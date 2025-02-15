@@ -19,6 +19,24 @@
 #include <hal/nrf_gpio.h>
 #endif
 
+#if defined(CONFIG_SB_DISABLE_SELF_R_X)
+/* Disabling R_X has to be done while running from RAM for obvious reasons.
+ * Moreover as a last step before jumping to application it must work even after
+ * RAW has been cleared, therefore we are using custom RAM function relocator.
+ * Size of the relocated are isn't known but it doesn't matter as long as it contains at least
+ * entire aforementioned function.
+ */
+#include <hal/nrf_rramc.h>
+
+#define FUNCTION_BUFFER_LEN 46
+#define RRAMC_REGION_RWX_LSB 0
+#define RRAMC_REGION_RWX_WIDTH 3
+#define RRAMC_REGION_TO_LOCK_ADDR NRF_RRAMC->REGION[3].CONFIG
+#define RRAMC_REGION_TO_LOCK_ADDR_H (((uint32_t)(&(RRAMC_REGION_TO_LOCK_ADDR))) >> 16)
+#define RRAMC_REGION_TO_LOCK_ADDR_L (((uint32_t)(&(RRAMC_REGION_TO_LOCK_ADDR))) & 0x0000fffful)
+static uint8_t ram_exec_buf[FUNCTION_BUFFER_LEN];
+#endif /* CONFIG_SB_DISABLE_SELF_R_X */
+
 #ifdef CONFIG_UART_NRFX_UARTE
 static void uninit_used_uarte(NRF_UARTE_Type *p_reg)
 {
@@ -156,10 +174,10 @@ void bl_boot(const struct fw_info *fw_info)
 	__set_MSP(vector_table[0]);
 	__set_PSP(0);
 
-#if CONFIG_SB_CLEANUP_RAM
 	__asm__ volatile (
 		/* vector_table[1] -> r0 */
 		"   mov r0, %0\n"
+#ifdef CONFIG_SB_CLEANUP_RAM
 		/* Base to write -> r1 */
 		"   mov r1, %1\n"
 		/* Size to write -> r2 */
@@ -174,16 +192,71 @@ void bl_boot(const struct fw_info *fw_info)
 		"   b   clear\n"
 		"out:\n"
 		"   dsb\n"
+#endif /* CONFIG_SB_CLEANUP_RAM */
+
+#ifdef CONFIG_SB_DISABLE_SELF_R_X
+		/* FUNCTION_BUFFER_LEN */
+		"   mov r4, %4\n"
+		/* ram_exec_buf */
+		"   mov r2, %5\n"
+		"  movw   r3, :lower16:bootconf_disable_r_x\n"
+		"  movt   r3, :upper16:bootconf_disable_r_x\n"
+		/* adjust address for thumb */
+		"  and r3, #0xfffffffe\n"
+		/* ram_exec_buf */
+		"   mov r5, %5\n"
+		/* adjust buffer address for thumb */
+		"   orr r5, #0x1\n"
+		/* copy end address in r4 */
+		"   add r4, r2\n"
+		"ram_cpy:\n"
+		/* read and increment */
+		"   ldrb r1, [r3], #1\n"
+		/* write and increment */
+		"   strb r1, [r2], #1\n"
+		/* check if end address is reached */
+		"   cmp r2, r4\n"
+		"   bne ram_cpy\n"
+		"   dsb\n"
+		/* jump to ram*/
+		"   bx r5\n"
+		/* CODE_UNREACHABLE */
+
+		".thumb_func\n"
+		"bootconf_disable_r_x:\n"
+		"   mov r1, %7\n"
+		"   movt r1, %8\n"
+		"   ldr r2, [r1]\n"
+		/* Size of the region should be set at this point
+		 * by provisioning through BOOTCONF. If not set it according partition size.
+		 */
+		"   rors r4, r2, #16\n"
+		"   cbnz r4, clear_rwx\n"
+		"   movt r2, %9\n"
+		"clear_rwx:\n"
+		"   bfc r2, %10, %11\n"
+		"   str r2, [r1]\n"
+		"   dsb\n"
+		"   bx r0\n"
+#endif /* CONFIG_SB_DISABLE_SELF_R_X */
+
 		/* Jump to reset vector of an app */
 		"   bx r0\n"
 		:
-		: "r" (vector_table[1]), "i" (CONFIG_SRAM_BASE_ADDRESS),
-		  "i" (CONFIG_SRAM_SIZE * 1024), "i" (0)
-		: "r0", "r1", "r2", "r3", "memory"
+		: "r" (vector_table[1]),
+		  "i" (CONFIG_SRAM_BASE_ADDRESS),
+		  "i" (CONFIG_SRAM_SIZE * 1024),
+		  "i" (0)
+#ifdef CONFIG_SB_DISABLE_SELF_R_X
+		  ,"i" (FUNCTION_BUFFER_LEN),
+		  "r" (ram_exec_buf),
+		  "r" (0),
+		  "i" (RRAMC_REGION_TO_LOCK_ADDR_L),
+		  "i" (RRAMC_REGION_TO_LOCK_ADDR_H), "i" (CONFIG_PM_PARTITION_SIZE_B0_IMAGE / 1024),
+		  "i" (RRAMC_REGION_RWX_LSB), "i" (RRAMC_REGION_RWX_WIDTH)
+#endif /* CONFIG_SB_DISABLE_SELF_R_X */
+		: "r0", "r1", "r2", "r3", "r4", "r5", "memory"
 	);
-#else
-	/* Call reset handler. */
-	((void (*)(void))vector_table[1])();
-#endif
+
 	CODE_UNREACHABLE;
 }
