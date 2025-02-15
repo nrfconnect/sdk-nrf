@@ -39,6 +39,17 @@ static const struct device *const uart_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_at_host
 #else
 static const struct device *const uart_dev = DEVICE_DT_GET(DT_NODELABEL(uart0));
 #endif
+
+#if DT_HAS_CHOSEN(zephyr_log_uart)
+static const bool host_uart_is_log_uart = \
+	(uart_dev == DEVICE_DT_GET(DT_CHOSEN(zephyr_log_uart)));
+#elif DT_HAS_CHOSEN(zephyr_console)
+static const bool host_uart_is_log_uart = \
+	(uart_dev == DEVICE_DT_GET(DT_CHOSEN(zephyr_console)));
+#else
+static const bool host_uart_is_log_uart = false;
+#endif
+
 static bool at_buf_busy; /* Guards at_buf while processing a command */
 static char at_buf[AT_BUF_SIZE]; /* AT command and modem response buffer */
 static struct k_work_q at_host_work_q;
@@ -46,7 +57,10 @@ static struct k_work cmd_send_work;
 
 static inline void write_uart_string(const char *str)
 {
-	if (IS_ENABLED(CONFIG_LOG_BACKEND_UART)) {
+	if (host_uart_is_log_uart && IS_ENABLED(CONFIG_LOG_BACKEND_UART)) {
+		/* The chosen UART device is also the UART log backend device, so that's
+		* where the AT response must go.
+		*/
 		LOG_RAW("%s", str);
 		return;
 	}
@@ -232,7 +246,6 @@ static int at_host_init(void)
 {
 	int err;
 	enum term_modes mode = CONFIG_AT_HOST_TERMINATION;
-
 
 	/* Choosing the termination mode */
 	if (mode < MODE_COUNT) {
