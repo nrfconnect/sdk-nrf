@@ -91,3 +91,21 @@ tests:
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_systemoff"
     timeout: 90
+  benchmarks.current_consumption.sample.boards.nrf.system_off.lpcomp_wakeup:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l05/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args: EXTRA_DTC_OVERLAY_FILE="boards/nrf54l15dk_nrf54l15_cpuapp_lpcomp_wakeup.overlay"
+    extra_configs:
+      - CONFIG_LPCOMP_WAKEUP_ENABLE=y
+      - CONFIG_COMPARATOR=y
+    tags: ppk_power_measure
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_with_wakeups"
+    timeout: 90
