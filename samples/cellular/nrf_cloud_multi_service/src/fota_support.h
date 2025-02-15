@@ -31,6 +31,6 @@ void on_fota_downloaded(void);
  * enabled.
  *
  */
-struct dfu_target_fmfu_fdev * get_full_modem_fota_fdev(void);
+struct dfu_target_fmfu_fdev *get_full_modem_fota_fdev(void);
 
 #endif /* _FOTA_SUPPORT_H_ */
