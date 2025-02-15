@@ -112,4 +112,10 @@ config RAW_TX_PKT_SAMPLE_INTER_FRAME_DELAY_MS
 	help
 	  Specify the inter-frame delay duration for raw TX packet transmission.
 
+config RAW_TX_PKT_SAMPLE_WIFI_IFACE_OPER_UP_TIMEOUT_S
+	int "Timeout for checking interface operational up status (seconds)"
+	default 10 if RAW_TX_PKT_SAMPLE_NON_CONNECTED_MODE
+	default 40 if RAW_TX_PKT_SAMPLE_CONNECTION_MODE
+	help
+	  specify the timeout (seconds) for checking if the Wi-Fi interface is operationally up.
 endmenu
