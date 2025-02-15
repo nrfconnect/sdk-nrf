@@ -50,8 +50,16 @@ The following table lists variants and extensions available out of the box for e
       - SED
       - MED
       - SSED
-      -
+      - MED
       - SED
+    * - :ref:`ICD mode <ug_matter_device_low_power_icd>`
+      - Not supported
+      - SIT
+      - SIT
+      - Not supported
+      - SIT
+      - Not supported
+      - LIT
     * - Wi-Fi® support
       - ✔
       - ✔
