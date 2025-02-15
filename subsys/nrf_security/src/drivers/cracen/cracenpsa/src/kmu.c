@@ -29,6 +29,8 @@
 
 #define SECONDARY_SLOT_METADATA_VALUE UINT32_MAX
 
+#define KMU_PUSH_AREA_SIZE	64
+
 extern nrf_security_mutex_t cracen_mutex_symmetric;
 
 /* The section .nrf_kmu_reserved_push_area is placed at the top RAM address
@@ -36,7 +38,14 @@ extern nrf_security_mutex_t cracen_mutex_symmetric;
  * Since this buffer is placed on the top of RAM we don't need to have the alignment
  * attribute anymore.
  */
-uint8_t kmu_push_area[64] __attribute__((section(".nrf_kmu_reserved_push_area")));
+
+#if DT_NODE_EXISTS(DT_NODELABEL(nrf_kmu_reserved_push_area))
+#define KMU_PUSH_AREA_NODE DT_NODELABEL(nrf_kmu_reserved_push_area)
+uint8_t kmu_push_area[KMU_PUSH_AREA_SIZE]
+	Z_GENERIC_SECTION(LINKER_DT_NODE_REGION_NAME(KMU_PUSH_AREA_NODE))__attribute__((used));
+#else
+uint8_t kmu_push_area[KMU_PUSH_AREA_SIZE] __attribute__((section(".nrf_kmu_reserved_push_area")));
+#endif
 
 typedef struct kmu_metadata {
 	uint32_t metadata_version: 4;
