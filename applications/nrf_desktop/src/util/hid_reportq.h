@@ -61,7 +61,7 @@ const void *hid_reportq_get_sub_id(struct hid_reportq *q);
  * The function returns an error if HID report subscription is disabled for the added HID report.
  *
  * If number of enqueued reports with a given report ID exceeds limit defined by the configuration
- * (@kconfig{CONFIG_DESKTOP_HID_REPORTQ_MAX_ENQUEUED_REPORTS}), the oldest enqueued HID report with
+ * (`CONFIG_DESKTOP_HID_REPORTQ_MAX_ENQUEUED_REPORTS`), the oldest enqueued HID report with
  * the ID is dropped.
  *
  * @param[in] q		Pointer to the queue instance.

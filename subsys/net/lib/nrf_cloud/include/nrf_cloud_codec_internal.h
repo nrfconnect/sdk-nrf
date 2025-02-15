@@ -179,7 +179,7 @@ int nrf_cloud_coap_shadow_default_process(struct nrf_cloud_obj_shadow_data *cons
 
 /** @brief Encode the info sections that are enabled to be sent to the device's shadow on
  * initial connection. The sections are enabled based on the configuration options that
- * set the Kconfig @kconfig{CONFIG_NRF_CLOUD_SEND_SHADOW_INFO} symbol.
+ * set the Kconfig `CONFIG_NRF_CLOUD_SEND_SHADOW_INFO` symbol.
  *
  * @retval 0		Success.
  * @retval -ENODEV	No info sections are enabled, no data encoded.
