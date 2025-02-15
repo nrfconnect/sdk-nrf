@@ -32,6 +32,7 @@ enum sock_shell_command {
 	SOCK_CMD_GETADDRINFO,
 	SOCK_CMD_SEND,
 	SOCK_CMD_RECV,
+	SOCK_CMD_OPTIONS,
 	SOCK_CMD_RAI
 };
 
@@ -133,6 +134,15 @@ static const char sock_recv_usage_str[] =
 	"                            'hex'\n"
 	"  -h, --help,               Shows this help information";
 
+static const char sock_options_usage_str[] =
+	"Usage: sock options -i <socket id> [--save_connection] [--load_connection]\n"
+	"Options:\n"
+	"  -i, --id, [int]           Socket id. Use 'sock list' command to see open\n"
+	"                            sockets.\n"
+	"      --save_connection     Save DTLS connection on given socket id.\n"
+	"      --load_connection     Load DTLS connection on given socket id.\n"
+	"  -h, --help,               Shows this help information";
+
 static const char sock_rai_usage_str[] =
 	"Usage: sock rai -i <socket id> [--rai_last] [--rai_no_data] [--rai_one_resp]\n"
 	"       [--rai_ongoing] [--rai_wait_more]\n"
@@ -172,6 +182,8 @@ static const char sock_rai_usage_str[] =
 #define SOCK_SHELL_OPT_RAI_ONGOING 203
 #define SOCK_SHELL_OPT_RAI_WAIT_MORE 204
 #define SOCK_SHELL_OPT_PACKET_NUMBER_PREFIX 205
+#define SOCK_SHELL_OPT_SAVE_CONNECTION 206
+#define SOCK_SHELL_OPT_LOAD_CONNECTION 207
 
 /* Specifying the expected options (both long and short) */
 static struct option long_options[] = {
@@ -197,6 +209,8 @@ static struct option long_options[] = {
 	{ "wait_ack",       no_argument,       0, 'W' },
 	{ "keep_open",      no_argument,       0, 'K' },
 	{ "print_format",   required_argument, 0, 'P' },
+	{ "save_connection", no_argument,      0, SOCK_SHELL_OPT_SAVE_CONNECTION },
+	{ "load_connection", no_argument,      0, SOCK_SHELL_OPT_LOAD_CONNECTION },
 	{ "packet_number_prefix", no_argument, 0, SOCK_SHELL_OPT_PACKET_NUMBER_PREFIX },
 	{ "rai_last",       no_argument,       0, SOCK_SHELL_OPT_RAI_LAST },
 	{ "rai_no_data",    no_argument,       0, SOCK_SHELL_OPT_RAI_NO_DATA },
@@ -226,6 +240,9 @@ static void sock_print_usage(enum sock_shell_command command)
 		break;
 	case SOCK_CMD_RECV:
 		mosh_print_no_format(sock_recv_usage_str);
+		break;
+	case SOCK_CMD_OPTIONS:
+		mosh_print_no_format(sock_options_usage_str);
 		break;
 	case SOCK_CMD_RAI:
 		mosh_print_no_format(sock_rai_usage_str);
@@ -852,6 +869,68 @@ show_usage:
 	return err;
 }
 
+static int cmd_sock_options(const struct shell *shell, size_t argc, char **argv)
+{
+	int err = 0;
+
+	if (argc < 2) {
+		goto show_usage;
+	}
+
+	/* Variables for command line arguments */
+	int arg_socket_id = SOCK_ID_NONE;
+	bool arg_save_connection = false;
+	bool arg_load_connection = false;
+
+	optreset = 1;
+	optind = 1;
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, "i:h", long_options, NULL)) != -1) {
+
+		switch (opt) {
+		case 'i': /* Socket ID */
+			arg_socket_id = atoi(optarg);
+			break;
+
+		case SOCK_SHELL_OPT_SAVE_CONNECTION:
+			arg_save_connection = true;
+			break;
+
+		case SOCK_SHELL_OPT_LOAD_CONNECTION:
+			arg_load_connection = true;
+			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
+		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
+		}
+	}
+
+	if (optind < argc) {
+		mosh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		goto show_usage;
+	}
+
+	if (arg_save_connection) {
+		err = sock_connection_save(arg_socket_id);
+	} else if (arg_load_connection) {
+		err = sock_connection_load(arg_socket_id);
+	} else {
+		mosh_error("No option specified.");
+		goto show_usage;
+	}
+
+	return err;
+
+show_usage:
+	sock_print_usage(SOCK_CMD_OPTIONS);
+	return err;
+}
+
 static int cmd_sock_list(const struct shell *shell, size_t argc, char **argv)
 {
 	return sock_list();
@@ -871,6 +950,10 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		getaddrinfo, NULL,
 		"DNS query using getaddrinfo.",
 		cmd_sock_getaddrinfo, 0, 10),
+	SHELL_CMD_ARG(
+		options, NULL,
+		"Socket options.",
+		cmd_sock_options, 0, 10),
 	SHELL_CMD_ARG(
 		send, NULL,
 		"Send data.",
