@@ -1,6 +1,8 @@
 /* Lzma2Dec.c -- LZMA2 Decoder
 2024-03-01 : Igor Pavlov : Public domain */
 
+/** With changes by Nordic Semiconductor ASA */
+
 /* #define SHOW_DEBUG_INFO */
 
 #include "Precomp.h"
@@ -165,7 +167,15 @@ static unsigned Lzma2Dec_UpdateState(CLzma2Dec *p, Byte b)
 
 static void LzmaDec_UpdateWithUncompressed(CLzmaDec *p, const Byte *src, SizeT size)
 {
+#ifdef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
+	if (LzmaDictionaryWrite(p->dicHandle, p->dicPos, src, size) != size) {
+		p->state = LZMA2_STATE_ERROR;
+		return;
+	}
+#else
 	memcpy(p->dic + p->dicPos, src, size);
+#endif
+
 	p->dicPos += size;
 	if (p->checkDicSize == 0 && p->prop.dicSize - p->processedPos <= size) {
 		p->checkDicSize = p->prop.dicSize;
@@ -240,6 +250,9 @@ SRes Lzma2Dec_DecodeToDic(CLzma2Dec *p, SizeT dicLimit, const Byte *src, SizeT *
 				}
 
 				LzmaDec_UpdateWithUncompressed(&p->decoder, src, inCur);
+				if (p->state == LZMA2_STATE_ERROR) {
+					continue;
+				}
 
 				src += inCur;
 				*srcLen += inCur;
@@ -419,6 +432,7 @@ ELzma2ParseStatus Lzma2Dec_Parse(CLzma2Dec *p, SizeT outSize, const Byte *src, S
 	return (ELzma2ParseStatus)LZMA_STATUS_NOT_SPECIFIED;
 }
 
+#ifndef CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY
 SRes Lzma2Dec_DecodeToBuf(CLzma2Dec *p, Byte *dest, SizeT *destLen, const Byte *src, SizeT *srcLen,
 			  ELzmaFinishMode finishMode, ELzmaStatus *status)
 {
@@ -481,5 +495,6 @@ SRes Lzma2Decode(Byte *dest, SizeT *destLen, const Byte *src, SizeT *srcLen, Byt
 	Lzma2Dec_FreeProbs(&p, alloc);
 	return res;
 }
+#endif
 
 #undef PRF

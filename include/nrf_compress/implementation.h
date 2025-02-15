@@ -12,6 +12,7 @@
 #ifndef NRF_COMPRESS_IMPLEMENTATION_H_
 #define NRF_COMPRESS_IMPLEMENTATION_H_
 
+#include "lzma_types.h"
 #include <stdint.h>
 #include <stdlib.h>
 #include <zephyr/kernel.h>
@@ -32,7 +33,8 @@ extern "C" {
  * @typedef		nrf_compress_init_func_t
  * @brief		Initialize compression implementation.
  *
- * @param[in] inst	Reserved for future use, must be NULL.
+ * @param[in] inst	Implementation specific initialization context.
+ *			Concrete implementation may cast it to predefined type.
  *
  * @retval		0 Success.
  * @retval		-errno Negative errno code on other failure.
@@ -43,7 +45,8 @@ typedef int (*nrf_compress_init_func_t)(void *inst);
  * @typedef		nrf_compress_deinit_func_t
  * @brief		De-initialize compression implementation.
  *
- * @param[in] inst	Reserved for future use, must be NULL.
+ * @param[in] inst	Implementation specific initialization context.
+ *			Concrete implementation may cast it to predefined type.
  *
  * @retval		0 Success.
  * @retval		-errno Negative errno code on other failure.
@@ -55,7 +58,8 @@ typedef int (*nrf_compress_deinit_func_t)(void *inst);
  * @brief		Reset compression state function. Used to abort current compression or
  *			decompression task before starting a new one.
  *
- * @param[in] inst	Reserved for future use, must be NULL.
+ * @param[in] inst	Implementation specific initialization context.
+ *			Concrete implementation may cast it to predefined type.
  *
  * @retval		0 Success.
  * @retval		-errno Negative errno code on other failure.
@@ -66,7 +70,8 @@ typedef int (*nrf_compress_reset_func_t)(void *inst);
  * @typedef		nrf_compress_compress_func_t
  * @brief		Placeholder function for future use, do not use.
  *
- * @param[in] inst	Reserved for future use, must be NULL.
+ * @param[in] inst	Implementation specific initialization context.
+ *			Concrete implementation may cast it to predefined type.
  *
  * @retval		0 Success.
  * @retval		-errno Negative errno code on other failure.
@@ -80,7 +85,8 @@ typedef int (*nrf_compress_compress_func_t)(void *inst);
  *			be provided if more is not available (for example, end of data or data is
  *			is being streamed).
  *
- * @param[in] inst	Reserved for future use, must be NULL.
+ * @param[in] inst	Implementation specific initialization context.
+ *			Concrete implementation may cast it to predefined type.
  *
  * @retval		Positive value Success indicating chunk size.
  * @retval		-errno Negative errno code on other failure.
@@ -92,7 +98,8 @@ typedef size_t (*nrf_compress_decompress_bytes_needed_t)(void *inst);
  *				be called one or more times with compressed data to decompress it
  *				into its natural form.
  *
- * @param[in] inst		Reserved for future use, must be NULL.
+ * @param[in] inst		Implementation specific initialization context.
+ *				Concrete implementation may cast it to predefined type.
  * @param[in] input		Input data buffer, containing the compressed data.
  * @param[in] input_size	Size of the input data buffer.
  * @param[in] last_part		Last part of compressed data. This should be set to true if this is
@@ -103,9 +110,13 @@ typedef size_t (*nrf_compress_decompress_bytes_needed_t)(void *inst);
  *				offset the input data buffer by this amount of bytes.
  * @param[out] output		Output data buffer pointer to pointer. This will be set to the
  *				compression's output buffer when decompressed data is available to
- *				be used or copied.
- * @param[out] output_size	Size of data in output data buffer pointer. Data should only be
- *				read when the value in this pointer is greater than 0.
+ *				be used or copied. WARNING: For LZMA implementation, it is only
+ *				valid if no external dictionary is used. For external dictionary
+ *				variant (indicated by *inst parameter in init function), this
+ *				will be set to NULL and user should read from ones own dictionary.
+ * @param[out] output_size	Size of data in output data buffer pointer (or in external
+ *				dictionary). Data should only be read when the value in this pointer
+ *				is greater than 0.
  *
  * @retval			0 Success.
  * @retval			-errno Negative errno code on other failure.

@@ -96,6 +96,20 @@ config NRF_COMPRESS_MEMORY_TYPE_MALLOC
 
 endchoice
 
+config NRF_COMPRESS_EXTERNAL_DICTIONARY
+	bool "External dictionary"
+	help
+	  Use external dictionary API for LZMA decompression. It provides the user with
+	  possibility to store dictionary data in memory areas of their choice (e.g. MRAM).
+
+config NRF_COMPRESS_DICTIONARY_CACHE_SIZE
+	int "Dictionary cache size"
+	default 1024
+	depends on NRF_COMPRESS_EXTERNAL_DICTIONARY
+	help
+	  Cache for last written dictionary data. It limits the number of external dictionary API calls:
+	  'write' and (possibly but not optimized for) 'read'.
+
 config NRF_COMPRESS_MEMORY_ALIGNMENT
 	int "Buffer memory alignment"
 	default 4
