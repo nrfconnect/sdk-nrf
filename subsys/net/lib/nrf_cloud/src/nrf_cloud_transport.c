@@ -1118,6 +1118,18 @@ int nct_dc_connect(void)
 		.message_id = NCT_MSG_ID_DC_SUB
 	};
 
+#if defined(CONFIG_NRF_CLOUD_GATEWAY)
+	/** The topic for cloud to device we receive in the shadow for
+	 * BLE gateway devices is incorrect. The <device_id>/+/r suffix is invalid and
+	 * must be corrected here to be <device_id>/c2g. Using it without this
+	 * change results in immediate disconnection from nRF Cloud.
+	 */
+	char *p = (char *)subscribe_topic.topic.utf8;
+	int l = subscribe_topic.topic.size;
+
+	memcpy(&p[l - 3], NRF_CLOUD_JSON_KEY_CLOUD_TO_DEVICE, 3);
+#endif
+
 	LOG_DBG("Subscribing to:");
 	for (int i = 0; i < subscription_list.list_count; i++) {
 		LOG_DBG("%.*s", subscription_list.list[i].topic.size,

@@ -1,0 +1,21 @@
+# Copyright (c) 2025 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+# NOTE: This file is replicated in nrf9160dk_nrf9160 and nrf9160dk_nrf52840.
+#       Any changes should be done in both instances.
+
+description: GPIO used to control boot mode for nRF52840 on nRF9160 DK
+
+compatible: "nordic,nrf9160dk-nrf52840-boot"
+
+include: base.yaml
+
+properties:
+  status:
+    required: true
+
+  gpios:
+    type: phandle-array
+    required: true
+    description: |
+      GPIO to use as nRF52840 boot mode line: output in nRF9160, input in nRF52840.
