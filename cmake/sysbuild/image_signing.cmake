@@ -233,10 +233,14 @@ function(zephyr_mcuboot_tasks)
     # add_custom_command() are run in order, so adding the 'west sign'
     # calls to the "extra_post_build_commands" property ensures they run
     # after the commands which generate the unsigned versions.
-    set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-      ${imgtool_sign} ${imgtool_args} ${imgtool_directxip_hex_command} ${imgtool_hex_extra} ${unconfirmed_args})
+    if("${keyfile_enc}" STREQUAL "")
+      set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+        ${imgtool_sign} ${imgtool_args} ${imgtool_directxip_hex_command} ${imgtool_hex_extra} ${unconfirmed_args})
+    else()
+      set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
+        ${imgtool_sign} ${imgtool_args} --encrypt "${keyfile_enc}" --clear
+        ${imgtool_directxip_hex_command} ${imgtool_hex_extra} ${unconfirmed_args})
 
-    if(NOT "${keyfile_enc}" STREQUAL "")
       set(unconfirmed_args ${input}.hex ${output}.encrypted.hex)
       list(APPEND byproducts ${output}.encrypted.hex)
       set(BYPRODUCT_KERNEL_SIGNED_ENCRYPTED_HEX_NAME "${output}.encrypted.hex"
