@@ -678,6 +678,7 @@
 /scripts/hid_configurator/                @nrfconnect/ncs-si-bluebagel
 /scripts/tools-versions-*.txt             @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
 /scripts/requirements-*.txt               @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
+/scripts/west_commands/utils/             @gmarull
 /scripts/west_commands/create_board/      @gmarull
 /scripts/west_commands/sbom/              @nrfconnect/ncs-si-muffin
 /scripts/west_commands/thingy91x_dfu.py   @nrfconnect/ncs-cia
