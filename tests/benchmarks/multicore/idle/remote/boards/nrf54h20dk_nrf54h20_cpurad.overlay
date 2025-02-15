@@ -1,0 +1,3 @@
+&uart135 {
+	status = "disabled";
+};
