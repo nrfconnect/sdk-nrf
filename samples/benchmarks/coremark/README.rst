@@ -77,33 +77,55 @@ Each target CPU has an assigned button responsible for starting the benchmark an
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF52 DKs
+
+      Button 1:
+         Start the benchmark run on the application core.
+
+      LED 1:
+         Indicates ``test in progress`` on the application core.
+
+   .. group-tab:: nRF53 DKs
 
       Button 1:
          Start the benchmark run on the application core.
 
       Button 2:
-         Start the benchmark run on the network or radio core.
+         Start the benchmark run on the network core.
 
       LED 1:
          Indicates ``test in progress`` on the application core.
 
       LED 2:
-         Indicates ``test in progress`` on the network or radio core.
+         Indicates ``test in progress`` on the network core.
 
-   .. group-tab:: nRF54 DKs
+   .. group-tab:: nRF54L DKs
+
+      Button 0:
+         Start the benchmark run on the application core.
+
+      Button 3 (only supported for the ``nrf54l15dk/nrf54l15/cpuapp`` board target):
+         Start the benchmark run on the FLPR core.
+
+      LED 0:
+         Indicates ``test in progress`` on the application core.
+
+      LED 3 (only supported for the ``nrf54l15dk/nrf54l15/cpuapp`` board target):
+         Indicates ``test in progress`` on the FLPR core.
+
+   .. group-tab:: nRF54H DKs
 
       Button 0:
          Start the benchmark run on the application core.
 
       Button 1:
-         Start the benchmark run on the network or radio core.
+         Start the benchmark run on the radio core.
 
       LED 0:
          Indicates ``test in progress`` on the application core.
 
       LED 1:
-         Indicates ``test in progress`` on the network or radio core.
+         Indicates ``test in progress`` on the radio core.
 
 .. _coremark_configuration:
 
@@ -171,8 +193,22 @@ CONFIG_APP_MODE_FLASH_AND_RUN - Start CoreMark sample automatically after flashi
    Otherwise, it will wait for the button press.
 
 .. note::
-   The :kconfig:option:`CONFIG_APP_MODE_FLASH_AND_RUN` Kconfig option is always enabled for the PPR core.
-   This core does not use buttons.
+   The :kconfig:option:`CONFIG_APP_MODE_FLASH_AND_RUN` Kconfig option is always enabled for the PPR and FLPR cores on the ``nrf54h20dk/nrf54h20/cpuapp`` board target.
+   These cores on the ``nrf54h20dk/nrf54h20/cpuapp`` board target do not use buttons and LEDs.
+
+.. _SB_CONFIG_APP_CPUFLPR_RUN:
+
+SB_CONFIG_APP_CPUFLPR_RUN - Enable execution for the FLPR core
+   Enable the benchmark execution also for the board targets with the FLPR core HW (for example, nRF54L15 and nRF54H20 SoCs).
+
+.. note::
+   FLPR code is run from RAM.
+
+   This option is not supported for the following board targets that include an SoC with the FLPR core:
+
+     * ``nrf54h20dk/nrf54h20/cpuapp``
+     * ``nrf54l15dk/nrf54l05/cpuapp``
+     * ``nrf54l15dk/nrf54l10/cpuapp``
 
 .. _SB_CONFIG_APP_CPUNET_RUN:
 

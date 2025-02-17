@@ -6,10 +6,19 @@
 
 menu "CoreMark sample"
 
-config APP_MODE_FLASH_AND_RUN
-	bool "Run CoreMark benchmark on start up" if \
-		!(SOC_NRF54H20_CPUPPR)
+config APP_BUTTON_AND_LED_UNSUPPORTED
+	bool
 	default y if SOC_NRF54H20_CPUPPR
+	help
+	  The VPR cores do not have button and LED support on the nRF54H20 DK as GPIO pins
+	  connected to buttons and LEDs share the same GPIO port. The Zephyr framework does
+	  not support individual GPIO pin assignments. For instance, it is not possible to
+	  assign Button 0 to the application core and Button 2 to the FLPR core on
+	  the nRF54H20 DK as these buttons share the same GPIO port.
+
+config APP_MODE_FLASH_AND_RUN
+	bool "Run CoreMark benchmark on start up" if !APP_BUTTON_AND_LED_UNSUPPORTED
+	default y if APP_BUTTON_AND_LED_UNSUPPORTED
 	help
 	  If enabled, CoreMark will start execution immediately after the CPU starts up.
 	  It also disables LEDs and buttons.
