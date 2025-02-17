@@ -1,0 +1,10 @@
+tests:
+  b0.self_lock:
+    sysbuild: true
+    extra_args:
+      - b0_CONFIG_SB_DISABLE_SELF_RWX=y
+    platform_allow: nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - b0
