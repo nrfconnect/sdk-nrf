@@ -68,6 +68,7 @@ config BOARD_IS_NON_SECURE
 	default y if "$(BOARD_NS_QUALIFIER_CHECK)" = "/ns"
 
 rsource "Kconfig.appcore"
+rsource "Kconfig.flprcore"
 rsource "Kconfig.netcore"
 rsource "Kconfig.pprcore"
 rsource "Kconfig.secureboot"
