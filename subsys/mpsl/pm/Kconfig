@@ -9,6 +9,7 @@ config MPSL_USE_ZEPHYR_PM
 	depends on SOC_SERIES_NRF54HX
 	depends on MPSL
 	depends on PM
+	default y
 	help
 	  This option configures MPSL to use Zephyr's Power Management.
 
