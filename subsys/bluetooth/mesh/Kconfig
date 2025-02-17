@@ -29,7 +29,7 @@ config MBEDTLS_HEAP_SIZE
 
 if BT_SETTINGS
 
-config BT_MESH_PSA_CRYPTO_STORAGE
+config BT_MESH_SECURE_STORAGE
 	bool
 	default y
 	imply TRUSTED_STORAGE
