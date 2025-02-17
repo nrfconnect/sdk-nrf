@@ -28,8 +28,9 @@ static void sx_cmdma_finalize_descs(struct sxdesc *start, struct sxdesc *end)
 
 	for (d = start; d < end; d++) {
 #ifdef DMA_FIFO_ADDR
-		if (d->addr == (char *)DMA_FIFO_ADDR)
+		if (d->addr == (char *)DMA_FIFO_ADDR) {
 			d->sz |= DMA_CONST_ADDR;
+		}
 #endif
 		d->next = d + 1;
 	}
@@ -37,8 +38,9 @@ static void sx_cmdma_finalize_descs(struct sxdesc *start, struct sxdesc *end)
 	end->dmatag |= DMATAG_LAST;
 	end->sz |= DMA_REALIGN;
 #ifdef DMA_FIFO_ADDR
-	if (end->addr == (char *)DMA_FIFO_ADDR)
+	if (end->addr == (char *)DMA_FIFO_ADDR) {
 		end->sz |= DMA_CONST_ADDR;
+	}
 #endif
 }
 
@@ -52,14 +54,16 @@ void sx_cmdma_start(struct sx_dmactl *dma, size_t privsz, struct sxdesc *indescs
 #ifdef CONFIG_DCACHE
 	m = (struct sxdesc *)(dma->mapped + sizeof(struct sx_dmaslot));
 	for (; m != DMA_LAST_DESCRIPTOR; m = m->next) {
+		sys_cache_data_flush_and_invd_range(m, sizeof(*m));
 		sys_cache_data_flush_and_invd_range(m->addr, m->sz & DMA_SZ_MASK);
 	}
 	m = (struct sxdesc *)(dma->mapped + offsetof(struct sx_dmaslot, outdescs));
 	for (; m != DMA_LAST_DESCRIPTOR; m = m->next) {
+		sys_cache_data_flush_and_invd_range(m, sizeof(*m));
 		sys_cache_data_flush_and_invd_range(m->addr, m->sz & DMA_SZ_MASK);
 	}
 
-	sys_cache_data_flush_range((void *)&dma->dmamem, sizeof(dma->dmamem) + privsz);
+	sys_cache_data_flush_and_invd_range((void *)&dma->dmamem, sizeof(dma->dmamem) + privsz);
 #endif
 
 	m = (struct sxdesc *)(dma->mapped + sizeof(struct sx_dmaslot));
@@ -69,6 +73,17 @@ void sx_cmdma_start(struct sx_dmactl *dma, size_t privsz, struct sxdesc *indescs
 	sx_wrreg(REG_CONFIG, REG_CONFIG_SG);
 	sx_wrreg(REG_START, REG_START_ALL);
 }
+
+#ifdef CONFIG_DCACHE
+void sx_cmdma_outdescs_flush_and_invd_dcache(const struct sx_dmactl *dma)
+{
+	struct sxdesc *m = (struct sxdesc *)(dma->mapped + offsetof(struct sx_dmaslot, outdescs));
+
+	for (; m != DMA_LAST_DESCRIPTOR; m = m->next) {
+		sys_cache_data_flush_and_invd_range(m->addr, m->sz & DMA_SZ_MASK);
+	}
+}
+#endif
 
 int sx_cmdma_check(void)
 {

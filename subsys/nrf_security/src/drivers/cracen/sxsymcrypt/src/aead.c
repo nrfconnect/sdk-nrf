@@ -474,7 +474,8 @@ int sx_aead_status(struct sxaead *c)
 	}
 
 #if CONFIG_DCACHE
-	sys_cache_data_invd_range((void *)&c->extramem, sizeof(c->extramem));
+	sx_cmdma_outdescs_flush_and_invd_dcache(&c->dma);
+	sys_cache_data_flush_and_invd_range((void *)&c->extramem, sizeof(c->extramem));
 #endif
 
 	if (!(c->dma.dmamem.cfg & c->cfg->ctxsave) && c->expectedtag != NULL) {

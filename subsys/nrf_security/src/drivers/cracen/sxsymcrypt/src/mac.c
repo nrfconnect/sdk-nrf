@@ -179,7 +179,8 @@ int sx_mac_status(struct sxmac *c)
 	}
 
 #if CONFIG_DCACHE
-	sys_cache_data_invd_range((void *)&c->extramem, sizeof(c->extramem));
+	sx_cmdma_outdescs_flush_and_invd_dcache(&c->dma);
+	sys_cache_data_flush_and_invd_range((void *)&c->extramem, sizeof(c->extramem));
 #endif
 
 	sx_mac_free(c);
