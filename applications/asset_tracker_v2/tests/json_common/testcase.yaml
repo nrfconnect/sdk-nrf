@@ -2,13 +2,9 @@ tests:
   applications.asset_tracker_v2.cloud.cloud_codec.json_common.aws:
     sysbuild: true
     platform_allow:
-      - nrf9160dk/nrf9160
       - native_sim
-      - qemu_cortex_m3
     integration_platforms:
-      - nrf9160dk/nrf9160
       - native_sim
-      - qemu_cortex_m3
     tags:
       - json_common_test-aws
       - sysbuild
