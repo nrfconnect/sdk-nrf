@@ -276,10 +276,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         )
 
       # Add fault injection protection to MCUBOOT
-      add_overlay_config(
-        mcuboot
-        ${ZEPHYR_NRF_MODULE_DIR}/modules/mcuboot/fih_low_enable.conf
-      )
+      set_config_bool(mcuboot CONFIG_BOOT_FIH_PROFILE_DEFAULT_LOW y)
     endif()
 
     if(SB_CONFIG_PARTITION_MANAGER)
