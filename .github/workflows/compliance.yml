@@ -67,7 +67,7 @@ jobs:
         # For now we run KconfigBasic, but we should transition to Kconfig
         $ZEPHYR_BASE/scripts/ci/check_compliance.py --annotate -e Kconfig \
         -e KconfigBasicNoModules -e ClangFormat -e Ruff \
-        -e SysbuildKconfig -e SysbuildKconfigBasic -e SysbuildKconfigBasicNoModules \
+        -e SysbuildKconfig -e SysbuildKconfigBasicNoModules \
         -c origin/${BASE_REF}..
 
     - name: upload-results
