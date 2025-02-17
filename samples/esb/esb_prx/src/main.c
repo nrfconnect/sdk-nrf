@@ -131,10 +131,8 @@ int clocks_start(void)
 		}
 	} while (err == -EAGAIN);
 
-#if defined(NRF54L15_XXAA)
-	/* MLTPAN-20 */
-	nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_PLLSTART);
-#endif /* defined(NRF54L15_XXAA) */
+	nrf_lrcconf_clock_always_run_force_set(NRF_LRCCONF000, 0, true);
+	nrf_lrcconf_task_trigger(NRF_LRCCONF000, NRF_LRCCONF_TASK_CLKSTART_0);
 
 	LOG_DBG("HF clock started");
 
