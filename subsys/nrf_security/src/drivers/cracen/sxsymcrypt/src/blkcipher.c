@@ -86,7 +86,6 @@ void sx_blkcipher_free(struct sxblkcipher *c)
 	sx_cmdma_release_hw(&c->dma);
 }
 
-
 static int sx_blkcipher_hw_reserve(struct sxblkcipher *c)
 {
 	int err = SX_OK;
@@ -149,8 +148,7 @@ static int sx_blkcipher_create_aesxts(struct sxblkcipher *c, const struct sxkeyr
 	mode = CMDMA_BLKCIPHER_MODE_SET(BLKCIPHER_MODEID_XTS);
 	keyszfld = 0;
 
-	sx_cmdma_newcmd(&c->dma, c->descs,
-			KEYREF_AES_HWKEY_CONF(key1->cfg) | mode | keyszfld,
+	sx_cmdma_newcmd(&c->dma, c->descs, KEYREF_AES_HWKEY_CONF(key1->cfg) | mode | keyszfld,
 			c->cfg->dmatags->cfg);
 	if (KEYREF_IS_USR(key1)) {
 		ADD_CFGDESC(c->dma, key1->key, key1->sz, c->cfg->dmatags->key);
@@ -240,8 +238,7 @@ int sx_blkcipher_create_aesctr_dec(struct sxblkcipher *c, const struct sxkeyref 
 	return sx_blkcipher_create_aes_ba411(c, key, iv, &ba411ctrcfg, ba411ctrcfg.decr);
 }
 
-int sx_blkcipher_create_aesecb_enc(struct sxblkcipher *c, const struct sxkeyref *key
-				   )
+int sx_blkcipher_create_aesecb_enc(struct sxblkcipher *c, const struct sxkeyref *key)
 {
 	return sx_blkcipher_create_aes_ba411(c, key, NULL, &ba411ecbcfg, CM_CFG_ENCRYPT);
 }
@@ -381,7 +378,9 @@ int sx_blkcipher_status(struct sxblkcipher *c)
 	}
 
 #if CONFIG_DCACHE
-	sys_cache_data_invd_range((void *)&c->extramem, sizeof(c->extramem));
+	sx_cmdma_outdescs_flush_and_invd_dcache(&c->dma);
+	/* extramem is often a target for out descriptors, this might not be needed anymore */
+	sys_cache_data_flush_and_invd_range((void *)&c->extramem, sizeof(c->extramem));
 #endif
 
 	sx_blkcipher_free(c);
@@ -435,6 +434,8 @@ int sx_blkcipher_ecb_simple(uint8_t *key, size_t key_size, uint8_t *input, size_
 #if CONFIG_DCACHE
 	sys_cache_data_flush_range(in_descs, sizeof(in_descs));
 	sys_cache_data_flush_range(&out_desc, sizeof(out_desc));
+	sys_cache_data_flush_range(&cmd, sizeof(cmd));
+	sys_cache_data_flush_range(key, key_size);
 	sys_cache_data_flush_range(input, input_size);
 	sys_cache_data_flush_range(output, output_size);
 #endif
@@ -451,7 +452,7 @@ int sx_blkcipher_ecb_simple(uint8_t *key, size_t key_size, uint8_t *input, size_
 	sx_cmdma_release_hw(NULL);
 
 #if CONFIG_DCACHE
-	sys_cache_data_invd_range(output, output_size);
+	sys_cache_data_flush_and_invd_range(output, output_size);
 #endif
 
 	return r;
