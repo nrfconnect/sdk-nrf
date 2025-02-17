@@ -536,6 +536,13 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
+    - sample.bluetooth.fast_pair.input_device
+  platforms:
+    - nrf54l15dk/nrf54l10/cpuapp
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
     - sample.find_my.coexistence.debug
   platforms:
     - nrf52840dk/nrf52840
