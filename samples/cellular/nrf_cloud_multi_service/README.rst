@@ -1169,6 +1169,12 @@ Then, complete the following steps for each device you wish to onboard:
 1. Make sure your device is plugged in and that this sample has been flashed to it.
 #. Install the device and server credentials using the :file:`device_credentials_installer.py` Python script :ref:`you installed <nrf_cloud_multi_service_install_nrf_utils>`:
 
+   .. note::
+      The :file:`device_credentials_installer.py` Python script requires other scripts in the same repository to be present in the same folder on your computer.
+      Clone this repository in its entirety.
+      The script does not work by itself without the others.
+      Also, install the required Python packages as mentioned in the script documentation.
+
    (Select the protocol (MQTT or CoAP) and connectivity technology (LTE or Wi-Fi) you built the sample for)
 
    .. tabs::
@@ -1253,17 +1259,17 @@ Then, complete the following steps for each device you wish to onboard:
 
    .. code-block:: console
 
-      Saving provisioning endpoint CSV file provision.csv...
-      Provisioning CSV file saved
+      Saving device onboarding CSV file onboard.csv...
+      Onboarding CSV file saved, row count: 1
 
-   And a new file, :file:`provision.csv` should be created.
+   And a new file, :file:`onboard.csv` should be created.
    This file will be used in the next step.
 
-#. Navigate to the `Bulk Onboard Devices`_ page of the nRF Cloud portal and upload the :file:`provision.csv` file to onboard the device.
+#. Navigate to the `Bulk Onboard Devices`_ page of the nRF Cloud portal and upload the :file:`onboard.csv` file to onboard the device.
 
    To get there from the :guilabel:`Dashboard`, click :guilabel:`Devices` under :guilabel:`Device Management` in the navigation pane on the left, then click :guilabel:`Add Devices` and select **Bulk Onboard**.
 
-   Once the `Bulk Onboard Devices`_ page is open, drag in the :file:`provision.csv` file and click **Onboard**.
+   Once the `Bulk Onboard Devices`_ page is open, drag in the :file:`onboard.csv` file and click **Onboard**.
 
    You should see a message stating that the file was uploaded successfully, and your device should appear in the `Devices <nRF Cloud Portal Devices_>`_ page.
 
