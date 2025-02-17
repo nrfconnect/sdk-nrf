@@ -574,7 +574,10 @@ Other samples
 
 * :ref:`coremark_sample` sample:
 
-  * Added support for the nRF54L05 and nRF54L10 SoCs (emulated on nRF54L15 DK).
+  * Added:
+
+    * Support for the nRF54L05 and nRF54L10 SoCs (emulated on nRF54L15 DK).
+    * FLPR core support for the :ref:`zephyr:nrf54l15dk_nrf54l15` board target.
 
 Drivers
 =======
