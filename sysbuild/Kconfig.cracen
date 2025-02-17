@@ -14,7 +14,7 @@ menu "CRACEN"
 
 config CRACEN_MICROCODE_LOAD_B0
 	bool
-	depends on SECURE_BOOT_APPCORE && SECURE_BOOT_SIGNATURE_TYPE_ED25519
+	depends on SECURE_BOOT_APPCORE
 	default y
 	help
 	  Hidden symbol indicating if b0 is using CRACEN.
