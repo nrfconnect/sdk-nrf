@@ -161,6 +161,11 @@ static struct fsm_state_object state_object = { 0 };
 
 static void on_modem_lib_init(int ret, void *ctx)
 {
+	if (ret != 0) {
+		LOG_ERR("Modem library did not initialize: %d", ret);
+		return;
+	}
+
 	event_send(EVENT_NRF_MODEM_LIB_INITED);
 }
 

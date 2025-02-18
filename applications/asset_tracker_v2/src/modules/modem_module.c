@@ -84,6 +84,11 @@ NRF_MODEM_LIB_ON_INIT(asset_tracker_init_hook, on_modem_lib_init, NULL);
 
 static void on_modem_lib_init(int ret, void *ctx)
 {
+	if (ret != 0) {
+		LOG_ERR("Modem library did not initialize: %d", ret);
+		return;
+	}
+
 	k_sem_give(&nrf_modem_initialized);
 }
 

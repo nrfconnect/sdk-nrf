@@ -22,7 +22,12 @@ static void cfun_callback(int mode)
 	}
 }
 
-static void on_modem_init(int err, void *ctx)
+static void on_modem_init(int ret, void *ctx)
 {
+	if (ret != 0) {
+		LOG_ERR("Modem library did not initialize: %d", ret);
+		return;
+	}
+
 	nrf_modem_at_cfun_handler_set(cfun_callback);
 }

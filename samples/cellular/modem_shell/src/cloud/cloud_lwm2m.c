@@ -73,8 +73,12 @@ NRF_MODEM_LIB_ON_INIT(cloud_lwm2m_init_hook, on_modem_lib_init, NULL);
 
 static void on_modem_lib_init(int ret, void *ctx)
 {
-	ARG_UNUSED(ret);
 	ARG_UNUSED(ctx);
+
+	if (ret != 0) {
+		printk("Modem library did not initialize: %d\n", ret);
+		return;
+	}
 
 	static bool initialized;
 

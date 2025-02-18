@@ -76,6 +76,11 @@ static void nrf_provisioning_on_modem_init(int ret, void *ctx)
 {
 	int err;
 
+	if (ret != 0) {
+		LOG_ERR("Modem library did not initialize: %d", ret);
+		return;
+	}
+
 	if (IS_ENABLED(CONFIG_NRF_PROVISIONING_AUTO_INIT)) {
 		err = nrf_provisioning_init(NULL, NULL);
 		if (err) {

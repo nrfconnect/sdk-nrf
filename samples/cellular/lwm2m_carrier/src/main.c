@@ -28,6 +28,7 @@ static void on_modem_lib_init(int ret, void *ctx)
 	ARG_UNUSED(ctx);
 
 	if (ret != 0) {
+		printk("Modem library did not initialize: %d\n", ret);
 		return;
 	}
 

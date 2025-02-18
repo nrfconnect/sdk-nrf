@@ -1806,8 +1806,12 @@ int dect_phy_ctrl_radio_mode_cmd(enum nrf_modem_dect_phy_radio_mode radio_mode)
 
 static void dect_phy_ctrl_on_modem_lib_init(int ret, void *ctx)
 {
-	ARG_UNUSED(ret);
 	ARG_UNUSED(ctx);
+
+	if (ret != 0) {
+		printk("Modem library did not initialize: %d\n", ret);
+		return;
+	}
 
 	if (!ctrl_data.phy_api_initialized) {
 		k_sem_reset(&dect_phy_ctrl_mdm_api_init_sema);
