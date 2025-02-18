@@ -68,11 +68,3 @@ jobs:
             quit
           EOF
           done
-
-      - name: Add preview URL comment for PRs
-        uses: nrfconnect/action-doc-url@main
-        with:
-          github-token: ${{ secrets.NCS_GITHUB_TOKEN }}
-          urlroot: ${{ vars.NCS_DOC_HOSTING_URL }}
-          pr-prefix: "PR-"
-          pr-file: docs/pr.txt
