@@ -283,8 +283,10 @@ static void queue_thread(void)
 		}
 
 		err = ipc_service_release_rx_buffer(&hci_ept, (void *)block.ptr);
-		if (err) {
+		if (err < 0) {
 			LOG_ERR("Failed to release rx buffer: %d.", err);
+		} else {
+			LOG_DBG("Released rx buffer with ret %d.", err);
 		}
 
 		if (buf) {
