@@ -591,6 +591,8 @@ Security libraries
 Modem libraries
 ---------------
 
+* Removed the deprecated AT command parser library and related APIs.
+
 * :ref:`pdn_readme` library:
 
   * Deprecated the :c:func:`pdn_dynamic_params_get` function.

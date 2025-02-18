@@ -158,7 +158,7 @@ nRF9160
     * Added polling "226 Transfer complete" after data channel TX/RX, with a configurable timeout of 60 seconds.
     * Ignored the reply code of "UTF8 ON" command as some FTP servers return abnormal replies.
 
-  * :ref:`at_params_readme` library:
+  * AT parameters library:
 
     * Added function :c:func:`at_params_int64_get` that allows for getting AT param list entries containing signed 64-bit integers.
 
@@ -180,7 +180,7 @@ nRF9160
     * Added data mode to the MQTT Publish service to support JSON-type payload.
     * Added SMS support, to send/receive SMS in plain text.
 
-  * :ref:`at_cmd_parser_readme` library:
+  * AT command parser library:
 
     * Added support for parsing parameters of type unsigned int or unsigned short.
 

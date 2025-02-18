@@ -11,8 +11,6 @@
 #include <cJSON.h>
 #endif
 
-#include <modem/at_params.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif

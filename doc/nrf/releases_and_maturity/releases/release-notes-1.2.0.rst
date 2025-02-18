@@ -473,7 +473,7 @@ Documentation
     * :ref:`sms_readme` - added
     * :ref:`supl_client` - added
     * ``at_cmd`` library - updated
-    * :ref:`at_cmd_parser_readme` - updated
+    * AT command parser - updated
     * :ref:`lib_download_client` - updated
 
   * Bluetooth Low Energy:
