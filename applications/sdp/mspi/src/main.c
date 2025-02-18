@@ -168,9 +168,6 @@ static void configure_clock(enum mspi_cpp_mode cpp_mode)
 	}
 	}
 
-	WRITE_BIT(out, 3, VPRCSR_NORDIC_OUT_HIGH);
-	WRITE_BIT(out, 4, VPRCSR_NORDIC_OUT_HIGH);
-
 	nrf_vpr_csr_vio_out_set(out);
 	nrf_vpr_csr_vio_config_set(&vio_config);
 }
@@ -414,6 +411,14 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		} else {
 			nrf_vpr_csr_vio_out_clear_set(
 				BIT(ce_vios[nrfe_mspi_devices[dev_config->device_index].ce_index]));
+		}
+
+		if (dev_config->dev_config.io_mode == MSPI_IO_MODE_SINGLE) {
+			nrf_vpr_csr_vio_out_or_set(BIT(3));
+			nrf_vpr_csr_vio_out_or_set(BIT(4));
+		} else {
+			nrf_vpr_csr_vio_out_clear_set(BIT(3));
+			nrf_vpr_csr_vio_out_clear_set(BIT(4));
 		}
 
 		break;
