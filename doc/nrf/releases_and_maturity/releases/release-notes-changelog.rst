@@ -135,6 +135,8 @@ Bluetooth® LE
     * An issue where a flash operation executed on the system workqueue might result in ``-ETIMEDOUT``, if there is an active Bluetooth LE connection.
     * An issue where Bluetooth applications built with the ``nordic-bt-rpc`` snippet (in the :ref:`ble_rpc` configuration) did not work on the nRF54H20 devices due to incorrect memory mapping.
 
+  * Updated the :kconfig:option:`CONFIG_BT_HCI_ACL_FLOW_CONTROL` Kconfig option to be enabled by default to mitigate the risk of potential deadlocks in the Bluetooth Host.
+
 Bluetooth Mesh
 --------------
 
