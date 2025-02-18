@@ -163,21 +163,23 @@ See the :ref:`zephyr:app-version-details` for details.
 
 The configuration of the DFU solution varies depending on the board target:
 
-+--------------+--------------------------------+------------------------------------------------------------+
-| DFU solution | Mode of operation              | Board targets                                              |
-+==============+================================+============================================================+
-| MCUboot      | direct-xip mode without revert | * ``nrf52dk/nrf52832`` (only ``release`` configuration)    |
-|              |                                | * ``nrf52833dk/nrf52833`` (only ``release`` configuration) |
-|              |                                | * ``nrf52840dk/nrf52840``                                  |
-|              |                                | * ``nrf54l15dk/nrf54l15/cpuapp``                           |
-+--------------+--------------------------------+------------------------------------------------------------+
-| MCUboot      | overwrite only mode            | * ``nrf5340dk/nrf5340/cpuapp``                             |
-|              |                                | * ``nrf5340dk/nrf5340/cpuapp/ns``                          |
-|              |                                | * ``thingy53/nrf5340/cpuapp``                              |
-|              |                                | * ``thingy53/nrf5340/cpuapp/ns``                           |
-+--------------+--------------------------------+------------------------------------------------------------+
-| SUIT         | overwrite only mode            | * ``nrf54h20dk/nrf54h20/cpuapp``                           |
-+--------------+--------------------------------+------------------------------------------------------------+
++--------------+--------------------------------+-------------------------------------------------------------------+
+| DFU solution | Mode of operation              | Board targets                                                     |
++==============+================================+===================================================================+
+| MCUboot      | direct-xip mode without revert | * ``nrf52dk/nrf52832`` (only ``release`` configuration)           |
+|              |                                | * ``nrf52833dk/nrf52833`` (only ``release`` configuration)        |
+|              |                                | * ``nrf52840dk/nrf52840``                                         |
+|              |                                | * ``nrf54l15dk/nrf54l05/cpuapp`` (only ``release`` configuration) |
+|              |                                | * ``nrf54l15dk/nrf54l10/cpuapp``                                  |
+|              |                                | * ``nrf54l15dk/nrf54l15/cpuapp``                                  |
++--------------+--------------------------------+-------------------------------------------------------------------+
+| MCUboot      | overwrite only mode            | * ``nrf5340dk/nrf5340/cpuapp``                                    |
+|              |                                | * ``nrf5340dk/nrf5340/cpuapp/ns``                                 |
+|              |                                | * ``thingy53/nrf5340/cpuapp``                                     |
+|              |                                | * ``thingy53/nrf5340/cpuapp/ns``                                  |
++--------------+--------------------------------+-------------------------------------------------------------------+
+| SUIT         | overwrite only mode            | * ``nrf54h20dk/nrf54h20/cpuapp``                                  |
++--------------+--------------------------------+-------------------------------------------------------------------+
 
 DFU mode
 --------
