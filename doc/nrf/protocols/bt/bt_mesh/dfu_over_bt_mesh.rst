@@ -268,7 +268,7 @@ For this particular example, the following output is generated:
             }
           ]
         },
-        "composition_hash": "0x71f3267c",
+        "composition_hash": 1911760508,
         "encoded_metadata": "020000000000000094cf24017c26f3710100",
         "firmware_id": "59000200000000000000"
       }

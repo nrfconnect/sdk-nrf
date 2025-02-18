@@ -62,7 +62,7 @@ def expected_metadata(size):
                     {'location': 1, 'sig_models': [0, 2], 'vendor_models': []}
                 ]
             },
-            'composition_hash': '0x587a2fb',
+            'composition_hash': 92775163,
             'encoded_metadata': f'0102030004000000{encoded_size}01fba287050100'
         },
         {
@@ -80,7 +80,7 @@ def expected_metadata(size):
                     {'location': 2, 'sig_models': [4097, 4099], 'vendor_models': []}
                 ]
             },
-            'composition_hash': '0x13f1a143',
+            'composition_hash': 334602563,
             'encoded_metadata': f'0102030004000000{encoded_size}0143a1f1130200'
         }
     ]

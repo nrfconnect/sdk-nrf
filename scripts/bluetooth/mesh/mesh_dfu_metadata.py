@@ -464,7 +464,7 @@ if __name__ == "__main__":
                 "binary_size": binary_size,
                 "core_type": core_type,
                 "composition_data": comp.dict_generate(),
-                "composition_hash": str(hex(comp.hash_generate())),
+                "composition_hash": comp.hash_generate(),
                 "encoded_metadata": str(encoded_metadata.hex())
             }
             if fwid is not None:
