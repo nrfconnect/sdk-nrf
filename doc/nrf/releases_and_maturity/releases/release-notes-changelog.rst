@@ -298,6 +298,15 @@ Bluetooth samples
   * :ref:`bluetooth_central_hids`
   * :ref:`peripheral_hids_keyboard`
 
+* Updated the configurations of the non-secure ``nrf5340dk/nrf5340/cpuapp/ns`` board target in the following samples to properly use the TF-M profile instead of the predefined minimal TF-M profile:
+
+  * :ref:`bluetooth_central_hids`
+  * :ref:`peripheral_hids_keyboard`
+  * :ref:`peripheral_hids_mouse`
+
+  This change results from the Bluetooth subsystem transition to the PSA cryptographic standard.
+  The Bluetooth stack can now use the PSA crypto API in the non-secure domain as all necessary TF-M partitions are configured properly.
+
 * :ref:`direct_test_mode` sample:
 
   * Added loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.
