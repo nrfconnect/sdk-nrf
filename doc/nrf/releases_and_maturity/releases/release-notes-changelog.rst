@@ -303,6 +303,8 @@ Bluetooth samples
 Bluetooth Fast Pair samples
 ---------------------------
 
+* Added support for the ``nrf54l15dk/nrf54l05/cpuapp`` and ``nrf54l15dk/nrf54l10/cpuapp`` board targets in all Fast Pair samples.
+
 * :ref:`fast_pair_locator_tag` sample:
 
   * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
