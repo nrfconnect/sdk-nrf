@@ -106,3 +106,10 @@
   platforms:
     - thingy53/nrf5340/cpuapp
   comment: "https://github.com/nrfconnect/sdk-nrf/pull/20439"
+
+- scenarios:
+    - samples.nrf_rpc.protocols_serialization.server.rpc
+  platforms:
+    - nrf52840dk/nrf52840
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31869"
