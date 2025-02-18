@@ -136,5 +136,10 @@ NRF_MODEM_LIB_ON_INIT(mqtt_sample_init_hook, on_modem_lib_init, NULL);
 
 static void on_modem_lib_init(int ret, void *ctx)
 {
+	if (ret != 0) {
+		printk("Modem library did not initialize: %d\n", ret);
+		return;
+	}
+
 	credentials_provision();
 }

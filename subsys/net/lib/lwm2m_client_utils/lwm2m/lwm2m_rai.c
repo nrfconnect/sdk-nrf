@@ -47,8 +47,12 @@ int lwm2m_rai_req(enum lwm2m_rai_mode mode)
 NRF_MODEM_LIB_ON_INIT(lwm2m_init_rai, lwm2m_init_rai, NULL);
 static void lwm2m_init_rai(int ret, void *ctx)
 {
-	ARG_UNUSED(ret);
 	ARG_UNUSED(ctx);
+
+	if (ret != 0) {
+		LOG_ERR("Modem library did not initialize: %d", ret);
+		return;
+	}
 
 	int r;
 

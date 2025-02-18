@@ -184,6 +184,11 @@ static void on_modem_init(int ret, void *ctx)
 {
 	int err;
 
+	if (ret != 0) {
+		LOG_ERR("Modem library did not initialize: %d", ret);
+		return;
+	}
+
 	err = modem_battery_low_level_set(CONFIG_MODEM_BATTERY_LOW_LEVEL);
 	if (err) {
 		LOG_ERR("Failed to set battery low level, error: %d", err);

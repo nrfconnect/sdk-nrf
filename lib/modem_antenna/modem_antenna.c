@@ -29,6 +29,7 @@ void set_antenna_configuration(const char *config_value)
 static void on_modem_lib_init(int ret, void *ctx)
 {
 	if (ret != 0) {
+		LOG_ERR("Modem library did not initialize: %d", ret);
 		return;
 	}
 

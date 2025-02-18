@@ -369,7 +369,7 @@ static void credentials_on_modem_init(int ret, void *ctx)
 	ARG_UNUSED(ctx);
 
 	if (ret != 0) {
-		/* Return if modem initialization failed */
+		LOG_ERR("Modem library did not initialize: %d", ret);
 		return;
 	}
 
