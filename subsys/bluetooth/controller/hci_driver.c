@@ -1519,6 +1519,9 @@ static int hci_driver_init(const struct device *dev)
 	int err = 0;
 
 	err = sdc_init(sdc_assertion_handler);
+	if (err) {
+		return err;
+	}
 
 	err = configure_supported_features();
 	if (err) {
