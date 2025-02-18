@@ -12,21 +12,22 @@
 #include <zephyr/sys/printk.h>
 #include <zephyr/sys/util.h>
 
-#include "nrf_fuel_gauge.h"
+#include <nrf_fuel_gauge.h>
 
-/* nPM1300 CHARGER.BCHGCHARGESTATUS.CONSTANTCURRENT register bitmask */
-#define NPM1300_CHG_STATUS_CC_MASK BIT(3)
+/* nPM1300 CHARGER.BCHGCHARGESTATUS register bitmasks */
+#define NPM1300_CHG_STATUS_COMPLETE_MASK BIT(1)
+#define NPM1300_CHG_STATUS_TRICKLE_MASK	 BIT(2)
+#define NPM1300_CHG_STATUS_CC_MASK	 BIT(3)
+#define NPM1300_CHG_STATUS_CV_MASK	 BIT(4)
 
-static float max_charge_current;
-static float term_charge_current;
 static int64_t ref_time;
 
 static const struct battery_model battery_model = {
 #include "battery_model.inc"
 };
 
-static int read_sensors(const struct device *charger,
-	float *voltage, float *current, float *temp, int32_t *chg_status)
+static int read_sensors(const struct device *charger, float *voltage, float *current, float *temp,
+			int32_t *chg_status)
 {
 	struct sensor_value value;
 	int ret;
@@ -51,13 +52,41 @@ static int read_sensors(const struct device *charger,
 	return 0;
 }
 
+static int charge_status_inform(int32_t chg_status)
+{
+	union nrf_fuel_gauge_ext_state_info_data state_info;
+
+	if (chg_status & NPM1300_CHG_STATUS_COMPLETE_MASK) {
+		printk("Charge complete\n");
+		state_info.charge_state = NRF_FUEL_GAUGE_CHARGE_STATE_COMPLETE;
+	} else if (chg_status & NPM1300_CHG_STATUS_TRICKLE_MASK) {
+		printk("Trickle charging\n");
+		state_info.charge_state = NRF_FUEL_GAUGE_CHARGE_STATE_TRICKLE;
+	} else if (chg_status & NPM1300_CHG_STATUS_CC_MASK) {
+		printk("Constant current charging\n");
+		state_info.charge_state = NRF_FUEL_GAUGE_CHARGE_STATE_CC;
+	} else if (chg_status & NPM1300_CHG_STATUS_CV_MASK) {
+		printk("Constant voltage charging\n");
+		state_info.charge_state = NRF_FUEL_GAUGE_CHARGE_STATE_CV;
+	} else {
+		printk("Charger idle\n");
+		state_info.charge_state = NRF_FUEL_GAUGE_CHARGE_STATE_IDLE;
+	}
+
+	return nrf_fuel_gauge_ext_state_update(NRF_FUEL_GAUGE_EXT_STATE_INFO_CHARGE_STATE_CHANGE,
+					       &state_info);
+}
+
 int fuel_gauge_init(const struct device *charger)
 {
 	struct sensor_value value;
 	struct nrf_fuel_gauge_init_parameters parameters = {
 		.model = &battery_model,
 		.opt_params = NULL,
+		.state = NULL,
 	};
+	float max_charge_current;
+	float term_charge_current;
 	int32_t chg_status;
 	int ret;
 
@@ -73,7 +102,33 @@ int fuel_gauge_init(const struct device *charger)
 	max_charge_current = (float)value.val1 + ((float)value.val2 / 1000000);
 	term_charge_current = max_charge_current / 10.f;
 
-	nrf_fuel_gauge_init(&parameters, NULL);
+	ret = nrf_fuel_gauge_init(&parameters, NULL);
+	if (ret < 0) {
+		printk("Error: Could not initialise fuel gauge\n");
+		return ret;
+	}
+
+	ret = nrf_fuel_gauge_ext_state_update(NRF_FUEL_GAUGE_EXT_STATE_INFO_CHARGE_CURRENT_LIMIT,
+					      &(union nrf_fuel_gauge_ext_state_info_data){
+						      .charge_current_limit = max_charge_current});
+	if (ret < 0) {
+		printk("Error: Could not set fuel gauge state\n");
+		return ret;
+	}
+
+	ret = nrf_fuel_gauge_ext_state_update(NRF_FUEL_GAUGE_EXT_STATE_INFO_TERM_CURRENT,
+					      &(union nrf_fuel_gauge_ext_state_info_data){
+						      .charge_term_current = term_charge_current});
+	if (ret < 0) {
+		printk("Error: Could not set fuel gauge state\n");
+		return ret;
+	}
+
+	ret = charge_status_inform(chg_status);
+	if (ret < 0) {
+		printk("Error: Could not set fuel gauge state\n");
+		return ret;
+	}
 
 	ref_time = k_uptime_get();
 
@@ -82,6 +137,8 @@ int fuel_gauge_init(const struct device *charger)
 
 int fuel_gauge_update(const struct device *charger, bool vbus_connected)
 {
+	static int32_t chg_status_prev;
+
 	float voltage;
 	float current;
 	float temp;
@@ -90,7 +147,6 @@ int fuel_gauge_update(const struct device *charger, bool vbus_connected)
 	float ttf;
 	float delta;
 	int32_t chg_status;
-	bool cc_charging;
 	int ret;
 
 	ret = read_sensors(charger, &voltage, &current, &temp, &chg_status);
@@ -99,13 +155,30 @@ int fuel_gauge_update(const struct device *charger, bool vbus_connected)
 		return ret;
 	}
 
-	cc_charging = (chg_status & NPM1300_CHG_STATUS_CC_MASK) != 0;
+	ret = nrf_fuel_gauge_ext_state_update(
+		vbus_connected ? NRF_FUEL_GAUGE_EXT_STATE_INFO_VBUS_CONNECTED
+			       : NRF_FUEL_GAUGE_EXT_STATE_INFO_VBUS_DISCONNECTED,
+		NULL);
+	if (ret < 0) {
+		printk("Error: Could not inform of state\n");
+		return ret;
+	}
 
-	delta = (float) k_uptime_delta(&ref_time) / 1000.f;
+	if (chg_status != chg_status_prev) {
+		chg_status_prev = chg_status;
 
-	soc = nrf_fuel_gauge_process(voltage, current, temp, delta, vbus_connected, NULL);
+		ret = charge_status_inform(chg_status);
+		if (ret < 0) {
+			printk("Error: Could not inform of charge status\n");
+			return ret;
+		}
+	}
+
+	delta = (float)k_uptime_delta(&ref_time) / 1000.f;
+
+	soc = nrf_fuel_gauge_process(voltage, current, temp, delta, NULL);
 	tte = nrf_fuel_gauge_tte_get();
-	ttf = nrf_fuel_gauge_ttf_get(cc_charging, -term_charge_current);
+	ttf = nrf_fuel_gauge_ttf_get();
 
 	printk("V: %.3f, I: %.3f, T: %.2f, ", (double)voltage, (double)current, (double)temp);
 	printk("SoC: %.2f, TTE: %.0f, TTF: %.0f\n", (double)soc, (double)tte, (double)ttf);
