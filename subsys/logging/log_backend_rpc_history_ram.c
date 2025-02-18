@@ -33,7 +33,7 @@ void log_rpc_history_push(const union log_msg_generic *msg)
 	uint8_t *dst_data;
 	uint8_t *src_data;
 
-	wlen = log_msg_generic_get_wlen(msg);
+	wlen = log_msg_generic_get_wlen((union mpsc_pbuf_generic *)msg);
 	if (wlen * sizeof(uint32_t) <= sizeof(struct mpsc_pbuf_hdr)) {
 		return;
 	}
