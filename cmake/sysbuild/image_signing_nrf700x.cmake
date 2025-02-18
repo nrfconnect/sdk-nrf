@@ -19,23 +19,8 @@ function(nrf7x_signing_tasks input output_hex output_bin dependencies)
     endif()
   endif()
 
-  # Find imgtool. Even though west is installed, imgtool might not be.
-  # The user may also have a custom manifest which doesn't include
-  # MCUboot.
-  #
-  # Therefore, go with an explicitly installed imgtool first, falling
-  # back on mcuboot/scripts/imgtool.py.
-  if(IMGTOOL)
-    set(imgtool_path "${IMGTOOL}")
-  elseif(DEFINED ZEPHYR_MCUBOOT_MODULE_DIR)
-    set(IMGTOOL_PY "${ZEPHYR_MCUBOOT_MODULE_DIR}/scripts/imgtool.py")
-    if(EXISTS "${IMGTOOL_PY}")
-      set(imgtool_path "${IMGTOOL_PY}")
-    endif()
-  endif()
-
   # No imgtool, no signed binaries.
-  if(NOT DEFINED imgtool_path)
+  if(NOT DEFINED IMGTOOL)
     message(FATAL_ERROR "Can't sign images for MCUboot: can't find imgtool. To fix, install imgtool with pip3, or add the mcuboot repository to the west manifest and ensure it has a scripts/imgtool.py file.")
     return()
   endif()
@@ -52,7 +37,7 @@ function(nrf7x_signing_tasks input output_hex output_bin dependencies)
   endif()
 
   sysbuild_get(CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION IMAGE ${DEFAULT_IMAGE} VAR CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION KCONFIG)
-  set(imgtool_sign ${PYTHON_EXECUTABLE} ${imgtool_path} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align 4 --slot-size $<TARGET_PROPERTY:partition_manager,PM_NRF70_WIFI_FW_SIZE> --pad-header --header-size ${SB_CONFIG_PM_MCUBOOT_PAD})
+  set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align 4 --slot-size $<TARGET_PROPERTY:partition_manager,PM_NRF70_WIFI_FW_SIZE> --pad-header --header-size ${SB_CONFIG_PM_MCUBOOT_PAD})
 
   sysbuild_get(CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION IMAGE ${DEFAULT_IMAGE} VAR CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION KCONFIG)
   if(CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
