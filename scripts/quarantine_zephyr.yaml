@@ -563,3 +563,15 @@
   platforms:
     - native_sim/native
   comment: "clang is not available in our toolchain"
+
+- scenarios:
+    - sample.bluetooth.mesh.onoff_level_lighting_vnd
+    - sample.bluetooth.mesh_provisioner
+    - bluetooth.mesh.mesh_shell
+    - sample.bluetooth.mesh.onoff
+    - sample.bluetooth.mesh_demo
+    - sample.bluetooth.mesh
+  comment:
+    - "Mesh by default enables HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT which has dependency on
+      Partition Manager. Upstream has no PM support and sysbuild is not by default supported
+      which can implicitly enable PM, consequently building those samples in NCS fails."
