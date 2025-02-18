@@ -81,3 +81,28 @@
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpurad
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31800"
+
+- scenarios:
+    - sample.nrf7001_eks.ble-wifi-provision
+    - sample.nrf7002_eks.ble-wifi-provision
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+  comment: "https://github.com/nrfconnect/sdk-nrf/pull/20439"
+
+- scenarios:
+    - sample.softap.wifi.provision
+  platforms:
+    - nrf7002dk/nrf5340/cpuapp/ns
+  comment: "https://github.com/nrfconnect/sdk-nrf/pull/20439"
+
+- scenarios:
+    - sample.nrf7002.ble-wifi-provision
+  platforms:
+    - nnrf7002dk/nrf5340/cpuapp
+  comment: "https://github.com/nrfconnect/sdk-nrf/pull/20439"
+
+- scenarios:
+    - sample.nrf7002_eb.thingy53.ble-wifi-provision
+  platforms:
+    - thingy53/nrf5340/cpuapp
+  comment: "https://github.com/nrfconnect/sdk-nrf/pull/20439"
