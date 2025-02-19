@@ -31,7 +31,7 @@
 static const nrf_vpr_csr_vio_shift_ctrl_t write_final_shift_ctrl_cfg = {
 	.shift_count = 1,
 	.out_mode = NRF_VPR_CSR_VIO_SHIFT_NONE,
-	.frame_width = 4,
+	.frame_width = 1,
 	.in_mode = NRF_VPR_CSR_VIO_MODE_IN_CONTINUOUS,
 };
 
@@ -125,6 +125,12 @@ void hrt_write(hrt_xfer_t *hrt_xfer_params)
 
 	nrf_vpr_csr_vio_mode_out_t out_mode = {.mode = NRF_VPR_CSR_VIO_SHIFT_OUTB_TOGGLE};
 
+	/*
+	 * Least significant bit is ignored when the whole OUTB is shifted to OUT at once after
+	 * switching to no shifting mode, so the read value need to be shifted left by 1.
+	 */
+	uint16_t prev_out = nrf_vpr_csr_vio_out_get() << 1;
+
 	/* Configure clock and pins */
 	nrf_vpr_csr_vio_dir_set(hrt_xfer_params->tx_direction_mask);
 
@@ -199,7 +205,7 @@ void hrt_write(hrt_xfer_t *hrt_xfer_params)
 	 */
 	if (hrt_xfer_params->cpp_mode == MSPI_CPP_MODE_0) {
 		nrf_vpr_csr_vio_shift_ctrl_buffered_set(&write_final_shift_ctrl_cfg);
-		nrf_vpr_csr_vio_out_buffered_reversed_word_set(0x00);
+		nrf_vpr_csr_vio_out_buffered_set(prev_out);
 		nrf_vpr_csr_vtim_count_mode_set(0, NRF_VPR_CSR_VTIM_COUNT_STOP);
 	} else {
 		while (nrf_vpr_csr_vio_shift_cnt_out_get() != 0) {
