@@ -37,6 +37,7 @@ constexpr int16_t sMockTemp[] = { 2000, 2731, 1600, 2100, 1937, 3011, 1500, 1899
 
 TemperatureSensor::TemperatureSensor()
 {
+	mCycleCounter = 0;
 	mMockTempIndex = 0;
 	mPreviousTemperature = startingMockedValue;
 	BindingHandler::Init();

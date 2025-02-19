@@ -13,6 +13,8 @@ LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 using namespace chip;
 using namespace ::chip::DeviceLayer;
 using namespace ::chip::app::Clusters;
+using namespace chip::app::Clusters::Thermostat::Attributes;
+using namespace Protocols::InteractionModel;
 
 constexpr EndpointId kThermostatEndpoint = 1;
 
@@ -38,15 +40,20 @@ uint8_t ReturnRemainderValue(int16_t Value)
 
 CHIP_ERROR TemperatureManager::Init()
 {
+	CHIP_ERROR err = CHIP_NO_ERROR;
+
 	PlatformMgr().LockChipStack();
-	Thermostat::Attributes::LocalTemperature::Get(kThermostatEndpoint, mLocalTempCelsius);
-	Thermostat::Attributes::OutdoorTemperature::Get(kThermostatEndpoint, mOutdoorTempCelsius);
-	Thermostat::Attributes::OccupiedCoolingSetpoint::Get(kThermostatEndpoint, &mCoolingCelsiusSetPoint);
-	Thermostat::Attributes::OccupiedHeatingSetpoint::Get(kThermostatEndpoint, &mHeatingCelsiusSetPoint);
-	Thermostat::Attributes::SystemMode::Get(kThermostatEndpoint, &mThermMode);
+
+	VerifyOrExit(Status::Success == LocalTemperature::Get(kThermostatEndpoint, mLocalTempCelsius), err = CHIP_IM_GLOBAL_STATUS(Failure));
+	VerifyOrExit(Status::Success == OutdoorTemperature::Get(kThermostatEndpoint, mOutdoorTempCelsius), err = CHIP_IM_GLOBAL_STATUS(Failure));
+	VerifyOrExit(Status::Success == OccupiedCoolingSetpoint::Get(kThermostatEndpoint, &mCoolingCelsiusSetPoint), err = CHIP_IM_GLOBAL_STATUS(Failure));
+	VerifyOrExit(Status::Success == OccupiedHeatingSetpoint::Get(kThermostatEndpoint, &mHeatingCelsiusSetPoint), err = CHIP_IM_GLOBAL_STATUS(Failure));
+	VerifyOrExit(Status::Success == SystemMode::Get(kThermostatEndpoint, &mThermMode), err = CHIP_IM_GLOBAL_STATUS(Failure));
+
+exit:
 	PlatformMgr().UnlockChipStack();
 
-	return CHIP_NO_ERROR;
+	return err;
 }
 
 void TemperatureManager::LogThermostatStatus()
@@ -76,31 +83,35 @@ void TemperatureManager::LogThermostatStatus()
 void TemperatureManager::AttributeChangeHandler(EndpointId endpointId, AttributeId attributeId, uint8_t *value,
 						uint16_t size)
 {
+	Status status;
+
 	switch (attributeId) {
-	case Thermostat::Attributes::LocalTemperature::Id: {
-		Thermostat::Attributes::LocalTemperature::Get(kThermostatEndpoint, mLocalTempCelsius);
+	case LocalTemperature::Id: {
+		status = LocalTemperature::Get(kThermostatEndpoint, mLocalTempCelsius);
+		VerifyOrReturn(Status::Success == status, LOG_ERR("Failed to get Thermostat LocalTemperature attribute"));
 	} break;
 
-	case Thermostat::Attributes::OutdoorTemperature::Id: {
-		Thermostat::Attributes::OutdoorTemperature::Get(kThermostatEndpoint, mOutdoorTempCelsius);
+	case OutdoorTemperature::Id: {
+		status = OutdoorTemperature::Get(kThermostatEndpoint, mOutdoorTempCelsius);
+		VerifyOrReturn(Status::Success == status, LOG_ERR("Failed to get Thermostat OutdoorTemperature attribute"));
 	} break;
 
-	case Thermostat::Attributes::OccupiedCoolingSetpoint::Id: {
+	case OccupiedCoolingSetpoint::Id: {
 		mCoolingCelsiusSetPoint = *reinterpret_cast<int16_t *>(value);
 		LOG_INF("Cooling TEMP: %d", mCoolingCelsiusSetPoint);
 	} break;
 
-	case Thermostat::Attributes::OccupiedHeatingSetpoint::Id: {
+	case OccupiedHeatingSetpoint::Id: {
 		mHeatingCelsiusSetPoint = *reinterpret_cast<int16_t *>(value);
 		LOG_INF("Heating TEMP %d", mHeatingCelsiusSetPoint);
 	} break;
 
-	case Thermostat::Attributes::SystemMode::Id: {
+	case SystemMode::Id: {
 		mThermMode = static_cast<app::Clusters::Thermostat::SystemModeEnum>(*value);
 	} break;
 
 	default: {
-		LOG_INF("Unhandled thermostat attribute %x", attributeId);
+		LOG_ERR("Unhandled thermostat attribute %x", attributeId);
 		return;
 	} break;
 	}

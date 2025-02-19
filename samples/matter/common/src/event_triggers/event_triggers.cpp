@@ -37,7 +37,7 @@ CHIP_ERROR TestEventTrigger::RegisterTestEventTriggerHandler(chip::TestEventTrig
 {
 	VerifyOrReturnError(triggerDelegate != nullptr, CHIP_ERROR_INVALID_ARGUMENT);
 
-	for (size_t idx = 0; idx < kMaxEventTriggers; idx++) {
+	for (size_t idx = 0; idx < kMaxEventTriggersHandlers; idx++) {
 		if (mHandlers[idx] == nullptr) {
 			mHandlers[idx] = triggerDelegate;
 			return CHIP_NO_ERROR;
