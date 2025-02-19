@@ -17,10 +17,9 @@ namespace
 template <class T> bool LoadDataToObject(Nrf::PersistentStorageNode *node, T &data)
 {
 	size_t readSize = 0;
+	const Nrf::PSErrorCode status = Nrf::GetPersistentStorage().NonSecureLoad(node, &data, sizeof(T), readSize);
 
-	bool result = Nrf::GetPersistentStorage().NonSecureLoad(node, &data, sizeof(T), readSize);
-
-	return result;
+	return status == Nrf::PSErrorCode::Success ? sizeof(T) == readSize : false;
 }
 
 Nrf::PersistentStorageNode CreateIndexNode(uint8_t bridgedDeviceIndex, Nrf::PersistentStorageNode *parent)
@@ -47,8 +46,8 @@ template <> bool BridgeStorageManager::LoadBridgedDevice(BridgedDeviceV1 &device
 	const uint8_t mandatoryItemsSize =
 		sizeof(device.mEndpointId) + sizeof(device.mDeviceType) + sizeof(device.mNodeLabelLength);
 
-	if (!Nrf::GetPersistentStorage().NonSecureLoad(&id, buffer, sizeof(BridgedDeviceV1) + kMaxUserDataSize,
-						       readSize)) {
+	if (Nrf::GetPersistentStorage().NonSecureLoad(&id, buffer, sizeof(BridgedDeviceV1) + kMaxUserDataSize,
+						      readSize) != PSErrorCode::Success) {
 		return false;
 	}
 
@@ -114,8 +113,8 @@ template <> bool BridgeStorageManager::LoadBridgedDevice(BridgedDeviceV2 &device
 	const uint8_t mandatoryItemsSize =
 		sizeof(device.mEndpointId) + sizeof(device.mDeviceType) + sizeof(device.mUniqueIDLength);
 
-	if (!Nrf::GetPersistentStorage().NonSecureLoad(&id, buffer, sizeof(BridgedDeviceV2) + kMaxUserDataSize,
-						       readSize)) {
+	if (Nrf::GetPersistentStorage().NonSecureLoad(&id, buffer, sizeof(BridgedDeviceV2) + kMaxUserDataSize,
+						      readSize) != PSErrorCode::Success) {
 		return false;
 	}
 
@@ -189,10 +188,10 @@ template <> bool BridgeStorageManager::LoadBridgedDevice(BridgedDeviceV2 &device
 
 bool BridgeStorageManager::Init()
 {
-	bool result = Nrf::GetPersistentStorage().NonSecureInit();
+	const PSErrorCode status = Nrf::GetPersistentStorage().NonSecureInit();
 
-	if (!result) {
-		return result;
+	if (status != PSErrorCode::Success) {
+		return false;
 	}
 
 	/* Perform data migration from previous data structure versions if needed. */
@@ -361,7 +360,10 @@ bool BridgeStorageManager::MigrateData()
 
 bool BridgeStorageManager::StoreBridgedDevicesCount(uint8_t count)
 {
-	return Nrf::GetPersistentStorage().NonSecureStore(&mBridgedDevicesCount, &count, sizeof(count));
+	const PSErrorCode status =
+		Nrf::GetPersistentStorage().NonSecureStore(&mBridgedDevicesCount, &count, sizeof(count));
+
+	return status == PSErrorCode::Success;
 }
 
 bool BridgeStorageManager::LoadBridgedDevicesCount(uint8_t &count)
@@ -375,7 +377,9 @@ bool BridgeStorageManager::StoreBridgedDevicesIndexes(uint8_t *indexes, uint8_t 
 		return false;
 	}
 
-	return Nrf::GetPersistentStorage().NonSecureStore(&mBridgedDevicesIndexes, indexes, count);
+	const PSErrorCode status = Nrf::GetPersistentStorage().NonSecureStore(&mBridgedDevicesIndexes, indexes, count);
+
+	return status == PSErrorCode::Success;
 }
 
 bool BridgeStorageManager::LoadBridgedDevicesIndexes(uint8_t *indexes, uint8_t maxCount, size_t &count)
@@ -384,7 +388,10 @@ bool BridgeStorageManager::LoadBridgedDevicesIndexes(uint8_t *indexes, uint8_t m
 		return false;
 	}
 
-	return Nrf::GetPersistentStorage().NonSecureLoad(&mBridgedDevicesIndexes, indexes, maxCount, count);
+	const PSErrorCode status =
+		Nrf::GetPersistentStorage().NonSecureLoad(&mBridgedDevicesIndexes, indexes, maxCount, count);
+
+	return status == PSErrorCode::Success;
 }
 
 #ifdef CONFIG_BRIDGE_MIGRATE_PRE_2_7_0
@@ -398,23 +405,26 @@ bool BridgeStorageManager::LoadBridgedDeviceEndpointId(uint16_t &endpointId, uin
 bool BridgeStorageManager::RemoveBridgedDeviceEndpointId(uint8_t bridgedDeviceIndex)
 {
 	Nrf::PersistentStorageNode id = CreateIndexNode(bridgedDeviceIndex, &mBridgedDeviceEndpointId);
+	const PSErrorCode status = Nrf::GetPersistentStorage().NonSecureRemove(&id);
 
-	return Nrf::GetPersistentStorage().NonSecureRemove(&id);
+	return status == PSErrorCode::Success;
 }
 
 bool BridgeStorageManager::LoadBridgedDeviceNodeLabel(char *label, size_t labelMaxLength, size_t &labelLength,
 						      uint8_t bridgedDeviceIndex)
 {
 	Nrf::PersistentStorageNode id = CreateIndexNode(bridgedDeviceIndex, &mBridgedDeviceNodeLabel);
+	const PSErrorCode status = Nrf::GetPersistentStorage().NonSecureLoad(&id, label, labelMaxLength, labelLength);
 
-	return Nrf::GetPersistentStorage().NonSecureLoad(&id, label, labelMaxLength, labelLength);
+	return status == PSErrorCode::Success;
 }
 
 bool BridgeStorageManager::RemoveBridgedDeviceNodeLabel(uint8_t bridgedDeviceIndex)
 {
 	Nrf::PersistentStorageNode id = CreateIndexNode(bridgedDeviceIndex, &mBridgedDeviceNodeLabel);
+	const PSErrorCode status = Nrf::GetPersistentStorage().NonSecureRemove(&id);
 
-	return Nrf::GetPersistentStorage().NonSecureRemove(&id);
+	return status == PSErrorCode::Success;
 }
 
 bool BridgeStorageManager::LoadBridgedDeviceType(uint16_t &deviceType, uint8_t bridgedDeviceIndex)
@@ -427,8 +437,9 @@ bool BridgeStorageManager::LoadBridgedDeviceType(uint16_t &deviceType, uint8_t b
 bool BridgeStorageManager::RemoveBridgedDeviceType(uint8_t bridgedDeviceIndex)
 {
 	Nrf::PersistentStorageNode id = CreateIndexNode(bridgedDeviceIndex, &mBridgedDeviceType);
+	const PSErrorCode status = Nrf::GetPersistentStorage().NonSecureRemove(&id);
 
-	return Nrf::GetPersistentStorage().NonSecureRemove(&id);
+	return status == PSErrorCode::Success;
 }
 #endif
 
@@ -464,14 +475,17 @@ bool BridgeStorageManager::StoreBridgedDevice(BridgedDevice &device, uint8_t ind
 		counter += device.mUserDataSize;
 	}
 
-	return Nrf::GetPersistentStorage().NonSecureStore(&id, buffer, counter);
+	const PSErrorCode status = Nrf::GetPersistentStorage().NonSecureStore(&id, buffer, counter);
+
+	return status == PSErrorCode::Success;
 }
 
 bool BridgeStorageManager::RemoveBridgedDevice(uint8_t index)
 {
 	Nrf::PersistentStorageNode id = CreateIndexNode(index, &mBridgedDevice);
+	const PSErrorCode status = Nrf::GetPersistentStorage().NonSecureRemove(&id);
 
-	return Nrf::GetPersistentStorage().NonSecureRemove(&id);
+	return status == PSErrorCode::Success;
 }
 
 #ifdef CONFIG_BRIDGE_MIGRATE_PRE_2_7_0
@@ -486,8 +500,9 @@ bool BridgeStorageManager::LoadBtAddress(bt_addr_le_t &addr, uint8_t bridgedDevi
 bool BridgeStorageManager::RemoveBtAddress(uint8_t bridgedDeviceIndex)
 {
 	Nrf::PersistentStorageNode id = CreateIndexNode(bridgedDeviceIndex, &mBtAddress);
+	const PSErrorCode status = Nrf::GetPersistentStorage().NonSecureRemove(&id);
 
-	return Nrf::GetPersistentStorage().NonSecureRemove(&id);
+	return status == PSErrorCode::Success;
 }
 #endif
 #endif

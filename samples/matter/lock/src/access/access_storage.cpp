@@ -62,7 +62,7 @@ bool GetStorageFreeSpace(size_t &freeBytes)
 
 bool AccessStorage::Init()
 {
-	return (Nrf::Success == Nrf::GetPersistentStorage().PSInit());
+	return (Nrf::PSErrorCode::Success == Nrf::GetPersistentStorage().PSInit());
 }
 
 bool AccessStorage::PrepareKeyName(Type storageType, uint16_t index, uint16_t subindex)
