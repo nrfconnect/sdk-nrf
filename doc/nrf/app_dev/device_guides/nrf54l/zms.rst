@@ -40,8 +40,6 @@ Additionally, you can optimize the application performance using caching mechani
         #. Set the lookup cache size in :kconfig:option:`CONFIG_ZMS_LOOKUP_CACHE_SIZE` depending on your application needs.
         #. Ensure the lookup cache is configured to support the Setting subsystem by enabling the :kconfig:option:`CONFIG_ZMS_LOOKUP_CACHE_FOR_SETTINGS` Kconfig option.
 
-      #. To further enhance the performance, enable the :kconfig:option:`CONFIG_SETTINGS_ZMS_NAME_CACHE` Kconfig option, and configure its size with :kconfig:option:`CONFIG_SETTINGS_ZMS_NAME_CACHE_SIZE` according to your application needs.
-
 Optimizing ZMS in your application
 **********************************
 
