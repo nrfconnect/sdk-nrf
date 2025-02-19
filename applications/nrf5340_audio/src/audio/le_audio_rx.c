@@ -142,6 +142,13 @@ static void audio_datapath_thread(void *dummy1, void *dummy2, void *dummy3)
 	struct ble_iso_data *iso_received = NULL;
 	size_t iso_received_size;
 
+	volatile uint8_t array[2];
+	for (int i = 0; i < 4; i++) {
+		array[i] = 4;
+	}
+
+	LOG_WRN("test %d %d", array[0], array[1]);
+
 	while (1) {
 		ret = data_fifo_pointer_last_filled_get(&ble_fifo_rx, (void *)&iso_received,
 							&iso_received_size, K_FOREVER);
