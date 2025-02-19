@@ -671,6 +671,13 @@ Modem libraries
 
   * Fixed a bug where AT responses would erroneously be written to the logging UART instead of being written to the chosen ``ncs,at-host-uart`` UART device when the :kconfig:option:`CONFIG_LOG_BACKEND_UART` Kconfig option was set.
 
+* :ref:`modem_info_readme` library:
+
+  * Added:
+
+    * The :c:enum:`modem_info_data_type` type for representing LTE link information data types.
+    * The :c:func:`modem_info_data_type_get` function for requesting the data type of the current modem information type.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 

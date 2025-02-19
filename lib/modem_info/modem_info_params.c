@@ -107,16 +107,16 @@ static int cellid_to_dec(struct lte_param *cellID, double *cellID_dec)
 
 static int modem_data_get(struct lte_param *param)
 {
-	enum at_param_type data_type;
+	enum modem_info_data_type data_type;
 	int ret;
 
-	data_type = modem_info_type_get(param->type);
+	data_type = modem_info_data_type_get(param->type);
 
-	if (data_type < 0) {
+	if (data_type == MODEM_INFO_DATA_TYPE_INVALID) {
 		return -EINVAL;
 	}
 
-	if (data_type == AT_PARAM_TYPE_STRING) {
+	if (data_type == MODEM_INFO_DATA_TYPE_STRING) {
 		ret = modem_info_string_get(param->type,
 				param->value_string,
 				sizeof(param->value_string));
@@ -124,7 +124,7 @@ static int modem_data_get(struct lte_param *param)
 			LOG_ERR("Link data not obtained: %d %d", param->type, ret);
 			return ret;
 		}
-	} else if (data_type == AT_PARAM_TYPE_NUM_INT) {
+	} else if (data_type == MODEM_INFO_DATA_TYPE_NUM_INT) {
 		ret = modem_info_short_get(param->type, &param->value);
 		if (ret < 0) {
 			LOG_ERR("Link data not obtained: %d", ret);
