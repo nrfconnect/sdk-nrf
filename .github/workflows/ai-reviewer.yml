@@ -1,0 +1,32 @@
+name: AI reviewer
+
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  pull_request:
+    types: [opened, synchronize, review_requested]
+    # 'opened' and 'synchronize' events are required to trigger this
+    # workflow when GitHub automatically assigns NordicBuilder as reviewer via CODEOWNERS file.
+
+jobs:
+  review_full:
+    if: contains(github.event.pull_request.requested_reviewers.*.login, 'Nordicbuilder')
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          repository: nrfconnect/action-ai-reviewer
+          ref: main
+          token: ${{ secrets.NORDICBUILDER_GPT }}
+          path: ./.github/actions/action-ai-reviewer
+          persist-credentials: false
+      - name: Full PR Diff Review
+        uses: ./.github/actions/action-ai-reviewer/
+        env:
+          GITHUB_TOKEN: ${{ secrets.NORDICBUILDER_GPT }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          IGNORE_PATTERNS: /placeholder
+          INCLUDE_PATTERNS: "*.*"
