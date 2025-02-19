@@ -32,9 +32,7 @@ psa_status_t ssf_psa_crypto_init(void)
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_get_key_attributes(
-
-	mbedtls_svc_key_id_t key, psa_key_attributes_t *attributes)
+psa_status_t ssf_psa_get_key_attributes(mbedtls_svc_key_id_t key, psa_key_attributes_t *attributes)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -55,9 +53,7 @@ psa_status_t ssf_psa_get_key_attributes(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_reset_key_attributes(
-
-	psa_key_attributes_t *attributes)
+psa_status_t ssf_psa_reset_key_attributes(psa_key_attributes_t *attributes)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -77,9 +73,7 @@ psa_status_t ssf_psa_reset_key_attributes(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_purge_key(
-
-	mbedtls_svc_key_id_t key)
+psa_status_t ssf_psa_purge_key(mbedtls_svc_key_id_t key)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -99,10 +93,9 @@ psa_status_t ssf_psa_purge_key(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_copy_key(
-
-	mbedtls_svc_key_id_t source_key, const psa_key_attributes_t *attributes,
-	mbedtls_svc_key_id_t *target_key)
+psa_status_t ssf_psa_copy_key(mbedtls_svc_key_id_t source_key,
+			      const psa_key_attributes_t *attributes,
+			      mbedtls_svc_key_id_t *target_key)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -124,9 +117,7 @@ psa_status_t ssf_psa_copy_key(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_destroy_key(
-
-	mbedtls_svc_key_id_t key)
+psa_status_t ssf_psa_destroy_key(mbedtls_svc_key_id_t key)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -146,10 +137,8 @@ psa_status_t ssf_psa_destroy_key(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_import_key(
-
-	const psa_key_attributes_t *attributes, const uint8_t *data, size_t data_length,
-	mbedtls_svc_key_id_t *key)
+psa_status_t ssf_psa_import_key(const psa_key_attributes_t *attributes, const uint8_t *data,
+				size_t data_length, mbedtls_svc_key_id_t *key)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -172,9 +161,8 @@ psa_status_t ssf_psa_import_key(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_export_key(
-
-	mbedtls_svc_key_id_t key, uint8_t *data, size_t data_size, size_t *data_length)
+psa_status_t ssf_psa_export_key(mbedtls_svc_key_id_t key, uint8_t *data, size_t data_size,
+				size_t *data_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -197,9 +185,8 @@ psa_status_t ssf_psa_export_key(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_export_public_key(
-
-	mbedtls_svc_key_id_t key, uint8_t *data, size_t data_size, size_t *data_length)
+psa_status_t ssf_psa_export_public_key(mbedtls_svc_key_id_t key, uint8_t *data, size_t data_size,
+				       size_t *data_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -222,10 +209,8 @@ psa_status_t ssf_psa_export_public_key(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_hash_compute(
-
-	psa_algorithm_t alg, const uint8_t *input, size_t input_length, uint8_t *hash,
-	size_t hash_size, size_t *hash_length)
+psa_status_t ssf_psa_hash_compute(psa_algorithm_t alg, const uint8_t *input, size_t input_length,
+				  uint8_t *hash, size_t hash_size, size_t *hash_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -250,10 +235,8 @@ psa_status_t ssf_psa_hash_compute(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_hash_compare(
-
-	psa_algorithm_t alg, const uint8_t *input, size_t input_length, const uint8_t *hash,
-	size_t hash_length)
+psa_status_t ssf_psa_hash_compare(psa_algorithm_t alg, const uint8_t *input, size_t input_length,
+				  const uint8_t *hash, size_t hash_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -277,9 +260,7 @@ psa_status_t ssf_psa_hash_compare(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_hash_setup(
-
-	mbedtls_psa_client_handle_t *p_handle, psa_algorithm_t alg)
+psa_status_t ssf_psa_hash_setup(mbedtls_psa_client_handle_t *p_handle, psa_algorithm_t alg)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -300,9 +281,8 @@ psa_status_t ssf_psa_hash_setup(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_hash_update(
-
-	mbedtls_psa_client_handle_t *p_handle, const uint8_t *input, size_t input_length)
+psa_status_t ssf_psa_hash_update(mbedtls_psa_client_handle_t *p_handle, const uint8_t *input,
+				 size_t input_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -324,9 +304,8 @@ psa_status_t ssf_psa_hash_update(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_hash_finish(
-
-	mbedtls_psa_client_handle_t *p_handle, uint8_t *hash, size_t hash_size, size_t *hash_length)
+psa_status_t ssf_psa_hash_finish(mbedtls_psa_client_handle_t *p_handle, uint8_t *hash,
+				 size_t hash_size, size_t *hash_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -349,9 +328,8 @@ psa_status_t ssf_psa_hash_finish(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_hash_verify(
-
-	mbedtls_psa_client_handle_t *p_handle, const uint8_t *hash, size_t hash_length)
+psa_status_t ssf_psa_hash_verify(mbedtls_psa_client_handle_t *p_handle, const uint8_t *hash,
+				 size_t hash_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -373,9 +351,7 @@ psa_status_t ssf_psa_hash_verify(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_hash_abort(
-
-	mbedtls_psa_client_handle_t *p_handle)
+psa_status_t ssf_psa_hash_abort(mbedtls_psa_client_handle_t *p_handle)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -395,9 +371,8 @@ psa_status_t ssf_psa_hash_abort(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_hash_clone(
-
-	mbedtls_psa_client_handle_t handle, mbedtls_psa_client_handle_t *p_handle)
+psa_status_t ssf_psa_hash_clone(mbedtls_psa_client_handle_t handle,
+				mbedtls_psa_client_handle_t *p_handle)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -418,10 +393,9 @@ psa_status_t ssf_psa_hash_clone(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_mac_compute(
-
-	mbedtls_svc_key_id_t key, psa_algorithm_t alg, const uint8_t *input, size_t input_length,
-	uint8_t *mac, size_t mac_size, size_t *mac_length)
+psa_status_t ssf_psa_mac_compute(mbedtls_svc_key_id_t key, psa_algorithm_t alg,
+				 const uint8_t *input, size_t input_length, uint8_t *mac,
+				 size_t mac_size, size_t *mac_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -447,10 +421,8 @@ psa_status_t ssf_psa_mac_compute(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_mac_verify(
-
-	mbedtls_svc_key_id_t key, psa_algorithm_t alg, const uint8_t *input, size_t input_length,
-	const uint8_t *mac, size_t mac_length)
+psa_status_t ssf_psa_mac_verify(mbedtls_svc_key_id_t key, psa_algorithm_t alg, const uint8_t *input,
+				size_t input_length, const uint8_t *mac, size_t mac_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -475,9 +447,8 @@ psa_status_t ssf_psa_mac_verify(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_mac_sign_setup(
-
-	mbedtls_psa_client_handle_t *p_handle, mbedtls_svc_key_id_t key, psa_algorithm_t alg)
+psa_status_t ssf_psa_mac_sign_setup(mbedtls_psa_client_handle_t *p_handle, mbedtls_svc_key_id_t key,
+				    psa_algorithm_t alg)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -499,9 +470,8 @@ psa_status_t ssf_psa_mac_sign_setup(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_mac_verify_setup(
-
-	mbedtls_psa_client_handle_t *p_handle, mbedtls_svc_key_id_t key, psa_algorithm_t alg)
+psa_status_t ssf_psa_mac_verify_setup(mbedtls_psa_client_handle_t *p_handle,
+				      mbedtls_svc_key_id_t key, psa_algorithm_t alg)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -523,9 +493,8 @@ psa_status_t ssf_psa_mac_verify_setup(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_mac_update(
-
-	mbedtls_psa_client_handle_t *p_handle, const uint8_t *input, size_t input_length)
+psa_status_t ssf_psa_mac_update(mbedtls_psa_client_handle_t *p_handle, const uint8_t *input,
+				size_t input_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -547,9 +516,8 @@ psa_status_t ssf_psa_mac_update(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_mac_sign_finish(
-
-	mbedtls_psa_client_handle_t *p_handle, uint8_t *mac, size_t mac_size, size_t *mac_length)
+psa_status_t ssf_psa_mac_sign_finish(mbedtls_psa_client_handle_t *p_handle, uint8_t *mac,
+				     size_t mac_size, size_t *mac_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -572,9 +540,8 @@ psa_status_t ssf_psa_mac_sign_finish(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_mac_verify_finish(
-
-	mbedtls_psa_client_handle_t *p_handle, const uint8_t *mac, size_t mac_length)
+psa_status_t ssf_psa_mac_verify_finish(mbedtls_psa_client_handle_t *p_handle, const uint8_t *mac,
+				       size_t mac_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -596,9 +563,7 @@ psa_status_t ssf_psa_mac_verify_finish(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_mac_abort(
-
-	mbedtls_psa_client_handle_t *p_handle)
+psa_status_t ssf_psa_mac_abort(mbedtls_psa_client_handle_t *p_handle)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -618,10 +583,9 @@ psa_status_t ssf_psa_mac_abort(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_cipher_encrypt(
-
-	mbedtls_svc_key_id_t key, psa_algorithm_t alg, const uint8_t *input, size_t input_length,
-	uint8_t *output, size_t output_size, size_t *output_length)
+psa_status_t ssf_psa_cipher_encrypt(mbedtls_svc_key_id_t key, psa_algorithm_t alg,
+				    const uint8_t *input, size_t input_length, uint8_t *output,
+				    size_t output_size, size_t *output_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -647,10 +611,9 @@ psa_status_t ssf_psa_cipher_encrypt(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_cipher_decrypt(
-
-	mbedtls_svc_key_id_t key, psa_algorithm_t alg, const uint8_t *input, size_t input_length,
-	uint8_t *output, size_t output_size, size_t *output_length)
+psa_status_t ssf_psa_cipher_decrypt(mbedtls_svc_key_id_t key, psa_algorithm_t alg,
+				    const uint8_t *input, size_t input_length, uint8_t *output,
+				    size_t output_size, size_t *output_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -676,9 +639,8 @@ psa_status_t ssf_psa_cipher_decrypt(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_cipher_encrypt_setup(
-
-	mbedtls_psa_client_handle_t *p_handle, mbedtls_svc_key_id_t key, psa_algorithm_t alg)
+psa_status_t ssf_psa_cipher_encrypt_setup(mbedtls_psa_client_handle_t *p_handle,
+					  mbedtls_svc_key_id_t key, psa_algorithm_t alg)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -700,9 +662,8 @@ psa_status_t ssf_psa_cipher_encrypt_setup(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_cipher_decrypt_setup(
-
-	mbedtls_psa_client_handle_t *p_handle, mbedtls_svc_key_id_t key, psa_algorithm_t alg)
+psa_status_t ssf_psa_cipher_decrypt_setup(mbedtls_psa_client_handle_t *p_handle,
+					  mbedtls_svc_key_id_t key, psa_algorithm_t alg)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -724,9 +685,8 @@ psa_status_t ssf_psa_cipher_decrypt_setup(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_cipher_generate_iv(
-
-	mbedtls_psa_client_handle_t *p_handle, uint8_t *iv, size_t iv_size, size_t *iv_length)
+psa_status_t ssf_psa_cipher_generate_iv(mbedtls_psa_client_handle_t *p_handle, uint8_t *iv,
+					size_t iv_size, size_t *iv_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -749,9 +709,8 @@ psa_status_t ssf_psa_cipher_generate_iv(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_cipher_set_iv(
-
-	mbedtls_psa_client_handle_t *p_handle, const uint8_t *iv, size_t iv_length)
+psa_status_t ssf_psa_cipher_set_iv(mbedtls_psa_client_handle_t *p_handle, const uint8_t *iv,
+				   size_t iv_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -773,10 +732,9 @@ psa_status_t ssf_psa_cipher_set_iv(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_cipher_update(
-
-	mbedtls_psa_client_handle_t *p_handle, const uint8_t *input, size_t input_length,
-	uint8_t *output, size_t output_size, size_t *output_length)
+psa_status_t ssf_psa_cipher_update(mbedtls_psa_client_handle_t *p_handle, const uint8_t *input,
+				   size_t input_length, uint8_t *output, size_t output_size,
+				   size_t *output_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -801,10 +759,8 @@ psa_status_t ssf_psa_cipher_update(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_cipher_finish(
-
-	mbedtls_psa_client_handle_t *p_handle, uint8_t *output, size_t output_size,
-	size_t *output_length)
+psa_status_t ssf_psa_cipher_finish(mbedtls_psa_client_handle_t *p_handle, uint8_t *output,
+				   size_t output_size, size_t *output_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -827,9 +783,7 @@ psa_status_t ssf_psa_cipher_finish(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_cipher_abort(
-
-	mbedtls_psa_client_handle_t *p_handle)
+psa_status_t ssf_psa_cipher_abort(mbedtls_psa_client_handle_t *p_handle)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -849,12 +803,12 @@ psa_status_t ssf_psa_cipher_abort(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_aead_encrypt(
-
-	mbedtls_svc_key_id_t key, psa_algorithm_t alg, const uint8_t *nonce, size_t nonce_length,
-	const uint8_t *additional_data, size_t additional_data_length, const uint8_t *plaintext,
-	size_t plaintext_length, uint8_t *ciphertext, size_t ciphertext_size,
-	size_t *ciphertext_length)
+psa_status_t ssf_psa_aead_encrypt(mbedtls_svc_key_id_t key, psa_algorithm_t alg,
+				  const uint8_t *nonce, size_t nonce_length,
+				  const uint8_t *additional_data, size_t additional_data_length,
+				  const uint8_t *plaintext, size_t plaintext_length,
+				  uint8_t *ciphertext, size_t ciphertext_size,
+				  size_t *ciphertext_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -884,12 +838,12 @@ psa_status_t ssf_psa_aead_encrypt(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_aead_decrypt(
-
-	mbedtls_svc_key_id_t key, psa_algorithm_t alg, const uint8_t *nonce, size_t nonce_length,
-	const uint8_t *additional_data, size_t additional_data_length, const uint8_t *ciphertext,
-	size_t ciphertext_length, uint8_t *plaintext, size_t plaintext_size,
-	size_t *plaintext_length)
+psa_status_t ssf_psa_aead_decrypt(mbedtls_svc_key_id_t key, psa_algorithm_t alg,
+				  const uint8_t *nonce, size_t nonce_length,
+				  const uint8_t *additional_data, size_t additional_data_length,
+				  const uint8_t *ciphertext, size_t ciphertext_length,
+				  uint8_t *plaintext, size_t plaintext_size,
+				  size_t *plaintext_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -919,9 +873,8 @@ psa_status_t ssf_psa_aead_decrypt(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_aead_encrypt_setup(
-
-	mbedtls_psa_client_handle_t *p_handle, mbedtls_svc_key_id_t key, psa_algorithm_t alg)
+psa_status_t ssf_psa_aead_encrypt_setup(mbedtls_psa_client_handle_t *p_handle,
+					mbedtls_svc_key_id_t key, psa_algorithm_t alg)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -943,9 +896,8 @@ psa_status_t ssf_psa_aead_encrypt_setup(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_aead_decrypt_setup(
-
-	mbedtls_psa_client_handle_t *p_handle, mbedtls_svc_key_id_t key, psa_algorithm_t alg)
+psa_status_t ssf_psa_aead_decrypt_setup(mbedtls_psa_client_handle_t *p_handle,
+					mbedtls_svc_key_id_t key, psa_algorithm_t alg)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -967,10 +919,8 @@ psa_status_t ssf_psa_aead_decrypt_setup(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_aead_generate_nonce(
-
-	mbedtls_psa_client_handle_t *p_handle, uint8_t *nonce, size_t nonce_size,
-	size_t *nonce_length)
+psa_status_t ssf_psa_aead_generate_nonce(mbedtls_psa_client_handle_t *p_handle, uint8_t *nonce,
+					 size_t nonce_size, size_t *nonce_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -993,9 +943,8 @@ psa_status_t ssf_psa_aead_generate_nonce(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_aead_set_nonce(
-
-	mbedtls_psa_client_handle_t *p_handle, const uint8_t *nonce, size_t nonce_length)
+psa_status_t ssf_psa_aead_set_nonce(mbedtls_psa_client_handle_t *p_handle, const uint8_t *nonce,
+				    size_t nonce_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1017,9 +966,8 @@ psa_status_t ssf_psa_aead_set_nonce(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_aead_set_lengths(
-
-	mbedtls_psa_client_handle_t *p_handle, size_t ad_length, size_t plaintext_length)
+psa_status_t ssf_psa_aead_set_lengths(mbedtls_psa_client_handle_t *p_handle, size_t ad_length,
+				      size_t plaintext_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1041,9 +989,8 @@ psa_status_t ssf_psa_aead_set_lengths(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_aead_update_ad(
-
-	mbedtls_psa_client_handle_t *p_handle, const uint8_t *input, size_t input_length)
+psa_status_t ssf_psa_aead_update_ad(mbedtls_psa_client_handle_t *p_handle, const uint8_t *input,
+				    size_t input_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1065,10 +1012,9 @@ psa_status_t ssf_psa_aead_update_ad(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_aead_update(
-
-	mbedtls_psa_client_handle_t *p_handle, const uint8_t *input, size_t input_length,
-	uint8_t *output, size_t output_size, size_t *output_length)
+psa_status_t ssf_psa_aead_update(mbedtls_psa_client_handle_t *p_handle, const uint8_t *input,
+				 size_t input_length, uint8_t *output, size_t output_size,
+				 size_t *output_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1093,10 +1039,9 @@ psa_status_t ssf_psa_aead_update(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_aead_finish(
-
-	mbedtls_psa_client_handle_t *p_handle, uint8_t *ciphertext, size_t ciphertext_size,
-	size_t *ciphertext_length, uint8_t *tag, size_t tag_size, size_t *tag_length)
+psa_status_t ssf_psa_aead_finish(mbedtls_psa_client_handle_t *p_handle, uint8_t *ciphertext,
+				 size_t ciphertext_size, size_t *ciphertext_length, uint8_t *tag,
+				 size_t tag_size, size_t *tag_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1122,10 +1067,9 @@ psa_status_t ssf_psa_aead_finish(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_aead_verify(
-
-	mbedtls_psa_client_handle_t *p_handle, uint8_t *plaintext, size_t plaintext_size,
-	size_t *plaintext_length, const uint8_t *tag, size_t tag_length)
+psa_status_t ssf_psa_aead_verify(mbedtls_psa_client_handle_t *p_handle, uint8_t *plaintext,
+				 size_t plaintext_size, size_t *plaintext_length,
+				 const uint8_t *tag, size_t tag_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1150,9 +1094,7 @@ psa_status_t ssf_psa_aead_verify(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_aead_abort(
-
-	mbedtls_psa_client_handle_t *p_handle)
+psa_status_t ssf_psa_aead_abort(mbedtls_psa_client_handle_t *p_handle)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1172,10 +1114,9 @@ psa_status_t ssf_psa_aead_abort(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_sign_message(
-
-	mbedtls_svc_key_id_t key, psa_algorithm_t alg, const uint8_t *input, size_t input_length,
-	uint8_t *signature, size_t signature_size, size_t *signature_length)
+psa_status_t ssf_psa_sign_message(mbedtls_svc_key_id_t key, psa_algorithm_t alg,
+				  const uint8_t *input, size_t input_length, uint8_t *signature,
+				  size_t signature_size, size_t *signature_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1201,10 +1142,9 @@ psa_status_t ssf_psa_sign_message(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_verify_message(
-
-	mbedtls_svc_key_id_t key, psa_algorithm_t alg, const uint8_t *input, size_t input_length,
-	const uint8_t *signature, size_t signature_length)
+psa_status_t ssf_psa_verify_message(mbedtls_svc_key_id_t key, psa_algorithm_t alg,
+				    const uint8_t *input, size_t input_length,
+				    const uint8_t *signature, size_t signature_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1229,10 +1169,9 @@ psa_status_t ssf_psa_verify_message(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_sign_hash(
-
-	mbedtls_svc_key_id_t key, psa_algorithm_t alg, const uint8_t *hash, size_t hash_length,
-	uint8_t *signature, size_t signature_size, size_t *signature_length)
+psa_status_t ssf_psa_sign_hash(mbedtls_svc_key_id_t key, psa_algorithm_t alg, const uint8_t *hash,
+			       size_t hash_length, uint8_t *signature, size_t signature_size,
+			       size_t *signature_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1258,10 +1197,9 @@ psa_status_t ssf_psa_sign_hash(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_verify_hash(
-
-	mbedtls_svc_key_id_t key, psa_algorithm_t alg, const uint8_t *hash, size_t hash_length,
-	const uint8_t *signature, size_t signature_length)
+psa_status_t ssf_psa_verify_hash(mbedtls_svc_key_id_t key, psa_algorithm_t alg, const uint8_t *hash,
+				 size_t hash_length, const uint8_t *signature,
+				 size_t signature_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1286,11 +1224,10 @@ psa_status_t ssf_psa_verify_hash(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_asymmetric_encrypt(
-
-	mbedtls_svc_key_id_t key, psa_algorithm_t alg, const uint8_t *input, size_t input_length,
-	const uint8_t *salt, size_t salt_length, uint8_t *output, size_t output_size,
-	size_t *output_length)
+psa_status_t ssf_psa_asymmetric_encrypt(mbedtls_svc_key_id_t key, psa_algorithm_t alg,
+					const uint8_t *input, size_t input_length,
+					const uint8_t *salt, size_t salt_length, uint8_t *output,
+					size_t output_size, size_t *output_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1318,11 +1255,10 @@ psa_status_t ssf_psa_asymmetric_encrypt(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_asymmetric_decrypt(
-
-	mbedtls_svc_key_id_t key, psa_algorithm_t alg, const uint8_t *input, size_t input_length,
-	const uint8_t *salt, size_t salt_length, uint8_t *output, size_t output_size,
-	size_t *output_length)
+psa_status_t ssf_psa_asymmetric_decrypt(mbedtls_svc_key_id_t key, psa_algorithm_t alg,
+					const uint8_t *input, size_t input_length,
+					const uint8_t *salt, size_t salt_length, uint8_t *output,
+					size_t output_size, size_t *output_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1350,9 +1286,8 @@ psa_status_t ssf_psa_asymmetric_decrypt(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_key_derivation_setup(
-
-	mbedtls_psa_client_handle_t *p_handle, psa_algorithm_t alg)
+psa_status_t ssf_psa_key_derivation_setup(mbedtls_psa_client_handle_t *p_handle,
+					  psa_algorithm_t alg)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1373,9 +1308,8 @@ psa_status_t ssf_psa_key_derivation_setup(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_key_derivation_get_capacity(
-
-	mbedtls_psa_client_handle_t handle, size_t *capacity)
+psa_status_t ssf_psa_key_derivation_get_capacity(mbedtls_psa_client_handle_t handle,
+						 size_t *capacity)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1396,9 +1330,8 @@ psa_status_t ssf_psa_key_derivation_get_capacity(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_key_derivation_set_capacity(
-
-	mbedtls_psa_client_handle_t *p_handle, size_t capacity)
+psa_status_t ssf_psa_key_derivation_set_capacity(mbedtls_psa_client_handle_t *p_handle,
+						 size_t capacity)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1419,10 +1352,9 @@ psa_status_t ssf_psa_key_derivation_set_capacity(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_key_derivation_input_bytes(
-
-	mbedtls_psa_client_handle_t *p_handle, psa_key_derivation_step_t step, const uint8_t *data,
-	size_t data_length)
+psa_status_t ssf_psa_key_derivation_input_bytes(mbedtls_psa_client_handle_t *p_handle,
+						psa_key_derivation_step_t step, const uint8_t *data,
+						size_t data_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1445,9 +1377,8 @@ psa_status_t ssf_psa_key_derivation_input_bytes(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_key_derivation_input_integer(
-
-	mbedtls_psa_client_handle_t *p_handle, psa_key_derivation_step_t step, uint64_t value)
+psa_status_t ssf_psa_key_derivation_input_integer(mbedtls_psa_client_handle_t *p_handle,
+						  psa_key_derivation_step_t step, uint64_t value)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1469,10 +1400,9 @@ psa_status_t ssf_psa_key_derivation_input_integer(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_key_derivation_input_key(
-
-	mbedtls_psa_client_handle_t *p_handle, psa_key_derivation_step_t step,
-	mbedtls_svc_key_id_t key)
+psa_status_t ssf_psa_key_derivation_input_key(mbedtls_psa_client_handle_t *p_handle,
+					      psa_key_derivation_step_t step,
+					      mbedtls_svc_key_id_t key)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1494,10 +1424,10 @@ psa_status_t ssf_psa_key_derivation_input_key(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_key_derivation_key_agreement(
-
-	mbedtls_psa_client_handle_t *p_handle, psa_key_derivation_step_t step,
-	mbedtls_svc_key_id_t private_key, const uint8_t *peer_key, size_t peer_key_length)
+psa_status_t ssf_psa_key_derivation_key_agreement(mbedtls_psa_client_handle_t *p_handle,
+						  psa_key_derivation_step_t step,
+						  mbedtls_svc_key_id_t private_key,
+						  const uint8_t *peer_key, size_t peer_key_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1521,9 +1451,8 @@ psa_status_t ssf_psa_key_derivation_key_agreement(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_key_derivation_output_bytes(
-
-	mbedtls_psa_client_handle_t *p_handle, uint8_t *output, size_t output_length)
+psa_status_t ssf_psa_key_derivation_output_bytes(mbedtls_psa_client_handle_t *p_handle,
+						 uint8_t *output, size_t output_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1545,10 +1474,9 @@ psa_status_t ssf_psa_key_derivation_output_bytes(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_key_derivation_output_key(
-
-	const psa_key_attributes_t *attributes, mbedtls_psa_client_handle_t *p_handle,
-	mbedtls_svc_key_id_t *key)
+psa_status_t ssf_psa_key_derivation_output_key(const psa_key_attributes_t *attributes,
+					       mbedtls_psa_client_handle_t *p_handle,
+					       mbedtls_svc_key_id_t *key)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1570,9 +1498,7 @@ psa_status_t ssf_psa_key_derivation_output_key(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_key_derivation_abort(
-
-	mbedtls_psa_client_handle_t *p_handle)
+psa_status_t ssf_psa_key_derivation_abort(mbedtls_psa_client_handle_t *p_handle)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1592,10 +1518,9 @@ psa_status_t ssf_psa_key_derivation_abort(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_raw_key_agreement(
-
-	psa_algorithm_t alg, mbedtls_svc_key_id_t private_key, const uint8_t *peer_key,
-	size_t peer_key_length, uint8_t *output, size_t output_size, size_t *output_length)
+psa_status_t ssf_psa_raw_key_agreement(psa_algorithm_t alg, mbedtls_svc_key_id_t private_key,
+				       const uint8_t *peer_key, size_t peer_key_length,
+				       uint8_t *output, size_t output_size, size_t *output_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1621,9 +1546,7 @@ psa_status_t ssf_psa_raw_key_agreement(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_generate_random(
-
-	uint8_t *output, size_t output_size)
+psa_status_t ssf_psa_generate_random(uint8_t *output, size_t output_size)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1644,9 +1567,7 @@ psa_status_t ssf_psa_generate_random(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_generate_key(
-
-	const psa_key_attributes_t *attributes, mbedtls_svc_key_id_t *key)
+psa_status_t ssf_psa_generate_key(const psa_key_attributes_t *attributes, mbedtls_svc_key_id_t *key)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1667,10 +1588,9 @@ psa_status_t ssf_psa_generate_key(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_pake_setup(
-
-	mbedtls_psa_client_handle_t *p_handle, mbedtls_svc_key_id_t password_key,
-	const psa_pake_cipher_suite_t *cipher_suite)
+psa_status_t ssf_psa_pake_setup(mbedtls_psa_client_handle_t *p_handle,
+				mbedtls_svc_key_id_t password_key,
+				const psa_pake_cipher_suite_t *cipher_suite)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1692,9 +1612,7 @@ psa_status_t ssf_psa_pake_setup(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_pake_set_role(
-
-	mbedtls_psa_client_handle_t *p_handle, psa_pake_role_t role)
+psa_status_t ssf_psa_pake_set_role(mbedtls_psa_client_handle_t *p_handle, psa_pake_role_t role)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1715,9 +1633,8 @@ psa_status_t ssf_psa_pake_set_role(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_pake_set_user(
-
-	mbedtls_psa_client_handle_t *p_handle, const uint8_t *user_id, size_t user_id_len)
+psa_status_t ssf_psa_pake_set_user(mbedtls_psa_client_handle_t *p_handle, const uint8_t *user_id,
+				   size_t user_id_len)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1739,9 +1656,8 @@ psa_status_t ssf_psa_pake_set_user(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_pake_set_peer(
-
-	mbedtls_psa_client_handle_t *p_handle, const uint8_t *peer_id, size_t peer_id_len)
+psa_status_t ssf_psa_pake_set_peer(mbedtls_psa_client_handle_t *p_handle, const uint8_t *peer_id,
+				   size_t peer_id_len)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1763,9 +1679,8 @@ psa_status_t ssf_psa_pake_set_peer(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_pake_set_context(
-
-	mbedtls_psa_client_handle_t *p_handle, const uint8_t *context, size_t context_len)
+psa_status_t ssf_psa_pake_set_context(mbedtls_psa_client_handle_t *p_handle, const uint8_t *context,
+				      size_t context_len)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1787,10 +1702,8 @@ psa_status_t ssf_psa_pake_set_context(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_pake_output(
-
-	mbedtls_psa_client_handle_t *p_handle, psa_pake_step_t step, uint8_t *output,
-	size_t output_size, size_t *output_length)
+psa_status_t ssf_psa_pake_output(mbedtls_psa_client_handle_t *p_handle, psa_pake_step_t step,
+				 uint8_t *output, size_t output_size, size_t *output_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1814,10 +1727,8 @@ psa_status_t ssf_psa_pake_output(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_pake_input(
-
-	mbedtls_psa_client_handle_t *p_handle, psa_pake_step_t step, const uint8_t *input,
-	size_t input_length)
+psa_status_t ssf_psa_pake_input(mbedtls_psa_client_handle_t *p_handle, psa_pake_step_t step,
+				const uint8_t *input, size_t input_length)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1840,10 +1751,9 @@ psa_status_t ssf_psa_pake_input(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_pake_get_shared_key(
-
-	mbedtls_psa_client_handle_t *p_handle, const psa_key_attributes_t *attributes,
-	mbedtls_svc_key_id_t *key)
+psa_status_t ssf_psa_pake_get_shared_key(mbedtls_psa_client_handle_t *p_handle,
+					 const psa_key_attributes_t *attributes,
+					 mbedtls_svc_key_id_t *key)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
@@ -1865,9 +1775,7 @@ psa_status_t ssf_psa_pake_get_shared_key(
 	return rsp.psa_crypto_rsp_status;
 }
 
-psa_status_t ssf_psa_pake_abort(
-
-	mbedtls_psa_client_handle_t *p_handle)
+psa_status_t ssf_psa_pake_abort(mbedtls_psa_client_handle_t *p_handle)
 {
 	int err;
 	struct psa_crypto_req req = { 0 };
