@@ -30,8 +30,11 @@ This fork builds upon the original nRF5340 Audio application with the following 
 To use this modified version, clone the repo and follow the standard nRF Connect SDK setup:
 
           git clone https://github.com/mighri-manar/BLE_HEADPHONES_FOR_AUDIOMETRY.git
+
           cd sdk-nrf
+
           west init -l
+
           west update
 
 📜 License
