@@ -6,6 +6,8 @@ common:
     - ci_tests_subsys_kmu
   platform_allow:
     - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54l20pdk/nrf54l20/cpuapp
+    - nrf54l09pdk/nrf54l09/cpuapp
 tests:
   kmu.west.provision.keys:
     harness: pytest
