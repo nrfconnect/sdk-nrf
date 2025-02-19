@@ -10,7 +10,7 @@
 
 namespace Nrf
 {
-enum PSErrorCode : uint8_t { Failure, Success, NotSupported };
+enum class PSErrorCode : uint8_t { Failure, Success, NotSupported };
 
 /**
  * @brief Class representing single tree node and containing information about its key.
