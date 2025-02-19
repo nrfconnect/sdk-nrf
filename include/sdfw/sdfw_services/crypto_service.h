@@ -8,12 +8,6 @@
 
 #include <psa/crypto.h>
 
-/** @brief Execute psa_crypto_init over SSF.
- *
- * See psa_crypto_init for details.
- */
-psa_status_t ssf_psa_crypto_init(void);
-
 /** @brief Execute psa_get_key_attributes over SSF.
  *
  * See psa_get_key_attributes for details.
