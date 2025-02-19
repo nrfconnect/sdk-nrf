@@ -1419,6 +1419,7 @@ ci_samples_nrf_rpc:
     - modules/lib/open-amp/
     - nrf/samples/nrf_rpc/
     - nrf/subsys/bluetooth/
+    - nrf/subsys/logging/
     - nrf/subsys/mpsl/
     - nrf/subsys/net/openthread/
     - nrf/subsys/nrf_rpc/
