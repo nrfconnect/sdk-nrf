@@ -39,6 +39,11 @@ function(partition_manager)
   if(DEFINED PM_DOMAIN)
     string(CONFIGURE "${${image_name}_PM_STATIC_YML_FILE}" user_def_pm_static)
     get_property(image_name GLOBAL PROPERTY DOMAIN_APP_${PM_DOMAIN})
+    sysbuild_get(${image_name}_BOARD IMAGE ${image_name} VAR BOARD CACHE)
+
+    if(DEFINED ${image_name}_BOARD)
+      set(ncs_file_board BOARD ${${image_name}_BOARD})
+    endif()
   else()
     string(CONFIGURE "${PM_STATIC_YML_FILE}" user_def_pm_static)
     get_property(image_name GLOBAL PROPERTY DOMAIN_APP_APP)
@@ -52,14 +57,16 @@ function(partition_manager)
 
   ncs_file(CONF_FILES ${${image_name}_APPLICATION_CONFIG_DIR}
            PM conf_dir_pm_static
-           DOMAIN ${DOMAIN}
+           DOMAIN ${PM_DOMAIN}
            BUILD ${CONF_FILE_BUILD_TYPE}
+           ${ncs_file_board}
   )
 
   ncs_file(CONF_FILES ${BOARD_DIR}
            PM board_dir_pm_static
-           DOMAIN ${DOMAIN}
+           DOMAIN ${PM_DOMAIN}
            BUILD ${CONF_FILE_BUILD_TYPE}
+           ${ncs_file_board}
   )
 
   if(EXISTS "${user_def_pm_static}" AND NOT IS_DIRECTORY "${user_def_pm_static}")
@@ -80,8 +87,16 @@ function(partition_manager)
     # user with a warning to do a pristine build if it differs to avoid having stale
     # configuration used for MCUboot images
     file(MD5 ${static_configuration_file} static_configuration_checksum)
-    if(NOT DEFINED STATIC_PM_FILE_HASH OR NOT "${STATIC_PM_FILE_HASH}" STREQUAL "${static_configuration_checksum}")
-      if(DEFINED STATIC_PM_FILE_HASH)
+    if(DEFINED PM_DOMAIN)
+      set(static_configuration_checksum_var STATIC_PM_FILE_HASH_${PM_DOMAIN})
+      set(static_configuration_extra_text for domain ${PM_DOMAIN})
+    else()
+      set(static_configuration_checksum_var STATIC_PM_FILE_HASH)
+      set(static_configuration_extra_text)
+    endif()
+
+    if(NOT DEFINED ${static_configuration_checksum_var} OR NOT "${${static_configuration_checksum_var}}" STREQUAL "${static_configuration_checksum}")
+      if(DEFINED ${static_configuration_checksum_var})
         message(WARNING "Static partition manager file has changed since this project was last configured, "
                         "this may cause images to use the original static partition manager file "
                         "configuration data, which is incorrect. It is recommended that a pristine build be "
@@ -89,8 +104,8 @@ function(partition_manager)
         )
       endif()
 
-      set(STATIC_PM_FILE_HASH "${static_configuration_checksum}" CACHE INTERNAL
-          "nRF Connect SDK static partition manager file hash" FORCE
+      set(${static_configuration_checksum_var} "${static_configuration_checksum}" CACHE INTERNAL
+          "nRF Connect SDK static partition manager file hash ${static_configuration_extra_text}" FORCE
       )
     endif()
 
