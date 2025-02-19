@@ -61,7 +61,6 @@ manifest:
   # For 'userdata' fields in the projects area, please refer to:
   # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/dm_code_base.html
   projects:
-
     # The Zephyr RTOS fork in the NCS, along with the subset of its
     # modules which NCS imports directly.
     #
@@ -159,7 +158,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: v2.9.0
+      revision: pull/533/head
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
