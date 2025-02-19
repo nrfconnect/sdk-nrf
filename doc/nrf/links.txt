@@ -681,8 +681,8 @@
 .. _`nRF9160 GPS receiver specification`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/gps.html
 .. _`nRF9160 SiP pin configuration`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/sip_pin_configuration/sip_pin_configuration.html
 
-
-.. _`nWP044 - Best practices for cellular IoT development`: https://docs.nordicsemi.com/bundle/nwp_044/page/WP/nwp_044/lte_technology.html
+.. _`nWP044 - Best practices for cellular IoT development LTE technology`: https://docs.nordicsemi.com/bundle/nwp_044/page/WP/nwp_044/lte_technology.html
+.. _`nWP044 - Best practices for cellular IoT development`: https://docs.nordicsemi.com/bundle/nwp_044/page/WP/nwp_044/intro.html
 .. _`Security protocol for cellular IoT`: https://docs.nordicsemi.com/bundle/nwp_044/page/WP/nwp_044/security_protocols.html
 
 .. _`nRF9160 DK Hardware`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/intro.html
