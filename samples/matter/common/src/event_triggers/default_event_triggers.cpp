@@ -119,8 +119,6 @@ CHIP_ERROR RebootCallback(TestEventTrigger::TriggerValue delayMs)
 			sys_reboot(SYS_REBOOT_WARM);
 		},
 		nullptr /* context */);
-
-	return CHIP_NO_ERROR;
 }
 
 #ifdef CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_EVENT_TRIGGERS
@@ -152,7 +150,7 @@ CHIP_ERROR BlockMatterThreadCallback(TestEventTrigger::TriggerValue blockingTime
 
 		LOG_INF("Blocking Matter thread for %d seconds", blockingTimeS);
 
-		while (startTime + (blockingTimeS * 1000) > k_uptime_get()) {
+		while (startTime + static_cast<int64_t>(blockingTimeS) * 1000 > k_uptime_get()) {
 			;
 		}
 

@@ -72,7 +72,7 @@ CHIP_ERROR AppTask::Init()
 		}
 		err = TemperatureManager::Instance().Init();
 		if (err != CHIP_NO_ERROR) {
-			LOG_ERR("TempMgr Init fail");
+			LOG_ERR("TemperatureManager Init fail");
 		}
 		return err;
 	} }));

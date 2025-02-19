@@ -32,7 +32,8 @@ public:
 	/* Define the maximum available event triggers that can be registered. */
 	constexpr static TriggerSlot kMaxEventTriggers = CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX;
 	constexpr static TriggerSlot kInvalidTriggerSlot = CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX + 1;
-	constexpr static TriggerSlot kMaxEventTriggersHandlers = CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX_TRIGGERS_DELEGATES;
+	constexpr static TriggerSlot kMaxEventTriggersHandlers =
+		CONFIG_NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX_TRIGGERS_DELEGATES;
 	constexpr static uint8_t kDisableEventTriggersKey[chip::TestEventTriggerDelegate::kEnableKeyLength] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 	};
@@ -128,6 +129,6 @@ private:
 	uint8_t mEnableKeyData[chip::TestEventTriggerDelegate::kEnableKeyLength] = {};
 	chip::MutableByteSpan mEnableKey{ mEnableKeyData };
 	Nrf::FiniteMap<EventTriggerId, EventTrigger, kMaxEventTriggers> mTriggersMap;
-	chip::TestEventTriggerHandler* mHandlers[kMaxEventTriggersHandlers];
+	chip::TestEventTriggerHandler *mHandlers[kMaxEventTriggersHandlers] = {};
 };
 }; // namespace Nrf::Matter
