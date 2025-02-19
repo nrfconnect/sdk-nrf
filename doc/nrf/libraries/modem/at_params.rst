@@ -7,6 +7,9 @@ AT parameters
    :local:
    :depth: 2
 
+.. important::
+   The AT parameters module is deprecated.
+
 The AT parameters module provides functionality to store lists of AT command or respond parameters.
 These lists can be used by other modules to write and read parameter values.
 

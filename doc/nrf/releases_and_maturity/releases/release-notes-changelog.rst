@@ -631,6 +631,8 @@ Security libraries
 Modem libraries
 ---------------
 
+* Deprecated the :ref:`at_params_readme` library.
+
 * :ref:`pdn_readme` library:
 
   * Deprecated the :c:func:`pdn_dynamic_params_get` function.
