@@ -19,11 +19,9 @@ Documentation
 
 This fork builds upon the original nRF5340 Audio application with the following modifications:
 
-✅ Ambient Noise Measurement – Integrating noise level detection to adapt hearing tests based on the environment.
+✅ Ambient Noise Measurement and Active Noise Cancellation – Integrating noise level detection to adapt hearing tests based on the environment.
 
 ✅ Modified Unicast Server & Client – Extending the existing audio streaming features to support diagnostic functionalities.
-
-✅ Codec Integration – Exploring support for an SBC codec and a codec with 8 entries + integrated DSP.
 
 📌 Key Modifications
 
