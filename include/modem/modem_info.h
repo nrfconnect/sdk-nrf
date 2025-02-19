@@ -298,15 +298,18 @@ int modem_info_short_get(enum modem_info info, uint16_t *buf);
  */
 int modem_info_name_get(enum modem_info info, char *name);
 
-/** @brief Request the data type of the current modem information
- *         type.
+/**
+ * @deprecated Use @ref modem_info_data_type_get instead.
+ *
+ * @brief Request the data type of the current modem information
+ *        type.
  *
  * @param info The requested information type.
  *
  * @return The data type of the requested modem information data.
  *         Otherwise, a (negative) error code is returned.
  */
-enum at_param_type modem_info_type_get(enum modem_info info);
+__deprecated enum at_param_type modem_info_type_get(enum modem_info info);
 
 /** @brief Request the data type of the current modem information
  *         type.
