@@ -167,13 +167,25 @@ config BT_GATT_UUID16_POOL_SIZE
 
 if BT_DIS
 
-config BT_DIS_MANUF
+config BT_DIS_MANUF_NAME
+	default y
+	help
+	  nRF Desktop enables the Manufacturer Name String characteristic as
+	  part of the DIS configuration.
+
+config BT_DIS_MANUF_NAME_STR
 	default DESKTOP_DEVICE_MANUFACTURER
 	help
 	  nRF Desktop defines common HID device identification values
 	  and passes them as defaults to the Bluetooth DIS configuration.
 
-config BT_DIS_MODEL
+config BT_DIS_MODEL_NUMBER
+	default y
+	help
+	  nRF Desktop enables the Model Number String characteristic as
+	  part of the DIS configuration.
+
+config BT_DIS_MODEL_NUMBER_STR
 	default DESKTOP_DEVICE_PRODUCT
 	help
 	  nRF Desktop defines common HID device identification values
@@ -260,15 +272,7 @@ config BT_MAX_PAIRED
 
 endif # DESKTOP_BT_CENTRAL
 
-if BT_CTLR
-
-choice BT_LL_CHOICE
-	default BT_LL_SOFTDEVICE
-	help
-	  nRF Desktop devices should use the Softdevice controller by default.
-	  Other controller variants may be used for resource-constrained
-	  devices.
-endchoice
+if HAS_BT_CTLR
 
 choice BT_CTLR_TX_PWR
 	default BT_CTLR_TX_PWR_0
@@ -282,7 +286,7 @@ config BT_CTLR_CONN_PARAM_REQ
 	  nRF Desktop devices disable support for the Connection Parameter
 	  Request feature as it is not needed.
 
-endif # BT_CTLR
+endif # HAS_BT_CTLR
 
 config BT_DEVICE_NAME
 	default DESKTOP_DEVICE_PRODUCT

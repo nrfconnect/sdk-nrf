@@ -132,7 +132,8 @@ endmenu
 
 config ESB_DYNAMIC_INTERRUPTS
 	bool "Use direct dynamic interrupts"
-	depends on DYNAMIC_INTERRUPTS && DYNAMIC_DIRECT_INTERRUPTS
+	select DYNAMIC_INTERRUPTS
+	select DYNAMIC_DIRECT_INTERRUPTS
 	help
 	  This option configures ESB IRQ handlers using direct dynamic
 	  interrupts. This allows reconfiguring ESB_SYS_TIMER_IRQn, ESB_EVT_IRQ,

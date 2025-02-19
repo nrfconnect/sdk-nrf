@@ -1,4 +1,4 @@
-.. ### This page lists links used in the nrfxlib docs.
+.. ### This page lists links used in the mcuboot wrapper docs.
        Links are grouped by source URL if three or more have the same source URL.
        Otherwise, they are placed in "Source: other".
        Links not separated by blank line are related to one another.
@@ -7,26 +7,21 @@
 
 .. _`sdk-nrf`: https://github.com/nrfconnect/sdk-nrf
 
-.. ### Source: infocenter.nordicsemi.com
-
-.. _`Infocenter`: https://infocenter.nordicsemi.com/index.jsp
-
 .. ### Source: www.nordicsemi.com
 
 .. _`Nordic Semiconductor`: https://www.nordicsemi.com/
 
-.. ### Source:  https://developer.nordicsemi.com/
+.. ### Source:  https://docs.nordicsemi.com/
 
-.. _`Immutable first-stage bootloader`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/config_and_build/bootloaders/bootloader.html#immutable-bootloader
-.. _`Second-stage upgradable bootloader`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/config_and_build/bootloaders/bootloader.html#upgradable-bootloader
-.. _`Secure bootloader chain`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/config_and_build/bootloaders/bootloader.html
-.. _`Adding a bootloader chain`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/config_and_build/bootloaders/bootloader_adding.html
-.. _`Testing the bootloader chain`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/config_and_build/bootloaders/bootloader_testing.html
-.. _`Using external memory partitions`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/config_and_build/bootloaders/bootloader_external_flash.html
-.. _`Customizing the bootloader`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/config_and_build/bootloaders/bootloader_config.html
-.. _`Signature keys`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/config_and_build/bootloaders/bootloader_signature_keys.html
-.. _`Multi-image builds`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/config_and_build/multi_image.html
-.. _`MCUboot output build files`: https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/config_and_build/output_build_files.html#mcuboot-output-build-files
+.. _`Immutable first-stage bootloader`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader.html#immutable-bootloader
+.. _`Second-stage upgradable bootloader`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader.html#upgradable-bootloader
+.. _`Secure bootloader chain`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader.html
+.. _`Enabling a bootloader chain using sysbuild`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader_adding_sysbuild.html
+.. _`MCUboot and NSIB`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader_mcuboot_nsib.html
+.. _`Partitioning device memory`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader_partitioning.html
+.. _`Customizing the bootloader`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/app_dev/bootloaders_dfu/mcuboot_nsib/bootloader_config.html
+.. _`Signature keys`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/config_and_build/bootloaders/bootloader_signature_keys.html
+.. _`MCUboot output build files`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/app_dev/config_and_build/output_build_files.html#mcuboot-output-build-files
 
 .. ### Source: other
 

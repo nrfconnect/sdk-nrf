@@ -18,4 +18,8 @@ if (CONFIG_MPSL_USE_ZEPHYR_PM)
   add_subdirectory(pm)
 endif()
 
+if (CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL)
+  add_subdirectory(clock_ctrl)
+endif()
+
 add_subdirectory_ifdef(CONFIG_MPSL_PIN_DEBUG pin_debug)

@@ -37,6 +37,26 @@ void fp_fmdn_callbacks_clock_synced_notify(void)
 	}
 }
 
+void fp_fmdn_callbacks_conn_authenticated_notify(struct bt_conn *conn)
+{
+	sys_slist_t *slists[] = {
+		&fmdn_info_cb_internal_slist,
+		&fmdn_info_cb_slist
+	};
+
+	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
+
+	for (size_t i = 0; i < ARRAY_SIZE(slists); i++) {
+		struct bt_fast_pair_fmdn_info_cb *listener;
+
+		SYS_SLIST_FOR_EACH_CONTAINER(slists[i], listener, node) {
+			if (listener->conn_authenticated) {
+				listener->conn_authenticated(conn);
+			}
+		}
+	}
+}
+
 void fp_fmdn_callbacks_provisioning_state_changed_notify(bool provisioned)
 {
 	sys_slist_t *slists[] = {

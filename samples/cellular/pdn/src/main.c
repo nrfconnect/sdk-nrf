@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <zephyr/kernel.h>
 #include <zephyr/net/net_ip.h>
+#include <zephyr/net/socket.h>
 #include <modem/pdn.h>
 #include <modem/lte_lc.h>
 #include <modem/nrf_modem_lib.h>
@@ -15,7 +16,6 @@
 #include <nrf_socket.h>
 
 #define SIN(addr)  ((struct nrf_sockaddr_in *)(addr))
-#define SIN6(addr) ((struct nrf_sockaddr_in6 *)(addr))
 
 static const char * const fam_str[] = {
 	[PDN_FAM_IPV4V6] = "IPV4V6",
@@ -33,17 +33,13 @@ static const char * const event_str[] = {
 	[PDN_EVENT_CTX_DESTROYED] = "context destroyed",
 };
 
-static void snprintaddr(char *str, size_t size, struct nrf_sockaddr *addr)
+static void snprintaddr(int fam, char *str, size_t size, void *addr)
 {
-	switch (addr->sa_family) {
-	case NRF_AF_INET:
-		nrf_inet_ntop(addr->sa_family, &SIN(addr)->sin_addr, str, size);
-		break;
-	case NRF_AF_INET6:
-		nrf_inet_ntop(addr->sa_family, &SIN6(addr)->sin6_addr, str, size);
-		break;
-	default:
-		snprintf(str, size, "Unknown family %d", addr->sa_family);
+	char *ret;
+
+	ret = zsock_inet_ntop(fam, addr, str, size);
+	if (!ret) {
+		snprintf(str, size, "Unable to parse");
 	}
 }
 
@@ -66,7 +62,8 @@ static void ifaddrs_print(void)
 
 	ifa = ifaddrs;
 	while (ifa != NULL) {
-		snprintaddr(buf, sizeof(buf), ifa->ifa_addr);
+		snprintaddr(ifa->ifa_addr->sa_family, buf, sizeof(buf),
+			    &SIN(ifa->ifa_addr)->sin_addr);
 		printk("%s: (%s) %s\n",
 		       ifa->ifa_name, net_family2str(ifa->ifa_addr->sa_family), buf);
 
@@ -79,6 +76,32 @@ static void ifaddrs_print(void)
 	printk("\n");
 
 	nrf_freeifaddrs(ifaddrs);
+}
+
+static void dynamic_info_print(uint32_t cid)
+{
+	int err;
+	struct pdn_dynamic_info info;
+	char buf[NRF_INET6_ADDRSTRLEN] = {0};
+
+	err = pdn_dynamic_info_get(cid, &info);
+	if (err) {
+		printk("pdn_dynamic_info_get() failed, err %d\n", err);
+		return;
+	}
+
+	printk("Dynamic info for cid %d:\n", cid);
+	if (info.dns_addr4_primary.s_addr) {
+		snprintaddr(AF_INET, buf, sizeof(buf), &info.dns_addr4_primary);
+		printk("Primary IPv4 DNS address: %s\n", buf);
+		snprintaddr(AF_INET, buf, sizeof(buf), &info.dns_addr4_primary);
+		printk("Secondary IPv4 DNS address: %s\n", buf);
+		snprintaddr(AF_INET6, buf, sizeof(buf), &info.dns_addr6_primary);
+		printk("Primary IPv6 DNS address: %s\n", buf);
+		snprintaddr(AF_INET6, buf, sizeof(buf), &info.dns_addr6_primary);
+		printk("Secondary IPv6 DNS address: %s\n", buf);
+		printk("IPv4 MTU: %d, IPv6 MTU: %d\n", info.ipv4_mtu, info.ipv6_mtu);
+	}
 }
 
 void pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
@@ -160,6 +183,9 @@ int main(void)
 
 	printk("PDP Context %d, PDN ID %d\n", 0, pdn_id_get(0));
 	printk("PDP Context %d, PDN ID %d\n", cid, pdn_id_get(cid));
+
+	dynamic_info_print(0);
+	dynamic_info_print(cid);
 
 	ifaddrs_print();
 

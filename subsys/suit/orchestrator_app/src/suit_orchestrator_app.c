@@ -78,6 +78,10 @@ int suit_dfu_initialize(void)
 	LOG_INF("DFU partition detected, addr: %p, size %d bytes",
 		(void *)device_info.mapped_address, device_info.partition_size);
 
+#if CONFIG_SUIT_CACHE_RW
+	suit_dfu_cache_rw_init();
+#endif /* CONFIG_SUIT_CACHE_RW */
+
 #if CONFIG_SUIT_CLEANUP_ON_INIT
 	suit_dfu_cleanup();
 

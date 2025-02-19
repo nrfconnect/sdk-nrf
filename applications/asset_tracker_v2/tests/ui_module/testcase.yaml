@@ -3,10 +3,8 @@ tests:
     sysbuild: true
     platform_allow:
       - native_sim
-      - nrf9160dk/nrf9160/ns
     integration_platforms:
       - native_sim
-      - nrf9160dk/nrf9160/ns
     tags:
       - ui_module
       - sysbuild

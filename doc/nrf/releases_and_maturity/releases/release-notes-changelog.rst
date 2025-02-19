@@ -1,3 +1,5 @@
+:orphan:
+
 .. _ncs_release_notes_changelog:
 
 Changelog for |NCS| v2.9.99
@@ -23,7 +25,7 @@ Known issues
 ************
 
 Known issues are only tracked for the latest official release.
-See `known issues for nRF Connect SDK v2.9.0-nRF54H20-rc1`_ for the list of issues valid for the latest release.
+See `known issues for nRF Connect SDK v2.9.0-nRF54H20-1-rc2`_ for the list of issues valid for the latest release.
 
 Changelog
 *********
@@ -96,6 +98,7 @@ Developing with Front-End Modules
 
   * :ref:`nRF2220 Front-End Module <ug_radio_fem_nrf2220>`.
   * :ref:`nRF2220 EK shield <ug_radio_fem_nrf2220ek>`.
+  * :ref:`nRF21540 Front-End Module in GPIO mode <ug_radio_fem_nrf21540_gpio>` for the nRF54L Series devices.
 
 Developing with PMICs
 =====================
@@ -105,8 +108,14 @@ Developing with PMICs
 Security
 ========
 
-  * Added support for HKDF-Expand and HKDF-Extract in CRACEN.
-  * Added support for Ed25519ph(HashEdDSA) to CRACEN
+  * Added:
+
+    * Support for HKDF-Expand and HKDF-Extract in CRACEN.
+    * Support for Ed25519ph(HashEdDSA) to CRACEN.
+
+  * Updated the :ref:`app_approtect` page with nRF Util commands that replaced the nrfjprog commands.
+    This is part of the ongoing work of archiving `nRF Command Line Tools`_ and replacing them with nRF Util.
+  * Moved the :ref:`app_boards_spe_nspe` documentation page under :ref:`security` from the :ref:`ug_app_dev` section.
 
 Protocols
 =========
@@ -147,10 +156,15 @@ Gazell
 Matter
 ------
 
-* Added a new documentation page :ref:`ug_matter_group_communication` in the :ref:`ug_matter_intro_overview`.
+* Added:
+
+  * A new documentation page :ref:`ug_matter_group_communication` in the :ref:`ug_matter_intro_overview`.
+  * A new section :ref:`ug_matter_creating_accessory_vendor_cluster` in the :ref:`ug_matter_creating_accessory` page.
+  * A description for the new :ref:`ug_matter_gs_tools_matter_west_commands_append` within the :ref:`ug_matter_gs_tools_matter_west_commands` page.
+  * New arguments to the :ref:`ug_matter_gs_tools_matter_west_commands_zap_tool_gui` to provide a custom cache directory and add new clusters to Matter Data Model.
+  * :ref:`ug_matter_debug_snippet`.
 
 * Disabled the :ref:`mpsl` before performing factory reset to speed up the process.
-* Added :ref:`ug_matter_debug_snippet`.
 
 Matter fork
 +++++++++++
@@ -222,6 +236,15 @@ nRF Desktop
   * The :ref:`nrf_desktop_failsafe` to use the Zephyr :ref:`zephyr:hwinfo_api` driver for getting and clearing the reset reason information (see the :c:func:`hwinfo_get_reset_cause` and :c:func:`hwinfo_clear_reset_cause` functions).
     The Zephyr :ref:`zephyr:hwinfo_api` driver replaces the dependency on the nrfx reset reason helper (see the :c:func:`nrfx_reset_reason_get` and :c:func:`nrfx_reset_reason_clear` functions).
   * The release configuration for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target to enable the :ref:`nrf_desktop_failsafe` (see the :ref:`CONFIG_DESKTOP_FAILSAFE_ENABLE <config_desktop_app_options>` Kconfig option).
+  * Enabled Link Time Optimization (:kconfig:option:`CONFIG_LTO` and :kconfig:option:`CONFIG_ISR_TABLES_LOCAL_DECLARATION`) by default for an nRF Desktop application image.
+    LTO was also explicitly enabled in configurations of other images built by sysbuild (bootloader, network core image).
+  * Application configurations for nRF54L05, nRF54L10, and nRF54L15 SoCs to use Fast Pair PSA cryptography (:kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_PSA`).
+    Using PSA cryptography improves security and reduces memory footprint.
+    Also increased the size of the Bluetooth receiving thread stack (:kconfig:option:`CONFIG_BT_RX_STACK_SIZE`) to prevent stack overflows.
+  * Application configurations for nRF52810 and nRF52820 SoCs to reduce memory footprint:
+
+    * Disabled Bluetooth long workqueue (:kconfig:option:`CONFIG_BT_LONG_WQ`).
+    * Limited the number of key slots in the PSA Crypto core to 10 (:kconfig:option:`CONFIG_MBEDTLS_PSA_KEY_SLOT_COUNT`).
 
 * Added:
 
@@ -231,6 +254,8 @@ nRF Desktop
   * Application configurations for the nRF54L05 and nRF54L10 SoCs (emulated on the nRF54L15 DK).
     The configurations are supported through ``nrf54l15dk/nrf54l10/cpuapp`` and ``nrf54l15dk/nrf54l05/cpuapp`` board targets.
     For details, see the :ref:`nrf_desktop_board_configuration`.
+  * The ``dongle_small`` configuration for the nRF52833 DK.
+    The configuration enables logs and mimics the dongle configuration used for small SoCs.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
@@ -240,6 +265,8 @@ nRF Machine Learning (Edge Impulse)
 Serial LTE modem
 ----------------
 
+* Added an overlay :file:`overlay-memfault.conf` file to enable Memfault.
+  For more information about Memfault features in |NCS|, see :ref:`mod_memfault`.
 * Updated the application to use the :ref:`lib_downloader` library instead of the deprecated :ref:`lib_download_client` library.
 
 Thingy:53: Matter weather station
@@ -260,9 +287,18 @@ Amazon Sidewalk samples
 Bluetooth samples
 -----------------
 
+* Added support for the ``nrf54l15dk/nrf54l05/cpuapp`` and ``nrf54l15dk/nrf54l10/cpuapp`` board targets in the following samples:
+
+  * :ref:`bluetooth_central_hids`
+  * :ref:`peripheral_hids_keyboard`
+
 * :ref:`direct_test_mode` sample:
 
   * Added loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.
+
+* :ref:`central_uart` sample:
+
+  * Added reconnection to bonded devices based on their address.
 
 Bluetooth Fast Pair samples
 ---------------------------
@@ -302,6 +338,11 @@ Bluetooth Mesh samples
     * :ref:`bluetooth_mesh_light`
     * :ref:`bluetooth_mesh_light_lc`
 
+* Updated the following samples to include the value of the :kconfig:option:`CONFIG_BT_COMPANY_ID` option in the Firmware ID:
+
+    * :ref:`ble_mesh_dfu_distributor`
+    * :ref:`ble_mesh_dfu_target`
+
 Cellular samples
 ----------------
 
@@ -330,10 +371,16 @@ Cellular samples
     * An issue with an uninitialized variable in the :c:func:`handle_at_cmd_requests` function.
     * An issue with the too small :kconfig:option:`CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE` Kconfig value
       in the :file:`overlay-coap_nrf_provisioning.conf` file.
+    * Slow Wi-Fi connectivity startup by selecting ``TFM_SFN`` instead of ``TFM_IPC``.
+    * The size of TLS credentials buffer for Wi-Fi connectivity to allow installing both AWS and CoAP CA certificates.
 
 * :ref:`lte_sensor_gateway` sample:
 
    * Fixed an issue with devicetree configuration after HCI updates in `sdk-zephyr`_.
+
+* :ref:`pdn_sample` sample:
+
+  * Added dynamic PDN information.
 
 Cryptography samples
 --------------------
@@ -548,7 +595,6 @@ Modem libraries
 
 * :ref:`pdn_readme` library:
 
-  * Added the :kconfig:option:`CONFIG_PDN_DYNAMIC_INFO_AT_BUF_SIZE ` Kconfig option to set the response buffer size for the ``AT+CGCONTRDP`` AT command.
   * Deprecated the :c:func:`pdn_dynamic_params_get` function.
     Use the new function :c:func:`pdn_dynamic_info_get` instead.
 
@@ -559,16 +605,31 @@ Modem libraries
 
 * :ref:`modem_key_mgmt` library:
 
+  * Added:
+
+    * The :c:func:`modem_key_mgmt_digest` function that would retrieve the SHA1 digest of a credential from the modem.
+    * The :c:func:`modem_key_mgmt_list` function that would retrieve the security tag and type of every credential stored in the modem.
+
   * Fixed:
 
     * An issue with the :c:func:`modem_key_mgmt_clear` function where it returned ``-ENOENT`` when the credential was cleared.
     * A race condition in several functions where ``+CMEE`` error notifications could be disabled by one function before the other one got a chance to run its command.
+    * An issue with the :c:func:`modem_key_mgmt_clear` function where ``+CMEE`` error notifications were not restored to their original state if the ``AT%CMNG`` AT command failed.
+    * The :c:func:`modem_key_mgmt_clear` function to lock the shared scratch buffer.
 
 * Updated the :ref:`nrf_modem_lib_lte_net_if` to automatically set the actual link :term:`Maximum Transmission Unit (MTU)` on the network interface when PDN connectivity is gained.
 
 * :ref:`nrf_modem_lib_readme`:
 
   * Fixed a bug where various subsystems would be erroneously initialized during a failed initialization of the library.
+
+* :ref:`lib_location` library:
+
+  * Removed references to HERE location services.
+
+* :ref:`lib_at_host` library:
+
+  * Fixed a bug where AT responses would erroneously be written to the logging UART instead of being written to the chosen ``ncs,at-host-uart`` UART device when the :kconfig:option:`CONFIG_LOG_BACKEND_UART` Kconfig option was set.
 
 Multiprotocol Service Layer libraries
 -------------------------------------
@@ -578,7 +639,11 @@ Multiprotocol Service Layer libraries
 Libraries for networking
 ------------------------
 
-* Added the :ref:`lib_downloader` library.
+* Added:
+
+  * The :ref:`lib_downloader` library.
+  * A backend for the :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` that stores the credentials in the modem, see :kconfig:option:`CONFIG_TLS_CREDENTIALS_BACKEND_NRF_MODEM`.
+
 * Deprecated the :ref:`lib_download_client` library.
   See the :ref:`migration guide <migration_3.0_recommended>` for recommended changes.
 
@@ -599,10 +664,12 @@ Libraries for networking
 
 * :ref:`lib_fota_download` library:
 
+  * Added error codes related to unsupported protocol, DFU failures, and invalid configuration.
   * Updated to use the :ref:`lib_downloader` library for CoAP downloads.
 
 * :ref:`lib_nrf_cloud` library:
 
+  * Added the :kconfig:option:`CONFIG_NRF_CLOUD` Kconfig option to prevent unintended inclusion of nRF Cloud Kconfig variables in non-nRF Cloud projects.
   * Updated to use the :ref:`lib_downloader` library for CoAP downloads.
 
 Libraries for NFC
@@ -665,7 +732,9 @@ Edge Impulse integration
 Memfault integration
 --------------------
 
-|no_changes_yet_note|
+* Added a new feature to automatically post coredumps to Memfault when network connectivity is available.
+  To enable this feature, set the :kconfig:option:`CONFIG_MEMFAULT_NCS_POST_COREDUMP_ON_NETWORK_CONNECTED` Kconfig option to ``y``.
+  Only supported for nRF91 Series devices.
 
 AVSystem integration
 --------------------
@@ -690,7 +759,7 @@ DULT integration
 MCUboot
 =======
 
-The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``a4eda30f5b0cfd0cf15512be9dcd559239dbfc91``, with some |NCS| specific additions.
+The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``a2bc982b3379d51fefda3e17a6a067342dce1a8b``, with some |NCS| specific additions.
 
 The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/modules/mcuboot` folder.
 
@@ -703,21 +772,21 @@ Zephyr
 
 .. NOTE TO MAINTAINERS: All the Zephyr commits in the below git commands must be handled specially after each upmerge and each nRF Connect SDK release.
 
-The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``beb733919d8d64a778a11bd5e7d5cbe5ae27b8ee``, with some |NCS| specific additions.
+The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``fdeb7350171279d4637c536fcceaad3fbb775392``, with some |NCS| specific additions.
 
 For the list of upstream Zephyr commits (not including cherry-picked commits) incorporated into nRF Connect SDK since the most recent release, run the following command from the :file:`ncs/zephyr` repository (after running ``west update``):
 
 .. code-block:: none
 
-   git log --oneline beb733919d ^ea02b93eea
+   git log --oneline fdeb735017 ^beb733919d
 
 For the list of |NCS| specific commits, including commits cherry-picked from upstream, run:
 
 .. code-block:: none
 
-   git log --oneline manifest-rev ^beb733919d
+   git log --oneline manifest-rev ^fdeb735017
 
-The current |NCS| main branch is based on revision ``beb733919d`` of Zephyr.
+The current |NCS| main branch is based on revision ``fdeb735017`` of Zephyr.
 
 .. note::
    For possible breaking changes and changes between the latest Zephyr release and the current Zephyr version, refer to the :ref:`Zephyr release notes <zephyr_release_notes>`.

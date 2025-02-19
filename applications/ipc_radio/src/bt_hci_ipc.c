@@ -31,6 +31,17 @@
 
 #include "ipc_bt.h"
 
+#if DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_bt_hci_ipc), zephyr_ipc_openamp_static_vrings)
+#include <openamp/rpmsg_virtio.h>
+#define IPC_BUF_SIZE DT_PROP_OR(DT_CHOSEN(zephyr_bt_hci_ipc), zephyr_buffer_size, RPMSG_BUFFER_SIZE)
+#define IPC_MEM_SIZE (DT_REG_SIZE(DT_PHANDLE(DT_CHOSEN(zephyr_bt_hci_ipc), memory_region)) / 2)
+#define MAX_IPC_BLOCKS DIV_ROUND_UP(IPC_MEM_SIZE, IPC_BUF_SIZE)
+#elif DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_bt_hci_ipc), zephyr_ipc_icbmsg)
+#define MAX_IPC_BLOCKS DT_PROP(DT_CHOSEN(zephyr_bt_hci_ipc), rx_blocks)
+#else
+#error "IPC backends other than rpmsg or icbmsg are not supported."
+#endif
+
 LOG_MODULE_DECLARE(ipc_radio, CONFIG_IPC_RADIO_LOG_LEVEL);
 
 #if defined(CONFIG_BT_CTLR_ASSERT_HANDLER) || defined(CONFIG_BT_HCI_VS_FATAL_ERROR)
@@ -40,6 +51,13 @@ static bool ipc_ept_ready;
 static K_SEM_DEFINE(ipc_bound_sem, 0, 1);
 
 static struct ipc_ept hci_ept;
+
+struct ipc_block_item {
+	const void *ptr;
+	size_t len;
+};
+
+K_MSGQ_DEFINE(ipc_block_queue, sizeof(struct ipc_block_item), MAX_IPC_BLOCKS, sizeof(void *));
 
 static K_FIFO_DEFINE(tx_queue);
 static K_FIFO_DEFINE(rx_queue);
@@ -54,115 +72,100 @@ enum hci_h4_type {
 #define HCI_FATAL_MSG true
 #define HCI_REGULAR_MSG false
 
-static void recv_cmd(const uint8_t *data, size_t len)
+static struct net_buf *recv_cmd(const uint8_t *data, size_t len)
 {
 	const struct bt_hci_cmd_hdr *hdr = (const struct bt_hci_cmd_hdr *)data;
 	struct net_buf *buf;
 
 	if (len < sizeof(*hdr)) {
 		LOG_ERR("Not enough data for command header.");
-		return;
+		return NULL;
 	}
 
 	if ((len - sizeof(*hdr)) != hdr->param_len) {
 		LOG_ERR("Command param_len does not match the remaining data length.");
-		return;
+		return NULL;
 	}
 
-	buf = bt_buf_get_tx(BT_BUF_CMD, K_NO_WAIT, hdr, sizeof(*hdr));
-	if (!buf) {
-		LOG_ERR("No available command buffers.");
-		return;
-	}
-
+	buf = bt_buf_get_tx(BT_BUF_CMD, K_FOREVER, hdr, sizeof(*hdr));
 	data += sizeof(*hdr);
 	len -= sizeof(*hdr);
 
 	if (len > net_buf_tailroom(buf)) {
 		LOG_ERR("Not enough space in buffer.");
 		net_buf_unref(buf);
-		return;
+		return NULL;
 	}
 
 	LOG_DBG("Received HCI CMD packet (opcode: %#x, len: %u).",
 						sys_le16_to_cpu(hdr->opcode), hdr->param_len);
 
 	net_buf_add_mem(buf, data, len);
-	k_fifo_put(&tx_queue, buf);
+	return buf;
 }
 
-static void recv_acl(const uint8_t *data, size_t len)
+static struct net_buf *recv_acl(const uint8_t *data, size_t len)
 {
 	const struct bt_hci_acl_hdr *hdr = (const struct bt_hci_acl_hdr *)data;
 	struct net_buf *buf;
 
 	if (len < sizeof(*hdr)) {
 		LOG_ERR("Not enough data for ACL header.");
-		return;
+		return NULL;
 	}
 
 	if ((len - sizeof(*hdr)) != sys_le16_to_cpu(hdr->len)) {
 		LOG_ERR("ACL payload length does not match the remaining data length.");
-		return;
+		return NULL;
 	}
 
-	buf = bt_buf_get_tx(BT_BUF_ACL_OUT, K_NO_WAIT, hdr, sizeof(*hdr));
-	if (!buf) {
-		LOG_ERR("No available ACL buffers.");
-		return;
-	}
-
+	buf = bt_buf_get_tx(BT_BUF_ACL_OUT, K_FOREVER, hdr, sizeof(*hdr));
 	data += sizeof(*hdr);
 	len -= sizeof(*hdr);
 
 	if (len > net_buf_tailroom(buf)) {
 		LOG_ERR("Not enough space in buffer.");
 		net_buf_unref(buf);
-		return;
+		return NULL;
 	}
 
 	LOG_DBG("Received HCI ACL packet (handle: %u, len: %u).",
 					sys_le16_to_cpu(hdr->handle), sys_le16_to_cpu(hdr->len));
 
 	net_buf_add_mem(buf, data, len);
-	k_fifo_put(&tx_queue, buf);
+	return buf;
 }
 
-static void recv_iso(const uint8_t *data, size_t len)
+static struct net_buf *recv_iso(const uint8_t *data, size_t len)
 {
 	const struct bt_hci_iso_hdr *hdr = (const struct bt_hci_iso_hdr *)data;
 	struct net_buf *buf;
 
 	if (len < sizeof(*hdr)) {
 		LOG_ERR("Not enough data for ISO header.");
-		return;
+		return NULL;
 	}
 
 	if ((len - sizeof(*hdr)) != bt_iso_hdr_len(sys_le16_to_cpu(hdr->len))) {
 		LOG_ERR("ISO payload length does not match the remaining data length.");
-		return;
+		return NULL;
 	}
 
-	buf = bt_buf_get_tx(BT_BUF_ISO_OUT, K_NO_WAIT, hdr, sizeof(*hdr));
-	if (!buf) {
-		LOG_ERR("No available ISO buffers.");
-		return;
-	}
-
+	buf = bt_buf_get_tx(BT_BUF_ISO_OUT, K_FOREVER, hdr, sizeof(*hdr));
 	data += sizeof(*hdr);
 	len -= sizeof(*hdr);
 
 	if (len > net_buf_tailroom(buf)) {
 		LOG_ERR("Not enough space in buffer.");
 		net_buf_unref(buf);
-		return;
+		return NULL;
 	}
 
 	LOG_DBG("Received HCI ISO packet (handle: %u, len: %u).",
 					sys_le16_to_cpu(hdr->handle), sys_le16_to_cpu(hdr->len));
 
 	net_buf_add_mem(buf, data, len);
-	k_fifo_put(&tx_queue, buf);
+	return buf;
 }
 
 static void send(struct net_buf *buf, bool is_fatal_err)
@@ -226,33 +229,75 @@ static void bound(void *priv)
 
 static void recv(const void *data, size_t len, void *priv)
 {
-	const uint8_t *tmp = (const uint8_t *)data;
-	enum hci_h4_type type;
+	struct ipc_block_item block;
+	int err;
 
 	LOG_INF("Received hci message of %u bytes.", len);
 	LOG_HEXDUMP_DBG(data, len, "HCI data:");
 
-	type = (enum hci_h4_type)*tmp++;
-	len -= sizeof(type);
+	block.ptr = data;
+	block.len = len;
 
-	switch (type) {
-	case HCI_H4_CMD:
-		recv_cmd(tmp, len);
-		break;
+	err = ipc_service_hold_rx_buffer(&hci_ept, (void *)data);
+	if (err) {
+		LOG_ERR("Failed to hold rx buffer: %d.", err);
+	}
 
-	case HCI_H4_ACL:
-		recv_acl(tmp, len);
-		break;
+	err = k_msgq_put(&ipc_block_queue, &block, K_NO_WAIT);
+	__ASSERT(err == 0, "Failed to put data into msgq: %d.", err);
+}
 
-	case HCI_H4_ISO:
-		recv_iso(tmp, len);
-		break;
+static void queue_thread(void)
+{
+	struct ipc_block_item block;
+	struct net_buf *buf;
+	const uint8_t *tmp;
+	enum hci_h4_type type;
+	int err;
 
-	default:
-		LOG_ERR("Unknown HCI type %u.", type);
-		return;
+	while (1) {
+		err = k_msgq_get(&ipc_block_queue, &block, K_FOREVER);
+		__ASSERT(err == 0, "Failed to get data from msgq: %d.", err);
+
+		tmp = (const uint8_t *)block.ptr;
+		type = (enum hci_h4_type)*tmp++;
+		block.len -= sizeof(type);
+
+		switch (type) {
+		case HCI_H4_CMD:
+			buf = recv_cmd(tmp, block.len);
+			break;
+
+		case HCI_H4_ACL:
+			buf = recv_acl(tmp, block.len);
+			break;
+
+		case HCI_H4_ISO:
+			buf = recv_iso(tmp, block.len);
+			break;
+
+		default:
+			LOG_ERR("Unknown HCI type %u.", type);
+			buf = NULL;
+			break;
+		}
+
+		err = ipc_service_release_rx_buffer(&hci_ept, (void *)block.ptr);
+		if (err < 0) {
+			LOG_ERR("Failed to release rx buffer: %d.", err);
+		} else {
+			LOG_DBG("Released rx buffer with ret %d.", err);
+		}
+
+		if (buf) {
+			k_fifo_put(&tx_queue, buf);
+		}
 	}
 }
+
+K_THREAD_DEFINE(queue_thread_id, CONFIG_QUEUE_THREAD_STACK_SIZE, queue_thread,
+		NULL, NULL, NULL,
+		CONFIG_QUEUE_THREAD_PRIO, 0, 0);
 
 static void tx_thread(void)
 {

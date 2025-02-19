@@ -17,8 +17,7 @@
 
 #include <zephyr/net/wifi.h>
 #include <zephyr/net/wifi_mgmt.h>
-#include <net/wifi_credentials.h>
-#include <net/wifi_mgmt_ext.h>
+#include <zephyr/net/wifi_credentials.h>
 
 #include <bluetooth/services/wifi_provisioning.h>
 
@@ -34,11 +33,11 @@
 #define ADV_DATA_FLAG_CONN_STATUS_BIT BIT(1)
 #define ADV_DATA_RSSI_IDX             (BT_UUID_SIZE_128 + 3)
 
-#define PROV_BT_LE_ADV_PARAM_FAST BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE, \
+#define PROV_BT_LE_ADV_PARAM_FAST BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONN, \
 						BT_GAP_ADV_FAST_INT_MIN_2, \
 						BT_GAP_ADV_FAST_INT_MAX_2, NULL)
 
-#define PROV_BT_LE_ADV_PARAM_SLOW BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONNECTABLE, \
+#define PROV_BT_LE_ADV_PARAM_SLOW BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONN, \
 						BT_GAP_ADV_SLOW_INT_MIN, \
 						BT_GAP_ADV_SLOW_INT_MAX, NULL)
 

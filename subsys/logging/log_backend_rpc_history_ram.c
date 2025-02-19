@@ -28,23 +28,31 @@ void log_rpc_history_init(void)
 
 void log_rpc_history_push(const union log_msg_generic *msg)
 {
-	uint32_t wlen;
-	union log_msg_generic *copy;
-	int len;
+	size_t wlen;
+	union mpsc_pbuf_generic *dst;
+	uint8_t *dst_data;
+	uint8_t *src_data;
 
-	wlen = log_msg_generic_get_wlen(&msg->buf);
-	copy = (union log_msg_generic *)mpsc_pbuf_alloc(&log_history_pbuf, wlen, K_NO_WAIT);
-
-	if (!copy) {
+	wlen = log_msg_generic_get_wlen((union mpsc_pbuf_generic *)msg);
+	if (wlen * sizeof(uint32_t) <= sizeof(struct mpsc_pbuf_hdr)) {
 		return;
 	}
 
-	copy->log.hdr = msg->log.hdr;
-	len = cbprintf_package_copy((void *)msg->log.data, msg->log.hdr.desc.package_len,
-				    copy->log.data, msg->log.hdr.desc.package_len, 0, NULL, 0);
-	__ASSERT_NO_MSG(len == msg->log.hdr.desc.package_len);
+	dst = mpsc_pbuf_alloc(&log_history_pbuf, wlen, K_NO_WAIT);
+	if (!dst) {
+		return;
+	}
 
-	mpsc_pbuf_commit(&log_history_pbuf, &copy->buf);
+	/* First word contains internal mpsc packet flags and when copying
+	 * those flags must be omitted.
+	 */
+	dst_data = (uint8_t *)dst + sizeof(struct mpsc_pbuf_hdr);
+	src_data = (uint8_t *)msg + sizeof(struct mpsc_pbuf_hdr);
+
+	dst->hdr.data = msg->buf.hdr.data;
+	memcpy(dst_data, src_data, wlen * sizeof(uint32_t) - sizeof(struct mpsc_pbuf_hdr));
+
+	mpsc_pbuf_commit(&log_history_pbuf, dst);
 }
 
 void log_rpc_history_set_overwriting(bool overwriting)

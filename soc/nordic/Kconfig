@@ -1,0 +1,13 @@
+# Nordic Semiconductor nRFx MCU line
+
+# Copyright (c) 2016-2025 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+# This file is contains Zephyr build system Kconfig references and is not
+# re-usable outside the Zephyr tree.
+
+if SOC_FAMILY_NORDIC_NRF
+
+rsource "*/Kconfig"
+
+endif # SOC_FAMILY_NORDIC_NRF

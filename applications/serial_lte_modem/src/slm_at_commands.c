@@ -81,7 +81,7 @@ enum sleep_modes {
 static struct {
 	struct k_work_delayable work;
 	uint32_t mode;
-} sleep;
+} sleep_control;
 #endif
 
 bool verify_datamode_control(uint16_t time_limit, uint16_t *time_limit_min);
@@ -130,13 +130,13 @@ static int handle_at_slmver(enum at_parser_cmd_type cmd_type, struct at_parser *
 
 static void go_sleep_wk(struct k_work *)
 {
-	if (sleep.mode == SLEEP_MODE_IDLE) {
+	if (sleep_control.mode == SLEEP_MODE_IDLE) {
 		if (slm_at_host_power_off() == 0) {
 			slm_enter_idle();
 		} else {
 			LOG_ERR("failed to power off UART");
 		}
-	} else if (sleep.mode == SLEEP_MODE_DEEP) {
+	} else if (sleep_control.mode == SLEEP_MODE_DEEP) {
 		slm_enter_sleep();
 	}
 }
@@ -148,12 +148,13 @@ static int handle_at_sleep(enum at_parser_cmd_type cmd_type, struct at_parser *p
 	int ret = -EINVAL;
 
 	if (cmd_type == AT_PARSER_CMD_TYPE_SET) {
-		ret = at_parser_num_get(parser, 1, &sleep.mode);
+		ret = at_parser_num_get(parser, 1, &sleep_control.mode);
 		if (ret) {
 			return -EINVAL;
 		}
-		if (sleep.mode == SLEEP_MODE_DEEP || sleep.mode == SLEEP_MODE_IDLE) {
-			k_work_reschedule(&sleep.work, SLM_UART_RESPONSE_DELAY);
+		if (sleep_control.mode == SLEEP_MODE_DEEP ||
+		    sleep_control.mode == SLEEP_MODE_IDLE) {
+			k_work_reschedule(&sleep_control.work, SLM_UART_RESPONSE_DELAY);
 		} else {
 			ret = -EINVAL;
 		}
@@ -376,7 +377,7 @@ int slm_at_init(void)
 	int err;
 
 #if POWER_PIN_IS_ENABLED
-	k_work_init_delayable(&sleep.work, go_sleep_wk);
+	k_work_init_delayable(&sleep_control.work, go_sleep_wk);
 #endif
 
 	err = slm_at_tcp_proxy_init();

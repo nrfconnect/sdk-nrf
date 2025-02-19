@@ -21,7 +21,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/util.h>
 
-LOG_MODULE_REGISTER(remote);
+LOG_MODULE_REGISTER(remote, LOG_LEVEL_DBG);
 
 static K_MUTEX_DEFINE(history_transfer_mtx);
 static uint32_t history_transfer_id;
@@ -190,4 +190,17 @@ int log_rpc_get_crash_log(size_t offset, char *buffer, size_t buffer_length)
 	}
 
 	return log_chunk_size;
+}
+
+void log_rpc_echo(enum log_rpc_level level, const char *message)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	size_t message_size = strlen(message);
+
+	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, 4 + message_size);
+	nrf_rpc_encode_uint(&ctx, level);
+	nrf_rpc_encode_str(&ctx, message, message_size);
+	nrf_rpc_cbor_cmd_rsp_no_err(&log_rpc_group, LOG_RPC_CMD_ECHO, &ctx);
+
+	nrf_rpc_cbor_decoding_done(&log_rpc_group, &ctx);
 }

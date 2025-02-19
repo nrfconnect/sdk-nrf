@@ -37,7 +37,7 @@ config NET_L2_ZIGBEE
 	depends on NETWORKING
 	select NET_L2_CUSTOM_IEEE802154
 	select NET_PKT_TIMESTAMP
-	select IEEE802154_NRF5_FCS_IN_LENGTH
+	select IEEE802154_L2_PKT_INCL_FCS
 
 choice ZIGBEE_CHANNEL_SELECTION_MODE
 	prompt "Zigbee channel selection mode"

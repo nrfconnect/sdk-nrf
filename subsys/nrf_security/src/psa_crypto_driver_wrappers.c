@@ -833,6 +833,9 @@ psa_status_t psa_driver_wrapper_cipher_encrypt(const psa_key_attributes_t *attri
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
 		 */
+#if defined(PSA_NEED_CRACEN_KMU_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN_KMU:
+#endif
 #if defined(PSA_NEED_CRACEN_CIPHER_DRIVER)
 		status = cracen_cipher_encrypt(attributes, key_buffer, key_buffer_size, alg, iv,
 					       iv_length, input, input_length, output, output_size,
@@ -902,6 +905,9 @@ psa_status_t psa_driver_wrapper_cipher_decrypt(const psa_key_attributes_t *attri
 	psa_key_location_t location = PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime);
 
 	switch (location) {
+#if defined(PSA_NEED_CRACEN_KMU_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN_KMU:
+#endif
 #if defined(PSA_NEED_CRACEN_CIPHER_DRIVER)
 	case PSA_KEY_LOCATION_CRACEN:
 #endif

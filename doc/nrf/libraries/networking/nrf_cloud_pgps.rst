@@ -38,7 +38,7 @@ With A-GNSS, new ephemerides are needed on average every two hours, or if the fi
 Configuration
 *************
 
-Configure the :kconfig:option:`CONFIG_NRF_CLOUD_PGPS` Kconfig option to enable or disable the use of this library.
+To enable this library, set the :kconfig:option:`CONFIG_NRF_CLOUD` and :kconfig:option:`CONFIG_NRF_CLOUD_PGPS` Kconfig options.
 
 Configure one of the following options to control the network transport for P-GPS requests and responses:
 

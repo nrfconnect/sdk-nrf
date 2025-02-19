@@ -9,6 +9,7 @@ zephyr_library()
 zephyr_library_sources(
   hci_driver.c
   hci_internal.c
+  hci_internal_wrappers.c
 )
 
 zephyr_library_sources_ifdef(
@@ -19,6 +20,11 @@ zephyr_library_sources_ifdef(
 zephyr_library_sources_ifdef(
   CONFIG_BT_CTLR_ECDH
   ecdh.c
+)
+
+zephyr_library_sources_ifdef(
+  CONFIG_BT_CHANNEL_SOUNDING
+  cs_antenna_switch.c
 )
 
 zephyr_library_link_libraries_ifdef(

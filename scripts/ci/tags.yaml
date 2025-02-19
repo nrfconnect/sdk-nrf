@@ -940,6 +940,11 @@ ci_tests_subsys_audio_module:
     - nrf/subsys/audio/
     - nrf/tests/subsys/audio/
 
+ci_tests_subsys_bluetooth_controller:
+  files:
+    - nrf/subsys/bluetooth/controller
+    - nrf/tests/subsys/bluetooth/controller
+
 ci_tests_subsys_mpsl:
   files:
     - nrf/subsys/mpsl/
@@ -965,6 +970,7 @@ ci_tests_subsys_nfc:
 ci_tests_lib_nrf_modem_lib:
   files:
     - nrf/lib/nrf_modem_lib/
+    - nrf/lib/pdn
     - nrf/tests/lib/nrf_modem_lib/
     - nrf/tests/mocks/nrf_modem_at/
     - zephyr/subsys/net/
@@ -1175,6 +1181,12 @@ ci_tests_lib_uicc_lwm2m:
     - nrf/lib/uicc_lwm2m/
     - nrf/tests/lib/uicc_lwm2m/
 
+ci_tests_lib_modem_key_mgmt:
+  files:
+    - nrfxlib/nrf_modem/
+    - nrf/lib/modem_key_mgmt/
+    - nrf/tests/lib/modem_key_mgmt/
+
 ci_tests_drivers_lpuart:
   files:
     - modules/hal/nordic/nrfx/
@@ -1289,12 +1301,14 @@ ci_tests_benchmarks_current_consumption:
     - zephyr/soc/nordic/
     - zephyr/drivers/sensor/nordic/temp/
 
-ci_tests_drivers_egpio:
+ci_tests_drivers_sdp:
   files:
-    - nrf/applications/sdp/gpio/
+    - nrf/applications/sdp/
     - nrf/drivers/gpio/
-    - nrf/snippets/emulated-gpio/
+    - nrf/drivers/mspi/
+    - nrf/snippets/sdp/
     - nrf/tests/drivers/gpio/egpio_basic_api/
+    - nrf/tests/drivers/sdp_asm/
     - zephyr/drivers/mbox/
     - zephyr/subsys/ipc/ipc_service/
 
@@ -1323,6 +1337,16 @@ ci_tests_drivers_pwm:
     - nrf/tests/drivers/pwm/
     - zephyr/drivers/gpio/
     - zephyr/drivers/pwm/
+    - zephyr/soc/nordic/
+
+ci_tests_drivers_uart:
+  files:
+    - modules/hal/nordic/nrfx/
+    - nrf/tests/drivers/uart/
+    - zephyr/boards/nordic/nrf54*
+    - zephyr/drivers/gpio/
+    - zephyr/drivers/serial/
+    - zephyr/dts/common/nordic/
     - zephyr/soc/nordic/
 
 ci_tests_drivers_sensor:
@@ -1395,6 +1419,7 @@ ci_samples_nrf_rpc:
     - modules/lib/open-amp/
     - nrf/samples/nrf_rpc/
     - nrf/subsys/bluetooth/
+    - nrf/subsys/logging/
     - nrf/subsys/mpsl/
     - nrf/subsys/net/openthread/
     - nrf/subsys/nrf_rpc/
@@ -1452,6 +1477,7 @@ ci_samples_mpsl:
     - nrf/samples/mpsl/
     - nrf/samples/nrf5340/empty_app_core/
     - nrf/subsys/mpsl/
+    - nrfxlib/mpsl/
 
 ci_samples_caf:
   files:

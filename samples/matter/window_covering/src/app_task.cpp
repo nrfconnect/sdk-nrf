@@ -12,7 +12,7 @@
 #include "app/task_executor.h"
 
 #include <app/clusters/identify-server/identify-server.h>
-#include <app/server/OnboardingCodesUtil.h>
+#include <setup_payload/OnboardingCodesUtil.h>
 
 #include <zephyr/logging/log.h>
 

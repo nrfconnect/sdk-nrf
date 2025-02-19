@@ -25,10 +25,6 @@ manifest:
       url-base: https://github.com/zephyrproject-rtos
     - name: throwtheswitch
       url-base: https://github.com/ThrowTheSwitch
-    - name: armmbed
-      url-base: https://github.com/ARMmbed
-    - name: nordicsemi
-      url-base: https://github.com/NordicSemiconductor
     - name: dragoon
       url-base: https://projecttools.nordicsemi.no/bitbucket/scm/drgn
     - name: memfault
@@ -70,7 +66,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 693769a5c7354efce42af62b6c7f68f77c6678b7
+      revision: 80cc5318ea91317d25fdeffb70e59507d68a1966
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -94,6 +90,7 @@ manifest:
           - fatfs
           - hal_nordic
           - hal_st # required for ST sensors (unrelated to STM32 MCUs)
+          - hal_tdk # required for Invensense sensors such as ICM42670
           - hal_wurthelektronik
           - hostap
           - liblc3
@@ -131,7 +128,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 3a25855215a2cfc64c3f0e2dba3ada3f11df7816
+      revision: 47faf767ec38947bd317dee906d44bdaaeb59368
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -148,7 +145,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 1cdbd26200df91ae3500daf6f5e15fae686ffdf8
+      revision: ee3173be8a90a858e83bb7597147c740470056e4
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -160,7 +157,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: a0aea7ec002eab768238613bb18bd6562c04a160
+      revision: cb40b0d0dcc8135c7cf9dc78f2b47d89404047ad
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
@@ -182,17 +179,11 @@ manifest:
       revision: 181c9cad332b9388a27e7b4304822e3551b033ac
       groups:
         - nrf-802154
-    - name: soc-hwmv1
-      repo-path: sdk-soc-hwmv1
-      revision: be0500992bd8c222118b651b88d1f3714855a3aa
-      path: modules/soc-hwmv1
-      groups:
-        - soc-hwmv1
     - name: dragoon
       # Only for internal Nordic development
       repo-path: dragoon.git
       remote: dragoon
-      revision: d85f37138db71ea6376260fb3ed5819faa4b97ee
+      revision: a400249e5d068afcfe0aa9d0c2f03aff28590c94
       submodules: true
       groups:
         - dragoon
@@ -207,12 +198,12 @@ manifest:
           compare-by-default: false
     - name: sidewalk
       repo-path: sdk-sidewalk
-      revision: f274ce8ab97d1504de4c6b372bb98d4dc41bacc5
+      revision: adba7ad6bfdcd7f773c2897dd2dc3bd8c24b9242
       groups:
         - sidewalk
     - name: find-my
       repo-path: sdk-find-my
-      revision: 719d36b15db3f228b0d83c52f13b97145d971ea4
+      revision: b68f490a099b813e7edc31fc26946b3af747fbef
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -240,17 +231,17 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: e344d15117bfb00c583b3667a047329210ee0ee8
+      revision: 08ab8a45872be6c996b79ac6d0119fe14cc1bd3f
       userdata:
         ncs:
           upstream-url: https://github.com/openthread/openthread
           upstream-sha: c6eaeda5a1c1c5dbb24dce7e027340cb8893a77b
           compare-by-default: false
     - name: suit-generator
-      revision: b37972cd90c122bb8f384f2509b72fad62c3aa4b
+      revision: 2e22c176ba50930604519c3f70ee8ae5ba2a09ac
       path: modules/lib/suit-generator
     - name: suit-processor
-      revision: a499bcadceff8877da63a0a140c6a91ff2f87b25
+      revision: 726c585a064e957d5e2074aed2d680b1d2a8b5c4
       path: modules/lib/suit-processor
     - name: doc-internal
       repo-path: doc-internal

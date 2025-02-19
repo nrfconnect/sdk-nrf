@@ -12,7 +12,7 @@ tests:
     integration_platforms:
       - frdm_k64f
 
-  sample.basic.blinky.egpio_icmsg:
+  sample.basic.blinky.sdp.gpio.icmsg:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -32,7 +32,7 @@ tests:
         - "LED state: ON"
         - "LED state: OFF"
 
-  sample.basic.blinky.egpio_mbox:
+  sample.basic.blinky.sdp.gpio.mbox:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -52,7 +52,7 @@ tests:
         - "LED state: ON"
         - "LED state: OFF"
 
-  sample.basic.blinky.egpio_icbmsg:
+  sample.basic.blinky.sdp.gpio.icbmsg:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp

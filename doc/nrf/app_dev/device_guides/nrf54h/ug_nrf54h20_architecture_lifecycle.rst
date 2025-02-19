@@ -55,3 +55,10 @@ This figure shows the states and transitions (both forward and backward ones) th
 
 Changing the lifecycle state will be useful during development.
 Test devices in their final configuration would require the device to be in the deployed state, however, updating the Secure Domain firmware and the System Controller firmware will be easier with the device in RoT state.
+
+For more information, see the following pages:
+
+* :ref:`ug_nrf54h20_gs`
+* :ref:`ug_nrf54h20_custom_pcb`
+* :ref:`ug_nrf54h20_suit_dfu`
+* :ref:`ug_nrf54h20_keys`

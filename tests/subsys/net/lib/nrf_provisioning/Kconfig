@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NRF_PROVISIONING
+	bool "nRF Provisioning"
+	select EXPERIMENTAL
+	#depends on NRF_MODEM_LIB
+	depends on SETTINGS
+	imply FCB
+	help
+	  Redefinition to disable modemlib requirement from the tests as we want to mock it.
+
+menuconfig NRF_PROVISIONING_CODEC
+	bool "nRF Provisioning codec"
+	select EXPERIMENTAL
+	#depends on NRF_MODEM_LIB
+	help
+	  Redefinition to disable modemlib requirement from the tests as we want to mock it.
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu

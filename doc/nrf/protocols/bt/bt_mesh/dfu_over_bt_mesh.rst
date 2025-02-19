@@ -201,11 +201,28 @@ Automated metadata generation
 By enabling the ``SB_CONFIG_DFU_ZIP_BLUETOOTH_MESH_METADATA`` option in sysbuild, the metadata will be automatically parsed from the ``.elf`` and ``.config`` files.
 The parsed data is stored in the :file:`ble_mesh_metadata.json` file.
 The file is placed in the :file:`dfu_application.zip` archive in the build folder of the application.
-Additionally, the metadata string required by the ``mesh models dfu slot add`` command will be printed in the command line window when the application is built::
+Additionally, the metadata string and, optionally, the firmware ID required by the ``mesh models dfu slot add`` command are printed in the command-line window when the application is built::
 
   Bluetooth Mesh Composition metadata generated:
     Encoded metadata: 020000000000000094cf24017c26f3710100
+    Firmware ID: 59000200000000000000
     Full metadata written to: APPLICATION_FOLDER\build\zephyr\dfu_application.zip
+
+You can generate the Firmware ID using one of the following options:
+
+* To use a user-supplied hex-string as the Firmware ID, enable the ``SB_CONFIG_DFU_ZIP_BLUETOOTH_MESH_METADATA_FWID_CUSTOM`` option.
+  This is the default behavior.
+
+  * If this option is selected, the ``SB_CONFIG_DFU_ZIP_BLUETOOTH_MESH_METADATA_FWID_CUSTOM_HEX`` option must be set to a valid Firmware ID.
+    At minimum, it should include a Company ID in little-endian order.
+    The rest of the string is vendor-specific version information.
+  * When using the :ref:`zephyr:bluetooth_mesh_dfd_srv` for distribution, the number of bytes in the Firmware ID of images used during distribution must not exceed the value of the :kconfig:option:`CONFIG_BT_MESH_DFU_FWID_MAXLEN` Kconfig option set on the distributor node.
+
+* To use a Firmware ID consisting of the values of the :kconfig:option:`CONFIG_BT_COMPANY_ID` and the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig options, enable the ``SB_CONFIG_DFU_ZIP_BLUETOOTH_MESH_METADATA_FWID_MCUBOOT_VERSION`` option.
+
+.. note::
+   The Firmware ID (FWID) specified in the JSON file must match the ``fwid`` used when initializing the :ref:`zephyr:bluetooth_mesh_dfu_srv`.
+   This ensures that after the firmware update is applied, the node will respond with the correct Current Firmware ID in the Firmware Update Information Status message.
 
 .. note::
    It is required that the Composition Data is declared with the ``const`` qualifier.
@@ -252,7 +269,8 @@ For this particular example, the following output is generated:
           ]
         },
         "composition_hash": "0x71f3267c",
-        "encoded_metadata": "020000000000000094cf24017c26f3710100"
+        "encoded_metadata": "020000000000000094cf24017c26f3710100",
+        "firmware_id": "59000200000000000000"
       }
 
 Manual metadata generation

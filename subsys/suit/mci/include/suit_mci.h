@@ -143,22 +143,23 @@ mci_err_t suit_mci_independent_update_policy_get(const suit_manifest_class_id_t 
 mci_err_t suit_mci_manifest_class_id_validate(const suit_manifest_class_id_t *class_id);
 
 /**
- * @brief Verifying whether specific key_id is valid for signing/checking signature of specific
- *manifest class
+ * @brief Verifying whether specific key_id and algorithm is valid for signing/checking
+ * signature of specific manifest class
  *
  * @param[in]   class_id	Manifest class id
  * @param[in]   key_id		Identifier of key utilized for manifest signing. key_id may be equal
  *				to 0. In that case function returns success if manifest class id
  *				does not require signing.
+ * @param[in]   cose_alg	COSE algorithm identifier
  *
  * @retval SUIT_PLAT_SUCCESS        on success
  * @retval SUIT_PLAT_ERR_INVAL      invalid parameter, i.e. null pointer
  * @retval MCI_ERR_MANIFESTCLASSID  manifest class id unsupported
- * @retval MCI_ERR_WRONGKEYID       provided key ID is invalid for signing
+ * @retval MCI_ERR_WRONGKEYID       provided key ID or algorithm is invalid for signing
  *                                  for provided manifest class
  */
-mci_err_t suit_mci_signing_key_id_validate(const suit_manifest_class_id_t *class_id,
-					   uint32_t key_id);
+mci_err_t suit_mci_signing_key_id_and_alg_validate(const suit_manifest_class_id_t *class_id,
+						   uint32_t key_id, int32_t cose_alg);
 
 #ifdef CONFIG_ZTEST
 /**

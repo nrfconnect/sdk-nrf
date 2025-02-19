@@ -219,6 +219,15 @@ static void sync_rest_client_data(struct nrf_cloud_rest_context *const rest_ctx,
 	}
 }
 
+static void rest_error_response_log(struct nrf_cloud_rest_context *const rest_ctx)
+{
+	LOG_ERR("REST request was rejected. Response status: %d", rest_ctx->status);
+	if (rest_ctx->response && rest_ctx->response_len > 0) {
+		LOG_ERR("Response body: %.*s",
+			MIN(rest_ctx->response_len, 256), rest_ctx->response);
+	}
+}
+
 static int do_rest_client_request(struct nrf_cloud_rest_context *const rest_ctx,
 	struct rest_client_req_context *const req,
 	struct rest_client_resp_context *const resp,
@@ -243,16 +252,17 @@ static int do_rest_client_request(struct nrf_cloud_rest_context *const rest_ctx,
 	}
 
 	if (ret) {
-		LOG_DBG("REST client request failed with error code %d", ret);
+		LOG_ERR("REST client request failed with error code %d", ret);
 		return ret;
 	} else if (rest_ctx->status == NRF_CLOUD_HTTP_STATUS_NONE) {
-		LOG_DBG("REST request endpoint closed connection without reply.");
+		LOG_ERR("REST request endpoint closed connection without reply.");
 		return -ESHUTDOWN;
 	} else if (check_status_good && (rest_ctx->status != NRF_CLOUD_HTTP_STATUS_OK) &&
 					(rest_ctx->status != NRF_CLOUD_HTTP_STATUS_ACCEPTED)) {
-		LOG_DBG("REST request was rejected. Response status: %d", rest_ctx->status);
+		rest_error_response_log(rest_ctx);
 		return -EBADMSG;
 	} else if (expect_body && (!rest_ctx->response || !rest_ctx->response_len)) {
+		LOG_ERR("REST response without body received.");
 		return -ENODATA;
 	}
 
@@ -476,6 +486,7 @@ int nrf_cloud_rest_fota_job_get(struct nrf_cloud_rest_context *const rest_ctx,
 
 	if (rest_ctx->status != NRF_CLOUD_HTTP_STATUS_OK &&
 	    rest_ctx->status != NRF_CLOUD_HTTP_STATUS_NOT_FOUND) {
+		rest_error_response_log(rest_ctx);
 		ret = -EBADMSG;
 		goto clean_up;
 	}
@@ -827,6 +838,7 @@ int nrf_cloud_rest_agnss_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 		}
 
 		if (rest_ctx->status != NRF_CLOUD_HTTP_STATUS_PARTIAL) {
+			rest_error_response_log(rest_ctx);
 			ret = -EBADMSG;
 			goto clean_up;
 		}
@@ -994,7 +1006,7 @@ int nrf_cloud_rest_disconnect(struct nrf_cloud_rest_context *const rest_ctx)
 		return -ENOTCONN;
 	}
 
-	int err = close(rest_ctx->connect_socket);
+	int err = zsock_close(rest_ctx->connect_socket);
 	if (err) {
 		LOG_ERR("Failed to close socket, error: %d", errno);
 		err = -EIO;
@@ -1312,6 +1324,7 @@ int nrf_cloud_rest_shadow_transform_request(struct nrf_cloud_rest_context *const
 	}
 
 	if (rest_ctx->status != NRF_CLOUD_HTTP_STATUS_OK) {
+		rest_error_response_log(rest_ctx);
 		ret = -EBADMSG;
 		goto clean_up;
 	}

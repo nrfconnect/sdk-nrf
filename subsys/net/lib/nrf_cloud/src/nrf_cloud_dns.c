@@ -15,13 +15,14 @@
 LOG_MODULE_REGISTER(nrf_cloud_dns, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
 static int nrf_cloud_try_addresses(const char *const host_name, uint16_t port,
-				   struct addrinfo *hints, nrf_cloud_connect_host_cb connect_cb)
+				   struct zsock_addrinfo *hints,
+				   nrf_cloud_connect_host_cb connect_cb)
 {
 	int err = 0;
-	struct addrinfo *info;
-	struct addrinfo *result;
+	struct zsock_addrinfo *info;
+	struct zsock_addrinfo *result;
 
-	err = getaddrinfo(host_name, NULL, hints, &info);
+	err = zsock_getaddrinfo(host_name, NULL, hints, &info);
 	if (err) {
 		LOG_DBG("getaddrinfo for %s, port: %d failed: %d, errno: %d",
 			host_name, port, err, errno);
@@ -47,8 +48,9 @@ static int nrf_cloud_try_addresses(const char *const host_name, uint16_t port,
 			break;
 		}
 
-		inet_ntop(sa->sa_family, (void *)&((struct sockaddr_in *)sa)->sin_addr,
-			  ip, sizeof(ip));
+		zsock_inet_ntop(sa->sa_family,
+				(void *)&((struct sockaddr_in *)sa)->sin_addr,
+				ip, sizeof(ip));
 
 		LOG_DBG("Trying IP address and port for server %s: %s, port: %d",
 			host_name, ip, port);
@@ -66,15 +68,16 @@ static int nrf_cloud_try_addresses(const char *const host_name, uint16_t port,
 		/* Pass the socket back to the initial caller, if creating/connecting it was
 		 * successful.
 		 */
-		freeaddrinfo(result);
+		zsock_freeaddrinfo(result);
 		return sock;
 	}
 
-	freeaddrinfo(result);
+	zsock_freeaddrinfo(result);
 	return -ECONNREFUSED;
 }
 
-int nrf_cloud_connect_host(const char *hostname, uint16_t port, struct addrinfo *hints,
+int nrf_cloud_connect_host(const char *hostname, uint16_t port,
+			   struct zsock_addrinfo *hints,
 			   nrf_cloud_connect_host_cb connect_cb)
 {
 	int sock;
@@ -92,7 +95,7 @@ int nrf_cloud_connect_host(const char *hostname, uint16_t port, struct addrinfo 
 	LOG_DBG("Trying static IPv4 address: %s, port: %d",
 		CONFIG_NRF_CLOUD_STATIC_IPV4_ADDR, port);
 
-	inet_pton(AF_INET, CONFIG_NRF_CLOUD_STATIC_IPV4_ADDR, &(static_addr.sin_addr));
+	zsock_inet_pton(AF_INET, CONFIG_NRF_CLOUD_STATIC_IPV4_ADDR, &(static_addr.sin_addr));
 	static_addr.sin_family = AF_INET;
 	static_addr.sin_port = static_port;
 

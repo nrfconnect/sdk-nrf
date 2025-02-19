@@ -11,8 +11,8 @@ Installing the |NCS|
 
 There are different ways to install the |NCS|, depending on your preferred development environment:
 
-* Using |VSC| and the |nRFVSC| (recommended)
-* Using command line and nRF Util
+* Using |VSC| and the :ref:`requirements_nrfvsc` (recommended)
+* Using command line and :ref:`requirements_nrf_util`
 
 Regardless of which way you choose, the following steps install the |NCS| source code and the |NCS| :term:`toolchain`.
 This includes everything that is required by Zephyr's :ref:`zephyr:getting_started` together with additional tools and Python dependencies that the |NCS| uses.
@@ -38,8 +38,7 @@ Before you start setting up the toolchain, install available updates for your :r
 Install prerequisites
 *********************
 
-Depending on your preferred development environment, install the following required tools.
-
+Depending on your preferred development environment, install the following software tools.
 
 .. tabs::
 
@@ -48,12 +47,13 @@ Depending on your preferred development environment, install the following requi
       * All operating systems:
 
         * The latest version of the :ref:`requirements_clt` package.
-          Check :ref:`operating system versions that support this tool <additional_nordic_sw_tools>` and download the installer from the `nRF Command Line Tools`_ page.
-        * The |jlink_ver_vsc| of :ref:`SEGGER J-Link <requirements_jlink>`.
+          Check :ref:`operating system versions that support this tool <additional_nordic_sw_tools>` and `download the installer <nRF Command Line Tools Downloads_>`_.
+        * The |jlink_ver_vsc| of SEGGER J-Link.
           Download it from the `J-Link Software and Documentation Pack`_ page.
           On Windows, `install it manually together with SEGGER USB Driver for J-Link <nRF Util prerequisites_>`_.
         * The latest version of |VSC| for your operating system from the `Visual Studio Code download page`_.
         * In |VSC|, the latest version of the `nRF Connect for VS Code Extension Pack`_.
+          The |nRFVSC| comes with its own bundled version of some of the nRF Util commands.
 
       * Additionally, for Windows users: SEGGER USB Driver for J-Link, required for support of older Nordic Semiconductor devices in nRF Util.
         For information on how to install the USB Driver, see the `nRF Util prerequisites`_ documentation.
@@ -64,19 +64,19 @@ Depending on your preferred development environment, install the following requi
       * All operating systems:
 
         * The latest version of nRF Util, a unified command-line utility for Nordic Semiconductor products.
-          Check :ref:`operating system versions that support this tool <additional_nordic_sw_tools>` and download the installer from the `nRF Util development tool`_ page.
+          Check :ref:`operating system versions that support this tool <additional_nordic_sw_tools>` and `download the installer <nRF Util Downloads_>`_.
 
           .. note::
               After downloading the nRF Util executable, move it to a directory that is in the system :envvar:`PATH`.
               On macOS and Linux, the downloaded file also needs to be given execute permission by typing `chmod +x nrfutil` or by checking the checkbox in the file properties.
 
         * The latest version of the :ref:`requirements_clt` package.
-          Check :ref:`operating system versions that support this tool <additional_nordic_sw_tools>` and download the installer from the `nRF Command Line Tools`_ page.
+          Check :ref:`operating system versions that support this tool <additional_nordic_sw_tools>` and `download the installer <nRF Command Line Tools Downloads_>`_.
 
          .. note::
                After downloading and installing the tools, add nrfjprog to the system :envvar:`PATH` in the environment variables.
 
-        * The |jlink_ver| of :ref:`SEGGER J-Link <requirements_jlink>`.
+        * The |jlink_ver| of SEGGER J-Link.
           Download it from the `J-Link Software and Documentation Pack`_ page.
           On Windows, `install it manually together with SEGGER USB Driver for J-Link <nRF Util prerequisites_>`_.
 
@@ -93,7 +93,7 @@ Install the |NCS| toolchain
 ***************************
 
 The |NCS| :term:`toolchain` includes the Zephyr SDK and then adds tools and modules required to build |NCS| samples and applications on top of it.
-These include the :ref:`required tools <requirements_toolchain_tools>`, the :ref:`Python dependencies <requirements_toolchain_python_deps>`, and the :ref:`GN tool <ug_matter_gs_tools_gn>` for creating :ref:`ug_matter` applications.
+These include the :ref:`required SDK tools <requirements_toolchain_tools>`, the :ref:`Python dependencies <requirements_toolchain_python_deps>`, and the :ref:`GN tool <ug_matter_gs_tools_gn>` for creating :ref:`ug_matter` applications.
 
 .. note::
     When you first install the |NCS|, it is recommended to install the latest released, stable versions of the SDK and the toolchain.
@@ -281,7 +281,10 @@ For more information about the repository and development model, see the :ref:`d
 
             west init -m https\://github.com/nrfconnect/sdk-nrf --mr *nRFConnectSDK_revision* *nRFConnectSDK_revision*
 
-         In this command, the first *nRFConnectSDK_revision* identifies the revision of the |NCS| and the second *nRFConnectSDK_revision* is the name of the workspace directory that will be created by west.
+         In this command:
+
+         - The first *nRFConnectSDK_revision* identifies the revision of the |NCS|.
+         - The second *nRFConnectSDK_revision* is the name of the workspace directory that will be created by west.
 
          The command creates the *nRFConnectSDK_revision* subdirectory and checks out the given revision of the |NCS| inside it.
          For example:
@@ -319,7 +322,7 @@ For more information about the repository and development model, see the :ref:`d
 
          .. west-error-end
 
-      #. Enter the following command to clone the project repositories:
+      #. Enter the *nRFConnectSDK_revision* subdirectory and run the following command to clone the project repositories:
 
          .. code-block:: console
 
@@ -421,8 +424,8 @@ Define the required environment variables as follows, depending on your operatin
 
 .. _additional_deps:
 
-System-wide installation
-************************
+Alternative method: System-wide installation
+********************************************
 
 System-wide installation is an alternative to the recommended installation methods using the |nRFVSC| or nRF Util.
 It gives you more control over each of the required tools, but requires more familiarity with Zephyr and with each of the tools.
@@ -643,8 +646,8 @@ To install the |NCS| system-wide, complete the following steps:
 .. _gs_assistant:
 .. _auto_installation_tcm_setup:
 
-Installation with Toolchain Manager
-***********************************
+Alternative method: Installation with Toolchain Manager
+*******************************************************
 
 Toolchain Manager is an SDK and toolchain installer for the |NCS|.
 It is available from `nRF Connect for Desktop`_, a cross-platform tool that provides different development applications for the |NCS| and Nordic Semiconductor products.

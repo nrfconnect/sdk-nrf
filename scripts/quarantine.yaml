@@ -26,11 +26,11 @@
     - sample.benchmark.coremark.heap_memory
     - sample.benchmark.coremark.multiple_threads
   platforms:
-    - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31409"
 
 - scenarios:
-    - applications.matter_bridge
+    - applications.matter_bridge.debug
     - applications.matter_bridge.br_ble
     - applications.matter_bridge.br_ble.memory_profiling
     - applications.matter_bridge.release
@@ -38,5 +38,55 @@
     - sample.openthread.cli
     - sample.openthread.cli.singleprotocol
   platforms:
-    - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31493"
+
+- scenarios:
+    - sample.bluetooth.mesh.light_ctrl
+    - sample.bluetooth.mesh.light_ctrl.emds
+  platforms:
+    - nrf52dk/nrf52832
+  comment: "To be fixed after upmerge. Footprint should be reduced. NCSDK-31428"
+
+- scenarios:
+    - applications.connectivity_bridge
+  platforms:
+    - thingy91x/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31757"
+
+- scenarios:
+    - sample.matter.light_bulb.aws
+  platforms:
+    - nrf7002dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31774"
+
+- scenarios:
+    - sample.bluetooth.peripheral_uart
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31800"
+
+- scenarios:
+    - sample.nrf7001_eks.ble-wifi-provision
+    - sample.nrf7002_eks.ble-wifi-provision
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+  comment: "https://github.com/nrfconnect/sdk-nrf/pull/20439"
+
+- scenarios:
+    - sample.softap.wifi.provision
+  platforms:
+    - nrf7002dk/nrf5340/cpuapp/ns
+  comment: "https://github.com/nrfconnect/sdk-nrf/pull/20439"
+
+- scenarios:
+    - sample.nrf7002.ble-wifi-provision
+  platforms:
+    - nrf7002dk/nrf5340/cpuapp
+  comment: "https://github.com/nrfconnect/sdk-nrf/pull/20439"
+
+- scenarios:
+    - sample.nrf7002_eb.thingy53.ble-wifi-provision
+  platforms:
+    - thingy53/nrf5340/cpuapp
+  comment: "https://github.com/nrfconnect/sdk-nrf/pull/20439"

@@ -18,8 +18,6 @@
 #define TEST_COMPONENT_SIZE_SMALLER ((size_t)128)
 #define TEST_COMPONENT_SIZE_BIGGER  ((size_t)512)
 
-static size_t smaller_component_size = 128, bigger_component_size = 512;
-
 static void test_before(void *data)
 {
 	/* Reset mocks */

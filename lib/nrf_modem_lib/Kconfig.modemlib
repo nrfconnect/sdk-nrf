@@ -124,7 +124,7 @@ endmenu # Memory config
 
 menuconfig NRF_MODEM_LIB_TRACE
 	bool "Tracing"
-	depends on SOC_SERIES_NRF91X || UNITY
+	depends on SOC_SERIES_NRF91X || SOC_SERIES_NRF92X || UNITY
 	help
 	  When enabled, a portion of RAM (called Trace region) will be shared with the modem to receive modem's trace data.
 	  The size of the Trace region is defined by the NRF_MODEM_LIB_SHMEM_TRACE_SIZE option.

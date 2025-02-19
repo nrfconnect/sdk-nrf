@@ -57,7 +57,7 @@
     - sample.modules.lvgl.demo_widgets
     - sample.smf.smf_calculator
   platforms:
-    - native_sim
+    - native_sim/native
     - native_sim/native/64
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24924"
 
@@ -80,14 +80,14 @@
     - sample.mgmt.osdp.peripheral_device_sc
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24928"
 
 - scenarios:
     - examples.nrfx_uarte.tx_rx_non_blocking
   platforms:
-    - nrf9160dk/nrf9160
+    - nrf9160dk@0.14.0/nrf9160
     - nrf52840dk/nrf52840
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-3395"
 
@@ -95,7 +95,7 @@
     - examples.nrfx_uarte.rx_double_buffered
   platforms:
     - nrf52840dk/nrf52840
-    - nrf9160dk/nrf9160
+    - nrf9160dk@0.14.0/nrf9160
     - nrf5340dk/nrf5340/cpuapp
     - nrf52833dk/nrf52833
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-3468"
@@ -112,7 +112,7 @@
   platforms:
     - nrf52840dk/nrf52840
     - nrf52833dk/nrf52833
-    - nrf9160dk/nrf9160
+    - nrf9160dk@0.14.0/nrf9160
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-3813"
 
 - scenarios:
@@ -130,7 +130,7 @@
 - scenarios:
     - arch.interrupt.gen_isr_table.riscv_no_direct
   platforms:
-    - nrf54h20dk/nrf54h20/cpuppr
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
     - nrf54l15dk/nrf54l15/cpuflpr
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-27981"
 
@@ -144,7 +144,7 @@
 - scenarios:
     - sample.net.sockets.http.server
   platforms:
-    - nrf54h20dk/nrf54h20/cpurad
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
   comment: "to be fixed in https://github.com/zephyrproject-rtos/zephyr/pull/73777"
 
 - scenarios:
@@ -155,14 +155,14 @@
   comment: "Test not aligned for nrf54l15 but selected due to jedec,spi-nor"
 
 - scenarios:
-    - llext.simple.*
+    - llext.*
   platforms:
-    - nrf54h20dk/nrf54h20/cpurad
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
     - nrf52dk/nrf52832
     - nrf5340dk/nrf5340/cpunet
-    - nrf54h20dk/nrf54h20/cpuppr
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
     - nrf54l15dk/nrf54l15/cpuflpr
-    - qemu_cortex_m3
+    - qemu_cortex_m3/ti_lm3s6965
   comment: "overflow, to report/fix in the upstream @permac and put ticket # here"
 
 - scenarios:
@@ -172,7 +172,7 @@
 - scenarios:
     - storage.flash_map
   platforms:
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-29462"
 
 - scenarios:
@@ -193,15 +193,102 @@
     - net.sockets.tls13.psk_kex.tickets
     - net.sockets.tls13.ephemeral_kex.tickets
   platforms:
-    - native_sim
+    - native_sim/native
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-30873"
 
 - scenarios:
     - drivers.power_domain.build.pm
     - drivers.power_domain.build
   platforms:
-    - native_sim
+    - native_sim/native
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-30877"
+
+- scenarios:
+    - sample.mcumgr.smp_svr.ram_load.*
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24488"
+
+- scenarios:
+    - net.iface.iid.stable
+  platforms:
+    - nrf9160dk@0.14.0/nrf9160/ns
+    - nrf5340dk/nrf5340/cpuapp/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31574"
+
+- scenarios:
+    - drivers.eeprom.emul.build
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31589"
+
+- scenarios:
+    - llext.writable
+    - llext.writable_relocatable
+    - llext.writable_slid_linking
+    - llext.writable_relocatable_slid_linking
+  platforms:
+    - nrf9160dk@0.14.0/nrf9160
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31590"
+
+- scenarios:
+    - drivers.stepper.shell
+    - drivers.stepper.shell_async
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31591"
+
+- scenarios:
+    - portability.posix.common.dynamic_stack
+  platforms:
+    - qemu_cortex_m3/ti_lm3s6965
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31667"
+
+- scenarios:
+    - sample.bluetooth.central.multilink
+    - sample.bluetooth.peripheral_identity
+  platforms:
+    - qemu_cortex_m3/ti_lm3s6965
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31671"
+
+- scenarios:
+    - secure_storage.psa.its.secure_storage.*
+    - sample.psa.persistent_key.secure_storage.entropy_driver
+    - secure_storage.psa.crypto.secure_storage
+  platforms:
+    - native_sim/native
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31681"
+
+- scenarios:
+    - init.check_init_priorities
+    - shell.device_filter
+  platforms:
+    - native_sim/native
+  comment: "clash of entropy configurations, will be resolved in upstream (Frank Kvamtro)"
+
+- scenarios:
+    - mgmt.mcumgr.fs.mgmt.hash.supported.sha256
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "needs porting, owner not clear"
+
+- scenarios:
+    - libraries.encoding.jwt.rsa.psa
+    - libraries.encoding.jwt.rsa.legacy
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31783"
+
+- scenarios:
+    - sample.bluetooth.mesh.onoff_level_lighting_vnd
+    - sample.bluetooth.mesh_provisioner
+    - bluetooth.mesh.mesh_shell
+    - sample.bluetooth.mesh.onoff
+    - sample.bluetooth.mesh_demo
+    - sample.bluetooth.mesh
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31884"
 
 # ---------------------------------   Won't fix section -----------------------------------
 
@@ -209,14 +296,14 @@
     - libraries.encoding.jwt
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-15508"
 
 - scenarios:
     - net.mqtt.tls
   platforms:
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
     - nrf5340dk/nrf5340/cpuapp/ns
   comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-24922"
 
@@ -224,7 +311,7 @@
     - net.socket.register.tls
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-18853"
 
 - scenarios:
@@ -244,29 +331,30 @@
 - scenarios:
     - sample.drivers.crypto.mbedtls
   platforms:
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
     - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf54l15dk/nrf54l15/cpuapp
   comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-15306"
 
 - scenarios:
     - sample.net.sockets.websocket_client
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-24929"
 
 - scenarios:
     - sample.psa_crypto
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-22771"
 
 - scenarios:
     - sample.net.sockets.http.server
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
-    - nrf9160dk/nrf9160/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Same reason as in https://nordicsemi.atlassian.net/browse/NCSDK-22771"
 
 - scenarios:
@@ -359,8 +447,14 @@
     - net.http.server.crime
     - drivers.gpio.build
     - sample.perf
+    - sample.psa.its.secure_storage.entropy_not_secure
+    - sample.psa.persistent_key.secure_storage.entropy_not_secure
+    - secure_storage.psa.crypto.secure_storage
+    - secure_storage.psa.its.secure_storage.custom.both
+    - secure_storage.psa.its.secure_storage.custom.store
+    - secure_storage.psa.its.secure_storage.store.settings
   platforms:
-    - nrf54h20dk/nrf54h20/cpuppr
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
   comment: "region RAM/FLASH overflowed"
 
 - scenarios:
@@ -411,6 +505,7 @@
     - sample.shell.shell_module
     - sample.shell.shell_module.getopt
     - sample.shell.shell_module.login
+    - secure_storage.psa.its.secure_storage.custom.store
   platforms:
     - nrf54l15dk/nrf54l15/cpuflpr
   comment: "region RAM/FLASH overflowed"
@@ -419,16 +514,16 @@
     - libraries.libc.newlib_nano.thread_safety.userspace.stress
     - libraries.libc.newlib.thread_safety.userspace.stress
   platforms:
-    - nrf54h20dk/nrf54h20/cpurad
-    - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "region FLASH overflowed"
 
 - scenarios:
     - libraries.cmsis_dsp.matrix.unary_f64
     - libraries.cmsis_dsp.matrix.unary_f64.fpu
   platforms:
-    - nrf54h20dk/nrf54h20/cpuapp
-    - nrf54h20dk/nrf54h20/cpurad
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
   comment: "Won't be fixed, 'rodata will not fit in region FLASH' - no ticket"
 
 - scenarios:
@@ -442,12 +537,38 @@
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "partition manager configuration need to be fixed/provided"
 
-- platforms:
-    - native_posix
-  comment: "native_posix will be removed soon - native_sim platform is the default simulator now"
-
 - scenarios:
     - drivers.hwinfo.api
   platforms:
-    - nrf54h20dk/nrf54h20/cpuppr
-  comment: Unsupported device
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
+  comment: "Unsupported device"
+
+- scenarios:
+    - secure_storage.psa.its.secure_storage.*
+  platforms:
+    - qemu_cortex_m3/ti_lm3s6965
+    - mps2/an521/cpu0
+  comment: "redundant due to natve_sim already in scope"
+
+- scenarios:
+    - sample.net.prometheus
+  comment: "not compatible with NCS (Frank Audun Kvamtro)"
+
+- scenarios:
+    - drivers.wifi.build.spi
+  platforms:
+    - native_sim/native
+  comment: "requires pulling in hal_atmel but is actually not very useful"
+
+- scenarios:
+    - bluetooth.bt_crypto
+    - bluetooth.bt_crypto.psa
+  platforms:
+    - qemu_cortex_m3/ti_lm3s6965
+  comment: "not supported in NCS anymore"
+
+- scenarios:
+    - kernel.common.toolchain
+  platforms:
+    - native_sim/native
+  comment: "clang is not available in our toolchain"

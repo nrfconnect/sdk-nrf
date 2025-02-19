@@ -11,8 +11,20 @@
 #include <suit_ipuc.h>
 #include <suit_plat_decode_util.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/cache.h>
 
-LOG_MODULE_REGISTER(flash_ipuc, CONFIG_FLASH_IPUC_LOG_LEVEL);
+/* __ALIGNED macro is not defined on NATIVE POSIX. This platform uses __aligned macro. */
+#ifndef __ALIGNED
+#ifdef __aligned
+#define __ALIGNED __aligned
+#endif
+#endif
+
+#ifdef CONFIG_DCACHE_LINE_SIZE
+#define CACHE_ALIGNMENT CONFIG_DCACHE_LINE_SIZE
+#else
+#define CACHE_ALIGNMENT 4
+#endif
 
 #define FLASH_WRITE_BLOCK_SIZE DT_PROP(DT_CHOSEN(zephyr_flash), write_block_size)
 #define WRITE_BLOCK_SIZE       FLASH_WRITE_BLOCK_SIZE
@@ -45,6 +57,8 @@ struct ipuc_context {
 
 #define DEFINE_NRF_IPUC_REF(x, _) &__device_flash_nrf_ipuc_##x
 
+LOG_MODULE_REGISTER(flash_ipuc, CONFIG_FLASH_IPUC_LOG_LEVEL);
+
 static int nrf_ipuc_read(const struct device *dev, off_t offset, void *data, size_t len)
 {
 	struct ipuc_context *ctx = NULL;
@@ -75,8 +89,11 @@ static int nrf_ipuc_read(const struct device *dev, off_t offset, void *data, siz
 
 static int nrf_ipuc_write(const struct device *dev, off_t offset, const void *data, size_t len)
 {
+	uint8_t unaligned_data_buf[CACHE_ALIGNMENT] __ALIGNED(CACHE_ALIGNMENT) = {0};
+	size_t unaligned_len = MIN(CACHE_ALIGNMENT - (((uintptr_t)data) % CACHE_ALIGNMENT), len);
+	suit_plat_err_t plat_ret = SUIT_PLAT_SUCCESS;
 	struct ipuc_context *ctx = NULL;
-	bool last_chunk = false;
+	int ret = 0;
 
 	if (dev == NULL) {
 		return -EINVAL;
@@ -88,20 +105,75 @@ static int nrf_ipuc_write(const struct device *dev, off_t offset, const void *da
 		return -EBADF;
 	}
 
-	LOG_DBG("write: %p:%zu", (void *)offset, len);
-
-	if (len == 0) {
-		last_chunk = true;
-	}
-
 	if (offset + len > ctx->size) {
 		return -ENOMEM;
 	}
 
-	suit_plat_err_t plat_ret =
-		suit_ipuc_write(&ctx->component_id, offset, (uintptr_t)data, len, last_chunk);
+	LOG_DBG("write: %p:%zu", (void *)offset, len);
 
+	if (len == 0) {
+		plat_ret = suit_ipuc_write(&ctx->component_id, offset, 0, 0, true);
+		if (plat_ret != SUIT_PLAT_SUCCESS) {
+			LOG_ERR("Last write (flush) error: %d", plat_ret);
+			return -EIO;
+		}
+
+		return 0;
+	}
+
+	/* Optimize: Use a single write call if all bytes can be transferred using stack-based
+	 * aligned buffer.
+	 */
+	if (len <= ARRAY_SIZE(unaligned_data_buf)) {
+		unaligned_len = len;
+	}
+
+	/* If the data buffer is not aligned to the cache lines:
+	 *  - copy the unaligned part into stack-based aligned buffer
+	 *  - write the internal buffer
+	 *  - skip the unaligned bytes of the input buffer
+	 */
+	if (unaligned_len != CACHE_ALIGNMENT) {
+		memcpy(unaligned_data_buf, data, unaligned_len);
+
+		LOG_DBG("align: %p:%zu", (void *)data, unaligned_len);
+
+		ret = sys_cache_data_flush_range((void *)unaligned_data_buf,
+						 sizeof(unaligned_data_buf));
+		if (ret != 0 && ret != -EAGAIN && ret != -ENOTSUP) {
+			LOG_ERR("Failed to flush cache buffer range (%p, 0x%x): %d",
+				(void *)unaligned_data_buf, sizeof(unaligned_data_buf), ret);
+			return -EIO;
+		}
+
+		plat_ret = suit_ipuc_write(&ctx->component_id, offset,
+					   (uintptr_t)unaligned_data_buf, unaligned_len, false);
+		if (plat_ret != SUIT_PLAT_SUCCESS) {
+			LOG_ERR("Unaligned data write (%p, 0x%x) error: %d",
+				(void *)unaligned_data_buf, unaligned_len, plat_ret);
+			return -EIO;
+		}
+
+		offset += unaligned_len;
+		len -= unaligned_len;
+		data = (void *)((uintptr_t)data + unaligned_len);
+	}
+
+	/* If no more (aligned) bytes left - return. */
+	if (len == 0) {
+		return 0;
+	}
+
+	/* Write (now aligned) data buffer. */
+	ret = sys_cache_data_flush_range((void *)data, len);
+	if (ret != 0 && ret != -EAGAIN && ret != -ENOTSUP) {
+		LOG_ERR("Failed to flush cache memory range (%p, 0x%x): %d", data, len, ret);
+		return -EIO;
+	}
+
+	plat_ret = suit_ipuc_write(&ctx->component_id, offset, (uintptr_t)data, len, false);
 	if (plat_ret != SUIT_PLAT_SUCCESS) {
+		LOG_ERR("Aligned data write (%p, 0x%x) error: %d", data, len, plat_ret);
 		return -EIO;
 	}
 
@@ -110,7 +182,8 @@ static int nrf_ipuc_write(const struct device *dev, off_t offset, const void *da
 
 static int nrf_ipuc_erase(const struct device *dev, off_t offset, size_t size)
 {
-	static uint8_t erase_block[WRITE_BLOCK_SIZE] = {ERASE_VALUE};
+	static const uint8_t erase_block[WRITE_BLOCK_SIZE] __ALIGNED(CACHE_ALIGNMENT) = {
+		ERASE_VALUE};
 	suit_plat_err_t plat_ret = SUIT_PLAT_SUCCESS;
 	struct ipuc_context *ctx = NULL;
 
@@ -128,16 +201,25 @@ static int nrf_ipuc_erase(const struct device *dev, off_t offset, size_t size)
 		return -ENOMEM;
 	}
 
+	int ret = sys_cache_data_flush_range((void *)erase_block, sizeof(erase_block));
+
+	if (ret != 0 && ret != -EAGAIN && ret != -ENOTSUP) {
+		LOG_ERR("Failed to flush cache range (%p, 0x%x): %d", erase_block,
+			sizeof(erase_block), ret);
+		return -EIO;
+	}
+
 	LOG_DBG("erase: %p:%zu", (void *)offset, size);
+
 	while (size > 0) {
 		plat_ret = suit_ipuc_write(&ctx->component_id, offset, (uintptr_t)erase_block,
 					   sizeof(erase_block), false);
+		if (plat_ret != SUIT_PLAT_SUCCESS) {
+			return -EIO;
+		}
+
 		offset += sizeof(erase_block);
 		size -= sizeof(erase_block);
-	}
-
-	if (plat_ret != SUIT_PLAT_SUCCESS) {
-		return -EIO;
 	}
 
 	return 0;

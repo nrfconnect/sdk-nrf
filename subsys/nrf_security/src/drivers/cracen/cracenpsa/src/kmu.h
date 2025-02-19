@@ -50,8 +50,6 @@ int cracen_kmu_clean_key(const uint8_t *user_data);
  *
  * If the key is available the key_buffer will be filled with a valid
  * instance of @ref kmu_opaque_key_buffer.
- *
- * @return psa_status_t
  */
 psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 					psa_key_attributes_t *attributes, uint8_t *key_buffer,
@@ -59,14 +57,11 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 
 /**
  * @brief Provision a key in the KMU.
- *
- * @return psa_status_t
  */
 psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot_id,
 				  const uint8_t *key_buffer, size_t key_buffer_size);
 
 /**
- * @brief Destroy PSA key stored in KMU.
- *
+ * @brief Destroy a key stored in the KMU.
  */
 psa_status_t cracen_kmu_destroy_key(const psa_key_attributes_t *attributes);

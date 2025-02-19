@@ -75,7 +75,7 @@ The :c:func:`nrf_cloud_rest_log_send` function initiates the connection as neede
 Configuration
 *************
 
-Configure one or both of the following Kconfig options to enable direct log messages or the logging backend:
+To enable direct log messages or the logging backend, set the :kconfig:option:`CONFIG_NRF_CLOUD` Kconfig option and one or both of the following options:
 
 * :kconfig:option:`CONFIG_NRF_CLOUD_LOG_DIRECT`
 * :kconfig:option:`CONFIG_NRF_CLOUD_LOG_BACKEND`

@@ -28,6 +28,7 @@ choice IPC_RADIO_BT_SER
 config IPC_RADIO_BT_HCI_IPC
 	bool "Bluetooth HCI serialization"
 	depends on IPC_SERVICE
+	depends on IPC_SERVICE_BACKEND_ICBMSG || IPC_SERVICE_BACKEND_RPMSG
 	depends on BT_HCI_RAW
 	help
 	  Use Bluetooth HCI serialization over ipc_service.
@@ -39,6 +40,22 @@ config IPC_RADIO_BT_RPC
 	  Use nRF RPC serialization for Bluetooth.
 
 endchoice # IPC_RADIO_BT_SER
+
+if IPC_RADIO_BT_HCI_IPC
+
+config QUEUE_THREAD_STACK_SIZE
+	int "Queue thread stack size"
+	default 512
+	help
+	  Stack size for the queue thread.
+
+config QUEUE_THREAD_PRIO
+	int "Queue thread priority"
+	default 7
+	help
+	  Priority for the queue thread.
+
+endif # IPC_RADIO_BT_HCI_IPC
 
 config SETTINGS
 	imply ZMS if SOC_FLASH_NRF_MRAM

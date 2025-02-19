@@ -7,10 +7,13 @@
 #include <zephyr/kernel.h>
 #include <zephyr/linker/devicetree_regions.h>
 
-#if !IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX)
+#if IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF)
 #include <zephyr/drivers/clock_control.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
-#endif /* !IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX) */
+#elif IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF2)
+#include <zephyr/devicetree.h>
+#include <zephyr/drivers/clock_control/nrf_clock_control.h>
+#endif /* IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF) */
 
 #include <zephyr/sys/__assert.h>
 #include <zephyr/sys/onoff.h>
@@ -49,12 +52,14 @@ LOG_MODULE_REGISTER(nfc_platform, CONFIG_NFC_PLATFORM_LOG_LEVEL);
 					      _irq_handler)
 #endif /* NFC_PLATFORM_USE_TIMER_WORKAROUND */
 
-#define DT_DRV_COMPAT nordic_nrf_clock
-
-#if !IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX)
+#if IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF)
 static struct onoff_manager *hf_mgr;
+#elif IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF2)
+static const struct device *clk_dev = DEVICE_DT_GET(DT_NODELABEL(hfxo));
+#else
+BUILD_ASSERT(false, "No Clock Control driver");
+#endif /* IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF) */
 static struct onoff_client cli;
-#endif /* !IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX) */
 
 #define NFCT DT_NODELABEL(nfct)
 #define NFCT_HAS_PROPERTY(_property) \
@@ -109,10 +114,10 @@ nrfx_err_t nfc_platform_setup(nfc_lib_cb_resolve_t nfc_lib_cb_resolve, uint8_t *
 {
 	int err;
 
-#if !IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX)
+#if IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF)
 	hf_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
 	__ASSERT_NO_MSG(hf_mgr);
-#endif /* !IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX) */
+#endif /* IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF) */
 
 	IRQ_DIRECT_CONNECT(DT_IRQN(NFCT), DT_IRQ(NFCT, priority),
 			   nfc_isr_wrapper, 0);
@@ -240,31 +245,25 @@ void nfc_platform_event_handler(nrfx_nfct_evt_t const *event)
 	case NRFX_NFCT_EVT_FIELD_DETECTED:
 		LOG_DBG("Field detected");
 
-#if !IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX)
-		/* For now, assume HFXO clock is running all the time on nRF54h20
-		 * and currently clock handling is not implemented on this platform.
-		 */
+#if IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF)
 		sys_notify_init_callback(&cli.notify, clock_handler);
 		err = onoff_request(hf_mgr, &cli);
+#elif IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF2)
+		sys_notify_init_callback(&cli.notify, clock_handler);
+		err = nrf_clock_control_request(clk_dev, NULL, &cli);
+#endif /* IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF) */
 		__ASSERT_NO_MSG(err >= 0);
-#else
-		ARG_UNUSED(err);
-		/* HFXO is running, switch NFCT to active state immediately. */
-		clock_handler(NULL, 0);
-#endif /* !IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX) */
-
 		break;
-
 	case NRFX_NFCT_EVT_FIELD_LOST:
 		LOG_DBG("Field lost");
 
-#if !IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX)
+#if IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF)
 		err = onoff_cancel_or_release(hf_mgr, &cli);
+#elif IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF2)
+		err = nrf_clock_control_cancel_or_release(clk_dev, NULL, &cli);
+#endif /* IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF) */
 		__ASSERT_NO_MSG(err >= 0);
-#endif /* !IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX) */
-
 		break;
-
 	default:
 		/* No implementation required */
 		break;

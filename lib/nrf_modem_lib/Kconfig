@@ -6,10 +6,11 @@
 menuconfig NRF_MODEM_LIB
 	bool "Modem library"
 	depends on (SOC_SERIES_NRF91X && TRUSTED_EXECUTION_NONSECURE) || SOC_NRF9280_CPUAPP
-	select EXPERIMENTAL if SOC_NRF9280_CPUAPP
 	select NRF_MODEM
+	select EXPERIMENTAL if SOC_NRF9280_CPUAPP
 	imply NET_SOCKETS_OFFLOAD
-	imply NET_SOCKETS_POSIX_NAMES if !POSIX_API
+	imply NET_IPV4
+	imply NET_IPV6
 	# The modem must be turned on to achieve low power consumption.
 	# But disable it for ZTEST's as some tests have HW
 	# resource-conflicts with NRF_MODEM_LIB.

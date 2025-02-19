@@ -191,6 +191,43 @@ config MEMFAULT_NCS_IMPLEMENT_METRICS_COLLECTION
 	  Implement the Memfault 'memfault_metrics_heartbeat_collect_data()' function
 	  for the selected metrics. Disable this to override the implementation.
 
+config MEMFAULT_NCS_POST_COREDUMP_ON_NETWORK_CONNECTED
+	bool "Post coredump on network connected"
+	depends on PDN
+	depends on LTE_LINK_CONTROL
+	depends on SOC_SERIES_NRF91X
+	select SMF
+	select SMF_ANCESTOR_SUPPORT
+	select SMF_INITIAL_TRANSITION
+	help
+	  Post coredump to Memfault when the device is connected to LTE network.
+	  This option is only supported for nRF91 targets.
+
+config MEMFAULT_NCS_POST_COREDUMP_AFTER_INITIAL_DELAY
+	bool "Post coredump after initial delay"
+	default y
+	help
+	  Delay coredump posting to Memfault to avoid conflicts with the application's
+	  TLS connection setup that occurs typically LTE network is obtained.
+	  The delay duration is defined by CONFIG_MEMFAULT_NCS_POST_COREDUMP_RETRY_INTERVAL_SECONDS.
+
+config MEMFAULT_NCS_POST_COREDUMP_RETRIES_MAX
+	int "Max number of coredump post retries"
+	default 3
+	default 4 if MEMFAULT_NCS_POST_COREDUMP_AFTER_INITIAL_WAIT
+	help
+	  Maximum number of retries to post a coredump to Memfault.
+
+config MEMFAULT_NCS_POST_COREDUMP_RETRY_INTERVAL_SECONDS
+	int "Retry interval in seconds"
+	default 30
+	help
+	  Interval in seconds between coredump post retries.
+
+config MEMFAULT_NCS_POST_COREDUMP_THREAD_STACK_SIZE
+	int "Post coredump thread size"
+	default 512
+
 config MEMFAULT_NCS_ETB_CAPTURE
 	bool "Enable ETB trace capture"
 	depends on ETB_TRACE

@@ -83,6 +83,12 @@ enum fota_download_error_cause {
 	FOTA_DOWNLOAD_ERROR_CAUSE_TYPE_MISMATCH,
 	/** Generic error on device side. */
 	FOTA_DOWNLOAD_ERROR_CAUSE_INTERNAL,
+	/** Error on DFU library */
+	FOTA_DOWNLOAD_ERROR_CAUSE_DFU,
+	/** Protocol not supported */
+	FOTA_DOWNLOAD_ERROR_CAUSE_PROTO_NOT_SUPPORTED,
+	/** Invalid URI or invalid configuration */
+	FOTA_DOWNLOAD_ERROR_CAUSE_INVALID_CONFIGURATION,
 };
 
 /**

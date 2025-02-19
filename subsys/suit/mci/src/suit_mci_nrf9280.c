@@ -13,6 +13,7 @@
 #endif /* CONFIG_SDFW_LCS */
 #include <zephyr/logging/log.h>
 #include <sdfw/arbiter.h>
+#include <suit_types.h>
 
 #define MANIFEST_PUBKEY_NRF_TOP_GEN0	 0x4000BB00
 #define MANIFEST_PUBKEY_SYSCTRL_GEN0	 0x40082100
@@ -229,8 +230,8 @@ static bool skip_validation(suit_manifest_role_t role)
 	return false;
 }
 
-mci_err_t suit_mci_signing_key_id_validate(const suit_manifest_class_id_t *class_id,
-					   uint32_t key_id)
+mci_err_t suit_mci_signing_key_id_and_alg_validate(const suit_manifest_class_id_t *class_id,
+						   uint32_t key_id, int32_t cose_alg)
 {
 	suit_manifest_role_t role = SUIT_MANIFEST_UNKNOWN;
 
@@ -271,14 +272,16 @@ mci_err_t suit_mci_signing_key_id_validate(const suit_manifest_class_id_t *class
 	case SUIT_MANIFEST_SEC_TOP:
 	case SUIT_MANIFEST_SEC_SDFW:
 		if (key_id >= MANIFEST_PUBKEY_NRF_TOP_GEN0 &&
-		    key_id <= MANIFEST_PUBKEY_NRF_TOP_GEN0 + MANIFEST_PUBKEY_GEN_RANGE) {
+		    key_id <= MANIFEST_PUBKEY_NRF_TOP_GEN0 + MANIFEST_PUBKEY_GEN_RANGE &&
+		    (cose_alg == suit_cose_EdDSA)) {
 			return SUIT_PLAT_SUCCESS;
 		}
 		break;
 
 	case SUIT_MANIFEST_SEC_SYSCTRL:
 		if (key_id >= MANIFEST_PUBKEY_SYSCTRL_GEN0 &&
-		    key_id <= MANIFEST_PUBKEY_SYSCTRL_GEN0 + MANIFEST_PUBKEY_GEN_RANGE) {
+		    key_id <= MANIFEST_PUBKEY_SYSCTRL_GEN0 + MANIFEST_PUBKEY_GEN_RANGE &&
+		    (cose_alg == suit_cose_EdDSA)) {
 			return SUIT_PLAT_SUCCESS;
 		}
 		break;

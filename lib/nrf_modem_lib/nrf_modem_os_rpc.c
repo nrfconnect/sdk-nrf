@@ -89,6 +89,7 @@ struct nrf_modem_os_rpc inst_data = NRF_MODEM_OS_RPC_INIT(inst_data, DCACHE_LINE
  */
 struct nrf_modem_os_rpc_signal inst_app_fault;
 struct nrf_modem_os_rpc_signal inst_modem_fault;
+struct nrf_modem_os_rpc_signal inst_modem_trace;
 struct nrf_modem_os_rpc_signal inst_modem_sysoff;
 
 uintptr_t nrf_modem_os_rpc_sigdev_app_get(void)
@@ -241,10 +242,11 @@ int nrf_modem_os_rpc_cache_data_flush(void *addr, size_t size)
 	 * Cache flush is only used on the tx heap. Therefore, cache coherency is
 	 * maintained even when start address and size are not aligned with cache lines.
 	 */
-	addr = (void *)ROUND_DOWN((uint32_t)addr, CONFIG_DCACHE_LINE_SIZE);
-	size = ROUND_UP(size, CONFIG_DCACHE_LINE_SIZE);
+	const uintptr_t addr_aligned = ROUND_DOWN((uintptr_t)addr, CONFIG_DCACHE_LINE_SIZE);
 
-	return sys_cache_data_flush_range(addr, size);
+	size = ROUND_UP((uintptr_t)addr + size, CONFIG_DCACHE_LINE_SIZE) - addr_aligned;
+
+	return sys_cache_data_flush_range((void *)addr_aligned, size);
 #else
 	ARG_UNUSED(addr);
 	ARG_UNUSED(size);
@@ -259,10 +261,11 @@ int nrf_modem_os_rpc_cache_data_invalidate(void *addr, size_t size)
 	 * Cache invalidation is only used on the rx heap. Therefore, cache coherency is
 	 * maintained even when start address and size are not aligned with cache lines.
 	 */
-	addr = (void *)ROUND_DOWN((uint32_t)addr, CONFIG_DCACHE_LINE_SIZE);
-	size = ROUND_UP(size, CONFIG_DCACHE_LINE_SIZE);
+	const uintptr_t addr_aligned = ROUND_DOWN((uintptr_t)addr, CONFIG_DCACHE_LINE_SIZE);
 
-	return sys_cache_data_invd_range(addr, size);
+	size = ROUND_UP((uintptr_t)addr + size, CONFIG_DCACHE_LINE_SIZE) - addr_aligned;
+
+	return sys_cache_data_invd_range((void *)addr_aligned, size);
 #else
 	ARG_UNUSED(addr);
 	ARG_UNUSED(size);

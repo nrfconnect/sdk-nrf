@@ -13,8 +13,8 @@
 #include <platform/ConnectivityManager.h>
 
 #ifdef CONFIG_CHIP_NFC_COMMISSIONING
-#include <app/server/OnboardingCodesUtil.h>
 #include <platform/NFCManager.h>
+#include <setup_payload/OnboardingCodesUtil.h>
 #endif
 
 #include <zephyr/logging/log.h>

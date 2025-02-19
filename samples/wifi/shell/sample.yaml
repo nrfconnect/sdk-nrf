@@ -196,7 +196,7 @@ tests:
     build_only: true
     extra_args:
       - EXTRA_CONF_FILE=overlay-scan-only.conf
-      - CONFIG_WIFI_NM_WPA_SUPPLICANT=n
+      - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     platform_allow:
       - thingy91x/nrf9151/ns
     tags:
@@ -217,19 +217,6 @@ tests:
     sysbuild: true
     build_only: true
     extra_args: EXTRA_CONF_FILE=overlay-openthread.conf
-    integration_platforms:
-      - nrf7002dk/nrf5340/cpuapp
-    platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags:
-      - ci_build
-      - sysbuild
-      - ci_samples_wifi
-  sample.nrf7002.shell.posix_names:
-    sysbuild: true
-    build_only: true
-    extra_args:
-      - CONFIG_POSIX_API=n
-      - CONIFG_NET_SOCKETS_POSIX_NAMES=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
@@ -470,7 +457,7 @@ tests:
       - ci_samples_wifi
   sample.nrf7002.shell.psa:
     build_only: true
-    extra_args: CONFIG_HOSTAP_CRYPTO_LEGACY_PSA=y
+    extra_args: CONFIG_HOSTAP_CRYPTO_ALT_LEGACY_PSA=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp

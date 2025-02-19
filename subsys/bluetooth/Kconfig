@@ -32,16 +32,20 @@ config BT_MAX_CONN
 config BT_LL_SOFTDEVICE_HEADERS_INCLUDE
 	bool
 	depends on (SOC_SERIES_BSIM_NRFXX || SOC_FAMILY_NORDIC_NRF)
-	default y if !BT_CTLR
+	default y if !HAS_BT_CTLR
 	help
 	  Include SoftDevice header files provided with the library.
 
 config BT_LL_SOFTDEVICE_HEADERS_INCLUDE_PATH_OVERRIDE
 	bool
 
-if BT_CTLR
+config BT_LONG_WQ_STACK_SIZE
+	int
+	default 3200 if (BT_ECC || BT_GATT_CACHING) && SOC_SERIES_NRF54LX
+	default 1800 if (BT_ECC || BT_GATT_CACHING)
+	default 1024
+
 rsource "controller/Kconfig"
-endif
 rsource "host_extensions/Kconfig"
 
 comment "BLE Libraries"

@@ -10,6 +10,8 @@
 #include <stdint.h>
 #include <stddef.h>
 
+#include <zephyr/bluetooth/conn.h>
+
 #include <bluetooth/services/fast_pair/fmdn.h>
 
 /**
@@ -27,6 +29,12 @@ extern "C" {
  *  about the accessory clock value.
  */
 void fp_fmdn_callbacks_clock_synced_notify(void);
+
+/** Notify the callback layer that the connected peer was authenticated locally.
+ *
+ *  @param conn Authenticated connection object
+ */
+void fp_fmdn_callbacks_conn_authenticated_notify(struct bt_conn *conn);
 
 /** Notify the callback layer about the provisioning state changes.
  *

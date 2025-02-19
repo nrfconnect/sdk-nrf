@@ -27,7 +27,7 @@ ZEPHYR_BASE = utils.get_projdir("zephyr")
 
 # Import all Zephyr configuration, override as needed later
 os.environ["ZEPHYR_BASE"] = str(ZEPHYR_BASE)
-os.environ["ZEPHYR_BUILD"] = str(utils.get_builddir() / "zephyr")
+os.environ["OUTPUT_DIR"] = str(utils.get_builddir() / "html" / "zephyr")
 
 conf = eval_config_file(str(ZEPHYR_BASE / "doc" / "conf.py"), tags)
 locals().update(conf)
@@ -71,16 +71,26 @@ if kconfig_mapping:
 
 # -- Options for doxyrunner plugin ---------------------------------------------
 
+_doxyrunner_outdir = utils.get_builddir() / "html" / "zephyr" / "doxygen"
+
 doxyrunner_doxygen = os.environ.get("DOXYGEN_EXECUTABLE", "doxygen")
-doxyrunner_doxyfile = NRF_BASE / "doc" / "zephyr" / "zephyr.doxyfile.in"
-doxyrunner_outdir = utils.get_builddir() / "html" / "zephyr" / "doxygen"
-doxyrunner_fmt = True
-doxyrunner_fmt_vars = {
-    "NRF_BASE": str(NRF_BASE),
-    "DOCSET_SOURCE_BASE": str(ZEPHYR_BASE),
-    "DOCSET_BUILD_DIR": str(doxyrunner_outdir),
-    "DOCSET_VERSION": version,
+doxyrunner_projects = {
+    "zephyr": {
+        "doxyfile": NRF_BASE / "doc" / "zephyr" / "zephyr.doxyfile.in",
+        "outdir": _doxyrunner_outdir,
+        "fmt": True,
+        "fmt_vars": {
+            "NRF_BASE": str(NRF_BASE),
+            "DOCSET_SOURCE_BASE": str(ZEPHYR_BASE),
+            "DOCSET_BUILD_DIR": str(_doxyrunner_outdir),
+            "DOCSET_VERSION": version,
+        }
+    }
 }
+
+# -- Options for doxybridge plugin ---------------------------------------------
+
+doxybridge_projects = {"zephyr": _doxyrunner_outdir}
 
 # -- Options for zephyr.warnings_filter ----------------------------------------
 

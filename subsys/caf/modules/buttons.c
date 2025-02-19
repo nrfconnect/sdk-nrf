@@ -10,7 +10,9 @@
 #include <soc.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/gpio.h>
+#include <zephyr/sys/atomic.h>
 #include <zephyr/sys/util.h>
+#include <zephyr/sys/reboot.h>
 
 #include <caf/key_id.h>
 #include <caf/gpio_pins.h>
@@ -52,6 +54,7 @@ static struct gpio_callback gpio_cb[ARRAY_SIZE(gpio_devs)];
 static struct k_work_delayable matrix_scan;
 static struct k_work_delayable button_pressed;
 static enum state state;
+static atomic_t system_power_off = ATOMIC_INIT(false);
 
 
 static void scan_fn(struct k_work *work);
@@ -408,6 +411,14 @@ static void button_pressed_isr(const struct device *gpio_dev,
 {
 	int err = 0;
 
+	if (IS_ENABLED(CONFIG_CAF_BUTTONS_PM_EVENTS) && atomic_get(&system_power_off)) {
+		/* Instantly reboot the system to prevent system power off with GPIO
+		 * interrupts disabled.
+		 */
+		sys_reboot(SYS_REBOOT_WARM);
+		return;
+	}
+
 	/* Scanning will be scheduled, switch off pins */
 	if (set_cols(0)) {
 		LOG_ERR("Cannot control pins");
@@ -598,6 +609,22 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return true;
 	}
 
+	if (IS_ENABLED(CONFIG_CAF_BUTTONS_PM_EVENTS) &&
+	    is_power_off_event(aeh)) {
+		(void)atomic_set(&system_power_off, true);
+
+		if ((state != STATE_IDLE) ||
+		    k_work_delayable_is_pending(&button_pressed) ||
+		    k_work_delayable_is_pending(&matrix_scan)) {
+			/* Instantly reboot the system to prevent system power off with GPIO
+			 * interrupts disabled.
+			 */
+			sys_reboot(SYS_REBOOT_WARM);
+		}
+
+		return false;
+	}
+
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
 
@@ -607,5 +634,6 @@ APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 #if CONFIG_CAF_BUTTONS_PM_EVENTS
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, power_down_event);
+APP_EVENT_SUBSCRIBE(MODULE, power_off_event);
 APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
 #endif

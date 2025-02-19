@@ -40,6 +40,7 @@ enum log_rpc_cmd_backend {
 	LOG_RPC_CMD_SET_HISTORY_LEVEL = 1,
 	LOG_RPC_CMD_FETCH_HISTORY = 2,
 	LOG_RPC_CMD_GET_CRASH_LOG = 3,
+	LOG_RPC_CMD_ECHO = 4,
 };
 
 #ifdef __cplusplus

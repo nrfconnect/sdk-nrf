@@ -1,0 +1,66 @@
+common:
+  tags:
+    - drivers
+    - uart
+    - ci_tests_drivers_uart
+  harness: ztest
+  harness_config:
+    fixture: gpio_loopback
+tests:
+  drivers.uart.baudrate_test.uart120:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args: DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_uart120.overlay"
+    extra_configs:
+      - CONFIG_PM_DEVICE=y
+      - CONFIG_PM_DEVICE_RUNTIME=y
+  drivers.uart.baudrate_test.uart135:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args: DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_uart135.overlay"
+  drivers.uart.baudrate_test.uart137:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args: DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_uart137.overlay"
+  drivers.uart.baudrate_test.l15_uart00:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args: DTC_OVERLAY_FILE="boards/nrf54l15dk_nrf54l15_cpuapp_uart00.overlay"
+  drivers.uart.baudrate_test.l15_uart21:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args: DTC_OVERLAY_FILE="boards/nrf54l15dk_nrf54l15_cpuapp_uart21.overlay"
+  drivers.uart.baudrate_test.l15_uart22:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args: DTC_OVERLAY_FILE="boards/nrf54l15dk_nrf54l15_cpuapp_uart22.overlay"
+  drivers.uart.baudrate_test.l20_uart00:
+    platform_allow:
+      - nrf54l20pdk/nrf54l20/cpuapp
+    integration_platforms:
+      - nrf54l20pdk/nrf54l20/cpuapp
+    extra_args: DTC_OVERLAY_FILE="boards/nrf54l20pdk_nrf54l20_cpuapp_uart00.overlay"
+  drivers.uart.baudrate_test.l20_uart21:
+    platform_allow:
+      - nrf54l20pdk/nrf54l20/cpuapp
+    integration_platforms:
+      - nrf54l20pdk/nrf54l20/cpuapp
+    extra_args: DTC_OVERLAY_FILE="boards/nrf54l20pdk_nrf54l20_cpuapp_uart21.overlay"
+  drivers.uart.baudrate_test.l20_uart22:
+    platform_allow:
+      - nrf54l20pdk/nrf54l20/cpuapp
+    integration_platforms:
+      - nrf54l20pdk/nrf54l20/cpuapp
+    extra_args: DTC_OVERLAY_FILE="boards/nrf54l20pdk_nrf54l20_cpuapp_uart22.overlay"

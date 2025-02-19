@@ -6,16 +6,15 @@
 
 from __future__ import annotations
 
+import abc
 import argparse
 import sys
 from hashlib import sha256, sha512
-from typing import BinaryIO
+from typing import BinaryIO, Type
 
 from cryptography.exceptions import InvalidSignature
-from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives import serialization
-from cryptography.hazmat.primitives.asymmetric import ec
-from cryptography.hazmat.primitives.asymmetric import ed25519
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import ec, ed25519
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
 
 
@@ -62,86 +61,43 @@ def generate_legal_key_for_ed25519():
             return key
 
 
-class EllipticCurveKeysGenerator:
-    """Generate private and public keys for Elliptic Curve cryptography."""
+class KeysGeneratorBase(abc.ABC):
 
     def __init__(self, infile: BinaryIO | None = None) -> None:
         """
         :param infile: A file-like object to read the private key.
         """
         if infile is None:
-            self.private_key = generate_legal_key_for_elliptic_curve()
+            self.private_key = self._generate_private_key()
         else:
             self.private_key = load_pem_private_key(infile.read(), password=None)
         self.public_key = self.private_key.public_key()
 
     @property
+    @abc.abstractmethod
     def private_key_pem(self) -> bytes:
-        return self.private_key.private_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PrivateFormat.PKCS8,
-            encryption_algorithm=serialization.NoEncryption(),
-        )
-
-    def write_private_key_pem(self, outfile: BinaryIO) -> bytes:
-        """
-        Write private key pem to file and return it.
-
-        :param outfile: A file-like object to write the private key.
-        """
-        if outfile is not None:
-            outfile.write(self.private_key_pem)
-        return self.private_key_pem
+        pass
 
     @property
+    @abc.abstractmethod
     def public_key_pem(self) -> bytes:
-        return self.public_key.public_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PublicFormat.SubjectPublicKeyInfo,
-        )
+        pass
 
-    def write_public_key_pem(self, outfile: BinaryIO) -> bytes:
-        """
-        Write public key pem to file and return it.
-
-        :param outfile: A file-like object to write the public key.
-        """
-        outfile.write(self.public_key_pem)
-        return self.public_key_pem
+    @abc.abstractmethod
+    def _generate_private_key(self):
+        pass
 
     @staticmethod
-    def verify_signature(public_key, message: bytes, signature: bytes) -> bool:
-        try:
-            public_key.verify(signature, message, ec.ECDSA(hashes.SHA256()))
-            return True
-        except InvalidSignature:
-            return False
-
-    @staticmethod
+    @abc.abstractmethod
     def sign_message(private_key, message: bytes) -> bytes:
-        return private_key.sign(message, ec.ECDSA(hashes.SHA256()))
+        pass
 
-
-class Ed25519KeysGenerator:
-    """Generate private and public keys for ED25519 cryptography."""
-
-    def __init__(self, infile: BinaryIO | None = None) -> None:
-        """
-        :param infile: A file-like object to read the private key.
-        """
-        if infile is None:
-            self.private_key: ed25519.Ed25519PrivateKey = generate_legal_key_for_ed25519()
-        else:
-            self.private_key = load_pem_private_key(infile.read(), password=None)  # type: ignore[assignment]
-        self.public_key: ed25519.Ed25519PublicKey = self.private_key.public_key()
-
-    @property
-    def private_key_pem(self) -> bytes:
-        return self.private_key.private_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PrivateFormat.PKCS8,
-            encryption_algorithm=serialization.NoEncryption()
-        )
+    @staticmethod
+    @abc.abstractmethod
+    def verify_signature(
+        public_key, message: bytes, signature: bytes
+    ) -> bool:
+        pass
 
     def write_private_key_pem(self, outfile: BinaryIO) -> bytes:
         """
@@ -152,6 +108,66 @@ class Ed25519KeysGenerator:
         outfile.write(self.private_key_pem)
         return self.private_key_pem
 
+    def write_public_key_pem(self, outfile: BinaryIO) -> bytes:
+        """
+        Write public key pem to file and return it.
+
+        :param outfile: A file-like object to write the public key.
+        """
+        outfile.write(self.public_key_pem)
+        return self.public_key_pem
+
+
+class EllipticCurveKeysGenerator(KeysGeneratorBase):
+    """Generate private and public keys for Elliptic Curve cryptography."""
+
+    def _generate_private_key(self):
+        return generate_legal_key_for_elliptic_curve()
+
+    @property
+    def private_key_pem(self) -> bytes:
+        return self.private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption(),
+        )
+
+    @property
+    def public_key_pem(self) -> bytes:
+        return self.public_key.public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo,
+        )
+
+    @staticmethod
+    def verify_signature(
+        public_key: ec.EllipticCurvePublicKey, message: bytes, signature: bytes
+    ) -> bool:
+        try:
+            public_key.verify(signature, message, ec.ECDSA(hashes.SHA256()))
+            return True
+        except InvalidSignature:
+            return False
+
+    @staticmethod
+    def sign_message(private_key: ec.EllipticCurvePrivateKey, message: bytes) -> bytes:
+        return private_key.sign(message, ec.ECDSA(hashes.SHA256()))
+
+
+class Ed25519KeysGenerator(KeysGeneratorBase):
+    """Generate private and public keys for ED25519 cryptography."""
+
+    def _generate_private_key(self):
+        return generate_legal_key_for_ed25519()
+
+    @property
+    def private_key_pem(self) -> bytes:
+        return self.private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.PKCS8,
+            encryption_algorithm=serialization.NoEncryption()
+        )
+
     @property
     def public_key_pem(self) -> bytes:
         return self.public_key.public_bytes(
@@ -159,18 +175,10 @@ class Ed25519KeysGenerator:
             format=serialization.PublicFormat.SubjectPublicKeyInfo
         )
 
-    def write_public_key_pem(self, outfile: BinaryIO) -> bytes:
-        """
-        Write public key pem to file and return it.
-
-        :param outfile: A file-like object to write the public key.
-        """
-        if outfile is not None:
-            outfile.write(self.public_key_pem)
-        return self.public_key_pem
-
     @staticmethod
-    def verify_signature(public_key: ed25519.Ed25519PublicKey, message: bytes, signature: bytes) -> bool:
+    def verify_signature(
+        public_key: ed25519.Ed25519PublicKey, message: bytes, signature: bytes
+    ) -> bool:
         try:
             public_key.verify(signature, message)
             return True
@@ -178,15 +186,22 @@ class Ed25519KeysGenerator:
             return False
 
     @staticmethod
-    def sign_message(private_key, message: bytes) -> bytes:
+    def sign_message(private_key: ed25519.Ed25519PrivateKey, message: bytes) -> bytes:
         return private_key.sign(message)
+
+
+ALGORITHMS: dict[str, Type[KeysGeneratorBase]] = {
+    "ed25519": Ed25519KeysGenerator,
+    "ec": EllipticCurveKeysGenerator,
+}
 
 
 def main(argv=None) -> int:
     parser = argparse.ArgumentParser(
         description='Generate PEM file.',
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        allow_abbrev=False)
+        allow_abbrev=False
+    )
 
     priv_pub_group = parser.add_mutually_exclusive_group(required=True)
     priv_pub_group.add_argument('--private', required=False, action='store_true',
@@ -207,19 +222,15 @@ def main(argv=None) -> int:
 
     args = parser.parse_args(argv)
 
-    if args.algorithm == 'ed25519':
-        ed25519_generator = Ed25519KeysGenerator(args.infile)
-        if args.private:
-            ed25519_generator.write_private_key_pem(args.out)
-        if args.public:
-            ed25519_generator.write_public_key_pem(args.out)
-    else:
-        ec_generator = EllipticCurveKeysGenerator(args.infile)
-        if args.private:
-            ec_generator.write_private_key_pem(args.out)
-        elif args.public:
-            ec_generator.write_public_key_pem(args.out)
+    try:
+        generator = ALGORITHMS[args.algorithm](args.infile)
+    except KeyError:
+        sys.exit(f'Unknown algorithm {args.algorithm}.')
 
+    if args.private:
+        generator.write_private_key_pem(args.out)
+    if args.public:
+        generator.write_public_key_pem(args.out)
     return 0
 
 

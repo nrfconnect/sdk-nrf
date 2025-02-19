@@ -48,9 +48,9 @@
 
 #include <app/InteractionModelEngine.h>
 #include <app/clusters/network-commissioning/network-commissioning.h>
-#include <app/server/OnboardingCodesUtil.h>
 #include <credentials/examples/DeviceAttestationCredsExample.h>
 #include <platform/nrfconnect/ExternalFlashManager.h>
+#include <setup_payload/OnboardingCodesUtil.h>
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 

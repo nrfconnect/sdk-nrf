@@ -20,7 +20,7 @@
 #define LOCATION_SEND_CBOR_MAX_SIZE 96
 #define AGNSS_GET_CBOR_MAX_SIZE 64
 #define PGPS_URL_GET_CBOR_MAX_SIZE 64
-#define SENSOR_SEND_CBOR_MAX_SIZE 32
+#define SENSOR_SEND_CBOR_MAX_SIZE 64
 #define MESSAGE_SEND_CBOR_MAX_SIZE 256
 
 #define LOG_CB_DBG(result_code, offset, len, last_block) { \

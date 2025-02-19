@@ -7,8 +7,10 @@ Getting started with the nRF54H20 DK
    :local:
    :depth: 2
 
-This document gets you started with your nRF54H20 Development Kit (DK) using the |NCS|.
+This document gets you started with your nRF54H20 Development Kit (DK) using the |NCS| for the first time.
 It tells you how to install the :zephyr:code-sample:`sysbuild_hello_world` sample and perform a quick test of your DK.
+
+If you are migrating from an earlier version of the |NCS|, see :ref:`migration_guides`.
 
 .. _ug_nrf54h20_gs_requirements:
 
@@ -138,7 +140,7 @@ Installing nRF Util and its commands
 Using the nRF54H20 DK with the |NCS| version |release| requires the following:
 
 * nRF Util v7.13.0 or higher
-* nRF Util ``device`` command v2.7.10
+* nRF Util ``device`` command v2.7.14
 * nRF Util ``trace`` command v3.1.0
 * nRF Util ``suit`` command v0.9.0
 
@@ -163,11 +165,11 @@ If you have not already installed nRF Util as part of :ref:`nRF Connect SDK prer
       For more information, consult the `Upgrading nRF Util core module`_ documentation.
 
 #. Install the required versions of nRF Util commands, as listed above, using the command from `Installing specific versions of nRF Util commands`_.
-   For example, the following command installs the nRF Util ``device`` command version 2.7.10:
+   For example, the following command installs the nRF Util ``device`` command version 2.7.14:
 
    .. code-block::
 
-      nrfutil install device=2.7.10 --force
+      nrfutil install device=2.7.14 --force
 
 .. _ug_nrf54h20_gs_bringup:
 
@@ -209,7 +211,7 @@ After programming the BICR, program the nRF54H20 SoC with the :ref:`nRF54H20 SoC
 This bundle contains the precompiled firmware for the :ref:`Secure Domain <ug_nrf54h20_secure_domain>` and :ref:`System Controller <ug_nrf54h20_sys_ctrl>`.
 To program the nRF54H20 SoC binaries to the nRF54H20 DK, do the following:
 
-1. Download the `nRF54H20 SoC Binaries v0.8.0`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
+1. Download the `nRF54H20 SoC binaries v0.9.1`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
 
    .. note::
       On MacOS, ensure that the ZIP file is not unpacked automatically upon download.

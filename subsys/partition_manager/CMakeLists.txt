@@ -127,12 +127,16 @@ if (CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_FLASH)
   ncs_add_partition_manager_config(pm.yml.modem_trace)
 endif()
 
-if (CONFIG_SOC_NRF54L15_CPUFLPR)
+if (CONFIG_SOC_NRF54L15_CPUFLPR OR CONFIG_SOC_NRF7120_ENGA_CPUFLPR)
   ncs_add_partition_manager_config(pm.yml.vpr_launcher)
 endif()
 
 if(CONFIG_WIFI_NRF70 AND CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_STORE)
   ncs_add_partition_manager_config(pm.yml.wifi)
+endif()
+
+if(CONFIG_LOG_BACKEND_RPC_HISTORY_STORAGE_FCB)
+  ncs_add_partition_manager_config(pm.yml.log_history)
 endif()
 
 # We are using partition manager if we are a child image or if we are

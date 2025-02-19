@@ -1,6 +1,7 @@
 tests:
   drivers.mspi.api:
     tags:
+      - ci_tests_drivers_sdp
       - drivers
       - mspi
       - api

@@ -121,11 +121,13 @@ ZTEST(mci_api_positive_scenarios_tests, test_signing_key_id_validate)
 
 	for (int i = 0; i < output_size; ++i) {
 		uint32_t key_id = 0;
+		int32_t alg_id = 0;
 
-		rc = suit_mci_signing_key_id_validate(result_class_info[i].class_id, key_id);
+		rc = suit_mci_signing_key_id_and_alg_validate(result_class_info[i].class_id,
+							      key_id, alg_id);
 		zassert_true((rc == MCI_ERR_NOACCESS || rc == SUIT_PLAT_SUCCESS ||
 			      rc == MCI_ERR_WRONGKEYID),
-			     "suit_mci_signing_key_id_validate returned (%d)", rc);
+			     "suit_mci_signing_key_id_and_alg_validate returned (%d)", rc);
 	}
 }
 
