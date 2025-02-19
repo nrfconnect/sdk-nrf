@@ -62,12 +62,12 @@ The following table shows a comparison between LTE-M and NB-IoT in terms of adva
 |                  | connection                     |                                |
 +------------------+--------------------------------+--------------------------------+
 
-You can find the key feature comparison between LTE-M and NB-IoT in the `nWP044 - Best practices for cellular IoT development`_ documentation.
+You can find the key feature comparison between LTE-M and NB-IoT in the `nWP044 - Best practices for cellular IoT development LTE technology`_ documentation.
 
 Factors to be considered for LTE
 ********************************
 
-Following are some key aspects to ensure LTE support for your SiP using Nordic Semiconductor's devices, such as the nRF91 Series.
+Following are the key considerations to ensure LTE support for your SiP when using Nordic Semiconductor's nRF91 Series devices.
 
 LTE bands
 =========
