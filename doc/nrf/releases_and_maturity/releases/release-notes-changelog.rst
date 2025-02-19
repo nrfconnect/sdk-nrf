@@ -678,6 +678,8 @@ Modem libraries
     * The :c:enum:`modem_info_data_type` type for representing LTE link information data types.
     * The :c:func:`modem_info_data_type_get` function for requesting the data type of the current modem information type.
 
+  * Deprecated the :c:func:`modem_info_type_get` function in favor of the :c:func:`modem_info_data_type_get` function.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 
