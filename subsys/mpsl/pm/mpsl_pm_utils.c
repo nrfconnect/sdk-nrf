@@ -10,9 +10,9 @@
 #include <zephyr/pm/policy.h>
 #include <zephyr/logging/log.h>
 
-#if defined(MPSL_PM_USE_MRAM_LATENCY_SERVICE)
+#if defined(CONFIG_MPSL_PM_USE_MRAM_LATENCY_SERVICE)
 #include <mram_latency.h>
-#endif /* MPSL_PM_USE_MRAM_LATENCY_SERVICE */
+#endif /* CONFIG_MPSL_PM_USE_MRAM_LATENCY_SERVICE */
 
 #include <mpsl/mpsl_pm_utils.h>
 
@@ -32,7 +32,7 @@ static uint32_t                         m_prev_lat_value_us;
 static struct pm_policy_latency_request m_latency_req;
 static struct pm_policy_event           m_evt;
 
-#if defined(MPSL_PM_USE_MRAM_LATENCY_SERVICE)
+#if defined(CONFIG_MPSL_PM_USE_MRAM_LATENCY_SERVICE)
 #define LOW_LATENCY_ATOMIC_BITS_NUM 2
 #define LOW_LATENCY_PM_BIT 0
 #define LOW_LATENCY_MRAM_BIT 0
@@ -44,7 +44,7 @@ struct onoff_client m_mram_req_cli;
 
 static void m_mram_low_latency_request(void);
 static void m_mram_low_latency_release(void);
-#endif /* MPSL_PM_USE_MRAM_LATENCY_SERVICE */
+#endif /* CONFIG_MPSL_PM_USE_MRAM_LATENCY_SERVICE */
 
 static void m_update_latency_request(uint32_t lat_value_us)
 {
@@ -103,13 +103,13 @@ static void m_register_latency(void)
 		if (mpsl_pm_low_latency_requested()) {
 			mpsl_pm_low_latency_state_set(MPSL_PM_LOW_LATENCY_STATE_REQUESTING);
 
-#if defined(MPSL_PM_USE_MRAM_LATENCY_SERVICE)
+#if defined(CONFIG_MPSL_PM_USE_MRAM_LATENCY_SERVICE)
 			/* Request MRAM latency first because the call goes to system controller */
 			m_mram_low_latency_request();
-#endif /* MPSL_PM_USE_MRAM_LATENCY_SERVICE */
+#endif /* CONFIG_MPSL_PM_USE_MRAM_LATENCY_SERVICE */
 
 			m_update_latency_request(0);
-#if defined(MPSL_PM_USE_MRAM_LATENCY_SERVICE)
+#if defined(CONFIG_MPSL_PM_USE_MRAM_LATENCY_SERVICE)
 			atomic_set_bit(m_low_latency_req_state, LOW_LATENCY_PM_BIT);
 
 			/* Attempt to notify MPLS about change. Most likely it will happen later
@@ -118,7 +118,7 @@ static void m_register_latency(void)
 			if (atomic_test_bit(m_low_latency_req_state, LOW_LATENCY_MRAM_BIT)) {
 #else
 			if (true) {
-#endif /* MPSL_PM_USE_MRAM_LATENCY_SERVICE*/
+#endif /* CONFIG_MPSL_PM_USE_MRAM_LATENCY_SERVICE*/
 				mpsl_pm_low_latency_state_set(MPSL_PM_LOW_LATENCY_STATE_ON);
 			}
 		}
@@ -127,13 +127,13 @@ static void m_register_latency(void)
 		if (!mpsl_pm_low_latency_requested()) {
 			mpsl_pm_low_latency_state_set(MPSL_PM_LOW_LATENCY_STATE_RELEASING);
 
-#if defined(MPSL_PM_USE_MRAM_LATENCY_SERVICE)
+#if defined(CONFIG_MPSL_PM_USE_MRAM_LATENCY_SERVICE)
 			m_mram_low_latency_release();
-#endif /* MPSL_PM_USE_MRAM_LATENCY_SERVICE */
+#endif /* CONFIG_MPSL_PM_USE_MRAM_LATENCY_SERVICE */
 			m_update_latency_request(PM_MAX_LATENCY_HCI_COMMANDS_US);
-#if defined(MPSL_PM_USE_MRAM_LATENCY_SERVICE)
+#if defined(CONFIG_MPSL_PM_USE_MRAM_LATENCY_SERVICE)
 			atomic_clear_bit(m_low_latency_req_state, LOW_LATENCY_PM_BIT);
-#endif /* MPSL_PM_USE_MRAM_LATENCY_SERVICE*/
+#endif /* CONFIG_MPSL_PM_USE_MRAM_LATENCY_SERVICE*/
 
 			/* MRAM low release is handled sunchronously, hence the MPLS notification
 			 * happens here.
@@ -146,7 +146,7 @@ static void m_register_latency(void)
 	}
 }
 
-#if defined(MPSL_PM_USE_MRAM_LATENCY_SERVICE)
+#if defined(CONFIG_MPSL_PM_USE_MRAM_LATENCY_SERVICE)
 static void m_mram_request_cb(struct onoff_manager *mgr, struct onoff_client *cli, uint32_t state,
 			      int res)
 {
@@ -199,7 +199,7 @@ static void m_mram_low_latency_release(void)
 	 */
 	atomic_clear_bit(m_low_latency_req_state, LOW_LATENCY_MRAM_BIT);
 }
-#endif /* MPSL_PM_USE_MRAM_LATENCY_SERVICE */
+#endif /* CONFIG_MPSL_PM_USE_MRAM_LATENCY_SERVICE */
 
 void mpsl_pm_utils_work_handler(void)
 {
