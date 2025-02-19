@@ -1,4 +1,4 @@
-nRF Connect SDK – Custom Fork for Diagnostic Headphones 🎧🔊
+nRF Connect SDK –  Diagnostic Headphones 🎧🔊
 ########################
 
 .. contents::
