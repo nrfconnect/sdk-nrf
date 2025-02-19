@@ -151,6 +151,16 @@ enum modem_info {
 	MODEM_INFO_COUNT,	/**< Number of legal elements in the enum. */
 };
 
+/** @brief LTE link information data types. */
+enum modem_info_data_type {
+	/** Data of type invalid. */
+	MODEM_INFO_DATA_TYPE_INVALID,
+	/** Data of type integer. */
+	MODEM_INFO_DATA_TYPE_NUM_INT,
+	/** Data of type string. */
+	MODEM_INFO_DATA_TYPE_STRING,
+};
+
 /**@brief LTE parameter data. **/
 struct lte_param {
 	uint16_t value; /**< The retrieved value. */
@@ -297,6 +307,15 @@ int modem_info_name_get(enum modem_info info, char *name);
  *         Otherwise, a (negative) error code is returned.
  */
 enum at_param_type modem_info_type_get(enum modem_info info);
+
+/** @brief Request the data type of the current modem information
+ *         type.
+ *
+ * @param info The requested information type.
+ *
+ * @return The data type of the requested modem information data.
+ */
+enum modem_info_data_type modem_info_data_type_get(enum modem_info info);
 
 /** @brief Obtain the modem parameters.
  *
