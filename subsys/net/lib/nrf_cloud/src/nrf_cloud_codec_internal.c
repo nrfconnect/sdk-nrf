@@ -1233,7 +1233,7 @@ int nrf_cloud_get_single_cell_modem_info(struct lte_lc_cell *const cell_inf)
 static int add_modem_info_data(struct lte_param *param, cJSON *json_obj)
 {
 	char data_name[MODEM_INFO_MAX_RESPONSE_SIZE];
-	enum at_param_type data_type;
+	enum modem_info_data_type data_type;
 	int ret;
 
 	__ASSERT_NO_MSG(param != NULL);
@@ -1246,12 +1246,12 @@ static int add_modem_info_data(struct lte_param *param, cJSON *json_obj)
 		return -EINVAL;
 	}
 
-	data_type = modem_info_type_get(param->type);
+	data_type = modem_info_data_type_get(param->type);
 	if (data_type < 0) {
 		return -EINVAL;
 	}
 
-	if (data_type == AT_PARAM_TYPE_STRING &&
+	if (data_type == MODEM_INFO_DATA_TYPE_STRING &&
 	    param->type != MODEM_INFO_AREA_CODE) {
 		if (cJSON_AddStringToObject(json_obj, data_name, param->value_string) == NULL) {
 			return -ENOMEM;
