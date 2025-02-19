@@ -6,7 +6,7 @@ nRF Connect SDK – Custom Fork for Diagnostic Headphones 🎧🔊
    :depth: 2
 
 This repository contains the core of nRF Connect SDK, including subsystems,
-libraries, samples, and applications. This repo will be modified to integrate new features into the nRF5340 Audio application. 
+libraries, samples, and applications. Files in applications/nrf5340_audio will be modified to integrate new features into the nRF5340 Audio application. 
 These enhancements are tailored for a diagnostic headphone system that measures ambient noise and generates hearing test signals.
 It is also the SDK's west manifest repository, containing the nRF Connect SDK
 manifest (west.yml).
@@ -18,15 +18,20 @@ Documentation
 
 
 This fork builds upon the original nRF5340 Audio application with the following modifications:
+
 ✅ Ambient Noise Measurement – Integrating noise level detection to adapt hearing tests based on the environment.
+
 ✅ Modified Unicast Server & Client – Extending the existing audio streaming features to support diagnostic functionalities.
+
 ✅ Codec Integration – Exploring support for an SBC codec and a codec with 8 entries + integrated DSP.
 
 📌 Key Modifications
 
 
 📡 Ambient Noise Detection: Measures surrounding noise levels and transmits a signal indicating noise conditions.
+
 🎵 Enhanced Audio Processing: Adapts hearing test signals based on ambient noise to improve accuracy.
+
 🔧 Codec Evaluation & Implementation: Investigating additional codec support for improved audio signal processing.
 
 
