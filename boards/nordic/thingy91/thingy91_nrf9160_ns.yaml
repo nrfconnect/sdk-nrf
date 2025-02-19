@@ -5,6 +5,8 @@ arch: arm
 toolchain:
   - gnuarmemb
   - zephyr
+  - zephyr-gnu
+  - zephyr-llvm
 ram: 128
 flash: 256
 supported:
