@@ -6,10 +6,6 @@
 
 menu "Protocols serialization client"
 
-choice BT_NUS_LOG_LEVEL_CHOICE
-	default BT_NUS_LOG_LEVEL_DBG if DEBUG
-endchoice
-
 config RPC_CRASH_LOG_READ_BUFFER_SIZE
 	int "Crash log read buffer size"
 	depends on LOG_FORWARDER_RPC
@@ -23,6 +19,16 @@ module-str = nrf_ps_client
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 endmenu # "Protocols serialization client"
+
+if SETTINGS
+
+config ZMS
+	default y if (SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+
+config NVS
+	default y if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+
+endif # SETTINGS
 
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"
