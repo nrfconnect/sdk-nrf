@@ -392,6 +392,7 @@ static int map_nrf_modem_at_scanf_error(int err)
 	}
 }
 
+/* Deprecated in favor of `modem_info_data_type_get`. */
 enum at_param_type modem_info_type_get(enum modem_info info_type)
 {
 	if (info_type >= MODEM_INFO_COUNT) {
