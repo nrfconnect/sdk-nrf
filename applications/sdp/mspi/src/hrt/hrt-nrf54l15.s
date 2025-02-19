@@ -230,8 +230,12 @@ hrt_write:
 	addi	sp,sp,-16
 	sw	s0,8(sp)
 	sw	ra,12(sp)
+	sw	s1,4(sp)
 	mv	s0,a0
 	sb	zero,3(sp)
+ #APP
+	csrr s1, 3008
+ #NO_APP
 	lhu	a5,90(a0)
  #APP
 	csrw 3009, a5
@@ -335,11 +339,16 @@ hrt_write:
 	call	hrt_tx
 	lbu	a5,94(s0)
 	bne	a5,zero,.L45
-	li	a5,16384
+	li	a5,4096
 	addi	a5,a5,1
  #APP
 	csrw 3019, a5
-	csrw 3017, 0
+ #NO_APP
+	slli	s1,s1,1
+	slli	s1,s1,16
+	srli	s1,s1,16
+ #APP
+	csrw 3012, s1
 	csrw 2000, 0
  #NO_APP
 .L46:
@@ -361,6 +370,7 @@ hrt_write:
 .L33:
 	lw	ra,12(sp)
 	lw	s0,8(sp)
+	lw	s1,4(sp)
 	addi	sp,sp,16
 	jr	ra
 .L40:
@@ -380,7 +390,7 @@ hrt_write:
  #APP
 	csrw 2000, 0
  #NO_APP
-	li	a5,16384
+	li	a5,4096
 	addi	a5,a5,1
  #APP
 	csrw 3019, a5
