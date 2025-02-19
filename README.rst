@@ -15,12 +15,16 @@ manifest (west.yml).
 Documentation
 *************
 🔹 About This Fork
+
+
 This fork builds upon the original nRF5340 Audio application with the following modifications:
 ✅ Ambient Noise Measurement – Integrating noise level detection to adapt hearing tests based on the environment.
 ✅ Modified Unicast Server & Client – Extending the existing audio streaming features to support diagnostic functionalities.
 ✅ Codec Integration – Exploring support for an SBC codec and a codec with 8 entries + integrated DSP.
 
 📌 Key Modifications
+
+
 📡 Ambient Noise Detection: Measures surrounding noise levels and transmits a signal indicating noise conditions.
 🎵 Enhanced Audio Processing: Adapts hearing test signals based on ambient noise to improve accuracy.
 🔧 Codec Evaluation & Implementation: Investigating additional codec support for improved audio signal processing.
