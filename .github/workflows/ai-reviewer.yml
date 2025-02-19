@@ -1,0 +1,23 @@
+name: Code Review
+
+permissions:
+  contents: read
+  pull-requests: write
+
+on:
+  pull_request:
+    types:
+      - review_requested
+
+jobs:
+  review_full:
+    if: github.event.action == 'review_requested' && github.event.requested_reviewer.login == 'Nordicbuilder'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Full PR Diff Review
+        uses: NordicBuilder/ChatGPT-CodeReview@takeAllCommits
+        env:
+          GITHUB_TOKEN: ${{ secrets.NORDICBUILDER_GPT }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          IGNORE_PATTERNS: /placeholder
+          INCLUDE_PATTERNS: "*.*"
