@@ -815,6 +815,7 @@
 # Tests
 /tests/benchmarks/                        @nrfconnect/ncs-low-level-test
 /tests/benchmarks/multicore/              @carlescufi @nrfconnect/ncs-low-level-test
+/tests/benchmarks/multicore/common/       @nrfconnect/ncs-low-level-test
 /tests/benchmarks/multicore/idle*         @nrfconnect/ncs-low-level-test
 /tests/benchmarks/multicore/idle/         @adamkondraciuk @nrfconnect/ncs-low-level-test
 /tests/benchmarks/multicore/idle_gpio/    @adamkondraciuk @nrfconnect/ncs-low-level-test
