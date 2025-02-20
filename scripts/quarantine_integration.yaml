@@ -443,10 +443,17 @@
     - fast_pair.storage.factory_reset.7keys
     - fast_pair.storage.factory_reset.8keys
     - fast_pair.storage.factory_reset.9keys
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
     - fast_pair.storage.factory_reset.default
     - fast_pair.storage.factory_reset.ak_minimal_backend
   platforms:
     - nrf52840dk/nrf52840
+    - nrf54l15dk/nrf54l10/cpuapp
+    - nrf54l15dk/nrf54l15/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -463,6 +470,8 @@
     - fast_pair.storage.account_key_storage.minimal
   platforms:
     - nrf52840dk/nrf52840
+    - nrf54l15dk/nrf54l10/cpuapp
+    - nrf54l15dk/nrf54l15/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
@@ -471,6 +480,8 @@
     - fast_pair.crypto.psa
   platforms:
     - nrf52840dk/nrf52840
+    - nrf54l15dk/nrf54l10/cpuapp
+    - nrf54l15dk/nrf54l15/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
