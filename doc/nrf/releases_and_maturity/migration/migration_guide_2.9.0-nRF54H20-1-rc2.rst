@@ -1,5 +1,3 @@
-:orphan:
-
 .. _migration_2.9.0-nRF54H20-1-rc2:
 
 Migration guide for |NCS| v2.9.0-nRF54H20-1-rc2
@@ -93,11 +91,11 @@ nRF Util device
 
 .. toggle::
 
-  * nRF Util ``device`` command has been updated to v2.7.10.
+  * nRF Util ``device`` command has been updated to v2.7.15.
 
-    Install the nRF Util ``device`` command v2.7.14 as follows::
+    Install the nRF Util ``device`` command v2.7.15 as follows::
 
-       nrfutil install device=2.7.14 --force
+       nrfutil install device=2.7.15 --force
 
     For more information, consult the `nRF Util`_ documentation.
 
