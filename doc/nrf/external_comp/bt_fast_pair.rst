@@ -580,6 +580,7 @@ For example, the "It's here" status message is displayed in the "Hot & Cold" exp
 
 You can set the TX power for the FMDN advertising and connections using the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_TX_POWER` Kconfig option.
 The configured value is directly used to set the TX power in the Bluetooth LE controller using an HCI command.
+This Kconfig option must be set to 0 at minimum as the Fast Pair specification requires that the conducted Bluetooth transmit power for FMDN advertisements must not be lower than 0 dBm.
 By default, 0 dBm is used for the FMDN TX power configuration.
 
 You can use the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_TX_POWER_CORRECTION_VAL` Kconfig option to define a correction value that is added to TX power readout from the Bluetooth LE controller (usually equal to the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_TX_POWER` Kconfig option), when calculating the calibrated TX power reported in the Read Beacon Parameters response.

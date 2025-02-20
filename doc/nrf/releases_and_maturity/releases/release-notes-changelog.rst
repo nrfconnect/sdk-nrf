@@ -610,6 +610,9 @@ Bluetooth libraries and services
 
 * :ref:`bt_fast_pair_readme` library:
 
+  * Added a restriction on the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_TX_POWER` Kconfig option in the Find My Device Network (FMDN) extension configuration.
+    This Kconfig option must now be set to 0 at minimum as the Fast Pair specification now requires that the conducted Bluetooth transmit power for FMDN advertisements must not be lower than 0 dBm.
+
   * Updated the automatically generated ``bt_fast_pair`` partition definition (located in the :file:`subsys/partition_manager/pm.yml.bt_fast_pair`) to work correctly when building with TF-M.
 
 * :ref:`bt_mesh` library:
