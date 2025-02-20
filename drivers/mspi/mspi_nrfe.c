@@ -188,6 +188,23 @@ static int mspi_ipc_data_send(nrfe_mspi_opcode_t opcode, const void *data, size_
 #endif
 #if !defined(CONFIG_MULTITHREADING)
 	atomic_clear_bit(&ipc_atomic_sem, opcode);
+#else
+	switch (opcode) {
+	case NRFE_MSPI_CONFIG_PINS:
+	case NRFE_MSPI_CONFIG_DEV:
+	case NRFE_MSPI_CONFIG_XFER: {
+		k_sem_reset(&ipc_sem_cfg);
+		break;
+	}
+	case NRFE_MSPI_TX:
+	case NRFE_MSPI_TXRX: {
+		k_sem_reset(&ipc_sem_xfer);
+		break;
+	}
+	default: {
+		break;
+	}
+	}
 #endif
 
 	do {
@@ -217,17 +234,26 @@ static int nrfe_mspi_wait_for_response(nrfe_mspi_opcode_t opcode, uint32_t timeo
 {
 #if defined(CONFIG_MULTITHREADING)
 	int ret = 0;
+	uint32_t microseconds = timeout * 1000;
 
 	switch (opcode) {
 	case NRFE_MSPI_CONFIG_PINS:
 	case NRFE_MSPI_CONFIG_DEV:
 	case NRFE_MSPI_CONFIG_XFER: {
-		ret = k_sem_take(&ipc_sem_cfg, K_MSEC(timeout));
+		while (microseconds-- && (k_sem_take(&ipc_sem_cfg, K_USEC(1)))) {
+			if (microseconds == 0) {
+				ret = -ETIMEDOUT;
+			};
+		};
 		break;
 	}
 	case NRFE_MSPI_TX:
 	case NRFE_MSPI_TXRX:
-		ret = k_sem_take(&ipc_sem_xfer, K_MSEC(timeout));
+		while (microseconds-- && (k_sem_take(&ipc_sem_xfer, K_USEC(1)))) {
+			if (microseconds == 0) {
+				ret = -ETIMEDOUT;
+			};
+		};
 		break;
 	default:
 		break;
@@ -674,7 +700,7 @@ static int nrfe_mspi_init(const struct device *dev)
 
 	/* Wait for ep to be bounded */
 #if defined(CONFIG_MULTITHREADING)
-	k_sem_take(&ipc_sem, K_FOREVER);
+	while(k_sem_take(&ipc_sem, K_USEC(1))) {};
 #else
 	while (!atomic_test_and_clear_bit(&ipc_atomic_sem, NRFE_MSPI_EP_BOUNDED)) {
 	}
