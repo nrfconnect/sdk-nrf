@@ -1,0 +1,335 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	model = "Apricity Gateway nRF9160";
+	compatible = "apricity,apricity-gateway-nrf9160";
+
+	chosen {
+		zephyr,console = &uart0;
+		zephyr,shell-uart = &uart0;
+		zephyr,uart-mcumgr = &uart0;
+		zephyr,bt-hci=&bt_hci_uart;
+	};
+
+	buttons {
+		compatible = "gpio-keys";
+
+		button0: button_0 {
+			gpios = <&gpio0 17 0>;
+			label = "Button 1";
+		};
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		red_led: led_1 {
+			gpios = <&gpio0 29 0>;
+			label = "RGB red channel";
+		};
+		green_led: led_2 {
+			gpios = <&gpio0 30 0>;
+			label = "RGB green channel";
+		};
+		blue_led: led_3 {
+			gpios = <&gpio0 31 0>;
+			label = "RGB blue channel";
+		};
+		red_led_2: led_4 {
+			gpios = <&gpio0 26 0>;
+			label = "RGB red 2 channel";
+		};
+		green_led_2: led_5 {
+			gpios = <&gpio0 27 0>;
+			label = "RGB green 2 channel";
+		};
+		blue_led_2: led_6 {
+			gpios = <&gpio0 28 0>;
+			label = "RGB blue 2 channel";
+		};
+	};
+
+	interface_to_nrf52840: gpio-interface {
+		compatible = "nordic,nrf9160dk-nrf52840-interface";
+		#gpio-cells = <2>;
+		gpio-map-mask = <0xf 0>;
+		gpio-map-pass-thru = <0 0xffffffff>;
+		gpio-map = <0 0 &gpio0 18 0>,
+			   <1 0 &gpio0 19 0>,
+			   <2 0 &gpio0 20 0>,
+			   <3 0 &gpio0 21 0>,
+			   <4 0 &gpio0 22 0>,
+			   <5 0 &gpio0 23 0>,
+			   /* 6: COEX0 */
+			   /* 7: COEX1 */
+			   /* 8: COEX2 */
+			   <9 0 &gpio0 13 0>,
+			   <10 0 &gpio0 5 0>,
+			   <11 0 &gpio0 9 0>;
+	};
+
+	nrf52840_reset: gpio-reset {
+		compatible = "nordic,nrf9160dk-nrf52840-reset";
+		status = "okay";
+		/*
+		 * This line is specified as active high for compatibility
+		 * with the previously used Kconfig-based configuration.
+		 */
+		gpios = <&interface_to_nrf52840 9 GPIO_ACTIVE_HIGH>;
+	};
+
+	nrf52840_boot: gpio-boot {
+		compatible = "nordic,nrf9160dk-nrf52840-boot";
+		status = "okay";
+		gpios = <&interface_to_nrf52840 10 GPIO_PULL_UP>;
+	};
+
+	ext_mem_ctrl: gpio-ext-mem-ctrl {
+		compatible = "nordic,ext-mem-ctrl";
+		status = "okay";
+		gpios = <&interface_to_nrf52840 11 0>;
+	};
+
+	aliases {
+		sw0 = &button0;
+		led0 = &red_led;
+		led1 = &green_led;
+		led2 = &blue_led;
+		led0-1 = &red_led_2;
+		led1-1 = &green_led_2;
+		led2-1 = &blue_led_2;
+		rgb-pwm = &pwm0;
+		rgb2-pwm = &pwm1;
+	};
+};
+
+&adc {
+	status = "okay";
+};
+
+&gpiote {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+/* PWM0 is intended for RGB LED control */
+&pwm0 {
+	compatible = "nordic,nrf-pwm";
+	status = "okay";
+	pinctrl-0 = <&pwm0_default>;
+	pinctrl-1 = <&pwm0_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+/* PWM1 is intended for RGB LED control */
+&pwm1 {
+	compatible = "nordic,nrf-pwm";
+	status = "okay";
+	pinctrl-0 = <&pwm1_default>;
+	pinctrl-1 = <&pwm1_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&spi3 {
+	compatible = "nordic,nrf-spim";
+	status = "okay";
+	pinctrl-0 = <&spi3_default_alt>;
+	pinctrl-1 = <&spi3_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	cs-gpios = <&gpio0 8 1>;
+	w25q64jv: w25q64jv@0 {
+		status = "okay";
+		compatible = "jedec,spi-nor";
+		reg = <0>;
+		spi-max-frequency = <80000000>;
+		jedec-id = [ef 40 17];
+		size = <67108864>;
+	};
+};
+
+&pinctrl {
+	spi3_default_alt: spi3_default_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 0, 14)>,
+				<NRF_PSEL(SPIM_MOSI, 0, 11)>,
+				<NRF_PSEL(SPIM_MISO, 0, 12)>;
+			nordic,drive-mode = <NRF_DRIVE_H0H1>;
+		};
+	};
+
+	spi3_sleep_alt: spi3_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 0, 14)>,
+				<NRF_PSEL(SPIM_MOSI, 0, 11)>,
+				<NRF_PSEL(SPIM_MISO, 0, 12)>;
+			low-power-enable;
+		};
+	};
+
+	pwm0_default: pwm0_default {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 0, 29)>,
+				<NRF_PSEL(PWM_OUT1, 0, 30)>,
+				<NRF_PSEL(PWM_OUT2, 0, 31)>;
+			nordic,invert;
+		};
+	};
+
+	pwm0_sleep: pwm0_sleep {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 0, 29)>,
+				<NRF_PSEL(PWM_OUT1, 0, 30)>,
+				<NRF_PSEL(PWM_OUT2, 0, 31)>;
+			low-power-enable;
+			nordic,invert;
+		};
+	};
+
+	pwm1_default: pwm1_default {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 0, 26)>,
+				<NRF_PSEL(PWM_OUT1, 0, 27)>,
+				<NRF_PSEL(PWM_OUT2, 0, 28)>;
+			nordic,invert;
+		};
+	};
+
+	pwm1_sleep: pwm1_sleep {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 0, 26)>,
+				<NRF_PSEL(PWM_OUT1, 0, 27)>,
+				<NRF_PSEL(PWM_OUT2, 0, 28)>;
+			low-power-enable;
+			nordic,invert;
+		};
+	};
+
+	uart0_default: uart0_default {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 0, 18)>,
+				<NRF_PSEL(UART_RX, 0, 19)>,
+				<NRF_PSEL(UART_RTS, 0, 20)>,
+				<NRF_PSEL(UART_CTS, 0, 21)>;
+		};
+	};
+
+	uart0_sleep: uart0_sleep {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 0, 18)>,
+				<NRF_PSEL(UART_RX, 0, 19)>,
+				<NRF_PSEL(UART_RTS, 0, 20)>,
+				<NRF_PSEL(UART_CTS, 0, 21)>;
+			low-power-enable;
+		};
+	};
+
+	uart1_default: uart1_default {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 0, 23)>,
+				<NRF_PSEL(UART_RX, 0, 22)>,
+				<NRF_PSEL(UART_RTS, 0, 25)>,
+				<NRF_PSEL(UART_CTS, 0, 24)>;
+		};
+	};
+
+	uart1_sleep: uart1_sleep {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 0, 23)>,
+				<NRF_PSEL(UART_RX, 0, 22)>,
+				<NRF_PSEL(UART_RTS, 0, 25)>,
+				<NRF_PSEL(UART_CTS, 0, 24)>;
+			low-power-enable;
+		};
+	};
+};
+
+&uart0 {
+	compatible = "nordic,nrf-uarte";
+	current-speed = <115200>;
+	status = "okay";
+	pinctrl-0 = <&uart0_default>;
+	pinctrl-1 = <&uart0_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&uart1 {
+	compatible = "nordic,nrf-uarte";
+	current-speed = <1000000>;
+	status = "okay";
+	hw-flow-control;
+	pinctrl-0 = <&uart1_default>;
+	pinctrl-1 = <&uart1_sleep>;
+	pinctrl-names = "default", "sleep";
+	bt_hci_uart: bt_hci_uart {
+		compatible = "zephyr,bt-hci-uart";
+		status = "okay";
+	};
+};
+
+&flash0 {
+	/*
+	 * For more information, see:
+	 * http://docs.zephyrproject.org/devices/dts/flash_partitions.html
+	 */
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 0x10000>;
+		};
+		slot0_partition: partition@10000 {
+			label = "image-0";
+		};
+		slot0_ns_partition: partition@50000 {
+			label = "image-0-nonsecure";
+		};
+		slot1_partition: partition@80000 {
+			label = "image-1";
+		};
+		slot1_ns_partition: partition@c0000 {
+			label = "image-1-nonsecure";
+		};
+		scratch_partition: partition@f0000 {
+			label = "image-scratch";
+			reg = <0x000f0000 0xa000>;
+		};
+		/* 0xf0000 to 0xf7fff reserved for TF-M partitions */
+		storage_partition: partition@fa000 {
+			label = "storage";
+			reg = <0x000f8000 0x00008000>;
+		};
+	};
+};
+
+/ {
+
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		sram0_s: image_s@20000000 {
+			/* Secure image memory */
+		};
+
+		sram0_bsd: image_modem@20010000 {
+			/* Modem (shared) memory */
+		};
+
+		sram0_ns: image_ns@20020000 {
+			/* Non-Secure image memory */
+		};
+	};
+};
+
+/* Include partition configuration file */
+#include "apricity_gateway_nrf9160_partition_conf.dts"

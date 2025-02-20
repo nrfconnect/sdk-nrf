@@ -355,6 +355,13 @@ int nrf_cloud_send(const struct nrf_cloud_tx_data *msg)
 		if (current_state < STATE_CC_CONNECTED) {
 			return -EACCES;
 		}
+#if defined(CONFIG_NRF_CLOUD_MQTT_SHADOW_TRANSFORMS)
+	} else if (msg->topic_type == NRF_CLOUD_TOPIC_STATE_TF) {
+		/* State (shadow) updates need to have the control channel connected */
+		if (current_state < STATE_CC_CONNECTED) {
+			return -EACCES;
+		}
+#endif
 	} else {
 		/* All other topics require device channel connected */
 		if (current_state != STATE_DC_CONNECTED) {
