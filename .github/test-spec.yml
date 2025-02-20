@@ -616,8 +616,11 @@
 "CI-test-low-level":
   - "applications/sdp/**/*"
   - "drivers/gpio/**/*"
+  - "drivers/mspi/**/*"
   - "dts/bindings/gpio/**/*"
+  - "dts/bindings/mspi/**/*"
   - "include/drivers/gpio/**/*"
+  - "include/drivers/mspi/**/*"
   - "include/event_manager_proxy.h"
   - "subsys/event_manager_proxy/**/*"
   - "samples/ipc/**/*"
@@ -629,6 +632,7 @@
   - "tests/drivers/gpio/**/*"
   - "tests/drivers/lpuart/**/*"
   - "tests/drivers/pwm/**/*"
+  - "tests/drivers/sdp_asm/**/*"
   - "tests/drivers/sensor/**/*"
   - "tests/drivers/audio/**/*"
 
