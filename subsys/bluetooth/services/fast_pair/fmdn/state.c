@@ -98,6 +98,9 @@ enum utp_control_flags_bit_num {
 	UTP_CONTROL_FLAGS_BIT_NUM_RING_AUTH_SKIP = 0,
 };
 
+/* Verify if the conducted Bluetooth TX power for FMDN advertisements is set to at least 0 dBm. */
+BUILD_ASSERT(CONFIG_BT_FAST_PAIR_FMDN_TX_POWER >= 0);
+
 /* Verify if the length of the EIK is consistent with the storage module. */
 BUILD_ASSERT(FP_FMDN_STATE_EIK_LEN == FP_STORAGE_EIK_LEN);
 
