@@ -59,9 +59,3 @@
   platforms:
     - nrf7002dk/nrf5340/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31774"
-
-- scenarios:
-    - sample.bluetooth.peripheral_uart
-  platforms:
-    - nrf54h20dk@0.9.0/nrf54h20/cpurad
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31800"
