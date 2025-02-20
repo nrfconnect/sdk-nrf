@@ -28,6 +28,7 @@ tests:
       - idle_ppr_CONFIG_TEST_SLEEP_DURATION_MS=500
       - remote_rad_CONFIG_TEST_SLEEP_DURATION_MS=500
       - remote_ppr_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - idle_ppr_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/workaround_idle.overlay"
     harness: pytest
     harness_config:
       fixture: ppk_power_measure
