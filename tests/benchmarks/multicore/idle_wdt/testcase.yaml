@@ -26,6 +26,7 @@ tests:
       - remote_CONF_FILE=prj_s2ram.conf
       - idle_wdt_CONFIG_TEST_SLEEP_DURATION_MS=500
       - remote_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - idle_wdt_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/workaround_idle.overlay"
     harness: pytest
     harness_config:
       fixture: ppk_power_measure

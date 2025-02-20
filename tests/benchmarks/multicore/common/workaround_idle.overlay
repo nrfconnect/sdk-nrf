@@ -1,0 +1,19 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Modify S2RAM low power state - increase it's min-residency
+ * so the cpu stays at IDLE state.
+ */
+
+/ {
+	cpus {
+		power-states {
+			s2ram: s2ram {
+				min-residency-us = <800000>;
+			};
+		};
+	};
+};
