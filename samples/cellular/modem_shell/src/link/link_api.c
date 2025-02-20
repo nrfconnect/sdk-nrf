@@ -227,7 +227,6 @@ int link_api_xmonitor_read(struct lte_xmonitor_resp_t *resp)
 {
 	int ret = 0;
 	int len;
-	uint32_t reg_status;
 	char tmp_cell_id_str[OP_CELL_ID_STR_MAX_LEN + 1] = { 0 };
 	char tmp_tac_str[OP_TAC_STR_MAX_LEN + 1] = { 0 };
 
@@ -242,12 +241,9 @@ int link_api_xmonitor_read(struct lte_xmonitor_resp_t *resp)
 	resp->cell_id = -1;
 	resp->tac = -1;
 
-	/* reg_status is not used but can not be ignored, otherwise the function returns an error
-	 * for a notification which only contains the registration status.
-	 */
 	ret = nrf_modem_at_scanf("AT%XMONITOR",
 				 "%%XMONITOR: "
-				 "%u,"                                 /* <reg_status> */
+				 "%*u,"                                /* <reg_status>: ignored */
 				 "%"L(OP_FULL_NAME_STR_MAX_LEN)"[^,]," /* <full_name> with quotes */
 				 "%"L(OP_SHORT_NAME_STR_MAX_LEN)"[^,],"/* <short_name> with quotes*/
 				 "%"L(OP_PLMN_STR_MAX_LEN)"[^,],"      /* <plmn> */
@@ -259,7 +255,6 @@ int link_api_xmonitor_read(struct lte_xmonitor_resp_t *resp)
 				 "%*u,"                                /* <EARFCN>: ignored */
 				 "%d,"                                 /* <rsrp> */
 				 "%d",                                 /* <snr> */
-					&reg_status,
 					resp->full_name_str,
 					resp->short_name_str,
 					resp->plmn_str,
@@ -300,7 +295,9 @@ static void link_api_modem_operator_info_read_for_shell(void)
 	int ret = link_api_xmonitor_read(&xmonitor_resp);
 
 	if (ret) {
-		mosh_error("link_api_xmonitor_read failed, result: ret %d", ret);
+		/* Reading the information fails if modem is no longer registered, but
+		 * don't want to print an error in this case.
+		 */
 		return;
 	}
 
