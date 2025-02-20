@@ -41,7 +41,7 @@ config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 if SOC_SERIES_NRF53X
 
 config MCUBOOT_UPDATEABLE_IMAGES
-	default 3 if (BOARD_NRF5340DK_NRF5340_CPUAPP && WIFI_NRF70) #### Support for WiFi patch on external flash memory.
+	default 3 if WIFI_NRF70
 	default 2
 
 choice MCUBOOT_MODE
@@ -60,6 +60,18 @@ config NETCORE_APP_UPDATE
 
 config DFU_MULTI_IMAGE_PACKAGE_NET
 	default y
+
+# Store WiFi firmware patches in external flash
+if WIFI_NRF70
+
+choice WIFI_PATCHES_EXT_FLASH_SUPPORT
+	default WIFI_PATCHES_EXT_FLASH_STORE
+endchoice
+
+config DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH
+	default y
+
+endif
 
 endif # SOC_SERIES_NRF53X
 endif # BOOTLOADER_MCUBOOT
