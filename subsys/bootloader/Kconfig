@@ -104,6 +104,13 @@ config SB_CLEANUP_RAM
 	help
 	  Sets contents of memory to 0 before jumping to application.
 
+config SB_DISABLE_SELF_RWX
+	bool "Disable read and execution on self NVM"
+	depends on SOC_NRF54L15_CPUAPP && !FPROTECT_ALLOW_COMBINED_REGIONS
+	help
+	  Sets RRAMC's BOOTCONF region protection before jumping to application.
+	  It disables reads writes and execution memory area which holds NSIB.
+
 endif # IS_SECURE_BOOTLOADER
 
 config IS_BOOTLOADER_IMG
