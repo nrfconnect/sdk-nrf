@@ -13,3 +13,27 @@ config MPSL_USE_EXTERNAL_CLOCK_CONTROL
 	help
 	  This option configures MPSL to use an external clock driver, and
 	  not the clock driver provided as part of the MPSL library.
+
+if MPSL_USE_EXTERNAL_CLOCK_CONTROL
+
+config MPSL_EXT_CLK_CTRL_CLOCK_REQUEST_WAIT_TIMEOUT_MS
+	int "Timeout value that MPSL will wait for request to be completed by a clock driver, in milliseconds"
+	default CLOCK_CONTROL_NRF2_NRFS_CLOCK_TIMEOUT_MS if CLOCK_CONTROL_NRF2
+	default 1000
+	help
+	  The option specifies a timeout value that MPSL clock control integration layer
+	  will wait for completion of a request put to a clock driver. Note that the value
+	  depends on the clock driver used, for example if nrf2 clock driver is used,
+	  it must be greater or equalt than internal clock driver timeout value.
+
+config MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST
+	bool "Enables a request for a non-volatile memory clock"
+	depends on CLOCK_CONTROL_NRF2_GLOBAL_HSFLL
+	depends on SOC_SERIES_NRF54HX
+	default y
+	help
+	  This option enables MPSL to request a clock for non-volatile memory,
+	  ensuring it operates at a frequency that prevents code execution being
+	  too slow. This is crucial to meet meet radio protocols requirements.
+
+endif # MPSL_USE_EXTERNAL_CLOCK_CONTROL

@@ -18,6 +18,8 @@
 
 LOG_MODULE_REGISTER(mpsl_clock_ctrl, CONFIG_MPSL_LOG_LEVEL);
 
+static int32_t m_lfclk_release(void);
+
 /* Variable shared for nrf and nrf2 clock control */
 static atomic_t m_hfclk_refcnt;
 
@@ -28,24 +30,36 @@ struct clock_onoff_state {
 	atomic_t m_clk_refcnt;
 	struct k_sem sem;
 	int clk_req_rsp;
+	int32_t (*m_clock_request_release)(void);
 };
 
-static struct clock_onoff_state m_lfclk_state;
+static struct clock_onoff_state m_lfclk_state = {
+	.m_clock_request_release = m_lfclk_release
+};
 
-static int32_t m_lfclk_release(void);
+#if defined(CONFIG_MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST)
+#define NVM_CLOCK_DT_LABEL DT_NODELABEL(hsfll120)
 
-#if defined(CONFIG_CLOCK_CONTROL_NRF2_NRFS_CLOCK_TIMEOUT_MS)
-#define MPSL_LFCLK_REQUEST_WAIT_TIMEOUT_MS CONFIG_CLOCK_CONTROL_NRF2_NRFS_CLOCK_TIMEOUT_MS
-#else
-#define MPSL_LFCLK_REQUEST_WAIT_TIMEOUT_MS 1000
-#endif /* CONFIG_CLOCK_CONTROL_NRF2_NRFS_CLOCK_TIMEOUT_MS */
+#define NVM_CLOCK_FREQUENCY_HIGHEST \
+	DT_PROP_LAST(NVM_CLOCK_DT_LABEL, supported_clock_frequencies)
 
-/** @brief LFCLK request callback.
+static const struct nrf_clock_spec m_nvm_clk_spec = {
+	.frequency = NVM_CLOCK_FREQUENCY_HIGHEST,
+};
+
+static int32_t m_nvm_clock_release(void);
+
+static struct clock_onoff_state m_nvm_clock_state = {
+	.m_clock_request_release = m_nvm_clock_release
+};
+#endif /* CONFIG_MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST */
+
+/** @brief A clock request callback.
  *
- * The callback function provided to clock control to notify about LFCLK request being finished.
+ * The callback function provided to clock control to notify about a clock request being finished.
  */
-static void lfclk_request_cb(struct onoff_manager *mgr, struct onoff_client *cli, uint32_t state,
-			     int res)
+static void m_clock_request_cb(struct onoff_manager *mgr, struct onoff_client *cli, uint32_t state,
+			       int res)
 {
 	struct clock_onoff_state *clock_state = CONTAINER_OF(cli, struct clock_onoff_state, cli);
 
@@ -53,9 +67,65 @@ static void lfclk_request_cb(struct onoff_manager *mgr, struct onoff_client *cli
 	k_sem_give(&clock_state->sem);
 }
 
+/** @brief Wait for clock requect to be completed to be ready.
+ *
+ * The function can time out if there is no response from clock control driver until provided
+ * time out value.
+ *
+ * @note For nRF54H SoC series waiting for a clock can't block the system work queue. The nrf2 clock
+ *       control driver can return -TIMEDOUT due not handled response from sysctrl.
+ *
+ * @retval 0 the clock is ready.
+ * @retval -NRF_EINVAL There were no the clock request.
+ * @retval -NRF_EFAULT the clock request failed.
+ */
+static int32_t m_clock_request_wait(struct clock_onoff_state *clock_state, uint32_t timeout_ms)
+{
+	int32_t err;
+
+	if (atomic_get(&clock_state->m_clk_ready) == (atomic_val_t) true) {
+		return 0;
+	}
+
+	/* Check if the clock has been requested */
+	if (atomic_get(&clock_state->m_clk_refcnt) <= (atomic_val_t)0) {
+		return -NRF_EINVAL;
+	}
+
+	/* Wait for response from clock control */
+	err = k_sem_take(&clock_state->sem, K_MSEC(timeout_ms));
+	if (err < 0) {
+		/* Do a gracefull cancel of the request, the function release does this
+		 * as well as and relase.
+		 */
+		(void)clock_state->m_clock_request_release();
+
+		return -NRF_EFAULT;
+	}
+
+	if (clock_state->clk_req_rsp == -ETIMEDOUT) {
+		/* Change of error code to stay consistent with other APIs. */
+		return -NRF_ETIMEDOUT;
+	} else if (clock_state->clk_req_rsp < 0) {
+		__ASSERT(false, "The requested clock could not be started, reason: %d",
+			 clock_state->clk_req_rsp);
+		/* Possible failure reasons:
+		 *  # -ERRTIMEDOUT - nRFS service timeout
+		 *  # -EIO - nRFS service error
+		 *  # -ENXIO - request rejected
+		 * All these mean failure for MPSL.
+		 */
+		return -NRF_EFAULT;
+	}
+
+	atomic_set(&clock_state->m_clk_ready, (atomic_val_t) true);
+
+	return 0;
+}
+
 /** @brief Wait for LFCLK to be ready.
  *
- * The function can time out if there is no response from clock control drvier until
+ * The function can time out if there is no response from clock control driver until
  * MPSL_LFCLK_REQUEST_WAIT_TIMEOUT_MS.
  *
  * @note For nRF54H SoC series waiting for LFCLK can't block the system work queue. The nrf2 clock
@@ -67,50 +137,21 @@ static void lfclk_request_cb(struct onoff_manager *mgr, struct onoff_client *cli
  */
 static int32_t m_lfclk_wait(void)
 {
-	int32_t err;
+	int err;
 
-	if (atomic_get(&m_lfclk_state.m_clk_ready) == (atomic_val_t) true) {
-		return 0;
-	}
+	err = m_clock_request_wait(&m_lfclk_state,
+				   CONFIG_MPSL_EXT_CLK_CTRL_CLOCK_REQUEST_WAIT_TIMEOUT_MS);
 
-	/* Check if lfclk has been requested */
-	if (atomic_get(&m_lfclk_state.m_clk_refcnt) <= (atomic_val_t)0) {
-		return -NRF_EINVAL;
-	}
-
-	/* Wait for response from clock control */
-	err = k_sem_take(&m_lfclk_state.sem, K_MSEC(MPSL_LFCLK_REQUEST_WAIT_TIMEOUT_MS));
-	if (err < 0) {
-		/* Do a gracefull cancel of the request, the function release does this
-		 * as well as and relase.
-		 */
-		(void)m_lfclk_release();
-
-		return -NRF_EFAULT;
-	}
-
-	if (IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF2) && m_lfclk_state.clk_req_rsp == -ETIMEDOUT) {
+	if (IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF2) && (err == -NRF_ETIMEDOUT)) {
 		/* Due to NCSDK-31169, temporarily allow for LFCLK request to timeout.
 		 * That doens't break anything now because the LFCLK requested clock is
 		 * 500PPM and such LFCLK should be running from boot of the radio core.
 		 */
 		LOG_WRN("LFCLK could not be started: %d", m_lfclk_state.clk_req_rsp);
 		return 0;
-	} else if (m_lfclk_state.clk_req_rsp < 0) {
-		__ASSERT(false, "LFCLK could not be started, reason: %d",
-			 m_lfclk_state.clk_req_rsp);
-		/* Possible failure reasons:
-		 *  # -ERRTIMEDOUT - nRFS service timeout
-		 *  # -EIO - nRFS service error
-		 *  # -ENXIO - request rejected
-		 * All these mean failure for MPSL.
-		 */
-		return -NRF_EFAULT;
 	}
 
-	atomic_set(&m_lfclk_state.m_clk_ready, (atomic_val_t) true);
-
-	return 0;
+	return err;
 }
 
 #if defined(CONFIG_CLOCK_CONTROL_NRF)
@@ -190,7 +231,7 @@ static int32_t m_lfclk_request(void)
 		m_hfclk_request();
 	}
 
-	sys_notify_init_callback(&m_lfclk_state.cli.notify, lfclk_request_cb);
+	sys_notify_init_callback(&m_lfclk_state.cli.notify, m_clock_request_cb);
 	(void)k_sem_init(&m_lfclk_state.sem, 0, 1);
 
 	err = onoff_request(mgr, &m_lfclk_state.cli);
@@ -263,7 +304,7 @@ static int32_t m_lfclk_request(void)
 	const struct device *lfclk_dev = DEVICE_DT_GET(DT_NODELABEL(lfclk));
 	int err;
 
-	sys_notify_init_callback(&m_lfclk_state.cli.notify, lfclk_request_cb);
+	sys_notify_init_callback(&m_lfclk_state.cli.notify, m_clock_request_cb);
 	k_sem_init(&m_lfclk_state.sem, 0, 1);
 
 	err = nrf_clock_control_request(lfclk_dev, &m_lfclk_specs, &m_lfclk_state.cli);
@@ -326,6 +367,59 @@ static bool m_hfclk_is_running(void)
 
 	return true;
 }
+
+#if defined(CONFIG_MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST)
+
+static int32_t m_nvm_clock_request(void)
+{
+	int err;
+
+	/* The MRAM DTS node does not provide:
+	 * - clock property that can be used to get the clock node,
+	 * - power-domain property that could provide reference to the clock node.
+	 *
+	 * The clock must be referred explicitly. It makes the code less portable.
+	 */
+	const struct device *nvm_clock_dev = DEVICE_DT_GET(NVM_CLOCK_DT_LABEL);
+
+	sys_notify_init_callback(&m_nvm_clock_state.cli.notify, m_clock_request_cb);
+	k_sem_init(&m_nvm_clock_state.sem, 0, 1);
+
+	LOG_DBG("Requested frequency [Hz]: %d\n", m_nvm_clk_spec.frequency);
+	err = nrf_clock_control_request(nvm_clock_dev, &m_nvm_clk_spec, &m_nvm_clock_state.cli);
+	if (err < 0) {
+		LOG_ERR("MRAM clock request failed: %d", err);
+		return err;
+	}
+
+	atomic_inc(&m_nvm_clock_state.m_clk_refcnt);
+
+	return 0;
+}
+
+static int32_t m_nvm_clock_release(void)
+{
+	const struct device *nvm_clock_dev = DEVICE_DT_GET(NVM_CLOCK_DT_LABEL);
+	int err;
+
+	err = nrf_clock_control_cancel_or_release(nvm_clock_dev, &m_nvm_clk_spec,
+						  &m_nvm_clock_state.cli);
+	if (err < 0) {
+		return err;
+	}
+
+	atomic_dec(&m_nvm_clock_state.m_clk_refcnt);
+
+	return 0;
+}
+
+int32_t mpsl_clock_ctrl_nvm_clock_wait(void)
+{
+	return m_clock_request_wait(&m_nvm_clock_state,
+				    CONFIG_MPSL_EXT_CLK_CTRL_CLOCK_REQUEST_WAIT_TIMEOUT_MS);
+}
+#endif /* CONFIG_MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST */
+
 #else
 #error "Unsupported clock control"
 #endif /* CONFIG_CLOCK_CONTROL_NRF */
@@ -353,10 +447,27 @@ static mpsl_clock_hfclk_ctrl_source_t m_nrf_hfclk_ctrl_data = {
 
 int32_t mpsl_clock_ctrl_init(void)
 {
+#if defined(CONFIG_MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST)
+	int err;
+
+	err = m_nvm_clock_request();
+	if (err) {
+		return err;
+	}
+#endif /* CONFIG_MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST */
 	return mpsl_clock_ctrl_source_register(&m_nrf_lfclk_ctrl_data, &m_nrf_hfclk_ctrl_data);
 }
 
 int32_t mpsl_clock_ctrl_uninit(void)
 {
+#if defined(CONFIG_MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST)
+	int err;
+
+	err = m_nvm_clock_release();
+	if (err) {
+		return err;
+	}
+#endif /* CONFIG_MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST */
+
 	return mpsl_clock_ctrl_source_unregister();
 }
