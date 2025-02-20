@@ -31,6 +31,7 @@ int sx_cm_load_mask(uint32_t csprng_value)
 		r = sx_cmdma_check();
 	}
 
+	sx_cmdma_outdescs_flush_and_invd_dcache(&channel.dma);
 	safe_memzero(&channel, sizeof(channel));
 	return r;
 }

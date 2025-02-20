@@ -381,7 +381,9 @@ int sx_blkcipher_status(struct sxblkcipher *c)
 	}
 
 #if CONFIG_DCACHE
-	sys_cache_data_invd_range((void *)&c->extramem, sizeof(c->extramem));
+	sx_cmdma_outdescs_flush_and_invd_dcache(&c->dma);
+	/* extramem is often a target for out descriptors, this might not be needed anymore */
+	sys_cache_data_flush_and_invd_range((void *)&c->extramem, sizeof(c->extramem));
 #endif
 
 	sx_blkcipher_free(c);
@@ -433,10 +435,10 @@ int sx_blkcipher_ecb_simple(uint8_t *key, size_t key_size, uint8_t *input, size_
 	sx_hw_reserve(NULL);
 
 #if CONFIG_DCACHE
-	sys_cache_data_flush_range(in_descs, sizeof(in_descs));
-	sys_cache_data_flush_range(&out_desc, sizeof(out_desc));
-	sys_cache_data_flush_range(input, input_size);
-	sys_cache_data_flush_range(output, output_size);
+	sys_cache_data_flush_and_invd_range(in_descs, sizeof(in_descs));
+	sys_cache_data_flush_and_invd_range(&out_desc, sizeof(out_desc));
+	sys_cache_data_flush_and_invd_range(input, input_size);
+	sys_cache_data_flush_and_invd_range(output, output_size);
 #endif
 
 	sx_wrreg_addr(REG_FETCH_ADDR, in_descs);
@@ -451,7 +453,7 @@ int sx_blkcipher_ecb_simple(uint8_t *key, size_t key_size, uint8_t *input, size_
 	sx_cmdma_release_hw(NULL);
 
 #if CONFIG_DCACHE
-	sys_cache_data_invd_range(output, output_size);
+	sys_cache_data_flush_and_invd_range(output, output_size);
 #endif
 
 	return r;

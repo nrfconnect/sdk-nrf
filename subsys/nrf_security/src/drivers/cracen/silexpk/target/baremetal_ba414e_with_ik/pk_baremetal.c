@@ -100,6 +100,7 @@ int sx_pk_wait(sx_pk_req *req)
 		}
 	} while (is_busy(req));
 
+	/* go through the outdescrptiors and invalidate cache */
 	return read_status(req);
 }
 

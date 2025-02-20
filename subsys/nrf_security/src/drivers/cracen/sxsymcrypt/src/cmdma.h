@@ -163,6 +163,9 @@ void sx_cmdma_newcmd(struct sx_dmactl *dma, struct sxdesc *d, uint32_t cmd, uint
 /** Start input/fetcher DMA at indescs and output/pusher DMA at outdescs */
 void sx_cmdma_start(struct sx_dmactl *dma, size_t privsz, struct sxdesc *indescs);
 
+/** Flush the buffers for the output descriptors */
+void sx_cmdma_outdescs_flush_and_invd_dcache(struct sx_dmactl *dma);
+
 /** Return how the DMA is doing.
  *
  * Possible return values are:

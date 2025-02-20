@@ -59,7 +59,7 @@ void sx_cmdma_start(struct sx_dmactl *dma, size_t privsz, struct sxdesc *indescs
 		sys_cache_data_flush_and_invd_range(m->addr, m->sz & DMA_SZ_MASK);
 	}
 
-	sys_cache_data_flush_range((void *)&dma->dmamem, sizeof(dma->dmamem) + privsz);
+	sys_cache_data_flush_and_invd_range((void *)&dma->dmamem, sizeof(dma->dmamem) + privsz);
 #endif
 
 	m = (struct sxdesc *)(dma->mapped + sizeof(struct sx_dmaslot));
@@ -68,6 +68,16 @@ void sx_cmdma_start(struct sx_dmactl *dma, size_t privsz, struct sxdesc *indescs
 	sx_wrreg_addr(REG_PUSH_ADDR, m);
 	sx_wrreg(REG_CONFIG, REG_CONFIG_SG);
 	sx_wrreg(REG_START, REG_START_ALL);
+}
+
+void sx_cmdma_outdescs_flush_and_invd_dcache(struct sx_dmactl *dma) {
+#ifdef CONFIG_DCACHE
+	struct sxdesc *m;
+	m = (struct sxdesc *)(dma->mapped + offsetof(struct sx_dmaslot, outdescs));
+	for (; m != DMA_LAST_DESCRIPTOR; m = m->next) {
+		sys_cache_data_flush_and_invd_range(m->addr, m->sz & DMA_SZ_MASK);
+	}
+#endif
 }
 
 int sx_cmdma_check(void)
