@@ -16,6 +16,7 @@ if BT_FAST_PAIR_FMDN
 config BT_FAST_PAIR_FMDN_TX_POWER
 	int "TX power set in Bluetooth LE controller [dBm]"
 	default 0
+	range 0 127
 	help
 	  Define the TX power configuration used for the extension advertising and
 	  connections in dBm. The value is passed to the Bluetooth LE controller
@@ -25,6 +26,10 @@ config BT_FAST_PAIR_FMDN_TX_POWER
 	  a warning notifying the user about the real TX power during the enabling
 	  procedure of this library. The actual TX power value will be as close to
 	  the desired configuration as possible.
+
+	  This Kconfig option must be set to zero at minimum. The Fast Pair specification
+	  requires that the conducted Bluetooth transmit power for FMDN advertisements
+	  must be set to at least 0 dBm.
 
 config BT_FAST_PAIR_FMDN_TX_POWER_CORRECTION_VAL
 	int "TX power correction value [dBm]"
