@@ -561,6 +561,11 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
+* :ref:`bt_fast_pair_readme` library:
+
+  * Added a restriction on the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_TX_POWER` Kconfig option in the Find My Device Network (FMDN) extension configuration.
+    This Kconfig option should now be set to 0 at minimum as the Fast Pair specification now requires that the conducted Bluetooth transmit power for FMDN advertisements must not be lower than 0 dBm.
+
 * :ref:`bt_mesh` library:
 
   * Fixed an issue in the :ref:`bt_mesh_light_ctrl_srv_readme` model to automatically resume the Lightness Controller after recalling a scene (``NCSDK-30033`` known issue).
