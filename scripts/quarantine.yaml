@@ -65,3 +65,10 @@
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpurad
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31800"
+
+- scenarios:
+    - sample.openthread.coprocessor
+    - sample.openthread.coprocessor.vendor_hook
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31957"
