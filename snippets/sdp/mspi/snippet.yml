@@ -14,3 +14,6 @@ boards:
   /.*/nrf54l15/cpuapp/:
     append:
       EXTRA_DTC_OVERLAY_FILE: soc/nrf54l15_cpuapp.overlay
+  /nrf54l15dk/nrf54l15/cpuapp/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: board/nrf54l15dk_nrf54l15_cpuapp.overlay
