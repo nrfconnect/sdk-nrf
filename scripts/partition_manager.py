@@ -5,11 +5,11 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 import argparse
-import yaml
-from os import path
 import sys
+from os import path
 from pprint import pformat
-from io import StringIO
+
+import yaml
 
 PERMITTED_STR_KEYS = ['size', 'region']
 END_TO_START = 'end_to_start'
@@ -1048,24 +1048,6 @@ def main():
 
     write_yaml_out_file(solution, args.output_partitions)
     write_yaml_out_file(regions, args.output_regions)
-
-
-def expect_addr_size(td, name, expected_address, expected_size):
-    if expected_size is not None:
-        assert td[name]['size'] == expected_size, \
-            'Size of {} was {}, expected {}.\ntd:{}'.format(name, td[name]['size'], expected_size, pformat(td))
-    if expected_address is not None:
-        assert td[name]['address'] == expected_address, \
-            'Address of {} was {}, expected {}.\ntd:{}'.format(name, td[name]['address'], expected_address, pformat(td))
-    if expected_size is not None and expected_address is not None:
-        assert td[name]['end_address'] == expected_address + expected_size, \
-            'End address of {} was {}, expected {}.\ntd:{}'.format(name, td[name]['end_address'], expected_address + expected_size, pformat(td))
-
-
-def expect_list(expected, actual):
-    expected_list = list(sorted(expected))
-    actual_list = list(sorted(actual))
-    assert sorted(expected_list) == sorted(actual_list), 'Expected list {}, was {}'.format(expected_list, actual_list)
 
 
 if __name__ == '__main__':
