@@ -26,7 +26,7 @@
 #endif
 
 #if IS_ENABLED(CONFIG_MPSL_USE_ZEPHYR_PM)
-#include <mpsl/mpsl_pm_utils.h>
+#include "../pm/mpsl_pm_utils.h"
 #endif
 
 #if IS_ENABLED(CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL)
@@ -398,6 +398,13 @@ static int32_t mpsl_lib_init_internal(void)
 	}
 #endif /* CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL */
 
+#if defined(CONFIG_MPSL_USE_ZEPHYR_PM)
+	err = mpsl_pm_utils_init();
+	if (err) {
+		return err;
+	}
+#endif /* CONFIG_MPSL_USE_ZEPHYR_PM */
+
 #if defined(CONFIG_SOC_SERIES_NRF54HX)
 	/* Secure domain no longer enables DPPI channels for local domains,
 	 * MPSL now has to enable the ones it uses.
@@ -441,10 +448,6 @@ static int mpsl_lib_init_sys(void)
 	if (err) {
 		return err;
 	}
-
-#if IS_ENABLED(CONFIG_MPSL_USE_ZEPHYR_PM)
-	mpsl_pm_utils_init();
-#endif
 
 #if IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS)
 	/* Ensure IRQs are disabled before attaching. */
@@ -518,6 +521,10 @@ int32_t mpsl_lib_init(void)
 int32_t mpsl_lib_uninit(void)
 {
 #if IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS)
+#if defined(CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL) || defined(CONFIG_MPSL_USE_ZEPHYR_PM)
+	int err;
+#endif /* CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL || CONFIG_MPSL_USE_ZEPHYR_PM */
+
 #if defined(CONFIG_MPSL_CALIBRATION_PERIOD)
 	atomic_set(&do_calibration, 0);
 #endif /* CONFIG_MPSL_CALIBRATION_PERIOD */
@@ -527,13 +534,18 @@ int32_t mpsl_lib_uninit(void)
 	mpsl_uninit();
 
 #if defined(CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL)
-	int err;
-
 	err = mpsl_clock_ctrl_uninit();
 	if (err) {
 		return err;
 	}
 #endif /* CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL */
+
+#if defined(CONFIG_MPSL_USE_ZEPHYR_PM)
+	err = mpsl_pm_utils_uninit();
+	if (err) {
+		return err;
+	}
+#endif /* CONFIG_MPSL_USE_ZEPHYR_PM */
 
 	return 0;
 #else /* !IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS) */
