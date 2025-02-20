@@ -10,7 +10,7 @@ mcuboot_primary:
   - tfm
   - app
   region: flash_primary
-  size: 0xef000
+  size: 0xe8000
   span: *id001
 mcuboot_pad:
   address: 0xc000
@@ -19,38 +19,46 @@ mcuboot_pad:
 tfm:
   address: 0xc200
   region: flash_primary
-  size: 0xbe00
+  size: 0x17e00
 tfm_secure:
   address: 0xc000
-  size: 0xc000
+  size: 0x18000
   span: [mcuboot_pad, tfm]
 tfm_nonsecure:
-  address: 0x18000
-  size: 0xe3000
+  address: 0x24000
+  size: 0xd0000
   span: [app]
 app:
-  address: 0x18000
+  address: 0x24000
   region: flash_primary
-  size: 0xe3000
+  size: 0xd0000
 mcuboot_primary_app:
   address: 0xc200
   orig_span: &id002
   - tfm
   - app
   region: flash_primary
-  size: 0xeee00
+  size: 0xe7e00
   span: *id002
 
+nonsecure_storage:
+  address: 0xf4000
+  size: 0x8000
+  span: [bt_fast_pair, settings_storage]
 bt_fast_pair:
-  address: 0xfb000
+  address: 0xf4000
   region: flash_primary
   size: 0x1000
+settings_storage:
+  address: 0xf5000
+  region: flash_primary
+  size: 0x7000
 
-nonsecure_storage:
+tfm_storage:
   address: 0xfc000
   size: 0x4000
-  span: [settings_storage]
-settings_storage:
+  span: [tfm_its]
+tfm_its:
   address: 0xfc000
   region: flash_primary
   size: 0x4000
