@@ -768,8 +768,8 @@
 /subsys/mgmt/                             @nrfconnect/ncs-pluto
 /subsys/mgmt/suitfu/                      @nrfconnect/ncs-charon
 /subsys/mpsl/                             @nrfconnect/ncs-dragoon
-/subsys/mpsl/cx/                          @ankuns @martintv
-/subsys/mpsl/fem/                         @ankuns @martintv
+/subsys/mpsl/cx/                          @nrfconnect/ncs-radio-sw
+/subsys/mpsl/fem/                         @nrfconnect/ncs-radio-sw
 /subsys/net/                              @nrfconnect/ncs-co-networking
 /subsys/net/lib/mqtt_helper/              @nrfconnect/ncs-cia
 /subsys/net/lib/azure_*                   @nrfconnect/ncs-cia
