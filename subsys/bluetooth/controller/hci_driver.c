@@ -984,15 +984,11 @@ static int configure_supported_features(void)
 		if (err) {
 			return -ENOTSUP;
 		}
-#ifdef CS_ANTENNA_SWITCH_CALLBACK_TYPE_DEFINED
 #if CONFIG_BT_CTLR_SDC_CS_NUM_ANTENNAS > 1
 		err = sdc_support_channel_sounding(cs_antenna_switch_func);
 		cs_antenna_switch_enable();
 #else
 		err = sdc_support_channel_sounding(NULL);
-#endif
-#else
-		err = sdc_support_channel_sounding();
 #endif
 		if (err) {
 			return -ENOTSUP;
