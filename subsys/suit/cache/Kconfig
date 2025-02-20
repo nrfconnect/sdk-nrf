@@ -39,4 +39,16 @@ config SUIT_CACHE_RW
 	depends on SUIT_UTILS
 	depends on !SUIT_PLATFORM_VARIANT_SDFW
 
+config SUIT_CACHE_SDFW_IPUC_ID
+	int "IPUC-based parition number, capable of performing SDFW updates"
+	depends on SUIT_CACHE_RW
+	depends on FLASH_IPUC
+	default 254
+
+config SUIT_CACHE_APP_IPUC_ID
+	int "IPUC-based parition number, without address restrictions"
+	depends on SUIT_CACHE_RW
+	depends on FLASH_IPUC
+	default 255
+
 endif # SUIT_CACHE

@@ -247,6 +247,23 @@ int suit_dfu_update_start(void)
 			update_regions_count++;
 		}
 	}
+
+#ifdef CONFIG_SUIT_CACHE_SDFW_IPUC_ID
+	if (suit_dfu_cache_rw_device_info_get(CONFIG_SUIT_CACHE_SDFW_IPUC_ID, &device_info) ==
+	    SUIT_PLAT_SUCCESS) {
+		update_candidate[update_regions_count].mem = device_info.mapped_address;
+		update_candidate[update_regions_count].size = device_info.partition_size;
+		update_regions_count++;
+	}
+#endif /* CONFIG_SUIT_CACHE_SDFW_IPUC_ID */
+#ifdef CONFIG_SUIT_CACHE_APP_IPUC_ID
+	if (suit_dfu_cache_rw_device_info_get(CONFIG_SUIT_CACHE_APP_IPUC_ID, &device_info) ==
+	    SUIT_PLAT_SUCCESS) {
+		update_candidate[update_regions_count].mem = device_info.mapped_address;
+		update_candidate[update_regions_count].size = device_info.partition_size;
+		update_regions_count++;
+	}
+#endif /* CONFIG_SUIT_CACHE_APP_IPUC_ID */
 #endif
 
 	return suit_trigger_update(update_candidate, update_regions_count);
