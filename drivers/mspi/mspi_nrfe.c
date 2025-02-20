@@ -573,6 +573,11 @@ static int api_transceive(const struct device *dev, const struct mspi_dev_id *de
 		return -EFAULT;
 	}
 
+	/* TODO: rx_dummy must be divisible by 8, remove when SHIFTCNTB changing is done. */
+	if ((drv_data->xfer_config_msg.xfer_config.rx_dummy % 8) != 0) {
+		return -ENOTSUP;
+	}
+
 	drv_data->xfer_config_msg.opcode = NRFE_MSPI_CONFIG_XFER;
 	drv_data->xfer_config_msg.xfer_config.device_index = dev_id->dev_idx;
 	drv_data->xfer_config_msg.xfer_config.command_length = req->cmd_length;
