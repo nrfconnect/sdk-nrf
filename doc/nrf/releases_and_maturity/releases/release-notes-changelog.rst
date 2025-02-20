@@ -228,6 +228,7 @@ Matter Bridge
 
 * Removed support for the nRF54H20 devices.
 * Enabled Link Time Optimization (LTO) by default for the ``release`` configuration.
+* Enabled the default storage of the Wi-Fi firmware patch in external flash.
 
 nRF5340 Audio
 -------------
@@ -542,6 +543,15 @@ Matter samples
 * :ref:`matter_lock_sample` sample:
 
   * Removed support for nRF54H20 devices.
+
+* Updated all Matter samples that runs Wi-Fi stack to store the Wi-Fi firmware patch in external flash.
+  The change affects the following samples on nRF7002 DK:
+
+  * :ref:`matter_light_bulb_sample`
+  * :ref:`matter_light_switch_sample`
+  * :ref:`matter_lock_sample`
+  * :ref:`matter_template_sample`
+  * :ref:`matter_thermostat_sample`
 
 Networking samples
 ------------------

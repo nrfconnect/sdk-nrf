@@ -60,12 +60,11 @@ Remote testing in a network
 ===========================
 
 .. |Bluetoothsc| replace:: Bluetooth®
-.. |WiFi| replace:: Wi-Fi
 
 .. matter_light_bulb_sample_remote_testing_start
 
 By default, the Matter accessory device has no IPv6 network configured.
-You must pair it with the Matter controller over |Bluetoothsc| LE to get the configuration from the controller to use the device within a Thread or |WiFi| network.
+You must pair it with the Matter controller over |Bluetoothsc| LE to get the configuration from the controller to use the device within a Thread or Wi-Fi network.
 The controller must get the `Onboarding information`_ from the Matter accessory device and provision the device into the network.
 For details, see the `Commissioning the device`_ section.
 
@@ -256,6 +255,10 @@ Building and running
 .. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
 
 .. include:: /includes/ipc_radio_conf.txt
+
+.. include:: ../template/README.rst
+    :start-after: matter_template_sample_nrf70_firmware_patch_start
+    :end-before: matter_template_sample_nrf70_firmware_patch_end
 
 See `Configuration`_ for information about building the sample with the DFU support.
 
