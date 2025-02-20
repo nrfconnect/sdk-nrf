@@ -18,7 +18,6 @@
 #endif
 #include <zephyr/net/tls_credentials.h>
 #include <fcntl.h>
-#include <nrf_socket.h>
 #include <modem/pdn.h>
 
 #include "sock.h"
@@ -354,7 +353,8 @@ static int sock_set_tls_options(
 	uint32_t sec_tag,
 	bool session_cache,
 	int peer_verify,
-	char *peer_hostname)
+	char *peer_hostname,
+	int dtls_cid)
 {
 	int err;
 	uint32_t sec_tag_list[] = { sec_tag };
@@ -409,7 +409,62 @@ static int sock_set_tls_options(
 			return errno;
 		}
 	}
+
+	/* DTLS connection ID */
+	if (dtls_cid) {
+		err = setsockopt(fd, SOL_TLS, TLS_DTLS_CID, &dtls_cid,
+				 sizeof(dtls_cid));
+		if (err) {
+			mosh_error("Unable to set DTLS connection ID, errno %d", errno);
+			return errno;
+		}
+	}
+
 	return 0;
+}
+
+static void sock_print_dtls_status(int fd, bool session_cache, int dtls_cid)
+{
+	int err;
+	int status;
+	int len = sizeof(status);
+	char status_str[21];
+
+	if (session_cache) {
+		err = getsockopt(fd, SOL_TLS, TLS_DTLS_HANDSHAKE_STATUS, &status, &len);
+		if (err == 0) {
+			if (status == TLS_DTLS_HANDSHAKE_STATUS_FULL) {
+				sprintf(status_str, "Full");
+			} else if (status == TLS_DTLS_HANDSHAKE_STATUS_CACHED) {
+				sprintf(status_str, "Cached");
+			} else {
+				sprintf(status_str, "Unknown (%d)", status);
+			}
+			mosh_print("Handshake status: %s", status_str);
+		} else {
+			mosh_error("Unable to get DTLS handshake status, errno %d", errno);
+		}
+	}
+
+	if (dtls_cid) {
+		err = getsockopt(fd, SOL_TLS, TLS_DTLS_CID_STATUS, &status, &len);
+		if (err == 0) {
+			if (status == TLS_DTLS_CID_STATUS_DISABLED) {
+				sprintf(status_str, "Disabled");
+			} else if (status == TLS_DTLS_CID_STATUS_DOWNLINK) {
+				sprintf(status_str, "Downlink");
+			} else if (status == TLS_DTLS_CID_STATUS_UPLINK) {
+				sprintf(status_str, "Uplink");
+			} else if (status == TLS_DTLS_CID_STATUS_BIDIRECTIONAL) {
+				sprintf(status_str, "Bidirectional");
+			} else {
+				sprintf(status_str, "Unknown (%d)", status);
+			}
+			mosh_print("Connection ID status: %s", status_str);
+		} else {
+			mosh_error("Unable to get DTLS connection ID status, errno %d", errno);
+		}
+	}
 }
 
 static int sock_bind(
@@ -529,7 +584,8 @@ int sock_open_and_connect(
 	bool session_cache,
 	bool keep_open,
 	int peer_verify,
-	char *peer_hostname)
+	char *peer_hostname,
+	int dtls_cid)
 {
 	int err = -EINVAL;
 	int proto = 0;
@@ -632,7 +688,8 @@ int sock_open_and_connect(
 
 	/* Set (D)TLS options */
 	if (secure) {
-		err = sock_set_tls_options(fd, sec_tag, session_cache, peer_verify, peer_hostname);
+		err = sock_set_tls_options(fd, sec_tag, session_cache, peer_verify, peer_hostname,
+					   dtls_cid);
 		if (err) {
 			goto connect_error;
 		}
@@ -651,6 +708,10 @@ int sock_open_and_connect(
 			err = errno;
 			goto connect_error;
 		}
+	}
+
+	if (secure && type == SOCK_DGRAM) {
+		sock_print_dtls_status(fd, session_cache, dtls_cid);
 	}
 
 	/* Set socket to non-blocking mode to make sure receiving
