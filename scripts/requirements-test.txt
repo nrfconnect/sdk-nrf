@@ -2,3 +2,4 @@
 cryptography
 intelhex
 pytest
+pyyaml
