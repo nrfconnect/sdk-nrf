@@ -60,8 +60,8 @@ To use nRF21540 in GPIO mode, complete the following steps:
 
    The state of the remaining control pins should be set in other ways and according to `nRF21540 Product Specification`_.
 
-#. On nRF53 devices, the devicetree nodes described above must be added to the network core.
-   For the application core, you must also add a GPIO forwarder node to its devicetree file:
+#. On nRF53 Series devices, add the devicetree nodes described above to the network core.
+   For the application core, add a GPIO forwarder node to its devicetree file to pass control over given pins from application core to the network core:
 
    .. code-block:: devicetree
 
@@ -75,17 +75,17 @@ To use nRF21540 in GPIO mode, complete the following steps:
 
    The pins defined in the GPIO forwarder node in the application core's devicetree file must match the pins defined in the FEM nodes in the network core's devicetree file.
 
-#. On nRF54L devices, the GPIO pins of the SoC selected to control ``tx-en-gpios``, ``rx-en-gpios`` and ``pdn-gpios`` must support GPIOTE.
-   For example, on the nRF54L15 device, you can only use pins belonging to GPIO P1 or GPIO P0.
+#. On nRF54L Series devices, make sure the GPIO pins of the SoC selected to control ``tx-en-gpios``, ``rx-en-gpios`` and ``pdn-gpios`` support GPIOTE.
+   For example, on the nRF54L15 device, use pins belonging to GPIO P1 or GPIO P0 only.
    You cannot use the GPIO P2 pins, because there is no related GPIOTE peripheral.
    It is recommended to use the GPIO pins that belong to the PERI Power Domain of the nRF54L device.
    For example, on the nRF54L15, these are pins belonging to GPIO P1.
    Using pins belonging to Low Power Domain (GPIO P0 on nRF54L15) is supported but requires more DPPI and PPIB channels of the SoC.
    The nRF54L devices contain only four PPIB channels between PERI Power Domain and Low Power Domain.
    Due to this limitation, only two out of three pins from group ``tx-en-gpios``, ``rx-en-gpios`` and ``pdn-gpios`` (for example, ``tx-en-gpios`` and ``rx-en-gpios``) can be controlled by GPIO P0.
-   The one remaining pin of the pin group (for example ``pdn-gpios``) must be controlled by other GPIO port.
+   Select other GPIO port for the one remaining pin of the pin group (for example ``pdn-gpios``).
    To ensure proper timing, set the ``tx-en-settle-time-us`` and ``rx-en-settle-time-us`` devicetree properties of the ``nrf_radio_fem`` node to the value ``12``.
-   You must also enable appropriate instances of the ``DPPIC`` and ``PPIB`` peripherals in the devicetree file:
+   Enable appropriate instances of the ``DPPIC`` and ``PPIB`` peripherals in the devicetree file:
 
    .. code-block:: devicetree
 
