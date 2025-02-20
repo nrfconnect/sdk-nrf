@@ -280,6 +280,7 @@ ci_samples_openthread:
     - nrf/subsys/mpsl/
     - nrf/subsys/net/lib/coap_utils/
     - nrf/subsys/net/openthread/
+    - nrf/subsys/nrf_security/
     - nrfxlib/crypto/
     - nrfxlib/mpsl/include/
     - nrfxlib/mpsl/lib/
