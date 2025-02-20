@@ -92,6 +92,30 @@ static void check_timing(const struct gpio_dt_spec *gpio_dt, uint32_t baudrate)
 	gpio_read_time_us_mean /= (double)REPEAT_NUMBER;
 	TC_PRINT("GPIO get takes: %.2f us\n", gpio_read_time_us_mean);
 
+	double expected_bit_period_us = 1e6 / (double)baudrate;
+	double number_of_bits = 8;
+
+	number_of_bits += 1;
+	if (test_uart_config.stop_bits == UART_CFG_STOP_BITS_1) {
+		number_of_bits += 1;
+	} else if (test_uart_config.stop_bits == UART_CFG_STOP_BITS_2) {
+		number_of_bits += 2;
+	} else {
+		zassert_true(false, "Unsupported stop_bits: %d", test_uart_config.stop_bits);
+	}
+	if (test_uart_config.parity != UART_CFG_PARITY_NONE) {
+		number_of_bits += 1;
+	}
+	double expected_symbol_period_us = number_of_bits * expected_bit_period_us;
+
+	TC_PRINT("[%d] Expected symbol time: %.2f us, expected bit time: %.2f us\n", baudrate,
+		 expected_symbol_period_us, expected_bit_period_us);
+
+	if (expected_bit_period_us < gpio_read_time_us_mean) {
+		TC_PRINT("[%d] Not supported - gpio measurement is too slow.\n", baudrate);
+		ztest_test_skip();
+	}
+
 	start_index_count_zero = 0;
 	bit_diviation_mean = 0;
 	symbol_diviation_mean = 0;
@@ -139,29 +163,11 @@ static void check_timing(const struct gpio_dt_spec *gpio_dt, uint32_t baudrate)
 		zassert_true(stop_index != -1, "Missing stop_index\n");
 
 		double measured_period_us = (stop_index - start_index) * gpio_read_time_us_mean;
-		double expected_bit_period_us = 1e6 / (double)baudrate;
-		double number_of_bits = 8;
-
-		number_of_bits += 1;
-		if (test_uart_config.stop_bits == UART_CFG_STOP_BITS_1) {
-			number_of_bits += 1;
-		} else if (test_uart_config.stop_bits == UART_CFG_STOP_BITS_2) {
-			number_of_bits += 2;
-		} else {
-			zassert_true(false, "Unsupported stop_bits: %d",
-				     test_uart_config.stop_bits);
-		}
-		if (test_uart_config.parity != UART_CFG_PARITY_NONE) {
-			number_of_bits += 1;
-		}
 		double measured_bit_us = measured_period_us / (double)number_of_bits;
-		double expected_symbol_period_us = number_of_bits * expected_bit_period_us;
 
 		TC_PRINT("[%d][%s][%d] Measured symbol period: %.2f us, measured bit time: %.2f "
-			 "us, expected "
-			 "symbol time: %.2f us, expected bit time: %.2f us\n",
-			 t, uart_dev->name, baudrate, measured_period_us, measured_bit_us,
-			 expected_symbol_period_us, expected_bit_period_us);
+			 "us\n",
+			 t, uart_dev->name, baudrate, measured_period_us, measured_bit_us);
 
 		double symbol_diviation = 100 *
 					  fabs(measured_period_us - expected_symbol_period_us) /
