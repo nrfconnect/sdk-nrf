@@ -463,6 +463,10 @@ static int downloader_start(struct downloader *dl, const struct downloader_host_
 	dl->buf_offset = 0;
 	dl->complete = false;
 
+	if (dl->host_cfg.redirects_max == 0) {
+		dl->host_cfg.redirects_max = CONFIG_DOWNLOADER_MAX_REDIRECTS;
+	}
+
 	dl->transport = NULL;
 	STRUCT_SECTION_FOREACH(dl_transport_entry, entry)
 	{
