@@ -24,6 +24,7 @@ This page is included only in the latest documentation, because it might contain
    releases/release-notes-2.9.0-nRF54H20-1-rc2
    releases/release-notes-2.9.0
    releases/release-notes-2.8.0
+   releases/release-notes-2.8.0-preview1
    releases/release-notes-2.7.99-cs2
    releases/release-notes-2.7.99-cs1
    releases/release-notes-2.7.0
