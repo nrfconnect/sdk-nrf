@@ -154,7 +154,7 @@ struct modem_info_data {
 	const char *data_name;
 	uint8_t param_index;
 	uint8_t param_count;
-	enum at_param_type data_type;
+	enum modem_info_data_type data_type;
 };
 
 static const struct modem_info_data rsrp_data = {
@@ -162,7 +162,7 @@ static const struct modem_info_data rsrp_data = {
 	.data_name	= RSRP_DATA_NAME,
 	.param_index	= RSRP_PARAM_INDEX,
 	.param_count	= RSRP_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_INT,
+	.data_type	= MODEM_INFO_DATA_TYPE_NUM_INT,
 };
 
 static const struct modem_info_data band_data = {
@@ -170,7 +170,7 @@ static const struct modem_info_data band_data = {
 	.data_name	= CUR_BAND_DATA_NAME,
 	.param_index	= BAND_PARAM_INDEX,
 	.param_count	= BAND_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_INT,
+	.data_type	= MODEM_INFO_DATA_TYPE_NUM_INT,
 };
 
 static const struct modem_info_data band_sup_data = {
@@ -178,7 +178,7 @@ static const struct modem_info_data band_sup_data = {
 	.data_name	= SUP_BAND_DATA_NAME,
 	.param_index	= BAND_PARAM_INDEX,
 	.param_count	= BAND_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_STRING,
+	.data_type	= MODEM_INFO_DATA_TYPE_STRING,
 };
 
 static const struct modem_info_data mode_data = {
@@ -186,7 +186,7 @@ static const struct modem_info_data mode_data = {
 	.data_name	= UE_MODE_DATA_NAME,
 	.param_index	= MODE_PARAM_INDEX,
 	.param_count	= MODE_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_INT,
+	.data_type	= MODEM_INFO_DATA_TYPE_NUM_INT,
 };
 
 static const struct modem_info_data operator_data = {
@@ -194,7 +194,7 @@ static const struct modem_info_data operator_data = {
 	.data_name	= OPERATOR_DATA_NAME,
 	.param_index	= OPERATOR_PARAM_INDEX,
 	.param_count	= OPERATOR_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_STRING,
+	.data_type	= MODEM_INFO_DATA_TYPE_STRING,
 };
 
 static const struct modem_info_data mcc_data = {
@@ -202,7 +202,7 @@ static const struct modem_info_data mcc_data = {
 	.data_name	= MCC_DATA_NAME,
 	.param_index	= OPERATOR_PARAM_INDEX,
 	.param_count	= OPERATOR_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_INT,
+	.data_type	= MODEM_INFO_DATA_TYPE_NUM_INT,
 };
 
 static const struct modem_info_data mnc_data = {
@@ -210,7 +210,7 @@ static const struct modem_info_data mnc_data = {
 	.data_name	= MNC_DATA_NAME,
 	.param_index	= OPERATOR_PARAM_INDEX,
 	.param_count	= OPERATOR_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_INT,
+	.data_type	= MODEM_INFO_DATA_TYPE_NUM_INT,
 };
 
 static const struct modem_info_data cellid_data = {
@@ -218,7 +218,7 @@ static const struct modem_info_data cellid_data = {
 	.data_name	= CELLID_DATA_NAME,
 	.param_index	= CELLID_PARAM_INDEX,
 	.param_count	= CELLID_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_STRING,
+	.data_type	= MODEM_INFO_DATA_TYPE_STRING,
 };
 
 static const struct modem_info_data area_data = {
@@ -226,7 +226,7 @@ static const struct modem_info_data area_data = {
 	.data_name	= AREA_CODE_DATA_NAME,
 	.param_index	= AREA_CODE_PARAM_INDEX,
 	.param_count	= AREA_CODE_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_STRING,
+	.data_type	= MODEM_INFO_DATA_TYPE_STRING,
 };
 
 static const struct modem_info_data ip_data = {
@@ -234,7 +234,7 @@ static const struct modem_info_data ip_data = {
 	.data_name	= IP_ADDRESS_DATA_NAME,
 	.param_index	= IP_ADDRESS_PARAM_INDEX,
 	.param_count	= IP_ADDRESS_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_STRING,
+	.data_type	= MODEM_INFO_DATA_TYPE_STRING,
 };
 
 static const struct modem_info_data uicc_data = {
@@ -242,7 +242,7 @@ static const struct modem_info_data uicc_data = {
 	.data_name	= UICC_DATA_NAME,
 	.param_index	= UICC_PARAM_INDEX,
 	.param_count	= UICC_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_INT,
+	.data_type	= MODEM_INFO_DATA_TYPE_NUM_INT,
 };
 
 static const struct modem_info_data battery_data = {
@@ -250,7 +250,7 @@ static const struct modem_info_data battery_data = {
 	.data_name	= BATTERY_DATA_NAME,
 	.param_index	= VBAT_PARAM_INDEX,
 	.param_count	= VBAT_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_INT,
+	.data_type	= MODEM_INFO_DATA_TYPE_NUM_INT,
 };
 
 static const struct modem_info_data temp_data = {
@@ -258,7 +258,7 @@ static const struct modem_info_data temp_data = {
 	.data_name	= TEMPERATURE_DATA_NAME,
 	.param_index	= TEMP_PARAM_INDEX,
 	.param_count	= TEMP_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_INT,
+	.data_type	= MODEM_INFO_DATA_TYPE_NUM_INT,
 };
 
 static const struct modem_info_data fw_data = {
@@ -266,7 +266,7 @@ static const struct modem_info_data fw_data = {
 	.data_name	= MODEM_FW_DATA_NAME,
 	.param_index	= MODEM_FW_PARAM_INDEX,
 	.param_count	= MODEM_FW_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_STRING,
+	.data_type	= MODEM_INFO_DATA_TYPE_STRING,
 };
 
 static const struct modem_info_data iccid_data = {
@@ -274,7 +274,7 @@ static const struct modem_info_data iccid_data = {
 	.data_name	= ICCID_DATA_NAME,
 	.param_index	= ICCID_PARAM_INDEX,
 	.param_count	= ICCID_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_STRING,
+	.data_type	= MODEM_INFO_DATA_TYPE_STRING,
 };
 
 static const struct modem_info_data lte_mode_data = {
@@ -282,7 +282,7 @@ static const struct modem_info_data lte_mode_data = {
 	.data_name	= LTE_MODE_DATA_NAME,
 	.param_index	= LTE_MODE_PARAM_INDEX,
 	.param_count	= SYSTEMMODE_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_INT,
+	.data_type	= MODEM_INFO_DATA_TYPE_NUM_INT,
 };
 
 static const struct modem_info_data nbiot_mode_data = {
@@ -290,7 +290,7 @@ static const struct modem_info_data nbiot_mode_data = {
 	.data_name	= NBIOT_MODE_DATA_NAME,
 	.param_index	= NBIOT_MODE_PARAM_INDEX,
 	.param_count	= SYSTEMMODE_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_INT,
+	.data_type	= MODEM_INFO_DATA_TYPE_NUM_INT,
 };
 
 static const struct modem_info_data gps_mode_data = {
@@ -298,7 +298,7 @@ static const struct modem_info_data gps_mode_data = {
 	.data_name	= GPS_MODE_DATA_NAME,
 	.param_index	= GPS_MODE_PARAM_INDEX,
 	.param_count	= SYSTEMMODE_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_NUM_INT,
+	.data_type	= MODEM_INFO_DATA_TYPE_NUM_INT,
 };
 
 static const struct modem_info_data imsi_data = {
@@ -306,7 +306,7 @@ static const struct modem_info_data imsi_data = {
 	.data_name	= IMSI_DATA_NAME,
 	.param_index	= IMSI_PARAM_INDEX,
 	.param_count	= IMSI_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_STRING,
+	.data_type	= MODEM_INFO_DATA_TYPE_STRING,
 };
 
 static const struct modem_info_data imei_data = {
@@ -314,7 +314,7 @@ static const struct modem_info_data imei_data = {
 	.data_name	= MODEM_IMEI_DATA_NAME,
 	.param_index	= MODEM_IMEI_PARAM_INDEX,
 	.param_count	= MODEM_IMEI_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_STRING,
+	.data_type	= MODEM_INFO_DATA_TYPE_STRING,
 };
 
 static const struct modem_info_data date_time_data = {
@@ -322,7 +322,7 @@ static const struct modem_info_data date_time_data = {
 	.data_name	= DATE_TIME_DATA_NAME,
 	.param_index	= DATE_TIME_PARAM_INDEX,
 	.param_count	= DATE_TIME_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_STRING,
+	.data_type	= MODEM_INFO_DATA_TYPE_STRING,
 };
 
 static const struct modem_info_data apn_data = {
@@ -330,7 +330,7 @@ static const struct modem_info_data apn_data = {
 	.data_name	= APN_DATA_NAME,
 	.param_index	= APN_PARAM_INDEX,
 	.param_count	= APN_PARAM_COUNT,
-	.data_type	= AT_PARAM_TYPE_STRING,
+	.data_type	= MODEM_INFO_DATA_TYPE_STRING,
 };
 
 static const struct modem_info_data *const modem_data[] = {
@@ -392,10 +392,28 @@ static int map_nrf_modem_at_scanf_error(int err)
 	}
 }
 
+/* Deprecated in favor of `modem_info_data_type_get`. */
 enum at_param_type modem_info_type_get(enum modem_info info_type)
 {
 	if (info_type >= MODEM_INFO_COUNT) {
 		return -EINVAL;
+	}
+
+	switch (modem_data[info_type]->data_type) {
+	case MODEM_INFO_DATA_TYPE_NUM_INT:
+		return AT_PARAM_TYPE_NUM_INT;
+	case MODEM_INFO_DATA_TYPE_STRING:
+		return AT_PARAM_TYPE_STRING;
+	default:
+		/* Unreachable. */
+		return AT_PARAM_TYPE_INVALID;
+	}
+}
+
+enum modem_info_data_type modem_info_data_type_get(enum modem_info info_type)
+{
+	if (info_type >= MODEM_INFO_COUNT) {
+		return MODEM_INFO_DATA_TYPE_INVALID;
 	}
 
 	return modem_data[info_type]->data_type;
@@ -433,7 +451,7 @@ int modem_info_short_get(enum modem_info info, uint16_t *buf)
 		return -EINVAL;
 	}
 
-	if (modem_data[info]->data_type == AT_PARAM_TYPE_STRING) {
+	if (modem_data[info]->data_type == MODEM_INFO_DATA_TYPE_STRING) {
 		return -EINVAL;
 	}
 
@@ -633,7 +651,7 @@ int modem_info_string_get(enum modem_info info, char *buf, const size_t buf_size
 	err = at_parser_init(&parser, recv_buf);
 	__ASSERT_NO_MSG(err == 0);
 
-	if (modem_data[info]->data_type == AT_PARAM_TYPE_NUM_INT) {
+	if (modem_data[info]->data_type == MODEM_INFO_DATA_TYPE_NUM_INT) {
 		err = at_parser_num_get(&parser,
 					modem_data[info]->param_index,
 					&param_value);
@@ -646,7 +664,7 @@ int modem_info_string_get(enum modem_info info, char *buf, const size_t buf_size
 		if ((len <= 0) || (len > buf_size)) {
 			return -EMSGSIZE;
 		}
-	} else if (modem_data[info]->data_type == AT_PARAM_TYPE_STRING) {
+	} else if (modem_data[info]->data_type == MODEM_INFO_DATA_TYPE_STRING) {
 		len = buf_size - out_buf_len;
 		err = at_parser_string_get(&parser,
 					   modem_data[info]->param_index,
@@ -685,7 +703,7 @@ static void modem_info_rsrp_subscribe_handler(const char *notif)
 		.data_name	= RSRP_DATA_NAME,
 		.param_index	= RSRP_NOTIFY_PARAM_INDEX,
 		.param_count	= RSRP_NOTIFY_PARAM_COUNT,
-		.data_type	= AT_PARAM_TYPE_NUM_INT,
+		.data_type	= MODEM_INFO_DATA_TYPE_NUM_INT,
 	};
 
 	err = at_parser_init(&parser, notif);

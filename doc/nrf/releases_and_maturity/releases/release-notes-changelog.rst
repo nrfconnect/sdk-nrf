@@ -604,6 +604,8 @@ Security libraries
 Modem libraries
 ---------------
 
+* Deprecated the :ref:`at_params_readme` library.
+
 * :ref:`pdn_readme` library:
 
   * Deprecated the :c:func:`pdn_dynamic_params_get` function.
@@ -641,6 +643,15 @@ Modem libraries
 * :ref:`lib_at_host` library:
 
   * Fixed a bug where AT responses would erroneously be written to the logging UART instead of being written to the chosen ``ncs,at-host-uart`` UART device when the :kconfig:option:`CONFIG_LOG_BACKEND_UART` Kconfig option was set.
+
+* :ref:`modem_info_readme` library:
+
+  * Added:
+
+    * The :c:enum:`modem_info_data_type` type for representing LTE link information data types.
+    * The :c:func:`modem_info_data_type_get` function for requesting the data type of the current modem information type.
+
+  * Deprecated the :c:func:`modem_info_type_get` function in favor of the :c:func:`modem_info_data_type_get` function.
 
 Multiprotocol Service Layer libraries
 -------------------------------------
