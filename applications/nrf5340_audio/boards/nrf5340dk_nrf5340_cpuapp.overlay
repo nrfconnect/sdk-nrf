@@ -16,3 +16,15 @@
 		hp-channel-r;
 	};
 };
+
+/ {
+	aliases {
+		sw-vol-down = &button0;
+		sw-vol-up = &button1;
+		sw-play-pause = &button2;
+		sw-mute = &button3;
+		led-app-status = &led1;
+		led-conn-status = &led0;
+		led-sync-status = &led2;
+	};
+};

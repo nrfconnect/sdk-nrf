@@ -40,27 +40,27 @@ const static struct btn_config btn_cfg[] = {
 	{
 		.btn_name = STRINGIFY(BUTTON_VOLUME_DOWN),
 		.btn_pin = BUTTON_VOLUME_DOWN,
-		.btn_cfg_mask = DT_GPIO_FLAGS(DT_ALIAS(sw0), gpios),
+		.btn_cfg_mask = BUTTON_VOLUME_DOWN_FLAGS,
 	},
 	{
 		.btn_name = STRINGIFY(BUTTON_VOLUME_UP),
 		.btn_pin = BUTTON_VOLUME_UP,
-		.btn_cfg_mask = DT_GPIO_FLAGS(DT_ALIAS(sw1), gpios),
+		.btn_cfg_mask = BUTTON_VOLUME_UP_FLAGS,
 	},
 	{
 		.btn_name = STRINGIFY(BUTTON_PLAY_PAUSE),
 		.btn_pin = BUTTON_PLAY_PAUSE,
-		.btn_cfg_mask = DT_GPIO_FLAGS(DT_ALIAS(sw2), gpios),
+		.btn_cfg_mask = BUTTON_PLAY_PAUSE_FLAGS,
 	},
 	{
-		.btn_name = STRINGIFY(BUTTON_4),
-		.btn_pin = BUTTON_4,
-		.btn_cfg_mask = DT_GPIO_FLAGS(DT_ALIAS(sw3), gpios),
+		.btn_name = STRINGIFY(BUTTON_TONE),
+		.btn_pin = BUTTON_TONE,
+		.btn_cfg_mask = BUTTON_TONE_FLAGS,
 	},
 	{
-		.btn_name = STRINGIFY(BUTTON_5),
-		.btn_pin = BUTTON_5,
-		.btn_cfg_mask = DT_GPIO_FLAGS(DT_ALIAS(sw4), gpios),
+		.btn_name = STRINGIFY(BUTTON_MUTE),
+		.btn_pin = BUTTON_MUTE,
+		.btn_cfg_mask = BUTTON_MUTE_FLAGS,
 	}
 };
 /* clang-format on */
@@ -84,7 +84,7 @@ K_TIMER_DEFINE(button_debounce_timer, on_button_debounce_timeout, NULL);
 static int pin_to_btn_idx(uint8_t btn_pin, uint32_t *pin_idx)
 {
 	for (uint8_t i = 0; i < ARRAY_SIZE(btn_cfg); i++) {
-		if (btn_pin == btn_cfg[i].btn_pin) {
+		if (btn_cfg[i].btn_pin != BUTTON_NOT_ASSIGNED && btn_pin == btn_cfg[i].btn_pin) {
 			*pin_idx = i;
 			return 0;
 		}
@@ -220,23 +220,27 @@ int button_handler_init(void)
 	}
 
 	for (uint8_t i = 0; i < ARRAY_SIZE(btn_cfg); i++) {
-		ret = gpio_pin_configure(gpio_53_dev, btn_cfg[i].btn_pin,
-					 GPIO_INPUT | btn_cfg[i].btn_cfg_mask);
-		if (ret) {
-			return ret;
-		}
+		if (btn_cfg[i].btn_pin != BUTTON_NOT_ASSIGNED) {
+			ret = gpio_pin_configure(gpio_53_dev, btn_cfg[i].btn_pin,
+						 GPIO_INPUT | btn_cfg[i].btn_cfg_mask);
+			if (ret) {
+				return ret;
+			}
 
-		gpio_init_callback(&btn_callback[i], button_isr, BIT(btn_cfg[i].btn_pin));
+			gpio_init_callback(&btn_callback[i], button_isr, BIT(btn_cfg[i].btn_pin));
 
-		ret = gpio_add_callback(gpio_53_dev, &btn_callback[i]);
-		if (ret) {
-			return ret;
-		}
+			ret = gpio_add_callback(gpio_53_dev, &btn_callback[i]);
+			if (ret) {
+				return ret;
+			}
 
-		ret = gpio_pin_interrupt_configure(gpio_53_dev, btn_cfg[i].btn_pin,
-						   GPIO_INT_EDGE_TO_INACTIVE);
-		if (ret) {
-			return ret;
+			ret = gpio_pin_interrupt_configure(gpio_53_dev, btn_cfg[i].btn_pin,
+							   GPIO_INT_EDGE_TO_INACTIVE);
+			if (ret) {
+				return ret;
+			}
+		} else {
+			LOG_DBG("Button %d is not assigned", i);
 		}
 	}
 
