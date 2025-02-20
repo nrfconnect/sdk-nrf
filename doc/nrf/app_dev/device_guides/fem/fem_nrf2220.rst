@@ -83,13 +83,14 @@ To use nRF2220, complete the following steps:
 
    .. note::
 
-      On nRF54L devices, instead of ``i2c0`` from the above example, use one of the instances ``i2c20``, ``i2c21``, ``i2c22`` if the I2C pins belong to *PERI Power domain* or ``i2c30`` if the I2C pins belong to *LP Power Domain*.
+      On nRF54L Series devices, instead of ``i2c0`` from the above example, use one of the instances ``i2c20``, ``i2c21``, ``i2c22`` if the I2C pins belong to *PERI Power domain* or ``i2c30`` if the I2C pins belong to *LP Power Domain*.
 
 #. The nRF2220 device supports alternative I2C slave address selection.
    Instead of using the default ``0x36`` I2C slave address for nRF2220 device you can use the value ``0x34``.
    In this case, the alternative address selection procedure when switching from ``Power Off`` to ``Bypass`` states of the nRF2220 is used automatically.
-#. On nRF53 devices, the devicetree nodes described above must be added to the network core and ``i2c0`` instance of the network core must be used.
-   For the application core, you must also add a GPIO forwarder node to its devicetree file to pass control over given pins from application core to the network core:
+#. On nRF53 Series devices, add the devicetree nodes described above the network core.
+   Use the ``i2c0`` instance of the network core.
+   For the application core, add a GPIO forwarder node to its devicetree file to pass control over given pins from application core to the network core:
 
    .. code-block:: devicetree
 
@@ -106,9 +107,9 @@ To use nRF2220, complete the following steps:
 
    The pins defined in the GPIO forwarder node in the application core's devicetree file must match the pins defined in the FEM nodes in the network core's devicetree file.
 
-#. On nRF53 devices, ``TWIM0`` and ``UARTE0`` are mutually exclusive AHB bus masters on the network core as described in the `Product Specification <nRF5340 Product Specification_>`_, Section 6.4.3.1, Table 22.
+#. On nRF53 Series devices, ``TWIM0`` and ``UARTE0`` are mutually exclusive AHB bus masters on the network core as described in the `Product Specification <nRF5340 Product Specification_>`_, Section 6.4.3.1, Table 22.
    As a result, they cannot be used simultaneously.
-   For the I2C part of the nRF2220 interface to be functional, you must disable the ``UARTE0`` node in the network core's devicetree file.
+   For the I2C part of the nRF2220 interface to be functional, disable the ``UARTE0`` node in the network core's devicetree file.
 
    .. code-block:: devicetree
 
@@ -116,12 +117,13 @@ To use nRF2220, complete the following steps:
          status = "disabled";
       };
 
-#. On nRF54L devices, the GPIO pins of the SoC selected to control ``cs-gpios`` and ``md-gpios`` must support GPIOTE.
-   For example, on the nRF54L15 device, only pins belonging to GPIO P1 or GPIO P0 can be used and GPIO P2 pins cannot be used due to lack of related GPIOTE peripheral.
-   It is recommended for mentioned purpose to use these GPIO pins that belong to the PERI Power Domain of the nRF54L device.
+#. On nRF54L Series devices, make sure the GPIO pins of the SoC selected to control ``cs-gpios`` and ``md-gpios`` support GPIOTE.
+   For example, on the nRF54L15 device, use pins belonging to GPIO P1 or GPIO P0 only.
+   You cannot use the GPIO P2 pins, because there is no related GPIOTE peripheral.
+   It is recommended to use the GPIO pins that belong to the PERI Power Domain of the nRF54L device.
    For example, on the nRF54L15, these are pins belonging to GPIO P1.
    Using pins belonging to Low Power Domain (GPIO P0 on nRF54L15) is supported but requires more DPPI and PPIB channels of the SoC.
-   You must also enable appropriate instances of ``DPPIC`` and ``PPIB`` peripherals in the devicetree file:
+   Enable appropriate instances of the ``DPPIC`` and ``PPIB`` peripherals in the devicetree file:
 
    .. code-block:: devicetree
 
