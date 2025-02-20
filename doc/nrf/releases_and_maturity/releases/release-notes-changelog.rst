@@ -319,10 +319,18 @@ Bluetooth Fast Pair samples
 ---------------------------
 
 * Added support for the ``nrf54l15dk/nrf54l05/cpuapp`` and ``nrf54l15dk/nrf54l10/cpuapp`` board targets in all Fast Pair samples.
+* Updated the non-secure target (``nrf5340dk/nrf5340/cpuapp/ns`` and ``thingy53/nrf5340/cpuapp/ns``) configurations of the following samples to use configurable TF-M profile instead of the predefined minimal TF-M profile:
+
+  * :ref:`fast_pair_locator_tag`
+  * :ref:`fast_pair_input_device`
+
+  This change results from the Bluetooth subsystem transition to the PSA cryptographic standard.
+  The Bluetooth stack can now use the PSA crypto API in the non-secure domain as all necessary TF-M partitions are configured properly.
 
 * :ref:`fast_pair_locator_tag` sample:
 
   * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
+  * Updated the partition layout for the ``nrf5340dk/nrf5340/cpuapp/ns`` and ``thingy53/nrf5340/cpuapp/ns`` board targets to accommodate the partitions needed due to change in the TF-M profile configuration.
 
 Bluetooth Mesh samples
 ----------------------
@@ -577,6 +585,10 @@ Binary libraries
 
 Bluetooth libraries and services
 --------------------------------
+
+* :ref:`bt_fast_pair_readme` library:
+
+  * Updated the automatically generated ``bt_fast_pair`` partition definition (located in the :file:`subsys/partition_manager/pm.yml.bt_fast_pair`) to work correctly when building with TF-M.
 
 * :ref:`bt_mesh` library:
 
