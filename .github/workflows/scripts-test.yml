@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - 'scripts/bootloader/**'
+      - 'scripts/**'
 
 jobs:
   test-scripts:
@@ -25,4 +25,4 @@ jobs:
       - name: Install packages
         run: python -m pip install -r scripts/requirements-test.txt
       - name: Run tests
-        run: python -m pytest scripts/bootloader/tests
+        run: python -m pytest scripts/bootloader/tests scripts/tests
