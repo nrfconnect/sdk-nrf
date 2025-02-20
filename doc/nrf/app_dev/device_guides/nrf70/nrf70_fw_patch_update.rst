@@ -42,7 +42,13 @@ Supported platforms
 
 The following platforms are supported:
 
+* nRF7002 DK
 * nRF5340 DK with nRF7002 EK as a shield
+
+.. note::
+
+   For nRF7002 DK, this feature does not work with tools from the `nRF Command Line Tools`_ product page and nrfjprog programming tool.
+   To program the nRF7002 DK device, you need to use the nRF Util downloaded from  `nRF Util development tool`_ product page.
 
 Preparing the application
 =========================
@@ -66,8 +72,8 @@ In addition to a partition dedicated to the nRF70 Series firmware patch, you wil
 
 Below are examples of MCUboot partition names for updating the nRF70 Series firmware patch, which vary depending on the platform and the number of cores used:
 
-* For the nRF5340 DK in a single-core variant (without the network core): ``mcuboot_primary_1`` and ``mcuboot_secondary_1``.
-* For the nRF5340 DK in a multi-core variant (with the network core): ``mcuboot_primary_2`` and ``mcuboot_secondary_2``.
+* For the nRF5340 DK and nRF7002 DK in a single-core variant (without the network core): ``mcuboot_primary_1`` and ``mcuboot_secondary_1``.
+* For the nRF5340 DK and nRF7002 DK in a multi-core variant (with the network core): ``mcuboot_primary_2`` and ``mcuboot_secondary_2``.
 
 .. _nrf70_fw_patch_update_adding_partitions:
 
@@ -161,47 +167,79 @@ Configuring build system
 
 To enable the DFU procedure for the nRF70 Series firmware patch, complete the following steps depending on the platform:
 
-* For the nRF5340 DK without the network core:
-
-    1. Set the :kconfig:option:`CONFIG_NRF_WIFI_FW_PATCH_DFU` Kconfig option to ``y``.
-    #. Set the ``SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES`` Kconfig option to ``2``.
-
-* For the nRF5340 DK with the network core:
-
-    1. Set the :kconfig:option:`CONFIG_NRF_WIFI_FW_PATCH_DFU`` Kconfig option to ``y``.
-    #. Set the ``SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES`` Kconfig option to ``3``.
-
-For example, to build the sample with the DFU procedure for the nRF70 Series firmware patch on the nRF5340 DK platform, which includes the network core image, run the following commands:
-
 .. tabs::
 
-   .. group-tab:: West
+    .. group-tab:: nRF5340 DK
 
-        .. code-block:: console
+        1. Set the :kconfig:option:`CONFIG_NRF_WIFI_FW_PATCH_DFU` Kconfig option to ``y``.
+        #. Set the :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE` Kconfig option to ``y``.
+        #. Use the ``nrf70-fw-patch-ext-flash`` snippet, by adding ``-D<project_name>_SNIPPET=nrf70-fw-patch-ext-flash`` to the build command.
+        #. Add shield configuration, by adding ``-DSHIELD=nrf7002ek`` to the build command.
 
-            west build -d nrf5340dk/nrf5340/cpuapp -d -- -DSHIELD=nrf7002ek -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DCONFIG_NRF_WIFI_FW_PATCH_DFU=y -DSB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES=3
+        For example, to build the :ref:`wifi_shell_sample` sample with the DFU procedure for the nRF70 Series firmware patch on the nRF7002 DK platform, which includes the network core image, run the following commands:
 
-   .. group-tab:: CMake
+        .. tabs::
 
-        .. code-block:: console
+            .. group-tab:: West
 
-            cmake -GNinja -Bbuild -DBOARD=nrf5340dk/nrf5340/cpuapp -DSHIELD=nrf7002ek -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DCONFIG_NRF_WIFI_FW_PATCH_DFU=y -DSB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES=3 sample
-            ninja -C build
+                    .. code-block:: console
 
-   .. group-tab:: nRF Connect for VS Code
+                        west build -p -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf7002ek -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DCONFIG_NRF_WIFI_FW_PATCH_DFU=y -Dshell_SNIPPET=nrf70-fw-patch-ext-flash
 
-        1. When `building an application <How to build an application_>`_ as described in the |nRFVSC| documentation, follow the steps for setting up the build configuration.
-        #. In the Add Build Configuration screen, click the Add argument button under the Extra CMake argument section.
-        #. Add the following Kconfig options:
+            .. group-tab:: CMake
 
-        .. code-block:: console
+                    .. code-block:: console
 
-            -- -DSHIELD=nrf7002ek -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DCONFIG_NRF_WIFI_FW_PATCH_DFU=y -DSB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES=3
+                        cmake -GNinja -Bbuild -DBOARD=nrf5340dk/nrf5340/cpuapp -DSHIELD=nrf7002ek -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DCONFIG_NRF_WIFI_FW_PATCH_DFU=y -Dshell_SNIPPET=nrf70-fw-patch-ext-flash -DAPP_DIR=*app_path* *path_to_zephyr*/share/sysbuild
+                        ninja -C build
+
+            .. group-tab:: nRF Connect for VS Code
+
+                    1. When `building an application <How to build an application_>`_ as described in the |nRFVSC| documentation, follow the steps for setting up the build configuration.
+                    #. In the **Add Build Configuration** screen, click the **Add argument** button under the **Extra CMake argument** section.
+                    #. Add the following Kconfig options:
+
+                    .. code-block:: console
+
+                        -- -DSHIELD=nrf7002ek -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DCONFIG_NRF_WIFI_FW_PATCH_DFU=y -Dshell_SNIPPET=nrf70-fw-patch-ext-flash
+
+    .. group-tab:: nRF7002 DK
+
+            1. Set the :kconfig:option:`CONFIG_NRF_WIFI_FW_PATCH_DFU` Kconfig option to ``y``.
+            #. Set the :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE` Kconfig option to ``y``.
+            #. Use the ``nrf70-fw-patch-ext-flash`` snippet, by adding ``-D<project_name>_SNIPPET=nrf70-fw-patch-ext-flash`` to the build command.
+
+        For example, to build the :ref:`wifi_shell_sample` sample with the DFU procedure for the nRF70 Series firmware patch on the nRF7002 DK platform, which does not include the network core image, run the following commands:
+
+        .. tabs::
+
+            .. group-tab:: West
+
+                    .. code-block:: console
+
+                        west build -p -b nrf7002dk/nrf5340/cpuapp -- -Dshell_SNIPPET=nrf70-fw-patch-ext-flash -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DCONFIG_NRF_WIFI_FW_PATCH_DFU=y
+
+            .. group-tab:: CMake
+
+                    .. code-block:: console
+
+                        cmake -GNinja -Bbuild -- -DBOARD=nrf7002dk/nrf5340/cpuapp -Dshell_SNIPPET=nrf70-fw-patch-ext-flash -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DCONFIG_NRF_WIFI_FW_PATCH_DFU=y -DAPP_DIR=*app_path* *path_to_zephyr*/share/sysbuild
+                        ninja -C build
+
+            .. group-tab:: nRF Connect for VS Code
+
+                    1. When `building an application <How to build an application_>`_ as described in the |nRFVSC| documentation, follow the steps for setting up the build configuration.
+                    #. In the **Add Build Configuration** screen, click the **Add argument** button under the **Extra CMake argument** section.
+                    #. Add the following Kconfig options:
+
+                    .. code-block:: console
+
+                        -- -Dshell_SNIPPET=nrf70-fw-patch-ext-flash -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DCONFIG_NRF_WIFI_FW_PATCH_DFU=y
 
 If you want to use the :ref:`sysbuild_images` feature, you need to set the ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH`` Kconfig option to ``y``, and must also set the :kconfig:option:`CONFIG_DFU_MULTI_IMAGE_MAX_IMAGE_COUNT` Kconfig option to one of the following values:
 
-* For the nRF5340 DK without the network core: ``2``
-* For the nRF5340 DK with the network core: ``3``
+* For the nRF5340 DK and nRF7002 DK without the network core: ``2``
+* For the nRF5340 DK and nRF7002 DK with the network core: ``3``
 
 Performing the update of the nRF70 Series firmware patch
 ========================================================

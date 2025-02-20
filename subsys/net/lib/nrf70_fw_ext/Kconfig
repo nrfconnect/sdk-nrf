@@ -24,10 +24,6 @@ config NRF_WIFI_PATCHES_EXT_FLASH_DISABLED
 
 config NRF_WIFI_PATCHES_EXT_FLASH_XIP
 	bool "Relocate nRF700x FW patches to external memory and execute from there"
-	# nRF7002 supports SPI based external flash access with no XIP
-	depends on !BOARD_NRF7002DK_NRF5340_CPUAPP && !BOARD_NRF7002DK_NRF5340_CPUAPP_NS
-	# Disable until Matter DFU changes are ready
-	# default y if BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF52840DK_NRF52840
 	# For accessing external flash
 	select FLASH
 	# For relocation code to external flash
@@ -39,9 +35,6 @@ config NRF_WIFI_PATCHES_EXT_FLASH_XIP
 
 config NRF_WIFI_PATCHES_EXT_FLASH_STORE
 	bool "Store nRF700x FW patches in external memory but execute from RAM"
-	# nRF7002 supports SPI based external memory access but missing tools support
-	# TODO: Enable when tools support is available (NRFJPROG-157)
-	depends on !BOARD_NRF7002DK_NRF5340_CPUAPP && !BOARD_NRF7002DK_NRF5340_CPUAPP_NS
 	select FLASH
 	select FLASH_MAP
 endchoice

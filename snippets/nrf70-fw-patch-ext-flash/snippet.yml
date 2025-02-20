@@ -2,3 +2,9 @@ name: nrf70-fw-patch-ext-flash
 append:
   EXTRA_DTC_OVERLAY_FILE: fw-patch-ext-flash.overlay
   EXTRA_CONF_FILE: overlay-fw-patch-ext-flash.conf
+  SB_EXTRA_CONF_FILE: overlay-sb-fw-patch-ext-flash.conf
+
+boards:
+  nrf7002dk/nrf5340/cpuapp:
+    append:
+      EXTRA_CONF_FILE: boards/nrf7002dk_nrf5340_cpuapp.conf
