@@ -448,7 +448,7 @@ static int read_max(uint8_t parameter, uint16_t *ret)
 
 static int cte_set(uint8_t parameter)
 {
-	enum dtm_cte_type_code type = (parameter & LE_CTE_TYPE_MASK) >> LE_CTE_TYPE_POS;
+	enum dtm_cte_type_code type = (parameter >> LE_CTE_TYPE_POS) & LE_CTE_TYPE_MASK;
 	uint8_t time = parameter & LE_CTE_CTETIME_MASK;
 
 	if (!parameter) {
@@ -472,7 +472,7 @@ static int cte_set(uint8_t parameter)
 
 static int cte_slot_set(uint8_t parameter)
 {
-	enum dtm_cte_type_code type = (parameter & LE_CTE_TYPE_MASK) >> LE_CTE_TYPE_POS;
+	enum dtm_cte_type_code type = (parameter >> LE_CTE_TYPE_POS) & LE_CTE_TYPE_MASK;
 
 	switch (type) {
 	case LE_CTE_SLOT_1US:
