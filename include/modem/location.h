@@ -78,7 +78,7 @@ enum location_event_id {
 	 * Application has indicated that getting location has been completed,
 	 * the result is not known, and the Location library does not need to care about it.
 	 *
-	 * This event can occur only if @kconfig{CONFIG_LOCATION_SERVICE_EXTERNAL} is set.
+	 * This event can occur only if `CONFIG_LOCATION_SERVICE_EXTERNAL` is set.
 	 */
 	LOCATION_EVT_RESULT_UNKNOWN,
 	/**
@@ -104,14 +104,14 @@ enum location_event_id {
 	/**
 	 * Location request has been started.
 	 *
-	 * This event is only sent if @kconfig{CONFIG_LOCATION_DATA_DETAILS} is set.
+	 * This event is only sent if `CONFIG_LOCATION_DATA_DETAILS` is set.
 	 */
 	LOCATION_EVT_STARTED,
 	/**
 	 * A fallback from one method to another has occurred,
 	 * and the positioning procedure continues.
 	 *
-	 * This event is only sent if @kconfig{CONFIG_LOCATION_DATA_DETAILS} is set and
+	 * This event is only sent if `CONFIG_LOCATION_DATA_DETAILS` is set and
 	 * @ref location_config.mode is @ref LOCATION_REQ_MODE_FALLBACK.
 	 */
 	LOCATION_EVT_FALLBACK,
@@ -377,7 +377,7 @@ struct location_gnss_config {
 	 *
 	 * Default value is 120000 (2 minutes). It is applied when
 	 * location_config_defaults_set() function is called and can be changed at build time
-	 * with @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_TIMEOUT} configuration.
+	 * with `CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_TIMEOUT` configuration.
 	 */
 	int32_t timeout;
 
@@ -391,7 +391,7 @@ struct location_gnss_config {
 	 *
 	 * Default value is @ref LOCATION_ACCURACY_NORMAL. It is applied when
 	 * location_config_defaults_set() function is called and can be changed at build time
-	 * with @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY} choice configuration.
+	 * with `CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_ACCURACY` choice configuration.
 	 */
 	enum location_accuracy accuracy;
 
@@ -404,7 +404,7 @@ struct location_gnss_config {
 	 *
 	 * Default value is 3. It is applied when location_config_defaults_set()
 	 * function is called and can be changed at build time with
-	 * @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_NUM_CONSECUTIVE_FIXES} configuration.
+	 * `CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_NUM_CONSECUTIVE_FIXES` configuration.
 	 */
 	uint8_t num_consecutive_fixes;
 
@@ -418,7 +418,7 @@ struct location_gnss_config {
 	 *
 	 * Default value is false. It is applied when location_config_defaults_set()
 	 * function is called and can be changed at build time with
-	 * @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_VISIBILITY_DETECTION} configuration.
+	 * `CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_VISIBILITY_DETECTION` configuration.
 	 *
 	 * @note Only supported with modem firmware v1.3.2 or later.
 	 */
@@ -442,7 +442,7 @@ struct location_gnss_config {
 	 *
 	 * Default value is false. It is applied when location_config_defaults_set()
 	 * function is called and can be changed at build time with
-	 * @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_PRIORITY_MODE} configuration.
+	 * `CONFIG_LOCATION_REQUEST_DEFAULT_GNSS_PRIORITY_MODE` configuration.
 	 */
 	bool priority_mode;
 };
@@ -455,12 +455,12 @@ struct location_cellular_config {
 	 *
 	 * @details Default value is 30000 (30 seconds). It is applied when
 	 * location_config_defaults_set() function is called and can be changed at build time
-	 * with @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_CELLULAR_TIMEOUT} configuration.
+	 * with `CONFIG_LOCATION_REQUEST_DEFAULT_CELLULAR_TIMEOUT` configuration.
 	 *
 	 * Timeout only applies to neighbor cell search, not the cloud communication.
 	 * Timeout for the entire location request specified in @ref location_config structure
 	 * is still valid.
-	 * When @kconfig{CONFIG_LOCATION_SERVICE_EXTERNAL} is enabled, this timeout stops when
+	 * When `CONFIG_LOCATION_SERVICE_EXTERNAL` is enabled, this timeout stops when
 	 * event @ref LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST is sent. However, timeout specified in
 	 * @ref location_config structure is still valid.
 	 */
@@ -472,7 +472,7 @@ struct location_cellular_config {
 	 * @details Default value is @ref LOCATION_SERVICE_ANY. It is applied when
 	 * location_config_defaults_set() function is called.
 	 *
-	 * This parameter is ignored when @kconfig{CONFIG_LOCATION_SERVICE_EXTERNAL} is enabled.
+	 * This parameter is ignored when `CONFIG_LOCATION_SERVICE_EXTERNAL` is enabled.
 	 */
 	enum location_service service;
 
@@ -481,7 +481,7 @@ struct location_cellular_config {
 	 *
 	 * @details Default value is 4. It is applied when
 	 * location_config_defaults_set() function is called and can be changed at build time
-	 * with @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_CELLULAR_CELL_COUNT} configuration.
+	 * with `CONFIG_LOCATION_REQUEST_DEFAULT_CELLULAR_CELL_COUNT` configuration.
 	 *
 	 * Maximum value is 15.
 	 *
@@ -508,13 +508,13 @@ struct location_wifi_config {
 	 *
 	 * @details Default value is 30000 (30 seconds). It is applied when
 	 * location_config_defaults_set() function is called and can be changed at build time
-	 * with @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_TIMEOUT} configuration.
+	 * with `CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_TIMEOUT` configuration.
 	 *
 	 * Timeout only applies to Wi-Fi scan, not the cloud communication.
 	 * Timeout for the entire location request specified in @ref location_config structure
 	 * is still valid.
 	 *
-	 * When @kconfig{CONFIG_LOCATION_SERVICE_EXTERNAL} is enabled, this timeout stops when
+	 * When `CONFIG_LOCATION_SERVICE_EXTERNAL` is enabled, this timeout stops when
 	 * event @ref LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST is sent. However, timeout specified in
 	 * @ref location_config structure is still valid.
 	 */
@@ -526,7 +526,7 @@ struct location_wifi_config {
 	 * @details Default value is @ref LOCATION_SERVICE_ANY. It is applied when
 	 * location_config_defaults_set() function is called.
 	 *
-	 * This parameter is ignored when @kconfig{CONFIG_LOCATION_SERVICE_EXTERNAL} is enabled.
+	 * This parameter is ignored when `CONFIG_LOCATION_SERVICE_EXTERNAL` is enabled.
 	 */
 	enum location_service service;
 };
@@ -572,7 +572,7 @@ struct location_config {
 	 *
 	 * Default value is 0. It is applied when
 	 * location_config_defaults_set() function is called and can be changed at build time
-	 * with @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_INTERVAL} configuration.
+	 * with `CONFIG_LOCATION_REQUEST_DEFAULT_INTERVAL` configuration.
 	 */
 	uint16_t interval;
 
@@ -583,7 +583,7 @@ struct location_config {
 	 *
 	 * Default value is 300000 (5 minutes). It is applied when
 	 * location_config_defaults_set() function is called and can be changed
-	 * at build time with @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_TIMEOUT} configuration.
+	 * at build time with `CONFIG_LOCATION_REQUEST_DEFAULT_TIMEOUT` configuration.
 	 *
 	 * This is intended to be a safety timer preventing location request from getting stuck
 	 * in any of its phases, because parts of the method-specific functionality are not
@@ -686,7 +686,7 @@ int location_request_cancel(void);
  *
  * @param[in,out] config Configuration to be supplied with default values.
  * @param[in] methods_count Number of location methods. This must not exceed
- *                          @kconfig{CONFIG_LOCATION_METHODS_LIST_SIZE}.
+ *                          `CONFIG_LOCATION_METHODS_LIST_SIZE`.
  * @param[in] method_types List of location method types in priority order.
  *                         Location methods with these types are initialized with default values
  *                         into given configuration. List size must be as given in 'methods_count'.
@@ -736,7 +736,7 @@ const struct location_data_details *location_details_get(
  *
  * @return 0 on success, or negative error code on failure.
  * @retval -EINVAL Given buffer is NULL or buffer length zero.
- * @retval -ENOTSUP @kconfig{CONFIG_LOCATION_SERVICE_EXTERNAL} is not set.
+ * @retval -ENOTSUP `CONFIG_LOCATION_SERVICE_EXTERNAL` is not set.
  */
 int location_agnss_data_process(const char *buf, size_t buf_len);
 
@@ -756,7 +756,7 @@ int location_agnss_data_process(const char *buf, size_t buf_len);
  *
  * @return 0 on success, or negative error code on failure.
  * @retval -EINVAL Given buffer is NULL or buffer length zero.
- * @retval -ENOTSUP @kconfig{CONFIG_LOCATION_SERVICE_EXTERNAL} is not set.
+ * @retval -ENOTSUP `CONFIG_LOCATION_SERVICE_EXTERNAL` is not set.
  */
 int location_pgps_data_process(const char *buf, size_t buf_len);
 

@@ -299,7 +299,7 @@ typedef void (*azure_iot_hub_evt_handler_t)(struct azure_iot_hub_evt *evt);
 struct azure_iot_hub_config {
 	/** Hostname to IoT Hub to connect to.
 	 *  If the buffer size is zero, the device ID provided by
-	 *  @kconfig{CONFIG_AZURE_IOT_HUB_HOSTNAME} is used. If DPS is enabled and `use_dps` is
+	 *  `CONFIG_AZURE_IOT_HUB_HOSTNAME` is used. If DPS is enabled and `use_dps` is
 	 *  set to true, the provided hostname is ignored.
 	 */
 	struct azure_iot_hub_buf hostname;
@@ -309,12 +309,12 @@ struct azure_iot_hub_config {
 	struct azure_iot_hub_buf device_id;
 
 	/** Use DPS to obtain hostname and device ID if true.
-	 *  Using DPS requires that @kconfig{CONFIG_AZURE_IOT_HUB_DPS} is enabled and DPS
+	 *  Using DPS requires that `CONFIG_AZURE_IOT_HUB_DPS` is enabled and DPS
 	 *  configured accordingly.
 	 *  If a hostname and device ID have already been obtained previously, the stored values
 	 *  will be used. To re-run DPS, the DPS information must be reset first.
 	 *  Note that using this option will use the device ID as DPS registration ID and the
-	 *  ID cope from @kconfig{CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE}.
+	 *  ID cope from `CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE`.
 	 *  For more fine-grained control over DPS, use the azure_iot_hub_dps APIs directly instead.
 	 */
 	bool use_dps;
