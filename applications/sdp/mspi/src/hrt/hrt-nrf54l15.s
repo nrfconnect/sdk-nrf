@@ -490,7 +490,7 @@ hrt_read:
 	li	a5,0
 .L57:
 	lw	a4,64(s0)
-	bltu	a5,a4,.L58
+	bgtu	a4,a5,.L58
  #APP
 	csrw 2000, 0
 	csrw 2001, 0
@@ -536,9 +536,8 @@ hrt_read:
 	lw	a4,60(s0)
 	srli	a3,a3,24
 	add	a4,a4,a5
-	addi	a5,a5,1
 	sb	a3,0(a4)
-	andi	a5,a5,0xff
+	addi	a5,a5,1
 	j	.L57
 .L60:
 	li	a5,1
