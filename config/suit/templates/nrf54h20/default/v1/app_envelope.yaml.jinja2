@@ -1,3 +1,9 @@
+# Consistency checks for the build configuration
+{%-  import 'consistency_checks.jinja' as consistency_checks -%}
+
+# Verify signature verification configuration
+{{ consistency_checks.suit_verify_signature_check("APP_LOCAL_1", application, sysbuild) }}
+
 {%- set mpi_application_vendor_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_APP_LOCAL_1_VENDOR_NAME']|default('nordicsemi.com') %}
 {%- set mpi_application_class_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_APP_LOCAL_1_CLASS_NAME']|default('nRF54H20_sample_app') %}
 {%- set suit_artifacts_base_dir = ( application['binary'].split('/')[:-1] | join('/') ) %}
