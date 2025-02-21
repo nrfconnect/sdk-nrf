@@ -20,7 +20,7 @@ if(SB_CONFIG_SUIT_BUILD_FLASH_COMPANION)
   )
 endif()
 
-if(SB_CONFIG_SUIT_BUILD_RECOVERY)
+if(SB_CONFIG_SUIT_BUILD_RECOVERY AND NOT SB_CONFIG_SUIT_RECOVERY_APPLICATION_NONE)
   # Calculate the network board target
   string(REPLACE "/" ";" split_board_qualifiers "${BOARD_QUALIFIERS}")
   list(GET split_board_qualifiers 1 target_soc)

@@ -184,6 +184,11 @@ config SUIT_RECOVERY_APPLICATION_DEFAULT
 	help
 	  Use the default recovery application using BluetoothLE and SMP.
 
+config SUIT_RECOVERY_APPLICATION_NONE
+	bool "Do not build the recovery application"
+	help
+	  Provide a recovery manifest, but do not build a recovery application.
+
 endchoice
 
 choice SUIT_RECOVERY_APPLICATION_IMAGE_MANIFEST

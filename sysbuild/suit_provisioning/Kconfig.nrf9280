@@ -111,7 +111,7 @@ manifest-mpi-offset=0x2000
 
 menuconfig SUIT_MPI_$(manifest)
 	bool "Radio recovery manifest configuration"
-	default y if SUIT_BUILD_RECOVERY
+	default y if SUIT_BUILD_RECOVERY && !SUIT_RECOVERY_APPLICATION_NONE
 
 rsource "Kconfig.template.manifest_config"
 
