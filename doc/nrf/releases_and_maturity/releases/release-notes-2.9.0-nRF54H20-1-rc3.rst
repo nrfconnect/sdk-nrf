@@ -1,6 +1,6 @@
-.. _ncs_release_notes_290-nrf54h20-1-rc2:
+.. _ncs_release_notes_290-nrf54h20-1-rc3:
 
-|NCS| v2.9.0-nRF54H20-1-rc2 Release Notes
+|NCS| v2.9.0-nRF54H20-1-rc3 Release Notes
 #########################################
 
 .. contents::
@@ -10,7 +10,7 @@
 |NCS| delivers reference software and supporting libraries for developing low-power wireless applications with Nordic Semiconductor products.
 The SDK includes open source projects (TF-M, MCUboot, OpenThread, Matter, and the Zephyr RTOS), which are continuously integrated and redistributed with the SDK.
 
-The |NCS| v2.9.0-nRF54H20-1-rc2 is an nRF54H20-exclusive release tag, only supporting products based on the nRF54H20 SoC.
+The |NCS| v2.9.0-nRF54H20-1-rc3 is an nRF54H20-exclusive release tag, only supporting products based on the nRF54H20 SoC.
 
 Release notes might refer to "experimental" support for features, which indicates that the feature is incomplete in functionality or verification, and can be expected to change in future releases.
 To learn more, see :ref:`software_maturity`.
@@ -25,6 +25,7 @@ Added the following features as supported:
   * Triggering firmware recovery by pressing a hardware button or calling the respective API.
     For more information, see :ref:`ug_nrf54h20_suit_recovery`.
   * Global Domain Frequency Scaling (GDFS), optimizing USB suspend power consumption.
+  * The support for a new ZMS backend for Settings.
   * Drivers adapted for the following peripherals:
 
     * UARTE120
@@ -63,40 +64,40 @@ You must use the :file:`spi_dw.c` driver in such case.
 Release tag
 ***********
 
-The release tag for the |NCS| manifest repository (|ncs_repo|) is **v2.9.0-nRF54H20-1-rc2**.
+The release tag for the |NCS| manifest repository (|ncs_repo|) is **v2.9.0-nRF54H20-1-rc3**.
 Check the :file:`west.yml` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
 See :ref:`cloning_the_repositories` and :ref:`gs_updating_repos_examples` for more information.
 
-For information on the included repositories and revisions, see `Repositories and revisions for v2.9.0-nRF54H20-1-rc2`_.
+For information on the included repositories and revisions, see `Repositories and revisions for v2.9.0-nRF54H20-1-rc3`_.
 
 Integration test results
 ************************
 
 The integration test results for this tag can be found in the following external Artifactory:
 
-* `Twister test report for nRF Connect SDK v2.9.0-nRF54H20-1-rc2`_
-* `Hardware test report for nRF Connect SDK v2.9.0-nRF54H20-1-rc2`_
+* `Twister test report for nRF Connect SDK v2.9.0-nRF54H20-1-rc3`_
+* `Hardware test report for nRF Connect SDK v2.9.0-nRF54H20-1-rc3`_
 
 IDE and tool support
 ********************
 
-`nRF Connect extension for Visual Studio Code <nRF Connect for Visual Studio Code_>`_ is the recommended IDE for |NCS| v2.9.0-nRF54H20-1-rc2.
+`nRF Connect extension for Visual Studio Code <nRF Connect for Visual Studio Code_>`_ is the recommended IDE for |NCS| v2.9.0-nRF54H20-1-rc3.
 See the :ref:`installation` section for more information about supported operating systems and toolchain.
 
 Known issues
 ************
 
 Known issues are only tracked for the latest official release.
-See `known issues for nRF Connect SDK v2.9.0-nRF54H20-1-rc2`_ for the list of issues valid for the latest release.
+See `known issues for nRF Connect SDK v2.9.0-nRF54H20-1-rc3`_ for the list of issues valid for the latest release.
 
 Migration notes
 ***************
 
-See the `Migration guide for nRF Connect SDK v2.9.0-nRF54H20-1-rc2`_ for the changes required or recommended when migrating your nRF54H Series application from |NCS| v2.8.0 to |NCS| v2.9.0-nRF54H20-1-rc2.
+See the `Migration guide for nRF Connect SDK v2.9.0-nRF54H20-1-rc3`_ for the changes required or recommended when migrating your nRF54H Series application from |NCS| v2.8.0 to |NCS| v2.9.0-nRF54H20-1-rc3.
 
-.. _ncs_release_notes_290-nrf54h20-1-rc2_changelog:
+.. _ncs_release_notes_290-nrf54h20-1-rc3_changelog:
 
 Changelog
 *********
@@ -445,6 +446,20 @@ The current |NCS| main branch is based on revision ``beb733919d`` of Zephyr.
 .. note::
    For possible breaking changes and changes between the latest Zephyr release and the current Zephyr version, refer to the :ref:`Zephyr release notes <zephyr_release_notes>`.
 
+ZMS backend
+-----------
+
+* Added the support for a new ZMS backend for Settings in |NCS|:
+
+  * The following Kconfig options for the *ZMS backend for Settings* are not available in the |NCS| v2.9.0-nRF54H20-1-rc3:
+
+    * ``CONFIG_SETTINGS_ZMS_NAME_CACHE``
+    * ``CONFIG_SETTINGS_ZMS_NAME_CACHE_SIZE``
+    * ``CONFIG_ZMS_LOOKUP_CACHE_FOR_SETTINGS``
+
+  * The ZMS settings backend now defaults to using the entire available storage partition.
+    See :ref:`migration_2.9.0-nRF54H20-1-rc3`.
+
 Documentation
 =============
 
@@ -453,12 +468,14 @@ Documentation
   * The :ref:`matter_samples_config` page that documents Kconfig options and snippets shared by Matter samples and applications.
   * A page about :ref:`add_new_driver`.
   * A page for the :ref:`sdp_gpio` application.
+  * The :ref:`ug_nrf54h20_keys` page.
 
 * Updated:
 
   * The :ref:`ug_nrf54h20_gs` page.
   * The :ref:`ug_nrf54h20_custom_pcb` page.
   * The :ref:`abi_compatibility` page.
+  * The :ref:`memory_storage` page to document its use on the nRF54H20 SoC.
   * The structure and contents of the :ref:`gpio_pin_config` page with more detailed information.
 
 * Fixed an issue on the :ref:`install_ncs` page where an incorrect directory path was provided for Linux and macOS at the end of the :ref:`cloning_the_repositories_win` section.

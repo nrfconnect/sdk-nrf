@@ -28,7 +28,7 @@ The following table illustrates ABI compatibility between different versions of 
 
    * - |NCS| versions
      - Compatible nRF54H20 SoC binaries version
-   * - |NCS| v2.9.0-nRF54H20-1-rc2
+   * - |NCS| v2.9.0-nRF54H20-1-rc3
      - `nRF54H20 SoC binaries v0.9.1`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
    * - |NCS| v2.9.0
      - `nRF54H20 SoC binaries v0.7.0 for EngC DKs`_, compatible with the nRF54H20 DK v0.8.3 and later revisions.
