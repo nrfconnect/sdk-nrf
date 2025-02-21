@@ -161,6 +161,79 @@ This is a reference configuration that can be modified in the production firmwar
        To use the Oberon backend for specific cryptographic operations supported by both drivers, disable those operations in the CRACEN driver, as it takes priority when both are enabled.
        See the :ref:`nrf_security_drivers` documentation for more information.
 
+.. _matter_platforms_security_kmu:
+
+nRF54L Key Management Unit (KMU)
+================================
+
+nRF54L series devices include :ref:`ug_nrf54l_crypto_kmu_cracen_peripherals` that can be used to store cryptographic keys in Matter.
+In this solution, the keys are stored within the available slots in the :ref:`ug_nrf54l_crypto_kmu_slots` range that are not reserved for current and future |NCS| use cases.
+
+The default slots range used for Matter is from ``100`` to ``180``, excluding the DAC private key.
+For details on the DAC private key configuration, see :ref:`matter_platforms_security_dac_priv_key_kmu`.
+To change the slots range, set the :kconfig:option:`CONFIG_CHIP_KMU_SLOT_RANGE_START` and :kconfig:option:`CONFIG_CHIP_KMU_SLOT_RANGE_END` Kconfig options.
+The Raw usage scheme defined in the :ref:`ug_nrf54l_crypto_kmu_key_usage_schemes` section is used for all Matter keys.
+
+To use this feature, set the :kconfig:option:`CONFIG_CHIP_STORE_KEYS_IN_KMU` Kconfig option to ``y``, and switch to the ``KMUKeyAllocator`` by calling the ``chip::Crypto::SetPSAKeyAllocator`` method in your code during the Matter stack initialization.
+
+For example:
+
+.. code-block:: cpp
+
+    #include <platform/nrfconnect/KMUKeyAllocator.h>
+
+    static KMUKeyAllocator kmuAllocator;
+    Crypto::SetPSAKeyAllocator(&kmuAllocator);
+
+See the :file:`samples/matter/common/src/app/matter_init.cpp` file for a usage example.
+
+Due to limited slots available in the KMU, the maximum number of Matter fabric is limited.
+The following table shows the current number of slots used by Matter:
+
+.. list-table:: KMU slots used by Matter crypto materials
+   :widths: auto
+   :header-rows: 1
+
+   * - Crypto material in Matter
+     - Key type
+     - Number of slots needed for a key
+     - Multiplication
+     - Minimum number of keys
+   * - Node Operational Certificate (NOC) private key
+     - ECC secp256r1 key pair
+     - 2
+     - For each Matter fabric
+     - 5 (5 Matter fabrics for each device)
+   * - Intermittently Connected Device (ICD) Token
+     - HMAC SHA-256 128-bit keys
+     - 1
+     - For each ICD user
+     - 10 (2 ICD users for each Matter fabric)
+   * - Intermittently Connected Device (ICD) symmetric Key
+     - AES 128-bit keys
+     - 1
+     - For each ICD user
+     - 10 (2 ICD users for each Matter fabric)
+   * - Device Attestation Certificate (DAC) private key
+     - ECC secp256r1 key pair
+     - 2
+     - For each device
+     - 1
+   * - Group key [3]_
+     - AES 128-bit keys
+     - 1
+     - For each group
+     - 15 (3 groups for each Matter fabric)
+
+.. [3] Group keys are not stored in the KMU yet, but the slots are reserved for the future usage.
+       A key may be shared between multiple groups, so the number of slots needed for group keys may be lower than the number of groups.
+       Three group keys are assumed for each Matter fabric.
+
+According to the table, the default KMU slot range has been chosen to support up to eight Matter fabrics, 32 ICD keys (16 ICD users), and 24 group keys.
+A minimum of 46 slots is required for cryptographic materials, including the DAC private key to support 5 fabrics (minimum required by the specification).
+A single Matter fabric requires at least nine KMU slots.
+You can adjust the number of reserved slots based on the values provided in the table, ensuring they do not overlap with reserved areas.
+
 .. _matter_platforms_security_dac_priv_key:
 
 Storing Device Attestation Certificate private key
