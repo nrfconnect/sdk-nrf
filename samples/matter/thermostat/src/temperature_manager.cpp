@@ -5,7 +5,8 @@
  */
 
 #include "temperature_manager.h"
-#include "app_task.h"
+#include <app-common/zap-generated/cluster-objects.h>
+#include <platform/PlatformManager.h>
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
@@ -44,11 +45,16 @@ CHIP_ERROR TemperatureManager::Init()
 
 	PlatformMgr().LockChipStack();
 
-	VerifyOrExit(Status::Success == LocalTemperature::Get(kThermostatEndpoint, mLocalTempCelsius), err = CHIP_IM_GLOBAL_STATUS(Failure));
-	VerifyOrExit(Status::Success == OutdoorTemperature::Get(kThermostatEndpoint, mOutdoorTempCelsius), err = CHIP_IM_GLOBAL_STATUS(Failure));
-	VerifyOrExit(Status::Success == OccupiedCoolingSetpoint::Get(kThermostatEndpoint, &mCoolingCelsiusSetPoint), err = CHIP_IM_GLOBAL_STATUS(Failure));
-	VerifyOrExit(Status::Success == OccupiedHeatingSetpoint::Get(kThermostatEndpoint, &mHeatingCelsiusSetPoint), err = CHIP_IM_GLOBAL_STATUS(Failure));
-	VerifyOrExit(Status::Success == SystemMode::Get(kThermostatEndpoint, &mThermMode), err = CHIP_IM_GLOBAL_STATUS(Failure));
+	VerifyOrExit(Status::Success == LocalTemperature::Get(kThermostatEndpoint, mLocalTempCelsius),
+		     err = CHIP_IM_GLOBAL_STATUS(Failure));
+	VerifyOrExit(Status::Success == OutdoorTemperature::Get(kThermostatEndpoint, mOutdoorTempCelsius),
+		     err = CHIP_IM_GLOBAL_STATUS(Failure));
+	VerifyOrExit(Status::Success == OccupiedCoolingSetpoint::Get(kThermostatEndpoint, &mCoolingCelsiusSetPoint),
+		     err = CHIP_IM_GLOBAL_STATUS(Failure));
+	VerifyOrExit(Status::Success == OccupiedHeatingSetpoint::Get(kThermostatEndpoint, &mHeatingCelsiusSetPoint),
+		     err = CHIP_IM_GLOBAL_STATUS(Failure));
+	VerifyOrExit(Status::Success == SystemMode::Get(kThermostatEndpoint, &mThermMode),
+		     err = CHIP_IM_GLOBAL_STATUS(Failure));
 
 exit:
 	PlatformMgr().UnlockChipStack();
@@ -88,12 +94,14 @@ void TemperatureManager::AttributeChangeHandler(EndpointId endpointId, Attribute
 	switch (attributeId) {
 	case LocalTemperature::Id: {
 		status = LocalTemperature::Get(kThermostatEndpoint, mLocalTempCelsius);
-		VerifyOrReturn(Status::Success == status, LOG_ERR("Failed to get Thermostat LocalTemperature attribute"));
+		VerifyOrReturn(Status::Success == status,
+			       LOG_ERR("Failed to get Thermostat LocalTemperature attribute"));
 	} break;
 
 	case OutdoorTemperature::Id: {
 		status = OutdoorTemperature::Get(kThermostatEndpoint, mOutdoorTempCelsius);
-		VerifyOrReturn(Status::Success == status, LOG_ERR("Failed to get Thermostat OutdoorTemperature attribute"));
+		VerifyOrReturn(Status::Success == status,
+			       LOG_ERR("Failed to get Thermostat OutdoorTemperature attribute"));
 	} break;
 
 	case OccupiedCoolingSetpoint::Id: {
