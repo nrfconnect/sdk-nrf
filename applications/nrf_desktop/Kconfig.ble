@@ -305,6 +305,11 @@ config BT_DEVICE_APPEARANCE
 	  keyboard. Other nRF Desktop devices use Bluetooth appearance of
 	  generic human interface device.
 
+config BT_SMP_SC_PAIR_ONLY
+	default n
+	help
+	  nRF Desktop devices allow legacy pairing to improve interoperability.
+
 config BT_SETTINGS_CCC_STORE_ON_WRITE
 	default y
 	help

@@ -246,6 +246,10 @@ nRF Desktop
     * Disabled Bluetooth long workqueue (:kconfig:option:`CONFIG_BT_LONG_WQ`).
     * Limited the number of key slots in the PSA Crypto core to 10 (:kconfig:option:`CONFIG_MBEDTLS_PSA_KEY_SLOT_COUNT`).
 
+  * The default value of the :kconfig:option:`CONFIG_BT_SMP_SC_PAIR_ONLY` Kconfig option to ``n`` if :ref:`CONFIG_DESKTOP_BT <config_desktop_app_options>` is enabled.
+    nRF Desktop devices allow Bluetooth LE legacy pairing to improve interoperability.
+    The :kconfig:option:`CONFIG_BT_SMP_SC_PAIR_ONLY` Kconfig option was enabled by default in Zephyr Bluetooth host.
+
   * Disabled the :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF2_GLOBAL_HSFLL_REQ_LOW_FREQ` Kconfig option in the IPC radio image configuration for the nRF54H20 SoC.
     This is done to ensure that the radio core requests high Global Domain (GD) frequency.
     The option was enabled by default, because the clock control is enabled by the Multiprotocol Service Layer (MPSL).
