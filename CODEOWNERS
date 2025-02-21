@@ -528,6 +528,8 @@
 /samples/nrf_rpc/                         @nrfconnect/ncs-si-muffin
 /samples/sensor/bh1749/                   @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-cia
+/samples/sensor/qdec/                     @nrfconnect/ncs-low-level-test
+/samples/subsys/settings/                 @nrfconnect/ncs-low-level-test
 /samples/nrf5340/empty_app_core/          @nrfconnect/ncs-si-muffin
 /samples/nrf_compress/                    @nordicjm
 /samples/nrf_profiler/                    @nrfconnect/ncs-si-bluebagel
