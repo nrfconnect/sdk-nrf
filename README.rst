@@ -38,7 +38,7 @@ To use this modified version, clone the repo and follow the standard nRF Connect
 
           git clone https://github.com/mighri-manar/BLE_HEADPHONES_FOR_AUDIOMETRY.git
 
-          cd sdk-nrf
+          cd BLE_HEADPHONES_FOR_AUDIOMETRY
 
           west init -l
 
