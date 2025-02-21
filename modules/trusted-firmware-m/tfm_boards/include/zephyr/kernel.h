@@ -18,6 +18,7 @@
  */
 
 #include <stddef.h>
+#include <errno.h>
 #include <zephyr/sys/__assert.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/irq.h>
