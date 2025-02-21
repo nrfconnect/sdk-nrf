@@ -1,13 +1,15 @@
-.. _migration_2.9.0-nRF54H20-1-rc2:
+:orphan:
 
-Migration guide for |NCS| v2.9.0-nRF54H20-1-rc2
+.. _migration_2.9.0-nRF54H20-1-rc3:
+
+Migration guide for |NCS| v2.9.0-nRF54H20-1-rc3
 ###############################################
 
 .. contents::
    :local:
    :depth: 3
 
-This document describes the changes required or recommended when migrating your nRF54H20 application from the |NCS| v2.8.0 to the |NCS| v2.9.0-nRF54H20-1-rc2.
+This document describes the changes required or recommended when migrating your nRF54H20 application from the |NCS| v2.8.0 to the |NCS| v2.9.0-nRF54H20-1-rc3.
 
 .. HOWTO
 
@@ -21,7 +23,7 @@ This document describes the changes required or recommended when migrating your 
       * Change1 and description
       * Change2 and description
 
-.. _migration_2.9.0-nRF54H20-1-rc2_required:
+.. _migration_2.9.0-nRF54H20-1-rc3_required:
 
 Required changes
 ****************
@@ -38,7 +40,7 @@ DK compatibility
 
 .. toggle::
 
-   * The |NCS| v2.9.0-nRF54H20-1-rc2 is compatible only with the Engineering C - v0.9.0 and later revisions of the nRF54H20 DK, PCA10175.
+   * The |NCS| v2.9.0-nRF54H20-1-rc3 is compatible only with the Engineering C - v0.9.0 and later revisions of the nRF54H20 DK, PCA10175.
      Check the version number on your DK's sticker to verify its compatibility with the |NCS|.
 
 Dependencies
@@ -160,3 +162,43 @@ nRF54H20 SoC binaries
           nrfutil device recover --core Application --serial-number <serial_number>
           nrfutil device recover --core Network --serial-number <serial_number>
           nrfutil device reset --reset-kind RESET_PIN --serial-number <serial_number>
+
+Application development
+-----------------------
+
+The following are the changes required to migrate your applications to the |NCS| v2.9.0-nRF54H20-1-rc3.
+
+##TODO DRAFT
+
+New ZMS backend
++++++++++++++++
+
+##TODO DRAFT
+
+A new backend for Zephyr Memory Settings (ZMS) has been introduced in |NCS|.
+This new backend implementation does not affect the ZMS Zephyr API.
+
+.. note::
+   If your application is still in development, it will not be affected by this update.
+
+Impact on deployed devices
+++++++++++++++++++++++++++
+
+##TODO DRAFT
+
+Any nRF54H20 SoC-based device running an application built with |NCS| v2.9.0-nRF54H20-1-rc2 or earlier uses the old ZMS backend.
+To update these devices via a FOTA update to a new application version that uses the new backend, your application must call a specific migration function.
+This function ensures that existing storage data is preserved.
+
+Migration function
+++++++++++++++++++
+
+##TODO DRAFT
+
+The migration function performs the following actions:
+
+* Reads existing storage data stored with the old backend.
+* Converts the data to the new format.
+* Writes the converted data using the new storage method.
+
+Your application must execute this function only once during the first boot after the FOTA update.
