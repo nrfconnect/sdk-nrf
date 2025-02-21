@@ -1,3 +1,5 @@
+:orphan:
+
 .. _child_parent_to_sysbuild_migration:
 
 Migrating from multi-image builds to sysbuild
