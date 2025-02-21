@@ -623,6 +623,8 @@
   - "samples/ipc/**/*"
   - "samples/event_manager_proxy/**/*"
   - "samples/peripheral/lpuart/**/*"
+  - "samples/sensor/qdec/**/*"
+  - "samples/subsys/settings/**/*"
   - "snippets/sdp/**/*"
   - "tests/subsys/event_manager_proxy/**/*"
   - "tests/benchmarks/multicore/idle/**/*"
