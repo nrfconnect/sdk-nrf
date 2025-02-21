@@ -1511,3 +1511,13 @@ ci_samples_nrf5340:
     - zephyr/subsys/mgmt/
     - zephyr/subsys/shell/
     - zephyr/subsys/usb/
+
+ci_samples_sensor_qdec:
+  files:
+    - nrf/samples/sensor/qdec/
+    - zephyr/samples/sensor/qdec/
+
+ci_samples_subsys_settings:
+  files:
+    - nrf/samples/subsys/settings/
+    - zephyr/samples/subsys/settings/
