@@ -326,6 +326,8 @@ endchoice
 
 config TFM_CPU_FREQ_MHZ
 	int
+	default $(div, $(dt_node_int_prop_int,/clocks/hfpll,clock-frequency), 1000000) \
+		if SOC_SERIES_NRF54LX
 	default $(div, $(dt_node_int_prop_int,/cpus/cpu@0,clock-frequency), 1000000) \
 		if $(dt_node_has_prop,/cpus/cpu@0,clock-frequency)
 	default $(div, $(dt_node_int_prop_int,/cpus/cpu@1,clock-frequency), 1000000) \
