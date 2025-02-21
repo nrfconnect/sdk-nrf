@@ -10,6 +10,7 @@
 
 #include <app-common/zap-generated/attributes/Accessors.h>
 #include <lib/core/CHIPError.h>
+#include <zephyr/kernel.h>
 
 using namespace chip;
 
