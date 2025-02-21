@@ -131,6 +131,19 @@ class StatsNordic():
         plt.savefig(os.path.join(output_dir, "{}_log.png".format(out_filename)))
 
     @staticmethod
+    def _times_between_to_interval_plot(preset_desc, output_dir, start_times, times_between_ms,
+                                        out_filename="interval_plot"):
+        plt.figure()
+
+        plt.xlabel("Start event timestamp [s]")
+        plt.ylabel("Time between events [ms]")
+        plt.title(preset_desc)
+        plt.grid(True)
+
+        plt.plot(start_times, times_between_ms, ".")
+        plt.savefig(os.path.join(output_dir, "{}.png".format(out_filename)))
+
+    @staticmethod
     def _test_preset_parse_event(event_dict):
         if event_dict is None:
             return None, None
@@ -183,6 +196,7 @@ class StatsNordic():
         # Filter out outliers
         mask = StatsNordic._get_outlier_filter_mask(times_between_ms)
         times_between_ms_no_outliers = times_between_ms[mask]
+        ts_start_no_outliers = ts_start[mask]
 
         # Store results in the output directory
         StatsNordic._times_between_to_stats_txt(preset_desc, output_dir, times_between_ms,
@@ -190,6 +204,12 @@ class StatsNordic():
         StatsNordic._times_between_to_histogram(preset_desc + " no outliers", output_dir,
                                                 times_between_ms_no_outliers,
                                                 out_filename="histogram_no_outliers")
+        StatsNordic._times_between_to_interval_plot(preset_desc, output_dir, ts_start,
+                                                    times_between_ms)
+        StatsNordic._times_between_to_interval_plot(preset_desc + " no outliers", output_dir,
+                                                    ts_start_no_outliers,
+                                                    times_between_ms_no_outliers,
+                                                    out_filename="interval_plot_no_outliers")
 
         # Display all of the figures to the user
         plt.show()
