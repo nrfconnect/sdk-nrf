@@ -1,13 +1,15 @@
-.. _migration_2.9.0-nRF54H20-1-rc2:
+:orphan:
 
-Migration guide for |NCS| v2.9.0-nRF54H20-1-rc2
+.. _migration_2.9.0-nRF54H20-1-rc3:
+
+Migration guide for |NCS| v2.9.0-nRF54H20-1-rc3
 ###############################################
 
 .. contents::
    :local:
    :depth: 3
 
-This document describes the changes required or recommended when migrating your nRF54H20 application from the |NCS| v2.8.0 to the |NCS| v2.9.0-nRF54H20-1-rc2.
+This document describes the changes required or recommended when migrating your nRF54H20 application from the |NCS| v2.8.0 to the |NCS| v2.9.0-nRF54H20-1-rc3.
 
 .. HOWTO
 
@@ -21,7 +23,7 @@ This document describes the changes required or recommended when migrating your 
       * Change1 and description
       * Change2 and description
 
-.. _migration_2.9.0-nRF54H20-1-rc2_required:
+.. _migration_2.9.0-nRF54H20-1-rc3_required:
 
 Required changes
 ****************
@@ -38,7 +40,7 @@ DK compatibility
 
 .. toggle::
 
-   * The |NCS| v2.9.0-nRF54H20-1-rc2 is compatible only with the Engineering C - v0.9.0 and later revisions of the nRF54H20 DK, PCA10175.
+   * The |NCS| v2.9.0-nRF54H20-1-rc3 is compatible only with the Engineering C - v0.9.0 and later revisions of the nRF54H20 DK, PCA10175.
      Check the version number on your DK's sticker to verify its compatibility with the |NCS|.
 
 Dependencies
@@ -160,3 +162,37 @@ nRF54H20 SoC binaries
           nrfutil device recover --core Application --serial-number <serial_number>
           nrfutil device recover --core Network --serial-number <serial_number>
           nrfutil device reset --reset-kind RESET_PIN --serial-number <serial_number>
+
+Application development
+-----------------------
+
+The following are the changes required to migrate your applications to the |NCS| v2.9.0-nRF54H20-1-rc3.
+
+ZMS backend
++++++++++++
+
+The support for the backend for Zephyr Memory Settings (ZMS) has been updated.
+This update does not affect the ZMS Zephyr API.
+
+Deprecated ZMS Kconfigs
++++++++++++++++++++++++
+
+The following ZMS Kconfig options are deprecated:
+
+   * ``CONFIG_SETTINGS_ZMS_NAME_CACHE``
+   * ``CONFIG_SETTINGS_ZMS_NAME_CACHE_SIZE``
+   * ``CONFIG_ZMS_LOOKUP_CACHE_FOR_SETTINGS``
+
+New ZMS backend defaults
+++++++++++++++++++++++++
+
+The ZMS settings backend now defaults to using the entire available storage partition.
+To customize the partition size used, complete the following steps:
+
+1. Set ``CONFIG_SETTINGS_ZMS_CUSTOM_SECTOR_COUNT`` to ``y``.
+#. Set the number of sectors used by the ZMS settings backend using the ``CONFIG_SETTINGS_ZMS_SECTOR_COUNT`` Kconfig option.
+
+For example::
+
+   CONFIG_SETTINGS_ZMS_CUSTOM_SECTOR_COUNT=y
+   CONFIG_SETTINGS_ZMS_SECTOR_COUNT=8
