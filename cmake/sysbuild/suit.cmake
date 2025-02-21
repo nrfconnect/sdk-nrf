@@ -39,7 +39,7 @@ function(suit_register_post_build_commands)
     list(APPEND dependencies "${BINARY_DIR}/zephyr/${BINARY_FILE}.bin")
   endforeach()
 
-  if(SB_CONFIG_SUIT_BUILD_RECOVERY)
+  if(SB_CONFIG_SUIT_BUILD_RECOVERY AND NOT SB_CONFIG_SUIT_RECOVERY_APPLICATION_NONE)
     list(APPEND dependencies recovery)
   endif()
 
