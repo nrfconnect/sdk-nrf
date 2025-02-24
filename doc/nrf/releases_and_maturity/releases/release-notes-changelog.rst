@@ -346,7 +346,13 @@ Bluetooth Fast Pair samples
 
 * :ref:`fast_pair_locator_tag` sample:
 
-  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
+  * Added:
+
+    * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
+    * Support for the firmware update intents on the Android platform.
+      Integrated the new connection authentication callback from the FMDN module and the Device Information Service (DIS) to support firmware version read operation over the Firmware Revision characteristic.
+      For further details on the Android intent feature for firmware updates, see the :ref:`ug_bt_fast_pair_provisioning_register_firmware_update_intent` section of the Fast Pair integration guide.
+
   * Updated the partition layout for the ``nrf5340dk/nrf5340/cpuapp/ns`` and ``thingy53/nrf5340/cpuapp/ns`` board targets to accommodate the partitions needed due to change in the TF-M profile configuration.
 
 Bluetooth Mesh samples
