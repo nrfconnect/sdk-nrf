@@ -12,6 +12,7 @@
 #include <memfault/ports/zephyr/http.h>
 #include <memfault/core/data_packetizer.h>
 #include <memfault/core/trace_event.h>
+#include <memfault/panics/coredump.h>
 #include <dk_buttons_and_leds.h>
 
 #include <zephyr/logging/log.h>
@@ -92,7 +93,8 @@ static void on_connect(void)
 	LOG_INF("Time to connect: %d ms", time_to_lte_connection);
 #endif /* IS_ENABLED(MEMFAULT_NCS_LTE_METRICS) */
 
-	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_POST_COREDUMP_ON_NETWORK_CONNECTED)) {
+	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_POST_COREDUMP_ON_NETWORK_CONNECTED) &&
+	    memfault_coredump_has_valid_coredump(NULL)) {
 		/* Coredump sending handled internally */
 		return;
 	}
