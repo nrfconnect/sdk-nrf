@@ -115,6 +115,10 @@ class StatsNordic():
                                     out_filename="histogram"):
         bin_width_ms = 0.01
 
+        fig = plt.figure()
+        # Increase window size to improve visibility
+        fig.set_size_inches(10, 5)
+
         plt.xlabel("Time between events [ms]")
         plt.ylabel("Number of occurrences")
         plt.title(preset_desc)
@@ -133,7 +137,9 @@ class StatsNordic():
     @staticmethod
     def _times_between_to_interval_plot(preset_desc, output_dir, start_times, times_between_ms,
                                         out_filename="interval_plot"):
-        plt.figure()
+        fig = plt.figure()
+        # Increase window size to improve visibility
+        fig.set_size_inches(10, 5)
 
         plt.xlabel("Start event timestamp [s]")
         plt.ylabel("Time between events [ms]")
