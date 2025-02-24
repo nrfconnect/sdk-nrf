@@ -15,6 +15,13 @@ config SDP_GPIO
 config SDP_MSPI
 	bool "SDP MSPI application"
 
+config SDP_IMAGE_PATH
+	string
+	default "${ZEPHYR_NRF_MODULE_DIR}/applications/sdp/gpio" if SDP_GPIO
+	default "${ZEPHYR_NRF_MODULE_DIR}/applications/sdp/mspi" if SDP_MSPI
+	help
+	  Source directory of SDP image.
+
 if SDP_GPIO
 
 choice SDP_GPIO_BACKEND
@@ -39,12 +46,25 @@ endchoice
 
 endif # SDP_GPIO
 
-config SDP_IMAGE_PATH
-	string
-	default "${ZEPHYR_NRF_MODULE_DIR}/applications/sdp/gpio" if SDP_GPIO
-	default "${ZEPHYR_NRF_MODULE_DIR}/applications/sdp/mspi" if SDP_MSPI
+if SDP_MSPI
+
+config SDP_FLPR_APP_FAULT_TIMER
+	bool "SDP FLPR application fault timer"
+	default y
 	help
-	  Source directory of SDP image.
+	  Enable SDP FLPR application fault timer.
+
+if SDP_FLPR_APP_FAULT_TIMER
+
+config SDP_FLPR_APP_FAULT_TIMEOUT
+	int "SDP FLPR application fault timeout"
+	default 1000000
+	help
+	  Fault timeout in microseconds.
+
+endif # SDP_FLPR_APP_FAULT_TIMER
+
+endif # SDP_MSPI
 
 endif # SDP
 
