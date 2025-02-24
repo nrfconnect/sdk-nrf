@@ -15,5 +15,8 @@
  */
 void cs_antenna_switch_func(uint8_t antenna_number);
 
-/** @brief Function to enable the pins used by antenna switching in Channel Sounding. */
-void cs_antenna_switch_enable(void);
+/** @brief Function to initialize the pins used by antenna switching in Channel Sounding. */
+void cs_antenna_switch_init(void);
+
+/** @brief Function to clear the pins used by antenna switching in Channel Sounding. */
+void cs_antenna_switch_clear(void);

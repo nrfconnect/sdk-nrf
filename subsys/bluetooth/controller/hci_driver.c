@@ -984,9 +984,9 @@ static int configure_supported_features(void)
 		if (err) {
 			return -ENOTSUP;
 		}
-#if CONFIG_BT_CTLR_SDC_CS_NUM_ANTENNAS > 1
+#if defined(CONFIG_BT_CTLR_SDC_CS_MULTIPLE_ANTENNA_SUPPORT)
 		err = sdc_support_channel_sounding(cs_antenna_switch_func);
-		cs_antenna_switch_enable();
+		cs_antenna_switch_init();
 #else
 		err = sdc_support_channel_sounding(NULL);
 #endif
@@ -1469,6 +1469,10 @@ static int hci_driver_close(const struct device *dev)
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_ECDH)) {
 		hci_ecdh_uninit();
+	}
+
+	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_CS_MULTIPLE_ANTENNA_SUPPORT)) {
+		cs_antenna_switch_clear();
 	}
 
 	err = MULTITHREADING_LOCK_ACQUIRE();
