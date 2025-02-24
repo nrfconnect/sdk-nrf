@@ -708,6 +708,9 @@ To enable the Zephyr DIS module and the Firmware Revision characteristic, set th
 If you use Zephyr's :ref:`zephyr:app-version-details` feature and define the :file:`VERSION` file in your project, the :kconfig:option:`CONFIG_BT_DIS_FW_REV_STR` Kconfig option is automatically set.
 Otherwise, set the :kconfig:option:`CONFIG_BT_DIS_FW_REV_STR` Kconfig option explicitly.
 
+If your device model supports the FMDN extension, also follow the additional guidelines to authenticate the connection before the firmware version read operation.
+For further details, see the :ref:`ug_bt_fast_pair_gatt_service_fmdn_info_callbacks_conn_authenticated` section.
+
 FMDN extension
 ==============
 
@@ -727,6 +730,10 @@ This function supports the following callbacks:
 
 * :c:member:`bt_fast_pair_fmdn_info_cb.provisioning_state_changed` -  Notification about the provisioning state update
 * :c:member:`bt_fast_pair_fmdn_info_cb.clock_synced` - Notification about the beacon clock synchronization event
+* :c:member:`bt_fast_pair_fmdn_info_cb.conn_authenticated` - Notification about the connected peer authentication event
+
+Provisioning state
+~~~~~~~~~~~~~~~~~~
 
 The provisioning state is indicated by the :c:member:`bt_fast_pair_fmdn_info_cb.provisioning_state_changed` callback.
 This callback is triggered in the following scenarios:
@@ -738,6 +745,9 @@ This callback is triggered in the following scenarios:
 The provisioning state callback is used to notify the application about switching to a proper advertising policy.
 The advertising policies are extensively described in the :ref:`Setting up Bluetooth LE advertising <ug_bt_fast_pair_advertising>` section of this integration guide.
 
+Clock synchronization
+~~~~~~~~~~~~~~~~~~~~~
+
 The clock synchronization is indicated by the :c:member:`bt_fast_pair_fmdn_info_cb.clock_synced` callback.
 This callback is triggered on a successful beacon clock read operation over Beacon Actions characteristic.
 
@@ -747,6 +757,30 @@ As a result, the beacon clock drift may become so high that the Ephemeral Identi
 As a fallback mechanism for clock synchronization, the accessory must simultaneously advertise the Fast Pair not discoverable and FMDN payloads right after the system reboot.
 The Fast Pair advertising frames make the affected Provider visible to nearby Seekers.
 Once one of the Seeker devices connects to the accessory and synchronizes the clock, the :c:member:`bt_fast_pair_fmdn_info_cb.clock_synced` callback is called to indicate that the Provider is no longer required to advertise the Fast Pair payload.
+
+.. _ug_bt_fast_pair_gatt_service_fmdn_info_callbacks_conn_authenticated:
+
+Connection authentication
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The connected peer authentication is indicated by the :c:member:`bt_fast_pair_fmdn_info_cb.conn_authenticated` callback.
+This callback is triggered on a successful provisioning state read operation over the Beacon Actions characteristic.
+A successful operation proves that the connected peer has at least one of the Provider's Account Keys.
+
+A typical use case for this callback is to authenticate the connected peer and allow it to read the firmware version to support firmware update intents on the Android platform.
+See :ref:`ug_bt_fast_pair_provisioning_register_firmware_update_intent` for general information about the firmware update intent feature and the required configuration steps in the Google Nearby Device console.
+See :ref:`ug_bt_fast_pair_gatt_service_firmware_update_intent` to learn how to prepare your Provider firmware to support the firmware update intent feature.
+You must meet the requirements in the linked sections before following the guidelines related to the FMDN extension.
+
+The firmware version is read by the Fast Pair Seeker over the Firmware Revision characteristic in the Device Information Service (DIS).
+It is assumed that DIS characteristics contain the identifying information and access to these characteristics should be limited to prevent tracking.
+
+If the defined device model from the Google Nearby Devices console supports Bluetooth bonding during the Fast Pair procedure, you can replace the connection authentication mechanism based on the :c:member:`bt_fast_pair_fmdn_info_cb.conn_authenticated` callback with an alternative mechanism based on Bluetooth bonds.
+In this case, bonded devices are allowed to read the firmware version.
+
+For further details on firmware updates in the FMDN extension context, see the `Fast Pair FMDN firmware updates`_ section in the FMDN specification.
+
+For an example of how to use the firmware update intents with the FMDN extension, see the :ref:`fast_pair_locator_tag` sample.
 
 .. _ug_bt_fast_pair_gatt_service_fmdn_read_mode_callbacks:
 

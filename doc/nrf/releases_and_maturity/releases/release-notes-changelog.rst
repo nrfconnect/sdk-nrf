@@ -608,8 +608,13 @@ Bluetooth libraries and services
 
 * :ref:`bt_fast_pair_readme` library:
 
-  * Added a restriction on the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_TX_POWER` Kconfig option in the Find My Device Network (FMDN) extension configuration.
-    This Kconfig option must now be set to 0 at minimum as the Fast Pair specification now requires that the conducted Bluetooth transmit power for FMDN advertisements must not be lower than 0 dBm.
+  * Added:
+
+    * A restriction on the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_TX_POWER` Kconfig option in the Find My Device Network (FMDN) extension configuration.
+      This Kconfig option must now be set to 0 at minimum as the Fast Pair specification now requires that the conducted Bluetooth transmit power for FMDN advertisements must not be lower than 0 dBm.
+    * A new information callback - :c:member:`bt_fast_pair_fmdn_info_cb.conn_authenticated` - to the FMDN extension API.
+      In the FMDN context, this change is required to support firmware update intents on the Android platform.
+      For further details on the Android intent feature for firmware updates, see the :ref:`ug_bt_fast_pair_provisioning_register_firmware_update_intent` section in the Fast Pair integration guide.
 
   * Updated the automatically generated ``bt_fast_pair`` partition definition (located in the :file:`subsys/partition_manager/pm.yml.bt_fast_pair`) to work correctly when building with TF-M.
 
@@ -798,6 +803,7 @@ Google Fast Pair integration
 
   * Instructions on how to provision the Fast Pair data onto devices without the :ref:`partition_manager` support, specifically for the :ref:`zephyr:nrf54h20dk_nrf54h20`.
   * Information on how to support the firmware update intent feature on the Android platform.
+    Expanded the documentation for the Fast Pair devices with the FMDN extension, which requires additional steps to support this feature.
 
 Edge Impulse integration
 ------------------------
