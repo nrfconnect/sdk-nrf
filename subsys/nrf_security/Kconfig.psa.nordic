@@ -89,7 +89,9 @@ config PSA_HAS_KEY_DERIVATION
 		   PSA_WANT_ALG_PBKDF2_AES_CMAC_PRF_128	|| \
 		   PSA_WANT_ALG_TLS12_PRF		|| \
 		   PSA_WANT_ALG_TLS12_PSK_TO_MS		|| \
-		   PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS
+		   PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS	|| \
+		   PSA_WANT_ALG_SP800_108_COUNTER_CMAC 	|| \
+		   PSA_WANT_ALG_SP800_108_COUNTER_HMAC
 	help
 	  Prompt-less configuration that states that key derivation is supported.
 
