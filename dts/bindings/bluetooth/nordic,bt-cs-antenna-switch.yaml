@@ -1,0 +1,29 @@
+# Copyright (c) 2025 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: |
+  This is an abstract representation of a generic antenna switching circuit
+  which is controlled by GPIO pins. Up to four antenna ports (ANT1-4) are defined.
+
+compatible: "nordic,bt-cs-antenna-switch"
+
+include: base.yaml
+
+properties:
+  multiplexing-mode:
+    type: int
+    description: |
+      Multiplexing mode. This setting determines whether or not the switching circuit
+      is controlled using a one-to-one mapping between pins and antennas.
+      The possible values are:
+      0: (default) One-to-one mapping. Each pin selects one antenna.
+        Only one pin is active at a time.
+      1: Multiplexed mapping. Antenna selection is derived from the state of all
+        pins. Example: two pins select between four antennas.
+
+  ant-gpios:
+    type: phandle-array
+    required: true
+    description: |
+      Array of pins corresponding to <ANT1, ANT2, ANT3, ANT4>.
+      At least one pin is needed.
