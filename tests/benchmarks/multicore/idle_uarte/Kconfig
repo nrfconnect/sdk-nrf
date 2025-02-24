@@ -29,4 +29,7 @@ config GLOBAL_DOMAIN_CLOCK_FREQUENCY_MHZ
 	default 128 if GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_128MHZ
 	default 64 if GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_64MHZ
 
+config GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING
+	bool "Enable global domain frequency changing when driver is active"
+
 source "Kconfig.zephyr"
