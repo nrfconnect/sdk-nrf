@@ -251,6 +251,13 @@ nRF Desktop
     The option was enabled by default, because the clock control is enabled by the Multiprotocol Service Layer (MPSL).
     Bluetooth stack with the SoftDevice Link Layer requires high frequency in GD to make the L2 cache and MRAM run fast to avoid code execution delays.
     The :ref:`nrf_desktop_dvfs` running on the application core selects the clock control and enables an automatic low GD frequency request (:kconfig:option:`CONFIG_CLOCK_CONTROL_NRF2_GLOBAL_HSFLL_REQ_LOW_FREQ`), so the application core would not request high frequency in the GD.
+  * Application configurations for HID peripherals by increasing the following thread stack sizes to prevent stack overflows during the :c:func:`settings_load` operation:
+
+    * The system workqueue thread stack (:kconfig:option:`CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE`).
+    * The CAF settings loader thread stack (:kconfig:option:`CONFIG_CAF_SETTINGS_LOADER_THREAD_STACK_SIZE`).
+
+    This change results from the Bluetooth subsystem transition to the PSA cryptographic API.
+    The GATT database hash calculation now requires larger stack size.
 
 * Added:
 
@@ -298,14 +305,24 @@ Bluetooth samples
   * :ref:`bluetooth_central_hids`
   * :ref:`peripheral_hids_keyboard`
 
-* Updated the configurations of the non-secure ``nrf5340dk/nrf5340/cpuapp/ns`` board target in the following samples to properly use the TF-M profile instead of the predefined minimal TF-M profile:
+* Updated:
 
-  * :ref:`bluetooth_central_hids`
-  * :ref:`peripheral_hids_keyboard`
-  * :ref:`peripheral_hids_mouse`
+    * The configurations of the non-secure ``nrf5340dk/nrf5340/cpuapp/ns`` board target in the following samples to properly use the TF-M profile instead of the predefined minimal TF-M profile:
 
-  This change results from the Bluetooth subsystem transition to the PSA cryptographic standard.
-  The Bluetooth stack can now use the PSA crypto API in the non-secure domain as all necessary TF-M partitions are configured properly.
+      * :ref:`bluetooth_central_hids`
+      * :ref:`peripheral_hids_keyboard`
+      * :ref:`peripheral_hids_mouse`
+
+      This change results from the Bluetooth subsystem transition to the PSA cryptographic standard.
+      The Bluetooth stack can now use the PSA crypto API in the non-secure domain as all necessary TF-M partitions are configured properly.
+
+    * The configurations of the following samples by increasing the main thread stack size (:kconfig:option:`CONFIG_MAIN_STACK_SIZE`) to prevent stack overflows:
+
+      * :ref:`bluetooth_central_hids`
+      * :ref:`peripheral_hids_keyboard`
+      * :ref:`peripheral_hids_mouse`
+
+      This change results from the Bluetooth subsystem transition to the PSA cryptographic API.
 
 * :ref:`direct_test_mode` sample:
 
@@ -319,13 +336,18 @@ Bluetooth Fast Pair samples
 ---------------------------
 
 * Added support for the ``nrf54l15dk/nrf54l05/cpuapp`` and ``nrf54l15dk/nrf54l10/cpuapp`` board targets in all Fast Pair samples.
-* Updated the non-secure target (``nrf5340dk/nrf5340/cpuapp/ns`` and ``thingy53/nrf5340/cpuapp/ns``) configurations of the following samples to use configurable TF-M profile instead of the predefined minimal TF-M profile:
 
-  * :ref:`fast_pair_locator_tag`
-  * :ref:`fast_pair_input_device`
+* Updated:
 
-  This change results from the Bluetooth subsystem transition to the PSA cryptographic standard.
-  The Bluetooth stack can now use the PSA crypto API in the non-secure domain as all necessary TF-M partitions are configured properly.
+  * The non-secure target (``nrf5340dk/nrf5340/cpuapp/ns`` and ``thingy53/nrf5340/cpuapp/ns``) configurations of all Fast Pair samples to use configurable TF-M profile instead of the predefined minimal TF-M profile:
+    This change results from the Bluetooth subsystem transition to the PSA cryptographic standard.
+    The Bluetooth stack can now use the PSA crypto API in the non-secure domain as all necessary TF-M partitions are configured properly.
+  * The configuration of all Fast Pair samples by increasing the following thread stack sizes to prevent stack overflows:
+
+    * The system workqueue thread stack (:kconfig:option:`CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE`).
+    * The Bluetooth receiving thread stack (:kconfig:option:`CONFIG_BT_RX_STACK_SIZE`).
+
+    This change results from the Bluetooth subsystem transition to the PSA cryptographic API.
 
 * :ref:`fast_pair_locator_tag` sample:
 
