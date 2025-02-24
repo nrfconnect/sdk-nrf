@@ -1469,6 +1469,7 @@
 .. _`Fast Pair FMDN advertising`: https://developers.google.com/nearby/fast-pair/specifications/extensions/fmdn#advertised-frames
 .. _`Fast Pair Locator Tag Specific Guidelines`: https://developers.google.com/nearby/fast-pair/specifications/extensions/fmdn#locator-tag
 .. _`Fast Pair Unwanted Tracking Prevention Guidelines`: https://developers.google.com/nearby/fast-pair/specifications/extensions/fmdn#unwanted-tracking-prevention
+.. _`Fast Pair FMDN firmware updates`: https://developers.google.com/nearby/fast-pair/specifications/extensions/fmdn#firmware-updates
 .. _`Fast Pair Device Feature Requirements`: https://developers.google.com/nearby/fast-pair/specifications/devicefeaturerequirement
 .. _`Fast Pair Device Feature Requirements for Locator Tags`: https://developers.google.com/nearby/fast-pair/specifications/devicefeaturerequirement/devicefeaturerequirement_locatortags
 
