@@ -13,15 +13,14 @@ The |NCS| provides a west command, ``ncs-provision``, allowing to upload keys to
 Prerequisites
 *************
 
-First, ensure that the nrfprovision script is installed.
+First, ensure that the `nRF Util`_ tool is installed.
 It should install automatically during the setup of the |NCS| working environment.
-If it was not installed, or if you wish to install it manually, run the following command:
+Once completed, install the required additional commands for nRF Util:
 
 .. parsed-literal::
    :class: highlight
 
-    pip install nrfprovision==0.9.0 --extra-index-url https://files.nordicsemi.com/artifactory/api/pypi/nordic-pypi/simple
-
+    nrfutil install device
 
 Key generation
 **************
@@ -62,21 +61,42 @@ Once you have an unprovisioned SoC, upload keys to the board by running the foll
 .. parsed-literal::
    :class: highlight
 
-    west ncs-provision upload -s nrf54l15 -k ed25519.pem -k ed25519-1.pem -k ed25519-2.pem
+    west ncs-provision upload -s nrf54l15 -k ed25519.pem -k ed25519-1.pem -k ed25519-2.pem --keyname UROT_PUBKEY
 
 * Parameter ``-s (-–soc)`` specifies the target device.
 
 * Parameter ``-k (-–key)`` specifies the private key PEM files to be provisioned to the SoC.
   You can specify up to three keys.
 
+* Parameter ``--keyname`` specifies the key name for which the key PEM files will be uploaded.
+
 * Parameter ``--dev-id`` specifies the interface serial number and should be used if multiple J-link interfaces are connected to the development machine.
 
-* Parameter ``-p" (--policy)`` specifies the policy applied to the given set of keys.
+* Parameter ``-p (--policy)`` specifies the policy applied to the given set of keys.
   You can apply the following options:
 
       * ``lock-last`` - Uploads the last key as locked, while the preceding keys are revocable. This option is set by default.
       * ``revokable`` - Enables revocation for each key.
       * ``lock`` - Sets all keys to be permanent.
+
+* Parameter ``--build-dir`` specifies the path to a directory where a JSON file for nRF Util tool will be created.
+  If this parameter is not provided, a temporary directory will be used instead.
+
+* Parameter ``-i (--input)`` specifies path to a YAML file that contains one or more key definitions intended for upload.
+  This file can serve as a substitute for other parameters.
+
+  The YAML file should look as follows:
+
+   .. code-block:: YAML
+
+      - keyname: UROT_PUBKEY
+          keys: ["/path/private-key1.pem", "/path/private-key2.pem"]
+          policy: lock
+      - keyname: APP_PUBKEY
+          keys: ["/path/private-key3.pem", "/path/private-key4.pem"]
+          policy: lock
+
+* Parameter ``--dry-run`` specifies that a command should generate a keyfile for nRF Util without actually executing the command.
 
 The script generates the public key for each private key and uploads them to your device.
 These public keys generate the verification keys for the application image, which are then used by MCUboot for validation.
@@ -94,4 +114,4 @@ For provision one key to the board run the following command:
 .. parsed-literal::
    :class: highlight
 
-    west ncs-provision upload -s nrf54l15 -k ed25519.pem
+    west ncs-provision upload -s nrf54l15 -k ed25519.pem --keyname UROT_PUBKEY
