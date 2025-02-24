@@ -604,6 +604,14 @@ config BT_CTLR_SDC_CS_NUM_ANTENNAS
 	range 1 BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS
 	depends on BT_CTLR_CHANNEL_SOUNDING
 
+config BT_CTLR_SDC_CS_MULTIPLE_ANTENNA_SUPPORT
+	bool
+	default y if BT_CTLR_SDC_CS_NUM_ANTENNAS > 1
+	select GPIO
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	help
+	  Internal helper config. Not intended for use.
+
 config BT_CTLR_SDC_CS_STEP_MODE3
 	bool "Enable optional step mode-3 capability [EXPERIMENTAL]"
 	depends on BT_CTLR_CHANNEL_SOUNDING
