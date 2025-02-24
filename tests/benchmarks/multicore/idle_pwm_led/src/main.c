@@ -8,6 +8,7 @@
 LOG_MODULE_REGISTER(idle_pwm_led, LOG_LEVEL_INF);
 
 #include <zephyr/kernel.h>
+#include <zephyr/cache.h>
 #include <zephyr/drivers/pwm.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/pm/device_runtime.h>
@@ -16,9 +17,11 @@ LOG_MODULE_REGISTER(idle_pwm_led, LOG_LEVEL_INF);
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 static const struct pwm_dt_spec pwm_led = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led0));
 
-
 #define PWM_STEPS_PER_SEC	(50)
-
+#define SHM_START_ADDR		(DT_REG_ADDR(DT_NODELABEL(cpuapp_cpurad_ipc_shm)))
+volatile static uint32_t *shared_var = (volatile uint32_t *) SHM_START_ADDR;
+#define HOST_IS_READY	(1)
+#define REMOTE_IS_READY	(2)
 
 int main(void)
 {
@@ -71,9 +74,36 @@ int main(void)
 
 	LOG_INF("Multicore idle_pwm_led test on %s", CONFIG_BOARD_TARGET);
 	LOG_INF("Core will sleep for %d ms", CONFIG_TEST_SLEEP_DURATION_MS);
+	LOG_INF("Shared memory at %p", (void *) shared_var);
 
 #if defined(CONFIG_PM_DEVICE_RUNTIME)
-		pm_device_runtime_enable(pwm_led.dev);
+	pm_device_runtime_enable(pwm_led.dev);
+#endif
+
+	/* Synchronize Remote core with Host core */
+#if !defined(CONFIG_TEST_ROLE_REMOTE)
+	LOG_DBG("HOST starts");
+	*shared_var = HOST_IS_READY;
+	sys_cache_data_flush_range((void *) shared_var, sizeof(*shared_var));
+	LOG_DBG("HOST wrote HOST_IS_READY: %u", *shared_var);
+	while (*shared_var != REMOTE_IS_READY) {
+		k_msleep(1);
+		sys_cache_data_invd_range((void *) shared_var, sizeof(*shared_var));
+		LOG_DBG("shared_var is: %u", *shared_var);
+	}
+	LOG_DBG("HOST continues");
+#else
+	LOG_DBG("REMOTE starts");
+	while (*shared_var != HOST_IS_READY) {
+		k_msleep(1);
+		sys_cache_data_invd_range((void *) shared_var, sizeof(*shared_var));
+		LOG_DBG("shared_var is: %u", *shared_var);
+	}
+	LOG_DBG("REMOTE found that HOST_IS_READY");
+	*shared_var = REMOTE_IS_READY;
+	sys_cache_data_flush_range((void *) shared_var, sizeof(*shared_var));
+	LOG_DBG("REMOTE wrote REMOTE_IS_READY: %u", *shared_var);
+	LOG_DBG("REMOTE continues");
 #endif
 
 #if defined(CONFIG_COVERAGE)
