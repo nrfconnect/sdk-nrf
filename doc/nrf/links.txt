@@ -1460,6 +1460,7 @@
 .. _`Fast Pair Advertising`: https://developers.google.com/nearby/fast-pair/specifications/service/provider
 .. _`Fast Pair GATT Characteristics`: https://developers.google.com/nearby/fast-pair/specifications/characteristics
 .. _`Fast Pair Procedure`: https://developers.google.com/nearby/fast-pair/specifications/service/gatt
+.. _`Fast Pair firmware update intent`: https://developers.google.com/nearby/fast-pair/companion-apps#firmware_update_intent
 .. _`Verifying Fast Pair`: https://developers.google.com/nearby/fast-pair/fast-pair-certification-guideline
 .. _`Fast Pair Personalized Name extension`: https://developers.google.com/nearby/fast-pair/specifications/extensions/personalizedname
 .. _`Fast Pair Certification Guidelines for Personalized Name`: https://developers.google.com/nearby/fast-pair/fast-pair-certification-guideline#42_personalized_name

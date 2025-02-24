@@ -161,6 +161,27 @@ The Fast Pair standard implementation in the |NCS| actively supports the followi
 * Input device (see the :ref:`fast_pair_input_device` sample)
 * Locator tag (see the :ref:`fast_pair_locator_tag` sample)
 
+.. _ug_bt_fast_pair_provisioning_register_firmware_update_intent:
+
+Firmware update intent
+----------------------
+
+Intents are an established mechanism for app-to-app communication on the Android platform.
+In this particular case, the firmware update intent is used by Fast Pair to notify the companion app about the need to update the Provider's firmware.
+A companion app is an Android application that is typically developed for a device model.
+It often unlocks additional interactions with a device, which are not supported at the Android system level.
+Companion apps are typically used to configure device parameters or update their firmware.
+For further details on the Android intent feature for firmware updates, see the `Fast Pair firmware update intent`_ section in the Fast Pair specification.
+
+To configure your device model in the Google Nearby Devices console for support of the firmware update intent feature, complete the following steps:
+
+1. Select the appropriate option in the **Firmware Type** list.
+   The default **Unspecified** selection disables the intent feature for firmware updates.
+#. Enter the firmware version string in the **Firmware Version** field.
+#. Enter the companion app package name in the **Companion App Package Name** field.
+
+See :ref:`ug_bt_fast_pair_gatt_service_firmware_update_intent` to learn how to prepare your Provider firmware to support the firmware update intent feature.
+
 FMDN extension
 --------------
 
@@ -672,6 +693,20 @@ Make sure that it is enabled for the following use cases of the Google Fast Pair
 * Mouse
 
 See :ref:`ug_bt_fast_pair_use_case` for more details about the use cases of the Google Fast Pair application.
+
+.. _ug_bt_fast_pair_gatt_service_firmware_update_intent:
+
+Firmware update intent
+======================
+
+See :ref:`ug_bt_fast_pair_provisioning_register_firmware_update_intent` for a basic introduction regarding the firmware update intent feature and for information on how to configure your device in the Google Nearby Device console to support this feature.
+
+To use the Android intent feature for firmware updates, your device must support the Device Information Service (DIS) and its Firmware Revision characteristic.
+You can disable all other DIS characteristics if they are not used for other purposes.
+
+To enable the Zephyr DIS module and the Firmware Revision characteristic, set the :kconfig:option:`CONFIG_BT_DIS` and :kconfig:option:`CONFIG_BT_DIS_FW_REV` Kconfig options.
+If you use Zephyr's :ref:`zephyr:app-version-details` feature and define the :file:`VERSION` file in your project, the :kconfig:option:`CONFIG_BT_DIS_FW_REV_STR` Kconfig option is automatically set.
+Otherwise, set the :kconfig:option:`CONFIG_BT_DIS_FW_REV_STR` Kconfig option explicitly.
 
 FMDN extension
 ==============
