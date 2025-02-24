@@ -138,7 +138,6 @@ function(partition_manager)
       dynamic_partition_argument
       "--flash_primary-dynamic-partition;${dynamic_partition}"
       )
-    set(static_configuration)
   endif()
 
   if (DEFINED PM_DOMAIN)
