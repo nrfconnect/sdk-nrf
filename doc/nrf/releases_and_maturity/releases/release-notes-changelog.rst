@@ -794,7 +794,10 @@ This section provides detailed lists of changes by :ref:`integration <integratio
 Google Fast Pair integration
 ----------------------------
 
-* Added instructions on how to provision the Fast Pair data onto devices without the :ref:`partition_manager` support, specifically for the :ref:`zephyr:nrf54h20dk_nrf54h20`.
+* Added:
+
+  * Instructions on how to provision the Fast Pair data onto devices without the :ref:`partition_manager` support, specifically for the :ref:`zephyr:nrf54h20dk_nrf54h20`.
+  * Information on how to support the firmware update intent feature on the Android platform.
 
 Edge Impulse integration
 ------------------------
