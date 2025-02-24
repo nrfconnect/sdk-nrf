@@ -24,8 +24,10 @@ LOG_MODULE_REGISTER(idle_uarte);
 #error Improper device tree configuration, UARTE test node not available
 #endif
 
-#define UART_ACTION_BASE_TIMEOUT_US 60000
-#define TEST_BUFFER_LEN		    512
+#define TEST_BUFFER_LEN 512
+
+static K_SEM_DEFINE(uart_rx_ready_sem, 0, 1);
+static K_SEM_DEFINE(uart_tx_done_sem, 0, 1);
 
 static const struct device *const uart_dev = DEVICE_DT_GET(UART_NODE);
 static const struct device *const console_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
@@ -36,36 +38,38 @@ static uint8_t test_buffer[TEST_BUFFER_LEN];
 static volatile uint8_t uart_error_counter;
 
 #if defined(CONFIG_CLOCK_CONTROL)
-const struct nrf_clock_spec clk_spec_global_hsfll = {
-	.frequency = MHZ(CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_MHZ)};
+const uint32_t freq[] = {320, 256, 128, 64};
 
 /*
  * Set Global Domain frequency (HSFLL120)
- * based on: CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_MHZ
  */
-void set_global_domain_frequency(void)
+void set_global_domain_frequency(uint32_t freq)
 {
 	int err;
 	int res;
 	struct onoff_client cli;
 	const struct device *hsfll_dev = DEVICE_DT_GET(DT_NODELABEL(hsfll120));
+	const struct nrf_clock_spec clk_spec_global_hsfll = {.frequency = MHZ(freq)};
 
 	printk("Requested frequency [Hz]: %d\n", clk_spec_global_hsfll.frequency);
 	sys_notify_init_spinwait(&cli.notify);
 	err = nrf_clock_control_request(hsfll_dev, &clk_spec_global_hsfll, &cli);
-	printk("Return code: %d\n", err);
-	__ASSERT_NO_MSG(err < 3);
-	__ASSERT_NO_MSG(err >= 0);
+	__ASSERT((err >= 0 && err < 3), "Wrong nrf_clock_control_request return code");
 	do {
 		err = sys_notify_fetch_result(&cli.notify, &res);
 		k_yield();
 	} while (err == -EAGAIN);
-	printk("Clock control request return value: %d\n", err);
-	printk("Clock control request response code: %d\n", res);
-	__ASSERT_NO_MSG(err == 0);
-	__ASSERT_NO_MSG(res == 0);
+	__ASSERT(err == 0, "Wrong clock control request return code");
+	__ASSERT(res == 0, "Wrong clock control request response");
 }
 #endif /* CONFIG_CLOCK_CONTROL */
+
+void timer_handler(struct k_timer *dummy)
+{
+	k_sem_give(&uart_tx_done_sem);
+}
+
+K_TIMER_DEFINE(timer, timer_handler, NULL);
 
 /*
  * Callback function for UART async transmission
@@ -84,16 +88,7 @@ static void async_uart_callback(const struct device *dev, struct uart_event *evt
 		break;
 	case UART_RX_RDY:
 		printk("UART_RX_RDY\n");
-		for (int index = 0; index < TEST_BUFFER_LEN; index++) {
-			printk("test_pattern[%d]=%d\n", index, test_pattern[index]);
-			printk("test_buffer[%d]=%d\n", index, test_buffer[index]);
-			if (test_buffer[index] != test_pattern[index]) {
-				printk("Recieived data byte %d does not match pattern 0x%x != "
-				       "0x%x\n",
-				       index, test_buffer[index], test_pattern[index]);
-				__ASSERT_NO_MSG(test_buffer[index] == test_pattern[index]);
-			}
-		}
+		k_sem_give(&uart_rx_ready_sem);
 		break;
 	case UART_RX_BUF_RELEASED:
 		printk("UART_RX_BUF_RELEASED\n");
@@ -113,106 +108,94 @@ static void async_uart_callback(const struct device *dev, struct uart_event *evt
 void enable_uart_rx(void)
 {
 	int err;
-
-	err = uart_rx_enable(uart_dev, test_buffer, TEST_BUFFER_LEN, UART_ACTION_BASE_TIMEOUT_US);
-	if (err != 0) {
-		printk("Unexpected error when enabling UART RX: %d\n", err);
-		__ASSERT_NO_MSG(err == 0);
-	}
-}
-
-/* Helper function for disabling UART RX */
-void disable_uart_rx(void)
-{
-	int err;
-
-	err = uart_rx_disable(uart_dev);
-	if (err != 0) {
-		printk("Unexpected error when disabling RX: %d\n", err);
-	}
+	do {
+		err = uart_rx_enable(uart_dev, test_buffer, TEST_BUFFER_LEN, 1000);
+	} while (err == -EBUSY);
+	__ASSERT(err == 0, "Unexpected error when enabling UART RX: %d", err);
 }
 
 void set_test_pattern(void)
 {
-	for (int counter = 0; counter < TEST_BUFFER_LEN; counter++) {
-		test_pattern[counter] = counter;
+	for (uint32_t counter = 0; counter < TEST_BUFFER_LEN; counter++) {
+		test_pattern[counter] = (uint8_t)(counter & 0xFF);
 	}
 }
 
 int main(void)
 {
 	int err;
-	int test_repetitions = 3;
-	struct uart_config test_uart_config = {.baudrate = 115200,
-					       .parity = UART_CFG_PARITY_ODD,
-					       .stop_bits = UART_CFG_STOP_BITS_1,
-					       .data_bits = UART_CFG_DATA_BITS_8,
-					       .flow_ctrl = UART_CFG_FLOW_CTRL_RTS_CTS};
+	uint8_t switch_flag;
+	uint32_t counter;
+	struct uart_config test_uart_config;
 
 	err = gpio_is_ready_dt(&led);
 	__ASSERT(err, "Error: GPIO Device not ready");
 
-#if defined(CONFIG_CLOCK_CONTROL)
-	err = gpio_pin_configure_dt(&led, GPIO_OUTPUT_INACTIVE);
-	__ASSERT(err == 0, "Could not configure led GPIO");
-	gpio_pin_set_dt(&led, 1);
-	set_global_domain_frequency();
-#else
 	err = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
 	__ASSERT(err == 0, "Could not configure led GPIO");
+
+#if defined(CONFIG_CLOCK_CONTROL)
+	set_global_domain_frequency(CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_MHZ);
 #endif
 
 	printk("Hello World! %s\n", CONFIG_BOARD_TARGET);
 	printk("UART instance: %s\n", uart_dev->name);
 	set_test_pattern();
+	err = uart_config_get(uart_dev, &test_uart_config);
+	__ASSERT(err == 0, "Failed to get uart config");
+	gpio_pin_set_dt(&led, 0);
 	k_msleep(10);
+	gpio_pin_set_dt(&led, 1);
 
 	err = uart_configure(uart_dev, &test_uart_config);
-	if (err != 0) {
-		printk("Unexpected error when configuring UART: %d\n", err);
-		__ASSERT_NO_MSG(err == 0);
-	}
+	__ASSERT(err == 0, "Unexpected error when configuring UART: %d", err);
 
 	/* UART is disabled so expect error. */
 	err = uart_rx_disable(uart_dev);
-	if (err != -EFAULT) {
-		printk("Unexpected error when disabling RX: %d\n", err);
-		__ASSERT_NO_MSG(err == 0);
-	}
+	__ASSERT(err == -EFAULT, "Expected an error when disabling RX");
 
 	err = uart_callback_set(uart_dev, async_uart_callback, NULL);
-	if (err != 0) {
-		printk("Unexpected error when setting callback %d\n", err);
-		__ASSERT_NO_MSG(err == 0);
-	}
+	__ASSERT(err == 0, "Unexpected error when setting callback %d", err);
 
 	if (IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME)) {
 		pm_device_runtime_enable(uart_dev);
 		pm_device_runtime_enable(console_dev);
 	}
 
-#if defined(CONFIG_COVERAGE)
-	printk("Coverage analysis enabled\n");
-	while (test_repetitions--)
-#else
-	while (test_repetitions)
+	counter = 0;
+	while (1) {
+		switch_flag = 1;
+		k_timer_start(&timer, K_SECONDS(1), K_NO_WAIT);
+		while (k_sem_take(&uart_tx_done_sem, K_NO_WAIT) != 0) {
+			enable_uart_rx();
+			do {
+				err = uart_tx(uart_dev, test_pattern, TEST_BUFFER_LEN, 1000000);
+			} while (err == -EBUSY);
+			__ASSERT(err == 0, "Unexpected error when sending UART TX data: %d", err);
+#if defined(CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING)
+			if (switch_flag) {
+				set_global_domain_frequency(freq[++counter % ARRAY_SIZE(freq)]);
+				switch_flag = 0;
+			}
 #endif
-	{
-		enable_uart_rx();
-		err = uart_tx(uart_dev, test_pattern, TEST_BUFFER_LEN, UART_ACTION_BASE_TIMEOUT_US);
-		if (err != 0) {
-			printk("Unexpected error when sending UART TX data: %d\n", err);
-			__ASSERT_NO_MSG(err == 0);
+			while (k_sem_take(&uart_rx_ready_sem, K_NO_WAIT) != 0) {
+			};
+			for (int index = 0; index < TEST_BUFFER_LEN; index++) {
+				__ASSERT(test_buffer[index] == test_pattern[index],
+					 "Recieived data byte %d does not match pattern 0x%x != "
+					 "0x%x",
+					 index, test_buffer[index], test_pattern[index]);
+			}
 		}
-		k_busy_wait(UART_ACTION_BASE_TIMEOUT_US);
-		disable_uart_rx();
 		gpio_pin_set_dt(&led, 0);
 		k_msleep(1000);
 		gpio_pin_set_dt(&led, 1);
-	}
-
 #if defined(CONFIG_COVERAGE)
-	printk("Coverage analysis start\n");
+		if (switch_flag) {
+			printk("Coverage analysis start\n");
+			break;
+		}
 #endif
+	}
 	return 0;
 }
