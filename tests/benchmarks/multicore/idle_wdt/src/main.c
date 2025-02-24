@@ -8,6 +8,7 @@
 LOG_MODULE_REGISTER(idle_wdt, LOG_LEVEL_INF);
 
 #include <zephyr/kernel.h>
+#include <zephyr/cache.h>
 #include <zephyr/drivers/watchdog.h>
 #include <zephyr/drivers/gpio.h>
 
@@ -29,6 +30,11 @@ static int my_wdt_channel;
 #define NOINIT_SECTION ".noinit.test_wdt"
 #endif
 static volatile uint32_t wdt_status __attribute__((section(NOINIT_SECTION)));
+
+#define SHM_START_ADDR		(DT_REG_ADDR(DT_NODELABEL(cpuapp_cpurad_ipc_shm)))
+volatile static uint32_t *shared_var = (volatile uint32_t *) SHM_START_ADDR;
+#define HOST_IS_READY	(1)
+#define REMOTE_IS_READY	(2)
 
 /* Variables used to make CPU active for ~1 second */
 static struct k_timer my_timer;
@@ -59,6 +65,7 @@ int main(void)
 
 	LOG_INF("Multicore idle_wdt test on %s", CONFIG_BOARD_TARGET);
 	LOG_INF("Main sleeps for %d ms", CONFIG_TEST_SLEEP_DURATION_MS);
+	LOG_INF("Shared memory at %p", (void *) shared_var);
 
 	k_timer_init(&my_timer, my_timer_handler, NULL);
 
@@ -96,6 +103,32 @@ int main(void)
 		LOG_ERR("wdt_install_timeout() returned %d", my_wdt_channel);
 		__ASSERT(false, "wdt_install_timeout() returned %d\n", my_wdt_channel);
 	}
+
+/* Synchronize Remote core with Host core */
+#if !defined(CONFIG_TEST_ROLE_REMOTE)
+	LOG_DBG("HOST starts");
+	*shared_var = HOST_IS_READY;
+	sys_cache_data_flush_range((void *) shared_var, sizeof(*shared_var));
+	LOG_DBG("HOST wrote HOST_IS_READY: %u", *shared_var);
+	while (*shared_var != REMOTE_IS_READY) {
+		k_msleep(1);
+		sys_cache_data_invd_range((void *) shared_var, sizeof(*shared_var));
+		LOG_DBG("shared_var is: %u", *shared_var);
+	}
+	LOG_DBG("HOST continues");
+#else
+	LOG_DBG("REMOTE starts");
+	while (*shared_var != HOST_IS_READY) {
+		k_msleep(1);
+		sys_cache_data_invd_range((void *) shared_var, sizeof(*shared_var));
+		LOG_DBG("shared_var is: %u", *shared_var);
+	}
+	LOG_DBG("REMOTE found that HOST_IS_READY");
+	*shared_var = REMOTE_IS_READY;
+	sys_cache_data_flush_range((void *) shared_var, sizeof(*shared_var));
+	LOG_DBG("REMOTE wrote REMOTE_IS_READY: %u", *shared_var);
+	LOG_DBG("REMOTE continues");
+#endif
 
 	/* Start Watchdog */
 	ret = wdt_setup(my_wdt_device, WDT_OPT_PAUSE_HALTED_BY_DBG | WDT_OPT_PAUSE_IN_SLEEP);

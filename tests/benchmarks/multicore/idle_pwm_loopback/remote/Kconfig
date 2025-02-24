@@ -12,4 +12,11 @@ config TEST_SLEEP_DURATION_MS
 	  Based on the value of 'min-residency-us' specified for each power state defined in the DTS,
 	  core enters the lowest possible power state.
 
+config TEST_ROLE_REMOTE
+	bool "Execute test variant for Remote core"
+	default y
+	help
+	  KConfig used in synchronization phase.
+	  Set TEST_ROLE_REMOTE=y on core that shall synchronize with the Host core.
+
 source "Kconfig.zephyr"

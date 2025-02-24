@@ -8,6 +8,7 @@
 LOG_MODULE_REGISTER(idle_pwm_loop, LOG_LEVEL_INF);
 
 #include <zephyr/kernel.h>
+#include <zephyr/cache.h>
 #include <zephyr/drivers/pwm.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/pm/device_runtime.h>
@@ -20,6 +21,11 @@ LOG_MODULE_REGISTER(idle_pwm_loop, LOG_LEVEL_INF);
 #if !DT_NODE_EXISTS(DT_NODELABEL(pwm_to_gpio_loopback))
 #error "Unsupported board: pwm_to_gpio_loopback node is not defined"
 #endif
+
+#define SHM_START_ADDR		(DT_REG_ADDR(DT_NODELABEL(cpuapp_cpurad_ipc_shm)))
+volatile static uint32_t *shared_var = (volatile uint32_t *) SHM_START_ADDR;
+#define HOST_IS_READY	(1)
+#define REMOTE_IS_READY	(2)
 
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 
@@ -126,6 +132,7 @@ int main(void)
 	LOG_INF("GPIO loopback at %s, pin %d", pin_in.port->name, pin_in.pin);
 	LOG_INF("Pulse/period: %u/%u usec", pulse / 1000, pwm_out.period / 1000);
 	LOG_INF("Expected number of edges in 1 second: %u (+/- %u)", edges, tolerance);
+	LOG_INF("Shared memory at %p", (void *) shared_var);
 	LOG_INF("===================================================================");
 
 	ret = pwm_is_ready_dt(&pwm_out);
@@ -154,6 +161,32 @@ int main(void)
 	gpio_init_callback(&gpio_input_cb_data, gpio_input_edge_callback, BIT(pin_in.pin));
 
 	k_timer_init(&my_timer, my_timer_handler, NULL);
+
+	/* Synchronize Remote core with Host core */
+#if !defined(CONFIG_TEST_ROLE_REMOTE)
+	LOG_DBG("HOST starts");
+	*shared_var = HOST_IS_READY;
+	sys_cache_data_flush_range((void *) shared_var, sizeof(*shared_var));
+	LOG_DBG("HOST wrote HOST_IS_READY: %u", *shared_var);
+	while (*shared_var != REMOTE_IS_READY) {
+		k_msleep(1);
+		sys_cache_data_invd_range((void *) shared_var, sizeof(*shared_var));
+		LOG_DBG("shared_var is: %u", *shared_var);
+	}
+	LOG_DBG("HOST continues");
+#else
+	LOG_DBG("REMOTE starts");
+	while (*shared_var != HOST_IS_READY) {
+		k_msleep(1);
+		sys_cache_data_invd_range((void *) shared_var, sizeof(*shared_var));
+		LOG_DBG("shared_var is: %u", *shared_var);
+	}
+	LOG_DBG("REMOTE found that HOST_IS_READY");
+	*shared_var = REMOTE_IS_READY;
+	sys_cache_data_flush_range((void *) shared_var, sizeof(*shared_var));
+	LOG_DBG("REMOTE wrote REMOTE_IS_READY: %u", *shared_var);
+	LOG_DBG("REMOTE continues");
+#endif
 
 #if defined(CONFIG_COVERAGE)
 	printk("Coverage analysis enabled\n");
