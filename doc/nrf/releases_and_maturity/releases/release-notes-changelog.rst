@@ -246,11 +246,6 @@ nRF Desktop
     * Disabled Bluetooth long workqueue (:kconfig:option:`CONFIG_BT_LONG_WQ`).
     * Limited the number of key slots in the PSA Crypto core to 10 (:kconfig:option:`CONFIG_MBEDTLS_PSA_KEY_SLOT_COUNT`).
 
-  * Disabled the :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF2_GLOBAL_HSFLL_REQ_LOW_FREQ` Kconfig option in the IPC radio image configuration for the nRF54H20 SoC.
-    This is done to ensure that the radio core requests high Global Domain (GD) frequency.
-    The option was enabled by default, because the clock control is enabled by the Multiprotocol Service Layer (MPSL).
-    Bluetooth stack with the SoftDevice Link Layer requires high frequency in GD to make the L2 cache and MRAM run fast to avoid code execution delays.
-    The :ref:`nrf_desktop_dvfs` running on the application core selects the clock control and enables an automatic low GD frequency request (:kconfig:option:`CONFIG_CLOCK_CONTROL_NRF2_GLOBAL_HSFLL_REQ_LOW_FREQ`), so the application core would not request high frequency in the GD.
   * Application configurations for HID peripherals by increasing the following thread stack sizes to prevent stack overflows during the :c:func:`settings_load` operation:
 
     * The system workqueue thread stack (:kconfig:option:`CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE`).
