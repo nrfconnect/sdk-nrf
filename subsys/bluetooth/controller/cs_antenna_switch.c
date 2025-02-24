@@ -36,5 +36,5 @@ void cs_antenna_switch_func(uint8_t antenna_number)
 
 void cs_antenna_switch_enable(void)
 {
-	nrf_gpio_port_dir_output_set(DEFAULT_CS_ANTENNA_GPIO_PORT, DEFAULT_CS_ANTENNA_BASE_PIN);
+	nrf_gpio_port_dir_output_set(DEFAULT_CS_ANTENNA_GPIO_PORT, DEFAULT_CS_ANTENNA_PIN_MASK);
 }
