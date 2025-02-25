@@ -28,6 +28,7 @@ LOG_MODULE_REGISTER(net_test, NET_LOG_LEVEL);
 #define NRF_WIFI_MAGIC_NUM_RAWTX	0x12345678
 
 int raw_socket_fd;
+int rx_raw_socket_fd;
 
 #define RECV_BUFFER_SIZE    1024
 #define RAW_PKT_DATA_OFFSET 6
@@ -40,6 +41,7 @@ struct packet_data test_packet;
 #define STACK_SIZE	CONFIG_RX_THREAD_STACK_SIZE
 #define THREAD_PRIORITY K_PRIO_COOP(CONFIG_NUM_COOP_PRIORITIES - 1)
 struct sockaddr_ll sa;
+struct sockaddr_ll dst;
 
 static void rx_thread_oneshot(void);
 
@@ -166,6 +168,30 @@ static int wifi_set_channel(void)
 	return 0;
 }
 
+static int setup_rawrecv_socket(struct sockaddr_ll *dst)
+{
+        int ret;
+	
+	rx_raw_socket_fd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
+        if (rx_raw_socket_fd < 0) {
+                LOG_ERR("Failed to create RAW socket : %d",
+                                errno);
+                return -errno;
+        }
+
+        dst->sll_ifindex = net_if_get_by_iface(net_if_get_first_wifi());
+        dst->sll_family = AF_PACKET;
+
+        ret = bind(rx_raw_socket_fd, (const struct sockaddr *)dst,
+                        sizeof(struct sockaddr_ll));
+        if (ret < 0) {
+                LOG_ERR("Failed to bind packet socket : %d", errno);
+                return -errno;
+        }
+
+        return 0;
+}
+
 static int setup_raw_pkt_socket(struct sockaddr_ll *sa)
 {
 	struct net_if *iface = NULL;
@@ -226,6 +252,7 @@ static int wifi_send_single_raw_tx_packet(int sockfd, char *test_frame, size_t b
 		return -1;
 	}
 
+	LOG_INF("Wi-Fi RaW TX Packet sent via socket returning success");
 	return 0;
 }
 
@@ -249,6 +276,7 @@ static int wifi_send_raw_tx_packets(unsigned int num_pkts)
 	buf_length = sizeof(struct raw_tx_pkt_header) + sizeof(test_beacon_frame);
 	memcpy(test_frame, &packet, sizeof(struct raw_tx_pkt_header));
 
+	LOG_INF("Wi-Fi sending RAW TX Packet");
 	ret = wifi_send_single_raw_tx_packet(raw_socket_fd, test_frame, buf_length, &sa);
 	if (ret < 0) {
 		LOG_ERR("Failed to send raw tx packets");
@@ -264,7 +292,7 @@ static int process_single_rx_packet(struct packet_data *packet)
 
 	LOG_INF("Wi-Fi monitor mode RX thread started");
 
-	received = recv(raw_socket_fd, packet->recv_buffer, sizeof(packet->recv_buffer), 0);
+	received = recv(rx_raw_socket_fd, packet->recv_buffer, sizeof(packet->recv_buffer), 0);
 	if (received <= 0) {
 		if (errno == EAGAIN) {
 			return 0;
@@ -288,7 +316,7 @@ static void rx_thread_oneshot()
 		.tv_usec = 0,
 	};
 
-	ret = setsockopt(raw_socket_fd, SOL_SOCKET, SO_RCVTIMEO, &timeo_optval,
+	ret = setsockopt(rx_raw_socket_fd, SOL_SOCKET, SO_RCVTIMEO, &timeo_optval,
 			 sizeof(timeo_optval));
 	if (ret < 0) {
 		LOG_ERR("Failed to set socket options : %s", strerror(errno));
@@ -306,13 +334,19 @@ ZTEST(nrf_wifi, test_single_raw_tx_rx)
 	zassert_false(wifi_set_tx_injection_mode(), "Failed to set TX injection mode");
 	zassert_equal(wifi_set_channel(), 0, "Failed to set channel");
 	zassert_false(setup_raw_pkt_socket(&sa), "Setting socket for raw pkt transmission failed");
-	k_thread_start(receiver_thread_id);
+	zassert_false(setup_rawrecv_socket(&dst), "Setting socket for raw pkt receive failed");
+	k_thread_start(receiver_thread_id); 
 	/* TODO: Wait for interface to be operationally UP */
 	k_sleep(K_MSEC(10));
 	zassert_false(wifi_send_raw_tx_packets(1), "Failed to send raw tx packets");
 	zassert_not_equal(
 		k_thread_join(receiver_thread_id, K_SECONDS(CONFIG_NRF_WIFI_RAW_RX_PKT_TIMEOUT_S)),
 		0, "Thread join failed/timedout");
+
+	zassert_not_equal(
+		k_thread_join(receiver_thread_id, K_MSEC(10)),
+		0, "Thread join failed/timedout");
+
 	zassert_mem_equal(&test_beacon_frame, &test_packet.recv_buffer[RAW_PKT_DATA_OFFSET],
 			  sizeof(test_beacon_frame), "Mismatch in sent and received data");
 
