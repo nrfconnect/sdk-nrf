@@ -458,7 +458,7 @@ static void adv_recv(const struct bt_le_scan_recv_info *info,
 
 static void store_dirty(struct k_work *work)
 {
-	int err;
+	int err = 0;
 
 	for (int i = 0; i < ARRAY_SIZE(devices); ++i) {
 		if (!(devices[i].flags & FLAG_DIRTY)) {
@@ -617,12 +617,12 @@ void bt_enocean_decommission(struct bt_enocean_device *dev)
 
 	if (IS_ENABLED(CONFIG_BT_ENOCEAN_STORE)) {
 		encode_tag(name, dev - &devices[0], ENTRY_TAG_DEVICE);
-		settings_delete(name);
+		(void)settings_delete(name);
 	}
 
 	if (IS_ENABLED(CONFIG_BT_ENOCEAN_STORE_SEQ)) {
 		encode_tag(name, dev - &devices[0], ENTRY_TAG_SEQ);
-		settings_delete(name);
+		(void)settings_delete(name);
 	}
 
 	dev->flags = 0;

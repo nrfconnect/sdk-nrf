@@ -8,8 +8,6 @@
 #include <bluetooth/mesh/models.h>
 #include <zephyr/shell/shell.h>
 
-#include "mesh/net.h"
-#include "mesh/access.h"
 #include "shell_utils.h"
 
 #define SHELL_SENSOR_CLI_REG_CNT_MAX 32

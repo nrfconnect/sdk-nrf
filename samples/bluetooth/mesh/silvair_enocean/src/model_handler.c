@@ -14,7 +14,6 @@
  */
 #include <zephyr/bluetooth/bluetooth.h>
 #include <bluetooth/mesh/models.h>
-#include <bluetooth/enocean.h>
 #include <bluetooth/mesh/vnd/silvair_enocean_srv.h>
 #include <dk_buttons_and_leds.h>
 #include "model_handler.h"

@@ -111,14 +111,18 @@ static void bt_ready(int err)
 	} else
 #endif /* CONFIG_COMP_DATA_LAYOUT_MULTIPLE */
 	{
-		bt_mesh_init(&prov, &comp);
+		err = bt_mesh_init(&prov, &comp);
+		__ASSERT_NO_MSG(err == 0);
 	}
 #endif /* defined(COMP_DATA_LAYOUT_SINGLE) || defined(COMP_DATA_LAYOUT_MULTIPLE) */
 }
 
 int main(void)
 {
-	bt_enable(bt_ready);
+	int err;
+
+	err = bt_enable(bt_ready);
+	__ASSERT_NO_MSG(err == 0);
 
 	return 0;
 }

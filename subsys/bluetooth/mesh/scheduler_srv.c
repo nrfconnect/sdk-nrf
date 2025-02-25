@@ -6,7 +6,6 @@
 
 #include <stdio.h>
 #include <bluetooth/mesh/models.h>
-#include <zephyr/sys/byteorder.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/math_extras.h>
 #include <zephyr/random/random.h>

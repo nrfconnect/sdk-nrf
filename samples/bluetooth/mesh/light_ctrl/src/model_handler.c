@@ -200,11 +200,11 @@ static int energy_use_get(struct bt_mesh_sensor_srv *srv,
 			 struct bt_mesh_sensor_value *rsp)
 {
 	/* Report energy usage as dummy value, and increase it by one every time
-	 * a get callback is triggered. The logic and hardware for mesuring
+	 * a get callback is triggered. The logic and hardware for measuring
 	 * the actual energy usage of the device should be implemented here.
 	 */
-	bt_mesh_sensor_value_from_micro(sensor->type->channels[0].format,
-					dummy_energy_use * 1000000LL, rsp);
+	(void)bt_mesh_sensor_value_from_micro(sensor->type->channels[0].format,
+					      dummy_energy_use * 1000000LL, rsp);
 	dummy_energy_use++;
 
 	return 0;

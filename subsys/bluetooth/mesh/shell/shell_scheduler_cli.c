@@ -7,10 +7,7 @@
 #include <stdlib.h>
 #include <bluetooth/mesh/models.h>
 #include <zephyr/shell/shell.h>
-#include <zephyr/sys/math_extras.h>
 
-#include "mesh/net.h"
-#include "mesh/access.h"
 #include "../model_utils.h"
 
 #include "shell_utils.h"

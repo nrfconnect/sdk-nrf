@@ -8,7 +8,6 @@
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <bluetooth/mesh/models.h>
-#include <sensor.h>
 
 #include <zephyr/logging/log.h>
 #define LOG_MODULE_NAME bttester_model_handler
