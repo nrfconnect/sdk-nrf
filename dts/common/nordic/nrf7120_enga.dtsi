@@ -82,7 +82,8 @@
 			#size-cells = <1>;
 			compatible = "nordic,nrf-mpc";
 			reg = <0x50041000 0x1000>;
-			protection-region-size = <4096>;
+			override-num = <14>;
+			override-granularity = <4096>;
 		};
 	};
 

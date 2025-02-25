@@ -28,7 +28,7 @@ DT_MPC_REGION_SIZE := $(dt_nodelabel_path,nrf_mpc_region)
 
 config NRF_TRUSTZONE_FLASH_REGION_SIZE
 	hex
-	default $(dt_node_int_prop_hex,$(DT_MPC_REGION_SIZE),protection-region-size)
+	default $(dt_node_int_prop_hex,$(DT_MPC_REGION_SIZE),override-granularity)
 	help
 	  This defines the flash region size from the TRUSTZONE perspective.
 	  It is used when configuring the TRUSTZONE and when setting alignments
@@ -38,7 +38,7 @@ config NRF_TRUSTZONE_FLASH_REGION_SIZE
 
 config NRF_TRUSTZONE_RAM_REGION_SIZE
 	hex
-	default $(dt_node_int_prop_hex,$(DT_MPC_REGION_SIZE),protection-region-size)
+	default $(dt_node_int_prop_hex,$(DT_MPC_REGION_SIZE),override-granularity)
 	help
 	  This defines the RAM region size from the TRUSTZONE perspective.
 	  It is used when configuring the TRUSTZONE and when setting alignments
