@@ -83,11 +83,13 @@ static struct dfu_cache_partition_ext dfu_partitions_ext[] = {
 		.id = 0,
 	},
 	LISTIFY(CONFIG_SUIT_CACHE_MAX_CACHES, PARTITION_DEFINE, (), dfu_cache_partition_)
+/* clang-format off */
 #ifdef CONFIG_SUIT_CACHE_SDFW_IPUC_ID
-		{
-			.id = CONFIG_SUIT_CACHE_SDFW_IPUC_ID,
-		},
+	{
+		.id = CONFIG_SUIT_CACHE_SDFW_IPUC_ID,
+	},
 #endif /* CONFIG_SUIT_CACHE_SDFW_IPUC_ID */
+/* clang-format on */
 #ifdef CONFIG_SUIT_CACHE_APP_IPUC_ID
 	{
 		.id = CONFIG_SUIT_CACHE_APP_IPUC_ID,
@@ -817,7 +819,7 @@ suit_plat_err_t suit_dfu_cache_rw_slot_drop(struct suit_cache_slot *slot)
 
 #ifdef CONFIG_FLASH_IPUC
 /**
- * @brief Check the availability of IPUCs that can be used as SUIT cache parition.
+ * @brief Check the availability of IPUCs that can be used as SUIT cache partition.
  */
 static void dfu_cache_ipuc_init(void)
 {
