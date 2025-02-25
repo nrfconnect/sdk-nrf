@@ -150,6 +150,21 @@ tests:
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram_with_clock_control"
 
+  benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.s2ram_fast.gd_freq_switching:
+    filter: not CONFIG_COVERAGE
+    tags: ppk_power_measure
+    extra_args:
+      - idle_pwm_loopback_CONF_FILE=prj_s2ram.conf
+      - remote_CONF_FILE=prj_s2ram.conf
+      - idle_pwm_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_1.overlay"
+      - idle_pwm_loopback_CONFIG_CLOCK_CONTROL=y
+      - CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING=y
+    harness: pytest
+    harness_config:
+      fixture: spi_loopback
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram_with_clock_control"
+
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.coverage:
     filter: CONFIG_COVERAGE
     extra_args:
