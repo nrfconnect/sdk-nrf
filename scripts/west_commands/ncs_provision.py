@@ -92,6 +92,8 @@ class NrfutilWrapper:
         ]
         if self.device_id:
             command += ["--serial-number", self.device_id]
+        else:
+            command += ["--traits", "jlink"]
 
         return command
 
