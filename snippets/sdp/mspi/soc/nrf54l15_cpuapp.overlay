@@ -80,7 +80,7 @@
 				<NRF_PSEL(SDP_MSPI_DQ2, 2, 3)>,
 				<NRF_PSEL(SDP_MSPI_DQ3, 2, 0)>,
 				<NRF_PSEL(SDP_MSPI_CS0, 2, 5)>;
-			nordic,drive-mode = <NRF_DRIVE_S0S1>;
+			nordic,drive-mode = <NRF_DRIVE_E0E1>;
 		};
 	};
 	/omit-if-no-ref/ sdp_mspi_sleep: sdp_mspi_sleep {
@@ -99,7 +99,7 @@
 /delete-node/ &mx25r64;
 
 &sdp_mspi {
-	clock-frequency = <DT_FREQ_M(48)>;
+	clock-frequency = <DT_FREQ_M(64)>;
 	pinctrl-0 = <&sdp_mspi_default>;
 	pinctrl-1 = <&sdp_mspi_sleep>;
 	pinctrl-names = "default", "sleep";
