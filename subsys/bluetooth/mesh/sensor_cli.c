@@ -6,11 +6,9 @@
 
 #include <stdlib.h>
 #include <bluetooth/mesh/sensor_cli.h>
-#include <bluetooth/mesh/properties.h>
 #include "model_utils.h"
 #include "sensor.h"
 #include "mesh/net.h"
-#include "mesh/transport.h"
 
 #define LOG_LEVEL CONFIG_BT_MESH_MODEL_LOG_LEVEL
 #include "zephyr/logging/log.h"

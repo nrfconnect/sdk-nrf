@@ -5,7 +5,6 @@
  */
 #include <bluetooth/mesh/models.h>
 #include "model_utils.h"
-#include "mesh/mesh.h"
 
 #define LOG_LEVEL CONFIG_BT_MESH_MODEL_LOG_LEVEL
 #include "zephyr/logging/log.h"

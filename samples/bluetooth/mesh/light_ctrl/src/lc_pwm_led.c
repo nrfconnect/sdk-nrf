@@ -31,5 +31,5 @@ void lc_pwm_led_set(uint16_t desired_lvl)
 		(PWM_PERIOD * desired_lvl) /
 		BT_MESH_LIGHTNESS_MAX;
 
-	pwm_set_dt(&led0, PWM_USEC(PWM_PERIOD), PWM_USEC(scaled_lvl));
+	(void)pwm_set_dt(&led0, PWM_USEC(PWM_PERIOD), PWM_USEC(scaled_lvl));
 }

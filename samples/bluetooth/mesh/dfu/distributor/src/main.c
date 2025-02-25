@@ -11,7 +11,6 @@
 #include <zephyr/storage/flash_map.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/mesh.h>
-#include <zephyr/bluetooth/mesh/shell.h>
 #include <bluetooth/mesh/vnd/le_pair_resp.h>
 #include <bluetooth/mesh/dk_prov.h>
 #include <dk_buttons_and_leds.h>

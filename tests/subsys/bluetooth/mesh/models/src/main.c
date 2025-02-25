@@ -115,7 +115,10 @@ static const struct bt_mesh_comp comp = {
 
 int main(void)
 {
-	bt_mesh_init(NULL, &comp);
+	int err;
+
+	err = bt_mesh_init(NULL, &comp);
+	__ASSERT_NO_MSG(err == 0);
 
 	return 0;
 }

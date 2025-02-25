@@ -10,7 +10,6 @@
 #include <bluetooth/mesh/properties.h>
 #include "mesh/net.h"
 #include "mesh/access.h"
-#include "mesh/transport.h"
 #include "model_utils.h"
 #include "sensor.h"
 

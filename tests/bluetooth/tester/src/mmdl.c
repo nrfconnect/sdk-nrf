@@ -1548,6 +1548,9 @@ static void sensor_desc_get(uint8_t *data, uint16_t len)
 	} else {
 		for (i = 0; i < count; ++i) {
 			sensor.type = bt_mesh_sensor_type_get(sensors[i].id);
+			if (!sensor.type) {
+				goto fail;
+			}
 			sensor.descriptor = &sensors[i].descriptor;
 			sensor_descriptor_encode(buf, &sensor);
 		}
@@ -1729,6 +1732,13 @@ static void sensor_cadence_set(uint8_t *data, uint16_t len)
 
 	net_buf_simple_init_with_data(buf, (void *)&cmd->data, cmd->len);
 	sensor = bt_mesh_sensor_type_get(cmd->id);
+	if (!sensor) {
+		LOG_ERR("Sensor not found");
+		err = -EINVAL;
+
+		goto fail;
+	}
+
 	err = sensor_cadence_decode(buf, sensor, &cadence.fast_period_div,
 				    &cadence.min_int, &cadence.threshold);
 	if (err) {
@@ -1885,7 +1895,7 @@ static void sensor_setting_set(uint8_t *data, uint16_t len)
 	struct mesh_sensor_setting_set *cmd = (void *)data;
 	const struct bt_mesh_sensor_type *sensor;
 	const struct bt_mesh_sensor_type *setting;
-	struct bt_mesh_sensor_value value[CONFIG_BT_MESH_SENSOR_CHANNELS_MAX];
+	struct bt_mesh_sensor_value value;
 	struct bt_mesh_sensor_setting_status rsp;
 	struct model_data *model_bound;
 	struct bt_mesh_msg_ctx ctx = {
@@ -1922,22 +1932,22 @@ static void sensor_setting_set(uint8_t *data, uint16_t len)
 		goto fail;
 	}
 
-	if (cmd->len > sizeof(value)) {
+	if (cmd->len > sizeof(value.raw)) {
 		err = -EINVAL;
 		LOG_ERR("Payload too long");
 		goto fail;
 	}
 
-	memset(value, 0, sizeof(value));
-	memcpy(&value[0].raw, cmd->data, cmd->len);
-	value[0].format = setting->channels[0].format;
+	memset(&value, 0, sizeof(value));
+	memcpy(&value.raw, cmd->data, cmd->len);
+	value.format = setting->channels[0].format;
 
 	if (cmd->ack) {
 		err = bt_mesh_sensor_cli_setting_set(&sensor_cli, &ctx, sensor,
-						     setting, value, &rsp);
+						     setting, &value, &rsp);
 	} else {
 		err = bt_mesh_sensor_cli_setting_set_unack(
-			&sensor_cli, &ctx, sensor, setting, value);
+			&sensor_cli, &ctx, sensor, setting, &value);
 	}
 
 	if (err) {
@@ -3958,10 +3968,6 @@ static void scene_store_procedure(uint8_t *data, uint16_t len)
 		net_buf_simple_init(buf, 0);
 		net_buf_simple_add_u8(buf, status.status);
 		net_buf_simple_add_le16(buf, status.current);
-		if (err) {
-			LOG_ERR("Cannot encode");
-			goto fail;
-		}
 
 		tester_send(BTP_SERVICE_ID_MMDL, MMDL_SCENE_STORE_PROCEDURE,
 			    CONTROLLER_INDEX, buf->data, buf->len);
@@ -4059,8 +4065,6 @@ static void light_xyl_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_XYL_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -4086,7 +4090,7 @@ static void light_xyl_get(uint8_t *data, uint16_t len)
 
 fail:
 	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_XYL_GET, CONTROLLER_INDEX,
-		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+		   BTP_STATUS_FAILED);
 }
 
 static void light_xyl_set(uint8_t *data, uint16_t len)
@@ -4175,8 +4179,6 @@ static void light_xyl_target_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_XYL_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -4202,8 +4204,7 @@ static void light_xyl_target_get(uint8_t *data, uint16_t len)
 
 fail:
 	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_XYL_TARGET_GET,
-		   CONTROLLER_INDEX,
-		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+		   CONTROLLER_INDEX, BTP_STATUS_FAILED);
 }
 
 static void light_xyl_default_get(uint8_t *data, uint16_t len)
@@ -4223,8 +4224,6 @@ static void light_xyl_default_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_XYL_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -4249,8 +4248,7 @@ static void light_xyl_default_get(uint8_t *data, uint16_t len)
 
 fail:
 	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_XYL_DEFAULT_GET,
-		   CONTROLLER_INDEX,
-		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+		   CONTROLLER_INDEX, BTP_STATUS_FAILED);
 }
 
 static void light_xyl_default_set(uint8_t *data, uint16_t len)
@@ -4330,8 +4328,6 @@ static void light_xyl_range_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_XYL_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -4358,8 +4354,7 @@ static void light_xyl_range_get(uint8_t *data, uint16_t len)
 
 fail:
 	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_XYL_RANGE_GET,
-		   CONTROLLER_INDEX,
-		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+		   CONTROLLER_INDEX, BTP_STATUS_FAILED);
 }
 
 static void light_xyl_range_set(uint8_t *data, uint16_t len)
@@ -4442,8 +4437,6 @@ static void light_hsl_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_HSL_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -4469,7 +4462,7 @@ static void light_hsl_get(uint8_t *data, uint16_t len)
 
 fail:
 	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_GET, CONTROLLER_INDEX,
-		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+		   BTP_STATUS_FAILED);
 }
 
 static void light_hsl_set(uint8_t *data, uint16_t len)
@@ -4559,8 +4552,6 @@ static void light_hsl_target_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_HSL_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -4586,8 +4577,7 @@ static void light_hsl_target_get(uint8_t *data, uint16_t len)
 
 fail:
 	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_TARGET_GET,
-		   CONTROLLER_INDEX,
-		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+		   CONTROLLER_INDEX, BTP_STATUS_FAILED);
 }
 
 static void light_hsl_default_get(uint8_t *data, uint16_t len)
@@ -4607,8 +4597,6 @@ static void light_hsl_default_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_HSL_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -4633,8 +4621,7 @@ static void light_hsl_default_get(uint8_t *data, uint16_t len)
 
 fail:
 	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_DEFAULT_GET,
-		   CONTROLLER_INDEX,
-		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+		   CONTROLLER_INDEX, BTP_STATUS_FAILED);
 }
 
 static void light_hsl_default_set(uint8_t *data, uint16_t len)
@@ -4715,8 +4702,6 @@ static void light_hsl_range_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_HSL_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -4743,8 +4728,7 @@ static void light_hsl_range_get(uint8_t *data, uint16_t len)
 
 fail:
 	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_RANGE_GET,
-		   CONTROLLER_INDEX,
-		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+		   CONTROLLER_INDEX, BTP_STATUS_FAILED);
 }
 
 static void light_hsl_range_set(uint8_t *data, uint16_t len)
@@ -4828,8 +4812,6 @@ static void light_hsl_hue_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_HSL_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -4854,8 +4836,7 @@ static void light_hsl_hue_get(uint8_t *data, uint16_t len)
 
 fail:
 	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_HUE_GET,
-		   CONTROLLER_INDEX,
-		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+		   CONTROLLER_INDEX, BTP_STATUS_FAILED);
 }
 
 static void light_hsl_hue_set(uint8_t *data, uint16_t len)
@@ -4943,8 +4924,6 @@ static void light_hsl_saturation_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_LIGHT_HSL_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -4969,8 +4948,7 @@ static void light_hsl_saturation_get(uint8_t *data, uint16_t len)
 
 fail:
 	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_LIGHT_HSL_SATURATION_GET,
-		   CONTROLLER_INDEX,
-		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+		   CONTROLLER_INDEX, BTP_STATUS_FAILED);
 }
 
 static void light_hsl_saturation_set(uint8_t *data, uint16_t len)
@@ -5058,8 +5036,6 @@ static void scheduler_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_SCHEDULER_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -5079,7 +5055,7 @@ static void scheduler_get(uint8_t *data, uint16_t len)
 
 fail:
 	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_SCHEDULER_GET, CONTROLLER_INDEX,
-		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+		   BTP_STATUS_FAILED);
 }
 static void scheduler_action_get(uint8_t *data, uint16_t len)
 {
@@ -5099,8 +5075,6 @@ static void scheduler_action_get(uint8_t *data, uint16_t len)
 	model_bound = lookup_model_bound(BT_MESH_MODEL_ID_SCHEDULER_CLI);
 	if (!model_bound) {
 		LOG_ERR("Model not found");
-		err = -EINVAL;
-
 		goto fail;
 	}
 
@@ -5133,8 +5107,7 @@ static void scheduler_action_get(uint8_t *data, uint16_t len)
 
 fail:
 	tester_rsp(BTP_SERVICE_ID_MMDL, MMDL_SCHEDULER_ACTION_GET,
-		   CONTROLLER_INDEX,
-		   err ? BTP_STATUS_FAILED : BTP_STATUS_SUCCESS);
+		   CONTROLLER_INDEX, BTP_STATUS_FAILED);
 }
 static void scheduler_action_set(uint8_t *data, uint16_t len)
 {

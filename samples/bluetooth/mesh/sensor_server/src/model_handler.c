@@ -1103,7 +1103,9 @@ const struct bt_mesh_comp *model_handler_init(void)
 	dk_button_handler_add(&button_handler);
 
 	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
-		settings_subsys_init();
+		if (!settings_subsys_init()) {
+			printf("Failed to initialize setting subsystem");
+		}
 		settings_register(&temp_range_conf);
 		settings_register(&presence_motion_threshold_conf);
 		settings_register(&amb_light_level_gain_conf);

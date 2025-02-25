@@ -10,7 +10,6 @@
 #include <bluetooth/mesh/vnd/le_pair_resp.h>
 #include "../model_utils.h"
 #include "mesh/net.h"
-#include "mesh/access.h"
 
 #define LOG_LEVEL CONFIG_BT_MESH_MODEL_LOG_LEVEL
 #include "zephyr/logging/log.h"
