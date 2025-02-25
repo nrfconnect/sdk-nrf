@@ -9,7 +9,6 @@
 #include <string.h>
 #include <zephyr/kernel.h>
 
-#include <modem/at_cmd_parser.h>
 #include <modem/at_params.h>
 
 #define TEST_PARAMS 6
