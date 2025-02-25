@@ -42,13 +42,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31493"
 
 - scenarios:
-    - sample.bluetooth.mesh.light_ctrl
-    - sample.bluetooth.mesh.light_ctrl.emds
-  platforms:
-    - nrf52dk/nrf52832
-  comment: "To be fixed after upmerge. Footprint should be reduced. NCSDK-31428"
-
-- scenarios:
     - applications.connectivity_bridge
   platforms:
     - thingy91x/nrf5340/cpuapp
