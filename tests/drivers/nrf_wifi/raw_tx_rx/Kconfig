@@ -58,3 +58,9 @@ config RX_THREAD_STACK_SIZE
 	default 4096
 	help
 	  This option sets the stack size for the threads used in the sample.
+
+config RAW_TX_RX_TRANSMIT_COUNT
+	int "Number of raw packets to transmit and receive"
+	default 1
+	help
+	  This option sets the stack size for the threads used in the sample.

@@ -20,6 +20,7 @@ LOG_MODULE_REGISTER(net_test, NET_LOG_LEVEL);
 #include <zephyr/ztest.h>
 
 #define BEACON_PAYLOAD_LENGTH	     256
+#define QOS_PAYLOAD_LENGTH	     32
 #define CONTINUOUS_MODE_TRANSMISSION 0
 #define FIXED_MODE_TRANSMISSION	     1
 
@@ -29,6 +30,8 @@ LOG_MODULE_REGISTER(net_test, NET_LOG_LEVEL);
 
 int raw_socket_fd;
 int rx_raw_socket_fd;
+
+bool packet_send = true;
 
 #define RECV_BUFFER_SIZE    1024
 #define RAW_PKT_DATA_OFFSET 6
@@ -58,7 +61,23 @@ struct beacon {
 	uint8_t payload[BEACON_PAYLOAD_LENGTH];
 } __packed;
 
-static struct beacon test_beacon_frame = {
+typedef struct {
+    /* Standard 802.11 frame header fields */
+    uint16_t frame_control;  /* Frame control field (including subtype: QoS data) */
+    uint16_t duration;
+    uint8_t  address1[6];  /* Receiver address */
+    uint8_t  address2[6];  /* Transmitter address */
+    uint8_t  address3[6];  /* BSSID */
+    uint16_t sequence_control; /* Sequence control field */
+
+    /* QoS specific fields */
+    uint16_t QoS;
+    /* Data payload */
+    uint8_t  data[QOS_PAYLOAD_LENGTH];
+    uint32_t frame_check_sequence;
+} wifi_qos_packet;
+
+static struct beacon test_beacon_frame  = {
 	.frame_control = htons(0X8000),
 	.duration = 0X0000,
 	.da = {0XFF, 0XFF, 0XFF, 0XFF, 0XFF, 0XFF},
@@ -172,6 +191,10 @@ static int wifi_set_channel(void)
 static int setup_rawrecv_socket(struct sockaddr_ll *dst)
 {
         int ret;
+        struct timeval timeo_optval = {
+                .tv_sec = 1,
+                .tv_usec = 0,
+        };
 	
 	rx_raw_socket_fd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
         if (rx_raw_socket_fd < 0) {
@@ -190,7 +213,13 @@ static int setup_rawrecv_socket(struct sockaddr_ll *dst)
                 return -errno;
         }
 
-        return 0;
+	ret = setsockopt(rx_raw_socket_fd, SOL_SOCKET, SO_RCVTIMEO, &timeo_optval,
+				sizeof(timeo_optval));
+	if (ret < 0) {
+		LOG_ERR("Failed to set socket options : %s", strerror(errno));
+		return -errno;
+	}
+	return 0;
 }
 
 static int setup_raw_pkt_socket(struct sockaddr_ll *sa)
@@ -291,19 +320,22 @@ static int process_single_rx_packet(struct packet_data *packet)
 {
 	int received;
 	int count =0;
+	memset(packet->recv_buffer, 0, RECV_BUFFER_SIZE);
+	LOG_INF("waiting on packet to be received");
 	received = recv(rx_raw_socket_fd, packet->recv_buffer, sizeof(packet->recv_buffer), 0);
 	if (received <= 0) {
 		if (errno == EAGAIN) {
+			LOG_INF("EAGAIN error - received = %d", received);
 			return 0;
 		}
 
 		if (received < 0) {
-			LOG_ERR("Monitor : recv error %s", strerror(errno));
+			LOG_ERR("recv error %s", strerror(errno));
 			return -errno;
 		}
 	}
-	LOG_INF("ZTEST: packet received = %d", received);
-	LOG_INF("ZTEST: sizeof of test_beacon frame is %d",sizeof(test_beacon_frame));
+
+	LOG_INF("sizeof of received frame is %d", received);
 
 	for (count = 0; count < received; count++)
 	{
@@ -312,62 +344,17 @@ static int process_single_rx_packet(struct packet_data *packet)
 			printf("\n");
 	}
 
+	LOG_INF("packet received");
 	return 0;
-}
-
-static int wifi_send_recv_tx_packets_serial(unsigned int num_pkts)
-{
-	int ret = 0;
-	struct raw_tx_pkt_header packet;
-	char *test_frame = NULL;
-	unsigned int buf_length;
-
-	fill_raw_tx_pkt_hdr(&packet);
-
-	test_frame = malloc(sizeof(struct raw_tx_pkt_header) + sizeof(test_beacon_frame));
-	if (!test_frame) {
-		LOG_ERR("Malloc failed for send buffer %d", errno);
-		return -1;
-	}
-
-	buf_length = sizeof(struct raw_tx_pkt_header) + sizeof(test_beacon_frame);
-	memcpy(test_frame, &packet, sizeof(struct raw_tx_pkt_header));
-
-	for (int i = 0; i < num_pkts; i++) {
-		k_sleep(K_MSEC(4));
-		ret = sendto(raw_socket_fd, test_frame, buf_length, 0,
-				(struct sockaddr *)&sa, sizeof(sa));
-		if (ret < 0) {
-			LOG_ERR("Unable to send beacon frame: %s", strerror(errno));
-			return -1 ;
-		}
-
-		k_sleep(K_MSEC(4));
-
-		process_single_rx_packet(&test_packet);
-	}
-
-	free(test_frame);
-	return ret;
 }
 
 /* handle incoming wifi packets in monitor mode */
 static void rx_thread_oneshot()
 {
-	int ret;
-	struct timeval timeo_optval = {
-		.tv_sec = 1,
-		.tv_usec = 0,
-	};
-
-	ret = setsockopt(rx_raw_socket_fd, SOL_SOCKET, SO_RCVTIMEO, &timeo_optval,
-			 sizeof(timeo_optval));
-	if (ret < 0) {
-		LOG_ERR("Failed to set socket options : %s", strerror(errno));
-		return;
+	while (packet_send)
+	{
+		process_single_rx_packet(&test_packet);
 	}
-
-	process_single_rx_packet(&test_packet);
 }
 
 static void initialize(void) {
@@ -378,32 +365,28 @@ static void initialize(void) {
 	wifi_set_channel();
 	setup_raw_pkt_socket(&sa);
 	setup_rawrecv_socket(&dst);
-/*	k_thread_start(receiver_thread_id);*/
+	k_thread_start(receiver_thread_id);
 }
 
 static void cleanup(void) {
 	close(raw_socket_fd);
 	close(rx_raw_socket_fd);
-/*	k_thread_join(receiver_thread_id, K_SECONDS(2));*/
+	k_thread_join(receiver_thread_id, K_SECONDS(2));
 }
 
-#if 1 
-ZTEST(nrf_wifi, test_single_raw_tx_rx)
+ZTEST(nrf_wifi, test_raw_tx_rx)
 {
-	k_thread_start(receiver_thread_id);
 	/* TODO: Wait for interface to be operationally UP */
-	k_sleep(K_MSEC(10));
-	zassert_false(wifi_send_raw_tx_packets(1), "Failed to send raw tx packets");
-	k_sleep(K_MSEC(10));
-	k_thread_join(receiver_thread_id, K_MSEC(100));
+	int count = CONFIG_RAW_TX_RX_TRANSMIT_COUNT;
+
+	LOG_INF("TX count is set is %d", CONFIG_RAW_TX_RX_TRANSMIT_COUNT);
+	while (count--)
+	{
+		k_sleep(K_MSEC(3));
+		zassert_false(wifi_send_raw_tx_packets(1), "Failed to send raw tx packets 1");
+		k_sleep(K_MSEC(3));
+	}
+	packet_send = false;
 }
-#else
-ZTEST(nrf_wifi, test_multiple_raw_tx_rx)
-{
-	k_sleep(K_MSEC(10));
-	zassert_false(wifi_send_recv_tx_packets_serial(2), "Failed to send/receive raw tx packets");
-	k_sleep(K_MSEC(10));
-}
-#endif
 
 ZTEST_SUITE(nrf_wifi, NULL, (void *)initialize, NULL, NULL, (void *)cleanup);
