@@ -617,7 +617,7 @@ Bluetooth libraries and services
   * Added:
 
     * A restriction on the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_TX_POWER` Kconfig option in the Find My Device Network (FMDN) extension configuration.
-      This Kconfig option must now be set to 0 at minimum as the Fast Pair specification now requires that the conducted Bluetooth transmit power for FMDN advertisements must not be lower than 0 dBm.
+      You must set this Kconfig option now to ``0`` at minimum as the Fast Pair specification requires that the conducted Bluetooth transmit power for FMDN advertisements must not be lower than 0 dBm.
     * A new information callback - :c:member:`bt_fast_pair_fmdn_info_cb.conn_authenticated` - to the FMDN extension API.
       In the FMDN context, this change is required to support firmware update intents on the Android platform.
       For further details on the Android intent feature for firmware updates, see the :ref:`ug_bt_fast_pair_provisioning_register_firmware_update_intent` section in the Fast Pair integration guide.
