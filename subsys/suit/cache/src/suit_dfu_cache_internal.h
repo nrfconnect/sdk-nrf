@@ -62,7 +62,7 @@ suit_plat_err_t suit_dfu_cache_partition_slot_foreach(struct dfu_cache_pool *cac
  *
  * @param cache_pool  Pointer to the SUIT cache pool structure.
  *
- * @retval SUIT_PLAT_ERR_IO        if unable to read parition contents.
+ * @retval SUIT_PLAT_ERR_IO        if unable to read partition contents.
  * @retval SUIT_PLAT_ERR_NOT_FOUND if partition contains inconsistent data.
  * @retval SUIT_PLAT_SUCCESS       if partition initialized.
  */

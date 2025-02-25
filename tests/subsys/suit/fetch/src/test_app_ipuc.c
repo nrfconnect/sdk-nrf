@@ -412,9 +412,8 @@ ZTEST(fetch_app_cache_tests, test_fetch_to_ipuc_cache_sdfw_scfw_OK)
 			0x4B, /* bytes(11) */
 				0x6A, /* text(10) */
 					'C', 'A', 'C', 'H', 'E', '_', 'P', 'O', 'O', 'L',
-			0x42, /* bytes(2) */
-				0x18, /* uint8_t */
-					CONFIG_SUIT_CACHE_SDFW_IPUC_ID,
+			0x41, /* bytes(1) */
+				CONFIG_SUIT_CACHE_SDFW_IPUC_ID, /* uint8_t == 0x01 */
 	};
 	/* clang-format on */
 	struct zcbor_string valid_dst_component_id = {

@@ -18,7 +18,7 @@
 			reg = <0xf5000 DT_SIZE_K(4)>;
 		};
 
-		dfu_cache_partition_1: partition@f6000 {
+		dfu_cache_partition_2: partition@f6000 {
 			reg = <0xf6000 DT_SIZE_K(4)>;
 		};
 

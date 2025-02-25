@@ -35,8 +35,14 @@ endchoice # TEST_SUIT_PLATFORM_FETCH_VARIANT
 
 if TEST_SUIT_PLATFORM_FETCH_VARIANT_APP
 
+config SUIT_CACHE_SDFW_IPUC
+	default y
+
 config SUIT_CACHE_SDFW_IPUC_ID
-	default 254
+	default 1
+
+config SUIT_CACHE_APP_IPUC
+	default y
 
 config SUIT_CACHE_APP_IPUC_ID
 	default 255
