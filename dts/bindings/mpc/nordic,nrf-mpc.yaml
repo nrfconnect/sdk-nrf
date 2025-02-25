@@ -1,10 +1,17 @@
-description: Nordic, Memory Protection Controller (MPC)
+description: Nordic Memory Privilege Controller (MPC)
 
 compatible: "nordic,nrf-mpc"
 
 include: base.yaml
 
 properties:
-  protection-region-size:
+  reg:
+    required: true
+
+  override-num:
     type: int
-    description: Region size for the Memory Protection Controller (MPC) in bytes.
+    description: Number of override regions supported by the MPC instance.
+
+  override-granularity:
+    type: int
+    description: Override region addresses must be aligned to this value.
