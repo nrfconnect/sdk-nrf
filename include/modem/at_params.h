@@ -102,7 +102,11 @@ struct at_param_list {
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
+#if CONFIG_UNITY || CONFIG_ZTEST
+int at_params_list_init(struct at_param_list *list, size_t max_params_count);
+#else
 __deprecated int at_params_list_init(struct at_param_list *list, size_t max_params_count);
+#endif
 
 /**
  * @deprecated
@@ -112,7 +116,11 @@ __deprecated int at_params_list_init(struct at_param_list *list, size_t max_para
  *
  * @param[in] list Parameter list to clear.
  */
+#if CONFIG_UNITY || CONFIG_ZTEST
+void at_params_list_clear(struct at_param_list *list);
+#else
 __deprecated void at_params_list_clear(struct at_param_list *list);
+#endif
 
 /**
  * @deprecated
@@ -122,7 +130,11 @@ __deprecated void at_params_list_clear(struct at_param_list *list);
  *
  * @param[in] list Parameter list to free.
  */
+#if CONFIG_UNITY || CONFIG_ZTEST
+void at_params_list_free(struct at_param_list *list);
+#else
 __deprecated void at_params_list_free(struct at_param_list *list);
+#endif
 
 /**
  * @deprecated
@@ -138,7 +150,11 @@ __deprecated void at_params_list_free(struct at_param_list *list);
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
+#if CONFIG_UNITY || CONFIG_ZTEST
+int at_params_int_put(const struct at_param_list *list, size_t index, int64_t value);
+#else
 __deprecated int at_params_int_put(const struct at_param_list *list, size_t index, int64_t value);
+#endif
 
 /**
  * @deprecated
@@ -156,8 +172,13 @@ __deprecated int at_params_int_put(const struct at_param_list *list, size_t inde
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
+#if CONFIG_UNITY || CONFIG_ZTEST
+int at_params_string_put(const struct at_param_list *list, size_t index,
+			 const char *str, size_t str_len);
+#else
 __deprecated int at_params_string_put(const struct at_param_list *list, size_t index,
 				      const char *str, size_t str_len);
+#endif
 
 /**
  * @deprecated
@@ -179,8 +200,13 @@ __deprecated int at_params_string_put(const struct at_param_list *list, size_t i
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
+#if CONFIG_UNITY || CONFIG_ZTEST
+int at_params_array_put(const struct at_param_list *list, size_t index,
+			const uint32_t *array, size_t array_len);
+#else
 __deprecated int at_params_array_put(const struct at_param_list *list, size_t index,
 				     const uint32_t *array, size_t array_len);
+#endif
 
 /**
  * @deprecated
@@ -196,7 +222,11 @@ __deprecated int at_params_array_put(const struct at_param_list *list, size_t in
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
+#if CONFIG_UNITY || CONFIG_ZTEST
+int at_params_empty_put(const struct at_param_list *list, size_t index);
+#else
 __deprecated int at_params_empty_put(const struct at_param_list *list, size_t index);
+#endif
 
 /**
  * @deprecated
@@ -211,7 +241,11 @@ __deprecated int at_params_empty_put(const struct at_param_list *list, size_t in
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
+#if CONFIG_UNITY || CONFIG_ZTEST
+int at_params_size_get(const struct at_param_list *list, size_t index, size_t *len);
+#else
 __deprecated int at_params_size_get(const struct at_param_list *list, size_t index, size_t *len);
+#endif
 
 /**
  * @deprecated
@@ -224,8 +258,13 @@ __deprecated int at_params_size_get(const struct at_param_list *list, size_t ind
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
+#if CONFIG_UNITY || CONFIG_ZTEST
+int at_params_short_get(const struct at_param_list *list, size_t index,
+			int16_t *value);
+#else
 __deprecated int at_params_short_get(const struct at_param_list *list, size_t index,
 				     int16_t *value);
+#endif
 
 /**
  * @deprecated
@@ -238,8 +277,13 @@ __deprecated int at_params_short_get(const struct at_param_list *list, size_t in
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
+#if CONFIG_UNITY || CONFIG_ZTEST
+int at_params_unsigned_short_get(const struct at_param_list *list, size_t index,
+				 uint16_t *value);
+#else
 __deprecated int at_params_unsigned_short_get(const struct at_param_list *list, size_t index,
 					      uint16_t *value);
+#endif
 
 /**
  * @deprecated
@@ -252,8 +296,13 @@ __deprecated int at_params_unsigned_short_get(const struct at_param_list *list, 
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
+#if CONFIG_UNITY || CONFIG_ZTEST
+int at_params_int_get(const struct at_param_list *list, size_t index,
+		      int32_t *value);
+#else
 __deprecated int at_params_int_get(const struct at_param_list *list, size_t index,
 				   int32_t *value);
+#endif
 
 /**
  * @deprecated
@@ -266,8 +315,13 @@ __deprecated int at_params_int_get(const struct at_param_list *list, size_t inde
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
+#if CONFIG_UNITY || CONFIG_ZTEST
+int at_params_unsigned_int_get(const struct at_param_list *list, size_t index,
+			       uint32_t *value);
+#else
 __deprecated int at_params_unsigned_int_get(const struct at_param_list *list, size_t index,
 					    uint32_t *value);
+#endif
 
 /**
  * @deprecated
@@ -280,8 +334,13 @@ __deprecated int at_params_unsigned_int_get(const struct at_param_list *list, si
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
+#if CONFIG_UNITY || CONFIG_ZTEST
+int at_params_int64_get(const struct at_param_list *list, size_t index,
+			int64_t *value);
+#else
 __deprecated int at_params_int64_get(const struct at_param_list *list, size_t index,
 				     int64_t *value);
+#endif
 
 /**
  * @deprecated
@@ -301,8 +360,13 @@ __deprecated int at_params_int64_get(const struct at_param_list *list, size_t in
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
+#if CONFIG_UNITY || CONFIG_ZTEST
+int at_params_string_get(const struct at_param_list *list, size_t index,
+			 char *value, size_t *len);
+#else
 __deprecated int at_params_string_get(const struct at_param_list *list, size_t index,
 				      char *value, size_t *len);
+#endif
 
 /**
  * @deprecated
@@ -320,8 +384,13 @@ __deprecated int at_params_string_get(const struct at_param_list *list, size_t i
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
+#if CONFIG_UNITY || CONFIG_ZTEST
+int at_params_string_ptr_get(const struct at_param_list *list, size_t index,
+			     const char **at_param, size_t *len);
+#else
 __deprecated int at_params_string_ptr_get(const struct at_param_list *list, size_t index,
 					  const char **at_param, size_t *len);
+#endif
 
 /**
  * @deprecated
@@ -341,8 +410,13 @@ __deprecated int at_params_string_ptr_get(const struct at_param_list *list, size
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
+#if CONFIG_UNITY || CONFIG_ZTEST
+int at_params_array_get(const struct at_param_list *list, size_t index,
+			uint32_t *array, size_t *len);
+#else
 __deprecated int at_params_array_get(const struct at_param_list *list, size_t index,
 				     uint32_t *array, size_t *len);
+#endif
 
 /**
  * @deprecated
@@ -352,7 +426,11 @@ __deprecated int at_params_array_get(const struct at_param_list *list, size_t in
  *
  * @return The number of valid parameters until an empty parameter is found.
  */
+#if CONFIG_UNITY || CONFIG_ZTEST
+uint32_t at_params_valid_count_get(const struct at_param_list *list);
+#else
 __deprecated uint32_t at_params_valid_count_get(const struct at_param_list *list);
+#endif
 
 /**
  * @deprecated
@@ -363,7 +441,11 @@ __deprecated uint32_t at_params_valid_count_get(const struct at_param_list *list
  *
  * @return Return parameter type of @ref at_param_type.
  */
+#if CONFIG_UNITY || CONFIG_ZTEST
+enum at_param_type at_params_type_get(const struct at_param_list *list, size_t index);
+#else
 __deprecated enum at_param_type at_params_type_get(const struct at_param_list *list, size_t index);
+#endif
 
 /** @} */
 
