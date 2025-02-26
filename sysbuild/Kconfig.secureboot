@@ -46,11 +46,9 @@ choice SECURE_BOOT_SIGNING
 
 config SECURE_BOOT_SIGNING_PYTHON
 	bool "Sign with Python ecdsa library"
-	select SECURE_BOOT_PRIVATE_KEY_PROVIDED
 
 config SECURE_BOOT_SIGNING_OPENSSL
 	bool "Sign with openssl command line tool"
-	select SECURE_BOOT_PRIVATE_KEY_PROVIDED
 
 config SECURE_BOOT_SIGNING_CUSTOM
 	bool "Sign with custom command"
