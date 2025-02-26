@@ -59,3 +59,12 @@
   platforms:
     - nrf7002dk/nrf5340/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31774"
+
+- scenarios:
+    - at_cmd_parser.at_utils
+    - at_cmd_parser.at_params
+    - at_cmd_parser.at_cmd_parser
+  platforms:
+    - native_sim/native
+    - qemu_cortex_m3/ti_lm3s6965
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-32030"
