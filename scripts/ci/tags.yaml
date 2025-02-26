@@ -875,7 +875,9 @@ ci_tests_lib_nrf_fuel_gauge:
 
 ci_tests_lib_at_cmd_parser:
   files:
+    - nrf/include/modem/
     - nrf/lib/at_cmd_parser/
+    - nrf/lib/modem_info/
     - nrf/tests/lib/at_cmd_parser/
 
 ci_tests_lib_at_parser:
