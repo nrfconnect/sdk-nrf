@@ -25,7 +25,7 @@ class Rtt2Stream:
 
         self.event_close = event_close
 
-        self.logger = logging.getLogger('Profiler Rtt to stream')
+        self.logger = logging.getLogger('rtt2stream')
         self.logger_console = logging.StreamHandler()
         self.logger.setLevel(log_lvl)
         self.log_format = logging.Formatter('[%(levelname)s] %(name)s: %(message)s')
