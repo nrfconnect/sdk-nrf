@@ -5,6 +5,7 @@
  */
 
 #include <zephyr/kernel.h>
+#include <zephyr/cache.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/counter.h>
 #include <zephyr/logging/log.h>
@@ -13,6 +14,11 @@
 
 LOG_MODULE_REGISTER(idle_counter);
 
+#define SHM_START_ADDR (DT_REG_ADDR(DT_NODELABEL(cpuapp_cpurad_ipc_shm)))
+volatile static uint32_t *shared_var = (volatile uint32_t *)SHM_START_ADDR;
+#define HOST_IS_READY	(1)
+#define REMOTE_IS_READY (2)
+
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 
 #define ALARM_CHANNEL_ID (0)
@@ -20,9 +26,9 @@ const struct device *const counter_dev = DEVICE_DT_GET(DT_ALIAS(counter));
 
 static K_SEM_DEFINE(my_sem, 0, 1);
 
-#if defined(CONFIG_CLOCK_CONTROL) && defined(CONFIG_SOC_NRF54H20_CPUAPP)
 const uint32_t freq[] = {320, 256, 128, 64};
 
+#if defined(CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING)
 /*
  * Set Global Domain frequency (HSFLL120)
  */
@@ -45,12 +51,11 @@ void set_global_domain_frequency(uint32_t freq)
 	__ASSERT(err == 0, "Wrong clock control request return code");
 	__ASSERT(res == 0, "Wrong clock control request response");
 }
-#endif /* CONFIG_CLOCK_CONTROL && CONFIG_SOC_NRF54H20_CPUAPP */
+#endif /* CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING */
 
 void counter_handler(const struct device *counter_dev, uint8_t chan_id, uint32_t ticks,
 		     void *user_data)
 {
-	gpio_pin_set_dt(&led, 1);
 	k_sem_give(&my_sem);
 	counter_stop(counter_dev);
 }
@@ -92,6 +97,17 @@ void verify_timer(uint32_t start_time)
 		 "expected time to elapse is 1s");
 }
 
+void sleep_with_state_indication(uint32_t sleep_duration_ms)
+{
+	int ret;
+
+	ret = gpio_pin_set_dt(&led, 0);
+	__ASSERT(ret == 0, "Unable to turn off LED");
+	k_msleep(sleep_duration_ms);
+	ret = gpio_pin_set_dt(&led, 1);
+	__ASSERT(ret == 0, "Unable to turn on LED");
+}
+
 int main(void)
 {
 	uint32_t start_time;
@@ -106,28 +122,45 @@ int main(void)
 	/* Wait a bit to solve NRFS request timeout issue. */
 	k_msleep(500);
 
+	/* Synchronize Remote core with Host core */
+#if !defined(CONFIG_TEST_ROLE_REMOTE)
+	LOG_DBG("HOST starts");
+	*shared_var = HOST_IS_READY;
+	sys_cache_data_flush_range((void *)shared_var, sizeof(*shared_var));
+	LOG_DBG("HOST wrote HOST_IS_READY: %u", *shared_var);
+	while (*shared_var != REMOTE_IS_READY) {
+		sys_cache_data_invd_range((void *)shared_var, sizeof(*shared_var));
+		LOG_DBG("shared_var is: %u", *shared_var);
+	}
+	LOG_DBG("HOST continues");
+#else
+	LOG_DBG("REMOTE starts");
+	while (*shared_var != HOST_IS_READY) {
+		sys_cache_data_invd_range((void *)shared_var, sizeof(*shared_var));
+		LOG_DBG("shared_var is: %u", *shared_var);
+	}
+	LOG_DBG("REMOTE found that HOST_IS_READY");
+	*shared_var = REMOTE_IS_READY;
+	sys_cache_data_flush_range((void *)shared_var, sizeof(*shared_var));
+	LOG_DBG("REMOTE wrote REMOTE_IS_READY: %u", *shared_var);
+	LOG_DBG("REMOTE continues");
+#endif
+
 	while (1) {
-		ret = gpio_pin_set_dt(&led, 0);
-		__ASSERT(ret == 0, "Unable to turn off LED");
-		k_msleep(CONFIG_TEST_SLEEP_DURATION_MS);
+		sleep_with_state_indication(CONFIG_TEST_SLEEP_DURATION_MS);
+		for (int i = 0; i < ARRAY_SIZE(freq); i++) {
+			start_time = start_timer(counter_dev);
+			k_msleep(100);
+#if defined(CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING)
+			sleep_with_state_indication(CONFIG_TEST_SLEEP_DURATION_MS / 2 - 100);
+			set_global_domain_frequency(freq[(i + 1) % ARRAY_SIZE(freq)]);
+			k_msleep(10);
+#endif /* CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING */
+			verify_timer(start_time);
+		}
 		ret = gpio_pin_set_dt(&led, 1);
 		__ASSERT(ret == 0, "Unable to turn on LED");
-		k_busy_wait(100000);
-
-#if defined(CONFIG_CLOCK_CONTROL) && defined(CONFIG_SOC_NRF54H20_CPUAPP)
-		for (int i = 0; i <= ARRAY_SIZE(freq); i++) {
-			start_time = start_timer(counter_dev);
-			if (i) {
-				set_global_domain_frequency(freq[i - 1]);
-			}
-			verify_timer(start_time);
-			k_busy_wait(100000);
-		}
-#else
-		start_time = start_timer(counter_dev);
-		verify_timer(start_time);
-		k_busy_wait(100000);
-#endif /* CONFIG_CLOCK_CONTROL && CONFIG_SOC_NRF54H20_CPUAPP */
+		k_msleep(100);
 	}
 
 	return 0;
