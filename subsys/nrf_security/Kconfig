@@ -210,7 +210,6 @@ config MBEDTLS_MAC_ALL_ENABLED
 
 config MBEDTLS_MAC_SHA256_ENABLED
 	bool "Enable the SHA-224 and SHA-256 hash algorithms"
-	default y
 	select PSA_WANT_ALG_SHA_224
 	select PSA_WANT_ALG_SHA_256
 	select PSA_WANT_ALG_HMAC
