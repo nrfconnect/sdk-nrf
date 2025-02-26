@@ -525,6 +525,7 @@
 /samples/net/                             @nrfconnect/ncs-cia @nrfconnect/ncs-modem
 /samples/nfc/                             @nrfconnect/ncs-si-muffin
 /samples/nrf5340/netboot/                 @nrfconnect/ncs-pluto
+/samples/nrf5340/extxip_smp_svr/          @nrfconnect/ncs-pluto
 /samples/nrf_rpc/                         @nrfconnect/ncs-si-muffin
 /samples/sensor/bh1749/                   @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-cia
