@@ -8,7 +8,7 @@ source "share/sysbuild/Kconfig"
 
 config APP_CPUFLPR_RUN
 	bool "Run the CoreMark benchmark on the FLPR core"
-	depends on SUPPORT_FLPRCORE && !SOC_NRF54H20_CPUAPP
+	depends on SUPPORT_FLPRCORE
 	default y
 
 config APP_CPUNET_RUN

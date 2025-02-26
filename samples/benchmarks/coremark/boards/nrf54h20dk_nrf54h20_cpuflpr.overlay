@@ -1,0 +1,13 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Disable the default UART node for the FLPR core, as logs are forwarded
+ * with STM and the application core UART. This setting also prevents access
+ * issues to the same UART instance from two or more different cores.
+ */
+&uart120 {
+	status = "disabled";
+};
