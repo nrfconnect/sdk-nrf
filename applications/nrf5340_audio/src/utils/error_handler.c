@@ -16,9 +16,14 @@ LOG_MODULE_REGISTER(error_handler, CONFIG_ERROR_HANDLER_LOG_LEVEL);
 
 #if (defined(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP) && (CONFIG_DEBUG))
 /* nRF5340 Audio DK center RGB LED */
-static const struct gpio_dt_spec center_led_r = GPIO_DT_SPEC_GET(DT_NODELABEL(rgb1_red), gpios);
-static const struct gpio_dt_spec center_led_g = GPIO_DT_SPEC_GET(DT_NODELABEL(rgb1_green), gpios);
-static const struct gpio_dt_spec center_led_b = GPIO_DT_SPEC_GET(DT_NODELABEL(rgb1_blue), gpios);
+static const struct gpio_dt_spec error_led_0 = GPIO_DT_SPEC_GET(DT_NODELABEL(rgb1_red), gpios);
+static const struct gpio_dt_spec error_led_1 = GPIO_DT_SPEC_GET(DT_NODELABEL(rgb1_green), gpios);
+static const struct gpio_dt_spec error_led_2 = GPIO_DT_SPEC_GET(DT_NODELABEL(rgb1_blue), gpios);
+#elif defined(CONFIG_DEBUG)
+static const struct gpio_dt_spec error_led_0 = GPIO_DT_SPEC_GET(DT_NODELABEL(led0), gpios);
+static const struct gpio_dt_spec error_led_1 = GPIO_DT_SPEC_GET(DT_NODELABEL(led1), gpios);
+static const struct gpio_dt_spec error_led_2 = GPIO_DT_SPEC_GET(DT_NODELABEL(led2), gpios);
+static const struct gpio_dt_spec error_led_3 = GPIO_DT_SPEC_GET(DT_NODELABEL(led3), gpios);
 #endif /* (defined(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP) && (CONFIG_DEBUG)) */
 
 void error_handler(unsigned int reason, const struct arch_esf *esf)
@@ -27,9 +32,14 @@ void error_handler(unsigned int reason, const struct arch_esf *esf)
 	LOG_ERR("Caught system error -- reason %d. Entering infinite loop", reason);
 	LOG_PANIC();
 #if defined(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP)
-	(void)gpio_pin_configure_dt(&center_led_r, GPIO_OUTPUT_ACTIVE);
-	(void)gpio_pin_configure_dt(&center_led_g, GPIO_OUTPUT_INACTIVE);
-	(void)gpio_pin_configure_dt(&center_led_b, GPIO_OUTPUT_INACTIVE);
+	(void)gpio_pin_configure_dt(&error_led_0, GPIO_OUTPUT_ACTIVE);
+	(void)gpio_pin_configure_dt(&error_led_1, GPIO_OUTPUT_INACTIVE);
+	(void)gpio_pin_configure_dt(&error_led_2, GPIO_OUTPUT_INACTIVE);
+#else
+	(void)gpio_pin_configure_dt(&error_led_0, GPIO_OUTPUT_ACTIVE);
+	(void)gpio_pin_configure_dt(&error_led_1, GPIO_OUTPUT_INACTIVE);
+	(void)gpio_pin_configure_dt(&error_led_2, GPIO_OUTPUT_INACTIVE);
+	(void)gpio_pin_configure_dt(&error_led_3, GPIO_OUTPUT_INACTIVE);
 #endif /* defined(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP) */
 	irq_lock();
 	while (1) {

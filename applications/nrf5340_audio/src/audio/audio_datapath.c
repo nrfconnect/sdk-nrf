@@ -354,9 +354,9 @@ static void pres_comp_state_set(enum pres_comp_state new_state)
 	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Pres comp state: %s", pres_comp_state_names[new_state]);
 	if (new_state == PRES_STATE_LOCKED) {
-		ret = led_on(LED_APP_2_GREEN);
+		ret = led_on(LED_AUDIO_SYNC_STATUS);
 	} else {
-		ret = led_off(LED_APP_2_GREEN);
+		ret = led_off(LED_AUDIO_SYNC_STATUS);
 	}
 	ERR_CHK(ret);
 }
