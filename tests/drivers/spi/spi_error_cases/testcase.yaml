@@ -1,0 +1,15 @@
+common:
+  # depends_on: spi
+  tags:
+    - drivers
+    - spi
+    - ci_tests_drivers_spi
+  harness: ztest
+  harness_config:
+    fixture: gpio_spi_loopback
+tests:
+  nrf.extended.drivers.spi.spi_error_cases:
+    platform_allow:
+      - nrf54l20pdk/nrf54l20/cpuapp
+    integration_platforms:
+      - nrf54l20pdk/nrf54l20/cpuapp
