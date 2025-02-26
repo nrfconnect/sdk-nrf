@@ -1,6 +1,6 @@
 config SDP_MSPI_MAX_RESPONSE_SIZE
 	int "Max size of response that can be sent to APP core. In bytes."
-	default 128
+	default 524
 
 config SDP_MSPI_IPC_NO_COPY
 	bool "IPC no copy mode"
