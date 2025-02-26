@@ -42,7 +42,7 @@ suit_plat_err_t suit_dfu_cache_sink_get(struct stream_sink *sink, uint8_t cache_
 
 		struct suit_nvm_device_info device_info;
 
-		if (suit_dfu_cache_rw_device_info_get(cache_partition_id, &device_info) !=
+		if (suit_dfu_cache_rw_declared_device_info_get(cache_partition_id, &device_info) !=
 		    SUIT_PLAT_SUCCESS) {
 			return SUIT_PLAT_ERR_NOT_FOUND;
 		}
