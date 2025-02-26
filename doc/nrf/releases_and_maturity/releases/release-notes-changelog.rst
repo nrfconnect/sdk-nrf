@@ -327,6 +327,13 @@ Bluetooth samples
 
   * Added reconnection to bonded devices based on their address.
 
+Bluetooth Mesh samples
+----------------------
+
+* :ref:`bluetooth_mesh_light_lc` sample:
+
+  * Disabled friend feature when sample is compiled for the :ref:`zephyr:nrf52dk_nrf52832` board to improve available RAM.
+
 Bluetooth Fast Pair samples
 ---------------------------
 
