@@ -1532,6 +1532,22 @@ KRKNWK-12115: Simultaneous commissioning of many devices can cause the Coordinat
 KRKNWK-11826: Zigbee Router does not accept new child devices if the maximum number of children is reached
   Once the maximum number of children devices on a Zigbee Router is reached and one of them leaves the network, the Zigbee Router does not update the flags inside beacon frames to indicate that it cannot accept new devices.
 
+.. rst-class:: v2-9-0-nRF54H20-1-rc2 v2-9-0 v2-8-0 v2-7-0 v2-6-3 v2-6-2 v2-6-1 v2-6-0
+
+KRKNWK-19894: The Device Firmware Upgrade (DFU) from |NCS| 2.5 or older to a newer version may cause fatal error or abnormal behavior.
+
+   The issue occurs in the following conditions: the device initially uses FW built with |NCS| 2.5 or older, has configured ZCL Reporting feature (i.e. reports selected attributes),
+   then DFU is performed where the new FW is built based on |NCS| 2.6.0 or later.
+
+   During the upgrade, the NVRAM content is preserved. However, part of this content has a structure that is incompatible with the new FW, leading to abnormal behavior.
+
+   Symptoms: attribute reporting stops working, the device sends Report Attributes command very frequently, but these are corrupted (empty) messages,
+   most likely in such a state it is not possible to reconfigure the reporting feature.
+   In some cases of cluster configuration it is also possible that the FW will encounter a fatal error every time it starts.
+
+   **Workaround:** After detecting that the device has been upgraded, perform a NVRAM erase (all or just the part with ``ZB_NVRAM_ZCL_REPORTING_DATA`` id).
+   Note that this is a way to avoid abnormal behavior, but the consequence is the loss of configuration data, i.e. the need to reconfigure the device.
+
 .. rst-class:: v1-9-2 v1-9-1 v1-9-0 v1-8-0
 
 KRKNWK-11704: NCP communication gets stuck
