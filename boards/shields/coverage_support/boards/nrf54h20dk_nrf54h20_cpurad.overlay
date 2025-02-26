@@ -6,5 +6,5 @@
 
 /* Shrink by 128 KB */
 &cpurad_slot0_partition {
-	reg = <0x66000 DT_SIZE_K(128)>;
+	reg = <0x54000 DT_SIZE_K(128)>;
 };
