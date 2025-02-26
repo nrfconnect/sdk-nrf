@@ -513,6 +513,7 @@
 /samples/debug/ppi_trace/                 @nordic-krch
 /samples/dect/dect_phy/dect_shell/        @jhirsi
 /samples/dect/dect_phy/hello_dect/        @nrfconnect/ncs-modem
+/samples/drivers/audio/dmic/              @nrfconnect/ncs-low-level-test
 /samples/edge_impulse/                    @nrfconnect/ncs-si-muffin
 /samples/esb/                             @nrfconnect/ncs-si-muffin
 /samples/event_manager_proxy/             @nrfconnect/ncs-si-muffin
