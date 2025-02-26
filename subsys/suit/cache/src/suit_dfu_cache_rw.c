@@ -571,6 +571,18 @@ suit_plat_err_t suit_dfu_cache_rw_device_info_get(uint8_t cache_partition_id,
 	return SUIT_PLAT_ERR_INVAL;
 }
 
+suit_plat_err_t suit_dfu_cache_rw_active_device_info_get(uint8_t cache_partition_id,
+							 struct suit_nvm_device_info *device_info)
+{
+	suit_plat_err_t ret = suit_dfu_cache_rw_device_info_get(cache_partition_id, device_info);
+
+	if ((ret == SUIT_PLAT_SUCCESS) && (device_info->fdev == NULL)) {
+		return SUIT_PLAT_ERR_NOT_FOUND;
+	}
+
+	return ret;
+}
+
 suit_plat_err_t suit_dfu_cache_rw_slot_create(uint8_t cache_partition_id,
 					      struct suit_cache_slot *slot, const uint8_t *uri,
 					      size_t uri_size)
