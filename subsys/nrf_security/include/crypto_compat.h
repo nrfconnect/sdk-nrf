@@ -1,5 +1,5 @@
 /**
- * \file psa/crypto_compat.h
+ * \file crypto_compat.h
  *
  * \brief PSA cryptography module: Backward compatibility aliases
  *
@@ -46,12 +46,12 @@ static inline int psa_key_handle_is_null(psa_key_handle_t handle)
 /** Open a handle to an existing persistent key.
  *
  * Open a handle to a persistent key. A key is persistent if it was created
- * with a lifetime other than #PSA_KEY_LIFETIME_VOLATILE. A persistent key
+ * with a lifetime other than PSA_KEY_LIFETIME_VOLATILE. A persistent key
  * always has a nonzero key identifier, set with psa_set_key_id() when
  * creating the key. Implementations may provide additional pre-provisioned
  * keys that can be opened with psa_open_key(). Such keys have an application
  * key identifier in the vendor range, as documented in the description of
- * #psa_key_id_t.
+ * psa_key_id_t.
  *
  * The application must eventually close the handle with psa_close_key() or
  * psa_destroy_key() to release associated resources. If the application dies
@@ -93,11 +93,11 @@ static inline int psa_key_handle_is_null(psa_key_handle_t handle)
  *         permission to access it. Note that this specification does not
  *         define any way to create such a key, but it may be possible
  *         through implementation-specific means.
- * \retval #PSA_ERROR_COMMUNICATION_FAILURE \emptydescription
- * \retval #PSA_ERROR_CORRUPTION_DETECTED \emptydescription
- * \retval #PSA_ERROR_STORAGE_FAILURE \emptydescription
- * \retval #PSA_ERROR_DATA_INVALID \emptydescription
- * \retval #PSA_ERROR_DATA_CORRUPT \emptydescription
+ * \retval #PSA_ERROR_COMMUNICATION_FAILURE
+ * \retval PSA_ERROR_CORRUPTION_DETECTED
+ * \retval #PSA_ERROR_STORAGE_FAILURE
+ * \retval PSA_ERROR_DATA_INVALID
+ * \retval #PSA_ERROR_DATA_CORRUPT
  * \retval #PSA_ERROR_BAD_STATE
  *         The library has not been previously initialized by psa_crypto_init().
  *         It is implementation-dependent whether a failure to initialize
@@ -137,8 +137,8 @@ psa_status_t psa_open_key(mbedtls_svc_key_id_t key,
  *         \p handle was a valid handle or \c 0. It is now closed.
  * \retval #PSA_ERROR_INVALID_HANDLE
  *         \p handle is not a valid handle nor \c 0.
- * \retval #PSA_ERROR_COMMUNICATION_FAILURE \emptydescription
- * \retval #PSA_ERROR_CORRUPTION_DETECTED \emptydescription
+ * \retval #PSA_ERROR_COMMUNICATION_FAILURE
+ * \retval PSA_ERROR_CORRUPTION_DETECTED
  * \retval #PSA_ERROR_BAD_STATE
  *         The library has not been previously initialized by psa_crypto_init().
  *         It is implementation-dependent whether a failure to initialize
@@ -175,8 +175,8 @@ psa_status_t psa_close_key(psa_key_handle_t handle);
  * \param[in] data              Ignored.
  * \param data_length           Must be 0.
  *
- * \retval #PSA_SUCCESS \emptydescription
- * \retval #PSA_ERROR_NOT_SUPPORTED \emptydescription
+ * \retval #PSA_SUCCESS
+ * \retval #PSA_ERROR_NOT_SUPPORTED
  */
 static inline psa_status_t MBEDTLS_DEPRECATED psa_set_key_domain_parameters(
 	psa_key_attributes_t *attributes,
@@ -202,7 +202,7 @@ static inline psa_status_t MBEDTLS_DEPRECATED psa_set_key_domain_parameters(
  * \param data_size             Ignored.
  * \param[out] data_length      Set to 0.
  *
- * \retval #PSA_SUCCESS \emptydescription
+ * \retval #PSA_SUCCESS
  */
 static inline psa_status_t MBEDTLS_DEPRECATED psa_get_key_domain_parameters(
 	const psa_key_attributes_t *attributes,
