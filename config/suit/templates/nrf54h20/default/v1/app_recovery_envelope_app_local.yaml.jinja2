@@ -1,3 +1,9 @@
+# Consistency checks for the build configuration
+{%-  import 'consistency_checks.jinja' as consistency_checks -%}
+
+# Verify signature verification configuration
+{{ consistency_checks.suit_verify_signature_check("APP_RECOVERY", sysbuild, sysbuild) }}
+
 {%- set component_index = 0 %}
 {%- set component_list = [] %}
 {%- set dependencies_list = [] %}
@@ -85,7 +91,6 @@ SUIT_Envelope_Tagged:
 {%- for component_element in dependencies_list %}
         "{{ component_element }}": {}
 {%- endfor %}
-
     suit-validate:
 {% if dependencies_list|length > 0 %}
     - suit-directive-set-component-index: [{{ dependencies_list|join(',') }}]
