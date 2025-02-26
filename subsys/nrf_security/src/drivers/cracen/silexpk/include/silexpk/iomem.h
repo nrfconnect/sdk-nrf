@@ -7,6 +7,7 @@
 #ifndef IOMEM_HEADER_FILE
 #define IOMEM_HEADER_FILE
 
+
 #include <string.h>
 
 #ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
@@ -14,7 +15,6 @@
 #else
 #define SX_WARN_UNALIGNED_ADDR(addr)
 #endif
-
 /** Clear device memory
  *
  * @param[in] dst Memory to clear.
@@ -46,15 +46,8 @@ void sx_wrpkmem(void *dst, const void *src, size_t sz);
  * Will be modified after this call
  * @param[in] input_byte The byte value to be written.
  */
-#ifndef CONFIG_SOC_NRF54L20
-static inline void sx_wrpkmem_byte(void *dst, char input_byte)
-{
-	volatile char *d = (volatile char *)dst;
-	*d = input_byte;
-}
-#else
+
 void sx_wrpkmem_byte(void *dst, char input_byte);
-#endif
 
 /** Read from device memory at src into normal memory at dst.
  *
