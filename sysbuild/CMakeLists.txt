@@ -571,8 +571,8 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     include_sdp()
   endif()
 
-  if(SB_CONFIG_APPROTECT_USE_UICR OR SB_CONFIG_APPROTECT_LOCK OR SB_CONFIG_APPROTECT_USER_HANDLING OR
-     SB_CONFIG_SECURE_APPROTECT_USE_UICR OR SB_CONFIG_SECURE_APPROTECT_LOCK OR SB_CONFIG_SECURE_APPROTECT_USER_HANDLING)
+  if(SB_CONFIG_APPROTECT_USE_UICR OR SB_CONFIG_APPROTECT_LOCK OR SB_CONFIG_APPROTECT_USER_HANDLING OR SB_CONFIG_APPROTECT_DISABLE OR
+     SB_CONFIG_SECURE_APPROTECT_USE_UICR OR SB_CONFIG_SECURE_APPROTECT_LOCK OR SB_CONFIG_SECURE_APPROTECT_USER_HANDLING OR SB_CONFIG_SECURE_APPROTECT_DISABLE)
     # Apply APPROTECT configuration to target images
     if(SB_CONFIG_APPROTECT_USE_UICR)
       set(normal_approtect CONFIG_NRF_APPROTECT_USE_UICR)
@@ -580,6 +580,8 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       set(normal_approtect CONFIG_NRF_APPROTECT_LOCK)
     elseif(SB_CONFIG_APPROTECT_USER_HANDLING)
       set(normal_approtect CONFIG_NRF_APPROTECT_USER_HANDLING)
+    elseif(SB_CONFIG_APPROTECT_DISABLE)
+      set(normal_approtect CONFIG_NRF_APPROTECT_DISABLE)
     endif()
 
     if(SB_CONFIG_SECURE_APPROTECT_USE_UICR)
@@ -588,6 +590,8 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       set(secure_approtect CONFIG_NRF_SECURE_APPROTECT_LOCK)
     elseif(SB_CONFIG_SECURE_APPROTECT_USER_HANDLING)
       set(secure_approtect CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING)
+    elseif(SB_CONFIG_SECURE_APPROTECT_DISABLE)
+      set(secure_approtect CONFIG_NRF_SECURE_APPROTECT_DISABLE)
     endif()
 
     if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_NONE)
@@ -595,13 +599,19 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     endif()
 
     foreach(image ${IMAGES})
-      if(secure_approtect AND SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_NONE AND ${image} IN_LIST network_images)
+      if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_NONE AND ${image} IN_LIST network_images)
         # Network core image
-        set_config_bool(${image} ${normal_approtect} y)
-      elseif(normal_approtect)
+        if(normal_approtect)
+          set_config_bool(${image} ${normal_approtect} y)
+        endif()
+      else()
         # Application (or other) core image
-        set_config_bool(${image} ${normal_approtect} y)
-        set_config_bool(${image} ${secure_approtect} y)
+        if(normal_approtect)
+          set_config_bool(${image} ${normal_approtect} y)
+        endif()
+        if(secure_approtect)
+          set_config_bool(${image} ${secure_approtect} y)
+        endif()
       endif()
     endforeach()
 
