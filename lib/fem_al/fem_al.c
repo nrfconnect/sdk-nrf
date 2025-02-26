@@ -186,6 +186,7 @@ int fem_tx_configure(uint32_t ramp_up_time)
 
 	fem_activate_event.event.timer.counter_period.end = ramp_up_time;
 
+	mpsl_fem_enable();
 	err = mpsl_fem_pa_configuration_set(&fem_activate_event, &fem_deactivate_evt);
 	if (err) {
 		printk("PA configuration set failed (err %d)\n", err);
@@ -201,6 +202,7 @@ int fem_rx_configure(uint32_t ramp_up_time)
 
 	fem_activate_event.event.timer.counter_period.end = ramp_up_time;
 
+	mpsl_fem_enable();
 	err = mpsl_fem_lna_configuration_set(&fem_activate_event, &fem_deactivate_evt);
 	if (err) {
 		printk("LNA configuration set failed (err %d)\n", err);
@@ -248,6 +250,11 @@ int fem_txrx_configuration_clear(void)
 	err = mpsl_fem_lna_configuration_clear();
 	if (err) {
 		printk("Failed to clear LNA configuration\n");
+		return -EPERM;
+	}
+	err = mpsl_fem_disable();
+	if (err) {
+		printk("Failed to disable front-end module\n");
 		return -EPERM;
 	}
 
