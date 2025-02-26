@@ -2,9 +2,9 @@
 
 .. ### Versions
 
-.. |release| replace:: v2.9.0-nRF54H20-1-rc2
-.. |release_tt| replace:: ``v2.9.0-nRF54H20-1-rc2``
-.. |release_number_tt| replace:: ``2.9.0-nRF54H20-1-rc2``
+.. |release| replace:: 3.0.0-preview1
+.. |release_tt| replace:: ``v3.0.0-preview1``
+.. |release_number_tt| replace:: ``3.0.0-preview1``
 
 .. |jlink_ver| replace:: v8.10f
 .. |jlink_ver_vsc| replace:: v7.94i
