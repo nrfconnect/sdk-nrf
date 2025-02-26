@@ -119,6 +119,10 @@ uint32_t psa_version(uint32_t sid);
 /**
  * \brief Connect to an RoT Service by its SID.
  *
+ * The call is invalid if one or more of the following are true:
+ * - The RoT Service ID is not present.
+ * - The RoT Service version is not supported.
+ * - The caller is not allowed to access the RoT service.
  * \param[in] sid               ID of the RoT Service to connect to.
  * \param[in] version           Requested version of the RoT Service.
  *
@@ -127,12 +131,6 @@ uint32_t psa_version(uint32_t sid);
  *                              connection.
  * \retval PSA_ERROR_CONNECTION_BUSY The SPM or RoT Service cannot make the
  *                              connection at the moment.
- * \retval "PROGRAMMER ERROR"   The call is a PROGRAMMER ERROR if one or more
- *                              of the following are true:
- * \arg                           The RoT Service ID is not present.
- * \arg                           The RoT Service version is not supported.
- * \arg                           The caller is not allowed to access the RoT
- *                                service.
  */
 psa_handle_t psa_connect(uint32_t sid, uint32_t version);
 
@@ -147,6 +145,14 @@ psa_handle_t psa_connect(uint32_t sid, uint32_t version);
  *        range has to be reduced into a 16-bit integer. So with this encoding,
  *        the valid range for 'type' is 0-32767.
  *
+ * The call is invalid if one or more of the following are true:
+ * - An invalid handle was passed.
+ * - The connection is already handling a request.
+ * - type < 0.
+ * - An invalid memory reference was provided.
+ * - in_len + out_len > PSA_MAX_IOVEC.
+ * - The message is unrecognized by the RoT Service or incorrectly formatted.
+ *
  * \param[in] handle            A handle to an established connection.
  * \param[in] type              The request type.
  *                              Must be zero( \ref PSA_IPC_CALL) or positive.
@@ -157,16 +163,6 @@ psa_handle_t psa_connect(uint32_t sid, uint32_t version);
  *
  * \retval >=0                  RoT Service-specific status value.
  * \retval <0                   RoT Service-specific error code.
- * \retval PSA_ERROR_PROGRAMMER_ERROR The connection has been terminated by the
- *                              RoT Service. The call is a PROGRAMMER ERROR if
- *                              one or more of the following are true:
- * \arg                           An invalid handle was passed.
- * \arg                           The connection is already handling a request.
- * \arg                           type < 0.
- * \arg                           An invalid memory reference was provided.
- * \arg                           in_len + out_len > PSA_MAX_IOVEC.
- * \arg                           The message is unrecognized by the RoT
- *                                Service or incorrectly formatted.
  */
 psa_status_t psa_call(psa_handle_t handle, int32_t type,
                       const psa_invec *in_vec,
@@ -177,16 +173,12 @@ psa_status_t psa_call(psa_handle_t handle, int32_t type,
 /**
  * \brief Close a connection to an RoT Service.
  *
+ * The call is invalid if one or more of the following are true:
+ * - An invalid handle was provided that is not the null handle.
+ * - The connection is currently handling a request.
+ *
  * \param[in] handle            A handle to an established connection, or the
  *                              null handle.
- *
- * \retval void                 Success.
- * \retval "PROGRAMMER ERROR"   The call is a PROGRAMMER ERROR if one or more
- *                              of the following are true:
- * \arg                           An invalid handle was provided that is not
- *                                the null handle.
- * \arg                           The connection is currently handling a
- *                                request.
  */
 void psa_close(psa_handle_t handle);
 
