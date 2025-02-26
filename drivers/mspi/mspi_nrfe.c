@@ -408,6 +408,12 @@ static int api_dev_config(const struct device *dev, const struct mspi_dev_id *de
 				drv_cfg->mspicfg.max_freq);
 			return -EINVAL;
 		}
+
+		if (cfg->freq < drv_cfg->mspicfg.max_freq / UINT16_MAX) {
+			LOG_ERR("Invalid frequency: %u. MIN: %u", cfg->freq,
+				drv_cfg->mspicfg.max_freq / UINT16_MAX);
+			return -EINVAL;
+		}
 	}
 
 	if (param_mask & MSPI_DEVICE_CONFIG_IO_MODE) {
