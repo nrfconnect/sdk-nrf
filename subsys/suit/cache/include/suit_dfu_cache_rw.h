@@ -111,6 +111,15 @@ suit_plat_err_t suit_dfu_cache_drop_content(void);
  *
  * @return suit_plat_success on success, error code otherwise.
  */
+suit_plat_err_t
+suit_dfu_cache_rw_declared_device_info_get(uint8_t cache_partition_id,
+					   struct suit_nvm_device_info *device_info);
+
+/**
+ * @brief Gets information about characteristics of active cache partition
+ *
+ * @return suit_plat_success on success, error code otherwise.
+ */
 suit_plat_err_t suit_dfu_cache_rw_device_info_get(uint8_t cache_partition_id,
 						  struct suit_nvm_device_info *device_info);
 
