@@ -24,7 +24,7 @@ class StatsNordic():
         self.processed_data = ProcessedEvents()
         self.processed_data.read_data_from_files(events_filename, events_types_filename)
 
-        self.logger = logging.getLogger("Stats Nordic")
+        self.logger = logging.getLogger("stats_nordic")
         self.logger_console = logging.StreamHandler()
         self.logger.setLevel(log_lvl)
         self.log_format = logging.Formatter("[%(levelname)s] %(name)s: %(message)s")

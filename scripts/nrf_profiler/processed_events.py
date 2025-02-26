@@ -17,7 +17,7 @@ class ProcessedEvents():
         self.registered_events_types = {}
         self.tracked_events = []
 
-        self.logger = logging.getLogger('Processed Events')
+        self.logger = logging.getLogger('processed_events')
         self.logger_console = logging.StreamHandler()
         self.logger.setLevel(logging.WARNING)
         self.log_format = logging.Formatter(

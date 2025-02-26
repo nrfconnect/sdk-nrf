@@ -84,7 +84,7 @@ class PlotNordic():
         if event_close is not None:
             self.event_close = event_close
 
-        self.logger = logging.getLogger('Plot Nordic')
+        self.logger = logging.getLogger('plot_nordic')
         self.logger_console = logging.StreamHandler()
         self.logger.setLevel(log_lvl)
         self.log_format = logging.Formatter(
