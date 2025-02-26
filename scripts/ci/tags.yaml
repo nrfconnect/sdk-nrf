@@ -1390,8 +1390,10 @@ ci_samples_sdfw:
 
 ci_samples_dect:
   files:
-    - nrf/samples/dect/dect_phy/
+    - nrf/include/modem/
+    - nrf/lib/modem_info/
     - nrf/lib/nrf_modem_lib/
+    - nrf/samples/dect/dect_phy/
     - nrfxlib/nrf_modem/
     - zephyr/drivers/hwinfo/
 
