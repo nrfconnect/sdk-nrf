@@ -633,6 +633,7 @@
   - "tests/drivers/pwm/**/*"
   - "tests/drivers/sensor/**/*"
   - "tests/drivers/audio/**/*"
+  - "tests/drivers/spi/**/*"
 
 "CI-ps-test":
   - "samples/nrf_rpc/protocols_serialization/**/*"
