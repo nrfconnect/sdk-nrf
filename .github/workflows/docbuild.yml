@@ -34,6 +34,8 @@ jobs:
     steps:
       - name: Checkout sources
         uses: nrfconnect/action-checkout-west-update@main
+        with:
+          git-fetch-depth: 0
 
       - name: cache-pip
         uses: actions/cache@v4
@@ -178,6 +180,32 @@ jobs:
           zip -rq "$ARCHIVE" .
           mv "$ARCHIVE" "$ROOT"
           popd
+
+      - name: Find nRF Connect SDK Edited Documents
+        working-directory: ncs/nrf
+        run: |
+          COMMENT="comment.txt"
+          PREFIX="https://ncsdoc.z6.web.core.windows.net/PR-${{ github.event.pull_request.number }}/"
+          CHANGED=$(git diff --name-only --diff-filter=d "${{ github.event.pull_request.base.sha }}..HEAD")
+
+          echo "You can find the documentation preview for this PR [here](${PREFIX})." >> $COMMENT
+
+          NRF=$(echo "$CHANGED" | \
+                grep -e "doc/nrf/" | \
+                grep -e ".rst" | \
+                sed -e "s#^doc/nrf\(.*\)\.rst#${PREFIX}nrf\1.html#g")
+
+          NRF_EXT=$(echo "$CHANGED" | \
+                    grep -e "applications/" -e "samples/" -e "scripts/" -e "tests/" | \
+                    grep -e ".rst" | \
+                    sed -e "s#^\(applications\|samples\|scripts\|tests\)\(.*\)\.rst#${PREFIX}nrf\/\1\2.html#g")
+
+          NRF_ALL=$(printf "$NRF\n$NRF_EXT")
+
+          if [ ! -z "$NRF_ALL" ]; then
+            printf "\nPreview links for modified nRF Connect SDK documents:\n\n$NRF_ALL" >> $COMMENT
+          fi
+
       - name: Store
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'external') || contains(github.event.pull_request.labels.*.name, 'CI-trusted-author') }}
         uses: actions/upload-artifact@v4
@@ -187,3 +215,4 @@ jobs:
             ncs/nrf/*.zip
             ncs/nrf/monitor*.txt
             ncs/nrf/pr.txt
+            ncs/nrf/comment.txt
