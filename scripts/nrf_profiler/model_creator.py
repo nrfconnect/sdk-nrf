@@ -61,7 +61,7 @@ class ModelCreator:
         self.bufs = list()
         self.bcnt = 0
 
-        self.logger = logging.getLogger('Profiler model creator')
+        self.logger = logging.getLogger('model_creator')
         self.logger_console = logging.StreamHandler()
         self.logger.setLevel(log_lvl)
         self.log_format = logging.Formatter('[%(levelname)s] %(name)s: %(message)s')
