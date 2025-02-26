@@ -11,7 +11,8 @@
 
 #include "broadcast_sink.h"
 #include "zbus_common.h"
-#include "nrf5340_audio_dk.h"
+#include "board_init.h"
+#include "led_assignments.h"
 #include "led.h"
 #include "button_assignments.h"
 #include "macros_common.h"
@@ -208,7 +209,7 @@ static void le_audio_msg_sub_thread(void)
 
 			audio_system_start();
 			stream_state_set(STATE_STREAMING);
-			ret = led_blink(LED_APP_1_BLUE);
+			ret = led_blink(LED_AUDIO_CONN_STATUS);
 			ERR_CHK(ret);
 
 			break;
@@ -223,7 +224,7 @@ static void le_audio_msg_sub_thread(void)
 
 			stream_state_set(STATE_PAUSED);
 			audio_system_stop();
-			ret = led_on(LED_APP_1_BLUE);
+			ret = led_on(LED_AUDIO_CONN_STATUS);
 			ERR_CHK(ret);
 
 			break;
@@ -265,7 +266,7 @@ static void le_audio_msg_sub_thread(void)
 			if (strm_state == STATE_STREAMING) {
 				stream_state_set(STATE_PAUSED);
 				audio_system_stop();
-				ret = led_on(LED_APP_1_BLUE);
+				ret = led_on(LED_AUDIO_CONN_STATUS);
 				ERR_CHK(ret);
 			}
 
@@ -566,7 +567,7 @@ int main(void)
 
 	LOG_DBG("Main started");
 
-	ret = nrf5340_audio_dk_init();
+	ret = board_init();
 	ERR_CHK(ret);
 
 	ret = fw_info_app_print();
