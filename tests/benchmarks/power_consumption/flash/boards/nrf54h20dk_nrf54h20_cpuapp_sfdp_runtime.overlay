@@ -1,0 +1,54 @@
+/ {
+	aliases {
+		led = &led0;
+		/delete-property/ led1;
+		jedec-spi-nor = &mx25uw63;
+	};
+};
+
+/delete-node/ &led1;
+/delete-node/ &exmif;
+
+&pinctrl {
+	spi120_default: spi120_default {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 6, 0)>,
+				<NRF_PSEL(SPIM_MISO, 6, 5)>,
+				<NRF_PSEL(SPIM_MOSI, 6, 7)>;
+		};
+	};
+
+	spi120_sleep: spi120_sleep {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 6, 0)>,
+				<NRF_PSEL(SPIM_MISO, 6, 5)>,
+				<NRF_PSEL(SPIM_MOSI, 6, 7)>;
+			low-power-enable;
+		};
+	};
+};
+
+&spi120 {
+	compatible = "nordic,nrf-spim";
+	status = "okay";
+	pinctrl-0 = <&spi120_default>;
+	pinctrl-1 = <&spi120_sleep>;
+	pinctrl-names = "default", "sleep";
+	overrun-character = <0x00>;
+	memory-regions = <&dma_fast_region>;
+	cs-gpios = <&gpio6 3 GPIO_ACTIVE_HIGH>;
+	zephyr,pm-device-runtime-auto;
+	mx25uw63: mx25uw6345g@0 {
+      compatible = "jedec,spi-nor";
+      status = "okay";
+      reg = < 0x0 >;
+      jedec-id = [ C2 84 37 ];
+      size = < 0x2000000 >;
+      spi-max-frequency = <DT_FREQ_M(4)>;
+      has-dpd;
+      t-enter-dpd = < 0x2710 >;
+      t-exit-dpd = < 0x7530 >;
+      reset-gpios = < &gpio6 0xc 0x1 >;
+    };
+};
+
