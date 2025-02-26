@@ -1530,3 +1530,8 @@ ci_samples_drivers_audio_dmic:
   files:
     - nrf/samples/drivers/audio/dmic/
     - zephyr/samples/drivers/audio/dmic/
+
+ci_tests_drivers_spi:
+  files:
+    - nrf/tests/drivers/spi/
+    - zephyr/tests/drivers/spi/
