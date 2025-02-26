@@ -43,7 +43,13 @@ For detailed information, refer to the hardware documentation.
      - Issuing an ``ERASEALL`` command through CTRL-AP.
        This command erases the flash, UICR, and RAM, including ``UICR.APPROTECT``.
 
-       To keep the AP-Protect disabled, ``UICR.APPROTECT`` must be programmed to ``HwDisabled`` and the firmware must write ``SwDisable`` to ``APPROTECT.DISABLE``.
+       To keep the AP-Protect disabled, ``UICR.APPROTECT`` must be programmed to ``HwDisabled``.
+
+       Additionally:
+
+       - For nRF52, nRF53, and nRF91 devices, firmware must write ``SwDisable`` to ``APPROTECT.DISABLE``.
+
+       - For nRF54L devices, firmware must open the `debugger signals in Tamper Controller <nRF54L15 Debugger signals>`_.
 
 The following table lists related SoCs or SiPs with information about the AP-Protect mechanism they support.
 For some SoCs or SiPs, the AP-Protect implementation is different depending on the build code of the device.
@@ -63,22 +69,22 @@ See the related hardware documentation for more information about which implemen
      - n/a
      - ✔
      - `AP-Protect for nRF9161`_
-     - Also supports Secure AP-Protect (see note below)
+     - Also :ref:`supports Secure AP-Protect <secure_approtect_support>`
    * - nRF9151
      - n/a
      - ✔
      - `AP-Protect for nRF9151`_
-     - Also supports Secure AP-Protect (see note below)
+     - Also :ref:`supports Secure AP-Protect <secure_approtect_support>`
    * - nRF9131
      - n/a
      - ✔
      - *Documentation not yet available*
-     - Also supports Secure AP-Protect (see note below)
+     - Also :ref:`supports Secure AP-Protect <secure_approtect_support>`
    * - nRF9160
      - ✔
      - n/a
      - `Debugger access protection for nRF9160`_
-     - Also supports Secure AP-Protect (see note below)
+     - Also :ref:`supports Secure AP-Protect <secure_approtect_support>`
    * - nRF54H20
      - n/a
      - n/a
@@ -88,12 +94,12 @@ See the related hardware documentation for more information about which implemen
      - n/a
      - ✔
      - `AP-Protect for nRF54L15`_
-     - Also supports Secure AP-Protect (see note below)
+     - Also :ref:`supports Secure AP-Protect <secure_approtect_support>`
    * - nRF5340
      - n/a
      - ✔
      - `AP-Protect for nRF5340`_
-     - Also supports Secure AP-Protect (see note below)
+     - Also :ref:`supports Secure AP-Protect <secure_approtect_support>`
    * - nRF52840
      - ✔
      - ✔
@@ -130,10 +136,18 @@ See the related hardware documentation for more information about which implemen
      - `AP-Protect for nRF52805`_
      -
 
-.. note::
-    The SoCs or SiPs that support `ARM TrustZone`_ and different :ref:`app_boards_spe_nspe` (nRF5340, nRF54L15 and nRF91 Series) implement two AP-Protect systems: AP-Protect and Secure AP-Protect.
-    While AP-Protect blocks access to all CPU registers and memories, Secure AP-Protect limits access to the CPU to only non-secure accesses.
-    This means that the CPU is entirely unavailable while it is running the code in the Secure Processing Environment, and only non-secure registers and address-mapped resources can be accessed.
+.. _secure_approtect_support:
+
+Secure AP-Protect support
+=========================
+
+The SoCs or SiPs that support `ARM TrustZone`_ and different :ref:`app_boards_spe_nspe` (nRF5340, nRF54L15, and nRF91 Series devices) implement two AP-Protect systems: AP-Protect and Secure AP-Protect.
+
+- AP-Protect blocks access to all CPU registers and memories
+- Secure AP-Protect limits access to the CPU to only non-secure accesses.
+  This means that the CPU is entirely unavailable while it is running the code in the Secure Processing Environment, and only non-secure registers and address-mapped resources can be accessed.
+
+For information about how to configure Secure AP-Protect in the |NCS|, see :ref:`app_secure_approtect`.
 
 .. _app_approtect_ncs:
 
@@ -148,50 +162,65 @@ Based on the available implementation types, you can configure the access port p
    :widths: auto
 
    * - AP-Protect state
+     - Series or devices
      - Related Kconfig option in the |NCS|
      - Description of the AP-Protect state
      - AP-Protect implementation type
    * - Locked
+     - All Series and devices
      - :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK` (:kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK` for Secure AP-Protect)
      - In this state, CPU uses the MDK system start-up file to enable and lock AP-Protect. UICR is not modified.
      - Hardware and software
    * - Authenticated
+     - nRF53, nRF54L and nRF91 Series
      - :kconfig:option:`CONFIG_NRF_APPROTECT_USER_HANDLING` (:kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING` for Secure AP-Protect)
      - In this state, AP-Protect is left enabled and it is up to the user-space code to handle unlocking the device if needed.
        The MDK will close the debug AHB-AP, but not lock it, so the AHB-AP can be reopened by the firmware.
        Reopening the AHB-AP should be preceded by a handshake operation over UART, CTRL-AP Mailboxes, or some other communication channel.
      - Hardware and software
-   * - Open (default)
+   * - Open
+     - Default for nRF52, nRF53, and nRF91 Series
      - | :kconfig:option:`CONFIG_NRF_APPROTECT_USE_UICR` (:kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USE_UICR` for Secure AP-Protect)
        |
        | This option is set to ``y`` by default in the |NCS|.
      - In this state, AP-Protect follows the UICR register. If the UICR is open, meaning ``UICR.APPROTECT`` has the value ``Disabled``, the AP-Protect will be disabled. (The exact value, placement, the enumeration name, and format varies between nRF Series families.)
      - Hardware; hardware and software
+   * - Open
+     - Default for the nRF54L Series
+     - | :kconfig:option:`CONFIG_NRF_APPROTECT_DISABLE` (:kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_DISABLE` for Secure AP-Protect)
+       |
+       | This option is set to ``y`` by default in the |NCS|.
+     - In this state, AP-Protect is disabled.
+     - Hardware and software
 
 .. _app_approtect_ncs_lock:
 
 Enabling software AP-Protect with :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK`
 =============================================================================
 
-Setting the :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK` Kconfig option to ``y`` and compiling the firmware enables the software access protection mechanism for SoCs of the nRF53 Series and the SoC revisions of the nRF52 Series that feature the hardware and software type of AP-Protect.
-
-Enabling the Kconfig option writes the debugger register in the ``SystemInit()`` function to lock the access port protection at every boot.
-In addition to this, the ``UICR.APPROTECT`` register should be written as instructed in :ref:`app_approtect_uicr_approtect`.
-
-.. note::
-    For multi-image builds, :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK` needs to be set for the first image (usually a bootloader).
-    Otherwise, the software AP-Protect will not be sufficient as the debugger can be attached to the device after the first image opens the software AP-Protect with the :kconfig:option:`CONFIG_NRF_APPROTECT_USE_UICR` Kconfig option, which is the default value.
-
-    You can set this option manually or use sysbuild's ``SB_CONFIG_APPROTECT_LOCK`` Kconfig option to set it for all images at once.
+This option is valid for the nRF53 Series, the nRF54L Series, and the SoC revisions of the nRF52 Series that feature the hardware and software type of AP-Protect (see hardware documentation for more information).
 
 .. important::
     On the nRF91x1 Series devices, the register setting related to the :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK` Kconfig option does not persist in System ON IDLE mode.
     You must lock the ``UICR.APPROTECT`` register to enable the hardware AP-Protect mechanism as instructed in :ref:`app_approtect_uicr_approtect`.
 
+Setting the :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK` Kconfig option to ``y`` and compiling the firmware enables the software access protection mechanism for supported SoCs.
+
+Enabling the Kconfig option writes the debugger register in the ``SystemInit()`` function to lock the access port protection at every boot.
+For hardware protection, the ``UICR.APPROTECT`` register should be written as instructed in :ref:`app_approtect_uicr_approtect`.
+
+.. note::
+    For multi-image builds, :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK` needs to be set for the first image (usually a bootloader).
+    Otherwise, the software AP-Protect will not be sufficient as the debugger can be attached to the device after the first image opens the software AP-Protect, which is the default operation.
+
+    You can set this option manually or use sysbuild's ``SB_CONFIG_APPROTECT_LOCK`` Kconfig option to set it for all images at once.
+
 .. _app_approtect_ncs_user_handling:
 
 Enabling software AP-Protect with :kconfig:option:`CONFIG_NRF_APPROTECT_USER_HANDLING`
 ======================================================================================
+
+This option is valid for the nRF53 Series, the nRF54L Series and the nRF91 Series devices.
 
 Setting the :kconfig:option:`CONFIG_NRF_APPROTECT_USER_HANDLING` Kconfig option to ``y`` and compiling the firmware allows you to handle the state of the software AP-Protect at a later stage.
 This option in fact does not touch the mechanism and keeps it closed.
@@ -201,17 +230,29 @@ See the SoC or SiP hardware documentation for more information.
 
 .. note::
     For multi-image builds, :kconfig:option:`CONFIG_NRF_APPROTECT_USER_HANDLING` needs to be set for all images.
-    The default value is to open the device if the ``UICR.APPROTECT`` register is not set.
+    The default value is to open the device.
     This allows the debugger to be attached to the device.
 
     You can set this option manually for each image or use sysbuild's ``SB_CONFIG_APPROTECT_USER_HANDLING`` Kconfig option to set it for all images at once.
 
 .. _app_approtect_ncs_use_uicr:
 
-Enabling software AP-Protect with :kconfig:option:`CONFIG_NRF_APPROTECT_USE_UICR`
-=================================================================================
+Disabling software AP-Protect with :kconfig:option:`CONFIG_NRF_APPROTECT_USE_UICR`
+==================================================================================
+
+This option is valid for the nRF52 Series, the nRF53 Series, and the nRF91 Series devices.
 
 Setting the :kconfig:option:`CONFIG_NRF_APPROTECT_USE_UICR` Kconfig option to ``y`` and compiling the firmware makes the software AP-Protect disabled by default.
+This is the default setting in the |NCS|.
+
+You can start debugging the firmware without additional steps needed.
+
+Disabling software AP-Protect with :kconfig:option:`CONFIG_NRF_APPROTECT_DISABLE`
+=================================================================================
+
+This option is valid for the nRF54L Series devices.
+
+Setting the :kconfig:option:`CONFIG_NRF_APPROTECT_DISABLE` Kconfig option to ``y`` and compiling the firmware disables the software AP-Protect.
 This is the default setting in the |NCS|.
 
 You can start debugging the firmware without additional steps needed.
@@ -248,47 +289,65 @@ This set of commands enables the hardware AP-Protect (and Secure AP-Protect) and
 
 .. note::
     With devices that use software AP-Protect, nRF Util cannot enable hardware AP-Protect if the software AP-Protect is already enabled.
-    If you encounter errors with nRF Util, make sure that :kconfig:option:`CONFIG_NRF_APPROTECT_USE_UICR` is set.
+    If you encounter errors with nRF Util, make sure that software AP-Protect is disabled.
 
 .. _app_secure_approtect:
 
-Secure AP-Protect
-=================
+Configuring Secure AP-Protect
+=============================
 
 With :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` comes :ref:`security by separation <app_boards_spe_nspe>`, enabling a Secure Processing Environment (SPE) that is isolated from the Non-Secure Processing Environment (NSPE).
-TF-M is available for the nRF53 and nRF91 Series devices.
+TF-M is available for the nRF53, nRF54L and nRF91 Series devices.
 
 While AP-Protect blocks access to all CPU registers and memories, Secure AP-Protect limits the CPU access to the non-secure side only.
 This allows debugging of the NSPE, while the SPE debugging is blocked.
 
-The following Kconfig options for enabling Secure AP-Protect are available for the nRF91x1 and nRF53 Series devices:
+The following Kconfig options are available for enabling Secure AP-Protect on the listed devices:
 
-* :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK`
-* :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING`
-* :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USE_UICR`
+.. list-table:: Secure AP-Protect Kconfig options
+  :header-rows: 1
+  :align: center
+  :widths: auto
+
+  * - Option
+    - Series or devices
+  * - :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK` Kconfig option
+    - nRF53, nRF54L
+  * - :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING` Kconfig option
+    - nRF53, nRF54L, nRF91x1 devices
+  * - :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USE_UICR` Kconfig option
+    - nRF53, nRF91x1 devices
+  * - :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_DISABLE` Kconfig option
+    - nRF54L
+  * - Locking the ``UICR.SECUREAPPROTECT`` register with nRF Util
+    - All devices
 
 In addition, you can enable hardware Secure AP-Protect by setting the ``UICR.SECUREAPPROTECT`` register as instructed in :ref:`app_secure_approtect_uicr_approtect`.
 
 Enabling software Secure AP-Protect with :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK`
 -------------------------------------------------------------------------------------------
 
-Setting the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK` Kconfig option to ``y`` and compiling the firmware enables the secure access protection mechanism for SoCs of the nRF53 Series.
+This option is valid for the nRF53 and the nRF54L Series devices.
+
+.. important::
+    On nRF91x1 devices, the register setting related to the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK` Kconfig option does not persist in System ON IDLE mode.
+    You must lock the ``UICR.SECUREAPPROTECT`` register to enable the hardware Secure AP-Protect mechanism as instructed in :ref:`app_secure_approtect_uicr_approtect`.
+
+Setting the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK` Kconfig option to ``y`` and compiling the firmware enables the secure access protection mechanism.
 
 Enabling this Kconfig option writes the secure debugger register in the ``SystemInit()`` function to lock the secure access port protection at every boot.
-In addition to this, the ``UICR.SECUREAPPROTECT`` register should be written as instructed in :ref:`app_secure_approtect_uicr_approtect`.
+For hardware protection, the ``UICR.SECUREAPPROTECT`` register should be written as instructed in :ref:`app_secure_approtect_uicr_approtect`.
 
 .. note::
     For multi-image builds, :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK` needs to be set for the first image (usually a bootloader).
-    Otherwise, the software Secure AP-Protect will not be sufficient as the debugger can be attached to the SPE after the first image opens the software Secure AP-Protect with the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USE_UICR` Kconfig option, which is the default value.
+    Otherwise, the software Secure AP-Protect will not be sufficient as the debugger can be attached to the SPE after the first image opens the software Secure AP-Protect, which is the default operation.
 
     You can set this option manually or use sysbuild's ``SB_CONFIG_SECURE_APPROTECT_LOCK`` Kconfig option to enable it for all images.
 
-.. important::
-    On the nRF91x1 Series devices, the register setting related to the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK` Kconfig option does not persist in System ON IDLE mode.
-    You must lock the ``UICR.SECUREAPPROTECT`` register to enable the hardware Secure AP-Protect mechanism as instructed in :ref:`app_secure_approtect_uicr_approtect`.
-
 Enabling software Secure AP-Protect with :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING`
 ----------------------------------------------------------------------------------------------------
+
+This option is valid for the nRF53 and the nRF54L Series devices, and nRF91x1 devices.
 
 Setting the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING` Kconfig option to ``y`` and compiling the firmware allows you to handle the state of the software Secure AP-Protect at a later stage.
 This option does not touch the mechanism and keeps it closed.
@@ -298,15 +357,27 @@ See the SoC or SiP hardware documentation for more information.
 
 .. note::
     With multi-image builds, :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING` needs to be set for all images.
-    The default value is to open the device if the ``UICR.SECUREAPPROTECT`` is not set.
+    The default value is to open the device.
     This allows the debugger to be attached to the device.
 
     You can set this option manually for each image or use sysbuild's ``SB_CONFIG_SECURE_APPROTECT_USER_HANDLING`` Kconfig option to set it for all images at once.
 
-Enabling software Secure AP-Protect with :kconfig:option:`CONFIG_SECURE_NRF_APPROTECT_USE_UICR`
------------------------------------------------------------------------------------------------
+Disabling software Secure AP-Protect with :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USE_UICR`
+------------------------------------------------------------------------------------------------
+
+This option is valid for the nRF53 Series and nRF91x1 devices.
 
 Setting the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USE_UICR` Kconfig option to ``y`` and compiling the firmware disables the software Secure AP-Protect mechanism by default.
+This is the default setting in the |NCS|.
+
+You can start debugging the SPE without additional steps needed.
+
+Disabling software Secure AP-Protect with :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_DISABLE`
+-----------------------------------------------------------------------------------------------
+
+This option is valid for the nRF54L Series devices.
+
+Setting the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_DISABLE` Kconfig option to ``y`` and compiling the firmware disables the software Secure AP-Protect.
 This is the default setting in the |NCS|.
 
 You can start debugging the SPE without additional steps needed.
@@ -319,7 +390,8 @@ Enabling hardware Secure AP-Protect by locking the ``UICR.SECUREAPPROTECT`` regi
 To enable only the hardware Secure AP-Protect mechanism, run the following command:
 
 .. note::
-    This is the only mechanism supported for the nRF9160 devices that do not have software support for Secure AP-Protect.
+    This option is supported by all devices and it is the most secure way to enable Secure AP-Protect.
+    Moreover, this is the only mechanism supported for the nRF9160 devices that do not have software support for Secure AP-Protect.
 
 .. code-block:: console
 
@@ -329,4 +401,4 @@ This command enables hardware Secure AP-Protect and resets the device.
 
 .. note::
     With devices that use software AP-Protect, nRF Util cannot enable hardware Secure AP-Protect if the software Secure AP-Protect is already enabled.
-    If you encounter errors with nRF Util, make sure that :kconfig:option:`CONFIG_NRF_APPROTECT_USE_UICR` and :kconfig:option:`CONFIG_SECURE_NRF_APPROTECT_USE_UICR` are set.
+    If you encounter errors with nRF Util, make sure that software AP-Protect and software Secure AP-Protect are disabled.
