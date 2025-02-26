@@ -1,0 +1,15 @@
+# Apricity Gateway nRF9160 board configuration
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+if SOC_NRF9160_SICA
+
+config BOARD_APRICITY_GATEWAY_NRF9160
+	bool "nRF9160 APRICITY GATEWAY"
+
+config BOARD_APRICITY_GATEWAY_NRF9160_NS
+	bool "nRF9160 APRICITY GATEWAY non-secure"
+
+endif # SOC_NRF9160_SICA
