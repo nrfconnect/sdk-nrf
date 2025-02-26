@@ -10,13 +10,13 @@ choice
 
 config $(EXT_API)_EXT_API_UNUSED
 	bool "Don't request the $(EXT_API) EXT_API"
-	depends on !$(EXT_API)_EXT_API_ATLEAST_OPTIONAL && !$(EXT_API)_EXT_API_ATLEAST_REQUIRED
+	depends on !$(EXT_API)_EXT_API_AT_LEAST_OPTIONAL && !$(EXT_API)_EXT_API_AT_LEAST_REQUIRED
 	help
 	  Do not include the client code for this external API (EXT_API).
 
 config $(EXT_API)_EXT_API_OPTIONAL
 	bool "Request to use the $(EXT_API) EXT_API (optional)"
-	depends on !$(EXT_API)_EXT_API_ATLEAST_REQUIRED
+	depends on !$(EXT_API)_EXT_API_AT_LEAST_REQUIRED
 	help
 	  Include client code for this EXT_API. This also puts a request for
 	  this EXT_API into the firmware info, marked as optional. The user must
@@ -29,12 +29,12 @@ config $(EXT_API)_EXT_API_REQUIRED
 	  this EXT_API into the firmware info, marked as required.
 endchoice
 
-config $(EXT_API)_EXT_API_ATLEAST_OPTIONAL
+config $(EXT_API)_EXT_API_AT_LEAST_OPTIONAL
 	bool
 	help
 	  Can be selected to force at least OPTIONAL
 
-config $(EXT_API)_EXT_API_ATLEAST_REQUIRED
+config $(EXT_API)_EXT_API_AT_LEAST_REQUIRED
 	bool
 	help
 	  Can be selected to force REQUIRED
