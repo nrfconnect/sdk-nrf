@@ -1,0 +1,89 @@
+name: SonarCloud
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'applications/asset_tracker_v2/**/*.c'
+      - 'applications/asset_tracker_v2/**/*.h'
+  pull_request:
+    paths:
+      - 'applications/asset_tracker_v2/**/*.c'
+      - 'applications/asset_tracker_v2/**/*.h'
+      - '.github/workflows/sonarcloud_demo.yml'
+
+jobs:
+  build:
+    name: Build and analyze
+    runs-on: ubuntu-22.04
+    container: ghcr.io/nrfconnect/sdk-nrf-toolchain:v2.9.0
+    defaults:
+      run:
+        # Bash shell is needed to set toolchain related environment variables in docker container
+        # It is a workaround for GitHub Actions limitation https://github.com/actions/runner/issues/1964
+        shell: bash
+
+    steps:
+      - uses: nrfconnect/action-checkout-west-update@main
+        if: github.event_name == 'pull_request'
+        with:
+          git-ref: ${{ github.event.pull_request.head.sha }}
+          git-fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          path: ncs/nrf
+
+      - uses: nrfconnect/action-checkout-west-update@main
+        if: github.event_name != 'pull_request'
+        with:
+          git-fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+          path: ncs/nrf
+
+      - name: Install dependencies
+        run: |
+            apt-get update
+            apt-get install -y curl unzip ruby gcc-multilib make
+
+      - name: Install sonar-scanner and build-wrapper
+        uses: SonarSource/sonarcloud-github-c-cpp@v3
+
+      - name: Build and test
+        working-directory: ncs/nrf
+        run: |
+          build-wrapper-linux-x86-64 --out-dir build_wrapper_output ../zephyr/scripts/twister \
+            --ninja --integration \
+            --quarantine-list scripts/quarantine.yaml --quarantine-list scripts/quarantine_integration.yaml \
+            -T applications/asset_tracker_v2
+
+      - name: Run sonar-scanner on main
+        working-directory: ncs/nrf
+        if: github.event_name != 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          sonar-scanner \
+            --define sonar.cfamily.compile-commands=build_wrapper_output/compile_commands.json \
+            --define project.settings=sonar-project.properties \
+            --define sonar.inclusions=**/*.c,**/*.h \
+            --define sonar.exclusions=tests/,drivers/sensor/*_dummy/
+
+      - name: Run sonar-scanner on PR
+        working-directory: ncs/nrf
+        if: github.event_name == 'pull_request'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+          BASE_REF: ${{ github.event.pull_request.base.ref }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          sonar-scanner \
+            --define sonar.cfamily.compile-commands=build_wrapper_output/compile_commands.json \
+            --define project.settings=sonar-project.properties \
+            --define sonar.inclusions=**/*.c,**/*.h \
+            --define sonar.exclusions=tests/ \
+            --define sonar.scm.revision=${{ env.HEAD_SHA }} \
+            --define sonar.pullrequest.key=${{ env.PR_NUMBER }} \
+            --define sonar.pullrequest.branch=${{ env.PR_BRANCH }} \
+            --define sonar.pullrequest.base=${{ env.BASE_REF }}
+
