@@ -192,8 +192,8 @@ static int setup_rawrecv_socket(struct sockaddr_ll *dst)
 {
         int ret;
         struct timeval timeo_optval = {
-                .tv_sec = 1,
-                .tv_usec = 0,
+                .tv_sec = 0,
+                .tv_usec = 10000,
         };
 	
 	rx_raw_socket_fd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
@@ -286,14 +286,12 @@ static int wifi_send_single_raw_tx_packet(int sockfd, char *test_frame, size_t b
 	return 0;
 }
 
-static int wifi_send_raw_tx_packets(unsigned int num_pkts)
+static int wifi_send_raw_tx_packets()
 {
 	int ret;
 	struct raw_tx_pkt_header packet;
 	char *test_frame = NULL;
 	unsigned int buf_length;
-
-	ARG_UNUSED(num_pkts);
 
 	fill_raw_tx_pkt_hdr(&packet);
 
@@ -364,14 +362,10 @@ static void initialize(void) {
 	wifi_set_tx_injection_mode();
 	wifi_set_channel();
 	setup_raw_pkt_socket(&sa);
-	setup_rawrecv_socket(&dst);
-	k_thread_start(receiver_thread_id);
 }
 
 static void cleanup(void) {
 	close(raw_socket_fd);
-	close(rx_raw_socket_fd);
-	k_thread_join(receiver_thread_id, K_SECONDS(2));
 }
 
 ZTEST(nrf_wifi, test_raw_tx_rx)
@@ -379,14 +373,42 @@ ZTEST(nrf_wifi, test_raw_tx_rx)
 	/* TODO: Wait for interface to be operationally UP */
 	int count = CONFIG_RAW_TX_RX_TRANSMIT_COUNT;
 
+	setup_rawrecv_socket(&dst);
+	k_thread_start(receiver_thread_id);
+
 	LOG_INF("TX count is set is %d", CONFIG_RAW_TX_RX_TRANSMIT_COUNT);
 	while (count--)
 	{
 		k_sleep(K_MSEC(3));
-		zassert_false(wifi_send_raw_tx_packets(1), "Failed to send raw tx packets 1");
+		zassert_false(wifi_send_raw_tx_packets(), "Failed to send raw tx packet");
 		k_sleep(K_MSEC(3));
 	}
 	packet_send = false;
+	LOG_INF("Waiting on RX Thread to exit");
+	k_thread_join(receiver_thread_id, K_SECONDS(1));
+	close(rx_raw_socket_fd);
+	LOG_INF("RX Thread has exited");
 }
+
+/* #define RAW_TX_TEST */
+/* currently all packets are being looped back. UMAC/LMAC should have
+ * a configuration to differentiate loopback and burst mode and the configuration
+ * can be set via network message to the driver/UMAC from the ZTEST application.
+ * Enable code if you wish to test or when the configuration in available
+ */
+/* #define RAW_TX_TEST */
+#ifdef RAW_TX_TEST
+ZTEST(nrf_wifi, test_raw_tx)
+{
+	int count = CONFIG_RAW_TX_TRANSMIT_COUNT;
+
+	LOG_INF("TX burst count is set is %d", CONFIG_RAW_TX_TRANSMIT_COUNT);
+	while (count--)
+	{
+		k_sleep(K_MSEC(1));
+		zassert_false(wifi_send_raw_tx_packets(), "Failed to send raw tx packet");
+	}
+}
+#endif
 
 ZTEST_SUITE(nrf_wifi, NULL, (void *)initialize, NULL, NULL, (void *)cleanup);
