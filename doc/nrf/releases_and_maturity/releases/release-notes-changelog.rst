@@ -254,6 +254,12 @@ nRF Desktop
     This change results from the Bluetooth subsystem transition to the PSA cryptographic API.
     The GATT database hash calculation now requires larger stack size.
 
+  * Support for Bluetooth LE legacy pairing is no longer enabled by default, because it is not secure.
+    Using Bluetooth LE legacy pairing introduces, among others, a risk of passive eavesdropping.
+    Supporting Bluetooth LE legacy pairing makes devices vulnerable for a downgrade attack.
+    The :kconfig:option:`CONFIG_BT_SMP_SC_PAIR_ONLY` Kconfig option is enabled by default in Zephyr.
+    If you still need to support the Bluetooth LE legacy pairing, you need to disable the option in the configuration.
+
 * Added:
 
   * System Power Management for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target on the application and radio cores.
