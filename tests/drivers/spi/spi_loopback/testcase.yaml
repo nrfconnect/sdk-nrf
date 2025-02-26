@@ -1,0 +1,25 @@
+common:
+  # depends_on: spi
+  tags:
+    - drivers
+    - spi
+    - dma
+    - ci_tests_drivers_spi
+  filter: dt_compat_enabled("test-spi-loopback-slow") and
+          dt_compat_enabled("test-spi-loopback-fast")
+  harness: ztest
+  harness_config:
+    fixture: spi_loopback
+  platform_allow:
+    - nrf54l20pdk/nrf54l20/cpuapp
+    - nrf54l09pdk/nrf54l09/cpuapp
+  integration_platforms:
+    - nrf54l20pdk/nrf54l20/cpuapp
+    - nrf54l09pdk/nrf54l09/cpuapp
+
+tests:
+  nrf.extended.drivers.spi.loopback: {}
+  nrf.extended.drivers.spi.nrf_pm_runtime:
+    extra_configs:
+      - CONFIG_PM_DEVICE=y
+      - CONFIG_PM_DEVICE_RUNTIME=y
