@@ -76,7 +76,6 @@ Remote testing in a network
 ---------------------------
 
 .. |Bluetoothsc| replace:: Bluetooth®
-.. |WiFi| replace:: Wi-Fi®
 
 .. include:: ../light_bulb/README.rst
     :start-after: matter_light_bulb_sample_remote_testing_start
