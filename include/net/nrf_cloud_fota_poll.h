@@ -82,7 +82,7 @@ struct nrf_cloud_fota_poll_ctx {
 
 	/** Callback of type @ref dfu_target_reset_cb_t for resetting the SMP device to enter
 	 * MCUboot recovery mode.
-	 * Used if @kconfig{CONFIG_NRF_CLOUD_FOTA_SMP} is enabled.
+	 * Used if `CONFIG_NRF_CLOUD_FOTA_SMP` is enabled.
 	 */
 	void *smp_reset_cb;
 };
