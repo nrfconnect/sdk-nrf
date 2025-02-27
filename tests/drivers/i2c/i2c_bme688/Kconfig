@@ -1,0 +1,7 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "tests/drivers/i2c/i2c_bme688/Kconfig"
