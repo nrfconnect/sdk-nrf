@@ -109,26 +109,9 @@ Matter smoke CO alarm custom configurations
     :start-after: matter_light_bulb_sample_configuration_file_types_start
     :end-before: matter_light_bulb_sample_configuration_file_types_end
 
-Device Firmware Upgrade support
-===============================
-
 .. |Bluetooth| replace:: Bluetooth
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_build_with_dfu_start
-    :end-before: matter_door_lock_sample_build_with_dfu_end
-
-FEM support
-===========
-
-.. include:: /includes/sample_fem_support.txt
-
-Factory data support
-====================
-
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_factory_data_start
-    :end-before: matter_door_lock_sample_factory_data_end
+.. include:: /includes/advanced_conf_matter.txt
 
 User interface
 **************

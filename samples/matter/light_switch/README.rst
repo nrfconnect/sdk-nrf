@@ -142,26 +142,9 @@ The following snippet is available:
 
   .. include:: /includes/matter_snippets_note.txt
 
-FEM support
-===========
-
-.. include:: /includes/sample_fem_support.txt
-
-Device Firmware Upgrade support
-===============================
-
 .. |Bluetooth| replace:: Bluetooth®
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_build_with_dfu_start
-    :end-before: matter_door_lock_sample_build_with_dfu_end
-
-Factory data support
-====================
-
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_factory_data_start
-    :end-before: matter_door_lock_sample_factory_data_end
+.. include:: /includes/advanced_conf_matter.txt
 
 .. _matter_light_switch_sample_ui:
 

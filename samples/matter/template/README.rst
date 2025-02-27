@@ -126,44 +126,9 @@ For example:
 
 .. matter_template_build_with_tfm_end
 
-Device Firmware Upgrade support
-===============================
-
 .. |Bluetooth| replace:: Bluetooth
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_build_with_dfu_start
-    :end-before: matter_door_lock_sample_build_with_dfu_end
-
-Alternatively, for the nRF54L15 DK, the DFU can be configured to only use the internal MRAM for storage.
-This means that both the currently running firmware and the new firmware to be updated will be stored within the device's internal flash memory.
-This configuration is enabled by default for the :ref:`debug configuration <matter_template_custom_configs>`.
-
-The following is an example command to build the sample on the nRF54L15 DK with support for Matter OTA DFU and DFU over Bluetooth SMP, and using internal MRAM only:
-
-.. code-block:: console
-
-    west build -p -b nrf54l15dk/nrf54l15/cpuapp -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DFILE_SUFFIX=internal
-
-To build the sample for the same purpose, but in the ``release`` configuration, use the following command:
-
-.. code-block:: console
-
-    west build -p -b nrf54l15dk/nrf54l15/cpuapp -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DFILE_SUFFIX=internal -Dtemplate_EXTRA_CONF_FILE=prj_release.conf
-
-Note that in this case, the size of the application partition is half of what it would be when using a configuration with external flash memory support.
-
-FEM support
-===========
-
-.. include:: /includes/sample_fem_support.txt
-
-Factory data support
-====================
-
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_factory_data_start
-    :end-before: matter_door_lock_sample_factory_data_end
+.. include:: /includes/advanced_conf_matter.txt
 
 User interface
 **************
