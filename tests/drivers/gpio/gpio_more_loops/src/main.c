@@ -102,8 +102,7 @@ static void *suite_setup(void)
 
 	}
 
-/* ToDo: Remove this #ifdef when nRF54L20 supports pull-up/pull-down. */
-#if !defined(CONFIG_BOARD_NRF54L20PDK)
+#if defined CONFIG_CHECK_PULLS
 	for (i = 0; i < npairs; i++) {
 		rc = gpio_pin_configure_dt(&in_pins[i], GPIO_INPUT | GPIO_PULL_UP);
 		zassert_equal(rc, 0, "IN[%d] config failed", i);
