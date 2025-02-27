@@ -439,6 +439,7 @@
 /samples/CMakeLists.txt                   @nrfconnect/ncs-co-build-system
 /samples/app_event_manager/               @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/app_event_manager_profiler_tracer/ @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
+/samples/basic/blinky/                    @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /samples/benchmarks/coremark/             @nrfconnect/ncs-si-bluebagel
 /samples/bluetooth/nrf_auraconfig/        @nrfconnect/ncs-audio
 /samples/bluetooth/central_and_peripheral_hr/ @nrfconnect/ncs-si-muffin
@@ -704,7 +705,6 @@
 /scripts/partition_manager/*.rst          @nrfconnect/ncs-aurora-doc
 /scripts/shell/ble_console/**/*.rst       @nrfconnect/ncs-doc-leads
 /scripts/west_commands/sbom/*.rst         @nrfconnect/ncs-si-muffin-doc
-/scripts/twister/alt/zephyr/samples/basic/ @nrfconnect/ncs-ll-ursus
 /scripts/twister/alt/zephyr/samples/sensor/ @nrfconnect/ncs-low-level-test
 /scripts/twister/alt/zephyr/tests/drivers/ @nrfconnect/ncs-low-level-test
 
