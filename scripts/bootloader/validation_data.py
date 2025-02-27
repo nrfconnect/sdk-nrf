@@ -117,7 +117,7 @@ class BaseValidator(abc.ABC):
     @staticmethod
     def _parse_magic_value(magic_value):
         parsed_magic_value = b''.join(
-            [struct.pack('<I', int(m, 0)) for m in magic_value.split(',')]
+            [struct.pack('I', int(m, 0)) for m in magic_value.split(',')]
         )
         return parsed_magic_value
 
