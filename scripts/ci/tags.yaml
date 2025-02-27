@@ -1518,6 +1518,11 @@ ci_samples_nrf5340:
     - zephyr/subsys/shell/
     - zephyr/subsys/usb/
 
+ci_samples_sensor_accel_polling:
+  files:
+    - nrf/samples/sensor/accel_polling/
+    - zephyr/samples/sensor/accel_polling/
+
 ci_samples_sensor_qdec:
   files:
     - nrf/samples/sensor/qdec/
