@@ -350,6 +350,10 @@ Bluetooth Fast Pair samples
 
     This change results from the Bluetooth subsystem transition to the PSA cryptographic API.
 
+* Removed using a separate workqueue for connection TX notify processing (:kconfig:option:`CONFIG_BT_CONN_TX_NOTIFY_WQ`) from configurations.
+  The MPSL flash synchronization issue (``NCSDK-29354`` in the :ref:`known_issues`) is fixed.
+  The workaround is no longer needed.
+
 * :ref:`fast_pair_locator_tag` sample:
 
   * Added:
