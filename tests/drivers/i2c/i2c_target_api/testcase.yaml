@@ -1,0 +1,25 @@
+common:
+  # depends_on: i2c
+  tags:
+    - drivers
+    - i2c
+    - ci_tests_drivers_i2c
+  harness: ztest
+  harness_config:
+    fixture: i2c_bus_short
+
+tests:
+  nrf.extended.drivers.i2c.target_api.single_role.l20:
+    platform_allow:
+      - nrf54l20pdk/nrf54l20/cpuapp
+    integration_platforms:
+      - nrf54l20pdk/nrf54l20/cpuapp
+  nrf.extended.drivers.i2c.target_api.single_role.l09:
+    platform_allow:
+      - nrf54l09pdk/nrf54l09/cpuapp
+    integration_platforms:
+      - nrf54l09pdk/nrf54l09/cpuapp
+    extra_args:
+      - SNIPPET=nrf54l09-switch-uart
+    tags:
+      - nrf54l09-switch-uart
