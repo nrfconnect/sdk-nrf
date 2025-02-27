@@ -119,14 +119,9 @@ Matter thermostat with Trusted Firmware-M
     :start-after: matter_template_build_with_tfm_start
     :end-before: matter_template_build_with_tfm_end
 
-Device Firmware Upgrade support
-===============================
-
 .. |Bluetooth| replace:: Bluetooth
 
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_build_with_dfu_start
-    :end-before: matter_door_lock_sample_build_with_dfu_end
+.. include:: /includes/advanced_conf_matter.txt
 
 .. _matter_thermostat_network_mode:
 
@@ -140,12 +135,6 @@ Remote testing in a network
     :start-after: matter_light_bulb_sample_remote_testing_start
     :end-before: matter_light_bulb_sample_remote_testing_end
 
-Factory data support
-====================
-
-.. include:: ../lock/README.rst
-    :start-after: matter_door_lock_sample_factory_data_start
-    :end-before: matter_door_lock_sample_factory_data_end
 
 User interface
 **************

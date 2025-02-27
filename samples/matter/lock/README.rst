@@ -277,52 +277,82 @@ The following snippet is available:
 
 .. _matter_lock_sample_configuration_dfu:
 
+Advanced configuration options
+==============================
+
+This section describes other configuration options for the sample.
+
 Device Firmware Upgrade support
-===============================
+-------------------------------
 
 .. |Bluetooth| replace:: Bluetooth
 
 .. matter_door_lock_sample_build_with_dfu_start
 
-.. note::
-   You can enable over-the-air Device Firmware Upgrade only on hardware platforms that have external flash memory.
-   Currently only nRF52840 DK, nRF5340 DK, nRF7002 DK and nRF54L15 DK support Device Firmware Upgrade feature.
+.. toggle::
 
-The sample supports over-the-air (OTA) device firmware upgrade (DFU) using one of the two following protocols:
+   .. note::
+      You can enable over-the-air Device Firmware Upgrade only on hardware platforms that have external flash memory.
+      Currently only nRF52840 DK, nRF5340 DK, nRF7002 DK and nRF54L15 DK support Device Firmware Upgrade feature.
 
-* Matter OTA update protocol that uses the Matter operational network for querying and downloading a new firmware image.
-* Simple Management Protocol (SMP) over |Bluetooth| LE.
-  In this case, the DFU can be done either using a smartphone application or a PC command line tool.
-  Note that this protocol is not part of the Matter specification.
+   The sample supports over-the-air (OTA) device firmware upgrade (DFU) using one of the two following protocols:
 
-In both cases, :ref:`MCUboot <mcuboot:mcuboot_wrapper>` secure bootloader is used to apply the new firmware image.
+   * Matter OTA update protocol that uses the Matter operational network for querying and downloading a new firmware image.
+   * Simple Management Protocol (SMP) over |Bluetooth| LE.
+     In this case, the DFU can be done either using a smartphone application or a PC command line tool.
+     Note that this protocol is not part of the Matter specification.
 
-The DFU over Matter is enabled by default.
-The following configuration arguments are available during the build process for configuring DFU:
+   In both cases, :ref:`MCUboot <mcuboot:mcuboot_wrapper>` secure bootloader is used to apply the new firmware image.
 
-* To configure the sample to support the DFU over Matter and SMP, use the ``-DCONFIG_CHIP_DFU_OVER_BT_SMP=y`` build flag.
+   The DFU over Matter is enabled by default.
+   The following configuration arguments are available during the build process for configuring DFU:
 
-See :ref:`cmake_options` for instructions on how to add these options to your build.
+   * To configure the sample to support the DFU over Matter and SMP, use the ``-DCONFIG_CHIP_DFU_OVER_BT_SMP=y`` build flag.
 
-When building on the command line, run the following command with *board_target* replaced with the board target name of the hardware platform you are using (see `Requirements`_), and *dfu_build_flag* replaced with the desired DFU build flag:
+   See :ref:`cmake_options` for instructions on how to add these options to your build.
 
-.. parsed-literal::
-   :class: highlight
+   When building on the command line, run the following command with *board_target* replaced with the board target name of the hardware platform you are using (see `Requirements`_), and *dfu_build_flag* replaced with the desired DFU build flag:
 
-   west build -b *board_target* -- *dfu_build_flag*
+   .. parsed-literal::
+      :class: highlight
 
-For example:
+      west build -b *board_target* -- *dfu_build_flag*
 
-.. code-block:: console
+   For example:
 
-   west build -b nrf52840dk/nrf52840 -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y
+   .. code-block:: console
+
+      west build -b nrf52840dk/nrf52840 -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y
 
 .. matter_door_lock_sample_build_with_dfu_end
 
-FEM support
-===========
+.. _matter_lock_sample_configuration_fem:
 
-.. include:: /includes/sample_fem_support.txt
+FEM support
+-----------
+
+.. toggle::
+
+   .. include:: /includes/sample_fem_support.txt
+
+Factory data support
+--------------------
+
+.. matter_door_lock_sample_factory_data_start
+
+.. toggle::
+
+   In this sample, the factory data support is enabled by default for all configurations except for the target board nRF21540 DK.
+   This means that a new factory data set will be automatically generated when building for the target board.
+
+   To disable factory data support, set the following Kconfig options to ``n``:
+
+   * :kconfig:option:`CONFIG_CHIP_FACTORY_DATA`
+   * ``SB_CONFIG_MATTER_FACTORY_DATA_GENERATE``
+
+   To learn more about factory data, read the :doc:`matter:nrfconnect_factory_data_configuration` page in the Matter documentation.
+
+   .. matter_door_lock_sample_factory_data_end
 
 .. _matter_lock_sample_configuration_nus:
 
@@ -347,23 +377,6 @@ The PIN code is different depending on the :ref:`configuration <matter_lock_samp
 * In the release configuration, the secure PIN is set to ``123456`` due to lack of a different way of showing it on nRF boards other than in the log console.
 
 See `Testing door lock using Bluetooth LE with Nordic UART Service`_ for more information about how to test this feature.
-
-Factory data support
-====================
-
-.. matter_door_lock_sample_factory_data_start
-
-In this sample, the factory data support is enabled by default for all configurations except for the target board nRF21540 DK.
-This means that a new factory data set will be automatically generated when building for the target board.
-
-To disable factory data support, set the following Kconfig options to ``n``:
-
-   * :kconfig:option:`CONFIG_CHIP_FACTORY_DATA`
-   * ``SB_CONFIG_MATTER_FACTORY_DATA_GENERATE``
-
-To learn more about factory data, read the :doc:`matter:nrfconnect_factory_data_configuration` page in the Matter documentation.
-
-.. matter_door_lock_sample_factory_data_end
 
 User interface
 **************
