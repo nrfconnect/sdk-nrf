@@ -65,7 +65,7 @@ class BaseValidator(abc.ABC):
         self.verify(public_key, signature_bytes, hash_bytes)
 
         validation_bytes = magic_value
-        validation_bytes += struct.pack('I', input_hex.addresses()[0])
+        validation_bytes += struct.pack('<I', input_hex.addresses()[0])
         validation_bytes += hash_bytes
         validation_bytes += public_key_bytes
         validation_bytes += signature_bytes
@@ -150,7 +150,7 @@ class EcdsaSignatureValidator(BaseValidator):
         self.verify(public_key, signature_bytes, hash_bytes)
 
         validation_bytes = magic_value
-        validation_bytes += struct.pack('I', input_hex.addresses()[0])
+        validation_bytes += struct.pack('<I', input_hex.addresses()[0])
         validation_bytes += hash_bytes
         validation_bytes += public_key_bytes
         validation_bytes += signature_bytes
@@ -215,7 +215,7 @@ class Ed25519SignatureValidator(BaseValidator):
                 magic_value=magic_value
             )
         validation_bytes = magic_value
-        validation_bytes += struct.pack('I', input_hex.addresses()[0])
+        validation_bytes += struct.pack('<I', input_hex.addresses()[0])
         validation_bytes += signature_bytes
 
         return validation_bytes
