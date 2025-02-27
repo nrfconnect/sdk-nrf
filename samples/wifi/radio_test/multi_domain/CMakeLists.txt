@@ -21,3 +21,5 @@ target_sources(app PRIVATE
 	src/nrf_wifi_radio_ficr_shell.c
 	src/ficr_prog.c
 )
+
+target_link_libraries(app PRIVATE nrf-wifi-osal)
