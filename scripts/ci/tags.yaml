@@ -1538,6 +1538,11 @@ ci_samples_drivers_audio_dmic:
     - nrf/samples/drivers/audio/dmic/
     - zephyr/samples/drivers/audio/dmic/
 
+ci_tests_drivers_i2c_i2c_bme688:
+  files:
+    - nrf/tests/drivers/i2c/i2c_bme688
+    - zephyr/tests/drivers/i2c/i2c_bme688
+
 ci_tests_drivers_spi:
   files:
     - nrf/tests/drivers/spi/

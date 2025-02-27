@@ -836,6 +836,7 @@
 /tests/drivers/flash/flash_rpc/           @nrfconnect/ncs-pluto
 /tests/drivers/flash_patch/               @nrfconnect/ncs-pluto
 /tests/drivers/fprotect/                  @nrfconnect/ncs-pluto
+/tests/drivers/i2c/i2c_bme688/            @nrfconnect/ncs-low-level-test
 /tests/drivers/lpuart/                    @nordic-krch
 /tests/drivers/nrfx_integration_test/     @nrfconnect/ncs-co-drivers
 /tests/drivers/i2c/i2c_target_api/        @nrfconnect/ncs-low-level-test
