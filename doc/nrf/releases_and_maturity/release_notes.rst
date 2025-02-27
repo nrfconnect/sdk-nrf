@@ -21,6 +21,7 @@ This page is included only in the latest documentation, because it might contain
    :caption: Subpages:
 
    releases/release-notes-changelog
+   releases/release-notes-3.0.0-preview1
    releases/release-notes-2.9.0-nRF54H20-1-rc2
    releases/release-notes-2.9.0
    releases/release-notes-2.8.0
