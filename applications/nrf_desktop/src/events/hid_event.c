@@ -103,7 +103,7 @@ static void profile_hid_report_subscriber_event(struct log_event_buf *buf,
 APP_EVENT_INFO_DEFINE(hid_report_subscriber_event,
 		  ENCODE(NRF_PROFILER_ARG_U32, NRF_PROFILER_ARG_U8, NRF_PROFILER_ARG_U8,
 			 NRF_PROFILER_ARG_U8, NRF_PROFILER_ARG_U8),
-		  ENCODE("subscriber", "connected", "priority", "pipeline size", " report max"),
+		  ENCODE("subscriber", "connected", "priority", "pipeline size", "report max"),
 		  profile_hid_report_subscriber_event);
 
 APP_EVENT_TYPE_DEFINE(hid_report_subscriber_event,
