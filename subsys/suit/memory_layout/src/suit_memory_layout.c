@@ -99,7 +99,7 @@ static struct ram_area ram_area_map[] = {
 #endif						/* ram0x */
 #if (DT_NODE_EXISTS(DT_NODELABEL(cpurad_ram0))) /* nrf54H20 */
 	{
-		.ra_start = DT_REG_ADDR(DT_NODELABEL(cpurad)),
+		.ra_start = DT_REG_ADDR(DT_NODELABEL(cpurad_ram0)),
 		.ra_size = DT_REG_SIZE(DT_NODELABEL(cpurad_ram0)),
 	},
 #endif							/* cpurad_ram0 */
