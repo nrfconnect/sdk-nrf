@@ -4,15 +4,11 @@ common:
   tags:
     - LED
     - gpio
+    - ci_tests_drivers_sdp
   depends_on: gpio
 tests:
-  sample.basic.blinky:
-    filter: dt_enabled_alias_with_parent_compat("led0", "gpio-leds")
-    harness: led
-    integration_platforms:
-      - frdm_k64f
 
-  sample.basic.blinky.sdp.gpio.icmsg:
+  nrf.extended.sample.basic.blinky.sdp.gpio.icmsg:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -32,7 +28,7 @@ tests:
         - "LED state: ON"
         - "LED state: OFF"
 
-  sample.basic.blinky.sdp.gpio.mbox:
+  nrf.extended.sample.basic.blinky.sdp.gpio.mbox:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -52,7 +48,7 @@ tests:
         - "LED state: ON"
         - "LED state: OFF"
 
-  sample.basic.blinky.sdp.gpio.icbmsg:
+  nrf.extended.sample.basic.blinky.sdp.gpio.icbmsg:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp

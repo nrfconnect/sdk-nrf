@@ -1314,6 +1314,8 @@ ci_tests_drivers_sdp:
     - nrf/tests/drivers/sdp_asm/
     - zephyr/drivers/mbox/
     - zephyr/subsys/ipc/ipc_service/
+    - nrf/samples/basic/blinky/
+    - zephyr/samples/basic/blinky/
 
 ci_tests_drivers_gpio:
   files:
