@@ -48,17 +48,17 @@ def add_hw_counters(provision_data, num_counter_slots_version, mcuboot_counters_
     assert num_counter_slots_version % 2 == 0, "--num-counters-slots-version must be an even number"
     assert mcuboot_counters_slots % 2 == 0, "--mcuboot-counters-slots     must be an even number"
 
-    provision_data += struct.pack('H', BL_COLLECTION_TYPE_MONOTONIC_COUNTERS)
-    provision_data += struct.pack('H', num_counters)  # Could be 0, 1, or 2
+    provision_data += struct.pack('<H', BL_COLLECTION_TYPE_MONOTONIC_COUNTERS)
+    provision_data += struct.pack('<H', num_counters)  # Could be 0, 1, or 2
 
     if num_counter_slots_version > 0:
-        provision_data += struct.pack('H', BL_MONOTONIC_COUNTERS_DESC_NSIB)
-        provision_data += struct.pack('H', num_counter_slots_version)
+        provision_data += struct.pack('<H', BL_MONOTONIC_COUNTERS_DESC_NSIB)
+        provision_data += struct.pack('<H', num_counter_slots_version)
         provision_data += bytes(otp_write_width * num_counter_slots_version * [0xFF])
 
     if mcuboot_counters_slots > 0:
-        provision_data += struct.pack('H', BL_MONOTONIC_COUNTERS_DESC_MCUBOOT_ID0)
-        provision_data += struct.pack('H', mcuboot_counters_slots)
+        provision_data += struct.pack('<H', BL_MONOTONIC_COUNTERS_DESC_MCUBOOT_ID0)
+        provision_data += struct.pack('<H', mcuboot_counters_slots)
         provision_data += bytes(otp_write_width * mcuboot_counters_slots * [0xFF])
 
     return provision_data
@@ -106,12 +106,12 @@ def generate_provision_hex_file(s0_address, s1_address, hashes, provision_addres
                                 num_counter_slots_version, mcuboot_counters_slots, otp_write_width,
                                 variable_data):
 
-    provision_data = struct.pack('III', s0_address, s1_address,
+    provision_data = struct.pack('<III', s0_address, s1_address,
                                  len(hashes))
 
     idx = 0
     for mhash in hashes:
-        provision_data += struct.pack('I', 0x50FAFFFF | (idx << 24))  # Invalidation token
+        provision_data += struct.pack('<I', 0x50FAFFFF | (idx << 24))  # Invalidation token
         provision_data += mhash
         idx += 1
 
@@ -201,8 +201,8 @@ def get_variable_data(psa_certification_reference):
         nonlocal variable_data
         nonlocal variable_data_count
 
-        variable_data += struct.pack('B', variable_data_type)
-        variable_data += struct.pack('B', len(data))
+        variable_data += struct.pack('<B', variable_data_type)
+        variable_data += struct.pack('<B', len(data))
         variable_data += data.encode('ascii')
         variable_data_count += 1
 
@@ -213,8 +213,8 @@ def get_variable_data(psa_certification_reference):
 
     if variable_data_count:
         # Add the variable data header at the beginning of the variable data.
-        variable_data = struct.pack('H', BL_COLLECTION_TYPE_VARIABLE_DATA) + \
-            struct.pack('H', variable_data_count) +  \
+        variable_data = struct.pack('<H', BL_COLLECTION_TYPE_VARIABLE_DATA) + \
+            struct.pack('<H', variable_data_count) +  \
             variable_data
 
         # Padding to align to 4 bytes.
