@@ -23,7 +23,10 @@
 #define DATA_PINS_MAX 8
 #define VIO_COUNT     11
 
-#define MAX_FREQUENCY 64000000
+#define MAX_FREQUENCY		   64000000
+#define STD_PAD_BIAS_FREQ_TRESHOLD 32000000
+
+#define PAD_BIAS 1
 
 #define MAX_SHIFT_COUNT 63
 
@@ -434,6 +437,14 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		nrfe_mspi_xfer_config = xfer_config->xfer_config;
 #endif
 		configure_clock(nrfe_mspi_devices[nrfe_mspi_xfer_config_ptr->device_index].cpp);
+
+		/* Tune up pad bias for frequencies above 32MHz */
+		if (nrfe_mspi_devices[nrfe_mspi_xfer_config_ptr->device_index].freq >
+		    STD_PAD_BIAS_FREQ_TRESHOLD) {
+			NRF_GPIOHSPADCTRL_Type *padCtrl_s = (NRF_GPIOHSPADCTRL_Type *)NRF_P2_S_BASE;
+			padCtrl_s->BIAS = PAD_BIAS;
+		}
+
 		break;
 	}
 	case NRFE_MSPI_TX:
