@@ -23,9 +23,14 @@
 #define DATA_PINS_MAX 8
 #define VIO_COUNT     11
 
-#define MAX_FREQUENCY 64000000
+#define MAX_FREQUENCY		   64000000
+#define STD_PAD_BIAS_FREQ_TRESHOLD 32000000
+
+#define PAD_BIAS 1
 
 #define MAX_SHIFT_COUNT 63
+
+#define DUMMY_CYCLES_DATA 0x00000000
 
 #define CE_PIN_UNUSED UINT8_MAX
 
@@ -254,9 +259,15 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet)
 
 void prepare_and_read_data(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile uint8_t *buffer)
 {
+	/* TODO: rx_dummy*bus_width must be divisible by 8, remove when SHIFTCNTB changing is done.
+	 */
+	NRFX_ASSERT((nrfe_mspi_xfer_config_ptr->rx_dummy * xfer_params.bus_widths.dummy_cycles %
+		     8) == 0);
+
 	volatile nrfe_mspi_dev_config_t *device =
 		&nrfe_mspi_devices[nrfe_mspi_xfer_config_ptr->device_index];
 	nrf_vpr_csr_vio_config_t config;
+	uint32_t dummy_cycles_data = DUMMY_CYCLES_DATA;
 
 	xfer_params.counter_value = 4;
 	xfer_params.ce_vio = ce_vios[device->ce_index];
@@ -291,6 +302,13 @@ void prepare_and_read_data(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile ui
 	xfer_params.xfer_data[HRT_FE_ADDRESS].data = (uint8_t *)&xfer_packet->address;
 	xfer_params.xfer_data[HRT_FE_ADDRESS].word_count =
 		nrfe_mspi_xfer_config_ptr->address_length;
+
+	/* Configure dummy_cycles phase. */
+	xfer_params.xfer_data[HRT_FE_DUMMY_CYCLES].fun_out = HRT_FUN_OUT_WORD;
+	xfer_params.xfer_data[HRT_FE_DUMMY_CYCLES].data = (uint8_t *)&dummy_cycles_data;
+	xfer_params.xfer_data[HRT_FE_DUMMY_CYCLES].word_count =
+		nrfe_mspi_xfer_config_ptr->rx_dummy * xfer_params.bus_widths.dummy_cycles /
+		BITS_IN_BYTE;
 
 	/* Configure data phase. */
 	xfer_params.xfer_data[HRT_FE_DATA].word_count = xfer_packet->num_bytes;
@@ -419,6 +437,14 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		nrfe_mspi_xfer_config = xfer_config->xfer_config;
 #endif
 		configure_clock(nrfe_mspi_devices[nrfe_mspi_xfer_config_ptr->device_index].cpp);
+
+		/* Tune up pad bias for frequencies above 32MHz */
+		if (nrfe_mspi_devices[nrfe_mspi_xfer_config_ptr->device_index].freq >
+		    STD_PAD_BIAS_FREQ_TRESHOLD) {
+			NRF_GPIOHSPADCTRL_Type *padCtrl_s = (NRF_GPIOHSPADCTRL_Type *)NRF_P2_S_BASE;
+			padCtrl_s->BIAS = PAD_BIAS;
+		}
+
 		break;
 	}
 	case NRFE_MSPI_TX:
