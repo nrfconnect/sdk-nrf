@@ -302,10 +302,10 @@ class PlotNordic():
 
             ev_type = self.processed_events.registered_events_types[event_submit.type_id]
 
-            for i in range(0, len(ev_type.data_descriptions)):
-                if ev_type.data_descriptions[i] == EM_MEM_ADDRESS_DATA_DESC:
+            for i, data_desc in enumerate(ev_type.data_descriptions):
+                if data_desc == EM_MEM_ADDRESS_DATA_DESC:
                     continue
-                self.draw_state.selected_event_text += ev_type.data_descriptions[i] + ' = '
+                self.draw_state.selected_event_text += data_desc + ' = '
                 self.draw_state.selected_event_text += str(event_submit.data[i]) + '\n'
 
             self.draw_state.selected_event_textbox.set_visible(True)
