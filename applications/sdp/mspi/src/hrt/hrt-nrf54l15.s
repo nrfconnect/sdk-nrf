@@ -487,6 +487,11 @@ hrt_read:
 	li	a2,0
 	addi	a0,s0,20
 	call	hrt_tx_rx.constprop.0
+	lbu	a1,82(s0)
+	lhu	a3,84(s0)
+	li	a2,0
+	addi	a0,s0,40
+	call	hrt_tx_rx.constprop.0
 	li	a5,0
 .L57:
 	lw	a4,64(s0)
