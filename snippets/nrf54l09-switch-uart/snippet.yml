@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+name: nrf54l09-switch-uart
+
+boards:
+  nrf54l09pdk/nrf54l09/cpuapp:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf54l09pdk_nrf54l09_cpuapp.overlay
