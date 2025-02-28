@@ -14,7 +14,10 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from cryptography.hazmat.primitives.serialization import load_pem_private_key
+from cryptography.hazmat.primitives.serialization import (
+    load_pem_private_key,
+    load_pem_public_key,
+)
 from west.commands import WestCommand
 
 KEY_SLOTS: dict[str, list[int]] = {
@@ -119,7 +122,7 @@ class NcsProvision(WestCommand):
             epilog=textwrap.dedent("""
                 Example input YAML file:
                     - keyname: UROT_PUBKEY
-                      keys: ["private-key1.pem", "private-key2.pem"]
+                      keys: ["key1.pem", "key2.pem"]
                       policy: lock
             """),
             formatter_class=argparse.RawDescriptionHelpFormatter
@@ -132,7 +135,7 @@ class NcsProvision(WestCommand):
             type=Path,
             action="append",
             dest="keys",
-            help="Input .pem file with ED25519 private key",
+            help="Input .pem file with ED25519 private or public key",
         )
         upload_parser.add_argument(
             "--keyname",
@@ -239,9 +242,14 @@ class NcsProvision(WestCommand):
     def _get_public_key_hex(keyfile: str) -> str:
         """Return the public key hex from the given keyfile."""
         with open(keyfile, "rb") as f:
-            priv_key = load_pem_private_key(f.read(), password=None)
-        pub_key = priv_key.public_key()
-        pub_key_hex = f"0x{pub_key.public_bytes_raw().hex()}"
+            data = f.read()
+            try:
+                public_key = load_pem_public_key(data)
+            except ValueError:
+                # it seems it is not public key, so lets try with private
+                private_key = load_pem_private_key(data, password=None)
+                public_key = private_key.public_key()
+        pub_key_hex = f"0x{public_key.public_bytes_raw().hex()}"
         return pub_key_hex
 
     @staticmethod
