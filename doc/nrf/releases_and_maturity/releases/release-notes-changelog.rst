@@ -537,6 +537,8 @@ Peripheral samples
 PMIC samples
 ------------
 
+* Added the :ref:`npm2100_fuel_gauge` sample that demonstrates how to calculate the battery state of charge of primary cell batteries using the :ref:`nrfxlib:nrf_fuel_gauge`.
+
 * :ref:`npm1300_fuel_gauge` sample:
 
   * Updated to accommodate API changes in nRF Fuel Gauge library v1.0.0.
