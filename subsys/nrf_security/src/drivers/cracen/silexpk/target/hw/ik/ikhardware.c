@@ -18,6 +18,7 @@
 #include "regs_addr.h"
 #include <silexpk/ec_curves.h>
 #include <silexpk/ik.h>
+#include "hal/nrf_cracen.h"
 
 int cracen_prepare_ik_key(const uint8_t *user_data);
 
@@ -45,9 +46,15 @@ void sx_pk_run(sx_pk_req *req)
 	/* Selection of operands ignore by hardware if in IK mode */
 	sx_pk_select_ops(req);
 	wmb(); /* comment for compliance */
+
 	if (sx_pk_is_ik_cmd(req)) {
 		sx_pk_wrreg(&req->regs, IK_REG_PK_CONTROL,
 			    IK_PK_CONTROL_START_OP | IK_PK_CONTROL_CLEAR_IRQ);
+		if (req->cmd != SX_PK_CMD_IK_EXIT) {
+			/* Workaround to handle IKG freezing issue on daylight/firelight */
+			nrf_cracen_int_enable(NRF_CRACEN, CRACEN_INTENCLR_PKEIKG_Msk);
+
+		}
 	} else {
 		sx_pk_wrreg(&req->regs, PK_REG_CONTROL,
 			    PK_RB_CONTROL_START_OP | PK_RB_CONTROL_CLEAR_IRQ);
@@ -75,11 +82,12 @@ int sx_pk_list_ik_inslots(sx_pk_req *req, unsigned int key, struct sx_pk_slot *i
 	const struct sx_pk_capabilities *caps;
 
 	if (req->cmd->cmdcode == PK_OP_IK_EXIT) {
+		/* Workaround to handle IKG freezing issue on daylight/firelight */
+		nrf_cracen_int_disable(NRF_CRACEN, CRACEN_INTENCLR_PKEIKG_Msk);
 		req->ik_mode = 0;
 	} else {
 		if (!req->ik_mode) {
 			int status = cracen_prepare_ik_key((uint8_t *)&key);
-
 			if (status != SX_OK) {
 				sx_pk_release_req(req);
 				return SX_ERR_INVALID_PARAM;
