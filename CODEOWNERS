@@ -365,7 +365,7 @@
 /include/net/nrf_cloud_*                  @nrfconnect/ncs-nrf-cloud
 /include/nfc/                             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-si-muffin
 /include/nrf_compress/                    @nordicjm
-/include/nrf_rpc/                         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-si-muffin
+/include/nrf_rpc/                         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-si-muffin @nrfconnect/ncs-protocols-serialization
 /include/power/                           @nrfconnect/ncs-co-drivers
 /include/sdfw/                            @nrfconnect/ncs-aurora
 /include/sdfw/sdfw_services/extmem_remote.h @nrfconnect/ncs-charon
@@ -798,7 +798,7 @@
 /subsys/nfc/rpc/                          @nrfconnect/ncs-protocols-serialization
 /subsys/nrf_compress/                     @nordicjm
 /subsys/nrf_profiler/                     @nrfconnect/ncs-si-bluebagel
-/subsys/nrf_rpc/                          @nrfconnect/ncs-si-muffin
+/subsys/nrf_rpc/                          @nrfconnect/ncs-si-muffin @nrfconnect/ncs-protocols-serialization
 /subsys/nrf_security/                     @nrfconnect/ncs-aegir
 /subsys/partition_manager/                @nordicjm @tejlmand
 /subsys/pcd/                              @nrfconnect/ncs-pluto
