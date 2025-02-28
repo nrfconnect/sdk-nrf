@@ -1523,6 +1523,11 @@ ci_samples_sensor_accel_polling:
     - nrf/samples/sensor/accel_polling/
     - zephyr/samples/sensor/accel_polling/
 
+ci_samples_sensor_bme680:
+  files:
+    - nrf/samples/sensor/bme680/
+    - zephyr/samples/sensor/bme680/
+
 ci_samples_sensor_qdec:
   files:
     - nrf/samples/sensor/qdec/
