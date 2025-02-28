@@ -24,14 +24,14 @@ LOG_MODULE_REGISTER(suitfu_mgmt, CONFIG_MGMT_SUITFU_LOG_LEVEL);
 
 #define SYSTEM_UPDATE_WORKER_STACK_SIZE 2048
 
-K_THREAD_STACK_DEFINE(system_update_stack_area, SYSTEM_UPDATE_WORKER_STACK_SIZE);
+static K_THREAD_STACK_DEFINE(system_update_stack_area, SYSTEM_UPDATE_WORKER_STACK_SIZE);
 
 struct system_update_work {
 	struct k_work_delayable work;
 	/* Other data to pass to the workqueue might go here */
 };
 
-struct k_work_q system_update_work_queue;
+static struct k_work_q system_update_work_queue;
 
 static void update_failure(void)
 {
@@ -40,7 +40,7 @@ static void update_failure(void)
 	}
 }
 
-static void schedule_system_update(struct k_work *item)
+static void schedule_envelope_processing(struct k_work *item)
 {
 	int ret = suit_dfu_candidate_preprocess();
 
@@ -85,8 +85,8 @@ int suitfu_mgmt_candidate_envelope_process(void)
 {
 	static struct system_update_work suw;
 
-	LOG_INF("Schedule system reboot");
-	k_work_init_delayable(&suw.work, schedule_system_update);
+	LOG_INF("Schedule envelope processing");
+	k_work_init_delayable(&suw.work, schedule_envelope_processing);
 
 	int ret = k_work_schedule_for_queue(&system_update_work_queue, &suw.work, K_NO_WAIT);
 
