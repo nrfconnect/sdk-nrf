@@ -43,8 +43,8 @@ IPv6 network support
 
 The development kits for this sample offer the following IPv6 network support for Matter:
 
-* Matter over Thread is supported for ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf21540dk/nrf52840``, and ``nrf54h20dk/nrf54h20/cpuapp``.
-* Matter over Wi-Fi is supported for ``nrf5340dk/nrf5340/cpuapp`` or ``nrf54h20dk/nrf54h20/cpuapp`` with the ``nrf7002ek`` shield attached, for ``nrf7002dk/nrf5340/cpuapp`` (2.4 GHz and 5 GHz), or for ``nrf7002dk/nrf5340/cpuapp/nrf7001`` (2.4 GHz only).
+* Matter over Thread is supported for ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf21540dk/nrf52840``, and ``nrf54l15dk/nrf54l15/cpuapp``.
+* Matter over Wi-Fi is supported for ``nrf5340dk/nrf5340/cpuapp`` with the ``nrf7002ek`` shield attached, for ``nrf7002dk/nrf5340/cpuapp`` (2.4 GHz and 5 GHz), or for ``nrf7002dk/nrf5340/cpuapp/nrf7001`` (2.4 GHz only).
 * :ref:`Switching between Matter over Thread and Matter over Wi-Fi <matter_lock_sample_wifi_thread_switching>` is supported for ``nrf5340dk/nrf5340/cpuapp`` with the ``nrf7002ek`` shield attached, using the :ref:`switched Thread and Wi-Fi configuration <matter_lock_sample_custom_configs>`.
 
 Overview
@@ -319,15 +319,6 @@ For example:
 
 .. matter_door_lock_sample_build_with_dfu_end
 
-SUIT DFU on nRF54H20
---------------------
-
-.. include:: ../template/README.rst
-    :start-after: matter_template_dfu_suit_start
-    :end-before: matter_template_dfu_suit_end
-
-.. _matter_lock_sample_configuration_fem:
-
 FEM support
 ===========
 
@@ -373,44 +364,6 @@ To disable factory data support, set the following Kconfig options to ``n``:
 To learn more about factory data, read the :doc:`matter:nrfconnect_factory_data_configuration` page in the Matter documentation.
 
 .. matter_door_lock_sample_factory_data_end
-
-.. matter_door_lock_sample_factory_data_nrf54h20_start
-
-Merging the factory data hex file with the firmware hex file is currently not available on the nRF54H20 DK.
-The factory data support is disabled by default on this board.
-You can still use it, but you need to flash the :file:`factory_data.hex` file manually.
-
-To use factory data on the nRF54H20 DK, complete the following steps:
-
-1. Flash the :file:`factory_data.hex` file into the device using the following command:
-
-   .. code-block:: console
-
-      nrfutil device program --firmware build/template/zephyr/factory_data.hex
-
-#. Enable factory data support by building the sample with the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA` Kconfig option set to ``y`` using the following command:
-
-   .. code-block:: console
-
-      west build -p -b nrf54h20dk/nrf54h20/cpuapp -- -DCONFIG_CHIP_FACTORY_DATA=y
-
-#. Flash the firmware into the device:
-
-   .. code-block:: console
-
-      west flash --erase
-
-The ``west flash --erase`` command does not clear the factory data partition.
-If you want to clear it, use the following command, and fill the ``<address>`` argument as an address of the factory data partition.
-By default, the address is set to ``0xe174000``.
-
-.. code-block:: console
-
-   nrfutil device erase --pages <address>
-
-Migrating the DAC private key from the factory data set to Trusted Storage is not supported yet on nRF54H20 DK.
-
-.. matter_door_lock_sample_factory_data_nrf54h20_end
 
 User interface
 **************
@@ -483,17 +436,6 @@ Building and running
 .. include:: /includes/build_and_run.txt
 
 See `Configuration`_ for information about building the sample with the DFU support.
-
-.. include:: ../template/README.rst
-    :start-after: matter_template_build_wifi_nrf54h20_start
-    :end-before: matter_template_build_wifi_nrf54h20_end
-
-.. code-block:: console
-
-    west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_CHIP_WIFI=y -Dlock_SHIELD=nrf7002eb_interposer_p1
-
-.. note::
-   |54H_engb_2_8|
 
 Selecting a configuration
 =========================

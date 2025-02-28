@@ -12,11 +12,9 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
     tags:
       - sysbuild
       - ci_applications_matter
@@ -29,11 +27,9 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
     tags:
       - sysbuild
       - ci_applications_matter
@@ -47,11 +43,9 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
     tags:
       - sysbuild
       - ci_applications_matter
@@ -66,11 +60,9 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
     tags:
       - sysbuild
       - ci_applications_matter
@@ -105,35 +97,6 @@ tests:
     tags:
       - sysbuild
       - ci_applications_matter
-  applications.matter_bridge.br_ble.nrf54h20.wifi:
-    sysbuild: true
-    build_only: true
-    extra_args:
-      - SB_CONFIG_WIFI_NRF70=y
-      - CONFIG_CHIP_WIFI=y
-      - matter_bridge_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
-      - CONFIG_BRIDGED_DEVICE_BT=y
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
-    platform_allow: nrf54h20dk/nrf54h20/cpuapp
-    tags:
-      - sysbuild
-      - ci_applications_matter
-  applications.matter_bridge.release.br_ble.nrf54h20.wifi:
-    sysbuild: true
-    build_only: true
-    extra_args:
-      - FILE_SUFFIX=release
-      - SB_CONFIG_WIFI_NRF70=y
-      - CONFIG_CHIP_WIFI=y
-      - matter_bridge_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
-      - CONFIG_BRIDGED_DEVICE_BT=y
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
-    platform_allow: nrf54h20dk/nrf54h20/cpuapp
-    tags:
-      - sysbuild
-      - ci_applications_matter
   applications.matter_bridge.br_ble.memory_profiling:
     sysbuild: true
     build_only: true
@@ -146,10 +109,8 @@ tests:
       - CONFIG_WIFI_NM_WPA_SUPPLICANT_WPA3=n
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
     tags:
       - sysbuild
       - ci_applications_matter
