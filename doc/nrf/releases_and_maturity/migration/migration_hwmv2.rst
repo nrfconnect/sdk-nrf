@@ -1,5 +1,3 @@
-:orphan:
-
 .. _hwmv1_to_v2_migration:
 
 Migrating to the current hardware model

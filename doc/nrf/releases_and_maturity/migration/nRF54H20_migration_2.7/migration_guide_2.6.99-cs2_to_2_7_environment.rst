@@ -1,5 +1,3 @@
-:orphan:
-
 .. _migration_cs2_to_2_7_env:
 
 Migrate your development environment to |NCS| v2.7.0 (for v2.6.99-cs2 users)
