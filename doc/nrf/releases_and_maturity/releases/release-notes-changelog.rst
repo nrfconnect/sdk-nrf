@@ -964,7 +964,11 @@ Libraries for networking
 * :ref:`lib_nrf_cloud` library:
 
   * Added the :kconfig:option:`CONFIG_NRF_CLOUD` Kconfig option to prevent unintended inclusion of nRF Cloud Kconfig variables in non-nRF Cloud projects.
-  * Updated to use the :ref:`lib_downloader` library for CoAP downloads.
+
+  * Updated:
+
+    * To use the :ref:`lib_downloader` library for CoAP downloads.
+    * To use the :ref:`lib_app_jwt` library to generate JWT tokens.
 
 Libraries for NFC
 -----------------
