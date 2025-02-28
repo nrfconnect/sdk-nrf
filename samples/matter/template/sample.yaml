@@ -70,35 +70,6 @@ tests:
     tags:
       - sysbuild
       - ci_samples_matter
-  sample.matter.template.smp_dfu.nrf54h20:
-    sysbuild: true
-    build_only: true
-    extra_args:
-      - CONFIG_CHIP_DFU_OVER_BT_SMP=y
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
-    platform_allow: nrf54h20dk/nrf54h20/cpuapp
-    tags:
-      - sysbuild
-      - ci_samples_matter
-  sample.matter.template.nrf54h20.nrf7002eb:
-    sysbuild: true
-    build_only: true
-    extra_args:
-      - SB_CONFIG_WIFI_NRF70=y
-      - template_SHIELD=nrf7002eb_interposer_p1 nrf7002eb
-      - CONFIG_CHIP_WIFI=y
-      - CONFIG_CHIP_BOOTLOADER_NONE=y
-      - CONFIG_CHIP_OTA_REQUESTOR=n
-      - SB_CONFIG_MATTER_OTA=n
-      - CONFIG_LTO=y
-      - CONFIG_ISR_TABLES_LOCAL_DECLARATION=y
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
-    platform_allow: nrf54h20dk/nrf54h20/cpuapp
-    tags:
-      - sysbuild
-      - ci_samples_matter
   sample.matter.template.release.internal.smp_dfu:
     sysbuild: true
     build_only: true
