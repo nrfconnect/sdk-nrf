@@ -640,6 +640,7 @@
   - "tests/drivers/audio/**/*"
   - "tests/drivers/spi/**/*"
   - "tests/zephyr/drivers/i2c/**/*"
+  - "tests/zephyr/drivers/flash/**/*"
   - "tests/drivers/uart/**/*"
   - "tests/zephyr/drivers/uart/**/*"
 
