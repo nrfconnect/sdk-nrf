@@ -121,19 +121,19 @@ static int nrf_ipuc_write(const struct device *dev, off_t offset, const void *da
 		return 0;
 	}
 
-	/* Optimize: Use a single write call if all bytes can be transferred using stack-based
-	 * aligned buffer.
-	 */
-	if (len <= ARRAY_SIZE(unaligned_data_buf)) {
-		unaligned_len = len;
-	}
-
 	/* If the data buffer is not aligned to the cache lines:
 	 *  - copy the unaligned part into stack-based aligned buffer
 	 *  - write the internal buffer
 	 *  - skip the unaligned bytes of the input buffer
 	 */
 	if (unaligned_len != CACHE_ALIGNMENT) {
+		/* Optimize: Use a single write call if all bytes can be transferred using stack-based
+		 * aligned buffer.
+		 */
+		if (len <= ARRAY_SIZE(unaligned_data_buf)) {
+			unaligned_len = len;
+		}
+
 		memcpy(unaligned_data_buf, data, unaligned_len);
 
 		LOG_DBG("align: %p:%zu", (void *)data, unaligned_len);
@@ -173,7 +173,8 @@ static int nrf_ipuc_write(const struct device *dev, off_t offset, const void *da
 
 	plat_ret = suit_ipuc_write(&ctx->component_id, offset, (uintptr_t)data, len, false);
 	if (plat_ret != SUIT_PLAT_SUCCESS) {
-		LOG_ERR("Aligned data write (%p, 0x%x) error: %d", data, len, plat_ret);
+		LOG_HEXDUMP_ERR(ctx->component_id.value, ctx->component_id.len, "COMPONENT_ID:");
+		LOG_ERR("Aligned data write (%p, 0x%x) error: %d, offset %p", (void*) data, len, plat_ret, (void*) offset);
 		return -EIO;
 	}
 
