@@ -1,5 +1,3 @@
-:orphan:
-
 .. _spm_to_tfm_migration:
 
 Migrating from Secure Partition Manager to Trusted Firmware-M
