@@ -620,12 +620,15 @@
   - "include/drivers/gpio/**/*"
   - "include/event_manager_proxy.h"
   - "subsys/event_manager_proxy/**/*"
+  - "samples/drivers/audio/**/*"
+  - "samples/drivers/i2c/**/*"
   - "samples/ipc/**/*"
   - "samples/event_manager_proxy/**/*"
   - "samples/peripheral/lpuart/**/*"
   - "samples/sensor/qdec/**/*"
   - "samples/subsys/settings/**/*"
   - "snippets/sdp/**/*"
+  - "snippets/nrf54l09-switch-uart/**/*"
   - "tests/subsys/event_manager_proxy/**/*"
   - "tests/benchmarks/multicore/idle/**/*"
   - "tests/drivers/gpio/**/*"
@@ -634,6 +637,7 @@
   - "tests/drivers/sensor/**/*"
   - "tests/drivers/audio/**/*"
   - "tests/drivers/spi/**/*"
+  - "tests/drivers/i2c/**/*"
 
 "CI-ps-test":
   - "samples/nrf_rpc/protocols_serialization/**/*"
