@@ -531,6 +531,7 @@
 /samples/nrf_rpc/                         @nrfconnect/ncs-si-muffin
 /samples/sensor/accel_polling/            @nrfconnect/ncs-low-level-test
 /samples/sensor/bh1749/                   @nrfconnect/ncs-cia
+/samples/sensor/bme680/                   @nrfconnect/ncs-low-level-test
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-cia
 /samples/sensor/qdec/                     @nrfconnect/ncs-low-level-test
 /samples/subsys/settings/                 @nrfconnect/ncs-low-level-test
@@ -706,7 +707,6 @@
 /scripts/partition_manager/*.rst          @nrfconnect/ncs-aurora-doc
 /scripts/shell/ble_console/**/*.rst       @nrfconnect/ncs-doc-leads
 /scripts/west_commands/sbom/*.rst         @nrfconnect/ncs-si-muffin-doc
-/scripts/twister/alt/zephyr/samples/sensor/ @nrfconnect/ncs-low-level-test
 /scripts/twister/alt/zephyr/tests/drivers/ @nrfconnect/ncs-low-level-test
 
 # Share

@@ -6,10 +6,11 @@ common:
     - drivers
     - i2c
     - sensors
+    - ci_samples_sensor_bme680
   harness: console
 
 tests:
-  sample.sensor.bme680.nrf54h:
+  nrf.extended.sample.sensor.bme680.nrf54h:
     filter: not CONFIG_COVERAGE
     harness_config:
       fixture: pca63566
@@ -21,7 +22,7 @@ tests:
       - SHIELD=pca63566
     platform_allow: nrf54h20dk/nrf54h20/cpuapp
 
-  sample.sensor.bme680.nrf54h_cpuppr:
+  nrf.extended.sample.sensor.bme680.nrf54h_cpuppr:
     filter: not CONFIG_COVERAGE
     sysbuild: true
     harness_config:
@@ -35,7 +36,7 @@ tests:
       - vpr_launcher_SHIELD=pca63566_fwd
     platform_allow: nrf54h20dk/nrf54h20/cpuppr
 
-  sample.sensor.bme680.nrf54h_coverage:
+  nrf.extended.sample.sensor.bme680.nrf54h_coverage:
     filter: CONFIG_COVERAGE
     harness_config:
       fixture: pca63566
@@ -47,7 +48,7 @@ tests:
       - SHIELD=pca63566;coverage_support
     platform_allow: nrf54h20dk/nrf54h20/cpuapp
 
-  sample.sensor.bme680.nrf54l:
+  nrf.extended.sample.sensor.bme680.nrf54l:
     filter: not CONFIG_COVERAGE
     harness_config:
       fixture: pca63565
@@ -59,7 +60,7 @@ tests:
       - SHIELD=pca63565
     platform_allow: nrf54l15dk/nrf54l15/cpuapp
 
-  sample.sensor.bme680.nrf54l_coverage:
+  nrf.extended.sample.sensor.bme680.nrf54l_coverage:
     filter: CONFIG_COVERAGE
     harness_config:
       fixture: pca63565
@@ -71,7 +72,7 @@ tests:
       - SHIELD=pca63565;coverage_support
     platform_allow: nrf54l15dk/nrf54l15/cpuapp
 
-  sample.sensor.bme680.nrf54l_cpuflpr:
+  nrf.extended.sample.sensor.bme680.nrf54l_cpuflpr:
     filter: not CONFIG_COVERAGE
     sysbuild: true
     harness_config:
@@ -82,5 +83,5 @@ tests:
         .]*$"
     extra_args:
       - SHIELD=pca63565
-      - vpr_launcher_DTC_OVERLAY_FILE="../../../../nrf/boards/shields/pca63565/boards/nrf54l15dk_nrf54l15_vpr_launcher.overlay"
+      - vpr_launcher_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/boards/shields/pca63565/boards/nrf54l15dk_nrf54l15_vpr_launcher.overlay"
     platform_allow: nrf54l15dk/nrf54l15/cpuflpr
