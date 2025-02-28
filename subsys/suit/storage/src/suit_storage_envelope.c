@@ -48,10 +48,6 @@ static suit_plat_err_t save_envelope_partial(uint8_t *area_addr, size_t area_siz
 		return SUIT_PLAT_ERR_HW_NOT_READY;
 	}
 
-	if (size >= (area_size - offset)) {
-		return SUIT_PLAT_ERR_INVAL;
-	}
-
 	if (reset) {
 		buf_fill_level = 0;
 		offset = 0;
@@ -59,6 +55,10 @@ static suit_plat_err_t save_envelope_partial(uint8_t *area_addr, size_t area_siz
 		envelope_offset = suit_plat_mem_nvm_offset_get(area_addr);
 
 		err = flash_erase(fdev, suit_plat_mem_nvm_offset_get(area_addr), area_size);
+	}
+
+	if (size >= (area_size - offset)) {
+		return SUIT_PLAT_ERR_INVAL;
 	}
 
 	/* Require to set reset flag before changing envelope index. */
