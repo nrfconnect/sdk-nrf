@@ -102,7 +102,7 @@ suit_plat_err_t suit_ipuc_get_info(size_t idx, struct zcbor_string *component_id
 	*role = rsp_data->SSF_SUIT_RSP_ARG(get_ipuc_info, role);
 	ssf_client_decode_done(rsp_pkt);
 
-#if defined(CONFIG_SUIT_LOG_LEVEL_INF) || defined(CONFIG_SUIT_LOG_LEVEL_DBG)
+#if defined(CONFIG_SSF_SUIT_SERVICE_LOG_LEVEL_INF) || defined(CONFIG_SSF_SUIT_SERVICE_LOG_LEVEL_DBG)
 	suit_component_type_t component_type = SUIT_COMPONENT_TYPE_UNSUPPORTED;
 
 	suit_plat_decode_component_type(component_id, &component_type);
