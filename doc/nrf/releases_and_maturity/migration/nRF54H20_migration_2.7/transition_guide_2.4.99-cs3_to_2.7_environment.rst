@@ -1,5 +1,3 @@
-:orphan:
-
 .. _transition_cs3_to_2_7_env:
 
 Transition your development environment to |NCS| v2.7.0 (for v2.4.99-cs3 users)
