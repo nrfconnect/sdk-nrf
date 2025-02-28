@@ -514,6 +514,7 @@
 /samples/dect/dect_phy/dect_shell/        @jhirsi
 /samples/dect/dect_phy/hello_dect/        @nrfconnect/ncs-modem
 /samples/drivers/audio/dmic/              @nrfconnect/ncs-low-level-test
+/samples/drivers/i2c/rtio_loopback/       @nrfconnect/ncs-low-level-test
 /samples/edge_impulse/                    @nrfconnect/ncs-si-muffin
 /samples/esb/                             @nrfconnect/ncs-si-muffin
 /samples/event_manager_proxy/             @nrfconnect/ncs-si-muffin
@@ -718,6 +719,7 @@
 /snippets/matter-debug/                   @nrfconnect/ncs-matter
 /snippets/matter-power-consumption-tests/ @nrfconnect/ncs-matter
 /snippets/nordic-bt-rpc/                  @ppryga-nordic
+/snippets/nrf54l09-switch-uart/           @nrfconnect/ncs-low-level-test
 /snippets/nrf70-driver-debug/             @krish2718 @sachinthegreen
 /snippets/nrf70-driver-verbose-debug/     @krish2718 @sachinthegreen
 /snippets/nrf70-fw-patch-ext-flash/       @krish2718 @sachinthegreen
@@ -835,6 +837,7 @@
 /tests/drivers/fprotect/                  @nrfconnect/ncs-pluto
 /tests/drivers/lpuart/                    @nordic-krch
 /tests/drivers/nrfx_integration_test/     @nrfconnect/ncs-co-drivers
+/tests/drivers/i2c/i2c_target_api/        @nrfconnect/ncs-low-level-test
 /tests/drivers/pwm/gpio_loopback/         @nrfconnect/ncs-low-level-test
 /tests/drivers/uart/uart_baudrate_test/   @nrfconnect/ncs-low-level-test
 /tests/drivers/sensor/multicore_temp/     @nrfconnect/ncs-low-level-test
