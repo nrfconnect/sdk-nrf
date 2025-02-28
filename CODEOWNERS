@@ -842,7 +842,7 @@
 /tests/drivers/nrfx_integration_test/     @nrfconnect/ncs-co-drivers
 /tests/drivers/i2c/i2c_target_api/        @nrfconnect/ncs-low-level-test
 /tests/drivers/pwm/gpio_loopback/         @nrfconnect/ncs-low-level-test
-/tests/drivers/uart/uart_baudrate_test/   @nrfconnect/ncs-low-level-test
+/tests/drivers/uart/                      @nrfconnect/ncs-low-level-test
 /tests/drivers/sensor/multicore_temp/     @nrfconnect/ncs-low-level-test
 /tests/drivers/sdp_asm/                   @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /tests/drivers/spi/                       @nrfconnect/ncs-low-level-test
