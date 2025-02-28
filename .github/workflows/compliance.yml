@@ -106,3 +106,28 @@ jobs:
         if [ "${exit}" == "1" ]; then
           exit 1;
         fi
+
+    - name: Check added or updated links
+      working-directory: ncs/nrf
+      run: |
+        RE=".. _\`(.*)\`: (.*)"
+        LINKS=$(git diff --unified=0 "${{ github.event.pull_request.base.sha }}..HEAD" -- "doc/nrf/links.txt" | \
+                grep "^+" || true | \
+                grep -Ev "^(---|\+\+\+)" || true)
+
+        while IFS= read -r link; do
+          if [[ $link =~ $RE ]]; then
+            NAME=${BASH_REMATCH[1]}
+            URL=${BASH_REMATCH[2]}
+
+            echo -n "Checking URL for '$NAME' ($URL)... "
+            status=$(curl --write-out "%{http_code}" --output /dev/null --silent --head "$URL" || true)
+
+            if [[ "$status" -ne 200 ]]; then
+              echo "FAIL (HTTP code: ${status})"
+                exit 1
+              else
+                echo "OK"
+              fi
+          fi
+        done <<< "$LINKS"
