@@ -6,7 +6,6 @@
 
 menuconfig APP_JWT
 	bool "Application JWT Library"
-	depends on SSF_CLIENT && SSF_PSA_CRYPTO_SERVICE_ENABLED && SSF_DEVICE_INFO_SERVICE_ENABLED
 	select BASE64
 	# Needed for time and date
 	select DATE_TIME

@@ -23,6 +23,7 @@ extern "C" {
 #include <stdint.h>
 #include <stdbool.h>
 #include <strings.h>
+#include <modem/modem_jwt.h>
 
 /** @brief Maximum size of a JWT string, could be used to allocate JWT
  *         output buffer.
@@ -44,25 +45,14 @@ extern "C" {
 /** @brief Size in bytes of each JWT String field */
 #define APP_JWT_CLAIM_MAX_SIZE 64
 
-/** @brief The type of key to be used for signing the JWT. */
-enum app_jwt_key_type {
-	JWT_KEY_TYPE_CLIENT_PRIV = 2,
-	JWT_KEY_TYPE_ENDORSEMENT = 8,
-};
-
-/** @brief JWT signing algorithm */
-enum app_jwt_alg_type {
-	JWT_ALG_TYPE_ES256 = 0,
-};
-
 /** @brief JWT parameters required for JWT generation and pointer to generated JWT */
 struct app_jwt_data {
 	/** Sec tag to use for JWT signing */
 	unsigned int sec_tag;
 	/** Key type in the specified sec tag */
-	enum app_jwt_key_type key_type;
+	enum jwt_key_type key_type;
 	/** JWT signing algorithm */
-	enum app_jwt_alg_type alg;
+	enum jwt_alg_type alg;
 
 	/**
 	 * Indicates if a 'kid' claim is requiered or not, if set to 1, 'kid' claim
