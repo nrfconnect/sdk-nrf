@@ -13,3 +13,4 @@ zcbor~=0.8.0
 nrf-regtool~=8.1.2
 windows-curses; sys_platform == 'win32'
 unidiff
+pycryptodome==3.21.0
