@@ -92,9 +92,11 @@ int read_status(sx_pk_req *req)
 int sx_pk_wait(sx_pk_req *req)
 {
 	do {
+#ifdef CONFIG_CRACEN_HW_VERSION_BASE
 		if (!sx_pk_is_ik_cmd(req)) {
 			cracen_wait_for_pke_interrupt();
 		}
+#endif
 	} while (is_busy(req));
 
 	return read_status(req);
@@ -195,9 +197,10 @@ struct sx_pk_acq_req sx_pk_acquire_req(const struct sx_pk_cmd_def *cmd)
 	req.req->cmd = cmd;
 	req.req->cnx = &silex_pk_engine;
 
+#ifdef CONFIG_CRACEN_HW_VERSION_BASE
 	cracen_acquire();
 	nrf_cracen_int_enable(NRF_CRACEN, NRF_CRACEN_INT_PKE_IKG_MASK);
-
+#endif
 	/* Wait until initialized. */
 	while (ba414ep_is_busy(req.req) || ik_is_busy(req.req)) {
 		cracen_wait_for_pke_interrupt();
