@@ -555,7 +555,7 @@ Trusted Firmware-M (TF-M) samples
 Thread samples
 --------------
 
-|no_changes_yet_note|
+* Removed support for nRF54H20 DK from the :ref:`ot_cli_sample` sample.
 
 Zigbee samples
 --------------
