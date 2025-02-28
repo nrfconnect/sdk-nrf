@@ -1,0 +1,15 @@
+common:
+  tags:
+    - drivers
+    - flash
+tests:
+  drivers.flash.common.sdp:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - SB_CONFIG_VPR_LAUNCHER=n
+      - SB_CONFIG_PARTITION_MANAGER=n
+      - SB_CONFIG_SDP=y
+      - SB_CONFIG_SDP_MSPI=y
