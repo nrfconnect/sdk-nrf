@@ -220,8 +220,7 @@ IPC radio firmware
 Matter Bridge
 -------------
 
-* Enabled SUIT DFU support for the :ref:`matter_bridge_app` application.
-  Currently, only the Matter OTA protocol is fully supported for SUIT DFU purposes.
+* Removed support for the nRF54H20 devices.
 * Enabled Link Time Optimization (LTO) by default for the ``release`` configuration.
 
 nRF5340 Audio
@@ -491,10 +490,9 @@ Keys samples
 Matter samples
 --------------
 
-* Updated the :ref:`matter_template_sample` sample document with the instructions on how to build the sample on the nRF54L15 DK with support for Matter OTA DFU and DFU over Bluetooth SMP, and using internal MRAM only.
-* Enabled SUIT DFU support for the :ref:`matter_lock_sample`, and :ref:`matter_template_sample` samples.
-  Currently, only the Matter OTA protocol is fully supported for SUIT DFU purposes.
+* Updated the :ref:`matter_template_sample` sample document with the instructions on how to build the sample on the nRF54L15 DK with support for Matter OTA DFU and DFU over Bluetooth SMP, and using internal RRAM only.
 * Enabled Link Time Optimization (LTO) by default for the ``release`` configuration and ``nrf7002dk/nrf5340/cpuapp`` build target.
+* Removed support for nRF54H20 devices from the :ref:`matter_lock_sample`, and :ref:`matter_template_sample` samples.
 
 Networking samples
 ------------------
