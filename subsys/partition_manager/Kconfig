@@ -156,6 +156,16 @@ config PM_PARTITION_SIZE_VPR_LAUNCHER
 	  This to place the flpr app's code at the address found in the devicetree.
 endif
 
+if SOC_NRF54L20_ENGA_CPUFLPR
+config PM_PARTITION_SIZE_VPR_LAUNCHER
+	hex
+	default $(dt_node_reg_addr_hex,/soc/rram-controller@5004e000/rram@1ed000)
+	help
+	  Memory set aside for the vpr_launcher partition.
+	  Must match the size of the cpuapp_rram partition which is deleted.
+	  This to place the flpr app's code at the address found in the devicetree.
+endif
+
 if SOC_NRF7120_ENGA_CPUFLPR
 
 config PM_PARTITION_SIZE_VPR_LAUNCHER
@@ -241,6 +251,7 @@ config PM_SRAM_BASE
 	hex
 	default $(dt_node_reg_addr_hex,/soc/memory@21000000) if SOC_NRF5340_CPUNET
 	default 0x20000000 if SOC_NRF54L15_CPUFLPR  # Because the cpuapp_sram DT node is deleted in nrf54l15_cpuflpr.dtsi
+	default 0x20000000 if SOC_NRF54L20_ENGA_CPUFLPR  # Because the cpuapp_sram DT node is deleted in nrf54l20_enga_cpuflpr.dtsi
 	default 0x20000000 if SOC_NRF7120_ENGA_CPUFLPR  # Because the cpuapp_sram DT node is deleted in nrf7120_enga_cpuflpr.dtsi
 	default $(dt_node_reg_addr_hex,/soc/memory@20000000)
 
@@ -248,6 +259,7 @@ config PM_SRAM_SIZE
 	hex
 	default $(dt_node_reg_size_hex,/soc/memory@21000000) if SOC_NRF5340_CPUNET
 	default 0x40000 if SOC_NRF54L15_CPUFLPR  # Because the cpuapp_rram DT node is deleted in nrf54l15_cpuflpr.dtsi
+	default 0x40000 if SOC_NRF54L20_ENGA_CPUFLPR  # Because the cpuapp_rram DT node is deleted in nrf54l20_enga_cpuflpr.dtsi
 	default 0x40000 if SOC_NRF7120_ENGA_CPUFLPR  # Because the cpuapp_mram DT node is deleted in nrf7120_enga_cpuflpr.dtsi
 	default $(dt_node_reg_size_hex,/soc/memory@20000000)
 
