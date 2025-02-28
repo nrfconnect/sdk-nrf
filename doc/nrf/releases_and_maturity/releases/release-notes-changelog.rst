@@ -490,9 +490,18 @@ Keys samples
 Matter samples
 --------------
 
-* Updated the :ref:`matter_template_sample` sample document with the instructions on how to build the sample on the nRF54L15 DK with support for Matter OTA DFU and DFU over Bluetooth SMP, and using internal RRAM only.
-* Enabled Link Time Optimization (LTO) by default for the ``release`` configuration and ``nrf7002dk/nrf5340/cpuapp`` build target.
-* Removed support for nRF54H20 devices from the :ref:`matter_lock_sample`, and :ref:`matter_template_sample` samples.
+* :ref:`matter_template_sample` sample:
+
+  * Updated:
+
+    * The documentation with instructions on how to build the sample on the nRF54L15 DK with support for Matter OTA DFU and DFU over Bluetooth SMP, and using internal RRAM only.
+    * Link Time Optimization (LTO) to be enabled by default for the ``release`` configuration and ``nrf7002dk/nrf5340/cpuapp`` build target.
+
+  * Removed support for nRF54H20 devices.
+
+* :ref:`matter_lock_sample` sample:
+
+  * Removed support for nRF54H20 devices.
 
 Networking samples
 ------------------
@@ -568,7 +577,9 @@ Trusted Firmware-M (TF-M) samples
 Thread samples
 --------------
 
-|no_changes_yet_note|
+* :ref:`ot_cli_sample` sample:
+
+  * Removed support for the nRF54H20 DK.
 
 Zigbee samples
 --------------
