@@ -638,6 +638,7 @@
   - "tests/drivers/audio/**/*"
   - "tests/drivers/spi/**/*"
   - "tests/drivers/i2c/**/*"
+  - "tests/drivers/uart/**/*"
 
 "CI-ps-test":
   - "samples/nrf_rpc/protocols_serialization/**/*"
