@@ -23,6 +23,10 @@
 #include <crypto/PSAOperationalKeystore.h>
 #endif
 
+#ifdef CONFIG_CHIP_STORE_KEYS_IN_KMU
+#include <platform/nrfconnect/KMUSessionKeystore.h>
+#endif
+
 #ifdef CONFIG_CHIP_FACTORY_DATA
 #include <platform/nrfconnect/FactoryDataProvider.h>
 #else
@@ -59,6 +63,10 @@ struct InitData {
 	/** @brief Pointer to the user provided OperationalKeystore implementation. */
 	chip::Crypto::OperationalKeystore *mOperationalKeyStore{ &sOperationalKeystoreDefault };
 #endif
+#ifdef CONFIG_CHIP_STORE_KEYS_IN_KMU
+	/** @brief Pointer to the user provided SessionKeystore implementation. */
+	chip::Crypto::SessionKeystore *mSessionKeystore{ &sKMUSessionKeystoreDefault };
+#endif
 	/** @brief Custom code to execute in the Matter main event loop before the server initialization. */
 	CustomInit mPreServerInitClbk{ nullptr };
 	/** @brief Custom code to execute in the Matter main event loop after the server initialization. */
@@ -76,6 +84,9 @@ struct InitData {
 #endif
 #ifdef CONFIG_CHIP_CRYPTO_PSA
 	static chip::Crypto::PSAOperationalKeystore sOperationalKeystoreDefault;
+#endif
+#ifdef CONFIG_CHIP_STORE_KEYS_IN_KMU
+	static chip::DeviceLayer::KMUSessionKeystore sKMUSessionKeystoreDefault;
 #endif
 };
 
