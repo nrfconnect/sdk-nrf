@@ -9,11 +9,14 @@
 
 #include <stdint.h>
 
-#define LED_APP_RGB	0
-#define LED_NET_RGB	1
-#define LED_APP_1_BLUE	2
-#define LED_APP_2_GREEN 3
-#define LED_APP_3_GREEN 4
+enum led_unit_assignment {
+	LED_AUDIO_DEVICE_TYPE,
+	LED_AUDIO_NET_STATUS,
+	LED_AUDIO_CONN_STATUS,
+	LED_AUDIO_SYNC_STATUS,
+	LED_AUDIO_APP_STATUS,
+	LED_AUDIO_ASSIGN_NUM
+};
 
 #define RED   0
 #define GREEN 1
@@ -54,7 +57,7 @@ enum led_color {
  *			-EINVAL if the color argument is illegal.
  *			Other errors from underlying drivers.
  */
-int led_blink(uint8_t led_unit, ...);
+int led_blink(enum led_unit_assignment led_unit, ...);
 
 /**
  * @brief Turn the given LED unit on.
@@ -71,7 +74,7 @@ int led_blink(uint8_t led_unit, ...);
  *			-EINVAL if the color argument is illegal.
  *			Other errors from underlying drivers.
  */
-int led_on(uint8_t led_unit, ...);
+int led_on(enum led_unit_assignment led_unit, ...);
 
 /**
  * @brief Set the state of a given LED unit to off.
@@ -85,7 +88,7 @@ int led_on(uint8_t led_unit, ...);
  *			-EINVAL if the color argument is illegal.
  *			Other errors from underlying drivers.
  */
-int led_off(uint8_t led_unit);
+int led_off(enum led_unit_assignment led_unit);
 
 /**
  * @brief Initialise the LED module.
