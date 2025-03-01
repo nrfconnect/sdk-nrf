@@ -18,6 +18,7 @@
 #include "regs_addr.h"
 #include <silexpk/ec_curves.h>
 #include <silexpk/ik.h>
+#include "hal/nrf_cracen.h"
 
 int cracen_prepare_ik_key(const uint8_t *user_data);
 
@@ -75,6 +76,10 @@ int sx_pk_list_ik_inslots(sx_pk_req *req, unsigned int key, struct sx_pk_slot *i
 	const struct sx_pk_capabilities *caps;
 
 	if (req->cmd->cmdcode == PK_OP_IK_EXIT) {
+		/* Disable CRACEN->INTENCLR PKEIKG here */
+		uint32_t int_disable_mask = 0;
+		int_disable_mask |= CRACEN_INTENCLR_PKEIKG_Msk;
+		nrf_cracen_int_disable(NRF_CRACEN, int_disable_mask);
 		req->ik_mode = 0;
 	} else {
 		if (!req->ik_mode) {
@@ -84,6 +89,10 @@ int sx_pk_list_ik_inslots(sx_pk_req *req, unsigned int key, struct sx_pk_slot *i
 				sx_pk_release_req(req);
 				return SX_ERR_INVALID_PARAM;
 			}
+			/* Enable CRACEN->INTENSET PKEIKG. here*/
+			uint32_t int_enable_mask = 0;
+			int_enable_mask |= CRACEN_INTENCLR_PKEIKG_Msk;
+			nrf_cracen_int_enable(NRF_CRACEN, int_enable_mask);
 			sx_pk_wrreg(&req->regs, PK_REG_CONTROL, PK_RB_CONTROL_CLEAR_IRQ);
 			req->ik_mode = 1;
 		}
