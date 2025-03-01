@@ -34,6 +34,7 @@ int bl_crypto_init(void)
 #include <ocrypto_constant_time.h>
 #include "bl_crypto_internal.h"
 
+#if !defined(CONFIG_SB_ED25519)
 static int verify_truncated_hash(const uint8_t *data, uint32_t data_len,
 		const uint8_t *expected, uint32_t hash_len, bool external)
 {
@@ -43,15 +44,18 @@ static int verify_truncated_hash(const uint8_t *data, uint32_t data_len,
 	if (retval != 0) {
 		return retval;
 	}
+
 	if (!ocrypto_constant_time_equal(expected, hash, hash_len)) {
 		return -EHASHINV;
 	}
 	return 0;
 }
+#endif
 
 static int verify_signature(const uint8_t *data, uint32_t data_len,
 		const uint8_t *signature, const uint8_t *public_key, bool external)
 {
+#if defined(CONFIG_SB_ECDSA_SECP256R1)
 	uint8_t hash1[CONFIG_SB_HASH_LEN];
 	uint8_t hash2[CONFIG_SB_HASH_LEN];
 
@@ -66,6 +70,11 @@ static int verify_signature(const uint8_t *data, uint32_t data_len,
 	}
 
 	return bl_secp256r1_validate(hash2, CONFIG_SB_HASH_LEN, public_key, signature);
+#elif defined(CONFIG_SB_ED25519)
+	return bl_ed25519_validate(data, data_len, signature);
+#else
+#error "Unsupported signature type selected"
+#endif
 }
 
 /* Base implementation, with 'external' parameter. */
@@ -74,14 +83,19 @@ static int root_of_trust_verify(
 		const uint8_t *signature, const uint8_t *firmware,
 		const uint32_t firmware_len, bool external)
 {
+#if !defined(CONFIG_SB_ED25519)
 	__ASSERT(public_key && public_key_hash && signature && firmware,
-			"A parameter was NULL.");
+		 "A parameter was NULL.");
+
 	int retval = verify_truncated_hash(public_key, CONFIG_SB_PUBLIC_KEY_LEN,
 			public_key_hash, SB_PUBLIC_KEY_HASH_LEN, external);
 
 	if (retval != 0) {
 		return retval;
 	}
+#else
+	__ASSERT((signature && firmware), "A parameter was NULL.");
+#endif
 
 	return verify_signature(firmware, firmware_len, signature, public_key,
 			external);
@@ -115,7 +129,7 @@ int bl_root_of_trust_verify_external(
 					firmware, firmware_len, true);
 }
 
-#ifndef CONFIG_BL_SHA256_EXT_API_REQUIRED
+#if !defined(CONFIG_BL_SHA256_EXT_API_REQUIRED) && !defined(CONFIG_SB_CRYPTO_NONE)
 int bl_sha256_verify(const uint8_t *data, uint32_t data_len, const uint8_t *expected)
 {
 	return verify_truncated_hash(data, data_len, expected, CONFIG_SB_HASH_LEN, true);

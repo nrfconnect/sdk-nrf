@@ -10,20 +10,250 @@ config SECURE_BOOT
 	  This option will be set if the first stage bootloader which verifies the signature of the
 	  application is enabled for one or multiple cores.
 
-config SECURE_BOOT_APPCORE
+menuconfig SECURE_BOOT_APPCORE
 	bool "Appcore"
 	select SECURE_BOOT
 	help
 	  Enable first stage bootloader for application core.
 
-config SECURE_BOOT_NETCORE
+if SECURE_BOOT_APPCORE
+
+config SECURE_BOOT_APPCORE_SUPPORTED_HASH_HARDWARE
+	bool
+	default y if SECURE_BOOT_HASH_TYPE_SHA256 && (SOC_SERIES_NRF91X || SOC_NRF52840)
+
+config SECURE_BOOT_APPCORE_SUPPORTED_HASH_SOFTWARE
+	bool
+	default y if !SECURE_BOOT_HASH_TYPE_NONE
+
+config SECURE_BOOT_APPCORE_SUPPORTED_HASH_UNUSED
+	bool
+	default y if !SECURE_BOOT_HASH_TYPE_NONE
+
+config SECURE_BOOT_APPCORE_SUPPORTED_HASH_NONE
+	bool
+	default y if SECURE_BOOT_HASH_TYPE_NONE
+
+config SECURE_BOOT_APPCORE_SUPPORTED_SIGNATURE_HARDWARE
+	bool
+	default y if SECURE_BOOT_SIGNATURE_TYPE_ECDSA && (SOC_SERIES_NRF91X || SOC_NRF52840)
+
+config SECURE_BOOT_APPCORE_SUPPORTED_SIGNATURE_SOFTWARE
+	bool
+	default y if !SECURE_BOOT_SIGNATURE_TYPE_NONE && !SECURE_BOOT_SIGNATURE_TYPE_ED25519
+
+config SECURE_BOOT_APPCORE_SUPPORTED_SIGNATURE_UNUSED
+	bool
+	default y
+
+choice SECURE_BOOT_APPCORE_HASH_TYPE
+	prompt "Hash mode"
+	default SECURE_BOOT_APPCORE_HASH_TYPE_HARDWARE if SECURE_BOOT_APPCORE_SUPPORTED_HASH_HARDWARE
+	default SECURE_BOOT_APPCORE_HASH_TYPE_SOFTWARE if SECURE_BOOT_APPCORE_SUPPORTED_HASH_SOFTWARE
+	default SECURE_BOOT_APPCORE_HASH_TYPE_UNUSED if SECURE_BOOT_APPCORE_SUPPORTED_HASH_UNUSED
+	default SECURE_BOOT_APPCORE_HASH_TYPE_NONE if SECURE_BOOT_APPCORE_SUPPORTED_HASH_NONE
+
+config SECURE_BOOT_APPCORE_HASH_TYPE_HARDWARE
+	bool "Hardware"
+	depends on SECURE_BOOT_APPCORE_SUPPORTED_HASH_HARDWARE
+	help
+	  Hashing using hardware acceleration.
+
+config SECURE_BOOT_APPCORE_HASH_TYPE_SOFTWARE
+	bool "Software"
+	depends on SECURE_BOOT_APPCORE_SUPPORTED_HASH_SOFTWARE
+	help
+	  Hashing using software implementation.
+
+config SECURE_BOOT_APPCORE_HASH_TYPE_UNUSED
+	bool "Unused"
+	depends on SECURE_BOOT_APPCORE_SUPPORTED_HASH_UNUSED
+	help
+	  Hash present but not used/verified.
+
+config SECURE_BOOT_APPCORE_HASH_TYPE_NONE
+	bool "None"
+	depends on SECURE_BOOT_APPCORE_SUPPORTED_HASH_NONE
+	help
+	  Disables hashing and excludes hash.
+
+endchoice
+
+choice SECURE_BOOT_APPCORE_SIGNATURE_TYPE
+	prompt "Signature mode"
+	default SECURE_BOOT_APPCORE_SIGNATURE_TYPE_HARDWARE if SECURE_BOOT_APPCORE_SUPPORTED_SIGNATURE_HARDWARE
+	default SECURE_BOOT_APPCORE_SIGNATURE_TYPE_SOFTWARE if SECURE_BOOT_APPCORE_SUPPORTED_SIGNATURE_SOFTWARE
+	default SECURE_BOOT_APPCORE_SIGNATURE_TYPE_UNUSED if SECURE_BOOT_APPCORE_SUPPORTED_SIGNATURE_UNUSED
+
+config SECURE_BOOT_APPCORE_SIGNATURE_TYPE_HARDWARE
+	bool "Hardware"
+	depends on SECURE_BOOT_APPCORE_SUPPORTED_SIGNATURE_HARDWARE
+	help
+	  Signature verification using hardware acceleration.
+
+config SECURE_BOOT_APPCORE_SIGNATURE_TYPE_SOFTWARE
+	bool "Software"
+	depends on SECURE_BOOT_APPCORE_SUPPORTED_SIGNATURE_SOFTWARE
+	help
+	  Signatures verification using software implementation.
+
+config SECURE_BOOT_APPCORE_SIGNATURE_TYPE_UNUSED
+	bool "Unused"
+	depends on SECURE_BOOT_APPCORE_SUPPORTED_SIGNATURE_UNUSED
+	help
+	  Signature present but not used/verified.
+
+endchoice
+
+endif # SECURE_BOOT_APPCORE
+
+menuconfig SECURE_BOOT_NETCORE
 	bool "Netcore"
 	depends on SUPPORT_NETCORE
 	select SECURE_BOOT
 	help
 	  Enable first stage bootloader for network core.
 
+if SECURE_BOOT_NETCORE
+
+config SECURE_BOOT_NETCORE_SUPPORTED_HASH_SOFTWARE
+	bool
+	default y if !SECURE_BOOT_HASH_TYPE_NONE
+
+config SECURE_BOOT_NETCORE_SUPPORTED_HASH_UNUSED
+	bool
+	default y if !SECURE_BOOT_HASH_TYPE_NONE
+
+config SECURE_BOOT_NETCORE_SUPPORTED_HASH_NONE
+	bool
+	default y if SECURE_BOOT_HASH_TYPE_NONE
+
+config SECURE_BOOT_NETCORE_SUPPORTED_SIGNATURE_SOFTWARE
+	bool
+	default y
+
+config SECURE_BOOT_NETCORE_SUPPORTED_SIGNATURE_UNUSED
+	bool
+	default y
+
+choice SECURE_BOOT_NETCORE_HASH_TYPE
+	prompt "Hash mode"
+	default SECURE_BOOT_NETCORE_HASH_TYPE_SOFTWARE if SECURE_BOOT_NETCORE_SUPPORTED_HASH_SOFTWARE
+	default SECURE_BOOT_NETCORE_HASH_TYPE_UNUSED if SECURE_BOOT_NETCORE_SUPPORTED_HASH_UNUSED
+	default SECURE_BOOT_NETCORE_HASH_TYPE_NONE if SECURE_BOOT_NETCORE_SUPPORTED_HASH_NONE
+
+config SECURE_BOOT_NETCORE_HASH_TYPE_SOFTWARE
+	bool "Software"
+	depends on SECURE_BOOT_NETCORE_SUPPORTED_HASH_SOFTWARE
+	help
+	  Hashing using software implementation.
+
+config SECURE_BOOT_NETCORE_HASH_TYPE_UNUSED
+	bool "Unused"
+	depends on SECURE_BOOT_NETCORE_SUPPORTED_HASH_UNUSED
+	help
+	  Hash present but not used/verified.
+
+config SECURE_BOOT_NETCORE_HASH_TYPE_NONE
+	bool "None"
+	depends on SECURE_BOOT_NETCORE_SUPPORTED_HASH_NONE
+	help
+	  Disables hashing and excludes hash.
+
+endchoice
+
+choice SECURE_BOOT_NETCORE_SIGNATURE_TYPE
+	# Application core verifies image, network core signature checking support is disabled by
+	# default selection to reduce flash usage
+	prompt "Signature mode"
+	default SECURE_BOOT_NETCORE_SIGNATURE_TYPE_UNUSED if SECURE_BOOT_NETCORE_SUPPORTED_SIGNATURE_UNUSED
+
+config SECURE_BOOT_NETCORE_SIGNATURE_TYPE_SOFTWARE
+	bool "Software"
+	depends on SECURE_BOOT_NETCORE_SUPPORTED_SIGNATURE_SOFTWARE
+	help
+	  Signatures verification using software implementation.
+
+config SECURE_BOOT_NETCORE_SIGNATURE_TYPE_UNUSED
+	bool "Unused"
+	depends on SECURE_BOOT_NETCORE_SUPPORTED_SIGNATURE_UNUSED
+	help
+	  Signature present but not used/verified.
+
+endchoice
+
+endif # SECURE_BOOT_NETCORE
+
 if SECURE_BOOT
+
+config SECURE_BOOT_SUPPORTED_HASH_SHA512
+	bool
+
+config SECURE_BOOT_SUPPORTED_HASH_SHA256
+	bool
+	default y if !SECURE_BOOT_SIGNATURE_TYPE_ED25519
+
+config SECURE_BOOT_SUPPORTED_HASH_NONE
+	bool
+	default y if SECURE_BOOT_SIGNATURE_TYPE_ED25519
+
+config SECURE_BOOT_SUPPORTED_SIGNATURE_ECDSA
+	bool
+	default y
+
+config SECURE_BOOT_SUPPORTED_SIGNATURE_ED25519
+	bool
+
+choice SECURE_BOOT_HASH_TYPE
+	prompt "Hash type"
+	default SECURE_BOOT_HASH_TYPE_SHA512 if SECURE_BOOT_SUPPORTED_HASH_SHA512
+	default SECURE_BOOT_HASH_TYPE_SHA256 if SECURE_BOOT_SUPPORTED_HASH_SHA256
+	default SECURE_BOOT_HASH_TYPE_NONE if SECURE_BOOT_SUPPORTED_HASH_NONE
+
+config SECURE_BOOT_HASH_TYPE_SHA512
+	bool "SHA512"
+	depends on SECURE_BOOT_SUPPORTED_HASH_SHA512
+	help
+	  SHA512 hash.
+
+config SECURE_BOOT_HASH_TYPE_SHA256
+	bool "SHA256"
+	depends on SECURE_BOOT_SUPPORTED_HASH_SHA256
+	help
+	  SHA256 hash.
+
+config SECURE_BOOT_HASH_TYPE_NONE
+	bool "None"
+	depends on SECURE_BOOT_SUPPORTED_HASH_NONE
+	help
+	  Disables hashing and excludes hash.
+
+endchoice
+
+choice SECURE_BOOT_SIGNATURE_TYPE
+	prompt "Signature type"
+	default SECURE_BOOT_SIGNATURE_TYPE_ED25519 if SECURE_BOOT_SUPPORTED_SIGNATURE_ED25519
+	default SECURE_BOOT_SIGNATURE_TYPE_ECDSA if SECURE_BOOT_SUPPORTED_SIGNATURE_ECDSA
+	default SECURE_BOOT_SIGNATURE_TYPE_NONE
+
+config SECURE_BOOT_SIGNATURE_TYPE_ED25519
+	bool "ED25519"
+	depends on SECURE_BOOT_SUPPORTED_SIGNATURE_ED25519
+	help
+	  ED25519 signatures using hardware acceleration.
+
+config SECURE_BOOT_SIGNATURE_TYPE_ECDSA
+	bool "ECDSA"
+	depends on SECURE_BOOT_SUPPORTED_SIGNATURE_ECDSA
+	help
+	  ECDSA signatures using hardware acceleration.
+
+config SECURE_BOOT_SIGNATURE_TYPE_NONE
+	bool "None"
+	help
+	  Disables signatures and excludes public key.
+
+endchoice
 
 config SECURE_BOOT_NETWORK_BOARD_TARGET_CPUCLUSTER
 	string
