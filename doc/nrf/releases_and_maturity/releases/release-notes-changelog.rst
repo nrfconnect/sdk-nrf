@@ -271,6 +271,11 @@ nRF Desktop
   * The ``dongle_small`` configuration for the nRF52833 DK.
     The configuration enables logs and mimics the dongle configuration used for small SoCs.
 
+* Removed an imply from the nRF Desktop Bluetooth connectivity Kconfig option (:ref:`CONFIG_DESKTOP_BT <config_desktop_app_options>`).
+  The imply enabled a separate workqueue for connection TX notify processing (:kconfig:option:`CONFIG_BT_CONN_TX_NOTIFY_WQ`) if MPSL was used for synchronization between the flash memory driver and radio (:kconfig:option:`CONFIG_SOC_FLASH_NRF_RADIO_SYNC_MPSL`).
+  The MPSL flash synchronization issue (``NCSDK-29354`` in the :ref:`known_issues`) is fixed.
+  The workaround is no longer needed.
+
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
