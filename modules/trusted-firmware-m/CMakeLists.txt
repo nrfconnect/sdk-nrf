@@ -307,6 +307,13 @@ if(CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING)
   )
 endif()
 
+if(CONFIG_IDENTITY_KEY_TFM)
+  set_property(TARGET zephyr_property_target
+    APPEND PROPERTY TFM_CMAKE_OPTIONS
+    -DCONFIG_IDENTITY_KEY_TFM=ON
+  )
+endif()
+
 zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/include/tfm)
 
 # Default values from config_base.h in TF-M.

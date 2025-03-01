@@ -116,7 +116,7 @@ if (${TFM_PARTITION_CRYPTO})
     tfm_sprt
   )
 
-  if (${TFM_PARTITION_INITIAL_ATTESTATION})
+  if((${TFM_PARTITION_INITIAL_ATTESTATION}) AND CONFIG_IDENTITY_KEY_TFM)
     target_sources(platform_s
       PRIVATE
       ${ZEPHYR_NRF_MODULE_DIR}/lib/identity_key/identity_key.c
