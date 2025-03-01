@@ -183,6 +183,4 @@ int mbedtls_ecdsa_der_to_raw(size_t bits, const unsigned char *der, size_t der_l
 
 #endif /* MBEDTLS_PSA_UTIL_HAVE_ECDSA */
 
-/**@}*/
-
 #endif /* MBEDTLS_PSA_UTIL_H */
