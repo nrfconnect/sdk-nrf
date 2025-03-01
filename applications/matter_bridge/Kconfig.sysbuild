@@ -17,13 +17,13 @@ config NETCORE_IPC_RADIO_BT_HCI_IPC
 
 #### Bootloader
 choice BOOTLOADER
-	default BOOTLOADER_MCUBOOT if !SOC_SERIES_NRF54HX
+	default BOOTLOADER_MCUBOOT
 endchoice
 
 # Enable IEEE802.15.4 serialization to network core
 # This config automatically pulls in the `overlay-802154.conf` in the ipc_radio image
 config NETCORE_IPC_RADIO_IEEE802154
-	default y if (SOC_SERIES_NRF53X || SOC_SERIES_NRF54HX) && !WIFI_NRF70
+	default y if SOC_SERIES_NRF53X && !WIFI_NRF70
 
 if BOOTLOADER_MCUBOOT
 
