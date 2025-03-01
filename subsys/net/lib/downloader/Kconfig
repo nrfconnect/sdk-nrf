@@ -26,6 +26,13 @@ config DOWNLOADER_MAX_FILENAME_SIZE
 	range 8 2048
 	default 255
 
+config DOWNLOADER_MAX_REDIRECTS
+	int "Number of redirects before download is aborted"
+	range 0 255
+	default 10
+	help
+	   The maximum number of redirects can be overwritten in the host config.
+
 config DOWNLOADER_SHELL
 	bool "Download client shell"
 	depends on SHELL
