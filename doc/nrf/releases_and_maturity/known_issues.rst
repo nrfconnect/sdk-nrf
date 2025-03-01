@@ -1421,6 +1421,23 @@ NCSIDB-1336: Zigbee Router device cannot rejoin after missing Network Key update
   If the returned message status is not ``ZB_ZDP_STATUS_SUCCESS``, initiate the rejoin procedure by calling the :c:func:`zb_bdb_initiate_tc_rejoin` function.
   The device will switch the key and successfully rejoin network, whether the network is open or closed.
 
+.. rst-class:: v2-9-0-nRF54H20-1-rc2 v2-9-0 v2-8-0 v2-7-0 v2-6-3 v2-6-2 v2-6-1 v2-6-0
+
+KRKNWK-19894: The Device Firmware Upgrade (DFU) from the |NCS| v2.5.X or older to a newer version may cause fatal error or abnormal behavior
+   The issue occurs when the device initially uses firmware built with the |NCS| v2.5.X or earlier, and has the ZCL Reporting feature configured (which means it reports selected attributes).
+   Subsequently, the DFU is performed where the new firmware is built based on the |NCS| v2.6.0 or later.
+
+   During the upgrade, the NVRAM content is preserved.
+   However, part of this content has a structure that is incompatible with the new firmware, leading to abnormal behavior.
+
+   The attribute reporting stops working correctly.
+   The device frequently sends the Report Attributes command, but the messages are corrupted (empty).
+   This condition of the device likely prevents remote reconfiguration.
+   In some cases of cluster configuration, the firmware may encounter a fatal error every time it starts.
+
+   **Workaround:** After upgrading the device, perform an NVRAM erase (complete or specifically targeting the part with the ``ZB_NVRAM_ZCL_REPORTING_DATA`` ID).
+   This method prevents abnormal behavior, but it leads to the loss of configuration data, requiring you to reconfigure the device.
+
 .. rst-class:: v2-7-0
 
 KRKNWK-19263: FOTA DFU on the nRF5340 DK fails due to an invalid update image
