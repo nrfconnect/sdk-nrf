@@ -143,6 +143,10 @@ function(fast_pair_hex_dts)
   )
 endfunction()
 
+if(NOT DEFINED FP_MODEL_ID OR NOT DEFINED FP_ANTI_SPOOFING_KEY)
+  message(FATAL_ERROR "Automatic Fast Pair provisioning data generation is enabled but `FP_MODEL_ID` or `FP_ANTI_SPOOFING_KEY` were not provided.")
+endif()
+
 if(SB_CONFIG_PARTITION_MANAGER)
   fast_pair_hex_pm()
 else()
