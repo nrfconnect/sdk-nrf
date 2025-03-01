@@ -1,0 +1,11 @@
+tests:
+  net.lib.app_jwt:
+    sysbuild: true
+    platform_allow:
+      - native_sim
+    integration_platforms:
+      - native_sim
+    tags:
+      - fota
+      - sysbuild
+      - ci_tests_subsys_net
