@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig JWT_SAMPLE
+	bool "Json Web Token Sample"
+	help
+	   Enable sample-specific configurations.
+
+if JWT_SAMPLE
+
+module = JWT_SAMPLE
+module-str = JWT Sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # JWT_SAMPLE
+
+source "Kconfig.zephyr"
