@@ -1,11 +1,12 @@
 #
-# Copyright (c) 2025 Nordic Semiconductor ASA
+# Copyright (c) 2018 Bosch Sensortec GmbH
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 cmake_minimum_required(VERSION 3.20.0)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
-project(settings_sample)
+project(bme680)
 
-target_sources(app PRIVATE ${ZEPHYR_BASE}/samples/subsys/settings/src/main.c)
+FILE(GLOB app_sources src/*.c)
+target_sources(app PRIVATE ${app_sources})

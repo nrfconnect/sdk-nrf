@@ -439,6 +439,7 @@
 /samples/CMakeLists.txt                   @nrfconnect/ncs-co-build-system
 /samples/app_event_manager/               @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/app_event_manager_profiler_tracer/ @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
+/samples/basic/blinky/                    @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /samples/benchmarks/coremark/             @nrfconnect/ncs-si-bluebagel
 /samples/bluetooth/nrf_auraconfig/        @nrfconnect/ncs-audio
 /samples/bluetooth/central_and_peripheral_hr/ @nrfconnect/ncs-si-muffin
@@ -528,7 +529,9 @@
 /samples/nfc/                             @nrfconnect/ncs-si-muffin
 /samples/nrf5340/netboot/                 @nrfconnect/ncs-pluto
 /samples/nrf_rpc/                         @nrfconnect/ncs-si-muffin
+/samples/sensor/accel_polling/            @nrfconnect/ncs-low-level-test
 /samples/sensor/bh1749/                   @nrfconnect/ncs-cia
+/samples/sensor/bme680/                   @nrfconnect/ncs-low-level-test
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-cia
 /samples/sensor/qdec/                     @nrfconnect/ncs-low-level-test
 /samples/subsys/settings/                 @nrfconnect/ncs-low-level-test
@@ -704,8 +707,6 @@
 /scripts/partition_manager/*.rst          @nrfconnect/ncs-aurora-doc
 /scripts/shell/ble_console/**/*.rst       @nrfconnect/ncs-doc-leads
 /scripts/west_commands/sbom/*.rst         @nrfconnect/ncs-si-muffin-doc
-/scripts/twister/alt/zephyr/samples/basic/ @nrfconnect/ncs-ll-ursus
-/scripts/twister/alt/zephyr/samples/sensor/ @nrfconnect/ncs-low-level-test
 /scripts/twister/alt/zephyr/tests/drivers/ @nrfconnect/ncs-low-level-test
 
 # Share
@@ -835,6 +836,7 @@
 /tests/drivers/flash/flash_rpc/           @nrfconnect/ncs-pluto
 /tests/drivers/flash_patch/               @nrfconnect/ncs-pluto
 /tests/drivers/fprotect/                  @nrfconnect/ncs-pluto
+/tests/drivers/i2c/i2c_bme688/            @nrfconnect/ncs-low-level-test
 /tests/drivers/lpuart/                    @nordic-krch
 /tests/drivers/nrfx_integration_test/     @nrfconnect/ncs-co-drivers
 /tests/drivers/i2c/i2c_target_api/        @nrfconnect/ncs-low-level-test
