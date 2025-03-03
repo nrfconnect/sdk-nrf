@@ -99,7 +99,7 @@ void cs_antenna_switch_init(void)
 
 	for (uint8_t i = 0; i < DT_PROP_LEN(ANTENNA_SWITCH_NODE, ant_gpios); i++) {
 		err = gpio_pin_configure_dt(&gpio_dt_spec_table[i], GPIO_OUTPUT_INACTIVE);
-		__ASSERT(err == 0, "Failed to initialize GPIOs for CS (%d)", ret);
+		__ASSERT(err == 0, "Failed to initialize GPIOs for CS (%d)", err);
 	}
 }
 
