@@ -399,11 +399,6 @@ In that case, also set the :ref:`CONFIG_LOCATION_TRACKING <CONFIG_LOCATION_TRACK
 
 For examples, see the related minimal overlays in the :ref:`nrf_cloud_multi_service_minimal` section.
 
-.. note::
-   MQTT should only be used with applications that need to stay connected constantly or transfer data frequently.
-   While this sample does allow its core features to be slowed or completely disabled, in real-world applications, you should carefully consider your data throughput and whether MQTT is an appropriate solution.
-   If you want to disable or excessively slow all of these features for a real-world application, other solutions, such as the `nRF Cloud Rest API`_, may be more appropriate.
-
 Customizing GNSS antenna configuration
 ======================================
 
