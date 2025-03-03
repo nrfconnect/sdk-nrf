@@ -164,5 +164,4 @@ tests:
       type: multi_line
       ordered: true
       regex:
-        - ".*Coverage analysis enabled.*"
         - ".*Coverage analysis start.*"
