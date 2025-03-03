@@ -2,6 +2,8 @@
 .. _ug_nrf52_gs:
 .. _ug_nrf5340_gs:
 .. _ug_thingy53_gs:
+.. _ug_thingy91_gsg:
+.. _ug_nrf9160_gs:
 
 Quick Start
 ###########
@@ -42,7 +44,7 @@ The application uses Nordic Semiconductor tools and precompiled binaries and doe
 +----------------------+--------------------------------------------------------------------+---------------------------------------+
 | nRF7002 EB           | `Get started <nRF7002 EB get started_>`_ on the product page       | `nRF7002 EB User Guide`_              |
 +----------------------+--------------------------------------------------------------------+---------------------------------------+
-| Thingy:91            | :ref:`ug_thingy91_gsg`                                             | `Nordic Thingy:91 User Guide`_        |
+| Thingy:91            | `Get started <Nordic Thingy:91 get started_>`_ on the product page | `Nordic Thingy:91 User Guide`_        |
 +----------------------+--------------------------------------------------------------------+---------------------------------------+
 | Thingy:53            | `Get started <Nordic Thingy:53 get started_>`_ on the product page | `Nordic Thingy:53 Hardware`_          |
 +----------------------+--------------------------------------------------------------------+---------------------------------------+
@@ -55,7 +57,5 @@ The application uses Nordic Semiconductor tools and precompiled binaries and doe
    :maxdepth: 1
    :caption: Subpages:
 
-   gsg_guides/nrf9160_gs
-   gsg_guides/thingy91_gsg
    gsg_guides/nrf7002_gs
    gsg_guides/gsg_other

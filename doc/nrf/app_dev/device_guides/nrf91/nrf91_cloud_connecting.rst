@@ -1,72 +1,12 @@
-.. _ug_nrf9160_gs:
-
-Getting started with nRF9160 DK
-###############################
-
-.. contents::
-   :local:
-   :depth: 2
-
-This guide lets you evaluate the |NCS|'s support for nRF9160 :term:`Development Kit (DK)` without the need of installing the SDK.
-You will update the firmware (both the modem firmware and the application firmware) and the nRF Cloud certificates of the DK, and conduct some initial tests.
-
-If you want to go through a hands-on online training to familiarize yourself with cellular IoT technologies and development of cellular applications, enroll in the `Cellular IoT Fundamentals course`_ in the `Nordic Developer Academy`_.
-
-.. _nrf9160_gs_requirements:
-
-Minimum requirements
-********************
-
-Make sure you have all the required hardware and that your computer has one of the supported operating systems.
-
-Hardware
-========
-
-* nRF9160 DK
-* nano-SIM card that supports :term:`LTE-M` or :term:`Narrowband Internet of Things (NB-IoT)` (the nRF9160 DK contains an iBasis SIM card)
-* micro-USB 2.0 cable
-
-Software
-========
-
-On your computer, one of the following operating systems:
-
-* Microsoft Windows
-* macOS
-* Ubuntu Linux
-
-|Supported OS|
-
-.. _nrf9160_gs_installing_software:
-.. _nrf9160_gs_updating_fw:
-
-Getting started using the Quick Start app
-*****************************************
-
-To work with the nRF9160 DK firmware and certificates, complete the following steps:
-
-1. Install `nRF Connect for Desktop`_.
-   This also automatically installs the `Quick Start app`_, a cross-platform tool for guided setup and installation procedures.
-#. Prepare your DK:
-
-   a. Punch out the nano-SIM from the SIM card and plug it into the SIM card holder on the nRF9160 DK.
-   #. Make sure the **PROG/DEBUG SW10** switch on the nRF9160 DK is set to **nRF91**.
-      On DK v0.9.0 and earlier, this is the **SW5** switch.
-   #. Connect the nRF9160 DK to the computer with a micro-USB cable, and then turn the DK on.
-
-#. Use the Quick Start app to update the DK firmware.
-
-   Follow the steps in the application to update the firmware, create an nRF Cloud account, and activate the iBasis SIM card that came with your nRF9160 DK.
-   When selecting which application to program, select the **Asset Tracking** option.
-
-If you have not yet installed the |NCS| and selected the preferred development environment, the application will point you to the related resources.
-It will also provide you with links to the recommended learning materials from Nordic Semiconductor related to cellular development.
-
 .. _nrf9160_gs_connect_to_cloud:
 .. _nrf9160_gs_connecting_dk_to_cloud:
 
 Connecting the |DK| to nRF Cloud
-*********************************
+################################
+
+.. contents::
+   :local:
+   :depth: 2
 
 .. |DK| replace:: nRF9160 DK
 
@@ -77,12 +17,12 @@ nRF Cloud is Nordic Semiconductor's platform for connecting your IoT devices to 
 
 .. dk_nrf_cloud_end
 
-If you used the :ref:`Quick Start app to get started <nrf9160_gs_updating_fw>`, you have an account and can :ref:`add the nRF9160 DK to nRF Cloud <nrf9160_gs_cloud_add_device>`.
+If you used the :ref:`Quick Start app to get started <ug_nrf9160_gs>`, you have an account and can :ref:`add the nRF9160 DK to nRF Cloud <nrf9160_gs_cloud_add_device>`.
 
 .. _creating_cloud_account:
 
 Creating an nRF Cloud account
-=============================
+*****************************
 
 .. nrf_cloud_account_start
 
@@ -105,7 +45,7 @@ After logging in, you are taken to the dashboard view that displays your device 
 .. _nrf9160_gs_cloud_add_device:
 
 Adding the nRF9160 DK to nRF Cloud
-==================================
+**********************************
 
 .. |led_cloud_association| replace:: the **LED3** double pulse blinks
 .. |led_publishing_data| replace:: blinking of **LED3**
@@ -187,7 +127,7 @@ On nRF Cloud, you can access the device by clicking :guilabel:`Devices` under :g
 .. _ug_nrf9160_gs_testing_gnss:
 
 Testing the GNSS functionality
-==============================
+******************************
 
 :ref:`asset_tracker_v2` supports acquiring GNSS position and transmitting it to nRF Cloud.
 
@@ -219,12 +159,3 @@ Complete the following steps to test the GNSS functionality:
 
 #. From the **Devices** view, open the entry for your device.
 #. Observe that after a while, the GNSS data is displayed on the map in the **GPS Data** card on nRF Cloud.
-
-Next steps
-**********
-
-You have now completed getting started with the nRF9160 DK.
-See the following links for where to go next:
-
-* :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
-* :ref:`ug_nrf9160` for more advanced topics related to the nRF9160 DK.
