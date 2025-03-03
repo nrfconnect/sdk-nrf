@@ -55,7 +55,7 @@ int32_t tfm_ns_interface_dispatch(veneer_fn fn,
  *          this function according to NS specific implementation and actual
  *          usage scenario.
  *
- * \return \ref OS_WRAPPER_SUCCESS on success or \ref OS_WRAPPER_ERROR on error
+ * \return `OS_WRAPPER_SUCCESS` on success or `OS_WRAPPER_ERROR` on error
  */
 uint32_t tfm_ns_interface_init(void);
 
