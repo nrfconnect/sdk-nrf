@@ -7,12 +7,12 @@ JWT generator
    :local:
    :depth: 2
 
-This sample demonstrates how Application core can generate a signed JWT.
+This sample demonstrates how the application core can generate a signed JWT.
 
 Requirements
 ************
 
-The sample supports the following development kits:
+The sample supports the following development kit:
 
 .. table-from-sample-yaml::
 
@@ -21,22 +21,20 @@ The sample supports the following development kits:
 Overview
 ********
 
-This code will generate two separate JWT : simplified (less fields) signed with a user generated key, and a complete JWT signed with the IAK key.
-The sample goes through the following steps to generate a JWTs:
+This code generates two separate JWTs - Simplified (less fields) signed with a user generated key, and a complete JWT signed with the IAK key.
+The sample completes the following steps to generate a JWT:
 
-1. Fill in the fields for the JWT.
+#. Fill in the fields for the JWT.
 
-   For the purposes of this Sample, an ECDSA keypair is created and fed to the Secure Domain using PSA Crypto interfaces, the returned key_id is used as a `sec_tag` for signing the JWT.
+   An ECDSA keypair is created and fed to the Secure Domain using PSA Crypto interfaces and the returned ``key_id`` is used as a ``sec_tag`` for signing the JWT.
+   The key must be of type ECDSA secp256r1 and must be used for message signing and message signature verification.
 
-   The key has to be of type ECDSA secp256r1 and the usage needs to be for message signing and message signature verification.
+   * For the simplified JWT version, only the **sub** claim and the **exp** claim fields are filled.
+   * For the full version, **sub**, **aud**, **iss**, **iat**, and **exp** claim fields are filled and the **kid** field is added to the header.
 
-   The simplified JWT version, only the `sub` claim and the `exp` claim fields are filled.
+#. Generates a JWT.
 
-   The full version, `sub`, `aud`, `iss`, `iat` and `exp` are filled and `kid` is added to the header.
-
-2. Generates a JWT.
-
-   The generated JWT is printed to serial terminal if project configuration allows it.
+   The generated JWT is printed to the serial terminal if set in the project configuration :file:`prj.conf`.
 
 Configuration
 *************
@@ -46,21 +44,23 @@ Configuration
 LIB JWT APP
 ===========
 
-As per provided on the project config, the used APIs requier the usage of lib::app_jwt.
+Based on the project configuration, the used APIs require the usage of the :ref:`lib_app_jwt` library.
 
 JWT signing verification
 ========================
 
-Flag :kconfig:option:`CONFIG_APP_JWT_VERIFY_SIGNATURE` allow to verify the JWT signature against the signing key.
+The :kconfig:option:`CONFIG_APP_JWT_VERIFY_SIGNATURE` Kconfig option allows to verify the JWT signature against the IAK key.
 
 Export public part of the signing key
 =====================================
 
-You might be interrested in the DER formatted key for later verifications of the generated JWT, the flag :kconfig:option:`CONFIG_APP_JWT_PRINT_EXPORTED_PUBKEY_DER` allows printing the DER formatted key to debug terminal.
-The DER key can be turned into PEM format by encoding it in base64 and adding the PEM markers `-----BEGIN PUBLIC KEY-----` and `-----END PUBLIC KEY-----`.
+If you want the key in the DER format for later verifications of the generated JWT, use the :kconfig:option:`CONFIG_APP_JWT_PRINT_EXPORTED_PUBKEY_DER` Kconfig option that prints the DER-formatted key to the debug terminal.
+You can convert the DER key into PEM format by encoding it in base64 and adding the PEM markers ``-----BEGIN PUBLIC KEY-----`` and ``-----END PUBLIC KEY-----``.
 
 Building and running
 ********************
+
+To build the sample, run the following command:
 
    .. code-block:: console
 
@@ -73,7 +73,7 @@ Testing
 
 1. |connect_terminal_specific|
 #. Reset the kit.
-#. Observe the following output (DER formatted public IAK key, and the JWT):
+#. Observe the following output (DER-formatted public IAK key, and the JWT):
 
    .. code-block:: console
 
@@ -94,11 +94,11 @@ Testing
    If an error occurs, the sample prints an error message.
 
 .. note::
-   Currently, the provided Sample doesn't support other boards than nrf54h20dk.
+   Currently, the sample only supports the nRF54H20 DK.
 
 Dependencies
 ************
 
-This sample uses the following |NCS| libraries:
+This sample uses the following |NCS| library:
 
 * :ref:`lib_app_jwt`
