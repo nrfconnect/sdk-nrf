@@ -242,6 +242,21 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
+.. matter_template_sample_nrf70_firmware_patch_start
+
+A portion of the application code related to the nRF70 Series' Wi-Fi firmware is saved onto an external memory to free up space in the on-chip memory.
+This option is set by default when building for the nRF7002 DK.
+The additional partition for MCUboot is created in the external memory and it is used to perform a firmware update of the Wi-Fi firmware.
+To disable this feature and keep the Wi-Fi firmware in the on-chip memory, set the ``SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE`` Kconfig option to ``n``, set the ``SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES`` Kconfig option to ``2``, and change the ``nrf70_wifi_fw`` partition locations in the associated ::file::`pm_static_*.yml` file.
+To learn how to configure MCUboot partitions, see the :ref:`nrf70_fw_patch_update_adding_partitions` guide.
+
+.. important::
+
+   This feature does not work with tools from the `nRF Command Line Tools`_ product page and nrfjprog programming tool.
+   To program the device you need to use the nRF Util downloaded from  `nRF Util development tool`_ product page.
+
+.. matter_template_sample_nrf70_firmware_patch_end
+
 .. matter_template_build_wifi_nrf54h20_start
 
 To use nrf54H20 DK with the ``nrf7002ek`` shield attached (2.4 GHz or 5 GHz), follow the :ref:`ug_nrf7002eb_nrf54h20dk_gs` user guide to connect all required pins and then use the following command to build the sample:

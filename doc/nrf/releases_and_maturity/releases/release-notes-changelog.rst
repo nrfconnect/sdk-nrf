@@ -223,6 +223,7 @@ Matter Bridge
 * Enabled SUIT DFU support for the :ref:`matter_bridge_app` application.
   Currently, only the Matter OTA protocol is fully supported for SUIT DFU purposes.
 * Enabled Link Time Optimization (LTO) by default for the ``release`` configuration.
+* Enabled the default storage of the Wi-Fi firmware patch in external flash.
 
 nRF5340 Audio
 -------------
@@ -491,7 +492,18 @@ Keys samples
 Matter samples
 --------------
 
-* Updated the :ref:`matter_template_sample` sample document with the instructions on how to build the sample on the nRF54L15 DK with support for Matter OTA DFU and DFU over Bluetooth SMP, and using internal MRAM only.
+* Updated:
+
+  * The :ref:`matter_template_sample` sample document with the instructions on how to build the sample on the nRF54L15 DK with support for Matter OTA DFU and DFU over Bluetooth SMP, and using internal MRAM only.
+  * All Matter samples that runs Wi-Fi stack to store the Wi-Fi firmware patch in external flash.
+    The change affects the following samples on nRF7002 DK:
+
+    * :ref:`matter_light_bulb_sample`
+    * :ref:`matter_light_switch_sample`
+    * :ref:`matter_lock_sample`
+    * :ref:`matter_template_sample`
+    * :ref:`matter_thermostat_sample`
+
 * Enabled SUIT DFU support for the :ref:`matter_lock_sample`, and :ref:`matter_template_sample` samples.
   Currently, only the Matter OTA protocol is fully supported for SUIT DFU purposes.
 * Enabled Link Time Optimization (LTO) by default for the ``release`` configuration and ``nrf7002dk/nrf5340/cpuapp`` build target.
