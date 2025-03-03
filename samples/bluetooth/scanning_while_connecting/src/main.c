@@ -322,11 +322,6 @@ static void scan_recv(const struct bt_le_scan_recv_info *info, struct net_buf_si
 		return;
 	}
 
-	/* connect only to devices in close proximity */
-	if (info->rssi < -50) {
-		return;
-	}
-
 	char name_str[ADV_NAME_STR_MAX_LEN] = {0};
 
 	bt_data_parse(buf, adv_data_parse_cb, name_str);
