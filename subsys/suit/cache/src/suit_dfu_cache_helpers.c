@@ -15,7 +15,33 @@
 #include "suit_ram_sink.h"
 #include "zcbor_noncanonical_decode.h"
 
+#ifdef CONFIG_FLASH_IPUC
+#include <drivers/flash/flash_ipuc.h>
+#endif /* CONFIG_FLASH_IPUC */
+
 LOG_MODULE_REGISTER(dfu_cache_helpers, CONFIG_SUIT_LOG_LEVEL);
+
+#ifdef CONFIG_FLASH_IPUC
+/* This function returns true if the given cache pool is an IPUC-based cache
+ * but is not initialized yet.
+ */
+static bool is_cache_ipuc_uninitialized(struct dfu_cache_pool *cache_pool)
+{
+	uintptr_t ipuc_address;
+	size_t ipuc_size;
+	bool ipuc_possible =
+		flash_cache_ipuc_check((uintptr_t)cache_pool->address, &ipuc_address, &ipuc_size);
+
+	if (ipuc_possible) {
+		if (flash_ipuc_find((uintptr_t)cache_pool->address, cache_pool->size, &ipuc_address,
+				    &ipuc_size) == NULL) {
+			return true;
+		}
+	}
+
+	return false;
+}
+#endif /* CONFIG_FLASH_IPUC */
 
 suit_plat_err_t suit_dfu_cache_partition_slot_foreach(struct dfu_cache_pool *cache_pool,
 						      partition_slot_foreach_cb cb, void *ctx)
@@ -48,6 +74,12 @@ suit_plat_err_t suit_dfu_cache_partition_slot_foreach(struct dfu_cache_pool *cac
 			 */
 			break;
 		}
+
+#ifdef CONFIG_FLASH_IPUC
+		if (is_cache_ipuc_uninitialized(cache_pool)) {
+			return SUIT_PLAT_ERR_CBOR_DECODING;
+		}
+#endif /* CONFIG_FLASH_IPUC */
 
 		err = suit_dfu_cache_memcpy(partition_header_storage, current_address, read_size);
 
@@ -167,6 +199,12 @@ suit_plat_err_t suit_dfu_cache_partition_is_empty(struct dfu_cache_pool *cache_p
 	uint8_t buffer[128];
 	const size_t chunk_size = sizeof(buffer);
 	suit_plat_err_t ret = SUIT_PLAT_SUCCESS;
+
+#ifdef CONFIG_FLASH_IPUC
+	if (is_cache_ipuc_uninitialized(cache_pool)) {
+		return SUIT_PLAT_SUCCESS;
+	}
+#endif /* CONFIG_FLASH_IPUC */
 
 	while (remaining > 0) {
 		size_t read_size = MIN(chunk_size, remaining);
