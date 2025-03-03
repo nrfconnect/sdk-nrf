@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "board_version.h"
+#include "nrf5340_dk_version.h"
 
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/adc.h>
 #include <zephyr/drivers/gpio.h>
 #include <stdlib.h>
 
-#include "board.h"
+#include "nrf5340_dk.h"
 #include "macros_common.h"
 
 #include <zephyr/logging/log.h>
@@ -122,7 +122,7 @@ static int board_version_init(void)
 	return 0;
 }
 
-int board_version_get(struct board_version *board_rev)
+int nrf5340_board_version_get(struct board_version *board_rev)
 {
 	int ret;
 
@@ -144,7 +144,7 @@ int board_version_get(struct board_version *board_rev)
 	return 0;
 }
 
-int board_version_valid_check(void)
+int nrf5340_board_version_valid_check(void)
 {
 	int ret;
 	struct board_version board_rev;

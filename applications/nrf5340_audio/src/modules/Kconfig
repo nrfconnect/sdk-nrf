@@ -20,6 +20,7 @@ config AUDIO_SYNC_TIMER_USES_RTC
 #----------------------------------------------------------------------------#
 menuconfig NRF5340_AUDIO_POWER_MEASUREMENT
 	bool "Power measurement"
+	default n
 	help
 	  Include the power measurement driver for the nRF5340 Audio DK
 
@@ -146,6 +147,7 @@ endmenu # Zbus
 #----------------------------------------------------------------------------#
 config NRF5340_AUDIO_SD_CARD_MODULE
 	bool "Audio SD Card Module"
+	default n
 	help
 	  Include the audio SD card module to support streaming audio files from an SD card.
 

@@ -1,3 +1,5 @@
+#include "nrf5340_audio_dk_nrf5340_cpuapp.overlay"
+
 / {
 	chosen {
 		nordic,pm-ext-flash = &mx25r64;
@@ -9,7 +11,9 @@
 };
 
 &spi4 {
-	cs-gpios = <&gpio1 10 GPIO_ACTIVE_LOW>, <&gpio0 11 GPIO_ACTIVE_LOW>, <&gpio0 17 GPIO_ACTIVE_LOW>;
+	cs-gpios = <&gpio1 10 GPIO_ACTIVE_LOW>,
+		<&gpio0 11 GPIO_ACTIVE_LOW>,
+		<&gpio0 17 GPIO_ACTIVE_LOW>;
 	status = "okay";
 	mx25r64: mx25r6435f@0 {
 
@@ -34,6 +38,6 @@
 
 &gpio_fwd {
 	uart {
-		gpios = < &gpio1 0x9 0x0 >, < &gpio1 0x8 0x0 >, < &gpio1 0xb 0x0 >;
+		gpios = <&gpio1 0x9 0x0>, <&gpio1 0x8 0x0>, <&gpio1 0xb 0x0>;
 	};
 };
