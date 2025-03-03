@@ -357,6 +357,16 @@ static void config_pins(nrfe_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 				  pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER],
 				  VPRCSR_NORDIC_DIR_OUTPUT);
 		}
+
+		/*
+		 * If DQ2 and DQ3 are defined, set them to high state. Most external flashes
+		 * initially are in SINGLE mode and need to be switched to QUAD mode. Before they
+		 * are switched, DQ2 and DQ3 and often used as RESET or WRITE PROTECTION pins, which
+		 * are active low.
+		 */
+		if (fun == NRF_FUN_SDP_MSPI_DQ2 || fun == NRF_FUN_SDP_MSPI_DQ3) {
+			nrf_vpr_csr_vio_out_or_set(BIT(pin_to_vio_map[pin_number]));
+		}
 	}
 	nrf_vpr_csr_vio_dir_set(xfer_params.tx_direction_mask);
 
