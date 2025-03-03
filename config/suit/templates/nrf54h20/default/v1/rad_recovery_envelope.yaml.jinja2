@@ -1,3 +1,9 @@
+# Consistency checks for the build configuration
+{%-  import 'consistency_checks.jinja' as consistency_checks -%}
+
+# Verify signature verification configuration
+{{ consistency_checks.suit_verify_signature_check("RAD_RECOVERY", rad_recovery, sysbuild) }}
+
 {%- set mpi_rad_recovery_vendor_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_RAD_RECOVERY_VENDOR_NAME']|default('nordicsemi.com') %}
 {%- set mpi_rad_recovery_class_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_RAD_RECOVERY_CLASS_NAME']|default('nRF54H20_sample_rad_recovery') %}
 SUIT_Envelope_Tagged:
