@@ -256,6 +256,8 @@ See :ref:`Bluetooth Mesh user guide <ug_bt_mesh>` for more information.
 
 .. include:: /includes/build_and_run_ns.txt
 
+When building the sample with :ref:`configuration_system_overview_sysbuild` for an SoC that has a network core, the IPC radio's :file:`prj.conf` source file from :file:`sysbuild/ipc_radio` is automatically applied to the build.
+
 .. _bluetooth_mesh_light_switch_testing:
 
 Testing

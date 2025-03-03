@@ -95,6 +95,8 @@ Building and Running
 
 .. include:: /includes/build_and_run.txt
 
+When building the sample with :ref:`configuration_system_overview_sysbuild` for an SoC that has a network core, the IPC radio's :file:`prj.conf` source file from :file:`sysbuild/ipc_radio` is automatically applied to the build.
+
 Testing
 =======
 

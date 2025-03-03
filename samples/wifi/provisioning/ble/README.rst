@@ -103,6 +103,8 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
+When building the sample with :ref:`configuration_system_overview_sysbuild` for an SoC that has a network core, the IPC radio's :file:`prj.conf` source file from :file:`sysbuild/ipc_radio` is automatically applied to the build.
+
 The sample generates header and source files based on protocol buffer definitions in :file:`.proto` files during the build process.
 You must install a protocol buffer compiler to generate the files.
 See the :zephyr:code-sample:`nanopb` in the Zephyr documentation for more information.
