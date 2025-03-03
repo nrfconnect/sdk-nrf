@@ -9,8 +9,8 @@
 
 /* Extend by 160 KB, taken from rad */
 &cpuapp_rx_partitions {
-	cpuapp_slot0_partition: partition@74000 {
-		reg = <0x74000 DT_SIZE_K(480)>;
+	cpuapp_slot0_partition: partition@6C000 {
+		reg = <0x6C000 DT_SIZE_K(480)>;
 	};
 };
 
