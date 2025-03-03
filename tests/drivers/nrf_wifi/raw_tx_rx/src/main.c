@@ -14,7 +14,7 @@ LOG_MODULE_REGISTER(net_test, NET_LOG_LEVEL);
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/net/socket.h>
-
+#include <fmac_api.h>
 #include "net_private.h"
 
 #include <zephyr/ztest.h>
@@ -103,7 +103,7 @@ static struct beacon test_beacon_frame  = {
 		0XFF, 0XDD, 0X18, 0X00, 0X50, 0XF2, 0X02, 0X01, 0X01, 0X01, 0X00, 0X03, 0XA4, 0X00,
 		0X00, 0X27, 0XA4, 0X00, 0X00, 0X42, 0X43, 0X5E, 0X00, 0X62, 0X32, 0X2F, 0X00}};
 
-/* TODO: Copied from nRF70 Wi-Fi driver, need to be moved to a common place */
+#if 0
 struct raw_tx_pkt_header {
 	unsigned int magic_num;
 	unsigned char data_rate;
@@ -112,6 +112,31 @@ struct raw_tx_pkt_header {
 	unsigned char queue;
 	unsigned char raw_tx_flag;
 };
+#endif
+
+static void wifi_set_loopback_mode(unsigned char loopback_mode)
+{
+/* It would be nice to map to this directly rather than creating a new event. 
+ * check this
+ */	
+#if 0
+	status = nrf_wifi_fmac_set_loopback_mode(ctx->rpu_ctx,
+						 loopback_mode);
+#endif	
+	int ret;
+	struct net_if *iface = NULL;
+
+	iface = net_if_get_first_wifi();
+	if (iface == NULL) {
+		LOG_ERR("Failed to get Wi-Fi iface");
+		return;
+	}
+	ret = net_mgmt(NET_REQUEST_WIFI_LOOPBACK_MODE, iface, &loopback_mode, sizeof(loopback_mode));
+	if (ret) {
+		LOG_ERR("Loopback Mode setting failed %d", ret);
+	}
+	LOG_INF("Mode setting set to loopback mode = %d", loopback_mode);
+}
 
 static void wifi_set_mode(int mode_val)
 {
@@ -396,11 +421,13 @@ ZTEST(nrf_wifi, test_raw_tx_rx)
  * can be set via network message to the driver/UMAC from the ZTEST application.
  * Enable code if you wish to test or when the configuration in available
  */
-/* #define RAW_TX_TEST */
+#define RAW_TX_TEST
 #ifdef RAW_TX_TEST
 ZTEST(nrf_wifi, test_raw_tx)
 {
 	int count = CONFIG_RAW_TX_TRANSMIT_COUNT;
+	/* disable loopback mode */
+	wifi_set_loopback_mode(0);
 
 	LOG_INF("TX burst count is set is %d", CONFIG_RAW_TX_TRANSMIT_COUNT);
 	while (count--)

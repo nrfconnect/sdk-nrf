@@ -6,3 +6,4 @@ project(nrf_wifi_tx_rx)
 
 FILE(GLOB app_sources src/*.c)
 target_sources(app PRIVATE ${app_sources})
+# target_link_libraries(zephyr_interface INTERFACE nrf-wifi-interface)
