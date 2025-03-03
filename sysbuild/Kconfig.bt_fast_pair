@@ -1,13 +1,63 @@
 #
-# Copyright (c) 2023 Nordic Semiconductor
+# Copyright (c) 2023-2025 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config BT_FAST_PAIR
-	bool "Bluetooth Fast Pair support"
+menu "Bluetooth Fair Pair"
+
+config BT_FAST_PAIR_MODEL_ID
+	hex "Set the Model ID used for Fast Pair provisioning"
+	range 0x000000 0x1000000
+	default 0x1000000
 	help
-	  Enable this option to generate a Fast Pair provisioning data hex file and enable
-	  Bluetooth Fast Pair support in the main image. Note that ``FP_MODEL_ID`` and
-	  ``FP_ANTI_SPOOFING_KEY`` variables must be supplied when configuring the application for
-	  this functionality to be available.
+	  Set the Model ID that is used to generate the Fast Pair provisioning data hex file.
+	  The Model ID is obtained during device model registration in the Google Nearby Console.
+	  Note that the corresponding SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY Kconfig
+	  option must be supplied to trigger the generation of the Fast Pair provisioning data hex
+	  file. The generation is indicated by the SB_CONFIG_BT_FAST_PAIR_PROV_DATA Kconfig.
+
+	  The Model ID should be a value from the 0x000000 - 0xFFFFFF range. The additional
+	  default value (0x1000000) that is outside of the actual range is only used to mark
+	  this option as unset by the user.
+
+config BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY
+	string "Set the Anti-Spoofing Private Key used for Fast Pair provisioning"
+	help
+	  Set the Anti-Spoofing Private Key that is used to generate the Fast Pair provisioning
+	  data hex file. The Anti-Spoofing Private Key is obtained during device model registration
+	  in the Google Nearby Console. Note that the corresponding SB_CONFIG_BT_FAST_PAIR_MODEL_ID
+	  Kconfig option must be supplied to trigger the generation of the Fast Pair provisioning
+	  data hex file The generation is indicated by the SB_CONFIG_BT_FAST_PAIR_PROV_DATA
+	  Kconfig.
+
+	  The Anti-Spoofing Private Key is confidential and must be handled securely. It is
+	  recommended to store this key securely outside the code repository and pass it to
+	  the project as an additional argument for the build command
+	  (``-DSB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY=<value>``).
+
+config BT_FAST_PAIR_PROV_DATA
+	bool
+	depends on BT_FAST_PAIR_MODEL_ID != 0x1000000
+	depends on BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY != ""
+	default y
+	help
+	  This option is automatically enabled when the Model ID (SB_CONFIG_BT_FAST_PAIR_MODEL_ID)
+	  and the Anti-Spoofing Private Key (SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY) are
+	  set. Both parameters are mandatory for the Fast Pair provisioning.
+
+	  When this option is enabled, sysbuild generates the Fast Pair provisioning data hex file
+	  and merges it with the final output hex file that is uploaded on the chosen board target.
+
+	  For the generation step to work correctly, the user must manually define the Fast Pair
+	  partition. In the case of platforms that use the DTS for memory map description (for
+	  example, nRF54H), the Fast Pair partition must be defined as a DTS node. In the case of
+	  platforms that use the Partition Manager (PM) for memory map description (for example,
+	  nRF54L), the Fast Pair partition must be a statically defined PM partition. The PM
+	  solution also supports the dynamic generation of the partition definition if the
+	  CONFIG_BT_FAST_PAIR Kconfig is enabled in the main (default) image. This is the only case
+	  when the partition does not have to be manually defined by the user. Detailed
+	  documentation regarding the Fast Pair partition definition can be found in the Fast Pair
+	  integration guide.
+
+endmenu

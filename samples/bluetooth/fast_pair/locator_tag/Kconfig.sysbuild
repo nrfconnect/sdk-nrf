@@ -1,11 +1,16 @@
 #
-# Copyright (c) 2024 Nordic Semiconductor
+# Copyright (c) 2024-2025 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config BT_FAST_PAIR
-	default y
+config BT_FAST_PAIR_MODEL_ID
+	default 0x4A436B
+
+# The Anti-Spoofing Private Key is confidential and must be handled securely.
+# The following key is only used for demonstration purposes and must not be used in production.
+config BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY
+	default "rie10A7ONqwd77VmkxGsblPUbMt384qjDgcEJ/ctT9Y="
 
 config APP_DFU
 	bool "Enable MCUmgr OTA DFU over Bluetooth"

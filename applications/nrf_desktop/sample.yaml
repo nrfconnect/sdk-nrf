@@ -83,8 +83,6 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
       - FILE_SUFFIX=fast_pair
-      - FP_MODEL_ID=0x8E717D
-      - FP_ANTI_SPOOFING_KEY=dZxFzP7X9CcfLPC0apyRkmgsh3n2EbWo9NFNXfVuxAM=
     timeout: 180
     harness: pytest
   applications.nrf_desktop.zdebug_fast_pair.gmouse:
@@ -97,8 +95,6 @@ tests:
       - nrf52840gmouse/nrf52840
     extra_args:
       - FILE_SUFFIX=fast_pair
-      - FP_MODEL_ID=0x8E717D
-      - FP_ANTI_SPOOFING_KEY=dZxFzP7X9CcfLPC0apyRkmgsh3n2EbWo9NFNXfVuxAM=
   applications.nrf_desktop.zdebug_mcuboot_qspi:
     build_only: true
     platform_allow: nrf52840dk/nrf52840
@@ -234,8 +230,6 @@ tests:
       - nrf52kbd/nrf52832
     extra_args:
       - FILE_SUFFIX=release_fast_pair
-      - FP_MODEL_ID=0x52FF02
-      - FP_ANTI_SPOOFING_KEY=8E8ulwhSIp/skZeg27xmWv2SxRxTOagypHrf2OdrhGY=
   applications.nrf_desktop.zrelease_fast_pair.gmouse:
     build_only: true
     platform_allow:
@@ -246,8 +240,6 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
     extra_args:
       - FILE_SUFFIX=release_fast_pair
-      - FP_MODEL_ID=0x8E717D
-      - FP_ANTI_SPOOFING_KEY=dZxFzP7X9CcfLPC0apyRkmgsh3n2EbWo9NFNXfVuxAM=
   applications.nrf_desktop.zrelease_4llpmconn:
     build_only: true
     platform_allow: nrf52840dongle/nrf52840
