@@ -427,6 +427,7 @@
 .. _`nRF Connect SDK latest documentation`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/index.html
 
 .. _`known issues page on the main branch`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html
+.. _`known issues for nRF Connect SDK v2.9.1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-9-1
 .. _`known issues for nRF Connect SDK v2.9.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-9-0
 .. _`known issues for nRF Connect SDK v2.8.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-8-0
 .. _`known issues for nRF Connect SDK v2.7.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-7-0
@@ -477,6 +478,7 @@
 
 .. _`nRF socket options`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrfxlib/nrf_modem/doc/sockets.html
 
+.. _`Repositories and revisions for v2.9.1`: https://docs.nordicsemi.com/bundle/ncs-2.9.1/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.9.0`: https://docs.nordicsemi.com/bundle/ncs-2.9.0/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.8.0`: https://docs.nordicsemi.com/bundle/ncs-2.8.0/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.7.99-cs2`: https://docs.nordicsemi.com/bundle/ncs-2.7.99-cs2/page/nrf/releases_and_maturity/repository_revisions.html
@@ -509,6 +511,7 @@
 .. _`Repositories and revisions for v1.9.1`: https://docs.nordicsemi.com/bundle/ncs-1.9.1/page/nrf/introduction.html#repositories_and_revisions
 .. _`Repositories and revisions`: https://docs.nordicsemi.com/bundle/ncs-1.9.0/page/nrf/introduction.html#repositories_and_revisions
 
+.. _`Modem library changelog for v2.9.1`: https://docs.nordicsemi.com/bundle/ncs-2.9.1/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.9.0`: https://docs.nordicsemi.com/bundle/ncs-2.9.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.8.0`: https://docs.nordicsemi.com/bundle/ncs-2.8.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
 .. _`Modem library changelog for v2.7.0`: https://docs.nordicsemi.com/bundle/ncs-2.7.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html#nrf-modem-changelog
@@ -538,6 +541,7 @@
 .. _`Modem library changelog for v1.9.1`: https://docs.nordicsemi.com/bundle/ncs-1.9.1/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
 .. _`Modem library changelog for v1.9.0`: https://docs.nordicsemi.com/bundle/ncs-1.9.0/page/nrfxlib/nrf_modem/doc/CHANGELOG.html
 
+.. _`LwM2M carrier library changelog for v2.9.1`: https://docs.nordicsemi.com/bundle/ncs-2.9.1/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.9.0`: https://docs.nordicsemi.com/bundle/ncs-2.9.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.8.0`: https://docs.nordicsemi.com/bundle/ncs-2.8.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
 .. _`LwM2M carrier library changelog for v2.7.0`: https://docs.nordicsemi.com/bundle/ncs-2.7.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html#liblwm2m-carrier-changelog
@@ -868,6 +872,7 @@
 .. _`Errata 256`: https://docs.nordicsemi.com/bundle/errata_nRF52820_Rev3/page/ERR/nRF52820/Rev3/latest/config_820_256.html
 .. _`Errata 257`: https://docs.nordicsemi.com/bundle/errata_nRF52811_Rev2/page/ERR/nRF52811/Rev2/latest/config_811_257.html
 .. _`Errata 117`: https://docs.nordicsemi.com/bundle/errata_nRF5340_Rev1/page/ERR/nRF5340/Rev1/latest/anomaly_340_117.html
+.. _`Errata 30`: https://docs.nordicsemi.com/bundle/errata_nRF54L15_Rev1/page/ERR/nRF54L15/Rev1/latest/anomaly_L15_30.html#anomaly_L15_30
 
 .. _`Unauthorized Thread Network Key Update (SA-2023-234) vulnerability`: https://docs.nordicsemi.com/bundle/SA/resource/SA-2023-234-v1_1.pdf
 
