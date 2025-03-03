@@ -527,6 +527,10 @@ Peripheral samples
 
   * Added loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.
 
+* :ref:`lpuart_sample` sample:
+
+  * Changed pins used for NRF52840 DK and NRF5340 DK.
+
 PMIC samples
 ------------
 
