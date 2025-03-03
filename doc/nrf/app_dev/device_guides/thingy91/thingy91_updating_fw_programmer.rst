@@ -1,7 +1,7 @@
 .. _programming_thingy:
 
-Updating the Thingy:91 firmware using Programmer
-################################################
+Updating the Thingy:91 firmware using the Programmer app
+########################################################
 
 .. contents::
    :local:

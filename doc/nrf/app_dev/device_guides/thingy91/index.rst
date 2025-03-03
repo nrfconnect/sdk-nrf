@@ -21,7 +21,7 @@ The |NCS| provide support for developing cellular applications using the Thingy:
    * - Thingy:91
      - PCA20035
      - ``thingy91/nrf9160``, ``thingy91/nrf9160/ns``
-     - | :ref:`Getting started <ug_thingy91_gsg>`
+     - | `Get started <Nordic Thingy:91 get started_>`_ on the product page
        | `User Guide <Nordic Thingy:91 User Guide_>`_
      - | `Thingy\:91 product page`_
        | `nRF9160 System in Package (SiP) <nRF9160 product website_>`_
@@ -38,5 +38,7 @@ See the subpages for information on the various aspects of Thingy:91.
 
    thingy91_features
    thingy91_connecting
+   thingy91_cloud_connecting
+   thingy91_updating_fw_celmon
    thingy91_updating_fw_programmer
    thingy91_building_programming

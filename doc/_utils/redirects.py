@@ -23,12 +23,14 @@ Examples:
 
 NRF = [
     ("introduction", "index"), # Introduction
-    ("ug_nrf9160_gs", "gsg_guides/nrf9160_gs"), # Getting started with nRF9160 DK
-    ("working_with_nrf/nrf91/nrf9160_gs", "gsg_guides/nrf9160_gs"),
-    ("device_guides/working_with_nrf/nrf91/nrf9160_gs", "gsg_guides/nrf9160_gs"),
-    ("ug_thingy91_gsg", "gsg_guides/thingy91_gsg"), # Getting started with Thingy:91
-    ("working_with_nrf/nrf91/thingy91_gsg", "gsg_guides/thingy91_gsg"),
-    ("device_guides/working_with_nrf/nrf91/thingy91_gsg", "gsg_guides/thingy91_gsg"),
+    ("ug_nrf9160_gs", "gsg_guides"), # Getting started with nRF9160 DK (removed in v3.0.0)
+    ("working_with_nrf/nrf91/nrf9160_gs", "gsg_guides"),
+    ("device_guides/working_with_nrf/nrf91/nrf9160_gs", "gsg_guides"),
+    ("gsg_guides/nrf9160_gs", "gsg_guides"),
+    ("ug_thingy91_gsg", "gsg_guides"), # Getting started with Thingy:91 (removed in v3.0.0)
+    ("working_with_nrf/nrf91/thingy91_gsg", "gsg_guides"),
+    ("device_guides/working_with_nrf/nrf91/thingy91_gsg", "gsg_guides"),
+    ("gsg_guides/thingy91_gsg", "gsg_guides"),
     ("ug_nrf7002_gs", "gsg_guides/nrf7002_gs"), # Getting started with nRF7002 DK
     ("working_with_nrf/nrf70/gs", "gsg_guides/nrf7002_gs"),
     ("device_guides/working_with_nrf/nrf70/gs", "gsg_guides/nrf7002_gs"),

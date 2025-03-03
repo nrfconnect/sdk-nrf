@@ -943,5 +943,13 @@ Documentation
   * The :ref:`ug_nrf91` documentation to use `nRF Util`_ instead of nrfjprog.
   * The :ref:`dm-revisions` section of the :ref:`dm_code_base` page with information about the preview release tag, which replaces the development tag.
 
-* Removed the standalone page for getting started with Nordic Thingy:53.
-  The contents of this page have been moved to the :ref:`thingy53_precompiled` page and to the `Programmer app <Programming Nordic Thingy:53_>`_ documentation.
+* Removed:
+
+  * The standalone page for getting started with Nordic Thingy:53.
+    The contents of this page have been moved to the :ref:`thingy53_precompiled` page and to the `Programmer app <Programming Nordic Thingy:53_>`_ documentation.
+  * The standalone page for getting started with Nordic Thingy:91.
+    The contents of this page are covered by the `Cellular IoT Fundamentals course`_ in the `Nordic Developer Academy`_.
+    The part about connecting the prototyping platform to nRF Cloud is now a standalone :ref:`thingy91_connect_to_cloud` page in the :ref:`thingy91_ug_intro` section.
+  * The standalone page for getting started with the nRF9160 DK.
+    This page has been replaced by the `Quick Start app`_ that supports the nRF9160 DK.
+    The part about connecting the DK to nRF Cloud is now a standalone :ref:`nrf9160_gs_connecting_dk_to_cloud` page in the :ref:`ug_nrf9160` section.
