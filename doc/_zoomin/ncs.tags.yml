@@ -21,10 +21,6 @@ mapping_topics:
                           "nrf52832", "nrf52820", "nrf52811", "nrf52810", "nrf52805", "nrf21540",
                           "npm1100", "npm1300", "npm6001", "development-kits",
                           "prototyping-platforms", "evaluation-kits", "pmic"]
-  - nrf/gsg_guides/nrf9160_gs.html: ["nrf91-series", "nrf9160", "nrf-cloud", "development-kits",
-                                     "lte"]
-  - nrf/gsg_guides/thingy91_gsg.html: ["nrf91-series", "thingy91", "nrf9160", "nrf52840", "lte",
-                                       "prototyping-platforms"]
   - nrf/gsg_guides/nrf7002_gs.html: ["nrf70-series", "nrf7002", "development-kits"]
   - nrf/gsg_guides/gsg_other.html: ["nrf52-series", "nrf52840", "nrf52833", "nrf52832", "nrf52820",
                                     "nrf52811", "nrf52810", "nrf52805", "nrf53-series", "nrf5340",
@@ -172,6 +168,9 @@ mapping_topics:
                                                           "prototyping-platforms", "dect-nr+"]
   - nrf/app_dev/device_guides/nrf91/nrf91_board_controllers.html: ["nrf9160", "nrf9161", "nrf9151",
                                                                    "nrf9161", "development-kits"]
+  - nrf/app_dev/device_guides/nrf91/nrf91_cloud_connecting.html: ["nrf91-series", "nrf9160",
+                                                                  "nrf-cloud", "development-kits",
+                                                                  "lte"]
   - nrf/app_dev/device_guides/nrf91/nrf91_cloud_certificate.html: ["nrf9160", "nrf9161", "nrf9151",
                                                                    "development-kits", "nrf-cloud"]
   - nrf/app_dev/device_guides/nrf91/nrf91_dk_updating_fw_programmer.html: ["nrf9160", "nrf9161",

@@ -24,14 +24,14 @@ Make sure you are logged in to the `nRF Cloud`_ portal.
 
 1. Click :guilabel:`Devices` under :guilabel:`Device Management` in the navigation pane on the left.
 
-   .. figure:: /gsg_guides/images/nrfcloud_devices.png
+   .. figure:: images/nrfcloud_devices.png
       :alt: nRF Cloud - Devices
 
       nRF Cloud - Devices
 
 #. Click :guilabel:`Add Devices`.
 
-   .. figure:: /gsg_guides/images/nrfcloud_add_devices.png
+   .. figure:: images/nrfcloud_add_devices.png
       :alt: nRF Cloud - Add Devices
 
       nRF Cloud - Add Devices
@@ -40,7 +40,7 @@ Make sure you are logged in to the `nRF Cloud`_ portal.
 
 #. Click :guilabel:`LTE Device` in the **Select Device Type** pop-up.
 
-   .. figure:: /gsg_guides/images/nrfcloud_selectdevicetype.png
+   .. figure:: images/nrfcloud_selectdevicetype.png
       :alt: nRF Cloud - Select Device Type
 
       nRF Cloud - Select Device Type
@@ -88,7 +88,7 @@ After downloading the certificate, you must provision it to your DK.
 .. note::
 
    The application firmware on the DK must support long AT commands up to three kB to provision the certificate.
-   If you have updated the application firmware using the instructions in either the :ref:`nrf9160_gs_updating_fw` documentation or the :ref:`nrf9160_ug_updating_fw_programmer` or :ref:`build_pgm_nrf9160` sections, this requirement is fulfilled.
+   If you have updated the application firmware using the instructions in either the :ref:`Quick Start app <ug_nrf9160_gs>` or the :ref:`nrf9160_ug_updating_fw_programmer` or :ref:`build_pgm_nrf9160` sections, this requirement is fulfilled.
 
 Complete the following steps to provision the certificate:
 
