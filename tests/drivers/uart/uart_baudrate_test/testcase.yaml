@@ -64,3 +64,9 @@ tests:
     integration_platforms:
       - nrf54l20pdk/nrf54l20/cpuapp
     extra_args: DTC_OVERLAY_FILE="boards/nrf54l20pdk_nrf54l20_cpuapp_uart22.overlay"
+  drivers.uart.baudrate_test.l09_uart21:
+    platform_allow:
+      - nrf54l09pdk/nrf54l09/cpuapp
+    integration_platforms:
+      - nrf54l09pdk/nrf54l09/cpuapp
+    extra_args: DTC_OVERLAY_FILE="boards/nrf54l09pdk_nrf54l09_cpuapp_uart21.overlay"
