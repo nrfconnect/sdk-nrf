@@ -1,6 +1,6 @@
 / {
 	chosen {
-		zephyr,bt-uart=&lpuart;
+		zephyr,bt-hci = &bt_hci_uart;
 	};
 };
 
@@ -17,6 +17,10 @@
 		status = "okay";
 		req-pin = <24>;
 		rdy-pin = <25>;
+		bt_hci_uart: bt_hci_uart {
+			compatible = "zephyr,bt-hci-uart";
+			status = "okay";
+		};
 	};
 };
 

@@ -8,7 +8,6 @@
 
 / {
 	chosen {
-		zephyr,bt-uart = &lpuart;
 		zephyr,bt-hci = &bt_hci_uart;
 	};
 };
