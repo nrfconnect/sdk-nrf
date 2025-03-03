@@ -829,7 +829,7 @@ bool bt_mesh_sensor_value_in_column(const struct bt_mesh_sensor_value *value,
 /** @brief Get a human readable representation of a single sensor channel.
  *
  *  @note This prints float values internally for most formats, which requires
- *  @kconfig{CONFIG_CBPRINTF_FP_SUPPORT} to be enabled.
+ *  `CONFIG_CBPRINTF_FP_SUPPORT` to be enabled.
  *
  *  @param[in]  ch  Sensor channel to represent.
  *  @param[out] str String buffer to fill. Should be @ref
@@ -845,7 +845,7 @@ int bt_mesh_sensor_ch_to_str(const struct bt_mesh_sensor_value *ch, char *str,
 /** @brief Get a human readable representation of a single sensor channel.
  *
  *  @note This prints float values internally for most formats, which requires
- *  @kconfig{CONFIG_CBPRINTF_FP_SUPPORT} to be enabled.
+ *  `CONFIG_CBPRINTF_FP_SUPPORT` to be enabled.
  *
  *  @note This function is not thread safe.
  *
@@ -859,7 +859,7 @@ const char *bt_mesh_sensor_ch_str(const struct bt_mesh_sensor_value *ch);
  *
  *  Only known sensor types from @ref bt_mesh_sensor_types will be available.
  *  Sensor types can be made known to the sensor module by enabling
- *  @kconfig{CONFIG_BT_MESH_SENSOR_ALL_TYPES} or by referencing them in the
+ *  `CONFIG_BT_MESH_SENSOR_ALL_TYPES` or by referencing them in the
  *  application.
  *
  *  @param[in] id A Device Property ID.

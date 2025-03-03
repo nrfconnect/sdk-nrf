@@ -261,8 +261,8 @@ int download_client_set_host(struct download_client *client, const char *host,
  * @brief Download a file.
  *
  * The download is carried out in fragments of up to
- * @kconfig{CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE} bytes for HTTP, or
- * @kconfig{CONFIG_DOWNLOAD_CLIENT_COAP_BLOCK_SIZE} bytes for CoAP,
+ * `CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE` bytes for HTTP, or
+ * `CONFIG_DOWNLOAD_CLIENT_COAP_BLOCK_SIZE` bytes for CoAP,
  * which are delivered to the application
  * via @ref DOWNLOAD_CLIENT_EVT_FRAGMENT events.
  *
@@ -326,8 +326,8 @@ int download_client_disconnect(struct download_client *client);
  * this returns -EALREADY.
  *
  * The download is carried out in fragments of up to
- * @kconfig{CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE} bytes for HTTP, or
- * @kconfig{CONFIG_DOWNLOAD_CLIENT_COAP_BLOCK_SIZE} bytes for CoAP,
+ * `CONFIG_DOWNLOAD_CLIENT_HTTP_FRAG_SIZE` bytes for HTTP, or
+ * `CONFIG_DOWNLOAD_CLIENT_COAP_BLOCK_SIZE` bytes for CoAP,
  * which are delivered to the application
  * through @ref DOWNLOAD_CLIENT_EVT_FRAGMENT events.
  *

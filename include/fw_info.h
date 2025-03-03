@@ -188,7 +188,7 @@ bool fw_info_ext_api_provide(const struct fw_info *fwinfo, bool provide);
  *
  * @details Invalidation happens by setting the @c valid value to INVALID_VAL.
  *
- * @note This function needs to have @kconfig{CONFIG_NRFX_NVMC} enabled.
+ * @note This function needs to have `CONFIG_NRFX_NVMC` enabled.
  *
  * @param[in]  fw_info  The info structure to invalidate.
  *                      This memory will be modified directly in flash.
