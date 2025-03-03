@@ -3,10 +3,13 @@
 
 if(CONFIG_BOARD_THINGY91_NRF9160 OR CONFIG_BOARD_THINGY91_NRF9160_NS)
   board_runner_args(nrfjprog "--softreset")
-  board_runner_args(jlink "--device=cortex-m33" "--speed=4000")
+  board_runner_args(nrfutil "--nrf-family=NRF91")
+  board_runner_args(jlink "--device=nRF9160_xxAA" "--speed=4000")
 elseif(CONFIG_BOARD_THINGY91_NRF52840)
+  board_runner_args(nrfutil "--nrf-family=NRF52")
   board_runner_args(jlink "--device=nrf52" "--speed=4000")
 endif()
 
+include(${ZEPHYR_BASE}/boards/common/nrfutil.board.cmake)
 include(${ZEPHYR_BASE}/boards/common/nrfjprog.board.cmake)
 include(${ZEPHYR_BASE}/boards/common/jlink.board.cmake)
