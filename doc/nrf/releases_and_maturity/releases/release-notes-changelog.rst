@@ -608,6 +608,15 @@ Other samples
     * Support for the nRF54L05 and nRF54L10 SoCs (emulated on nRF54L15 DK).
     * FLPR core support for the :ref:`zephyr:nrf54l15dk_nrf54l15` board target.
 
+  * Removed the following compiler options that were set in the :kconfig:option:`CONFIG_COMPILER_OPT` Kconfig option:
+
+    * ``-fno-pie``
+    * ``-fno-pic``
+    * ``-ffunction-sections``
+    * ``-fdata-sections``
+
+    These options are enabled by default in Zephyr and do not need to be set with the dedicated Kconfig option.
+
 Drivers
 =======
 
