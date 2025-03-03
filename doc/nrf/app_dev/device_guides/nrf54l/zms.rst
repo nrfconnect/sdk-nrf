@@ -7,7 +7,7 @@ Enabling Zephyr Memory Storage
    :local:
    :depth: 2
 
-For nRF54L Series, you should use the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>`.
+For the nRF54L and nRF54H Series, use the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>`.
 ZMS utilizes a flexible data management system that reduces write and erase cycles, extending the lifespan of non-volatile memory.
 
 .. note::
