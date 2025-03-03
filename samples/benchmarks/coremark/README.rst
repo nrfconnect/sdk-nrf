@@ -167,8 +167,8 @@ CONFIG_APP_MODE_FLASH_AND_RUN - Start CoreMark sample automatically after flashi
    Otherwise, it will wait for the button press.
 
 .. note::
-   The :kconfig:option:`CONFIG_APP_MODE_FLASH_AND_RUN` Kconfig option is always enabled for the PPR core on the ``nrf54h20dk/nrf54h20/cpuapp`` board target.
-   This core on the ``nrf54h20dk/nrf54h20/cpuapp`` board target does not use the on-board buttons and LEDs.
+   The :kconfig:option:`CONFIG_APP_MODE_FLASH_AND_RUN` Kconfig option is always enabled for the PPR and FLPR cores on the ``nrf54h20dk/nrf54h20/cpuapp`` board target.
+   These cores on the ``nrf54h20dk/nrf54h20/cpuapp`` board target do not use the on-board buttons and LEDs.
 
 .. _SB_CONFIG_APP_CPUFLPR_RUN:
 
@@ -180,7 +180,6 @@ SB_CONFIG_APP_CPUFLPR_RUN - Enable the benchmark execution also for the FLPR cor
 
    This option is not supported for the following board targets that include an SoC with the FLPR core:
 
-     * ``nrf54h20dk/nrf54h20/cpuapp``
      * ``nrf54l15dk/nrf54l05/cpuapp``
      * ``nrf54l15dk/nrf54l10/cpuapp``
 
