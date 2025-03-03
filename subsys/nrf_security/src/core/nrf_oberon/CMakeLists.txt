@@ -40,6 +40,11 @@ target_compile_options(oberon_psa_core
     -Wno-strict-aliasing
 )
 
+target_compile_definitions(oberon_psa_core
+  PRIVATE
+    BUILDING_MBEDTLS_CRYPTO
+)
+
 target_link_libraries(oberon_psa_core
   PRIVATE
     psa_crypto_library_config
@@ -53,4 +58,3 @@ target_link_libraries(${mbedcrypto_target}
   PRIVATE
     oberon_psa_core
 )
-
