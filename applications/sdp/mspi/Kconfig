@@ -11,4 +11,11 @@ config SDP_MSPI_IPC_NO_COPY
 	  this requires both cores to be able to access each others memory spaces.
 	  If n Data is passed through IPC by copy.
 
+config SDP_MSPI_FAULT_TIMER
+	bool "SDP application fault timer"
+	help
+	  Enable SDP application fault timer.
+	  Timer is used to detect application faults. If the timer expires,
+	  the application is considered to be in a fault state.
+
 source "Kconfig.zephyr"

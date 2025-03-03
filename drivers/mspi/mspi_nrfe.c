@@ -9,6 +9,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/mspi.h>
 #include <zephyr/drivers/pinctrl.h>
+#include <zephyr/drivers/counter.h>
 #include <zephyr/ipc/ipc_service.h>
 #include <zephyr/pm/device.h>
 #if !defined(CONFIG_MULTITHREADING)
@@ -44,6 +45,7 @@ SDP_MSPI_PINCTRL_DT_DEFINE(MSPI_NRFE_NODE);
 static struct ipc_ept ep;
 static size_t ipc_received;
 static uint8_t *ipc_receive_buffer;
+static uint32_t *cpuflpr_error_ctx_ptr = (uint32_t *)DT_REG_ADDR(DT_NODELABEL(cpuflpr_error_code));
 
 #if defined(CONFIG_MULTITHREADING)
 static K_SEM_DEFINE(ipc_sem, 0, 1);
@@ -113,6 +115,16 @@ static void ep_recv(const void *data, size_t len, void *priv)
 	nrfe_mspi_flpr_response_msg_t *response = (nrfe_mspi_flpr_response_msg_t *)data;
 
 	switch (response->opcode) {
+#if defined(CONFIG_MSPI_NRFE_FAULT_TIMER)
+	case NRFE_MSPI_CONFIG_TIMER_PTR: {
+#if defined(CONFIG_MULTITHREADING)
+		k_sem_give(&ipc_sem);
+#else
+		atomic_set_bit(&ipc_atomic_sem, NRFE_MSPI_CONFIG_TIMER_PTR);
+#endif
+		break;
+	}
+#endif
 	case NRFE_MSPI_CONFIG_PINS: {
 #if defined(CONFIG_MULTITHREADING)
 		k_sem_give(&ipc_sem_cfg);
@@ -155,6 +167,21 @@ static void ep_recv(const void *data, size_t len, void *priv)
 #else
 		atomic_set_bit(&ipc_atomic_sem, NRFE_MSPI_TXRX);
 #endif
+		break;
+	}
+	case NRFE_MSPI_SDP_APP_HARD_FAULT: {
+
+		volatile uint32_t cause = cpuflpr_error_ctx_ptr[0];
+		volatile uint32_t pc = cpuflpr_error_ctx_ptr[1];
+		volatile uint32_t bad_addr = cpuflpr_error_ctx_ptr[2];
+		volatile uint32_t *ctx = (volatile uint32_t *)cpuflpr_error_ctx_ptr[3];
+
+		LOG_ERR(">>> SDP APP FATAL ERROR");
+		LOG_ERR("Faulting instruction address (mepc): 0x%08x", pc);
+		LOG_ERR("mcause: 0x%08x, mtval: 0x%08x, ra: 0x%08x", cause, bad_addr, ctx[0]);
+		LOG_ERR("    t0: 0x%08x,    t1: 0x%08x, t2: 0x%08x", ctx[1], ctx[2], ctx[3]);
+
+		LOG_ERR("SDP application halted...");
 		break;
 	}
 	default: {
@@ -219,6 +246,9 @@ static int nrfe_mspi_wait_for_response(nrfe_mspi_opcode_t opcode, uint32_t timeo
 	int ret = 0;
 
 	switch (opcode) {
+	case NRFE_MSPI_CONFIG_TIMER_PTR:
+		ret = k_sem_take(&ipc_sem, K_MSEC(timeout));
+		break;
 	case NRFE_MSPI_CONFIG_PINS:
 	case NRFE_MSPI_CONFIG_DEV:
 	case NRFE_MSPI_CONFIG_XFER: {
@@ -633,6 +663,16 @@ static int dev_pm_action_cb(const struct device *dev, enum pm_device_action acti
 }
 #endif
 
+#if defined(CONFIG_MSPI_NRFE_FAULT_TIMER)
+static void flpr_fault_handler(const struct device *dev, void *user_data)
+{
+	ARG_UNUSED(dev);
+	ARG_UNUSED(user_data);
+
+	LOG_ERR("SDP fault detected.");
+}
+#endif
+
 /**
  * @brief Initialize the MSPI NRFE driver.
  *
@@ -654,6 +694,16 @@ static int nrfe_mspi_init(const struct device *dev)
 		.bus = dev,
 		.config = drv_cfg->mspicfg,
 	};
+
+#if defined(CONFIG_MSPI_NRFE_FAULT_TIMER)
+	const struct device *const flpr_fault_timer = DEVICE_DT_GET(DT_NODELABEL(fault_timer));
+	const struct counter_top_cfg top_cfg = {
+		.callback = flpr_fault_handler,
+		.user_data = NULL,
+		.flags = 0,
+		.ticks = counter_us_to_ticks(flpr_fault_timer, CONFIG_MSPI_NRFE_FAULT_TIMEOUT)
+	};
+#endif
 
 	ret = pinctrl_apply_state(drv_cfg->pcfg, PINCTRL_STATE_DEFAULT);
 	if (ret) {
@@ -691,6 +741,40 @@ static int nrfe_mspi_init(const struct device *dev)
 		return ret;
 	}
 #endif
+
+#if defined(CONFIG_MSPI_NRFE_FAULT_TIMER)
+	/* Configure timer as SDP `watchdog` */
+	if (!device_is_ready(flpr_fault_timer)) {
+		LOG_ERR("FLPR timer not ready");
+		return -1;
+	}
+
+	ret = counter_set_top_value(flpr_fault_timer, &top_cfg);
+	if (ret < 0) {
+		LOG_ERR("counter_set_top_value() failure");
+		return ret;
+	}
+
+	/* Send timer address to FLPR */
+	nrfe_mspi_flpr_timer_msg_t timer_data = {
+		.opcode = NRFE_MSPI_CONFIG_TIMER_PTR,
+		.timer_ptr = (NRF_TIMER_Type *)DT_REG_ADDR(DT_NODELABEL(fault_timer)),
+	};
+
+	ret = send_data(NRFE_MSPI_CONFIG_TIMER_PTR, (const void *)&timer_data.opcode,
+			sizeof(nrfe_mspi_flpr_timer_msg_t));
+	if (ret < 0) {
+		LOG_ERR("Send timer configuration failure");
+		return ret;
+	}
+
+	ret = counter_start(flpr_fault_timer);
+	if (ret < 0) {
+		LOG_ERR("counter_start() failure");
+		return ret;
+	}
+#endif
+
 	return ret;
 }
 
