@@ -103,13 +103,6 @@ This feature provides an additional endpoint with an ID equal to 2, which repres
 This means that you can integrate the Matter bridge functionality into your end product, such as a smart plug, and avoid having to use a standalone bridge device.
 This is an optional feature and can be enabled by :ref:`Configuring the smart plug functionality <matter_bridge_smart_plug_functionality>`.
 
-SUIT DFU on nRF54H20
-====================
-
-.. include:: ../../../samples/matter/template/README.rst
-    :start-after: matter_template_dfu_suit_start
-    :end-before: matter_template_dfu_suit_end
-
 .. _matter_bridge_app_bridged_support:
 
 Bridged device support
@@ -573,34 +566,6 @@ The current maximum number of Bluetooth LE connections that can be selected usin
             You can still increase the number of connections by modifying the board files and decreasing the buffer sizes.
             The default number of connections is ``10``, which effectively means 9 bridged devices.
 
-   .. group-tab:: nRF54 DKs
-
-      The nRF54 Series supports the Matter bridge over Wi-Fi and Matter bridge over Thread configurations.
-
-      .. tabs::
-
-         .. group-tab:: Matter bridge over Wi-Fi
-
-            You can increase the number of Bluetooth LE connections if you decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller, but this will decrease the communication throughput.
-
-            Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` (which effectively means 19 bridged devices) by decreasing the sizes of Bluetooth LE TX/RX buffers:
-
-             .. parsed-literal::
-               :class: highlight
-
-               west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_CHIP_WIFI=y -Dmatter_bridge_SHIELD=nrf7002eb_interposer_p1 -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="overlay-bt_max_connections_net.conf"
-
-         .. group-tab:: Matter bridge over Thread
-
-            You can increase the number of Bluetooth LE connections if you decrease the size of the Bluetooth LE TX/RX buffers used by the Bluetooth controller, but this will decrease the communication throughput.
-
-            Build the target using the following command in the project directory to enable a configuration that increases the number of Bluetooth LE connections to ``20`` (which effectively means 19 bridged devices) by decreasing the sizes of Bluetooth LE TX/RX buffers:
-
-             .. parsed-literal::
-               :class: highlight
-
-               west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="overlay-bt_max_connections_net.conf"
-
    .. group-tab:: nRF70 DKs
 
       The nRF70 Series supports the Matter bridge over Wi-Fi configuration.
@@ -716,10 +681,6 @@ Factory data support
     :start-after: matter_door_lock_sample_factory_data_start
     :end-before: matter_door_lock_sample_factory_data_end
 
-.. include:: ../../../samples/matter/lock/README.rst
-    :start-after: matter_door_lock_sample_factory_data_nrf54h20_start
-    :end-before: matter_door_lock_sample_factory_data_nrf54h20_end
-
 Building and running
 ********************
 
@@ -736,17 +697,6 @@ For example:
    .. code-block:: console
 
       west build -b nrf5340dk/nrf5340/cpuapp -p -- -Dmatter_bridge_SHIELD=nrf7002ek -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DSB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH=y -DSB_CONFIG_WIFI_NRF70=y -Dmcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3 -DFILE_SUFFIX=nrf70ek
-
-To use the nRF54H20 DK with the ``nrf7002ek`` shield (2.4 GHz or 5 GHz), follow the :ref:`ug_nrf7002eb_nrf54h20dk_gs` user guide to connect all required pins.
-Once connected, run the following command to build the sample:
-
-   .. code-block:: console
-
-      west build -b nrf54h20dk/nrf54h20/cpuapp -p -- -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_CHIP_WIFI=y -Dmatter_bridge_SHIELD=nrf7002eb_interposer_p1
-
-.. note::
-   |54H_engb_2_8|
-
 
 Selecting a configuration
 =========================

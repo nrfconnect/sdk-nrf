@@ -5,11 +5,6 @@
 menuconfig MATTER
 	bool "Matter"
 	depends on ZEPHYR_CONNECTEDHOMEIP_MODULE
-	# Matter requires at least one DFU transport so we always need to have SUIT mechanisms for nRF54H series
-	select SUIT_ENVELOPE if SOC_SERIES_NRF54HX
-	select SUIT_BUILD_FLASH_COMPANION if SOC_SERIES_NRF54HX
-	select SUIT_MULTI_IMAGE_PACKAGE_BUILD if MATTER_OTA && SOC_SERIES_NRF54HX
-	select SUIT_ENVELOPE_NORDIC_TOP_EXTRACT_PAYLOADS_TO_CACHE if SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY != "" && SOC_SERIES_NRF54HX
 
 if MATTER
 
@@ -42,11 +37,4 @@ config MATTER_OTA_IMAGE_FILE_NAME
 	help
 	  Provides the file name of the generated Matter OTA image in the build directory.
 
-if SOC_SERIES_NRF54HX
-
-# Set the default value of manifest variant dedicated to Matter
-config SUIT_BASE_MANIFEST_VARIANT
-	default "matter/v1"
-
-endif # SOC_SERIES_NRF54HX
 endif # MATTER
