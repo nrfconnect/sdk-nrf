@@ -45,6 +45,8 @@ SDP_MSPI_PINCTRL_DT_DEFINE(MSPI_NRFE_NODE);
 static struct ipc_ept ep;
 static size_t ipc_received;
 static uint8_t *ipc_receive_buffer;
+static volatile uint32_t *cpuflpr_error_ctx_ptr =
+	(uint32_t *)DT_REG_ADDR(DT_NODELABEL(cpuflpr_error_code));
 
 #if defined(CONFIG_MULTITHREADING)
 static K_SEM_DEFINE(ipc_sem, 0, 1);
@@ -166,6 +168,21 @@ static void ep_recv(const void *data, size_t len, void *priv)
 #else
 		atomic_set_bit(&ipc_atomic_sem, NRFE_MSPI_TXRX);
 #endif
+		break;
+	}
+	case NRFE_MSPI_SDP_APP_HARD_FAULT: {
+
+		volatile uint32_t cause = cpuflpr_error_ctx_ptr[0];
+		volatile uint32_t pc = cpuflpr_error_ctx_ptr[1];
+		volatile uint32_t bad_addr = cpuflpr_error_ctx_ptr[2];
+		volatile uint32_t *ctx = (volatile uint32_t *)cpuflpr_error_ctx_ptr[3];
+
+		LOG_ERR(">>> SDP APP FATAL ERROR");
+		LOG_ERR("Faulting instruction address (mepc): 0x%08x", pc);
+		LOG_ERR("mcause: 0x%08x, mtval: 0x%08x, ra: 0x%08x", cause, bad_addr, ctx[0]);
+		LOG_ERR("    t0: 0x%08x,    t1: 0x%08x, t2: 0x%08x", ctx[1], ctx[2], ctx[3]);
+
+		LOG_ERR("SDP application halted...");
 		break;
 	}
 	default: {

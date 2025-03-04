@@ -80,6 +80,8 @@ static atomic_t ipc_atomic_sem = ATOMIC_INIT(0);
 #if defined(CONFIG_SDP_MSPI_FAULT_TIMER)
 static NRF_TIMER_Type *fault_timer;
 #endif
+static volatile uint32_t *cpuflpr_error_ctx_ptr =
+	(uint32_t *)DT_REG_ADDR(DT_NODELABEL(cpuflpr_error_code));
 
 static void adjust_tail(volatile hrt_xfer_data_t *xfer_data, uint16_t frame_width,
 			uint32_t data_length)
@@ -368,15 +370,14 @@ static void ep_recv(const void *data, size_t len, void *priv)
 
 	(void)priv;
 	(void)len;
-	nrfe_mspi_flpr_response_msg_t response;
 	uint8_t opcode = *(uint8_t *)data;
 	uint32_t num_bytes = 0;
+
 #if defined(CONFIG_SDP_MSPI_FAULT_TIMER)
 	if (fault_timer != NULL) {
 		nrf_timer_task_trigger(fault_timer, NRF_TIMER_TASK_START);
 	}
 #endif
-	response.opcode = opcode;
 
 	switch (opcode) {
 #if defined(CONFIG_SDP_MSPI_FAULT_TIMER)
@@ -513,10 +514,103 @@ __attribute__((interrupt)) void hrt_handler_write(void)
 	hrt_write((hrt_xfer_t *)&xfer_params);
 }
 
+/**
+ * @brief Trap handler for SDP application.
+ *
+ * @details
+ * This function is called on unhandled CPU exceptions. It's a good place to
+ * handle critical errors and notify the core that the SDP application has
+ * crashed.
+ *
+ * @param mcause  - cause of the exception (from mcause register)
+ * @param mepc    - address of the instruction that caused the exception (from mepc register)
+ * @param mtval   - additional value (e.g. bad address)
+ * @param context - pointer to the saved context (only some registers are saved - ra, t0, t1, t2)
+ */
+void trap_handler(uint32_t mcause, uint32_t mepc, uint32_t mtval, void *context)
+{
+	const uint8_t fault_opcode = NRFE_MSPI_SDP_APP_HARD_FAULT;
+
+	/* It can be distinguish whether the exception was caused by an interrupt or an error:
+	 * On RV32, bit 31 of the mcause register indicates whether the event is an interrupt.
+	 */
+	if (mcause & 0x80000000) {
+		/* Interrupt – can be handled or ignored */
+	} else {
+		/* Exception – critical error */
+	}
+
+	cpuflpr_error_ctx_ptr[0] = mcause;
+	cpuflpr_error_ctx_ptr[1] = mepc;
+	cpuflpr_error_ctx_ptr[2] = mtval;
+	cpuflpr_error_ctx_ptr[3] = (uint32_t)context;
+
+	ipc_service_send(&ep, &fault_opcode, sizeof(fault_opcode));
+
+	while (1) {
+		/* Loop forever */
+	}
+}
+
+/* The trap_entry function is the entry point for exception handling.
+ * The naked attribute prevents the compiler from generating an automatic prologue/epilogue.
+ */
+__attribute__((naked)) void trap_entry(void)
+{
+	__asm__ volatile(
+		/* Reserve space on the stack:
+		 * 16 bytes for 4 registers context (ra, t0, t1, t2).
+		 */
+		"addi sp, sp, -16\n"
+		"sw   ra, 12(sp)\n"
+		"sw   t0, 8(sp)\n"
+		"sw   t1, 4(sp)\n"
+		"sw   t2, 0(sp)\n"
+
+		/* Read CSR: mcause, mepc, mtval */
+		"csrr t0, mcause\n" /* t0 = mcause */
+		"csrr t1, mepc\n"   /* t1 = mepc   */
+		"csrr t2, mtval\n"  /* t2 = mtval  */
+
+		/* Prepare arguments for trap_handler function:
+		 * a0 = mcause (t0), a1 = mepc (t1), a2 = mtval (t2), a3 = sp (pointer on context).
+		 */
+		"mv   a0, t0\n"
+		"mv   a1, t1\n"
+		"mv   a2, t2\n"
+		"mv   a3, sp\n"
+
+		"call trap_handler\n"
+
+		/* Restore registers values */
+		"lw   ra, 12(sp)\n"
+		"lw   t0, 8(sp)\n"
+		"lw   t1, 4(sp)\n"
+		"lw   t2, 0(sp)\n"
+		"addi sp, sp, 16\n"
+
+		"mret\n");
+}
+
+void init_trap_handler(void)
+{
+	/* Write the address of the trap_entry function into the mtvec CSR.
+	 * Note: On RV32, the address must be aligned to 4 bytes.
+	 */
+	uintptr_t trap_entry_addr = (uintptr_t)&trap_entry;
+
+	__asm__ volatile("csrw mtvec, %0\n"
+			 : /* no outs */
+			 : "r"(trap_entry_addr));
+}
+
 int main(void)
 {
-	int ret = backend_init();
+	int ret = 0;
 
+	init_trap_handler();
+
+	ret = backend_init();
 	if (ret < 0) {
 		return 0;
 	}
