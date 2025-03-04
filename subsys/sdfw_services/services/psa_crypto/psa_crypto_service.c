@@ -17,19 +17,109 @@ LOG_MODULE_REGISTER(psa_crypto_srvc, CONFIG_SSF_PSA_CRYPTO_SERVICE_LOG_LEVEL);
 SSF_CLIENT_SERVICE_DEFINE(psa_crypto_srvc, PSA_CRYPTO, cbor_encode_psa_crypto_req,
 			  cbor_decode_psa_crypto_rsp);
 
+#if defined(CONFIG_SSF_PSA_CRYPTO_SERVICE_OUT_BOUNCE_BUFFERS)
+
+#define CACHE_DATA_UNIT_SIZE (DCACHEDATA_DATAWIDTH * 4)
+
+/* k_heap_alloc allocated memory is aligned on a multiple of pointer sizes. The HW's DataUnit size
+ * must match this Zephyr behaviour.
+ */
+BUILD_ASSERT(CACHE_DATA_UNIT_SIZE == sizeof(uintptr_t));
+
+static K_HEAP_DEFINE(out_buffer_heap,
+		     ROUND_UP(CONFIG_SSF_PSA_CRYPTO_SERVICE_OUT_HEAP_SIZE, CACHE_DATA_UNIT_SIZE));
+
+/**
+ * @brief Prepare an out buffer in case the original buffer is not aligned
+ *
+ * If the original buffer is not aligned, a new buffer is allocated and the data is copied to it.
+ * This is needed to achieve DCache DataUnit alignment.
+ *
+ * @param original_buffer Original buffer
+ * @param size Size of the buffer
+ * @return void* NULL if the buffer could not be allocated, original_buffer if it was aligned, else
+ * a new buffer from the heap
+ *
+ */
+static void *prepare_out_buffer(void *original_buffer, size_t size)
+{
+	void *out_buffer;
+
+	if ((IS_ALIGNED(original_buffer, CACHE_DATA_UNIT_SIZE)) &&
+	    (IS_ALIGNED(size, CACHE_DATA_UNIT_SIZE))) {
+		out_buffer = original_buffer;
+	} else {
+		out_buffer = k_heap_alloc(&out_buffer_heap, size, K_NO_WAIT);
+		if (out_buffer != NULL) {
+			memcpy(out_buffer, original_buffer, size);
+		}
+	}
+
+	return out_buffer;
+}
+
+/**
+ * @brief Release an out buffer if it was allocated
+ *
+ * If the out buffer was allocated, the data is copied back to the original buffer and the out
+ * buffer is first zeroed and then freed.
+ *
+ * @param original_buffer The original buffer
+ * @param out_buffer The buffer to release
+ * @param size Size of the buffer
+ */
+static void release_out_buffer(void *original_buffer, void *out_buffer, size_t size)
+{
+	if (out_buffer == NULL) {
+		return;
+	}
+
+	if (original_buffer != out_buffer) {
+		memcpy(original_buffer, out_buffer, size);
+		/* Clear buffer before returning it to not leak sensitive data */
+		memset(out_buffer, 0, size);
+		sys_cache_data_flush_range(out_buffer, size);
+		k_heap_free(&out_buffer_heap, out_buffer);
+	}
+}
+
+#else
+
+static inline void *prepare_out_buffer(void *original_buffer, size_t size)
+{
+	ARG_UNUSED(size);
+	return original_buffer;
+}
+
+static inline void release_out_buffer(void *original_buffer, void *out_buffer, size_t size)
+{
+	ARG_UNUSED(original_buffer);
+	ARG_UNUSED(out_buffer);
+	ARG_UNUSED(size);
+}
+
+#endif
+
 psa_status_t ssf_psa_get_key_attributes(mbedtls_svc_key_id_t key, psa_key_attributes_t *attributes)
 {
 	int err;
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *attributes_tmp = NULL;
 
 	struct psa_get_key_attributes_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_get_key_attributes_req_m_c;
 	req_data = &req.psa_crypto_req_msg_psa_get_key_attributes_req_m;
 
 	req_data->psa_get_key_attributes_req_key = key;
-	req_data->psa_get_key_attributes_req_p_attributes = (uint32_t)attributes;
+	attributes_tmp = prepare_out_buffer(attributes, sizeof(*attributes));
+	if (attributes_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_get_key_attributes_req_p_attributes = (uint32_t)attributes_tmp;
+	sys_cache_data_flush_range((void *)attributes_tmp, sizeof(*attributes));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -38,9 +128,10 @@ psa_status_t ssf_psa_get_key_attributes(mbedtls_svc_key_id_t key, psa_key_attrib
 	} else {
 		result = rsp.psa_crypto_rsp_status;
 	}
-	sys_cache_data_flush_and_invd_range((void *)attributes, sizeof(*attributes));
+	sys_cache_data_flush_and_invd_range((void *)attributes_tmp, sizeof(*attributes));
 
 fail:
+	release_out_buffer(attributes, attributes_tmp, sizeof(*attributes));
 	return result;
 }
 
@@ -50,13 +141,19 @@ psa_status_t ssf_psa_reset_key_attributes(psa_key_attributes_t *attributes)
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *attributes_tmp = NULL;
 
 	struct psa_reset_key_attributes_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_reset_key_attributes_req_m_c;
 	req_data = &req.psa_crypto_req_msg_psa_reset_key_attributes_req_m;
 
-	req_data->psa_reset_key_attributes_req_p_attributes = (uint32_t)attributes;
-	sys_cache_data_flush_range((void *)attributes, sizeof(*attributes));
+	attributes_tmp = prepare_out_buffer(attributes, sizeof(*attributes));
+	if (attributes_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_reset_key_attributes_req_p_attributes = (uint32_t)attributes_tmp;
+	sys_cache_data_flush_range((void *)attributes_tmp, sizeof(*attributes));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -65,9 +162,10 @@ psa_status_t ssf_psa_reset_key_attributes(psa_key_attributes_t *attributes)
 	} else {
 		result = rsp.psa_crypto_rsp_status;
 	}
-	sys_cache_data_flush_and_invd_range((void *)attributes, sizeof(*attributes));
+	sys_cache_data_flush_and_invd_range((void *)attributes_tmp, sizeof(*attributes));
 
 fail:
+	release_out_buffer(attributes, attributes_tmp, sizeof(*attributes));
 	return result;
 }
 
@@ -104,6 +202,7 @@ psa_status_t ssf_psa_copy_key(mbedtls_svc_key_id_t source_key,
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *target_key_tmp = NULL;
 
 	struct psa_copy_key_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_copy_key_req_m_c;
@@ -111,8 +210,14 @@ psa_status_t ssf_psa_copy_key(mbedtls_svc_key_id_t source_key,
 
 	req_data->psa_copy_key_req_source_key = source_key;
 	req_data->psa_copy_key_req_p_attributes = (uint32_t)attributes;
-	req_data->psa_copy_key_req_p_target_key = (uint32_t)target_key;
+	target_key_tmp = prepare_out_buffer(target_key, sizeof(*target_key));
+	if (target_key_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_copy_key_req_p_target_key = (uint32_t)target_key_tmp;
 	sys_cache_data_flush_range((void *)attributes, sizeof(*attributes));
+	sys_cache_data_flush_range((void *)target_key_tmp, sizeof(*target_key));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -121,9 +226,10 @@ psa_status_t ssf_psa_copy_key(mbedtls_svc_key_id_t source_key,
 	} else {
 		result = rsp.psa_crypto_rsp_status;
 	}
-	sys_cache_data_flush_and_invd_range((void *)target_key, sizeof(*target_key));
+	sys_cache_data_flush_and_invd_range((void *)target_key_tmp, sizeof(*target_key));
 
 fail:
+	release_out_buffer(target_key, target_key_tmp, sizeof(*target_key));
 	return result;
 }
 
@@ -159,6 +265,7 @@ psa_status_t ssf_psa_import_key(const psa_key_attributes_t *attributes, const ui
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *key_tmp = NULL;
 
 	struct psa_import_key_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_import_key_req_m_c;
@@ -167,9 +274,15 @@ psa_status_t ssf_psa_import_key(const psa_key_attributes_t *attributes, const ui
 	req_data->psa_import_key_req_p_attributes = (uint32_t)attributes;
 	req_data->psa_import_key_req_p_data = (uint32_t)data;
 	req_data->psa_import_key_req_data_length = data_length;
-	req_data->psa_import_key_req_p_key = (uint32_t)key;
+	key_tmp = prepare_out_buffer(key, sizeof(*key));
+	if (key_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_import_key_req_p_key = (uint32_t)key_tmp;
 	sys_cache_data_flush_range((void *)attributes, sizeof(*attributes));
 	sys_cache_data_flush_range((void *)data, data_length);
+	sys_cache_data_flush_range((void *)key_tmp, sizeof(*key));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -178,9 +291,10 @@ psa_status_t ssf_psa_import_key(const psa_key_attributes_t *attributes, const ui
 	} else {
 		result = rsp.psa_crypto_rsp_status;
 	}
-	sys_cache_data_flush_and_invd_range((void *)key, sizeof(*key));
+	sys_cache_data_flush_and_invd_range((void *)key_tmp, sizeof(*key));
 
 fail:
+	release_out_buffer(key, key_tmp, sizeof(*key));
 	return result;
 }
 
@@ -191,15 +305,29 @@ psa_status_t ssf_psa_export_key(mbedtls_svc_key_id_t key, uint8_t *data, size_t 
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *data_tmp = NULL;
+	void *data_length_tmp = NULL;
 
 	struct psa_export_key_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_export_key_req_m_c;
 	req_data = &req.psa_crypto_req_msg_psa_export_key_req_m;
 
 	req_data->psa_export_key_req_key = key;
-	req_data->psa_export_key_req_p_data = (uint32_t)data;
+	data_tmp = prepare_out_buffer(data, data_size);
+	if (data_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_export_key_req_p_data = (uint32_t)data_tmp;
 	req_data->psa_export_key_req_data_size = data_size;
-	req_data->psa_export_key_req_p_data_length = (uint32_t)data_length;
+	data_length_tmp = prepare_out_buffer(data_length, sizeof(*data_length));
+	if (data_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_export_key_req_p_data_length = (uint32_t)data_length_tmp;
+	sys_cache_data_flush_range((void *)data_tmp, data_size);
+	sys_cache_data_flush_range((void *)data_length_tmp, sizeof(*data_length));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -208,10 +336,12 @@ psa_status_t ssf_psa_export_key(mbedtls_svc_key_id_t key, uint8_t *data, size_t 
 	} else {
 		result = rsp.psa_crypto_rsp_status;
 	}
-	sys_cache_data_flush_and_invd_range((void *)data, data_size);
-	sys_cache_data_flush_and_invd_range((void *)data_length, sizeof(*data_length));
+	sys_cache_data_flush_and_invd_range((void *)data_tmp, data_size);
+	sys_cache_data_flush_and_invd_range((void *)data_length_tmp, sizeof(*data_length));
 
 fail:
+	release_out_buffer(data, data_tmp, data_size);
+	release_out_buffer(data_length, data_length_tmp, sizeof(*data_length));
 	return result;
 }
 
@@ -222,15 +352,29 @@ psa_status_t ssf_psa_export_public_key(mbedtls_svc_key_id_t key, uint8_t *data, 
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *data_tmp = NULL;
+	void *data_length_tmp = NULL;
 
 	struct psa_export_public_key_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_export_public_key_req_m_c;
 	req_data = &req.psa_crypto_req_msg_psa_export_public_key_req_m;
 
 	req_data->psa_export_public_key_req_key = key;
-	req_data->psa_export_public_key_req_p_data = (uint32_t)data;
+	data_tmp = prepare_out_buffer(data, data_size);
+	if (data_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_export_public_key_req_p_data = (uint32_t)data_tmp;
 	req_data->psa_export_public_key_req_data_size = data_size;
-	req_data->psa_export_public_key_req_p_data_length = (uint32_t)data_length;
+	data_length_tmp = prepare_out_buffer(data_length, sizeof(*data_length));
+	if (data_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_export_public_key_req_p_data_length = (uint32_t)data_length_tmp;
+	sys_cache_data_flush_range((void *)data_tmp, data_size);
+	sys_cache_data_flush_range((void *)data_length_tmp, sizeof(*data_length));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -239,10 +383,12 @@ psa_status_t ssf_psa_export_public_key(mbedtls_svc_key_id_t key, uint8_t *data, 
 	} else {
 		result = rsp.psa_crypto_rsp_status;
 	}
-	sys_cache_data_flush_and_invd_range((void *)data, data_size);
-	sys_cache_data_flush_and_invd_range((void *)data_length, sizeof(*data_length));
+	sys_cache_data_flush_and_invd_range((void *)data_tmp, data_size);
+	sys_cache_data_flush_and_invd_range((void *)data_length_tmp, sizeof(*data_length));
 
 fail:
+	release_out_buffer(data, data_tmp, data_size);
+	release_out_buffer(data_length, data_length_tmp, sizeof(*data_length));
 	return result;
 }
 
@@ -253,6 +399,8 @@ psa_status_t ssf_psa_hash_compute(psa_algorithm_t alg, const uint8_t *input, siz
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *hash_tmp = NULL;
+	void *hash_length_tmp = NULL;
 
 	struct psa_hash_compute_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_hash_compute_req_m_c;
@@ -261,10 +409,22 @@ psa_status_t ssf_psa_hash_compute(psa_algorithm_t alg, const uint8_t *input, siz
 	req_data->psa_hash_compute_req_alg = alg;
 	req_data->psa_hash_compute_req_p_input = (uint32_t)input;
 	req_data->psa_hash_compute_req_input_length = input_length;
-	req_data->psa_hash_compute_req_p_hash = (uint32_t)hash;
+	hash_tmp = prepare_out_buffer(hash, hash_size);
+	if (hash_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_hash_compute_req_p_hash = (uint32_t)hash_tmp;
 	req_data->psa_hash_compute_req_hash_size = hash_size;
-	req_data->psa_hash_compute_req_p_hash_length = (uint32_t)hash_length;
+	hash_length_tmp = prepare_out_buffer(hash_length, sizeof(*hash_length));
+	if (hash_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_hash_compute_req_p_hash_length = (uint32_t)hash_length_tmp;
 	sys_cache_data_flush_range((void *)input, input_length);
+	sys_cache_data_flush_range((void *)hash_tmp, hash_size);
+	sys_cache_data_flush_range((void *)hash_length_tmp, sizeof(*hash_length));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -273,10 +433,12 @@ psa_status_t ssf_psa_hash_compute(psa_algorithm_t alg, const uint8_t *input, siz
 	} else {
 		result = rsp.psa_crypto_rsp_status;
 	}
-	sys_cache_data_flush_and_invd_range((void *)hash, hash_size);
-	sys_cache_data_flush_and_invd_range((void *)hash_length, sizeof(*hash_length));
+	sys_cache_data_flush_and_invd_range((void *)hash_tmp, hash_size);
+	sys_cache_data_flush_and_invd_range((void *)hash_length_tmp, sizeof(*hash_length));
 
 fail:
+	release_out_buffer(hash, hash_tmp, hash_size);
+	release_out_buffer(hash_length, hash_length_tmp, sizeof(*hash_length));
 	return result;
 }
 
@@ -378,16 +540,30 @@ psa_status_t ssf_psa_hash_finish(mbedtls_psa_client_handle_t *p_handle, uint8_t 
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *hash_tmp = NULL;
+	void *hash_length_tmp = NULL;
 
 	struct psa_hash_finish_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_hash_finish_req_m_c;
 	req_data = &req.psa_crypto_req_msg_psa_hash_finish_req_m;
 
 	req_data->psa_hash_finish_req_p_handle = (uint32_t)p_handle;
-	req_data->psa_hash_finish_req_p_hash = (uint32_t)hash;
+	hash_tmp = prepare_out_buffer(hash, hash_size);
+	if (hash_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_hash_finish_req_p_hash = (uint32_t)hash_tmp;
 	req_data->psa_hash_finish_req_hash_size = hash_size;
-	req_data->psa_hash_finish_req_p_hash_length = (uint32_t)hash_length;
+	hash_length_tmp = prepare_out_buffer(hash_length, sizeof(*hash_length));
+	if (hash_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_hash_finish_req_p_hash_length = (uint32_t)hash_length_tmp;
 	sys_cache_data_flush_range((void *)p_handle, sizeof(*p_handle));
+	sys_cache_data_flush_range((void *)hash_tmp, hash_size);
+	sys_cache_data_flush_range((void *)hash_length_tmp, sizeof(*hash_length));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -397,10 +573,12 @@ psa_status_t ssf_psa_hash_finish(mbedtls_psa_client_handle_t *p_handle, uint8_t 
 		result = rsp.psa_crypto_rsp_status;
 	}
 	sys_cache_data_flush_and_invd_range((void *)p_handle, sizeof(*p_handle));
-	sys_cache_data_flush_and_invd_range((void *)hash, hash_size);
-	sys_cache_data_flush_and_invd_range((void *)hash_length, sizeof(*hash_length));
+	sys_cache_data_flush_and_invd_range((void *)hash_tmp, hash_size);
+	sys_cache_data_flush_and_invd_range((void *)hash_length_tmp, sizeof(*hash_length));
 
 fail:
+	release_out_buffer(hash, hash_tmp, hash_size);
+	release_out_buffer(hash_length, hash_length_tmp, sizeof(*hash_length));
 	return result;
 }
 
@@ -499,6 +677,8 @@ psa_status_t ssf_psa_mac_compute(mbedtls_svc_key_id_t key, psa_algorithm_t alg,
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *mac_tmp = NULL;
+	void *mac_length_tmp = NULL;
 
 	struct psa_mac_compute_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_mac_compute_req_m_c;
@@ -508,10 +688,22 @@ psa_status_t ssf_psa_mac_compute(mbedtls_svc_key_id_t key, psa_algorithm_t alg,
 	req_data->psa_mac_compute_req_alg = alg;
 	req_data->psa_mac_compute_req_p_input = (uint32_t)input;
 	req_data->psa_mac_compute_req_input_length = input_length;
-	req_data->psa_mac_compute_req_p_mac = (uint32_t)mac;
+	mac_tmp = prepare_out_buffer(mac, mac_size);
+	if (mac_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_mac_compute_req_p_mac = (uint32_t)mac_tmp;
 	req_data->psa_mac_compute_req_mac_size = mac_size;
-	req_data->psa_mac_compute_req_p_mac_length = (uint32_t)mac_length;
+	mac_length_tmp = prepare_out_buffer(mac_length, sizeof(*mac_length));
+	if (mac_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_mac_compute_req_p_mac_length = (uint32_t)mac_length_tmp;
 	sys_cache_data_flush_range((void *)input, input_length);
+	sys_cache_data_flush_range((void *)mac_tmp, mac_size);
+	sys_cache_data_flush_range((void *)mac_length_tmp, sizeof(*mac_length));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -520,10 +712,12 @@ psa_status_t ssf_psa_mac_compute(mbedtls_svc_key_id_t key, psa_algorithm_t alg,
 	} else {
 		result = rsp.psa_crypto_rsp_status;
 	}
-	sys_cache_data_flush_and_invd_range((void *)mac, mac_size);
-	sys_cache_data_flush_and_invd_range((void *)mac_length, sizeof(*mac_length));
+	sys_cache_data_flush_and_invd_range((void *)mac_tmp, mac_size);
+	sys_cache_data_flush_and_invd_range((void *)mac_length_tmp, sizeof(*mac_length));
 
 fail:
+	release_out_buffer(mac, mac_tmp, mac_size);
+	release_out_buffer(mac_length, mac_length_tmp, sizeof(*mac_length));
 	return result;
 }
 
@@ -658,16 +852,30 @@ psa_status_t ssf_psa_mac_sign_finish(mbedtls_psa_client_handle_t *p_handle, uint
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *mac_tmp = NULL;
+	void *mac_length_tmp = NULL;
 
 	struct psa_mac_sign_finish_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_mac_sign_finish_req_m_c;
 	req_data = &req.psa_crypto_req_msg_psa_mac_sign_finish_req_m;
 
 	req_data->psa_mac_sign_finish_req_p_handle = (uint32_t)p_handle;
-	req_data->psa_mac_sign_finish_req_p_mac = (uint32_t)mac;
+	mac_tmp = prepare_out_buffer(mac, mac_size);
+	if (mac_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_mac_sign_finish_req_p_mac = (uint32_t)mac_tmp;
 	req_data->psa_mac_sign_finish_req_mac_size = mac_size;
-	req_data->psa_mac_sign_finish_req_p_mac_length = (uint32_t)mac_length;
+	mac_length_tmp = prepare_out_buffer(mac_length, sizeof(*mac_length));
+	if (mac_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_mac_sign_finish_req_p_mac_length = (uint32_t)mac_length_tmp;
 	sys_cache_data_flush_range((void *)p_handle, sizeof(*p_handle));
+	sys_cache_data_flush_range((void *)mac_tmp, mac_size);
+	sys_cache_data_flush_range((void *)mac_length_tmp, sizeof(*mac_length));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -677,10 +885,12 @@ psa_status_t ssf_psa_mac_sign_finish(mbedtls_psa_client_handle_t *p_handle, uint
 		result = rsp.psa_crypto_rsp_status;
 	}
 	sys_cache_data_flush_and_invd_range((void *)p_handle, sizeof(*p_handle));
-	sys_cache_data_flush_and_invd_range((void *)mac, mac_size);
-	sys_cache_data_flush_and_invd_range((void *)mac_length, sizeof(*mac_length));
+	sys_cache_data_flush_and_invd_range((void *)mac_tmp, mac_size);
+	sys_cache_data_flush_and_invd_range((void *)mac_length_tmp, sizeof(*mac_length));
 
 fail:
+	release_out_buffer(mac, mac_tmp, mac_size);
+	release_out_buffer(mac_length, mac_length_tmp, sizeof(*mac_length));
 	return result;
 }
 
@@ -750,6 +960,8 @@ psa_status_t ssf_psa_cipher_encrypt(mbedtls_svc_key_id_t key, psa_algorithm_t al
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *output_tmp = NULL;
+	void *output_length_tmp = NULL;
 
 	struct psa_cipher_encrypt_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_cipher_encrypt_req_m_c;
@@ -759,10 +971,22 @@ psa_status_t ssf_psa_cipher_encrypt(mbedtls_svc_key_id_t key, psa_algorithm_t al
 	req_data->psa_cipher_encrypt_req_alg = alg;
 	req_data->psa_cipher_encrypt_req_p_input = (uint32_t)input;
 	req_data->psa_cipher_encrypt_req_input_length = input_length;
-	req_data->psa_cipher_encrypt_req_p_output = (uint32_t)output;
+	output_tmp = prepare_out_buffer(output, output_size);
+	if (output_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_cipher_encrypt_req_p_output = (uint32_t)output_tmp;
 	req_data->psa_cipher_encrypt_req_output_size = output_size;
-	req_data->psa_cipher_encrypt_req_p_output_length = (uint32_t)output_length;
+	output_length_tmp = prepare_out_buffer(output_length, sizeof(*output_length));
+	if (output_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_cipher_encrypt_req_p_output_length = (uint32_t)output_length_tmp;
 	sys_cache_data_flush_range((void *)input, input_length);
+	sys_cache_data_flush_range((void *)output_tmp, output_size);
+	sys_cache_data_flush_range((void *)output_length_tmp, sizeof(*output_length));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -771,10 +995,12 @@ psa_status_t ssf_psa_cipher_encrypt(mbedtls_svc_key_id_t key, psa_algorithm_t al
 	} else {
 		result = rsp.psa_crypto_rsp_status;
 	}
-	sys_cache_data_flush_and_invd_range((void *)output, output_size);
-	sys_cache_data_flush_and_invd_range((void *)output_length, sizeof(*output_length));
+	sys_cache_data_flush_and_invd_range((void *)output_tmp, output_size);
+	sys_cache_data_flush_and_invd_range((void *)output_length_tmp, sizeof(*output_length));
 
 fail:
+	release_out_buffer(output, output_tmp, output_size);
+	release_out_buffer(output_length, output_length_tmp, sizeof(*output_length));
 	return result;
 }
 
@@ -786,6 +1012,8 @@ psa_status_t ssf_psa_cipher_decrypt(mbedtls_svc_key_id_t key, psa_algorithm_t al
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *output_tmp = NULL;
+	void *output_length_tmp = NULL;
 
 	struct psa_cipher_decrypt_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_cipher_decrypt_req_m_c;
@@ -795,10 +1023,22 @@ psa_status_t ssf_psa_cipher_decrypt(mbedtls_svc_key_id_t key, psa_algorithm_t al
 	req_data->psa_cipher_decrypt_req_alg = alg;
 	req_data->psa_cipher_decrypt_req_p_input = (uint32_t)input;
 	req_data->psa_cipher_decrypt_req_input_length = input_length;
-	req_data->psa_cipher_decrypt_req_p_output = (uint32_t)output;
+	output_tmp = prepare_out_buffer(output, output_size);
+	if (output_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_cipher_decrypt_req_p_output = (uint32_t)output_tmp;
 	req_data->psa_cipher_decrypt_req_output_size = output_size;
-	req_data->psa_cipher_decrypt_req_p_output_length = (uint32_t)output_length;
+	output_length_tmp = prepare_out_buffer(output_length, sizeof(*output_length));
+	if (output_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_cipher_decrypt_req_p_output_length = (uint32_t)output_length_tmp;
 	sys_cache_data_flush_range((void *)input, input_length);
+	sys_cache_data_flush_range((void *)output_tmp, output_size);
+	sys_cache_data_flush_range((void *)output_length_tmp, sizeof(*output_length));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -807,10 +1047,12 @@ psa_status_t ssf_psa_cipher_decrypt(mbedtls_svc_key_id_t key, psa_algorithm_t al
 	} else {
 		result = rsp.psa_crypto_rsp_status;
 	}
-	sys_cache_data_flush_and_invd_range((void *)output, output_size);
-	sys_cache_data_flush_and_invd_range((void *)output_length, sizeof(*output_length));
+	sys_cache_data_flush_and_invd_range((void *)output_tmp, output_size);
+	sys_cache_data_flush_and_invd_range((void *)output_length_tmp, sizeof(*output_length));
 
 fail:
+	release_out_buffer(output, output_tmp, output_size);
+	release_out_buffer(output_length, output_length_tmp, sizeof(*output_length));
 	return result;
 }
 
@@ -881,16 +1123,30 @@ psa_status_t ssf_psa_cipher_generate_iv(mbedtls_psa_client_handle_t *p_handle, u
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *iv_tmp = NULL;
+	void *iv_length_tmp = NULL;
 
 	struct psa_cipher_generate_iv_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_cipher_generate_iv_req_m_c;
 	req_data = &req.psa_crypto_req_msg_psa_cipher_generate_iv_req_m;
 
 	req_data->psa_cipher_generate_iv_req_p_handle = (uint32_t)p_handle;
-	req_data->psa_cipher_generate_iv_req_p_iv = (uint32_t)iv;
+	iv_tmp = prepare_out_buffer(iv, iv_size);
+	if (iv_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_cipher_generate_iv_req_p_iv = (uint32_t)iv_tmp;
 	req_data->psa_cipher_generate_iv_req_iv_size = iv_size;
-	req_data->psa_cipher_generate_iv_req_p_iv_length = (uint32_t)iv_length;
+	iv_length_tmp = prepare_out_buffer(iv_length, sizeof(*iv_length));
+	if (iv_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_cipher_generate_iv_req_p_iv_length = (uint32_t)iv_length_tmp;
 	sys_cache_data_flush_range((void *)p_handle, sizeof(*p_handle));
+	sys_cache_data_flush_range((void *)iv_tmp, iv_size);
+	sys_cache_data_flush_range((void *)iv_length_tmp, sizeof(*iv_length));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -900,10 +1156,12 @@ psa_status_t ssf_psa_cipher_generate_iv(mbedtls_psa_client_handle_t *p_handle, u
 		result = rsp.psa_crypto_rsp_status;
 	}
 	sys_cache_data_flush_and_invd_range((void *)p_handle, sizeof(*p_handle));
-	sys_cache_data_flush_and_invd_range((void *)iv, iv_size);
-	sys_cache_data_flush_and_invd_range((void *)iv_length, sizeof(*iv_length));
+	sys_cache_data_flush_and_invd_range((void *)iv_tmp, iv_size);
+	sys_cache_data_flush_and_invd_range((void *)iv_length_tmp, sizeof(*iv_length));
 
 fail:
+	release_out_buffer(iv, iv_tmp, iv_size);
+	release_out_buffer(iv_length, iv_length_tmp, sizeof(*iv_length));
 	return result;
 }
 
@@ -946,6 +1204,8 @@ psa_status_t ssf_psa_cipher_update(mbedtls_psa_client_handle_t *p_handle, const 
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *output_tmp = NULL;
+	void *output_length_tmp = NULL;
 
 	struct psa_cipher_update_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_cipher_update_req_m_c;
@@ -954,11 +1214,23 @@ psa_status_t ssf_psa_cipher_update(mbedtls_psa_client_handle_t *p_handle, const 
 	req_data->psa_cipher_update_req_p_handle = (uint32_t)p_handle;
 	req_data->psa_cipher_update_req_p_input = (uint32_t)input;
 	req_data->psa_cipher_update_req_input_length = input_length;
-	req_data->psa_cipher_update_req_p_output = (uint32_t)output;
+	output_tmp = prepare_out_buffer(output, output_size);
+	if (output_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_cipher_update_req_p_output = (uint32_t)output_tmp;
 	req_data->psa_cipher_update_req_output_size = output_size;
-	req_data->psa_cipher_update_req_p_output_length = (uint32_t)output_length;
+	output_length_tmp = prepare_out_buffer(output_length, sizeof(*output_length));
+	if (output_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_cipher_update_req_p_output_length = (uint32_t)output_length_tmp;
 	sys_cache_data_flush_range((void *)p_handle, sizeof(*p_handle));
 	sys_cache_data_flush_range((void *)input, input_length);
+	sys_cache_data_flush_range((void *)output_tmp, output_size);
+	sys_cache_data_flush_range((void *)output_length_tmp, sizeof(*output_length));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -968,10 +1240,12 @@ psa_status_t ssf_psa_cipher_update(mbedtls_psa_client_handle_t *p_handle, const 
 		result = rsp.psa_crypto_rsp_status;
 	}
 	sys_cache_data_flush_and_invd_range((void *)p_handle, sizeof(*p_handle));
-	sys_cache_data_flush_and_invd_range((void *)output, output_size);
-	sys_cache_data_flush_and_invd_range((void *)output_length, sizeof(*output_length));
+	sys_cache_data_flush_and_invd_range((void *)output_tmp, output_size);
+	sys_cache_data_flush_and_invd_range((void *)output_length_tmp, sizeof(*output_length));
 
 fail:
+	release_out_buffer(output, output_tmp, output_size);
+	release_out_buffer(output_length, output_length_tmp, sizeof(*output_length));
 	return result;
 }
 
@@ -982,16 +1256,30 @@ psa_status_t ssf_psa_cipher_finish(mbedtls_psa_client_handle_t *p_handle, uint8_
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *output_tmp = NULL;
+	void *output_length_tmp = NULL;
 
 	struct psa_cipher_finish_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_cipher_finish_req_m_c;
 	req_data = &req.psa_crypto_req_msg_psa_cipher_finish_req_m;
 
 	req_data->psa_cipher_finish_req_p_handle = (uint32_t)p_handle;
-	req_data->psa_cipher_finish_req_p_output = (uint32_t)output;
+	output_tmp = prepare_out_buffer(output, output_size);
+	if (output_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_cipher_finish_req_p_output = (uint32_t)output_tmp;
 	req_data->psa_cipher_finish_req_output_size = output_size;
-	req_data->psa_cipher_finish_req_p_output_length = (uint32_t)output_length;
+	output_length_tmp = prepare_out_buffer(output_length, sizeof(*output_length));
+	if (output_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_cipher_finish_req_p_output_length = (uint32_t)output_length_tmp;
 	sys_cache_data_flush_range((void *)p_handle, sizeof(*p_handle));
+	sys_cache_data_flush_range((void *)output_tmp, output_size);
+	sys_cache_data_flush_range((void *)output_length_tmp, sizeof(*output_length));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -1001,10 +1289,12 @@ psa_status_t ssf_psa_cipher_finish(mbedtls_psa_client_handle_t *p_handle, uint8_
 		result = rsp.psa_crypto_rsp_status;
 	}
 	sys_cache_data_flush_and_invd_range((void *)p_handle, sizeof(*p_handle));
-	sys_cache_data_flush_and_invd_range((void *)output, output_size);
-	sys_cache_data_flush_and_invd_range((void *)output_length, sizeof(*output_length));
+	sys_cache_data_flush_and_invd_range((void *)output_tmp, output_size);
+	sys_cache_data_flush_and_invd_range((void *)output_length_tmp, sizeof(*output_length));
 
 fail:
+	release_out_buffer(output, output_tmp, output_size);
+	release_out_buffer(output_length, output_length_tmp, sizeof(*output_length));
 	return result;
 }
 
@@ -1046,6 +1336,8 @@ psa_status_t ssf_psa_aead_encrypt(mbedtls_svc_key_id_t key, psa_algorithm_t alg,
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *ciphertext_tmp = NULL;
+	void *ciphertext_length_tmp = NULL;
 
 	struct psa_aead_encrypt_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_aead_encrypt_req_m_c;
@@ -1059,12 +1351,24 @@ psa_status_t ssf_psa_aead_encrypt(mbedtls_svc_key_id_t key, psa_algorithm_t alg,
 	req_data->psa_aead_encrypt_req_additional_data_length = additional_data_length;
 	req_data->psa_aead_encrypt_req_p_plaintext = (uint32_t)plaintext;
 	req_data->psa_aead_encrypt_req_plaintext_length = plaintext_length;
-	req_data->psa_aead_encrypt_req_p_ciphertext = (uint32_t)ciphertext;
+	ciphertext_tmp = prepare_out_buffer(ciphertext, ciphertext_size);
+	if (ciphertext_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_aead_encrypt_req_p_ciphertext = (uint32_t)ciphertext_tmp;
 	req_data->psa_aead_encrypt_req_ciphertext_size = ciphertext_size;
-	req_data->psa_aead_encrypt_req_p_ciphertext_length = (uint32_t)ciphertext_length;
+	ciphertext_length_tmp = prepare_out_buffer(ciphertext_length, sizeof(*ciphertext_length));
+	if (ciphertext_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_aead_encrypt_req_p_ciphertext_length = (uint32_t)ciphertext_length_tmp;
 	sys_cache_data_flush_range((void *)nonce, nonce_length);
 	sys_cache_data_flush_range((void *)additional_data, additional_data_length);
 	sys_cache_data_flush_range((void *)plaintext, plaintext_length);
+	sys_cache_data_flush_range((void *)ciphertext_tmp, ciphertext_size);
+	sys_cache_data_flush_range((void *)ciphertext_length_tmp, sizeof(*ciphertext_length));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -1073,10 +1377,13 @@ psa_status_t ssf_psa_aead_encrypt(mbedtls_svc_key_id_t key, psa_algorithm_t alg,
 	} else {
 		result = rsp.psa_crypto_rsp_status;
 	}
-	sys_cache_data_flush_and_invd_range((void *)ciphertext, ciphertext_size);
-	sys_cache_data_flush_and_invd_range((void *)ciphertext_length, sizeof(*ciphertext_length));
+	sys_cache_data_flush_and_invd_range((void *)ciphertext_tmp, ciphertext_size);
+	sys_cache_data_flush_and_invd_range((void *)ciphertext_length_tmp,
+					    sizeof(*ciphertext_length));
 
 fail:
+	release_out_buffer(ciphertext, ciphertext_tmp, ciphertext_size);
+	release_out_buffer(ciphertext_length, ciphertext_length_tmp, sizeof(*ciphertext_length));
 	return result;
 }
 
@@ -1091,6 +1398,8 @@ psa_status_t ssf_psa_aead_decrypt(mbedtls_svc_key_id_t key, psa_algorithm_t alg,
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *plaintext_tmp = NULL;
+	void *plaintext_length_tmp = NULL;
 
 	struct psa_aead_decrypt_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_aead_decrypt_req_m_c;
@@ -1104,12 +1413,24 @@ psa_status_t ssf_psa_aead_decrypt(mbedtls_svc_key_id_t key, psa_algorithm_t alg,
 	req_data->psa_aead_decrypt_req_additional_data_length = additional_data_length;
 	req_data->psa_aead_decrypt_req_p_ciphertext = (uint32_t)ciphertext;
 	req_data->psa_aead_decrypt_req_ciphertext_length = ciphertext_length;
-	req_data->psa_aead_decrypt_req_p_plaintext = (uint32_t)plaintext;
+	plaintext_tmp = prepare_out_buffer(plaintext, plaintext_size);
+	if (plaintext_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_aead_decrypt_req_p_plaintext = (uint32_t)plaintext_tmp;
 	req_data->psa_aead_decrypt_req_plaintext_size = plaintext_size;
-	req_data->psa_aead_decrypt_req_p_plaintext_length = (uint32_t)plaintext_length;
+	plaintext_length_tmp = prepare_out_buffer(plaintext_length, sizeof(*plaintext_length));
+	if (plaintext_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_aead_decrypt_req_p_plaintext_length = (uint32_t)plaintext_length_tmp;
 	sys_cache_data_flush_range((void *)nonce, nonce_length);
 	sys_cache_data_flush_range((void *)additional_data, additional_data_length);
 	sys_cache_data_flush_range((void *)ciphertext, ciphertext_length);
+	sys_cache_data_flush_range((void *)plaintext_tmp, plaintext_size);
+	sys_cache_data_flush_range((void *)plaintext_length_tmp, sizeof(*plaintext_length));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -1118,10 +1439,13 @@ psa_status_t ssf_psa_aead_decrypt(mbedtls_svc_key_id_t key, psa_algorithm_t alg,
 	} else {
 		result = rsp.psa_crypto_rsp_status;
 	}
-	sys_cache_data_flush_and_invd_range((void *)plaintext, plaintext_size);
-	sys_cache_data_flush_and_invd_range((void *)plaintext_length, sizeof(*plaintext_length));
+	sys_cache_data_flush_and_invd_range((void *)plaintext_tmp, plaintext_size);
+	sys_cache_data_flush_and_invd_range((void *)plaintext_length_tmp,
+					    sizeof(*plaintext_length));
 
 fail:
+	release_out_buffer(plaintext, plaintext_tmp, plaintext_size);
+	release_out_buffer(plaintext_length, plaintext_length_tmp, sizeof(*plaintext_length));
 	return result;
 }
 
@@ -1192,16 +1516,30 @@ psa_status_t ssf_psa_aead_generate_nonce(mbedtls_psa_client_handle_t *p_handle, 
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *nonce_tmp = NULL;
+	void *nonce_length_tmp = NULL;
 
 	struct psa_aead_generate_nonce_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_aead_generate_nonce_req_m_c;
 	req_data = &req.psa_crypto_req_msg_psa_aead_generate_nonce_req_m;
 
 	req_data->psa_aead_generate_nonce_req_p_handle = (uint32_t)p_handle;
-	req_data->psa_aead_generate_nonce_req_p_nonce = (uint32_t)nonce;
+	nonce_tmp = prepare_out_buffer(nonce, nonce_size);
+	if (nonce_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_aead_generate_nonce_req_p_nonce = (uint32_t)nonce_tmp;
 	req_data->psa_aead_generate_nonce_req_nonce_size = nonce_size;
-	req_data->psa_aead_generate_nonce_req_p_nonce_length = (uint32_t)nonce_length;
+	nonce_length_tmp = prepare_out_buffer(nonce_length, sizeof(*nonce_length));
+	if (nonce_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_aead_generate_nonce_req_p_nonce_length = (uint32_t)nonce_length_tmp;
 	sys_cache_data_flush_range((void *)p_handle, sizeof(*p_handle));
+	sys_cache_data_flush_range((void *)nonce_tmp, nonce_size);
+	sys_cache_data_flush_range((void *)nonce_length_tmp, sizeof(*nonce_length));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -1211,10 +1549,12 @@ psa_status_t ssf_psa_aead_generate_nonce(mbedtls_psa_client_handle_t *p_handle, 
 		result = rsp.psa_crypto_rsp_status;
 	}
 	sys_cache_data_flush_and_invd_range((void *)p_handle, sizeof(*p_handle));
-	sys_cache_data_flush_and_invd_range((void *)nonce, nonce_size);
-	sys_cache_data_flush_and_invd_range((void *)nonce_length, sizeof(*nonce_length));
+	sys_cache_data_flush_and_invd_range((void *)nonce_tmp, nonce_size);
+	sys_cache_data_flush_and_invd_range((void *)nonce_length_tmp, sizeof(*nonce_length));
 
 fail:
+	release_out_buffer(nonce, nonce_tmp, nonce_size);
+	release_out_buffer(nonce_length, nonce_length_tmp, sizeof(*nonce_length));
 	return result;
 }
 
@@ -1318,6 +1658,8 @@ psa_status_t ssf_psa_aead_update(mbedtls_psa_client_handle_t *p_handle, const ui
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *output_tmp = NULL;
+	void *output_length_tmp = NULL;
 
 	struct psa_aead_update_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_aead_update_req_m_c;
@@ -1326,11 +1668,23 @@ psa_status_t ssf_psa_aead_update(mbedtls_psa_client_handle_t *p_handle, const ui
 	req_data->psa_aead_update_req_p_handle = (uint32_t)p_handle;
 	req_data->psa_aead_update_req_p_input = (uint32_t)input;
 	req_data->psa_aead_update_req_input_length = input_length;
-	req_data->psa_aead_update_req_p_output = (uint32_t)output;
+	output_tmp = prepare_out_buffer(output, output_size);
+	if (output_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_aead_update_req_p_output = (uint32_t)output_tmp;
 	req_data->psa_aead_update_req_output_size = output_size;
-	req_data->psa_aead_update_req_p_output_length = (uint32_t)output_length;
+	output_length_tmp = prepare_out_buffer(output_length, sizeof(*output_length));
+	if (output_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_aead_update_req_p_output_length = (uint32_t)output_length_tmp;
 	sys_cache_data_flush_range((void *)p_handle, sizeof(*p_handle));
 	sys_cache_data_flush_range((void *)input, input_length);
+	sys_cache_data_flush_range((void *)output_tmp, output_size);
+	sys_cache_data_flush_range((void *)output_length_tmp, sizeof(*output_length));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -1340,10 +1694,12 @@ psa_status_t ssf_psa_aead_update(mbedtls_psa_client_handle_t *p_handle, const ui
 		result = rsp.psa_crypto_rsp_status;
 	}
 	sys_cache_data_flush_and_invd_range((void *)p_handle, sizeof(*p_handle));
-	sys_cache_data_flush_and_invd_range((void *)output, output_size);
-	sys_cache_data_flush_and_invd_range((void *)output_length, sizeof(*output_length));
+	sys_cache_data_flush_and_invd_range((void *)output_tmp, output_size);
+	sys_cache_data_flush_and_invd_range((void *)output_length_tmp, sizeof(*output_length));
 
 fail:
+	release_out_buffer(output, output_tmp, output_size);
+	release_out_buffer(output_length, output_length_tmp, sizeof(*output_length));
 	return result;
 }
 
@@ -1355,19 +1711,47 @@ psa_status_t ssf_psa_aead_finish(mbedtls_psa_client_handle_t *p_handle, uint8_t 
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *ciphertext_tmp = NULL;
+	void *ciphertext_length_tmp = NULL;
+	void *tag_tmp = NULL;
+	void *tag_length_tmp = NULL;
 
 	struct psa_aead_finish_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_aead_finish_req_m_c;
 	req_data = &req.psa_crypto_req_msg_psa_aead_finish_req_m;
 
 	req_data->psa_aead_finish_req_p_handle = (uint32_t)p_handle;
-	req_data->psa_aead_finish_req_p_ciphertext = (uint32_t)ciphertext;
+	ciphertext_tmp = prepare_out_buffer(ciphertext, ciphertext_size);
+	if (ciphertext_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_aead_finish_req_p_ciphertext = (uint32_t)ciphertext_tmp;
 	req_data->psa_aead_finish_req_ciphertext_size = ciphertext_size;
-	req_data->psa_aead_finish_req_p_ciphertext_length = (uint32_t)ciphertext_length;
-	req_data->psa_aead_finish_req_p_tag = (uint32_t)tag;
+	ciphertext_length_tmp = prepare_out_buffer(ciphertext_length, sizeof(*ciphertext_length));
+	if (ciphertext_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_aead_finish_req_p_ciphertext_length = (uint32_t)ciphertext_length_tmp;
+	tag_tmp = prepare_out_buffer(tag, tag_size);
+	if (tag_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_aead_finish_req_p_tag = (uint32_t)tag_tmp;
 	req_data->psa_aead_finish_req_tag_size = tag_size;
-	req_data->psa_aead_finish_req_p_tag_length = (uint32_t)tag_length;
+	tag_length_tmp = prepare_out_buffer(tag_length, sizeof(*tag_length));
+	if (tag_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_aead_finish_req_p_tag_length = (uint32_t)tag_length_tmp;
 	sys_cache_data_flush_range((void *)p_handle, sizeof(*p_handle));
+	sys_cache_data_flush_range((void *)ciphertext_tmp, ciphertext_size);
+	sys_cache_data_flush_range((void *)ciphertext_length_tmp, sizeof(*ciphertext_length));
+	sys_cache_data_flush_range((void *)tag_tmp, tag_size);
+	sys_cache_data_flush_range((void *)tag_length_tmp, sizeof(*tag_length));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -1377,12 +1761,17 @@ psa_status_t ssf_psa_aead_finish(mbedtls_psa_client_handle_t *p_handle, uint8_t 
 		result = rsp.psa_crypto_rsp_status;
 	}
 	sys_cache_data_flush_and_invd_range((void *)p_handle, sizeof(*p_handle));
-	sys_cache_data_flush_and_invd_range((void *)ciphertext, ciphertext_size);
-	sys_cache_data_flush_and_invd_range((void *)ciphertext_length, sizeof(*ciphertext_length));
-	sys_cache_data_flush_and_invd_range((void *)tag, tag_size);
-	sys_cache_data_flush_and_invd_range((void *)tag_length, sizeof(*tag_length));
+	sys_cache_data_flush_and_invd_range((void *)ciphertext_tmp, ciphertext_size);
+	sys_cache_data_flush_and_invd_range((void *)ciphertext_length_tmp,
+					    sizeof(*ciphertext_length));
+	sys_cache_data_flush_and_invd_range((void *)tag_tmp, tag_size);
+	sys_cache_data_flush_and_invd_range((void *)tag_length_tmp, sizeof(*tag_length));
 
 fail:
+	release_out_buffer(ciphertext, ciphertext_tmp, ciphertext_size);
+	release_out_buffer(ciphertext_length, ciphertext_length_tmp, sizeof(*ciphertext_length));
+	release_out_buffer(tag, tag_tmp, tag_size);
+	release_out_buffer(tag_length, tag_length_tmp, sizeof(*tag_length));
 	return result;
 }
 
@@ -1394,18 +1783,32 @@ psa_status_t ssf_psa_aead_verify(mbedtls_psa_client_handle_t *p_handle, uint8_t 
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *plaintext_tmp = NULL;
+	void *plaintext_length_tmp = NULL;
 
 	struct psa_aead_verify_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_aead_verify_req_m_c;
 	req_data = &req.psa_crypto_req_msg_psa_aead_verify_req_m;
 
 	req_data->psa_aead_verify_req_p_handle = (uint32_t)p_handle;
-	req_data->psa_aead_verify_req_p_plaintext = (uint32_t)plaintext;
+	plaintext_tmp = prepare_out_buffer(plaintext, plaintext_size);
+	if (plaintext_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_aead_verify_req_p_plaintext = (uint32_t)plaintext_tmp;
 	req_data->psa_aead_verify_req_plaintext_size = plaintext_size;
-	req_data->psa_aead_verify_req_p_plaintext_length = (uint32_t)plaintext_length;
+	plaintext_length_tmp = prepare_out_buffer(plaintext_length, sizeof(*plaintext_length));
+	if (plaintext_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_aead_verify_req_p_plaintext_length = (uint32_t)plaintext_length_tmp;
 	req_data->psa_aead_verify_req_p_tag = (uint32_t)tag;
 	req_data->psa_aead_verify_req_tag_length = tag_length;
 	sys_cache_data_flush_range((void *)p_handle, sizeof(*p_handle));
+	sys_cache_data_flush_range((void *)plaintext_tmp, plaintext_size);
+	sys_cache_data_flush_range((void *)plaintext_length_tmp, sizeof(*plaintext_length));
 	sys_cache_data_flush_range((void *)tag, tag_length);
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
@@ -1416,10 +1819,13 @@ psa_status_t ssf_psa_aead_verify(mbedtls_psa_client_handle_t *p_handle, uint8_t 
 		result = rsp.psa_crypto_rsp_status;
 	}
 	sys_cache_data_flush_and_invd_range((void *)p_handle, sizeof(*p_handle));
-	sys_cache_data_flush_and_invd_range((void *)plaintext, plaintext_size);
-	sys_cache_data_flush_and_invd_range((void *)plaintext_length, sizeof(*plaintext_length));
+	sys_cache_data_flush_and_invd_range((void *)plaintext_tmp, plaintext_size);
+	sys_cache_data_flush_and_invd_range((void *)plaintext_length_tmp,
+					    sizeof(*plaintext_length));
 
 fail:
+	release_out_buffer(plaintext, plaintext_tmp, plaintext_size);
+	release_out_buffer(plaintext_length, plaintext_length_tmp, sizeof(*plaintext_length));
 	return result;
 }
 
@@ -1458,6 +1864,8 @@ psa_status_t ssf_psa_sign_message(mbedtls_svc_key_id_t key, psa_algorithm_t alg,
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *signature_tmp = NULL;
+	void *signature_length_tmp = NULL;
 
 	struct psa_sign_message_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_sign_message_req_m_c;
@@ -1467,10 +1875,22 @@ psa_status_t ssf_psa_sign_message(mbedtls_svc_key_id_t key, psa_algorithm_t alg,
 	req_data->psa_sign_message_req_alg = alg;
 	req_data->psa_sign_message_req_p_input = (uint32_t)input;
 	req_data->psa_sign_message_req_input_length = input_length;
-	req_data->psa_sign_message_req_p_signature = (uint32_t)signature;
+	signature_tmp = prepare_out_buffer(signature, signature_size);
+	if (signature_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_sign_message_req_p_signature = (uint32_t)signature_tmp;
 	req_data->psa_sign_message_req_signature_size = signature_size;
-	req_data->psa_sign_message_req_p_signature_length = (uint32_t)signature_length;
+	signature_length_tmp = prepare_out_buffer(signature_length, sizeof(*signature_length));
+	if (signature_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_sign_message_req_p_signature_length = (uint32_t)signature_length_tmp;
 	sys_cache_data_flush_range((void *)input, input_length);
+	sys_cache_data_flush_range((void *)signature_tmp, signature_size);
+	sys_cache_data_flush_range((void *)signature_length_tmp, sizeof(*signature_length));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -1479,10 +1899,13 @@ psa_status_t ssf_psa_sign_message(mbedtls_svc_key_id_t key, psa_algorithm_t alg,
 	} else {
 		result = rsp.psa_crypto_rsp_status;
 	}
-	sys_cache_data_flush_and_invd_range((void *)signature, signature_size);
-	sys_cache_data_flush_and_invd_range((void *)signature_length, sizeof(*signature_length));
+	sys_cache_data_flush_and_invd_range((void *)signature_tmp, signature_size);
+	sys_cache_data_flush_and_invd_range((void *)signature_length_tmp,
+					    sizeof(*signature_length));
 
 fail:
+	release_out_buffer(signature, signature_tmp, signature_size);
+	release_out_buffer(signature_length, signature_length_tmp, sizeof(*signature_length));
 	return result;
 }
 
@@ -1528,6 +1951,8 @@ psa_status_t ssf_psa_sign_hash(mbedtls_svc_key_id_t key, psa_algorithm_t alg, co
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *signature_tmp = NULL;
+	void *signature_length_tmp = NULL;
 
 	struct psa_sign_hash_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_sign_hash_req_m_c;
@@ -1537,10 +1962,22 @@ psa_status_t ssf_psa_sign_hash(mbedtls_svc_key_id_t key, psa_algorithm_t alg, co
 	req_data->psa_sign_hash_req_alg = alg;
 	req_data->psa_sign_hash_req_p_hash = (uint32_t)hash;
 	req_data->psa_sign_hash_req_hash_length = hash_length;
-	req_data->psa_sign_hash_req_p_signature = (uint32_t)signature;
+	signature_tmp = prepare_out_buffer(signature, signature_size);
+	if (signature_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_sign_hash_req_p_signature = (uint32_t)signature_tmp;
 	req_data->psa_sign_hash_req_signature_size = signature_size;
-	req_data->psa_sign_hash_req_p_signature_length = (uint32_t)signature_length;
+	signature_length_tmp = prepare_out_buffer(signature_length, sizeof(*signature_length));
+	if (signature_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_sign_hash_req_p_signature_length = (uint32_t)signature_length_tmp;
 	sys_cache_data_flush_range((void *)hash, hash_length);
+	sys_cache_data_flush_range((void *)signature_tmp, signature_size);
+	sys_cache_data_flush_range((void *)signature_length_tmp, sizeof(*signature_length));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -1549,10 +1986,13 @@ psa_status_t ssf_psa_sign_hash(mbedtls_svc_key_id_t key, psa_algorithm_t alg, co
 	} else {
 		result = rsp.psa_crypto_rsp_status;
 	}
-	sys_cache_data_flush_and_invd_range((void *)signature, signature_size);
-	sys_cache_data_flush_and_invd_range((void *)signature_length, sizeof(*signature_length));
+	sys_cache_data_flush_and_invd_range((void *)signature_tmp, signature_size);
+	sys_cache_data_flush_and_invd_range((void *)signature_length_tmp,
+					    sizeof(*signature_length));
 
 fail:
+	release_out_buffer(signature, signature_tmp, signature_size);
+	release_out_buffer(signature_length, signature_length_tmp, sizeof(*signature_length));
 	return result;
 }
 
@@ -1599,6 +2039,8 @@ psa_status_t ssf_psa_asymmetric_encrypt(mbedtls_svc_key_id_t key, psa_algorithm_
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *output_tmp = NULL;
+	void *output_length_tmp = NULL;
 
 	struct psa_asymmetric_encrypt_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_asymmetric_encrypt_req_m_c;
@@ -1610,11 +2052,23 @@ psa_status_t ssf_psa_asymmetric_encrypt(mbedtls_svc_key_id_t key, psa_algorithm_
 	req_data->psa_asymmetric_encrypt_req_input_length = input_length;
 	req_data->psa_asymmetric_encrypt_req_p_salt = (uint32_t)salt;
 	req_data->psa_asymmetric_encrypt_req_salt_length = salt_length;
-	req_data->psa_asymmetric_encrypt_req_p_output = (uint32_t)output;
+	output_tmp = prepare_out_buffer(output, output_size);
+	if (output_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_asymmetric_encrypt_req_p_output = (uint32_t)output_tmp;
 	req_data->psa_asymmetric_encrypt_req_output_size = output_size;
-	req_data->psa_asymmetric_encrypt_req_p_output_length = (uint32_t)output_length;
+	output_length_tmp = prepare_out_buffer(output_length, sizeof(*output_length));
+	if (output_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_asymmetric_encrypt_req_p_output_length = (uint32_t)output_length_tmp;
 	sys_cache_data_flush_range((void *)input, input_length);
 	sys_cache_data_flush_range((void *)salt, salt_length);
+	sys_cache_data_flush_range((void *)output_tmp, output_size);
+	sys_cache_data_flush_range((void *)output_length_tmp, sizeof(*output_length));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -1623,10 +2077,12 @@ psa_status_t ssf_psa_asymmetric_encrypt(mbedtls_svc_key_id_t key, psa_algorithm_
 	} else {
 		result = rsp.psa_crypto_rsp_status;
 	}
-	sys_cache_data_flush_and_invd_range((void *)output, output_size);
-	sys_cache_data_flush_and_invd_range((void *)output_length, sizeof(*output_length));
+	sys_cache_data_flush_and_invd_range((void *)output_tmp, output_size);
+	sys_cache_data_flush_and_invd_range((void *)output_length_tmp, sizeof(*output_length));
 
 fail:
+	release_out_buffer(output, output_tmp, output_size);
+	release_out_buffer(output_length, output_length_tmp, sizeof(*output_length));
 	return result;
 }
 
@@ -1639,6 +2095,8 @@ psa_status_t ssf_psa_asymmetric_decrypt(mbedtls_svc_key_id_t key, psa_algorithm_
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *output_tmp = NULL;
+	void *output_length_tmp = NULL;
 
 	struct psa_asymmetric_decrypt_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_asymmetric_decrypt_req_m_c;
@@ -1650,11 +2108,23 @@ psa_status_t ssf_psa_asymmetric_decrypt(mbedtls_svc_key_id_t key, psa_algorithm_
 	req_data->psa_asymmetric_decrypt_req_input_length = input_length;
 	req_data->psa_asymmetric_decrypt_req_p_salt = (uint32_t)salt;
 	req_data->psa_asymmetric_decrypt_req_salt_length = salt_length;
-	req_data->psa_asymmetric_decrypt_req_p_output = (uint32_t)output;
+	output_tmp = prepare_out_buffer(output, output_size);
+	if (output_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_asymmetric_decrypt_req_p_output = (uint32_t)output_tmp;
 	req_data->psa_asymmetric_decrypt_req_output_size = output_size;
-	req_data->psa_asymmetric_decrypt_req_p_output_length = (uint32_t)output_length;
+	output_length_tmp = prepare_out_buffer(output_length, sizeof(*output_length));
+	if (output_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_asymmetric_decrypt_req_p_output_length = (uint32_t)output_length_tmp;
 	sys_cache_data_flush_range((void *)input, input_length);
 	sys_cache_data_flush_range((void *)salt, salt_length);
+	sys_cache_data_flush_range((void *)output_tmp, output_size);
+	sys_cache_data_flush_range((void *)output_length_tmp, sizeof(*output_length));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -1663,10 +2133,12 @@ psa_status_t ssf_psa_asymmetric_decrypt(mbedtls_svc_key_id_t key, psa_algorithm_
 	} else {
 		result = rsp.psa_crypto_rsp_status;
 	}
-	sys_cache_data_flush_and_invd_range((void *)output, output_size);
-	sys_cache_data_flush_and_invd_range((void *)output_length, sizeof(*output_length));
+	sys_cache_data_flush_and_invd_range((void *)output_tmp, output_size);
+	sys_cache_data_flush_and_invd_range((void *)output_length_tmp, sizeof(*output_length));
 
 fail:
+	release_out_buffer(output, output_tmp, output_size);
+	release_out_buffer(output_length, output_length_tmp, sizeof(*output_length));
 	return result;
 }
 
@@ -1706,13 +2178,20 @@ psa_status_t ssf_psa_key_derivation_get_capacity(mbedtls_psa_client_handle_t han
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *capacity_tmp = NULL;
 
 	struct psa_key_derivation_get_capacity_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_key_derivation_get_capacity_req_m_c;
 	req_data = &req.psa_crypto_req_msg_psa_key_derivation_get_capacity_req_m;
 
 	req_data->psa_key_derivation_get_capacity_req_handle = (uint32_t)handle;
-	req_data->psa_key_derivation_get_capacity_req_p_capacity = (uint32_t)capacity;
+	capacity_tmp = prepare_out_buffer(capacity, sizeof(*capacity));
+	if (capacity_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_key_derivation_get_capacity_req_p_capacity = (uint32_t)capacity_tmp;
+	sys_cache_data_flush_range((void *)capacity_tmp, sizeof(*capacity));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -1721,9 +2200,10 @@ psa_status_t ssf_psa_key_derivation_get_capacity(mbedtls_psa_client_handle_t han
 	} else {
 		result = rsp.psa_crypto_rsp_status;
 	}
-	sys_cache_data_flush_and_invd_range((void *)capacity, sizeof(*capacity));
+	sys_cache_data_flush_and_invd_range((void *)capacity_tmp, sizeof(*capacity));
 
 fail:
+	release_out_buffer(capacity, capacity_tmp, sizeof(*capacity));
 	return result;
 }
 
@@ -1892,15 +2372,22 @@ psa_status_t ssf_psa_key_derivation_output_bytes(mbedtls_psa_client_handle_t *p_
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *output_tmp = NULL;
 
 	struct psa_key_derivation_output_bytes_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_key_derivation_output_bytes_req_m_c;
 	req_data = &req.psa_crypto_req_msg_psa_key_derivation_output_bytes_req_m;
 
 	req_data->psa_key_derivation_output_bytes_req_p_handle = (uint32_t)p_handle;
-	req_data->psa_key_derivation_output_bytes_req_p_output = (uint32_t)output;
+	output_tmp = prepare_out_buffer(output, output_length);
+	if (output_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_key_derivation_output_bytes_req_p_output = (uint32_t)output_tmp;
 	req_data->psa_key_derivation_output_bytes_req_output_length = output_length;
 	sys_cache_data_flush_range((void *)p_handle, sizeof(*p_handle));
+	sys_cache_data_flush_range((void *)output_tmp, output_length);
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -1910,9 +2397,10 @@ psa_status_t ssf_psa_key_derivation_output_bytes(mbedtls_psa_client_handle_t *p_
 		result = rsp.psa_crypto_rsp_status;
 	}
 	sys_cache_data_flush_and_invd_range((void *)p_handle, sizeof(*p_handle));
-	sys_cache_data_flush_and_invd_range((void *)output, output_length);
+	sys_cache_data_flush_and_invd_range((void *)output_tmp, output_length);
 
 fail:
+	release_out_buffer(output, output_tmp, output_length);
 	return result;
 }
 
@@ -1924,6 +2412,7 @@ psa_status_t ssf_psa_key_derivation_output_key(const psa_key_attributes_t *attri
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *key_tmp = NULL;
 
 	struct psa_key_derivation_output_key_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_key_derivation_output_key_req_m_c;
@@ -1931,9 +2420,15 @@ psa_status_t ssf_psa_key_derivation_output_key(const psa_key_attributes_t *attri
 
 	req_data->psa_key_derivation_output_key_req_p_attributes = (uint32_t)attributes;
 	req_data->psa_key_derivation_output_key_req_p_handle = (uint32_t)p_handle;
-	req_data->psa_key_derivation_output_key_req_p_key = (uint32_t)key;
+	key_tmp = prepare_out_buffer(key, sizeof(*key));
+	if (key_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_key_derivation_output_key_req_p_key = (uint32_t)key_tmp;
 	sys_cache_data_flush_range((void *)attributes, sizeof(*attributes));
 	sys_cache_data_flush_range((void *)p_handle, sizeof(*p_handle));
+	sys_cache_data_flush_range((void *)key_tmp, sizeof(*key));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -1943,9 +2438,10 @@ psa_status_t ssf_psa_key_derivation_output_key(const psa_key_attributes_t *attri
 		result = rsp.psa_crypto_rsp_status;
 	}
 	sys_cache_data_flush_and_invd_range((void *)p_handle, sizeof(*p_handle));
-	sys_cache_data_flush_and_invd_range((void *)key, sizeof(*key));
+	sys_cache_data_flush_and_invd_range((void *)key_tmp, sizeof(*key));
 
 fail:
+	release_out_buffer(key, key_tmp, sizeof(*key));
 	return result;
 }
 
@@ -1984,6 +2480,8 @@ psa_status_t ssf_psa_raw_key_agreement(psa_algorithm_t alg, mbedtls_svc_key_id_t
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *output_tmp = NULL;
+	void *output_length_tmp = NULL;
 
 	struct psa_raw_key_agreement_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_raw_key_agreement_req_m_c;
@@ -1993,10 +2491,22 @@ psa_status_t ssf_psa_raw_key_agreement(psa_algorithm_t alg, mbedtls_svc_key_id_t
 	req_data->psa_raw_key_agreement_req_private_key = private_key;
 	req_data->psa_raw_key_agreement_req_p_peer_key = (uint32_t)peer_key;
 	req_data->psa_raw_key_agreement_req_peer_key_length = peer_key_length;
-	req_data->psa_raw_key_agreement_req_p_output = (uint32_t)output;
+	output_tmp = prepare_out_buffer(output, output_size);
+	if (output_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_raw_key_agreement_req_p_output = (uint32_t)output_tmp;
 	req_data->psa_raw_key_agreement_req_output_size = output_size;
-	req_data->psa_raw_key_agreement_req_p_output_length = (uint32_t)output_length;
+	output_length_tmp = prepare_out_buffer(output_length, sizeof(*output_length));
+	if (output_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_raw_key_agreement_req_p_output_length = (uint32_t)output_length_tmp;
 	sys_cache_data_flush_range((void *)peer_key, peer_key_length);
+	sys_cache_data_flush_range((void *)output_tmp, output_size);
+	sys_cache_data_flush_range((void *)output_length_tmp, sizeof(*output_length));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -2005,10 +2515,12 @@ psa_status_t ssf_psa_raw_key_agreement(psa_algorithm_t alg, mbedtls_svc_key_id_t
 	} else {
 		result = rsp.psa_crypto_rsp_status;
 	}
-	sys_cache_data_flush_and_invd_range((void *)output, output_size);
-	sys_cache_data_flush_and_invd_range((void *)output_length, sizeof(*output_length));
+	sys_cache_data_flush_and_invd_range((void *)output_tmp, output_size);
+	sys_cache_data_flush_and_invd_range((void *)output_length_tmp, sizeof(*output_length));
 
 fail:
+	release_out_buffer(output, output_tmp, output_size);
+	release_out_buffer(output_length, output_length_tmp, sizeof(*output_length));
 	return result;
 }
 
@@ -2018,13 +2530,20 @@ psa_status_t ssf_psa_generate_random(uint8_t *output, size_t output_size)
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *output_tmp = NULL;
 
 	struct psa_generate_random_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_generate_random_req_m_c;
 	req_data = &req.psa_crypto_req_msg_psa_generate_random_req_m;
 
-	req_data->psa_generate_random_req_p_output = (uint32_t)output;
+	output_tmp = prepare_out_buffer(output, output_size);
+	if (output_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_generate_random_req_p_output = (uint32_t)output_tmp;
 	req_data->psa_generate_random_req_output_size = output_size;
+	sys_cache_data_flush_range((void *)output_tmp, output_size);
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -2033,9 +2552,10 @@ psa_status_t ssf_psa_generate_random(uint8_t *output, size_t output_size)
 	} else {
 		result = rsp.psa_crypto_rsp_status;
 	}
-	sys_cache_data_flush_and_invd_range((void *)output, output_size);
+	sys_cache_data_flush_and_invd_range((void *)output_tmp, output_size);
 
 fail:
+	release_out_buffer(output, output_tmp, output_size);
 	return result;
 }
 
@@ -2045,14 +2565,21 @@ psa_status_t ssf_psa_generate_key(const psa_key_attributes_t *attributes, mbedtl
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *key_tmp = NULL;
 
 	struct psa_generate_key_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_generate_key_req_m_c;
 	req_data = &req.psa_crypto_req_msg_psa_generate_key_req_m;
 
 	req_data->psa_generate_key_req_p_attributes = (uint32_t)attributes;
-	req_data->psa_generate_key_req_p_key = (uint32_t)key;
+	key_tmp = prepare_out_buffer(key, sizeof(*key));
+	if (key_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_generate_key_req_p_key = (uint32_t)key_tmp;
 	sys_cache_data_flush_range((void *)attributes, sizeof(*attributes));
+	sys_cache_data_flush_range((void *)key_tmp, sizeof(*key));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -2061,9 +2588,10 @@ psa_status_t ssf_psa_generate_key(const psa_key_attributes_t *attributes, mbedtl
 	} else {
 		result = rsp.psa_crypto_rsp_status;
 	}
-	sys_cache_data_flush_and_invd_range((void *)key, sizeof(*key));
+	sys_cache_data_flush_and_invd_range((void *)key_tmp, sizeof(*key));
 
 fail:
+	release_out_buffer(key, key_tmp, sizeof(*key));
 	return result;
 }
 
@@ -2227,6 +2755,8 @@ psa_status_t ssf_psa_pake_output(mbedtls_psa_client_handle_t *p_handle, psa_pake
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *output_tmp = NULL;
+	void *output_length_tmp = NULL;
 
 	struct psa_pake_output_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_pake_output_req_m_c;
@@ -2234,10 +2764,22 @@ psa_status_t ssf_psa_pake_output(mbedtls_psa_client_handle_t *p_handle, psa_pake
 
 	req_data->psa_pake_output_req_p_handle = (uint32_t)p_handle;
 	req_data->psa_pake_output_req_step = step;
-	req_data->psa_pake_output_req_p_output = (uint32_t)output;
+	output_tmp = prepare_out_buffer(output, output_size);
+	if (output_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_pake_output_req_p_output = (uint32_t)output_tmp;
 	req_data->psa_pake_output_req_output_size = output_size;
-	req_data->psa_pake_output_req_p_output_length = (uint32_t)output_length;
+	output_length_tmp = prepare_out_buffer(output_length, sizeof(*output_length));
+	if (output_length_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_pake_output_req_p_output_length = (uint32_t)output_length_tmp;
 	sys_cache_data_flush_range((void *)p_handle, sizeof(*p_handle));
+	sys_cache_data_flush_range((void *)output_tmp, output_size);
+	sys_cache_data_flush_range((void *)output_length_tmp, sizeof(*output_length));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -2247,10 +2789,12 @@ psa_status_t ssf_psa_pake_output(mbedtls_psa_client_handle_t *p_handle, psa_pake
 		result = rsp.psa_crypto_rsp_status;
 	}
 	sys_cache_data_flush_and_invd_range((void *)p_handle, sizeof(*p_handle));
-	sys_cache_data_flush_and_invd_range((void *)output, output_size);
-	sys_cache_data_flush_and_invd_range((void *)output_length, sizeof(*output_length));
+	sys_cache_data_flush_and_invd_range((void *)output_tmp, output_size);
+	sys_cache_data_flush_and_invd_range((void *)output_length_tmp, sizeof(*output_length));
 
 fail:
+	release_out_buffer(output, output_tmp, output_size);
+	release_out_buffer(output_length, output_length_tmp, sizeof(*output_length));
 	return result;
 }
 
@@ -2294,6 +2838,7 @@ psa_status_t ssf_psa_pake_get_shared_key(mbedtls_psa_client_handle_t *p_handle,
 	psa_status_t result = PSA_ERROR_GENERIC_ERROR;
 	struct psa_crypto_req req = { 0 };
 	struct psa_crypto_rsp rsp = { 0 };
+	void *key_tmp = NULL;
 
 	struct psa_pake_get_shared_key_req *req_data;
 	req.psa_crypto_req_msg_choice = psa_crypto_req_msg_psa_pake_get_shared_key_req_m_c;
@@ -2301,9 +2846,15 @@ psa_status_t ssf_psa_pake_get_shared_key(mbedtls_psa_client_handle_t *p_handle,
 
 	req_data->psa_pake_get_shared_key_req_p_handle = (uint32_t)p_handle;
 	req_data->psa_pake_get_shared_key_req_p_attributes = (uint32_t)attributes;
-	req_data->psa_pake_get_shared_key_req_p_key = (uint32_t)key;
+	key_tmp = prepare_out_buffer(key, sizeof(*key));
+	if (key_tmp == NULL) {
+		result = PSA_ERROR_INSUFFICIENT_MEMORY;
+		goto fail;
+	}
+	req_data->psa_pake_get_shared_key_req_p_key = (uint32_t)key_tmp;
 	sys_cache_data_flush_range((void *)p_handle, sizeof(*p_handle));
 	sys_cache_data_flush_range((void *)attributes, sizeof(*attributes));
+	sys_cache_data_flush_range((void *)key_tmp, sizeof(*key));
 
 	err = ssf_client_send_request(&psa_crypto_srvc, &req, &rsp, NULL);
 	if (err != 0) {
@@ -2313,9 +2864,10 @@ psa_status_t ssf_psa_pake_get_shared_key(mbedtls_psa_client_handle_t *p_handle,
 		result = rsp.psa_crypto_rsp_status;
 	}
 	sys_cache_data_flush_and_invd_range((void *)p_handle, sizeof(*p_handle));
-	sys_cache_data_flush_and_invd_range((void *)key, sizeof(*key));
+	sys_cache_data_flush_and_invd_range((void *)key_tmp, sizeof(*key));
 
 fail:
+	release_out_buffer(key, key_tmp, sizeof(*key));
 	return result;
 }
 
