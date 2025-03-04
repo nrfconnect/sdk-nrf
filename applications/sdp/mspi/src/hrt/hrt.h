@@ -131,6 +131,6 @@ void hrt_write(hrt_xfer_t *hrt_xfer_params);
  *
  *  @param[in] hrt_xfer_params Hrt transfer parameters and data.
  */
-void hrt_read(volatile hrt_xfer_t *hrt_xfer_params);
+void hrt_read(hrt_xfer_t *hrt_xfer_params);
 
 #endif /* _HRT_H__ */
