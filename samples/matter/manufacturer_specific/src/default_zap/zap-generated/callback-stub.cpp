@@ -52,6 +52,9 @@ void emberAfClusterInitCallback(EndpointId endpoint, ClusterId clusterId)
 	case app::Clusters::NetworkCommissioning::Id:
 		emberAfNetworkCommissioningClusterInitCallback(endpoint);
 		break;
+	case app::Clusters::NordicDevKitCluster::Id:
+		emberAfNordicDevKitClusterClusterInitCallback(endpoint);
+		break;
 	case app::Clusters::OtaSoftwareUpdateProvider::Id:
 		emberAfOtaSoftwareUpdateProviderClusterInitCallback(endpoint);
 		break;
@@ -103,6 +106,11 @@ void __attribute__((weak)) emberAfGroupKeyManagementClusterInitCallback(Endpoint
 	(void)endpoint;
 }
 void __attribute__((weak)) emberAfNetworkCommissioningClusterInitCallback(EndpointId endpoint)
+{
+	// To prevent warning
+	(void)endpoint;
+}
+void __attribute__((weak)) emberAfNordicDevKitClusterClusterInitCallback(EndpointId endpoint)
 {
 	// To prevent warning
 	(void)endpoint;

@@ -299,6 +299,50 @@ namespace app
 
 		} // namespace GroupKeyManagement
 
+		namespace NordicDevKitCluster
+		{
+
+			void DispatchServerCommand(CommandHandler *apCommandObj,
+						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
+			{
+				CHIP_ERROR TLVError = CHIP_NO_ERROR;
+				bool wasHandled = false;
+				{
+					switch (aCommandPath.mCommandId) {
+					case Commands::SetLED::Id: {
+						Commands::SetLED::DecodableType commandData;
+						TLVError = DataModel::Decode(aDataTlv, commandData);
+						if (TLVError == CHIP_NO_ERROR) {
+							wasHandled = emberAfNordicDevKitClusterClusterSetLEDCallback(
+								apCommandObj, aCommandPath, commandData);
+						}
+						break;
+					}
+					default: {
+						// Unrecognized command ID, error status will apply.
+						apCommandObj->AddStatus(
+							aCommandPath,
+							Protocols::InteractionModel::Status::UnsupportedCommand);
+						ChipLogError(Zcl,
+							     "Unknown command " ChipLogFormatMEI
+							     " for cluster " ChipLogFormatMEI,
+							     ChipLogValueMEI(aCommandPath.mCommandId),
+							     ChipLogValueMEI(aCommandPath.mClusterId));
+						return;
+					}
+					}
+				}
+
+				if (CHIP_NO_ERROR != TLVError || !wasHandled) {
+					apCommandObj->AddStatus(aCommandPath,
+								Protocols::InteractionModel::Status::InvalidCommand);
+					ChipLogProgress(Zcl, "Failed to dispatch command, TLVError=%" CHIP_ERROR_FORMAT,
+							TLVError.Format());
+				}
+			}
+
+		} // namespace NordicDevKitCluster
+
 		namespace OtaSoftwareUpdateRequestor
 		{
 
@@ -476,6 +520,9 @@ namespace app
 			break;
 		case Clusters::GroupKeyManagement::Id:
 			Clusters::GroupKeyManagement::DispatchServerCommand(apCommandObj, aCommandPath, aReader);
+			break;
+		case Clusters::NordicDevKitCluster::Id:
+			Clusters::NordicDevKitCluster::DispatchServerCommand(apCommandObj, aCommandPath, aReader);
 			break;
 		case Clusters::OtaSoftwareUpdateRequestor::Id:
 			Clusters::OtaSoftwareUpdateRequestor::DispatchServerCommand(apCommandObj, aCommandPath,

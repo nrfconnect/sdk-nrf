@@ -19,6 +19,7 @@ public:
 	};
 
 	CHIP_ERROR StartApp();
+	void UpdateClusterState();
 
 private:
 	CHIP_ERROR Init();

@@ -5,8 +5,6 @@ tests:
   sample.matter.manufacturer_specific.debug:
     sysbuild: true
     build_only: true
-    extra_args:
-      - CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS=y
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
