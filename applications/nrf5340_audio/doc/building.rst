@@ -48,6 +48,11 @@ This eases the process of building and programming images for multiple developme
 
 The script is located in the :file:`applications/nrf5340_audio/tools/buildprog` directory.
 
+  .. note::
+     The :file:`buildprog.py` is an app-specific script for building and programming multiple kits and cores with various audio application configurations.
+     The script will be deprecated in a future release.
+     The audio applications will gradually shift to using only the standard |NCS| tools for building and programming development kits.
+
 Preparing the JSON file
 =======================
 
@@ -115,9 +120,9 @@ For example, the following command builds headset and gateway applications using
 
 The command can be run from any location, as long as the correct path to :file:`buildprog.py` is given.
 
-The build files are saved in separate subdirectories in the :file:`applications/nrf5340_audio/build` directory.
-The script creates a directory for each application version and device type combination.
-For example, when running the command above, the script creates the :file:`dev_gateway/build_debug` and :file:`dev_headset/build_debug` directories.
+The build files are saved in separate subdirectories in the :file:`applications/nrf5340_audio/tools/build` directory.
+The script creates a directory for each transport, device type, core, and version combination.
+For example, when running the command above, the script creates the :file:`unicast/gateway/app/debug`, :file:`unicast/gateway/net/debug`, :file:`unicast/headset/app/debug`, :file:`unicast/headset/net/debug` and directories.
 
 Script parameters for programming
 ---------------------------------

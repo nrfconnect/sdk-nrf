@@ -24,7 +24,7 @@ class SelectFlags(str, Enum):
 class Core(str, Enum):
     """SoC core"""
     app = "app"
-    net = "network"
+    net = "net"
     both = "both"
 
 
