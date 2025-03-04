@@ -490,6 +490,8 @@ Keys samples
 Matter samples
 --------------
 
+* Added :ref:`matter_manufacturer_specific_sample` sample that demonstrates an implementation of custom manufacturer-specific clusters used by the application layer.
+
 * :ref:`matter_template_sample` sample:
 
   * Updated:
