@@ -1,0 +1,29 @@
+sample:
+  name: I2C RTIO loopback sample
+
+common:
+  tags:
+    - rtio
+    - i2c_target
+    - ci_samples_zephyr_drivers_i2c
+  harness: console
+  harness_config:
+    fixture: i2c_bus_short
+    type: one_line
+    regex:
+      - "sample complete"
+tests:
+  nrf.extended.sample.drivers.i2c.rtio_loopback.l20:
+    platform_allow:
+      - nrf54l20pdk/nrf54l20/cpuapp
+    integration_platforms:
+      - nrf54l20pdk/nrf54l20/cpuapp
+  nrf.extended.sample.drivers.i2c.rtio_loopback.l09:
+    platform_allow:
+      - nrf54l09pdk/nrf54l09/cpuapp
+    integration_platforms:
+      - nrf54l09pdk/nrf54l09/cpuapp
+    extra_args:
+      - SNIPPET=nrf54l09-switch-uart
+    tags:
+      - nrf54l09-switch-uart

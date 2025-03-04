@@ -1,0 +1,96 @@
+sample:
+  name: Accelerometer polling sample
+common:
+  depends_on: spi
+  tags:
+    - drivers
+    - spi
+    - sensors
+    - ci_samples_zephyr_sensor_accel_polling
+  harness: console
+
+tests:
+  nrf.extended.sample.sensor.accel_polling.nrf54h:
+    filter: not CONFIG_COVERAGE
+    harness_config:
+      fixture: pca63566
+      type: one_line
+      regex:
+        - "^\\s*[0-9A-Za-z_,+-.]*@[0-9A-Fa-f]* \\[m/s\\^2\\]:    \\(\\s*-?[0-9\\.]*,\\\
+        s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
+    extra_args:
+      - SHIELD=pca63566
+    extra_configs:
+      - CONFIG_LOG=y
+      - CONFIG_SENSOR_LOG_LEVEL_DBG=y
+    platform_allow: nrf54h20dk/nrf54h20/cpuapp
+
+  nrf.extended.sample.sensor.accel_polling.nrf54h_cpuppr:
+    filter: not CONFIG_COVERAGE
+    sysbuild: true
+    harness_config:
+      fixture: pca63566
+      type: one_line
+      regex:
+        - "^\\s*[0-9A-Za-z_,+-.]*@[0-9A-Fa-f]* \\[m/s\\^2\\]:    \\(\\s*-?[0-9\\.]*,\\\
+        s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
+    extra_args:
+      - accel_polling_SHIELD=pca63566
+      - vpr_launcher_SHIELD=pca63566_fwd
+    platform_allow: nrf54h20dk/nrf54h20/cpuppr
+
+  nrf.extended.sample.sensor.accel_polling.nrf54h_coverage:
+    filter: CONFIG_COVERAGE
+    harness_config:
+      fixture: pca63566
+      type: one_line
+      regex:
+        - "^\\s*[0-9A-Za-z_,+-.]*@[0-9A-Fa-f]* \\[m/s\\^2\\]:    \\(\\s*-?[0-9\\.]*,\\\
+        s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
+    extra_args:
+      - SHIELD=pca63566;coverage_support
+    platform_allow: nrf54h20dk/nrf54h20/cpuapp
+
+  nrf.extended.sample.sensor.accel_polling.nrf54l:
+    filter: not CONFIG_COVERAGE
+    harness_config:
+      fixture: pca63565
+      type: one_line
+      regex:
+        - "^\\s*[0-9A-Za-z_,+-.]*@[0-9A-Fa-f]* \\[m/s\\^2\\]:    \\(\\s*-?[0-9\\.]*,\\\
+        s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
+    extra_args:
+      - SHIELD=pca63565
+    extra_configs:
+      - CONFIG_LOG=y
+      - CONFIG_SENSOR_LOG_LEVEL_DBG=y
+    platform_allow: nrf54l15dk/nrf54l15/cpuapp
+
+  nrf.extended.sample.sensor.accel_polling.nrf54l_coverage:
+    filter: CONFIG_COVERAGE
+    harness_config:
+      fixture: pca63565
+      type: one_line
+      regex:
+        - "^\\s*[0-9A-Za-z_,+-.]*@[0-9A-Fa-f]* \\[m/s\\^2\\]:    \\(\\s*-?[0-9\\.]*,\\\
+        s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
+    extra_args:
+      - SHIELD=pca63565;coverage_support
+    platform_allow: nrf54l15dk/nrf54l15/cpuapp
+
+  nrf.extended.sample.sensor.accel_polling.nrf54l15_cpuflpr:
+    filter: not CONFIG_COVERAGE
+    sysbuild: true
+    harness_config:
+      fixture: pca63565
+      type: one_line
+      regex:
+        - "^\\s*[0-9A-Za-z_,+-.]*@[0-9A-Fa-f]* \\[m/s\\^2\\]:    \\(\\s*-?[0-9\\.]*,\\\
+        s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
+    extra_args:
+      - SHIELD=pca63565
+      - vpr_launcher_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/boards/shields/pca63565/boards/nrf54l15dk_nrf54l15_vpr_launcher.overlay"
+    extra_configs:
+      - CONFIG_LOG=y
+      - CONFIG_SENSOR_LOG_LEVEL_DBG=y
+    platform_allow: nrf54l15dk/nrf54l15/cpuflpr
