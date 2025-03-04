@@ -521,31 +521,31 @@ Syntax
 
     * ``<value>`` is an integer that indicates the send timeout in seconds.
 
-  * ``30`` - :c:macro:`SO_SILENCE_ALL`.
+  * ``1030`` - :c:macro:`SO_SILENCE_ALL`.
 
     * ``<value>`` is an integer that indicates whether ICMP echo replies for IPv4 and IPv6 are disabled.
       It is ``0`` for allowing ICMP echo replies or ``1`` for disabling them.
 
-  * ``31`` - :c:macro:`SO_IP_ECHO_REPLY`.
+  * ``1031`` - :c:macro:`SO_IP_ECHO_REPLY`.
 
     * ``<value>`` is an integer that indicates whether ICMP echo replies for IPv4 are enabled.
       It is ``0`` for disabled or ``1`` for enabled.
 
-  * ``32`` - :c:macro:`SO_IPV6_ECHO_REPLY`.
+  * ``1032`` - :c:macro:`SO_IPV6_ECHO_REPLY`.
 
     * ``<value>`` is an integer that indicates whether ICMP echo replies for IPv6 are enabled.
       It is ``0`` for disabled or ``1`` for enabled.
 
-  * ``40`` - :c:macro:`SO_BINDTOPDN` (set-only).
+  * ``1040`` - :c:macro:`SO_BINDTOPDN` (set-only).
 
     * ``<value>`` is an integer that indicates the packet data network ID to bind to.
 
-  * ``55`` - :c:macro:`SO_TCP_SRV_SESSTIMEO`.
+  * ``1055`` - :c:macro:`SO_TCP_SRV_SESSTIMEO`.
 
     * ``<value>`` is an integer that indicates the TCP server session inactivity timeout for a socket.
       It accepts values from the range ``0`` to ``135``, where ``0`` is no timeout and ``135`` is 2 hours, 15 minutes.
 
-  * ``61`` - :c:macro:`SO_RAI` (set-only).
+  * ``1061`` - :c:macro:`SO_RAI` (set-only).
     Release Assistance Indication (RAI).
 
     * ``<value>`` The option accepts an integer, indicating the type of RAI.
@@ -571,7 +571,7 @@ Syntax
         Indicates that the socket is in active use by a server application.
         This lets the modem stay in connected mode longer.
 
-  * ``62`` - :c:macro:`SO_IPV6_DELAYED_ADDR_REFRESH`.
+  * ``1062`` - :c:macro:`SO_IPV6_DELAYED_ADDR_REFRESH`.
 
     * ``<value>`` is an integer that indicates whether delayed IPv6 address refresh is enabled.
       It is ``0`` for disabled or ``1`` for enabled.
@@ -693,7 +693,7 @@ Syntax
     This option is only supported with modem firmware 1.3.5 and newer.
     See :ref:`nrfxlib:dtls_cid_status` for more details regarding the returned values.
 
-  * ``18`` - :c:macro:`TLS_DTLS_HANDSHAKE_TIMEO`.
+  * ``1018`` - :c:macro:`TLS_DTLS_HANDSHAKE_TIMEO`.
 
     * ``<value>`` is an integer that indicates the DTLS handshake timeout in seconds.
       It can be one of the following values: ``1``, ``3``, ``7``, ``15``, ``31``, ``63``, ``123``.
