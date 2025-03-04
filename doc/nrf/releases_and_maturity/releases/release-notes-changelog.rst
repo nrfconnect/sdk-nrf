@@ -299,7 +299,20 @@ Serial LTE modem
 
 * Added an overlay :file:`overlay-memfault.conf` file to enable Memfault.
   For more information about Memfault features in |NCS|, see :ref:`mod_memfault`.
-* Updated the application to use the :ref:`lib_downloader` library instead of the deprecated :ref:`lib_download_client` library.
+
+* Updated:
+
+  * The application to use the :ref:`lib_downloader` library instead of the deprecated :ref:`lib_download_client` library.
+  * In Zephyr, the numerical values of various |NCS| specific socket options that are used with the ``#XSOCKETOPT`` command:
+
+      * The :c:macro:`TLS_DTLS_HANDSHAKE_TIMEO` has been changed from ``18`` to ``1018``
+      * The :c:macro:`SO_SILENCE_ALL` has been changed from ``30`` to ``1030``
+      * The :c:macro:`SO_IP_ECHO_REPLY` has been changed from ``31`` to ``1031``
+      * The :c:macro:`SO_IPV6_ECHO_REPLY` has been changed from ``32`` to ``1032``
+      * The :c:macro:`SO_BINDTOPDN` has been changed from ``40`` to ``1040``
+      * The :c:macro:`SO_TCP_SRV_SESSTIMEO` has been changed from ``55`` to ``1055``
+      * The :c:macro:`SO_RAI` has been changed from ``61`` to ``1061``
+      * The :c:macro:`SO_IPV6_DELAYED_ADDR_REFRESH` has been changed from ``62`` to ``1062``
 
 Thingy:53: Matter weather station
 ---------------------------------
