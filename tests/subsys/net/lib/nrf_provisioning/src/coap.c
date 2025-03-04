@@ -124,6 +124,16 @@ char *z_impl_net_addr_ntop(sa_family_t family, const void *src, char *dst, size_
 	return "";
 }
 
+struct coap_transmission_parameters coap_transmission_params = {
+	.ack_timeout = 2000,
+	.coap_backoff_percent = 200,
+	.max_retransmission = 2};
+
+struct coap_transmission_parameters coap_get_transmission_parameters(void)
+{
+	return coap_transmission_params;
+}
+
 void setUp(void)
 {
 }

@@ -311,6 +311,7 @@ static int send_coap_request(struct coap_client *client, uint8_t method, const c
 			     struct nrf_provisioning_coap_context *const coap_ctx, bool confirmable)
 {
 	int retries = 0;
+	struct coap_transmission_parameters params = coap_get_transmission_parameters();
 
 	struct coap_client_request client_request = {
 		.method = method,
@@ -334,7 +335,7 @@ static int send_coap_request(struct coap_client *client, uint8_t method, const c
 			break;
 		}
 		LOG_DBG("CoAP client busy");
-		k_sleep(K_MSEC(500));
+		k_sleep(K_MSEC(params.ack_timeout));
 		retries++;
 	}
 	k_sem_take(&coap_response, K_FOREVER);
