@@ -448,7 +448,7 @@
 #cmakedefine MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
 #cmakedefine MBEDTLS_PSA_KEY_SLOT_COUNT                         @MBEDTLS_PSA_KEY_SLOT_COUNT@
 
-#include <psa/core_unsupported_ciphers_check.h>
+#include <oberon_check_unsupported.h>
 
 #include <check_crypto_config.h>
 
