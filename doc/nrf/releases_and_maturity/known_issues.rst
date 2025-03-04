@@ -543,6 +543,13 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v2-9-0 v2-8-0
+
+KRKNWK-20035: Door Lock Attributes do not persist after reboot or reset
+  The persistent storage fails to load due to a wrong value in the :kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_MAX_DATA_SIZE` Kconfig option.
+
+  **Workaround:** Cherry-pick changes from PR #20713 in the `sdk-nrf`_ repository.
+
 .. rst-class:: v2-9-0 v2-8-0 v2-7-0 v2-6-3 v2-6-2 v2-6-1 v2-6-0
 
 KRKNWK-19915: Certification test case TC-DGGEN-2.1 fails on test step 10d when Total Operational Hours feature is enabled
