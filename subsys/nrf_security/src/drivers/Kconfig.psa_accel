@@ -1694,4 +1694,28 @@ config PSA_ACCEL_XTS_CAMELLIA
 config PSA_ACCEL_XTS_DES
 	bool
 
+config PSA_ACCEL_ALG_AES_KW
+	bool
+
+config PSA_ACCEL_ALG_AES_KWP
+	bool
+
+config PSA_ACCEL_KEY_TYPE_WPA3_SAE_PT_SECP_R1_256
+	bool
+
+config PSA_ACCEL_WPA3_SAE_PT
+	bool
+
+config PSA_ACCEL_WPA3_SAE_SECP_R1_256_SHA_256
+	bool
+
+config PSA_ACCEL_WPA3_SAE_SECP_R1_256_SHA_384
+	bool
+
+config PSA_ACCEL_WPA3_SAE_SECP_R1_256_SHA_512
+	bool
+
+config PSA_ACCEL_SP800_108_COUNTER_HMAC
+	bool
+
 endmenu
