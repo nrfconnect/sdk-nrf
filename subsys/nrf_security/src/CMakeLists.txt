@@ -54,6 +54,8 @@ target_include_directories(psa_crypto_library_config
   INTERFACE
     ${PSA_CRYPTO_CONFIG_LIBRARY_PATH}
     ${NRF_SECURITY_ROOT}/include
+    # This is needed for the oberon_check_unsupported.h
+    ${OBERON_PSA_CORE_PATH}/oberon/drivers
 )
 
 if(CONFIG_MBEDTLS_ENABLE_HEAP)
