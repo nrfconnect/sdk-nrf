@@ -110,11 +110,27 @@ static int coap_dl(struct nrf_cloud_download_data *const dl)
 		return ret;
 	}
 
-	return fota_download_with_host_cfg("coaps://" CONFIG_NRF_CLOUD_COAP_SERVER_HOSTNAME,
-					   "proxy", dl->dl_host_conf.sec_tag_count ?
-					   dl->dl_host_conf.sec_tag_list[0] : -1,
-					   dl->dl_host_conf.pdn_id, dl->dl_host_conf.range_override,
-					   dl->fota.expected_type, &host_cfg);
+	const char *host = "coaps://" CONFIG_NRF_CLOUD_COAP_SERVER_HOSTNAME;
+	const char *file = "proxy";
+
+	if (dl->type == NRF_CLOUD_DL_TYPE_FOTA) {
+		return fota_download_with_host_cfg(host,
+						   file, dl->dl_host_conf.sec_tag_count ?
+						   dl->dl_host_conf.sec_tag_list[0] : -1,
+						   dl->dl_host_conf.pdn_id,
+						   dl->dl_host_conf.range_override,
+						   dl->fota.expected_type, &host_cfg);
+	} else {
+		/* If not downloading FOTA, use downloader directly */
+		dl->dl_host_conf.cid = true;
+		dl->dl_host_conf.auth_cb = nrf_cloud_download_handle_coap_auth;
+		dl->dl_host_conf.proxy_uri = proxy_uri;
+
+		return downloader_get_with_host_and_file(
+			dl->dl, &dl->dl_host_conf, host, file, 0
+		);
+	}
+
 }
 #endif /* NRF_CLOUD_COAP_DOWNLOADS */
 
