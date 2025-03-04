@@ -254,9 +254,9 @@
 
 | :ref:`nRF54L15 DK <ug_nrf54l>` | PCA10156 | :zephyr:board:`nrf54l15dk` | ``nrf54l15dk/nrf54l15/cpuflpr`` |
 
-.. nrf54l20pdk_nrf54l20_cpuapp
+.. nrf54lv10dk_nrf54lv10a_cpuapp
 
-| nRF54L20 PDK |   | :zephyr:board:`nrf54l20pdk` | ``nrf54l20pdk/nrf54l20/cpuapp`` |
+| nRF54LV10 DK |   | nrf54lv10dk | ``nrf54lv10dk/nrf54lv10a/cpuapp`` |
 
 .. nrf54lm20pdk_nrf54lm20a_cpuapp
 

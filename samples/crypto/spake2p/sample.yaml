@@ -46,10 +46,11 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     harness: console
     harness_config:
       type: multi_line
@@ -58,10 +59,11 @@ tests:
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
   sample.spake2p.cracen.crypto_service:
     sysbuild: true
     tags:
