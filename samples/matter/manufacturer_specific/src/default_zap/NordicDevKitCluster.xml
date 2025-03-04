@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configurator>
+  <enum name="LEDActionEnum" type="int8u">
+    <cluster code="0xFFF1FC01" />
+    <item name="Off" value="0" />
+    <item name="On" value="1" />
+    <item name="Toggle" value="2" />
+  </enum>
+  <cluster>
+    <domain>General</domain>
+    <name>NordicDevKitCluster</name>
+    <code>0xFFF1FC01</code>
+    <define>NORDIC_DEV_KIT_CLUSTER</define>
+    <description>The NordicDevKitCluster cluster showcases a cluster manufacturer extensions</description>
+    <command source="client" code="0x00" name="SetLED" optional="false">
+      <description>Change LED state</description>
+      <arg name="LEDID" type="int8u" optional="false"/>
+      <arg name="Action" type="LEDActionEnum" optional="false"/>
+    </command>
+    <attribute side="server" code="0x01" define="DEV_KIT_NAME" type="char_string" writable="true" optional="false" default="Nordic Development Kit">DevKitName</attribute>
+    <attribute side="server" code="0x02" define="LED_2" type="boolean" length="0" writable="false" reportable="false" isNullable="false" default="false" optional="false" apiMaturity="NaN">LED2<description/><access op="read" role="view"/></attribute>
+    <attribute side="server" code="0x03" define="LED_3" type="boolean" length="0" writable="false" reportable="false" isNullable="false" default="false" optional="false" apiMaturity="NaN">LED3<description/><access op="read" role="view"/></attribute>
+  </cluster>
+  <deviceType>
+    <name>nordic-dev-kit</name>
+    <domain>CHIP</domain>
+    <typeName>Nordic Development Kit</typeName>
+    <profileId editable="false">0x0FFF</profileId>
+    <deviceId editable="false">0x001</deviceId>
+    <class>Simple</class>
+    <scope>Endpoint</scope>
+    <clusters lockOthers="true">
+      <include cluster="NordicDevKitCluster" client="true" server="true" clientLocked="false" serverLocked="false"/>
+    </clusters>
+  </deviceType>
+</configurator>
