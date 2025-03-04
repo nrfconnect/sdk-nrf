@@ -279,7 +279,11 @@ Matter Bridge
 nRF5340 Audio
 -------------
 
-|no_changes_yet_note|
+* Updated:
+
+  * The documentation for :ref:`nrf53_audio_app_building` with cross-links and additional information.
+  * The :file:`buildprog.py` is an app-specific script for building and programming multiple kits and cores with various audio application configurations. The script will be deprecated in a future release. The audio applications will gradually shift only to using standard tools for building and programming development kits.
+  * The :ref:`nrf53_audio_app` :ref:`nrf53_audio_app_building_script` now builds into a directory for each transport, device type, core, and version combination.
 
 nRF Desktop
 -----------
