@@ -306,6 +306,28 @@ config PSA_WANT_ALG_SHAKE256_512
 	bool "PSA SHAKE256 512 bits support" if !PSA_PROMPTLESS
 	default y if PSA_CRYPTO_ENABLE_ALL
 
+config PSA_WANT_ALG_AES_KW
+	bool "AES key wrap support (NIST-SP-800-38F and RFC3394)" if !MBEDTLS_PROMPTLESS
+	select EXPERIMENTAL
+
+config PSA_WANT_ALG_AES_KWP
+	bool "AES key wrap support (NIST-SP-800-38F and RFC5649)" if !MBEDTLS_PROMPTLESS
+	select EXPERIMENTAL
+
+config PSA_WANT_ALG_WPA3_SAE_PT
+	bool "WPA3-SAE-PT support" if !MBEDTLS_PROMPTLESS
+	select EXPERIMENTAL
+
+config PSA_WANT_ALG_WPA3_SAE
+	bool "WPA3-SAE support" if !MBEDTLS_PROMPTLESS
+	select EXPERIMENTAL
+
+config PSA_WANT_ALG_SP800_108_COUNTER_CMAC
+	bool "NIST SP 800-108 conformant CMAC based KDF" if !MBEDTLS_PROMPTLESS
+
+config PSA_WANT_ALG_SP800_108_COUNTER_HMAC
+	bool "NIST SP 800-108 conformant HMAC based KDF" if !MBEDTLS_PROMPTLESS
+
 comment "Nordic addded RNG configuration"
 
 config PSA_WANT_GENERATE_RANDOM
@@ -402,3 +424,6 @@ config PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY
 	bool "SRP public key support" if !MBEDTLS_PROMPTLESS
 	help
 	  SRP public key support.
+
+config PSA_WANT_KEY_TYPE_WPA3_SAE_PT
+	bool "WPA3 SAE key support" if !MBEDTLS_PROMPTLESS
