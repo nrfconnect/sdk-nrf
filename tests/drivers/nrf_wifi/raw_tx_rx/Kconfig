@@ -70,3 +70,25 @@ config RAW_TX_TRANSMIT_COUNT
 	default 2
 	help
 	  This option sets the number of packets to be transmitted in burst mode.
+
+config TX_THREAD_TRANSMIT
+	bool "enable for thread based transmit"
+	help
+	  This configuration allows thread based burst transmission.
+
+config RAW_TX_BURST
+	bool "enable RAW TX burst"
+	help
+	  This configuration allows RAW TX burst transmission ZTEST to be enabled.
+
+config RAW_TX_RX_LOOPBACK
+	bool "enable loopback TX-RX"
+	help
+	  This configuration allows RAW TX-RX loopback ZTEST to be enabled.
+
+config RX_LOOPBACK_THREAD
+	bool "enable thread based loopback code"
+	help
+	  This configuration allows thread based Loopback test.
+
+

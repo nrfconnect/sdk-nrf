@@ -47,8 +47,12 @@ struct sockaddr_ll sa;
 struct sockaddr_ll dst;
 
 static void rx_thread_oneshot(void);
+static void tx_thread_transmit(void); 
 
 K_THREAD_DEFINE(receiver_thread_id, STACK_SIZE, rx_thread_oneshot, NULL, NULL, NULL,
+		THREAD_PRIORITY, 0, -1);
+
+K_THREAD_DEFINE(transmit_thread_id, STACK_SIZE, tx_thread_transmit, NULL, NULL, NULL,
 		THREAD_PRIORITY, 0, -1);
 
 struct beacon {
@@ -113,6 +117,30 @@ struct raw_tx_pkt_header {
 	unsigned char raw_tx_flag;
 };
 #endif
+
+#define ONE_MB 1000000
+static void wifi_get_throughput()
+{
+	int ret;
+	struct net_if *iface = NULL;
+	struct wifi_throughput_info throughput_info = {0};
+	
+	iface = net_if_get_first_wifi();
+	if (iface == NULL) {
+		LOG_ERR("Failed to get Wi-Fi iface");
+		return;
+	}
+	
+	ret = net_mgmt(NET_REQUEST_WIFI_LOOPBACK_MODE, iface,
+		       &throughput_info, sizeof(throughput_info));
+	if (ret) {
+		LOG_ERR("Loopback Mode setting failed %d", ret);
+	}
+/*
+	LOG_INF("throughput is %d Mb/s", 
+		((throughput_info.current_sec_packet_count - throughput_info.previous_sec_packet_count)*8)/1_MB);
+*/
+}
 
 static void wifi_set_loopback_mode(unsigned char loopback_mode)
 {
@@ -379,8 +407,21 @@ static void rx_thread_oneshot()
 		process_single_rx_packet(&test_packet);
 	}
 }
+static void tx_thread_transmit() {
+	int count = CONFIG_RAW_TX_TRANSMIT_COUNT;
+
+	LOG_INF("TX burst count is set is %d", CONFIG_RAW_TX_TRANSMIT_COUNT);
+	while (count--)
+	{
+		k_sleep(K_MSEC(4));
+		zassert_false(wifi_send_raw_tx_packets(), "Failed to send raw tx packet");
+		/*k_sleep(K_MSEC(4));*/
+	}
+}
 
 static void initialize(void) {
+	/* wait for supplicant Init */
+	k_sleep(K_MSEC(3));
 	/* MONITOR mode */
 	int mode = BIT(1);
 	wifi_set_mode(mode);
@@ -393,12 +434,50 @@ static void cleanup(void) {
 	close(raw_socket_fd);
 }
 
+static int wifi_send_recv_tx_packets_serial(unsigned int num_pkts)
+{
+	int ret = 0;
+	struct raw_tx_pkt_header packet;
+	char *test_frame = NULL;
+	unsigned int buf_length;
+
+	LOG_INF("serial Transmit and receive function");
+	fill_raw_tx_pkt_hdr(&packet);
+
+	test_frame = malloc(sizeof(struct raw_tx_pkt_header) + sizeof(test_beacon_frame));
+	if (!test_frame) {
+		LOG_ERR("Malloc failed for send buffer %d", errno);
+		return -1;
+	}
+
+	buf_length = sizeof(struct raw_tx_pkt_header) + sizeof(test_beacon_frame);
+	memcpy(test_frame, &packet, sizeof(struct raw_tx_pkt_header));
+	memcpy(test_frame + sizeof(struct raw_tx_pkt_header), &test_beacon_frame,
+	       sizeof(test_beacon_frame));
+
+	for (int i = 0; i < num_pkts; i++) {
+		k_sleep(K_MSEC(3));
+		LOG_INF("sending packet to lower layer");
+		ret = sendto(raw_socket_fd, test_frame, buf_length, 0,
+				(struct sockaddr *)&sa, sizeof(sa));
+		if (ret < 0) {
+			LOG_ERR("Unable to send beacon frame: %s", strerror(errno));
+			return -1 ;
+		}
+		process_single_rx_packet(&test_packet);
+	}
+
+	free(test_frame);
+	LOG_INF("RAW TX RX success");
+	return 0;
+}
+
+#ifdef CONFIG_RAW_TX_RX_LOOPBACK
 ZTEST(nrf_wifi, test_raw_tx_rx)
 {
-	/* TODO: Wait for interface to be operationally UP */
 	int count = CONFIG_RAW_TX_RX_TRANSMIT_COUNT;
-
 	setup_rawrecv_socket(&dst);
+#ifdef CONFIG_RX_LOOPBACK_THREAD
 	k_thread_start(receiver_thread_id);
 
 	LOG_INF("TX count is set is %d", CONFIG_RAW_TX_RX_TRANSMIT_COUNT);
@@ -413,28 +492,43 @@ ZTEST(nrf_wifi, test_raw_tx_rx)
 	k_thread_join(receiver_thread_id, K_SECONDS(1));
 	close(rx_raw_socket_fd);
 	LOG_INF("RX Thread has exited");
-}
+#else
+	LOG_INF("TX count is set is %d", CONFIG_RAW_TX_RX_TRANSMIT_COUNT);
+	zassert_false(wifi_send_recv_tx_packets_serial(count), "Failed to send raw tx packet");
+	close(rx_raw_socket_fd);
 
-/* #define RAW_TX_TEST */
-/* currently all packets are being looped back. UMAC/LMAC should have
- * a configuration to differentiate loopback and burst mode and the configuration
- * can be set via network message to the driver/UMAC from the ZTEST application.
- * Enable code if you wish to test or when the configuration in available
- */
-#define RAW_TX_TEST
-#ifdef RAW_TX_TEST
+#endif
+}
+#endif
+
+#ifdef CONFIG_RAW_TX_BURST
 ZTEST(nrf_wifi, test_raw_tx)
 {
+#ifdef CONFIG_TX_THREAD_TRANSMIT
+	k_thread_start(transmit_thread_id);
+	txdone_count_match = 1;
+	while(txdone_count_match) {
+		/**
+		 * Code under development: will not exit at this time
+		 * To query throughput here till txdone_count_match
+		 * is equivalent to CONFIG_RAW_TX_TRANSMIT_COUNT.
+		 * For the moment
+		 * provide some sleep setting to
+		 * allow thread to run immediately
+		 */
+		k_sleep(K_MSEC(100));
+	}
+	k_thread_join(transmit_thread_id, K_SECONDS(1));
+#else
 	int count = CONFIG_RAW_TX_TRANSMIT_COUNT;
-	/* disable loopback mode */
-	wifi_set_loopback_mode(0);
-
+	/* Send burst packets without querying for throughput */
 	LOG_INF("TX burst count is set is %d", CONFIG_RAW_TX_TRANSMIT_COUNT);
 	while (count--)
 	{
-		k_sleep(K_MSEC(1));
+		k_sleep(K_MSEC(4));
 		zassert_false(wifi_send_raw_tx_packets(), "Failed to send raw tx packet");
 	}
+#endif
 }
 #endif
 
