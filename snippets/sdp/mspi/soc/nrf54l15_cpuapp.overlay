@@ -83,7 +83,7 @@
 				<NRF_PSEL(SDP_MSPI_DQ2, 2, 3)>,
 				<NRF_PSEL(SDP_MSPI_DQ3, 2, 0)>,
 				<NRF_PSEL(SDP_MSPI_CS0, 2, 5)>;
-			nordic,drive-mode = <NRF_DRIVE_S0S1>;
+			nordic,drive-mode = <NRF_DRIVE_E0E1>;
 		};
 	};
 	/omit-if-no-ref/ sdp_mspi_sleep: sdp_mspi_sleep {
