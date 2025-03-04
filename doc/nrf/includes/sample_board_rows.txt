@@ -248,6 +248,10 @@
 
 | nRF54L20 PDK |   | :zephyr:board:`nrf54l20pdk` | ``nrf54l20pdk/nrf54l20/cpuapp`` |
 
+.. nrf54lv10apdk_nrf54lv10a_cpuapp
+
+| nRF54LV10A PDK |   | nrf54lv10apdk | ``nrf54lv10apdk/nrf54lv10a/cpuapp`` |
+
 .. nrf54lm20pdk_nrf54lm20a_cpuapp
 
 | nRF54LM20 PDK |   | nrf54lm20pdk | ``nrf54lm20pdk/nrf54lm20a/cpuapp`` |
