@@ -430,12 +430,7 @@
     - net.http.server.crime
     - drivers.gpio.build
     - sample.perf
-    - sample.psa.its.secure_storage.entropy_not_secure
-    - sample.psa.persistent_key.secure_storage.entropy_not_secure
-    - secure_storage.psa.crypto.secure_storage
-    - secure_storage.psa.its.secure_storage.custom.both
-    - secure_storage.psa.its.secure_storage.custom.store
-    - secure_storage.psa.its.secure_storage.store.settings
+    - .*secure_storage.*
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuppr
   comment: "region RAM/FLASH overflowed"
@@ -488,7 +483,7 @@
     - sample.shell.shell_module
     - sample.shell.shell_module.getopt
     - sample.shell.shell_module.login
-    - secure_storage.psa.its.secure_storage.custom.store
+    - .*secure_storage.*
   platforms:
     - nrf54l15dk/nrf54l15/cpuflpr
   comment: "region RAM/FLASH overflowed"
@@ -527,7 +522,7 @@
   comment: "Unsupported device"
 
 - scenarios:
-    - secure_storage.psa.its.secure_storage.*
+    - .*secure_storage.*
   platforms:
     - qemu_cortex_m3/ti_lm3s6965
     - mps2/an521/cpu0
