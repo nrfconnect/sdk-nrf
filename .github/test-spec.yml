@@ -376,6 +376,7 @@
   - "drivers/hw_cc3xx/*"
   - "drivers/entropy/*"
   - "modules/nrfxlib/nrf_802154/**/*"
+  - "modules/openthread/**/*"
 
 "CI-nfc-test":
   - "subsys/nfc/**/*"

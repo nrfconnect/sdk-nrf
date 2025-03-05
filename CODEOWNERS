@@ -430,6 +430,7 @@
 /modules/mcuboot/                         @nrfconnect/ncs-pluto
 /modules/memfault-firmware-sdk/           @nrfconnect/ncs-cia
 /modules/nrfxlib/                         @nrfconnect/ncs-code-owners
+/modules/openthread/                      @nrfconnect/ncs-thread
 /modules/trusted-firmware-m/              @nrfconnect/ncs-aegir
 /modules/wfa-qt/                          @nrfconnect/ncs-wifi
 

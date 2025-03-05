@@ -67,12 +67,9 @@ void platformAlarmProcess(otInstance *aInstance)
 #endif
 	if (timer_ms_fired) {
 		timer_ms_fired = false;
-#if defined(CONFIG_OPENTHREAD_DIAG)
-		if (otPlatDiagModeGet()) {
+		if (IS_ENABLED(CONFIG_OPENTHREAD_DIAG) && otPlatDiagModeGet()) {
 			otPlatDiagAlarmFired(aInstance);
-		} else
-#endif
-		{
+		} else {
 			otPlatAlarmMilliFired(aInstance);
 		}
 	}
