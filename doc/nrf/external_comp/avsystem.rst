@@ -117,7 +117,8 @@ nRF Cloud integration with AVSystem
 
 You can optionally integrate nRF Cloud with AVSystem and make use of nRF Cloud Location services for device positioning.
 The advantage of this integration is that it removes the need to establish a separate DTLS session into nRF Cloud.
-See `nRF Cloud integration with Coiote Device Management`_ for more information on how the integration can be done.
+See the AVSystem Coiote user guide for information on how the integration can be done.
+Login to `Coiote Device Management server`_, click :guilabel:`Integrations`, and then :guilabel:`Other integrations` to access the user guide.
 
 The integration supports the following location services:
 
@@ -165,7 +166,7 @@ This data is used in combination with the data broadcast by the GNSS satellites 
 For cell-based location assistance, each supported sample might use a different overlay file.
 See the sample or application documentation for more information.
 
-After building the sample, complete the steps in `Setting observations for an object`_ to enable observations for the Location object.
+After building the sample, complete the steps in the Setting observations for an object user guide of the `Coiote Device Management server`_ to enable observations for the Location object.
 
 After you flash the sample, Location object under **Data model** in the Coiote Device Management UI will be updated with values after the fix is obtained.
 
