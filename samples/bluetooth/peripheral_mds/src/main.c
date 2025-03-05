@@ -37,7 +37,6 @@ static const struct bt_data sd[] = {
 	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
 };
 
-static struct bt_conn *pairing_confirmation_conn;
 static struct bt_conn *mds_conn;
 
 static void bas_work_handler(struct k_work *work);
@@ -133,10 +132,6 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 
 	printk("Pairing failed conn: %s, reason %d %s\n", addr, reason,
 	       bt_security_err_to_str(reason));
-
-	if (pairing_confirmation_conn) {
-		pairing_confirmation_conn = NULL;
-	}
 }
 
 static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
@@ -153,26 +148,8 @@ static void auth_cancel(struct bt_conn *conn)
 	printk("Pairing cancelled: %s\n", addr);
 }
 
-static void pairing_confirm(struct bt_conn *conn)
-{
-	char addr[BT_ADDR_LE_STR_LEN];
-
-	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
-	pairing_confirmation_conn = conn;
-
-	printk("Pairing confirmation required for %s\n", addr);
-
-	if (IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX) || IS_ENABLED(CONFIG_SOC_SERIES_NRF54LX)) {
-		printk("Press Button 0 to confirm, Button 1 to reject.\n");
-	} else {
-		printk("Press Button 1 to confirm, Button 2 to reject.\n");
-	}
-}
-
 static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.cancel = auth_cancel,
-	.pairing_confirm = pairing_confirm,
 };
 
 static bool mds_access_enable(struct bt_conn *conn)
@@ -195,7 +172,7 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 	int err;
 	uint32_t buttons = button_state & has_changed;
 
-	if ((buttons & DK_BTN1_MSK) & !pairing_confirmation_conn) {
+	if (buttons & DK_BTN1_MSK) {
 		time_measure_start = !time_measure_start;
 
 		if (time_measure_start) {
@@ -214,20 +191,7 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 		}
 	}
 
-	if (buttons & DK_BTN1_MSK) {
-		if (pairing_confirmation_conn) {
-			err = bt_conn_auth_pairing_confirm(pairing_confirmation_conn);
-			if (err) {
-				printk("Failed to confirm the pairing: %d\n", err);
-			} else {
-				printk("Pairing confirmed\n");
-			}
-
-			pairing_confirmation_conn = NULL;
-		}
-	}
-
-	if ((has_changed & DK_BTN2_MSK) && !pairing_confirmation_conn) {
+	if (has_changed & DK_BTN2_MSK) {
 		bool button_state = (buttons & DK_BTN2_MSK) ? 1 : 0;
 
 		MEMFAULT_TRACE_EVENT_WITH_LOG(button_state_changed, "Button state: %u",
@@ -235,19 +199,6 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 
 		printk("button_state_changed event has been tracked, button state: %u\n",
 		       button_state);
-	}
-
-	if (buttons & DK_BTN2_MSK) {
-		if (pairing_confirmation_conn) {
-			err = bt_conn_auth_cancel(pairing_confirmation_conn);
-			if (err) {
-				printk("Failed to reject the pairing: %d\n", err);
-			} else {
-				printk("Pairing rejected\n");
-			}
-
-			pairing_confirmation_conn = NULL;
-		}
 	}
 
 	if (buttons & DK_BTN3_MSK) {

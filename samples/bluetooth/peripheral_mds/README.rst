@@ -170,12 +170,8 @@ You can control the sample using predefined buttons, while LEDs are used to disp
          Press this button to start time measuring.
          The second press stops time measuring.
 
-         During the pairing procedure, press this button to accept pairing.
-
       Button 2:
          Triggers the ``button_state_changed`` trace event.
-
-         During the pairing procedure, press this button to reject pairing.
 
       Button 3:
          Every press of this button is counted under the ``button_press_count`` metric.
@@ -195,12 +191,8 @@ You can control the sample using predefined buttons, while LEDs are used to disp
          Press this button to start time measuring.
          The second press stops time measuring.
 
-         During the pairing procedure, press this button to accept pairing.
-
       Button 1:
          Triggers the ``button_state_changed`` trace event.
-
-         During the pairing procedure, press this button to reject pairing.
 
       Button 2:
          Every press of this button is counted under the ``button_press_count`` metric.
@@ -289,13 +281,6 @@ Testing with MDS BLE gateway script
             python3 mds_ble_gateway.py --snr 682900407 --com COM0
 
       #. Wait for the script to establish a connection with your development kit.
-      #. Use the buttons on the development kit to confirm or reject a pairing request.
-
-         .. code-block:: console
-
-            Pairing confirmation required for 6D:99:66:6E:19:72 (random)
-            Press Button 1 to confirm, Button 2 to reject.
-
       #. Upon connection, data already collected by the `Memfault SDK`_ is forwarded to the cloud for further analysis.
          When connected, the new data is periodically transferred to the cloud with the interval configured in the :kconfig:option:`CONFIG_BT_MDS_DATA_POLL_INTERVAL` Kconfig option.
       #. On the terminal running the script, you can observe the Memfault chunk counter:
@@ -342,13 +327,6 @@ Testing with MDS BLE gateway script
             python3 mds_ble_gateway.py --snr 682900407 --com COM0
 
       #. Wait for the script to establish a connection with your development kit.
-      #. Use the buttons on the development kit to confirm or reject a pairing request.
-
-         .. code-block:: console
-
-            Pairing confirmation required for 6D:99:66:6E:19:72 (random)
-            Press Button 0 to confirm, Button 1 to reject.
-
       #. Upon connection, data already collected by the `Memfault SDK`_ is forwarded to the cloud for further analysis.
          When connected, the new data is periodically transferred to the cloud with the interval configured in the :kconfig:option:`CONFIG_BT_MDS_DATA_POLL_INTERVAL` Kconfig option.
       #. On the terminal running the script, you can observe the Memfault chunk counter:
@@ -395,13 +373,6 @@ Testing with Memfault WebBluetooth Client
          For more details, see the `Memfault WebBluetooth Client source code`_.
       #. Make sure that your development kit is advertising.
       #. In the browser, click the :guilabel:`Connect` button and select your device from the list.
-      #. Use the buttons on your development kit to confirm or reject a pairing request:
-
-         .. code-block:: console
-
-            Pairing confirmation required for 6D:99:66:6E:19:72 (random)
-            Press Button 1 to confirm, Button 2 to reject.
-
       #. Upon connection, data already collected by the `Memfault SDK`_ is forwarded to the cloud for further the analysis.
          When connected, the new data is periodically flushed to the cloud with the interval configured by the Kconfig option :kconfig:option:`CONFIG_BT_MDS_DATA_POLL_INTERVAL`.
       #. Upload the symbol file generated from your build to your Memfault account so that the information from your application can be parsed.
@@ -435,13 +406,6 @@ Testing with Memfault WebBluetooth Client
          For more details, see the `Memfault WebBluetooth Client source code`_.
       #. Make sure that your development kit is advertising.
       #. In the browser, click the :guilabel:`Connect` button and select your device from the list.
-      #. Use the buttons on your development kit to confirm or reject a pairing request:
-
-         .. code-block:: console
-
-            Pairing confirmation required for 6D:99:66:6E:19:72 (random)
-            Press Button 0 to confirm, Button 1 to reject.
-
       #. Upon connection, data already collected by the `Memfault SDK`_ is forwarded to the cloud for further the analysis.
          When connected, the new data is periodically flushed to the cloud with the interval configured by the Kconfig option :kconfig:option:`CONFIG_BT_MDS_DATA_POLL_INTERVAL`.
       #. Upload the symbol file generated from your build to your Memfault account so that the information from your application can be parsed.

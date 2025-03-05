@@ -26,27 +26,6 @@ Overview
 
 When connected to another device, the sample discovers the services of the connected device and outputs the service information.
 
-User interface
-**************
-
-.. tabs::
-
-   .. group-tab:: nRF52 and nRF53 DKs
-
-      Button 1:
-         During the pairing procedure, press this button to accept the pairing.
-
-      Button 2:
-         During the pairing procedure, press this button to reject the pairing.
-
-   .. group-tab:: nRF54 DKs
-
-      Button 0:
-         During the pairing procedure, press this button to accept the pairing.
-
-      Button 1:
-         During the pairing procedure, press this button to reject the pairing.
-
 Building and running
 ********************
 .. |sample path| replace:: :file:`samples/bluetooth/peripheral_gatt_dm`
