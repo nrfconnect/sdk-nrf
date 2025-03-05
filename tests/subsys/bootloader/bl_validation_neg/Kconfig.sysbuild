@@ -8,4 +8,4 @@ config SECURE_BOOT_BUILD_S1_VARIANT_IMAGE
 	bool
 	default n
 
-source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+source "share/sysbuild/Kconfig"

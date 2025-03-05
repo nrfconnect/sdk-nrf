@@ -50,4 +50,4 @@ config DFU_MULTI_IMAGE_PACKAGE_NET
 config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 	default y
 
-source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+source "share/sysbuild/Kconfig"

@@ -21,4 +21,4 @@ config SECURE_BOOT_NETCORE
 config NETCORE_APP_UPDATE
 	default y if SOC_NRF5340_CPUAPP
 
-source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+source "share/sysbuild/Kconfig"

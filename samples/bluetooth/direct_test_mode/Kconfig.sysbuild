@@ -47,4 +47,4 @@ config DTM_NO_DFE
 	help
 	  Disable direction finding feature.
 
-source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+source "share/sysbuild/Kconfig"
