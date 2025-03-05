@@ -112,7 +112,7 @@ static int dtls_setup(int fd)
 	err = zsock_setsockopt(fd, SOL_TLS, TLS_PEER_VERIFY, &verify, sizeof(verify));
 	if (err) {
 		LOG_ERR("Failed to setup peer verification, err %d", errno);
-		return err;
+		return -errno;
 	}
 
 	/* Associate the socket with the security tag
@@ -121,7 +121,7 @@ static int dtls_setup(int fd)
 	err = zsock_setsockopt(fd, SOL_TLS, TLS_SEC_TAG_LIST, tls_sec_tag, sizeof(tls_sec_tag));
 	if (err) {
 		LOG_ERR("Failed to setup TLS sec tag, err %d", errno);
-		return err;
+		return -errno;
 	}
 
 	if (IS_ENABLED(CONFIG_NRF_PROVISIONING_COAP_DTLS_SESSION_CACHE)) {
@@ -134,13 +134,13 @@ static int dtls_setup(int fd)
 					&session_cache, sizeof(session_cache));
 	if (err) {
 		LOG_ERR("Failed to set TLS_SESSION_CACHE option: %d", errno);
-		return err;
+		return -errno;
 	}
 
 	err = zsock_setsockopt(fd, SOL_TLS, TLS_HOSTNAME, COAP_HOST, strlen(COAP_HOST));
 	if (err) {
 		LOG_ERR("Failed to setup TLS hostname, err %d", errno);
-		return err;
+		return -errno;
 	}
 
 	/* Enable connection ID */
@@ -149,7 +149,7 @@ static int dtls_setup(int fd)
 	err = zsock_setsockopt(fd, SOL_TLS, TLS_DTLS_CID, &dtls_cid, sizeof(dtls_cid));
 	if (err) {
 		LOG_ERR("Failed to enable connection ID, err %d", errno);
-		return err;
+		return -errno;
 	}
 
 	if (IS_ENABLED(CONFIG_SOC_NRF9120)) {
@@ -159,7 +159,7 @@ static int dtls_setup(int fd)
 		if (err) {
 			LOG_ERR("Failed to set socket option SO_KEEPOPEN, err %d", errno);
 			socket_keep_open = false;
-			return err;
+			return -errno;
 		}
 		socket_keep_open = true;
 	}
@@ -207,25 +207,19 @@ static int socket_connect(int *const fd)
 	*fd = zsock_socket(address->ai_family, address->ai_socktype, IPPROTO_DTLS_1_2);
 	if (*fd < 0) {
 		LOG_ERR("Failed to create UDP socket %d", errno);
-		ret = -ENOTCONN;
+		ret = -errno;
 		goto clean_up;
 	}
 
 	/* Setup DTLS socket options */
 	ret = dtls_setup(*fd);
 	if (ret) {
-		LOG_ERR("Failed to setup TLS socket option");
-		ret = -EACCES;
 		goto clean_up;
 	}
 
 	if (zsock_connect(*fd, address->ai_addr, address->ai_addrlen) < 0) {
 		LOG_ERR("Failed to connect UDP socket %d", errno);
-		if (errno == ETIMEDOUT) {
-			ret = -ETIMEDOUT;
-		} else {
-			ret = -ECONNREFUSED;
-		}
+		ret = -errno;
 		goto clean_up;
 	}
 	LOG_INF("Connected");
@@ -573,8 +567,7 @@ int nrf_provisioning_coap_req(struct nrf_provisioning_coap_context *const coap_c
 	coap_ctx->rx_buf_len = sizeof(rx_buf);
 
 	ret = socket_connect(&coap_ctx->connect_socket);
-	if (ret) {
-		LOG_ERR("Failed to connect socket");
+	if (ret < 0) {
 		return ret;
 	}
 
@@ -634,7 +627,6 @@ int nrf_provisioning_coap_req(struct nrf_provisioning_coap_context *const coap_c
 			if (!socket_keep_open) {
 				ret = socket_connect(&coap_ctx->connect_socket);
 				if (ret < 0) {
-					LOG_ERR("Failed to connect socket, error: %d", ret);
 					break;
 				}
 

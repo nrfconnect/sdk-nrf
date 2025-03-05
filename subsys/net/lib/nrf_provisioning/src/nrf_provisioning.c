@@ -629,13 +629,9 @@ int nrf_provisioning_req(void)
 			__ASSERT(false, "Invalid exchange, abort");
 			LOG_ERR("Invalid exchange");
 		} else if (ret == -ECONNREFUSED) {
-			LOG_ERR("Connection refused, client exits");
+			LOG_ERR("Connection refused");
 			LOG_WRN("Please check the CA certificate stored in sectag "
 				STRINGIFY(CONFIG_NRF_PROVISIONING_ROOT_CA_SEC_TAG)"");
-			k_mutex_lock(&np_mtx, K_FOREVER);
-			initialized = false;
-			k_mutex_unlock(&np_mtx);
-			break;
 		} else if (ret < 0) {
 			LOG_ERR("Provisioning failed, error: %d", ret);
 		} else if (ret > 0) {
