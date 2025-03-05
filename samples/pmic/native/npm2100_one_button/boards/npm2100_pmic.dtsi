@@ -1,0 +1,45 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+npm2100_pmic: pmic@74 {
+	compatible = "nordic,npm2100";
+	reg = <0x74>;
+	pmic-int-pin = <1>;
+	pmic-int-flags = <GPIO_ACTIVE_HIGH>;
+	host-int-type = "level";
+	shiphold-longpress = "reset";
+
+	npm2100_gpio: gpio-controller {
+		compatible = "nordic,npm2100-gpio";
+		gpio-controller;
+		#gpio-cells = <2>;
+		ngpios = <2>;
+	};
+
+	npm2100_regulators: regulators {
+		compatible = "nordic,npm2100-regulator";
+
+		/* limits are set to min/max allowed values */
+		npm2100_boost: BOOST {
+			regulator-min-microvolt = <1800000>;
+			regulator-max-microvolt = <3300000>;
+			regulator-init-microamp = <0>;
+		};
+
+		npm2100_ldosw: LDOSW {
+			regulator-min-microvolt = <800000>;
+			regulator-max-microvolt = <3000000>;
+		};
+	};
+
+	npm2100_wdt: watchdog {
+		compatible = "nordic,npm2100-wdt";
+	};
+
+	npm2100_vbat: vbat {
+		compatible = "nordic,npm2100-vbat";
+	};
+};
