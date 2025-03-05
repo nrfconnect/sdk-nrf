@@ -34,3 +34,9 @@
   platforms:
     - nrf7002dk/nrf5340/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31774"
+
+- scenarios:
+    - sample.bluetooth.direction_finding_central_nrf
+  platforms:
+    - nrf52833dk/nrf52820
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-32042"
