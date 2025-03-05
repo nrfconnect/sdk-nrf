@@ -28,6 +28,25 @@ static struct bt_conn *default_conn;
 
 static struct bt_hrs_client hrs_c;
 
+static const char *phy_to_str(uint8_t phy)
+{
+	switch (phy) {
+	case BT_GAP_LE_PHY_NONE:
+		return "No packets";
+	case BT_GAP_LE_PHY_1M:
+		return "LE 1M";
+	case BT_GAP_LE_PHY_2M:
+		return "LE 2M";
+	case BT_GAP_LE_PHY_CODED:
+		return "LE Coded";
+	case BT_GAP_LE_PHY_CODED_S8:
+		return "S=8 Coded";
+	case BT_GAP_LE_PHY_CODED_S2:
+		return "S=2 Coded";
+	default: return "Unknown";
+	}
+}
+
 static void notify_func(struct bt_hrs_client *hrs_c,
 			const struct bt_hrs_client_measurement *meas,
 			int err)
@@ -116,8 +135,11 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 
 	bt_addr_le_to_str(device_info->recv_info->addr, addr, sizeof(addr));
 
-	printk("Filters matched. Address: %s connectable: %s\n",
-		addr, connectable ? "yes" : "no");
+	uint8_t prim_phy = device_info->recv_info->primary_phy;
+	uint8_t sec_phy = device_info->recv_info->secondary_phy;
+
+	printk("Filters matched. Address: %s connectable: %s Primary PHY: %s Secondary PHY %s\n",
+		addr, connectable ? "yes" : "no", phy_to_str(prim_phy), phy_to_str(sec_phy));
 
 	err = bt_scan_stop();
 	if (err) {
@@ -211,8 +233,8 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 		const struct bt_conn_le_phy_info *phy_info;
 
 		phy_info = info.le.phy;
-		printk("Connected: %s, tx_phy %u, rx_phy %u\n",
-				addr, phy_info->tx_phy, phy_info->rx_phy);
+		printk("Connected: %s, tx_phy %s, rx_phy %s\n",
+				addr, phy_to_str(phy_info->tx_phy), phy_to_str(phy_info->rx_phy));
 	}
 
 	if (conn == default_conn) {
