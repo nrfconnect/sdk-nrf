@@ -32,14 +32,16 @@
 
 BUILD_ASSERT(DT_NODE_HAS_PROP(ANTENNA_SWITCH_NODE, ant_gpios));
 
+#define NUM_GPIOS DT_PROP_LEN(ANTENNA_SWITCH_NODE, ant_gpios)
+
 #if MULTIPLEXED
 #if CONFIG_BT_CTLR_SDC_CS_NUM_ANTENNAS == 2
-BUILD_ASSERT(DT_PROP_LEN(ANTENNA_SWITCH_NODE, ant_gpios) >= 1);
+BUILD_ASSERT(NUM_GPIOS >= 1);
 #else
-BUILD_ASSERT(DT_PROP_LEN(ANTENNA_SWITCH_NODE, ant_gpios) >= 2);
+BUILD_ASSERT(NUM_GPIOS >= 2);
 #endif
 #else
-BUILD_ASSERT(DT_PROP_LEN(ANTENNA_SWITCH_NODE, ant_gpios) >= CONFIG_BT_CTLR_SDC_CS_NUM_ANTENNAS);
+BUILD_ASSERT(NUM_GPIOS >= CONFIG_BT_CTLR_SDC_CS_NUM_ANTENNAS);
 #endif /* MULTIPLEXED */
 
 static uint8_t currently_active_antenna = ANTENNA_NOT_SET;
@@ -76,8 +78,10 @@ void cs_antenna_switch_func(uint8_t antenna_number)
 	err = gpio_pin_set_dt(&gpio_dt_spec_table[0], antenna_number & (1 << 0));
 	__ASSERT_NO_MSG(err == 0);
 
+#if NUM_GPIOS > 1
 	err = gpio_pin_set_dt(&gpio_dt_spec_table[1], antenna_number & (1 << 1));
 	__ASSERT_NO_MSG(err == 0);
+#endif
 #else
 	if (currently_active_antenna != antenna_number) {
 		if (currently_active_antenna != ANTENNA_NOT_SET) {
@@ -97,7 +101,7 @@ void cs_antenna_switch_init(void)
 {
 	int err;
 
-	for (uint8_t i = 0; i < DT_PROP_LEN(ANTENNA_SWITCH_NODE, ant_gpios); i++) {
+	for (uint8_t i = 0; i < NUM_GPIOS; i++) {
 		err = gpio_pin_configure_dt(&gpio_dt_spec_table[i], GPIO_OUTPUT_INACTIVE);
 		__ASSERT(err == 0, "Failed to initialize GPIOs for CS (%d)", err);
 	}
@@ -107,7 +111,7 @@ void cs_antenna_switch_clear(void)
 {
 	int err;
 
-	for (uint8_t i = 0; i < DT_PROP_LEN(ANTENNA_SWITCH_NODE, ant_gpios); i++) {
+	for (uint8_t i = 0; i < NUM_GPIOS; i++) {
 		err = gpio_pin_set_dt(&gpio_dt_spec_table[i], false);
 		__ASSERT_NO_MSG(err == 0);
 	}
