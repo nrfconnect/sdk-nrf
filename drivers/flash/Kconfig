@@ -15,7 +15,7 @@ if FLASH_IPUC
 
 config FLASH_IPUC_COUNT
 	int "Number of available flash IPUC drivers"
-	default 1
+	default 4
 
 module = FLASH_IPUC
 module-str = Flash over SUIT IPUC
