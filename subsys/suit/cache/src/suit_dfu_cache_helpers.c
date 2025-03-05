@@ -29,14 +29,11 @@ static bool is_cache_ipuc_uninitialized(struct dfu_cache_pool *cache_pool)
 {
 	uintptr_t ipuc_address;
 	size_t ipuc_size;
-	bool ipuc_possible =
-		flash_cache_ipuc_check((uintptr_t)cache_pool->address, &ipuc_address, &ipuc_size);
+	struct device *ipuc_dev = flash_ipuc_find((uintptr_t)cache_pool->address, cache_pool->size,
+						  &ipuc_address, &ipuc_size);
 
-	if (ipuc_possible) {
-		if (flash_ipuc_find((uintptr_t)cache_pool->address, cache_pool->size, &ipuc_address,
-				    &ipuc_size) == NULL) {
-			return true;
-		}
+	if ((ipuc_dev != NULL) && (flash_ipuc_setup_pending(ipuc_dev))) {
+		return true;
 	}
 
 	return false;
