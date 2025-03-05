@@ -49,6 +49,25 @@ static const struct bt_data ad[] = {
 };
 
 
+static const char *phy_to_str(uint8_t phy)
+{
+	switch (phy) {
+	case BT_GAP_LE_PHY_NONE:
+		return "No packets";
+	case BT_GAP_LE_PHY_1M:
+		return "LE 1M";
+	case BT_GAP_LE_PHY_2M:
+		return "LE 2M";
+	case BT_GAP_LE_PHY_CODED:
+		return "LE Coded";
+	case BT_GAP_LE_PHY_CODED_S8:
+		return "S=8 Coded";
+	case BT_GAP_LE_PHY_CODED_S2:
+		return "S=2 Coded";
+	default: return "Unknown";
+	}
+}
+
 static void connected(struct bt_conn *conn, uint8_t conn_err)
 {
 	int err;
@@ -69,8 +88,8 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 		const struct bt_conn_le_phy_info *phy_info;
 		phy_info = info.le.phy;
 
-		printk("Connected: %s, tx_phy %u, rx_phy %u\n",
-		       addr, phy_info->tx_phy, phy_info->rx_phy);
+		printk("Connected: %s, tx_phy %s, rx_phy %s\n",
+		       addr, phy_to_str(phy_info->tx_phy), phy_to_str(phy_info->rx_phy));
 	}
 
 	dk_set_led_on(CON_STATUS_LED);
@@ -96,7 +115,8 @@ static int create_advertising_coded(void)
 	struct bt_le_adv_param param =
 		BT_LE_ADV_PARAM_INIT(BT_LE_ADV_OPT_CONN |
 				     BT_LE_ADV_OPT_EXT_ADV |
-				     BT_LE_ADV_OPT_CODED,
+				     BT_LE_ADV_OPT_CODED |
+						 BT_LE_ADV_OPT_REQUIRE_S8_CODING,
 				     BT_GAP_ADV_FAST_INT_MIN_2,
 				     BT_GAP_ADV_FAST_INT_MAX_2,
 				     NULL);
