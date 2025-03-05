@@ -85,7 +85,7 @@ After programming the sample to your development kit, you can test it with the `
       #. Click :guilabel:`Apply to device`.
       #. Open the :guilabel:`CONNECTION MAP` tab.
          Click the dongle configuration and select **Security parameters**.
-         Check :guilabel:`Perform Bonding`, and click :guilabel:`Apply`.
+         Check :guilabel:`Perform Bonding` and :guilabel:`Enable LE Secure Connection pairing`, and click :guilabel:`Apply`.
       #. Set the value of **Current Time Service** > **Current Time** to ``C2 07 0B 0F 0C 22 38 06 80 02`` and click :guilabel:`Write`.
       #. Connect to the device from the app. The device is advertising as "Nordic_CTS".
       #. Wait until the bond is established. Verify that the UART data is received as follows::
@@ -155,7 +155,7 @@ After programming the sample to your development kit, you can test it with the `
       #. Click :guilabel:`Apply to device`.
       #. Open the :guilabel:`CONNECTION MAP` tab.
          Click the dongle configuration and select **Security parameters**.
-         Check :guilabel:`Perform Bonding`, and click :guilabel:`Apply`.
+         Check :guilabel:`Perform Bonding` and :guilabel:`Enable LE Secure Connection pairing`, and click :guilabel:`Apply`.
       #. Set the value of **Current Time Service** > **Current Time** to ``C2 07 0B 0F 0C 22 38 06 80 02`` and click :guilabel:`Write`.
       #. Connect to the device from the app. The device is advertising as "Nordic_CTS".
       #. Wait until the bond is established. Verify that the UART data is received as follows::
