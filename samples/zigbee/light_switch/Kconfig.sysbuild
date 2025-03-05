@@ -43,4 +43,4 @@ endif # SOC_SERIES_NRF53X
 
 endif # BOOTLOADER_MCUBOOT
 
-source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+source "share/sysbuild/Kconfig"

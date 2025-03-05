@@ -73,4 +73,4 @@ endif # BOOTLOADER_MCUBOOT
 config MATTER_FACTORY_DATA_GENERATE
 	default y
 
-source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+source "share/sysbuild/Kconfig"

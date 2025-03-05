@@ -1,3 +1,9 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
 choice COMP_DATA_LAYOUT
 	prompt "Composition data layout"
 	default COMP_DATA_LAYOUT_SINGLE
@@ -13,4 +19,4 @@ config COMP_DATA_LAYOUT_ARRAY
 
 endchoice
 
-source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+source "share/sysbuild/Kconfig"

@@ -11,4 +11,4 @@ choice WIFI_NRF70_OPER_MODES
 	default WIFI_NRF70_SCAN_ONLY if BOARD_THINGY91X_NRF9151_NS
 endchoice
 
-source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+source "share/sysbuild/Kconfig"

@@ -3,7 +3,8 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
-source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+
+source "share/sysbuild/Kconfig"
 
 config NET_CORE_BOARD
 	string

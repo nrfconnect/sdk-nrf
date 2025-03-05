@@ -81,4 +81,4 @@ endif # BOOTLOADER_MCUBOOT
 config MATTER_FACTORY_DATA_GENERATE
 	default y if !BOARD_NRF21540DK
 
-source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+source "share/sysbuild/Kconfig"

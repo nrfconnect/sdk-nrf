@@ -22,4 +22,4 @@ config APP_DFU
 	  (BOOTLOADER_MCUBOOT Kconfig) and for the SUIT-based targets
 	  (SOC_SERIES_NRF54HX Kconfig).
 
-source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+source "share/sysbuild/Kconfig"
