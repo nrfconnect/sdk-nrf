@@ -5,63 +5,11 @@
  */
 
 #include "persistent_storage_settings.h"
+#include "settings_utils.h"
 
 #include <zephyr/logging/log.h>
-#include <zephyr/settings/settings.h>
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
-
-namespace
-{
-struct ReadEntry {
-	void *destination;
-	size_t destinationBufferSize;
-	size_t readSize;
-	bool result;
-};
-
-/* Random magic bytes to represent an empty value.
-   It is needed because Zephyr settings subsystem does not distinguish an empty value from no value. */
-constexpr uint8_t kEmptyValue[] = { 0x22, 0xa6, 0x54, 0xd1, 0x39 };
-constexpr size_t kEmptyValueSize = sizeof(kEmptyValue);
-
-int LoadEntryCallback(const char *name, size_t entrySize, settings_read_cb readCb, void *cbArg, void *param)
-{
-	ReadEntry &entry = *static_cast<ReadEntry *>(param);
-
-	/* name != nullptr -> If requested key X is empty, process the next one
-	   name != '\0' -> process just node X and ignore all its descendants: X */
-	if (name != nullptr && *name != '\0') {
-		return 0;
-	}
-
-	if (!entry.destination || 0 == entry.destinationBufferSize) {
-		/* Just found the key, do not try to read value */
-		entry.result = true;
-		return 1;
-	}
-
-	uint8_t emptyValue[kEmptyValueSize];
-
-	if (entrySize == kEmptyValueSize && readCb(cbArg, emptyValue, kEmptyValueSize) == kEmptyValueSize &&
-	    memcmp(emptyValue, kEmptyValue, kEmptyValueSize) == 0) {
-		/* There are wrong bytes stored - the same as the magic ones defined above */
-		entry.result = false;
-		return 1;
-	}
-
-	const ssize_t bytesRead = readCb(cbArg, entry.destination, entry.destinationBufferSize);
-	entry.readSize = bytesRead > 0 ? bytesRead : 0;
-
-	if (entrySize > entry.destinationBufferSize) {
-		entry.result = false;
-	} else {
-		entry.result = bytesRead > 0;
-	}
-
-	return 1;
-}
-} /* namespace */
 
 namespace Nrf
 {
@@ -147,8 +95,8 @@ PSErrorCode PersistentStorageSettings::_NonSecureRemove(PersistentStorageNode *n
 
 bool PersistentStorageSettings::LoadEntry(const char *key, void *data, size_t dataMaxSize, size_t *outSize)
 {
-	ReadEntry entry{ data, dataMaxSize, 0, false };
-	settings_load_subtree_direct(key, LoadEntryCallback, &entry);
+	SettingsReadEntry entry{ data, dataMaxSize, 0, false };
+	settings_load_subtree_direct(key, SettingsLoadEntryCallback, &entry);
 
 	if (!entry.result) {
 		return false;
