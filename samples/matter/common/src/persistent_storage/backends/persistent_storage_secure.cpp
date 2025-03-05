@@ -5,6 +5,10 @@
  */
 
 #include "persistent_storage_secure.h"
+#include "persistent_storage/persistent_storage_common.h"
+#include "settings_utils.h"
+
+#define PERSISTENT_STORAGE_SECURE_UUID_MAP_KEY "ps_uuid_map"
 
 namespace Nrf
 {
@@ -14,7 +18,29 @@ PersistentStorageSecure::Byte PersistentStorageSecure::sSerializedMapBuff[kMaxMa
 
 PSErrorCode PersistentStorageSecure::_SecureInit()
 {
-	return LoadUIDMap();
+#ifdef CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND_MIGRATE_UID_MAP
+	{
+		PSErrorCode error = LoadUIDMapSecure();
+		if (error == PSErrorCode::Success) {
+			error = StoreUIDMap();
+			if (error != PSErrorCode::Success) {
+				return error;
+			}
+
+			psa_status_t status = psa_ps_remove(kKeyOffset);
+			if (status != PSA_SUCCESS) {
+				return PSErrorCode::Failure;
+			}
+		}
+	}
+#endif
+
+	int error = settings_load();
+	if (error) {
+		return PSErrorCode::Failure;
+	}
+
+	return LoadUIDMapSettings();
 }
 
 PSErrorCode PersistentStorageSecure::_SecureStore(PersistentStorageNode *node, const void *data, size_t dataSize)
@@ -109,10 +135,9 @@ PSErrorCode PersistentStorageSecure::StoreUIDMap()
 {
 	size_t outSize{ 0 };
 	if (PSErrorCode::Success == SerializeUIDMap(sSerializedMapBuff, kMaxMapSerializationBufferSize, outSize)) {
-		psa_status_t status = psa_ps_set(kKeyOffset, outSize, sSerializedMapBuff, PSA_STORAGE_FLAG_NONE);
-		if (status == PSA_SUCCESS) {
-			return PSErrorCode::Success;
-		}
+		return (settings_save_one(PERSISTENT_STORAGE_SECURE_UUID_MAP_KEY, sSerializedMapBuff, outSize) ?
+				PSErrorCode::Failure :
+				PSErrorCode::Success);
 	}
 	return PSErrorCode::Failure;
 }
@@ -143,16 +168,25 @@ PSErrorCode PersistentStorageSecure::SerializeUIDMap(Byte *buff, size_t buffSize
 	return PSErrorCode::Success;
 }
 
-PSErrorCode PersistentStorageSecure::LoadUIDMap()
+PSErrorCode PersistentStorageSecure::LoadUIDMapSecure()
 {
 	size_t outSize{ 0 };
 
 	psa_status_t status = psa_ps_get(kKeyOffset, 0, kMaxMapSerializationBufferSize, sSerializedMapBuff, &outSize);
 
 	if (status == PSA_SUCCESS) {
-		if (PSErrorCode::Success == DeserializeUIDMap(sSerializedMapBuff, kMaxMapSerializationBufferSize)) {
-			return PSErrorCode::Success;
-		}
+		return DeserializeUIDMap(sSerializedMapBuff, kMaxMapSerializationBufferSize);
+	}
+	return PSErrorCode::Failure;
+}
+
+PSErrorCode PersistentStorageSecure::LoadUIDMapSettings()
+{
+	SettingsReadEntry entry{ sSerializedMapBuff, kMaxMapSerializationBufferSize, 0, false };
+	settings_load_subtree_direct(PERSISTENT_STORAGE_SECURE_UUID_MAP_KEY, SettingsLoadEntryCallback, &entry);
+
+	if (entry.result) {
+		return DeserializeUIDMap(sSerializedMapBuff, kMaxMapSerializationBufferSize);
 	}
 	return PSErrorCode::Failure;
 }
