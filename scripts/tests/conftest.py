@@ -7,4 +7,5 @@ import sys
 from pathlib import Path
 
 # make all scripts importable in tests
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parents[1]))
+sys.path.insert(0, str(Path(__file__).parents[1].joinpath('west_commands')))

@@ -3,3 +3,4 @@ cryptography
 intelhex
 pytest
 pyyaml
+west

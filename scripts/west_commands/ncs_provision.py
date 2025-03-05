@@ -25,11 +25,64 @@ KEY_SLOTS: dict[str, list[int]] = {
     "BL_PUBKEY": [242, 244, 246],
     "APP_PUBKEY": [202, 204, 206],
 }
-KEY_SLOT_METADATA: str = "0x10ba0030"
 KMU_KEY_SLOT_DEST_ADDR: str = "0x20000000"
 ALGORITHM: str = "ED25519"
 POLICIES = ["revokable", "lock", "lock-last"]
 NRF54L15_KEY_POLICIES: dict[str, str] = {"revokable": "REVOKED", "lock": "LOCKED"}
+
+METADATA_ALGORITHM_MAPPING: dict[str, int] = {
+    "ED25519": 10,
+}
+METADATA_RPOLICY_MAPPING: dict[str, int] = {
+    'ROTATING': 1,
+    'LOCKED': 2,
+    'REVOKED': 3
+}
+
+
+# Implemented based on
+# https://github.com/nrfconnect/sdk-nrf/blob/f3ac9cfb784d163f4c1af11209976fcd5c403d5a/subsys/nrf_security/src/drivers/cracen/cracenpsa/src/kmu.c#L41
+@dataclass
+class KmuMetadata:
+    metadata_version: int = 0
+    key_usage_scheme: int = 0
+    reserved: int = 0
+    algorithm: int = 0
+    size: int = 0
+    rpolicy: int = 0
+    usage_flags: int = 0
+
+    @property
+    def value(self) -> int:
+        # Combine all fields into a single 32-bit integer
+        value = 0
+        value |= (self.metadata_version & 0xF) << 0  # (4 bits)
+        value |= (self.key_usage_scheme & 0x3) << 4  # (2 bits)
+        value |= (self.reserved & 0x3FF) << 6  # (10 bits)
+        value |= (self.algorithm & 0xF) << 16  # (4 bits)
+        value |= (self.size & 0x7) << 20  # (3 bits)
+        value |= (self.rpolicy & 0x3) << 23  # (2 bits)
+        value |= (self.usage_flags & 0x7F) << 25  # (7 bits)
+
+        return value
+
+    @classmethod
+    def from_value(cls, value: int):
+        metadata_version = (value >> 0) & 0xF
+        key_usage_scheme = (value >> 4) & 0x3
+        reserved = (value >> 6) & 0x3FF
+        algorithm = (value >> 16) & 0xF
+        size = (value >> 20) & 0x7
+        rpolicy = (value >> 23) & 0x3
+        usage_flags = (value >> 25) & 0x7F
+
+        return cls(
+            metadata_version, key_usage_scheme, reserved,
+            algorithm, size, rpolicy, usage_flags
+        )
+
+    def __str__(self) -> str:
+        return f'0x{self.value:08x}'
 
 
 @dataclass
@@ -37,9 +90,9 @@ class SlotParams:
     id: int
     value: str
     rpolicy: str
+    metadata: str
     algorithm: str = ALGORITHM
     dest: str = KMU_KEY_SLOT_DEST_ADDR
-    metadata: str = KEY_SLOT_METADATA
 
     def asdict(self) -> dict[str, str]:
         return asdict(self)
@@ -232,14 +285,26 @@ class NcsProvision(WestCommand):
             else:
                 key_policy = NRF54L15_KEY_POLICIES[policy]
             slot_id = KEY_SLOTS[keyname][slot_idx]
-            slot = SlotParams(id=slot_id, value=pub_key_hex, rpolicy=key_policy)
+
+            metadata = KmuMetadata(
+                metadata_version=0,
+                key_usage_scheme=3,
+                reserved=0,
+                algorithm=METADATA_ALGORITHM_MAPPING[ALGORITHM],
+                size=3,
+                rpolicy=METADATA_RPOLICY_MAPPING[key_policy],
+                usage_flags=8
+            )
+            slot = SlotParams(
+                id=slot_id, value=pub_key_hex, rpolicy=key_policy, metadata=str(metadata)
+            )
 
             slots.append(slot)
 
         return slots
 
     @staticmethod
-    def _get_public_key_hex(keyfile: str) -> str:
+    def _get_public_key_hex(keyfile: str | Path) -> str:
         """Return the public key hex from the given keyfile."""
         with open(keyfile, "rb") as f:
             data = f.read()
