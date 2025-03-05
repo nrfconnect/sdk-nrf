@@ -288,6 +288,56 @@ config MPSL_FEM_USE_TWI_DRV
 	select I2C
 	default y
 
+config MPSL_FEM_NRF2220_TEMPERATURE_COMPENSATION
+	bool "Temperature compensation of the nRF2220 Front-End Module [EXPERIMENTAL]"
+	depends on MPSL_FEM_NRF2220 && MPSL_FEM_USE_TWI_DRV
+	select EXPERIMENTAL
+	help
+	  This allows to achieve better accuracy in output power among all
+	  temperature ranges for the nRF2220 Front-End modules.
+
+config MPSL_FEM_NRF2220_TEMPERATURE_COMPENSATION_WITH_MPSL_SCHEDULER
+	bool
+	depends on MPSL_FEM_NRF2220_TEMPERATURE_COMPENSATION
+	default y if MPSL && !MPSL_FEM_ONLY
+	help
+	  Enable this option when using protocols relying on the MPSL scheduler.
+	  After it turns out that for the current temperature some registers
+	  of the nRF2220 must be written, the writes are performed within a timeslot
+	  negotiated with the MPSL scheduler. For operation with Bluetooth, the timeslot
+	  for the nRF2220 register update is between other Bluetooth timeslots.
+	  For operation with the nRF 802.15.4 Radio Driver, the grant for the timeslot
+	  for the nRF2220 register update causes short inability to transmit or receive.
+
+choice MPSL_FEM_NRF2220_TEMPERATURE_SOURCE
+	prompt "Source of temperature measurement of the nRF2220"
+	depends on MPSL_FEM_NRF2220_TEMPERATURE_COMPENSATION
+	default MPSL_FEM_NRF2220_TEMPERATURE_SOURCE_SOC
+
+config MPSL_FEM_NRF2220_TEMPERATURE_SOURCE_SOC
+	bool "Temperature of the SoC as the temperature of the nRF2220"
+	select SENSOR
+	help
+	  The temperature of the SoC controlling the nRF2220 Front-End Module
+	  is taken as an input for the temperature compensation.
+	  Use this option if there is good thermal coupling between the
+	  temperature of the SoC and the nRF2220 Front-End Module.
+
+config MPSL_FEM_NRF2220_TEMPERATURE_SOURCE_CUSTOM
+	bool "Custom nRF2220 temperature measurement provider"
+	help
+	  Use this option if you have a custom temperature sensor measuring the
+	  temperature of the nRF2220 device. Your custom code must call
+	  the fem_temperature_change() function to notify the module handling the FEM
+	  that the new temperature value is to be processed.
+
+endchoice # MPSL_FEM_NRF2220_TEMPERATURE_SOURCE
+
+config MPSL_FEM_NRF2220_TEMPERATURE_POLL_PERIOD
+	int "Temperature measurement poll period (in ms) for temperature compensation of the nRF2220"
+	depends on MPSL_FEM_NRF2220_TEMPERATURE_SOURCE_SOC
+	default 5000
+
 config MPSL_FEM_INIT_PRIORITY
 	int "Init priority of the Front-End Module support code"
 	depends on MPSL_FEM
