@@ -173,3 +173,9 @@ class NcsInclude(SphinxDirective):
 def setup(app):
     app.add_config_value('ncs_include_mapping', {}, True)
     directives.register_directive('ncs-include', NcsInclude)
+
+    return {
+        "version": "0.1.0",
+        "parallel_read_safe": True,
+        "parallel_write_safe": True,
+    }
