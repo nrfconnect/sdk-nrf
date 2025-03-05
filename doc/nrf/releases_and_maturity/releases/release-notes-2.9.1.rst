@@ -20,8 +20,7 @@ This patch release adds changes on top of the :ref:`nRF Connect SDK v2.9.0 <ncs_
 
 |NCS| v2.9.1 has workarounds for the following nRF54L15, nRF54L10, and nRF54L05 Errata:
 
-* `Errata 30`_.
-* For Errata 39 - Workaround is implemented in the :ref:`nrfxlib:mpsl` (MPSL) library and Zephyr.
+* Errata 39 - Workaround is implemented in the :ref:`nrfxlib:mpsl` (MPSL) library and Zephyr.
 
 Release tag
 ***********

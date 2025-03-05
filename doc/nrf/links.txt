@@ -872,7 +872,6 @@
 .. _`Errata 256`: https://docs.nordicsemi.com/bundle/errata_nRF52820_Rev3/page/ERR/nRF52820/Rev3/latest/config_820_256.html
 .. _`Errata 257`: https://docs.nordicsemi.com/bundle/errata_nRF52811_Rev2/page/ERR/nRF52811/Rev2/latest/config_811_257.html
 .. _`Errata 117`: https://docs.nordicsemi.com/bundle/errata_nRF5340_Rev1/page/ERR/nRF5340/Rev1/latest/anomaly_340_117.html
-.. _`Errata 30`: https://docs.nordicsemi.com/bundle/errata_nRF54L15_Rev1/page/ERR/nRF54L15/Rev1/latest/anomaly_L15_30.html#anomaly_L15_30
 
 .. _`Unauthorized Thread Network Key Update (SA-2023-234) vulnerability`: https://docs.nordicsemi.com/bundle/SA/resource/SA-2023-234-v1_1.pdf
 
