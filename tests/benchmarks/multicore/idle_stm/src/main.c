@@ -22,7 +22,7 @@ static const struct device *const console_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_c
 
 /* Variables used to make CPU active for ~1 second */
 static struct k_timer my_timer;
-static bool timer_expired;
+static volatile bool timer_expired;
 
 void my_timer_handler(struct k_timer *dummy)
 {
