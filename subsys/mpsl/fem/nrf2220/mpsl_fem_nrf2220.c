@@ -30,12 +30,18 @@
 #include <pinctrl_soc.h>
 #endif
 
+#if IS_ENABLED(CONFIG_MPSL_FEM_NRF2220_TEMPERATURE_COMPENSATION)
+#include <protocol/mpsl_fem_nrf2220_protocol_api.h>
+#include <zephyr/drivers/i2c/i2c_nrfx_twim.h>
+#endif
+
 #if !defined(CONFIG_PINCTRL)
 #error "The nRF2220 driver must be used with CONFIG_PINCTRL! Set CONFIG_PINCTRL=y"
 #endif
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), twi_if)
-#define MPSL_FEM_TWI_IF     DT_PHANDLE(DT_NODELABEL(nrf_radio_fem), twi_if)
+#define MPSL_FEM_TWI_IF      DT_PHANDLE(DT_NODELABEL(nrf_radio_fem), twi_if)
+#define MPSL_FEM_TWI_ADDRESS DT_REG_ADDR(MPSL_FEM_TWI_IF)
 #endif
 
 #define FEM_OUTPUT_POWER_DBM     DT_PROP(DT_NODELABEL(nrf_radio_fem), output_power_dbm)
@@ -66,7 +72,16 @@ static void fem_nrf2220_twi_init_regs_configure(mpsl_fem_nrf2220_interface_confi
 
 static void fem_nrf2220_twi_configure(mpsl_fem_nrf2220_interface_config_t *cfg)
 {
-	cfg->twi_if = MPSL_FEM_TWI_DRV_IF_INITIALIZER(MPSL_FEM_TWI_IF);
+	static mpsl_fem_twi_drv_t fem_twi_drv = MPSL_FEM_TWI_DRV_INITIALIZER(MPSL_FEM_TWI_IF);
+
+	mpsl_fem_twi_drv_fem_twi_if_prepare(&fem_twi_drv, &cfg->twi_if, MPSL_FEM_TWI_ADDRESS);
+	if (IS_ENABLED(CONFIG_MPSL_FEM_NRF2220_TEMPERATURE_COMPENSATION_WITH_MPSL_SCHEDULER)) {
+		/* The nRF2220 temperature compensation with the MPSL scheduler requires
+		 * asynchronous interface.
+		 * See mpsl_fem_nrf2220_temperature_changed_update_request function.
+		 */
+		mpsl_fem_twi_drv_fem_twi_if_prepare_add_async(&cfg->twi_if);
+	}
 }
 #endif /* DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), twi_if) */
 
@@ -192,5 +207,146 @@ BUILD_ASSERT(CONFIG_MPSL_FEM_INIT_PRIORITY > CONFIG_I2C_INIT_PRIORITY,
 #endif
 
 SYS_INIT(mpsl_fem_init, POST_KERNEL, CONFIG_MPSL_FEM_INIT_PRIORITY);
+
+#if defined(CONFIG_MPSL_FEM_NRF2220_TEMPERATURE_COMPENSATION)
+
+static K_SEM_DEFINE(fem_temperature_new_value_sem, 0, 1);
+
+#if defined(CONFIG_MPSL_FEM_NRF2220_TEMPERATURE_COMPENSATION_WITH_MPSL_SCHEDULER)
+static int32_t fem_temperature_update_result;
+static K_SEM_DEFINE(fem_temperature_updated_cb_sem, 0, 1);
+
+static void fem_temperature_update_cb(int32_t res)
+{
+	fem_temperature_update_result = res;
+	k_sem_give(&fem_temperature_updated_cb_sem);
+}
+
+static int32_t fem_temperature_changed_update_now(void)
+{
+	const struct device *i2c_bus_dev = DEVICE_DT_GET(DT_BUS(MPSL_FEM_TWI_IF));
+
+	/* Let's have initially "taken" semaphore that will inform the operation
+	 * on the nrf2220 is finished.
+	 */
+	k_sem_take(&fem_temperature_updated_cb_sem, K_NO_WAIT);
+
+	(void)i2c_nrfx_twim_exclusive_access_acquire(i2c_bus_dev, K_FOREVER);
+
+	/* Temporary raise i2c_bus_dev IRQ priority, as required by the
+	 * mpsl_fem_nrf2220_temperature_changed_update_request function.
+	 * The IRQs from i2c may not be delayed while performing operations
+	 * in a timeslot granted by the MPSL scheduler.
+	 */
+	z_arm_irq_priority_set(DT_IRQN(DT_BUS(MPSL_FEM_TWI_IF)), 0, IRQ_ZERO_LATENCY);
+
+	mpsl_fem_nrf2220_temperature_changed_update_request(fem_temperature_update_cb);
+
+	/* Let's wait until the operation is finished */
+	k_sem_take(&fem_temperature_updated_cb_sem, K_FOREVER);
+
+	/* Restore original i2c_bus_dev IRQ priority. */
+	z_arm_irq_priority_set(DT_IRQN(DT_BUS(MPSL_FEM_TWI_IF)),
+		DT_IRQ(DT_BUS(MPSL_FEM_TWI_IF), priority), 0);
+
+	i2c_nrfx_twim_exclusive_access_release(i2c_bus_dev);
+
+	return fem_temperature_update_result;
+}
+#endif /* CONFIG_MPSL_FEM_NRF2220_TEMPERATURE_COMPENSATION_MPSL_SCHEDULER */
+
+#if defined(CONFIG_MPSL_FEM_NRF2220_TEMPERATURE_SOURCE_SOC)
+
+#include <zephyr/drivers/sensor.h>
+#define FEM_TEMPERATURE_NEW_VALUE_SEM_TIMEOUT \
+	(K_MSEC(CONFIG_MPSL_FEM_NRF2220_TEMPERATURE_POLL_PERIOD))
+
+static int8_t fem_temperature_sensor_value_get(void)
+{
+	const struct device *dev = DEVICE_DT_GET_ONE(nordic_nrf_temp);
+
+	if (!device_is_ready(dev)) {
+		__ASSERT(false, "Temperature sensor not ready");
+	}
+
+	struct sensor_value v;
+	int ret = sensor_sample_fetch(dev);
+
+	__ASSERT(ret == 0, "Can't fetch temperature sensor sample");
+
+	ret = sensor_channel_get(dev, SENSOR_CHAN_DIE_TEMP, &v);
+	__ASSERT(ret == 0, "Can't get temperature of the die");
+
+	(void)ret;
+
+	return v.val1;
+}
+#endif /* CONFIG_MPSL_FEM_NRF2220_TEMPERATURE_SOURCE_SOC */
+
+#if defined(CONFIG_MPSL_FEM_NRF2220_TEMPERATURE_SOURCE_CUSTOM)
+
+#define FEM_TEMPERATURE_NEW_VALUE_SEM_TIMEOUT  K_FOREVER
+
+#define NRF2220_TEMPERATURE_DEFAULT 25
+
+static int8_t fem_temperature_value = NRF2220_TEMPERATURE_DEFAULT;
+
+void fem_temperature_change(int8_t temperature)
+{
+	fem_temperature_value = temperature;
+	k_sem_give(&fem_temperature_new_value_sem);
+}
+
+static int8_t fem_temperature_sensor_value_get(void)
+{
+	return fem_temperature_value;
+}
+#endif /* CONFIG_MPSL_FEM_NRF2220_TEMPERATURE_SOURCE_CUSTOM */
+
+static void fem_temperature_compensation_thread(void *dummy1, void *dummy2, void *dummy3)
+{
+	ARG_UNUSED(dummy1);
+	ARG_UNUSED(dummy2);
+	ARG_UNUSED(dummy3);
+
+	while (true) {
+		(void)k_sem_take(&fem_temperature_new_value_sem,
+			FEM_TEMPERATURE_NEW_VALUE_SEM_TIMEOUT);
+
+		int8_t new_temperature = fem_temperature_sensor_value_get();
+
+		if (mpsl_fem_nrf2220_temperature_changed(new_temperature)) {
+#if defined(CONFIG_MPSL_FEM_NRF2220_TEMPERATURE_COMPENSATION_WITH_MPSL_SCHEDULER)
+			int32_t res = fem_temperature_changed_update_now();
+
+			__ASSERT(res == 0, "FEM update on temperature change failed");
+			(void)res;
+#endif /* CONFIG_MPSL_FEM_NRF2220_TEMPERATURE_COMPENSATION_WITH_MPSL_SCHEDULER */
+		}
+	}
+}
+
+#define FEM_TEMPERATURE_COMPENSATION_THREAD_STACK_SIZE 512
+
+static K_THREAD_STACK_DEFINE(fem_temperature_compensation_thread_stack,
+			FEM_TEMPERATURE_COMPENSATION_THREAD_STACK_SIZE);
+static struct k_thread fem_temperature_compensation_thread_data;
+
+static int fem_nrf2220_temperature_compensation_init(void)
+{
+	(void)k_thread_create(&fem_temperature_compensation_thread_data,
+		fem_temperature_compensation_thread_stack,
+		K_THREAD_STACK_SIZEOF(fem_temperature_compensation_thread_stack),
+		fem_temperature_compensation_thread,
+		NULL, NULL, NULL,
+		K_LOWEST_APPLICATION_THREAD_PRIO, 0, K_NO_WAIT);
+
+	return 0;
+}
+
+SYS_INIT(fem_nrf2220_temperature_compensation_init, APPLICATION,
+	CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
+
+#endif /* CONFIG_MPSL_FEM_NRF2220_TEMPERATURE_COMPENSATION */
 
 #endif /* defined(CONFIG_MPSL_FEM_NRF2220) */
