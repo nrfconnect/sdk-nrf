@@ -39,9 +39,6 @@ config NRF_WIFI_PATCHES_EXT_FLASH_XIP
 
 config NRF_WIFI_PATCHES_EXT_FLASH_STORE
 	bool "Store nRF700x FW patches in external memory but execute from RAM"
-	# nRF7002 supports SPI based external memory access but missing tools support
-	# TODO: Enable when tools support is available (NRFJPROG-157)
-	depends on !BOARD_NRF7002DK_NRF5340_CPUAPP && !BOARD_NRF7002DK_NRF5340_CPUAPP_NS
 	select FLASH
 	select FLASH_MAP
 endchoice

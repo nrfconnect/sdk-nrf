@@ -278,6 +278,20 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_wifi
+  sample.spi.ext_flash_store:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - shell_SNIPPET=nrf70-fw-patch-ext-flash
+      - SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y
+    integration_platforms:
+      - nrf7002dk/nrf5340/cpuapp
+    platform_allow:
+      - nrf7002dk/nrf5340/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
   sample.nrf7002eb_interposer_p1.nrf7002eb.shell:
     sysbuild: true
     build_only: true
