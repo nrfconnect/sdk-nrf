@@ -89,6 +89,13 @@ bool flash_cache_ipuc_check(uintptr_t min_address, uintptr_t *ipuc_address, size
 struct device *flash_ipuc_find(uintptr_t address, size_t size, uintptr_t *ipuc_address,
 			       size_t *ipuc_size);
 
+/**
+ * @brief Check if IPUC device was not initialized over SSF.
+ *
+ * @param[in]  dev  Reference to the IPUC device to release.
+ */
+bool flash_ipuc_setup_pending(const struct device *dev);
+
 #ifdef __cplusplus
 }
 #endif

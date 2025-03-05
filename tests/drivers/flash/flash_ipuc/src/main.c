@@ -29,6 +29,7 @@ static const uint8_t component_invalid[] = {
 	'c', 'o', 'm', 'p', 'o', 'n', 'e', 'n', 't', ' ',
 	'I', 'D', '\n',
 };
+#ifndef CONFIG_SOC_SERIES_NRF54HX
 static const uint8_t component_radio_0x54000_0x1000[] = {
 	0x84, /* array(4) */
 		0x44, /* bstr(4) */
@@ -85,6 +86,64 @@ static const uint8_t component_app_0x101000_0x60000[] = {
 			0x1a, /* uint32 */
 				0x00, 0x06, 0x00, 0x00,
 };
+#else /* CONFIG_SOC_SERIES_NRF54HX */
+static const uint8_t component_radio_0x54000_0x1000[] = {
+	0x84, /* array(4) */
+		0x44, /* bstr(4) */
+			0x63, /* text(3) */
+				'M', 'E', 'M',
+		0x41, /* bstr(1) */
+			0x03, /* Radio core - executable */
+		0x45, /* bstr(5) */
+			0x1a, /* uint32 */
+				0x0e, 0x05, 0x40, 0x00,
+		0x43, /* bstr(3) */
+			0x19, /* uint16 */
+				0x10, 0x00,
+};
+static const uint8_t component_radio_0x55000_0x3f000[] = {
+	0x84, /* array(4) */
+		0x44, /* bstr(4) */
+			0x63, /* text(3) */
+				'M', 'E', 'M',
+		0x41, /* bstr(1) */
+			0x20, /* Radio core - data */
+		0x45, /* bstr(5) */
+			0x1a, /* uint32 */
+				0x0e, 0x05, 0x50, 0x00,
+		0x45, /* bstr(5) */
+			0x1a, /* uint32 */
+				0x00, 0x03, 0xf0, 0x00,
+};
+static const uint8_t component_app_0x94000_0x6d000[] = {
+	0x84, /* array(4) */
+		0x44, /* bstr(4) */
+			0x63, /* text(3) */
+				'M', 'E', 'M',
+		0x41, /* bstr(1) */
+			0x02, /* Application core - executable */
+		0x45, /* bstr(5) */
+			0x1a, /* uint32 */
+				0x0e, 0x09, 0x40, 0x00,
+		0x45, /* bstr(5) */
+			0x1a, /* uint32 */
+				0x00, 0x06, 0xd0, 0x00,
+};
+static const uint8_t component_app_0x101000_0x60000[] = {
+	0x84, /* array(4) */
+		0x44, /* bstr(4) */
+			0x63, /* text(3) */
+				'M', 'E', 'M',
+		0x41, /* bstr(1) */
+			0x20, /* Application core - data */
+		0x45, /* bstr(5) */
+			0x1a, /* uint32 */
+				0x0e, 0x10, 0x10, 0x00,
+		0x45, /* bstr(5) */
+			0x1a, /* uint32 */
+				0x00, 0x06, 0x00, 0x00,
+};
+#endif /* CONFIG_SOC_SERIES_NRF54HX */
 /* clang-format on */
 
 static void setup_sample_ipucs(struct flash_ipuc_tests_fixture *f)
@@ -141,9 +200,9 @@ static suit_plat_err_t suit_ipuc_write_setup_fake_func(struct zcbor_string *comp
 {
 	zassert_not_null(component_id, "Caller must provide non-Null pointer to read component_id");
 	zassert_equal(encryption_info, test_fixture.exp_encryption_info,
-		      "Unexpected encryption info structer passed");
+		      "Unexpected encryption info structure passed");
 	zassert_equal(compression_info, test_fixture.exp_compression_info,
-		      "Unexpected compression info structer passed");
+		      "Unexpected compression info structure passed");
 	zassert_true(test_fixture.exp_component_idx < test_fixture.count,
 		     "Invalid test: expected idx value is larger than declared IPUC list");
 
@@ -171,6 +230,30 @@ static suit_plat_err_t suit_ipuc_write_fake_func(struct zcbor_string *component_
 		      "Invalid component ID length passed");
 	zassert_equal(memcmp(component_id->value, exp_component_id->value, exp_component_id->len),
 		      0, "Invalid component ID value passed");
+
+	if (chunk_size == 4) {
+		uint8_t exp_data[] = {0x1, 0x2, 0x3, 0x4};
+
+		zassert_equal(memcmp((uint8_t *)buffer, exp_data, sizeof(exp_data)), 0,
+			      "Unexpected data passed through IPUC write API");
+	} else if (chunk_size == 1) {
+		uint8_t data = *((uint8_t *)buffer);
+
+		if ((data != 0xAB) && (data != 0xFF)) {
+			zassert_true(false, "Unexpected data passed through IPUC write API");
+		}
+	} else if (chunk_size == 0) {
+		zassert_is_null((uint8_t *)buffer, "Unexpected data passed through IPUC write API");
+	} else {
+		uint8_t *data = (uint8_t *)buffer;
+
+		for (size_t i = 0; i < chunk_size; i++) {
+			zassert_equal(
+				data[i], 0xFF,
+				"Unexpected data length passed though IPUC write API (%d, %d)",
+				chunk_size, i);
+		}
+	}
 
 	return SUIT_PLAT_SUCCESS;
 }
@@ -243,6 +326,7 @@ ZTEST_F(flash_ipuc_tests, test_null_arg)
 ZTEST_F(flash_ipuc_tests, test_component_check_OK)
 {
 	/* clang-format off */
+#ifndef CONFIG_SOC_SERIES_NRF54HX
 	const uint8_t declared_component_id_cbor[] = {
 		0x84, /* array(4) */
 			0x44, /* bstr(4) */
@@ -257,6 +341,22 @@ ZTEST_F(flash_ipuc_tests, test_component_check_OK)
 				0x19, /* uint16 */
 					0x10, 0x00,
 	};
+#else /* CONFIG_SOC_SERIES_NRF54HX */
+	const uint8_t declared_component_id_cbor[] = {
+		0x84, /* array(4) */
+			0x44, /* bstr(4) */
+				0x63, /* text(3) */
+					'M', 'E', 'M',
+			0x41, /* bstr(1) */
+				0x03, /* Radio core - executable */
+			0x45, /* bstr(5) */
+				0x1a, /* uint32 */
+					0x0e, 0x05, 0x40, 0x00,
+			0x43, /* bstr(3) */
+				0x19, /* uint16 */
+					0x10, 0x00,
+	};
+#endif /* CONFIG_SOC_SERIES_NRF54HX */
 	/* clang-format on */
 	struct zcbor_string test_component_id = {
 		.value = component_radio_0x54000_0x1000,
@@ -290,7 +390,7 @@ ZTEST_F(flash_ipuc_tests, test_component_check_OK)
 	/* ... and the IPUC was not set up */
 	zassert_equal(suit_ipuc_write_setup_fake.call_count, 0,
 		      "Incorrect number of suit_ipuc_write_setup() calls");
-	/* ... and the IPUC content was not modifed */
+	/* ... and the IPUC content was not modified */
 	zassert_equal(suit_ipuc_write_fake.call_count, 0,
 		      "Incorrect number of suit_ipuc_write() calls");
 }
@@ -298,6 +398,7 @@ ZTEST_F(flash_ipuc_tests, test_component_check_OK)
 ZTEST_F(flash_ipuc_tests, test_component_check_NOK_different_id)
 {
 	/* clang-format off */
+#ifndef CONFIG_SOC_SERIES_NRF54HX
 	const uint8_t declared_component_id_cbor[] = {
 		0x84, /* array(4) */
 			0x44, /* bstr(4) */
@@ -312,6 +413,22 @@ ZTEST_F(flash_ipuc_tests, test_component_check_NOK_different_id)
 				0x19, /* uint16 */
 					0x10, 0x10,
 	};
+#else /* CONFIG_SOC_SERIES_NRF54HX */
+	const uint8_t declared_component_id_cbor[] = {
+		0x84, /* array(4) */
+			0x44, /* bstr(4) */
+				0x63, /* text(3) */
+					'M', 'E', 'M',
+			0x41, /* bstr(1) */
+				0x03, /* Radio core - executable */
+			0x45, /* bstr(5) */
+				0x1a, /* uint32 */
+					0x0e, 0x05, 0x40, 0x00,
+			0x43, /* bstr(3) */
+				0x19, /* uint16 */
+					0x10, 0x10,
+	};
+#endif /* CONFIG_SOC_SERIES_NRF54HX */
 	/* clang-format on */
 	struct zcbor_string test_component_id = {
 		.value = component_radio_0x54000_0x1000,
@@ -345,7 +462,7 @@ ZTEST_F(flash_ipuc_tests, test_component_check_NOK_different_id)
 	/* ... and the IPUC was not set up */
 	zassert_equal(suit_ipuc_write_setup_fake.call_count, 0,
 		      "Incorrect number of suit_ipuc_write_setup() calls");
-	/* ... and the IPUC content was not modifed */
+	/* ... and the IPUC content was not modified */
 	zassert_equal(suit_ipuc_write_fake.call_count, 0,
 		      "Incorrect number of suit_ipuc_write() calls");
 }
@@ -353,6 +470,7 @@ ZTEST_F(flash_ipuc_tests, test_component_check_NOK_different_id)
 ZTEST_F(flash_ipuc_tests, test_component_create_OK)
 {
 	/* clang-format off */
+#ifndef CONFIG_SOC_SERIES_NRF54HX
 	const uint8_t declared_component_id_cbor[] = {
 		0x84, /* array(4) */
 			0x44, /* bstr(4) */
@@ -367,17 +485,35 @@ ZTEST_F(flash_ipuc_tests, test_component_create_OK)
 				0x19, /* uint16 */
 					0x10, 0x00,
 	};
+#else /* CONFIG_SOC_SERIES_NRF54HX */
+	const uint8_t declared_component_id_cbor[] = {
+		0x84, /* array(4) */
+			0x44, /* bstr(4) */
+				0x63, /* text(3) */
+					'M', 'E', 'M',
+			0x41, /* bstr(1) */
+				0x03, /* Radio core - executable */
+			0x45, /* bstr(5) */
+				0x1a, /* uint32 */
+					0x0e, 0x05, 0x40, 0x00,
+			0x43, /* bstr(3) */
+				0x19, /* uint16 */
+					0x10, 0x00,
+	};
+#endif /* CONFIG_SOC_SERIES_NRF54HX */
 	/* clang-format on */
 	struct zcbor_string test_component_id = {
 		.value = component_radio_0x54000_0x1000,
 		.len = sizeof(component_radio_0x54000_0x1000),
 	};
 	struct device *flash_ipuc = NULL;
+	uint8_t exp_data[] = {0xAB};
 
 	/* Set fakes, that return values from the test fixture. */
 	suit_ipuc_get_count_fake.custom_fake = suit_ipuc_get_count_fake_func;
 	suit_ipuc_get_info_fake.custom_fake = suit_ipuc_get_info_fake_func;
 	suit_ipuc_write_setup_fake.custom_fake = suit_ipuc_write_setup_fake_func;
+	suit_ipuc_write_fake.custom_fake = suit_ipuc_write_fake_func;
 
 	/* GIVEN a single radio manifest component IPUC is available */
 	fixture->count = 1;
@@ -402,13 +538,48 @@ ZTEST_F(flash_ipuc_tests, test_component_create_OK)
 		      "Incorrect number of suit_ipuc_get_info() calls");
 	zassert_equal(suit_ipuc_get_info_fake.arg0_val, 0,
 		      "Incorrect IPUC index value in suit_ipuc_get_info() call");
-	/* ... and the IPUC was set up for writing */
+	/* ... and the IPUC was not set up for writing */
+	zassert_equal(suit_ipuc_write_setup_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_write_setup() calls");
+
+	/* ... and the IPUC was not initialized over SSF */
+	zassert_equal(flash_ipuc_setup_pending(flash_ipuc), true,
+		      "Cache IPUC initialized immediately");
+	/* ... and the IPUC content was not modified */
+	zassert_equal(suit_ipuc_write_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_write() calls");
+
+	/* WHEN erase API is called for any byte */
+	zassert_equal(flash_erase(flash_ipuc, 1, 1), 0, "Failed to erase cache IPUC");
+
+	/* THEN the IPUC was not set up for writing */
+	zassert_equal(flash_ipuc_setup_pending(flash_ipuc), true,
+		      "Cache IPUC initialized while erasing uninitialized instance");
+	zassert_equal(suit_ipuc_write_setup_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_write_setup() calls");
+
+	/* ... and the IPUC content was not modified */
+	zassert_equal(suit_ipuc_write_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_write() calls");
+
+	/* WHEN write API is called for any byte */
+	zassert_equal(flash_write(flash_ipuc, 1, exp_data, sizeof(exp_data)), 0,
+		      "Failed to erase cache IPUC");
+
+	/* THEN the IPUC was set up for writing */
+	zassert_equal(flash_ipuc_setup_pending(flash_ipuc), false,
+		      "Cache IPUC not initialized while erasing contents");
 	zassert_equal(suit_ipuc_write_setup_fake.call_count, 1,
 		      "Incorrect number of suit_ipuc_write_setup() calls");
 
-	/* ... and the IPUC content was not modifed */
-	zassert_equal(suit_ipuc_write_fake.call_count, 0,
+	/* ... and the IPUC content was modified */
+	zassert_equal(suit_ipuc_write_fake.call_count, 1,
 		      "Incorrect number of suit_ipuc_write() calls");
+	zassert_equal(suit_ipuc_write_fake.arg1_val, 1, "Incorrect offset passed through IPUC API");
+	zassert_equal(suit_ipuc_write_fake.arg3_val, sizeof(exp_data),
+		      "Incorrect data length passed through IPUC API");
+	zassert_equal(suit_ipuc_write_fake.arg4_val, false,
+		      "Incorrect last_chunk flag value passed through IPUC API");
 
 	/* Release the IPUC */
 	flash_ipuc_release(flash_ipuc);
@@ -417,6 +588,7 @@ ZTEST_F(flash_ipuc_tests, test_component_create_OK)
 ZTEST_F(flash_ipuc_tests, test_component_create_NOK_different_id)
 {
 	/* clang-format off */
+#ifndef CONFIG_SOC_SERIES_NRF54HX
 	const uint8_t declared_component_id_cbor[] = {
 		0x84, /* array(4) */
 			0x44, /* bstr(4) */
@@ -431,6 +603,22 @@ ZTEST_F(flash_ipuc_tests, test_component_create_NOK_different_id)
 				0x1a, /* uint32 */
 					0x00, 0x05, 0x40, 0x00,
 	};
+#else /* CONFIG_SOC_SERIES_NRF54HX */
+	const uint8_t declared_component_id_cbor[] = {
+		0x84, /* array(4) */
+			0x44, /* bstr(4) */
+				0x63, /* text(3) */
+					'M', 'E', 'M',
+			0x41, /* bstr(1) */
+				0x03, /* Radio core - executable */
+			0x45, /* bstr(5) */
+				0x1a, /* uint32 */
+					0x0e, 0x05, 0x40, 0x00,
+			0x45, /* bstr(5) */
+				0x1a, /* uint32 */
+					0x00, 0x05, 0x40, 0x00,
+	};
+#endif /* CONFIG_SOC_SERIES_NRF54HX */
 	/* clang-format on */
 	struct zcbor_string test_component_id = {
 		.value = component_radio_0x54000_0x1000,
@@ -465,7 +653,7 @@ ZTEST_F(flash_ipuc_tests, test_component_create_NOK_different_id)
 	/* ... and the IPUC was not set up */
 	zassert_equal(suit_ipuc_write_setup_fake.call_count, 0,
 		      "Incorrect number of suit_ipuc_write_setup() calls");
-	/* ... and the IPUC content was not modifed */
+	/* ... and the IPUC content was not modified */
 	zassert_equal(suit_ipuc_write_fake.call_count, 0,
 		      "Incorrect number of suit_ipuc_write() calls");
 }
@@ -505,8 +693,8 @@ ZTEST_F(flash_ipuc_tests, test_driver_write_read_ro)
 		      "Incorrect IPUC index value in suit_ipuc_get_info() call");
 	zassert_equal(suit_ipuc_get_info_fake.arg0_history[1], 1,
 		      "Incorrect IPUC index value in suit_ipuc_get_info() call");
-	/* ... and the IPUC was set up for writing */
-	zassert_equal(suit_ipuc_write_setup_fake.call_count, 1,
+	/* ... and the IPUC was not set up for writing at this stage */
+	zassert_equal(suit_ipuc_write_setup_fake.call_count, 0,
 		      "Incorrect number of suit_ipuc_write_setup() calls");
 
 	for (size_t offset = 0; offset < 0x2000; offset += 0x300) {
@@ -518,15 +706,16 @@ ZTEST_F(flash_ipuc_tests, test_driver_write_read_ro)
 			/* THEN the memory is modified through IPUC API */
 			zassert_equal(ret, 0, "Write inside IPUC area failed");
 			zassert_equal(suit_ipuc_write_fake.call_count, offset / 0x300 + 1,
-				      "Incorrect number of suit_ipuc_write() calls");
+				      "Incorrect number of suit_ipuc_write() calls @0x%x", offset);
 			zassert_equal(suit_ipuc_write_fake.arg1_val, offset,
-				      "Incorrect offset passed through IPUC API");
-			zassert_equal_ptr(suit_ipuc_write_fake.arg2_val, sample_data,
-					  "Incorrect data passed through IPUC API");
+				      "Incorrect offset passed through IPUC API @0x%x", offset);
 			zassert_equal(suit_ipuc_write_fake.arg3_val, sizeof(sample_data),
-				      "Incorrect data length passed through IPUC API");
-			zassert_equal(suit_ipuc_write_fake.arg4_val, false,
-				      "Incorrect last_chunk flag value passed through IPUC API");
+				      "Incorrect data length passed through IPUC API @0x%x",
+				      offset);
+			zassert_equal(
+				suit_ipuc_write_fake.arg4_val, false,
+				"Incorrect last_chunk flag value passed through IPUC API @0x%x",
+				offset);
 		} else {
 			/* ... and the offset is not within the IPUC access range */
 			/* THEN the memory is not modified through IPUC API */
@@ -535,10 +724,14 @@ ZTEST_F(flash_ipuc_tests, test_driver_write_read_ro)
 				      "Incorrect number of suit_ipuc_write() calls");
 		}
 
-		/* .. and it is not possible to read back the data */
+		/* ... and it is not possible to read back the data */
 		ret = flash_read(flash_ipuc, offset, sample_data, sizeof(sample_data));
 		zassert_equal(ret, -EACCES, "Read inside write-only IPUC area did not fail");
 	}
+
+	/* ... and the IPUC was set up only once for writing at the first write request */
+	zassert_equal(suit_ipuc_write_setup_fake.call_count, 1,
+		      "Incorrect number of suit_ipuc_write_setup() calls");
 
 	/* ... and it is possible to close the IPUC slot */
 	ret = flash_write(flash_ipuc, 0, NULL, 0);
@@ -597,8 +790,8 @@ ZTEST_F(flash_ipuc_tests, test_driver_write_read_rw)
 		      "Incorrect IPUC index value in suit_ipuc_get_info() call");
 	zassert_equal(suit_ipuc_get_info_fake.arg0_history[3], 3,
 		      "Incorrect IPUC index value in suit_ipuc_get_info() call");
-	/* ... and the IPUC was set up for writing */
-	zassert_equal(suit_ipuc_write_setup_fake.call_count, 1,
+	/* ... and the IPUC was not set up for writing at this stage */
+	zassert_equal(suit_ipuc_write_setup_fake.call_count, 0,
 		      "Incorrect number of suit_ipuc_write_setup() calls");
 
 	for (size_t offset = 0; offset < 0x6d000; offset += 0x300) {
@@ -613,13 +806,11 @@ ZTEST_F(flash_ipuc_tests, test_driver_write_read_rw)
 				      "Incorrect number of suit_ipuc_write() calls");
 			zassert_equal(suit_ipuc_write_fake.arg1_val, offset,
 				      "Incorrect offset passed through IPUC API");
-			zassert_equal_ptr(suit_ipuc_write_fake.arg2_val, sample_data,
-					  "Incorrect data passed through IPUC API");
 			zassert_equal(suit_ipuc_write_fake.arg3_val, sizeof(sample_data),
 				      "Incorrect data length passed through IPUC API");
 			zassert_equal(suit_ipuc_write_fake.arg4_val, false,
 				      "Incorrect last_chunk flag value passed through IPUC API");
-			/* .. and it is possible to read back the data */
+			/* ... and it is possible to read back the data */
 			ret = flash_read(flash_ipuc, offset, read_buf, sizeof(read_buf));
 			zassert_equal(ret, 0, "Read inside readable IPUC area failed");
 		} else {
@@ -628,12 +819,16 @@ ZTEST_F(flash_ipuc_tests, test_driver_write_read_rw)
 			zassert_equal(ret, -ENOMEM, "Write outside of IPUC area did not fail");
 			zassert_equal(suit_ipuc_write_fake.call_count, 0x6d000 / 0x300 + 1,
 				      "Incorrect number of suit_ipuc_write() calls");
-			/* .. and it is not possible to read back the data */
+			/* ... and it is not possible to read back the data */
 			ret = flash_read(flash_ipuc, offset, sample_data, sizeof(sample_data));
 			zassert_equal(ret, -ENOMEM,
 				      "Read inside write-only IPUC area did not fail");
 		}
 	}
+
+	/* ... and the IPUC was set up only once for writing at the first write request */
+	zassert_equal(suit_ipuc_write_setup_fake.call_count, 1,
+		      "Incorrect number of suit_ipuc_write_setup() calls");
 
 	/* ... and it is possible to close the IPUC slot */
 	ret = flash_write(flash_ipuc, 0, NULL, 0);
@@ -660,6 +855,7 @@ ZTEST_F(flash_ipuc_tests, test_driver_erase_ro)
 	};
 	struct device *flash_ipuc = NULL;
 	int ret = 0;
+	uint8_t sample_data[] = {0xAB};
 
 	/* Set fakes, that return values from the test fixture. */
 	suit_ipuc_get_count_fake.custom_fake = suit_ipuc_get_count_fake_func;
@@ -686,12 +882,20 @@ ZTEST_F(flash_ipuc_tests, test_driver_erase_ro)
 		      "Incorrect IPUC index value in suit_ipuc_get_info() call");
 	zassert_equal(suit_ipuc_get_info_fake.arg0_history[1], 1,
 		      "Incorrect IPUC index value in suit_ipuc_get_info() call");
-	/* ... and the IPUC was set up for writing */
+	/* ... and the IPUC was set up for writing as a result of a write request */
+	zassert_equal(flash_write(flash_ipuc, 0, sample_data, sizeof(sample_data)), 0,
+		      "Failed to initialize IPUC through write request");
 	zassert_equal(suit_ipuc_write_setup_fake.call_count, 1,
 		      "Incorrect number of suit_ipuc_write_setup() calls");
+	zassert_equal(suit_ipuc_write_fake.call_count, 1,
+		      "Incorrect number of suit_ipuc_write() calls");
+
+	/* Reset fake to keep the offset/history offsets intact. */
+	RESET_FAKE(suit_ipuc_write);
+	suit_ipuc_write_fake.custom_fake = suit_ipuc_write_fake_func;
 
 	/* WHEN the erase API is called */
-	ret = flash_erase(flash_ipuc, 0, 0x1000);
+	ret = flash_erase(flash_ipuc, 0, 0xFFF);
 
 	size_t write_blocks_passed = suit_ipuc_write_fake.call_count;
 
@@ -705,18 +909,27 @@ ZTEST_F(flash_ipuc_tests, test_driver_erase_ro)
 			"Incorrect offset (0x%x != 0x%x) passed through IPUC API in iteration %d",
 			suit_ipuc_write_fake.arg1_history[i], 0x1000 / write_blocks_passed * i, i);
 		zassert_equal(suit_ipuc_write_fake.arg3_history[i], 0x1000 / write_blocks_passed,
-			      "Incorrect data length passed through IPUC API");
+			      "Incorrect data length (0x%x != 0x%x) passed through IPUC API @%d",
+			      suit_ipuc_write_fake.arg3_history[i], 0x1000 / write_blocks_passed,
+			      i);
 		zassert_equal(
 			suit_ipuc_write_fake.arg4_history[i], false,
 			"Incorrect last_chunk flag value passed through IPUC API in iteration %d",
 			i);
 	}
 
+	/* ... and it is possible to do a massive erase through write_setup */
+	ret = flash_erase(flash_ipuc, 0, 0x1000);
+	zassert_equal(ret, 0, "Masive erase inside IPUC area failed");
+	zassert_equal(suit_ipuc_write_setup_fake.call_count, 2,
+		      "Incorrect number of suit_ipuc_write_setup() calls");
+
 	/* ... and it is possible to close the IPUC slot */
 	ret = flash_write(flash_ipuc, 0, NULL, 0);
 	zassert_equal(ret, 0, "IPUC flush failed failed");
 	zassert_equal(suit_ipuc_write_fake.call_count, write_blocks_passed + 1,
-		      "Incorrect number of suit_ipuc_write() calls");
+		      "Incorrect number of suit_ipuc_write() calls (%d != %d)",
+		      suit_ipuc_write_fake.call_count, write_blocks_passed + 1);
 	zassert_equal(suit_ipuc_write_fake.arg1_val, 0, "Incorrect offset passed through IPUC API");
 	zassert_equal_ptr(suit_ipuc_write_fake.arg2_val, NULL,
 			  "Incorrect data passed through IPUC API");
@@ -741,7 +954,7 @@ ZTEST_F(flash_ipuc_tests, test_cache_bank0_check_OK)
 		.len = sizeof(component_app_0x94000_0x6d000),
 	};
 
-	/* Read the expected address and size fromt he component ID. */
+	/* Read the expected address and size from the component ID. */
 	zassert_equal(suit_plat_decode_component_id(&exp_component_id, &exp_cpu_id, &exp_address,
 						    &exp_size),
 		      SUIT_PLAT_SUCCESS, "Unable to decode expected cache IPUC component ID");
@@ -781,7 +994,7 @@ ZTEST_F(flash_ipuc_tests, test_cache_bank0_check_OK)
 	/* ... and the IPUC was not set up */
 	zassert_equal(suit_ipuc_write_setup_fake.call_count, 0,
 		      "Incorrect number of suit_ipuc_write_setup() calls");
-	/* ... and the IPUC content was not modifed */
+	/* ... and the IPUC content was not modified */
 	zassert_equal(suit_ipuc_write_fake.call_count, 0,
 		      "Incorrect number of suit_ipuc_write() calls");
 }
@@ -797,7 +1010,7 @@ ZTEST_F(flash_ipuc_tests, test_cache_bank1_check_OK)
 		.value = component_app_0x101000_0x60000,
 		.len = sizeof(component_app_0x101000_0x60000),
 	};
-	uintptr_t bank1_address = (uintptr_t)suit_plat_mem_ptr_get(0x100000);
+	uintptr_t bank1_address = (uintptr_t)suit_plat_mem_nvm_ptr_get(0x100000);
 
 	/* Read the expected address and size from the component ID. */
 	zassert_equal(suit_plat_decode_component_id(&exp_component_id, &exp_cpu_id, &exp_address,
@@ -839,7 +1052,7 @@ ZTEST_F(flash_ipuc_tests, test_cache_bank1_check_OK)
 	/* ... and the IPUC was not set up */
 	zassert_equal(suit_ipuc_write_setup_fake.call_count, 0,
 		      "Incorrect number of suit_ipuc_write_setup() calls");
-	/* ... and the IPUC content was not modifed */
+	/* ... and the IPUC content was not modified */
 	zassert_equal(suit_ipuc_write_fake.call_count, 0,
 		      "Incorrect number of suit_ipuc_write() calls");
 }
@@ -855,7 +1068,7 @@ ZTEST_F(flash_ipuc_tests, test_cache_bank1_partial_check_OK)
 		.value = component_app_0x94000_0x6d000,
 		.len = sizeof(component_app_0x94000_0x6d000),
 	};
-	uintptr_t bank1_address = (uintptr_t)suit_plat_mem_ptr_get(0x100000);
+	uintptr_t bank1_address = (uintptr_t)suit_plat_mem_nvm_ptr_get(0x100000);
 
 	/* Read the expected address and size from the component ID. */
 	zassert_equal(suit_plat_decode_component_id(&exp_component_id, &exp_cpu_id, &exp_address,
@@ -898,7 +1111,7 @@ ZTEST_F(flash_ipuc_tests, test_cache_bank1_partial_check_OK)
 	/* ... and the IPUC was not set up */
 	zassert_equal(suit_ipuc_write_setup_fake.call_count, 0,
 		      "Incorrect number of suit_ipuc_write_setup() calls");
-	/* ... and the IPUC content was not modifed */
+	/* ... and the IPUC content was not modified */
 	zassert_equal(suit_ipuc_write_fake.call_count, 0,
 		      "Incorrect number of suit_ipuc_write() calls");
 }
@@ -914,7 +1127,7 @@ ZTEST_F(flash_ipuc_tests, test_cache_bank1_partial_create_OK)
 		.value = component_app_0x94000_0x6d000,
 		.len = sizeof(component_app_0x94000_0x6d000),
 	};
-	uintptr_t bank1_address = (uintptr_t)suit_plat_mem_ptr_get(0x100000);
+	uintptr_t bank1_address = (uintptr_t)suit_plat_mem_nvm_ptr_get(0x100000);
 	struct device *flash_ipuc = NULL;
 
 	/* Read the expected address and size from the component ID. */
@@ -955,13 +1168,139 @@ ZTEST_F(flash_ipuc_tests, test_cache_bank1_partial_create_OK)
 		      ipuc_address, exp_address);
 	zassert_equal(ipuc_size, exp_size, "unexpected IPUC size returned (0x%x != 0x%x)",
 		      ipuc_size, exp_size);
-	/* ... and the IPUC was set up for writing */
+	/* ... and the IPUC was not set up for writing */
+	zassert_equal(suit_ipuc_write_setup_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_write_setup() calls");
+
+	/* ... and the IPUC was not initialized over SSF */
+	zassert_equal(flash_ipuc_setup_pending(flash_ipuc), true,
+		      "Cache IPUC initialized immediately");
+	/* ... and the IPUC content was not modified */
+	zassert_equal(suit_ipuc_write_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_write() calls");
+
+	/* Release the IPUC */
+	flash_ipuc_release(flash_ipuc);
+}
+
+ZTEST_F(flash_ipuc_tests, test_cache_setup_on_erase_OK)
+{
+	uintptr_t ipuc_address = 0;
+	size_t ipuc_size = 0;
+	uintptr_t exp_address = 0;
+	size_t exp_size = 0;
+	uint8_t exp_cpu_id = 0;
+	struct zcbor_string exp_component_id = {
+		.value = component_app_0x94000_0x6d000,
+		.len = sizeof(component_app_0x94000_0x6d000),
+	};
+	uintptr_t bank1_address = (uintptr_t)suit_plat_mem_nvm_ptr_get(0x100000);
+	struct device *flash_ipuc = NULL;
+
+	/* Read the expected address and size from the component ID. */
+	zassert_equal(suit_plat_decode_component_id(&exp_component_id, &exp_cpu_id, &exp_address,
+						    &exp_size),
+		      SUIT_PLAT_SUCCESS, "Unable to decode expected cache IPUC component ID");
+
+	/* Set fakes, that return values from the test fixture. */
+	suit_ipuc_get_count_fake.custom_fake = suit_ipuc_get_count_fake_func;
+	suit_ipuc_get_info_fake.custom_fake = suit_ipuc_get_info_fake_func;
+
+	/* GIVEN all sample IPUCs are available */
+	setup_sample_ipucs(fixture);
+
+	/* WHEN the bank 1 cache IPUC is requested */
+	flash_ipuc = flash_cache_ipuc_create(bank1_address, &ipuc_address, &ipuc_size);
+
+	/* THEN the API returns a valid IPUC driver */
+	zassert_not_null(flash_ipuc, "Cache IPUC create failed");
+
+	/* ... and the IPUC was not initialized over SSF */
+	zassert_equal(flash_ipuc_setup_pending(flash_ipuc), true,
+		      "Cache IPUC initialized immediately");
+	zassert_equal(suit_ipuc_write_setup_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_write_setup() calls");
+
+	/* WHEN erase API is called for any byte */
+	zassert_equal(flash_erase(flash_ipuc, 1, 1), 0, "Failed to erase cache IPUC");
+
+	/* THEN the IPUC was not set up for writing */
+	zassert_equal(flash_ipuc_setup_pending(flash_ipuc), true,
+		      "Cache IPUC initialized while erasing uninitialized instance");
+	zassert_equal(suit_ipuc_write_setup_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_write_setup() calls");
+
+	/* ... and the IPUC content was not modified */
+	zassert_equal(suit_ipuc_write_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_write() calls");
+
+	/* Release the IPUC */
+	flash_ipuc_release(flash_ipuc);
+}
+
+ZTEST_F(flash_ipuc_tests, test_cache_setup_on_write_OK)
+{
+	uintptr_t ipuc_address = 0;
+	size_t ipuc_size = 0;
+	uintptr_t exp_address = 0;
+	size_t exp_size = 0;
+	uint8_t exp_cpu_id = 0;
+	struct zcbor_string exp_component_id = {
+		.value = component_app_0x101000_0x60000,
+		.len = sizeof(component_app_0x101000_0x60000),
+	};
+	uintptr_t bank1_address = (uintptr_t)suit_plat_mem_nvm_ptr_get(0x100000);
+	struct device *flash_ipuc = NULL;
+	uint8_t exp_data[] = {0xAB};
+
+	/* Read the expected address and size from the component ID. */
+	zassert_equal(suit_plat_decode_component_id(&exp_component_id, &exp_cpu_id, &exp_address,
+						    &exp_size),
+		      SUIT_PLAT_SUCCESS, "Unable to decode expected cache IPUC component ID");
+
+	/* Set fakes, that return values from the test fixture. */
+	suit_ipuc_get_count_fake.custom_fake = suit_ipuc_get_count_fake_func;
+	suit_ipuc_get_info_fake.custom_fake = suit_ipuc_get_info_fake_func;
+	suit_ipuc_write_fake.custom_fake = suit_ipuc_write_fake_func;
+
+	/* GIVEN all sample IPUCs are available */
+	setup_sample_ipucs(fixture);
+
+	/* ... and the test expects the fourth plaintext, uncompressed IPUC to be configured */
+	fixture->exp_component_idx = 4;
+	fixture->exp_encryption_info = NULL;
+	fixture->exp_compression_info = NULL;
+
+	/* WHEN the bank 1 cache IPUC is requested */
+	flash_ipuc = flash_cache_ipuc_create(bank1_address, &ipuc_address, &ipuc_size);
+
+	/* THEN the API returns a valid IPUC driver */
+	zassert_not_null(flash_ipuc, "Cache IPUC create failed");
+
+	/* ... and the IPUC was not initialized over SSF */
+	zassert_equal(flash_ipuc_setup_pending(flash_ipuc), true,
+		      "Cache IPUC initialized immediately");
+	zassert_equal(suit_ipuc_write_setup_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_write_setup() calls");
+
+	/* WHEN write API is called for any byte */
+	zassert_equal(flash_write(flash_ipuc, 1, exp_data, sizeof(exp_data)), 0,
+		      "Failed to erase cache IPUC");
+
+	/* THEN the IPUC was set up for writing */
+	zassert_equal(flash_ipuc_setup_pending(flash_ipuc), false,
+		      "Cache IPUC not initialized while erasing contents");
 	zassert_equal(suit_ipuc_write_setup_fake.call_count, 1,
 		      "Incorrect number of suit_ipuc_write_setup() calls");
 
-	/* ... and the IPUC content was not modifed */
-	zassert_equal(suit_ipuc_write_fake.call_count, 0,
+	/* ... and the IPUC content was modified */
+	zassert_equal(suit_ipuc_write_fake.call_count, 1,
 		      "Incorrect number of suit_ipuc_write() calls");
+	zassert_equal(suit_ipuc_write_fake.arg1_val, 1, "Incorrect offset passed through IPUC API");
+	zassert_equal(suit_ipuc_write_fake.arg3_val, sizeof(exp_data),
+		      "Incorrect data length passed through IPUC API");
+	zassert_equal(suit_ipuc_write_fake.arg4_val, false,
+		      "Incorrect last_chunk flag value passed through IPUC API");
 
 	/* Release the IPUC */
 	flash_ipuc_release(flash_ipuc);
@@ -993,40 +1332,40 @@ ZTEST_F(flash_ipuc_tests, test_find_ipuc)
 			 "Failed to create application cache IPUC before test execution");
 
 	/* WHEN component IPUC for unconfigured ID is searched */
-	flash_ipuc = flash_ipuc_find((uintptr_t)suit_plat_mem_ptr_get(0x54000), 0x1000,
+	flash_ipuc = flash_ipuc_find((uintptr_t)suit_plat_mem_nvm_ptr_get(0x54000), 0x1000,
 				     &ipuc_address, &ipuc_size);
 	/* THEN the API returns NULL */
 	zassert_is_null(flash_ipuc, "Find for unconfigured IPUC shall fail");
 
 	/* WHEN component IPUC for address overlapping with configured ID is searched */
-	flash_ipuc = flash_ipuc_find((uintptr_t)suit_plat_mem_ptr_get(0x55000 - 1), 0x3f000,
+	flash_ipuc = flash_ipuc_find((uintptr_t)suit_plat_mem_nvm_ptr_get(0x55000 - 1), 0x3f000,
 				     &ipuc_address, &ipuc_size);
 	/* THEN the API returns NULL */
 	zassert_is_null(flash_ipuc, "Find for unconfigured IPUC shall fail");
 
 	/* WHEN component IPUC for matching address and too bigger size is searched */
-	flash_ipuc = flash_ipuc_find((uintptr_t)suit_plat_mem_ptr_get(0x55000), 0x3f000 + 1,
+	flash_ipuc = flash_ipuc_find((uintptr_t)suit_plat_mem_nvm_ptr_get(0x55000), 0x3f000 + 1,
 				     &ipuc_address, &ipuc_size);
 	/* THEN the API returns NULL */
 	zassert_is_null(flash_ipuc, "Find for unconfigured IPUC shall fail");
 
 	/* WHEN component IPUC for matching address and size is searched */
-	flash_ipuc = flash_ipuc_find((uintptr_t)suit_plat_mem_ptr_get(0x55000), 0x3f000,
+	flash_ipuc = flash_ipuc_find((uintptr_t)suit_plat_mem_nvm_ptr_get(0x55000), 0x3f000,
 				     &ipuc_address, &ipuc_size);
 	/* THEN the API returns a valid IPUC driver */
 	zassert_not_null(flash_ipuc, "Find for configured IPUC failed");
 	/* ... and the returned address and size matches with the component ID */
-	zassert_equal(ipuc_address, (uintptr_t)suit_plat_mem_ptr_get(0x55000),
+	zassert_equal(ipuc_address, (uintptr_t)suit_plat_mem_nvm_ptr_get(0x55000),
 		      "Component IPUC address does not match");
 	zassert_equal(ipuc_size, 0x3f000, "Component IPUC size does not match");
 
 	/* WHEN component IPUC for address within configured ID is searched */
-	flash_ipuc = flash_ipuc_find((uintptr_t)suit_plat_mem_ptr_get(0x55000 + 1), 0x1000,
+	flash_ipuc = flash_ipuc_find((uintptr_t)suit_plat_mem_nvm_ptr_get(0x55000 + 1), 0x1000,
 				     &ipuc_address, &ipuc_size);
 	/* THEN the API returns a valid IPUC driver */
 	zassert_not_null(flash_ipuc, "Find for configured IPUC failed");
 	/* ... and the returned address and size matches with the component ID */
-	zassert_equal(ipuc_address, (uintptr_t)suit_plat_mem_ptr_get(0x55000),
+	zassert_equal(ipuc_address, (uintptr_t)suit_plat_mem_nvm_ptr_get(0x55000),
 		      "Component IPUC address does not match");
 	zassert_equal(ipuc_size, 0x3f000, "Component IPUC size does not match");
 
@@ -1040,7 +1379,7 @@ ZTEST_F(flash_ipuc_tests, test_find_ipuc)
 	zassert_equal(ipuc_size, cache_ipuc_size, "Cache IPUC size does not match");
 
 	/* Release IPUCs */
-	flash_ipuc = flash_ipuc_find((uintptr_t)suit_plat_mem_ptr_get(0x55000), 0x1000,
+	flash_ipuc = flash_ipuc_find((uintptr_t)suit_plat_mem_nvm_ptr_get(0x55000), 0x1000,
 				     &ipuc_address, &ipuc_size);
 	flash_ipuc_release(flash_ipuc);
 

@@ -206,35 +206,19 @@ static void test_before(void *data)
 	zassert_equal(suit_ipuc_get_count_fake.call_count, 2,
 		      "Incorrect number of suit_ipuc_get_count() calls (%d)",
 		      suit_ipuc_get_count_fake.call_count);
-	/* 2x ((count: search for max) + (info of the max))*/
+	/* 2x ((count: search for max) + (info of the max)) */
 	zassert_equal(suit_ipuc_get_info_fake.call_count, 6,
 		      "Incorrect number of suit_ipuc_get_info() calls (%d)",
 		      suit_ipuc_get_info_fake.call_count);
-
+	/* Initialization routine must not erase IPUC areas. */
+	zassert_equal(suit_ipuc_write_setup_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_write_setup() calls (%d)",
+		      suit_ipuc_write_setup_fake.call_count);
 	/* Reset mocks */
 	mock_suit_ipuc_reset();
 
 	/* Reset common FFF internal structures */
 	FFF_RESET_HISTORY();
-}
-
-static void test_after(void *data)
-{
-	uintptr_t cache_ipuc_address = (uintptr_t)suit_plat_mem_ptr_get(0x90000);
-	size_t cache_ipuc_size = 0x1000;
-	struct device *flash_ipuc = NULL;
-	uintptr_t ipuc_address = 0;
-	size_t ipuc_size = 0;
-
-	/* SUIT cache IPUC is not released automatically as it is possible to populate cache
-	 * with miltiple payloads.
-	 * Relase them manually to preserve constant number of IPUCs for all test cases.
-	 */
-	flash_ipuc =
-		flash_ipuc_find(cache_ipuc_address, cache_ipuc_size, &ipuc_address, &ipuc_size);
-	if (flash_ipuc != NULL) {
-		flash_ipuc_release(flash_ipuc);
-	}
 }
 
 ZTEST_SUITE(fetch_app_mem_tests, NULL, NULL, test_before, NULL, NULL);
@@ -269,12 +253,14 @@ ZTEST(fetch_app_mem_tests, test_fetch_to_ipuc_mem_OK)
 	ret = suit_plat_fetch(dst_handle, &uri, &valid_dst_component_id, NULL);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_fetch failed - error %i", ret);
 
+	/* Fetch operation validation. */
 	zassert_equal(suit_ipuc_get_count_fake.call_count, 2,
 		      "Incorrect number of suit_ipuc_get_count() calls (%d)",
 		      suit_ipuc_get_count_fake.call_count);
 	zassert_equal(suit_ipuc_get_info_fake.call_count, 2,
 		      "Incorrect number of suit_ipuc_get_info() calls (%d)",
 		      suit_ipuc_get_info_fake.call_count);
+	/* Write into MEM IPUC. */
 	zassert_equal(suit_ipuc_write_setup_fake.call_count, 1,
 		      "Incorrect number of suit_ipuc_write_setup() calls (%d)",
 		      suit_ipuc_write_setup_fake.call_count);
@@ -310,7 +296,7 @@ ZTEST(fetch_app_mem_tests, test_fetch_to_ipuc_mem_OK)
 	zassert_equal(ret, SUIT_SUCCESS, "dst_handle release failed - error %i", ret);
 }
 
-ZTEST_SUITE(fetch_app_cache_tests, NULL, NULL, test_before, test_after, NULL);
+ZTEST_SUITE(fetch_app_cache_tests, NULL, NULL, test_before, NULL, NULL);
 
 ZTEST(fetch_app_cache_tests, test_fetch_to_ipuc_cache_OK)
 {
@@ -351,16 +337,18 @@ ZTEST(fetch_app_cache_tests, test_fetch_to_ipuc_cache_OK)
 	ret = suit_plat_fetch(dst_handle, &uri, &valid_dst_component_id, NULL);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_fetch failed - error %i", ret);
 
-	zassert_equal(suit_ipuc_write_setup_fake.call_count, 1,
-		      "Incorrect number of suit_ipuc_write_setup() calls (%d)",
-		      suit_ipuc_write_setup_fake.call_count);
-	zassert_equal(suit_ipuc_get_count_fake.call_count, 1,
+	/* Fetch operation validation - uses already created IPUC driver instances. */
+	zassert_equal(suit_ipuc_get_count_fake.call_count, 0,
 		      "Incorrect number of suit_ipuc_get_count() calls (%d)",
 		      suit_ipuc_get_count_fake.call_count);
-	zassert_equal(suit_ipuc_get_info_fake.call_count, 3,
+	zassert_equal(suit_ipuc_get_info_fake.call_count, 0,
 		      "Incorrect number of suit_ipuc_get_info() calls (%d)",
 		      suit_ipuc_get_info_fake.call_count);
 
+	/* Write into APP cache IPUC. */
+	zassert_equal(suit_ipuc_write_setup_fake.call_count, 1,
+		      "Incorrect number of suit_ipuc_write_setup() calls (%d)",
+		      suit_ipuc_write_setup_fake.call_count);
 	zassert_true(suit_ipuc_write_fake.call_count >= 4,
 		     "Too small number of suit_ipuc_write() calls (%d)",
 		     suit_ipuc_write_fake.call_count);
@@ -439,15 +427,18 @@ ZTEST(fetch_app_cache_tests, test_fetch_to_ipuc_cache_sdfw_scfw_OK)
 	ret = suit_plat_fetch(dst_handle, &uri_sdfw, &valid_dst_component_id, NULL);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_fetch failed - error %i", ret);
 
+	/* Fetch operation validation - uses already created IPUC driver instances. */
+	zassert_equal(suit_ipuc_get_count_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_get_count() calls (%d)",
+		      suit_ipuc_get_count_fake.call_count);
+	zassert_equal(suit_ipuc_get_info_fake.call_count, 0,
+		      "Incorrect number of suit_ipuc_get_info() calls (%d)",
+		      suit_ipuc_get_info_fake.call_count);
+
+	/* Write into SDFW cache IPUC. */
 	zassert_equal(suit_ipuc_write_setup_fake.call_count, 1,
 		      "Incorrect number of suit_ipuc_write_setup() calls (%d)",
 		      suit_ipuc_write_setup_fake.call_count);
-	zassert_equal(suit_ipuc_get_count_fake.call_count, 1,
-		      "Incorrect number of suit_ipuc_get_count() calls (%d)",
-		      suit_ipuc_get_count_fake.call_count);
-	zassert_equal(suit_ipuc_get_info_fake.call_count, 3,
-		      "Incorrect number of suit_ipuc_get_info() calls (%d)",
-		      suit_ipuc_get_info_fake.call_count);
 
 	/* Fetch SCFW binary using the same IPUC and component context */
 	ret = suit_plat_fetch(dst_handle, &uri_scfw, &valid_dst_component_id, NULL);
