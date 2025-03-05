@@ -188,7 +188,7 @@ config TFM_ITS_VALIDATE_METADATA_FROM_FLASH
 	  Validate filesystem metadata every time it is read from flash
 
 config TFM_ITS_MAX_ASSET_SIZE
-	range 512 4096
+	range 256 4096
 	default 512
 	help
 	  The maximum asset size to be stored in the Internal Trusted Storage. The maximum value
