@@ -502,6 +502,7 @@ static void openthread_handle_received_frame(otInstance *instance,
 					     struct net_pkt *pkt)
 {
 	otRadioFrame recv_frame;
+
 	memset(&recv_frame, 0, sizeof(otRadioFrame));
 
 	recv_frame.mPsdu = net_buf_frag_last(pkt->buffer)->data;
@@ -942,6 +943,7 @@ int8_t otPlatRadioGetRssi(otInstance *aInstance)
 	int error = 0;
 	const uint16_t detection_time = 1;
 	enum ieee802154_hw_caps radio_caps;
+
 	ARG_UNUSED(aInstance);
 
 	radio_caps = radio_api->get_capabilities(radio_dev);
@@ -973,8 +975,8 @@ int8_t otPlatRadioGetRssi(otInstance *aInstance)
 otRadioCaps otPlatRadioGetCaps(otInstance *aInstance)
 {
 	otRadioCaps caps = OT_RADIO_CAPS_NONE;
-
 	enum ieee802154_hw_caps radio_caps;
+
 	ARG_UNUSED(aInstance);
 	__ASSERT(radio_api,
 	    "platformRadioInit needs to be called prior to otPlatRadioGetCaps");

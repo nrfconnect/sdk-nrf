@@ -7,6 +7,8 @@ set(ZEPHYR_COREMARK_KCONFIG   ${CMAKE_CURRENT_LIST_DIR}/coremark/Kconfig)
 set(ZEPHYR_TRUSTED_FIRMWARE_M_KCONFIG ${CMAKE_CURRENT_LIST_DIR}/trusted-firmware-m/Kconfig)
 set(ZEPHYR_AZURE_SDK_FOR_C_KCONFIG ${CMAKE_CURRENT_LIST_DIR}/azure-sdk-for-c/Kconfig)
 set(ZEPHYR_AZURE_SDK_FOR_C_CMAKE_DIR ${CMAKE_CURRENT_LIST_DIR}/azure-sdk-for-c)
+set(ZEPHYR_OPENTHREAD_CMAKE_DIR ${CMAKE_CURRENT_LIST_DIR}/openthread)
+set(ZEPHYR_OPENTHREAD_KCONFIG ${CMAKE_CURRENT_LIST_DIR}/openthread/Kconfig)
 
 # Those are modules with Kconfig tree's inside the module repo but where
 # nRF Connect SDK extend those trees.

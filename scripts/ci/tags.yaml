@@ -275,6 +275,7 @@ ci_samples_openthread:
     - nrf/drivers/hw_cc3xx/
     - nrf/drivers/mpsl/
     - nrf/modules/nrfxlib/nrf_802154/
+    - nrf/modules/openthread/
     - nrf/samples/openthread/
     - nrf/subsys/ieee802154/
     - nrf/subsys/mpsl/
@@ -290,7 +291,6 @@ ci_samples_openthread:
     - nrfxlib/openthread/
     - zephyr/include/zephyr/net/
     - zephyr/modules/mbedtls/
-    - zephyr/modules/openthread/
     - zephyr/soc/nordic/
     - zephyr/subsys/net/
     - zephyr/subsys/settings/
@@ -1461,6 +1461,7 @@ ci_applications_protocols_serialization:
     - nrf/applications/protocols_serialization/
     - nrf/drivers/mpsl/
     - nrf/modules/nrfxlib/nrf_802154/
+    - nrf/modules/openthread/
     - nrf/subsys/bluetooth/
     - nrf/subsys/ieee802154/
     - nrf/subsys/logging/
@@ -1473,7 +1474,6 @@ ci_applications_protocols_serialization:
     - nrfxlib/nrf_802154/
     - nrfxlib/nrf_rpc/
     - zephyr/drivers/ieee802154/
-    - zephyr/modules/openthread/
     - zephyr/subsys/bluetooth/
     - zephyr/subsys/net/
     - zephyr/subsys/retention/

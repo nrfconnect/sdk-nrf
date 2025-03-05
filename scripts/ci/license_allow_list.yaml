@@ -48,6 +48,7 @@ Apache-2.0: |
   ^nrf/tests/bluetooth/tester/src/bttester.c$
   ^nrf/subsys/nrf_security/src/legacy
   ^nrf/modules/trusted-firmware-m/fault.c
+  ^nrf/modules/openthread/
   ^nrf/samples/net/http_server/src/main.c
   ^nrf/tests/subsys/suit/common/tls_config/user-tls-conf.h
 curl: "^nrf/ext/"
