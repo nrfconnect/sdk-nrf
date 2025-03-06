@@ -81,6 +81,7 @@ static volatile uint8_t ce_vios_count;
 static volatile uint8_t ce_vios[DEVICES_MAX];
 static volatile uint8_t data_vios_count;
 static volatile uint8_t data_vios[DATA_PINS_MAX];
+static volatile uint8_t clk_vio;
 static volatile nrfe_mspi_dev_config_t nrfe_mspi_devices[DEVICES_MAX];
 static volatile nrfe_mspi_xfer_config_t nrfe_mspi_xfer_config;
 static volatile nrfe_mspi_xfer_config_t *nrfe_mspi_xfer_config_ptr = &nrfe_mspi_xfer_config;
@@ -191,22 +192,22 @@ static void configure_clock(enum mspi_cpp_mode cpp_mode)
 	switch (cpp_mode) {
 	case MSPI_CPP_MODE_0: {
 		vio_config.clk_polarity = 0;
-		WRITE_BIT(out, pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER], VPRCSR_NORDIC_OUT_LOW);
+		WRITE_BIT(out, clk_vio, VPRCSR_NORDIC_OUT_LOW);
 		break;
 	}
 	case MSPI_CPP_MODE_1: {
 		vio_config.clk_polarity = 1;
-		WRITE_BIT(out, pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER], VPRCSR_NORDIC_OUT_LOW);
+		WRITE_BIT(out, clk_vio, VPRCSR_NORDIC_OUT_LOW);
 		break;
 	}
 	case MSPI_CPP_MODE_2: {
 		vio_config.clk_polarity = 1;
-		WRITE_BIT(out, pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER], VPRCSR_NORDIC_OUT_HIGH);
+		WRITE_BIT(out, clk_vio, VPRCSR_NORDIC_OUT_HIGH);
 		break;
 	}
 	case MSPI_CPP_MODE_3: {
 		vio_config.clk_polarity = 0;
-		WRITE_BIT(out, pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER], VPRCSR_NORDIC_OUT_HIGH);
+		WRITE_BIT(out, clk_vio, VPRCSR_NORDIC_OUT_HIGH);
 		break;
 	}
 	}
@@ -240,7 +241,7 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile uint
 	xfer_params.cpp_mode = device->cpp;
 	xfer_params.ce_polarity = device->ce_polarity;
 	xfer_params.bus_widths = io_modes[device->io_mode];
-	xfer_params.clk_vio = pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER];
+	xfer_params.clk_vio = clk_vio;
 
 	/* Fix position of command and address if command/address length is < BITS_IN_WORD,
 	 * so that leading zeros would not be printed instead of data bits.
@@ -371,12 +372,9 @@ static void config_pins(nrfe_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 				  VPRCSR_NORDIC_DIR_INPUT);
 			data_vios_count++;
 		} else if (fun == NRF_FUN_SDP_MSPI_SCK) {
-			WRITE_BIT(xfer_params.tx_direction_mask,
-				  pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER],
-				  VPRCSR_NORDIC_DIR_OUTPUT);
-			WRITE_BIT(xfer_params.rx_direction_mask,
-				  pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER],
-				  VPRCSR_NORDIC_DIR_OUTPUT);
+			clk_vio = pin_to_vio_map[pin_number];
+			WRITE_BIT(xfer_params.tx_direction_mask, clk_vio, VPRCSR_NORDIC_DIR_OUTPUT);
+			WRITE_BIT(xfer_params.rx_direction_mask, clk_vio, VPRCSR_NORDIC_DIR_OUTPUT);
 		}
 	}
 	nrf_vpr_csr_vio_dir_set(xfer_params.tx_direction_mask);
