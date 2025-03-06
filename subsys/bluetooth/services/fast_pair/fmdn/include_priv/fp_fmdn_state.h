@@ -67,12 +67,6 @@ uint8_t fp_fmdn_state_ecc_type_encode(void);
  */
 int8_t fp_fmdn_state_tx_power_encode(void);
 
-/** Check if the beacon is provisioned with the Ephemeral Identity Key (EIK).
- *
- * @return True if the beacon is provisioned with the EIK, False Otherwise.
- */
-bool fp_fmdn_state_is_provisioned(void);
-
 /** Provision or unprovision the beacon with the Ephemeral Identity Key (EIK).
  *
  * @param[in] eik Ephemeral Identity Key (EIK).

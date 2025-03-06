@@ -452,7 +452,7 @@ static bool fmdn_adv_rpa_expired(struct bt_le_ext_adv *adv)
 
 	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
 
-	if (!fp_fmdn_state_is_provisioned()) {
+	if (!bt_fast_pair_fmdn_is_provisioned()) {
 		/* Keep the RPA in the valid state to ensure that the RPA expired callback will be
 		 * received on a forced RPA rotation during the FMDN provisioning operation (and
 		 * just before the start of the FMDN advertising). The RPA expired callback will
@@ -508,7 +508,7 @@ static void fmdn_adv_connected(struct bt_le_ext_adv *adv,
 	fmdn_conns[bt_conn_index(info->conn)] = true;
 	fmdn_conn_cnt++;
 
-	if (!fp_fmdn_state_is_provisioned()) {
+	if (!bt_fast_pair_fmdn_is_provisioned()) {
 		return;
 	}
 
@@ -745,7 +745,7 @@ static void fmdn_disconnected(struct bt_conn *conn, uint8_t reason)
 	fmdn_conns[bt_conn_index(conn)] = false;
 	fmdn_conn_cnt--;
 
-	if (!fp_fmdn_state_is_provisioned()) {
+	if (!bt_fast_pair_fmdn_is_provisioned()) {
 		/* FMDN is unprovisioned. */
 		return;
 	}
@@ -787,7 +787,7 @@ static int fmdn_utp_mode_state_set(bool activated, uint8_t *control_flags)
 
 	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
 
-	if (!fp_fmdn_state_is_provisioned()) {
+	if (!bt_fast_pair_fmdn_is_provisioned()) {
 		return -EINVAL;
 	}
 
@@ -857,7 +857,7 @@ bool fp_fmdn_state_utp_mode_ring_auth_skip(void)
 {
 	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
 
-	if (!fp_fmdn_state_is_provisioned()) {
+	if (!bt_fast_pair_fmdn_is_provisioned()) {
 		return false;
 	}
 
@@ -872,7 +872,7 @@ int fp_fmdn_state_eid_read(uint8_t *eid)
 {
 	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
 
-	if (!fp_fmdn_state_is_provisioned()) {
+	if (!bt_fast_pair_fmdn_is_provisioned()) {
 		return -EINVAL;
 	}
 
@@ -887,7 +887,7 @@ int fp_fmdn_state_eik_read(uint8_t *eik)
 
 	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
 
-	if (!fp_fmdn_state_is_provisioned()) {
+	if (!bt_fast_pair_fmdn_is_provisioned()) {
 		return -EINVAL;
 	}
 
@@ -942,9 +942,14 @@ int8_t fp_fmdn_state_tx_power_encode(void)
 	return calibrated_tx_power;
 }
 
-bool fp_fmdn_state_is_provisioned(void)
+bool bt_fast_pair_fmdn_is_provisioned(void)
 {
 	int ret;
+
+	if (!bt_fast_pair_is_ready()) {
+		LOG_WRN("FMDN State: checking provisioning state with disabled Fast Pair");
+		return false;
+	}
 
 	ret = fp_storage_eik_is_provisioned();
 	__ASSERT_NO_MSG(ret >= 0);
@@ -1005,7 +1010,7 @@ static int fmdn_unprovision(void)
 {
 	int err;
 
-	if (!fp_fmdn_state_is_provisioned()) {
+	if (!bt_fast_pair_fmdn_is_provisioned()) {
 		/* Ignore the request and stay in the unprovisioned state. */
 		return 0;
 	}
@@ -1100,7 +1105,7 @@ static int fmdn_new_provision(void)
 static int fmdn_provision(const uint8_t *eik)
 {
 	int err;
-	bool was_provisioned = fp_fmdn_state_is_provisioned();
+	bool was_provisioned = bt_fast_pair_fmdn_is_provisioned();
 
 	__ASSERT_NO_MSG(eik);
 
@@ -1164,7 +1169,7 @@ int bt_fast_pair_fmdn_adv_param_set(
 			new_param_valid = false;
 		}
 
-		if ((fmdn_conn_cnt < FMDN_MAX_CONN) && fp_fmdn_state_is_provisioned()) {
+		if ((fmdn_conn_cnt < FMDN_MAX_CONN) && bt_fast_pair_fmdn_is_provisioned()) {
 			int adv_start_err;
 
 			adv_start_err = fmdn_adv_start();
@@ -1216,11 +1221,8 @@ static void fmdn_post_init_work_handle(struct k_work *work)
 {
 	bool is_provisioned;
 
-	/* Check provisioning state. */
-	is_provisioned = fp_fmdn_state_is_provisioned();
-
-	/* Notify the user about the initial provisioning state. */
-	fp_fmdn_callbacks_provisioning_state_changed_notify(is_provisioned);
+	/* Check the provisioning state. */
+	is_provisioned = bt_fast_pair_fmdn_is_provisioned();
 
 	if (is_provisioned) {
 		int err;

@@ -165,7 +165,7 @@ int bt_fast_pair_fmdn_read_mode_enter(enum bt_fast_pair_fmdn_read_mode mode)
 		return -EINVAL;
 	}
 
-	if (!fp_fmdn_state_is_provisioned()) {
+	if (!bt_fast_pair_fmdn_is_provisioned()) {
 		return -EACCES;
 	}
 
@@ -185,7 +185,7 @@ int fp_fmdn_read_mode_recovery_mode_request(bool *accepted)
 {
 	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
 
-	if (!fp_fmdn_state_is_provisioned()) {
+	if (!bt_fast_pair_fmdn_is_provisioned()) {
 		return -EACCES;
 	}
 
