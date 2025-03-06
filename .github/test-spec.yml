@@ -623,6 +623,7 @@
   - "subsys/event_manager_proxy/**/*"
   - "samples/zephyr/drivers/audio/**/*"
   - "samples/zephyr/drivers/i2c/**/*"
+  - "samples/zephyr/boards/nordic/**/*"
   - "samples/ipc/**/*"
   - "samples/event_manager_proxy/**/*"
   - "samples/peripheral/lpuart/**/*"
