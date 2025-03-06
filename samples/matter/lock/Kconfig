@@ -166,10 +166,13 @@ config TRUSTED_STORAGE_BACKEND_AEAD_MAX_DATA_SIZE
 	default 3072
 
 config OPENTHREAD_THREAD_STACK_SIZE
-	default 5120
+	default 7168
 
 config CHIP_TASK_STACK_SIZE
-	default 9216
+	default 10240
+
+config MAIN_STACK_SIZE
+	default 7168
 
 endif
 
