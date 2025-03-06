@@ -49,7 +49,7 @@ typedef struct {
 	enum mspi_cpp_mode cpp;
 	uint8_t ce_index;
 	enum mspi_ce_polarity ce_polarity;
-	uint32_t freq;
+	uint16_t cnt0_value;
 } nrfe_mspi_dev_config_t;
 
 typedef struct {

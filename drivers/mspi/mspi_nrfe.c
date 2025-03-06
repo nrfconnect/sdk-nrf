@@ -21,11 +21,12 @@ LOG_MODULE_REGISTER(mspi_nrfe, CONFIG_MSPI_LOG_LEVEL);
 #include <hal/nrf_gpio.h>
 #include <drivers/mspi/nrfe_mspi.h>
 
-#define MSPI_NRFE_NODE	   DT_DRV_INST(0)
-#define MAX_TX_MSG_SIZE	   (DT_REG_SIZE(DT_NODELABEL(sram_tx)))
-#define MAX_RX_MSG_SIZE	   (DT_REG_SIZE(DT_NODELABEL(sram_rx)))
-#define IPC_TIMEOUT_MS	   100
-#define EP_SEND_TIMEOUT_MS 10
+#define MSPI_NRFE_NODE		 DT_DRV_INST(0)
+#define MAX_TX_MSG_SIZE		 (DT_REG_SIZE(DT_NODELABEL(sram_tx)))
+#define MAX_RX_MSG_SIZE		 (DT_REG_SIZE(DT_NODELABEL(sram_rx)))
+#define IPC_TIMEOUT_MS		 100
+#define EP_SEND_TIMEOUT_MS	 10
+#define CNT0_TOP_CALCULATE(freq) (NRFX_CEIL_DIV(SystemCoreClock, freq * 2) - 1)
 
 #define SDP_MPSI_PINCTRL_DEV_CONFIG_INIT(node_id)                                                  \
 	{                                                                                          \
@@ -439,6 +440,12 @@ static int api_dev_config(const struct device *dev, const struct mspi_dev_id *de
 				drv_cfg->mspicfg.max_freq);
 			return -EINVAL;
 		}
+
+		if (CNT0_TOP_CALCULATE(cfg->freq) > UINT16_MAX) {
+			LOG_ERR("Invalid frequency: %u. MIN: %u", cfg->freq,
+				NRFX_CEIL_DIV(drv_cfg->mspicfg.max_freq, UINT16_MAX));
+			return -EINVAL;
+		}
 	}
 
 	if (param_mask & MSPI_DEVICE_CONFIG_IO_MODE) {
@@ -467,7 +474,7 @@ static int api_dev_config(const struct device *dev, const struct mspi_dev_id *de
 	mspi_dev_config_msg.dev_config.io_mode = cfg->io_mode;
 	mspi_dev_config_msg.dev_config.cpp = cfg->cpp;
 	mspi_dev_config_msg.dev_config.ce_polarity = cfg->ce_polarity;
-	mspi_dev_config_msg.dev_config.freq = cfg->freq;
+	mspi_dev_config_msg.dev_config.cnt0_value = CNT0_TOP_CALCULATE(cfg->freq);
 	mspi_dev_config_msg.dev_config.ce_index = cfg->ce_num;
 
 	return send_data(NRFE_MSPI_CONFIG_DEV, (void *)&mspi_dev_config_msg,
