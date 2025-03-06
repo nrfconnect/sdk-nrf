@@ -36,4 +36,16 @@ config MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST
 	  ensuring it operates at a frequency that prevents code execution being
 	  too slow. This is crucial to meet meet radio protocols requirements.
 
+config MPSL_EXT_CLK_CTRL_LFCLK_REQ_TIMEOUT_ALLOW
+	bool "Enables a workaround for LFCLK request timeout"
+	depends on SOC_SERIES_NRF54HX
+	default y
+	help
+	  This option enables a workaround in MPSL external clock control
+	  integration layer, to ignore the -NRF_ETIMEDOUT response for LFCLK
+	  request. This workaround is safe to use for cases where there is no
+	  other clock requests in the radio core FW or available requests are
+	  for a clock with better accuracy than the one requested by the MPSL.
+	  It is user responsibility to make sure these requirements are fulfilled.
+
 endif # MPSL_USE_EXTERNAL_CLOCK_CONTROL
