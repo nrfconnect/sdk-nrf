@@ -22,12 +22,10 @@ choice LIBC_IMPLEMENTATION
 	  Use minimal libc implementation to reduce memory footprint.
 endchoice
 
-config LTO
+config DESKTOP_LTO_DEFAULTS
+	bool
 	default y
-	help
-	  nRF Desktop enables LTO to limit memory usage and improve performance.
-
-config ISR_TABLES_LOCAL_DECLARATION
-	default y
+	imply LTO
+	imply ISR_TABLES_LOCAL_DECLARATION
 	help
 	  nRF Desktop enables LTO to limit memory usage and improve performance.
