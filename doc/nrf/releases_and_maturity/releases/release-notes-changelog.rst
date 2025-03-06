@@ -159,14 +159,13 @@ Matter
 * Added:
 
   * A new documentation page :ref:`ug_matter_group_communication` in the :ref:`ug_matter_intro_overview`.
-  * A new section :ref:`ug_matter_creating_accessory_vendor_cluster` in the :ref:`ug_matter_creating_accessory` page.
+  * A new :ref:`ug_matter_creating_custom_cluster` guide page.
   * A description for the new :ref:`ug_matter_gs_tools_matter_west_commands_append` within the :ref:`ug_matter_gs_tools_matter_west_commands` page.
   * New arguments to the :ref:`ug_matter_gs_tools_matter_west_commands_zap_tool_gui` to provide a custom cache directory and add new clusters to Matter Data Model.
   * :ref:`ug_matter_debug_snippet`.
   * Storing Matter key materials in the :ref:`matter_platforms_security_kmu`.
 
 * Disabled the :ref:`mpsl` before performing factory reset to speed up the process.
-* Moved section :ref:`ug_matter_creating_accessory_vendor_cluster` as a separate :ref:`ug_matter_creating_custom_cluster`
 
 Matter fork
 +++++++++++
