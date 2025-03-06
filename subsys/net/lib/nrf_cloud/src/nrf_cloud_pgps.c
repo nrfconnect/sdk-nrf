@@ -239,11 +239,13 @@ static bool validate_pgps_header(const struct nrf_cloud_pgps_header *header)
 	    (header->prediction_period_min != PREDICTION_PERIOD) ||
 	    (header->prediction_count <= 0) ||
 	    (header->prediction_count > NUM_PREDICTIONS)) {
-		if ((((uint8_t)header->schema_version) == 0xff) &&
-		    (((uint8_t)header->array_type) == 0xff)) {
-			LOG_WRN("Flash is erased.");
+		if ((((uint8_t)header->schema_version) == 0x00) &&
+		    (((uint8_t)header->array_type) == 0x00)) {
+			LOG_WRN("No P-GPS data downloaded yet.");
 		} else {
-			LOG_WRN("One or more fields are wrong");
+			LOG_HEXDUMP_WRN(
+				header,	sizeof(struct nrf_cloud_pgps_header),
+				"P-GPS data corrupted; header:");
 		}
 		return false;
 	}
