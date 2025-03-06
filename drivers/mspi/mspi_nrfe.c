@@ -29,6 +29,16 @@ LOG_MODULE_REGISTER(mspi_nrfe, CONFIG_MSPI_LOG_LEVEL);
 #define EXTREME_DRIVE_FREQ_THRESHOLD 32000000
 #define CNT0_TOP_CALCULATE(freq)     (NRFX_CEIL_DIV(SystemCoreClock, freq * 2) - 1)
 
+#ifdef CONFIG_SOC_NRF54L15
+
+#define NRFE_MSPI_PORT_NUMBER	 2 /* Physical port number */
+#define NRFE_MSPI_SCK_PIN_NUMBER 1 /* Physical pin number on port 2 */
+
+#define NRFE_MSPI_DATA_LINE_CNT_MAX 8
+#else
+#error "Unsupported SoC for SDP MSPI"
+#endif
+
 #define SDP_MPSI_PINCTRL_DEV_CONFIG_INIT(node_id)                                                  \
 	{                                                                                          \
 		.reg = PINCTRL_REG_NONE,                                                           \
@@ -310,6 +320,75 @@ static int send_data(nrfe_mspi_opcode_t opcode, const void *data, size_t len)
 	return rc;
 }
 
+static int check_pin_assignments(const struct pinctrl_state *state)
+{
+	uint8_t data_pins[NRFE_MSPI_DATA_LINE_CNT_MAX];
+	uint8_t data_pins_cnt = 0;
+	uint8_t cs_pins[NRFE_MSPI_PINS_MAX];
+	uint8_t cs_pins_cnt = 0;
+	uint32_t psel = 0;
+
+	for (uint8_t i = 0; i < state->pin_cnt; i++) {
+		psel = NRF_GET_PIN(state->pins[i]);
+		if (NRF_PIN_NUMBER_TO_PORT(psel) != NRFE_MSPI_PORT_NUMBER) {
+			LOG_ERR("Wrong port number. Only %d port is supported.",
+				NRFE_MSPI_PORT_NUMBER);
+			return -ENOTSUP;
+		}
+		switch (NRF_GET_FUN(state->pins[i])) {
+		case NRF_FUN_SDP_MSPI_DQ0:
+		case NRF_FUN_SDP_MSPI_DQ1:
+		case NRF_FUN_SDP_MSPI_DQ2:
+		case NRF_FUN_SDP_MSPI_DQ3:
+		case NRF_FUN_SDP_MSPI_DQ4:
+		case NRF_FUN_SDP_MSPI_DQ5:
+		case NRF_FUN_SDP_MSPI_DQ6:
+		case NRF_FUN_SDP_MSPI_DQ7:
+			data_pins[data_pins_cnt] = NRF_PIN_NUMBER_TO_PIN(psel);
+			data_pins_cnt++;
+			break;
+		case NRF_FUN_SDP_MSPI_CS0:
+		case NRF_FUN_SDP_MSPI_CS1:
+		case NRF_FUN_SDP_MSPI_CS2:
+		case NRF_FUN_SDP_MSPI_CS3:
+		case NRF_FUN_SDP_MSPI_CS4:
+			cs_pins[cs_pins_cnt] = NRF_PIN_NUMBER_TO_PIN(psel);
+			cs_pins_cnt++;
+			break;
+		case NRF_FUN_SDP_MSPI_SCK:
+			if (NRF_PIN_NUMBER_TO_PIN(psel) != NRFE_MSPI_SCK_PIN_NUMBER) {
+				LOG_ERR("Clock signal only supported on pin %d.%d",
+					NRFE_MSPI_PORT_NUMBER, NRFE_MSPI_SCK_PIN_NUMBER);
+				return -ENOTSUP;
+			}
+			break;
+		default:
+			LOG_ERR("Not supported pin function: %d", NRF_GET_FUN(state->pins[i]));
+			return -ENOTSUP;
+		}
+	}
+
+	if (cs_pins_cnt == 0) {
+		LOG_ERR("No CS pin defined.");
+		return -EINVAL;
+	}
+
+	for (uint8_t i = 0; i < cs_pins_cnt; i++) {
+		for (uint8_t j = 0; j < data_pins_cnt; j++) {
+			if (cs_pins[i] == data_pins[j]) {
+				LOG_ERR("CS pin cannot be the same as any data line pin.");
+				return -EINVAL;
+			}
+		}
+		if (cs_pins[i] == NRFE_MSPI_SCK_PIN_NUMBER) {
+			LOG_ERR("CS pin cannot be the same CLK pin.");
+			return -EINVAL;
+		}
+	}
+
+	return 0;
+}
+
 /**
  * @brief Configures the MSPI controller based on the provided spec.
  *
@@ -326,6 +405,7 @@ static int api_config(const struct mspi_dt_spec *spec)
 	const struct mspi_cfg *config = &spec->config;
 	const struct mspi_nrfe_config *drv_cfg = spec->bus->config;
 	nrfe_mspi_pinctrl_soc_pin_msg_t mspi_pin_config;
+	int ret;
 
 	if (config->op_mode != MSPI_OP_MODE_CONTROLLER) {
 		LOG_ERR("Only MSPI controller mode is supported.");
@@ -361,6 +441,12 @@ static int api_config(const struct mspi_dt_spec *spec)
 		return -ENOTSUP;
 	}
 
+	ret = check_pin_assignments(&drv_cfg->pcfg->states[state_id]);
+
+	if (ret < 0) {
+		return ret;
+	}
+
 	for (uint8_t i = 0; i < drv_cfg->pcfg->states[state_id].pin_cnt; i++) {
 		mspi_pin_config.pin[i] = drv_cfg->pcfg->states[state_id].pins[i];
 	}
@@ -384,6 +470,54 @@ static int check_io_mode(enum mspi_io_mode io_mode)
 		return -ENOTSUP;
 	}
 
+	return 0;
+}
+
+static int check_pins_for_io_mode(const struct pinctrl_state *state, enum mspi_io_mode io_mode)
+{
+	bool d0_defined = false;
+	bool d1_defined = false;
+	uint8_t data_pins_cnt = 0;
+
+	switch (io_mode) {
+	case MSPI_IO_MODE_SINGLE: {
+		for (uint8_t i = 0; i < state->pin_cnt; i++) {
+			if (NRF_GET_FUN(state->pins[i]) == NRF_FUN_SDP_MSPI_DQ0) {
+				d0_defined = true;
+			} else if (NRF_GET_FUN(state->pins[i]) == NRF_FUN_SDP_MSPI_DQ1) {
+				d1_defined = true;
+			}
+		}
+		if (!d0_defined || !d1_defined) {
+			LOG_ERR("IO SINGLE mode requires definitions of D0 and D1 pins.");
+			return -EINVAL;
+		}
+		break;
+	}
+	case MSPI_IO_MODE_QUAD:
+	case MSPI_IO_MODE_QUAD_1_1_4:
+	case MSPI_IO_MODE_QUAD_1_4_4: {
+		for (uint8_t i = 0; i < state->pin_cnt; i++) {
+			switch (NRF_GET_FUN(state->pins[i])) {
+			case NRF_FUN_SDP_MSPI_DQ0:
+			case NRF_FUN_SDP_MSPI_DQ1:
+			case NRF_FUN_SDP_MSPI_DQ2:
+			case NRF_FUN_SDP_MSPI_DQ3:
+				data_pins_cnt++;
+				break;
+			default:
+				break;
+			}
+		}
+		if (data_pins_cnt < 4) {
+			LOG_ERR("Not enough data pins for QUAD mode: %d", data_pins_cnt);
+			return -EINVAL;
+		}
+		break;
+	}
+	default:
+		break;
+	}
 	return 0;
 }
 
@@ -455,6 +589,11 @@ static int api_dev_config(const struct device *dev, const struct mspi_dev_id *de
 
 	if (param_mask & MSPI_DEVICE_CONFIG_IO_MODE) {
 		rc = check_io_mode(cfg->io_mode);
+		if (rc < 0) {
+			return rc;
+		}
+		rc = check_pins_for_io_mode(&drv_cfg->pcfg->states[PINCTRL_STATE_DEFAULT],
+					    cfg->io_mode);
 		if (rc < 0) {
 			return rc;
 		}
