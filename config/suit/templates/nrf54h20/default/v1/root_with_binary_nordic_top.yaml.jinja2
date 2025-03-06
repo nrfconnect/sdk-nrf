@@ -8,7 +8,7 @@
 # depending on which components are defined in the input context and which payloads
 # are included/detached from the envelope.
 # This manifest will only be installed if the SoC Binaries (nordic_top envelope) installed
-# in the device have a semantic version of at least 0.8.0.
+# in the device have a semantic version of at least MIN_NORDIC_TOP_VERSION (by default 0.8.0).
 # If a partial update (only radio or only application) needs to be performed,
 # several rules are enforced:
 # - If the candidate only contains the radio core image, it is ensured that
@@ -29,6 +29,9 @@
 {% set RAD_LOCAL_1_VERSION_MAJOR = ( RAD_LOCAL_1_VERSION.split('.')[0] | int ) %}
 {%- else %}
 {% set RAD_LOCAL_1_VERSION_MAJOR = 0 %}
+{%- endif %}
+{%- if not MIN_NORDIC_TOP_VERSION is defined %}
+  {%- set MIN_NORDIC_TOP_VERSION = "0.8.0" %}
 {%- endif %}
 {%- if 'SB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY' in sysbuild['config'] and sysbuild['config']['SB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY'] != '' %}
   {%- set nordic_top = True %}
@@ -273,11 +276,9 @@ SUIT_Envelope_Tagged:
 
     suit-candidate-verification:
     - suit-directive-set-component-index: {{ top_component_index }}
-    # The version check below should be modified if a different installed SoC Binaries version
-    # is required for the update.
     - suit-directive-override-parameters:
         suit-parameter-version:
-          suit-condition-version-comparison-greater-equal: 0.8.0
+          suit-condition-version-comparison-greater-equal: {{ MIN_NORDIC_TOP_VERSION }}
     - suit-condition-version:
       - suit-send-record-success
       - suit-send-record-failure
