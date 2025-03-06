@@ -313,6 +313,7 @@ void hci_ecdh_uninit(void)
 {
 #if !defined(CONFIG_BT_CTLR_ECDH_IN_MPSL_WORK)
 	k_thread_abort(&ecdh_thread_data);
+	atomic_set(&cmd, 0);
 #endif /* !defined(CONFIG_BT_CTLR_ECDH_IN_MPSL_WORK) */
 }
 
