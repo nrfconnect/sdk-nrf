@@ -538,17 +538,18 @@ struct bt_fast_pair_fmdn_info_cb {
 	/** @brief Indicate provisioning state changes.
 	 *
 	 *  This callback is called to indicate that the FMDN accessory has been
-	 *  successfully provisioned or unprovisioned.
+	 *  successfully provisioned or unprovisioned by the connected Bluetooth
+	 *  peer.
 	 *
-	 *  This callback also reports the initial provisioning state when the
-	 *  user enables Fast Pair with the @ref bt_fast_pair_enable API.
+	 *  This callback does not report the initial provisioning state when the
+	 *  user enables Fast Pair with the @ref bt_fast_pair_enable API. To check
+	 *  the initial state, use the @ref bt_fast_pair_fmdn_is_provisioned API.
 	 *
-	 *  The first callback is executed in the workqueue context after the
-	 *  @ref bt_fast_pair_enable function call. Subsequent callbacks are
-	 *  also executed in the cooperative thread context. You can learn about
-	 *  the exact thread context by analyzing the @kconfig{CONFIG_BT_RECV_CONTEXT}
-	 *  configuration choice. By default, this callback is executed in the
-	 *  Bluetooth-specific workqueue thread (@kconfig{CONFIG_BT_RECV_WORKQ_BT}).
+	 *  This callback is executed in the cooperative thread context. You
+	 *  can learn about the exact thread context by analyzing the
+	 *  @kconfig{CONFIG_BT_RECV_CONTEXT} configuration choice. By default, this
+	 *  callback is executed in the Bluetooth-specific workqueue thread
+	 *  (@kconfig{CONFIG_BT_RECV_WORKQ_BT}).
 	 *
 	 *  @param provisioned true if the accessory has been successfully provisioned.
 	 *                     false if the accessory has been successfully unprovisioned.
@@ -558,6 +559,20 @@ struct bt_fast_pair_fmdn_info_cb {
 	/** Internally used field for list handling. */
 	sys_snode_t node;
 };
+
+/** @brief Check the FMDN provisioning state.
+ *
+ *  This function can be used to synchronously check the FMDN provisioning state.
+ *  To track the provisioning state asynchronously, use the
+ *  @ref bt_fast_pair_fmdn_info_cb.provisioning_state_changed callback.
+ *
+ *  The function shall only be used after the Fast Pair module is enabled with the
+ *  @ref bt_fast_pair_enable API. In the disabled state, this function always returns
+ *  false.
+ *
+ *  @return True if the device is provisioned, false otherwise.
+ */
+bool bt_fast_pair_fmdn_is_provisioned(void);
 
 /** @brief Register the information callbacks in the FMDN module.
  *

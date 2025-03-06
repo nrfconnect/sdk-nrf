@@ -324,6 +324,7 @@ static void fp_advertising_update(void)
 static void fp_adv_connected(struct bt_le_ext_adv *adv, struct bt_le_ext_adv_connected_info *info)
 {
 	__ASSERT_NO_MSG(!fp_conn);
+	__ASSERT_NO_MSG(fp_adv_set);
 
 	fp_adv_set_active = false;
 	fp_adv_state_changed_notify(fp_adv_set_active);
@@ -344,9 +345,13 @@ static bool fp_adv_rpa_expired(struct bt_le_ext_adv *adv)
 	__ASSERT_NO_MSG(!k_is_preempt_thread());
 	__ASSERT_NO_MSG(!k_is_in_isr());
 
-	__ASSERT_NO_MSG(is_enabled);
+	__ASSERT_NO_MSG(fp_adv_set);
 
 	LOG_INF("Fast Pair: RPA expired");
+
+	if (!fp_adv_set_active) {
+		LOG_INF("Fast Pair: RPA rotation in the inactive advertising state");
+	}
 
 	if (!uptime) {
 		uptime = k_uptime_get();
@@ -368,6 +373,18 @@ static bool fp_adv_rpa_expired(struct bt_le_ext_adv *adv)
 		} else {
 			LOG_INF("Fast Pair: setting RPA timeout to %d [s]",
 				next_rpa_timeout);
+		}
+	} else {
+		if (!fp_adv_set_active) {
+			/* Keep the RPA in the valid state to ensure that the RPA expired callback
+			 * will be received on a forced RPA rotation during the FMDN unprovisioning
+			 * operation. The forced RPA rotation allows the Fast Pair advertising set
+			 * to take control from the FMDN advertising set over the RPA timeout. The
+			 * RPA expired callback will not be received if any RPA rotation was
+			 * previously allowed here in the provisioned state and with inactive Fast
+			 * Pair advertising set.
+			 */
+			expire_rpa = false;
 		}
 	}
 
@@ -392,6 +409,25 @@ static bool fp_adv_rpa_expired(struct bt_le_ext_adv *adv)
 	}
 
 	return expire_rpa;
+}
+
+static int fp_adv_set_rotate(void)
+{
+	int err;
+	struct bt_le_oob oob;
+
+	__ASSERT(fp_adv_set, "Fast Pair: invalid state of the advertising set");
+
+	/* Force the RPA rotation to synchronize the Fast Pair advertising
+	 * payload with its RPA address using rpa_expired callback.
+	 */
+	err = bt_le_oob_get_local(fp_adv_param.id, &oob);
+	if (err) {
+		LOG_ERR("Fast Pair: bt_le_oob_get_local failed: %d", err);
+		return err;
+	}
+
+	return 0;
 }
 
 static int fp_adv_set_setup(void)
@@ -502,16 +538,7 @@ static void fp_adv_provisioning_state_changed(bool provisioned)
 	}
 
 	if (!provisioned) {
-		int err;
-		struct bt_le_oob oob;
-
-		/* Force the RPA rotation to synchronize the Fast Pair advertising
-			* payload with its RPA address using rpa_expired callback.
-			*/
-		err = bt_le_oob_get_local(fp_adv_param.id, &oob);
-		if (err) {
-			LOG_ERR("Fast Pair: bt_le_oob_get_local failed: %d", err);
-		}
+		(void) fp_adv_set_rotate();
 	} else {
 		fp_adv_rpa_suspension_cancel();
 	}
@@ -688,13 +715,23 @@ int app_fp_adv_enable(void)
 		return 0;
 	}
 
+	fp_account_key_present = bt_fast_pair_has_account_key();
+	fmdn_provisioned = bt_fast_pair_fmdn_is_provisioned();
+
 	err = fp_adv_set_setup();
 	if (err) {
 		LOG_ERR("Fast Pair: fp_adv_set_setup failed (err %d)", err);
 		return err;
 	}
 
-	fp_account_key_present = bt_fast_pair_has_account_key();
+	if (!fmdn_provisioned) {
+		err = fp_adv_set_rotate();
+		if (err) {
+			LOG_ERR("Fast Pair: fp_adv_set_rotate failed: %d", err);
+			(void) fp_adv_set_teardown();
+			return err;
+		}
+	}
 
 	fp_adv_mode_update();
 
