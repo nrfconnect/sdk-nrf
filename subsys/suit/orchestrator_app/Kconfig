@@ -19,4 +19,9 @@ config SUIT_CLEANUP_ON_INIT
 	depends on SUIT_ORCHESTRATOR_APP_CANDIDATE_PROCESSING
 	default y
 
+config SUIT_NORDIC_TOP_INDEPENDENT_UPDATE_FORBIDDEN
+	bool "Disallow independent update of the Nordic Top envelope (not as part of the root envelope)"
+	depends on SUIT_ORCHESTRATOR_APP_CANDIDATE_PROCESSING
+	depends on SUIT_PROCESSOR
+
 endif # SUIT_ORCHESTRATOR_APP

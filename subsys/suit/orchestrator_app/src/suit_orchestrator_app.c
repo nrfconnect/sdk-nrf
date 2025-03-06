@@ -19,6 +19,7 @@
 #include <sdfw/sdfw_services/suit_service.h>
 #include <suit_envelope_info.h>
 #include <suit_plat_mem_util.h>
+#include <suit_plat_decode_util.h>
 #if CONFIG_SUIT_CACHE_RW
 #include <suit_dfu_cache_rw.h>
 #endif
@@ -63,6 +64,40 @@ static int dfu_partition_erase(void)
 }
 
 #endif /* CONFIG_SUIT_ORCHESTRATOR_APP_CANDIDATE_PROCESSING */
+
+#if CONFIG_SUIT_NORDIC_TOP_INDEPENDENT_UPDATE_FORBIDDEN
+static int nordic_top_disallowed_check(uint8_t *candidate_envelope_address,
+				       size_t candidate_envelope_size)
+{
+	int err = 0;
+	struct zcbor_string manifest_component_id = {
+		.value = NULL,
+		.len = 0,
+	};
+	suit_manifest_class_id_t *candidate_class_id = NULL;
+	suit_ssf_manifest_class_info_t nordic_top_class_info;
+
+	err = suit_processor_get_manifest_metadata(
+		candidate_envelope_address, candidate_envelope_size, false, &manifest_component_id,
+		NULL, NULL, NULL, NULL, NULL);
+
+	if (suit_plat_decode_manifest_class_id(&manifest_component_id, &candidate_class_id) !=
+	    SUIT_PLAT_SUCCESS) {
+		LOG_ERR("Component ID of candidate is not a manifest class");
+		return SUIT_ERR_UNSUPPORTED_COMPONENT_ID;
+	}
+
+	suit_get_supported_manifest_info(SUIT_MANIFEST_SEC_TOP, &nordic_top_class_info);
+
+	if (suit_metadata_uuid_compare(candidate_class_id, &nordic_top_class_info.class_id) ==
+	    SUIT_PLAT_SUCCESS) {
+		LOG_ERR("Nordic top manifest class ID is not allowed in the update candidate");
+		return -EACCES;
+	}
+
+	return 0;
+}
+#endif /* CONFIG_SUIT_NORDIC_TOP_INDEPENDENT_UPDATE_FORBIDDEN */
 
 int suit_dfu_initialize(void)
 {
@@ -181,6 +216,14 @@ int suit_dfu_candidate_preprocess(void)
 
 	LOG_INF("Update candidate envelope detected, addr: %p, size %d bytes",
 		(void *)candidate_envelope_address, candidate_envelope_size);
+
+#if CONFIG_SUIT_NORDIC_TOP_INDEPENDENT_UPDATE_FORBIDDEN
+	err = nordic_top_disallowed_check(candidate_envelope_address, candidate_envelope_size);
+
+	if (err != 0) {
+		return err;
+	}
+#endif /* CONFIG_SUIT_NORDIC_TOP_INDEPENDENT_UPDATE_FORBIDDEN */
 
 	err = suit_process_sequence(candidate_envelope_address, candidate_envelope_size,
 				    SUIT_SEQ_DEP_RESOLUTION);

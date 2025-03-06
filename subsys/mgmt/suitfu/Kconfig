@@ -15,6 +15,10 @@ menuconfig MGMT_SUITFU
 
 if MGMT_SUITFU
 
+config MGMT_SUITFU_WORKER_STACK_SIZE
+	int "Stack size for the MGMT SUITFU worker thread"
+	default 4096
+
 config MGMT_SUITFU_INITIALIZE_SUIT
 	bool "Initialize the SUIT DFU library on startup"
 	default y

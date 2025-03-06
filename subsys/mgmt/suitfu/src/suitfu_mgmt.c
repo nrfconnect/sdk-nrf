@@ -22,9 +22,7 @@
 
 LOG_MODULE_REGISTER(suitfu_mgmt, CONFIG_MGMT_SUITFU_LOG_LEVEL);
 
-#define SYSTEM_UPDATE_WORKER_STACK_SIZE 2048
-
-static K_THREAD_STACK_DEFINE(system_update_stack_area, SYSTEM_UPDATE_WORKER_STACK_SIZE);
+static K_THREAD_STACK_DEFINE(system_update_stack_area, CONFIG_MGMT_SUITFU_WORKER_STACK_SIZE);
 
 struct system_update_work {
 	struct k_work_delayable work;
