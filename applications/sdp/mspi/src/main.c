@@ -24,7 +24,10 @@
 #define DATA_PINS_MAX 8
 #define VIO_COUNT     11
 
-#define MAX_FREQUENCY 64000000
+#define MAX_FREQUENCY		   64000000
+#define STD_PAD_BIAS_FREQ_TRESHOLD 32000000
+
+#define PAD_BIAS 1
 
 #define MAX_SHIFT_COUNT 63
 
@@ -82,6 +85,31 @@ static NRF_TIMER_Type *fault_timer;
 #endif
 static volatile uint32_t *cpuflpr_error_ctx_ptr =
 	(uint32_t *)DT_REG_ADDR(DT_NODELABEL(cpuflpr_error_code));
+
+static uint16_t cnt0_top_calculate(uint32_t freq)
+{
+	uint16_t dividor_high = UINT16_MAX;
+	uint16_t dividor_low = 1;
+	uint16_t middle;
+
+	if (freq == MAX_FREQUENCY) {
+		return 0;
+	}
+
+	/* Perform binary search for the highest frequency that is smaller than the requested one.
+	 */
+	while ((dividor_high - dividor_low) > 1) {
+		middle = (dividor_high + dividor_low) / 2;
+
+		if (freq < SystemCoreClock / (2 * middle)) {
+			dividor_low = middle;
+		} else {
+			dividor_high = middle;
+		}
+	}
+
+	return dividor_high - 1;
+}
 
 static void adjust_tail(volatile hrt_xfer_data_t *xfer_data, uint16_t frame_width,
 			uint32_t data_length)
@@ -177,7 +205,7 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet)
 	volatile nrfe_mspi_dev_config_t *device =
 		&nrfe_mspi_devices[nrfe_mspi_xfer_config_ptr->device_index];
 
-	xfer_params.counter_value = 4;
+	xfer_params.counter_value = cnt0_top_calculate(device->freq);
 	xfer_params.ce_vio = ce_vios[device->ce_index];
 	xfer_params.ce_hold = nrfe_mspi_xfer_config_ptr->hold_ce;
 	xfer_params.cpp_mode = device->cpp;
@@ -261,7 +289,7 @@ void prepare_and_read_data(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile ui
 		&nrfe_mspi_devices[nrfe_mspi_xfer_config_ptr->device_index];
 	nrf_vpr_csr_vio_config_t config;
 
-	xfer_params.counter_value = 4;
+	xfer_params.counter_value = cnt0_top_calculate(device->freq);
 	xfer_params.ce_vio = ce_vios[device->ce_index];
 	xfer_params.ce_hold = nrfe_mspi_xfer_config_ptr->hold_ce;
 	xfer_params.ce_polarity = device->ce_polarity;
@@ -442,6 +470,14 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		nrfe_mspi_xfer_config = xfer_config->xfer_config;
 #endif
 		configure_clock(nrfe_mspi_devices[nrfe_mspi_xfer_config_ptr->device_index].cpp);
+
+		/* Tune up pad bias for frequencies above 32MHz */
+		if (nrfe_mspi_devices[nrfe_mspi_xfer_config_ptr->device_index].freq >
+		    STD_PAD_BIAS_FREQ_TRESHOLD) {
+			NRF_GPIOHSPADCTRL_Type *padCtrl_s = (NRF_GPIOHSPADCTRL_Type *)NRF_P2_S_BASE;
+			padCtrl_s->BIAS = PAD_BIAS;
+		}
+
 		break;
 	}
 	case NRFE_MSPI_TX:
