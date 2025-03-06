@@ -166,6 +166,7 @@ Matter
   * Storing Matter key materials in the :ref:`matter_platforms_security_kmu`.
 
 * Disabled the :ref:`mpsl` before performing factory reset to speed up the process.
+* Moved section :ref:`ug_matter_creating_accessory_vendor_cluster` as a separate :ref:`ug_matter_creating_custom_cluster`
 
 Matter fork
 +++++++++++

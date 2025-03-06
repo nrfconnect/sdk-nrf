@@ -56,7 +56,7 @@ Custom manufacturer-specific cluster
 ====================================
 
 The sample provides a custom ``NordicDevkit`` cluster, configured in the :file:`src/default_zap/NordicDevKitCluster.xml` file.
-To learn more about adding custom clusters to your Matter application, see the :ref:`ug_matter_creating_accessory_vendor_cluster` section.
+To learn more about adding custom clusters to your Matter application, see the :ref:`ug_matter_creating_custom_cluster` section.
 
 .. _matter_manufacturer_specific_network_mode:
 
