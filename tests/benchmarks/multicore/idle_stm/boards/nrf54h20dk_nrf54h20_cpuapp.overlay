@@ -11,3 +11,7 @@
 &cpuppr_ram3x_region {
 	status = "okay";
 };
+
+&uart136 {
+	zephyr,pm-device-runtime-auto;
+};
