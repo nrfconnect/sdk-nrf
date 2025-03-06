@@ -35,7 +35,7 @@ choice LIBC_IMPLEMENTATION
 endchoice
 
 config NEWLIB_LIBC_NANO
-	default y
+	default y if NEWLIB_LIBC
 
 config NUM_METAIRQ_PRIORITIES
 	default 1
