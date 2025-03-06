@@ -62,8 +62,9 @@ NRF = [
     ("app_dev/board_support/index", "app_dev/board_names"),
     ("config_and_build/board_support/board_names", "app_dev/board_names"), # Board names (moved to top of the hierarchy in v3.0.0)
     ("app_dev/board_support/board_names", "app_dev/board_names"),
-    ("config_and_build/board_support/processing_environments", "security/processing_environments"), # Processing environments (moved under Security in v3.0.0)
-    ("app_dev/board_support/processing_environments", "security/processing_environments"),
+    ("config_and_build/board_support/processing_environments", "security/tfm/processing_environments"), # Processing environments (moved under Security > TF-M in v3.0.0)
+    ("app_dev/board_support/processing_environments", "security/tfm/processing_environments"),
+    ("security/processing_environments", "security/tfm/processing_environments"),
     ("gs_modifying", "app_dev/config_and_build/index"), # Configuring and building (landing)
     ("getting_started/modifying", "app_dev/config_and_build/index"),
     ("config_and_build/modifying", "app_dev/config_and_build/index"),
@@ -291,8 +292,9 @@ NRF = [
     ("app_dev/optimizing/power", "test_and_optimize/optimizing/power"),
     ("security_chapter", "security"), # Security (landing)
     ("security/security", "security"), # Security (subpage -- removed in v2.8.0)
-    ("ug_tfm", "security/tfm"), # Running applications with Trusted Firmware-M
-    ("app_dev/tfm/index", "security/tfm"),
+    ("ug_tfm", "security/tfm/tfm"), # Running applications with Trusted Firmware-M
+    ("app_dev/tfm/index", "security/tfm/tfm"),
+    ("security/tfm", "security/tfm/tfm"),
     ("app_dev/ap_protect/index", "security/ap_protect"), # Enabling access port protection mechanism
     ("ug_ble_controller", "protocols/bt/index"), # Bluetooth LE Controller
     ("protocols/ble/index", "protocols/bt/index"),

@@ -1,7 +1,7 @@
 .. _ug_tfm:
 
-Running applications with Trusted Firmware-M
-############################################
+Configuring applications for Trusted Firmware-M
+###############################################
 
 .. contents::
    :local:
@@ -19,7 +19,8 @@ This is achieved by a set of secure run time services such as Secure Storage, Cr
 Additionally, secure boot through MCUboot in TF-M ensures integrity of runtime software and supports firmware upgrade.
 
 .. note::
-   Support for TF-M with :ref:`minimal version <tfm_minimal_build>` disabled in the |NCS| is currently :ref:`experimental <software_maturity>`.
+   Only the TF-M :ref:`minimal build <tfm_minimal_build>` implementation in the |NCS| is currently :ref:`supported <software_maturity_security_features_tfm>`.
+   Support for TF-M with minimal version *disabled* in the |NCS| is :ref:`experimental <software_maturity_security_features_tfm>`.
 
 For official documentation, see the `TF-M documentation`_.
 
@@ -156,13 +157,13 @@ Following are the available Kconfig options for TF-M partitions:
      - Disabled
      - CRYPTO
 
-Security Partition Manager backend configuration
-------------------------------------------------
+Secure Partition Manager backend configuration
+----------------------------------------------
 
-Security Partition Manager (SPM) backend may also be configured, depending on the isolation requirements of the application.
+TF-M's Secure Partition Manager (SPM) backend may also be configured, depending on the isolation requirements of the application.
 
 .. note::
-    Do not confuse *Security* Partition Manager with *Secure* Partition Manager that was removed in the |NCS| v2.1.0.
+    Do not confuse TF-M's Secure Partition Manager with Secure Partition Manager that was removed in the |NCS| v2.1.0.
     See :ref:`migration guide <spm_to_tfm_migration>`.
 
 .. list-table:: SPM backends
@@ -348,7 +349,8 @@ Following sections describe the available TF-M services and their purpose.
 Platform service
 ================
 
-The platform service provides platform-specific services to other TF-M partitions and to a non-secure application.
+The platform service is the mandatory implementation of the :ref:`ug_tfm_architecture_rot_services_platform`.
+It provides platform-specific services to other TF-M partitions and to a non-secure application.
 To enable the platform service, set the :kconfig:option:`CONFIG_TFM_PARTITION_PLATFORM` Kconfig option.
 
 For user applications :ref:`placed in the Non-Secure Processing Environment <app_boards_spe_nspe_cpuapp_ns>`, you can set the :kconfig:option:`CONFIG_TFM_ALLOW_NON_SECURE_FAULT_HANDLING` Kconfig option, which enables more detailed error descriptions of faults from the application with the Zephyr fault handler.
@@ -370,7 +372,8 @@ For more information about the general features of the TF-M Platform partition, 
 Internal Trusted Storage service
 ================================
 
-The Internal Trusted Storage (ITS) service implements the PSA Internal Trusted Storage APIs (`PSA Certified Secure Storage API 1.0`_) to achieve confidentiality, authenticity and encryption in rest (optional).
+The Internal Trusted Storage (ITS) service is one of :ref:`ug_tfm_architecture_rot_services_platform`.
+It implements the PSA Internal Trusted Storage APIs (`PSA Certified Secure Storage API 1.0`_) to achieve confidentiality, authenticity and encryption in rest (optional).
 
 To enable the ITS service, set the :kconfig:option:`CONFIG_TFM_PARTITION_INTERNAL_TRUSTED_STORAGE` Kconfig option.
 
@@ -454,7 +457,8 @@ It is recommended to test the ITS with the intended assets to ensure that the as
 Crypto service
 ==============
 
-The crypto service implements the PSA Crypto APIs (`PSA Certified Crypto API`_) and provides cryptographic services to other TF-M partitions and to the non-secure application.
+The crypto service is one of :ref:`ug_tfm_architecture_rot_services_platform`.
+It implements the PSA Crypto APIs (`PSA Certified Crypto API`_) and provides cryptographic services to other TF-M partitions and to the non-secure application.
 
 To enable the crypto service, set the :kconfig:option:`CONFIG_TFM_PARTITION_CRYPTO` Kconfig option.
 
@@ -471,7 +475,8 @@ For more information about the general features of the Crypto partition, see `TF
 Protected Storage service
 =========================
 
-The Protected Storage (PS) service implements the PSA Protected Storage APIs (`PSA Certified Secure Storage API 1.0`_).
+The Protected Storage (PS) service is one of possible :ref:`ug_tfm_architecture_rot_services_application`.
+It implements the PSA Protected Storage APIs (`PSA Certified Secure Storage API 1.0`_).
 
 To enable the PS service, set the :kconfig:option:`CONFIG_TFM_PARTITION_PROTECTED_STORAGE` Kconfig option.
 
