@@ -36,6 +36,10 @@ struct clock_onoff_state {
 static struct clock_onoff_state m_lfclk_state = {
 	.m_clock_request_release = m_lfclk_release
 };
+#if defined(CONFIG_MPSL_EXT_CLK_CTRL_LFCLK_REQ_TIMEOUT_ALLOW)
+/* Variable used temporarily until the NCSDK-31169 is fixed */
+static atomic_t m_lfclk_req_timeout;
+#endif /* CONFIG_MPSL_EXT_CLK_CTRL_LFCLK_REQ_TIMEOUT_ALLOW */
 
 #if defined(CONFIG_MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST)
 #define NVM_CLOCK_DT_LABEL DT_NODELABEL(hsfll120)
@@ -139,17 +143,37 @@ static int32_t m_lfclk_wait(void)
 {
 	int err;
 
+#if defined(CONFIG_MPSL_EXT_CLK_CTRL_LFCLK_REQ_TIMEOUT_ALLOW)
+	/* Do not attempt to wait for the LFCLK if there was a timeout reported
+	 * for former requests. Due to NCSDK-31169, we allow for such case,
+	 * assuming there is a LFCLK source selected by sysctrl with accuracy
+	 * that meets radio protocols requirements.
+	 */
+	if (atomic_get(&m_lfclk_req_timeout) == (atomic_val_t) true) {
+		return 0;
+	}
+#endif /* CONFIG_MPSL_EXT_CLK_CTRL_LFCLK_REQ_TIMEOUT_ALLOW */
+
 	err = m_clock_request_wait(&m_lfclk_state,
 				   CONFIG_MPSL_EXT_CLK_CTRL_CLOCK_REQUEST_WAIT_TIMEOUT_MS);
-
-	if (IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF2) && (err == -NRF_ETIMEDOUT)) {
+#if defined(CONFIG_MPSL_EXT_CLK_CTRL_LFCLK_REQ_TIMEOUT_ALLOW)
+	if (err == -NRF_ETIMEDOUT) {
 		/* Due to NCSDK-31169, temporarily allow for LFCLK request to timeout.
 		 * That doens't break anything now because the LFCLK requested clock is
 		 * 500PPM and such LFCLK should be running from boot of the radio core.
 		 */
+		atomic_set(&m_lfclk_req_timeout, (atomic_val_t) true);
+
+		/* Decrement the internal reference counter because the m_lfclk_req_timeout
+		 * takes priority in handling of future request and release calls until
+		 * mpsl_clock_ctrl_uninit() is called.
+		 */
+		atomic_dec(&m_lfclk_state.m_clk_refcnt);
+
 		LOG_WRN("LFCLK could not be started: %d", m_lfclk_state.clk_req_rsp);
 		return 0;
 	}
+#endif /* CONFIG_MPSL_EXT_CLK_CTRL_LFCLK_REQ_TIMEOUT_ALLOW */
 
 	return err;
 }
@@ -304,6 +328,17 @@ static int32_t m_lfclk_request(void)
 	const struct device *lfclk_dev = DEVICE_DT_GET(DT_NODELABEL(lfclk));
 	int err;
 
+#if defined(CONFIG_MPSL_EXT_CLK_CTRL_LFCLK_REQ_TIMEOUT_ALLOW)
+	/* Do not attempt request LFCLK again if there was a timeout resposne
+	 * for past request. Due to NCSDK-31169, we allow for such case
+	 * assuming there is a LFCLK source selected by sysctrl with accuracy
+	 * that meets radio protocols requirements.
+	 */
+	if (atomic_get(&m_lfclk_req_timeout) == (atomic_val_t) true) {
+		return 0;
+	}
+#endif /* CONFIG_MPSL_EXT_CLK_CTRL_LFCLK_REQ_TIMEOUT_ALLOW */
+
 	sys_notify_init_callback(&m_lfclk_state.cli.notify, m_clock_request_cb);
 	k_sem_init(&m_lfclk_state.sem, 0, 1);
 
@@ -322,9 +357,30 @@ static int32_t m_lfclk_release(void)
 	const struct device *lfclk_dev = DEVICE_DT_GET(DT_NODELABEL(lfclk));
 	int err;
 
+#if defined(CONFIG_MPSL_EXT_CLK_CTRL_LFCLK_REQ_TIMEOUT_ALLOW)
+	/* Do not attempt to release the LFCLK if there was a timeout reported
+	 * for a request. The clock driver hasn't got a request registered
+	 * because of the error.
+	 * Due to NCSDK-31169, we allow for such case assuming there is
+	 * a LFCLK source selected by sysctrl with accuracy that meets radio
+	 * protocols requirements.
+	 */
+	if (atomic_get(&m_lfclk_req_timeout) == (atomic_val_t) true) {
+		return 0;
+	}
+#endif /* CONFIG_MPSL_EXT_CLK_CTRL_LFCLK_REQ_TIMEOUT_ALLOW */
+
+
 	err = nrf_clock_control_cancel_or_release(lfclk_dev, &m_lfclk_specs, &m_lfclk_state.cli);
 	if (err < 0) {
 		return err;
+#if defined(CONFIG_MPSL_EXT_CLK_CTRL_LFCLK_REQ_TIMEOUT_ALLOW)
+	} else if (err == ONOFF_STATE_OFF) {
+		/* Due to NCSDK-31169, clear the variable only in case all request are released.
+		 * This allows for full reinitialization.
+		 */
+		atomic_set(&m_lfclk_req_timeout, (atomic_val_t) false);
+#endif /* CONFIG_MPSL_EXT_CLK_CTRL_LFCLK_REQ_TIMEOUT_ALLOW */
 	}
 
 	atomic_dec(&m_lfclk_state.m_clk_refcnt);
@@ -468,6 +524,11 @@ int32_t mpsl_clock_ctrl_uninit(void)
 		return err;
 	}
 #endif /* CONFIG_MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST */
+
+#if defined(CONFIG_MPSL_EXT_CLK_CTRL_LFCLK_REQ_TIMEOUT_ALLOW)
+	/* Reset the LFCLK timeout to allow for regular re-initialization of the MPSL.*/
+	atomic_set(&m_lfclk_req_timeout, (atomic_val_t) false);
+#endif /* CONFIG_MPSL_EXT_CLK_CTRL_LFCLK_REQ_TIMEOUT_ALLOW */
 
 	return mpsl_clock_ctrl_source_unregister();
 }
