@@ -1,0 +1,45 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		/delete-property/ zephyr,bt-hci;
+		/delete-property/ zephyr,ieee802154;
+		/delete-property/ nordic,802154-spinel-ipc;
+	};
+};
+
+/* Disable uart135 for use in ppr core */
+
+&uart135 {
+	status = "disabled";
+};
+
+/* Disable unused devices */
+
+&rng_hci {
+	status = "disabled";
+};
+
+&dppic020 {
+	status = "disabled";
+};
+
+&cpurad_ieee802154 {
+	status = "disabled";
+};
+
+&bt_hci_sdc {
+	status = "disabled";
+};
+
+&dppic130 {
+	status = "disabled";
+};
+
+&dppic132 {
+	status = "disabled";
+};
