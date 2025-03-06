@@ -24,8 +24,6 @@
 #define DATA_PINS_MAX 8
 #define VIO_COUNT     11
 
-#define MAX_FREQUENCY 64000000
-
 #define MAX_SHIFT_COUNT 63
 
 #define CE_PIN_UNUSED UINT8_MAX
@@ -177,7 +175,7 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet)
 	volatile nrfe_mspi_dev_config_t *device =
 		&nrfe_mspi_devices[nrfe_mspi_xfer_config_ptr->device_index];
 
-	xfer_params.counter_value = 4;
+	xfer_params.counter_value = device->cnt0_value;
 	xfer_params.ce_vio = ce_vios[device->ce_index];
 	xfer_params.ce_hold = nrfe_mspi_xfer_config_ptr->hold_ce;
 	xfer_params.cpp_mode = device->cpp;
@@ -261,7 +259,7 @@ void prepare_and_read_data(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile ui
 		&nrfe_mspi_devices[nrfe_mspi_xfer_config_ptr->device_index];
 	nrf_vpr_csr_vio_config_t config;
 
-	xfer_params.counter_value = 4;
+	xfer_params.counter_value = device->cnt0_value;
 	xfer_params.ce_vio = ce_vios[device->ce_index];
 	xfer_params.ce_hold = nrfe_mspi_xfer_config_ptr->hold_ce;
 	xfer_params.ce_polarity = device->ce_polarity;
@@ -400,7 +398,6 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		NRFX_ASSERT(dev_config->dev_config.cpp <= MSPI_CPP_MODE_3);
 		NRFX_ASSERT(dev_config->dev_config.ce_index < ce_vios_count);
 		NRFX_ASSERT(dev_config->dev_config.ce_polarity <= MSPI_CE_ACTIVE_HIGH);
-		NRFX_ASSERT(dev_config->dev_config.freq <= MAX_FREQUENCY);
 
 		nrfe_mspi_devices[dev_config->device_index] = dev_config->dev_config;
 
