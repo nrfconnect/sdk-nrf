@@ -7,4 +7,4 @@
 zephyr_library()
 zephyr_library_sources_ifdef(CONFIG_MPSL_PIN_DEBUG_APP_CORE mpsl_pin_debug_app_core.c)
 zephyr_library_sources_ifdef(CONFIG_MPSL_PIN_DEBUG_RADIO_CORE mpsl_pin_debug_radio_core.c)
-zephyr_library_sources_ifdef(CONFIG_SOC_COMPATIBLE_NRF54LX mpsl_pin_debug_nrf54.c)
+zephyr_library_sources_ifdef(CONFIG_MPSL_PIN_DEBUG_54X_APP_OR_RADIO_CORE mpsl_pin_debug_nrf54.c)
