@@ -110,6 +110,7 @@ config OPENTHREAD_CSL_RECEIVER
 
 config OPENTHREAD_CSL_RECEIVER_LOCAL_TIME_SYNC
 	bool "Use local time for CSL synchronization"
+	default y if NRF_802154_SER_HOST
 	help
 	  Use host time rather than radio platform time to track elapsed time
 	  since last CSL synchronization. This reduces the usage of radio API
@@ -173,6 +174,7 @@ config OPENTHREAD_DUA
 	  Enable Domain Unicast Address feature for Thread 1.2
 
 config OPENTHREAD_DYNAMIC_STORE_FRAME_AHEAD_COUNTER
+	default y
 	bool "Dynamic store frame ahead counter"
 
 config OPENTHREAD_ECDSA
@@ -283,6 +285,7 @@ config OPENTHREAD_OTNS
 
 config OPENTHREAD_PING_SENDER
 	bool "Ping sender support"
+	default y
 
 config OPENTHREAD_PLATFORM_KEY_REF
 	bool "Platform cryptographic key reference support"
