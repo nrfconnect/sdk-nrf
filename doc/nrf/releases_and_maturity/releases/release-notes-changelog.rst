@@ -628,6 +628,10 @@ Other samples
 
     These options are enabled by default in Zephyr and do not need to be set with the dedicated Kconfig option.
 
+* :ref:`caf_sensor_manager_sample` sample:
+
+  * Added low power configuration for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
+
 Drivers
 =======
 
