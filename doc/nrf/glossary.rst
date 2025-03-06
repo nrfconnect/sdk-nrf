@@ -135,10 +135,11 @@ Glossary
       A method of establishing a secure session between two network nodes, using the operational credentials obtained by the nodes during their commissioning into the network.
 
    Chain of Trust
+      A concept related to `Platform Security Architecture (PSA)`_.
       A sequence of properties identifying the trustworthiness of each layer in the system, all the way back to a property in the system referred to as :term:`Root of Trust (RoT)`.
       A secure system depends on building and maintaining a chain of trust through all the layers in the system.
       Each step in this chain guarantees that the next step can be trusted to have certain properties because any unauthorized modification of a subsequent step will be detected and the process halted.
-      You can read more about this concept in the :ref:`bootloader documentation <ug_bootloader_chain_of_trust>`.
+      You can read more about this concept in the |NCS| in the :ref:`bootloader documentation <ug_bootloader_chain_of_trust>`.
 
    Clear to Send (CTS)
       In :term:`flow control <Hardware Flow Control (HWFC)>`, the receiving end is ready and telling the far end to start sending.
@@ -778,8 +779,10 @@ Glossary
       For more information, see :ref:`dm-revisions` and `Git revisions`_.
 
    Root of Trust (RoT)
+      A concept related to `Platform Security Architecture (PSA)`_.
       The property or component in a secure system that provides the foundation of a :term:`Chain of Trust`.
-      You can read more about this concept in the :ref:`bootloader documentation <ug_bootloader_chain_of_trust>`.
+      You can read more about this concept in the |NCS| in the :ref:`bootloader documentation <ug_bootloader_chain_of_trust>`.
+      See also `What is a Root of Trust?`_ on the PSA Certified website.
 
    Sample
       An implementation example that showcases a single feature or library.
