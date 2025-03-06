@@ -32,7 +32,7 @@ factory_data:
 settings_storage:
   address: 0x173000
   region: flash_primary
-  size: 0xA000
+  size: 0x14000
 mcuboot_secondary:
   address: 0x0
   orig_span: &id003
