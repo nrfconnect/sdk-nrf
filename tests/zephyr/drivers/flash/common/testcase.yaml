@@ -2,6 +2,7 @@ common:
   tags:
     - drivers
     - flash
+    - ci_tests_drivers_sdp
 tests:
   nrf.extended.drivers.flash.common.sdp:
     platform_allow:
