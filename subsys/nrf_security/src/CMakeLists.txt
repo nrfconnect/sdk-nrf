@@ -54,6 +54,8 @@ target_include_directories(psa_crypto_library_config
   INTERFACE
     ${PSA_CRYPTO_CONFIG_LIBRARY_PATH}
     ${NRF_SECURITY_ROOT}/include
+    # This is needed for the oberon_check_unsupported.h
+    ${OBERON_PSA_CORE_PATH}/oberon/drivers
 )
 
 if(CONFIG_MBEDTLS_ENABLE_HEAP)
@@ -78,11 +80,15 @@ if(NOT CONFIG_MBEDTLS_PSA_CRYPTO_SPM AND NOT BUILD_INSIDE_TFM)
     cipher.c
     cipher_wrap.c
     md.c
-    pk.c
     pk_ecc.c
     pk_wrap.c
     pkwrite.c
     psa_util.c
+  )
+
+  # Oberon copied this file to avoid double definition of PSA_EXPORT_KEY_PAIR_OR_PUBLIC_MAX_SIZE
+  append_with_prefix(src_crypto ${OBERON_PSA_CORE_PATH}/programs/ssl/library
+    pk.c
   )
 endif()
 
