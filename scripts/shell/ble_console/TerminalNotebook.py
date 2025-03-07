@@ -65,7 +65,7 @@ class TerminalNotebook(object):
                 self.device_string_dict[device] += text
 
     def receive_data_from_device(self, device, string):
-        self.device_terminal_dict[device].feed(string)
+        self.device_terminal_dict[device].feed(str.encode(string))
 
     def get_data_from_terminal(self):
         return self.device_string_dict
@@ -108,10 +108,10 @@ class TerminalNotebook(object):
         return opened_terminals
 
     def remove_terminal(self, device):
-        self.device_terminal_dict[device].feed('\033[2J')
+        self.device_terminal_dict[device].feed(b'\033[2J')
         if self.notebook.get_n_pages() != 1:
-	        self.notebook.remove_page(self.notebook.page_num(self.device_terminal_dict[device]))
-	        self.notebook.queue_draw_area(0,0,-1,-1)
+            self.notebook.remove_page(self.notebook.page_num(self.device_terminal_dict[device]))
+            self.notebook.queue_draw_area(0,0,-1,-1)
         else:
             self.device_terminal_dict[device].set_color_background(COLOR_TERMINAL_INACTIVE)
         del self.device_sending_dict[device]
