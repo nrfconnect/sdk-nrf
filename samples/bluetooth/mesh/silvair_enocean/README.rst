@@ -137,6 +137,11 @@ See :ref:`Bluetooth Mesh user guide <ug_bt_mesh>` for more information.
 
 .. include:: /includes/build_and_run_ns.txt
 
+.. |sample_or_app| replace:: sample
+.. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
+
+.. include:: /includes/ipc_radio_conf.txt
+
 .. _bluetooth_mesh_silvair_enocean_testing:
 
 Testing
