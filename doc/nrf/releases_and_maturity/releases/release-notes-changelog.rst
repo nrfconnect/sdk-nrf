@@ -259,6 +259,8 @@ nRF Desktop
     Supporting Bluetooth LE legacy pairing makes devices vulnerable for a downgrade attack.
     The :kconfig:option:`CONFIG_BT_SMP_SC_PAIR_ONLY` Kconfig option is enabled by default in Zephyr.
     If you still need to support the Bluetooth LE legacy pairing, you need to disable the option in the configuration.
+  * :ref:`nrf_desktop_hid_state` and :ref:`nrf_desktop_fn_keys` to use :c:func:`bsearch` implementation from C library.
+    This simplifies maintenance and allows you to use Picolibc (:kconfig:option:`CONFIG_PICOLIBC`).
 
 * Added:
 

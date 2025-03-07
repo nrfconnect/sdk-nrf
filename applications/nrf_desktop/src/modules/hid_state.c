@@ -17,6 +17,7 @@
 #include <zephyr/sys/slist.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/byteorder.h>
+#include <stdlib.h>
 
 #include <caf/events/led_event.h>
 #include <caf/events/button_event.h>
@@ -149,43 +150,6 @@ static bool report_send(struct report_state *rs,
 			bool send_always);
 
 
-/**@brief Binary search. Input array must be already sorted.
- *
- * bsearch is also available from newlib libc, but including
- * the library takes around 10K of FLASH.
- */
-static void *bsearch(const void *key, const uint8_t *base,
-			 size_t elem_num, size_t elem_size,
-			 int (*compare)(const void *, const void *))
-{
-	__ASSERT_NO_MSG(base);
-	__ASSERT_NO_MSG(compare);
-	__ASSERT_NO_MSG(elem_num <= SSIZE_MAX);
-
-	if (!elem_num) {
-		return NULL;
-	}
-
-	ssize_t lower = 0;
-	ssize_t upper = elem_num - 1;
-
-	while (upper >= lower) {
-		ssize_t m = (lower + upper) / 2;
-		int cmp = compare(key, base + (elem_size * m));
-
-		if (cmp == 0) {
-			return (void *)(base + (elem_size * m));
-		} else if (cmp < 0) {
-			upper = m - 1;
-		} else {
-			lower = m + 1;
-		}
-	}
-
-	/* key not found */
-	return NULL;
-}
-
 /**@brief Compare Key ID in HID Keymap entries. */
 static int hid_keymap_compare(const void *a, const void *b)
 {
@@ -203,7 +167,7 @@ static struct hid_keymap *hid_keymap_get(uint16_t key_id)
 	};
 
 	struct hid_keymap *map = bsearch(&key,
-					 (uint8_t *)hid_keymap,
+					 hid_keymap,
 					 ARRAY_SIZE(hid_keymap),
 					 sizeof(key),
 					 hid_keymap_compare);
@@ -516,7 +480,7 @@ static bool key_value_set(struct items *items, uint16_t usage_id, int16_t value)
 	};
 
 	p_item = bsearch(&i,
-			 (uint8_t *)items->item,
+			 items->item,
 			 ARRAY_SIZE(items->item),
 			 sizeof(items->item[0]),
 			 usage_id_compare);
