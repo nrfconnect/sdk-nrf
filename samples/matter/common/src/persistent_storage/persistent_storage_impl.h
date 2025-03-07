@@ -31,15 +31,16 @@ class PersistentStorageImpl : public PersistentStorage
 	friend class PersistentStorage;
 
 #ifdef CONFIG_NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND
-
 	using PersistentStorageSettings::_NonSecureHasEntry;
 	using PersistentStorageSettings::_NonSecureInit;
 	using PersistentStorageSettings::_NonSecureLoad;
 	using PersistentStorageSettings::_NonSecureRemove;
+	using PersistentStorageSettings::_NonSecureFactoryReset;
 	using PersistentStorageSettings::_NonSecureStore;
 #endif
 
 #ifdef CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND
+	using PersistentStorageSecure::_SecureFactoryReset;
 	using PersistentStorageSecure::_SecureHasEntry;
 	using PersistentStorageSecure::_SecureInit;
 	using PersistentStorageSecure::_SecureLoad;
