@@ -1,22 +1,9 @@
 #
-# Copyright (c) 2024 Nordic Semiconductor
+# Copyright (c) 2024-2025 Nordic Semiconductor
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 cmake_minimum_required(VERSION 3.20.0)
-
-if(NOT DEFINED FP_MODEL_ID AND NOT DEFINED FP_ANTI_SPOOFING_KEY AND NOT SYSBUILD)
-  message(WARNING "
-  -------------------------------------------------------
-  --- WARNING: Using demo Fast Pair Model ID and Fast ---
-  --- Pair Anti Spoofing Key, it should not be used   ---
-  --- for production.                                 ---
-  -------------------------------------------------------
-  \n"
-  )
-  set(FP_MODEL_ID "0x4A436B")
-  set(FP_ANTI_SPOOFING_KEY "rie10A7ONqwd77VmkxGsblPUbMt384qjDgcEJ/ctT9Y=")
-endif()
 
 # The sample uses a separate directory for configuration files.
 set(APPLICATION_CONFIG_DIR "${CMAKE_CURRENT_LIST_DIR}/configuration")
