@@ -227,14 +227,6 @@ struct ras_rd_buffer {
 	} procedure;
 };
 
-/** @brief Subevent result step */
-struct ras_rd_cs_subevent_step {
-	/** CS step mode. */
-	uint8_t mode;
-	/** Pointer to role- and mode-specific information. */
-	const uint8_t *data;
-};
-
 /** @brief Allocate Ranging Responder instance for connection.
  *
  *  This will allocate an instance of the Ranging Responder service for the given connection.
