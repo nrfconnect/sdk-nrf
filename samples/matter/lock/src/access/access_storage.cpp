@@ -65,6 +65,24 @@ bool AccessStorage::Init()
 	return (Nrf::PSErrorCode::Success == Nrf::GetPersistentStorage().PSInit());
 }
 
+bool AccessStorage::FactoryReset()
+{
+	bool non_secure_result = true;
+	bool secure_result = true;
+
+#ifdef CONFIG_NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND
+	non_secure_result =
+		Nrf::PSErrorCode::Success == Nrf::GetPersistentStorage().NonSecureRemoveSubtree(kAccessPrefix);
+
+#endif
+#ifdef CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND
+
+	secure_result = Nrf::PSErrorCode::Success == Nrf::GetPersistentStorage().SecureFactoryReset();
+#endif
+
+	return non_secure_result && secure_result;
+}
+
 bool AccessStorage::PrepareKeyName(Type storageType, uint16_t index, uint16_t subindex)
 {
 	memset(mKeyName, '\0', sizeof(mKeyName));

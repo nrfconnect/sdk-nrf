@@ -72,12 +72,26 @@ public:
 	 */
 	PSErrorCode NonSecureRemove(PersistentStorageNode *node);
 
+	/**
+	 * @brief Remove subtree from the persistent storage for given key prefix.
+	 *
+	 * @param prefix key prefix
+	 * @return true if subtree has been removed successfully.
+	 * @return false an error occurred.
+	 */
+	PSErrorCode NonSecureRemoveSubtree(const char *prefix);
+
 	/* Secure storage API counterparts.*/
 	PSErrorCode SecureInit();
 	PSErrorCode SecureStore(PersistentStorageNode *node, const void *data, size_t dataSize);
 	PSErrorCode SecureLoad(PersistentStorageNode *node, void *data, size_t dataMaxSize, size_t &outSize);
 	PSErrorCode SecureHasEntry(PersistentStorageNode *node);
 	PSErrorCode SecureRemove(PersistentStorageNode *node);
+
+	/**
+	 * @brief Perform factory reset and remove all keys.
+	 */
+	PSErrorCode SecureFactoryReset();
 
 protected:
 	PersistentStorage() = default;
@@ -133,6 +147,11 @@ inline PSErrorCode PersistentStorage::NonSecureRemove(PersistentStorageNode *nod
 	return Impl()->_NonSecureRemove(node);
 }
 
+inline PSErrorCode PersistentStorage::NonSecureRemoveSubtree(const char *prefix)
+{
+	return Impl()->_NonSecureRemoveSubtree(prefix);
+}
+
 /* Secure storage API. */
 inline PSErrorCode PersistentStorage::SecureInit()
 {
@@ -158,6 +177,11 @@ inline PSErrorCode PersistentStorage::SecureHasEntry(PersistentStorageNode *node
 inline PSErrorCode PersistentStorage::SecureRemove(PersistentStorageNode *node)
 {
 	return Impl()->_SecureRemove(node);
+}
+
+inline PSErrorCode PersistentStorage::SecureFactoryReset()
+{
+	return Impl()->_SecureFactoryReset();
 }
 
 } /* namespace Nrf */
