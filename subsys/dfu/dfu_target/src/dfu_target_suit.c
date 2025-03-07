@@ -15,6 +15,10 @@
 #endif
 #include <dfu/suit_dfu.h>
 
+#ifdef CONFIG_FLASH_IPUC
+#include <drivers/flash/flash_ipuc.h>
+#endif /* CONFIG_FLASH_IPUC */
+
 LOG_MODULE_REGISTER(dfu_target_suit, CONFIG_DFU_TARGET_LOG_LEVEL);
 
 #define IS_ALIGNED_32(POINTER) (((uintptr_t)(const void *)(POINTER)) % 4 == 0)
@@ -59,19 +63,40 @@ int dfu_target_suit_init(size_t file_size, int img_num, dfu_target_callback_t cb
 		return -ENODEV;
 	}
 
+	device_info.fdev = NULL;
 	if (ENVELOPE_IMAGE_NUMBER == img_num) {
 		/* Get info about dfu_partition to store the envelope */
 		err = suit_dfu_partition_device_info_get(&device_info);
 	} else {
+#ifdef CONFIG_FLASH_IPUC
+		device_info.partition_offset = 0;
+		device_info.erase_block_size = 1;
+		device_info.write_block_size = 1;
+		device_info.fdev = flash_image_ipuc_create(img_num, NULL, NULL,
+							   (uintptr_t *)&device_info.mapped_address,
+							   &device_info.partition_size);
+		if (device_info.fdev != NULL) {
+			LOG_INF("Found IPUC for image %d (0x%lx, 0x%x)", img_num,
+				(uintptr_t)device_info.mapped_address, device_info.partition_size);
+		}
+#endif /* CONFIG_FLASH_IPUC */
 #ifdef CONFIG_DFU_TARGET_SUIT_CACHE_PROCESSING
 		/* Cache partitions ids starts from 0, whereas image number 0 is reserved for
 		 * dfu_partition. Decrease img_num value by 1 to reach the correct DFU cache
 		 * partition id.
 		 */
-		err = suit_dfu_cache_rw_device_info_get(img_num - 1, &device_info);
-#else
-		return -ENOTSUP;
-#endif
+		if (device_info.fdev == NULL) {
+			err = suit_dfu_cache_rw_device_info_get(img_num - 1, &device_info);
+			if (device_info.fdev != NULL) {
+				LOG_INF("Found cache pool %d (0x%lx, 0x%x)", img_num - 1,
+					(uintptr_t)device_info.mapped_address,
+					device_info.partition_size);
+			}
+		}
+#endif /* CONFIG_DFU_TARGET_SUIT_CACHE_PROCESSING */
+		if (device_info.fdev == NULL) {
+			return -ENOTSUP;
+		}
 	}
 
 	if (err != SUIT_PLAT_SUCCESS) {
@@ -140,6 +165,9 @@ int dfu_target_suit_write(const void *const buf, size_t len)
 
 int dfu_target_suit_done(bool successful)
 {
+#ifdef CONFIG_FLASH_IPUC
+	struct stream_flash_ctx *stream = dfu_target_stream_get_stream();
+#endif /* CONFIG_FLASH_IPUC */
 	stream_flash_in_use = false;
 
 	int err = dfu_target_stream_done(successful);
@@ -156,6 +184,11 @@ int dfu_target_suit_done(bool successful)
 			LOG_ERR("suit_dfu_candidate_envelope_stored error %d", err);
 			return err;
 		}
+#ifdef CONFIG_FLASH_IPUC
+	} else {
+		flash_image_ipuc_release(image_num);
+		stream->fdev = NULL;
+#endif /* CONFIG_FLASH_IPUC */
 	}
 
 	if (successful) {
@@ -187,6 +220,9 @@ int dfu_target_suit_schedule_update(int img_num)
 
 int dfu_target_suit_reset(void)
 {
+#ifdef CONFIG_FLASH_IPUC
+	struct stream_flash_ctx *stream = dfu_target_stream_get_stream();
+#endif /* CONFIG_FLASH_IPUC */
 	int rc = dfu_target_stream_reset();
 
 	if (rc != 0) {
@@ -195,6 +231,11 @@ int dfu_target_suit_reset(void)
 	}
 
 	int err = suit_dfu_cleanup();
+
+#ifdef CONFIG_FLASH_IPUC
+	flash_image_ipuc_release(image_num);
+	stream->fdev = NULL;
+#endif /* CONFIG_FLASH_IPUC */
 
 	stream_flash_in_use = false;
 	stream_buf_bytes = 0;
