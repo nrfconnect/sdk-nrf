@@ -697,7 +697,6 @@
 /scripts/print_docker_image.sh            @nrfconnect/ncs-ci
 /scripts/print_toolchain_checksum.sh      @nrfconnect/ncs-ci
 /scripts/sdp/                             @nrfconnect/ncs-ll-ursus
-/scripts/twister/alt/zephyr/tests/drivers/mspi/api/testcase.yaml @nrfconnect/ncs-ll-ursus
 /scripts/generate_psa_key_attributes.py   @nrfconnect/ncs-aurora
 /scripts/tests/                           @nrfconnect/ncs-pluto @fundakol
 
@@ -708,7 +707,6 @@
 /scripts/partition_manager/*.rst          @nrfconnect/ncs-aurora-doc
 /scripts/shell/ble_console/**/*.rst       @nrfconnect/ncs-doc-leads
 /scripts/west_commands/sbom/*.rst         @nrfconnect/ncs-si-muffin-doc
-/scripts/twister/alt/zephyr/tests/drivers/ @nrfconnect/ncs-low-level-test
 
 # Share
 /share/                                   @nrfconnect/ncs-co-build-system
@@ -922,6 +920,7 @@
 /tests/zephyr/drivers/flash/common/       @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /tests/zephyr/drivers/i2c/i2c_bme688/     @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/i2c/i2c_target_api/ @nrfconnect/ncs-low-level-test
+/tests/zephyr/drivers/mspi/api/           @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /tests/zephyr/drivers/spi/                @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/uart/               @nrfconnect/ncs-low-level-test
 
