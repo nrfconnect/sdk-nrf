@@ -16,13 +16,9 @@ LOG_MODULE_REGISTER(idle_stm, LOG_LEVEL_INF);
 #include <zephyr/pm/device_runtime.h>
 #include <zephyr/drivers/uart.h>
 
-#ifdef CONFIG_SERIAL
-static const struct device *const console_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
-#endif
-
 /* Variables used to make CPU active for ~1 second */
 static struct k_timer my_timer;
-static bool timer_expired;
+static volatile bool timer_expired;
 
 void my_timer_handler(struct k_timer *dummy)
 {
@@ -37,12 +33,6 @@ int main(void)
 	LOG_INF("Main sleeps for %d ms", CONFIG_TEST_SLEEP_DURATION_MS);
 
 	k_timer_init(&my_timer, my_timer_handler, NULL);
-
-#ifdef CONFIG_SERIAL
-	if (IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME)) {
-		pm_device_runtime_enable(console_dev);
-	}
-#endif
 
 	/* Run test forever */
 	while (1) {
