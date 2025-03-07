@@ -451,6 +451,7 @@ static int api_config(const struct mspi_dt_spec *spec)
 		mspi_pin_config.pin[i] = drv_cfg->pcfg->states[state_id].pins[i];
 	}
 	mspi_pin_config.opcode = NRFE_MSPI_CONFIG_PINS;
+	mspi_pin_config.pins_count = drv_cfg->pcfg->states[state_id].pin_cnt;
 
 	/* Send pinout configuration to FLPR */
 	return send_data(NRFE_MSPI_CONFIG_PINS, (const void *)&mspi_pin_config,
