@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DESKTOP_KEYS_STATE
+	bool "Enable keys state utility"
+	help
+	  The utility can be used to track the state of active keys.
+
+if DESKTOP_KEYS_STATE
+
+config DESKTOP_KEYS_STATE_KEY_CNT_MAX
+	int "Maximum number of keys that can be simultaneously active"
+	default 8
+	range 1 255
+	help
+	  The configuration option determines the maximum number of keys that
+	  can be simultaneously tracked by the keys state.
+
+module = DESKTOP_KEYS_STATE
+module-str = keys state
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # DESKTOP_KEYS_STATE

@@ -12,5 +12,6 @@ rsource "Kconfig.hid_eventq"
 rsource "Kconfig.hid_keymap"
 rsource "Kconfig.hid_reportq"
 rsource "Kconfig.hwid"
+rsource "Kconfig.keys_state"
 
 endmenu
