@@ -64,6 +64,14 @@ public:
 	bool Init();
 
 	/**
+	 * @brief Factory reset the storage.
+	 *
+	 * @return true if success.
+	 * @return false otherwise.
+	 */
+	bool FactoryReset();
+
+	/**
 	 * @brief Store the entry into the persistent storage.
 	 *
 	 * @param storageType depending on that there will be a different key set.

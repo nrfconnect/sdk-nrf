@@ -188,7 +188,7 @@ template <> bool BridgeStorageManager::LoadBridgedDevice(BridgedDeviceV2 &device
 
 bool BridgeStorageManager::Init()
 {
-	const PSErrorCode status = Nrf::GetPersistentStorage().NonSecureInit();
+	const PSErrorCode status = Nrf::GetPersistentStorage().NonSecureInit("br");
 
 	if (status != PSErrorCode::Success) {
 		return false;
@@ -196,6 +196,15 @@ bool BridgeStorageManager::Init()
 
 	/* Perform data migration from previous data structure versions if needed. */
 	return MigrateData();
+}
+
+bool BridgeStorageManager::FactoryReset()
+{
+#ifndef CONFIG_CHIP_FACTORY_RESET_ERASE_SETTINGS
+	return Nrf::PSErrorCode::Success == Nrf::GetPersistentStorage().NonSecureFactoryReset();
+#else
+	return true;
+#endif
 }
 
 #ifdef CONFIG_BRIDGE_MIGRATE_PRE_2_7_0

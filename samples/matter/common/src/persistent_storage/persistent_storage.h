@@ -26,10 +26,11 @@ public:
 	/**
 	 * @brief Perform the initialization required before using the storage.
 	 *
+	 * @param prefix storage key prefix
 	 * @return true if success.
 	 * @return false otherwise.
 	 */
-	PSErrorCode NonSecureInit();
+	PSErrorCode NonSecureInit(const char *prefix);
 
 	/**
 	 * @brief Store data into the persistent storage.
@@ -72,12 +73,21 @@ public:
 	 */
 	PSErrorCode NonSecureRemove(PersistentStorageNode *node);
 
+	/**
+	 * @brief Perform factory reset and remove all keys.
+	 *
+	 * @return true if subtree has been removed successfully.
+	 * @return false an error occurred.
+	 */
+	PSErrorCode NonSecureFactoryReset();
+
 	/* Secure storage API counterparts.*/
-	PSErrorCode SecureInit();
+	PSErrorCode SecureInit(const char *prefix);
 	PSErrorCode SecureStore(PersistentStorageNode *node, const void *data, size_t dataSize);
 	PSErrorCode SecureLoad(PersistentStorageNode *node, void *data, size_t dataMaxSize, size_t &outSize);
 	PSErrorCode SecureHasEntry(PersistentStorageNode *node);
 	PSErrorCode SecureRemove(PersistentStorageNode *node);
+	PSErrorCode SecureFactoryReset();
 
 protected:
 	PersistentStorage() = default;
@@ -107,9 +117,9 @@ inline PersistentStorageImpl *PersistentStorage::Impl()
 }
 
 /* Non secure storage API. */
-inline PSErrorCode PersistentStorage::NonSecureInit()
+inline PSErrorCode PersistentStorage::NonSecureInit(const char *prefix)
 {
-	return Impl()->_NonSecureInit();
+	return Impl()->_NonSecureInit(prefix);
 };
 
 inline PSErrorCode PersistentStorage::NonSecureStore(PersistentStorageNode *node, const void *data, size_t dataSize)
@@ -133,10 +143,15 @@ inline PSErrorCode PersistentStorage::NonSecureRemove(PersistentStorageNode *nod
 	return Impl()->_NonSecureRemove(node);
 }
 
-/* Secure storage API. */
-inline PSErrorCode PersistentStorage::SecureInit()
+inline PSErrorCode PersistentStorage::NonSecureFactoryReset()
 {
-	return Impl()->_SecureInit();
+	return Impl()->_NonSecureFactoryReset();
+}
+
+/* Secure storage API. */
+inline PSErrorCode PersistentStorage::SecureInit(const char *prefix)
+{
+	return Impl()->_SecureInit(prefix);
 };
 
 inline PSErrorCode PersistentStorage::SecureStore(PersistentStorageNode *node, const void *data, size_t dataSize)
@@ -158,6 +173,11 @@ inline PSErrorCode PersistentStorage::SecureHasEntry(PersistentStorageNode *node
 inline PSErrorCode PersistentStorage::SecureRemove(PersistentStorageNode *node)
 {
 	return Impl()->_SecureRemove(node);
+}
+
+inline PSErrorCode PersistentStorage::SecureFactoryReset()
+{
+	return Impl()->_SecureFactoryReset();
 }
 
 } /* namespace Nrf */

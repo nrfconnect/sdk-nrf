@@ -20,6 +20,11 @@ struct ReadEntry {
 	bool result;
 };
 
+struct DeleteSubtreeEntry {
+	const char *prefix;
+	int result;
+};
+
 /* Random magic bytes to represent an empty value.
    It is needed because Zephyr settings subsystem does not distinguish an empty value from no value. */
 constexpr uint8_t kEmptyValue[] = { 0x22, 0xa6, 0x54, 0xd1, 0x39 };
@@ -61,12 +66,36 @@ int LoadEntryCallback(const char *name, size_t entrySize, settings_read_cb readC
 
 	return 1;
 }
+
+int DeleteSubtreeCallback(const char *name, size_t entrySize, settings_read_cb readCb, void *cbArg, void *param)
+{
+	DeleteSubtreeEntry &entry = *static_cast<DeleteSubtreeEntry *>(param);
+	char fullKey[SETTINGS_MAX_NAME_LEN + 1];
+
+	// name comes from Zephyr settings subsystem so it is guaranteed to fit in the buffer.
+	(void)snprintf(fullKey, sizeof(fullKey), "%s/%s", entry.prefix, name);
+	const int result = settings_delete(fullKey);
+
+	// Return the first error, but continue removing remaining keys anyway.
+	if (entry.result == 0) {
+		entry.result = result;
+	}
+
+	return 0;
+}
+
 } /* namespace */
 
 namespace Nrf
 {
-PSErrorCode PersistentStorageSettings::_NonSecureInit()
+PSErrorCode PersistentStorageSettings::_NonSecureInit(const char *prefix)
 {
+	if (prefix == nullptr) {
+		return PSErrorCode::Failure;
+	}
+
+	mPrefix = prefix;
+
 	return settings_load() ? PSErrorCode::Failure : PSErrorCode::Success;
 }
 
@@ -160,4 +189,17 @@ bool PersistentStorageSettings::LoadEntry(const char *key, void *data, size_t da
 
 	return true;
 }
+
+PSErrorCode PersistentStorageSettings::_NonSecureFactoryReset()
+{
+	DeleteSubtreeEntry entry{ mPrefix, 0 };
+	int result = settings_load_subtree_direct(mPrefix, DeleteSubtreeCallback, &entry);
+
+	if (result == 0 && entry.result == 0) {
+		return PSErrorCode::Success;
+	}
+
+	return PSErrorCode::Failure;
+}
+
 } /* namespace Nrf */

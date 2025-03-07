@@ -93,6 +93,14 @@ public:
 	bool Init();
 
 	/**
+	 * @brief Factory reset the storage.
+	 *
+	 * @return true if success.
+	 * @return false otherwise.
+	 */
+	bool FactoryReset();
+
+	/**
 	 * @brief Store bridged devices count into settings
 	 *
 	 * @param count count value to be stored
