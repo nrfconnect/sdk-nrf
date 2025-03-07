@@ -1569,3 +1569,13 @@ ci_samples_zephyr_boards_nordic_system_off:
   files:
     - nrf/samples/zephyr/boards/nordic/system_off/
     - zephyr/samples/boards/nordic/system_off/
+
+ci_tests_zephyr_drivers_watchdog:
+  files:
+    - nrf/tests/zephyr/drivers/watchdog/
+    - zephyr/tests/drivers/watchdog/
+
+ci_sampples_zephyr_drivers_watchdog:
+  files:
+    - nrf/samples/zephyr/drivers/watchdog/
+    - zephyr/samples/drivers/watchdog/

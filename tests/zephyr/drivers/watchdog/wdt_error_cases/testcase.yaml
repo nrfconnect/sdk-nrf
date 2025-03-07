@@ -1,0 +1,14 @@
+common:
+  tags:
+    - drivers
+    - watchdog
+    - ci_tests_zephyr_drivers_watchdog
+  # depends_on: watchdog
+  harness: ztest
+
+tests:
+  nrf.extended.drivers.watchdog.wdt_error_cases:
+    platform_allow:
+      - nrf54l09pdk/nrf54l09/cpuapp
+    integration_platforms:
+      - nrf54l09pdk/nrf54l09/cpuapp

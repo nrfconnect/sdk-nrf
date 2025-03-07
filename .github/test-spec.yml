@@ -623,6 +623,7 @@
   - "subsys/event_manager_proxy/**/*"
   - "samples/zephyr/drivers/audio/**/*"
   - "samples/zephyr/drivers/i2c/**/*"
+  - "samples/zephyr/drivers/watchdog/**/*"
   - "samples/zephyr/boards/nordic/**/*"
   - "samples/ipc/**/*"
   - "samples/event_manager_proxy/**/*"
@@ -644,6 +645,7 @@
   - "tests/zephyr/drivers/i2c/**/*"
   - "tests/zephyr/drivers/mspi/**/*"
   - "tests/zephyr/drivers/uart/**/*"
+  - "tests/zephyr/drivers/watchdog/**/*"
 
 "CI-ps-test":
   - "samples/nrf_rpc/protocols_serialization/**/*"

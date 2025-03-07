@@ -668,6 +668,7 @@
 /samples/zephyr/boards/nordic/system_off/ @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/audio/dmic/       @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/i2c/rtio_loopback/ @nrfconnect/ncs-low-level-test
+/samples/zephyr/drivers/watchdog/         @nrfconnect/ncs-low-level-test
 /samples/zephyr/sensor/accel_polling/     @nrfconnect/ncs-low-level-test
 /samples/zephyr/sensor/bme680/            @nrfconnect/ncs-low-level-test
 /samples/zephyr/sensor/qdec/              @nrfconnect/ncs-low-level-test
@@ -923,6 +924,7 @@
 /tests/zephyr/drivers/mspi/api/           @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /tests/zephyr/drivers/spi/                @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/uart/               @nrfconnect/ncs-low-level-test
+/tests/zephyr/drivers/watchdog/           @nrfconnect/ncs-low-level-test
 
 /tests/benchmarks/multicore/idle/*.rst    @nrfconnect/ncs-si-bluebagel-doc
 /tests/benchmarks/multicore/idle_gpio/*.rst @nrfconnect/ncs-si-bluebagel-doc
