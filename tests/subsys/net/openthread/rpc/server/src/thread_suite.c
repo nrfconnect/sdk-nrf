@@ -89,7 +89,7 @@ ZTEST(ot_rpc_thread, test_otThreadDiscover)
 /*
  * Test sending of otThreadDiscover result over server's callback.
  */
-ZTEST(ot_rpc_dataset, test_tx_discover_cb)
+ZTEST(ot_rpc_thread, test_tx_discover_cb)
 {
 	otActiveScanResult result = {
 		.mExtAddress.m8 = {INT_SEQUENCE(OT_EXT_ADDRESS_SIZE)},
@@ -119,7 +119,7 @@ ZTEST(ot_rpc_dataset, test_tx_discover_cb)
 /*
  * Test sending of absence of otThreadDiscover result over server's callback.
  */
-ZTEST(ot_rpc_dataset, test_tx_discover_cb_null)
+ZTEST(ot_rpc_thread, test_tx_discover_cb_null)
 {
 	mock_nrf_rpc_tr_expect_add(
 		RPC_CMD(OT_RPC_CMD_THREAD_DISCOVER_CB, CBOR_NULL, CBOR_UINT32(0xdeadbeef), 0),

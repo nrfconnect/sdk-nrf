@@ -83,9 +83,13 @@ OpenThread RPC currently supports the serialization of the following OpenThread 
 * :c:func:`otCoapStop`
 * :c:func:`otDatasetGetActive`
 * :c:func:`otDatasetGetActiveTlvs`
+* :c:func:`otDatasetGetPending`
+* :c:func:`otDatasetGetPendingTlvs`
 * :c:func:`otDatasetIsCommissioned`
 * :c:func:`otDatasetSetActive`
 * :c:func:`otDatasetSetActiveTlvs`
+* :c:func:`otDatasetSetPending`
+* :c:func:`otDatasetSetPendingTlvs`
 * :c:func:`otDnsAddressResponseGetAddress`
 * :c:func:`otDnsAddressResponseGetHostName`
 * :c:func:`otDnsBrowseResponseGetHostAddress`

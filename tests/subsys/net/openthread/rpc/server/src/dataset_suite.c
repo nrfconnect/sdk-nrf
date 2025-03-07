@@ -20,13 +20,21 @@ FAKE_VALUE_FUNC(otError, otDatasetSetActiveTlvs, otInstance *, const otOperation
 FAKE_VALUE_FUNC(otError, otDatasetGetActiveTlvs, otInstance *, otOperationalDatasetTlvs *);
 FAKE_VALUE_FUNC(otError, otDatasetSetActive, otInstance *, const otOperationalDataset *);
 FAKE_VALUE_FUNC(otError, otDatasetGetActive, otInstance *, otOperationalDataset *);
+FAKE_VALUE_FUNC(otError, otDatasetSetPendingTlvs, otInstance *, const otOperationalDatasetTlvs *);
+FAKE_VALUE_FUNC(otError, otDatasetGetPendingTlvs, otInstance *, otOperationalDatasetTlvs *);
+FAKE_VALUE_FUNC(otError, otDatasetSetPending, otInstance *, const otOperationalDataset *);
+FAKE_VALUE_FUNC(otError, otDatasetGetPending, otInstance *, otOperationalDataset *);
 
 #define FOREACH_FAKE(f)                                                                            \
 	f(otDatasetIsCommissioned);                                                                \
 	f(otDatasetSetActiveTlvs);                                                                 \
 	f(otDatasetGetActiveTlvs);                                                                 \
 	f(otDatasetSetActive);                                                                     \
-	f(otDatasetGetActive);
+	f(otDatasetGetActive);                                                                     \
+	f(otDatasetSetPendingTlvs);                                                                \
+	f(otDatasetGetPendingTlvs);                                                                \
+	f(otDatasetSetPending);                                                                    \
+	f(otDatasetGetPending);
 
 static void nrf_rpc_err_handler(const struct nrf_rpc_err_report *report)
 {
@@ -65,11 +73,8 @@ ZTEST(ot_rpc_dataset, test_otDatasetIsCommissioned)
 
 	zassert_equal(otDatasetIsCommissioned_fake.call_count, 2);
 }
-/*
- * Test reception of otDatasetSetActiveTlvs command.
- * Test serialization of the result: OT_ERROR_NONE.
- */
-otError dataset_tlvs_set_fake(otInstance *instance, const otOperationalDatasetTlvs *dataset)
+
+static otError dataset_tlvs_set_fake(otInstance *instance, const otOperationalDatasetTlvs *dataset)
 {
 	const otOperationalDatasetTlvs expected_dataset = {
 		{INT_SEQUENCE(OT_OPERATIONAL_DATASET_MAX_LENGTH)},
@@ -80,6 +85,10 @@ otError dataset_tlvs_set_fake(otInstance *instance, const otOperationalDatasetTl
 	return OT_ERROR_NONE;
 }
 
+/*
+ * Test reception of otDatasetSetActiveTlvs command.
+ * Test serialization of the result: OT_ERROR_NONE.
+ */
 ZTEST(ot_rpc_dataset, test_otDatasetSetActiveTlvs)
 {
 	otDatasetSetActiveTlvs_fake.custom_fake = dataset_tlvs_set_fake;
@@ -89,6 +98,21 @@ ZTEST(ot_rpc_dataset, test_otDatasetSetActiveTlvs)
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otDatasetSetActiveTlvs_fake.call_count, 1);
+}
+
+/*
+ * Test reception of otDatasetSetPendingTlvs command.
+ * Test serialization of the result: OT_ERROR_NONE.
+ */
+ZTEST(ot_rpc_dataset, test_otDatasetSetPendingTlvs)
+{
+	otDatasetSetPendingTlvs_fake.custom_fake = dataset_tlvs_set_fake;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATASET_SET_PENDING_TLVS, TLVS));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otDatasetSetPendingTlvs_fake.call_count, 1);
 }
 
 /*
@@ -102,6 +126,19 @@ ZTEST(ot_rpc_dataset, test_otDatasetSetActiveTlvs_negative)
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otDatasetSetActiveTlvs_fake.call_count, 0);
+}
+
+/*
+ * Test reception of otDatasetSetPendingTlvs command with NULL pointer.
+ * Test serialization of the result: OT_ERROR_INVALID_ARGS.
+ */
+ZTEST(ot_rpc_dataset, test_otDatasetSetPendingTlvs_negative)
+{
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_INVALID_ARGS), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATASET_SET_PENDING_TLVS, CBOR_NULL));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otDatasetSetPendingTlvs_fake.call_count, 0);
 }
 
 static otError dataset_get_tlvs_fake(otInstance *instance, otOperationalDatasetTlvs *dataset)
@@ -131,6 +168,21 @@ ZTEST(ot_rpc_dataset, test_otDatasetGetActiveTlvs)
 }
 
 /*
+ * Test reception of otDatasetGetPendingTlvs command.
+ * Test serialization of the result: TLVS data.
+ */
+ZTEST(ot_rpc_dataset, test_otDatasetGetPendingTlvs)
+{
+	otDatasetGetPendingTlvs_fake.custom_fake = dataset_get_tlvs_fake;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(TLVS), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATASET_GET_PENDING_TLVS));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otDatasetGetPendingTlvs_fake.call_count, 1);
+}
+
+/*
  * Test reception of otDatasetGetActiveTlvs command.
  * Test serialization of the result: NULL as tlvs data has not been found.
  */
@@ -146,10 +198,21 @@ ZTEST(ot_rpc_dataset, test_otDatasetGetActiveTlvs_null)
 }
 
 /*
- * Test reception of otDatasetSetActive command.
- * Test serialization of the result: OT_ERROR_NONE.
+ * Test reception of otDatasetGetPendingTlvs command.
+ * Test serialization of the result: NULL as tlvs data has not been found.
  */
-otError dataset_set_fake(otInstance *instance, const otOperationalDataset *dataset)
+ZTEST(ot_rpc_dataset, test_otDatasetGetPendingTlvs_null)
+{
+	otDatasetGetPendingTlvs_fake.return_val = OT_ERROR_NOT_FOUND;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(CBOR_NULL), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATASET_GET_PENDING_TLVS));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otDatasetGetPendingTlvs_fake.call_count, 1);
+}
+
+static otError dataset_set_fake(otInstance *instance, const otOperationalDataset *dataset)
 {
 	uint8_t net_key[] = {INT_SEQUENCE(OT_NETWORK_KEY_SIZE)};
 	uint8_t nwk_name[] = {INT_SEQUENCE(OT_NETWORK_NAME_MAX_SIZE), 0};
@@ -204,6 +267,10 @@ otError dataset_set_fake(otInstance *instance, const otOperationalDataset *datas
 	return OT_ERROR_NONE;
 }
 
+/*
+ * Test reception of otDatasetSetActive command.
+ * Test serialization of the result: OT_ERROR_NONE.
+ */
 ZTEST(ot_rpc_dataset, test_otDatasetSetActive)
 {
 	otDatasetSetActive_fake.custom_fake = dataset_set_fake;
@@ -213,6 +280,21 @@ ZTEST(ot_rpc_dataset, test_otDatasetSetActive)
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otDatasetSetActive_fake.call_count, 1);
+}
+
+/*
+ * Test reception of otDatasetSetPending command.
+ * Test serialization of the result: OT_ERROR_NONE.
+ */
+ZTEST(ot_rpc_dataset, test_otDatasetSetPending)
+{
+	otDatasetSetPending_fake.custom_fake = dataset_set_fake;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATASET_SET_PENDING, DATASET));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otDatasetSetPending_fake.call_count, 1);
 }
 
 /*
@@ -226,6 +308,19 @@ ZTEST(ot_rpc_dataset, test_otDatasetSetActive_negative)
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otDatasetSetActive_fake.call_count, 0);
+}
+
+/*
+ * Test reception of otDatasetSetPending command with NULL pointer.
+ * Test serialization of the result: OT_ERROR_INVALID_ARGS.
+ */
+ZTEST(ot_rpc_dataset, test_otDatasetSetPending_negative)
+{
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_INVALID_ARGS), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATASET_SET_PENDING, CBOR_NULL));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otDatasetSetPending_fake.call_count, 0);
 }
 
 static otError dataset_get_fake(otInstance *instance, otOperationalDataset *dataset)
@@ -266,6 +361,21 @@ ZTEST(ot_rpc_dataset, test_otDatasetGetActive)
 }
 
 /*
+ * Test reception of otDatasetGetPending command.
+ * Test serialization of the result: dataset.
+ */
+ZTEST(ot_rpc_dataset, test_otDatasetGetPending)
+{
+	otDatasetGetPending_fake.custom_fake = dataset_get_fake;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(DATASET), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATASET_GET_PENDING));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otDatasetGetPending_fake.call_count, 1);
+}
+
+/*
  * Test reception of otDatasetGetActive command.
  * Test serialization of the result: NULL as dataset has not been found.
  */
@@ -278,6 +388,21 @@ ZTEST(ot_rpc_dataset, test_otDatasetGetActive_null)
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otDatasetGetActive_fake.call_count, 1);
+}
+
+/*
+ * Test reception of otDatasetGetPending command.
+ * Test serialization of the result: NULL as dataset has not been found.
+ */
+ZTEST(ot_rpc_dataset, test_otDatasetGetPending_null)
+{
+	otDatasetGetPending_fake.return_val = OT_ERROR_NOT_FOUND;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(CBOR_NULL), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_DATASET_GET_PENDING));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otDatasetGetPending_fake.call_count, 1);
 }
 
 ZTEST_SUITE(ot_rpc_dataset, NULL, NULL, tc_setup, NULL, NULL);

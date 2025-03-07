@@ -14,9 +14,8 @@
 
 #include <openthread/dataset.h>
 
-static void ot_rpc_dataset_is_commissioned_rpc_handler(const struct nrf_rpc_group *group,
-						       struct nrf_rpc_cbor_ctx *ctx,
-						       void *handler_data)
+static void ot_rpc_dataset_is_commissioned_handler(const struct nrf_rpc_group *group,
+						   struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 	bool result;
 
@@ -33,27 +32,32 @@ static void ot_rpc_dataset_is_commissioned_rpc_handler(const struct nrf_rpc_grou
 }
 
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_dataset_is_commissioned,
-			 OT_RPC_CMD_DATASET_IS_COMMISSIONED,
-			 ot_rpc_dataset_is_commissioned_rpc_handler, NULL);
+			 OT_RPC_CMD_DATASET_IS_COMMISSIONED, ot_rpc_dataset_is_commissioned_handler,
+			 NULL);
 
-static void ot_rpc_data_set_active_tlvs_rpc_handler(const struct nrf_rpc_group *group,
-						    struct nrf_rpc_cbor_ctx *ctx,
-						    void *handler_data)
+struct ot_rpc_dataset_set_tlvs_params {
+	uint8_t cmd;
+	otError (*set)(otInstance *instance, const otOperationalDatasetTlvs *tlvs);
+};
+
+static void ot_rpc_dataset_set_tlvs_handler(const struct nrf_rpc_group *group,
+					    struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
-	otOperationalDatasetTlvs dataset;
-	void *data_ptr = &dataset;
+	const struct ot_rpc_dataset_set_tlvs_params *handler_params = handler_data;
+	otOperationalDatasetTlvs dataset_buf;
+	otOperationalDatasetTlvs *dataset = &dataset_buf;
 	otError error;
 
-	ot_rpc_decode_dataset_tlvs(group, ctx, &data_ptr);
+	ot_rpc_decode_dataset_tlvs(group, ctx, &dataset);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_DATASET_SET_ACTIVE_TLVS);
+		ot_rpc_report_cmd_decoding_error(handler_params->cmd);
 		return;
 	}
 
-	if (data_ptr) {
+	if (dataset) {
 		openthread_api_mutex_lock(openthread_get_default_context());
-		error = otDatasetSetActiveTlvs(openthread_get_default_instance(), &dataset);
+		error = handler_params->set(openthread_get_default_instance(), dataset);
 		openthread_api_mutex_unlock(openthread_get_default_context());
 	} else {
 		error = OT_ERROR_INVALID_ARGS;
@@ -62,8 +66,23 @@ static void ot_rpc_data_set_active_tlvs_rpc_handler(const struct nrf_rpc_group *
 	nrf_rpc_rsp_send_uint(group, error);
 }
 
-NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_data_set_active_tlvs, OT_RPC_CMD_DATASET_SET_ACTIVE_TLVS,
-			 ot_rpc_data_set_active_tlvs_rpc_handler, NULL);
+const static struct ot_rpc_dataset_set_tlvs_params ot_rpc_dataset_set_active_tlvs_params = {
+	.cmd = OT_RPC_CMD_DATASET_SET_ACTIVE_TLVS,
+	.set = otDatasetSetActiveTlvs,
+};
+
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_dataset_set_active_tlvs,
+			 OT_RPC_CMD_DATASET_SET_ACTIVE_TLVS, ot_rpc_dataset_set_tlvs_handler,
+			 (void *)&ot_rpc_dataset_set_active_tlvs_params);
+
+const static struct ot_rpc_dataset_set_tlvs_params ot_rpc_dataset_set_pending_tlvs_params = {
+	.cmd = OT_RPC_CMD_DATASET_SET_PENDING_TLVS,
+	.set = otDatasetSetPendingTlvs,
+};
+
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_dataset_set_pending_tlvs,
+			 OT_RPC_CMD_DATASET_SET_PENDING_TLVS, ot_rpc_dataset_set_tlvs_handler,
+			 (void *)&ot_rpc_dataset_set_pending_tlvs_params);
 
 static void ot_rpc_rsp_send_dataset(otOperationalDatasetTlvs *dataset)
 {
@@ -75,45 +94,71 @@ static void ot_rpc_rsp_send_dataset(otOperationalDatasetTlvs *dataset)
 	nrf_rpc_cbor_rsp_no_err(&ot_group, &ctx);
 }
 
-static void ot_rpc_data_get_active_tlvs_rpc_handler(const struct nrf_rpc_group *group,
-						    struct nrf_rpc_cbor_ctx *ctx,
-						    void *handler_data)
+struct ot_rpc_dataset_get_tlvs_params {
+	uint8_t cmd;
+	otError (*get)(otInstance *instance, otOperationalDatasetTlvs *tlvs);
+};
+
+static void ot_rpc_dataset_get_tlvs_handler(const struct nrf_rpc_group *group,
+					    struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
+	const struct ot_rpc_dataset_get_tlvs_params *handler_params = handler_data;
 	otOperationalDatasetTlvs dataset;
 	otError error;
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_DATASET_GET_ACTIVE_TLVS);
+		ot_rpc_report_cmd_decoding_error(handler_params->cmd);
 		return;
 	}
 
 	openthread_api_mutex_lock(openthread_get_default_context());
-	error = otDatasetGetActiveTlvs(openthread_get_default_instance(), &dataset);
+	error = handler_params->get(openthread_get_default_instance(), &dataset);
 	openthread_api_mutex_unlock(openthread_get_default_context());
 
 	ot_rpc_rsp_send_dataset(error == OT_ERROR_NONE ? &dataset : NULL);
 }
 
-NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_data_get_active_tlvs, OT_RPC_CMD_DATASET_GET_ACTIVE_TLVS,
-			 ot_rpc_data_get_active_tlvs_rpc_handler, NULL);
+const static struct ot_rpc_dataset_get_tlvs_params ot_rpc_dataset_get_active_tlvs_params = {
+	.cmd = OT_RPC_CMD_DATASET_GET_ACTIVE_TLVS,
+	.get = otDatasetGetActiveTlvs,
+};
 
-static void ot_rpc_dataset_set_active_rpc_handler(const struct nrf_rpc_group *group,
-						  struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_dataset_get_active_tlvs,
+			 OT_RPC_CMD_DATASET_GET_ACTIVE_TLVS, ot_rpc_dataset_get_tlvs_handler,
+			 (void *)&ot_rpc_dataset_get_active_tlvs_params);
+
+const static struct ot_rpc_dataset_get_tlvs_params ot_rpc_dataset_get_pending_tlvs_params = {
+	.cmd = OT_RPC_CMD_DATASET_GET_PENDING_TLVS,
+	.get = otDatasetGetPendingTlvs,
+};
+
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_dataset_get_pending_tlvs,
+			 OT_RPC_CMD_DATASET_GET_PENDING_TLVS, ot_rpc_dataset_get_tlvs_handler,
+			 (void *)&ot_rpc_dataset_get_pending_tlvs_params);
+
+struct ot_rpc_dataset_set_params {
+	uint8_t cmd;
+	otError (*set)(otInstance *instance, const otOperationalDataset *dataset);
+};
+
+static void ot_rpc_dataset_set_handler(const struct nrf_rpc_group *group,
+				       struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
-	otOperationalDataset dataset;
-	void *data_ptr = &dataset;
+	const struct ot_rpc_dataset_set_params *handler_params = handler_data;
+	otOperationalDataset dataset_buf;
+	otOperationalDataset *dataset = &dataset_buf;
 	otError error;
 
-	ot_rpc_decode_dataset(group, ctx, &data_ptr);
+	ot_rpc_decode_dataset(group, ctx, &dataset);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_DATASET_SET_ACTIVE);
+		ot_rpc_report_cmd_decoding_error(handler_params->cmd);
 		return;
 	}
 
-	if (data_ptr) {
+	if (dataset) {
 		openthread_api_mutex_lock(openthread_get_default_context());
-		error = otDatasetSetActive(openthread_get_default_instance(), &dataset);
+		error = handler_params->set(openthread_get_default_instance(), dataset);
 		openthread_api_mutex_unlock(openthread_get_default_context());
 	} else {
 		error = OT_ERROR_INVALID_ARGS;
@@ -122,24 +167,43 @@ static void ot_rpc_dataset_set_active_rpc_handler(const struct nrf_rpc_group *gr
 	nrf_rpc_rsp_send_uint(group, error);
 }
 
-NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_dataset_set_active, OT_RPC_CMD_DATASET_SET_ACTIVE,
-			 ot_rpc_dataset_set_active_rpc_handler, NULL);
+const static struct ot_rpc_dataset_set_params ot_rpc_dataset_set_active_params = {
+	.cmd = OT_RPC_CMD_DATASET_SET_ACTIVE,
+	.set = otDatasetSetActive,
+};
 
-static void ot_rpc_dataset_get_active_rpc_handler(const struct nrf_rpc_group *group,
-						  struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_dataset_set_active, OT_RPC_CMD_DATASET_SET_ACTIVE,
+			 ot_rpc_dataset_set_handler, (void *)&ot_rpc_dataset_set_active_params);
+
+const static struct ot_rpc_dataset_set_params ot_rpc_dataset_set_pending_params = {
+	.cmd = OT_RPC_CMD_DATASET_SET_PENDING,
+	.set = otDatasetSetPending,
+};
+
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_dataset_set_pending, OT_RPC_CMD_DATASET_SET_PENDING,
+			 ot_rpc_dataset_set_handler, (void *)&ot_rpc_dataset_set_pending_params);
+
+struct ot_rpc_dataset_get_params {
+	uint8_t cmd;
+	otError (*get)(otInstance *instance, otOperationalDataset *dataset);
+};
+
+static void ot_rpc_dataset_get_handler(const struct nrf_rpc_group *group,
+				       struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
+	const struct ot_rpc_dataset_get_params *handler_params = handler_data;
 	otOperationalDataset dataset;
 	struct nrf_rpc_cbor_ctx tx_ctx;
 	size_t cbor_buffer_size = OPERATIONAL_DATASET_LENGTH(&dataset);
 	otError error;
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_DATASET_GET_ACTIVE);
+		ot_rpc_report_cmd_decoding_error(handler_params->cmd);
 		return;
 	}
 
 	openthread_api_mutex_lock(openthread_get_default_context());
-	error = otDatasetGetActive(openthread_get_default_instance(), &dataset);
+	error = handler_params->get(openthread_get_default_instance(), &dataset);
 	openthread_api_mutex_unlock(openthread_get_default_context());
 
 	if (error != OT_ERROR_NONE) {
@@ -153,5 +217,18 @@ static void ot_rpc_dataset_get_active_rpc_handler(const struct nrf_rpc_group *gr
 	nrf_rpc_cbor_rsp_no_err(&ot_group, &tx_ctx);
 }
 
+const static struct ot_rpc_dataset_get_params ot_rpc_dataset_get_active_params = {
+	.cmd = OT_RPC_CMD_DATASET_GET_ACTIVE,
+	.get = otDatasetGetActive,
+};
+
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_dataset_get_active, OT_RPC_CMD_DATASET_GET_ACTIVE,
-			 ot_rpc_dataset_get_active_rpc_handler, NULL);
+			 ot_rpc_dataset_get_handler, (void *)&ot_rpc_dataset_get_active_params);
+
+const static struct ot_rpc_dataset_get_params ot_rpc_dataset_get_pending_params = {
+	.cmd = OT_RPC_CMD_DATASET_GET_PENDING,
+	.get = otDatasetGetPending,
+};
+
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_dataset_get_pending, OT_RPC_CMD_DATASET_GET_PENDING,
+			 ot_rpc_dataset_get_handler, (void *)&ot_rpc_dataset_get_pending_params);
