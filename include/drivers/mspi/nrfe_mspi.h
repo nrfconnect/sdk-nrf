@@ -16,7 +16,7 @@ extern "C" {
 #endif
 
 #ifdef CONFIG_SOC_NRF54L15
-#define NRFE_MSPI_PINS_MAX	 6
+#define NRFE_MSPI_PINS_MAX	 11
 #else
 #error "Unsupported SoC for SDP MSPI"
 #endif
@@ -61,6 +61,7 @@ typedef struct {
 
 typedef struct {
 	nrfe_mspi_opcode_t opcode; /* NRFE_MSPI_CONFIG_PINS */
+	uint8_t pins_count;
 	pinctrl_soc_pin_t pin[NRFE_MSPI_PINS_MAX];
 } nrfe_mspi_pinctrl_soc_pin_msg_t;
 
