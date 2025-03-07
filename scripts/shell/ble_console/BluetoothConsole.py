@@ -9,10 +9,7 @@ import os
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GObject, Gdk, GLib
-
-gi.require_version('Vte', '2.91')
-from gi.repository import Vte
+from gi.repository import Gtk, GLib
 
 from dbus import DBusException
 from TerminalNotebook import TerminalNotebook
@@ -24,7 +21,6 @@ MAX_SEND_LENGTH     = 20
 class BluetoothConsole( TerminalNotebook, BluetoothConnection):
 
     def __init__(self):
-        self.device_sending_dict = {}
         self.disconnected_devs   = []
         self.connected_devs      = []
 
@@ -54,26 +50,26 @@ class BluetoothConsole( TerminalNotebook, BluetoothConnection):
         self.text_message = self.text_window.get_buffer()
 
         try:
-            BluetoothConnection.__init__(self, self.bt_read_event, self.display_message)
+            BluetoothConnection.__init__(self, self.bt_read_event, self.show_message)
         except DBusException:
             self.popup_warning("Bluetooth stack not reachable on D-Bus. Ensure Bluetooth device is connected and restart program.")
 
-        TerminalNotebook.__init__(self, self.write_bluetooth, vbox, self.unconnect_from_menu, self.display_message)
+        TerminalNotebook.__init__(self, self.write_bluetooth, vbox, self.unconnect_from_menu, self.show_message)
 
         GLib.timeout_add(1000, self.update_device_list)
 
         menubar = Gtk.MenuBar()
 
         filemenu = Gtk.Menu()
-        filem = Gtk.MenuItem("File")
+        filem = Gtk.MenuItem(label = "File")
         filem.set_submenu(filemenu)
 
-        exit = Gtk.MenuItem("Exit")
-        exit.connect("activate", Gtk.main_quit)
-        filemenu.append(exit)
+        exit_item = Gtk.MenuItem(label = "Exit")
+        exit_item.connect("activate", Gtk.main_quit)
+        filemenu.append(exit_item)
 
         self.connect_menu = Gtk.Menu()
-        connect_item = Gtk.MenuItem("Select device")
+        connect_item = Gtk.MenuItem(label = "Select device")
         connect_item.set_submenu(self.connect_menu)
 
         menubar.append(filem)
@@ -83,9 +79,9 @@ class BluetoothConsole( TerminalNotebook, BluetoothConnection):
         vbox.pack_start(self.text_window, False, False, 0)
         self.text_window.set_size_request(-1,0)
         self.window.show_all()
-        self.display_message("Welcome to Bluetooth Console by Nordic Semiconductor\r\nSelect device from context menu to connect", 8000)
+        self.show_message("Welcome to Bluetooth Console by Nordic Semiconductor\r\nSelect device from context menu to connect", 8000)
 
-    """Signal from BlueZ"""
+    # Signal from BlueZ
     def bt_read_event(self, *args, **kwargs):
         if len(args) >= 2:
             if (args[0] == READ_CHARACTERISTIC) and ('Value' in args[1]):
@@ -97,12 +93,12 @@ class BluetoothConsole( TerminalNotebook, BluetoothConnection):
     def export_name_from_rec_arg(self, argument):
         return argument.split('/service',1)[0]
 
-    def display_message(self, message, timeout = 3000):
+    def show_message(self, message, timeout = 3000):
         self.text_window.set_size_request(-1,-1)
         self.text_message.set_text(message)
-        GLib.timeout_add(timeout, self.clr_display_message)
+        GLib.timeout_add(timeout, self.clear_message)
 
-    def clr_display_message(self):
+    def clear_message(self):
         self.text_message.set_text('')
         self.text_window.set_size_request(-1,0)
         return False
@@ -137,7 +133,7 @@ class BluetoothConsole( TerminalNotebook, BluetoothConnection):
                 self.connect_menu.remove(dev)
 
             for dev in connected_devs:
-                dev_menu_item = Gtk.CheckMenuItem(self.get_device_name(dev) + ' (' + dev + ')')
+                dev_menu_item = Gtk.CheckMenuItem(label = self.get_device_name(dev) + ' (' + dev + ')')
                 if dev in opened_devices:
                     dev_menu_item.set_active(True)
                     self.connect_to_device(dev)
@@ -150,7 +146,7 @@ class BluetoothConsole( TerminalNotebook, BluetoothConnection):
         # When there are no connected NUS devices, show info in menu
         items = [item for item in self.connect_menu]
         if not items:
-            no_bonded_menu_item = Gtk.CheckMenuItem('No compatible devices connected')
+            no_bonded_menu_item = Gtk.CheckMenuItem(label = 'No compatible devices connected')
             self.connect_menu.append(no_bonded_menu_item)
             self.connect_menu.show_all()
 
@@ -174,12 +170,12 @@ class BluetoothConsole( TerminalNotebook, BluetoothConnection):
         GLib.idle_add(self.send_data)
         self.connect_to_device(device)
         self.add_terminal(device, self.get_device_name(device))
-        self.display_message("Connected to " + device)
+        self.show_message("Connected to " + device)
 
     def disconnect(self, device):
         self.disconnect_from_device(device)
         self.remove_terminal(device)
-        self.display_message("Disonnected from " + device)
+        self.show_message("Disonnected from " + device)
 
     def popup_warning(self, text):
         popup = Gtk.MessageDialog(self.window, 0, Gtk.MessageType.WARNING,
