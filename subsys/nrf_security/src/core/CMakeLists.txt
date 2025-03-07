@@ -4,4 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-add_subdirectory(nrf_oberon)
+if(CONFIG_PSA_CORE_LITE)
+  add_subdirectory(lite)
+else()
+  add_subdirectory(nrf_oberon)
+endif()
