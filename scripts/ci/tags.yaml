@@ -1313,6 +1313,7 @@ ci_tests_drivers_sdp:
     - nrf/tests/drivers/gpio/egpio_basic_api/
     - nrf/tests/drivers/sdp_asm/
     - nrf/tests/zephyr/drivers/flash/
+    - nrf/tests/zephyr/drivers/mspi/
     - zephyr/drivers/mbox/
     - zephyr/subsys/ipc/ipc_service/
     - nrf/samples/zephyr/basic/blinky/
