@@ -12,8 +12,11 @@ namespace Nrf
 PersistentStorageSecure::UidMap PersistentStorageSecure::sUidMap{};
 PersistentStorageSecure::Byte PersistentStorageSecure::sSerializedMapBuff[kMaxMapSerializationBufferSize]{};
 
-PSErrorCode PersistentStorageSecure::_SecureInit()
+PSErrorCode PersistentStorageSecure::_SecureInit(PersistentStorageNode *rootNode)
 {
+	// Ignored in this backend
+	(void)rootNode;
+
 	return LoadUIDMap();
 }
 
@@ -83,6 +86,30 @@ PSErrorCode PersistentStorageSecure::_SecureRemove(PersistentStorageNode *node)
 	}
 
 	return PSErrorCode::Failure;
+}
+
+PSErrorCode PersistentStorageSecure::_SecureFactoryReset()
+{
+	PSErrorCode error = PSErrorCode::Success;
+
+	// Remove all keys
+	for (auto it = std::begin(sUidMap.mMap); it != std::end(sUidMap.mMap) - sUidMap.FreeSlots(); ++it) {
+		psa_status_t status = psa_ps_remove(it->key);
+		if (status != PSA_SUCCESS) {
+			// Set error but try to remove all keys
+			error = PSErrorCode::Failure;
+		}
+	}
+
+	// Remove UidMap
+	psa_status_t status = psa_ps_remove(kKeyOffset);
+	if (status != PSA_SUCCESS) {
+		error = PSErrorCode::Failure;
+	}
+
+	sUidMap = {};
+
+	return error;
 }
 
 psa_storage_uid_t PersistentStorageSecure::UIDFromString(char *str, bool *alreadyInTheMap)
