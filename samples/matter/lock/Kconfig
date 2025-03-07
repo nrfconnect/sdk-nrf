@@ -71,13 +71,6 @@ config SHELL_CMD_BUFF_SIZE
 
 endif
 
-config LOCK_LEAVE_FABRIC_CLEAR_CREDENTIAL
-	bool "Clear all credentials assigned to given fabric index"
-	default y
-	help
-	  This feature allows to remove all credentials which were created or modified
-	  within the fabric which is being removed from the door lock.
-
 config STATE_LEDS
 	bool "Use LEDs to indicate the device state"
 	default y

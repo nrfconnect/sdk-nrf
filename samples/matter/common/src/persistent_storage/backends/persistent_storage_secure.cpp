@@ -85,6 +85,28 @@ PSErrorCode PersistentStorageSecure::_SecureRemove(PersistentStorageNode *node)
 	return PSErrorCode::Failure;
 }
 
+PSErrorCode PersistentStorageSecure::_SecureFactoryReset()
+{
+	PSErrorCode error = PSErrorCode::Success;
+
+	// Remove all keys
+	for (auto it = std::begin(sUidMap.mMap); it != std::end(sUidMap.mMap) - sUidMap.FreeSlots(); ++it) {
+		psa_status_t status = psa_ps_remove(it->key);
+		if (status != PSA_SUCCESS) {
+			// Set error but try to remove all keys
+			error = PSErrorCode::Failure;
+		}
+	}
+
+	// Remove UidMap
+	psa_status_t status = psa_ps_remove(kKeyOffset);
+	if (status != PSA_SUCCESS) {
+		error = PSErrorCode::Failure;
+	}
+
+	return error;
+}
+
 psa_storage_uid_t PersistentStorageSecure::UIDFromString(char *str, bool *alreadyInTheMap)
 {
 	for (auto &it : sUidMap.mMap) {
