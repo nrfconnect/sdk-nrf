@@ -1003,9 +1003,13 @@ void bt_ras_rreq_rd_subevent_data_parse(struct net_buf_simple *peer_ranging_data
 			struct bt_le_cs_subevent_step local_step;
 			struct bt_le_cs_subevent_step peer_step;
 
-			if (local_step_data_buf->len < sizeof(struct bt_le_cs_subevent_step) ||
-			    peer_ranging_data_buf->len < sizeof(struct ras_rd_cs_subevent_step)) {
-				LOG_WRN("Step data appears malformed.");
+			if (local_step_data_buf->len < 3) {
+				LOG_WRN("Local step data appears malformed.");
+				return;
+			}
+
+			if (peer_ranging_data_buf->len < 1) {
+				LOG_WRN("Peer step data appears malformed.");
 				return;
 			}
 
@@ -1054,9 +1058,13 @@ void bt_ras_rreq_rd_subevent_data_parse(struct net_buf_simple *peer_ranging_data
 							 bt_hci_le_cs_step_data_mode_0_initiator);
 			}
 
-			if (local_step.data_len > local_step_data_buf->len ||
-			    peer_step.data_len > peer_ranging_data_buf->len) {
-				LOG_WRN("Step data appears malformed.");
+			if (local_step.data_len > local_step_data_buf->len) {
+				LOG_WRN("Local step data appears malformed.");
+				return;
+			}
+
+			if (peer_step.data_len > peer_ranging_data_buf->len) {
+				LOG_WRN("Peer step data appears malformed.");
 				return;
 			}
 
