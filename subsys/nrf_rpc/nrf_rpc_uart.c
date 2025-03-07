@@ -71,24 +71,37 @@ struct nrf_rpc_uart {
 	struct k_mutex tx_lock;
 };
 
+static void log_hexdump_dbg(const uint8_t *data, size_t length, const char *fmt, ...)
+{
+	if (IS_ENABLED(CONFIG_NRF_RPC_TR_LOG_LEVEL_DBG)) {
+		va_list ap;
+		char message[32];
+
+		va_start(ap, fmt);
+		vsnprintk(message, sizeof(message), fmt, ap);
+		va_end(ap);
+
+		LOG_HEXDUMP_DBG(data, length, message);
+	}
+}
+
 #define CRC_SIZE sizeof(uint16_t)
 
 static void send_byte(const struct device *dev, uint8_t byte);
 
 static void ack_rx(struct nrf_rpc_uart *uart_tr)
 {
-	if (!IS_ENABLED(CONFIG_NRF_RPC_UART_RELIABLE)) {
-		return;
-	}
-
-	if (uart_tr->rx_packet_len != CRC_SIZE) {
+	if (!IS_ENABLED(CONFIG_NRF_RPC_UART_RELIABLE) || uart_tr->rx_packet_len != CRC_SIZE) {
+		log_hexdump_dbg(uart_tr->rx_packet, uart_tr->rx_packet_len, ">>> RX invalid frame");
 		return;
 	}
 
 	uint16_t rx_ack = sys_get_le16(uart_tr->rx_packet);
 
+	LOG_DBG(">>> RX ack %04x", rx_ack);
+
 	if (uart_tr->ack_payload != rx_ack) {
-		LOG_WRN("Wrong ack. Expected: %#4x. Received: %#4x.", uart_tr->ack_payload, rx_ack);
+		LOG_WRN("Received ack %04x but expected %04x", rx_ack, uart_tr->ack_payload);
 		return;
 	}
 
@@ -106,7 +119,7 @@ static void ack_tx(struct nrf_rpc_uart *uart_tr, uint16_t ack_pld)
 
 	sys_put_le16(ack_pld, ack);
 	k_mutex_lock(&uart_tr->ack_tx_lock, K_FOREVER);
-	LOG_HEXDUMP_DBG(ack, sizeof(ack), "Tx ack");
+	LOG_DBG("<<< TX ack %04x", ack_pld);
 
 	uart_poll_out(uart_tr->uart, HDLC_CHAR_DELIMITER);
 
@@ -182,7 +195,6 @@ static void hdlc_decode_byte(struct nrf_rpc_uart *uart_tr, uint8_t byte)
 	}
 
 	if (uart_tr->hdlc_state == HDLC_STATE_FRAME_FOUND) {
-		LOG_HEXDUMP_DBG(uart_tr->rx_packet, uart_tr->rx_packet_len, "Received frame");
 		if (uart_tr->rx_packet_len > CRC_SIZE) {
 			uart_tr->rx_packet_len -= CRC_SIZE;
 		} else {
@@ -216,9 +228,13 @@ static void work_handler(struct k_work *work)
 			crc_received = sys_get_le16(uart_tr->rx_packet + uart_tr->rx_packet_len);
 			crc_calculated =
 				crc16_ccitt(0xffff, uart_tr->rx_packet, uart_tr->rx_packet_len);
+
+			log_hexdump_dbg(uart_tr->rx_packet, uart_tr->rx_packet_len,
+					">>> RX packet %04x", crc_received);
+
 			if (!crc_compare(crc_received, crc_calculated)) {
-				LOG_ERR("Invalid CRC, calculated %4x received %4x", crc_calculated,
-					crc_received);
+				LOG_ERR("Invalid packet CRC: calculated %04x but received %04x",
+					crc_calculated, crc_received);
 				uart_tr->rx_packet_len = 0;
 				uart_tr->hdlc_state = HDLC_STATE_UNSYNC;
 				continue;
@@ -227,7 +243,7 @@ static void work_handler(struct k_work *work)
 			ack_tx(uart_tr, crc_received);
 
 			if (rx_flip_check(uart_tr, crc_received)) {
-				LOG_WRN("Duplicated frame was filtered (crc:%#4x)", crc_received);
+				LOG_WRN("Duplicate packet %04x", crc_received);
 			} else {
 				uart_tr->receive_callback(transport, uart_tr->rx_packet,
 							  uart_tr->rx_packet_len,
@@ -240,7 +256,7 @@ static void work_handler(struct k_work *work)
 
 		ret = ring_buf_get_finish(&uart_tr->rx_ringbuf, len);
 		if (ret < 0) {
-			LOG_DBG("Cannot flush ring buffer (%d)", ret);
+			LOG_DBG("Cannot flush ring buffer: %d", ret);
 		}
 	}
 }
@@ -269,7 +285,7 @@ static void serial_cb(const struct device *uart, void *user_data)
 			uint8_t dummy;
 
 			/* No space in the ring buffer - consume byte. */
-			LOG_WRN("RX ring buffer full.");
+			LOG_WRN("RX ring buffer full");
 
 			rx_len = uart_fifo_read(uart, &dummy, 1);
 		}
@@ -286,7 +302,6 @@ static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t
 	struct nrf_rpc_uart *uart_tr = transport->ctx;
 
 	if (uart_tr->transport != NULL) {
-		LOG_DBG("init not needed");
 		return 0;
 	}
 
@@ -295,7 +310,6 @@ static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t
 	LOG_DBG("init called");
 
 	if (receive_cb == NULL) {
-		LOG_ERR("No transport receive callback");
 		return -NRF_EINVAL;
 	}
 	uart_tr->receive_callback = receive_cb;
@@ -362,14 +376,13 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 
 	k_mutex_lock(&uart_tr->tx_lock, K_FOREVER);
 
-	LOG_HEXDUMP_DBG(data, length, "Sending frame");
-
 	crc_val = crc16_ccitt(0xffff, data, length);
+	crc_val = tx_flip(uart_tr, crc_val);
+	log_hexdump_dbg(data, length, "<<< TX packet %04x", crc_val);
 
 #if CONFIG_NRF_RPC_UART_RELIABLE
 	int attempts = 0;
 
-	crc_val = tx_flip(uart_tr, crc_val);
 	uart_tr->ack_payload = crc_val;
 	acked = false;
 
@@ -396,9 +409,9 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 		if (k_sem_take(&uart_tr->ack_sem, K_MSEC(CONFIG_NRF_RPC_UART_ACK_WAITING_TIME)) ==
 		    0) {
 			acked = true;
-			LOG_DBG("Acked successfully.");
+			LOG_DBG("Acked successfully");
 		} else {
-			LOG_WRN("Ack timeout expired.");
+			LOG_WRN("Ack timeout");
 		}
 	} while (!acked && attempts < CONFIG_NRF_RPC_UART_TX_ATTEMPTS);
 #endif /* CONFIG_NRF_RPC_UART_RELIABLE */
@@ -416,7 +429,7 @@ static void *tx_buf_alloc(const struct nrf_rpc_tr *transport, size_t *size)
 
 	data = k_malloc(*size);
 	if (!data) {
-		LOG_ERR("Failed to allocate Tx buffer.");
+		LOG_ERR("Failed to allocate TX buffer");
 		goto error;
 	}
 
