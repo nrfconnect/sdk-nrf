@@ -420,6 +420,10 @@ static int api_dev_config(const struct device *dev, const struct mspi_dev_id *de
 	int rc;
 	nrfe_mspi_dev_config_msg_t mspi_dev_config_msg;
 
+	if (param_mask == MSPI_DEVICE_CONFIG_NONE) {
+		return 0;
+	}
+
 	if (param_mask & MSPI_DEVICE_CONFIG_MEM_BOUND) {
 		if (cfg->mem_boundary) {
 			LOG_ERR("Memory boundary is not supported.");

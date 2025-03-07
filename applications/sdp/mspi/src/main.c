@@ -314,9 +314,13 @@ static void config_pins(nrfe_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 		uint32_t psel = NRF_GET_PIN(pins_cfg->pin[i]);
 		uint32_t fun = NRF_GET_FUN(pins_cfg->pin[i]);
 
+		if ((psel == NRF_PIN_DISCONNECTED) || (pins_cfg->pin[i] == 0)) {
+			continue;
+		}
+
 		uint8_t pin_number = NRF_PIN_NUMBER_TO_PIN(psel);
 
-		NRFX_ASSERT(pin_number < VIO_COUNT)
+		NRFX_ASSERT(pin_number < VIO_COUNT);
 
 		if ((fun >= NRF_FUN_SDP_MSPI_CS0) && (fun <= NRF_FUN_SDP_MSPI_CS4)) {
 
