@@ -22,7 +22,6 @@
 
 #define DEVICES_MAX   5
 #define DATA_PINS_MAX 8
-#define VIO_COUNT     11
 
 #define MAX_SHIFT_COUNT 63
 
@@ -37,7 +36,7 @@
 
 BUILD_ASSERT(CONFIG_SDP_MSPI_MAX_RESPONSE_SIZE > 0, "Response max size should be greater that 0");
 
-static const uint8_t pin_to_vio_map[VIO_COUNT] = {
+static const uint8_t pin_to_vio_map[NRFE_MSPI_PINS_MAX] = {
 	4,  /* Physical pin 0 */
 	0,  /* Physical pin 1 */
 	1,  /* Physical pin 2 */
@@ -311,13 +310,13 @@ static void config_pins(nrfe_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 	xfer_params.tx_direction_mask = 0;
 	xfer_params.rx_direction_mask = 0;
 
-	for (uint8_t i = 0; i < NRFE_MSPI_PINS_MAX; i++) {
+	for (uint8_t i = 0; i < pins_cfg->pins_count; i++) {
 		uint32_t psel = NRF_GET_PIN(pins_cfg->pin[i]);
 		uint32_t fun = NRF_GET_FUN(pins_cfg->pin[i]);
 
 		uint8_t pin_number = NRF_PIN_NUMBER_TO_PIN(psel);
 
-		NRFX_ASSERT(pin_number < VIO_COUNT)
+		NRFX_ASSERT(pin_number < NRFE_MSPI_PINS_MAX)
 
 		if ((fun >= NRF_FUN_SDP_MSPI_CS0) && (fun <= NRF_FUN_SDP_MSPI_CS4)) {
 
