@@ -25,6 +25,14 @@
 		dfu_cache_partition_3: partition@160000 {
 			reg = <0x160000 DT_SIZE_K(128)>;
 		};
+
+		dfu_target_img_31: cpurad_slot_a_partition: partition@80000 {
+			reg = <0x80000 DT_SIZE_K(4)>;
+		};
+
+		dfu_target_img_21: cpuapp_slot_a_partition: partition@190000 {
+			reg = <0x190000 DT_SIZE_K(4)>;
+		};
 	};
 };
 

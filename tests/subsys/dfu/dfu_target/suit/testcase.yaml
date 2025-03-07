@@ -25,3 +25,16 @@ tests:
       - dfu
       - sysbuild
       - ci_tests_subsys_dfu
+  dfu.dfu_target.suit.cache_ipuc_processing:
+    sysbuild: true
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - native_sim
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - native_sim
+    extra_args: OVERLAY_CONFIG=cache_ipuc_processing.conf
+    tags:
+      - dfu
+      - sysbuild
+      - ci_tests_subsys_dfu
