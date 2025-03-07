@@ -261,6 +261,9 @@ nRF Desktop
     If you still need to support the Bluetooth LE legacy pairing, you need to disable the option in the configuration.
   * :ref:`nrf_desktop_hid_state` and :ref:`nrf_desktop_fn_keys` to use :c:func:`bsearch` implementation from C library.
     This simplifies maintenance and allows you to use Picolibc (:kconfig:option:`CONFIG_PICOLIBC`).
+  * The IPC radio image configurations of the nRF5340 DK to use Picolibc (:kconfig:option:`CONFIG_PICOLIBC`).
+    This aligns the configurations to the IPC radio image configurations of the nRF54H20 DK.
+    Picolibc is used by default in Zephyr.
 
 * Added:
 
