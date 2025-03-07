@@ -20,12 +20,17 @@
 #include <sxsymcrypt/trng.h>
 #include <sxsymcrypt/aes.h>
 #include <sxsymcrypt/keyref.h>
-
 #include <zephyr/kernel.h>
 #include <nrf_security_mutexes.h>
 
-#define MAX_BITS_PER_REQUEST (1 << 19)		 /* NIST.SP.800-90Ar1:Table 3 */
-#define RESEED_INTERVAL	     ((uint64_t)1 << 48) /* 2^48 as per NIST spec */
+#ifdef CONFIG_CRACEN_HW_VERSION_LITE
+#define MAX_BITS_PER_REQUEST (1 << 16) /* Cracen Lite only supports 2^16 ctr size */
+/* Cracen Lite only supports 2^16 ctr size so will need to reseed before it overflows */
+#define RESEED_INTERVAL ((uint64_t)1 << 16)
+#else
+#define MAX_BITS_PER_REQUEST (1 << 19) /* NIST.SP.800-90Ar1:Table 3 */
+#define RESEED_INTERVAL ((uint64_t)1 << 48) /* 2^48 as per NIST spec */
+#endif
 
 /** @brief Magic number to signal that PRNG context is initialized */
 #define CRACEN_PRNG_INITIALIZED (0xA5B4A5B4)
@@ -103,6 +108,7 @@ static psa_status_t ctr_drbg_update(uint8_t *data)
 			return status;
 		}
 		temp_length += SX_BLKCIPHER_AES_BLK_SZ;
+		prng.reseed_counter++;
 	}
 
 	if (data) {
@@ -158,12 +164,33 @@ exit:
 	return silex_statuscodes_to_psa(sx_err);
 }
 
+static psa_status_t cracen_reseed(void)
+{
+	psa_status_t status;
+
+	/* DRBG entropy + nonce buffer. */
+	char entropy[CRACEN_PRNG_ENTROPY_SIZE + CRACEN_PRNG_NONCE_SIZE];
+	int sx_err = trng_get_seed(entropy, sizeof(entropy));
+
+	if (sx_err) {
+		return PSA_ERROR_HARDWARE_FAILURE;
+	}
+	status = ctr_drbg_update(entropy);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+	safe_memset(entropy, sizeof(entropy), 0, CRACEN_PRNG_ENTROPY_SIZE + CRACEN_PRNG_NONCE_SIZE);
+	prng.reseed_counter = 0;
+	return PSA_SUCCESS;
+}
+
 psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, size_t output_size)
 {
 	(void)context;
 
 	psa_status_t status = PSA_SUCCESS;
 	size_t len_left = output_size;
+	size_t number_of_blocks = DIV_ROUND_UP(output_size, SX_BLKCIPHER_AES_BLK_SZ);
 
 	if (output_size > 0 && output == NULL) {
 		return PSA_ERROR_INVALID_ARGUMENT;
@@ -181,29 +208,18 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 		 * here even though we hold the mutex.
 		 */
 		status = cracen_init_random(context);
-
 		if (status != PSA_SUCCESS) {
-			goto exit;
+			nrf_security_mutex_unlock(cracen_prng_context_mutex);
+			return status;
 		}
 	}
 
-	if (prng.reseed_counter >= RESEED_INTERVAL) {
-		char entropy[CRACEN_PRNG_ENTROPY_SIZE +
-			     CRACEN_PRNG_NONCE_SIZE]; /* DRBG entropy + nonce buffer. */
-		int sx_err = trng_get_seed(entropy, sizeof(entropy));
-
-		if (sx_err) {
-			status = PSA_ERROR_HARDWARE_FAILURE;
-			goto exit;
-		}
-		status = ctr_drbg_update(entropy);
+	if (prng.reseed_counter + number_of_blocks >= RESEED_INTERVAL) {
+		status = cracen_reseed();
 		if (status != PSA_SUCCESS) {
-			goto exit;
+			nrf_security_mutex_unlock(cracen_prng_context_mutex);
+			return status;
 		}
-		safe_memset(entropy, sizeof(entropy), 0,
-			    CRACEN_PRNG_ENTROPY_SIZE + CRACEN_PRNG_NONCE_SIZE);
-
-		prng.reseed_counter = 0;
 	}
 
 	psa_key_attributes_t attr = PSA_KEY_ATTRIBUTES_INIT;
@@ -211,10 +227,6 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 	psa_set_key_type(&attr, PSA_KEY_TYPE_AES);
 	psa_set_key_bits(&attr, PSA_BYTES_TO_BITS(sizeof(prng.key)));
 	psa_set_key_usage_flags(&attr, PSA_KEY_USAGE_ENCRYPT);
-
-	if (status != PSA_SUCCESS) {
-		return status;
-	}
 
 	while (len_left > 0) {
 		size_t cur_len = MIN(len_left, SX_BLKCIPHER_AES_BLK_SZ);
@@ -225,7 +237,8 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 						 temp, sizeof(temp));
 
 		if (status != PSA_SUCCESS) {
-			goto exit;
+			nrf_security_mutex_unlock(cracen_prng_context_mutex);
+			return status;
 		}
 
 		for (int i = 0; i < cur_len; i++) {
@@ -234,16 +247,10 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 
 		len_left -= cur_len;
 		output += cur_len;
+		prng.reseed_counter++;
 	}
 
 	status = ctr_drbg_update(NULL);
-	if (status != PSA_SUCCESS) {
-		goto exit;
-	}
-
-	prng.reseed_counter += 1;
-
-exit:
 	nrf_security_mutex_unlock(cracen_prng_context_mutex);
 	return status;
 }
