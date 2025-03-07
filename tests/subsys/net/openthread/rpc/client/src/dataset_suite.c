@@ -43,35 +43,54 @@ ZTEST(ot_rpc_dataset, test_otDatasetIsCommissioned)
 	zassert_false(result);
 }
 
-/* Test serialization of otDatasetSetActiveTlvs() */
-ZTEST(ot_rpc_dataset, test_otDatasetSetActiveTlvs)
+static void test_set_tlvs(uint8_t cmd,
+			  otError (*set)(otInstance *, const otOperationalDatasetTlvs *))
 {
-	otError error;
+	otError error = OT_ERROR_NONE;
 
 	const otOperationalDatasetTlvs dataset = {{INT_SEQUENCE(OT_OPERATIONAL_DATASET_MAX_LENGTH)},
 						  OT_OPERATIONAL_DATASET_MAX_LENGTH};
 
-	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_DATASET_SET_ACTIVE_TLVS, TLVS),
-				   RPC_RSP(OT_ERROR_NONE));
-	error = otDatasetSetActiveTlvs(NULL, &dataset);
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(cmd, TLVS), RPC_RSP(OT_ERROR_NONE));
+	error = set(NULL, &dataset);
 	mock_nrf_rpc_tr_expect_done();
 	zassert_equal(error, OT_ERROR_NONE);
+}
+
+/* Test serialization of otDatasetSetActiveTlvs() */
+ZTEST(ot_rpc_dataset, test_otDatasetSetActiveTlvs)
+{
+	test_set_tlvs(OT_RPC_CMD_DATASET_SET_ACTIVE_TLVS, otDatasetSetActiveTlvs);
+}
+
+/* Test serialization of otDatasetSetPendingTlvs() */
+ZTEST(ot_rpc_dataset, test_otDatasetSetPendingTlvs)
+{
+	test_set_tlvs(OT_RPC_CMD_DATASET_SET_PENDING_TLVS, otDatasetSetPendingTlvs);
+}
+
+static void test_set_tlvs_negative(otError (*set)(otInstance *, const otOperationalDatasetTlvs *))
+{
+	otError error;
+	const otOperationalDatasetTlvs dataset = {{0}, OT_OPERATIONAL_DATASET_MAX_LENGTH + 1};
+
+	error = set(NULL, &dataset);
+	zassert_equal(error, OT_ERROR_INVALID_ARGS);
 }
 
 /* Test incoming parameters validation of otDatasetSetActiveTlvs() */
 ZTEST(ot_rpc_dataset, test_otDatasetSetActiveTlvs_negative)
 {
-	otError error;
-	const otOperationalDatasetTlvs dataset = {{0}, OT_OPERATIONAL_DATASET_MAX_LENGTH + 1};
-
-	error = otDatasetSetActiveTlvs(NULL, &dataset);
-	zassert_equal(error, OT_ERROR_INVALID_ARGS);
-	error = otDatasetSetActiveTlvs(NULL, NULL);
-	zassert_equal(error, OT_ERROR_INVALID_ARGS);
+	test_set_tlvs_negative(otDatasetSetActiveTlvs);
 }
 
-/* Test serialization of otDatasetGetActiveTlvs() */
-ZTEST(ot_rpc_dataset, test_otDatasetGetActiveTlvs)
+/* Test incoming parameters validation of otDatasetSetPendingTlvs() */
+ZTEST(ot_rpc_dataset, test_otDatasetSetPendingTlvs_negative)
+{
+	test_set_tlvs_negative(otDatasetSetPendingTlvs);
+}
+
+static void test_get_tlvs(uint8_t cmd, otError (*get)(otInstance *, otOperationalDatasetTlvs *))
 {
 	otError error;
 	otOperationalDatasetTlvs dataset;
@@ -79,30 +98,50 @@ ZTEST(ot_rpc_dataset, test_otDatasetGetActiveTlvs)
 		{INT_SEQUENCE(OT_OPERATIONAL_DATASET_MAX_LENGTH)},
 		OT_OPERATIONAL_DATASET_MAX_LENGTH};
 
-	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_DATASET_GET_ACTIVE_TLVS), RPC_RSP(TLVS));
-	error = otDatasetGetActiveTlvs(NULL, &dataset);
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(cmd), RPC_RSP(TLVS));
+	error = get(NULL, &dataset);
 	mock_nrf_rpc_tr_expect_done();
 	zassert_equal(error, OT_ERROR_NONE);
 	zassert_mem_equal(&dataset, &expected_dataset, sizeof(otOperationalDatasetTlvs));
 }
 
-/* Test NULL replay on otDatasetGetActiveTlvs() and parameter validation. */
-ZTEST(ot_rpc_dataset, test_otDatasetGetActiveTlvs_null)
+/* Test serialization of otDatasetGetActiveTlvs() */
+ZTEST(ot_rpc_dataset, test_otDatasetGetActiveTlvs)
+{
+	test_get_tlvs(OT_RPC_CMD_DATASET_GET_ACTIVE_TLVS, otDatasetGetActiveTlvs);
+}
+
+/* Test serialization of otDatasetGetPendingTlvs() */
+ZTEST(ot_rpc_dataset, test_otDatasetGetPendingTlvs)
+{
+	test_get_tlvs(OT_RPC_CMD_DATASET_GET_PENDING_TLVS, otDatasetGetPendingTlvs);
+}
+
+static void test_get_tlvs_negative(uint8_t cmd,
+				   otError (*get)(otInstance *, otOperationalDatasetTlvs *))
 {
 	otError error;
 	otOperationalDatasetTlvs dataset;
 
-	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_DATASET_GET_ACTIVE_TLVS), RPC_RSP(CBOR_NULL));
-	error = otDatasetGetActiveTlvs(NULL, &dataset);
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(cmd), RPC_RSP(CBOR_NULL));
+	error = get(NULL, &dataset);
 	mock_nrf_rpc_tr_expect_done();
-	zassert_equal(error, OT_ERROR_NOT_FOUND);
-
-	error = otDatasetGetActiveTlvs(NULL, NULL);
 	zassert_equal(error, OT_ERROR_NOT_FOUND);
 }
 
-/* Test serialization of otDatasetSetActive() */
-ZTEST(ot_rpc_dataset, test_otDatasetSetActive)
+/* Test NULL replay on otDatasetGetActiveTlvs() and parameter validation. */
+ZTEST(ot_rpc_dataset, test_otDatasetGetActiveTlvs_negative)
+{
+	test_get_tlvs_negative(OT_RPC_CMD_DATASET_GET_ACTIVE_TLVS, otDatasetGetActiveTlvs);
+}
+
+/* Test NULL replay on otDatasetGetPendingTlvs() and parameter validation. */
+ZTEST(ot_rpc_dataset, test_otDatasetGetPendingTlvs_negative)
+{
+	test_get_tlvs_negative(OT_RPC_CMD_DATASET_GET_PENDING_TLVS, otDatasetGetPendingTlvs);
+}
+
+static void test_set(uint8_t cmd, otError (*set)(otInstance *, const otOperationalDataset *))
 {
 	otError error;
 
@@ -121,24 +160,25 @@ ZTEST(ot_rpc_dataset, test_otDatasetSetActive)
 		0xfedcba98,
 		{false, true, false, true, false, true, false, true, false, true, false, true}};
 
-	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_DATASET_SET_ACTIVE, DATASET),
-				   RPC_RSP(OT_ERROR_NONE));
-	error = otDatasetSetActive(NULL, &dataset);
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(cmd, DATASET), RPC_RSP(OT_ERROR_NONE));
+	error = set(NULL, &dataset);
 	mock_nrf_rpc_tr_expect_done();
 	zassert_equal(error, OT_ERROR_NONE);
 }
 
-/* Test incoming parameters validation of otDatasetSetActive() */
-ZTEST(ot_rpc_dataset, test_otDatasetSetActive_negative)
+/* Test serialization of otDatasetSetActive() */
+ZTEST(ot_rpc_dataset, test_otDatasetSetActive)
 {
-	otError error;
-
-	error = otDatasetSetActive(NULL, NULL);
-	zassert_equal(error, OT_ERROR_INVALID_ARGS);
+	test_set(OT_RPC_CMD_DATASET_SET_ACTIVE, otDatasetSetActive);
 }
 
-/* Test serialization of otDatasetGetActive() */
-ZTEST(ot_rpc_dataset, test_otDatasetGetActive)
+/* Test serialization of otDatasetSetPending() */
+ZTEST(ot_rpc_dataset, test_otDatasetSetPending)
+{
+	test_set(OT_RPC_CMD_DATASET_SET_PENDING, otDatasetSetPending);
+}
+
+static void test_get(uint8_t cmd, otError (*get)(otInstance *, otOperationalDataset *))
 {
 	otError error;
 	otOperationalDataset dataset;
@@ -148,8 +188,8 @@ ZTEST(ot_rpc_dataset, test_otDatasetGetActive)
 	uint8_t local_prefix[] = {INT_SEQUENCE(OT_IP6_PREFIX_SIZE)};
 	uint8_t pskc[] = {INT_SEQUENCE(OT_PSKC_MAX_SIZE)};
 
-	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_DATASET_GET_ACTIVE), RPC_RSP(DATASET));
-	error = otDatasetGetActive(NULL, &dataset);
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(cmd), RPC_RSP(DATASET));
+	error = get(NULL, &dataset);
 	mock_nrf_rpc_tr_expect_done();
 	zassert_equal(error, OT_ERROR_NONE);
 	zassert_equal(dataset.mActiveTimestamp.mSeconds, 0x0123456789abcdefull);
@@ -197,19 +237,39 @@ ZTEST(ot_rpc_dataset, test_otDatasetGetActive)
 	zassert_true(dataset.mComponents.mIsChannelMaskPresent);
 }
 
-/* Test NULL replay on otDatasetGetActive() and parameter validation. */
-ZTEST(ot_rpc_dataset, test_otDatasetGetActive_null)
+/* Test serialization of otDatasetGetActive() */
+ZTEST(ot_rpc_dataset, test_otDatasetGetActive)
+{
+	test_get(OT_RPC_CMD_DATASET_GET_ACTIVE, otDatasetGetActive);
+}
+
+/* Test serialization of otDatasetGetPending() */
+ZTEST(ot_rpc_dataset, test_otDatasetGetPending)
+{
+	test_get(OT_RPC_CMD_DATASET_GET_PENDING, otDatasetGetPending);
+}
+
+static void test_get_negative(uint8_t cmd, otError (*get)(otInstance *, otOperationalDataset *))
 {
 	otError error;
 	otOperationalDataset dataset;
 
-	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_DATASET_GET_ACTIVE), RPC_RSP(CBOR_NULL));
-	error = otDatasetGetActive(NULL, &dataset);
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(cmd), RPC_RSP(CBOR_NULL));
+	error = get(NULL, &dataset);
 	mock_nrf_rpc_tr_expect_done();
 	zassert_equal(error, OT_ERROR_NOT_FOUND);
+}
 
-	error = otDatasetGetActive(NULL, NULL);
-	zassert_equal(error, OT_ERROR_NOT_FOUND);
+/* Test NULL replay on otDatasetGetActive() and parameter validation. */
+ZTEST(ot_rpc_dataset, test_otDatasetGetActive_negative)
+{
+	test_get_negative(OT_RPC_CMD_DATASET_GET_ACTIVE, otDatasetGetActive);
+}
+
+/* Test NULL replay on otDatasetGetPending() and parameter validation. */
+ZTEST(ot_rpc_dataset, test_otDatasetGetPending_negative)
+{
+	test_get_negative(OT_RPC_CMD_DATASET_GET_PENDING, otDatasetGetPending);
 }
 
 ZTEST_SUITE(ot_rpc_dataset, NULL, NULL, tc_setup, NULL, NULL);

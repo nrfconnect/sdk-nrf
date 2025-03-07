@@ -78,7 +78,7 @@ static void discover_cb(otActiveScanResult *result, void *ctx)
 }
 
 /* Test reception of discover callback with active scan result. */
-ZTEST(ot_rpc_dataset, test_discover_cb_handler)
+ZTEST(ot_rpc_thread, test_discover_cb_handler)
 {
 
 	int in_slot = nrf_rpc_cbkproxy_in_set(discover_cb);
@@ -104,9 +104,8 @@ static void discover_empty_cb(otActiveScanResult *result, void *ctx)
 }
 
 /* Test reception of discover callback with empty active scan result. */
-ZTEST(ot_rpc_dataset, test_discover_cb_handler_empty)
+ZTEST(ot_rpc_thread, test_discover_cb_handler_empty)
 {
-
 	int in_slot = nrf_rpc_cbkproxy_in_set(discover_empty_cb);
 
 	cb_called = false;
