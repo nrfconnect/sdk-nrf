@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/util.h>
+#include <stdlib.h>
 #include <zephyr/settings/settings.h>
 
 #define MODULE fn_keys
@@ -72,38 +73,6 @@ static void validate_enabled_fn_keys(void)
 	}
 }
 
-static void *bsearch(const void *key, const uint8_t *base,
-		     size_t elem_num, size_t elem_size,
-		     int (*compare)(const void *, const void *))
-{
-	__ASSERT_NO_MSG(base);
-	__ASSERT_NO_MSG(compare);
-	__ASSERT_NO_MSG(elem_num <= SSIZE_MAX);
-
-	if (!elem_num) {
-		return NULL;
-	}
-
-	ssize_t lower = 0;
-	ssize_t upper = elem_num - 1;
-
-	while (upper >= lower) {
-		ssize_t m = (lower + upper) / 2;
-		int cmp = compare(key, base + (elem_size * m));
-
-		if (cmp == 0) {
-			return (void *)(base + (elem_size * m));
-		} else if (cmp < 0) {
-			upper = m - 1;
-		} else {
-			lower = m + 1;
-		}
-	}
-
-	/* key not found */
-	return NULL;
-}
-
 static int key_id_compare(const void *a, const void *b)
 {
 	const uint16_t *p_a = a;
@@ -117,10 +86,10 @@ static bool fn_key_enabled(uint16_t key_id)
 	validate_enabled_fn_keys();
 
 	uint16_t *p = bsearch(&key_id,
-			   (uint8_t *)fn_keys,
-			   ARRAY_SIZE(fn_keys),
-			   sizeof(fn_keys[0]),
-			   key_id_compare);
+			      fn_keys,
+			      ARRAY_SIZE(fn_keys),
+			      sizeof(fn_keys[0]),
+			      key_id_compare);
 
 	return (p != NULL);
 }
