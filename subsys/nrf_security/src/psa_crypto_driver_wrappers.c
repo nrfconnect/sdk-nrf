@@ -303,11 +303,15 @@ psa_status_t psa_driver_wrapper_verify_message(const psa_key_attributes_t *attri
 		break;
 	}
 
+#if defined(CONFIG_PSA_CORE_LITE)
+	return PSA_ERROR_NOT_SUPPORTED;
+#else
 	/* Call back to the core with psa_verify_message_builtin.
 	 * This will in turn forward this to use psa_crypto_driver_wrapper_verify_hash
 	 */
 	return psa_verify_message_builtin(attributes, key_buffer, key_buffer_size, alg, input,
 					  input_length, signature, signature_length);
+#endif
 }
 
 psa_status_t psa_driver_wrapper_sign_hash(const psa_key_attributes_t *attributes,
