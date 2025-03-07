@@ -264,6 +264,8 @@ nRF Desktop
   * The IPC radio image configurations of the nRF5340 DK to use Picolibc (:kconfig:option:`CONFIG_PICOLIBC`).
     This aligns the configurations to the IPC radio image configurations of the nRF54H20 DK.
     Picolibc is used by default in Zephyr.
+  * The nRF Desktop application image configurations to use Picolibc (:kconfig:option:`CONFIG_PICOLIBC`) by default.
+    Using the minimal libc implementation (:kconfig:option:`CONFIG_MINIMAL_LIBC`) no longer decreases the memory footprint of the application image for most of the configurations.
 
 * Added:
 
