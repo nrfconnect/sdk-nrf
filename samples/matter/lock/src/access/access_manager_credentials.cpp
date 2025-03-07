@@ -145,32 +145,6 @@ CHIP_ERROR AccessManager<CRED_BIT_MASK>::GetCredentialUserId(uint16_t credential
 	return CHIP_ERROR_NOT_FOUND;
 }
 
-#ifdef CONFIG_LOCK_LEAVE_FABRIC_CLEAR_CREDENTIAL
-template <CredentialsBits CRED_BIT_MASK> bool AccessManager<CRED_BIT_MASK>::ClearAllCredentialsFromFabric()
-{
-	return mCredentials.ForEach([](DoorLockData::Credential &credential, uint8_t credIdx) {
-		/* At this point the door-lock-server already invalidated both mCreatedBy and mLastModifiedBy
-		    of all credentials assigned to the fabric which is currently being removed */
-		if (credential.mInfo.mFields.mCreatedBy == kUndefinedFabricIndex &&
-		    credential.mInfo.mFields.mLastModifiedBy == kUndefinedFabricIndex &&
-		    credential.mSecret.mDataLength != 0) {
-			return Instance().ClearCredential(credential, credIdx);
-		}
-		return true;
-	});
-}
-
-template <CredentialsBits CRED_BIT_MASK>
-bool AccessManager<CRED_BIT_MASK>::ClearCredential(DoorLockData::Credential &credential, uint8_t credIdx)
-{
-	credIdx++; /* DoSetCredential expects indexes starting from 1 */
-	return DoSetCredential(credential, credIdx, kUndefinedFabricIndex, kUndefinedFabricIndex,
-			       DlCredentialStatus::kAvailable,
-			       static_cast<CredentialTypeEnum>(credential.mInfo.mFields.mCredentialType),
-			       chip::ByteSpan());
-}
-#endif
-
 template <CredentialsBits CRED_BIT_MASK> void AccessManager<CRED_BIT_MASK>::LoadCredentialsFromPersistentStorage()
 {
 	uint8_t credentialData[DoorLockData::Credential::RequiredBufferSize()] = { 0 };
@@ -186,8 +160,8 @@ template <CredentialsBits CRED_BIT_MASK> void AccessManager<CRED_BIT_MASK>::Load
 		}
 		outSize = 0;
 		if (!AccessStorage::Instance().Load(AccessStorage::Type::CredentialsIndexes,
-							 credentialIndexesSerialized,
-							 sizeof(credentialIndexesSerialized), outSize, type)) {
+						    credentialIndexesSerialized, sizeof(credentialIndexesSerialized),
+						    outSize, type)) {
 			LOG_INF("No stored indexes for credential of type: %d", type);
 			continue;
 		}
@@ -203,8 +177,7 @@ template <CredentialsBits CRED_BIT_MASK> void AccessManager<CRED_BIT_MASK>::Load
 			uint16_t credentialIndex = credIndexes.mList.mIndexes[idx];
 			outSize = 0;
 			if (!AccessStorage::Instance().Load(AccessStorage::Type::Credential, credentialData,
-								 sizeof(credentialData), outSize, type,
-								 credentialIndex)) {
+							    sizeof(credentialData), outSize, type, credentialIndex)) {
 				LOG_ERR("Cannot load credentials of type %d for index: %d", static_cast<uint8_t>(type),
 					credentialIndex);
 			}
@@ -217,7 +190,7 @@ template <CredentialsBits CRED_BIT_MASK> void AccessManager<CRED_BIT_MASK>::Load
 	}
 	outSize = 0;
 	if (!AccessStorage::Instance().Load(AccessStorage::Type::RequirePIN, &mRequirePINForRemoteOperation,
-						 sizeof(mRequirePINForRemoteOperation), outSize) ||
+					    sizeof(mRequirePINForRemoteOperation), outSize) ||
 	    outSize != sizeof(mRequirePINForRemoteOperation)) {
 		LOG_DBG("Cannot load RequirePINforRemoteOperation");
 	}
