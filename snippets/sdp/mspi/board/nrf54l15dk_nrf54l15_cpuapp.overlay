@@ -26,7 +26,7 @@
 		reset-gpios = <&gpio2 0 GPIO_ACTIVE_LOW>;
 
 		mspi-max-frequency = <DT_FREQ_M(1)>;
-		mspi-io-mode = "MSPI_IO_MODE_SINGLE";
+		mspi-io-mode = "MSPI_IO_MODE_QUAD_1_4_4";
 		mspi-data-rate = "MSPI_DATA_RATE_SINGLE";
 		mspi-hardware-ce-num = <0>;
 		mspi-cpp-mode = "MSPI_CPP_MODE_0";
