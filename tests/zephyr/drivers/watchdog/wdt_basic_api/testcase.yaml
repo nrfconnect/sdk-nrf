@@ -1,0 +1,11 @@
+common:
+  tags:
+    - drivers
+    - watchdog
+    - ci_tests_zephyr_drivers_watchdog
+tests:
+  nrf.extended.drivers.watchdog:
+    platform_allow:
+      - nrf54l09pdk/nrf54l09/cpuapp
+    integration_platforms:
+      - nrf54l09pdk/nrf54l09/cpuapp
