@@ -1,0 +1,20 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		sw-vol-down = &button_1_vol_dn;
+		sw-vol-up = &button_2_vol_up;
+		sw-play-pause = &button3;
+		sw-tone = &button4;
+		sw-mute = &button5;
+		led-device-type = &rgb1_red;
+		led-net-status = &rgb2_red;
+		led-app-status = &led3_green;
+		led-conn-status = &led1_blue;
+		led-sync-status = &led2_green;
+	};
+};
