@@ -110,10 +110,15 @@ Security
 
     * Support for HKDF-Expand and HKDF-Extract in CRACEN.
     * Support for Ed25519ph(HashEdDSA) to CRACEN.
+    * Documentation page about the :ref:`ug_tfm_architecture`.
 
-  * Updated the :ref:`app_approtect` page with nRF Util commands that replaced the nrfjprog commands.
-    This is part of the ongoing work of archiving `nRF Command Line Tools`_ and replacing them with nRF Util.
-  * Moved the :ref:`app_boards_spe_nspe` documentation page under :ref:`security` from the :ref:`ug_app_dev` section.
+  * Updated:
+
+    * The :ref:`app_approtect` page with nRF Util commands that replaced the nrfjprog commands.
+      This is part of the ongoing work of archiving `nRF Command Line Tools`_ and replacing them with nRF Util.
+    * The Running applications with Trusted Firmware-M page by renaming it to :ref:`ug_tfm` and moving it under :ref:`ug_tfm_index`.
+
+  * Moved the :ref:`app_boards_spe_nspe` documentation page under :ref:`ug_tfm_index` from the :ref:`ug_app_dev` section.
 
 Protocols
 =========

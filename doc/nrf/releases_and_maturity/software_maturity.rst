@@ -1910,6 +1910,8 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - --
 
+.. _software_maturity_security_features:
+
 Security Feature Support
 ************************
 
@@ -1920,6 +1922,8 @@ The following sections contain the tables indicating the software maturity level
 * |NSIB|
 * Hardware Unique Key
 * Trusted storage
+
+.. _software_maturity_security_features_tfm:
 
 Trusted Firmware-M support
 ==========================
@@ -1980,6 +1984,8 @@ Trusted Firmware-M support
         - Supported
 
    | [1]: The attestation service is not supported.
+
+.. _software_maturity_security_features_psa:
 
 PSA Crypto support
 ==================
@@ -2055,6 +2061,8 @@ PSA Crypto support
         - --
         - --
 
+.. _software_maturity_security_features_nsib:
+
 |NSIB|
 ======
 
@@ -2097,6 +2105,8 @@ PSA Crypto support
          - Supported
          - Supported
 
+.. _software_maturity_security_features_huk:
+
 Hardware Unique Key
 ===================
 
@@ -2138,6 +2148,8 @@ Hardware Unique Key
         - Supported
         - Supported
         - Supported
+
+.. _software_maturity_security_features_ts:
 
 Trusted storage
 ===============
