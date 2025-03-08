@@ -188,9 +188,16 @@ static bool ppp_is_running(void)
 	return (atomic_get(&ppp_state) == PPP_STATE_RUNNING);
 }
 
-static void send_status_notification(void)
+static void read_xppp(void)
 {
 	rsp_send("\r\n#XPPP: %u,%u\r\n", ppp_is_running(), ppp_peer_connected);
+}
+
+static void send_status_notification(void)
+{
+#if defined(CONFIG_SLM_PPP_XPPP_NOTIFICATION)
+	read_xppp();
+#endif
 }
 
 static int ppp_start_failure(int ret)
@@ -550,7 +557,7 @@ static int handle_at_ppp(enum at_parser_cmd_type cmd_type, struct at_parser *par
 	};
 
 	if (cmd_type == AT_PARSER_CMD_TYPE_READ) {
-		send_status_notification();
+		read_xppp();
 		return 0;
 	}
 	if (cmd_type != AT_PARSER_CMD_TYPE_SET || param_count != 2) {
