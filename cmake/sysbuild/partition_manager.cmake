@@ -512,6 +512,8 @@ foreach(d APP ${PM_DOMAINS})
   elseif (DEFINED ${image_name}_CONFIG_SOC_NRF54L15_CPUAPP)
     set(otp_start_addr "0xffd500")
     set(otp_size 1276)  # 319 * 4
+    set(bootconf_start_addr "0xffd080")
+    set(bootconf_size 4)
   endif()
 
   sysbuild_get(${image_name}_CONFIG_SOC_SERIES_NRF54LX IMAGE ${image_name} VAR CONFIG_SOC_SERIES_NRF54LX KCONFIG)
@@ -540,6 +542,15 @@ foreach(d APP ${PM_DOMAINS})
       NAME otp
       SIZE ${otp_size}
       BASE ${otp_start_addr}
+      PLACEMENT start_to_end
+      DOMAIN ${d}
+      )
+  endif()
+  if(${image_name}_CONFIG_SOC_NRF54L15_CPUAPP)
+    add_region(
+      NAME bootconf
+      SIZE ${bootconf_size}
+      BASE ${bootconf_start_addr}
       PLACEMENT start_to_end
       DOMAIN ${d}
       )
