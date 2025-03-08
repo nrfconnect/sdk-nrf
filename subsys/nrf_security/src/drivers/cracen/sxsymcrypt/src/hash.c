@@ -235,7 +235,7 @@ static int start_hash_hw(struct sxhash *c)
 {
 	sx_cmdma_start(&c->dma, sizeof(c->descs) + sizeof(c->extramem), c->descs);
 
-	return 0;
+	return SX_OK;
 }
 
 int sx_hash_save_state(struct sxhash *c)
@@ -289,7 +289,8 @@ int sx_hash_status(struct sxhash *c)
 	}
 
 #if CONFIG_DCACHE
-	sys_cache_data_invd_range((void *)&c->extramem, sizeof(c->extramem));
+	sx_cmdma_outdescs_flush_and_invd_dcache(&c->dma);
+	sys_cache_data_flush_and_invd_range((void *)&c->extramem, sizeof(c->extramem));
 #endif
 
 	sx_hash_free(c);
