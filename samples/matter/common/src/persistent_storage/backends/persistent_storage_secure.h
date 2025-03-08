@@ -78,7 +78,8 @@ private:
 	static PSErrorCode SerializeUIDMap(Byte *buff, size_t buffSize, size_t &outSize);
 	static PSErrorCode DeserializeUIDMap(const Byte *buff, size_t buffSize);
 	static PSErrorCode StoreUIDMap();
-	static PSErrorCode LoadUIDMap();
+	static PSErrorCode LoadUIDMapSecure();
+	static PSErrorCode LoadUIDMapSettings();
 	static bool HasEntry(PersistentStorageNode *node, psa_storage_uid_t &uid);
 	static psa_storage_uid_t UIDFromString(char *str, bool *alreadyInTheMap = nullptr);
 
