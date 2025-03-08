@@ -337,6 +337,12 @@ Bluetooth samples
 
       This change results from the Bluetooth subsystem transition to the PSA cryptographic API.
 
+    * The following samples to use LE Secure Connection pairing (:kconfig:option:`CONFIG_BT_SMP_SC_PAIR_ONLY`).
+
+      * :ref:`peripheral_gatt_dm`
+      * :ref:`peripheral_mds`
+      * :ref:`peripheral_cts_client`
+
 * :ref:`direct_test_mode` sample:
 
   * Added loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.

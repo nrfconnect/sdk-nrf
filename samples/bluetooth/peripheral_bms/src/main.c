@@ -48,6 +48,18 @@ static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_BMS_VAL)),
 };
 
+static void advertising_start(void)
+{
+	int err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+
+	if (err) {
+		printk("Advertising failed to start (err %d)\n", err);
+		return;
+	}
+
+	printk("Advertising successfully started\n");
+}
+
 static void connected(struct bt_conn *conn, uint8_t err)
 {
 	if (err) {
@@ -82,10 +94,17 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	}
 }
 
+static void recycled_cb(void)
+{
+	printk("Connection object available from previous conn. Disconnect is complete!\n");
+	advertising_start();
+}
+
 BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected        = connected,
 	.disconnected     = disconnected,
 	.security_changed = security_changed,
+	.recycled         = recycled_cb,
 };
 
 
@@ -217,14 +236,7 @@ int main(void)
 		return 0;
 	}
 
-	err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad),
-			      sd, ARRAY_SIZE(sd));
-	if (err) {
-		printk("Advertising failed to start (err %d)\n", err);
-		return 0;
-	}
-
-	printk("Advertising successfully started\n");
+	advertising_start();
 
 	for (;;) {
 		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);

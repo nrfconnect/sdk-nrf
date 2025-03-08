@@ -22,8 +22,6 @@
 
 #include <bluetooth/gatt_dm.h>
 
-#include <dk_buttons_and_leds.h>
-
 #define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)
 
@@ -31,7 +29,6 @@
 #define KEY_PAIRING_ACCEPT DK_BTN1_MSK
 #define KEY_PAIRING_REJECT DK_BTN2_MSK
 
-static struct bt_conn *pairing_confirmation_conn;
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
 	BT_DATA(BT_DATA_NAME_COMPLETE, DEVICE_NAME, DEVICE_NAME_LEN),
@@ -74,6 +71,18 @@ static struct bt_gatt_dm_cb discover_all_cb = {
 	.error_found = discover_all_error_found,
 };
 
+static void advertising_start(void)
+{
+	int err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), NULL, 0);
+
+	if (err) {
+		printk("Advertising failed to start (err %d)\n", err);
+		return;
+	}
+
+	printk("Advertising successfully started\n");
+}
+
 static void connected(struct bt_conn *conn, uint8_t err)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -114,10 +123,17 @@ static void security_changed(struct bt_conn *conn, bt_security_t level, enum bt_
 	}
 }
 
+static void recycled_cb(void)
+{
+	printk("Connection object available from previous conn. Disconnect is complete!\n");
+	advertising_start();
+}
+
 BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected        = connected,
 	.disconnected     = disconnected,
 	.security_changed = security_changed,
+	.recycled         = recycled_cb,
 };
 
 static void auth_cancel(struct bt_conn *conn)
@@ -127,24 +143,6 @@ static void auth_cancel(struct bt_conn *conn)
 	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
 
 	printk("Pairing cancelled: %s\n", addr);
-}
-
-static void pairing_confirm(struct bt_conn *conn)
-{
-	char addr[BT_ADDR_LE_STR_LEN];
-
-	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
-	__ASSERT_NO_MSG(!pairing_confirmation_conn);
-	pairing_confirmation_conn = bt_conn_ref(conn);
-
-	printk("Pairing confirmation required for %s\n", addr);
-
-	if (IS_ENABLED(CONFIG_SOC_SERIES_NRF54HX) || IS_ENABLED(CONFIG_SOC_SERIES_NRF54LX)) {
-		printk("Press Button 0 to confirm, Button 1 to reject.\n");
-	} else {
-		printk("Press Button 1 to confirm, Button 2 to reject.\n");
-	}
 }
 
 static void pairing_complete(struct bt_conn *conn, bool bonded)
@@ -164,16 +162,10 @@ static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 
 	printk("Pairing failed conn: %s, reason %d %s\n", addr, reason,
 	       bt_security_err_to_str(reason));
-
-	if (pairing_confirmation_conn) {
-		bt_conn_unref(pairing_confirmation_conn);
-		pairing_confirmation_conn = NULL;
-	}
 }
 
 static struct bt_conn_auth_cb conn_auth_callbacks = {
 	.cancel = auth_cancel,
-	.pairing_confirm = pairing_confirm,
 };
 
 static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
@@ -181,56 +173,11 @@ static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
 	.pairing_failed = pairing_failed
 };
 
-static void button_changed(uint32_t button_state, uint32_t has_changed)
-{
-	int err;
-	uint32_t buttons = button_state & has_changed;
-
-	if (buttons & KEY_PAIRING_ACCEPT) {
-		struct bt_conn *conn = pairing_confirmation_conn;
-		pairing_confirmation_conn = NULL;
-
-		if (conn) {
-			err = bt_conn_auth_pairing_confirm(conn);
-			if (err) {
-				printk("Failed to confirm the pairing: %d\n", err);
-			} else {
-				printk("Pairing confirmed\n");
-			}
-
-			bt_conn_unref(conn);
-			conn = NULL;
-		}
-	}
-
-	if (buttons & KEY_PAIRING_REJECT) {
-		struct bt_conn *conn = pairing_confirmation_conn;
-		pairing_confirmation_conn = NULL;
-
-		if (conn) {
-			err = bt_conn_auth_cancel(conn);
-			if (err) {
-				printk("Failed to reject the pairing: %d\n", err);
-			} else {
-				printk("Pairing rejected\n");
-			}
-
-			bt_conn_unref(conn);
-			conn = NULL;
-		}
-	}
-}
-
 int main(void)
 {
 	int err;
 
 	printk("Starting GATT Discovery Manager sample\n");
-
-	err = dk_buttons_init(button_changed);
-	if (err) {
-		printk("Cannot init buttons (err: %d)\n", err);
-	}
 
 	err = bt_enable(NULL);
 	if (err) {
@@ -250,14 +197,7 @@ int main(void)
 		return 0;
 	}
 
-	err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad),
-			      NULL, 0);
-	if (err) {
-		printk("Advertising failed to start (err %d)\n", err);
-		return 0;
-	}
-
-	printk("Advertising successfully started\n");
+	advertising_start();
 
 	return 0;
 }
