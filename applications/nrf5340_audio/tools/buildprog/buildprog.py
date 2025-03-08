@@ -312,9 +312,8 @@ def __main():
     parser.add_argument(
         "-t",
         "--transport",
-        type=str,
+        required=True,
         choices=[i.name for i in Transport],
-        default=Transport.unicast.name,
         help="Select the transport type",
     )
 
