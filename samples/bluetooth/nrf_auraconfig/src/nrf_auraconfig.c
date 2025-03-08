@@ -22,6 +22,7 @@
 #include "lc3_streamer.h"
 
 #if CONFIG_BOARD_NRF5340_AUDIO_DK
+#include "led_assignments.h"
 #include "led.h"
 #include "sd_card.h"
 #endif /* CONFIG_BOARD_NRF5340_AUDIO_DK */
