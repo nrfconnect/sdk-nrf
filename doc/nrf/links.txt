@@ -747,6 +747,7 @@
 
 .. _`nRF54L15 Datasheet`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/keyfeatures_html5.html
 .. _`nRF54L15 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf54l15_dk/page/UG/nRF54L15_DK/intro/intro.html
+.. _`nRF54L15 Debugger signals`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/tampc.html#ariaid-title6
 
 .. _`nRF53 Series`: https://docs.nordicsemi.com/category/nrf-53-series
 
