@@ -11,4 +11,4 @@ config SECURE_BOOT_DEBUG_NO_VERIFY_HASHES
 config SECURE_BOOT_PUBLIC_KEY_FILES
 	default "$(ZEPHYR_NRF_MODULE_DIR)/tests/subsys/bootloader/bl_validation_ff_key/ff_pub.pem"
 
-source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+source "share/sysbuild/Kconfig"

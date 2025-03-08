@@ -7,4 +7,4 @@
 config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 	default y if BOARD_NRF5340DK_NRF5340_CPUAPP
 
-source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+source "share/sysbuild/Kconfig"

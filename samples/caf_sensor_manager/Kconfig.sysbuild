@@ -4,10 +4,10 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+source "share/sysbuild/Kconfig"
 
 config INCLUDE_REMOTE_IMAGE
-	bool "Include CAF Sensor Manager romete image"
+	bool "Include CAF Sensor Manager remote image"
 	default y
 
 config REMOTE_BOARD

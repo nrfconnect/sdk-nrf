@@ -14,4 +14,4 @@ config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 config WIFI_NRF70
 	default y if BOARD_NRF7002DK_NRF5340_CPUAPP_NS
 
-source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+source "share/sysbuild/Kconfig"
