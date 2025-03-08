@@ -48,9 +48,10 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54l09pdk/nrf54l09/cpuapp
     harness: console
     harness_config:
       type: multi_line
@@ -62,6 +63,8 @@ tests:
       - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54l09pdk/nrf54l09/cpuapp
   sample.aes_ccm.cracen.crypto_service:
     sysbuild: true
     tags:
