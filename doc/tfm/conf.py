@@ -41,9 +41,13 @@ extensions = [
     "zephyr.external_content",
 ]
 source_suffix = [".rst", ".md"]
+master_doc = "wrapper"
+
+linkcheck_ignore = [r"(\.\.(\\|/))+(kconfig|zephyr)"]
 
 exclude_patterns = [
   "platform/cypress/psoc64/security/keys/readme.rst"
+  "index.rst"
 ]
 
 numfig = True
@@ -87,6 +91,7 @@ warnings_filter_config = str(NRF_BASE / "doc" / "tfm" / "known-warnings.txt")
 # Options for external_content -------------------------------------------------
 
 external_content_contents = [
+    (NRF_BASE / "doc" / "tfm", "wrapper.rst"),
     (TFM_BASE / "docs", "**/*"),
 ]
 
