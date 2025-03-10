@@ -99,6 +99,8 @@ For more details on nRF54L Series cryptography operations and the related config
    On nRF54L Series devices, CRACEN is the only source of entropy.
    Therefore, it is not possible to disable the :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_CRACEN` option when the Zephyr entropy driver is enabled.
 
+.. _nrf_security_drivers_legacy:
+
 Legacy Mbed TLS
 ***************
 

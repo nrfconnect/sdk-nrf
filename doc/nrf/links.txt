@@ -640,6 +640,7 @@
 .. _`Matter factory data Kconfig options`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CHIP_FACTORY_DATA
 
 .. _`Kconfig search results`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CONFIG_PM_PARTITION_SIZE
+.. _`CONFIG_SSF_PSA_CRYPTO_SERVICE_ENABLED`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CONFIG_SSF_PSA_CRYPTO_SERVICE_ENABLED
 
 .. _`nRF Asset Tracker project`: https://docs.nordicsemi.com/bundle/nrf-asset-tracker-saga/page/index.html
 .. _`Getting started guide for nRF Asset Tracker for AWS`: https://docs.nordicsemi.com/bundle/nrf-asset-tracker-saga/page/docs/aws/GettingStarted/Index.html
