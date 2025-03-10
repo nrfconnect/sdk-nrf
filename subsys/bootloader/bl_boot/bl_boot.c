@@ -121,6 +121,11 @@ void bl_boot(const struct fw_info *fw_info)
 
 	printk("Booting (0x%x).\r\n", fw_info->address);
 
+	if (!fw_info_ext_api_provide(fw_info, true)) {
+		printk("Failed to provide ext APIs to image, boot aborted.\r\n");
+		return;
+	}
+
 	uninit_used_peripherals();
 
 	/* Allow any pending interrupts to be recognized */
@@ -157,10 +162,6 @@ void bl_boot(const struct fw_info *fw_info)
 
 	VTOR = fw_info->address;
 	uint32_t *vector_table = (uint32_t *)fw_info->address;
-
-	if (!fw_info_ext_api_provide(fw_info, true)) {
-		return;
-	}
 
 #if defined(CONFIG_BUILTIN_STACK_GUARD) && \
     defined(CONFIG_CPU_CORTEX_M_HAS_SPLIM)
