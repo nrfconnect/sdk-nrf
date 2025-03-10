@@ -116,7 +116,7 @@ static int create_advertising_coded(void)
 		BT_LE_ADV_PARAM_INIT(BT_LE_ADV_OPT_CONN |
 				     BT_LE_ADV_OPT_EXT_ADV |
 				     BT_LE_ADV_OPT_CODED |
-						 BT_LE_ADV_OPT_REQUIRE_S8_CODING,
+				     BT_LE_ADV_OPT_REQUIRE_S8_CODING,
 				     BT_GAP_ADV_FAST_INT_MIN_2,
 				     BT_GAP_ADV_FAST_INT_MAX_2,
 				     NULL);
