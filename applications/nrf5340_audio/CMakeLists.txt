@@ -12,6 +12,11 @@ add_compile_definitions(GATEWAY=2)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
+# Test a configuration file option has been given
+if(NOT DEFINED EXTRA_CONF_FILE)
+    message(FATAL_ERROR "No configuration file specified, set -- -DEXTRA_CONF_FILE=<configuration file>")
+endif()
+
 project(NRF5340_AUDIO)
 
 string(TIMESTAMP NRF5340_AUDIO_CORE_APP_COMP_DATE "%a %b %d %H:%M:%S %Y")

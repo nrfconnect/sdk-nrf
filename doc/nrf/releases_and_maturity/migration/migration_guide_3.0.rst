@@ -29,7 +29,13 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
-|no_changes_yet_note|
+nRF5340 Audio applications
+--------------------------
+
+.. toggle::
+
+   * The :ref:`nrf53_audio_app` :ref:`nrf53_audio_app_building_script` now requires the transport (``-t/--transport``) type to be included.
+   * The :ref:`nrf53_audio_app` :ref:`nrf53_audio_app_building_standard` now requires an extra :ref:`CMake option to provide extra Kconfig fragments <cmake_options>` to select the device type.
 
 Libraries
 =========
