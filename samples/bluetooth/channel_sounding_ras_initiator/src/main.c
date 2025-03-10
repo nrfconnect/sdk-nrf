@@ -56,19 +56,13 @@ static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subeve
 {
 	LOG_INF("Subevent result callback %d", result->header.procedure_counter);
 
-	if (result->header.subevent_done_status == BT_CONN_LE_CS_SUBEVENT_ABORTED) {
-		/* If this subevent was aborted, drop the entire procedure for now. */
-		LOG_WRN("Subevent aborted");
-		dropped_ranging_counter = result->header.procedure_counter;
-		net_buf_simple_reset(&latest_local_steps);
-		return;
-	}
-
 	if (dropped_ranging_counter == result->header.procedure_counter) {
 		return;
 	}
 
-	if (result->step_data_buf) {
+	if (result->header.subevent_done_status == BT_CONN_LE_CS_SUBEVENT_ABORTED) {
+		/* The steps from this subevent will not be used. */
+	} else if (result->step_data_buf) {
 		if (result->step_data_buf->len <= net_buf_simple_tailroom(&latest_local_steps)) {
 			uint16_t len = result->step_data_buf->len;
 			uint8_t *step_data = net_buf_simple_pull_mem(result->step_data_buf, len);
@@ -91,7 +85,7 @@ static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subeve
 		most_recent_local_ranging_counter = result->header.procedure_counter;
 		k_sem_give(&sem_procedure_done);
 	} else if (result->header.procedure_done_status == BT_CONN_LE_CS_PROCEDURE_ABORTED) {
-		LOG_WRN("Procedure aborted");
+		LOG_WRN("Procedure %u aborted", result->header.procedure_counter);
 		net_buf_simple_reset(&latest_local_steps);
 	}
 }

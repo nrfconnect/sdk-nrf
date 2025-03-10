@@ -977,7 +977,10 @@ void bt_ras_rreq_rd_subevent_data_parse(struct net_buf_simple *peer_ranging_data
 					bt_ras_rreq_subevent_header_cb_t subevent_header_cb,
 					bt_ras_rreq_step_data_cb_t step_data_cb, void *user_data)
 {
-	if (!peer_ranging_data_buf || !local_step_data_buf) {
+	if (!peer_ranging_data_buf
+		|| !local_step_data_buf
+		|| peer_ranging_data_buf->len == 0
+		|| local_step_data_buf->len == 0) {
 		LOG_ERR("Tried to parse empty step data.");
 		return;
 	}
@@ -994,8 +997,13 @@ void bt_ras_rreq_rd_subevent_data_parse(struct net_buf_simple *peer_ranging_data
 			return;
 		}
 
-		if (peer_subevent_header_data->num_steps_reported == 0 ||
-		    peer_ranging_data_buf->len == 0) {
+		if (peer_subevent_header_data->num_steps_reported == 0) {
+			LOG_DBG("Skipping subevent with no steps.");
+			continue;
+		}
+
+		if (peer_ranging_data_buf->len == 0) {
+			LOG_WRN("Empty peer step data buf where steps were expected.");
 			return;
 		}
 

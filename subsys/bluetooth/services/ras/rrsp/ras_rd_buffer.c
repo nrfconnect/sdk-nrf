@@ -200,14 +200,14 @@ static void subevent_data_available(struct bt_conn *conn,
 	__ASSERT_NO_MSG(conn_index < ARRAY_SIZE(tx_power_cache));
 	__ASSERT_NO_MSG(conn_index < ARRAY_SIZE(drop_procedure_counter));
 
-	if (result->header.subevent_done_status == BT_CONN_LE_CS_SUBEVENT_ABORTED) {
-		/* If this subevent was aborted, drop the entire procedure for now. */
+	if (result->header.procedure_done_status == BT_CONN_LE_CS_PROCEDURE_ABORTED) {
+		LOG_DBG("Procedure was aborted.");
 		drop_procedure_counter[conn_index] = result->header.procedure_counter;
 	}
 
 	if (drop_procedure_counter[conn_index] == result->header.procedure_counter) {
 		/* This procedure will not be sent to the peer, so ignore all data. */
-		LOG_WRN("Dropping subevent data for procedure %u",
+		LOG_DBG("Dropping subevent data for procedure %u",
 			result->header.procedure_counter);
 
 		if (buf) {
@@ -261,10 +261,17 @@ static void subevent_data_available(struct bt_conn *conn,
 	hdr->ranging_abort_reason = result->header.procedure_abort_reason;
 	hdr->subevent_abort_reason = result->header.subevent_abort_reason;
 	hdr->ref_power_level = result->header.reference_power_level;
-	hdr->num_steps_reported = result->header.num_steps_reported;
 
-	if (result->step_data_buf) {
-		bt_le_cs_step_data_parse(result->step_data_buf, process_step_data, buf);
+	if (result->header.subevent_done_status == BT_CONN_LE_CS_SUBEVENT_ABORTED) {
+		hdr->num_steps_reported = 0;
+		LOG_DBG("Discarding %u steps in aborted subevent",
+			result->header.num_steps_reported);
+	} else {
+		hdr->num_steps_reported = result->header.num_steps_reported;
+
+		if (result->step_data_buf) {
+			bt_le_cs_step_data_parse(result->step_data_buf, process_step_data, buf);
+		}
 	}
 
 	/* process_step_data might have requested dropping this procedure. */
@@ -275,7 +282,8 @@ static void subevent_data_available(struct bt_conn *conn,
 		return;
 	}
 
-	if (hdr->ranging_done_status == BT_CONN_LE_CS_PROCEDURE_COMPLETE) {
+	if (hdr->ranging_done_status == BT_CONN_LE_CS_PROCEDURE_COMPLETE ||
+	    hdr->ranging_done_status == BT_CONN_LE_CS_PROCEDURE_ABORTED) {
 		buf->ready = true;
 		buf->busy = false;
 		notify_new_rd_stored(conn, result->header.procedure_counter);
