@@ -598,6 +598,10 @@ Trusted Firmware-M (TF-M) samples
     * PSA certificate reference (optional), configured using the :kconfig:option:`SB_CONFIG_TFM_OTP_PSA_CERTIFICATE_REFERENCE` sysbuild Kconfig option
     * Verification service URL (optional), configured using the :kconfig:option:`CONFIG_TFM_ATTEST_VERIFICATION_SERVICE_URL` Kconfig option
 
+* :ref:`tfm_secure_peripheral_partition` sample:
+
+  * Updated documentation with information about how to access other TF-M partitions from the secure partition.
+
 Thread samples
 --------------
 
