@@ -28,8 +28,8 @@ The following table illustrates ABI compatibility between different versions of 
 
    * - |NCS| versions
      - Compatible nRF54H20 SoC binaries version
-   * - |NCS| v2.9.0-nRF54H20-1-rc3
-     - `nRF54H20 SoC binaries v0.9.1`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
+   * - |NCS| v2.9.0-nRF54H20-1
+     - `nRF54H20 SoC binaries v0.9.2`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
    * - |NCS| v2.9.0
      - `nRF54H20 SoC binaries v0.7.0 for EngC DKs`_, compatible with the nRF54H20 DK v0.8.3 and later revisions.
    * - |NCS| v2.8.0
@@ -47,7 +47,7 @@ The following table illustrates ABI compatibility between different versions of 
 ABI compatibility ensures that the Secure Domain and System Controller firmware binaries do not need to be recompiled each time the application, radio binaries, or both are recompiled, as long as they are based on a compatible |NCS| version.
 Additionally, maintaining ABI compatibility allows the nRF54H20 SoC binary components to work together without recompilation when updating to newer |NCS| versions.
 
-nRF54H20 SoC binaries v0.9.1 changelog
+nRF54H20 SoC binaries v0.9.2 changelog
 **************************************
 
 .. note::
@@ -55,6 +55,11 @@ nRF54H20 SoC binaries v0.9.1 changelog
     Upgrading the nRF54H20 SoC binaries on your development kit might break the DK's compatibility with applications developed for previous versions of the |NCS|.
 
 The following sections provide detailed lists of changes by component.
+
+Secure Domain Firmware (SDFW) v10.2.0
+=====================================
+
+* Updated SUIT to support defining the SUIT cache in Nordic manifests.
 
 Secure Domain Firmware (SDFW) v10.1.0
 =====================================
@@ -98,6 +103,12 @@ Fixed
 * An issue where replies to ADAC SSF commands contained a large amount of additional zero values at the end of the message.
 * An issue where permission checks for pointer members in the SSF PSA crypto service requests were incorrect.
 * An issue with invoking crypto service from multiple threads or clients.
+
+System Controller Firmware (SCFW) v4.0.3
+=========================================
+
+* Updated LRC to now use a direct GDPWR request.
+* Fixed an issue with USB D+ pull-up.
 
 System Controller Firmware (SCFW) v4.0.2
 =========================================
