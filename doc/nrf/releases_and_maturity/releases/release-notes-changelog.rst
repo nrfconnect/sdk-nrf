@@ -517,7 +517,9 @@ Cellular samples
 Cryptography samples
 --------------------
 
-|no_changes_yet_note|
+* :ref:`crypto_tls` sample:
+
+  * Added support for the TLS v1.3.
 
 Debug samples
 -------------
