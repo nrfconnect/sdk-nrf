@@ -104,6 +104,44 @@ CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_REDIRECT
 
   This option enables only redirection of logs from the ``chip`` module (as diagnostic network logs) and from the ``app`` module (as diagnostic end-user logs).
 
+Last fabric removal
+===================
+
+You can configure the reaction to the last Matter fabric removal using the following options:
+
+.. _CONFIG_CHIP_LAST_FABRIC_REMOVED_NONE:
+
+CONFIG_CHIP_LAST_FABRIC_REMOVED_NONE
+  ``bool`` - After removing the last fabric, do not perform any action.
+  The current state will be left as is and the BLE advertising will not start automatically.
+
+.. _CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_ONLY:
+
+CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_ONLY
+  ``bool`` After removing the last fabric, erase NVS only.
+  The current RAM state will be saved and the new commissioning to the next fabric will use the next possible fabric index.
+
+.. _CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_PAIRING_START:
+
+CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_PAIRING_START
+  ``bool`` After removing the last fabric, erase NVS and start Bluetooth LE advertising.
+  The current RAM state will be saved and the new commissioning to the next fabric will use the next possible fabric index.
+  This option should not be used for devices that normally do not advertise Bluetooth LE on boot to keep their original behavior.
+
+.. _CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_REBOOT:
+
+CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_REBOOT
+  ``bool`` After removing the last fabric, erase NVS and reboot.
+  The current RAM state will be removed and the new commissioning to the new fabric will use the initial fabric index.
+  This is the safest option.
+
+.. _CONFIG_CHIP_LAST_FABRIC_REMOVED_ACTION_DELAY:
+
+CONFIG_CHIP_LAST_FABRIC_REMOVED_ACTION_DELAY
+  ``int`` After removing the last fabric, wait for the defined time (in milliseconds) to perform an action.
+  This schedule will allow for avoiding race conditions before the device removes non-volatile data.
+
+
 Migration of operational keys
 =============================
 
