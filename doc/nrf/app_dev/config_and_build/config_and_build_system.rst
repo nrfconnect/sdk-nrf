@@ -164,7 +164,7 @@ In this way, these files are made dependent on the given configuration and are o
 For example, if an application uses a custom :file:`nrf5340dk_nrf5340_cpuapp_release.overlay` overlay file, this file will be used together with the application's :file:`prj_release.conf` when you set :makevar:`FILE_SUFFIX` to ``release`` (``-DFILE_SUFFIX=release``).
 
 Many applications and samples in the |NCS| define even more detailed build configurations.
-For example, the :ref:`Zigbee light switch <zigbee_light_switch_sample>` sample features the ``fota`` configuration.
+For example, the Zigbee light switch sample in the `Zigbee R22`_ and `Zigbee R23`_ add-ons features the ``fota`` configuration.
 See the Configuration section of the given application or sample's documentation for information on if it includes any custom configurations.
 
 .. important::

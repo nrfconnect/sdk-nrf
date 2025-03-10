@@ -130,19 +130,19 @@ Zigbee
 
 * Added:
 
-  * Experimental support for Zigbee Cluster Library ver8 (ZCL8), included in :ref:`nrfxlib:zboss` v3.11.1.177.
+  * Experimental support for Zigbee Cluster Library ver8 (ZCL8), included in ZBOSS Zigbee stack v3.11.1.177.
   * Support for Zigbee Base Device Behavior v3.0.1 (BDB 3.0.1).
   * Set of Zigbee libraries with binary trace logs enabled.
   * Stability and performance improvements.
-  * Documentation for collecting Zigbee trace logs. See :ref:`ug_zigbee_configuring_zboss_traces` for more information.
+  * Documentation for collecting Zigbee trace logs. See configuring ZBOSS traces in nRF Connect SDK for more information.
 
 
 * Updated:
 
   * Support for nRF5340 and for the combination of nRF5340 and nRF21540. The support is not experimental anymore.
-  * :ref:`nrfxlib:zboss` to v3.11.1.0 and platform v5.1.1 (``v3.11.1.0+v5.1.1``).
-  * :ref:`ZBOSS Network Co-processor Host <ug_zigbee_tools_ncp_host>` package to the new version v2.1.1.
-  * :ref:`lib_zigbee_osif` library with Kconfig options that allow to either reset or halt the device upon ZBOSS stack assert. Reset is enabled by default.
+  * ZBOSS Zigbee stack to v3.11.1.0 and platform v5.1.1 (``v3.11.1.0+v5.1.1``).
+  * ZBOSS Network Co-processor Host package to the new version v2.1.1.
+  * Zigbee ZBOSS OSIF library with Kconfig options that allow to either reset or halt the device upon ZBOSS stack assert. Reset is enabled by default.
 
 * Fixed:
 
@@ -407,7 +407,7 @@ Zigbee samples
 
 * Updated:
 
-  * :ref:`zigbee_light_bulb_sample` sample and :ref:`zigbee_network_coordinator_sample` sample:
+  * Zigbee: Light bulb sample and Zigbee: Network coordinator sample:
 
     * Updated the User interface section in the respective sample documentation.
 
@@ -634,8 +634,8 @@ Zigbee libraries
 
 * Updated:
 
-  * :ref:`lib_zigbee_osif` library documentation by updating the Configuration section with new Kconfig options.
-  * :ref:`lib_zigbee_error_handler` library documentation with information about the new function :c:func:`zb_osif_abort`.
+  * Zigbee ZBOSS OSIF library documentation by updating the Configuration section with new Kconfig options.
+  * Zigbee error handler library documentation with information about the new function :c:func:`zb_osif_abort`.
 
 Other libraries
 ---------------

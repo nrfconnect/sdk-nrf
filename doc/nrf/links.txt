@@ -201,6 +201,8 @@
 
 .. _`commit #d55314`: https://github.com/nrfconnect/sdk-nrf/commit/d553142f4f37bc324da9869e4837cdd9105e25ab
 
+.. _`Zigbee R22`: https://github.com/nrfconnect/ncs-zigbee-r22
+.. _`Zigbee R23`: https://github.com/nrfconnect/ncs-zigbee
 .. _`zcbor 0.8.0 release notes`: https://github.com/zephyrproject-rtos/zcbor/blob/0.8.0/RELEASE_NOTES.md
 .. _`zcbor 0.8.1 release notes`: https://github.com/zephyrproject-rtos/zcbor/blob/0.8.1/RELEASE_NOTES.md
 

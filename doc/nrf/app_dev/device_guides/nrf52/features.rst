@@ -137,12 +137,10 @@ To start developing, refer to the :ref:`openthread_samples`.
 Zigbee
 ======
 
-.. include:: /protocols/zigbee/index.rst
-   :start-after: zigbee_ug_intro_start
-   :end-before: zigbee_ug_intro_end
+Zigbee is a portable, low-power software networking protocol that provides connectivity over a mesh network based on the IEEE 802.15.4 radio protocol.
+It also defines an application layer that provides interoperability among all Zigbee devices.
 
-See the :ref:`Zigbee user guide <ug_zigbee>` on how to work with the Zigbee protocol and stack.
-To start developing, refer to the :ref:`zigbee_samples`.
+For more information, see the :ref:`Zigbee protocol<ug_zigbee>` support.
 
 Multiprotocol support
 *********************

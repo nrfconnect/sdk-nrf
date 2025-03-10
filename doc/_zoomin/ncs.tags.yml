@@ -286,10 +286,6 @@ mapping_topics:
   - nrf/protocols/thread/sed_ssed.html: ["kconfig"]
   - nrf/protocols/thread/certification.html: ["certifications"]
   - nrf/protocols/zigbee/*.html: ["zigbee"]
-  - nrf/protocols/zigbee/configuring.html: ["kconfig"]
-  - nrf/protocols/zigbee/configuring_libraries.html: ["kconfig"]
-  - nrf/protocols/zigbee/configuring_zboss_traces.html: ["kconfig"]
-  - nrf/protocols/zigbee/other_ecosystems.html: ["kconfig"]
   - nrf/protocols/wifi/*.html: ["wifi", "nrf70-series", "nrf7002", "nrf7001", "nrf7000"]
   - nrfprotocols/wifi/wifi_certification.html: ["certifications"]
   - nrf/protocols/wifi/station_mode/powersave.html: ["power-profiler-kit"]
@@ -311,7 +307,6 @@ mapping_topics:
   - nrf/applications/nrf5340_audio/index.html: ["ble", "nrf5340"]
   - nrf/applications/nrf5340_audio/doc/*.html: ["ble", "nrf5340"]
   - nrf/applications/matter_weather_station/README.html: ["matter", "thingy53"]
-  - nrf/applications/zigbee_weather_station/README.html: ["zigbee", "thingy53"]
   - nrf/samples.html: ["nrf91-series", "nrf70-series", "nrf54-series", "nrf53-series",
                        "nrf52-series", "nrf7002", "nrf7001", "nrf7000", "nrf9160", "thingy91",
                        "thingy91x", "nrf9161", "nrf9151", "nrf54h20", "nrf54l15", "nrf54l05",
@@ -393,7 +388,6 @@ mapping_topics:
   - nrf/libraries/others/esb.html: ["esb"]
   - nrf/libraries/others/fem_al.html: ["fem", "nrf21540"]
   - nrf/libraries/others/st25r3911b_nfc.html: ["nfc"]
-  - nrf/libraries/zigbee/*.html: ["zigbee"]
   - nrf/external_comp/bt_fast_pair.html: ["ble"]
   - nrf/external_comp/nrf_cloud.html: ["nrf-cloud"]
   - nrf/external_comp/avsystem.html: ["lte"]

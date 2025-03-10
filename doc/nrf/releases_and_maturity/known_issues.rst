@@ -1349,6 +1349,9 @@ Zigbee
 ======
 
 The issues in this section are related to the :ref:`ug_zigbee` protocol.
+Starting with the |NCS| v3.0.0 release, known issues are moved to the `Zigbee R22`_ repository.
+
+.. include:: /includes/zigbee_deprecation.txt
 
 .. rst-class:: v2-9-0-nRF54H20-1-rc3 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0
 
@@ -1501,14 +1504,14 @@ KRKNWK-16705: Router device is not fully operational in the distributed network
 .. rst-class:: v2-9-0-nRF54H20-1-rc3 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
 KRKNWK-14024: Fatal error when the network coordinator factory resets in the Identify mode
-  A fatal error occurs when the :ref:`Zigbee network coordinator <zigbee_network_coordinator_sample>` triggers factory reset in the Identify mode.
+  A fatal error occurs when the Zigbee network coordinator triggers factory reset in the Identify mode.
 
   **Workaround:** Modify your application, so that the factory reset is requested only after the Identify mode ends.
 
 .. rst-class:: v2-9-0-nRF54H20-1-rc3 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0
 
 KRKNWK-12937: Activation of Sleepy End Device must be done at the very first commissioning procedure for Zigbee light switch sample
-   After programming the :ref:`Zigbee light switch <zigbee_light_switch_sample>` sample and its first commissioning, Zigbee End Device joins the Zigbee network as a normal End Device. Pressing **Button 3** does not switch the device to the Sleepy End Device configuration.
+   After programming the Zigbee light switch sample and its first commissioning, Zigbee End Device joins the Zigbee network as a normal End Device. Pressing **Button 3** does not switch the device to the Sleepy End Device configuration.
 
    **Workaround:** Keep **Button 3** pressed during the first commissioning procedure.
 
@@ -1525,7 +1528,7 @@ KRKNWK-12115: Simultaneous commissioning of many devices can cause the Coordinat
 
   **Workaround:** To lower the likelihood of the Coordinator device asserting, increase its scheduler queue and buffer pool by completing the following steps:
 
-  1. Create your own custom memory configuration file by creating an empty header file for your application, similar to :file:`include/zb_mem_config_custom.h` header file in the :ref:`Zigbee light switch <zigbee_light_switch_sample>` sample.
+  1. Create your own custom memory configuration file by creating an empty header file for your application, similar to :file:`include/zb_mem_config_custom.h` header file in the Zigbee light switch sample.
   #. Copy the contents of :file:`zb_mem_config_max.h` memory configuration file to the memory configuration header file you have just created.
      The Zigbee Network Coordinator sample uses the contents of the memory configuration file by default.
   #. In your custom memory configuration file, locate the following code:
@@ -1766,7 +1769,7 @@ KRKNWK-6336: OTA transfer might be aborted after the MAC-level packet retransmis
 .. rst-class:: v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 
 KRKNWK-7831: Factory reset broken on coordinator with Zigbee shell
-  A coordinator with the :ref:`lib_zigbee_shell` component enabled could assert after executing the ``bdb factory_reset`` command.
+  A coordinator with the Zigbee Shell library component enabled could assert after executing the ``bdb factory_reset`` command.
 
   **Workaround:** Call the ``bdb_reset_via_local_action ()`` function twice to remove all the network information.
 
@@ -1790,21 +1793,21 @@ KRKNWK-5535: Device assert if flooded with multiple Network Address requests
 .. rst-class:: v1-5-0
 
 KRKNWK-9119: Zigbee shell does not work with ZBOSS development libraries
-    Because of changes to the ZBOSS API, the :ref:`lib_zigbee_shell` library cannot be enabled when :ref:`zigbee_samples` are built with the :ref:`nrfxlib:zboss` development libraries.
+    Because of changes to the ZBOSS API, the Zigbee Shell library cannot be enabled when Zigbee samples are built with the ZBOSS development libraries.
 
-    **Workaround:** Use only the production version of :ref:`nrfxlib:zboss` when using :ref:`lib_zigbee_shell`.
+    **Workaround:** Use only the production version of ZBOSS when using the Zigbee Shell library.
 
 .. rst-class:: v1-5-0
 
 KRKNWK-9145: Corrupted payload in commands of the Scenes cluster
-  When receiving Scenes cluster commands, the payload is corrupted when using the :ref:`nrfxlib:zboss` production libraries.
+  When receiving Scenes cluster commands, the payload is corrupted when using the ZBOSS production libraries.
 
-  **Workaround:** Use the development version of :ref:`nrfxlib:zboss`.
+  **Workaround:** Use the development version of ZBOSS.
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0
 
 KRKNWK-7836: Coordinator asserting when flooded with ZDO commands
-  Executing a high number of ZDO commands can cause assert on the coordinator with the :ref:`lib_zigbee_shell` component enabled.
+  Executing a high number of ZDO commands can cause assert on the coordinator with the Zigbee Shell library component enabled.
 
 .. rst-class:: v1-3-1 v1-3-0
 

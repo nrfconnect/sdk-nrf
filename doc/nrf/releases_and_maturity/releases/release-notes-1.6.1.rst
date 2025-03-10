@@ -48,4 +48,4 @@ See `known issues for nRF Connect SDK v1.6.1`_ for the list of issues valid for 
 Documentation
 =============
 
-* :ref:`zigbee_memory` - corrected KB to B for stack memory requirements.
+* Zigbee memory requirements - corrected KB to B for stack memory requirements.
