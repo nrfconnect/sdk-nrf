@@ -1,13 +1,15 @@
-.. _migration_2.9.0-nRF54H20-1-rc3:
+:orphan:
 
-Migration guide for |NCS| v2.9.0-nRF54H20-1-rc3
-###############################################
+.. _migration_2.9.0-nRF54H20-1:
+
+Migration guide for |NCS| v2.9.0-nRF54H20-1
+###########################################
 
 .. contents::
    :local:
    :depth: 3
 
-This document describes the changes required or recommended when migrating your nRF54H20 application from the |NCS| v2.8.0 to the |NCS| v2.9.0-nRF54H20-1-rc3.
+This document describes the changes required or recommended when migrating your nRF54H20 application from the |NCS| v2.8.0 to the |NCS| v2.9.0-nRF54H20-1.
 
 .. HOWTO
 
@@ -21,7 +23,7 @@ This document describes the changes required or recommended when migrating your 
       * Change1 and description
       * Change2 and description
 
-.. _migration_2.9.0-nRF54H20-1-rc3_required:
+.. _migration_2.9.0-nRF54H20-1_required:
 
 Required changes
 ****************
@@ -38,7 +40,7 @@ DK compatibility
 
 .. toggle::
 
-   * The |NCS| v2.9.0-nRF54H20-1-rc3 is compatible only with the Engineering C - v0.9.0 and later revisions of the nRF54H20 DK, PCA10175.
+   * The |NCS| v2.9.0-nRF54H20-1 is compatible only with the Engineering C - v0.9.0 and later revisions of the nRF54H20 DK, PCA10175.
      Check the version number on your DK's sticker to verify its compatibility with the |NCS|.
 
 Dependencies
@@ -130,7 +132,7 @@ nRF54H20 SoC binaries
 
 .. toggle::
 
-  * The *nRF54H20 SoC binaries* bundle has been updated to version 0.9.1.
+  * The *nRF54H20 SoC binaries* bundle has been updated to version 0.9.2.
 
     .. note::
        The nRF54H20 SoC binaries only support specific versions of the |NCS| and do not support rollbacks to a previous version.
@@ -139,7 +141,7 @@ nRF54H20 SoC binaries
 
     To update the SoC binaries bundle of your development kit while in Root of Trust, do the following:
 
-    1. Download the `nRF54H20 SoC binaries v0.9.1`_.
+    1. Download the `nRF54H20 SoC binaries v0.9.2`_.
 
        .. note::
           On macOS, ensure that the ZIP file is not unpacked automatically upon download.
@@ -153,7 +155,7 @@ nRF54H20 SoC binaries
     #. Run ``west update``.
     #. Move the correct :file:`.zip` bundle to a folder of your choice, then run nRF Util to program the binaries using the following command::
 
-          nrfutil device x-suit-dfu --firmware nrf54h20_soc_binaries_v0.9.1.zip --serial-number <serial_number>
+          nrfutil device x-suit-dfu --firmware nrf54h20_soc_binaries_v0.9.2.zip --serial-number <serial_number>
 
     #. Purge the device again as follows::
 
@@ -164,7 +166,7 @@ nRF54H20 SoC binaries
 Application development
 -----------------------
 
-The following are the changes required to migrate your applications to the |NCS| v2.9.0-nRF54H20-1-rc3.
+The following are the changes required to migrate your applications to the |NCS| v2.9.0-nRF54H20-1.
 
 ZMS backend
 +++++++++++

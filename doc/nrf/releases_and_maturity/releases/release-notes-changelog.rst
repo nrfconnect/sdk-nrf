@@ -1,3 +1,5 @@
+:orphan:
+
 .. _ncs_release_notes_changelog:
 
 Changelog for |NCS| v2.9.99
@@ -23,7 +25,7 @@ Known issues
 ************
 
 Known issues are only tracked for the latest official release.
-See `known issues for nRF Connect SDK v2.9.0-nRF54H20-1-rc3`_ for the list of issues valid for the latest release.
+See `known issues for nRF Connect SDK v2.9.0-nRF54H20-1`_ for the list of issues valid for the latest release.
 
 Changelog
 *********
