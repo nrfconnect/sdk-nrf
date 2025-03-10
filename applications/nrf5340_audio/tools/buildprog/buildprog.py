@@ -107,13 +107,12 @@ def __build_cmd_get(cores: Core, device: AudioDevice, build: BuildType,
         raise Exception("Invalid core!")
 
     if device == AudioDevice.headset:
-        device_flag = "-DCONFIG_AUDIO_DEV=1"
         dest_folder = TARGET_DEV_HEADSET_FOLDER
     elif device == AudioDevice.gateway:
-        device_flag = "-DCONFIG_AUDIO_DEV=2"
         dest_folder = TARGET_DEV_GATEWAY_FOLDER
     else:
         raise Exception("Invalid device!")
+
     if build == BuildType.debug:
         release_flag = ""
         dest_folder /= TARGET_DEBUG_FOLDER
@@ -122,6 +121,9 @@ def __build_cmd_get(cores: Core, device: AudioDevice, build: BuildType,
         dest_folder /= TARGET_RELEASE_FOLDER
     else:
         raise Exception("Invalid build type!")
+
+    device_flag = ""
+
     if options.nrf21540:
         device_flag += " -Dnrf5340_audio_SHIELD=nrf21540ek"
         device_flag += " -Dipc_radio_SHIELD=nrf21540ek"
@@ -141,11 +143,18 @@ def __build_cmd_get(cores: Core, device: AudioDevice, build: BuildType,
             overlay_flag = f" -DEXTRA_CONF_FILE={BROADCAST_SINK_OVERLAY}"
         elif device == AudioDevice.gateway:
             overlay_flag = f" -DEXTRA_CONF_FILE={BROADCAST_SOURCE_OVERLAY}"
+        else:
+            raise Exception("Invalid device type!")
     elif options.transport == Transport.unicast.name:
         if device == AudioDevice.headset:
             overlay_flag = f" -DEXTRA_CONF_FILE={UNICAST_SERVER_OVERLAY}"
         elif device == AudioDevice.gateway:
             overlay_flag = f" -DEXTRA_CONF_FILE={UNICAST_CLIENT_OVERLAY}"
+        else:
+            raise Exception("Invalid device type!")
+    else:
+        raise Exception("Invalid transport type!")
+
     if os.name == 'nt':
         release_flag = release_flag.replace('\\', '/')
     if pristine:
@@ -312,7 +321,7 @@ def __main():
     parser.add_argument(
         "-t",
         "--transport",
-        type=str,
+        required = True,
         choices=[i.name for i in Transport],
         default=Transport.unicast.name,
         help="Select the transport type",
