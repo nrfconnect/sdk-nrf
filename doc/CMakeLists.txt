@@ -316,11 +316,6 @@ add_doxygen_docset(nrf ${NRF_BASE} ${NRF_VERSION})
 add_docset(mcuboot "2.1.99")
 
 #-------------------------------------------------------------------------------
-# docset: nrfx
-
-add_doxygen_docset(nrfx ${ZEPHYR_HAL_NORDIC_MODULE_DIR} "" STANDALONE)
-
-#-------------------------------------------------------------------------------
 # docset: tfm
 
 add_docset(tfm "2.1.0")
@@ -404,7 +399,6 @@ add_dependencies(build-all
     copy-extra-content
     merge-search-indexes
     nrf-all
-    nrfx
     nrfxlib-all
     zephyr-all
     mcuboot-all

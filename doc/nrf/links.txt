@@ -431,6 +431,8 @@
 .. _`nRF Connect SDK v0.3.0 documentation`: https://docs.nordicsemi.com/bundle/ncs-0.3.0/page/nrf/index.html
 .. _`nRF Connect SDK latest documentation`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/index.html
 
+.. _`nrfx documentation`: https://docs.nordicsemi.com/bundle/nrfx_3.11.0/page/index.html
+
 .. _`known issues page on the main branch`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html
 .. _`known issues for nRF Connect SDK v2.9.1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-9-1
 .. _`known issues for nRF Connect SDK v2.9.0-nRF54H20-1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-9-0-nRF54H20-1

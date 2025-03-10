@@ -94,6 +94,7 @@
 /doc/nrf/app_dev/device_guides/nrf54h/ug_nrf54h20_suit_*.rst @nrfconnect/ncs-charon-doc
 /doc/nrf/app_dev/device_guides/wifi_coex.rst @nrfconnect/ncs-doc-leads
 /doc/nrf/dev_model_and_contributions/     @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc
+/doc/nrf/drivers/nrfx.rst                 @nrfconnect/ncs-doc-leads
 /doc/nrf/drivers/bh1749.rst               @nrfconnect/ncs-cia-doc
 /doc/nrf/drivers/bme68x_iaq.rst           @nrfconnect/ncs-cia-doc
 /doc/nrf/drivers/entropy_cc3xx.rst        @nrfconnect/ncs-aegir-doc
