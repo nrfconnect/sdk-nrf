@@ -7,7 +7,7 @@ TF-M: PSA template
    :local:
    :depth: 2
 
-This sample provides a template for Arm Platform Security Architecture (PSA) best practices on nRF devices.
+This sample provides a template for Arm's `Platform Security Architecture (PSA)`_ best practices on Nordic Semiconductor devices.
 
 Requirements
 ************
@@ -21,7 +21,7 @@ The sample supports the following development kits:
 Overview
 ********
 
-This sample uses Trusted Firmware-M, nRF Secure Immutable bootloader and MCUboot to demonstrate how to implement the best practices that comply with the Arm PSA requirements.
+This sample uses :ref:`Trusted Firmware-M <ug_tfm>`, :ref:`MCUboot and nRF Secure Immutable Bootloader (NSIB)<ug_bootloader_mcuboot_nsib>` to demonstrate how to implement the best practices that comply with the Arm PSA requirements.
 It includes provisioning the device with keys and being able to perform a device firmware update.
 The sample prints information about the identity of the device and the firmware versions that are currently running.
 
@@ -126,195 +126,216 @@ After programming the sample, the following output is displayed in the console:
     D7 05 45 3C 89 BE C2 9B  2B D0 ED 05 F1 AC 42 21  |  ..E<....+.....B!
     F0 05 00 CE B7 B9 47 E9                           |  ......G.
 
-Firmware update
-***************
+.. _tfm_psa_template_fw_update:
+
+Configuring firmware update
+===========================
 
 This sample supports firmware update of both the application and TF-M, and the second stage bootloader.
 
-The firmware update process requires signature verification keys in order to sign the images used in the process.
+The firmware update process requires :ref:`signature verification keys <ug_fw_update_keys>` to sign the images used in the process.
 The nRF Secure Immutable bootloader and MCUboot will use signing keys that should not be used in production.
 For signing and verifying images, use ECDSA with secp256r1-sha256, which is supported by the |NCS| cryptographic libraries :ref:`nrf_oberon_readme` and :ref:`crypto_api_nrf_cc310_bl`.
 
-Below is an example of how to generate and use the keys.
+The following steps are an example of how to generate the keys and update the configuration files with them:
 
-Generate security keys if needed:
+1. Generate security keys if you have not already done so.
+   The following example generates keys using :ref:`Imgtool <ug_fw_update_keys_imgtool>`, but you can also use :ref:`OpenSSL <ug_fw_update_keys_openssl>`.
 
-.. code-block:: console
+   .. code-block:: console
 
-    mkdir _keys
-    python3 bootloader/mcuboot/scripts/imgtool.py keygen -t ecdsa-p256 -k ~/ncs/_keys/mcuboot_priv.pem
-    python3 bootloader/mcuboot/scripts/imgtool.py keygen -t ecdsa-p256 -k ~/ncs/_keys/nsib_priv.pem
+      mkdir _keys
+      python3 bootloader/mcuboot/scripts/imgtool.py keygen -t ecdsa-p256 -k ~/ncs/_keys/mcuboot_priv.pem
+      python3 bootloader/mcuboot/scripts/imgtool.py keygen -t ecdsa-p256 -k ~/ncs/_keys/nsib_priv.pem
 
-Update the :file:`sysbuild.conf` file to set the private signing keys for MCUboot and NSIB:
+#. Update the :file:`sysbuild.conf` file to set the private signing keys for MCUboot and NSIB:
 
-.. code-block:: console
+   .. note::
+        Use only absolute paths for ``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`` and ``SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE``.
 
-    SB_CONFIG_BOOT_SIGNATURE_KEY_FILE="/home/user/ncs/_keys/mcuboot_priv.pem"
-    SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE="/home/user/ncs/_keys/nsib_priv.pem"
+   .. code-block:: console
 
-See :ref:`ug_fw_update_keys` for more information on how to generate and use keys for a project.
+      SB_CONFIG_BOOT_SIGNATURE_KEY_FILE="/home/user/ncs/_keys/mcuboot_priv.pem"
+      SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE="/home/user/ncs/_keys/nsib_priv.pem"
+
+#. Rebuild the sample with the updated keys before proceeding with the firmware update as described in the next sections.
 
 The bootloader and the application can be updated using the :file:`mcumgr` command-line tool.
 See :zephyr:code-sample:`smp-svr` for installation and usage instructions.
 
-.. note::
+Updating application and TF-M firmware
+--------------------------------------
 
-    Remember to rebuild the sample with the updated keys before proceeding with the firmware update.
-
-Application and TF-M firmware update
-====================================
-
-Use firmware update to update the application and TF-M firmware.
-For the image to be updatable, the firmware image version :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` has to be updated to a higher version.
+You can use firmware update to update the application and TF-M firmware.
+For the image to be updatable, the firmware image version :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` must be updated to a higher version.
 See :ref:`ug_fw_update_image_versions_mcuboot_downgrade` for information on downgrade protection in MCUboot.
 
-To upload a new application image, build an application with an updated image version.
+To upload a new application image, complete the following steps:
 
-.. code-block:: console
+1. Build an application with an updated image version:
 
-    west build -b nrf5340dk/nrf5340/cpuapp/ns nrf/samples/tfm/tfm_psa_template -d build_update \
-    -DCONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION=\"1.2.3\"
+   .. code-block:: console
 
-Then upload the new application image to the device.
+      west build -b nrf5340dk/nrf5340/cpuapp/ns nrf/samples/tfm/tfm_psa_template -d build_update \
+      -DCONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION=\"1.2.3\"
 
-.. code-block:: console
+#. |mcumgr_installation_step|
+#. Upload the new application image to the device using mcumgr:
 
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image list
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image upload \
-    build_update/tfm_psa_template/zephyr/zephyr.signed.bin
+   .. code-block:: console
 
-Once the new application image is uploaded, the hash of the image is shown in the image list.
-Flag the image to be tested on next reboot using its hash.
+      mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image list
+      mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image upload \
+      build_update/tfm_psa_template/zephyr/zephyr.signed.bin
 
-.. code-block:: console
+   Once the new application image is uploaded, the hash of the image is shown in the image list.
+#. Flag the image to be tested on next reboot using its hash:
 
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image list
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image test <hash>
+   .. code-block:: console
 
-Trigger the application update by initiating a reset.
-The verification of the image will happen during the update process.
+      mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image list
+      mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image test <hash>
 
-.. code-block:: console
+#. Trigger the application update by initiating a reset.
+   The verification of the image will happen during the update process.
 
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 reset
+   .. code-block:: console
 
-Bootloader firmware update
-==========================
+      mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 reset
 
-To upload a new bootloader image, build a bootloader targeting the correct bootloader slot with an updated firmware image version.
+Updating bootloader firmware
+----------------------------
 
-.. code-block:: console
+To upload a new bootloader image, complete the following steps:
 
-    west build -b nrf5340dk/nrf5340/cpuapp/ns nrf/samples/tfm/tfm_psa_template -d build_update \
-    -Dmcuboot_CONFIG_FW_INFO_FIRMWARE_VERSION=2
+1. Build a bootloader targeting the correct bootloader slot with an updated firmware image version:
 
-List the current firmware images and upload a bootloader image that targets the non-active bootloader slot.
+   .. code-block:: console
 
-.. code-block:: console
+      west build -b nrf5340dk/nrf5340/cpuapp/ns nrf/samples/tfm/tfm_psa_template -d build_update \
+      -Dmcuboot_CONFIG_FW_INFO_FIRMWARE_VERSION=2
 
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image list
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image upload \
-    build_update/signed_by_mcuboot_and_b0_s1_image.bin
+#. |mcumgr_installation_step|
+#. List the current firmware images and upload a bootloader image that targets the non-active bootloader slot.
 
-Once the new bootloader image is uploaded, the hash of the image is shown in the image list.
-Flag the image to be tested on next reboot using its hash.
+   .. code-block:: console
 
-.. code-block:: console
+      mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image list
+      mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image upload \
+      build_update/signed_by_mcuboot_and_b0_s1_image.bin
 
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image list
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image test <hash>
+   Once the new bootloader image is uploaded, the hash of the image is shown in the image list.
+#. Flag the image to be tested on next reboot using its hash:
 
-Trigger the bootloader update by initiating a reset.
-The verification of the image will happen during the update process.
+   .. code-block:: console
 
-.. code-block:: console
+      mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image test <hash>
 
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 reset
+#. Trigger the bootloader update by initiating a reset.
+   The verification of the image will happen during the update process.
 
-Network core update (nRF5340 only)
-==================================
+   .. code-block:: console
 
-To upload a new network core image, build the empty_net_core image with an updated firmware image version.
+      mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 reset
 
-.. code-block:: console
+Updating the network core (nRF5340 only)
+----------------------------------------
 
-    west build -b nrf5340dk/nrf5340/cpuapp/ns nrf/samples/tfm/tfm_psa_template -d build_update \
-    -Dempty_net_core_CONFIG_FW_INFO_FIRMWARE_VERSION=2
+To upload a new network core image, complete the following steps:
 
-Then upload the new network core image to the device.
-Note that the image is uploaded to the network core slot.
+1. Build the ``empty_net_core`` image with an updated firmware image version:
 
-.. code-block:: console
+   .. code-block:: console
 
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image upload \
-    build_update/signed_by_mcuboot_and_b0_empty_net_core.bin -e -n 1
+      west build -b nrf5340dk/nrf5340/cpuapp/ns nrf/samples/tfm/tfm_psa_template -d build_update \
+      -Dempty_net_core_CONFIG_FW_INFO_FIRMWARE_VERSION=2
 
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image list
+#. |mcumgr_installation_step|
+#. Upload the new network core image to the device:
 
-Once the network core image is uploaded, the hash of the image is shown in the image list as image 1 in slot 1.
-Flag the image to be tested on next reboot using its hash.
+   .. note::
 
-.. code-block:: console
+      The image is uploaded to the network core slot.
 
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image test <hash>
+   .. code-block:: console
 
-Trigger the network core update by initiating a reset.
-The verification of the image will happen during the update process.
+      mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image upload \
+      build_update/signed_by_mcuboot_and_b0_empty_net_core.bin -e -n 1
 
-.. code-block:: console
+      mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image list
 
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 reset
+   Once the network core image is uploaded, the hash of the image is shown in the image list as image 1 in slot 1.
+#. Flag the image to be tested on next reboot using its hash:
+
+   .. code-block:: console
+
+      mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image test <hash>
+
+#. Trigger the network core update by initiating a reset.
+   The verification of the image will happen during the update process.
+
+   .. code-block:: console
+
+      mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 reset
 
 Alternatively, you can conduct a manual reset to trigger the network core update.
 This allows you to observe the update process in the application and network core console outputs.
 
-Simultaneous application and network core update (nRF5340 only)
-===============================================================
+Updating application and network cores simultaneously (nRF5340 only)
+--------------------------------------------------------------------
 
-When the interface between the application and network core is updated, both the application and network core images must be updated simultaneously.
-To do this, build the application image with an updated image version and the network core image with an updated firmware image version.
+When the interface between the application core and the network core is updated, both the application and network core images must be updated simultaneously.
+To do this, complete the following steps:
 
-.. code-block:: console
+1. Build the application image with an updated image version and the network core image with an updated firmware image version:
 
-    west build -b nrf5340dk/nrf5340/cpuapp/ns nrf/samples/tfm/tfm_psa_template -d build_update \
-    -DCONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION=\"1.2.4\" -Dempty_net_core_CONFIG_FW_INFO_FIRMWARE_VERSION=3
+   .. code-block:: console
 
-Then upload the new application and network core images to the device.
-Note that the application image is uploaded to the application slot, and the network core image is uploaded to the network core slot.
+      west build -b nrf5340dk/nrf5340/cpuapp/ns nrf/samples/tfm/tfm_psa_template -d build_update \
+      -DCONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION=\"1.2.4\" -Dempty_net_core_CONFIG_FW_INFO_FIRMWARE_VERSION=3
 
-.. code-block:: console
+#. |mcumgr_installation_step|
+#. Upload the new application and network core images to the device.
 
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image upload \
-    build_update/tfm_psa_template/zephyr/zephyr.signed.bin -e -n 0
+   .. note::
+      The application image is uploaded to the application slot, and the network core image is uploaded to the network core slot.
 
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image upload \
-    build_update/signed_by_mcuboot_and_b0_empty_net_core.bin -e -n 1
+   .. code-block:: console
 
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image list
+      mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image upload \
+      build_update/tfm_psa_template/zephyr/zephyr.signed.bin -e -n 0
 
-Once the images are uploaded, the hash of the images is shown in the image list.
-The application image is image 1 in slot 0, and the network core image is image 1 in slot 1.
-To allow the application and network core images to be updated simultaneously, first confirm the network core image and then the application image.
+      mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image upload \
+      build_update/signed_by_mcuboot_and_b0_empty_net_core.bin -e -n 1
 
-.. code-block:: console
+      mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image list
 
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image confirm <network core image hash>
+   Once the images are uploaded, the hash of the images is shown in the image list.
+   The application image is image 1 in slot 0, and the network core image is image 1 in slot 1.
+#. To allow the application and network core images to be updated simultaneously, first confirm the network core image and then the application image:
 
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image confirm <application core image hash>
+   .. code-block:: console
 
-Trigger the core updates by initiating a reset.
-The verification of the images will happen during the update process.
+      mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image confirm <network core image hash>
 
-.. code-block:: console
+      mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 image confirm <application core image hash>
 
-    mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 reset
+#. Trigger the core updates by initiating a reset.
+   The verification of the images will happen during the update process.
+
+   .. code-block:: console
+
+      mcumgr --conntype serial --connstring dev=/dev/ttyACM1,baud=115200,mtu=512 reset
 
 Alternatively, you can conduct a manual reset to trigger the core updates.
 This allows you to observe the update process in the application and network core console outputs.
 
 Dependencies
-*************
+************
 
 * This sample uses the TF-M module found in the :file:`modules/tee/tfm/` folder of the |NCS|.
 * This sample uses the :ref:`lib_tfm_ioctl_api` library.
 * On the nRF5340 devices, this sample uses the :ref:`subsys_pcd` library.
+
+.. |mcumgr_installation_step| replace:: Install the :file:`mcumgr` command-line tool if you have not already done so.
+   See :ref:`dfu_tools_mcumgr_cli` for installation and usage instructions.
