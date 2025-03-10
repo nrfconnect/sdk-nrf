@@ -138,7 +138,11 @@ You can add this feature to your own project and check its functionality as foll
 
 1. Generate two or more private keys for the application and extract a public key for each one (for example, using :ref:`OpenSSL <ug_fw_update_keys_openssl>`).
 
-#. Compile the application and bootloader with the relevant configurations, using only absolute paths:
+#. Compile the application and bootloader with the following configuration options set:
+
+   .. note::
+
+      Use only absolute paths for :kconfig:option:`CONFIG_SB_SIGNING_KEY_FILE` and :kconfig:option:`CONFIG_SB_PUBLIC_KEY_FILES`.
 
    .. code-block:: console
 
