@@ -735,7 +735,7 @@ Thread samples
 Zigbee samples
 --------------
 
-* :ref:`zigbee_light_switch_sample` sample:
+* Zigbee light switch sample:
 
   * Added the option to configure transmission power.
   * Fixed the FOTA configuration for the nRF5340 DK.

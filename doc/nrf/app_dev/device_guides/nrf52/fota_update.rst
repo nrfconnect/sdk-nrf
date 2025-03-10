@@ -269,7 +269,7 @@ FOTA over Zigbee
 
 .. fota_upgrades_zigbee_start
 
-You can enable support for FOTA over the Zigbee network using the :ref:`lib_zigbee_fota` library.
-For detailed information about how to configure the Zigbee FOTA library for your application, see :ref:`ug_zigbee_configuring_components_ota`.
+You can enable support for FOTA over the Zigbee network using the Zigbee FOTA library.
+For more information, see the :ref:`ug_zigbee` page.
 
 .. fota_upgrades_zigbee_end

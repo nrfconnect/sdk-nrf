@@ -158,7 +158,7 @@ Zigbee
 
 * Added:
 
-  * Support for nRF5340 DK (PCA10095) in the :ref:`zigbee_light_switch_sample` sample with the :ref:`lib_zigbee_fota` library enabled.
+  * Support for nRF5340 DK (PCA10095) in the Zigbee light switch sample with the Zigbee FOTA library enabled.
   * Production support for Weather Station application for Thingy:53.
 
 * Updated:
@@ -167,15 +167,15 @@ Zigbee
     The support is not experimental anymore.
   * Support for Zigbee Base Device Behavior v3.0.1 (BDB 3.0.1).
     The support is not experimental anymore.
-  * :ref:`lib_zigbee_fota` library.
+  * Zigbee FOTA library.
     For details, see `Libraries for Zigbee`_.
   * Zigbee Network Co-processor Host package to the new version v2.2.0.
-  * :ref:`lib_zigbee_shell` library.
+  * Zigbee shell library.
     For details, see `Libraries for Zigbee`_.
 
 * Fixed:
 
-  * An issue where the :ref:`zigbee_light_bulb_sample` sample was flickering when set to 50 kHz.
+  * An issue where the Zigbee light bulb sample was flickering when set to 50 kHz.
   * An issue with an assertion fail in :file:`/zephyr/include/spinlock.h:129`.
   * An issue where a wrong value was reported for attributes ``MinMeasuredvalue`` and ``MaxMeasuredValue`` in the Weather Station.
   * An issue with ZBOSS fatal error after factory reset and before bdb start.
@@ -279,7 +279,7 @@ nRF Desktop
 Thingy:53 Zigbee weather station
 --------------------------------
 
-* Added new :ref:`zigbee_weather_station_app` application.
+* Added new Thingy:53 Zigbee weather station application.
 * Fixed an issue where the buffer was being freed incorrectly.
 
 Samples
@@ -506,19 +506,19 @@ nRF5340 samples
 Zigbee samples
 --------------
 
-* Added support for the factory reset functionality from :ref:`lib_zigbee_application_utilities` in the following samples:
+* Added support for the factory reset functionality from Zigbee application utilities in the following samples:
 
-  * :ref:`zigbee_light_bulb_sample`
-  * :ref:`zigbee_light_switch_sample`
-  * :ref:`zigbee_network_coordinator_sample`
-  * :ref:`zigbee_shell_sample`
-  * :ref:`zigbee_template_sample`
+  * Zigbee Light bulb
+  * Zigbee Light switch
+  * Zigbee Network coordinator
+  * Zigbee Shell
+  * Zigbee Template
 
-* :ref:`zigbee_light_switch_sample` sample:
+* Zigbee Light switch sample:
 
   * Added identify handler.
 
-* :ref:`zigbee_light_bulb_sample` sample:
+* Zigbee Light bulb sample:
 
   * Removed implementation of Home Automation Profile Specification logic.
     This logic added dependency between On/Off and Level clusters, so changes in Level cluster were affecting the On/Off one.
@@ -855,11 +855,11 @@ Shell libraries
 Libraries for Zigbee
 --------------------
 
-* :ref:`lib_zigbee_application_utilities` library:
+* Zigbee application utilities library:
 
-  * Added factory reset functionality in :ref:`lib_zigbee_application_utilities` library.
+  * Added factory reset functionality in Zigbee application utilities library.
 
-* :ref:`lib_zigbee_shell` library:
+* Zigbee shell library:
 
   * Added:
 
@@ -869,7 +869,7 @@ Libraries for Zigbee
 
   * Updated:
 
-    * :ref:`lib_zigbee_shell` structure to make it an independent library.
+    * Zigbee shell structure to make it an independent library.
     * File names ``zigbee_cli*`` and changed it to ``zigbee_shell*``.
     * Function names ``zigbee_cli*`` and changed it to ``zigbee_shell*``.
     * ``bdb factory_reset`` command.
@@ -880,11 +880,11 @@ Libraries for Zigbee
 
   * Fixed an issue where the ``zcl cmd`` shell command was using the incorrect index of a context manager entry during cleanup after the command was sent.
 
-* :ref:`lib_zigbee_zcl_scenes` library:
+* Zigbee ZCL scene helper library:
 
   * Updated the library, so that it is allowed to store empty scenes.
 
-* :ref:`lib_zigbee_osif` library:
+* Zigbee ZBOSS OSIF library:
 
   * Updated:
 
@@ -893,7 +893,7 @@ Libraries for Zigbee
     * Optimize calling ZBOSS API in |NCS| platform.
       If the ZBOSS API is called in the ZBOSS thread context, processing by the workqueue is now skipped.
 
-* :ref:`lib_zigbee_fota` library:
+* Zigbee FOTA library:
 
   * Added:
 
@@ -1045,7 +1045,7 @@ Documentation
   * A page on :ref:`software_maturity` listing the different software maturity levels for the available features.
   * A page on :ref:`ug_pinctrl`.
   * Documentation for :ref:`ug_thingy53_gs`.
-  * Documentation page about :ref:`ug_zigbee_commissioning`.
+  * Documentation page about Zigbee commissioning.
   * Documentation for Asset tracker v2 :ref:`asset_tracker_unit_test`.
   * New :ref:`security` page on the top level, with a brief introduction to core security features available in Nordic Semiconductor products.
 
