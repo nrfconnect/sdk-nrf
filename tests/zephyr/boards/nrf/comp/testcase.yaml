@@ -1,0 +1,15 @@
+common:
+  harness_config:
+    fixture: gpio_loopback
+  tags:
+    - drivers
+    - comparator
+    - ci_tests_zephyr_boards_nrf_comp
+tests:
+  nrf.extended.drivers.comparator.nrf_comp:
+    platform_allow:
+      - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54l20pdk/nrf54l20/cpuapp
+    integration_platforms:
+      - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54l20pdk/nrf54l20/cpuapp

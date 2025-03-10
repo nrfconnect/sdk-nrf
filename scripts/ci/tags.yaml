@@ -1584,3 +1584,13 @@ ci_tests_zephyr_boards_nrf_hwinfo:
   files:
     - nrf/tests/zephyr/boards/nrf/hwinfo/
     - zephyr/tests/boards/nrf/hwinfo/
+
+ci_tests_zephyr_drivers_comparator:
+  files:
+    - nrf/tests/zephyr/drivers/comparator/
+    - zephyr/tests/drivers/comparator/
+
+ci_tests_zephyr_boards_nrf_comp:
+  files:
+    - nrf/tests/zephyr/boards/nrf/comp/
+    - zephyr/tests/boards/nrf/comp/

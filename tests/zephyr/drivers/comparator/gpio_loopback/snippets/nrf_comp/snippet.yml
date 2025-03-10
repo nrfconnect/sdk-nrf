@@ -1,0 +1,9 @@
+name: gpio_loopback_nrf_comp
+
+boards:
+  nrf54l20pdk/nrf54l20/cpuapp:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf54l20pdk_nrf54l20_cpuapp.overlay
+  nrf54l09pdk/nrf54l09/cpuapp:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf54l09pdk_nrf54l09_cpuapp.overlay
