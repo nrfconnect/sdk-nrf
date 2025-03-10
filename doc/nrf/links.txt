@@ -210,6 +210,8 @@
 
 .. _`Zephyr hostap fork`: https://github.com/zephyrproject-rtos/hostap
 
+.. _`tfm_secure_peripheral_partition.yaml`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/tfm/tfm_secure_peripheral/secure_peripheral_partition/tfm_secure_peripheral_partition.yaml
+
 .. ### Source: github.io
 
 .. _`TinyCBOR`: https://intel.github.io/tinycbor/current/

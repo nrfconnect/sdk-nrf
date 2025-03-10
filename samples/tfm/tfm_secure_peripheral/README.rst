@@ -7,7 +7,7 @@ TF-M secure peripheral partition
    :local:
    :depth: 2
 
-The TF-M secure peripheral partition sample demonstrates the configuration and usage of secure peripherals in a Trusted Firmware-M (TF-M) partition.
+The TF-M secure peripheral partition sample demonstrates the configuration and usage of secure peripherals in a :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` partition.
 
 Requirements
 ************
@@ -16,17 +16,17 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-Optionally a logic analyzer can be used.
+Optionally, you can also use a logic analyzer.
 
 Overview
 ********
 
 A secure partition is an isolated module that resides in TF-M.
-It exposes a number of functions or secure services to other partitions and/or to the firmware in Non-Secure Processing Environment (NSPE).
+It exposes a number of functions or secure services to other partitions or to the firmware in the :ref:`Non-Secure Processing Environment (NSPE) <app_boards_spe_nspe>` (or both).
 TF-M already contains standard partitions such as crypto, protected storage and firmware update, but you can also create your own partitions.
 
 The sample demonstrates how to configure peripherals as secure peripherals and use them in the secure partition.
-In this way, the peripheral is only accessible from Secure Processing Environment (SPE), or from the secure partition with isolation level 2 or higher.
+In this way, the peripheral is only accessible from the :ref:`Secure Processing Environment (SPE) <app_boards_spe_nspe>`, or from the secure partition with isolation level 2 or higher.
 
 The secure partition is located in the ``secure_peripheral_partition`` directory.
 It contains the partition sources, build files and build configuration files.
@@ -38,96 +38,118 @@ For more information on how to add custom secure partitions, see `TF-M secure pa
 Configuration
 *************
 
-To configure a peripheral as secure, the peripheral must be enabled and assigned to the partition, and any interrupt signals must be defined.
-
 |config|
 
-Secure peripheral
-=================
+To configure a peripheral as secure:
 
-To start using a peripheral as a secure peripheral, it must first be enabled for use in SPE.
+* Enable and assign the peripheral to the partition.
+* Define interrupt signals.
 
-.. code-block:: none
+Additionally, you can configure the secure partition to get access to other TF-M partitions.
 
-	CONFIG_NRF_TIMER1_SECURE=y
-        CONFIG_NRF_SPIM3_SECURE=y
-        CONFIG_NRF_GPIOTE0_SECURE=y
+See the following sections for more details.
 
-To use GPIO pins or DPPI channels with secure peripherals, assign them as secure pins or channels.
-This is done with a bitmask, for example to assign GPIO pin 23 as secure:
+Enabling secure peripheral
+==========================
 
-.. code-block:: none
+To start using a peripheral as a secure peripheral, complete the following steps:
 
-	CONFIG_NRF_GPIO0_PIN_MASK_SECURE=0x00800000
+1. In your application's :file:`prj.conf` file, enable the peripheral for use in the SPE by setting the following Kconfig options to ``y``:
 
-In addition, the peripheral must be assigned to the specific partition in the partition manifest file:
+   .. code-block:: none
 
-.. code-block:: none
+      CONFIG_NRF_TIMER1_SECURE=y
+      CONFIG_NRF_SPIM3_SECURE=y
+      CONFIG_NRF_GPIOTE0_SECURE=y
 
-        "mmio_regions": [
-                {
-                        "name": "TFM_PERIPHERAL_TIMER1",
-                        "permission": "READ-WRITE"
-                },
-        ]
+#. If you want to use GPIO pins or DPPI channels with secure peripherals, assign them as secure pins or channels.
+   You can do this with a bitmask.
+   For example, the following setting assigns GPIO pin 23 as secure:
 
-Secure interrupt
-================
+   .. code-block:: none
 
-If the secure peripheral generates interrupts, the interrupt needs to be integrated with TF-Ms interrupt mechanism.
-The interrupt source and handling type needs to be defined in the partition manifest file:
+      CONFIG_NRF_GPIO0_PIN_MASK_SECURE=0x00800000
 
-.. code-block:: none
+#. Assign the peripheral to the specific partition in the partition manifest YAML file `tfm_secure_peripheral_partition.yaml`_, located in the :file:`secure_peripheral_partition` directory:
 
-        "irqs": [
-                {
-                        "source": "TFM_TIMER1_IRQ",
-                        "name": "TFM_TIMER1_IRQ",
-                        "handling": "FLIH"
-                },
-        ]
+   .. code-block:: yaml
 
-If the type of interrupt handling is defined as the First Level Interrupt Handling (FLIH), then the FLIH handler needs to be defined.
-The return value specifies if the Second Level Interrupt Handling signal should be asserted or not.
+      "mmio_regions": [
+              {
+                      "name": "TFM_PERIPHERAL_TIMER1",
+                      "permission": "READ-WRITE"
+              },
+      ]
 
-.. code-block:: c
+Integrating secure interrupt
+============================
 
-        psa_flih_result_t tfm_timer1_irq_flih(void)
-        {
-                /* Application specific handling */
+If the secure peripheral generates interrupts, complete the following steps to integrate the interrupt with the TF-M interrupt mechanism:
 
-                if (condition) {
-                        return PSA_FLIH_SIGNAL;
-                } else {
-                        return PSA_FLIH_NO_SIGNAL;
-                }
-        }
+1. Define the interrupt source and handling type in the partition manifest YAML file `tfm_secure_peripheral_partition.yaml`_, located in the :file:`secure_peripheral_partition` directory:
 
-If the type of interrupt handling is defined as the Second Level Interrupt Handling (SLIH), or the FLIH handler specifies the signal to be raised, the interrupt is sent to the partition as a signal.
-How to clear an interrupt signal depends on the type of interrupt handling.
+   .. code-block:: yaml
 
-.. code-block:: c
+      "irqs": [
+              {
+                      "source": "TFM_TIMER1_IRQ",
+                      "name": "TFM_TIMER1_IRQ",
+                      "handling": "FLIH"
+              },
+      ]
 
-        if (signals & TFM_TIMER1_IRQ_SIGNAL) {
-                /* Application specific handling */
+#. If the type of interrupt handling is defined as the First Level Interrupt Handling (FLIH), define the FLIH handler.
 
-                /* FLIH: Reset signal */
-                psa_reset_signal(TFM_TIMER1_IRQ_SIGNAL);
-        }
+   .. code-block:: c
 
-        if (signals & TFM_SPIM3_IRQ_SIGNAL) {
-                /* Application specific handling */
+      psa_flih_result_t tfm_timer1_irq_flih(void)
+      {
+              /* Application specific handling */
 
-                /* SLIH: End of Interrupt signal */
-                psa_eoi(TFM_SPIM3_IRQ_SIGNAL);
-        }
+              if (condition) {
+                      return PSA_FLIH_SIGNAL;
+              } else {
+                      return PSA_FLIH_NO_SIGNAL;
+              }
+      }
+
+   The return value specifies if the Second Level Interrupt Handling signal should be asserted or not.
+
+#. If the type of interrupt handling is defined as the Second Level Interrupt Handling (SLIH), or if the FLIH handler specifies the signal to be raised, the interrupt is sent to the partition as a signal, which needs to be cleared.
+   How to clear an interrupt signal depends on the type of interrupt handling:
+
+   .. code-block:: c
+
+      if (signals & TFM_TIMER1_IRQ_SIGNAL) {
+              /* Application specific handling */
+
+              /* FLIH: Reset signal */
+              psa_reset_signal(TFM_TIMER1_IRQ_SIGNAL);
+      }
+
+      if (signals & TFM_SPIM3_IRQ_SIGNAL) {
+              /* Application specific handling */
+
+              /* SLIH: End of Interrupt signal */
+              psa_eoi(TFM_SPIM3_IRQ_SIGNAL);
+      }
 
 .. note::
 
-        TF-M interrupt signals only assert the signal but do not schedule the partition to run.
-        In cases where the interrupt signal is preempting the non-secure execution, the interrupt signal is not processed until the next time the partition is scheduled to run.
-        The sample demonstrates a workaround for this limitation by triggering an EGU0 interrupt in the firmware in NSPE which calls the secure partition to process the interrupt signals.
+   TF-M interrupt signals only assert the signal but do not schedule the partition to run.
+   In cases where the interrupt signal is preempting the non-secure execution, the interrupt signal is not processed until the next time the partition is scheduled to run.
+   The sample demonstrates a workaround for this limitation by triggering an ``EGU0`` interrupt in the firmware in the NSPE, which calls the secure partition to process the interrupt signals.
 
+Accessing other TF-M partitions
+===============================
+
+For a secure peripheral partition to access services from other TF-M partitions (such as Crypto or Protected Storage), you must explicitly list these dependencies in the partition manifest YAML file `tfm_secure_peripheral_partition.yaml`_, located in the :file:`secure_peripheral_partition` directory.
+For example, to allow access to the Protected Storage partition, add it to the ``dependencies`` section:
+
+.. code-block:: yaml
+
+   dependencies:
+     - name: "TFM_SP_PS"
 
 Building and Running
 ********************
@@ -139,14 +161,14 @@ Building and Running
 Testing
 =======
 
-The sample displays the following output in the console from the firmware in NSPE:
+The sample displays the following output in the console from the firmware in the NSPE:
 
 .. code-block:: console
 
         SPP: send message: Success
         SPP: process signals: Success
 
-The sample displays the following output in the console from the firmware in SPE:
+The sample displays the following output in the console from the firmware in the SPE:
 
 .. code-block:: console
 
