@@ -9,6 +9,7 @@
 #if defined(CONFIG_SETTINGS_NVS)
 #include <zephyr/fs/nvs.h>
 #elif defined(CONFIG_SETTINGS_ZMS)
+#include <settings/settings_zms.h>
 #include <zephyr/fs/zms.h>
 #endif
 #include <zephyr/settings/settings.h>
@@ -123,6 +124,30 @@ int FreeHandler(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
+int ZmsCyclesHandler(const struct shell *shell, size_t argc, char **argv)
+{
+	if (!IS_ENABLED(CONFIG_SETTINGS_ZMS) || !sStorage) {
+		return -ENOEXEC;
+	}
+
+	shell_print(shell, "%u", zms_get_num_cycles(sStorage));
+
+	return 0;
+}
+
+int ZmsKeyCollisions(const struct shell *shell, size_t argc, char **argv)
+{
+	if (!IS_ENABLED(CONFIG_SETTINGS_ZMS) || !sStorage) {
+		return -ENOEXEC;
+	}
+
+	settings_zms *backend = CONTAINER_OF(sStorage, settings_zms, cf_zms);
+
+	shell_print(shell, "%u", static_cast<unsigned>(backend->hash_collision_num));
+
+	return 0;
+}
+
 } // namespace
 
 bool PersistentStorageShell::Init()
@@ -163,6 +188,14 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_persistent_storage,
 					     "Get free settings space in Bytes. \n"
 					     "Usage: matter_settings current\n",
 					     FreeHandler, 1, 1),
+			       SHELL_CMD_ARG(zms_cycles, NULL,
+					     "Get max number of ZMS sector cycles.\n"
+					     "Usage: matter_settings zms_cycles\n)",
+					     ZmsCyclesHandler, 1, 0),
+			       SHELL_CMD_ARG(zms_key_collisions, NULL,
+					     "Get max number of key hash collisions.\n"
+					     "Usage: matter_settings zms_key_collisions\n)",
+					     ZmsKeyCollisions, 1, 0),
 			       SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_REGISTER(matter_settings, &sub_persistent_storage, "Matter persistent storage ", NULL);
