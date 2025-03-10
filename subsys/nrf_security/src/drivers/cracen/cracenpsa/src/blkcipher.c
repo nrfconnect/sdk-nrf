@@ -316,8 +316,7 @@ static psa_status_t operation_setup(enum cipher_operation dir, cracen_cipher_ope
 
 	psa_status_t status = cracen_load_keyref(attributes, operation->key_buffer, key_buffer_size,
 						 &operation->keyref);
-
-	if (status) {
+	if (status != PSA_SUCCESS) {
 		return status;
 	}
 
