@@ -15,4 +15,5 @@ Here you can find documentation for drivers in the |NCS|, including API document
    :caption: Subpages:
    :glob:
 
+   drivers/nrfx
    drivers/*
