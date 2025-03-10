@@ -25,6 +25,9 @@
 #ifdef CONFIG_SUIT_CACHE_RW
 #include <suit_dfu_cache_rw.h>
 #endif
+#ifdef CONFIG_FLASH_IPUC
+#include <drivers/flash/flash_ipuc.h>
+#endif /* CONFIG_FLASH_IPUC */
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(suitfu_mgmt, CONFIG_MGMT_SUITFU_LOG_LEVEL);
@@ -87,6 +90,7 @@ static int suitfu_mgmt_img_upload(struct smp_streamer *ctx)
 			return MGMT_ERR_EINVAL;
 		}
 
+		device_info.fdev = NULL;
 		if (req.image == 0) {
 			suit_plat_err_t err = suit_dfu_partition_device_info_get(&device_info);
 
@@ -94,20 +98,35 @@ static int suitfu_mgmt_img_upload(struct smp_streamer *ctx)
 				LOG_ERR("DFU Partition not found");
 				return MGMT_ERR_ENOENT;
 			}
-
 		} else {
+#ifdef CONFIG_FLASH_IPUC
+			device_info.partition_offset = 0;
+			device_info.erase_block_size = 1;
+			device_info.write_block_size = 1;
+			device_info.fdev = flash_image_ipuc_create(
+				req.image, NULL, NULL, (uintptr_t *)&device_info.mapped_address,
+				&device_info.partition_size);
+			if (device_info.fdev != NULL) {
+				LOG_INF("Found IPUC for image %d (0x%lx, 0x%x)", req.image,
+					(uintptr_t)device_info.mapped_address,
+					device_info.partition_size);
+			}
+#endif /* CONFIG_FLASH_IPUC */
 #ifdef CONFIG_SUIT_CACHE_RW
-			uint32_t cache_pool_id = req.image - 1;
-			suit_plat_err_t err =
-				suit_dfu_cache_rw_device_info_get(cache_pool_id, &device_info);
+			if (device_info.fdev == NULL) {
+				uint32_t cache_pool_id = req.image - 1;
+				suit_plat_err_t err = suit_dfu_cache_rw_device_info_get(
+					cache_pool_id, &device_info);
 
-			if (err != SUIT_PLAT_SUCCESS) {
-				LOG_ERR("Cache pool %d not found", cache_pool_id);
+				if (err != SUIT_PLAT_SUCCESS) {
+					LOG_ERR("Cache pool %d not found", cache_pool_id);
+					return MGMT_ERR_ENOENT;
+				}
+			}
+#endif /* CONFIG_SUIT_CACHE_RW */
+			if (device_info.fdev == NULL) {
 				return MGMT_ERR_ENOENT;
 			}
-#else
-			return MGMT_ERR_ENOENT;
-#endif
 		}
 
 		if (req.size > device_info.partition_size) {
@@ -165,9 +184,12 @@ static int suitfu_mgmt_img_upload(struct smp_streamer *ctx)
 				LOG_INF("Candidate envelope stored");
 				rc = suitfu_mgmt_candidate_envelope_stored();
 			} else {
-				uint32_t cache_pool_id = image_id - 1;
-
-				LOG_INF("Cache pool %d updated with RAW image", cache_pool_id);
+				uint32_t cache_pool_id = req.image - 1;
+#ifdef CONFIG_FLASH_IPUC
+				flash_image_ipuc_release(image_id);
+#endif /* CONFIG_FLASH_IPUC */
+				LOG_INF("Cache pool %d or image %d updated with RAW image",
+					cache_pool_id, req.image);
 			}
 
 			image_size = 0;
