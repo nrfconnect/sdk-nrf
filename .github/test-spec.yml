@@ -644,6 +644,7 @@
   - "tests/zephyr/drivers/flash/**/*"
   - "tests/zephyr/drivers/i2c/**/*"
   - "tests/zephyr/drivers/mspi/**/*"
+  - "tests/zephyr/boards/nrf/**/*"
   - "tests/zephyr/drivers/uart/**/*"
   - "tests/zephyr/drivers/watchdog/**/*"
 

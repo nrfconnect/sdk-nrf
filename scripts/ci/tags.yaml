@@ -1579,3 +1579,8 @@ ci_sampples_zephyr_drivers_watchdog:
   files:
     - nrf/samples/zephyr/drivers/watchdog/
     - zephyr/samples/drivers/watchdog/
+
+ci_tests_zephyr_boards_nrf_hwinfo:
+  files:
+    - nrf/tests/zephyr/boards/nrf/hwinfo/
+    - zephyr/tests/boards/nrf/hwinfo/
