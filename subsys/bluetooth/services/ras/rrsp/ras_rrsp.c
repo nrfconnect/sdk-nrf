@@ -542,9 +542,7 @@ static int rd_status_notify_or_indicate(struct bt_conn *conn, const struct bt_uu
 
 	__ASSERT_NO_MSG(attr);
 
-	if (bt_gatt_is_subscribed(conn, attr, BT_GATT_CCC_NOTIFY)) {
-		return bt_gatt_notify(conn, attr, &ranging_counter, sizeof(ranging_counter));
-	} else if (bt_gatt_is_subscribed(conn, attr, BT_GATT_CCC_INDICATE)) {
+	if (bt_gatt_is_subscribed(conn, attr, BT_GATT_CCC_INDICATE)) {
 		struct bt_ras_rrsp *rrsp = rrsp_find(conn);
 
 		__ASSERT_NO_MSG(rrsp);
@@ -557,6 +555,8 @@ static int rd_status_notify_or_indicate(struct bt_conn *conn, const struct bt_uu
 		rrsp->rd_status_params.destroy = NULL;
 
 		return bt_gatt_indicate(conn, &rrsp->rd_status_params);
+	} else if (bt_gatt_is_subscribed(conn, attr, BT_GATT_CCC_NOTIFY)) {
+		return bt_gatt_notify(conn, attr, &ranging_counter, sizeof(ranging_counter));
 	}
 
 	LOG_WRN("Peer is not subscribed to status characteristic.");
