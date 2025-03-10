@@ -270,6 +270,6 @@ Specifically, you can refer to the section on :ref:`networking stack <constraine
 Zigbee
 ******
 
-The current Zigbee memory requirements are listed on the :ref:`zigbee_memory` page.
+The current Zigbee memory requirements are listed in the :ref:`Zigbee <ug_zigbee>` add-on page.
 
-Apply `General recommendations`_ to optimize the :ref:`Zigbee <ug_zigbee>` part of your application.
+Apply `General recommendations`_ to optimize the Zigbee part of your application.

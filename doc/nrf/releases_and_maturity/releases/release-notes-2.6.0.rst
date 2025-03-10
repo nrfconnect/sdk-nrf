@@ -386,10 +386,10 @@ Zigbee
 
 * Updated:
 
-  * :ref:`nrfxlib:zboss` to v3.11.3.0 and platform v5.1.4 (``v3.11.3.0+5.1.4``).
+  * ZBOSS Zigbee stack to v3.11.3.0 and platform v5.1.4 (``v3.11.3.0+5.1.4``).
     They contain fixes for security vulnerabilities and other bugs.
-    For details, see :ref:`zboss_changelog`.
-  * :ref:`ZBOSS Network Co-processor Host <ug_zigbee_tools_ncp_host>` package to the new version v2.2.2.
+    For details, see the ZBOSS changelog.
+  * ZBOSS Network Co-processor Host package to the new version v2.2.2.
 
 * Removed the precompiled development variant of ZBOSS libraries.
 * Fixed a bus fault issue at reset when using :kconfig:option:`CONFIG_RAM_POWER_DOWN_LIBRARY` in some samples configuration (KRKNWK-18572).

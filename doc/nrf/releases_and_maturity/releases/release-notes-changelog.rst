@@ -996,6 +996,8 @@ Documentation
 
 * Removed:
 
+  * The entire Zigbee protocol, application and samples documentation.
+    It is now available in a separate `Zigbee R22`_ add-on repository.
   * The standalone page for getting started with Nordic Thingy:53.
     The contents of this page have been moved to the :ref:`thingy53_precompiled` page and to the `Programmer app <Programming Nordic Thingy:53_>`_ documentation.
   * The standalone page for getting started with Nordic Thingy:91.

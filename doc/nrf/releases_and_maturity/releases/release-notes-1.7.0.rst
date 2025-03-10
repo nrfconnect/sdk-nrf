@@ -280,22 +280,22 @@ Zigbee
 
   * Added production support for :ref:`radio front-end module (FEM) <ug_radio_fem>` for nRF52 Series devices and nRF21540 EK.
   * Added development support for :ref:`radio front-end module (FEM) <ug_radio_fem>` for nRF53 Series devices and nRF21540 EK.
-  * Added development support for ``nrf5340dk_nrf5340_cpuapp`` to the :ref:`zigbee_ncp_sample` sample.
-  * :ref:`lib_zigbee_zcl_scenes` library with documentation.
+  * Added development support for ``nrf5340dk_nrf5340_cpuapp`` to the Zigbee NCP sample.
+  * Zigbee ZCL scene helper library with documentation.
     This library was separated from the Zigbee light bulb sample.
-  * :ref:`zigbee_template_sample` sample.
+  * Zigbee template sample.
     This minimal Zigbee router application can be used as the starting point for developing custom Zigbee devices.
-  * Added user guide about :ref:`ug_zigee_adding_clusters` that is based on the new template sample.
+  * Added user guide about adding ZCL clusters to application that is based on the new template sample.
   * Added API for vendor-specific NCP commands.
-    See the :ref:`Zigbee NCP sample <zigbee_ncp_vendor_specific_commands>` page for more information.
+    See the Zigbee NCP sample page for more information.
   * Added API for Zigbee command for getting active nodes.
 
 * Updated:
 
   * ZBOSS Zigbee stack to version 3.8.0.1+4.0.0.
-    See the :ref:`nrfxlib:zboss_changelog` in the nrfxlib documentation for detailed information.
-  * :ref:`ug_zigbee_tools_ncp_host` is now supported for production and updated to version 1.0.0.
-  * :ref:`zigbee_ug_logging_stack_logs` - Improved printing ZBOSS stack logs.
+    See the ZBOSS changelog in the nrfxlib documentation for detailed information.
+  * ZBOSS NCP host is now supported for production and updated to version 1.0.0.
+  * Stack logs - Improved printing ZBOSS stack logs.
     Added new backend options to print ZBOSS stack logs with option for using binary format.
   * Fixed the KRKNWK-9743 known issue where the timer could not be stopped in Zigbee routers and coordinators.
   * Fixed the KRKNWK-10490 known issue that would cause a deadlock in the NCP frame fragmentation logic.
@@ -500,9 +500,9 @@ In addition to documentation related to the changes listed above, the following 
   * Added the :ref:`rscs_readme` library page.
   * Added documentation pages for the following Zigbee libraries:
 
-    * :ref:`lib_zigbee_osif`
-    * :ref:`lib_zigbee_zcl_scenes`
-    * :ref:`lib_zigbee_error_handler`
+    * Zigbee ZBOSS OSIF
+    * Zigbee ZCL scene helper
+    * Zigbee error handler
 
 * Updated pages:
 
@@ -535,8 +535,8 @@ In addition to documentation related to the changes listed above, the following 
 
     * :ref:`ug_zigbee` pages:
 
-      * :ref:`ug_zigbee_configuring` - Updated the :ref:`zigbee_ug_logging` section.
-      * :ref:`zigbee_memory` - Updated the memory values for the latest release.
+      * Configuring Zigbee in nRF Connect SDK - Updated the Custom logging per module section.
+      * Zigbee memory requirements - Updated the memory values for the latest release.
 
   * :ref:`applications` section pages:
 
@@ -570,7 +570,7 @@ In addition to documentation related to the changes listed above, the following 
 
     * :ref:`zigbee_samples`:
 
-      * :ref:`zigbee_ncp_sample` - Updated with information about logging ZBOSS traces and about vendor-specific commands.
+      * Zigbee NCP - Updated with information about logging ZBOSS traces and about vendor-specific commands.
 
   * :ref:`libraries` section pages:
 

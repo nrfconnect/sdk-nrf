@@ -193,13 +193,13 @@ See the :ref:`ug_thread` user guide to get started.
 Zigbee
 ------
 
-Added initial support for the Zigbee network protocol:
+Added initial support for the Zigbee network p`rotocol:
 
-* :ref:`nrfxlib:zboss` - port of the ZBOSS stack to the |NCS|, provided as a closed stack binary in nrfxlib.
+* ZBOSS - port of the ZBOSS stack to the |NCS|, provided as a closed stack binary in nrfxlib.
   The stack provided in this release has not been certified by the `Zigbee Alliance`_.
-* Light control sample consisting of :ref:`zigbee_light_bulb_sample`, :ref:`zigbee_light_switch_sample`, and :ref:`zigbee_network_coordinator_sample` - ported from the nRF5 SDK for Thread and Zigbee.
+* Light control sample consisting of the Zigbee light bulb sample, Zigbee light switch sample, and Zigbee network coordinator sample - ported from the nRF5 SDK for Thread and Zigbee.
   The sample demonstrates all Zigbee roles (coordinator, router, end device).
-  The :ref:`zigbee_light_switch_sample` sample provides sleepy end device support.
+  The Zigbee light switch sample provides sleepy end device support.
 
 See the :ref:`ug_zigbee` user guide to get started.
 

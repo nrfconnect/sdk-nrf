@@ -1,9 +1,0 @@
-@startuml
-
-start
-
-partition zigbee_enable() {
-:zboss_start_no_autostart();
-}
-
-@enduml

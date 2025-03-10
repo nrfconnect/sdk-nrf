@@ -263,24 +263,24 @@ Zigbee
 
 * Added:
 
-  * Development support for :ref:`NCP (Network Co-Processor) <ug_zigbee_platform_design_ncp_details>`.
-  * Development support for the nRF5340 DK in single and multi-protocol (Zigbee and Bluetooth LE) configuration for the :ref:`zigbee_light_switch_sample`, :ref:`zigbee_light_bulb_sample`, and :ref:`zigbee_network_coordinator_sample` samples.
+  * Development support for NCP (Network Co-Processor).
+  * Development support for the nRF5340 DK in single and multi-protocol (Zigbee and Bluetooth LE) configuration for the Zigbee light switch sample, Zigbee light bulb sample, and Zigbee network coordinator sample.
   * PA/LNA GPIO interface support for RF front-end modules (FEM) in Zigbee. The front-end module feature in Zigbee currently has support for SKY66112-11 device, but does not support nRF21540 revision 1 or older.
-  * :ref:`zigbee_ncp_sample` sample, which is a Network Co-Processor example for nRF52840 (DK and dongle) and nRF52833 DK.
+  * The Zigbee NCP sample, which is a Network Co-Processor example for nRF52840 (DK and dongle) and nRF52833 DK.
 
 	* Supports USB and UART transports.
 	* Enables USB DFU when USB transport is used.
 
-  * New ``zcl ping`` command in the :ref:`lib_zigbee_shell` library.
+  * New ``zcl ping`` command in the Zigbee Shell library.
   * New libraries that were extracted from common code under :file:`subsys/zigbee/common`:
 
-    * :ref:`lib_zigbee_application_utilities` library
-    * :ref:`lib_zigbee_logger_endpoint` library
+    * Zigbee application utilities library
+    * Zigbee endpoint logger library
 
 * Updated:
 
-  * ZBOSS Zigbee stack to version 3_3_0_6+11_30_2020. See :ref:`zboss_configuration` for detailed information.
-  * Added development (unstable) :ref:`zboss` libraries (v3.5.0.0). See :ref:`zboss_configuration` for detailed information.
+  * ZBOSS Zigbee stack to version 3_3_0_6+11_30_2020. See ZBOSS configuration for detailed information.
+  * Added development (unstable) ZBOSS libraries (v3.5.0.0). See ZBOSS configuration for detailed information.
 
 nRF Desktop
 -----------
@@ -980,8 +980,8 @@ In addition to documentation related to the changes listed above, the following 
   * :ref:`ug_thread_tools` - Added information on installing `wpantund`_.
 * :ref:`ug_zigbee`:
 
-  * Updated :ref:`zigbee_ug_supported_features`, :ref:`ug_zigbee_platform_design_ncp`, and :ref:`ug_zigbee_tools`.
-  * :ref:`ug_zigbee_configuring` - Updated mandatory and optional configuration options, logger options, section on power saving during sleep and added IEEE 802.15.4 EUI-64 configuration.
+  * Updated Supported Zigbee features, Co-processor designs, and Zigbee tools.
+  * Configuring Zigbee in the |NCS| - Updated mandatory and optional configuration options, logger options, section on power saving during sleep and added IEEE 802.15.4 EUI-64 configuration.
 * Documentation updates for Homekit.
 
 
@@ -1013,7 +1013,7 @@ Applications and samples
 * Zigbee:
 
   * Added information on FEM support and updated the dependencies sections.
-  * :ref:`zigbee_light_switch_sample` - Added a section on :ref:`zigbee_light_switch_activating_variants`.
+  * Zigbee light switch sample - Added a section on configuration files for sample extensions.
 * Updated the configuration sections of the following samples:
 
   * :ref:`download_sample`
@@ -1044,7 +1044,7 @@ nrfxlib
 * :ref:`nrf_802154_sl` - Added.
 * :ref:`nrf_security` - Updated to reflect the features supported by different backends.
 * :ref:`softdevice_controller` - Updated the Bluetooth LE feature support.
-* :ref:`zboss` - Added the types of ZBOSS libraries that are available.
+* ZBOSS Zigbee stack - Added the types of ZBOSS libraries that are available.
 
 
 Known issues
