@@ -86,9 +86,15 @@ Minimal build
 =============
 
 The default configuration of TF-M has all supported features enabled, which results in a significant memory footprint.
-A minimal version of the TF-M secure application is provided in |NCS| to show how to configure a reduced version of TF-M.
+For this reason, the |NCS| provides a minimal version of the TF-M secure application, which shows how to configure a reduced version of TF-M.
 
-The secure services supported by this minimal version allow for generating random numbers, and the platform services.
+The secure services supported by this minimal version allow for:
+
+* Generating random numbers using the CryptoCell peripheral.
+* Using the :ref:`platform services <ug_tfm_services_platform>`.
+* Reading secure memory from the non-secure application (strictly restricted to a list of allowed addresses).
+  Depending on the device, this lets you read metadata in the bootloader, verify FICR or UICR values, or access a peripheral that is secure-only.
+* Rebooting from the non-secure side.
 
 The minimal version is set with the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` Kconfig option, which is enabled by default on the nRF53 Series and nRF91 Series devices.
 With the minimal build, the configuration of TF-M is severely limited.
@@ -339,12 +345,16 @@ Depending on your development environment, you can generate memory reports for T
 
 For more information about the ``tfm_ram_report`` and ``tfm_rom_report`` targets, refer to the :ref:`tfm_build_system` documentation.
 
+.. _ug_tfm_services:
+
 TF-M Services
 *************
 
 As explained in the :ref:`tfm_configurable_build` section, TF-M is built from a set of services that are isolated from each other.
 Services can be enabled or disabled based on the application requirements.
 Following sections describe the available TF-M services and their purpose.
+
+.. _ug_tfm_services_platform:
 
 Platform service
 ================
