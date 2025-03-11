@@ -24,34 +24,24 @@ bool emberAfNordicDevKitClusterClusterSetLEDCallback(chip::app::CommandHandler *
 						     const chip::app::ConcreteCommandPath &commandPath,
 						     const Commands::SetLED::DecodableType &commandData)
 {
-	bool result = true;
-
-	/* Shift ledID by one, as numeration of Nrf::DeviceLeds starts from 0 */
-	Nrf::DeviceLeds ledID = static_cast<Nrf::DeviceLeds>(commandData.ledid - 1);
-
-	VerifyOrExit(ledID == Nrf::DeviceLeds::LED2 || ledID == Nrf::DeviceLeds::LED3, result = false);
-
 	switch (commandData.action) {
 		case LEDActionEnum::kOff:
-			Nrf::GetBoard().GetLED(ledID).Set(false);
+			Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(false);
 			break;
 		case LEDActionEnum::kOn:
-			Nrf::GetBoard().GetLED(ledID).Set(true);
+			Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(true);
 			break;
 		case LEDActionEnum::kToggle:
-			Nrf::GetBoard().GetLED(ledID).Invert();
+			Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Invert();
 			break;
 		default:
-			ExitNow(result = false);
+			commandObj->AddStatus(commandPath, Protocols::InteractionModel::Status::Failure);
+			return true;
 	}
 
-exit:
-	if (result) {
-		AppTask::Instance().UpdateClusterState();
-		commandObj->AddStatus(commandPath, Protocols::InteractionModel::Status::Success);
-	} else {
-		commandObj->AddStatus(commandPath, Protocols::InteractionModel::Status::Failure);
-	}
+	AppTask::Instance().UpdateClusterState();
+	commandObj->AddStatus(commandPath, Protocols::InteractionModel::Status::Success);
+
 	return true;
 }
 
@@ -74,16 +64,10 @@ void emberAfNordicDevKitClusterClusterInitCallback(EndpointId endpoint)
 	Protocols::InteractionModel::Status status;
 	bool storedValue;
 
-	/* Read storedValue on/off value */
-	status = NordicDevKitCluster::Attributes::Led2::Get(endpoint, &storedValue);
+	/* Read storedValue UserLED value */
+	status = NordicDevKitCluster::Attributes::UserLED::Get(endpoint, &storedValue);
 	if (status == Protocols::InteractionModel::Status::Success) {
 		/* Set actual state to the cluster state that was last persisted */
 		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Set(storedValue);
-	}
-	/* Read storedValue on/off value */
-	status = NordicDevKitCluster::Attributes::Led3::Get(endpoint, &storedValue);
-	if (status == Protocols::InteractionModel::Status::Success) {
-		/* Set actual state to the cluster state that was last persisted */
-		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED3).Set(storedValue);
 	}
 }

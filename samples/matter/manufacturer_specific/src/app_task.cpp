@@ -28,42 +28,35 @@ using namespace ::chip::DeviceLayer;
 namespace
 {
 #define BUTTON2_MASK DK_BTN2_MSK
-#define BUTTON3_MASK DK_BTN3_MSK
 constexpr EndpointId kEndpointId = 1;
 } /* namespace */
 
-static void ButtonEventHandler(Nrf::ButtonState button_state, Nrf::ButtonMask has_changed)
+static void ButtonEventHandler(Nrf::ButtonState /* unused */, Nrf::ButtonMask has_changed)
 {
-        if(!ConnectivityMgrImpl().IsIPv6NetworkProvisioned() || !ConnectivityMgrImpl().IsIPv6NetworkEnabled()) {
-                return;
-        }
-
         /* Handle button press */
-	if (BUTTON2_MASK & has_changed && BUTTON2_MASK & button_state) {
-		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Invert();
-	} else if (BUTTON3_MASK & has_changed && BUTTON3_MASK & button_state) {
-		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED3).Invert();
-	} else {
-		return;
+	if (ConnectivityMgrImpl().IsIPv6NetworkProvisioned() && ConnectivityMgrImpl().IsIPv6NetworkEnabled() &&
+	    BUTTON2_MASK & has_changed) {
+		AppTask::Instance().UpdateClusterState();
 	}
-
-	AppTask::Instance().UpdateClusterState();
 }
 
 void AppTask::UpdateClusterState()
 {
 	SystemLayer().ScheduleLambda([] {
 		Protocols::InteractionModel::Status status;
+		Nrf::ButtonState button_state;
 
-		status = Clusters::NordicDevKitCluster::Attributes::Led2::Set(kEndpointId,
+		dk_read_buttons(&button_state, nullptr);
+
+		status = Clusters::NordicDevKitCluster::Attributes::UserLED::Set(kEndpointId,
 								Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).GetState());
 
 		if (status != Protocols::InteractionModel::Status::Success) {
 			LOG_ERR("Updating NordicDevkit cluster failed: %x", to_underlying(status));
 		}
 
-		status = Clusters::NordicDevKitCluster::Attributes::Led3::Set(kEndpointId,
-								Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED3).GetState());
+		status = Clusters::NordicDevKitCluster::Attributes::UserButton::Set(kEndpointId,
+										    BUTTON2_MASK & button_state);
 
 		if (status != Protocols::InteractionModel::Status::Success) {
 			LOG_ERR("Updating NordicDevkit cluster failed: %x", to_underlying(status));

@@ -9394,15 +9394,15 @@ namespace app
 					static constexpr AttributeId Id = 0x00000001;
 				} // namespace DevKitName
 
-				namespace Led2
+				namespace UserLED
 				{
 					static constexpr AttributeId Id = 0x00000002;
-				} // namespace Led2
+				} // namespace UserLED
 
-				namespace Led3
+				namespace UserButton
 				{
 					static constexpr AttributeId Id = 0x00000003;
-				} // namespace Led3
+				} // namespace UserButton
 
 				namespace GeneratedCommandList
 				{

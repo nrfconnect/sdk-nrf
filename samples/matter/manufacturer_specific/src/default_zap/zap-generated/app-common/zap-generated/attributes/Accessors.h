@@ -8833,23 +8833,23 @@ namespace app
 					Set(EndpointId endpoint, chip::CharSpan value, MarkAttributeDirty markDirty);
 				} // namespace DevKitName
 
-				namespace Led2
+				namespace UserLED
 				{
 					Protocols::InteractionModel::Status Get(EndpointId endpoint,
 										bool *value); // boolean
 					Protocols::InteractionModel::Status Set(EndpointId endpoint, bool value);
 					Protocols::InteractionModel::Status Set(EndpointId endpoint, bool value,
 										MarkAttributeDirty markDirty);
-				} // namespace Led2
+				} // namespace UserLED
 
-				namespace Led3
+				namespace UserButton
 				{
 					Protocols::InteractionModel::Status Get(EndpointId endpoint,
 										bool *value); // boolean
 					Protocols::InteractionModel::Status Set(EndpointId endpoint, bool value);
 					Protocols::InteractionModel::Status Set(EndpointId endpoint, bool value,
 										MarkAttributeDirty markDirty);
-				} // namespace Led3
+				} // namespace UserButton
 
 				namespace FeatureMap
 				{
