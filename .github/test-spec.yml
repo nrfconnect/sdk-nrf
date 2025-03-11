@@ -642,6 +642,7 @@
   - "tests/drivers/uart/**/*"
   - "tests/subsys/event_manager_proxy/**/*"
   - "tests/zephyr/drivers/comparator/**/*"
+  - "tests/zephyr/drivers/gpio/**/*"
   - "tests/zephyr/drivers/flash/**/*"
   - "tests/zephyr/drivers/i2c/**/*"
   - "tests/zephyr/drivers/mspi/**/*"

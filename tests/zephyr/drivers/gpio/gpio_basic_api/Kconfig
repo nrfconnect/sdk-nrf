@@ -1,0 +1,1 @@
+source "tests/drivers/gpio/gpio_basic_api/Kconfig"
