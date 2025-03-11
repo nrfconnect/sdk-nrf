@@ -46,6 +46,7 @@ These are built from the files available in the official `Matter GitHub reposito
    kconfig
    advanced_kconfigs
    transmission_power
+   custom_clusters
    adding_clusters
    matter_api
    adding_bt_services

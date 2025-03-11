@@ -299,7 +299,7 @@ You can use the following optional arguments:
 * ``clusters <cluster_name>`` to add a new cluster to the ZCL.
   Use this option to add a new cluster to the ZAP tool before launching the GUI.
   The cluster must be written in the XML file format and contains attributes, commands, and events and other required information.
-  See the :ref:`ug_matter_creating_accessory_vendor_cluster` user guide for more information.
+  See the :ref:`ug_matter_creating_custom_cluster` user guide for more information.
 
 .. _ug_matter_gs_tools_matter_west_commands_zap_tool_generate:
 
