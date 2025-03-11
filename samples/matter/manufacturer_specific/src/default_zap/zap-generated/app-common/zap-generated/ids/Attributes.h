@@ -718,6 +718,11 @@ namespace app
 					static constexpr AttributeId Id = 0x00000016;
 				} // namespace MaxPathsPerInvoke
 
+				namespace RandomNumber
+				{
+					static constexpr AttributeId Id = 0x00000017;
+				} // namespace RandomNumber
+
 				namespace GeneratedCommandList
 				{
 					static constexpr AttributeId Id = Globals::Attributes::GeneratedCommandList::Id;
@@ -9384,7 +9389,7 @@ namespace app
 			} // namespace Attributes
 		} // namespace CommissionerControl
 
-		namespace NordicDevKitCluster
+		namespace NordicDevKit
 		{
 			namespace Attributes
 			{
@@ -9435,7 +9440,7 @@ namespace app
 				} // namespace ClusterRevision
 
 			} // namespace Attributes
-		} // namespace NordicDevKitCluster
+		} // namespace NordicDevKit
 
 		namespace UnitTesting
 		{

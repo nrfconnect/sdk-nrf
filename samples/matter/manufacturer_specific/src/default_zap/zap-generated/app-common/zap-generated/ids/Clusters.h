@@ -512,10 +512,10 @@ namespace app
 		{
 			static constexpr ClusterId Id = 0x00000751;
 		} // namespace CommissionerControl
-		namespace NordicDevKitCluster
+		namespace NordicDevKit
 		{
 			static constexpr ClusterId Id = 0xFFF1FC01;
-		} // namespace NordicDevKitCluster
+		} // namespace NordicDevKit
 		namespace UnitTesting
 		{
 			static constexpr ClusterId Id = 0xFFF1FC05;

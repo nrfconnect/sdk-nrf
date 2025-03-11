@@ -3302,6 +3302,25 @@ namespace app
 						}
 					}
 				} // namespace MfgSpecificPing.
+				namespace GenerateRandom
+				{
+					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
+					{
+						DataModel::WrappedStructEncoder encoder{ aWriter, aTag };
+						return encoder.Finalize();
+					}
+
+					CHIP_ERROR DecodableType::Decode(TLV::TLVReader &reader)
+					{
+						detail::StructDecodeIterator __iterator(reader);
+						while (true) {
+							auto __element = __iterator.Next();
+							if (std::holds_alternative<CHIP_ERROR>(__element)) {
+								return std::get<CHIP_ERROR>(__element);
+							}
+						}
+					}
+				} // namespace GenerateRandom.
 			} // namespace Commands
 
 			namespace Attributes
@@ -3356,6 +3375,8 @@ namespace app
 						return DataModel::Decode(reader, specificationVersion);
 					case Attributes::MaxPathsPerInvoke::TypeInfo::GetAttributeId():
 						return DataModel::Decode(reader, maxPathsPerInvoke);
+					case Attributes::RandomNumber::TypeInfo::GetAttributeId():
+						return DataModel::Decode(reader, randomNumber);
 					case Attributes::GeneratedCommandList::TypeInfo::GetAttributeId():
 						return DataModel::Decode(reader, generatedCommandList);
 					case Attributes::AcceptedCommandList::TypeInfo::GetAttributeId():
@@ -27701,7 +27722,7 @@ namespace app
 			} // namespace Events
 
 		} // namespace CommissionerControl
-		namespace NordicDevKitCluster
+		namespace NordicDevKit
 		{
 
 			namespace Commands
@@ -27772,7 +27793,7 @@ namespace app
 			{
 			} // namespace Events
 
-		} // namespace NordicDevKitCluster
+		} // namespace NordicDevKit
 		namespace UnitTesting
 		{
 			namespace Structs
@@ -30924,7 +30945,7 @@ namespace app
 				return false;
 			}
 		}
-		case Clusters::NordicDevKitCluster::Id: {
+		case Clusters::NordicDevKit::Id: {
 			switch (aCommand) {
 			default:
 				return false;

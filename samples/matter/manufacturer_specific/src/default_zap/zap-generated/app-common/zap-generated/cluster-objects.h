@@ -5123,6 +5123,12 @@ namespace app
 					struct DecodableType;
 				} // namespace MfgSpecificPing
 
+				namespace GenerateRandom
+				{
+					struct Type;
+					struct DecodableType;
+				} // namespace GenerateRandom
+
 			} // namespace Commands
 
 			namespace Commands
@@ -5165,6 +5171,44 @@ namespace app
 						CHIP_ERROR Decode(TLV::TLVReader &reader);
 					};
 				}; // namespace MfgSpecificPing
+				namespace GenerateRandom
+				{
+					enum class Fields : uint8_t {};
+
+					struct Type {
+					public:
+						// Use GetCommandId instead of commandId directly to avoid naming
+						// conflict with CommandIdentification in ExecutionOfACommand
+						static constexpr CommandId GetCommandId()
+						{
+							return Commands::GenerateRandom::Id;
+						}
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::BasicInformation::Id;
+						}
+
+						CHIP_ERROR Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const;
+
+						using ResponseType = DataModel::NullObjectType;
+
+						static constexpr bool MustUseTimedInvoke() { return false; }
+					};
+
+					struct DecodableType {
+					public:
+						static constexpr CommandId GetCommandId()
+						{
+							return Commands::GenerateRandom::Id;
+						}
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::BasicInformation::Id;
+						}
+
+						CHIP_ERROR Decode(TLV::TLVReader &reader);
+					};
+				}; // namespace GenerateRandom
 			} // namespace Commands
 
 			namespace Attributes
@@ -5602,6 +5646,24 @@ namespace app
 						static constexpr bool MustUseTimedWrite() { return false; }
 					};
 				} // namespace MaxPathsPerInvoke
+				namespace RandomNumber
+				{
+					struct TypeInfo {
+						using Type = uint16_t;
+						using DecodableType = uint16_t;
+						using DecodableArgType = uint16_t;
+
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::BasicInformation::Id;
+						}
+						static constexpr AttributeId GetAttributeId()
+						{
+							return Attributes::RandomNumber::Id;
+						}
+						static constexpr bool MustUseTimedWrite() { return false; }
+					};
+				} // namespace RandomNumber
 				namespace GeneratedCommandList
 				{
 					struct TypeInfo
@@ -5705,6 +5767,8 @@ namespace app
 							specificationVersion = static_cast<uint32_t>(0);
 						Attributes::MaxPathsPerInvoke::TypeInfo::DecodableType
 							maxPathsPerInvoke = static_cast<uint16_t>(0);
+						Attributes::RandomNumber::TypeInfo::DecodableType randomNumber =
+							static_cast<uint16_t>(0);
 						Attributes::GeneratedCommandList::TypeInfo::DecodableType
 							generatedCommandList;
 						Attributes::AcceptedCommandList::TypeInfo::DecodableType
@@ -59752,7 +59816,7 @@ namespace app
 				} // namespace CommissioningRequestResult
 			} // namespace Events
 		} // namespace CommissionerControl
-		namespace NordicDevKitCluster
+		namespace NordicDevKit
 		{
 
 			namespace Commands
@@ -59785,7 +59849,7 @@ namespace app
 						}
 						static constexpr ClusterId GetClusterId()
 						{
-							return Clusters::NordicDevKitCluster::Id;
+							return Clusters::NordicDevKit::Id;
 						}
 
 						LEDActionEnum action = static_cast<LEDActionEnum>(0);
@@ -59805,7 +59869,7 @@ namespace app
 						}
 						static constexpr ClusterId GetClusterId()
 						{
-							return Clusters::NordicDevKitCluster::Id;
+							return Clusters::NordicDevKit::Id;
 						}
 
 						LEDActionEnum action = static_cast<LEDActionEnum>(0);
@@ -59826,7 +59890,7 @@ namespace app
 
 						static constexpr ClusterId GetClusterId()
 						{
-							return Clusters::NordicDevKitCluster::Id;
+							return Clusters::NordicDevKit::Id;
 						}
 						static constexpr AttributeId GetAttributeId()
 						{
@@ -59845,7 +59909,7 @@ namespace app
 
 						static constexpr ClusterId GetClusterId()
 						{
-							return Clusters::NordicDevKitCluster::Id;
+							return Clusters::NordicDevKit::Id;
 						}
 						static constexpr AttributeId GetAttributeId()
 						{
@@ -59863,7 +59927,7 @@ namespace app
 
 						static constexpr ClusterId GetClusterId()
 						{
-							return Clusters::NordicDevKitCluster::Id;
+							return Clusters::NordicDevKit::Id;
 						}
 						static constexpr AttributeId GetAttributeId()
 						{
@@ -59878,7 +59942,7 @@ namespace app
 						: public Clusters::Globals::Attributes::GeneratedCommandList::TypeInfo {
 						static constexpr ClusterId GetClusterId()
 						{
-							return Clusters::NordicDevKitCluster::Id;
+							return Clusters::NordicDevKit::Id;
 						}
 					};
 				} // namespace GeneratedCommandList
@@ -59888,7 +59952,7 @@ namespace app
 						: public Clusters::Globals::Attributes::AcceptedCommandList::TypeInfo {
 						static constexpr ClusterId GetClusterId()
 						{
-							return Clusters::NordicDevKitCluster::Id;
+							return Clusters::NordicDevKit::Id;
 						}
 					};
 				} // namespace AcceptedCommandList
@@ -59897,7 +59961,7 @@ namespace app
 					struct TypeInfo : public Clusters::Globals::Attributes::EventList::TypeInfo {
 						static constexpr ClusterId GetClusterId()
 						{
-							return Clusters::NordicDevKitCluster::Id;
+							return Clusters::NordicDevKit::Id;
 						}
 					};
 				} // namespace EventList
@@ -59907,7 +59971,7 @@ namespace app
 						: public Clusters::Globals::Attributes::AttributeList::TypeInfo {
 						static constexpr ClusterId GetClusterId()
 						{
-							return Clusters::NordicDevKitCluster::Id;
+							return Clusters::NordicDevKit::Id;
 						}
 					};
 				} // namespace AttributeList
@@ -59916,7 +59980,7 @@ namespace app
 					struct TypeInfo : public Clusters::Globals::Attributes::FeatureMap::TypeInfo {
 						static constexpr ClusterId GetClusterId()
 						{
-							return Clusters::NordicDevKitCluster::Id;
+							return Clusters::NordicDevKit::Id;
 						}
 					};
 				} // namespace FeatureMap
@@ -59926,7 +59990,7 @@ namespace app
 						: public Clusters::Globals::Attributes::ClusterRevision::TypeInfo {
 						static constexpr ClusterId GetClusterId()
 						{
-							return Clusters::NordicDevKitCluster::Id;
+							return Clusters::NordicDevKit::Id;
 						}
 					};
 				} // namespace ClusterRevision
@@ -59935,7 +59999,7 @@ namespace app
 					struct DecodableType {
 						static constexpr ClusterId GetClusterId()
 						{
-							return Clusters::NordicDevKitCluster::Id;
+							return Clusters::NordicDevKit::Id;
 						}
 
 						CHIP_ERROR Decode(TLV::TLVReader &reader,
@@ -59959,7 +60023,7 @@ namespace app
 					};
 				};
 			} // namespace Attributes
-		} // namespace NordicDevKitCluster
+		} // namespace NordicDevKit
 		namespace UnitTesting
 		{
 			namespace Structs

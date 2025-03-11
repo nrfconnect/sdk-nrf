@@ -293,6 +293,11 @@ namespace app
 					static constexpr CommandId Id = 0x10020000;
 				} // namespace MfgSpecificPing
 
+				namespace GenerateRandom
+				{
+					static constexpr CommandId Id = 0x00000000;
+				} // namespace GenerateRandom
+
 			} // namespace Commands
 		} // namespace BasicInformation
 
@@ -2365,7 +2370,7 @@ namespace app
 			} // namespace Commands
 		} // namespace CommissionerControl
 
-		namespace NordicDevKitCluster
+		namespace NordicDevKit
 		{
 			namespace Commands
 			{
@@ -2376,7 +2381,7 @@ namespace app
 				} // namespace SetLED
 
 			} // namespace Commands
-		} // namespace NordicDevKitCluster
+		} // namespace NordicDevKit
 
 		namespace UnitTesting
 		{

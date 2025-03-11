@@ -23,6 +23,7 @@
 /**** Cluster endpoint counts ****/
 #define MATTER_DM_DESCRIPTOR_CLUSTER_SERVER_ENDPOINT_COUNT (1)
 #define MATTER_DM_ACCESS_CONTROL_CLUSTER_SERVER_ENDPOINT_COUNT (1)
+#define MATTER_DM_BASIC_INFORMATION_CLUSTER_CLIENT_ENDPOINT_COUNT (1)
 #define MATTER_DM_BASIC_INFORMATION_CLUSTER_SERVER_ENDPOINT_COUNT (1)
 #define MATTER_DM_OTA_SOFTWARE_UPDATE_PROVIDER_CLUSTER_CLIENT_ENDPOINT_COUNT (1)
 #define MATTER_DM_OTA_SOFTWARE_UPDATE_REQUESTOR_CLUSTER_SERVER_ENDPOINT_COUNT (1)
@@ -46,6 +47,10 @@
 #define ZCL_USING_ACCESS_CONTROL_CLUSTER_SERVER
 #define MATTER_DM_PLUGIN_ACCESS_CONTROL_SERVER
 #define MATTER_DM_PLUGIN_ACCESS_CONTROL
+
+// Use this macro to check if the client side of the Basic Information cluster is included
+#define ZCL_USING_BASIC_INFORMATION_CLUSTER_CLIENT
+#define MATTER_DM_PLUGIN_BASIC_INFORMATION_CLIENT
 
 // Use this macro to check if the server side of the Basic Information cluster is included
 #define ZCL_USING_BASIC_INFORMATION_CLUSTER_SERVER
@@ -91,11 +96,11 @@
 #define MATTER_DM_PLUGIN_GROUP_KEY_MANAGEMENT_SERVER
 #define MATTER_DM_PLUGIN_GROUP_KEY_MANAGEMENT
 
-// Use this macro to check if the client side of the NordicDevKitCluster cluster is included
+// Use this macro to check if the client side of the NordicDevKit cluster is included
 #define ZCL_USING_NORDIC_DEV_KIT_CLUSTER_CLIENT
-#define MATTER_DM_PLUGIN_NORDIC_DEV_KIT_CLUSTER_CLIENT
+#define MATTER_DM_PLUGIN_NORDIC_DEV_KIT_CLIENT
 
-// Use this macro to check if the server side of the NordicDevKitCluster cluster is included
+// Use this macro to check if the server side of the NordicDevKit cluster is included
 #define ZCL_USING_NORDIC_DEV_KIT_CLUSTER_SERVER
-#define MATTER_DM_PLUGIN_NORDIC_DEV_KIT_CLUSTER_SERVER
-#define MATTER_DM_PLUGIN_NORDIC_DEV_KIT_CLUSTER
+#define MATTER_DM_PLUGIN_NORDIC_DEV_KIT_SERVER
+#define MATTER_DM_PLUGIN_NORDIC_DEV_KIT

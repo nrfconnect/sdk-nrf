@@ -641,7 +641,7 @@ void emberAfCommissionerControlClusterInitCallback(chip::EndpointId endpoint);
 /**
  * @param endpoint    Endpoint that is being initialized
  */
-void emberAfNordicDevKitClusterClusterInitCallback(chip::EndpointId endpoint);
+void emberAfNordicDevKitClusterInitCallback(chip::EndpointId endpoint);
 
 /**
  * @param endpoint    Endpoint that is being initialized
@@ -5514,29 +5514,28 @@ MatterCommissionerControlClusterServerPreAttributeChangedCallback(const chip::ap
 void emberAfCommissionerControlClusterServerTickCallback(chip::EndpointId endpoint);
 
 //
-// NordicDevKitCluster Cluster
+// NordicDevKit Cluster
 //
 
 /**
  * @param endpoint    Endpoint that is being initialized
  */
-void emberAfNordicDevKitClusterClusterServerInitCallback(chip::EndpointId endpoint);
+void emberAfNordicDevKitClusterServerInitCallback(chip::EndpointId endpoint);
 
 /**
  * @param endpoint    Endpoint that is being shutdown
  */
-void MatterNordicDevKitClusterClusterServerShutdownCallback(chip::EndpointId endpoint);
+void MatterNordicDevKitClusterServerShutdownCallback(chip::EndpointId endpoint);
 
 /**
  * @param endpoint    Endpoint that is being initialized
  */
-void emberAfNordicDevKitClusterClusterClientInitCallback(chip::EndpointId endpoint);
+void emberAfNordicDevKitClusterClientInitCallback(chip::EndpointId endpoint);
 
 /**
  * @param attributePath Concrete attribute path that changed
  */
-void MatterNordicDevKitClusterClusterServerAttributeChangedCallback(
-	const chip::app::ConcreteAttributePath &attributePath);
+void MatterNordicDevKitClusterServerAttributeChangedCallback(const chip::app::ConcreteAttributePath &attributePath);
 
 /**
  * @param attributePath Concrete attribute path to be changed
@@ -5545,14 +5544,14 @@ void MatterNordicDevKitClusterClusterServerAttributeChangedCallback(
  * @param value         Attribute value
  */
 chip::Protocols::InteractionModel::Status
-MatterNordicDevKitClusterClusterServerPreAttributeChangedCallback(const chip::app::ConcreteAttributePath &attributePath,
-								  EmberAfAttributeType attributeType, uint16_t size,
-								  uint8_t *value);
+MatterNordicDevKitClusterServerPreAttributeChangedCallback(const chip::app::ConcreteAttributePath &attributePath,
+							   EmberAfAttributeType attributeType, uint16_t size,
+							   uint8_t *value);
 
 /**
  * @param endpoint  Endpoint that is being served
  */
-void emberAfNordicDevKitClusterClusterServerTickCallback(chip::EndpointId endpoint);
+void emberAfNordicDevKitClusterServerTickCallback(chip::EndpointId endpoint);
 
 //
 // Unit Testing Cluster
@@ -5898,6 +5897,12 @@ bool emberAfActionsClusterDisableActionWithDurationCallback(
 bool emberAfBasicInformationClusterMfgSpecificPingCallback(
 	chip::app::CommandHandler *commandObj, const chip::app::ConcreteCommandPath &commandPath,
 	const chip::app::Clusters::BasicInformation::Commands::MfgSpecificPing::DecodableType &commandData);
+/**
+ * @brief Basic Information Cluster GenerateRandom Command callback (from client)
+ */
+bool emberAfBasicInformationClusterGenerateRandomCallback(
+	chip::app::CommandHandler *commandObj, const chip::app::ConcreteCommandPath &commandPath,
+	const chip::app::Clusters::BasicInformation::Commands::GenerateRandom::DecodableType &commandData);
 /**
  * @brief OTA Software Update Provider Cluster QueryImage Command callback (from client)
  */
@@ -6938,11 +6943,11 @@ bool emberAfCommissionerControlClusterCommissionNodeCallback(
 	chip::app::CommandHandler *commandObj, const chip::app::ConcreteCommandPath &commandPath,
 	const chip::app::Clusters::CommissionerControl::Commands::CommissionNode::DecodableType &commandData);
 /**
- * @brief NordicDevKitCluster Cluster SetLED Command callback (from client)
+ * @brief NordicDevKit Cluster SetLED Command callback (from client)
  */
-bool emberAfNordicDevKitClusterClusterSetLEDCallback(
+bool emberAfNordicDevKitClusterSetLEDCallback(
 	chip::app::CommandHandler *commandObj, const chip::app::ConcreteCommandPath &commandPath,
-	const chip::app::Clusters::NordicDevKitCluster::Commands::SetLED::DecodableType &commandData);
+	const chip::app::Clusters::NordicDevKit::Commands::SetLED::DecodableType &commandData);
 /**
  * @brief Unit Testing Cluster Test Command callback (from client)
  */
