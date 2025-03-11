@@ -920,6 +920,7 @@
 /tests/subsys/zigbee/                     @nrfconnect/ncs-zigbee
 /tests/zephyr/drivers/comparator/         @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/flash/common/       @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
+/tests/zephyr/drivers/gpio/               @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/i2c/i2c_bme688/     @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/i2c/i2c_target_api/ @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/mspi/api/           @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
