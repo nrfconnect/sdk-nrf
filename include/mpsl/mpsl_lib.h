@@ -50,6 +50,8 @@ int32_t mpsl_lib_init(void);
  * user to override any interrupt handlers used by MPSL.
  *
  * @pre This method requires CONFIG_MPSL_DYNAMIC_INTERRUPTS to be enabled.
+ * @pre The function requires the multithreading lock (@see MULTITHREADING_LOCK_ACQUIRE())
+ *      to be acquired before.
  *
  * @note
  * After successful execution of this method, user-supplied interrupt
