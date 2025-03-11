@@ -44625,7 +44625,7 @@ namespace app
 
 				} // namespace DevKitName
 
-				namespace Led2
+				namespace UserLED
 				{
 
 					Protocols::InteractionModel::Status Get(EndpointId endpoint, bool *value)
@@ -44679,9 +44679,9 @@ namespace app
 									     writable, ZCL_BOOLEAN_ATTRIBUTE_TYPE);
 					}
 
-				} // namespace Led2
+				} // namespace UserLED
 
-				namespace Led3
+				namespace UserButton
 				{
 
 					Protocols::InteractionModel::Status Get(EndpointId endpoint, bool *value)
@@ -44735,7 +44735,7 @@ namespace app
 									     writable, ZCL_BOOLEAN_ATTRIBUTE_TYPE);
 					}
 
-				} // namespace Led3
+				} // namespace UserButton
 
 				namespace FeatureMap
 				{

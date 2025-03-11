@@ -264,9 +264,8 @@
 			{ ZAP_LONG_DEFAULTS_INDEX(8), 0x00000001, 255, ZAP_TYPE(CHAR_STRING),                                         \
 			  ZAP_ATTRIBUTE_MASK(TOKENIZE) | ZAP_ATTRIBUTE_MASK(WRITABLE) }, /* DevKitName */                             \
 			{ ZAP_SIMPLE_DEFAULT(false), 0x00000002, 1, ZAP_TYPE(BOOLEAN),                                                \
-			  ZAP_ATTRIBUTE_MASK(TOKENIZE) }, /* LED2 */                                                                  \
-			{ ZAP_SIMPLE_DEFAULT(false), 0x00000003, 1, ZAP_TYPE(BOOLEAN),                                                \
-			  ZAP_ATTRIBUTE_MASK(TOKENIZE) }, /* LED3 */                                                                  \
+			  ZAP_ATTRIBUTE_MASK(TOKENIZE) }, /* UserLED */                                                               \
+			{ ZAP_SIMPLE_DEFAULT(false), 0x00000003, 1, ZAP_TYPE(BOOLEAN), 0 }, /* UserButton */                          \
 			{ ZAP_SIMPLE_DEFAULT(0), 0x0000FFFC, 4, ZAP_TYPE(BITMAP32), 0 }, /* FeatureMap */                             \
 			{ ZAP_SIMPLE_DEFAULT(1), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                          \
 	}

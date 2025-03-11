@@ -14,12 +14,11 @@
     <description>The NordicDevKitCluster cluster showcases a cluster manufacturer extensions</description>
     <command source="client" code="0x00" name="SetLED" optional="false">
       <description>Change LED state</description>
-      <arg name="LEDID" type="int8u" optional="false"/>
       <arg name="Action" type="LEDActionEnum" optional="false"/>
     </command>
     <attribute side="server" code="0x01" define="DEV_KIT_NAME" type="char_string" writable="true" optional="false" default="Nordic Development Kit">DevKitName</attribute>
-    <attribute side="server" code="0x02" define="LED_2" type="boolean" length="0" writable="false" reportable="false" isNullable="false" default="false" optional="false" apiMaturity="NaN">LED2<description/><access op="read" role="view"/></attribute>
-    <attribute side="server" code="0x03" define="LED_3" type="boolean" length="0" writable="false" reportable="false" isNullable="false" default="false" optional="false" apiMaturity="NaN">LED3<description/><access op="read" role="view"/></attribute>
+    <attribute side="server" code="0x02" define="USER_LED" type="boolean" length="0" writable="false" reportable="false" isNullable="false" default="false" optional="false" apiMaturity="NaN">UserLED<description/><access op="read" role="view"/></attribute>
+    <attribute side="server" code="0x03" define="USER_BUTTON" type="boolean" length="0" writable="false" reportable="false" isNullable="false" default="false" optional="false" apiMaturity="NaN">UserButton<description/><access op="read" role="view"/></attribute>
   </cluster>
   <deviceType>
     <name>nordic-dev-kit</name>

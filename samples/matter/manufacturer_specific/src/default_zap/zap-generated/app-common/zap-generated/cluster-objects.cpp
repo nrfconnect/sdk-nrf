@@ -27711,7 +27711,6 @@ namespace app
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
 					{
 						DataModel::WrappedStructEncoder encoder{ aWriter, aTag };
-						encoder.Encode(to_underlying(Fields::kLedid), ledid);
 						encoder.Encode(to_underlying(Fields::kAction), action);
 						return encoder.Finalize();
 					}
@@ -27728,9 +27727,7 @@ namespace app
 							CHIP_ERROR err = CHIP_NO_ERROR;
 							const uint8_t __context_tag = std::get<uint8_t>(__element);
 
-							if (__context_tag == to_underlying(Fields::kLedid)) {
-								err = DataModel::Decode(reader, ledid);
-							} else if (__context_tag == to_underlying(Fields::kAction)) {
+							if (__context_tag == to_underlying(Fields::kAction)) {
 								err = DataModel::Decode(reader, action);
 							} else {
 							}
@@ -27749,10 +27746,10 @@ namespace app
 					switch (path.mAttributeId) {
 					case Attributes::DevKitName::TypeInfo::GetAttributeId():
 						return DataModel::Decode(reader, devKitName);
-					case Attributes::Led2::TypeInfo::GetAttributeId():
-						return DataModel::Decode(reader, led2);
-					case Attributes::Led3::TypeInfo::GetAttributeId():
-						return DataModel::Decode(reader, led3);
+					case Attributes::UserLED::TypeInfo::GetAttributeId():
+						return DataModel::Decode(reader, userLED);
+					case Attributes::UserButton::TypeInfo::GetAttributeId():
+						return DataModel::Decode(reader, userButton);
 					case Attributes::GeneratedCommandList::TypeInfo::GetAttributeId():
 						return DataModel::Decode(reader, generatedCommandList);
 					case Attributes::AcceptedCommandList::TypeInfo::GetAttributeId():

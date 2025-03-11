@@ -59772,8 +59772,7 @@ namespace app
 				namespace SetLED
 				{
 					enum class Fields : uint8_t {
-						kLedid = 0,
-						kAction = 1,
+						kAction = 0,
 					};
 
 					struct Type {
@@ -59789,7 +59788,6 @@ namespace app
 							return Clusters::NordicDevKitCluster::Id;
 						}
 
-						uint8_t ledid = static_cast<uint8_t>(0);
 						LEDActionEnum action = static_cast<LEDActionEnum>(0);
 
 						CHIP_ERROR Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const;
@@ -59810,7 +59808,6 @@ namespace app
 							return Clusters::NordicDevKitCluster::Id;
 						}
 
-						uint8_t ledid = static_cast<uint8_t>(0);
 						LEDActionEnum action = static_cast<LEDActionEnum>(0);
 						CHIP_ERROR Decode(TLV::TLVReader &reader);
 					};
@@ -59839,7 +59836,7 @@ namespace app
 						static constexpr size_t MaxLength() { return 254; }
 					};
 				} // namespace DevKitName
-				namespace Led2
+				namespace UserLED
 				{
 					struct TypeInfo {
 						using Type = bool;
@@ -59852,12 +59849,12 @@ namespace app
 						}
 						static constexpr AttributeId GetAttributeId()
 						{
-							return Attributes::Led2::Id;
+							return Attributes::UserLED::Id;
 						}
 						static constexpr bool MustUseTimedWrite() { return false; }
 					};
-				} // namespace Led2
-				namespace Led3
+				} // namespace UserLED
+				namespace UserButton
 				{
 					struct TypeInfo {
 						using Type = bool;
@@ -59870,11 +59867,11 @@ namespace app
 						}
 						static constexpr AttributeId GetAttributeId()
 						{
-							return Attributes::Led3::Id;
+							return Attributes::UserButton::Id;
 						}
 						static constexpr bool MustUseTimedWrite() { return false; }
 					};
-				} // namespace Led3
+				} // namespace UserButton
 				namespace GeneratedCommandList
 				{
 					struct TypeInfo
@@ -59945,8 +59942,10 @@ namespace app
 								  const ConcreteAttributePath &path);
 
 						Attributes::DevKitName::TypeInfo::DecodableType devKitName;
-						Attributes::Led2::TypeInfo::DecodableType led2 = static_cast<bool>(0);
-						Attributes::Led3::TypeInfo::DecodableType led3 = static_cast<bool>(0);
+						Attributes::UserLED::TypeInfo::DecodableType userLED =
+							static_cast<bool>(0);
+						Attributes::UserButton::TypeInfo::DecodableType userButton =
+							static_cast<bool>(0);
 						Attributes::GeneratedCommandList::TypeInfo::DecodableType
 							generatedCommandList;
 						Attributes::AcceptedCommandList::TypeInfo::DecodableType
