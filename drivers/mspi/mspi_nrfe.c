@@ -21,12 +21,13 @@ LOG_MODULE_REGISTER(mspi_nrfe, CONFIG_MSPI_LOG_LEVEL);
 #include <hal/nrf_gpio.h>
 #include <drivers/mspi/nrfe_mspi.h>
 
-#define MSPI_NRFE_NODE		 DT_DRV_INST(0)
-#define MAX_TX_MSG_SIZE		 (DT_REG_SIZE(DT_NODELABEL(sram_tx)))
-#define MAX_RX_MSG_SIZE		 (DT_REG_SIZE(DT_NODELABEL(sram_rx)))
-#define IPC_TIMEOUT_MS		 100
-#define EP_SEND_TIMEOUT_MS	 10
-#define CNT0_TOP_CALCULATE(freq) (NRFX_CEIL_DIV(SystemCoreClock, freq * 2) - 1)
+#define MSPI_NRFE_NODE		     DT_DRV_INST(0)
+#define MAX_TX_MSG_SIZE		     (DT_REG_SIZE(DT_NODELABEL(sram_tx)))
+#define MAX_RX_MSG_SIZE		     (DT_REG_SIZE(DT_NODELABEL(sram_rx)))
+#define IPC_TIMEOUT_MS		     100
+#define EP_SEND_TIMEOUT_MS	     10
+#define EXTREME_DRIVE_FREQ_THRESHOLD 32000000
+#define CNT0_TOP_CALCULATE(freq)     (NRFX_CEIL_DIV(SystemCoreClock, freq * 2) - 1)
 
 #define SDP_MPSI_PINCTRL_DEV_CONFIG_INIT(node_id)                                                  \
 	{                                                                                          \
@@ -439,6 +440,23 @@ static int api_dev_config(const struct device *dev, const struct mspi_dev_id *de
 	}
 
 	if (param_mask & MSPI_DEVICE_CONFIG_FREQUENCY) {
+
+		uint8_t state_id;
+
+		for (state_id = 0; state_id < drv_cfg->pcfg->state_cnt; state_id++) {
+			if (drv_cfg->pcfg->states[state_id].id == PINCTRL_STATE_DEFAULT) {
+				break;
+			}
+		}
+
+		if ((cfg->freq >= EXTREME_DRIVE_FREQ_THRESHOLD) &&
+		    (NRF_GET_DRIVE(drv_cfg->pcfg->states[state_id].pins[0]) != NRF_DRIVE_E0E1)) {
+			LOG_ERR("Invalid pin drive for this frequency: %u, expected: %u",
+				NRF_GET_DRIVE(drv_cfg->pcfg->states[state_id].pins[0]),
+				NRF_DRIVE_E0E1);
+			return -EINVAL;
+		}
+
 		if (cfg->freq > drv_cfg->mspicfg.max_freq) {
 			LOG_ERR("Invalid frequency: %u, MAX: %u", cfg->freq,
 				drv_cfg->mspicfg.max_freq);
