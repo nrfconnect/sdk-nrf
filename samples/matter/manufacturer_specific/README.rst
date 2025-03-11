@@ -9,7 +9,9 @@ Matter: Manufacturer-specific
 
 This sample demonstrates an implementation of custom manufacturer-specific clusters used by the application layer.
 This sample uses development kit's buttons and LEDs to demonstrate the functionality of the custom ``NordicDevkit`` cluster.
-The device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power, 802.15.4 Thread network.
+The device works as a Matter accessory device, meaning it can be paired and controlled remotely over a Matter network built on top of a low-power, 802.15.4 Thread network or on top of a Wi-Fi® network.
+Support for both Thread and Wi-Fi is mutually exclusive and depends on the hardware platform, so only one protocol can be supported for a specific Matter device.
+In case of Thread, this device works as a Thread :ref:`Minimal End Device <thread_ot_device_types>`.
 You can use this sample as a reference for creating your own application.
 
 Requirements
@@ -19,19 +21,27 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-For testing purposes, that is to commission the device and :ref:`control it remotely <matter_manufacturer_specific_network_mode>` through a Thread network, you also need a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>`.
+For testing purposes, that is to commission the device and :ref:`control it remotely <matter_manufacturer_specific_network_mode>` through a Thread network or a Wi-Fi network, you also need a Matter controller device :ref:`configured on PC or smartphone <ug_matter_configuring>`.
 This requires additional hardware depending on the setup you choose.
 
 .. note::
     |matter_gn_required_note|
 
+IPv6 network support
+====================
+
+The development kits for this sample offer the following IPv6 network support for Matter:
+
+* Matter over Thread is supported for the ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf21540dk/nrf52840``, ``nrf54l15dk/nrf54l15/cpuapp``, and ``nrf54l15dk/nrf54l10/cpuapp`` board targets.
+* Matter over Wi-Fi is supported for the ``nrf5340dk/nrf5340/cpuapp`` board target with the ``nrf7002ek`` shield attached, or for the ``nrf7002dk/nrf5340/cpuapp`` board target.
+
 Overview
 ********
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF52, nRF53 and nRF70 DKs
 
-      The sample starts the Bluetooth® LE advertising automatically and prepares the Matter device for commissioning into a Matter-enabled Thread network.
+      The sample starts the Bluetooth® LE advertising automatically and prepares the Matter device for commissioning into a Matter-enabled IPv6 network.
       The sample uses the **LED 1** to show the state of the connection.
       You can press **Button 1** to start the factory reset when needed.
       **Button 2** is used to set the state of the ``NordicDevkit`` cluster's attribute, ``UserButton``.
@@ -42,7 +52,7 @@ Overview
 
    .. group-tab:: nRF54 DKs
 
-      The sample starts the Bluetooth® LE advertising automatically and prepares the Matter device for commissioning into a Matter-enabled Thread network.
+      The sample starts the Bluetooth LE advertising automatically and prepares the Matter device for commissioning into a Matter-enabled IPv6 network.
       The sample uses the **LED 0** to show the state of the connection.
       You can press **Button 0** to start the factory reset when needed.
       **Button 1** is used to set the state of the ``NordicDevkit`` cluster's attribute, ``UserButton``.
@@ -108,7 +118,7 @@ User interface
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF52, nRF53 and nRF70 DKs
 
       LED 1:
          .. include:: /includes/matter_sample_state_led.txt
@@ -153,7 +163,7 @@ See `Configuration`_ for information about building the sample with the DFU supp
 Enabling remote control
 =======================
 
-Remote control allows you to control the Matter manufacturer-specific device from a Thread network.
+Remote control allows you to control the Matter manufacturer-specific device from an IPv6 network.
 
 `Commissioning the device`_ allows you to set up a testing environment and remotely control the sample over a Matter-enabled Thread network.
 
