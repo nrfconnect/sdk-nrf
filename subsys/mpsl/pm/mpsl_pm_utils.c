@@ -20,19 +20,9 @@
 LOG_MODULE_REGISTER(mpsl_pm_utils, CONFIG_MPSL_LOG_LEVEL);
 
 #define NO_RADIO_EVENT_PERIOD_LATENCY_US CONFIG_MPSL_PM_NO_RADIO_EVENT_PERIOD_LATENCY_US
-#define UNINIT_WORK_WAIT_TIMEOUT_MS	 K_MSEC(CONFIG_MPSL_PM_UNINIT_WORK_WAIT_TIME_MS)
-
-/* All MPSL PM event and latency actions are triggered inside the library.
- * The uninitialization may be started outside of the library thgough public API.
- * To avoid interference with other MPSL work items we need dedicated work
- * item for uninitialization purpose.
- */
-static void m_pm_uninit_work_handler(struct k_work *work);
-static K_WORK_DELAYABLE_DEFINE(m_pm_uninit_work, m_pm_uninit_work_handler);
 
 enum MPLS_PM_STATE {
 	MPSL_PM_UNINITIALIZED,
-	MPSL_PM_UNINITIALIZING,
 	MPSL_PM_INITIALIZED
 };
 
@@ -43,7 +33,6 @@ static struct pm_policy_latency_request m_latency_req;
 static struct pm_policy_event m_evt;
 
 static atomic_t m_pm_state = (atomic_val_t)MPSL_PM_UNINITIALIZED;
-struct k_sem m_uninit_wait_sem;
 
 #if defined(CONFIG_MPSL_PM_USE_MRAM_LATENCY_SERVICE)
 #define LOW_LATENCY_ATOMIC_BITS_NUM 2
@@ -214,13 +203,6 @@ static void m_mram_low_latency_release(void)
 }
 #endif /* CONFIG_MPSL_PM_USE_MRAM_LATENCY_SERVICE */
 
-static void m_pm_uninit_work_handler(struct k_work *work)
-{
-	ARG_UNUSED(work);
-
-	mpsl_pm_utils_work_handler();
-}
-
 void mpsl_pm_utils_work_handler(void)
 {
 	enum MPLS_PM_STATE pm_state = (enum MPLS_PM_STATE)atomic_get(&m_pm_state);
@@ -228,22 +210,6 @@ void mpsl_pm_utils_work_handler(void)
 	if (pm_state == MPSL_PM_INITIALIZED) {
 		m_register_event();
 		m_register_latency();
-	} else if (pm_state == MPSL_PM_UNINITIALIZING) {
-
-		/* The uninitialization is handled by all MPSL work items as well as by dedicated
-		 * uninit work item. In case regular MPSL work item cleans MPSL PM the uninit
-		 * work queue will not do anything.
-		 */
-		pm_policy_latency_request_remove(&m_latency_req);
-		pm_policy_event_unregister(&m_evt);
-
-		/* The MPSL PM status is updated here to make the code unit testable.
-		 * There is no work queue when running UTs, so the mpsl_pm_utils_work_handler()
-		 * is manualy executed after mpsl_pm_utils_uninit() returns.
-		 */
-		atomic_set(&m_pm_state, (atomic_val_t)MPSL_PM_UNINITIALIZED);
-
-		k_sem_give(&m_uninit_wait_sem);
 	}
 }
 
@@ -271,31 +237,20 @@ int32_t mpsl_pm_utils_init(void)
 
 int32_t mpsl_pm_utils_uninit(void)
 {
-	int err;
-
 	if (atomic_get(&m_pm_state) != (atomic_val_t)MPSL_PM_INITIALIZED) {
 		return -NRF_EPERM;
 	}
 
 	mpsl_pm_uninit();
-	atomic_set(&m_pm_state, (atomic_val_t)MPSL_PM_UNINITIALIZING);
-	/* In case there is any pended MPSL work item that was not handled, a dedicated
-	 * work item is used to remove PM policy event and unregister latency request.
-	 */
-	(void)k_sem_init(&m_uninit_wait_sem, 0, 1);
 
-	mpsl_work_reschedule(&m_pm_uninit_work, K_NO_WAIT);
-
-	/* Wait for completion of the uninit work item to make sure user can re-initialize
-	 * MPSL PM after return.
+	/* The mpsl_pm_utils_uninit() must be called with MULTITHREADING_LOCK_ACQUIRE to make sure
+	 * there is no mpsl_low_prio_work running. That could lead to a race condition.
+	 * Call to MULTITHREADING_LOCK_ACQUIRE() is responsibility of the function caller.
 	 */
-	err = k_sem_take(&m_uninit_wait_sem, UNINIT_WORK_WAIT_TIMEOUT_MS);
-	if (err == -EAGAIN) {
-		return -NRF_ETIMEDOUT;
-	} else if (err != 0) {
-		__ASSERT(false, "MPSL PM uninit failed to complete: %d", err);
-		return -NRF_EFAULT;
-	}
+	pm_policy_latency_request_remove(&m_latency_req);
+	pm_policy_event_unregister(&m_evt);
+
+	atomic_set(&m_pm_state, (atomic_val_t)MPSL_PM_UNINITIALIZED);
 
 	return 0;
 }

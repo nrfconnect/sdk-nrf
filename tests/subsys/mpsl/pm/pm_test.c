@@ -11,7 +11,6 @@
 #include <zephyr/kernel.h>
 
 #include "cmock_policy.h"
-#include "cmock_kernel_minimal_mock.h"
 #include "cmock_mpsl_pm.h"
 #include "cmock_mpsl_pm_config.h"
 #include "cmock_mpsl_work.h"
@@ -20,7 +19,6 @@
 #include "nrf_errno.h"
 
 #define NO_RADIO_EVENT_PERIOD_LATENCY_US CONFIG_MPSL_PM_NO_RADIO_EVENT_PERIOD_LATENCY_US
-#define UNINIT_WORK_WAIT_TIMEOUT_MS	 K_MSEC(CONFIG_MPSL_PM_UNINIT_WORK_WAIT_TIME_MS)
 /* The unity_main is not declared in any header file. It is only defined in the generated test
  * runner because of ncs' unity configuration. It is therefore declared here to avoid a compiler
  * warning.
@@ -55,52 +53,17 @@ typedef struct {
 	mpsl_pm_low_latency_state_t low_latency_state_next;
 } test_vector_latency_t;
 
-/* Init and uninit tests */
-void start_uninit_module(void)
+/* Manual teardown tested module, there is no way to overload it for given test case. */
+void uninit_tested_module(void)
 {
-	__cmock_mpsl_work_reschedule_Expect(0, (k_timeout_t){0});
-	__cmock_mpsl_work_reschedule_IgnoreArg_dwork();
 	__cmock_mpsl_pm_uninit_Expect();
 
-	__cmock_z_impl_k_sem_init_ExpectAndReturn(NULL, 0, 1, 0);
-	__cmock_z_impl_k_sem_init_IgnoreArg_sem();
-
-	/* The k_sem_take will return immediately because there is no real work queue in the test.
-	 * To make the proper uninitialization we must call mpsl_pm_utils_work_handler() after that.
-	 *
-	 * NOTE: There is an assumption the remaining part of unitialization is done by
-	 *       mpsl_pm_utils_work_handler(). The mpsl_pm_utils_uninit() just waits for it to end.
-	 */
-	__cmock_z_impl_k_sem_take_ExpectAndReturn(NULL, UNINIT_WORK_WAIT_TIMEOUT_MS, 0);
-	__cmock_z_impl_k_sem_take_IgnoreArg_sem();
-
-	TEST_ASSERT_EQUAL(0, mpsl_pm_utils_uninit());
-}
-
-void commit_uninit_module(void)
-{
 	__cmock_pm_policy_latency_request_remove_Expect(0);
 	__cmock_pm_policy_latency_request_remove_IgnoreArg_req();
 	__cmock_pm_policy_event_unregister_Expect(0);
 	__cmock_pm_policy_event_unregister_IgnoreArg_evt();
 
-	/* There is no real work queue so the mpsl_pm_utils_uninit() is not waiting for this
-	 * semaphore to be signaled. We must call this function to make unintialization to complete.
-	 *
-	 * NOTE: There is an assumption the remaining part of unitialization is done by
-	 *       mpsl_pm_utils_work_handler(). The mpsl_pm_utils_uninit() just waits for it to end.
-	 */
-	__cmock_z_impl_k_sem_give_Expect(NULL);
-	__cmock_z_impl_k_sem_give_IgnoreArg_sem();
-
-	mpsl_pm_utils_work_handler();
-}
-
-/* Manual teardown tested module, there is no way to overload it for given test case. */
-void uninit_tested_module(void)
-{
-	start_uninit_module();
-	commit_uninit_module();
+	TEST_ASSERT_EQUAL(0, mpsl_pm_utils_uninit());
 }
 
 void init_expect_prepare(void)
@@ -136,66 +99,9 @@ void test_init_when_already_initialized(void)
 	uninit_tested_module();
 }
 
-void test_init_when_uninit_started(void)
-{
-	init_expect_prepare();
-
-	TEST_ASSERT_EQUAL(0, mpsl_pm_utils_init());
-
-	start_uninit_module();
-
-	TEST_ASSERT_EQUAL(-NRF_EPERM, mpsl_pm_utils_init());
-
-	commit_uninit_module();
-}
-
 void test_uninit_when_not_initialized(void)
 {
 	TEST_ASSERT_EQUAL(-NRF_EPERM, mpsl_pm_utils_uninit());
-}
-
-void test_uninit_wait_timeout(void)
-{
-	init_expect_prepare();
-
-	TEST_ASSERT_EQUAL(0, mpsl_pm_utils_init());
-
-	__cmock_mpsl_work_reschedule_Expect(0, (k_timeout_t){0});
-	__cmock_mpsl_work_reschedule_IgnoreArg_dwork();
-	__cmock_mpsl_pm_uninit_Expect();
-
-	__cmock_z_impl_k_sem_init_ExpectAndReturn(NULL, 0, 1, 0);
-	__cmock_z_impl_k_sem_init_IgnoreArg_sem();
-
-	__cmock_z_impl_k_sem_take_ExpectAndReturn(NULL, UNINIT_WORK_WAIT_TIMEOUT_MS, -EAGAIN);
-	__cmock_z_impl_k_sem_take_IgnoreArg_sem();
-
-	TEST_ASSERT_EQUAL(-NRF_ETIMEDOUT, mpsl_pm_utils_uninit());
-
-	/* Just to cleanup after the test case */
-	commit_uninit_module();
-}
-
-void test_uninit_wait_fatal_err(void)
-{
-	init_expect_prepare();
-
-	TEST_ASSERT_EQUAL(0, mpsl_pm_utils_init());
-
-	__cmock_mpsl_work_reschedule_Expect(0, (k_timeout_t){0});
-	__cmock_mpsl_work_reschedule_IgnoreArg_dwork();
-	__cmock_mpsl_pm_uninit_Expect();
-
-	__cmock_z_impl_k_sem_init_ExpectAndReturn(NULL, 0, 1, 0);
-	__cmock_z_impl_k_sem_init_IgnoreArg_sem();
-
-	__cmock_z_impl_k_sem_take_ExpectAndReturn(NULL, UNINIT_WORK_WAIT_TIMEOUT_MS, -EBUSY);
-	__cmock_z_impl_k_sem_take_IgnoreArg_sem();
-
-	TEST_ASSERT_EQUAL(-NRF_EFAULT, mpsl_pm_utils_uninit());
-
-	/* Just to cleanup after the test case */
-	commit_uninit_module();
 }
 
 /* Latency and event handling tests */
