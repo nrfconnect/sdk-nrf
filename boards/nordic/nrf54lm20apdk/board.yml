@@ -1,0 +1,6 @@
+board:
+  name: nrf54lm20apdk
+  full_name: nRF54LM20A PDK
+  vendor: nordic
+  socs:
+  - name: nrf54lm20a
