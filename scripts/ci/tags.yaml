@@ -1177,6 +1177,7 @@ ci_tests_drivers_hpf:
     - nrf/drivers/mspi/
     - nrf/snippets/hpf/
     - nrf/tests/drivers/gpio/hpf_gpio_basic_api/
+    - nrf/tests/drivers/mspi/
     - nrf/tests/zephyr/drivers/flash/
     - nrf/tests/zephyr/drivers/mspi/
     - zephyr/drivers/mbox/
