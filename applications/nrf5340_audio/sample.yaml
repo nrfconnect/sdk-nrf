@@ -41,7 +41,7 @@ tests:
       - EXTRA_CONF_FILE=unicast_server/overlay-unicast_server.conf
   applications.nrf5340_audio.headset_dfu:
     extra_args:
-      - FILE_SUFFIX=release
-      - CONFIG_AUDIO_DEV=1
       - FILE_SUFFIX=fota
+      - ipc_radio_FILE_SUFFIX=release
+      - CONFIG_AUDIO_DEV=1
       - EXTRA_CONF_FILE=unicast_server/overlay-unicast_server.conf
