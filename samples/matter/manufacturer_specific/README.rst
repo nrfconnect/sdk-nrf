@@ -48,7 +48,8 @@ Overview
       Matter command ``SetLED`` is used to control the state of ``UserLED``.
       It takes one argument - the action to be performed (``0`` to turn the LED off, ``1`` to turn it on, ``2`` to toggle the state).
       **LED 2** reflects the state of the ``UserLED``.
-      ``NordicDevkit`` cluster additionally introduces a writable ``DevKitName`` attribute, of string type.
+      The ``NordicDevkit`` cluster introduces a writable ``DevKitName`` attribute, of string type as well.
+      The sample additionally extends the ``Basic Information`` cluster with a ``RandomNumber`` attribute and ``GenerateRandom`` command that updates the ``RandomNumber`` with a random value.
 
    .. group-tab:: nRF54 DKs
 
@@ -59,7 +60,8 @@ Overview
       Matter command ``SetLED`` is used to control the state of ``UserLED``.
       It takes one argument - the action to be performed (``0`` to turn the LED off, ``1`` to turn it on, ``2`` to toggle the state).
       **LED 1** reflects the state of the ``UserLED``.
-      ``NordicDevkit`` cluster additionally introduces a writable ``DevKitName`` attribute, of string type.
+      The ``NordicDevkit`` cluster introduces a writable ``DevKitName`` attribute, of string type as well.
+      The sample additionally extends the ``Basic Information`` cluster with a ``RandomNumber`` attribute and ``GenerateRandom`` command that updates the ``RandomNumber`` with a random value.
 
 
 Custom manufacturer-specific cluster
@@ -227,7 +229,7 @@ To test ``NordicDevkit`` cluster's attributes and commands, complete the followi
 
       chip-tool interactive start
 
-#. Read the attributes by index:
+#. Read the ``NordicDevkit`` cluster's attributes by index:
 
    .. parsed-literal::
       :class: highlight
@@ -261,8 +263,23 @@ To test ``NordicDevkit`` cluster's attributes and commands, complete the followi
 
       any subscribe-by-id 0xFFF1FC01 3 0 120 1 1
 
-#. Press the button assigned to the ``UserButton``, check if the attribute state is updated in the chip-tool.
-#. Reboot the device, restart chip-tool and check if the attributes are persisting after joining the network.
+#. Press the button assigned to the ``UserButton`` and check if the attribute state is updated in the chip-tool.
+#. Read the ``Basic Information`` cluster's ``RandomNumber`` attribute:
+
+   .. parsed-literal::
+      :class: highlight
+
+      any read-by-id 0x0028 0x17 1 0
+
+#. Send the ``GenerateRandom`` command to the device to update the ``RandomNumber`` attribute:
+
+   .. parsed-literal::
+      :class: highlight
+
+      any command-by-id 0x0028 0 '{}' 1 0
+
+#. Verify that the random value has been generated and the attribute value is updated.
+#. Reboot the device, restart the chip-tool, and check if the attributes are persisting after joining the network.
 
 Upgrading the device firmware
 =============================

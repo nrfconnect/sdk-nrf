@@ -5258,7 +5258,7 @@ namespace app
 			};
 		} // namespace CommissionerControl
 
-		namespace NordicDevKitCluster
+		namespace NordicDevKit
 		{
 
 			// Enum for LEDActionEnum
@@ -5272,7 +5272,7 @@ namespace app
 				// enum value. This specific should never be transmitted.
 				kUnknownEnumValue = 3,
 			};
-		} // namespace NordicDevKitCluster
+		} // namespace NordicDevKit
 
 		namespace UnitTesting
 		{

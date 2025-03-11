@@ -19,7 +19,8 @@ public:
 	};
 
 	CHIP_ERROR StartApp();
-	void UpdateClusterState();
+	void UpdateNordicDevkitClusterState();
+	void UpdateBasicInformationClusterState();
 
 private:
 	CHIP_ERROR Init();

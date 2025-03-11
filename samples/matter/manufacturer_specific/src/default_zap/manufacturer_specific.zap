@@ -19,18 +19,18 @@
   "package": [
     {
       "pathRelativity": "relativeToZap",
+      "path": "../../../../../../modules/lib/matter/src/app/zap-templates/app-templates.json",
+      "type": "gen-templates-json",
+      "category": "matter",
+      "version": "chip-v1"
+    },
+    {
+      "pathRelativity": "relativeToZap",
       "path": "zcl.json",
       "type": "zcl-properties",
       "category": "matter",
       "version": 1,
       "description": "Matter SDK ZCL data"
-    },
-    {
-      "pathRelativity": "relativeToZap",
-      "path": "../../../../../../modules/lib/matter/src/app/zap-templates/app-templates.json",
-      "type": "gen-templates-json",
-      "category": "matter",
-      "version": "chip-v1"
     }
   ],
   "endpointTypes": [
@@ -430,8 +430,36 @@
           "code": 40,
           "mfgCode": null,
           "define": "BASIC_INFORMATION_CLUSTER",
+          "side": "client",
+          "enabled": 1,
+          "commands": [
+            {
+              "name": "GenerateRandom",
+              "code": 0,
+              "mfgCode": null,
+              "source": "client",
+              "isIncoming": 0,
+              "isEnabled": 1
+            }
+          ]
+        },
+        {
+          "name": "Basic Information",
+          "code": 40,
+          "mfgCode": null,
+          "define": "BASIC_INFORMATION_CLUSTER",
           "side": "server",
           "enabled": 1,
+          "commands": [
+            {
+              "name": "GenerateRandom",
+              "code": 0,
+              "mfgCode": null,
+              "source": "client",
+              "isIncoming": 1,
+              "isEnabled": 1
+            }
+          ],
           "attributes": [
             {
               "name": "DataModelRevision",
@@ -700,6 +728,22 @@
               "singleton": 1,
               "bounded": 0,
               "defaultValue": null,
+              "reportable": 1,
+              "minInterval": 1,
+              "maxInterval": 65534,
+              "reportableChange": 0
+            },
+            {
+              "name": "RandomNumber",
+              "code": 23,
+              "mfgCode": null,
+              "side": "server",
+              "type": "int16u",
+              "included": 1,
+              "storageOption": "RAM",
+              "singleton": 1,
+              "bounded": 0,
+              "defaultValue": "0",
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -2629,7 +2673,7 @@
       "deviceTypeProfileId": 4095,
       "clusters": [
         {
-          "name": "NordicDevKitCluster",
+          "name": "NordicDevKit",
           "code": 4294048769,
           "mfgCode": null,
           "define": "NORDIC_DEV_KIT_CLUSTER",
@@ -2647,7 +2691,7 @@
           ]
         },
         {
-          "name": "NordicDevKitCluster",
+          "name": "NordicDevKit",
           "code": 4294048769,
           "mfgCode": null,
           "define": "NORDIC_DEV_KIT_CLUSTER",

@@ -8,10 +8,10 @@
   </enum>
   <cluster>
     <domain>General</domain>
-    <name>NordicDevKitCluster</name>
+    <name>NordicDevKit</name>
     <code>0xFFF1FC01</code>
     <define>NORDIC_DEV_KIT_CLUSTER</define>
-    <description>The NordicDevKitCluster cluster showcases a cluster manufacturer extensions</description>
+    <description>The NordicDevKit cluster showcases a cluster manufacturer extensions</description>
     <command source="client" code="0x00" name="SetLED" optional="false">
       <description>Change LED state</description>
       <arg name="Action" type="LEDActionEnum" optional="false"/>
@@ -20,6 +20,12 @@
     <attribute side="server" code="0x02" define="USER_LED" type="boolean" length="0" writable="false" reportable="false" isNullable="false" default="false" optional="false" apiMaturity="NaN">UserLED<description/><access op="read" role="view"/></attribute>
     <attribute side="server" code="0x03" define="USER_BUTTON" type="boolean" length="0" writable="false" reportable="false" isNullable="false" default="false" optional="false" apiMaturity="NaN">UserButton<description/><access op="read" role="view"/></attribute>
   </cluster>
+  <clusterExtension code="0x0028">
+    <command source="client" code="0x00" name="GenerateRandom" optional="false">
+      <description>Generate random number</description>
+    </command>
+    <attribute side="server" code="0x17" define="RANDOM_NUMBER" type="int16u" writable="true" optional="false" default="0">RandomNumber</attribute>
+  </clusterExtension>
   <deviceType>
     <name>nordic-dev-kit</name>
     <domain>CHIP</domain>
@@ -29,7 +35,7 @@
     <class>Simple</class>
     <scope>Endpoint</scope>
     <clusters lockOthers="true">
-      <include cluster="NordicDevKitCluster" client="true" server="true" clientLocked="false" serverLocked="false"/>
+      <include cluster="NordicDevKit" client="true" server="true" clientLocked="false" serverLocked="false"/>
     </clusters>
   </deviceType>
 </configurator>

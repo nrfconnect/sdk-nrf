@@ -565,6 +565,15 @@ namespace app
 										MarkAttributeDirty markDirty);
 				} // namespace Reachable
 
+				namespace RandomNumber
+				{
+					Protocols::InteractionModel::Status Get(EndpointId endpoint,
+										uint16_t *value); // int16u
+					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value);
+					Protocols::InteractionModel::Status Set(EndpointId endpoint, uint16_t value,
+										MarkAttributeDirty markDirty);
+				} // namespace RandomNumber
+
 				namespace FeatureMap
 				{
 					Protocols::InteractionModel::Status Get(EndpointId endpoint,
@@ -8818,7 +8827,7 @@ namespace app
 			} // namespace Attributes
 		} // namespace CommissionerControl
 
-		namespace NordicDevKitCluster
+		namespace NordicDevKit
 		{
 			namespace Attributes
 			{
@@ -8870,7 +8879,7 @@ namespace app
 				} // namespace ClusterRevision
 
 			} // namespace Attributes
-		} // namespace NordicDevKitCluster
+		} // namespace NordicDevKit
 
 		namespace UnitTesting
 		{

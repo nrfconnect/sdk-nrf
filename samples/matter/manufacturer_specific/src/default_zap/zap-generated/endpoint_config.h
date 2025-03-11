@@ -34,7 +34,7 @@
 		/* 0 - Breadcrumb, */                                                                                  \
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                                        \
-			/* Endpoint: 1, Cluster: NordicDevKitCluster (server), big-endian */                           \
+			/* Endpoint: 1, Cluster: NordicDevKit (server), big-endian */                                  \
                                                                                                                        \
 			/* 8 - DevKitName, */                                                                          \
 			22, 'N', 'o', 'r', 'd', 'i', 'c', ' ', 'D', 'e', 'v', 'e', 'l', 'o', 'p', 'm', 'e', 'n', 't',  \
@@ -49,7 +49,7 @@
 		/* 0 - Breadcrumb, */                                                                                  \
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,                                                        \
                                                                                                                        \
-			/* Endpoint: 1, Cluster: NordicDevKitCluster (server), little-endian */                        \
+			/* Endpoint: 1, Cluster: NordicDevKit (server), little-endian */                               \
                                                                                                                        \
 			/* 8 - DevKitName, */                                                                          \
 			22, 'N', 'o', 'r', 'd', 'i', 'c', ' ', 'D', 'e', 'v', 'e', 'l', 'o', 'p', 'm', 'e', 'n', 't',  \
@@ -67,7 +67,7 @@
 	}
 
 // This is an array of EmberAfAttributeMetadata structures.
-#define GENERATED_ATTRIBUTE_COUNT 90
+#define GENERATED_ATTRIBUTE_COUNT 91
 #define GENERATED_ATTRIBUTES                                                                                                          \
 	{                                                                                                                             \
 		/* Endpoint: 0, Cluster: Descriptor (server) */                                                                       \
@@ -144,6 +144,8 @@
 			{ ZAP_EMPTY_DEFAULT(), 0x00000016, 2, ZAP_TYPE(INT16U),                                                       \
 			  ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE) | ZAP_ATTRIBUTE_MASK(SINGLETON) }, /* MaxPathsPerInvoke                \
 												   */                                 \
+			{ ZAP_SIMPLE_DEFAULT(0), 0x00000017, 2, ZAP_TYPE(INT16U),                                                     \
+			  ZAP_ATTRIBUTE_MASK(SINGLETON) | ZAP_ATTRIBUTE_MASK(WRITABLE) }, /* RandomNumber */                          \
 			{ ZAP_SIMPLE_DEFAULT(0), 0x0000FFFC, 4, ZAP_TYPE(BITMAP32), 0 }, /* FeatureMap */                             \
 			{ ZAP_SIMPLE_DEFAULT(4), 0x0000FFFD, 2, ZAP_TYPE(INT16U),                                                     \
 			  ZAP_ATTRIBUTE_MASK(SINGLETON) }, /* ClusterRevision */                                                      \
@@ -260,7 +262,7 @@
 			{ ZAP_EMPTY_DEFAULT(), 0x0000FFFD, 2, ZAP_TYPE(INT16U),                                                       \
 			  ZAP_ATTRIBUTE_MASK(EXTERNAL_STORAGE) }, /* ClusterRevision */                                               \
                                                                                                                                       \
-			/* Endpoint: 1, Cluster: NordicDevKitCluster (server) */                                                      \
+			/* Endpoint: 1, Cluster: NordicDevKit (server) */                                                             \
 			{ ZAP_LONG_DEFAULTS_INDEX(8), 0x00000001, 255, ZAP_TYPE(CHAR_STRING),                                         \
 			  ZAP_ATTRIBUTE_MASK(TOKENIZE) | ZAP_ATTRIBUTE_MASK(WRITABLE) }, /* DevKitName */                             \
 			{ ZAP_SIMPLE_DEFAULT(false), 0x00000002, 1, ZAP_TYPE(BOOLEAN),                                                \
@@ -292,23 +294,27 @@
 
 // clang-format off
 #define GENERATED_COMMANDS { \
-  /* Endpoint: 0, Cluster: OTA Software Update Requestor (server) */\
+  /* Endpoint: 0, Cluster: Basic Information (server) */\
   /*   AcceptedCommandList (index=0) */ \
+  0x00000000 /* GenerateRandom */, \
+  chip::kInvalidCommandId /* end of list */, \
+  /* Endpoint: 0, Cluster: OTA Software Update Requestor (server) */\
+  /*   AcceptedCommandList (index=2) */ \
   0x00000000 /* AnnounceOTAProvider */, \
   chip::kInvalidCommandId /* end of list */, \
   /* Endpoint: 0, Cluster: General Commissioning (server) */\
-  /*   AcceptedCommandList (index=2) */ \
+  /*   AcceptedCommandList (index=4) */ \
   0x00000000 /* ArmFailSafe */, \
   0x00000002 /* SetRegulatoryConfig */, \
   0x00000004 /* CommissioningComplete */, \
   chip::kInvalidCommandId /* end of list */, \
-  /*   GeneratedCommandList (index=6)*/ \
+  /*   GeneratedCommandList (index=8)*/ \
   0x00000001 /* ArmFailSafeResponse */, \
   0x00000003 /* SetRegulatoryConfigResponse */, \
   0x00000005 /* CommissioningCompleteResponse */, \
   chip::kInvalidCommandId /* end of list */, \
   /* Endpoint: 0, Cluster: Network Commissioning (server) */\
-  /*   AcceptedCommandList (index=10) */ \
+  /*   AcceptedCommandList (index=12) */ \
   0x00000000 /* ScanNetworks */, \
   0x00000002 /* AddOrUpdateWiFiNetwork */, \
   0x00000003 /* AddOrUpdateThreadNetwork */, \
@@ -316,27 +322,27 @@
   0x00000006 /* ConnectNetwork */, \
   0x00000008 /* ReorderNetwork */, \
   chip::kInvalidCommandId /* end of list */, \
-  /*   GeneratedCommandList (index=17)*/ \
+  /*   GeneratedCommandList (index=19)*/ \
   0x00000001 /* ScanNetworksResponse */, \
   0x00000005 /* NetworkConfigResponse */, \
   0x00000007 /* ConnectNetworkResponse */, \
   chip::kInvalidCommandId /* end of list */, \
   /* Endpoint: 0, Cluster: General Diagnostics (server) */\
-  /*   AcceptedCommandList (index=21) */ \
+  /*   AcceptedCommandList (index=23) */ \
   0x00000000 /* TestEventTrigger */, \
   0x00000001 /* TimeSnapshot */, \
   chip::kInvalidCommandId /* end of list */, \
-  /*   GeneratedCommandList (index=24)*/ \
+  /*   GeneratedCommandList (index=26)*/ \
   0x00000002 /* TimeSnapshotResponse */, \
   chip::kInvalidCommandId /* end of list */, \
   /* Endpoint: 0, Cluster: Administrator Commissioning (server) */\
-  /*   AcceptedCommandList (index=26) */ \
+  /*   AcceptedCommandList (index=28) */ \
   0x00000000 /* OpenCommissioningWindow */, \
   0x00000001 /* OpenBasicCommissioningWindow */, \
   0x00000002 /* RevokeCommissioning */, \
   chip::kInvalidCommandId /* end of list */, \
   /* Endpoint: 0, Cluster: Operational Credentials (server) */\
-  /*   AcceptedCommandList (index=30) */ \
+  /*   AcceptedCommandList (index=32) */ \
   0x00000000 /* AttestationRequest */, \
   0x00000002 /* CertificateChainRequest */, \
   0x00000004 /* CSRRequest */, \
@@ -346,25 +352,25 @@
   0x0000000A /* RemoveFabric */, \
   0x0000000B /* AddTrustedRootCertificate */, \
   chip::kInvalidCommandId /* end of list */, \
-  /*   GeneratedCommandList (index=39)*/ \
+  /*   GeneratedCommandList (index=41)*/ \
   0x00000001 /* AttestationResponse */, \
   0x00000003 /* CertificateChainResponse */, \
   0x00000005 /* CSRResponse */, \
   0x00000008 /* NOCResponse */, \
   chip::kInvalidCommandId /* end of list */, \
   /* Endpoint: 0, Cluster: Group Key Management (server) */\
-  /*   AcceptedCommandList (index=44) */ \
+  /*   AcceptedCommandList (index=46) */ \
   0x00000000 /* KeySetWrite */, \
   0x00000001 /* KeySetRead */, \
   0x00000003 /* KeySetRemove */, \
   0x00000004 /* KeySetReadAllIndices */, \
   chip::kInvalidCommandId /* end of list */, \
-  /*   GeneratedCommandList (index=49)*/ \
+  /*   GeneratedCommandList (index=51)*/ \
   0x00000002 /* KeySetReadResponse */, \
   0x00000005 /* KeySetReadAllIndicesResponse */, \
   chip::kInvalidCommandId /* end of list */, \
-  /* Endpoint: 1, Cluster: NordicDevKitCluster (server) */\
-  /*   AcceptedCommandList (index=52) */ \
+  /* Endpoint: 1, Cluster: NordicDevKit (server) */\
+  /*   AcceptedCommandList (index=54) */ \
   0x00000000 /* SetLED */, \
   chip::kInvalidCommandId /* end of list */, \
 }
@@ -372,7 +378,7 @@
 // clang-format on
 
 // This is an array of EmberAfCluster structures.
-#define GENERATED_CLUSTER_COUNT 13
+#define GENERATED_CLUSTER_COUNT 14
 // clang-format off
 #define GENERATED_CLUSTERS { \
   { \
@@ -402,14 +408,27 @@
       .eventCount = 0, \
     },\
   { \
+      /* Endpoint: 0, Cluster: Basic Information (client) */ \
+      .clusterId = 0x00000028, \
+      .attributes = ZAP_ATTRIBUTE_INDEX(13), \
+      .attributeCount = 0, \
+      .clusterSize = 0, \
+      .mask = ZAP_CLUSTER_MASK(CLIENT), \
+      .functions = NULL, \
+      .acceptedCommandList = nullptr, \
+      .generatedCommandList = nullptr, \
+      .eventList = nullptr, \
+      .eventCount = 0, \
+    },\
+  { \
       /* Endpoint: 0, Cluster: Basic Information (server) */ \
       .clusterId = 0x00000028, \
       .attributes = ZAP_ATTRIBUTE_INDEX(13), \
-      .attributeCount = 19, \
-      .clusterSize = 39, \
+      .attributeCount = 20, \
+      .clusterSize = 41, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
-      .acceptedCommandList = nullptr, \
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 0 ), \
       .generatedCommandList = nullptr, \
       .eventList = ZAP_GENERATED_EVENTS_INDEX( 0 ), \
       .eventCount = 3, \
@@ -417,7 +436,7 @@
   { \
       /* Endpoint: 0, Cluster: OTA Software Update Provider (client) */ \
       .clusterId = 0x00000029, \
-      .attributes = ZAP_ATTRIBUTE_INDEX(32), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(33), \
       .attributeCount = 0, \
       .clusterSize = 0, \
       .mask = ZAP_CLUSTER_MASK(CLIENT), \
@@ -430,12 +449,12 @@
   { \
       /* Endpoint: 0, Cluster: OTA Software Update Requestor (server) */ \
       .clusterId = 0x0000002A, \
-      .attributes = ZAP_ATTRIBUTE_INDEX(32), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(33), \
       .attributeCount = 6, \
       .clusterSize = 9, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 0 ), \
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 2 ), \
       .generatedCommandList = nullptr, \
       .eventList = ZAP_GENERATED_EVENTS_INDEX( 3 ), \
       .eventCount = 3, \
@@ -443,51 +462,51 @@
   { \
       /* Endpoint: 0, Cluster: General Commissioning (server) */ \
       .clusterId = 0x00000030, \
-      .attributes = ZAP_ATTRIBUTE_INDEX(38), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(39), \
       .attributeCount = 7, \
       .clusterSize = 14, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 2 ), \
-      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 6 ), \
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 4 ), \
+      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 8 ), \
       .eventList = nullptr, \
       .eventCount = 0, \
     },\
   { \
       /* Endpoint: 0, Cluster: Network Commissioning (server) */ \
       .clusterId = 0x00000031, \
-      .attributes = ZAP_ATTRIBUTE_INDEX(45), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(46), \
       .attributeCount = 13, \
       .clusterSize = 6, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 10 ), \
-      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 17 ), \
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 12 ), \
+      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 19 ), \
       .eventList = nullptr, \
       .eventCount = 0, \
     },\
   { \
       /* Endpoint: 0, Cluster: General Diagnostics (server) */ \
       .clusterId = 0x00000033, \
-      .attributes = ZAP_ATTRIBUTE_INDEX(58), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(59), \
       .attributeCount = 8, \
       .clusterSize = 0, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 21 ), \
-      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 24 ), \
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 23 ), \
+      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 26 ), \
       .eventList = nullptr, \
       .eventCount = 0, \
     },\
   { \
       /* Endpoint: 0, Cluster: Administrator Commissioning (server) */ \
       .clusterId = 0x0000003C, \
-      .attributes = ZAP_ATTRIBUTE_INDEX(66), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(67), \
       .attributeCount = 5, \
       .clusterSize = 6, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 26 ), \
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 28 ), \
       .generatedCommandList = nullptr, \
       .eventList = nullptr, \
       .eventCount = 0, \
@@ -495,33 +514,33 @@
   { \
       /* Endpoint: 0, Cluster: Operational Credentials (server) */ \
       .clusterId = 0x0000003E, \
-      .attributes = ZAP_ATTRIBUTE_INDEX(71), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(72), \
       .attributeCount = 8, \
       .clusterSize = 6, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 30 ), \
-      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 39 ), \
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 32 ), \
+      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 41 ), \
       .eventList = nullptr, \
       .eventCount = 0, \
     },\
   { \
       /* Endpoint: 0, Cluster: Group Key Management (server) */ \
       .clusterId = 0x0000003F, \
-      .attributes = ZAP_ATTRIBUTE_INDEX(79), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(80), \
       .attributeCount = 6, \
       .clusterSize = 0, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 44 ), \
-      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 49 ), \
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 46 ), \
+      .generatedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 51 ), \
       .eventList = nullptr, \
       .eventCount = 0, \
     },\
   { \
-      /* Endpoint: 1, Cluster: NordicDevKitCluster (client) */ \
+      /* Endpoint: 1, Cluster: NordicDevKit (client) */ \
       .clusterId = 0xFFF1FC01, \
-      .attributes = ZAP_ATTRIBUTE_INDEX(85), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(86), \
       .attributeCount = 0, \
       .clusterSize = 0, \
       .mask = ZAP_CLUSTER_MASK(CLIENT), \
@@ -532,14 +551,14 @@
       .eventCount = 0, \
     },\
   { \
-      /* Endpoint: 1, Cluster: NordicDevKitCluster (server) */ \
+      /* Endpoint: 1, Cluster: NordicDevKit (server) */ \
       .clusterId = 0xFFF1FC01, \
-      .attributes = ZAP_ATTRIBUTE_INDEX(85), \
+      .attributes = ZAP_ATTRIBUTE_INDEX(86), \
       .attributeCount = 5, \
       .clusterSize = 263, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
       .functions = NULL, \
-      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 52 ), \
+      .acceptedCommandList = ZAP_GENERATED_COMMANDS_INDEX( 54 ), \
       .generatedCommandList = nullptr, \
       .eventList = nullptr, \
       .eventCount = 0, \
@@ -553,7 +572,7 @@
 // This is an array of EmberAfEndpointType structures.
 #define GENERATED_ENDPOINT_TYPES                                                                                       \
 	{                                                                                                              \
-		{ ZAP_CLUSTER_INDEX(0), 11, 84 }, { ZAP_CLUSTER_INDEX(11), 2, 263 },                                   \
+		{ ZAP_CLUSTER_INDEX(0), 12, 86 }, { ZAP_CLUSTER_INDEX(12), 2, 263 },                                   \
 	}
 
 // Largest attribute size is needed for various buffers
@@ -563,10 +582,10 @@ static_assert(ATTRIBUTE_LARGEST <= CHIP_CONFIG_MAX_ATTRIBUTE_STORE_ELEMENT_SIZE,
 	      "ATTRIBUTE_LARGEST larger than expected");
 
 // Total size of singleton attributes
-#define ATTRIBUTE_SINGLETONS_SIZE (35)
+#define ATTRIBUTE_SINGLETONS_SIZE (37)
 
 // Total size of attribute storage
-#define ATTRIBUTE_MAX_SIZE (347)
+#define ATTRIBUTE_MAX_SIZE (349)
 
 // Number of fixed endpoints
 #define FIXED_ENDPOINT_COUNT (2)

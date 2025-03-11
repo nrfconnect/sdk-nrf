@@ -3403,9 +3403,9 @@ namespace app
 			}
 		}
 
-		static auto __attribute__((unused)) EnsureKnownEnumValue(NordicDevKitCluster::LEDActionEnum val)
+		static auto __attribute__((unused)) EnsureKnownEnumValue(NordicDevKit::LEDActionEnum val)
 		{
-			using EnumType = NordicDevKitCluster::LEDActionEnum;
+			using EnumType = NordicDevKit::LEDActionEnum;
 			switch (val) {
 			case EnumType::kOff:
 			case EnumType::kOn:

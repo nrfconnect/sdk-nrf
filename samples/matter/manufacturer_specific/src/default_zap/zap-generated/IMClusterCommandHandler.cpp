@@ -105,6 +105,51 @@ namespace app
 
 		} // namespace AdministratorCommissioning
 
+		namespace BasicInformation
+		{
+
+			void DispatchServerCommand(CommandHandler *apCommandObj,
+						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
+			{
+				CHIP_ERROR TLVError = CHIP_NO_ERROR;
+				bool wasHandled = false;
+				{
+					switch (aCommandPath.mCommandId) {
+					case Commands::GenerateRandom::Id: {
+						Commands::GenerateRandom::DecodableType commandData;
+						TLVError = DataModel::Decode(aDataTlv, commandData);
+						if (TLVError == CHIP_NO_ERROR) {
+							wasHandled =
+								emberAfBasicInformationClusterGenerateRandomCallback(
+									apCommandObj, aCommandPath, commandData);
+						}
+						break;
+					}
+					default: {
+						// Unrecognized command ID, error status will apply.
+						apCommandObj->AddStatus(
+							aCommandPath,
+							Protocols::InteractionModel::Status::UnsupportedCommand);
+						ChipLogError(Zcl,
+							     "Unknown command " ChipLogFormatMEI
+							     " for cluster " ChipLogFormatMEI,
+							     ChipLogValueMEI(aCommandPath.mCommandId),
+							     ChipLogValueMEI(aCommandPath.mClusterId));
+						return;
+					}
+					}
+				}
+
+				if (CHIP_NO_ERROR != TLVError || !wasHandled) {
+					apCommandObj->AddStatus(aCommandPath,
+								Protocols::InteractionModel::Status::InvalidCommand);
+					ChipLogProgress(Zcl, "Failed to dispatch command, TLVError=%" CHIP_ERROR_FORMAT,
+							TLVError.Format());
+				}
+			}
+
+		} // namespace BasicInformation
+
 		namespace GeneralCommissioning
 		{
 
@@ -299,7 +344,7 @@ namespace app
 
 		} // namespace GroupKeyManagement
 
-		namespace NordicDevKitCluster
+		namespace NordicDevKit
 		{
 
 			void DispatchServerCommand(CommandHandler *apCommandObj,
@@ -313,7 +358,7 @@ namespace app
 						Commands::SetLED::DecodableType commandData;
 						TLVError = DataModel::Decode(aDataTlv, commandData);
 						if (TLVError == CHIP_NO_ERROR) {
-							wasHandled = emberAfNordicDevKitClusterClusterSetLEDCallback(
+							wasHandled = emberAfNordicDevKitClusterSetLEDCallback(
 								apCommandObj, aCommandPath, commandData);
 						}
 						break;
@@ -341,7 +386,7 @@ namespace app
 				}
 			}
 
-		} // namespace NordicDevKitCluster
+		} // namespace NordicDevKit
 
 		namespace OtaSoftwareUpdateRequestor
 		{
@@ -512,6 +557,9 @@ namespace app
 			Clusters::AdministratorCommissioning::DispatchServerCommand(apCommandObj, aCommandPath,
 										    aReader);
 			break;
+		case Clusters::BasicInformation::Id:
+			Clusters::BasicInformation::DispatchServerCommand(apCommandObj, aCommandPath, aReader);
+			break;
 		case Clusters::GeneralCommissioning::Id:
 			Clusters::GeneralCommissioning::DispatchServerCommand(apCommandObj, aCommandPath, aReader);
 			break;
@@ -521,8 +569,8 @@ namespace app
 		case Clusters::GroupKeyManagement::Id:
 			Clusters::GroupKeyManagement::DispatchServerCommand(apCommandObj, aCommandPath, aReader);
 			break;
-		case Clusters::NordicDevKitCluster::Id:
-			Clusters::NordicDevKitCluster::DispatchServerCommand(apCommandObj, aCommandPath, aReader);
+		case Clusters::NordicDevKit::Id:
+			Clusters::NordicDevKit::DispatchServerCommand(apCommandObj, aCommandPath, aReader);
 			break;
 		case Clusters::OtaSoftwareUpdateRequestor::Id:
 			Clusters::OtaSoftwareUpdateRequestor::DispatchServerCommand(apCommandObj, aCommandPath,
