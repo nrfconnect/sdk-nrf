@@ -64,6 +64,7 @@ Some of them are documented in detail in other parts of this documentation, whil
    :maxdepth: 2
    :caption: Subpages:
 
+   security/psa_certified_api_overview
    security/ap_protect
    security/tfm/index
    security/trusted_storage

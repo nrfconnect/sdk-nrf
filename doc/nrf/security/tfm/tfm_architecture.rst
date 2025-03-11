@@ -161,7 +161,7 @@ Isolation Levels
 The TF-M architecture figure at the top of this page uses several lines as connectors and separators.
 These lines represent the isolation levels between different parts of the SPE and between the SPE and the NSPE.
 
-The following table describes the isolation levels in the TF-M architecture, based on the `Trusted Base System Architecture for M (TBSA-M) Specification`_ (section 4.3).
+The following table describes the isolation levels in the TF-M architecture, based on the `Trusted Base System Architecture for M (TBSA-M) Specification`_ (section 4.3) and the `FF-M Isolation Rules`_.
 
 .. list-table::
    :header-rows: 1
@@ -169,9 +169,9 @@ The following table describes the isolation levels in the TF-M architecture, bas
    * - Isolation Level
      - Description
    * - Level 1
-     - | SPE isolation
+     - | Two security domains
        |
-       | Two security domains
+       | SPE isolation
        |
        | SPE is protected from access by Non-Secure application firmware and hardware.
    * - Level 2
@@ -181,9 +181,9 @@ The following table describes the isolation levels in the TF-M architecture, bas
        |
        | In addition to Level 1, the Platform RoT is also protected from access by the Application RoT.
    * - Level 3
-     - | Maximum firmware isolation
+     - | Three or more security domains
        |
-       | Three or more security domains
+       | Maximum firmware isolation
        |
        | In addition to Level 2, each Secure Partition is sandboxed and only permitted to access its own resources.
        | This protects each Secure Partition from access by other Secure Partitions and protects the SPM from access by any Secure Partition.
@@ -193,3 +193,4 @@ In other words:
 * Level 1 Isolation is the Secure/Non-Secure separation described in the :ref:`ug_tfm_architecture_spe_nspe` section.
 * Level 2 Isolation means that the :ref:`ug_tfm_architecture_rot_services_application` are *unable* to access other parts of the SPE.
 * Level 3 Isolation means that the Application RoT Services are unable to access other parts of the SPE *and* other Application RoT Services.
+  Level 3 Isolation is :ref:`not supported <ug_tfm_supported_services_isolation>` in the |NCS|.

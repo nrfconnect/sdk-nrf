@@ -235,6 +235,9 @@
 .. _`crypto.h`: https://github.com/nrfconnect/sdk-trusted-firmware-m/blob/master/interface/include/psa/crypto.h
 .. _`protected_storage.h`: https://github.com/nrfconnect/sdk-trusted-firmware-m/blob/master/interface/include/psa/protected_storage.h
 .. _`initial_attestation.h`: https://github.com/nrfconnect/sdk-trusted-firmware-m/blob/main/interface/include/psa/initial_attestation.h.in
+.. _`tfm_platform_api.h`: https://github.com/nrfconnect/sdk-trusted-firmware-m/blob/main/interface/include/tfm_platform_api.h
+.. _`tfm_ioctl_core_api.h`: https://github.com/nrfconnect/sdk-trusted-firmware-m/blob/main/platform/ext/target/nordic_nrf/common/core/services/include/tfm_ioctl_core_api.h
+.. _`tfm_ioctl_api.h`: https://github.com/nrfconnect/sdk-nrf/blob/main/include/tfm/tfm_ioctl_api.h
 
 .. ### Source: arm-software.github.io, armmbed.github.io
 
@@ -245,8 +248,8 @@
 .. _`Key Identifiers`: https://arm-software.github.io/psa-api/crypto/1.1/api/keys/ids.html#key-identifiers
 .. _`Keystore Interface`: https://arm-software.github.io/psa-api/crypto/1.1/overview/goals.html#a-keystore-interface
 .. _`PSA Cryptography API 1.0.1`: https://armmbed.github.io/mbed-crypto/1.0.1/html/index.html
+.. _`PSA Certified Crypto API 1.0.0`: https://arm-software.github.io/psa-api/crypto/1.0/IHI0086-PSA_Cryptography_API-1.0.0.pdf
 .. _`PSA Certified Crypto API 1.2.1`: https://arm-software.github.io/psa-api/crypto/1.2/
-.. _`PSA Certified Crypto API 1.2 PAKE Extension Final 1`: https://arm-software.github.io/psa-api/crypto/1.2/ext-pake/
 .. _`PSA functions for key management`: https://arm-software.github.io/psa-api/crypto/1.1/api/keys/management.html
 
 .. _`PSA Certified Secure Storage API`: https://arm-software.github.io/psa-api/storage/
@@ -484,6 +487,7 @@
 .. _`TF-M Secure Interrupt Integration`: https://docs.nordicsemi.com/bundle/ncs-latest/page/tfm/integration_guide/tfm_secure_irq_integration_guide.html
 .. _`TF-M Secure Partition Manager`: https://docs.nordicsemi.com/bundle/ncs-latest/page/tfm/design_docs/services/secure_partition_manager.html
 .. _`TF-M Inter-Process Communication`: https://docs.nordicsemi.com/bundle/ncs-latest/page/tfm/design_docs/services/tfm_psa_inter_process_communication.html
+.. _`FF-M Isolation Rules`: https://docs.nordicsemi.com/bundle/ncs-latest/page/tfm/design_docs/ff_isolation.html
 
 .. _`HCI Events`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrfxlib/softdevice_controller/doc/api.html#hci_events
 

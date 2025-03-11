@@ -45,6 +45,34 @@ Using the PSA Certified APIs has the following benefits:
 * Flexible and scalable - The various use cases supported ensure that the PSA Certified APIs can be used across multiple devices, from very simple ones to more complex systems.
 * Future-proof - PSA Certified APIs are designed to be updated over time as security threats evolve, ensuring that devices remain secure throughout their lifecycle.
 
+.. _ug_psa_certified_api_overview_supported_apis:
+
+Supported PSA Certified APIs
+============================
+
+The following table provides an overview of the PSA Certified APIs support status in the |NCS|:
+
+.. list-table:: PSA Certified APIs support in the |NCS|
+   :header-rows: 1
+   :widths: auto
+
+   * - PSA Certified API
+     - Support status in the |NCS|
+     - Latest version supported
+   * - `PSA Certified Crypto API`_
+     - Supported
+     - | `PSA Certified Crypto API 1.2.1`_ for :ref:`nRF54L cryptography <ug_nrf54l_cryptography>` and :ref:`nrf_security` builds without TF-M
+       | `PSA Certified Crypto API 1.0.0`_ for builds with TF-M
+   * - `PSA Certified Attestation API`_
+     - Supported
+     - `PSA Certified Attestation API 1.0`_
+   * - `PSA Certified Secure Storage API`_
+     - Supported
+     - `PSA Certified Secure Storage API 1.0`_
+   * - `PSA Certified Firmware Update API`_
+     - Not supported
+     - n/a
+
 .. _ug_psa_certified_api_overview_crypto:
 
 PSA Crypto API
@@ -190,7 +218,7 @@ Internal Trusted Storage is by default only available from the SPE.
 
 .. note::
 
-   For Nordic SoCs without TF-M's Platform Root of Trust (such as the nRF52832), the :ref:`trusted_storage_readme` library is used for the PSA Ceritifed Secure Storage APIs.
+   For Nordic SoCs without TF-M's Platform Root of Trust (such as the nRF52832), the :ref:`trusted_storage_readme` library is used for the PSA Certified Secure Storage APIs.
 
 The PSA Protected Storage API implementation is optional for use in the |NCS|.
 It does not support storing data to external flash.
