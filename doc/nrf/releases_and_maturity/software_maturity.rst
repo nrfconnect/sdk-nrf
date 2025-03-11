@@ -1930,11 +1930,13 @@ Trusted Firmware-M support
 
 .. toggle::
 
+   .. tfm_ncs_profiles_support_table_start
+
    .. list-table::
       :widths: auto
       :header-rows: 1
 
-      * -
+      * - TF-M profile
         - nRF52810
         - nRF52811
         - nRF52820
@@ -1950,7 +1952,7 @@ Trusted Firmware-M support
         - nRF9151
         - nRF9160
         - nRF9161
-      * - **Full build**
+      * - :ref:`Configurable <ug_tfm_supported_services_profiles_configurable>`
         - --
         - --
         - --
@@ -1966,7 +1968,7 @@ Trusted Firmware-M support
         - Experimental
         - Experimental
         - Experimental
-      * - **Minimal Build**
+      * - :ref:`Minimal <ug_tfm_supported_services_profiles_minimal>`
         - --
         - --
         - --
@@ -1984,6 +1986,10 @@ Trusted Firmware-M support
         - Supported
 
    | [1]: The attestation service is not supported.
+
+    .. tfm_ncs_profiles_support_table_end
+
+   For more information about supported TF-M features in the |NCS|, see :ref:`ug_tfm_supported_services`.
 
 .. _software_maturity_security_features_psa:
 

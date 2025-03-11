@@ -142,6 +142,7 @@ Security
     * Support for Ed25519ph(HashEdDSA) to CRACEN.
     * Documentation page about the :ref:`ug_tfm_architecture`.
     * Documentation page about the :ref:`ug_psa_certified_api_overview`.
+    * Documentation page about the :ref:`ug_tfm_supported_services`.
 
   * Updated:
 

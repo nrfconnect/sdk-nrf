@@ -9,46 +9,10 @@ Configuring applications for Trusted Firmware-M
 
 On nRF5340, nRF54L15 and nRF91 Series devices, Trusted Firmware-M (TF-M) is used to configure and boot an application as non-secure.
 
-Overview
-********
+.. _ug_tfm_building:
 
-TF-M is the reference implementation of `Platform Security Architecture (PSA)`_.
-
-It provides a highly configurable set of software components to create a Trusted Execution Environment.
-This is achieved by a set of secure run time services such as Secure Storage, Cryptography, Audit Logs, and Attestation.
-Additionally, secure boot through MCUboot in TF-M ensures integrity of runtime software and supports firmware upgrade.
-
-.. note::
-   Only the TF-M :ref:`minimal build <tfm_minimal_build>` implementation in the |NCS| is currently :ref:`supported <software_maturity_security_features_tfm>`.
-   Support for TF-M with minimal version *disabled* in the |NCS| is :ref:`experimental <software_maturity_security_features_tfm>`.
-
-For official documentation, see the `TF-M documentation`_.
-
-The TF-M implementation in |NCS| is demonstrated in the following samples:
-
-* All :ref:`tfm_samples` in this SDK
-* All :ref:`cryptography samples <crypto_samples>` in this SDK
-* A series of :zephyr:code-sample-category:`tfm_integration` samples available in Zephyr
-
-In addition, the TF-M implementation is used in all samples and applications in this SDK that support the ``*/ns`` :ref:`variant <app_boards_names>` of the boards, due to :ref:`Cortex-M Security Extensions (CMSE) <app_boards_spe_nspe>` support.
-
-Limitations
-===========
-
-The following limitations apply to TF-M and its usage:
-
-* Firmware Update service is not supported.
-* The following crypto modules or ciphers are not supported:
-
-  * AES output feedback (AES-OFB) mode.
-  * AES cipher feedback (AES-CFB) mode.
-
-* Isolation level 3 is not supported.
-* In Isolation level 2 (and 3), the number of peripherals configured as secure in Application Root of Trust (ARoT) is limited by the number of available MPU regions.
-* Nordic Semiconductor devices only support the GCC toolchain for building TF-M.
-
-Building
-********
+Building with TF-M
+******************
 
 TF-M is one of the images that are built as part of a multi-image application.
 
@@ -85,18 +49,13 @@ See :ref:`tfm_partition_crypto` for more information about the TF-M Crypto parti
 Minimal build
 =============
 
-The default configuration of TF-M has all supported features enabled, which results in a significant memory footprint.
-For this reason, the |NCS| provides a minimal version of the TF-M secure application, which shows how to configure a reduced version of TF-M.
+.. include:: tfm_supported_services.rst
+   :start-after: minimal_build_overview_start
+   :end-before: minimal_build_overview_end
 
-The secure services supported by this minimal version allow for:
+The minimal build uses an image of 32 kB.
+It is set with the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` Kconfig option that is enabled by default on the nRF53 and nRF91 Series devices.
 
-* Generating random numbers using the CryptoCell peripheral.
-* Using the :ref:`platform services <ug_tfm_services_platform>`.
-* Reading secure memory from the non-secure application (strictly restricted to a list of allowed addresses).
-  Depending on the device, this lets you read metadata in the bootloader, verify FICR or UICR values, or access a peripheral that is secure-only.
-* Rebooting from the non-secure side.
-
-The minimal version is set with the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` Kconfig option, which is enabled by default on the nRF53 Series and nRF91 Series devices.
 With the minimal build, the configuration of TF-M is severely limited.
 Hence, it is not possible to modify the TF-M minimal configuration to create your own variant of the minimal configuration.
 Instead, the default configuration must be used as a starting point.
@@ -106,8 +65,9 @@ Instead, the default configuration must be used as a starting point.
 Configurable build
 ==================
 
-The configurable build is the full TF-M implementation that lets you configure all of its features.
-It does not come with the constraints of the minimal build.
+.. include:: tfm_supported_services.rst
+   :start-after: configurable_build_overview_start
+   :end-before: configurable_build_overview_end
 
 To enable the configurable, full TF-M build, make sure the following Kconfig options are configured:
 
@@ -378,6 +338,8 @@ The platform service also exposes the following |NCS| specific APIs for the non-
 See :ref:`lib_tfm_ioctl_api` for more information about APIs available for the non-secure application.
 
 For more information about the general features of the TF-M Platform partition, see `TF-M Platform`_.
+
+.. _ug_tfm_services_its:
 
 Internal Trusted Storage service
 ================================
@@ -720,6 +682,8 @@ The available space for the non-secure application has increased by 0x10000 byte
 .. note::
 
    For devices that are intended for production and meant to be updated in the field, you should always use static partitions to ensure that the partitions are not moved around in the flash memory.
+
+.. _ug_tfm_services_initial_attestation:
 
 Initial Attestation service
 ===========================
