@@ -24,6 +24,9 @@ int32_t mpsl_pm_utils_init(void);
  *
  * This routine uninitializes MPSL PM (via `mpsl_pm_uninit`).
  *
+ * @pre The function requires the multithreading lock (@see MULTITHREADING_LOCK_ACQUIRE())
+ *      to be acquired before.
+ *
  * @retval 0 MPSL PM was uninitialized successfully.
  * @retval -NRF_EPERM MPSL was not initialized before the call.
  * @retval -NRF_ETIMEDOUT MPSL PM uninitialization timed out while waiting for completion.

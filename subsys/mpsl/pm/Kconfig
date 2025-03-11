@@ -15,13 +15,6 @@ config MPSL_USE_ZEPHYR_PM
 
 if MPSL_USE_ZEPHYR_PM
 
-config MPSL_PM_UNINIT_WORK_WAIT_TIME_MS
-	int "Timeout value the MPSL PM uninit procedure will wait for work queue to complete, in milliseconds"
-	default 100
-	help
-	  The option specifies a timeout value in milliseconds, the MPLS PM uninit procedure
-	  will wait for MPSL work queue to complete handling of scheduled uninit work item.
-
 config MPSL_PM_NO_RADIO_EVENT_PERIOD_LATENCY_US
 	int "Latency value the MPSL PM allows in periods outside of radio events, in microseconds"
 	default 499999

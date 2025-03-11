@@ -13,7 +13,6 @@ project(pm_test)
 test_runner_generate(pm_test.c)
 
 # Create mocks for pm module.
-cmock_handle(${CMAKE_CURRENT_SOURCE_DIR}/kernel_minimal_mock.h)
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/pm/policy.h)
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/mpsl/include/mpsl_pm.h)
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/mpsl/include/mpsl_pm_config.h)
@@ -39,6 +38,5 @@ set_property(SOURCE ${ZEPHYR_NRF_MODULE_DIR}/subsys/mpsl/pm/mpsl_pm_utils.c
 target_compile_options(app PRIVATE
     -DCONFIG_PM=y
     -DCONFIG_MPSL_USE_ZEPHYR_PM=y
-    -DCONFIG_MPSL_PM_UNINIT_WORK_WAIT_TIME_MS=100
     -DCONFIG_MPSL_PM_NO_RADIO_EVENT_PERIOD_LATENCY_US=499999
 )
