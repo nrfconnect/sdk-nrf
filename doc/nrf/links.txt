@@ -226,17 +226,31 @@
 .. _`nRF Connect SDK Add-ons`: https://nrfconnect.github.io/ncs-app-index/
 .. _`ncs-app-index`: https://github.com/nrfconnect/ncs-app-index
 
+.. _`crypto.h`: https://github.com/nrfconnect/sdk-trusted-firmware-m/blob/master/interface/include/psa/crypto.h
+.. _`protected_storage.h`: https://github.com/nrfconnect/sdk-trusted-firmware-m/blob/master/interface/include/psa/protected_storage.h
+.. _`initial_attestation.h`: https://github.com/nrfconnect/sdk-trusted-firmware-m/blob/main/interface/include/psa/initial_attestation.h.in
+
 .. ### Source: arm-software.github.io, armmbed.github.io
+
+.. _`PSA Certified APIs`: https://arm-software.github.io/psa-api/
 
 .. _`PSA Certified Crypto API`: https://arm-software.github.io/psa-api/crypto/
 .. _`psa_generate_random()`: https://arm-software.github.io/psa-api/crypto/1.1/api/ops/rng.html
+.. _`Key Identifiers`: https://arm-software.github.io/psa-api/crypto/1.1/api/keys/ids.html#key-identifiers
+.. _`Keystore Interface`: https://arm-software.github.io/psa-api/crypto/1.1/overview/goals.html#a-keystore-interface
 .. _`PSA Cryptography API 1.0.1`: https://armmbed.github.io/mbed-crypto/1.0.1/html/index.html
-.. _`PSA Certified APIs`: https://arm-software.github.io/psa-api/
 .. _`PSA Certified Crypto API 1.2.1`: https://arm-software.github.io/psa-api/crypto/1.2/
 .. _`PSA Certified Crypto API 1.2 PAKE Extension Final 1`: https://arm-software.github.io/psa-api/crypto/1.2/ext-pake/
 .. _`PSA functions for key management`: https://arm-software.github.io/psa-api/crypto/1.1/api/keys/management.html
+
+.. _`PSA Certified Secure Storage API`: https://arm-software.github.io/psa-api/storage/
 .. _`PSA Certified Secure Storage API 1.0`: https://arm-software.github.io/psa-api/storage/1.0/
+
+.. _`PSA Certified Attestation API`: https://arm-software.github.io/psa-api/attestation/
 .. _`PSA Certified Attestation API 1.0`: https://arm-software.github.io/psa-api/attestation/1.0/
+
+.. _`PSA Certified Firmware Update API`: https://arm-software.github.io/psa-api/fwu/
+
 
 .. ### Source: githubusercontent.com
 
@@ -380,6 +394,8 @@
 .. _`Nordic third-party modules`: https://www.nordicsemi.com/Nordic-Partners/3rd-party-modules
 
 .. _`contact our sales`: https://www.nordicsemi.com/About-us/Contact-Us#Sales_related_questions
+
+.. _`PSA Certified Nordic Products`: https://www.nordicsemi.com/Products/Technologies/Security/Certifications?lang=en#infotabs
 
 .. #### Source: www.nordicsemi.com/Events/
 
@@ -697,7 +713,9 @@
 .. _`nRF9160 DK GPS`:
 .. _`nRF9160 GPS receiver specification`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/gps.html
 .. _`nRF9160 System Protection Unit`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/spu.html
+.. _`nRF9160 flash access control`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/spu.html#ariaid-title4
 .. _`nRF9160 SiP pin configuration`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/sip_pin_configuration/sip_pin_configuration.html
+.. _`nRF9160 CRYPTOCELL - Arm TrustZone CryptoCell 310`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/cryptocell.html
 
 .. _`nWP044 - Best practices for cellular IoT development LTE technology`: https://docs.nordicsemi.com/bundle/nwp_044/page/WP/nwp_044/lte_technology.html
 .. _`nWP044 - Best practices for cellular IoT development`: https://docs.nordicsemi.com/bundle/nwp_044/page/WP/nwp_044/intro.html
@@ -761,10 +779,13 @@
 .. _`nRF54L15 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf54l15_dk/page/UG/nRF54L15_DK/intro/intro.html
 .. _`nRF54L15 Debugger signals`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/tampc.html#ariaid-title6
 .. _`nRF54L15 Security`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/chapters/security.html
+.. _`nRF54L15 feature access control`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/spu.html#ariaid-title8
 
 .. _`nRF53 Series`: https://docs.nordicsemi.com/category/nrf-53-series
 
 .. _`nRF5340 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/keyfeatures_html5.html
+.. _`nRF5340 CRYPTOCELL — Arm TrustZone CryptoCell 312`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/cryptocell.html
+
 .. _`nRF5340 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf5340_dk/page/UG/dk/intro.html
 .. _`Execute in place page in the nRF5340 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/qspi.html#d1789e363
 .. _`nRF5340 DK Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf5340/page/COMP/nrf5340/nrf5340_comp_matrix.html
@@ -1532,6 +1553,9 @@
 .. _`PSA Certified IoT Security Framework`: https://www.psacertified.org/what-is-psa-certified/using-psa-certified/
 .. _`What is a Root of Trust?`: https://www.psacertified.org/blog/what-is-a-root-of-trust/
 .. _`Device Attestation and Entity Attestation Tokens Explained`: https://www.psacertified.org/blog/what-is-an-entity-attestation-token/
+.. _`PSA Certified development resources`: https://www.psacertified.org/development-resources/
+.. _`PSA Certified foundational training course`: https://www.psacertified.org/development-resources/psa-certified-foundational-training-course/
+
 
 .. ### Source: etsi.org
 

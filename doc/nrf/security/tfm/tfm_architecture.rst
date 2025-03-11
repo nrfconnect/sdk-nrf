@@ -79,7 +79,7 @@ Platform RoT Services
 Defined by the section 7 in the `ARM Platform Security Model 1.1`_, the Platform RoT Services are a set of mandatory RoT Services:
 
 * Crypto: An RoT Service that provides an API to cryptographic operations, such as securely generating, storing, or accessing keys.
-  For more information, see the `PSA Certified Crypto API`_ and the :ref:`crypto_samples`.
+  For more information, see :ref:`ug_psa_certified_api_overview_crypto`, the `PSA Certified Crypto API`_ and the :ref:`crypto_samples`.
 * Attestation: "The Initial Attestation Service (IAS) provides a signed Initial Attestation Token (IAT).
   The IAT includes the state of the Platform Root-of-Trust, including whether a debug state has been entered, and any claims made by AEP."
   For a detailed explanation of attestation, see `Device Attestation and Entity Attestation Tokens Explained`_ blog post on the PSA Certified website.
@@ -100,7 +100,7 @@ Some Application RoT Services are pre-defined, but you can add custom Applicatio
 For example:
 
 * Protected Storage - A RoT Service that provides secure storage capabilities for non-volatile data present in the NSPE.
-  For more information about this service, see `PSA Certified Secure Storage API 1.0`_ and Zephyr's :zephyr:code-sample:`psa_protected_storage`.
+  For more information about this service, see :ref:`ug_psa_certified_api_overview_secstorage`, `PSA Certified Secure Storage API 1.0`_ and Zephyr's :zephyr:code-sample:`psa_protected_storage`.
   For information about how to enable it, see :ref:`tfm_partition_ps`.
 * Other custom Application RoT Services - See the :ref:`tfm_secure_peripheral_partition` sample that demonstrates how to create a custom Application RoT Service.
 
