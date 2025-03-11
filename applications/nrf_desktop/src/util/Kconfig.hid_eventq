@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DESKTOP_HID_EVENTQ
+	bool "Enable HID event queue utility"
+	depends on DESKTOP_ROLE_HID_PERIPHERAL
+	help
+	  The HID event queue utility can be used to temporarily enqueue HID
+	  events related to keypresses.
+
+if DESKTOP_HID_EVENTQ
+
+module = DESKTOP_HID_EVENTQ
+module-str = HID event queue
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # DESKTOP_HID_EVENTQ
