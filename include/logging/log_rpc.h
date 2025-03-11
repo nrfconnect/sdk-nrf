@@ -7,6 +7,7 @@
 #ifndef LOG_RPC_H_
 #define LOG_RPC_H_
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -62,12 +63,9 @@ typedef void (*log_rpc_history_threshold_reached_handler_t)(void);
  * This function issues an nRF RPC command that configures the remote device to
  * stream log messages whose level is less than or equal to the specified level.
  *
- * @param level		Logging level, see @ref log_rpc_level.
- *
- * @retval 0		On success.
- * @retval -errno	On failure.
+ * @param level	Logging level, see @ref log_rpc_level.
  */
-int log_rpc_set_stream_level(enum log_rpc_level level);
+void log_rpc_set_stream_level(enum log_rpc_level level);
 
 /**
  * @brief Sets the log history verbosity level.
@@ -79,12 +77,9 @@ int log_rpc_set_stream_level(enum log_rpc_level level);
  * This function issues an nRF RPC command that configures the remote device to
  * save log messages whose level is less than or equal to the specified level.
  *
- * @param level		Logging level, see @ref log_rpc_level.
- *
- * @retval 0		On success.
- * @retval -errno	On failure.
+ * @param level	Logging level, see @ref log_rpc_level.
  */
-int log_rpc_set_history_level(enum log_rpc_level level);
+void log_rpc_set_history_level(enum log_rpc_level level);
 
 /**
  * @brief Gets the current history usage threshold.
@@ -134,6 +129,18 @@ void log_rpc_set_history_usage_threshold(log_rpc_history_threshold_reached_handl
  * @retval -errno	On failure.
  */
 int log_rpc_fetch_history(log_rpc_history_handler_t handler);
+
+/**
+ * @brief Stops the log history transfer.
+ *
+ * This function issues an nRF RPC command that stops the log history transfer.
+ *
+ * @param pause		Indicates that the transfer should be put on hold rather
+ *			than cancelled, which means that the history overwriting
+ *			is kept disabled and the transfer position is retained
+ *			so that the transfer can be resumed later on.
+ */
+void log_rpc_stop_fetch_history(bool pause);
 
 /**
  * @brief Retrieves the crash log retained on the remote device.
