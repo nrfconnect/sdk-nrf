@@ -1,0 +1,14 @@
+common:
+  tags:
+    - ci_tests_drivers_hpf
+    - drivers
+    - mspi
+    - api
+
+tests:
+  drivers.mspi.error_cases.hpf:
+    harness: ztest
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
