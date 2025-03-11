@@ -30,7 +30,7 @@
 #define KEY_READ_TIME DK_BTN1_MSK
 
 static struct bt_cts_client cts_c;
-
+static struct k_work adv_work;
 static bool has_cts;
 
 static const struct bt_data ad[] = {
@@ -163,7 +163,7 @@ static const struct bt_gatt_dm_cb discover_cb = {
 };
 
 
-static void advertising_start(void)
+static void adv_work_handler(struct k_work *work)
 {
 	int err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), NULL, 0);
 
@@ -173,6 +173,11 @@ static void advertising_start(void)
 	}
 
 	printk("Advertising successfully started\n");
+}
+
+static void advertising_start(void)
+{
+	k_work_submit(&adv_work);
 }
 
 static void connected(struct bt_conn *conn, uint8_t err)
@@ -366,6 +371,7 @@ int main(void)
 		return 0;
 	}
 
+	k_work_init(&adv_work, adv_work_handler);
 	advertising_start();
 
 	for (;;) {

@@ -38,6 +38,7 @@ static const struct bt_data sd[] = {
 };
 
 static struct bt_conn *mds_conn;
+static struct k_work adv_work;
 
 static void bas_work_handler(struct k_work *work);
 
@@ -64,7 +65,7 @@ static void security_changed(struct bt_conn *conn, bt_security_t level,
 	}
 }
 
-static void advertising_start(void)
+static void adv_work_handler(struct k_work *work)
 {
 	int err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 
@@ -74,6 +75,11 @@ static void advertising_start(void)
 	}
 
 	printk("Advertising successfully started\n");
+}
+
+static void advertising_start(void)
+{
+	k_work_submit(&adv_work);
 }
 
 static void connected(struct bt_conn *conn, uint8_t conn_err)
@@ -302,6 +308,7 @@ int main(void)
 		}
 	}
 
+	k_work_init(&adv_work, adv_work_handler);
 	advertising_start();
 
 	k_work_schedule(&bas_work, K_SECONDS(1));

@@ -50,6 +50,7 @@ K_MSGQ_DEFINE(hrs_queue, sizeof(struct bt_hrs_client_measurement), HRS_QUEUE_SIZ
 
 static struct bt_hrs_client hrs_c;
 static struct bt_conn *central_conn;
+static struct k_work adv_work;
 
 static const char * const sensor_location_str[] = {
 	"Other",
@@ -219,7 +220,7 @@ static int scan_start(void)
 	return err;
 }
 
-static void advertising_start(void)
+static void adv_work_handler(struct k_work *work)
 {
 	int err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 
@@ -229,6 +230,11 @@ static void advertising_start(void)
 	}
 
 	printk("Advertising successfully started\n");
+}
+
+static void advertising_start(void)
+{
+	k_work_submit(&adv_work);
 }
 
 static void connected(struct bt_conn *conn, uint8_t conn_err)
@@ -444,6 +450,7 @@ int main(void)
 
 	printk("Scanning started\n");
 
+	k_work_init(&adv_work, adv_work_handler);
 	advertising_start();
 
 	for (;;) {
