@@ -37,6 +37,7 @@
 #define STATUS1_BUTTON             DK_BTN1_MSK
 #define STATUS2_BUTTON             DK_BTN2_MSK
 
+static struct k_work adv_work;
 
 /* Implementation of two status characteristics */
 BT_NSMS_DEF(nsms_btn1, "Button 1", false, "Unknown", 20);
@@ -52,7 +53,7 @@ static const struct bt_data sd[] = {
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, BT_UUID_NSMS_VAL),
 };
 
-static void advertising_start(void)
+static void adv_work_handler(struct k_work *work)
 {
 	int err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 
@@ -62,6 +63,11 @@ static void advertising_start(void)
 	}
 
 	printk("Advertising successfully started\n");
+}
+
+static void advertising_start(void)
+{
+	k_work_submit(&adv_work);
 }
 
 static void connected(struct bt_conn *conn, uint8_t err)
@@ -237,6 +243,7 @@ int main(void)
 		settings_load();
 	}
 
+	k_work_init(&adv_work, adv_work_handler);
 	advertising_start();
 
 	for (;;) {

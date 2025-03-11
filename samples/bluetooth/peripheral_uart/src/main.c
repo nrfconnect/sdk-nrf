@@ -59,6 +59,7 @@ static K_SEM_DEFINE(ble_init_ok, 0, 1);
 
 static struct bt_conn *current_conn;
 static struct bt_conn *auth_conn;
+static struct k_work adv_work;
 
 static const struct device *uart = DEVICE_DT_GET(DT_CHOSEN(nordic_nus_uart));
 static struct k_work_delayable uart_work;
@@ -333,7 +334,7 @@ static int uart_init(void)
 	return err;
 }
 
-static void advertising_start(void)
+static void adv_work_handler(struct k_work *work)
 {
 	int err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 
@@ -343,6 +344,11 @@ static void advertising_start(void)
 	}
 
 	printk("Advertising successfully started\n");
+}
+
+static void advertising_start(void)
+{
+	k_work_submit(&adv_work);
 }
 
 static void connected(struct bt_conn *conn, uint8_t err)
@@ -640,6 +646,7 @@ int main(void)
 		return 0;
 	}
 
+	k_work_init(&adv_work, adv_work_handler);
 	advertising_start();
 
 	for (;;) {
