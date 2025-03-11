@@ -488,6 +488,13 @@ static void history_transfer_task(struct k_work *work)
 	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, CONFIG_LOG_BACKEND_RPC_HISTORY_UPLOAD_CHUNK_SIZE);
 
 	k_mutex_lock(&history_transfer_mtx, K_FOREVER);
+
+	if (history_transfer_id == 0) {
+		/* History transfer has been stopped */
+		k_mutex_unlock(&history_transfer_mtx);
+		return;
+	}
+
 	nrf_rpc_encode_uint(&ctx, history_transfer_id);
 
 	while (true) {
@@ -563,6 +570,31 @@ static void log_rpc_fetch_history_handler(const struct nrf_rpc_group *group,
 
 NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_fetch_history_handler, LOG_RPC_CMD_FETCH_HISTORY,
 			 log_rpc_fetch_history_handler, NULL);
+
+static void log_rpc_stop_fetch_history_handler(const struct nrf_rpc_group *group,
+					       struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	bool pause;
+
+	pause = nrf_rpc_decode_bool(ctx);
+
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, group, LOG_RPC_CMD_STOP_FETCH_HISTORY,
+			    NRF_RPC_PACKET_TYPE_CMD);
+		return;
+	}
+
+	k_mutex_lock(&history_transfer_mtx, K_FOREVER);
+	history_transfer_id = 0;
+	log_rpc_history_set_overwriting(!pause);
+	history_threshold_active = history_threshold > 0;
+	k_mutex_unlock(&history_transfer_mtx);
+
+	nrf_rpc_rsp_send_void(group);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_stop_fetch_history_handler,
+			 LOG_RPC_CMD_STOP_FETCH_HISTORY, log_rpc_stop_fetch_history_handler, NULL);
 
 static void log_rpc_get_history_usage_threshold_handler(const struct nrf_rpc_group *group,
 							struct nrf_rpc_cbor_ctx *ctx,

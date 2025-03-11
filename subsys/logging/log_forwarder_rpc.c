@@ -66,7 +66,7 @@ static void log_rpc_msg_handler(const struct nrf_rpc_group *group, struct nrf_rp
 NRF_RPC_CBOR_EVT_DECODER(log_rpc_group, log_rpc_msg_handler, LOG_RPC_EVT_MSG, log_rpc_msg_handler,
 			 NULL);
 
-int log_rpc_set_stream_level(enum log_rpc_level level)
+void log_rpc_set_stream_level(enum log_rpc_level level)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
@@ -74,11 +74,9 @@ int log_rpc_set_stream_level(enum log_rpc_level level)
 	nrf_rpc_encode_uint(&ctx, level);
 	nrf_rpc_cbor_cmd_no_err(&log_rpc_group, LOG_RPC_CMD_SET_STREAM_LEVEL, &ctx,
 				nrf_rpc_rsp_decode_void, NULL);
-
-	return 0;
 }
 
-int log_rpc_set_history_level(enum log_rpc_level level)
+void log_rpc_set_history_level(enum log_rpc_level level)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 
@@ -86,8 +84,6 @@ int log_rpc_set_history_level(enum log_rpc_level level)
 	nrf_rpc_encode_uint(&ctx, level);
 	nrf_rpc_cbor_cmd_no_err(&log_rpc_group, LOG_RPC_CMD_SET_HISTORY_LEVEL, &ctx,
 				nrf_rpc_rsp_decode_void, NULL);
-
-	return 0;
 }
 
 int log_rpc_fetch_history(log_rpc_history_handler_t handler)
@@ -106,6 +102,20 @@ int log_rpc_fetch_history(log_rpc_history_handler_t handler)
 				nrf_rpc_rsp_decode_void, NULL);
 
 	return 0;
+}
+
+void log_rpc_stop_fetch_history(bool pause)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+
+	k_mutex_lock(&history_transfer_mtx, K_FOREVER);
+	history_handler = NULL;
+	k_mutex_unlock(&history_transfer_mtx);
+
+	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, 1);
+	nrf_rpc_encode_bool(&ctx, pause);
+	nrf_rpc_cbor_cmd_no_err(&log_rpc_group, LOG_RPC_CMD_STOP_FETCH_HISTORY, &ctx,
+				nrf_rpc_rsp_decode_void, NULL);
 }
 
 static void log_rpc_put_history_chunk_handler(const struct nrf_rpc_group *group,
