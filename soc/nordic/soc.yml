@@ -7,3 +7,8 @@ family:
             cpuclusters:
               - name: cpuapp
               - name: cpuflpr
+      - name: nrf54l
+        socs:
+          - name: nrf54lm20a
+            cpuclusters:
+              - name: cpuapp

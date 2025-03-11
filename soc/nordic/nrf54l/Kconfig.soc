@@ -1,0 +1,25 @@
+# Nordic Semiconductor nRF54L MCU line
+
+# Copyright (c) 2024 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config SOC_NRF54LM20A
+	bool
+	select SOC_SERIES_NRF54LX
+	help
+	  NRF54LM20A
+
+config SOC_NRF54LM20A_ENGA
+	bool
+	select SOC_NRF54LM20A
+	help
+	  NRF54LM20A ENGA
+
+config SOC_NRF54LM20A_ENGA_CPUAPP
+	bool
+	select SOC_NRF54LM20A_ENGA
+	help
+	  NRF54LM20A ENGA CPUAPP
+
+config SOC
+	default "nrf54lm20a" if SOC_NRF54LM20A
