@@ -24,6 +24,10 @@
 #define DATA_PINS_MAX 8
 #define VIO_COUNT     11
 
+#define STD_PAD_BIAS_CNT0_THRESHOLD 1
+
+#define PAD_BIAS_VALUE 1
+
 #define MAX_SHIFT_COUNT 63
 
 #define CE_PIN_UNUSED UINT8_MAX
@@ -34,6 +38,12 @@
 
 #define VEVIF_IRQN(vevif)   VEVIF_IRQN_1(vevif)
 #define VEVIF_IRQN_1(vevif) VPRCLIC_##vevif##_IRQn
+
+#ifdef CONFIG_SOC_NRF54L15
+#define NRF_GPIOHSPADCTRL ((NRF_GPIOHSPADCTRL_Type *)NRF_P2_S_BASE)
+#else
+#error "Unsupported SoC for SDP MSPI"
+#endif
 
 BUILD_ASSERT(CONFIG_SDP_MSPI_MAX_RESPONSE_SIZE > 0, "Response max size should be greater that 0");
 
@@ -443,6 +453,13 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		nrfe_mspi_xfer_config = xfer_config->xfer_config;
 #endif
 		configure_clock(nrfe_mspi_devices[nrfe_mspi_xfer_config_ptr->device_index].cpp);
+
+		/* Tune up pad bias for frequencies above 32MHz */
+		if (nrfe_mspi_devices[nrfe_mspi_xfer_config_ptr->device_index].cnt0_value <=
+		    STD_PAD_BIAS_CNT0_THRESHOLD) {
+			NRF_GPIOHSPADCTRL->BIAS = PAD_BIAS_VALUE;
+		}
+
 		break;
 	}
 	case NRFE_MSPI_TX:
