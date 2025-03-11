@@ -12,6 +12,7 @@
 
 #include <openthread/cli.h>
 
+#include <zephyr/net/ethernet.h> /* For ETH_P_ALL */
 #include <zephyr/net/net_l2.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/net_pkt.h>
@@ -97,14 +98,13 @@ static void ot_rpc_cmd_if_enable(const struct nrf_rpc_group *group, struct nrf_r
 	if (enable) {
 		struct sockaddr_ll addr;
 
-		ret = net_context_get(AF_PACKET, SOCK_RAW, IPPROTO_RAW, &recv_net_context);
+		ret = net_context_get(AF_PACKET, SOCK_DGRAM, ETH_P_ALL, &recv_net_context);
 		if (ret) {
 			NET_ERR("Failed to allocate recv net context");
 			goto out;
 		}
 
 		addr.sll_family = AF_PACKET;
-		addr.sll_protocol = htons(IPPROTO_RAW);
 		addr.sll_ifindex = net_if_get_by_iface(iface);
 
 		ret = net_context_bind(recv_net_context, (const struct sockaddr *)&addr,
