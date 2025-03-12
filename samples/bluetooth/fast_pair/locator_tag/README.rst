@@ -519,7 +519,7 @@ Building and running
 
 .. include:: /includes/ipc_radio_conf.txt
 
-When building the sample, you can provide the Fast Pair Model ID (``FP_MODEL_ID``) and the Fast Pair Anti-Spoofing Key (``FP_ANTI_SPOOFING_KEY``) as CMake options.
+When building the sample, you can provide the Fast Pair Model ID (``SB_CONFIG_BT_FAST_PAIR_MODEL_ID``) and the Fast Pair Anti-Spoofing Key (``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY``) as sysbuild Kconfig options.
 If the data is not provided, the sample uses the default provisioning data obtained for the *NCS locator tag* (the locator tag debug Fast Pair Provider).
 See :ref:`ug_bt_fast_pair_provisioning` for details.
 
@@ -1083,8 +1083,8 @@ Fast Pair GATT Service
 This sample uses the :ref:`bt_fast_pair_readme` and its dependencies and is configured to meet the requirements of the Fast Pair standard together with its FMDN extension.
 For details about integrating Fast Pair in the |NCS|, see :ref:`ug_bt_fast_pair`.
 
-This sample enables the ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option.
-With this option enabled, the build system calls the :ref:`bt_fast_pair_provision_script`, which automatically generates a hexadecimal file containing Fast Pair Model ID and Anti Spoofing Private Key.
+By default, this sample sets the ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID`` and ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` Kconfig options to use the Nordic device model that is intended for demonstration purposes.
+With these options set, the build system calls the :ref:`bt_fast_pair_provision_script` that automatically generates a hexadecimal file containing Fast Pair Model ID and the Anti-Spoofing Private Key.
 For more details about enabling Fast Pair for your application, see the :ref:`ug_bt_fast_pair_prerequisite_ops_kconfig` section in the Fast Pair integration guide.
 
 Bluetooth LE advertising data providers
