@@ -207,7 +207,11 @@ static mpsl_timeslot_signal_return_param_t *mpsl_timeslot_callback(
 		dm_api_call = TIMESLOT_RESCHEDULE;
 		k_msgq_put(&dm_api_msgq, &dm_api_call, K_NO_WAIT);
 		break;
+	case MPSL_TIMESLOT_SIGNAL_OVERSTAYED:
+		LOG_ERR("overstayed the timeslot: consider increasing DM_TIMESLOT_OVERHEAD_US");
+		break;
 	default:
+		LOG_ERR("Unexpected timeslot signal (%u)", signal_type);
 		break;
 	}
 
