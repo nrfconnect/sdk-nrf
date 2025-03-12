@@ -34,9 +34,9 @@ General information about samples in the |NCS|
    :caption: Subpages:
 
    samples/amazon_sidewalk
-   samples/bl
    samples/fast_pair
    samples/mesh
+   samples/bl
    samples/cellular
    samples/crypto
    samples/debug
@@ -51,11 +51,11 @@ General information about samples in the |NCS|
    samples/nrf5340
    samples/peripheral
    samples/pmic
-   samples/sensor
    samples/serialization
+   samples/sensor
    samples/suit
-   samples/tfm
    samples/thread
-   samples/zigbee
+   samples/tfm
    samples/wifi
+   samples/zigbee
    samples/other
