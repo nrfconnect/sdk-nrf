@@ -272,6 +272,8 @@ nRF Desktop
     Picolibc is used by default in Zephyr.
   * The nRF Desktop application image configurations to use Picolibc (:kconfig:option:`CONFIG_PICOLIBC`) by default.
     Using the minimal libc implementation (:kconfig:option:`CONFIG_MINIMAL_LIBC`) no longer decreases the memory footprint of the application image for most of the configurations.
+  * The Fast Pair sysbuild configurations to align the application with the sysbuild Kconfig changes for controlling the Fast Pair provisioning process.
+    The Nordic device models intended for demonstration purposes are now supplied by default in the nRF Desktop Fast Pair configurations.
 
 * Added:
 
