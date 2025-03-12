@@ -16,6 +16,7 @@
 		zephyr,uart-mcumgr = &uart20;
 		zephyr,flash = &cpuapp_mram;
 		zephyr,ieee802154 = &ieee802154;
+		zephyr,wifi = &wlan0;
 	};
 };
 
@@ -126,5 +127,9 @@
 };
 
 &adc {
+	status = "okay";
+};
+
+&wifi {
 	status = "okay";
 };
