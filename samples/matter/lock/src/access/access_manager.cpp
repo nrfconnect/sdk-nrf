@@ -33,6 +33,15 @@ void AccessManager<CRED_BIT_MASK>::Init(SetCredentialCallback setCredentialClbk,
 #endif /* CONFIG_LOCK_SCHEDULES */
 }
 
+template <CredentialsBits CRED_BIT_MASK> void AccessManager<CRED_BIT_MASK>::FactoryReset()
+{
+	/* Factory reset the storage */
+	AccessStorage::Instance().FactoryReset();
+
+	/* Reinitialize to clear removed users/credentials/schedules */
+	InitializeAllCredentials();
+}
+
 template <CredentialsBits CRED_BIT_MASK>
 bool AccessManager<CRED_BIT_MASK>::ValidateCustom(CredentialTypeEnum type, chip::MutableByteSpan &secret)
 {
