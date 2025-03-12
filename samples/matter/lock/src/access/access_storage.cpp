@@ -53,16 +53,23 @@ bool GetStorageFreeSpace(size_t &freeBytes)
 #define PSStore SecureStore
 #define PSRemove SecureRemove
 #define PSLoad SecureLoad
+#define PSFactoryReset SecureFactoryReset
 #elif defined(CONFIG_NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND)
 #define PSInit NonSecureInit
 #define PSStore NonSecureStore
 #define PSLoad NonSecureLoad
 #define PSRemove NonSecureRemove
+#define PSFactoryReset NonSecureFactoryReset
 #endif
 
 bool AccessStorage::Init()
 {
-	return (Nrf::PSErrorCode::Success == Nrf::GetPersistentStorage().PSInit());
+	return Nrf::PSErrorCode::Success == Nrf::GetPersistentStorage().PSInit(&mRootNode);
+}
+
+void AccessStorage::FactoryReset()
+{
+	Nrf::GetPersistentStorage().PSFactoryReset();
 }
 
 bool AccessStorage::PrepareKeyName(Type storageType, uint16_t index, uint16_t subindex)

@@ -276,6 +276,11 @@ public:
 #endif /* CONFIG_LOCK_SCHEDULES */
 #endif /* CONFIG_LOCK_ENABLE_DEBUG */
 
+	/**
+	 * @brief Factory reset the manager.
+	 */
+	void FactoryReset();
+
 private:
 	struct CredentialsIndexes {
 		using CredentialList = DoorLockData::IndexList<CONFIG_LOCK_MAX_NUM_CREDENTIALS_PER_TYPE>;
