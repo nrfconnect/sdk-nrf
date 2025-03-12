@@ -1,0 +1,21 @@
+common:
+  platform_allow:
+    - nrf54l20pdk/nrf54l20/cpuapp
+  integration_platforms:
+    - nrf54l20pdk/nrf54l20/cpuapp
+  harness: ztest
+  harness_config:
+    fixture: gpio_loopback
+  tags:
+    - drivers
+    - sensors
+    - qdec
+    - ci_tests_zephyr_boards_nrf_qdec
+tests:
+  nrf.extended.drivers.sensor.qdec: {}
+  nrf.extended.drivers.sensor.qdec.pm_runtime:
+    tags:
+      - pm
+    extra_configs:
+      - CONFIG_PM_DEVICE=y
+      - CONFIG_PM_DEVICE_RUNTIME=y
