@@ -40,12 +40,9 @@ extensions = [
     "sphinx_tabs.tabs",
     "zephyr.external_content",
 ]
+
 source_suffix = [".rst", ".md"]
 master_doc = "wrapper"
-
-rst_epilog = """
-.. include:: /links.txt
-"""
 
 exclude_patterns = [
   "platform/cypress/psoc64/security/keys/readme.rst"

@@ -3,12 +3,12 @@
 Trusted Firmware-M documentation
 ################################
 
-This section includes the official `Trusted Firmware-M (TF-M)`_ documentation.
+This section includes the official `Trusted Firmware-M (TF-M) <https://www.trustedfirmware.org/projects/tf-m/>`_ documentation.
 It is provided for reference only and is intended for the developers working on the integration of TF-M in the nRF Connect SDK.
 
-The section renders the content of the `official TF-M documentation <Trusted Firmware-M documentation_>`_ as-is using the sources from the downstream `TF-M repository <sdk-trusted-firmware-m_>`_.
+The section renders the content of the `official TF-M documentation <https://trustedfirmware-m.readthedocs.io/en/latest/index.html>`_ as-is using the sources from the downstream `TF-M repository <https://github.com/nrfconnect/sdk-trusted-firmware-m>`_.
 
-For information on how TF-M is integrated in the nRF Connect SDK, see the `Security section in the nRF Connect SDK documentation <Security section_>`_.
+For information on how TF-M is integrated in the nRF Connect SDK, see the `Security section in the nRF Connect SDK documentation <https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/security.html>`_.
 
 The following table provides an overview of the TF-M features supported and not supported in the nRF Connect SDK.
 
