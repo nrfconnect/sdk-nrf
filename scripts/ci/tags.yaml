@@ -1599,3 +1599,8 @@ ci_tests_zephyr_drivers_gpio:
   files:
     - nrf/tests/zephyr/drivers/gpio/
     - zephyr/tests/drivers/gpio/
+
+ci_tests_zephyr_boards_nrf_qdec:
+  files:
+    - nrf/tests/zephyr/boards/nrf/qdec/
+    - zephyr/tests/boards/nrf/qdec/
