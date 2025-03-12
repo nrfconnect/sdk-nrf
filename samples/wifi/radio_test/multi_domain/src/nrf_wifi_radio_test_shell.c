@@ -1708,7 +1708,38 @@ static int nrf_wifi_radio_get_temperature(const struct shell *shell,
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
-			      "DPD programming failed\n");
+			      "Temperature read failed\n");
+		goto out;
+	}
+
+	ret = 0;
+out:
+	ctx->rf_test_run = false;
+	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
+
+	return ret;
+}
+
+static int nrf_wifi_radio_get_bat_volt(const struct shell *shell,
+					  size_t argc,
+					  const char *argv[])
+{
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	int ret = -ENOEXEC;
+
+	if (!check_test_in_prog(shell)) {
+		goto out;
+	}
+
+	ctx->rf_test_run = true;
+	ctx->rf_test = NRF_WIFI_RF_TEST_GET_BAT_VOLT;
+
+	status = nrf_wifi_rt_fmac_rf_get_bat_volt(ctx->rpu_ctx);
+
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Voltage read failed\n");
 		goto out;
 	}
 
@@ -2512,6 +2543,12 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      NULL,
 		      "No arguments required",
 		      nrf_wifi_radio_get_temperature,
+		      1,
+		      0),
+	SHELL_CMD_ARG(get_voltage,
+		      NULL,
+		      "No arguments required",
+		      nrf_wifi_radio_get_bat_volt,
 		      1,
 		      0),
 	SHELL_CMD_ARG(get_rf_rssi,
