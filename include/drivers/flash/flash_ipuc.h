@@ -56,8 +56,8 @@ bool flash_component_ipuc_check(struct zcbor_string *component_id);
  * @brief Create a new IPUC device, dedicated for the SUIT DFU cache usage.
  *
  * @param[in]   min_address   The minimal start address of the new SUIT DFU cache area.
- * @param[out]  ipuc_address  The start address of the area manged by the found IPUC device.
- * @param[out]  ipuc_size     The size of the area manged by the found IPUC device.
+ * @param[out]  ipuc_address  The start address of the area managed by the found IPUC device.
+ * @param[out]  ipuc_size     The size of the area managed by the found IPUC device.
  *
  * @return Pointer to the device on success, NULL otherwise.
  */
@@ -68,8 +68,8 @@ struct device *flash_cache_ipuc_create(uintptr_t min_address, uintptr_t *ipuc_ad
  * @brief Check if it is possible to create a new IPUC device, dedicated for the SUIT DFU cache.
  *
  * @param[in]   min_address   The minimal start address of the new SUIT DFU cache area.
- * @param[out]  ipuc_address  The start address of the area manged by the found IPUC device.
- * @param[out]  ipuc_size     The size of the area manged by the found IPUC device.
+ * @param[out]  ipuc_address  The start address of the area managed by the found IPUC device.
+ * @param[out]  ipuc_size     The size of the area managed by the found IPUC device.
  *
  * @retval true   If it is possible to create the IPUC, based on the list of available IPUCs
  * @retval false  If it is not possible to create such IPUC.
@@ -81,8 +81,8 @@ bool flash_cache_ipuc_check(uintptr_t min_address, uintptr_t *ipuc_address, size
  *
  * @param[in]   address       The start of an address range to be modified through IPUC.
  * @param[in]   size          The size of the address range.
- * @param[out]  ipuc_address  The start address of the area manged by the found IPUC device.
- * @param[out]  ipuc_size     The size of the area manged by the found IPUC device.
+ * @param[out]  ipuc_address  The start address of the area managed by the found IPUC device.
+ * @param[out]  ipuc_size     The size of the area managed by the found IPUC device.
  *
  * @return Pointer to the device on success, NULL otherwise.
  */
@@ -95,6 +95,28 @@ struct device *flash_ipuc_find(uintptr_t address, size_t size, uintptr_t *ipuc_a
  * @param[in]  dev  Reference to the IPUC device to release.
  */
 bool flash_ipuc_setup_pending(const struct device *dev);
+
+/**
+ * @brief Create a new IPUC device, based on image ID.
+ *
+ * @param[in]   id                Image ID, defined inside DTS.
+ * @param[in]   encryption_info   Pointer to the binary defining the decryption parameters.
+ * @param[in]   compression_info  Pointer to the binary defining the decompression parameters.
+ * @param[out]  ipuc_address      The start address of the area managed by the found IPUC device.
+ * @param[out]  ipuc_size         The size of the area managed by the found IPUC device.
+ *
+ * @return Pointer to the device on success, NULL otherwise.
+ */
+struct device *flash_image_ipuc_create(size_t id, struct zcbor_string *encryption_info,
+				       struct zcbor_string *compression_info,
+				       uintptr_t *ipuc_address, size_t *ipuc_size);
+
+/**
+ * @brief Release one of the flash image IPUC driver context.
+ *
+ * @param[in]  id  Image ID, defined inside DTS.
+ */
+void flash_image_ipuc_release(size_t id);
 
 #ifdef __cplusplus
 }
