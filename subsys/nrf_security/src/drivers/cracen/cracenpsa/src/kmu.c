@@ -712,6 +712,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 	break;
 
 	case PSA_ALG_ECDSA(PSA_ALG_ANY_HASH):
+	case PSA_ALG_ECDSA(PSA_ALG_SHA_256):
 		if (PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(key_attr)) !=
 		    PSA_ECC_FAMILY_SECP_R1) {
 			return PSA_ERROR_NOT_SUPPORTED;
@@ -836,7 +837,15 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 #endif /* PSA_NEED_CRACEN_KMU_ENCRYPTED_KEYS */
 	case CRACEN_KMU_KEY_USAGE_SCHEME_RAW:
 		push_address = (uint8_t *)kmu_push_area;
-		if (key_buffer_size != 16 && key_buffer_size != 24 && key_buffer_size != 32) {
+		if (key_buffer_size == 65) {
+			/* ECDSA public keys are 65 bytes, but the first byte is CBR and compressed
+			 * points are not supported so the first byte is removed here and appended
+			 * when retrieved
+			 */
+			key_buffer++;
+			key_buffer_size--;
+		} else if (key_buffer_size != 16 && key_buffer_size != 24 &&
+			   key_buffer_size != 32) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 		break;
@@ -1013,6 +1022,12 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 	}
 
 	if (key_buffer_size >= opaque_key_size) {
+		if (psa_get_key_type(attributes) ==
+		    PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1)) {
+			*key_buffer = SI_ECC_PUBKEY_UNCOMPRESSED;
+			key_buffer++;
+			key_buffer_size--;
+		}
 		*key_buffer_length = opaque_key_size;
 		kmu_opaque_key_buffer *key = (kmu_opaque_key_buffer *)key_buffer;
 		unsigned int slot_count;
@@ -1032,12 +1047,6 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 
 	/* ECC keys are getting loading into the key buffer like volatile keys */
 	if (PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
-		if (psa_get_key_type(attributes) ==
-		    PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1)) {
-			*key_buffer = SI_ECC_PUBKEY_UNCOMPRESSED;
-			key_buffer++;
-			key_buffer_size--;
-		}
 		return push_kmu_key_to_ram(key_buffer, key_buffer_size);
 	}
 
