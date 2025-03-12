@@ -195,6 +195,8 @@ For an example that uses the **Find My Device** feature, see the :ref:`fast_pair
    To register your development email account, complete Google's device proposal form.
    You can find the link to the device proposal form in the `Fast Pair Find My Device Network extension`_ specification.
 
+.. _ug_bt_fast_pair_provisioning_register_hex_generation:
+
 Provisioning registration data onto device
 ==========================================
 
@@ -211,6 +213,10 @@ Partition definition using the Partition Manager (PM)
 For devices that support :ref:`partition_manager`, the system also automatically creates the ``bt_fast_pair`` partition.
 The partition is defined in the :file:`subsys/partition_manager/pm.yml.bt_fast_pair` file.
 The :ref:`fast_pair_input_device` sample follows this approach.
+
+.. note::
+   The dynamic generation of the ``bt_fast_pair`` partition definition is only supported if you enable the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option in your project image.
+
 Alternatively, the Fast Pair partition can be defined manually in the application's configuration file.
 To see how to do this, refer to the example in the :file:`samples/bluetooth/fast_pair/locator_tag/configuration/pm_static_nrf52840dk_nrf52840.yml` file which is a part of the :ref:`fast_pair_locator_tag` sample.
 For more information about defining Partition Manager partitions, see the :ref:`Configuration <pm_configuration>` section of the :ref:`partition_manager` page.
@@ -222,16 +228,33 @@ For devices that do not support :ref:`partition_manager`, you must declare the `
 Currently, the :ref:`zephyr:nrf54h20dk_nrf54h20` is the only device that requires manual partition definition.
 To see how to do this, refer to the example in the :file:`samples/bluetooth/fast_pair/input_device/boards/nrf54h20dk_nrf54h20_cpuapp.overlay` file.
 
-To build an application with the Fast Pair support, include the following additional CMake options:
+To generate a hexadecimal file with the Fast Pair provisioning data during the build run, you must use the default |NCS| build system configuration with sysbuild and set the following sysbuild Kconfig options:
 
-* ``FP_MODEL_ID`` - Fast Pair Model ID in format ``0xXXXXXX``,
-* ``FP_ANTI_SPOOFING_KEY`` - base64-encoded Fast Pair Anti-Spoofing Private Key.
+* ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID`` - Fast Pair Model ID in format ``0xXXXXXX``,
+* ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` - base64-encoded Fast Pair Anti-Spoofing Private Key.
 
 The Fast Pair partition address is provided automatically by the build system.
 
-For example, when building an application with the |nRFVSC|, you need to add the following parameters in the **Extra CMake arguments** field on the **Add Build Configuration view**: ``-DFP_MODEL_ID=0xFFFFFF -DFP_ANTI_SPOOFING_KEY=AbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbA=``.
+.. note::
+   The Fast Pair partition is only recognized by the sysbuild code when it is defined in the main project domain.
+   For example, the CPUNET domain in the case of nRF53 Series does not work.
+
+For example, when building an application with the |nRFVSC|, you need to add the following parameters in the **Extra CMake arguments** field on the **Add Build Configuration view**: ``-DSB_CONFIG_BT_FAST_PAIR_MODEL_ID=0xFFFFFF -DSB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY=\"AbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbA=\"``.
 Make sure to replace ``0xFFFFFF`` and ``AbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbA=`` with values obtained for your device.
-See :ref:`cmake_options` for more information about defining CMake options.
+
+Apart from passing the Fast Pair sysbuild Kconfig options as additional build parameters, these options can also be supplied to the build system with the following alternative methods:
+
+* A project configuration file for modifying the sysbuild configuration (:file:`sysbuild.conf`).
+* A default redefinition in the project Kconfig file for sysbuild (:file:`Kconfig.sysbuild`).
+
+.. note::
+   The Anti-Spoofing Private Key is confidential and must be handled securely.
+   It is recommended to store this key securely outside the code repository and pass it to the project as an additional build parameter (with the ``-DSB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` parameter).
+
+If the provisioning data generation is triggered successfully, the ``SB_CONFIG_BT_FAST_PAIR_PROV_DATA`` Kconfig option is set in the project sysbuild configuration.
+
+The Fast Pair provisioning data is automatically merged with the final hexadecimal output from the build command (:file:`merged.hex`) and is uploaded on your target device with the `west flash` command.
+
 See the following sections for information on how to add the Google Fast Pair subsystem to your project.
 
 .. rst-class:: numbered-step
@@ -253,12 +276,11 @@ The subsequent subsections describe required steps for enabling Fast Pair extens
 Enabling Fast Pair in Kconfig
 =============================
 
-If you are using the default |NCS| build system configuration with sysbuild and wish to add the Google Fast Pair subsystem to your project, enable the ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option.
-If you do not use sysbuild, you must enable :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option at the main application image level.
+To support Google Fast Pair in your project, you must enable :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option at the main application image level.
 
 .. note::
-   Sysbuild sets the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option in the main application image based on the value of the ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option.
-   Your configuration of the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option at the main application image will be ineffective, as sysbuild overrides it.
+   The Fast Pair Kconfig configuration at the sysbuild level is only used to generate the Fast Pair provisioning data hex file during the build run.
+   See the :ref:`ug_bt_fast_pair_provisioning_register_hex_generation` section for more details regarding sysbuild configuration for Fast Pair.
 
 .. _ug_bt_fast_pair_prerequisite_ops_api:
 
