@@ -580,19 +580,6 @@
   - "subsys/partition_manager/**/*"
   - "tests/subsys/net/lib/nrf_cloud/**/*"
 
-"CI-sidewalk-test":
-  - "subsys/bootloader/**/*"
-  - "subsys/partition_manager/**/*"
-  - "subsys/dfu/**/*"
-  - "modules/mcuboot/**/*"
-  - "subsys/fw_info/*"
-  - "subsys/pcd/**/*"
-  - "subsys/bluetooth/controller/*"
-  - any:
-      - "subsys/nrf_security/**/*"
-      - "!subsys/nrf_security/doc/**/*"
-      - "!subsys/nrf_security/*.rst"
-
 "CI-suit-dfu-test":
   - "include/bl*"
   - "include/fprotect.h"
