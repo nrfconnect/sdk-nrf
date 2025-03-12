@@ -919,6 +919,11 @@ Google Fast Pair integration
   * Information on how to support the firmware update intent feature on the Android platform.
     Expanded the documentation for the Fast Pair devices with the FMDN extension, which requires additional steps to support this feature.
 
+* Updated:
+
+  * The :ref:`ug_bt_fast_pair_provisioning_register_hex_generation` section that describes how to generate the hex file with the Fast Pair provisioning data.
+  * The :ref:`ug_bt_fast_pair_prerequisite_ops_kconfig` section to align it with recent changes in the sysbuild configuration for Fast Pair.
+
 Edge Impulse integration
 ------------------------
 
