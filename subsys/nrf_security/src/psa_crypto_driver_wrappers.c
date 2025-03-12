@@ -330,6 +330,9 @@ psa_status_t psa_driver_wrapper_sign_hash(const psa_key_attributes_t *attributes
 
 #if defined(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
 	case PSA_KEY_LOCATION_CRACEN:
+#if defined(PSA_NEED_CRACEN_KMU_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN_KMU:
+#endif /* PSA_NEED_CRACEN_KMU_DRIVER */
 		status = cracen_sign_hash(attributes, key_buffer, key_buffer_size, alg, hash,
 					  hash_length, signature, signature_size, signature_length);
 		/* Declared with fallback == true */
@@ -391,6 +394,9 @@ psa_status_t psa_driver_wrapper_verify_hash(const psa_key_attributes_t *attribut
 		 */
 #if defined(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
 	case PSA_KEY_LOCATION_CRACEN:
+#if defined(PSA_NEED_CRACEN_KMU_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN_KMU:
+#endif /* PSA_NEED_CRACEN_KMU_DRIVER */
 		status = cracen_verify_hash(attributes, key_buffer, key_buffer_size, alg, hash,
 					    hash_length, signature, signature_length);
 
