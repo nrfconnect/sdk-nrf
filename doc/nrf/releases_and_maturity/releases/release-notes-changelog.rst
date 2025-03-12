@@ -287,6 +287,8 @@ nRF Desktop
     For details, see the :ref:`nrf_desktop_board_configuration`.
   * The ``dongle_small`` configuration for the nRF52833 DK.
     The configuration enables logs and mimics the dongle configuration used for small SoCs.
+  * Requirement for zero latency in Zephyr's :ref:`zephyr:pm-system` while USB is active (:ref:`CONFIG_DESKTOP_USB_PM_REQ_NO_PM_LATENCY <config_desktop_app_options>` Kconfig option of the :ref:`nrf_desktop_usb_state_pm`).
+    The feature is enabled by default if Zephyr Power Management (:kconfig:option:`CONFIG_PM`) is enabled to prevent entering power states that introduce wakeup latency and ensure high performance.
 
 * Removed an imply from the nRF Desktop Bluetooth connectivity Kconfig option (:ref:`CONFIG_DESKTOP_BT <config_desktop_app_options>`).
   The imply enabled a separate workqueue for connection TX notify processing (:kconfig:option:`CONFIG_BT_CONN_TX_NOTIFY_WQ`) if MPSL was used for synchronization between the flash memory driver and radio (:kconfig:option:`CONFIG_SOC_FLASH_NRF_RADIO_SYNC_MPSL`).
