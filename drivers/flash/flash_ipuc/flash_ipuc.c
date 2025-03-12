@@ -12,6 +12,10 @@
 #include <suit_plat_decode_util.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/cache.h>
+#include <zephyr/storage/flash_map.h>
+#ifdef CONFIG_FLASH_SIMULATOR
+#include <zephyr/drivers/flash/flash_simulator.h>
+#endif /* CONFIG_FLASH_SIMULATOR */
 
 /* __ALIGNED macro is not defined on NATIVE POSIX. This platform uses __aligned macro. */
 #ifndef __ALIGNED
@@ -33,7 +37,58 @@
 BUILD_ASSERT(WRITE_BLOCK_SIZE > 0, "zephyr,flash: write_block_size expected to be non-zero");
 
 #define IPUC_MEM_COMPONENT_MAX_SIZE 32
+#define FLASH_IPUC_IMG_MAX	    512
+#define FLASH_IPUC_IMG_PREFIX	    dfu_target_img_
 
+/* The main structure that bind image IDs to the address and size, that identifies one of the
+ * available IPUCs.
+ */
+struct flash_ipuc_img {
+	uintptr_t address;
+	size_t size;
+	uint8_t id;
+	struct device *fdev;
+};
+
+/* The partition offset is relative to the parent nodes.
+ * In most cases, the direct parent is a group of partitions and the grandparent hold the offset
+ * in the absolute (dereferenceable) address space.
+ */
+#define GPARENT_OFFSET(label) (DT_REG_ADDR(DT_GPARENT(DT_NODELABEL(label))))
+
+/* Get the absolute address of a fixed partition, identified by a label. */
+#define FIXED_PARTITION_ADDRESS(label) (GPARENT_OFFSET(label) + FIXED_PARTITION_OFFSET(label))
+
+/* Initialize flash_ipuc_img structure, based on the partition label and image ID number. */
+#define PARTITION_INIT(index, label)                                                               \
+	{                                                                                          \
+		.address = FIXED_PARTITION_ADDRESS(label),                                         \
+		.size = FIXED_PARTITION_SIZE(label),                                               \
+		.id = index,                                                                       \
+		.fdev = NULL,                                                                      \
+	},
+
+/* Verify the dfu_target_img_<n> index: it should not be less than one to avoid
+ * conflicts with DFU partition (envelope) identification schemes.
+ */
+#define INDEX_IN_RAGE(index) IN_RANGE(index, 1, (FLASH_IPUC_IMG_MAX - 1))
+#define PARTITION_INIT_IF_INDEX_OK(label, index)                                                   \
+	IF_ENABLED(UTIL_BOOL(INDEX_IN_RANGE(index)), (PARTITION_INIT(index, label)))
+
+/* Only partitions with a parent node compatible with "fixed-paritions" should
+ * be taken into account.
+ */
+#define PARTITION_DEFINE_(index, label)                                                            \
+	IF_ENABLED(FIXED_PARTITION_EXISTS(label), (PARTITION_INIT_IF_INDEX_OK(label, index)))
+
+/* Concatenate prefix with the image ID and return the structure initialization code snippet. */
+#define PARTITION_DEFINE(index, prefix) PARTITION_DEFINE_(index, prefix##index)
+
+/* Define the global list of bindings between partition address, size and image ID number. */
+static struct flash_ipuc_img ipuc_imgs[] = {
+	LISTIFY(FLASH_IPUC_IMG_MAX, PARTITION_DEFINE, (), FLASH_IPUC_IMG_PREFIX)};
+
+/* The main IPUC context structure. */
 struct ipuc_context {
 	struct zcbor_string component_id;
 	uint8_t component_id_buf[IPUC_MEM_COMPONENT_MAX_SIZE];
@@ -649,4 +704,116 @@ bool flash_ipuc_setup_pending(const struct device *dev)
 	}
 
 	return false;
+}
+
+struct device *flash_image_ipuc_create(size_t id, struct zcbor_string *encryption_info,
+				       struct zcbor_string *compression_info,
+				       uintptr_t *ipuc_address, size_t *ipuc_size)
+{
+	suit_manifest_role_t role = SUIT_MANIFEST_UNKNOWN;
+	suit_plat_err_t plat_err = SUIT_PLAT_SUCCESS;
+	struct ipuc_context *ctx = NULL;
+	struct device *dev = NULL;
+	size_t count = 0;
+	uint8_t cpu_id = 0;
+	size_t idx = 0;
+#ifdef CONFIG_FLASH_SIMULATOR
+	size_t f_size = 0;
+	uintptr_t base_address = (uintptr_t)flash_simulator_get_memory(NULL, &f_size);
+#else
+	uintptr_t base_address = 0;
+#endif
+
+	if ((ipuc_address == NULL) || (ipuc_size == NULL)) {
+		LOG_WRN("Invalid image input arguments: (0x%lx, 0x%lx)", (uintptr_t)ipuc_address,
+			(uintptr_t)ipuc_size);
+		return NULL;
+	}
+
+	for (idx = 0; idx < ARRAY_SIZE(ipuc_imgs); idx++) {
+		if (ipuc_imgs[idx].id == id) {
+			LOG_INF("Found IPUC image %d: (0x%lx, 0x%x)", ipuc_imgs[idx].id,
+				ipuc_imgs[idx].address, ipuc_imgs[idx].size);
+			break;
+		}
+	}
+
+	if (idx >= ARRAY_SIZE(ipuc_imgs)) {
+		LOG_INF("IPUC image with ID %d not found", id);
+		return NULL;
+	}
+
+	if (ipuc_imgs[idx].fdev != NULL) {
+		LOG_WRN("IPUC for image %d already created", id);
+		return NULL;
+	}
+
+	plat_err = suit_ipuc_get_count(&count);
+	if (plat_err != SUIT_PLAT_SUCCESS) {
+		LOG_WRN("Unable to read IPUC count");
+		return NULL;
+	}
+
+	dev = get_free_dev();
+	if (dev == NULL) {
+		LOG_WRN("Unable to allocate new image IPUC device - no free instances");
+		return NULL;
+	}
+
+	ctx = (struct ipuc_context *)dev->data;
+
+	for (size_t i = 0; i < count; i++) {
+		ctx->component_id.len = sizeof(ctx->component_id_buf);
+		plat_err = suit_ipuc_get_info(i, &ctx->component_id, &role);
+		if (plat_err != SUIT_PLAT_SUCCESS) {
+			LOG_WRN("Failed to read IPUC %d info: %d", i, plat_err);
+			break;
+		}
+
+		plat_err = suit_plat_decode_component_id(&ctx->component_id, &cpu_id,
+							 (intptr_t *)&ctx->address, &ctx->size);
+		if (plat_err != SUIT_PLAT_SUCCESS) {
+			LOG_ERR("Failed to decode IPUC %d component ID: %d", i, plat_err);
+			continue;
+		}
+
+		if ((ctx->address != base_address + ipuc_imgs[idx].address) ||
+		    (ctx->size != ipuc_imgs[idx].size)) {
+			continue;
+		}
+
+		LOG_INF("IPUC for address range (0x%lx, 0x%x) created", ctx->address, ctx->size);
+
+		if (encryption_info == NULL) {
+			ctx->read_access = read_access_check(role);
+		} else {
+			ctx->read_access = false;
+		}
+
+		ipuc_imgs[idx].fdev = dev;
+		ctx->setup_pending = true;
+		*ipuc_address = ctx->address;
+		*ipuc_size = ctx->size;
+#ifdef CONFIG_FLASH_PAGE_LAYOUT
+		ctx->pages_layout.pages_count = 1;
+		ctx->pages_layout.pages_size = ctx->size;
+#endif /* CONFIG_FLASH_PAGE_LAYOUT */
+
+		return dev;
+	}
+
+	flash_ipuc_release(dev);
+
+	return NULL;
+}
+
+void flash_image_ipuc_release(size_t id)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(ipuc_imgs); i++) {
+		if (ipuc_imgs[i].id == id) {
+			flash_ipuc_release(ipuc_imgs[i].fdev);
+			ipuc_imgs[i].fdev = NULL;
+			break;
+		}
+	}
 }
