@@ -13,35 +13,17 @@ endchoice
 choice HOSTAP_CRYPTO_BACKEND
 	prompt "WPA supplicant crypto implementation"
 	default HOSTAP_CRYPTO_ALT_PSA if SOC_SERIES_NRF54HX
-	default HOSTAP_CRYPTO_ALT_LEGACY_PSA if SOC_SERIES_NRF54LX || BUILD_WITH_TFM
-	default HOSTAP_CRYPTO_ALT_LEGACY
+	default HOSTAP_CRYPTO_ALT_LEGACY_PSA
 	help
 	  Select the crypto implementation to use for WPA supplicant.
 	  HOSTAP_CRYPTO_ALT supports enterprise mode
 	  and DPP.
 
-config HOSTAP_CRYPTO_ALT_LEGACY
-	bool "Legacy Crypto support for WiFi using nRF security"
-	select MBEDTLS
-	select NRF_SECURITY
-	select PSA_WANT_GENERATE_RANDOM
-	select MBEDTLS_CIPHER_MODE_CBC
-	select MBEDTLS_CIPHER_MODE_CTR
-	select MBEDTLS_LEGACY_CRYPTO_C
-	select MBEDTLS_CIPHER
-	select MBEDTLS_ECP_C
-	select MBEDTLS_PK_WRITE_C
-	select MBEDTLS_HKDF_C
-	select MBEDTLS_KEY_EXCHANGE_ALL_ENABLED
-	select MBEDTLS_MD_C
-	select MBEDTLS_MD5_C
-	select MBEDTLS_CIPHER_PADDING_PKCS7
-	select MBEDTLS_PKCS5_C
-
 config HOSTAP_CRYPTO_ALT_LEGACY_PSA
 	bool "Legacy Crypto support for WiFi using nRF security"
 	select MBEDTLS
 	select NRF_SECURITY
+	# Enable for non-TF-M builds to keep it simple, no overhead
 	select PSA_WANT_GENERATE_RANDOM
 	select MBEDTLS_CIPHER_MODE_CBC
 	select MBEDTLS_CIPHER_MODE_CTR
