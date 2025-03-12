@@ -10,6 +10,7 @@ pyparsing
 python-stdnum
 pytz
 pyusb
+PyGObject
 qrcode
 stringcase==1.2.0
 toml
