@@ -50,7 +50,6 @@ private:
 		if (chip::Server::GetInstance().GetFabricTable().FabricCount() == 0) {
 			chip::DeviceLayer::PlatformMgr().ScheduleWork([](intptr_t) {
 #ifdef CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_REBOOT
-				GroupDataProviderImpl::Instance().WillBeFactoryReset();
 				chip::Server::GetInstance().ScheduleFactoryReset();
 #elif defined(CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_ONLY) ||                                                           \
 	defined(CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_PAIRING_START)
