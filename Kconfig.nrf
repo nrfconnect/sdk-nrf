@@ -134,6 +134,12 @@ config MBEDTLS_HEAP_SIZE
 	default 2048
 endif
 
+# Override configuration from zephyr which disables it by default
+config MCUMGR_GRP_IMG_ALLOW_ERASE_PENDING
+	bool
+	depends on !MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP
+	default y
+
 rsource "samples/Kconfig"
 rsource "subsys/Kconfig"
 rsource "modules/Kconfig"
