@@ -278,6 +278,8 @@ nRF Desktop
     Picolibc is used by default in Zephyr.
   * The nRF Desktop application image configurations to use Picolibc (:kconfig:option:`CONFIG_PICOLIBC`) by default.
     Using the minimal libc implementation (:kconfig:option:`CONFIG_MINIMAL_LIBC`) no longer decreases the memory footprint of the application image for most of the configurations.
+  * Enabled :ref:`nrf_desktop_usb_state_sof_synchronization` (:ref:`CONFIG_DESKTOP_USB_HID_REPORT_SENT_ON_SOF <config_desktop_app_options>` Kconfig option) by default on the nRF54H Series SoC (:kconfig:option:`CONFIG_SOC_SERIES_NRF54HX`).
+    The negative impact of USB polling jitter is more visible in case of USB High-Speed.
 
 * Added:
 

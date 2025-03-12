@@ -85,6 +85,9 @@ The module informs that the HID report was sent using :c:struct:`hid_report_sent
   In the case of :ref:`nrf_desktop_hid_mouse_report_handling`, enabling the USB SOF synchronization also synchronizes motion sensor sampling with the USB SOF instead of USB polls (motion sensor sampling is synchronized to :c:struct:`hid_report_sent_event`).
   This synchronization ensures that the sensor is sampled more evenly.
 
+The :ref:`CONFIG_DESKTOP_USB_HID_REPORT_SENT_ON_SOF <config_desktop_app_options>` Kconfig option is enabled by default on the nRF54H Series SoC (:kconfig:option:`CONFIG_SOC_SERIES_NRF54HX`) to mitigate a negative impact of jitter related to USB polls.
+The negative impact of the jitter is more visible for USB High-Speed.
+
 .. _nrf_desktop_usb_state_hid_class_instance:
 
 USB HID class instance configuration
