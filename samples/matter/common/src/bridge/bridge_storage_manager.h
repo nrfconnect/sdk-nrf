@@ -114,6 +114,11 @@ public:
 	bool Init();
 
 	/**
+	 * @brief Factory reset the storage.
+	 */
+	void FactoryReset();
+
+	/**
 	 * @brief Store bridged devices count into settings
 	 *
 	 * @param count count value to be stored
