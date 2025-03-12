@@ -47,7 +47,6 @@ manifest:
     - -find-my
     - -babblesim
     - -libmodem
-    - -sidewalk
     - -bsec
     - -doc-internal
     - +optional
@@ -196,11 +195,6 @@ manifest:
           upstream-url: https://github.com/DaveGamble/cJSON
           upstream-sha: d2735278ed1c2e4556f53a7a782063b31331dbf7
           compare-by-default: false
-    - name: sidewalk
-      repo-path: sdk-sidewalk
-      revision: 735afa54b9c6658a698e990b18c2acb539b48dba
-      groups:
-        - sidewalk
     - name: find-my
       repo-path: sdk-find-my
       revision: f1afa0d5070fdfbdc4605392792e967ee6f8d1bb
