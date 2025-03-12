@@ -5,6 +5,7 @@
  */
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
+#include <zephyr/pm/policy.h>
 
 #include "usb_event.h"
 
@@ -18,12 +19,36 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 #include <caf/events/force_power_down_event.h>
 
 
+static void update_pm_policy_latency_req(bool enable)
+{
+	static bool enabled;
+	static struct pm_policy_latency_request req;
+
+	if (enabled == enable) {
+		/* Nothing to do. */
+		return;
+	}
+
+	if (enable) {
+		/* Ensure no latency. */
+		pm_policy_latency_request_add(&req, 0U);
+	} else {
+		pm_policy_latency_request_remove(&req);
+	}
+
+	enabled = enable;
+}
+
 static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_usb_state_event(aeh)) {
 		const struct usb_state_event *event = cast_usb_state_event(aeh);
 
 		LOG_DBG("USB state change detected");
+
+		if (IS_ENABLED(CONFIG_DESKTOP_USB_PM_REQ_NO_PM_LATENCY)) {
+			update_pm_policy_latency_req(event->state == USB_STATE_ACTIVE);
+		}
 
 		switch (event->state) {
 		case USB_STATE_POWERED:

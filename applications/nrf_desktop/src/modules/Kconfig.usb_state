@@ -47,6 +47,16 @@ config DESKTOP_USB_PM_ENABLE
 	help
 	  This enables small module that blocks power down if the USB is active.
 
+config DESKTOP_USB_PM_REQ_NO_PM_LATENCY
+	bool "Require zero latency in Power Management while USB is active"
+	default y
+	depends on PM
+	depends on DESKTOP_USB_PM_ENABLE
+	help
+	  The zero latency prevents entering power states that introduce wakeup
+	  latency and ensures high performance. While USB is active, application
+	  power down is blocked anyway.
+
 config DESKTOP_USB_HID_REPORT_SENT_ON_SOF
 	bool "Submit HID report sent event on USB Start of Frame (SOF) [EXPERIMENTAL]"
 	select EXPERIMENTAL
