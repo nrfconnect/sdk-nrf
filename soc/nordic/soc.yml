@@ -12,3 +12,6 @@ family:
           - name: nrf54lm20a
             cpuclusters:
               - name: cpuapp
+          - name: nrf54lv10a
+            cpuclusters:
+              - name: cpuapp
