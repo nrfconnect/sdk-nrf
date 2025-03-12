@@ -13,7 +13,7 @@ jobs:
         with:
           git-fetch-depth: 0
           path: workspace/nrf
-          west-update-args: '--group-filter=+babblesim,+sidewalk'
+          west-update-args: '--group-filter=+babblesim'
 
       - name: Configure git and run garbage collection
         run: |
