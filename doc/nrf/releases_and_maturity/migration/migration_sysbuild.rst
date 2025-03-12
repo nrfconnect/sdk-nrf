@@ -214,18 +214,27 @@ Sysbuild now handles the HEX generation with Google Fast Pair provisioning data.
 See the :ref:`ug_bt_fast_pair_provisioning_register` section in the Fast Pair integration guide for more details regarding the provisioning process.
 The following Kconfig options are available:
 
-+------------------------------------------+----------------------------------------+
-| Kconfig option                           | Description                            |
-+==========================================+========================================+
-|               ``SB_CONFIG_BT_FAST_PAIR`` | Enables Google Fast Pair functionality |
-+------------------------------------------+----------------------------------------+
++-------------------------------------------------------+--------------------------------------------------------------------+
+| Kconfig option                                        | Description                                                        |
++=======================================================+====================================================================+
+|  ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID``                  | Sets the Model ID used for Fast Pair provisioning                  |
++-------------------------------------------------------+--------------------------------------------------------------------+
+|  ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` | Sets the Anti-Spoofing Private Key used for Fast Pair provisioning |
++-------------------------------------------------------+--------------------------------------------------------------------+
 
-To generate the Google Fast Pair provisioning data, you must set this Kconfig option at the sysbuild level.
-The method of supplying the Fast Pair Model ID and Anti-Spoofing Private Key using the command line arguments remains unchanged from previous |NCS| versions.
+To generate the Google Fast Pair provisioning data, you must set both Kconfig options at the sysbuild level.
+The promptless (read-only) ``SB_CONFIG_BT_FAST_PAIR_PROV_DATA`` Kconfig option indicates that the provisioning data HEX generation has been triggered for your build.
 
 .. note::
-    When building with sysbuild, the value of the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option is overwritten by ``SB_CONFIG_BT_FAST_PAIR``.
-    For more details about enabling Fast Pair for your application, see the :ref:`ug_bt_fast_pair_prerequisite_ops_kconfig` section in the Fast Pair integration guide.
+   The following items have been changed since the |NCS| v3.0.0:
+
+   * The Fast Pair sysbuild Kconfig options.
+     The ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option is replaced with the ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID`` and ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY``.
+   * The method of supplying the Fast Pair Model ID and Anti-Spoofing Private Key.
+     The ``FP_MODEL_ID`` and ``FP_ANTI_SPOOFING_KEY`` CMake variables are replaced by the corresponding ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID`` and ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` Kconfig options.
+   * Sysbuild no longer controls the value of the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option that is defined in the main (default) image.
+
+   For more details about the HEX generation with Google Fast Pair provisioning data, see the :ref:`ug_bt_fast_pair_provisioning_register_hex_generation` section in the Fast Pair integration guide.
 
 .. _child_parent_to_sysbuild_migration_matter:
 
