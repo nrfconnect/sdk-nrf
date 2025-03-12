@@ -96,6 +96,28 @@ struct device *flash_ipuc_find(uintptr_t address, size_t size, uintptr_t *ipuc_a
  */
 bool flash_ipuc_setup_pending(const struct device *dev);
 
+/**
+ * @brief Create a new IPUC device, based on image ID.
+ *
+ * @param[in]   id                Image ID, defined inside DTS.
+ * @param[in]   encryption_info   Pointer to the binary defining the decryption parameters.
+ * @param[in]   compression_info  Pointer to the binary defining the decompression parameters.
+ * @param[out]  ipuc_address      The start address of the area manged by the found IPUC device.
+ * @param[out]  ipuc_size         The size of the area manged by the found IPUC device.
+ *
+ * @return Pointer to the device on success, NULL otherwise.
+ */
+struct device *flash_image_ipuc_create(size_t id, struct zcbor_string *encryption_info,
+				       struct zcbor_string *compression_info,
+				       uintptr_t *ipuc_address, size_t *ipuc_size);
+
+/**
+ * @brief Release one of the flash image IPUC driver context.
+ *
+ * @param[in]  id  Image ID, defined inside DTS.
+ */
+void flash_image_ipuc_release(size_t id);
+
 #ifdef __cplusplus
 }
 #endif
