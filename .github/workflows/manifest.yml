@@ -31,7 +31,7 @@ jobs:
           west update zephyr
 
       - name: Manifest
-        uses: zephyrproject-rtos/action-manifest@v1.7.0
+        uses: zephyrproject-rtos/action-manifest@v1.8.0
         with:
           github-token: ${{ secrets.NCS_GITHUB_TOKEN }}
           manifest-path: 'west.yml'
@@ -43,3 +43,4 @@ jobs:
           verbosity-level: '1'
           labels: 'manifest'
           dnm-labels: 'DNM'
+          allowed-unreachables: 'dragoon'
