@@ -71,6 +71,12 @@ config RAW_TX_TRANSMIT_COUNT
 	help
 	  This option sets the number of packets to be transmitted in burst mode.
 
+config RAW_RX_THROUGHPUT_COUNT
+	int "Number of times throughput is calculated per second"
+	default 1
+	help
+	  This option sets the count for the number of times throughput is to be calculated.
+
 config TX_THREAD_TRANSMIT
 	bool "enable for thread based transmit"
 	help
@@ -81,6 +87,11 @@ config RAW_TX_BURST
 	help
 	  This configuration allows RAW TX burst transmission ZTEST to be enabled.
 
+config RAW_RX_BURST
+	bool "enable RAW RX burst ZTEST"
+	help
+	  This configuration allows RAW RX burst transmission ZTEST to be enabled.
+
 config RAW_TX_RX_LOOPBACK
 	bool "enable loopback TX-RX"
 	help
@@ -90,5 +101,4 @@ config RX_LOOPBACK_THREAD
 	bool "enable thread based loopback code"
 	help
 	  This configuration allows thread based Loopback test.
-
 

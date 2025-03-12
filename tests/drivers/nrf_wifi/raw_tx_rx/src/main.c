@@ -32,6 +32,8 @@ int raw_socket_fd;
 int rx_raw_socket_fd;
 
 bool packet_send = true;
+unsigned int rx_received_bytes = 0;
+#define ONE_MB 1000000
 
 #define RECV_BUFFER_SIZE    1024
 #define RAW_PKT_DATA_OFFSET 6
@@ -107,18 +109,8 @@ static struct beacon test_beacon_frame  = {
 		0XFF, 0XDD, 0X18, 0X00, 0X50, 0XF2, 0X02, 0X01, 0X01, 0X01, 0X00, 0X03, 0XA4, 0X00,
 		0X00, 0X27, 0XA4, 0X00, 0X00, 0X42, 0X43, 0X5E, 0X00, 0X62, 0X32, 0X2F, 0X00}};
 
+/* enable this code after driver changes */
 #if 0
-struct raw_tx_pkt_header {
-	unsigned int magic_num;
-	unsigned char data_rate;
-	unsigned short packet_length;
-	unsigned char tx_mode;
-	unsigned char queue;
-	unsigned char raw_tx_flag;
-};
-#endif
-
-#define ONE_MB 1000000
 static void wifi_get_throughput()
 {
 	int ret;
@@ -141,30 +133,7 @@ static void wifi_get_throughput()
 		((throughput_info.current_sec_packet_count - throughput_info.previous_sec_packet_count)*8)/1_MB);
 */
 }
-
-static void wifi_set_loopback_mode(unsigned char loopback_mode)
-{
-/* It would be nice to map to this directly rather than creating a new event. 
- * check this
- */	
-#if 0
-	status = nrf_wifi_fmac_set_loopback_mode(ctx->rpu_ctx,
-						 loopback_mode);
-#endif	
-	int ret;
-	struct net_if *iface = NULL;
-
-	iface = net_if_get_first_wifi();
-	if (iface == NULL) {
-		LOG_ERR("Failed to get Wi-Fi iface");
-		return;
-	}
-	ret = net_mgmt(NET_REQUEST_WIFI_LOOPBACK_MODE, iface, &loopback_mode, sizeof(loopback_mode));
-	if (ret) {
-		LOG_ERR("Loopback Mode setting failed %d", ret);
-	}
-	LOG_INF("Mode setting set to loopback mode = %d", loopback_mode);
-}
+#endif
 
 static void wifi_set_mode(int mode_val)
 {
@@ -372,7 +341,10 @@ static int process_single_rx_packet(struct packet_data *packet)
 	int received;
 	int count =0;
 	memset(packet->recv_buffer, 0, RECV_BUFFER_SIZE);
+/* removing print statements on receive during RX throuhput */
+#if !defined(CONFIG_RAW_RX_BURST)
 	LOG_INF("waiting on packet to be received");
+#endif
 	received = recv(rx_raw_socket_fd, packet->recv_buffer, sizeof(packet->recv_buffer), 0);
 	if (received <= 0) {
 		if (errno == EAGAIN) {
@@ -385,9 +357,8 @@ static int process_single_rx_packet(struct packet_data *packet)
 			return -errno;
 		}
 	}
-
+#if !defined(CONFIG_RAW_RX_BURST)
 	LOG_INF("sizeof of received frame is %d", received);
-
 	for (count = 0; count < received; count++)
 	{
 		printf("0x%x ", packet->recv_buffer[count]);
@@ -396,6 +367,8 @@ static int process_single_rx_packet(struct packet_data *packet)
 	}
 
 	LOG_INF("packet received");
+#endif
+	rx_received_bytes += received;
 	return 0;
 }
 
@@ -407,6 +380,7 @@ static void rx_thread_oneshot()
 		process_single_rx_packet(&test_packet);
 	}
 }
+
 static void tx_thread_transmit() {
 	int count = CONFIG_RAW_TX_TRANSMIT_COUNT;
 
@@ -522,13 +496,56 @@ ZTEST(nrf_wifi, test_raw_tx)
 #else
 	int count = CONFIG_RAW_TX_TRANSMIT_COUNT;
 	/* Send burst packets without querying for throughput */
-	LOG_INF("TX burst count is set is %d", CONFIG_RAW_TX_TRANSMIT_COUNT);
+	LOG_INF("TX burst count is set to  %d", CONFIG_RAW_TX_TRANSMIT_COUNT);
 	while (count--)
 	{
-		k_sleep(K_MSEC(4));
+		k_sleep(K_MSEC(2));
 		zassert_false(wifi_send_raw_tx_packets(), "Failed to send raw tx packet");
 	}
 #endif
+}
+#endif
+
+#ifdef CONFIG_RAW_RX_BURST
+ZTEST(nrf_wifi, test_raw_rx_single_transmit)
+{
+	unsigned int prev_time;
+	unsigned int curr_time;
+	unsigned int throughput_count = 0;
+	setup_rawrecv_socket(&dst);
+	/**
+	 * start receive thread to receive data packets. 
+	 * serialized implementation to avaoid threads. 
+	 * Keep receiving packets till throughput count is reached
+	 * calculate throughput in Mb/s.
+	 * for example - if throughput count is 1000 and 
+	 * duration is 1 sec, get throughput every 1 sec for 1000 iterations.
+	 * This code approximately calculates around 1 sec. 
+	 * Not creating threads so that TLM does not become slower.
+	 **/
+	LOG_INF("TX sent to lower layer is 1");
+	zassert_false(wifi_send_raw_tx_packets(), "Failed to send raw tx packet");
+
+	/* get kernel ticks in milliseconds */
+	prev_time = k_uptime_get();
+
+	/* receive packet and calculate throughput for received RX every 
+	 * ~1 second */
+	while (throughput_count < CONFIG_RAW_RX_THROUGHPUT_COUNT)
+	{
+		/* below API waits on recv of packets. 
+		 * current wait timeout is 10 milliseconds
+		 */
+		process_single_rx_packet(&test_packet);
+		curr_time = k_uptime_get();
+		/* possibly set 990 milliseconds here instead of 1000?? */
+		if ((curr_time - prev_time) >= 1000) {
+			prev_time = curr_time;
+			LOG_INF("Throughput in Mb/s = %d", ((rx_received_bytes * 8)/ONE_MB));
+			throughput_count++;
+		}
+	}
+	close(rx_raw_socket_fd);
 }
 #endif
 
