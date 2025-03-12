@@ -676,6 +676,23 @@ void init_trap_handler(void)
 			 : "r"(trap_entry_addr));
 }
 
+#if defined(CONFIG_ASSERT)
+#ifdef CONFIG_ASSERT_NO_FILE_INFO
+void assert_post_action(void)
+#else
+void assert_post_action(const char *file, unsigned int line)
+#endif
+{
+#ifndef CONFIG_ASSERT_NO_FILE_INFO
+	ARG_UNUSED(file);
+	ARG_UNUSED(line);
+#endif
+
+	/* force send trap_handler signal */
+	trap_entry();
+}
+#endif
+
 int main(void)
 {
 	int ret = 0;
