@@ -795,7 +795,15 @@ Modem libraries
 Multiprotocol Service Layer libraries
 -------------------------------------
 
-|no_changes_yet_note|
+* Added:
+
+  * Integration with the nrf2 clock control driver for the nRF54H20 SoC.
+  * Integration with Zephyr's System Power Management for the nRF54H20 SoC.
+  * Global domain HSFLL120 320MHz frequency request if MPSL is enabled.
+    The high frequency in global domain is required to ensure that fetching instructions from L2-cache and MRAM is as fast as possible.
+    It is needed for the radio protocols to operate correctly.
+  * MRAM always-on request for scheduled radio events.
+    It is needed to avoid MRAM wake-up latency for radio protocols.
 
 Libraries for networking
 ------------------------
