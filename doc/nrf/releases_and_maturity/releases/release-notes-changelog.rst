@@ -412,6 +412,7 @@ Bluetooth Fast Pair samples
     * The Bluetooth receiving thread stack (:kconfig:option:`CONFIG_BT_RX_STACK_SIZE`).
 
     This change results from the Bluetooth subsystem transition to the PSA cryptographic API.
+  * The sysbuild configurations in samples to align them with the sysbuild Kconfig changes for controlling the Fast Pair provisioning process.
 
 * Removed using a separate workqueue for connection TX notify processing (:kconfig:option:`CONFIG_BT_CONN_TX_NOTIFY_WQ`) from configurations.
   The MPSL flash synchronization issue (``NCSDK-29354`` in the :ref:`known_issues`) is fixed.
