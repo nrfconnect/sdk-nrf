@@ -7,6 +7,8 @@
 #include <bluetooth/conn_ctx.h>
 #include <zephyr/logging/log.h>
 
+/*Dummy comment */
+
 LOG_MODULE_REGISTER(bt_conn_ctx, CONFIG_BT_CONN_CTX_LOG_LEVEL);
 
 static void bt_conn_ctx_mem_free(struct k_mem_slab *mem_slab, void **data)
