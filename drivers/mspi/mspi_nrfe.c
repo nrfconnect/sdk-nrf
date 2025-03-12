@@ -115,6 +115,31 @@ static struct ipc_ept_cfg ep_cfg = {
 	.cb = {.bound = ep_bound, .received = ep_recv},
 };
 
+const char *z_riscv_mcause_str(uint32_t cause)
+{
+	static const char *const mcause_str[17] = {
+		[0] = "Instruction address misaligned",
+		[1] = "Instruction Access fault",
+		[2] = "Illegal instruction",
+		[3] = "Breakpoint",
+		[4] = "Load address misaligned",
+		[5] = "Load access fault",
+		[6] = "Store/AMO address misaligned",
+		[7] = "Store/AMO access fault",
+		[8] = "Environment call from U-mode",
+		[9] = "Environment call from S-mode",
+		[10] = "Unknown",
+		[11] = "Environment call from M-mode",
+		[12] = "Instruction page fault",
+		[13] = "Load page fault",
+		[14] = "Unknown",
+		[15] = "Store/AMO page fault",
+		[16] = "Unknown",
+	};
+
+	return mcause_str[MIN(cause, ARRAY_SIZE(mcause_str) - 1)];
+}
+
 /**
  * @brief IPC receive callback function.
  *
@@ -186,17 +211,18 @@ static void ep_recv(const void *data, size_t len, void *priv)
 	}
 	case NRFE_MSPI_SDP_APP_HARD_FAULT: {
 
+		const uint32_t mcause_exc_mask = 0xfff;
 		volatile uint32_t cause = cpuflpr_error_ctx_ptr[0];
 		volatile uint32_t pc = cpuflpr_error_ctx_ptr[1];
 		volatile uint32_t bad_addr = cpuflpr_error_ctx_ptr[2];
 		volatile uint32_t *ctx = (volatile uint32_t *)cpuflpr_error_ctx_ptr[3];
 
-		LOG_ERR(">>> SDP APP FATAL ERROR");
+		LOG_ERR(">>> HPF APP FATAL ERROR: %s", z_riscv_mcause_str(cause & mcause_exc_mask));
 		LOG_ERR("Faulting instruction address (mepc): 0x%08x", pc);
 		LOG_ERR("mcause: 0x%08x, mtval: 0x%08x, ra: 0x%08x", cause, bad_addr, ctx[0]);
 		LOG_ERR("    t0: 0x%08x,    t1: 0x%08x, t2: 0x%08x", ctx[1], ctx[2], ctx[3]);
 
-		LOG_ERR("SDP application halted...");
+		LOG_ERR("HPF application halted...");
 		break;
 	}
 	default: {
