@@ -36,6 +36,55 @@ Libraries
 
 This section describes the changes related to libraries.
 
+Google Fast Pair
+----------------
+
+.. toggle::
+
+   For applications and samples using the :ref:`bt_fast_pair_readme` library:
+
+   * If you use sysbuild for generating a hex file with the Fast Pair provisioning data, you must align your application with the new approach for passing the provisioning parameters (the Model ID and the Anti-Spoofing Private Key).
+     The ``FP_MODEL_ID`` and ``FP_ANTI_SPOOFING_KEY`` CMake variables are replaced by the corresponding ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID`` and ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` Kconfig options that are defined at the sysbuild level.
+     The following additional build parameters for Fast Pair are no longer valid:
+
+     ``-DFP_MODEL_ID=0xFFFFFF -DFP_ANTI_SPOOFING_KEY=AbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbA=``
+
+     You must replace them with the new sysbuild Kconfig options.
+     You can provide them as additional build parameters to the build command as follows:
+
+     .. tabs::
+
+        .. tab:: Windows
+
+           ``-DSB_CONFIG_BT_FAST_PAIR_MODEL_ID=0xFFFFFF -DSB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY='\"AbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbA=\"'``
+
+        .. tab:: Linux
+
+           ``-DSB_CONFIG_BT_FAST_PAIR_MODEL_ID=0xFFFFFF -DSB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY=\"AbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbA=\"``
+
+     You can replace this exemplary method with any other configuration method that is supported by sysbuild.
+
+     .. note::
+        To avoid build failures, you must surround the string value for the Anti-Spoofing Private Key parameter with the special character sequence instead of the typical ``"`` character.
+        The surrounding characters depend on your operating system:
+
+        .. tabs::
+
+           .. tab:: Windows
+
+              1. Replace the standard ``"`` character with the ``\"`` characters.
+              #. Surround the modified string value with the ``'`` character.
+
+           .. tab:: Linux
+
+              Replace the standard ``"`` character with the ``\"`` characters.
+
+        The special character sequence is only required when you pass the ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` Kconfig option as an additional build parameter.
+
+   * You must remove the ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option from the sysbuild configuration in your project.
+     The ``SB_CONFIG_BT_FAST_PAIR`` option no longer exists in this |NCS| release.
+     Additionally, if you rely on the ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option to set the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option in the main image configuration of your application, you must align your main image configuration and set the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option explicitly.
+
 nRF Cloud library
 -----------------
 
