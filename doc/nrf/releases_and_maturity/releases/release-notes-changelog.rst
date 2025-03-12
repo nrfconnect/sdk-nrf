@@ -35,7 +35,7 @@ IDE, OS, and tool support
 
 * Updated:
 
-  * The required `SEGGER J-Link`_ version to v8.10f.
+  * The required `SEGGER J-Link`_ version to v8.18.
   * The :ref:`installing_vsc` section on the :ref:`installation` page with the Windows-only requirement to install SEGGER USB Driver for J-Link.
 
 Board support
