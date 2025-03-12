@@ -213,7 +213,6 @@ void Board::FunctionTimerEventHandler()
 	} else if (sInstance.mFunction == BoardFunctions::FactoryReset) {
 		/* Actually trigger Factory Reset */
 		sInstance.mFunction = BoardFunctions::None;
-		Matter::GroupDataProviderImpl::Instance().WillBeFactoryReset();
 		chip::Server::GetInstance().ScheduleFactoryReset();
 	}
 }
