@@ -190,6 +190,8 @@ Bluetooth® LE
   * An issue where a flash operation executed on the system workqueue might result in ``-ETIMEDOUT``, if there is an active Bluetooth LE connection.
   * An issue where Bluetooth applications built with the ``nordic-bt-rpc`` snippet (in the :ref:`ble_rpc` configuration) did not work on the nRF54H20 devices due to incorrect memory mapping.
 
+* Removed the HCI_LE_Read_Local_P-256_Public_Key and HCI_LE_Generate_DHKey commands emulation from HCI driver.
+
 Bluetooth Mesh
 --------------
 

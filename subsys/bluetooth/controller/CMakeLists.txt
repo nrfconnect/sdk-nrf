@@ -18,18 +18,8 @@ zephyr_library_sources_ifdef(
 )
 
 zephyr_library_sources_ifdef(
-  CONFIG_BT_CTLR_ECDH
-  ecdh.c
-)
-
-zephyr_library_sources_ifdef(
   CONFIG_BT_CTLR_SDC_CS_MULTIPLE_ANTENNA_SUPPORT
   cs_antenna_switch.c
-)
-
-zephyr_library_link_libraries_ifdef(
-  CONFIG_BT_CTLR_ECDH_LIB_OBERON
-  nrfxlib_crypto
 )
 
 zephyr_library_link_libraries(subsys__bluetooth)
