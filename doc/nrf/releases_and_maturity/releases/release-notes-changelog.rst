@@ -333,6 +333,10 @@ Cellular samples
 * Deprecated the :ref:`lte_sensor_gateway` sample.
   It is no longer maintained.
 
+* :ref:`modem_shell_application` sample:
+
+  * Added ``ATE0`` and ``ATE1`` in AT command mode to handle echo off/on.
+
 * :ref:`nrf_cloud_multi_service` sample:
 
   * Added support for native simulator platform and updated the documentation accordingly.

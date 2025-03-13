@@ -17,8 +17,11 @@
 #define AT_CMD_MODE_SETT_KEY "at_cmd_mode_settings"
 
 #define AT_CMD_MODE_SETT_AUTOSTART "autostart_enabled"
+#define AT_CMD_MODE_SETT_ECHO_ON "echo_on"
 
 static bool sett_autostart_enabled;
+
+extern bool at_cmd_mode_echo_on;
 
 /******************************************************************************/
 
@@ -32,6 +35,12 @@ static int at_cmd_mode_sett_handler(const char *key, size_t len, settings_read_c
 		ret = read_cb(cb_arg, &sett_autostart_enabled, sizeof(sett_autostart_enabled));
 		if (ret < 0) {
 			mosh_error("Failed to read sett_autostart_enabled, error: %d", ret);
+			return ret;
+		}
+	} else if (strcmp(key, AT_CMD_MODE_SETT_ECHO_ON) == 0) {
+		ret = read_cb(cb_arg, &at_cmd_mode_echo_on, sizeof(at_cmd_mode_echo_on));
+		if (ret < 0) {
+			mosh_error("Failed to read at_cmd_mode_echo_on, error: %d", ret);
 			return ret;
 		}
 	}
@@ -62,6 +71,28 @@ int at_cmd_mode_sett_autostart_enabled(bool enabled)
 bool at_cmd_mode_sett_is_autostart_enabled(void)
 {
 	return sett_autostart_enabled;
+}
+
+int at_cmd_mode_sett_echo_on(bool enabled, bool print_status)
+{
+	const char *key_enabled = AT_CMD_MODE_SETT_KEY "/" AT_CMD_MODE_SETT_ECHO_ON;
+	int err;
+
+	at_cmd_mode_echo_on = enabled;
+
+	if (print_status) {
+		mosh_print("at_cmd_mode echo_%s", (enabled ? "on" : "off"));
+	}
+
+	err = settings_save_one(key_enabled, &at_cmd_mode_echo_on, sizeof(at_cmd_mode_echo_on));
+	if (err) {
+		if (print_status) {
+			mosh_error("sett_echo_on: err %d from settings_save_one()", err);
+		}
+		return err;
+	}
+
+	return 0;
 }
 
 /******************************************************************************/
