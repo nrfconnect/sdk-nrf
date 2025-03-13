@@ -96,6 +96,7 @@ static struct ras_rd_buffer *rd_buffer_alloc(struct bt_conn *conn, uint16_t rang
 {
 	uint16_t conn_buffer_count = 0;
 	uint16_t oldest_ranging_counter = UINT16_MAX;
+	uint16_t oldest_ranging_counter_age = 0;
 	struct ras_rd_buffer *available_free_buffer = NULL;
 	struct ras_rd_buffer *available_oldest_buffer = NULL;
 
@@ -103,13 +104,17 @@ static struct ras_rd_buffer *rd_buffer_alloc(struct bt_conn *conn, uint16_t rang
 		if (rd_buffer_pool[i].conn == conn) {
 			conn_buffer_count++;
 
+			const uint16_t ranging_counter_age = ranging_counter
+				- rd_buffer_pool[i].ranging_counter;
+
 			/* Only overwrite buffers that have ranging data stored
 			 * and are not being read.
 			 */
 			if (rd_buffer_pool[i].ready && !rd_buffer_pool[i].busy &&
 			    atomic_get(&rd_buffer_pool[i].refcount) == 0 &&
-			    rd_buffer_pool[i].ranging_counter < oldest_ranging_counter) {
+			    ranging_counter_age > oldest_ranging_counter_age) {
 				oldest_ranging_counter = rd_buffer_pool[i].ranging_counter;
+				oldest_ranging_counter_age = ranging_counter_age;
 				available_oldest_buffer = &rd_buffer_pool[i];
 			}
 		}
