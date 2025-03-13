@@ -25,7 +25,7 @@
 #define VIO_COUNT     11
 
 #define STD_PAD_BIAS_CNT0_THRESHOLD 1 /* 32MHz */
-#define RX_CNT0_MIN_VALUE 2 /* 23.333333MHz */
+#define RX_CNT0_MIN_VALUE	    2 /* 23.333333MHz */
 
 #define PAD_BIAS_VALUE 1
 
@@ -487,10 +487,15 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		break;
 	case NRFE_MSPI_TXRX: {
 		nrfe_mspi_xfer_packet_msg_t *packet = (nrfe_mspi_xfer_packet_msg_t *)data;
-		num_bytes = packet->num_bytes;
-
-		if (num_bytes > 0) {
+		if (packet->num_bytes > 0) {
+#ifdef CONFIG_SDP_MSPI_IPC_NO_COPY
+			prepare_and_read_data(packet, packet->data);
+#else
+			NRFX_ASSERT(packet->num_bytes <=
+				    CONFIG_SDP_MSPI_MAX_RESPONSE_SIZE - sizeof(uint32_t));
+			num_bytes = packet->num_bytes;
 			prepare_and_read_data(packet, response_buffer + sizeof(uint32_t));
+#endif
 		}
 		break;
 	}
