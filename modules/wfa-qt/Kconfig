@@ -12,8 +12,8 @@ source "subsys/logging/Kconfig.template.log_config"
 config WFA_QT_CONTROL_APP
 	# Need full POSIX from libc, Zephyr's POSIX support is only partial
 	select POSIX_API
-	select PTHREAD_IPC
-	select POSIX_SIGNAL
+	select POSIX_THREADS
+	select POSIX_SIGNALS
 	bool "WFA Quicktrack control app"
 
 config WFA_QT_THREAD_STACK_SIZE
