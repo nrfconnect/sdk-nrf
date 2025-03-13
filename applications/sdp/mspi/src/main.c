@@ -453,10 +453,15 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		break;
 	case NRFE_MSPI_TXRX: {
 		nrfe_mspi_xfer_packet_msg_t *packet = (nrfe_mspi_xfer_packet_msg_t *)data;
-		num_bytes = packet->num_bytes;
-
-		if (num_bytes > 0) {
+		if (packet->num_bytes > 0) {
+#ifdef CONFIG_SDP_MSPI_IPC_NO_COPY
+			xfer_execute(packet, packet->data);
+#else
+			NRFX_ASSERT(packet->num_bytes <=
+				    CONFIG_SDP_MSPI_MAX_RESPONSE_SIZE - sizeof(uint32_t));
+			num_bytes = packet->num_bytes;
 			xfer_execute(packet, response_buffer + sizeof(uint32_t));
+#endif
 		}
 		break;
 	}
