@@ -16,6 +16,8 @@ The keys provisioning workflow for the nRF54H20 SoC consists of two main steps:
    The nRF54H20 SoC must be in RoT lifecycle state for key provisioning to work.
    For more details on lifecycle states, see :ref:`ug_nrf54h20_architecture_lifecycle`.
 
+.. _ug_nrf54h20_keys_generating:
+
 Generating the keys
 ===================
 
@@ -82,6 +84,6 @@ Provisioning a key calls the function to import the key:
 
 To provision the keys from ``all_keys.json`` onto the KMU of the nRF54H20 SoC, use nRF Util as follows::
 
-      nrfutil device x-provision-nrf54h-keys --serial-number <snr> --key-file all_keys.json
+      nrfutil device x-provision-keys --serial-number <snr> --key-file all_keys.json
 
 For more information on how to provision keys, see the `Provisioning keys for hardware KMU`_ page in the nRF Util documentation.
