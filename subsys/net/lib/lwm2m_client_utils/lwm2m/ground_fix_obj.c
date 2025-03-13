@@ -119,7 +119,7 @@ static int forward_to_location_obj(uint16_t obj_inst_id,
 
 	switch (res_id) {
 	case GROUND_FIX_LATITUDE:
-		if (IS_ENABLED(CONFIG_POSIX_CLOCK)) {
+		if (IS_ENABLED(CONFIG_POSIX_TIMERS)) {
 			/* Update timestamp as well */
 			lwm2m_set_time(
 				&LWM2M_OBJ(LWM2M_OBJECT_LOCATION_ID, 0, LOCATION_TIMESTAMP_ID),
