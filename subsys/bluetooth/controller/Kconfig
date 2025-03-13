@@ -361,40 +361,6 @@ config BT_CTLR_FAL_SIZE
 	help
 	  Size of the Filter Accept List.
 
-if BT_CTLR_ECDH
-choice BT_CTLR_ECDH_LIB
-	prompt "SoftDevice Controller ECDH library"
-
-config BT_CTLR_ECDH_LIB_OBERON
-	select NRF_OBERON
-	depends on !SOC_SERIES_BSIM_NRFXX
-	bool "nRF Oberon (SW)"
-
-config BT_CTLR_ECDH_LIB_TINYCRYPT
-	select TINYCRYPT
-	select TINYCRYPT_ECC_DH
-	bool "Tinycrypt"
-
-endchoice
-
-config BT_CTLR_ECDH_STACK_SIZE
-	int
-	default 900 if BT_CTLR_ECDH_LIB_OBERON
-	default 1200 if BT_CTLR_ECDH_LIB_TINYCRYPT
-	help
-	  Size of the ECDH processing thread stack.
-
-config BT_CTLR_ECDH_IN_MPSL_WORK
-	bool "ECDH processing in MPSL workqueue"
-	depends on BT_CTLR_ECDH_LIB_OBERON
-	default y if !BT_SMP
-	help
-	  Run the ECDH processing in the MPSL workqueue instead of in a
-	  dedicated pre-emptible thread.
-	  This saves RAM at the cost of delaying MPSL work.
-
-endif # BT_CTLR_ECDH
-
 config BT_CTLR_SDC_EVENT_TRIGGER
 	bool "Event Trigger"
 	help
