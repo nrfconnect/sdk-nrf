@@ -510,5 +510,5 @@ SUIT_Envelope_Tagged:
     '#{{ application['name'] }}': {{ artifacts_folder ~ application['name'] }}.suit
 {%- endif %}
 {%- if nordic_top %}
-    '#top': {{ sysbuild['config']['SB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY'] }}/nordic_top.suit
+    '#top': {{ artifacts_folder }}nordic_top.suit
 {%- endif %}

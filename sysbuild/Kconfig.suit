@@ -66,6 +66,15 @@ config SUIT_ENVELOPE_NORDIC_TOP_EXTRACT_PAYLOADS_TO_CACHE
 	  size to 0 in the suit-candidate-verification sequence - so that its
 	  memory can be used as a mirror for the update of the Nordic elements.
 
+config SUIT_ENVELOPE_NORDIC_TOP_EXTRACT_PAYLOADS_FOR_PULL
+	bool "Extract payloads from the nordic_top envelope for the use of the pull model"
+	depends on !SUIT_ENVELOPE_NORDIC_TOP_EXTRACT_PAYLOADS_TO_CACHE
+	help
+	  When this option is enabled, the build system extracts payloads from
+	  the nordic_top envelope into binaries. The binaries are stored in the
+	  DFU directory, allowing them to be used for the pull model.
+	  They are also added to the DFU zip file.
+
 config SUIT_ENVELOPE_NORDIC_TOP_CACHE_PARTITION_NUM
 	int "Cache partition number to store the payloads extracted from nordic_top envelope"
 	default 1

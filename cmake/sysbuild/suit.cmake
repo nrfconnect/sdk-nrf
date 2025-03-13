@@ -230,6 +230,18 @@ function(suit_create_package)
     --core sysbuild,,,${PROJECT_BINARY_DIR}/.config
   )
 
+  if(SB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_IN_ROOT)
+    # Prepare Nordic artifacts for the root SUIT envelope
+    set(nordic_pull FALSE)
+    if(SB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_EXTRACT_PAYLOADS_FOR_PULL)
+      set(nordic_pull TRUE)
+    endif()
+    suit_nordic_artifacts_prepare(
+      ${SB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY}
+      ${nordic_pull}
+    )
+  endif()
+
   foreach(image ${IMAGES})
     unset(target)
     unset(encrypt)
