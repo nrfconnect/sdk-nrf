@@ -306,6 +306,7 @@ static int send_coap_request(struct coap_client *client, uint8_t method, const c
 {
 	int retries = 0;
 	struct coap_transmission_parameters params = coap_get_transmission_parameters();
+	static struct coap_client_option block2_option;
 
 	struct coap_client_request client_request = {
 		.method = method,
@@ -321,6 +322,13 @@ static int send_coap_request(struct coap_client *client, uint8_t method, const c
 	if (payload != NULL) {
 		client_request.payload = (uint8_t *)payload;
 		client_request.len = len;
+	}
+
+	/* Suggest the maximum block size CONFIG_COAP_CLIENT_BLOCK_SIZE to the server */
+	if (method == COAP_METHOD_GET) {
+		block2_option = coap_client_option_initial_block2();
+		client_request.options = &block2_option;
+		client_request.num_options = 1;
 	}
 
 	while (coap_client_req(client, coap_ctx->connect_socket, NULL, &client_request, NULL) ==
