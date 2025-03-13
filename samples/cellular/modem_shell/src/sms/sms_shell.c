@@ -8,7 +8,7 @@
 #include <assert.h>
 #include <string.h>
 #include <stdio.h>
-#ifdef CONFIG_GETOPT
+#ifdef CONFIG_POSIX_C_LIB_EXT
 #include <zephyr/posix/unistd.h>
 #endif
 #include <getopt.h>
