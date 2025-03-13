@@ -433,6 +433,8 @@
 /modules/openthread/                      @nrfconnect/ncs-thread
 /modules/trusted-firmware-m/              @nrfconnect/ncs-aegir
 /modules/wfa-qt/                          @nrfconnect/ncs-wifi
+/modules/hal_nordic/                      @nrfconnect/ncs-code-owners @rob-robinson-14 @Hi-Im-David
+
 
 # Samples
 /samples/CMakeLists.txt                   @nrfconnect/ncs-co-build-system
