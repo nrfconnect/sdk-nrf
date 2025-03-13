@@ -61,7 +61,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: c0864fcca88c9aca53e9c1ec2d737a6cfcfdbdaf
+      revision: v3.5.99-ncs1-4
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -129,7 +129,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: v2.0.99-ncs1-3
+      revision: v2.0.99-ncs1-4
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -138,15 +138,15 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: v3.5.2-ncs1-3
+      revision: v3.5.2-ncs1-4
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 5d8c89330530ca6428977aed2a082f3c64384794
+      revision: v2.6.4
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: v2.0.0-ncs1-3
+      revision: v2.0.0-ncs1-4
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
@@ -154,7 +154,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: v2.6.3
+      revision: v2.6.4
       submodules:
         - name: nlio
           path: third_party/nlio/repo
@@ -174,7 +174,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: v2.6.3
+      revision: v2.6.4
       groups:
         - nrf-802154
     - name: dragoon
@@ -196,12 +196,12 @@ manifest:
           compare-by-default: false
     - name: sidewalk
       repo-path: sdk-sidewalk
-      revision: v2.6.3
+      revision: v2.6.4
       groups:
         - sidewalk
     - name: find-my
       repo-path: sdk-find-my
-      revision: v2.6.3
+      revision: v2.6.4
       groups:
         - find-my
     - name: azure-sdk-for-c
