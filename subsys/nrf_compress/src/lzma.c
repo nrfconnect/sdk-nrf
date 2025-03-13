@@ -286,14 +286,14 @@ static int lzma_decompress(void *inst, const uint8_t *input, size_t input_size, 
 
 #ifdef CONFIG_NRF_COMPRESS_LZMA_VERSION_LZMA2
 	if (lzma_decoder.decoder.dicPos >= lzma_decoder.decoder.dicBufSize ||
-	    (last_part && input_size == chunk_size)) {
+	    (last_part && input_size == *offset)) {
 		*output = lzma_decoder.decoder.dic;
 		*output_size = lzma_decoder.decoder.dicPos;
 		lzma_decoder.decoder.dicPos = 0;
 	}
 #else
 	if (lzma_decoder.dicPos >= lzma_decoder.dicBufSize ||
-	    (last_part && input_size == chunk_size)) {
+	    (last_part && input_size == *offset)) {
 		*output = lzma_decoder.dic;
 		*output_size = lzma_decoder.dicPos;
 		lzma_decoder.dicPos = 0;
