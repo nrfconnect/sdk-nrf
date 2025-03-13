@@ -19,6 +19,7 @@ common:
 tests:
   samples.npm2100_one_button_compile:
     sysbuild: true
+    build_only: true
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
