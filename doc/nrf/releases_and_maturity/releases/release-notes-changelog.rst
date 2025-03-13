@@ -864,6 +864,10 @@ Other libraries
 
 * Removed the following unused SDFW services: ``echo_service``, ``reset_evt_service``, and ``sdfw_update_service``.
 
+* :ref:`mod_dm` library:
+
+  * Updated the default timeslot duration to avoid an overstay assert when the ranging failed.
+
 Security libraries
 ------------------
 
