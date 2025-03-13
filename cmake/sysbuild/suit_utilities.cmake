@@ -37,6 +37,51 @@ function(suit_copy_artifact_to_output_directory target artifact)
   )
 endfunction()
 
+function(suit_nordic_artifacts_prepare nordic_top_directory pull)
+  if(pull)
+    list(APPEND nordic_extract_args "--input-envelope" "${nordic_top_directory}/nordic_top.suit")
+    list(APPEND nordic_extract_args "--output-envelope" "nordic_top.suit")
+    list(APPEND nordic_extract_args "--omit-payload-regex" "(?!.*sec.*\.bin|.*sysctl_v.*\.bin).*")
+    list(APPEND nordic_extract_args "--dependency-regex" "(#secdom|#sysctrl)")
+    list(APPEND nordic_extract_args "--payload-file-prefix-to-remove" "file://")
+
+    execute_process(
+      COMMAND ${CMAKE_COMMAND} -E make_directory "nordic_pull_dir"
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    )
+
+    execute_process(
+      COMMAND
+      ${PYTHON_EXECUTABLE} ${SUIT_GENERATOR_CLI_SCRIPT}
+      payload_extract
+      recursive
+      ${nordic_extract_args}
+      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/nordic_pull_dir
+    )
+
+    set(temporary_dir "${CMAKE_CURRENT_BINARY_DIR}/nordic_pull_dir")
+    file(GLOB nordic_binaries RELATIVE "${temporary_dir}" "${temporary_dir}/*.bin")
+
+    foreach(nordic_bin ${nordic_binaries})
+      set_property(
+        GLOBAL APPEND PROPERTY SUIT_POST_BUILD_COMMANDS
+        COMMAND ${CMAKE_COMMAND} -E copy ${temporary_dir}/${nordic_bin} ${SUIT_ROOT_DIRECTORY}${nordic_bin}
+        BYPRODUCTS ${SUIT_ROOT_DIRECTORY}${nordic_bin}
+      )
+
+      set_property(GLOBAL APPEND PROPERTY SUIT_DFU_ARTIFACTS ${SUIT_ROOT_DIRECTORY}${nordic_bin})
+    endforeach()
+
+    set(nordic_top_directory "${temporary_dir}")
+  endif()
+
+  set_property(
+    GLOBAL APPEND PROPERTY SUIT_POST_BUILD_COMMANDS
+    COMMAND ${CMAKE_COMMAND} -E copy ${nordic_top_directory}/nordic_top.suit ${SUIT_ROOT_DIRECTORY}nordic_top.suit
+    BYPRODUCTS ${SUIT_ROOT_DIRECTORY}nordic_top.suit
+  )
+endfunction()
+
 # Render jinja templates using passed arguments.
 # Function uses core_arguments which is list of folowing entries:
 #   --core <target_name>,<locatino_of_firmware_binary_file>,<location_of_edt_file_representing_dts>
@@ -132,7 +177,7 @@ endfunction()
 #   'output_file' - path to output cache partition file
 function(suit_create_nordic_cache_partition args output_file)
   list(APPEND args "--output-file" "${output_file}")
-  list(APPEND args "--omit-payload-regex" "'(?!.*secdom.*\.bin|.*sysctl_v.*\.bin).*'")
+  list(APPEND args "--omit-payload-regex" "'(?!.*sec.*\.bin|.*sysctl_v.*\.bin).*'")
   list(APPEND args "--dependency-regex" "'(#top|#secdom|#sysctrl)'")
 
   set_property(
