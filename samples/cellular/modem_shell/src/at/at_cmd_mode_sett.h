@@ -10,5 +10,6 @@
 int at_cmd_mode_sett_init(void);
 int at_cmd_mode_sett_autostart_enabled(bool enabled);
 bool at_cmd_mode_sett_is_autostart_enabled(void);
+int at_cmd_mode_sett_echo_on(bool enabled, bool print_status);
 
 #endif /* MOSH_AT_CMD_MODE_SETT_H */

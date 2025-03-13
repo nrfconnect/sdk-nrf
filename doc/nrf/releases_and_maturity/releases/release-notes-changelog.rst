@@ -281,6 +281,10 @@ Cellular samples
 
   * The sample is no longer maintained and is now deprecated.
 
+* :ref:`modem_shell_application` sample:
+
+  * Added ``ATE0`` and ``ATE1`` in AT command mode to handle echo off/on.
+
 * :ref:`nrf_cloud_multi_service` sample:
 
   * Added support for native simulator platform and updated the documentation accordingly.
