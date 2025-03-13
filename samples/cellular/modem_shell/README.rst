@@ -168,6 +168,7 @@ Examples
      at at_cmd_mode start
      MoSh AT command mode started, press ctrl-x ctrl-q to escape
      MoSh specific AT commands:
+       Echo off/on: ATE0 and ATE1
        ICMP Ping: AT+NPING=<addr>[,<payload_length>,<timeout_msecs>,<count>[,<interval_msecs>[,<cid>]]]
      Other custom functionalities:
        AT command pipelining, for example:
