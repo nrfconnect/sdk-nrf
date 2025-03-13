@@ -162,7 +162,7 @@ static void ep_recv(const void *data, size_t len, void *priv)
 	}
 	case NRFE_MSPI_TXRX: {
 		if (len > 0) {
-			ipc_received = len - sizeof(nrfe_mspi_opcode_t);
+			ipc_received = len - sizeof(uint32_t);
 			ipc_receive_buffer = (uint8_t *)&response->data;
 		}
 #if defined(CONFIG_MULTITHREADING)

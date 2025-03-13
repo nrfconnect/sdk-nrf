@@ -96,6 +96,7 @@ typedef struct {
 
 typedef struct {
 	nrfe_mspi_opcode_t opcode; /* Same as application's request. */
+	uint32_t reserved : 24; /* Reserved in order to align data to 32 bits. */
 	uint8_t data;
 } nrfe_mspi_flpr_response_msg_t;
 
