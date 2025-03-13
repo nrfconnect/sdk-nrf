@@ -7,11 +7,19 @@
 #include <zephyr/net/socket.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/logging/log_ctrl.h>
+#include <zephyr/sys/reboot.h>
 #include <stdio.h>
 #include <date_time.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_log.h>
+#if defined(CONFIG_SOFTSIM)
+#include <nrf_softsim.h>
+#include <pm_config.h>
+#include <zephyr/device.h>
+#include <zephyr/drivers/uart.h>
+#endif
 #if defined(CONFIG_NRF_CLOUD_COAP)
 #include <net/nrf_cloud_coap.h>
 #include "fota_support_coap.h"
@@ -34,6 +42,97 @@ LOG_MODULE_REGISTER(cloud_connection, CONFIG_MULTI_SERVICE_LOG_LEVEL);
 #define CLOUD_DISCONNECTED		BIT(3)
 #define DATE_TIME_KNOWN			BIT(4)
 static K_EVENT_DEFINE(cloud_events);
+
+#if defined(CONFIG_SOFTSIM)
+#define PROFILE_MAX_SIZE 360
+static const struct device *const uart_dev = DEVICE_DT_GET(DT_NODELABEL(uart0));
+K_SEM_DEFINE(profile_received, 0, 1);
+
+struct rx_buf_t {
+	char *buf;
+	size_t len;
+	size_t pos;
+};
+
+/* read profile from uart */
+void serial_cb(const struct device *dev, void *user_data)
+{
+	int rx_recv = 0;
+	struct rx_buf_t *rx = (struct rx_buf_t *)user_data;
+	char *rx_buf = rx->buf;
+	size_t *rx_buf_pos = &rx->pos;
+
+	if (!uart_irq_update(uart_dev)) {
+		return;
+	}
+
+	while (uart_irq_rx_ready(uart_dev)) {
+		rx_recv = uart_fifo_read(uart_dev, &rx_buf[*rx_buf_pos], 1);
+
+		/* Search for those end of line characters */
+		if ((rx_buf[*rx_buf_pos] == '\n') ||
+		    (rx_buf[*rx_buf_pos] == '\r')) {
+			rx_buf[*rx_buf_pos] = 0;
+			k_sem_give(&profile_received);
+			return;
+		}
+	}
+
+	*rx_buf_pos += rx_recv;
+}
+
+void check_for_softsim(void)
+{
+	if (nrf_softsim_check_provisioned()) {
+		LOG_INF("SoftSIM is provisioned.");
+		return;
+	}
+
+	LOG_INF("Waiting for SoftSIM profile...");
+
+	if (!device_is_ready(uart_dev)) {
+		LOG_ERR("UART device not found!");
+		return;
+	}
+
+	char *profile_read_from_external_source = k_malloc(PROFILE_MAX_SIZE);
+
+	__ASSERT_NO_MSG(profile_read_from_external_source != NULL);
+
+	struct rx_buf_t rx = {
+		.buf = profile_read_from_external_source,
+		.len = PROFILE_MAX_SIZE,
+		.pos = 0,
+	};
+
+	uart_irq_callback_user_data_set(uart_dev, serial_cb, &rx);
+	uart_irq_rx_enable(uart_dev);
+
+	do {
+		LOG_INF("Transfer SoftSIM profile using serial COM port, "
+			"terminate by newline character (return key)");
+	} while (k_sem_take(&profile_received, K_SECONDS(20)));
+
+	LOG_INF("Profile received: %d characters in total", rx.pos);
+
+	uart_irq_rx_disable(uart_dev);
+
+	if (nrf_softsim_provision((uint8_t *)profile_read_from_external_source, rx.pos) != 0) {
+		LOG_ERR("SoftSIM Profile provisioning failed");
+	}
+
+	if (profile_read_from_external_source != NULL) {
+		k_free(profile_read_from_external_source);
+	}
+
+	/* Soft reset to free uart for AT host/monitor */
+	while (log_data_pending()) {
+		log_process();
+		k_yield();
+	}
+	sys_reboot(0);
+}
+#endif /* CONFIG_SOFTSIM */
 
 /* Atomic status flag tracking whether an initial association is in progress. */
 atomic_t initial_association;
@@ -559,6 +658,10 @@ static void check_credentials(void)
 
 void cloud_connection_thread_fn(void)
 {
+#if defined(CONFIG_SOFTSIM)
+	check_for_softsim();
+#endif
+
 	long_led_pattern(LED_WAITING);
 
 	LOG_INF("Enabling connectivity...");
