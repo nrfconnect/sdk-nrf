@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-source "share/sysbuild/Kconfig"
-
 config BT_FAST_PAIR_MODEL_ID
 	default 0x2A410B
 
@@ -16,3 +14,5 @@ config BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY
 
 config NRF_DEFAULT_IPC_RADIO
 	default y
+
+source "share/sysbuild/Kconfig"
