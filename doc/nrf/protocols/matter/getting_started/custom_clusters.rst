@@ -120,7 +120,7 @@ See the description of each element in the following tabs:
             </event>
          </cluster>
 
-   .. tab:: ``<cluster>``
+   .. tab:: ``<clusterExtension>``
 
       ``<clusterExtension>`` defines the extension of an existing cluster and consist of the following attributes and child elements:
 
