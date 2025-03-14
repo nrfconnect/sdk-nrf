@@ -28,6 +28,15 @@ BUILD_ASSERT((CONFIG_MQTT_HELPER_SEC_TAG != -1), "Security tag must be configure
 #define MQTT_HELPER_STATIC static
 #endif
 
+#if defined(CONFIG_MQTT_LIB_WEBSOCKET)
+/* Making RX buffer large enough that the full IPv6 packet can fit into it */
+#define MQTT_LIB_WEBSOCKET_RECV_BUF_LEN 1280
+
+/* Websocket needs temporary buffer to store partial packets */
+static uint8_t temp_ws_rx_buf[MQTT_LIB_WEBSOCKET_RECV_BUF_LEN];
+#endif
+
+
 MQTT_HELPER_STATIC struct mqtt_client mqtt_client;
 static struct sockaddr_storage broker;
 static char rx_buffer[CONFIG_MQTT_HELPER_RX_TX_BUFFER_SIZE];
@@ -486,10 +495,28 @@ static int client_connect(struct mqtt_helper_conn_params *conn_params)
 #endif
 
 #if defined(CONFIG_MQTT_LIB_TLS)
-	mqtt_client.transport.type      = MQTT_TRANSPORT_SECURE;
+#if defined(CONFIG_MQTT_LIB_WEBSOCKET)
+	mqtt_client.transport.type = MQTT_TRANSPORT_SECURE_WEBSOCKET;
 #else
-	mqtt_client.transport.type	= MQTT_TRANSPORT_NON_SECURE;
+	mqtt_client.transport.type = MQTT_TRANSPORT_SECURE;
+#endif /* CONFIG_MQTT_LIB_WEBSOCKET */
+#else
+#if defined(CONFIG_MQTT_LIB_WEBSOCKET)
+	mqtt_client.transport.type = MQTT_TRANSPORT_NON_SECURE_WEBSOCKET;
+#else
+	mqtt_client.transport.type = MQTT_TRANSPORT_NON_SECURE;
+#endif /* CONFIG_MQTT_LIB_WEBSOCKET */
+
 #endif /* CONFIG_MQTT_LIB_TLS */
+
+#if defined(CONFIG_MQTT_LIB_WEBSOCKET)
+	mqtt_client.transport.websocket.config.host = conn_params->hostname.ptr;
+	mqtt_client.transport.websocket.config.url = "/mqtt";
+	mqtt_client.transport.websocket.config.tmp_buf = temp_ws_rx_buf;
+	mqtt_client.transport.websocket.config.tmp_buf_len = sizeof(temp_ws_rx_buf);
+	mqtt_client.transport.websocket.timeout = 20 * MSEC_PER_SEC;
+#endif
+
 	mqtt_client.user_name	        = conn_params->user_name.size > 0 ? &user_name : NULL;
 	mqtt_client.password	        = conn_params->password.size > 0 ? &password : NULL;
 
