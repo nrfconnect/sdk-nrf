@@ -48,6 +48,7 @@
 .. _`Zephyr pull request #50305`: https://github.com/zephyrproject-rtos/zephyr/pull/50305
 .. _`Zephyr issue #69546`: https://github.com/zephyrproject-rtos/zephyr/issues/69546
 
+.. _`generate_psa_key_attributes.py`: https://github.com/nrfconnect/sdk-nrf/blob/main/scripts/generate_psa_key_attributes.py
 .. _`print_toolchain_checksum.sh`: https://github.com/nrfconnect/sdk-nrf/blob/main/scripts/print_toolchain_checksum.sh
 .. _`JLink License Agreement`: https://github.com/nrfconnect/sdk-nrf/blob/main/scripts/docker/jlink/license.txt
 
