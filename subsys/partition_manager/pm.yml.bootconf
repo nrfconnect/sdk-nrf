@@ -1,0 +1,6 @@
+#if defined(CONFIG_SOC_NRF54L15_CPUAPP)
+bootconf:
+  address: 0xffd080
+  region: bootconf
+  size: 0x4
+#endif /* CONFIG_SOC_NRF54L15_CPUAPP */
