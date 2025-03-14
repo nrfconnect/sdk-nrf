@@ -18,6 +18,7 @@ LOG_MODULE_REGISTER(raw_tx_packet, CONFIG_LOG_DEFAULT_LEVEL);
 #include <zephyr/posix/sys/socket.h>
 #endif
 
+#include <zephyr/net/ethernet.h>
 #include <zephyr/net/socket.h>
 
 #include "net_private.h"
@@ -171,7 +172,7 @@ static int setup_raw_pkt_socket(int *sockfd, struct sockaddr_ll *sa)
 	struct net_if *iface = NULL;
 	int ret;
 
-	*sockfd = socket(AF_PACKET, SOCK_RAW, htons(IPPROTO_RAW));
+	*sockfd = socket(AF_PACKET, SOCK_RAW, htons(ETH_P_ALL));
 	if (*sockfd < 0) {
 		LOG_ERR("Unable to create a socket %d", errno);
 		return -1;
