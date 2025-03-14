@@ -38,23 +38,11 @@ Provisioning keys to the board
 ******************************
 
 Before uploading keys, ensure that the SoC is unprovisioned.
-If the SoC has been previously provisioned and you need to use a different set of keys, you must first erase the SoC with the erase command:
+If the SoC has been previously provisioned and you need to use a different set of keys, you must first erase the SoC with the following erase command:
 
-.. tabs::
+.. code-block::
 
-    .. group-tab:: erase using nrfutil
-
-      .. parsed-literal::
-         :class: highlight
-
-          nrfutil device erase
-
-    .. group-tab:: erase using nrfjprog
-
-      .. parsed-literal::
-         :class: highlight
-
-          nrfjprog --eraseall
+   nrfutil device erase --all
 
 Once you have an unprovisioned SoC, upload keys to the board by running the following command:
 
