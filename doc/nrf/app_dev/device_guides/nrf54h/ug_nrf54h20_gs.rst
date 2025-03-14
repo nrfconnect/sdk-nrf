@@ -266,6 +266,7 @@ If you have multiple Nordic Semiconductor devices, ensure that only the nRF54H20
 
    west flash
 
+Make sure you have the :ref:`nrfutil device <ug_nrf54h20_install_toolchain>` command installed for ``west flash`` to work with the nRF54H20 DK.
 This command builds and programs the sample automatically on both the application core and the Peripheral Processor (PPR) of the nRF54H20 SoC.
 
 .. include:: /includes/nRF54H20_erase_UICR.txt
