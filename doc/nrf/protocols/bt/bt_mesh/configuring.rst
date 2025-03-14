@@ -246,3 +246,44 @@ Using the :ref:`bluetooth_mesh_sensor_server` sample as an example, configured a
   * Ambient light level gain
 
 Adding up all entries, it is worth setting the cache size to minimum 71.
+
+Security toolbox
+----------------
+
+Zephyr's Mesh security toolbox implementation does not include encryption and authentication functionality like CMAC, AES-CCM, HMAC-SHA-256 and etc.
+The third party crypto solutions are used instead.
+
+* The following options are available:
+
+  * :kconfig:option:`CONFIG_BT_MESH_USES_MBEDTLS_PSA` - Enables use of mbedTLS PSA API based security toolbox. Default option.
+  * :kconfig:option:`CONFIG_BT_MESH_USES_TFM_PSA` - Enables use of TF-M PSA API based security toolbox. Default option for plarforms those suppot TF-M.
+  * :kconfig:option:`CONFIG_BT_MESH_USES_TINYCRYPT` - Enables use of Tinycrypt based security toolbox.
+    Zephyr's Mesh operates with open value of keys, including storing them in the persistent memory.
+    The Tinycrypt based solution has worse security materials protection comparing to others and not recommended for the future designs.
+
+Bluetooth Mesh security toolbox based on the PSA API does not operate with open values of keys. Getting keys Bluetooth Mesh imports them instantly into
+crypto library getting back the unique key identifier. The only key identifiers are used in the security toolbox.
+The only key identifier are stored in the persistent memory too. The crypto library is responsible for storing of the key values in the Internal Trusted Storage (ITS).
+Data strutures that Bluetooth Mesh based on Tinycrypt and based on the PSA API store in the persistent memory are not compatible due to different key representations.
+The general way for a provisioned device to update its image with Tinycrypt based toolbox on image with the PSA API based toolbox and vice versa
+is to be unprovisioned first and reprovisioned after update again.
+If the image is changed over Mesh DFU it is recommended to use :c:enumerator:`BT_MESH_DFU_EFFECT_UNPROV`.
+
+Meanwhile, there is ability for a provisioned device to update its image with Tinycrypt based toolbox on image with the PSA API based toolbox without being unprovisioned.
+The following option :kconfig:option:`CONFIG_BT_MESH_KEY_IMPORTER` enables the key importer functionality.
+The key importer is an application initialization functionality that is called with kernel initialization priority before starting main.
+The functionality reads out the Bluetooth Mesh persistently stored data and if it finds keys stored by Tinycrypt based security toolbox it
+imports them over PSA API into crypto library and stores gotten key identifiers in PSA API toolbox based form.
+At the moment when application starts Bluetooth Mesh initialization, the persistent area already has stored data in the correct form.
+
+However, the key importer usage might add the potential vulnerability to the device. If device works with enabled key importer functionality
+and attacker gets ability to write arbitrary data in persistent memory then fake keys might be stored and will be imported to PSA crypto library after next device reset.
+
+* The following steps should be done to use the key importer functionality safely:
+
+  * Update images with Tinycrypt based toolbox on images with the PSA API based toolbox with enabled the key importer feature.
+  * Reset device to perform key import after devices in the network have successfully updated their images.
+  * Update images with the PSA API based security toolbox but with disabled the key importer feature.
+
+However, even these steps have been completed, the Tinycrypt based open key values is still possible to extract from the settings subsystem backend if there is access to it.
+The keys might still be compromised. It is strictly recommended to start the key refresh procedure according to specification for all existing keys.

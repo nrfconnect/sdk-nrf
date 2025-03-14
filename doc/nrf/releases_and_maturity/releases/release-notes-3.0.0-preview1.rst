@@ -133,7 +133,13 @@ Bluetooth® LE
 Bluetooth Mesh
 --------------
 
-|no_changes_yet_note|
+* Added:
+
+  * The key importer functionality (:kconfig:option:`CONFIG_BT_MESH_KEY_IMPORTER`)
+
+* Updated:
+
+  * The :ref:`ug_bt_mesh_configuring` page with the security toolbox subclause and the key importer functionality.
 
 DECT NR+
 --------
