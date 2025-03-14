@@ -338,8 +338,8 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - samples.npm1300_fuel_gauge
-    - samples.npm1300_one_button
+    - sample.npm1300_fuel_gauge
+    - sample.npm1300_one_button
   platforms:
     - nrf52840dk/nrf52840
     - nrf52dk/nrf52832

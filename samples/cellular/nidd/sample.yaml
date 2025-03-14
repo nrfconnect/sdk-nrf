@@ -1,7 +1,7 @@
 sample:
   name: NIDD sample
 tests:
-  samples.cellular.nidd:
+  sample.cellular.nidd:
     sysbuild: true
     build_only: true
     platform_allow:

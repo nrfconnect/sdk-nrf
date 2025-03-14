@@ -17,7 +17,7 @@ common:
     - ci_samples_pmic
 
 tests:
-  samples.npm2100_one_button_compile:
+  sample.npm2100_one_button_compile:
     sysbuild: true
     build_only: true
     platform_allow:

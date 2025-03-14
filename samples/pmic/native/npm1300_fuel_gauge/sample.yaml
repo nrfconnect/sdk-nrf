@@ -23,7 +23,7 @@ common:
     - pmic
     - ci_samples_pmic
 tests:
-  samples.npm1300_fuel_gauge:
+  sample.npm1300_fuel_gauge:
     sysbuild: true
     platform_allow:
       - nrf52dk/nrf52832
@@ -39,7 +39,7 @@ tests:
         - "PMIC device ok"
         - "V: [0-9.]+, I: [0-9.-]+, T: [0-9.-]+"
         - "SoC: [0-9.]+, TTE: ([0-9.]+|nan), TTF: ([0-9.]+|nan)"
-  samples.compile:
+  sample.compile:
     sysbuild: true
     platform_allow:
       - nrf9160dk/nrf9160

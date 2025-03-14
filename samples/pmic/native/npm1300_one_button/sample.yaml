@@ -23,7 +23,7 @@ common:
     - pmic
     - ci_samples_pmic
 tests:
-  samples.npm1300_one_button:
+  sample.npm1300_one_button:
     sysbuild: true
     platform_allow:
       - nrf52dk/nrf52832
@@ -39,7 +39,7 @@ tests:
     tags:
       - sysbuild
       - ci_samples_pmic
-  samples.npm1300_one_button_compile:
+  sample.npm1300_one_button_compile:
     sysbuild: true
     platform_allow:
       - nrf9160dk/nrf9160

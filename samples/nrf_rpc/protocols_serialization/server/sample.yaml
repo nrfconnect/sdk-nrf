@@ -3,7 +3,7 @@ sample:
   description: Demonstrates serialization of Bluetooth LE and OpenThread API using
     nRF RPC
 tests:
-  samples.nrf_rpc.protocols_serialization.server.rpc_ble:
+  sample.nrf_rpc.protocols_serialization.server.rpc_ble:
     build_only: true
     platform_allow:
       - nrf52840dk/nrf52840
@@ -16,7 +16,7 @@ tests:
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
-  samples.nrf_rpc.protocols_serialization.server.rpc_ot:
+  sample.nrf_rpc.protocols_serialization.server.rpc_ot:
     build_only: true
     platform_allow:
       - nrf52840dk/nrf52840
@@ -29,7 +29,7 @@ tests:
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
-  samples.nrf_rpc.protocols_serialization.server.rpc:
+  sample.nrf_rpc.protocols_serialization.server.rpc:
     build_only: true
     platform_allow:
       - nrf52840dk/nrf52840

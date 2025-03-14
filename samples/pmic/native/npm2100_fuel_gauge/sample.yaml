@@ -16,7 +16,7 @@ common:
     - pmic
     - ci_samples_pmic
 tests:
-  samples.npm2100_fuel_gauge_compile:
+  sample.npm2100_fuel_gauge_compile:
     sysbuild: true
     build_only: true
     platform_allow:
