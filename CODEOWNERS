@@ -918,6 +918,7 @@
 /tests/subsys/suit/                       @nrfconnect/ncs-charon
 /tests/tfm/                               @nrfconnect/ncs-aegir @stephen-nordic @magnev
 /tests/unity/                             @nordic-krch
+/tests/sdp/                               @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /tests/subsys/zigbee/                     @nrfconnect/ncs-zigbee
 /tests/zephyr/drivers/comparator/         @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/flash/common/       @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
