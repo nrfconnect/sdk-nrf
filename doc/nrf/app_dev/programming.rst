@@ -21,6 +21,60 @@ To program the :ref:`output build files <app_build_output_files>` to your device
 The flash command programs all cores by default, both in the |nRFVSC| and on the command line.
 If you want to program only one selected core, use ``west flash`` on the command line and :ref:`specify the domain <zephyr:west-multi-domain-flashing>`.
 
+.. _programming_selecting_runner:
+
+Selecting west runner
+*********************
+
+Starting with the |NCS| v3.0.0, all Nordic Semiconductor :ref:`boards <app_boards>` are using the `nRF Util`_ as the default runner for the ``west flash`` command.
+This change ensures that the programming process is consistent across all boards.
+See the :ref:`build system section in the v3.0.0 migration guide <migration_3.0_recommended>` for more information.
+
+.. note::
+
+   The ``west debug`` command is not affected by this change of the default runner.
+
+Runners are Zephyr-specific Python classes that wrap Zephyr's :ref:`flash and debug host tools <zephyr:flash-debug-host-tools>` and integrate them with west and the Zephyr build system to support ``west flash`` and related commands.
+Runners supported on a board are determined by the :file:`board.cmake` file in the board folder, for example `this one <nRF52840 DK board.cmake_>`_.
+In particular, the following include lines enable them, with the first ``<runner>`` listed becoming the default runner:
+
+.. code-block:: cmake
+
+   include(${ZEPHYR_BASE}/boards/common/<runner>.board.cmake)
+
+For more information about runners, see the Zephyr documentation: :ref:`zephyr:flash-and-debug-support` and :ref:`zephyr:west-flashing`.
+
+If you want to change the runner used by ``west flash``, you can use one of the following options:
+
+* Specify the runner permanently in your application's :file:`CMakeLists.txt` file:
+
+  .. code-block::
+
+     set(BOARD_FLASH_RUNNER nrfjprog)
+
+* Specify the runner for a single command:
+
+  .. code-block::
+
+     west flash -r nrfjprog
+
+In either case, make sure you have the required tools installed on your system: `nRF Util`_ for ``-r nrfutil`` or the archived `nRF Command Line Tools`_ for ``-r nrfjprog``.
+
+To see which runners are available for your board, run the following command:
+
+.. code-block::
+
+   west flash --context
+
+The output will include lines like the following:
+
+.. code-block::
+
+   available runners in runners.yaml:
+     nrfutil, nrfjprog, jlink, pyocd, openocd
+   default runner in runners.yaml:
+     nrfutil
+
 .. _programming_hw:
 
 Hardware-specific programming steps
@@ -34,6 +88,10 @@ Programming to Thingy:91 also requires a :ref:`similar step <building_pgming>`, 
 
 Programming the nRF52840 Dongle
   To program the nRF52840 Dongle instead of a development kit, follow the programming instructions in :ref:`zephyr:nrf52840dongle_nrf52840` or use the `Programmer app <Programming the nRF52840 Dongle_>`_.
+
+Programming the nRF54H20 DK
+   To program the nRF54H20 DK, follow the programming instructions in the :ref:`nRF54H20 device guide <ug_nrf54h20_gs_sample>`.
+   Programming the nRF54H20 DK with the |NCS| version earlier than v3.0.0 requires installing the `nrfutil device command <Installing and upgrading nRF Util commands_>`_ for the ``west flash`` command to work with this device.
 
 .. _programming_params:
 

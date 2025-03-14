@@ -53,6 +53,36 @@ Recommended changes
 
 The following changes are recommended for your application to work optimally after the migration.
 
+Build system
+============
+
+.. toggle::
+
+   * The default runner for the ``west flash`` command has been changed to use `nRF Util`_ instead of ``nrfjprog`` that is part of the archived `nRF Command Line Tools`_.
+     This affects all :ref:`boards <app_boards>` that used ``nrfjprog`` as the west runner backend for programming the following SoCs and SiPs:
+
+     * nRF91 Series (including nRF91x1)
+     * nRF7002
+     * nRF5340 (including nRF5340 Audio DK)
+     * Nordic Thingy:53
+     * nRF52 Series
+     * nRF21540
+
+     This change is made to ensure that the programming process is consistent across all boards and to provide a more robust programming experience.
+     The ``west flash`` command now uses the ``nrfutil device`` subcommand by default to flash the application to the board.
+
+     It is recommended to install nRF Util to avoid potential issues during programming.
+     Complete the following steps:
+
+     1. Follow the steps for `Installing nRF Util`_ in its official documentation.
+     2. Install the `nrfutil device <Device command overview_>`_ using the following command:
+
+        .. code-block::
+
+           nrfutil install device
+
+     If you prefer to continue using ``nrfjprog`` for programming devices, :ref:`specify the west runner <programming_selecting_runner>` with ``west flash``.
+
 Samples and applications
 ========================
 
