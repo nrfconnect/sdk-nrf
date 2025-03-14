@@ -36,6 +36,27 @@ Libraries
 
 This section describes the changes related to libraries.
 
+Google Fast Pair
+----------------
+
+.. toggle::
+
+   For applications and samples using the :ref:`bt_fast_pair_readme` library:
+
+   * If you use the sysbuild feature for generating a hex file with the Fast Pair provisioning data, you must align your application with the newest approach for passing the provisioning parameters (the Model ID and the Anti-Spoofing Private Key).
+     The ``FP_MODEL_ID`` and ``FP_ANTI_SPOOFING_KEY`` CMake variables are replaced by the corresponding ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID`` and ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` Kconfig options that are defined at the sysbuild level.
+     The additional build parameters for Fast Pair are no longer valid:
+
+     ``-DFP_MODEL_ID=0xFFFFFF -DFP_ANTI_SPOOFING_KEY=AbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbA=``
+
+     And must be replaced with the following parameters:
+
+     ``-DSB_CONFIG_BT_FAST_PAIR_MODEL_ID=0xFFFFFF -DSB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY=\"AbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbA=\"``
+
+   * You must remove the ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option from the sysbuild configuration in your project.
+     The ``SB_CONFIG_BT_FAST_PAIR`` option no longer exists in this |NCS| release.
+     Additionally, if you rely on the ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option to set the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option in the main image configuration of your application, you must align your main image configuration and set the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option explicitly.
+
 nRF Cloud library
 -----------------
 

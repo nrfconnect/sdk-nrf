@@ -272,6 +272,8 @@ nRF Desktop
     Picolibc is used by default in Zephyr.
   * The nRF Desktop application image configurations to use Picolibc (:kconfig:option:`CONFIG_PICOLIBC`) by default.
     Using the minimal libc implementation (:kconfig:option:`CONFIG_MINIMAL_LIBC`) no longer decreases the memory footprint of the application image for most of the configurations.
+  * The Fast Pair sysbuild configurations to align the application with the sysbuild Kconfig changes for controlling the Fast Pair provisioning process.
+    The Nordic device models intended for demonstration purposes are now supplied by default in the nRF Desktop Fast Pair configurations.
 
 * Added:
 
@@ -399,6 +401,7 @@ Bluetooth Fast Pair samples
     * The Bluetooth receiving thread stack (:kconfig:option:`CONFIG_BT_RX_STACK_SIZE`).
 
     This change results from the Bluetooth subsystem transition to the PSA cryptographic API.
+  * The sysbuild configurations in samples to align them with the sysbuild Kconfig changes for controlling the Fast Pair provisioning process.
 
 * Removed using a separate workqueue for connection TX notify processing (:kconfig:option:`CONFIG_BT_CONN_TX_NOTIFY_WQ`) from configurations.
   The MPSL flash synchronization issue (``NCSDK-29354`` in the :ref:`known_issues`) is fixed.
@@ -716,7 +719,16 @@ Bluetooth libraries and services
       In the FMDN context, this change is required to support firmware update intents on the Android platform.
       For further details on the Android intent feature for firmware updates, see the :ref:`ug_bt_fast_pair_provisioning_register_firmware_update_intent` section in the Fast Pair integration guide.
 
-  * Updated the automatically generated ``bt_fast_pair`` partition definition (located in the :file:`subsys/partition_manager/pm.yml.bt_fast_pair`) to work correctly when building with TF-M.
+  * Updated:
+
+    * The Fast Pair sysbuild Kconfig options.
+      The ``SB_CONFIG_BT_FAST_PAIR`` is replaced with the ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID`` and ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` Kconfig options.
+    * The method of supplying the Fast Pair Model ID and Anti-Spoofing Private Key to generate the Fast Pair provisioning data HEX file.
+      The ``FP_MODEL_ID`` and ``FP_ANTI_SPOOFING_KEY`` CMake variables are replaced by the corresponding ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID`` and ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` Kconfig options.
+    * The automatically generated ``bt_fast_pair`` partition definition (located in the :file:`subsys/partition_manager/pm.yml.bt_fast_pair`) to work correctly when building with TF-M.
+
+  * Removed the sysbuild control over the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option, which is defined in the main (default) image.
+    Sysbuild no longer sets the value of this Kconfig option.
 
 * :ref:`bt_mesh` library:
 
@@ -908,6 +920,11 @@ Google Fast Pair integration
   * Instructions on how to provision the Fast Pair data onto devices without the :ref:`partition_manager` support, specifically for the :ref:`zephyr:nrf54h20dk_nrf54h20`.
   * Information on how to support the firmware update intent feature on the Android platform.
     Expanded the documentation for the Fast Pair devices with the FMDN extension, which requires additional steps to support this feature.
+
+* Updated:
+
+  * The :ref:`ug_bt_fast_pair_provisioning_register_hex_generation` section that describes how to generate the hex file with the Fast Pair provisioning data.
+  * The :ref:`ug_bt_fast_pair_prerequisite_ops_kconfig` section to align it with recent changes in the sysbuild configuration for Fast Pair.
 
 Edge Impulse integration
 ------------------------
