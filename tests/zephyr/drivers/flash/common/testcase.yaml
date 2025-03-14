@@ -4,8 +4,14 @@ common:
     - flash
     - ci_tests_drivers_sdp
 tests:
-  nrf.extended.drivers.flash.common.sdp:
+  nrf.extended.drivers.flash.common.sdp.quad:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+  nrf.extended.drivers.flash.common.sdp.single:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args: EXTRA_DTC_OVERLAY_FILE="single.overlay"

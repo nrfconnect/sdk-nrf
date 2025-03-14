@@ -162,7 +162,7 @@ static void ep_recv(const void *data, size_t len, void *priv)
 	}
 	case NRFE_MSPI_TXRX: {
 		if (len > 0) {
-			ipc_received = len - sizeof(nrfe_mspi_opcode_t);
+			ipc_received = len - sizeof(uint32_t);
 			ipc_receive_buffer = (uint8_t *)&response->data;
 		}
 #if defined(CONFIG_MULTITHREADING)
@@ -542,10 +542,12 @@ static int xfer_packet(struct mspi_xfer_packet *packet, uint32_t timeout)
 	xfer_packet->num_bytes = packet->num_bytes;
 
 #ifdef CONFIG_MSPI_NRFE_IPC_NO_COPY
-	/* Check for alignlemt problems. */
+	/* Check for alignment problems. */
 	if (((uint32_t)packet->data_buf) % sizeof(uint32_t) != 0) {
-		memcpy((void *)(buffer + sizeof(nrfe_mspi_xfer_packet_msg_t)),
-		       (void *)packet->data_buf, packet->num_bytes);
+		if (packet->dir == MSPI_TX) {
+			memcpy((void *)(buffer + sizeof(nrfe_mspi_xfer_packet_msg_t)),
+			       (void *)packet->data_buf, packet->num_bytes);
+		}
 		xfer_packet->data = buffer + sizeof(nrfe_mspi_xfer_packet_msg_t);
 	} else {
 		xfer_packet->data = packet->data_buf;
@@ -557,20 +559,32 @@ static int xfer_packet(struct mspi_xfer_packet *packet, uint32_t timeout)
 	rc = send_data(xfer_packet->opcode, xfer_packet, len);
 
 	/* Wait for the transfer to complete and receive data. */
-	if ((packet->dir == MSPI_RX) && (ipc_receive_buffer != NULL) && (ipc_received > 0)) {
-		/*
-		 * It is not possible to check whether received data is valid, so packet->num_bytes
-		 * should always be equal to ipc_received. If it is not, then something went wrong.
-		 */
-		if (packet->num_bytes != ipc_received) {
-			rc = -EIO;
-		} else {
-			memcpy((void *)packet->data_buf, (void *)ipc_receive_buffer, ipc_received);
+	if (packet->dir == MSPI_RX) {
+#ifdef CONFIG_MSPI_NRFE_IPC_NO_COPY
+		/* Not aligned buffer. */
+		if (((uint32_t)packet->data_buf) % sizeof(uint32_t) != 0) {
+			memcpy((void *)packet->data_buf, (void *)xfer_packet->data,
+			       packet->num_bytes);
 		}
+#else
+		if ((ipc_receive_buffer != NULL) && (ipc_received > 0)) {
+			/*
+			 * It is not possible to check whether received data is valid, so
+			 * packet->num_bytes should always be equal to ipc_received. If it is not,
+			 * then something went wrong.
+			 */
+			if (packet->num_bytes != ipc_received) {
+				rc = -EIO;
+			} else {
+				memcpy((void *)packet->data_buf, (void *)ipc_receive_buffer,
+				       ipc_received);
+			}
 
-		/* Clear the receive buffer pointer and size */
-		ipc_receive_buffer = NULL;
-		ipc_received = 0;
+			/* Clear the receive buffer pointer and size */
+			ipc_receive_buffer = NULL;
+			ipc_received = 0;
+		}
+#endif
 	}
 
 	return rc;
@@ -731,8 +745,7 @@ static int nrfe_mspi_init(const struct device *dev)
 		.callback = flpr_fault_handler,
 		.user_data = NULL,
 		.flags = 0,
-		.ticks = counter_us_to_ticks(flpr_fault_timer, CONFIG_MSPI_NRFE_FAULT_TIMEOUT)
-	};
+		.ticks = counter_us_to_ticks(flpr_fault_timer, CONFIG_MSPI_NRFE_FAULT_TIMEOUT)};
 #endif
 
 	ret = pinctrl_apply_state(drv_cfg->pcfg, PINCTRL_STATE_DEFAULT);

@@ -10,16 +10,16 @@
 			#address-cells = <1>;
 			#size-cells = <1>;
 
-			sram_tx: memory@2003c000 {
-				reg = <0x2003c000 0x07f0>;
+			sram_tx: memory@2003b400 {
+				reg = <0x2003b400 0x07f0>;
 			};
 
-			sram_rx: memory@2003c7f0 {
-				reg = <0x2003c7f0 0x07f0>;
+			sram_rx: memory@2003bbf0 {
+				reg = <0x2003bbf0 0x07f0>;
 			};
 
-			cpuflpr_error_code: memory@2003cfe0 {
-				reg = <0x2003cfe0 0x0020>; /* 32bytes */
+			cpuflpr_error_code: memory@2003c3e0 {
+				reg = <0x2003c3e0 0x0020>; /* 32bytes */
 			};
 		};
 	};
@@ -37,16 +37,16 @@
 };
 
 &cpuflpr_rram {
-	reg = <0x17a000 DT_SIZE_K(12)>;
+	reg = <0x179400 DT_SIZE_K(15)>;
 };
 
 &cpuflpr_code_partition {
-	reg = <0x0 DT_SIZE_K(12)>;
+	reg = <0x0 DT_SIZE_K(15)>;
 };
 
 &cpuflpr_sram {
-	reg = <0x2003d000 DT_SIZE_K(12)>;
-	ranges = <0x0 0x2003d000 0x3000>;
+	reg = <0x2003c400 DT_SIZE_K(15)>;
+	ranges = <0x0 0x2003c400 0x3c00>;
 };
 
 &cpuflpr_vevif_rx {
