@@ -203,28 +203,21 @@ Programming the project
 ***********************
 
 For the nRF5340 DK and other boards equipped with flash working in the QSPI mode, use the :ref:`standard programming command <programming>` (``west flash``).
-For other cases, set up a configuration file for nrfjprog, as described in the following section.
-
-.. note::
-      |nrfjprog_deprecation_note|
+For other cases, set up a configuration file for `nRF Util`_, as described in the following section.
 
 Programming to external flash in SPI/DSPI mode
 ==============================================
 
-Programming an application with west triggers the nrfjprog runner.
+Programming an application with west triggers the nRF Util runner.
 The runner uses the default system settings that configure the application in the QSPI mode when programming the external flash.
-You can change this behavior by using a custom :file:`Qspi.ini` configuration file.
+You can change this behavior by using a custom :file:`Qspi.json` configuration file.
+This file is used to set up the QSPI flash device and its parameters.
 
 .. note::
-    The :file:`Qspi.ini` file is required to work on the Nordic Thingy:53.
+    The :file:`Qspi.json` file is required to work on the Nordic Thingy:53.
+    Its QSPI configuration is different from the default one, for example, it uses the ``PP`` command for programming and ``READ2IO`` for reading.
 
-This file can specify the mode to use when programming the QSPI flash.
-For example, the following code is from the file for the Thingy:53 and uses ``PP`` for programming and ``READ2IO`` for reading:
-
-.. literalinclude:: ../../../../../samples/nrf5340/extxip_smp_svr/Qspi_thingy53.ini
-    :language: yaml
-
-To use this file automatically in a project, update the ``CMakeLists.txt`` file by :ref:`adding the mention of the new file <modifying_files_compiler>`.
+To use such a file automatically in a project, update the ``CMakeLists.txt`` file by :ref:`adding the mention of the new file <modifying_files_compiler>`.
 This way, the file can be applied globally for every board built with a project or applied to specific boards if a project supports multiple board targets, each with different configurations.
 The following code shows how to set the configuration file used when flashing the Thingy:53 only.
 
@@ -238,7 +231,7 @@ The following code shows how to set the configuration file used when flashing th
     macro(app_set_runner_args)
       if(CONFIG_BOARD_THINGY53_NRF5340_CPUAPP)
         # Use alternative QSPI configuration file when flashing Thingy53
-        board_runner_args(nrfjprog "--qspiini=${CMAKE_CURRENT_SOURCE_DIR}/Qspi_thingy53.ini")
+        board_runner_args(nrfutil "--ext-mem-config-file=${CMAKE_CURRENT_SOURCE_DIR}/qspi_thingy53.json")
       endif()
     endmacro()
 
@@ -248,7 +241,7 @@ The following code shows how to set the configuration file used when flashing th
 
 .. note::
     The external flash chip must be connected to the dedicated QSPI peripheral port pins of the nRF5340 SoC.
-    It is not possible to program an external flash chip that is connected to different pins using nrfjprog.
+    It is not possible to program an external flash chip that is connected to different pins using nRF Util.
 
 Troubleshooting
 ***************

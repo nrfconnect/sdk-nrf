@@ -167,14 +167,11 @@ With other tools
 
 You must use the :file:`merged.hex` file instead of the :file:`zephyr.hex` file to choose the program image explicitly.
 
-For example, for nrfjprog:
+For example, for nRF Util:
 
 .. code-block:: console
 
-   nrfjprog -f nrf53 -s 0 --program build/merged.hex ---sectorerase --qspisectorerase --verify --reset
-
-.. note::
-      |nrfjprog_deprecation_note|
+   nrfutil device program --x-family nrf53 --options chip_erase_mode=ERASE_RANGES_TOUCHED_BY_FIRMWARE,qspi_erase_mode=ERASE_ALL,verify=VERIFY_HASH,reset=RESET_SOFT --firmware build/merged.hex
 
 Updating firmware patches
 =========================
