@@ -163,9 +163,15 @@ OpenThread RPC currently supports the serialization of the following OpenThread 
 * :c:func:`otThreadGetMleCounters`
 * :c:func:`otThreadGetNetworkName`
 * :c:func:`otThreadGetPartitionId`
+* :c:func:`otThreadGetVendorName`
+* :c:func:`otThreadGetVendorModel`
+* :c:func:`otThreadGetVendorSwVersion`
 * :c:func:`otThreadGetVersion`
 * :c:func:`otThreadSetEnabled`
 * :c:func:`otThreadSetLinkMode`
+* :c:func:`otThreadSetVendorName`
+* :c:func:`otThreadSetVendorModel`
+* :c:func:`otThreadSetVendorSwVersion`
 * :c:func:`otUdpBind`
 * :c:func:`otUdpClose`
 * :c:func:`otUdpConnect`

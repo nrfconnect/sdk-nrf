@@ -22,6 +22,7 @@
 
 #define CBOR_LIST(...) 0x9F, __VA_ARGS__, 0xFF
 #define CBOR_EMPTY_BYTES 0x40
+#define CBOR_EMPTY_STRING 0x60
 
 /* Macros for constructing nRF RPC packets for the OpenThread command group. */
 
@@ -108,6 +109,15 @@
 #define CBOR_NETDATA_BR                                                                            \
 	CBOR_ADDR1, CBOR_UINT8(64), 0x20, CBOR_TRUE, CBOR_FALSE, CBOR_TRUE, CBOR_FALSE, CBOR_TRUE, \
 		CBOR_FALSE, CBOR_TRUE, CBOR_FALSE, CBOR_TRUE, CBOR_UINT16(NETDATA_BR_RLOC)
+
+#define NETDIAG_VENDOR_DATA_16      {STR_SEQUENCE(16), '\0'}
+#define NETDIAG_VENDOR_DATA_17      {STR_SEQUENCE(17), '\0'}
+#define NETDIAG_VENDOR_DATA_32      {STR_SEQUENCE(32), '\0'}
+#define NETDIAG_VENDOR_DATA_33      {STR_SEQUENCE(33), '\0'}
+#define CBOR_NETDIAG_VENDOR_DATA_16 0x70, STR_SEQUENCE(16)
+#define CBOR_NETDIAG_VENDOR_DATA_17 0x71, STR_SEQUENCE(17)
+#define CBOR_NETDIAG_VENDOR_DATA_32 0x78, 0x20, STR_SEQUENCE(32)
+#define CBOR_NETDIAG_VENDOR_DATA_33 0x78, 0x21, STR_SEQUENCE(33)
 
 #define DNS_HOSTNAME "example.com"
 #define DNS_SERVICE_NAME "_test._udp.example.com"

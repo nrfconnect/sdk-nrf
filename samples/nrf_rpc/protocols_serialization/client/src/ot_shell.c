@@ -16,6 +16,7 @@
 #include <openthread/thread.h>
 #include <openthread/udp.h>
 #include <openthread/netdata.h>
+#include <openthread/netdiag.h>
 #include <openthread/message.h>
 #include <openthread/srp_client.h>
 #include <openthread/dns_client.h>
@@ -1028,6 +1029,19 @@ static int cmd_test_srp_client_ttl(const struct shell *sh, size_t argc, char *ar
 	return 0;
 }
 
+static int cmd_test_vendor_data(const struct shell *sh, size_t argc, char *argv[])
+{
+	otThreadSetVendorName(NULL, argv[1]);
+	otThreadSetVendorModel(NULL, argv[2]);
+	otThreadSetVendorSwVersion(NULL, argv[3]);
+
+	shell_print(sh, "Vendor name set to: %s", otThreadGetVendorName(NULL));
+	shell_print(sh, "Vendor model set to: %s", otThreadGetVendorModel(NULL));
+	shell_print(sh, "Vendor SW version set to: %s", otThreadGetVendorSwVersion(NULL));
+
+	return 0;
+}
+
 static void print_txt_entry(const struct shell *sh, const otDnsTxtEntry *entry)
 {
 	char buffer[128];
@@ -1575,6 +1589,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      cmd_dns_client_service, 4, 0),
 	SHELL_CMD_ARG(test_dns_client_browse, NULL, "Service browsing, args <service> <server>",
 		      cmd_dns_client_browse, 3, 0),
+	SHELL_CMD_ARG(test_vendor_data, NULL, "Vendor data, args: <vendor-name> <vendor-model>"
+					      " <vendor-sw-version>",
+		      cmd_test_vendor_data, 4, 0),
 	SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_ARG_REGISTER(ot, &ot_cmds,
