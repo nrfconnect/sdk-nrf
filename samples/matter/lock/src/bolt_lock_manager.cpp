@@ -166,3 +166,8 @@ void BoltLockManager::SetState(State state, OperationSource source)
 		mStateChangeCallback(state, source);
 	}
 }
+
+void BoltLockManager::FactoryReset()
+{
+	AccessMgr::Instance().FactoryReset();
+}

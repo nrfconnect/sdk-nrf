@@ -175,7 +175,10 @@ Matter
 Matter fork
 +++++++++++
 
-|no_changes_yet_note|
+* Added:
+
+  * A new ``kFactoryReset`` event that is posted during factory reset.
+    The application can register a handler and perform additional cleanup.
 
 nRF IEEE 802.15.4 radio driver
 ------------------------------

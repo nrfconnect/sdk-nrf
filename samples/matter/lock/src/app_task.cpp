@@ -50,6 +50,20 @@ constexpr uint32_t kSwitchTransportTimeout = 10000;
 
 #define APPLICATION_BUTTON_MASK DK_BTN2_MSK
 #define SWITCHING_BUTTON_MASK DK_BTN3_MSK
+
+#ifndef CONFIG_CHIP_FACTORY_RESET_ERASE_SETTINGS
+void AppFactoryResetHandler(const ChipDeviceEvent *event, intptr_t /* unused */)
+{
+	switch (event->Type) {
+	case DeviceEventType::kFactoryReset:
+		BoltLockMgr().FactoryReset();
+		break;
+	default:
+		break;
+	}
+}
+#endif
+
 } /* namespace */
 
 Identify sIdentify = { kLockEndpointId, AppTask::IdentifyStartHandler, AppTask::IdentifyStopHandler,
@@ -241,6 +255,14 @@ CHIP_ERROR AppTask::Init()
 	/* Register Matter event handler that controls the connectivity status LED based on the captured Matter network
 	 * state. */
 	ReturnErrorOnFailure(Nrf::Matter::RegisterEventHandler(Nrf::Board::DefaultMatterEventHandler, 0));
+
+#ifndef CONFIG_CHIP_FACTORY_RESET_ERASE_SETTINGS
+	/* Register factory reset event handler.
+	 * With this configuration we have to manually clean up the storage,
+	 * as whole settings partition won't be erased.
+	 * */
+	ReturnErrorOnFailure(Nrf::Matter::RegisterEventHandler(AppFactoryResetHandler, 0));
+#endif
 
 #ifdef CONFIG_THREAD_WIFI_SWITCHING
 	CHIP_ERROR err = ThreadWifiSwitch::StartCurrentTransport();
