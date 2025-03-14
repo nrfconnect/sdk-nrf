@@ -1305,6 +1305,53 @@ int sock_rai(int socket_id, bool rai_last, bool rai_no_data,
 	return 0;
 }
 
+int sock_setopt(int socket_id, int sock_level, int sock_opt_id, int sock_opt_value)
+{
+	struct sock_info *socket_info = get_socket_info_by_id(socket_id);
+	int err;
+
+	if (socket_info == NULL) {
+		return -EINVAL;
+	}
+
+	err = setsockopt(socket_info->fd, sock_level, sock_opt_id, &sock_opt_value,
+			 sizeof(sock_opt_value));
+
+	if (err) {
+		mosh_error("setsockopt() for level=%d, option=%d, value=%d failed with error %d",
+			   sock_level, sock_opt_id, sock_opt_value, errno);
+	}
+
+	return err;
+}
+
+int sock_getopt(int socket_id, int sock_level, int sock_opt_id)
+{
+	struct sock_info *socket_info = get_socket_info_by_id(socket_id);
+	int err;
+	int sock_opt_value = 0;
+	int sock_opt_value_len = sizeof(sock_opt_value);
+
+	if (socket_info == NULL) {
+		return -EINVAL;
+	}
+
+	err = getsockopt(socket_info->fd, sock_level, sock_opt_id, &sock_opt_value,
+			 &sock_opt_value_len);
+
+	if (err) {
+		mosh_error(
+			"getsockopt() socket_id=%d, level=%d, option=%d failed with error %d",
+			socket_id, sock_level, sock_opt_id, errno);
+	} else {
+		mosh_print(
+			"getsockopt() socket_id=%d, option=%d, level=%d, value=%d",
+			socket_id, sock_opt_id, sock_level, sock_opt_value);
+	}
+
+	return err;
+}
+
 int sock_list(void)
 {
 	bool opened_sockets = false;
