@@ -584,6 +584,8 @@
 
 "CI-test-low-level":
   - "applications/sdp/**/*"
+  - "boards/nordic/nrf54lm20apdk/**/*"
+  - "boards/nordic/nrf54lv10apdk/**/*"
   - "drivers/gpio/**/*"
   - "dts/bindings/gpio/**/*"
   - "include/drivers/gpio/**/*"
@@ -601,6 +603,7 @@
   - "samples/zephyr/subsys/settings/**/*"
   - "snippets/sdp/**/*"
   - "snippets/nrf54l09-switch-uart/**/*"
+  - "soc/nordic/nrf54l/**/*"
   - "tests/benchmarks/multicore/idle/**/*"
   - "tests/drivers/audio/**/*"
   - "tests/drivers/gpio/**/*"
