@@ -33,16 +33,6 @@ config DEBUG_MODULE_MEMFAULT_USE_EXTERNAL_TRANSPORT
 	  The AWS IoT configuration of the application is the only implementation that currently
 	  supports this option.
 
-config DEBUG_MODULE_MEMFAULT_HEARTBEAT_INTERVAL_SEC
-	int "Memfault heartbeat interval in seconds"
-	default 1800
-	help
-	  Configuration that sets how often Memfault captures and prepares data that will be sent
-	  to Memfault cloud. Reduce this interval to get more frequent updates to Memfault.
-	  Note that data transmitted to Memfault cloud is still dependent on how often the
-	  application sends data, which can be manipulated by setting the application's real-time
-	  configurations.
-
 config DEBUG_MODULE_MEMFAULT_WATCHDOG_DELTA_MS
 	int "Memfault software watchdog delta"
 	default 5000
