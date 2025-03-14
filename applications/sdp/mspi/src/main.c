@@ -24,7 +24,8 @@
 #define DATA_PINS_MAX 8
 #define VIO_COUNT     11
 
-#define STD_PAD_BIAS_CNT0_THRESHOLD 1
+#define STD_PAD_BIAS_CNT0_THRESHOLD 1 /* 32MHz */
+#define RX_CNT0_MIN_VALUE	    2 /* 23.333333MHz */
 
 #define PAD_BIAS_VALUE 1
 
@@ -245,21 +246,6 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet)
 	adjust_tail(&xfer_params.xfer_data[HRT_FE_DATA], xfer_params.bus_widths.data,
 		    xfer_packet->num_bytes * BITS_IN_BYTE);
 
-	/* Hardware issue: Additional clock edge when transmitting in modes other
-	 *                 than MSPI_CPP_MODE_0.
-	 * Here is first part workaround of that issue only for MSPI_CPP_MODE_2.
-	 * Workaround: Add one pulse more to the last word in message,
-	 *             and disable clock before the last pulse.
-	 */
-	if (device->cpp == MSPI_CPP_MODE_2) {
-		for (uint8_t i = 0; i < HRT_FE_MAX; i++) {
-			if (xfer_params.xfer_data[HRT_FE_MAX - 1 - i].word_count != 0) {
-				xfer_params.xfer_data[HRT_FE_MAX - 1 - i].last_word_clocks++;
-				break;
-			}
-		}
-	}
-
 	nrf_vpr_clic_int_pending_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_WRITE));
 }
 
@@ -269,12 +255,14 @@ void prepare_and_read_data(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile ui
 		&nrfe_mspi_devices[nrfe_mspi_xfer_config_ptr->device_index];
 	nrf_vpr_csr_vio_config_t config;
 
+	NRFX_ASSERT(device->cnt0_value >= RX_CNT0_MIN_VALUE);
+
 	xfer_params.counter_value = device->cnt0_value;
 	xfer_params.ce_vio = ce_vios[device->ce_index];
 	xfer_params.ce_hold = nrfe_mspi_xfer_config_ptr->hold_ce;
 	xfer_params.ce_polarity = device->ce_polarity;
 	xfer_params.bus_widths = io_modes[device->io_mode];
-	xfer_params.xfer_data[HRT_FE_DATA].data = buffer;
+	xfer_params.cpp_mode = device->cpp;
 
 	nrf_vpr_csr_vio_config_get(&config);
 	config.input_sel = true;
@@ -296,15 +284,45 @@ void prepare_and_read_data(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile ui
 	xfer_params.xfer_data[HRT_FE_COMMAND].data = (uint8_t *)&xfer_packet->command;
 	xfer_params.xfer_data[HRT_FE_COMMAND].word_count =
 		nrfe_mspi_xfer_config_ptr->command_length;
+	adjust_tail(&xfer_params.xfer_data[HRT_FE_COMMAND], xfer_params.bus_widths.command,
+		    nrfe_mspi_xfer_config_ptr->command_length * BITS_IN_BYTE);
 
 	/* Configure address phase. */
 	xfer_params.xfer_data[HRT_FE_ADDRESS].fun_out = HRT_FUN_OUT_WORD;
 	xfer_params.xfer_data[HRT_FE_ADDRESS].data = (uint8_t *)&xfer_packet->address;
 	xfer_params.xfer_data[HRT_FE_ADDRESS].word_count =
 		nrfe_mspi_xfer_config_ptr->address_length;
+	adjust_tail(&xfer_params.xfer_data[HRT_FE_ADDRESS], xfer_params.bus_widths.address,
+		    nrfe_mspi_xfer_config_ptr->address_length * BITS_IN_BYTE);
+
+	/* Configure dummy_cycles phase. */
+	xfer_params.xfer_data[HRT_FE_DUMMY_CYCLES].fun_out = HRT_FUN_OUT_WORD;
+	xfer_params.xfer_data[HRT_FE_DUMMY_CYCLES].data = NULL;
+	xfer_params.xfer_data[HRT_FE_DUMMY_CYCLES].word_count = 0;
+
+	hrt_frame_element_t elem =
+		nrfe_mspi_xfer_config_ptr->address_length != 0 ? HRT_FE_ADDRESS : HRT_FE_COMMAND;
+
+	/* Up to 63 clock pulses (including data from previous part) can be sent by simply
+	 * increasing shift count of last word in the previous part.
+	 * Beyond that, dummy cycles have to be treated af different transfer part.
+	 */
+	if (xfer_params.xfer_data[elem].last_word_clocks + nrfe_mspi_xfer_config_ptr->rx_dummy <=
+	    MAX_SHIFT_COUNT) {
+		xfer_params.xfer_data[elem].last_word_clocks += nrfe_mspi_xfer_config_ptr->rx_dummy;
+	} else {
+		adjust_tail(&xfer_params.xfer_data[HRT_FE_DUMMY_CYCLES],
+			    xfer_params.bus_widths.dummy_cycles,
+			    nrfe_mspi_xfer_config_ptr->rx_dummy *
+				    xfer_params.bus_widths.dummy_cycles);
+	}
 
 	/* Configure data phase. */
-	xfer_params.xfer_data[HRT_FE_DATA].word_count = xfer_packet->num_bytes;
+	xfer_params.xfer_data[HRT_FE_DATA].data = NULL;
+	xfer_params.xfer_data[HRT_FE_DATA].word_count = 0;
+	adjust_tail(&xfer_params.xfer_data[HRT_FE_DATA], xfer_params.bus_widths.data,
+		    xfer_packet->num_bytes * BITS_IN_BYTE);
+	xfer_params.xfer_data[HRT_FE_DATA].data = buffer;
 
 	/* Read/write barrier to make sure that all configuration is done before jumping to HRT. */
 	nrf_barrier_rw();
@@ -469,10 +487,15 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		break;
 	case NRFE_MSPI_TXRX: {
 		nrfe_mspi_xfer_packet_msg_t *packet = (nrfe_mspi_xfer_packet_msg_t *)data;
-		num_bytes = packet->num_bytes;
-
-		if (num_bytes > 0) {
-			prepare_and_read_data(packet, response_buffer + 1);
+		if (packet->num_bytes > 0) {
+#ifdef CONFIG_SDP_MSPI_IPC_NO_COPY
+			prepare_and_read_data(packet, packet->data);
+#else
+			NRFX_ASSERT(packet->num_bytes <=
+				    CONFIG_SDP_MSPI_MAX_RESPONSE_SIZE - sizeof(uint32_t));
+			num_bytes = packet->num_bytes;
+			prepare_and_read_data(packet, response_buffer + sizeof(uint32_t));
+#endif
 		}
 		break;
 	}
@@ -482,7 +505,8 @@ static void ep_recv(const void *data, size_t len, void *priv)
 	}
 
 	response_buffer[0] = opcode;
-	ipc_service_send(&ep, (const void *)response_buffer, sizeof(opcode) + num_bytes);
+	ipc_service_send(&ep, (const void *)response_buffer, sizeof(uint32_t) + num_bytes);
+
 #if defined(CONFIG_SDP_MSPI_FAULT_TIMER)
 	if (fault_timer != NULL) {
 		nrf_timer_task_trigger(fault_timer, NRF_TIMER_TASK_CLEAR);
@@ -529,7 +553,7 @@ static int backend_init(void)
 
 __attribute__((interrupt)) void hrt_handler_read(void)
 {
-	hrt_read(&xfer_params);
+	hrt_read((hrt_xfer_t *)&xfer_params);
 }
 
 __attribute__((interrupt)) void hrt_handler_write(void)
