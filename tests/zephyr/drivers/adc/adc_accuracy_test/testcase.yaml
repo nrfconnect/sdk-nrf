@@ -1,0 +1,15 @@
+common:
+  tags:
+    - adc
+    - drivers
+    - ci_tests_zephyr_drivers_adc
+tests:
+  nrf.extended.drivers.adc.accuracy.ref_volt:
+    # harness_config:
+    #   fixture: adc_ref_volt
+    integration_platforms:
+      - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54l20pdk/nrf54l20/cpuapp
+    platform_allow:
+      - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54l20pdk/nrf54l20/cpuapp

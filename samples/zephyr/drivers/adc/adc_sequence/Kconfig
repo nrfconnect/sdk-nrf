@@ -1,0 +1,1 @@
+source "samples/drivers/adc/adc_sequence/Kconfig"

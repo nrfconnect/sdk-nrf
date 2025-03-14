@@ -667,6 +667,7 @@
 /samples/zigbee/**/*.rst                  @nrfconnect/ncs-terahertz-doc
 /samples/zephyr/basic/blinky/             @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /samples/zephyr/boards/nordic/system_off/ @nrfconnect/ncs-low-level-test
+/samples/zephyr/drivers/adc/              @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/audio/dmic/       @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/i2c/rtio_loopback/ @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/watchdog/         @nrfconnect/ncs-low-level-test
@@ -919,6 +920,7 @@
 /tests/tfm/                               @nrfconnect/ncs-aegir @stephen-nordic @magnev
 /tests/unity/                             @nordic-krch
 /tests/subsys/zigbee/                     @nrfconnect/ncs-zigbee
+/tests/zephyr/drivers/adc/                @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/comparator/         @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/flash/common/       @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /tests/zephyr/drivers/gpio/               @nrfconnect/ncs-low-level-test
