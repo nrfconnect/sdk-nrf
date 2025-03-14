@@ -21,6 +21,9 @@
 #include <zephyr/mgmt/mcumgr/mgmt/handlers.h>
 #include "suitfu_mgmt_priv.h"
 #include <suit_dfu_cache_rw.h>
+#ifdef CONFIG_FLASH_IPUC
+#include <drivers/flash/flash_ipuc.h>
+#endif /* CONFIG_FLASH_IPUC */
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(suitfu_mgmt, CONFIG_MGMT_SUITFU_LOG_LEVEL);
@@ -74,10 +77,30 @@ int suitfu_mgmt_suit_cache_raw_upload(struct smp_streamer *ctx)
 			return MGMT_ERR_EINVAL;
 		}
 
-		suit_plat_err_t err =
-			suit_dfu_cache_rw_device_info_get(req.target_id, &device_info);
-		if (err != SUIT_PLAT_SUCCESS) {
-			LOG_ERR("Cache pool %d not found", req.target_id);
+#ifdef CONFIG_FLASH_IPUC
+		device_info.partition_offset = 0;
+		device_info.erase_block_size = 1;
+		device_info.write_block_size = 1;
+		device_info.fdev = flash_image_ipuc_create(req.target_id, NULL, NULL,
+							   (uintptr_t *)&device_info.mapped_address,
+							   &device_info.partition_size);
+		if (device_info.fdev != NULL) {
+			LOG_INF("Found IPUC for image %d (0x%lx, 0x%x)", req.target_id,
+				(uintptr_t)device_info.mapped_address, device_info.partition_size);
+		}
+#endif /* CONFIG_FLASH_IPUC */
+#ifdef CONFIG_SUIT_CACHE_RW
+		if (device_info.fdev == NULL) {
+			suit_plat_err_t err =
+				suit_dfu_cache_rw_device_info_get(req.target_id, &device_info);
+
+			if (err != SUIT_PLAT_SUCCESS) {
+				LOG_ERR("Cache pool %d not found", req.target_id);
+				return MGMT_ERR_ENOENT;
+			}
+		}
+#endif /* CONFIG_SUIT_CACHE_RW */
+		if (device_info.fdev == NULL) {
 			return MGMT_ERR_ENOENT;
 		}
 
@@ -131,7 +154,10 @@ int suitfu_mgmt_suit_cache_raw_upload(struct smp_streamer *ctx)
 		req.off += req.img_data.len;
 		offset_in_image += req.img_data.len;
 		if (last) {
-			LOG_INF("Cache pool %d updated with RAW image", target_id);
+#ifdef CONFIG_FLASH_IPUC
+			flash_image_ipuc_release(target_id);
+#endif /* CONFIG_FLASH_IPUC */
+			LOG_INF("Cache pool or image %d updated with RAW image", target_id);
 			image_size = 0;
 		}
 	}

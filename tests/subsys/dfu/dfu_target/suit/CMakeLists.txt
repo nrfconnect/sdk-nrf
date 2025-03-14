@@ -16,5 +16,9 @@ target_sources(app PRIVATE ${app_sources})
 target_include_directories(app
   PRIVATE
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/dfu/include
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/suit/ipuc/include
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/suit/memory_layout/include
   "src"
   )
+
+zephyr_compile_definitions(CONFIG_SOC_NRF54H20_CPUAPP)
