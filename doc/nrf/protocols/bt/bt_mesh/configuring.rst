@@ -246,3 +246,53 @@ Using the :ref:`bluetooth_mesh_sensor_server` sample as an example, configured a
   * Ambient light level gain
 
 Adding up all entries, it is worth setting the cache size to minimum 71.
+
+Security toolbox
+----------------
+
+Zephyr's Mesh security toolbox implementation uses third-party crypto library APIs (such as CMAC, AES-CCM, and HMAC-SHA-256) for implementing the encryption and authentication functionality.
+
+* The following options are available:
+
+  * :kconfig:option:`CONFIG_BT_MESH_USES_MBEDTLS_PSA` - Enables use of the `Mbed TLS`_ PSA API based security toolbox (default option).
+  * :kconfig:option:`CONFIG_BT_MESH_USES_TFM_PSA` - Enables use of the `Trusted Firmware M`_ PSA API based security toolbox (default option for platforms that support TF-M).
+  * :kconfig:option:`CONFIG_BT_MESH_USES_TINYCRYPT` - Enables use of Tinycrypt-based security toolbox.
+    Zephyr's Mesh operates with open key values, including storing them in the persistent memory.
+    The Tinycrypt-based solution has worse security materials protection compared to others, because it keeps the keys in the memory in open form.
+    Tinycrypt is not recommended for future designs.
+
+The Bluetooth Mesh security toolbox based on the `PSA Certified Crypto API`_ does not operate with open key values.
+After Bluetooth Mesh receives an open key value, it immediately imports the key into the crypto library and receives the unique key identifier.
+The key identifiers are used in the security toolbox and stored in the persistent memory.
+The crypto library is responsible for storing of the key values in the Internal Trusted Storage (`PSA Certified Secure Storage API 1.0`_).
+Bluetooth Mesh data structures based on Tinycrypt and the PSA API, as well as images of these structures stored in the persistent memory, are not compatible due to different key representations.
+When a provisioned device updates its firmware binary from the Tinycrypt-based toolbox to firmware binary that uses the PSA API based toolbox, a provisioned device must be unprovisioned first and reprovisioned after the update.
+The provisioned device cannot restore data from the persistent memory after firmware update.
+If the image is changed over Mesh DFU, it is recommended to use :c:enumerator:`BT_MESH_DFU_EFFECT_UNPROV`.
+
+A provisioned device can update its firmware image from the Tinycrypt-based toolbox to firmware image that uses the PSA API based toolbox without unprovisioning if the key importer functionality is used.
+The :kconfig:option:`CONFIG_BT_MESH_KEY_IMPORTER` Kconfig option enables the key importer functionality.
+The key importer is an application initialization functionality that is called with kernel initialization priority before starting main.
+This functionality reads out the persistently stored Bluetooth Mesh data and if it finds keys stored by the Tinycrypt-based security toolbox, it imports them over the PSA API into the crypto library and stores the key identifiers in a format based on the PSA API toolbox.
+Once the new firmware image starts Bluetooth Mesh initialization, the persistent area already has the stored data in the correct format.
+
+The device can be vulnerable to attacks while the device uses the key importer functionality.
+The following two types of security risks are possible:
+
+* If the device is provided with a new image with the key importer functionality enabled, the new image is not yet activated and the attacker can write arbitrary data in the persistent memory during this time by whichever methods.
+  The fake keys might be imported to the PSA crypto library after the next device reset (which activates the new firmware with the key importer).
+  The device gets provisioned to the attackers network and the attacker can read out the mesh state data from the device.
+
+  Mitigation:
+
+  * Ensure that the device is protected from unauthorized writes to the non-volatile storage.
+
+* Even after the key importer imports the keys to the crypto library, the plain text values are left in the flash until the next garbage collection is triggered by the storage backend.
+
+  Mitigation:
+
+  * Ensure that the device is protected from unauthorized reads (such as reading flash from programmer, or using mcumgr shell commands) from the non-volatile storage.
+  * Execute a key refresh procedure for all existing keys used on the entire network as soon as possible by excluding the compromised device, if any.
+    The mechanism to determine if the device is compromised is up to the OEM developers.
+
+Additionally, after upgrading the device firmware with the key importer functionality enabled, and once the key import is complete, it is recommend to update device firmware with the key importer functionality disabled as soon as possible.

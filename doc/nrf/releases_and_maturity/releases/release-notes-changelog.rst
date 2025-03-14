@@ -150,7 +150,9 @@ Bluetooth® LE
 Bluetooth Mesh
 --------------
 
-|no_changes_yet_note|
+* Added:
+
+  * The key importer functionality (:kconfig:option:`CONFIG_BT_MESH_KEY_IMPORTER`).
 
 DECT NR+
 --------
@@ -1050,6 +1052,7 @@ Documentation
   * The :ref:`create_application` page with the :ref:`creating_add_on_index` section.
   * The :ref:`ug_nrf91` documentation to use `nRF Util`_ instead of nrfjprog.
   * The :ref:`dm-revisions` section of the :ref:`dm_code_base` page with information about the preview release tag, which replaces the development tag.
+  * The :ref:`ug_bt_mesh_configuring` page with the security toolbox section and the key importer functionality.
 
 * Removed:
 
