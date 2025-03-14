@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.20.0)
 macro(app_set_runner_args)
   if(CONFIG_BOARD_THINGY53_NRF5340_CPUAPP)
     # Use alternative QSPI configuration file when flashing Thingy53
+    board_runner_args(nrfutil "--ext-mem-config-file=${CMAKE_CURRENT_SOURCE_DIR}/qspi_thingy53.json")
     board_runner_args(nrfjprog "--qspiini=${CMAKE_CURRENT_SOURCE_DIR}/Qspi_thingy53.ini")
   endif()
 endmacro()
