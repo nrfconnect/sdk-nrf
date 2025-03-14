@@ -28,20 +28,20 @@ Overview
 
 The sample shows how the device performs the following actions:
 
-* Connects to nRF Cloud Provisioning Service.
-* Fetches available device-specific provisioning configuration.
-* Decodes the commands.
-* Acts on any AT commands, if available.
+* Connects to the nRF Cloud Provisioning Service.
+* Retrieves the device-specific provisioning configuration.
+* Decodes the received commands.
+* Executes any AT commands, if present.
 * Reports the results back to the server.
-  In the case of an error, stops processing the commands at the first error and reports it back to server.
-* Sends ``FINISHED`` response if all the previous commands are executed without errors provided and ``FINISHED`` is one of the set provisioning commands.
+	If an error occurs, stops processing further commands and reports the error to the server.
+* Sends a ``FINISHED`` response if all commands are executed successfully and ``FINISHED`` is one of the provisioning commands.
 
 User interface
 **************
 
-Device side interaction is not required.
-You must define the provisioning configuration at the server side.
-See `nRF Cloud provisioning configuration`_.
+No user interaction with the device is required.
+Provisioning configuration must be defined on the server side.
+Refer to `nRF Cloud device claiming`_ and `nRF Cloud provisioning configuration`_ for more details.
 
 Configuration
 *************
@@ -115,6 +115,7 @@ The following files are available:
 * :file:`prj.conf` - Standard default configuration file.
 * :file:`overlay-coap.conf` - Enables CoAP transfer protocol support.
 * :file:`overlay-at_shell.conf` - Enables writing of large certificates from AT shell.
+* :file:`overlay-large_cert.conf` - Adjusts buffer sizes to handle nRF Cloud certificates.
 
 Building and running
 ********************
@@ -130,8 +131,7 @@ Testing
 
 #. |connect_kit|
 #. |connect_terminal|
-#. Add a provisioning configuration using the nRF Cloud Provisioning Service.
-   See `nRF Cloud provisioning configuration`.
+#. Add a provisioning configuration using the `nRF Cloud Provisioning Service <nRF Cloud provisioning configuration_>`_.
 #. Power on or reset your device.
 #. Observe that the sample starts and connects to the LTE network.
 #. Observe that provisioning pauses and resumes while fetching and executing provisioning commands.
@@ -171,6 +171,34 @@ The following is an example output when the sample is processing commands from t
 	<inf> nrf_provisioning_sample: Provisioning stopped
 	<inf> nrf_provisioning_sample: Provisioning done, rebooting...
 	<inf> nrf_provisioning: Disconnected from network - provisioning paused
+
+Provisioning with the nRF Cloud Provisioning Service using auto-onboarding
+==========================================================================
+
+Auto-onboarding is the easiest method to provision and onboard devices to the nRF Cloud.
+
+To enable support of large certificates when building the sample, add the ``-DEXTRA_CONF_FILE=overlay-large_cert.conf`` option to the build command.
+
+Complete the following steps to provision your device:
+
+1. |connect_kit|
+#. |connect_terminal|
+#. Enter command ``nrf_provisioning token`` to generate an `attestation token <nRF Cloud Generating attestation tokens_>`_ for the device
+#. Copy the content of the response.
+#. Log in to the `nRF Cloud`_ portal.
+#. Select **Security Services** in the left sidebar.
+   A panel opens to the right.
+#. Select :guilabel:`Claimed Devices`.
+#. Click :guilabel:`Claim Device`.
+   A pop-up opens.
+#. Copy and paste the attestation token into the **Claim token** text box.
+#. Select an existing provisioning rule or create a new rule to auto-onboard the device during the claiming process.
+#. Click :guilabel:`Claim Device`.
+   The device is now claimed and an entry appears on the **Claimed Devices** page.
+#. Open the Serial Terminal and enter command ``nrf_provisioning now`` to start the provisioning process.
+   The device connects to the nRF Cloud Provisioning Service and retrieves the provisioning configuration.
+
+Refer to `nRF Cloud device claiming`_ for more details on managing claimed devices.
 
 Dependencies
 ************
