@@ -15,3 +15,33 @@ family:
           - name: nrf54lv10a
             cpuclusters:
               - name: cpuapp
+runners:
+  run_once:
+    '--recover':
+      - runners:
+          - nrfutil
+        run: first
+        groups:
+          - qualifiers:
+              - nrf54lv10a/cpuapp
+          - qualifiers:
+              - nrf54lm20a/cpuapp
+    '--erase':
+      - runners:
+          - jlink
+          - nrfutil
+        run: first
+        groups:
+          - qualifiers:
+              - nrf54lv10a/cpuapp
+          - qualifiers:
+              - nrf54lm20a/cpuapp
+    '--reset':
+      - runners:
+          - nrfutil
+        run: last
+        groups:
+          - qualifiers:
+              - nrf54lv10a/cpuapp
+          - qualifiers:
+              - nrf54lm20a/cpuapp
