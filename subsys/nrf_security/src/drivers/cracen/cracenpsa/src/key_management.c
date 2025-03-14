@@ -1297,44 +1297,21 @@ psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uin
 			       size_t *data_length)
 {
 #ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
-	int status;
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
 	if (location == PSA_KEY_LOCATION_CRACEN_KMU) {
-		/* The keys will already be in the key buffer as they got loaded their by a previous
-		 * call to cracen_get_builtin_key or cached in the memory.
-		 */
-		psa_ecc_family_t ecc_fam =
-			PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(attributes));
-		if (ecc_fam == PSA_ECC_FAMILY_TWISTED_EDWARDS ||
-		    ecc_fam == PSA_ECC_FAMILY_SECP_R1) {
-			memcpy(data, key_buffer, key_buffer_size);
-			*data_length = key_buffer_size;
-			return PSA_SUCCESS;
-		}
-
+		nrf_security_mutex_lock(cracen_mutex_symmetric);
 		size_t key_out_size = PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
-
 		if (key_out_size > data_size) {
 			return PSA_ERROR_BUFFER_TOO_SMALL;
 		}
-
-		/* The kmu_push_area is guarded by the symmetric mutex since it is the most common
-		 * use case. Here the decision was to avoid defining another mutex to handle the
-		 * push buffer for the rest of the use cases.
-		 */
-		nrf_security_mutex_lock(cracen_mutex_symmetric);
-		status = cracen_kmu_prepare_key(key_buffer);
-		if (status == SX_OK) {
-			memcpy(data, kmu_push_area, key_out_size);
-			*data_length = key_out_size;
-		}
-
+		memcpy(data, key_buffer, key_buffer_size);
+		*data_length = key_out_size;
 		(void)cracen_kmu_clean_key(key_buffer);
 		nrf_security_mutex_unlock(cracen_mutex_symmetric);
 
-		return silex_statuscodes_to_psa(status);
+		return PSA_SUCCESS;
 	}
 #endif
 
