@@ -214,14 +214,11 @@ To test that the bootloader no longer boots images signed with the earlier keys,
       CONFIG_SB_SIGNING_KEY_FILE="/path/to/priv_b.pem"
       CONFIG_FW_INFO_FIRMWARE_VERSION=3
 
-#. To facilitate testing, use nrfjprog to program this image directly into a slot:
+#. To facilitate testing, use `nRF Util`_ to program this image directly into a slot:
 
    .. code-block:: console
 
-      nrfjprog -f nRF52 -r --verify --program build/zephyr/signed_by_b0_s0_image.hex --sectorerase
-
-   .. note::
-      |nrfjprog_deprecation_note|
+      nrfutil device program --x-family nrf52 --options chip_erase_mode=ERASE_RANGES_TOUCHED_BY_FIRMWARE,verify=VERIFY_HASH,reset=RESET_SOFT --firmware build/zephyr/signed_by_b0_s0_image.hex
 
 #. Observe the bootloader skipping the invalid image and booting the valid image in the other slot:
 
