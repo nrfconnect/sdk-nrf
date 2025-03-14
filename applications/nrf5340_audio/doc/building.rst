@@ -62,7 +62,7 @@ When preparing the JSON file, update the following fields:
 
 * ``nrf5340_audio_dk_snr`` -- This field lists the SEGGER serial number.
   You can check this ten-digit number on the sticker on the nRF5340 Audio development kit.
-  Alternatively, connect the development kit to your PC and run ``nrfjprog -i`` in a command window to print the SEGGER serial number of all connected kits.
+  Alternatively, connect the development kit to your PC and run ``nrfutil device list`` in a command window to print the SEGGER serial number of all connected kits.
 * ``nrf5340_audio_dk_dev`` -- This field assigns the specific nRF5340 Audio development kit to be ``headset`` or ``gateway``.
 * ``channel`` -- This field is valid only for headsets.
   It sets the channels on which the headset is meant to work.
@@ -298,21 +298,21 @@ After building the files for the development kit you want to program, follow the
 When using the default CIS configuration, if you want to use two headset devices, you must also populate the UICR with the desired channel for each headset.
 Use the following commands, depending on which headset you want to populate:
 
-* Left headset (``--val 0``):
+* Left headset (``--value 0``):
 
    .. code-block:: console
 
-      nrfjprog --memwr 0x00FF80F4 --val 0
+      nrfutil device x-write --address 0x00FF80F4 --value 0
 
-* Right headset (``--val 1``):
+* Right headset (``--value 1``):
 
    .. code-block:: console
 
-      nrfjprog --memwr 0x00FF80F4 --val 1
+      nrfutil device x-write --address 0x00FF80F4 --value 1
 
 Select the correct board when prompted with the popup.
-Alternatively, you can add the ``--snr`` parameter followed by the SEGGER serial number of the correct board at the end of the ``nrfjprog`` command.
-You can check the serial numbers of the connected devices with the ``nrfjprog -i`` command.
+Alternatively, you can add the ``--serial-number`` parameter followed by the SEGGER serial number of the correct board at the end of the ``nrfutil device`` command.
+You can check the serial numbers of the connected devices with the ``nrfutil device list`` command.
 
 .. note::
    |usb_known_issues|
