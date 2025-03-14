@@ -99,23 +99,6 @@
 .. |thread_hwfc_enabled| replace:: This sample has Hardware Flow Control mechanism enabled by default in serial communication.
    When enabled, it allows devices to manage transmission by informing each other about their current state, and ensures more reliable connection in high-speed communication scenarios.
 
-.. ### Zigbee & ZBOSS shortcuts
-
-.. |zigbee_version| replace:: Zigbee 3.0
-.. |zboss_version| replace:: 3.11.6.0
-.. |zigbee_ncp_package_version| replace:: 2.2.5
-.. |zigbee_description| replace:: Zigbee is a portable, low-power software networking protocol that provides connectivity over an 802.15.4-based mesh network.
-.. |enable_zigbee_before_testing| replace:: Make sure to configure the Zigbee stack before building and testing this sample.
-   See :ref:`ug_zigbee_configuring` for more information.
-.. |zigbee_library| replace:: This is a Zigbee library.
-   See :ref:`ug_zigbee_configuring_libraries` for information about how to configure it for you Zigbee application.
-.. |zigbee_ncp_package| replace:: It contains the full development-ready source code for host and evaluation-ready firmware for the nRF52840 DK, the nRF52833 DK, and the nRF52840 Dongle.
-   The package comes with prebuilt libraries compatible with 64-bit Ubuntu 18.04 Linux.
-.. |zigbee_ncp_package_more_info| replace:: For information about how to recompile the package libraries for a different host architecture or operating system, see the `NCP Host documentation`_.
-   For information about how to use NCP Host for Zigbee in the |NCS| or build the firmware using the NCP sample, see the :ref:`NCP sample <zigbee_ncp_sample>`.
-.. |zigbee_shell_config| replace:: You can add support for Zigbee shell commands to any of the available :ref:`Zigbee samples <zigbee_samples>`, except for the :ref:`NCP sample <zigbee_ncp_sample>`.
-   Some of the commands use an endpoint for sending packets, so no endpoint handler is allowed to be registered for this endpoint.
-
 .. ### nRF Desktop shortcuts
 
 .. |battery_meas| replace:: Battery measurement module

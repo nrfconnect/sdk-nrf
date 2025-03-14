@@ -62,7 +62,6 @@ Zigbee
 ======
 
 Zigbee stack logs are independent from Zephyr system logger and must be configured by setting dedicated options in the system configuration file.
-For detailed information, see :ref:`zigbee_ug_logging`.
 
 .. _ug_logging_backends:
 

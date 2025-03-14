@@ -72,7 +72,7 @@ For example:
 
 * The Thread protocol implementation offers :ref:`pre-built libraries with debug symbols <thread_ug_feature_updating_libs>`.
 
-* The Zigbee protocol implementation offers :ref:`lib_zigbee_osif` and :ref:`lib_zigbee_shell` with custom Kconfig options that you can set for debugging.
+* The Zigbee protocol implementation offers Zigbee OSIF and Shell libraries with custom Kconfig options that you can set for debugging.
 
 Debugging stack overflows
 =========================

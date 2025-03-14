@@ -348,17 +348,17 @@ Zigbee
 
 * Added:
 
-  * :ref:`lib_zigbee_fota` (DFU) support for nRF52840.
-  * Support for Command Line Interface (:ref:`lib_zigbee_shell`).
+  * Zigbee FOTA (DFU) support for nRF52840.
+  * Support for Command Line Interface.
     This is a port from the nRF5 SDK for Thread and Zigbee.
-  * Support for :ref:`Network Co-Processor (NCP) architecture <ug_zigbee_platform_design_ncp>`.
+  * Support for Network Co-Processor (NCP) architecture.
     The NCP host package for Zigbee can be downloaded from https://developer.nordicsemi.com/
 
 * Updated:
 
-  * :ref:`zigbee_light_switch_sample` sample with :ref:`multiprotocol extension <zigbee_light_switch_sample_nus>` based on Bluetooth LE :ref:`nus_service_readme`.
-  * Updated :ref:`zboss` to version ``v3_3_0_5+10_06_2020``.
-    See :ref:`nrfxlib:zboss_changelog` for detailed information.
+  * The Zigbee light switch sample with multiprotocol extension based on Bluetooth LE :ref:`nus_service_readme`.
+  * Updated ZBOSS to version ``v3_3_0_5+10_06_2020``.
+    See ZBOSS changelog for detailed information.
 
 Common
 ======
@@ -612,15 +612,15 @@ Thread
 Zigbee
 ------
 
-* :ref:`lib_zigbee_signal_handler` - added
-* :ref:`zigbee_light_switch_sample` - added a note about :file:`overlay.conf`
+* Zigbee default signal handler - added
+* Zigbee light switch sample - added a note about :file:`overlay.conf`
 * :ref:`ug_zigbee` - updated by reorganizing structure and adding new pages
 
   * Zigbee overview - added as a separate page (was a section of :ref:`ug_zigbee`)
-  * :ref:`ug_zigbee_architectures` - added
-  * :ref:`ug_zigbee_configuring` - added as a separate page (was a section of :ref:`ug_zigbee`)
-  * :ref:`ug_zigbee_configuring_libraries` - added
-  * :ref:`ug_zigbee_tools` - added as a separate page (was a section of :ref:`ug_zigbee`)
+  * Zigbee Architectures - added
+  * Configuring Zigbee in the |NCS| - added as a separate page (was a section of :ref:`ug_zigbee`)
+  * Configuring Zigbee libraries in the |NCS| - added
+  * Zigbee tools - added as a separate page (was a section of :ref:`ug_zigbee`)
 
 NFC
 ---

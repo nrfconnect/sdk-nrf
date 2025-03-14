@@ -202,7 +202,7 @@ Zigbee
 
 * Updated:
 
-  * The PAN ID conflict resolution is now enabled in applications that use the :ref:`lib_zigbee_application_utilities` library.
+  * The PAN ID conflict resolution is now enabled in applications that use the Zigbee application utilities library.
     For details, see `Libraries for Zigbee`_.
   * The default entropy source of Zigbee samples and unit tests to Cryptocell for SoCs that have Cryptocell.
 
@@ -588,18 +588,18 @@ NFC samples
 Zigbee samples
 --------------
 
-* :ref:`zigbee_light_switch_sample` sample:
+* Zigbee light switch sample:
 
   * Fixed an issue where a buffer would not be freed after a failure occurred when sending a Match Descriptor request.
 
-* :ref:`zigbee_shell_sample` sample:
+* Zigbee shell sample:
 
   * Added:
 
     * Support for :ref:`zephyr:nrf52840dongle_nrf52840`.
-    * An option to build :ref:`zigbee_shell_sample` sample with the nRF USB CDC ACM as shell backend.
+    * An option to build Zigbee shell sample with the nRF USB CDC ACM as shell backend.
 
-* :ref:`zigbee_ncp_sample` sample:
+* Zigbee NCP sample:
 
   * Updated by setting :kconfig:option:`CONFIG_ZBOSS_TRACE_BINARY_LOGGING` to be disabled by default for NCP over USB variant.
 
@@ -957,7 +957,7 @@ Common Application Framework (CAF)
 Libraries for Zigbee
 --------------------
 
-* :ref:`lib_zigbee_application_utilities` library:
+* Zigbee application utilities library:
 
   * Added :kconfig:option:`CONFIG_ZIGBEE_PANID_CONFLICT_RESOLUTION` for enabling automatic PAN ID conflict resolution.
     This option is enabled by default.
