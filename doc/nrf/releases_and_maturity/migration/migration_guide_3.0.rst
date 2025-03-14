@@ -29,6 +29,14 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
+nRF5340 Audio applications
+--------------------------
+
+.. toggle::
+
+   * The :ref:`nrf53_audio_app` :ref:`nrf53_audio_app_building_script` now requires the transport (-t/--transport) type to be included.
+   * The :ref:`nrf53_audio_app` :ref:`nrf53_audio_app_building_standard` now requires a configuration overlay compile option to be included.
+
 |no_changes_yet_note|
 
 Libraries
