@@ -1,0 +1,12 @@
+common:
+  tags:
+    - adc
+    - drivers
+    - userspace
+    - ci_tests_zephyr_drivers_adc
+tests:
+  nrf.extended.drivers.adc:
+    integration_platforms:
+      - nrf54l09pdk/nrf54l09/cpuapp
+    platform_allow:
+      - nrf54l09pdk/nrf54l09/cpuapp
