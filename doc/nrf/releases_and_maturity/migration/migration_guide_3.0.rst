@@ -219,3 +219,19 @@ Download client
         .. code-block:: C
 
            err = downloader_deinit(&dl);
+
+Protocols
+=========
+
+This section provides detailed lists of changes by :ref:`protocol <protocols>`.
+
+Bluetooth Mesh
+--------------
+
+.. toggle::
+
+   * Support of Tinycrypt based security toolbox (:kconfig:option:`CONFIG_BT_MESH_USES_TINYCRYPT`) started deprecation procedure and not recommended for the future designs.
+   * The default security toolbox is based on mbedTLS PSA API (:kconfig:option:`CONFIG_BT_MESH_USES_MBEDTLS_PSA`)
+   * The default security toolbox is based on TF-M PSA API (:kconfig:option:`CONFIG_BT_MESH_USES_TFM_PSA`) for platforms those support TF-M.
+
+The :ref:`ug_bt_mesh_configuring` page provides more information about the updating of the images based on different security toolboxes.
