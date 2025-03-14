@@ -102,9 +102,6 @@ config NORDIC_QSPI_NOR_FLASH_LAYOUT_PAGE_SIZE
 	  chosen Zephyr flash devicetree node to ensure that swapping can be
 	  performed.
 
-config GETOPT
-	default n
-
 # Temporary hack to be able to build samples and tests on the nRF51L15/nRF54L20 Eng A/nRF7120 FLPR core
 config FLASH_BASE_ADDRESS
 	hex

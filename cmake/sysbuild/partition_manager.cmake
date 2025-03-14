@@ -58,14 +58,12 @@ function(partition_manager)
   ncs_file(CONF_FILES ${${image_name}_APPLICATION_CONFIG_DIR}
            PM conf_dir_pm_static
            DOMAIN ${PM_DOMAIN}
-           BUILD ${CONF_FILE_BUILD_TYPE}
            ${ncs_file_board}
   )
 
   ncs_file(CONF_FILES ${BOARD_DIR}
            PM board_dir_pm_static
            DOMAIN ${PM_DOMAIN}
-           BUILD ${CONF_FILE_BUILD_TYPE}
            ${ncs_file_board}
   )
 
