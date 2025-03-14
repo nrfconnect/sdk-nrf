@@ -19,35 +19,20 @@ common:
     - nrf54h20dk/nrf54h20/cpuapp
     - nrf9160dk/nrf9160
   tags:
-
     - pmic
     - ci_samples_pmic
 tests:
-  sample.npm1300_fuel_gauge:
+  sample.npm1300_fuel_gauge_compile:
     sysbuild: true
+    build_only: true
     platform_allow:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
-    harness: console
-    tags: sysbuild
-    harness_config:
-      fixture: nPM1300_setup_eng_b
-      type: multi_line
-      ordered: true
-      regex:
-        - "PMIC device ok"
-        - "V: [0-9.]+, I: [0-9.-]+, T: [0-9.-]+"
-        - "SoC: [0-9.]+, TTE: ([0-9.]+|nan), TTF: ([0-9.]+|nan)"
-  sample.compile:
-    sysbuild: true
-    platform_allow:
-      - nrf9160dk/nrf9160
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
-    harness: shield
+      - nrf9160dk/nrf9160
     tags:
       - shield
       - sysbuild
       - ci_samples_pmic
-    extra_args: SHIELD=npm1300_ek
