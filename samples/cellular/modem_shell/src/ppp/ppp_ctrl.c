@@ -377,9 +377,9 @@ static int ppp_ctrl_zephyr_sckt_create(void)
 		return 0;
 	}
 
-	/* Create raw Zephyr socket for passing data to/from ppp link: */
-	ppp_data_socket_fd = socket(AF_PACKET, SOCK_RAW | SOCK_NATIVE,
-				    htons(IPPROTO_RAW));
+	/* Create Zephyr packet socket for passing data to/from ppp link: */
+	ppp_data_socket_fd = socket(AF_PACKET, SOCK_DGRAM | SOCK_NATIVE,
+				    htons(ETH_P_ALL));
 	if (ppp_data_socket_fd < 0) {
 		mosh_error("PPP Zephyr data socket creation failed: (%d)\n", -errno);
 		goto return_error;
@@ -392,6 +392,7 @@ static int ppp_ctrl_zephyr_sckt_create(void)
 
 	dst.sll_ifindex = net_if_get_by_iface(ppp_iface_global);
 	dst.sll_family = AF_PACKET;
+	dst.sll_protocol = htons(ETH_P_ALL);
 
 	ret = bind(ppp_data_socket_fd, (const struct sockaddr *)&dst,
 		       sizeof(struct sockaddr_ll));
