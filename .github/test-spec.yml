@@ -1,5 +1,9 @@
 # This is the Jenkins ci variant of the .github/labler.yaml
 
+"__EXCLUDE__":
+  - "**/VERSION"
+  - "**/*.rst"
+
 "CI-run-twister":
   - any:
       - "!.github/**/*"
@@ -8,7 +12,6 @@
       - "!test-manifests/**/*"
       - "!CODEOWNERS"
       - "!LICENSE"
-      - "!**/*.rst"
       - "!VERSION"
       - "!ncs_version.h.in"
 
