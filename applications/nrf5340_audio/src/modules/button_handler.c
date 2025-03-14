@@ -52,6 +52,7 @@ const static struct btn_config btn_cfg[] = {
 		.btn_pin = BUTTON_PLAY_PAUSE,
 		.btn_cfg_mask = DT_GPIO_FLAGS(DT_ALIAS(sw2), gpios),
 	},
+#if defined(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP)
 	{
 		.btn_name = STRINGIFY(BUTTON_4),
 		.btn_pin = BUTTON_4,
@@ -62,6 +63,17 @@ const static struct btn_config btn_cfg[] = {
 		.btn_pin = BUTTON_5,
 		.btn_cfg_mask = DT_GPIO_FLAGS(DT_ALIAS(sw4), gpios),
 	}
+#else
+	{
+		.btn_name = STRINGIFY(BUTTON_4),
+		.btn_pin = BUTTON_4,
+	},
+	{
+		.btn_name = STRINGIFY(BUTTON_5),
+		.btn_pin = BUTTON_5,
+		.btn_cfg_mask = DT_GPIO_FLAGS(DT_ALIAS(sw3), gpios),
+	}
+#endif /* CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP */
 };
 /* clang-format on */
 
@@ -220,6 +232,10 @@ int button_handler_init(void)
 	}
 
 	for (uint8_t i = 0; i < ARRAY_SIZE(btn_cfg); i++) {
+		if (btn_cfg[i].btn_pin == BUTTON_NOT_ASSIGNED) {
+			continue;
+		}
+
 		ret = gpio_pin_configure(gpio_53_dev, btn_cfg[i].btn_pin,
 					 GPIO_INPUT | btn_cfg[i].btn_cfg_mask);
 		if (ret) {

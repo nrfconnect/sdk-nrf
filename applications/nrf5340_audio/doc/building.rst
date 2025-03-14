@@ -259,6 +259,13 @@ Complete the following steps to build the application:
       * For headset device: ``-DCONFIG_AUDIO_DEV=1``
       * For gateway device: ``-DCONFIG_AUDIO_DEV=2``
 
+   #. Choose the configuration file for the device selected by using one of the following options:
+
+      * For unicast headset: ``-DEXTRA_CONF_FILE=".\unicast_server\overlay-unicast_server.conf"``
+      * For unicast gateway: ``-DEXTRA_CONF_FILE=".\unicast_client\overlay-unicast_client.conf"``
+      * For broadcast headset: ``-DEXTRA_CONF_FILE=".\broadcast_sink\overlay-broadcast_sink.conf"``
+      * For broadcast gateway: ``-DEXTRA_CONF_FILE=".\broadcast_source\overlay-broadcast_source.conf"``
+
    #. Choose the application version (:ref:`nrf53_audio_app_building_config_files`) by using one of the following options:
 
       * For the debug version: No build flag needed.
@@ -269,9 +276,9 @@ Complete the following steps to build the application:
 
    .. code-block:: console
 
-      west build -b nrf5340_audio_dk/nrf5340/cpuapp --pristine -- -DCONFIG_AUDIO_DEV=1 -DFILE_SUFFIX=release
+      west build -b nrf5340_audio_dk/nrf5340/cpuapp --pristine -- -DCONFIG_AUDIO_DEV=1 -DEXTRA_CONF_FILE=".\unicast_server\overlay-unicast_server.conf" -DFILE_SUFFIX=release
 
-   This command creates the build files for headset device directly in the :file:`build` directory.
+   This command creates the build files for a unicast headset device directly in the :file:`build` directory.
    What this means is that you cannot create build files for all devices you want to program, because the subsequent commands will overwrite the files in the :file:`build` directory.
 
    To work around this standard west behavior, you can add the ``-d`` parameter to the ``west`` command to specify a custom build folder for each device.
