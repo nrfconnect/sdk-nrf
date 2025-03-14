@@ -8,15 +8,11 @@ Trusted Firmware-M in the |NCS|
    :depth: 2
 
 Nordic Semiconductor recommends following `Platform Security Architecture (PSA)`_ for product development to ensure appropriate security implementation in IoT devices.
-PSA offers the `PSA Certified IoT Security Framework`_ for securing connected devices, which consists of four steps:
 
-* Analyze the threats that have the potential to compromise your device and generate a set of security requirements based on these risks.
-* Architect the right level of security for your product by using unique security requirements to identify and select components and specifications.
-* Implement the trusted components and firmware, making use of high-level APIs to build-in security and create an interface to the hardware Root of Trust (RoT).
-* Certify device, platform, or silicon by following independent security evaluation.
+Trusted Firmware-M (TF-M) is the reference implementation of PSA, which follows `PSA Certified IoT Security Framework`_ for securing connected devices.
+For more information about the framework, see the :ref:`ug_psa_certified_api_overview` page.
 
-Trusted Firmware-M (TF-M) is the reference implementation of PSA.
-It provides a reference design of a Secure Processing Environment (SPE) for Arm M-profile architectures.
+TF-M provides a reference design of a Secure Processing Environment (SPE) for Arm M-profile architectures.
 The SPE relies on security by separation to protect sensitive assets and code.
 TF-M also provides security services to the application, such as Protected Storage, Cryptography, and Attestation.
 
@@ -37,4 +33,5 @@ For more information about TF-M, see the `Trusted Firmware-M documentation <TF-M
 
    tfm_architecture
    processing_environments
+   psa_certified_api_overview
    tfm

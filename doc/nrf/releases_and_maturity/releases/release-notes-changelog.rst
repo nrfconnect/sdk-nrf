@@ -111,6 +111,7 @@ Security
     * Support for HKDF-Expand and HKDF-Extract in CRACEN.
     * Support for Ed25519ph(HashEdDSA) to CRACEN.
     * Documentation page about the :ref:`ug_tfm_architecture`.
+    * Documentation page about the :ref:`ug_psa_certified_api_overview`.
 
   * Updated:
 
