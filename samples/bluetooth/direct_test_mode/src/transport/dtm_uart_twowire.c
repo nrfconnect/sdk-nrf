@@ -335,6 +335,9 @@ enum dtm_evt {
 /** Upper bits of packet length */
 static uint8_t upper_len;
 
+/** Currently configured PHY */
+static enum dtm_phy dtm_phy = DTM_PHY_1M;
+
 static int reset_dtm(uint8_t parameter)
 {
 	if (parameter > LE_RESET_MAX_RANGE) {
@@ -342,6 +345,7 @@ static int reset_dtm(uint8_t parameter)
 	}
 
 	upper_len = 0;
+	dtm_phy = DTM_PHY_1M;
 	return dtm_setup_reset();
 }
 
@@ -357,18 +361,32 @@ static int upper_set(uint8_t parameter)
 
 static int phy_set(uint8_t parameter)
 {
+	int err;
 	switch (parameter) {
 	case LE_PHY_1M_MIN_RANGE ... LE_PHY_1M_MAX_RANGE:
-		return dtm_setup_set_phy(DTM_PHY_1M);
-
+		err = dtm_setup_set_phy(DTM_PHY_1M);
+		if (err == 0) {
+			dtm_phy = DTM_PHY_1M;
+		}
+		return err;
 	case LE_PHY_2M_MIN_RANGE ... LE_PHY_2M_MAX_RANGE:
-		return dtm_setup_set_phy(DTM_PHY_2M);
-
+		err = dtm_setup_set_phy(DTM_PHY_2M);
+		if (err == 0) {
+			dtm_phy = DTM_PHY_2M;
+		}
+		return err;
 	case LE_PHY_LE_CODED_S8_MIN_RANGE ... LE_PHY_LE_CODED_S8_MAX_RANGE:
-		return dtm_setup_set_phy(DTM_PHY_CODED_S8);
-
+		err = dtm_setup_set_phy(DTM_PHY_CODED_S8);
+		if (err == 0) {
+			dtm_phy = DTM_PHY_CODED_S8;
+		}
+		return err;
 	case LE_PHY_LE_CODED_S2_MIN_RANGE ... LE_PHY_LE_CODED_S2_MAX_RANGE:
-		return dtm_setup_set_phy(DTM_PHY_CODED_S2);
+		err = dtm_setup_set_phy(DTM_PHY_CODED_S2);
+		if (err == 0) {
+			dtm_phy = DTM_PHY_CODED_S2;
+		}
+		return err;
 
 	default:
 		return -EINVAL;
@@ -668,7 +686,10 @@ static uint16_t on_test_tx_cmd(uint8_t chan, uint8_t length, enum dtm_pkt_type t
 		return LE_TEST_STATUS_EVENT_ERROR;
 	}
 
-	length = (length & ~LE_UPPER_BITS_MASK) | upper_len;
+	/* Add upper bits to length only if packet is not vendor specific */
+	if (pkt != DTM_PACKET_FF_OR_VENDOR || (dtm_phy != DTM_PHY_1M && dtm_phy != DTM_PHY_2M)) {
+		length = (length & ~LE_UPPER_BITS_MASK) | upper_len;
+	}
 
 	err = dtm_test_transmit(chan, length, pkt);
 
