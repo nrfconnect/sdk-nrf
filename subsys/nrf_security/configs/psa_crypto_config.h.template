@@ -77,6 +77,7 @@
 #cmakedefine PSA_NEED_OBERON_KEY_AGREEMENT_DRIVER                                   @PSA_NEED_OBERON_KEY_AGREEMENT_DRIVER@
 #cmakedefine PSA_NEED_OBERON_KEY_DERIVATION_DRIVER                                  @PSA_NEED_OBERON_KEY_DERIVATION_DRIVER@
 #cmakedefine PSA_NEED_OBERON_KEY_MANAGEMENT_DRIVER                                  @PSA_NEED_OBERON_KEY_MANAGEMENT_DRIVER@
+#cmakedefine PSA_NEED_OBERON_KEY_WRAP_DRIVER                                        @PSA_NEED_OBERON_KEY_WRAP_DRIVER@
 #cmakedefine PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE                           @PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE@
 #cmakedefine PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_MONTGOMERY                @PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_MONTGOMERY@
 #cmakedefine PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_MONTGOMERY_255            @PSA_NEED_OBERON_KEY_TYPE_ECC_KEY_PAIR_DERIVE_MONTGOMERY_255@
@@ -201,6 +202,16 @@
 #cmakedefine PSA_NEED_OBERON_TLS12_ECJPAKE_TO_PMS                                   @PSA_NEED_OBERON_TLS12_ECJPAKE_TO_PMS@
 #cmakedefine PSA_NEED_OBERON_TLS12_PRF                                              @PSA_NEED_OBERON_TLS12_PRF@
 #cmakedefine PSA_NEED_OBERON_TLS12_PSK_TO_MS                                        @PSA_NEED_OBERON_TLS12_PSK_TO_MS@
+#cmakedefine PSA_NEED_OBERON_AES_KW                                                 @PSA_NEED_OBERON_AES_KW@
+#cmakedefine PSA_NEED_OBERON_AES_KWP                                                @PSA_NEED_OBERON_AES_KWP@
+#cmakedefine PSA_NEED_OBERON_WPA3_SAE_PT                                            @PSA_NEED_OBERON_WPA3_SAE_PT@
+#cmakedefine PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_PT                                   @PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_PT_SEC@
+#cmakedefine PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_PT_SECP                              @PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_PT_SECP@
+#cmakedefine PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_PT_SECP_R1_256                       @PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_PT_SECP_R1_256@
+#cmakedefine PSA_NEED_OBERON_WPA3_SAE                                               @PSA_NEED_OBERON_WPA3_SAE@
+#cmakedefine PSA_NEED_OBERON_WPA3_SAE_SECP_R1_256                                   @PSA_NEED_OBERON_WPA3_SAE_SECP_R1_256@
+#cmakedefine PSA_NEED_OBERON_SP800_108_COUNTER_CMAC                                 @PSA_NEED_OBERON_SP800_108_COUNTER_CMAC@
+#cmakedefine PSA_NEED_OBERON_SP800_108_COUNTER_HMAC                                 @PSA_NEED_OBERON_SP800_108_COUNTER_HMAC@
 
 #cmakedefine PSA_NEED_NRF_RNG_ENTROPY_DRIVER                    @PSA_NEED_NRF_RNG_ENTROPY_DRIVER@
 
@@ -447,8 +458,11 @@
 #cmakedefine MBEDTLS_PSA_CRYPTO_CLIENT
 #cmakedefine MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
 #cmakedefine MBEDTLS_PSA_KEY_SLOT_COUNT                         @MBEDTLS_PSA_KEY_SLOT_COUNT@
+#cmakedefine MBEDTLS_PSA_STATIC_KEY_SLOTS                       @MBEDTLS_PSA_STATIC_KEY_SLOTS@
+#cmakedefine MBEDTLS_PSA_STATIC_KEY_SLOT_BUFFER_SIZE            @MBEDTLS_PSA_STATIC_KEY_SLOT_BUFFER_SIZE@
+#cmakedefine MBEDTLS_PSA_KEY_STORE_DYNAMIC                      @MBEDTLS_PSA_KEY_STORE_DYNAMIC@
 
-#include <psa/core_unsupported_ciphers_check.h>
+#include <oberon_check_unsupported.h>
 
 #include <check_crypto_config.h>
 

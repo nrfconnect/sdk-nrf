@@ -141,11 +141,11 @@ manifest:
     - name: oberon-psa-crypto
       path: modules/crypto/oberon-psa-crypto
       repo-path: sdk-oberon-psa-crypto
-      revision: v1.3.0-ncs1-snapshot1
+      revision: pull/21/head
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 781639f43dc9605b6018f3a8ccd05f588a4bad6e
+      revision: pull/1668/head
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
