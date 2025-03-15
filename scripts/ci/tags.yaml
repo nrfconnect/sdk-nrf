@@ -1604,3 +1604,13 @@ ci_tests_zephyr_boards_nrf_qdec:
   files:
     - nrf/tests/zephyr/boards/nrf/qdec/
     - zephyr/tests/boards/nrf/qdec/
+
+ci_tests_zephyr_drivers_adc:
+  files:
+    - nrf/tests/zephyr/drivers/adc/
+    - zephyr/tests/drivers/adc/
+
+ci_samples_zephyr_drivers_adc:
+  files:
+    - nrf/samples/zephyr/drivers/adc/
+    - zephyr/samples/drivers/adc/
