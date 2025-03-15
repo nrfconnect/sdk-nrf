@@ -79,6 +79,7 @@ static void hmac_produce(struct sitask *t, char *out, size_t sz)
 	if (r) {
 		si_task_mark_final(t, r);
 	}
+	r = sx_hash_wait(&t->u.h);
 }
 
 static int start_hmac_computation(struct sitask *t, struct siwq *wq)
