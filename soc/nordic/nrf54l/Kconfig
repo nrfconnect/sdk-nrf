@@ -1,0 +1,10 @@
+# Nordic Semiconductor nRF54 MCU line
+
+# Copyright (c) 2024 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config SOC_NRF54LV10A_ENGA_CPUAPP
+	select SOC_NRF54L_CPUAPP_COMMON
+
+config SOC_NRF54LM20A_ENGA_CPUAPP
+	select SOC_NRF54L_CPUAPP_COMMON
