@@ -12,6 +12,11 @@ Developing with nRF7002 EB
 The nRF7002 :term:`Expansion Board (EB)` (PCA63561), part of the `nRF70 Series Family <nRF70 Series product page_>`_, can be used to provide Wi-Fi® connectivity to compatible development or evaluation boards through the nRF7002 Wi-Fi 6 companion IC.
 For example, you can use it with the :ref:`Nordic Thingy:53 <ug_thingy53>`, an IoT prototyping platform from Nordic Semiconductor.
 
+.. note::
+   .. deprecated:: v3.0.0
+      Support for the nRF7002 EB is deprecated for all boards except the Thingy:53.
+      This support will be removed in the next major release of the |NCS|.
+
 You can also use the nRF7002 EB to provide Wi-Fi connectivity to the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`zephyr:nrf54l15dk_nrf54l15`.
 
 .. figure:: images/nRF7002eb.png
