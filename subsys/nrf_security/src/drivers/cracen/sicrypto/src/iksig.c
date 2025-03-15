@@ -279,6 +279,11 @@ static void create_pubkey(struct sitask *t, const struct si_sig_privkey *privkey
 	pubkey->key.eckey.curve = privkey->key.ref.curve;
 }
 
+const struct si_sig_def *const si_sig_def_ecdsa = &(const struct si_sig_def){
+	.pubkey = create_pubkey,
+	.sigcomponents = 2,
+};
+
 static const struct si_sig_def si_sig_def_ik = {
 	.sign = create_sign,
 	.sign_digest = create_sign_digest,
