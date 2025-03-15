@@ -14,14 +14,12 @@
 #include <sxsymcrypt/chachapoly.h>
 #include <sxsymcrypt/internal.h>
 #include <sxsymcrypt/keyref.h>
+#include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include <zephyr/sys/__assert.h>
-
 #include "common.h"
-#include <cracen/mem_helpers.h>
 
-/* CCM, GCM and ChaCha20-Poly1305 have 16 byte tags by default */
-#define DEFAULT_TAG_SIZE 16
+#define CCM_HEADER_MAX_LENGTH 26
 
 /*
  * This function assumes it is given a valid algorithm for aead.
@@ -57,8 +55,10 @@ static bool is_nonce_length_supported(psa_algorithm_t alg, size_t nonce_length)
 	case PSA_ALG_GCM:
 	case PSA_ALG_CHACHA20_POLY1305:
 		return nonce_length == 12u;
+#ifdef PSA_NEED_CRACEN_CCM_AES
 	case PSA_ALG_CCM:
 		return sx_aead_aesccm_nonce_size_is_valid(nonce_length);
+#endif
 	}
 
 	return false;
@@ -195,12 +195,12 @@ static void cracen_writebe(uint8_t *out, uint64_t data, uint16_t targetsz)
 	}
 }
 
-static psa_status_t create_aead_ccmheader(cracen_aead_operation_t *operation)
+static void create_aead_ccmheader(cracen_aead_operation_t *operation,
+				  uint8_t header[static CCM_HEADER_MAX_LENGTH],
+				  size_t *header_length)
 {
 	uint8_t flags;
 	size_t m, l;
-	uint8_t header[26] = {0};
-	size_t header_size = 16;
 
 	/* RFC3610 paragraph 2.2 defines the formatting of the first block.
 	 * M, CCM TAG size is one of {4,6,8,10,12,14,16}, CCM* not supported
@@ -232,6 +232,7 @@ static psa_status_t create_aead_ccmheader(cracen_aead_operation_t *operation)
 
 	cracen_writebe(&(header[1 + operation->nonce_length]), operation->plaintext_length, l);
 
+	*header_length = 16;
 	/*
 	 * If there is additional authentication data, encode the size into
 	 * bytes [16, 17/21/25] depending on the length
@@ -239,21 +240,19 @@ static psa_status_t create_aead_ccmheader(cracen_aead_operation_t *operation)
 	if (operation->ad_length > 0) {
 		if (operation->ad_length < 0xFF00) {
 			cracen_writebe(&header[16], operation->ad_length, 2);
-			header_size += 2;
+			*header_length += 2;
 		} else if (operation->ad_length <= 0xFFFFFFFF) {
 			header[16] = 0xFF;
 			header[17] = 0xFE;
 			cracen_writebe(&header[18], operation->ad_length, 4);
-			header_size += 6;
+			*header_length += 6;
 		} else {
 			header[16] = 0xFF;
 			header[17] = 0xFF;
 			cracen_writebe(&header[18], operation->ad_length, 8);
-			header_size += 10;
+			*header_length += 10;
 		}
 	}
-
-	return cracen_aead_update_ad(operation, header, header_size);
 }
 
 static psa_status_t setup(cracen_aead_operation_t *operation, enum cipher_operation dir,
@@ -343,8 +342,8 @@ psa_status_t cracen_aead_decrypt_setup(cracen_aead_operation_t *operation,
 	return setup(operation, CRACEN_DECRYPT, attributes, key_buffer, key_buffer_size, alg);
 }
 
-psa_status_t cracen_aead_set_nonce(cracen_aead_operation_t *operation, const uint8_t *nonce,
-				   size_t nonce_length)
+static psa_status_t set_nonce(cracen_aead_operation_t *operation, const uint8_t *nonce,
+			      size_t nonce_length)
 {
 	if (!is_nonce_length_supported(operation->alg, nonce_length)) {
 		return PSA_ERROR_NOT_SUPPORTED;
@@ -353,9 +352,26 @@ psa_status_t cracen_aead_set_nonce(cracen_aead_operation_t *operation, const uin
 	memcpy(operation->nonce, nonce, nonce_length);
 	operation->nonce_length = nonce_length;
 
+	return PSA_SUCCESS;
+}
+
+psa_status_t cracen_aead_set_nonce(cracen_aead_operation_t *operation, const uint8_t *nonce,
+				   size_t nonce_length)
+{
+	psa_status_t status;
+
+	status = set_nonce(operation, nonce, nonce_length);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
 	/* Create the CCM header */
-	if (operation->alg == PSA_ALG_CCM) {
-		return create_aead_ccmheader(operation);
+	if (IS_ENABLED(PSA_NEED_CRACEN_CCM_AES) && operation->alg == PSA_ALG_CCM) {
+		uint8_t ccm_header[CCM_HEADER_MAX_LENGTH];
+		size_t ccm_header_length;
+
+		create_aead_ccmheader(operation, ccm_header, &ccm_header_length);
+		return cracen_aead_update_ad(operation, ccm_header, ccm_header_length);
 	}
 
 	return PSA_SUCCESS;
@@ -428,13 +444,14 @@ static psa_status_t cracen_aead_update_internal(cracen_aead_operation_t *operati
 	/* Clamp input length to a multiple of the block size. */
 	blk_bytes = input_length & ~(get_block_size(operation->alg) - 1);
 
-	/* For CCM, sxsymcrypt driver needs a chunk of input data to produce a tag
+	/* For CCM, in multi-part mode sxsymcrypt needs a chunk of input data to produce a tag
 	 * therefore we buffer the last block until finish will be called.
 	 * blk_bytes tracks the amount of block-sized input that will be
 	 * processed immediately. So to buffer the input and prevent processing
 	 * we subtract one block from blk_bytes.
 	 */
-	if (operation->alg == PSA_ALG_CCM && input_length != 0 && blk_bytes == input_length) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_CCM_AES) &&
+	    operation->alg == PSA_ALG_CCM && input_length != 0 && blk_bytes == input_length) {
 		blk_bytes -= get_block_size(operation->alg);
 	}
 
@@ -502,12 +519,12 @@ psa_status_t cracen_aead_update(cracen_aead_operation_t *operation, const uint8_
 		psa_status_t status =
 			cracen_feed_data_to_hw(operation, operation->unprocessed_input,
 					       operation->unprocessed_input_bytes, NULL, true);
-		if (status) {
+		if (status != PSA_SUCCESS) {
 			return status;
 		}
 
 		status = process_on_hw(operation);
-		if (status) {
+		if (status != PSA_SUCCESS) {
 			return status;
 		}
 
@@ -536,7 +553,7 @@ psa_status_t cracen_aead_finish(cracen_aead_operation_t *operation, uint8_t *cip
 		status = cracen_feed_data_to_hw(operation, operation->unprocessed_input,
 						operation->unprocessed_input_bytes, ciphertext,
 						!operation->ad_finished);
-		if (status) {
+		if (status != PSA_SUCCESS) {
 			return status;
 		}
 		if (operation->ad_finished) {
@@ -561,9 +578,7 @@ psa_status_t cracen_aead_finish(cracen_aead_operation_t *operation, uint8_t *cip
 
 	*tag_length = operation->tag_size;
 
-	safe_memzero((void *)operation, sizeof(cracen_aead_operation_t));
-
-	return PSA_SUCCESS;
+	return cracen_aead_abort(operation);
 }
 
 psa_status_t cracen_aead_verify(cracen_aead_operation_t *operation, uint8_t *plaintext,
@@ -581,7 +596,7 @@ psa_status_t cracen_aead_verify(cracen_aead_operation_t *operation, uint8_t *pla
 		status = cracen_feed_data_to_hw(operation, operation->unprocessed_input,
 						operation->unprocessed_input_bytes, plaintext,
 						!operation->ad_finished);
-		if (status) {
+		if (status != PSA_SUCCESS) {
 			return status;
 		}
 		if (operation->ad_finished) {
@@ -605,15 +620,56 @@ psa_status_t cracen_aead_verify(cracen_aead_operation_t *operation, uint8_t *pla
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	safe_memzero((void *)operation, sizeof(cracen_aead_operation_t));
-
-	return silex_statuscodes_to_psa(sx_status);
+	return cracen_aead_abort(operation);
 }
 
 psa_status_t cracen_aead_abort(cracen_aead_operation_t *operation)
 {
 	safe_memzero((void *)operation, sizeof(cracen_aead_operation_t));
 	return PSA_SUCCESS;
+}
+
+static psa_status_t feed_singlepart_ccm_aad(cracen_aead_operation_t *operation,
+					    const uint8_t *additional_data,
+					    size_t additional_data_length)
+{
+	psa_status_t status;
+	/* Data fed to CRACEN needs to remain untouched until it's been consumed
+	 * (sx_aead_wait()), so don't put the CCM header buffer on the stack.
+	 */
+	static uint8_t ccm_header_aad[ROUND_UP(CCM_HEADER_MAX_LENGTH,
+					       PSA_BLOCK_CIPHER_BLOCK_LENGTH(PSA_KEY_TYPE_AES))];
+	size_t ccm_header_length;
+	size_t aad_fed_count;
+
+	create_aead_ccmheader(operation, ccm_header_aad, &ccm_header_length);
+
+	if (additional_data_length != 0) {
+		/* Data fed to CRACEN needs to be block size-aligned, so
+		 * complete the header with the beginning of the user-provided AAD.
+		 */
+		aad_fed_count = MIN(additional_data_length,
+				    sizeof(ccm_header_aad) - ccm_header_length);
+		memcpy(ccm_header_aad + ccm_header_length, additional_data, aad_fed_count);
+	} else {
+		aad_fed_count = 0;
+	}
+
+	status = cracen_feed_data_to_hw(operation, ccm_header_aad,
+					ccm_header_length + aad_fed_count, NULL, true);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	if (additional_data_length != aad_fed_count) {
+		/* Feed the rest of the user-provided AAD.
+		 * The last feeding doesn't need to be block size-aligned.
+		 */
+		status = cracen_feed_data_to_hw(operation, additional_data + aad_fed_count,
+						additional_data_length - aad_fed_count, NULL, true);
+	}
+
+	return status;
 }
 
 psa_status_t cracen_aead_encrypt(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
@@ -625,12 +681,14 @@ psa_status_t cracen_aead_encrypt(const psa_key_attributes_t *attributes, const u
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	cracen_aead_operation_t operation = {0};
-	size_t update_length = 0;
-	uint8_t local_tag_buffer[PSA_AEAD_TAG_MAX_SIZE] = {0};
-	size_t tag_length = 0;
+	size_t tag_length;
 
-	status =
-		cracen_aead_encrypt_setup(&operation, attributes, key_buffer, key_buffer_size, alg);
+	if (ciphertext_size < plaintext_length) {
+		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+
+	status = cracen_aead_encrypt_setup(&operation, attributes,
+					   key_buffer, key_buffer_size, alg);
 	if (status != PSA_SUCCESS) {
 		goto error_exit;
 	}
@@ -640,42 +698,40 @@ psa_status_t cracen_aead_encrypt(const psa_key_attributes_t *attributes, const u
 		goto error_exit;
 	}
 
-	status = cracen_aead_set_nonce(&operation, nonce, nonce_length);
+	/* Do not call the cracen_aead_update*() functions to avoid using
+	 * HW context switching (process_on_hw()) in single-part operations.
+	 */
+
+	status = set_nonce(&operation, nonce, nonce_length);
 	if (status != PSA_SUCCESS) {
 		goto error_exit;
 	}
 
-	status = cracen_aead_update_ad(&operation, additional_data, additional_data_length);
+	if (IS_ENABLED(PSA_NEED_CRACEN_CCM_AES) && operation.alg == PSA_ALG_CCM) {
+		status = feed_singlepart_ccm_aad(&operation, additional_data,
+						 additional_data_length);
+	} else {
+		status = cracen_feed_data_to_hw(&operation, additional_data,
+						additional_data_length, NULL, true);
+	}
 	if (status != PSA_SUCCESS) {
 		goto error_exit;
 	}
 
-	status = cracen_aead_update(&operation, plaintext, plaintext_length, ciphertext,
-				    ciphertext_size, ciphertext_length);
+	status = cracen_feed_data_to_hw(&operation, plaintext, plaintext_length, ciphertext, false);
 	if (status != PSA_SUCCESS) {
-		*ciphertext_length = 0;
 		goto error_exit;
 	}
 
-	status = cracen_aead_finish(&operation, &ciphertext[*ciphertext_length],
-				    ciphertext_size - *ciphertext_length, &update_length,
-				    local_tag_buffer, sizeof(local_tag_buffer), &tag_length);
+	status = cracen_aead_finish(&operation, NULL, 0, NULL,
+				    &ciphertext[plaintext_length],
+				    ciphertext_size - plaintext_length, &tag_length);
 	if (status != PSA_SUCCESS) {
-		*ciphertext_length = 0;
 		goto error_exit;
 	}
-	*ciphertext_length += update_length;
 
-	/* Copy tag to the end of the ciphertext buffer, if big enough */
-	if (*ciphertext_length + tag_length > ciphertext_size) {
-		*ciphertext_length = 0;
-		status = PSA_ERROR_BUFFER_TOO_SMALL;
-		goto error_exit;
-	}
-	memcpy(&ciphertext[*ciphertext_length], &local_tag_buffer, tag_length);
-	*ciphertext_length += tag_length;
-
-	return status;
+	*ciphertext_length = plaintext_length + tag_length;
+	return PSA_SUCCESS;
 
 error_exit:
 	cracen_aead_abort(&operation);
@@ -691,49 +747,61 @@ psa_status_t cracen_aead_decrypt(const psa_key_attributes_t *attributes, const u
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	cracen_aead_operation_t operation = {0};
-	size_t update_length = 0;
 
-	status =
-		cracen_aead_decrypt_setup(&operation, attributes, key_buffer, key_buffer_size, alg);
+	status = cracen_aead_decrypt_setup(&operation, attributes,
+					   key_buffer, key_buffer_size, alg);
 	if (status != PSA_SUCCESS) {
 		goto error_exit;
 	}
 
-	status = cracen_aead_set_lengths(&operation, additional_data_length,
-					 ciphertext_length - operation.tag_size);
+	*plaintext_length = ciphertext_length - operation.tag_size;
+
+	if (plaintext_size < *plaintext_length) {
+		status = PSA_ERROR_BUFFER_TOO_SMALL;
+		goto error_exit;
+	}
+
+	status = cracen_aead_set_lengths(&operation, additional_data_length, *plaintext_length);
 	if (status != PSA_SUCCESS) {
 		goto error_exit;
 	}
 
-	status = cracen_aead_set_nonce(&operation, nonce, nonce_length);
+	/* Do not call the cracen_aead_update*() functions to avoid using
+	 * HW context switching (process_on_hw()) in single-part operations.
+	 */
+
+	status = set_nonce(&operation, nonce, nonce_length);
 	if (status != PSA_SUCCESS) {
 		goto error_exit;
 	}
 
-	status = cracen_aead_update_ad(&operation, additional_data, additional_data_length);
+	if (IS_ENABLED(PSA_NEED_CRACEN_CCM_AES) && operation.alg == PSA_ALG_CCM) {
+		status = feed_singlepart_ccm_aad(&operation, additional_data,
+						 additional_data_length);
+	} else {
+		status = cracen_feed_data_to_hw(&operation, additional_data,
+						additional_data_length, NULL, true);
+	}
 	if (status != PSA_SUCCESS) {
 		goto error_exit;
 	}
 
-	status = cracen_aead_update(&operation, ciphertext, ciphertext_length - operation.tag_size,
-				    plaintext, plaintext_size, plaintext_length);
+	status = cracen_feed_data_to_hw(&operation, ciphertext,
+					*plaintext_length, plaintext, false);
 	if (status != PSA_SUCCESS) {
-		*plaintext_length = 0;
 		goto error_exit;
 	}
 
-	status = cracen_aead_verify(&operation, &plaintext[*plaintext_length],
-				    plaintext_size - *plaintext_length, &update_length,
-				    &ciphertext[ciphertext_length - operation.tag_size],
-				    operation.tag_size);
+	status = cracen_aead_verify(&operation, NULL, 0, NULL,
+				    &ciphertext[*plaintext_length], operation.tag_size);
 	if (status != PSA_SUCCESS) {
-		*plaintext_length = 0;
 		goto error_exit;
 	}
-	*plaintext_length += update_length;
 
-	return status;
+	return PSA_SUCCESS;
+
 error_exit:
+	*plaintext_length = 0;
 	cracen_aead_abort(&operation);
 	return status;
 }
