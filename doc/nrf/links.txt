@@ -67,8 +67,11 @@
 .. _`manifest group filter`: https://github.com/nrfconnect/sdk-nrf/blob/20f40501f69bc9bfd2b321704917da1769411936/west.yml#L42
 .. _`Zephyr commit 8dc3f8`: https://github.com/nrfconnect/sdk-zephyr/commit/8dc3f856229ce083c956aa301c31a23e65bd8cd8
 .. _`hwmv2 conversion script`: https://github.com/nrfconnect/sdk-zephyr/blob/main/scripts/utils/board_v1_to_v2.py
-.. _`ncs-example-application commit f9f2da`: https://github.com/nrfconnect/ncs-example-application/commit/f9f2da24041a7b1923e49893cca912482c138aae
 .. _`sdk-zephyr west build patch`: https://github.com/nrfconnect/sdk-zephyr/blob/1a5d3b4a4ff98a33222856526afdf9c089b96d2b/scripts/west_commands/build.py#L585-L598
+.. _`nRF52840 DK board.cmake`: https://github.com/nrfconnect/sdk-zephyr/blob/main/boards/nordic/nrf52840dk/board.cmake
+
+.. _`ncs-example-application commit f9f2da`: https://github.com/nrfconnect/ncs-example-application/commit/f9f2da24041a7b1923e49893cca912482c138aae
+
 .. _`sdk-nrf PR #15892`: https://github.com/nrfconnect/sdk-nrf/pull/15892
 .. _`sdk-nrf PR #14474`: https://github.com/nrfconnect/sdk-nrf/pull/14474
 .. _`sdk-nrf PR #16242`: https://github.com/nrfconnect/sdk-nrf/pull/16242
