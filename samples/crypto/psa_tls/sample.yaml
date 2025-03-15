@@ -12,6 +12,7 @@ tests:
     extra_args:
       OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf"
     platform_allow:
+      - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf9160dk/nrf9160
       - nrf5340dk/nrf5340/cpuapp/ns
@@ -21,6 +22,7 @@ tests:
       - nrf9151dk/nrf9151
       - nrf9151dk/nrf9151/ns
     integration_platforms:
+      - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160
@@ -40,6 +42,7 @@ tests:
     extra_args:
       OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf;overlays/dtls.conf"
     platform_allow:
+      - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160
@@ -49,6 +52,7 @@ tests:
       - nrf9151dk/nrf9151
       - nrf9151dk/nrf9151/ns
     integration_platforms:
+      - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160
@@ -69,6 +73,7 @@ tests:
     extra_args:
       OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf"
     platform_allow:
+      - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160
@@ -78,6 +83,7 @@ tests:
       - nrf9151dk/nrf9151
       - nrf9151dk/nrf9151/ns
     integration_platforms:
+      - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160
@@ -97,6 +103,7 @@ tests:
     extra_args:
       OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf;overlays/dtls.conf"
     platform_allow:
+      - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160
@@ -106,6 +113,7 @@ tests:
       - nrf9151dk/nrf9151
       - nrf9151dk/nrf9151/ns
     integration_platforms:
+      - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160
@@ -126,6 +134,7 @@ tests:
     extra_args:
       OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf;overlays/tls_1_3.conf"
     platform_allow:
+      - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160
@@ -135,6 +144,7 @@ tests:
       - nrf9151dk/nrf9151
       - nrf9151dk/nrf9151/ns
     integration_platforms:
+      - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160
@@ -154,6 +164,7 @@ tests:
     extra_args:
       OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf;overlays/tls_1_3.conf"
     platform_allow:
+      - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160
@@ -163,6 +174,7 @@ tests:
       - nrf9151dk/nrf9151
       - nrf9151dk/nrf9151/ns
     integration_platforms:
+      - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9160dk/nrf9160
@@ -318,49 +330,6 @@ tests:
     tags:
       - ci_build
       - cracen
-      - sysbuild
-      - ci_samples_crypto
-  ################################################################################
-  ## PSA APIs with Cracen and Oberon
-  ################################################################################
-  sample.psa_tls.tls_1_3_server.ecdsa.cracen_oberon:
-    sysbuild: true
-    build_only: true
-    extra_args:
-      OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/cracen-oberon-psa.conf;overlays/tls_1_3.conf"
-    platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
-      - nrf54l15dk/nrf54l10/cpuapp
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
-      - nrf54l15dk/nrf54l10/cpuapp
-    tags:
-      - ci_build
-      - cracen_oberon
-      - sysbuild
-      - ci_samples_crypto
-  sample.psa_tls.tls_1_3_client.ecdsa.cracen_oberon:
-    sysbuild: true
-    build_only: true
-    extra_args:
-      OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/cracen-oberon-psa.conf;overlays/tls_1_3.conf"
-    platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
-      - nrf54l15dk/nrf54l10/cpuapp
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
-      - nrf54l15dk/nrf54l10/cpuapp
-    tags:
-      - ci_build
-      - cracen_oberon
       - sysbuild
       - ci_samples_crypto
   ################################################################################
