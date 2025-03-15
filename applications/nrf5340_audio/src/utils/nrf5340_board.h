@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef _NRF5340_AUDIO_DK_H_
-#define _NRF5340_AUDIO_DK_H_
+#ifndef _NRF5340_BOARD_H_
+#define _NRF5340_BOARD_H_
 
 #include "led.h"
 
@@ -14,6 +14,6 @@
  *
  * @return	0 if successful, error otherwise.
  */
-int nrf5340_audio_dk_init(void);
+int nrf5340_board_init(void);
 
-#endif /* _NRF5340_AUDIO_DK_H_ */
+#endif /* _NRF5340_BOARD_H_ */

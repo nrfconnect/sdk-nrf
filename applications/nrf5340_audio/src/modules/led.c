@@ -11,9 +11,12 @@
 #include <zephyr/drivers/gpio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
+#include <stdio.h>
 #include <zephyr/device.h>
 
 #include "macros_common.h"
+#include "led_assignments.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(led, CONFIG_MODULE_LED_LOG_LEVEL);
@@ -55,11 +58,13 @@ struct led_unit_cfg {
 static uint8_t leds_num;
 static bool initialized;
 static struct led_unit_cfg led_units[LED_UNIT_MAX];
+static struct led_unit_cfg *led_units_map[LED_UNIT_MAX] = {NULL};
+static uint8_t led_units_num;
 
 /**
  * @brief Configures fields for a RGB LED
  */
-static int configure_led_color(uint8_t led_unit, uint8_t led_color, uint8_t led)
+static int configure_led_color(enum led_unit_assignment led_unit, uint8_t led_color, uint8_t led)
 {
 	if (!device_is_ready(leds[led].port)) {
 		LOG_ERR("LED GPIO controller not ready");
@@ -76,7 +81,7 @@ static int configure_led_color(uint8_t led_unit, uint8_t led_color, uint8_t led)
 /**
  * @brief Configures fields for a monochrome LED
  */
-static int config_led_monochrome(uint8_t led_unit, uint8_t led)
+static int config_led_monochrome(enum led_unit_assignment led_unit, uint8_t led)
 {
 	if (!device_is_ready(leds[led].port)) {
 		LOG_ERR("LED GPIO controller not ready");
@@ -89,6 +94,46 @@ static int config_led_monochrome(uint8_t led_unit, uint8_t led)
 	return gpio_pin_configure_dt(led_units[led_unit].type.mono, GPIO_OUTPUT_INACTIVE);
 }
 
+static void led_units_mapping(enum led_unit_assignment led_unit, uint8_t led)
+{
+	if (led == LED_AUDIO_DEVICE_TYPE_INDEX) {
+		led_units_map[LED_AUDIO_DEVICE_TYPE] = &led_units[led_unit];
+		led_units_num++;
+	} else if (led == LED_AUDIO_NET_STATUS_INDEX) {
+		led_units_map[LED_AUDIO_NET_STATUS] = &led_units[led_unit];
+		led_units_num++;
+	} else if (led == LED_AUDIO_CONN_STATUS_INDEX) {
+		led_units_map[LED_AUDIO_CONN_STATUS] = &led_units[led_unit];
+		led_units_num++;
+	} else if (led == LED_AUDIO_SYNC_STATUS_INDEX) {
+		led_units_map[LED_AUDIO_SYNC_STATUS] = &led_units[led_unit];
+		led_units_num++;
+	} else if (led == LED_AUDIO_APP_STATUS_INDEX) {
+		led_units_map[LED_AUDIO_APP_STATUS] = &led_units[led_unit];
+		led_units_num++;
+	} else {
+		LOG_DBG("LED %d not assigned", led);
+	}
+}
+
+static int find_unit_number(const char *label, uint8_t *unit)
+{
+	uint8_t len = strlen(label);
+
+	for (uint8_t i = 0; i < len; i++) {
+		char c = *label;
+
+		if (isdigit(c)) {
+			*unit = strtoul(label, NULL, BASE_10);
+			return 0;
+		}
+
+		label++;
+	}
+
+	return -EINVAL;
+}
+
 /**
  * @brief Parses the device tree for LED settings.
  */
@@ -97,10 +142,11 @@ static int led_device_tree_parse(void)
 	int ret;
 
 	for (uint8_t i = 0; i < leds_num; i++) {
-		char *end_ptr = NULL;
-		uint32_t led_unit = strtoul(led_labels[i], &end_ptr, BASE_10);
 
-		if (led_labels[i] == end_ptr) {
+		int8_t led_unit;
+
+		ret = find_unit_number(led_labels[i], &led_unit);
+		if (ret) {
 			LOG_ERR("No match for led unit. The dts is likely not properly formatted");
 			return -ENXIO;
 		}
@@ -110,20 +156,22 @@ static int led_device_tree_parse(void)
 			if (ret) {
 				return ret;
 			}
-
 		} else if (strstr(led_labels[i], "LED_RGB_GREEN")) {
 			ret = configure_led_color(led_unit, GRN, i);
 			if (ret) {
 				return ret;
 			}
-
 		} else if (strstr(led_labels[i], "LED_RGB_BLUE")) {
 			ret = configure_led_color(led_unit, BLU, i);
 			if (ret) {
 				return ret;
 			}
-
 		} else if (strstr(led_labels[i], "LED_MONO")) {
+			ret = config_led_monochrome(led_unit, i);
+			if (ret) {
+				return ret;
+			}
+		} else if (strstr(led_labels[i], "Green LED")) {
 			ret = config_led_monochrome(led_unit, i);
 			if (ret) {
 				return ret;
@@ -132,25 +180,28 @@ static int led_device_tree_parse(void)
 			LOG_ERR("No color identifier for LED %d LED unit %d", i, led_unit);
 			return -ENODEV;
 		}
+
+		led_units_mapping(led_unit, i);
 	}
+
 	return 0;
 }
 
 /**
  * @brief Internal handling to set the status of a led unit
  */
-static int led_set_int(uint8_t led_unit, enum led_color color)
+static int led_set_int(enum led_unit_assignment led_unit, enum led_color color)
 {
 	int ret;
 
-	if (led_units[led_unit].unit_type == LED_MONOCHROME) {
+	if (led_units_map[led_unit]->unit_type == LED_MONOCHROME) {
 		if (color) {
-			ret = gpio_pin_set_dt(led_units[led_unit].type.mono, 1);
+			ret = gpio_pin_set_dt(led_units_map[led_unit]->type.mono, 1);
 			if (ret) {
 				return ret;
 			}
 		} else {
-			ret = gpio_pin_set_dt(led_units[led_unit].type.mono, 0);
+			ret = gpio_pin_set_dt(led_units_map[led_unit]->type.mono, 0);
 			if (ret) {
 				return ret;
 			}
@@ -158,12 +209,12 @@ static int led_set_int(uint8_t led_unit, enum led_color color)
 	} else {
 		for (uint8_t i = 0; i < NUM_COLORS_RGB; i++) {
 			if (color & BIT(i)) {
-				ret = gpio_pin_set_dt(led_units[led_unit].type.color[i], 1);
+				ret = gpio_pin_set_dt(led_units_map[led_unit]->type.color[i], 1);
 				if (ret) {
 					return ret;
 				}
 			} else {
-				ret = gpio_pin_set_dt(led_units[led_unit].type.color[i], 0);
+				ret = gpio_pin_set_dt(led_units_map[led_unit]->type.color[i], 0);
 				if (ret) {
 					return ret;
 				}
@@ -196,10 +247,10 @@ static void led_blink_work_handler(struct k_work *work)
 	int ret;
 	static bool on_phase;
 
-	for (uint8_t i = 0; i < leds_num; i++) {
-		if (led_units[i].user_cfg.blink) {
+	for (uint8_t i = 0; i < LED_AUDIO_ASSIGN_NUM; i++) {
+		if (led_units_map[i] != NULL && led_units_map[i]->user_cfg.blink) {
 			if (on_phase) {
-				ret = led_set_int(i, led_units[i].user_cfg.color);
+				ret = led_set_int(i, led_units_map[i]->user_cfg.color);
 				ERR_CHK(ret);
 			} else {
 				ret = led_set_int(i, LED_COLOR_OFF);
@@ -211,7 +262,7 @@ static void led_blink_work_handler(struct k_work *work)
 	on_phase = !on_phase;
 }
 
-static int led_set(uint8_t led_unit, enum led_color color, bool blink)
+static int led_set(enum led_unit_assignment led_unit, enum led_color color, bool blink)
 {
 	int ret;
 
@@ -224,15 +275,20 @@ static int led_set(uint8_t led_unit, enum led_color color, bool blink)
 		return ret;
 	}
 
-	led_units[led_unit].user_cfg.blink = blink;
-	led_units[led_unit].user_cfg.color = color;
+	led_units_map[led_unit]->user_cfg.blink = blink;
+	led_units_map[led_unit]->user_cfg.color = color;
 
 	return 0;
 }
 
-int led_on(uint8_t led_unit, ...)
+int led_on(enum led_unit_assignment led_unit, ...)
 {
-	if (led_units[led_unit].unit_type == LED_MONOCHROME) {
+	if (led_units_map[led_unit] == NULL) {
+		LOG_WRN("LED unit %d is not assigned to an LED(s)", led_unit);
+		return 0;
+	}
+
+	if (led_units_map[led_unit]->unit_type == LED_MONOCHROME) {
 		return led_set(led_unit, LED_ON, LED_SOLID);
 	}
 
@@ -247,12 +303,18 @@ int led_on(uint8_t led_unit, ...)
 		LOG_ERR("Invalid color code %d", color);
 		return -EINVAL;
 	}
+
 	return led_set(led_unit, color, LED_SOLID);
 }
 
-int led_blink(uint8_t led_unit, ...)
+int led_blink(enum led_unit_assignment led_unit, ...)
 {
-	if (led_units[led_unit].unit_type == LED_MONOCHROME) {
+	if (led_units_map[led_unit] == NULL) {
+		LOG_WRN("LED unit %d is not assigned to an LED(s)", led_unit);
+		return 0;
+	}
+
+	if (led_units_map[led_unit]->unit_type == LED_MONOCHROME) {
 		return led_set(led_unit, LED_ON, LED_BLINK);
 	}
 
@@ -272,8 +334,13 @@ int led_blink(uint8_t led_unit, ...)
 	return led_set(led_unit, color, LED_BLINK);
 }
 
-int led_off(uint8_t led_unit)
+int led_off(enum led_unit_assignment led_unit)
 {
+	if (led_units_map[led_unit] == NULL) {
+		LOG_WRN("LED unit %d is not assigned to an LED(s)", led_unit);
+		return 0;
+	}
+
 	return led_set(led_unit, LED_COLOR_OFF, LED_SOLID);
 }
 
@@ -296,5 +363,6 @@ int led_init(void)
 
 	k_timer_start(&led_blink_timer, K_MSEC(BLINK_FREQ_MS / 2), K_MSEC(BLINK_FREQ_MS / 2));
 	initialized = true;
+
 	return 0;
 }
