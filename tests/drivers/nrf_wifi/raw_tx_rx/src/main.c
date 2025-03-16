@@ -14,7 +14,9 @@ LOG_MODULE_REGISTER(net_test, NET_LOG_LEVEL);
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/net/socket.h>
+#include <fmac_main.h>
 #include <fmac_api.h>
+#include <fmac_api_common.h>
 #include "net_private.h"
 
 #include <zephyr/ztest.h>
@@ -28,12 +30,17 @@ LOG_MODULE_REGISTER(net_test, NET_LOG_LEVEL);
 #define IEEE80211_SEQ_NUMBER_INC	BIT(4) /* 0-3 is fragment number */
 #define NRF_WIFI_MAGIC_NUM_RAWTX	0x12345678
 
+extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
+struct nrf_wifi_ctx_zep *ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
+
 int raw_socket_fd;
 int rx_raw_socket_fd;
 
 bool packet_send = true;
-unsigned int rx_received_bytes = 0;
+unsigned int rx_total_received_bytes = 0;
+unsigned int rx_received_bytes_last_sec = 0;
 #define ONE_MB 1000000
+#define ONE_KB 1000
 
 #define RECV_BUFFER_SIZE    1024
 #define RAW_PKT_DATA_OFFSET 6
@@ -56,6 +63,9 @@ K_THREAD_DEFINE(receiver_thread_id, STACK_SIZE, rx_thread_oneshot, NULL, NULL, N
 
 K_THREAD_DEFINE(transmit_thread_id, STACK_SIZE, tx_thread_transmit, NULL, NULL, NULL,
 		THREAD_PRIORITY, 0, -1);
+
+#define RDW(addr)           (*(volatile unsigned int *)(addr))
+#define WRW(addr, data)     (*(volatile unsigned int *)(addr) = (data))
 
 struct beacon {
 	uint16_t frame_control;
@@ -109,31 +119,86 @@ static struct beacon test_beacon_frame  = {
 		0XFF, 0XDD, 0X18, 0X00, 0X50, 0XF2, 0X02, 0X01, 0X01, 0X01, 0X00, 0X03, 0XA4, 0X00,
 		0X00, 0X27, 0XA4, 0X00, 0X00, 0X42, 0X43, 0X5E, 0X00, 0X62, 0X32, 0X2F, 0X00}};
 
-/* enable this code after driver changes */
 #if 0
-static void wifi_get_throughput()
+void configurePlayoutCapture(uint32_t pktLen, uint32_t holdOff, uint32_t flushBytes, bool burst)
 {
-	int ret;
-	struct net_if *iface = NULL;
-	struct wifi_throughput_info throughput_info = {0};
+	unsigned int value;
 	
-	iface = net_if_get_first_wifi();
-	if (iface == NULL) {
-		LOG_ERR("Failed to get Wi-Fi iface");
-		return;
+	LOG_INF("%s: Setting Playout capture settings",__func__);
+	// Set AXI Master to APP so we can access the RF
+	NRF_WIFICORE_RPURFBUS->RFCTRL.AXIMASTERACCESS = 0x31;
+	while(NRF_WIFICORE_RPURFBUS->RFCTRL.AXIMASTERACCESS != 0x31);
+
+	WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x0, 0x3);
+
+	value = RDW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x0);
+	LOG_INF("%s: WRW setting to value 0x03 is 0x%x",__func__, value);
+
+	if(burst)
+	{
+		WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x4, 0x7F);
+		WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x8, 0);
 	}
-	
-	ret = net_mgmt(NET_REQUEST_WIFI_LOOPBACK_MODE, iface,
-		       &throughput_info, sizeof(throughput_info));
-	if (ret) {
-		LOG_ERR("Loopback Mode setting failed %d", ret);
+	else
+	{
+		WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x4, holdOff);
+		value = RDW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x4);
+		LOG_INF("%s: WRW setting to value 0x04 is 0x%x",__func__, value);
+
+		WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x8, (pktLen + holdOff + flushBytes));
+		value = RDW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x8);
+		LOG_INF("%s: WRW setting to value 0x08 is 0x%x",__func__, value);
 	}
-/*
-	LOG_INF("throughput is %d Mb/s", 
-		((throughput_info.current_sec_packet_count - throughput_info.previous_sec_packet_count)*8)/1_MB);
-*/
+
+	// Switch to the RF playout
+	WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0xC, 0x1);
+	LOG_INF("%s: Playput capture settings configured",__func__);
 }
 #endif
+void configurePlayoutCapture(uint32_t pktLen, uint32_t holdOff, uint32_t flushBytes)
+{
+	unsigned int value;
+	LOG_INF("%s: Setting Playout capture settings",__func__);
+	// Set AXI Master to APP so we can access the RF
+	NRF_WIFICORE_RPURFBUS->RFCTRL.AXIMASTERACCESS = 0x31;
+	while(NRF_WIFICORE_RPURFBUS->RFCTRL.AXIMASTERACCESS != 0x31);
+#ifdef CONFIG_RAW_TX_RX_LOOPBACK
+    WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x0, 0x2);
+    value = RDW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x0);
+    LOG_INF("%s: WRW setting to value 0x02 is 0x%x",__func__, value);
+    WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x4, holdOff);
+    value = RDW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x4);
+    LOG_INF("%s: WRW setting to value 0x04 is 0x%x",__func__, value);
+    WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x8, (pktLen + holdOff + flushBytes));
+    value = RDW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x8);
+    LOG_INF("%s: WRW setting to value 0x08 is 0x%x",__func__, value);
+#endif
+#ifdef CONFIG_RAW_RX_BURST
+    WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x0, 0x3);
+	value = RDW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x0);
+	LOG_INF("%s: WRW setting to value 0x03 is 0x%x",__func__, value);
+    WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x4, holdOff);
+	value = RDW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x4);
+	LOG_INF("%s: WRW setting to value 0x04 is 0x%x",__func__, value);
+	WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x8, (pktLen + holdOff + flushBytes));
+	value = RDW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x8);
+	LOG_INF("%s: WRW setting to value 0x08 is 0x%x",__func__, value);
+#endif
+#ifdef CONFIG_RAW_TX_BURST
+    WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x0, 0x3);
+	value = RDW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x0);
+	LOG_INF("%s: WRW setting to value 0x03 is 0x%x",__func__, value);
+	WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x4, 0x7F);
+	value = RDW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x4);
+	LOG_INF("%s: WRW setting to value 0x04 is 0x%x",__func__, value);
+	WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x8, 0);
+	value = RDW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x8);
+	LOG_INF("%s: WRW setting to value 0x08 is 0x%x",__func__, value);
+#endif
+	// Switch to the RF playout
+	WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0xC, 0x1);
+	LOG_INF("%s: Playput capture settings configured",__func__);
+}
 
 static void wifi_set_mode(int mode_val)
 {
@@ -342,7 +407,7 @@ static int process_single_rx_packet(struct packet_data *packet)
 	int count =0;
 	memset(packet->recv_buffer, 0, RECV_BUFFER_SIZE);
 /* removing print statements on receive during RX throuhput */
-#if !defined(CONFIG_RAW_RX_BURST)
+#if defined(CONFIG_RAW_RX_BURST_LOGGING)
 	LOG_INF("waiting on packet to be received");
 #endif
 	received = recv(rx_raw_socket_fd, packet->recv_buffer, sizeof(packet->recv_buffer), 0);
@@ -357,18 +422,20 @@ static int process_single_rx_packet(struct packet_data *packet)
 			return -errno;
 		}
 	}
-#if !defined(CONFIG_RAW_RX_BURST)
-	LOG_INF("sizeof of received frame is %d", received);
+#if defined(CONFIG_RAW_RX_BURST_LOGGING)
+	LOG_INF("packet received: sizeof of received frame is %d", received);
+/* Only enable below code in case packet sanity is to be checked */
+#if 0
 	for (count = 0; count < received; count++)
 	{
 		printf("0x%x ", packet->recv_buffer[count]);
 		if (((count % 14) == 0) && count != 0)
 			printf("\n");
 	}
-
-	LOG_INF("packet received");
 #endif
-	rx_received_bytes += received;
+#endif
+	rx_received_bytes_last_sec += received;
+	rx_total_received_bytes += received;
 	return 0;
 }
 
@@ -387,9 +454,8 @@ static void tx_thread_transmit() {
 	LOG_INF("TX burst count is set is %d", CONFIG_RAW_TX_TRANSMIT_COUNT);
 	while (count--)
 	{
-		k_sleep(K_MSEC(4));
 		zassert_false(wifi_send_raw_tx_packets(), "Failed to send raw tx packet");
-		/*k_sleep(K_MSEC(4));*/
+		k_sleep(K_MSEC(1));
 	}
 }
 
@@ -402,6 +468,7 @@ static void initialize(void) {
 	wifi_set_tx_injection_mode();
 	wifi_set_channel();
 	setup_raw_pkt_socket(&sa);
+	k_sleep(K_MSEC(10));
 }
 
 static void cleanup(void) {
@@ -450,6 +517,10 @@ static int wifi_send_recv_tx_packets_serial(unsigned int num_pkts)
 ZTEST(nrf_wifi, test_raw_tx_rx)
 {
 	int count = CONFIG_RAW_TX_RX_TRANSMIT_COUNT;
+
+	configurePlayoutCapture(0xCA60, 0x7f, 0x100);
+	k_sleep(K_MSEC(5));
+
 	setup_rawrecv_socket(&dst);
 #ifdef CONFIG_RX_LOOPBACK_THREAD
 	k_thread_start(receiver_thread_id);
@@ -478,19 +549,37 @@ ZTEST(nrf_wifi, test_raw_tx_rx)
 #ifdef CONFIG_RAW_TX_BURST
 ZTEST(nrf_wifi, test_raw_tx)
 {
+	configurePlayoutCapture(0, 0, 0);
+	/**
+	 * Provide some time for TLM settings to take effect
+	 **/
+	k_sleep(K_MSEC(2));
+
 #ifdef CONFIG_TX_THREAD_TRANSMIT
+	/* code under development. Do not attempt Thread transmit */
+	unsigned int prev_time;
+	unsigned int curr_time;
+	unsigned int tx_received_bytes_last_interval = 0;
+	unsigned int total_tx_bytes = 0;
+	unsigned int throughput_count = 0;
+
+	LOG_INF("starting transmit thread");
 	k_thread_start(transmit_thread_id);
-	txdone_count_match = 1;
-	while(txdone_count_match) {
-		/**
-		 * Code under development: will not exit at this time
-		 * To query throughput here till txdone_count_match
-		 * is equivalent to CONFIG_RAW_TX_TRANSMIT_COUNT.
-		 * For the moment
-		 * provide some sleep setting to
-		 * allow thread to run immediately
-		 */
-		k_sleep(K_MSEC(100));
+
+	/* get kernel ticks in milliseconds */
+	prev_time = k_uptime_get();
+
+	while(throughput_count < CONFIG_RAW_TX_THROUGHPUT_COUNT) {
+		curr_time = k_uptime_get();
+		if ((curr_time - prev_time) >= CONFIG_RAW_TX_THROUGHPUT_INTERVAL) {
+			prev_time = curr_time;
+			/* get the tx bytes from the driver and assign to local variable */
+			nrf_wifi_fmac_get_throughput_bytes(ctx->rpu_ctx, &total_tx_bytes);
+			tx_received_bytes_last_interval = total_tx_bytes - tx_received_bytes_last_interval;
+			LOG_INF("transmit throughput in Kb for iteration %d  = %f", throughput_count,
+					((((double)tx_received_bytes_last_interval) * 8)/ONE_KB));
+			throughput_count++;
+		}
 	}
 	k_thread_join(transmit_thread_id, K_SECONDS(1));
 #else
@@ -513,38 +602,54 @@ ZTEST(nrf_wifi, test_raw_rx_single_transmit)
 	unsigned int curr_time;
 	unsigned int throughput_count = 0;
 	setup_rawrecv_socket(&dst);
+	/* Only setting sizeof(test_beacon_frame) here as the raw header should
+	 * is stripped in driver. Adding values for holdoff, flushbytes and burst
+	 * as provided by TLM team
+	 **/ 
+
+	configurePlayoutCapture(0xCA60, 0x7f, 0x100);
 	/**
-	 * start receive thread to receive data packets. 
-	 * serialized implementation to avaoid threads. 
+	 * serialized implementation to avoid threads.
 	 * Keep receiving packets till throughput count is reached
-	 * calculate throughput in Mb/s.
-	 * for example - if throughput count is 1000 and 
+	 * calculate throughput in Kb per interval time.
+	 * for example - if throughput count is 1000 and
 	 * duration is 1 sec, get throughput every 1 sec for 1000 iterations.
-	 * This code approximately calculates around 1 sec. 
+	 * This code approximately calculates around 1 sec.
 	 * Not creating threads so that TLM does not become slower.
 	 **/
-	LOG_INF("TX sent to lower layer is 1");
+	LOG_INF("TX to be sent to lower layer is 1");
+	k_sleep(K_MSEC(1));
 	zassert_false(wifi_send_raw_tx_packets(), "Failed to send raw tx packet");
 
 	/* get kernel ticks in milliseconds */
 	prev_time = k_uptime_get();
 
-	/* receive packet and calculate throughput for received RX every 
-	 * ~1 second */
+	/**
+	 * receive packet and calculate throughput for received RX every
+	 * througput interval time. The throughput interval is placed
+	 * milliseconds and refer the prj.conf for current settings.
+	 **/
 	while (throughput_count < CONFIG_RAW_RX_THROUGHPUT_COUNT)
 	{
-		/* below API waits on recv of packets. 
+		/* Below API waits on recv of packets.
 		 * current wait timeout is 10 milliseconds
 		 */
 		process_single_rx_packet(&test_packet);
 		curr_time = k_uptime_get();
-		/* possibly set 990 milliseconds here instead of 1000?? */
-		if ((curr_time - prev_time) >= 1000) {
+#ifdef CONFIG_RAW_RX_BURST_LOGGING
+		LOG_INF("curr_uptime is %d, prev_uptime is %d, difference is %d",
+				curr_time, prev_time, (curr_time - prev_time));
+#endif
+		if ((curr_time - prev_time) >= CONFIG_RX_THROUGHPUT_INTERVAL) {
 			prev_time = curr_time;
-			LOG_INF("Throughput in Mb/s = %d", ((rx_received_bytes * 8)/ONE_MB));
+			LOG_INF("Receive throughput in Kb for iteration %d  = %f", throughput_count,
+					((((double)rx_received_bytes_last_sec) * 8)/ONE_KB));
+			rx_received_bytes_last_sec = 0;
 			throughput_count++;
 		}
 	}
+	LOG_INF("Average receive throughput in Kb for number of iterations is %f",
+			(((((double)rx_total_received_bytes) * 8)/ONE_KB)/CONFIG_RAW_RX_THROUGHPUT_COUNT));
 	close(rx_raw_socket_fd);
 }
 #endif

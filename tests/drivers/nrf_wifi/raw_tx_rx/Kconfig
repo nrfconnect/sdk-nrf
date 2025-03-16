@@ -67,7 +67,7 @@ config RAW_TX_RX_TRANSMIT_COUNT
 
 config RAW_TX_TRANSMIT_COUNT
 	int "Number of raw packets to burst transmit"
-	default 2
+	default 3
 	help
 	  This option sets the number of packets to be transmitted in burst mode.
 
@@ -76,6 +76,33 @@ config RAW_RX_THROUGHPUT_COUNT
 	default 1
 	help
 	  This option sets the count for the number of times throughput is to be calculated.
+
+config RX_THROUGHPUT_INTERVAL
+	int "Interval in milliseconds for each throughput calculation"
+	default 50
+	help
+	  This configuration allows the throughput to be calculated for a specified interval.
+	  Set the interval to 1000 milliseconds if 1 sec interval throughput readouts are needed.
+	  The number of times througphpt is calculated is throughput count * throughput interval.
+
+config RAW_TX_THROUGHPUT_COUNT
+	int "Number of times throughput is calculated per throughput interval"
+	default 1
+	help
+	  This option sets the count for the number of times transmit throughput is to be calculated.
+
+config RAW_TX_THROUGHPUT_INTERVAL
+	int "Interval in milliseconds for each throughput calculation"
+	default 50
+	help
+	  This configuration allows the throughput to be calculated for a specified interval.
+	  Set the interval to 1000 milliseconds if 1 sec interval throughput readouts are needed.
+	  The number of times througphpt is calculated is throughput count * throughput interval.
+
+config RAW_RX_BURST_LOGGING
+	bool "enable RX burst logging to see if RX packets are being received"
+	help
+	  This configuraiton allows RX burst logging enable.
 
 config TX_THREAD_TRANSMIT
 	bool "enable for thread based transmit"
