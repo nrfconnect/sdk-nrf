@@ -32,7 +32,8 @@ int raw_socket_fd;
 int rx_raw_socket_fd;
 
 bool packet_send = true;
-unsigned int rx_received_bytes = 0;
+unsigned int rx_total_received_bytes = 0;
+unsigned int rx_received_bytes_last_sec = 0;
 #define ONE_MB 1000000
 
 #define RECV_BUFFER_SIZE    1024
@@ -56,6 +57,9 @@ K_THREAD_DEFINE(receiver_thread_id, STACK_SIZE, rx_thread_oneshot, NULL, NULL, N
 
 K_THREAD_DEFINE(transmit_thread_id, STACK_SIZE, tx_thread_transmit, NULL, NULL, NULL,
 		THREAD_PRIORITY, 0, -1);
+
+#define RDW(addr)           (*(volatile unsigned int *)(addr))
+#define WRW(addr, data)     (*(volatile unsigned int *)(addr) = (data))
 
 struct beacon {
 	uint16_t frame_control;
@@ -108,6 +112,41 @@ static struct beacon test_beacon_frame  = {
 		0XFA, 0XFF, 0X61, 0X1C, 0XC7, 0X71, 0XFF, 0X07, 0X24, 0XF0, 0X3F, 0X00, 0X81, 0XFC,
 		0XFF, 0XDD, 0X18, 0X00, 0X50, 0XF2, 0X02, 0X01, 0X01, 0X01, 0X00, 0X03, 0XA4, 0X00,
 		0X00, 0X27, 0XA4, 0X00, 0X00, 0X42, 0X43, 0X5E, 0X00, 0X62, 0X32, 0X2F, 0X00}};
+
+void configurePlayoutCapture(uint32_t pktLen, uint32_t holdOff, uint32_t flushBytes, bool burst)
+{
+	unsigned int value;
+	
+	LOG_INF("%s: Setting Playout capture settings",__func__);
+	// Set AXI Master to APP so we can access the RF
+	NRF_WIFICORE_RPURFBUS->RFCTRL.AXIMASTERACCESS = 0x31;
+	while(NRF_WIFICORE_RPURFBUS->RFCTRL.AXIMASTERACCESS != 0x31);
+
+	WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x0, 0x3);
+
+	value = RDW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x0);
+	LOG_INF("%s: WRW setting to value 0x03 is 0x%x",__func__, value);
+
+	if(burst)
+	{
+		WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x4, 0x7F);
+		WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x8, 0);
+	}
+	else
+	{
+		WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x4, holdOff);
+		value = RDW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x4);
+		LOG_INF("%s: WRW setting to value 0x04 is 0x%x",__func__, value);
+
+		WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x8, (pktLen + holdOff + flushBytes));
+		value = RDW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x8);
+		LOG_INF("%s: WRW setting to value 0x08 is 0x%x",__func__, value);
+	}
+
+	// Switch to the RF playout
+	WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0xC, 0x1);
+	LOG_INF("%s: Playput capture settings configured",__func__);
+}
 
 /* enable this code after driver changes */
 #if 0
@@ -368,7 +407,8 @@ static int process_single_rx_packet(struct packet_data *packet)
 
 	LOG_INF("packet received");
 #endif
-	rx_received_bytes += received;
+	rx_received_bytes_last_sec += received;
+	rx_total_received_bytes += received;
 	return 0;
 }
 
@@ -402,6 +442,7 @@ static void initialize(void) {
 	wifi_set_tx_injection_mode();
 	wifi_set_channel();
 	setup_raw_pkt_socket(&sa);
+	k_sleep(K_MSEC(10));
 }
 
 static void cleanup(void) {
@@ -513,8 +554,13 @@ ZTEST(nrf_wifi, test_raw_rx_single_transmit)
 	unsigned int curr_time;
 	unsigned int throughput_count = 0;
 	setup_rawrecv_socket(&dst);
+	/* Only setting sizeof(test_beacon_frame) here as the raw header should
+	 * is stripped in driver. Adding values for holdoff, flushbytes and burst
+	 * as provided by TLM team
+	 **/ 
+
+	configurePlayoutCapture(0xCA60, 0x7f, 0x100, false);
 	/**
-	 * start receive thread to receive data packets. 
 	 * serialized implementation to avaoid threads. 
 	 * Keep receiving packets till throughput count is reached
 	 * calculate throughput in Mb/s.
@@ -523,7 +569,8 @@ ZTEST(nrf_wifi, test_raw_rx_single_transmit)
 	 * This code approximately calculates around 1 sec. 
 	 * Not creating threads so that TLM does not become slower.
 	 **/
-	LOG_INF("TX sent to lower layer is 1");
+	LOG_INF("TX to be sent to lower layer is 1");
+	k_sleep(K_MSEC(5));
 	zassert_false(wifi_send_raw_tx_packets(), "Failed to send raw tx packet");
 
 	/* get kernel ticks in milliseconds */
@@ -541,10 +588,12 @@ ZTEST(nrf_wifi, test_raw_rx_single_transmit)
 		/* possibly set 990 milliseconds here instead of 1000?? */
 		if ((curr_time - prev_time) >= 1000) {
 			prev_time = curr_time;
-			LOG_INF("Throughput in Mb/s = %d", ((rx_received_bytes * 8)/ONE_MB));
+			LOG_INF("Throughput in Mb/s = %d", ((rx_received_bytes_last_sec * 8)/ONE_MB));
+			rx_received_bytes_last_sec = 0;
 			throughput_count++;
 		}
 	}
+	LOG_INF("Cumulative throughput in Mb/s is %d", ((rx_total_received_bytes * 8)/ONE_MB));
 	close(rx_raw_socket_fd);
 }
 #endif
