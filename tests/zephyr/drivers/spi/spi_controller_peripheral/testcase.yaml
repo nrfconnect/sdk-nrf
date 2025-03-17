@@ -9,15 +9,6 @@ common:
     fixture: gpio_spi_loopback
 
 tests:
-  nrf.extended.drivers.spi.spi_mode0.l20:
-    platform_allow:
-      - nrf54l20pdk/nrf54l20/cpuapp
-    integration_platforms:
-      - nrf54l20pdk/nrf54l20/cpuapp
-    extra_configs:
-      - CONFIG_TESTED_SPI_MODE=0
-    extra_args: EXTRA_DTC_OVERLAY_FILE="boards/250khz.overlay"
-
   nrf.extended.drivers.spi.spi_mode0.l09:
     platform_allow:
       - nrf54l09pdk/nrf54l09/cpuapp
@@ -30,15 +21,6 @@ tests:
       - SNIPPET=nrf54l09-switch-uart
     tags:
       - nrf54l09-switch-uart
-
-  nrf.extended.drivers.spi.spi_mode1.l20:
-    platform_allow:
-      - nrf54l20pdk/nrf54l20/cpuapp
-    integration_platforms:
-      - nrf54l20pdk/nrf54l20/cpuapp
-    extra_configs:
-      - CONFIG_TESTED_SPI_MODE=1
-    extra_args: EXTRA_DTC_OVERLAY_FILE="boards/500khz.overlay"
 
   nrf.extended.drivers.spi.spi_mode1.l09:
     platform_allow:
@@ -53,15 +35,6 @@ tests:
     tags:
       - nrf54l09-switch-uart
 
-  nrf.extended.drivers.spi.spi_mode2.l20:
-    platform_allow:
-      - nrf54l20pdk/nrf54l20/cpuapp
-    integration_platforms:
-      - nrf54l20pdk/nrf54l20/cpuapp
-    extra_configs:
-      - CONFIG_TESTED_SPI_MODE=2
-    extra_args: EXTRA_DTC_OVERLAY_FILE="boards/1mhz.overlay"
-
   nrf.extended.drivers.spi.spi_mode2.l09:
     platform_allow:
       - nrf54l09pdk/nrf54l09/cpuapp
@@ -74,15 +47,6 @@ tests:
       - SNIPPET=nrf54l09-switch-uart
     tags:
       - nrf54l09-switch-uart
-
-  nrf.extended.drivers.spi.spi_mode3.l20:
-    platform_allow:
-      - nrf54l20pdk/nrf54l20/cpuapp
-    integration_platforms:
-      - nrf54l20pdk/nrf54l20/cpuapp
-    extra_configs:
-      - CONFIG_TESTED_SPI_MODE=3
-    extra_args: EXTRA_DTC_OVERLAY_FILE="boards/2mhz.overlay"
 
   nrf.extended.drivers.spi.spi_mode3.l09:
     platform_allow:
@@ -97,15 +61,6 @@ tests:
     tags:
       - nrf54l09-switch-uart
 
-  nrf.extended.drivers.spi.spi_4MHz.l20:
-    platform_allow:
-      - nrf54l20pdk/nrf54l20/cpuapp
-    integration_platforms:
-      - nrf54l20pdk/nrf54l20/cpuapp
-    extra_configs:
-      - CONFIG_TESTED_SPI_MODE=2
-    extra_args: EXTRA_DTC_OVERLAY_FILE="boards/4mhz.overlay"
-
   nrf.extended.drivers.spi.spi_4MHz.l09:
     platform_allow:
       - nrf54l09pdk/nrf54l09/cpuapp
@@ -119,15 +74,6 @@ tests:
     tags:
       - nrf54l09-switch-uart
 
-  nrf.extended.drivers.spi.spi_8MHz.l20:
-    platform_allow:
-      - nrf54l20pdk/nrf54l20/cpuapp
-    integration_platforms:
-      - nrf54l20pdk/nrf54l20/cpuapp
-    extra_configs:
-      - CONFIG_TESTED_SPI_MODE=1
-    extra_args: EXTRA_DTC_OVERLAY_FILE="boards/8mhz.overlay"
-
   nrf.extended.drivers.spi.spi_8MHz.l09:
     platform_allow:
       - nrf54l09pdk/nrf54l09/cpuapp
@@ -140,15 +86,6 @@ tests:
       - SNIPPET=nrf54l09-switch-uart
     tags:
       - nrf54l09-switch-uart
-
-  nrf.extended.drivers.spi.pm_runtime.l20:
-    platform_allow:
-      - nrf54l20pdk/nrf54l20/cpuapp
-    integration_platforms:
-      - nrf54l20pdk/nrf54l20/cpuapp
-    extra_configs:
-      - CONFIG_PM_DEVICE=y
-      - CONFIG_PM_DEVICE_RUNTIME=y
 
   nrf.extended.drivers.spi.pm_runtime.l09:
     platform_allow:
