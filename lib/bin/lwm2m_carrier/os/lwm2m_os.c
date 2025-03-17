@@ -699,8 +699,8 @@ static struct {
 #endif
 } dfu_target;
 
-#define DFU_ACTIVE (dfu_target.state == DFU_STATE_ACTIVE)
-#define DFU_PAUSED (dfu_target.state == DFU_STATE_PAUSED)
+#define DFU_IS_ACTIVE (dfu_target.state == DFU_STATE_ACTIVE)
+#define DFU_IS_PAUSED (dfu_target.state == DFU_STATE_PAUSED)
 
 #if CONFIG_DFU_TARGET_MCUBOOT
 #include <dfu/dfu_target_mcuboot.h>
@@ -825,8 +825,8 @@ static int dfu_img_header_decode(const uint8_t *const buf, size_t len,
 	}
 
 	/* Validate the sequence. May be the next one or the same if already in progress (retry). */
-	if ((DFU_ACTIVE || new_header.number != dfu_target.header.number + 1) &&
-	    (DFU_PAUSED || new_header.number != dfu_target.header.number)) {
+	if ((DFU_IS_ACTIVE || new_header.number != dfu_target.header.number + 1) &&
+	    (DFU_IS_PAUSED || new_header.number != dfu_target.header.number)) {
 		/* The file does not follow the sequence. */
 		LOG_WRN("DFU header does not follow the sequence");
 		return LWM2M_OS_DFU_IMG_TYPE_NONE;
@@ -880,7 +880,7 @@ int lwm2m_os_dfu_start(int img_type, size_t max_file_size, bool crc_validate)
 	int err;
 	size_t offset;
 
-	if (DFU_ACTIVE) {
+	if (DFU_IS_ACTIVE) {
 		return -EBUSY;
 	}
 
@@ -944,7 +944,7 @@ int lwm2m_os_dfu_fragment(const char *buf, size_t len, uint32_t crc32)
 {
 	int err;
 
-	if (!DFU_ACTIVE) {
+	if (!DFU_IS_ACTIVE) {
 		return -EACCES;
 	}
 
@@ -972,7 +972,7 @@ int lwm2m_os_dfu_done(bool successful, uint32_t crc32)
 {
 	int err;
 
-	if (!DFU_ACTIVE) {
+	if (!DFU_IS_ACTIVE) {
 		return -EACCES;
 	}
 
@@ -1013,7 +1013,7 @@ int lwm2m_os_dfu_pause(void)
 	int err;
 	size_t offset;
 
-	if (!DFU_ACTIVE) {
+	if (!DFU_IS_ACTIVE) {
 		return -EACCES;
 	}
 
@@ -1036,7 +1036,7 @@ int lwm2m_os_dfu_schedule_update(void)
 {
 	int err;
 
-	if (!DFU_ACTIVE) {
+	if (!DFU_IS_ACTIVE) {
 		return -EACCES;
 	}
 
@@ -1053,12 +1053,12 @@ int lwm2m_os_dfu_schedule_update(void)
 void lwm2m_os_dfu_reset(void)
 {
 	/* If reset is triggered while the target is paused, reinitialize it to clean up. */
-	if (DFU_PAUSED) {
+	if (DFU_IS_PAUSED) {
 		dfu_target_init(dfu_target.type, 0, 0, dfu_target_cb);
 		dfu_target.state = DFU_STATE_ACTIVE;
 	}
 
-	if (DFU_ACTIVE) {
+	if (DFU_IS_ACTIVE) {
 		dfu_target_reset();
 		memset(&dfu_target, 0, sizeof(dfu_target));
 	}

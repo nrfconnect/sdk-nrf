@@ -372,11 +372,20 @@ typedef struct {
 /** LwM2M carrier bootstrap failed. */
 #define LWM2M_CARRIER_ERROR_BOOTSTRAP		3
 /**
- * Firmware update failed. value:
- *   - -ECONNREFUSED  Connection refused using available security tags.
- *   - -ENOTSUP       Protocol not supported.
- *   - -ENOMEM        Too many open connections.
- *   - -EBADF         Incorrect firmware update version.
+ * Firmware update failed. Possible values:
+ * -ECONNREFUSED  Connection refused using available security tags.
+ * -EINVAL        Update image integrity check failed.
+ * -E2BIG         Provided URL is too large.
+ * -EFBIG         Update image is too large.
+ * -ENOMEM        Insufficient RAM to handle the firmware update.
+ * -ENOTSUP       Update image is not supported or not recognized.
+ * -EBADR         Wrong request (invalid message or state).
+ * -ETIMEDOUT     Update image download timed out.
+ * -ECANCELED     Update was aborted by the server.
+ * -ENETDOWN      Update image download cannot be resumed after losing connection.
+ * -ENETUNREACH   Requested network or host is not reachable.
+ * -EFAULT        Failed to apply the firmware update.
+ * -EIO           Internal error, for example an unknown error from an external module.
  */
 #define LWM2M_CARRIER_ERROR_FOTA_FAIL		4
 /**
