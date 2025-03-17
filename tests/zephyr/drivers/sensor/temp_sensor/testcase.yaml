@@ -1,0 +1,11 @@
+tests:
+  nrf.extended.drivers.sensor.temp_sensor:
+    tags:
+      - drivers
+      - sensors
+      - ci_tests_zephyr_drivers_sensors
+    filter: dt_nodelabel_enabled("temp_sensor")
+    platform_allow:
+      - nrf7120pdk/nrf7120/cpuapp
+    integration_platforms:
+      - nrf7120pdk/nrf7120/cpuapp
