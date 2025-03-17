@@ -36,8 +36,13 @@ IDE, OS, and tool support
 * Updated:
 
   * The required `SEGGER J-Link`_ version to v8.18.
-  * The :ref:`installing_vsc` section on the :ref:`installation` page with a list valid for both development environments.
-    The list now includes nRF Util as an additional requirement for :ref:`west runner <programming_selecting_runner>` for the |nRFVSC|, and the Windows-only requirement to install SEGGER USB Driver for J-Link for both development environments.
+  * The :ref:`installation` page with the following updates:
+
+    * The :ref:`installing_vsc` section with a list valid for both development environments.
+      The list now includes nRF Util as an additional requirement for :ref:`west runner <programming_selecting_runner>` for the |nRFVSC|, and the Windows-only requirement to install SEGGER USB Driver for J-Link for both development environments.
+    * The command-line instructions now use the ``nrfutil sdk-manager`` command instead of the ``nrfutil toolchain-manager`` command.
+      You can read more about the new command in the `nRF Util documentation <sdk-manager command_>`_.
+
 
 Board support
 =============
