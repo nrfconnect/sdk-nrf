@@ -103,14 +103,7 @@ config NRF_CLOUD_JWT_SOURCE_CUSTOM
 	select EXPERIMENTAL
 	select TLS_CREDENTIALS
 	select BASE64
-	select TINYCRYPT
-	select TINYCRYPT_SHA256
-	select TINYCRYPT_ECC_DSA
-	select TINYCRYPT_CTR_PRNG
-	select TINYCRYPT_AES
-	select CJSON_LIB
-	depends on NEWLIB_LIBC_FLOAT_PRINTF || PICOLIBC_IO_FLOAT
-	depends on DATE_TIME
+	select APP_JWT
 	help
 	  JWTs are created and signed by the nRF Cloud library, not the modem.
 	  The signing key is obtained from the TLS credentials module.
