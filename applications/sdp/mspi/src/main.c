@@ -44,6 +44,8 @@
 #error "Unsupported SoC for SDP MSPI"
 #endif
 
+#define DATA_LINE_INDEX(pinctr_fun) (pinctr_fun - NRF_FUN_SDP_MSPI_DQ0)
+
 BUILD_ASSERT(CONFIG_SDP_MSPI_MAX_RESPONSE_SIZE > 0, "Response max size should be greater that 0");
 
 static const uint8_t pin_to_vio_map[NRFE_MSPI_PINS_MAX] = {
@@ -320,6 +322,10 @@ static void config_pins(nrfe_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 	xfer_params.tx_direction_mask = 0;
 	xfer_params.rx_direction_mask = 0;
 
+	for (uint8_t i = 0; i < DATA_PINS_MAX; i++) {
+		data_vios[i] = UINT8_MAX;
+	}
+
 	for (uint8_t i = 0; i < pins_cfg->pins_count; i++) {
 		uint32_t psel = NRF_GET_PIN(pins_cfg->pin[i]);
 		uint32_t fun = NRF_GET_FUN(pins_cfg->pin[i]);
@@ -343,10 +349,13 @@ static void config_pins(nrfe_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 
 		} else if ((fun >= NRF_FUN_SDP_MSPI_DQ0) && (fun <= NRF_FUN_SDP_MSPI_DQ7)) {
 
-			data_vios[data_vios_count] = pin_to_vio_map[pin_number];
-			WRITE_BIT(xfer_params.tx_direction_mask, data_vios[data_vios_count],
+			NRFX_ASSERT(DATA_LINE_INDEX(fun) < DATA_PINS_MAX);
+			NRFX_ASSERT(data_vios[DATA_LINE_INDEX(fun)] == UINT8_MAX);
+
+			data_vios[DATA_LINE_INDEX(fun)] = pin_to_vio_map[pin_number];
+			WRITE_BIT(xfer_params.tx_direction_mask, data_vios[DATA_LINE_INDEX(fun)],
 				  VPRCSR_NORDIC_DIR_OUTPUT);
-			WRITE_BIT(xfer_params.rx_direction_mask, data_vios[data_vios_count],
+			WRITE_BIT(xfer_params.rx_direction_mask, data_vios[DATA_LINE_INDEX(fun)],
 				  VPRCSR_NORDIC_DIR_INPUT);
 			data_vios_count++;
 		} else if (fun == NRF_FUN_SDP_MSPI_SCK) {
@@ -422,11 +431,18 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		}
 
 		if (dev_config->dev_config.io_mode == MSPI_IO_MODE_SINGLE) {
-			nrf_vpr_csr_vio_out_or_set(BIT(3));
-			nrf_vpr_csr_vio_out_or_set(BIT(4));
+			if (data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ2)] != UINT8_MAX &&
+			    data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ3)] != UINT8_MAX) {
+				nrf_vpr_csr_vio_out_or_set(
+					BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ2)]));
+				nrf_vpr_csr_vio_out_or_set(
+					BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ3)]));
+			}
 		} else {
-			nrf_vpr_csr_vio_out_clear_set(BIT(3));
-			nrf_vpr_csr_vio_out_clear_set(BIT(4));
+			nrf_vpr_csr_vio_out_clear_set(
+				BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ2)]));
+			nrf_vpr_csr_vio_out_clear_set(
+				BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ3)]));
 		}
 
 		break;
