@@ -309,9 +309,9 @@
 /dts/                                     @nrfconnect/ncs-co-drivers
 
 # External
-/ext/curl/                                @nrfconnect/ncs-code-owners @jhirsi
+/ext/curl/                                @nrfconnect/ncs-code-owners @nrfconnect/ncs-modem-tre
 /ext/freebsd-getopt/                      @nrfconnect/ncs-code-owners
-/ext/iperf3/                              @nrfconnect/ncs-code-owners @jhirsi
+/ext/iperf3/                              @nrfconnect/ncs-code-owners @nrfconnect/ncs-modem-tre
 
 # Include
 /include/audio/                           @nrfconnect/ncs-audio
@@ -355,7 +355,7 @@
 /include/fem_al/                          @nrfconnect/ncs-dragoon
 /include/logging/                         @nrfconnect/ncs-protocols-serialization
 /include/mgmt/                            @nrfconnect/ncs-pluto
-/include/modem/                           @nrfconnect/ncs-modem
+/include/modem/                           @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
 /include/mpsl/                            @nrfconnect/ncs-dragoon
 /include/net/                             @nrfconnect/ncs-co-networking
 /include/net/azure_*                      @nrfconnect/ncs-cia
@@ -380,7 +380,7 @@
 /lib/at_cmd_parser/                       @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
 /lib/at_cmd_custom/                       @nrfconnect/ncs-modem
 /lib/at_host/                             @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
-/lib/at_monitor/                          @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
+/lib/at_monitor/                          @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
 /lib/at_parser/                           @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
 /lib/at_shell/                            @nrfconnect/ncs-cia
 /lib/bin/                                 @nrfconnect/ncs-co-networking @lemrey
@@ -388,7 +388,7 @@
 /lib/boot_banner/                         @nordicjm
 /lib/contin_array/                        @nrfconnect/ncs-audio
 /lib/data_fifo/                           @nrfconnect/ncs-audio
-/lib/date_time/                           @trantanen @tokangas
+/lib/date_time/                           @nrfconnect/ncs-modem-tre
 /lib/dk_buttons_and_leds/                 @nrfconnect/ncs-si-muffin
 /lib/edge_impulse/                        @nrfconnect/ncs-si-muffin
 /lib/fatal_error/                         @nordic-krch
@@ -399,27 +399,27 @@
 /lib/hw_id/                               @nrfconnect/ncs-cia
 /lib/hw_unique_key/                       @nrfconnect/ncs-aegir
 /lib/identity_key/                        @nrfconnect/ncs-aegir
-/lib/location/                            @trantanen @jhirsi @tokangas
-/lib/lte_link_control/                    @tokangas @trantanen @jhirsi @nrfconnect/ncs-modem
-/lib/modem_antenna/                       @tokangas @nrfconnect/ncs-modem
+/lib/location/                            @nrfconnect/ncs-modem-tre
+/lib/lte_link_control/                    @nrfconnect/ncs-modem-tre @nrfconnect/ncs-modem
+/lib/modem_antenna/                       @nrfconnect/ncs-modem-tre @nrfconnect/ncs-modem
 /lib/modem_attest_token/                  @nrfconnect/ncs-modem
 /lib/modem_battery/                       @nrfconnect/ncs-modem
-/lib/modem_info/                          @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
+/lib/modem_info/                          @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
 /lib/modem_jwt/                           @nrfconnect/ncs-iot-oulu @nrfconnect/ncs-modem
 /lib/modem_key_mgmt/                      @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
 /lib/modem_slm/                           @nrfconnect/ncs-iot-oulu
 /lib/multithreading_lock/                 @nrfconnect/ncs-dragoon
-/lib/nrf_modem_lib/                       @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
+/lib/nrf_modem_lib/                       @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
 /lib/pcm_mix/                             @nrfconnect/ncs-audio
 /lib/pcm_stream_channel_modifier/         @nrfconnect/ncs-audio
-/lib/pdn/                                 @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
+/lib/pdn/                                 @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
 /lib/qos/                                 @nrfconnect/ncs-cia
 /lib/ram_pwrdn/                           @MarekPorwisz
 /lib/sample_rate_converter/               @nrfconnect/ncs-audio
 /lib/sfloat/                              @nrfconnect/ncs-si-muffin
-/lib/sms/                                 @trantanen @tokangas
+/lib/sms/                                 @nrfconnect/ncs-modem-tre
 /lib/st25r3911b/                          @nrfconnect/ncs-si-muffin
-/lib/supl/                                @nrfconnect/ncs-co-networking @tokangas
+/lib/supl/                                @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem-tre
 /lib/tone/                                @nrfconnect/ncs-audio
 /lib/uicc_lwm2m/                          @stig-bjorlykke
 /lib/wave_gen/                            @nrfconnect/ncs-si-bluebagel
@@ -495,23 +495,23 @@
 /samples/caf_sensor_manager/              @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/cellular/                        @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
 /samples/cellular/battery/                @nrfconnect/ncs-modem
-/samples/cellular/gnss/                   @tokangas
-/samples/cellular/location/               @trantanen @jhirsi @tokangas
+/samples/cellular/gnss/                   @nrfconnect/ncs-modem-tre
+/samples/cellular/location/               @nrfconnect/ncs-modem-tre
 /samples/cellular/lwm2m_carrier/          @nrfconnect/ncs-carrier
 /samples/cellular/lwm2m_client/           @nrfconnect/ncs-co-networking @nrfconnect/ncs-iot-oulu
-/samples/cellular/modem_shell/            @trantanen @jhirsi @tokangas
+/samples/cellular/modem_shell/            @nrfconnect/ncs-modem-tre
 /samples/cellular/nidd/                   @stig-bjorlykke
 /samples/cellular/nrf_cloud_*             @nrfconnect/ncs-nrf-cloud
 /samples/cellular/nrf_provisioning/       @nrfconnect/ncs-iot-oulu
 /samples/cellular/modem_trace_flash/      @nrfconnect/ncs-modem
 /samples/cellular/slm_shell/              @nrfconnect/ncs-iot-oulu
-/samples/cellular/sms/                    @trantanen @tokangas
+/samples/cellular/sms/                    @nrfconnect/ncs-modem-tre
 /samples/cellular/uicc_lwm2m/             @stig-bjorlykke
 /samples/common/                          @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/crypto/                          @nrfconnect/ncs-aegir
 /samples/debug/memfault/                  @nrfconnect/ncs-cia
 /samples/debug/ppi_trace/                 @nordic-krch
-/samples/dect/dect_phy/dect_shell/        @jhirsi
+/samples/dect/dect_phy/dect_shell/        @nrfconnect/ncs-modem-tre
 /samples/dect/dect_phy/hello_dect/        @nrfconnect/ncs-modem
 /samples/edge_impulse/                    @nrfconnect/ncs-si-muffin
 /samples/esb/                             @nrfconnect/ncs-si-muffin
@@ -848,13 +848,13 @@
 /tests/lib/at_parser/                     @nrfconnect/ncs-modem
 /tests/lib/contin_array/                  @nrfconnect/ncs-audio
 /tests/lib/data_fifo/                     @nrfconnect/ncs-audio
-/tests/lib/date_time/                     @trantanen @tokangas
+/tests/lib/date_time/                     @nrfconnect/ncs-modem-tre
 /tests/lib/edge_impulse/                  @nrfconnect/ncs-si-muffin
 /tests/lib/gcf_sms/                       @nrfconnect/ncs-modem
 /tests/lib/hw_unique_key*/                @nrfconnect/ncs-aegir
 /tests/lib/hw_id/                         @nrfconnect/ncs-cia
-/tests/lib/location/                      @trantanen @tokangas
-/tests/lib/lte_lc_api/                    @trantanen @tokangas
+/tests/lib/location/                      @nrfconnect/ncs-modem-tre
+/tests/lib/lte_lc_api/                    @nrfconnect/ncs-modem-tre
 /tests/lib/modem_battery/                 @nrfconnect/ncs-modem
 /tests/lib/modem_info/                    @nrfconnect/ncs-cia
 /tests/lib/modem_jwt/                     @nrfconnect/ncs-iot-oulu
@@ -869,7 +869,7 @@
 /tests/lib/ram_pwrdn/                     @Damian-Nordic
 /tests/lib/sample_rate_converter/         @nrfconnect/ncs-audio
 /tests/lib/sfloat/                        @nrfconnect/ncs-si-muffin
-/tests/lib/sms/                           @trantanen @tokangas
+/tests/lib/sms/                           @nrfconnect/ncs-modem-tre
 /tests/lib/tone/                          @nrfconnect/ncs-audio
 /tests/lib/uicc_lwm2m/                    @stig-bjorlykke
 /tests/mocks/nrf_rpc/                     @nrfconnect/ncs-protocols-serialization
