@@ -28,6 +28,8 @@ LOG_MODULE_REGISTER(mspi_nrfe, CONFIG_MSPI_LOG_LEVEL);
 #define EP_SEND_TIMEOUT_MS	     10
 #define EXTREME_DRIVE_FREQ_THRESHOLD 32000000
 #define CNT0_TOP_CALCULATE(freq)     (NRFX_CEIL_DIV(SystemCoreClock, freq * 2) - 1)
+#define DATA_LINE_INDEX(pinctr_fun)  (pinctr_fun - NRF_FUN_SDP_MSPI_DQ0)
+#define DATA_PIN_UNUSED              UINT8_MAX
 
 #ifdef CONFIG_SOC_NRF54L15
 
@@ -327,6 +329,11 @@ static int check_pin_assignments(const struct pinctrl_state *state)
 	uint8_t cs_pins[NRFE_MSPI_PINS_MAX];
 	uint8_t cs_pins_cnt = 0;
 	uint32_t psel = 0;
+	uint32_t pin_fun = 0;
+
+	for (uint8_t i = 0; i < NRFE_MSPI_DATA_LINE_CNT_MAX; i++) {
+		data_pins[i] = DATA_PIN_UNUSED;
+	}
 
 	for (uint8_t i = 0; i < state->pin_cnt; i++) {
 		psel = NRF_GET_PIN(state->pins[i]);
@@ -335,7 +342,8 @@ static int check_pin_assignments(const struct pinctrl_state *state)
 				NRFE_MSPI_PORT_NUMBER);
 			return -ENOTSUP;
 		}
-		switch (NRF_GET_FUN(state->pins[i])) {
+		pin_fun = NRF_GET_FUN(state->pins[i]);
+		switch (pin_fun) {
 		case NRF_FUN_SDP_MSPI_DQ0:
 		case NRF_FUN_SDP_MSPI_DQ1:
 		case NRF_FUN_SDP_MSPI_DQ2:
@@ -344,7 +352,13 @@ static int check_pin_assignments(const struct pinctrl_state *state)
 		case NRF_FUN_SDP_MSPI_DQ5:
 		case NRF_FUN_SDP_MSPI_DQ6:
 		case NRF_FUN_SDP_MSPI_DQ7:
-			data_pins[data_pins_cnt] = NRF_PIN_NUMBER_TO_PIN(psel);
+			if (data_pins[DATA_LINE_INDEX(pin_fun)] != DATA_PIN_UNUSED) {
+				LOG_ERR("This pin is assigned to an already taken data line: "
+					"%d.%d.",
+					NRF_PIN_NUMBER_TO_PORT(psel), NRF_PIN_NUMBER_TO_PIN(psel));
+				return -EINVAL;
+			}
+			data_pins[DATA_LINE_INDEX(pin_fun)] = NRF_PIN_NUMBER_TO_PIN(psel);
 			data_pins_cnt++;
 			break;
 		case NRF_FUN_SDP_MSPI_CS0:
@@ -363,7 +377,7 @@ static int check_pin_assignments(const struct pinctrl_state *state)
 			}
 			break;
 		default:
-			LOG_ERR("Not supported pin function: %d", NRF_GET_FUN(state->pins[i]));
+			LOG_ERR("Not supported pin function: %d", pin_fun);
 			return -ENOTSUP;
 		}
 	}
