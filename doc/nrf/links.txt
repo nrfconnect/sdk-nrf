@@ -1608,6 +1608,8 @@
 .. _`VSMQTT`: https://marketplace.visualstudio.com/items?itemName=rpdswtk.vsmqtt
 .. _`Visual Studio Code download page`: https://code.visualstudio.com/download
 
+.. _`start VS Code walkthrough`: vscode://nordic-semiconductor.nrf-connect-extension-pack/quickstart
+
 .. ### Source: python.org
 
 .. _`Python virtual environments`: https://docs.python.org/3/library/venv.html
