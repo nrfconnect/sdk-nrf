@@ -82,6 +82,8 @@ public:
 	void SetRequirePIN(bool require);
 	bool GetRequirePIN();
 
+	void FactoryReset();
+
 private:
 	using AccessMgr = AccessManager<DoorLockData::PIN>;
 	friend class AppTask;

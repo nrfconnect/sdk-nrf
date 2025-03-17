@@ -61,7 +61,6 @@ void DelayTimerCallback(k_timer *timer)
 
 		switch (ctx->action) {
 		case DelayedAction::FactoryReset:
-			GroupDataProviderImpl::Instance().WillBeFactoryReset();
 			Server::GetInstance().ScheduleFactoryReset();
 			break;
 #ifdef CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_EVENT_TRIGGERS

@@ -34,6 +34,22 @@ class BridgeStorageManager {
 public:
 	static inline constexpr auto kMaxUserDataSize = 128u;
 
+	constexpr static auto kBridgePrefix = "br";
+	constexpr static auto kBridgedDevicesCountPrefix = "brd_cnt";
+	constexpr static auto kBridgedDevicesIndexesPrefix = "brd_ids";
+	constexpr static auto kBridgedDevicePrefix = "brd";
+	constexpr static auto kVersionPrefix = "ver";
+
+#ifdef CONFIG_BRIDGE_MIGRATE_PRE_2_7_0
+	constexpr static auto kBridgedDeviceEndpointIdPrefix = "eid";
+	constexpr static auto kBridgedDeviceLabelPrefix = "label";
+	constexpr static auto kBridgedDeviceTypePrefix = "type";
+#ifdef CONFIG_BRIDGED_DEVICE_BT
+	constexpr static auto kBtPrefix = "bt";
+	constexpr static auto kBtAddrPrefix = "addr";
+#endif
+#endif
+
 #ifdef CONFIG_BRIDGE_MIGRATE_VERSION_1
 	struct BridgedDeviceV1 {
 		uint16_t mEndpointId;
@@ -62,17 +78,22 @@ public:
 	static constexpr auto kMaxIndexLength = 3;
 
 	BridgeStorageManager()
-		: mBridge("br", strlen("br")), mBridgedDevicesCount("brd_cnt", strlen("brd_cnt"), &mBridge),
-		  mBridgedDevicesIndexes("brd_ids", strlen("brd_ids"), &mBridge),
-		  mBridgedDevice("brd", strlen("brd"), &mBridge), mVersion("ver", strlen("ver"), &mBridge)
+		: mBridge(kBridgePrefix, strlen(kBridgePrefix)),
+		  mBridgedDevicesCount(kBridgedDevicesCountPrefix, strlen(kBridgedDevicesCountPrefix), &mBridge),
+		  mBridgedDevicesIndexes(kBridgedDevicesIndexesPrefix, strlen(kBridgedDevicesIndexesPrefix), &mBridge),
+		  mBridgedDevice(kBridgedDevicePrefix, strlen(kBridgedDevicePrefix), &mBridge),
+		  mVersion(kVersionPrefix, strlen(kVersionPrefix), &mBridge)
 #ifdef CONFIG_BRIDGE_MIGRATE_PRE_2_7_0
 		  ,
-		  mBridgedDeviceEndpointId("eid", strlen("eid"), &mBridgedDevice),
-		  mBridgedDeviceNodeLabel("label", strlen("label"), &mBridgedDevice),
-		  mBridgedDeviceType("type", strlen("type"), &mBridgedDevice)
+		  mBridgedDeviceEndpointId(kBridgedDeviceEndpointIdPrefix, strlen(kBridgedDeviceEndpointIdPrefix),
+					   &mBridgedDevice),
+		  mBridgedDeviceNodeLabel(kBridgedDeviceLabelPrefix, strlen(kBridgedDeviceLabelPrefix),
+					  &mBridgedDevice),
+		  mBridgedDeviceType(kBridgedDeviceTypePrefix, strlen(kBridgedDeviceTypePrefix), &mBridgedDevice)
 #ifdef CONFIG_BRIDGED_DEVICE_BT
 		  ,
-		  mBt("bt", strlen("bt"), &mBridgedDevice), mBtAddress("addr", strlen("addr"), &mBt)
+		  mBt(kBtPrefix, strlen(kBtPrefix), &mBridgedDevice),
+		  mBtAddress(kBtAddrPrefix, strlen(kBtAddrPrefix), &mBt)
 #endif
 #endif
 	{
@@ -91,6 +112,11 @@ public:
 	 * @return false an error occurred
 	 */
 	bool Init();
+
+	/**
+	 * @brief Factory reset the storage.
+	 */
+	void FactoryReset();
 
 	/**
 	 * @brief Store bridged devices count into settings

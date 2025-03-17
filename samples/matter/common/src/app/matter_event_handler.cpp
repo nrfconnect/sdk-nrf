@@ -5,6 +5,7 @@
  */
 
 #include "matter_event_handler.h"
+#include "group_data_provider.h"
 
 #ifdef CONFIG_CHIP_OTA_REQUESTOR
 #include "dfu/ota/ota_util.h"
@@ -59,6 +60,9 @@ void DefaultEventHandler(const ChipDeviceEvent *event, intptr_t /* unused */)
 		InitBasicOTARequestor();
 		break;
 #endif /* CONFIG_CHIP_OTA_REQUESTOR */
+	case DeviceEventType::kFactoryReset:
+		GroupDataProviderImpl::Instance().WillBeFactoryReset();
+		break;
 	default:
 		break;
 	}

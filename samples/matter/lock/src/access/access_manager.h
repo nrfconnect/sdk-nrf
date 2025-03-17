@@ -264,15 +264,6 @@ public:
 	 */
 	bool GetRequirePIN() { return mRequirePINForRemoteOperation; };
 
-#ifdef CONFIG_LOCK_LEAVE_FABRIC_CLEAR_CREDENTIAL
-	/**
-	 * @brief Clear all credentials from the fabric which is currently being removed
-	 *
-	 * @return true on success, false otherwise
-	 */
-	bool ClearAllCredentialsFromFabric();
-#endif
-
 #ifdef CONFIG_LOCK_ENABLE_DEBUG
 	/* DEBUG API allowing to retrieve internally stored credentials and user data */
 	void PrintCredential(CredentialTypeEnum type, uint16_t index);
@@ -284,6 +275,11 @@ public:
 	void PrintSchedule(ScheduleType scheduleType, uint16_t scheduleIndex, uint16_t userIndex = 0);
 #endif /* CONFIG_LOCK_SCHEDULES */
 #endif /* CONFIG_LOCK_ENABLE_DEBUG */
+
+	/**
+	 * @brief Factory reset the manager.
+	 */
+	void FactoryReset();
 
 private:
 	struct CredentialsIndexes {
@@ -335,10 +331,6 @@ private:
 				    chip::FabricIndex creator, chip::FabricIndex modifier,
 				    DlCredentialStatus credentialStatus, CredentialTypeEnum credentialType,
 				    const chip::ByteSpan &secret);
-
-#ifdef CONFIG_LOCK_LEAVE_FABRIC_CLEAR_CREDENTIAL
-	static bool ClearCredential(DoorLockData::Credential &credential, uint8_t credIdx);
-#endif
 
 	SetCredentialCallback mSetCredentialCallback{ nullptr };
 	ClearCredentialCallback mClearCredentialCallback{ nullptr };
