@@ -1,0 +1,1 @@
+source "tests/drivers/uart/uart_errors/Kconfig"

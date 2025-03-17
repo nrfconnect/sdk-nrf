@@ -1,0 +1,22 @@
+common:
+  tags:
+    - drivers
+    - uart
+    - ci_tests_zephyr_drivers_uart
+  depends_on: gpio
+  harness: ztest
+  harness_config:
+    fixture: gpio_loopback
+tests:
+  nrf.extended.drivers.uart.uart_errors.int_driven:
+    filter: CONFIG_SERIAL_SUPPORT_INTERRUPT
+    platform_allow:
+      - nrf7120pdk/nrf7120/cpuapp
+  nrf.extended.drivers.uart.uart_errors.async:
+    filter: CONFIG_SERIAL_SUPPORT_ASYNC
+    platform_allow:
+      - nrf7120pdk/nrf7120/cpuapp
+    extra_configs:
+      - CONFIG_UART_ASYNC_API=y
+      - CONFIG_UART_INTERRUPT_DRIVEN=n
+      - CONFIG_PM_DEVICE=n
