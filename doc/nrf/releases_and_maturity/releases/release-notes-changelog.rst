@@ -760,7 +760,11 @@ Bluetooth libraries and services
 Common Application Framework
 ----------------------------
 
-|no_changes_yet_note|
+* :ref:`caf_buttons`:
+
+  * Added possibility of using more GPIOs.
+    Earlier, only **GPIO0** and **GPIO1** devices were supported.
+    Now, the generic solution supports all GPIOs available in the DTS.
 
 Debug libraries
 ---------------
