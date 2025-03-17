@@ -114,6 +114,10 @@ static void init_dlci(size_t dlci_idx, uint16_t recv_buf_size,
 
 static int cmux_write_at_channel(const uint8_t *data, size_t len)
 {
+	if (cmux.dlcis[cmux.at_channel].instance.state != MODEM_CMUX_DLCI_STATE_OPEN) {
+		return 0;
+	}
+
 	int ret = modem_pipe_transmit(cmux.dlcis[cmux.at_channel].pipe, data, len);
 
 	if (ret != len) {
