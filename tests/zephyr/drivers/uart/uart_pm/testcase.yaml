@@ -6,6 +6,7 @@ common:
   harness: ztest
   platform_allow:
     - nrf54l09pdk/nrf54l09/cpuapp
+    - nrf7120pdk/nrf7120/cpuapp
   harness_config:
     fixture: gpio_loopback
   depends_on: gpio
