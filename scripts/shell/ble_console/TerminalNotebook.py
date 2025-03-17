@@ -3,12 +3,11 @@
 
 import os
 import sys
-import warnings
 import re
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GObject, Gdk, GLib
+from gi.repository import Gtk, Gdk
 
 gi.require_version('Vte', '2.91')
 from gi.repository import Vte
@@ -17,20 +16,11 @@ COLOR_TERMINAL_ACTIVE = Gdk.RGBA(0.0/256, 0.0/256, 0.0/256, 0.8)
 COLOR_TERMINAL_INACTIVE = Gdk.RGBA(200.0/256, 200.0/256, 200.0/256, 0.8)
 MARKUP_REMOVE = re.compile(r'<[^>]+>')
 
-class TerminalNotebook(object):
+class TerminalNotebook:
 
     def __init__(self, write_device, widget, unconnect, message):
-
-        # Save images used in terminals
-
-        if getattr(sys, 'frozen', False):
-            # frozen (released)
-            dir_name = os.path.dirname(sys.executable)
-        else:
-            # unfrozen
-            dir_name = os.path.dirname(os.path.realpath(__file__))
-
         self.device_terminal_dict = {}
+        self.device_sending_dict = {}
         self.device_string_dict   = {}
         self.labels = {}
 
@@ -65,7 +55,7 @@ class TerminalNotebook(object):
                 self.device_string_dict[device] += text
 
     def receive_data_from_device(self, device, string):
-        self.device_terminal_dict[device].feed(string)
+        self.device_terminal_dict[device].feed(str.encode(string))
 
     def get_data_from_terminal(self):
         return self.device_string_dict
@@ -91,7 +81,7 @@ class TerminalNotebook(object):
             if self.device_terminal_dict[device] == terminal:
                 label_text = self.labels[device].get_text()
 
-                if state == False :
+                if state is False :
                     terminal.set_color_background(COLOR_TERMINAL_INACTIVE)
                     self.display_message("Lost connection with " + device)
                     # Strikethrough name of inactive device
@@ -108,10 +98,10 @@ class TerminalNotebook(object):
         return opened_terminals
 
     def remove_terminal(self, device):
-        self.device_terminal_dict[device].feed('\033[2J')
+        self.device_terminal_dict[device].feed(b'\033[2J')
         if self.notebook.get_n_pages() != 1:
-	        self.notebook.remove_page(self.notebook.page_num(self.device_terminal_dict[device]))
-	        self.notebook.queue_draw_area(0,0,-1,-1)
+            self.notebook.remove_page(self.notebook.page_num(self.device_terminal_dict[device]))
+            self.notebook.queue_draw_area(0,0,-1,-1)
         else:
             self.device_terminal_dict[device].set_color_background(COLOR_TERMINAL_INACTIVE)
         del self.device_sending_dict[device]
