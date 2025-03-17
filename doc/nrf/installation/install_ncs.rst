@@ -101,17 +101,17 @@ Depending on your preferred development environment, complete the following step
    .. group-tab:: Command line
 
       1. Open a terminal window.
-      #. Run the following command to install the nRF Util ``toolchain-manager`` command:
+      #. Run the following command to install the nRF Util's ``sdk-manager`` command:
 
          .. code-block:: console
 
-            nrfutil install toolchain-manager
+            nrfutil install sdk-manager
 
       #. Run the following command to list the available installations:
 
          .. code-block:: console
 
-            nrfutil toolchain-manager search
+            nrfutil sdk-manager search
 
          The versions from this list correspond to the |NCS| versions and will be *version* in the following step.
       #. Run the following command to install the toolchain version for the SDK version of your choice:
@@ -119,38 +119,38 @@ Depending on your preferred development environment, complete the following step
          .. parsed-literal::
             :class: highlight
 
-            nrfutil toolchain-manager install --ncs-version *version*
+            nrfutil sdk-manager toolchain install --ncs-version *version*
 
          For example:
 
          .. parsed-literal::
             :class: highlight
 
-            nrfutil toolchain-manager install --ncs-version |release|
+            nrfutil sdk-manager toolchain install --ncs-version |release|
 
          This example command installs the toolchain required for the |NCS| |release|.
          |install_latest_version|
 
-      The ``toolchain-manager`` command installs the toolchain by default at :file:`C:/ncs/toolchains` on Windows and at :file:`~/ncs/toolchains` on Linux.
-      These can be modified, as explained in the `Toolchain Manager command`_ documentation.
-      To check the current configuration setting, use the ``nrfutil toolchain-manager config --show`` command.
+      The ``sdk-manager`` command installs the toolchain by default at :file:`C:/ncs/toolchains` on Windows and at :file:`~/ncs/toolchains` on Linux.
+      These can be modified, as explained in the `command documentation <sdk-manager Configuration settings_>`_.
       On macOS, :file:`/opt/nordic/ncs/toolchains` is used and no other location is allowed.
 
-      If you have received a custom URL for installing the toolchain, you can use the following command to set it as default, replacing the respective parameter:
+      If you have received a custom URL for installing the toolchain, you can use the following commands to set it as default, replacing the respective parameters:
 
       .. parsed-literal::
          :class: highlight
 
-         nrfutil toolchain-manager config --set toolchain-index=\ *custom_toolchain_URL*
+         nrfutil sdk-manager config toolchain-index add *index-name* *custom_toolchain_URL*
+         nrfutil sdk-manager config toolchain-index set *index-name*
 
       If you have received a custom bundle ID for installing a specific toolchain version, you can use the following commands to provide it, replacing the respective parameter:
 
       .. parsed-literal::
          :class: highlight
 
-         nrfutil toolchain-manager install --bundle-id *custom_bundle_ID*
+         nrfutil sdk-manager toolchain install --toolchain-bundle-id *custom_bundle_ID*
 
-      To read more about ``toolchain-manager`` commands, use the ``nrfutil toolchain-manager --help`` command.
+      To read more about ``sdk-manager`` commands, use the ``nrfutil sdk-manager --help`` command, or see the `command documentation <sdk-manager command_>`_.
 
 With the default location to install the toolchain (:file:`C:/ncs/toolchains` on Windows, :file:`~/ncs/toolchains/` on Linux, and the non-modifiable :file:`/opt/nordic/ncs/toolchains/` on macOS), your directory structure now looks similar to this:
 
@@ -229,19 +229,19 @@ For more information about the repository and development model, see the :ref:`d
 
                .. code-block:: console
 
-                  nrfutil toolchain-manager launch --terminal
+                  nrfutil sdk-manager toolchain launch --terminal
 
             .. tab:: Linux
 
                .. code-block:: console
 
-                  nrfutil toolchain-manager launch --shell
+                  nrfutil sdk-manager toolchain launch --shell
 
             .. tab:: macOS
 
                .. code-block:: console
 
-                  nrfutil toolchain-manager launch --shell
+                  nrfutil sdk-manager toolchain launch --shell
 
          ..
 
