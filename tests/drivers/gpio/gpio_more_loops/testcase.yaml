@@ -13,8 +13,11 @@ tests:
   drivers.gpio.gpio_more_loops:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54l15dk/nrf54l15/cpuflpr
       - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54l09pdk/nrf54l09/cpuflpr
+      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54l20pdk/nrf54l20/cpuflpr
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
