@@ -62,7 +62,7 @@ The following help information describes the available script arguments:
      -m MODEL_ID, --model_id MODEL_ID
                            Model ID (in format 0xXXXXXX)
      -k ANTI_SPOOFING_KEY, --anti_spoofing_key ANTI_SPOOFING_KEY
-                           Anti Spoofing Key (base64 encoded)
+                           Anti Spoofing Key (Base64 encoded)
 
 The following commands show an example of a script call that uses short names of arguments:
 

@@ -250,7 +250,7 @@ Sysbuild Kconfig configuration and provisioning data generation
 To generate a hexadecimal file with the Fast Pair provisioning data during the build, you must use the default |NCS| build system configuration with sysbuild and set the following sysbuild Kconfig options:
 
 * ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID`` - Fast Pair Model ID in format ``0xXXXXXX``.
-* ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` - base64-encoded Fast Pair Anti-Spoofing Private Key.
+* ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` - Base64-encoded Fast Pair Anti-Spoofing Private Key.
 
 See :ref:`zephyr:sysbuild` for detailed information on how to configure the sysbuild Kconfig options.
 
