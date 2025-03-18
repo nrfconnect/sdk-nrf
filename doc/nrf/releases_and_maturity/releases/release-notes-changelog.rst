@@ -735,7 +735,7 @@ Bluetooth libraries and services
       The ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option is replaced with the ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID`` and ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY``.
     * The method of supplying the Fast Pair Model ID and Anti-Spoofing Private Key to generate the Fast Pair provisioning data HEX file.
       The ``FP_MODEL_ID`` and ``FP_ANTI_SPOOFING_KEY`` CMake variables are replaced by the corresponding ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID`` and ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` Kconfig options.
-    * The automatically generated ``bt_fast_pair`` partition definition (located in the :file:`subsys/partition_manager/pm.yml.bt_fast_pair`) to work correctly when building with TF-M.
+    * The automatically generated ``bt_fast_pair`` partition definition (in the :file:`subsys/partition_manager/pm.yml.bt_fast_pair` file) to work correctly when building with TF-M.
 
   * Removed the sysbuild control over the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option that is defined in the main (default) image.
     Sysbuild no longer sets the value of this Kconfig option.
