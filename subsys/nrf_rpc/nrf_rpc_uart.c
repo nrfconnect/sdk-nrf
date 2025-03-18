@@ -17,6 +17,8 @@
 
 LOG_MODULE_REGISTER(nrf_rpc_uart, CONFIG_NRF_RPC_TR_LOG_LEVEL);
 
+#define CRC_SIZE sizeof(uint16_t)
+
 enum {
 	HDLC_CHAR_ESCAPE = 0x7d,
 	HDLC_CHAR_DELIMITER = 0x7e,
@@ -68,6 +70,10 @@ struct nrf_rpc_uart {
 
 	K_KERNEL_STACK_MEMBER(rx_workq_stack, CONFIG_NRF_RPC_UART_RX_THREAD_STACK_SIZE);
 
+	/* HDLC ack decoding state */
+	struct hdlc_decode_ctx rx_ack_ctx;
+	uint8_t rx_ack[CRC_SIZE];
+
 	/* HDLC packet decoding state */
 	struct hdlc_decode_ctx rx_pkt_ctx;
 	uint8_t rx_pkt[CONFIG_NRF_RPC_UART_MAX_PACKET_SIZE];
@@ -96,18 +102,16 @@ static void log_hexdump_dbg(const uint8_t *data, size_t length, const char *fmt,
 	}
 }
 
-#define CRC_SIZE sizeof(uint16_t)
-
 static void send_byte(const struct device *dev, uint8_t byte);
 
 static void ack_rx(struct nrf_rpc_uart *uart_tr)
 {
-	if (!IS_ENABLED(CONFIG_NRF_RPC_UART_RELIABLE) || uart_tr->rx_pkt_ctx.len != CRC_SIZE) {
-		log_hexdump_dbg(uart_tr->rx_pkt, uart_tr->rx_pkt_ctx.len, ">>> RX invalid frame");
+	if (!IS_ENABLED(CONFIG_NRF_RPC_UART_RELIABLE) || uart_tr->rx_ack_ctx.len != CRC_SIZE) {
+		log_hexdump_dbg(uart_tr->rx_ack, uart_tr->rx_ack_ctx.len, ">>> RX invalid frame");
 		return;
 	}
 
-	uint16_t rx_ack = sys_get_le16(uart_tr->rx_pkt);
+	uint16_t rx_ack = sys_get_le16(uart_tr->rx_ack);
 
 	LOG_DBG(">>> RX ack %04x", rx_ack);
 
@@ -117,7 +121,6 @@ static void ack_rx(struct nrf_rpc_uart *uart_tr)
 	}
 
 	k_sem_give(&uart_tr->ack_sem);
-	k_yield();
 }
 
 static void ack_tx(struct nrf_rpc_uart *uart_tr, uint16_t ack_pld)
@@ -245,8 +248,8 @@ static void work_handler(struct k_work *work)
 				continue;
 			}
 
+			/* ACKs are already handled in ISR, so process only normal packets here */
 			if (uart_tr->rx_pkt_ctx.len <= CRC_SIZE) {
-				ack_rx(uart_tr);
 				continue;
 			}
 
@@ -282,6 +285,17 @@ static void work_handler(struct k_work *work)
 	}
 }
 
+static void decode_ack(struct nrf_rpc_uart *inst, const uint8_t *in, size_t len)
+{
+	for (size_t i = 0; i < len; i++) {
+		hdlc_decode_byte(&inst->rx_ack_ctx, inst->rx_ack, in[i]);
+
+		if (inst->rx_ack_ctx.state == HDLC_STATE_FRAME_FOUND) {
+			ack_rx(inst);
+		}
+	}
+}
+
 static void serial_cb(const struct device *uart, void *user_data)
 {
 	struct nrf_rpc_uart *uart_tr = user_data;
@@ -294,6 +308,7 @@ static void serial_cb(const struct device *uart, void *user_data)
 					    uart_tr->rx_ringbuf.size);
 		if (rx_len > 0) {
 			rx_len = uart_fifo_read(uart, rx_buffer, rx_len);
+			decode_ack(uart_tr, rx_buffer, rx_len);
 			int err = ring_buf_put_finish(&uart_tr->rx_ringbuf, rx_len);
 			(void)err; /*silence the compiler*/
 			__ASSERT_NO_MSG(err == 0);
@@ -373,6 +388,8 @@ static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t
 
 	uart_tr->rx_pkt_ctx.state = HDLC_STATE_UNSYNC;
 	uart_tr->rx_pkt_ctx.capacity = sizeof(uart_tr->rx_pkt);
+	uart_tr->rx_ack_ctx.state = HDLC_STATE_UNSYNC;
+	uart_tr->rx_ack_ctx.capacity = sizeof(uart_tr->rx_ack);
 	uart_irq_rx_enable(uart_tr->uart);
 	nrf_rpc_uart_initialized_hook(uart_tr->uart);
 
