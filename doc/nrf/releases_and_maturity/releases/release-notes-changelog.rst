@@ -232,7 +232,10 @@ nRF IEEE 802.15.4 radio driver
 Thread
 ------
 
-|no_changes_yet_note|
+* Added:
+
+  * Support for storing the Thread key materials in the :ref:`ug_ot_thread_security_kmu`.
+  * The :ref:`ug_ot_thread_security` user guide describing the security features of the |NCS| OpenThread implementation.
 
 Zigbee
 ------
