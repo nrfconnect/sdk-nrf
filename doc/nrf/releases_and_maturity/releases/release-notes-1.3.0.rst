@@ -196,7 +196,7 @@ Zigbee
 Added initial support for the Zigbee network p`rotocol:
 
 * ZBOSS - port of the ZBOSS stack to the |NCS|, provided as a closed stack binary in nrfxlib.
-  The stack provided in this release has not been certified by the `Zigbee Alliance`_.
+  The stack provided in this release has not been certified by the Zigbee Alliance.
 * Light control sample consisting of the Zigbee light bulb sample, Zigbee light switch sample, and Zigbee network coordinator sample - ported from the nRF5 SDK for Thread and Zigbee.
   The sample demonstrates all Zigbee roles (coordinator, router, end device).
   The Zigbee light switch sample provides sleepy end device support.
