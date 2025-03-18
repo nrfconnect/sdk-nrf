@@ -69,7 +69,7 @@ By default, if Model ID and Anti-Spoofing Private Key are not specified, the fol
 
    * Device Name: NCS input device
    * Model ID: ``0x2A410B``
-   * Anti-Spoofing Private Key (base64, uncompressed): ``Unoh+nycK/ZJ7k3dHsdcNpiP1SfOy0P/Lx5XixyYois=``
+   * Anti-Spoofing Private Key (Base64, uncompressed): ``Unoh+nycK/ZJ7k3dHsdcNpiP1SfOy0P/Lx5XixyYois=``
    * Device Type: Input Device
    * Notification Type: Fast Pair
    * Data-Only connection: true

@@ -212,7 +212,7 @@ If the Model ID and Anti-Spoofing Private Key are not specified, the following d
 
    * Device Name: NCS locator tag
    * Model ID: ``0x4A436B``
-   * Anti-Spoofing Private Key (base64, uncompressed): ``rie10A7ONqwd77VmkxGsblPUbMt384qjDgcEJ/ctT9Y=``
+   * Anti-Spoofing Private Key (Base64, uncompressed): ``rie10A7ONqwd77VmkxGsblPUbMt384qjDgcEJ/ctT9Y=``
    * Device Type: Locator Tag
    * Notification Type: Fast Pair
    * Data-Only connection: true

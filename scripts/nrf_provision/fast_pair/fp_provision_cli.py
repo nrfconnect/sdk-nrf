@@ -72,7 +72,7 @@ def parse_arguments():
     p.add_argument("-m", "--model_id", type=str, required=True,
                    help="Model ID (in format 0xXXXXXX)")
     p.add_argument("-k", "--anti_spoofing_key", type=str, required=True,
-                   help="Anti Spoofing Key (base64 encoded)")
+                   help="Anti Spoofing Key (Base64 encoded)")
 
     return p.parse_args()
 
