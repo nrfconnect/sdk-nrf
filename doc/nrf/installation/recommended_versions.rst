@@ -285,7 +285,7 @@ J-Link Software and Documentation Pack
 SEGGER's `J-Link Software and Documentation Pack`_ is a package of tools that is required for SEGGER J-Link to work correctly with both Intel and ARM assemblies.
 Among others, this package includes the J-Link RTT Viewer, which can be used for :ref:`test_and_optimize`.
 
-For the SEGGER J-Link version to use with your preferred development environment, see the :ref:`installing_vsc` section on the |NCS| installation page.
+Use the J-Link |jlink_ver| when working with the |NCS|, as also listed in the :ref:`installing_vsc` section on the |NCS| installation page.
 
 On Windows, you also need to install SEGGER USB Driver for J-Link, which is required for support of older Nordic Semiconductor devices in :ref:`requirements_nrf_util`.
 For information on how to install the USB Driver, see the `nRF Util prerequisites`_ documentation.
@@ -413,8 +413,13 @@ Its functionality is provided through installable and upgradeable commands that 
 The utility follows its own release cycle and has its own `operating system requirements <nRF Util_>`_.
 Use the latest available release for development.
 
-nRF Util provides |NCS| toolchain packages for each |NCS| release through the ``toolchain-manager`` command.
-See the :ref:`install_ncs` page for information about how to use this command.
+When you :ref:`install the nRF Connect SDK <install_ncs>`, you need to install the following nRF Util commands:
+
+* `Device command <Device command overview_>`_ (``device``) - The latest version is required as the default :ref:`west runner <programming_selecting_runner>`.
+* `Toolchain Manager command`_ (``toolchain-manager``) - The latest version is required for working with |NCS| toolchain packages.
+  You only need to install this command if you are working with command line in the |NCS|.
+
+See `Installing and upgrading nRF Util commands`_ for information about how to install these commands.
 
 .. _requirements_ncd:
 
