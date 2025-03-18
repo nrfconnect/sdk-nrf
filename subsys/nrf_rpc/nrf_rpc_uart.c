@@ -33,12 +33,24 @@ struct trx_flips {
 	uint16_t last_rx_crc;
 };
 
-typedef enum {
+enum hdlc_state {
+	/* Ignore incoming bytes until the delimiter is found. */
 	HDLC_STATE_UNSYNC,
-	HDLC_STATE_FRAME_START,
+	/* Append incoming bytes to the output buffer. */
+	HDLC_STATE_FRAME,
+	/* Found the delimeter when the output buffer was non-empty. */
 	HDLC_STATE_FRAME_FOUND,
+	/* Found the escape byte. Append the following byte XORed with 0x20 to the output buffer. */
 	HDLC_STATE_ESCAPE,
-} hdlc_state_t;
+};
+
+struct hdlc_decode_ctx {
+	enum hdlc_state state;
+	/* The number of bytes of the current packet that have been decoded so far. */
+	uint16_t len;
+	/* The capacity of the buffer to store a decoded packet. */
+	uint16_t capacity;
+};
 
 struct nrf_rpc_uart {
 	const struct device *uart;
@@ -56,10 +68,9 @@ struct nrf_rpc_uart {
 
 	K_KERNEL_STACK_MEMBER(rx_workq_stack, CONFIG_NRF_RPC_UART_RX_THREAD_STACK_SIZE);
 
-	/* HDLC frame parsing state */
-	hdlc_state_t hdlc_state;
-	uint8_t rx_packet[CONFIG_NRF_RPC_UART_MAX_PACKET_SIZE];
-	size_t rx_packet_len;
+	/* HDLC packet decoding state */
+	struct hdlc_decode_ctx rx_pkt_ctx;
+	uint8_t rx_pkt[CONFIG_NRF_RPC_UART_MAX_PACKET_SIZE];
 
 	/* Ack waiting semaphore */
 	struct k_sem ack_sem;
@@ -91,12 +102,12 @@ static void send_byte(const struct device *dev, uint8_t byte);
 
 static void ack_rx(struct nrf_rpc_uart *uart_tr)
 {
-	if (!IS_ENABLED(CONFIG_NRF_RPC_UART_RELIABLE) || uart_tr->rx_packet_len != CRC_SIZE) {
-		log_hexdump_dbg(uart_tr->rx_packet, uart_tr->rx_packet_len, ">>> RX invalid frame");
+	if (!IS_ENABLED(CONFIG_NRF_RPC_UART_RELIABLE) || uart_tr->rx_pkt_ctx.len != CRC_SIZE) {
+		log_hexdump_dbg(uart_tr->rx_pkt, uart_tr->rx_pkt_ctx.len, ">>> RX invalid frame");
 		return;
 	}
 
-	uint16_t rx_ack = sys_get_le16(uart_tr->rx_packet);
+	uint16_t rx_ack = sys_get_le16(uart_tr->rx_pkt);
 
 	LOG_DBG(">>> RX ack %04x", rx_ack);
 
@@ -176,39 +187,48 @@ static bool crc_compare(uint16_t rx_crc, uint16_t calc_crc)
 	return rx_crc == calc_crc;
 }
 
-static void hdlc_decode_byte(struct nrf_rpc_uart *uart_tr, uint8_t byte)
+static void hdlc_decode_byte(struct hdlc_decode_ctx *ctx, uint8_t *out, uint8_t in)
 {
-	/* TODO: handle frame buffer overflow */
-
-	if (uart_tr->hdlc_state == HDLC_STATE_ESCAPE) {
-		uart_tr->rx_packet[uart_tr->rx_packet_len++] = byte ^ 0x20;
-		uart_tr->hdlc_state = HDLC_STATE_FRAME_START;
-	} else if (byte == HDLC_CHAR_ESCAPE) {
-		uart_tr->hdlc_state = HDLC_STATE_ESCAPE;
-	} else if (byte == HDLC_CHAR_DELIMITER) {
-		uart_tr->hdlc_state = (uart_tr->hdlc_state == HDLC_STATE_FRAME_START)
-					      ? HDLC_STATE_FRAME_FOUND
-					      : HDLC_STATE_UNSYNC;
-	} else {
-		uart_tr->rx_packet[uart_tr->rx_packet_len++] = byte;
-		uart_tr->hdlc_state = HDLC_STATE_FRAME_START;
-	}
-
-	if (uart_tr->hdlc_state == HDLC_STATE_FRAME_FOUND) {
-		if (uart_tr->rx_packet_len > CRC_SIZE) {
-			uart_tr->rx_packet_len -= CRC_SIZE;
-		} else {
-			ack_rx(uart_tr);
-			uart_tr->rx_packet_len = 0;
-			uart_tr->hdlc_state = HDLC_STATE_UNSYNC;
+	switch (ctx->state) {
+	case HDLC_STATE_UNSYNC:
+		if (in == HDLC_CHAR_DELIMITER) {
+			ctx->len = 0;
+			ctx->state = HDLC_STATE_FRAME;
 		}
+		return;
+	case HDLC_STATE_FRAME_FOUND:
+		ctx->len = 0;
+		ctx->state = HDLC_STATE_FRAME;
+		__fallthrough;
+	case HDLC_STATE_FRAME:
+		if (in == HDLC_CHAR_DELIMITER) {
+			if (ctx->len > 0) {
+				ctx->state = HDLC_STATE_FRAME_FOUND;
+			}
+			return;
+		} else if (in == HDLC_CHAR_ESCAPE) {
+			ctx->state = HDLC_STATE_ESCAPE;
+			return;
+		}
+		break;
+	case HDLC_STATE_ESCAPE:
+		in ^= 0x20;
+		ctx->state = HDLC_STATE_FRAME;
+		break;
 	}
+
+	if (ctx->len >= ctx->capacity) {
+		/* Ignore too long frame */
+		ctx->state = HDLC_STATE_UNSYNC;
+		return;
+	}
+
+	out[ctx->len++] = in;
 }
 
 static void work_handler(struct k_work *work)
 {
 	struct nrf_rpc_uart *uart_tr = CONTAINER_OF(work, struct nrf_rpc_uart, rx_work);
-	const struct nrf_rpc_tr *transport = uart_tr->transport;
 	uint8_t *data;
 	size_t len;
 	int ret;
@@ -219,24 +239,28 @@ static void work_handler(struct k_work *work)
 		len = ring_buf_get_claim(&uart_tr->rx_ringbuf, &data,
 					 CONFIG_NRF_RPC_UART_MAX_PACKET_SIZE);
 		for (size_t i = 0; i < len; i++) {
-			hdlc_decode_byte(uart_tr, data[i]);
+			hdlc_decode_byte(&uart_tr->rx_pkt_ctx, uart_tr->rx_pkt, data[i]);
 
-			if (uart_tr->hdlc_state != HDLC_STATE_FRAME_FOUND) {
+			if (uart_tr->rx_pkt_ctx.state != HDLC_STATE_FRAME_FOUND) {
 				continue;
 			}
 
-			crc_received = sys_get_le16(uart_tr->rx_packet + uart_tr->rx_packet_len);
-			crc_calculated =
-				crc16_ccitt(0xffff, uart_tr->rx_packet, uart_tr->rx_packet_len);
+			if (uart_tr->rx_pkt_ctx.len <= CRC_SIZE) {
+				ack_rx(uart_tr);
+				continue;
+			}
 
-			log_hexdump_dbg(uart_tr->rx_packet, uart_tr->rx_packet_len,
+			uart_tr->rx_pkt_ctx.len -= CRC_SIZE;
+			crc_received = sys_get_le16(uart_tr->rx_pkt + uart_tr->rx_pkt_ctx.len);
+			crc_calculated =
+				crc16_ccitt(0xffff, uart_tr->rx_pkt, uart_tr->rx_pkt_ctx.len);
+
+			log_hexdump_dbg(uart_tr->rx_pkt, uart_tr->rx_pkt_ctx.len,
 					">>> RX packet %04x", crc_received);
 
 			if (!crc_compare(crc_received, crc_calculated)) {
 				LOG_ERR("Invalid packet CRC: calculated %04x but received %04x",
 					crc_calculated, crc_received);
-				uart_tr->rx_packet_len = 0;
-				uart_tr->hdlc_state = HDLC_STATE_UNSYNC;
 				continue;
 			}
 
@@ -245,13 +269,10 @@ static void work_handler(struct k_work *work)
 			if (rx_flip_check(uart_tr, crc_received)) {
 				LOG_WRN("Duplicate packet %04x", crc_received);
 			} else {
-				uart_tr->receive_callback(transport, uart_tr->rx_packet,
-							  uart_tr->rx_packet_len,
+				uart_tr->receive_callback(uart_tr->transport, uart_tr->rx_pkt,
+							  uart_tr->rx_pkt_ctx.len,
 							  uart_tr->receive_ctx);
 			}
-
-			uart_tr->rx_packet_len = 0;
-			uart_tr->hdlc_state = HDLC_STATE_UNSYNC;
 		}
 
 		ret = ring_buf_get_finish(&uart_tr->rx_ringbuf, len);
@@ -350,8 +371,8 @@ static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t
 	k_work_init(&uart_tr->rx_work, work_handler);
 	ring_buf_init(&uart_tr->rx_ringbuf, sizeof(uart_tr->rx_buffer), uart_tr->rx_buffer);
 
-	uart_tr->hdlc_state = HDLC_STATE_UNSYNC;
-	uart_tr->rx_packet_len = 0;
+	uart_tr->rx_pkt_ctx.state = HDLC_STATE_UNSYNC;
+	uart_tr->rx_pkt_ctx.capacity = sizeof(uart_tr->rx_pkt);
 	uart_irq_rx_enable(uart_tr->uart);
 	nrf_rpc_uart_initialized_hook(uart_tr->uart);
 
