@@ -24,10 +24,65 @@ LOG_MODULE_DECLARE(app_main, LOG_LEVEL_INF);
 #define MAX_NUM_RTT_SAMPLES		256
 #define MAX_NUM_IQ_SAMPLES		256 * CONFIG_BT_RAS_MAX_ANTENNA_PATHS
 
+#define A1 (0)
+#define A2 (1)
+#define A3 (2)
+#define A4 (3)
+
+/* Bluetooth Core Specification 6.0, Table 4.13, Antenna Path Permutation for N_AP=2.
+ * The last element corresponds to extension slot
+ */
+static uint8_t antenna_path_lut_n_ap_2[2][3] = {
+	{A1, A2, A2},
+	{A2, A1, A1},
+};
+
+/* Bluetooth Core Specification 6.0, Table 4.14, Antenna Path Permutation for N_AP=3.
+ * The last element corresponds to extension slot
+ */
+static uint8_t antenna_path_lut_n_ap_3[6][4] = {
+	{A1, A2, A3, A3},
+	{A2, A1, A3, A3},
+	{A1, A3, A2, A2},
+	{A3, A1, A2, A2},
+	{A3, A2, A1, A1},
+	{A2, A3, A1, A1},
+};
+
+/* Bluetooth Core Specification 6.0, Table 4.15, Antenna Path Permutation for N_AP=4.
+ * The last element corresponds to extension slot
+ */
+static uint8_t antenna_path_lut_n_ap_4[24][5] = {
+	{A1, A2, A3, A4, A4},
+	{A2, A1, A3, A4, A4},
+	{A1, A3, A2, A4, A4},
+	{A3, A1, A2, A4, A4},
+	{A3, A2, A1, A4, A4},
+	{A2, A3, A1, A4, A4},
+	{A1, A2, A4, A3, A3},
+	{A2, A1, A4, A3, A3},
+	{A1, A4, A2, A3, A3},
+	{A4, A1, A2, A3, A3},
+	{A4, A2, A1, A3, A3},
+	{A2, A4, A1, A3, A3},
+	{A1, A4, A3, A2, A2},
+	{A4, A1, A3, A2, A2},
+	{A1, A3, A4, A2, A2},
+	{A3, A1, A4, A2, A2},
+	{A3, A4, A1, A2, A2},
+	{A4, A3, A1, A2, A2},
+	{A4, A2, A3, A1, A1},
+	{A2, A4, A3, A1, A1},
+	{A4, A3, A2, A1, A1},
+	{A3, A4, A2, A1, A1},
+	{A3, A2, A4, A1, A1},
+	{A2, A3, A4, A1, A1},
+};
+
 struct iq_sample_and_channel {
 	bool failed;
 	uint8_t channel;
-	uint8_t antenna_permutation;
+	uint8_t antenna_path;
 	struct bt_le_cs_iq_sample local_iq_sample;
 	struct bt_le_cs_iq_sample peer_iq_sample;
 };
@@ -47,6 +102,22 @@ struct processing_context {
 	uint8_t n_ap;
 	enum bt_conn_le_cs_role role;
 };
+
+static uint8_t get_antenna_path(uint8_t n_ap,
+				uint8_t antenna_path_permutation_index,
+				uint8_t antenna_index)
+{
+	if (n_ap == 2) {
+		return antenna_path_lut_n_ap_2[antenna_path_permutation_index][antenna_index];
+	}
+	if (n_ap == 3) {
+		return antenna_path_lut_n_ap_3[antenna_path_permutation_index][antenna_index];
+	}
+	if (n_ap == 4) {
+		return antenna_path_lut_n_ap_4[antenna_path_permutation_index][antenna_index];
+	}
+	return 0;
+}
 
 static void calc_complex_product(int32_t z_a_real, int32_t z_a_imag, int32_t z_b_real,
 				 int32_t z_b_imag, int32_t *z_out_real, int32_t *z_out_imag)
@@ -107,7 +178,10 @@ static void bubblesort_2(float *array1, float *array2, uint16_t len)
 	}
 }
 
-static float estimate_distance_using_phase_slope(struct iq_sample_and_channel *data, uint8_t len)
+static float estimate_distance_using_phase_slope(struct iq_sample_and_channel *data,
+						 uint8_t len,
+						 uint8_t ant_path,
+						 uint8_t *samples_cnt)
 {
 	int32_t combined_i;
 	int32_t combined_q;
@@ -116,7 +190,7 @@ static float estimate_distance_using_phase_slope(struct iq_sample_and_channel *d
 	static float frequencies[MAX_NUM_IQ_SAMPLES];
 
 	for (uint8_t i = 0; i < len; i++) {
-		if (!data[i].failed) {
+		if (!data[i].failed && data[i].antenna_path == ant_path) {
 			calc_complex_product(data[i].local_iq_sample.i, data[i].local_iq_sample.q,
 					     data[i].peer_iq_sample.i, data[i].peer_iq_sample.q,
 					     &combined_i, &combined_q);
@@ -124,6 +198,7 @@ static float estimate_distance_using_phase_slope(struct iq_sample_and_channel *d
 			theta[num_angles] = atan2(1.0 * combined_q, 1.0 * combined_i);
 			frequencies[num_angles] = 1.0 * CS_FREQUENCY_MHZ(data[i].channel);
 			num_angles++;
+			*samples_cnt += 1;
 		}
 	}
 
@@ -193,8 +268,8 @@ static void process_tone_info_data(struct processing_context *context,
 		}
 
 		iq_sample_channel_data[context->iq_sample_channel_data_index].channel = channel;
-		iq_sample_channel_data[context->iq_sample_channel_data_index].antenna_permutation =
-			antenna_permutation_index;
+		iq_sample_channel_data[context->iq_sample_channel_data_index].antenna_path =
+			get_antenna_path(context->n_ap, antenna_permutation_index, i);
 		iq_sample_channel_data[context->iq_sample_channel_data_index].local_iq_sample =
 			bt_le_cs_parse_pct(local_tone_info[i].phase_correction_term);
 		iq_sample_channel_data[context->iq_sample_channel_data_index].peer_iq_sample =
@@ -290,6 +365,7 @@ static bool process_step_data(struct bt_le_cs_subevent_step *local_step,
 void estimate_distance(struct net_buf_simple *local_steps, struct net_buf_simple *peer_steps,
 		       uint8_t n_ap, enum bt_conn_le_cs_role role)
 {
+	bool distance_measurement_failed = true;
 	struct processing_context context = {
 		.rtt_timing_data_index = 0,
 		.iq_sample_channel_data_index = 0,
@@ -303,24 +379,34 @@ void estimate_distance(struct net_buf_simple *local_steps, struct net_buf_simple
 	bt_ras_rreq_rd_subevent_data_parse(peer_steps, local_steps, context.role, NULL,
 					   process_step_data, &context);
 
-	float phase_slope_based_distance = estimate_distance_using_phase_slope(
-		iq_sample_channel_data, context.iq_sample_channel_data_index);
+	LOG_INF("Estimated distance to reflector:");
 
 	float rtt_based_distance =
 		estimate_distance_using_time_of_flight(context.rtt_timing_data_index);
 
-	if (rtt_based_distance == 0.0f && phase_slope_based_distance == 0.0f) {
-		LOG_INF("A reliable distance estimate could not be computed.");
-	} else {
-		LOG_INF("Estimated distance to reflector:");
-	}
-
 	if (rtt_based_distance != 0.0f) {
 		LOG_INF("- Round-Trip Timing method: %f meters (derived from %d samples)",
 			(double)rtt_based_distance, context.rtt_timing_data_index);
+		distance_measurement_failed = false;
 	}
-	if (phase_slope_based_distance != 0.0f) {
-		LOG_INF("- Phase-Based Ranging method: %f meters (derived from %d samples)",
-			(double)phase_slope_based_distance, context.iq_sample_channel_data_index);
+	for (int i = 0; i < n_ap; i++) {
+		uint8_t samples_cnt = 0;
+		float phase_slope_based_distance = estimate_distance_using_phase_slope(
+			iq_sample_channel_data,
+			context.iq_sample_channel_data_index,
+			i,
+			&samples_cnt);
+
+		if (phase_slope_based_distance != 0.0f) {
+			LOG_INF("- Phase-Based Ranging method: %f meters "
+				"(derived on antenna path %d from %d samples)",
+				(double)phase_slope_based_distance,
+				i,
+				samples_cnt);
+			distance_measurement_failed = false;
+		}
+	}
+	if (distance_measurement_failed) {
+		LOG_INF("- A reliable distance estimate could not be computed.");
 	}
 }
