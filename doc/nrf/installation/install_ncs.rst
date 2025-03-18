@@ -44,45 +44,17 @@ Depending on your preferred development environment, install the following softw
 
    .. group-tab:: nRF Connect for Visual Studio Code
 
-      * All operating systems:
+      .. include:: /includes/install_sdk_common_prerequisites.txt
 
-        * The latest version of the :ref:`requirements_clt` package.
-          Check :ref:`operating system versions that support this tool <additional_nordic_sw_tools>` and `download the installer <nRF Command Line Tools Downloads_>`_.
-        * The |jlink_ver_vsc| of SEGGER J-Link.
-          Download it from the `J-Link Software and Documentation Pack`_ page.
-          On Windows, `install it manually together with SEGGER USB Driver for J-Link <nRF Util prerequisites_>`_.
-        * The latest version of |VSC| for your operating system from the `Visual Studio Code download page`_ or `using this direct link <start VS Code walkthrough_>`_.
-        * In |VSC|, the latest version of the `nRF Connect for VS Code Extension Pack`_.
-          The |nRFVSC| comes with its own bundled version of some of the nRF Util commands.
+      Additionally, install |VSC|:
 
-      * Additionally, for Windows users: SEGGER USB Driver for J-Link, required for support of older Nordic Semiconductor devices in nRF Util.
-        For information on how to install the USB Driver, see the `nRF Util prerequisites`_ documentation.
-      * Additionally, for Linux users: the `nrf-udev`_ module with udev rules required to access USB ports on Nordic Semiconductor devices and program the firmware.
+      * The latest version of |VSC| for your operating system from the `Visual Studio Code download page`_ or `using this direct link <start VS Code walkthrough_>`_.
+      * In |VSC|, the latest version of the `nRF Connect for VS Code Extension Pack`_.
+        The |nRFVSC| comes with its own bundled version of some of the nRF Util commands.
 
    .. group-tab:: Command line
 
-      * All operating systems:
-
-        * The latest version of nRF Util, a unified command-line utility for Nordic Semiconductor products.
-          Check :ref:`operating system versions that support this tool <additional_nordic_sw_tools>` and `download the installer <nRF Util Downloads_>`_.
-
-          .. note::
-              After downloading the nRF Util executable, move it to a directory that is in the system :envvar:`PATH`.
-              On macOS and Linux, the downloaded file also needs to be given execute permission by typing `chmod +x nrfutil` or by checking the checkbox in the file properties.
-
-        * The latest version of the :ref:`requirements_clt` package.
-          Check :ref:`operating system versions that support this tool <additional_nordic_sw_tools>` and `download the installer <nRF Command Line Tools Downloads_>`_.
-
-         .. note::
-               After downloading and installing the tools, add nrfjprog to the system :envvar:`PATH` in the environment variables.
-
-        * The |jlink_ver| of SEGGER J-Link.
-          Download it from the `J-Link Software and Documentation Pack`_ page.
-          On Windows, `install it manually together with SEGGER USB Driver for J-Link <nRF Util prerequisites_>`_.
-
-      * Additionally, for Windows users: SEGGER USB Driver for J-Link, required for support of older Nordic Semiconductor devices in nRF Util.
-        For information on how to install the USB Driver, see the `nRF Util prerequisites`_ documentation.
-      * Additionally, for Linux users: the `nrf-udev`_ module with udev rules required to access USB ports on Nordic Semiconductor devices and program the firmware.
+      .. include:: /includes/install_sdk_common_prerequisites.txt
 
 .. _gs_installing_toolchain:
 .. _gs_installing_tools:

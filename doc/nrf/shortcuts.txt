@@ -7,7 +7,6 @@
 .. |release_number_tt| replace:: ``2.9.0-nRF54H20-1``
 
 .. |jlink_ver| replace:: v8.18
-.. |jlink_ver_vsc| replace:: v7.94i
 
 .. ### Config shortcuts
 

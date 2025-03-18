@@ -58,7 +58,9 @@ If you want to change the runner used by ``west flash``, you can use one of the 
 
      west flash -r nrfjprog
 
-In either case, make sure you have the required tools installed on your system: `nRF Util`_ for ``-r nrfutil`` or the archived `nRF Command Line Tools`_ for ``-r nrfjprog``.
+In either case, make sure you have the required tools installed on your system.
+`nRF Util`_ is a :ref:`prerequisite <installing_vsc>` for the |NCS|.
+For ``-r nrfjprog``, you need the archived `nRF Command Line Tools`_.
 
 To see which runners are available for your board, run the following command:
 
