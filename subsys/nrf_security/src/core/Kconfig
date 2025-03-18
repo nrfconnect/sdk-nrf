@@ -30,3 +30,7 @@ config PSA_CORE_LITE
 	  possible to use.
 
 endchoice
+
+config PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS
+	bool "Optimize Ed25519 for NSIB usage"
+	depends on PSA_CORE_LITE
