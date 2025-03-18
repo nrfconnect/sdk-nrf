@@ -324,11 +324,11 @@ Zigbee
 In this release, Zigbee is supported for development and should not be used for production.
 |NCS| v1.5.1 contains the certified Zigbee solution supported for production.
 
-* Added version 0.9.5 of the `ZBOSS NCP Host`_ package that includes a simple gateway application.
+* Added version 0.9.5 of the ZBOSS NCP Host package that includes a simple gateway application.
 * Updated:
 
   * Reworked the Zigbee NCP sample to work with the simple gateway application.
-  * Moved the `NCP Host documentation`_ from the `ZBOSS NCP Host`_ package to the same location as the `external ZBOSS development guide and API documentation`_.
+  * Moved the NCP Host documentation from the ZBOSS NCP Host package to the same location as the external ZBOSS development guide and API documentation.
 
 nRF Desktop
 -----------
@@ -655,4 +655,4 @@ nrfxlib
 
 * :ref:`nrf_802154` - Full documentation of the radio driver is now available as part of nrfxlib and replaces the previous nRF 802.15.4 Service Layer documentation.
 * :ref:`nrf_security_readme` - Added section on Building with TF-M.
-* Added :ref:`zboss_certification`.
+* Added ZBOSS library certification.
