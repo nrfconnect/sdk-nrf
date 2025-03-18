@@ -37,6 +37,7 @@
 
 - scenarios:
     - sample.bluetooth.direction_finding_central_nrf
+    - sample.bluetooth.direction_finding_central_nrf.aod
   platforms:
     - nrf52833dk/nrf52820
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-32042"
