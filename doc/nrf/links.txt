@@ -469,7 +469,7 @@
 
 .. _`known issues page on the main branch`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html
 .. _`known issues for nRF Connect SDK v2.9.1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-9-1
-.. _`known issues for nRF Connect SDK v2.9.0-nRF54H20-1-rc3`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-9-0-nRF54H20-1-rc3
+.. _`known issues for nRF Connect SDK v2.9.0-nRF54H20-1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-9-0-nRF54H20-1
 .. _`known issues for nRF Connect SDK v2.9.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-9-0
 .. _`known issues for nRF Connect SDK v2.8.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-8-0
 .. _`known issues for nRF Connect SDK v2.7.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v2-7-0
@@ -530,7 +530,7 @@
 .. _`nRF socket options`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrfxlib/nrf_modem/doc/sockets.html
 
 .. _`Repositories and revisions for v2.9.1`: https://docs.nordicsemi.com/bundle/ncs-2.9.1/page/nrf/releases_and_maturity/repository_revisions.html
-.. _`Repositories and revisions for v2.9.0-nRF54H20-1-rc3`: https://docs.nordicsemi.com/bundle/ncs-2.9.0-nRF54H20-1-rc3/page/nrf/releases_and_maturity/repository_revisions.html
+.. _`Repositories and revisions for v2.9.0-nRF54H20-1`: https://docs.nordicsemi.com/bundle/ncs-2.9.0-nRF54H20-1/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.9.0`: https://docs.nordicsemi.com/bundle/ncs-2.9.0/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.8.0`: https://docs.nordicsemi.com/bundle/ncs-2.8.0/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.7.99-cs2`: https://docs.nordicsemi.com/bundle/ncs-2.7.99-cs2/page/nrf/releases_and_maturity/repository_revisions.html
@@ -630,7 +630,7 @@
 .. _`LwM2M carrier library changelog for v1.9.0`: https://docs.nordicsemi.com/bundle/ncs-1.9.0/page/nrf/libraries/bin/lwm2m_carrier/CHANGELOG.html
 
 .. _`Migration guide for nRF Connect SDK v3.0.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_3.0.html
-.. _`Migration guide for nRF Connect SDK v2.9.0-nRF54H20-1-rc3`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_2.9.0-nRF54H20-1-rc3.html
+.. _`Migration guide for nRF Connect SDK v2.9.0-nRF54H20-1`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_2.9.0-nRF54H20-1.html
 .. _`Migration guide for nRF Connect SDK v2.9.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_2.9.html
 .. _`Migration guide for nRF Connect SDK v2.8.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_2.8.html
 .. _`Migration guide for nRF Connect SDK v2.7.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_2.7.html
@@ -1654,8 +1654,8 @@
 
 .. ### Source: files.nordicsemi.com
 
-.. _`Twister test report for nRF Connect SDK v2.9.0-nRF54H20-1-rc3`: https://files.nordicsemi.com/ui/api/v1/download/contentBrowsing/NCS/external/release/v2.9.0-nrf54h20-1-rc3/test-report/twister_test_results_report.html?isNativeBrowsing=true
-.. _`Hardware test report for nRF Connect SDK v2.9.0-nRF54H20-1-rc3`: https://files.nordicsemi.com/ui/api/v1/download/contentBrowsing/NCS/external/release/v2.9.0-nrf54h20-1-rc3/test-report/common_ncs_test_results_report.html?isNativeBrowsing=true
+.. _`Twister test report for nRF Connect SDK v2.9.0-nRF54H20-1`: https://files.nordicsemi.com/ui/api/v1/download/contentBrowsing/NCS/external/release/v2.9.0-nRF54H20-1/test-report/twister_test_results_report.html?isNativeBrowsing=true
+.. _`Hardware test report for nRF Connect SDK v2.9.0-nRF54H20-1`: https://files.nordicsemi.com/ui/api/v1/download/contentBrowsing/NCS/external/release/v2.9.0-nRF54H20-1/test-report/common_ncs_test_results_report.html?isNativeBrowsing=true
 .. _`Twister test report for nRF Connect SDK v2.9.0`: https://files.nordicsemi.com/ui/api/v1/download/contentBrowsing/NCS/external/release/v2.9.0/test-report/twister_test_results_report.html?isNativeBrowsing=true
 .. _`Hardware test report for nRF Connect SDK v2.9.0`: https://files.nordicsemi.com/ui/api/v1/download/contentBrowsing/NCS/external/release/v2.9.0/test-report/common_ncs_test_results_report.html?isNativeBrowsing=true
 .. _`Twister test report for nRF Connect SDK v2.8.0`: https://files.nordicsemi.com/ui/api/v1/download/contentBrowsing/NCS/external/release/v2.8.0/test-report/twister_test_results_report.html?isNativeBrowsing=true
@@ -1850,7 +1850,7 @@
 .. _`nRF54H20 SoC binaries v0.7.0 for EngC DKs`: https://files.nordicsemi.com/artifactory/SDSC/external/nrf54h20_soc_binaries_v0.7.0_engc.zip
 .. _`nRF54H20 SoC binaries v0.7.0 for EngB DKs`: https://files.nordicsemi.com/artifactory/SDSC/external/nrf54h20_soc_binaries_v0.7.0_engb.zip
 .. _`nRF54H20 SoC binaries v0.8.0`: https://files.nordicsemi.com/ui/native/SDSC/external/nrf54h20_soc_binaries_v0.8.0.zip
-.. _`nRF54H20 SoC binaries v0.9.1`: https://files.nordicsemi.com/ui/native/SDSC/external/nrf54h20_soc_binaries_v0.9.1.zip
+.. _`nRF54H20 SoC binaries v0.9.2`: https://files.nordicsemi.com/ui/native/SDSC/external/nrf54h20_soc_binaries_v0.9.2.zip
 
 .. _`BICR binary file`: https://files.nordicsemi.com/artifactory/SDSC/external/bicr_ext_loadcap.hex
 .. _`BICR new binary file`: https://files.nordicsemi.com/artifactory/SDSC/external/bicr/bicr.hex

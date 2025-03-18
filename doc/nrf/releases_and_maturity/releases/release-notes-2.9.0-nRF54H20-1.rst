@@ -1,7 +1,7 @@
-.. _ncs_release_notes_290-nrf54h20-1-rc3:
+.. _ncs_release_notes_290-nrf54h20-1:
 
-|NCS| v2.9.0-nRF54H20-1-rc3 Release Notes
-#########################################
+|NCS| v2.9.0-nRF54H20-1 Release Notes
+#####################################
 
 .. contents::
    :local:
@@ -10,7 +10,7 @@
 |NCS| delivers reference software and supporting libraries for developing low-power wireless applications with Nordic Semiconductor products.
 The SDK includes open source projects (TF-M, MCUboot, OpenThread, Matter, and the Zephyr RTOS), which are continuously integrated and redistributed with the SDK.
 
-The |NCS| v2.9.0-nRF54H20-1-rc3 is an nRF54H20-exclusive release tag, only supporting products based on the nRF54H20 SoC.
+The |NCS| v2.9.0-nRF54H20-1 is an nRF54H20-exclusive release tag, only supporting products based on the nRF54H20 SoC.
 
 Release notes might refer to "experimental" support for features, which indicates that the feature is incomplete in functionality or verification, and can be expected to change in future releases.
 To learn more, see :ref:`software_maturity`.
@@ -50,7 +50,7 @@ Improved:
 
 Fixed:
 
-* NCSDK-30802: An issue where the nRF54H20 device suddenly stopped transmitting ESB packets after nrfxlib 3.9.0.
+* NCSDK-30802: An issue where the nRF54H20 device suddenly stopped transmitting ESB packets after nrfx 3.9.0.
 * NCSDK-30161: An assertion during boot time caused by a combination of :kconfig:option:`CONFIG_ASSERT`, :kconfig:option:`CONFIG_SOC_NRF54H20_GPD`, and external flash.
 * NCSDK-30117: An issue where a MEM component could be declared pointing to a memory region not assigned to a specific core.
 * NCSDK-29682: Added support for the ``cose-alg-sha-512`` algorithm in the SUIT module.
@@ -64,40 +64,40 @@ You must use the :file:`spi_dw.c` driver in such case.
 Release tag
 ***********
 
-The release tag for the |NCS| manifest repository (|ncs_repo|) is **v2.9.0-nRF54H20-1-rc3**.
+The release tag for the |NCS| manifest repository (|ncs_repo|) is **v2.9.0-nRF54H20-1**.
 Check the :file:`west.yml` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
 See :ref:`cloning_the_repositories` and :ref:`gs_updating_repos_examples` for more information.
 
-For information on the included repositories and revisions, see `Repositories and revisions for v2.9.0-nRF54H20-1-rc3`_.
+For information on the included repositories and revisions, see `Repositories and revisions for v2.9.0-nRF54H20-1`_.
 
 Integration test results
 ************************
 
-The integration test results for this tag can be found in the following external Artifactory:
+The integration test results for this tag can be found in the following external locations:
 
-* `Twister test report for nRF Connect SDK v2.9.0-nRF54H20-1-rc3`_
-* `Hardware test report for nRF Connect SDK v2.9.0-nRF54H20-1-rc3`_
+* `Twister test report for nRF Connect SDK v2.9.0-nRF54H20-1`_
+* `Hardware test report for nRF Connect SDK v2.9.0-nRF54H20-1`_
 
 IDE and tool support
 ********************
 
-`nRF Connect extension for Visual Studio Code <nRF Connect for Visual Studio Code_>`_ is the recommended IDE for |NCS| v2.9.0-nRF54H20-1-rc3.
+`nRF Connect extension for Visual Studio Code <nRF Connect for Visual Studio Code_>`_ is the recommended IDE for |NCS| v2.9.0-nRF54H20-1.
 See the :ref:`installation` section for more information about supported operating systems and toolchain.
 
 Known issues
 ************
 
 Known issues are only tracked for the latest official release.
-See `known issues for nRF Connect SDK v2.9.0-nRF54H20-1-rc3`_ for the list of issues valid for the latest release.
+See `known issues for nRF Connect SDK v2.9.0-nRF54H20-1`_ for the list of issues valid for the latest release.
 
 Migration notes
 ***************
 
-See the `Migration guide for nRF Connect SDK v2.9.0-nRF54H20-1-rc3`_ for the changes required or recommended when migrating your nRF54H Series application from |NCS| v2.8.0 to |NCS| v2.9.0-nRF54H20-1-rc3.
+See the `Migration guide for nRF Connect SDK v2.9.0-nRF54H20-1`_ for the changes required or recommended when migrating your nRF54H Series application from |NCS| v2.8.0 to |NCS| v2.9.0-nRF54H20-1.
 
-.. _ncs_release_notes_290-nrf54h20-1-rc3_changelog:
+.. _ncs_release_notes_290-nrf54h20-1_changelog:
 
 Changelog
 *********
@@ -159,7 +159,10 @@ Enhanced ShockBurst (ESB)
 -------------------------
 
 * Added support for loading radio trims.
-* Fixed a hardware erratum for the nRF54H20 SoC to improve RF performance.
+* Fixed:
+
+  * An hardware erratum for the nRF54H20 SoC to improve RF performance.
+  * An issue where the nRF54H20 device suddenly stopped transmitting ESB packets after nrfx 3.9.0.
 
 Matter fork
 +++++++++++
@@ -451,14 +454,14 @@ ZMS backend
 
 * Added the support for a new ZMS backend for Settings in |NCS|:
 
-  * The following Kconfig options for the *ZMS backend for Settings* are not available in the |NCS| v2.9.0-nRF54H20-1-rc3:
+  * The following Kconfig options for the *ZMS backend for Settings* are not available in the |NCS| v2.9.0-nRF54H20-1:
 
     * ``CONFIG_SETTINGS_ZMS_NAME_CACHE``
     * ``CONFIG_SETTINGS_ZMS_NAME_CACHE_SIZE``
     * ``CONFIG_ZMS_LOOKUP_CACHE_FOR_SETTINGS``
 
   * The ZMS settings backend now defaults to using the entire available storage partition.
-    See :ref:`migration_2.9.0-nRF54H20-1-rc3`.
+    See :ref:`migration_2.9.0-nRF54H20-1`.
 
 Documentation
 =============
