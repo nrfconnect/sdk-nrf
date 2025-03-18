@@ -197,45 +197,6 @@ static void ep_recv(const void *data, size_t len, void *priv)
 }
 
 /**
- * @brief Send data to the flpr with the given opcode.
- *
- * @param opcode The opcode of the message to send.
- * @param data The data to send.
- * @param len The length of the data to send.
- *
- * @return 0 on success, -ENOMEM if there is no space in the buffer,
- *         -ETIMEDOUT if the transfer timed out.
- */
-static int mspi_ipc_data_send(nrfe_mspi_opcode_t opcode, const void *data, size_t len)
-{
-	int rc;
-
-	LOG_DBG("Sending msg with opcode: %d", (uint8_t)opcode);
-#if defined(CONFIG_SYS_CLOCK_EXISTS)
-	uint32_t start = k_uptime_get_32();
-#else
-	uint32_t repeat = EP_SEND_TIMEOUT_MS;
-#endif
-#if !defined(CONFIG_MULTITHREADING)
-	atomic_clear_bit(&ipc_atomic_sem, opcode);
-#endif
-
-	do {
-		rc = ipc_service_send(&ep, data, len);
-#if defined(CONFIG_SYS_CLOCK_EXISTS)
-		if ((k_uptime_get_32() - start) > EP_SEND_TIMEOUT_MS) {
-#else
-		repeat--;
-		if ((rc < 0) && (repeat == 0)) {
-#endif
-			break;
-		};
-	} while (rc == -ENOMEM); /* No space in the buffer. Retry. */
-
-	return rc;
-}
-
-/**
  * @brief Waits for a response from the peer with the given opcode.
  *
  * @param opcode The opcode of the response to wait for.
@@ -303,16 +264,38 @@ static int nrfe_mspi_wait_for_response(nrfe_mspi_opcode_t opcode, uint32_t timeo
  */
 static int send_data(nrfe_mspi_opcode_t opcode, const void *data, size_t len)
 {
-	int rc;
+	LOG_DBG("Sending msg with opcode: %d", (uint8_t)opcode);
 
+	int rc;
 #ifdef CONFIG_MSPI_NRFE_IPC_NO_COPY
 	(void)len;
 	void *data_ptr = (void *)data;
-
-	rc = mspi_ipc_data_send(opcode, &data_ptr, sizeof(void *));
-#else
-	rc = mspi_ipc_data_send(opcode, data, len);
 #endif
+
+#if defined(CONFIG_SYS_CLOCK_EXISTS)
+	uint32_t start = k_uptime_get_32();
+#else
+	uint32_t repeat = EP_SEND_TIMEOUT_MS;
+#endif
+#if !defined(CONFIG_MULTITHREADING)
+	atomic_clear_bit(&ipc_atomic_sem, opcode);
+#endif
+
+	do {
+#ifdef CONFIG_MSPI_NRFE_IPC_NO_COPY
+		rc = ipc_service_send(&ep, &data_ptr, sizeof(void *));
+#else
+		rc = ipc_service_send(&ep, data, len);
+#endif
+#if defined(CONFIG_SYS_CLOCK_EXISTS)
+		if ((k_uptime_get_32() - start) > EP_SEND_TIMEOUT_MS) {
+#else
+		repeat--;
+		if ((rc < 0) && (repeat == 0)) {
+#endif
+			break;
+		};
+	} while (rc == -ENOMEM); /* No space in the buffer. Retry. */
 
 	if (rc < 0) {
 		LOG_ERR("Data transfer failed: %d", rc);
@@ -520,7 +503,7 @@ static int api_get_channel_status(const struct device *dev, uint8_t ch)
  * @retval -ENOMEM if there is no space in the buffer
  * @retval -ETIMEDOUT if the transfer timed out
  */
-static int xfer_packet(struct mspi_xfer_packet *packet, uint32_t timeout)
+static int send_packet(struct mspi_xfer_packet *packet, uint32_t timeout)
 {
 	int rc;
 	nrfe_mspi_opcode_t opcode = (packet->dir == MSPI_RX) ? NRFE_MSPI_TXRX : NRFE_MSPI_TX;
@@ -598,7 +581,7 @@ static int start_next_packet(struct mspi_xfer *xfer, uint32_t packets_done)
 		return -EINVAL;
 	}
 
-	return xfer_packet(packet, xfer->timeout);
+	return send_packet(packet, xfer->timeout);
 }
 
 /**
