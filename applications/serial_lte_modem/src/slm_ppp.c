@@ -14,6 +14,7 @@
 #include <modem/pdn.h>
 #include <zephyr/modem/ppp.h>
 #include <zephyr/modem/backend/uart.h>
+#include <zephyr/net/ethernet.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/ppp.h>
 #include <zephyr/posix/sys/socket.h>
@@ -99,8 +100,8 @@ static bool open_ppp_sockets(void)
 {
 	int ret;
 
-	ppp_fds[ZEPHYR_FD_IDX] = zsock_socket(AF_PACKET, SOCK_RAW | SOCK_NATIVE,
-				        htons(IPPROTO_RAW));
+	ppp_fds[ZEPHYR_FD_IDX] = zsock_socket(AF_PACKET, SOCK_DGRAM | SOCK_NATIVE,
+					      htons(ETH_P_ALL));
 	if (ppp_fds[ZEPHYR_FD_IDX] < 0) {
 		LOG_ERR("Zephyr socket creation failed (%d).", errno);
 		return false;
@@ -108,7 +109,8 @@ static bool open_ppp_sockets(void)
 
 	ppp_zephyr_dst_addr = (struct sockaddr_ll){
 		.sll_family = AF_PACKET,
-		.sll_ifindex = net_if_get_by_iface(ppp_iface)
+		.sll_ifindex = net_if_get_by_iface(ppp_iface),
+		.sll_protocol = htons(ETH_P_ALL),
 	};
 	ret = zsock_bind(ppp_fds[ZEPHYR_FD_IDX],
 		   (const struct sockaddr *)&ppp_zephyr_dst_addr, sizeof(ppp_zephyr_dst_addr));
@@ -624,6 +626,19 @@ static void ppp_data_passing_thread(void*, void*, void*)
 			const size_t dst = (src == ZEPHYR_FD_IDX) ? MODEM_FD_IDX : ZEPHYR_FD_IDX;
 			void *dst_addr = (dst == MODEM_FD_IDX) ? NULL : &ppp_zephyr_dst_addr;
 			socklen_t addrlen = (dst == MODEM_FD_IDX) ? 0 : sizeof(ppp_zephyr_dst_addr);
+
+			if (dst == ZEPHYR_FD_IDX) {
+				uint8_t type = ppp_data_buf[0] & 0xf0;
+
+				if (type == 0x60) {
+					ppp_zephyr_dst_addr.sll_protocol = htons(ETH_P_IPV6);
+				} else if (type == 0x40) {
+					ppp_zephyr_dst_addr.sll_protocol = htons(ETH_P_IP);
+				} else {
+					/* Not IP traffic, ignore. */
+					continue;
+				}
+			}
 
 			send_ret =
 				zsock_sendto(fds[dst].fd, ppp_data_buf, len, 0, dst_addr, addrlen);

@@ -10,6 +10,7 @@
 
 #include <zephyr/net/ppp.h>
 
+#include <zephyr/net/ethernet.h>
 #include <zephyr/net/net_ip.h>
 #include <zephyr/net/net_if.h>
 
@@ -68,6 +69,17 @@ static void ppp_modem_dl_data_thread_handler(void)
 			recv_data_len =
 				recv(ppp_modem_data_socket_fd, receive_buffer, used_mtu_mru, 0);
 			if (recv_data_len > 0) {
+				uint8_t type = receive_buffer[0] & 0xf0;
+
+				if (type == 0x60) {
+					dst.sll_protocol = htons(ETH_P_IPV6);
+				} else if (type == 0x40) {
+					dst.sll_protocol = htons(ETH_P_IP);
+				} else {
+					/* Not IP traffic, ignore. */
+					continue;
+				}
+
 				ret = sendto(ppp_data_socket_fd, receive_buffer, recv_data_len, 0,
 					     (const struct sockaddr *)&dst,
 					     sizeof(struct sockaddr_ll));
