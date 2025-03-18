@@ -49,12 +49,15 @@ def mcuboot_provision(dut: DeviceAdapter):
     run_command(command)
 
 
-def board_reset(dut: DeviceAdapter):
-    command = ["nrfutil", "device", "reset"]
-    if dut.device_config.id:
-        command.extend(["--serial-number", dut.device_config.id])
+def board_flash(dut: DeviceAdapter):
+    build_dir = dut.device_config.build_dir
+    dev_id = dut.device_config.id
 
-    logger.info("Resetting board")
+    command = ["west", "flash", "--skip-rebuild", "-d", build_dir]
+    if dev_id:
+        command.extend(["--dev-id", dev_id])
+
+    logger.info("Programming the board")
     run_command(command)
 
 
@@ -96,8 +99,10 @@ def test_boot(dut: DeviceAdapter):
     # nRF Desktop and bootloader images are already programmed at this stage.
     mcuboot_provision(dut)
 
-    # Clear buffer to ensure proper state and then reset the board to start test.
+    # Clear buffer to ensure proper state. Then flash and reset the board to start test. The board
+    # must be programmed again at this point, because MCUboot erases application image if running
+    # before KMU is provisioned.
     dut.clear_buffer()
-    board_reset(dut)
+    board_flash(dut)
 
     logs_verify(dut)
