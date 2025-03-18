@@ -66,7 +66,7 @@ After programming the sample to your development kit, you can test it by connect
       I: Ranging data get completed for ranging counter 0
       I: Estimated distance to reflector:
       I: - Round-Trip Timing method: X.XXXXX meters (derived from X samples)
-      I: - Phase-Based Ranging method: X.XXXXX meters (derived from X samples)
+      I: - Phase-Based Ranging method: X.XXXXX meters (derived on antenna path A from X samples)
 
 Dependencies
 ************
