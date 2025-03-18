@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2024-2025 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -17,6 +17,7 @@ LOG_MODULE_REGISTER(fp_fmdn_clock, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 #include "fp_storage_clock.h"
 
 static uint32_t storage_clock_boot_checkpoint;
+static int64_t uptime_on_boot;
 
 static void fmdn_clock_storage_work_handle(struct k_work *work);
 
@@ -32,6 +33,14 @@ static uint32_t fmdn_clock_read(void)
 
 	/* Calculate elapsed time since bootup. */
 	sys_uptime = k_uptime_get();
+
+	/* Ensure that uptime starts from zero after a system reset by subtracting
+	 * the timestamp during the system initialization.
+	 */
+	if (IS_ENABLED(CONFIG_BT_FAST_PAIR_FMDN_CLOCK_UPTIME_PERSISTENCE)) {
+		__ASSERT_NO_MSG(sys_uptime >= uptime_on_boot);
+		sys_uptime -= uptime_on_boot;
+	}
 
 	/* Convert from milliseconds to seconds. */
 	sys_uptime /= MSEC_PER_SEC;
@@ -156,3 +165,18 @@ FP_ACTIVATION_MODULE_REGISTER(fp_fmdn_clock,
 			      FP_ACTIVATION_INIT_PRIORITY_DEFAULT,
 			      fp_fmdn_clock_init,
 			      fp_fmdn_clock_uninit);
+
+#if defined(CONFIG_BT_FAST_PAIR_FMDN_CLOCK_UPTIME_PERSISTENCE)
+static int bt_fast_pair_fmdn_clock_uptime_persistence_workaround_init(void)
+{
+	uptime_on_boot = k_uptime_get();
+
+	return 0;
+}
+
+/* Define the system initialization hook with the priority level that is executed as closely
+ * as possible to the kernel initialization. The kernel uptime value should be read as soon
+ * as possible after the kernel starts to increase accuracy of the FMDN clock.
+ */
+SYS_INIT(bt_fast_pair_fmdn_clock_uptime_persistence_workaround_init, POST_KERNEL, 0);
+#endif /* defined(CONFIG_BT_FAST_PAIR_FMDN_CLOCK_UPTIME_PERSISTENCE) */
