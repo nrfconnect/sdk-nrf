@@ -9,6 +9,11 @@
 #include <psa_crypto_driver_wrappers.h>
 #include "cracen_psa_kmu.h"
 
+#if defined(CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS)
+#include "cracen_psa.h"
+psa_status_t silex_statuscodes_to_psa(int ret);
+#endif
+
 #if (defined(PSA_WANT_ALG_ECDSA) || defined(PSA_WANT_ALG_DETERMINISTIC_ECDSA)) && \
 	defined(PSA_WANT_ECC_SECP_R1_256)
 	const size_t pub_key_max_size = 65;
@@ -95,9 +100,15 @@ psa_status_t psa_verify_hash(
 		return status;
 	}
 
+#if defined(CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS)
+	int cracen_status = cracen_ed25519ph_verify(pub_key, hash, hash_length, signature, false);
+
+	return silex_statuscodes_to_psa(cracen_status);
+#else
 	return psa_driver_wrapper_verify_hash(&attr, pub_key, pub_key_length,
 					      alg, hash, hash_length,
 					      signature, signature_length);
+#endif
 }
 
 #endif
@@ -130,10 +141,15 @@ psa_status_t psa_verify_message(
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
+#if defined(CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS)
+	int cracen_status = cracen_ed25519_verify(pub_key, input, input_length, signature);
 
+	return silex_statuscodes_to_psa(cracen_status);
+#else
 	return psa_driver_wrapper_verify_message(&attr, pub_key, pub_key_size,
 						 alg, input, input_length,
 						 signature, signature_length);
+#endif
 }
 
 #endif
