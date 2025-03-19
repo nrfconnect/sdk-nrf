@@ -12,8 +12,10 @@ common:
     fixture: spi_loopback
   platform_allow:
     - nrf54l09pdk/nrf54l09/cpuapp
+    - nrf7120pdk/nrf7120/cpuapp
   integration_platforms:
     - nrf54l09pdk/nrf54l09/cpuapp
+    - nrf7120pdk/nrf7120/cpuapp
 
 tests:
   nrf.extended.drivers.spi.loopback: {}
