@@ -583,25 +583,41 @@ config BT_CTLR_SDC_CIS_SUBEVENT_LENGTH_US
 config BT_CTLR_CHANNEL_SOUNDING
 	bool "Channel Sounding support [EXPERIMENTAL]"
 	select EXPERIMENTAL
+	help
+	  Enable Channel Sounding support.
 
 config BT_CTLR_SDC_CS_COUNT
 	int "Number of concurrent connections supporting CS procedure [EXPERIMENTAL]"
 	default 1
+	range 1 BT_MAX_CONN
 	depends on BT_CTLR_CHANNEL_SOUNDING
 	help
-	  Set the number of concurrent connections that can support Channel Sounding procedure.
+	  Set the number of concurrent connections that can support Channel Sounding.
+	  Needs to be equal to or less than BT_MAX_CONN.
 
 config BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS
 	int "Max number of Channel Sounding antenna paths supported by the controller [EXPERIMENTAL]"
 	default 1
 	range 1 4
 	depends on BT_CTLR_CHANNEL_SOUNDING
+	help
+	  Sets the max number of antenna paths the controller supports.
+	  The number of antenna paths used during channel sounding
+	  depends on the tone antenna configuration index selected in the procedure parameters.
+	  For instance, an A2_B2 configuration requires four antenna paths.
+	  Reducing the value of this kconfig will reduce the RAM usage per CS context.
 
 config BT_CTLR_SDC_CS_NUM_ANTENNAS
 	int "Number of antennas used in Channel Sounding procedure supported by the controller [EXPERIMENTAL]"
 	default 1
 	range 1 BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS
 	depends on BT_CTLR_CHANNEL_SOUNDING
+	help
+	  Configure the maximum number of antennas the local controller can support.
+	  Must be equal to or less than BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS.
+	  This value also configures whether to use the antenna switching API or not.
+	  When this value is not 1, the controller requires an antenna switching callback to function.
+	  For more information see the Multiple antennas support documentation in SDC.
 
 config BT_CTLR_SDC_CS_MULTIPLE_ANTENNA_SUPPORT
 	bool
@@ -612,8 +628,12 @@ config BT_CTLR_SDC_CS_MULTIPLE_ANTENNA_SUPPORT
 	  Internal helper config. Not intended for use.
 
 config BT_CTLR_SDC_CS_STEP_MODE3
-	bool "Enable optional step mode-3 capability [EXPERIMENTAL]"
+	bool "Enable optional step mode-3 support [EXPERIMENTAL]"
 	depends on BT_CTLR_CHANNEL_SOUNDING
+	select EXPERIMENTAL
+	help
+	  Enable optional step mode-3 support. Channel sounding will not automatically start using step mode-3 if this
+	  config is set. To use step mode-3, modify the configuration which is created using the LE CS Create config command.
 
 config BT_CTLR_SDC_LE_POWER_CLASS_1
 	bool "Device supports transmitting at LE Power Class 1 level"
