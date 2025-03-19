@@ -102,6 +102,20 @@ Recommended changes
 
 The following changes are recommended for your application to work optimally after the migration.
 
+.. _gs_app_tcm:
+.. _gs_assistant:
+.. _auto_installation_tcm_setup:
+.. _toolchain_update:
+
+Installation of the SDK and toolchain
+=====================================
+
+.. toggle::
+
+   The Toolchain Manager app has been deprecated: starting from the |NCS| v3.0.0, it no longer provides the latest toolchain and |NCS| versions for installation.
+
+   Use one of the two :ref:`installation methods <install_ncs>` to manage the toolchain and SDK versions, either the recommended |nRFVSC| extension or the command line with nRF Util.
+
 Build system
 ============
 

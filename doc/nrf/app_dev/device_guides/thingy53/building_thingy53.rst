@@ -151,7 +151,8 @@ To build and program the source code from the command line, complete the followi
 
    For example, the directory path is :file:`ncs/nrf/applications/machine_learning` when building the source code for the :ref:`nrf_machine_learning_app` application.
 
-#. Make sure that you have the required version of the |NCS| repository by pulling the ``sdk-nrf`` repository on GitHub as described in :ref:`dm-wf-get-ncs` and :ref:`dm-wf-update-ncs` sections.
+#. Pull the ``sdk-nrf`` repository on GitHub as described in the :ref:`cloning_the_repositories` and :ref:`updating_repos` sections.
+   This is needed to make sure that you have the required version of the |NCS| repository.
 #. Get the rest of the dependencies using west:
 
    .. code-block:: console

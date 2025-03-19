@@ -45,7 +45,7 @@ To obtain a copy of the |NCS|, you can use one of the following methods:
 * Follow the instructions in the :ref:`dm-wf-get-ncs` section of the documentation.
   This requires you to install Git and west, but you can then ignore them from that point onwards.
 
-If you need to update the copy of the |NCS| you are working with, you can obtain the source code again, or, if you have kept the original set of repositories, update it in the Toolchain Manager or by following steps in :ref:`dm-wf-update-ncs`.
+If you need to update the copy of the |NCS| you are working with, you can obtain the source code again, or, if you have kept the original set of repositories, follow the steps in :ref:`dm-wf-update-ncs` to update it.
 
 Once you have obtained a copy of the |NCS| source code, which is self-contained in a single folder, you can then proceed to manage that code in any way you see fit.
 
@@ -76,7 +76,7 @@ Forking the `sdk-nrf`_ repository and adding the application to it is another va
 This approach also allows you to fork additional |NCS| repositories and point to those.
 This can be useful if you have to make changes to those repositories beyond adding your own application to the manifest repository.
 
-In order to use this approach, you first need to get the source code (either through the :ref:`Toolchain Manager <auto_installation_tcm_setup>` or :ref:`command line <dm-wf-get-ncs>`), and then :ref:`fork the sdk-nrf repository <dm-wf-fork>`.
+With this approach, first get the source code (for example, using the :ref:`command line <dm-wf-get-ncs>`), and then :ref:`fork the sdk-nrf repository <dm-wf-fork>`.
 Once you have your own fork, you can start adding your application to your fork's tree and push it to your own Git server.
 Every time you want to update the revision of the |NCS| that you want to use as a basis for your application, you must follow the :ref:`instructions to update <dm-wf-update-ncs>` on your own fork of ``sdk-nrf``.
 
@@ -98,7 +98,7 @@ You have two different options to create your own repository, as discussed in th
 * `Recommended: Using the example application repository`_
 * `Creating your own manifest repository from scratch`_
 
-Once you have your new manifest repository hosted online, you can use it with west just like you use the `sdk-nrf`_  repository when getting the source code (either through the :ref:`Toolchain Manager <auto_installation_tcm_setup>` or :ref:`command line <dm-wf-get-ncs>`) and later :ref:`updating it from command line <dm-wf-update-ncs>`.
+Once you have your new manifest repository hosted online, you can use it with west the same way you use the `sdk-nrf`_ repository when getting the source code (for example, with the :ref:`command line <dm-wf-get-ncs>`) and later :ref:`updating it <dm-wf-update-ncs>`.
 You just need to replace ``sdk-nrf`` and ``nrf`` with the repository name and path you have chosen for your manifest repository (*your-name/your-application* and *your-app-workspace*, respectively), as shown in the following code:
 
 .. parsed-literal::
