@@ -5,7 +5,7 @@
 #
 
 cmake_minimum_required(VERSION 3.20.0)
-set(KCONFIG_ROOT "\${ZEPHYR_BASE}/tests/drivers/spi/spi_controller_peripheral/Kconfig")
+set(ZEPHYR_TEST_DIR "\${ZEPHYR_BASE}/tests/drivers/spi/spi_controller_peripheral")
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(spi_controller_peripheral)
 

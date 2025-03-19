@@ -1,0 +1,1 @@
+source "tests/drivers/spi/spi_controller_peripheral/Kconfig"
