@@ -675,8 +675,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
   endif()
 
   include_packaging()
-  include_suit_provisioning()
-  include_suit()
+  if(NOT SB_CONFIG_IRON)
+    include_suit_provisioning()
+    include_suit()
+  endif()
 
   if(SB_CONFIG_SECURE_BOOT OR SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
     include_provision_hex()
