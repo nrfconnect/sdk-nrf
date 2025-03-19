@@ -65,6 +65,7 @@ static volatile uint8_t ce_vios_count;
 static volatile uint8_t ce_vios[DEVICES_MAX];
 static volatile uint8_t data_vios_count;
 static volatile uint8_t data_vios[DATA_PINS_MAX];
+static volatile nrfe_mspi_reset_config_t reset_configs[DEVICES_MAX];
 static volatile nrfe_mspi_dev_config_t nrfe_mspi_devices[DEVICES_MAX];
 static volatile nrfe_mspi_xfer_config_t nrfe_mspi_xfer_config;
 static volatile nrfe_mspi_xfer_config_t *nrfe_mspi_xfer_config_ptr = &nrfe_mspi_xfer_config;
@@ -356,6 +357,21 @@ static void config_pins(nrfe_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 	}
 }
 
+static void reset_set(uint8_t device_index, int value)
+{
+	if (reset_configs[device_index].inversed) {
+		value = (value != 0) ? 0 : 1;
+	}
+
+	if (value == 0) {
+		nrf_vpr_csr_vio_out_clear_set(
+			BIT(pin_to_vio_map[reset_configs[device_index].pin_number]));
+	} else {
+		nrf_vpr_csr_vio_out_or_set(
+			BIT(pin_to_vio_map[reset_configs[device_index].pin_number]));
+	}
+}
+
 static void ep_bound(void *priv)
 {
 	atomic_set_bit(&ipc_atomic_sem, NRFE_MSPI_EP_BOUNDED);
@@ -392,6 +408,18 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		nrfe_mspi_pinctrl_soc_pin_msg_t *pins_cfg = (nrfe_mspi_pinctrl_soc_pin_msg_t *)data;
 
 		config_pins(pins_cfg);
+		break;
+	}
+	case NRFE_MSPI_CONFIG_RESET: {
+		nrfe_mspi_reset_config_msg_t *reset_cfg = (nrfe_mspi_reset_config_msg_t *)data;
+
+		reset_configs[reset_cfg->device_index] = reset_cfg->reset_config;
+		break;
+	}
+	case NRFE_MSPI_SET_RESET: {
+		nrfe_mspi_reset_set_msg_t *reset_cfg = (nrfe_mspi_reset_set_msg_t *)data;
+
+		reset_set(reset_cfg->device_index, reset_cfg->value);
 		break;
 	}
 	case NRFE_MSPI_CONFIG_DEV: {
