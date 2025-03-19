@@ -43,31 +43,36 @@ Depending on your preferred development method, you can start the correct CLI to
 
    .. group-tab:: Command line
 
-      Use the command for your operating system:
+      Use the command for your operating system with the ``--ncs-version`` corresponding to the version of the |NCS| you are working with.
+      The following commands start the command line environment for the latest release (|release|):
 
       .. tabs::
 
          .. tab:: Windows
 
-            .. code-block:: console
+            .. parsed-literal::
+               :class: highlight
 
-               nrfutil toolchain-manager launch --terminal
+               nrfutil sdk-manager toolchain launch --ncs-version |release|  --terminal
 
          .. tab:: Linux
 
-            .. code-block:: console
+            .. parsed-literal::
+               :class: highlight
 
-               nrfutil toolchain-manager launch --shell
+               nrfutil sdk-manager toolchain launch --ncs-version |release| --shell
 
          .. tab:: macOS
 
-            .. code-block:: console
+            .. parsed-literal::
+               :class: highlight
 
-               nrfutil toolchain-manager launch --shell
+               nrfutil sdk-manager toolchain launch --ncs-version |release| --shell
 
       ..
 
-      See the documentation for nRF Util's `Toolchain Manager command`_ for the list of supported shells.
+      You can also use other options instead of ``--ncs-version``.
+      See the `sdk-manager command documentation <sdk-manager Starting and inspecting the toolchain environment_>`_ for more information.
 
 .. _gs_updating_repos:
 .. _gs_updating_repos_examples:
