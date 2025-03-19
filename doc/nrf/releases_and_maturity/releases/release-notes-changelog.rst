@@ -47,7 +47,7 @@ IDE, OS, and tool support
 Board support
 =============
 
-|no_changes_yet_note|
+* Removed support for the nRF52810 Desktop Mouse board (``nrf52810dmouse/nrf52810``).
 
 Build and configuration system
 ==============================
