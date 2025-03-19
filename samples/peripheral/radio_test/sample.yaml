@@ -75,3 +75,30 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_peripheral_radio_test
+  sample.peripheral.radio_test.nrf2220:
+    sysbuild: true
+    build_only: true
+    extra_args: SHIELD=nrf2220ek
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpunet
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf5340dk/nrf5340/cpunet
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_peripheral_radio_test
+  sample.peripheral.radio_test.nrf5340_nrf2220_usb:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - SHIELD=nrf2220ek
+      - FILE_SUFFIX=usb
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpunet
+    platform_allow: nrf5340dk/nrf5340/cpunet
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_peripheral_radio_test

@@ -38,12 +38,15 @@ The sample also requires one of the following testing devices:
    You can perform the radio test also using a spectrum analyzer.
    This method of testing is not covered by this documentation.
 
-nRF21540 front-end module
-=========================
+Front-end module
+================
 
 .. include:: /includes/sample_dtm_radio_test_fem.txt
 
-You can configure the nRF21540 front-end module (FEM) transmitted power control, antenna output and activation delay using the main shell commands of the :ref:`radio_test_ui`.
+You can configure the front-end module (FEM) transmitted power control, antenna output, and activation delay using the main shell commands of the :ref:`radio_test_ui`.
+
+.. note::
+   Each front-end module (FEM) has different capabilities and operating modes, so some commands may not be supported by a specific FEM and those supported may work differently on different FEMs.
 
 Skyworks front-end module
 =========================

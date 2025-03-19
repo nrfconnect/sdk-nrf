@@ -429,7 +429,10 @@ Bluetooth samples
 
 * :ref:`direct_test_mode` sample:
 
-  * Added loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.
+  * Added:
+
+    * Loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.
+    * Support for the :ref:`nRF2220 front-end module <ug_radio_fem_nrf2220ek>`.
 
 * :ref:`central_uart` sample:
 
@@ -638,7 +641,10 @@ Peripheral samples
 
 * :ref:`radio_test` sample:
 
-  * Added loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.
+  * Added:
+
+    * Loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.
+    * Support for the :ref:`nRF2220 front-end module <ug_radio_fem_nrf2220ek>`.
 
 PMIC samples
 ------------

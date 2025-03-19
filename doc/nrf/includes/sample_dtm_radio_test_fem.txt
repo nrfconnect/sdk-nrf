@@ -1,9 +1,10 @@
-You can add support for the nRF21540 front-end module (FEM) to the sample.
+You can add support for the nRF21540 or nRF2220 front-end module (FEM) to the sample.
 
-To add support for the nRF21540 FEM, build the sample for a board containing nRF21540 FEM like :ref:`nrf21540dk/nrf52840 <zephyr:nrf21540dk_nrf52840>` or create a devicetree overlay file describing how FEM is connected to nRF5 SoC in your device.
+To add support for the FEM, build the sample for a board containing FEM like :ref:`nRF21540 DK/nRF52840 <zephyr:nrf21540dk_nrf52840>` or create a devicetree overlay file describing how FEM is connected to the nRF52 Series SoC in your device.
 
 .. note::
    If you use the nRF21540 EK, append ``nrf21540ek`` shield to your build command instructing build system to append the appropriate devicetree overlay file.
+   If you use the nRF2220 EK, append the ``nrf2220ek`` shield to your build command instructing the build system to append the appropriate devicetree overlay file.
    If you use the nRF21540 DK, build your application for the :ref:`nrf21540dk/nrf52840 <zephyr:nrf21540dk_nrf52840>` board target.
    The devicetree for the nRF21540 DK already contains the required FEM configuration, so you do not need to set an additional build option.
 
@@ -19,3 +20,4 @@ For more details refer to the following documentation:
 * :ref:`ug_radio_fem_direct_support`
 * :ref:`ug_radio_fem_nrf21540_spi_gpio`
 * :ref:`ug_radio_fem_nrf21540ek`
+* :ref:`ug_radio_fem_nrf2220ek`
