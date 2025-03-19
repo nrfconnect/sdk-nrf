@@ -22,6 +22,8 @@ Once completed, install the required additional commands for nRF Util:
 
     nrfutil install device
 
+Additionally, before provisioning, make sure you familiarized yourself with the :ref:`ug_nrf54l_developing_basics_kmu_provisioning_keys` section.
+
 .. _ug_nrf54l_developing_provision_kmu_generate:
 
 Key generation

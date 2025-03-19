@@ -35,11 +35,21 @@ Locked keys
 Once provisioned, locked keys are permanently available for use and cannot be deleted without erasing the device.
 For these keys, the revocation policy (RPOLICY) must be marked as ``locked``.
 
+.. _ug_nrf54l_developing_basics_kmu_provisioning_keys:
+
 Provisioning keys for the bootloader
 ************************************
 
 The bootloader can use multiple key generations for image verification (up to three for nRF54L SoCs).
 To safeguard against unauthorized provisioning by attackers, you must :ref:`provision all key generations onto the device<ug_nrf54l_developing_provision_kmu>`.
+
+Make sure to provision the setup’s relevant key sets before any run with bootloaders, including the first boot.
+Failure to do so can lead to unwanted actions by the bootloader on your firmware setup.
+You may experience the following issues:
+
+  * The nRF Secure Immutable Bootloader (NSIB) will mark the image as permanently invalid without a key available for verification.
+  * In direct-xip mode, MCUboot will delete the image if no appropriate key is provisioned.
+  * The firmware will simply not boot, indicating a lack of proper key provisioning.
 
 By default, MCUboot uses a single key.
 You can configure the number of key generations that MCUboot uses for application verification with the ``CONFIG_BOOT_SIGNATURE_KMU_SLOTS`` MCUboot's Kconfig option.

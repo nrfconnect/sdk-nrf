@@ -193,6 +193,7 @@ Provisioning of keys for Hardware KMU
 *************************************
 
 In case of FOTA implementations using the MCUboot bootloader, which includes hardware cryptography and KMU, you must complete key provisioning before booting any application.
+Otherwise, the bootloader :ref:`may not boot the firmware setup and might take unwanted actions<ug_nrf54l_developing_basics_kmu_provisioning_keys>`.
 Refer to :ref:`ug_nrf54l_developing_provision_kmu` for detailed description.
 
 .. _ug_nrf54l_developing_ble_fota_mcuboot_direct_xip_mode:
