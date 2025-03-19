@@ -339,7 +339,7 @@ Depending on the development kit you use, you need to select the respective conf
 
       .. table-from-rows:: /includes/sample_board_rows.txt
          :header: heading
-         :rows: nrf52dmouse_nrf52832, nrf52810dmouse_nrf52810
+         :rows: nrf52dmouse_nrf52832
 
    .. tab:: Keyboard
 

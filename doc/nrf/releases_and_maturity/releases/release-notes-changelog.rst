@@ -261,7 +261,7 @@ nRF Desktop
   * Application configurations for nRF54L05, nRF54L10, and nRF54L15 SoCs to use Fast Pair PSA cryptography (:kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_PSA`).
     Using PSA cryptography improves security and reduces memory footprint.
     Also increased the size of the Bluetooth receiving thread stack (:kconfig:option:`CONFIG_BT_RX_STACK_SIZE`) to prevent stack overflows.
-  * Application configurations for nRF52810 and nRF52820 SoCs to reduce memory footprint:
+  * Application configurations for the nRF52820 SoC to reduce memory footprint:
 
     * Disabled Bluetooth long workqueue (:kconfig:option:`CONFIG_BT_LONG_WQ`).
     * Limited the number of key slots in the PSA Crypto core to 10 (:kconfig:option:`CONFIG_MBEDTLS_PSA_KEY_SLOT_COUNT`).
@@ -302,10 +302,13 @@ nRF Desktop
   * Requirement for zero latency in Zephyr's :ref:`zephyr:pm-system` while USB is active (:ref:`CONFIG_DESKTOP_USB_PM_REQ_NO_PM_LATENCY <config_desktop_app_options>` Kconfig option of the :ref:`nrf_desktop_usb_state_pm`).
     The feature is enabled by default if Zephyr Power Management (:kconfig:option:`CONFIG_PM`) is enabled to prevent entering power states that introduce wakeup latency and ensure high performance.
 
-* Removed an imply from the nRF Desktop Bluetooth connectivity Kconfig option (:ref:`CONFIG_DESKTOP_BT <config_desktop_app_options>`).
-  The imply enabled a separate workqueue for connection TX notify processing (:kconfig:option:`CONFIG_BT_CONN_TX_NOTIFY_WQ`) if MPSL was used for synchronization between the flash memory driver and radio (:kconfig:option:`CONFIG_SOC_FLASH_NRF_RADIO_SYNC_MPSL`).
-  The MPSL flash synchronization issue (``NCSDK-29354`` in the :ref:`known_issues`) is fixed.
-  The workaround is no longer needed.
+* Removed:
+
+  * An imply from the nRF Desktop Bluetooth connectivity Kconfig option (:ref:`CONFIG_DESKTOP_BT <config_desktop_app_options>`).
+    The imply enabled a separate workqueue for connection TX notify processing (:kconfig:option:`CONFIG_BT_CONN_TX_NOTIFY_WQ`) if MPSL was used for synchronization between the flash memory driver and the radio (:kconfig:option:`CONFIG_SOC_FLASH_NRF_RADIO_SYNC_MPSL`).
+    The workaround for the MPSL flash synchronization issue (``NCSDK-29354`` in the :ref:`known_issues` page) is no longer needed, as the issue is now fixed.
+  * Application configurations for the nRF52810 Desktop Mouse board (``nrf52810dmouse/nrf52810``).
+    The board is no longer supported in the |NCS|.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
