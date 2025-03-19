@@ -98,8 +98,8 @@ CHIP_ERROR FactoryResetCallback(TestEventTrigger::TriggerValue delayMs)
 	delayedContext->action = DelayedAction::FactoryReset;
 	delayedContext->value = delayMs;
 
-	k_timer_start(&sDelayTimer, K_MSEC(delayMs), K_NO_WAIT);
 	k_timer_user_data_set(&sDelayTimer, reinterpret_cast<void *>(delayedContext.get()));
+	k_timer_start(&sDelayTimer, K_MSEC(delayMs), K_NO_WAIT);
 
 	delayedContext.release();
 
@@ -134,8 +134,8 @@ CHIP_ERROR BlockMainThreadCallback(TestEventTrigger::TriggerValue blockingTimeS)
 	delayedContext->action = DelayedAction::BlockMainThread;
 	delayedContext->value = blockingTimeS * 1000;
 
-	k_timer_start(&sDelayTimer, K_MSEC(delayTimeMs), K_NO_WAIT);
 	k_timer_user_data_set(&sDelayTimer, reinterpret_cast<void *>(delayedContext.get()));
+	k_timer_start(&sDelayTimer, K_MSEC(delayTimeMs), K_NO_WAIT);
 
 	delayedContext.release();
 
