@@ -48,7 +48,7 @@ static struct {
 		      {DOMAIN_CELL, "CELL-"}, {DOMAIN_WIFI, "WIFI-"},
 		      {DOMAIN_RADIO, "RADIOCORE-"},	  {DOMAIN_APPLICATION, "APPLICATION-"}};
 
-struct {
+static struct {
 	uint8_t id;
 	const char *label;
 } key_type_to_label[] = {
