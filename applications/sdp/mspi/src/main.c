@@ -103,25 +103,26 @@ static void distribute_last_word_bits(void)
 	uint32_t last_word = xfer_params.xfer_data[HRT_FE_DATA].last_word;
 	uint32_t word_count = xfer_params.xfer_data[HRT_FE_DATA].word_count;
 	uint32_t penultimate_word_bits =
-	xfer_params.xfer_data[HRT_FE_DATA].penultimate_word_clocks *
-	xfer_params.bus_widths.data;
-	uint32_t last_word_bits = xfer_params.xfer_data[HRT_FE_DATA].last_word_clocks *
-				  xfer_params.bus_widths.data;
+		xfer_params.xfer_data[HRT_FE_DATA].penultimate_word_clocks *
+		xfer_params.bus_widths.data;
+	uint32_t last_word_bits =
+		xfer_params.xfer_data[HRT_FE_DATA].last_word_clocks * xfer_params.bus_widths.data;
 	uint32_t penultimate_word_shift = BITS_IN_WORD - penultimate_word_bits;
 	/* In case when last word is too short, penultimate word has to give it 1 byte.
 	 * this is here to pass this byte back to penultimate word to avoid holes.
 	 */
 	if ((penultimate_word_shift != 0) && (word_count > 1)) {
 		rx_data[word_count - 2] = (rx_data[word_count - 2] >> penultimate_word_shift) |
-					(last_word << penultimate_word_bits);
+					  (last_word << penultimate_word_bits);
 		last_word = last_word >> penultimate_word_shift;
 	}
 
 	/* This is to avoid writing outside of data buffer in case when buffer_length%4 !=
 	 * 0.
 	 */
-	for(uint8_t byte=0; byte<NRFX_CEIL_DIV(last_word_bits - penultimate_word_shift, BITS_IN_BYTE); byte++) {
-		((uint8_t*)&(rx_data[word_count-1]))[byte] = ((uint8_t*)&last_word)[byte];
+	for (uint8_t byte = 0;
+	     byte < NRFX_CEIL_DIV(last_word_bits - penultimate_word_shift, BITS_IN_BYTE); byte++) {
+		((uint8_t *)&(rx_data[word_count - 1]))[byte] = ((uint8_t *)&last_word)[byte];
 	}
 }
 
@@ -294,13 +295,13 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile uint
 		xfer_params.xfer_data[HRT_FE_DATA].data = NULL;
 
 		adjust_tail(&xfer_params.xfer_data[HRT_FE_DATA], xfer_params.bus_widths.data,
-			xfer_packet->num_bytes * BITS_IN_BYTE);
+			    xfer_packet->num_bytes * BITS_IN_BYTE);
 
 		xfer_params.xfer_data[HRT_FE_DATA].data = rx_buffer;
 	} else {
 		xfer_params.xfer_data[HRT_FE_DATA].data = xfer_packet->data;
 		adjust_tail(&xfer_params.xfer_data[HRT_FE_DATA], xfer_params.bus_widths.data,
-			xfer_packet->num_bytes * BITS_IN_BYTE);
+			    xfer_packet->num_bytes * BITS_IN_BYTE);
 	}
 
 	/* Hardware issue: Additional clock edge when transmitting in modes other
@@ -489,10 +490,15 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		break;
 	case NRFE_MSPI_TXRX: {
 		nrfe_mspi_xfer_packet_msg_t *packet = (nrfe_mspi_xfer_packet_msg_t *)data;
-		num_bytes = packet->num_bytes;
-
-		if (num_bytes > 0) {
+		if (packet->num_bytes > 0) {
+#ifdef CONFIG_SDP_MSPI_IPC_NO_COPY
+			xfer_execute(packet, packet->data);
+#else
+			NRFX_ASSERT(packet->num_bytes <=
+				    CONFIG_SDP_MSPI_MAX_RESPONSE_SIZE - sizeof(nrfe_mspi_opcode_t));
+			num_bytes = packet->num_bytes;
 			xfer_execute(packet, response_buffer + sizeof(nrfe_mspi_opcode_t));
+#endif
 		}
 		break;
 	}
@@ -502,7 +508,8 @@ static void ep_recv(const void *data, size_t len, void *priv)
 	}
 
 	response_buffer[0] = opcode;
-	ipc_service_send(&ep, (const void *)response_buffer, sizeof(nrfe_mspi_opcode_t) + num_bytes);
+	ipc_service_send(&ep, (const void *)response_buffer,
+			 sizeof(nrfe_mspi_opcode_t) + num_bytes);
 
 #if defined(CONFIG_SDP_MSPI_FAULT_TIMER)
 	if (fault_timer != NULL) {
