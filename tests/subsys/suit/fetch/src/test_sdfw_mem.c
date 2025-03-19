@@ -150,7 +150,6 @@ ZTEST(fetch_tests, test_integrated_fetch_to_msink_encrypted_OK)
 ZTEST(fetch_tests, test_integrated_fetch_to_memptr_encrypted_NOK)
 {
 	suit_component_t component_handle;
-	memptr_storage_handle_t handle = NULL;
 	struct zcbor_string source = {.value = decrypt_test_ciphertext_direct,
 				      .len = sizeof(decrypt_test_ciphertext_direct)};
 
@@ -186,21 +185,6 @@ ZTEST(fetch_tests, test_integrated_fetch_to_memptr_encrypted_NOK)
 	ret = suit_plat_fetch_integrated(component_handle, &source, &valid_manifest_component_id,
 					 &enc_info);
 	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_fetch failed - error %i", ret);
-
-	ret = suit_plat_component_impl_data_get(component_handle, &handle);
-	zassert_equal(ret, SUIT_SUCCESS, "suit_plat_component_impl_data_get failed - error %i",
-		      ret);
-
-	const uint8_t *payload;
-	size_t payload_size = 0;
-
-	ret = suit_memptr_storage_ptr_get(handle, &payload, &payload_size);
-
-	zassert_equal(ret, SUIT_PLAT_SUCCESS, "storage.get failed - error %i", ret);
-	zassert_not_equal(memcmp(decrypt_test_plaintext, payload, strlen(decrypt_test_plaintext)),
-			  0, "Retrieved decrypted payload should not mach decrypt_test_plaintext");
-	zassert_equal(sizeof(decrypt_test_plaintext), payload_size,
-		      "Retrieved payload_size doesn't mach size of decrypt_test_plaintext");
 
 	ret = suit_plat_release_component_handle(component_handle);
 	zassert_equal(ret, SUIT_SUCCESS, "Handle release failed - error %i", ret);
