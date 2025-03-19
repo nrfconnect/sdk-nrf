@@ -20,11 +20,11 @@ Plug nRF2220 EK board into ``SLOT 2`` of the *Nordic Interposer Board A*.
 
 On the :ref:`nrf54l15dk_nrf54l15` development kit, plug the nRF2220 EK board into the ``PORT P0`` expansion slot.
 
-.. warning::
+.. caution::
 
    On the :ref:`nrf54l15dk_nrf54l15` development kit pins **P0.00** ... **P0.03** of the nRF54L15 SoC are connected to the debugger chip and by default connect ``UART0`` of the debugger chip to the nRF54L15 SoC.
-   The UART0 function (VCOM0) of the debugger chip must be disabled to allow the pins to be used as FEM control signals and FEM I2C interface.
-   The `Board Configurator app`_ , which is part of the `nRF Connect for Desktop`_ can be used for this purpose.
+   Disable the UART0 function (VCOM0) of the debugger chip to allow the pins to be used as FEM control signals and FEM I2C interface.
+   You can use the `Board Configurator app`_ , which is part of the `nRF Connect for Desktop`_, for this purpose.
    The pin **P0.04** of the nRF54L15 SoC is connected also to **Button 3** of the development kit.
    Do not press this button while the firmware containing the code supporting the nRF2220 EK shield is running.
 
