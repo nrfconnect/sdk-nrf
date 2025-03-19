@@ -39,7 +39,6 @@ tests:
     platform_allow:
       - nrf52dmouse/nrf52832
       - nrf52kbd/nrf52832
-      - nrf52810dmouse/nrf52810
       - nrf52820dongle/nrf52820
       - nrf52833dk/nrf52820
       - nrf52833dk/nrf52833
@@ -52,7 +51,6 @@ tests:
     integration_platforms:
       - nrf52dmouse/nrf52832
       - nrf52kbd/nrf52832
-      - nrf52810dmouse/nrf52810
       - nrf52820dongle/nrf52820
       - nrf52833dk/nrf52820
       - nrf52833dk/nrf52833
@@ -193,7 +191,6 @@ tests:
     platform_allow:
       - nrf52dmouse/nrf52832
       - nrf52kbd/nrf52832
-      - nrf52810dmouse/nrf52810
       - nrf52820dongle/nrf52820
       - nrf52833dk/nrf52820
       - nrf52833dk/nrf52833
@@ -209,7 +206,6 @@ tests:
     integration_platforms:
       - nrf52dmouse/nrf52832
       - nrf52kbd/nrf52832
-      - nrf52810dmouse/nrf52810
       - nrf52820dongle/nrf52820
       - nrf52833dk/nrf52820
       - nrf52833dk/nrf52833
