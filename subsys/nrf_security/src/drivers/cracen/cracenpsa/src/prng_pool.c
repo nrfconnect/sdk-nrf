@@ -17,8 +17,14 @@
  * and can be freely adjusted later when we test this
  * in practice.
  *
+ * The CONFIG_SOC_NRF54H20_CPUSEC secure element only has 29kB of RAM
+ * so we have a smaller pool for this platform.
  */
+#ifdef CONFIG_SOC_NRF54H20_CPUSEC
+#define PRNG_POOL_SIZE (8)
+#else
 #define PRNG_POOL_SIZE (32)
+#endif
 
 static uint32_t prng_pool[PRNG_POOL_SIZE];
 static uint32_t prng_pool_remaining;
