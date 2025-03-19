@@ -44,6 +44,8 @@ See :ref:`wifi_radio_ficr_prog_subcmds` for a list of available subcommands.
    All the FICR registers are stored in the one-time programmable (OTP) memory.
    Consequently, the write commands are destructive. Once written, the contents of the OTP registers cannot be reprogrammed.
 
+.. _wifi_radio_sample_building_and_running:
+
 Building and running
 ********************
 
@@ -571,9 +573,9 @@ Testing
 
          * :math:`P_\text{reg}` is the applicable regulatory power limit, as described in :ref:`ug_nrf70_developing_regulatory_support`.
          * :math:`P_\text{rt}` is the power set via the ``tx_power`` command when using Radio Test sample, as described in :ref:`wifi_radio_subcommands`.
-         * ``AntGain`` is the compensation for the antenna gain in the TX direction, as described in `Antenna gain compensation`_.
+         * ``AntGain`` is the compensation for the antenna gain in the TX direction, as described in :ref:`ug_wifi_antenna_gain_compensation`.
            ``AntGain`` can be set to ``0`` using ``wifi_radio_test set_ant_gain`` command.
-         * ``EdgeBackoff`` is the backoff applied to band edge channels, as described in `Band edge compensation`_.
+         * ``EdgeBackoff`` is the backoff applied to band edge channels, as described in :ref:`ug_wifi_band_edge_compensation`.
            ``EdgeBackoff`` can be set to ``0`` using ``wifi_radio_test set_edge_bo`` command.
 
          .. note::
