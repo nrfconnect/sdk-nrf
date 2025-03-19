@@ -12,7 +12,7 @@ class NrfHidManager():
         'gaming_mouse' : ['nrf52840gmouse'],
         'dongle' : ['nrf52840dongle', 'nrf52833dongle', 'nrf52820dongle'],
         'keyboard' : ['nrf52kbd'],
-        'desktop_mouse' : ['nrf52dmouse', 'nrf52810dmouse'],
+        'desktop_mouse' : ['nrf52dmouse'],
     }
 
     def __init__(self, vid=NORDIC_VID):
