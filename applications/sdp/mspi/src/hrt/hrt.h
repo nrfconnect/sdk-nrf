@@ -123,7 +123,7 @@ typedef struct {
  *
  *  @param[in] hrt_xfer_params Hrt transfer parameters and data.
  */
-void hrt_write(hrt_xfer_t *hrt_xfer_params);
+void hrt_write(volatile hrt_xfer_t *hrt_xfer_params);
 
 /** @brief Read.
  *

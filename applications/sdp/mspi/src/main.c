@@ -24,7 +24,13 @@
 #define DATA_PINS_MAX 8
 #define VIO_COUNT     11
 
+/* Bellow this CNT0 period pin steering force has to be increased to produce correct waveform.
+ * CNT0 value 1 generates 32MHz clock.
+ */
 #define STD_PAD_BIAS_CNT0_THRESHOLD 1
+
+/* Max RX frequency is 21.333333MHz which corresponds to counter period value of 2. */
+#define RX_CNT0_MIN_VALUE 2
 
 #define PAD_BIAS_VALUE 1
 
@@ -90,6 +96,34 @@ static NRF_TIMER_Type *fault_timer;
 #endif
 static volatile uint32_t *cpuflpr_error_ctx_ptr =
 	(uint32_t *)DT_REG_ADDR(DT_NODELABEL(cpuflpr_error_code));
+
+static void distribute_last_word_bits(void)
+{
+	uint32_t *rx_data = (uint32_t *)xfer_params.xfer_data[HRT_FE_DATA].data;
+	uint32_t last_word = xfer_params.xfer_data[HRT_FE_DATA].last_word;
+	uint32_t word_count = xfer_params.xfer_data[HRT_FE_DATA].word_count;
+	uint32_t penultimate_word_bits =
+	xfer_params.xfer_data[HRT_FE_DATA].penultimate_word_clocks *
+	xfer_params.bus_widths.data;
+	uint32_t last_word_bits = xfer_params.xfer_data[HRT_FE_DATA].last_word_clocks *
+				  xfer_params.bus_widths.data;
+	uint32_t penultimate_word_shift = BITS_IN_WORD - penultimate_word_bits;
+	/* In case when last word is too short, penultimate word has to give it 1 byte.
+	 * this is here to pass this byte back to penultimate word to avoid holes.
+	 */
+	if ((penultimate_word_shift != 0) && (word_count > 1)) {
+		rx_data[word_count - 2] = (rx_data[word_count - 2] >> penultimate_word_shift) |
+					(last_word << penultimate_word_bits);
+		last_word = last_word >> penultimate_word_shift;
+	}
+
+	/* This is to avoid writing outside of data buffer in case when buffer_length%4 !=
+	 * 0.
+	 */
+	for(uint8_t byte=0; byte<NRFX_CEIL_DIV(last_word_bits - penultimate_word_shift, BITS_IN_BYTE); byte++) {
+		((uint8_t*)&(rx_data[word_count-1]))[byte] = ((uint8_t*)&last_word)[byte];
+	}
+}
 
 static void adjust_tail(volatile hrt_xfer_data_t *xfer_data, uint16_t frame_width,
 			uint32_t data_length)
@@ -180,10 +214,24 @@ static void configure_clock(enum mspi_cpp_mode cpp_mode)
 	nrf_vpr_csr_vio_config_set(&vio_config);
 }
 
-static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet)
+static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile uint8_t *rx_buffer)
 {
+	nrf_vpr_csr_vio_config_t config;
 	volatile nrfe_mspi_dev_config_t *device =
 		&nrfe_mspi_devices[nrfe_mspi_xfer_config_ptr->device_index];
+	uint16_t dummy_cycles = 0;
+
+	if (xfer_packet->opcode == NRFE_MSPI_TXRX) {
+		NRFX_ASSERT(device->cnt0_value >= RX_CNT0_MIN_VALUE);
+
+		nrf_vpr_csr_vio_config_get(&config);
+		config.input_sel = true;
+		nrf_vpr_csr_vio_config_set(&config);
+
+		dummy_cycles = nrfe_mspi_xfer_config_ptr->rx_dummy;
+	} else {
+		dummy_cycles = nrfe_mspi_xfer_config_ptr->tx_dummy;
+	}
 
 	xfer_params.counter_value = device->cnt0_value;
 	xfer_params.ce_vio = ce_vios[device->ce_index];
@@ -203,6 +251,7 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet)
 		xfer_packet->address
 		<< (BITS_IN_WORD - nrfe_mspi_xfer_config_ptr->address_length * BITS_IN_BYTE);
 
+	/* Configure command phase. */
 	xfer_params.xfer_data[HRT_FE_COMMAND].fun_out = HRT_FUN_OUT_WORD;
 	xfer_params.xfer_data[HRT_FE_COMMAND].data = (uint8_t *)&xfer_packet->command;
 	xfer_params.xfer_data[HRT_FE_COMMAND].word_count = 0;
@@ -210,6 +259,7 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet)
 	adjust_tail(&xfer_params.xfer_data[HRT_FE_COMMAND], xfer_params.bus_widths.command,
 		    nrfe_mspi_xfer_config_ptr->command_length * BITS_IN_BYTE);
 
+	/* Configure address phase. */
 	xfer_params.xfer_data[HRT_FE_ADDRESS].fun_out = HRT_FUN_OUT_WORD;
 	xfer_params.xfer_data[HRT_FE_ADDRESS].data = (uint8_t *)&xfer_packet->address;
 	xfer_params.xfer_data[HRT_FE_ADDRESS].word_count = 0;
@@ -217,6 +267,7 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet)
 	adjust_tail(&xfer_params.xfer_data[HRT_FE_ADDRESS], xfer_params.bus_widths.address,
 		    nrfe_mspi_xfer_config_ptr->address_length * BITS_IN_BYTE);
 
+	/* Configure dummy_cycles phase. */
 	xfer_params.xfer_data[HRT_FE_DUMMY_CYCLES].fun_out = HRT_FUN_OUT_WORD;
 	xfer_params.xfer_data[HRT_FE_DUMMY_CYCLES].data = NULL;
 	xfer_params.xfer_data[HRT_FE_DUMMY_CYCLES].word_count = 0;
@@ -228,22 +279,29 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet)
 	 * increasing shift count of last word in the previous part.
 	 * Beyond that, dummy cycles have to be treated af different transfer part.
 	 */
-	if (xfer_params.xfer_data[elem].last_word_clocks + nrfe_mspi_xfer_config_ptr->tx_dummy <=
-	    MAX_SHIFT_COUNT) {
-		xfer_params.xfer_data[elem].last_word_clocks += nrfe_mspi_xfer_config_ptr->tx_dummy;
+	if (xfer_params.xfer_data[elem].last_word_clocks + dummy_cycles <= MAX_SHIFT_COUNT) {
+		xfer_params.xfer_data[elem].last_word_clocks += dummy_cycles;
 	} else {
 		adjust_tail(&xfer_params.xfer_data[HRT_FE_DUMMY_CYCLES],
 			    xfer_params.bus_widths.dummy_cycles,
-			    nrfe_mspi_xfer_config_ptr->tx_dummy *
-				    xfer_params.bus_widths.dummy_cycles);
+			    dummy_cycles * xfer_params.bus_widths.dummy_cycles);
 	}
 
+	/* Configure data phase. */
 	xfer_params.xfer_data[HRT_FE_DATA].fun_out = HRT_FUN_OUT_BYTE;
-	xfer_params.xfer_data[HRT_FE_DATA].data = xfer_packet->data;
 	xfer_params.xfer_data[HRT_FE_DATA].word_count = 0;
+	if (xfer_packet->opcode == NRFE_MSPI_TXRX) {
+		xfer_params.xfer_data[HRT_FE_DATA].data = NULL;
 
-	adjust_tail(&xfer_params.xfer_data[HRT_FE_DATA], xfer_params.bus_widths.data,
-		    xfer_packet->num_bytes * BITS_IN_BYTE);
+		adjust_tail(&xfer_params.xfer_data[HRT_FE_DATA], xfer_params.bus_widths.data,
+			xfer_packet->num_bytes * BITS_IN_BYTE);
+
+		xfer_params.xfer_data[HRT_FE_DATA].data = rx_buffer;
+	} else {
+		xfer_params.xfer_data[HRT_FE_DATA].data = xfer_packet->data;
+		adjust_tail(&xfer_params.xfer_data[HRT_FE_DATA], xfer_params.bus_widths.data,
+			xfer_packet->num_bytes * BITS_IN_BYTE);
+	}
 
 	/* Hardware issue: Additional clock edge when transmitting in modes other
 	 *                 than MSPI_CPP_MODE_0.
@@ -252,65 +310,27 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet)
 	 *             and disable clock before the last pulse.
 	 */
 	if (device->cpp == MSPI_CPP_MODE_2) {
-		for (uint8_t i = 0; i < HRT_FE_MAX; i++) {
-			if (xfer_params.xfer_data[HRT_FE_MAX - 1 - i].word_count != 0) {
-				xfer_params.xfer_data[HRT_FE_MAX - 1 - i].last_word_clocks++;
+		/* Ommit data phase in rx mode */
+		for (uint8_t phase = xfer_packet->opcode == NRFE_MSPI_TXRX ? 1 : 0;
+		     phase < HRT_FE_MAX; phase++) {
+			if (xfer_params.xfer_data[HRT_FE_MAX - 1 - phase].word_count != 0) {
+				xfer_params.xfer_data[HRT_FE_MAX - 1 - phase].last_word_clocks++;
 				break;
 			}
 		}
 	}
 
-	nrf_vpr_clic_int_pending_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_WRITE));
-}
-
-void prepare_and_read_data(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile uint8_t *buffer)
-{
-	volatile nrfe_mspi_dev_config_t *device =
-		&nrfe_mspi_devices[nrfe_mspi_xfer_config_ptr->device_index];
-	nrf_vpr_csr_vio_config_t config;
-
-	xfer_params.counter_value = device->cnt0_value;
-	xfer_params.ce_vio = ce_vios[device->ce_index];
-	xfer_params.ce_hold = nrfe_mspi_xfer_config_ptr->hold_ce;
-	xfer_params.ce_polarity = device->ce_polarity;
-	xfer_params.bus_widths = io_modes[device->io_mode];
-	xfer_params.xfer_data[HRT_FE_DATA].data = buffer;
-
-	nrf_vpr_csr_vio_config_get(&config);
-	config.input_sel = true;
-	nrf_vpr_csr_vio_config_set(&config);
-
-	/*
-	 * Fix position of command and address if command/address length is < BITS_IN_WORD,
-	 * so that leading zeros would not be printed instead of data bits.
-	 */
-	xfer_packet->command =
-		xfer_packet->command
-		<< (BITS_IN_WORD - nrfe_mspi_xfer_config_ptr->command_length * BITS_IN_BYTE);
-	xfer_packet->address =
-		xfer_packet->address
-		<< (BITS_IN_WORD - nrfe_mspi_xfer_config_ptr->address_length * BITS_IN_BYTE);
-
-	/* Configure command phase. */
-	xfer_params.xfer_data[HRT_FE_COMMAND].fun_out = HRT_FUN_OUT_WORD;
-	xfer_params.xfer_data[HRT_FE_COMMAND].data = (uint8_t *)&xfer_packet->command;
-	xfer_params.xfer_data[HRT_FE_COMMAND].word_count =
-		nrfe_mspi_xfer_config_ptr->command_length;
-
-	/* Configure address phase. */
-	xfer_params.xfer_data[HRT_FE_ADDRESS].fun_out = HRT_FUN_OUT_WORD;
-	xfer_params.xfer_data[HRT_FE_ADDRESS].data = (uint8_t *)&xfer_packet->address;
-	xfer_params.xfer_data[HRT_FE_ADDRESS].word_count =
-		nrfe_mspi_xfer_config_ptr->address_length;
-
-	/* Configure data phase. */
-	xfer_params.xfer_data[HRT_FE_DATA].word_count = xfer_packet->num_bytes;
-
 	/* Read/write barrier to make sure that all configuration is done before jumping to HRT. */
 	nrf_barrier_rw();
 
-	/* Read data */
-	nrf_vpr_clic_int_pending_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_READ));
+	if (xfer_packet->opcode == NRFE_MSPI_TXRX) {
+		nrf_vpr_clic_int_pending_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_READ));
+
+		distribute_last_word_bits();
+
+	} else {
+		nrf_vpr_clic_int_pending_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_WRITE));
+	}
 }
 
 static void config_pins(nrfe_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
@@ -465,14 +485,14 @@ static void ep_recv(const void *data, size_t len, void *priv)
 	case NRFE_MSPI_TX:
 		nrfe_mspi_xfer_packet_msg_t *packet = (nrfe_mspi_xfer_packet_msg_t *)data;
 
-		xfer_execute(packet);
+		xfer_execute(packet, NULL);
 		break;
 	case NRFE_MSPI_TXRX: {
 		nrfe_mspi_xfer_packet_msg_t *packet = (nrfe_mspi_xfer_packet_msg_t *)data;
 		num_bytes = packet->num_bytes;
 
 		if (num_bytes > 0) {
-			prepare_and_read_data(packet, response_buffer + 1);
+			xfer_execute(packet, response_buffer + sizeof(nrfe_mspi_opcode_t));
 		}
 		break;
 	}
@@ -482,7 +502,8 @@ static void ep_recv(const void *data, size_t len, void *priv)
 	}
 
 	response_buffer[0] = opcode;
-	ipc_service_send(&ep, (const void *)response_buffer, sizeof(opcode) + num_bytes);
+	ipc_service_send(&ep, (const void *)response_buffer, sizeof(nrfe_mspi_opcode_t) + num_bytes);
+
 #if defined(CONFIG_SDP_MSPI_FAULT_TIMER)
 	if (fault_timer != NULL) {
 		nrf_timer_task_trigger(fault_timer, NRF_TIMER_TASK_CLEAR);
@@ -534,7 +555,7 @@ __attribute__((interrupt)) void hrt_handler_read(void)
 
 __attribute__((interrupt)) void hrt_handler_write(void)
 {
-	hrt_write((hrt_xfer_t *)&xfer_params);
+	hrt_write(&xfer_params);
 }
 
 /**
