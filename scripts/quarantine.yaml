@@ -49,9 +49,3 @@
   platforms:
     - nrf54l20pdk/nrf54l20/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-7205"
-
-- scenarios:
-    - suit-platform.integration.fetch
-  platforms:
-    - native_sim/native
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-32472"
