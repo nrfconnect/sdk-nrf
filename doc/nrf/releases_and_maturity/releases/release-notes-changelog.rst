@@ -46,6 +46,9 @@ IDE, OS, and tool support
   * Mentions of commands that use tools from the nRF Command Line Tools to use nRF Util.
     |nrf_CLT_deprecation_note|
 
+* Removed the Toolchain Manager app section from the following pages: :ref:`installation`, :ref:`updating`, :ref:`requirements`.
+  The app has been deprecated and no longer provides the latest toolchain and |NCS| versions for installation.
+
 Board support
 =============
 

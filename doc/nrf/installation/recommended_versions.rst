@@ -406,14 +406,3 @@ When you :ref:`install the nRF Connect SDK <install_ncs>`, you need to install t
   You only need to install this command if you are working with command line in the |NCS|.
 
 See `Installing and upgrading nRF Util commands`_ for information about how to install these commands.
-
-.. _requirements_ncd:
-
-nRF Connect for Desktop's Toolchain Manager
-===========================================
-
-`nRF Connect for Desktop`_ is a cross-platform tool that provides different applications that simplify working the |NCS| and Nordic Semiconductor products.
-One of those tools is the :ref:`Toolchain Manager <auto_installation_tcm_setup>`, which allows you to install the toolchain and the SDK.
-
-.. note::
-    |toolchain_management_ncs_versions|
