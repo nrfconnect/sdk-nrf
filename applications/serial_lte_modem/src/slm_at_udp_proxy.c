@@ -392,18 +392,12 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 		LOG_DBG("sock events 0x%08x", fds[SOCK].revents);
 		LOG_DBG("efd events 0x%08x", fds[EVENT_FD].revents);
 		if ((fds[SOCK].revents & ZSOCK_POLLIN) != 0) {
-			if (proxy.role == UDP_ROLE_SERVER) {
-				/* Store the remote to send responses with the #XUDPSEND command. */
-				unsigned int size = sizeof(proxy.remote);
+			unsigned int size = sizeof(proxy.remote);
 
-				memset(&proxy.remote, 0, sizeof(proxy.remote));
-				ret = zsock_recvfrom(proxy.sock, (void *)slm_data_buf,
-					       sizeof(slm_data_buf), ZSOCK_MSG_DONTWAIT,
-					       (struct sockaddr *)&proxy.remote, &size);
-			} else {
-				ret = zsock_recv(proxy.sock, (void *)slm_data_buf,
-						 sizeof(slm_data_buf), ZSOCK_MSG_DONTWAIT);
-			}
+			memset(&proxy.remote, 0, sizeof(proxy.remote));
+			ret = zsock_recvfrom(proxy.sock, (void *)slm_data_buf,
+					sizeof(slm_data_buf), ZSOCK_MSG_DONTWAIT,
+					(struct sockaddr *)&proxy.remote, &size);
 			if (ret < 0 && errno != EAGAIN) {
 				LOG_WRN("zsock_recv() error: %d", -errno);
 			} else if (ret > 0) {
