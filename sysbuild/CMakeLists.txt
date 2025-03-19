@@ -221,7 +221,9 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
     # The NRF54LX goes with PSA crypto by default
     if(SB_CONFIG_SOC_SERIES_NRF54LX)
-      if(SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519)
+      if(SB_CONFIG_BOOT_SIGNATURE_TYPE_NONE)
+        set_config_bool(mcuboot CONFIG_NRF_SECURITY y)
+      elseif(SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519)
         set_config_bool(mcuboot CONFIG_NRF_SECURITY y)
         set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519 y)
         set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUBOOT_BOOTLOADER_USES_SHA512 y)
