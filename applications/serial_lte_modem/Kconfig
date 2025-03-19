@@ -201,6 +201,12 @@ config SLM_MODEM_PIPE_TIMEOUT
 
 endif
 
+config SLM_SKIP_READY_MSG
+	bool "Skip ready message"
+	help
+	  Skip sending the ready message when the application is powered on.
+
+
 module = SLM
 module-str = serial modem
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

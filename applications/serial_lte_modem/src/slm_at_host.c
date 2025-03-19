@@ -910,9 +910,12 @@ int slm_at_host_init(void)
 		return err;
 	}
 
-	err = slm_at_send_str(SLM_SYNC_STR);
-	if (err) {
-		return err;
+	if (!IS_ENABLED(CONFIG_SLM_SKIP_READY_MSG)) {
+		/* Send Ready string to indicate that AT host is ready */
+		err = slm_at_send_str(SLM_SYNC_STR);
+		if (err) {
+			return err;
+		}
 	}
 
 	/* This is here and not earlier because in case of firmware
