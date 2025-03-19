@@ -43,6 +43,15 @@ static void tc_setup(void *f)
 	FFF_RESET_HISTORY();
 }
 
+static otMessage *udp_new_message_failed_fake(otInstance *instance,
+					      const otMessageSettings *settings)
+{
+	zassert_true(settings->mLinkSecurityEnabled);
+	zassert_equal(settings->mPriority, 40);
+
+	return NULL;
+}
+
 ZTEST(ot_rpc_message, test_otUdpNewMessage_failing)
 {
 	const uint8_t prio = 40;
@@ -52,15 +61,24 @@ ZTEST(ot_rpc_message, test_otUdpNewMessage_failing)
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(0), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_UDP_NEW_MESSAGE, CBOR_NULL));
 
+	zassert_equal(otUdpNewMessage_fake.call_count, 1);
 	zassert_is_null(otUdpNewMessage_fake.arg1_val);
+
+	otUdpNewMessage_fake.custom_fake = udp_new_message_failed_fake;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(0), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_UDP_NEW_MESSAGE, CBOR_TRUE, CBOR_UINT8(prio)));
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otUdpNewMessage_fake.call_count, 2);
-	zassert_true(otUdpNewMessage_fake.arg1_val->mLinkSecurityEnabled);
-	zassert_equal(otUdpNewMessage_fake.arg1_val->mPriority, prio);
+}
+
+static otMessage *udp_new_message_free_fake(otInstance *instance, const otMessageSettings *settings)
+{
+	zassert_true(settings->mLinkSecurityEnabled);
+	zassert_equal(settings->mPriority, 40);
+
+	return (otMessage *)1;
 }
 
 ZTEST(ot_rpc_message, test_otUdpNewMessage_free_working)
@@ -72,14 +90,15 @@ ZTEST(ot_rpc_message, test_otUdpNewMessage_free_working)
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(1), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_UDP_NEW_MESSAGE, CBOR_NULL));
 
+	zassert_equal(otUdpNewMessage_fake.call_count, 1);
 	zassert_is_null(otUdpNewMessage_fake.arg1_val);
+
+	otUdpNewMessage_fake.custom_fake = udp_new_message_free_fake;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(2), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_UDP_NEW_MESSAGE, CBOR_TRUE, CBOR_UINT8(prio)));
 
 	zassert_equal(otUdpNewMessage_fake.call_count, 2);
-	zassert_true(otUdpNewMessage_fake.arg1_val->mLinkSecurityEnabled);
-	zassert_equal(otUdpNewMessage_fake.arg1_val->mPriority, prio);
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_MESSAGE_FREE, 1));
