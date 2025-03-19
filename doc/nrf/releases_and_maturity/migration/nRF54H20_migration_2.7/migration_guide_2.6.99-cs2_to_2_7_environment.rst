@@ -101,7 +101,7 @@ To proceed with the update, complete the following steps:
 #. Open the Toolchain Manager application in nRF Connect for Desktop.
 #. Click the button with the arrow pointing down next to the installed |NCS| version to expand the drop-down menu with options.
 
-   .. figure:: ../../../../nrf/installation/images/gs-assistant_tm_dropdown.png
+   .. figure:: ../../../../nrf/images/gs-assistant_tm.png
       :alt: The Toolchain Manager dropdown menu for the installed nRF Connect SDK version, cropped
 
       The Toolchain Manager dropdown menu options

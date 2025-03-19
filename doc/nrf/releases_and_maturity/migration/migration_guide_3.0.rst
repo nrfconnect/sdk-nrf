@@ -136,6 +136,20 @@ IDE, OS, and tool support
 
    It is recommended to install the latest version of `nRF Util`_, as listed in the :ref:`installing_vsc` section of the installation page.
 
+.. _gs_app_tcm:
+.. _gs_assistant:
+.. _auto_installation_tcm_setup:
+.. _toolchain_update:
+
+Installation of the SDK and toolchain
+-------------------------------------
+
+.. toggle::
+
+   The Toolchain Manager app has been deprecated: starting from the |NCS| v3.0.0, it no longer provides the latest toolchain and |NCS| versions for installation.
+
+   Use one of the two :ref:`installation methods <install_ncs>` to manage the toolchain and SDK versions, either the recommended |nRFVSC| extension or the command line with nRF Util.
+
 Build system
 ============
 

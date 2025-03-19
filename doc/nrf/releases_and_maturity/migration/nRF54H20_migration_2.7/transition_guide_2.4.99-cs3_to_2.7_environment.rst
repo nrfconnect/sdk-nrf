@@ -110,7 +110,7 @@ To install the toolchain and the SDK using the Toolchain Manager app, complete t
 
    a. Open Toolchain Manager in nRF Connect for Desktop.
 
-      .. figure:: ../../../../nrf/installation/images/gs-assistant_tm.png
+      .. figure:: ../../../../nrf/images/gs-assistant_tm.png
          :alt: The Toolchain Manager window
 
          The Toolchain Manager window
@@ -145,7 +145,7 @@ To install the toolchain and the SDK using the Toolchain Manager app, complete t
          #. Restart the Toolchain Manager application.
          #. Click the dropdown menu for the installed nRF Connect SDK version.
 
-            .. figure:: ../../../../nrf/installation/images/gs-assistant_tm_dropdown.png
+            .. figure:: ../../../../nrf/images/gs-assistant_tm.png
                :alt: The Toolchain Manager dropdown menu for the installed nRF Connect SDK version, cropped
 
                The Toolchain Manager dropdown menu options
