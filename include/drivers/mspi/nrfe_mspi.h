@@ -96,6 +96,7 @@ typedef struct {
 
 typedef struct {
 	nrfe_mspi_opcode_t opcode; /* Same as application's request. */
+	unsigned reserved : 24; /* Reserved to ensure proper alignment of data field. */
 	uint8_t data;
 } nrfe_mspi_flpr_response_msg_t;
 

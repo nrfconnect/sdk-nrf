@@ -9,6 +9,7 @@
 
 	sdp_mspi: sdp_mspi {
 		compatible = "nordic,nrfe-mspi-controller";
+		software-multiperipheral;
 		#address-cells = <1>;
 		#size-cells = <0>;
 	};
