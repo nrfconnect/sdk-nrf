@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout sources
-        uses: nrfconnect/action-checkout-west-update@main
+        uses: nrfconnect/action-checkout-west-update@474d935aaf838d4ce825b468ea89318cfd9e1596
         with:
           git-fetch-depth: 0
           path: workspace/nrf
@@ -26,7 +26,7 @@ jobs:
           tar -C ./workspace -czvf src.tar.gz .
 
       - name: Set up JFrog CLI
-        uses: jfrog/setup-jfrog-cli@v4
+        uses: jfrog/setup-jfrog-cli@f748a0599171a192a2668afee8d0497f7c1069df
 
       - name: Configure and Upload to Artifactory
         env:

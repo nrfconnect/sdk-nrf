@@ -14,7 +14,7 @@ jobs:
     name: Run Python checks for west commands on patch series (PR)
     steps:
       - name: Checkout the code
-        uses: nrfconnect/action-checkout-west-update@main
+        uses: nrfconnect/action-checkout-west-update@474d935aaf838d4ce825b468ea89318cfd9e1596
         with:
           path: ncs/nrf
           git-ref: ${{ github.event.pull_request.head.sha }}
@@ -42,7 +42,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout sources
-        uses: nrfconnect/action-checkout-west-update@main
+        uses: nrfconnect/action-checkout-west-update@474d935aaf838d4ce825b468ea89318cfd9e1596
         with:
           git-fetch-depth: 0
           path: nrf

@@ -33,7 +33,7 @@ jobs:
       cancel-in-progress: true
     steps:
       - name: Checkout sources
-        uses: nrfconnect/action-checkout-west-update@main
+        uses: nrfconnect/action-checkout-west-update@474d935aaf838d4ce825b468ea89318cfd9e1596
         with:
           git-fetch-depth: 0
 
@@ -46,7 +46,7 @@ jobs:
           git rebase origin/${{ github.base_ref }}
 
       - name: cache-pip
-        uses: actions/cache@v4
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-doc-pip
@@ -216,7 +216,7 @@ jobs:
 
       - name: Store
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'external') || contains(github.event.pull_request.labels.*.name, 'CI-trusted-author') }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1
         with:
           name: docs
           path: |

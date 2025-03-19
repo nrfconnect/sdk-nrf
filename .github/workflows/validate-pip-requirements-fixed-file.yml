@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout sources
-        uses: nrfconnect/action-checkout-west-update@main
+        uses: nrfconnect/action-checkout-west-update@474d935aaf838d4ce825b468ea89318cfd9e1596
         with:
           git-ref: ${{ github.event.pull_request.head.sha }}
           west-update-args: '--narrow mcuboot zephyr'
@@ -29,7 +29,7 @@ jobs:
           echo "python_version=$PYTHON_VERSION" >> $GITHUB_OUTPUT
 
       - name: Setup python version
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38
         with:
           python-version: '${{ steps.pyv.outputs.python_version }}'
 
@@ -39,7 +39,7 @@ jobs:
           pip3 install --user -U setuptools wheel pip virtualenv virtualenvwrapper
 
       - name: Execute script diff action
-        uses: nrfconnect/action-script-diff@v0.3
+        uses: nrfconnect/action-script-diff@3d001ad27d839824c472e483143e84bb03529b68
         with:
           diff_file: "ncs/nrf/scripts/requirements-fixed.txt"
           script_call: |

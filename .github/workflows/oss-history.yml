@@ -7,7 +7,7 @@ jobs:
     name: Check OSS history
     steps:
       - name: Checkout sources
-        uses: nrfconnect/action-checkout-west-update@main
+        uses: nrfconnect/action-checkout-west-update@474d935aaf838d4ce825b468ea89318cfd9e1596
         with:
           git-fetch-depth: 0
           west-update-args: ''
@@ -28,7 +28,7 @@ jobs:
           python3 scripts/ci/check_manifest_userdata.py
 
       - name: Check OSS history
-        uses: nrfconnect/action-oss-history@main
+        uses: nrfconnect/action-oss-history@784bb408e165c966f5ca63639905d1cb83d86c8a
         with:
           workspace: 'ncs'
           args: -p zephyr -p mcuboot -p hostap -p wfa-qt-control-app
