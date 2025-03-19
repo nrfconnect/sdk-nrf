@@ -61,35 +61,28 @@ static void on_modem_lib_init(int ret, void *ctx)
 }
 
 #if defined(CONFIG_NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC)
-static void on_modem_failure_shutdown(struct k_work *item);
-static void on_modem_failure_reinit(struct k_work *item);
+static struct nrf_modem_fault_info modem_fault_info;
 
-K_WORK_DELAYABLE_DEFINE(modem_failure_shutdown_work, on_modem_failure_shutdown);
-K_WORK_DELAYABLE_DEFINE(modem_failure_reinit_work, on_modem_failure_reinit);
+static void on_modem_failure(struct k_work *)
+{
+	int ret;
+
+	rsp_send("\r\n#XMODEM: FAULT,0x%x,0x%x\r\n", modem_fault_info.reason,
+		 modem_fault_info.program_counter);
+
+	ret = nrf_modem_lib_shutdown();
+	rsp_send("\r\n#XMODEM: SHUTDOWN,%d\r\n", ret);
+
+	ret = nrf_modem_lib_init();
+	rsp_send("\r\n#XMODEM: INIT,%d\r\n", ret);
+}
+K_WORK_DEFINE(modem_failure_work, on_modem_failure);
 
 void nrf_modem_fault_handler(struct nrf_modem_fault_info *fault_info)
 {
-	rsp_send("\r\n#XMODEM: FAULT,0x%x,0x%x\r\n", fault_info->reason,
-		fault_info->program_counter);
-	/* For now we wait 10 ms to give the trace handler time to process trace data. */
-	k_work_reschedule(&modem_failure_shutdown_work, K_MSEC(10));
-}
+	modem_fault_info = *fault_info;
 
-static void on_modem_failure_shutdown(struct k_work *work)
-{
-	int ret = nrf_modem_lib_shutdown();
-
-	ARG_UNUSED(work);
-	rsp_send("\r\n#XMODEM: SHUTDOWN,%d\r\n", ret);
-	k_work_reschedule(&modem_failure_reinit_work, K_MSEC(10));
-}
-
-static void on_modem_failure_reinit(struct k_work *work)
-{
-	int ret = nrf_modem_lib_init();
-
-	ARG_UNUSED(work);
-	rsp_send("\r\n#XMODEM: INIT,%d\r\n", ret);
+	k_work_submit(&modem_failure_work);
 }
 #endif /* CONFIG_NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC */
 
