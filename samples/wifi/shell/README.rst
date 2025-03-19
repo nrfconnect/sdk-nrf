@@ -23,6 +23,8 @@ The sample can perform all Wi-Fi operations in the 2.4GHz and 5GHz bands dependi
 
 Using this sample, the development kit can associate with, and ping to, any Wi-Fi capable access point in :abbr:`STA (Station)` mode.
 
+.. _wifi_shell_sample_building_and_running:
+
 Building and running
 ********************
 

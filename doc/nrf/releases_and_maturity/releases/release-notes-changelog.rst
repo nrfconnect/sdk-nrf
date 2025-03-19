@@ -195,7 +195,7 @@ Zigbee
 Wi-Fi
 -----
 
-|no_changes_yet_note|
+* The :ref:`ug_wifi_regulatory_certification` documentation is now moved under :ref:`ug_wifi` protocol page.
 
 Applications
 ============
