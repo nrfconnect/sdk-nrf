@@ -35,8 +35,7 @@
 
 #define MAX_SHIFT_COUNT 63
 
-#define DATA_PIN_UNUSED UINT8_MAX
-#define CE_PIN_UNUSED   UINT8_MAX
+#define PIN_UNUSED UINT8_MAX
 
 #define HRT_IRQ_PRIORITY    2
 #define HRT_VEVIF_IDX_READ  17
@@ -84,6 +83,7 @@ static volatile uint8_t ce_vios[DEVICES_MAX];
 static volatile uint8_t data_vios_count;
 static volatile uint8_t data_vios[DATA_PINS_MAX];
 static volatile uint8_t clk_vio;
+static volatile nrfe_mspi_reset_config_t reset_configs[DEVICES_MAX];
 static volatile nrfe_mspi_dev_config_t nrfe_mspi_devices[DEVICES_MAX];
 static volatile nrfe_mspi_xfer_config_t nrfe_mspi_xfer_config;
 static volatile nrfe_mspi_xfer_config_t *nrfe_mspi_xfer_config_ptr = &nrfe_mspi_xfer_config;
@@ -345,7 +345,7 @@ static void config_pins(nrfe_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 	xfer_params.rx_direction_mask = 0;
 
 	for (uint8_t i = 0; i < DATA_PINS_MAX; i++) {
-		data_vios[i] = DATA_PIN_UNUSED;
+		data_vios[i] = PIN_UNUSED;
 	}
 
 	for (uint8_t i = 0; i < pins_cfg->pins_count; i++) {
@@ -372,7 +372,7 @@ static void config_pins(nrfe_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 		} else if ((fun >= NRF_FUN_SDP_MSPI_DQ0) && (fun <= NRF_FUN_SDP_MSPI_DQ7)) {
 
 			NRFX_ASSERT(DATA_LINE_INDEX(fun) < DATA_PINS_MAX);
-			NRFX_ASSERT(data_vios[DATA_LINE_INDEX(fun)] == DATA_PIN_UNUSED);
+			NRFX_ASSERT(data_vios[DATA_LINE_INDEX(fun)] == PIN_UNUSED);
 
 			data_vios[DATA_LINE_INDEX(fun)] = pin_to_vio_map[pin_number];
 			WRITE_BIT(xfer_params.tx_direction_mask, data_vios[DATA_LINE_INDEX(fun)],
@@ -390,7 +390,23 @@ static void config_pins(nrfe_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 
 	/* Set all devices as undefined. */
 	for (uint8_t i = 0; i < DEVICES_MAX; i++) {
-		nrfe_mspi_devices[i].ce_index = CE_PIN_UNUSED;
+		nrfe_mspi_devices[i].ce_index = PIN_UNUSED;
+		reset_configs[i].pin_number = PIN_UNUSED;
+	}
+}
+
+static void reset_set(uint8_t device_index, int value)
+{
+	if (reset_configs[device_index].inversed) {
+		value = (value != 0) ? 0 : 1;
+	}
+
+	if (value == 0) {
+		nrf_vpr_csr_vio_out_clear_set(
+			BIT(pin_to_vio_map[reset_configs[device_index].pin_number]));
+	} else {
+		nrf_vpr_csr_vio_out_or_set(
+			BIT(pin_to_vio_map[reset_configs[device_index].pin_number]));
 	}
 }
 
@@ -432,6 +448,20 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		config_pins(pins_cfg);
 		break;
 	}
+	case NRFE_MSPI_CONFIG_RESET: {
+		NRFX_ASSERT(reset_cfg->device_index < DEVICES_MAX);
+
+		nrfe_mspi_reset_config_msg_t *reset_cfg = (nrfe_mspi_reset_config_msg_t *)data;
+
+		reset_configs[reset_cfg->device_index] = reset_cfg->reset_config;
+		break;
+	}
+	case NRFE_MSPI_SET_RESET: {
+		nrfe_mspi_reset_set_msg_t *reset_cfg = (nrfe_mspi_reset_set_msg_t *)data;
+
+		reset_set(reset_cfg->device_index, reset_cfg->value);
+		break;
+	}
 	case NRFE_MSPI_CONFIG_DEV: {
 		nrfe_mspi_dev_config_msg_t *dev_config = (nrfe_mspi_dev_config_msg_t *)data;
 
@@ -452,19 +482,13 @@ static void ep_recv(const void *data, size_t len, void *priv)
 				BIT(ce_vios[nrfe_mspi_devices[dev_config->device_index].ce_index]));
 		}
 
-		if (dev_config->dev_config.io_mode == MSPI_IO_MODE_SINGLE) {
-			if (data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ2)] != DATA_PIN_UNUSED &&
-			    data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ3)] != DATA_PIN_UNUSED) {
-				nrf_vpr_csr_vio_out_or_set(
-					BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ2)]));
-				nrf_vpr_csr_vio_out_or_set(
-					BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ3)]));
-			}
-		} else {
+		/* If there is reset defined on any data line, assume it is no longer valid and
+		 * clear it. */
+		if (dev_config->dev_config.io_mode != MSPI_IO_MODE_SINGLE &&
+		    reset_configs[dev_config->device_index].pin_number != PIN_UNUSED) {
 			nrf_vpr_csr_vio_out_clear_set(
-				BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ2)]));
-			nrf_vpr_csr_vio_out_clear_set(
-				BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ3)]));
+				BIT(pin_to_vio_map[reset_configs[dev_config->device_index]
+							   .pin_number]));
 		}
 
 		break;

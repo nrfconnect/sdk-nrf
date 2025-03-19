@@ -10,6 +10,7 @@
 #include <zephyr/drivers/mspi.h>
 #include <zephyr/drivers/pinctrl.h>
 #include <zephyr/drivers/counter.h>
+#include <zephyr/drivers/gpio.h>
 #include <zephyr/ipc/ipc_service.h>
 #include <zephyr/pm/device.h>
 #if !defined(CONFIG_MULTITHREADING)
@@ -29,7 +30,8 @@ LOG_MODULE_REGISTER(mspi_nrfe, CONFIG_MSPI_LOG_LEVEL);
 #define EXTREME_DRIVE_FREQ_THRESHOLD 32000000
 #define CNT0_TOP_CALCULATE(freq)     (NRFX_CEIL_DIV(SystemCoreClock, freq * 2) - 1)
 #define DATA_LINE_INDEX(pinctr_fun)  (pinctr_fun - NRF_FUN_SDP_MSPI_DQ0)
-#define DATA_PIN_UNUSED              UINT8_MAX
+#define DATA_PIN_UNUSED		     UINT8_MAX
+#define DEVICES_MAX		     5
 
 #ifdef CONFIG_SOC_NRF54L15
 
@@ -97,6 +99,7 @@ static const struct mspi_nrfe_config dev_config = {
 };
 
 static struct mspi_nrfe_data dev_data;
+static bool is_reset_sent[DEVICES_MAX];
 
 static void ep_recv(const void *data, size_t len, void *priv);
 
@@ -145,6 +148,22 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		k_sem_give(&ipc_sem_cfg);
 #else
 		atomic_set_bit(&ipc_atomic_sem, NRFE_MSPI_CONFIG_PINS);
+#endif
+		break;
+	}
+	case NRFE_MSPI_CONFIG_RESET: {
+#if defined(CONFIG_MULTITHREADING)
+		k_sem_give(&ipc_sem_cfg);
+#else
+		atomic_set_bit(&ipc_atomic_sem, NRFE_MSPI_CONFIG_RESET);
+#endif
+		break;
+	}
+	case NRFE_MSPI_SET_RESET: {
+#if defined(CONFIG_MULTITHREADING)
+		k_sem_give(&ipc_sem_cfg);
+#else
+		atomic_set_bit(&ipc_atomic_sem, NRFE_MSPI_SET_RESET);
 #endif
 		break;
 	}
@@ -226,6 +245,8 @@ static int nrfe_mspi_wait_for_response(nrfe_mspi_opcode_t opcode, uint32_t timeo
 		ret = k_sem_take(&ipc_sem, K_MSEC(timeout));
 		break;
 	case NRFE_MSPI_CONFIG_PINS:
+	case NRFE_MSPI_CONFIG_RESET:
+	case NRFE_MSPI_SET_RESET:
 	case NRFE_MSPI_CONFIG_DEV:
 	case NRFE_MSPI_CONFIG_XFER: {
 		ret = k_sem_take(&ipc_sem_cfg, K_MSEC(timeout));
@@ -821,6 +842,79 @@ static int api_transceive(const struct device *dev, const struct mspi_dev_id *de
 	return 0;
 }
 
+static int api_reset_config(const struct device *dev, const struct mspi_dev_id *dev_id,
+			    const struct gpio_dt_spec *spec, uint8_t gpio_port_num,
+			    gpio_flags_t extra_flags)
+{
+	const struct mspi_nrfe_config *drv_cfg = dev->config;
+	const struct pinctrl_state *state = &drv_cfg->pcfg->states[PINCTRL_STATE_DEFAULT];
+	gpio_flags_t flags = spec->dt_flags | extra_flags;
+	uint8_t pin_number = spec->pin;
+	nrfe_mspi_reset_config_msg_t mspi_reset_config;
+
+	/*
+	 * Check if reset pin is not the same as any pin declared for MSPI device.
+	 * If it is and it is valid, send the information to FLPR, otherwise treat it as a regular
+	 * GPIO pin.
+	 */
+	if (gpio_port_num == NRFE_MSPI_PORT_NUMBER) {
+		for (uint8_t i = 0; i < state->pin_cnt; i++) {
+			if (pin_number == NRF_PIN_NUMBER_TO_PIN(NRF_GET_PIN(state->pins[i]))) {
+				switch (NRF_GET_FUN(state->pins[i])) {
+				case NRF_FUN_SDP_MSPI_DQ0:
+				case NRF_FUN_SDP_MSPI_DQ1:
+					LOG_ERR("Reset pin cannot be the same as D0 or "
+						"D1.");
+					return -EINVAL;
+				case NRF_FUN_SDP_MSPI_SCK:
+					LOG_ERR("Reset pin cannot be the same as CLK.");
+					return -EINVAL;
+				case NRF_FUN_SDP_MSPI_CS0:
+				case NRF_FUN_SDP_MSPI_CS1:
+				case NRF_FUN_SDP_MSPI_CS2:
+				case NRF_FUN_SDP_MSPI_CS3:
+					LOG_ERR("Reset pin cannot be the same as any CS.");
+					return -EINVAL;
+				case NRF_FUN_SDP_MSPI_DQ2:
+				case NRF_FUN_SDP_MSPI_DQ3:
+					is_reset_sent[dev_id->dev_idx] = true;
+					mspi_reset_config.opcode = NRFE_MSPI_CONFIG_RESET;
+					mspi_reset_config.device_index = dev_id->dev_idx;
+					mspi_reset_config.reset_config.pin_number = pin_number;
+					mspi_reset_config.reset_config.inversed =
+						((flags & GPIO_ACTIVE_LOW) != 0);
+					/* Send reset configuration to FLPR */
+					return send_data(NRFE_MSPI_CONFIG_RESET,
+							 (const void *)&mspi_reset_config,
+							 sizeof(nrfe_mspi_reset_config_msg_t));
+				default:
+					break;
+				}
+			}
+		}
+	}
+
+	return gpio_pin_configure_dt(spec, flags);
+}
+
+static int api_reset_set(const struct device *dev, const struct gpio_dt_spec *spec,
+			 const struct mspi_dev_id *dev_id, int value)
+{
+	nrfe_mspi_reset_set_msg_t mspi_reset_set;
+
+	if (is_reset_sent[dev_id->dev_idx]) {
+		mspi_reset_set.opcode = NRFE_MSPI_SET_RESET;
+		mspi_reset_set.device_index = dev_id->dev_idx;
+		mspi_reset_set.value = value;
+		return send_data(NRFE_MSPI_SET_RESET, (const void *)&mspi_reset_set,
+				 sizeof(nrfe_mspi_reset_set_msg_t));
+	} else {
+		return gpio_pin_set_dt(spec, value);
+	}
+
+	return 0;
+}
+
 #if CONFIG_PM_DEVICE
 /**
  * @brief Callback function to handle power management actions.
@@ -968,11 +1062,16 @@ static int nrfe_mspi_init(const struct device *dev)
 	return ret;
 }
 
-static const struct mspi_driver_api drv_api = {
-	.config = api_config,
-	.dev_config = api_dev_config,
-	.get_channel_status = api_get_channel_status,
-	.transceive = api_transceive,
+static const struct nrf_mspi_driver_api drv_api = {
+	.std_api =
+		{
+			.config = api_config,
+			.dev_config = api_dev_config,
+			.get_channel_status = api_get_channel_status,
+			.transceive = api_transceive,
+		},
+	.reset_pin_config = api_reset_config,
+	.reset_pin_set = api_reset_set,
 };
 
 PM_DEVICE_DT_INST_DEFINE(0, dev_pm_action_cb);
