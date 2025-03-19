@@ -649,38 +649,57 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 		case PSA_ECC_FAMILY_SECP_R1:
 		case PSA_ECC_FAMILY_SECP_K1:
 		case PSA_ECC_FAMILY_BRAINPOOL_P_R1:
-			priv_key.def = si_sig_def_ecdsa;
-			priv_key.key.eckey.curve = sx_curve;
-			priv_key.key.eckey.d = (char *)key_buffer;
+			if (IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_R1) ||
+			    IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_K1) ||
+			    IS_ENABLED(PSA_NEED_CRACEN_ECDSA_BRAINPOOL_P_R1)) {
+				priv_key.def = si_sig_def_ecdsa;
+				priv_key.key.eckey.curve = sx_curve;
+				priv_key.key.eckey.d = (char *)key_buffer;
 
-			data[0] = SI_ECC_PUBKEY_UNCOMPRESSED;
-			pub_key.key.eckey.qx = &data[1];
-			pub_key.key.eckey.qy = &data[1 + sx_pk_curve_opsize(sx_curve)];
-			break;
+				data[0] = SI_ECC_PUBKEY_UNCOMPRESSED;
+				pub_key.key.eckey.qx = &data[1];
+				pub_key.key.eckey.qy = &data[1 + sx_pk_curve_opsize(sx_curve)];
+				break;
+			} else {
+				return PSA_ERROR_NOT_SUPPORTED;
+			}
 		case PSA_ECC_FAMILY_MONTGOMERY:
-			if (key_bits_attr == 255) {
-				priv_key.def = si_sig_def_x25519;
-				priv_key.key.x25519 = (struct sx_x25519_op *)key_buffer;
-				pub_key.key.x25519 = (struct sx_x25519_pt *)data;
-			} else {
-				priv_key.def = si_sig_def_x448;
-				priv_key.key.x448 = (struct sx_x448_op *)key_buffer;
-				pub_key.key.x448 = (struct sx_x448_pt *)data;
-			}
-			break;
-		case PSA_ECC_FAMILY_TWISTED_EDWARDS:
-			if (key_bits_attr == 255) {
-				si_status = cracen_ed25519_create_pubkey(key_buffer, data);
-				if (si_status == SX_OK) {
-					*data_length = expected_pub_key_size;
+			if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_MONTGOMERY_255)) {
+				if (key_bits_attr == 255) {
+					priv_key.def = si_sig_def_x25519;
+					priv_key.key.x25519 = (struct sx_x25519_op *)key_buffer;
+					pub_key.key.x25519 = (struct sx_x25519_pt *)data;
+					break;
 				}
-				return silex_statuscodes_to_psa(si_status);
-			} else {
-				priv_key.def = si_sig_def_ed448;
-				priv_key.key.ed448 = (struct sx_ed448_v *)key_buffer;
-				pub_key.key.ed448 = (struct sx_ed448_pt *)data;
 			}
-			break;
+			if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_MONTGOMERY_448)) {
+				if (key_bits_attr == 448) {
+					priv_key.def = si_sig_def_x448;
+					priv_key.key.x448 = (struct sx_x448_op *)key_buffer;
+					pub_key.key.x448 = (struct sx_x448_pt *)data;
+					break;
+				}
+			}
+			return PSA_ERROR_NOT_SUPPORTED;
+		case PSA_ECC_FAMILY_TWISTED_EDWARDS:
+			if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_255)) {
+				if (key_bits_attr == 255) {
+					si_status = cracen_ed25519_create_pubkey(key_buffer, data);
+					if (si_status == SX_OK) {
+						*data_length = expected_pub_key_size;
+					}
+					return silex_statuscodes_to_psa(si_status);
+				}
+			}
+			if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_448)) {
+				if (key_bits_attr == 448) {
+					priv_key.def = si_sig_def_ed448;
+					priv_key.key.ed448 = (struct sx_ed448_v *)key_buffer;
+					pub_key.key.ed448 = (struct sx_ed448_pt *)data;
+					break;
+				}
+			}
+			return PSA_ERROR_NOT_SUPPORTED;
 		default:
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
