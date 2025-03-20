@@ -54,9 +54,11 @@ static void calc_subtypes_space(const char *const *subtypes, size_t *out_count,
 	size_t count = 0;
 	size_t cbor_size = 0;
 
-	for (; *subtypes; ++subtypes) {
-		++count;
-		cbor_size += 2 + strlen(*subtypes);
+	if (subtypes) {
+		for (; *subtypes; ++subtypes) {
+			++count;
+			cbor_size += 2 + strlen(*subtypes);
+		}
 	}
 
 	*out_count = count;
@@ -176,10 +178,15 @@ otError otSrpClientAddService(otInstance *aInstance, otSrpClientService *aServic
 	calc_txt_space(aService->mTxtEntries, aService->mNumTxtEntries, &txt_size);
 
 	cbor_buffer_size = 1 + sizeof(uintptr_t); /* Service pointer */
+	cbor_buffer_size += 1 + sizeof(num_subtypes);
+	cbor_buffer_size += 1 + sizeof(aService->mNumTxtEntries);
+	cbor_buffer_size += 1 + sizeof(name_len + instance_len + 2);
+	cbor_buffer_size += 1 + sizeof(subtypes_size);
+	cbor_buffer_size += 1 + sizeof(txt_size);
 	cbor_buffer_size += 2 + name_len;
 	cbor_buffer_size += 2 + instance_len;
-	cbor_buffer_size += 1 + subtypes_size; /* Array of service subtypes */
-	cbor_buffer_size += 1 + txt_size;      /* Map of TXT entries */
+	cbor_buffer_size += 2 + subtypes_size; /* Array of service subtypes */
+	cbor_buffer_size += 2 + txt_size;      /* Map of TXT entries */
 	cbor_buffer_size += 1 + sizeof(aService->mPort);
 	cbor_buffer_size += 1 + sizeof(aService->mPriority);
 	cbor_buffer_size += 1 + sizeof(aService->mWeight);
@@ -199,8 +206,11 @@ otError otSrpClientAddService(otInstance *aInstance, otSrpClientService *aServic
 
 	zcbor_list_start_encode(ctx.zs, num_subtypes);
 
-	for (const char *const *subtype = aService->mSubTypeLabels; *subtype != NULL; ++subtype) {
-		nrf_rpc_encode_str(&ctx, *subtype, -1);
+	if (aService->mSubTypeLabels != NULL) {
+		for (const char *const *subtype = aService->mSubTypeLabels; *subtype != NULL;
+		     ++subtype) {
+			nrf_rpc_encode_str(&ctx, *subtype, -1);
+		}
 	}
 
 	zcbor_list_end_encode(ctx.zs, num_subtypes);
