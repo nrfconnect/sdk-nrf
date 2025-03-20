@@ -297,15 +297,6 @@ suit_plat_err_t suit_ipuc_sdfw_write_setup(int ipc_client_id, struct zcbor_strin
 		suit_plat_digest_cache_remove(component_id);
 #endif /* CONFIG_SUIT_DIGEST_CACHE */
 
-		if (ipuc_sink.erase == NULL ||
-		    ipuc_sink.erase(ipuc_sink.ctx) != SUIT_PLAT_SUCCESS) {
-			LOG_ERR("Erase operation not supported or failed");
-			if (ipuc_sink.release) {
-				ipuc_sink.release(ipuc_sink.ctx);
-			}
-			k_mutex_unlock(&ipuc_mutex);
-			return SUIT_PLAT_ERR_IO;
-		}
 
 		if (ipuc_sink.release) {
 			ipuc_sink.release(ipuc_sink.ctx);
@@ -369,6 +360,22 @@ suit_plat_err_t suit_ipuc_sdfw_write(int ipc_client_id, struct zcbor_string *com
 			LOG_ERR("IPUC sink not allocated");
 			k_mutex_unlock(&ipuc_mutex);
 			return SUIT_PLAT_ERR_IO;
+		}
+
+		if ((ipuc_sink.write != NULL) && (ipuc_sink.seek != NULL)
+		    && (offset > ipuc_entry->write_peek_offset)) {
+			/* Erasing if necessary
+			 */
+			uint8_t erase_buffer[READ_CHUNK_MAX_SIZE] = {
+					[0 ... READ_CHUNK_MAX_SIZE - 1] = 0xFF
+			};
+
+			ipuc_sink.seek(ipuc_sink.ctx, ipuc_entry->write_peek_offset);
+			for (size_t off = ipuc_entry->write_peek_offset; off < offset;
+			     off += READ_CHUNK_MAX_SIZE) {
+				ipuc_sink.write(ipuc_sink.ctx, (uint8_t *)erase_buffer,
+				MIN(sizeof(erase_buffer), slot_size - off));
+			}
 		}
 
 		if (ipuc_sink.seek == NULL ||
