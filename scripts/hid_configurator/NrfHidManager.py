@@ -9,8 +9,8 @@ NORDIC_VID = 0x1915
 
 class NrfHidManager():
     TYPE2BOARDLIST = {
-        'gaming_mouse' : ['nrf52840gmouse', 'nrf52840dk', 'nrf54l15dk', 'nrf54h20dk'],
-        'dongle' : ['nrf52840dongle', 'nrf52833dongle', 'nrf52820dongle', 'nrf5340dk'],
+        'gaming_mouse' : ['nrf52840gmouse'],
+        'dongle' : ['nrf52840dongle', 'nrf52833dongle', 'nrf52820dongle'],
         'keyboard' : ['nrf52kbd'],
         'desktop_mouse' : ['nrf52dmouse', 'nrf52810dmouse'],
     }
