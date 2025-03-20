@@ -49,3 +49,13 @@
   platforms:
     - nrf54l20pdk/nrf54l20/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-7205"
+
+- scenarios:
+    - nrf.extended.sample.usb_device_next.hid-mouse.l20
+    - nrf.extended.sample.usbd.hid-keyboard.l20
+    - nrf.extended.sample.usbd.hid-keyboard.out-report.l20
+    - nrf.extended.sample.usbd.hid-keyboard.large-report.l20
+    - nrf.extended.sample.usbd.hid-keyboard.large-out-report.l20
+  platforms:
+    - nrf54l20pdk/nrf54l20/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-7255"

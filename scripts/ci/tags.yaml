@@ -1614,3 +1614,8 @@ ci_samples_zephyr_drivers_adc:
   files:
     - nrf/samples/zephyr/drivers/adc/
     - zephyr/samples/drivers/adc/
+
+ci_samples_zephyr_subsys_usb:
+  files:
+    - nrf/samples/zephyr/subsys/usb/
+    - zephyr/samples/subsys/usb/
