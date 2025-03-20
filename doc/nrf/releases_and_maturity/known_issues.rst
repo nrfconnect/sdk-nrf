@@ -3333,6 +3333,17 @@ NCSDK-23682: The Fast Pair Seeker might be unable to bond again after losing the
 
   **Workaround:** Keep the :kconfig:option:`CONFIG_BT_SETTINGS_CCC_LAZY_LOADING` Kconfig option enabled.
 
+.. rst-class:: v2-9-0-nRF54H20-1 v2-9-1 v2-9-0 v2-8-0
+
+NCSDK-32268: FMDN clock might not be correctly set after the system reboot for nRF54L Series devices
+  The clock value in the Find My Device Network (FMDN) module is calculated using the kernel uptime function (:c:func:`k_uptime_get`).
+  For nRF54L Series devices, the kernel uptime persists after a system reset if the reset reason is of a specific type, such as a software reset (for example, triggered by the :c:func:`sys_reboot` API during the DFU process).
+  This platform-specific behavior breaks the assumption in the FMDN clock module that the uptime starts from zero after the system reboot.
+  For more information, see the description of the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_CLOCK_UPTIME_PERSISTENCE` Kconfig option that activates a workaround for this issue as part of the following patch commit.
+
+  **Affected platforms:** nRF54L Series
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``190839b44b678e2a90793e01471155fa9e579dc1``).
 
 Other libraries
 ===============
