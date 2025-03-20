@@ -925,9 +925,6 @@ Building and running
    This sample uses the :ref:`shell_ipc_readme` library to forward shell data through the physical UART interface of the application core.
    The Remote IPC shell sample is built and programmed automatically by default.
 
-.. note::
-   |54H_engb_2_8|
-
 .. _802154_phy_test_testing:
 
 Testing the sample
