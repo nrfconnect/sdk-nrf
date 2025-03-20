@@ -677,6 +677,7 @@
 /samples/zephyr/sensor/bme680/            @nrfconnect/ncs-low-level-test
 /samples/zephyr/sensor/qdec/              @nrfconnect/ncs-low-level-test
 /samples/zephyr/subsys/settings/          @nrfconnect/ncs-low-level-test
+/samples/zephyr/subsys/usb/               @nrfconnect/ncs-low-level-test
 
 /samples/**/*.svg                         @nrfconnect/ncs-doc-leads
 /samples/**/*.png                         @nrfconnect/ncs-doc-leads

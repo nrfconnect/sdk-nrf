@@ -1,0 +1,9 @@
+#include "app.overlay"
+
+/ {
+	hid_dev_0: hid_dev_0 {
+		compatible = "zephyr,hid-device";
+		out-report-size = <64>;
+		out-polling-period-us = <16000>;
+	};
+};
