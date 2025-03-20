@@ -86,6 +86,11 @@ static inline void nrf_rpc_os_tls_set(void *data)
 	k_thread_custom_data_set(data);
 }
 
+static inline void nrf_rpc_os_fatal_error(void)
+{
+	k_oops();
+}
+
 uint32_t nrf_rpc_os_ctx_pool_reserve(void);
 void nrf_rpc_os_ctx_pool_release(uint32_t number);
 
