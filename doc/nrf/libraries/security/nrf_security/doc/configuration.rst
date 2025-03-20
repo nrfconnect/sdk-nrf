@@ -19,6 +19,8 @@ PSA crypto support is included by default when you enable nRF Security through t
 PSA crypto support is provided through PSA Crypto APIs and is implemented by PSA core.
 PSA core uses PSA drivers to implement the cryptographic features either in software, or using hardware accelerators.
 
+Version 1.0 of the `PSA Crypto API <https://arm-software.github.io/psa-api/>`_ is implemented when building with TF-M, otherwise version 1.2 is implemented.
+
 .. _legacy_crypto_support:
 
 Legacy crypto support
