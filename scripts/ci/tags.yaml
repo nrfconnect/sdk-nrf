@@ -1574,6 +1574,11 @@ ci_samples_zephyr_drivers_adc:
     - nrf/samples/zephyr/drivers/adc/
     - zephyr/samples/drivers/adc/
 
+ci_tests_zephyr_drivers_timer:
+  files:
+    - nrf/tests/zephyr/drivers/timer/
+    - zephyr/tests/drivers/timer/
+
 ci_samples_zephyr_subsys_usb:
   files:
     - nrf/samples/zephyr/subsys/usb/
