@@ -111,21 +111,23 @@ bool BoltLockManager::GetRequirePIN()
 	return AccessMgr::Instance().GetRequirePIN();
 }
 
-void BoltLockManager::Lock(OperationSource source)
+void BoltLockManager::Lock(const OperationSource source, const Nullable<chip::FabricIndex> &fabricIdx,
+			   const Nullable<chip::NodeId> &nodeId, const Nullable<ValidatePINResult> &validatePINResult)
 {
-	VerifyOrReturn(mState != State::kLockingCompleted);
-	SetState(State::kLockingInitiated, source);
+	VerifyOrReturn(mStateData.mState != State::kLockingCompleted);
+	StateData newStateData{ State::kLockingInitiated, source, fabricIdx, nodeId, validatePINResult };
+	SetStateData(newStateData);
 
-	mActuatorOperationSource = source;
 	k_timer_start(&mActuatorTimer, K_MSEC(kActuatorMovementTimeMs), K_NO_WAIT);
 }
 
-void BoltLockManager::Unlock(OperationSource source)
+void BoltLockManager::Unlock(const OperationSource source, const Nullable<chip::FabricIndex> &fabricIdx,
+			     const Nullable<chip::NodeId> &nodeId, const Nullable<ValidatePINResult> &validatePINResult)
 {
-	VerifyOrReturn(mState != State::kUnlockingCompleted);
-	SetState(State::kUnlockingInitiated, source);
+	VerifyOrReturn(mStateData.mState != State::kUnlockingCompleted);
+	StateData newStateData{ State::kUnlockingInitiated, source, fabricIdx, nodeId, validatePINResult };
+	SetStateData(newStateData);
 
-	mActuatorOperationSource = source;
 	k_timer_start(&mActuatorTimer, K_MSEC(kActuatorMovementTimeMs), K_NO_WAIT);
 }
 
@@ -146,24 +148,33 @@ void BoltLockManager::ActuatorAppEventHandler(const BoltLockManagerEvent &event)
 {
 	BoltLockManager *lock = reinterpret_cast<BoltLockManager *>(event.manager);
 
-	switch (lock->mState) {
+	switch (lock->mStateData.mState) {
 	case State::kLockingInitiated:
-		lock->SetState(State::kLockingCompleted, lock->mActuatorOperationSource);
+		lock->SetState(State::kLockingCompleted);
 		break;
 	case State::kUnlockingInitiated:
-		lock->SetState(State::kUnlockingCompleted, lock->mActuatorOperationSource);
+		lock->SetState(State::kUnlockingCompleted);
 		break;
 	default:
 		break;
 	}
 }
 
-void BoltLockManager::SetState(State state, OperationSource source)
+void BoltLockManager::SetState(State state)
 {
-	mState = state;
+	mStateData.mState = state;
 
 	if (mStateChangeCallback != nullptr) {
-		mStateChangeCallback(state, source);
+		mStateChangeCallback(mStateData);
+	}
+}
+
+void BoltLockManager::SetStateData(const StateData &stateData)
+{
+	mStateData = stateData;
+
+	if (mStateChangeCallback != nullptr) {
+		mStateChangeCallback(mStateData);
 	}
 }
 

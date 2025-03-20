@@ -130,9 +130,9 @@ void AppTask::SwitchTransportTriggerHandler(const SwitchButtonAction &action)
 }
 #endif
 
-void AppTask::LockStateChanged(BoltLockManager::State state, BoltLockManager::OperationSource source)
+void AppTask::LockStateChanged(const BoltLockManager::StateData &stateData)
 {
-	switch (state) {
+	switch (stateData.mState) {
 	case BoltLockManager::State::kLockingInitiated:
 		LOG_INF("Lock action initiated");
 		Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).Blink(50, 50);
@@ -164,26 +164,33 @@ void AppTask::LockStateChanged(BoltLockManager::State state, BoltLockManager::Op
 	}
 
 	/* Handle changing attribute state in the application */
-	Instance().UpdateClusterState(state, source);
+	Instance().UpdateClusterState(stateData);
 }
 
-void AppTask::UpdateClusterState(BoltLockManager::State state, BoltLockManager::OperationSource source)
+void AppTask::UpdateClusterState(const BoltLockManager::StateData &stateData)
 {
-	DlLockState newLockState;
+	BoltLockManager::StateData *stateDataCopy = Platform::New<BoltLockManager::StateData>(stateData);
 
-	switch (state) {
-	case BoltLockManager::State::kLockingCompleted:
-		newLockState = DlLockState::kLocked;
-		break;
-	case BoltLockManager::State::kUnlockingCompleted:
-		newLockState = DlLockState::kUnlocked;
-		break;
-	default:
-		newLockState = DlLockState::kNotFullyLocked;
-		break;
+	if (stateDataCopy == nullptr) {
+		LOG_ERR("Failed to allocate memory for BoltLockManager::StateData");
+		return;
 	}
 
-	SystemLayer().ScheduleLambda([newLockState, source] {
+	CHIP_ERROR err = SystemLayer().ScheduleLambda([stateData = stateDataCopy]() {
+		DlLockState newLockState;
+
+		switch (stateData->mState) {
+		case BoltLockManager::State::kLockingCompleted:
+			newLockState = DlLockState::kLocked;
+			break;
+		case BoltLockManager::State::kUnlockingCompleted:
+			newLockState = DlLockState::kUnlocked;
+			break;
+		default:
+			newLockState = DlLockState::kNotFullyLocked;
+			break;
+		}
+
 		chip::app::DataModel::Nullable<chip::app::Clusters::DoorLock::DlLockState> currentLockState;
 		chip::app::Clusters::DoorLock::Attributes::LockState::Get(kLockEndpointId, currentLockState);
 
@@ -193,19 +200,43 @@ void AppTask::UpdateClusterState(BoltLockManager::State state, BoltLockManager::
 		} else {
 			LOG_INF("Updating LockState attribute");
 
-			if (!DoorLockServer::Instance().SetLockState(kLockEndpointId, newLockState, source)) {
+			Nullable<uint16_t> userId;
+			Nullable<List<const LockOpCredentials>> credentials;
+			List<const LockOpCredentials> credentialList;
+
+			if (!stateData->mValidatePINResult.IsNull()) {
+				userId = { stateData->mValidatePINResult.Value().mUserId };
+
+				/* `DoorLockServer::SetLockState` exptects list of `LockOpCredentials`,
+				   however in case of PIN validation it makes no sense to have more than one
+				   credential corresponding to validation result. For simplicity we wrap single
+				   credential in list here. */
+				credentialList = { &stateData->mValidatePINResult.Value().mCredential, 1 };
+				credentials = { credentialList };
+			}
+
+			if (!DoorLockServer::Instance().SetLockState(kLockEndpointId, newLockState, stateData->mSource,
+								     userId, credentials, stateData->mFabricIdx,
+								     stateData->mNodeId)) {
 				LOG_ERR("Failed to update LockState attribute");
 			}
 		}
+
+		Platform::Delete(stateData);
 	});
+
+	if (err != CHIP_NO_ERROR) {
+		LOG_ERR("Failed to schedule lambda: %" CHIP_ERROR_FORMAT, err.Format());
+		Platform::Delete(stateDataCopy);
+	}
 }
 
 #ifdef CONFIG_CHIP_NUS
 void AppTask::NUSLockCallback(void *context)
 {
 	LOG_DBG("Received LOCK command from NUS");
-	if (BoltLockMgr().mState == BoltLockManager::State::kLockingCompleted ||
-	    BoltLockMgr().mState == BoltLockManager::State::kLockingInitiated) {
+	if (BoltLockMgr().GetState().mState == BoltLockManager::State::kLockingCompleted ||
+	    BoltLockMgr().GetState().mState == BoltLockManager::State::kLockingInitiated) {
 		LOG_INF("Device is already locked");
 	} else {
 		Nrf::PostTask([] { LockActionEventHandler(); });
@@ -215,8 +246,8 @@ void AppTask::NUSLockCallback(void *context)
 void AppTask::NUSUnlockCallback(void *context)
 {
 	LOG_DBG("Received UNLOCK command from NUS");
-	if (BoltLockMgr().mState == BoltLockManager::State::kUnlockingCompleted ||
-	    BoltLockMgr().mState == BoltLockManager::State::kUnlockingInitiated) {
+	if (BoltLockMgr().GetState().mState == BoltLockManager::State::kUnlockingCompleted ||
+	    BoltLockMgr().GetState().mState == BoltLockManager::State::kUnlockingInitiated) {
 		LOG_INF("Device is already unlocked");
 	} else {
 		Nrf::PostTask([] { LockActionEventHandler(); });

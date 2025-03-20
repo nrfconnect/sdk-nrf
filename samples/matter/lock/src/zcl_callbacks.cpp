@@ -68,7 +68,7 @@ bool emberAfPluginDoorLockOnDoorLockCommand(EndpointId endpointId, const Nullabl
 
 	/* Handle changing attribute state on command reception */
 	if (success) {
-		BoltLockMgr().Lock(BoltLockManager::OperationSource::kRemote);
+		BoltLockMgr().Lock(BoltLockManager::OperationSource::kRemote, fabricIdx, nodeId, validatePINResult);
 	}
 
 	return success;
@@ -83,7 +83,7 @@ bool emberAfPluginDoorLockOnDoorUnlockCommand(EndpointId endpointId, const Nulla
 
 	/* Handle changing attribute state on command reception */
 	if (success) {
-		BoltLockMgr().Unlock(BoltLockManager::OperationSource::kRemote);
+		BoltLockMgr().Unlock(BoltLockManager::OperationSource::kRemote, fabricIdx, nodeId, validatePINResult);
 	}
 
 	return success;
@@ -124,8 +124,9 @@ void emberAfDoorLockClusterInitCallback(EndpointId endpoint)
 		     "number of holiday schedules");
 #endif /* CONFIG_LOCK_SCHEDULES */
 
-	AppTask::Instance().UpdateClusterState(BoltLockMgr().GetState(),
-					       BoltLockManager::OperationSource::kUnspecified);
+	BoltLockManager::StateData state = BoltLockMgr().GetState();
+	state.mSource = BoltLockManager::OperationSource::kUnspecified;
+	AppTask::Instance().UpdateClusterState(state);
 }
 
 #ifdef CONFIG_LOCK_SCHEDULES
