@@ -65,7 +65,7 @@ static void gpio_wakeup_wk(struct k_work *work)
 	if (gpio_pin_set(gpio_dev, CONFIG_MODEM_SLM_WAKEUP_PIN, 0) != 0) {
 		LOG_WRN("GPIO set error");
 	}
-	LOG_DBG("Stop wake-up");
+	LOG_INF("Stop wake-up");
 }
 
 static void slm_data_wk(struct k_work *work)
@@ -525,6 +525,26 @@ int modem_slm_shell(const struct shell *shell, size_t argc, char **argv)
 	return modem_slm_send_cmd((char *)argv[1], 0);
 }
 
-SHELL_CMD_REGISTER(slm, NULL, "SLM Shell", modem_slm_shell);
+int modem_slm_shell_slmsh_powerpin(const struct shell *shell, size_t argc, char **argv)
+{
+	int err;
+
+	err = modem_slm_wake_up();
+	if (err) {
+		LOG_ERR("Failed to toggle power pin");
+	}
+	return 0;
+}
+
+SHELL_CMD_REGISTER(slm, NULL, "Send AT commands to SLM device", modem_slm_shell);
+
+SHELL_STATIC_SUBCMD_SET_CREATE(
+	sub_slmsh,
+	SHELL_CMD(powerpin, NULL, "Toggle power pin configured with CONFIG_SLM_POWER_PIN",
+		  modem_slm_shell_slmsh_powerpin),
+	SHELL_SUBCMD_SET_END
+);
+
+SHELL_CMD_REGISTER(slmsh, &sub_slmsh, "Commands handled in SLM shell device", NULL);
 
 #endif /* CONFIG_MODEM_SLM_SHELL */
