@@ -931,7 +931,12 @@ Scripts
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
 
-|no_changes_yet_note|
+* :ref:`nrf_desktop_config_channel_script`:
+
+  * Removed HID device type mapping for Development Kits.
+    A Development Kit may use various HID roles (depending on configuration).
+    Assigning a fixed type per board may be misleading.
+    HID device type is still defined for boards that are always configured as the same HID device type.
 
 Integrations
 ============
