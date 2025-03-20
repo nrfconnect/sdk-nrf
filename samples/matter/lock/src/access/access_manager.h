@@ -13,6 +13,11 @@
 
 template <DoorLockData::CredentialsBits CRED_BIT_MASK> class AccessManager {
 public:
+	struct ValidatePINResult {
+		uint16_t mUserId;
+		LockOpCredentials mCredential;
+	};
+
 	/**
 	 * @brief Signature of the callback fired when the credential is set.
 	 *
@@ -234,9 +239,11 @@ public:
 	 *
 	 * @param pinCode PIN code data.
 	 * @param err specific error code enumeration.
+	 * @param result user and credential data set on success.
 	 * @return true on success, false otherwise.
 	 */
-	bool ValidatePIN(const Optional<chip::ByteSpan> &pinCode, OperationErrorEnum &err);
+	bool ValidatePIN(const Optional<chip::ByteSpan> &pinCode, OperationErrorEnum &err,
+			 Nullable<ValidatePINResult> &result);
 	bool ValidateCustom(CredentialTypeEnum type, chip::MutableByteSpan &secret);
 
 	/**

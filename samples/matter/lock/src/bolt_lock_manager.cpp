@@ -96,9 +96,10 @@ DlStatus BoltLockManager::SetHolidaySchedule(uint8_t holidayIndex, DlScheduleSta
 
 #endif /* CONFIG_LOCK_SCHEDULES */
 
-bool BoltLockManager::ValidatePIN(const Optional<ByteSpan> &pinCode, OperationErrorEnum &err)
+bool BoltLockManager::ValidatePIN(const Optional<chip::ByteSpan> &pinCode, OperationErrorEnum &err,
+				  Nullable<ValidatePINResult> &result)
 {
-	return AccessMgr::Instance().ValidatePIN(pinCode, err);
+	return AccessMgr::Instance().ValidatePIN(pinCode, err, result);
 }
 
 void BoltLockManager::SetRequirePIN(bool require)
