@@ -19,16 +19,21 @@
 #define NORMAL "\e[0m"
 
 static const char ca411[] = {
-	/* VzW and Motive, AT&T */
+	/* VzW and Motive */
 	#include "DigiCertGlobalRootG2.pem.inc"
 };
 static const char ca412[] = {
-	/* VzW and Motive, AT&T */
+	/* VzW and Motive */
 	#include "DigiCertGlobalRootCA.pem.inc"
+};
+static const char ca413[] = {
+	/* Coiote */
+	#include "DSTRootCA-X3.pem.inc"
 };
 
 BUILD_ASSERT(sizeof(ca411) < KB(4), "Cert is too large");
 BUILD_ASSERT(sizeof(ca412) < KB(4), "Cert is too large");
+BUILD_ASSERT(sizeof(ca413) < KB(4), "Cert is too large");
 
 static const struct {
 	uint16_t tag;
@@ -44,6 +49,11 @@ static const struct {
 		.tag = 412,
 		.data = ca412,
 		.len = sizeof(ca412),
+	},
+	{
+		.tag = 413,
+		.data = ca413,
+		.len = sizeof(ca413),
 	}
 };
 

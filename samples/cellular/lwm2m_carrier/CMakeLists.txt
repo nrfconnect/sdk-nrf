@@ -22,6 +22,11 @@ generate_inc_file_for_target(
     certs/DigiCertGlobalRootG2.pem
     ${gen_dir}/DigiCertGlobalRootG2.pem.inc
     )
+generate_inc_file_for_target(
+    app
+    certs/DSTRootCA-X3.pem
+    ${gen_dir}/DSTRootCA-X3.pem.inc
+    )
 
 # NORDIC SDK APP START
 target_sources(app PRIVATE src/main.c)
