@@ -18,6 +18,8 @@
 struct BoltLockManagerEvent;
 
 class BoltLockManager {
+	using AccessMgr = AccessManager<DoorLockData::PIN>;
+
 public:
 	static constexpr size_t kMaxCredentialLength = 128;
 
@@ -39,6 +41,7 @@ public:
 
 	using OperationSource = chip::app::Clusters::DoorLock::OperationSourceEnum;
 	using StateChangeCallback = void (*)(State, OperationSource);
+	using ValidatePINResult = AccessMgr::ValidatePINResult;
 
 	static constexpr uint32_t kActuatorMovementTimeMs = 2000;
 
@@ -74,7 +77,8 @@ public:
 				    uint32_t localEndTime, OperatingModeEnum operatingMode);
 #endif /* CONFIG_LOCK_SCHEDULES */
 
-	bool ValidatePIN(const Optional<chip::ByteSpan> &pinCode, OperationErrorEnum &err);
+	bool ValidatePIN(const Optional<chip::ByteSpan> &pinCode, OperationErrorEnum &err,
+			 Nullable<ValidatePINResult> &result);
 
 	void Lock(OperationSource source);
 	void Unlock(OperationSource source);
@@ -85,7 +89,6 @@ public:
 	void FactoryReset();
 
 private:
-	using AccessMgr = AccessManager<DoorLockData::PIN>;
 	friend class AppTask;
 
 	void SetState(State state, OperationSource source);

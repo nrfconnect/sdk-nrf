@@ -63,28 +63,30 @@ bool emberAfPluginDoorLockOnDoorLockCommand(EndpointId endpointId, const Nullabl
 					    const Nullable<chip::NodeId> &nodeId, const Optional<ByteSpan> &pinCode,
 					    OperationErrorEnum &err)
 {
-	bool result = BoltLockMgr().ValidatePIN(pinCode, err);
+	Nullable<BoltLockManager::ValidatePINResult> validatePINResult;
+	bool success = BoltLockMgr().ValidatePIN(pinCode, err, validatePINResult);
 
 	/* Handle changing attribute state on command reception */
-	if (result) {
+	if (success) {
 		BoltLockMgr().Lock(BoltLockManager::OperationSource::kRemote);
 	}
 
-	return result;
+	return success;
 }
 
 bool emberAfPluginDoorLockOnDoorUnlockCommand(EndpointId endpointId, const Nullable<chip::FabricIndex> &fabricIdx,
 					      const Nullable<chip::NodeId> &nodeId, const Optional<ByteSpan> &pinCode,
 					      OperationErrorEnum &err)
 {
-	bool result = BoltLockMgr().ValidatePIN(pinCode, err);
+	Nullable<BoltLockManager::ValidatePINResult> validatePINResult;
+	bool success = BoltLockMgr().ValidatePIN(pinCode, err, validatePINResult);
 
 	/* Handle changing attribute state on command reception */
-	if (result) {
+	if (success) {
 		BoltLockMgr().Unlock(BoltLockManager::OperationSource::kRemote);
 	}
 
-	return result;
+	return success;
 }
 
 void emberAfDoorLockClusterInitCallback(EndpointId endpoint)
