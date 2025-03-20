@@ -37,7 +37,7 @@ bool BoltLockManager::SetUser(uint16_t userIndex, FabricIndex creator, FabricInd
 			      size_t totalCredentials)
 {
 	return AccessMgr::Instance().SetUser(userIndex, creator, modifier, userName, uniqueId, userStatus, userType,
-					      credentialRule, credentials, totalCredentials);
+					     credentialRule, credentials, totalCredentials);
 }
 
 bool BoltLockManager::GetCredential(uint16_t credentialIndex, CredentialTypeEnum credentialType,
@@ -50,8 +50,8 @@ bool BoltLockManager::SetCredential(uint16_t credentialIndex, FabricIndex creato
 				    DlCredentialStatus credentialStatus, CredentialTypeEnum credentialType,
 				    const ByteSpan &secret)
 {
-	return AccessMgr::Instance().SetCredential(credentialIndex, creator, modifier, credentialStatus,
-						    credentialType, secret);
+	return AccessMgr::Instance().SetCredential(credentialIndex, creator, modifier, credentialStatus, credentialType,
+						   secret);
 }
 
 #ifdef CONFIG_LOCK_SCHEDULES
@@ -67,7 +67,7 @@ DlStatus BoltLockManager::SetWeekDaySchedule(uint8_t weekdayIndex, uint16_t user
 					     uint8_t endHour, uint8_t endMinute)
 {
 	return AccessMgr::Instance().SetWeekDaySchedule(weekdayIndex, userIndex, status, daysMask, startHour,
-							 startMinute, endHour, endMinute);
+							startMinute, endHour, endMinute);
 }
 
 DlStatus BoltLockManager::GetYearDaySchedule(uint8_t yearDayIndex, uint16_t userIndex,
@@ -91,11 +91,10 @@ DlStatus BoltLockManager::SetHolidaySchedule(uint8_t holidayIndex, DlScheduleSta
 					     uint32_t localEndTime, OperatingModeEnum operatingMode)
 {
 	return AccessMgr::Instance().SetHolidaySchedule(holidayIndex, status, localStartTime, localEndTime,
-							 operatingMode);
+							operatingMode);
 }
 
 #endif /* CONFIG_LOCK_SCHEDULES */
-
 
 bool BoltLockManager::ValidatePIN(const Optional<ByteSpan> &pinCode, OperationErrorEnum &err)
 {
