@@ -18,8 +18,8 @@ using namespace DoorLockData;
 
 template <CredentialsBits CRED_BIT_MASK>
 void AccessManager<CRED_BIT_MASK>::Init(SetCredentialCallback setCredentialClbk,
-					     ClearCredentialCallback clearCredentialClbk,
-					     ValidateCredentialCallback validateCredentialClbk)
+					ClearCredentialCallback clearCredentialClbk,
+					ValidateCredentialCallback validateCredentialClbk)
 {
 	InitializeAllCredentials();
 	mSetCredentialCallback = setCredentialClbk;
@@ -134,9 +134,8 @@ template <CredentialsBits CRED_BIT_MASK> void AccessManager<CRED_BIT_MASK>::SetR
 {
 	if (mRequirePINForRemoteOperation != require) {
 		mRequirePINForRemoteOperation = require;
-		if (!AccessStorage::Instance().Store(AccessStorage::Type::RequirePIN,
-							  &mRequirePINForRemoteOperation,
-							  sizeof(mRequirePINForRemoteOperation))) {
+		if (!AccessStorage::Instance().Store(AccessStorage::Type::RequirePIN, &mRequirePINForRemoteOperation,
+						     sizeof(mRequirePINForRemoteOperation))) {
 			LOG_ERR("Cannot store RequirePINforRemoteOperation.");
 		}
 	}
@@ -148,4 +147,4 @@ template class AccessManager<DoorLockData::PIN | DoorLockData::RFID>;
 template class AccessManager<DoorLockData::PIN | DoorLockData::RFID | DoorLockData::FINGER>;
 template class AccessManager<DoorLockData::PIN | DoorLockData::RFID | DoorLockData::FINGER | DoorLockData::VEIN>;
 template class AccessManager<DoorLockData::PIN | DoorLockData::RFID | DoorLockData::FINGER | DoorLockData::VEIN |
-				  DoorLockData::FACE>;
+			     DoorLockData::FACE>;
