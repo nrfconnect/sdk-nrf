@@ -31,7 +31,7 @@ public:
 
 	CHIP_ERROR StartApp();
 
-	void UpdateClusterState(BoltLockManager::State state, BoltLockManager::OperationSource source);
+	void UpdateClusterState(const BoltLockManager::StateData &stateData);
 	static void IdentifyStartHandler(Identify *);
 	static void IdentifyStopHandler(Identify *);
 
@@ -40,7 +40,7 @@ private:
 
 	static void LockActionEventHandler();
 	static void ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged);
-	static void LockStateChanged(BoltLockManager::State state, BoltLockManager::OperationSource source);
+	static void LockStateChanged(const BoltLockManager::StateData &stateData);
 
 #ifdef CONFIG_THREAD_WIFI_SWITCHING
 	static void SwitchTransportEventHandler();
