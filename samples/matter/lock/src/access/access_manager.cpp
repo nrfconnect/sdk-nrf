@@ -54,7 +54,8 @@ bool AccessManager<CRED_BIT_MASK>::ValidateCustom(CredentialTypeEnum type, chip:
 }
 
 template <CredentialsBits CRED_BIT_MASK>
-bool AccessManager<CRED_BIT_MASK>::ValidatePIN(const Optional<ByteSpan> &pinCode, OperationErrorEnum &err)
+bool AccessManager<CRED_BIT_MASK>::ValidatePIN(const Optional<ByteSpan> &pinCode, OperationErrorEnum &err,
+					       Nullable<ValidatePINResult> &result)
 {
 	/* Optionality of the PIN code is validated by the caller, so assume it is OK not to provide the PIN
 	 * code. */
@@ -72,6 +73,18 @@ bool AccessManager<CRED_BIT_MASK>::ValidatePIN(const Optional<ByteSpan> &pinCode
 			}
 
 			if (credential.credentialData.data_equal(pinCode.Value())) {
+				uint32_t credentialUserId;
+				if (GetCredentialUserId(index, CredentialTypeEnum::kPin, credentialUserId) ==
+				    CHIP_NO_ERROR) {
+					result = ValidatePINResult{
+						.mUserId = static_cast<uint16_t>(credentialUserId),
+						.mCredential = LockOpCredentials{ CredentialTypeEnum::kPin,
+										  static_cast<uint16_t>(index) },
+					};
+				} else {
+					result = {};
+				}
+
 				LOG_DBG("Valid lock PIN code provided");
 				return true;
 			}
