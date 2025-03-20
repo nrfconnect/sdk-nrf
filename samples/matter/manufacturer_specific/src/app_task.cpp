@@ -14,11 +14,13 @@
 
 #include <app-common/zap-generated/attributes/Accessors.h>
 
+#include <app/EventLogging.h>
+#include <app/util/attribute-storage.h>
 #include <setup_payload/OnboardingCodesUtil.h>
 
-#include <zephyr/random/random.h>
-#include <zephyr/logging/log.h>
 #include <dk_buttons_and_leds.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/random/random.h>
 
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
@@ -35,7 +37,7 @@ constexpr EndpointId kNordicDevKitEndpointId = 1;
 
 static void ButtonEventHandler(Nrf::ButtonState /* unused */, Nrf::ButtonMask has_changed)
 {
-        /* Handle button press */
+	/* Handle button press */
 	if (ConnectivityMgrImpl().IsIPv6NetworkProvisioned() && ConnectivityMgrImpl().IsIPv6NetworkEnabled() &&
 	    BUTTON2_MASK & has_changed) {
 		AppTask::Instance().UpdateNordicDevkitClusterState();
@@ -50,18 +52,28 @@ void AppTask::UpdateNordicDevkitClusterState()
 
 		dk_read_buttons(&button_state, nullptr);
 
-		status = Clusters::NordicDevKit::Attributes::UserLED::Set(kNordicDevKitEndpointId,
-								Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).GetState());
+		status = Clusters::NordicDevKit::Attributes::UserLED::Set(
+			kNordicDevKitEndpointId, Nrf::GetBoard().GetLED(Nrf::DeviceLeds::LED2).GetState());
 
 		if (status != Protocols::InteractionModel::Status::Success) {
 			LOG_ERR("Updating NordicDevkit cluster failed: %x", to_underlying(status));
 		}
 
 		status = Clusters::NordicDevKit::Attributes::UserButton::Set(kNordicDevKitEndpointId,
-										    BUTTON2_MASK & button_state);
+									     BUTTON2_MASK & button_state);
 
 		if (status != Protocols::InteractionModel::Status::Success) {
 			LOG_ERR("Updating NordicDevkit cluster failed: %x", to_underlying(status));
+		}
+
+		for (auto endpoint : EnabledEndpointsWithServerCluster(Clusters::NordicDevKit::Id)) {
+			/* If NordicDevKit cluster is implemented on this endpoint */
+			Clusters::NordicDevKit::Events::UserButtonChanged::Type event;
+			EventNumber eventNumber;
+
+			if (CHIP_NO_ERROR != LogEvent(event, endpoint, eventNumber)) {
+				ChipLogError(Zcl, "Failed to emit UserButtonChanged event");
+			}
 		}
 	});
 }
@@ -76,6 +88,16 @@ void AppTask::UpdateBasicInformationClusterState()
 
 		if (status != Protocols::InteractionModel::Status::Success) {
 			LOG_ERR("Updating Basic information cluster failed: %x", to_underlying(status));
+		}
+
+		for (auto endpoint : EnabledEndpointsWithServerCluster(Clusters::BasicInformation::Id)) {
+			/* If Basic cluster is implemented on this endpoint */
+			Clusters::BasicInformation::Events::RandomNumberChanged::Type event;
+			EventNumber eventNumber;
+
+			if (CHIP_NO_ERROR != LogEvent(event, endpoint, eventNumber)) {
+				ChipLogError(Zcl, "Failed to emit RandomNumberChanged event");
+			}
 		}
 	});
 }

@@ -12,19 +12,25 @@
     <code>0xFFF1FC01</code>
     <define>NORDIC_DEV_KIT_CLUSTER</define>
     <description>The NordicDevKit cluster showcases a cluster manufacturer extensions</description>
-    <command source="client" code="0x00" name="SetLED" optional="false">
+    <command source="client" code="0xFFF10000" name="SetLED" optional="false">
       <description>Change LED state</description>
       <arg name="Action" type="LEDActionEnum" optional="false"/>
     </command>
-    <attribute side="server" code="0x01" define="DEV_KIT_NAME" type="char_string" writable="true" optional="false" default="Nordic Development Kit">DevKitName</attribute>
-    <attribute side="server" code="0x02" define="USER_LED" type="boolean" length="0" writable="false" reportable="false" isNullable="false" default="false" optional="false" apiMaturity="NaN">UserLED<description/><access op="read" role="view"/></attribute>
-    <attribute side="server" code="0x03" define="USER_BUTTON" type="boolean" length="0" writable="false" reportable="false" isNullable="false" default="false" optional="false" apiMaturity="NaN">UserButton<description/><access op="read" role="view"/></attribute>
+    <attribute side="server" code="0xFFF10000" define="DEV_KIT_NAME" type="char_string" writable="true" optional="false" default="Nordic Development Kit">DevKitName</attribute>
+    <attribute side="server" code="0xFFF10001" define="USER_LED" type="boolean" length="0" writable="false" reportable="false" isNullable="false" default="false" optional="false" apiMaturity="NaN">UserLED<description/><access op="read" role="view"/></attribute>
+    <attribute side="server" code="0xFFF10002" define="USER_BUTTON" type="boolean" length="0" writable="false" reportable="false" isNullable="false" default="false" optional="false" apiMaturity="NaN">UserButton<description/><access op="read" role="view"/></attribute>
+    <event side="server" code="0xFFF10000" name="UserButtonChanged" priority="info" optional="false">
+      <description>The UserButtonChanged event SHALL be emitted by a Node as soon as the User Button is pressed or released.</description>
+    </event>
   </cluster>
   <clusterExtension code="0x0028">
     <command source="client" code="0x00" name="GenerateRandom" optional="false">
       <description>Generate random number</description>
     </command>
     <attribute side="server" code="0x17" define="RANDOM_NUMBER" type="int16u" writable="true" optional="false" default="0">RandomNumber</attribute>
+    <event side="server" code="0x4" name="RandomNumberChanged" priority="info" optional="true">
+      <description>The RandomNumberChanged event SHALL be emitted by a Node as soon as the RandomNumber attribute is changed.</description>
+    </event>
   </clusterExtension>
   <deviceType>
     <name>nordic-dev-kit</name>

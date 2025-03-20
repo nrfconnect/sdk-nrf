@@ -5956,6 +5956,49 @@ namespace app
 						CHIP_ERROR Decode(TLV::TLVReader &reader);
 					};
 				} // namespace ReachableChanged
+				namespace RandomNumberChanged
+				{
+					static constexpr PriorityLevel kPriorityLevel = PriorityLevel::Info;
+
+					enum class Fields : uint8_t {};
+
+					struct Type {
+					public:
+						static constexpr PriorityLevel GetPriorityLevel()
+						{
+							return kPriorityLevel;
+						}
+						static constexpr EventId GetEventId()
+						{
+							return Events::RandomNumberChanged::Id;
+						}
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::BasicInformation::Id;
+						}
+						static constexpr bool kIsFabricScoped = false;
+
+						CHIP_ERROR Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const;
+					};
+
+					struct DecodableType {
+					public:
+						static constexpr PriorityLevel GetPriorityLevel()
+						{
+							return kPriorityLevel;
+						}
+						static constexpr EventId GetEventId()
+						{
+							return Events::RandomNumberChanged::Id;
+						}
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::BasicInformation::Id;
+						}
+
+						CHIP_ERROR Decode(TLV::TLVReader &reader);
+					};
+				} // namespace RandomNumberChanged
 			} // namespace Events
 		} // namespace BasicInformation
 		namespace OtaSoftwareUpdateProvider
@@ -59881,61 +59924,6 @@ namespace app
 			namespace Attributes
 			{
 
-				namespace DevKitName
-				{
-					struct TypeInfo {
-						using Type = chip::CharSpan;
-						using DecodableType = chip::CharSpan;
-						using DecodableArgType = chip::CharSpan;
-
-						static constexpr ClusterId GetClusterId()
-						{
-							return Clusters::NordicDevKit::Id;
-						}
-						static constexpr AttributeId GetAttributeId()
-						{
-							return Attributes::DevKitName::Id;
-						}
-						static constexpr bool MustUseTimedWrite() { return false; }
-						static constexpr size_t MaxLength() { return 254; }
-					};
-				} // namespace DevKitName
-				namespace UserLED
-				{
-					struct TypeInfo {
-						using Type = bool;
-						using DecodableType = bool;
-						using DecodableArgType = bool;
-
-						static constexpr ClusterId GetClusterId()
-						{
-							return Clusters::NordicDevKit::Id;
-						}
-						static constexpr AttributeId GetAttributeId()
-						{
-							return Attributes::UserLED::Id;
-						}
-						static constexpr bool MustUseTimedWrite() { return false; }
-					};
-				} // namespace UserLED
-				namespace UserButton
-				{
-					struct TypeInfo {
-						using Type = bool;
-						using DecodableType = bool;
-						using DecodableArgType = bool;
-
-						static constexpr ClusterId GetClusterId()
-						{
-							return Clusters::NordicDevKit::Id;
-						}
-						static constexpr AttributeId GetAttributeId()
-						{
-							return Attributes::UserButton::Id;
-						}
-						static constexpr bool MustUseTimedWrite() { return false; }
-					};
-				} // namespace UserButton
 				namespace GeneratedCommandList
 				{
 					struct TypeInfo
@@ -59994,6 +59982,61 @@ namespace app
 						}
 					};
 				} // namespace ClusterRevision
+				namespace DevKitName
+				{
+					struct TypeInfo {
+						using Type = chip::CharSpan;
+						using DecodableType = chip::CharSpan;
+						using DecodableArgType = chip::CharSpan;
+
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::NordicDevKit::Id;
+						}
+						static constexpr AttributeId GetAttributeId()
+						{
+							return Attributes::DevKitName::Id;
+						}
+						static constexpr bool MustUseTimedWrite() { return false; }
+						static constexpr size_t MaxLength() { return 254; }
+					};
+				} // namespace DevKitName
+				namespace UserLED
+				{
+					struct TypeInfo {
+						using Type = bool;
+						using DecodableType = bool;
+						using DecodableArgType = bool;
+
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::NordicDevKit::Id;
+						}
+						static constexpr AttributeId GetAttributeId()
+						{
+							return Attributes::UserLED::Id;
+						}
+						static constexpr bool MustUseTimedWrite() { return false; }
+					};
+				} // namespace UserLED
+				namespace UserButton
+				{
+					struct TypeInfo {
+						using Type = bool;
+						using DecodableType = bool;
+						using DecodableArgType = bool;
+
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::NordicDevKit::Id;
+						}
+						static constexpr AttributeId GetAttributeId()
+						{
+							return Attributes::UserButton::Id;
+						}
+						static constexpr bool MustUseTimedWrite() { return false; }
+					};
+				} // namespace UserButton
 
 				struct TypeInfo {
 					struct DecodableType {
@@ -60005,11 +60048,6 @@ namespace app
 						CHIP_ERROR Decode(TLV::TLVReader &reader,
 								  const ConcreteAttributePath &path);
 
-						Attributes::DevKitName::TypeInfo::DecodableType devKitName;
-						Attributes::UserLED::TypeInfo::DecodableType userLED =
-							static_cast<bool>(0);
-						Attributes::UserButton::TypeInfo::DecodableType userButton =
-							static_cast<bool>(0);
 						Attributes::GeneratedCommandList::TypeInfo::DecodableType
 							generatedCommandList;
 						Attributes::AcceptedCommandList::TypeInfo::DecodableType
@@ -60020,9 +60058,60 @@ namespace app
 							static_cast<uint32_t>(0);
 						Attributes::ClusterRevision::TypeInfo::DecodableType clusterRevision =
 							static_cast<uint16_t>(0);
+						Attributes::DevKitName::TypeInfo::DecodableType devKitName;
+						Attributes::UserLED::TypeInfo::DecodableType userLED =
+							static_cast<bool>(0);
+						Attributes::UserButton::TypeInfo::DecodableType userButton =
+							static_cast<bool>(0);
 					};
 				};
 			} // namespace Attributes
+			namespace Events
+			{
+				namespace UserButtonChanged
+				{
+					static constexpr PriorityLevel kPriorityLevel = PriorityLevel::Info;
+
+					enum class Fields : uint8_t {};
+
+					struct Type {
+					public:
+						static constexpr PriorityLevel GetPriorityLevel()
+						{
+							return kPriorityLevel;
+						}
+						static constexpr EventId GetEventId()
+						{
+							return Events::UserButtonChanged::Id;
+						}
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::NordicDevKit::Id;
+						}
+						static constexpr bool kIsFabricScoped = false;
+
+						CHIP_ERROR Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const;
+					};
+
+					struct DecodableType {
+					public:
+						static constexpr PriorityLevel GetPriorityLevel()
+						{
+							return kPriorityLevel;
+						}
+						static constexpr EventId GetEventId()
+						{
+							return Events::UserButtonChanged::Id;
+						}
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::NordicDevKit::Id;
+						}
+
+						CHIP_ERROR Decode(TLV::TLVReader &reader);
+					};
+				} // namespace UserButtonChanged
+			} // namespace Events
 		} // namespace NordicDevKit
 		namespace UnitTesting
 		{

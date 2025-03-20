@@ -37,32 +37,33 @@ The development kits for this sample offer the following IPv6 network support fo
 
 Overview
 ********
+
+The sample starts the Bluetooth® LE advertising automatically and prepares the Matter device for commissioning into a Matter-enabled IPv6 network.
+
 .. tabs::
 
    .. group-tab:: nRF52, nRF53 and nRF70 DKs
 
-      The sample starts the Bluetooth® LE advertising automatically and prepares the Matter device for commissioning into a Matter-enabled IPv6 network.
       The sample uses the **LED 1** to show the state of the connection.
       You can press **Button 1** to start the factory reset when needed.
       **Button 2** is used to set the state of the ``NordicDevkit`` cluster's attribute, ``UserButton``.
-      Matter command ``SetLED`` is used to control the state of ``UserLED``.
-      It takes one argument - the action to be performed (``0`` to turn the LED off, ``1`` to turn it on, ``2`` to toggle the state).
       **LED 2** reflects the state of the ``UserLED``.
-      The ``NordicDevkit`` cluster introduces a writable ``DevKitName`` attribute, of string type as well.
-      The sample additionally extends the ``Basic Information`` cluster with a ``RandomNumber`` attribute and ``GenerateRandom`` command that updates the ``RandomNumber`` with a random value.
 
    .. group-tab:: nRF54 DKs
 
-      The sample starts the Bluetooth LE advertising automatically and prepares the Matter device for commissioning into a Matter-enabled IPv6 network.
       The sample uses the **LED 0** to show the state of the connection.
       You can press **Button 0** to start the factory reset when needed.
       **Button 1** is used to set the state of the ``NordicDevkit`` cluster's attribute, ``UserButton``.
-      Matter command ``SetLED`` is used to control the state of ``UserLED``.
-      It takes one argument - the action to be performed (``0`` to turn the LED off, ``1`` to turn it on, ``2`` to toggle the state).
       **LED 1** reflects the state of the ``UserLED``.
-      The ``NordicDevkit`` cluster introduces a writable ``DevKitName`` attribute, of string type as well.
-      The sample additionally extends the ``Basic Information`` cluster with a ``RandomNumber`` attribute and ``GenerateRandom`` command that updates the ``RandomNumber`` with a random value.
 
+The Matter command ``SetLED`` is used to control the state of ``UserLED``.
+It takes one argument - the action to be performed (``0`` to turn the LED off, ``1`` to turn it on, ``2`` to toggle the state).
+The ``UserButtonChanged`` event is generated when the ``UserButton`` attribute is changed.
+
+The ``NordicDevkit`` cluster introduces a writable ``DevKitName`` attribute, of string type as well.
+The sample additionally extends the ``Basic Information`` cluster with a ``RandomNumber`` attribute and ``GenerateRandom`` command that updates the ``RandomNumber`` with a random value.
+The ``RandomNumberChanged`` event is generated when the ``RandomNumber`` attribute is changed.
+The ``RandomNumber`` attribute value is not persistent and it is generated on each application's boot.
 
 Custom manufacturer-specific cluster
 ====================================
@@ -132,7 +133,7 @@ User interface
          .. include:: /includes/matter_sample_button.txt
 
       Button 2:
-         Sets the state of ``UserButton`` attribute in the ``NordicDevkit`` cluster.
+         Sets the state of ``UserButton`` attribute in the ``NordicDevkit`` cluster to ``true`` on press and ``false`` on release.
 
       .. include:: /includes/matter_segger_usb.txt
 
@@ -148,7 +149,7 @@ User interface
          .. include:: /includes/matter_sample_button.txt
 
       Button 1:
-         Sets the state of ``UserButton`` attribute in the ``NordicDevkit`` cluster.
+         Sets the state of ``UserButton`` attribute in the ``NordicDevkit`` cluster to ``true`` on press and ``false`` on release.
 
       .. include:: /includes/matter_segger_usb.txt
 
@@ -234,16 +235,16 @@ To test ``NordicDevkit`` cluster's attributes and commands, complete the followi
    .. parsed-literal::
       :class: highlight
 
-      any read-by-id read-by-id 0xFFF1FC01 *attribute-id* 1 1
+      any read-by-id 0xFFF1FC01 *attribute-id* 1 1
 
-   * *attribute-id* is the attribute's ID, equal to ``1`` for ``DevKitName``, ``2`` for ``UserLED`` and ``3`` for ``UserButton`` attributes for the ``NordicDevkit`` cluster in this sample.
+   * *attribute-id* is the attribute's ID, equal to ``0xFFF10000`` for ``DevKitName``, ``0xFFF10001`` for ``UserLED`` and ``0xFFF10002`` for ``UserButton`` attributes for the ``NordicDevkit`` cluster in this sample.
 #. Verify that all attributes have been read correctly and are equal to the default values defined in cluster's configuration.
 #. Write the ``DevkitName`` attribute:
 
    .. parsed-literal::
       :class: highlight
 
-      any write-by-id 0xFFF1FC01 1 "NewName" 1 1
+      any write-by-id 0xFFF1FC01 0xFFF10000 "NewName" 1 1
 
 #. Read the ``DevkitName`` attribute again to check if it has changed.
 #. Send the ``SetLED`` command to the device to control the LED state:
@@ -251,7 +252,7 @@ To test ``NordicDevkit`` cluster's attributes and commands, complete the followi
    .. parsed-literal::
       :class: highlight
 
-      any command-by-id 0xFFF1FC01 0 '{ "0x0": "u:*action*" }' 1 1
+      any command-by-id 0xFFF1FC01 0xFFF10000 '{ "0x0": "u:*action*" }' 1 1
 
    * *action* is the action that should be performed on LED attribute: ``0`` to turn the LED off, ``1`` to turn it on, ``2`` to toggle the state.
 
@@ -261,9 +262,16 @@ To test ``NordicDevkit`` cluster's attributes and commands, complete the followi
    .. parsed-literal::
       :class: highlight
 
-      any subscribe-by-id 0xFFF1FC01 3 0 120 1 1
+      any subscribe-by-id 0xFFF1FC01 0xFFF10002 0 120 1 1
 
 #. Press the button assigned to the ``UserButton`` and check if the attribute state is updated in the chip-tool.
+#. Read the ``UserButtonChanged`` event to check that events were generated on ``UserButton`` attribute changes.
+
+   .. parsed-literal::
+      :class: highlight
+
+      any read-event-by-id 0xFFF1FC01 0xFFF10000 1 1
+
 #. Read the ``Basic Information`` cluster's ``RandomNumber`` attribute:
 
    .. parsed-literal::
@@ -279,6 +287,13 @@ To test ``NordicDevkit`` cluster's attributes and commands, complete the followi
       any command-by-id 0x0028 0 '{}' 1 0
 
 #. Verify that the random value has been generated and the attribute value is updated.
+#. Read the ``Basic Information`` cluster's ``RandomNumberChanged`` event to check that events were generated on ``RandomNumber`` attribute changes.
+
+   .. parsed-literal::
+      :class: highlight
+
+      any read-event-by-id 0x0028 0x4 1 0
+
 #. Reboot the device, restart the chip-tool, and check if the attributes are persisting after joining the network.
 
 Upgrading the device firmware
