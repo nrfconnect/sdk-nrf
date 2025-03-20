@@ -337,13 +337,13 @@ config PSA_WANT_ECC_FRP_V1_256
 comment "Nordic addded RNG configuration"
 
 config PSA_WANT_GENERATE_RANDOM
-	bool "PSA RNG support" if !MBEDTLS_PROMPTLESS
+	bool "PSA RNG support" if !PSA_PROMPTLESS
 	default y if PSA_CRYPTO_ENABLE_ALL
 
 comment "Nordic added key types"
 
 config PSA_WANT_KEY_TYPE_PEPPER
-	bool "PSA pepper key type support" if !MBEDTLS_PROMPTLESS
+	bool "PSA pepper key type support" if !PSA_PROMPTLESS
 	default y if PSA_CRYPTO_ENABLE_ALL
 
 config PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_BASIC
@@ -357,35 +357,35 @@ config PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_BASIC
 	  SPAKE2+ key pair: Basic key support
 
 config PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_IMPORT
-	bool "SPAKE2+ key pair import support" if !MBEDTLS_PROMPTLESS
+	bool "SPAKE2+ key pair import support" if !PSA_PROMPTLESS
 	select PSA_WANT_KEY_TYPE_SPAKE2P_PUBLIC_KEY
 	default y if PSA_CRYPTO_ENABLE_ALL
 	help
 	  SPAKE2+ key pair: Import key for both the private and public key.
 
 config PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_EXPORT
-	bool "SPAKE2+ key pair export support" if !MBEDTLS_PROMPTLESS
+	bool "SPAKE2+ key pair export support" if !PSA_PROMPTLESS
 	select PSA_WANT_KEY_TYPE_SPAKE2P_PUBLIC_KEY
 	default y if PSA_CRYPTO_ENABLE_ALL
 	help
 	  SPAKE2+ key pair: Export key for both the private and public key.
 
 config PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_GENERATE
-	bool "SPAKE2+ key pair generate support" if !MBEDTLS_PROMPTLESS
+	bool "SPAKE2+ key pair generate support" if !PSA_PROMPTLESS
 	select PSA_WANT_KEY_TYPE_SPAKE2P_PUBLIC_KEY
 	default y if PSA_CRYPTO_ENABLE_ALL
 	help
 	  SPAKE2+ key pair: Generate key for both the private and public key.
 
 config PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE
-	bool "SPAKE2+ key pair derive support" if !MBEDTLS_PROMPTLESS
+	bool "SPAKE2+ key pair derive support" if !PSA_PROMPTLESS
 	select PSA_WANT_KEY_TYPE_SPAKE2P_PUBLIC_KEY
 	default y if PSA_CRYPTO_ENABLE_ALL
 	help
 	  SPAKE2+ key pair: Derive key for both the private and public key.
 
 config PSA_WANT_KEY_TYPE_SPAKE2P_PUBLIC_KEY
-	bool "SPAKE2+ public key support" if !MBEDTLS_PROMPTLESS
+	bool "SPAKE2+ public key support" if !PSA_PROMPTLESS
 	default y if PSA_CRYPTO_ENABLE_ALL
 	help
 	  SPAKE2+ public key support.
@@ -399,37 +399,37 @@ config PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_BASIC
 		   PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_DERIVE
 
 config PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_IMPORT
-	bool "SRP key pair import support" if !MBEDTLS_PROMPTLESS
+	bool "SRP key pair import support" if !PSA_PROMPTLESS
 	select PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY
 	default y if PSA_CRYPTO_ENABLE_ALL
 	help
 	  SRP key pair: import key for both the private and public key.
 
 config PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_EXPORT
-	bool "SRP key pair export support" if !MBEDTLS_PROMPTLESS
+	bool "SRP key pair export support" if !PSA_PROMPTLESS
 	select PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY
 	default y if PSA_CRYPTO_ENABLE_ALL
 	help
 	  SRP key pair: export key for both the private and public key.
 
 config PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_GENERATE
-	bool "SRP key pair export support" if !MBEDTLS_PROMPTLESS
+	bool "SRP key pair export support" if !PSA_PROMPTLESS
 	select PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY
 	default y if PSA_CRYPTO_ENABLE_ALL
 	help
 	  SRP key pair: export key for both the private and public key.
 
 config PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_DERIVE
-	bool "SRP key pair derive support" if !MBEDTLS_PROMPTLESS
+	bool "SRP key pair derive support" if !PSA_PROMPTLESS
 	select PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY
 	default y if PSA_CRYPTO_ENABLE_ALL
 	help
 	  SRP key pair: derive key for both the private and public key.
 
 config PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY
-	bool "SRP public key support" if !MBEDTLS_PROMPTLESS
+	bool "SRP public key support" if !PSA_PROMPTLESS
 	help
 	  SRP public key support.
 
 config PSA_WANT_KEY_TYPE_WPA3_SAE_PT
-	bool "WPA3-SAE-PT key support" if !MBEDTLS_PROMPTLESS
+	bool "WPA3-SAE-PT key support" if !PSA_PROMPTLESS
