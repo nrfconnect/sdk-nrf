@@ -33,24 +33,35 @@ struct link_shell_pdn_info {
 	uint8_t cid;
 };
 
-static const char *const event_str[] = {
-	[PDN_EVENT_CNEC_ESM] = "ESM",
-	[PDN_EVENT_ACTIVATED] = "activated",
-	[PDN_EVENT_DEACTIVATED] = "deactivated",
-	[PDN_EVENT_IPV6_UP] = "IPv6 up",
-	[PDN_EVENT_IPV6_DOWN] = "IPv6 down",
-	[PDN_EVENT_NETWORK_DETACH] = "network detach",
-	[PDN_EVENT_CTX_DESTROYED] = "context destroyed",
-};
+const char *link_pdn_event_to_string(enum pdn_event event, char *out_str_buf)
+{
+	struct mapping_tbl_item const mapping_table[] = {
+		/* PDN_EVENT_CNEC_ESM is handled separately */
+		{ PDN_EVENT_ACTIVATED, "activated" },
+		{ PDN_EVENT_DEACTIVATED, "deactivated" },
+		{ PDN_EVENT_IPV6_UP, "IPv6 up" },
+		{ PDN_EVENT_IPV6_DOWN, "IPv6 down" },
+		{ PDN_EVENT_NETWORK_DETACH, "network detach" },
+		{ PDN_EVENT_APN_RATE_CONTROL_ON, "APN rate control on" },
+		{ PDN_EVENT_APN_RATE_CONTROL_OFF, "APN rate control off" },
+		{ PDN_EVENT_CTX_DESTROYED, "context destroyed" },
+		{ -1, NULL }
+	};
+
+	return link_shell_map_to_string(mapping_table, event, out_str_buf);
+}
 
 void link_pdn_event_handler(uint8_t cid, enum pdn_event event, int reason)
 {
+	char str_buf[32];
+
 	switch (event) {
 	case PDN_EVENT_CNEC_ESM:
 		mosh_print("PDN event: PDP context %d, %s", cid, pdn_esm_strerror(reason));
 		break;
 	default:
-		mosh_print("PDN event: PDP context %d %s", cid, event_str[event]);
+		mosh_print("PDN event: PDP context %d %s", cid,
+			   link_pdn_event_to_string(event, str_buf));
 		if (cid == 0) {
 #if defined(CONFIG_MOSH_STARTUP_CMDS)
 			if (event == PDN_EVENT_ACTIVATED) {
