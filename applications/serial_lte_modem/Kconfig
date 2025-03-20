@@ -52,7 +52,9 @@ config SLM_UART_RX_BUF_COUNT
 	range 2 4
 	default 3
 	help
-	  Amount of buffers for receiving (RX) UART traffic. If the buffers are full, UART RX will be disabled until the buffers are processed.
+	  Amount of buffers for receiving (RX) UART traffic.
+	  If the buffers are full, UART RX will be disabled until the buffers are processed.
+	  These buffers are not used when CMUX is in use.
 
 config SLM_UART_RX_BUF_SIZE
 	int "Receive buffer size for UART"
@@ -60,13 +62,16 @@ config SLM_UART_RX_BUF_SIZE
 	default 256
 	help
 	  Amount of received (RX), unprocessed, UART traffic that can be held by single buffer.
+	  These buffers are not used when CMUX is in use.
 
 config SLM_UART_TX_BUF_SIZE
 	int "Send buffer size for UART"
 	range 128 4096
 	default 256
 	help
-	  Amount of UART traffic waiting to be sent (TX), that can be held. If the buffers are full, will send synchronously.
+	  Amount of UART traffic waiting to be sent (TX), that can be held.
+	  If the buffers are full, will send synchronously.
+	  These buffers are not used when CMUX is in use.
 
 #
 # GPIO functionality
@@ -180,6 +185,14 @@ endif
 
 config SLM_CMUX
 	bool "CMUX support in SLM"
+
+config SLM_CMUX_UART_BUFFER_SIZE
+	int "UART buffer size for CMUX"
+	depends on SLM_CMUX
+	default 6000
+	help
+	  Size of the buffer for data received in CMUX mode.
+	  Same buffer size is used for both RX and TX.
 
 if SLM_CMUX && SLM_PPP
 
