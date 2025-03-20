@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "share/sysbuild/Kconfig"
+
+config REMOTE_BOARD
+	string "Remote board"
+	default "nrf54l09pdk/nrf54l09/cpuflpr" if $(BOARD) = "nrf54l09pdk"
+	default "nrf54l20pdk/nrf54l20/cpuflpr" if $(BOARD) = "nrf54l20pdk"

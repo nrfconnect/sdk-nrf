@@ -1519,6 +1519,11 @@ ci_samples_zephyr_drivers_i2c:
     - nrf/samples/zephyr/drivers/i2c/
     - zephyr/samples/drivers/i2c/
 
+ci_samples_zephyr_drivers_mbox:
+  files:
+    - nrf/samples/zephyr/drivers/mbox/
+    - zephyr/samples/drivers/mbox/
+
 ci_samples_zephyr_boards_nordic_system_off:
   files:
     - nrf/samples/zephyr/boards/nordic/system_off/
