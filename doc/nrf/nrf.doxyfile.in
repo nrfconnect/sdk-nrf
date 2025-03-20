@@ -962,7 +962,28 @@ INPUT                  = @DOCSET_SOURCE_BASE@/applications \
                          @DOCSET_SOURCE_BASE@/subsys/zigbee/osif/zb_nrf_platform.h \
                          @DOCSET_SOURCE_BASE@/subsys/nrf_security/include/protected_storage.h \
                          @DOCSET_SOURCE_BASE@/subsys/nrf_security/include/internal_trusted_storage.h \
-                         @DOCSET_SOURCE_BASE@/subsys/nrf_security/include/nrf_security_api_structure.h
+                         @DOCSET_SOURCE_BASE@/subsys/nrf_security/include/nrf_security_api_structure.h \
+                         @DOCSET_SOURCE_BASE@/../modules/crypto/oberon-psa-crypto/include/psa/crypto_extra.h \
+                         @DOCSET_SOURCE_BASE@/../modules/crypto/oberon-psa-crypto/include/psa/build_info.h \
+                         @DOCSET_SOURCE_BASE@/../modules/crypto/oberon-psa-crypto/include/psa/crypto.h \
+                         @DOCSET_SOURCE_BASE@/../modules/crypto/oberon-psa-crypto/include/psa/crypto_adjust_auto_enabled.h \
+                         @DOCSET_SOURCE_BASE@/../modules/crypto/oberon-psa-crypto/include/psa/crypto_adjust_config_key_pair_types.h \
+                         @DOCSET_SOURCE_BASE@/../modules/crypto/oberon-psa-crypto/include/psa/crypto_adjust_config_synonyms.h \
+                         @DOCSET_SOURCE_BASE@/../modules/crypto/oberon-psa-crypto/include/psa/crypto_compat.h \
+                         @DOCSET_SOURCE_BASE@/../modules/crypto/oberon-psa-crypto/include/psa/crypto_config.h \
+                         @DOCSET_SOURCE_BASE@/../modules/crypto/oberon-psa-crypto/include/psa/crypto_driver_common.h \
+                         @DOCSET_SOURCE_BASE@/../modules/crypto/oberon-psa-crypto/include/psa/crypto_driver_config.h \
+                         @DOCSET_SOURCE_BASE@/../modules/crypto/oberon-psa-crypto/include/psa/crypto_driver_contexts_composites.h \
+                         @DOCSET_SOURCE_BASE@/../modules/crypto/oberon-psa-crypto/include/psa/crypto_driver_contexts_key_derivation.h \
+                         @DOCSET_SOURCE_BASE@/../modules/crypto/oberon-psa-crypto/include/psa/crypto_driver_contexts_primitives.h \
+                         @DOCSET_SOURCE_BASE@/../modules/crypto/oberon-psa-crypto/include/psa/crypto_extra   \
+                         @DOCSET_SOURCE_BASE@/../modules/crypto/oberon-psa-crypto/include/psa/crypto_legacy.h \
+                         @DOCSET_SOURCE_BASE@/../modules/crypto/oberon-psa-crypto/include/psa/crypto_platform.h \
+                         @DOCSET_SOURCE_BASE@/../modules/crypto/oberon-psa-crypto/include/psa/crypto_se_driver.h \
+                         @DOCSET_SOURCE_BASE@/../modules/crypto/oberon-psa-crypto/include/psa/crypto_sizes   \
+                         @DOCSET_SOURCE_BASE@/../modules/crypto/oberon-psa-crypto/include/psa/crypto_struct.h \
+                         @DOCSET_SOURCE_BASE@/../modules/crypto/oberon-psa-crypto/include/psa/crypto_types   \
+                         @DOCSET_SOURCE_BASE@/../modules/crypto/oberon-psa-crypto/include/psa/crypto_values.h
 
 # This tag can be used to specify the character encoding of the source files
 # that Doxygen parses. Internally Doxygen uses the UTF-8 encoding. Doxygen uses

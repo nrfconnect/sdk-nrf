@@ -29,4 +29,14 @@
  * @brief PSA Protected Storage API
  */
 
+/**
+ * @defgroup crypto_extra Crypto Extra APIs
+ * @brief Crypto Extra APIs
+ *
+ * Text
+ *
+ * @file ../../../modules/crypto/oberon-psa-crypto/include/psa/crypto_extra.h
+ * @brief Crypto Extra APIs
+ */
+
 /** @} */
