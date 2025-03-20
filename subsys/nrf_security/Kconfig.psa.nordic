@@ -219,6 +219,42 @@ config PSA_WANT_ALG_XTS
 	bool "PSA XTS block cipher mode support" if !PSA_PROMPTLESS
 	default y if PSA_CRYPTO_ENABLE_ALL
 
+config PSA_WANT_ALG_ECB_NO_PADDING
+	bool "PSA ECB support" if !PSA_PROMPTLESS
+	default y if PSA_CRYPTO_ENABLE_ALL
+	default y if MBEDTLS_BUILTIN && !MBEDTLS_FORCE_LEGACY_CIPHER && \
+		     PSA_WANT_KEY_TYPE_AES && (PSA_WANT_ALG_GCM || PSA_WANT_ALG_CCM)
+
+config PSA_WANT_ALG_CHACHA20
+	bool "PSA CHACHA20 stream cipher support" if !PSA_PROMPTLESS
+	default y if PSA_CRYPTO_ENABLE_ALL
+
+config PSA_WANT_ALG_SHAKE256_512
+	bool "PSA SHAKE256 512 bits support" if !PSA_PROMPTLESS
+	default y if PSA_CRYPTO_ENABLE_ALL
+
+config PSA_WANT_ALG_AES_KW
+	bool "AES key wrap support (NIST-SP-800-38F and RFC3394)" if !MBEDTLS_PROMPTLESS
+	select EXPERIMENTAL
+
+config PSA_WANT_ALG_AES_KWP
+	bool "AES key wrap support (NIST-SP-800-38F and RFC5649)" if !MBEDTLS_PROMPTLESS
+	select EXPERIMENTAL
+
+config PSA_WANT_ALG_WPA3_SAE_PT
+	bool "WPA3-SAE-PT support" if !MBEDTLS_PROMPTLESS
+	select EXPERIMENTAL
+
+config PSA_WANT_ALG_WPA3_SAE
+	bool "WPA3-SAE support" if !MBEDTLS_PROMPTLESS
+	select EXPERIMENTAL
+
+config PSA_WANT_ALG_SP800_108_COUNTER_CMAC
+	bool "NIST SP 800-108 conformant CMAC based KDF" if !MBEDTLS_PROMPTLESS
+
+config PSA_WANT_ALG_SP800_108_COUNTER_HMAC
+	bool "NIST SP 800-108 conformant HMAC based KDF" if !MBEDTLS_PROMPTLESS
+
 comment "Nordic added ECC curve types"
 
 config PSA_WANT_ECC_BRAINPOOL_P_R1_160
@@ -297,36 +333,6 @@ config PSA_WANT_ECC_SECT_R2_163
 
 config PSA_WANT_ECC_FRP_V1_256
 	bool "PSA ECC FRP256v1 support" if !PSA_PROMPTLESS
-
-config PSA_WANT_ALG_CHACHA20
-	bool "PSA CHACHA20 stream cipher support" if !PSA_PROMPTLESS
-	default y if PSA_CRYPTO_ENABLE_ALL
-
-config PSA_WANT_ALG_SHAKE256_512
-	bool "PSA SHAKE256 512 bits support" if !PSA_PROMPTLESS
-	default y if PSA_CRYPTO_ENABLE_ALL
-
-config PSA_WANT_ALG_AES_KW
-	bool "AES key wrap support (NIST-SP-800-38F and RFC3394)" if !MBEDTLS_PROMPTLESS
-	select EXPERIMENTAL
-
-config PSA_WANT_ALG_AES_KWP
-	bool "AES key wrap support (NIST-SP-800-38F and RFC5649)" if !MBEDTLS_PROMPTLESS
-	select EXPERIMENTAL
-
-config PSA_WANT_ALG_WPA3_SAE_PT
-	bool "WPA3-SAE-PT support" if !MBEDTLS_PROMPTLESS
-	select EXPERIMENTAL
-
-config PSA_WANT_ALG_WPA3_SAE
-	bool "WPA3-SAE support" if !MBEDTLS_PROMPTLESS
-	select EXPERIMENTAL
-
-config PSA_WANT_ALG_SP800_108_COUNTER_CMAC
-	bool "NIST SP 800-108 conformant CMAC based KDF" if !MBEDTLS_PROMPTLESS
-
-config PSA_WANT_ALG_SP800_108_COUNTER_HMAC
-	bool "NIST SP 800-108 conformant HMAC based KDF" if !MBEDTLS_PROMPTLESS
 
 comment "Nordic addded RNG configuration"
 
