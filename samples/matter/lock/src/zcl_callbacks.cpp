@@ -25,19 +25,7 @@ void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath &a
 {
 	VerifyOrReturn(attributePath.mClusterId == DoorLock::Id);
 
-	if (attributePath.mAttributeId == DoorLock::Attributes::LockState::Id) {
-		/* Post events only if current lock state is different than given */
-		switch (*value) {
-		case to_underlying(DlLockState::kLocked):
-			BoltLockMgr().Lock(BoltLockManager::OperationSource::kRemote);
-			break;
-		case to_underlying(DlLockState::kUnlocked):
-			BoltLockMgr().Unlock(BoltLockManager::OperationSource::kRemote);
-			break;
-		default:
-			break;
-		}
-	} else if (attributePath.mAttributeId == DoorLock::Attributes::RequirePINforRemoteOperation::Id) {
+	if (attributePath.mAttributeId == DoorLock::Attributes::RequirePINforRemoteOperation::Id) {
 		BoltLockMgr().SetRequirePIN(*value);
 	}
 }
