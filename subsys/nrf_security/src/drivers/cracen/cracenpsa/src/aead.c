@@ -516,6 +516,7 @@ psa_status_t cracen_aead_update(cracen_aead_operation_t *operation, const uint8_
 	 * of AD buffered before creating/verifying the tag
 	 */
 	if (input_length == 0) {
+		*output_length = 0;
 		return PSA_SUCCESS;
 	}
 
