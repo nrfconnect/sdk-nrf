@@ -205,7 +205,7 @@
 #cmakedefine PSA_NEED_OBERON_AES_KW                                                 @PSA_NEED_OBERON_AES_KW@
 #cmakedefine PSA_NEED_OBERON_AES_KWP                                                @PSA_NEED_OBERON_AES_KWP@
 #cmakedefine PSA_NEED_OBERON_WPA3_SAE_PT                                            @PSA_NEED_OBERON_WPA3_SAE_PT@
-#cmakedefine PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_PT                                   @PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_PT_SEC@
+#cmakedefine PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_PT                                   @PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_PT@
 #cmakedefine PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_PT_SECP                              @PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_PT_SECP@
 #cmakedefine PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_PT_SECP_R1_256                       @PSA_NEED_OBERON_KEY_TYPE_WPA3_SAE_PT_SECP_R1_256@
 #cmakedefine PSA_NEED_OBERON_WPA3_SAE                                               @PSA_NEED_OBERON_WPA3_SAE@
