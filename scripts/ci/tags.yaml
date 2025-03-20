@@ -1206,6 +1206,7 @@ ci_tests_drivers_flash:
     - nrf/tests/drivers/flash/
     - nrfxlib/nrf_rpc/
     - zephyr/drivers/flash/
+    - nrf/tests/drivers/nrf_qspi_flash/
 
 ci_tests_unity:
   files:
