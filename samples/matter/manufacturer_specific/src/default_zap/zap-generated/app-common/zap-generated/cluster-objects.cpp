@@ -3520,6 +3520,27 @@ namespace app
 						}
 					}
 				} // namespace ReachableChanged.
+				namespace RandomNumberChanged
+				{
+					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
+					{
+						TLV::TLVType outer;
+						ReturnErrorOnFailure(
+							aWriter.StartContainer(aTag, TLV::kTLVType_Structure, outer));
+						return aWriter.EndContainer(outer);
+					}
+
+					CHIP_ERROR DecodableType::Decode(TLV::TLVReader &reader)
+					{
+						detail::StructDecodeIterator __iterator(reader);
+						while (true) {
+							auto __element = __iterator.Next();
+							if (std::holds_alternative<CHIP_ERROR>(__element)) {
+								return std::get<CHIP_ERROR>(__element);
+							}
+						}
+					}
+				} // namespace RandomNumberChanged.
 			} // namespace Events
 
 		} // namespace BasicInformation
@@ -27765,12 +27786,6 @@ namespace app
 									   const ConcreteAttributePath &path)
 				{
 					switch (path.mAttributeId) {
-					case Attributes::DevKitName::TypeInfo::GetAttributeId():
-						return DataModel::Decode(reader, devKitName);
-					case Attributes::UserLED::TypeInfo::GetAttributeId():
-						return DataModel::Decode(reader, userLED);
-					case Attributes::UserButton::TypeInfo::GetAttributeId():
-						return DataModel::Decode(reader, userButton);
 					case Attributes::GeneratedCommandList::TypeInfo::GetAttributeId():
 						return DataModel::Decode(reader, generatedCommandList);
 					case Attributes::AcceptedCommandList::TypeInfo::GetAttributeId():
@@ -27783,6 +27798,12 @@ namespace app
 						return DataModel::Decode(reader, featureMap);
 					case Attributes::ClusterRevision::TypeInfo::GetAttributeId():
 						return DataModel::Decode(reader, clusterRevision);
+					case Attributes::DevKitName::TypeInfo::GetAttributeId():
+						return DataModel::Decode(reader, devKitName);
+					case Attributes::UserLED::TypeInfo::GetAttributeId():
+						return DataModel::Decode(reader, userLED);
+					case Attributes::UserButton::TypeInfo::GetAttributeId():
+						return DataModel::Decode(reader, userButton);
 					default:
 						return CHIP_NO_ERROR;
 					}
@@ -27791,6 +27812,27 @@ namespace app
 
 			namespace Events
 			{
+				namespace UserButtonChanged
+				{
+					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
+					{
+						TLV::TLVType outer;
+						ReturnErrorOnFailure(
+							aWriter.StartContainer(aTag, TLV::kTLVType_Structure, outer));
+						return aWriter.EndContainer(outer);
+					}
+
+					CHIP_ERROR DecodableType::Decode(TLV::TLVReader &reader)
+					{
+						detail::StructDecodeIterator __iterator(reader);
+						while (true) {
+							auto __element = __iterator.Next();
+							if (std::holds_alternative<CHIP_ERROR>(__element)) {
+								return std::get<CHIP_ERROR>(__element);
+							}
+						}
+					}
+				} // namespace UserButtonChanged.
 			} // namespace Events
 
 		} // namespace NordicDevKit

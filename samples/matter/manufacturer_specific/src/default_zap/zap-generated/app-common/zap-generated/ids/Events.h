@@ -94,6 +94,11 @@ namespace app
 					static constexpr EventId Id = 0x00000003;
 				} // namespace ReachableChanged
 
+				namespace RandomNumberChanged
+				{
+					static constexpr EventId Id = 0x00000004;
+				} // namespace RandomNumberChanged
+
 			} // namespace Events
 		} // namespace BasicInformation
 
@@ -880,6 +885,19 @@ namespace app
 
 			} // namespace Events
 		} // namespace CommissionerControl
+
+		namespace NordicDevKit
+		{
+			namespace Events
+			{
+
+				namespace UserButtonChanged
+				{
+					static constexpr EventId Id = 0xFFF10000;
+				} // namespace UserButtonChanged
+
+			} // namespace Events
+		} // namespace NordicDevKit
 
 		namespace UnitTesting
 		{

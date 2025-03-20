@@ -9394,21 +9394,6 @@ namespace app
 			namespace Attributes
 			{
 
-				namespace DevKitName
-				{
-					static constexpr AttributeId Id = 0x00000001;
-				} // namespace DevKitName
-
-				namespace UserLED
-				{
-					static constexpr AttributeId Id = 0x00000002;
-				} // namespace UserLED
-
-				namespace UserButton
-				{
-					static constexpr AttributeId Id = 0x00000003;
-				} // namespace UserButton
-
 				namespace GeneratedCommandList
 				{
 					static constexpr AttributeId Id = Globals::Attributes::GeneratedCommandList::Id;
@@ -9438,6 +9423,21 @@ namespace app
 				{
 					static constexpr AttributeId Id = Globals::Attributes::ClusterRevision::Id;
 				} // namespace ClusterRevision
+
+				namespace DevKitName
+				{
+					static constexpr AttributeId Id = 0xFFF10000;
+				} // namespace DevKitName
+
+				namespace UserLED
+				{
+					static constexpr AttributeId Id = 0xFFF10001;
+				} // namespace UserLED
+
+				namespace UserButton
+				{
+					static constexpr AttributeId Id = 0xFFF10002;
+				} // namespace UserButton
 
 			} // namespace Attributes
 		} // namespace NordicDevKit

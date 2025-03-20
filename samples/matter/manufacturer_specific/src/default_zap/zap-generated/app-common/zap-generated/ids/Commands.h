@@ -2377,7 +2377,7 @@ namespace app
 
 				namespace SetLED
 				{
-					static constexpr CommandId Id = 0x00000000;
+					static constexpr CommandId Id = 0xFFF10000;
 				} // namespace SetLED
 
 			} // namespace Commands

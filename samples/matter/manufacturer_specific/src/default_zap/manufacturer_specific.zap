@@ -19,18 +19,18 @@
   "package": [
     {
       "pathRelativity": "relativeToZap",
-      "path": "../../../../../../modules/lib/matter/src/app/zap-templates/app-templates.json",
-      "type": "gen-templates-json",
-      "category": "matter",
-      "version": "chip-v1"
-    },
-    {
-      "pathRelativity": "relativeToZap",
       "path": "zcl.json",
       "type": "zcl-properties",
       "category": "matter",
       "version": 1,
       "description": "Matter SDK ZCL data"
+    },
+    {
+      "pathRelativity": "relativeToZap",
+      "path": "../../../../../../modules/lib/matter/src/app/zap-templates/app-templates.json",
+      "type": "gen-templates-json",
+      "category": "matter",
+      "version": "chip-v1"
     }
   ],
   "endpointTypes": [
@@ -864,6 +864,13 @@
             {
               "name": "Leave",
               "code": 2,
+              "mfgCode": null,
+              "side": "server",
+              "included": 1
+            },
+            {
+              "name": "RandomNumberChanged",
+              "code": 4,
               "mfgCode": null,
               "side": "server",
               "included": 1
@@ -2682,7 +2689,7 @@
           "commands": [
             {
               "name": "SetLED",
-              "code": 0,
+              "code": 4293984256,
               "mfgCode": null,
               "source": "client",
               "isIncoming": 0,
@@ -2700,7 +2707,7 @@
           "commands": [
             {
               "name": "SetLED",
-              "code": 0,
+              "code": 4293984256,
               "mfgCode": null,
               "source": "client",
               "isIncoming": 1,
@@ -2708,54 +2715,6 @@
             }
           ],
           "attributes": [
-            {
-              "name": "DevKitName",
-              "code": 1,
-              "mfgCode": null,
-              "side": "server",
-              "type": "char_string",
-              "included": 1,
-              "storageOption": "NVM",
-              "singleton": 0,
-              "bounded": 0,
-              "defaultValue": "Nordic Development Kit",
-              "reportable": 1,
-              "minInterval": 1,
-              "maxInterval": 65534,
-              "reportableChange": 0
-            },
-            {
-              "name": "UserLED",
-              "code": 2,
-              "mfgCode": null,
-              "side": "server",
-              "type": "boolean",
-              "included": 1,
-              "storageOption": "NVM",
-              "singleton": 0,
-              "bounded": 0,
-              "defaultValue": "false",
-              "reportable": 0,
-              "minInterval": 1,
-              "maxInterval": 65534,
-              "reportableChange": 0
-            },
-            {
-              "name": "UserButton",
-              "code": 3,
-              "mfgCode": null,
-              "side": "server",
-              "type": "boolean",
-              "included": 1,
-              "storageOption": "RAM",
-              "singleton": 0,
-              "bounded": 0,
-              "defaultValue": "false",
-              "reportable": 0,
-              "minInterval": 1,
-              "maxInterval": 65534,
-              "reportableChange": 0
-            },
             {
               "name": "GeneratedCommandList",
               "code": 65528,
@@ -2766,7 +2725,7 @@
               "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "",
+              "defaultValue": null,
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -2782,7 +2741,7 @@
               "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "",
+              "defaultValue": null,
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -2798,7 +2757,7 @@
               "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "",
+              "defaultValue": null,
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -2814,7 +2773,7 @@
               "storageOption": "External",
               "singleton": 0,
               "bounded": 0,
-              "defaultValue": "",
+              "defaultValue": null,
               "reportable": 1,
               "minInterval": 1,
               "maxInterval": 65534,
@@ -2851,6 +2810,63 @@
               "minInterval": 1,
               "maxInterval": 65534,
               "reportableChange": 0
+            },
+            {
+              "name": "DevKitName",
+              "code": 4293984256,
+              "mfgCode": null,
+              "side": "server",
+              "type": "char_string",
+              "included": 1,
+              "storageOption": "RAM",
+              "singleton": 0,
+              "bounded": 0,
+              "defaultValue": "Nordic Development Kit",
+              "reportable": 1,
+              "minInterval": 1,
+              "maxInterval": 65534,
+              "reportableChange": 0
+            },
+            {
+              "name": "UserLED",
+              "code": 4293984257,
+              "mfgCode": null,
+              "side": "server",
+              "type": "boolean",
+              "included": 1,
+              "storageOption": "RAM",
+              "singleton": 0,
+              "bounded": 0,
+              "defaultValue": "false",
+              "reportable": 0,
+              "minInterval": 1,
+              "maxInterval": 65534,
+              "reportableChange": 0
+            },
+            {
+              "name": "UserButton",
+              "code": 4293984258,
+              "mfgCode": null,
+              "side": "server",
+              "type": "boolean",
+              "included": 1,
+              "storageOption": "RAM",
+              "singleton": 0,
+              "bounded": 0,
+              "defaultValue": "false",
+              "reportable": 0,
+              "minInterval": 1,
+              "maxInterval": 65534,
+              "reportableChange": 0
+            }
+          ],
+          "events": [
+            {
+              "name": "UserButtonChanged",
+              "code": 4293984256,
+              "mfgCode": null,
+              "side": "server",
+              "included": 1
             }
           ]
         }
