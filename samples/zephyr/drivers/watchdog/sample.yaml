@@ -18,5 +18,7 @@ tests:
   nrf.extended.sample.drivers.watchdog:
     platform_allow:
       - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54l09pdk/nrf54l09/cpuflpr
+      - nrf54l20pdk/nrf54l20/cpuflpr
     integration_platforms:
       - nrf54l09pdk/nrf54l09/cpuapp
