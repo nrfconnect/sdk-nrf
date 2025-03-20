@@ -29,7 +29,58 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
-|no_changes_yet_note|
+Matter
+------
+
+.. toggle::
+
+   * For the Matter samples and applications:
+
+      * The Wi-Fi firmware patch is now stored in the external flash memory by default for the nRF7002 DK and nRF5340 DK with the nRF7002 EK shield attached.
+        It means that the default partitions for the Wi-Fi configuration have been changed for these boards.
+        The Wi-Fi firmware patch is located in the ``nrf70_wifi_fw`` partition within the external flash memory space, and the ``mcuboot_primary_2`` partition is used for the updating the patch pruposes.
+
+        To keep storing the Wi-Fi firmware patch in the internal flash memory, do the following actions:
+
+         * Set the :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_DISABLED` Kconfig option to ``y``.
+         * Set the :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH` Kconfig option to ``n``.
+         * Set the :kconfig:option:`SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES` Kconfig option to ``2``.
+         * Remove the following partitions from the default :file:`pm_static_nrf7002dk_nrf5340_cpuapp.yml` file located in the project directory:
+
+            .. code-block:: yaml
+
+               nrf70_wifi_fw_mcuboot_pad:
+                  address: 0x12B000
+                  size: 0x200
+                  device: MX25R64
+                  region: external_flash
+               nrf70_wifi_fw:
+                  address: 0x12B200
+                  size: 0x20000
+                  device: MX25R64
+                  region: external_flash
+               mcuboot_primary_2:
+                  orig_span: &id003
+                     - nrf70_wifi_fw_mcuboot_pad
+                     - nrf70_wifi_fw
+                  span: *id003
+                  address: 0x12B000
+                  size: 0x21000
+                  device: MX25R64
+                  region: external_flash
+               mcuboot_secondary_2:
+                  address: 0x14C000
+                  size: 0x21000
+                  device: MX25R64
+                  region: external_flash
+
+         * Change the ``external_flash`` partition address and size to match the new partition layout, for example:
+
+            .. code-block:: yaml
+
+               external_flash:
+               address: 0x12b000
+               size: 0x6D5000
 
 Libraries
 =========

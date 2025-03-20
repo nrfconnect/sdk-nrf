@@ -185,6 +185,10 @@ Building and running
 
 .. include:: /includes/ipc_radio_conf.txt
 
+.. include:: ../template/README.rst
+    :start-after: matter_template_sample_nrf70_firmware_patch_start
+    :end-before: matter_template_sample_nrf70_firmware_patch_end
+
 Selecting a build type
 ======================
 

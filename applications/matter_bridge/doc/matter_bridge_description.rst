@@ -693,15 +693,15 @@ Building and running
 
 .. include:: /includes/ipc_radio_conf.txt
 
-.. include:: ../../../samples/matter/lock/README.rst
-    :start-after: matter_door_lock_sample_nrf70_firmware_patch_start
-    :end-before: matter_door_lock_sample_nrf70_firmware_patch_end
+.. include:: ../../../samples/matter/template/README.rst
+    :start-after: matter_template_sample_nrf70_firmware_patch_start
+    :end-before: matter_template_sample_nrf70_firmware_patch_end
 
-For example:
+To build the sample for nRF5340 DK with the nRF7002 EK shield attached, run the following command:
 
    .. code-block:: console
 
-      west build -b nrf5340dk/nrf5340/cpuapp -p -- -Dmatter_bridge_SHIELD=nrf7002ek -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DSB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH=y -DSB_CONFIG_WIFI_NRF70=y -Dmcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3 -DFILE_SUFFIX=nrf70ek
+      west build -b nrf5340dk/nrf5340/cpuapp -p -- -Dmatter_bridge_SHIELD=nrf7002ek -DSB_CONFIG_WIFI_NRF70=y -DFILE_SUFFIX=nrf70ek
 
 Selecting a configuration
 =========================
