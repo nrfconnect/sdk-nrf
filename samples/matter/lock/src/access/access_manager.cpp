@@ -67,29 +67,34 @@ bool AccessManager<CRED_BIT_MASK>::ValidatePIN(const Optional<ByteSpan> &pinCode
 
 	/* Check the PIN code */
 	for (size_t index = 1; index <= CONFIG_LOCK_MAX_NUM_CREDENTIALS_PER_TYPE; ++index) {
-		if (CHIP_NO_ERROR == mCredentials.GetCredentials(CredentialTypeEnum::kPin, credential, index)) {
-			if (credential.status == DlCredentialStatus::kAvailable) {
-				continue;
-			}
-
-			if (credential.credentialData.data_equal(pinCode.Value())) {
-				uint32_t credentialUserId;
-				if (GetCredentialUserId(index, CredentialTypeEnum::kPin, credentialUserId) ==
-				    CHIP_NO_ERROR) {
-					result = ValidatePINResult{
-						.mUserId = static_cast<uint16_t>(credentialUserId),
-						.mCredential = LockOpCredentials{ CredentialTypeEnum::kPin,
-										  static_cast<uint16_t>(index) },
-					};
-				} else {
-					result = {};
-				}
-
-				LOG_DBG("Valid lock PIN code provided");
-				return true;
-			}
+		if (CHIP_NO_ERROR != mCredentials.GetCredentials(CredentialTypeEnum::kPin, credential, index)) {
+			err = OperationErrorEnum::kInvalidCredential;
+			continue;
 		}
-		err = OperationErrorEnum::kInvalidCredential;
+
+		if (credential.status == DlCredentialStatus::kAvailable) {
+			continue;
+		}
+
+		if (!credential.credentialData.data_equal(pinCode.Value())) {
+			err = OperationErrorEnum::kInvalidCredential;
+			continue;
+		}
+
+		uint32_t credentialUserId;
+		if (GetCredentialUserId(index, CredentialTypeEnum::kPin, credentialUserId) == CHIP_NO_ERROR) {
+			result = ValidatePINResult{
+				.mUserId = static_cast<uint16_t>(credentialUserId),
+				.mCredential =
+					LockOpCredentials{ CredentialTypeEnum::kPin, static_cast<uint16_t>(index) },
+			};
+		} else {
+			result = {};
+		}
+
+		LOG_DBG("Valid lock PIN code provided");
+		err = OperationErrorEnum::kUnspecified;
+		return true;
 	}
 	LOG_DBG("Invalid lock PIN code provided");
 	return false;
