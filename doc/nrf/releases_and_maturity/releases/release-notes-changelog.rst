@@ -487,6 +487,13 @@ Bluetooth Fast Pair samples
     * The partition layout for the ``nrf5340dk/nrf5340/cpuapp/ns`` and ``thingy53/nrf5340/cpuapp/ns`` board targets to accommodate the partitions needed due to a change in the TF-M profile configuration.
     * The debug (default) configuration of the main image to enable the Link Time Optimization (LTO) with the :kconfig:option:`CONFIG_LTO` Kconfig option.
       This change ensures consistency with the sample release configuration that has the LTO feature enabled by default.
+    * The ``nrf54l15dk/nrf54l15/cpuapp`` board target configuration to enable hardware cryptography for the MCUboot bootloader.
+      The application image is verified using a pure ED25519 signature and the public key used by MCUboot for validating the application image is securely stored in the Key Management Unit (KMU) hardware peripheral.
+      Support for the ``nrf54l15dk/nrf54l05/cpuapp`` and ``nrf54l15dk/nrf54l10/cpuapp`` board targets, which is added to this sample in this release iteration, also includes the same MCUboot bootloader configuration with the hardware cryptography enabled.
+
+      The change modifies the memory partition layout for the ``nrf54l15dk/nrf54l15/cpuapp`` board target and changes the MCUboot image signing algorithm.
+      Because of that, the application images built for the ``nrf54l15dk/nrf54l15/cpuapp`` board target from this |NCS| release are not compatible with the MCUboot bootloader built from previous releases.
+      It is highly recommended to use hardware cryptography for the nRF54L SoC Series for improved security.
 
 Bluetooth Mesh samples
 ----------------------
