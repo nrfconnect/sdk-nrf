@@ -11,7 +11,7 @@ choice NRF_MODEM_LIB_TRACE_BACKEND
 
 config NRF_MODEM_LIB_TRACE_BACKEND_CUSTOM
 	bool "Count modem traces and print to terminal"
-	depends on CPU_LOAD
+	depends on NRF_CPU_LOAD
 	depends on FPU
 	depends on NEWLIB_LIBC_FLOAT_PRINTF || PICOLIBC_IO_FLOAT
 	help
