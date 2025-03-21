@@ -41,6 +41,7 @@ private:
 	static void LockActionEventHandler();
 	static void ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged);
 	static void LockStateChanged(const BoltLockManager::StateData &stateData);
+	static void UpdateClusterStateHandler(const BoltLockManager::StateData &stateData);
 
 #ifdef CONFIG_THREAD_WIFI_SWITCHING
 	static void SwitchTransportEventHandler();

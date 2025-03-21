@@ -176,54 +176,57 @@ void AppTask::UpdateClusterState(const BoltLockManager::StateData &stateData)
 		return;
 	}
 
-	SystemLayer().ScheduleLambda([stateData = stateDataCopy]() {
-		DlLockState newLockState;
-
-		switch (stateData->state) {
-		case BoltLockManager::State::kLockingCompleted:
-			newLockState = DlLockState::kLocked;
-			break;
-		case BoltLockManager::State::kUnlockingCompleted:
-			newLockState = DlLockState::kUnlocked;
-			break;
-		default:
-			newLockState = DlLockState::kNotFullyLocked;
-			break;
-		}
-
-		chip::app::DataModel::Nullable<chip::app::Clusters::DoorLock::DlLockState> currentLockState;
-		chip::app::Clusters::DoorLock::Attributes::LockState::Get(kLockEndpointId, currentLockState);
-
-		if (currentLockState.IsNull()) {
-			/* Initialize lock state with start value, but not invoke lock/unlock. */
-			chip::app::Clusters::DoorLock::Attributes::LockState::Set(kLockEndpointId, newLockState);
-		} else {
-			LOG_INF("Updating LockState attribute");
-
-			Nullable<uint16_t> userId;
-			Nullable<List<const LockOpCredentials>> credentials;
-			List<const LockOpCredentials> credentialList;
-
-			if (!stateData->validatePINResult.IsNull()) {
-				userId = { stateData->validatePINResult.Value().userId };
-
-				/* `DoorLockServer::SetLockState` exptects list of `LockOpCredentials`,
-				   however in case of PIN validation it makes no sense to have more than one
-				   credential corresponding to validation result. For simplicity we wrap single
-				   credential in list here. */
-				credentialList = { &stateData->validatePINResult.Value().credential, 1 };
-				credentials = { credentialList };
-			}
-
-			if (!DoorLockServer::Instance().SetLockState(kLockEndpointId, newLockState, stateData->source,
-								     userId, credentials, stateData->fabricIdx,
-								     stateData->nodeId)) {
-				LOG_ERR("Failed to update LockState attribute");
-			}
-		}
-
-		Platform::Delete(stateData);
+	SystemLayer().ScheduleLambda([stateDataCopy]() {
+		UpdateClusterStateHandler(*stateDataCopy);
+		Platform::Delete(stateDataCopy);
 	});
+}
+
+void AppTask::UpdateClusterStateHandler(const BoltLockManager::StateData &stateData)
+{
+	DlLockState newLockState;
+
+	switch (stateData.state) {
+	case BoltLockManager::State::kLockingCompleted:
+		newLockState = DlLockState::kLocked;
+		break;
+	case BoltLockManager::State::kUnlockingCompleted:
+		newLockState = DlLockState::kUnlocked;
+		break;
+	default:
+		newLockState = DlLockState::kNotFullyLocked;
+		break;
+	}
+
+	chip::app::DataModel::Nullable<chip::app::Clusters::DoorLock::DlLockState> currentLockState;
+	chip::app::Clusters::DoorLock::Attributes::LockState::Get(kLockEndpointId, currentLockState);
+
+	if (currentLockState.IsNull()) {
+		/* Initialize lock state with start value, but not invoke lock/unlock. */
+		chip::app::Clusters::DoorLock::Attributes::LockState::Set(kLockEndpointId, newLockState);
+	} else {
+		LOG_INF("Updating LockState attribute");
+
+		Nullable<uint16_t> userId;
+		Nullable<List<const LockOpCredentials>> credentials;
+		List<const LockOpCredentials> credentialList;
+
+		if (!stateData.validatePINResult.IsNull()) {
+			userId = { stateData.validatePINResult.Value().userId };
+
+			/* `DoorLockServer::SetLockState` exptects list of `LockOpCredentials`,
+			   however in case of PIN validation it makes no sense to have more than one
+			   credential corresponding to validation result. For simplicity we wrap single
+			   credential in list here. */
+			credentialList = { &stateData.validatePINResult.Value().credential, 1 };
+			credentials = { credentialList };
+		}
+
+		if (!DoorLockServer::Instance().SetLockState(kLockEndpointId, newLockState, stateData.source, userId,
+							     credentials, stateData.fabricIdx, stateData.nodeId)) {
+			LOG_ERR("Failed to update LockState attribute");
+		}
+	}
 }
 
 #ifdef CONFIG_CHIP_NUS
