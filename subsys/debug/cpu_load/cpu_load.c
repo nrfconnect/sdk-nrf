@@ -5,11 +5,6 @@
  */
 #include <debug/cpu_load.h>
 #include <zephyr/shell/shell.h>
-#ifdef DPPI_PRESENT
-#include <nrfx_dppi.h>
-#else
-#include <nrfx_ppi.h>
-#endif
 #include <helpers/nrfx_gppi.h>
 #include <nrfx_timer.h>
 #include <hal/nrf_rtc.h>
@@ -46,10 +41,7 @@ static uint32_t shared_ch_mask;
 /** @brief Allocate (D)PPI channel. */
 static nrfx_err_t ppi_alloc(uint8_t *ch, uint32_t evt)
 {
-	nrfx_err_t err;
 #ifdef DPPI_PRESENT
-	nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(0);
-
 	if (*PUBLISH_ADDR(evt) != 0) {
 		if (!IS_ENABLED(CONFIG_NRF_CPU_LOAD_USE_SHARED_DPPI_CHANNELS)) {
 			return NRFX_ERROR_BUSY;
@@ -59,31 +51,22 @@ static nrfx_err_t ppi_alloc(uint8_t *ch, uint32_t evt)
 		 * channel id.
 		 */
 		*ch = *PUBLISH_ADDR(evt) & DPPIC_SUBSCRIBE_CHG_EN_CHIDX_Msk;
-		err = NRFX_SUCCESS;
 		shared_ch_mask |= BIT(*ch);
-	} else {
-		err = nrfx_dppi_channel_alloc(&dppi, ch);
+		return NRFX_SUCCESS;
 	}
-#else
-	err = nrfx_ppi_channel_alloc((nrf_ppi_channel_t *)ch);
 #endif
-	return err;
+	return nrfx_gppi_channel_alloc(ch);
 }
 
 static nrfx_err_t ppi_free(uint8_t ch)
 {
 #ifdef DPPI_PRESENT
-	nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(0);
-
-	if (!IS_ENABLED(CONFIG_NRF_CPU_LOAD_USE_SHARED_DPPI_CHANNELS)
-		|| ((BIT(ch) & shared_ch_mask) == 0)) {
-		return nrfx_dppi_channel_free(&dppi, ch);
-	} else {
+	if (IS_CH_SHARED(ch)) {
+		shared_ch_mask &= ~BIT(ch);
 		return NRFX_SUCCESS;
 	}
-#else
-	return nrfx_ppi_channel_free((nrf_ppi_channel_t)ch);
 #endif
+	return nrfx_gppi_channel_free(ch);
 }
 
 static void ppi_cleanup(uint8_t ch_tick, uint8_t ch_sleep, uint8_t ch_wakeup)
