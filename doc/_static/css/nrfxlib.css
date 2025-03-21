@@ -80,10 +80,6 @@
   transform: translate(-50%, -50%);
 }
 
-.zboss-box {
-  background: #ffaa54;
-}
-
 .yellow-box {
   background: var(--docset-color);
 }

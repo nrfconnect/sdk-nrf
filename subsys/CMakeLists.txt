@@ -29,7 +29,6 @@ endif()
 
 add_subdirectory(mpsl)
 
-add_subdirectory_ifdef(CONFIG_ZIGBEE zigbee)
 add_subdirectory_ifdef(CONFIG_MGMT_FMFU mgmt/fmfu)
 add_subdirectory_ifdef(CONFIG_GAZELL gazell)
 
