@@ -150,12 +150,21 @@ config PM_PARTITION_SIZE_VPR_LAUNCHER
 	hex
 	depends on SOC_NRF54L15_CPUFLPR || SOC_NRF54L20_ENGA_CPUFLPR || SOC_NRF7120_ENGA_CPUFLPR
 	default $(dt_node_reg_addr_hex,/soc/rram-controller@5004b000/rram@165000) if SOC_NRF54L15_CPUFLPR
-	default $(dt_node_reg_addr_hex,/soc/rram-controller@5004e000/rram@1ed000) if SOC_NRF54L20_ENGA_CPUFLPR
+	default $(dt_node_reg_addr_hex,/soc/rram-controller@5004e000/rram@1e5000) if SOC_NRF54L20_ENGA_CPUFLPR
 	default $(dt_node_reg_addr_hex,/soc/mram@3e1000) if SOC_NRF7120_ENGA_CPUFLPR
 	help
 	  Memory set aside for the vpr_launcher partition.
 	  Must match the size of the cpuapp_rram/cpuapp_mram partition which is deleted.
 	  This to place the flpr app's code at the address found in the devicetree.
+
+config PM_RAM_SIZE_VPR_LAUNCHER
+	hex
+	depends on SOC_NRF54L15_CPUFLPR || SOC_NRF54L20_ENGA_CPUFLPR || SOC_NRF7120_ENGA_CPUFLPR
+	default 0x28000 if SOC_NRF54L15_CPUFLPR || SOC_NRF7120_ENGA_CPUFLPR
+	default 0x67c00 if SOC_NRF54L20_ENGA_CPUFLPR
+	help
+	  Size of RAM available for the vpr_launcher application (usually run on cpuapp).
+	  Must match the size of the cpuapp_sram node.
 
 if WIFI_NRF70 && NRF_WIFI_PATCHES_EXT_FLASH_STORE
 
@@ -238,7 +247,7 @@ config PM_SRAM_SIZE
 	hex
 	default $(dt_node_reg_size_hex,/soc/memory@21000000) if SOC_NRF5340_CPUNET
 	default 0x40000 if SOC_NRF54L15_CPUFLPR  # Because the cpuapp_rram DT node is deleted in nrf54l15_cpuflpr.dtsi
-	default 0x40000 if SOC_NRF54L20_ENGA_CPUFLPR  # Because the cpuapp_rram DT node is deleted in nrf54l20_enga_cpuflpr.dtsi
+	default 0x7fc00 if SOC_NRF54L20_ENGA_CPUFLPR  # Because the cpuapp_rram DT node is deleted in nrf54l20_enga_cpuflpr.dtsi
 	default 0x40000 if SOC_NRF7120_ENGA_CPUFLPR  # Because the cpuapp_mram DT node is deleted in nrf7120_enga_cpuflpr.dtsi
 	default $(dt_node_reg_size_hex,/soc/memory@20000000)
 
