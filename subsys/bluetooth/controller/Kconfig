@@ -583,25 +583,42 @@ config BT_CTLR_SDC_CIS_SUBEVENT_LENGTH_US
 config BT_CTLR_CHANNEL_SOUNDING
 	bool "Channel Sounding support [EXPERIMENTAL]"
 	select EXPERIMENTAL
+	help
+	  Enable Channel Sounding support.
 
 config BT_CTLR_SDC_CS_COUNT
 	int "Number of concurrent connections supporting CS procedure [EXPERIMENTAL]"
 	default 1
+	range 1 BT_MAX_CONN
 	depends on BT_CTLR_CHANNEL_SOUNDING
 	help
-	  Set the number of concurrent connections that can support Channel Sounding procedure.
+	  Set the number of concurrent connections that can support Channel Sounding.
+	  Needs to be equal to or less than BT_MAX_CONN
 
 config BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS
 	int "Max number of Channel Sounding antenna paths supported by the controller [EXPERIMENTAL]"
 	default 1
 	range 1 4
 	depends on BT_CTLR_CHANNEL_SOUNDING
+	help
+	  Set the max number of antenna paths the controller supports. This differs from BT_CTLR_SDC_CS_NUM_ANTENNAS
+	  since you can run a setup where local controller only has one antenna, but peer controller has two antennas.
+	  In this configuration, set BT_CTLR_SDC_CS_NUM_ANTENNAS to 1 and BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS to 2
+	  (since local controller can send to both of the peer antennas, creating a total of 2 antenna paths)
+	  This option is purely a RAM-usage optimisation. If this option is set to 4, the controller has to reserve space for
+	  a total of 5 measurements per CS-step. However, if you set this to 1, the controller will only reserve space for
+	  2 measurements per CS-step.
 
 config BT_CTLR_SDC_CS_NUM_ANTENNAS
 	int "Number of antennas used in Channel Sounding procedure supported by the controller [EXPERIMENTAL]"
 	default 1
 	range 1 BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS
 	depends on BT_CTLR_CHANNEL_SOUNDING
+	help
+	  Set the max number of antennas supported by local controller. This differs from BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS
+	  since you can run a setup where both local controller and peer controller has 2 antennas.
+	  In this configuration, set BT_CTLR_SDC_CS_NUM_ANTENNAS to 2 and BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS to 4
+	  (since both of the local antennas can send to both of the peer's antennas, creating a total of 4 antenna paths).
 
 config BT_CTLR_SDC_CS_MULTIPLE_ANTENNA_SUPPORT
 	bool
@@ -612,8 +629,12 @@ config BT_CTLR_SDC_CS_MULTIPLE_ANTENNA_SUPPORT
 	  Internal helper config. Not intended for use.
 
 config BT_CTLR_SDC_CS_STEP_MODE3
-	bool "Enable optional step mode-3 capability [EXPERIMENTAL]"
+	bool "Enable optional step mode-3 support [EXPERIMENTAL]"
+	default n
 	depends on BT_CTLR_CHANNEL_SOUNDING
+	help
+	  Enable optional step mode-3 support. Channel sounding will not automatically start using step mode-3 if this
+	  config is set. To use step mode-3, you need to modify the configuration which is created using the LE CS Create config command.
 
 config BT_CTLR_SDC_LE_POWER_CLASS_1
 	bool "Device supports transmitting at LE Power Class 1 level"
