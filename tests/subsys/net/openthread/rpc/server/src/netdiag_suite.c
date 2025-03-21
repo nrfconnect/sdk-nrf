@@ -23,6 +23,12 @@ FAKE_VALUE_FUNC(otError, otThreadSetVendorSwVersion, otInstance *, const char *)
 FAKE_VALUE_FUNC(const char *, otThreadGetVendorName, otInstance *);
 FAKE_VALUE_FUNC(const char *, otThreadGetVendorModel, otInstance *);
 FAKE_VALUE_FUNC(const char *, otThreadGetVendorSwVersion, otInstance *);
+FAKE_VALUE_FUNC(otError, otThreadGetNextDiagnosticTlv, const otMessage *, otNetworkDiagIterator *,
+		otNetworkDiagTlv *);
+FAKE_VALUE_FUNC(otError, otThreadSendDiagnosticGet, otInstance *, const otIp6Address *,
+		const uint8_t *, uint8_t, otReceiveDiagnosticGetCallback, void *);
+FAKE_VALUE_FUNC(otError, otThreadSendDiagnosticReset, otInstance *, const otIp6Address *,
+		const uint8_t *, uint8_t);
 
 #define FOREACH_FAKE(f)                                                                            \
 	f(otThreadSetVendorName);                                                                  \
@@ -30,7 +36,10 @@ FAKE_VALUE_FUNC(const char *, otThreadGetVendorSwVersion, otInstance *);
 	f(otThreadSetVendorSwVersion);                                                             \
 	f(otThreadGetVendorName);                                                                  \
 	f(otThreadGetVendorModel);                                                                 \
-	f(otThreadGetVendorSwVersion);
+	f(otThreadGetVendorSwVersion);                                                             \
+	f(otThreadGetNextDiagnosticTlv);                                                           \
+	f(otThreadSendDiagnosticGet);                                                              \
+	f(otThreadSendDiagnosticReset);
 
 static void nrf_rpc_err_handler(const struct nrf_rpc_err_report *report)
 {
