@@ -42,7 +42,16 @@ private:
 	void OnFabricRemoved(const chip::FabricTable &fabricTable, chip::FabricIndex fabricIndex)
 	{
 #ifndef CONFIG_CHIP_LAST_FABRIC_REMOVED_NONE
-		k_timer_start(&sFabricRemovedTimer, K_MSEC(CONFIG_CHIP_LAST_FABRIC_REMOVED_ACTION_DELAY), K_NO_WAIT);
+		auto &server = chip::Server::GetInstance();
+
+		if (server.GetFabricTable().FabricCount() == 0) {
+			if (chip::DeviceLayer::ConnectivityMgr().IsBLEAdvertisingEnabled()) {
+				server.GetCommissioningWindowManager().CloseCommissioningWindow();
+			}
+
+			k_timer_start(&sFabricRemovedTimer, K_MSEC(CONFIG_CHIP_LAST_FABRIC_REMOVED_ACTION_DELAY),
+				      K_NO_WAIT);
+		}
 #endif // CONFIG_CHIP_LAST_FABRIC_REMOVED_NONE
 	}
 
