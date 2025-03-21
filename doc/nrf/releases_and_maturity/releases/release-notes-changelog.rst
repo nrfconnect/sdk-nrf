@@ -396,7 +396,9 @@ Common Application Framework
 Debug libraries
 ---------------
 
-|no_changes_yet_note|
+* :ref:`cpu_load` library:
+
+  * Added prefix ``NRF_`` to all Kconfig options (for example, :kconfig:option:`CONFIG_NRF_CPU_LOAD`) to avoid conflicts with Zephyr Kconfig options with the same names.
 
 DFU libraries
 -------------
