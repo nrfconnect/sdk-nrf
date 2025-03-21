@@ -123,6 +123,15 @@ Security
 
   * Updated:
 
+    * The Oberon PSA core to version 1.3.4 that introduces support for the following:
+
+      * PSA static key slots with the option :kconfig:option:`CONFIG_MBEDTLS_PSA_STATIC_KEY_SLOTS`.
+      * Key Wrap with and without padding (NIST-SP-800-38F) using Oberon PSA driver.
+      * WPA3-SAE and WPA3-SAE-PT using Oberon PSA driver.
+      * NIST SP 800-108 conformant CMAC and HMAC based key derivation using Oberon PSA driver.
+
+        For more information regarding the Oberon PSA core v1.3.4 update, see the relevant changelog entry in the `Oberon PSA core changelog`_.
+
     * The :ref:`app_approtect` page with nRF Util commands that replaced the nrfjprog commands.
       This is part of the ongoing work of archiving `nRF Command Line Tools`_ and replacing them with nRF Util.
     * The Running applications with Trusted Firmware-M page by renaming it to :ref:`ug_tfm` and moving it under :ref:`ug_tfm_index`.
