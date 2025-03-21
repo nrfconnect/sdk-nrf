@@ -25,19 +25,7 @@ void MatterPostAttributeChangeCallback(const chip::app::ConcreteAttributePath &a
 {
 	VerifyOrReturn(attributePath.mClusterId == DoorLock::Id);
 
-	if (attributePath.mAttributeId == DoorLock::Attributes::LockState::Id) {
-		/* Post events only if current lock state is different than given */
-		switch (*value) {
-		case to_underlying(DlLockState::kLocked):
-			BoltLockMgr().Lock(BoltLockManager::OperationSource::kRemote);
-			break;
-		case to_underlying(DlLockState::kUnlocked):
-			BoltLockMgr().Unlock(BoltLockManager::OperationSource::kRemote);
-			break;
-		default:
-			break;
-		}
-	} else if (attributePath.mAttributeId == DoorLock::Attributes::RequirePINforRemoteOperation::Id) {
+	if (attributePath.mAttributeId == DoorLock::Attributes::RequirePINforRemoteOperation::Id) {
 		BoltLockMgr().SetRequirePIN(*value);
 	}
 }
@@ -75,28 +63,30 @@ bool emberAfPluginDoorLockOnDoorLockCommand(EndpointId endpointId, const Nullabl
 					    const Nullable<chip::NodeId> &nodeId, const Optional<ByteSpan> &pinCode,
 					    OperationErrorEnum &err)
 {
-	bool result = BoltLockMgr().ValidatePIN(pinCode, err);
+	Nullable<BoltLockManager::ValidatePINResult> validatePINResult;
+	bool success = BoltLockMgr().ValidatePIN(pinCode, err, validatePINResult);
 
 	/* Handle changing attribute state on command reception */
-	if (result) {
-		BoltLockMgr().Lock(BoltLockManager::OperationSource::kRemote);
+	if (success) {
+		BoltLockMgr().Lock(BoltLockManager::OperationSource::kRemote, fabricIdx, nodeId, validatePINResult);
 	}
 
-	return result;
+	return success;
 }
 
 bool emberAfPluginDoorLockOnDoorUnlockCommand(EndpointId endpointId, const Nullable<chip::FabricIndex> &fabricIdx,
 					      const Nullable<chip::NodeId> &nodeId, const Optional<ByteSpan> &pinCode,
 					      OperationErrorEnum &err)
 {
-	bool result = BoltLockMgr().ValidatePIN(pinCode, err);
+	Nullable<BoltLockManager::ValidatePINResult> validatePINResult;
+	bool success = BoltLockMgr().ValidatePIN(pinCode, err, validatePINResult);
 
 	/* Handle changing attribute state on command reception */
-	if (result) {
-		BoltLockMgr().Unlock(BoltLockManager::OperationSource::kRemote);
+	if (success) {
+		BoltLockMgr().Unlock(BoltLockManager::OperationSource::kRemote, fabricIdx, nodeId, validatePINResult);
 	}
 
-	return result;
+	return success;
 }
 
 void emberAfDoorLockClusterInitCallback(EndpointId endpoint)
@@ -134,8 +124,9 @@ void emberAfDoorLockClusterInitCallback(EndpointId endpoint)
 		     "number of holiday schedules");
 #endif /* CONFIG_LOCK_SCHEDULES */
 
-	AppTask::Instance().UpdateClusterState(BoltLockMgr().GetState(),
-					       BoltLockManager::OperationSource::kUnspecified);
+	BoltLockManager::StateData state = BoltLockMgr().GetState();
+	state.source = BoltLockManager::OperationSource::kUnspecified;
+	AppTask::Instance().UpdateClusterState(state);
 }
 
 #ifdef CONFIG_LOCK_SCHEDULES

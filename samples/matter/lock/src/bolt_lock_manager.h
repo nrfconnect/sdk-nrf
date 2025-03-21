@@ -18,6 +18,8 @@
 struct BoltLockManagerEvent;
 
 class BoltLockManager {
+	using AccessMgr = AccessManager<DoorLockData::PIN>;
+
 public:
 	static constexpr size_t kMaxCredentialLength = 128;
 
@@ -38,14 +40,24 @@ public:
 	};
 
 	using OperationSource = chip::app::Clusters::DoorLock::OperationSourceEnum;
-	using StateChangeCallback = void (*)(State, OperationSource);
+	using ValidatePINResult = AccessMgr::ValidatePINResult;
+
+	struct StateData {
+		State state;
+		OperationSource source;
+		Nullable<chip::FabricIndex> fabricIdx;
+		Nullable<chip::NodeId> nodeId;
+		Nullable<ValidatePINResult> validatePINResult;
+	};
+
+	using StateChangeCallback = void (*)(const StateData &);
 
 	static constexpr uint32_t kActuatorMovementTimeMs = 2000;
 
 	void Init(StateChangeCallback callback);
 
-	State GetState() const { return mState; }
-	bool IsLocked() const { return mState == State::kLockingCompleted; }
+	const StateData &GetState() const { return mStateData; }
+	bool IsLocked() const { return mStateData.state == State::kLockingCompleted; }
 
 	bool GetUser(uint16_t userIndex, EmberAfPluginDoorLockUserInfo &user);
 	bool SetUser(uint16_t userIndex, chip::FabricIndex creator, chip::FabricIndex modifier,
@@ -74,10 +86,15 @@ public:
 				    uint32_t localEndTime, OperatingModeEnum operatingMode);
 #endif /* CONFIG_LOCK_SCHEDULES */
 
-	bool ValidatePIN(const Optional<chip::ByteSpan> &pinCode, OperationErrorEnum &err);
+	bool ValidatePIN(const Optional<chip::ByteSpan> &pinCode, OperationErrorEnum &err,
+			 Nullable<ValidatePINResult> &result);
 
-	void Lock(OperationSource source);
-	void Unlock(OperationSource source);
+	void Lock(const OperationSource source, const Nullable<chip::FabricIndex> &fabricIdx = NullNullable,
+		  const Nullable<chip::NodeId> &nodeId = NullNullable,
+		  const Nullable<ValidatePINResult> &validatePINResult = NullNullable);
+	void Unlock(const OperationSource source, const Nullable<chip::FabricIndex> &fabricIdx = NullNullable,
+		    const Nullable<chip::NodeId> &nodeId = NullNullable,
+		    const Nullable<ValidatePINResult> &validatePINResult = NullNullable);
 
 	void SetRequirePIN(bool require);
 	bool GetRequirePIN();
@@ -85,18 +102,17 @@ public:
 	void FactoryReset();
 
 private:
-	using AccessMgr = AccessManager<DoorLockData::PIN>;
 	friend class AppTask;
 
-	void SetState(State state, OperationSource source);
+	void SetState(State state);
+	void SetStateData(const StateData &stateData);
 
 	static void ActuatorTimerEventHandler(k_timer *timer);
 	static void ActuatorAppEventHandler(const BoltLockManagerEvent &event);
 	friend BoltLockManager &BoltLockMgr();
 
-	State mState = State::kLockingCompleted;
+	StateData mStateData = { State::kLockingCompleted, OperationSource::kButton, {}, {}, {} };
 	StateChangeCallback mStateChangeCallback = nullptr;
-	OperationSource mActuatorOperationSource = OperationSource::kButton;
 	k_timer mActuatorTimer = {};
 
 	static BoltLockManager sLock;

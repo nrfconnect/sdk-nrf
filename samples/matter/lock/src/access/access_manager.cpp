@@ -18,8 +18,8 @@ using namespace DoorLockData;
 
 template <CredentialsBits CRED_BIT_MASK>
 void AccessManager<CRED_BIT_MASK>::Init(SetCredentialCallback setCredentialClbk,
-					     ClearCredentialCallback clearCredentialClbk,
-					     ValidateCredentialCallback validateCredentialClbk)
+					ClearCredentialCallback clearCredentialClbk,
+					ValidateCredentialCallback validateCredentialClbk)
 {
 	InitializeAllCredentials();
 	mSetCredentialCallback = setCredentialClbk;
@@ -54,7 +54,8 @@ bool AccessManager<CRED_BIT_MASK>::ValidateCustom(CredentialTypeEnum type, chip:
 }
 
 template <CredentialsBits CRED_BIT_MASK>
-bool AccessManager<CRED_BIT_MASK>::ValidatePIN(const Optional<ByteSpan> &pinCode, OperationErrorEnum &err)
+bool AccessManager<CRED_BIT_MASK>::ValidatePIN(const Optional<ByteSpan> &pinCode, OperationErrorEnum &err,
+					       Nullable<ValidatePINResult> &result)
 {
 	/* Optionality of the PIN code is validated by the caller, so assume it is OK not to provide the PIN
 	 * code. */
@@ -66,17 +67,34 @@ bool AccessManager<CRED_BIT_MASK>::ValidatePIN(const Optional<ByteSpan> &pinCode
 
 	/* Check the PIN code */
 	for (size_t index = 1; index <= CONFIG_LOCK_MAX_NUM_CREDENTIALS_PER_TYPE; ++index) {
-		if (CHIP_NO_ERROR == mCredentials.GetCredentials(CredentialTypeEnum::kPin, credential, index)) {
-			if (credential.status == DlCredentialStatus::kAvailable) {
-				continue;
-			}
-
-			if (credential.credentialData.data_equal(pinCode.Value())) {
-				LOG_DBG("Valid lock PIN code provided");
-				return true;
-			}
+		if (CHIP_NO_ERROR != mCredentials.GetCredentials(CredentialTypeEnum::kPin, credential, index)) {
+			err = OperationErrorEnum::kInvalidCredential;
+			continue;
 		}
-		err = OperationErrorEnum::kInvalidCredential;
+
+		if (credential.status == DlCredentialStatus::kAvailable) {
+			continue;
+		}
+
+		if (!credential.credentialData.data_equal(pinCode.Value())) {
+			err = OperationErrorEnum::kInvalidCredential;
+			continue;
+		}
+
+		uint32_t credentialUserId;
+		if (GetCredentialUserId(index, CredentialTypeEnum::kPin, credentialUserId) == CHIP_NO_ERROR) {
+			result = ValidatePINResult{
+				.userId = static_cast<uint16_t>(credentialUserId),
+				.credential =
+					LockOpCredentials{ CredentialTypeEnum::kPin, static_cast<uint16_t>(index) },
+			};
+		} else {
+			result = {};
+		}
+
+		LOG_DBG("Valid lock PIN code provided");
+		err = OperationErrorEnum::kUnspecified;
+		return true;
 	}
 	LOG_DBG("Invalid lock PIN code provided");
 	return false;
@@ -134,9 +152,8 @@ template <CredentialsBits CRED_BIT_MASK> void AccessManager<CRED_BIT_MASK>::SetR
 {
 	if (mRequirePINForRemoteOperation != require) {
 		mRequirePINForRemoteOperation = require;
-		if (!AccessStorage::Instance().Store(AccessStorage::Type::RequirePIN,
-							  &mRequirePINForRemoteOperation,
-							  sizeof(mRequirePINForRemoteOperation))) {
+		if (!AccessStorage::Instance().Store(AccessStorage::Type::RequirePIN, &mRequirePINForRemoteOperation,
+						     sizeof(mRequirePINForRemoteOperation))) {
 			LOG_ERR("Cannot store RequirePINforRemoteOperation.");
 		}
 	}
@@ -148,4 +165,4 @@ template class AccessManager<DoorLockData::PIN | DoorLockData::RFID>;
 template class AccessManager<DoorLockData::PIN | DoorLockData::RFID | DoorLockData::FINGER>;
 template class AccessManager<DoorLockData::PIN | DoorLockData::RFID | DoorLockData::FINGER | DoorLockData::VEIN>;
 template class AccessManager<DoorLockData::PIN | DoorLockData::RFID | DoorLockData::FINGER | DoorLockData::VEIN |
-				  DoorLockData::FACE>;
+			     DoorLockData::FACE>;
