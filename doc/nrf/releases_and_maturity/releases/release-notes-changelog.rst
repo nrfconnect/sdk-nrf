@@ -736,6 +736,8 @@ Bluetooth libraries and services
     * A new information callback - :c:member:`bt_fast_pair_fmdn_info_cb.conn_authenticated` - to the FMDN extension API.
       In the FMDN context, this change is required to support firmware update intents on the Android platform.
       For further details on the Android intent feature for firmware updates, see the :ref:`ug_bt_fast_pair_provisioning_register_firmware_update_intent` section in the Fast Pair integration guide.
+    * A workaround for the issue where the FMDN clock value might not be correctly set after the system reboot for nRF54L Series devices.
+      For details, see the ``NCSDK-32268`` issue in the :ref:`known_issues` page.
 
   * Updated:
 
