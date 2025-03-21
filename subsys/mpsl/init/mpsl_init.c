@@ -15,6 +15,10 @@
 #include <mpsl/mpsl_work.h>
 #include "multithreading_lock.h"
 #include <nrfx.h>
+#if defined(NRF_TRUSTZONE_NONSECURE)
+#include "tfm_platform_api.h"
+#include "tfm_ioctl_core_api.h"
+#endif
 #if IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF54LX)
 #include <nrfx_power.h>
 #endif
@@ -436,6 +440,21 @@ static int32_t mpsl_lib_init_internal(void)
 		return err;
 	}
 #endif /* MPSL_TIMESLOT_SESSION_COUNT > 0 */
+#if defined(NRF_TRUSTZONE_NONSECURE)
+	/* Temporary fix in order to get mpsl to work well when
+	 *  compiling for nrf54l15dk/nrf54l15/cpuapp/ns
+	 */
+	uint32_t result_out;
+	uint32_t result = tfm_platform_mem_write32((uint32_t)&NRF_RRAMC_S->POWER.LOWPOWERCONFIG,
+		RRAMC_POWER_LOWPOWERCONFIG_MODE_Standby << RRAMC_POWER_LOWPOWERCONFIG_MODE_Pos,
+		RRAMC_POWER_LOWPOWERCONFIG_MODE_Msk,
+		&result_out);
+	(void) result_out;
+	(void) result;
+	  __ASSERT(result == TFM_PLATFORM_ERR_SUCCESS,
+			   "tfm_platform_mem_write32 failed %i\n", result);
+	  __ASSERT(result_out == 0, "tfm_platform_mem_write32 failed %i\n", result_out);
+#endif
 
 	return 0;
 }
