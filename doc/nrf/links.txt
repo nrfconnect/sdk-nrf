@@ -156,6 +156,8 @@
 
 .. _`conversion example Pull Request`: https://github.com/zephyrproject-rtos/example-application/pull/58
 
+.. _`Oberon PSA core changelog`: https://github.com/nrfconnect/sdk-oberon-psa-crypto/blob/main/CHANGELOG.md
+
 .. ### Matter links that need updated SHA per release
 
 .. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/022f2c9/src/controller
