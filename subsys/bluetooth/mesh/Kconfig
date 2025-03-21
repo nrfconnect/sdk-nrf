@@ -47,15 +47,6 @@ config BT_MESH_CRYPTO_KEY_INITIALIZER
 
 endif # BT_SETTINGS
 
-if BT_LONG_WQ
-# There is no clear undestanding where this parameter should be adapted for ble mesh purposes.
-# This place has been chosen as temporary solution.
-# JIRA task NCSDK-31391 was created to solve the issue later.
-config BT_LONG_WQ_STACK_SIZE
-	default 4096
-
-endif # BT_LONG_WQ
-
 endif # BT_MESH_USES_MBEDTLS_PSA
 
 if BT_MESH_ADV_EXT
