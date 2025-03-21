@@ -1,9 +1,0 @@
-# Allocate more flash for MCUBOOT with USB DFU enabled
-mcuboot:
-  address: 0x0
-  end_address: 0x10000
-  placement:
-    before:
-    - mcuboot_primary
-  region: flash_primary
-  size: 0x10000

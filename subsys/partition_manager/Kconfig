@@ -101,24 +101,6 @@ rsource "Kconfig.template.partition_config"
 rsource "Kconfig.template.partition_region"
 endif
 
-if ZIGBEE && !SOC_NRF52833
-partition=ZBOSS_NVRAM
-partition-size=0x8000
-rsource "Kconfig.template.partition_config"
-endif
-
-if ZIGBEE && SOC_NRF52833
-partition=ZBOSS_NVRAM
-partition-size=0x4000
-rsource "Kconfig.template.partition_config"
-endif
-
-if ZIGBEE
-partition=ZBOSS_PRODUCT_CONFIG
-partition-size=0x1000
-rsource "Kconfig.template.partition_config"
-endif
-
 if EMDS
 partition=EMDS_STORAGE
 partition-size=0x1000

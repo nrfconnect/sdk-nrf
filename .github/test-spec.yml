@@ -258,27 +258,6 @@
   - "tests/subsys/bluetooth/mesh/**/*"
   - "samples/bluetooth/mesh/**/*"
 
-"CI-zigbee-test":
-  - "include/zigbee/**/*"
-  - "samples/zigbee/**/*"
-  - "subsys/zigbee/**/*"
-  - "tests/subsys/zigbee/**/*"
-  - "subsys/mpsl/**/*"
-  - "subsys/ieee802154/**/*"
-  - "subsys/bootloader/**/*"
-  - "subsys/partition_manager/**/*"
-  - "subsys/dfu/**/*"
-  - "subsys/fw_info/*"
-  - "subsys/pcd/**/*"
-  - "subsys/bluetooth/controller/*"
-  - "subsys/bluetooth/services/nus.c"
-  - "drivers/mpsl/**/*"
-  - "dts/bindings/radio_fem/**/*"
-  - "applications/ipc_radio/**/*"
-  - "modules/nrfxlib/nrf_802154/**/*"
-  - "modules/mcuboot/**/*"
-  - "applications/zigbee_weather_station/**/*"
-
 "CI-thingy91-test":
   - "modules/cjson/**/*"
   - "modules/azure-sdk-for-c/**/*"
