@@ -85,7 +85,6 @@ Zephyr and the |NCS| provide support for developing networking applications with
        | :ref:`Developing with nRF54L Series <ug_nrf54l15_gs>`
 
 
-
 The following nRF70 Series shields are available and defined in the :file:`nrf/boards/shields` folder:
 
 .. list-table::
@@ -115,6 +114,11 @@ The following nRF70 Series shields are available and defined in the :file:`nrf/b
      - ``nrf7002eb``, ``nrf7002eb_interposer_p1`` (nRF54 Series)
      - | :ref:`Development guide <ug_nrf7002eb_gs>`
        | `User Guide <nRF7002 EB User Guide_>`_
+   * - nRF7002 :term:`Expansion Board (EB)` II
+     - PCA63571
+     - ``nrf7002eb2`` (nRF54 Series)
+     - | :ref:`Development guide <ug_nrf7002eb_gs>`
+       | `User Guide <nRF7002-EB II User Guide_>`_
 
 Applications can be developed on the nRF7002 DK (PCA10143), which includes the nRF7002 companion IC, or on boards compatible with the nRF7002 EK (PCA63556) or the nRF7002 EB (PCA63561).
 
@@ -132,4 +136,5 @@ The following subpages cover topics related to developing applications with the 
    power_profiling
    nrf7002ek_dev_guide
    nrf7002eb_dev_guide
+   nrf7002eb2_dev_guide
    wifi_advanced_security_modes
