@@ -824,7 +824,7 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 	case CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED:
 		/* Only AES keys are supported. */
 		if (psa_get_key_type(key_attr) != PSA_KEY_TYPE_AES) {
-			return PSA_ERROR_NOT_SUPPORTED;
+			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 		push_address = (uint8_t *)CRACEN_PROTECTED_RAM_AES_KEY0;
 		/* Only 128, 192 and 256 bit keys are supported. */
@@ -832,10 +832,17 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 		break;
+	case CRACEN_KMU_KEY_USAGE_SCHEME_RAW:
+		/* Since AES-keys can be stored using protected there is no reason to allow them to
+		 * be stored raw. This has the added benefit of blocking for export/copy which is
+		 * not supported for AES-keys
+		 */
+		if (psa_get_key_type(key_attr) == PSA_KEY_TYPE_AES) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
 #ifdef PSA_NEED_CRACEN_KMU_ENCRYPTED_KEYS
 	case CRACEN_KMU_KEY_USAGE_SCHEME_ENCRYPTED:
 #endif /* PSA_NEED_CRACEN_KMU_ENCRYPTED_KEYS */
-	case CRACEN_KMU_KEY_USAGE_SCHEME_RAW:
 		push_address = (uint8_t *)kmu_push_area;
 		if (key_buffer_size == 65) {
 			/* ECDSA public keys are 65 bytes, but the first byte is CBR and compressed
