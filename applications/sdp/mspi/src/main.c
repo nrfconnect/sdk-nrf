@@ -22,7 +22,6 @@
 
 #define DEVICES_MAX   5
 #define DATA_PINS_MAX 8
-#define VIO_COUNT     11
 
 #define STD_PAD_BIAS_CNT0_THRESHOLD 1
 
@@ -45,9 +44,11 @@
 #error "Unsupported SoC for SDP MSPI"
 #endif
 
+#define DATA_LINE_INDEX(pinctr_fun) (pinctr_fun - NRF_FUN_SDP_MSPI_DQ0)
+
 BUILD_ASSERT(CONFIG_SDP_MSPI_MAX_RESPONSE_SIZE > 0, "Response max size should be greater that 0");
 
-static const uint8_t pin_to_vio_map[VIO_COUNT] = {
+static const uint8_t pin_to_vio_map[NRFE_MSPI_PINS_MAX] = {
 	4,  /* Physical pin 0 */
 	0,  /* Physical pin 1 */
 	1,  /* Physical pin 2 */
@@ -75,6 +76,7 @@ static volatile uint8_t ce_vios_count;
 static volatile uint8_t ce_vios[DEVICES_MAX];
 static volatile uint8_t data_vios_count;
 static volatile uint8_t data_vios[DATA_PINS_MAX];
+static volatile uint8_t clk_vio;
 static volatile nrfe_mspi_dev_config_t nrfe_mspi_devices[DEVICES_MAX];
 static volatile nrfe_mspi_xfer_config_t nrfe_mspi_xfer_config;
 static volatile nrfe_mspi_xfer_config_t *nrfe_mspi_xfer_config_ptr = &nrfe_mspi_xfer_config;
@@ -156,22 +158,22 @@ static void configure_clock(enum mspi_cpp_mode cpp_mode)
 	switch (cpp_mode) {
 	case MSPI_CPP_MODE_0: {
 		vio_config.clk_polarity = 0;
-		WRITE_BIT(out, pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER], VPRCSR_NORDIC_OUT_LOW);
+		WRITE_BIT(out, clk_vio, VPRCSR_NORDIC_OUT_LOW);
 		break;
 	}
 	case MSPI_CPP_MODE_1: {
 		vio_config.clk_polarity = 1;
-		WRITE_BIT(out, pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER], VPRCSR_NORDIC_OUT_LOW);
+		WRITE_BIT(out, clk_vio, VPRCSR_NORDIC_OUT_LOW);
 		break;
 	}
 	case MSPI_CPP_MODE_2: {
 		vio_config.clk_polarity = 1;
-		WRITE_BIT(out, pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER], VPRCSR_NORDIC_OUT_HIGH);
+		WRITE_BIT(out, clk_vio, VPRCSR_NORDIC_OUT_HIGH);
 		break;
 	}
 	case MSPI_CPP_MODE_3: {
 		vio_config.clk_polarity = 0;
-		WRITE_BIT(out, pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER], VPRCSR_NORDIC_OUT_HIGH);
+		WRITE_BIT(out, clk_vio, VPRCSR_NORDIC_OUT_HIGH);
 		break;
 	}
 	}
@@ -191,7 +193,7 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet)
 	xfer_params.cpp_mode = device->cpp;
 	xfer_params.ce_polarity = device->ce_polarity;
 	xfer_params.bus_widths = io_modes[device->io_mode];
-	xfer_params.clk_vio = pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER];
+	xfer_params.clk_vio = clk_vio;
 
 	/* Fix position of command and address if command/address length is < BITS_IN_WORD,
 	 * so that leading zeros would not be printed instead of data bits.
@@ -320,7 +322,11 @@ static void config_pins(nrfe_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 	xfer_params.tx_direction_mask = 0;
 	xfer_params.rx_direction_mask = 0;
 
-	for (uint8_t i = 0; i < NRFE_MSPI_PINS_MAX; i++) {
+	for (uint8_t i = 0; i < DATA_PINS_MAX; i++) {
+		data_vios[i] = UINT8_MAX;
+	}
+
+	for (uint8_t i = 0; i < pins_cfg->pins_count; i++) {
 		uint32_t psel = NRF_GET_PIN(pins_cfg->pin[i]);
 		uint32_t fun = NRF_GET_FUN(pins_cfg->pin[i]);
 
@@ -330,7 +336,7 @@ static void config_pins(nrfe_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 
 		uint8_t pin_number = NRF_PIN_NUMBER_TO_PIN(psel);
 
-		NRFX_ASSERT(pin_number < VIO_COUNT);
+		NRFX_ASSERT(pin_number < NRFE_MSPI_PINS_MAX);
 
 		if ((fun >= NRF_FUN_SDP_MSPI_CS0) && (fun <= NRF_FUN_SDP_MSPI_CS4)) {
 
@@ -343,19 +349,19 @@ static void config_pins(nrfe_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 
 		} else if ((fun >= NRF_FUN_SDP_MSPI_DQ0) && (fun <= NRF_FUN_SDP_MSPI_DQ7)) {
 
-			data_vios[data_vios_count] = pin_to_vio_map[pin_number];
-			WRITE_BIT(xfer_params.tx_direction_mask, data_vios[data_vios_count],
+			NRFX_ASSERT(DATA_LINE_INDEX(fun) < DATA_PINS_MAX);
+			NRFX_ASSERT(data_vios[DATA_LINE_INDEX(fun)] == UINT8_MAX);
+
+			data_vios[DATA_LINE_INDEX(fun)] = pin_to_vio_map[pin_number];
+			WRITE_BIT(xfer_params.tx_direction_mask, data_vios[DATA_LINE_INDEX(fun)],
 				  VPRCSR_NORDIC_DIR_OUTPUT);
-			WRITE_BIT(xfer_params.rx_direction_mask, data_vios[data_vios_count],
+			WRITE_BIT(xfer_params.rx_direction_mask, data_vios[DATA_LINE_INDEX(fun)],
 				  VPRCSR_NORDIC_DIR_INPUT);
 			data_vios_count++;
 		} else if (fun == NRF_FUN_SDP_MSPI_SCK) {
-			WRITE_BIT(xfer_params.tx_direction_mask,
-				  pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER],
-				  VPRCSR_NORDIC_DIR_OUTPUT);
-			WRITE_BIT(xfer_params.rx_direction_mask,
-				  pin_to_vio_map[NRFE_MSPI_SCK_PIN_NUMBER],
-				  VPRCSR_NORDIC_DIR_OUTPUT);
+			clk_vio = pin_to_vio_map[pin_number];
+			WRITE_BIT(xfer_params.tx_direction_mask, clk_vio, VPRCSR_NORDIC_DIR_OUTPUT);
+			WRITE_BIT(xfer_params.rx_direction_mask, clk_vio, VPRCSR_NORDIC_DIR_OUTPUT);
 		}
 	}
 	nrf_vpr_csr_vio_dir_set(xfer_params.tx_direction_mask);
@@ -425,11 +431,18 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		}
 
 		if (dev_config->dev_config.io_mode == MSPI_IO_MODE_SINGLE) {
-			nrf_vpr_csr_vio_out_or_set(BIT(3));
-			nrf_vpr_csr_vio_out_or_set(BIT(4));
+			if (data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ2)] != UINT8_MAX &&
+			    data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ3)] != UINT8_MAX) {
+				nrf_vpr_csr_vio_out_or_set(
+					BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ2)]));
+				nrf_vpr_csr_vio_out_or_set(
+					BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ3)]));
+			}
 		} else {
-			nrf_vpr_csr_vio_out_clear_set(BIT(3));
-			nrf_vpr_csr_vio_out_clear_set(BIT(4));
+			nrf_vpr_csr_vio_out_clear_set(
+				BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ2)]));
+			nrf_vpr_csr_vio_out_clear_set(
+				BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ3)]));
 		}
 
 		break;
