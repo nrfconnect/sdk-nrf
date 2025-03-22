@@ -34,4 +34,6 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_net
-    extra_args: coap_client_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
+    extra_args:
+      - coap_client_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
+      - coap_client_SNIPPET=nrf70-wifi
