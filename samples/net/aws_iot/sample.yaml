@@ -37,4 +37,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
-    extra_args: aws_iot_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
+    extra_args:
+      - aws_iot_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
+      - aws_iot_SNIPPET=nrf70-wifi
+      - CONFIG_HEAP_MEM_POOL_SIZE=90000
