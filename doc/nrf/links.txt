@@ -797,11 +797,13 @@
 
 .. _`Measuring current`: https://docs.nordicsemi.com/bundle/ug_nrf7002_dk/page/UG/nrf7002_DK/hw_measure_current.html
 .. _`nRF70 Series`:
+.. _`Guidelines for nRF70 Series devices`:
 .. _`Guidelines and application notes for nRF70 Series devices`: https://docs.nordicsemi.com/category/nrf-70-series
 
 .. _`nRF70 Series power states`: https://docs.nordicsemi.com/bundle/ps_nrf7002/page/chapters/functional/doc/power_states.html
 
 .. _`nRF7002 EK`:
+.. _`nRF7002 EK Hardware`:
 .. _`nRF7002 EK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf7002_ek/page/UG/nrf7002_EK/intro.html
 .. _`nRF7002 EB User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf7002_eb/page/UG/nrf7002_EB/intro.html
 .. _`nRF7002 EB PCB edge connector`: https://docs.nordicsemi.com/bundle/ug_nrf7002_eb/page/UG/nrf7002_EB/pcb_edge_connector.html

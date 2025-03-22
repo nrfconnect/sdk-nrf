@@ -38,3 +38,4 @@ If you want to go through an online training course to familiarize yourself with
    regulatory_support
    debugging
    stack_configuration
+   regulatory_certification/index
