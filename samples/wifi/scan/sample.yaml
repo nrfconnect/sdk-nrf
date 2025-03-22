@@ -2,6 +2,17 @@ sample:
   description: Wi-Fi scan sample application
   name: Wi-Fi scan
 tests:
+  sample.nrf7002dk.scan:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf7002dk/nrf5340/cpuapp
+    platform_allow:
+      - nrf7002dk/nrf5340/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
   sample.nrf7000_eks.scan:
     sysbuild: true
     build_only: true
