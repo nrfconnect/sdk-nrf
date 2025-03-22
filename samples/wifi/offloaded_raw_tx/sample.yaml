@@ -39,3 +39,17 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_wifi
+  sample.nrf7002eb2.offloaded_raw_tx:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - offloaded_raw_tx_SHIELD="nrf7002eb2"
+      - offloaded_raw_tx_SNIPPET=nrf70-wifi
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
