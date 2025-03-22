@@ -28,3 +28,11 @@ Complete the following steps:
 
 .. note::
    Providing custom Mbed TLS configuration headers is not supported when TF-M is enabled.
+
+API documentation
+*****************
+
+| Header file: :file:`subsys/nrf_security/include/psa/protected_storage.h`
+| Source files: :file:`modules/lib/hw_unique_key/`
+
+.. doxygengroup:: psa_storage
