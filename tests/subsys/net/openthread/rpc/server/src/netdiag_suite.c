@@ -50,25 +50,28 @@ static void tc_setup(void *f)
 #define TEST_STRING_SETTER(test_name, cmd, data, data_cbor, func_to_call, max_length, result_exp)  \
 	static otError fake_##test_name(otInstance *instance, const char *arg)                     \
 	{                                                                                          \
+		char data_exp[] = data;                                                            \
+                                                                                                   \
 		ARG_UNUSED(instance);                                                              \
+                                                                                                   \
 		if (strlen(arg) > max_length) {                                                    \
 			return OT_ERROR_INVALID_ARGS;                                              \
 		}                                                                                  \
                                                                                                    \
+		zassert_str_equal(func_to_call##_fake.arg1_val, data_exp);                         \
+                                                                                                   \
 		return OT_ERROR_NONE;                                                              \
 	}                                                                                          \
-												   \
+                                                                                                   \
 	ZTEST(ot_rpc_netdiag, test_name)                                                           \
 	{                                                                                          \
-		char data_exp[] = data;                                                            \
 		func_to_call##_fake.custom_fake = fake_##test_name;                                \
-												   \
+                                                                                                   \
 		mock_nrf_rpc_tr_expect_add(RPC_RSP(result_exp), NO_RSP);                           \
 		mock_nrf_rpc_tr_receive(RPC_CMD(cmd, data_cbor));                                  \
 		mock_nrf_rpc_tr_expect_done();                                                     \
-												   \
+                                                                                                   \
 		zassert_equal(func_to_call##_fake.call_count, 1);                                  \
-		zassert_str_equal(func_to_call##_fake.arg1_val, data_exp);                         \
 	}
 
 #define TEST_STRING_GETTER(test_name, cmd, data, data_cbor, func_to_call)                          \
