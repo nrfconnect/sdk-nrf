@@ -40,7 +40,9 @@ extensions = [
     "sphinx_tabs.tabs",
     "zephyr.external_content",
 ]
+
 source_suffix = [".rst", ".md"]
+master_doc = "wrapper"
 
 exclude_patterns = [
   "platform/cypress/psoc64/security/keys/readme.rst"
@@ -87,9 +89,9 @@ warnings_filter_config = str(NRF_BASE / "doc" / "tfm" / "known-warnings.txt")
 # Options for external_content -------------------------------------------------
 
 external_content_contents = [
+    (NRF_BASE / "doc" / "tfm", "*.rst"),
     (TFM_BASE / "docs", "**/*"),
 ]
-
 
 def setup(app):
     app.add_css_file("css/common.css")
