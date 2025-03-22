@@ -16,3 +16,17 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_wifi
+  sample.nrf7002eb2.wifi_ble_radio_test_sd:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - single_domain_SHIELD="nrf7002eb2"
+      - single_domain_SNIPPET=nrf70-wifi
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
