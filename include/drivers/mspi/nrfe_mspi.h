@@ -16,16 +16,7 @@ extern "C" {
 #endif
 
 #ifdef CONFIG_SOC_NRF54L15
-
-#define NRFE_MSPI_PORT_NUMBER	 2 /* Physical port number */
-#define NRFE_MSPI_SCK_PIN_NUMBER 1 /* Physical pins number on port 2 */
-#define NRFE_MSPI_DQ0_PIN_NUMBER 2
-#define NRFE_MSPI_DQ1_PIN_NUMBER 4
-#define NRFE_MSPI_DQ2_PIN_NUMBER 3
-#define NRFE_MSPI_DQ3_PIN_NUMBER 0
-#define NRFE_MSPI_CS0_PIN_NUMBER 5
-#define NRFE_MSPI_PINS_MAX	 6
-
+#define NRFE_MSPI_PINS_MAX	 11
 #else
 #error "Unsupported SoC for SDP MSPI"
 #endif
@@ -68,6 +59,7 @@ typedef struct {
 
 typedef struct {
 	nrfe_mspi_opcode_t opcode; /* NRFE_MSPI_CONFIG_PINS */
+	uint8_t pins_count;
 	pinctrl_soc_pin_t pin[NRFE_MSPI_PINS_MAX];
 } nrfe_mspi_pinctrl_soc_pin_msg_t;
 
