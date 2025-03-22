@@ -38,7 +38,6 @@ foreach(config_dir ${APPLICATION_CONFIG_DIR} ${COMMON_CHILD_IMAGE_CONFIG_DIR})
   ncs_file(CONF_FILES ${config_dir}
            PM conf_dir_pm_static
            DOMAIN ${DOMAIN}
-           BUILD ${CONF_FILE_BUILD_TYPE}
   )
   if(EXISTS ${conf_dir_pm_static})
     break()
@@ -48,7 +47,6 @@ endforeach()
 ncs_file(CONF_FILES ${BOARD_DIR}
          PM board_dir_pm_static
          DOMAIN ${DOMAIN}
-         BUILD ${CONF_FILE_BUILD_TYPE}
 )
 
 ncs_file(CONF_FILES ${BOARD_DIR}
