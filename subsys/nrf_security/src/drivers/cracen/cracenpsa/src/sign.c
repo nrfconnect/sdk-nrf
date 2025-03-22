@@ -1,7 +1,7 @@
 /**
  * @file
  *
- * @copyright Copyright (c) 2023 Nordic Semiconductor ASA
+ * @copyright Copyright (c) 2025 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -11,7 +11,6 @@
 #include <psa/crypto.h>
 #include <psa/crypto_values.h>
 #include <sicrypto/drbghash.h>
-#include <sicrypto/ecdsa.h>
 #include <sicrypto/ik.h>
 #include <sicrypto/internal.h>
 #include <sicrypto/rsapss.h>
@@ -26,6 +25,7 @@
 #include <sxsymcrypt/sha1.h>
 #include <sxsymcrypt/sha2.h>
 #include <sxsymcrypt/trng.h>
+#include "hashdefs.h"
 
 #include "common.h"
 #include "cracen_psa.h"
@@ -88,6 +88,7 @@ static int cracen_signature_prepare_ec_prvkey(struct si_sig_privkey *privkey, ch
 					      const psa_key_attributes_t *attributes,
 					      bool is_message, size_t digestsz)
 {
+	/* This code can be removed once IKSIG is rewritten */
 	int status;
 
 	status = cracen_ecc_get_ecurve_from_psa(
@@ -117,61 +118,26 @@ static int cracen_signature_prepare_ec_prvkey(struct si_sig_privkey *privkey, ch
 		return SX_ERR_INVALID_ARG;
 	}
 
+	if (alg == PSA_ALG_PURE_EDDSA || alg == PSA_ALG_ED25519PH) {
+		return SX_OK;
+	}
+
 	if (IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_R1) ||
 	    IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_K1) ||
 	    IS_ENABLED(PSA_NEED_CRACEN_ECDSA_BRAINPOOL_P_R1)) {
 		if (PSA_ALG_IS_ECDSA(alg)) {
-			privkey->def = PSA_ALG_ECDSA_IS_DETERMINISTIC(alg)
-					       ? si_sig_def_ecdsa_deterministic
-					       : si_sig_def_ecdsa;
-			privkey->key.eckey.curve = *sicurve;
-			privkey->key.eckey.d = key_buffer;
-			if (is_message) {
-				return cracen_signature_set_hashalgo(&privkey->hashalg, alg);
-			} else {
-				return cracen_signature_set_hashalgo_from_digestsz(
-					&privkey->hashalg, alg, digestsz);
-			}
+			return SX_OK;
 		}
 	}
 
 	return SX_ERR_INCOMPATIBLE_HW;
 }
 
-static int cracen_prepare_ecdsa_ec_pubkey(struct si_sig_pubkey *pubkey,
-					  const struct sx_pk_ecurve *sicurve, bool is_message,
-					  psa_algorithm_t alg, size_t digestsz, size_t curvesz,
-					  char *key_buffer)
-{
-
-	int status = SX_ERR_INCOMPATIBLE_HW;
-
-	pubkey->def = si_sig_def_ecdsa;
-	pubkey->key.eckey.curve = sicurve;
-
-	if (is_message) {
-		status = cracen_signature_set_hashalgo(&pubkey->hashalg, alg);
-	} else {
-		status = cracen_signature_set_hashalgo_from_digestsz(&pubkey->hashalg, alg,
-								     digestsz);
-	}
-
-	if (status != SX_OK) {
-		return status;
-	}
-
-	pubkey->key.eckey.qx = key_buffer;
-	pubkey->key.eckey.qy = key_buffer + curvesz;
-
-	return SX_OK;
-}
-
-static int cracen_signature_prepare_ec_pubkey(struct sitask *t, struct si_sig_pubkey *pubkey,
-					      char *key_buffer, size_t key_buffer_size,
+static int cracen_signature_prepare_ec_pubkey(char *key_buffer, size_t key_buffer_size,
 					      const struct sx_pk_ecurve **sicurve,
 					      psa_algorithm_t alg,
 					      const psa_key_attributes_t *attributes,
-					      bool is_message, size_t digestsz, char *pubkey_buffer)
+					      char *pubkey_buffer)
 {
 	size_t curvesz = PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
 	int status;
@@ -212,36 +178,15 @@ static int cracen_signature_prepare_ec_pubkey(struct sitask *t, struct si_sig_pu
 				}
 
 				/* key_buffer + 1 to skip the 0x4 flag in the first byte */
-				status = cracen_prepare_ecdsa_ec_pubkey(pubkey, *sicurve,
-									is_message, alg, digestsz,
-									curvesz, key_buffer + 1);
-			} else {
-				status = cracen_prepare_ecdsa_ec_pubkey(pubkey, *sicurve,
-									is_message, alg, digestsz,
-									curvesz, pubkey_buffer);
-			}
+				memcpy(pubkey_buffer, key_buffer + 1, key_buffer_size - 1);
+				return SX_OK;
 
-			if (status != SX_OK) {
+			} else {
+				status = ecc_create_genpubkey(key_buffer, pubkey_buffer, *sicurve);
 				return status;
 			}
 		}
 	}
-
-	if (PSA_KEY_TYPE_IS_ECC_KEY_PAIR(psa_get_key_type(attributes))) {
-		struct si_sig_privkey m_privkey;
-
-		status = cracen_signature_prepare_ec_prvkey(&m_privkey, key_buffer, key_buffer_size,
-							    sicurve, alg, attributes, is_message,
-							    digestsz);
-		if (status != SX_OK) {
-			return status;
-		}
-
-		si_sig_create_pubkey(t, &m_privkey, pubkey);
-		si_task_run(t);
-		return si_task_wait(t);
-	}
-
 	return status;
 }
 
@@ -252,7 +197,7 @@ static psa_status_t cracen_signature_ecc_sign(bool is_message,
 					      size_t input_length, uint8_t *signature,
 					      size_t signature_size, size_t *signature_length)
 {
-	int si_status;
+	int si_status = SX_ERR_INCOMPATIBLE_HW;
 	psa_status_t psa_status;
 	const struct sx_pk_ecurve *curve;
 
@@ -296,40 +241,47 @@ static psa_status_t cracen_signature_ecc_sign(bool is_message,
 		} else {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
+	} else if (PSA_ALG_IS_ECDSA(alg)) {
+		const struct sx_pk_ecurve *curve;
+		struct ecc_priv_key privkey;
+		struct sxhashalg hashalg = {0};
+		const struct sxhashalg *hashalgpointer = &hashalg;
+
+		privkey.d = (char *)key_buffer;
+		psa_status = cracen_ecc_get_ecurve_from_psa(
+			PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(attributes)),
+			psa_get_key_bits(attributes), &curve);
+		if (psa_status != PSA_SUCCESS) {
+			return psa_status;
+		}
+
+		psa_status = hash_get_algo(alg, &hashalgpointer);
+		if (psa_status != PSA_SUCCESS) {
+			return psa_status;
+		}
+		*signature_length = 2 * curve->sz;
+		if (PSA_ALG_IS_DETERMINISTIC_ECDSA(alg)) {
+			if (is_message) {
+				si_status = cracen_ecdsa_sign_message_deterministic(
+					&privkey, key_buffer_size, hashalgpointer, curve, input,
+					input_length, signature, signature_size, signature_length);
+			} else {
+				si_status = cracen_ecdsa_sign_digest_deterministic(
+					&privkey, key_buffer_size, hashalgpointer, curve, input,
+					input_length, signature, signature_size, signature_length);
+			}
+		} else {
+			if (is_message) {
+				si_status = cracen_ecdsa_sign_message(
+					&privkey, key_buffer_size, hashalgpointer, curve, input,
+					input_length, signature, signature_size, signature_length);
+			} else {
+				si_status = cracen_ecdsa_sign_digest(
+					&privkey, key_buffer_size, hashalgpointer, curve, input,
+					input_length, signature, signature_size, signature_length);
+			}
+		}
 	}
-
-	struct si_sig_privkey privkey = {0};
-	struct si_sig_signature sign = {0};
-	struct sitask t;
-	/* Workmem for ecc sign task is 4 * digestsz + hmac block size + curve size */
-	char workmem[4 * PSA_HASH_MAX_SIZE + PSA_HMAC_MAX_HASH_BLOCK_SIZE +
-		     PSA_BITS_TO_BYTES(PSA_VENDOR_ECC_MAX_CURVE_BITS)];
-
-	si_task_init(&t, workmem, sizeof(workmem));
-	si_status = cracen_signature_prepare_ec_prvkey(&privkey, (char *)key_buffer,
-						       key_buffer_size, &curve, alg,
-						       attributes, is_message, input_length);
-	if (si_status) {
-		return silex_statuscodes_to_psa(si_status);
-	}
-
-	*signature_length = 2 * curve->sz;
-	sign.sz = *signature_length;
-	sign.r = (char *)signature;
-	sign.s = (char *)signature + *signature_length / 2;
-
-	if (is_message) {
-		si_sig_create_sign(&t, &privkey, &sign);
-	} else {
-		si_sig_create_sign_digest(&t, &privkey, &sign);
-	}
-
-	si_task_consume(&t, (char *)input,
-			is_message ? input_length : sx_hash_get_alg_digestsz(privkey.hashalg));
-
-	si_task_run(&t);
-	si_status = si_task_wait(&t);
-	safe_memzero(workmem, sizeof(workmem));
 	return silex_statuscodes_to_psa(si_status);
 }
 
@@ -341,14 +293,9 @@ static psa_status_t cracen_signature_ecc_verify(bool is_message,
 						size_t signature_length)
 {
 	int si_status = 0;
-	const struct sx_pk_ecurve *curve;
-	struct si_sig_pubkey pubkey = {0};
-	struct si_sig_signature sign = {0};
+	psa_status_t status;
 	char pubkey_buffer[132] = {0}; /* 521 bits * 2 */
-
-	/* Workmem for sicrypto ecc verify task is digest size. */
-	char workmem[PSA_HASH_MAX_SIZE];
-	struct sitask t;
+	const struct sx_pk_ecurve *curve;
 
 	if (!PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(psa_get_key_type(attributes)) &&
 	    !PSA_KEY_TYPE_IS_ECC_KEY_PAIR(psa_get_key_type(attributes))) {
@@ -363,14 +310,8 @@ static psa_status_t cracen_signature_ecc_verify(bool is_message,
 	    ((!is_message) && (!SI_PSA_IS_KEY_FLAG(PSA_KEY_USAGE_VERIFY_HASH, attributes)))) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
-
-	si_task_init(&t, workmem, sizeof(workmem));
-	si_status = cracen_signature_prepare_ec_pubkey(&t, &pubkey, (char *)key_buffer,
-						       key_buffer_size, &curve, alg, attributes,
-						       is_message, input_length, pubkey_buffer);
-	if (si_status) {
-		return silex_statuscodes_to_psa(si_status);
-	}
+	si_status = cracen_signature_prepare_ec_pubkey((char *)key_buffer, key_buffer_size, &curve,
+						       alg, attributes, pubkey_buffer);
 
 	if ((int)signature_length != 2 * curve->sz) {
 		return PSA_ERROR_INVALID_SIGNATURE;
@@ -384,25 +325,30 @@ static psa_status_t cracen_signature_ecc_verify(bool is_message,
 		si_status = cracen_ed25519_verify(pubkey_buffer, (char *)input, input_length,
 						  signature);
 		return silex_statuscodes_to_psa(si_status);
-	}
+	} else if (PSA_ALG_IS_ECDSA(alg) || PSA_ALG_IS_DETERMINISTIC_ECDSA(alg)) {
+		struct sxhashalg hashalg = {0};
+		const struct sxhashalg *hashalgpointer = &hashalg;
 
-	sign.sz = signature_length;
-	sign.r = (char *)signature;
-	sign.s = (char *)signature + signature_length / 2;
-
-	if (is_message) {
-		si_sig_create_verify(&t, &pubkey, &sign);
-	} else {
-		if (sx_hash_get_alg_digestsz(pubkey.hashalg) != input_length) {
-			return PSA_ERROR_INVALID_ARGUMENT;
+		status = cracen_ecc_get_ecurve_from_psa(
+			PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(attributes)),
+			psa_get_key_bits(attributes), &curve);
+		if (status != PSA_SUCCESS) {
+			return status;
 		}
-		si_sig_create_verify_digest(&t, &pubkey, &sign);
+		status = hash_get_algo(alg, &hashalgpointer);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+		if (is_message) {
+			si_status = cracen_ecdsa_verify_message(pubkey_buffer, hashalgpointer,
+								input, input_length, curve,
+								signature);
+		} else {
+			si_status = cracen_ecdsa_verify_digest(pubkey_buffer, hashalgpointer, input,
+							       input_length, curve, signature);
+		}
+		return silex_statuscodes_to_psa(si_status);
 	}
-	si_task_consume(&t, (char *)input, input_length);
-	si_task_run(&t);
-	si_status = si_task_wait(&t);
-
-	safe_memzero(workmem, sizeof(workmem));
 
 	return silex_statuscodes_to_psa(si_status);
 }
