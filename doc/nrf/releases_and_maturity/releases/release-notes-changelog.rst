@@ -43,6 +43,8 @@ IDE, OS, and tool support
     * The command-line instructions now use the ``nrfutil sdk-manager`` command instead of the ``nrfutil toolchain-manager`` command.
       You can read more about the new command in the `nRF Util documentation <sdk-manager command_>`_.
 
+* Removed the Toolchain Manager app section from the following pages: :ref:`installation`, :ref:`updating`, :ref:`requirements`.
+  The app has been deprecated and no longer provides the latest toolchain and |NCS| versions for installation.
 
 Board support
 =============
