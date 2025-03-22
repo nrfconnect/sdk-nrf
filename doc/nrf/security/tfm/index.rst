@@ -31,6 +31,7 @@ For more information about TF-M, see the `Trusted Firmware-M documentation <TF-M
    :maxdepth: 2
    :caption: Subpages:
 
+   tfm_supported_services
    tfm_architecture
    processing_environments
    psa_certified_api_overview
