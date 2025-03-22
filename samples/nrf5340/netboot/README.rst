@@ -111,18 +111,15 @@ After programming the sample to your development kit, complete the following ste
       I: Jumping to the first image slot
       *** Booting Zephyr OS build v2.7.99-ncs1-2195-g186cf4539e5a  ***
 
-#. Program the network core update image using nrfjprog:
+#. Program the network core update image using nRF Util:
 
    .. code-block:: console
 
-      nrfjprog --program zephyr/net_core_app_moved_test_update.hex --sectorerase
+      nrfutil device program --options chip_erase_mode=ERASE_RANGES_TOUCHED_BY_FIRMWARE --firmware zephyr/net_core_app_moved_test_update.hex
 
    .. note::
       Typically, the update image is received through serial interface or Bluetooth.
-      For testing purposes, use nrfjprog to program the update image directly into the update slot.
-
-   .. note::
-      |nrfjprog_deprecation_note|
+      For testing purposes, use nRF Util to program the update image directly into the update slot.
 
 #. Reset the kit.
 #. Observe that the output includes the following lines indicating that the MCUBoot in the application core has read the update image and performed a firmware update of the network core:
