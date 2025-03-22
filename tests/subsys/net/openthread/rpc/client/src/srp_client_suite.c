@@ -52,6 +52,36 @@
  */
 
 /* clang-format off */
+#define CBOR_SERVICE_MIN \
+	/* Subtypes num: */ \
+	0x0, \
+	/* TXT entry count: */ \
+	0x0, \
+	/* String buffer size (service + instance): */ \
+	0xb, \
+	/* Subtypes' buffer size: */ \
+	0x0, \
+	/* TXT buffer size: */ \
+	0x0, \
+	/* Service type: */ \
+	0x65, SERVICE_TYPE, \
+	/* Service instance: */ \
+	0x64, SERVICE_INSTANCE, \
+	/* Subtypes: */ \
+	0x9f, \
+	0xff, \
+	/* TXT: */ \
+	0xbf, \
+	0xff, \
+	/* Other fields: */ \
+	CBOR_UINT16(PORT_1), \
+	CBOR_UINT16(SERVICE_PRIORITY), \
+	CBOR_UINT16(SERVICE_WEIGHT), \
+	CBOR_UINT32(SERVICE_LEASE), \
+	CBOR_UINT32(SERVICE_KEY_LEASE)
+/* clang-format on */
+
+/* clang-format off */
 #define CBOR_SERVICE \
 	/* Subtypes num: */ \
 	0x2, \
@@ -116,6 +146,33 @@ static void tc_after(void *f)
 				   RPC_RSP());
 	otSrpClientClearHostAndServices(NULL);
 	mock_nrf_rpc_tr_expect_done();
+}
+
+/* Test serialization of otSrpClientAddService() with the minimal service data */
+ZTEST(ot_rpc_srp_client, test_otSrpClientAddService_min)
+{
+	otError error;
+	otSrpClientService service;
+
+	service.mName = MAKE_CSTR(SERVICE_TYPE);
+	service.mInstanceName = MAKE_CSTR(SERVICE_INSTANCE);
+	service.mSubTypeLabels = NULL;
+	service.mTxtEntries = NULL;
+	service.mPort = PORT_1;
+	service.mPriority = SERVICE_PRIORITY;
+	service.mWeight = SERVICE_WEIGHT;
+	service.mNumTxtEntries = 0;
+	service.mLease = SERVICE_LEASE;
+	service.mKeyLease = SERVICE_KEY_LEASE;
+
+	/* Test serialization of otSrpClientAddService() */
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_SRP_CLIENT_ADD_SERVICE,
+					   CBOR_UINT32((uintptr_t)&service), CBOR_SERVICE_MIN),
+				   RPC_RSP(OT_ERROR_NONE));
+	error = otSrpClientAddService(NULL, &service);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(error, OT_ERROR_NONE);
 }
 
 /* Test serialization of otSrpClientAddService() followed by otSrpClientClearService() */
