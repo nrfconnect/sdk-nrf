@@ -46,16 +46,49 @@ enum state {
 	STATE_SUSPENDING
 };
 
-static const struct device * const gpio_devs[] = {
-	DEVICE_DT_GET_OR_NULL(DT_NODELABEL(gpio0)),
-	DEVICE_DT_GET_OR_NULL(DT_NODELABEL(gpio1)),
+struct gpio_dev {
+	const struct device * const dev;
+	const uint8_t port;
+	const bool has_gpiote;
+	struct gpio_callback gpio_cb;
 };
-static struct gpio_callback gpio_cb[ARRAY_SIZE(gpio_devs)];
+
+#define DT_DRV_COMPAT nordic_nrf_gpio
+#define _GPIO_PORT_VALIDATE(id)							\
+	BUILD_ASSERT((DT_INST_PROP(id, port) >= 0) && (DT_INST_PROP(id, port) <= UINT8_MAX));
+#define _GPIO_INSTANCE_GET(id)							\
+	{									\
+		.dev = DEVICE_DT_GET(DT_DRV_INST(id)),				\
+		.port = DT_INST_PROP(id, port),					\
+		.has_gpiote = DT_INST_NODE_HAS_PROP(id, gpiote_instance),	\
+	},
+
+DT_INST_FOREACH_STATUS_OKAY(_GPIO_PORT_VALIDATE)
+static struct gpio_dev gpio_devs[] = {
+	DT_INST_FOREACH_STATUS_OKAY(_GPIO_INSTANCE_GET)
+};
 static struct k_work_delayable matrix_scan;
 static struct k_work_delayable button_pressed;
 static enum state state;
 static atomic_t system_power_off = ATOMIC_INIT(false);
 
+
+static int get_gpio_idx(uint8_t port)
+{
+	for (int i = 0; i < ARRAY_SIZE(gpio_devs); i++) {
+		if (gpio_devs[i].port == port) {
+			return i;
+		}
+	}
+
+	__ASSERT_NO_MSG(false);
+	return -EINVAL;
+}
+
+static const struct device *get_gpio_dev(uint8_t port)
+{
+	return gpio_devs[get_gpio_idx(port)].dev;
+}
 
 static void scan_fn(struct k_work *work);
 
@@ -81,10 +114,10 @@ static int set_cols(uint32_t mask)
 				val = !val;
 			}
 
-			err = gpio_pin_configure(gpio_devs[col[i].port],
+			err = gpio_pin_configure(get_gpio_dev(col[i].port),
 						 col[i].pin, GPIO_OUTPUT);
 			if (!err) {
-				err = gpio_pin_set_raw(gpio_devs[col[i].port],
+				err = gpio_pin_set_raw(get_gpio_dev(col[i].port),
 						       col[i].pin, val);
 			}
 		} else {
@@ -97,7 +130,7 @@ static int set_cols(uint32_t mask)
 			 */
 			flags |= pull;
 
-			err = gpio_pin_configure(gpio_devs[col[i].port], col[i].pin, flags);
+			err = gpio_pin_configure(get_gpio_dev(col[i].port), col[i].pin, flags);
 		}
 
 		if (err) {
@@ -112,7 +145,7 @@ static int set_cols(uint32_t mask)
 static int get_rows(uint32_t *mask)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(row); i++) {
-		int val = gpio_pin_get_raw(gpio_devs[row[i].port], row[i].pin);
+		int val = gpio_pin_get_raw(get_gpio_dev(row[i].port), row[i].pin);
 
 		if (val < 0) {
 			LOG_ERR("Cannot get pin");
@@ -138,10 +171,7 @@ static int set_trig_mode(void)
 	int err = 0;
 
 	for (size_t i = 0; (i < ARRAY_SIZE(row)) && !err; i++) {
-		__ASSERT_NO_MSG(row[i].port < ARRAY_SIZE(gpio_devs));
-		__ASSERT_NO_MSG(gpio_devs[row[i].port] != NULL);
-
-		err = gpio_pin_configure(gpio_devs[row[i].port], row[i].pin,
+		err = gpio_pin_configure(get_gpio_dev(row[i].port), row[i].pin,
 					 flags);
 	}
 
@@ -172,11 +202,11 @@ static int callback_ctrl(uint32_t enable_mask)
 			gpio_flags_t flag_irq = (IS_ENABLED(CONFIG_CAF_BUTTONS_POLARITY_INVERSED) ?
 						(GPIO_INT_LEVEL_LOW) : (GPIO_INT_LEVEL_HIGH));
 
-			err = gpio_pin_interrupt_configure(gpio_devs[row[i].port],
+			err = gpio_pin_interrupt_configure(get_gpio_dev(row[i].port),
 							   row[i].pin,
 							   flag_irq);
 		} else {
-			err = gpio_pin_interrupt_configure(gpio_devs[row[i].port],
+			err = gpio_pin_interrupt_configure(get_gpio_dev(row[i].port),
 							   row[i].pin,
 							   GPIO_INT_DISABLE);
 		}
@@ -485,25 +515,52 @@ static void button_pressed_fn(struct k_work *work)
 	}
 }
 
+static int configuration_validate(void)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(col); i++) {
+		int idx = get_gpio_idx(col[i].port);
+
+		if (idx < 0) {
+			LOG_ERR("Unable to find GPIO device");
+			return -EINVAL;
+		}
+	}
+
+	for (size_t i = 0; i < ARRAY_SIZE(row); i++) {
+		int idx = get_gpio_idx(row[i].port);
+
+		if (idx < 0) {
+			LOG_ERR("Unable to find GPIO device");
+			return -EINVAL;
+		}
+		if (!gpio_devs[idx].has_gpiote) {
+			LOG_ERR("GPIO device does not support GPIOTE");
+			return -ENOTSUP;
+		}
+	}
+
+	return 0;
+}
+
 static void init_fn(void)
 {
 	/* Setup GPIO configuration */
 	for (size_t i = 0; i < ARRAY_SIZE(gpio_devs); i++) {
-		if (!gpio_devs[i]) {
-			/* Skip non-existing ports */
-			continue;
-		}
-		if (!device_is_ready(gpio_devs[i])) {
+		if (!device_is_ready(gpio_devs[i].dev)) {
 			LOG_ERR("GPIO device not ready");
 			goto error;
 		}
 	}
 
-	for (size_t i = 0; i < ARRAY_SIZE(col); i++) {
-		__ASSERT_NO_MSG(col[i].port < ARRAY_SIZE(gpio_devs));
-		__ASSERT_NO_MSG(gpio_devs[col[i].port] != NULL);
+	int err = configuration_validate();
 
-		int err = gpio_pin_configure(gpio_devs[col[i].port],
+	if (err) {
+		LOG_ERR("Invalid GPIO configuration");
+		goto error;
+	}
+
+	for (size_t i = 0; i < ARRAY_SIZE(col); i++) {
+		int err = gpio_pin_configure(get_gpio_dev(col[i].port),
 					     col[i].pin, GPIO_INPUT);
 
 		if (err) {
@@ -512,7 +569,7 @@ static void init_fn(void)
 		}
 	}
 
-	int err = set_trig_mode();
+	err = set_trig_mode();
 	if (err) {
 		LOG_ERR("Cannot set interrupt mode");
 		goto error;
@@ -523,7 +580,7 @@ static void init_fn(void)
 		/* Module starts in scanning mode and will switch to
 		 * callback mode if no button is pressed.
 		 */
-		err = gpio_pin_interrupt_configure(gpio_devs[row[i].port],
+		err = gpio_pin_interrupt_configure(get_gpio_dev(row[i].port),
 						   row[i].pin,
 						   GPIO_INT_DISABLE);
 		if (err) {
@@ -531,16 +588,12 @@ static void init_fn(void)
 			goto error;
 		}
 
-		pin_mask[row[i].port] |= BIT(row[i].pin);
+		pin_mask[get_gpio_idx(row[i].port)] |= BIT(row[i].pin);
 	}
 
 	for (size_t i = 0; i < ARRAY_SIZE(gpio_devs); i++) {
-		if (!gpio_devs[i]) {
-			/* Skip non-existing ports */
-			continue;
-		}
-		gpio_init_callback(&gpio_cb[i], button_pressed_isr, pin_mask[i]);
-		err = gpio_add_callback(gpio_devs[i], &gpio_cb[i]);
+		gpio_init_callback(&gpio_devs[i].gpio_cb, button_pressed_isr, pin_mask[i]);
+		err = gpio_add_callback(gpio_devs[i].dev, &gpio_devs[i].gpio_cb);
 		if (err) {
 			LOG_ERR("Cannot add callback");
 			goto error;
