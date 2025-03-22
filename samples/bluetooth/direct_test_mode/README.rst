@@ -250,12 +250,12 @@ The following table presents the patterns that you can use to switch antennas on
 | RFU    | 15 (0b1111)  |
 +--------+--------------+
 
-nRF21540 front-end module
-=========================
+Front-end module
+================
 
 .. include:: /includes/sample_dtm_radio_test_fem.txt
 
-You can configure the transmitted power gain, antenna output and activation delay in nRF21540 using vendor-specific commands, see `Vendor-specific packet payload`_.
+You can configure the transmitted power gain, antenna output and activation delay in FEMs using vendor-specific commands, see `Vendor-specific packet payload`_.
 
 Skyworks front-end module
 =========================
