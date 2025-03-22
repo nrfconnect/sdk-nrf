@@ -29,3 +29,4 @@ You can find more information about OpenThread at `OpenThread.io`_.
    ot_memory
    power_consumption
    commissioning
+   security
