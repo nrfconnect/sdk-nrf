@@ -1583,3 +1583,8 @@ ci_samples_zephyr_subsys_usb:
   files:
     - nrf/samples/zephyr/subsys/usb/
     - zephyr/samples/subsys/usb/
+
+ci_tests_zephyr_drivers_uart:
+  files:
+    - nrf/tests/zephyr/drivers/uart/
+    - zephyr/tests/drivers/uart/

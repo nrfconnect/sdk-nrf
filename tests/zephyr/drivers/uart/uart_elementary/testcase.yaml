@@ -2,7 +2,7 @@ common:
   tags:
     - drivers
     - uart
-    - ci_tests_drivers_uart
+    - ci_tests_zephyr_drivers_uart
   depends_on: gpio
   harness: ztest
   harness_config:
