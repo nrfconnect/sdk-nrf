@@ -42,24 +42,24 @@ The following table shows an example of how to calculate the Kconfig parameter v
 +-------------------+---------------------------+----------------------+--------------+--------------+--------------------+
 | Bands             | Kconfig parameter         | Frequency range (MHz)| AntGain (dB) | PCBLoss (dB) | Kconfig value (dB) |
 +===================+===========================+======================+==============+==============+====================+
-| ANTGAIN_2G        | NRF700X_ANT_GAIN_2G       | 2402 to 2494         | 3.38         | 0.54         | 3                  |
+| ANTGAIN_2G        | NRF70_ANT_GAIN_2G         | 2402 to 2494         | 3.38         | 0.54         | 3                  |
 +-------------------+---------------------------+----------------------+--------------+--------------+--------------------+
-| ANTGAIN_5G_BAND1  | NRF700X_ANT_GAIN_5G_BAND1 | 5150 to 5350         | 2.74         | 1.60         | 2                  |
+| ANTGAIN_5G_BAND1  | NRF70_ANT_GAIN_5G_BAND1   | 5150 to 5350         | 2.74         | 1.60         | 2                  |
 +-------------------+---------------------------+----------------------+--------------+--------------+--------------------+
-| ANTGAIN_5G_BAND2  | NRF700X_ANT_GAIN_5G_BAND2 | 5470 to 5730         | 2.46         | 1.84         | 1                  |
+| ANTGAIN_5G_BAND2  | NRF70_ANT_GAIN_5G_BAND2   | 5470 to 5730         | 2.46         | 1.84         | 1                  |
 +-------------------+---------------------------+----------------------+--------------+--------------+--------------------+
-| ANTGAIN_5G_BAND3  | NRF700X_ANT_GAIN_5G_BAND3 | 5730 to 5895         | 1.77         | 1.51         | 1                  |
+| ANTGAIN_5G_BAND3  | NRF70_ANT_GAIN_5G_BAND3   | 5730 to 5895         | 1.77         | 1.51         | 1                  |
 +-------------------+---------------------------+----------------------+--------------+--------------+--------------------+
 
 Setting antenna gain parameters
 *******************************
 
-The Kconfig parameters and their default values are defined in the :file:`<ncs_repo>/nrf/drivers/wifi/nrf700x/Kconfig` file.
+The Kconfig parameters and their default values are defined in the :file:`<ncs_repo>/zephyr/drivers/wifi/nrf_wifi/Kconfig.nrfwifi` file.
 To compensate for antenna gains, set the following Kconfig parameters in the project :file:`prj.conf` configuration file.
 
-* :kconfig:option:`CONFIG_NRF700X_ANT_GAIN_2G` = ``<ant gain value>``
-* :kconfig:option:`CONFIG_NRF700X_ANT_GAIN_5G_BAND1` = ``<ant gain value>``
-* :kconfig:option:`CONFIG_NRF700X_ANT_GAIN_5G_BAND2` = ``<ant gain value>``
-* :kconfig:option:`CONFIG_NRF700X_ANT_GAIN_5G_BAND3` = ``<ant gain value>``
+* :kconfig:option:`CONFIG_NRF70_ANT_GAIN_2G` = ``<ant gain value>``
+* :kconfig:option:`CONFIG_NRF70_ANT_GAIN_5G_BAND1` = ``<ant gain value>``
+* :kconfig:option:`CONFIG_NRF70_ANT_GAIN_5G_BAND2` = ``<ant gain value>``
+* :kconfig:option:`CONFIG_NRF70_ANT_GAIN_5G_BAND3` = ``<ant gain value>``
 
 The Kconfig parameters can also be set in a relevant overlay file or entered as command-line arguments to the CMake build.

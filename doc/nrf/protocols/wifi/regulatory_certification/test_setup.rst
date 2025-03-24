@@ -12,7 +12,7 @@ An overview of software test samples, hardware development platforms, test modes
 Test samples
 ************
 
-You can use the software test samples available in the |NCS| can be used for regulatory testing of the nRF70 Series devices.
+You can use the software test samples available in the |NCS| for regulatory testing of the nRF70 Series devices.
 
 Wi-Fi Radio test sample
 =======================
@@ -67,7 +67,8 @@ Use the nRF70 Series hardware development platforms for regulatory testing.
 The nRF70 Series includes the following platforms:
 
 * nRF7002 :term:`Development Kit (DK)` – A single-board solution featuring the Wi-Fi 6 capabilities of the nRF7002 companion IC and the nRF5340 :term:`System on Chip (SoC)`.
-* nRF7002 :term:`Evaluation Kit (EK)` – A shield board used for evaluating the nRF7002 companion IC. The EK is compatible with the nRF52840, nRF5340, and nRF91 DKs through its Arduino connector.
+* nRF7002 :term:`Evaluation Kit (EK)` – A shield board used for evaluating the nRF7002 companion IC.
+  The EK is compatible with the nRF52840, nRF5340, and nRF91 DKs through its Arduino connector.
 
 For hardware information, see the user guides `nRF7002 DK Hardware`_ and `nRF7002 EK Hardware`_.
 For more information on the boards in nRF Connect for Desktop, see :ref:`Getting started with nRF70 Series <ug_nrf7002_gs>`.
@@ -138,7 +139,8 @@ This describes the flashing, running, and use of the appropriate console ports w
 Programming firmware in the nRF7002 setup
 =========================================
 
-Before you begin, make sure you have the ``nrfjprog`` that is part of the archived `nRF Command Line Tools`_.
+Before you begin, make sure you have the nRF Util tool installed on your computer.
+See `Installing nRF Util`_ and `Installing and upgrading nRF Util commands`_ for instructions on how to install the nRF Util device utility.
 
 To program firmware in the nRF7002 DK or EK setup, complete the following steps.
 
@@ -149,7 +151,7 @@ To program firmware in the nRF7002 DK or EK setup, complete the following steps.
 
    .. code-block:: console
 
-       $ nrfjprog --recover
+       $ nrfutil device recover
 
    .. note::
       Firmware loading returns an error if the read back protection mechanism is enabled.
@@ -160,22 +162,22 @@ To program firmware in the nRF7002 DK or EK setup, complete the following steps.
 
      .. code-block:: console
 
-        $ nrfjprog --program merged.hex -f NRF53 --coprocessor CP_APPLICATION --verify --chiperase –-reset
+        $ nrfutil device program --firmware merged.hex --core Application --options chip_erase_mode=ERASE_ALL,reset=RESET_SYSTEM
 
    * For Station (STA), Shell, and stand-alone Wi-Fi Radio test samples:
 
      .. code-block:: console
 
-        $ nrfjprog --program zephyr.hex -f NRF53 --coprocessor CP_APPLICATION --verify --chiperase –-reset
+        $ nrfutil device program --firmware merged.hex --core Application --options chip_erase_mode=ERASE_ALL,reset=RESET_SYSTEM
 
 #. Program the relevant hex (binaries) to the network core on the nRF7002 DK:
 
    .. code-block:: console
 
-      $ nrfjprog --program merged_CPUNET.hex -f NRF53 --coprocessor CP_NETWORK --verify --chiperase --reset
+      $  nrfutil device program --firmware merged_CPUNET.hex --core Network --options chip_erase_mode=ERASE_ALL,reset=RESET_SYSTEM
 
 #. To run the firmware on the nRF7002 DK or EK, reset the device.
-   You can press the reset button, use the reset command in nrfjprog, or power cycle the development kit.
+   You can press the **RESET** button, use the ``reset`` command in nRF Util, or power cycle the development kit.
 
    .. note::
       Set the baud rate to 115,200 bps.
@@ -192,16 +194,23 @@ To choose the correct COM port to interact with the network core on the nRF7002 
 
 .. code-block:: console
 
-    $ nrfjprog --com
+    $ nrfutil device list
 
 Typically, VCOM0 is connected to the nRF5340 network core running a Radio test (short-range) and VCOM1 is connected to the nRF5340 application core running a Wi-Fi Radio test.
 Verify the mapping of the COM ports based on the available commands for each port, see Short-range Radio test port, Wi-Fi Radio test port, and the following example:
 
 .. code-block:: console
 
-    $ nrfjprog --com
-    1050771296   /dev/ttyACM0    VCOM0   // This is for Radio Test, note baud rate is 115200bps
-    1050771296   /dev/ttyACM1    VCOM1   // This is for Wi-Fi Radio Test, note baud rate is 115200bps
+    $ nrfutil device list
+    1050753610
+    product         J-Link
+    board version   PCA10143
+    ports           /dev/ttyACM4, vcom: 0   // This is for Radio Test, note baud rate is 115200bps
+                    /dev/ttyACM5, vcom: 1   // This is for Wi-Fi Radio Test, note baud rate is 115200bps
+    traits          devkit, jlink, seggerUsb, serialPorts, usb
+
+   Found 1 supported device(s)
+
 
 .. figure:: images/sr_radio_test_port.png
    :alt: Short-range Radio test port
