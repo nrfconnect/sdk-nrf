@@ -10,7 +10,7 @@
 #include <ot_rpc_common.h>
 
 #include <nrf_rpc_cbor.h>
-#include "ot_rpc_message.h"
+#include "ot_rpc_resource.h"
 
 #include <openthread/udp.h>
 #include <openthread/message.h>

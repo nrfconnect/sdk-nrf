@@ -8,7 +8,7 @@
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
 #include <ot_rpc_common.h>
-#include "ot_rpc_message.h"
+#include "ot_rpc_resource.h"
 
 #include <nrf_rpc_cbor.h>
 

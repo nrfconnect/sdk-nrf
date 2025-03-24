@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "ot_rpc_message.h"
+#include "ot_rpc_resource.h"
 
 #include <nrf_rpc/nrf_rpc_serialize.h>
 #include <ot_rpc_ids.h>
