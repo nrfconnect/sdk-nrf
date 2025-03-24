@@ -37,25 +37,20 @@ ot_msg_key ot_reg_msg_alloc(otMessage *msg)
 
 void ot_msg_free(ot_msg_key key)
 {
-	key--;
-	if (key >= OT_MESSAGES_POOL) {
+	if (key == 0 || key > OT_MESSAGES_POOL) {
 		return;
 	}
 
-	if (ot_message_registry[key] != NULL) {
-		ot_message_registry[key] = NULL;
-	}
+	ot_message_registry[key - 1] = NULL;
 }
 
 otMessage *ot_msg_get(ot_msg_key key)
 {
-	key--;
-
-	if (key < OT_MESSAGES_POOL) {
-		return ot_message_registry[key];
+	if (key == 0 || key > OT_MESSAGES_POOL) {
+		return NULL;
 	}
 
-	return NULL;
+	return ot_message_registry[key - 1];
 }
 
 static void ot_rpc_msg_free(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
