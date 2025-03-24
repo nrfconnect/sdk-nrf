@@ -959,7 +959,8 @@ WARN_LOGFILE           =
 INPUT                  = @DOCSET_SOURCE_BASE@/applications \
                          @DOCSET_SOURCE_BASE@/lib \
                          @DOCSET_SOURCE_BASE@/include \
-                         @DOCSET_SOURCE_BASE@/subsys/zigbee/osif/zb_nrf_platform.h
+                         @DOCSET_SOURCE_BASE@/subsys/zigbee/osif/zb_nrf_platform.h \
+                         @DOCSET_SOURCE_BASE@/subsys/bluetooth/controller/cs_antenna_switch.h
 
 # This tag can be used to specify the character encoding of the source files
 # that Doxygen parses. Internally Doxygen uses the UTF-8 encoding. Doxygen uses
