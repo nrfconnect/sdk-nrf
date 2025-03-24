@@ -60,7 +60,6 @@ tests:
       - mqtt_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
       - mqtt_SNIPPET=nrf70-wifi
       - mqtt_EXTRA_CONF_FILE=overlay-tls-nrf54l15-nrf70.conf
-      - CONFIG_HEAP_MEM_POOL_SIZE=87000
   sample.net.mqtt.nrf91.tls:
     sysbuild: true
     build_only: true

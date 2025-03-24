@@ -1523,8 +1523,7 @@ static int nrf_wifi_radio_test_rx_cap(const struct shell *shell,
 		goto out;
 	}
 
-	rx_cap_buf = k_calloc((ctx->conf_params.capture_length * 3),
-			      sizeof(char));
+	rx_cap_buf = nrf_wifi_osal_mem_zalloc((ctx->conf_params.capture_length * 3));
 
 	if (!rx_cap_buf) {
 		shell_fprintf(shell,

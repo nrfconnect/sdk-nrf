@@ -99,6 +99,7 @@ tests:
       - SHIELD=nrf7002ek_nrf7000
       - CONFIG_SOC_NRF53_CPUNET_ENABLE=y
       - CONFIG_WIFI_NM_WPA_SUPPLICANT=n
+      - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
@@ -166,7 +167,9 @@ tests:
   sample.nrf7002.shell.scan_only_7002:
     sysbuild: true
     build_only: true
-    extra_args: EXTRA_CONF_FILE=overlay-scan-only.conf
+    extra_args:
+      - EXTRA_CONF_FILE=overlay-scan-only.conf
+      - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
@@ -181,6 +184,7 @@ tests:
       - EXTRA_CONF_FILE=overlay-scan-only.conf
       - SHIELD=nrf7002ek_nrf7000
       - CONFIG_WIFI_NM_WPA_SUPPLICANT=n
+      - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     integration_platforms:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
