@@ -234,7 +234,8 @@ Thread
 Zigbee
 ------
 
-* Fixed the :file:`zb_add_ota_header.py` script to allow a patch version higher than 9 in an ``APPLICATION_VERSION_STRING``.
+* Removed all Zigbee resources.
+  They are now available as separate `Zigbee R22`_ and `Zigbee R23`_ add-on repositories.
 
 Wi-Fi®
 ------
@@ -693,7 +694,8 @@ Thread samples
 Zigbee samples
 --------------
 
-|no_changes_yet_note|
+* Removed all Zigbee samples.
+  They are now available as separate `Zigbee R22`_ and `Zigbee R23`_ add-on repositories.
 
 Wi-Fi samples
 -------------
@@ -963,7 +965,8 @@ Shell libraries
 Libraries for Zigbee
 --------------------
 
-|no_changes_yet_note|
+* Removed Zigbee libraries.
+  They are now available as separate `Zigbee R22`_ and `Zigbee R23`_ add-on repositories.
 
 sdk-nrfxlib
 -----------
