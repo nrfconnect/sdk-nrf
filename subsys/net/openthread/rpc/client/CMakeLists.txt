@@ -16,6 +16,7 @@ zephyr_library_sources(
   ot_rpc_ip6.c
   ot_rpc_link.c
   ot_rpc_message.c
+  ot_rpc_meshdiag.c
   ot_rpc_netdata.c
   ot_rpc_netdiag.c
   ot_rpc_srp_client.c
