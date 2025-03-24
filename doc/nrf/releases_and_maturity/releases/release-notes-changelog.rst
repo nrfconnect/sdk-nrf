@@ -566,6 +566,7 @@ Matter samples
 * :ref:`matter_lock_sample` sample:
 
   * Removed support for nRF54H20 devices.
+  * Updated the API of ``AppTask``, ``BoltLockManager``, and ``AccessManager`` to provide additional information for the ``LockOperation`` event.
 
 Networking samples
 ------------------
