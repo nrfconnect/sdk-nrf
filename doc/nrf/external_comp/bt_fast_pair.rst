@@ -545,7 +545,8 @@ When creating the Fast Pair advertising set with the :c:func:`bt_le_ext_adv_crea
    * For the unprovisioned device, control the Fast Pair advertising rotation time using the :c:func:`bt_le_set_rpa_timeout` and :c:func:`bt_le_oob_get_local` functions.
      You must still comply with the requirements of the Fast Pair protocol.
 
-   The provisioning state is indicated by the :c:member:`bt_fast_pair_fmdn_info_cb.provisioning_state_changed` callback.
+   The :c:func:`bt_fast_pair_fmdn_is_provisioned` function can be used to check the current FMDN provisioning state synchronously.
+   Also, the provisioning state changes are indicated by the :c:member:`bt_fast_pair_fmdn_info_cb.provisioning_state_changed` callback.
    See :ref:`ug_bt_fast_pair_gatt_service_fmdn_info_callbacks` for more details.
 
 See the :ref:`fast_pair_locator_tag` sample that demonstrates how to comply with the rules described in this section.
@@ -763,17 +764,27 @@ This function supports the following callbacks:
 * :c:member:`bt_fast_pair_fmdn_info_cb.clock_synced` - Notification about the beacon clock synchronization event
 * :c:member:`bt_fast_pair_fmdn_info_cb.conn_authenticated` - Notification about the connected peer authentication event
 
+.. _ug_bt_fast_pair_gatt_service_fmdn_info_callbacks_provisioning_state:
+
 Provisioning state
 ~~~~~~~~~~~~~~~~~~
 
-The provisioning state is indicated by the :c:member:`bt_fast_pair_fmdn_info_cb.provisioning_state_changed` callback.
+The :c:func:`bt_fast_pair_fmdn_is_provisioned` function can be used to check the current FMDN provisioning state synchronously.
+You can only call this function in the ready state of the Fast Pair module (see the :c:func:`bt_fast_pair_is_ready` function).
+
+The provisioning state changes are indicated by the :c:member:`bt_fast_pair_fmdn_info_cb.provisioning_state_changed` callback.
 This callback is triggered in the following scenarios:
 
-* Right after the :c:func:`bt_fast_pair_enable` enable operation to indicate the initial provisioning state of the extension.
 * On the successful provisioning operation over Beacon Actions characteristic.
 * On the successful unprovisioning operation over Beacon Actions characteristic.
 
-The provisioning state callback is used to notify the application about switching to a proper advertising policy.
+The :c:func:`bt_fast_pair_fmdn_is_provisioned` function and the :c:member:`bt_fast_pair_fmdn_info_cb.provisioning_state_changed` callback are two complementary API elements that can be used to track the FMDN provisioning state in your application code.
+The recommended usage scenario is described in the next paragraph.
+
+Use the :c:func:`bt_fast_pair_fmdn_is_provisioned` function to initialize the provisioning state right after enabling the Fast Pair module with the :c:func:`bt_fast_pair_enable` function call.
+Then, handle the :c:member:`bt_fast_pair_fmdn_info_cb.provisioning_state_changed` callback to track the provisioning state changes until the Fast Pair module is disabled again with the :c:func:`bt_fast_pair_disable` function call.
+
+The accurate tracking of the FMDN provisioning state is mandatory for proper management of the Fast Pair and FMDN advertising policies.
 The advertising policies are extensively described in the :ref:`Setting up Bluetooth LE advertising <ug_bt_fast_pair_advertising>` section of this integration guide.
 
 Clock synchronization
@@ -822,7 +833,7 @@ The FMDN extension defines special read modes, in which sensitive data can be re
 The read mode persists only for limited time after which it is deactivated.
 
 To enter the chosen read mode, you must call the :c:func:`bt_fast_pair_fmdn_read_mode_enter` function and pass the supported read mode type as a function parameter.
-You can only call this function in the ready state of the Fast Pair module (see the :c:func:`bt_fast_pair_is_ready` function) and in the FMDN provisioned state (see the :c:member:`bt_fast_pair_fmdn_info_cb.provisioning_state_changed` callback).
+You can only call this function in the ready state of the Fast Pair module (see the :c:func:`bt_fast_pair_is_ready` function) and in the FMDN provisioned state (see the :c:func:`bt_fast_pair_fmdn_is_provisioned` function).
 The FMDN extension supports the following read mode types:
 
 * :c:enum:`BT_FAST_PAIR_FMDN_READ_MODE_FMDN_RECOVERY` - Ephemeral Identity Key (EIK) recovery mode
