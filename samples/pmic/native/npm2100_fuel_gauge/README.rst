@@ -23,7 +23,7 @@ Overview
 
 This sample allows the calculation of state of charge from a battery connected to the nPM2100 PMIC.
 
-Battery models for Alkaline AA, AAA, LR44, and Lithium-manganese dioxide coin cell CR2032 batteries are included.
+Battery models for Alkaline AA (1S and 2S configuration), AAA (1S and 2S configuration), LR44, and Lithium-manganese dioxide coin cell CR2032 batteries are included.
 You can change the active battery model using a shell command, as illustrated in `Testing`_.
 You can also change the battery model at compile time using the :kconfig:option:`CONFIG_BATTERY_MODEL` Kconfig option.
 
