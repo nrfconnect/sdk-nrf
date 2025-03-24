@@ -738,6 +738,9 @@ Bluetooth libraries and services
       For further details on the Android intent feature for firmware updates, see the :ref:`ug_bt_fast_pair_provisioning_register_firmware_update_intent` section in the Fast Pair integration guide.
     * A workaround for the issue where the FMDN clock value might not be correctly set after the system reboot for nRF54L Series devices.
       For details, see the ``NCSDK-32268`` issue in the :ref:`known_issues` page.
+    * A new function :c:func:`bt_fast_pair_fmdn_is_provisioned` for the FMDN extension API.
+      This function can be used to synchronously check the current FMDN provisioning state.
+      For more details, see the :ref:`ug_bt_fast_pair_gatt_service_fmdn_info_callbacks_provisioning_state` section in the Fast Pair integration guide.
 
   * Updated:
 
@@ -746,6 +749,9 @@ Bluetooth libraries and services
     * The method of supplying the Fast Pair Model ID and Anti-Spoofing Private Key to generate the Fast Pair provisioning data HEX file.
       The ``FP_MODEL_ID`` and ``FP_ANTI_SPOOFING_KEY`` CMake variables are replaced by the corresponding ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID`` and ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` Kconfig options.
     * The automatically generated ``bt_fast_pair`` partition definition (in the :file:`subsys/partition_manager/pm.yml.bt_fast_pair` file) to work correctly when building with TF-M.
+    * The behavior of the :c:member:`bt_fast_pair_fmdn_info_cb.provisioning_state_changed` callback.
+      The callback no longer reports the initial provisioning state after the Fast Pair subsystem is enabled with the :c:func:`bt_fast_pair_enable` function call.
+      See the :ref:`migration guide <migration_3.0_recommended>` for mandatory changes and the :ref:`ug_bt_fast_pair_gatt_service_fmdn_info_callbacks_provisioning_state` section in the Fast Pair integration guide for the description on how to track the FMDN provisioning state with the new approach.
 
   * Removed the sysbuild control over the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option that is defined in the main (default) image.
     Sysbuild no longer sets the value of this Kconfig option.
