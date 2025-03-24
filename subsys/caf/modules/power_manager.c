@@ -6,7 +6,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
 
-#include <zephyr/device.h>
 #if CONFIG_CAF_POWER_MANAGER_CLEAR_RESET_REASON
 #include <hal/nrf_power.h>
 #include <helpers/nrfx_reset_reason.h>
