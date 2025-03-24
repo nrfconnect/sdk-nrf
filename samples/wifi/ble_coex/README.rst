@@ -201,19 +201,27 @@ Testing
 
    .. code-block:: console
 
-      nrfjprog --com
-
-   .. note::
-         |nrfjprog_deprecation_note|
+      nrfutil device list
 
    This command returned the following output in the setup used to run the coexistence tests.
 
    .. code-block:: console
 
-      1050043161         /dev/ttyACM0    VCOM0
-      1050043161         /dev/ttyACM1    VCOM1
-      1050724225         /dev/ttyACM2    VCOM0
-      1050724225         /dev/ttyACM3    VCOM1
+      1050043161
+      product         J-Link
+      board version   PCA10095
+      ports           /dev/ttyACM0, vcom: 0
+                      /dev/ttyACM1, vcom: 1
+      traits          devkit, jlink, seggerUsb, serialPorts, usb
+
+      1050724225
+      product         J-Link
+      board version   PCA10143
+      ports           /dev/ttyACM2, vcom: 0
+                      /dev/ttyACM3, vcom: 1
+      traits          devkit, jlink, seggerUsb, serialPorts, usb
+
+      Found 2 supported device(s)
 
 
    In this example, ``1050043161`` is the serial number of the nRF5340 DK and ``1050724225`` is the serial number of the nRF7002 DK.
