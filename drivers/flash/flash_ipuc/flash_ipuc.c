@@ -673,7 +673,11 @@ struct device *flash_ipuc_find(uintptr_t address, size_t size, uintptr_t *ipuc_a
 	}
 
 	for (size_t i = 0; i < ARRAY_SIZE(ipuc_devs); i++) {
-		dev = (struct device *)ipuc_devs[i];
+		/* Due to the existence of permanent IPUCs (i.e. in the DFU cache RW module)
+		 * IPUC list must be searched in the FILO order, so any temporary, newly
+		 * created IPUC driver is returned by an immediate call to the find API.
+		 */
+		dev = (struct device *)ipuc_devs[ARRAY_SIZE(ipuc_devs) - 1 - i];
 		ctx = (struct ipuc_context *)dev->data;
 		if (ctx->component_id.value == NULL) {
 			continue;
