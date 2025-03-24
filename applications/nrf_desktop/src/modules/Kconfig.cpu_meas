@@ -8,7 +8,7 @@ menu "CPU load measurement"
 
 config DESKTOP_CPU_MEAS_ENABLE
 	bool "Enable measuring CPU load"
-	select CPU_LOAD
+	select NRF_CPU_LOAD
 	help
 	  The CPU load is sent periodically using dedicated application event.
 
