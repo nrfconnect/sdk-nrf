@@ -958,8 +958,7 @@ WARN_LOGFILE           =
 
 INPUT                  = @DOCSET_SOURCE_BASE@/applications \
                          @DOCSET_SOURCE_BASE@/lib \
-                         @DOCSET_SOURCE_BASE@/include \
-                         @DOCSET_SOURCE_BASE@/subsys/zigbee/osif/zb_nrf_platform.h
+                         @DOCSET_SOURCE_BASE@/include
 
 # This tag can be used to specify the character encoding of the source files
 # that Doxygen parses. Internally Doxygen uses the UTF-8 encoding. Doxygen uses
@@ -2438,8 +2437,6 @@ PREDEFINED             = __DOXYGEN__ \
                          "CONFIG_LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT=y" \
                          "CONFIG_LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT=y" \
                          "ATOMIC_DEFINE(x, y)=atomic_t x[ATOMIC_BITMAP_SIZE(y)]" \
-                         "CONFIG_ZIGBEE_DEBUG_FUNCTIONS=y" \
-                         "CONFIG_ZBOSS_ERROR_PRINT_TO_LOG=y" \
                          "CONFIG_BT_MESH_LIGHT_CTRL_SRV_REG=y" \
                          "CONFIG_BT_MESH_LIGHT_CTRL_SRV=y" \
                          "MODULE=" \
@@ -2455,8 +2452,6 @@ PREDEFINED             = __DOXYGEN__ \
                          "CONFIG_NRF_CLOUD_PGPS=y" \
                          "CONFIG_MODEM_INFO=y" \
                          "CONFIG_NRF_MODEM=y" \
-                         "CONFIG_ZIGBEE_ROLE_END_DEVICE=y" \
-                         "CONFIG_ZIGBEE_FACTORY_RESET=y" \
                          "CONFIG_NRF_CLOUD_GATEWAY=y" \
                          "CONFIG_BT_CENTRAL" \
                          "CONFIG_LTE_LC_CONN_EVAL_MODULE=y" \

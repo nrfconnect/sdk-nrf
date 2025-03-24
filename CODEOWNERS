@@ -38,7 +38,6 @@
 /applications/sdp/                        @nrfconnect/ncs-ll-ursus
 /applications/serial_lte_modem/           @nrfconnect/ncs-co-networking @nrfconnect/ncs-iot-oulu
 /applications/serial_lte_modem/src/lwm2m_carrier/ @nrfconnect/ncs-carrier
-/applications/zigbee_weather_station/     @nrfconnect/ncs-zigbee
 /applications/asset_tracker_v2/**/*.rst   @nrfconnect/ncs-cia-doc
 /applications/connectivity_bridge/*.rst   @nrfconnect/ncs-cia-doc
 /applications/ipc_radio/*.rst             @nrfconnect/ncs-si-muffin-doc
@@ -275,7 +274,6 @@
 /doc/nrf/samples/wifi_radiotest.rst       @nrfconnect/ncs-wifi-doc
 /doc/nrf/samples/wifi_provisioning.rst    @nrfconnect/ncs-wifi-doc
 /doc/nrf/samples/wifi_zephyr.rst          @nrfconnect/ncs-wifi-doc
-/doc/nrf/samples/zigbee.rst               @nrfconnect/ncs-terahertz-doc
 /doc/nrf/security/                        @nrfconnect/ncs-aegir-doc
 /doc/nrf/templates/                       @nrfconnect/ncs-doc-leads
 /doc/nrf/test_and_optimize/               @nrfconnect/ncs-doc-leads
@@ -372,7 +370,6 @@
 /include/sdp/                             @nrfconnect/ncs-ll-ursus
 /include/shell/                           @nordic-krch
 /include/tfm/                             @nrfconnect/ncs-aegir
-/include/zigbee/                          @nrfconnect/ncs-zigbee
 /include/dult.h                           @nrfconnect/ncs-si-bluebagel
 
 # Libraries
@@ -561,7 +558,6 @@
 /samples/wifi/promiscuous/                @D-Triveni
 /samples/wifi/wfa_qt_app/                 @D-Triveni
 /samples/wifi/offloaded_raw_tx/           @kapbh @sachinthegreen
-/samples/zigbee/                          @nrfconnect/ncs-zigbee
 
 /samples/app_event_manager/*.rst          @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-bluebagel-doc
 /samples/app_event_manager_profiler_tracer/*.rst @nrfconnect/ncs-si-muffin-doc
@@ -818,7 +814,6 @@
 /subsys/suit/                             @nrfconnect/ncs-charon
 /subsys/trusted_storage/                  @nrfconnect/ncs-aegir
 /subsys/uart_async_adapter/               @nrfconnect/ncs-si-muffin
-/subsys/zigbee/                           @nrfconnect/ncs-zigbee
 
 # Sysbuild
 /sysbuild/                                @nrfconnect/ncs-co-build-system
@@ -925,7 +920,6 @@
 /tests/subsys/suit/                       @nrfconnect/ncs-charon
 /tests/tfm/                               @nrfconnect/ncs-aegir @stephen-nordic @magnev
 /tests/unity/                             @nordic-krch
-/tests/subsys/zigbee/                     @nrfconnect/ncs-zigbee
 /tests/zephyr/drivers/adc/                @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/comparator/         @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/flash/common/       @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus

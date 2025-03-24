@@ -61,10 +61,6 @@ if (CONFIG_FILE_SYSTEM_LITTLEFS)
   ncs_add_partition_manager_config(pm.yml.file_system)
 endif()
 
-if (CONFIG_ZIGBEE)
-  ncs_add_partition_manager_config(pm.yml.zboss)
-endif()
-
 if (CONFIG_NVS AND NOT CONFIG_SETTINGS_NVS)
   ncs_add_partition_manager_config(pm.yml.nvs)
 endif()
