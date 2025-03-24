@@ -37,7 +37,7 @@ To measure the power consumption of the nRF7002 DK, complete the following steps
         .. code-block:: console
 
            wifi scan
-           wifi connect <SSID>
+           wifi connect -s <SSID> -k <key_management> -p <passphrase>
 
      #. Check the connection status using the following Wi-Fi shell command:
 
@@ -59,7 +59,7 @@ To measure the power consumption of the nRF7002 DK, complete the following steps
         .. code-block:: console
 
            wifi scan
-           wifi connect <SSID>
+           wifi connect -s <SSID> -k <key_management> -p <passphrase>
 
      #. Check the connection status using the following Wi-Fi shell command:
 

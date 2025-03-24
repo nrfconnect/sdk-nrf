@@ -66,7 +66,7 @@ The following test procedure is recommended:
 
         .. code-block:: bash
 
-           wifi connect <SSID> <Password>
+           wifi connect -s <SSID> -k <key_management> -p <passphrase>
            wifi_util tx_rate 0 6
            zperf udp upload 192.168.1.20 5001 20 1k 20M
 

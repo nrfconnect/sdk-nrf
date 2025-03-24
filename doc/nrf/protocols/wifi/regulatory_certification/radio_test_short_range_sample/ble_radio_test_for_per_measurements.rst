@@ -27,7 +27,7 @@ Configure the transmitting device (DK or EK) to transmit 10000 packets (TX trans
 
 Record the number of successfully received packets on the receiving device (DK or EK).
 Repeat as necessary until the count stops incrementing.
-RX success count is displayed as ``dsss_crc32_pass_cnt``.
+RX success count is displayed as ``Number of packets:``.
 
 .. code-block:: shell
 

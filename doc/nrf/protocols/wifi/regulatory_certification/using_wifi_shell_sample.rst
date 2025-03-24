@@ -36,7 +36,7 @@ The following commands lets you scan, connect, and ping to a desired network or 
 
    .. code-block:: shell
 
-      uart:~$ wifi connect <SSID> <Password>
+      uart:~$ wifi connect -s <SSID> -k <key_management> -p <passphrase>
 
 #. Query the status of the connection:
 

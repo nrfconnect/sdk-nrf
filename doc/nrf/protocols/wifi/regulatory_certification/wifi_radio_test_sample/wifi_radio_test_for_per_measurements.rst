@@ -29,7 +29,7 @@ Configure the transmitting DK or EK to send 10,000 packets (TX transmit count) w
 
    uart:~$ wifi_radio_test init 1
    uart:~$ wifi_radio_test tx_pkt_tput_mode 0
-   uart:~$ wifi_radio_test tx_pkt_preamble 1
+   uart:~$ wifi_radio_test tx_pkt_preamble 0
    uart:~$ wifi_radio_test tx_pkt_rate 1
    uart:~$ wifi_radio_test tx_pkt_len 1024
    uart:~$ wifi_radio_test tx_pkt_gap 200
@@ -135,7 +135,7 @@ To prevent lengthy transmission times, keep the interpacket gap at minimum 200 Â
 
 Record the number of successfully received packets on the receiving DK or EK.
 Repeat as necessary until the count stops incrementing.
-The RX success count is displayed as ofdm_crc32_pass_cnt.
+The RX success count is displayed as ``ofdm_crc32_pass_cnt``.
 
 .. code-block:: shell
 
@@ -185,7 +185,7 @@ To prevent lengthy transmission times, keep the interpacket gap at minimum 200 Â
 
 Record the number of successfully received packets on the receiving DK or EK.
 Repeat as necessary until the count stops incrementing.
-The RX success count is displayed as ``dsss_crc32_pass_cnt``.
+The RX success count is displayed as ``ofdm_crc32_pass_cnt``.
 
 .. code-block:: shell
 
@@ -234,7 +234,7 @@ To prevent lengthy transmission times, keep the interpacket gap at minimum 200 Â
 
 Record the number of successfully received packets on the receiving DK or EK.
 Repeat as necessary until the count stops incrementing.
-The RX success count is displayed as ``dsss_crc32_pass_cnt``.
+The RX success count is displayed as ``ofdm_crc32_pass_cnt``.
 
 .. code-block:: shell
 
@@ -284,7 +284,7 @@ To prevent lengthy transmission times, keep the interpacket gap at minimum 200 Â
 
 Record the number of successfully received packets on the receiving DK or EK.
 Repeat as necessary until the count stops incrementing.
-The RX success count is displayed as ``dsss_crc32_pass_cnt``.
+The RX success count is displayed as ``ofdm_crc32_pass_cnt``.
 
 .. code-block:: shell
 
