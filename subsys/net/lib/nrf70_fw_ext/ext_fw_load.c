@@ -40,7 +40,13 @@ static const char nrf70_fw_patch[] = {
 #include <zephyr/drivers/flash.h>
 #include <zephyr/storage/flash_map.h>
 
-#include "hal_api.h"
+#ifdef CONFIG_NRF70_SYSTEM_MODE
+#include "system/hal_api.h"
+#elif CONFIG_NRF70_RADIO_TEST
+#include "radio_test/hal_api.h"
+#else
+#include "offload_raw_tx/hal_api.h"
+#endif
 
 #include <patch_info.h>
 
