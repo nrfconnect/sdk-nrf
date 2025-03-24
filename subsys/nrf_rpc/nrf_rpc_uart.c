@@ -353,6 +353,7 @@ static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t
 	uart_tr->hdlc_state = HDLC_STATE_UNSYNC;
 	uart_tr->rx_packet_len = 0;
 	uart_irq_rx_enable(uart_tr->uart);
+	nrf_rpc_uart_initialized_hook(uart_tr->uart);
 
 	return 0;
 }
@@ -447,6 +448,10 @@ static void tx_buf_free(const struct nrf_rpc_tr *transport, void *buf)
 	ARG_UNUSED(transport);
 
 	k_free(buf);
+}
+
+__weak void nrf_rpc_uart_initialized_hook(const struct device *uart_dev)
+{
 }
 
 const struct nrf_rpc_tr_api nrf_rpc_uart_service_api = {
