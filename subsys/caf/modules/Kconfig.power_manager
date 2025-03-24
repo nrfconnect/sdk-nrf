@@ -13,6 +13,7 @@ config CAF_POWER_MANAGER
 	imply POWEROFF if !SOC_SERIES_NRF54HX
 	imply PM if SOC_SERIES_NRF54HX
 	imply PM_DEVICE
+	imply PM_DEVICE_RUNTIME if SOC_SERIES_NRF54HX
 	help
 	  Enable power management, which will put the device to low-power mode
 	  if it is idle.
