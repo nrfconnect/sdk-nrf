@@ -19,6 +19,7 @@
 #include <openthread/netdata.h>
 #include <openthread/netdiag.h>
 #include <openthread/message.h>
+#include <openthread/mesh_diag.h>
 #include <openthread/srp_client.h>
 #include <openthread/dns_client.h>
 
@@ -1327,6 +1328,109 @@ static int cmd_test_net_diag(const struct shell *sh, size_t argc, char *argv[])
 	return 0;
 }
 
+static void handle_mesh_diag_discover(otError error, otMeshDiagRouterInfo *router_info,
+				      void *context)
+{
+	const struct shell *sh = (const struct shell *)context;
+
+	if (error != OT_ERROR_NONE && error != OT_ERROR_PENDING) {
+		shell_error(sh, "Error in mesh diag discovery :%d", error);
+		return;
+	}
+
+	shell_print(sh, "------------------------------------------------------------------");
+	shell_print(sh, "Received mesh diagnostic response from Router ID: %u",
+		    router_info->mRouterId);
+	shell_print(sh, "Rloc16: 0x%x", router_info->mRloc16);
+	shell_print(sh, "Extended Address:");
+	shell_hexdump(sh, router_info->mExtAddress.m8, OT_EXT_ADDRESS_SIZE);
+	if (router_info->mVersion != OT_MESH_DIAG_VERSION_UNKNOWN) {
+		shell_print(sh, "Version: %u", router_info->mVersion);
+	}
+	shell_print(sh, "IsThisDeviceParent: %s",
+		    router_info->mIsThisDeviceParent ? "true" : "false");
+	shell_print(sh, "IsLeader: %s", router_info->mIsLeader ? "true" : "false");
+	shell_print(sh, "IsThisDevice: %s", router_info->mIsThisDevice ? "true" : "false");
+	shell_print(sh, "IsBorderRouter:  %s", router_info->mIsBorderRouter ? "true" : "false");
+
+	for (int i = 0; i <= OT_NETWORK_MAX_ROUTER_ID; i++) {
+		if (router_info->mLinkQualities[i]) {
+			shell_print(sh, "Link quality to Router %u: %u", i,
+				    router_info->mLinkQualities[i]);
+		}
+	}
+
+	if (router_info->mIp6AddrIterator) {
+		otIp6Address address;
+
+		error = otMeshDiagGetNextIp6Address(router_info->mIp6AddrIterator, &address);
+		if (error == OT_ERROR_NONE) {
+			shell_print(sh, "\nIPv6 addresses:");
+			do {
+				shell_hexdump(sh, address.mFields.m8, OT_IP6_ADDRESS_SIZE);
+				error = otMeshDiagGetNextIp6Address(router_info->mIp6AddrIterator,
+								    &address);
+
+			} while (error == OT_ERROR_NONE);
+		}
+	}
+
+	if (router_info->mChildIterator) {
+		otMeshDiagChildInfo child_info;
+
+		error = otMeshDiagGetNextChildInfo(router_info->mChildIterator, &child_info);
+		if (error == OT_ERROR_NONE) {
+			shell_print(sh, "\nChildren:");
+			do {
+				shell_print(sh, "\tRloc16 0x%x", child_info.mRloc16);
+				shell_print(sh, "\tLink quality: %u", child_info.mLinkQuality);
+				shell_print(sh, "\tRxOnWhenIdle: %s",
+					    child_info.mMode.mRxOnWhenIdle ? "true" : "false");
+				shell_print(sh, "\tDeviceType: %s",
+					    child_info.mMode.mDeviceType ? "true" : "false");
+				shell_print(sh, "\tNetworkData: %s",
+					    child_info.mMode.mNetworkData ? "true" : "false");
+				shell_print(sh, "\tIsThisDevice: %s",
+					    child_info.mIsThisDevice ? "true" : "false");
+				shell_print(sh, "\tIsBorderRouter: %s\n",
+					    child_info.mIsBorderRouter ? "true" : "false");
+				error = otMeshDiagGetNextChildInfo(router_info->mChildIterator,
+								   &child_info);
+			} while (error == OT_ERROR_NONE);
+		}
+	}
+}
+
+static int cmd_test_mesh_diag(const struct shell *sh, size_t argc, char *argv[])
+{
+	otMeshDiagDiscoverConfig config = {
+		.mDiscoverIp6Addresses = false,
+		.mDiscoverChildTable = false,
+	};
+
+	if (strcmp(argv[1], "cancel") == 0) {
+		otMeshDiagCancel(NULL);
+		return 0;
+	} else if (strcmp(argv[1], "start") != 0) {
+		shell_error(sh, "Invalid argument %s", argv[1]);
+		return -EINVAL;
+	}
+
+	for (int i = 2; i < argc; i++) {
+		if (strcmp(argv[i], "ip6") == 0) {
+			config.mDiscoverIp6Addresses = true;
+		} else if (strcmp(argv[i], "children") == 0) {
+			config.mDiscoverChildTable = true;
+		} else {
+			shell_error(sh, "Invalid argument %s", argv[i]);
+			return -EINVAL;
+		}
+	}
+	otMeshDiagDiscoverTopology(NULL, &config, handle_mesh_diag_discover, (void *)sh);
+
+	return 0;
+}
+
 static void print_txt_entry(const struct shell *sh, const otDnsTxtEntry *entry)
 {
 	char buffer[128];
@@ -1885,6 +1989,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      "Network diag, args: <get|reset> <IPv6-address>"
 		      " <tlv-type ...>",
 		      cmd_test_net_diag, 4, 255),
+	SHELL_CMD_ARG(test_mesh_diag, NULL, "Mesh diag topology discovery, args: <start|cancel>"
+					    "[ip6] [children]",
+		      cmd_test_mesh_diag, 2, 2),
 	SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_ARG_REGISTER(ot, &ot_cmds,

@@ -6,7 +6,7 @@
 
 #include <mock_nrf_rpc_transport.h>
 #include <ot_rpc_ids.h>
-#include <ot_rpc_message.h>
+#include <ot_rpc_resource.h>
 #include <test_rpc_env.h>
 
 #include <zephyr/fff.h>
