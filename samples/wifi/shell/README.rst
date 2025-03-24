@@ -92,16 +92,13 @@ The following is an example of the CLI commands:
 
    west build -b thingy91x/nrf5340/cpuapp -- -DSB_CONFIG_THINGY91X_STATIC_PARTITIONS_NRF53_EXTERNAL_FLASH=y
    # Set SWD switch to nRF91 and check if you are connected to an nRF91:
-   nrfjprog --deviceversion
-   # If you see NRF9120_xxAA_REV3, proceed with erasing:
-   nrfjprog --recover
+   nrfutil device device-info
+   # If you see deviceVersion as NRF9120_xxAA_REV3 in the above output, proceed with erasing:
+   nrfutil device --recover
    # Flip the SWD switch back to nRF53.
-   nrfjprog --deviceversion
-   # If you see NRF5340_xxAA_REV1, proceed with flashing:
+   nrfutil device device-info
+   # If you see deviceVersion as NRF5340_xxAA_REV1 in the above output, proceed with flashing:
    west flash --erase
-
-.. note::
-    |nrfjprog_deprecation_note|
 
 See also :ref:`cmake_options` for instructions on how to provide CMake options.
 
