@@ -288,6 +288,26 @@ Configure radio transmitter power
 
 See :ref:`ug_matter_gs_transmission_power` for more information.
 
+.. _ug_matter_device_low_power_calibration_period:
+
+Configure radio driver temperature calibration period
+*****************************************************
+
+The radio driver requires periodic calibration events to compensate the potential temperature changes that may affect the clock configuration.
+The frequency of the calibration depends on the device's environment and the temperature changes the device is exposed to.
+For example, a device that is mobile or installed outdoors likely requires shorter calibration period than a device that is installed indoors.
+
+Additionally, the calibration period has an impact on the device's power consumption, because it results in device wake-ups.
+It is recommended not to use a calibration period value smaller than required to avoid the unnecessary increase in power consumption.
+
+You can configure the calibration period using the following Kconfig options:
+
+* :kconfig:option:`CONFIG_NRF_802154_TEMPERATURE_UPDATE_PERIOD` -  Configures the 802.15.4 radio driver calibration period in milliseconds.
+  The default value is 60000 ms (60 s), which is optimal for most use cases.
+* :kconfig:option:`CONFIG_MPSL_CALIBRATION_PERIOD` - Configures Multiprotocol Service Layer (MPSL) driver calibration period in milliseconds.
+  This is used only, if the application uses LFRC or it is run on an nRF54L Series SoC.
+  The default value is 4000 ms (4 s), which is likely too aggressive for most use cases.
+
 Disable unused RAM sections
 ***************************
 
