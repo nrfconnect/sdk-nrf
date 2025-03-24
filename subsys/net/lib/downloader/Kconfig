@@ -13,7 +13,7 @@ comment "Thread and stack buffers"
 
 config DOWNLOADER_STACK_SIZE
 	int "Thread stack size"
-	range 768 4096
+	range 768 8192
 	default 1280
 
 config DOWNLOADER_MAX_HOSTNAME_SIZE
