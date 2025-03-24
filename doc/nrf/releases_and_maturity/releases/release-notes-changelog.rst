@@ -1070,6 +1070,7 @@ Documentation
   * The :ref:`ug_nrf91` documentation to use `nRF Util`_ instead of nrfjprog.
   * The :ref:`dm-revisions` section of the :ref:`dm_code_base` page with information about the preview release tag, which replaces the development tag.
   * The :ref:`ug_bt_mesh_configuring` page with the security toolbox section and the key importer functionality.
+  * The :ref:`ug_nrf7002_gs` documentation to use `nRF Util`_ instead of nrfjprog.
 
 * Removed:
 
