@@ -71,23 +71,18 @@ static void ot_rpc_cmd_coap_new_message(const struct nrf_rpc_group *group,
 
 	openthread_api_mutex_lock(openthread_get_default_context());
 	message = otCoapNewMessage(openthread_get_default_instance(), settings);
-	openthread_api_mutex_unlock(openthread_get_default_context());
-
-	if (!message) {
-		goto out;
-	}
-
 	message_rep = ot_reg_msg_alloc(message);
 
-	if (!message_rep) {
+	if ((message != NULL) && !message_rep) {
 		/*
-		 * If failed to allocate the message handle, the ownership can't be passed to the
-		 * RPC client. Therefore, free the message.
+		 * Failed to allocate the message handle, so the ownership can't be passed to
+		 * the RPC client. Therefore, free the message.
 		 */
 		otMessageFree(message);
 	}
 
-out:
+	openthread_api_mutex_unlock(openthread_get_default_context());
+
 	nrf_rpc_rsp_send_uint(group, message_rep);
 }
 
@@ -180,7 +175,7 @@ static void ot_rpc_cmd_coap_message_append_uri_path_options(const struct nrf_rpc
 	message_rep = nrf_rpc_decode_uint(ctx);
 	nrf_rpc_decode_str(ctx, uri, sizeof(uri));
 
-	if (!nrf_rpc_decode_valid(ctx)) {
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_APPEND_URI_PATH_OPTIONS);
 		return;
 	}
@@ -194,7 +189,6 @@ static void ot_rpc_cmd_coap_message_append_uri_path_options(const struct nrf_rpc
 
 	openthread_api_mutex_lock(openthread_get_default_context());
 	error = otCoapMessageAppendUriPathOptions(message, uri);
-	nrf_rpc_cbor_decoding_done(group, ctx);
 	openthread_api_mutex_unlock(openthread_get_default_context());
 
 	nrf_rpc_rsp_send_uint(group, error);
@@ -455,6 +449,8 @@ static void ot_rpc_coap_resource_handler(void *aContext, otMessage *aMessage,
 	message_rep = ot_reg_msg_alloc(aMessage);
 
 	if (!message_rep) {
+		nrf_rpc_err(-ENOMEM, NRF_RPC_ERR_SRC_SEND, &ot_group,
+			    OT_RPC_CMD_COAP_RESOURCE_HANDLER, NRF_RPC_PACKET_TYPE_CMD);
 		return;
 	}
 
@@ -559,6 +555,8 @@ static void ot_rpc_coap_default_handler(void *aContext, otMessage *aMessage,
 	message_rep = ot_reg_msg_alloc(aMessage);
 
 	if (!message_rep) {
+		nrf_rpc_err(-ENOMEM, NRF_RPC_ERR_SRC_SEND, &ot_group,
+			    OT_RPC_CMD_COAP_DEFAULT_HANDLER, NRF_RPC_PACKET_TYPE_CMD);
 		return;
 	}
 
@@ -606,13 +604,12 @@ static void ot_rpc_coap_response_handler(void *context, otMessage *message,
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t cbor_buffer_size = 0;
 
-	if (message) {
-		message_rep = ot_reg_msg_alloc(message);
-
-		if (!message_rep) {
-			return;
-		}
-	}
+	message_rep = ot_reg_msg_alloc(message);
+	/*
+	 * Ignore message handle allocation failure. It seems safer to call the client's response
+	 * handler without the response (which indicates response timeout) than not to call the
+	 * handler at all and make the client wait for the response indefinitely.
+	 */
 
 	cbor_buffer_size += 1 + sizeof(ot_rpc_coap_request_key);
 	cbor_buffer_size += 1 + sizeof(ot_msg_key);
@@ -657,12 +654,12 @@ static void ot_rpc_cmd_coap_send_request(const struct nrf_rpc_group *group,
 	openthread_api_mutex_lock(openthread_get_default_context());
 	error = otCoapSendRequest(openthread_get_default_instance(), message, &message_info,
 				  ot_rpc_coap_response_handler, (void *)request_rep);
-	openthread_api_mutex_unlock(openthread_get_default_context());
 
 	if (error == OT_ERROR_NONE) {
 		ot_msg_free(message_rep);
 	}
 
+	openthread_api_mutex_unlock(openthread_get_default_context());
 	nrf_rpc_rsp_send_uint(group, error);
 }
 
@@ -694,8 +691,12 @@ static void ot_rpc_cmd_coap_send_response(const struct nrf_rpc_group *group,
 
 	openthread_api_mutex_lock(openthread_get_default_context());
 	error = otCoapSendResponse(openthread_get_default_instance(), message, &message_info);
-	openthread_api_mutex_unlock(openthread_get_default_context());
 
+	if (error == OT_ERROR_NONE) {
+		ot_msg_free(message_rep);
+	}
+
+	openthread_api_mutex_unlock(openthread_get_default_context());
 	nrf_rpc_rsp_send_uint(group, error);
 }
 
