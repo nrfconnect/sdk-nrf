@@ -226,46 +226,6 @@ ci_samples_crypto: &ci_crypto
 
 ci_tests_crypto: *ci_crypto
 
-ci_samples_zigbee: &ci_zigbee
-  files:
-    - nrf/applications/ipc_radio/
-    - nrf/applications/zigbee_weather_station/
-    - nrf/cmake/
-    - nrf/drivers/mpsl/
-    - nrf/dts/bindings/radio_fem/
-    - nrf/include/zigbee/
-    - nrf/modules/mcuboot/
-    - nrf/modules/nrfxlib/nrf_802154/
-    - nrf/samples/zigbee/
-    - nrf/subsys/bluetooth/controller/
-    - nrf/subsys/bluetooth/services/
-    - nrf/subsys/bootloader/
-    - nrf/subsys/dfu/
-    - nrf/subsys/fw_info/
-    - nrf/subsys/ieee802154/
-    - nrf/subsys/mpsl/
-    - nrf/subsys/partition_manager/
-    - nrf/subsys/pcd/
-    - nrf/subsys/zigbee
-    - nrf/sysbuild/
-    - nrf/tests/subsys/zigbee/
-    - nrfxlib/mpsl/include/
-    - nrfxlib/mpsl/lib/
-    - nrfxlib/nrf_802154/driver/
-    - nrfxlib/nrf_802154/serialization/
-    - nrfxlib/nrf_802154/sl/
-    - nrfxlib/softdevice_controller/include/
-    - nrfxlib/softdevice_controller/lib/
-    - nrfxlib/zboss/
-    - zephyr/cmake/
-    - zephyr/include/dfu/
-    - zephyr/include/mgmt/mcumgr/
-    - zephyr/share/
-    - zephyr/subsys/dfu/
-    - zephyr/subsys/mgmt/mcumgr/
-
-ci_tests_subsys_zigbee: *ci_zigbee
-
 ci_samples_openthread:
   files:
     - modules/hal_nordic/nrf_802154/

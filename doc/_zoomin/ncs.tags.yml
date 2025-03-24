@@ -285,9 +285,9 @@ mapping_topics:
   - nrf/protocols/thread/prebuilt_libs.html: ["kconfig"]
   - nrf/protocols/thread/sed_ssed.html: ["kconfig"]
   - nrf/protocols/thread/certification.html: ["certifications"]
-  - nrf/protocols/zigbee/*.html: ["zigbee"]
   - nrf/protocols/wifi/*.html: ["wifi", "nrf70-series", "nrf7002", "nrf7001", "nrf7000"]
   - nrfprotocols/wifi/wifi_certification.html: ["certifications"]
+  - nrf/protocols/zigbee/index.html: ["zigbee"]
   - nrf/protocols/wifi/station_mode/powersave.html: ["power-profiler-kit"]
   - nrf/applications.html: ["nrf91-series", "nrf70-series", "nrf54-series", "nrf53-series",
                             "nrf52-series", "nrf7002", "nrf7001", "nrf7000", "nrf9160", "thingy91",
@@ -342,7 +342,6 @@ mapping_topics:
   - nrf/samples/openthread.html: ["thread"]
   - nrf/samples/openthread/*.html: ["thread"]
   - nrf/samples/zigbee.html: ["zigbee"]
-  - nrf/samples/zigbee/*.html: ["zigbee"]
   - nrf/samples/wifi.html: ["wifi"]
   - nrf/samples/wifi/*.html: ["wifi"]
   - nrf/drivers/*.html: ["drivers"]
@@ -415,5 +414,4 @@ mapping_topics:
   - nrfxlib/openthread/*.html: ["thread"]
   - nrfxlib/nrf_dm/*.html: ["nrf52-series", "nrf53-series"]
   - nrfxlib/softdevice_controller/*.html: ["nrf52-series", "nrf53-series", "ble"]
-  - nrfxlib/zboss/*.html: ["kconfig", "zigbee"]
   - nrfx/*.html: ["drivers"]

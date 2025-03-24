@@ -12,9 +12,6 @@
 # Nordic 5-Clause is always allowed.
 LicenseRef-Nordic-5-Clause: ".*"
 
-# ZBOSS 4-clause is allowed only in zboss directory.
-LicenseRef-ZBOSS-4-Clause: "^nrfxlib/zboss/"
-
 # PCFT license is allowed for nRF53 Audio.
 LicenseRef-PCFT: "^nrf/applications/nrf5340_audio/"
 
