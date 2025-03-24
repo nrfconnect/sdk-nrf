@@ -51,3 +51,10 @@
   platforms:
     - nrf54l20pdk/nrf54l20/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-7255"
+
+- scenarios:
+    - nrf.extended.drivers.uart.uart_elementary_dual_l09
+    - nrf.extended.drivers.uart.uart_elementary_dual_setup_mismatch_l09
+  platforms:
+    - nrf54l09pdk/nrf54l09/cpuflpr
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-7265"
