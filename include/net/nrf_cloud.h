@@ -294,6 +294,12 @@ enum nrf_cloud_fota_status {
 	NRF_CLOUD_FOTA_CANCELED = 5,
 	NRF_CLOUD_FOTA_REJECTED = 6,
 	NRF_CLOUD_FOTA_DOWNLOADING = 7,
+
+	/* Validation for Full modem FOTA needed, disconnect from LTE network and call
+	 * nrf_cloud_fota_poll_update_apply(). This event is not reported to nRF Cloud and is only
+	 * used internally to signal the application to apply the full modem FOTA update.
+	 */
+	NRF_CLOUD_FOTA_FMFU_VALIDATION_NEEDED = 8,
 };
 
 /** @brief FOTA update type. */
