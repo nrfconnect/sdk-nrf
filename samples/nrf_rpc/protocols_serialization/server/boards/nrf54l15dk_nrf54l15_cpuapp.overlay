@@ -8,8 +8,10 @@
 		nordic,rpc-uart = &uart21;
 	};
 
-	/* delete all buttons except button0 to free GPIO pins assigned to uart21 below */
 	aliases {
+		rpc-alive-led = &led0;
+
+		/* delete all buttons except button0 to free GPIO pins assigned to uart21 below */
 		/delete-property/ sw1;
 		/delete-property/ sw2;
 		/delete-property/ sw3;

@@ -7,6 +7,10 @@
 	chosen {
 		nordic,rpc-uart = &uart1;
 	};
+
+	aliases {
+		rpc-alive-led = &led0;
+	};
 };
 
 &uart1 {

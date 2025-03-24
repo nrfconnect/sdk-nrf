@@ -15,6 +15,14 @@ config NRF_PS_SERVER_FATAL_ERROR_TRIGGER
 	  provides an RPC client with access to the crash log stored in the retained
 	  RAM partition.
 
+config NRF_PS_SERVER_RPC_ALIVE_LED
+	bool "RPC alive LED"
+	default y
+	depends on $(dt_alias_enabled,rpc-alive-led)
+	help
+	  Turns on the LED selected with "/alias/rpc-alive-led" DTS property when
+	  the UART transport is alive and ready to receive nRF RPC packets.
+
 module = NRF_PS_SERVER
 module-str = nrf_ps_server
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

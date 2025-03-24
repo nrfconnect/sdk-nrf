@@ -32,6 +32,19 @@ extern "C" {
 #define NRF_RPC_UART_TRANSPORT(node_id) _CONCAT(nrf_rpc_tr_, DT_DEP_ORD(node_id))
 
 /**
+ * @brief Notifies that nRF RPC UART transport is ready to receive packets.
+ *
+ * This function is called by the nRF RPC UART transport implementation as soon as
+ * a transport instance is initialized and ready to receive nRF RPC packets.
+ *
+ * @note The nRF RPC transport implementation provides an empty, weak definition of this
+ *       function, which the application can override if needed.
+ *
+ * @param uart_dev The UART device for which the transport has just been initialized.
+ */
+extern void nrf_rpc_uart_initialized_hook(const struct device *uart_dev);
+
+/**
  * @}
  */
 
