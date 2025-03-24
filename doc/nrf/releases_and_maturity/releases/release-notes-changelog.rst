@@ -447,7 +447,11 @@ Bluetooth Fast Pair samples
       Integrated the new connection authentication callback from the FMDN module and the Device Information Service (DIS) to support firmware version read operation over the Firmware Revision characteristic.
       For further details on the Android intent feature for firmware updates, see the :ref:`ug_bt_fast_pair_provisioning_register_firmware_update_intent` section of the Fast Pair integration guide.
 
-  * Updated the partition layout for the ``nrf5340dk/nrf5340/cpuapp/ns`` and ``thingy53/nrf5340/cpuapp/ns`` board targets to accommodate the partitions needed due to change in the TF-M profile configuration.
+  * Updated:
+
+    * The partition layout for the ``nrf5340dk/nrf5340/cpuapp/ns`` and ``thingy53/nrf5340/cpuapp/ns`` board targets to accommodate the partitions needed due to change in the TF-M profile configuration.
+    * The debug (default) configuration of the main image to enable the Link Time Optimization (LTO) with the :kconfig:option:`CONFIG_LTO` Kconfig option.
+      This change ensures consistency with the sample release configuration that has the LTO feature enabled by default.
 
 Bluetooth Mesh samples
 ----------------------
