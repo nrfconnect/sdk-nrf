@@ -8,11 +8,11 @@ menu "Power manager"
 
 config CAF_POWER_MANAGER
 	bool "Enable power management"
-	select PM_DEVICE
 	select CAF_PM_EVENTS
 	select CAF_POWER_MANAGER_EVENTS
 	imply POWEROFF if !SOC_SERIES_NRF54HX
 	imply PM if SOC_SERIES_NRF54HX
+	imply PM_DEVICE
 	help
 	  Enable power management, which will put the device to low-power mode
 	  if it is idle.
