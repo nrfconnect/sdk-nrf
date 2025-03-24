@@ -189,6 +189,7 @@ Matter
   * New arguments to the :ref:`ug_matter_gs_tools_matter_west_commands_zap_tool_gui` to provide a custom cache directory and add new clusters to Matter Data Model.
   * :ref:`ug_matter_debug_snippet`.
   * Storing Matter key materials in the :ref:`matter_platforms_security_kmu`.
+  * A new section :ref:`ug_matter_device_low_power_calibration_period` in the :ref:`ug_matter_device_low_power_configuration` page.
 
 * Disabled the :ref:`mpsl` before performing factory reset to speed up the process.
 
