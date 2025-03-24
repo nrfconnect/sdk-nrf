@@ -25,6 +25,12 @@ static const struct battery_model_primary battery_models[] = {
 	[BATTERY_TYPE_ALKALINE_AAA] = {
 		#include <battery_models/primary_cell/AAA_Alkaline.inc>
 	},
+	[BATTERY_TYPE_ALKALINE_2SAA] = {
+		#include <battery_models/primary_cell/2SAA_Alkaline.inc>
+	},
+	[BATTERY_TYPE_ALKALINE_2SAAA] = {
+		#include <battery_models/primary_cell/2SAAA_Alkaline.inc>
+	},
 	[BATTERY_TYPE_ALKALINE_LR44] = {
 		#include <battery_models/primary_cell/LR44.inc>
 	},
@@ -39,6 +45,8 @@ static const struct battery_model_primary battery_models[] = {
 static const float battery_current[] = {
 	[BATTERY_TYPE_ALKALINE_AA] = 5e-3f,
 	[BATTERY_TYPE_ALKALINE_AAA] = 5e-3f,
+	[BATTERY_TYPE_ALKALINE_2SAA] = 5e-3f,
+	[BATTERY_TYPE_ALKALINE_2SAAA] = 5e-3f,
 	[BATTERY_TYPE_ALKALINE_LR44] = 1.5e-3f,
 	[BATTERY_TYPE_LITHIUM_CR2032] = 1.5e-3f,
 };

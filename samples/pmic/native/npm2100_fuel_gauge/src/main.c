@@ -29,6 +29,10 @@ int main(void)
 		battery_model = BATTERY_TYPE_ALKALINE_AA;
 	} else if (IS_ENABLED(CONFIG_BATTERY_MODEL_ALKALINE_AAA)) {
 		battery_model = BATTERY_TYPE_ALKALINE_AAA;
+	} else if (IS_ENABLED(CONFIG_BATTERY_MODEL_ALKALINE_2SAA)) {
+		battery_model = BATTERY_TYPE_ALKALINE_2SAA;
+	} else if (IS_ENABLED(CONFIG_BATTERY_MODEL_ALKALINE_2SAAA)) {
+		battery_model = BATTERY_TYPE_ALKALINE_2SAAA;
 	} else if (IS_ENABLED(CONFIG_BATTERY_MODEL_ALKALINE_LR44)) {
 		battery_model = BATTERY_TYPE_ALKALINE_LR44;
 	} else if (IS_ENABLED(CONFIG_BATTERY_MODEL_LITHIUM_CR2032)) {
@@ -75,6 +79,10 @@ static int cmd_battery_model_set(const struct shell *sh, size_t argc, char **arg
 		battery_model = BATTERY_TYPE_ALKALINE_AA;
 	} else if (strcmp(argv[0], "Alkaline_AAA") == 0) {
 		battery_model = BATTERY_TYPE_ALKALINE_AAA;
+	} else if (strcmp(argv[0], "Alkaline_2SAA") == 0) {
+		battery_model = BATTERY_TYPE_ALKALINE_2SAA;
+	} else if (strcmp(argv[0], "Alkaline_2SAAA") == 0) {
+		battery_model = BATTERY_TYPE_ALKALINE_2SAAA;
 	} else if (strcmp(argv[0], "Alkaline_LR44") == 0) {
 		battery_model = BATTERY_TYPE_ALKALINE_LR44;
 	} else if (strcmp(argv[0], "Lithium_CR2032") == 0) {

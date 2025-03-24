@@ -11,6 +11,10 @@ enum battery_type {
 	BATTERY_TYPE_ALKALINE_AA,
 	/* Cylindrical non-rechargeable Alkaline AAA */
 	BATTERY_TYPE_ALKALINE_AAA,
+	/* Cylindrical non-rechargeable Alkaline 2SAA (2 x AA in series) */
+	BATTERY_TYPE_ALKALINE_2SAA,
+	/* Cylindrical non-rechargeable Alkaline 2SAAA (2 x AAA in series) */
+	BATTERY_TYPE_ALKALINE_2SAAA,
 	/* Alkaline coin cell LR44 */
 	BATTERY_TYPE_ALKALINE_LR44,
 	/* Lithium-manganese dioxide coin cell CR2032 */

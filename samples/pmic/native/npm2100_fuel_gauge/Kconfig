@@ -27,6 +27,16 @@ config BATTERY_MODEL_ALKALINE_AAA
 	help
 	  Alkaline AAA cylindrical battery.
 
+config BATTERY_MODEL_ALKALINE_2SAA
+	bool "Alkaline 2SAA"
+	help
+	  Two Alkaline AA cylindrical batteries in series.
+
+config BATTERY_MODEL_ALKALINE_2SAAA
+	bool "Alkaline 2SAAA"
+	help
+	  Two Alkaline AAA cylindrical batteries in series.
+
 config BATTERY_MODEL_ALKALINE_LR44
 	bool "Alkaline LR44"
 	help
