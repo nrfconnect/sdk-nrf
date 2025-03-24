@@ -978,6 +978,7 @@ Google Fast Pair integration
 
   * The :ref:`ug_bt_fast_pair_provisioning_register_hex_generation` section that describes how to generate the hex file with the Fast Pair provisioning data.
   * The :ref:`ug_bt_fast_pair_prerequisite_ops_kconfig` section to align it with recent changes in the sysbuild configuration for Fast Pair.
+  * The :ref:`ug_bt_fast_pair_gatt_service_fmdn_info_callbacks_provisioning_state` section with changes to the FMDN API elements that are used for tracking of the FMDN provisioning state.
 
 Edge Impulse integration
 ------------------------
