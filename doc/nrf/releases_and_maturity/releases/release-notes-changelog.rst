@@ -494,6 +494,10 @@ Bluetooth Fast Pair samples
       The change modifies the memory partition layout for the ``nrf54l15dk/nrf54l15/cpuapp`` board target and changes the MCUboot image signing algorithm.
       Because of that, the application images built for the ``nrf54l15dk/nrf54l15/cpuapp`` board target from this |NCS| release are not compatible with the MCUboot bootloader built from previous releases.
       It is highly recommended to use hardware cryptography for the nRF54L SoC Series for improved security.
+    * The configurations for board targets with the MCUboot bootloader support to use a non-default signature key file (the ``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`` Kconfig option).
+      The application uses a unique signature key file for each board target, which is defined at the same directory level as the target sysbuild configuration file.
+      This modification changes the key set that is used by the MCUboot DFU solution.
+      Because of that, the application images from this |NCS| release are not compatible with the MCUboot bootloader built from previous releases.
 
 Bluetooth Mesh samples
 ----------------------
