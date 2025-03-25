@@ -600,7 +600,14 @@ Networking samples
 NFC samples
 -----------
 
-|no_changes_yet_note|
+* Added support for the ``nrf54l15dk/nrf54l05/cpuapp`` and ``nrf54l15dk/nrf54l10/cpuapp`` board targets in the following samples:
+
+    * :ref:`record_text`
+    * :ref:`record_launch_app`
+    * :ref:`nfc_shell`
+    * :ref:`nrf-nfc-system-off-sample`
+    * :ref:`nfc_tnep_tag`
+    * :ref:`writable_ndef_msg`
 
 nRF5340 samples
 ---------------
