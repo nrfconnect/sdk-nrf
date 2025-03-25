@@ -45,7 +45,7 @@ jobs:
         west-update-args: '-n zephyr bsim'
 
     - name: cache-pip
-      uses: actions/cache@v3
+      uses: actions/cache@2f8e54208210a422b2efd51efaa6bd6d7ca8920f # v3
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-doc-pip
@@ -104,7 +104,7 @@ jobs:
             -c origin/${BASE_REF}..
 
     - name: Upload results
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4
       continue-on-error: true
       if: always() && contains(github.event.pull_request.user.login, 'dependabot[bot]') != true
       with:

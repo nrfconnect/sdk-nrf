@@ -26,7 +26,7 @@ jobs:
           tar -C ./workspace -czvf src.tar.gz .
 
       - name: Set up JFrog CLI
-        uses: jfrog/setup-jfrog-cli@v4
+        uses: jfrog/setup-jfrog-cli@f748a0599171a192a2668afee8d0497f7c1069df # v4
 
       - name: Configure and Upload to Artifactory
         env:

@@ -11,7 +11,7 @@ jobs:
     name: Manifest
     steps:
       - name: Checkout the code
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           path: ncs/nrf
           ref: ${{ github.event.pull_request.head.sha }}
@@ -31,7 +31,7 @@ jobs:
           west update zephyr
 
       - name: Manifest
-        uses: zephyrproject-rtos/action-manifest@v1.8.0
+        uses: zephyrproject-rtos/action-manifest@ea38f222cddfbbb9debb5f0239f4139ae2677ebb # v1.8.0
         with:
           github-token: ${{ secrets.NCS_GITHUB_TOKEN }}
           manifest-path: 'west.yml'
