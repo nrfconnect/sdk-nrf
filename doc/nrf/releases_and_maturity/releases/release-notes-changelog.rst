@@ -335,6 +335,9 @@ nRF Desktop
     The negative impact of USB polling jitter is more visible in case of USB High-Speed.
   * The Fast Pair sysbuild configurations to align the application with the sysbuild Kconfig changes for controlling the Fast Pair provisioning process.
     The Nordic device models intended for demonstration purposes are now supplied by default in the nRF Desktop Fast Pair configurations.
+  * The :ref:`nrf_desktop_dvfs` to no longer consume the :c:struct:`ble_peer_conn_params_event`.
+    This allows to propagate the event to further listeners of the same or lower priority.
+    This prevents an issue where :ref:`nrf_desktop_ble_latency` is not informed about the connection parameter update (it might cause missing connection latency updates).
 
 * Removed:
 

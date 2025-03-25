@@ -300,7 +300,7 @@ static bool handle_ble_peer_conn_params_event(const struct ble_peer_conn_params_
 	process_dvfs_states(DVFS_STATE_LLPM_CONNECTED,
 			    event->interval_min & REG_CONN_INTERVAL_LLPM_MASK);
 
-	return true;
+	return false;
 }
 static void dvfs_state_timeout_work_handler(struct k_work *work)
 {
