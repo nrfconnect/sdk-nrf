@@ -343,6 +343,10 @@
 .. _`nPM1300 EK get started`: https://www.nordicsemi.com/Products/Development-hardware/nPM1300-EK/Get-started?lang=en#infotabs
 
 .. _`nPM2100 product website`: https://www.nordicsemi.com/Products/nPM2100
+.. _`nPM2100 Datasheet`: https://docs.nordicsemi.com/bundle/ps_npm2100/page/keyfeatures_html5.html
+.. _`nPM2100 EK product page`: https://docs.nordicsemi.com/bundle/ug_npm2100_ek/page/UG/nPM2100_EK/intro/intro.html
+.. _`Connect and use the nPM2100 EK`: https://docs.nordicsemi.com/bundle/ug_npm2100_ek/page/UG/nPM2100_EK/connect_ek/connect_ek.html
+.. _`Using the nPM2100 Fuel Gauge`: https://docs.nordicsemi.com/bundle/nan_048/page/APP/nan_048/intro.html
 
 .. _`nRF Desktop reference design page`: https://www.nordicsemi.com/Products/Reference-designs/nRF-Desktop
 

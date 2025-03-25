@@ -25,6 +25,12 @@ Zephyr and the |NCS| provides support for developing applications with the follo
        | `nPM1300 EK get started`_
      - | `nPM1300 EK product page`_
        | `nPM1300 Power Management IC (PMIC) <nPM1300 product website_>`_
+   * - --
+     - PCA10170
+     - See :ref:`ug_npm2100_compatible_boards`
+     - | `Datasheet <nPM2100 Datasheet_>`_
+     - | `nPM2100 EK product page`_
+       | `nPM2100 Power Management IC (PMIC) <nPM2100 product website_>`_
 
 .. note::
     Despite being supported in Zephyr, the |NCS| does not support :ref:`zephyr:npm1100_ek` and :ref:`zephyr:npm6001_ek`.
@@ -34,3 +40,4 @@ Zephyr and the |NCS| provides support for developing applications with the follo
    :caption: Subpages:
 
    npm1300
+   npm2100
