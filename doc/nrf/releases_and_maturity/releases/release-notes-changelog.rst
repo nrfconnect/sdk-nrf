@@ -817,6 +817,17 @@ Common Application Framework
     Earlier, only **GPIO0** and **GPIO1** devices were supported.
     Now, the generic solution supports all GPIOs available in the DTS.
 
+* :ref:`caf_power_manager`:
+
+  * Updated:
+
+    * The :kconfig:option:`CONFIG_CAF_POWER_MANAGER` Kconfig option to imply the device power management (:kconfig:option:`CONFIG_DEVICE_PM`) instead of selecting it.
+      The device power management is not required by the module.
+    * The :kconfig:option:`CONFIG_CAF_POWER_MANAGER` Kconfig option to imply device runtime power management (:kconfig:option:`CONFIG_PM_DEVICE_RUNTIME`) for the nRF54H Series SoC (:kconfig:option:`CONFIG_SOC_SERIES_NRF54HX`).
+      The feature can be used to reduce the power consumption of device drivers.
+      Enabling the device runtime power management also prevents using system-managed device power management (:kconfig:option:`CONFIG_PM_DEVICE_SYSTEM_MANAGED`) by default.
+      The system-managed device power management does not work properly with some drivers (for example, nrfx UARTE) and should be avoided.
+
 Debug libraries
 ---------------
 
