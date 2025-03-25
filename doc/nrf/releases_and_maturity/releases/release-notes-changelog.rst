@@ -449,7 +449,7 @@ Bluetooth Fast Pair samples
 
   * Updated:
 
-    * The partition layout for the ``nrf5340dk/nrf5340/cpuapp/ns`` and ``thingy53/nrf5340/cpuapp/ns`` board targets to accommodate the partitions needed due to change in the TF-M profile configuration.
+    * The partition layout for the ``nrf5340dk/nrf5340/cpuapp/ns`` and ``thingy53/nrf5340/cpuapp/ns`` board targets to accommodate the partitions needed due to a change in the TF-M profile configuration.
     * The debug (default) configuration of the main image to enable the Link Time Optimization (LTO) with the :kconfig:option:`CONFIG_LTO` Kconfig option.
       This change ensures consistency with the sample release configuration that has the LTO feature enabled by default.
 
