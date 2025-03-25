@@ -600,7 +600,7 @@
 .. _`Migration guide for nRF Connect SDK v2.0.0`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_1.x_to_2.x.html
 .. _`Migrating from multi-image builds to sysbuild`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_sysbuild.html
 .. _`Migrating to the current hardware model`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_hwmv2.html
-
+.. _`Migrating from Secure Partition Manager to Trusted Firmware-M`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_spm_to_tf-m.html
 
 .. _`Migration notes for nRF Connect SDK v2.7.99-cs2 and the nRF54H20 DK`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_nRF54H20_cs_to_2_7_99-cs2.html
 .. _`Migration notes for nRF Connect SDK v2.7.99-cs1 and the nRF54H20 DK`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/migration/migration_guide_nRF54H20_cs_to_2_7_99-cs1.html
