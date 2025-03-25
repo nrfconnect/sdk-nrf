@@ -72,7 +72,8 @@ static struct onoff_client cli;
 		())
 
 #define NFC_T2T_BUFFER_SIZE (IS_ENABLED(CONFIG_NFC_T2T_NRFXLIB) ? NFC_PLATFORM_T2T_BUFFER_SIZE : 0U)
-#define NFC_T4T_BUFFER_SIZE (IS_ENABLED(CONFIG_NFC_T4T_NRFXLIB) ? NFC_PLATFORM_T4T_BUFFER_SIZE : 0U)
+#define NFC_T4T_BUFFER_SIZE (IS_ENABLED(CONFIG_NFC_T4T_NRFXLIB) ? \
+							    (2 * NFC_PLATFORM_T4T_BUFFER_SIZE) : 0U)
 
 #define NFCT_PLATFORM_BUFFER_SIZE MAX(NFC_T4T_BUFFER_SIZE, NFC_T2T_BUFFER_SIZE)
 
@@ -89,7 +90,7 @@ static uint8_t nfc_platform_buffer[NFCT_PLATFORM_BUFFER_SIZE] NFCT_MEMORY_SECTIO
 
 #if CONFIG_NFC_T4T_NRFXLIB
 	BUILD_ASSERT(sizeof(nfc_platform_buffer) >= NFC_T4T_BUFFER_SIZE,
-		     "Minimal buffer size for the NFC T4T operations must be at least 256 bytes");
+		     "Minimal buffer size for the NFC T4T operations must be at least 518 bytes");
 #endif /* CONFIG_NFC_T4T_NRFXLIB */
 
 ISR_DIRECT_DECLARE(nfc_isr_wrapper)
