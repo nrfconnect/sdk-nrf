@@ -15,7 +15,29 @@ Configuration
 
 To enable the |power_manager|, set the :kconfig:option:`CONFIG_CAF_POWER_MANAGER` Kconfig option in the configuration.
 
-This module uses Zephyr's :ref:`zephyr:pm_api` subsystem.
+Implied features
+================
+
+The :kconfig:option:`CONFIG_CAF_POWER_MANAGER` option implies the following features that can be used to reduce power consumption:
+
+* System power off support (:kconfig:option:`CONFIG_POWEROFF`).
+  The option is not implied for an nRF54H Series SoC (:kconfig:option:`CONFIG_SOC_SERIES_NRF54HX`), because the :c:func:`sys_poweroff` API is not yet fully supported on the nRF54H Series SoC.
+* Device Power Management (:kconfig:option:`CONFIG_PM_DEVICE`).
+  The option allows to reduce the power consumption of device drivers while they are inactive.
+  It is recommended to disable the feature if your application does not use device drivers that integrate device power management.
+  Disabling the feature reduces the memory footprint.
+
+nRF54H Series SoC
+-----------------
+
+For the nRF54H Series SoC (:kconfig:option:`CONFIG_SOC_SERIES_NRF54HX`), the module also implies the following features:
+
+* Zephyr's :ref:`zephyr:pm-system` (:kconfig:option:`CONFIG_PM`).
+  The nRF54H Series SoC (:kconfig:option:`CONFIG_SOC_SERIES_NRF54HX`) integrates the system power management to reduce power consumption when inactive.
+* Zephyr's :ref:`zephyr:pm-device-runtime` (:kconfig:option:`CONFIG_PM_DEVICE_RUNTIME`).
+  The option extends device power management and depends on the :kconfig:option:`CONFIG_PM_DEVICE` Kconfig option.
+  Enabling the device runtime power management also prevents using system-managed device power management (:kconfig:option:`CONFIG_PM_DEVICE_SYSTEM_MANAGED`) by default.
+  The system-managed device power management does not work properly with some drivers (for example, nrfx UARTE) and should be avoided.
 
 Timeout configuration options
 =============================
