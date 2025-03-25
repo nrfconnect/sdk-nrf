@@ -1,0 +1,116 @@
+.. _ug_npm2100_developing:
+.. _ug_npm2100_gs:
+
+Developing with the nPM2100 PMIC
+################################
+
+.. contents::
+   :local:
+   :depth: 2
+
+The |NCS| provides support for development with the `nPM2100 Power Management IC (PMIC) <nPM2100 product website_>`_, using the `nPM2100 Evaluation Kit (PCA10170) <nPM2100 EK product page_>`_.
+
+.. _ug_npm2100_features:
+
+nPM2100 features
+****************
+
+nPM2100 is a PMIC designed for primary (non-rechargeable) batteries in an extremely compact form factor.
+It has an ultra-efficient boost regulator, a dual purpose LDO/load switch, two GPIOs, an ADC, and other features.
+
+nPM2100 is the perfect companion for nRF52, nRF53, and nRF54 Series SoCs.
+It is ideal for compact and advanced IoT products that uses primary cell batteries.
+
+For additional information on the nPM2100 PMIC and associated kits, see the `nPM2100 product website`_ technical documentation, especially the `nPM2100 EK product page`_.
+
+.. _ug_npm2100_compatible_boards:
+
+Boards compatible with nPM2100
+******************************
+
+The following boards in the `Zephyr`_ open source project and in the |NCS| are supported in the :ref:`pmic_samples`.
+These boards represent a subset of the boards that are compatible with nPM2100.
+
+.. list-table::
+   :header-rows: 1
+
+   * - DK or Prototype platform
+     - Companion module
+     - PCA number
+     - Board target
+     - Documentation
+   * - :ref:`zephyr:nrf54l15dk_nrf54l15`
+     - nPM2100 EK
+     - PCA10156
+     - ``nrf54l15dk/nrf54l15/cpuapp``
+     - `User Guide <nRF54L15 DK User Guide_>`_
+   * - :ref:`zephyr:nrf5340dk_nrf5340`
+     - nPM2100 EK
+     - PCA10095
+     - ``nrf5340dk/nrf5340/cpuapp``
+     - | `Product Specification <nRF5340 Product Specification_>`_
+       | `Quick Start app`_
+       | `User Guide <nRF5340 DK User Guide_>`_
+   * - :ref:`zephyr:nrf52840dk_nrf52840`
+     - nPM2100 EK
+     - PCA10056
+     - ``nrf52840dk/nrf52840``
+     - | `Product Specification <nRF52840 Product Specification_>`_
+       | `Quick Start app`_
+       | `User Guide <nRF52840 DK User Guide_>`_
+
+PMIC samples and libraries
+**************************
+
+The |NCS| provides several :ref:`pmic_samples` that demonstrate the features and capabilities of nPM2100 using the nPM2100 EK.
+
+The |NCS| also provides the :ref:`nrfxlib:nrf_fuel_gauge` that processes battery measurements made by PMICs and provides a state-of-charge (SOC) prediction, along with other metrics.
+:ref:`nrfxlib:nrf_fuel_gauge` also includes battery models for a number of common primary cell battery types, such as Alkaline AA, AAA, LR44, and Lithium-manganese dioxide coin cell CR2032 batteries.
+You can use these generic models directly in your application to calculate the state of charge of the battery connected to the PMIC.
+
+See `Using the nPM2100 Fuel Gauge`_ for more information on how to use the :ref:`nrfxlib:nrf_fuel_gauge` in your application.
+
+PMIC tools
+**********
+
+The :ref:`nrfxlib:nrf_fuel_gauge` is supported by the `nPM PowerUP app`_ in `nRF Connect for Desktop`_.
+See `Connect and use the nPM2100 EK`_ section of the `nPM2100 EK product page`_ for more information.
+
+.. _ug_npm2100_developing_overlay_import:
+
+Importing an overlay from the nPM PowerUP app
+=============================================
+
+The nPM PowerUP app from nRF Connect for Desktop supports exporting a full configuration of the nPM2100 EK in devicetree overlay format.
+You can use this exported overlay file to quickly configure the nPM2100 EK in your application.
+
+If there is no overlay file for your project, include the file directly in your application folder with the name :file:`app.overlay`.
+If an overlay already exists, append the contents of the generated overlay to the existing file.
+For more information about devicetree overlays, see :ref:`zephyr:use-dt-overlays`.
+
+.. _npm2100_building:
+
+Building and programming for nPM2100
+************************************
+
+There is no firmware for nPM2100 EK that you can build and program onto the PMIC.
+Instead, you need to connect a compatible development kit to the nPM2100 EK and program the DK with the firmware.
+
+Connecting the development kit to nPM2100
+=========================================
+
+If you are using the nRF52840 DK, nRF5340 DK, or nRF54L15 DK, follow the steps in `Connect and use the nPM2100 EK`_ in the `nPM2100 EK product page`_.
+For other Nordic Semiconductor kits, use the wiring steps in the documentation for :ref:`pmic_samples` as reference (:ref:`wiring for the Fuel gauge sample <npm2100_fuel_gauge_wiring>` and :ref:`wiring for the One button sample <npm2100_one_button_wiring>`, respectively).
+
+If you are using custom hardware, the wiring process is similar to the `ones for the nRF5x DKs <Connect and use the nPM2100 EK_>`_, but board-specific steps will be different.
+
+.. note::
+   Logic levels on the nPM2100 EK follow the nPM2100 boost regulator output voltage.
+   There is no voltage level translation on the nPM2100 EK headers.
+   To ensure proper communication between the nPM2100 EK and the development kit, the DK must be powered by the nPM2100 EK.
+   Appropriate wiring for supported DKs is provided in the :ref:`pmic_samples` documentation.
+
+Programming the development kit with nPM2100-compatible firmware
+================================================================
+
+Follow the detailed instructions in the building and programming sections of the :ref:`pmic_samples` documentation to build the sample and flash it to a compatible DK.

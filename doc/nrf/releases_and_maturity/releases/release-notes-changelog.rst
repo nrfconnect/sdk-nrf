@@ -126,7 +126,7 @@ Developing with Front-End Modules
 Developing with PMICs
 =====================
 
-|no_changes_yet_note|
+* Added the :ref:`ug_npm2100_developing` documentation.
 
 Developing with custom boards
 =============================
