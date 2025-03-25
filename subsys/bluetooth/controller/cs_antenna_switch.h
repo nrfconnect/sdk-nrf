@@ -8,10 +8,10 @@
 
 /** @brief Antenna switching Callback for use in Channel Sounding.
  *
- *  See also @ref sdc_support_channel_sounding
+ *  See also sdc_support_channel_sounding
  *
- *  @param[in] antenna_index the index of the antenna being switched to.
- *                           Valid range [0, @ref sdc_cfg_cs_cfg_t::num_antennas_supported - 1]
+ *  @param[in] antenna_number the index of the antenna being switched to.
+ *                           Valid range [0, sdc_cfg_cs_cfg_t::num_antennas_supported - 1]
  */
 void cs_antenna_switch_func(uint8_t antenna_number);
 
