@@ -36,7 +36,7 @@ IDE, OS, and tool support
 * Updated:
 
   * The required `SEGGER J-Link`_ version to v8.18.
-  * The :ref:`installation` page with the following updates:
+  * The :ref:`installation` page with the following:
 
     * The :ref:`installing_vsc` section with a list valid for both development environments.
       The list now includes nRF Util as an additional requirement for :ref:`west runner <programming_selecting_runner>` for the |nRFVSC|, and the Windows-only requirement to install SEGGER USB Driver for J-Link for both development environments.
@@ -71,21 +71,18 @@ Developing with nRF91 Series
 Developing with nRF70 Series
 ============================
 
-* :ref:`ug_nrf70_developing_fw_patch_ext_flash`
-
-   * Removed support for storing the nRF70 firmware patches in external flash without the :ref:`partition_manager`.
-
-
-Working with nRF54H Series
-==========================
-
-* Removed the note on installing SEGGER USB Driver for J-Link on Windows from the :ref:`ug_nrf54h20_gs` page and moved its contents to the `nRF Util prerequisites`_ documentation.
-  The Windows-only requirement to install the SEGGER USB Driver for J-Link is now mentioned in the :ref:`installing_vsc` section on the :ref:`installation` page.
+* Removed support for storing the nRF70 firmware patches in external flash without the :ref:`partition_manager`, as mentioned in :ref:`ug_nrf70_developing_fw_patch_ext_flash`.
 
 Developing with nRF54L Series
 =============================
 
 * Added HMAC SHA-256 with a 128-bit key type to KMU, as detailed in the :ref:`ug_nrf54l_crypto_kmu_supported_key_types` documentation section.
+
+Developing with nRF54H Series
+=============================
+
+* Removed the note on installing SEGGER USB Driver for J-Link on Windows from the :ref:`ug_nrf54h20_gs` page and moved its contents to the `nRF Util prerequisites`_ documentation.
+  The Windows-only requirement to install the SEGGER USB Driver for J-Link is now mentioned in the :ref:`installing_vsc` section on the :ref:`installation` page.
 
 Developing with nRF53 Series
 ============================
@@ -94,6 +91,26 @@ Developing with nRF53 Series
 
 Developing with nRF52 Series
 ============================
+
+|no_changes_yet_note|
+
+Developing with Thingy:91 X
+===========================
+
+|no_changes_yet_note|
+
+Developing with Thingy:91
+=========================
+
+|no_changes_yet_note|
+
+Developing with Thingy:53
+=========================
+
+|no_changes_yet_note|
+
+Developing with PMICs
+=====================
 
 |no_changes_yet_note|
 
@@ -108,6 +125,11 @@ Developing with Front-End Modules
 
 Developing with PMICs
 =====================
+
+|no_changes_yet_note|
+
+Developing with custom boards
+=============================
 
 |no_changes_yet_note|
 
@@ -135,8 +157,8 @@ Security
     * The :ref:`app_approtect` page with nRF Util commands that replaced the nrfjprog commands.
       This is part of the ongoing work of archiving `nRF Command Line Tools`_ and replacing them with nRF Util.
     * The Running applications with Trusted Firmware-M page by renaming it to :ref:`ug_tfm` and moving it under :ref:`ug_tfm_index`.
+    * The :ref:`app_boards_spe_nspe` documentation page from the :ref:`ug_app_dev` section has been moved under :ref:`ug_tfm_index`.
 
-  * Moved the :ref:`app_boards_spe_nspe` documentation page under :ref:`ug_tfm_index` from the :ref:`ug_app_dev` section.
 
 Protocols
 =========
@@ -151,17 +173,17 @@ Amazon Sidewalk
 Bluetooth® LE
 -------------
 
-* Fixed an issue where a flash operation executed on the system workqueue might result in ``-ETIMEDOUT``, if there is an active Bluetooth LE connection.
-* Fixed an issue where Bluetooth applications built with the ``nordic-bt-rpc`` snippet (in the :ref:`ble_rpc` configuration) did not work on the nRF54H20 devices due to incorrect memory mapping.
-
 * Updated the Bluetooth LE SoftDevice Controller driver to make the :c:func:`hci_vs_sdc_llpm_mode_set` function return an error if Low Latency Packet Mode (LLPM) is not supported or not enabled in the Bluetooth LE Controller driver configuration (:kconfig:option:`CONFIG_BT_CTLR_SDC_LLPM`).
+
+* Fixed:
+
+  * An issue where a flash operation executed on the system workqueue might result in ``-ETIMEDOUT``, if there is an active Bluetooth LE connection.
+  * An issue where Bluetooth applications built with the ``nordic-bt-rpc`` snippet (in the :ref:`ble_rpc` configuration) did not work on the nRF54H20 devices due to incorrect memory mapping.
 
 Bluetooth Mesh
 --------------
 
-* Added:
-
-  * The key importer functionality (:kconfig:option:`CONFIG_BT_MESH_KEY_IMPORTER`).
+* Added the key importer functionality (:kconfig:option:`CONFIG_BT_MESH_KEY_IMPORTER`).
 
 DECT NR+
 --------
@@ -184,22 +206,20 @@ Matter
 * Added:
 
   * A new documentation page :ref:`ug_matter_group_communication` in the :ref:`ug_matter_intro_overview`.
-  * A new :ref:`ug_matter_creating_custom_cluster` guide page.
+  * A new page on :ref:`ug_matter_creating_custom_cluster`.
   * A description for the new :ref:`ug_matter_gs_tools_matter_west_commands_append` within the :ref:`ug_matter_gs_tools_matter_west_commands` page.
   * New arguments to the :ref:`ug_matter_gs_tools_matter_west_commands_zap_tool_gui` to provide a custom cache directory and add new clusters to Matter Data Model.
   * :ref:`ug_matter_debug_snippet`.
   * Storing Matter key materials in the :ref:`matter_platforms_security_kmu`.
   * A new section :ref:`ug_matter_device_low_power_calibration_period` in the :ref:`ug_matter_device_low_power_configuration` page.
 
-* Disabled the :ref:`mpsl` before performing factory reset to speed up the process.
+* Updated by disabling the :ref:`mpsl` before performing factory reset to speed up the process.
 
 Matter fork
 +++++++++++
 
-* Added:
-
-  * A new ``kFactoryReset`` event that is posted during factory reset.
-    The application can register a handler and perform additional cleanup.
+* Added a new ``kFactoryReset`` event that is posted during factory reset.
+  The application can register a handler and perform additional cleanup.
 
 nRF IEEE 802.15.4 radio driver
 ------------------------------
@@ -216,8 +236,8 @@ Zigbee
 
 * Fixed the :file:`zb_add_ota_header.py` script to allow a patch version higher than 9 in an ``APPLICATION_VERSION_STRING``.
 
-Wi-Fi
------
+Wi-Fi®
+------
 
 * The :ref:`ug_wifi_regulatory_certification` documentation is now moved under :ref:`ug_wifi` protocol page.
 
@@ -244,14 +264,16 @@ Connectivity Bridge
 IPC radio firmware
 ------------------
 
-* Updated the application to enable the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` file system in all devices that contain MRAM, such as the nRF54H Series devices.
-* Updated documentation of applications and samples that use the IPC radio firmware as :ref:`companion component <companion_components>` to mention its usage when built with :ref:`configuration_system_overview_sysbuild`.
+* Updated:
+
+  * The application to enable the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` file system in all devices that contain MRAM, such as the nRF54H Series devices.
+  * The documentation of applications and samples that use the IPC radio firmware as a :ref:`companion component <companion_components>` to mention its usage when built with :ref:`configuration_system_overview_sysbuild`.
 
 Matter Bridge
 -------------
 
+* Updated by enabling Link Time Optimization (LTO) by default for the ``release`` configuration.
 * Removed support for the nRF54H20 devices.
-* Enabled Link Time Optimization (LTO) by default for the ``release`` configuration.
 
 nRF5340 Audio
 -------------
@@ -260,6 +282,18 @@ nRF5340 Audio
 
 nRF Desktop
 -----------
+
+* Added:
+
+  * System Power Management for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target on the application and radio cores.
+  * Application configurations for the nRF54L05 and nRF54L10 SoCs (emulated on the nRF54L15 DK).
+    The configurations are supported through ``nrf54l15dk/nrf54l10/cpuapp`` and ``nrf54l15dk/nrf54l05/cpuapp`` board targets.
+    For details, see the :ref:`nrf_desktop_board_configuration`.
+  * The ``dongle_small`` configuration for the nRF52833 DK.
+    The configuration enables logs and mimics the dongle configuration used for small SoCs.
+  * Requirement for zero latency in Zephyr's :ref:`zephyr:pm-system` while USB is active (:ref:`CONFIG_DESKTOP_USB_PM_REQ_NO_PM_LATENCY <config_desktop_app_options>` Kconfig option of the :ref:`nrf_desktop_usb_state_pm`).
+    The feature is enabled by default if Zephyr power management (:kconfig:option:`CONFIG_PM`) is enabled.
+    It prevents entering power states that introduce wakeup latency and ensure high performance.
 
 * Updated:
 
@@ -301,17 +335,6 @@ nRF Desktop
   * The Fast Pair sysbuild configurations to align the application with the sysbuild Kconfig changes for controlling the Fast Pair provisioning process.
     The Nordic device models intended for demonstration purposes are now supplied by default in the nRF Desktop Fast Pair configurations.
 
-* Added:
-
-  * System Power Management for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target on the application and radio cores.
-  * Application configurations for the nRF54L05 and nRF54L10 SoCs (emulated on the nRF54L15 DK).
-    The configurations are supported through ``nrf54l15dk/nrf54l10/cpuapp`` and ``nrf54l15dk/nrf54l05/cpuapp`` board targets.
-    For details, see the :ref:`nrf_desktop_board_configuration`.
-  * The ``dongle_small`` configuration for the nRF52833 DK.
-    The configuration enables logs and mimics the dongle configuration used for small SoCs.
-  * Requirement for zero latency in Zephyr's :ref:`zephyr:pm-system` while USB is active (:ref:`CONFIG_DESKTOP_USB_PM_REQ_NO_PM_LATENCY <config_desktop_app_options>` Kconfig option of the :ref:`nrf_desktop_usb_state_pm`).
-    The feature is enabled by default if Zephyr Power Management (:kconfig:option:`CONFIG_PM`) is enabled to prevent entering power states that introduce wakeup latency and ensure high performance.
-
 * Removed:
 
   * An imply from the nRF Desktop Bluetooth connectivity Kconfig option (:ref:`CONFIG_DESKTOP_BT <config_desktop_app_options>`).
@@ -348,7 +371,7 @@ Serial LTE modem
 Thingy:53: Matter weather station
 ---------------------------------
 
-* Enabled Link Time Optimization (LTO) by default for the ``release`` configuration.
+* Updated by enabling Link Time Optimization (LTO) by default for the ``release`` configuration.
 
 Samples
 =======
@@ -363,35 +386,42 @@ Amazon Sidewalk samples
 Bluetooth samples
 -----------------
 
-* Added support for the ``nrf54l15dk/nrf54l05/cpuapp`` and ``nrf54l15dk/nrf54l10/cpuapp`` board targets in the following samples:
+* Added
 
-  * :ref:`bluetooth_central_hids`
-  * :ref:`peripheral_hids_keyboard`
+  * Support for the ``nrf54l15dk/nrf54l05/cpuapp`` and ``nrf54l15dk/nrf54l10/cpuapp`` board targets in the following samples:
+
+    * :ref:`bluetooth_central_hids`
+    * :ref:`peripheral_hids_keyboard`
+
+  * The Advertising Coding Selection feature to the following samples:
+
+    * :ref:`bluetooth_central_hr_coded`
+    * :ref:`peripheral_hr_coded`
 
 * Updated:
 
-    * The configurations of the non-secure ``nrf5340dk/nrf5340/cpuapp/ns`` board target in the following samples to properly use the TF-M profile instead of the predefined minimal TF-M profile:
+  * The configurations of the non-secure ``nrf5340dk/nrf5340/cpuapp/ns`` board target in the following samples to properly use the TF-M profile instead of the predefined minimal TF-M profile:
 
-      * :ref:`bluetooth_central_hids`
-      * :ref:`peripheral_hids_keyboard`
-      * :ref:`peripheral_hids_mouse`
+    * :ref:`bluetooth_central_hids`
+    * :ref:`peripheral_hids_keyboard`
+    * :ref:`peripheral_hids_mouse`
 
-      This change results from the Bluetooth subsystem transition to the PSA cryptographic standard.
-      The Bluetooth stack can now use the PSA crypto API in the non-secure domain as all necessary TF-M partitions are configured properly.
+    This change results from the Bluetooth subsystem transition to the PSA cryptographic standard.
+    The Bluetooth stack can now use the PSA crypto API in the non-secure domain as all necessary TF-M partitions are configured properly.
 
-    * The configurations of the following samples by increasing the main thread stack size (:kconfig:option:`CONFIG_MAIN_STACK_SIZE`) to prevent stack overflows:
+  * The configurations of the following samples by increasing the main thread stack size (:kconfig:option:`CONFIG_MAIN_STACK_SIZE`) to prevent stack overflows:
 
-      * :ref:`bluetooth_central_hids`
-      * :ref:`peripheral_hids_keyboard`
-      * :ref:`peripheral_hids_mouse`
+    * :ref:`bluetooth_central_hids`
+    * :ref:`peripheral_hids_keyboard`
+    * :ref:`peripheral_hids_mouse`
 
-      This change results from the Bluetooth subsystem transition to the PSA cryptographic API.
+    This change results from the Bluetooth subsystem transition to the PSA cryptographic API.
 
-    * The following samples to use LE Secure Connection pairing (:kconfig:option:`CONFIG_BT_SMP_SC_PAIR_ONLY`).
+  * The following samples to use LE Secure Connection pairing (:kconfig:option:`CONFIG_BT_SMP_SC_PAIR_ONLY`).
 
-      * :ref:`peripheral_gatt_dm`
-      * :ref:`peripheral_mds`
-      * :ref:`peripheral_cts_client`
+    * :ref:`peripheral_gatt_dm`
+    * :ref:`peripheral_mds`
+    * :ref:`peripheral_cts_client`
 
 * :ref:`direct_test_mode` sample:
 
@@ -401,20 +431,12 @@ Bluetooth samples
 
   * Added reconnection to bonded devices based on their address.
 
-* :ref:`bluetooth_central_hr_coded` sample:
-
-  * Added the Advertising Coding Selection feature to the sample.
-
-* :ref:`peripheral_hr_coded` sample:
-
-  * Added the Advertising Coding Selection feature to the sample.
-
 Bluetooth Mesh samples
 ----------------------
 
 * :ref:`bluetooth_mesh_light_lc` sample:
 
-  * Disabled the Friend feature when the sample is compiled for the :ref:`zephyr:nrf52dk_nrf52832` board target to increase the amount of RAM available for the application.
+  * Updated by disabling the Friend feature when the sample is compiled for the :ref:`zephyr:nrf52dk_nrf52832` board target to increase the amount of RAM available for the application.
 
 Bluetooth Fast Pair samples
 ---------------------------
@@ -423,7 +445,7 @@ Bluetooth Fast Pair samples
 
 * Updated:
 
-  * The non-secure target (``nrf5340dk/nrf5340/cpuapp/ns`` and ``thingy53/nrf5340/cpuapp/ns``) configurations of all Fast Pair samples to use configurable TF-M profile instead of the predefined minimal TF-M profile:
+  * The non-secure target (``nrf5340dk/nrf5340/cpuapp/ns`` and ``thingy53/nrf5340/cpuapp/ns``) configurations of all Fast Pair samples to use configurable TF-M profile instead of the predefined minimal TF-M profile.
     This change results from the Bluetooth subsystem transition to the PSA cryptographic standard.
     The Bluetooth stack can now use the PSA crypto API in the non-secure domain as all necessary TF-M partitions are configured properly.
   * The configuration of all Fast Pair samples by increasing the following thread stack sizes to prevent stack overflows:
@@ -440,10 +462,10 @@ Bluetooth Fast Pair samples
 
 * :ref:`fast_pair_locator_tag` sample:
 
-  * Added:
+  * Added support for the following:
 
-    * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
-    * Support for the firmware update intents on the Android platform.
+    * :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
+    * Firmware update intents on the Android platform.
       Integrated the new connection authentication callback from the FMDN module and the Device Information Service (DIS) to support firmware version read operation over the Firmware Revision characteristic.
       For further details on the Android intent feature for firmware updates, see the :ref:`ug_bt_fast_pair_provisioning_register_firmware_update_intent` section of the Fast Pair integration guide.
 
@@ -486,8 +508,8 @@ Bluetooth Mesh samples
 
 * Updated the following samples to include the value of the :kconfig:option:`CONFIG_BT_COMPANY_ID` option in the Firmware ID:
 
-    * :ref:`ble_mesh_dfu_distributor`
-    * :ref:`ble_mesh_dfu_target`
+  * :ref:`ble_mesh_dfu_distributor`
+  * :ref:`ble_mesh_dfu_target`
 
 Cellular samples
 ----------------
@@ -515,14 +537,13 @@ Cellular samples
 
     * Wrong header naming in :file:`provisioning_support.h` that was causing build errors when :file:`sample_reboot.h` was included in other source files.
     * An issue with an uninitialized variable in the :c:func:`handle_at_cmd_requests` function.
-    * An issue with the too small :kconfig:option:`CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE` Kconfig value
-      in the :file:`overlay-coap_nrf_provisioning.conf` file.
+    * An issue with a very small :kconfig:option:`CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE` Kconfig value in the :file:`overlay-coap_nrf_provisioning.conf` file.
     * Slow Wi-Fi connectivity startup by selecting ``TFM_SFN`` instead of ``TFM_IPC``.
     * The size of TLS credentials buffer for Wi-Fi connectivity to allow installing both AWS and CoAP CA certificates.
 
 * :ref:`lte_sensor_gateway` sample:
 
-   * Fixed an issue with devicetree configuration after HCI updates in `sdk-zephyr`_.
+  * Fixed an issue with devicetree configuration after HCI updates in `sdk-zephyr`_.
 
 * :ref:`pdn_sample` sample:
 
@@ -590,7 +611,7 @@ Networking samples
 * Updated:
 
   * The :kconfig:option:`CONFIG_HEAP_MEM_POOL_SIZE` Kconfig option value to ``1280`` for all networking samples that had it set to a lower value.
-    This is a requirement from zephyr and removes a build warning.
+    This is a requirement from Zephyr and removes a build warning.
   * The following samples to use the :ref:`lib_downloader` library instead of the :ref:`lib_download_client` library:
 
     * :ref:`aws_iot`
@@ -618,16 +639,14 @@ Peripheral samples
 PMIC samples
 ------------
 
-* Added the :ref:`npm2100_one_button` sample that demonstrates how to support wake-up, shutdown,
-  and user interactions through a single button connected to the nPM2100 PMIC.
+* Added:
 
-* Added the :ref:`npm2100_fuel_gauge` sample that demonstrates how to calculate the battery state of charge of primary cell batteries using the :ref:`nrfxlib:nrf_fuel_gauge`.
+  * The :ref:`npm2100_one_button` sample that demonstrates how to support wake-up, shutdown, and user interactions through a single button connected to the nPM2100 PMIC.
+  * The :ref:`npm2100_fuel_gauge` sample that demonstrates how to calculate the battery state of charge of primary cell batteries using the :ref:`nrfxlib:nrf_fuel_gauge`.
 
 * :ref:`npm1300_fuel_gauge` sample:
 
   * Updated to accommodate API changes in nRF Fuel Gauge library v1.0.0.
-
-|no_changes_yet_note|
 
 Protocol serialization samples
 ------------------------------
@@ -685,17 +704,14 @@ Wi-Fi samples
 
 * Radio test samples:
 
-  * Added:
-
-    * The :ref:`wifi_radio_test_sd` sample to demonstrate the Wi-Fi and Bluetooth LE radio test running on the application core.
-
+  * Added the :ref:`wifi_radio_test_sd` sample to demonstrate the Wi-Fi and Bluetooth LE radio test running on the application core.
   * Updated:
 
     * The :ref:`wifi_radio_test` sample is now moved to :zephyr_file:`samples/wifi/radio_test/multi_domain`.
 
 * :ref:`wifi_shell_sample` sample:
 
-  * Modified support for storing the nRF70 firmware patches in external flash using the :ref:`partition_manager`.
+  * Updated by modifying support for storing the nRF70 firmware patches in external flash using the :ref:`partition_manager`.
 
 Other samples
 -------------
@@ -872,7 +888,7 @@ Multiprotocol Service Layer libraries
 * Added:
 
   * Integration with the nrf2 clock control driver for the nRF54H20 SoC.
-  * Integration with Zephyr's System Power Management for the nRF54H20 SoC.
+  * Integration with Zephyr's system power management for the nRF54H20 SoC.
   * Global domain HSFLL120 320MHz frequency request if MPSL is enabled.
     The high frequency in global domain is required to ensure that fetching instructions from L2-cache and MRAM is as fast as possible.
     It is needed for the radio protocols to operate correctly.
@@ -963,7 +979,7 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
   * Removed HID device type mapping for Development Kits.
     A Development Kit may use various HID roles (depending on configuration).
-    Assigning a fixed type per board may be misleading.
+    Assigning a fixed type for each board might be misleading.
     HID device type is still defined for boards that are always configured as the same HID device type.
 
 Integrations
@@ -1108,4 +1124,4 @@ Documentation
     The part about connecting the prototyping platform to nRF Cloud is now a standalone :ref:`thingy91_connect_to_cloud` page in the :ref:`thingy91_ug_intro` section.
   * The standalone page for getting started with the nRF9160 DK.
     This page has been replaced by the `Quick Start app`_ that supports the nRF9160 DK.
-    The part about connecting the DK to nRF Cloud is now a standalone :ref:`nrf9160_gs_connecting_dk_to_cloud` page in the :ref:`ug_nrf9160` section.
+    The content about connecting the DK to nRF Cloud is now a standalone :ref:`nrf9160_gs_connecting_dk_to_cloud` page in the :ref:`ug_nrf9160` section.
