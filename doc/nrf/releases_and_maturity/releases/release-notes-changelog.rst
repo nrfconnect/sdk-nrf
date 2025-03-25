@@ -295,6 +295,10 @@ nRF Desktop
   * Requirement for zero latency in Zephyr's :ref:`zephyr:pm-system` while USB is active (:ref:`CONFIG_DESKTOP_USB_PM_REQ_NO_PM_LATENCY <config_desktop_app_options>` Kconfig option of the :ref:`nrf_desktop_usb_state_pm`).
     The feature is enabled by default if Zephyr power management (:kconfig:option:`CONFIG_PM`) is enabled.
     It prevents entering power states that introduce wakeup latency and ensure high performance.
+  * Static Partition Manager memory maps for single-image configurations (without bootloader and separate radio/network core image).
+    In the |NCS|, the Partition Manager is enabled by default for single-image sysbuild builds.
+    The static memory map ensures control over settings partition placement and size.
+    The introduced static memory maps may not be consistent with the ``storage_partition`` defined by the board-level DTS configuration.
 
 * Updated:
 
