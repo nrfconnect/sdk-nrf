@@ -9,7 +9,7 @@ jobs:
     name: Contribs
     steps:
       - name: Contribs
-        uses: carlescufi/action-contribs@main
+        uses: carlescufi/action-contribs@d139e12dabbe631fcc94ec3e19e386a11d3e1a26 # main
         with:
           github-token: ${{ secrets.NCS_GITHUB_TOKEN }}
           command: 'external'

@@ -24,7 +24,7 @@ jobs:
       )
     steps:
       - name: Backport
-        uses: zephyrproject-rtos/action-backport@v2.0.3-3
+        uses: zephyrproject-rtos/action-backport@6b0bae5b575d289305a22ab11a273941b518994c # v2.0.3-3
         with:
           github_token: ${{ secrets.NCS_GITHUB_TOKEN }}
           issue_labels: Backport
