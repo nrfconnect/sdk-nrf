@@ -116,6 +116,12 @@ psa_signal_t psa_wait(psa_signal_t signal_mask, uint32_t timeout);
  * \brief Retrieve the message which corresponds to a given RoT Service signal
  *        and remove the message from the RoT Service queue.
  *
+ * The call is invalid because one or more of the following are true:
+ * - signal has more than a single bit set.
+ * - signal does not correspond to an RoT Service.
+ * - The RoT Service signal is not currently asserted.
+ * - The msg pointer provided is not a valid memory reference.
+ *
  * \param[in] signal            The signal value for an asserted RoT Service.
  * \param[out] msg              Pointer to \ref psa_msg_t object for receiving
  *                              the message.
@@ -123,33 +129,28 @@ psa_signal_t psa_wait(psa_signal_t signal_mask, uint32_t timeout);
  * \retval PSA_SUCCESS          Success, *msg will contain the delivered
  *                              message.
  * \retval PSA_ERROR_DOES_NOT_EXIST Message could not be delivered.
- * \retval "PROGRAMMER ERROR"   The call is invalid because one or more of the
- *                              following are true:
- * \arg                           signal has more than a single bit set.
- * \arg                           signal does not correspond to an RoT Service.
- * \arg                           The RoT Service signal is not currently
- *                                asserted.
- * \arg                           The msg pointer provided is not a valid memory
- *                                reference.
  */
 psa_status_t psa_get(psa_signal_t signal, psa_msg_t *msg);
 
 /**
  * \brief Associate some RoT Service private data with a client connection.
  *
+ * The call is invalid if msg_handle is invalid.
+ *
  * \param[in] msg_handle        Handle for the client's message.
  * \param[in] rhandle           Reverse handle allocated by the RoT Service.
- *
- * \retval void                 Success, rhandle will be provided with all
- *                              subsequent messages delivered on this
- *                              connection.
- * \retval "PROGRAMMER ERROR"   msg_handle is invalid.
  */
 void psa_set_rhandle(psa_handle_t msg_handle, void *rhandle);
 
 /**
  * \brief Read a message parameter or part of a message parameter from a client
  *        input vector.
+ *
+ * The call is invalid if one or more of the following are true:
+ * - msg_handle is invalid.
+ * - msg_handle does not refer to a \ref PSA_IPC_CALL message.
+ * - invec_idx is equal to or greater than \ref PSA_MAX_IOVEC.
+ * - the memory reference for buffer is invalid or not writable.
  *
  * \param[in] msg_handle        Handle for the client's message.
  * \param[in] invec_idx         Index of the input vector to read from. Must be
@@ -162,21 +163,17 @@ void psa_set_rhandle(psa_handle_t msg_handle, void *rhandle);
  * \retval >0                   Number of bytes copied.
  * \retval 0                    There was no remaining data in this input
  *                              vector.
- * \retval "PROGRAMMER ERROR"   The call is invalid, one or more of the
- *                              following are true:
- * \arg                           msg_handle is invalid.
- * \arg                           msg_handle does not refer to a
- *                                \ref PSA_IPC_CALL message.
- * \arg                           invec_idx is equal to or greater than
- *                                \ref PSA_MAX_IOVEC.
- * \arg                           the memory reference for buffer is invalid or
- *                                not writable.
  */
 size_t psa_read(psa_handle_t msg_handle, uint32_t invec_idx,
                 void *buffer, size_t num_bytes);
 
 /**
  * \brief Skip over part of a client input vector.
+ *
+ * The call is invalid if one or more of the following are true:
+ * - msg_handle is invalid.
+ * - msg_handle does not refer to a request message.
+ * - invec_idx is equal to or greater than \ref PSA_MAX_IOVEC.
  *
  * \param[in] msg_handle        Handle for the client's message.
  * \param[in] invec_idx         Index of input vector to skip from. Must be
@@ -187,18 +184,18 @@ size_t psa_read(psa_handle_t msg_handle, uint32_t invec_idx,
  * \retval >0                   Number of bytes skipped.
  * \retval 0                    There was no remaining data in this input
  *                              vector.
- * \retval "PROGRAMMER ERROR"   The call is invalid, one or more of the
- *                              following are true:
- * \arg                           msg_handle is invalid.
- * \arg                           msg_handle does not refer to a request
- *                                message.
- * \arg                           invec_idx is equal to or greater than
- *                                \ref PSA_MAX_IOVEC.
  */
 size_t psa_skip(psa_handle_t msg_handle, uint32_t invec_idx, size_t num_bytes);
 
 /**
  * \brief Write a message response to a client output vector.
+ *
+ * The call is invalid if one or more of the following are true:
+ * - msg_handle is invalid.
+ * - msg_handle does not refer to a request message.
+ * - outvec_idx is equal to or greater than \ref PSA_MAX_IOVEC.
+ * - The memory reference for buffer is invalid.
+ * - The call attempts to write data past the end of the client output vector.
  *
  * \param[in] msg_handle        Handle for the client's message.
  * \param[out] outvec_idx       Index of output vector in message to write to.
@@ -206,18 +203,6 @@ size_t psa_skip(psa_handle_t msg_handle, uint32_t invec_idx, size_t num_bytes);
  * \param[in] buffer            Buffer with the data to write.
  * \param[in] num_bytes         Number of bytes to write to the client output
  *                              vector.
- *
- * \retval void                 Success
- * \retval "PROGRAMMER ERROR"   The call is invalid, one or more of the
- *                              following are true:
- * \arg                           msg_handle is invalid.
- * \arg                           msg_handle does not refer to a request
- *                                message.
- * \arg                           outvec_idx is equal to or greater than
- *                                \ref PSA_MAX_IOVEC.
- * \arg                           The memory reference for buffer is invalid.
- * \arg                           The call attempts to write data past the end
- *                                of the client output vector.
  */
 void psa_write(psa_handle_t msg_handle, uint32_t outvec_idx,
                const void *buffer, size_t num_bytes);
@@ -225,74 +210,63 @@ void psa_write(psa_handle_t msg_handle, uint32_t outvec_idx,
 /**
  * \brief Complete handling of a specific message and unblock the client.
  *
+ * The call is invalid if one or more of the following are true:
+ * - msg_handle is invalid.
+ * - An invalid status code is specified for the type of message.
+ *
  * \param[in] msg_handle        Handle for the client's message.
  * \param[in] status            Message result value to be reported to the
  *                              client.
- *
- * \retval void                 Success.
- * \retval "PROGRAMMER ERROR"   The call is invalid, one or more of the
- *                              following are true:
- * \arg                         msg_handle is invalid.
- * \arg                         An invalid status code is specified for the
- *                              type of message.
  */
 void psa_reply(psa_handle_t msg_handle, psa_status_t status);
 
 /**
  * \brief Send a PSA_DOORBELL signal to a specific Secure Partition.
  *
- * \param[in] partition_id      Secure Partition ID of the target partition.
+ * The call is invalid if partition_id does not correspond to a Secure Partition.
  *
- * \retval void                 Success.
- * \retval "PROGRAMMER ERROR"   partition_id does not correspond to a Secure
- *                              Partition.
+ * \param[in] partition_id      Secure Partition ID of the target partition.
  */
 void psa_notify(int32_t partition_id);
 
 /**
  * \brief Clear the PSA_DOORBELL signal.
  *
- * \retval void                 Success.
- * \retval "PROGRAMMER ERROR"   The Secure Partition's doorbell signal is not
- *                              currently asserted.
+ * The call is invalid if the Secure Partition's doorbell signal is not
+ * currently asserted.
  */
 void psa_clear(void);
 
 /**
  * \brief Inform the SPM that an interrupt has been handled (end of interrupt).
  *
+ * The call is invalid, one or more of the following are true:
+ * - irq_signal is not an interrupt signal.
+ * - irq_signal indicates more than one signal.
+ * - irq_signal is not currently asserted.
+ * - The interrupt is not using SLIH.
+
  * \param[in] irq_signal        The interrupt signal that has been processed.
- *
- * \retval void                 Success.
- * \retval "PROGRAMMER ERROR"   The call is invalid, one or more of the
- *                              following are true:
- * \arg                           irq_signal is not an interrupt signal.
- * \arg                           irq_signal indicates more than one signal.
- * \arg                           irq_signal is not currently asserted.
- * \arg                           The interrupt is not using SLIH.
  */
 void psa_eoi(psa_signal_t irq_signal);
 
 /**
  * \brief Terminate execution within the calling Secure Partition and will not
  *        return.
- *
- * \retval "Does not return"
  */
 void psa_panic(void);
 
 /**
  * \brief Enable an interrupt.
  *
+ * The call is invalid if one or more of the following are true:
+ * - irq_signal is not an interrupt signal.
+ * - irq_signal indicates more than one signal.
+ *
  * \param[in] irq_signal The signal for the interrupt to be enabled.
  *                       This must have a single bit set, which must be the
  *                       signal value for an interrupt in the calling Secure
  *                       Partition.
- *
- * \retval void
- * \retval "PROGRAMMER ERROR" If one or more of the following are true:
- * \arg                       \a irq_signal is not an interrupt signal.
- * \arg                       \a irq_signal indicates more than one signal.
  */
 void psa_irq_enable(psa_signal_t irq_signal);
 
@@ -300,16 +274,17 @@ void psa_irq_enable(psa_signal_t irq_signal);
  * \brief Disable an interrupt and return the status of the interrupt prior to
  *        being disabled by this call.
  *
+ * The call is invalid if one or more of the following are true:
+ * - irq_signal is not an interrupt signal.
+ * - irq_signal indicates more than one signal.
+ *
  * \param[in] irq_signal The signal for the interrupt to be disabled.
  *                       This must have a single bit set, which must be the
  *                       signal value for an interrupt in the calling Secure
  *                       Partition.
  *
  * \retval 0                  The interrupt was disabled prior to this call.
- *         1                  The interrupt was enabled prior to this call.
- * \retval "PROGRAMMER ERROR" If one or more of the following are true:
- * \arg                       \a irq_signal is not an interrupt signal.
- * \arg                       \a irq_signal indicates more than one signal.
+ * \retval 1                  The interrupt was enabled prior to this call.
  *
  * \note The current implementation always return 1. Do not use the return.
  */
@@ -318,18 +293,16 @@ psa_irq_status_t psa_irq_disable(psa_signal_t irq_signal);
 /**
  * \brief Reset the signal for an interrupt that is using FLIH handling.
  *
+ * The call is invalid if one or more of the following are true:
+ * - irq_signal is not a signal for an interrupt that is specified with FLIH
+ *   handling in the Secure Partition manifest.
+ * - irq_signal indicates more than one signal.
+ * - irq_signal is not currently asserted.
+ *
  * \param[in] irq_signal    The interrupt signal to be reset.
  *                          This must have a single bit set, corresponding to a
  *                          currently asserted signal for an interrupt that is
  *                          defined to use FLIH handling.
- *
- * \retval void
- * \retval "Programmer Error" if one or more of the following are true:
- * \arg                       \a irq_signal is not a signal for an interrupt
- *                            that is specified with FLIH handling in the Secure
- *                            Partition manifest.
- * \arg                       \a irq_signal indicates more than one signal.
- * \arg                       \a irq_signal is not currently asserted.
  */
 void psa_reset_signal(psa_signal_t irq_signal);
 
@@ -339,25 +312,20 @@ void psa_reset_signal(psa_signal_t irq_signal);
  * \brief Map a client input vector for direct access by a Secure Partition RoT
  *        Service.
  *
+ * The call is invalid, one or more of the following are true:
+ * - MM-IOVEC has not been enabled for the RoT Service that received the message.
+ * - msg_handle is invalid.
+ * - msg_handle does not refer to a request message.
+ * - invec_idx is equal to or greater than \ref PSA_MAX_IOVEC.
+ * - The input vector has length zero.
+ * - The input vector has already been mapped using psa_map_invec().
+ * - The input vector has already been accessed using psa_read() or psa_skip().
+ *
  * \param[in] msg_handle        Handle for the client's message.
  * \param[in] invec_idx         Index of input vector to map. Must be
  *                              less than \ref PSA_MAX_IOVEC.
  *
  * \retval                      A pointer to the input vector data.
- * \retval "PROGRAMMER ERROR"   The call is invalid, one or more of the
- *                              following are true:
- * \arg                           MM-IOVEC has not been enabled for the RoT
- *                                Service that received the message.
- * \arg                           msg_handle is invalid.
- * \arg                           msg_handle does not refer to a request
- *                                message.
- * \arg                           invec_idx is equal to or greater than
- *                                \ref PSA_MAX_IOVEC.
- * \arg                           The input vector has length zero.
- * \arg                           The input vector has already been mapped using
- *                                psa_map_invec().
- * \arg                           The input vector has already been accessed
- *                                using psa_read() or psa_skip().
  */
 const void *psa_map_invec(psa_handle_t msg_handle, uint32_t invec_idx);
 
@@ -365,22 +333,16 @@ const void *psa_map_invec(psa_handle_t msg_handle, uint32_t invec_idx);
  * \brief Unmap a previously mapped client input vector from a Secure Partition
  *        RoT Service.
  *
+ * The call is invalid if one or more of the following are true:
+ * - msg_handle is invalid.
+ * - msg_handle does not refer to a request message.
+ * - invec_idx is equal to or greater than \ref PSA_MAX_IOVEC.
+ * - The input vector has not been mapped by a call to psa_map_invec().
+ * - The input vector has already been unmapped by a call to psa_unmap_invec().
+ *
  * \param[in] msg_handle        Handle for the client's message.
  * \param[in] invec_idx         Index of input vector to map. Must be
  *                              less than \ref PSA_MAX_IOVEC.
- *
- * \retval void
- * \retval "PROGRAMMER ERROR"   The call is invalid, one or more of the
- *                              following are true:
- * \arg                           msg_handle is invalid.
- * \arg                           msg_handle does not refer to a request
- *                                message.
- * \arg                           invec_idx is equal to or greater than
- *                                \ref PSA_MAX_IOVEC.
- * \arg                           The input vector has not been mapped by a call
- *                                to psa_map_invec().
- * \arg                           The input vector has already been unmapped by
- *                                a call to psa_unmap_invec().
  */
 void psa_unmap_invec(psa_handle_t msg_handle, uint32_t invec_idx);
 
@@ -388,25 +350,20 @@ void psa_unmap_invec(psa_handle_t msg_handle, uint32_t invec_idx);
  * \brief Map a client output vector for direct access by a Secure Partition RoT
  *        Service.
  *
+ * The call is invalid if one or more of the following are true:
+ * - MM-IOVEC has not been enabled for the RoT Service that received the message.
+ * - msg_handle is invalid.
+ * - msg_handle does not refer to a request message.
+ * - The outvec_idx is equal to or greater than \ref PSA_MAX_IOVEC.
+ * - The output vector has length zero.
+ * - The output vector has already been mapped using psa_map_outvec().
+ * - The output vector has already been accessed using psa_write().
+ *
  * \param[in] msg_handle        Handle for the client's message.
  * \param[in] outvec_idx        Index of output vector to map. Must be
  *                              less than \ref PSA_MAX_IOVEC.
  *
  * \retval                      A pointer to the output vector data.
- * \retval "PROGRAMMER ERROR"   The call is invalid, one or more of the
- *                              following are true:
- * \arg                           MM-IOVEC has not been enabled for the RoT
- *                                Service that received the message.
- * \arg                           msg_handle is invalid.
- * \arg                           msg_handle does not refer to a request
- *                                message.
- * \arg                           outvec_idx is equal to or greater than
- *                                \ref PSA_MAX_IOVEC.
- * \arg                           The output vector has length zero.
- * \arg                           The output vector has already been mapped
- *                                using psa_map_outvec().
- * \arg                           The output vector has already been accessed
- *                                using psa_write().
  */
 void *psa_map_outvec(psa_handle_t msg_handle, uint32_t outvec_idx);
 
@@ -414,25 +371,19 @@ void *psa_map_outvec(psa_handle_t msg_handle, uint32_t outvec_idx);
  * \brief Unmap a previously mapped client output vector from a Secure Partition
  *        RoT Service.
  *
+ * The call is invalid if one or more of the following are true:
+ * - msg_handle is invalid.
+ * - msg_handle does not refer to a request message.
+ * - outvec_idx is equal to or greater than \ref PSA_MAX_IOVEC.
+ * - The output vector has not been mapped by a call to psa_map_outvec().
+ * - The output vector has already been unmapped by a call to psa_unmap_outvec().
+ *
  * \param[in] msg_handle        Handle for the client's message.
  * \param[in] outvec_idx        Index of output vector to map. Must be
  *                              less than \ref PSA_MAX_IOVEC.
  * \param[in] len               The number of bytes written to the output
  *                              vector. This must be less than or equal to the
  *                              size of the output vector.
- *
- * \retval void
- * \retval "PROGRAMMER ERROR"   The call is invalid, one or more of the
- *                              following are true:
- * \arg                           msg_handle is invalid.
- * \arg                           msg_handle does not refer to a request
- *                                message.
- * \arg                           outvec_idx is equal to or greater than
- *                                \ref PSA_MAX_IOVEC.
- * \arg                           The output vector has not been mapped by a
- *                                call to psa_map_outvec().
- * \arg                           The output vector has already been unmapped by
- *                                a call to psa_unmap_outvec().
  */
 void psa_unmap_outvec(psa_handle_t msg_handle, uint32_t outvec_idx, size_t len);
 
