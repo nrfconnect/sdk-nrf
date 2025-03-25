@@ -1,0 +1,11 @@
+# Copyright (c) 2023 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+menu "nrfx drivers logging"
+	depends on LOG
+
+config NRFX_MRAMC_LOG
+    bool "MRAMC driver logging"
+    depends on NRFX_MRAMC
+
+endmenu # "nrfx drivers logging"

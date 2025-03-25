@@ -1,0 +1,16 @@
+# Copyright (c) 2016 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+config HAS_NRFX
+	bool
+
+menu "nrfx drivers"
+	depends on HAS_NRFX
+
+rsource "Kconfig.logging"
+
+config NRFX_MRAMC
+	bool "MRAMC driver"
+	depends on $(dt_has_compat,$(DT_COMPAT_NORDIC_MRAM))
+
+endmenu # "nrfx drivers"
