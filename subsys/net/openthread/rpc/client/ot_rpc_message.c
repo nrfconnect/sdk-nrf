@@ -148,3 +148,35 @@ uint16_t otMessageRead(const otMessage *aMessage, uint16_t aOffset, void *aBuf, 
 
 	return MIN(size, aLength);
 }
+
+otError otMessageGetThreadLinkInfo(const otMessage *aMessage, otThreadLinkInfo *aLinkInfo)
+{
+	ot_rpc_res_tab_key key = (ot_rpc_res_tab_key)aMessage;
+	struct nrf_rpc_cbor_ctx ctx;
+	otError error;
+
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + sizeof(key));
+	nrf_rpc_encode_uint(&ctx, key);
+	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_MESSAGE_GET_THREAD_LINK_INFO, &ctx);
+
+	error = nrf_rpc_decode_uint(&ctx);
+
+	if (nrf_rpc_decode_valid(&ctx) && error == OT_ERROR_NONE) {
+		aLinkInfo->mPanId = nrf_rpc_decode_uint(&ctx);
+		aLinkInfo->mChannel = nrf_rpc_decode_uint(&ctx);
+		aLinkInfo->mRss = nrf_rpc_decode_int(&ctx);
+		aLinkInfo->mLqi = nrf_rpc_decode_uint(&ctx);
+		aLinkInfo->mLinkSecurity = nrf_rpc_decode_bool(&ctx);
+		aLinkInfo->mIsDstPanIdBroadcast = nrf_rpc_decode_bool(&ctx);
+		aLinkInfo->mTimeSyncSeq = nrf_rpc_decode_uint(&ctx);
+		aLinkInfo->mNetworkTimeOffset = nrf_rpc_decode_int64(&ctx);
+		aLinkInfo->mRadioType = nrf_rpc_decode_uint(&ctx);
+	}
+
+	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
+		ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_MESSAGE_GET_THREAD_LINK_INFO);
+		return OT_ERROR_NOT_FOUND;
+	}
+
+	return error;
+}

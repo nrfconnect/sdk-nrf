@@ -213,6 +213,66 @@ exit:
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 
+static void ot_rpc_msg_get_thread_link_info(const struct nrf_rpc_group *group,
+					    struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	ot_rpc_res_tab_key key;
+	otMessage *message;
+	otThreadLinkInfo link_info;
+	otError error;
+	size_t cbor_buffer_size;
+	struct nrf_rpc_cbor_ctx rsp_ctx;
+
+	key = nrf_rpc_decode_uint(ctx);
+
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_GET_THREAD_LINK_INFO);
+		return;
+	}
+
+	message = ot_res_tab_msg_get(key);
+
+	if (!message) {
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_GET_THREAD_LINK_INFO);
+		return;
+	}
+
+	openthread_api_mutex_lock(openthread_get_default_context());
+	error = otMessageGetThreadLinkInfo(message, &link_info);
+	openthread_api_mutex_unlock(openthread_get_default_context());
+
+	cbor_buffer_size = 1;
+
+	if (error == OT_ERROR_NONE) {
+		cbor_buffer_size += 1 + sizeof(link_info.mPanId);
+		cbor_buffer_size += 1 + sizeof(link_info.mChannel);
+		cbor_buffer_size += 1 + sizeof(link_info.mRss);
+		cbor_buffer_size += 1 + sizeof(link_info.mLqi);
+		cbor_buffer_size += 2; /* mLinkSecurity + mIsDstPanIdBroadcast */
+		cbor_buffer_size += 1 + sizeof(link_info.mTimeSyncSeq);
+		cbor_buffer_size += 1 + sizeof(link_info.mNetworkTimeOffset);
+		cbor_buffer_size += 1 + sizeof(link_info.mRadioType);
+	}
+
+	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, cbor_buffer_size);
+
+	nrf_rpc_encode_uint(&rsp_ctx, error);
+
+	if (error == OT_ERROR_NONE) {
+		nrf_rpc_encode_uint(&rsp_ctx, link_info.mPanId);
+		nrf_rpc_encode_uint(&rsp_ctx, link_info.mChannel);
+		nrf_rpc_encode_int(&rsp_ctx, link_info.mRss);
+		nrf_rpc_encode_uint(&rsp_ctx, link_info.mLqi);
+		nrf_rpc_encode_bool(&rsp_ctx, link_info.mLinkSecurity);
+		nrf_rpc_encode_bool(&rsp_ctx, link_info.mIsDstPanIdBroadcast);
+		nrf_rpc_encode_uint(&rsp_ctx, link_info.mTimeSyncSeq);
+		nrf_rpc_encode_int64(&rsp_ctx, link_info.mNetworkTimeOffset);
+		nrf_rpc_encode_uint(&rsp_ctx, link_info.mRadioType);
+	}
+
+	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
+}
+
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_msg_length, OT_RPC_CMD_MESSAGE_GET_LENGTH,
 			 ot_rpc_msg_length, NULL);
 
@@ -227,4 +287,8 @@ NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_msg_udp_new, OT_RPC_CMD_UDP_NEW_MESSAG
 			 ot_rpc_msg_udp_new, NULL);
 
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_msg_append, OT_RPC_CMD_MESSAGE_APPEND, ot_rpc_msg_append,
+			 NULL);
+
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_msg_get_thread_link_info,
+			 OT_RPC_CMD_MESSAGE_GET_THREAD_LINK_INFO, ot_rpc_msg_get_thread_link_info,
 			 NULL);
