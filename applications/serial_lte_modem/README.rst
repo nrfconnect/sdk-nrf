@@ -18,6 +18,7 @@ See the subpages for how to use the application, how to extend it, and informati
 
    doc/slm_description
    doc/nRF91_as_Zephyr_modem
+   doc/PPP_linux
    doc/slm_testing
    doc/slm_extending
    doc/slm_data_mode
