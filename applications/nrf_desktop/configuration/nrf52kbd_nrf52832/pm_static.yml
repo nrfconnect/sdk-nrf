@@ -1,0 +1,6 @@
+app:
+  address: 0x0000
+  size: 0x7e000
+settings_storage:
+  address: 0x7e000
+  size: 0x2000
