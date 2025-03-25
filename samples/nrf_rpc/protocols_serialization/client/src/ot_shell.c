@@ -483,18 +483,25 @@ static void handle_udp_receive(void *context, otMessage *message, const otMessag
 	uint16_t length;
 	uint16_t offset;
 	uint16_t read;
+	otError error;
+	otThreadLinkInfo link_info;
 	char buf[128] = {0};
-	const struct shell *sh = (const struct shell *)context;
+	const struct shell *sh = context;
 
 	offset = otMessageGetOffset(message);
 	length = otMessageGetLength(message);
+	error = otMessageGetThreadLinkInfo(message, &link_info);
+	read = otMessageRead(message, offset, buf, MIN(length, sizeof(buf)));
 
-	read = otMessageRead(message, offset, buf, length);
+	shell_print(sh, "Received UDP message");
+	shell_hexdump(sh, buf, read);
 
-	if (read > 0) {
-		shell_print(sh, "RECEIVED: '%s'", buf);
-	} else {
-		shell_print(sh, "message empty");
+	if (error == OT_ERROR_NONE) {
+		shell_print(sh, "PAN ID: %x", link_info.mPanId);
+		shell_print(sh, "Channel: %u", link_info.mChannel);
+		shell_print(sh, "RSS: %d", link_info.mRss);
+		shell_print(sh, "LQI: %u", link_info.mLqi);
+		shell_print(sh, "Link security: %c", link_info.mLinkSecurity ? 'y' : 'n');
 	}
 }
 

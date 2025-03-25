@@ -8,6 +8,7 @@
 
 DEFINE_FAKE_VALUE_FUNC(uint16_t, otMessageGetLength, const otMessage *);
 DEFINE_FAKE_VALUE_FUNC(uint16_t, otMessageGetOffset, const otMessage *);
+DEFINE_FAKE_VALUE_FUNC(otError, otMessageGetThreadLinkInfo, const otMessage *, otThreadLinkInfo *);
 DEFINE_FAKE_VALUE_FUNC(uint16_t, otMessageRead, const otMessage *, uint16_t, void *, uint16_t);
 DEFINE_FAKE_VOID_FUNC(otMessageFree, otMessage *);
 DEFINE_FAKE_VALUE_FUNC(otError, otMessageAppend, otMessage *, const void *, uint16_t);

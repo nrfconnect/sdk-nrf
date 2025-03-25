@@ -131,6 +131,7 @@ OpenThread RPC currently supports the serialization of the following OpenThread 
 * :c:func:`otMessageFree`
 * :c:func:`otMessageGetLength`
 * :c:func:`otMessageGetOffset`
+* :c:func:`otMessageGetThreadLinkInfo`
 * :c:func:`otMessageRead`
 * :c:func:`otNetDataGet`
 * :c:func:`otNetDataGetNextOnMeshPrefix`

@@ -28,6 +28,7 @@ static void nrf_rpc_err_handler(const struct nrf_rpc_err_report *report)
 #define FOREACH_FAKE(f)                                                                            \
 	f(otMessageGetLength);                                                                     \
 	f(otMessageGetOffset);                                                                     \
+	f(otMessageGetThreadLinkInfo);                                                             \
 	f(otMessageRead);                                                                          \
 	f(otMessageFree);                                                                          \
 	f(otMessageAppend);                                                                        \
