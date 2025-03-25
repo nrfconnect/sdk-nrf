@@ -136,6 +136,8 @@ To start Fast Pair discoverable advertising after the FMDN unprovisioning and fa
    The Bluetooth advertising is active only until the Fast Pair Provider connects to a Bluetooth Central.
    Once connected, you can still request to turn on the advertising, but it will only activate after you disconnect.
 
+.. _fast_pair_locator_tag_dfu:
+
 Device Firmware Update (DFU)
 ============================
 
@@ -180,6 +182,44 @@ The configuration of the DFU solution varies depending on the board target:
 +--------------+--------------------------------+-------------------------------------------------------------------+
 | SUIT         | overwrite only mode            | * ``nrf54h20dk/nrf54h20/cpuapp``                                  |
 +--------------+--------------------------------+-------------------------------------------------------------------+
+
+Signature algorithm
+-------------------
+
+Each board target that is supported by this sample, sets a specific signature algorithm for its DFU functionality.
+The signature algorithm determines the type of the key pair that is used to automatically sign the application image by the |NCS| build system (the private key) and to verify the application image by the bootloader (the public key).
+The bootloader must have access to the public key for its image verification process.
+The choice of the signature algorithm and the implementation of the public key storage solution have an impact on the security properties of the overall DFU solution.
+
+The configuration of the signature algorithm and the public key storage solution in this sample varies depending on the board target:
+
++--------------------------------+-------------------------------------------------------------------+---------------------------+---------------------------+
+| Signature algorithm            | Board targets                                                     | Public key storage        | Properties                |
++================================+===================================================================+===========================+===========================+
+| RSA-2048                       | * ``nrf52dk/nrf52832`` (only ``release`` configuration)           | Bootloader partition      | SW calculation,           |
+|                                | * ``nrf52833dk/nrf52833`` (only ``release`` configuration)        |                           | Signature derived from    |
+|                                | * ``nrf52840dk/nrf52840``                                         |                           | image hash                |
+|                                | * ``nrf5340dk/nrf5340/cpuapp``                                    |                           |                           |
+|                                | * ``nrf5340dk/nrf5340/cpuapp/ns``                                 |                           |                           |
+|                                | * ``thingy53/nrf5340/cpuapp``                                     |                           |                           |
+|                                | * ``thingy53/nrf5340/cpuapp/ns``                                  |                           |                           |
++--------------------------------+-------------------------------------------------------------------+---------------------------+---------------------------+
+| ED25519                        | * ``nrf54l15dk/nrf54l05/cpuapp`` (only ``release`` configuration) | Key Management Unit (KMU) | HW-accelerated (CRACEN),  |
+|                                | * ``nrf54l15dk/nrf54l10/cpuapp``                                  |                           | Signature derived from    |
+|                                | * ``nrf54l15dk/nrf54l15/cpuapp``                                  |                           | image (pure)              |
++--------------------------------+-------------------------------------------------------------------+---------------------------+---------------------------+
+
+.. note::
+   The SUIT DFU integration in this sample does not support the secure boot feature and its requirement for the signature verification.
+   The affected board targets are not listed in the table above.
+
+Each supported board target has the signature key file (the ``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`` Kconfig option) defined in the :file:`sysbuild/configuration` directory that is part of the sample directory.
+The signature key file is unique for each board target and is located in the :file:`<board_target>` subdirectory.
+For example, the signature key file for the ``nrf54l15dk/nrf54l15/cpuapp`` board target is located in the :file:`sysbuild/configuration/nrf54l15dk_nrf54l15_cpuapp` subdirectory.
+
+.. important::
+   The signature private keys defined by the sample are publicly available and intended for demonstration purposes only.
+   For production purposes, you must create and use your own signature key file that must be stored in a secure location.
 
 DFU mode
 --------
@@ -543,6 +583,43 @@ For example, when building from the command line, you can add it as follows:
    :class: highlight
 
    west build -b *board_target* -- -DFILE_SUFFIX=release
+
+DFU build with the key storage in KMU
+=====================================
+
+The MCUboot-based targets that enable the ``SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU`` Kconfig option use the Key Management Unit (KMU) hardware peripheral to store the public key that is used by the bootloader to verify the application image.
+
+.. note::
+   The board targets based on the nRF54L SoC Series are currently the only targets that support the KMU-based key storage.
+   See the :ref:`fast_pair_locator_tag_dfu` section of this sample documentation for the details regarding the supported signature algorithms, public key storage location and the signature key file.
+
+Using KMU requires the provisioning operation of the public key to be performed manually.
+Before performing the provisioning operation, you need to ensure that your board target is fully erased:
+
+.. parsed-literal::
+   :class: highlight
+
+   nrfutil device erase --all
+
+Assuming that your current working directory points to this sample directory, you can perform the provisioning operation as follows:
+
+.. parsed-literal::
+   :class: highlight
+
+   west ncs-provision upload -s <soc> -k sysbuild/configuration/<board_target>/boot_signature_key_file_<algorithm>.pem --keyname UROT_PUBKEY
+
+* The ``<soc>`` placeholder is the SoC name used in your board target (for example, ``nrf54l15``).
+* The ``<board_target>`` placeholder is your board target name (for example, ``nrf54l15dk_nrf54l15_cpuapp``).
+* The ``<algorithm>`` placeholder is the algorithm used to generate the key pair for the application image signature generation and verification (for example, ``ed25519``).
+
+The examplary command for the ``nrf54l15dk/nrf54l15/cpuapp`` board target and the demonstration key file looks is as follows:
+
+.. parsed-literal::
+   :class: highlight
+
+   west ncs-provision upload -s nrf54l15 -k sysbuild/configuration/nrf54l15dk_nrf54l15_cpuapp/boot_signature_key_file_ed25519.pem --keyname UROT_PUBKEY
+
+See :ref:`ug_nrf54l_developing_provision_kmu` for further details regarding the KMU provisioning process.
 
 .. _fast_pair_locator_tag_motion_detector_test_build:
 
