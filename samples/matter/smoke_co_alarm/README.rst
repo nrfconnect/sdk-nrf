@@ -368,7 +368,7 @@ For this sample, you can use one of the following :ref:`onboarding information f
             :width: 200px
             :alt: QR code for commissioning the smoke co alarm device
 
-       - MT:6FCJ142C00KA0648G00
+       - MT:Y.K9042C00KA0648G00
        - 34970112332
 
 .. include:: ../lock/README.rst
