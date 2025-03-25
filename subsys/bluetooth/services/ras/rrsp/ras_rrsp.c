@@ -477,7 +477,7 @@ static void ondemand_rd_indicate_sent_cb(struct bt_conn *conn,
 static int ondemand_rd_notify_or_indicate(struct bt_conn *conn, struct net_buf_simple *buf)
 {
 	struct bt_gatt_attr *attr =
-		bt_gatt_find_by_uuid(rrsp_svc.attrs, 1, BT_UUID_RAS_ONDEMAND_RD);
+		bt_gatt_find_by_uuid(rrsp_svc.attrs, 0, BT_UUID_RAS_ONDEMAND_RD);
 
 	__ASSERT_NO_MSG(attr);
 
@@ -512,7 +512,7 @@ static int ondemand_rd_notify_or_indicate(struct bt_conn *conn, struct net_buf_s
 
 static int rascp_indicate(struct bt_conn *conn, struct net_buf_simple *rsp)
 {
-	struct bt_gatt_attr *attr = bt_gatt_find_by_uuid(rrsp_svc.attrs, 1, BT_UUID_RAS_CP);
+	struct bt_gatt_attr *attr = bt_gatt_find_by_uuid(rrsp_svc.attrs, 0, BT_UUID_RAS_CP);
 
 	__ASSERT_NO_MSG(attr);
 
@@ -538,7 +538,7 @@ static int rascp_indicate(struct bt_conn *conn, struct net_buf_simple *rsp)
 static int rd_status_notify_or_indicate(struct bt_conn *conn, const struct bt_uuid *uuid,
 					uint16_t ranging_counter)
 {
-	struct bt_gatt_attr *attr = bt_gatt_find_by_uuid(rrsp_svc.attrs, 1, uuid);
+	struct bt_gatt_attr *attr = bt_gatt_find_by_uuid(rrsp_svc.attrs, 0, uuid);
 
 	__ASSERT_NO_MSG(attr);
 
@@ -617,7 +617,7 @@ static void rascp_cmd_handle(struct bt_ras_rrsp *rrsp)
 		LOG_DBG("GET_RD %d", ranging_counter);
 
 		struct bt_gatt_attr *attr =
-			bt_gatt_find_by_uuid(rrsp_svc.attrs, 1, BT_UUID_RAS_ONDEMAND_RD);
+			bt_gatt_find_by_uuid(rrsp_svc.attrs, 0, BT_UUID_RAS_ONDEMAND_RD);
 
 		__ASSERT_NO_MSG(attr);
 
