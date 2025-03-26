@@ -803,6 +803,7 @@ static void dfu_cache_ipuc_init(void)
 	for (size_t i = 1; i < ARRAY_SIZE(dfu_partitions_ext); i++) {
 		/* Calculating memory-mapped address for cache pool */
 		struct dfu_cache_partition_ext *partition = &dfu_partitions_ext[i];
+		(void)partition; /* Suppress warning if cache IPUC is not used */
 
 		/* Allocate IPUC driver for DFU cache usage.
 		 * The IPUC initialization is delayed to the first write API usage.
