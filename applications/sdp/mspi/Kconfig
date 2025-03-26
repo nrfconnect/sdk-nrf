@@ -18,4 +18,5 @@ config SDP_MSPI_FAULT_TIMER
 	  Timer is used to detect application faults. If the timer expires,
 	  the application is considered to be in a fault state.
 
+rsource "../Kconfig"
 source "Kconfig.zephyr"
