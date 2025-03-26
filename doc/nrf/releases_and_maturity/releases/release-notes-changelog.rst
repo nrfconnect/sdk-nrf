@@ -591,6 +591,7 @@ Cellular samples
     * An issue with a very small :kconfig:option:`CONFIG_COAP_EXTENDED_OPTIONS_LEN_VALUE` Kconfig value in the :file:`overlay-coap_nrf_provisioning.conf` file.
     * Slow Wi-Fi connectivity startup by selecting ``TFM_SFN`` instead of ``TFM_IPC``.
     * The size of TLS credentials buffer for Wi-Fi connectivity to allow installing both AWS and CoAP CA certificates.
+    * Build issues with Wi-Fi configuration using CoAP.
 
 * :ref:`lte_sensor_gateway` sample:
 
