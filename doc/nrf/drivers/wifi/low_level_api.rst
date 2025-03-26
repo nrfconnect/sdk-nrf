@@ -1,5 +1,14 @@
-Low-Level API
+.. _nrf70_wifi_low_level_api:
+
+Low-level API
 #############
+
+.. contents::
+   :local:
+   :depth: 2
+
+The nRF70 Series Wi-Fi® driver provides a low-level API for applications that need direct access to the nRF70 Series device.
+This is intended for users who want to use the nRF70 Series device on a platform other than Zephyr.
 
 Common
 ******
