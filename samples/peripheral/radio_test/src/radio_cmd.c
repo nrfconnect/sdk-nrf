@@ -190,6 +190,7 @@ static int cmd_time_set(const struct shell *shell, size_t argc, char **argv)
 static int cmd_cancel(const struct shell *shell, size_t argc, char **argv)
 {
 	radio_test_cancel();
+	test_in_progress = false;
 	return 0;
 }
 
