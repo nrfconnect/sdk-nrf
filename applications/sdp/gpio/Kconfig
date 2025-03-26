@@ -15,4 +15,5 @@ config SDP_GPIO_BACKEND_ICBMSG
 
 endchoice
 
+rsource "../Kconfig"
 source "Kconfig.zephyr"

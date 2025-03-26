@@ -1,0 +1,7 @@
+config SDP_DEVELOPER_MODE
+	bool "SDP developer mode"
+	help
+	  SDP developer mode.
+	  If enabled, changes in HRT files will be included in build.
+	  Otherwise, if there is a change in HRT that produces a different ASM file than
+	  the provided one, build error is reported.
