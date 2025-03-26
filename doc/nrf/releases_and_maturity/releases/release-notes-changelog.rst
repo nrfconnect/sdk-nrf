@@ -610,7 +610,7 @@ DECT NR+ samples
 Edge Impulse samples
 --------------------
 
-|no_changes_yet_note|
+* Added support for the ``nrf54l15dk/nrf54l05/cpuapp`` and ``nrf54l15dk/nrf54l10/cpuapp`` board targets in all Edge Impulse samples.
 
 Enhanced ShockBurst samples
 ---------------------------
