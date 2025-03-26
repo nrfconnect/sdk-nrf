@@ -50,7 +50,7 @@ static void print_err(const lwm2m_carrier_event_t *evt)
 			"Connection failure",
 	};
 
-	__ASSERT(PART_OF_ARRAY(strerr, strerr[err->type]),
+	__ASSERT(PART_OF_ARRAY(strerr, &strerr[err->type]),
 		 "Unhandled liblwm2m_carrier error");
 
 	LOG_ERR("LWM2M_CARRIER_EVENT_ERROR: %s, reason %d", strerr[err->type], err->value);
@@ -86,7 +86,7 @@ static void print_deferred(const lwm2m_carrier_event_t *evt)
 			"Waiting for SIM MSISDN",
 	};
 
-	__ASSERT(PART_OF_ARRAY(strdef, strdef[def->reason]),
+	__ASSERT(PART_OF_ARRAY(strdef, &strdef[def->reason]),
 		 "Unhandled deferred reason");
 
 	LOG_INF("LWM2M_CARRIER_EVENT_DEFERRED: reason %s, timeout %d seconds",
