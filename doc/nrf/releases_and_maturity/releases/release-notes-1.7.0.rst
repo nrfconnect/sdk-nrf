@@ -114,12 +114,12 @@ nRF9160
     * Added the :ref:`slm_data_mode` documentation page to explain the data mode mechanism and how it works.
     * Added the :ref:`SLM_AT_FOTA` documentation page to describe the FOTA service.
 
-  * :ref:`asset_tracker_v2` application:
+  * Asset Tracker v2 application:
 
     * Changed the custom module responsible for controlling the LEDs to the :ref:`LEDs module <caf_leds>` from :ref:`lib_caf`.
     * Added support for A-GPS when configuring the application for AWS IoT.
     * Added support for P-GPS when configuring the application for AWS IoT.
-    * Added a new :ref:`debug module <asset_tracker_v2_debug_module>` that implements support for `Memfault`_.
+    * Added a new debug module that implements support for `Memfault`_.
     * Added support for the :ref:`liblwm2m_carrier_readme` library.
 
   * :ref:`liblwm2m_carrier_readme` library:
@@ -137,7 +137,7 @@ nRF9160
 
 * Deprecated:
 
-  * nRF9160: Asset Tracker has been deprecated in favor of :ref:`asset_tracker_v2`.
+  * nRF9160: Asset Tracker has been deprecated in favor of Asset Tracker v2.
   * ``at_notif`` library has been deprecated in favor of the :ref:`at_monitor_readme` library.
   * ``at_cmd`` library has been deprecated in favor of Modem library's native AT interface.
   * GPS driver has been deprecated in favor of the :ref:`GNSS interface<nrfxlib:gnss_interface>`.
@@ -540,7 +540,7 @@ In addition to documentation related to the changes listed above, the following 
 
   * :ref:`applications` section pages:
 
-    * :ref:`asset_tracker_v2` pages:
+    * Asset Tracker v2 pages:
 
       * Restructured the single application page into several subpages.
       * Updated with information about using the LwM2M carrier library.

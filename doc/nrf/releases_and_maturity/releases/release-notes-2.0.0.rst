@@ -221,9 +221,9 @@ nRF9160: Asset Tracker v2
 
 * Added:
 
-  * Support for :ref:`bosch_software_environmental_cluster_library`.
+  * Support for Bosh Software Environmental Cluster library.
   * Support for Indoor Air Quality (IAQ) readings retrieved from the BME680 sensor on Thingy:91.
-    For more information, see the :ref:`asset_tracker_v2_sensor_module` documentation.
+    For more information, see the Asset Tracker v2 sensor module documentation.
   * Support for QEMU x86 emulation.
   * Support for the :ref:`lib_nrf_cloud_pgps` flash memory partition under certain conditions.
   * Support for :ref:`QoS` library to handle multiple in-flight messages for MQTT based cloud backends such as AWS IoT, Azure IoT Hub, and nRF Cloud.
@@ -1046,7 +1046,7 @@ Documentation
   * A page on :ref:`ug_pinctrl`.
   * Documentation for :ref:`ug_thingy53_gs`.
   * Documentation page about Zigbee commissioning.
-  * Documentation for Asset tracker v2 :ref:`asset_tracker_unit_test`.
+  * Documentation for Asset tracker v2 unit tests.
   * New :ref:`security` page on the top level, with a brief introduction to core security features available in Nordic Semiconductor products.
 
 * Updated:

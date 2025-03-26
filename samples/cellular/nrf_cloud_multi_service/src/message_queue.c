@@ -119,8 +119,7 @@ static int consume_device_message(void)
 	 *
 	 * Note, it is possible (and better) to batch-send device messages when more than one is
 	 * queued up. We limit this sample to sending individual messages mainly to keep the sample
-	 * simple and accessible. See the Asset Tracker V2 application for an example of batch
-	 * message sending.
+	 * simple and accessible.
 	 */
 	LOG_DBG("Attempting to transmit enqueued device message");
 	LOG_DBG("Messages remaining in queue: %u", k_msgq_num_used_get(&device_message_queue));

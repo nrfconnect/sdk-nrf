@@ -61,7 +61,7 @@ nRF9160
 
 * Added:
 
-  * :ref:`asset_tracker_v2` application, which is a low-power asset tracking example for nRF9160 DK and Thingy:91.
+  * Asset Tracker v2 application, which is a low-power asset tracking example for nRF9160 DK and Thingy:91.
   * :ref:`fmfu_smp_svr_sample` sample, which shows how to add the full modem serial update functionality to an application using SMP Server.
   * :ref:`http_modem_full_update_sample` sample, which demonstrates how to add full modem upgrade support to an application. Note that this requires an external flash memory of a minimum of 2 MB to work, hence the sample will only work on the nRF9160 DK v0.14.0 or later.
   * :ref:`http_modem_delta_update_sample` sample, which demonstrates how to add delta modem upgrade support to an application.

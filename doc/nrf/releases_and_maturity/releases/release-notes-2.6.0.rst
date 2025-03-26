@@ -442,7 +442,7 @@ Asset Tracker v2
 * Added:
 
   * Support for the nRF9151 development kit.
-  * The :ref:`CONFIG_DATA_SAMPLE_WIFI_DEFAULT <CONFIG_DATA_SAMPLE_WIFI_DEFAULT>` Kconfig option to configure whether Wi-Fi APs are included in sample requests by default.
+  * The ``CONFIG_DATA_SAMPLE_WIFI_DEFAULT`` Kconfig option to configure whether Wi-Fi APs are included in sample requests by default.
   * The :kconfig:option:`CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_FOTA` and :kconfig:option:`CONFIG_NRF_CLOUD_SEND_SERVICE_INFO_UI` Kconfig options.
     The application no longer sends a device shadow update; this is now handled by the :ref:`lib_nrf_cloud` library.
   * Support for ADXL367 accelerometer.

@@ -236,10 +236,6 @@ For more information on the various services, see the following documentation:
 Applications and samples
 ************************
 
-The following application uses the :ref:`lib_nrf_cloud` for services in |NCS|:
-
-* :ref:`asset_tracker_v2`
-
 The following sample demonstrates nRF Cloud-specific functionality using CoAP:
 
 * :ref:`nrf_cloud_multi_service`

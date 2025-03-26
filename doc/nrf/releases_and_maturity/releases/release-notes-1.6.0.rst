@@ -134,7 +134,7 @@ nRF9160
 
       * :kconfig:option:`CONFIG_NRF_CLOUD_CELL_POS`
 
-  * :ref:`asset_tracker_v2` application:
+  * Asset Tracker v2 application:
 
     * Added support for Azure IoT Hub.
     * Added support for nRF Cloud.
@@ -603,7 +603,7 @@ Applications and samples
 * nRF9160:
 
    * nRF9160: Asset Tracker - Added sections on using nRF Cloud A-GPS or P-GPS, and on using nRF Cloud FOTA.
-   * :ref:`asset_tracker_v2`:
+   * Asset Tracker v2:
 
       * Added a table showing cloud services and the corresponding cloud-side instances.
       * Extended the documentation to include Azure IoT Hub and nRF Cloud support.

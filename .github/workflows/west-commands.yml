@@ -52,10 +52,6 @@ jobs:
           python3 -m pip install -U pip
           pip3 install -r nrf/scripts/requirements-west-ncs-sbom.txt
           pip3 install -r nrf/scripts/requirements-extra.txt
-      - name: Test ncs-sbom with asset tracker sample
-        shell: bash
-        run: |
-          west ncs-sbom --input-files nrf/applications/asset_tracker_v2/**/*.c
       - name: Smoke test ncs-loot & ncs-compare
         shell: bash
         run: |

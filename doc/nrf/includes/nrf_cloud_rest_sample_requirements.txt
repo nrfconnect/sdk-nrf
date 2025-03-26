@@ -31,7 +31,7 @@ To provision your device on nRF Cloud using JITP, complete the following steps:
    These devices need new credentials to be installed before they can perform REST requests.
 
 #. Install a sample or application that supports JITP.
-   You can use the :ref:`Asset Tracker V2 <asset_tracker_v2>` application for this purpose.
+   You can use the :ref:`nRF Cloud multi-service <nrf_cloud_multi_service>` sample for this purpose.
 
 #. Allow your device to connect to nRF Cloud and add it to the nRF Cloud portal.
    When successfully provisioned, the device appears in the devices list of the nRF Cloud portal.

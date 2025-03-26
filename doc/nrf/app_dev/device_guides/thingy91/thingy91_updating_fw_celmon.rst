@@ -7,11 +7,8 @@ Updating the Thingy:91 firmware using the Cellular Monitor app
    :local:
    :depth: 2
 
-Thingy:91 (v1.5.0 or earlier) comes preloaded with the nRF9160: Asset Tracker firmware and modem firmware on the nRF9160 :term:`System in Package (SiP)`, and the Connectivity bridge application firmware on the nRF52840 :term:`System on Chip (SoC)` that enable the device to use the environment sensors and track the device using :term:`Global Positioning System (GPS)`.
+Thingy:91 (v1.5.0 or earlier) comes preloaded with the Asset Tracker v2 firmware and modem firmware on the nRF9160 :term:`System in Package (SiP)`, and the Connectivity bridge application firmware on the nRF52840 :term:`System on Chip (SoC)` that enable the device to use the environment sensors and track the device using :term:`Global Positioning System (GPS)`.
 The data is transmitted to nRF Cloud.
-
-Before you start using the Thingy:91, it is recommended that you update the application firmware on the nRF9160 SiP to :ref:`asset_tracker_v2`.
-You must also update the modem firmware.
 
 .. tip::
    For a more compact nRF Cloud firmware application, you can build and install the :ref:`nrf_cloud_multi_service` sample.
@@ -60,7 +57,6 @@ To update the firmware on the Thingy:91, complete the following steps:
    The **Program sample app** window appears, displaying applications you can program to the Thingy:91.
 
 #. Click :guilabel:`Select` in the **Asset Tracker V2** section.
-   Asset Tracker v2 is an application that simulates sensor data and transmits it to Nordic Semiconductor's cloud solution, `nRF Cloud`_.
 
    .. figure:: images/cellularmonitor_selectassettracker.png
       :alt: Cellular Monitor app - Select Asset Tracker V2

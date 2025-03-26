@@ -92,10 +92,6 @@ Applications and samples
 .. note::
    Add details about applications and samples that use or implement the product or service.
 
-The following application uses the Memfault integration in |NCS|:
-
-* :ref:`asset_tracker_v2`
-
 The following samples demonstrate the Memfault integration in |NCS|:
 
 * :ref:`peripheral_mds`

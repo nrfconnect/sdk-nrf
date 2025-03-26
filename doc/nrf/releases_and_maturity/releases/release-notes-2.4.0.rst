@@ -45,7 +45,7 @@ The following list includes the summary of the most relevant changes introduced 
 
   * Cellular IoT:
 
-    * :ref:`asset_tracker_v2` now supports Wi-Fi locationing using nF9160 DK combined with nRF7002 EK.
+    * Asset Tracker v2 now supports Wi-Fi locationing using nF9160 DK combined with nRF7002 EK.
 
   * Security:
 

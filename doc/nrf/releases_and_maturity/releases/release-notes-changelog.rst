@@ -248,7 +248,10 @@ Wi-Fi®
 Applications
 ============
 
-This section provides detailed lists of changes by :ref:`application <applications>`.
+* Removed the Asset Tracker v2 application.
+  For development of Asset Tracker applications, refer to the `Asset Tracker Template <Asset Tracker Template_>`_.
+
+  The factory-programmed Asset Tracker v2 firmware is still available to program the nRF91 Series devices using the `Programmer app`_ and in the `Quick Start app`_ and the `Cellular Monitor app`_.
 
 Machine learning
 ----------------

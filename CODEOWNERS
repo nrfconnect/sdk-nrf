@@ -27,7 +27,6 @@
 /.vscode/                                 @FilipZajdel
 
 # Applications
-/applications/asset_tracker_v2/           @nrfconnect/ncs-cia
 /applications/connectivity_bridge/        @nrfconnect/ncs-cia @nordic-auko
 /applications/ipc_radio/                  @nrfconnect/ncs-si-muffin
 /applications/machine_learning/           @nrfconnect/ncs-si-muffin
@@ -38,7 +37,6 @@
 /applications/sdp/                        @nrfconnect/ncs-ll-ursus
 /applications/serial_lte_modem/           @nrfconnect/ncs-co-networking @nrfconnect/ncs-iot-oulu
 /applications/serial_lte_modem/src/lwm2m_carrier/ @nrfconnect/ncs-carrier
-/applications/asset_tracker_v2/**/*.rst   @nrfconnect/ncs-cia-doc
 /applications/connectivity_bridge/*.rst   @nrfconnect/ncs-cia-doc
 /applications/ipc_radio/*.rst             @nrfconnect/ncs-si-muffin-doc
 /applications/machine_learning/*.rst      @nrfconnect/ncs-si-muffin-doc

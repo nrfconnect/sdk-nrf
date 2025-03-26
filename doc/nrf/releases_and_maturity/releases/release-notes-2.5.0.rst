@@ -174,7 +174,7 @@ Working with nRF91 Series
 * Added support for :ref:`nrf91_modem_trace_uart_snippet`.
   Snippet is used for nRF91 modem tracing with the UART backend for the following applications and samples:
 
-  * :ref:`asset_tracker_v2`
+  * Asset Tracker v2
   * :ref:`serial_lte_modem`
   * All samples that use nRF91 Series DK except for :ref:`slm_shell_sample`, :ref:`modem_trace_flash`, :ref:`modem_trace_backend_sample`.
 
@@ -344,7 +344,7 @@ Asset Tracker v2
 
 * Updated:
 
-  * Default value of the Kconfig option :ref:`CONFIG_DATA_ACTIVE_TIMEOUT_SECONDS <CONFIG_DATA_ACTIVE_TIMEOUT_SECONDS>` is changed to 300 seconds.
+  * Default value of the Kconfig option ``CONFIG_DATA_ACTIVE_TIMEOUT_SECONDS`` is changed to 300 seconds.
   * Enabled link time optimization to reduce the flash size of the application.
     You can disable this using the Kconfig option :kconfig:option:`CONFIG_ASSET_TRACKER_V2_LTO`.
   * Replaced overlay arguments ``OVERLAY_CONFIG`` and ``DTC_OVERLAY_FILE`` with the new Zephyr overlay arguments ``EXTRA_CONF_FILE`` and ``EXTRA_DTC_OVERLAY_FILE`` so as to avoid overriding of board overlay for the nRF9160 DK v0.14.0.

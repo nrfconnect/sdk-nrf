@@ -1,7 +1,0 @@
-# Config options for Location module test
-#
-# Copyright (c) 2022 Nordic Semiconductor ASA
-#
-# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
-#
-source "Kconfig.zephyr"

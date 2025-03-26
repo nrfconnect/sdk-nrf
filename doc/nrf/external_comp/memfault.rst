@@ -189,15 +189,6 @@ See the Configuration section of the following library documents for different M
 Applications and samples
 ************************
 
-The following applications use the Memfault integration in |NCS|:
-
-* :ref:`asset_tracker_v2` - The :ref:`asset_tracker_v2_debug_module` uses `Memfault SDK`_ to track metrics specific to |NCS| such as LTE and stack metrics.
-  The application also uses Memfault on a custom transport, without using Memfault's own HTTPS transport.
-  See :ref:`asset_tracker_v2_ext_transport` for more details.
-
-* `nRF Asset Tracker project`_ - The `nRF Asset Tracker Memfault integration for AWS IoT`_ or the `nRF Asset Tracker Memfault integration for Azure IoT Hub`_ provide the necessary cloud resources to send Memfault data using the established MQTT cloud connection.
-  See the `nRF Asset Tracker Memfault integration`_ documentation for more details.
-
 The following samples demonstrate the Memfault integration in |NCS|:
 
 * :ref:`peripheral_mds` - This sample has an implementation of the Memfault Diagnostic Service (MDS).

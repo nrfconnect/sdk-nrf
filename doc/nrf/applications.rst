@@ -17,7 +17,6 @@ If you want to list applications available for one or more specific boards, `use
    :glob:
    :caption: Subpages:
 
-   ../../applications/asset_tracker_v2/README
    ../../applications/connectivity_bridge/README
    ../../applications/ipc_radio/README
    ../../applications/matter_bridge/README

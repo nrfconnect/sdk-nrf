@@ -198,7 +198,6 @@ Applications and samples
 
 The following applications use the cellular IoT in |NCS|:
 
-* :ref:`asset_tracker_v2`
 * :ref:`serial_lte_modem`
 * :ref:`connectivity_bridge`
 
@@ -213,7 +212,6 @@ Integrations
 
 The following integrations are available for cellular IoT in |NCS|:
 
-* `nRF Asset Tracker project`_.
 * :ref:`nRF Cloud <ug_nrf_cloud>` - `nRF Cloud`_ is `Nordic Semiconductor's IoT cloud platform`_ that allows you to remotely manage and update your IoT devices using :term:`Firmware Over-the-Air (FOTA) <Firmware Over-the-Air (FOTA) update>`.
 * :ref:`Memfault <ug_memfault>` - A cloud-based web application with |NCS| compatibility that monitors devices and allows you to debug issues remotely through an LTE or Wi-Fi network.
 * :ref:`AVSystem <ug_avsystem>` - Software solution provider that provides a device management platform.

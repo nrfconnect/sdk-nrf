@@ -23,7 +23,6 @@ For more information, see the following pages:
 The :ref:`lwm2m_carrier` sample demonstrates how to run this library in an application.
 In addition to this stand-alone sample, the following applications and samples include an overlay file to easily integrate the LwM2M carrier library:
 
-  * :ref:`asset_tracker_v2`
   * :ref:`modem_shell_application`
   * :ref:`http_application_update_sample`
   * :ref:`serial_lte_modem`

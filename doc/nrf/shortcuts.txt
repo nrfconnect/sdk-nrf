@@ -232,9 +232,6 @@
 .. |nrf54_buttons_leds_numbering| replace:: The nRF54 DKs use a different numbering pattern for LED and buttons.
    See the User interface section for full overview.
 
-.. |ATv2_maintenance_note| replace:: The Asset Tracker v2 application is in maintenance mode.
-   For new projects, it is recommended to use the :ref:`nrf_cloud_multi_service` sample instead.
-
 .. |toolchain_management_ncs_versions| replace:: The Toolchain Manager installation is recommended only when using the nRF54H20 DK with the |NCS| v2.7.0.
    When using any other DK, the Toolchain Manager installation is recommended for the |NCS| v1.9.x and earlier versions.
 

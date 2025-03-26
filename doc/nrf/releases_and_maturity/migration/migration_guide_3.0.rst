@@ -29,6 +29,18 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
+.. _asset_tracker_v2:
+
+Asset Tracker v2
+----------------
+
+.. toggle::
+
+   * The Asset Tracker v2 has beeen removed.
+     For development of Asset Tracker applications, refer to the `Asset Tracker Template <Asset Tracker Template_>`_.
+
+     The factory-programmed Asset Tracker v2 firmware is still available to program the nRF91 Series devices using the `Programmer app`_ and in the `Quick Start app`_ and the `Cellular Monitor app`_.
+
 nRF5340 Audio applications
 --------------------------
 

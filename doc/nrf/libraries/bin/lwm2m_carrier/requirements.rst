@@ -110,5 +110,3 @@ The following library sizes are reported in the :ref:`liblwm2m_carrier_changelog
 
    Enabling the LwM2M carrier library into the :ref:`lwm2m_carrier` sample serves only as a reference.
    The increase in memory size due to the inclusion of the LwM2M carrier library depends on the application that it is being integrated into.
-   For example, an application such as the :ref:`asset_tracker_v2` already uses several libraries which the LwM2M carrier library depends on.
-   This makes the added memory requirement considerably smaller.
