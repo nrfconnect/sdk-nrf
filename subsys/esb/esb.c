@@ -420,6 +420,16 @@ static void esb_fem_for_tx_set(bool ack)
 		nrf_timer_cc_set(esb_timer.p_reg, NRF_TIMER_CC_CHANNEL2, ramp_up);
 	}
 
+	if (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX)) {
+		uint32_t cc1 = nrfx_timer_capture_get(&esb_timer, NRF_TIMER_CC_CHANNEL1);
+		uint32_t cc2 = nrfx_timer_capture_get(&esb_timer, NRF_TIMER_CC_CHANNEL2);
+
+		if (cc1 > cc2) {
+			timer_shorts = NRF_TIMER_SHORT_COMPARE1_STOP_MASK;
+			timer_shorts |= NRF_TIMER_SHORT_COMPARE1_CLEAR_MASK;
+		}
+	}
+
 	nrf_timer_shorts_set(esb_timer.p_reg, timer_shorts);
 }
 
