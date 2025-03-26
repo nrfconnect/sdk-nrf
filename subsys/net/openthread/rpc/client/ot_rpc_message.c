@@ -19,7 +19,7 @@
 otError otMessageAppend(otMessage *aMessage, const void *aBuf, uint16_t aLength)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	ot_msg_key key = (ot_msg_key)aMessage;
+	ot_rpc_res_tab_key key = (ot_rpc_res_tab_key)aMessage;
 	otError error = OT_ERROR_NONE;
 
 	if (aLength == 0 || aBuf == NULL) {
@@ -39,7 +39,7 @@ otMessage *otUdpNewMessage(otInstance *aInstance, const otMessageSettings *aSett
 {
 	otMessage *msg = NULL;
 	struct nrf_rpc_cbor_ctx ctx;
-	ot_msg_key key;
+	ot_rpc_res_tab_key key;
 
 	ARG_UNUSED(aInstance);
 
@@ -62,9 +62,9 @@ otMessage *otUdpNewMessage(otInstance *aInstance, const otMessageSettings *aSett
 void otMessageFree(otMessage *aMessage)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	ot_msg_key key = (ot_msg_key)aMessage;
+	ot_rpc_res_tab_key key = (ot_rpc_res_tab_key)aMessage;
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(ot_msg_key) + 1);
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(ot_rpc_res_tab_key) + 1);
 
 	nrf_rpc_encode_uint(&ctx, key);
 	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_MESSAGE_FREE, &ctx);
@@ -77,7 +77,7 @@ void otMessageFree(otMessage *aMessage)
 uint16_t otMessageGetLength(const otMessage *aMessage)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	ot_msg_key key = (ot_msg_key)aMessage;
+	ot_rpc_res_tab_key key = (ot_rpc_res_tab_key)aMessage;
 	uint16_t ret = 0;
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(uint32_t) + 1);
@@ -98,7 +98,7 @@ uint16_t otMessageGetLength(const otMessage *aMessage)
 uint16_t otMessageGetOffset(const otMessage *aMessage)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	ot_msg_key key = (ot_msg_key)aMessage;
+	ot_rpc_res_tab_key key = (ot_rpc_res_tab_key)aMessage;
 	uint16_t ret = 0;
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(uint32_t) + 1);
@@ -119,7 +119,7 @@ uint16_t otMessageGetOffset(const otMessage *aMessage)
 uint16_t otMessageRead(const otMessage *aMessage, uint16_t aOffset, void *aBuf, uint16_t aLength)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	ot_msg_key key = (ot_msg_key)aMessage;
+	ot_rpc_res_tab_key key = (ot_rpc_res_tab_key)aMessage;
 	size_t size = 0;
 	const void *buf = NULL;
 

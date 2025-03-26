@@ -90,7 +90,7 @@ static void ot_rpc_cmd_udp_receive_cb(const struct nrf_rpc_group *group,
 				      struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 	otMessageInfo message_info;
-	ot_msg_key msg_key = 0;
+	ot_rpc_res_tab_key msg_key = 0;
 	ot_socket_key soc_key = 0;
 	otUdpSocket *socket;
 
@@ -143,7 +143,7 @@ otError otUdpSend(otInstance *aInstance, otUdpSocket *aSocket, otMessage *aMessa
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	ot_socket_key soc_key = (ot_socket_key)aSocket;
-	ot_msg_key msg_key = (ot_msg_key)aMessage;
+	ot_rpc_res_tab_key msg_key = (ot_rpc_res_tab_key)aMessage;
 	otError error = OT_ERROR_NONE;
 
 	ARG_UNUSED(aInstance);

@@ -10,53 +10,19 @@
 #include <ot_rpc_common.h>
 
 #include <nrf_rpc_cbor.h>
+#include "ot_rpc_message.h"
 
 #include <openthread/udp.h>
 #include <openthread/message.h>
 
 #include <zephyr/net/openthread.h>
 
-#define OT_MESSAGES_POOL CONFIG_OPENTHREAD_RPC_MESSAGE_POOL
-
-static otMessage *ot_message_registry[OT_MESSAGES_POOL];
-
-ot_msg_key ot_reg_msg_alloc(otMessage *msg)
-{
-	if (msg == NULL) {
-		return 0;
-	}
-
-	for (ot_msg_key i = 0; i < OT_MESSAGES_POOL; i++) {
-		if (ot_message_registry[i] == NULL) {
-			ot_message_registry[i] = msg;
-			return i + 1;
-		}
-	}
-	return 0;
-}
-
-void ot_msg_free(ot_msg_key key)
-{
-	if (key == 0 || key > OT_MESSAGES_POOL) {
-		return;
-	}
-
-	ot_message_registry[key - 1] = NULL;
-}
-
-otMessage *ot_msg_get(ot_msg_key key)
-{
-	if (key == 0 || key > OT_MESSAGES_POOL) {
-		return NULL;
-	}
-
-	return ot_message_registry[key - 1];
-}
+OT_RPC_RESOURCE_TABLE_REGISTER(msg, otMessage, CONFIG_OPENTHREAD_RPC_MESSAGE_POOL);
 
 static void ot_rpc_msg_free(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 			    void *handler_data)
 {
-	ot_msg_key key = 0;
+	ot_rpc_res_tab_key key = 0;
 	otMessage *message;
 
 	key = nrf_rpc_decode_uint(ctx);
@@ -65,7 +31,7 @@ static void ot_rpc_msg_free(const struct nrf_rpc_group *group, struct nrf_rpc_cb
 		return;
 	}
 
-	message = ot_msg_get(key);
+	message = ot_res_tab_msg_get(key);
 
 	if (message != NULL) {
 		openthread_api_mutex_lock(openthread_get_default_context());
@@ -73,7 +39,7 @@ static void ot_rpc_msg_free(const struct nrf_rpc_group *group, struct nrf_rpc_cb
 		openthread_api_mutex_unlock(openthread_get_default_context());
 	}
 
-	ot_msg_free(key);
+	ot_res_tab_msg_free(key);
 
 	nrf_rpc_rsp_send_void(group);
 }
@@ -92,7 +58,7 @@ static void ot_rpc_msg_append(const struct nrf_rpc_group *group, struct nrf_rpc_
 	data = nrf_rpc_decode_buffer_ptr_and_size(ctx, &size);
 
 	if (data && size && nrf_rpc_decode_valid(ctx)) {
-		message = ot_msg_get(key);
+		message = ot_res_tab_msg_get(key);
 
 		if (message != NULL) {
 			openthread_api_mutex_lock(openthread_get_default_context());
@@ -114,7 +80,7 @@ static void ot_rpc_msg_append(const struct nrf_rpc_group *group, struct nrf_rpc_
 static void ot_rpc_msg_udp_new(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 			       void *handler_data)
 {
-	ot_msg_key key;
+	ot_rpc_res_tab_key key;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 	otMessageSettings settings;
 	otMessageSettings *p_settings = &settings;
@@ -127,10 +93,10 @@ static void ot_rpc_msg_udp_new(const struct nrf_rpc_group *group, struct nrf_rpc
 	}
 
 	openthread_api_mutex_lock(openthread_get_default_context());
-	key = ot_reg_msg_alloc(otUdpNewMessage(openthread_get_default_instance(), p_settings));
+	key = ot_res_tab_msg_alloc(otUdpNewMessage(openthread_get_default_instance(), p_settings));
 	openthread_api_mutex_unlock(openthread_get_default_context());
 
-	if (ot_msg_get(key) == NULL) {
+	if (ot_res_tab_msg_get(key) == NULL) {
 		key = 0;
 	}
 
@@ -142,7 +108,7 @@ static void ot_rpc_msg_udp_new(const struct nrf_rpc_group *group, struct nrf_rpc
 static void ot_rpc_msg_length(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 			      void *handler_data)
 {
-	ot_msg_key key;
+	ot_rpc_res_tab_key key;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 	uint16_t length = 0;
 	otMessage *message;
@@ -153,7 +119,7 @@ static void ot_rpc_msg_length(const struct nrf_rpc_group *group, struct nrf_rpc_
 		return;
 	}
 
-	message = ot_msg_get(key);
+	message = ot_res_tab_msg_get(key);
 
 	if (message != NULL) {
 		openthread_api_mutex_lock(openthread_get_default_context());
@@ -169,7 +135,7 @@ static void ot_rpc_msg_length(const struct nrf_rpc_group *group, struct nrf_rpc_
 static void ot_rpc_get_offset(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 			      void *handler_data)
 {
-	ot_msg_key key;
+	ot_rpc_res_tab_key key;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 	uint16_t offset = 0;
 	otMessage *message;
@@ -180,7 +146,7 @@ static void ot_rpc_get_offset(const struct nrf_rpc_group *group, struct nrf_rpc_
 		return;
 	}
 
-	message = ot_msg_get(key);
+	message = ot_res_tab_msg_get(key);
 
 	if (message != NULL) {
 		openthread_api_mutex_lock(openthread_get_default_context());
@@ -198,7 +164,7 @@ static void ot_rpc_msg_read(const struct nrf_rpc_group *group, struct nrf_rpc_cb
 {
 	uint16_t offset;
 	uint16_t length;
-	ot_msg_key key;
+	ot_rpc_res_tab_key key;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 	const uint16_t chunk_size = 64;
 	uint8_t buf[chunk_size];
@@ -215,7 +181,7 @@ static void ot_rpc_msg_read(const struct nrf_rpc_group *group, struct nrf_rpc_cb
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, length + 2);
 
-	message = ot_msg_get(key);
+	message = ot_res_tab_msg_get(key);
 
 	if (message == NULL) {
 		nrf_rpc_encode_null(&rsp_ctx);

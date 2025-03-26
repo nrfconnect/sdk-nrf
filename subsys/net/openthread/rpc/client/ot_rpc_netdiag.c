@@ -192,8 +192,9 @@ otError otThreadGetNextDiagnosticTlv(const otMessage *aMessage, otNetworkDiagIte
 	struct nrf_rpc_cbor_ctx ctx;
 	otError error;
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(ot_msg_key) + 2 + sizeof(otNetworkDiagIterator));
-	nrf_rpc_encode_uint(&ctx, (ot_msg_key)aMessage);
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(ot_rpc_res_tab_key) + 2 +
+					   sizeof(otNetworkDiagIterator));
+	nrf_rpc_encode_uint(&ctx, (ot_rpc_res_tab_key)aMessage);
 	nrf_rpc_encode_uint(&ctx, *aIterator);
 	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_THREAD_GET_NEXT_DIAGNOSTIC_TLV, &ctx);
 

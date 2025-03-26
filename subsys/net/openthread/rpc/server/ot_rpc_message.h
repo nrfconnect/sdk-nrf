@@ -8,10 +8,8 @@
 #define OT_RPC_OT_MESSAGE_
 
 #include <openthread/message.h>
-#include <ot_rpc_types.h>
+#include "ot_rpc_resource.h"
 
-ot_msg_key ot_reg_msg_alloc(otMessage *msg);
-void ot_msg_free(ot_msg_key key);
-otMessage *ot_msg_get(ot_msg_key key);
+OT_RPC_RESOURCE_TABLE_DECLARE(msg, otMessage);
 
 #endif
