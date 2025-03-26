@@ -24,61 +24,6 @@ LOG_MODULE_DECLARE(app_main, LOG_LEVEL_INF);
 #define MAX_NUM_RTT_SAMPLES		256
 #define MAX_NUM_IQ_SAMPLES		256 * CONFIG_BT_RAS_MAX_ANTENNA_PATHS
 
-#define A1 (0)
-#define A2 (1)
-#define A3 (2)
-#define A4 (3)
-
-/* Bluetooth Core Specification 6.0, Table 4.13, Antenna Path Permutation for N_AP=2.
- * The last element corresponds to extension slot
- */
-static uint8_t antenna_path_lut_n_ap_2[2][3] = {
-	{A1, A2, A2},
-	{A2, A1, A1},
-};
-
-/* Bluetooth Core Specification 6.0, Table 4.14, Antenna Path Permutation for N_AP=3.
- * The last element corresponds to extension slot
- */
-static uint8_t antenna_path_lut_n_ap_3[6][4] = {
-	{A1, A2, A3, A3},
-	{A2, A1, A3, A3},
-	{A1, A3, A2, A2},
-	{A3, A1, A2, A2},
-	{A3, A2, A1, A1},
-	{A2, A3, A1, A1},
-};
-
-/* Bluetooth Core Specification 6.0, Table 4.15, Antenna Path Permutation for N_AP=4.
- * The last element corresponds to extension slot
- */
-static uint8_t antenna_path_lut_n_ap_4[24][5] = {
-	{A1, A2, A3, A4, A4},
-	{A2, A1, A3, A4, A4},
-	{A1, A3, A2, A4, A4},
-	{A3, A1, A2, A4, A4},
-	{A3, A2, A1, A4, A4},
-	{A2, A3, A1, A4, A4},
-	{A1, A2, A4, A3, A3},
-	{A2, A1, A4, A3, A3},
-	{A1, A4, A2, A3, A3},
-	{A4, A1, A2, A3, A3},
-	{A4, A2, A1, A3, A3},
-	{A2, A4, A1, A3, A3},
-	{A1, A4, A3, A2, A2},
-	{A4, A1, A3, A2, A2},
-	{A1, A3, A4, A2, A2},
-	{A3, A1, A4, A2, A2},
-	{A3, A4, A1, A2, A2},
-	{A4, A3, A1, A2, A2},
-	{A4, A2, A3, A1, A1},
-	{A2, A4, A3, A1, A1},
-	{A4, A3, A2, A1, A1},
-	{A3, A4, A2, A1, A1},
-	{A3, A2, A4, A1, A1},
-	{A2, A3, A4, A1, A1},
-};
-
 struct iq_sample_and_channel {
 	bool failed;
 	uint8_t channel;
@@ -102,22 +47,6 @@ struct processing_context {
 	uint8_t n_ap;
 	enum bt_conn_le_cs_role role;
 };
-
-static uint8_t get_antenna_path(uint8_t n_ap,
-				uint8_t antenna_path_permutation_index,
-				uint8_t antenna_index)
-{
-	if (n_ap == 2) {
-		return antenna_path_lut_n_ap_2[antenna_path_permutation_index][antenna_index];
-	}
-	if (n_ap == 3) {
-		return antenna_path_lut_n_ap_3[antenna_path_permutation_index][antenna_index];
-	}
-	if (n_ap == 4) {
-		return antenna_path_lut_n_ap_4[antenna_path_permutation_index][antenna_index];
-	}
-	return 0;
-}
 
 static void calc_complex_product(int32_t z_a_real, int32_t z_a_imag, int32_t z_b_real,
 				 int32_t z_b_imag, int32_t *z_out_real, int32_t *z_out_imag)
@@ -267,9 +196,17 @@ static void process_tone_info_data(struct processing_context *context,
 			return;
 		}
 
+		int antenna_path = bt_le_cs_get_antenna_path(context->n_ap,
+							     antenna_permutation_index,
+							     i);
+		if (antenna_path < 0) {
+			LOG_WRN("Invalid antenna path");
+			return;
+		}
+
 		iq_sample_channel_data[context->iq_sample_channel_data_index].channel = channel;
 		iq_sample_channel_data[context->iq_sample_channel_data_index].antenna_path =
-			get_antenna_path(context->n_ap, antenna_permutation_index, i);
+			(uint8_t)antenna_path;
 		iq_sample_channel_data[context->iq_sample_channel_data_index].local_iq_sample =
 			bt_le_cs_parse_pct(local_tone_info[i].phase_correction_term);
 		iq_sample_channel_data[context->iq_sample_channel_data_index].peer_iq_sample =
