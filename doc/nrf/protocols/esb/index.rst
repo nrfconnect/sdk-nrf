@@ -338,3 +338,5 @@ It changes the ESB driver's behavior.
 If a packet is not acknowledged, the radio peripheral remains in TXIDLE state instead of TXDISABLE when transmission is pending.
 Using this experimental feature can reduce transmission delay below 100 µs for a 32 bits (four bytes) payload.
 However, this process consumes more energy, because the radio transmitter stage remains enabled when transmission is taking place.
+In this mode, the :c:member:`esb_config.retransmit_delay` field specifies the delay between consecutive packet transmissions from the TX FIFO.
+Depending on the reception processing time, a minimum value might be required.
