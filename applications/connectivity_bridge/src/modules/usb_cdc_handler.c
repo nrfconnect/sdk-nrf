@@ -100,39 +100,47 @@ static void cdc_uart_interrupt_handler(const struct device *dev, void *user_data
 	int dev_idx = (int) user_data;
 
 	uart_irq_update(dev);
+	if (!uart_irq_rx_ready(dev)) {
+		return;
+	}
 
-	while (uart_irq_rx_ready(dev)) {
-		void *rx_buf;
-		int err;
-		int data_length;
+	void *rx_buf;
+	int err;
+	int data_length;
 
-		poll_dtr();
+	poll_dtr();
 
+	do {
 		err = k_mem_slab_alloc(&cdc_rx_slab, &rx_buf, K_NO_WAIT);
 		if (err) {
-			data_length = uart_fifo_read(
-				dev,
-				overflow_buf,
-				sizeof(overflow_buf));
-			LOG_WRN("CDC_%d RX overflow", dev_idx);
-		} else {
-			data_length = uart_fifo_read(
-				dev,
-				rx_buf,
-				USB_CDC_RX_BLOCK_SIZE);
-
-			if (data_length) {
-				struct cdc_data_event *event = new_cdc_data_event();
-
-				event->dev_idx = dev_idx;
-				event->buf = rx_buf;
-				event->len = data_length;
-				APP_EVENT_SUBMIT(event);
-			} else {
-				k_mem_slab_free(&cdc_rx_slab, rx_buf);
-			}
+			do {
+				data_length = uart_fifo_read(
+					dev,
+					overflow_buf,
+					sizeof(overflow_buf));
+				LOG_WRN("CDC_%d RX overflow", dev_idx);
+			} while (data_length == sizeof(overflow_buf));
+			return;
 		}
-	}
+
+		data_length = uart_fifo_read(
+			dev,
+			rx_buf,
+			USB_CDC_RX_BLOCK_SIZE);
+
+		if (data_length == 0) {
+			k_mem_slab_free(&cdc_rx_slab, rx_buf);
+			return;
+		}
+
+		struct cdc_data_event *event = new_cdc_data_event();
+
+		event->dev_idx = dev_idx;
+		event->buf = rx_buf;
+		event->len = data_length;
+		APP_EVENT_SUBMIT(event);
+
+	} while (data_length == USB_CDC_RX_BLOCK_SIZE);
 }
 
 static void enable_rx_irq(int dev_idx)
