@@ -235,6 +235,45 @@ void hrt_write(volatile hrt_xfer_t *hrt_xfer_params)
 	}
 }
 
+/* Value of 1 is set to SHIFTCNTOUT register to start MSPI clock
+ * running, 0 is not possible. Due to hardware error it causes 2*1
+ * clock pulses to be generated. After that n-2 pulses have to be
+ * generated to receive total of n bits
+ */
+NRF_STATIC_INLINE void workaround_two_pulses(volatile hrt_xfer_t *hrt_xfer_params,
+					     nrf_vpr_csr_vio_shift_ctrl_t *rx_shift_ctrl)
+{
+	rx_shift_ctrl->shift_count -= 2;
+	nrf_vpr_csr_vio_shift_ctrl_buffered_set(rx_shift_ctrl);
+
+	nrf_vpr_csr_vtim_combined_counter_set(
+		(hrt_xfer_params->counter_value
+		 << VPRCSR_NORDIC_CNT_CNT0_Pos) +
+		(CNT1_INIT_VALUE << VPRCSR_NORDIC_CNT_CNT1_Pos));
+	/* Read INBRB to continue clock beyond first 2 pulses. */
+	nrf_vpr_csr_vio_in_buffered_reversed_byte_get();
+}
+
+NRF_STATIC_INLINE void apply_shiftcnt(volatile hrt_xfer_t *hrt_xfer_params,
+				      nrf_vpr_csr_vio_shift_ctrl_t *rx_shift_ctrl,
+				      uint32_t i)
+{
+	switch (hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count - i) {
+	case 1: /* Last transfer */
+		rx_shift_ctrl->shift_count = SHIFTCNTB_VALUE(
+			hrt_xfer_params->xfer_data[HRT_FE_DATA].last_word_clocks);
+		break;
+	case 2: /* Last but one transfer */
+		rx_shift_ctrl->shift_count =
+			SHIFTCNTB_VALUE(hrt_xfer_params->xfer_data[HRT_FE_DATA]
+						.penultimate_word_clocks);
+		break;
+	default:
+		rx_shift_ctrl->shift_count = SHIFTCNTB_VALUE(
+			BITS_IN_WORD / hrt_xfer_params->bus_widths.data);
+	}
+}
+
 void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 {
 	nrf_vpr_csr_vio_shift_ctrl_t rx_shift_ctrl = {
@@ -363,46 +402,15 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 					  BYTE_3_SHIFT);
 		}
 	} else {
-		uint32_t i = 0;
+		apply_shiftcnt(hrt_xfer_params, &rx_shift_ctrl, 0);
+		workaround_two_pulses(hrt_xfer_params, &rx_shift_ctrl);
 
+		uint32_t i = 1;
 		for (; i < hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count; i++) {
+			apply_shiftcnt(hrt_xfer_params, &rx_shift_ctrl, i);
 
-			switch (hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count - i) {
-			case 1: /* Last transfer */
-				rx_shift_ctrl.shift_count = SHIFTCNTB_VALUE(
-					hrt_xfer_params->xfer_data[HRT_FE_DATA].last_word_clocks);
-				break;
-			case 2: /* Last but one transfer */
-				rx_shift_ctrl.shift_count =
-					SHIFTCNTB_VALUE(hrt_xfer_params->xfer_data[HRT_FE_DATA]
-								.penultimate_word_clocks);
-				break;
-			default:
-				rx_shift_ctrl.shift_count = SHIFTCNTB_VALUE(
-					BITS_IN_WORD / hrt_xfer_params->bus_widths.data);
-			}
-
-			if (i == 0) {
-				/* Value of 1 is set to SHIFTCNTOUT register to start MSPI clock
-				 * running, 0 is not possible. Due to hardware error it causes 2*1
-				 * clock pulses to be generated. After that n-2 pulses have to be
-				 * generated to receive total of n bits
-				 */
-				rx_shift_ctrl.shift_count -= 2;
-				nrf_vpr_csr_vio_shift_ctrl_buffered_set(&rx_shift_ctrl);
-
-				nrf_vpr_csr_vtim_combined_counter_set(
-					(hrt_xfer_params->counter_value
-					 << VPRCSR_NORDIC_CNT_CNT0_Pos) +
-					(CNT1_INIT_VALUE << VPRCSR_NORDIC_CNT_CNT1_Pos));
-				/* Read INBRB to continue clock beyond first 2 pulses. */
-				nrf_vpr_csr_vio_in_buffered_reversed_byte_get();
-
-			} else {
-				nrf_vpr_csr_vio_shift_ctrl_buffered_set(&rx_shift_ctrl);
-
-				data[i - 1] = nrf_vpr_csr_vio_in_buffered_reversed_byte_get();
-			}
+			nrf_vpr_csr_vio_shift_ctrl_buffered_set(&rx_shift_ctrl);
+			data[i - 1] = nrf_vpr_csr_vio_in_buffered_reversed_byte_get();
 		}
 
 		/* Wait for reception to end, transfer has to be stopped "manualy".
