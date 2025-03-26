@@ -169,13 +169,13 @@ Add the following SHIELD options for the nRF7002 EK and nRF7001 EK.
 
   .. code-block:: console
 
-     -DSHIELD=nrf7002ek
+     -Dble_coex_SHIELD="nrf7002ek;nrf7002ek_coex"
 
 * For nRF7001 EK:
 
   .. code-block:: console
 
-     -DSHIELD=nrf7002ek_nrf7001
+     -Dble_coex_SHIELD="nrf7002ek_nrf7001;nrf7002ek_coex"
 
 The generated HEX file to be used is :file:`ble_coex/build/merged.hex`.
 

@@ -38,7 +38,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     extra_args:
-      - SHIELD=nrf7002ek
+      - thread_coex_SHIELD="nrf7002ek;nrf7002ek_coex"
       - CONFIG_MPSL_CX=y
       - ipc_radio_CONFIG_MPSL_CX=y
       - CONFIG_COEX_SEP_ANTENNAS=y
@@ -54,7 +54,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     extra_args:
-      - SHIELD=nrf7002ek_nrf7001
+      - thread_coex_SHIELD="nrf7002ek_nrf7001;nrf7002ek_coex"
       - CONFIG_MPSL_CX=y
       - ipc_radio_CONFIG_MPSL_CX=y
       - CONFIG_COEX_SEP_ANTENNAS=y
