@@ -183,7 +183,6 @@ manifest:
       repo-path: dragoon.git
       remote: dragoon
       revision: 308f61dc07939c69a65449e834fa8588f7e61276
-      submodules: true
       groups:
         - dragoon
     - name: cjson
