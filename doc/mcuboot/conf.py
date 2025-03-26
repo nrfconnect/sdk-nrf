@@ -87,6 +87,8 @@ external_content_contents = [
     (MCUBOOT_BASE / "docs", "SECURITY.md"),
     (MCUBOOT_BASE / "docs", "signed_images.md"),
     (MCUBOOT_BASE / "docs", "SubmittingPatches.md"),
+    (MCUBOOT_BASE / "docs", "compression_format.md"),
+    (MCUBOOT_BASE / "docs", "images/decomp.png"),
 ]
 
 
