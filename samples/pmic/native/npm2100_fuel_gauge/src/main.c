@@ -20,6 +20,8 @@ static bool fuel_gauge_initialized;
 
 static const char *const battery_model_str[] = {[BATTERY_TYPE_ALKALINE_AA] = "Alkaline AA",
 						[BATTERY_TYPE_ALKALINE_AAA] = "Alkaline AAA",
+						[BATTERY_TYPE_ALKALINE_2SAA] = "Alkaline 2SAA",
+						[BATTERY_TYPE_ALKALINE_2SAAA] = "Alkaline 2SAAA",
 						[BATTERY_TYPE_ALKALINE_LR44] = "Alkaline LR44",
 						[BATTERY_TYPE_LITHIUM_CR2032] = "Lithium CR2032"};
 
@@ -111,6 +113,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	subcmd_battery_model,
 	SHELL_CMD_ARG(Alkaline_AA, NULL, "Alkaline AA battery", cmd_battery_model_set, 1, 0),
 	SHELL_CMD_ARG(Alkaline_AAA, NULL, "Alkaline AAA battery", cmd_battery_model_set, 1, 0),
+	SHELL_CMD_ARG(Alkaline_2SAA, NULL, "Alkaline 2SAA battery", cmd_battery_model_set, 1, 0),
+	SHELL_CMD_ARG(Alkaline_2SAAA, NULL, "Alkaline 2SAAA battery", cmd_battery_model_set, 1, 0),
 	SHELL_CMD_ARG(Alkaline_LR44, NULL, "Alkaline LR44 battery", cmd_battery_model_set, 1, 0),
 	SHELL_CMD_ARG(Lithium_CR2032, NULL, "Lithium CR2032 battery", cmd_battery_model_set, 1, 0),
 	SHELL_SUBCMD_SET_END);
