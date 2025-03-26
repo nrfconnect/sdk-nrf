@@ -7,7 +7,7 @@ nRF Desktop: Bootloader and Device Firmware Update
    :local:
    :depth: 2
 
-The nRF Desktop application uses the :ref:`bootloaders <app_bootloaders>` firmware image that allows you to upgrade the used application firmware image using the :ref:`app_dfu` procedure.
+The nRF Desktop application uses the :ref:`bootloaders <app_bootloaders>` firmware image that allows you to upgrade the used application firmware image using either the :ref:`app_dfu` procedure or :ref:`ug_nrf54h20_suit_dfu`.
 
 You can use the following Device Firmware Update (DFU) procedures for upgrading the application firmware version:
 
@@ -238,7 +238,7 @@ SUIT also has the following options in the sysbuild configuration:
 .. note::
    The ``SB_CONFIG_SUIT_ENVELOPE_SIGN`` is disabled, so the generated SUIT envelope is not signed.
 
-By default, the SUIT generator sets the values inside the manifest based on the content of the :file:`VERSION` file, used for :ref:`zephyr:app-version-details` in Zephyr and the |NCS|.:
+By default, the SUIT generator sets the values inside the manifest based on the content of the :file:`VERSION` file, used for :ref:`zephyr:app-version-details` in Zephyr and the |NCS|:
 
    * The manifest sequence number is set in the same manner as the ``APPVERSION`` CMake variable.
    * The manifest current (semantic) version is set in the same manner as the ``APP_VERSION_EXTENDED_STRING`` CMake variable.

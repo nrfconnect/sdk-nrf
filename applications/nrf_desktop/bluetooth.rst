@@ -171,10 +171,7 @@ The nRF Desktop peripheral can be built with Google `Fast Pair`_ support.
 The configurations that enable Fast Pair are specified in the files with filenames ending with the ``fast_pair`` and ``release_fast_pair`` suffixes.
 
 .. note::
-   The Fast Pair integration in the nRF Desktop is :ref:`experimental <software_maturity>`.
-   The factory reset of the Fast Pair non-volatile data is not yet supported.
-
-   The Fast Pair support in the |NCS| is :ref:`experimental <software_maturity>`.
+   Both the Fast Pair integration in the nRF Desktop and the Fast Pair support in the |NCS| for the HID use case are :ref:`experimental <software_maturity_fast_pair>`.
    See :ref:`ug_bt_fast_pair` for details.
 
 These configurations support multiple bonds for each Bluetooth local identity (:kconfig:option:`CONFIG_CAF_BLE_STATE_MAX_LOCAL_ID_BONDS` is set to ``3``) and erase advertising (:ref:`CONFIG_DESKTOP_BLE_PEER_ERASE <config_desktop_app_options>`), but Bluetooth peer selection (:ref:`CONFIG_DESKTOP_BLE_PEER_SELECT <config_desktop_app_options>`) is disabled.
