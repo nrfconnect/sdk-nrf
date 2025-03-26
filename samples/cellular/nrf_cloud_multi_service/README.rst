@@ -997,14 +997,14 @@ Once your device has been flashed with this sample, you can add a credential by 
 .. parsed-literal::
    :class: highlight
 
-   wifi_cred add -s *NetworkSSID* -k 1 -p *NetworkPassword*
+   wifi cred add *NetworkSSID* WPA2-PSK *NetworkPassword*
 
 Where *NetworkSSID* is replaced with the SSID of the Wi-Fi access point you want your device to connect to, and *NetworkPassword* is its password.
-Then either reboot the device or use the ``wifi_cred auto_connect`` command to manually trigger a connection attempt.
+Then either reboot the device or use the ``wifi cred auto_connect`` command to manually trigger a connection attempt.
 
 From now on, these credentials will automatically be used when the configured network is reachable.
 
-See the :ref:`Wi-Fi shell sample documentation <wifi_shell_sample>` for more details on the ``wifi_cred`` command.
+See the :ref:`Wi-Fi shell sample documentation <wifi_shell_sample>` for more details on the ``wifi`` commands.
 
 Building with nRF Cloud logging support
 =======================================
