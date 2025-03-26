@@ -31,12 +31,12 @@ It depends on the options :ref:`CONFIG_DESKTOP_USB_ENABLE <config_desktop_app_op
 
 The log level is inherited from the :ref:`nrf_desktop_usb_state`.
 
-System Power Management integration
+System power management integration
 ===================================
 
-Zephyr's System Power Management (:kconfig:option:`CONFIG_PM`) does not automatically take into account (expect) wakeups related to user input and finalized HID report transfers over USB.
+Zephyr's system power management (:kconfig:option:`CONFIG_PM`) does not automatically take into account (expect) wakeups related to user input and finalized HID report transfers over USB.
 This results in entering low power states if no work is scheduled to be done in the nearest future.
-If you use Zephyr's System Power Management, the module automatically requires zero latency in the Power Management while USB is active.
+If you use Zephyr's system power management, the module automatically requires zero latency in the power management while USB is active.
 This is done to prevent entering power states that introduce wakeup latency and ensure high performance.
 You can control this feature using the :ref:`CONFIG_DESKTOP_USB_PM_REQ_NO_PM_LATENCY <config_desktop_app_options>` Kconfig option.
 
@@ -59,9 +59,9 @@ The application power level is imposed using the :c:struct:`power_manager_restri
   The module restricts the power down level to the :c:enum:`POWER_MANAGER_LEVEL_SUSPENDED`.
   The module also submits a :c:struct:`force_power_down_event` to force a quick power down.
 
-System Power Management latency
+System power management latency
 ===============================
 
-The latency requirements of the System Power Management are updated using the :c:func:`pm_policy_latency_request_add` and :c:func:`pm_policy_latency_request_remove` functions.
+The latency requirements of the system power management are updated using the :c:func:`pm_policy_latency_request_add` and :c:func:`pm_policy_latency_request_remove` functions.
 The zero latency requirement is added when USB state is set to :c:enum:`USB_STATE_ACTIVE`.
 The requirement is removed if USB enters another state.

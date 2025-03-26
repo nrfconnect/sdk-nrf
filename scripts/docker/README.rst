@@ -16,7 +16,7 @@ The image is based on Linux - Ubuntu 22.04 Docker image with the following addit
   * ``device``
 
 * |NCS| toolchain bundle
-* JLink |jlink_ver| (installation requires accepting SEGGER License)
+* SEGGER J-Link |jlink_ver| (installation requires accepting SEGGER License)
 
 Building image
 **************
@@ -29,16 +29,16 @@ You can use `print_toolchain_checksum.sh`_ to get ID proper for your |NCS| revis
     TOOLCHAIN_ID=$(../print_toolchain_checksum.sh)
     docker build --build-arg VERSION=$TOOLCHAIN_ID
 
-Accepting JLink license
-***********************
+Accepting J-Link license
+************************
 
-To install and use JLink software you have to accept `JLink License Agreement`_.
+To install and use J-Link software you have to accept `JLink License Agreement`_.
 
 If the container is run in an interactive mode, you will be asked to accept the license at the start of the container.
 
-You can also start the container with the ``ACCEPT_JLINK_LICENSE=1`` environment variable, and JLink will be installed without prompting.
+You can also start the container with the ``ACCEPT_JLINK_LICENSE=1`` environment variable, and J-Link will be installed without prompting.
 
-During post installation steps, JLink configures ``udev`` roles.
+During post installation steps, J-Link configures ``udev`` roles.
 This operation requires running a container with the ``--privileged`` flag to grant permissions needed for the container.
 
 Running container
@@ -79,7 +79,7 @@ GitHub Actions
 
 GitHub action starts container with overwritten default entry point. That means you have to set ``bash`` as a default shell to load all required environment variables.
 
-If the container is started with the ``ACCEPT_JLINK_LICENSE`` env variable set to ``1``, JLink will be installed just before the first bash command is executed.
+If the container is started with the ``ACCEPT_JLINK_LICENSE`` env variable set to ``1``, J-Link will be installed just before the first bash command is executed.
 
 Example job configuration:
 
