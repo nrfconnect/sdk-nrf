@@ -93,12 +93,14 @@ endfunction()
 #   'input_file' - path to input jinja template
 #   'output_file' - path to output yaml file
 #   'core_arguments' - list of arguments for registered cores
-function(suit_render_template input_file output_file core_arguments)
+#   'target' - target name
+function(suit_render_template input_file output_file core_arguments target)
   set(TEMPLATE_ARGS)
   list(APPEND TEMPLATE_ARGS
     --template-suit ${input_file}
     --output-suit ${output_file}
     --zephyr-base ${ZEPHYR_BASE}
+    --target ${target}
   )
   list(APPEND TEMPLATE_ARGS ${core_arguments})
   list(APPEND TEMPLATE_ARGS --artifacts-folder "${SUIT_ROOT_DIRECTORY}")

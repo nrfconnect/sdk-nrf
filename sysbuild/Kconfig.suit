@@ -69,6 +69,7 @@ config SUIT_ENVELOPE_NORDIC_TOP_EXTRACT_PAYLOADS_TO_CACHE
 config SUIT_ENVELOPE_NORDIC_TOP_EXTRACT_PAYLOADS_FOR_PULL
 	bool "Extract payloads from the nordic_top envelope for the use of the pull model"
 	depends on !SUIT_ENVELOPE_NORDIC_TOP_EXTRACT_PAYLOADS_TO_CACHE
+	default y if SUIT_BUILD_AB_UPDATE
 	help
 	  When this option is enabled, the build system extracts payloads from
 	  the nordic_top envelope into binaries. The binaries are stored in the
@@ -177,6 +178,7 @@ if SUIT_BUILD_RECOVERY
 
 choice SUIT_RECOVERY_APPLICATION
 	prompt "Select SUIT recovery application"
+	default SUIT_RECOVERY_APPLICATION_NONE if SUIT_BUILD_AB_UPDATE
 	default SUIT_RECOVERY_APPLICATION_DEFAULT
 
 config SUIT_RECOVERY_APPLICATION_DEFAULT
@@ -309,5 +311,10 @@ config FLASH_COMPANION_TARGET_CPUCLUSTER
 	  Set the target CPU cluster on which the companion firmware will run.
 
 endif # SUIT_BUILD_FLASH_COMPANION
+
+config SUIT_BUILD_AB_UPDATE
+	bool "Build AB variant"
+	help
+	  Build two applications for the A and B update.
 
 endmenu
