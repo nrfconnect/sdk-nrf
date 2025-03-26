@@ -27,6 +27,8 @@ Battery models for Alkaline AA (1S and 2S configuration), AAA (1S and 2S configu
 You can change the active battery model using a shell command, as illustrated in `Testing`_.
 You can also change the battery model at compile time using the :kconfig:option:`CONFIG_BATTERY_MODEL` Kconfig option.
 
+.. _npm2100_fuel_gauge_wiring:
+
 Wiring
 ******
 
