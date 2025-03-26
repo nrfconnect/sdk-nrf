@@ -20,7 +20,12 @@ function(sdp_assembly_install target hrt_srcs)
   sdp_assembly_prepare_install(${CONFIG_SOC} "${hrt_srcs}")
   sdp_assembly_target_sources(${CONFIG_SOC} ${target} "${hrt_srcs}")
 
-  add_dependencies(${target} asm_check)
+  if(CONFIG_SDP_DEVELOPER_MODE)
+    add_dependencies(asm_install asm_check)
+    add_dependencies(${target} asm_install)
+  else()
+    add_dependencies(${target} asm_check)
+  endif()
 endfunction()
 
 function(sdp_assembly_target_sources soc target hrt_srcs)
@@ -87,10 +92,16 @@ function(sdp_assembly_check soc hrt_srcs)
     )
   endif()
 
+  if(CONFIG_SDP_DEVELOPER_MODE)
+    set(dev_mode TRUE)
+  else()
+    set(dev_mode FALSE)
+  endif()
+
   string(REPLACE ";" "$<SEMICOLON>" hrt_srcs_semi "${hrt_srcs}")
 
   add_custom_target(asm_check
-    COMMAND ${CMAKE_COMMAND} -D hrt_srcs="${hrt_srcs_semi}" -D soc="${soc}" -P ${ZEPHYR_NRF_MODULE_DIR}/cmake/sdp_asm_check.cmake
+    COMMAND ${CMAKE_COMMAND} -D hrt_srcs="${hrt_srcs_semi}" -D soc="${soc}" -D dev_mode=${dev_mode} -P ${ZEPHYR_NRF_MODULE_DIR}/cmake/sdp_asm_check.cmake
     COMMENT ${asm_check_msg}
   )
 
