@@ -109,9 +109,6 @@ User interface
 
 The user interface of the sample depends on the hardware platform you are using.
 
-Development kits
-================
-
 .. tabs::
 
    .. group-tab:: nRF21, nRF52 and nRF53 DKs
