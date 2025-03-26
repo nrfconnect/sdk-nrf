@@ -29,8 +29,6 @@ By default, a Zephyr-based application defines the memory layout in the DTS.
 If enabled, the :ref:`partition_manager` defines a new memory layout that is used instead of the memory layout defined in the DTS.
 You can use the :kconfig:option:`CONFIG_PARTITION_MANAGER_ENABLED` Kconfig option value to check whether the Partition Manager is enabled in the current build.
 The option is automatically enabled when using Zephyr's :ref:`zephyr:sysbuild` (unless your board uses nRF54H SoC Series).
-Enabling the :ref:`nrf_desktop_bluetooth_guide_fast_pair` also results in using the Partition Manager.
-To store the Fast Pair Provisioning data, the Fast Pair integration in the |NCS| uses partition defined by the Partition Manager.
 
 Memory layout in DTS
 ********************
@@ -40,7 +38,7 @@ For example, the nRF52 Series devices use non-volatile flash memory represented 
 Make sure to also update the DTS chosen nodes, which represent the code partition (``zephyr,code-partition``) and flash (``zephyr,flash``), if needed.
 
 If you wish to change the default memory layout of the board without editing the board-specific files, edit the DTS overlay file.
-The nRF Desktop application automatically adds the :file:`dts.overlay` file if it is present in the project's board configuration directory.
+The nRF Desktop application automatically adds the :file:`app.overlay` file if it is present in the project's board configuration directory.
 For more details, see the :ref:`nrf_desktop_board_configuration` section.
 
 .. important::

@@ -1736,6 +1736,8 @@ The following sections contain the tables indicating the software maturity level
 
 * Google Fast Pair
 
+.. _software_maturity_fast_pair:
+
 Google Fast Pair
 ================
 
