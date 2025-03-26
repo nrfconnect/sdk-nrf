@@ -60,7 +60,7 @@ static void ot_rpc_cmd_coap_new_message(const struct nrf_rpc_group *group,
 	otMessageSettings settings_buf;
 	otMessageSettings *settings;
 	otMessage *message;
-	ot_msg_key message_rep = 0;
+	ot_rpc_res_tab_key message_rep = 0;
 
 	settings = ot_rpc_decode_message_settings(ctx, &settings_buf);
 
@@ -71,7 +71,7 @@ static void ot_rpc_cmd_coap_new_message(const struct nrf_rpc_group *group,
 
 	openthread_api_mutex_lock(openthread_get_default_context());
 	message = otCoapNewMessage(openthread_get_default_instance(), settings);
-	message_rep = ot_reg_msg_alloc(message);
+	message_rep = ot_res_tab_msg_alloc(message);
 
 	if ((message != NULL) && !message_rep) {
 		/*
@@ -92,7 +92,7 @@ NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_coap_new_message, OT_RPC_CMD_COAP_
 static void ot_rpc_cmd_coap_message_init(const struct nrf_rpc_group *group,
 					 struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
-	ot_msg_key message_rep;
+	ot_rpc_res_tab_key message_rep;
 	otCoapType type;
 	otCoapCode code;
 	otMessage *message;
@@ -106,7 +106,7 @@ static void ot_rpc_cmd_coap_message_init(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	message = ot_msg_get(message_rep);
+	message = ot_res_tab_msg_get(message_rep);
 
 	if (!message) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_INIT);
@@ -126,8 +126,8 @@ NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_coap_message_init, OT_RPC_CMD_COAP
 static void ot_rpc_cmd_coap_message_init_response(const struct nrf_rpc_group *group,
 						  struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
-	ot_msg_key response_rep;
-	ot_msg_key request_rep;
+	ot_rpc_res_tab_key response_rep;
+	ot_rpc_res_tab_key request_rep;
 	otCoapType type;
 	otCoapCode code;
 	otMessage *response;
@@ -144,8 +144,8 @@ static void ot_rpc_cmd_coap_message_init_response(const struct nrf_rpc_group *gr
 		return;
 	}
 
-	response = ot_msg_get(response_rep);
-	request = ot_msg_get(request_rep);
+	response = ot_res_tab_msg_get(response_rep);
+	request = ot_res_tab_msg_get(request_rep);
 
 	if (!response || !request) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_INIT_RESPONSE);
@@ -167,7 +167,7 @@ static void ot_rpc_cmd_coap_message_append_uri_path_options(const struct nrf_rpc
 							    struct nrf_rpc_cbor_ctx *ctx,
 							    void *handler_data)
 {
-	ot_msg_key message_rep;
+	ot_rpc_res_tab_key message_rep;
 	char uri[OT_RPC_COAP_MAX_URI_LENGTH + 1];
 	otMessage *message;
 	otError error;
@@ -180,7 +180,7 @@ static void ot_rpc_cmd_coap_message_append_uri_path_options(const struct nrf_rpc
 		return;
 	}
 
-	message = ot_msg_get(message_rep);
+	message = ot_res_tab_msg_get(message_rep);
 
 	if (!message) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_APPEND_URI_PATH_OPTIONS);
@@ -202,7 +202,7 @@ static void ot_rpc_cmd_coap_message_set_payload_marker(const struct nrf_rpc_grou
 						       struct nrf_rpc_cbor_ctx *ctx,
 						       void *handler_data)
 {
-	ot_msg_key message_rep;
+	ot_rpc_res_tab_key message_rep;
 	otMessage *message;
 	otError error;
 
@@ -213,7 +213,7 @@ static void ot_rpc_cmd_coap_message_set_payload_marker(const struct nrf_rpc_grou
 		return;
 	}
 
-	message = ot_msg_get(message_rep);
+	message = ot_res_tab_msg_get(message_rep);
 
 	if (!message) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_SET_PAYLOAD_MARKER);
@@ -234,7 +234,7 @@ NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_coap_message_set_payload_marker,
 static void ot_rpc_cmd_coap_message_get_type(const struct nrf_rpc_group *group,
 					     struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
-	ot_msg_key message_rep;
+	ot_rpc_res_tab_key message_rep;
 	otMessage *message;
 	otCoapType type;
 
@@ -245,7 +245,7 @@ static void ot_rpc_cmd_coap_message_get_type(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	message = ot_msg_get(message_rep);
+	message = ot_res_tab_msg_get(message_rep);
 
 	if (!message) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_TYPE);
@@ -265,7 +265,7 @@ NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_coap_message_get_type,
 static void ot_rpc_cmd_coap_message_get_code(const struct nrf_rpc_group *group,
 					     struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
-	ot_msg_key message_rep;
+	ot_rpc_res_tab_key message_rep;
 	otMessage *message;
 	otCoapCode code;
 
@@ -276,7 +276,7 @@ static void ot_rpc_cmd_coap_message_get_code(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	message = ot_msg_get(message_rep);
+	message = ot_res_tab_msg_get(message_rep);
 
 	if (!message) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_CODE);
@@ -296,7 +296,7 @@ NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_coap_message_get_code,
 static void ot_rpc_cmd_coap_message_get_message_id(const struct nrf_rpc_group *group,
 						   struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
-	ot_msg_key message_rep;
+	ot_rpc_res_tab_key message_rep;
 	otMessage *message;
 	uint16_t id;
 
@@ -307,7 +307,7 @@ static void ot_rpc_cmd_coap_message_get_message_id(const struct nrf_rpc_group *g
 		return;
 	}
 
-	message = ot_msg_get(message_rep);
+	message = ot_res_tab_msg_get(message_rep);
 
 	if (!message) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_MESSAGE_ID);
@@ -329,7 +329,7 @@ static void ot_rpc_cmd_coap_message_get_token_length(const struct nrf_rpc_group 
 						     struct nrf_rpc_cbor_ctx *ctx,
 						     void *handler_data)
 {
-	ot_msg_key message_rep;
+	ot_rpc_res_tab_key message_rep;
 	otMessage *message;
 	uint8_t token_length;
 
@@ -340,7 +340,7 @@ static void ot_rpc_cmd_coap_message_get_token_length(const struct nrf_rpc_group 
 		return;
 	}
 
-	message = ot_msg_get(message_rep);
+	message = ot_res_tab_msg_get(message_rep);
 
 	if (!message) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_TOKEN_LENGTH);
@@ -361,7 +361,7 @@ NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_coap_message_get_token_length,
 static void ot_rpc_cmd_coap_message_get_token(const struct nrf_rpc_group *group,
 					      struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
-	ot_msg_key message_rep;
+	ot_rpc_res_tab_key message_rep;
 	otMessage *message;
 	uint8_t token[OT_COAP_MAX_TOKEN_LENGTH];
 	uint8_t token_length;
@@ -374,7 +374,7 @@ static void ot_rpc_cmd_coap_message_get_token(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	message = ot_msg_get(message_rep);
+	message = ot_res_tab_msg_get(message_rep);
 
 	if (!message) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_MESSAGE_GET_TOKEN);
@@ -441,12 +441,12 @@ NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_coap_stop, OT_RPC_CMD_COAP_STOP, o
 static void ot_rpc_coap_resource_handler(void *aContext, otMessage *aMessage,
 					 const otMessageInfo *aMessageInfo)
 {
-	ot_msg_key message_rep;
+	ot_rpc_res_tab_key message_rep;
 	const char *uri = aContext;
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t cbor_buffer_size = 0;
 
-	message_rep = ot_reg_msg_alloc(aMessage);
+	message_rep = ot_res_tab_msg_alloc(aMessage);
 
 	if (!message_rep) {
 		nrf_rpc_err(-ENOMEM, NRF_RPC_ERR_SRC_SEND, &ot_group,
@@ -455,7 +455,7 @@ static void ot_rpc_coap_resource_handler(void *aContext, otMessage *aMessage,
 	}
 
 	cbor_buffer_size += 2 + strlen(uri);
-	cbor_buffer_size += 1 + sizeof(ot_msg_key);		      /* aMessage */
+	cbor_buffer_size += 1 + sizeof(ot_rpc_res_tab_key);	      /* aMessage */
 	cbor_buffer_size += OT_RPC_MESSAGE_INFO_LENGTH(aMessageInfo); /* aMessageInfo */
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
@@ -465,7 +465,7 @@ static void ot_rpc_coap_resource_handler(void *aContext, otMessage *aMessage,
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_COAP_RESOURCE_HANDLER, &ctx,
 				nrf_rpc_rsp_decode_void, NULL);
 
-	ot_msg_free(message_rep);
+	ot_res_tab_msg_free(message_rep);
 }
 
 static void ot_rpc_cmd_coap_add_resource(const struct nrf_rpc_group *group,
@@ -548,11 +548,11 @@ NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_coap_remove_resource, OT_RPC_CMD_C
 static void ot_rpc_coap_default_handler(void *aContext, otMessage *aMessage,
 					const otMessageInfo *aMessageInfo)
 {
-	ot_msg_key message_rep;
+	ot_rpc_res_tab_key message_rep;
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t cbor_buffer_size = 0;
 
-	message_rep = ot_reg_msg_alloc(aMessage);
+	message_rep = ot_res_tab_msg_alloc(aMessage);
 
 	if (!message_rep) {
 		nrf_rpc_err(-ENOMEM, NRF_RPC_ERR_SRC_SEND, &ot_group,
@@ -560,7 +560,7 @@ static void ot_rpc_coap_default_handler(void *aContext, otMessage *aMessage,
 		return;
 	}
 
-	cbor_buffer_size += 1 + sizeof(ot_msg_key);		      /* aMessage */
+	cbor_buffer_size += 1 + sizeof(ot_rpc_res_tab_key);	      /* aMessage */
 	cbor_buffer_size += OT_RPC_MESSAGE_INFO_LENGTH(aMessageInfo); /* aMessageInfo */
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
@@ -569,7 +569,7 @@ static void ot_rpc_coap_default_handler(void *aContext, otMessage *aMessage,
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_COAP_DEFAULT_HANDLER, &ctx,
 				nrf_rpc_rsp_decode_void, NULL);
 
-	ot_msg_free(message_rep);
+	ot_res_tab_msg_free(message_rep);
 }
 
 static void ot_rpc_cmd_coap_set_default_handler(const struct nrf_rpc_group *group,
@@ -600,11 +600,11 @@ static void ot_rpc_coap_response_handler(void *context, otMessage *message,
 					 const otMessageInfo *message_info, otError error)
 {
 	ot_rpc_coap_request_key request_rep = (ot_rpc_coap_request_key)context;
-	ot_msg_key message_rep = 0;
+	ot_rpc_res_tab_key message_rep = 0;
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t cbor_buffer_size = 0;
 
-	message_rep = ot_reg_msg_alloc(message);
+	message_rep = ot_res_tab_msg_alloc(message);
 	/*
 	 * Ignore message handle allocation failure. It seems safer to call the client's response
 	 * handler without the response (which indicates response timeout) than not to call the
@@ -612,7 +612,7 @@ static void ot_rpc_coap_response_handler(void *context, otMessage *message,
 	 */
 
 	cbor_buffer_size += 1 + sizeof(ot_rpc_coap_request_key);
-	cbor_buffer_size += 1 + sizeof(ot_msg_key);
+	cbor_buffer_size += 1 + sizeof(ot_rpc_res_tab_key);
 	cbor_buffer_size += OT_RPC_MESSAGE_INFO_LENGTH(message_info);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
@@ -623,13 +623,13 @@ static void ot_rpc_coap_response_handler(void *context, otMessage *message,
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_COAP_RESPONSE_HANDLER, &ctx,
 				nrf_rpc_rsp_decode_void, NULL);
 
-	ot_msg_free(message_rep);
+	ot_res_tab_msg_free(message_rep);
 }
 
 static void ot_rpc_cmd_coap_send_request(const struct nrf_rpc_group *group,
 					 struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
-	ot_msg_key message_rep;
+	ot_rpc_res_tab_key message_rep;
 	otMessageInfo message_info;
 	ot_rpc_coap_request_key request_rep;
 	otMessage *message;
@@ -644,7 +644,7 @@ static void ot_rpc_cmd_coap_send_request(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	message = ot_msg_get(message_rep);
+	message = ot_res_tab_msg_get(message_rep);
 
 	if (!message) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_SEND_REQUEST);
@@ -656,7 +656,7 @@ static void ot_rpc_cmd_coap_send_request(const struct nrf_rpc_group *group,
 				  ot_rpc_coap_response_handler, (void *)request_rep);
 
 	if (error == OT_ERROR_NONE) {
-		ot_msg_free(message_rep);
+		ot_res_tab_msg_free(message_rep);
 	}
 
 	openthread_api_mutex_unlock(openthread_get_default_context());
@@ -669,7 +669,7 @@ NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_coap_send_request, OT_RPC_CMD_COAP
 static void ot_rpc_cmd_coap_send_response(const struct nrf_rpc_group *group,
 					  struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
-	ot_msg_key message_rep;
+	ot_rpc_res_tab_key message_rep;
 	otMessageInfo message_info;
 	otMessage *message;
 	otError error;
@@ -682,7 +682,7 @@ static void ot_rpc_cmd_coap_send_response(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	message = ot_msg_get(message_rep);
+	message = ot_res_tab_msg_get(message_rep);
 
 	if (!message) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_COAP_SEND_RESPONSE);
@@ -693,7 +693,7 @@ static void ot_rpc_cmd_coap_send_response(const struct nrf_rpc_group *group,
 	error = otCoapSendResponse(openthread_get_default_instance(), message, &message_info);
 
 	if (error == OT_ERROR_NONE) {
-		ot_msg_free(message_rep);
+		ot_res_tab_msg_free(message_rep);
 	}
 
 	openthread_api_mutex_unlock(openthread_get_default_context());

@@ -67,7 +67,7 @@ static void handle_udp_receive(void *context, otMessage *message, const otMessag
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	nrf_udp_socket *socket = (nrf_udp_socket *)context;
-	ot_msg_key msg_key = ot_reg_msg_alloc(message);
+	ot_rpc_res_tab_key msg_key = ot_res_tab_msg_alloc(message);
 	ot_socket_key soc_key = socket->mKey;
 
 	if (msg_key == 0) {
@@ -87,7 +87,7 @@ static void handle_udp_receive(void *context, otMessage *message, const otMessag
 	}
 
 exit:
-	ot_msg_free(msg_key); /* This is NULL safe. */
+	ot_res_tab_msg_free(msg_key); /* This is NULL safe. */
 }
 
 static void ot_rpc_udp_open(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
@@ -132,7 +132,7 @@ static void ot_rpc_udp_send(const struct nrf_rpc_group *group, struct nrf_rpc_cb
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 	otError error;
 	ot_socket_key soc_key;
-	ot_msg_key msg_key;
+	ot_rpc_res_tab_key msg_key;
 	nrf_udp_socket *socket;
 	otMessageInfo message_info;
 	otMessage *message;
@@ -149,7 +149,7 @@ static void ot_rpc_udp_send(const struct nrf_rpc_group *group, struct nrf_rpc_cb
 	}
 
 	socket = nrf_udp_find_socket(soc_key);
-	message = ot_msg_get(msg_key);
+	message = ot_res_tab_msg_get(msg_key);
 
 	if (socket == NULL || message == NULL) {
 		error = OT_ERROR_INVALID_ARGS;
@@ -162,7 +162,7 @@ static void ot_rpc_udp_send(const struct nrf_rpc_group *group, struct nrf_rpc_cb
 	openthread_api_mutex_unlock(openthread_get_default_context());
 
 	if (error == OT_ERROR_NONE) {
-		ot_msg_free(msg_key);
+		ot_res_tab_msg_free(msg_key);
 	}
 
 exit:

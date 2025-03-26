@@ -115,30 +115,30 @@ ZTEST(ot_rpc_message, test_otUdpNewMessage_free_working)
 	zassert_equal(otMessageFree_fake.call_count, 2);
 }
 
-ZTEST(ot_rpc_message, test_ot_reg_msg_alloc_free)
+ZTEST(ot_rpc_message, test_ot_res_tab_msg_alloc_free)
 {
 
 	for (size_t i = 1; i < CONFIG_OPENTHREAD_RPC_MESSAGE_POOL + 1; i++) {
-		zassert_equal(ot_reg_msg_alloc((otMessage *)i), i);
+		zassert_equal(ot_res_tab_msg_alloc((otMessage *)i), i);
 	}
 
-	zassert_equal(ot_reg_msg_alloc((otMessage *)UINT32_MAX), 0);
+	zassert_equal(ot_res_tab_msg_alloc((otMessage *)UINT32_MAX), 0);
 
 	for (size_t i = 1; i < CONFIG_OPENTHREAD_RPC_MESSAGE_POOL + 1; i++) {
-		ot_msg_free(i);
+		ot_res_tab_msg_free(i);
 	}
 }
 
-ZTEST(ot_rpc_message, test_ot_reg_msg_get)
+ZTEST(ot_rpc_message, test_ot_res_tab_msg_get)
 {
 
-	zassert_equal(ot_reg_msg_alloc((otMessage *)1), 1);
+	zassert_equal(ot_res_tab_msg_alloc((otMessage *)1), 1);
 
-	zassert_equal(ot_msg_get(1), (otMessage *)1);
+	zassert_equal(ot_res_tab_msg_get(1), (otMessage *)1);
 
-	zassert_equal(ot_msg_get(CONFIG_OPENTHREAD_RPC_MESSAGE_POOL), NULL);
+	zassert_equal(ot_res_tab_msg_get(CONFIG_OPENTHREAD_RPC_MESSAGE_POOL), NULL);
 
-	ot_msg_free(1);
+	ot_res_tab_msg_free(1);
 }
 
 ZTEST(ot_rpc_message, test_get_length_offset)

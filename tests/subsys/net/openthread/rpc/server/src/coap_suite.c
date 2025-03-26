@@ -90,8 +90,8 @@ static void tc_setup(void *f)
 	FFF_RESET_HISTORY();
 
 	/* Unit tests take up to two message slots. */
-	ot_msg_free(1);
-	ot_msg_free(2);
+	ot_res_tab_msg_free(1);
+	ot_res_tab_msg_free(2);
 }
 
 /*
@@ -125,7 +125,7 @@ ZTEST(ot_rpc_coap, test_otCoapNewMessage_max)
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otCoapNewMessage_fake.call_count, 1);
-	zassert_not_null(ot_msg_get(1));
+	zassert_not_null(ot_res_tab_msg_get(1));
 }
 
 /*
@@ -133,7 +133,7 @@ ZTEST(ot_rpc_coap, test_otCoapNewMessage_max)
  */
 ZTEST(ot_rpc_coap, test_otCoapMessageInit)
 {
-	ot_msg_key message_rep = ot_reg_msg_alloc((otMessage *)MSG_ADDR);
+	ot_rpc_res_tab_key message_rep = ot_res_tab_msg_alloc((otMessage *)MSG_ADDR);
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_COAP_MESSAGE_INIT, message_rep,
@@ -153,8 +153,8 @@ ZTEST(ot_rpc_coap, test_otCoapMessageInit)
  */
 ZTEST(ot_rpc_coap, test_otCoapMessageInitResponse)
 {
-	ot_msg_key response_rep = ot_reg_msg_alloc((otMessage *)MSG_ADDR);
-	ot_msg_key request_rep = ot_reg_msg_alloc((otMessage *)(MSG_ADDR - 1));
+	ot_rpc_res_tab_key response_rep = ot_res_tab_msg_alloc((otMessage *)MSG_ADDR);
+	ot_rpc_res_tab_key request_rep = ot_res_tab_msg_alloc((otMessage *)(MSG_ADDR - 1));
 
 	otCoapMessageInitResponse_fake.return_val = OT_ERROR_INVALID_ARGS;
 
@@ -187,7 +187,7 @@ otError append_uri_path_options_fake(otMessage *message, const char *uri_path)
 
 ZTEST(ot_rpc_coap, test_otCoapMessageAppendUriPathOptions)
 {
-	ot_msg_key message_rep = ot_reg_msg_alloc((otMessage *)MSG_ADDR);
+	ot_rpc_res_tab_key message_rep = ot_res_tab_msg_alloc((otMessage *)MSG_ADDR);
 
 	otCoapMessageAppendUriPathOptions_fake.custom_fake = append_uri_path_options_fake;
 
@@ -205,7 +205,7 @@ ZTEST(ot_rpc_coap, test_otCoapMessageAppendUriPathOptions)
  */
 ZTEST(ot_rpc_coap, test_otCoapMessageSetPayloadMarker)
 {
-	ot_msg_key message_rep = ot_reg_msg_alloc((otMessage *)MSG_ADDR);
+	ot_rpc_res_tab_key message_rep = ot_res_tab_msg_alloc((otMessage *)MSG_ADDR);
 
 	otCoapMessageSetPayloadMarker_fake.return_val = OT_ERROR_INVALID_ARGS;
 
@@ -223,7 +223,7 @@ ZTEST(ot_rpc_coap, test_otCoapMessageSetPayloadMarker)
  */
 ZTEST(ot_rpc_coap, test_otCoapMessageGetType)
 {
-	ot_msg_key message_rep = ot_reg_msg_alloc((otMessage *)MSG_ADDR);
+	ot_rpc_res_tab_key message_rep = ot_res_tab_msg_alloc((otMessage *)MSG_ADDR);
 
 	otCoapMessageGetType_fake.return_val = OT_COAP_TYPE_RESET;
 
@@ -241,7 +241,7 @@ ZTEST(ot_rpc_coap, test_otCoapMessageGetType)
  */
 ZTEST(ot_rpc_coap, test_otCoapMessageGetCode)
 {
-	ot_msg_key message_rep = ot_reg_msg_alloc((otMessage *)MSG_ADDR);
+	ot_rpc_res_tab_key message_rep = ot_res_tab_msg_alloc((otMessage *)MSG_ADDR);
 
 	otCoapMessageGetCode_fake.return_val = OT_COAP_CODE_PROXY_NOT_SUPPORTED;
 
@@ -259,7 +259,7 @@ ZTEST(ot_rpc_coap, test_otCoapMessageGetCode)
  */
 ZTEST(ot_rpc_coap, test_otCoapMessageGetMessageId)
 {
-	ot_msg_key message_rep = ot_reg_msg_alloc((otMessage *)MSG_ADDR);
+	ot_rpc_res_tab_key message_rep = ot_res_tab_msg_alloc((otMessage *)MSG_ADDR);
 
 	otCoapMessageGetMessageId_fake.return_val = UINT16_MAX;
 
@@ -277,7 +277,7 @@ ZTEST(ot_rpc_coap, test_otCoapMessageGetMessageId)
  */
 ZTEST(ot_rpc_coap, test_otCoapMessageGetTokenLength)
 {
-	ot_msg_key message_rep = ot_reg_msg_alloc((otMessage *)MSG_ADDR);
+	ot_rpc_res_tab_key message_rep = ot_res_tab_msg_alloc((otMessage *)MSG_ADDR);
 
 	otCoapMessageGetTokenLength_fake.return_val = OT_COAP_MAX_TOKEN_LENGTH;
 
@@ -295,7 +295,7 @@ ZTEST(ot_rpc_coap, test_otCoapMessageGetTokenLength)
  */
 ZTEST(ot_rpc_coap, test_otCoapMessageGetToken)
 {
-	ot_msg_key message_rep = ot_reg_msg_alloc((otMessage *)MSG_ADDR);
+	ot_rpc_res_tab_key message_rep = ot_res_tab_msg_alloc((otMessage *)MSG_ADDR);
 	uint8_t token[] = {TOKEN};
 
 	otCoapMessageGetToken_fake.return_val = token;
@@ -365,7 +365,7 @@ ZTEST(ot_rpc_coap, test_otCoapAddResource_otCoapRemoveResource)
 	 * Message key is allocated by the resource handler encoder function but we know that
 	 * the first free slot will be selected so it will be 1.
 	 */
-	ot_msg_key message_rep = 1;
+	ot_rpc_res_tab_key message_rep = 1;
 	otMessageInfo message_info = {
 		.mSockAddr = {.mFields.m8 = {ADDR_1}},
 		.mPeerAddr = {.mFields.m8 = {ADDR_2}},
@@ -394,7 +394,7 @@ ZTEST(ot_rpc_coap, test_otCoapAddResource_otCoapRemoveResource)
 	otCoapAddResource_fake.arg1_val->mHandler(otCoapAddResource_fake.arg1_val->mContext,
 						  (otMessage *)MSG_ADDR, &message_info);
 	mock_nrf_rpc_tr_expect_done();
-	zassert_is_null(ot_msg_get(message_rep));
+	zassert_is_null(ot_res_tab_msg_get(message_rep));
 
 	/* Test reception of otCoapRemoveResource() */
 	otCoapRemoveResource_fake.custom_fake = otCoapRemoveResource_custom_func;
@@ -415,7 +415,7 @@ ZTEST(ot_rpc_coap, test_otCoapSetDefaultHandler)
 	 * Message key is allocated by the default handler encoder function but we know that
 	 * the first free slot will be selected so it will be 1.
 	 */
-	ot_msg_key message_rep = 1;
+	ot_rpc_res_tab_key message_rep = 1;
 	otMessageInfo message_info = {
 		.mSockAddr = {.mFields.m8 = {ADDR_1}},
 		.mPeerAddr = {.mFields.m8 = {ADDR_2}},
@@ -442,7 +442,7 @@ ZTEST(ot_rpc_coap, test_otCoapSetDefaultHandler)
 	otCoapSetDefaultHandler_fake.arg1_val(otCoapSetDefaultHandler_fake.arg2_val,
 					      (otMessage *)MSG_ADDR, &message_info);
 	mock_nrf_rpc_tr_expect_done();
-	zassert_is_null(ot_msg_get(message_rep));
+	zassert_is_null(ot_res_tab_msg_get(message_rep));
 
 	/* Test reception of otCoapSetDefaultHandler() command that unsets the default handler */
 	RESET_FAKE(otCoapSetDefaultHandler);
@@ -463,12 +463,12 @@ ZTEST(ot_rpc_coap, test_otCoapSetDefaultHandler)
 ZTEST(ot_rpc_coap, test_otCoapSendRequest)
 {
 	ot_rpc_coap_request_key request_rep = 3;
-	ot_msg_key message_rep = ot_reg_msg_alloc((otMessage *)MSG_ADDR);
+	ot_rpc_res_tab_key message_rep = ot_res_tab_msg_alloc((otMessage *)MSG_ADDR);
 	/*
 	 * The request message slot is freed when otCoapSendRequest() succeeds,
 	 * so we know that the same slot will be used to relay the response message.
 	 */
-	ot_msg_key response_rep = message_rep;
+	ot_rpc_res_tab_key response_rep = message_rep;
 	otMessageInfo message_info = {
 		.mSockAddr = {.mFields.m8 = {ADDR_1}},
 		.mPeerAddr = {.mFields.m8 = {ADDR_2}},
@@ -511,7 +511,7 @@ ZTEST(ot_rpc_coap, test_otCoapSendRequest)
 ZTEST(ot_rpc_coap, test_otCoapSendRequest_failed)
 {
 	ot_rpc_coap_request_key request_rep = 3;
-	ot_msg_key message_rep = ot_reg_msg_alloc((otMessage *)MSG_ADDR);
+	ot_rpc_res_tab_key message_rep = ot_res_tab_msg_alloc((otMessage *)MSG_ADDR);
 
 	otCoapSendRequestWithParameters_fake.return_val = OT_ERROR_INVALID_STATE;
 
@@ -524,7 +524,7 @@ ZTEST(ot_rpc_coap, test_otCoapSendRequest_failed)
 	zexpect_equal(otCoapSendRequestWithParameters_fake.arg1_val, (otMessage *)MSG_ADDR);
 	zexpect_not_null(otCoapSendRequestWithParameters_fake.arg2_val);
 	zexpect_not_null(otCoapSendRequestWithParameters_fake.arg3_val);
-	zassert_not_null(ot_msg_get(message_rep));
+	zassert_not_null(ot_res_tab_msg_get(message_rep));
 }
 
 /*
@@ -534,7 +534,7 @@ ZTEST(ot_rpc_coap, test_otCoapSendRequest_failed)
  */
 ZTEST(ot_rpc_coap, test_otCoapSendResponse)
 {
-	ot_msg_key message_rep = ot_reg_msg_alloc((otMessage *)MSG_ADDR);
+	ot_rpc_res_tab_key message_rep = ot_res_tab_msg_alloc((otMessage *)MSG_ADDR);
 
 	otCoapSendResponseWithParameters_fake.return_val = OT_ERROR_NONE;
 
@@ -545,7 +545,7 @@ ZTEST(ot_rpc_coap, test_otCoapSendResponse)
 	zassert_equal(otCoapSendResponseWithParameters_fake.call_count, 1);
 	zexpect_equal(otCoapSendResponseWithParameters_fake.arg1_val, (otMessage *)MSG_ADDR);
 	zexpect_not_null(otCoapSendResponseWithParameters_fake.arg2_val);
-	zassert_is_null(ot_msg_get(message_rep));
+	zassert_is_null(ot_res_tab_msg_get(message_rep));
 }
 
 /*
@@ -555,7 +555,7 @@ ZTEST(ot_rpc_coap, test_otCoapSendResponse)
  */
 ZTEST(ot_rpc_coap, test_otCoapSendResponse_failed)
 {
-	ot_msg_key message_rep = ot_reg_msg_alloc((otMessage *)MSG_ADDR);
+	ot_rpc_res_tab_key message_rep = ot_res_tab_msg_alloc((otMessage *)MSG_ADDR);
 
 	otCoapSendResponseWithParameters_fake.return_val = OT_ERROR_INVALID_STATE;
 
@@ -566,7 +566,7 @@ ZTEST(ot_rpc_coap, test_otCoapSendResponse_failed)
 	zassert_equal(otCoapSendResponseWithParameters_fake.call_count, 1);
 	zexpect_equal(otCoapSendResponseWithParameters_fake.arg1_val, (otMessage *)MSG_ADDR);
 	zexpect_not_null(otCoapSendResponseWithParameters_fake.arg2_val);
-	zassert_not_null(ot_msg_get(message_rep));
+	zassert_not_null(ot_res_tab_msg_get(message_rep));
 }
 
 ZTEST_SUITE(ot_rpc_coap, NULL, NULL, tc_setup, NULL, NULL);

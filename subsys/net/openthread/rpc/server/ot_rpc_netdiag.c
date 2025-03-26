@@ -238,7 +238,7 @@ static void ot_rpc_cmd_get_next_diagnostic_tlv(const struct nrf_rpc_group *group
 					       struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 	otError error;
-	ot_msg_key message_rep;
+	ot_rpc_res_tab_key message_rep;
 	const otMessage *message;
 	otNetworkDiagIterator iterator;
 	otNetworkDiagTlv tlv;
@@ -252,7 +252,7 @@ static void ot_rpc_cmd_get_next_diagnostic_tlv(const struct nrf_rpc_group *group
 		return;
 	}
 
-	message = ot_msg_get(message_rep);
+	message = ot_res_tab_msg_get(message_rep);
 
 	if (!message) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_THREAD_GET_NEXT_DIAGNOSTIC_TLV);
@@ -281,11 +281,11 @@ void handle_receive_diagnostic_get(otError aError, otMessage *aMessage,
 					  const otMessageInfo *aMessageInfo, void *aContext)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	ot_msg_key message_rep;
+	ot_rpc_res_tab_key message_rep;
 
 	ARG_UNUSED(aContext);
 
-	message_rep = ot_reg_msg_alloc(aMessage);
+	message_rep = ot_res_tab_msg_alloc(aMessage);
 
 	if (message_rep == 0) {
 		nrf_rpc_err(-ENOMEM, NRF_RPC_ERR_SRC_SEND, &ot_group,
@@ -303,7 +303,7 @@ void handle_receive_diagnostic_get(otError aError, otMessage *aMessage,
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_THREAD_SEND_DIAGNOSTIC_GET_CB, &ctx,
 				nrf_rpc_rsp_decode_void, NULL);
 
-	ot_msg_free(message_rep);
+	ot_res_tab_msg_free(message_rep);
 }
 
 static void ot_rpc_cmd_send_diagnostic_get(const struct nrf_rpc_group *group,
