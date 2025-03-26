@@ -244,12 +244,12 @@ nRF9160: Asset Tracker v2
 
 * Added:
 
-  * :ref:`motion_impact_detection` using the ADXL372 accelerometer.
+  * Motion impact detection using the ADXL372 accelerometer.
   * The following Kconfig options to set the threshold and timeout values:
 
-    * :ref:`CONFIG_DATA_ACCELEROMETER_ACT_THRESHOLD <CONFIG_DATA_ACCELEROMETER_ACT_THRESHOLD>`
-    * :ref:`CONFIG_DATA_ACCELEROMETER_INACT_THRESHOLD <CONFIG_DATA_ACCELEROMETER_INACT_THRESHOLD>`
-    * :ref:`CONFIG_DATA_ACCELEROMETER_INACT_TIMEOUT_SECONDS <CONFIG_DATA_ACCELEROMETER_INACT_TIMEOUT_SECONDS>`
+    * ``CONFIG_DATA_ACCELEROMETER_ACT_THRESHOLD``
+    * ``CONFIG_DATA_ACCELEROMETER_INACT_THRESHOLD``
+    * ``CONFIG_DATA_ACCELEROMETER_INACT_TIMEOUT_SECONDS``
 
   * Support for full modem FOTA updates for nRF Cloud builds.
 
@@ -257,17 +257,17 @@ nRF9160: Asset Tracker v2
 
   * The application to use :ref:`TF-M <ug_tfm>` as the default secure firmware component.
   * Data sampling method.
-    It is now performed when the device detects both activity and inactivity in passive mode, notified by the :c:enum:`SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED` event of the :ref:`sensor module <asset_tracker_v2_sensor_module>`.
+    It is now performed when the device detects both activity and inactivity in passive mode, notified by the :c:enum:`SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED` event of the Asset Tracker v2 sensor module.
   * ``CONFIG_MODEM_NEIGHBOR_SEARCH_TYPE`` Kconfig option.
   * Publishing method for GNSS fixes.
     GNSS fixes are now published in the PVT format instead of NMEA for nRF Cloud builds.
     To revert to NMEA, set the ``CONFIG_GNSS_MODULE_NMEA`` Kconfig option.
   * Forwarding of :c:enum:`SENSOR_EVT_MOVEMENT_ACTIVITY_DETECTED` and :c:enum:`SENSOR_EVT_MOVEMENT_INACTIVITY_DETECTED` events by the sensor module.
-  * :ref:`Real-time configurations <real_time_configs>`, which can now configure the upper and lower thresholds for motion detection.
+  * Real-time configurations, which can now configure the upper and lower thresholds for motion detection.
     You can also configure the timeout after which the sensor reports inactivity.
     It is now set to 30 seconds.
   * LwM2M schema.
-    To use the new parameters, upload the updated :file:`config_object_descript.xml` file to AVSystem.
+    To use the new parameters, upload the object description file to AVSystem.
   * The conversions of RSRP and RSRQ.
     These now use common macros that follow the conversion algorithms defined in the `AT Commands Reference Guide`_.
   * Bootstrapping to be disabled by default.

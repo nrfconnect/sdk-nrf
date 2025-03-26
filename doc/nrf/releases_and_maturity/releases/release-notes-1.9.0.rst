@@ -174,20 +174,21 @@ nRF9160: Asset Tracker v2
 
   * Support for A-GPS filtered ephemerides.
   * Functionality that allows the application to wait for A-GPS data to be processed before starting GNSS positioning.
-  * New documentation for the following modules in :ref:`asset_tracker_v2`:
+  * New documentation for the following modules in Asset Tracker v2:
 
-    * :ref:`asset_tracker_v2_app_module`
-    * :ref:`asset_tracker_v2_cloud_module`
-    * :ref:`api_cloud_wrapper`
-    * :ref:`asset_tracker_v2_data_module`
+    * Application module
+    * Cloud module
+    * Cloud wrapper API
+    * Data module
     * GNSS module
-    * :ref:`asset_tracker_v2_modem_module`
-    * :ref:`api_modules_common`
-    * :ref:`asset_tracker_v2_sensor_module`
-    * :ref:`asset_tracker_v2_ui_module`
-    * :ref:`asset_tracker_v2_util_module`
+    * Modem module
+    * Modules common
+    * Sensor module
+    * UI module
+    * Utility module
 
-  * Support for atmospheric pressure readings retrieved from the BME680 sensor on Thingy:91. See :ref:`asset_tracker_v2_sensor_module` for more information.
+  * Support for atmospheric pressure readings retrieved from the BME680 sensor on Thingy:91.
+    See Asset Tracker v2 sensor module for more information.
 
 * Updated:
 
@@ -204,7 +205,7 @@ nRF9160: Asset Tracker
 ----------------------
 
 * Removed nRF9160: Asset Tracker.
-  It is recommended to upgrade to the :ref:`asset_tracker_v2` application.
+  It is recommended to upgrade to the Asset Tracker v2 application.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------

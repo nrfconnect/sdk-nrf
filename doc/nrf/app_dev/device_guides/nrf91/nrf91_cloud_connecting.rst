@@ -60,7 +60,6 @@ Make sure you are logged in to the `nRF Cloud`_ portal and have an activated SIM
 
    At this stage, the |DK| is provisioned on nRF Cloud, but not yet associated with your nRF Cloud account.
    When the device has connected, |led_cloud_association| to indicate that user association is required and you can move to the next step.
-   See :ref:`Asset Tracker v2 LED indication <led_indication>` for more information.
 
 #. Click :guilabel:`Devices` under :guilabel:`Device Management` in the navigation pane on the left.
 
@@ -118,7 +117,6 @@ Make sure you are logged in to the `nRF Cloud`_ portal and have an activated SIM
 
 The |DK| is now added to your nRF Cloud account.
 This is indicated by the |led_publishing_data|, which shows that the device is publishing data.
-See :ref:`Asset Tracker v2 LED indication <led_indication>` for more information.
 
 On nRF Cloud, you can access the device by clicking :guilabel:`Devices` under :guilabel:`Device Management` in the navigation pane on the left.
 
@@ -128,8 +126,6 @@ On nRF Cloud, you can access the device by clicking :guilabel:`Devices` under :g
 
 Testing the GNSS functionality
 ******************************
-
-:ref:`asset_tracker_v2` supports acquiring GNSS position and transmitting it to nRF Cloud.
 
 To achieve the fastest Time To First Fix of GNSS position, the following conditions need to be met:
 

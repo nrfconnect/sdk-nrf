@@ -1,4 +1,0 @@
-mcuboot_secondary:
-  region: external_flash
-  address: 0x0
-  size: 0xD0000

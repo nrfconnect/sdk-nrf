@@ -47,6 +47,7 @@
 .. _`Zephyr issue #51831`: https://github.com/zephyrproject-rtos/zephyr/issues/51831
 .. _`Zephyr pull request #50305`: https://github.com/zephyrproject-rtos/zephyr/pull/50305
 .. _`Zephyr issue #69546`: https://github.com/zephyrproject-rtos/zephyr/issues/69546
+.. _`Asset Tracker Template`: https://github.com/nrfconnect/Asset-Tracker-Template
 
 .. _`generate_psa_key_attributes.py`: https://github.com/nrfconnect/sdk-nrf/blob/main/scripts/generate_psa_key_attributes.py
 .. _`print_toolchain_checksum.sh`: https://github.com/nrfconnect/sdk-nrf/blob/main/scripts/print_toolchain_checksum.sh
@@ -205,9 +206,6 @@
 .. _`Zigbee R23`: https://github.com/nrfconnect/ncs-zigbee
 .. _`zcbor 0.8.0 release notes`: https://github.com/zephyrproject-rtos/zcbor/blob/0.8.0/RELEASE_NOTES.md
 .. _`zcbor 0.8.1 release notes`: https://github.com/zephyrproject-rtos/zcbor/blob/0.8.1/RELEASE_NOTES.md
-
-.. _`nRF Asset Tracker Memfault integration for AWS IoT`: https://github.com/NordicSemiconductor/asset-tracker-cloud-memfault-aws-js
-.. _`nRF Asset Tracker Memfault integration for Azure IoT Hub`: https://github.com/NordicSemiconductor/asset-tracker-cloud-memfault-azure-js
 
 .. _`Memfault-SDK`:
 .. _`Memfault firmware SDK`: https://github.com/memfault/memfault-firmware-sdk
@@ -637,9 +635,6 @@
 .. _`CONFIG_SSF_PSA_CRYPTO_SERVICE_ENABLED`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CONFIG_SSF_PSA_CRYPTO_SERVICE_ENABLED
 
 .. _`nRF Asset Tracker project`: https://docs.nordicsemi.com/bundle/nrf-asset-tracker-saga/page/index.html
-.. _`Getting started guide for nRF Asset Tracker for AWS`: https://docs.nordicsemi.com/bundle/nrf-asset-tracker-saga/page/docs/aws/GettingStarted/Index.html
-.. _`Getting started guide for nRF Asset Tracker for Azure`: https://docs.nordicsemi.com/bundle/nrf-asset-tracker-saga/page/docs/azure/GettingStarted/Index.html
-.. _`nRF Asset Tracker Memfault integration`: https://docs.nordicsemi.com/bundle/nrf-asset-tracker-saga/page/docs/memfault/Index.html
 
 .. _`Board Configurator app`: https://docs.nordicsemi.com/bundle/nrf-connect-board-configurator/page/index.html
 

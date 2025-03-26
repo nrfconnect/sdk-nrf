@@ -158,7 +158,6 @@ nRF9160: Asset Tracker v2
   * Support for A-GPS and P-GPS in Azure IoT Hub integration.
   * New overlay configuration files and split the :file:`prj.conf` file to several files that now bind specific features.
     To build with a specific feature, such as P-GPS, Memfault or communications with AWS IoT, you need to include the respective overlay configuration in the build command.
-    This is documented in :ref:`asset_tracker_v2_description`.
 
 * Updated:
 

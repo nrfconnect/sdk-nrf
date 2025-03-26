@@ -27,7 +27,7 @@ Sign up for the `nRF Connect SDK v2.3.0 webinar`_ to learn more about the new fe
     This feature allows Periodic Advertising synchronization data to be transferred over an ACL connection, which gives power saving benefits for energy constraint devices.
     This is a key feature for the `Auracast™`_ Assistant.
   * The :ref:`lib_location` library now supports sending both Wi-Fi and cellular location data to nRF Cloud location services for improved location accuracy.
-    This is demonstrated in :ref:`asset_tracker_v2`, :ref:`modem_shell_application`, and :ref:`lwm2m_client`.
+    This is demonstrated in Asset Tracker v2, :ref:`modem_shell_application`, and :ref:`lwm2m_client`.
   * Writing modem trace to external flash for later retrieval.
     The :ref:`modem_shell_application` sample now demonstrates how to store and upload modem trace to cloud.
   * New :ref:`Serial LTE Modem (SLM) Shell <slm_shell_sample>` sample:
@@ -301,7 +301,7 @@ nRF9160: Asset Tracker v2
 * Added:
 
   * Wi-Fi support for nRF9160 DK + nRF7002 EK configuration.
-  * A section about :ref:`Custom transport <asset_tracker_v2_ext_transport>` in the :ref:`asset_tracker_v2_debug_module` documentation.
+  * A section about custom transport in the debug module documentation.
 
 * Updated:
 

@@ -38,7 +38,7 @@ To pre-program the certificates, use one of the following methods:
   * The appropriate certificates (:file:`*.pem`) are included in the :file:`certs` folder.
   * |hex_format|
 
-Other samples and applications like :ref:`asset_tracker_v2` and :ref:`modem_shell_application` with the carrier library integration do not write any certificates in the application.
+Other samples such as the :ref:`modem_shell_application` with the carrier library integration do not write any certificates in the application.
 
 Pre-shared key (PSK)
 ********************

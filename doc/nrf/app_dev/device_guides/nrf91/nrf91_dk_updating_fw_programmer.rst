@@ -15,11 +15,11 @@ The downloaded ZIP archive contains the following firmware:
 
 Application firmware
   The :file:`img_app_bl` folder contains full firmware images for different applications.
-  The guides in this section use the image for the :ref:`asset_tracker_v2` application as an example.
-  Asset Tracker v2 simulates sensor data and transmits it to Nordic Semiconductor's cloud solution, `nRF Cloud`_.
+  The guides in this section use the image for the :ref:`nrf_cloud_multi_service` sample as an example.
+  The nRF Cloud multi-service sample simulates sensor data and transmits it to Nordic Semiconductor's cloud solution, `nRF Cloud`_.
 
   The data is transmitted using either LTE-M or NB-IoT.
-  Asset Tracker v2 first attempts to use LTE-M, then NB-IoT.
+  The nRF Cloud multi-service sample first attempts to use LTE-M, then NB-IoT.
   Check with your SIM card provider for the mode they support at your location.
 
   .. tabs::
@@ -46,10 +46,6 @@ Modem firmware
   The modem firmware is in a ZIP archive instead of a folder.
   The archive is named :file:`mfw_nrf9160_` or :file:`mfw_nrf91x1_`, followed by the firmware version number.
   Do not unzip this file.
-
-.. tip::
-   For a more compact nRF Cloud firmware application, you can build and install the :ref:`nrf_cloud_multi_service` sample.
-   See :ref:`building` for details on building a firmware sample application.
 
 The :file:`CONTENTS.txt` file in the extracted folder contains the location and names of the different firmware images.
 
@@ -173,7 +169,7 @@ To update the application firmware using the Programmer app, complete the follow
 #. For the nRF9160 DK only: Make sure the **PROG/DEBUG SW10** switch (**SW5** on DK v0.9.0 and earlier) on the nRF9160 DK is set to **nRF91** or **nRF52** as appropriate for the application or sample you are programming.
    See the `Device programming section in the nRF9160 DK User Guide`_ for more information.
 
-   For the :ref:`asset_tracker_v2` application, the switch must be set to **nRF91**.
+   For the :ref:`nrf_cloud_multi_service` sample, the switch must be set to **nRF91**.
 
 #. Connect the DK to the computer with a USB cable, and then turn the DK on.
 #. Click :guilabel:`SELECT DEVICE` and select the DK from the drop-down list.
@@ -203,11 +199,8 @@ To update the application firmware using the Programmer app, complete the follow
 #. Navigate to where you extracted the firmware, and then to the :file:`img_app_bl` folder there.
 #. Select the :file:`.hex` file for your DK for the application you are programming:
 
-   * nRF9160 DK - :file:`nrf9160dk_asset_tracker_v2_<version-number>.hex`
-   * nRF91x1 DK - :file:`nrf9151dk_asset_tracker_v2_<version-number>.hex` or :file:`nrf9161dk_asset_tracker_v2_<version-number>.hex`
-
-   For NB-IoT, there is a second variant of the Asset Tracker v2 firmware in the file ending with :file:`*_nbiot_legacy_pco_<version-number>.hex`.
-   Only use this legacy variant if your network does not support ePCO.
+   * nRF9160 DK - :file:`nrf9160dk_nrfcloud_multi_service_coap_<version-number>.hex`
+   * nRF91x1 DK - :file:`nrf9151dk_nrfcloud_multi_service_coap_<version-number>.hex` or :file:`nrf9161dk_nrfcloud_multi_service_coap_<version-number>.hex`
 
 #. Click the :guilabel:`Erase & write` button in the **DEVICE** section to program the DK.
    Do not unplug or turn off the DK during this process.

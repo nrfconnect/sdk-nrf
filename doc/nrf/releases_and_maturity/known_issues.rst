@@ -1822,11 +1822,12 @@ The issues in this section are related to :ref:`applications`.
 Asset Tracker v2
 ================
 
-The issues in this section are related to the :ref:`asset_tracker_v2` application.
+The issues in this section are related to the Asset Tracker v2 application.
+This application has been removed in the |NCS| v3.0.0 and replaced by `Asset Tracker Template <Asset Tracker Template_>`_.
 
 .. rst-class:: v2-9-0-nRF54H20-1 v2-9-1 v2-9-0 v2-8-0
 
-NCSDK-30983: :ref:`asset_tracker_v2` with :file:`overlay-lwm2m` (LwM2M overlay) reboots after GNSS fix
+NCSDK-30983: Asset Tracker v2 with :file:`overlay-lwm2m` (LwM2M overlay) reboots after GNSS fix
   This issue affects Asset Tracker v2 with the LwM2M overlay.
   After a GNSS fix, the device reboots due to a NULL pointer exception.
 
@@ -1864,7 +1865,7 @@ CIA-604: Asset Tracker v2 cannot be built for the ``thingy91_nrf9160_ns`` board 
 .. rst-class:: v2-0-2 v2-0-1 v2-0-0
 
 CIA-661: Asset Tracker v2 application configured for LwM2M cannot be built for the ``nrf9160dk_nrf9160_ns`` board target with modem traces or Memfault enabled
-  The :ref:`asset_tracker_v2` application configured for LwM2M cannot be built for the ``nrf9160dk_nrf9160_ns`` board target with :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` for modem traces or :file:`overlay-memfault.conf` for Memfault due to memory constraints.
+  The Asset Tracker v2 application configured for LwM2M cannot be built for the ``nrf9160dk_nrf9160_ns`` board target with :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE` for modem traces or :file:`overlay-memfault.conf` for Memfault due to memory constraints.
 
   **Affected platforms:** nRF9160
 
@@ -1878,7 +1879,7 @@ CIA-661: Asset Tracker v2 application configured for LwM2M cannot be built for t
 .. rst-class:: v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
 CIA-890: The application cannot be built with :file:`overlay-debug.conf` and :kconfig:option:`CONFIG_DEBUG_OPTIMIZATIONS` set to ``y``
-  Due to insufficient flash space for the application when it is not optimized, the :ref:`asset_tracker_v2` application cannot be built with :file:`overlay-debug.conf` and :kconfig:option:`CONFIG_DEBUG_OPTIMIZATIONS` set to ``y``.
+  Due to insufficient flash space for the application when it is not optimized, the Asset Tracker v2 application cannot be built with :file:`overlay-debug.conf` and :kconfig:option:`CONFIG_DEBUG_OPTIMIZATIONS` set to ``y``.
 
   **Affected platforms:** nRF9160
 
@@ -1899,7 +1900,7 @@ nRF9160: Asset tracker
 ======================
 
 The issues in this section are related to the nRF9160: Asset tracker application.
-This application was removed in :ref:`nRF Connect SDK v1.9.0 <ncs_release_notes_190>` and replaced by :ref:`asset_tracker_v2`.
+This application was removed in :ref:`nRF Connect SDK v1.9.0 <ncs_release_notes_190>` and replaced by Asset Tracker v2.
 
 .. rst-class:: v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 

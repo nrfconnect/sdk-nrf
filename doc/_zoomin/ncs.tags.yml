@@ -299,8 +299,6 @@ mapping_topics:
   - nrf/applications/*.html: ["applications", "kconfig"]
   - nrf/applications/connectivity_bridge/README.html: ["lte"]
   - nrf/applications/matter_bridge/*.html: ["matter", "wifi"]
-  - nrf/applications/asset_tracker_v2/doc/*.html: ["lte"]
-  - nrf/applications/asset_tracker_v2/README.html: ["lte"]
   - nrf/applications/serial_lte_modem/doc/*.html: ["lte", "at-commands"]
   - nrf/applications/serial_lte_modem/README.html: ["lte"]
   - nrf/applications/nrf_desktop/*.html: ["ble"]

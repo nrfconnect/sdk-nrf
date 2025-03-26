@@ -89,7 +89,6 @@ Samples using the library
 
 The following |NCS| samples and applications use this library:
 
-* :ref:`asset_tracker_v2`
 * :ref:`serial_lte_modem`
 * :ref:`location_sample`
 * :ref:`gnss_sample`

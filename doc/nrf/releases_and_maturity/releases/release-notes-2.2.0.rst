@@ -233,7 +233,7 @@ nRF9160: Asset Tracker v2
 
   * Handling for the new data receive events in the :ref:`lib_nrf_cloud` library.
     This is a major change in the application code but a minor change from the user perspective.
-  * :ref:`asset_tracker_v2_location_module`.
+  * Location module.
     GNSS is used through the :ref:`lib_location` library.
 
 * Updated:
@@ -242,8 +242,8 @@ nRF9160: Asset Tracker v2
   * The application now uses passive mode as the default mode for Thingy:91 builds.
   * The application now uses the :ref:`lib_location` library for retrieving location information.
     This is a major change in the application code but a minor change from the user perspective.
-  * Neighbor cell handling moved from :ref:`asset_tracker_v2_modem_module` to :ref:`asset_tracker_v2_location_module` to be used through Location library.
-  * The :ref:`asset_tracker_v2_location_module` triggers a :c:func:`location_request` with GNSS being the first priority method and cellular the second priority if they are enabled in the application configuration.
+  * Neighbor cell handling moved from the Asset Tracker v2 modem module to location module to be used through Location library.
+  * The Asset Tracker v2 location module triggers a :c:func:`location_request` with GNSS being the first priority method and cellular the second priority if they are enabled in the application configuration.
   * A-GPS/P-GPS are not requested based on triggers in the application but only based on :ref:`lib_location` library events :c:enum:`LOCATION_EVT_GNSS_ASSISTANCE_REQUEST` and :c:enum:`LOCATION_EVT_GNSS_PREDICTION_REQUEST`.
   * Currently, you cannot configure or define the LTE LC neighbor cell search type with the :ref:`lib_location` library.
     The default search type is always used.

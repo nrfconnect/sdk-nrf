@@ -1,15 +1,9 @@
 The following sections describe the various features of |thingy| apart from the ones on the :ref:`ug_nrf91_features` page.
 
-Operating modes
-***************
-
-|thingy| contains RGB indicator LEDs, which indicate the operating state of the device as described in the :ref:`LED indication <led_indication>` section of the :ref:`asset_tracker_v2_ui_module`.
-
 GNSS
 ****
 
 |thingy| has a GNSS receiver, which, if activated, allows the device to be located globally using GNSS signals.
-In the :ref:`asset_tracker_v2` application, GNSS is activated by default.
 
 LTE Band Lock
 *************

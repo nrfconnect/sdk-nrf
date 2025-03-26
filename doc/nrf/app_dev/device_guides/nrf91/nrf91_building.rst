@@ -106,6 +106,3 @@ Samples and applications implementing FOTA
 * :ref:`http_application_update_sample` sample - Performs a basic application FOTA update.
 * :ref:`aws_iot` sample - Performs a FOTA update using MQTT and HTTP, where the firmware download is triggered through an AWS IoT job.
 * :ref:`azure_iot_hub` sample - Performs a FOTA update from the Azure IoT Hub.
-* :ref:`asset_tracker_v2` application - Performs FOTA updates of the application, modem (delta), and boot (if enabled).
-  It also supports nRF Cloud FOTA as well as AWS or Azure FOTA.
-  You can configure only one at a time.
