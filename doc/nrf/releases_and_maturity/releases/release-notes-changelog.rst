@@ -391,8 +391,25 @@ Bluetooth samples
 
   * Support for the ``nrf54l15dk/nrf54l05/cpuapp`` and ``nrf54l15dk/nrf54l10/cpuapp`` board targets in the following samples:
 
+    * :ref:`central_and_peripheral_hrs`
+    * :ref:`central_bas`
     * :ref:`bluetooth_central_hids`
+    * :ref:`bluetooth_central_hr_coded`
+    * :ref:`bluetooth_central_dfu_smp`
+    * :ref:`central_uart`
+    * :ref:`multiple_adv_sets`
+    * :ref:`peripheral_bms`
+    * :ref:`peripheral_cgms`
+    * :ref:`peripheral_cts_client`
+    * :ref:`peripheral_gatt_dm`
     * :ref:`peripheral_hids_keyboard`
+    * :ref:`peripheral_hr_coded`
+    * :ref:`peripheral_mds`
+    * :ref:`peripheral_nfc_pairing`
+    * :ref:`peripheral_rscs`
+    * :ref:`peripheral_status`
+    * :ref:`shell_bt_nus`
+    * :ref:`ble_throughput`
 
   * The Advertising Coding Selection feature to the following samples:
 
