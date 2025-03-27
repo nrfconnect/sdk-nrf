@@ -164,7 +164,9 @@ int nrf_flash_sync_exe(struct flash_op_desc *op_desc)
 		return -EBUSY;
 	}
 
-	/* TODO: Optimization: no sync if non radio core memory? */
+	_context.timeslot_started_time = 0;
+	_context.op_desc = op_desc;
+	_context.status = -ETIMEDOUT;
 
 	NRF_RPC_CBOR_ALLOC(&flash_sync_rpc_api_grp, ctx, FLASH_SYNC_EXE_MAX_ENCODED_LENGTH);
 
