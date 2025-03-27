@@ -242,7 +242,9 @@ def main() -> None:
     if args.trng_key:
         value  = f'TRNG:{int(math.ceil(args.size / 8))}'
     elif args.key:
-        key = args.key.strip("0x")
+        key = args.key
+        while key.startswith("0x"):
+            key = key.removeprefix("0x")
         if not is_valid_hexa_code(key):
             print("Invalid KEY value")
             return
