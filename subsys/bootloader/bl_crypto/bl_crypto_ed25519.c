@@ -25,9 +25,13 @@ static psa_key_id_t kmu_key_ids[] =  {
 	MAKE_PSA_KMU_KEY_ID(246)
 };
 
+BUILD_ASSERT(INT8_MAX >= ARRAY_SIZE(kmu_key_ids),
+		"Number of KMU keys too big");
+
 int bl_ed25519_validate(const uint8_t *data, uint32_t data_len, const uint8_t *signature)
 {
 	psa_status_t status = PSA_ERROR_BAD_STATE;
+	int8_t verified_with = -1;
 
 	if (!data || (data_len == 0) || !signature) {
 		return -EINVAL;
@@ -54,8 +58,24 @@ int bl_ed25519_validate(const uint8_t *data, uint32_t data_len, const uint8_t *s
 		LOG_DBG("PSA verify message result: %d", status);
 
 		if (status == PSA_SUCCESS) {
-			return 0;
+			verified_with = i;
+			break;
 		}
+	}
+#if defined(CONFIG_SB_CRYPTO_KMU_KEYS_REVOCATION)
+	for (int i = 0; i < verified_with; ++i) {
+		psa_key_id_t kid = kmu_key_ids[i];
+
+		status = psa_destroy_key(kid);
+		if (status == PSA_SUCCESS) {
+			LOG_DBG("Success invalidating key ID %d", i);
+		} else {
+			LOG_ERR("Key invalidation failed with: %d", status);
+		}
+	}
+#endif
+	if (verified_with >= 0) {
+		return 0;
 	}
 
 	LOG_ERR("ED25519 signature verification failed: %d", status);
