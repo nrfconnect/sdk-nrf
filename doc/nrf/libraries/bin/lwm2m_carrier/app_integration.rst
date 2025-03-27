@@ -80,9 +80,11 @@ Following are some of the general Kconfig options that you can configure:
     Upon timeout, the LwM2M carrier library disconnects from one or more device management servers.
   * The timeout closes the DTLS session.
     A new DTLS session will be created on the next activity (for example, lifetime trigger).
+
+    * If the DTLS session is using Connection ID, the session is *not* closed.
+
   * Leaving this configuration empty (``0``) sets it to a default of 60 seconds.
   * Setting this configuration to ``-1`` disables the session idle timeout.
-  * This configuration does not apply when the DTLS session is using Connection ID.
 
 * :kconfig:option:`CONFIG_LWM2M_CARRIER_COAP_CON_INTERVAL`:
 

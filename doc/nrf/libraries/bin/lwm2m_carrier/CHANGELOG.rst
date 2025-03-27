@@ -18,6 +18,55 @@ For certification status of the released versions, see the following documents, 
 * `nRF9161 Mobile network operator certifications`_
 * `nRF9160 Mobile network operator certifications`_
 
+liblwm2m_carrier 3.7.0
+**********************
+
+Release for modem firmware versions 1.3.7 and 2.0.2.
+
+Size
+====
+
+See :ref:`lwm2m_lib_size` for an explanation of the library size in different scenarios.
+
++-------------------------+---------------+------------+
+|                         | Flash (Bytes) | RAM (Bytes)|
++-------------------------+---------------+------------+
+| Library size            | 78147         | 18828      |
+| (binary)                |               |            |
++-------------------------+---------------+------------+
+| Library size            | 98144         | 34568      |
+| (reference application) |               |            |
++-------------------------+---------------+------------+
+
+Changes
+=======
+
+* Added the new :ref:`lib_downloader` library to the glue layer (:file:`lwm2m_os.c/h`).
+  Removed the deprecated :ref:`lib_download_client` from the glue layer.
+* Added missing documentation for some glue layer functions.
+* Removed the error type ``LWM2M_CARRIER_ERROR_RUN``.
+
+  * Errors that were previously notified to the application with the ``LWM2M_CARRIER_ERROR_RUN`` event type have instead been added to :c:macro:`LWM2M_CARRIER_ERROR_CONFIGURATION`.
+
+* Improved the error codes to more uniquely identify possible errors.
+  In addition, some previously unlisted errors have now been documented.
+  For more information, see the following events:
+
+  * :c:macro:`LWM2M_CARRIER_ERROR_INIT`
+  * :c:macro:`LWM2M_CARRIER_ERROR_CONFIGURATION`
+  * :c:macro:`LWM2M_CARRIER_ERROR_FOTA_FAIL`
+  * :c:macro:`LWM2M_CARRIER_ERROR_CONNECT`
+
+* Improved the handling of failures during the download of FOTA images.
+  This is to ensure that the relevant DFU target is reinitialized appropriately before the download is resumed.
+* Optimizations in the CoAP implementation to reduce the memory footprint.
+* Fixed an issue for delayed bootstrap when connecting to two servers.
+
+  * Previously, if the second connection failed and caused a delayed bootstrap, the first server would disconnect (and connect again once the deferred time had passed).
+  * Now, the first server will remain connected while the LwM2M carrier library is waiting to bootstrap again.
+
+* Fixed a bug where the Signal Strength resource in the Connection Monitoring object was off by 1 dB.
+
 liblwm2m_carrier 3.6.0
 **********************
 

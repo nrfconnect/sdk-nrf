@@ -329,11 +329,9 @@ int lwm2m_os_sleep(int ms)
 
 static lwm2m_os_at_handler_callback_t at_handler_callback;
 
-int lwm2m_os_at_init(lwm2m_os_at_handler_callback_t callback)
+void lwm2m_os_at_init(lwm2m_os_at_handler_callback_t callback)
 {
 	at_handler_callback = callback;
-
-	return 0;
 }
 
 static void lwm2m_os_at_handler(const char *notif)
@@ -692,9 +690,17 @@ int lwm2m_os_nrf_errno(void)
 
 #include <dfu/dfu_target.h>
 
-static bool dfu_in_progress;
-static bool dfu_crc_validate;
-static int dfu_img_type;
+static struct {
+	enum dfu_target_image_type type;
+	enum { DFU_STATE_IDLE, DFU_STATE_ACTIVE, DFU_STATE_PAUSED } state;
+	bool crc_validate;
+#if CONFIG_LWM2M_CARRIER_SOFTBANK_DIVIDED_FOTA
+	struct lwm2m_os_dfu_header header;
+#endif
+} dfu_target;
+
+#define DFU_IS_ACTIVE (dfu_target.state == DFU_STATE_ACTIVE)
+#define DFU_IS_PAUSED (dfu_target.state == DFU_STATE_PAUSED)
 
 #if CONFIG_DFU_TARGET_MCUBOOT
 #include <dfu/dfu_target_mcuboot.h>
@@ -782,8 +788,6 @@ static void dfu_target_cb(enum dfu_target_evt_id evt_id)
 }
 
 #if CONFIG_LWM2M_CARRIER_SOFTBANK_DIVIDED_FOTA
-static struct lwm2m_os_dfu_header dfu_header;
-
 static int dfu_img_header_decode(const uint8_t *const buf, size_t len,
 				 struct lwm2m_os_dfu_header **header)
 {
@@ -821,37 +825,25 @@ static int dfu_img_header_decode(const uint8_t *const buf, size_t len,
 	}
 
 	/* Validate the sequence. May be the next one or the same if already in progress (retry). */
-	if ((dfu_in_progress || new_header.number != dfu_header.number + 1) &&
-	    (!dfu_in_progress || new_header.number != dfu_header.number)) {
+	if ((DFU_IS_ACTIVE || new_header.number != dfu_target.header.number + 1) &&
+	    (DFU_IS_PAUSED || new_header.number != dfu_target.header.number)) {
 		/* The file does not follow the sequence. */
 		LOG_WRN("DFU header does not follow the sequence");
 		return LWM2M_OS_DFU_IMG_TYPE_NONE;
 	}
 
 	/* Check if this is the continuation of the current sequence. */
-	if ((new_header.number != 1) && (strcmp(dfu_header.version, new_header.version) != 0)) {
+	if ((new_header.number != 1) &&
+	    (strcmp(dfu_target.header.version, new_header.version) != 0)) {
 		/* The versions do not match. */
 		LOG_WRN("DFU header version string does not match");
 		return LWM2M_OS_DFU_IMG_TYPE_NONE;
 	}
 
-	memcpy(&dfu_header, &new_header, sizeof(dfu_header));
-	*header = &dfu_header;
+	memcpy(&dfu_target.header, &new_header, sizeof(dfu_target.header));
+	*header = &dfu_target.header;
 
 	return LWM2M_OS_DFU_IMG_TYPE_APPLICATION_FILE;
-}
-
-static void divided_dfu_reset(void)
-{
-	/* Divided DFU may have been paused. Reinitialize the target to reset appropriately. */
-	dfu_target_init(DFU_TARGET_IMAGE_TYPE_MCUBOOT, 0, 0, dfu_target_cb);
-	dfu_in_progress = true;
-	lwm2m_os_dfu_reset();
-}
-
-static bool divided_dfu_in_progress(void)
-{
-	return dfu_header.number > 0;
 }
 #endif
 
@@ -887,16 +879,15 @@ int lwm2m_os_dfu_start(int img_type, size_t max_file_size, bool crc_validate)
 {
 	int err;
 	size_t offset;
-	static enum dfu_target_image_type dfu_target;
 
-	if (dfu_in_progress) {
+	if (DFU_IS_ACTIVE) {
 		return -EBUSY;
 	}
 
 #if CONFIG_LWM2M_CARRIER_SOFTBANK_DIVIDED_FOTA
-	if (divided_dfu_in_progress() && (img_type != LWM2M_OS_DFU_IMG_TYPE_APPLICATION_FILE)) {
+	if (dfu_target.header.number && (img_type != LWM2M_OS_DFU_IMG_TYPE_APPLICATION_FILE)) {
 		LOG_WRN("Ongoing divided FOTA interrupted, proceed with the new target");
-		divided_dfu_reset();
+		lwm2m_os_dfu_reset();
 	}
 #endif
 
@@ -906,17 +897,17 @@ int lwm2m_os_dfu_start(int img_type, size_t max_file_size, bool crc_validate)
 #if CONFIG_LWM2M_CARRIER_SOFTBANK_DIVIDED_FOTA
 	case LWM2M_OS_DFU_IMG_TYPE_APPLICATION_FILE:
 #endif
-		dfu_target = DFU_TARGET_IMAGE_TYPE_MCUBOOT;
+		dfu_target.type = DFU_TARGET_IMAGE_TYPE_MCUBOOT;
 		break;
 	case LWM2M_OS_DFU_IMG_TYPE_MODEM_DELTA:
-		dfu_target = DFU_TARGET_IMAGE_TYPE_MODEM_DELTA;
+		dfu_target.type = DFU_TARGET_IMAGE_TYPE_MODEM_DELTA;
 		break;
 	default:
 		return -ENOTSUP;
 	}
 
 	/* A stream buffer is required if the target is MCUBOOT. */
-	if (dfu_target == DFU_TARGET_IMAGE_TYPE_MCUBOOT) {
+	if (dfu_target.type == DFU_TARGET_IMAGE_TYPE_MCUBOOT) {
 #if CONFIG_DFU_TARGET_MCUBOOT
 		err = dfu_target_mcuboot_set_buf(dfu_stream_buf, sizeof(dfu_stream_buf));
 		if (err) {
@@ -930,11 +921,10 @@ int lwm2m_os_dfu_start(int img_type, size_t max_file_size, bool crc_validate)
 	/* Mark as in progress regardless of the initialization result. The DFU target must be
 	 * reset afterwards to ensure full clean-up.
 	 */
-	dfu_in_progress = true;
-	dfu_img_type = img_type;
-	dfu_crc_validate = crc_validate;
+	dfu_target.state = DFU_STATE_ACTIVE;
+	dfu_target.crc_validate = crc_validate;
 
-	err = dfu_target_init(dfu_target, 0, max_file_size, dfu_target_cb);
+	err = dfu_target_init(dfu_target.type, 0, max_file_size, dfu_target_cb);
 	if (err == -EFBIG) {
 		/* Insufficient flash storage for the image. */
 		return err;
@@ -954,12 +944,12 @@ int lwm2m_os_dfu_fragment(const char *buf, size_t len, uint32_t crc32)
 {
 	int err;
 
-	if (!dfu_in_progress) {
+	if (!DFU_IS_ACTIVE) {
 		return -EACCES;
 	}
 
 	/* CRC-validate whole fragment if required. */
-	if (dfu_crc_validate) {
+	if (dfu_target.crc_validate) {
 		err = crc_validate_fragment(buf, len, crc32);
 		if (err) {
 			return err;
@@ -982,12 +972,12 @@ int lwm2m_os_dfu_done(bool successful, uint32_t crc32)
 {
 	int err;
 
-	if (!dfu_in_progress) {
+	if (!DFU_IS_ACTIVE) {
 		return -EACCES;
 	}
 
 #if CONFIG_DFU_TARGET_MCUBOOT
-	if (dfu_crc_validate && (dfu_img_type == DFU_TARGET_IMAGE_TYPE_MCUBOOT)) {
+	if (dfu_target.crc_validate && (dfu_target.type == DFU_TARGET_IMAGE_TYPE_MCUBOOT)) {
 		size_t offset;
 
 		/* Ensure that the whole image is flushed into flash before CRC-validating it. */
@@ -1023,11 +1013,11 @@ int lwm2m_os_dfu_pause(void)
 	int err;
 	size_t offset;
 
-	if (!dfu_in_progress) {
+	if (!DFU_IS_ACTIVE) {
 		return -EACCES;
 	}
 
-	dfu_in_progress = false;
+	dfu_target.state = DFU_STATE_PAUSED;
 
 	err = dfu_target_done(false);
 	if (err) {
@@ -1046,7 +1036,7 @@ int lwm2m_os_dfu_schedule_update(void)
 {
 	int err;
 
-	if (!dfu_in_progress) {
+	if (!DFU_IS_ACTIVE) {
 		return -EACCES;
 	}
 
@@ -1062,16 +1052,15 @@ int lwm2m_os_dfu_schedule_update(void)
 
 void lwm2m_os_dfu_reset(void)
 {
-	if (dfu_in_progress) {
+	/* If reset is triggered while the target is paused, reinitialize it to clean up. */
+	if (DFU_IS_PAUSED) {
+		dfu_target_init(dfu_target.type, 0, 0, dfu_target_cb);
+		dfu_target.state = DFU_STATE_ACTIVE;
+	}
+
+	if (DFU_IS_ACTIVE) {
 		dfu_target_reset();
-		dfu_in_progress = false;
-		dfu_img_type = 0;
-		dfu_crc_validate = false;
-#if CONFIG_LWM2M_CARRIER_SOFTBANK_DIVIDED_FOTA
-		memset(&dfu_header, 0, sizeof(dfu_header));
-	} else if (divided_dfu_in_progress()) {
-		divided_dfu_reset();
-#endif
+		memset(&dfu_target, 0, sizeof(dfu_target));
 	}
 }
 
