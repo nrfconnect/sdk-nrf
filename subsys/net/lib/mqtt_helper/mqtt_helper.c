@@ -622,7 +622,7 @@ int mqtt_helper_disconnect(void)
 
 	mqtt_state_set(MQTT_STATE_DISCONNECTING);
 
-	err = mqtt_disconnect(&mqtt_client);
+	err = mqtt_disconnect(&mqtt_client, NULL);
 	if (err) {
 		/* Treat the sitation as an ungraceful disconnect */
 		LOG_ERR("Failed to send disconnection request, treating as disconnected");

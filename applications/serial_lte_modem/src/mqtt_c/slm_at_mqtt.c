@@ -424,7 +424,7 @@ static int do_mqtt_disconnect(void)
 		return -ENOTCONN;
 	}
 
-	err = mqtt_disconnect(&client);
+	err = mqtt_disconnect(&client, NULL);
 	if (err) {
 		LOG_ERR("ERROR: mqtt_disconnect %d", err);
 		return err;

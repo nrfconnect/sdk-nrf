@@ -400,7 +400,7 @@ void test_on_publish_too_large_incoming_msg(void)
 
 void test_mqtt_helper_disconnect_when_connected(void)
 {
-	__cmock_mqtt_disconnect_ExpectAndReturn(&mqtt_client, 0);
+	__cmock_mqtt_disconnect_ExpectAndReturn(&mqtt_client, NULL, 0);
 
 	mqtt_state = MQTT_STATE_CONNECTED;
 
@@ -410,7 +410,7 @@ void test_mqtt_helper_disconnect_when_connected(void)
 
 void test_mqtt_helper_disconnect_when_connected_mqtt_api_error(void)
 {
-	__cmock_mqtt_disconnect_ExpectAndReturn(&mqtt_client, -1);
+	__cmock_mqtt_disconnect_ExpectAndReturn(&mqtt_client, NULL, -1);
 
 	mqtt_state = MQTT_STATE_CONNECTED;
 
