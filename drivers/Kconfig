@@ -12,7 +12,7 @@ rsource "flash/Kconfig"
 rsource "gpio/Kconfig"
 rsource "hw_cc3xx/Kconfig"
 
-if MPSL && !MPSL_FEM_ONLY
+if !MPSL_FEM_ONLY
 rsource "mpsl/Kconfig"
 endif
 

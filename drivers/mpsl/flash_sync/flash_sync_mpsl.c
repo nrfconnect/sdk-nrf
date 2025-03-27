@@ -27,6 +27,13 @@ LOG_MODULE_REGISTER(flash_sync_mpsl);
 #define TIMESLOT_LENGTH_SLACK_US 100
 #endif
 
+#ifdef CONFIG_SOC_NRF54H20
+#undef FLASH_TIMEOUT_MS
+#define FLASH_TIMEOUT_MS 25000
+#endif
+
+#define FLASH_OP_ONGOING_NONBLOCKING 0x266641F
+
 /* After this many us's, start using higher priority when requesting. */
 #define TIMESLOT_TIMEOUT_PRIORITY_NORMAL_US 30000
 
@@ -59,6 +66,9 @@ static uint32_t get_timeslot_time_us(void)
 #ifdef CONFIG_SOC_COMPATIBLE_NRF54LX
 	nrf_timer_task_trigger(NRF_TIMER10, NRF_TIMER_TASK_CAPTURE0);
 	return nrf_timer_cc_get(NRF_TIMER10, NRF_TIMER_CC_CHANNEL0);
+#elif CONFIG_SOC_NRF54H20
+	/* Unused */
+	return 0;
 #else
 	nrf_timer_task_trigger(NRF_TIMER0, NRF_TIMER_TASK_CAPTURE0);
 	return nrf_timer_cc_get(NRF_TIMER0, NRF_TIMER_CC_CHANNEL0);
@@ -91,11 +101,11 @@ timeslot_callback(mpsl_timeslot_session_id_t session_id, uint32_t signal)
 	switch (signal) {
 	case MPSL_TIMESLOT_SIGNAL_START:
 		rc = _context.op_desc->handler(_context.op_desc->context);
-		if (rc != FLASH_OP_ONGOING) {
+		if (rc != FLASH_OP_ONGOING && rc != FLASH_OP_ONGOING_NONBLOCKING) {
 			_context.status = (rc == FLASH_OP_DONE) ? 0 : rc;
 			_context.return_param.callback_action =
 				MPSL_TIMESLOT_SIGNAL_ACTION_END;
-		} else {
+		} else if (rc == FLASH_OP_ONGOING) {
 			/* Reset the priority back to normal after a successful
 			 * timeslot. */
 			_context.timeslot_request.params.earliest.priority =
@@ -107,6 +117,13 @@ timeslot_callback(mpsl_timeslot_session_id_t session_id, uint32_t signal)
 				MPSL_TIMESLOT_SIGNAL_ACTION_REQUEST;
 			_context.return_param.params.request.p_next =
 				&_context.timeslot_request;
+#if defined(CONFIG_SOC_FLASH_NRF_RADIO_SYNC_RPC_CONTROLLER)
+		} else {
+			/* Simply let the timeslot run */
+			_context.status = 0;
+			_context.return_param.callback_action =
+				MPSL_TIMESLOT_SIGNAL_ACTION_NONE;
+#endif
 		}
 
 		break;
@@ -228,7 +245,7 @@ void nrf_flash_sync_get_timestamp_begin(void)
 
 bool nrf_flash_sync_check_time_limit(uint32_t iteration)
 {
-#ifdef CONFIG_SOC_COMPATIBLE_NRF54LX
+#if defined(CONFIG_SOC_COMPATIBLE_NRF54LX) || defined(CONFIG_SOC_NRF54H20)
 	/* The time taken in a previous write is not a predictor of the time taken
 	 * for the next write. Writing the same value as is already stored is much
 	 * faster than writing a different value. If the first few writes are fast
