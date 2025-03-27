@@ -88,8 +88,10 @@
 .. |nrfjprog_deprecation_note| replace:: Starting with the |NCS| v2.8.0, nrfjprog is in the process of being archived.
    It will remain available for download, but `nRF Util (device command) <Device command overview_>`_ will gradually replace it.
 
-.. |nrf_CLT_deprecation_note| replace:: Starting with the |NCS| v2.8.0, the nRF Command Line Tools are in the process of being archived.
-   They will remain available for download, but `nRF Util`_ will gradually replace them.
+.. |nrf_CLT_deprecation_note| replace:: The `nRF Command Line Tools`_ have been archived and replaced by `nRF Util`_.
+   No further updates will be made to the nRF Command Line Tools.
+   Last supported operating systems are Windows 10, Linux Ubuntu 22.04, and macOS 13.
+   The nRF Command Line Tools will remain available for download, but do not install the SEGGER J-Link version they provide if you have a newer version installed.
 
 .. ### Thread usage shortcuts
 

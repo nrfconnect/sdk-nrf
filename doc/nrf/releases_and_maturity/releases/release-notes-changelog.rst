@@ -43,6 +43,8 @@ IDE, OS, and tool support
     * The command-line instructions now use the ``nrfutil sdk-manager`` command instead of the ``nrfutil toolchain-manager`` command.
       You can read more about the new command in the `nRF Util documentation <sdk-manager command_>`_.
 
+  * Mentions of commands that use tools from the nRF Command Line Tools to use nRF Util.
+    |nrf_CLT_deprecation_note|
 
 Board support
 =============

@@ -388,7 +388,6 @@
 .. _`nRF5x Command Line Tools Windows 32`:
 .. _`nRF5x Command Line Tools Windows 64`:
 .. _`nRF5x Command Line Tools OSX`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Command-Line-Tools
-.. _`nRF Command Line Tools Downloads`: https://www.nordicsemi.com/Products/Development-tools/nRF-Command-Line-Tools/Download?lang=en#infotabs
 
 .. _`nRF Util development tool`: https://www.nordicsemi.com/Products/Development-tools/nrf-util
 .. _`nRF Util Downloads`: https://www.nordicsemi.com/Products/Development-tools/nRF-Util/Download#infotabs
