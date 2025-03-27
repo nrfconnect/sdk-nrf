@@ -5,5 +5,5 @@
 #
 
 add_subdirectory_ifdef(CONFIG_CLOCK_CONTROL_MPSL clock_control)
-add_subdirectory_ifdef(CONFIG_SOC_FLASH_NRF_RADIO_SYNC_MPSL flash_sync)
+add_subdirectory(flash_sync)
 add_subdirectory_ifdef(CONFIG_TEMP_NRF5_MPSL temp_nrf5)
