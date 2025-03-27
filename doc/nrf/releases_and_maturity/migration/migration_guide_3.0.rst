@@ -113,6 +113,17 @@ Recommended changes
 
 The following changes are recommended for your application to work optimally after the migration.
 
+.. _requirements_clt:
+
+IDE, OS, and tool support
+=========================
+
+.. toggle::
+
+   |nrf_CLT_deprecation_note|
+
+   It is recommended to install the latest version of `nRF Util`_, as listed in the :ref:`installing_vsc` section of the installation page.
+
 Build system
 ============
 

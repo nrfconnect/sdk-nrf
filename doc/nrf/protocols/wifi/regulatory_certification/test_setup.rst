@@ -138,8 +138,7 @@ This describes the flashing, running, and use of the appropriate console ports w
 Programming firmware in the nRF7002 setup
 =========================================
 
-Before you begin, make sure you have the nrfjprog tool installed on your computer.
-You can download it at `nRF Command Line Tools Downloads`_.
+Before you begin, make sure you have the ``nrfjprog`` that is part of the archived `nRF Command Line Tools`_.
 
 To program firmware in the nRF7002 DK or EK setup, complete the following steps.
 

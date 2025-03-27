@@ -369,20 +369,6 @@ Tier definitions
      Not applicable
        The specified architecture is not supported for the respective operating system.
 
-.. _requirements_clt:
-
-nRF Command Line Tools
-======================
-
-`nRF Command Line Tools`_ is a package of tools used for development, programming, and debugging of Nordic Semiconductor's nRF51, nRF52, nRF53, nRF54H, and nRF91 Series devices.
-Among others, this package includes the nrfjprog executable and library, which the west command uses by default to program the development kits.
-For more information on nrfjprog, see `Programming SoCs with nrfjprog`_.
-
-.. note::
-    |nrf_CLT_deprecation_note|
-
-It is recommended to use the latest version of the package when you :ref:`installing_vsc`.
-
 .. _requirements_nrfvsc:
 
 nRF Connect for Visual Studio Code
