@@ -10,6 +10,7 @@
 #include <zephyr/logging/log.h>
 #include <sdfw/sdfw_services/suit_service.h>
 #include <zephyr/bluetooth/bluetooth.h>
+#include <mpsl/flash_sync_rpc_host.h>
 
 LOG_MODULE_DECLARE(AB, CONFIG_SUIT_LOG_LEVEL);
 
@@ -92,6 +93,14 @@ void device_healthcheck(void)
 		return;
 	}
 
+	if (mfst_var_boot_status == BOOT_STATUS_A_NO_RADIO
+	    || mfst_var_boot_status == BOOT_STATUS_B_NO_RADIO) {
+		/* Disable flash synchronization with radio core,
+		 * as radio core is not running.
+		 */
+		flash_sync_rpc_host_sync_enable(false);
+	}
+
 	/* Confirming only in non-degraded boot states
 	 */
 	if (DT_SAME_NODE(DT_ALIAS(suit_active_code_partition),
@@ -122,6 +131,10 @@ void device_healthcheck(void)
 
 		if (!radio_domain_healthy()) {
 			LOG_ERR("Radio domain is NOT healthy");
+			/* Disable flash synchronization with radio core,
+			 * as radio core is not operational.
+			 */
+			flash_sync_rpc_host_sync_enable(false);
 			healthy = false;
 		}
 
