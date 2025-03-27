@@ -15,6 +15,14 @@ Testing and optimization
 Each application in the |NCS| comes with its own testing instructions.
 Follow these instructions to make sure that the application runs as expected.
 
+.. |sample_test| replace:: tests
+
+.. |sample_test_file| replace:: :file:`nrf/tests/zephyr`
+
+.. |zephyr_sample_test_file| replace:: :file:`zephyr/tests`
+
+.. include:: /includes/zephyr_sample_test.txt
+
 Information about the current state of the application is usually provided through LEDs, :term:`Universal Asynchronous Receiver/Transmitter (UART)`, or both.
 See the user interface section of the application's documentation for the LED states or available UART commands.
 

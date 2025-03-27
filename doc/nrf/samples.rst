@@ -11,6 +11,14 @@ Zephyr also provides a variety of :zephyr:code-sample-category:`samples`, includ
 These samples are a good starting point for understanding how to put together your own application.
 However, Zephyr samples and applications are not tested and verified to work with the |NCS| releases.
 
+.. |sample_test| replace:: samples
+
+.. |sample_test_file| replace:: :file:`nrf/samples/zephyr`
+
+.. |zephyr_sample_test_file| replace:: :file:`zephyr/samples`
+
+.. include:: /includes/zephyr_sample_test.txt
+
 .. samples_general_info_start
 
 General information about samples in the |NCS|
