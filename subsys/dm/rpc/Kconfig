@@ -9,6 +9,7 @@ config DM_MODULE_RPC
 	select NRF_RPC
 	select NRF_RPC_CBOR
 	select EXPERIMENTAL
+	select SOC_NRF53_CPUNET_ENABLE if SOC_NRF5340_CPUAPP
 	depends on DM_MODULE
 	help
 	  Enables Distance Measurement serialization over RPC.
