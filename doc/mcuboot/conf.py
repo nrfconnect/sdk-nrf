@@ -34,6 +34,7 @@ extensions = [
     "zephyr.kconfig",
     "sphinx.ext.intersphinx",
     "recommonmark",
+    "sphinx_markdown_tables",
     "zephyr.external_content"
 ]
 source_suffix = [".rst", ".md"]
