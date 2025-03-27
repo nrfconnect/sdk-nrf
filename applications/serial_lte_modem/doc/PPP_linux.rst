@@ -21,8 +21,8 @@ Prerequisites
 
 The Linux device needs to have the following packages installed:
 
-* pppd from the ppp package
-* ldattach from the util-linux package
+* ``pppd`` from the ppp package
+* ``ldattach`` from the util-linux package
 
 These should be available on all standard Linux distributions.
 
@@ -35,13 +35,19 @@ You can adjust the serial port baud rate using the devicetree overlay file.
 By default, the baud rate is set to 115200.
 If you change the baud rate, set the same rate in the :file:`scripts/slm_start_ppp.sh` and :file:`scripts/slm_stop_ppp.sh` scripts.
 
+.. note::
+   The standard ``ldattach`` utility sets MRU and MTU to 127 bytes.
+   This is hard-coded and cannot be changed.
+   If you change the SLM configuration, make sure that the :kconfig:option:`CONFIG_MODEM_CMUX_MTU` Kconfig option is set to 127 bytes.
+   This is already configured in the :file:`overlay-ppp-cmux-linux.conf` configuration overlay.
+
 Building and running
 ====================
 
 To build and program the SLM application to the nRF91 Series device, use the :file:`overlay-ppp-cmux-linux.conf` overlay file.
 
 Managing the connection
-=======================
+***********************
 
 The start and stop scripts are provided in the :file:`scripts` directory of the SLM application.
 The scripts assume that the nRF91 Series SiP is connected to the Linux device using the `/dev/ttyACM0` serial port.
