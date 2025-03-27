@@ -171,7 +171,14 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
-|no_changes_yet_note|
+Serial LTE Modem
+----------------
+
+.. toggle::
+
+   The error event ``LWM2M_CARRIER_ERROR_RUN`` has been removed from the :ref:`SLM_AT_CARRIER`.
+
+   * Errors that were previously notified to the application with the ``LWM2M_CARRIER_ERROR_RUN`` event type have instead been added to :c:macro:`LWM2M_CARRIER_ERROR_CONFIGURATION`.
 
 Libraries
 =========

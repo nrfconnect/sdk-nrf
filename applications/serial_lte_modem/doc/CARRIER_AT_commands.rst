@@ -148,7 +148,6 @@ These may be the following:
   * ``4`` - - :c:macro:`LWM2M_CARRIER_ERROR_FOTA_FAIL`.
   * ``5`` - - :c:macro:`LWM2M_CARRIER_ERROR_CONFIGURATION`.
   * ``6`` - - :c:macro:`LWM2M_CARRIER_ERROR_INIT`.
-  * ``7`` - - :c:macro:`LWM2M_CARRIER_ERROR_RUN`.
   * ``8`` - - :c:macro:`LWM2M_CARRIER_ERROR_CONNECT`.
 
   ``<value>`` indicates the error value returned in this event.

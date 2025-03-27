@@ -372,22 +372,52 @@ typedef struct {
 /** LwM2M carrier bootstrap failed. */
 #define LWM2M_CARRIER_ERROR_BOOTSTRAP		3
 /**
- * Firmware update failed. value:
+ * Firmware update failed. Possible values:
  *   - -ECONNREFUSED  Connection refused using available security tags.
- *   - -ENOTSUP       Protocol not supported.
- *   - -ENOMEM        Too many open connections.
- *   - -EBADF         Incorrect firmware update version.
+ *   - -EINVAL        Update image integrity check failed.
+ *   - -E2BIG         Provided URL is too large.
+ *   - -EFBIG         Update image is too large.
+ *   - -ENOMEM        Insufficient RAM to handle the firmware update.
+ *   - -ENOTSUP       Update image is not supported or not recognized.
+ *   - -EBADR         Wrong request (invalid message or state).
+ *   - -ETIMEDOUT     Update image download timed out.
+ *   - -ECANCELED     Update was aborted by the server.
+ *   - -ENETDOWN      Update image download cannot be resumed after losing connection.
+ *   - -ENETUNREACH   Requested network or host is not reachable.
+ *   - -EFAULT        Failed to apply the firmware update.
+ *   - -EIO           Internal error, for example, an unknown error from an external module.
  */
 #define LWM2M_CARRIER_ERROR_FOTA_FAIL		4
-/** Illegal object configuration detected. */
+/**
+ * Illegal LwM2M carrier library configuration. Possible values:
+ *   - -E2BIG    Configurable string exceeds the maximum allowed length.
+ *   - -EFAULT   Invalid operator-specific configuration (for example, missing service code
+ *               when configured to run in LG U+ network).
+ *   - -ENOENT   Configured sec_tag does not exist in the modem.
+ *   - -EINVAL   Illegal server URI (for example, invalid protocol).
+ *   - -EBADR    Invalid server binding or PDN type.
+ */
 #define LWM2M_CARRIER_ERROR_CONFIGURATION	5
-/** LwM2M carrier init failed. */
-#define LWM2M_CARRIER_ERROR_INIT		6
-/** LwM2M carrier run failed. */
-#define LWM2M_CARRIER_ERROR_RUN			7
-/** LwM2M carrier connect failed. */
+/**
+ * LwM2M carrier library initialization failed. Possible values:
+ *   - -EIO     Unhandled error from an external module. For example, an unknown modem
+ *              initialization result.
+ *   - -EACCES  Failed to initialize a semaphore.
+ *   - -ENOMEM  Insufficient OS resources. For example, an insufficient number of timers.
+ */
+#define LWM2M_CARRIER_ERROR_INIT                6
+/**
+ * LwM2M carrier connect failed. Possible values:
+ *   - -EHOSTUNREACH   Exhausted all connection attempts to a server. The LwM2M carrier library will
+ *                     restart the connection attempts once the device reboots.
+ *   - -ENOTSUP        The detected Subscriber ID is not supported. Check if this network operator
+ *                     requires the LwM2M carrier library.
+ *   - -EPERM          Not allowed to connect due to unfulfilled carrier requirements. This
+ *                     typically happens due to the characteristics of the network that the device
+ *                     is currently registered to. For example, not allowed to connect to current
+ *                     carrier's servers while roaming.
+ */
 #define LWM2M_CARRIER_ERROR_CONNECT		8
-
 /** @} */
 
 /**

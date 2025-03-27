@@ -30,7 +30,7 @@ extern "C" {
 /**
  * @brief Maximum number of timers that the system must support.
  */
-#define LWM2M_OS_MAX_TIMER_COUNT (6 + (LWM2M_OS_MAX_WORK_QS * 4))
+#define LWM2M_OS_MAX_TIMER_COUNT (6 + (LWM2M_OS_MAX_WORK_QS * 5))
 
 typedef int lwm2m_os_work_q_t;
 typedef int lwm2m_os_timer_t;
@@ -445,12 +445,9 @@ int64_t lwm2m_os_timer_remaining(lwm2m_os_timer_t *timer);
 bool lwm2m_os_timer_is_pending(lwm2m_os_timer_t *timer);
 
 /**
- * @brief Initialize AT command driver.
- *
- * @retval  0   If success.
- * @retval -EIO If AT command driver initialization failed.
+ * @brief Initialize AT notification handler.
  */
-int lwm2m_os_at_init(lwm2m_os_at_handler_callback_t callback);
+void lwm2m_os_at_init(lwm2m_os_at_handler_callback_t callback);
 
 /**
  * @brief Register as an SMS client/listener.
