@@ -109,6 +109,13 @@ config SB_CRYPTO_PSA_ED25519
 
 endchoice
 
+config SB_CRYPTO_KMU_KEYS_REVOCATION
+	bool "Auto revoke previous gen key"
+	depends on SB_CRYPTO_PSA_ED25519
+	default y
+	help
+	  Automatically revoke previous generation key upon new valid key usage.
+
 choice SB_CRYPTO_HASH
 	prompt "Hashing Implementation"
 	default SB_CRYPTO_NONE if SB_CRYPTO_PSA_ED25519

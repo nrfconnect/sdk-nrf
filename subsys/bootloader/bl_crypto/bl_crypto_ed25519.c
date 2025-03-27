@@ -56,6 +56,14 @@ int bl_ed25519_validate(const uint8_t *data, uint32_t data_len, const uint8_t *s
 		if (status == PSA_SUCCESS) {
 			return 0;
 		}
+#if defined(CONFIG_SB_CRYPTO_KMU_KEYS_REVOCATION)
+		status = psa_destroy_key(kid);
+		if (status == PSA_SUCCESS) {
+			LOG_DBG("Success on key ID %d", i);
+		} else {
+			LOG_ERR("Key invalidation failed with: %d", status);
+		}
+#endif
 	}
 
 	LOG_ERR("ED25519 signature verification failed: %d", status);
