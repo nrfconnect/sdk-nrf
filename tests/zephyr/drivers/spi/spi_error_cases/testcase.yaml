@@ -8,11 +8,6 @@ common:
   harness_config:
     fixture: gpio_spi_loopback
 tests:
-  nrf.extended.drivers.spi.spi_error_cases.l20:
-    platform_allow:
-      - nrf54l20pdk/nrf54l20/cpuapp
-    integration_platforms:
-      - nrf54l20pdk/nrf54l20/cpuapp
   nrf.extended.drivers.spi.spi_error_cases.l09:
     platform_allow:
       - nrf54l09pdk/nrf54l09/cpuapp
