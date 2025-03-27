@@ -1063,13 +1063,12 @@ static int nrfe_mspi_init(const struct device *dev)
 }
 
 static const struct nrf_mspi_driver_api drv_api = {
-	.std_api =
-		{
-			.config = api_config,
-			.dev_config = api_dev_config,
-			.get_channel_status = api_get_channel_status,
-			.transceive = api_transceive,
-		},
+	.std_api = {
+		.config = api_config,
+		.dev_config = api_dev_config,
+		.get_channel_status = api_get_channel_status,
+		.transceive = api_transceive,
+	},
 	.reset_pin_config = api_reset_config,
 	.reset_pin_set = api_reset_set,
 };

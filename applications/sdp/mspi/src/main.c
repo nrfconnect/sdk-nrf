@@ -423,8 +423,9 @@ static void ep_recv(const void *data, size_t len, void *priv)
 
 	(void)priv;
 	(void)len;
-	uint8_t opcode = *(uint8_t *)data;
+	uint32_t opcode = *(uint32_t *)data;
 	uint32_t num_bytes = 0;
+	uint32_t *resp_buff = (uint32_t *)response_buffer;
 
 #if defined(CONFIG_SDP_MSPI_FAULT_TIMER)
 	if (fault_timer != NULL) {
@@ -483,7 +484,8 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		}
 
 		/* If there is reset defined on any data line, assume it is no longer valid and
-		 * clear it. */
+		 * clear it.
+		 */
 		if (dev_config->dev_config.io_mode != MSPI_IO_MODE_SINGLE &&
 		    reset_configs[dev_config->device_index].pin_number != PIN_UNUSED) {
 			nrf_vpr_csr_vio_out_clear_set(
@@ -545,7 +547,7 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		break;
 	}
 
-	response_buffer[0] = opcode;
+	resp_buff[0] = opcode;
 	ipc_service_send(&ep, (const void *)response_buffer,
 			 sizeof(nrfe_mspi_opcode_t) + num_bytes);
 

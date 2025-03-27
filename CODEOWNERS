@@ -346,6 +346,7 @@
 /include/drivers/flash/flash_ipuc.h       @nrfconnect/ncs-co-drivers @nrfconnect/ncs-charon
 /include/drivers/gpio/                    @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /include/drivers/bme68x_iaq.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
+/include/drivers/mspi/nrf_mspi.h          @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /include/drivers/mspi/nrfe_mspi.h         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /include/drivers/sensor_sim.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/drivers/sensor_stub.h            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
