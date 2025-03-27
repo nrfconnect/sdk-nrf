@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+source "Kconfig.zephyr"
+
+config PSA_CORE_LITE_USE_VERIFY_HASH
+	bool
+	prompt "Force usage of verify-hash"
+	help
+	  This configures the fake sample to use verify_hash instead of
+	  verify_message

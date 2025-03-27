@@ -1,0 +1,244 @@
+sample:
+  description: |
+    This app provides an example of PSA Crypto Lite
+  name: PSA crypto lite example
+tests:
+  # Sample targets using EdDSA for signature validation
+  sample.eddsa.cracen_lite:
+    tags: introduction psa cracen sysbuild ci_samples_crypto
+    platform_allow: >
+      nrf54l15dk/nrf54l15/cpuapp
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - ".*Example finished successfully!.*"
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    sysbuild: true
+    extra_args: >
+      OVERLAY_CONFIG="overlays/lite.conf;overlays/eddsa.conf"
+  sample.eddsa.cracen_normal:
+    tags: introduction psa cracen sysbuild ci_samples_crypto
+    platform_allow: >
+      nrf54l15dk/nrf54l15/cpuapp
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - .*Example finished successfully!.*
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    sysbuild: true
+    extra_args: >
+      OVERLAY_CONFIG="overlays/eddsa.conf"
+  sample.eddsa_hash.cracen_lite:
+    tags: introduction psa cracen sysbuild ci_samples_crypto
+    platform_allow: >
+      nrf54l15dk/nrf54l15/cpuapp
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - ".*Example finished successfully!.*"
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    sysbuild: true
+    extra_args: >
+      OVERLAY_CONFIG="overlays/lite.conf;overlays/eddsa.conf;overlays/hash.conf"
+  sample.eddsa_hash.cracen_normal:
+    tags: introduction psa oberon sysbuild ci_samples_crypto
+    platform_allow: >
+      nrf54l15dk/nrf54l15/cpuapp
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - .*Example finished successfully!.*
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args: >
+      OVERLAY_CONFIG="overlays/eddsa.conf;overlays/hash.conf"
+  sample.eddsa_hash_encrypt.cracen_lite:
+    tags: introduction psa cracen sysbuild ci_samples_crypto
+    platform_allow: >
+      nrf54l15dk/nrf54l15/cpuapp
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - ".*Example finished successfully!.*"
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    sysbuild: true
+    extra_args: >
+      OVERLAY_CONFIG="overlays/lite.conf;overlays/eddsa.conf;overlays/hash.conf;overlays/encrypt.conf"
+  sample.eddsa_hash_encrypt.cracen_normal:
+    tags: introduction psa oberon sysbuild ci_samples_crypto
+    platform_allow: >
+      nrf54l15dk/nrf54l15/cpuapp
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - .*Example finished successfully!.*
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    sysbuild: true
+    extra_args: >
+      OVERLAY_CONFIG="overlays/eddsa.conf;overlays/hash.conf;overlays/encrypt.conf;overlays/rng.conf"
+  sample.eddsa_hash_encrypt_rng.cracen_lite:
+    tags: introduction psa cracen sysbuild ci_samples_crypto
+    platform_allow: >
+      nrf54l15dk/nrf54l15/cpuapp
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - ".*Example finished successfully!.*"
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    sysbuild: true
+    extra_args: >
+      OVERLAY_CONFIG="overlays/lite.conf;overlays/eddsa.conf;overlays/hash.conf;overlays/encrypt.conf;overlays/rng.conf"
+  sample.eddsa_hash_encrypt_rng.cracen_normal:
+    tags: introduction psa oberon sysbuild ci_samples_crypto
+    platform_allow: >
+      nrf54l15dk/nrf54l15/cpuapp
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - .*Example finished successfully!.*
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    sysbuild: true
+    extra_args: >
+      OVERLAY_CONFIG="overlays/eddsa.conf;overlays/hash.conf;overlays/encrypt.conf;overlays/rng.conf"
+  # Sample targets using ECDSA verify_message for signature validation
+  sample.ecdsa.cracen_lite:
+    tags: introduction psa cracen sysbuild ci_samples_crypto
+    platform_allow: >
+      nrf54l15dk/nrf54l15/cpuapp
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - ".*Example finished successfully!.*"
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    sysbuild: true
+    extra_args: >
+      OVERLAY_CONFIG="overlays/lite.conf;overlays/ecdsa.conf"
+  sample.ecdsa.cracen_normal:
+    tags: introduction psa cracen sysbuild ci_samples_crypto
+    platform_allow: >
+      nrf54l15dk/nrf54l15/cpuapp
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - .*Example finished successfully!.*
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    sysbuild: true
+    extra_args: >
+      OVERLAY_CONFIG="overlays/ecdsa.conf"
+  sample.ecdsa_hash.cracen_lite:
+    tags: introduction psa cracen sysbuild ci_samples_crypto
+    platform_allow: >
+      nrf54l15dk/nrf54l15/cpuapp
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - ".*Example finished successfully!.*"
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    sysbuild: true
+    extra_args: >
+      OVERLAY_CONFIG="overlays/lite.conf;overlays/ecdsa.conf;overlays/hash.conf"
+  sample.ecdsa_hash.cracen_normal:
+    tags: introduction psa oberon sysbuild ci_samples_crypto
+    platform_allow: >
+      nrf54l15dk/nrf54l15/cpuapp
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - .*Example finished successfully!.*
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args: >
+      OVERLAY_CONFIG="overlays/ecdsa.conf;overlays/hash.conf"
+  sample.ecdsa_hash_encrypt.cracen_lite:
+    tags: introduction psa cracen sysbuild ci_samples_crypto
+    platform_allow: >
+      nrf54l15dk/nrf54l15/cpuapp
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - ".*Example finished successfully!.*"
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    sysbuild: true
+    extra_args: >
+      OVERLAY_CONFIG="overlays/lite.conf;overlays/ecdsa.conf;overlays/hash.conf;overlays/encrypt.conf"
+  sample.ecdsa_hash_encrypt.cracen_normal:
+    tags: introduction psa oberon sysbuild ci_samples_crypto
+    platform_allow: >
+      nrf54l15dk/nrf54l15/cpuapp
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - .*Example finished successfully!.*
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    sysbuild: true
+    extra_args: >
+      OVERLAY_CONFIG="overlays/ecdsa.conf;overlays/hash.conf;overlays/encrypt.conf;overlays/rng.conf"
+  sample.ecdsa_hash_encrypt_rng.cracen_lite:
+    tags: introduction psa cracen sysbuild ci_samples_crypto
+    platform_allow: >
+      nrf54l15dk/nrf54l15/cpuapp
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - ".*Example finished successfully!.*"
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    sysbuild: true
+    extra_args: >
+      OVERLAY_CONFIG="overlays/lite.conf;overlays/ecdsa.conf;overlays/hash.conf;overlays/encrypt.conf;overlays/rng.conf"
+  sample.ecdsa_hash_encrypt_rng.cracen_normal:
+    tags: introduction psa oberon sysbuild ci_samples_crypto
+    platform_allow: >
+      nrf54l15dk/nrf54l15/cpuapp
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - .*Example finished successfully!.*
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    sysbuild: true
+    extra_args: >
+      OVERLAY_CONFIG="overlays/ecdsa_verify_hash.conf;overlays/hash.conf;overlays/encrypt.conf;overlays/rng.conf"
+  # Sample targets using ECDSA verify_hash for signature validation
+  sample.ecdsa_verify_hash.cracen_lite:
+    tags: introduction psa cracen sysbuild ci_samples_crypto
+    platform_allow: >
+      nrf54l15dk/nrf54l15/cpuapp
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - ".*Example finished successfully!.*"
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    sysbuild: true
+    extra_args: >
+      OVERLAY_CONFIG="overlays/lite.conf;overlays/ecdsa_verify_hash.conf"
