@@ -1196,7 +1196,7 @@ int nct_disconnect(void)
 	LOG_DBG("Disconnecting");
 
 	dc_endpoint_free();
-	return mqtt_disconnect(&nct.client);
+	return mqtt_disconnect(&nct.client, NULL);
 }
 
 int nct_process(void)
