@@ -13,6 +13,7 @@
 #include <openthread/coap.h>
 #include <openthread/ip6.h>
 #include <openthread/link.h>
+#include <openthread/link_raw.h>
 #include <openthread/thread.h>
 #include <openthread/udp.h>
 #include <openthread/netdata.h>
@@ -233,6 +234,26 @@ static otError ot_cli_command_discover(const struct shell *sh, size_t argc, char
 static int cmd_discover(const struct shell *sh, size_t argc, char *argv[])
 {
 	return ot_cli_command_invoke(ot_cli_command_discover, sh, argc, argv);
+}
+
+static otError ot_cli_command_radio(const struct shell *sh, size_t argc, char *argv[])
+{
+	if (argc != 2 || strcmp(argv[1], "time") != 0) {
+		return OT_ERROR_INVALID_COMMAND;
+	}
+
+	shell_print(sh, "%" PRIu64, otLinkRawGetRadioTime(NULL));
+
+	return OT_ERROR_NONE;
+}
+
+static int cmd_radio(const struct shell *sh, size_t argc, char *argv[])
+{
+	if (argc == 2 && strcmp(argv[1], "time") == 0) {
+		return ot_cli_command_invoke(ot_cli_command_radio, sh, argc, argv);
+	}
+
+	return ot_cli_command_send(sh, argc + 1, argv - 1);
 }
 
 static otError ot_cli_command_ifconfig(const struct shell *sh, size_t argc, char *argv[])
@@ -1783,6 +1804,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(state, NULL, "Current role", cmd_state, 1, 1),
 	SHELL_CMD_ARG(thread, NULL, "Role management", cmd_thread, 2, 0),
 	SHELL_CMD_ARG(discover, NULL, "Thread discovery scan", cmd_discover, 1, 4),
+	SHELL_CMD_ARG(radio, NULL, "Radio configuration", cmd_radio, 1, 1),
 	SHELL_CMD_ARG(test_message, NULL, "Test message API", cmd_test_message, 1, 0),
 	SHELL_CMD_ARG(test_udp_init, NULL, "Test udp init API", cmd_test_udp_init, 1, 0),
 	SHELL_CMD_ARG(test_udp_send, NULL, "Test udp send API", cmd_test_udp_send, 1, 0),
@@ -1827,8 +1849,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(cmd_test_srp_client_service_clear, NULL, "Test SRP client service clear API",
 		      cmd_test_srp_client_service_clear, 2, 0),
 	SHELL_CMD_ARG(test_srp_client_add_service_remove, NULL,
-		      "Test SRP client service remove API",
-		      cmd_test_srp_client_service_remove, 2, 0),
+		      "Test SRP client service remove API", cmd_test_srp_client_service_remove, 2,
+		      0),
 	SHELL_CMD_ARG(test_srp_client_host_address_auto, NULL,
 		      "Test SRP client host address auto API",
 		      cmd_test_srp_client_host_address_auto, 1, 0),
@@ -1845,19 +1867,23 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      cmd_dns_client_resolve, 3, 0),
 	SHELL_CMD_ARG(test_dns_client_resolve4, NULL, "Resolve IPv4 address, args: <name> <server>",
 		      cmd_dns_client_resolve, 3, 0),
-	SHELL_CMD_ARG(test_dns_client_service, NULL, "Service instance resolution, args: <instance>"
-						     "<service> <server>",
+	SHELL_CMD_ARG(test_dns_client_service, NULL,
+		      "Service instance resolution, args: <instance>"
+		      "<service> <server>",
 		      cmd_dns_client_service, 4, 0),
-	SHELL_CMD_ARG(test_dns_client_servicehost, NULL, "Service instance resolution, args:"
-							 " <instance> <service> <server>",
+	SHELL_CMD_ARG(test_dns_client_servicehost, NULL,
+		      "Service instance resolution, args:"
+		      " <instance> <service> <server>",
 		      cmd_dns_client_service, 4, 0),
 	SHELL_CMD_ARG(test_dns_client_browse, NULL, "Service browsing, args <service> <server>",
 		      cmd_dns_client_browse, 3, 0),
-	SHELL_CMD_ARG(test_vendor_data, NULL, "Vendor data, args: <vendor-name> <vendor-model>"
-					      " <vendor-sw-version>",
+	SHELL_CMD_ARG(test_vendor_data, NULL,
+		      "Vendor data, args: <vendor-name> <vendor-model>"
+		      " <vendor-sw-version>",
 		      cmd_test_vendor_data, 4, 0),
-	SHELL_CMD_ARG(test_net_diag, NULL, "Network diag, args: <get|reset> <IPv6-address>"
-					   " <tlv-type ...>",
+	SHELL_CMD_ARG(test_net_diag, NULL,
+		      "Network diag, args: <get|reset> <IPv6-address>"
+		      " <tlv-type ...>",
 		      cmd_test_net_diag, 4, 255),
 	SHELL_SUBCMD_SET_END);
 

@@ -123,6 +123,7 @@ OpenThread RPC currently supports the serialization of the following OpenThread 
 * :c:func:`otLinkGetFactoryAssignedIeeeEui64`
 * :c:func:`otLinkGetPanId`
 * :c:func:`otLinkGetPollPeriod`
+* :c:func:`otLinkRawGetRadioTime`
 * :c:func:`otLinkSetEnabled`
 * :c:func:`otLinkSetMaxFrameRetriesDirect`
 * :c:func:`otLinkSetMaxFrameRetriesIndirect`
