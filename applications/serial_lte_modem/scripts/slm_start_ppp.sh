@@ -14,6 +14,18 @@ BAUD=115200
 PPP_CMUX=/dev/gsmtty2
 AT_CMUX=/dev/gsmtty1
 CHATOPT="-vs"
+TIMEOUT=60
+
+# Parse command line parameters
+while getopts s:b:t:h flag
+do
+    case "${flag}" in
+	s) MODEM=${OPTARG};;
+	b) BAUD=${OPTARG};;
+	t) TIMEOUT=${OPTARG};;
+	h|?) echo "Usage: $0 [-s serial_port] [-b baud_rate] [-t timeout]"; exit 0;;
+    esac
+done
 
 cleanup() {
 	set +eu
@@ -42,7 +54,7 @@ stty -F $AT_CMUX clocal
 
 echo "Connect and wait for PPP link..."
 test -c $AT_CMUX
-chat $CHATOPT -t60 "" "AT+CFUN=1" "OK" "\c" "#XPPP: 1,0" >$AT_CMUX <$AT_CMUX
+chat $CHATOPT -t$TIMEOUT "" "AT+CFUN=1" "OK" "\c" "#XPPP: 1,0" >$AT_CMUX <$AT_CMUX
 
 pppd $PPP_CMUX noauth novj nodeflate nobsdcomp debug noipdefault passive +ipv6 \
 		noremoteip local linkname nrf91 defaultroute defaultroute-metric -1
