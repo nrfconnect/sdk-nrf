@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if SOC_FLASH_NRF || SOC_FLASH_NRF_RRAM
+if SOC_FLASH_NRF || SOC_FLASH_NRF_RRAM || SOC_NRF54H20
 
 choice SOC_FLASH_NRF_RADIO_SYNC_CHOICE
 	prompt "Nordic nRFx flash driver synchronization"
@@ -16,7 +16,41 @@ config SOC_FLASH_NRF_RADIO_SYNC_MPSL
 	help
 	  Enable synchronization between flash memory driver and MPSL.
 
+config SOC_FLASH_NRF_RADIO_SYNC_RPC_HOST
+	bool "Nordic nRFx flash driver synchronized on the application core via RPC"
+	depends on SOC_NRF54H20_CPUAPP
+	depends on BT # If synchronization with other radio protocols is needed, extend this
+	select NRF_RPC
+	select NRF_RPC_CBOR
+	help
+	  Enable synchronization between the flash memory driver on the application core
+	  and radio protocols on the radio core using RPC communication.
+
 endchoice
+
+endif
+
+config SOC_FLASH_NRF_RADIO_SYNC_RPC_CONTROLLER
+	bool "Nordic nRFx flash driver RPC synchronization controller"
+	default y if SOC_NRF54H20_CPURAD
+	depends on SOC_FLASH_NRF_RADIO_SYNC_MPSL
+	select NRF_RPC
+	select NRF_RPC_CBOR
+	help
+	  Enable the RPC controller (radio core part) for the flash driver synchronization
+	  via RPC. This controller calls the proper flash sync MPSL API.
+
+if SOC_FLASH_NRF_RADIO_SYNC_RPC_CONTROLLER
+
+config SOC_FLASH_NRF_RADIO_SYNC_RPC_CONTROLLER_SWI_NUM
+	int "SWI number to be used by the flash synchronization RPC controller"
+	default 5
+	range 0 7
+	help
+	  The interrupt coming from MPSL cannot be used to give semaphores.
+	  Thus, the SWI is used as an "offload" to give the semaphore to the waiting thread.
+	  This Kconfig option allows the user to select the SWI number to be used by the controller
+	  for this purpose.
 
 endif
 
