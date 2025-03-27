@@ -1,0 +1,16 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		suit-active-code-partition = &cpurad_slot_b_partition;
+		suit-inactive-code-partition = &cpurad_slot_a_partition;
+	};
+
+	chosen {
+		zephyr,code-partition = &cpurad_slot_b_partition;
+	};
+};
