@@ -9,11 +9,6 @@ common:
     fixture: i2c_bus_short
 
 tests:
-  nrf.extended.drivers.i2c.target_api.single_role.l20:
-    platform_allow:
-      - nrf54l20pdk/nrf54l20/cpuapp
-    integration_platforms:
-      - nrf54l20pdk/nrf54l20/cpuapp
   nrf.extended.drivers.i2c.target_api.single_role.7120:
     platform_allow:
       - nrf7120pdk/nrf7120/cpuapp
