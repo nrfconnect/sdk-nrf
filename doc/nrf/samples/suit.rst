@@ -19,3 +19,4 @@ This section lists available |NCS| samples for :ref:`Device Firmware Update usin
    ../../../samples/suit/smp_transfer/README
    ../../../samples/suit/flash_companion/README
    ../../../samples/suit/recovery/README
+   ../../../samples/suit/ab/README
