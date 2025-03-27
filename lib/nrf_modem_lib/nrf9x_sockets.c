@@ -564,11 +564,13 @@ static int nrf9x_socket_offload_getsockopt(void *obj, int level, int optname,
 				}
 			} else if ((optname == SO_RCVTIMEO) ||
 				(optname == SO_SNDTIMEO)) {
-				((struct timeval *)optval)->tv_sec =
-					nrf_timeo.tv_sec;
-				((struct timeval *)optval)->tv_usec =
-					nrf_timeo.tv_usec;
-				*optlen = sizeof(struct timeval);
+				struct timeval tv;
+				size_t tvlen = MIN(sizeof(struct timeval), *optlen);
+
+				tv.tv_sec = nrf_timeo.tv_sec;
+				tv.tv_usec = nrf_timeo.tv_usec;
+				memcpy(optval, &tv, tvlen);
+				*optlen = tvlen;
 			}
 		}
 	}
