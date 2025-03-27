@@ -9,9 +9,6 @@
 # using Serial LTE Modem
 #
 
-MODEM=/dev/ttyACM0
-BAUD=115200
-PPP_CMUX=/dev/gsmtty2
 AT_CMUX=/dev/gsmtty1
 CHATOPT="-vs"
 
