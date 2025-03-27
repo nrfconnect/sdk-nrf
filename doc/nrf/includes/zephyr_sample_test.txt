@@ -1,0 +1,3 @@
+Additionally, the |NCS| contains |sample_test| that are built upon the corresponding Zephyr |sample_test|, extending their support with new Nordic development kits.
+These |sample_test| are placed under the |sample_test_file| folder.
+The source code and configuration files are located within the corresponding Zephyr |sample_test| folder under |zephyr_sample_test_file|.
