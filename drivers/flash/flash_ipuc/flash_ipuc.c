@@ -16,6 +16,7 @@
 #ifdef CONFIG_FLASH_SIMULATOR
 #include <zephyr/drivers/flash/flash_simulator.h>
 #endif /* CONFIG_FLASH_SIMULATOR */
+#include "soc_flash_nrf.h"
 
 /* __ALIGNED macro is not defined on NATIVE POSIX. This platform uses __aligned macro. */
 #ifndef __ALIGNED
@@ -118,7 +119,96 @@ struct ipuc_context {
 
 #define DEFINE_NRF_IPUC_REF(x, _) &__device_flash_nrf_ipuc_##x
 
+#define MAX_SINGLE_BYTE_WRITE_TIME_US 4
+#define MAX_SSF_IPUC_WRITE_COMMUNICATION_TIME_US 1200
+
 LOG_MODULE_REGISTER(flash_ipuc, CONFIG_FLASH_IPUC_LOG_LEVEL);
+
+#if defined(CONFIG_SOC_FLASH_NRF_RADIO_SYNC_RPC_HOST)
+
+struct ipuc_write_chunk_data {
+	struct zcbor_string *component_id;
+	size_t offset;
+	uintptr_t buffer;
+	size_t chunk_size;
+	bool last_chunk;
+};
+
+static int ipuc_write_op(void *context)
+{
+	suit_plat_err_t plat_ret = SUIT_PLAT_SUCCESS;
+	struct ipuc_write_chunk_data *data = (struct ipuc_write_chunk_data *)context;
+
+	plat_ret = suit_ipuc_write(data->component_id, data->offset, data->buffer,
+				   data->chunk_size, data->last_chunk);
+	if (plat_ret != SUIT_PLAT_SUCCESS) {
+		LOG_ERR("Write error: %d", plat_ret);
+		return -EIO;
+	}
+
+	return FLASH_OP_DONE;
+}
+
+static int ipuc_synchronous_write(struct zcbor_string *component_id, size_t offset,
+				  uintptr_t buffer, size_t chunk_size, bool last_chunk)
+{
+	struct ipuc_write_chunk_data data = {
+		.component_id = component_id,
+		.offset = offset,
+		.buffer = buffer,
+		.chunk_size = chunk_size,
+		.last_chunk = last_chunk,
+	};
+
+	struct flash_op_desc flash_op_desc = {
+		.handler = ipuc_write_op,
+		/* Currently data is passed as context despite of the type mismatch,
+		 * as nrf_flash_sync_exe simply passes the context without any operations.
+
+		 * However, a better approach might be creating a global context variable for
+		 * the flash_ipuc module which would store all of the data.
+		 * This would not only remove the issue with the type mismatch, it would
+		 * also allow the driver to (for example) handle different addresses
+		 * in a different way, for example not synchronyze if the NVM memory is
+		 * not in the same bank as the memory used by the radio protocols.
+		 */
+		.context = (void *) &data
+	};
+
+	/* We are only accounting for SSF communication time when sending the request,
+	 * the response time does not matter, as the flash write has already finished
+	 * by then.
+	 */
+	uint32_t requested_timeslot_duration = MAX_SINGLE_BYTE_WRITE_TIME_US * chunk_size +
+					       MAX_SSF_IPUC_WRITE_COMMUNICATION_TIME_US;
+
+
+	nrf_flash_sync_set_context(requested_timeslot_duration);
+	return nrf_flash_sync_exe(&flash_op_desc);
+}
+#endif /* defined(CONFIG_SOC_FLASH_NRF_RADIO_SYNC_RPC_HOST) */
+
+static int ipuc_write(struct zcbor_string *component_id, size_t offset,
+		      uintptr_t buffer, size_t chunk_size, bool last_chunk)
+{
+	suit_plat_err_t plat_ret = SUIT_PLAT_SUCCESS;
+
+#if defined(CONFIG_SOC_FLASH_NRF_RADIO_SYNC_RPC_HOST)
+	if (nrf_flash_sync_is_required()) {
+		/* The driver internally always ensures there is no reinitialization */
+		nrf_flash_sync_init();
+		return ipuc_synchronous_write(component_id, offset, buffer, chunk_size, last_chunk);
+	}
+#endif
+	plat_ret = suit_ipuc_write(component_id, offset, buffer, chunk_size, last_chunk);
+	if (plat_ret != SUIT_PLAT_SUCCESS) {
+		LOG_ERR("Data write (%p, 0x%x) error: %d", (void *) buffer, chunk_size, plat_ret);
+		return -EIO;
+	}
+
+	return 0;
+}
+
 
 static int nrf_ipuc_read(const struct device *dev, off_t offset, void *data, size_t len)
 {
@@ -219,12 +309,12 @@ static int nrf_ipuc_write(const struct device *dev, off_t offset, const void *da
 			return -EIO;
 		}
 
-		plat_ret = suit_ipuc_write(&ctx->component_id, offset,
-					   (uintptr_t)unaligned_data_buf, unaligned_len, false);
-		if (plat_ret != SUIT_PLAT_SUCCESS) {
+		ret = ipuc_write(&ctx->component_id, offset,
+				 (uintptr_t)unaligned_data_buf, unaligned_len, false);
+		if (ret != 0) {
 			LOG_ERR("Unaligned data write (%p, 0x%x) error: %d",
-				(void *)unaligned_data_buf, unaligned_len, plat_ret);
-			return -EIO;
+				(void *)unaligned_data_buf, unaligned_len, ret);
+			return ret;
 		}
 
 		offset += unaligned_len;
@@ -244,10 +334,10 @@ static int nrf_ipuc_write(const struct device *dev, off_t offset, const void *da
 		return -EIO;
 	}
 
-	plat_ret = suit_ipuc_write(&ctx->component_id, offset, (uintptr_t)data, len, false);
-	if (plat_ret != SUIT_PLAT_SUCCESS) {
-		LOG_ERR("Aligned data write (%p, 0x%x) error: %d", data, len, plat_ret);
-		return -EIO;
+	ret = ipuc_write(&ctx->component_id, offset, (uintptr_t)data, len, false);
+	if (ret != 0) {
+		LOG_ERR("Aligned data write (%p, 0x%x) error: %d", data, len, ret);
+		return ret;
 	}
 
 	return 0;
@@ -308,11 +398,11 @@ static int nrf_ipuc_erase(const struct device *dev, off_t offset, size_t size)
 
 	while (size > 0) {
 		bytes_erased = MIN(sizeof(erase_block), size);
-		plat_ret = suit_ipuc_write(&ctx->component_id, offset, (uintptr_t)erase_block,
-					   bytes_erased, false);
-		if (plat_ret != SUIT_PLAT_SUCCESS) {
+		ret = ipuc_write(&ctx->component_id, offset, (uintptr_t)erase_block,
+				 bytes_erased, false);
+		if (ret != 0) {
 			LOG_ERR("Failed to erase IPUC (%p:%zu): %d",
-				(void *)(ctx->address + offset), bytes_erased, plat_ret);
+				(void *)(ctx->address + offset), bytes_erased, ret);
 			return -EIO;
 		}
 
