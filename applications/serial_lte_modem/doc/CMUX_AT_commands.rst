@@ -9,12 +9,13 @@ CMUX AT commands
 
 This page describes CMUX-related AT commands.
 
-The CMUX protocol enables multiplexing multiple data streams through a single serial link, setting up one channel per data stream.
+The GSM 0710 multiplexer protocol (CMUX) enables multiplexing multiple data streams through a single serial link, setting up one channel per data stream.
 For example, it can be used to exchange AT data and have a :ref:`Point-to-Point Protocol (PPP) <CONFIG_SLM_PPP>` link up at the same time on a single UART.
 
 .. note::
 
    To use the nRF91 Series SiP as a standalone modem in Zephyr, see :ref:`slm_as_zephyr_modem`.
+   To use the nRF91 Series SiP as a modem for a Linux device, see :ref:`slm_as_linux_modem`.
 
 CMUX is enabled in SLM by compiling it with the appropriate configuration files, depending on your use case.
 See the :ref:`slm_config_files` section for more information.
@@ -38,7 +39,7 @@ See the :ref:`slm_config_files` section for more information.
 
    * Only UIH frames are used.
    * The speed used is the configured baud rate of SLM's UART.
-   * The maximum frame size is ``2100`` (defined by :c:macro:`SLM_AT_MAX_RSP_LEN` found in :file:`slm_defines.h`).
+   * The maximum frame size is configured using the :kconfig:option:`CONFIG_MODEM_CMUX_MTU` Kconfig option.
 
 CMUX setup #XCMUX
 =================
