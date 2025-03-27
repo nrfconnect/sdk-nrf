@@ -263,7 +263,7 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 	}
 
 	/* Get state of all VIO to reset it correctly after transfer. */
-	prev_out = nrf_vpr_csr_vio_out_get();
+	prev_out = nrf_vpr_csr_vio_out_get() >> 1;
 
 	/* Write only command address and dummy cycles and keep CS active. */
 	hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count = 0;
