@@ -238,7 +238,7 @@ struct bt_fast_pair_fmdn_ring_cb {
  *  (see @ref bt_fast_pair_is_ready function).
  *
  *  This function must be called in the cooperative thread context or in the system initialization
- *  context (@ref SYS_INIT macro).
+ *  context (SYS_INIT macro).
  *
  *  @param cb Ringing callback structure.
  *
@@ -362,7 +362,7 @@ struct bt_fast_pair_fmdn_motion_detector_cb {
  *  (see @ref bt_fast_pair_is_ready function).
  *
  *  This function must be called in the cooperative thread context or in the system initialization
- *  context (@ref SYS_INIT macro).
+ *  context (SYS_INIT macro).
  *
  *  @param cb Motion detector callback structure.
  *
@@ -582,7 +582,7 @@ bool bt_fast_pair_fmdn_is_provisioned(void);
  *  register multiple instances of information callbacks.
  *
  *  This function must be called in the cooperative thread context or in the system initialization
- *  context (@ref SYS_INIT macro).
+ *  context (SYS_INIT macro).
  *
  *  @param cb Information callback structure.
  *
@@ -621,7 +621,7 @@ struct bt_fast_pair_fmdn_read_mode_cb {
  *  (see @ref bt_fast_pair_is_ready function).
  *
  *  This function must be called in the cooperative thread context or in the system initialization
- *  context (@ref SYS_INIT macro).
+ *  context (SYS_INIT macro).
  *
  *  @param cb Read mode callback structure.
  *
