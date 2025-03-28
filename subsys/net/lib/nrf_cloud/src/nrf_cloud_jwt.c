@@ -132,7 +132,8 @@ static int get_key_from_cred(const int sec_tag, uint8_t *const der_out)
 	return 0;
 }
 
-static int custom_jwt_generate(struct jwt_data *const jwt)
+static int custom_jwt_generate(uint32_t exp_delta_s, char *const jwt_buf, size_t jwt_buf_sz,
+			       const char *subject, int sec_tag)
 {
 	int err = 0;
 	psa_key_id_t kid;
@@ -140,7 +141,7 @@ static int custom_jwt_generate(struct jwt_data *const jwt)
 	uint8_t priv_key[PRV_KEY_SZ];
 
 	/* Load private key from storage */
-	err = get_key_from_cred(jwt->sec_tag, priv_key);
+	err = get_key_from_cred(sec_tag, priv_key);
 	if (err) {
 		LOG_ERR("Failed to get private key, error: %d", err);
 		return err;
@@ -170,11 +171,10 @@ static int custom_jwt_generate(struct jwt_data *const jwt)
 		.sec_tag = kid,
 		.key_type = JWT_KEY_TYPE_CLIENT_PRIV,
 		.alg = JWT_ALG_TYPE_ES256,
-		.validity_s = jwt->exp_delta_s,
-		.jwt_buf = jwt->jwt_buf,
-		.jwt_sz = jwt->jwt_sz,
-		.subject = jwt->subject,
-		.audience = jwt->audience,
+		.validity_s = exp_delta_s,
+		.jwt_buf = jwt_buf,
+		.jwt_sz = jwt_buf_sz,
+		.subject = subject,
 	};
 
 	return app_jwt_generate(&_jwt_internal);
@@ -189,16 +189,10 @@ int nrf_cloud_jwt_generate(uint32_t time_valid_s, char *const jwt_buf, size_t jw
 
 	int err;
 	const char *id_ptr;
-	struct jwt_data jwt = {
-		.audience = NULL,
-		.key = JWT_KEY_TYPE_CLIENT_PRIV,
-		.alg = JWT_ALG_TYPE_ES256,
-		.jwt_buf = jwt_buf,
-		.jwt_sz = jwt_buf_sz
-	};
-
-	jwt.sec_tag = IS_ENABLED(CONFIG_NRF_CLOUD_COAP) ?
+	uint32_t exp_delta_s = time_valid_s;
+	int sec_tag = IS_ENABLED(CONFIG_NRF_CLOUD_COAP) ?
 		      nrf_cloud_sec_tag_coap_jwt_get() : nrf_cloud_sec_tag_get();
+	const char *subject;
 
 #if defined(CONFIG_MODEM_JWT)
 	/* Check if modem time is valid */
@@ -211,30 +205,38 @@ int nrf_cloud_jwt_generate(uint32_t time_valid_s, char *const jwt_buf, size_t jw
 	}
 #endif
 	if (time_valid_s > NRF_CLOUD_JWT_VALID_TIME_S_MAX) {
-		jwt.exp_delta_s = NRF_CLOUD_JWT_VALID_TIME_S_MAX;
+		exp_delta_s = NRF_CLOUD_JWT_VALID_TIME_S_MAX;
 	} else if (time_valid_s == 0) {
-		jwt.exp_delta_s = NRF_CLOUD_JWT_VALID_TIME_S_DEF;
-	} else {
-		jwt.exp_delta_s = time_valid_s;
+		exp_delta_s = NRF_CLOUD_JWT_VALID_TIME_S_DEF;
 	}
 
 	if (IS_ENABLED(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID)) {
 		/* The UUID is present in the iss claim, so there is no need
 		 * to also include it in the sub claim.
 		 */
-		jwt.subject = NULL;
+		subject = NULL;
 	} else {
 		err = nrf_cloud_client_id_ptr_get(&id_ptr);
 		if (err) {
 			LOG_ERR("Failed to obtain client ID, error: %d", err);
 			return err;
 		}
-		jwt.subject = id_ptr;
+		subject = id_ptr;
 	}
 
 #if defined(CONFIG_NRF_CLOUD_JWT_SOURCE_CUSTOM)
-	return custom_jwt_generate(&jwt);
+	return custom_jwt_generate(exp_delta_s, jwt_buf, jwt_buf_sz, subject, sec_tag);
 #elif defined(CONFIG_MODEM_JWT)
+	struct jwt_data jwt = {
+		.audience = NULL,
+		.key = JWT_KEY_TYPE_CLIENT_PRIV,
+		.alg = JWT_ALG_TYPE_ES256,
+		.jwt_buf = jwt_buf,
+		.jwt_sz = jwt_buf_sz,
+		.exp_delta_s = exp_delta_s,
+		.sec_tag = sec_tag,
+		.subject = subject,
+	};
 	err = modem_jwt_generate(&jwt);
 	if (err) {
 		LOG_ERR("Failed to generate JWT, error: %d", err);
