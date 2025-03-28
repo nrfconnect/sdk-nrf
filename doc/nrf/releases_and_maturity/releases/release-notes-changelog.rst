@@ -305,6 +305,8 @@ nRF Desktop
     In the |NCS|, the Partition Manager is enabled by default for single-image sysbuild builds.
     The static memory map ensures control over settings partition placement and size.
     The introduced static memory maps may not be consistent with the ``storage_partition`` defined by the board-level DTS configuration.
+  * Support for GATT long (reliable) writes (:kconfig:option:`CONFIG_BT_ATT_PREPARE_COUNT`) to Fast Pair and Works With ChromeBook (WWCB) configurations.
+    This allows performing :ref:`fwupd <nrf_desktop_fwupd>` DFU image upload over Bluetooth LE with GATT clients that do not perform MTU exchange (for example, ChromeOS using the Floss Bluetooth stack).
 
 * Updated:
 
