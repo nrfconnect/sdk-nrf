@@ -27,7 +27,7 @@
  *         32 bytes of this area.
  */
 #include <string.h>
-#include <sxsymcrypt/sha2.h>
+#include <sxsymcrypt/hashdefs.h>
 #include <silexpk/ed25519.h>
 #include <cracen/ec_helpers.h>
 #include <sxsymcrypt/hash.h>

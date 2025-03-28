@@ -19,7 +19,7 @@
 #include <silexpk/core.h>
 #include <silexpk/iomem.h>
 #include <sxsymcrypt/hash.h>
-#include <sxsymcrypt/sha2.h>
+#include <sxsymcrypt/hashdefs.h>
 #include <silexpk/ik.h>
 #include "../include/sicrypto/sicrypto.h"
 #include "../include/sicrypto/hash.h"
