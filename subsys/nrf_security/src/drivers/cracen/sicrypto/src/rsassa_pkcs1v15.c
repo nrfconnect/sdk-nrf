@@ -17,8 +17,7 @@
 #include <string.h>
 #include <silexpk/iomem.h>
 #include <silexpk/core.h>
-#include <sxsymcrypt/sha1.h>
-#include <sxsymcrypt/sha2.h>
+#include <sxsymcrypt/hashdefs.h>
 #include "../include/sicrypto/sicrypto.h"
 #include "../include/sicrypto/rsassa_pkcs1v15.h"
 #include "../include/sicrypto/hash.h"

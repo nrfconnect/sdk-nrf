@@ -14,9 +14,7 @@
 #include <zephyr/sys/util.h>
 #include <sicrypto/sicrypto.h>
 #include <silexpk/sxbuf/sxbufop.h>
-#include <sxsymcrypt/sha1.h>
-#include <sxsymcrypt/sha2.h>
-#include <sxsymcrypt/sha3.h>
+#include <sxsymcrypt/hashdefs.h>
 
 /* RFC5480 - first byte of ECC public key that indicates that the key
  * is uncompressed

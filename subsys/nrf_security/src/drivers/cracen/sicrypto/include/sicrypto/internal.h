@@ -11,6 +11,7 @@
 #include <sxsymcrypt/aead.h>
 #include <sxsymcrypt/blkcipher.h>
 #include <sxsymcrypt/internal.h>
+#include <sxsymcrypt/hashdefs.h>
 #include <silexpk/ec_curves.h>
 #include <stdbool.h>
 #include <stdint.h>
