@@ -129,44 +129,20 @@ const struct sxhashalg sxhashalg_sha3_224 = {
 	SX_HASH_BLOCKSZ_SHA3_224, 200, 144, sx_hash_create_ba418
 };
 
-int sx_hash_create_sha3_224(struct sxhash *c, size_t csz)
-{
-	c->algo = &sxhashalg_sha3_224;
-	return sx_hash_create_ba418(c, csz);
-}
-
 const struct sxhashalg sxhashalg_sha3_256 = {
 	SHA3_MODE(7), SHA3_SW_PAD, SHA3_SAVE_CONTEXT, SX_HASH_DIGESTSZ_SHA3_256,
 	SX_HASH_BLOCKSZ_SHA3_256, 200, 136, sx_hash_create_ba418
 };
-
-int sx_hash_create_sha3_256(struct sxhash *c, size_t csz)
-{
-	c->algo = &sxhashalg_sha3_256;
-	return sx_hash_create_ba418(c, csz);
-}
 
 const struct sxhashalg sxhashalg_sha3_384 = {
 	SHA3_MODE(11), SHA3_SW_PAD, SHA3_SAVE_CONTEXT, SX_HASH_DIGESTSZ_SHA3_384,
 	SX_HASH_BLOCKSZ_SHA3_384, 200, 104, sx_hash_create_ba418
 };
 
-int sx_hash_create_sha3_384(struct sxhash *c, size_t csz)
-{
-	c->algo = &sxhashalg_sha3_384;
-	return sx_hash_create_ba418(c, csz);
-}
-
 const struct sxhashalg sxhashalg_sha3_512 = {
 	SHA3_MODE(15), SHA3_SW_PAD, SHA3_SAVE_CONTEXT, SX_HASH_DIGESTSZ_SHA3_512,
 	SX_HASH_BLOCKSZ_SHA3_512, 200, 72, sx_hash_create_ba418
 };
-
-int sx_hash_create_sha3_512(struct sxhash *c, size_t csz)
-{
-	c->algo = &sxhashalg_sha3_512;
-	return sx_hash_create_ba418(c, csz);
-}
 
 const struct sxhashalg sxhashalg_shake256_114 = {
 	SHA3_MODE_SHAKE(7, 114), SHA3_SW_PAD, SHA3_SAVE_CONTEXT, 114,
