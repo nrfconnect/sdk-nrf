@@ -41,7 +41,7 @@
  */
 
 #include <string.h>
-#include <sxsymcrypt/sha3.h>
+#include <sxsymcrypt/hashdefs.h>
 #include <silexpk/core.h>
 #include <silexpk/ed448.h>
 #include <sicrypto/sicrypto.h>

@@ -5,9 +5,6 @@
  */
 #include "../include/sxsymcrypt/hash.h"
 #include "../include/sxsymcrypt/hashdefs.h"
-#include "../include/sxsymcrypt/sha1.h"
-#include "../include/sxsymcrypt/sha2.h"
-#include "../include/sxsymcrypt/sm3.h"
 #include <cracen/statuscodes.h>
 #include "../include/sxsymcrypt/internal.h"
 #include "crypmasterregs.h"

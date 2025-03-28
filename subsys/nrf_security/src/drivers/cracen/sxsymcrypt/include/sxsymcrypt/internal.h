@@ -17,9 +17,6 @@ extern "C" {
 #ifndef SX_EXTRA_IN_DESCS
 #define SX_EXTRA_IN_DESCS 0
 #endif
-#ifndef SX_HASH_PRIV_SZ
-#define SX_HASH_PRIV_SZ 344
-#endif
 
 #define SX_BLKCIPHER_PRIV_SZ (16)
 #define SX_AEAD_PRIV_SZ	     (70)
@@ -32,7 +29,6 @@ extern "C" {
 struct sx3gppalg;
 struct sx_blkcipher_cmdma_cfg;
 struct sx_aead_cmdma_cfg;
-struct sxhashalg;
 
 /** A cryptomaster DMA descriptor */
 struct sxdesc {
@@ -133,26 +129,6 @@ struct sx3gpp {
 	size_t insz;
 	size_t outsz;
 };
-
-/** A hash operation.
- *
- * To be used with sx_hash_*() functions.
- *
- * All members should be considered INTERNAL and may not be accessed
- * directly.
- */
-struct sxhash {
-	const struct sxhashalg *algo;
-	const struct sx_digesttags *dmatags;
-	uint32_t cntindescs;
-	size_t totalfeedsz;
-	uint32_t feedsz;
-	void (*digest)(struct sxhash *c, char *digest);
-	struct sx_dmactl dma;
-	struct sxdesc descs[7 + SX_EXTRA_IN_DESCS];
-	uint8_t extramem[SX_HASH_PRIV_SZ];
-};
-
 
 /** A simple MAC(message authentication code) operation
  *

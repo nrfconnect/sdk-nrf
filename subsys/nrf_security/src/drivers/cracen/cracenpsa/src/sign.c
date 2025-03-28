@@ -23,8 +23,7 @@
 #include <silexpk/ik.h>
 #include <silexpk/sxbuf/sxbufop.h>
 #include <string.h>
-#include <sxsymcrypt/sha1.h>
-#include <sxsymcrypt/sha2.h>
+#include <sxsymcrypt/hashdefs.h>
 #include <sxsymcrypt/trng.h>
 
 #include "common.h"
