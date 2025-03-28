@@ -101,7 +101,7 @@ config MPSL_CALIBRATION_PERIOD
 	int "Calibration callback period in milliseconds"
 	depends on CLOCK_CONTROL_MPSL && (SOC_SERIES_NRF54LX || CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION)
 	default CLOCK_CONTROL_NRF_CALIBRATION_PERIOD if CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION
-	default 4000
+	default 60000
 	help
 	  This configuration means how often the calibration callback to mpsl is called.
 	  On 54L, this still needs to be called even if LFRC is not used.
