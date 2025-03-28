@@ -8,6 +8,7 @@
 #define HASHDEFS_HEADER_FILE
 
 #include <stddef.h>
+#include <stdint.h>
 
 struct sx_digesttags {
 	uint32_t cfg;
