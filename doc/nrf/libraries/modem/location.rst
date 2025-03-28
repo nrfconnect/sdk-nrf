@@ -361,7 +361,7 @@ Use method priority list defined by Kconfig options and set custom timeout value
 Samples using the library
 *************************
 
-The following |NCS| applications and samples use this library:
+The following |NCS| samples use this library:
 
 * :ref:`location_sample`
 * :ref:`modem_shell_application`
