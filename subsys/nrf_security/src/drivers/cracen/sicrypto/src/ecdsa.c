@@ -26,7 +26,7 @@
 #include <silexpk/core.h>
 #include <silexpk/iomem.h>
 #include <silexpk/cmddefs/ecc.h>
-#include <sxsymcrypt/sha2.h>
+#include <sxsymcrypt/hashdefs.h>
 #include "../include/sicrypto/sicrypto.h"
 #include "../include/sicrypto/ecdsa.h"
 #include "../include/sicrypto/hash.h"
