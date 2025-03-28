@@ -505,7 +505,18 @@ int bt_ras_rreq_rd_overwritten_unsubscribe(struct bt_conn *conn);
  */
 int bt_ras_rreq_read_features(struct bt_conn *conn, bt_ras_rreq_features_read_cb_t cb);
 
-/** @brief Provide step header for each step back to the user.
+/** @brief Provide ranging header for the ranging data back to the user.
+ *
+ * @param[in] ranging_header Ranging header data.
+ * @param[in] user_data User data.
+ *
+ * @retval true if data parsing should continue.
+ *         false if data parsing should be stopped.
+ */
+typedef bool (*bt_ras_rreq_ranging_header_cb_t)(struct ras_ranging_header *ranging_header,
+						 void *user_data);
+
+/** @brief Provide subevent header for each subevent back to the user.
  *
  * @param[in] subevent_header Subevent header data.
  * @param[in] user_data       User data.
@@ -541,6 +552,7 @@ typedef bool (*bt_ras_rreq_step_data_cb_t)(struct bt_le_cs_subevent_step *local_
  * @param[in] peer_ranging_data_buf Buffer to the peer ranging data to parse.
  * @param[in] local_step_data_buf   Buffer to the local step data to parse.
  * @param[in] cs_role               Channel sounding role of local device.
+ * @param[in] ranging_header_cb     Callback called (once) for the ranging header.
  * @param[in] subevent_header_cb    Callback called with each subevent header.
  * @param[in] step_data_cb          Callback called with each peer and local step data.
  * @param[in] user_data             User data to be passed to the callbacks.
@@ -548,6 +560,7 @@ typedef bool (*bt_ras_rreq_step_data_cb_t)(struct bt_le_cs_subevent_step *local_
 void bt_ras_rreq_rd_subevent_data_parse(struct net_buf_simple *peer_ranging_data_buf,
 					struct net_buf_simple *local_step_data_buf,
 					enum bt_conn_le_cs_role cs_role,
+					bt_ras_rreq_ranging_header_cb_t ranging_header_cb,
 					bt_ras_rreq_subevent_header_cb_t subevent_header_cb,
 					bt_ras_rreq_step_data_cb_t step_data_cb, void *user_data);
 
