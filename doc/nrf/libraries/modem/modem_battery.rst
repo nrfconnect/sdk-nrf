@@ -50,7 +50,7 @@ Battery low level notifications are received within a time interval of 60 second
 Unsolicited notifications of battery voltage low level are automatically enabled when the modem battery library is enabled using the :kconfig:option:`CONFIG_MODEM_BATTERY` Kconfig option.
 
 An application can follow ``+CSCON`` notifications and expect low battery level notification only after ``+CSCON: 1`` is received.
-The factory default battery voltage low level is 3300 mV and the default range is 3100 to 3500 mV.
+The factory default battery voltage low level is 3300 mV and the default range is 3100 to 5000 mV.
 To update this value, call the :c:func:`modem_battery_low_level_set` function by passing an integer for the battery voltage low level (measured in mV).
 
 To start receiving notifications of battery voltage low level from the modem, first set a handler by calling the :c:func:`modem_battery_low_level_handler_set` function before subscribing.
