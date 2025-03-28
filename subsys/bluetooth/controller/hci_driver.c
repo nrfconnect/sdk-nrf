@@ -29,7 +29,6 @@
 
 #include "multithreading_lock.h"
 #include "hci_internal.h"
-#include "ecdh.h"
 #include "radio_nrf5_txp.h"
 #include "cs_antenna_switch.h"
 
@@ -1308,10 +1307,6 @@ static int hci_driver_open(const struct device *dev, bt_hci_recv_t recv_func)
 
 	k_work_init(&receive_work, receive_work_handler);
 
-	if (IS_ENABLED(CONFIG_BT_CTLR_ECDH)) {
-		hci_ecdh_init();
-	}
-
 	uint8_t build_revision[SDC_BUILD_REVISION_SIZE];
 
 	sdc_build_revision_get(build_revision);
@@ -1466,10 +1461,6 @@ static int hci_driver_open(const struct device *dev, bt_hci_recv_t recv_func)
 static int hci_driver_close(const struct device *dev)
 {
 	int err;
-
-	if (IS_ENABLED(CONFIG_BT_CTLR_ECDH)) {
-		hci_ecdh_uninit();
-	}
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_CS_MULTIPLE_ANTENNA_SUPPORT)) {
 		cs_antenna_switch_clear();
