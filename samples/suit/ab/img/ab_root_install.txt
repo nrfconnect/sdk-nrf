@@ -1,0 +1,58 @@
+@startuml
+start
+
+: SET_TO_UPDATE_MIRROR := SET_TO_UPDATE ;
+
+if (Uri('#top') present and valid) then (yes)
+
+if (SET_TO_UPDATE_MIRROR == SET_B) then (yes)
+if (Version(Application A) >= MIN_COMPATIBLE_APP_VERSION_FOR_NORDIC_TOP) then (yes)
+if (Version(Radio A) >= MIN_COMPATIBLE_RAD_VERSION_FOR_NORDIC_TOP) then (yes)
+: fetch('#top') ;
+: check_integrity('#top') ;
+: process('#top') ;
+stop
+
+endif
+endif
+endif
+: abort() ;
+stop
+
+else (no)
+if (Version(Intalled Nordic Top) >= MIN_NORDIC_TOP_VERSION) then (yes)
+if (SET_TO_UPDATE_MIRROR == SET_A) then (yes)
+: CONFIRM_SET_A := JUST_INSTALLED ;
+: fetch('#radio') ;
+: check_integrity('#radio') ;
+: process('#radio') ;
+
+: fetch('#application') ;
+: check_integrity('#application') ;
+: process('#application') ;
+: BOOT_PREFERENCE := SET_A ;
+stop
+elseif (SET_TO_UPDATE_MIRROR == SET_B) then (yes)
+: CONFIRM_SET_B := JUST_INSTALLED ;
+: fetch('#radio_b') ;
+: check_integrity('#radio_b') ;
+: process('#radio_b') ;
+
+: fetch('#application_b') ;
+: check_integrity('#application_b') ;
+: process('#application_b') ;
+: BOOT_PREFERENCE := SET_B ;
+stop
+else (no)
+: abort() ;
+stop
+endif
+
+else (no)
+: abort() ;
+stop
+endif
+
+endif
+
+@enduml
