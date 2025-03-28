@@ -684,3 +684,556 @@ To verify the serial ports name for your operating system, use the ``nrfutil dev
       Confirm status set B: confirmed
 
    The **LED 1** should blink once for every 5 seconds, indicating the first version of the application variant ``B``.
+
+#. Enter the degraded mode.
+
+   It is possible to test the degraded mode using the sample.
+   If the application enables ``CONFIG_EMULATE_APP_HEALTH_CHECK_FAILURE`` then any update will not be confirmed, thus after two updates
+   the device will contain two ucncofirmed variants.
+   In such case, the logic inside the root manifest will set the ``BOOT_STATUS`` to ``BOOT_A_DEGRADED``.
+
+   To test it, first build the third version of the application, that does not confirm its correctness after any update:
+
+   #. Update the SUIT envelope sequence number, by changing the following line to the :file:`VERSION` file:
+
+      .. code-block:: console
+
+         APP_ROOT_SEQ_NUM = 3
+         APP_LOCAL_1_SEQ_NUM = 3
+
+   #. Update the number of LED blinks, by rebuilding the sample with the following Kconfig options set:
+
+      .. code-block:: console
+
+         west build -p -b nrf54h20dk/nrf54h20/cpuapp -- \
+            -DSB_EXTRA_CONF_FILE="suit_mpi.conf" \
+            -Dab_CONFIG_N_BLINKS=3 \
+            -Dab_CONFIG_EMULATE_APP_HEALTH_CHECK_FAILURE=y
+
+      Another :file:`root.suit` file is created after running this command, that contains the updated firmware, that does not confirm its correctness.
+
+   Once created, send the update to the device twice:
+
+   #. Change the directory to execute commands from DFU artifacts folder:
+
+      .. code-block:: console
+
+         cd build/DFU
+
+   #. Upload the image variant ``A`` with nrfutil:
+
+      .. code-block:: console
+
+         nrfutil suit upload-envelope --serial-port COM7 --envelope-file root.suit --install --serve-images 60
+
+      You should see an output similar to the following logged on UART::
+
+      .. code-block:: console
+
+         [00:01:01] ###### 100% [COM7] Uploaded
+         ✔️ Serving images done
+         ✔️ Uploaded hci_ipc.bin
+         ✔️ Uploaded ab.bin
+
+      The following log message should appear on the logging serial interface:
+
+      .. code-block:: console
+
+         <inf> AB: Image set A not confirmed yet, testing...
+         <err> AB: App domain is NOT healthy
+         <err> AB: Reboot the device to try to boot from previous firmware
+
+      The **LED 0** should blink three times for every 5 seconds, indicating the third version of the application variant ``A``.
+
+   #. Upload the image variant ``B`` with nrfutil:
+
+      .. code-block:: console
+
+         nrfutil suit upload-envelope --serial-port COM7 --envelope-file root.suit --install --serve-images 60
+
+      You should see an output similar to the following logged on UART::
+
+      .. code-block:: console
+
+         [00:01:01] ###### 100% [COM7] Uploaded
+         ✔️ Serving images done
+         ✔️ Uploaded hci_ipc_variant_b.bin
+         ✔️ Uploaded ab_variant_b.bin
+
+      The following log message should appear on the logging serial interface:
+
+      .. code-block:: console
+
+         <inf> AB: Image set B not confirmed yet, testing...
+         <err> AB: App domain is NOT healthy
+         <err> AB: Reboot the device to try to boot from previous firmware
+
+      The **LED 1** should blink three times for every 5 seconds, indicating the third version of the application variant ``B``.
+
+   #. Reboot the DK using the reset button.
+
+      After reboot the root manifest will boot the unconfirmed application variant ``A`` in the degraded mode.
+      The following log message should appear on the logging serial interface:
+
+      .. code-block:: console
+
+         Boot preference: set B
+         Boot status: image set A active, degraded mode
+         Confirm status set A: not confirmed
+         Confirm status set B: not confirmed
+
+      The **LED 0** should blink three times for every 5 seconds, indicating the third version of the application variant ``A``.
+      The **LED 2** and **LED 3** should blink simultaneously, indicating the degraded mode.
+
+#. Demage the radio firmware
+
+   Modify the variant ``A`` of the radio firmware to enter the degraded mode in the application variant ``B``.
+
+   .. code-block:: console
+
+      nrfutil device x-write --address 0xe054000 --value 0xFFFFFF --core Network --traits jlink
+
+   You should see an output similar to the following logged on UART::
+
+   .. code-block:: console
+
+      ✔️ Data written to <snr>
+
+   Reboot the DK using the reset button.
+   After reboot the root manifest will boot the unconfirmed application variant ``B`` in the degraded mode, with the radio.
+   The following log message should appear on the logging serial interface:
+
+   .. code-block:: console
+
+      Boot preference: set B
+      Boot status: app image B active, degraded mode
+      Confirm status set A: not confirmed
+      Confirm status set B: not confirmed
+
+   Modify the variant ``B`` of the radio firmware to enter the degraded mode without radio support.
+
+   .. code-block:: console
+
+      nrfutil device x-write --address 0xe086000 --value 0xFFFFFF --core Network --traits jlink
+
+   You should see an output similar to the following logged on UART::
+
+   .. code-block:: console
+
+      ✔️ Data written to <snr>
+
+   Reboot the DK using the reset button.
+   After reboot the root manifest will boot the unconfirmed application variant ``A`` in the degraded mode, without the radio.
+   The following log message should appear on the logging serial interface:
+
+   .. code-block:: console
+
+      Boot preference: set B
+      Boot status: app image A active, no radio, degraded mode
+      Confirm status set A: not confirmed
+      Confirm status set B: not confirmed
+
+   The **LED 0** should blink three times for every 5 seconds, indicating the third version of the application variant ``A``.
+   The **LED 2** should blink continuously.
+   The **LED 3** should be turned off.
+
+#. Enter recovery mode by damaging root manifest.
+
+   Modify the root manifest to enter recovery mode.
+
+   .. code-block:: console
+
+      nrfutil device x-write --address 0x0e1ef400 --value 0xFFFFFF --traits jlink
+
+   You should see an output similar to the following logged on UART::
+
+   .. code-block:: console
+
+      ✔️ Data written to <snr>
+
+   Reboot the DK using the reset button.
+   After reboot the root manifest will boot the unconfirmed application variant ``A`` in the degraded mode, without the radio, using recovery manifest.
+   The following log message should appear on the logging serial interface:
+
+   .. code-block:: console
+
+      Boot in RECOVERY mode, probably the root manifest is damaged!
+      Boot preference: set B
+      Boot status: app image A active, no radio, degraded mode
+      Confirm status set A: not confirmed
+      Confirm status set B: not confirmed
+
+   The **LED 0** should blink three times for every 5 seconds, indicating the third version of the application variant ``A``.
+   Both **LED 2** and **LED3** should blink in an alternating pattern, indicating the recovery mode.
+
+#. Recover the device through the application update
+
+   To test it, first build the fourth version of the application, that confirm its correctness after any update:
+
+   #. Update the SUIT envelope sequence number, by changing the following line to the :file:`VERSION` file:
+
+      .. code-block:: console
+
+         APP_ROOT_SEQ_NUM = 4
+         APP_LOCAL_1_SEQ_NUM = 4
+
+   #. Update the number of LED blinks, by rebuilding the sample with the following Kconfig options set:
+
+      .. code-block:: console
+
+         west build -p -b nrf54h20dk/nrf54h20/cpuapp -- \
+            -DSB_EXTRA_CONF_FILE="suit_mpi.conf" \
+            -Dab_CONFIG_N_BLINKS=4
+
+      Another :file:`root.suit` file is created after running this command, that contains the updated firmware, that confirms its correctness.
+
+   #. Change the directory to execute commands from DFU artifacts folder:
+
+      .. code-block:: console
+
+         cd build/DFU
+
+   #. Upload the image variant ``B`` with nrfutil:
+
+      .. code-block:: console
+
+         nrfutil suit upload-envelope --serial-port COM7 --envelope-file root.suit --install --serve-images 60
+
+      You should see an output similar to the following logged on UART::
+
+      .. code-block:: console
+
+         [00:01:01] ###### 100% [COM7] Uploaded
+         ✔️ Serving images done
+         ✔️ Uploaded hci_ipc_variant_b.bin
+         ✔️ Uploaded ab_variant_b.bin
+
+      The following log message should appear on the logging serial interface:
+
+      .. code-block:: console
+
+         Boot preference: set B
+         Boot status: image set B active
+         Confirm status set A: not confirmed
+         Confirm status set B: not confirmed
+
+         <inf> AB: Image set B not confirmed yet, testing...
+         <inf> AB: Confirming...
+         <inf> AB: Confirmed
+
+      The **LED 1** should blink four times for every 5 seconds, indicating the fourth version of the application variant ``B``.
+      Both **LED 2** and **LED3** should be turned on, indicating that the device recovered from both recovery and degraded modes.
+
+   #. Upload the image variant ``A`` with nrfutil:
+
+      .. code-block:: console
+
+         nrfutil suit upload-envelope --serial-port COM7 --envelope-file root.suit --install --serve-images 60
+
+      You should see an output similar to the following logged on UART::
+
+      .. code-block:: console
+
+         [00:01:01] ###### 100% [COM7] Uploaded
+         ✔️ Serving images done
+         ✔️ Uploaded hci_ipc.bin
+         ✔️ Uploaded ab.bin
+
+      The following log message should appear on the logging serial interface:
+
+      .. code-block:: console
+
+         Boot preference: set A
+         Boot status: image set A active
+         Confirm status set A: not confirmed
+         Confirm status set B: confirmed
+
+         <inf> AB: Image set A not confirmed yet, testing...
+         <inf> AB: Confirming...
+         <inf> AB: Confirmed
+
+      The **LED 0** should blink four times for every 5 seconds, indicating the fourth version of the application variant ``A``.
+      Both **LED 2** and **LED3** should be turned on.
+
+#. Update Nordic components
+
+   The update of Nordic components is possible only from the application variant ``A``.
+   If the device is booted into variant ``B``, press the BUTTON 3 and reset the DK to switch to the variant ``A`` before executing further steps.
+
+   #. Check the currently installed version of Nordic top manifest
+
+      .. code-block:: console
+
+         nrfutil device x-suit-manifest-info-get --known-class-id nRF54H20_nordic_top --traits jlink
+
+      You should see an output similar to the following::
+
+      .. code-block:: console
+
+         manifest_info:
+           classId: f03d385e-a731-5605-b15d-037f6da6097f (nRF54H20_nordic_top)
+           semantic version: 0.9.4
+           signatureCheck: signature check passed
+
+   #. Build the update package through the regular application build.
+
+      .. code-block:: console
+
+         west build  -b nrf54h20dk/nrf54h20/cpuapp -- \
+            -DSB_EXTRA_CONF_FILE="suit_mpi.conf" \
+            -Dab_CONFIG_N_BLINKS=5 \
+            -DSB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY="\"<path-to-the-nordic-update-packege>\""
+
+   #. Send the update candidate to the device.
+
+      .. code-block:: console
+
+         nrfutil suit upload-envelope --serial-port COM7 --envelope-file build/DFU/root.suit
+
+      You should see an output similar to the following::
+
+      .. code-block:: console
+
+         [00:00:07] ###### 100% [COM7] Uploaded
+
+   #. Start the installation of the new firmware as follows:
+
+      .. code-block:: console
+
+         nrfutil suit install --serial-port COM7 --serve-images 60 --images-path build/DFU/
+
+      You should see an output similar to the following logged on UART::
+
+      .. code-block:: console
+
+         ✔️ Installation triggered
+         ✔️ Serving images done
+         ✔️ Uploaded nrf54h20_sec_v10.3.1.bin
+         ✔️ Uploaded nrf54h20_sec_rec_v10.3.1.bin
+         ✔️ Uploaded nrf54h20_sysctl_v4.2.0.bin
+
+   #. Check if the of Nordic top manifest was successful:
+
+      .. code-block:: console
+
+         nrfutil device x-suit-manifest-info-get --known-class-id nRF54H20_nordic_top --traits jlink
+
+      You should see an output similar to the following::
+
+      .. code-block:: console
+
+         manifest_info:
+           classId: f03d385e-a731-5605-b15d-037f6da6097f (nRF54H20_nordic_top)
+           semantic version: 0.9.5
+           signatureCheck: signature check passed
+
+Testing push mode with A/B sample
+=================================
+
+It is possible to configure the application to perform updates using the push method.
+
+Since in the A/B method only a single variant is updateable for each boot (inactive one),
+the PC tool must correctly handle the error codes, if the incorrect image is attempted to be transferred.
+
+The images will be sent as DFU cache RAW images. Their IDs are defined using the common memory app, by adding the following aliases:
+
+.. code-block:: dts
+
+   dfu_target_img_22: cpuapp_slot_b_partition: partition@14c000 {
+      reg = < 0x14c000 DT_SIZE_K(592) >;
+   };
+
+   dfu_target_img_21: cpuapp_slot_a_partition: partition@b8000 {
+      reg = < 0xb8000 DT_SIZE_K(592) >;
+   };
+
+   ...
+
+   dfu_target_img_32: cpurad_slot_b_partition: partition@86000 {
+      reg = <0x86000 DT_SIZE_K(200)>;
+   };
+
+   dfu_target_img_31: cpurad_slot_a_partition: partition@54000 {
+      reg = < 0x54000 DT_SIZE_K(200) >;
+   };
+
+Using the declaration above:
+
+   * Application variant ``A`` can be sent as DFU cache partition 21
+   * Application variant ``B`` can be sent as DFU cache partition 22
+   * Radio variant ``A`` can be sent as DFU cache partition 31
+   * Radio variant ``B`` can be sent as DFU cache partition 32
+
+#. Build the new update candidate firmware.
+
+   #. Update the SUIT envelope sequence number, by changing the following line to the :file:`VERSION` file:
+
+      .. code-block:: console
+
+         APP_ROOT_SEQ_NUM = 5
+         APP_LOCAL_1_SEQ_NUM = 5
+
+   #. Update the number of LED blinks, by rebuilding the sample with the following Kconfig options set:
+
+      .. code-block:: console
+
+         west build -p -b nrf54h20dk/nrf54h20/cpuapp -- \
+            -DSB_EXTRA_CONF_FILE="suit_mpi.conf" \
+            -Dab_CONFIG_N_BLINKS=5
+
+      Another :file:`root.suit` file is created after running this command, that contains the updated firmware, that confirms its correctness.
+
+#. Update the device using the push method.
+
+   #. Send the root manifest, but do not trigger the installation procedure.
+
+      .. code-block:: console
+
+         nrfutil suit upload-envelope --serial-port COM7 --envelope-file build/DFU/root.suit
+
+      You should see an output similar to the following::
+
+      .. code-block:: console
+
+         [00:00:07] ###### 100% [COM7] Uploaded
+
+   #. Try to push application image ``A`` (should fail):
+
+      .. code-block:: console
+
+         nrfutil suit upload-cache-raw --serial-port COM7 --cache-file ./build/ab/zephyr/zephyr.bin  --pool 21
+
+      You should see an output similar to the following::
+
+      .. code-block:: console
+
+         [00:00:00] ------   0% [COM7] Upload cache raw failed: NMP_ERR_ENOENT - Is dfu_cache_partition_21 defined in the device tree?
+         Error: NMP_ERR_ENOENT - Is dfu_cache_partition_21 defined in the device tree?
+
+   #. Push application image ``B``:
+
+      .. code-block:: console
+
+         nrfutil suit upload-cache-raw --serial-port COM7 --cache-file ./build/ab_variant_b/zephyr/zephyr.bin  --pool 22
+
+      You should see an output similar to the following::
+
+      .. code-block:: console
+
+         [00:00:28] ###### 100% [COM7] Uploaded
+
+   #. Push radio image ``B``:
+
+      .. code-block:: console
+
+         nrfutil suit upload-cache-raw --serial-port COM7 --cache-file ./build/hci_ipc_variant_b/zephyr/zephyr.bin  --pool 32
+
+      You should see an output similar to the following::
+
+      .. code-block:: console
+
+         [00:00:28] ###### 100% [COM7] Uploaded
+
+   #. Trigger the update:
+
+      .. code-block:: console
+
+         nrfutil suit install --serial-port COM7
+
+      You should see an output similar to the following::
+
+      .. code-block:: console
+
+         ✔️ Installation triggered
+
+      The following log message should appear on the logging serial interface:
+
+      .. code-block:: console
+
+         Boot preference: set B
+         Boot status: image set B active
+         Confirm status set A: confirmed
+         Confirm status set B: not confirmed
+
+
+#. Update Nordic components using push method
+
+   The update of Nordic components is possible only from the application variant ``A``.
+   If the device is booted into variant ``B``, press the BUTTON 3 and reset the DK to switch to the variant ``A`` before executing further steps.
+
+   #. Check the currently installed version of Nordic top manifest
+
+      .. code-block:: console
+
+         nrfutil device x-suit-manifest-info-get --known-class-id nRF54H20_nordic_top --traits jlink
+
+      You should see an output similar to the following::
+
+      .. code-block:: console
+
+         manifest_info:
+           classId: f03d385e-a731-5605-b15d-037f6da6097f (nRF54H20_nordic_top)
+           semantic version: 0.9.4
+           signatureCheck: signature check passed
+
+   #. Build the update package through the regular application build.
+
+      .. code-block:: console
+
+         west build  -b nrf54h20dk/nrf54h20/cpuapp -- \
+            -DSB_EXTRA_CONF_FILE="suit_mpi.conf" \
+            -Dab_CONFIG_N_BLINKS=5 \
+            -DSB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_EXTRACT_PAYLOADS_TO_CACHE=y \
+            -DSUIT_DFU_CACHE_PARTITION_1_EB_SIZE=128 \
+            -DSB_CONFIG_SUIT_ENVELOPE_NORDIC_TOP_DIRECTORY="\"<path-to-the-nordic-update-packege>\""
+
+   #. Send the root manifest, but do not trigger the installation procedure.
+
+      .. code-block:: console
+
+         nrfutil suit upload-envelope --serial-port COM7 --envelope-file build/DFU/root.suit
+
+      You should see an output similar to the following::
+
+      .. code-block:: console
+
+         [00:00:07] ###### 100% [COM7] Uploaded
+
+   #. Upload RAW cache image, containing Nordic firmware binaries:
+
+      .. code-block:: console
+
+         nrfutil suit upload-cache-raw --serial-port COM7 --cache-file ./build/DFU/dfu_cache_partition_1.bin --pool 1
+
+      You should see an output similar to the following::
+
+      .. code-block:: console
+
+         [00:00:28] ###### 100% [COM7] Uploaded
+
+   #. Trigger the update:
+
+      .. code-block:: console
+
+         nrfutil suit install --serial-port COM7
+
+      You should see an output similar to the following::
+
+      .. code-block:: console
+
+         ✔️ Installation triggered
+
+   #. Check if the of Nordic top manifest was successful:
+
+      .. code-block:: console
+
+         nrfutil device x-suit-manifest-info-get --known-class-id nRF54H20_nordic_top --traits jlink
+
+      You should see an output similar to the following::
+
+      .. code-block:: console
+
+         manifest_info:
+           classId: f03d385e-a731-5605-b15d-037f6da6097f (nRF54H20_nordic_top)
+           semantic version: 0.9.5
+           signatureCheck: signature check passed
