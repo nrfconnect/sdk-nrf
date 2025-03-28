@@ -162,7 +162,7 @@ Testing
 
    .. code-block:: console
 
-      wifi connect <SSID> <passphrase>
+      wifi connect -s <SSID> -k <key_management> -p <passphrase>
 
    ``<SSID>`` is the SSID of the network you want to connect to, and ``<passphrase>`` is its passphrase.
 

@@ -40,7 +40,7 @@ When applying backoff, consider the following:
 * Backoff values also vary based on the frame type, affecting the maximum transmit power. Different backoff values are configured for each frame type.
 
 Backoff values, which are expressed in dB, are inputs to the Wi-Fi® firmware driver through Kconfig parameters.
-The Kconfig parameters are defined in the :file:`<ncs_repo>/nrf/drivers/wifi/nrf700x/Kconfig` file.
+The Kconfig parameters are defined in the :file:`<ncs_repo>/zephyr/drivers/wifi/nrf_wifi/Kconfig.nrfwifi` file.
 
 Set the Kconfig parameter values (which are positive numbers) according to the required backoff in the specific frequency band for the regulatory domain.
 The default value of the Kconfig parameter is zero.
@@ -50,98 +50,98 @@ The following tables show the Kconfig parameters for lower and upper edge backof
 +---------+-----------+---------------------------------------------------------------+
 | Band    | Frame type| Kconfig parameter for lower edge backoff                      |
 +=========+===========+===============================================================+
-| 2.4 GHz | DSSS      | CONFIG_NRF700X_BAND_2G_LOWER_EDGE_BACKOFF_DSSS                |
+| 2.4 GHz | DSSS      | CONFIG_NRF70_BAND_2G_LOWER_EDGE_BACKOFF_DSSS                  |
 +         +-----------+---------------------------------------------------------------+
-|         | HT/V HT   | CONFIG_NRF700X_BAND_2G_LOWER_EDGE_BACKOFF_HT                  |
+|         | HT/V HT   | CONFIG_NRF70_BAND_2G_LOWER_EDGE_BACKOFF_HT                    |
 +         +-----------+---------------------------------------------------------------+
-|         | HE        | CONFIG_NRF700X_BAND_2G_LOWER_EDGE_BACKOFF_HE                  |
+|         | HE        | CONFIG_NRF70_BAND_2G_LOWER_EDGE_BACKOFF_HE                    |
 +---------+-----------+---------------------------------------------------------------+
-| UNII-1  | HT/V HT   | CONFIG_NRF700X_BAND_UNII_1_LOWER_EDGE_BACKOFF_HT              |
+| UNII-1  | HT/V HT   | CONFIG_NRF70_BAND_UNII_1_LOWER_EDGE_BACKOFF_HT                |
 +         +-----------+---------------------------------------------------------------+
-|         | HE        | CONFIG_NRF700X_BAND_UNII_1_LOWER_EDGE_BACKOFF_HE              |
+|         | HE        | CONFIG_NRF70_BAND_UNII_1_LOWER_EDGE_BACKOFF_HE                |
 +---------+-----------+---------------------------------------------------------------+
-| UNII-2A | HT/V HT   | CONFIG_NRF700X_BAND_UNII_2A_LOWER_EDGE_BACKOFF_HT             |
+| UNII-2A | HT/V HT   | CONFIG_NRF70_BAND_UNII_2A_LOWER_EDGE_BACKOFF_HT               |
 +         +-----------+---------------------------------------------------------------+
-|         | HE        | CONFIG_NRF700X_BAND_UNII_2A_LOWER_EDGE_BACKOFF_HE             |
+|         | HE        | CONFIG_NRF70_BAND_UNII_2A_LOWER_EDGE_BACKOFF_HE               |
 +---------+-----------+---------------------------------------------------------------+
-| UNII-2C | HT/V HT   | CONFIG_NRF700X_BAND_UNII_2C_LOWER_EDGE_BACKOFF_HT             |
+| UNII-2C | HT/V HT   | CONFIG_NRF70_BAND_UNII_2C_LOWER_EDGE_BACKOFF_HT               |
 +         +-----------+---------------------------------------------------------------+
-|         | HE        | CONFIG_NRF700X_BAND_UNII_2C_LOWER_EDGE_BACKOFF_HE             |
+|         | HE        | CONFIG_NRF70_BAND_UNII_2C_LOWER_EDGE_BACKOFF_HE               |
 +---------+-----------+---------------------------------------------------------------+
-| UNII-3  | HT/V HT   | CONFIG_NRF700X_BAND_UNII_3_LOWER_EDGE_BACKOFF_HT              |
+| UNII-3  | HT/V HT   | CONFIG_NRF70_BAND_UNII_3_LOWER_EDGE_BACKOFF_HT                |
 +         +-----------+---------------------------------------------------------------+
-|         | HE        | CONFIG_NRF700X_BAND_UNII_3_LOWER_EDGE_BACKOFF_HE              |
+|         | HE        | CONFIG_NRF70_BAND_UNII_3_LOWER_EDGE_BACKOFF_HE                |
 +---------+-----------+---------------------------------------------------------------+
-| UNII-4  | HT/V HT   | CONFIG_NRF700X_BAND_UNII_4_LOWER_EDGE_BACKOFF_HT              |
+| UNII-4  | HT/V HT   | CONFIG_NRF70_BAND_UNII_4_LOWER_EDGE_BACKOFF_HT                |
 +         +-----------+---------------------------------------------------------------+
-|         | HE        | CONFIG_NRF700X_BAND_UNII_4_LOWER_EDGE_BACKOFF_HE              |
+|         | HE        | CONFIG_NRF70_BAND_UNII_4_LOWER_EDGE_BACKOFF_HE                |
 +---------+-----------+---------------------------------------------------------------+
 
 +---------+-----------+---------------------------------------------------------------+
 | Band    | Frame type| Kconfig parameter for upper edge backoff                      |
 +=========+===========+===============================================================+
-| 2.4 GHz | DSSS      | CONFIG_NRF700X_BAND_2G_UPPER_EDGE_BACKOFF_DSSS                |
+| 2.4 GHz | DSSS      | CONFIG_NRF70_BAND_2G_UPPER_EDGE_BACKOFF_DSSS                  |
 +         +-----------+---------------------------------------------------------------+
-|         | HT/V HT   | CONFIG_NRF700X_BAND_2G_UPPER_EDGE_BACKOFF_HT                  |
+|         | HT/V HT   | CONFIG_NRF70_BAND_2G_UPPER_EDGE_BACKOFF_HT                    |
 +         +-----------+---------------------------------------------------------------+
-|         | HE        | CONFIG_NRF700X_BAND_2G_UPPER_EDGE_BACKOFF_HE                  |
+|         | HE        | CONFIG_NRF70_BAND_2G_UPPER_EDGE_BACKOFF_HE                    |
 +---------+-----------+---------------------------------------------------------------+
-| UNII-1  | HT/V HT   | CONFIG_NRF700X_BAND_UNII_1_UPPER_EDGE_BACKOFF_HT              |
+| UNII-1  | HT/V HT   | CONFIG_NRF70_BAND_UNII_1_UPPER_EDGE_BACKOFF_HT                |
 +         +-----------+---------------------------------------------------------------+
-|         | HE        | CONFIG_NRF700X_BAND_UNII_1_UPPER_EDGE_BACKOFF_HE              |
+|         | HE        | CONFIG_NRF70_BAND_UNII_1_UPPER_EDGE_BACKOFF_HE                |
 +---------+-----------+---------------------------------------------------------------+
-| UNII-2A | HT/V HT   | CONFIG_NRF700X_BAND_UNII_2A_UPPER_EDGE_BACKOFF_HT             |
+| UNII-2A | HT/V HT   | CONFIG_NRF70_BAND_UNII_2A_UPPER_EDGE_BACKOFF_HT               |
 +         +-----------+---------------------------------------------------------------+
-|         | HE        | CONFIG_NRF700X_BAND_UNII_2A_UPPER_EDGE_BACKOFF_HE             |
+|         | HE        | CONFIG_NRF70_BAND_UNII_2A_UPPER_EDGE_BACKOFF_HE               |
 +---------+-----------+---------------------------------------------------------------+
-| UNII-2C | HT/V HT   | CONFIG_NRF700X_BAND_UNII_2C_UPPER_EDGE_BACKOFF_HT             |
+| UNII-2C | HT/V HT   | CONFIG_NRF70_BAND_UNII_2C_UPPER_EDGE_BACKOFF_HT               |
 +         +-----------+---------------------------------------------------------------+
-|         | HE        | CONFIG_NRF700X_BAND_UNII_2C_UPPER_EDGE_BACKOFF_HE             |
+|         | HE        | CONFIG_NRF70_BAND_UNII_2C_UPPER_EDGE_BACKOFF_HE               |
 +---------+-----------+---------------------------------------------------------------+
-| UNII-3  | HT/V HT   | CONFIG_NRF700X_BAND_UNII_3_UPPER_EDGE_BACKOFF_HT              |
+| UNII-3  | HT/V HT   | CONFIG_NRF70_BAND_UNII_3_UPPER_EDGE_BACKOFF_HT                |
 +         +-----------+---------------------------------------------------------------+
-|         | HE        | CONFIG_NRF700X_BAND_UNII_3_UPPER_EDGE_BACKOFF_HE              |
+|         | HE        | CONFIG_NRF70_BAND_UNII_3_UPPER_EDGE_BACKOFF_HE                |
 +---------+-----------+---------------------------------------------------------------+
-| UNII-4  | HT/V HT   | CONFIG_NRF700X_BAND_UNII_4_UPPER_EDGE_BACKOFF_HT              |
+| UNII-4  | HT/V HT   | CONFIG_NRF70_BAND_UNII_4_UPPER_EDGE_BACKOFF_HT                |
 +         +-----------+---------------------------------------------------------------+
-|         | HE        | CONFIG_NRF700X_BAND_UNII_4_UPPER_EDGE_BACKOFF_HE              |
+|         | HE        | CONFIG_NRF70_BAND_UNII_4_UPPER_EDGE_BACKOFF_HE                |
 +---------+-----------+---------------------------------------------------------------+
 
 Setting band edge parameters
 ****************************
 
 Review if the transmission (TX) power of any band-edge channels requires backoff according to the active regulatory domain.
-The Kconfig parameters and their default values are defined in the :file:`<ncs_repo>/nrf/drivers/wifi/nrf700x/Kconfig` file.
+The Kconfig parameters and their default values are defined in the :file:`<ncs_repo>/zephyr/drivers/wifi/nrf_wifi/Kconfig.nrfwifi` file.
 If backoff is needed, set the following Kconfig parameters to ``<backoff_dB>`` in the project :file:`prj.conf` configuration file.
 
 Kconfig parameters for the lower edge backoff:
 
-* :kconfig:option:`CONFIG_NRF700X_BAND_2G_LOWER_EDGE_BACKOFF_DSSS`
-* :kconfig:option:`CONFIG_NRF700X_BAND_2G_LOWER_EDGE_BACKOFF_HT`
-* :kconfig:option:`CONFIG_NRF700X_BAND_2G_LOWER_EDGE_BACKOFF_HE`
-* :kconfig:option:`CONFIG_NRF700X_BAND_UNII_1_LOWER_EDGE_BACKOFF_HT`
-* :kconfig:option:`CONFIG_NRF700X_BAND_UNII_1_LOWER_EDGE_BACKOFF_HE`
-* :kconfig:option:`CONFIG_NRF700X_BAND_UNII_2A_LOWER_EDGE_BACKOFF_HT`
-* :kconfig:option:`CONFIG_NRF700X_BAND_UNII_2A_LOWER_EDGE_BACKOFF_HE`
-* :kconfig:option:`CONFIG_NRF700X_BAND_UNII_2C_LOWER_EDGE_BACKOFF_HT`
-* :kconfig:option:`CONFIG_NRF700X_BAND_UNII_2C_LOWER_EDGE_BACKOFF_HE`
-* :kconfig:option:`CONFIG_NRF700X_BAND_UNII_3_LOWER_EDGE_BACKOFF_HT`
-* :kconfig:option:`CONFIG_NRF700X_BAND_UNII_3_LOWER_EDGE_BACKOFF_HE`
-* :kconfig:option:`CONFIG_NRF700X_BAND_UNII_4_LOWER_EDGE_BACKOFF_HT`
-* :kconfig:option:`CONFIG_NRF700X_BAND_UNII_4_LOWER_EDGE_BACKOFF_HE`
+* :kconfig:option:`CONFIG_NRF70_BAND_2G_LOWER_EDGE_BACKOFF_DSSS`
+* :kconfig:option:`CONFIG_NRF70_BAND_2G_LOWER_EDGE_BACKOFF_HT`
+* :kconfig:option:`CONFIG_NRF70_BAND_2G_LOWER_EDGE_BACKOFF_HE`
+* :kconfig:option:`CONFIG_NRF70_BAND_UNII_1_LOWER_EDGE_BACKOFF_HT`
+* :kconfig:option:`CONFIG_NRF70_BAND_UNII_1_LOWER_EDGE_BACKOFF_HE`
+* :kconfig:option:`CONFIG_NRF70_BAND_UNII_2A_LOWER_EDGE_BACKOFF_HT`
+* :kconfig:option:`CONFIG_NRF70_BAND_UNII_2A_LOWER_EDGE_BACKOFF_HE`
+* :kconfig:option:`CONFIG_NRF70_BAND_UNII_2C_LOWER_EDGE_BACKOFF_HT`
+* :kconfig:option:`CONFIG_NRF70_BAND_UNII_2C_LOWER_EDGE_BACKOFF_HE`
+* :kconfig:option:`CONFIG_NRF70_BAND_UNII_3_LOWER_EDGE_BACKOFF_HT`
+* :kconfig:option:`CONFIG_NRF70_BAND_UNII_3_LOWER_EDGE_BACKOFF_HE`
+* :kconfig:option:`CONFIG_NRF70_BAND_UNII_4_LOWER_EDGE_BACKOFF_HT`
+* :kconfig:option:`CONFIG_NRF70_BAND_UNII_4_LOWER_EDGE_BACKOFF_HE`
 
 Kconfig parameters for the upper edge backoff:
 
-* :kconfig:option:`CONFIG_NRF700X_BAND_2G_UPPER_EDGE_BACKOFF_DSSS`
-* :kconfig:option:`CONFIG_NRF700X_BAND_2G_UPPER_EDGE_BACKOFF_HT`
-* :kconfig:option:`CONFIG_NRF700X_BAND_2G_UPPER_EDGE_BACKOFF_HE`
-* :kconfig:option:`CONFIG_NRF700X_BAND_UNII_1_UPPER_EDGE_BACKOFF_HT`
-* :kconfig:option:`CONFIG_NRF700X_BAND_UNII_1_UPPER_EDGE_BACKOFF_HE`
-* :kconfig:option:`CONFIG_NRF700X_BAND_UNII_2A_UPPER_EDGE_BACKOFF_HT`
-* :kconfig:option:`CONFIG_NRF700X_BAND_UNII_2A_UPPER_EDGE_BACKOFF_HE`
-* :kconfig:option:`CONFIG_NRF700X_BAND_UNII_2C_UPPER_EDGE_BACKOFF_HT`
-* :kconfig:option:`CONFIG_NRF700X_BAND_UNII_2C_UPPER_EDGE_BACKOFF_HE`
-* :kconfig:option:`CONFIG_NRF700X_BAND_UNII_3_UPPER_EDGE_BACKOFF_HT`
-* :kconfig:option:`CONFIG_NRF700X_BAND_UNII_3_UPPER_EDGE_BACKOFF_HE`
-* :kconfig:option:`CONFIG_NRF700X_BAND_UNII_4_UPPER_EDGE_BACKOFF_HT`
-* :kconfig:option:`CONFIG_NRF700X_BAND_UNII_4_UPPER_EDGE_BACKOFF_HE`
+* :kconfig:option:`CONFIG_NRF70_BAND_2G_UPPER_EDGE_BACKOFF_DSSS`
+* :kconfig:option:`CONFIG_NRF70_BAND_2G_UPPER_EDGE_BACKOFF_HT`
+* :kconfig:option:`CONFIG_NRF70_BAND_2G_UPPER_EDGE_BACKOFF_HE`
+* :kconfig:option:`CONFIG_NRF70_BAND_UNII_1_UPPER_EDGE_BACKOFF_HT`
+* :kconfig:option:`CONFIG_NRF70_BAND_UNII_1_UPPER_EDGE_BACKOFF_HE`
+* :kconfig:option:`CONFIG_NRF70_BAND_UNII_2A_UPPER_EDGE_BACKOFF_HT`
+* :kconfig:option:`CONFIG_NRF70_BAND_UNII_2A_UPPER_EDGE_BACKOFF_HE`
+* :kconfig:option:`CONFIG_NRF70_BAND_UNII_2C_UPPER_EDGE_BACKOFF_HT`
+* :kconfig:option:`CONFIG_NRF70_BAND_UNII_2C_UPPER_EDGE_BACKOFF_HE`
+* :kconfig:option:`CONFIG_NRF70_BAND_UNII_3_UPPER_EDGE_BACKOFF_HT`
+* :kconfig:option:`CONFIG_NRF70_BAND_UNII_3_UPPER_EDGE_BACKOFF_HE`
+* :kconfig:option:`CONFIG_NRF70_BAND_UNII_4_UPPER_EDGE_BACKOFF_HT`
+* :kconfig:option:`CONFIG_NRF70_BAND_UNII_4_UPPER_EDGE_BACKOFF_HE`
