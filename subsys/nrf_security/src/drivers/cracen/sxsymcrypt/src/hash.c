@@ -4,6 +4,7 @@
  *  SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include "../include/sxsymcrypt/hash.h"
+#include "../include/sxsymcrypt/hashdefs.h"
 #include "../include/sxsymcrypt/sha1.h"
 #include "../include/sxsymcrypt/sha2.h"
 #include "../include/sxsymcrypt/sm3.h"
@@ -12,7 +13,6 @@
 #include "crypmasterregs.h"
 #include "hw.h"
 #include "cmdma.h"
-#include "hashdefs.h"
 
 #define BA413_HMAC_CONF (1 << 8)
 #define HASH_HW_PAD	(1 << 9)
