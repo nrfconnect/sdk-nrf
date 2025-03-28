@@ -747,7 +747,17 @@ Sensor samples
 SUIT samples
 ------------
 
-|no_changes_yet_note|
+* Added the :ref:`nrf54h_suit_ab_sample` sample that demonstrates how to perform A/B updates using SUIT manifests.
+
+* :ref:`nrf54h_suit_sample` sample:
+
+  * Updated:
+
+    * The memory maps to cover the entire available MRAM memory.
+    * The memory maps to place recovery firmware on lower addresses than the main firmware.
+    * By enabling secure entropy source in all main Bluetooth-enabled sample variants (except recovery firmware).
+    * By extending the manifests to process the ``suit-payload-fetch`` sequence of the Nordic top update candidate.
+    * By extending the manifests with build-time checks for consistency between MPI and envelope signing configuration.
 
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
@@ -829,6 +839,11 @@ Wi-Fi drivers
 -------------
 
 |no_changes_yet_note|
+
+Flash drivers
+-------------
+
+* Added a ``flash_ipuc`` driver that allows to manage SUIT IPUC memory through the Zephyr flash API.
 
 Libraries
 =========
@@ -914,6 +929,33 @@ DFU libraries
 * :ref:`lib_fmfu_fdev`:
 
   * Regenerated the zcbor-generated code files using v0.9.0.
+
+SUIT libraries
+--------------
+
+* Added:
+
+  * Support for manifest-controlled variables, that allow to control manifest logic based on previous evaluations as well as store integer values inside the SUIT non-volatile memory region.
+  * Support for in-place updateable components (IPUC) that allows to cross memory permission boundaries to update inactive memory regions from the main application.
+  * Support for IPUC in SUIT manifests:
+
+    * It is possible to fetch payloads directly into an IPUC.
+    * It is possible to declare an IPUC as DFU cache area.
+    * It is possible to trigger Nordic firmware updates from an IPUC-based DFU cache area.
+
+  * Support for IPUC in DFU protocols:
+
+    * It is possible to write into IPUC using SMP image command group.
+    * It is possible to write into IPUC using SUIT SMP cache raw upload commands.
+    * It is possible to write into IPUC using SUIT :ref:`dfu_target<lib_dfu_target_suit_style_update>` library.
+
+  * A possibility to copy binaries into radio local RAM memory from SUIT radio manifests.
+  * A possibility to specify the minimal Nordic top manifest version in the :file:`VERSION` file.
+  * A possibility to block independent updates of Nordic manifests using the :kconfig:option:`CONFIG_SUIT_NORDIC_TOP_INDEPENDENT_UPDATE_FORBIDDEN` Kconfig option.
+
+* Updated:
+
+  * By moving the MPI configuration from local Kconfigs to sysbuild.
 
 Gazell libraries
 ----------------
