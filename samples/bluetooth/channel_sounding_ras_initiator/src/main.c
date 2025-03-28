@@ -8,15 +8,17 @@
  *  @brief Channel Sounding Initiator with Ranging Requestor sample
  */
 
+#include <math.h>
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
+#include <zephyr/sys/reboot.h>
 #include <zephyr/bluetooth/cs.h>
 #include <zephyr/bluetooth/gatt.h>
 #include <zephyr/bluetooth/conn.h>
 #include <bluetooth/scan.h>
 #include <bluetooth/services/ras.h>
 #include <bluetooth/gatt_dm.h>
-#include "distance_estimation.h"
+#include <bluetooth/cs_de.h>
 
 #include <dk_buttons_and_leds.h>
 
@@ -28,6 +30,8 @@ LOG_MODULE_REGISTER(app_main, LOG_LEVEL_INF);
 #define CS_CONFIG_ID	       0
 #define NUM_MODE_0_STEPS       3
 #define PROCEDURE_COUNTER_NONE (-1)
+#define DE_SLIDING_WINDOW_SIZE (10)
+#define MAX_AP		       (CONFIG_BT_RAS_MAX_ANTENNA_PATHS)
 
 #define LOCAL_PROCEDURE_MEM                                                                        \
 	((BT_RAS_MAX_STEPS_PER_PROCEDURE * sizeof(struct bt_le_cs_subevent_step)) +                \
@@ -36,28 +40,136 @@ LOG_MODULE_REGISTER(app_main, LOG_LEVEL_INF);
 static K_SEM_DEFINE(sem_remote_capabilities_obtained, 0, 1);
 static K_SEM_DEFINE(sem_config_created, 0, 1);
 static K_SEM_DEFINE(sem_cs_security_enabled, 0, 1);
-static K_SEM_DEFINE(sem_procedure_done, 0, 1);
 static K_SEM_DEFINE(sem_connected, 0, 1);
-static K_SEM_DEFINE(sem_rd_ready, 0, 1);
 static K_SEM_DEFINE(sem_discovery_done, 0, 1);
 static K_SEM_DEFINE(sem_mtu_exchange_done, 0, 1);
-static K_SEM_DEFINE(sem_rd_complete, 0, 1);
 static K_SEM_DEFINE(sem_security, 0, 1);
+static K_SEM_DEFINE(sem_local_steps, 1, 1);
+
+static K_MUTEX_DEFINE(distance_estimate_buffer_mutex);
 
 static struct bt_conn *connection;
-static uint8_t n_ap;
 NET_BUF_SIMPLE_DEFINE_STATIC(latest_local_steps, LOCAL_PROCEDURE_MEM);
 NET_BUF_SIMPLE_DEFINE_STATIC(latest_peer_steps, BT_RAS_PROCEDURE_MEM);
-static int32_t most_recent_peer_ranging_counter = PROCEDURE_COUNTER_NONE;
 static int32_t most_recent_local_ranging_counter = PROCEDURE_COUNTER_NONE;
 static int32_t dropped_ranging_counter = PROCEDURE_COUNTER_NONE;
 
+static uint8_t buffer_index;
+static uint8_t buffer_num_valid;
+static cs_de_dist_estimates_t distance_estimate_buffer[MAX_AP][DE_SLIDING_WINDOW_SIZE];
+
+static void store_distance_estimates(cs_de_report_t *p_report)
+{
+	int lock_state = k_mutex_lock(&distance_estimate_buffer_mutex, K_FOREVER);
+
+	__ASSERT_NO_MSG(lock_state == 0);
+
+	for (uint8_t ap = 0; ap < p_report->n_ap; ap++) {
+		memcpy(&distance_estimate_buffer[ap][buffer_index],
+		       &p_report->distance_estimates[ap], sizeof(cs_de_dist_estimates_t));
+	}
+
+	buffer_index = (buffer_index + 1) % DE_SLIDING_WINDOW_SIZE;
+
+	if (buffer_num_valid < DE_SLIDING_WINDOW_SIZE) {
+		buffer_num_valid++;
+	}
+
+	k_mutex_unlock(&distance_estimate_buffer_mutex);
+}
+
+static cs_de_dist_estimates_t get_distance(uint8_t ap)
+{
+	cs_de_dist_estimates_t averaged_result = {};
+	uint8_t num_ifft = 0;
+	uint8_t num_phase_slope = 0;
+	uint8_t num_rtt = 0;
+
+	int lock_state = k_mutex_lock(&distance_estimate_buffer_mutex, K_FOREVER);
+
+	__ASSERT_NO_MSG(lock_state == 0);
+
+	for (uint8_t i = 0; i < buffer_num_valid; i++) {
+		if (isfinite(distance_estimate_buffer[ap][i].ifft)) {
+			num_ifft++;
+			averaged_result.ifft += distance_estimate_buffer[ap][i].ifft;
+		}
+		if (isfinite(distance_estimate_buffer[ap][i].phase_slope)) {
+			num_phase_slope++;
+			averaged_result.phase_slope += distance_estimate_buffer[ap][i].phase_slope;
+		}
+		if (isfinite(distance_estimate_buffer[ap][i].rtt)) {
+			num_rtt++;
+			averaged_result.rtt += distance_estimate_buffer[ap][i].rtt;
+		}
+	}
+
+	k_mutex_unlock(&distance_estimate_buffer_mutex);
+
+	if (num_ifft) {
+		averaged_result.ifft /= num_ifft;
+	}
+
+	if (num_phase_slope) {
+		averaged_result.phase_slope /= num_phase_slope;
+	}
+
+	if (num_rtt) {
+		averaged_result.rtt /= num_rtt;
+	}
+
+	return averaged_result;
+}
+
+static void ranging_data_get_complete_cb(struct bt_conn *conn, uint16_t ranging_counter, int err)
+{
+	ARG_UNUSED(conn);
+
+	if (err) {
+		LOG_ERR("Error when getting ranging data with ranging counter %d (err %d)",
+			ranging_counter, err);
+		return;
+	}
+
+	LOG_DBG("Ranging data get completed for ranging counter %d", ranging_counter);
+
+	/* This struct is static to avoid putting it on the stack (it's very large) */
+	static cs_de_report_t cs_de_report;
+
+	cs_de_populate_report(&latest_local_steps, &latest_peer_steps, BT_CONN_LE_CS_ROLE_INITIATOR,
+			      &cs_de_report);
+
+	net_buf_simple_reset(&latest_local_steps);
+	net_buf_simple_reset(&latest_peer_steps);
+	k_sem_give(&sem_local_steps);
+
+	cs_de_quality_t quality = cs_de_calc(&cs_de_report);
+
+	if (quality == CS_DE_QUALITY_OK) {
+		for (uint8_t ap = 0; ap < cs_de_report.n_ap; ap++) {
+			if (cs_de_report.tone_quality[ap] == CS_DE_TONE_QUALITY_OK) {
+				store_distance_estimates(&cs_de_report);
+			}
+		}
+	}
+}
+
 static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subevent_result *result)
 {
-	LOG_INF("Subevent result callback %d", result->header.procedure_counter);
-
 	if (dropped_ranging_counter == result->header.procedure_counter) {
 		return;
+	}
+
+	if (most_recent_local_ranging_counter != result->header.procedure_counter) {
+		int sem_state = k_sem_take(&sem_local_steps, K_NO_WAIT);
+
+		if (sem_state < 0) {
+			dropped_ranging_counter = result->header.procedure_counter;
+			LOG_DBG("Dropped subevent results due to unfinished ranging data request.");
+			return;
+		}
+
+		most_recent_local_ranging_counter = result->header.procedure_counter;
 	}
 
 	if (result->header.subevent_done_status == BT_CONN_LE_CS_SUBEVENT_ABORTED) {
@@ -79,36 +191,31 @@ static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subeve
 	}
 
 	dropped_ranging_counter = PROCEDURE_COUNTER_NONE;
-	n_ap = result->header.num_antenna_paths;
 
 	if (result->header.procedure_done_status == BT_CONN_LE_CS_PROCEDURE_COMPLETE) {
 		most_recent_local_ranging_counter = result->header.procedure_counter;
-		k_sem_give(&sem_procedure_done);
 	} else if (result->header.procedure_done_status == BT_CONN_LE_CS_PROCEDURE_ABORTED) {
 		LOG_WRN("Procedure %u aborted", result->header.procedure_counter);
 		net_buf_simple_reset(&latest_local_steps);
+		k_sem_give(&sem_local_steps);
 	}
-}
-
-static void ranging_data_get_complete_cb(struct bt_conn *conn, uint16_t ranging_counter, int err)
-{
-	ARG_UNUSED(conn);
-
-	if (err) {
-		LOG_ERR("Error when getting ranging data with ranging counter %d (err %d)",
-			ranging_counter, err);
-		return;
-	}
-
-	LOG_INF("Ranging data get completed for ranging counter %d", ranging_counter);
-	k_sem_give(&sem_rd_complete);
 }
 
 static void ranging_data_ready_cb(struct bt_conn *conn, uint16_t ranging_counter)
 {
-	LOG_INF("Ranging data ready %i", ranging_counter);
-	most_recent_peer_ranging_counter = ranging_counter;
-	k_sem_give(&sem_rd_ready);
+	LOG_DBG("Ranging data ready %i", ranging_counter);
+
+	if (ranging_counter == most_recent_local_ranging_counter) {
+		int err = bt_ras_rreq_cp_get_ranging_data(connection, &latest_peer_steps,
+							  ranging_counter,
+							  ranging_data_get_complete_cb);
+		if (err) {
+			LOG_ERR("Get ranging data failed (err %d)", err);
+			net_buf_simple_reset(&latest_local_steps);
+			net_buf_simple_reset(&latest_peer_steps);
+			k_sem_give(&sem_local_steps);
+		}
+	}
 }
 
 static void ranging_data_overwritten_cb(struct bt_conn *conn, uint16_t ranging_counter)
@@ -217,6 +324,8 @@ static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 	bt_conn_unref(conn);
 	connection = NULL;
 	dk_set_led_off(CON_STATUS_LED);
+
+	sys_reboot(SYS_REBOOT_COLD);
 }
 
 static void remote_capabilities_cb(struct bt_conn *conn, struct bt_conn_le_cs_capabilities *params)
@@ -242,7 +351,22 @@ static void procedure_enabled_cb(struct bt_conn *conn,
 				 struct bt_conn_le_cs_procedure_enable_complete *params)
 {
 	if (params->state == 1) {
-		LOG_INF("CS procedures enabled.");
+		LOG_INF("CS procedures enabled:\n"
+			" - config ID: %u\n"
+			" - antenna configuration index: %u\n"
+			" - TX power: %d dbm\n"
+			" - subevent length: %u us\n"
+			" - subevents per event: %u\n"
+			" - subevent interval: %u\n"
+			" - event interval: %u\n"
+			" - procedure interval: %u\n"
+			" - procedure count: %u\n"
+			" - maximum procedure length: %u",
+			params->config_id, params->tone_antenna_config_selection,
+			params->selected_tx_power, params->subevent_len,
+			params->subevents_per_event, params->subevent_interval,
+			params->event_interval, params->procedure_interval, params->procedure_count,
+			params->max_procedure_len);
 	} else {
 		LOG_INF("CS procedures disabled.");
 	}
@@ -414,14 +538,14 @@ int main(void)
 		.id = CS_CONFIG_ID,
 		.main_mode_type = BT_CONN_LE_CS_MAIN_MODE_2,
 		.sub_mode_type = BT_CONN_LE_CS_SUB_MODE_1,
-		.min_main_mode_steps = 10,
-		.max_main_mode_steps = 20,
+		.min_main_mode_steps = 2,
+		.max_main_mode_steps = 5,
 		.main_mode_repetition = 0,
 		.mode_0_steps = NUM_MODE_0_STEPS,
 		.role = BT_CONN_LE_CS_ROLE_INITIATOR,
 		.rtt_type = BT_CONN_LE_CS_RTT_TYPE_AA_ONLY,
 		.cs_sync_phy = BT_CONN_LE_CS_SYNC_1M_PHY,
-		.channel_map_repetition = 5,
+		.channel_map_repetition = 3,
 		.channel_selection_type = BT_CONN_LE_CS_CHSEL_TYPE_3B,
 		.ch3c_shape = BT_CONN_LE_CS_CH3C_SHAPE_HAT,
 		.ch3c_jump = 2,
@@ -448,10 +572,10 @@ int main(void)
 
 	const struct bt_le_cs_set_procedure_parameters_param procedure_params = {
 		.config_id = CS_CONFIG_ID,
-		.max_procedure_len = 100,
-		.min_procedure_interval = 100,
-		.max_procedure_interval = 100,
-		.max_procedure_count = 1,
+		.max_procedure_len = 1000,
+		.min_procedure_interval = 10,
+		.max_procedure_interval = 10,
+		.max_procedure_count = 0,
 		.min_subevent_len = 60000,
 		.max_subevent_len = 60000,
 		.tone_antenna_config_selection = BT_LE_CS_TONE_ANTENNA_CONFIGURATION_A1_B1,
@@ -473,56 +597,28 @@ int main(void)
 		.enable = 1,
 	};
 
+	err = bt_le_cs_procedure_enable(connection, &params);
+	if (err) {
+		LOG_ERR("Failed to enable CS procedures (err %d)", err);
+		return 0;
+	}
+
 	while (true) {
-		err = bt_le_cs_procedure_enable(connection, &params);
-		if (err) {
-			LOG_ERR("Failed to enable CS procedures (err %d)", err);
-			return 0;
+		k_sleep(K_MSEC(5000));
+
+		if (buffer_num_valid != 0) {
+			for (uint8_t ap = 0; ap < MAX_AP; ap++) {
+				cs_de_dist_estimates_t distance_on_ap = get_distance(ap);
+
+				LOG_INF("Distance estimates on antenna path %u: ifft: %f, "
+					"phase_slope: %f, rtt: %f",
+					ap, (double)distance_on_ap.ifft,
+					(double)distance_on_ap.phase_slope,
+					(double)distance_on_ap.rtt);
+			}
 		}
 
-		err = k_sem_take(&sem_procedure_done, K_SECONDS(1));
-		if (err) {
-			LOG_WRN("Timeout waiting for local procedure done (err %d)", err);
-
-			/* Check if remote has rd ready to align counters. */
-			k_sem_take(&sem_rd_ready, K_SECONDS(1));
-
-			goto retry;
-		}
-
-		err = k_sem_take(&sem_rd_ready, K_SECONDS(1));
-		if (err) {
-			LOG_WRN("Timeout waiting for ranging data ready (err %d)", err);
-			goto retry;
-		}
-
-		if (most_recent_peer_ranging_counter != most_recent_local_ranging_counter) {
-			LOG_WRN("Mismatch of local and peer ranging counters (%d != %d)",
-				most_recent_peer_ranging_counter,
-				most_recent_local_ranging_counter);
-			goto retry;
-		}
-
-		err = bt_ras_rreq_cp_get_ranging_data(connection, &latest_peer_steps,
-						      most_recent_peer_ranging_counter,
-						      ranging_data_get_complete_cb);
-		if (err) {
-			LOG_ERR("Get ranging data failed (err %d)", err);
-			goto retry;
-		}
-
-		err = k_sem_take(&sem_rd_complete, K_SECONDS(5));
-		if (err) {
-			LOG_ERR("Timeout waiting for ranging data complete (err %d)", err);
-			goto retry;
-		}
-
-		estimate_distance(&latest_local_steps, &latest_peer_steps, n_ap,
-				  BT_CONN_LE_CS_ROLE_INITIATOR);
-
-retry:
-		net_buf_simple_reset(&latest_local_steps);
-		net_buf_simple_reset(&latest_peer_steps);
+		LOG_INF("Sleeping for a few seconds...");
 	}
 
 	return 0;
