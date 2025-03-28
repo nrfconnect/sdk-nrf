@@ -135,48 +135,6 @@ static int sx_hash_create_ba413(struct sxhash *c, size_t csz)
 	return SX_OK;
 }
 
-int sx_hash_create_sha256(struct sxhash *c, size_t csz)
-{
-	c->algo = &sxhashalg_sha2_256;
-
-	return sx_hash_create_ba413(c, csz);
-}
-
-int sx_hash_create_sha384(struct sxhash *c, size_t csz)
-{
-	c->algo = &sxhashalg_sha2_384;
-
-	return sx_hash_create_ba413(c, csz);
-}
-
-int sx_hash_create_sha512(struct sxhash *c, size_t csz)
-{
-	c->algo = &sxhashalg_sha2_512;
-
-	return sx_hash_create_ba413(c, csz);
-}
-
-int sx_hash_create_sha1(struct sxhash *c, size_t csz)
-{
-	c->algo = &sxhashalg_sha1;
-
-	return sx_hash_create_ba413(c, csz);
-}
-
-int sx_hash_create_sha224(struct sxhash *c, size_t csz)
-{
-	c->algo = &sxhashalg_sha2_224;
-
-	return sx_hash_create_ba413(c, csz);
-}
-
-int sx_hash_create_sm3(struct sxhash *c, size_t csz)
-{
-	c->algo = &sxhashalg_sm3;
-
-	return sx_hash_create_ba413(c, csz);
-}
-
 int sx_hash_create(struct sxhash *c, const struct sxhashalg *alg, size_t csz)
 {
 	c->algo = alg;
