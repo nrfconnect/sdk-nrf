@@ -4,12 +4,12 @@
  *  SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include "../include/sxsymcrypt/hash.h"
+#include "../include/sxsymcrypt/hashdefs.h"
 #include "../include/sxsymcrypt/sha3.h"
 #include <cracen/statuscodes.h>
 #include "crypmasterregs.h"
 #include "hw.h"
 #include "cmdma.h"
-#include "hashdefs.h"
 
 static const struct sx_digesttags ba418tags = {.cfg = DMATAG_BA418 | DMATAG_CONFIG(0),
 					       .initialstate = DMATAG_BA418 | DMATAG_DATATYPE(1) |
