@@ -92,10 +92,14 @@ Applications and samples
 .. note::
    Add details about applications and samples that use or implement the product or service.
 
-The following samples demonstrate the Memfault integration in |NCS|:
+The following application uses the Edge Impulse integration in the |NCS|:
 
-* :ref:`peripheral_mds`
-* :ref:`memfault_sample`
+* :ref:`nrf_machine_learning_app`
+
+The following samples demonstrate the Edge Impulse integration in the |NCS|:
+
+* :ref:`ei_wrapper_sample`
+* :ref:`ei_data_forwarder_sample`
 
 Library support
 ***************

@@ -7,7 +7,7 @@ Updating the Thingy:91 firmware using the Cellular Monitor app
    :local:
    :depth: 2
 
-Thingy:91 (v1.5.0 or earlier) comes preloaded with the Asset Tracker v2 firmware and modem firmware on the nRF9160 :term:`System in Package (SiP)`, and the Connectivity bridge application firmware on the nRF52840 :term:`System on Chip (SoC)` that enable the device to use the environment sensors and track the device using :term:`Global Positioning System (GPS)`.
+Thingy:91 (v1.5.0 or earlier) comes preloaded with the nRF9160: Asset Tracker firmware and modem firmware on the nRF9160 :term:`System in Package (SiP)`, and the Connectivity bridge application firmware on the nRF52840 :term:`System on Chip (SoC)` that enable the device to use the environment sensors and track the device using :term:`Global Positioning System (GPS)`.
 The data is transmitted to nRF Cloud.
 
 .. tip::
