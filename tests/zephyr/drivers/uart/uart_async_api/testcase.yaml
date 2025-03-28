@@ -1,0 +1,25 @@
+common:
+  tags:
+    - drivers
+    - uart
+    - ci_tests_zephyr_drivers_uart
+tests:
+  nrf.extended.drivers.uart.async_api:
+    platform_allow:
+      - nrf7120pdk/nrf7120/cpuapp
+    filter: CONFIG_SERIAL_SUPPORT_ASYNC and not CONFIG_UART_MCUX_LPUART
+    harness: ztest
+    harness_config:
+      fixture: gpio_loopback
+    depends_on: gpio
+  nrf.extended.drivers.uart.async_api.rtt:
+    platform_allow:
+      - nrf7120pdk/nrf7120/cpuapp
+    filter: CONFIG_SERIAL_SUPPORT_ASYNC and CONFIG_HAS_SEGGER_RTT
+      and not CONFIG_UART_MCUX_LPUART and not CONFIG_UART_MCUX_FLEXCOMM
+    extra_args: |
+      DTC_OVERLAY_FILE=${ZEPHYR_BASE}/tests/drivers/uart/uart_async_api/boards/segger_rtt.overlay
+    extra_configs:
+      - CONFIG_USE_SEGGER_RTT=y
+      - CONFIG_UART_RTT=y
+    build_only: true

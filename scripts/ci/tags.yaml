@@ -1493,3 +1493,8 @@ ci_tests_zephyr_drivers_uart:
   files:
     - nrf/tests/zephyr/drivers/uart/
     - zephyr/tests/drivers/uart/
+
+ci_tests_zephyr_drivers_sensors:
+  files:
+    - nrf/tests/zephyr/drivers/sensor/
+    - zephyr/tests/drivers/sensor/

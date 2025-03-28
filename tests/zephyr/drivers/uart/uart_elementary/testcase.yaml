@@ -14,8 +14,10 @@ tests:
       - nrf54l09pdk/nrf54l09/cpuapp
       - nrf54l09pdk/nrf54l09/cpuflpr
       - nrf54l20pdk/nrf54l20/cpuflpr
+      - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp
   nrf.extended.drivers.uart.uart_elementary_dual_l09:
     filter: CONFIG_SERIAL_SUPPORT_INTERRUPT
     platform_allow:
@@ -53,6 +55,36 @@ tests:
       - nrf54l20pdk/nrf54l20/cpuflpr
     extra_args:
       - DTC_OVERLAY_FILE="boards/nrf54l20pdk_nrf54l20_dual_uart.overlay"
+    extra_configs:
+      - CONFIG_DUAL_UART_TEST=y
+      - CONFIG_SETUP_MISMATCH_TEST=y
+  nrf.extended.drivers.uart.uart_elementary_dual_nrf7120:
+    filter: CONFIG_SERIAL_SUPPORT_INTERRUPT
+    platform_allow:
+      - nrf7120pdk/nrf7120/cpuapp
+    extra_args: DTC_OVERLAY_FILE="boards/nrf7120pdk_nrf7120_cpuapp_dual_uart.overlay"
+    extra_configs:
+      - CONFIG_DUAL_UART_TEST=y
+  nrf.extended.drivers.uart.uart_elementary_dual_setup_mismatch_nrf7120:
+    filter: CONFIG_SERIAL_SUPPORT_INTERRUPT
+    platform_allow:
+      - nrf7120pdk/nrf7120/cpuapp
+    extra_args: DTC_OVERLAY_FILE="boards/nrf7120pdk_nrf7120_cpuapp_dual_uart.overlay"
+    extra_configs:
+      - CONFIG_DUAL_UART_TEST=y
+      - CONFIG_SETUP_MISMATCH_TEST=y
+  nrf.extended.drivers.uart.uart_elementary_dual_nrf7120_cpuflpr:
+    filter: CONFIG_SERIAL_SUPPORT_INTERRUPT
+    platform_allow:
+      - nrf7120pdk/nrf7120/cpuflpr
+    extra_args: DTC_OVERLAY_FILE="boards/nrf7120pdk_nrf7120_cpuflpr_dual_uart.overlay"
+    extra_configs:
+      - CONFIG_DUAL_UART_TEST=y
+  nrf.extended.drivers.uart.uart_elementary_dual_setup_mismatch_nrf7120_cpuflpr:
+    filter: CONFIG_SERIAL_SUPPORT_INTERRUPT
+    platform_allow:
+      - nrf7120pdk/nrf7120/cpuflpr
+    extra_args: DTC_OVERLAY_FILE="boards/nrf7120pdk_nrf7120_cpuflpr_dual_uart.overlay"
     extra_configs:
       - CONFIG_DUAL_UART_TEST=y
       - CONFIG_SETUP_MISMATCH_TEST=y
