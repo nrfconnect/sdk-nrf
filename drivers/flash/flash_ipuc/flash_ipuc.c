@@ -815,6 +815,8 @@ void flash_image_ipuc_release(size_t id)
 {
 	for (size_t i = 0; i < ARRAY_SIZE(ipuc_imgs); i++) {
 		if (ipuc_imgs[i].id == id) {
+			/* Flush any remaining data. */
+			(void)nrf_ipuc_write(ipuc_imgs[i].fdev, 0, NULL, 0);
 			flash_ipuc_release(ipuc_imgs[i].fdev);
 			ipuc_imgs[i].fdev = NULL;
 			break;
