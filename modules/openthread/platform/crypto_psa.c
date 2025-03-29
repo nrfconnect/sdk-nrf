@@ -5,21 +5,19 @@
  */
 
 #include <openthread/platform/crypto.h>
-
 #include <psa/crypto.h>
-
 #include <zephyr/sys/__assert.h>
+#include <string.h>
 
 #if !defined(CONFIG_BUILD_WITH_TFM) && defined(CONFIG_OPENTHREAD_CRYPTO_PSA)
 #include <zephyr/settings/settings.h>
 #endif
 
 #if defined(CONFIG_OPENTHREAD_ECDSA)
-#include <string.h>
 #include <mbedtls/asn1.h>
 #endif
 
-#include <string.h>
+#include "crypto_psa_key_allocator.h"
 
 static otError psaToOtError(psa_status_t aStatus)
 {
@@ -32,6 +30,20 @@ static otError psaToOtError(psa_status_t aStatus)
 		return OT_ERROR_NO_BUFS;
 	default:
 		return OT_ERROR_FAILED;
+	}
+}
+
+static size_t getKeyBits(otCryptoKeyType aType)
+{
+	switch (aType) {
+	case OT_CRYPTO_KEY_TYPE_AES:
+	case OT_CRYPTO_KEY_TYPE_RAW:
+	case OT_CRYPTO_KEY_TYPE_HMAC:
+		return 128;
+	case OT_CRYPTO_KEY_TYPE_ECDSA:
+		return 256;
+	default:
+		return 0;
 	}
 }
 
@@ -59,7 +71,7 @@ static psa_algorithm_t toPsaAlgorithm(otCryptoKeyAlgorithm aAlgorithm)
 	case OT_CRYPTO_KEY_ALG_HMAC_SHA_256:
 		return PSA_ALG_HMAC(PSA_ALG_SHA_256);
 	case OT_CRYPTO_KEY_ALG_ECDSA:
-		return PSA_ALG_DETERMINISTIC_ECDSA(PSA_ALG_SHA_256);
+		return PSA_ALG_ECDSA(PSA_ALG_SHA_256);
 	default:
 		/*
 		 * There is currently no constant like PSA_ALG_NONE, but 0 is used
@@ -116,7 +128,7 @@ void otPlatCryptoInit(void)
 {
 	psa_crypto_init();
 
-#if !defined(CONFIG_BUILD_WITH_TFM) && defined(CONFIG_OPENTHREAD_CRYPTO_PSA)
+#if !defined(CONFIG_BUILD_WITH_TFM) && defined(CONFIG_OPENTHREAD_PSA_NVM_BACKEND_ITS)
 	/*
 	 * In OpenThread, Settings are initialized after KeyManager by default. If device uses
 	 * PSA with emulated TFM, Settings have to be initialized at the end of otPlatCryptoInit(),
@@ -176,18 +188,29 @@ otError otPlatCryptoImportKey(otCryptoKeyRef *aKeyRef, otCryptoKeyType aKeyType,
 	psa_set_key_type(&attributes, toPsaKeyType(aKeyType));
 	psa_set_key_algorithm(&attributes, toPsaAlgorithm(aKeyAlgorithm));
 	psa_set_key_usage_flags(&attributes, toPsaKeyUsage(aKeyUsage));
+	psa_set_key_bits(&attributes, getKeyBits(aKeyType));
 
 	switch (aKeyPersistence) {
-	case OT_CRYPTO_KEY_STORAGE_PERSISTENT:
+	case OT_CRYPTO_KEY_STORAGE_PERSISTENT: {
+		/* Do not operate on the input key reference, because we must return the same to
+		 * OpenThread stack. Instead use local reference and the getKeyRef function to set a
+		 * proper key reference related to chosen nvs backend.
+		 */
+		otCryptoKeyRef keyRef = *aKeyRef;
+
 		psa_set_key_lifetime(&attributes, PSA_KEY_LIFETIME_PERSISTENT);
-		psa_set_key_id(&attributes, *aKeyRef);
-		break;
+
+		GET_KEY_REF(&keyRef, &attributes);
+
+		psa_set_key_id(&attributes, keyRef);
+		status = psa_import_key(&attributes, aKey, aKeyLen, &keyRef);
+	} break;
 	case OT_CRYPTO_KEY_STORAGE_VOLATILE:
 		psa_set_key_lifetime(&attributes, PSA_KEY_LIFETIME_VOLATILE);
+		status = psa_import_key(&attributes, aKey, aKeyLen, aKeyRef);
 		break;
 	}
 
-	status = psa_import_key(&attributes, aKey, aKeyLen, aKeyRef);
 	psa_reset_key_attributes(&attributes);
 
 	return psaToOtError(status);
@@ -200,11 +223,17 @@ otError otPlatCryptoExportKey(otCryptoKeyRef aKeyRef, uint8_t *aBuffer, size_t a
 		return OT_ERROR_INVALID_ARGS;
 	}
 
-	return psaToOtError(psa_export_key(aKeyRef, aBuffer, aBufferLen, aKeyLen));
+	GET_KEY_REF(&aKeyRef, NULL);
+
+	psa_status_t error = psa_export_key(aKeyRef, aBuffer, aBufferLen, aKeyLen);
+
+	return psaToOtError(error);
 }
 
 otError otPlatCryptoDestroyKey(otCryptoKeyRef aKeyRef)
 {
+	GET_KEY_REF(&aKeyRef, NULL);
+
 	return psaToOtError(psa_destroy_key(aKeyRef));
 }
 
@@ -212,6 +241,8 @@ bool otPlatCryptoHasKey(otCryptoKeyRef aKeyRef)
 {
 	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
 	psa_status_t status;
+
+	GET_KEY_REF(&aKeyRef, NULL);
 
 	status = psa_get_key_attributes(aKeyRef, &attributes);
 	psa_reset_key_attributes(&attributes);
@@ -255,8 +286,12 @@ otError otPlatCryptoHmacSha256Start(otCryptoContext *aContext, const otCryptoKey
 		return OT_ERROR_INVALID_ARGS;
 	}
 
+	otCryptoKeyRef key_ref = aKey->mKeyRef;
+
+	GET_KEY_REF(&key_ref, NULL);
+
 	operation = aContext->mContext;
-	status = psa_mac_sign_setup(operation, aKey->mKeyRef, PSA_ALG_HMAC(PSA_ALG_SHA_256));
+	status = psa_mac_sign_setup(operation, key_ref, PSA_ALG_HMAC(PSA_ALG_SHA_256));
 
 	return psaToOtError(status);
 }
@@ -321,15 +356,18 @@ otError otPlatCryptoAesEncrypt(otCryptoContext *aContext, const uint8_t *aInput,
 {
 	const size_t block_size = PSA_BLOCK_CIPHER_BLOCK_LENGTH(PSA_KEY_TYPE_AES);
 	psa_status_t status = PSA_SUCCESS;
-	psa_key_id_t *key_ref;
+	psa_key_id_t key_ref;
 	size_t cipher_length;
 
 	if (aInput == NULL || aOutput == NULL || !checkContext(aContext, sizeof(psa_key_id_t))) {
 		return OT_ERROR_INVALID_ARGS;
 	}
 
-	key_ref = aContext->mContext;
-	status = psa_cipher_encrypt(*key_ref, PSA_ALG_ECB_NO_PADDING, aInput, block_size, aOutput,
+	memcpy(&key_ref, aContext->mContext, sizeof(psa_key_id_t));
+
+	GET_KEY_REF(&key_ref, NULL);
+
+	status = psa_cipher_encrypt(key_ref, PSA_ALG_ECB_NO_PADDING, aInput, block_size, aOutput,
 				    block_size, &cipher_length);
 
 	return psaToOtError(status);
@@ -533,7 +571,9 @@ otError otPlatCryptoEcdsaSignUsingKeyRef(otCryptoKeyRef aKeyRef,
 	psa_status_t status;
 	size_t signature_length;
 
-	status = psa_sign_hash(aKeyRef, PSA_ALG_DETERMINISTIC_ECDSA(PSA_ALG_SHA_256), aHash->m8,
+	GET_KEY_REF(&aKeyRef, NULL);
+
+	status = psa_sign_hash(aKeyRef, PSA_ALG_ECDSA(PSA_ALG_SHA_256), aHash->m8,
 			       OT_CRYPTO_SHA256_HASH_SIZE, aSignature->m8,
 			       OT_CRYPTO_ECDSA_SIGNATURE_SIZE, &signature_length);
 	if (status != PSA_SUCCESS) {
@@ -551,7 +591,9 @@ otError otPlatCryptoEcdsaVerifyUsingKeyRef(otCryptoKeyRef aKeyRef,
 {
 	psa_status_t status;
 
-	status = psa_verify_hash(aKeyRef, PSA_ALG_DETERMINISTIC_ECDSA(PSA_ALG_SHA_256), aHash->m8,
+	GET_KEY_REF(&aKeyRef, NULL);
+
+	status = psa_verify_hash(aKeyRef, PSA_ALG_ECDSA(PSA_ALG_SHA_256), aHash->m8,
 				 OT_CRYPTO_SHA256_HASH_SIZE, aSignature->m8,
 				 OT_CRYPTO_ECDSA_SIGNATURE_SIZE);
 	if (status != PSA_SUCCESS) {
@@ -568,6 +610,8 @@ otError otPlatCryptoEcdsaExportPublicKey(otCryptoKeyRef aKeyRef,
 	psa_status_t status;
 	size_t exported_length;
 	uint8_t buffer[1 + OT_CRYPTO_ECDSA_PUBLIC_KEY_SIZE];
+
+	GET_KEY_REF(&aKeyRef, NULL);
 
 	status = psa_export_public_key(aKeyRef, buffer, sizeof(buffer), &exported_length);
 	if (status != PSA_SUCCESS) {
@@ -588,12 +632,14 @@ otError otPlatCryptoEcdsaGenerateAndImportKey(otCryptoKeyRef aKeyRef)
 	psa_key_id_t key_id = (psa_key_id_t)aKeyRef;
 
 	psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_VERIFY_HASH | PSA_KEY_USAGE_SIGN_HASH);
-	psa_set_key_algorithm(&attributes, PSA_ALG_DETERMINISTIC_ECDSA(PSA_ALG_SHA_256));
+	psa_set_key_algorithm(&attributes, PSA_ALG_ECDSA(PSA_ALG_SHA_256));
 	psa_set_key_type(&attributes, PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1));
 	psa_set_key_lifetime(&attributes, PSA_KEY_LIFETIME_PERSISTENT);
-	psa_set_key_id(&attributes, key_id);
 	psa_set_key_bits(&attributes, 256);
 
+	GET_KEY_REF(&key_id, &attributes);
+
+	psa_set_key_id(&attributes, key_id);
 	status = psa_generate_key(&attributes, &key_id);
 	if (status != PSA_SUCCESS) {
 		goto out;
@@ -605,13 +651,9 @@ out:
 	return psaToOtError(status);
 }
 
-otError otPlatCryptoPbkdf2GenerateKey(const uint8_t *aPassword,
-				      uint16_t       aPasswordLen,
-				      const uint8_t *aSalt,
-				      uint16_t       aSaltLen,
-				      uint32_t       aIterationCounter,
-				      uint16_t       aKeyLen,
-				      uint8_t       *aKey)
+otError otPlatCryptoPbkdf2GenerateKey(const uint8_t *aPassword, uint16_t aPasswordLen,
+				      const uint8_t *aSalt, uint16_t aSaltLen,
+				      uint32_t aIterationCounter, uint16_t aKeyLen, uint8_t *aKey)
 {
 	psa_status_t status = PSA_SUCCESS;
 	psa_key_id_t key_id = PSA_KEY_ID_NULL;
@@ -641,14 +683,14 @@ otError otPlatCryptoPbkdf2GenerateKey(const uint8_t *aPassword,
 		goto out;
 	}
 
-	status = psa_key_derivation_input_bytes(&operation, PSA_KEY_DERIVATION_INPUT_SALT,
-						aSalt, aSaltLen);
+	status = psa_key_derivation_input_bytes(&operation, PSA_KEY_DERIVATION_INPUT_SALT, aSalt,
+						aSaltLen);
 	if (status != PSA_SUCCESS) {
 		goto out;
 	}
 
-	status = psa_key_derivation_input_key(&operation, PSA_KEY_DERIVATION_INPUT_PASSWORD,
-					      key_id);
+	status =
+		psa_key_derivation_input_key(&operation, PSA_KEY_DERIVATION_INPUT_PASSWORD, key_id);
 	if (status != PSA_SUCCESS) {
 		goto out;
 	}
