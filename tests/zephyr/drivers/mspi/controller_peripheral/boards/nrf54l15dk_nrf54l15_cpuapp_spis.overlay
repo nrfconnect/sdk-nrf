@@ -1,0 +1,88 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&pinctrl {
+	sdp_mspi_spi_default: sdp_mspi_spi_default {
+		group1 {
+			psels = <NRF_PSEL(SDP_MSPI_SCK, 2, 1)>,
+				<NRF_PSEL(SDP_MSPI_DQ0, 2, 2)>,
+				<NRF_PSEL(SDP_MSPI_DQ1, 2, 4)>,
+				<NRF_PSEL(SDP_MSPI_CS0, 2, 5)>,
+				<NRF_PSEL(SDP_MSPI_CS1, 2, 6)>;
+			nordic,drive-mode = <NRF_DRIVE_S0S1>;
+		};
+	};
+	sdp_mspi_spi_sleep: sdp_mspi_spi_sleep {
+		group1 {
+			psels = <NRF_PSEL(SDP_MSPI_SCK, 2, 1)>,
+				<NRF_PSEL(SDP_MSPI_DQ0, 2, 2)>,
+				<NRF_PSEL(SDP_MSPI_DQ1, 2, 4)>,
+				<NRF_PSEL(SDP_MSPI_CS0, 2, 5)>,
+				<NRF_PSEL(SDP_MSPI_CS1, 2, 6)>;
+			low-power-enable;
+		};
+	};
+	spi21_default_alt: spi21_default_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIS_SCK, 1, 12)>,
+				<NRF_PSEL(SPIS_MISO, 1, 10)>,
+				<NRF_PSEL(SPIS_MOSI, 1, 8)>,
+				<NRF_PSEL(SPIS_CSN, 1, 14)>;
+		};
+	};
+
+	spi21_sleep_alt: spi21_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIS_SCK, 1, 12)>,
+				<NRF_PSEL(SPIS_MISO, 1, 10)>,
+				<NRF_PSEL(SPIS_MOSI, 1, 8)>,
+				<NRF_PSEL(SPIS_CSN, 1, 14)>;
+			low-power-enable;
+		};
+	};
+
+};
+
+// /delete-node/ &mx25r64;
+
+&sdp_mspi {
+	status = "okay";
+	pinctrl-0 = <&sdp_mspi_spi_default>;
+	pinctrl-1 = <&sdp_mspi_spi_sleep>;
+
+	// mspi_device: mspi_device@0 {
+	// 	status = "okay";
+	// 	compatible = "zephyr,mspi-emul-device";
+	// 	reg = <0x0>;
+	// 	mspi-max-frequency = <48000000>;
+	// };
+
+	dut_spi_dt: dut_spi_dt@1 {
+		status = "okay";
+		compatible = "zephyr,mspi-emul-device";
+		reg = <0x1>;
+		mspi-max-frequency = <DT_FREQ_M(16)>;
+	};
+};
+
+dut_spis: &spi21 {
+	compatible = "nordic,nrf-spis";
+	status = "okay";
+	def-char = <0x00>;
+	pinctrl-0 = <&spi21_default_alt>;
+	pinctrl-1 = <&spi21_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	/delete-property/rx-delay-supported;
+	/delete-property/rx-delay;
+};
+
+/ {
+	aliases {
+		mspi0 = &sdp_mspi;
+		testdevice0 = &mx25r64;
+		testdevice1 = &dut_spi_dt;
+	};
+};
