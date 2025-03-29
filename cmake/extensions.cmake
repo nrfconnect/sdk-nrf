@@ -140,12 +140,8 @@ endfunction()
 #
 #                    DTS <list>:   List to populate with DTS overlay files
 #                    KCONF <list>: List to populate with Kconfig fragment files
-#                    PM <list>:    List to populate with board / build / domain specific
+#                    PM <list>:    List to populate with board / domain specific
 #                                  static partition manager files
-#                    BUILD <type>: Build type to include for search.
-#                                  For example:
-#                                  BUILD debug, will look for <board>_debug.conf
-#                                  and <board>_debug.overlay, instead of <board>.conf
 #                    DOMAIN <domain>: Domain to use. This argument is only effective
 #                                     for partition manager configuration files.
 #
@@ -157,12 +153,10 @@ Please provide one of following: CONF_FILES")
   endif()
 
   set(single_args CONF_FILES PM DOMAIN)
-  set(zephyr_conf_single_args BOARD BOARD_REVISION BUILD DTS KCONF SUFFIX)
+  set(zephyr_conf_single_args BOARD BOARD_REVISION DTS KCONF SUFFIX)
 
   cmake_parse_arguments(PREPROCESS_ARGS "" "${single_args};${zephyr_conf_single_args}" "" ${ARGN})
-  # Remove any argument that is missing value to ensure proper behavior in situations like:
-  # ncs_file(CONF_FILES <path> PM <list> DOMAIN BUILD <type>)
-  # where value of DOMAIN could wrongly become BUILD which is another keyword.
+  # Remove any argument that is missing value to ensure proper behavior
   if(DEFINED PREPROCESS_ARGS_KEYWORDS_MISSING_VALUES)
     list(REMOVE_ITEM ARGN ${PREPROCESS_ARGS_KEYWORDS_MISSING_VALUES})
   endif()
@@ -173,9 +167,7 @@ Please provide one of following: CONF_FILES")
   if(ZEPHYR_FILE_KCONF)
     if(ZEPHYR_FILE_SUFFIX AND EXISTS ${NCS_FILE_CONF_FILES}/prj_${ZEPHYR_FILE_SUFFIX}.conf)
       set(${ZEPHYR_FILE_KCONF} ${NCS_FILE_CONF_FILES}/prj_${ZEPHYR_FILE_SUFFIX}.conf)
-    elseif(ZEPHYR_FILE_BUILD AND EXISTS ${NCS_FILE_CONF_FILES}/prj_${ZEPHYR_FILE_BUILD}.conf)
-      set(${ZEPHYR_FILE_KCONF} ${NCS_FILE_CONF_FILES}/prj_${ZEPHYR_FILE_BUILD}.conf)
-    elseif(NOT ZEPHYR_FILE_BUILD AND EXISTS ${NCS_FILE_CONF_FILES}/prj.conf)
+    elseif(EXISTS ${NCS_FILE_CONF_FILES}/prj.conf)
       set(${ZEPHYR_FILE_KCONF} ${NCS_FILE_CONF_FILES}/prj.conf)
     endif()
   endif()
@@ -212,54 +204,21 @@ Please provide one of following: CONF_FILES")
   if(NCS_FILE_PM)
     set(PM_FILE_PREFIX pm_static)
 
-    if(DEFINED FILE_SUFFIX)
-      # Prepare search for pm_static_board@ver_suffix.yml
-      zephyr_build_string(filename
-			  BOARD ${board_name}
-			  BOARD_REVISION ${board_revision}
-			  BOARD_QUALIFIERS ${board_qualifiers}
-      )
-      set(filename_list ${PM_FILE_PREFIX}_${filename})
+    # Prepare search for pm_static_board@ver_suffix.yml
+    zephyr_build_string(filename
+                        BOARD ${board_name}
+                        BOARD_REVISION ${board_revision}
+                        BOARD_QUALIFIERS ${board_qualifiers}
+    )
+    set(filename_list ${PM_FILE_PREFIX}_${filename})
 
-      # Prepare search for pm_static_board_suffix.yml
-      zephyr_build_string(filename
-			  BOARD ${board_name}
-			  BOARD_QUALIFIERS ${board_qualifiers}
-      )
-      list(APPEND filename_list ${PM_FILE_PREFIX}_${filename})
-
-      list(APPEND filename_list ${PM_FILE_PREFIX})
-    else()
-      # Prepare search for pm_static_board@ver_build.yml
-      zephyr_build_string(filename
-			  BOARD ${board_name}
-			  BOARD_REVISION ${board_revision}
-			  BOARD_QUALIFIERS ${board_qualifiers}
-                          BUILD ${ZEPHYR_FILE_BUILD}
-      )
-      set(filename_list ${PM_FILE_PREFIX}_${filename})
-
-      # Prepare search for pm_static_board_build.yml
-      zephyr_build_string(filename
-			  BOARD ${board_name}
-			  BOARD_QUALIFIERS ${board_qualifiers}
-                          BUILD ${ZEPHYR_FILE_BUILD}
-      )
-      list(APPEND filename_list ${PM_FILE_PREFIX}_${filename})
-
-      if(DEFINED ZEPHYR_FILE_BUILD)
-        # Prepare search for pm_static_build.yml
-        # Note that BOARD argument is used to position suffix accordingly
-        zephyr_build_string(filename
-                            BOARD ${ZEPHYR_FILE_BUILD}
-        )
-        list(APPEND filename_list ${PM_FILE_PREFIX}_${filename})
-      endif()
-
-      # Prepare search for pm_static.yml
-      list(APPEND filename_list ${PM_FILE_PREFIX})
-    endif()
-
+    # Prepare search for pm_static_board_suffix.yml
+    zephyr_build_string(filename
+                        BOARD ${board_name}
+                        BOARD_QUALIFIERS ${board_qualifiers}
+    )
+    list(APPEND filename_list ${PM_FILE_PREFIX}_${filename})
+    list(APPEND filename_list ${PM_FILE_PREFIX})
     list(REMOVE_DUPLICATES filename_list)
 
     foreach(filename ${filename_list})
