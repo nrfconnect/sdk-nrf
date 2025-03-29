@@ -28,6 +28,12 @@
 #include "fem_al/fem_al.h"
 #endif /* CONFIG_FEM */
 
+#define NRF54H20_ERRATA_216_PRESENT DT_NODE_HAS_STATUS(DT_NODELABEL(cpurad_cpusys_errata216_mboxes), okay)
+
+#if NRF54H20_ERRATA_216_PRESENT
+#include <zephyr/drivers/mbox.h>
+#endif /* NRF54H20_ERRATA_216_PRESENT */
+
 /* IEEE 802.15.4 default frequency. */
 #define IEEE_DEFAULT_FREQ         (5)
 /* Length on air of the LENGTH field. */
@@ -112,6 +118,50 @@ K_WORK_DELAYABLE_DEFINE(rx_timeout_work, rx_timeout_work_handler);
 
 /* Pointer to rx timeout callback function. */
 static void (**rx_timeout_cb)(void);
+
+#if NRF54H20_ERRATA_216_PRESENT
+static const struct mbox_dt_spec on_channel =
+	MBOX_DT_SPEC_GET(DT_NODELABEL(cpurad_cpusys_errata216_mboxes), on_req);
+static const struct mbox_dt_spec off_channel =
+	MBOX_DT_SPEC_GET(DT_NODELABEL(cpurad_cpusys_errata216_mboxes), off_req);
+
+/**
+ * @brief Send errata 216 on request
+ *
+ * @return 0 if successful, otherwise a negative error code
+ */
+static int errata216_on(void)
+{
+	int err = mbox_send_dt(&on_channel, NULL);
+	// printk("execute  HMPAN216 send on task\n");
+	if (!err) {
+		k_usleep(40);
+	}
+
+	return err;
+}
+
+/**
+ * @brief Send errata 216 off request
+ *
+ * @return 0 if successful, otherwise a negative error code
+ */
+static int errata216_off(void)
+{
+	// printk("execute  HMPAN216 send off task\n");
+	return mbox_send_dt(&off_channel, NULL);
+}
+#else
+static int errata216_on(void)
+{
+	return 0;
+}
+
+static int errata216_off(void)
+{
+	return 0;
+}
+#endif /* NRF54H20_ERRATA_216_PRESENT */
 
 #if CONFIG_FEM
 static struct radio_test_fem fem;
@@ -451,6 +501,10 @@ static void radio_start(bool rx, bool force_egu)
 	if (IS_ENABLED(CONFIG_FEM) || force_egu) {
 		nrf_egu_task_trigger(RADIO_TEST_EGU, RADIO_TEST_EGU_TASK);
 	} else {
+		if (errata216_on()) {
+			printk("Failed to send errata 216 on request, not starting radio.\n");
+			return;
+		}
 		nrf_radio_task_trigger(NRF_RADIO, rx ? NRF_RADIO_TASK_RXEN : NRF_RADIO_TASK_TXEN);
 	}
 }
@@ -1007,6 +1061,10 @@ void radio_test_cancel(void)
 
 	endpoints_clear();
 	radio_disable();
+
+	if (errata216_off()) {
+		printk("Failed to send errata 216 off.\n");
+	}
 }
 
 void radio_rx_stats_get(struct radio_rx_stats *rx_stats)
