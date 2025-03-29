@@ -35,7 +35,6 @@ LOG_MODULE_REGISTER(ot_coex_functions, CONFIG_LOG_DEFAULT_LEVEL);
 
 #include "coex.h"
 #include "coex_struct.h"
-#include "fmac_main.h"
 #include "ot_utils.h"
 
 #define DEMARCATE_TEST_START

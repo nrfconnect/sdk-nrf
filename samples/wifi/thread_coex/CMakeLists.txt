@@ -21,4 +21,5 @@ target_sources(app PRIVATE
 # For net_private.h
 target_include_directories(app PUBLIC
 	${ZEPHYR_BASE}/subsys/net/ip
+	${ZEPHYR_BASE}/drivers/wifi/nrf_wifi/inc/
 )
