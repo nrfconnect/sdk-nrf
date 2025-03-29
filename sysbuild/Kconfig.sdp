@@ -15,6 +15,9 @@ config SDP_GPIO
 config SDP_MSPI
 	bool "SDP MSPI application"
 
+config SDP_DEVELOPER_MODE
+	bool "SDP developer mode"
+
 config SDP_IMAGE_PATH
 	string
 	default "${ZEPHYR_NRF_MODULE_DIR}/applications/sdp/gpio" if SDP_GPIO
