@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+config TEST_USE_DMM
+	bool "Use of DMM pre-allocation"
+	help
+	  The test will use it to determine whether to prealocate DMM
+	  buffer or use regular mem slab and allocate dmm buffer inside
+	  PDM driver.

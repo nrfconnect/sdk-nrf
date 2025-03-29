@@ -832,6 +832,7 @@
 /tests/bluetooth/bsim/nrf_auraconfig/     @nrfconnect/ncs-audio
 /tests/bluetooth/tester/                  @carlescufi @nrfconnect/ncs-paladin
 /tests/crypto/                            @stephen-nordic @magnev
+/tests/drivers/audio/dmic_dump_buffer/    @nrfconnect/ncs-low-level-test
 /tests/drivers/audio/pdm_loopback/        @nrfconnect/ncs-low-level-test
 /tests/drivers/gpio/                      @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /tests/drivers/flash/flash_ipuc/          @nrfconnect/ncs-charon
