@@ -128,6 +128,10 @@ OpenThread RPC currently supports the serialization of the following OpenThread 
 * :c:func:`otLinkSetMaxFrameRetriesDirect`
 * :c:func:`otLinkSetMaxFrameRetriesIndirect`
 * :c:func:`otLinkSetPollPeriod`
+* :c:func:`otMeshDiagCancel`
+* :c:func:`otMeshDiagDiscoverTopology`
+* :c:func:`otMeshDiagGetNextChildInfo`
+* :c:func:`otMeshDiagGetNextIp6Address`
 * :c:func:`otMessageAppend`
 * :c:func:`otMessageFree`
 * :c:func:`otMessageGetLength`
