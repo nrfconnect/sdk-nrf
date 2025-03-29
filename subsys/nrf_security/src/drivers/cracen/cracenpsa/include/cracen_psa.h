@@ -375,4 +375,44 @@ int cracen_ed25519ph_verify(const uint8_t *pub_key, const char *message, size_t 
 
 int cracen_ed25519_create_pubkey(const uint8_t *priv_key, uint8_t *pub_key);
 
+int be_cmp(const unsigned char *a, const unsigned char *b, size_t sz, int carry);
+
+int ecc_create_genpubkey(const char *priv_key, char *pub_key, const struct sx_pk_ecurve *curve);
+
+int ecc_create_genprivkey(const struct sx_pk_ecurve *curve, char *priv_key, size_t priv_key_size);
+
+int cracen_ecdsa_verify_message(const char *pubkey, const struct sxhashalg *hashalg,
+				const uint8_t *message, size_t message_length,
+				const struct sx_pk_ecurve *curve, const uint8_t *signature);
+
+int cracen_ecdsa_verify_digest(const char *pubkey, const uint8_t *digest, size_t digestsz,
+			       const struct sx_pk_ecurve *curve, const uint8_t *signature);
+
+int cracen_ecdsa_sign_message(const struct ecc_priv_key *privkey, const struct sxhashalg *hashalg,
+			      const struct sx_pk_ecurve *curve, const uint8_t *message,
+			      size_t message_length, const uint8_t *signature);
+
+int cracen_ecdsa_sign_digest(const struct ecc_priv_key *privkey, const struct sxhashalg *hashalg,
+			     const struct sx_pk_ecurve *curve, const uint8_t *digest,
+			     size_t digest_length, const uint8_t *signature);
+
+int cracen_ecdsa_sign_message_deterministic(const struct ecc_priv_key *privkey,
+					    const struct sxhashalg *hashalg,
+					    const struct sx_pk_ecurve *curve,
+					    const uint8_t *message, size_t message_length,
+					    const uint8_t *signature);
+
+int cracen_ecdsa_sign_digest_deterministic(const struct ecc_priv_key *privkey,
+					   const struct sxhashalg *hashalg,
+					   const struct sx_pk_ecurve *curve, const uint8_t *digest,
+					   size_t digestsz, const uint8_t *signature);
+
+int rndinrange_create(const unsigned char *n, size_t nsz, unsigned char *out);
+
+int mac_create_hmac(const struct sxhashalg *hashalg, struct sxhash *hashopctx, const char *key,
+		    size_t keysz, char *workmem, size_t workmemsz);
+
+int hmac_produce(struct sxhash *hashctx, const struct sxhashalg *hashalg, char *out, size_t sz,
+		 char *workmem);
+
 #endif /* CRACEN_PSA_H */

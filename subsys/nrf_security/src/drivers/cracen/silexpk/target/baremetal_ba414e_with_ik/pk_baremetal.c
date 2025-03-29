@@ -137,7 +137,6 @@ uint32_t sx_pk_rdreg(struct sx_regs *regs, uint32_t addr)
 	if ((uintptr_t)p % 4) {
 		SX_WARN_UNALIGNED_ADDR(p);
 	}
-
 	v = *p;
 
 #ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
