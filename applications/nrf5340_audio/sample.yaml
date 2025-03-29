@@ -4,7 +4,10 @@ sample:
 common:
   integration_platforms:
     - nrf5340_audio_dk/nrf5340/cpuapp
-  platform_allow: nrf5340_audio_dk/nrf5340/cpuapp
+    - nrf5340dk/nrf5340/cpuapp
+  platform_allow:
+    - nrf5340_audio_dk/nrf5340/cpuapp
+    - nrf5340dk/nrf5340/cpuapp
   sysbuild: true
   build_only: true
   tags:

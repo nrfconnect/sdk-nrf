@@ -40,8 +40,12 @@ endmenu # FIFO
 #----------------------------------------------------------------------------#
 menu "Log levels"
 
-module = BOARD_VERSION
-module-str = board-version
+module = AUDIO_NRF5340_DK_INIT
+module-str = audio_nrf534-dk-init
+source "subsys/logging/Kconfig.template.log_config"
+
+module = AUDIO_NRF5340_DK_VERSION
+module-str = audio_nrf534-dk-version
 source "subsys/logging/Kconfig.template.log_config"
 
 module = CHAN_ASSIGNMENT
