@@ -30,7 +30,6 @@ LOG_MODULE_REGISTER(main, CONFIG_LOG_DEFAULT_LEVEL);
 #include <zephyr/net/socket.h>
 
 #include "coex.h"
-#include "fmac_main.h"
 
 
 /**
