@@ -31,3 +31,5 @@ target_sources(app PRIVATE
 	${app_sources}
 )
 # NORDIC SDK APP END
+
+target_link_libraries(app PRIVATE nrf-wifi-osal)
