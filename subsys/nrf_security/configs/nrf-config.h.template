@@ -36,6 +36,8 @@
 #cmakedefine MBEDTLS_MEMORY_BUFFER_ALLOC_C
 #cmakedefine MBEDTLS_DEBUG_C
 #cmakedefine MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG
+#cmakedefine MBEDTLS_HAVE_TIME
+#cmakedefine MBEDTLS_HAVE_TIME_DATE
 
 /* Platform configurations for _ALT defines */
 #cmakedefine MBEDTLS_PLATFORM_EXIT_ALT
