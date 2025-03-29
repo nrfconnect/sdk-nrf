@@ -222,7 +222,7 @@ The nRF5340 SoC is connected to the first PPK2 and the nRF7002 DK is connected t
 
 See `Measuring current`_ for more information about how to set up and measure the current consumption of both the nRF5340 SoC and the nRF7002 device.
 
-The average current consumption in an idle case can be around ~1-2 mA in the nRF5340 SoC and ~20 µA in the nRF7002 device.
+The average current consumption in an idle case can be around ~1-2 mA in the nRF5340 SoC and ~15 µA in the nRF7002 device.
 
 See :ref:`app_power_opt` for more information on power management testing and usage of the PPK2.
 
