@@ -7,8 +7,8 @@
 #ifndef DRIVERS_MSPI_NRFE_MSPI_H
 #define DRIVERS_MSPI_NRFE_MSPI_H
 
+#include <drivers/mspi/nrf_mspi.h>
 #include <zephyr/drivers/pinctrl.h>
-#include <zephyr/drivers/mspi.h>
 #include <hal/nrf_timer.h>
 
 #ifdef __cplusplus
@@ -25,10 +25,12 @@ extern "C" {
 typedef enum {
 	NRFE_MSPI_EP_BOUNDED = 0,
 	NRFE_MSPI_CONFIG_TIMER_PTR, /* nrfe_mspi_flpr_timer_msg_t */
-	NRFE_MSPI_CONFIG_PINS,      /* nrfe_mspi_pinctrl_soc_pin_msg_t */
-	NRFE_MSPI_CONFIG_DEV,       /* nrfe_mspi_dev_config_msg_t */
-	NRFE_MSPI_CONFIG_XFER,      /* nrfe_mspi_xfer_config_msg_t */
-	NRFE_MSPI_TX,	            /* nrfe_mspi_xfer_packet_msg_t + data buffer at the end */
+	NRFE_MSPI_CONFIG_PINS,	    /* nrfe_mspi_pinctrl_soc_pin_msg_t */
+	NRFE_MSPI_CONFIG_RESET,	    /* nrfe_mspi_reset_config_msg_t */
+	NRFE_MSPI_SET_RESET,	    /* nrfe_mspi_reset_set_msg_t */
+	NRFE_MSPI_CONFIG_DEV,	    /* nrfe_mspi_dev_config_msg_t */
+	NRFE_MSPI_CONFIG_XFER,	    /* nrfe_mspi_xfer_config_msg_t */
+	NRFE_MSPI_TX,		    /* nrfe_mspi_xfer_packet_msg_t + data buffer at the end */
 	NRFE_MSPI_TXRX,
 	NRFE_MSPI_SDP_APP_HARD_FAULT,
 	NRFE_MSPI_WRONG_OPCODE,
@@ -36,6 +38,11 @@ typedef enum {
 	/* This is to make sizeof(nrfe_mspi_opcode_t)==32bit, for alignment purpouse. */
 	NREE_MSPI_OPCODES_MAX = 0xFFFFFFFFU,
 } nrfe_mspi_opcode_t;
+
+typedef struct {
+	uint8_t pin_number;
+	bool inversed;
+} nrfe_mspi_reset_config_t;
 
 typedef struct {
 	enum mspi_io_mode io_mode;
@@ -64,6 +71,18 @@ typedef struct {
 	uint8_t pins_count;
 	pinctrl_soc_pin_t pin[NRFE_MSPI_PINS_MAX];
 } nrfe_mspi_pinctrl_soc_pin_msg_t;
+
+typedef struct {
+	nrfe_mspi_opcode_t opcode; /* NRFE_MSPI_CONFIG_RESET */
+	uint8_t device_index;
+	nrfe_mspi_reset_config_t reset_config;
+} nrfe_mspi_reset_config_msg_t;
+
+typedef struct {
+	nrfe_mspi_opcode_t opcode; /* NRFE_MSPI_SET_RESET */
+	uint8_t device_index;
+	int value;
+} nrfe_mspi_reset_set_msg_t;
 
 typedef struct {
 	nrfe_mspi_opcode_t opcode; /* NRFE_MSPI_CONFIG_DEV */
