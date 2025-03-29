@@ -8,7 +8,7 @@
 
 psa_status_t psa_crypto_init(void)
 {
-	return ssf_psa_crypto_init();
+	return PSA_SUCCESS;
 }
 
 psa_status_t psa_get_key_attributes(mbedtls_svc_key_id_t key, psa_key_attributes_t *attributes)
@@ -400,6 +400,18 @@ psa_status_t psa_key_derivation_output_key(const psa_key_attributes_t *attribute
 	return ssf_psa_key_derivation_output_key(attributes, &operation->handle, key);
 }
 
+psa_status_t psa_key_derivation_verify_bytes(psa_key_derivation_operation_t *operation,
+					     const uint8_t *expected, size_t expected_length)
+{
+	return PSA_ERROR_NOT_SUPPORTED;
+}
+
+psa_status_t psa_key_derivation_verify_key(psa_key_derivation_operation_t *operation,
+					   mbedtls_svc_key_id_t expected)
+{
+	return PSA_ERROR_NOT_SUPPORTED;
+}
+
 psa_status_t psa_key_derivation_abort(psa_key_derivation_operation_t *operation)
 {
 	return ssf_psa_key_derivation_abort(&operation->handle);
@@ -430,6 +442,13 @@ psa_status_t psa_sign_hash_start(psa_sign_hash_interruptible_operation_t *operat
 	return PSA_ERROR_NOT_SUPPORTED;
 }
 
+psa_status_t psa_sign_hash_complete(psa_sign_hash_interruptible_operation_t *operation,
+				    uint8_t *signature, size_t signature_size,
+				    size_t *signature_length)
+{
+	return PSA_ERROR_NOT_SUPPORTED;
+}
+
 psa_status_t psa_sign_hash_abort(psa_sign_hash_interruptible_operation_t *operation)
 {
 	return PSA_ERROR_NOT_SUPPORTED;
@@ -439,6 +458,11 @@ psa_status_t psa_verify_hash_start(psa_verify_hash_interruptible_operation_t *op
 				   mbedtls_svc_key_id_t key, psa_algorithm_t alg,
 				   const uint8_t *hash, size_t hash_length,
 				   const uint8_t *signature, size_t signature_length)
+{
+	return PSA_ERROR_NOT_SUPPORTED;
+}
+
+psa_status_t psa_verify_hash_complete(psa_verify_hash_interruptible_operation_t *operation)
 {
 	return PSA_ERROR_NOT_SUPPORTED;
 }
