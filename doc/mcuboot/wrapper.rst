@@ -17,6 +17,7 @@ Topics that are not relevant for the integration of MCUboot in the nRF Connect S
 
    index-ncs.rst
    release-notes.md
+   compression_format.md
    design.md
    encrypted_images.md
    imgtool.md
