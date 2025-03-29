@@ -691,6 +691,10 @@ Peripheral samples
     * Loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.
     * Support for the :ref:`nRF2220 front-end module <ug_radio_fem_nrf2220ek>`.
 
+* :ref:`lpuart_sample` sample:
+
+  * Changed pins used for NRF52840 DK and NRF5340 DK.
+
 PMIC samples
 ------------
 
