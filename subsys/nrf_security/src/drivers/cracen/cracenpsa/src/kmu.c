@@ -115,7 +115,7 @@ static psa_status_t get_encryption_key(const uint8_t *context, uint8_t *key)
 	psa_set_key_id(&mkek_attr, mbedtls_svc_key_id_make(0, CRACEN_BUILTIN_MKEK_ID));
 	psa_set_key_lifetime(&mkek_attr,
 			     PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
-				     PSA_KEY_PERSISTENCE_READ_ONLY, PSA_KEY_LOCATION_CRACEN));
+				     CRACEN_KEY_PERSISTENCE_READ_ONLY, PSA_KEY_LOCATION_CRACEN));
 
 	cracen_key_derivation_operation_t op = {};
 
@@ -454,7 +454,7 @@ static psa_status_t convert_to_psa_attributes(kmu_metadata *metadata,
 		key_persistence = CRACEN_KEY_PERSISTENCE_REVOKABLE;
 		break;
 	case LIB_KMU_REV_POLICY_LOCKED:
-		key_persistence = PSA_KEY_PERSISTENCE_READ_ONLY;
+		key_persistence = CRACEN_KEY_PERSISTENCE_READ_ONLY;
 		break;
 	default:
 		return PSA_ERROR_STORAGE_FAILURE;
@@ -779,6 +779,7 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 
 	switch (PSA_KEY_LIFETIME_GET_PERSISTENCE(psa_get_key_lifetime(key_attr))) {
 	case PSA_KEY_PERSISTENCE_READ_ONLY:
+	case CRACEN_KEY_PERSISTENCE_READ_ONLY:
 		metadata->rpolicy = LIB_KMU_REV_POLICY_LOCKED;
 		break;
 	case PSA_KEY_PERSISTENCE_DEFAULT:
@@ -932,17 +933,28 @@ psa_status_t cracen_kmu_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_lifeti
 	psa_status_t status;
 	unsigned int slot_id;
 	kmu_metadata metadata;
+	psa_key_persistence_t persistence;
 
 	status = get_kmu_slot_id_and_metadata(key_id, &slot_id, &metadata);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
 
-	psa_key_persistence_t read_only = metadata.rpolicy == LIB_KMU_REV_POLICY_ROTATING
-						  ? PSA_KEY_PERSISTENCE_DEFAULT
-						  : PSA_KEY_PERSISTENCE_READ_ONLY;
+	switch (metadata.rpolicy) {
+	case LIB_KMU_REV_POLICY_ROTATING:
+		persistence = PSA_KEY_PERSISTENCE_DEFAULT;
+		break;
+	case LIB_KMU_REV_POLICY_REVOKED:
+		persistence = CRACEN_KEY_PERSISTENCE_REVOKABLE;
+		break;
+	case LIB_KMU_REV_POLICY_LOCKED:
+		persistence = CRACEN_KEY_PERSISTENCE_READ_ONLY;
+		break;
+	default:
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
 
-	*lifetime = PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(read_only,
+	*lifetime = PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(persistence,
 								   PSA_KEY_LOCATION_CRACEN_KMU);
 	*slot_number = slot_id;
 

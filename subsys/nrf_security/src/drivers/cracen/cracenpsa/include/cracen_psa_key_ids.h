@@ -25,4 +25,10 @@
  */
 #define CRACEN_KEY_PERSISTENCE_REVOKABLE 0x02
 
+/*
+ * Defines a persistence state where the key can't be erased
+ * In this state the key will only be erased if ERASEALL is available and run
+ */
+ #define CRACEN_KEY_PERSISTENCE_READ_ONLY 0x03
+
 #endif
