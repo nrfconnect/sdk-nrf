@@ -1,5 +1,9 @@
+#
 # Copyright (c) 2024 Nordic Semiconductor ASA
-# SPDX-License-Identifier: Apache-2.0
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
 
 config SHIELD_NRF7002EB_INTERPOSER_P1
+	select DEPRECATED
 	def_bool $(shields_list_contains,nrf7002eb_interposer_p1)
