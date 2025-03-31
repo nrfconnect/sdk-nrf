@@ -37,261 +37,488 @@ Use the :ref:`matter_template_sample` sample as the base for building a sensor d
 
 .. rst-class:: numbered-step
 
+.. _ug_matter_gs_custom_clusters_create_xml_file:
+
 Create a new cluster description file in XML format
 ***************************************************
 
-The file should contain cluster definitions, attributes, commands, events, enums, structs, and device types in XML format.
-The cluster ``<code>`` is a 32-bit combination of the vendor ID and cluster ID and must be unique, not conflicting with existing clusters.
-The most significant 16 bits are the vendor ID, and the least significant 16 bits are the cluster ID.
-The vendor ID must be configured according to the Matter specification (section 2.5.2 Vendor Identifier).
-The cluster ID for a manufacturer-specific cluster must be in the range from ``0xFC00`` to ``0xFFFE``.
-The example contains a cluster with the code ``0xFFF1FC01``, which means ``0xFFF1`` is the Test Manufacturer ID, and ``0xFC01`` is the cluster ID.
-See the :file:`<default Matter SDK location>/src/app/zap-templates/zcl/data-model/manufacturers.xml` file to learn about the manufacturer codes.
+You can create a new cluster description file in two ways - using the nRF Connect Matter Manufacturer Cluster Editor tool or manually by writing an XML file.
+Choose the method that you find most convenient.
 
-The XML file consists of the following elements:
+The ``Using the nRF Connect Matter Manufacturer Cluster Editor`` tab provides the steps to create a new cluster description file.
+The ``Manually create an XML file`` tab explains each element of the XML file, to help you create the file manually.
+You can also use the example of the XML file provided at the end of this section.
 
-* ``<cluster>`` - Cluster definition.
-* ``<clusterExtension>`` - Cluster extension definition.
-* ``<enum>`` - Enumerated type definition.
-* ``<struct>`` - Structure definition.
-* ``<deviceType>`` - Device type definition.
-
-See the description of each element in the following tabs:
+To learn more about the tool, see the :ref:`ug_nrfconnect_manufacturer_cluster_editor_tool_basic_functionalities` section in the :ref:`ug_nrfconnect_manufacturer_cluster_editor_tool` user guide.
 
 .. tabs::
 
-   .. tab:: ``<cluster>``
+   .. tab:: Using the nRF Connect Matter Manufacturer Cluster Editor
 
-      ``<cluster>`` defines the cluster and consist of the following child elements:
+      Before using the tool, you need to download its preview version and unpack it on your machine.
+      First, make sure you have completed the steps listed in the :ref:`ug_nrfconnect_manufacturer_cluster_editor_tool_downloading_installing` user guide.
 
-      * ``<domain>`` - The domain to which the cluster belongs.
-      * ``<name>`` - The name of the cluster.
-      * ``<code>`` - A 32-bit identifier for the cluster, combining the vendor ID and a cluster ID.
-      * ``<define>`` - The C++ preprocessor macro name for the cluster, typically in uppercase with words separated by underscores.
-      * ``<description>`` - A brief description of the cluster's purpose and functionality.
-      * ``<attribute>`` - An attribute definition within the cluster.
+      Once you have the tool installed, you can create a new cluster description file.
+      Complete the following steps:
 
-         * ``side`` - Specifies whether the attribute is on the client or server side.
-         * ``code`` - A unique identifier for the attribute within the cluster.
-         * ``define`` - The C++ preprocessor macro name for the attribute, typically in uppercase with words separated by underscores.
-         * ``type`` - The data type of the attribute.
-         * ``entryType`` - The data type of array elements if the attribute is an array.
-         * ``writable`` - Indicates whether the attribute can be written by a Matter controller.
-         * ``default`` - The default value of the attribute.
-         * ``optional`` - Indicates whether the attribute is optional.
-         * ``name`` - The name of the attribute.
+      1. Edit the :guilabel:`Cluster` tab contents.
 
-      * ``<command>`` - A command definition within the cluster.
+         a. Open the :guilabel:`Cluster` tab.
+         #. Fill in the domain, name, code, define, and description of the cluster as follows:
 
-         * ``source`` - Specifies whether the command originates from the client or server.
-         * ``code`` - A unique identifier for the command within the cluster.
-         * ``name`` - The name of the command.
-         * ``optional`` - Indicates whether the command is optional.
-         * ``disableDefaultResponse`` - Indicates whether the default response to the command is disabled.
-         * ``response`` - The name of the response command, if any.
-         * ``description`` - A brief description of the command's purpose and functionality.
-         * ``arg`` - An argument for the command, specifying its name and type.
+            .. figure:: images/matter_creating_custom_cluster_cluster_page.png
+               :alt: Cluster tab
 
-      * ``<event>`` - An event definition within the cluster.
+      #. Add a new command in the :guilabel:`Commands` tab.
 
-         * ``source`` - Specifies whether the event originates from the client or server.
-         * ``code`` - A unique identifier for the event within the cluster.
-         * ``name`` - The name of the event.
-         * ``optional`` - Indicates whether the event is optional.
-         * ``description`` - A brief description of the event's purpose and functionality.
-         * ``arg`` - An argument for the event, specifying its name and type.
+         a. Open the :guilabel:`Commands` tab.
+         #. Click :guilabel:`Add command` to open edit box.
+         #. In the edit box, set the following values:
 
-      For example, the following XML code defines a cluster with one attribute, one command, and one event:
+            * **Name** as ``MyCommand``
+            * **Code** as ``0xFFF10000``
+            * **Source** as ``client``
+            * **Response** as ``MyCommandResponse``
+            * **Description** as ``Command that takes two uint8 arguments and returns their sum``
 
-      .. code-block:: xml
+         #. Click :guilabel:`Arguments`.
+         #. In the new edit box, click the plus icon to create a new argument.
+         #. Fill in :guilabel:`Name` as ``arg1``, :guilabel:`Type` as ``int8u``.
+         #. Click the plus icon icon again to create second argument.
+         #. Fill in :guilabel:`Name` as ``arg2``, :guilabel:`Type` as ``int8u``.
 
-         <?xml version="1.0"?>
-         <cluster>
-            <domain>General</domain>
-            <name>MyNewCluster</name>
-            <code>0xFFF1FC01</code>
-            <define>MY_NEW_CLUSTER</define>
-            <description>The MyNewCluster cluster showcases a cluster manufacturer extensions</description>
-            <attribute side="server" code="0xFFF10000" define="MY_ATTRIBUTE" type="boolean" writable="true" default="false" optional="false">MyAttribute</attribute>
-            <command source="client" code="0xFFF10000" name="MyCommand" response="MyCommandResponse" optional="false">
-               <description>Command that takes two uint8 arguments and returns their sum.</description>
-               <arg name="arg1" type="int8u"/>
-               <arg name="arg2" type="int8u"/>
-            </command>
-            <event source="server" code="0xFFF10000" name="MyEvent" priority="info" optional="false">
-               <description>Event that is generated by the server.</description>
-               <arg name="arg1" type="int8u"/>
-            </event>
-         </cluster>
+            The following figure shows the filled in edit box dialog with two arguments added:
 
-   .. tab:: ``<clusterExtension>``
+            .. figure:: images/matter_creating_custom_cluster_arguments_page.png
+               :alt: Arguments tab
 
-      ``<clusterExtension>`` defines the extension of an existing cluster and consist of the following attributes and child elements:
+         #. Click :guilabel:`Save` to save the arguments.
 
-      * ``code`` - A 32-bit identifier for the existing cluster, that will be extended.
-      * ``<attribute>`` - An attribute definition within the cluster.
+            The following figure shows the filled in edit box dialog with the new command added:
 
-         * ``side`` - Specifies whether the attribute is on the client or server side.
-         * ``code`` - A unique identifier for the attribute within the cluster.
-         * ``define`` - The C++ preprocessor macro name for the attribute, typically in uppercase with words separated by underscores.
-         * ``type`` - The data type of the attribute.
-         * ``entryType`` - The data type of array elements if the attribute is an array.
-         * ``writable`` - Indicates whether the attribute can be written by a Matter controller.
-         * ``default`` - The default value of the attribute.
-         * ``optional`` - Indicates whether the attribute is optional.
-         * ``name`` - The name of the attribute.
+            .. figure:: images/matter_creating_custom_cluster_commands_page.png
+               :alt: Commands tab
 
-      * ``<command>`` - A command definition within the cluster.
+         #. Click :guilabel:`Save` to save the command.
 
-         * ``source`` - Specifies whether the command originates from the client or server.
-         * ``code`` - A unique identifier for the command within the cluster.
-         * ``name`` - The name of the command.
-         * ``optional`` - Indicates whether the command is optional.
-         * ``disableDefaultResponse`` - Indicates whether the default response to the command is disabled.
-         * ``response`` - The name of the response command, if any.
-         * ``description`` - A brief description of the command's purpose and functionality.
-         * ``arg`` - An argument for the command, specifying its name and type.
+      #. Add a new argument in the :guilabel:`Attributes` tab.
 
-      * ``<event>`` - An event definition within the cluster.
+         a. Open the :guilabel:`Attributes` tab.
+         #. Click :guilabel:`Add attribute` to open edit box dialog.
+         #. Set the following values:
 
-         * ``source`` - Specifies whether the event originates from the client or server.
-         * ``code`` - A unique identifier for the event within the cluster.
-         * ``name`` - The name of the event.
-         * ``priority`` - The priority of the event.
-                          The valid values are ``debug``, ``info``, and ``critical``.
-         * ``optional`` - Indicates whether the event is optional.
-         * ``description`` - A brief description of the event's purpose and functionality.
-         * ``arg`` - An argument for the event, specifying its name and type.
+            * **Name** as ``MyAttribute``
+            * **Side** as ``server``
+            * **Code** as ``0xFFF10000``
+            * **Define** as ``MY_ATTRIBUTE``
+            * **Type** as ``boolean``
+            * **Writable** as ``true``
 
-      For example, the following XML code extends a ``Basic Information`` cluster with one attribute, one command, and one event:
+            The following figure shows the filled in edit box dialog with the new attribute added:
 
-      .. code-block:: xml
+            .. figure:: images/matter_creating_custom_cluster_attributes_page.png
+               :alt: Attributes tab
 
-         <?xml version="1.0"?>
-         <clusterExtension code="0x0028">
-            <attribute side="server" code="0x17" define="EXTENDED_ATTRIBUTE" type="boolean" writable="true" default="false" optional="false">ExtendedAttribute</attribute>
-            <command source="client" code="0x00" name="ExtendedCommand" response="ExtendedCommandResponse" optional="false">
-               <description>Command that takes two uint8 arguments and returns their sum.</description>
-               <arg name="arg1" type="int8u"/>
-               <arg name="arg2" type="int8u"/>
-            </command>
-            <event source="server" code="0x04" name="ExtendedEvent" priority="info" optional="false">
-               <description>Event that is generated by the server.</description>
-               <arg name="arg1" type="int8u"/>
-            </event>
-         </clusterExtension>
+         #. Click :guilabel:`Save` to save the attribute.
 
-   .. tab:: ``<enum>``
+      #. Add a new event in the :guilabel:`Events` tab.
 
-      ``<enum>`` elements define the enumerated types that can be used in the cluster and consist of the following attributes and child elements:
+         a. Open the :guilabel:`Events` tab.
+         #. Click :guilabel:`Add event` to open edit box dialog.
+         #. In the edit box, set the following values:
 
-      * ``name`` - The unique name of the enumerated type.
-      * ``<cluster code>`` - The cluster code(s) that the enumerated type is associated with.
-        An enumerated type can be associated with multiple clusters by defining multiple ``<cluster code>`` elements.
-        If no cluster code is specified, the enumerated type has a global scope.
-      * ``type`` - The data type of the enumerated values.
-      * ``<item>`` - The definition of an individual item within the enumerated type.
+            * **Code** as ``0xFFF10000``
+            * **Name** as ``MyEvent``
+            * **Side** as ``server``
+            * **Priority** as ``info``
+            * **Description** as ``Event that is generated by the server``
 
-         * ``name`` - The name of the item.
-         * ``value`` - The value assigned to the item, which must match the specified data type of the enumerated type.
+         #. Click :guilabel:`Fields`.
+         #. In the new edit box, click the plus icon icon to add a new field.
+         #. Fill in the following values:
 
-      For example, the following XML code defines an enumerated type with two items:
+            * **Field Id** as ``0x1``
+            * **Name** as ``arg1``
+            * **Type** as ``int8u``
 
-      .. code-block:: xml
+            The following figure shows the filled in edit box dialog with the new field added:
 
-         <enum name="MyNewEnum" type="uint8">
-            <cluster code="0xFFF1FC01" />
-            <item name="EnumValue1" value="0" />
-            <item name="EnumValue2" value="1" />
-         </enum>
+            .. figure:: images/matter_creating_custom_cluster_fields_page.png
+               :alt: Fields tab
 
-   .. tab:: ``<struct>``
+         #. Click :guilabel:`Save` to save the field.
 
-      ``<struct>`` elements define the structure types that can be used in the cluster and consist of the following attributes and child elements:
+            The following figure shows the filled in edit box dialog with the new event added:
 
-      * ``name`` - The unique name of the structure.
-      * ``isFabricScoped`` - Indicates if the structure is fabric-scoped.
-      * ``<cluster code>`` - The cluster code(s) that the structure is associated with.
-        A structure can be associated with multiple clusters by defining multiple ``<cluster code>`` elements.
-        If no cluster code is specified, the structure has a global scope.
-      * ``<item>`` - The definition of an individual item within the structure.
+            .. figure:: images/matter_creating_custom_cluster_event_page.png
+               :alt: Event page
 
-         * ``fieldId`` - The unique ID of the item within the structure.
-         * ``name`` - The name of the item.
-         * ``type`` - The data type of the item.
-         * ``array`` - Indicates if the item is an array.
-         * ``minLength`` - The minimum length of the array, if applicable.
-         * ``maxLength`` - The maximum length of the array, if applicable.
-         * ``isNullable`` - Indicates if the item can be NULL.
-         * ``isFabricSensitive`` - Indicates if the item is fabric-sensitive.
-         * ``min`` - The minimum value of the item, if applicable.
-         * ``max`` - The maximum value of the item, if applicable.
+         #. Click on the :guilabel:`Save` button to save the event.
 
-      For example, the following XML code defines a structure with one item of type octet string and length 128:
+      #. Add a new structure in the :guilabel:`Structures` tab.
 
-      .. code-block:: xml
+         a. Open the :guilabel:`Structures` tab.
+         #. Click :guilabel:`Add structure` to open edit box dialog.
+         #. In the edit box, set the following values:
 
-         <struct name="MyStruct" isFabricScoped="true">
-           <cluster code="0xFFF1FC01"/>
-           <item fieldId="1" name="Data" type="octet_string" length="128" isFabricSensitive="true"/>
-         </struct>
+            * **Name** as ``MyStruct``
+            * **Is Fabric Scoped** as ``true``
 
-   .. tab:: ``<deviceType>``
+         #. Click :guilabel:`Items`.
+         #. In the new edit box, click the plus icon icon to create a new item.
+         #. Fill in the following values:
 
-      ``<deviceType>`` elements define the device types that can be used in the cluster and consist of the following child elements:
+            * **Field Id** as ``0x1``
+            * **Name** as ``value1``
+            * **Type** as ``int8u``
+            * **Is Fabric Sensitive** as ``true``
 
-      * ``<name>`` - The unique name of the device.
-      * ``<domain>`` - The domain to which the device belongs.
-      * ``<typeName>`` - The name of the device displayed in the zap tool.
-      * ``<profileId>`` - The profile ID of the device.
+            The following figure shows the filled in edit box dialog with the new item added:
 
-         * ``editable`` - Indicates if the field can be modified.
+            .. figure:: images/matter_creating_custom_cluster_structure_items_page.png
+               :alt: Structure items tab
 
-      * ``<deviceId>`` - The device ID.
+         #. Click :guilabel:`Save` to save the item.
+         #. Click :guilabel:`Assigned clusters` to open edit box dialog.
+         #. In the new edit box, click the plus icon icon to create a new cluster assignment.
+         #. Fill in ``Code`` with the value of the cluster code defined in first step as ``0xFFF1FC01``.
 
-         * ``editable`` - Indicates if the field can be modified.
+            The following figure shows the filled in edit box dialog with the new cluster added:
 
-      * ``<class>`` - The class of the device.
-        Can be ``Utility``, ``Simple``, or ``Node``.
-      * ``<scope>`` - The scope of the device.
-        Can be ``Node``, or ``Endpoint``.
-      * ``<clusters>`` - The definition of an individual item within the structure.
+            .. figure:: images/matter_creating_custom_cluster_assigned_clusters_page.png
+               :alt: Assigned clusters tab
 
-         * ``lockOthers`` - Indicates if other clusters are locked.
-         * ``<include>`` - Defines a cluster that should be included in the device.
+         #. Click :guilabel:`Save` to save the cluster.
 
-            * ``cluster`` - The name of the cluster.
-            * ``client`` - Indicates if the client role should be enabled.
-            * ``server`` - Indicates if the server role should be enabled.
-            * ``clientLocked`` - Indicates if the client role modification should be locked.
-            * ``serverLocked`` - Indicates if the server role modification should be locked.
-            * ``<requireAttribute>`` - Indicates a required attribute's define.
-            * ``<requireCommand>`` - Indicates a required command's define.
+            The following figure shows the filled in edit box dialog with the new structure added:
 
-      For example, the following XML code defines a structure with one item of type octet string and length 128:
+            .. figure:: images/matter_creating_custom_cluster_structures_page.png
+               :alt: Structures tab
 
-      .. code-block:: xml
+         #. Click :guilabel:`Save` to save the structure.
 
-         <deviceType>
-            <name>my-new-device</name>
-            <domain>CHIP</domain>
-            <typeName>My new device</typeName>
-            <profileId editable="false">0x0FFF</profileId>
-            <deviceId editable="false">0x001</deviceId>
-            <class>Simple</class>
-            <scope>Endpoint</scope>
-            <clusters lockOthers="true">
-            <include cluster="MyNewCluster" client="true" server="true" clientLocked="false" serverLocked="false"/>
-               <requireAttribute>MY_ATTRIBUTE</requireAttribute>
-               <requireCommand>MyCommand</requireCommand>
-            </clusters>
-         </deviceType>
+      #. Add a new enum in the :guilabel:`Enums` tab.
 
-.. note::
-   The descriptions of the elements above show only the basic functionality.
-   To see the full list of available elements for each part of the XML file, refer to the Matter Specification.
+         a. Open the :guilabel:`Enums` tab.
+         #. Click :guilabel:`Add enum` to open edit box dialog.
+         #. Set the following values:
 
-You can use the following template for the :file:`MyCluster.xml` file:
+            * **Name** as ``MyEnum``
+            * **Type** as ``int8u``
+
+         #. Click :guilabel:`Items`.
+         #. In the new edit box, click the plus icon icon to create a new item.
+         #. Fill in the following values:
+
+            * **Name** as ``EnumValue1``
+            * **Value** as ``0``
+
+         #. Click the plus icon icon to create a new item.
+         #. Fill in the following values:
+
+            * **Name** as ``EnumValue2``
+            * **Value** as ``1``
+
+            The following figure shows the filled in edit box dialog with the new items added:
+
+            .. figure:: images/matter_creating_custom_cluster_items_enum_page.png
+               :alt: Items tab
+
+         #. Click :guilabel:`Save` to save the item.
+         #. Click :guilabel:`Assigned clusters` to open edit box dialog.
+         #. In the new edit box, click the plus icon icon to create a new cluster assignment.
+         #. Fill in ``Code`` with the value of the cluster code defined in first step as ``0xFFF1FC01``.
+
+            The following figure shows the filled in edit box dialog with the new cluster assignment added:
+
+            .. figure:: images/matter_creating_custom_cluster_assigned_clusters_page.png
+               :alt: Assigned clusters tab
+
+         #. Click :guilabel:`Save` to save the cluster.
+
+            The following figure shows the filled in edit box dialog with the new enum added:
+
+            .. figure:: images/matter_creating_custom_cluster_enums_page.png
+               :alt: Enums tab
+
+         #. Click :guilabel:`Save` to save the enum.
+
+      #. Add a new device type in the :guilabel:`Device Type` tab.
+
+         a. Open the :guilabel:`Device Type` tab.
+         #. Fill the fields as follows:
+
+            .. figure:: images/matter_creating_custom_cluster_device_type_page.png
+               :alt: Device type tab
+
+         #. Click :guilabel:`Add cluster assignment to device type` to open edit box dialog.
+         #. Fill the Cluster fields as follows:
+
+            .. figure:: images/matter_creating_custom_cluster_device_type_cluster_assignment_page.png
+               :alt: Device type cluster assignment tab
+
+         #. Click :guilabel:`Save` to save the cluster assignment.
+
+      #. Click the :guilabel:`Save cluster to file` button to save the cluster description file to the sample directory and name it as ``MyCluster.xml``.
+
+   .. tab:: Manually create an XML file
+
+      The file should contain cluster definitions, attributes, commands, events, enums, structs, and device types in XML format.
+
+      The cluster ``<code>`` is a 32-bit combination of the vendor ID and cluster ID and must be unique, not conflicting with existing clusters.
+      The most significant 16 bits are the vendor ID, and the least significant 16 bits are the cluster ID.
+
+      The vendor ID must be configured according to the Matter specification (section 2.5.2 Vendor Identifier).
+
+      The cluster ID for a manufacturer-specific cluster must be in the range from ``0xFC00`` to ``0xFFFE``.
+
+      The example contains a cluster with the code ``0xFFF1FC01``, which means ``0xFFF1`` is the Test Manufacturer ID, and ``0xFC01`` is the cluster ID.
+      See the :file:`<default Matter SDK location>/src/app/zap-templates/zcl/data-model/manufacturers.xml` file to learn about the manufacturer codes.
+
+      The XML file consists of the following elements:
+
+      * ``<cluster>`` - Cluster definition.
+      * ``<clusterExtension>`` - Cluster extension definition.
+      * ``<enum>`` - Enumerated type definition.
+      * ``<struct>`` - Structure definition.
+      * ``<deviceType>`` - Device type definition.
+
+      See the description of each element in the following tabs:
+
+      .. tabs::
+
+         .. tab:: ``<cluster>``
+
+            ``<cluster>`` defines the cluster and consist of the following child elements:
+
+            * ``<domain>`` - The domain to which the cluster belongs.
+            * ``<name>`` - The name of the cluster.
+            * ``<code>`` - A 32-bit identifier for the cluster, combining the vendor ID and a cluster ID.
+            * ``<define>`` - The C++ preprocessor macro name for the cluster, typically in uppercase with words separated by underscores.
+            * ``<description>`` - A brief description of the cluster's purpose and functionality.
+            * ``<attribute>`` - An attribute definition within the cluster.
+
+               * ``side`` - Specifies whether the attribute is on the client or server side.
+               * ``code`` - A unique identifier for the attribute within the cluster.
+               * ``define`` - The C++ preprocessor macro name for the attribute, typically in uppercase with words separated by underscores.
+               * ``type`` - The data type of the attribute.
+               * ``entryType`` - The data type of array elements if the attribute is an array.
+               * ``writable`` - Indicates whether the attribute can be written by a Matter controller.
+               * ``default`` - The default value of the attribute.
+               * ``optional`` - Indicates whether the attribute is optional.
+               * ``name`` - The name of the attribute.
+
+            * ``<command>`` - A command definition within the cluster.
+
+               * ``source`` - Specifies whether the command originates from the client or server.
+               * ``code`` - A unique identifier for the command within the cluster.
+               * ``name`` - The name of the command.
+               * ``optional`` - Indicates whether the command is optional.
+               * ``disableDefaultResponse`` - Indicates whether the default response to the command is disabled.
+               * ``response`` - The name of the response command, if any.
+               * ``description`` - A brief description of the command's purpose and functionality.
+               * ``arg`` - An argument for the command, specifying its name and type.
+
+            * ``<event>`` - An event definition within the cluster.
+
+               * ``side`` - Specifies whether the event originates from the client or server.
+               * ``code`` - A unique identifier for the event within the cluster.
+               * ``name`` - The name of the event.
+               * ``optional`` - Indicates whether the event is optional.
+               * ``description`` - A brief description of the event's purpose and functionality.
+               * ``arg`` - An argument for the event, specifying its name and type.
+
+            For example, the following XML code defines a cluster with one attribute, one command, and one event:
+
+            .. code-block:: xml
+
+               <?xml version="1.0"?>
+               <cluster>
+                  <domain>General</domain>
+                  <name>MyNewCluster</name>
+                  <code>0xFFF1FC01</code>
+                  <define>MY_NEW_CLUSTER</define>
+                  <description>The MyNewCluster cluster showcases a cluster manufacturer extensions</description>
+                  <attribute side="server" code="0xFFF10000" define="MY_ATTRIBUTE" type="boolean" writable="true" default="false" optional="false">MyAttribute</attribute>
+                  <command source="client" code="0xFFF10000" name="MyCommand" response="MyCommandResponse" optional="false">
+                     <description>Command that takes two uint8 arguments and returns their sum.</description>
+                     <arg name="arg1" type="int8u"/>
+                     <arg name="arg2" type="int8u"/>
+                  </command>
+                  <event side="server" code="0xFFF10000" name="MyEvent" priority="info" optional="false">
+                     <description>Event that is generated by the server.</description>
+                     <arg name="arg1" type="int8u"/>
+                  </event>
+               </cluster>
+
+         .. tab:: ``<clusterExtension>``
+
+            ``<clusterExtension>`` defines the extension of an existing cluster and consist of the following attributes and child elements:
+
+            * ``code`` - A 32-bit identifier for the existing cluster, that will be extended.
+            * ``<attribute>`` - An attribute definition within the cluster.
+
+               * ``side`` - Specifies whether the attribute is on the client or server side.
+               * ``code`` - A unique identifier for the attribute within the cluster.
+               * ``define`` - The C++ preprocessor macro name for the attribute, typically in uppercase with words separated by underscores.
+               * ``type`` - The data type of the attribute.
+               * ``entryType`` - The data type of array elements if the attribute is an array.
+               * ``writable`` - Indicates whether the attribute can be written by a Matter controller.
+               * ``default`` - The default value of the attribute.
+               * ``optional`` - Indicates whether the attribute is optional.
+               * ``name`` - The name of the attribute.
+
+            * ``<command>`` - A command definition within the cluster.
+
+               * ``source`` - Specifies whether the command originates from the client or server.
+               * ``code`` - A unique identifier for the command within the cluster.
+               * ``name`` - The name of the command.
+               * ``optional`` - Indicates whether the command is optional.
+               * ``disableDefaultResponse`` - Indicates whether the default response to the command is disabled.
+               * ``response`` - The name of the response command, if any.
+               * ``description`` - A brief description of the command's purpose and functionality.
+               * ``arg`` - An argument for the command, specifying its name and type.
+
+            * ``<event>`` - An event definition within the cluster.
+
+               * ``side`` - Specifies whether the event originates from the client or server.
+               * ``code`` - A unique identifier for the event within the cluster.
+               * ``name`` - The name of the event.
+               * ``priority`` - The priority of the event.
+                 The valid values are ``debug``, ``info``, and ``critical``.
+               * ``optional`` - Indicates whether the event is optional.
+               * ``description`` - A brief description of the event's purpose and functionality.
+               * ``arg`` - An argument for the event, specifying its name and type.
+
+            For example, the following XML code extends a ``Basic Information`` cluster with one attribute, one command, and one event:
+
+            .. code-block:: xml
+
+               <?xml version="1.0"?>
+               <clusterExtension code="0x0028">
+                  <attribute side="server" code="0x17" define="EXTENDED_ATTRIBUTE" type="boolean" writable="true" default="false" optional="false">ExtendedAttribute</attribute>
+                  <command source="client" code="0x00" name="ExtendedCommand" response="ExtendedCommandResponse" optional="false">
+                     <description>Command that takes two uint8 arguments and returns their sum.</description>
+                     <arg name="arg1" type="int8u"/>
+                     <arg name="arg2" type="int8u"/>
+                  </command>
+                  <event side="server" code="0x04" name="ExtendedEvent" priority="info" optional="false">
+                     <description>Event that is generated by the server.</description>
+                     <arg name="arg1" type="int8u"/>
+                  </event>
+               </clusterExtension>
+
+         .. tab:: ``<enum>``
+
+            ``<enum>`` elements define the enumerated types that can be used in the cluster and consist of the following attributes and child elements:
+
+            * ``name`` - The unique name of the enumerated type.
+            * ``<cluster code>`` - The cluster code(s) that the enumerated type is associated with.
+              An enumerated type can be associated with multiple clusters by defining multiple ``<cluster code>`` elements.
+              If no cluster code is specified, the enumerated type has a global scope.
+            * ``type`` - The data type of the enumerated values.
+            * ``<item>`` - The definition of an individual item within the enumerated type.
+
+               * ``name`` - The name of the item.
+               * ``value`` - The value assigned to the item, which must match the specified data type of the enumerated type.
+
+            For example, the following XML code defines an enumerated type with two items:
+
+            .. code-block:: xml
+
+               <enum name="MyNewEnum" type="uint8">
+                  <cluster code="0xFFF1FC01" />
+                  <item name="EnumValue1" value="0" />
+                  <item name="EnumValue2" value="1" />
+               </enum>
+
+         .. tab:: ``<struct>``
+
+            ``<struct>`` elements define the structure types that can be used in the cluster and consist of the following attributes and child elements:
+
+            * ``name`` - The unique name of the structure.
+            * ``isFabricScoped`` - Indicates if the structure is fabric-scoped.
+            * ``<cluster code>`` - The cluster code(s) that the structure is associated with.
+              A structure can be associated with multiple clusters by defining multiple ``<cluster code>`` elements.
+              If no cluster code is specified, the structure has a global scope.
+            * ``<item>`` - The definition of an individual item within the structure.
+
+               * ``fieldId`` - The unique ID of the item within the structure.
+               * ``name`` - The name of the item.
+               * ``type`` - The data type of the item.
+               * ``array`` - Indicates if the item is an array.
+               * ``minLength`` - The minimum length of the array, if applicable.
+               * ``maxLength`` - The maximum length of the array, if applicable.
+               * ``isNullable`` - Indicates if the item can be NULL.
+               * ``isFabricSensitive`` - Indicates if the item is fabric-sensitive.
+               * ``min`` - The minimum value of the item, if applicable.
+               * ``max`` - The maximum value of the item, if applicable.
+
+            For example, the following XML code defines a structure with one item of type octet string and length 128:
+
+            .. code-block:: xml
+
+               <struct name="MyStruct" isFabricScoped="true">
+                 <cluster code="0xFFF1FC01"/>
+                 <item fieldId="1" name="Data" type="octet_string" length="128" isFabricSensitive="true"/>
+               </struct>
+
+         .. tab:: ``<deviceType>``
+
+            ``<deviceType>`` elements define the device types that can be used in the cluster and consist of the following child elements:
+
+            * ``<name>`` - The unique name of the device.
+            * ``<domain>`` - The domain to which the device belongs.
+            * ``<typeName>`` - The name of the device displayed in the zap tool.
+            * ``<profileId>`` - The profile ID reflects the current version of the Matter specification where the least significant byte is the major version and the most significant byte is the minor version.
+
+               * ``editable`` - Indicates if the field can be modified.
+
+            * ``<deviceId>`` - The device ID.
+
+               * ``editable`` - Indicates if the field can be modified.
+
+            * ``<class>`` - The class of the device.
+              Can be ``Utility``, ``Simple``, or ``Node``.
+            * ``<scope>`` - The scope of the device.
+              Can be ``Node``, or ``Endpoint``.
+            * ``<clusters>`` - The definition of an individual item within the structure.
+
+               * ``lockOthers`` - Indicates if other clusters are locked.
+               * ``<include>`` - Defines a cluster that should be included in the device.
+
+                  * ``cluster`` - The name of the cluster.
+                  * ``client`` - Indicates if the client role should be enabled.
+                  * ``server`` - Indicates if the server role should be enabled.
+                  * ``clientLocked`` - Indicates if the client role modification should be locked.
+                  * ``serverLocked`` - Indicates if the server role modification should be locked.
+                  * ``<requireAttribute>`` - Indicates a required attribute's define.
+                  * ``<requireCommand>`` - Indicates a required command's define.
+
+            For example, the following XML code defines a structure with one item of type octet string and length 128:
+
+            .. code-block:: xml
+
+               <deviceType>
+                  <name>my-new-device</name>
+                  <domain>CHIP</domain>
+                  <typeName>My new device</typeName>
+                  <profileId editable="false">0x0104</profileId>
+                  <deviceId editable="false">0xfff10001</deviceId>
+                  <class>Simple</class>
+                  <scope>Endpoint</scope>
+                  <clusters lockOthers="true">
+                  <include cluster="MyNewCluster" client="true" server="true" clientLocked="false" serverLocked="false"/>
+                     <requireAttribute>MY_ATTRIBUTE</requireAttribute>
+                     <requireCommand>MyCommand</requireCommand>
+                  </clusters>
+               </deviceType>
+
+      .. note::
+         The descriptions of the elements above show only the basic functionality.
+         To see the full list of available elements for each part of the XML file, refer to the Matter Specification.
+
+For an example, you can use the following template for the :file:`MyCluster.xml` file:
 
 .. code-block:: xml
 
@@ -309,7 +536,7 @@ You can use the following template for the :file:`MyCluster.xml` file:
             <arg name="arg1" type="int8u"/>
             <arg name="arg2" type="int8u"/>
          </command>
-         <event source="server" code="0xFFF10000" name="MyEvent" priority="info" optional="false">
+         <event side="server" code="0xFFF10000" name="MyEvent" priority="info" optional="false">
             <description>Event that is generated by the server.</description>
             <arg name="arg1" type="int8u"/>
          </event>
@@ -321,7 +548,7 @@ You can use the following template for the :file:`MyCluster.xml` file:
             <arg name="arg1" type="int8u"/>
             <arg name="arg2" type="int8u"/>
          </command>
-         <event source="server" code="0x04" name="ExtendedEvent" priority="info" optional="false">
+         <event side="server" code="0x04" name="ExtendedEvent" priority="info" optional="false">
             <description>Event that is generated by the server.</description>
             <arg name="arg1" type="int8u"/>
          </event>
@@ -339,8 +566,8 @@ You can use the following template for the :file:`MyCluster.xml` file:
          <name>my-new-device</name>
          <domain>CHIP</domain>
          <typeName>My new device</typeName>
-         <profileId editable="false">0x0FFF</profileId>
-         <deviceId editable="false">0x001</deviceId>
+         <profileId editable="false">0x0104</profileId>
+         <deviceId editable="false">0xfff10001</deviceId>
          <class>Simple</class>
          <scope>Endpoint</scope>
          <clusters lockOthers="true">
