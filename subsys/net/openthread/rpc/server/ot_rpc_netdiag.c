@@ -151,7 +151,6 @@ static void ot_rpc_encode_network_diag_tlv(struct nrf_rpc_cbor_ctx *ctx,
 		nrf_rpc_encode_uint64(ctx, aNetworkDiagTlv->mData.mMleCounters.mDetachedTime);
 		nrf_rpc_encode_uint64(ctx, aNetworkDiagTlv->mData.mMleCounters.mChildTime);
 		nrf_rpc_encode_uint64(ctx, aNetworkDiagTlv->mData.mMleCounters.mRouterTime);
-		nrf_rpc_encode_uint64(ctx, aNetworkDiagTlv->mData.mMleCounters.mParentChanges);
 		nrf_rpc_encode_uint64(ctx, aNetworkDiagTlv->mData.mMleCounters.mLeaderTime);
 		break;
 	case OT_NETWORK_DIAGNOSTIC_TLV_BATTERY_LEVEL:
@@ -310,29 +309,26 @@ static void ot_rpc_cmd_send_diagnostic_get(const struct nrf_rpc_group *group,
 					   struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 	otIp6Address addr;
-	otError error;
-	uint8_t count;
-	uint8_t tlvTypes[35];
+	otError error = OT_ERROR_INVALID_ARGS;
+	size_t count;
+	const uint8_t *tlvTypes;
 
 	nrf_rpc_decode_buffer(ctx, addr.mFields.m8, OT_IP6_ADDRESS_SIZE);
 
-	count = nrf_rpc_decode_uint(ctx);
+	tlvTypes = nrf_rpc_decode_buffer_ptr_and_size(ctx, &count);
 
-	zcbor_list_start_decode(ctx->zs);
-	for (int i = 0; i < count; i++) {
-		tlvTypes[i] = nrf_rpc_decode_uint(ctx);
+	if (tlvTypes) {
+		openthread_api_mutex_lock(openthread_get_default_context());
+		error = otThreadSendDiagnosticGet(openthread_get_default_instance(), &addr,
+						  tlvTypes, count, handle_receive_diagnostic_get,
+						  NULL);
+		openthread_api_mutex_unlock(openthread_get_default_context());
 	}
-	zcbor_list_end_decode(ctx->zs);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_THREAD_SEND_DIAGNOSTIC_GET);
 		return;
 	}
-
-	openthread_api_mutex_lock(openthread_get_default_context());
-	error = otThreadSendDiagnosticGet(openthread_get_default_instance(), &addr, tlvTypes, count,
-					  handle_receive_diagnostic_get, NULL);
-	openthread_api_mutex_unlock(openthread_get_default_context());
 
 	nrf_rpc_rsp_send_uint(group, error);
 }
@@ -341,29 +337,25 @@ static void ot_rpc_cmd_send_diagnostic_reset(const struct nrf_rpc_group *group,
 					     struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 	otIp6Address addr;
-	otError error;
-	uint8_t count;
-	uint8_t tlvTypes[35];
+	otError error = OT_ERROR_INVALID_ARGS;
+	size_t count;
+	const uint8_t *tlvTypes;
 
 	nrf_rpc_decode_buffer(ctx, addr.mFields.m8, OT_IP6_ADDRESS_SIZE);
 
-	count = nrf_rpc_decode_uint(ctx);
+	tlvTypes = nrf_rpc_decode_buffer_ptr_and_size(ctx, &count);
 
-	zcbor_list_start_decode(ctx->zs);
-	for (int i = 0; i < count; i++) {
-		tlvTypes[i] = nrf_rpc_decode_uint(ctx);
+	if (tlvTypes) {
+		openthread_api_mutex_lock(openthread_get_default_context());
+		error = otThreadSendDiagnosticReset(openthread_get_default_instance(), &addr,
+						    tlvTypes, count);
+		openthread_api_mutex_unlock(openthread_get_default_context());
 	}
-	zcbor_list_end_decode(ctx->zs);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_THREAD_SEND_DIAGNOSTIC_RESET);
 		return;
 	}
-
-	openthread_api_mutex_lock(openthread_get_default_context());
-	error = otThreadSendDiagnosticReset(openthread_get_default_instance(), &addr, tlvTypes,
-					    count);
-	openthread_api_mutex_lock(openthread_get_default_context());
 
 	nrf_rpc_rsp_send_uint(group, error);
 }
