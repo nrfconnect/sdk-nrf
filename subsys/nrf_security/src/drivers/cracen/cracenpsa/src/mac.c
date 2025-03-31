@@ -11,6 +11,7 @@
 #include <string.h>
 #include <sxsymcrypt/cmac.h>
 #include <sxsymcrypt/hash.h>
+#include <sxsymcrypt/hashdefs.h>
 #include <sxsymcrypt/keyref.h>
 #include <zephyr/sys/__assert.h>
 #include "common.h"
@@ -35,7 +36,7 @@ static psa_status_t cracen_hmac_setup(cracen_mac_operation_t *operation,
 
 	/* HMAC task creation and configuration. */
 	si_task_init(&operation->hmac.task, operation->hmac.workmem,
-		     MAX_HASH_BLOCK_SIZE + PSA_HASH_MAX_SIZE);
+		     SX_HASH_MAX_ENABLED_BLOCK_SIZE + PSA_HASH_MAX_SIZE);
 	si_mac_create_hmac(&operation->hmac.task, sx_hash_algo, key_buffer, key_buffer_size);
 
 	/* Wait until the key is processed */
