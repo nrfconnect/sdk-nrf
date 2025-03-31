@@ -9,11 +9,18 @@ menuconfig SDP
 
 if SDP
 
+choice SDP_APPLICATION
+	prompt "SDP application selection"
+	help
+	  Select which SDP application should be flashed on FLPR.
+
 config SDP_GPIO
 	bool "SDP GPIO application"
 
 config SDP_MSPI
 	bool "SDP MSPI application"
+
+endchoice
 
 config SDP_DEVELOPER_MODE
 	bool "SDP developer mode"
