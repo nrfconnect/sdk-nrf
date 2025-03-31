@@ -719,7 +719,7 @@ static int cmd_log_data_set(const struct shell *shell, size_t argc, char **argv)
 
 	switch (err) {
 	case 0:
-		shell_print(shell, "Sent log data");
+		shell_print(shell, "Wrote log data successfully");
 		break;
 	case -ENOENT:
 		shell_print(shell, "Event Log not initialized");
@@ -824,7 +824,13 @@ static int cmd_data_send(const struct shell *shell, size_t argc, char **argv)
 
 	switch (err) {
 	case 0:
-		shell_print(shell, "Sent app data successfully");
+		if (path_len == 3) {
+			shell_print(shell, "Sent data in resource /%hu/%hu/%hu successfully",
+				    path[0], path[1], path[2]);
+		} else {
+			shell_print(shell, "Sent data in resource instance /%hu/%hu/%hu/%hu "
+				    "successfully", path[0], path[1], path[2], path[3]);
+		}
 		break;
 	case -EPERM:
 		shell_print(shell, "Resource at path is not readable");
