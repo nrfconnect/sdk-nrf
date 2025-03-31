@@ -138,10 +138,10 @@ Complete the following steps:
       :class: highlight
 
       Device connected using USB:
-      ATTRS{idVendor}=="my Vendor ID", ATTRS{idProduct}=="my Product ID", MODE="0666", SYMLINK+="nrf52-desktop-my-dev-name"
+      ATTRS{idVendor}=="my Vendor ID", ATTRS{idProduct}=="my Product ID", MODE="0666", SYMLINK+="nrf-desktop-my-dev-name"
 
       Device connected using Bluetooth:
-      ATTRS{name}=="Name of my Bluetooth device ", SUBSYSTEMS=="input", MODE="0666", SYMLINK+="nrf52-desktop-my-dev-name"
+      ATTRS{name}=="Name of my Bluetooth device ", SUBSYSTEMS=="input", MODE="0666", SYMLINK+="nrf-desktop-my-dev-name"
 
 #. If you want to display an LED stream based on sound data, you must also install the additional requirements using the following commands:
 

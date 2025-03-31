@@ -259,7 +259,7 @@ def parse_arguments():
 
 def configurator():
     logging.basicConfig(level=logging.ERROR)
-    logging.info('Configuration channel for nRF52 Desktop')
+    logging.info('Configuration channel for nRF Desktop')
 
     args = parse_arguments()
     backend = NrfHidManager()
