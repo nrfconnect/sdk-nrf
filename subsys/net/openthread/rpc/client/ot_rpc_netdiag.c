@@ -251,14 +251,9 @@ otError otThreadSendDiagnosticGet(otInstance *aInstance, const otIp6Address *aDe
 	receive_diag_get_cb = aCallback;
 	receive_diag_get_cb_context = aCallbackContext;
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + OT_IP6_ADDRESS_SIZE + 4 + aCount * 2);
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + OT_IP6_ADDRESS_SIZE + 2 + aCount);
 	nrf_rpc_encode_buffer(&ctx, aDestination->mFields.m8, OT_IP6_ADDRESS_SIZE);
-	nrf_rpc_encode_uint(&ctx, aCount);
-	zcbor_list_start_encode(ctx.zs, aCount);
-	for (int i = 0; i < aCount; i++) {
-		nrf_rpc_encode_uint(&ctx, aTlvTypes[i]);
-	}
-	zcbor_list_end_encode(ctx.zs, aCount);
+	nrf_rpc_encode_buffer(&ctx, aTlvTypes, aCount);
 
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_THREAD_SEND_DIAGNOSTIC_GET,
 				&ctx, ot_rpc_decode_error, &error);
@@ -274,14 +269,9 @@ otError otThreadSendDiagnosticReset(otInstance *aInstance, const otIp6Address *a
 
 	ARG_UNUSED(aInstance);
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + OT_IP6_ADDRESS_SIZE + 4 + aCount * 2);
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + OT_IP6_ADDRESS_SIZE + 2 + aCount);
 	nrf_rpc_encode_buffer(&ctx, aDestination->mFields.m8, OT_IP6_ADDRESS_SIZE);
-	nrf_rpc_encode_uint(&ctx, aCount);
-	zcbor_list_start_encode(ctx.zs, aCount);
-	for (int i = 0; i < aCount; i++) {
-		nrf_rpc_encode_uint(&ctx, aTlvTypes[i]);
-	}
-	zcbor_list_end_encode(ctx.zs, aCount);
+	nrf_rpc_encode_buffer(&ctx, aTlvTypes, aCount);
 
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_THREAD_SEND_DIAGNOSTIC_RESET,
 				&ctx, ot_rpc_decode_error, &error);
