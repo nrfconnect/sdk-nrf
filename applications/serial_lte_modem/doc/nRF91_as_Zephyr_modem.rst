@@ -46,10 +46,9 @@ The following configuration files must be included:
 * :file:`overlay-zephyr-modem.conf` - To tailor SLM to how Zephyr's cellular modem driver works.
   This enables the :ref:`CONFIG_SLM_START_SLEEP <CONFIG_SLM_START_SLEEP>` Kconfig option, which makes the nRF91 Series SiP start only when the :ref:`power pin <CONFIG_SLM_POWER_PIN>` is toggled.
 
-In addition, if the controlling chip is an external MCU, the following files must also be included:
+In addition, if the controlling chip is an external MCU, the following configurations must also be included:
 
-* :file:`overlay-zephyr-modem-external-mcu.conf`- To define the power pin.
-  Make sure to update the defined pin so that it matches your setup.
+* :kconfig:option:`CONFIG_SLM_POWER_PIN` Kconfig option - To define the power pin so that it matches your setup.
 * :file:`overlay-external-mcu.overlay` - To configure which UART SLM will use.
   The actual configuration of the UART is defined in the :file:`*_ns.overlay` overlay file matching your board in the :file:`boards` directory.
   Make sure to update the UART configuration (pins, baud rate) so that it matches your setup.
