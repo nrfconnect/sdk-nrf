@@ -182,10 +182,10 @@ menu "HID device identification"
 
 config DESKTOP_DEVICE_PRODUCT
 	string "Product name"
-	default "Dongle nRF52 Desktop" if DESKTOP_ROLE_HID_DONGLE
-	default "Mouse nRF52 Desktop" if DESKTOP_PERIPHERAL_TYPE_MOUSE
-	default "Keyboard nRF52 Desktop" if DESKTOP_PERIPHERAL_TYPE_KEYBOARD
-	default "HID nRF52 Desktop"
+	default "Dongle nRF Desktop" if DESKTOP_ROLE_HID_DONGLE
+	default "Mouse nRF Desktop" if DESKTOP_PERIPHERAL_TYPE_MOUSE
+	default "Keyboard nRF Desktop" if DESKTOP_PERIPHERAL_TYPE_KEYBOARD
+	default "HID nRF Desktop"
 	help
 	  Product name used for both GATT Device Information Service and USB
 	  device. By default, name is determined by nRF Desktop device role and

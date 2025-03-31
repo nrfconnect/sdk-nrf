@@ -1,4 +1,4 @@
-# udev rules which allow using configuration channel for nRF52 Desktop without
+# udev rules which allow using configuration channel for nRF Desktop without
 # root permissions on Linux. Adapted from HIDAPI project.
 #
 # Symbolic links are only used for identification of attached devices and
@@ -13,15 +13,15 @@
 
 ### Mouse over USB
 # HIDAPI + libusb/hidraw
-ATTRS{idVendor}=="1915", ATTRS{idProduct}=="52de", MODE="0666", SYMLINK+="nrf52-desktop-mouse-usb"
+ATTRS{idVendor}=="1915", ATTRS{idProduct}=="52de", MODE="0666", SYMLINK+="nrf-desktop-mouse-usb"
 
 ### Dongle over USB
 # HIDAPI + libusb/hidraw
-ATTRS{idVendor}=="1915", ATTRS{idProduct}=="52dc", MODE="0666", SYMLINK+="nrf52-desktop-dongle-usb"
+ATTRS{idVendor}=="1915", ATTRS{idProduct}=="52dc", MODE="0666", SYMLINK+="nrf-desktop-dongle-usb"
 #
 # Note that the hexadecimal values for VID and PID are case sensitive and
 # must be lower case.
 
 ### Mouse over BLE
 # HIDAPI + hidraw
-ATTRS{name}=="Mouse nRF52 Desktop", SUBSYSTEMS=="input", MODE="0666", SYMLINK+="nrf52-desktop-mouse-ble"
+ATTRS{name}=="Mouse nRF Desktop", SUBSYSTEMS=="input", MODE="0666", SYMLINK+="nrf-desktop-mouse-ble"
