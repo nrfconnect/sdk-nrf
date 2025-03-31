@@ -10,6 +10,7 @@ common:
     - nrf54l15dk/nrf54l15/cpuapp
   harness: pytest
   harness_config:
-    pytest_dut_scope: session
+    pytest_root:
+      - "../pytest/test_kmu_revoke_in_app.py"
 tests:
-  mcuboot.kmu.west.provision.default_key: {}
+  mcuboot.kmu.west.provision.revoke: {}

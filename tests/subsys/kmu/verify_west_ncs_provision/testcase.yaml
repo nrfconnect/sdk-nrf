@@ -7,9 +7,8 @@ common:
   platform_allow:
     - nrf54l15dk/nrf54l15/cpuapp
 tests:
-  kmu.west.provision.keys:
+  kmu.west.provision.verify_keys_in_app:
     harness: pytest
     harness_config:
-      pytest_dut_scope: session
       pytest_root:
-        - "../pytest/test_kmu_key_provision.py"
+        - "../pytest/test_kmu_verify_keys_in_app.py"
