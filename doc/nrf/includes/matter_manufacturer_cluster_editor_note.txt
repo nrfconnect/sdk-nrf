@@ -1,0 +1,3 @@
+.. note::
+   The nRF Connect Matter Manufacturer Cluster Editor is currently in the preview stage and is available only on Linux and Windows platforms.
+   You can download, use and test it, but the full version will be available in the future.
