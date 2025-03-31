@@ -76,6 +76,8 @@ Developing with nRF91 Series
 Developing with nRF70 Series
 ============================
 
+* Added support for the nRF7002 EB II (PCA63571) with the nRF54 Series DKs as detailed in :ref:`ug_nrf7002eb2_gs`.
+* Deprecated support for the nRF7002 EB (PCA63561) with the nRF54 Series DKs.
 * Removed support for storing the nRF70 firmware patches in external flash without the :ref:`partition_manager`, as mentioned in :ref:`ug_nrf70_developing_fw_patch_ext_flash`.
 
 Developing with nRF54L Series
