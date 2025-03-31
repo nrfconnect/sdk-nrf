@@ -310,6 +310,9 @@ The following configuration files are provided:
 
 * :file:`overlay-carrier.conf` - Configuration file that adds |NCS| :ref:`liblwm2m_carrier_readme` support.
   See :ref:`slm_carrier_library_support` for more information on how to connect to an operator's device management platform.
+  With the ``thingy91/nrf9160/ns`` board target, you must additionally pass the sysbuild option ``-DSB_CONFIG_THINGY91_STATIC_PARTITIONS_LWM2M_CARRIER=y`` to fit the application in the flash memory.
+  This means that you will need an external debug probe to program the application.
+  See the :ref:`programming_thingy` for more information.
 
 * :file:`overlay-carrier-softbank.conf` and :file:`sysbuild-softbank.conf` - Configuration files that add SoftBank configurations needed by the carrier library.
   Used in conjunction with :file:`overlay-carrier.conf`.
