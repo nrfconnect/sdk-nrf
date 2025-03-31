@@ -10,9 +10,37 @@
 #include <stddef.h>
 #include <stdint.h>
 #include "internal.h"
+#include "nrf-psa-crypto-user-config.h"
 
-#ifndef SX_HASH_PRIV_SZ
-#define SX_HASH_PRIV_SZ 344
+/* These are not magic numbers, the number here is the size in bytes of the
+ * extramem field of sxhash. The extra memory holds the data for saving/resuming
+ * the state and should have the size of statesz + maxpadsz.
+ * The size here is the MAX of this sum for the enabled algorithms.
+ *
+ * !!! ORDER MATTERS !!!
+ */
+#if defined(PSA_NEED_CRACEN_SHA3_224)
+#define SX_HASH_OPERATION_CONTEXT_SZ 344
+#elif defined(PSA_NEED_CRACEN_SHA3_256)
+/* SHAKE256 has the same size but doesn't have a PSA_NEED yet */
+#define SX_HASH_OPERATION_CONTEXT_SZ 336
+#elif defined(PSA_NEED_CRACEN_SHA3_384)
+#define SX_HASH_OPERATION_CONTEXT_SZ 304
+#elif defined(PSA_NEED_CRACEN_SHA3_512)
+#define SX_HASH_OPERATION_CONTEXT_SZ 272
+#elif defined(PSA_NEED_CRACEN_SHA_512) || defined(PSA_NEED_CRACEN_SHA_384)
+#define SX_HASH_OPERATION_CONTEXT_SZ 208
+#elif defined(PSA_NEED_CRACEN_SHA_256) || defined(PSA_NEED_CRACEN_SHA_224)
+/* SM3 has the same size but doesn't have a PSA_NEED yet */
+#define SX_HASH_OPERATION_CONTEXT_SZ 104
+#elif defined(PSA_NEED_CRACEN_SHA_1)
+#define SX_HASH_OPERATION_CONTEXT_SZ 92
+#else
+/* A default value is needed to avoid building failures when no hash is
+ * enabled. A small number is used because it will enforce a runtime failure
+ * if the sx_hash APIs are called while no algorithm is enabled.
+ */
+#define SX_HASH_OPERATION_CONTEXT_SZ 1
 #endif
 
 struct sx_digesttags {
@@ -38,7 +66,7 @@ struct sxhash {
 	void (*digest)(struct sxhash *c, char *digest);
 	struct sx_dmactl dma;
 	struct sxdesc descs[7 + SX_EXTRA_IN_DESCS];
-	uint8_t extramem[SX_HASH_PRIV_SZ];
+	uint8_t extramem[SX_HASH_OPERATION_CONTEXT_SZ];
 };
 
 struct sxhashalg {
