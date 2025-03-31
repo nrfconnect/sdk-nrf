@@ -17,9 +17,7 @@
 #include <sxsymcrypt/cmac.h>
 #include <sxsymcrypt/internal.h>
 #include <sxsymcrypt/trng.h>
-
-/* Max blocksize of the supported algorithms 144 bytes */
-#define MAX_HASH_BLOCK_SIZE 144
+#include <sxsymcrypt/hashdefs.h>
 
 #define SX_BLKCIPHER_IV_SZ	(16U)
 #define SX_BLKCIPHER_AES_BLK_SZ (16U)
@@ -141,7 +139,7 @@ struct cracen_hash_operation_s {
 	size_t bytes_left_for_next_block;
 
 	/* Buffer for input data to fill up the next block */
-	uint8_t input_buffer[MAX_HASH_BLOCK_SIZE];
+	uint8_t input_buffer[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
 
 	/* Flag to know if the Hashing has already started */
 	bool is_first_block;
@@ -192,13 +190,13 @@ struct cracen_mac_operation_s {
 	size_t bytes_left_for_next_block;
 
 	/* Buffer for input data to fill up the next block */
-	uint8_t input_buffer[MAX_HASH_BLOCK_SIZE];
+	uint8_t input_buffer[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
 
 	union {
 		struct {
 			struct sitask task;
 
-			uint8_t workmem[MAX_HASH_BLOCK_SIZE + PSA_HASH_MAX_SIZE];
+			uint8_t workmem[SX_HASH_MAX_ENABLED_BLOCK_SIZE + PSA_HASH_MAX_SIZE];
 		} hmac;
 
 		struct {
@@ -216,7 +214,7 @@ struct cracen_key_derivation_operation {
 	psa_algorithm_t alg;
 	enum cracen_kd_state state;
 	uint64_t capacity;
-	uint8_t output_block[MAX_HASH_BLOCK_SIZE];
+	uint8_t output_block[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
 	uint8_t output_block_available_bytes;
 	union{
 		cracen_mac_operation_t mac_op;
@@ -225,8 +223,8 @@ struct cracen_key_derivation_operation {
 	union {
 		struct {
 			uint8_t blk_counter;
-			uint8_t prk[MAX_HASH_BLOCK_SIZE];
-			uint8_t t[MAX_HASH_BLOCK_SIZE];
+			uint8_t prk[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
+			uint8_t t[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
 			char info[CRACEN_HKDF_MAX_INFO_SIZE];
 			size_t info_length;
 			bool info_set;
@@ -234,7 +232,7 @@ struct cracen_key_derivation_operation {
 
 		struct {
 			uint64_t input_cost;
-			char password[MAX_HASH_BLOCK_SIZE];
+			char password[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
 			size_t password_length;
 			char salt[CRACEN_PBKDF_MAX_SALT_SIZE];
 			size_t salt_length;
@@ -274,7 +272,7 @@ struct cracen_key_derivation_operation {
 			uint8_t label[CRACEN_TLS12_PRF_MAX_LABEL_SIZE];
 			size_t label_length;
 			size_t counter;
-			uint8_t a[MAX_HASH_BLOCK_SIZE];
+			uint8_t a[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
 		} tls12;
 	};
 };
