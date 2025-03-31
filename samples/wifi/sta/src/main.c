@@ -23,7 +23,9 @@ LOG_MODULE_REGISTER(sta, CONFIG_LOG_DEFAULT_LEVEL);
 #include <zephyr/net/net_event.h>
 #include <zephyr/drivers/gpio.h>
 
+#ifdef CONFIG_WIFI_READY_LIB
 #include <net/wifi_ready.h>
+#endif /* CONFIG_WIFI_READY_LIB */
 
 #if defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
 	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
