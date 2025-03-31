@@ -8,9 +8,9 @@
 #include <zephyr/bluetooth/hci.h>
 #include <bluetooth/gatt_dm.h>
 
-#ifdef CONFIG_BT_LL_SOFTDEVICE
+#ifdef CONFIG_CAF_BLE_USE_LLPM
 #include <bluetooth/hci_vs_sdc.h>
-#endif /* CONFIG_BT_LL_SOFTDEVICE */
+#endif /* CONFIG_CAF_BLE_USE_LLPM */
 
 #define MODULE ble_conn_params
 #include <caf/events/module_state_event.h>
@@ -86,7 +86,7 @@ static int interval_reg_to_us(uint16_t reg)
 
 static int set_llpm_conn_param(struct bt_conn *conn, uint16_t latency)
 {
-#ifdef CONFIG_BT_CTLR_SDC_LLPM
+#ifdef CONFIG_CAF_BLE_USE_LLPM
 	sdc_hci_cmd_vs_conn_update_t cmd_conn_update;
 	uint16_t conn_handle;
 
@@ -106,7 +106,7 @@ static int set_llpm_conn_param(struct bt_conn *conn, uint16_t latency)
 #else
 	__ASSERT_NO_MSG(false);
 	return -ENOTSUP;
-#endif /* CONFIG_BT_CTLR_SDC_LLPM */
+#endif /* CONFIG_CAF_BLE_USE_LLPM */
 }
 
 static int set_conn_params(struct connected_peer *peer)
