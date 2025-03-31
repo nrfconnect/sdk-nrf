@@ -72,6 +72,21 @@ This feature is useful when you want to post the coredump as soon as possible af
 Alternatively, you can manually trigger the coredump upload by calling the :c:func:`memfault_zephyr_port_post_data` function.
 You can use the :c:func:`memfault_coredump_has_valid_coredump` function to check whether a coredump is available.
 
+Automatic sending of modem trace to Memfault
+=============================================
+
+.. memfault_coredump_send_start
+
+To post modem traces to Memfault together with coredumps, set the :kconfig:option:`CONFIG_MEMFAULT_NCS_POST_MODEM_TRACE_ON_COREDUMP` Kconfig option to ``y``.
+This option is only supported for nRF91 Series devices.
+
+The modem trace will be posted as a CDR (Custom Data Record) to Memfault and depends on the :ref:`modem_trace_module` being configured to use a trace backend that persists traces across reboots.
+Depending on the Memfault account type you use, different rate limits are imposed on the number of CDRs that can be posted.
+During development you can enable Developer Mode for selected devices, allowing them to post more CDRs.
+For more information, see the `Memfault Server-Side Developer Mode`_.
+
+.. memfault_coredump_send_end
+
 Configuration options in Memfault SDK
 =====================================
 
@@ -107,6 +122,7 @@ Configuration options in |NCS|
 The Kconfig options for Memfault that are defined in |NCS| provide some additional features compared to the options that are already implemented in Memfault SDK:
 
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_POST_COREDUMP_ON_NETWORK_CONNECTED`
+* :kconfig:option:`CONFIG_MEMFAULT_NCS_POST_MODEM_TRACE_ON_COREDUMP`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_PROVISION_CERTIFICATES`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP`

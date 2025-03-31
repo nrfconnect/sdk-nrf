@@ -147,6 +147,16 @@ If :kconfig:option:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP` is enabl
    :start-after: modem_lib_sending_traces_UART_start
    :end-before: modem_lib_sending_traces_UART_end
 
+Automatic capture and upload modem traces with coredumps
+--------------------------------------------------------
+
+You can configure the sample to upload modem traces to Memfault when an application coredump is triggered.
+To enable this feature, include the :file:`overlay-modem_trace_to_memfault.conf` overlay in your project.
+
+.. include:: /libraries/debug/memfault_ncs.rst
+   :start-after: memfault_coredump_send_start
+   :end-before: memfault_coredump_send_end
+
 Building and running
 ********************
 

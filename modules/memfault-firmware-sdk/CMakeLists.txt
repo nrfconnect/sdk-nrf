@@ -36,6 +36,10 @@ zephyr_library_sources_ifdef(
         memfault_lte_coredump.c)
 
 zephyr_library_sources_ifdef(
+        CONFIG_MEMFAULT_NCS_POST_MODEM_TRACE_ON_COREDUMP
+        memfault_lte_coredump_modem_trace.c)
+
+zephyr_library_sources_ifdef(
         CONFIG_MEMFAULT_NCS_ETB_CAPTURE
         memfault_etb_trace_capture.c)
 

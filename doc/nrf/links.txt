@@ -1355,6 +1355,7 @@
 .. _`Memfault: Collecting Device Metrics`: https://docs.memfault.com/docs/embedded/metrics-api
 .. _`Memfault: Error Tracking with Trace Events`: https://docs.memfault.com/docs/embedded/trace-events/
 .. _`Memfault Demo CLI`: https://docs.memfault.com/docs/mcu/demo-cli/
+.. _`Memfault Server-Side Developer Mode`: https://docs.memfault.com/docs/platform/rate-limiting#server-side-developer-mode
 
 .. _`Memfault debugging`: https://docs.memfault.com/docs/platform/introduction#debugging
 .. _`Memfault OTA`: https://docs.memfault.com/docs/platform/introduction#ota

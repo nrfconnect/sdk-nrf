@@ -1105,6 +1105,10 @@ Memfault integration
   To enable this feature, set the :kconfig:option:`CONFIG_MEMFAULT_NCS_POST_COREDUMP_ON_NETWORK_CONNECTED` Kconfig option to ``y``.
   Only supported for nRF91 Series devices.
 
+* Added a new feature to automatically capture and upload modem traces to Memfault with coredumps upon a crash.
+  To enable this feature, set the :kconfig:option:`CONFIG_MEMFAULT_NCS_POST_MODEM_TRACE_ON_COREDUMP` Kconfig option to ``y``.
+  Only supported for nRF91 Series devices.
+
 AVSystem integration
 --------------------
 
