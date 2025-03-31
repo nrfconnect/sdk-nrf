@@ -331,6 +331,16 @@ You can use the following optional arguments:
 * ``-m`` or ``--matter-path`` to provide a path to a different Matter SDK location than the default one.
   The command will use this path to read the required ZAP tool version and use the generation script from it.
 
+.. _ug_matter_gs_tools_nrfconnect_manufacturer_cluster_editor:
+
+nRF Connect Matter Manufacturer Cluster Editor
+==============================================
+
+The nRF Connect Matter Manufacturer Cluster Editor is a GUI tool for creating new manufacturer-specific clusters or creating an extensions to the existing clusters.
+To use the tool, see the dedicated :ref:`ug_nrfconnect_manufacturer_cluster_editor_tool` user guide.
+
+.. include:: /includes/matter_manufacturer_cluster_editor_note.txt
+
 .. _ug_matter_gs_tools_cert:
 
 CHIP Certificate Tool
