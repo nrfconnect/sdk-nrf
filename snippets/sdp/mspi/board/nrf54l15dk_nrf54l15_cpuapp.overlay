@@ -9,7 +9,7 @@
 
 &sdp_mspi {
 	mx25r64: mx25r6435f@0 {
-		compatible = "jedec,mspi-nor";
+		compatible = "mxicy,mx25r","jedec,mspi-nor";
 		status = "okay";
 		reg = <0>;
 		jedec-id = [c2 28 17];
@@ -31,5 +31,7 @@
 		mspi-cpp-mode = "MSPI_CPP_MODE_0";
 		mspi-endian = "MSPI_BIG_ENDIAN";
 		mspi-ce-polarity = "MSPI_CE_ACTIVE_LOW";
+
+		quad-enable-requirements = "S1B6";
 	};
 };
