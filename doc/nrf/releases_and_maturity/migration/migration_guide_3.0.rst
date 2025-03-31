@@ -367,6 +367,17 @@ Download client
 
            err = downloader_deinit(&dl);
 
+Modem SLM
+---------
+
+.. toggle::
+
+   For applications and samples using the :ref:`lib_modem_slm` library:
+
+    * Replace the ``CONFIG_MODEM_SLM_WAKEUP_PIN`` Kconfig option with :kconfig:option:`CONFIG_MODEM_SLM_POWER_PIN`.
+    * Replace the ``CONFIG_MODEM_SLM_WAKEUP_TIME`` Kconfig option with :kconfig:option:`CONFIG_MODEM_SLM_POWER_PIN_TIME`.
+    * Replace the :c:func:`modem_slm_wake_up` function with :c:func:`modem_slm_power_pin_toggle`.
+
 Protocols
 =========
 
