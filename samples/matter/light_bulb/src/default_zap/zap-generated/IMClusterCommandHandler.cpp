@@ -150,71 +150,6 @@ namespace app
 
 		} // namespace DiagnosticLogs
 
-		namespace GeneralCommissioning
-		{
-
-			void DispatchServerCommand(CommandHandler *apCommandObj,
-						   const ConcreteCommandPath &aCommandPath, TLV::TLVReader &aDataTlv)
-			{
-				CHIP_ERROR TLVError = CHIP_NO_ERROR;
-				bool wasHandled = false;
-				{
-					switch (aCommandPath.mCommandId) {
-					case Commands::ArmFailSafe::Id: {
-						Commands::ArmFailSafe::DecodableType commandData;
-						TLVError = DataModel::Decode(aDataTlv, commandData);
-						if (TLVError == CHIP_NO_ERROR) {
-							wasHandled =
-								emberAfGeneralCommissioningClusterArmFailSafeCallback(
-									apCommandObj, aCommandPath, commandData);
-						}
-						break;
-					}
-					case Commands::SetRegulatoryConfig::Id: {
-						Commands::SetRegulatoryConfig::DecodableType commandData;
-						TLVError = DataModel::Decode(aDataTlv, commandData);
-						if (TLVError == CHIP_NO_ERROR) {
-							wasHandled =
-								emberAfGeneralCommissioningClusterSetRegulatoryConfigCallback(
-									apCommandObj, aCommandPath, commandData);
-						}
-						break;
-					}
-					case Commands::CommissioningComplete::Id: {
-						Commands::CommissioningComplete::DecodableType commandData;
-						TLVError = DataModel::Decode(aDataTlv, commandData);
-						if (TLVError == CHIP_NO_ERROR) {
-							wasHandled =
-								emberAfGeneralCommissioningClusterCommissioningCompleteCallback(
-									apCommandObj, aCommandPath, commandData);
-						}
-						break;
-					}
-					default: {
-						// Unrecognized command ID, error status will apply.
-						apCommandObj->AddStatus(
-							aCommandPath,
-							Protocols::InteractionModel::Status::UnsupportedCommand);
-						ChipLogError(Zcl,
-							     "Unknown command " ChipLogFormatMEI
-							     " for cluster " ChipLogFormatMEI,
-							     ChipLogValueMEI(aCommandPath.mCommandId),
-							     ChipLogValueMEI(aCommandPath.mClusterId));
-						return;
-					}
-					}
-				}
-
-				if (CHIP_NO_ERROR != TLVError || !wasHandled) {
-					apCommandObj->AddStatus(aCommandPath,
-								Protocols::InteractionModel::Status::InvalidCommand);
-					ChipLogProgress(Zcl, "Failed to dispatch command, TLVError=%" CHIP_ERROR_FORMAT,
-							TLVError.Format());
-				}
-			}
-
-		} // namespace GeneralCommissioning
-
 		namespace GeneralDiagnostics
 		{
 
@@ -899,9 +834,6 @@ namespace app
 			break;
 		case Clusters::DiagnosticLogs::Id:
 			Clusters::DiagnosticLogs::DispatchServerCommand(apCommandObj, aCommandPath, aReader);
-			break;
-		case Clusters::GeneralCommissioning::Id:
-			Clusters::GeneralCommissioning::DispatchServerCommand(apCommandObj, aCommandPath, aReader);
 			break;
 		case Clusters::GeneralDiagnostics::Id:
 			Clusters::GeneralDiagnostics::DispatchServerCommand(apCommandObj, aCommandPath, aReader);
