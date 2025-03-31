@@ -844,7 +844,6 @@
 /tests/drivers/pwm/gpio_loopback/         @nrfconnect/ncs-low-level-test
 /tests/drivers/uart/                      @nrfconnect/ncs-low-level-test
 /tests/drivers/sensor/multicore_temp/     @nrfconnect/ncs-low-level-test
-/tests/drivers/sdp_asm/                   @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /tests/lib/at_cmd_parser/                 @nrfconnect/ncs-modem
 /tests/lib/at_cmd_custom/                 @nrfconnect/ncs-modem
 /tests/lib/at_parser/                     @nrfconnect/ncs-modem
