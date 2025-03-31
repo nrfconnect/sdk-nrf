@@ -48,3 +48,19 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_debug
+  sample.debug.memfault.modem_trace_to_memfault:
+    sysbuild: true
+    build_only: true
+    extra_configs:
+      - CONFIG_MEMFAULT_NCS_PROJECT_KEY="dummy-key"
+    extra_args: OVERLAY_CONFIG=overlay-modem-trace-to-memfault.conf
+    integration_platforms:
+      - nrf9151dk/nrf9151/ns
+      - thingy91x/nrf9151/ns
+    platform_allow:
+      - nrf9151dk/nrf9151/ns
+      - thingy91x/nrf9151/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_debug

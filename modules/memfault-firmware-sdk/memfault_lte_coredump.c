@@ -18,6 +18,8 @@
 #include <modem/pdn.h>
 #include <nrf_modem_at.h>
 
+#include "memfault_lte_coredump_modem_trace.h"
+
 LOG_MODULE_DECLARE(memfault_ncs, CONFIG_MEMFAULT_NCS_LOG_LEVEL);
 
 NRF_MODEM_LIB_ON_INIT(memfault_ncs_lte_coredump_init_hook, on_modem_lib_init, NULL);
@@ -371,6 +373,21 @@ static void state_coredump_send_attempt_entry(void *o)
 	LOG_DBG("Attempting to send coredump");
 
 	memfault_metrics_heartbeat_debug_trigger();
+
+	if (IS_ENABLED(CONFIG_MEMFAULT_NCS_POST_MODEM_TRACE_ON_COREDUMP)) {
+		err = memfault_lte_coredump_modem_trace_init();
+		if (err == -EIO) {
+			LOG_ERR("memfault_lte_coredump_modem_trace_init, error: %d", err);
+			__ASSERT_NO_MSG(false);
+			return;
+		}
+
+		err = memfault_lte_coredump_modem_trace_prepare_for_upload();
+		if (err == -ENOTSUP) {
+			__ASSERT_NO_MSG(false);
+			return;
+		}
+	}
 
 	err = memfault_zephyr_port_post_data();
 	if (err) {

@@ -146,7 +146,10 @@ static void modem_trace_dump_uart(const struct shell *sh, size_t argc, char **ar
 			return;
 		}
 
+#ifdef CONFIG_NRF_MODEM_LIB_SHELL_TRACE_UART
 		modem_trace_uart_send(sh, size);
+#endif /* CONFIG_NRF_MODEM_LIB_SHELL_TRACE_UART */
+
 	} else {
 		shell_error(sh, "Missing chosen node for nordic,modem-trace-uart. "
 			"Please configure which uart to use.");

@@ -191,7 +191,7 @@ config MEMFAULT_NCS_IMPLEMENT_METRICS_COLLECTION
 	  Implement the Memfault 'memfault_metrics_heartbeat_collect_data()' function
 	  for the selected metrics. Disable this to override the implementation.
 
-config MEMFAULT_NCS_POST_COREDUMP_ON_NETWORK_CONNECTED
+menuconfig MEMFAULT_NCS_POST_COREDUMP_ON_NETWORK_CONNECTED
 	bool "Post coredump on network connected"
 	depends on PDN
 	depends on LTE_LINK_CONTROL
@@ -202,6 +202,17 @@ config MEMFAULT_NCS_POST_COREDUMP_ON_NETWORK_CONNECTED
 	help
 	  Post coredump to Memfault when the device is connected to LTE network.
 	  This option is only supported for nRF91 targets.
+
+if MEMFAULT_NCS_POST_COREDUMP_ON_NETWORK_CONNECTED
+
+config MEMFAULT_NCS_POST_MODEM_TRACE_ON_COREDUMP
+	bool "Post modem trace on coredump"
+	select MEMFAULT_CDR_ENABLE
+	depends on NRF_MODEM_LIB_TRACE
+	depends on NRF_MODEM_LIB_TRACE_BACKEND_FLASH || NRF_MODEM_LIB_TRACE_BACKEND_RAM
+	help
+	  Capture modem traces continuously to flash or RAM (no init RAM), and post the traces
+	  together with the coredump to Memfault in the event of a crash.
 
 config MEMFAULT_NCS_POST_COREDUMP_AFTER_INITIAL_DELAY
 	bool "Post coredump after initial delay"
@@ -227,6 +238,8 @@ config MEMFAULT_NCS_POST_COREDUMP_RETRY_INTERVAL_SECONDS
 config MEMFAULT_NCS_POST_COREDUMP_THREAD_STACK_SIZE
 	int "Post coredump thread size"
 	default 512
+
+endif # MEMFAULT_NCS_POST_COREDUMP_ON_NETWORK_CONNECTED
 
 config MEMFAULT_NCS_ETB_CAPTURE
 	bool "Enable ETB trace capture"
