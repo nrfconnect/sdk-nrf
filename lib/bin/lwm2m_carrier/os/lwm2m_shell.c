@@ -359,7 +359,15 @@ static int cmd_device_error_code_add(const struct shell *shell, size_t argc, cha
 		return 0;
 	}
 
-	int err = lwm2m_carrier_error_code_add((int32_t)atoi(argv[1]));
+	int32_t error_code = (int32_t)atoi(argv[1]);
+
+	if (error_code < LWM2M_CARRIER_ERROR_CODE_NO_ERROR ||
+	    error_code > LWM2M_CARRIER_ERROR_CODE_PERIPHERAL_MALFUNCTION) {
+		shell_print(shell, "Unsupported error code");
+		return 0;
+	}
+
+	int err = lwm2m_carrier_error_code_add(error_code);
 
 	switch (err) {
 	case 0:
@@ -382,7 +390,6 @@ static int cmd_device_error_code_add(const struct shell *shell, size_t argc, cha
 static int cmd_device_error_code_remove(const struct shell *shell, size_t argc, char **argv)
 {
 	if (argc != 2) {
-		shell_print(shell, " 0 = No error");
 		shell_print(shell, " 1 = Low charge");
 		shell_print(shell, " 2 = External supply off");
 		shell_print(shell, " 3 = GPS failure");
@@ -394,7 +401,14 @@ static int cmd_device_error_code_remove(const struct shell *shell, size_t argc, 
 		return 0;
 	}
 
-	int err = lwm2m_carrier_error_code_remove((int32_t)atoi(argv[1]));
+	int32_t error_code = (int32_t)atoi(argv[1]);
+
+	if (error_code == LWM2M_CARRIER_ERROR_CODE_NO_ERROR) {
+		shell_print(shell, "Cannot remove error code no error");
+		return 0;
+	}
+
+	int err = lwm2m_carrier_error_code_remove(error_code);
 
 	switch (err) {
 	case 0:
