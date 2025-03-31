@@ -42,3 +42,4 @@ The following pages provide a brief overview of the Matter structure, in accorda
    bridge
    dev_model
    integration
+   manufacturer_cluster_editor_tool
