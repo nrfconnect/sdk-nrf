@@ -16,7 +16,7 @@ Overview
 The Modem SLM library allows you to perform the following functions:
 
 * Manage the serial interface so that the application only decides which UART device to use and configures its DTS.
-* Manage the GPIO pins, with support for bidirectional indication and wakeup.
+* Manage the GPIO pins, with support for bidirectional indication and power pin.
 * Send modem or SLM proprietary AT commands, receive responses and notifications, similar to the :ref:`lib_at_host` library.
   Received AT responses or notifications can be parsed by the :ref:`at_parser_readme` library.
 * Send raw data in SLM data mode.
@@ -33,8 +33,8 @@ Configure the following Kconfig options to enable this library:
 
 * :kconfig:option:`CONFIG_MODEM_SLM` - Enables the Modem SLM library.
 * :kconfig:option:`CONFIG_MODEM_SLM_DMA_MAXLEN` - Configures UART RX EasyDMA buffer size, which is configured to 1024 bytes by default.
-* :kconfig:option:`CONFIG_MODEM_SLM_WAKEUP_PIN` - Configures the mandatory wake-up GPIO, which is not configured by default.
-* :kconfig:option:`CONFIG_MODEM_SLM_WAKEUP_TIME` - Sets the toggle time value in milliseconds for wake-up GPIO, by default 100 ms.
+* :kconfig:option:`CONFIG_MODEM_SLM_POWER_PIN` - Configures the mandatory power pin GPIO, which is not configured by default.
+* :kconfig:option:`CONFIG_MODEM_SLM_POWER_PIN_TIME` - Sets the toggle time value in milliseconds for power pin GPIO, by default 100 ms.
 
 Optionally configure the following Kconfig options based on need:
 

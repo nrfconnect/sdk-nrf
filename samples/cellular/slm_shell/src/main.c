@@ -32,7 +32,7 @@ void slm_shell_indication_handler(void)
 	int err;
 
 	LOG_INF("SLM indicate pin triggered");
-	err = modem_slm_wake_up();
+	err = modem_slm_power_pin_toggle();
 	if (err) {
 		LOG_ERR("Failed to toggle power pin");
 	}

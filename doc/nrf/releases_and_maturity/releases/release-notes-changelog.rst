@@ -976,6 +976,14 @@ Modem libraries
 
   * Deprecated the :c:func:`modem_info_type_get` function in favor of the :c:func:`modem_info_data_type_get` function.
 
+* :ref:`lib_modem_slm` library:
+
+  * Updated:
+
+    * By renaming the ``CONFIG_MODEM_SLM_WAKEUP_PIN`` and ``CONFIG_MODEM_SLM_WAKEUP_TIME`` Kconfig options to
+      :kconfig:option:`CONFIG_MODEM_SLM_POWER_PIN` and :kconfig:option:`CONFIG_MODEM_SLM_POWER_PIN_TIME`, respectively.
+    * By renaming the :c:func:`modem_slm_wake_up` function to :c:func:`modem_slm_power_pin_toggle`.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 

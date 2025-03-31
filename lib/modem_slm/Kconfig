@@ -24,7 +24,7 @@ config MODEM_SLM_SHELL
 	bool "SLM Shell"
 	depends on SHELL
 	help
-	  Adds AT command capability to shell. The shell command is "slm"
+	  Adds AT command capability to shell. The shell command is "slm".
 
 choice
 	prompt "AT command terminator"
@@ -44,23 +44,23 @@ choice
 		bool "CR+LF Termination"
 endchoice
 
-config MODEM_SLM_WAKEUP_PIN
-	int "Wakeup pin"
+config MODEM_SLM_POWER_PIN
+	int "Power pin"
 	default -1
 	help
-	  Interface GPIO to wake up nRF9160 from sleep or exit SLM idle
+	  Interface GPIO to toggle power pin of the nRF91 Series device.
 
-config MODEM_SLM_WAKEUP_TIME
-	int "wakeup period"
+config MODEM_SLM_POWER_PIN_TIME
+	int "Power pin active time"
 	default 100
 	help
-	  GPIO active time in milliseconds. This setting specify the period length for the pin to be active
+	  GPIO active time in milliseconds. This setting specifies the period length for the pin to be active.
 
 config MODEM_SLM_INDICATE_PIN
 	int "Indicate pin"
 	default -1
 	help
-	  Interface GPIO pin used by SLM to indicate that data is available or an unexpected reset has occurred
+	  Interface GPIO pin used by SLM to indicate that data is available or an unexpected reset has occurred.
 
 module = MODEM_SLM
 module-str = Modem SLM

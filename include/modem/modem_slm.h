@@ -59,7 +59,7 @@ typedef void (*slm_data_handler_t)(const uint8_t *data, size_t datalen);
 /**
  * @typedef slm_ind_handler_t
  *
- * Handler to handle MODEM_SLM_INDICATE_PIN signal from SLM.
+ * Handler to handle @kconfig{CONFIG_MODEM_SLM_INDICATE_PIN} signal from SLM.
  */
 typedef void (*slm_ind_handler_t)(void);
 
@@ -77,22 +77,26 @@ int modem_slm_init(slm_data_handler_t handler);
 int modem_slm_uninit(void);
 
 /**
- * @brief Register callback for MODEM_SLM_INDICATE_PIN indication
+ * @brief Register callback for @kconfig{CONFIG_MODEM_SLM_INDICATE_PIN} indication
  *
  * @param handler Pointer to a handler function of type @ref slm_ind_handler_t.
  * @param wakeup  Enable/disable System Off wakeup by GPIO Sense.
  *
  * @retval Zero    Success.
- * @retval -EFAULT if MODEM_SLM_INDICATE_PIN is not defined.
+ * @retval -EFAULT if @kconfig{CONFIG_MODEM_SLM_INDICATE_PIN} is not defined.
  */
 int modem_slm_register_ind(slm_ind_handler_t handler, bool wakeup);
 
 /**
- * @brief Wakeup nRF9160 SiP via MODEM_SLM_WAKEUP_PIN
+ * @brief Toggle power pin of the nRF91 Series device configured with
+ * @kconfig{CONFIG_MODEM_SLM_POWER_PIN}.
+ *
+ * The pin is enabled for the time specified in @kconfig{CONFIG_MODEM_SLM_POWER_PIN_TIME}
+ * and then disabled.
  *
  * @return Zero on success, non-zero otherwise.
  */
-int modem_slm_wake_up(void);
+int modem_slm_power_pin_toggle(void);
 
 /**
  * @brief Reset the RX function of the serial interface
