@@ -319,6 +319,8 @@ nRF Desktop
     The introduced static memory maps may not be consistent with the ``storage_partition`` defined by the board-level DTS configuration.
   * Support for GATT long (reliable) writes (:kconfig:option:`CONFIG_BT_ATT_PREPARE_COUNT`) to Fast Pair and Works With ChromeBook (WWCB) configurations.
     This allows performing :ref:`fwupd <nrf_desktop_fwupd>` DFU image upload over Bluetooth LE with GATT clients that do not perform MTU exchange (for example, ChromeOS using the Floss Bluetooth stack).
+  * The ``dongle`` and ``release_dongle`` application configurations for the nRF54H20 Development Kit (``nrf54h20dk/nrf54h20/cpuapp``).
+    The configurations act as a HID dongle.
 
 * Updated:
 

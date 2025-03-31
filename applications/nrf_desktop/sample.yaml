@@ -144,6 +144,20 @@ tests:
     integration_platforms:
       - nrf52840dk/nrf52840
     extra_args: FILE_SUFFIX=dongle
+  applications.nrf_desktop.zdebug_dongle.uart:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    harness: console
+    extra_args: FILE_SUFFIX=dongle
+  applications.nrf_desktop.zrelease_dongle:
+    build_only: true
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args: FILE_SUFFIX=release_dongle
   applications.nrf_desktop.zdebug_keyboard.uart.kmu_provision:
     platform_allow:
       - nrf54l15dk/nrf54l10/cpuapp

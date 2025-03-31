@@ -166,13 +166,14 @@ Sample mouse or keyboard (``nrf54l15dk/nrf54l15/cpuapp``)
       * The board supports the ``debug`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration that acts as a mouse (``fast_pair`` file suffix).
         The configuration uses the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and supports firmware updates using the :ref:`nrf_desktop_dfu` and :ref:`nrf_desktop_dfu_mcumgr`.
 
-Sample mouse (``nrf54h20dk/nrf54h20/cpuapp``)
-      * The configuration uses the nRF54H20 DK.
-      * The build types allow to build the application as a mouse.
+Sample mouse or dongle (``nrf54h20dk/nrf54h20/cpuapp``)
+      * The configuration uses the nRF54H20 Development Kit.
+      * The build types allow to build the application as a mouse or dongle.
       * Inputs are simulated based on the hardware button presses.
       * Bluetooth LE and USB High-Speed transports are enabled.
         Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
         USB High-Speed is configured to use the USB next stack (:kconfig:option:`CONFIG_USB_DEVICE_STACK_NEXT`).
       * In ``debug`` configurations, logs are provided through the UART.
         For detailed information on working with the nRF54H20 DK, see the :ref:`ug_nrf54h20_gs` documentation.
-      * The configurations use the Software Updates for Internet of Things (SUIT) and supports firmware updates using the :ref:`nrf_desktop_dfu` and :ref:`nrf_desktop_smp`.
+      * The configurations use the Software Updates for Internet of Things (SUIT) and support firmware updates using the :ref:`nrf_desktop_dfu`.
+        Configurations acting as HID peripherals also support firmware updates using the :ref:`nrf_desktop_dfu_mcumgr`.
