@@ -90,6 +90,7 @@ Developing with nRF54H Series
 
 * Removed the note on installing SEGGER USB Driver for J-Link on Windows from the :ref:`ug_nrf54h20_gs` page and moved its contents to the `nRF Util prerequisites`_ documentation.
   The Windows-only requirement to install the SEGGER USB Driver for J-Link is now mentioned in the :ref:`installing_vsc` section on the :ref:`installation` page.
+* Added a new documentation page :ref:`ug_nrf54h20_suit_signing` under :ref:`ug_nrf54h20_suit_dfu`.
 
 Developing with nRF53 Series
 ============================
