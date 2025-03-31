@@ -354,6 +354,9 @@ nRF Desktop
   * The :ref:`nrf_desktop_dvfs` to no longer consume the :c:struct:`ble_peer_conn_params_event`.
     This allows to propagate the event to further listeners of the same or lower priority.
     This prevents an issue where :ref:`nrf_desktop_ble_latency` is not informed about the connection parameter update (it might cause missing connection latency updates).
+  * The Low Latency Packet Mode (LLPM) dependency in the :ref:`nrf_desktop_ble_conn_params`.
+    The module relies on the :kconfig:option:`CONFIG_CAF_BLE_USE_LLPM` Kconfig option.
+    This allows using the module also when the Bluetooth LE controller is not part of the main application.
 
 * Removed:
 
