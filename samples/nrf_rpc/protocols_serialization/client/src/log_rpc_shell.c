@@ -8,8 +8,14 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/shell/shell.h>
+#include <zephyr/sys/util.h>
 
 #include <stdlib.h>
+
+#define COREDUMP_LOG_PREFIX   "#CD:"
+#define COREDUMP_LOG_BEGIN    "BEGIN#"
+#define COREDUMP_LOG_END      "END#"
+#define COREDUMP_LOG_LINE_LEN 32
 
 static int cmd_log_rpc_stream_level(const struct shell *sh, size_t argc, char *argv[])
 {
@@ -143,19 +149,26 @@ static int cmd_log_rpc_crash(const struct shell *sh, size_t argc, char *argv[])
 {
 	int rc;
 	char buffer[CONFIG_RPC_CRASH_LOG_READ_BUFFER_SIZE];
+	char line[COREDUMP_LOG_LINE_LEN * 2 + 1];
 	size_t offset = 0;
 
+	shell_print(sh, COREDUMP_LOG_PREFIX COREDUMP_LOG_BEGIN);
+
 	while (true) {
-		rc = log_rpc_get_crash_log(offset, buffer, sizeof(buffer));
+		rc = log_rpc_get_crash_dump(offset, buffer, sizeof(buffer));
 		if (rc <= 0) {
 			break;
 		}
 
-		shell_fprintf(sh, SHELL_NORMAL, "%.*s", (size_t)rc, buffer);
+		for (int i = 0; i < rc; i += COREDUMP_LOG_LINE_LEN) {
+			bin2hex(&buffer[i], MIN(COREDUMP_LOG_LINE_LEN, rc - i), line, sizeof(line));
+			shell_print(sh, COREDUMP_LOG_PREFIX "%s", line);
+		}
+
 		offset += (size_t)rc;
 	}
 
-	shell_fprintf(sh, SHELL_NORMAL, "\n");
+	shell_print(sh, COREDUMP_LOG_PREFIX COREDUMP_LOG_END);
 
 	if (rc) {
 		shell_error(sh, "Error: %d", rc);

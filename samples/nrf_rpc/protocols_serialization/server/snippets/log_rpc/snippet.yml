@@ -7,11 +7,3 @@
 name: log_rpc
 append:
   EXTRA_CONF_FILE: log_rpc.conf
-
-boards:
-  nrf52840dk/nrf52840:
-    append:
-      EXTRA_DTC_OVERLAY_FILE: boards/nrf52840dk_nrf52840.overlay
-  nrf54l15dk/nrf54l15/cpuapp:
-    append:
-      EXTRA_DTC_OVERLAY_FILE: boards/nrf54l15dk_nrf54l15_cpuapp.overlay
