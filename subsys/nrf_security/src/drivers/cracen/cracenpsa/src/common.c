@@ -301,7 +301,11 @@ psa_status_t cracen_ecc_get_ecurve_from_psa(psa_ecc_family_t curve_family, size_
 {
 	switch (curve_family) {
 	case PSA_ECC_FAMILY_BRAINPOOL_P_R1:
+#if PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1
 		return get_sx_brainpool_curve(curve_bits, sicurve);
+#else
+		return PSA_ERROR_NOT_SUPPORTED;
+#endif
 	case PSA_ECC_FAMILY_SECP_R1:
 		return get_sx_secp_r1_curve(curve_bits, sicurve);
 	case PSA_ECC_FAMILY_MONTGOMERY:
