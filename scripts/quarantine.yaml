@@ -58,3 +58,24 @@
   platforms:
     - nrf54l20pdk/nrf54l20/cpuflpr
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-7267"
+
+- scenarios:
+    - applications.matter_bridge.nrf5340.wifi
+    - sample.matter.lock.thread_wifi_switched.smp_dfu
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-32762"
+
+- scenarios:
+    - applications.matter_bridge.br_ble.smp_dfu
+    - sample.matter.lock.smp_dfu
+    - sample.matter.template.smp_dfu
+  platforms:
+    - nrf7002dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-32762"
+
+- scenarios:
+    - applications.matter_weather_station.nrf7002eb
+  platforms:
+    - thingy53/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-32762"
