@@ -12,6 +12,28 @@
 #include "internal.h"
 #include "nrf-psa-crypto-user-config.h"
 
+#define SX_HASH_DIGESTSZ_SHA3_512 64
+#define SX_HASH_DIGESTSZ_SHA2_512 64
+#define SX_HASH_DIGESTSZ_SHA3_384 48
+#define SX_HASH_DIGESTSZ_SHA2_384 48
+#define SX_HASH_DIGESTSZ_SHA3_256 32
+#define SX_HASH_DIGESTSZ_SHA2_256 32
+#define SX_HASH_DIGESTSZ_SM3 32
+#define SX_HASH_DIGESTSZ_SHA3_224 28
+#define SX_HASH_DIGESTSZ_SHA2_224 28
+#define SX_HASH_DIGESTSZ_SHA1 20
+
+#define SX_HASH_BLOCKSZ_SHA3_224 144
+#define SX_HASH_BLOCKSZ_SHA3_256 136
+#define SX_HASH_BLOCKSZ_SHA2_384 128
+#define SX_HASH_BLOCKSZ_SHA2_512 128
+#define SX_HASH_BLOCKSZ_SHA3_384 104
+#define SX_HASH_BLOCKSZ_SHA3_512 72
+#define SX_HASH_BLOCKSZ_SHA2_224 64
+#define SX_HASH_BLOCKSZ_SHA2_256 64
+#define SX_HASH_BLOCKSZ_SHA1 64
+#define SX_HASH_BLOCKSZ_SM3 64
+
 /* These are not magic numbers, the number here is the size in bytes of the
  * extramem field of sxhash. The extra memory holds the data for saving/resuming
  * the state and should have the size of statesz + maxpadsz.
@@ -79,27 +101,6 @@ struct sxhashalg {
 	size_t maxpadsz;
 	int (*reservehw)(struct sxhash *c, size_t csz);
 };
-
-#define SX_HASH_DIGESTSZ_SHA1 20
-#define SX_HASH_BLOCKSZ_SHA1 64
-#define SX_HASH_DIGESTSZ_SHA2_224 28
-#define SX_HASH_DIGESTSZ_SHA2_256 32
-#define SX_HASH_DIGESTSZ_SHA2_384 48
-#define SX_HASH_DIGESTSZ_SHA2_512 64
-#define SX_HASH_BLOCKSZ_SHA2_224 64
-#define SX_HASH_BLOCKSZ_SHA2_256 64
-#define SX_HASH_BLOCKSZ_SHA2_384 128
-#define SX_HASH_BLOCKSZ_SHA2_512 128
-#define SX_HASH_DIGESTSZ_SHA3_224 28
-#define SX_HASH_DIGESTSZ_SHA3_256 32
-#define SX_HASH_DIGESTSZ_SHA3_384 48
-#define SX_HASH_DIGESTSZ_SHA3_512 64
-#define SX_HASH_BLOCKSZ_SHA3_224 144
-#define SX_HASH_BLOCKSZ_SHA3_256 136
-#define SX_HASH_BLOCKSZ_SHA3_384 104
-#define SX_HASH_BLOCKSZ_SHA3_512 72
-#define SX_HASH_DIGESTSZ_SM3 32
-#define SX_HASH_BLOCKSZ_SM3 64
 
 /** Hash algorithm SHA-1 (Secure Hash Algorithm 1)
  *
