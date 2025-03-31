@@ -34,6 +34,30 @@
 #define SX_HASH_BLOCKSZ_SHA1 64
 #define SX_HASH_BLOCKSZ_SM3 64
 
+/*
+ * !!! ORDER MATTERS !!!
+ */
+#if defined(PSA_NEED_CRACEN_SHA3_224)
+#define SX_HASH_MAX_ENABLED_BLOCK_SIZE SX_HASH_BLOCKSZ_SHA3_224
+#elif defined(PSA_NEED_CRACEN_SHA3_256)
+/* SHAKE256 has the same size but doesn't have a PSA_NEED yet */
+#define SX_HASH_MAX_ENABLED_BLOCK_SIZE SX_HASH_BLOCKSZ_SHA3_256
+#elif defined(PSA_NEED_CRACEN_SHA_512) || defined(PSA_NEED_CRACEN_SHA_384)
+#define SX_HASH_MAX_ENABLED_BLOCK_SIZE SX_HASH_BLOCKSZ_SHA2_512
+#elif defined(PSA_NEED_CRACEN_SHA3_384)
+#define SX_HASH_MAX_ENABLED_BLOCK_SIZE SX_HASH_BLOCKSZ_SHA3_384
+#elif defined(PSA_NEED_CRACEN_SHA3_512)
+#define SX_HASH_MAX_ENABLED_BLOCK_SIZE SX_HASH_BLOCKSZ_SHA3_512
+#elif defined(PSA_NEED_CRACEN_SHA_256) || defined(PSA_NEED_CRACEN_SHA_224)
+#define SX_HASH_MAX_ENABLED_BLOCK_SIZE SX_HASH_BLOCKSZ_SHA2_256
+#elif defined(PSA_NEED_CRACEN_SHA_1)
+/* SM3 has the same size but doesn't have a PSA_NEED yet */
+#define SX_HASH_MAX_ENABLED_BLOCK_SIZE SX_HASH_BLOCKSZ_SHA1
+#else
+/* A static assert is used in the hash.c against size 1. */
+#define SX_HASH_MAX_ENABLED_BLOCK_SIZE 1
+#endif
+
 /* These are not magic numbers, the number here is the size in bytes of the
  * extramem field of sxhash. The extra memory holds the data for saving/resuming
  * the state and should have the size of statesz + maxpadsz.

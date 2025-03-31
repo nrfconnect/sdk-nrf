@@ -19,6 +19,10 @@
 #include <cracen/mem_helpers.h>
 #include "cracen_psa_primitives.h"
 
+_Static_assert(SX_HASH_MAX_ENABLED_BLOCK_SIZE != 1,
+	       "To compile this file you need at least one hash algorithm enabled in the driver "
+	       "using the PSA_WANT_* configs.");
+
 psa_status_t cracen_hash_compute(psa_algorithm_t alg, const uint8_t *input, size_t input_length,
 				 uint8_t *hash, size_t hash_size, size_t *hash_length)
 {
