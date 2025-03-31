@@ -130,7 +130,7 @@ TF-M's Secure Partition Manager (SPM) backend may also be configured, depending 
 
 .. note::
     Do not confuse TF-M's Secure Partition Manager with Secure Partition Manager that was removed in the |NCS| v2.1.0.
-    See :ref:`migration guide <spm_to_tfm_migration>`.
+    See also `Migrating from Secure Partition Manager to Trusted Firmware-M`_ in the |NCS| v2.0.0 documentation.
 
 .. list-table:: SPM backends
    :header-rows: 1

@@ -46,7 +46,7 @@ Trusted Firmware M (TF-M) replaces the Secure Partition Manager (SPM) for secure
 TF-M is now enabled by default for most nRF9160 and nRF5340 applications and samples.
 
 Required action:
-   To start using TF-M instead of SPM in your application, see the information in :ref:`spm_to_tfm_migration`.
+   To start using TF-M instead of SPM in your application, see the information in `Migrating from Secure Partition Manager to Trusted Firmware-M`_ in the |NCS| v2.0.0 documentation.
 
 Switch from TinyCBOR to zcbor
 *****************************
