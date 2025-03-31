@@ -10,14 +10,7 @@ common:
     - nrf54l15dk/nrf54l15/cpuapp
   harness: pytest
   harness_config:
-    pytest_dut_scope: session
     pytest_root:
-      - "../pytest/test_kmu_with_mcuboot.py"
+      - "../pytest/test_kmu_provision.py"
 tests:
-  mcuboot.kmu.west.provision.default_key: {}
-  mcuboot.kmu.west.provision.secondary_key:
-    extra_args:
-      - SB_EXTRA_CONF_FILE=sb_secondary_key.conf
-  mcuboot.kmu.west.provision.wrong_key:
-    extra_args:
-      - SB_EXTRA_CONF_FILE=sb_wrong_key.conf
+  mcuboot.kmu.west.provision.basic: {}

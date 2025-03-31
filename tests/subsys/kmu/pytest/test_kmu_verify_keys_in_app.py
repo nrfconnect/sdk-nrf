@@ -10,7 +10,7 @@ from twister_harness import DeviceAdapter
 from twister_harness.helpers.utils import match_lines, find_in_config
 from common import (
     provision_keys_for_kmu,
-    flash_board,
+    reset_board,
     APP_KEYS_FOR_KMU
 )
 
@@ -24,14 +24,16 @@ def test_kmu_correct_keys_uploaded(dut: DeviceAdapter):
     """
     zephyr_base = find_in_config(dut.device_config.build_dir / 'CMakeCache.txt', 'ZEPHYR_BASE:PATH')
     default_key = Path(zephyr_base).parent / 'bootloader' / 'mcuboot' / 'root-ed25519.pem'
-    provision_keys_for_kmu(dut.device_config.id,
-                           key1=default_key,
-                           key2=APP_KEYS_FOR_KMU / 'root-ed25519-1.pem',
-                           key3=APP_KEYS_FOR_KMU / 'root-ed25519-2.pem')
+    provision_keys_for_kmu(
+        keys=[default_key,
+              APP_KEYS_FOR_KMU / 'root-ed25519-1.pem',
+              APP_KEYS_FOR_KMU / 'root-ed25519-2.pem'],
+        dev_id=dut.device_config.id
+    )
 
-    logger.info("Flash the board once again and check if keys are verified")
+    logger.info("Reset the board once again and check if keys are verified")
     dut.clear_buffer()
-    flash_board(dut.device_config.build_dir, dut.device_config.id)
+    reset_board(dut.device_config.id)
 
     lines = dut.readlines_until(
         regex='Key 2 failed|Key 2 verified|PSA crypto init failed',
@@ -49,14 +51,16 @@ def test_kmu_wrong_keys_uploaded(dut: DeviceAdapter):
     Upload two wrong keys to DUT using west ncs-provission command
     and verify it in application.
     """
-    provision_keys_for_kmu(dut.device_config.id,
-                           key1=APP_KEYS_FOR_KMU / 'root-ed25519-w.pem',
-                           key2=APP_KEYS_FOR_KMU / 'root-ed25519-1.pem',
-                           key3=APP_KEYS_FOR_KMU / 'root-ed25519-w.pem')
+    provision_keys_for_kmu(
+        keys=[APP_KEYS_FOR_KMU / 'root-ed25519-w.pem',
+              APP_KEYS_FOR_KMU / 'root-ed25519-1.pem',
+              APP_KEYS_FOR_KMU / 'root-ed25519-w.pem'],
+        dev_id=dut.device_config.id
+    )
 
-    logger.info("Flash the board once again and check if keys are verified")
+    logger.info("Reset the board once again and check if keys are verified")
     dut.clear_buffer()
-    flash_board(dut.device_config.build_dir, dut.device_config.id)
+    reset_board(dut.device_config.id)
 
     lines = dut.readlines_until(
         regex='Key 2 failed|Key 2 verified|PSA crypto init failed',
