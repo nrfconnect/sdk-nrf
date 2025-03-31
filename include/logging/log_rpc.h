@@ -143,13 +143,13 @@ int log_rpc_fetch_history(log_rpc_history_handler_t handler);
 void log_rpc_stop_fetch_history(bool pause);
 
 /**
- * @brief Retrieves the crash log retained on the remote device.
+ * @brief Retrieves the crash dump saved on the remote device.
  *
- * This function issues an nRF RPC command to obtain the last crash log retained
- * on the remote device, and then it copies the received log chunk into the
- * specified buffer.
+ * This function issues an nRF RPC command to obtain a subsequent chunk of the
+ * last crash dump saved on the remote device, and then it puts the received
+ * chunk into the provided buffer.
  *
- * The remote may either send the entire crash log in one go, if it fits within
+ * The remote may either send the entire dump in one go, if it fits within
  * the output buffer, or it may send a chunk of the log. Therefore, the caller
  * should repeatedly call this function, with an increasing offset, until it
  * returns 0 (indicating no more data), or a negative value (indicated an error).
@@ -161,7 +161,7 @@ void log_rpc_stop_fetch_history(bool pause);
  * @returns             The number of characters copied into the output buffer.
  * @returns -errno      Indicates failure.
  */
-int log_rpc_get_crash_log(size_t offset, char *buffer, size_t buffer_length);
+int log_rpc_get_crash_dump(size_t offset, uint8_t *buffer, size_t buffer_length);
 
 /**
  * @brief Generates a log message on the remote device.

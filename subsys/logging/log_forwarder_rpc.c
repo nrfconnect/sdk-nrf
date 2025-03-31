@@ -176,7 +176,7 @@ out:
 NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_put_history_chunk_handler,
 			 LOG_RPC_CMD_PUT_HISTORY_CHUNK, log_rpc_put_history_chunk_handler, NULL);
 
-int log_rpc_get_crash_log(size_t offset, char *buffer, size_t buffer_length)
+int log_rpc_get_crash_dump(size_t offset, uint8_t *buffer, size_t buffer_length)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	const uint8_t *log_chunk;
@@ -185,7 +185,7 @@ int log_rpc_get_crash_log(size_t offset, char *buffer, size_t buffer_length)
 	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, 2 + sizeof(offset) + sizeof(buffer_length));
 	nrf_rpc_encode_uint(&ctx, offset);
 	nrf_rpc_encode_uint(&ctx, buffer_length);
-	nrf_rpc_cbor_cmd_rsp_no_err(&log_rpc_group, LOG_RPC_CMD_GET_CRASH_LOG, &ctx);
+	nrf_rpc_cbor_cmd_rsp_no_err(&log_rpc_group, LOG_RPC_CMD_GET_CRASH_DUMP, &ctx);
 
 	/* Parse response */
 	log_chunk = nrf_rpc_decode_buffer_ptr_and_size(&ctx, &log_chunk_size);
@@ -197,7 +197,7 @@ int log_rpc_get_crash_log(size_t offset, char *buffer, size_t buffer_length)
 
 	if (!nrf_rpc_decoding_done_and_check(&log_rpc_group, &ctx)) {
 		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, &log_rpc_group,
-			    LOG_RPC_CMD_GET_CRASH_LOG, NRF_RPC_PACKET_TYPE_RSP);
+			    LOG_RPC_CMD_GET_CRASH_DUMP, NRF_RPC_PACKET_TYPE_RSP);
 	}
 
 	return log_chunk_size;
