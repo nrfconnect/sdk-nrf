@@ -13,20 +13,22 @@ if BT_RAS_RRSP
 config BT_RAS_RRSP_AUTO_ALLOC_INSTANCE
 	bool "Automatically allocate RRSP instances to new connections"
 	default y
+	help
+	  Automatically allocate RRSP instances to new connections.
 
 config BT_RAS_RRSP_MAX_ACTIVE_CONN
 	int "Number of simultaneously supported RRSP instances"
 	default BT_MAX_CONN
 	range 1 BT_MAX_CONN
 	help
-	  The number of simultaneous connections with an instance of RAS RRSP
+	  The number of simultaneous connections with an instance of RAS RRSP.
 
 config BT_RAS_RRSP_RD_BUFFERS_PER_CONN
 	int "Number of ranging data buffers per connection"
 	default 1
 	range 1 10
 	help
-	  The number of ranging procedures that can be stored inside RRSP.
+	  The number of ranging procedures that can be stored inside RRSP at the same time.
 
 module = BT_RAS_RRSP
 module-str = RAS_RRSP
