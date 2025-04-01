@@ -130,6 +130,7 @@ static int fem_nrf21540_gpio_spi_configure(void)
 	}
 #endif
 
+#if !defined(_MPSL_FEM_CONFIG_NRF21540_GPIO_SPI_PDN_FROM_MPSL_FEM_ENABLE)
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), pdn_gpios)
 	uint8_t pdn_gpiote_channel;
 	const nrfx_gpiote_t pdn_gpiote = NRFX_GPIOTE_INSTANCE(
@@ -138,6 +139,7 @@ static int fem_nrf21540_gpio_spi_configure(void)
 	if (nrfx_gpiote_channel_alloc(&pdn_gpiote, &pdn_gpiote_channel) != NRFX_SUCCESS) {
 		return -ENOMEM;
 	}
+#endif
 #endif
 
 	mpsl_fem_nrf21540_gpio_spi_interface_config_t cfg = {
@@ -200,9 +202,15 @@ static int fem_nrf21540_gpio_spi_configure(void)
 			},
 			.enable        = true,
 			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(pdn_gpios),
+#if !defined(_MPSL_FEM_CONFIG_NRF21540_GPIO_SPI_PDN_FROM_MPSL_FEM_ENABLE)
 			.gpiote_ch_id  = pdn_gpiote_channel
+#endif
 #else
+#if !defined(_MPSL_FEM_CONFIG_NRF21540_GPIO_SPI_PDN_FROM_MPSL_FEM_ENABLE)
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
+#else
+			MPSL_FEM_DISABLED_GPIO_CONFIG_INIT
+#endif
 #endif
 		},
 		.mode_pin_config = {
