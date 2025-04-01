@@ -72,7 +72,7 @@ rsource "Kconfig.template.partition_region"
 endif
 
 
-if SETTINGS_FCB || SETTINGS_NVS || SETTINGS_ZMS
+if SETTINGS_FCB || SETTINGS_NVS || SETTINGS_ZMS || SETTINGS_ZMS_LEGACY
 partition=SETTINGS_STORAGE
 partition-size=0x2000
 rsource "Kconfig.template.partition_config"
@@ -94,7 +94,7 @@ rsource "Kconfig.template.partition_config"
 rsource "Kconfig.template.partition_region"
 endif
 
-if ZMS && !SETTINGS_ZMS
+if ZMS && !(SETTINGS_ZMS || SETTINGS_ZMS_LEGACY)
 partition=ZMS_STORAGE
 partition-size=0x6000
 rsource "Kconfig.template.partition_config"

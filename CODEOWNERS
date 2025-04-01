@@ -815,6 +815,7 @@
 /subsys/partition_manager/                @nordicjm @tejlmand
 /subsys/pcd/                              @nrfconnect/ncs-pluto
 /subsys/sdfw_services/                    @nrfconnect/ncs-aurora
+/subsys/settings/                         @nrfconnect/ncs-pluto @rghaddab
 /subsys/sdfw_services/services/extmem/    @nrfconnect/ncs-charon
 /subsys/sdfw_services/services/suit_service/ @nrfconnect/ncs-charon
 /subsys/shell/                            @nordic-krch
