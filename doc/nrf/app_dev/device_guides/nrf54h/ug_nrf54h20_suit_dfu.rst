@@ -37,3 +37,4 @@ For a list of available SUIT samples, see the :ref:`suit_samples` page.
    ug_nrf54h20_suit_soc_binaries
    ug_nrf54h20_suit_recovery
    ug_nrf54h20_suit_sdfw_sdrfw_update
+   ug_nrf54h20_suit_ipuc
