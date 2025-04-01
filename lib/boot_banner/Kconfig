@@ -22,7 +22,7 @@ config NCS_APPLICATION_BOOT_BANNER_STRING
 	  Use this option to set the application boot banner.
 
 config NCS_NCS_BOOT_BANNER_STRING
-	string
+	string "Boot banner string"
 	default "nRF Connect SDK"
 
 config NCS_ZEPHYR_BOOT_BANNER_STRING
