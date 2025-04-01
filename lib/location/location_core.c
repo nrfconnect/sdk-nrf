@@ -205,31 +205,6 @@ static const char *location_core_gnss_accuracy_str(enum location_accuracy accura
 	return accuracy_str;
 }
 
-static const char LOCATION_SERVICE_ANY_STR[] = "Any";
-static const char LOCATION_SERVICE_NRF_CLOUD_STR[] = "nRF Cloud";
-static const char LOCATION_SERVICE_HERE_STR[] = "HERE";
-
-static const char *location_core_service_str(enum location_service service)
-{
-	const char *service_str = NULL;
-
-	switch (service) {
-	case LOCATION_SERVICE_ANY:
-		service_str = LOCATION_SERVICE_ANY_STR;
-		break;
-	case LOCATION_SERVICE_NRF_CLOUD:
-		service_str = LOCATION_SERVICE_NRF_CLOUD_STR;
-		break;
-	case LOCATION_SERVICE_HERE:
-		service_str = LOCATION_SERVICE_HERE_STR;
-		break;
-	default:
-		__ASSERT_NO_MSG(0);
-		break;
-	}
-	return service_str;
-}
-
 #endif
 
 int location_core_init(void)
@@ -328,16 +303,10 @@ void location_core_config_log(const struct location_config *config)
 				config->methods[i].gnss.accuracy);
 		} else if (type == LOCATION_METHOD_CELLULAR) {
 			LOG_DBG("      Timeout: %dms", config->methods[i].cellular.timeout);
-			LOG_DBG("      Service: %s (%d)",
-				location_core_service_str(config->methods[i].cellular.service),
-				config->methods[i].cellular.service);
 			LOG_DBG("      Cell count: %d", config->methods[i].cellular.cell_count);
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
 		} else if (type == LOCATION_METHOD_WIFI) {
 			LOG_DBG("      Timeout: %dms", config->methods[i].wifi.timeout);
-			LOG_DBG("      Service: %s (%d)",
-				location_core_service_str(config->methods[i].wifi.service),
-				config->methods[i].wifi.service);
 #endif
 		}
 	}
@@ -428,14 +397,6 @@ static void location_request_info_create(const struct location_config *config)
 		if (abs(method_wifi_index - method_cellular_index) == 1) {
 			__ASSERT_NO_MSG(loc_req_info.cellular != NULL);
 			__ASSERT_NO_MSG(loc_req_info.wifi != NULL);
-
-			/* If Wi-Fi and cellular are using same service */
-			if (loc_req_info.cellular->service == loc_req_info.wifi->service) {
-				combine_wifi_cell = true;
-			} else {
-				LOG_DBG("Wi-Fi and cellular methods have different service "
-					"so they are not combined");
-			}
 		} else if (loc_req_info.cellular != NULL && loc_req_info.wifi != NULL) {
 			LOG_DBG("Wi-Fi and cellular methods are not one after the other "
 				"in method list so they are not combined");

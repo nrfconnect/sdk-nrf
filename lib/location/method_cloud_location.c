@@ -15,15 +15,22 @@
 #include "location_utils.h"
 #include "scan_cellular.h"
 #include "scan_wifi.h"
-#include "cloud_service/cloud_service.h"
+#include "cloud_service.h"
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
 BUILD_ASSERT(
 	IS_ENABLED(CONFIG_LOCATION_SERVICE_NRF_CLOUD) ||
-	IS_ENABLED(CONFIG_LOCATION_SERVICE_HERE) ||
 	IS_ENABLED(CONFIG_LOCATION_SERVICE_EXTERNAL),
-	"At least one location service, or handling the service externally must be enabled");
+	"Either CONFIG_LOCATION_SERVICE_NRF_CLOUD or CONFIG_LOCATION_SERVICE_EXTERNAL "
+	"must be enabled");
+
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+BUILD_ASSERT(
+	!IS_ENABLED(CONFIG_LOCATION_SERVICE_NRF_CLOUD),
+	"CONFIG_LOCATION_SERVICE_NRF_CLOUD must be disabled when "
+	"CONFIG_LOCATION_SERVICE_EXTERNAL is set");
+#endif
 
 /* Common for both */
 struct method_cloud_location_start_work_args {
@@ -44,8 +51,12 @@ static void method_cloud_location_positioning_work_fn(struct k_work *work)
 {
 	struct method_cloud_location_start_work_args *work_data =
 		CONTAINER_OF(work, struct method_cloud_location_start_work_args, work_item);
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
 	const struct location_wifi_config *wifi_config = work_data->wifi_config;
+#endif
+#if defined(CONFIG_LOCATION_METHOD_CELLULAR)
 	const struct location_cellular_config *cell_config = work_data->cell_config;
+#endif
 	struct wifi_scan_info *scan_wifi_info = NULL;
 	struct lte_lc_cells_info *scan_cellular_info = NULL;
 	int err = 0;
@@ -83,8 +94,6 @@ static void method_cloud_location_positioning_work_fn(struct k_work *work)
 	}
 
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
-	ARG_UNUSED(wifi_config);
-
 	struct location_data_cloud request = {
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR)
 		.cell_data = scan_cellular_info,
@@ -102,7 +111,6 @@ static void method_cloud_location_positioning_work_fn(struct k_work *work)
 	struct cloud_service_pos_req params = {
 		.cell_data = scan_cellular_info,
 		.wifi_data = scan_wifi_info,
-		.service = (cell_config != NULL) ? cell_config->service : wifi_config->service,
 		.timeout_ms = SYS_FOREVER_MS
 	};
 
@@ -215,10 +223,6 @@ void method_cloud_location_details_get(struct location_data_details *details)
 int method_cloud_location_init(void)
 {
 	running = false;
-
-#if !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
-	cloud_service_init();
-#endif
 
 	return 0;
 }

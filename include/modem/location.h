@@ -142,21 +142,6 @@ enum location_accuracy {
 	LOCATION_ACCURACY_HIGH,
 };
 
-/** Location service. */
-enum location_service {
-	/**
-	 * Use any location service that has been configured to be available.
-	 *
-	 * This is useful when only one service is configured but can also be used
-	 * even if several services are available.
-	 */
-	LOCATION_SERVICE_ANY,
-	/** nRF Cloud location service. */
-	LOCATION_SERVICE_NRF_CLOUD,
-	/** HERE location service. */
-	LOCATION_SERVICE_HERE
-};
-
 /** Date and time (UTC). */
 struct location_datetime {
 	/** True if date and time are valid, false if not. */
@@ -467,16 +452,6 @@ struct location_cellular_config {
 	int32_t timeout;
 
 	/**
-	 * @brief Used cellular positioning service.
-	 *
-	 * @details Default value is @ref LOCATION_SERVICE_ANY. It is applied when
-	 * location_config_defaults_set() function is called.
-	 *
-	 * This parameter is ignored when @kconfig{CONFIG_LOCATION_SERVICE_EXTERNAL} is enabled.
-	 */
-	enum location_service service;
-
-	/**
 	 * @brief Number of cells to be requested for cellular positioning.
 	 *
 	 * @details Default value is 4. It is applied when
@@ -519,16 +494,6 @@ struct location_wifi_config {
 	 * @ref location_config structure is still valid.
 	 */
 	int32_t timeout;
-
-	/**
-	 * @brief Used Wi-Fi positioning service.
-	 *
-	 * @details Default value is @ref LOCATION_SERVICE_ANY. It is applied when
-	 * location_config_defaults_set() function is called.
-	 *
-	 * This parameter is ignored when @kconfig{CONFIG_LOCATION_SERVICE_EXTERNAL} is enabled.
-	 */
-	enum location_service service;
 };
 
 /** Location method configuration. */
@@ -560,7 +525,6 @@ struct location_config {
 	 * these methods are handled together, if the following conditions are met:
 	 *   - Methods are one after the other in location request method list
 	 *   - @ref mode is @ref LOCATION_REQ_MODE_FALLBACK
-	 *   - Requested cloud service for Wi-Fi and cellular is the same
 	 */
 	struct location_method_config methods[CONFIG_LOCATION_METHODS_LIST_SIZE];
 

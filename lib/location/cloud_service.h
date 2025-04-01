@@ -17,8 +17,6 @@ extern "C" {
 
 /** Cloud positioning input parameters. */
 struct cloud_service_pos_req {
-	/** Cloud positioning service to be used. */
-	enum location_service service;
 	/** Neighbor cell data. */
 	struct lte_lc_cells_info *cell_data;
 	/** Wi-Fi scanning results data. */
@@ -43,11 +41,6 @@ struct cloud_service_pos_req {
 int cloud_service_location_get(
 	const struct cloud_service_pos_req *params,
 	struct location_data *location);
-
-/**
- * @brief Initialize cloud services.
- */
-void cloud_service_init(void);
 
 #ifdef __cplusplus
 }

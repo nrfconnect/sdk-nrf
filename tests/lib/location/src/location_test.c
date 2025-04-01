@@ -110,7 +110,7 @@ static const char ncellmeas_resp_pci1[] =
 	"%NCELLMEAS:0,\"00011B07\",\"26295\",\"00B7\",2300,7,63,31,"
 	"150344527,2300,8,60,29,0,2400,11,55,26,184\r\n";
 
-#if !defined(CONFIG_LOCATION_METHOD_WIFI)
+#if !defined(CONFIG_LOCATION_METHOD_WIFI) && !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 
 static const char ncellmeas_resp_gci1[] =
 	"%NCELLMEAS:0,\"00011B07\",\"26295\",\"00B7\",10512,9034,2300,7,63,31,150344527,1,0,"
@@ -737,7 +737,7 @@ void test_location_gnss(void)
 	location_cb_expected++;
 #endif
 
-#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_LOCATION_TEST_AGNSS)
 	test_location_event_data[location_cb_expected].id = LOCATION_EVT_GNSS_ASSISTANCE_REQUEST;
 	test_location_event_data[location_cb_expected].method = LOCATION_METHOD_GNSS;
 	location_cb_expected++;
@@ -1038,7 +1038,7 @@ void cellular_rest_req_resp_handle(int test_event_data_index)
 		sizeof(rest_resp_ctx));
 }
 
-/* Test successful cellular location request utilizing HERE service.
+/* Test successful cellular location request utilizing external service.
  * Also try to make a location request while previous one is still pending.
  */
 void test_location_cellular(void)
@@ -1087,11 +1087,7 @@ void test_location_cellular(void)
 
 	cellular_rest_req_resp_handle(location_cb_expected - 1);
 
-	/* Select cellular service to be used */
-	rest_req_ctx.url = "here.api"; /* Needs a fix once rest_req_ctx is verified */
-	rest_req_ctx.sec_tag = CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG;
-	rest_req_ctx.port = HTTPS_PORT;
-	rest_req_ctx.host = CONFIG_LOCATION_SERVICE_HERE_HOSTNAME;
+	/* TODO: Add support for nRF Cloud */
 #endif
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
@@ -1206,11 +1202,7 @@ void test_location_cellular_timeout_during_1st_ncellmeas(void)
 
 	cellular_rest_req_resp_handle(location_cb_expected - 1);
 
-	/* Select cellular service to be used */
-	rest_req_ctx.url = "here.api"; /* Needs a fix once rest_req_ctx is verified */
-	rest_req_ctx.sec_tag = CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG;
-	rest_req_ctx.port = HTTPS_PORT;
-	rest_req_ctx.host = CONFIG_LOCATION_SERVICE_HERE_HOSTNAME;
+	/* TODO: Add support for nRF Cloud */
 
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
@@ -1258,11 +1250,7 @@ void test_location_cellular_timeout_during_2nd_ncellmeas_backup_timeout(void)
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=3,5", 0);
 
-	/* Select cellular service to be used */
-	rest_req_ctx.url = "here.api"; /* Needs a fix once rest_req_ctx is verified */
-	rest_req_ctx.sec_tag = CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG;
-	rest_req_ctx.port = HTTPS_PORT;
-	rest_req_ctx.host = CONFIG_LOCATION_SERVICE_HERE_HOSTNAME;
+	/* TODO: Add support for nRF Cloud */
 
 	/* Wait a bit so that NCELLMEAS is sent from location lib before we send a response.
 	 * Otherwise, lte_lc would ignore NCELLMEAS notification because no NCELLMEAS on going
@@ -1284,7 +1272,7 @@ void test_location_cellular_timeout_during_2nd_ncellmeas_backup_timeout(void)
 
 /********* WIFI POSITIONING TESTS ***********************/
 
-/* Test successful Wi-Fi location request utilizing HERE service. */
+/* Test successful Wi-Fi location request. */
 void test_location_wifi(void)
 {
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
@@ -1323,11 +1311,7 @@ void test_location_wifi(void)
 
 	cellular_rest_req_resp_handle(location_cb_expected - 1);
 
-	/* Select cellular service to be used */
-	rest_req_ctx.url = "here.api"; /* Needs a fix once rest_req_ctx is verified */
-	rest_req_ctx.sec_tag = CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG;
-	rest_req_ctx.port = HTTPS_PORT;
-	rest_req_ctx.host = CONFIG_LOCATION_SERVICE_HERE_HOSTNAME;
+	/* TODO: Add support for nRF Cloud */
 
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
@@ -1643,11 +1627,7 @@ void test_location_request_default(void)
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=4,4", 0);
 
-	/* Select cellular service to be used */
-	rest_req_ctx.url = "here.api"; /* Needs a fix once rest_req_ctx is verified */
-	rest_req_ctx.sec_tag = CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG;
-	rest_req_ctx.port = HTTPS_PORT;
-	rest_req_ctx.host = CONFIG_LOCATION_SERVICE_HERE_HOSTNAME;
+	/* TODO: Add support for nRF Cloud */
 
 	/* Wait a bit so that NCELLMEAS is sent from location lib before we send a response.
 	 * Otherwise, lte_lc would ignore NCELLMEAS notification because no NCELLMEAS on going
@@ -1781,11 +1761,7 @@ void test_location_request_mode_all_cellular_gnss(void)
 #endif
 	cellular_rest_req_resp_handle(location_cb_expected - 2);
 
-	/* Select cellular service to be used */
-	rest_req_ctx.url = "here.api"; /* Needs a fix once rest_req_ctx is verified */
-	rest_req_ctx.sec_tag = CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG;
-	rest_req_ctx.port = HTTPS_PORT;
-	rest_req_ctx.host = CONFIG_LOCATION_SERVICE_HERE_HOSTNAME;
+	/* TODO: Add support for nRF Cloud */
 
 	/* Wait a bit so that NCELLMEAS is sent before we send response */
 	k_sleep(K_MSEC(1));
@@ -2167,11 +2143,7 @@ void test_location_cellular_periodic(void)
 
 	cellular_rest_req_resp_handle(0);
 
-	/* Select cellular service to be used */
-	rest_req_ctx.url = "here.api"; /* Needs a fix once rest_req_ctx is verified */
-	rest_req_ctx.sec_tag = CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG;
-	rest_req_ctx.port = HTTPS_PORT;
-	rest_req_ctx.host = CONFIG_LOCATION_SERVICE_HERE_HOSTNAME;
+	/* TODO: Add support for nRF Cloud */
 
 	err = location_request(&config);
 	TEST_ASSERT_EQUAL(0, err);
@@ -2189,11 +2161,7 @@ void test_location_cellular_periodic(void)
 
 	cellular_rest_req_resp_handle(1);
 
-	/* Select cellular service to be used */
-	rest_req_ctx.url = "here.api"; /* Needs a fix once rest_req_ctx is verified */
-	rest_req_ctx.sec_tag = CONFIG_LOCATION_SERVICE_HERE_TLS_SEC_TAG;
-	rest_req_ctx.port = HTTPS_PORT;
-	rest_req_ctx.host = CONFIG_LOCATION_SERVICE_HERE_HOSTNAME;
+	/* TODO: Add support for nRF Cloud */
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%NCELLMEAS=1", 0);
 	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);

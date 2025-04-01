@@ -15,7 +15,7 @@
 
 #include "location_core.h"
 #include "location_utils.h"
-#include "cloud_service/cloud_service.h"
+#include "cloud_service.h"
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
 
