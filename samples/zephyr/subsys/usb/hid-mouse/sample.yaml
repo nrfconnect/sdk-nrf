@@ -33,8 +33,10 @@ tests:
     #   - usbd
     integration_platforms:
       - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
     extra_args:
       - CONF_FILE="usbd_next_prj.conf"
       - EXTRA_DTC_OVERLAY_FILE="usbd_next.overlay"
