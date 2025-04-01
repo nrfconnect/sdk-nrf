@@ -367,6 +367,8 @@ nRF Desktop
     This allows using the module also when the Bluetooth LE controller is not part of the main application.
   * Enabled the :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_OUT_REPORT <config_desktop_app_options>` Kconfig option for the nRF54H20 DK.
     The option mitigates HID report rate drops during DFU image transfer through the nRF Desktop dongle.
+  * Explicitly enabled the :kconfig:option:`CONFIG_BT_CTLR_ASSERT_HANDLER` Kconfig option in IPC radio image configurations of the nRF54H20 DK.
+    This is done to use an assertion handler defined by the IPC radio image.
 
 * Removed:
 
