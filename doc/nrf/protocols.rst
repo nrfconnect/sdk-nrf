@@ -12,10 +12,10 @@ They introduce you to concepts that are important to work with the protocol and 
 
    protocols/amazon_sidewalk/index
    protocols/bt/index
+   protocols/lte/index
    protocols/dect/index
    protocols/esb/index
    protocols/gazell/index
-   protocols/lte/index
    protocols/matter/index
    protocols/multiprotocol/index
    protocols/nfc/index
