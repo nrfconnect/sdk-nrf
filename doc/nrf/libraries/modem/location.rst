@@ -382,12 +382,10 @@ This library uses the following |NCS| libraries:
 
 * :ref:`nrf_modem_lib_readme`
 * :ref:`lte_lc_readme`
-* :ref:`lib_rest_client`
 * :ref:`lib_nrf_cloud`
 * :ref:`lib_nrf_cloud_agnss`
 * :ref:`lib_nrf_cloud_pgps`
 * :ref:`lib_nrf_cloud_rest`
-* :ref:`lib_modem_jwt`
 
 It uses the following `sdk-nrfxlib`_ library:
 

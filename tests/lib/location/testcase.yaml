@@ -30,19 +30,6 @@ tests:
       - native_sim
     extra_configs:
       - CONFIG_LOCATION_METHOD_WIFI=n
-  unity.location_test.service_external:
-    sysbuild: true
-    tags:
-      - location_service_external
-      - sysbuild
-      - ci_tests_lib_location
-    platform_allow: native_sim
-    integration_platforms:
-      - native_sim
-    extra_configs:
-      - CONFIG_LOCATION_SERVICE_EXTERNAL=y
-      - CONFIG_LOCATION_SERVICE_HERE=n
-      - CONFIG_LOCATION_SERVICE_HERE_API_KEY=""
   unity.location_test.data_details:
     sysbuild: true
     tags:

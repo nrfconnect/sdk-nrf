@@ -209,13 +209,11 @@ static void location_config_method_defaults_set(
 	} else if (method_type == LOCATION_METHOD_CELLULAR) {
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR)
 		method->cellular.timeout = CONFIG_LOCATION_REQUEST_DEFAULT_CELLULAR_TIMEOUT;
-		method->cellular.service = LOCATION_SERVICE_ANY;
 		method->cellular.cell_count = CONFIG_LOCATION_REQUEST_DEFAULT_CELLULAR_CELL_COUNT;
 #endif
 	} else if (method_type == LOCATION_METHOD_WIFI) {
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
 		method->wifi.timeout = CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_TIMEOUT;
-		method->wifi.service = LOCATION_SERVICE_ANY;
 #endif
 	}
 }

@@ -118,6 +118,19 @@ nRF Cloud library
    * You must set the :kconfig:option:`CONFIG_NRF_CLOUD` Kconfig option to access the nRF Cloud libraries.
      This option is now disabled by default to prevent the unintended inclusion of nRF Cloud Kconfig variables in non-nRF Cloud projects, addressing a previous issue.
 
+Location library
+----------------
+
+.. toggle::
+
+   For applications and samples using the :ref:`lib_location` library:
+
+   * Support for HERE location services and the :kconfig:option:`CONFIG_LOCATION_SERVICE_HERE` Kconfig option has been removed.
+     To use external location services, enable the :kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL` option and implement the required APIs.
+
+   * The ``service`` parameter in :c:struct:`location_cellular_config` and :c:struct:`location_wifi_config` has been removed.
+     The library supports only one location service, so the ``service`` parameter is no longer needed.
+
 .. _migration_3.0_recommended:
 
 Recommended changes

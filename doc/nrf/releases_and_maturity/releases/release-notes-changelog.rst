@@ -953,7 +953,7 @@ Modem libraries
 
 * :ref:`lib_location` library:
 
-  * Removed references to HERE location services.
+  * Removed support for HERE location services.
 
 * :ref:`lib_at_host` library:
 
