@@ -339,11 +339,11 @@ static void adv_work_handler(struct k_work *work)
 	int err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 
 	if (err) {
-		printk("Advertising failed to start (err %d)\n", err);
+		LOG_ERR("Advertising failed to start (err %d)", err);
 		return;
 	}
 
-	printk("Advertising successfully started\n");
+	LOG_INF("Advertising successfully started");
 }
 
 static void advertising_start(void)
@@ -390,7 +390,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 
 static void recycled_cb(void)
 {
-	printk("Connection object available from previous conn. Disconnect is complete!\n");
+	LOG_INF("Connection object available from previous conn. Disconnect is complete!");
 	advertising_start();
 }
 
@@ -616,13 +616,13 @@ int main(void)
 	if (IS_ENABLED(CONFIG_BT_NUS_SECURITY_ENABLED)) {
 		err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 		if (err) {
-			printk("Failed to register authorization callbacks.\n");
+			LOG_ERR("Failed to register authorization callbacks. (err: %d)", err);
 			return 0;
 		}
 
 		err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
 		if (err) {
-			printk("Failed to register authorization info callbacks.\n");
+			LOG_ERR("Failed to register authorization info callbacks. (err: %d)", err);
 			return 0;
 		}
 	}
