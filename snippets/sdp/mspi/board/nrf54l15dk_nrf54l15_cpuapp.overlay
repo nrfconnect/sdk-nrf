@@ -23,9 +23,6 @@
 		has-dpd;
 		t-enter-dpd = <10000>;
 		t-exit-dpd = <35000>;
-		reset-gpios = <&gpio2 0 GPIO_ACTIVE_LOW>;
-		t-reset-pulse = <10000>;
-		t-reset-recovery = <35000>;
 
 		mspi-max-frequency = <DT_FREQ_M(13)>;
 		mspi-io-mode = "MSPI_IO_MODE_QUAD_1_4_4";
