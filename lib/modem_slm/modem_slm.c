@@ -60,6 +60,57 @@ static const char at_usage_str[] = "Usage: slm <at_command>";
 /* global functions defined in different files */
 void slm_monitor_dispatch(const char *notif);
 
+#if (CONFIG_MODEM_SLM_INDICATE_PIN >= 0)
+static bool indicate_pin_enabled;
+
+static void gpio_cb_func(const struct device *dev, struct gpio_callback *gpio_cb, uint32_t pins);
+static struct gpio_callback gpio_cb;
+#endif
+
+static int indicate_pin_enable(void)
+{
+#if (CONFIG_MODEM_SLM_INDICATE_PIN >= 0)
+	int err = 0;
+
+	if (!indicate_pin_enabled) {
+		err = gpio_pin_configure(gpio_dev, CONFIG_MODEM_SLM_INDICATE_PIN,
+					 GPIO_INPUT | GPIO_PULL_UP | GPIO_ACTIVE_LOW);
+		if (err) {
+			LOG_ERR("GPIO config error: %d", err);
+			return err;
+		}
+
+		gpio_init_callback(&gpio_cb, gpio_cb_func, BIT(CONFIG_MODEM_SLM_INDICATE_PIN));
+		err = gpio_add_callback(gpio_dev, &gpio_cb);
+		if (err) {
+			LOG_WRN("GPIO add callback error: %d", err);
+		}
+		err = gpio_pin_interrupt_configure(gpio_dev, CONFIG_MODEM_SLM_INDICATE_PIN,
+						   GPIO_INT_LEVEL_LOW);
+		if (err) {
+			LOG_WRN("GPIO interrupt configure error: %d", err);
+		}
+		indicate_pin_enabled = true;
+		LOG_DBG("Indicate pin enabled");
+	}
+#endif
+	return 0;
+}
+
+static void indicate_pin_disable(void)
+{
+#if (CONFIG_MODEM_SLM_INDICATE_PIN >= 0)
+	if (indicate_pin_enabled) {
+		gpio_remove_callback(gpio_dev, &gpio_cb);
+		gpio_pin_interrupt_configure(gpio_dev, CONFIG_MODEM_SLM_INDICATE_PIN,
+					     GPIO_INT_DISABLE);
+		gpio_pin_configure(gpio_dev, CONFIG_MODEM_SLM_INDICATE_PIN, GPIO_DISCONNECTED);
+		indicate_pin_enabled = false;
+		LOG_DBG("Indicate pin disabled");
+	}
+#endif
+}
+
 static void gpio_wakeup_wk(struct k_work *work)
 {
 	ARG_UNUSED(work);
@@ -67,6 +118,9 @@ static void gpio_wakeup_wk(struct k_work *work)
 	if (gpio_pin_set(gpio_dev, CONFIG_MODEM_SLM_WAKEUP_PIN, 0) != 0) {
 		LOG_WRN("GPIO set error");
 	}
+	/* When SLM is woken up, indicate pin must be enabled */
+	(void)indicate_pin_enable();
+
 	LOG_INF("Stop wake-up");
 }
 
@@ -323,11 +377,16 @@ static void gpio_cb_func(const struct device *dev, struct gpio_callback *gpio_cb
 	if (k_work_delayable_is_pending(&gpio_wakeup_work)) {
 		(void)k_work_cancel_delayable(&gpio_wakeup_work);
 		(void)gpio_pin_set(gpio_dev, CONFIG_MODEM_SLM_WAKEUP_PIN, 0);
+	} else {
+		/* Disable indicate pin so that callbacks doesn't keep on coming. */
+		indicate_pin_disable();
 	}
 
 	LOG_INF("Remote indication");
 	if (ind_handler) {
 		ind_handler();
+	} else {
+		LOG_WRN("Indicate PIN configured but slm_ind_handler_t not defined");
 	}
 }
 #endif  /* CONFIG_MODEM_SLM_INDICATE_PIN */
@@ -348,27 +407,9 @@ static int gpio_init(void)
 		return err;
 	}
 
-#if (CONFIG_MODEM_SLM_INDICATE_PIN >= 0)
-	err = gpio_pin_configure(gpio_dev, CONFIG_MODEM_SLM_INDICATE_PIN,
-				 GPIO_INPUT | GPIO_PULL_UP | GPIO_ACTIVE_LOW);
-	if (err) {
-		LOG_ERR("GPIO config error: %d", err);
-		return err;
-	}
+	err = indicate_pin_enable();
 
-	gpio_init_callback(&gpio_cb, gpio_cb_func, BIT(CONFIG_MODEM_SLM_INDICATE_PIN));
-	err = gpio_add_callback(gpio_dev, &gpio_cb);
-	if (err) {
-		LOG_WRN("GPIO add callback error: %d", err);
-	}
-	err = gpio_pin_interrupt_configure(gpio_dev, CONFIG_MODEM_SLM_INDICATE_PIN,
-					   GPIO_INT_LEVEL_LOW);
-	if (err) {
-		LOG_WRN("GPIO enable callback error: %d", err);
-	}
-#endif
-
-	return 0;
+	return err;
 }
 
 int modem_slm_init(slm_data_handler_t handler)
@@ -415,11 +456,8 @@ int modem_slm_uninit(void)
 	k_sleep(K_MSEC(10));
 
 	gpio_pin_configure(gpio_dev, CONFIG_MODEM_SLM_WAKEUP_PIN, GPIO_DISCONNECTED);
-#if (CONFIG_MODEM_SLM_INDICATE_PIN >= 0)
-	gpio_remove_callback(gpio_dev, &gpio_cb);
-	gpio_pin_interrupt_configure(gpio_dev, CONFIG_MODEM_SLM_INDICATE_PIN, GPIO_INT_DISABLE);
-	gpio_pin_configure(gpio_dev, CONFIG_MODEM_SLM_INDICATE_PIN, GPIO_DISCONNECTED);
-#endif
+
+	indicate_pin_disable();
 
 	data_handler = NULL;
 	ind_handler = NULL;
@@ -484,6 +522,11 @@ void modem_slm_reset_uart(void)
 int modem_slm_send_cmd(const char *const command, uint32_t timeout)
 {
 	int ret;
+
+	/* Enable indicate pin when command is sent. This should not be needed but is made
+	 * currently to make sure it wouldn't be disabled forever.
+	 */
+	(void)indicate_pin_enable();
 
 	slm_at_state = AT_CMD_PENDING;
 	ret = uart_send(command, strlen(command));
