@@ -1,6 +1,6 @@
-=====================
+======================
   Nordic Thingy:91 X
-=====================
+======================
 
 This USB interface has the following functions:
 * Disk drive containing this file and others
@@ -8,14 +8,14 @@ This USB interface has the following functions:
 * CMSIS-DAP 2.1 compliant debug probe interface for accessing the nRF91 SiP
 
 COM Ports
-====================
+=========
 This USB interface exposes two COM ports mapped to the physical UART interfaces between the nRF91 Series and nRF5340 devices.
-When opening these ports manually (without using the LTE Link Monitor), be aware that the USB COM port baud rate selection is applied to the UART.
+When opening these ports manually (without using the nRF Connect Serial Terminal), be aware that the USB COM port baud rate selection is applied to the UART.
 
 Bluetooth® LE Central UART Service
 ==================================
 
-This device advertises as "Thingy:91 X UART".
+This device advertises as configured in BLE_NAME in Config.txt, default being "Thingy:91 X UART".
 Connect using a Bluetooth LE Central device, for example a phone running the nRF Connect app:
 https://www.nordicsemi.com/Software-and-tools/Development-Tools/nRF-Connect-for-mobile/
 

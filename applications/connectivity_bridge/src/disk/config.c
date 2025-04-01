@@ -110,13 +110,13 @@ static struct cfg_option configs[] = {
 };
 
 static const char file_contents_header[] =
-"=========================\r\n"
+"==========================================\r\n"
 "          Configuration options\r\n"
 "==========================================\r\n"
 "The parameters below can be changed at runtime.\r\n"
 "\r\n"
-"NOTE: For changes to take effect,\r\n"
-"safely disconnect (unmount) the drive and disconnect the USB cable.\r\n"
+"NOTE: For changes to take effect, safely disconnect\r\n"
+"(unmount) the drive and disconnect the USB cable.\r\n"
 "==========================================\r\n";
 
 static bool ble_enable_opt_cb(char *opt)
