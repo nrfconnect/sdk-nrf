@@ -13,6 +13,7 @@ zephyr_sources_ifdef(CONFIG_BT_LL_SOFTDEVICE_HEADERS_INCLUDE hci_vs_sdc.c)
 
 add_subdirectory_ifdef(CONFIG_BT_ADV_PROV adv_prov)
 add_subdirectory_ifdef(CONFIG_BT_LL_SOFTDEVICE controller)
+add_subdirectory_ifdef(CONFIG_BT_CHANNEL_SOUNDING cs_de)
 add_subdirectory_ifdef(CONFIG_BT_MESH mesh)
 
 add_subdirectory_ifdef(CONFIG_BT_NRF_SERVICES services)
