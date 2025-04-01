@@ -7,6 +7,7 @@
 #include "psa_core_lite.h"
 #include <psa/crypto.h>
 #include <psa_crypto_driver_wrappers.h>
+#include <cracen_psa_kmu.h>
 
 #if (defined(PSA_WANT_ALG_ECDSA) || defined(PSA_WANT_ALG_DETERMINISTIC_ECDSA)) && \
 	defined(PSA_WANT_ECC_SECP_R1_256)
@@ -19,6 +20,36 @@
 #endif
 
 extern void safe_memzero(void *dest, const size_t dest_size);
+
+psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
+	psa_key_attributes_t *attributes, uint8_t *key_buffer,
+	size_t key_buffer_size, size_t *key_buffer_length);
+
+static psa_status_t get_key_buffer(
+	mbedtls_svc_key_id_t key_id, psa_key_attributes_t *attributes,
+	uint8_t *key, size_t key_size, size_t *key_length)
+{
+	psa_status_t status;
+	psa_key_lifetime_t lifetime;
+	psa_drv_slot_number_t slot_number;
+
+	status = cracen_kmu_get_key_slot(key_id, &lifetime, &slot_number);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	return cracen_kmu_get_builtin_key(slot_number, attributes, key, key_size, key_length);
+}
+
+/* Signature validation algorithms */
+
+#if defined(CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS) && \
+    (defined(PSA_WANT_ALG_ECDSA) || defined(PSA_WANT_ALG_DETERMINISTIC_ECDSA))
+/* We don't support Ed25519 + ECDSA as the only supported verification is
+ * Ed25519 when PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS is used
+ */
+#error "PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS with ECDSA is invalid!";
+#endif
 
 #if defined(PSA_WANT_ALG_ECDSA) || defined(PSA_WANT_ALG_DETERMINISTIC_ECDSA) || \
 	defined(PSA_WANT_ALG_ED25519PH)
