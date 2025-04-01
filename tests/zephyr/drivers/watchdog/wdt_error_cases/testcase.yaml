@@ -10,5 +10,7 @@ tests:
   nrf.extended.drivers.watchdog.wdt_error_cases:
     platform_allow:
       - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
     integration_platforms:
       - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
