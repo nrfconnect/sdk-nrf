@@ -8,7 +8,7 @@
 
 #if defined(CONFIG_SETTINGS_NVS)
 #include <zephyr/fs/nvs.h>
-#elif defined(CONFIG_SETTINGS_ZMS)
+#elif defined(CONFIG_SETTINGS_ZMS) || defined(CONFIG_SETTINGS_ZMS_LEGACY)
 #include <zephyr/fs/zms.h>
 #endif
 #include <zephyr/settings/settings.h>
@@ -20,7 +20,7 @@ namespace
 {
 #if defined(CONFIG_SETTINGS_NVS)
 nvs_fs *sStorage = nullptr;
-#elif defined(CONFIG_SETTINGS_ZMS)
+#elif defined(CONFIG_SETTINGS_ZMS) || defined(CONFIG_SETTINGS_ZMS_LEGACY)
 zms_fs *sStorage = nullptr;
 #endif
 
@@ -34,7 +34,7 @@ int CalculateFreeSpace()
 {
 #if defined(CONFIG_SETTINGS_NVS)
 	return nvs_calc_free_space(sStorage);
-#elif defined(CONFIG_SETTINGS_ZMS)
+#elif defined(CONFIG_SETTINGS_ZMS) || defined(CONFIG_SETTINGS_ZMS_LEGACY)
 	return zms_calc_free_space(sStorage);
 #endif
 }
@@ -135,7 +135,7 @@ bool PersistentStorageShell::Init()
 
 #if defined(CONFIG_SETTINGS_NVS)
 	sStorage = reinterpret_cast<nvs_fs *>(storage);
-#elif defined(CONFIG_SETTINGS_ZMS)
+#elif defined(CONFIG_SETTINGS_ZMS) || defined(CONFIG_SETTINGS_ZMS_LEGACY)
 	sStorage = reinterpret_cast<zms_fs *>(storage);
 #endif
 

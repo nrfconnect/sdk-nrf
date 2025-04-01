@@ -30,7 +30,7 @@
 #define image_scratch mcuboot_scratch
 
 #if (CONFIG_SETTINGS_FCB || CONFIG_SETTINGS_NVS || defined(PM_SETTINGS_STORAGE_ID) ||\
-	CONFIG_SETTINGS_ZMS)
+	CONFIG_SETTINGS_ZMS || CONFIG_SETTINGS_ZMS_LEGACY)
 #define storage settings_storage
 #define storage_partition settings_storage
 #elif CONFIG_FILE_SYSTEM_LITTLEFS
