@@ -1,0 +1,44 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_CS_DE
+	bool "Bluetooth Channel Sounding Distance Estimation [EXPERIMENTAL]"
+	depends on BT_CHANNEL_SOUNDING
+	depends on BT_RAS
+	depends on BT_RAS_RREQ
+	imply FPU
+	select FPU_SHARING if FPU
+	select CMSIS_DSP
+	select CMSIS_DSP_TRANSFORM
+	select CMSIS_DSP_STATISTICS
+	select EXPERIMENTAL
+
+
+if BT_CS_DE
+
+module = BT_CS_DE
+module-str = CS_DE
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+config BT_CS_DE_NFFT_SIZE
+	int
+	default 512
+	default 512 if BT_CS_DE_512_NFFT
+	default 1024 if BT_CS_DE_1024_NFFT
+	default 2048 if BT_CS_DE_2048_NFFT
+	help
+	  Internal config. Not intended for use.
+
+config BT_CS_DE_512_NFFT
+	bool "Use NFFT with 512 samples."
+
+config BT_CS_DE_1024_NFFT
+	bool "Use NFFT with 1024 samples."
+
+config BT_CS_DE_2048_NFFT
+	bool "Use NFFT with 2048 samples."
+
+endif # BT_CS_DE

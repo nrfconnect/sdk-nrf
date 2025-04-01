@@ -833,6 +833,8 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
+* Added the :ref:`cs_de_readme` library.
+
 * :ref:`bt_fast_pair_readme` library:
 
   * Added:
