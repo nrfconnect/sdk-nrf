@@ -365,6 +365,8 @@ nRF Desktop
   * The Low Latency Packet Mode (LLPM) dependency in the :ref:`nrf_desktop_ble_conn_params`.
     The module relies on the :kconfig:option:`CONFIG_CAF_BLE_USE_LLPM` Kconfig option.
     This allows using the module also when the Bluetooth LE controller is not part of the main application.
+  * Enabled the :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_OUT_REPORT <config_desktop_app_options>` Kconfig option for the nRF54H20 DK.
+    The option mitigates HID report rate drops during DFU image transfer through the nRF Desktop dongle.
 
 * Removed:
 
