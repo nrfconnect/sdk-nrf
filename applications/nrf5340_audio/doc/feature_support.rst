@@ -18,10 +18,23 @@ For an explanation of the maturity levels, see :ref:`Software maturity levels <s
    :start-after: software_maturity_application_nrf5340audio_table:
    :end-before: software_maturity_protocol
 
-nRF5340 Audio QDIDs
-*******************
+nRF5340 Audio DNs and QDIDs
+***************************
 
-The following QDIDs are related to the nRF5340 Audio application:
+The following DNs (Design Numbers) and QDIDs (Qualified Design IDs) are related to the nRF5340 LE Audio applications:
+
+nRF5340 DK Bluetooth DNs/QDIDs
+   See `nRF5340 DK Bluetooth DNs and QDIDs Compatibility Matrix`_ for the DNs/QDIDs for nRF5340 LE Audio applications.
+
+   A full Audio product DN will typically require DNs/QDIDs for Controller component, Host component, Profiles and Services component and LC3 codec component.
+   The exact DN/QDID numbers depend on the project configuration and the features used in the application.
+
+   .. note::
+      - The DNs/QDIDs listed in the Compatibility Matrix may not cover all use cases or combinations.
+        The full details of what is supported by a DN/QDID can be found in the associated ICS (Implementation Conformance Statement).
+
+      - The Audio applications do not demonstrate the full capabilities of the underlying DNs/QDIDs.
+        At the same time, the Audio applications may demonstrate features not available in the underlying DNs/QDID
 
 .. ncs-include:: lc3/README.rst
    :docset: nrfxlib
