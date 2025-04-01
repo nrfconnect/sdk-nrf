@@ -11,6 +11,9 @@
 
 #if defined(CONFIG_CLOCK_CONTROL_NRF)
 #include <nrfx_clock.h>
+#else
+#include <hal/nrf_bicr.h>
+#define BICR (NRF_BICR_Type *)DT_REG_ADDR(DT_NODELABEL(bicr))
 #endif /* CONFIG_CLOCK_CONTROL_NRF */
 
 #include <mpsl_clock.h>
@@ -293,15 +296,8 @@ static int32_t m_lfclk_release(void)
 
 #elif defined(CONFIG_CLOCK_CONTROL_NRF2)
 
-/* Temporary macro because there is no system level configuration of LFCLK source and its accuracy
- * for nRF54H SoC series. What more, there is no API to retrieve the information about accuracy of
- * available LFCLK.
- */
-#define MPSL_LFCLK_ACCURACY_PPM 500
-
-static const struct nrf_clock_spec m_lfclk_specs = {
+static struct nrf_clock_spec m_lfclk_specs = {
 	.frequency = 32768,
-	.accuracy = MPSL_LFCLK_ACCURACY_PPM,
 	/* This affects selected LFCLK source. It doesn't switch to higher accuracy but selects more
 	 * precise but current hungry lfclk source.
 	 */
@@ -486,11 +482,6 @@ static mpsl_clock_lfclk_ctrl_source_t m_nrf_lfclk_ctrl_data = {
 	.lfclk_calibration_is_enabled = m_lfclk_calibration_is_enabled,
 	.lfclk_request = m_lfclk_request,
 	.lfclk_release = m_lfclk_release,
-#if defined(CONFIG_CLOCK_CONTROL_NRF_ACCURACY)
-	.accuracy_ppm = CONFIG_CLOCK_CONTROL_NRF_ACCURACY,
-#else
-	.accuracy_ppm = MPSL_LFCLK_ACCURACY_PPM,
-#endif /* CONFIG_CLOCK_CONTROL_NRF_ACCURACY */
 	.skip_wait_lfclk_started = IS_ENABLED(CONFIG_SYSTEM_CLOCK_NO_WAIT)
 };
 
@@ -501,8 +492,65 @@ static mpsl_clock_hfclk_ctrl_source_t m_nrf_hfclk_ctrl_data = {
 	.startup_time_us = CONFIG_MPSL_HFCLK_LATENCY
 };
 
+
+static void capture_lfclk_accuracy(void)
+{
+	uint16_t accuracy_ppm;
+
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
+	accuracy_ppm = CONFIG_CLOCK_CONTROL_NRF_ACCURACY;
+#else
+	nrf_bicr_lfosc_mode_t lfosc_mode;
+
+	lfosc_mode = nrf_bicr_lfosc_mode_get(BICR);
+
+	if (lfosc_mode == NRF_BICR_LFOSC_MODE_UNCONFIGURED ||
+		lfosc_mode == NRF_BICR_LFOSC_MODE_DISABLED) {
+		/* RC is used as LFCLK source */
+		accuracy_ppm = DT_PROP(DT_NODELABEL(lfclk), lfrc_accuracy_ppm);
+	} else {
+		switch (nrf_bicr_lfosc_accuracy_get(BICR)) {
+		case NRF_BICR_LFOSC_ACCURACY_500PPM:
+			accuracy_ppm = 500U;
+			break;
+		case NRF_BICR_LFOSC_ACCURACY_250PPM:
+			accuracy_ppm = 250U;
+			break;
+		case NRF_BICR_LFOSC_ACCURACY_150PPM:
+			accuracy_ppm = 150U;
+			break;
+		case NRF_BICR_LFOSC_ACCURACY_100PPM:
+			accuracy_ppm = 100U;
+			break;
+		case NRF_BICR_LFOSC_ACCURACY_75PPM:
+			accuracy_ppm = 75U;
+			break;
+		case NRF_BICR_LFOSC_ACCURACY_50PPM:
+			accuracy_ppm = 50U;
+			break;
+		case NRF_BICR_LFOSC_ACCURACY_30PPM:
+			accuracy_ppm = 30U;
+			break;
+		case NRF_BICR_LFOSC_ACCURACY_20PPM:
+			accuracy_ppm = 20U;
+			break;
+		default:
+			LOG_ERR("Unknown LFCLK accuracy");
+			accuracy_ppm = 0; /* Set to invalid value*/
+			break;
+		}
+	}
+
+	m_lfclk_specs.accuracy = accuracy_ppm;
+#endif
+
+	m_nrf_lfclk_ctrl_data.accuracy_ppm = accuracy_ppm;
+}
+
 int32_t mpsl_clock_ctrl_init(void)
 {
+	capture_lfclk_accuracy();
+
 #if defined(CONFIG_MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST)
 	int err;
 
