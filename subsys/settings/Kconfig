@@ -1,0 +1,48 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+choice SETTINGS_BACKEND
+
+config SETTINGS_ZMS_LEGACY
+	bool "Settings ZMS legacy backend [DEPRECATED]"
+	depends on ZMS
+	select DEPRECATED
+	help
+	  Use the legacy backend of ZMS for Settings
+
+endchoice
+
+if SETTINGS_ZMS_LEGACY
+
+config SETTINGS_ZMS_NAME_CACHE
+	bool "ZMS name lookup cache"
+	select SYS_HASH_FUNC32
+	help
+	  Enable ZMS name lookup cache, used to reduce the Settings name
+	  lookup time.
+
+config SETTINGS_ZMS_NAME_CACHE_SIZE
+	int "ZMS name lookup cache size"
+	default 128
+	range 1 $(UINT32_MAX)
+	depends on SETTINGS_ZMS_NAME_CACHE
+	help
+	  Number of entries in Settings ZMS name cache.
+
+config SETTINGS_ZMS_SECTOR_SIZE_MULT
+	int "Sector size of the ZMS settings area"
+	default 1
+	help
+	  The sector size to use for the ZMS settings area as a multiple of
+	  FLASH_ERASE_BLOCK_SIZE.
+
+config SETTINGS_ZMS_SECTOR_COUNT
+	int "Sector count of the ZMS settings area"
+	default 8
+	help
+	  Number of sectors used for the ZMS settings area
+
+endif # SETTINGS_ZMS_LEGACY
