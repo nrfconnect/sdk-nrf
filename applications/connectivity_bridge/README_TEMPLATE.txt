@@ -1,6 +1,6 @@
 ==============================
   Nordic Connectivity Bridge
-=============================
+==============================
 
 This device is running Nordic's Connectivity bridge application.
 

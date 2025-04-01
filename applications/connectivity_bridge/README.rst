@@ -54,7 +54,7 @@ The sample supports the following nRF52840-based device:
 
 .. table-from-sample-yaml::
 
-The sample also requires a USB host which can communicate with CDC ACM devices, such as a Windows or Linux PC.
+The sample also requires a USB host that can communicate with CDC ACM devices, such as a Windows or Linux PC or a Mac.
 
 
 Building and running
@@ -70,7 +70,7 @@ Testing
 After programming the sample to your kit, test it by performing the following steps:
 
 1. Connect the kit to the host using a USB cable.
-#. Observe that the CDC ACM devices enumerate on the USB host (COM ports on Windows, /dev/tty* on Linux).
+#. Observe that the CDC ACM devices enumerate on the USB host (COM ports on Windows, /dev/tty* on Linux and Mac).
 #. Use a serial client on the USB host to communicate over the kit's UART pins.
 
 
