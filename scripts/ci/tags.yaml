@@ -154,6 +154,7 @@ ci_samples_wifi:
 
 ci_applications_matter: &ci_matter
   files:
+    - bootloader/mcuboot/
     - modules/hal_nordic/nrf_802154/
     - modules/lib/hostap/
     - modules/lib/matter/
