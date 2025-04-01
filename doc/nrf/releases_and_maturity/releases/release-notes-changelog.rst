@@ -855,6 +855,8 @@ Wi-Fi drivers
   * Advanced debug shell for reading and writing registers/memory of the nRF70 Series chip.
     The debug shell can be enabled using the :kconfig:option:`CONFIG_WIFI_NRF70_DEBUG_SHELL` Kconfig option.
 
+  * A new shell command ``nrf70 util rpu_stats_mem`` is added to retrieve the RPU statistics even when the RPU processors are not functional (for example, if the LMAC processor has crashed).
+
 * Updated:
 
   * The ``wifi_util`` shell command is now renamed to ``nrf70 util``.
