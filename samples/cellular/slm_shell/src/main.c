@@ -21,10 +21,41 @@ static void cereg_mon(const char *notif)
 	}
 }
 
+void slm_shell_data_indication(const uint8_t *data, size_t datalen)
+{
+	LOG_INF("Data received (len=%d): %.*s", datalen, datalen, (const char *)data);
+}
+
+#if (CONFIG_MODEM_SLM_INDICATE_PIN >= 0)
+void slm_shell_indication_handler(void)
+{
+	int err;
+
+	LOG_INF("SLM indicate pin triggered");
+	err = modem_slm_wake_up();
+	if (err) {
+		LOG_ERR("Failed to toggle power pin");
+	}
+}
+#endif /* CONFIG_MODEM_SLM_INDICATE_PIN */
+
 int main(void)
 {
+	int err;
+
 	LOG_INF("SLM Shell starts on %s", CONFIG_BOARD);
 
-	(void)modem_slm_init(NULL);
+	err = modem_slm_init(slm_shell_data_indication);
+	if (err) {
+		LOG_ERR("Failed to initialize SLM: %d", err);
+	}
+
+#if (CONFIG_MODEM_SLM_INDICATE_PIN >= 0)
+	err = modem_slm_register_ind(slm_shell_indication_handler, true);
+	if (err) {
+		LOG_ERR("Failed to register indication: %d", err);
+	}
+#endif /* CONFIG_MODEM_SLM_INDICATE_PIN */
+
 	return 0;
 }
