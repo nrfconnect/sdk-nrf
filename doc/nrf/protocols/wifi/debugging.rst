@@ -115,7 +115,11 @@ See `Enable debug features`_.
     * - ``nrf70 util rpu_stats all`` [1]_
       - Displays statistics for the nRF70 firmware (all modules, support for specific modules is also available).
       - nRF70 firmware debugging (Data and control path)
+    * - ``nrf70 util rpu_stats_mem all`` [2]_
+      - Displays memory statistics for the nRF70 firmware (all modules, support for specific modules is also available).
+      - nRF70 firmware debugging (Data and control path) even when the control plane is not functional
 .. [1] This command only works when the nRF70 control plane is functional, as it uses the control plane to retrieve the statistics.
+.. [2] This command always works independent of the processors state as it retrieves the statistics from the RPU memory directly.
 
 .. note::
    All statistics, especially data path statistics, must be collected multiple times to see the incremental changes and understand the behavior.
