@@ -30,7 +30,7 @@ config NCS_BOOT_BANNER_ZEPHYR
 	default y
 
 config NCS_ZEPHYR_BOOT_BANNER_STRING
-	string
+	string "Zephyr banner string"
 	default "Zephyr OS"
 	depends on NCS_BOOT_BANNER_ZEPHYR
 
