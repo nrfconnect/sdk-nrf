@@ -25,8 +25,13 @@ config NCS_NCS_BOOT_BANNER_STRING
 	string "Boot banner string"
 	default "nRF Connect SDK"
 
+config NCS_BOOT_BANNER_ZEPHYR
+	bool "Include Zephyr banner"
+	default y
+
 config NCS_ZEPHYR_BOOT_BANNER_STRING
 	string
 	default "Zephyr OS"
+	depends on NCS_BOOT_BANNER_ZEPHYR
 
 endif # NCS_BOOT_BANNER
