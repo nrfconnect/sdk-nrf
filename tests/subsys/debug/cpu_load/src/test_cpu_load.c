@@ -57,7 +57,7 @@ ZTEST(cpu_load, test_cpu_load)
 	nrfx_gppi_channel_endpoints_setup(ch, evt, tsk);
 	nrfx_gppi_channels_enable(BIT(ch));
 
-	if (!IS_ENABLED(CONFIG_CPU_LOAD_USE_SHARED_DPPI_CHANNELS)) {
+	if (!IS_ENABLED(CONFIG_NRF_CPU_LOAD_USE_SHARED_DPPI_CHANNELS)) {
 		err = cpu_load_init();
 		zassert_equal(err, -ENODEV, "Unexpected err:%d", err);
 
