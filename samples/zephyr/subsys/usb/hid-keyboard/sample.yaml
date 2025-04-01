@@ -49,8 +49,10 @@ tests:
   nrf.extended.sample.usbd.hid-keyboard.l20:
     integration_platforms:
       - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
     harness_config:
       type: multi_line
       regex:
@@ -60,8 +62,10 @@ tests:
   nrf.extended.sample.usbd.hid-keyboard.out-report.l20:
     integration_platforms:
       - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="out_report.overlay"
     harness_config:
@@ -73,8 +77,10 @@ tests:
   nrf.extended.sample.usbd.hid-keyboard.large-report.l20:
     integration_platforms:
       - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="large_in_report.overlay"
     harness_config:
@@ -86,8 +92,10 @@ tests:
   nrf.extended.sample.usbd.hid-keyboard.large-out-report.l20:
     integration_platforms:
       - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="large_out_report.overlay"
     harness_config:
