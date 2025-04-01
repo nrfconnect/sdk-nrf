@@ -48,7 +48,7 @@ The following commands lets you scan, connect, and ping to a desired network or 
 
    .. code-block:: shell
 
-      uart:~$ wifi_util tx_rate <frame_format> <rate_val>
+      uart:~$ nrf70 util tx_rate <frame_format> <rate_val>
 
 #. When the connection is established, you can run network tools like ping:
 

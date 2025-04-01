@@ -206,7 +206,7 @@ To test RPU recovery, you must build the sample with :kconfig:option:`CONFIG_SHE
 
    .. code-block:: console
 
-      wifi_util rpu_recovery_test
+      nrf70 util rpu_recovery_test
 
    If RPU recovery is triggered, you should see an output similar to the following:
 

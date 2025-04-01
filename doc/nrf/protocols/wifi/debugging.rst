@@ -103,10 +103,10 @@ See `Enable debug features`_.
     * - ``wifi statistics``
       - Displays frame statistics for the nRF Wi-Fi driver.
       - Data path debugging (nRF Wi-Fi driver)
-    * - ``wifi_util tx_stats <vif_index>``
+    * - ``nrf70 util tx_stats <vif_index>``
       - Displays transmit statistics for the nRF Wi-Fi driver.
       - Data path debugging (nRF Wi-Fi driver TX)
-    * - ``wifi_util rpu_stats all`` [1]_
+    * - ``nrf70 util rpu_stats all`` [1]_
       - Displays statistics for the nRF70 firmware (all modules, support for specific modules is also available).
       - nRF70 firmware debugging (Data and control path)
 .. [1] This command only works when the nRF70 control plane is functional, as it uses the control plane to retrieve the statistics.

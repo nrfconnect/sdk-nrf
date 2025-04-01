@@ -848,7 +848,14 @@ This section provides detailed lists of changes by :ref:`driver <drivers>`.
 Wi-Fi drivers
 -------------
 
-|no_changes_yet_note|
+* Added:
+
+  * Advanced debug shell for reading and writing registers/memory of the nRF70 Series chip.
+    The debug shell can be enabled using the :kconfig:option:`CONFIG_WIFI_NRF70_DEBUG_SHELL` Kconfig option.
+
+* Updated:
+
+  * The ``wifi_util`` shell command is now renamed to ``nrf70 util``.
 
 Flash drivers
 -------------
