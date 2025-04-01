@@ -39,6 +39,13 @@
 	chosen {
 		zephyr,console = &uart136;
 	};
+
+	cpurad_cpusys_errata216_mboxes: errata216_mboxes {
+		compatible = "zephyr,mbox-ipm";
+		status = "okay";
+		mboxes = < &cpusys_vevif 0x14 >, < &cpusys_vevif 0x15 >;
+		mbox-names = "on_req", "off_req";
+	};
 };
 
 &gpio9 {

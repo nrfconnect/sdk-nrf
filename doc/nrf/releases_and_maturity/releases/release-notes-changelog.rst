@@ -202,7 +202,10 @@ DECT NR+
 Enhanced ShockBurst (ESB)
 -------------------------
 
-* Added loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.
+* Added:
+
+  * Loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.
+  * Workaround for the hardware errata HMPAN-216 for the nRF54H20 SoC.
 
 Gazell
 ------
