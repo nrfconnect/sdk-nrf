@@ -9,6 +9,8 @@
 #include <zephyr/shell/shell.h>
 #include <hal/nrf_gpio.h>
 #include <modem/modem_slm.h>
+#include <zephyr/shell/shell_uart.h>
+#include <zephyr/shell/shell_rtt.h>
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_REGISTER(mdm_slm, CONFIG_MODEM_SLM_LOG_LEVEL);
@@ -51,7 +53,7 @@ static struct k_work_delayable gpio_wakeup_work;
 static slm_ind_handler_t ind_handler;
 
 #if defined(CONFIG_MODEM_SLM_SHELL)
-static struct shell *global_shell;
+static const struct shell *global_shell;
 static const char at_usage_str[] = "Usage: slm <at_command>";
 #endif
 
@@ -398,6 +400,12 @@ int modem_slm_init(slm_data_handler_t handler)
 	k_work_init(&slm_data_work, slm_data_wk);
 	k_work_init_delayable(&uart_recovery_work, uart_recovery_wk);
 
+	/* Initialize shell pointer so it's available for printing in callbacks */
+#if defined(CONFIG_SHELL_BACKEND_SERIAL)
+	global_shell = shell_backend_uart_get_ptr();
+#elif defined(CONFIG_SHELL_BACKEND_RTT)
+	global_shell = shell_backend_rtt_get_ptr();
+#endif
 	return 0;
 }
 
@@ -515,8 +523,6 @@ int modem_slm_send_data(const uint8_t *const data, size_t datalen)
 
 int modem_slm_shell(const struct shell *shell, size_t argc, char **argv)
 {
-	global_shell = (struct shell *)shell;
-
 	if (argc < 2) {
 		shell_print(shell, "%s", at_usage_str);
 		return 0;
