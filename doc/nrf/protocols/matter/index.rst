@@ -15,7 +15,7 @@ It supports a wide range of existing technologies, including Wi-Fi®, Thread, an
 
 .. matter_intro_end
 
-|NCS| |release| allows you to develop applications with Matter specification version 1.4.0 and `Matter SDK version`_ 1.4.0.0.
+|NCS| |release| allows you to develop applications with Matter specification version 1.4.1 and `Matter SDK version`_ 1.4.1.0.
 For a full list of |NCS| and Matter versions, view the following table:
 
 .. toggle:: nRF Connect SDK, Matter specification, and Matter SDK versions
@@ -23,7 +23,9 @@ For a full list of |NCS| and Matter versions, view the following table:
    +--------------------------+-----------------------------------------------------+------------------------+
    | nRF Connect SDK version  | Matter specification version                        | Matter SDK version     |
    +==========================+=====================================================+========================+
-   | v2.9.99 (latest)         | :ref:`1.4.0 <ug_matter_overview_dev_model_support>` | 1.4.0.0                |
+   | v2.9.99 (latest)         | :ref:`1.4.1 <ug_matter_overview_dev_model_support>` | 1.4.1.0                |
+   +--------------------------+-----------------------------------------------------+------------------------+
+   | v2.9.1                   | :ref:`1.4.0 <ug_matter_overview_dev_model_support>` | 1.4.0.0                |
    +--------------------------+                                                     |                        |
    | v2.9.0-nRF54H20-1        |                                                     |                        |
    +--------------------------+                                                     |                        |
@@ -33,7 +35,11 @@ For a full list of |NCS| and Matter versions, view the following table:
    +--------------------------+                                                     |                        |
    | v2.7.0                   |                                                     |                        |
    +--------------------------+-----------------------------------------------------+------------------------+
-   | v2.6.2                   | :ref:`1.2.0 <ug_matter_overview_dev_model_support>` | 1.2.0.1                |
+   | v2.6.4                   | :ref:`1.2.0 <ug_matter_overview_dev_model_support>` | 1.2.0.1                |
+   +--------------------------+                                                     |                        |
+   | v2.6.3                   |                                                     |                        |
+   +--------------------------+                                                     |                        |
+   | v2.6.2                   |                                                     |                        |
    +--------------------------+                                                     |                        |
    | v2.6.1                   |                                                     |                        |
    +--------------------------+                                                     |                        |
