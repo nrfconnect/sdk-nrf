@@ -628,6 +628,13 @@ static int api_dev_config(const struct device *dev, const struct mspi_dev_id *de
 		}
 	}
 
+	if (param_mask & MSPI_DEVICE_CONFIG_CPP) {
+		if ((cfg->cpp != MSPI_CPP_MODE_0) && (cfg->cpp != MSPI_CPP_MODE_3)) {
+			LOG_ERR("Only CPP modes 0 and 3 are supported.");
+			return -ENOTSUP;
+		}
+	}
+
 	mspi_dev_config_msg.opcode = NRFE_MSPI_CONFIG_DEV;
 	mspi_dev_config_msg.device_index = dev_id->dev_idx;
 	mspi_dev_config_msg.dev_config.io_mode = cfg->io_mode;
