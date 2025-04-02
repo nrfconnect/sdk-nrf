@@ -83,11 +83,12 @@ config SB_CRYPTO_PSA_ED25519
 	depends on NRF_SECURITY
 	depends on CRACEN_LIB_KMU
 	select SB_ED25519
+	# Below depends on PSA_CORE_LITE
+	select PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS
 	select PSA_WANT_ALG_SHA_512
 	select PSA_WANT_ALG_PURE_EDDSA
 	select PSA_WANT_ECC_TWISTED_EDWARDS_255
 	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT
-	select MBEDTLS_ENABLE_HEAP
 	help
 	  Use PSA crypto for ed25519 support.
 
@@ -115,6 +116,15 @@ config SB_CRYPTO_KMU_KEYS_REVOCATION
 	default y
 	help
 	  Automatically revoke previous generation key upon new valid key usage.
+
+choice PSA_CORE
+	default PSA_CORE_LITE if SB_CRYPTO_PSA_ED25519
+	help
+	  This is copy of PSA_CORE choice from NRF Security Kconfig, as the
+	  only way to select an element from choice is to override default
+	  for it.
+
+endchoice
 
 choice SB_CRYPTO_HASH
 	prompt "Hashing Implementation"
