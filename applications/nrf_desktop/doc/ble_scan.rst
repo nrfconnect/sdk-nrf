@@ -7,7 +7,7 @@ Bluetooth LE scanning module
    :local:
    :depth: 2
 
-The nRF Desktop's Bluetooth® LE scanning module is based on the |NCS|'s :ref:`nrf_bt_scan_readme`.
+The nRF Desktop's Bluetooth® LE scanning module is based on the |NCS|'s :ref:`nrf_bt_le_scan_readme`.
 
 Use the |ble_scan| for the following purposes:
 
@@ -36,24 +36,24 @@ Complete the following steps to enable the |ble_scan|:
    Make sure that both :ref:`CONFIG_DESKTOP_ROLE_HID_DONGLE <config_desktop_app_options>` and :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` options are enabled.
    The |ble_scan| is enabled by the :ref:`CONFIG_DESKTOP_BLE_SCAN_ENABLE <config_desktop_app_options>` Kconfig option which is implied by :ref:`CONFIG_DESKTOP_BT_CENTRAL <config_desktop_app_options>` Kconfig option together with other application modules.
    These modules that are required for HID dongle that forwards the data from HID peripherals connected over Bluetooth.
-#. Make sure that the number of scan filters based on the Bluetooth address (:kconfig:option:`CONFIG_BT_SCAN_ADDRESS_CNT`) is equal to the number of Bluetooth bonds.
+#. Make sure that the number of scan filters based on the Bluetooth address (:kconfig:option:`CONFIG_BT_LE_SCAN_ADDRESS_CNT`) is equal to the number of Bluetooth bonds.
    The number of Bluetooth bonds is defined by the :kconfig:option:`CONFIG_BT_MAX_PAIRED` Kconfig option.
    The |ble_scan| uses the Bluetooth address filters to look for bonded peripherals.
-#. Make sure that the number of scan filters based on the Bluetooth name (:kconfig:option:`CONFIG_BT_SCAN_NAME_CNT`) is equal to the number of peripheral types the nRF Desktop central connects to.
+#. Make sure that the number of scan filters based on the Bluetooth name (:kconfig:option:`CONFIG_BT_LE_SCAN_NAME_CNT`) is equal to the number of peripheral types the nRF Desktop central connects to.
    The |ble_scan| uses Bluetooth name filters to look for unbonded peripherals.
    The peripheral type may be either a mouse or a keyboard.
-#. To limit the number of attempts to connect to a device, you can use the connection attempt filter (:kconfig:option:`CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER`).
+#. To limit the number of attempts to connect to a device, you can use the connection attempt filter (:kconfig:option:`CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_FILTER`).
    The Kconfig option is enabled by default.
    After the predefined number of disconnections or connection failures, the nRF Desktop central will no longer try to connect with the given peripheral device.
    This is done to prevent connecting and disconnecting with a peripheral in a never-ending loop.
 
    You can further configure this setting with the following Kconfig options:
 
-   * :kconfig:option:`CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER_LEN` - This option defines the maximum number of filtered devices.
-   * :kconfig:option:`CONFIG_BT_SCAN_CONN_ATTEMPTS_COUNT` - This option defines the connection attempt count for a given peripheral.
+   * :kconfig:option:`CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_FILTER_LEN` - This option defines the maximum number of filtered devices.
+   * :kconfig:option:`CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_COUNT` - This option defines the connection attempt count for a given peripheral.
 
-   The :ref:`nrf_bt_scan_readme` counts all disconnections for a peripheral.
-   The |ble_scan| uses :c:func:`bt_scan_conn_attempts_filter_clear` to clear all the connection attempt counters on the following occasions:
+   The :ref:`nrf_bt_le_scan_readme` counts all disconnections for a peripheral.
+   The |ble_scan| uses :c:func:`bt_le_scan_conn_attempts_filter_clear` to clear all the connection attempt counters on the following occasions:
 
    * After a successful peripheral discovery takes place (on ``ble_discovery_complete_event``).
    * When you request scan start or peer erase.
@@ -88,15 +88,15 @@ The following scanning scenarios are possible:
 Scanning module configuration
 =============================
 
-The |ble_scan| relies on the :ref:`nrf_bt_scan_readme` library to perform Bluetooth scanning.
-The module selects :kconfig:option:`CONFIG_BT_SCAN` and :kconfig:option:`CONFIG_BT_SCAN_FILTER_ENABLE`.
+The |ble_scan| relies on the :ref:`nrf_bt_le_scan_readme` library to perform Bluetooth scanning.
+The module selects :kconfig:option:`CONFIG_BT_LE_SCAN` and :kconfig:option:`CONFIG_BT_LE_SCAN_FILTER_ENABLE`.
 Apart from that, the following default values are applied:
 
-* :kconfig:option:`CONFIG_BT_SCAN_NAME_CNT` is set to ``2``.
+* :kconfig:option:`CONFIG_BT_LE_SCAN_NAME_CNT` is set to ``2``.
   By default, the nRF Desktop dongle connects to peripherals that are either keyboard or mouse.
-* :kconfig:option:`CONFIG_BT_SCAN_ADDRESS_CNT` is set to :kconfig:option:`CONFIG_BT_MAX_PAIRED`.
+* :kconfig:option:`CONFIG_BT_LE_SCAN_ADDRESS_CNT` is set to :kconfig:option:`CONFIG_BT_MAX_PAIRED`.
   The dongle scans for all bonded peripherals.
-* :kconfig:option:`CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER` is enabled.
+* :kconfig:option:`CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_FILTER` is enabled.
 
 .. _nrf_desktop_ble_scan_scanning_not_started:
 
@@ -162,7 +162,7 @@ Bluetooth connection interval
 
 After the scan filter match, the following happens:
 
-1. The scanning is stopped and the |NCS|'s :ref:`nrf_bt_scan_readme` automatically establishes the Bluetooth connection with the peripheral.
+1. The scanning is stopped and the |NCS|'s :ref:`nrf_bt_le_scan_readme` automatically establishes the Bluetooth connection with the peripheral.
    The initial Bluetooth connection interval is set by default to 7.5 ms, that is to the shortest connection interval allowed by the Bluetooth specification.
 #. The peer discovery is started.
 #. After the :ref:`nrf_desktop_ble_discovery` completes the peer discovery, the :ref:`nrf_desktop_ble_conn_params` receives the ``ble_discovery_complete_event`` and updates the Bluetooth connection interval.

@@ -115,7 +115,7 @@ This sample uses the following |NCS| libraries:
 * :ref:`nfc_ndef_ch_rec_parser_readme`
 * :ref:`nfc_ndef_parser_readme`
 * :ref:`dk_buttons_and_leds_readme`
-* :ref:`nrf_bt_scan_readme`
+* :ref:`nrf_bt_le_scan_readme`
 
 The sample uses the following Zephyr libraries:
 

@@ -80,7 +80,7 @@ Dependencies
 This sample uses the following |NCS| libraries:
 
 * :ref:`gatt_dm_readme`
-* :ref:`nrf_bt_scan_readme`
+* :ref:`nrf_bt_le_scan_readme`
 * :ref:`lib_hrs_client_readme`
 
 In addition, it uses the following Zephyr libraries:

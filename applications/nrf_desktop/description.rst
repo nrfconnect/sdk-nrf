@@ -1131,7 +1131,7 @@ This application uses the following |NCS| libraries and drivers:
 * :ref:`nrf_profiler`
 * :ref:`hids_readme`
 * :ref:`hogp_readme`
-* :ref:`nrf_bt_scan_readme`
+* :ref:`nrf_bt_le_scan_readme`
 * :ref:`gatt_dm_readme`
 * :file:`drivers/sensor/paw3212`
 * :file:`drivers/sensor/pmw3360`

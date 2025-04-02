@@ -18,7 +18,7 @@ It can also configure the Heart Rate Service on a remote device by writing speci
 Configuration
 *************
 
-Applications use the :ref:`lib_nrf_bt_scan_readme` for detecting advertising devices that support the Heart Rate Service.
+Applications use the :ref:`lib_nrf_bt_le_scan_readme` for detecting advertising devices that support the Heart Rate Service.
 If an advertising device is detected, the application connects to it automatically and starts receiving HRS data.
 
 Once a connection with a remote device providing a Heart Rate Service is established, the client needs service discovery to discover Heart Rate Service handles.

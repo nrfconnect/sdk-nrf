@@ -1,5 +1,5 @@
-.. _lib_nrf_bt_scan_readme:
-.. _nrf_bt_scan_readme:
+.. _lib_nrf_bt_le_scan_readme:
+.. _nrf_bt_le_scan_readme:
 
 Bluetooth LE scanning
 #####################
@@ -15,7 +15,7 @@ Overview
 
 Use the library to find advertising devices and establish connections with them.
 It can automatically establish connection after a filter match.
-It can also receive :ref:`directed advertising packets <lib_nrf_bt_scan_readme_directedadvertising>`.
+It can also receive :ref:`directed advertising packets <lib_nrf_bt_le_scan_readme_directedadvertising>`.
 
 The library can work in one of the following modes:
 
@@ -25,20 +25,20 @@ The library can work in one of the following modes:
 Configuration
 *************
 
-Use the :kconfig:option:`CONFIG_BT_SCAN` Kconfig option to enable the library in the build system.
+Use the :kconfig:option:`CONFIG_BT_LE_SCAN` Kconfig option to enable the library in the build system.
 
 Blocklist
 =========
 
 Devices can be added to the blocklist, which means that the library ignores these devices and does not generate any events for them.
-Use the :kconfig:option:`CONFIG_BT_SCAN_BLOCKLIST` Kconfig option to enable the blocklist.
+Use the :kconfig:option:`CONFIG_BT_LE_SCAN_BLOCKLIST` Kconfig option to enable the blocklist.
 
 In the default configuration, the library allows to add up to two devices to the blocklist.
-To increase the blocklist size, set the :kconfig:option:`CONFIG_BT_SCAN_BLOCKLIST_LEN` Kconfig option.
-Use the :c:func:`bt_scan_blocklist_device_add` function to add a new device to the blocklist.
-To remove all devices from the blocklist, use the :c:func:`bt_scan_blocklist_clear` function.
+To increase the blocklist size, set the :kconfig:option:`CONFIG_BT_LE_SCAN_BLOCKLIST_LEN` Kconfig option.
+Use the :c:func:`bt_le_scan_blocklist_device_add` function to add a new device to the blocklist.
+To remove all devices from the blocklist, use the :c:func:`bt_le_scan_blocklist_clear` function.
 
-.. _lib_nrf_bt_scan_readme_directedadvertising:
+.. _lib_nrf_bt_le_scan_readme_directedadvertising:
 
 Directed advertising
 ====================
@@ -46,12 +46,12 @@ Directed advertising
 To receive directed advertising packets through the library, enable one of the following Kconfig options in Zephyr:
 
 * :kconfig:option:`CONFIG_BT_PRIVACY` - Scan with changing addresses.
-* :kconfig:option:`CONFIG_BT_SCAN_WITH_IDENTITY` - Scan with a local identity address.
+* :kconfig:option:`CONFIG_BT_LE_SCAN_WITH_IDENTITY` - Scan with a local identity address.
 
 It is recommended to enable the :kconfig:option:`CONFIG_BT_PRIVACY` Kconfig option to support directed advertising only between bonded peers.
-Use the :kconfig:option:`CONFIG_BT_SCAN_WITH_IDENTITY` Kconfig option only when the :kconfig:option:`CONFIG_BT_PRIVACY` Kconfig option is not available.
+Use the :kconfig:option:`CONFIG_BT_LE_SCAN_WITH_IDENTITY` Kconfig option only when the :kconfig:option:`CONFIG_BT_PRIVACY` Kconfig option is not available.
 
-When the library is set to the advanced mode and :ref:`filters <lib_nrf_bt_scan_readme_filters>` are set, you can use the ``filter_no_match`` event to check if directed advertising packets have been received.
+When the library is set to the advanced mode and :ref:`filters <lib_nrf_bt_le_scan_readme_filters>` are set, you can use the ``filter_no_match`` event to check if directed advertising packets have been received.
 They will typically not match any filter as, by specification, they do not contain any advertising data.
 
 If there is no match, you can establish a connection without the need to disable or reconfigure the existing filters.
@@ -71,7 +71,7 @@ You can use the library to execute actions described in the following sections.
 Initializing
 ============
 
-To initialize the library, call the :c:func:`bt_scan_init` function.
+To initialize the library, call the :c:func:`bt_le_scan_init` function.
 
 You can also call the function without an initialization structure.
 When you pass the initialization structure as ``NULL``, the default static configuration is used.
@@ -83,19 +83,19 @@ Scanning
 
 Call the following functions to perform basic scanning activities:
 
-* :c:func:`bt_scan_start` - Start scanning.
+* :c:func:`bt_le_scan_start` - Start scanning.
 
   In the simple mode, when you do not use the event handler, you can establish a connection when the scanner finds the device.
 
-* :c:func:`bt_scan_params_set` - Change parameters.
+* :c:func:`bt_le_scan_params_set` - Change parameters.
 
-* :c:func:`bt_scan_stop` - Stop scanning manually.
+* :c:func:`bt_le_scan_stop` - Stop scanning manually.
 
   Scanning stops automatically if the library established the connection.
 
-* :c:func:`bt_scan_start` - Resume scanning.
+* :c:func:`bt_le_scan_start` - Resume scanning.
 
-.. _lib_nrf_bt_scan_readme_filters:
+.. _lib_nrf_bt_le_scan_readme_filters:
 
 Filtering
 =========
@@ -153,18 +153,18 @@ Connection attempts filter
 After a scanning session is started by the application, some peripheral devices can disconnect immediately.
 This might result in a loop of the connection and disconnection events.
 
-To avoid that, enable the :kconfig:option:`CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER` Kconfig option that limits the number of the connection attempts.
+To avoid that, enable the :kconfig:option:`CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_FILTER` Kconfig option that limits the number of the connection attempts.
 
 This filter automatically tracks the connected devices and counts all disconnection events for them.
 If the number of disconnections is greater than or equal to the number of the allowed attempts, the library ignores this device.
 
-You must remove the filtered devices manually from the filter array through the :c:func:`bt_scan_conn_attempts_filter_clear` function.
+You must remove the filtered devices manually from the filter array through the :c:func:`bt_le_scan_conn_attempts_filter_clear` function.
 Use this function before each scan starts, unless your application has different requirements.
 If the filter array is full, the library overwrites the oldest device with the new one.
 
 In the default configuration, the filter allows to add two devices and limits the connection attempts to two.
-To increase the number of devices, set the :kconfig:option:`CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER_LEN` Kconfig option.
-The :kconfig:option:`CONFIG_BT_SCAN_CONN_ATTEMPTS_COUNT` Kconfig option adjusts the number of connection attempts.
+To increase the number of devices, set the :kconfig:option:`CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_FILTER_LEN` Kconfig option.
+The :kconfig:option:`CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_COUNT` Kconfig option adjusts the number of connection attempts.
 
 Samples using the library
 *************************
@@ -182,4 +182,4 @@ API documentation
 | Header file: :file:`include/bluetooth/scan.h`
 | Source file: :file:`subsys/bluetooth/scan.c`
 
-.. doxygengroup:: nrf_bt_scan
+.. doxygengroup:: nrf_bt_le_scan
