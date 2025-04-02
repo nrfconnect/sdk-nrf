@@ -36,6 +36,7 @@ extensions = [
     "sphinxcontrib.mscgen",
     "inventory_builder",
     "warnings_filter",
+    "sphinx_tabs.tabs",
     "zephyr.kconfig",
     "zephyr.external_content",
     "zephyr.doxyrunner",
