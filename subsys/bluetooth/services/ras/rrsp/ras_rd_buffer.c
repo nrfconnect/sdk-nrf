@@ -150,15 +150,18 @@ static struct ras_rd_buffer *rd_buffer_alloc(struct bt_conn *conn, uint16_t rang
 	return NULL;
 }
 
-static void cs_procedure_enabled(struct bt_conn *conn,
-				 struct bt_conn_le_cs_procedure_enable_complete *params)
+static void cs_procedure_enable(struct bt_conn *conn,
+				uint8_t status,
+				struct bt_conn_le_cs_procedure_enable_complete *params)
 {
 	uint8_t conn_index = bt_conn_index(conn);
 
 	__ASSERT_NO_MSG(conn_index < ARRAY_SIZE(tx_power_cache));
 
-	tx_power_cache[conn_index] = params->selected_tx_power;
-	drop_procedure_counter[conn_index] = DROP_PROCEDURE_COUNTER_EMPTY;
+	if (status == BT_HCI_ERR_SUCCESS) {
+		tx_power_cache[conn_index] = params->selected_tx_power;
+		drop_procedure_counter[conn_index] = DROP_PROCEDURE_COUNTER_EMPTY;
+	}
 }
 
 static bool process_step_data(struct bt_le_cs_subevent_step *step, void *user_data)
@@ -302,7 +305,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 }
 
 BT_CONN_CB_DEFINE(conn_callbacks) = {
-	.le_cs_procedure_enabled = cs_procedure_enabled,
+	.le_cs_procedure_enable_complete = cs_procedure_enable,
 	.le_cs_subevent_data_available = subevent_data_available,
 	.disconnected = disconnected,
 };

@@ -65,43 +65,68 @@ static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 	sys_reboot(SYS_REBOOT_COLD);
 }
 
-static void remote_capabilities_cb(struct bt_conn *conn, struct bt_conn_le_cs_capabilities *params)
+static void remote_capabilities_cb(struct bt_conn *conn,
+				   uint8_t status,
+				   struct bt_conn_le_cs_capabilities *params)
 {
 	ARG_UNUSED(conn);
 	ARG_UNUSED(params);
-	LOG_INF("CS capability exchange completed.");
-}
 
-static void config_created_cb(struct bt_conn *conn, struct bt_conn_le_cs_config *config)
-{
-	ARG_UNUSED(conn);
-	LOG_INF("CS config creation complete. ID: %d", config->id);
-}
-
-static void security_enabled_cb(struct bt_conn *conn)
-{
-	ARG_UNUSED(conn);
-	LOG_INF("CS security enabled.");
-}
-
-static void procedure_enabled_cb(struct bt_conn *conn,
-				 struct bt_conn_le_cs_procedure_enable_complete *params)
-{
-	ARG_UNUSED(conn);
-	if (params->state == 1) {
-		LOG_INF("CS procedures enabled.");
+	if (status == BT_HCI_ERR_SUCCESS) {
+		LOG_INF("CS capability exchange completed.");
 	} else {
-		LOG_INF("CS procedures disabled.");
+		LOG_WRN("CS capability exchange failed. (HCI status 0x%02x)", status);
+	}
+}
+
+static void config_create_cb(struct bt_conn *conn,
+			      uint8_t status,
+			      struct bt_conn_le_cs_config *config)
+{
+	ARG_UNUSED(conn);
+
+	if (status == BT_HCI_ERR_SUCCESS) {
+		LOG_INF("CS config creation complete. ID: %d", config->id);
+	} else {
+		LOG_WRN("CS config creation failed. (HCI status 0x%02x)", status);
+	}
+}
+
+static void security_enable_cb(struct bt_conn *conn, uint8_t status)
+{
+	ARG_UNUSED(conn);
+
+	if (status == BT_HCI_ERR_SUCCESS) {
+		LOG_INF("CS security enabled.");
+	} else {
+		LOG_WRN("CS security enable failed. (HCI status 0x%02x)", status);
+	}
+}
+
+static void procedure_enable_cb(struct bt_conn *conn,
+				uint8_t status,
+				struct bt_conn_le_cs_procedure_enable_complete *params)
+{
+	ARG_UNUSED(conn);
+
+	if (status == BT_HCI_ERR_SUCCESS) {
+		if (params->state == 1) {
+			LOG_INF("CS procedures enabled.");
+		} else {
+			LOG_INF("CS procedures disabled.");
+		}
+	} else {
+		LOG_WRN("CS procedures enable failed. (HCI status 0x%02x)", status);
 	}
 }
 
 BT_CONN_CB_DEFINE(conn_cb) = {
 	.connected = connected_cb,
 	.disconnected = disconnected_cb,
-	.le_cs_remote_capabilities_available = remote_capabilities_cb,
-	.le_cs_config_created = config_created_cb,
-	.le_cs_security_enabled = security_enabled_cb,
-	.le_cs_procedure_enabled = procedure_enabled_cb,
+	.le_cs_read_remote_capabilities_complete = remote_capabilities_cb,
+	.le_cs_config_complete = config_create_cb,
+	.le_cs_security_enable_complete = security_enable_cb,
+	.le_cs_procedure_enable_complete = procedure_enable_cb,
 };
 
 int main(void)

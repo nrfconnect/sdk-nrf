@@ -328,47 +328,76 @@ static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 	sys_reboot(SYS_REBOOT_COLD);
 }
 
-static void remote_capabilities_cb(struct bt_conn *conn, struct bt_conn_le_cs_capabilities *params)
+static void remote_capabilities_cb(struct bt_conn *conn,
+				   uint8_t status,
+				   struct bt_conn_le_cs_capabilities *params)
 {
+	ARG_UNUSED(conn);
 	ARG_UNUSED(params);
-	LOG_INF("CS capability exchange completed.");
-	k_sem_give(&sem_remote_capabilities_obtained);
-}
 
-static void config_created_cb(struct bt_conn *conn, struct bt_conn_le_cs_config *config)
-{
-	LOG_INF("CS config creation complete. ID: %d", config->id);
-	k_sem_give(&sem_config_created);
-}
-
-static void security_enabled_cb(struct bt_conn *conn)
-{
-	LOG_INF("CS security enabled.");
-	k_sem_give(&sem_cs_security_enabled);
-}
-
-static void procedure_enabled_cb(struct bt_conn *conn,
-				 struct bt_conn_le_cs_procedure_enable_complete *params)
-{
-	if (params->state == 1) {
-		LOG_INF("CS procedures enabled:\n"
-			" - config ID: %u\n"
-			" - antenna configuration index: %u\n"
-			" - TX power: %d dbm\n"
-			" - subevent length: %u us\n"
-			" - subevents per event: %u\n"
-			" - subevent interval: %u\n"
-			" - event interval: %u\n"
-			" - procedure interval: %u\n"
-			" - procedure count: %u\n"
-			" - maximum procedure length: %u",
-			params->config_id, params->tone_antenna_config_selection,
-			params->selected_tx_power, params->subevent_len,
-			params->subevents_per_event, params->subevent_interval,
-			params->event_interval, params->procedure_interval, params->procedure_count,
-			params->max_procedure_len);
+	if (status == BT_HCI_ERR_SUCCESS) {
+		LOG_INF("CS capability exchange completed.");
+		k_sem_give(&sem_remote_capabilities_obtained);
 	} else {
-		LOG_INF("CS procedures disabled.");
+		LOG_WRN("CS capability exchange failed. (HCI status 0x%02x)", status);
+	}
+}
+
+static void config_create_cb(struct bt_conn *conn,
+			     uint8_t status,
+			     struct bt_conn_le_cs_config *config)
+{
+	ARG_UNUSED(conn);
+
+	if (status == BT_HCI_ERR_SUCCESS) {
+		LOG_INF("CS config creation complete. ID: %d", config->id);
+		k_sem_give(&sem_config_created);
+	} else {
+		LOG_WRN("CS config creation failed. (HCI status 0x%02x)", status);
+	}
+}
+
+static void security_enable_cb(struct bt_conn *conn, uint8_t status)
+{
+	ARG_UNUSED(conn);
+
+	if (status == BT_HCI_ERR_SUCCESS) {
+		LOG_INF("CS security enabled.");
+		k_sem_give(&sem_cs_security_enabled);
+	} else {
+		LOG_WRN("CS security enable failed. (HCI status 0x%02x)", status);
+	}
+}
+
+static void procedure_enable_cb(struct bt_conn *conn,
+				uint8_t status,
+				struct bt_conn_le_cs_procedure_enable_complete *params)
+{
+	ARG_UNUSED(conn);
+
+	if (status == BT_HCI_ERR_SUCCESS) {
+		if (params->state == 1) {
+			LOG_INF("CS procedures enabled:\n"
+				" - config ID: %u\n"
+				" - antenna configuration index: %u\n"
+				" - TX power: %d dbm\n"
+				" - subevent length: %u us\n"
+				" - subevents per event: %u\n"
+				" - subevent interval: %u\n"
+				" - event interval: %u\n"
+				" - procedure interval: %u\n"
+				" - procedure count: %u\n"
+				" - maximum procedure length: %u",
+				params->config_id, params->tone_antenna_config_selection,
+				params->selected_tx_power, params->subevent_len,
+				params->subevents_per_event, params->subevent_interval,
+				params->event_interval, params->procedure_interval,
+				params->procedure_count, params->max_procedure_len);
+		} else {
+			LOG_INF("CS procedures disabled.");
+		}
+	} else {
+		LOG_WRN("CS procedures enable failed. (HCI status 0x%02x)", status);
 	}
 }
 
@@ -432,10 +461,10 @@ BT_CONN_CB_DEFINE(conn_cb) = {
 	.disconnected = disconnected_cb,
 	.le_param_req = le_param_req,
 	.security_changed = security_changed,
-	.le_cs_remote_capabilities_available = remote_capabilities_cb,
-	.le_cs_config_created = config_created_cb,
-	.le_cs_security_enabled = security_enabled_cb,
-	.le_cs_procedure_enabled = procedure_enabled_cb,
+	.le_cs_read_remote_capabilities_complete = remote_capabilities_cb,
+	.le_cs_config_complete = config_create_cb,
+	.le_cs_security_enable_complete = security_enable_cb,
+	.le_cs_procedure_enable_complete = procedure_enable_cb,
 	.le_cs_subevent_data_available = subevent_result_cb,
 };
 
