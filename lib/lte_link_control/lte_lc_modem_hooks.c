@@ -10,6 +10,7 @@
 #include <zephyr/logging/log.h>
 
 #include "modules/rai.h"
+#include "modules/dns.h"
 
 LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
@@ -131,6 +132,10 @@ static void on_modem_init(int err, void *ctx)
 #if defined(CONFIG_LTE_LC_RAI_MODULE)
 	/* Configure Release Assistance Indication (RAI). */
 	rai_set();
+#endif
+
+#if defined(CONFIG_LTE_LC_DNS_FALLBACK_MODULE)
+	dns_fallback_set();
 #endif
 }
 
