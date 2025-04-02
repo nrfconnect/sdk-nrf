@@ -10,7 +10,7 @@ intelhex
 pylint
 setuptools==75.2.0
 zcbor~=0.8.0
-nrf-regtool==9.0.0
+nrf-regtool==9.0.1
 windows-curses; sys_platform == 'win32'
 unidiff
 pycryptodome==3.21.0
