@@ -32,13 +32,15 @@ function(asm_check)
     elseif( compare_result EQUAL 1)
       if(dev_mode)
         message(WARNING "${asm_filename}-${soc}.s ASM file content has changed.\
-                It will be updated and included in build.")
+                The new version will be included in build, but it will not be moved to the source \
+                directory. If you want to update ASM file in source directory with the new one \
+                run `ninja asm_install` in FLPR build directory.")
       else()
         message(FATAL_ERROR "${asm_filename}-${soc}.s ASM file content has changed.\
                 If you want to include the new ASM in build, \
                 please run `ninja asm_install` in FLPR build directory and build again. \
                 If you want to disable this error and include new ASM in build every time,\
-                enable SB_CONFIG_DEVELOPER_MODE option.")
+                enable SB_CONFIG_SDP_DEVELOPER_MODE option.")
       endif()
     else()
       message("Something went wrong when comparing ${asm_filename}-${soc}.s and ${asm_filename}-${soc}-temp.s")
