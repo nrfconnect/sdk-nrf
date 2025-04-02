@@ -41,6 +41,31 @@ static nrf_vpr_csr_vio_shift_ctrl_t xfer_shift_ctrl = {
 	.in_mode = NRF_VPR_CSR_VIO_MODE_IN_CONTINUOUS,
 };
 
+NRF_STATIC_INLINE bool is_counter_running(uint8_t counter)
+{
+	/* This may not work for higher frequencies but
+	 * there is no other way to check if timer is running.
+	 * Tested it down to counter value 2 which is 21.333333MHz.
+	 */
+	uint16_t cnt = nrf_vpr_csr_vtim_simple_counter_get(counter);
+
+	return cnt != nrf_vpr_csr_vtim_simple_counter_get(counter);
+}
+
+NRF_STATIC_INLINE uint32_t get_next_shift_count(volatile hrt_xfer_t *hrt_xfer_params,
+						uint32_t word_count, uint32_t index)
+{
+	switch (word_count - index) {
+	case 1: /* Last transfer */
+		return SHIFTCNTB_VALUE(hrt_xfer_params->xfer_data[HRT_FE_DATA].last_word_clocks);
+	case 2: /* Last but one transfer */
+		return SHIFTCNTB_VALUE(
+			hrt_xfer_params->xfer_data[HRT_FE_DATA].penultimate_word_clocks);
+	default:
+		return SHIFTCNTB_VALUE(BITS_IN_WORD / hrt_xfer_params->bus_widths.data);
+	}
+}
+
 static void hrt_tx(volatile hrt_xfer_data_t *xfer_data, uint8_t frame_width, bool *counter_running,
 		   uint16_t counter_value)
 {
@@ -247,13 +272,11 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 		.mode = NRF_VPR_CSR_VIO_SHIFT_OUTB_TOGGLE,
 		.frame_width = hrt_xfer_params->bus_widths.data,
 	};
-	uint32_t data_length = hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count;
+	uint32_t word_count = hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count;
 	bool hold = hrt_xfer_params->ce_hold;
 	uint32_t *data = (uint32_t *)hrt_xfer_params->xfer_data[HRT_FE_DATA].data;
 	uint32_t last_word;
 	uint16_t prev_out;
-	uint16_t cnt0;
-	uint16_t cnt0_prev;
 
 	/* Enable CE */
 	if (hrt_xfer_params->ce_polarity == MSPI_CE_ACTIVE_LOW) {
@@ -271,7 +294,7 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 	hrt_write(hrt_xfer_params);
 
 	/* Restore variables values for read phase. */
-	hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count = data_length;
+	hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count = word_count;
 	hrt_xfer_params->ce_hold = hold;
 
 	/* Configure clock and pins */
@@ -315,31 +338,27 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 	nrf_vpr_csr_vio_out_buffered_reversed_word_set(0x00);
 
 	/* Special case when only 2 clocks are required. */
-	if ((hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count == 1) &&
-	    (hrt_xfer_params->xfer_data[HRT_FE_DATA].last_word_clocks == 2)) {
+	if ((word_count == 1) && (hrt_xfer_params->xfer_data[HRT_FE_DATA].last_word_clocks == 2)) {
 
 		/* Start reception. */
-		nrf_vpr_csr_vtim_combined_counter_set(
-			(hrt_xfer_params->counter_value << VPRCSR_NORDIC_CNT_CNT0_Pos) +
-			(CNT1_INIT_VALUE << VPRCSR_NORDIC_CNT_CNT1_Pos));
+		nrf_vpr_csr_vtim_combined_counter_set(NRF_VPR_CSR_VTIM_COUNTER_VAL(
+			hrt_xfer_params->counter_value, CNT1_INIT_VALUE));
 
-		/* Wait for reception to end, transfer has to be stopped "manualy".
-		 * Setting SHIFTCTRLB cannot be used because with RTPERIPHCTRL:STOPCOUNTERS == 1,
-		 * counter stops 1 clock too early.
-		 */
-		while (nrf_vpr_csr_vio_shift_cnt_in_get() > 0) {
-		}
-		/* Wait until timer 0 stops.
-		 * WAIT0 cannot be used for this because in higher frequencies function
+		/* Wait for reception to end.
+		 * Here are the solutions that should work but in this case due to high clock
+		 * frequency don't.
+		 * 1. Setting SHIFTCTRLB cannot be used because with RTPERIPHCTRL:STOPCOUNTERS == 1,
+		 *    counter stops 1 clock too early.
+		 * 2. while loop with nrf_vpr_csr_vio_shift_cnt_in_get function inside cannot be
+		 *    used because at higher frequencies shifting stops before it is called the
+		 *    first time.
+		 * Therefore the only solution that works is to wait for timer 0 to stop.
+		 * Here also the defaut way of doing that does not work,
+		 * which is to use WAIT0 register, because at higher frequencies function
 		 * nrf_vpr_csr_vtim_simple_wait_set is called when CNT0 has already stopped,
 		 * making code wait indefinitely.
 		 */
-		cnt0 = nrf_vpr_csr_vtim_simple_counter_get(0);
-		cnt0_prev = cnt0 + 1;
-
-		while (cnt0 != cnt0_prev) {
-			cnt0_prev = cnt0;
-			cnt0 = nrf_vpr_csr_vtim_simple_counter_get(0);
+		while (is_counter_running(0)) {
 		}
 
 		/* Reset VIO outputs. */
@@ -363,67 +382,55 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 					  BYTE_3_SHIFT);
 		}
 	} else {
-		uint32_t i = 0;
-
-		for (; i < hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count; i++) {
-
-			switch (hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count - i) {
-			case 1: /* Last transfer */
-				rx_shift_ctrl.shift_count = SHIFTCNTB_VALUE(
-					hrt_xfer_params->xfer_data[HRT_FE_DATA].last_word_clocks);
-				break;
-			case 2: /* Last but one transfer */
-				rx_shift_ctrl.shift_count =
-					SHIFTCNTB_VALUE(hrt_xfer_params->xfer_data[HRT_FE_DATA]
-								.penultimate_word_clocks);
-				break;
-			default:
-				rx_shift_ctrl.shift_count = SHIFTCNTB_VALUE(
-					BITS_IN_WORD / hrt_xfer_params->bus_widths.data);
-			}
-
-			if (i == 0) {
-				/* Value of 1 is set to SHIFTCNTOUT register to start MSPI clock
-				 * running, 0 is not possible. Due to hardware error it causes 2*1
-				 * clock pulses to be generated. After that n-2 pulses have to be
-				 * generated to receive total of n bits
-				 */
-				rx_shift_ctrl.shift_count -= 2;
-				nrf_vpr_csr_vio_shift_ctrl_buffered_set(&rx_shift_ctrl);
-
-				nrf_vpr_csr_vtim_combined_counter_set(
-					(hrt_xfer_params->counter_value
-					 << VPRCSR_NORDIC_CNT_CNT0_Pos) +
-					(CNT1_INIT_VALUE << VPRCSR_NORDIC_CNT_CNT1_Pos));
-				/* Read INBRB to continue clock beyond first 2 pulses. */
-				nrf_vpr_csr_vio_in_buffered_reversed_byte_get();
-
-			} else {
-				nrf_vpr_csr_vio_shift_ctrl_buffered_set(&rx_shift_ctrl);
-
-				data[i - 1] = nrf_vpr_csr_vio_in_buffered_reversed_byte_get();
-			}
-		}
-
-		/* Wait for reception to end, transfer has to be stopped "manualy".
-		 * Setting SHIFTCTRLB cannot be used because with RTPERIPHCTRL:STOPCOUNTERS == 1,
-		 * counter stops 1 clock too early.
+		/* Get shift count for index 0.
+		 * Value of 1 is set to SHIFTCNTOUT register to start MSPI clock
+		 * running, 0 is not possible. Due to hardware error it causes 2*1
+		 * clock pulses to be generated. After that n-2 pulses have to be
+		 * generated to receive total of n bits.
 		 */
-		while (nrf_vpr_csr_vio_shift_cnt_in_get() > 0) {
+		rx_shift_ctrl.shift_count =
+			get_next_shift_count(hrt_xfer_params, word_count, 0) - 2;
+		nrf_vpr_csr_vio_shift_ctrl_buffered_set(&rx_shift_ctrl);
+
+		/* Get shift count for index 1. */
+		rx_shift_ctrl.shift_count = get_next_shift_count(hrt_xfer_params, word_count, 1);
+
+		nrf_vpr_csr_vtim_combined_counter_set(NRF_VPR_CSR_VTIM_COUNTER_VAL(
+			hrt_xfer_params->counter_value, CNT1_INIT_VALUE));
+		/* Read INBRB to continue clock beyond first 2 pulses.
+		 * For higher frequencies it is important that SHIFTCTRLB is written
+		 * immediately after reading INB/INBRB.
+		 */
+		nrf_vpr_csr_vio_in_buffered_reversed_byte_get();
+		nrf_vpr_csr_vio_shift_ctrl_buffered_set(&rx_shift_ctrl);
+
+		for (uint32_t i = 0; i < word_count - 1; i++) {
+			/* Shift count was already read for indexes 0 and 1. */
+			rx_shift_ctrl.shift_count =
+				get_next_shift_count(hrt_xfer_params, word_count, i + 2);
+			/* For higher frequencies it is important that SHIFTCTRLB is written
+			 * immediately after reading INB/INBRB.
+			 */
+			data[i] = nrf_vpr_csr_vio_in_buffered_reversed_byte_get();
+			nrf_vpr_csr_vio_shift_ctrl_buffered_set(&rx_shift_ctrl);
 		}
-		/* Wait until timer 0 stops.
-		 * WAIT0 cannot be used for this because in higher frequencies function
+
+		/* Wait for reception to end.
+		 * Here are the solutions that should work but in this case due to high clock
+		 * frequency don't.
+		 * 1. Setting SHIFTCTRLB cannot be used because with RTPERIPHCTRL:STOPCOUNTERS == 1,
+		 *    counter stops 1 clock too early.
+		 * 2. while loop with nrf_vpr_csr_vio_shift_cnt_in_get function inside cannot be
+		 *    used because at higher frequencies shifting stops before it is called the
+		 *    first time.
+		 * Therefore the only solution that works is to wait for timer 0 to stop.
+		 * Here also the defaut way of doing that does not work,
+		 * which is to use WAIT0 register, because at higher frequencies function
 		 * nrf_vpr_csr_vtim_simple_wait_set is called when CNT0 has already stopped,
 		 * making code wait indefinitely.
 		 */
-		cnt0 = nrf_vpr_csr_vtim_simple_counter_get(0);
-		cnt0_prev = cnt0 + 1;
-
-		while (cnt0 != cnt0_prev) {
-			cnt0_prev = cnt0;
-			cnt0 = nrf_vpr_csr_vtim_simple_counter_get(0);
+		while (is_counter_running(0)) {
 		}
-
 		/* Reset VIO outputs. */
 		nrf_vpr_csr_vio_out_buffered_reversed_word_set(prev_out << BYTE_3_SHIFT);
 
