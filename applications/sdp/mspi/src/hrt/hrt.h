@@ -94,9 +94,6 @@ typedef struct {
 	 */
 	uint16_t counter_value;
 
-	/** @brief Index of clock VIO pin */
-	uint8_t clk_vio;
-
 	/** @brief Index of CE VIO pin */
 	uint8_t ce_vio;
 

@@ -243,7 +243,6 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile uint
 	xfer_params.cpp_mode = device->cpp;
 	xfer_params.ce_polarity = device->ce_polarity;
 	xfer_params.bus_widths = io_modes[device->io_mode];
-	xfer_params.clk_vio = clk_vio;
 
 	/* Fix position of command and address if command/address length is < BITS_IN_WORD,
 	 * so that leading zeros would not be printed instead of data bits.
@@ -322,6 +321,11 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile uint
 				break;
 			}
 		}
+	}
+
+	if (device->cpp == MSPI_CPP_MODE_3) {
+		NRFX_ASSERT(xfer_params.xfer_data[HRT_FE_DATA].last_word_clocks >=
+			    MODE_3_RX_MIN_CLOCKS);
 	}
 
 	/* Read/write barrier to make sure that all configuration is done before jumping to HRT. */
@@ -437,7 +441,8 @@ static void ep_recv(const void *data, size_t len, void *priv)
 
 		NRFX_ASSERT(dev_config->device_index < DEVICES_MAX);
 		NRFX_ASSERT(dev_config->dev_config.io_mode < SUPPORTED_IO_MODES_COUNT);
-		NRFX_ASSERT(dev_config->dev_config.cpp <= MSPI_CPP_MODE_3);
+		NRFX_ASSERT((dev_config->dev_config.cpp == MSPI_CPP_MODE_0) ||
+			    (dev_config->dev_config.cpp == MSPI_CPP_MODE_3));
 		NRFX_ASSERT(dev_config->dev_config.ce_index < ce_vios_count);
 		NRFX_ASSERT(dev_config->dev_config.ce_polarity <= MSPI_CE_ACTIVE_HIGH);
 
