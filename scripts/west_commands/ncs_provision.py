@@ -13,6 +13,8 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
+import psa_attribute_generator.generate_psa_key_attributes as psa_attr_generator
+
 import yaml
 from cryptography.hazmat.primitives.serialization import (
     load_pem_private_key,
@@ -25,74 +27,24 @@ KEY_SLOTS: dict[str, list[int]] = {
     "BL_PUBKEY": [242, 244, 246],
     "APP_PUBKEY": [202, 204, 206],
 }
-KMU_KEY_SLOT_DEST_ADDR: str = "0x20000000"
-ALGORITHM: str = "ED25519"
+ALGORITHM: str = "EDDSA_PURE"
+LOCATION: str = "LOCATION_CRACEN_KMU"
+CRACEN_USAGE: str = "RAW"
+USAGE: str = "VERIFY_MESSAGE_EXPORT"
 POLICIES = ["revokable", "lock", "lock-last"]
-NRF54L15_KEY_POLICIES: dict[str, str] = {"revokable": "REVOKED", "lock": "LOCKED"}
-
-METADATA_ALGORITHM_MAPPING: dict[str, int] = {
-    "ED25519": 10,
-}
-METADATA_RPOLICY_MAPPING: dict[str, int] = {
-    'ROTATING': 1,
-    'LOCKED': 2,
-    'REVOKED': 3
-}
-
-
-# Implemented based on
-# https://github.com/nrfconnect/sdk-nrf/blob/f3ac9cfb784d163f4c1af11209976fcd5c403d5a/subsys/nrf_security/src/drivers/cracen/cracenpsa/src/kmu.c#L41
-@dataclass
-class KmuMetadata:
-    metadata_version: int = 0
-    key_usage_scheme: int = 0
-    reserved: int = 0
-    algorithm: int = 0
-    size: int = 0
-    rpolicy: int = 0
-    usage_flags: int = 0
-
-    @property
-    def value(self) -> int:
-        # Combine all fields into a single 32-bit integer
-        value = 0
-        value |= (self.metadata_version & 0xF) << 0  # (4 bits)
-        value |= (self.key_usage_scheme & 0x3) << 4  # (2 bits)
-        value |= (self.reserved & 0x3FF) << 6  # (10 bits)
-        value |= (self.algorithm & 0xF) << 16  # (4 bits)
-        value |= (self.size & 0x7) << 20  # (3 bits)
-        value |= (self.rpolicy & 0x3) << 23  # (2 bits)
-        value |= (self.usage_flags & 0x7F) << 25  # (7 bits)
-
-        return value
-
-    @classmethod
-    def from_value(cls, value: int):
-        metadata_version = (value >> 0) & 0xF
-        key_usage_scheme = (value >> 4) & 0x3
-        reserved = (value >> 6) & 0x3FF
-        algorithm = (value >> 16) & 0xF
-        size = (value >> 20) & 0x7
-        rpolicy = (value >> 23) & 0x3
-        usage_flags = (value >> 25) & 0x7F
-
-        return cls(
-            metadata_version, key_usage_scheme, reserved,
-            algorithm, size, rpolicy, usage_flags
-        )
-
-    def __str__(self) -> str:
-        return f'0x{self.value:08x}'
-
+NRF54L15_KEY_POLICIES: dict[str, str] = {"revokable": "PERSISTENCE_REVOKABLE", "lock":
+                                         "PERSISTENCE_DEFAULT"}
 
 @dataclass
 class SlotParams:
     id: int
     value: str
-    rpolicy: str
-    metadata: str
+    size: int
+    lifetime: str
+    usage: str = USAGE
+    location: str = LOCATION
     algorithm: str = ALGORITHM
-    dest: str = KMU_KEY_SLOT_DEST_ADDR
+    cracen_usage: str = CRACEN_USAGE
 
     def asdict(self) -> dict[str, str]:
         return asdict(self)
@@ -110,11 +62,27 @@ class NrfutilWrapper:
     ) -> None:
         self.device_id = device_id
         self.dry_run = dry_run
-        self.data = {
-            "version": 0,
-            "keyslots": [slot.asdict() for slot in slots]
-        }
         self.output_dir = output_dir or tempfile.mkdtemp(prefix="nrfutil_")
+        self.output_file = Path(self.output_dir).joinpath("keyfile.json").resolve().expanduser()
+
+        for slot in slots:
+            attr = psa_attr_generator.PlatformKeyAttributes(
+                    key_type=psa_attr_generator.PsaKeyType["ECC_TWISTED_EDWARDS"],
+                    identifier=slot.id,
+                    location=psa_attr_generator.PsaKeyLocation[slot.location],
+                    lifetime=psa_attr_generator.PsaKeyLifetime[slot.lifetime],
+                    algorithm=psa_attr_generator.PsaAlgorithm[slot.algorithm],
+                    size=slot.size,
+                    cracen_usage=psa_attr_generator.PsaCracenUsageSceme[slot.cracen_usage],
+                    usage=psa_attr_generator.PsaUsage[slot.usage]
+                )
+
+            psa_attr_generator.generate_attr_file(attributes=attr,
+                                                  key_value=slot.value,
+                                                  key_file=self.output_file,
+                                                  key_from_file="",
+                                                  trng_key=False,
+                                                  bin_out=False)
 
     def run_command(self):
         command = self._build_command()
@@ -128,23 +96,13 @@ class NrfutilWrapper:
         else:
             print("Uploaded!", file=sys.stderr)
 
-    def _make_json_file(self) -> str:
-        """Create JSON file and return path to it."""
-        json_file = Path(self.output_dir).joinpath("keyfile.json").resolve().expanduser()
-        with open(json_file, "w") as file:
-            json.dump(self.data, file, indent=2)
-        print(f"Keys file saved as {json_file}", file=sys.stderr)
-        return str(json_file)
-
     def _build_command(self) -> list[str]:
-        json_file_path = self._make_json_file()
         command = [
             "nrfutil",
             "device",
-            "x-provision-nrf54l-keys",
+            "x-provision-keys",
             "--key-file",
-            json_file_path,
-            "--verify",
+            str(self.output_file),
         ]
         if self.device_id:
             command += ["--serial-number", self.device_id]
@@ -285,19 +243,8 @@ class NcsProvision(WestCommand):
             else:
                 key_policy = NRF54L15_KEY_POLICIES[policy]
             slot_id = KEY_SLOTS[keyname][slot_idx]
-
-            metadata = KmuMetadata(
-                metadata_version=0,
-                key_usage_scheme=3,
-                reserved=0,
-                algorithm=METADATA_ALGORITHM_MAPPING[ALGORITHM],
-                size=3,
-                rpolicy=METADATA_RPOLICY_MAPPING[key_policy],
-                usage_flags=8
-            )
-            slot = SlotParams(
-                id=slot_id, value=pub_key_hex, rpolicy=key_policy, metadata=str(metadata)
-            )
+            slot = SlotParams(id=slot_id, value=pub_key_hex, lifetime=key_policy,
+                              size=psa_attr_generator.PsaKeyBits.EDDSA)
 
             slots.append(slot)
 
