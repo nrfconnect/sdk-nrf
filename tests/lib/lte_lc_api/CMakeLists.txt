@@ -18,6 +18,7 @@ cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem_at.h
 	     WORD_EXCLUDE "__nrf_modem_(printf|scanf)_like\(.*\)")
 
 cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_modem.h)
+cmock_handle(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/nrf_socket.h)
 
 # When mocking nrf_modem_at then nrf_modem/include must manually be added
 # because CONFIG_NRF_MODEM_LINK_BINARY=n
