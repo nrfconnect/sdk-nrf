@@ -104,6 +104,16 @@ static otError getKeyRef(otCryptoKeyRef *aInputKeyRef, psa_key_attributes_t *aAt
 		if (psa_get_key_algorithm(aAttributes) == 0) {
 			psa_set_key_algorithm(aAttributes, PSA_ALG_HMAC(PSA_ALG_SHA_256));
 		}
+
+		/* KMU does not support deterministic ECDSA, so we need to set it to
+		 * PSA_ALG_ECDSA(PSA_ALG_SHA_256).
+		 * To keep backward compatibility with the previous functionality we must
+		 * leave PSA_ALG_DETERMINISTIC_ECDSA(PSA_ALG_SHA_256) for the ITS purposes.
+		 */
+		if (psa_get_key_algorithm(aAttributes) ==
+		    PSA_ALG_DETERMINISTIC_ECDSA(PSA_ALG_SHA_256)) {
+			psa_set_key_algorithm(aAttributes, PSA_ALG_ECDSA(PSA_ALG_SHA_256));
+		}
 	}
 #endif /* CONFIG_OPENTHREAD_PSA_NVM_BACKEND */
 
@@ -680,9 +690,14 @@ otError otPlatCryptoEcdsaSignUsingKeyRef(otCryptoKeyRef aKeyRef,
 
 	GET_KEY_REF(&aKeyRef, NULL);
 
-	status = psa_sign_hash(aKeyRef, PSA_ALG_ECDSA(PSA_ALG_SHA_256), aHash->m8,
-			       OT_CRYPTO_SHA256_HASH_SIZE, aSignature->m8,
-			       OT_CRYPTO_ECDSA_SIGNATURE_SIZE, &signature_length);
+#if defined(CONFIG_OPENTHREAD_PSA_NVM_BACKEND_KMU)
+	psa_algorithm_t algorithm = PSA_ALG_ECDSA(PSA_ALG_SHA_256);
+#else
+	psa_algorithm_t algorithm = PSA_ALG_DETERMINISTIC_ECDSA(PSA_ALG_SHA_256);
+#endif
+
+	status = psa_sign_hash(aKeyRef, algorithm, aHash->m8, OT_CRYPTO_SHA256_HASH_SIZE,
+			       aSignature->m8, OT_CRYPTO_ECDSA_SIGNATURE_SIZE, &signature_length);
 	if (status != PSA_SUCCESS) {
 		goto out;
 	}
@@ -700,7 +715,13 @@ otError otPlatCryptoEcdsaVerifyUsingKeyRef(otCryptoKeyRef aKeyRef,
 
 	GET_KEY_REF(&aKeyRef, NULL);
 
-	status = psa_verify_hash(aKeyRef, PSA_ALG_ECDSA(PSA_ALG_SHA_256), aHash->m8,
+#if defined(CONFIG_OPENTHREAD_PSA_NVM_BACKEND_KMU)
+	psa_algorithm_t algorithm = PSA_ALG_ECDSA(PSA_ALG_SHA_256);
+#else
+	psa_algorithm_t algorithm = PSA_ALG_DETERMINISTIC_ECDSA(PSA_ALG_SHA_256);
+#endif
+
+	status = psa_verify_hash(aKeyRef, algorithm, aHash->m8,
 				 OT_CRYPTO_SHA256_HASH_SIZE, aSignature->m8,
 				 OT_CRYPTO_ECDSA_SIGNATURE_SIZE);
 	if (status != PSA_SUCCESS) {
@@ -739,7 +760,7 @@ otError otPlatCryptoEcdsaGenerateAndImportKey(otCryptoKeyRef aKeyRef)
 	psa_key_id_t key_id = (psa_key_id_t)aKeyRef;
 
 	psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_VERIFY_HASH | PSA_KEY_USAGE_SIGN_HASH);
-	psa_set_key_algorithm(&attributes, PSA_ALG_ECDSA(PSA_ALG_SHA_256));
+	psa_set_key_algorithm(&attributes, PSA_ALG_DETERMINISTIC_ECDSA(PSA_ALG_SHA_256));
 	psa_set_key_type(&attributes, PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1));
 	psa_set_key_lifetime(&attributes, PSA_KEY_LIFETIME_PERSISTENT);
 	psa_set_key_bits(&attributes, 256);
@@ -747,6 +768,7 @@ otError otPlatCryptoEcdsaGenerateAndImportKey(otCryptoKeyRef aKeyRef)
 	GET_KEY_REF(&key_id, &attributes);
 
 	psa_set_key_id(&attributes, key_id);
+
 	status = psa_generate_key(&attributes, &key_id);
 	if (status != PSA_SUCCESS) {
 		goto out;
