@@ -449,6 +449,7 @@
     - kernel.common.picolibc
     - kernel.common.tls
     - kernel.timer.timer
+    - libraries.encoding.jwt.rsa.psa
     - net.coap.server.common
     - net.http.server.common
     - net.http.server.crime
