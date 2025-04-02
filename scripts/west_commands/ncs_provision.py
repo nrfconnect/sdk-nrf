@@ -4,20 +4,18 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 import argparse
-import json
 import subprocess
 import sys
 import tempfile
 import textwrap
-from dataclasses import asdict, dataclass
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+sys.path.insert(0, str(Path(__file__).parents[1]))
+import generate_psa_key_attributes as psa_attr_generator
+
 import yaml
-from cryptography.hazmat.primitives.serialization import (
-    load_pem_private_key,
-    load_pem_public_key,
-)
 from west.commands import WestCommand
 
 KEY_SLOTS: dict[str, list[int]] = {
@@ -25,95 +23,32 @@ KEY_SLOTS: dict[str, list[int]] = {
     "BL_PUBKEY": [242, 244, 246],
     "APP_PUBKEY": [202, 204, 206],
 }
-KMU_KEY_SLOT_DEST_ADDR: str = "0x20000000"
-ALGORITHM: str = "ED25519"
 POLICIES = ["revokable", "lock", "lock-last"]
-NRF54L15_KEY_POLICIES: dict[str, str] = {"revokable": "REVOKED", "lock": "LOCKED"}
-
-METADATA_ALGORITHM_MAPPING: dict[str, int] = {
-    "ED25519": 10,
+NRF54L15_KEY_POLICIES: dict[str, str] = {
+    "revokable": psa_attr_generator.PsaKeyLifetime.PERSISTENCE_REVOKABLE,
+    "lock": psa_attr_generator.PsaKeyLifetime.PERSISTENCE_READ_ONLY,
 }
-METADATA_RPOLICY_MAPPING: dict[str, int] = {
-    'ROTATING': 1,
-    'LOCKED': 2,
-    'REVOKED': 3
-}
-
-
-# Implemented based on
-# https://github.com/nrfconnect/sdk-nrf/blob/f3ac9cfb784d163f4c1af11209976fcd5c403d5a/subsys/nrf_security/src/drivers/cracen/cracenpsa/src/kmu.c#L41
-@dataclass
-class KmuMetadata:
-    metadata_version: int = 0
-    key_usage_scheme: int = 0
-    reserved: int = 0
-    algorithm: int = 0
-    size: int = 0
-    rpolicy: int = 0
-    usage_flags: int = 0
-
-    @property
-    def value(self) -> int:
-        # Combine all fields into a single 32-bit integer
-        value = 0
-        value |= (self.metadata_version & 0xF) << 0  # (4 bits)
-        value |= (self.key_usage_scheme & 0x3) << 4  # (2 bits)
-        value |= (self.reserved & 0x3FF) << 6  # (10 bits)
-        value |= (self.algorithm & 0xF) << 16  # (4 bits)
-        value |= (self.size & 0x7) << 20  # (3 bits)
-        value |= (self.rpolicy & 0x3) << 23  # (2 bits)
-        value |= (self.usage_flags & 0x7F) << 25  # (7 bits)
-
-        return value
-
-    @classmethod
-    def from_value(cls, value: int):
-        metadata_version = (value >> 0) & 0xF
-        key_usage_scheme = (value >> 4) & 0x3
-        reserved = (value >> 6) & 0x3FF
-        algorithm = (value >> 16) & 0xF
-        size = (value >> 20) & 0x7
-        rpolicy = (value >> 23) & 0x3
-        usage_flags = (value >> 25) & 0x7F
-
-        return cls(
-            metadata_version, key_usage_scheme, reserved,
-            algorithm, size, rpolicy, usage_flags
-        )
-
-    def __str__(self) -> str:
-        return f'0x{self.value:08x}'
 
 
 @dataclass
 class SlotParams:
     id: int
-    value: str
-    rpolicy: str
-    metadata: str
-    algorithm: str = ALGORITHM
-    dest: str = KMU_KEY_SLOT_DEST_ADDR
-
-    def asdict(self) -> dict[str, str]:
-        return asdict(self)
+    keyfile: str
+    lifetime: psa_attr_generator.PsaKeyLifetime
 
 
 class NrfutilWrapper:
-
     def __init__(
         self,
         slots: list[SlotParams],
         device_id: str | None = None,
         output_dir: str | None = None,
         *,
-        dry_run: bool = False
+        dry_run: bool = False,
     ) -> None:
         self.device_id = device_id
+        self.slots = slots
         self.dry_run = dry_run
-        self.data = {
-            "version": 0,
-            "keyslots": [slot.asdict() for slot in slots]
-        }
         self.output_dir = output_dir or tempfile.mkdtemp(prefix="nrfutil_")
 
     def run_command(self):
@@ -129,22 +64,37 @@ class NrfutilWrapper:
             print("Uploaded!", file=sys.stderr)
 
     def _make_json_file(self) -> str:
-        """Create JSON file and return path to it."""
-        json_file = Path(self.output_dir).joinpath("keyfile.json").resolve().expanduser()
-        with open(json_file, "w") as file:
-            json.dump(self.data, file, indent=2)
-        print(f"Keys file saved as {json_file}", file=sys.stderr)
-        return str(json_file)
+        """Generate PSA key attribute file, see generate_psa_key_attributes.py for details"""
+        output_file = (
+            Path(self.output_dir).joinpath("keyfile.json").resolve().expanduser()
+        )
+
+        for slot in self.slots:
+            attr = psa_attr_generator.PlatformKeyAttributes(
+                key_type=psa_attr_generator.PsaKeyType.ECC_TWISTED_EDWARDS,
+                identifier=slot.id,
+                location=psa_attr_generator.PsaKeyLocation.LOCATION_CRACEN_KMU,
+                lifetime=slot.lifetime,
+                usage=psa_attr_generator.PsaUsage.VERIFY_MESSAGE_EXPORT,
+                algorithm=psa_attr_generator.PsaAlgorithm.EDDSA_PURE,
+                size=psa_attr_generator.PsaKeyBits.EDDSA,
+                cracen_usage=psa_attr_generator.PsaCracenUsageSceme.RAW,
+            )
+
+            with open(slot.keyfile, "rb") as key_file:
+                psa_attr_generator.generate_attr_file(
+                    attributes=attr, key_file=output_file, key_from_file=key_file
+                )
+        return str(output_file)
 
     def _build_command(self) -> list[str]:
         json_file_path = self._make_json_file()
         command = [
             "nrfutil",
             "device",
-            "x-provision-nrf54l-keys",
+            "x-provision-keys",
             "--key-file",
             json_file_path,
-            "--verify",
         ]
         if self.device_id:
             command += ["--serial-number", self.device_id]
@@ -155,7 +105,6 @@ class NrfutilWrapper:
 
 
 class NcsProvision(WestCommand):
-
     def __init__(self):
         super().__init__(
             name="ncs-provision",
@@ -178,10 +127,12 @@ class NcsProvision(WestCommand):
                       keys: ["key1.pem", "key2.pem"]
                       policy: lock
             """),
-            formatter_class=argparse.RawDescriptionHelpFormatter
+            formatter_class=argparse.RawDescriptionHelpFormatter,
         )
         group = upload_parser.add_mutually_exclusive_group(required=True)
-        group.add_argument("-i", "--input", metavar="PATH", help="Upload keys from YAML file")
+        group.add_argument(
+            "-i", "--input", metavar="PATH", help="Upload keys from YAML file"
+        )
         group.add_argument(
             "-k",
             "--key",
@@ -205,24 +156,31 @@ class NcsProvision(WestCommand):
             choices=POLICIES,
             default="lock-last",
             help="Policy applied to the given set of keys. "
-                 "revokable: keys can be revoked each by one. "
-                 "lock: all keys stay as they are. "
-                 "lock-last: last key is uploaded as locked, "
-                 "others as revokable (default=%(default)s)",
+            "revokable: keys can be revoked each by one. "
+            "lock: all keys stay as they are. "
+            "lock-last: last key is uploaded as locked, "
+            "others as revokable (default=%(default)s)",
         )
         upload_parser.add_argument(
-            "-s", "--soc", type=str, help="SoC",
-            choices=["nrf54l05", "nrf54l10", "nrf54l15"], required=True
+            "-s",
+            "--soc",
+            type=str,
+            help="SoC",
+            choices=["nrf54l05", "nrf54l10", "nrf54l15"],
+            required=True,
         )
         upload_parser.add_argument("--dev-id", help="Device serial number")
         upload_parser.add_argument(
-            "--build-dir", metavar="PATH",
+            "--build-dir",
+            metavar="PATH",
             help="Path to output directory where keyfile.json will be saved. "
-                 "If not specified, temporary directory will be used.",
+            "If not specified, temporary directory will be used.",
         )
         upload_parser.add_argument(
-            "--dry-run", default=False, action="store_true",
-            help="Generate upload command and keyfile without executing the command"
+            "--dry-run",
+            default=False,
+            action="store_true",
+            help="Generate upload command and keyfile without executing the command",
         )
 
         return parser
@@ -243,19 +201,16 @@ class NcsProvision(WestCommand):
             slots += self._generate_slots(**value)
 
         runner = NrfutilWrapper(
-            slots=slots, device_id=args.dev_id, output_dir=args.build_dir, dry_run=args.dry_run
+            slots=slots,
+            device_id=args.dev_id,
+            output_dir=args.build_dir,
+            dry_run=args.dry_run,
         )
         runner.run_command()
 
     @staticmethod
     def _read_keys_params_from_args(args: argparse.Namespace) -> list[dict[str, Any]]:
-        data = [
-            dict(
-                keyname=args.keyname,
-                policy=args.policy,
-                keys=args.keys
-            )
-        ]
+        data = [dict(keyname=args.keyname, policy=args.policy, keys=args.keys)]
         return data
 
     def _read_keys_params_from_file(self, filename: str) -> list[dict[str, Any]]:
@@ -276,7 +231,6 @@ class NcsProvision(WestCommand):
             )
         slots: list[SlotParams] = []
         for slot_idx, keyfile in enumerate(keys):
-            pub_key_hex = self._get_public_key_hex(keyfile)
             if policy == "lock-last":
                 if slot_idx == (len(keys) - 1):
                     key_policy = NRF54L15_KEY_POLICIES["lock"]
@@ -285,37 +239,9 @@ class NcsProvision(WestCommand):
             else:
                 key_policy = NRF54L15_KEY_POLICIES[policy]
             slot_id = KEY_SLOTS[keyname][slot_idx]
-
-            metadata = KmuMetadata(
-                metadata_version=0,
-                key_usage_scheme=3,
-                reserved=0,
-                algorithm=METADATA_ALGORITHM_MAPPING[ALGORITHM],
-                size=3,
-                rpolicy=METADATA_RPOLICY_MAPPING[key_policy],
-                usage_flags=8
-            )
-            slot = SlotParams(
-                id=slot_id, value=pub_key_hex, rpolicy=key_policy, metadata=str(metadata)
-            )
-
+            slot = SlotParams(id=slot_id, keyfile=keyfile, lifetime=key_policy)
             slots.append(slot)
-
         return slots
-
-    @staticmethod
-    def _get_public_key_hex(keyfile: str | Path) -> str:
-        """Return the public key hex from the given keyfile."""
-        with open(keyfile, "rb") as f:
-            data = f.read()
-            try:
-                public_key = load_pem_public_key(data)
-            except ValueError:
-                # it seems it is not public key, so lets try with private
-                private_key = load_pem_private_key(data, password=None)
-                public_key = private_key.public_key()
-        pub_key_hex = f"0x{public_key.public_bytes_raw().hex()}"
-        return pub_key_hex
 
     @staticmethod
     def _validate_input_file(data: list[dict[str, str]]) -> bool:
