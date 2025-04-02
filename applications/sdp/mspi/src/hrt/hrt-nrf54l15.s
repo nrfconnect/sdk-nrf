@@ -255,8 +255,8 @@ hrt_write:
  #APP
 	csrw 3022, a5
  #NO_APP
-	lbu	a5,89(s0)
-	lbu	a4,87(s0)
+	lbu	a5,88(s0)
+	lbu	a4,86(s0)
 	bne	a5,zero,.L30
 	li	a5,1
 	sll	a5,a5,a4
@@ -308,10 +308,10 @@ hrt_write:
  #APP
 	csrw 2005, 0
  #NO_APP
-	lbu	a5,88(s0)
+	lbu	a5,87(s0)
 	bne	a5,zero,.L19
-	lbu	a5,89(s0)
-	lbu	a4,87(s0)
+	lbu	a5,88(s0)
+	lbu	a4,86(s0)
 	bne	a5,zero,.L36
 	li	a5,1
 	sll	a5,a5,a4
@@ -352,28 +352,19 @@ hrt_write:
  #APP
 	csrw 3019, a5
  #NO_APP
-	lbu	a3,94(s0)
+	lbu	a4,94(s0)
 	li	a5,1
-	andi	a4,a3,0xff
-	bne	a3,a5,.L34
-	lbu	a5,86(s0)
-	sll	a5,a4,a5
-	slli	a5,a5,16
-	srli	a5,a5,16
+	bne	a4,a5,.L34
  #APP
-	csrc 3008, a5
+	csrc 3008, 1
  #NO_APP
 	j	.L33
 .L34:
-	lbu	a3,94(s0)
-	li	a4,3
-	bne	a3,a4,.L33
-	lbu	a4,86(s0)
-	sll	a5,a5,a4
-	slli	a5,a5,16
-	srli	a5,a5,16
+	lbu	a4,94(s0)
+	li	a5,3
+	bne	a4,a5,.L33
  #APP
-	csrs 3008, a5
+	csrs 3008, 1
  #NO_APP
 	j	.L33
 .L36:
@@ -402,16 +393,24 @@ hrt_read:
 	lbu	a5,83(a0)
 	lbu	a3,83(a0)
 	lw	a4,64(a0)
-	lbu	t1,88(a0)
+	lbu	t1,87(a0)
 	lw	a1,60(a0)
-	lbu	a2,89(a0)
-	lbu	a0,87(a0)
+	lbu	a0,94(a0)
+	li	a2,3
 	andi	a5,a5,0xff
 	andi	a3,a3,0xff
 	andi	t1,t1,0xff
 	addi	s1,s1,-1
 	andi	s1,s1,0xff
-	bne	a2,zero,.L46
+	bne	a0,a2,.L46
+	lbu	a2,68(s0)
+	addi	a2,a2,-1
+	andi	a2,a2,0xff
+	sb	a2,68(s0)
+.L46:
+	lbu	a2,88(s0)
+	lbu	a0,86(s0)
+	bne	a2,zero,.L47
 	li	a2,1
 	sll	a2,a2,a0
 	slli	a2,a2,16
@@ -419,7 +418,7 @@ hrt_read:
  #APP
 	csrc 3008, a2
  #NO_APP
-.L47:
+.L48:
 	sw	a1,20(sp)
 	sw	t1,16(sp)
 	sw	a4,12(sp)
@@ -430,7 +429,7 @@ hrt_read:
  #NO_APP
 	li	t0,1
 	sw	zero,64(s0)
-	sb	t0,88(s0)
+	sb	t0,87(s0)
 	mv	a0,s0
 	sw	a5,0(sp)
 	call	hrt_write
@@ -438,12 +437,12 @@ hrt_read:
 	lw	t1,16(sp)
 	li	t0,1
 	sw	a4,64(s0)
-	sb	t1,88(s0)
+	sb	t1,87(s0)
 	lbu	a0,83(s0)
 	lw	a5,4(sp)
 	lw	a3,8(sp)
 	lw	a1,20(sp)
-	bne	a0,t0,.L48
+	bne	a0,t0,.L49
 	lhu	a0,90(s0)
 	slli	a0,a0,16
 	srli	a0,a0,16
@@ -452,7 +451,7 @@ hrt_read:
 	srli	a0,a0,16
 	sh	a0,90(s0)
 	lhu	a0,90(s0)
-.L76:
+.L85:
  #APP
 	csrw 3009, a0
 	csrw 3011, 2
@@ -507,17 +506,17 @@ hrt_read:
 	csrw 3017, 0
  #NO_APP
 	li	a0,1
-	bne	a4,a0,.L50
+	bne	a4,a0,.L51
 	lbu	t0,68(s0)
 	li	a0,2
-	bne	t0,a0,.L51
+	bne	t0,a0,.L52
 	lhu	a4,84(s0)
 	li	a1,65536
 	or	a4,a4,a1
  #APP
 	csrw 2002, a4
  #NO_APP
-.L52:
+.L53:
  #APP
 	csrr a1, 2005
 	csrr a4, 2005
@@ -526,7 +525,7 @@ hrt_read:
 	slli	a4,a4,16
 	srli	a1,a1,16
 	srli	a4,a4,16
-	bne	a1,a4,.L52
+	bne	a1,a4,.L53
 	lw	a4,0(sp)
 	slli	a2,a4,24
  #APP
@@ -535,7 +534,7 @@ hrt_read:
  #NO_APP
 	lbu	a3,83(s0)
 	li	a4,8
-	bne	a3,a4,.L53
+	bne	a3,a4,.L54
  #APP
 	csrr a4, 3018
  #NO_APP
@@ -545,7 +544,7 @@ hrt_read:
 	sb	a4,0(a3)
 	lw	a3,60(s0)
 	sb	a4,1(a3)
-.L54:
+.L55:
  #APP
 	csrw 2000, 0
 	csrw 2001, 0
@@ -555,11 +554,11 @@ hrt_read:
  #APP
 	csrw 3019, s1
  #NO_APP
+	lbu	a5,87(s0)
+	bne	a5,zero,.L75
 	lbu	a5,88(s0)
-	bne	a5,zero,.L68
-	lbu	a5,89(s0)
-	lbu	a4,87(s0)
-	bne	a5,zero,.L69
+	lbu	a4,86(s0)
+	bne	a5,zero,.L76
 	li	a5,1
 	sll	a5,a5,a4
 	slli	a5,a5,16
@@ -567,7 +566,7 @@ hrt_read:
  #APP
 	csrs 3008, a5
  #NO_APP
-.L68:
+.L75:
 	lbu	a4,83(s0)
 	li	a5,1
 	bne	a4,a5,.L45
@@ -584,7 +583,7 @@ hrt_read:
 	lw	s1,24(sp)
 	addi	sp,sp,36
 	jr	ra
-.L46:
+.L47:
 	li	a2,1
 	sll	a2,a2,a0
 	slli	a2,a2,16
@@ -592,21 +591,21 @@ hrt_read:
  #APP
 	csrs 3008, a2
  #NO_APP
-	j	.L47
-.L48:
+	j	.L48
+.L49:
 	lhu	a0,92(s0)
-	j	.L76
-.L53:
+	j	.L85
+.L54:
  #APP
 	csrr a4, 3018
  #NO_APP
 	lw	a3,60(s0)
 	srli	a4,a4,24
 	sb	a4,0(a3)
-	j	.L54
-.L50:
+	j	.L55
+.L51:
 	li	a0,2
-	bne	a4,a0,.L73
+	bne	a4,a0,.L82
 	lbu	a0,69(s0)
 	addi	a0,a0,-3
 	andi	a0,a0,63
@@ -616,7 +615,7 @@ hrt_read:
 	csrw 3019, a0
  #NO_APP
 	lbu	s1,68(s0)
-.L77:
+.L86:
 	lhu	a0,84(s0)
 	li	t1,65536
 	addi	s1,s1,-1
@@ -638,9 +637,9 @@ hrt_read:
 	addi	a4,a4,-2
 	li	t0,2
 	li	t2,32
-.L61:
-	bne	a4,a2,.L66
-.L67:
+.L62:
+	bne	a4,a2,.L67
+.L68:
  #APP
 	csrr a1, 2005
 	csrr a4, 2005
@@ -649,23 +648,101 @@ hrt_read:
 	slli	a4,a4,16
 	srli	a1,a1,16
 	srli	a4,a4,16
-	bne	a1,a4,.L67
+	bne	a1,a4,.L68
 	lw	a4,0(sp)
 	slli	a2,a4,24
  #APP
 	csrw 3017, a2
 	csrw 3043, a3
-	csrr a4, 3018
  #NO_APP
-	lbu	a2,68(s0)
-	lbu	a3,83(s0)
-	mul	a2,a2,a3
-	li	a3,32
-	sub	a3,a3,a2
-	srl	a4,a4,a3
+	lbu	a3,94(s0)
+	li	a4,3
+	bne	a3,a4,.L69
+ #APP
+	csrr a3, 3018
+	csrw 3011, 0
+ #NO_APP
+	lhu	a2,84(s0)
+	li	a4,35
+	bleu	a2,a4,.L70
+ #APP
+	csrw 2000, 0
+ #NO_APP
+	lhu	a4,84(s0)
+	addi	a4,a4,-35
+	slli	a4,a4,16
+	srli	a4,a4,16
+ #APP
+	csrw 2005, a4
+ #NO_APP
+.L70:
+	li	a4,65536
+	addi	a4,a4,-1
+.L71:
+ #APP
+	csrr a2, 3010
+ #NO_APP
+	slli	a2,a2,16
+	srli	a2,a2,16
+	beq	a2,a4,.L71
+	lhu	a2,84(s0)
+	li	a4,35
+	bleu	a2,a4,.L72
+ #APP
+	csrw 2010, 0
+ #NO_APP
+.L72:
+ #APP
+	csrr a2, 3010
+ #NO_APP
+	slli	a2,a2,16
+	srli	a2,a2,16
+ #APP
+	csrs 3008, 1
+ #NO_APP
+	lbu	a1,83(s0)
+	li	a4,4
+	beq	a1,a4,.L78
+	li	t1,2
+	li	t0,4
+.L73:
+	slli	a1,a3,24
+	srli	a4,a3,24
+	or	a4,a4,a1
+	li	a1,65536
+	srli	a0,a3,8
+	addi	a1,a1,-256
+	and	a0,a0,a1
+	lbu	t2,83(s0)
+	or	a4,a4,a0
+	slli	a3,a3,8
+	li	a0,16711680
+	and	a3,a3,a0
+	or	a4,a4,a3
+	and	a2,a2,t0
+	lbu	a3,68(s0)
+	sra	a2,a2,t1
+	sll	a4,a4,t2
+	or	a4,a4,a2
+	lbu	a2,83(s0)
+	addi	a3,a3,1
+	mul	a3,a3,a2
+	li	a2,32
+	sub	a3,a2,a3
+	sll	a4,a4,a3
+	slli	a2,a4,24
+	srli	a3,a4,24
+	or	a3,a3,a2
+	srli	a2,a4,8
+	and	a2,a2,a1
+	slli	a4,a4,8
+	or	a3,a3,a2
+	and	a4,a4,a0
+	or	a4,a3,a4
+.L88:
 	sw	a4,72(s0)
-	j	.L54
-.L51:
+	j	.L55
+.L52:
 	lbu	a0,68(s0)
 	addi	a0,a0,-3
 	andi	a0,a0,63
@@ -675,12 +752,12 @@ hrt_read:
 	csrw 3019, a0
  #NO_APP
 	li	a0,0
-.L58:
+.L59:
 	li	t1,2
-	bne	a0,t1,.L60
+	bne	a0,t1,.L61
 	lbu	s1,69(s0)
-	j	.L77
-.L73:
+	j	.L86
+.L82:
 	lbu	t0,83(s0)
 	li	a0,32
 	div	a0,a0,t0
@@ -692,22 +769,22 @@ hrt_read:
 	csrw 3019, a0
  #NO_APP
 	addi	a0,a4,-1
-	j	.L58
-.L60:
+	j	.L59
+.L61:
 	lbu	a0,83(s0)
 	li	s1,32
 	div	s1,s1,a0
-	j	.L77
-.L66:
+	j	.L86
+.L67:
 	li	a0,1
-	beq	a4,a0,.L62
-	beq	a4,t0,.L63
+	beq	a4,a0,.L63
+	beq	a4,t0,.L64
 	lbu	s1,83(s0)
 	div	s1,t2,s1
-	j	.L78
-.L62:
+	j	.L87
+.L63:
 	lbu	s1,68(s0)
-.L78:
+.L87:
 	addi	s1,s1,-1
 	andi	s1,s1,0xff
  #APP
@@ -722,11 +799,26 @@ hrt_read:
  #NO_APP
 	addi	a1,a1,4
 	addi	a4,a4,-1
-	j	.L61
-.L63:
+	j	.L62
+.L64:
 	lbu	s1,69(s0)
-	j	.L78
+	j	.L87
+.L78:
+	li	t1,1
+	li	t0,30
+	j	.L73
 .L69:
+ #APP
+	csrr a4, 3018
+ #NO_APP
+	lbu	a2,68(s0)
+	lbu	a3,83(s0)
+	mul	a2,a2,a3
+	li	a3,32
+	sub	a3,a3,a2
+	srl	a4,a4,a3
+	j	.L88
+.L76:
 	li	a5,1
 	sll	a5,a5,a4
 	slli	a5,a5,16
@@ -734,7 +826,7 @@ hrt_read:
  #APP
 	csrc 3008, a5
  #NO_APP
-	j	.L68
+	j	.L75
 	.size	hrt_read, .-hrt_read
 	.section	.sdata.xfer_shift_ctrl,"aw"
 	.align	2
