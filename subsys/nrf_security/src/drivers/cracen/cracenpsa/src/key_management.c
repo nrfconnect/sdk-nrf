@@ -1232,7 +1232,7 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 	switch (slot_number) {
 	case CRACEN_IDENTITY_KEY_SLOT_NUMBER:
 		psa_set_key_lifetime(attributes, PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
-							 PSA_KEY_PERSISTENCE_READ_ONLY,
+							 CRACEN_KEY_PERSISTENCE_READ_ONLY,
 							 PSA_KEY_LOCATION_CRACEN));
 		psa_set_key_type(attributes, PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1));
 		psa_set_key_bits(attributes, 256);
@@ -1266,7 +1266,7 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 	case CRACEN_MKEK_SLOT_NUMBER:
 	case CRACEN_MEXT_SLOT_NUMBER:
 		psa_set_key_lifetime(attributes, PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
-							 PSA_KEY_PERSISTENCE_READ_ONLY,
+							 CRACEN_KEY_PERSISTENCE_READ_ONLY,
 							 PSA_KEY_LOCATION_CRACEN));
 		psa_set_key_type(attributes, PSA_KEY_TYPE_AES);
 		psa_set_key_bits(attributes, 256);
@@ -1329,7 +1329,7 @@ psa_status_t mbedtls_psa_platform_get_builtin_key(mbedtls_svc_key_id_t key_id,
 #endif
 	};
 
-	*lifetime = PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(PSA_KEY_PERSISTENCE_READ_ONLY,
+	*lifetime = PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(CRACEN_KEY_PERSISTENCE_READ_ONLY,
 								   PSA_KEY_LOCATION_CRACEN);
 
 	return PSA_SUCCESS;
