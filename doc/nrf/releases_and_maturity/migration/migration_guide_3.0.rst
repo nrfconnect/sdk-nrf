@@ -212,6 +212,28 @@ Libraries
 
 This section describes the changes related to libraries.
 
+ZMS Settings backend
+--------------------
+
+.. toggle::
+
+   The new ZMS backend for Settings is not backward compatible with the old version.
+
+   To keep using the legacy backend, enable the :kconfig:option:`CONFIG_SETTINGS_ZMS_LEGACY` Kconfig option.
+
+   To migrate from the legacy backend to the new backend remove :kconfig:option:`CONFIG_SETTINGS_ZMS_NAME_CACHE`
+   and :kconfig:option:`CONFIG_SETTINGS_ZMS_NAME_CACHE_SIZE` from your conf files.
+
+   For the new backend you can now enable some performance optimizations using the following Kconfig options:
+
+   * :kconfig:option:`CONFIG_SETTINGS_ZMS_LL_CACHE`: Used for caching the linked list nodes related to Settings Key/Value entries.
+   * :kconfig:option:`CONFIG_SETTINGS_ZMS_LL_CACHE_SIZE`: The size of the linked list cache (each entry occupies 8B of RAM).
+   * :kconfig:option:`CONFIG_SETTINGS_ZMS_NO_LL_DELETE`: Disables deleting the linked list nodes when deleting a Settings Key.
+     Use this option only when the application is always using the same Settings Keys.
+     When the application uses random Keys, enabling this option could lead to incrementing the linked list nodes without corresponding Keys and cause excessive delays to loading of the Keys.
+     Use this option only to accelerate the delete operation for a fixed set of Settings elements.
+   * :kconfig:option:`CONFIG_SETTINGS_ZMS_LOAD_SUBTREE_PATH`: Loads first the subtree path passed in the argument, then continue to load all the Keys in the same subtree if the handler returns a zero value.
+
 Download client
 ---------------
 
