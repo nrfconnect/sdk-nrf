@@ -211,7 +211,7 @@ static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
 
 static int scan_start(void)
 {
-	int err = bt_scan_start(BT_SCAN_TYPE_SCAN_PASSIVE);
+	int err = bt_le_scan_start(BT_LE_SCAN_TYPE_SCAN_PASSIVE);
 
 	if (err) {
 		printk("Scanning failed to start (err %d)\n", err);
@@ -333,8 +333,8 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.recycled = recycled_cb,
 };
 
-static void scan_filter_match(struct bt_scan_device_info *device_info,
-			      struct bt_scan_filter_match *filter_match,
+static void scan_filter_match(struct bt_le_scan_device_info *device_info,
+			      struct bt_le_scan_filter_match *filter_match,
 			      bool connectable)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -345,39 +345,39 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 		   addr, connectable);
 }
 
-static void scan_connecting_error(struct bt_scan_device_info *device_info)
+static void scan_connecting_error(struct bt_le_scan_device_info *device_info)
 {
 	printk("Connecting failed\n");
 }
 
-static void scan_connecting(struct bt_scan_device_info *device_info,
+static void scan_connecting(struct bt_le_scan_device_info *device_info,
 			    struct bt_conn *conn)
 {
 	central_conn = bt_conn_ref(conn);
 }
 
-BT_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL,
+BT_LE_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL,
 		scan_connecting_error, scan_connecting);
 
 static void scan_init(void)
 {
 	int err;
 
-	struct bt_scan_init_param param = {
+	struct bt_le_scan_init_param param = {
 		.scan_param = NULL,
 		.conn_param = BT_LE_CONN_PARAM_DEFAULT,
 		.connect_if_match = 1
 	};
 
-	bt_scan_init(&param);
-	bt_scan_cb_register(&scan_cb);
+	bt_le_scan_init(&param);
+	bt_le_scan_cb_register(&scan_cb);
 
-	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_HRS);
+	err = bt_le_scan_filter_add(BT_LE_SCAN_FILTER_TYPE_UUID, BT_UUID_HRS);
 	if (err) {
 		printk("Scanning filters cannot be set (err %d)\n", err);
 	}
 
-	err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER, false);
+	err = bt_le_scan_filter_enable(BT_LE_SCAN_UUID_FILTER, false);
 	if (err) {
 		printk("Filters cannot be turned on (err %d)\n", err);
 	}

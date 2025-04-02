@@ -30,7 +30,7 @@ public:
 	static constexpr uint16_t kMaxScannedDevices = CONFIG_BRIDGE_BT_MAX_SCANNED_DEVICES;
 	/* One BT connection is reserved for the Matter service purposes. */
 	static constexpr uint16_t kMaxConnectedDevices = CONFIG_BT_MAX_CONN - 1;
-	static constexpr uint8_t kMaxServiceUuids = CONFIG_BT_SCAN_UUID_CNT;
+	static constexpr uint8_t kMaxServiceUuids = CONFIG_BT_LE_SCAN_UUID_CNT;
 
 	/**
 	 * States for indicating the most important BLE Connectivity Manager states.
@@ -236,7 +236,7 @@ public:
 	CHIP_ERROR PrepareFilterForAddress(bt_addr_le_t *addr);
 
 	/* Public static callbacks for Bluetooth LE connection handling. */
-	static void FilterMatch(bt_scan_device_info *device_info, bt_scan_filter_match *filter_match, bool connectable);
+	static void FilterMatch(bt_le_scan_device_info *device_info, bt_le_scan_filter_match *filter_match, bool connectable);
 	static void ScanTimeoutCallback(k_timer *timer);
 	static void ScanTimeoutHandle(intptr_t context);
 	static void ConnectionHandler(bt_conn *conn, uint8_t conn_err);

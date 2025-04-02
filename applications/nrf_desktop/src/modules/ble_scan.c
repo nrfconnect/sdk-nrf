@@ -237,7 +237,7 @@ static int scan_stop(void)
 		return 0;
 	}
 
-	int err = bt_scan_stop();
+	int err = bt_le_scan_stop();
 
 	if (!err) {
 		LOG_INF("Scan stopped");
@@ -274,7 +274,7 @@ static int configure_address_filters(uint8_t *filter_mode)
 			continue;
 		}
 
-		err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_ADDR, addr);
+		err = bt_le_scan_filter_add(BT_LE_SCAN_FILTER_TYPE_ADDR, addr);
 		if (err) {
 			LOG_ERR("Address filter cannot be added (err %d)", err);
 			break;
@@ -284,7 +284,7 @@ static int configure_address_filters(uint8_t *filter_mode)
 
 		bt_addr_le_to_str(addr, addr_str, sizeof(addr_str));
 		LOG_INF("Address filter added %s", addr_str);
-		*filter_mode |= BT_SCAN_ADDR_FILTER;
+		*filter_mode |= BT_LE_SCAN_ADDR_FILTER;
 	}
 
 	return err;
@@ -315,12 +315,12 @@ static int configure_name_filters(uint8_t *filter_mode)
 			continue;
 		}
 
-		err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_NAME, peer_name[i]);
+		err = bt_le_scan_filter_add(BT_LE_SCAN_FILTER_TYPE_NAME, peer_name[i]);
 		if (err) {
 			LOG_ERR("Name filter cannot be added (err %d)", err);
 			break;
 		}
-		*filter_mode |= BT_SCAN_NAME_FILTER;
+		*filter_mode |= BT_LE_SCAN_NAME_FILTER;
 	}
 
 	if (!err) {
@@ -333,12 +333,12 @@ static int configure_name_filters(uint8_t *filter_mode)
 static int configure_filters(void)
 {
 	BUILD_ASSERT(CONFIG_BT_MAX_PAIRED >= CONFIG_BT_MAX_CONN, "");
-	BUILD_ASSERT(CONFIG_BT_MAX_PAIRED <= CONFIG_BT_SCAN_ADDRESS_CNT,
+	BUILD_ASSERT(CONFIG_BT_MAX_PAIRED <= CONFIG_BT_LE_SCAN_ADDRESS_CNT,
 		     "Insufficient number of address filters");
-	BUILD_ASSERT(ARRAY_SIZE(peer_name) <= CONFIG_BT_SCAN_NAME_CNT,
+	BUILD_ASSERT(ARRAY_SIZE(peer_name) <= CONFIG_BT_LE_SCAN_NAME_CNT,
 		     "Insufficient number of name filers");
 	BUILD_ASSERT(ARRAY_SIZE(peer_name) == PEER_TYPE_COUNT, "");
-	bt_scan_filter_remove_all();
+	bt_le_scan_filter_remove_all();
 
 	uint8_t filter_mode = 0;
 	int err = configure_address_filters(&filter_mode);
@@ -354,7 +354,7 @@ static int configure_filters(void)
 	}
 
 	if (!err) {
-		err = bt_scan_filter_enable(filter_mode, false);
+		err = bt_le_scan_filter_enable(filter_mode, false);
 	} else {
 		LOG_ERR("Filters cannot be turned on (err %d)", err);
 	}
@@ -377,7 +377,7 @@ static int scan_start(void)
 		return err;
 	}
 
-	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
+	err = bt_le_scan_start(BT_LE_SCAN_TYPE_SCAN_ACTIVE);
 	if (err) {
 		LOG_ERR("Cannot start scanning (err %d)", err);
 		return err;
@@ -392,8 +392,8 @@ static int scan_start(void)
 
 static void update_state(enum state new_state);
 
-static void scan_filter_match(struct bt_scan_device_info *device_info,
-			      struct bt_scan_filter_match *filter_match,
+static void scan_filter_match(struct bt_le_scan_device_info *device_info,
+			      struct bt_le_scan_filter_match *filter_match,
 			      bool connectable)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -404,7 +404,7 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 	/* Scanning will be stopped by nrf scan module. */
 }
 
-static void scan_connecting_error(struct bt_scan_device_info *device_info)
+static void scan_connecting_error(struct bt_le_scan_device_info *device_info)
 {
 	LOG_WRN("Connecting failed");
 
@@ -413,7 +413,7 @@ static void scan_connecting_error(struct bt_scan_device_info *device_info)
 	}
 }
 
-static void scan_connecting(struct bt_scan_device_info *device_info,
+static void scan_connecting(struct bt_le_scan_device_info *device_info,
 			    struct bt_conn *conn)
 {
 	LOG_INF("Connecting done");
@@ -421,7 +421,7 @@ static void scan_connecting(struct bt_scan_device_info *device_info,
 	peer_discovery_start(conn);
 }
 
-BT_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL, scan_connecting_error, scan_connecting);
+BT_LE_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL, scan_connecting_error, scan_connecting);
 
 static void update_state_work_fn(struct k_work *w);
 
@@ -449,14 +449,14 @@ static void scan_init(void)
 		cp.interval_max = 6;
 	}
 
-	struct bt_scan_init_param scan_init = {
+	struct bt_le_scan_init_param scan_init = {
 		.connect_if_match = true,
 		.scan_param = &sp,
 		.conn_param = &cp,
 	};
 
-	bt_scan_init(&scan_init);
-	bt_scan_cb_register(&scan_cb);
+	bt_le_scan_init(&scan_init);
+	bt_le_scan_cb_register(&scan_cb);
 
 	k_work_init_delayable(&update_state_work, update_state_work_fn);
 }
@@ -811,8 +811,8 @@ static bool handle_ble_peer_operation_event(const struct ble_peer_operation_even
 		/* Fall-through */
 
 	case PEER_OPERATION_SCAN_REQUEST:
-		if (IS_ENABLED(CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER)) {
-			bt_scan_conn_attempts_filter_clear();
+		if (IS_ENABLED(CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_FILTER)) {
+			bt_le_scan_conn_attempts_filter_clear();
 		}
 		if (IS_ENABLED(CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST)) {
 			peers_only = false;
@@ -843,8 +843,8 @@ static bool handle_ble_peer_operation_event(const struct ble_peer_operation_even
 static bool handle_ble_discovery_complete_event(const struct ble_discovery_complete_event *event)
 {
 	peer_discovery_end(event);
-	if (IS_ENABLED(CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER)) {
-		bt_scan_conn_attempts_filter_clear();
+	if (IS_ENABLED(CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_FILTER)) {
+		bt_le_scan_conn_attempts_filter_clear();
 	}
 
 	/* Cannot start scanning right after discovery - problems establishing security.

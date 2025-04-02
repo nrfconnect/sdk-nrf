@@ -56,8 +56,8 @@ static struct {
 	uint32_t crc_mismatches;
 } llpm_latency;
 
-void scan_filter_match(struct bt_scan_device_info *device_info,
-		       struct bt_scan_filter_match *filter_match,
+void scan_filter_match(struct bt_le_scan_device_info *device_info,
+		       struct bt_le_scan_filter_match *filter_match,
 		       bool connectable)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -68,7 +68,7 @@ void scan_filter_match(struct bt_scan_device_info *device_info,
 	       addr, connectable);
 }
 
-void scan_filter_no_match(struct bt_scan_device_info *device_info,
+void scan_filter_no_match(struct bt_le_scan_device_info *device_info,
 			  bool connectable)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -79,12 +79,12 @@ void scan_filter_no_match(struct bt_scan_device_info *device_info,
 	       addr, connectable);
 }
 
-void scan_connecting_error(struct bt_scan_device_info *device_info)
+void scan_connecting_error(struct bt_le_scan_device_info *device_info)
 {
 	printk("Connecting failed\n");
 }
 
-BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match,
+BT_LE_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match,
 		scan_connecting_error, NULL);
 
 static void scan_init(void)
@@ -97,22 +97,22 @@ static void scan_init(void)
 		.window = 0x0010,
 	};
 
-	struct bt_scan_init_param scan_init = {
+	struct bt_le_scan_init_param scan_init = {
 		.connect_if_match = true,
 		.scan_param = &scan_param,
 		.conn_param = conn_param
 	};
 
-	bt_scan_init(&scan_init);
-	bt_scan_cb_register(&scan_cb);
+	bt_le_scan_init(&scan_init);
+	bt_le_scan_cb_register(&scan_cb);
 
-	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_LATENCY);
+	err = bt_le_scan_filter_add(BT_LE_SCAN_FILTER_TYPE_UUID, BT_UUID_LATENCY);
 	if (err) {
 		printk("Scanning filters cannot be set (err %d)\n", err);
 		return;
 	}
 
-	err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER, false);
+	err = bt_le_scan_filter_enable(BT_LE_SCAN_UUID_FILTER, false);
 	if (err) {
 		printk("Filters cannot be turned on (err %d)\n", err);
 	}
@@ -167,7 +167,7 @@ static void scan_start(void)
 {
 	int err;
 
-	err = bt_scan_start(BT_SCAN_TYPE_SCAN_PASSIVE);
+	err = bt_le_scan_start(BT_LE_SCAN_TYPE_SCAN_PASSIVE);
 	if (err) {
 		printk("Starting scanning failed (err %d)\n", err);
 		return;
@@ -192,7 +192,7 @@ static void connected(struct bt_conn *conn, uint8_t err)
 
 	/* make sure we're not scanning or advertising */
 	if (conn_info.role == BT_CONN_ROLE_CENTRAL) {
-		bt_scan_stop();
+		bt_le_scan_stop();
 	} else {
 		bt_le_adv_stop();
 #if defined(CONFIG_BT_SMP)

@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef BT_SCAN_H_
-#define BT_SCAN_H_
+#ifndef BT_LE_SCAN_H_
+#define BT_LE_SCAN_H_
 
 /**
  * @file
- * @defgroup nrf_bt_scan BT Scanning module
+ * @defgroup nrf_bt_le_scan BT Scanning module
  * @{
  * @brief BT Scanning module
  *
@@ -36,63 +36,63 @@ extern "C" {
 #endif
 
 
-/**@defgroup BT_SCAN_FILTER_MODE Filter modes
+/**@defgroup BT_LE_SCAN_FILTER_MODE Filter modes
  * @{
  */
 
 /**@brief Filters the device name. */
-#define BT_SCAN_NAME_FILTER 0x01
+#define BT_LE_SCAN_NAME_FILTER 0x01
 
 /**@brief Filters the device address. */
-#define BT_SCAN_ADDR_FILTER 0x02
+#define BT_LE_SCAN_ADDR_FILTER 0x02
 
 /**@brief Filters the UUID. */
-#define BT_SCAN_UUID_FILTER 0x04
+#define BT_LE_SCAN_UUID_FILTER 0x04
 
 /**@brief Filters the appearance. */
-#define BT_SCAN_APPEARANCE_FILTER 0x08
+#define BT_LE_SCAN_APPEARANCE_FILTER 0x08
 
 /**@brief Filters the device short name. */
-#define BT_SCAN_SHORT_NAME_FILTER 0x10
+#define BT_LE_SCAN_SHORT_NAME_FILTER 0x10
 
 /**@brief Filters the manufacturer data. */
-#define BT_SCAN_MANUFACTURER_DATA_FILTER 0x20
+#define BT_LE_SCAN_MANUFACTURER_DATA_FILTER 0x20
 
 /**@brief Uses the combination of all filters. */
-#define BT_SCAN_ALL_FILTER 0x3F
+#define BT_LE_SCAN_ALL_FILTER 0x3F
 /** @} */
 
 
 /**@brief Scan types.
  */
-enum bt_scan_type {
+enum bt_le_scan_type {
 	/** Passive scanning. */
-	BT_SCAN_TYPE_SCAN_PASSIVE,
+	BT_LE_SCAN_TYPE_SCAN_PASSIVE,
 
 	/** Active scanning. */
-	BT_SCAN_TYPE_SCAN_ACTIVE
+	BT_LE_SCAN_TYPE_SCAN_ACTIVE
 };
 
 /**@brief Types of filters.
  */
-enum bt_scan_filter_type {
+enum bt_le_scan_filter_type {
 	/** Filter for names. */
-	BT_SCAN_FILTER_TYPE_NAME,
+	BT_LE_SCAN_FILTER_TYPE_NAME,
 
 	/** Filter for short names. */
-	BT_SCAN_FILTER_TYPE_SHORT_NAME,
+	BT_LE_SCAN_FILTER_TYPE_SHORT_NAME,
 
 	/** Filter for addresses. */
-	BT_SCAN_FILTER_TYPE_ADDR,
+	BT_LE_SCAN_FILTER_TYPE_ADDR,
 
 	/** Filter for UUIDs. */
-	BT_SCAN_FILTER_TYPE_UUID,
+	BT_LE_SCAN_FILTER_TYPE_UUID,
 
 	/** Filter for appearances. */
-	BT_SCAN_FILTER_TYPE_APPEARANCE,
+	BT_LE_SCAN_FILTER_TYPE_APPEARANCE,
 
 	/** Filter for manufacturer data. */
-	BT_SCAN_FILTER_TYPE_MANUFACTURER_DATA,
+	BT_LE_SCAN_FILTER_TYPE_MANUFACTURER_DATA,
 };
 
 /**@brief Filter information structure.
@@ -100,7 +100,7 @@ enum bt_scan_filter_type {
  * @details It contains information about the number of filters of a given type
  *          and whether they are enabled
  */
-struct bt_scan_filter_info {
+struct bt_le_scan_filter_info {
 	/** Filter enabled. */
 	bool enabled;
 
@@ -115,27 +115,27 @@ struct bt_filter_status {
 	bool all_mode;
 
 	/** Name filters info. */
-	struct bt_scan_filter_info name;
+	struct bt_le_scan_filter_info name;
 
 	/** Short name filters info. */
-	struct bt_scan_filter_info short_name;
+	struct bt_le_scan_filter_info short_name;
 
 	/** Address filters info. */
-	struct bt_scan_filter_info addr;
+	struct bt_le_scan_filter_info addr;
 
 	/** UUID filters info. */
-	struct bt_scan_filter_info uuid;
+	struct bt_le_scan_filter_info uuid;
 
 	/** Appearance filter info. */
-	struct bt_scan_filter_info appearance;
+	struct bt_le_scan_filter_info appearance;
 
 	/** Manufacturer filter info. */
-	struct bt_scan_filter_info manufacturer_data;
+	struct bt_le_scan_filter_info manufacturer_data;
 };
 
 /**@brief Advertising info structure.
  */
-struct bt_scan_adv_info {
+struct bt_le_scan_adv_info {
 	/** Bluetooth LE advertising type. According to
 	 *  Bluetooth Specification 7.8.5
 	 */
@@ -147,7 +147,7 @@ struct bt_scan_adv_info {
 
 /**@brief A helper structure to set filters for the name.
  */
-struct bt_scan_short_name {
+struct bt_le_scan_short_name {
 	/** Pointer to the short name. */
 	const char *name;
 
@@ -157,7 +157,7 @@ struct bt_scan_short_name {
 
 /**@brief A helper structure to set filters for the manufacturer data.
  */
-struct bt_scan_manufacturer_data {
+struct bt_le_scan_manufacturer_data {
 	/** Pointer to the manufacturer data. */
 	uint8_t *data;
 
@@ -167,7 +167,7 @@ struct bt_scan_manufacturer_data {
 
 /**@brief Structure for Scanning Module initialization.
  */
-struct bt_scan_init_param {
+struct bt_le_scan_init_param {
 	/** Scan parameters required to initialize the module.
 	 * Can be initialized as NULL. If NULL, the parameters required to
 	 * initialize the module are loaded from the static configuration.
@@ -190,7 +190,7 @@ struct bt_scan_init_param {
 /**@brief Name filter status structure, used to inform the application
  *        which name filter is matched.
  */
-struct bt_scan_name_filter_status {
+struct bt_le_scan_name_filter_status {
 	/** Set to true if this type of filter is matched. */
 	bool match;
 
@@ -204,7 +204,7 @@ struct bt_scan_name_filter_status {
 /**@brief Address filter status structure, used to inform the application
  *        which address filter is matched.
  */
-struct bt_scan_addr_filter_status {
+struct bt_le_scan_addr_filter_status {
 	/** Set to true if this type of filter is matched. */
 	bool match;
 
@@ -215,12 +215,12 @@ struct bt_scan_addr_filter_status {
 /**@brief UUID filter status structure, used to inform the application
  *        which UUID filters are matched.
  */
-struct bt_scan_uuid_filter_status {
+struct bt_le_scan_uuid_filter_status {
 	/** Set to true if this type of filter is matched. */
 	bool match;
 
 	/** Array of pointers to the matched UUID filters. */
-	const struct bt_uuid *uuid[CONFIG_BT_SCAN_UUID_CNT];
+	const struct bt_uuid *uuid[CONFIG_BT_LE_SCAN_UUID_CNT];
 
 	/** Matched UUID count. */
 	uint8_t count;
@@ -229,7 +229,7 @@ struct bt_scan_uuid_filter_status {
 /**@brief Appearance filter status structure, used to inform the application
  *        which appearance filter is matched.
  */
-struct bt_scan_appearance_filter_status {
+struct bt_le_scan_appearance_filter_status {
 	/** Set to true if this type of filter is matched. */
 	bool match;
 
@@ -240,7 +240,7 @@ struct bt_scan_appearance_filter_status {
 /**@brief Manufacturer data filter status structure, used to inform the
  *        application which manufacturer data filter is matched.
  */
-struct bt_scan_manufacturer_data_filter_status {
+struct bt_le_scan_manufacturer_data_filter_status {
 	/** Set to true if this type of filter is matched. */
 	bool match;
 
@@ -260,30 +260,30 @@ struct bt_scan_manufacturer_data_filter_status {
  *          filter data.
  *
  */
-struct bt_scan_filter_match {
+struct bt_le_scan_filter_match {
 	/** Name filter status data. */
-	struct bt_scan_name_filter_status name;
+	struct bt_le_scan_name_filter_status name;
 
 	/** Short name filter status data. */
-	struct bt_scan_name_filter_status short_name;
+	struct bt_le_scan_name_filter_status short_name;
 
 	/** Address filter status data. */
-	struct bt_scan_addr_filter_status addr;
+	struct bt_le_scan_addr_filter_status addr;
 
 	/** UUIDs filter status data. */
-	struct bt_scan_uuid_filter_status uuid;
+	struct bt_le_scan_uuid_filter_status uuid;
 
 	/** Appearance filter status data. */
-	struct bt_scan_appearance_filter_status appearance;
+	struct bt_le_scan_appearance_filter_status appearance;
 
 	/** Manufacturer data filter status data. */
-	struct bt_scan_manufacturer_data_filter_status manufacturer_data;
+	struct bt_le_scan_manufacturer_data_filter_status manufacturer_data;
 };
 
 /**@brief Structure containing device data needed to establish
  *        connection and advertising information.
  */
-struct bt_scan_device_info {
+struct bt_le_scan_device_info {
 	/** Received advertising packet information */
 	const struct bt_le_scan_recv_info *recv_info;
 
@@ -300,9 +300,9 @@ struct bt_scan_device_info {
 
 /** @brief Initializing macro for scanning module.
  *
- * This is macro initializing necessary structures for @ref bt_scan_cb type.
+ * This is macro initializing necessary structures for @ref bt_le_scan_cb type.
  *
- * @param[in] _name Unique name for @ref bt_scan_cb structure.
+ * @param[in] _name Unique name for @ref bt_le_scan_cb structure.
  * @param[in] match_fun Scan filter matched function pointer.
  * @param[in] no_match_fun Scan filter unmatched (the device was not found)
 		 function pointer.
@@ -311,7 +311,7 @@ struct bt_scan_device_info {
  */
 
 #if CONFIG_BT_CENTRAL
-#define BT_SCAN_CB_INIT(_name,				\
+#define BT_LE_SCAN_CB_INIT(_name,			\
 			match_fun,			\
 			no_match_fun,			\
 			error_fun,			\
@@ -322,11 +322,11 @@ struct bt_scan_device_info {
 		.connecting_error = error_fun,		\
 		.connecting = connecting_fun,		\
 	};						\
-	static struct bt_scan_cb _name = {		\
+	static struct bt_le_scan_cb _name = {		\
 		.cb_addr = &_name ## _data,		\
 	}
 #else
-#define BT_SCAN_CB_INIT(_name,				\
+#define BT_LE_SCAN_CB_INIT(_name,			\
 			match_fun,			\
 			no_match_fun,			\
 			error_fun,			\
@@ -335,7 +335,7 @@ struct bt_scan_device_info {
 		.filter_match = match_fun,		\
 		.filter_no_match = no_match_fun,	\
 	};						\
-	static struct bt_scan_cb _name = {		\
+	static struct bt_le_scan_cb _name = {		\
 		.cb_addr = &_name ## _data,		\
 	}
 #endif /* CONFIG_BT_CENTRAL */
@@ -343,7 +343,7 @@ struct bt_scan_device_info {
 /** @brief Data for scanning callback structure.
  *
  * This structure is used for storing callback functions pointers.
- * It is used by @ref bt_scan_cb structure.
+ * It is used by @ref bt_le_scan_cb structure.
  */
 
 struct cb_data {
@@ -354,8 +354,8 @@ struct cb_data {
 	 * @param[in] filter_match Filter match status.
 	 * @param[in] connectable Inform that device is connectable.
 	 */
-	void (*filter_match)(struct bt_scan_device_info *device_info,
-			     struct bt_scan_filter_match *filter_match,
+	void (*filter_match)(struct bt_le_scan_device_info *device_info,
+			     struct bt_le_scan_filter_match *filter_match,
 			     bool connectable);
 
 	/**@brief Scan filter unmatched. The device was not found.
@@ -368,7 +368,7 @@ struct cb_data {
 	 *       will be reported by this callback.
 	 *       It can be useful if the scan is used without filters.
 	 */
-	void (*filter_no_match)(struct bt_scan_device_info *device_info,
+	void (*filter_no_match)(struct bt_le_scan_device_info *device_info,
 				bool connectable);
 
 #if CONFIG_BT_CENTRAL
@@ -377,7 +377,7 @@ struct cb_data {
 	 * @param[in] device_info Data needed to establish
 	 *                        connection and advertising information.
 	 */
-	void (*connecting_error)(struct bt_scan_device_info *device_info);
+	void (*connecting_error)(struct bt_le_scan_device_info *device_info);
 
 	/**@brief Connecting data.
 	 *
@@ -385,7 +385,7 @@ struct cb_data {
 	 *                        connection and advertising information.
 	 * @param[in] conn Connection object.
 	 */
-	void (*connecting)(struct bt_scan_device_info *device_info,
+	void (*connecting)(struct bt_le_scan_device_info *device_info,
 			   struct bt_conn *conn);
 #endif /* CONFIG_BT_CENTRAL */
 };
@@ -393,15 +393,15 @@ struct cb_data {
 /** @brief Scanning callback structure.
  *
  *  This structure is used for tracking the state of a scanning.
- *  It is registered with the help of the @ref bt_scan_cb_register() API.
- *  It is permissible to register multiple instances of this @ref bt_scan_cb
+ *  It is registered with the help of the @ref bt_le_scan_cb_register() API.
+ *  It is permissible to register multiple instances of this @ref bt_le_scan_cb
  *  type, in case different modules of an application are interested in
  *  tracking the scanning state. If a callback is not of interest for
  *  an instance, it may be set to NULL and will as a consequence not be
  *  used for that instance.
  */
 
-struct bt_scan_cb {
+struct bt_le_scan_cb {
 	const struct cb_data *cb_addr;
 	sys_snode_t node;
 };
@@ -412,7 +412,7 @@ struct bt_scan_cb {
  *
  * @param cb Callback struct.
  */
-void bt_scan_cb_register(struct bt_scan_cb *cb);
+void bt_le_scan_cb_register(struct bt_le_scan_cb *cb);
 
 /**@brief Function for initializing the Scanning Module.
  *
@@ -423,7 +423,7 @@ void bt_scan_cb_register(struct bt_scan_cb *cb);
  *                 connection automatically, this must be initialized
  *                 with the relevant data.
  */
-void bt_scan_init(const struct bt_scan_init_param *init);
+void bt_le_scan_init(const struct bt_le_scan_init_param *init);
 
 /**@brief Function for starting scanning.
  *
@@ -435,11 +435,11 @@ void bt_scan_init(const struct bt_scan_init_param *init);
  * @return 0 If the operation was successful. Otherwise, a (negative) error
  *	   code is returned.
  */
-int bt_scan_start(enum bt_scan_type scan_type);
+int bt_le_scan_start(enum bt_le_scan_type scan_type);
 
 /**@brief Function for stopping scanning.
  */
-int bt_scan_stop(void);
+int bt_le_scan_stop(void);
 
 /**@brief Function to update initial connection parameters.
  *
@@ -447,21 +447,21 @@ int bt_scan_stop(void);
  *
  * @param[in] new_conn_param New initial connection parameters.
  */
-void bt_scan_update_init_conn_params(struct bt_le_conn_param *new_conn_param);
+void bt_le_scan_update_init_conn_params(struct bt_le_conn_param *new_conn_param);
 
-#if CONFIG_BT_SCAN_FILTER_ENABLE
+#if CONFIG_BT_LE_SCAN_FILTER_ENABLE
 
 /**@brief Function for enabling filtering.
  *
  * @details The filters can be combined with each other.
  *          For example, you can enable one filter or several filters.
- *          For example, (BT_SCAN_NAME_FILTER | BT_SCAN_UUID_FILTER)
+ *          For example, (BT_LE_SCAN_NAME_FILTER | BT_LE_SCAN_UUID_FILTER)
  *          enables UUID and name filters.
  *
- * @param[in] mode Filter mode: @ref BT_SCAN_FILTER_MODE.
+ * @param[in] mode Filter mode: @ref BT_LE_SCAN_FILTER_MODE.
  * @param[in] match_all If this flag is set, all types of enabled filters
  *                      must be matched before generating
- *                      @em BT_SCAN_EVT_FILTER_MATCH to the main
+ *                      @em BT_LE_SCAN_EVT_FILTER_MATCH to the main
  *                      application. Otherwise, it is enough to
  *                      match one filter to trigger the filter match event.
  *
@@ -469,7 +469,7 @@ void bt_scan_update_init_conn_params(struct bt_le_conn_param *new_conn_param);
  *	     code is returned.
  *
  */
-int bt_scan_filter_enable(uint8_t mode, bool match_all);
+int bt_le_scan_filter_enable(uint8_t mode, bool match_all);
 
 /**@brief Function for disabling filtering.
  *
@@ -478,7 +478,7 @@ int bt_scan_filter_enable(uint8_t mode, bool match_all);
  *          the connection will not be established with the first
  *          device found after this function is called.
  */
-void bt_scan_filter_disable(void);
+void bt_le_scan_filter_disable(void);
 
 /**@brief Function for getting filter status.
  *
@@ -490,7 +490,7 @@ void bt_scan_filter_disable(void);
  * @return 0 If the operation was successful. Otherwise, a (negative) error
  *	     code is returned.
  */
-int bt_scan_filter_status_get(struct bt_filter_status *status);
+int bt_le_scan_filter_status_get(struct bt_filter_status *status);
 
 /**@brief Function for adding any type of filter to the scanning.
  *
@@ -505,7 +505,7 @@ int bt_scan_filter_status_get(struct bt_filter_status *status);
  * @return 0 If the operation was successful. Otherwise, a (negative) error
  *	     code is returned.
  */
-int bt_scan_filter_add(enum bt_scan_filter_type type,
+int bt_le_scan_filter_add(enum bt_le_scan_filter_type type,
 		       const void *data);
 
 /**@brief Function for removing all set filters.
@@ -514,15 +514,15 @@ int bt_scan_filter_add(enum bt_scan_filter_type type,
  *
  * @note After using this function the filters are still enabled.
  */
-void bt_scan_filter_remove_all(void);
+void bt_le_scan_filter_remove_all(void);
 
-#endif /* CONFIG_BT_SCAN_FILTER_ENABLE */
+#endif /* CONFIG_BT_LE_SCAN_FILTER_ENABLE */
 
 /**@brief Function for changing the scanning parameters.
  *
  * @details Use this function to change scanning parameters.
  *          During the parameter change the scan is stopped.
- *          To resume scanning, use @ref bt_scan_start.
+ *          To resume scanning, use @ref bt_le_scan_start.
  *          Scanning parameters can be set to NULL. If so,
  *          the default static configuration is used.
  *
@@ -532,14 +532,14 @@ void bt_scan_filter_remove_all(void);
  * @return 0 If the operation was successful. Otherwise, a (negative) error
  *	     code is returned.
  */
-int bt_scan_params_set(struct bt_le_scan_param *scan_param);
+int bt_le_scan_params_set(struct bt_le_scan_param *scan_param);
 
 /**@brief Clear connection attempts filter.
  *
  * @details Use this function to remove all entries
  *          from the connection attempts filter.
  */
-void bt_scan_conn_attempts_filter_clear(void);
+void bt_le_scan_conn_attempts_filter_clear(void);
 
 /**@brief Add a new device to the blocklist.
  *
@@ -553,14 +553,14 @@ void bt_scan_conn_attempts_filter_clear(void);
  * @retval 0 If the operation was successful. Otherwise, a (negative) error
  *	     code is returned.
  */
-int bt_scan_blocklist_device_add(const bt_addr_le_t *addr);
+int bt_le_scan_blocklist_device_add(const bt_addr_le_t *addr);
 
 /**@brief Clear the blocklist of the scanning module device.
  *
  * @details Use this function to remove all entries from
  *          the blocklist.
  */
-void bt_scan_blocklist_clear(void);
+void bt_le_scan_blocklist_clear(void);
 
 /**@brief Function to update the autoconnect flag after a filter match.
  *
@@ -569,7 +569,7 @@ void bt_scan_blocklist_clear(void);
  * @param[in] connect_if_match If set to true, the module automatically
  *			       connects after a filter match.
  */
-void bt_scan_update_connect_if_match(bool connect_if_match);
+void bt_le_scan_update_connect_if_match(bool connect_if_match);
 
 #ifdef __cplusplus
 }
@@ -577,4 +577,4 @@ void bt_scan_update_connect_if_match(bool connect_if_match);
 
 /** @} */
 
-#endif /* BT_SCAN_H_ */
+#endif /* BT_LE_SCAN_H_ */

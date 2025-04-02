@@ -75,7 +75,7 @@ static struct bt_le_scan_param scan_param = {
 	.timeout  = 0,
 };
 
-static struct bt_scan_init_param scan_init = {
+static struct bt_le_scan_init_param scan_init = {
 	.connect_if_match = 0,
 	.scan_param = &scan_param,
 	.conn_param = NULL
@@ -90,7 +90,7 @@ static void adv_update_data(void);
 static uint32_t scanner_addr_to_random_share(const bt_addr_t *p_scanner_addr);
 static uint32_t get_id_addr_random_share(void);
 
-static struct bt_scan_manufacturer_data scan_mfg_data = {
+static struct bt_le_scan_manufacturer_data scan_mfg_data = {
 	.data = (unsigned char *)&mfg_data,
 	.data_len = sizeof(mfg_data.company_code) + sizeof(mfg_data.support_dm_code),
 };
@@ -150,8 +150,8 @@ static uint32_t scanner_addr_to_random_share(const bt_addr_t *p_scanner_addr)
 	       (p_scanner_addr->val[4] | p_scanner_addr->val[5] << 8);
 }
 
-static void scan_filter_match(struct bt_scan_device_info *device_info,
-			      struct bt_scan_filter_match *filter_match,
+static void scan_filter_match(struct bt_le_scan_device_info *device_info,
+			      struct bt_le_scan_filter_match *filter_match,
 			      bool connectable)
 {
 	bt_addr_le_t addr;
@@ -161,7 +161,7 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 	bt_data_parse(device_info->adv_data, data_cb, &addr);
 }
 
-BT_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL, NULL, NULL);
+BT_LE_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL, NULL, NULL);
 
 static void adv_scanned_cb(struct bt_le_ext_adv *adv,
 			struct bt_le_ext_adv_scanned_info *info)
@@ -253,16 +253,16 @@ static int scan_start(void)
 {
 	int err;
 
-	bt_scan_init(&scan_init);
-	bt_scan_cb_register(&scan_cb);
+	bt_le_scan_init(&scan_init);
+	bt_le_scan_cb_register(&scan_cb);
 
-	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_MANUFACTURER_DATA, &scan_mfg_data);
+	err = bt_le_scan_filter_add(BT_LE_SCAN_FILTER_TYPE_MANUFACTURER_DATA, &scan_mfg_data);
 	if (err) {
 		printk("Scanning filters cannot be set (err %d)\n", err);
 		return err;
 	}
 
-	err = bt_scan_filter_enable(BT_SCAN_MANUFACTURER_DATA_FILTER, false);
+	err = bt_le_scan_filter_enable(BT_LE_SCAN_MANUFACTURER_DATA_FILTER, false);
 	if (err) {
 		printk("Filters cannot be turned on (err %d)\n", err);
 		return err;
@@ -270,7 +270,7 @@ static int scan_start(void)
 
 	scanner_random_share = get_id_addr_random_share();
 
-	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
+	err = bt_le_scan_start(BT_LE_SCAN_TYPE_SCAN_ACTIVE);
 	if (err) {
 		printk("Scanning failed to start (err %d)\n", err);
 		return err;

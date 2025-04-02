@@ -154,8 +154,8 @@ static struct bt_conn_cb conn_callbacks = {
 	.connected = connected,
 };
 
-void scan_filter_match(struct bt_scan_device_info *device_info,
-		       struct bt_scan_filter_match *filter_match,
+void scan_filter_match(struct bt_le_scan_device_info *device_info,
+		       struct bt_le_scan_filter_match *filter_match,
 		       bool connectable)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -165,12 +165,12 @@ void scan_filter_match(struct bt_scan_device_info *device_info,
 	LOG_INF("Device found: %s", addr);
 }
 
-void scan_connecting_error(struct bt_scan_device_info *device_info)
+void scan_connecting_error(struct bt_le_scan_device_info *device_info)
 {
 	LOG_ERR("Connection to peer failed!");
 }
 
-BT_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL, scan_connecting_error, NULL);
+BT_LE_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL, scan_connecting_error, NULL);
 
 static void scan_start(void)
 {
@@ -183,27 +183,27 @@ static void scan_start(void)
 		.window = 0x0010,
 	};
 
-	struct bt_scan_init_param scan_init = {
+	struct bt_le_scan_init_param scan_init = {
 		.connect_if_match = 1,
 		.scan_param = &scan_param,
 		.conn_param = BT_LE_CONN_PARAM_DEFAULT,
 	};
 
-	bt_scan_init(&scan_init);
-	bt_scan_cb_register(&scan_cb);
+	bt_le_scan_init(&scan_init);
+	bt_le_scan_cb_register(&scan_cb);
 
-	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_THINGY);
+	err = bt_le_scan_filter_add(BT_LE_SCAN_FILTER_TYPE_UUID, BT_UUID_THINGY);
 	if (err) {
 		LOG_ERR("Scanning filters cannot be set");
 		return;
 	}
 
-	err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER, false);
+	err = bt_le_scan_filter_enable(BT_LE_SCAN_UUID_FILTER, false);
 	if (err) {
 		LOG_ERR("Filters cannot be turned on");
 	}
 
-	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
+	err = bt_le_scan_start(BT_LE_SCAN_TYPE_SCAN_ACTIVE);
 	if (err) {
 		LOG_ERR("Scanning failed to start, err %d", err);
 	}

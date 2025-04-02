@@ -385,7 +385,7 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 		gatt_discover(conn);
 	}
 
-	err = bt_scan_stop();
+	err = bt_le_scan_stop();
 	if ((!err) && (err != -EALREADY)) {
 		LOG_ERR("Stop LE scan failed (err %d)", err);
 	}
@@ -432,8 +432,8 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.security_changed = security_changed
 };
 
-static void scan_filter_match(struct bt_scan_device_info *device_info,
-			      struct bt_scan_filter_match *filter_match,
+static void scan_filter_match(struct bt_le_scan_device_info *device_info,
+			      struct bt_le_scan_filter_match *filter_match,
 			      bool connectable)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -444,12 +444,12 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 		addr, connectable);
 }
 
-static void scan_connecting_error(struct bt_scan_device_info *device_info)
+static void scan_connecting_error(struct bt_le_scan_device_info *device_info)
 {
 	LOG_WRN("Connecting failed");
 }
 
-static void scan_connecting(struct bt_scan_device_info *device_info,
+static void scan_connecting(struct bt_le_scan_device_info *device_info,
 			    struct bt_conn *conn)
 {
 	default_conn = bt_conn_ref(conn);
@@ -475,7 +475,7 @@ static int nus_client_init(void)
 	return err;
 }
 
-BT_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL,
+BT_LE_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL,
 		scan_connecting_error, scan_connecting);
 
 static void try_add_address_filter(const struct bt_bond_info *info, void *user_data)
@@ -493,14 +493,14 @@ static void try_add_address_filter(const struct bt_bond_info *info, void *user_d
 		return;
 	}
 
-	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_ADDR, &info->addr);
+	err = bt_le_scan_filter_add(BT_LE_SCAN_FILTER_TYPE_ADDR, &info->addr);
 	if (err) {
 		LOG_ERR("Address filter cannot be added (err %d): %s", err, addr);
 		return;
 	}
 
 	LOG_INF("Address filter added: %s", addr);
-	*filter_mode |= BT_SCAN_ADDR_FILTER;
+	*filter_mode |= BT_LE_SCAN_ADDR_FILTER;
 }
 
 static int scan_start(void)
@@ -508,30 +508,30 @@ static int scan_start(void)
 	int err;
 	uint8_t filter_mode = 0;
 
-	err = bt_scan_stop();
+	err = bt_le_scan_stop();
 	if (err) {
 		LOG_ERR("Failed to stop scanning (err %d)", err);
 		return err;
 	}
 
-	bt_scan_filter_remove_all();
+	bt_le_scan_filter_remove_all();
 
-	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_NUS_SERVICE);
+	err = bt_le_scan_filter_add(BT_LE_SCAN_FILTER_TYPE_UUID, BT_UUID_NUS_SERVICE);
 	if (err) {
 		LOG_ERR("UUID filter cannot be added (err %d", err);
 		return err;
 	}
-	filter_mode |= BT_SCAN_UUID_FILTER;
+	filter_mode |= BT_LE_SCAN_UUID_FILTER;
 
 	bt_foreach_bond(BT_ID_DEFAULT, try_add_address_filter, &filter_mode);
 
-	err = bt_scan_filter_enable(filter_mode, false);
+	err = bt_le_scan_filter_enable(filter_mode, false);
 	if (err) {
 		LOG_ERR("Filters cannot be turned on (err %d)", err);
 		return err;
 	}
 
-	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
+	err = bt_le_scan_start(BT_LE_SCAN_TYPE_SCAN_ACTIVE);
 	if (err) {
 		LOG_ERR("Scanning failed to start (err %d)", err);
 		return err;
@@ -550,12 +550,12 @@ static void scan_work_handler(struct k_work *item)
 
 static void scan_init(void)
 {
-	struct bt_scan_init_param scan_init = {
+	struct bt_le_scan_init_param scan_init = {
 		.connect_if_match = true,
 	};
 
-	bt_scan_init(&scan_init);
-	bt_scan_cb_register(&scan_cb);
+	bt_le_scan_init(&scan_init);
+	bt_le_scan_cb_register(&scan_cb);
 
 	k_work_init(&scan_work, scan_work_handler);
 	LOG_INF("Scan module initialized");

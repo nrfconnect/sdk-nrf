@@ -18,7 +18,7 @@ LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
 using namespace chip;
 
-BT_SCAN_CB_INIT(scan_cb, Nrf::BLEConnectivityManager::FilterMatch, NULL, NULL, NULL);
+BT_LE_SCAN_CB_INIT(scan_cb, Nrf::BLEConnectivityManager::FilterMatch, NULL, NULL, NULL);
 
 BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.connected = Nrf::BLEConnectivityManager::ConnectionHandler,
@@ -51,7 +51,8 @@ static struct bt_conn_le_create_param *create_param = BT_CONN_LE_CREATE_CONN;
 namespace Nrf
 {
 
-void BLEConnectivityManager::FilterMatch(bt_scan_device_info *device_info, bt_scan_filter_match *filter_match,
+void BLEConnectivityManager::FilterMatch(bt_le_scan_device_info *device_info,
+					 bt_le_scan_filter_match *filter_match,
 					 bool connectable)
 {
 	if (!filter_match) {
@@ -468,30 +469,30 @@ CHIP_ERROR BLEConnectivityManager::Init(const bt_uuid **serviceUuids, uint8_t se
 	struct bt_le_scan_param scan_param = {
 		.type = BT_LE_SCAN_TYPE_PASSIVE,
 		.options = BT_LE_SCAN_OPT_FILTER_DUPLICATE,
-		.interval = CONFIG_BRIDGE_BT_SCAN_INTERVAL,
-		.window = CONFIG_BRIDGE_BT_SCAN_WINDOW,
+		.interval = CONFIG_BRIDGE_BT_LE_SCAN_INTERVAL,
+		.window = CONFIG_BRIDGE_BT_LE_SCAN_WINDOW,
 	};
 
-	bt_scan_init_param scan_init = {
+	bt_le_scan_init_param scan_init = {
 		.scan_param = &scan_param,
 		.connect_if_match = 0,
 	};
 
-	bt_scan_init(&scan_init);
-	bt_scan_cb_register(&scan_cb);
+	bt_le_scan_init(&scan_init);
+	bt_le_scan_cb_register(&scan_cb);
 
 	return PrepareFilterForUuid();
 } // namespace Nrf
 
 CHIP_ERROR BLEConnectivityManager::PrepareFilterForUuid()
 {
-	bt_scan_filter_disable();
-	bt_scan_filter_remove_all();
+	bt_le_scan_filter_disable();
+	bt_le_scan_filter_remove_all();
 
 	int err = -1;
 
 	for (uint8_t i = 0; i < mServicesUuidCount; i++) {
-		err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, mServicesUuid[i]);
+		err = bt_le_scan_filter_add(BT_LE_SCAN_FILTER_TYPE_UUID, mServicesUuid[i]);
 
 		if (err) {
 			LOG_ERR("Failed to set scanning filter");
@@ -499,7 +500,7 @@ CHIP_ERROR BLEConnectivityManager::PrepareFilterForUuid()
 		}
 	}
 
-	err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER, false);
+	err = bt_le_scan_filter_enable(BT_LE_SCAN_UUID_FILTER, false);
 	if (err) {
 		LOG_ERR("Filters cannot be turned on");
 		return System::MapErrorZephyr(err);
@@ -510,16 +511,16 @@ CHIP_ERROR BLEConnectivityManager::PrepareFilterForUuid()
 
 CHIP_ERROR BLEConnectivityManager::PrepareFilterForAddress(bt_addr_le_t *addr)
 {
-	bt_scan_filter_disable();
-	bt_scan_filter_remove_all();
+	bt_le_scan_filter_disable();
+	bt_le_scan_filter_remove_all();
 
-	int err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_ADDR, addr);
+	int err = bt_le_scan_filter_add(BT_LE_SCAN_FILTER_TYPE_ADDR, addr);
 	if (err) {
 		LOG_ERR("Failed to set scanning filter");
 		return System::MapErrorZephyr(err);
 	}
 
-	err = bt_scan_filter_enable(BT_SCAN_ADDR_FILTER, false);
+	err = bt_le_scan_filter_enable(BT_LE_SCAN_ADDR_FILTER, false);
 	if (err) {
 		LOG_ERR("Filters cannot be turned on");
 		return System::MapErrorZephyr(err);
@@ -554,7 +555,7 @@ CHIP_ERROR BLEConnectivityManager::Scan(ScanDoneCallback callback, void *context
 
 	mScanDoneCallback = callback;
 	mScanDoneCallbackContext = context;
-	ret = System::MapErrorZephyr(bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE));
+	ret = System::MapErrorZephyr(bt_le_scan_start(BT_LE_SCAN_TYPE_SCAN_ACTIVE));
 	VerifyOrExit(ret == CHIP_NO_ERROR, );
 
 	k_timer_start(&mScanTimer, K_MSEC(scanTimeoutMs), K_NO_WAIT);
@@ -652,7 +653,7 @@ CHIP_ERROR BLEConnectivityManager::StopScan()
 		return CHIP_NO_ERROR;
 	}
 
-	int err = bt_scan_stop();
+	int err = bt_le_scan_stop();
 	if (err) {
 		LOG_ERR("Scanning failed to stop (err %d)", err);
 		return System::MapErrorZephyr(err);

@@ -58,8 +58,8 @@ static void hids_on_ready(struct k_work *work);
 static K_WORK_DEFINE(hids_ready_work, hids_on_ready);
 
 
-static void scan_filter_match(struct bt_scan_device_info *device_info,
-			      struct bt_scan_filter_match *filter_match,
+static void scan_filter_match(struct bt_le_scan_device_info *device_info,
+			      struct bt_le_scan_filter_match *filter_match,
 			      bool connectable)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
@@ -81,18 +81,18 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 		addr, connectable ? "yes" : "no");
 }
 
-static void scan_connecting_error(struct bt_scan_device_info *device_info)
+static void scan_connecting_error(struct bt_le_scan_device_info *device_info)
 {
 	printk("Connecting failed\n");
 }
 
-static void scan_connecting(struct bt_scan_device_info *device_info,
+static void scan_connecting(struct bt_le_scan_device_info *device_info,
 			    struct bt_conn *conn)
 {
 	default_conn = bt_conn_ref(conn);
 }
 /** .. include_startingpoint_scan_rst */
-static void scan_filter_no_match(struct bt_scan_device_info *device_info,
+static void scan_filter_no_match(struct bt_le_scan_device_info *device_info,
 				 bool connectable)
 {
 	int err;
@@ -103,7 +103,7 @@ static void scan_filter_no_match(struct bt_scan_device_info *device_info,
 		bt_addr_le_to_str(device_info->recv_info->addr, addr,
 				  sizeof(addr));
 		printk("Direct advertising received from %s\n", addr);
-		bt_scan_stop();
+		bt_le_scan_stop();
 
 		err = bt_conn_le_create(device_info->recv_info->addr,
 					BT_CONN_LE_CREATE_CONN,
@@ -116,7 +116,7 @@ static void scan_filter_no_match(struct bt_scan_device_info *device_info,
 	}
 }
 /** .. include_endpoint_scan_rst */
-BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match,
+BT_LE_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match,
 		scan_connecting_error, scan_connecting);
 
 static void discovery_completed_cb(struct bt_gatt_dm *dm,
@@ -189,7 +189,7 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 			default_conn = NULL;
 
 			/* This demo doesn't require active scan */
-			err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
+			err = bt_le_scan_start(BT_LE_SCAN_TYPE_SCAN_ACTIVE);
 			if (err) {
 				printk("Scanning failed to start (err %d)\n",
 				       err);
@@ -236,7 +236,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	default_conn = NULL;
 
 	/* This demo doesn't require active scan */
-	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
+	err = bt_le_scan_start(BT_LE_SCAN_TYPE_SCAN_ACTIVE);
 	if (err) {
 		printk("Scanning failed to start (err %d)\n", err);
 	}
@@ -269,23 +269,23 @@ static void scan_init(void)
 {
 	int err;
 
-	struct bt_scan_init_param scan_init = {
+	struct bt_le_scan_init_param scan_init = {
 		.connect_if_match = 1,
 		.scan_param = NULL,
 		.conn_param = BT_LE_CONN_PARAM_DEFAULT
 	};
 
-	bt_scan_init(&scan_init);
-	bt_scan_cb_register(&scan_cb);
+	bt_le_scan_init(&scan_init);
+	bt_le_scan_cb_register(&scan_cb);
 
-	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_HIDS);
+	err = bt_le_scan_filter_add(BT_LE_SCAN_FILTER_TYPE_UUID, BT_UUID_HIDS);
 	if (err) {
 		printk("Scanning filters cannot be set (err %d)\n", err);
 
 		return;
 	}
 
-	err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER, false);
+	err = bt_le_scan_filter_enable(BT_LE_SCAN_UUID_FILTER, false);
 	if (err) {
 		printk("Filters cannot be turned on (err %d)\n", err);
 	}
@@ -682,7 +682,7 @@ int main(void)
 		return 0;
 	}
 
-	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
+	err = bt_le_scan_start(BT_LE_SCAN_TYPE_SCAN_ACTIVE);
 	if (err) {
 		printk("Scanning failed to start (err %d)\n", err);
 		return 0;

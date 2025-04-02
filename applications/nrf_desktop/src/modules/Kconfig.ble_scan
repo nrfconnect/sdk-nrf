@@ -6,26 +6,26 @@
 
 menuconfig DESKTOP_BLE_SCAN_ENABLE
 	bool "Bluetooth LE scan module"
-	select BT_SCAN
-	select BT_SCAN_FILTER_ENABLE
+	select BT_LE_SCAN
+	select BT_LE_SCAN_FILTER_ENABLE
 	depends on DESKTOP_BT_CENTRAL
 	help
 	  Enable device to scan for peripheral devices.
 
 if DESKTOP_BLE_SCAN_ENABLE
 
-config BT_SCAN_NAME_CNT
+config BT_LE_SCAN_NAME_CNT
 	default 2
 	help
 	  The nRF Desktop by default uses two name filters. The peripheral
 	  device may advertise either as mouse or as keyboard.
 
-config BT_SCAN_ADDRESS_CNT
+config BT_LE_SCAN_ADDRESS_CNT
 	default BT_MAX_PAIRED
 	help
 	  The nRF Desktop needs an address filter per every bonded peripheral.
 
-config BT_SCAN_CONN_ATTEMPTS_FILTER
+config BT_LE_SCAN_CONN_ATTEMPTS_FILTER
 	default y
 	help
 	  The connection attempts filter is enabled by default to limit number

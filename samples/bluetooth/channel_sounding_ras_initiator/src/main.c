@@ -372,8 +372,8 @@ static void procedure_enabled_cb(struct bt_conn *conn,
 	}
 }
 
-static void scan_filter_match(struct bt_scan_device_info *device_info,
-			      struct bt_scan_filter_match *filter_match, bool connectable)
+static void scan_filter_match(struct bt_le_scan_device_info *device_info,
+			      struct bt_le_scan_filter_match *filter_match, bool connectable)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
@@ -382,43 +382,43 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 	LOG_INF("Filters matched. Address: %s connectable: %d", addr, connectable);
 }
 
-static void scan_connecting_error(struct bt_scan_device_info *device_info)
+static void scan_connecting_error(struct bt_le_scan_device_info *device_info)
 {
 	int err;
 
 	LOG_INF("Connecting failed, restarting scanning");
 
-	err = bt_scan_start(BT_SCAN_TYPE_SCAN_PASSIVE);
+	err = bt_le_scan_start(BT_LE_SCAN_TYPE_SCAN_PASSIVE);
 	if (err) {
 		LOG_ERR("Failed to restart scanning (err %i)", err);
 		return;
 	}
 }
 
-static void scan_connecting(struct bt_scan_device_info *device_info, struct bt_conn *conn)
+static void scan_connecting(struct bt_le_scan_device_info *device_info, struct bt_conn *conn)
 {
 	LOG_INF("Connecting");
 }
 
-BT_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL, scan_connecting_error, scan_connecting);
+BT_LE_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL, scan_connecting_error, scan_connecting);
 
 static int scan_init(void)
 {
 	int err;
 
-	struct bt_scan_init_param param = {
+	struct bt_le_scan_init_param param = {
 		.scan_param = NULL, .conn_param = BT_LE_CONN_PARAM_DEFAULT, .connect_if_match = 1};
 
-	bt_scan_init(&param);
-	bt_scan_cb_register(&scan_cb);
+	bt_le_scan_init(&param);
+	bt_le_scan_cb_register(&scan_cb);
 
-	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, BT_UUID_RANGING_SERVICE);
+	err = bt_le_scan_filter_add(BT_LE_SCAN_FILTER_TYPE_UUID, BT_UUID_RANGING_SERVICE);
 	if (err) {
 		LOG_ERR("Scanning filters cannot be set (err %d)", err);
 		return err;
 	}
 
-	err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER, false);
+	err = bt_le_scan_filter_enable(BT_LE_SCAN_UUID_FILTER, false);
 	if (err) {
 		LOG_ERR("Filters cannot be turned on (err %d)", err);
 		return err;
@@ -459,7 +459,7 @@ int main(void)
 		return 0;
 	}
 
-	err = bt_scan_start(BT_SCAN_TYPE_SCAN_PASSIVE);
+	err = bt_le_scan_start(BT_LE_SCAN_TYPE_SCAN_PASSIVE);
 	if (err) {
 		LOG_ERR("Scanning failed to start (err %i)", err);
 		return 0;

@@ -189,8 +189,8 @@ static void adv_start(void)
 	printk("Advertising successfully started\n");
 }
 
-static void scan_filter_match(struct bt_scan_device_info *device_info,
-			      struct bt_scan_filter_match *filter_match, bool connectable)
+static void scan_filter_match(struct bt_le_scan_device_info *device_info,
+			      struct bt_le_scan_filter_match *filter_match, bool connectable)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
@@ -199,12 +199,12 @@ static void scan_filter_match(struct bt_scan_device_info *device_info,
 	printk("Filters matched. Address: %s connectable: %d\n", addr, connectable);
 }
 
-static void scan_connecting_error(struct bt_scan_device_info *device_info)
+static void scan_connecting_error(struct bt_le_scan_device_info *device_info)
 {
 	printk("Connecting failed\n");
 }
 
-BT_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL, scan_connecting_error, NULL);
+BT_LE_SCAN_CB_INIT(scan_cb, scan_filter_match, NULL, scan_connecting_error, NULL);
 
 static void scan_start(void)
 {
@@ -220,16 +220,16 @@ static void scan_start(void)
 	struct bt_le_conn_param *conn_param =
 		BT_LE_CONN_PARAM(INTERVAL_100MS, INTERVAL_100MS, 0, 400);
 
-	struct bt_scan_init_param scan_init = {
+	struct bt_le_scan_init_param scan_init = {
 		.connect_if_match = true,
 		.scan_param = &scan_param,
 		.conn_param = conn_param,
 	};
 
-	bt_scan_init(&scan_init);
-	bt_scan_cb_register(&scan_cb);
+	bt_le_scan_init(&scan_init);
+	bt_le_scan_cb_register(&scan_cb);
 
-	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID,
+	err = bt_le_scan_filter_add(BT_LE_SCAN_FILTER_TYPE_UUID,
 				 BT_UUID_DECLARE_128(ADVERTISING_UUID128));
 
 	if (err) {
@@ -237,12 +237,12 @@ static void scan_start(void)
 		return;
 	}
 
-	err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER, false);
+	err = bt_le_scan_filter_enable(BT_LE_SCAN_UUID_FILTER, false);
 	if (err) {
 		printk("Filters cannot be turned on (err %d)\n", err);
 	}
 
-	err = bt_scan_start(BT_SCAN_TYPE_SCAN_PASSIVE);
+	err = bt_le_scan_start(BT_LE_SCAN_TYPE_SCAN_PASSIVE);
 	if (err) {
 		printk("Starting scanning failed (err %d)\n", err);
 		return;

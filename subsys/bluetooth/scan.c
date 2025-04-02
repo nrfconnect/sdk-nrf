@@ -10,13 +10,13 @@
 #include <bluetooth/scan.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(nrf_bt_scan, CONFIG_BT_SCAN_LOG_LEVEL);
+LOG_MODULE_REGISTER(nrf_bt_le_scan, CONFIG_BT_LE_SCAN_LOG_LEVEL);
 
-#define BT_SCAN_UUID_128_SIZE 16
+#define BT_LE_SCAN_UUID_128_SIZE 16
 
-#define MODE_CHECK (BT_SCAN_NAME_FILTER | BT_SCAN_ADDR_FILTER | \
-	BT_SCAN_SHORT_NAME_FILTER | BT_SCAN_APPEARANCE_FILTER | \
-	BT_SCAN_UUID_FILTER | BT_SCAN_MANUFACTURER_DATA_FILTER)
+#define MODE_CHECK (BT_LE_SCAN_NAME_FILTER | BT_LE_SCAN_ADDR_FILTER | \
+	BT_LE_SCAN_SHORT_NAME_FILTER | BT_LE_SCAN_APPEARANCE_FILTER | \
+	BT_LE_SCAN_UUID_FILTER | BT_LE_SCAN_MANUFACTURER_DATA_FILTER)
 
 /* Scan filter mutex. */
 K_MUTEX_DEFINE(scan_mutex);
@@ -24,7 +24,7 @@ K_MUTEX_DEFINE(scan_mutex);
 /* Scanning control structure used to
  * compare matching filters, their mode and event generation.
  */
-struct bt_scan_control {
+struct bt_le_scan_control {
 	/* Number of active filters. */
 	uint8_t filter_cnt;
 
@@ -41,19 +41,19 @@ struct bt_scan_control {
 	bool connectable;
 
 	/* Data needed to establish connection and advertising information. */
-	struct bt_scan_device_info device_info;
+	struct bt_le_scan_device_info device_info;
 
 	/* Scan filter status. */
-	struct bt_scan_filter_match filter_status;
+	struct bt_le_scan_filter_match filter_status;
 };
 
 /* Name filter structure.
  */
-struct bt_scan_name_filter {
+struct bt_le_scan_name_filter {
 	/* Names that the main application will scan for,
 	 * and that will be advertised by the peripherals.
 	 */
-	char target_name[CONFIG_BT_SCAN_NAME_CNT][CONFIG_BT_SCAN_NAME_MAX_LEN];
+	char target_name[CONFIG_BT_LE_SCAN_NAME_CNT][CONFIG_BT_LE_SCAN_NAME_MAX_LEN];
 
 	/* Name filter counter. */
 	uint8_t cnt;
@@ -65,16 +65,16 @@ struct bt_scan_name_filter {
 
 /* Short names filter structure.
  */
-struct bt_scan_short_name_filter {
+struct bt_le_scan_short_name_filter {
 	struct {
 		/* Short names that the main application will scan for,
 		 * and that will be advertised by the peripherals.
 		 */
-		char target_name[CONFIG_BT_SCAN_SHORT_NAME_MAX_LEN];
+		char target_name[CONFIG_BT_LE_SCAN_SHORT_NAME_MAX_LEN];
 
 		/* Minimum length of the short name. */
 		uint8_t min_len;
-	} name[CONFIG_BT_SCAN_SHORT_NAME_CNT];
+	} name[CONFIG_BT_LE_SCAN_SHORT_NAME_CNT];
 
 	/* Short name filter counter. */
 	uint8_t cnt;
@@ -85,9 +85,9 @@ struct bt_scan_short_name_filter {
 
 /* BLE Addresses filter structure.
  */
-struct bt_scan_addr_filter {
+struct bt_le_scan_addr_filter {
 	/* Addresses advertised by the peripherals. */
-	bt_addr_le_t target_addr[CONFIG_BT_SCAN_ADDRESS_CNT];
+	bt_addr_le_t target_addr[CONFIG_BT_LE_SCAN_ADDRESS_CNT];
 
 	/* Address filter counter. */
 	uint8_t cnt;
@@ -97,7 +97,7 @@ struct bt_scan_addr_filter {
 };
 
 /* Structure for storing different types of UUIDs */
-struct bt_scan_uuid {
+struct bt_le_scan_uuid {
 	/* Pointer to the appropriate type of UUID. **/
 	struct bt_uuid *uuid;
 	union {
@@ -114,11 +114,11 @@ struct bt_scan_uuid {
 
 /* UUIDs filter structure.
  */
-struct bt_scan_uuid_filter {
+struct bt_le_scan_uuid_filter {
 	/* UUIDs that the main application will scan for,
 	 * and that will be advertised by the peripherals.
 	 */
-	struct bt_scan_uuid uuid[CONFIG_BT_SCAN_UUID_CNT];
+	struct bt_le_scan_uuid uuid[CONFIG_BT_LE_SCAN_UUID_CNT];
 
 	/* UUID filter counter. */
 	uint8_t cnt;
@@ -127,11 +127,11 @@ struct bt_scan_uuid_filter {
 	bool enabled;
 };
 
-struct bt_scan_appearance_filter {
+struct bt_le_scan_appearance_filter {
 	/* Apperances that the main application will scan for,
 	 * and that will be advertised by the peripherals.
 	 */
-	uint16_t appearance[CONFIG_BT_SCAN_APPEARANCE_CNT];
+	uint16_t appearance[CONFIG_BT_LE_SCAN_APPEARANCE_CNT];
 
 	/* Appearance filter counter. */
 	uint8_t cnt;
@@ -142,18 +142,18 @@ struct bt_scan_appearance_filter {
 
 /* Manufacturer data filter structure.
  */
-struct bt_scan_manufacturer_data_filter {
+struct bt_le_scan_manufacturer_data_filter {
 	struct {
 		/* Manufacturer data that the main application will scan for,
 		 * and that will be advertised by the peripherals.
 		 */
-		uint8_t data[CONFIG_BT_SCAN_MANUFACTURER_DATA_MAX_LEN];
+		uint8_t data[CONFIG_BT_LE_SCAN_MANUFACTURER_DATA_MAX_LEN];
 
 		/* Length of the manufacturere data that the main application
 		 * will scan for.
 		 */
 		uint8_t data_len;
-	} manufacturer_data[CONFIG_BT_SCAN_MANUFACTURER_DATA_CNT];
+	} manufacturer_data[CONFIG_BT_LE_SCAN_MANUFACTURER_DATA_CNT];
 
 	/* Name filter counter. */
 	uint8_t cnt;
@@ -171,24 +171,24 @@ struct bt_scan_manufacturer_data_filter {
  * the main application. Otherwise, it is enough to
  * match one of filters to send notification.
  */
-struct bt_scan_filters {
+struct bt_le_scan_filters {
 	/* Name filter data. */
-	struct bt_scan_name_filter name;
+	struct bt_le_scan_name_filter name;
 
 	/* Short name filter data. */
-	struct bt_scan_short_name_filter short_name;
+	struct bt_le_scan_short_name_filter short_name;
 
 	/* Address filter data. */
-	struct bt_scan_addr_filter addr;
+	struct bt_le_scan_addr_filter addr;
 
 	/* UUID filter data. */
-	struct bt_scan_uuid_filter uuid;
+	struct bt_le_scan_uuid_filter uuid;
 
 	/* Appearance filter data. */
-	struct bt_scan_appearance_filter appearance;
+	struct bt_le_scan_appearance_filter appearance;
 
 	/* Manufacturer data filter data. */
-	struct bt_scan_manufacturer_data_filter manufacturer_data;
+	struct bt_le_scan_manufacturer_data_filter manufacturer_data;
 
 	/* Filter mode. If true, all set filters must be
 	 * matched to generate an event.
@@ -196,7 +196,7 @@ struct bt_scan_filters {
 	bool all_mode;
 };
 
-#if CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER
+#if CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_FILTER
 /* Connection attempts filter device */
 struct conn_attempts_device {
 	/* Filtered device address. */
@@ -209,7 +209,7 @@ struct conn_attempts_device {
 /* Connection attempts filter. */
 struct conn_attempts_filter {
 	/* Array of the filtered devices. */
-	struct conn_attempts_device device[CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER_LEN];
+	struct conn_attempts_device device[CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_FILTER_LEN];
 
 	/* The oldest device index. */
 	uint32_t oldest_idx;
@@ -217,26 +217,26 @@ struct conn_attempts_filter {
 	/* Count of the filtered devices. */
 	size_t count;
 };
-#endif /* CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER */
+#endif /* CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_FILTER */
 
-#if CONFIG_BT_SCAN_BLOCKLIST
+#if CONFIG_BT_LE_SCAN_BLOCKLIST
 /* Connection blocklist */
 struct conn_blocklist {
 	/* Array of the blocklist devices. */
-	bt_addr_le_t addr[CONFIG_BT_SCAN_BLOCKLIST_LEN];
+	bt_addr_le_t addr[CONFIG_BT_LE_SCAN_BLOCKLIST_LEN];
 
 	/* Blocklist device count. */
 	uint32_t count;
 };
-#endif /* CONFIG_BT_SCAN_BLOCKLIST */
+#endif /* CONFIG_BT_LE_SCAN_BLOCKLIST */
 
 /* Scanning module instance. Options for the different scanning modes.
  * This structure stores all module settings. It is used to enable
  * or disable scanning modes and to configure filters.
  */
-static struct bt_scan {
+static struct bt_le_scan {
 	/* Filter data. */
-	struct bt_scan_filters scan_filters;
+	struct bt_le_scan_filters scan_filters;
 
 #if CONFIG_BT_CENTRAL
 	/* If set to true, the module automatically connects
@@ -256,21 +256,21 @@ static struct bt_scan {
 	 */
 	struct bt_le_conn_param conn_param;
 
-#if CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER
+#if CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_FILTER
 	/* Scan Connection attempts filter. */
 	struct conn_attempts_filter attempts_filter;
-#endif /* CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER */
+#endif /* CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_FILTER */
 
-#if CONFIG_BT_SCAN_BLOCKLIST
+#if CONFIG_BT_LE_SCAN_BLOCKLIST
 	/* Scan device blocklist. */
 	struct conn_blocklist blocklist;
-#endif /* CONFIG_BT_SCAN_BLOCKLIST */
+#endif /* CONFIG_BT_LE_SCAN_BLOCKLIST */
 
-} bt_scan;
+} bt_le_scan;
 
 static sys_slist_t callback_list;
 
-void bt_scan_cb_register(struct bt_scan_cb *cb)
+void bt_le_scan_cb_register(struct bt_le_scan_cb *cb)
 {
 	if (!cb) {
 		return;
@@ -279,11 +279,11 @@ void bt_scan_cb_register(struct bt_scan_cb *cb)
 	sys_slist_append(&callback_list, &cb->node);
 }
 
-static void notify_filter_matched(struct bt_scan_device_info *device_info,
-				  struct bt_scan_filter_match *filter_match,
+static void notify_filter_matched(struct bt_le_scan_device_info *device_info,
+				  struct bt_le_scan_filter_match *filter_match,
 				  bool connectable)
 {
-	struct bt_scan_cb *cb;
+	struct bt_le_scan_cb *cb;
 
 	SYS_SLIST_FOR_EACH_CONTAINER(&callback_list, cb, node) {
 		if (cb->cb_addr->filter_match) {
@@ -293,10 +293,10 @@ static void notify_filter_matched(struct bt_scan_device_info *device_info,
 	}
 }
 
-static void notify_filter_no_match(struct bt_scan_device_info *device_info,
+static void notify_filter_no_match(struct bt_le_scan_device_info *device_info,
 				   bool connectable)
 {
-	struct bt_scan_cb *cb;
+	struct bt_le_scan_cb *cb;
 
 	SYS_SLIST_FOR_EACH_CONTAINER(&callback_list, cb, node) {
 		if (cb->cb_addr->filter_no_match) {
@@ -306,10 +306,10 @@ static void notify_filter_no_match(struct bt_scan_device_info *device_info,
 }
 
 #if CONFIG_BT_CENTRAL
-static void notify_connecting(struct bt_scan_device_info *device_info,
+static void notify_connecting(struct bt_le_scan_device_info *device_info,
 			      struct bt_conn *conn)
 {
-	struct bt_scan_cb *cb;
+	struct bt_le_scan_cb *cb;
 
 	SYS_SLIST_FOR_EACH_CONTAINER(&callback_list, cb, node) {
 		if (cb->cb_addr->connecting) {
@@ -318,9 +318,9 @@ static void notify_connecting(struct bt_scan_device_info *device_info,
 	}
 }
 
-static void notify_connecting_error(struct bt_scan_device_info *device_info)
+static void notify_connecting_error(struct bt_le_scan_device_info *device_info)
 {
-	struct bt_scan_cb *cb;
+	struct bt_le_scan_cb *cb;
 
 	SYS_SLIST_FOR_EACH_CONTAINER(&callback_list, cb, node) {
 		if (cb->cb_addr->connecting_error) {
@@ -330,15 +330,15 @@ static void notify_connecting_error(struct bt_scan_device_info *device_info)
 }
 #endif /* CONFIG_BT_CENTRAL */
 
-#if CONFIG_BT_SCAN_BLOCKLIST
+#if CONFIG_BT_LE_SCAN_BLOCKLIST
 static bool blocklist_device_check(const bt_addr_le_t *addr)
 {
 	bool blocklist_device = false;
 
 	k_mutex_lock(&scan_mutex, K_FOREVER);
 
-	for (size_t i = 0; i < bt_scan.blocklist.count; i++) {
-		if (bt_addr_le_cmp(&bt_scan.blocklist.addr[i], addr) == 0) {
+	for (size_t i = 0; i < bt_le_scan.blocklist.count; i++) {
+		if (bt_addr_le_cmp(&bt_le_scan.blocklist.addr[i], addr) == 0) {
 			blocklist_device = true;
 
 			break;
@@ -349,9 +349,9 @@ static bool blocklist_device_check(const bt_addr_le_t *addr)
 
 	return blocklist_device;
 }
-#endif /* CONFIG_BT_SCAN_BLOCKLIST */
+#endif /* CONFIG_BT_LE_SCAN_BLOCKLIST */
 
-#if CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER
+#if CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_FILTER
 static void attempts_filter_force_add(struct conn_attempts_filter *filter,
 				      const bt_addr_le_t *addr)
 {
@@ -370,7 +370,7 @@ static void attempts_filter_force_add(struct conn_attempts_filter *filter,
 
 static void scan_attempts_filter_device_add(const bt_addr_le_t *addr)
 {
-	struct conn_attempts_filter *filter = &bt_scan.attempts_filter;
+	struct conn_attempts_filter *filter = &bt_le_scan.attempts_filter;
 	char addr_str[BT_ADDR_LE_STR_LEN];
 
 	bt_addr_le_to_str(addr, addr_str, sizeof(addr_str));
@@ -403,7 +403,7 @@ out:
 static void device_conn_attempts_count(struct bt_conn *conn)
 {
 	const bt_addr_le_t *addr = bt_conn_get_dst(conn);
-	struct conn_attempts_filter *filter = &bt_scan.attempts_filter;
+	struct conn_attempts_filter *filter = &bt_le_scan.attempts_filter;
 
 	k_mutex_lock(&scan_mutex, K_FOREVER);
 
@@ -411,7 +411,7 @@ static void device_conn_attempts_count(struct bt_conn *conn)
 		struct conn_attempts_device *device = &filter->device[i];
 
 		if (bt_addr_le_cmp(addr, &device->addr) == 0) {
-			if (device->attempts < CONFIG_BT_SCAN_CONN_ATTEMPTS_COUNT) {
+			if (device->attempts < CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_COUNT) {
 				device->attempts++;
 			}
 
@@ -424,7 +424,7 @@ static void device_conn_attempts_count(struct bt_conn *conn)
 
 static bool conn_attempts_exceeded(const bt_addr_le_t *addr)
 {
-	struct conn_attempts_filter *filter = &bt_scan.attempts_filter;
+	struct conn_attempts_filter *filter = &bt_le_scan.attempts_filter;
 	char addr_str[BT_ADDR_LE_STR_LEN];
 	bool attempts_exceeded = false;
 
@@ -437,7 +437,7 @@ static bool conn_attempts_exceeded(const bt_addr_le_t *addr)
 		struct conn_attempts_device *device = &filter->device[i];
 
 		if (bt_addr_le_cmp(addr, &device->addr) == 0) {
-			if (device->attempts >= CONFIG_BT_SCAN_CONN_ATTEMPTS_COUNT) {
+			if (device->attempts >= CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_COUNT) {
 				LOG_DBG("Connection attempts count for %s exceeded",
 					addr_str);
 				attempts_exceeded = true;
@@ -452,33 +452,33 @@ static bool conn_attempts_exceeded(const bt_addr_le_t *addr)
 	return attempts_exceeded;
 }
 
-#endif /* CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER */
+#endif /* CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_FILTER */
 
 static bool scan_device_filter_check(const bt_addr_le_t *addr)
 {
-#if CONFIG_BT_SCAN_BLOCKLIST
+#if CONFIG_BT_LE_SCAN_BLOCKLIST
 	if (blocklist_device_check(addr)) {
 		return false;
 	}
-#endif /* CONFIG_BT_SCAN_BLOCKLIST */
+#endif /* CONFIG_BT_LE_SCAN_BLOCKLIST */
 
-#if CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER
+#if CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_FILTER
 	if (conn_attempts_exceeded(addr)) {
 		return false;
 	}
-#endif /* CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER */
+#endif /* CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_FILTER */
 
 	return true;
 }
 
 #if CONFIG_BT_CENTRAL
-static void scan_connect_with_target(struct bt_scan_control *control,
+static void scan_connect_with_target(struct bt_le_scan_control *control,
 				     const bt_addr_le_t *addr)
 {
 	int err;
 
 	/* Return if the automatic connection is disabled. */
-	if (!bt_scan.connect_if_match) {
+	if (!bt_le_scan.connect_if_match) {
 		return;
 	}
 
@@ -486,11 +486,11 @@ static void scan_connect_with_target(struct bt_scan_control *control,
 	struct bt_conn *conn = NULL;
 
 	/* Stop scanning. */
-	bt_scan_stop();
+	bt_le_scan_stop();
 
 	err = bt_conn_le_create(addr,
 			       BT_CONN_LE_CREATE_CONN,
-			       &bt_scan.conn_param, &conn);
+			       &bt_le_scan.conn_param, &conn);
 
 	LOG_DBG("Connecting (%d)", err);
 
@@ -507,11 +507,11 @@ static void scan_connect_with_target(struct bt_scan_control *control,
 #endif /* CONFIG_BT_CENTRAL */
 
 static bool adv_addr_compare(const bt_addr_le_t *target_addr,
-			     struct bt_scan_control *control)
+			     struct bt_le_scan_control *control)
 {
 	const bt_addr_le_t *addr =
-			bt_scan.scan_filters.addr.target_addr;
-	uint8_t counter = bt_scan.scan_filters.addr.cnt;
+			bt_le_scan.scan_filters.addr.target_addr;
+	uint8_t counter = bt_le_scan.scan_filters.addr.cnt;
 
 	for (size_t i = 0; i < counter; i++) {
 		if (bt_addr_le_cmp(target_addr, &addr[i]) == 0) {
@@ -526,10 +526,10 @@ static bool adv_addr_compare(const bt_addr_le_t *target_addr,
 
 static bool is_addr_filter_enabled(void)
 {
-	return CONFIG_BT_SCAN_ADDRESS_CNT && bt_scan.scan_filters.addr.enabled;
+	return CONFIG_BT_LE_SCAN_ADDRESS_CNT && bt_le_scan.scan_filters.addr.enabled;
 }
 
-static void check_addr(struct bt_scan_control *control,
+static void check_addr(struct bt_le_scan_control *control,
 		       const bt_addr_le_t *addr)
 {
 	if (is_addr_filter_enabled()) {
@@ -547,11 +547,11 @@ static int scan_addr_filter_add(const bt_addr_le_t *target_addr)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 	bt_addr_le_t *addr_filter =
-			bt_scan.scan_filters.addr.target_addr;
-	uint8_t counter = bt_scan.scan_filters.addr.cnt;
+			bt_le_scan.scan_filters.addr.target_addr;
+	uint8_t counter = bt_le_scan.scan_filters.addr.cnt;
 
 	/* If no memory for filter. */
-	if (counter >= CONFIG_BT_SCAN_ADDRESS_CNT) {
+	if (counter >= CONFIG_BT_LE_SCAN_ADDRESS_CNT) {
 		return -ENOMEM;
 	}
 
@@ -573,7 +573,7 @@ static int scan_addr_filter_add(const bt_addr_le_t *target_addr)
 	LOG_DBG("Address: %s", addr);
 
 	/* Increase the address filter counter. */
-	bt_scan.scan_filters.addr.cnt++;
+	bt_le_scan.scan_filters.addr.cnt++;
 
 	return 0;
 }
@@ -586,11 +586,11 @@ static bool adv_name_cmp(const uint8_t *data,
 }
 
 static bool adv_name_compare(const struct bt_data *data,
-			     struct bt_scan_control *control)
+			     struct bt_le_scan_control *control)
 {
-	struct bt_scan_name_filter const *name_filter =
-			&bt_scan.scan_filters.name;
-	uint8_t counter = bt_scan.scan_filters.name.cnt;
+	struct bt_le_scan_name_filter const *name_filter =
+			&bt_le_scan.scan_filters.name;
+	uint8_t counter = bt_le_scan.scan_filters.name.cnt;
 	uint8_t data_len = data->data_len;
 
 	/* Compare the name found with the name filter. */
@@ -612,10 +612,10 @@ static bool adv_name_compare(const struct bt_data *data,
 
 static inline bool is_name_filter_enabled(void)
 {
-	return CONFIG_BT_SCAN_NAME_CNT && bt_scan.scan_filters.name.enabled;
+	return CONFIG_BT_LE_SCAN_NAME_CNT && bt_le_scan.scan_filters.name.enabled;
 }
 
-static void name_check(struct bt_scan_control *control,
+static void name_check(struct bt_le_scan_control *control,
 		       const struct bt_data *data)
 {
 	if (is_name_filter_enabled()) {
@@ -631,33 +631,33 @@ static void name_check(struct bt_scan_control *control,
 
 static int scan_name_filter_add(const char *name)
 {
-	uint8_t counter = bt_scan.scan_filters.name.cnt;
+	uint8_t counter = bt_le_scan.scan_filters.name.cnt;
 	size_t name_len;
 
 	/* If no memory for filter. */
-	if (counter >= CONFIG_BT_SCAN_NAME_CNT) {
+	if (counter >= CONFIG_BT_LE_SCAN_NAME_CNT) {
 		return -ENOMEM;
 	}
 
 	name_len = strlen(name);
 
 	/* Check the name length. */
-	if ((name_len == 0) || (name_len > CONFIG_BT_SCAN_NAME_MAX_LEN)) {
+	if ((name_len == 0) || (name_len > CONFIG_BT_LE_SCAN_NAME_MAX_LEN)) {
 		return -EINVAL;
 	}
 
 	/* Check for duplicated filter. */
 	for (size_t i = 0; i < counter; i++) {
-		if (!strcmp(bt_scan.scan_filters.name.target_name[i], name)) {
+		if (!strcmp(bt_le_scan.scan_filters.name.target_name[i], name)) {
 			return 0;
 		}
 	}
 
 	/* Add name to filter. */
-	memcpy(bt_scan.scan_filters.name.target_name[counter],
+	memcpy(bt_le_scan.scan_filters.name.target_name[counter],
 	       name, name_len);
 
-	bt_scan.scan_filters.name.cnt++;
+	bt_le_scan.scan_filters.name.cnt++;
 
 	LOG_DBG("Adding filter on %s name", name);
 
@@ -678,11 +678,11 @@ static bool adv_short_name_cmp(const uint8_t *data,
 }
 
 static bool adv_short_name_compare(const struct bt_data *data,
-				   struct bt_scan_control *control)
+				   struct bt_le_scan_control *control)
 {
-	const struct bt_scan_short_name_filter *name_filter =
-			&bt_scan.scan_filters.short_name;
-	uint8_t counter = bt_scan.scan_filters.short_name.cnt;
+	const struct bt_le_scan_short_name_filter *name_filter =
+			&bt_le_scan.scan_filters.short_name;
+	uint8_t counter = bt_le_scan.scan_filters.short_name.cnt;
 	uint8_t data_len = data->data_len;
 
 	/* Compare the name found with the name filters. */
@@ -705,10 +705,10 @@ static bool adv_short_name_compare(const struct bt_data *data,
 
 static inline bool is_short_name_filter_enabled(void)
 {
-	return CONFIG_BT_SCAN_SHORT_NAME_CNT && bt_scan.scan_filters.short_name.enabled;
+	return CONFIG_BT_LE_SCAN_SHORT_NAME_CNT && bt_le_scan.scan_filters.short_name.enabled;
 }
 
-static void short_name_check(struct bt_scan_control *control,
+static void short_name_check(struct bt_le_scan_control *control,
 			     const struct bt_data *data)
 {
 	if (is_short_name_filter_enabled()) {
@@ -722,16 +722,16 @@ static void short_name_check(struct bt_scan_control *control,
 	}
 }
 
-static int scan_short_name_filter_add(const struct bt_scan_short_name *short_name)
+static int scan_short_name_filter_add(const struct bt_le_scan_short_name *short_name)
 {
 	uint8_t counter =
-		bt_scan.scan_filters.short_name.cnt;
-	struct bt_scan_short_name_filter *short_name_filter =
-		    &bt_scan.scan_filters.short_name;
+		bt_le_scan.scan_filters.short_name.cnt;
+	struct bt_le_scan_short_name_filter *short_name_filter =
+		    &bt_le_scan.scan_filters.short_name;
 	uint8_t name_len;
 
 	/* If no memory for filter. */
-	if (counter >= CONFIG_BT_SCAN_SHORT_NAME_CNT) {
+	if (counter >= CONFIG_BT_LE_SCAN_SHORT_NAME_CNT) {
 		return -ENOMEM;
 	}
 
@@ -739,7 +739,7 @@ static int scan_short_name_filter_add(const struct bt_scan_short_name *short_nam
 
 	/* Check the name length. */
 	if ((name_len == 0) ||
-	    (name_len > CONFIG_BT_SCAN_SHORT_NAME_MAX_LEN)) {
+	    (name_len > CONFIG_BT_LE_SCAN_SHORT_NAME_MAX_LEN)) {
 		return -EINVAL;
 	}
 
@@ -757,7 +757,7 @@ static int scan_short_name_filter_add(const struct bt_scan_short_name *short_nam
 	       short_name->name,
 	       name_len);
 
-	bt_scan.scan_filters.short_name.cnt++;
+	bt_le_scan.scan_filters.short_name.cnt++;
 
 	LOG_DBG("Adding filter on %s name", short_name->name);
 
@@ -767,7 +767,7 @@ static int scan_short_name_filter_add(const struct bt_scan_short_name *short_nam
 static bool find_uuid(const uint8_t *data,
 		      uint8_t data_len,
 		      uint8_t uuid_type,
-		      const struct bt_scan_uuid *target_uuid)
+		      const struct bt_le_scan_uuid *target_uuid)
 {
 	uint8_t uuid_len;
 
@@ -781,7 +781,7 @@ static bool find_uuid(const uint8_t *data,
 		break;
 
 	case BT_UUID_TYPE_128:
-		uuid_len = BT_SCAN_UUID_128_SIZE * sizeof(uint8_t);
+		uuid_len = BT_LE_SCAN_UUID_128_SIZE * sizeof(uint8_t);
 		break;
 
 	default:
@@ -804,12 +804,12 @@ static bool find_uuid(const uint8_t *data,
 }
 
 static bool adv_uuid_compare(const struct bt_data *data, uint8_t uuid_type,
-			     struct bt_scan_control *control)
+			     struct bt_le_scan_control *control)
 {
-	const struct bt_scan_uuid_filter *uuid_filter =
-			&bt_scan.scan_filters.uuid;
-	const bool all_filters_mode = bt_scan.scan_filters.all_mode;
-	const uint8_t counter = bt_scan.scan_filters.uuid.cnt;
+	const struct bt_le_scan_uuid_filter *uuid_filter =
+			&bt_le_scan.scan_filters.uuid;
+	const bool all_filters_mode = bt_le_scan.scan_filters.all_mode;
+	const uint8_t counter = bt_le_scan.scan_filters.uuid.cnt;
 	uint8_t data_len = data->data_len;
 	uint8_t uuid_match_cnt = 0;
 
@@ -849,10 +849,10 @@ static bool adv_uuid_compare(const struct bt_data *data, uint8_t uuid_type,
 
 static bool is_uuid_filter_enabled(void)
 {
-	return CONFIG_BT_SCAN_UUID_CNT && bt_scan.scan_filters.uuid.enabled;
+	return CONFIG_BT_LE_SCAN_UUID_CNT && bt_le_scan.scan_filters.uuid.enabled;
 }
 
-static void uuid_check(struct bt_scan_control *control,
+static void uuid_check(struct bt_le_scan_control *control,
 		       const struct bt_data *data,
 		       uint8_t type)
 {
@@ -869,14 +869,14 @@ static void uuid_check(struct bt_scan_control *control,
 
 static int scan_uuid_filter_add(struct bt_uuid *uuid)
 {
-	struct bt_scan_uuid *uuid_filter = bt_scan.scan_filters.uuid.uuid;
-	uint8_t counter = bt_scan.scan_filters.uuid.cnt;
+	struct bt_le_scan_uuid *uuid_filter = bt_le_scan.scan_filters.uuid.uuid;
+	uint8_t counter = bt_le_scan.scan_filters.uuid.cnt;
 	struct bt_uuid_16 *uuid_16;
 	struct bt_uuid_32 *uuid_32;
 	struct bt_uuid_128 *uuid_128;
 
 	/* If no memory. */
-	if (counter >= CONFIG_BT_SCAN_UUID_CNT) {
+	if (counter >= CONFIG_BT_LE_SCAN_UUID_CNT) {
 		return -ENOMEM;
 	}
 
@@ -917,7 +917,7 @@ static int scan_uuid_filter_add(struct bt_uuid *uuid)
 		return -EINVAL;
 	}
 
-	bt_scan.scan_filters.uuid.cnt++;
+	bt_le_scan.scan_filters.uuid.cnt++;
 	LOG_DBG("Added filter on UUID type %x", uuid->type);
 
 	return 0;
@@ -942,12 +942,12 @@ static bool find_appearance(const uint8_t *data,
 }
 
 static bool adv_appearance_compare(const struct bt_data *data,
-				   struct bt_scan_control *control)
+				   struct bt_le_scan_control *control)
 {
-	const struct bt_scan_appearance_filter *appearance_filter =
-			&bt_scan.scan_filters.appearance;
+	const struct bt_le_scan_appearance_filter *appearance_filter =
+			&bt_le_scan.scan_filters.appearance;
 	const uint8_t counter =
-			bt_scan.scan_filters.appearance.cnt;
+			bt_le_scan.scan_filters.appearance.cnt;
 	uint8_t data_len = data->data_len;
 
 	/* Verify if the advertised appearance matches
@@ -970,10 +970,10 @@ static bool adv_appearance_compare(const struct bt_data *data,
 
 static inline bool is_appearance_filter_enabled(void)
 {
-	return CONFIG_BT_SCAN_APPEARANCE_CNT && bt_scan.scan_filters.appearance.enabled;
+	return CONFIG_BT_LE_SCAN_APPEARANCE_CNT && bt_le_scan.scan_filters.appearance.enabled;
 }
 
-static void appearance_check(struct bt_scan_control *control,
+static void appearance_check(struct bt_le_scan_control *control,
 			     const struct bt_data *data)
 {
 	if (is_appearance_filter_enabled()) {
@@ -989,11 +989,11 @@ static void appearance_check(struct bt_scan_control *control,
 
 static int scan_appearance_filter_add(uint16_t appearance)
 {
-	uint16_t *appearance_filter = bt_scan.scan_filters.appearance.appearance;
-	uint8_t counter = bt_scan.scan_filters.appearance.cnt;
+	uint16_t *appearance_filter = bt_le_scan.scan_filters.appearance.appearance;
+	uint8_t counter = bt_le_scan.scan_filters.appearance.cnt;
 
 	/* If no memory. */
-	if (counter >= CONFIG_BT_SCAN_APPEARANCE_CNT) {
+	if (counter >= CONFIG_BT_LE_SCAN_APPEARANCE_CNT) {
 		return -ENOMEM;
 	}
 
@@ -1006,7 +1006,7 @@ static int scan_appearance_filter_add(uint16_t appearance)
 
 	/* Add appearance to the filter. */
 	appearance_filter[counter] = appearance;
-	bt_scan.scan_filters.appearance.cnt++;
+	bt_le_scan.scan_filters.appearance.cnt++;
 
 	LOG_DBG("Added filter on appearance %x", appearance);
 
@@ -1030,11 +1030,11 @@ static bool adv_manufacturer_data_cmp(const uint8_t *data,
 }
 
 static bool adv_manufacturer_data_compare(const struct bt_data *data,
-					  struct bt_scan_control *control)
+					  struct bt_le_scan_control *control)
 {
-	const struct bt_scan_manufacturer_data_filter *md_filter =
-		&bt_scan.scan_filters.manufacturer_data;
-	uint8_t counter = bt_scan.scan_filters.manufacturer_data.cnt;
+	const struct bt_le_scan_manufacturer_data_filter *md_filter =
+		&bt_le_scan.scan_filters.manufacturer_data;
+	uint8_t counter = bt_le_scan.scan_filters.manufacturer_data.cnt;
 
 	/* Compare the name found with the name filter. */
 	for (size_t i = 0; i < counter; i++) {
@@ -1056,11 +1056,11 @@ static bool adv_manufacturer_data_compare(const struct bt_data *data,
 }
 static inline bool is_manufacturer_data_filter_enabled(void)
 {
-	return CONFIG_BT_SCAN_MANUFACTURER_DATA_CNT &&
-		bt_scan.scan_filters.manufacturer_data.enabled;
+	return CONFIG_BT_LE_SCAN_MANUFACTURER_DATA_CNT &&
+		bt_le_scan.scan_filters.manufacturer_data.enabled;
 }
 
-static void manufacturer_data_check(struct bt_scan_control *control,
+static void manufacturer_data_check(struct bt_le_scan_control *control,
 				    const struct bt_data *data)
 {
 	if (is_manufacturer_data_filter_enabled()) {
@@ -1074,21 +1074,22 @@ static void manufacturer_data_check(struct bt_scan_control *control,
 	}
 }
 
-static int scan_manufacturer_data_filter_add(const struct bt_scan_manufacturer_data *manufacturer_data)
+static int scan_manufacturer_data_filter_add(
+				const struct bt_le_scan_manufacturer_data *manufacturer_data)
 {
-	struct bt_scan_manufacturer_data_filter *md_filter =
-		&bt_scan.scan_filters.manufacturer_data;
-	uint8_t counter = bt_scan.scan_filters.manufacturer_data.cnt;
+	struct bt_le_scan_manufacturer_data_filter *md_filter =
+		&bt_le_scan.scan_filters.manufacturer_data;
+	uint8_t counter = bt_le_scan.scan_filters.manufacturer_data.cnt;
 
 	/* If no memory for filter. */
-	if (counter >= CONFIG_BT_SCAN_MANUFACTURER_DATA_CNT) {
+	if (counter >= CONFIG_BT_LE_SCAN_MANUFACTURER_DATA_CNT) {
 		return -ENOMEM;
 	}
 
 	/* Check the data length. */
 	if ((manufacturer_data->data_len == 0) ||
 			(manufacturer_data->data_len >
-			 CONFIG_BT_SCAN_MANUFACTURER_DATA_MAX_LEN)) {
+			 CONFIG_BT_LE_SCAN_MANUFACTURER_DATA_MAX_LEN)) {
 		return -EINVAL;
 	}
 
@@ -1108,7 +1109,7 @@ static int scan_manufacturer_data_filter_add(const struct bt_scan_manufacturer_d
 	md_filter->manufacturer_data[counter].data_len =
 		manufacturer_data->data_len;
 
-	bt_scan.scan_filters.manufacturer_data.cnt++;
+	bt_le_scan.scan_filters.manufacturer_data.cnt++;
 
 	LOG_DBG("Adding filter on manufacturer data");
 
@@ -1125,10 +1126,10 @@ static void scan_default_param_set(void)
 	struct bt_le_scan_param *scan_param = BT_LE_SCAN_PASSIVE;
 
 	/* Set the default parameters. */
-	bt_scan.scan_param = *scan_param;
+	bt_le_scan.scan_param = *scan_param;
 }
 
-#if CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER
+#if CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_FILTER
 static void connected(struct bt_conn *conn, uint8_t err)
 {
 	scan_attempts_filter_device_add(bt_conn_get_dst(conn));
@@ -1146,25 +1147,25 @@ static struct bt_conn_cb conn_callbacks = {
 	.connected = connected,
 	.disconnected = disconnected
 };
-#endif /* CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER */
+#endif /* CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_FILTER */
 
 static void scan_default_conn_param_set(void)
 {
 	struct bt_le_conn_param *conn_param = BT_LE_CONN_PARAM_DEFAULT;
 
 	/* Set default Connection params. */
-	bt_scan.conn_param = *conn_param;
+	bt_le_scan.conn_param = *conn_param;
 }
 
-int bt_scan_filter_add(enum bt_scan_filter_type type,
+int bt_le_scan_filter_add(enum bt_le_scan_filter_type type,
 		       const void *data)
 {
 	char *name;
-	struct bt_scan_short_name *short_name;
+	struct bt_le_scan_short_name *short_name;
 	bt_addr_le_t *addr;
 	struct bt_uuid *uuid;
 	uint16_t appearance;
-	struct bt_scan_manufacturer_data *manufacturer_data;
+	struct bt_le_scan_manufacturer_data *manufacturer_data;
 	int err = 0;
 
 	if (!data) {
@@ -1174,33 +1175,33 @@ int bt_scan_filter_add(enum bt_scan_filter_type type,
 	k_mutex_lock(&scan_mutex, K_FOREVER);
 
 	switch (type) {
-	case BT_SCAN_FILTER_TYPE_NAME:
+	case BT_LE_SCAN_FILTER_TYPE_NAME:
 		name = (char *)data;
 		err = scan_name_filter_add(name);
 		break;
 
-	case BT_SCAN_FILTER_TYPE_SHORT_NAME:
-		short_name = (struct bt_scan_short_name *)data;
+	case BT_LE_SCAN_FILTER_TYPE_SHORT_NAME:
+		short_name = (struct bt_le_scan_short_name *)data;
 		err = scan_short_name_filter_add(short_name);
 		break;
 
-	case BT_SCAN_FILTER_TYPE_ADDR:
+	case BT_LE_SCAN_FILTER_TYPE_ADDR:
 		addr = (bt_addr_le_t *)data;
 		err = scan_addr_filter_add(addr);
 		break;
 
-	case BT_SCAN_FILTER_TYPE_UUID:
+	case BT_LE_SCAN_FILTER_TYPE_UUID:
 		uuid = (struct bt_uuid *)data;
 		err = scan_uuid_filter_add(uuid);
 		break;
 
-	case BT_SCAN_FILTER_TYPE_APPEARANCE:
+	case BT_LE_SCAN_FILTER_TYPE_APPEARANCE:
 		appearance = *((uint16_t *)data);
 		err = scan_appearance_filter_add(appearance);
 		break;
 
-	case BT_SCAN_FILTER_TYPE_MANUFACTURER_DATA:
-		manufacturer_data = (struct bt_scan_manufacturer_data *)data;
+	case BT_LE_SCAN_FILTER_TYPE_MANUFACTURER_DATA:
+		manufacturer_data = (struct bt_le_scan_manufacturer_data *)data;
 		err = scan_manufacturer_data_filter_add(manufacturer_data);
 		break;
 
@@ -1214,49 +1215,49 @@ int bt_scan_filter_add(enum bt_scan_filter_type type,
 	return err;
 }
 
-void bt_scan_filter_remove_all(void)
+void bt_le_scan_filter_remove_all(void)
 {
 	k_mutex_lock(&scan_mutex, K_FOREVER);
 
-	struct bt_scan_name_filter *name_filter =
-			&bt_scan.scan_filters.name;
+	struct bt_le_scan_name_filter *name_filter =
+			&bt_le_scan.scan_filters.name;
 	name_filter->cnt = 0;
 
-	struct bt_scan_short_name_filter *short_name_filter =
-			&bt_scan.scan_filters.short_name;
+	struct bt_le_scan_short_name_filter *short_name_filter =
+			&bt_le_scan.scan_filters.short_name;
 	short_name_filter->cnt = 0;
 
-	struct bt_scan_addr_filter *addr_filter =
-			&bt_scan.scan_filters.addr;
+	struct bt_le_scan_addr_filter *addr_filter =
+			&bt_le_scan.scan_filters.addr;
 	addr_filter->cnt = 0;
 
-	struct bt_scan_uuid_filter *uuid_filter =
-			&bt_scan.scan_filters.uuid;
+	struct bt_le_scan_uuid_filter *uuid_filter =
+			&bt_le_scan.scan_filters.uuid;
 	uuid_filter->cnt = 0;
 
-	struct bt_scan_appearance_filter *appearance_filter =
-			&bt_scan.scan_filters.appearance;
+	struct bt_le_scan_appearance_filter *appearance_filter =
+			&bt_le_scan.scan_filters.appearance;
 	appearance_filter->cnt = 0;
 
-	struct bt_scan_manufacturer_data_filter *manufacturer_data_filter =
-		&bt_scan.scan_filters.manufacturer_data;
+	struct bt_le_scan_manufacturer_data_filter *manufacturer_data_filter =
+		&bt_le_scan.scan_filters.manufacturer_data;
 	manufacturer_data_filter->cnt = 0;
 
 	k_mutex_unlock(&scan_mutex);
 }
 
-void bt_scan_filter_disable(void)
+void bt_le_scan_filter_disable(void)
 {
 	/* Disable all filters. */
-	bt_scan.scan_filters.name.enabled = false;
-	bt_scan.scan_filters.short_name.enabled = false;
-	bt_scan.scan_filters.addr.enabled = false;
-	bt_scan.scan_filters.uuid.enabled = false;
-	bt_scan.scan_filters.appearance.enabled = false;
-	bt_scan.scan_filters.manufacturer_data.enabled = false;
+	bt_le_scan.scan_filters.name.enabled = false;
+	bt_le_scan.scan_filters.short_name.enabled = false;
+	bt_le_scan.scan_filters.addr.enabled = false;
+	bt_le_scan.scan_filters.uuid.enabled = false;
+	bt_le_scan.scan_filters.appearance.enabled = false;
+	bt_le_scan.scan_filters.manufacturer_data.enabled = false;
 }
 
-int bt_scan_filter_enable(uint8_t mode, bool match_all)
+int bt_le_scan_filter_enable(uint8_t mode, bool match_all)
 {
 	/* Check if the mode is correct. */
 	if (!check_filter_mode(mode)) {
@@ -1264,32 +1265,32 @@ int bt_scan_filter_enable(uint8_t mode, bool match_all)
 	}
 
 	/* Disable filters. */
-	bt_scan_filter_disable();
+	bt_le_scan_filter_disable();
 
-	struct bt_scan_filters *filters = &bt_scan.scan_filters;
+	struct bt_le_scan_filters *filters = &bt_le_scan.scan_filters;
 
 	/* Turn on the filters of your choice. */
-	if (mode & BT_SCAN_ADDR_FILTER) {
+	if (mode & BT_LE_SCAN_ADDR_FILTER) {
 		filters->addr.enabled = true;
 	}
 
-	if (mode & BT_SCAN_NAME_FILTER) {
+	if (mode & BT_LE_SCAN_NAME_FILTER) {
 		filters->name.enabled = true;
 	}
 
-	if (mode & BT_SCAN_SHORT_NAME_FILTER) {
+	if (mode & BT_LE_SCAN_SHORT_NAME_FILTER) {
 		filters->short_name.enabled = true;
 	}
 
-	if (mode & BT_SCAN_UUID_FILTER) {
+	if (mode & BT_LE_SCAN_UUID_FILTER) {
 		filters->uuid.enabled = true;
 	}
 
-	if (mode & BT_SCAN_APPEARANCE_FILTER) {
+	if (mode & BT_LE_SCAN_APPEARANCE_FILTER) {
 		filters->appearance.enabled = true;
 	}
 
-	if (mode & BT_SCAN_MANUFACTURER_DATA_FILTER) {
+	if (mode & BT_LE_SCAN_MANUFACTURER_DATA_FILTER) {
 		filters->manufacturer_data.enabled = true;
 	}
 
@@ -1299,62 +1300,62 @@ int bt_scan_filter_enable(uint8_t mode, bool match_all)
 	return 0;
 }
 
-int bt_scan_filter_status_get(struct bt_filter_status *status)
+int bt_le_scan_filter_status_get(struct bt_filter_status *status)
 {
 	if (!status) {
 		return -EINVAL;
 	}
 
-	status->addr.enabled = bt_scan.scan_filters.addr.enabled;
-	status->addr.cnt = bt_scan.scan_filters.addr.cnt;
-	status->name.enabled = bt_scan.scan_filters.name.enabled;
-	status->name.cnt = bt_scan.scan_filters.name.cnt;
+	status->addr.enabled = bt_le_scan.scan_filters.addr.enabled;
+	status->addr.cnt = bt_le_scan.scan_filters.addr.cnt;
+	status->name.enabled = bt_le_scan.scan_filters.name.enabled;
+	status->name.cnt = bt_le_scan.scan_filters.name.cnt;
 	status->short_name.enabled =
-			bt_scan.scan_filters.short_name.enabled;
-	status->short_name.cnt = bt_scan.scan_filters.short_name.cnt;
-	status->uuid.enabled = bt_scan.scan_filters.uuid.enabled;
-	status->uuid.cnt = bt_scan.scan_filters.uuid.cnt;
+			bt_le_scan.scan_filters.short_name.enabled;
+	status->short_name.cnt = bt_le_scan.scan_filters.short_name.cnt;
+	status->uuid.enabled = bt_le_scan.scan_filters.uuid.enabled;
+	status->uuid.cnt = bt_le_scan.scan_filters.uuid.cnt;
 	status->appearance.enabled =
-			bt_scan.scan_filters.appearance.enabled;
+			bt_le_scan.scan_filters.appearance.enabled;
 	status->appearance.cnt =
-			bt_scan.scan_filters.appearance.cnt;
-	status->manufacturer_data.enabled = bt_scan.scan_filters.manufacturer_data.enabled;
+			bt_le_scan.scan_filters.appearance.cnt;
+	status->manufacturer_data.enabled = bt_le_scan.scan_filters.manufacturer_data.enabled;
 	status->manufacturer_data.cnt =
-			bt_scan.scan_filters.manufacturer_data.cnt;
+			bt_le_scan.scan_filters.manufacturer_data.cnt;
 
 	return 0;
 }
 
-int bt_scan_stop(void)
+int bt_le_scan_stop(void)
 {
 	return bt_le_scan_stop();
 }
 
 static struct bt_le_scan_cb scan_cb;
-void bt_scan_init(const struct bt_scan_init_param *init)
+void bt_le_scan_init(const struct bt_le_scan_init_param *init)
 {
 	bt_le_scan_cb_register(&scan_cb);
 
 	/* Disable all scanning filters. */
-	memset(&bt_scan.scan_filters, 0, sizeof(bt_scan.scan_filters));
+	memset(&bt_le_scan.scan_filters, 0, sizeof(bt_le_scan.scan_filters));
 
 	/* If the pointer to the initialization structure exist,
 	 * use it to scan the configuration.
 	 */
 	if (init) {
 #if CONFIG_BT_CENTRAL
-		bt_scan.connect_if_match = init->connect_if_match;
+		bt_le_scan.connect_if_match = init->connect_if_match;
 #endif /* CONFIG_BT_CENTRAL */
 
 		if (init->scan_param) {
-			bt_scan.scan_param = *init->scan_param;
+			bt_le_scan.scan_param = *init->scan_param;
 		} else {
 			/* Use the default static configuration. */
 			scan_default_param_set();
 		}
 
 		if (init->conn_param) {
-			bt_scan.conn_param = *init->conn_param;
+			bt_le_scan.conn_param = *init->conn_param;
 		} else {
 			/* Use the default static configuration. */
 			scan_default_conn_param_set();
@@ -1365,21 +1366,21 @@ void bt_scan_init(const struct bt_scan_init_param *init)
 		scan_default_conn_param_set();
 
 #if CONFIG_BT_CENTRAL
-		bt_scan.connect_if_match = false;
+		bt_le_scan.connect_if_match = false;
 #endif /* CONFIG_BT_CENTRAL */
 	}
 
-#if CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER
+#if CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_FILTER
 	bt_conn_cb_register(&conn_callbacks);
-#endif /* CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER */
+#endif /* CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_FILTER */
 }
 
-void bt_scan_update_init_conn_params(struct bt_le_conn_param *new_conn_param)
+void bt_le_scan_update_init_conn_params(struct bt_le_conn_param *new_conn_param)
 {
-	bt_scan.conn_param = *new_conn_param;
+	bt_le_scan.conn_param = *new_conn_param;
 }
 
-static void check_enabled_filters(struct bt_scan_control *control)
+static void check_enabled_filters(struct bt_le_scan_control *control)
 {
 	control->filter_cnt = 0;
 
@@ -1410,8 +1411,8 @@ static void check_enabled_filters(struct bt_scan_control *control)
 
 static bool adv_data_found(struct bt_data *data, void *user_data)
 {
-	struct bt_scan_control *scan_control =
-			(struct bt_scan_control *)user_data;
+	struct bt_le_scan_control *scan_control =
+			(struct bt_le_scan_control *)user_data;
 
 	switch (data->type) {
 	case BT_DATA_NAME_COMPLETE:
@@ -1458,7 +1459,7 @@ static bool adv_data_found(struct bt_data *data, void *user_data)
 	return true;
 }
 
-static void filter_state_check(struct bt_scan_control *control,
+static void filter_state_check(struct bt_le_scan_control *control,
 			       const bt_addr_le_t *addr)
 {
 	if (!scan_device_filter_check(addr)) {
@@ -1494,12 +1495,12 @@ static void filter_state_check(struct bt_scan_control *control,
 static void scan_recv(const struct bt_le_scan_recv_info *info,
 		      struct net_buf_simple *ad)
 {
-	struct bt_scan_control scan_control;
+	struct bt_le_scan_control scan_control;
 	struct net_buf_simple_state state;
 
 	memset(&scan_control, 0, sizeof(scan_control));
 
-	scan_control.all_mode = bt_scan.scan_filters.all_mode;
+	scan_control.all_mode = bt_le_scan.scan_filters.all_mode;
 
 	check_enabled_filters(&scan_control);
 
@@ -1518,7 +1519,7 @@ static void scan_recv(const struct bt_le_scan_recv_info *info,
 	net_buf_simple_restore(ad, &state);
 
 	scan_control.device_info.recv_info = info;
-	scan_control.device_info.conn_param = &bt_scan.conn_param;
+	scan_control.device_info.conn_param = &bt_le_scan.conn_param;
 	scan_control.device_info.adv_data = ad;
 
 	/* In the multifilter mode, the number of the active filters must equal
@@ -1532,15 +1533,15 @@ static struct bt_le_scan_cb scan_cb = {
 	.recv = scan_recv,
 };
 
-int bt_scan_start(enum bt_scan_type scan_type)
+int bt_le_scan_start(enum bt_le_scan_type scan_type)
 {
 	switch (scan_type) {
-	case BT_SCAN_TYPE_SCAN_ACTIVE:
-		bt_scan.scan_param.type = BT_LE_SCAN_TYPE_ACTIVE;
+	case BT_LE_SCAN_TYPE_SCAN_ACTIVE:
+		bt_le_scan.scan_param.type = BT_LE_SCAN_TYPE_ACTIVE;
 		break;
 
-	case BT_SCAN_TYPE_SCAN_PASSIVE:
-		bt_scan.scan_param.type = BT_LE_SCAN_TYPE_PASSIVE;
+	case BT_LE_SCAN_TYPE_SCAN_PASSIVE:
+		bt_le_scan.scan_param.type = BT_LE_SCAN_TYPE_PASSIVE;
 		break;
 
 	default:
@@ -1548,7 +1549,7 @@ int bt_scan_start(enum bt_scan_type scan_type)
 	}
 
 	/* Start the scanning. */
-	int err = bt_le_scan_start(&bt_scan.scan_param, NULL);
+	int err = bt_le_scan_start(&bt_le_scan.scan_param, NULL);
 
 	if (!err) {
 		LOG_DBG("Scanning");
@@ -1557,13 +1558,13 @@ int bt_scan_start(enum bt_scan_type scan_type)
 	return err;
 }
 
-int bt_scan_params_set(struct bt_le_scan_param *scan_param)
+int bt_le_scan_params_set(struct bt_le_scan_param *scan_param)
 {
-	bt_scan_stop();
+	bt_le_scan_stop();
 
 	if (scan_param) {
 		/* Assign new scanning parameters. */
-		bt_scan.scan_param = *scan_param;
+		bt_le_scan.scan_param = *scan_param;
 	} else {
 		/* If NULL, use the default static configuration. */
 		scan_default_param_set();
@@ -1574,8 +1575,8 @@ int bt_scan_params_set(struct bt_le_scan_param *scan_param)
 	return 0;
 }
 
-#if CONFIG_BT_SCAN_BLOCKLIST
-int bt_scan_blocklist_device_add(const bt_addr_le_t *addr)
+#if CONFIG_BT_LE_SCAN_BLOCKLIST
+int bt_le_scan_blocklist_device_add(const bt_addr_le_t *addr)
 {
 	int err = 0;
 	char addr_str[BT_ADDR_LE_STR_LEN];
@@ -1589,8 +1590,8 @@ int bt_scan_blocklist_device_add(const bt_addr_le_t *addr)
 	k_mutex_lock(&scan_mutex, K_FOREVER);
 
 	/* Check if the device is already on the blocklist. */
-	for (size_t i = 0; i < ARRAY_SIZE(bt_scan.blocklist.addr); i++) {
-		if (bt_addr_le_cmp(&bt_scan.blocklist.addr[i], addr) == 0) {
+	for (size_t i = 0; i < ARRAY_SIZE(bt_le_scan.blocklist.addr); i++) {
+		if (bt_addr_le_cmp(&bt_le_scan.blocklist.addr[i], addr) == 0) {
 			LOG_DBG("Device %s is already on the blocklist",
 				addr_str);
 
@@ -1598,13 +1599,13 @@ int bt_scan_blocklist_device_add(const bt_addr_le_t *addr)
 		}
 	}
 
-	if (bt_scan.blocklist.count >= ARRAY_SIZE(bt_scan.blocklist.addr)) {
+	if (bt_le_scan.blocklist.count >= ARRAY_SIZE(bt_le_scan.blocklist.addr)) {
 		LOG_ERR("No place for the new device");
 		err = -ENOMEM;
 	} else {
-		bt_addr_le_copy(&bt_scan.blocklist.addr[bt_scan.blocklist.count],
+		bt_addr_le_copy(&bt_le_scan.blocklist.addr[bt_le_scan.blocklist.count],
 				addr);
-		bt_scan.blocklist.count++;
+		bt_le_scan.blocklist.count++;
 		LOG_INF("Device %s added to the scanning blocklist", addr_str);
 	}
 
@@ -1614,26 +1615,26 @@ out:
 	return err;
 }
 
-void bt_scan_blocklist_clear(void)
+void bt_le_scan_blocklist_clear(void)
 {
 	k_mutex_lock(&scan_mutex, K_FOREVER);
-	memset(&bt_scan.blocklist, 0, sizeof(bt_scan.blocklist));
+	memset(&bt_le_scan.blocklist, 0, sizeof(bt_le_scan.blocklist));
 	k_mutex_unlock(&scan_mutex);
 }
-#endif /* CONFIG_BT_SCAN_BLOCKLIST */
+#endif /* CONFIG_BT_LE_SCAN_BLOCKLIST */
 
-#if CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER
-void bt_scan_conn_attempts_filter_clear(void)
+#if CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_FILTER
+void bt_le_scan_conn_attempts_filter_clear(void)
 {
 	k_mutex_lock(&scan_mutex, K_FOREVER);
-	memset(&bt_scan.attempts_filter, 0, sizeof(bt_scan.attempts_filter));
+	memset(&bt_le_scan.attempts_filter, 0, sizeof(bt_le_scan.attempts_filter));
 	k_mutex_unlock(&scan_mutex);
 }
-#endif /* CONFIG_BT_SCAN_CONN_ATTEMPTS_FILTER */
+#endif /* CONFIG_BT_LE_SCAN_CONN_ATTEMPTS_FILTER */
 
 #if CONFIG_BT_CENTRAL
-void bt_scan_update_connect_if_match(bool connect_if_match)
+void bt_le_scan_update_connect_if_match(bool connect_if_match)
 {
-	bt_scan.connect_if_match = connect_if_match;
+	bt_le_scan.connect_if_match = connect_if_match;
 }
 #endif /* CONFIG_BT_CENTRAL */
