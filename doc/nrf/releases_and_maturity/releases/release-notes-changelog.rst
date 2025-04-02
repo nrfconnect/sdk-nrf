@@ -221,8 +221,12 @@ Matter
   * :ref:`ug_matter_debug_snippet`.
   * Storing Matter key materials in the :ref:`matter_platforms_security_kmu`.
   * A new section :ref:`ug_matter_device_low_power_calibration_period` in the :ref:`ug_matter_device_low_power_configuration` page.
+  * A new section :ref:`ug_matter_gs_tools_opp` in the :ref:`ug_matter_gs_tools` page.
 
-* Updated by disabling the :ref:`mpsl` before performing factory reset to speed up the process.
+* Updated:
+
+  * By disabling the :ref:`mpsl` before performing factory reset to speed up the process.
+  * The `ug_matter_device_low_power_configuration` page to mention the `nWP049 - Matter over Thread: Power consumption and battery life`_ and `Online Power Profiler for Matter over Thread`_ as a useful resources in optimizing the power consumption of a Matter device.
 
 Matter fork
 +++++++++++

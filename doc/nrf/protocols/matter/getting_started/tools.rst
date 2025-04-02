@@ -408,3 +408,13 @@ nRF Thread Topology Monitor
 .. include:: ../../thread/tools.rst
     :start-after: ttm_shortdesc_start
     :end-before: ttm_shortdesc_end
+
+.. _ug_matter_gs_tools_opp:
+
+Online Power Profiler for Matter over Thread
+********************************************
+
+`Online Power Profiler for Matter over Thread`_ is a web tool that allows you to estimate the power consumption of your Matter devices.
+It provides a graphical interface for configuring the parameters of your device, such as TX power, voltage supply, or ICD configuration and simulating its power consumption based on the simplified, theoretical model.
+The tool supports the nRF52840, nRF5340 and nRF54L15 platforms.
+It allows you to also estimate the power consumption of your device in a selected period of time and use the output for estimating the lifetime of the battery used as a power source.

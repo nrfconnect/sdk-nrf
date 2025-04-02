@@ -152,6 +152,8 @@
 .. _`Matter SDK tagged as v1.0.0`: https://github.com/project-chip/connectedhomeip/releases/tag/v1.0.0
 .. _`Testing with Apple Devices`: https://github.com/project-chip/connectedhomeip/blob/master/docs/guides/darwin.md
 .. _`chip-tool`: https://docs.nordicsemi.com/bundle/ncs-latest/page/matter/chip_tool_guide.html
+.. _`Online Power Profiler for Matter over Thread`: https://devzone.nordicsemi.com/power/w/opp/16/online-power-profiler-for-matter-over-thread
+.. _`nWP049 - Matter over Thread: Power consumption and battery life`: https://docs.nordicsemi.com/bundle/nwp_049/page/WP/nwp_049/intro.html
 
 .. _`CoreMark GitHub`: https://github.com/eembc/coremark
 
