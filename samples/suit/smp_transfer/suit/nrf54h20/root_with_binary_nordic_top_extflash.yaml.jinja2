@@ -17,6 +17,15 @@
 {%- else %}
   {%- set nordic_top = False %}
 {%- endif %}
+{%- if 'SB_CONFIG_SUIT_RECOVERY_APPLICATION_IMAGE_MANIFEST_APP_LOCAL_3' in sysbuild['config'] and sysbuild['config']['SB_CONFIG_SUIT_RECOVERY_APPLICATION_IMAGE_MANIFEST_APP_LOCAL_3'] != '' %}
+  {%- set mpi_app_recovery_local_vendor_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_APP_LOCAL_3_VENDOR_NAME']|default('nordicsemi.com') %}
+  {%- set mpi_app_recovery_local_class_name = sysbuild['config']['SB_CONFIG_SUIT_MPI_APP_LOCAL_3_CLASS_NAME']|default('nRF54H20_sample_app_3') %}
+{%- endif %}
+{%- if app_recovery_img is defined and 'CONFIG_SUIT_INVOKE_APP_LOCAL_3_BEFORE_MAIN_APP' in app_recovery_img['config'] and app_recovery_img['config'][CONFIG_SUIT_INVOKE_APP_LOCAL_3_BEFORE_MAIN_APP] != ''  %}
+  {%- set recovery_button_check_on_invoke = True %}
+{%- else %}
+  {%- set recovery_button_check_on_invoke = False %}
+{%- endif %}
 SUIT_Envelope_Tagged:
   suit-authentication-wrapper:
     SuitDigest:
@@ -34,14 +43,14 @@ SUIT_Envelope_Tagged:
       suit-components:
       - - CAND_MFST
         - 0
-{%- if radio is defined %}
+{% if recovery_button_check_on_invoke %}
     {%- set component_index = component_index + 1 %}
-    {%- set rad_component_index = component_index %}
-    {{- component_list.append( rad_component_index ) or ""}}
+    {%- set app_recovery_local_component_index = component_index %}
+    {{- component_list.append( app_recovery_local_component_index ) or ""}}
       - - INSTLD_MFST
         - RFC4122_UUID:
-            namespace: {{ mpi_radio_vendor_name }}
-            name: {{ mpi_radio_class_name }}
+            namespace: {{ mpi_app_recovery_local_vendor_name }}
+            name: {{ mpi_app_recovery_local_class_name }}
 {%- endif %}
 {%- if application is defined %}
     {%- set component_index = component_index + 1 %}
@@ -51,6 +60,15 @@ SUIT_Envelope_Tagged:
         - RFC4122_UUID:
             namespace: {{ mpi_application_vendor_name }}
             name: {{ mpi_application_class_name }}
+{%- endif %}
+{%- if radio is defined %}
+    {%- set component_index = component_index + 1 %}
+    {%- set rad_component_index = component_index %}
+    {{- component_list.append( rad_component_index ) or ""}}
+      - - INSTLD_MFST
+        - RFC4122_UUID:
+            namespace: {{ mpi_radio_vendor_name }}
+            name: {{ mpi_radio_class_name }}
 {%- endif %}
 
 {%- set component_list_without_top = component_list[:] %}
