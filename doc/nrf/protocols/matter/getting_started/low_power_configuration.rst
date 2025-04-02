@@ -20,6 +20,11 @@ The following Matter samples and applications use the low power configuration by
 * :ref:`Matter window covering sample <matter_window_covering_sample>`
 * :ref:`Matter weather station application <matter_weather_station_app>`
 
+The following additional materials and tools might help you to optimize, estimate, and measure the power consumption of your device are:
+
+* `nWP049 - Matter over Thread: Power consumption and battery life`_
+* :ref:`ug_matter_gs_tools_opp`
+
 .. _ug_matter_device_low_power_icd:
 
 Enable Matter Intermittently Connected Devices support
