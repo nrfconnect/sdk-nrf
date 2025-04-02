@@ -25,10 +25,11 @@ Zephyr and the |NCS| provides support for developing applications with the follo
        | `nPM1300 EK get started`_
      - | `nPM1300 EK product page`_
        | `nPM1300 Power Management IC (PMIC) <nPM1300 product website_>`_
-   * - --
+   * - `nPM2100 EK <nPM2100 EK User Guide_>`_
      - PCA10170
      - See :ref:`ug_npm2100_compatible_boards`
      - | `Datasheet <nPM2100 Datasheet_>`_
+       | `User Guide <nPM2100 EK User Guide_>`_
      - | `nPM2100 EK product page`_
        | `nPM2100 Power Management IC (PMIC) <nPM2100 product website_>`_
 
