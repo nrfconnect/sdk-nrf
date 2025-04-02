@@ -1494,3 +1494,8 @@ ci_tests_zephyr_drivers_uart:
   files:
     - nrf/tests/zephyr/drivers/uart/
     - zephyr/tests/drivers/uart/
+
+ci_tests_zephyr_drivers_i2s:
+  files:
+    - nrf/tests/zephyr/drivers/i2s/
+    - zephyr/tests/drivers/i2s/

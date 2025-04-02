@@ -926,6 +926,7 @@
 /tests/zephyr/drivers/gpio/               @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/i2c/i2c_bme688/     @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/i2c/i2c_target_api/ @nrfconnect/ncs-low-level-test
+/tests/zephyr/drivers/i2s/                @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/mspi/api/           @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /tests/zephyr/boards/nrf/                 @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/sensor/             @nrfconnect/ncs-low-level-test
