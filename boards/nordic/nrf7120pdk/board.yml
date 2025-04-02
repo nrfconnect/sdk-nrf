@@ -8,3 +8,5 @@ board:
       cpucluster: cpuflpr
     - name: ns
       cpucluster: cpuapp
+    - name: emu
+      cpucluster: cpuapp
