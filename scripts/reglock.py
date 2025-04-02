@@ -21,6 +21,7 @@ NRF54L15 BOOTCONF generator.
 from intelhex import IntelHex
 import argparse
 import sys
+import warnings
 
 SIZE_MAX_KB = 31
 
@@ -57,7 +58,8 @@ def main():
         sys.exit("error: requested size not aligned to 1k")
     size = size // 1024
     if size > SIZE_MAX_KB:
-        sys.exit("error: requested size too big")
+        warnings.warn("warning: requested size too big; Setting to allowed maximum")
+        size = SIZE_MAX_KB
 
     payload = bytearray([
         READ_ALLOWED | EXECUTE_ALLOWED | SECURE | OWNER_NONE,
