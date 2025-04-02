@@ -44,6 +44,7 @@ jobs:
         (echo "::error ::Merge commits not allowed, rebase instead";false)
 
         git rebase origin/${BASE_REF}
+        west update
         # debug
         git log  --pretty=oneline | head -n 10
 
