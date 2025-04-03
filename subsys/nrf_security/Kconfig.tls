@@ -222,6 +222,15 @@ config MBEDTLS_SSL_DTLS_BADMAC_LIMIT
 
 endif # MBEDTLS_SSL_PROTO_DTLS
 
+# This config can be set only for OpenThread's TCAT and CoAPs, because these are isolated cases,
+# when X.509 certificate-based handshake is done in an internal network with full trust.
+# KRKNWK-20181
+config MBEDTLS_SSL_CLI_ALLOW_WEAK_CERTIFICATE_VERIFICATION_WITHOUT_HOSTNAME
+	bool
+	depends on OPENTHREAD_BLE_TCAT || OPENTHREAD_COAPS
+	help
+	  Allow weak certificate verification without hostname check.
+
 config MBEDTLS_SSL_ALL_ALERT_MESSAGES
 	bool
 	prompt "Enable all SSL alert messages"
