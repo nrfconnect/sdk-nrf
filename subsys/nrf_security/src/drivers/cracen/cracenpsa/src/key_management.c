@@ -716,7 +716,7 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 
 	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
 	    PSA_KEY_LOCATION_CRACEN) {
-		return handle_identity_key(key_buffer, key_buffer_size, sx_curve, data,
+		status = handle_identity_key(key_buffer, key_buffer_size, sx_curve, data,
 						  &priv_key, &pub_key);
 	} else {
 		status = handle_curve_family(psa_curve, key_bits_attr, key_buffer, data, sx_curve,
