@@ -285,6 +285,7 @@
 /doc/**/*.svg                             @nrfconnect/ncs-doc-leads
 /doc/**/*.png                             @nrfconnect/ncs-doc-leads
 /doc/**/*.webp                            @nrfconnect/ncs-doc-leads
+/doc/**/*.txt                             @nrfconnect/ncs-doc-leads
 
 # Drivers
 /drivers/bluetooth/                       @nrfconnect/ncs-co-drivers @nrfconnect/ncs-dragoon
