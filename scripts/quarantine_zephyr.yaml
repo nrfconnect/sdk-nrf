@@ -273,6 +273,14 @@
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31783"
 
+- scenarios:
+    - sample.net.openthread.coprocessor
+    - sample.net.openthread.coprocessor.usb
+    - sample.openthread.coprocessor.rcp
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "Not compatible with NCS. https://nordicsemi.atlassian.net/browse/KRKNWK-20183"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
