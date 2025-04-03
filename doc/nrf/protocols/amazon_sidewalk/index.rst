@@ -23,4 +23,5 @@ Amazon Sidewalk
    In addition, we recommend that you consult with your local regulatory bodies, and check if the gateway is allowed to operate its radio in your locale, as U.S. license-free band devices, only for development.
 
 To learn more about the Amazon Sidewalk solution and to see step-by-step setup instructions, refer to the `Amazon Sidewalk documentation`_ page.
-Note that after the |NCS| release v2.9.0 for Amazon Sidewalk protocol, it will be moved to the add-on structure and released separately.
+After the |NCS| release v2.9.1, the Amazon Sidewalk protocol is no longer a part of the |NCS|.
+It is now moved to the add-on structure and released separately.
