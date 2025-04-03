@@ -73,8 +73,14 @@ config BT_POWER_PROFILING_NON_CONNECTABLE_ADV_INTERVAL_MAX
 
 config BT_POWER_PROFILING_LED_DISABLED
 	bool "Disable LEDs"
+	default y
 	help
 	  Disables the LEDs to reduce power consumption.
+
+config BT_POWER_PROFILING_NFC_DISABLED
+	bool "Disable NFC"
+	help
+	  Disables the NFC to reduce power consumption.
 
 config SETTINGS
 	default y

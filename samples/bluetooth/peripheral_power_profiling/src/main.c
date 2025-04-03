@@ -104,7 +104,7 @@ static const struct bt_le_adv_param *connectable_ad_params =
 			NULL);
 
 static const struct bt_le_adv_param *non_connectable_ad_params =
-	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_SCANNABLE,
+	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_NONE,
 			NON_CONNECTABLE_ADV_INTERVAL_MIN,
 			NON_CONNECTABLE_ADV_INTERVAL_MAX,
 			NULL);
@@ -774,10 +774,12 @@ int main(void)
 		return 0;
 	}
 
-	err = nfc_init();
-	if (err) {
-		printk("Failed to initialize NFC (err %d)\n", err);
-		return 0;
+	if (!IS_ENABLED(BT_POWER_PROFILING_NFC_DISABLED)) {
+		err = nfc_init();
+		if (err) {
+			printk("Failed to initialize NFC (err %d)\n", err);
+			return 0;
+		}
 	}
 
 	button_handler(button_state, has_changed);
@@ -786,8 +788,12 @@ int main(void)
 		k_work_schedule(&system_off_work, K_SECONDS(SYSTEM_OFF_DELAY));
 	}
 
-	for (;;) {
-		set_led(RUN_STATUS_LED, (++blink_status) % 2);
-		k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
+	if (!IS_ENABLED(CONFIG_BT_POWER_PROFILING_LED_DISABLED)) {
+		for (;;) {
+			set_led(RUN_STATUS_LED, (++blink_status) % 2);
+			k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
+		}
+	} else {
+		return 0;
 	}
 }
