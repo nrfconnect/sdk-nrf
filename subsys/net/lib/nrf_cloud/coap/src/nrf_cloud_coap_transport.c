@@ -69,6 +69,8 @@ struct cc_xfer_data {
 static K_SEM_DEFINE(cb_sem, 0, 1);
 /* Semaphore to be used when doing authorization with an external coap_client */
 static K_SEM_DEFINE(ext_cc_sem, 0, 1);
+/* Mutex to be used when using the internal coap_client */
+static K_MUTEX_DEFINE(internal_transfer_mut);
 
 static struct nrf_cloud_coap_client internal_cc = {0};
 
@@ -188,16 +190,17 @@ static int add_creds(void)
 /**@brief Initialize the CoAP client */
 int nrf_cloud_coap_init(void)
 {
-	int err;
+	int err = 0;
 
 	(void)nrf_cloud_print_details();
+	k_mutex_lock(&internal_transfer_mut, K_FOREVER);
 
 	internal_cc.authenticated = false;
 
 	if (!internal_cc.initialized) {
 		err = add_creds();
 		if (err) {
-			return err;
+			goto exit;
 		}
 
 		(void)nrf_cloud_codec_init(NULL);
@@ -205,16 +208,18 @@ int nrf_cloud_coap_init(void)
 #if defined(CONFIG_MODEM_INFO)
 		err = modem_info_init();
 		if (err) {
-			return err;
+			goto exit;
 		}
 #endif
 		err = nrf_cloud_coap_transport_init(&internal_cc);
 		if (err) {
-			return err;
+			goto exit;
 		}
 	}
 
-	return 0;
+exit:
+	k_mutex_unlock(&internal_transfer_mut);
+	return err;
 }
 
 static int update_configured_info_sections(const char * const app_ver)
@@ -281,7 +286,7 @@ static void update_control_section(void)
 
 	struct nrf_cloud_ctrl_data device_ctrl = {0};
 	struct nrf_cloud_data data_out = {0};
-	int err;
+	int err = 0;
 
 	/* Get the device control settings, encode it, and send to shadow */
 	nrf_cloud_device_control_get(&device_ctrl);
@@ -307,21 +312,23 @@ static void update_control_section(void)
 
 int nrf_cloud_coap_connect(const char * const app_ver)
 {
+	int err = 0;
+
 	if (!internal_cc.initialized) {
 		LOG_ERR("nRF Cloud CoAP library has not been initialized");
 		return -EACCES;
 	}
 
-	int err;
+	k_mutex_lock(&internal_transfer_mut, K_FOREVER);
 
 	err = nrf_cloud_coap_transport_connect(&internal_cc);
 	if (err < 0) {
-		return err;
+		goto exit;
 	}
 
 	err = nrf_cloud_coap_transport_authenticate(&internal_cc);
 	if (err) {
-		return err;
+		goto exit;
 	}
 
 	/* On initial connect, set the control section in the shadow */
@@ -330,21 +337,37 @@ int nrf_cloud_coap_connect(const char * const app_ver)
 	/* On initial connect, update the configured info sections in the shadow */
 	err = update_configured_info_sections(app_ver);
 	if (err != -EIO) {
-		return 0;
+		err = 0;
+		goto exit;
 	}
 
 	nrf_cloud_coap_transport_disconnect(&internal_cc);
+
+exit:
+	k_mutex_unlock(&internal_transfer_mut);
 	return err;
 }
 
 int nrf_cloud_coap_pause(void)
 {
-	return nrf_cloud_coap_transport_pause(&internal_cc);
+	int err = 0;
+
+	k_mutex_lock(&internal_transfer_mut, K_FOREVER);
+	err = nrf_cloud_coap_transport_pause(&internal_cc);
+	k_mutex_unlock(&internal_transfer_mut);
+
+	return err;
 }
 
 int nrf_cloud_coap_resume(void)
 {
-	return nrf_cloud_coap_transport_resume(&internal_cc);
+	int err = 0;
+
+	k_mutex_lock(&internal_transfer_mut, K_FOREVER);
+	err = nrf_cloud_coap_transport_resume(&internal_cc);
+	k_mutex_unlock(&internal_transfer_mut);
+
+	return err;
 }
 
 static void client_callback(int16_t result_code, size_t offset, const uint8_t *payload, size_t len,
@@ -387,7 +410,6 @@ static void client_callback(int16_t result_code, size_t offset, const uint8_t *p
 	}
 }
 
-static K_SEM_DEFINE(serial_sem, 1, 1);
 
 static int client_transfer(enum coap_method method,
 			   const char *resource, const char *query,
@@ -402,11 +424,6 @@ static int client_transfer(enum coap_method method,
 		return -ENOBUFS;
 	}
 	__ASSERT_NO_MSG(resource != NULL);
-
-	/* Use the serial semaphore if this is the internal coap client */
-	if (is_internal(xfer->nrfc_cc)) {
-		k_sem_take(&serial_sem, K_FOREVER);
-	}
 
 	int err = 0;
 	int retry;
@@ -508,9 +525,6 @@ static int client_transfer(enum coap_method method,
 	}
 
 transfer_end:
-	if (is_internal(xfer->nrfc_cc)) {
-		k_sem_give(&serial_sem);
-	}
 	xfer_ctx_release(xfer);
 	if (err == -ETIMEDOUT && IS_ENABLED(CONFIG_NRF_CLOUD_COAP_DISCONNECT_ON_FAILED_REQUEST)) {
 		nrf_cloud_coap_disconnect();
@@ -524,10 +538,16 @@ int nrf_cloud_coap_get(const char *resource, const char *query,
 		       enum coap_content_format fmt_in, bool reliable,
 		       coap_client_response_cb_t cb, void *user)
 {
+	int err = 0;
+
+	k_mutex_lock(&internal_transfer_mut, K_FOREVER);
 	void *xfer = xfer_data_init(&internal_cc, cb, user, &cb_sem);
 
-	return client_transfer(COAP_METHOD_GET, resource, query,
-			       buf, len, fmt_out, fmt_in, true, reliable, xfer);
+	err = client_transfer(COAP_METHOD_GET, resource, query,
+			      buf, len, fmt_out, fmt_in, true, reliable, xfer);
+	k_mutex_unlock(&internal_transfer_mut);
+
+	return err;
 }
 
 int nrf_cloud_coap_post(const char *resource, const char *query,
@@ -535,10 +555,16 @@ int nrf_cloud_coap_post(const char *resource, const char *query,
 			enum coap_content_format fmt, bool reliable,
 			coap_client_response_cb_t cb, void *user)
 {
+	int err = 0;
+
+	k_mutex_lock(&internal_transfer_mut, K_FOREVER);
 	void *xfer = xfer_data_init(&internal_cc, cb, user, &cb_sem);
 
-	return client_transfer(COAP_METHOD_POST, resource, query,
-			       buf, len, fmt, fmt, false, reliable, xfer);
+	err = client_transfer(COAP_METHOD_POST, resource, query,
+			      buf, len, fmt, fmt, false, reliable, xfer);
+	k_mutex_unlock(&internal_transfer_mut);
+
+	return err;
 }
 
 int nrf_cloud_coap_put(const char *resource, const char *query,
@@ -546,10 +572,16 @@ int nrf_cloud_coap_put(const char *resource, const char *query,
 		       enum coap_content_format fmt, bool reliable,
 		       coap_client_response_cb_t cb, void *user)
 {
+	int err = 0;
+
+	k_mutex_lock(&internal_transfer_mut, K_FOREVER);
 	void *xfer = xfer_data_init(&internal_cc, cb, user, &cb_sem);
 
-	return client_transfer(COAP_METHOD_PUT, resource, query,
-			       buf, len, fmt, fmt, false, reliable, xfer);
+	err = client_transfer(COAP_METHOD_PUT, resource, query,
+			      buf, len, fmt, fmt, false, reliable, xfer);
+	k_mutex_unlock(&internal_transfer_mut);
+
+	return err;
 }
 
 int nrf_cloud_coap_delete(const char *resource, const char *query,
@@ -557,10 +589,16 @@ int nrf_cloud_coap_delete(const char *resource, const char *query,
 			  enum coap_content_format fmt, bool reliable,
 			  coap_client_response_cb_t cb, void *user)
 {
+	int err = 0;
+
+	k_mutex_lock(&internal_transfer_mut, K_FOREVER);
 	void *xfer = xfer_data_init(&internal_cc, cb, user, &cb_sem);
 
-	return client_transfer(COAP_METHOD_DELETE, resource, query,
-			       buf, len, fmt, fmt, false, reliable, xfer);
+	err = client_transfer(COAP_METHOD_DELETE, resource, query,
+			      buf, len, fmt, fmt, false, reliable, xfer);
+	k_mutex_unlock(&internal_transfer_mut);
+
+	return err;
 }
 
 int nrf_cloud_coap_fetch(const char *resource, const char *query,
@@ -569,10 +607,16 @@ int nrf_cloud_coap_fetch(const char *resource, const char *query,
 			 enum coap_content_format fmt_in, bool reliable,
 			 coap_client_response_cb_t cb, void *user)
 {
+	int err = 0;
+
+	k_mutex_lock(&internal_transfer_mut, K_FOREVER);
 	void *xfer = xfer_data_init(&internal_cc, cb, user, &cb_sem);
 
-	return client_transfer(COAP_METHOD_FETCH, resource, query,
-			       buf, len, fmt_out, fmt_in, true, reliable, xfer);
+	err = client_transfer(COAP_METHOD_FETCH, resource, query,
+			      buf, len, fmt_out, fmt_in, true, reliable, xfer);
+	k_mutex_unlock(&internal_transfer_mut);
+
+	return err;
 }
 
 int nrf_cloud_coap_patch(const char *resource, const char *query,
@@ -580,10 +624,16 @@ int nrf_cloud_coap_patch(const char *resource, const char *query,
 			 enum coap_content_format fmt, bool reliable,
 			 coap_client_response_cb_t cb, void *user)
 {
+	int err = 0;
+
+	k_mutex_lock(&internal_transfer_mut, K_FOREVER);
 	void *xfer = xfer_data_init(&internal_cc, cb, user, &cb_sem);
 
-	return client_transfer(COAP_METHOD_PATCH, resource, query,
-			       buf, len, fmt, fmt, false, reliable, xfer);
+	err = client_transfer(COAP_METHOD_PATCH, resource, query,
+			      buf, len, fmt, fmt, false, reliable, xfer);
+	k_mutex_unlock(&internal_transfer_mut);
+
+	return err;
 }
 
 static void auth_cb(int16_t result_code, size_t offset, const uint8_t *payload, size_t len,
@@ -613,7 +663,13 @@ static int nrf_cloud_coap_auth_post(struct nrf_cloud_coap_client *const client,
 
 int nrf_cloud_coap_disconnect(void)
 {
-	return nrf_cloud_coap_transport_disconnect(&internal_cc);
+	int err = 0;
+
+	k_mutex_lock(&internal_transfer_mut, K_FOREVER);
+	err = nrf_cloud_coap_transport_disconnect(&internal_cc);
+	k_mutex_unlock(&internal_transfer_mut);
+
+	return err;
 }
 
 int nrf_cloud_coap_transport_init(struct nrf_cloud_coap_client *const client)
@@ -650,7 +706,7 @@ int nrf_cloud_coap_transport_init(struct nrf_cloud_coap_client *const client)
 
 static int nrf_cloud_coap_connect_host_cb(struct sockaddr *const addr)
 {
-	int err;
+	int err = 0;
 	int sock;
 	size_t addr_size;
 
@@ -697,7 +753,7 @@ out:
 
 int nrf_cloud_coap_transport_connect(struct nrf_cloud_coap_client *const client)
 {
-	int err;
+	int err = 0;
 	int tmp;
 	int sock;
 
@@ -750,7 +806,7 @@ int nrf_cloud_coap_transport_disconnect(struct nrf_cloud_coap_client *const clie
 	LOG_DBG("Cancelled requests");
 
 	int tmp;
-	int err;
+	int err = 0;
 
 	k_mutex_lock(&client->mutex, K_FOREVER);
 	client->cid_saved = false;
@@ -777,7 +833,7 @@ int nrf_cloud_coap_transport_authenticate(struct nrf_cloud_coap_client *const cl
 		return 0;
 	}
 
-	int err;
+	int err = 0;
 	char *jwt;
 
 #if defined(CONFIG_MODEM_INFO)
