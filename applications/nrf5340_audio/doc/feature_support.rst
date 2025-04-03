@@ -18,6 +18,8 @@ For an explanation of the maturity levels, see :ref:`Software maturity levels <s
    :start-after: software_maturity_application_nrf5340audio_table:
    :end-before: software_maturity_protocol
 
+.. _nrf5340_audio_dns_and_qdids:
+
 nRF5340 Audio DNs and QDIDs
 ***************************
 
