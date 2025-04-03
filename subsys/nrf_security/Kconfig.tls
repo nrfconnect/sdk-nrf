@@ -40,8 +40,6 @@ config MBEDTLS_X509_CHECK_EXTENDED_KEY_USAGE
 config MBEDTLS_X509_CRL_PARSE_C
 	bool "X.509 - CRL parsing"
 	default y
-	help
-	  Enable X.509 CRL parsing.
 
 config MBEDTLS_X509_CSR_PARSE_C
 	bool "X.509 - CSR parsing"
@@ -50,10 +48,7 @@ config MBEDTLS_X509_CSR_PARSE_C
 	  Enable X.509 Certificate Signing Requests (CSR) parsing.
 
 config MBEDTLS_X509_CRT_PARSE_C
-	bool "X.509 - CTR parsing"
-	default y
-	help
-	  Enable X.509 CTR parsing
+	bool "X.509 - CRT parsing"
 
 config MBEDTLS_X509_CSR_WRITE_C
 	bool "X.509 - CSR writing"
