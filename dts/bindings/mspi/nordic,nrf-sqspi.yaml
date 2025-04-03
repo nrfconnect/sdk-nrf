@@ -1,0 +1,10 @@
+# Copyright (c) 2025 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: Nordic Software Defined QSPI (sQSPI)
+
+compatible: "nordic,nrf-sqspi"
+
+include:
+  - mspi-controller.yaml
+  - memory-region.yaml
