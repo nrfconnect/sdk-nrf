@@ -37,14 +37,6 @@ jobs:
         with:
           git-fetch-depth: 0
 
-      - name: Rebase
-        if: github.event_name == 'pull_request'
-        working-directory: ncs/nrf
-        run: |
-          git config --global user.email "bot@github.com"
-          git config --global user.name "Github Actions"
-          git rebase origin/${{ github.base_ref }}
-
       - name: cache-pip
         uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4
         with:

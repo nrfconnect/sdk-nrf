@@ -17,7 +17,6 @@ jobs:
         uses: nrfconnect/action-checkout-west-update@main
         with:
           path: ncs/nrf
-          git-ref: ${{ github.event.pull_request.head.sha }}
           git-fetch-depth: 0
       - name: Install python dependencies
         working-directory: ncs/nrf
