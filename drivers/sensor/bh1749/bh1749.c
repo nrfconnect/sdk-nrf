@@ -13,6 +13,7 @@
 #include <zephyr/kernel.h>
 #include <string.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/pm/device.h>
 
 #include "bh1749.h"
 
@@ -237,6 +238,19 @@ static int bh1749_async_init_reset_check(const struct device *dev)
 	return bh1749_check(i2c);
 }
 
+static int bh1749_async_init_rgb_disable(const struct device *dev)
+{
+	const struct bh1749_config *config = dev->config;
+	const struct i2c_dt_spec *i2c = &config->i2c;
+	int err;
+
+	err = bh1749_rgb_measurement_enable(i2c, false);
+	if (err < 0) {
+		LOG_ERR("Could not set measurement mode.");
+	}
+	return err;
+}
+
 static int bh1749_async_init_rgb_enable(const struct device *dev)
 {
 	const struct bh1749_config *config = dev->config;
@@ -292,6 +306,34 @@ static int bh1749_init(const struct device *dev)
 	return 0;
 };
 
+static int pm_action(const struct device *dev, enum pm_device_action action)
+{
+	int err;
+
+	switch (action) {
+	case PM_DEVICE_ACTION_SUSPEND:
+		err = bh1749_async_init_rgb_disable(dev);
+		if (err) {
+			LOG_ERR("Failed to disable RGB measurement: %d", err);
+			return err;
+		}
+
+		break;
+	case PM_DEVICE_ACTION_RESUME:
+		err = bh1749_async_init_rgb_enable(dev);
+		if (err) {
+			LOG_ERR("Failed to enable RGB measurement: %d", err);
+			return err;
+		}
+
+		break;
+	default:
+		return -ENOTSUP;
+	}
+
+	return 0;
+}
+
 static const struct sensor_driver_api bh1749_driver_api = {
 	.sample_fetch = &bh1749_sample_fetch,
 	.channel_get = &bh1749_channel_get,
@@ -307,7 +349,9 @@ static const struct sensor_driver_api bh1749_driver_api = {
 		.i2c = I2C_DT_SPEC_INST_GET(inst),			\
 		.int_gpio = GPIO_DT_SPEC_INST_GET(inst, int_gpios),	\
 	};								\
-	DEVICE_DT_INST_DEFINE(inst, bh1749_init, NULL,			\
+	PM_DEVICE_DT_INST_DEFINE(inst, pm_action);			\
+	DEVICE_DT_INST_DEFINE(inst, bh1749_init,			\
+			      PM_DEVICE_DT_INST_GET(inst),		\
 			      &bh1749_data_##inst,			\
 			      &bh1749_config_##inst,			\
 			      POST_KERNEL, CONFIG_SENSOR_INIT_PRIORITY, \

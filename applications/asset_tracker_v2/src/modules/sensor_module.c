@@ -138,6 +138,22 @@ static void accelerometer_callback_set(bool enable)
 	}
 }
 
+static void light_data_send(const struct ext_sensor_evt *const acc_data)
+{
+	struct sensor_module_event *sensor_module_event = new_sensor_module_event();
+
+	__ASSERT(sensor_module_event, "Not enough heap left to allocate event");
+
+	sensor_module_event->type = SENSOR_EVT_LIGHT_SENSOR_THRESHOLD_EXCEEDED;
+	sensor_module_event->data.light.timestamp = k_uptime_get();
+	sensor_module_event->data.light.red = acc_data->light_sensor_data.red;
+	sensor_module_event->data.light.green = acc_data->light_sensor_data.green;
+	sensor_module_event->data.light.blue = acc_data->light_sensor_data.blue;
+	sensor_module_event->data.light.ir = acc_data->light_sensor_data.ir;
+
+	APP_EVENT_SUBMIT(sensor_module_event);
+}
+
 static void activity_data_send(const struct ext_sensor_evt *const acc_data)
 {
 	struct sensor_module_event *sensor_module_event = new_sensor_module_event();
@@ -169,6 +185,10 @@ static void impact_data_send(const struct ext_sensor_evt *const evt)
 static void ext_sensor_handler(const struct ext_sensor_evt *const evt)
 {
 	switch (evt->type) {
+	case EXT_SENSOR_EVT_LIGHT_SENSOR_UPPER_THRESHOLD_EXCEEDED:
+		LOG_DBG("Light sensor upper threshold exceeded");
+		light_data_send(evt);
+		break;
 	case EXT_SENSOR_EVT_ACCELEROMETER_ACT_TRIGGER:
 		activity_data_send(evt);
 		break;
@@ -285,7 +305,6 @@ static void environmental_data_get(void)
 	double temperature = 0, humidity = 0, pressure = 0;
 	uint16_t bsec_air_quality = UINT16_MAX;
 
-	/* Request data from external sensors. */
 	err = ext_sensors_temperature_get(&temperature);
 	if (err) {
 		LOG_ERR("ext_sensors_temperature_get, error: %d", err);

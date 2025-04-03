@@ -32,7 +32,8 @@ enum ext_sensor_evt_type {
 	EXT_SENSOR_EVT_ACCELEROMETER_INACT_TRIGGER,
 	/** ADXL372 high-G accelerometer */
 	EXT_SENSOR_EVT_ACCELEROMETER_IMPACT_TRIGGER,
-
+	/** Event propagated when any of the light sensor values exceeds the set threshold. */
+	EXT_SENSOR_EVT_LIGHT_SENSOR_UPPER_THRESHOLD_EXCEEDED,
 	/** Event propagated when an error has occurred with any of the accelerometers. */
 	EXT_SENSOR_EVT_ACCELEROMETER_ERROR,
 	/** Event propagated when an error has occurred with the temperature sensor. */
@@ -42,7 +43,20 @@ enum ext_sensor_evt_type {
 	/** Event propagated when an error has occurred with the pressure sensor. */
 	EXT_SENSOR_EVT_PRESSURE_ERROR,
 	/** Event propagated when an error has occurred with the virtual air quality sensor. */
-	EXT_SENSOR_EVT_AIR_QUALITY_ERROR
+	EXT_SENSOR_EVT_AIR_QUALITY_ERROR,
+	/** Event propagated when an error has occurred with the light sensor. */
+	EXT_SENSOR_EVT_LIGHT_ERROR
+};
+
+struct ext_sensor_light_sensor_data {
+	/** Red light value in lux. */
+	int red;
+	/** Green light value in lux. */
+	int green;
+	/** Blue light value in lux. */
+	int blue;
+	/** Infrared light value in lux. */
+	int ir;
 };
 
 /** @brief Structure containing external sensor data. */
@@ -55,6 +69,8 @@ struct ext_sensor_evt {
 		double value_array[ACCELEROMETER_CHANNELS];
 		/** Single external sensor value. */
 		double value;
+		/** Light sensor data. */
+		struct ext_sensor_light_sensor_data light_sensor_data;
 	};
 };
 
@@ -73,6 +89,15 @@ typedef void (*ext_sensor_handler_t)(
  * @return 0 on success or negative error value on failure.
  */
 int ext_sensors_init(ext_sensor_handler_t handler);
+
+/**
+ * @brief Get light sensor data.
+ *
+ * @param[out] light_data Pointer to variable containing light sensor data.
+ *
+ * @return 0 on success or negative error value on failure.
+ */
+int ext_sensors_light_sensor_get(struct ext_sensor_light_sensor_data *light_data);
 
 /**
  * @brief Get temperature from library.
