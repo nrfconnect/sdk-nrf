@@ -237,6 +237,8 @@ This restriction helps satisfy FMDN privacy requirements, which prohibit the loc
 Moreover, after entering the DFU mode, the SMP GATT Service UUID is present in the Fast Pair advertising payload which helps to filter and find the devices that are in the DFU mode.
 It is located in advertising data when Fast Pair advertising is in the discoverable mode, or in the scan response data when it is in the not discoverable mode.
 
+.. _android_notifications_fastpair:
+
 Android notifications about firmware updates
 --------------------------------------------
 
