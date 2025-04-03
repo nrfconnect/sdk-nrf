@@ -19,7 +19,7 @@ config OPENTHREAD_LIBRARY_AVAILABLE
 	# Switch:
 	# - To `y` when libraries for the current OpenThread revision are provided
 	# - To `n` on the next OpenThread upmerge
-	default n
+	default y
 	depends on OPENTHREAD_THREAD_VERSION_1_4
 	depends on (OPENTHREAD_NORDIC_LIBRARY_MASTER && (SOC_NRF52840 || SOC_SERIES_NRF54LX)) || \
 		    OPENTHREAD_NORDIC_LIBRARY_FTD || OPENTHREAD_NORDIC_LIBRARY_MTD
