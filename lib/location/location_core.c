@@ -397,6 +397,8 @@ static void location_request_info_create(const struct location_config *config)
 		if (abs(method_wifi_index - method_cellular_index) == 1) {
 			__ASSERT_NO_MSG(loc_req_info.cellular != NULL);
 			__ASSERT_NO_MSG(loc_req_info.wifi != NULL);
+
+			combine_wifi_cell = true;
 		} else if (loc_req_info.cellular != NULL && loc_req_info.wifi != NULL) {
 			LOG_DBG("Wi-Fi and cellular methods are not one after the other "
 				"in method list so they are not combined");
