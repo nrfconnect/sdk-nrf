@@ -29,9 +29,6 @@ Before using this feature, make sure that the following prerequisites are comple
  * The external memory must be large enough to store the firmware patches, taking into consideration also the patch upgrade requirement, for example, Device Firmware Update (DFU).
    The maximum size of all the firmware patches combined is 128 KB.
 
-.. note::
-   Currently, in Nordic Semiconductor SoCs, access to external memory and the Execute in Place (XIP) feature are available through the QSPI interface only.
-
 Supported platforms
 ===================
 
@@ -39,9 +36,7 @@ The following platforms are supported:
 
 * nRF5340 DK with nRF7002 EK as a shield
 * nRF52840 DK with nRF7002 EK as a shield
-
-.. note::
-   Due to limitations mentioned above, the nRF7002 DK is not supported as it needs access to external memory through the SPI interface.
+* nRF7002 DK (requires latest version of nRF Util tool)
 
 Available options
 *****************
@@ -49,7 +44,10 @@ Available options
 There are two supported options for offloading the firmware patches in the external memory feature:
 
 * Using XIP access
-* Using QSPI transfers to RAM
+* Using (Q)SPI transfers to RAM
+
+.. note::
+   The nRF7002 DK  does not support the XIP access option.
 
 Using XIP access
 ================
@@ -71,8 +69,8 @@ Following is a sample summary of the memory regions:
              RAM:      170636 B       448 KB     37.20%
         IDT_LIST:          0 GB         2 KB      0.00%
 
-Using QSPI transfers to RAM
-===========================
+Using (Q)SPI transfers to RAM
+=============================
 
 The nRF Wi-Fi driver supports the option for offloading the nRF70 firmware patch to external non-XIP memory.
 In this case the upload of the firmware patch from the external memory to the nRF70 device happens in two stages:
