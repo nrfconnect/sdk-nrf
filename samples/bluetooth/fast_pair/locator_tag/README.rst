@@ -255,6 +255,9 @@ If the Model ID and Anti-Spoofing Private Key are not specified, the following d
    * Anti-Spoofing Private Key (Base64, uncompressed): ``rie10A7ONqwd77VmkxGsblPUbMt384qjDgcEJ/ctT9Y=``
    * Device Type: Locator Tag
    * Notification Type: Fast Pair
+   * Firmware Version: ``99.99.99+0``
+   * Firmware Type: Non-critical
+   * Companion App Package Name: no.nordicsemi.android.nrfconnectdevicemanager
    * Data-Only connection: true
    * No Personalized Name: true
    * Find My Device: true
