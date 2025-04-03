@@ -406,6 +406,8 @@
 .. _`nRF Programmer mobile app`: https://www.nordicsemi.com/Products/Development-tools/nrf-programmer
 
 .. _`nRF Connect Device Manager`: https://www.nordicsemi.com/Products/Development-tools/nrf-connect-device-manager
+.. _`nRF Connect Device Manager GitHub repository`: https://github.com/NordicSemiconductor/Android-nRF-Connect-Device-Manager
+.. _`nRF Connect Device Manager GitHub PR with support for Fast Pair firmware update intents`: https://github.com/NordicSemiconductor/Android-nRF-Connect-Device-Manager/pull/231
 
 .. _`nRF Mesh mobile app`: https://www.nordicsemi.com/Software-and-Tools/Development-Tools/nRF-Mesh
 
