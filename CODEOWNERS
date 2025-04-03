@@ -371,6 +371,7 @@
 /include/sdfw/sdfw_services/suit_service.h @nrfconnect/ncs-charon
 /include/sdp/                             @nrfconnect/ncs-ll-ursus
 /include/shell/                           @nordic-krch
+/include/util/                            @nrfconnect/ncs-aegir @nordic-krch
 /include/tfm/                             @nrfconnect/ncs-aegir
 /include/dult.h                           @nrfconnect/ncs-si-bluebagel
 
