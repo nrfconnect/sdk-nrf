@@ -233,7 +233,11 @@ static int nrf_ipuc_read(const struct device *dev, off_t offset, void *data, siz
 		return -ENOMEM;
 	}
 
-	memcpy(data, (void *)(ctx->address + offset), len);
+	if (ctx->setup_pending) {
+		memset(data, 0xFF, len);
+	} else {
+		memcpy(data, (void *)(ctx->address + offset), len);
+	}
 
 	return 0;
 }
