@@ -7,7 +7,7 @@
 zephyr_library()
 
 zephyr_library_sources(
-  dev_info_server.c
+  rpc_utils_client.c
 )
 
 zephyr_library_include_directories(

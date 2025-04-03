@@ -9,7 +9,7 @@
 #include <mock_nrf_rpc_transport.h>
 #include <test_rpc_env.h>
 
-#include <dev_info_rpc_ids.h>
+#include <rpc_utils_ids.h>
 #include <nrf_rpc/nrf_rpc_dev_info.h>
 
 #include <zephyr/kernel.h>
@@ -32,7 +32,7 @@ ZTEST(dev_info_rpc_client, test_get_version)
 	const char *commit = NCS_COMMIT_STRING;
 	const char *version = 0;
 
-	mock_nrf_rpc_tr_expect_add(RPC_CMD(DEV_INFO_RPC_GET_VERSION),
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(RPC_UTIL_DEV_INFO_GET_VERSION),
 				   RPC_RSP(0x6C, STRING_TO_TUPLE(NCS_COMMIT_STRING)));
 	version = nrf_rpc_get_ncs_commit_sha();
 	mock_nrf_rpc_tr_expect_done();
@@ -49,8 +49,8 @@ ZTEST(dev_info_rpc_client, test_invoke_shell_cmd)
 	char *reply = NULL;
 
 	mock_nrf_rpc_tr_expect_add(
-		RPC_CMD(DEV_INFO_RPC_INVOKE_SHELL_CMD, 0x6a, 's', 'a', 'y', ' ', 'h', 'e', 'l', 'l',
-			'o', '\0'),
+		RPC_CMD(RPC_UTIL_DEV_INFO_INVOKE_SHELL_CMD, 0x6a, 's', 'a', 'y', ' ', 'h', 'e', 'l',
+			'l', 'o', '\0'),
 		RPC_RSP(0x6b, 'H', 'e', 'l', 'l', 'o', 'W', 'o', 'r', 'l', 'd', '\0'));
 	reply = nrf_rpc_invoke_remote_shell_cmd(argc, (char **)argv);
 	mock_nrf_rpc_tr_expect_done();
