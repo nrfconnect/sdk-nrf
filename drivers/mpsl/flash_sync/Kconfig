@@ -32,7 +32,6 @@ endif
 
 config SOC_FLASH_NRF_RADIO_SYNC_RPC_CONTROLLER
 	bool "Nordic nRFx flash driver RPC synchronization controller"
-	default y if SOC_NRF54H20_CPURAD
 	depends on SOC_FLASH_NRF_RADIO_SYNC_MPSL
 	select NRF_RPC
 	select NRF_RPC_CBOR

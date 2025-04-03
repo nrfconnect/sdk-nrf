@@ -67,6 +67,11 @@ config BT_MAX_CONN
 
 endif # IPC_RADIO_BT
 
+config IPC_RADIO_USE_RPC_FLASH_SYNC_CONTROLLER
+	bool
+	default y if SOC_NRF54H20_CPURAD
+	imply SOC_FLASH_NRF_RADIO_SYNC_RPC_CONTROLLER
+
 module = IPC_RADIO
 module-str = "ipc_radio"
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
