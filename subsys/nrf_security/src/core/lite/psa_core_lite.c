@@ -10,6 +10,11 @@
 #include <cracen_psa_kmu.h>
 #include <cracen/mem_helpers.h>
 
+#if defined(CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS)
+#include "cracen_psa.h"
+psa_status_t silex_statuscodes_to_psa(int ret);
+#endif
+
 #if (defined(PSA_WANT_ALG_ECDSA) || defined(PSA_WANT_ALG_DETERMINISTIC_ECDSA)) && \
 	defined(PSA_WANT_ECC_SECP_R1_256)
 	const size_t pub_key_max_size = 65;
@@ -40,6 +45,16 @@ static psa_status_t get_key_buffer(
 	return cracen_kmu_get_builtin_key(slot_number, attributes, key, key_size, key_length);
 }
 
+/* Signature validation algorithms */
+
+#if defined(CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS) && \
+	(defined(PSA_WANT_ALG_ECDSA) || defined(PSA_WANT_ALG_DETERMINISTIC_ECDSA))
+/* We don't support Ed25519 + ECDSA as the only supported verification is
+ * Ed25519 when PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS is used
+ */
+#error PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS with ECDSA is invalid!
+#endif
+
 #if defined(PSA_WANT_ALG_ECDSA) || defined(PSA_WANT_ALG_DETERMINISTIC_ECDSA) || \
 	defined(PSA_WANT_ALG_ED25519PH)
 
@@ -68,9 +83,15 @@ psa_status_t psa_verify_hash(
 		return status;
 	}
 
+#if defined(CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS)
+	int cracen_status = cracen_ed25519ph_verify(pub_key, hash, hash_length, signature, false);
+
+	return silex_statuscodes_to_psa(cracen_status);
+#else
 	return psa_driver_wrapper_verify_hash(&attr, pub_key, pub_key_length,
 					      alg, hash, hash_length,
 					      signature, signature_length);
+#endif
 }
 
 #endif /* PSA_WANT_ALG_ECDSA || PSA_WANT_ALG_DETERMINISTIC_ECDSA || PSA_WANT_ALG_ED25519PH  */
@@ -103,10 +124,15 @@ psa_status_t psa_verify_message(
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
+#if defined(CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS)
+	int cracen_status = cracen_ed25519_verify(pub_key, input, input_length, signature);
 
+	return silex_statuscodes_to_psa(cracen_status);
+#else
 	return psa_driver_wrapper_verify_message(&attr, pub_key, pub_key_size,
 						 alg, input, input_length,
 						 signature, signature_length);
+#endif
 }
 
 #endif /* PSA_WANT_ALG_ECDSA || PSA_WANT_ALG_DETERMINISTIC_ECDSA || PSA_WANT_ALG_PURE_EDDSA  */
@@ -348,7 +374,6 @@ psa_status_t psa_destroy_key(mbedtls_svc_key_id_t key_id)
 		return status;
 	}
 
-	/* Generalize to psa_driver_wrapper_destroy_key */
 	return psa_driver_wrapper_destroy_builtin_key(&attr);
 }
 

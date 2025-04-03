@@ -30,3 +30,12 @@ config PSA_CORE_LITE
 	  not possible to use. Also note that PSA core lite is not thread-safe.
 
 endchoice
+
+config PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS
+	bool "Optimized Ed25519 (only) support for NSIB usage"
+	depends on PSA_CORE_LITE
+	help
+	  This configuration calls low-level APIs in CRACEN for Ed25519 instead of
+	  going through PSA crypto driver wrappers APIs. This optimization limits
+	  supported algorithms for signature verification to only Pure Ed25519 and
+	  Ed25519ph.
