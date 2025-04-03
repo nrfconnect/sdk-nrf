@@ -24,7 +24,7 @@ ALL_DOCSETS = {
     "nrfxlib": ("nrfxlib", "README", "nrfxlib"),
     "zephyr": ("Zephyr Project", "index", "zephyr"),
     "mcuboot": ("MCUboot", "wrapper", "mcuboot"),
-    "tfm": ("Trusted Firmware-M", "index", "trusted-firmware-m"),
+    "tfm": ("Trusted Firmware-M", "wrapper", "trusted-firmware-m"),
     "matter": ("Matter", "index", "matter"),
     "kconfig": ("Kconfig Reference", "index", None),
 }
