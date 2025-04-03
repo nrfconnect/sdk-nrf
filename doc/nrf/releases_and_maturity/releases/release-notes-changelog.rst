@@ -1,3 +1,5 @@
+:orphan:
+
 .. _ncs_release_notes_changelog:
 
 Changelog for |NCS| v2.9.99

@@ -23,6 +23,7 @@ It can be used as either a standalone processor or as a helper core.
 
 As a helper processor, FLPR specializes in managing tasks that require real-time attention or low power consumption, effectively boosting the performance of the main processor.
 It is versatile, capable of operating independently or as an integrated peripheral, with accessible components for easy control and customization.
+The nRF54L15 SoC supports :ref:`nrfxlib:soft_peripherals`, which you can use to emulate the hardware peripherals.
 
 Trusted Firmware-M (TF-M)
 *************************
