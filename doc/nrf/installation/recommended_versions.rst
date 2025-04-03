@@ -401,7 +401,7 @@ Use the latest available release for development.
 
 When you :ref:`install the nRF Connect SDK <install_ncs>`, you need to install the following nRF Util commands:
 
-* `device command <Device command overview_>`_ - The latest version is required as the default :ref:`west runner <programming_selecting_runner>`.
+* `device command <Device command overview_>`_ - The version 2.8.8 is required as the default :ref:`west runner <programming_selecting_runner>`.
 * `sdk-manager command`_ - The latest version is required for working with |NCS| toolchain packages.
   You only need to install this command if you are working with command line in the |NCS|.
 

@@ -7,7 +7,7 @@
         After downloading the nRF Util executable, move it to a directory that is in the system :envvar:`PATH`.
         On macOS and Linux, the downloaded file also needs to be given execute permission by typing `chmod +x nrfutil` or by checking the checkbox in the file properties.
 
-  * In nRF Util, the latest version of the ``device`` command.
+  * In nRF Util, v2.8.8 of the ``device`` command.
     Check `Installing and upgrading nRF Util commands`_ for installation information.
   * The |jlink_ver| of SEGGER J-Link.
     Download it from the `J-Link Software and Documentation Pack`_ page.
