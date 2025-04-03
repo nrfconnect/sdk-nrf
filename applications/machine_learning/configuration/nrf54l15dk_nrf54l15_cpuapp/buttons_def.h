@@ -18,8 +18,13 @@ const struct {} buttons_def_include_once;
 static const struct gpio_pin col[] = {};
 
 static const struct gpio_pin row[] = {
+#if IS_ENABLED(CONFIG_SHIELD_PCA63565)
+	{ .port = 1, .pin = DT_GPIO_PIN(DT_NODELABEL(button2), gpios) },
+	{ .port = 0, .pin = DT_GPIO_PIN(DT_NODELABEL(button3), gpios) },
+#else
 	{ .port = 1, .pin = DT_GPIO_PIN(DT_NODELABEL(button0), gpios) },
 	{ .port = 1, .pin = DT_GPIO_PIN(DT_NODELABEL(button1), gpios) },
 	{ .port = 1, .pin = DT_GPIO_PIN(DT_NODELABEL(button2), gpios) },
 	{ .port = 0, .pin = DT_GPIO_PIN(DT_NODELABEL(button3), gpios) },
+#endif
 };
