@@ -853,7 +853,7 @@ Wi-Fi drivers
 Flash drivers
 -------------
 
-* Added a ``flash_ipuc`` driver that allows to manage SUIT IPUC memory through the Zephyr flash API.
+* Added a :ref:`flash_ipuc` driver that allows to manage SUIT IPUC memory through the Zephyr flash API.
 
 Libraries
 =========
@@ -940,13 +940,10 @@ DFU libraries
 
   * Regenerated the zcbor-generated code files using v0.9.0.
 
-SUIT libraries
---------------
-
 * Added:
 
-  * Support for manifest-controlled variables, that allow to control manifest logic based on previous evaluations as well as store integer values inside the SUIT non-volatile memory region.
-  * Support for in-place updateable components (IPUC) that allows to cross memory permission boundaries to update inactive memory regions from the main application.
+  * Support for :ref:`manifest-controlled variables<subsys_suit_mfst_var>`, that allow to control manifest logic based on previous evaluations as well as store integer values inside the SUIT non-volatile memory region.
+  * Support for :ref:`In-place Updateable Components (IPUC)<ug_nrf54h20_suit_ipuc>` that allow to cross memory permission boundaries to update inactive memory regions from the main application.
   * Support for IPUC in SUIT manifests:
 
     * It is possible to fetch payloads directly into an IPUC.
