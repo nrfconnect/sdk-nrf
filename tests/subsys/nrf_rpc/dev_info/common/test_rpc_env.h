@@ -28,9 +28,9 @@
 	}
 
 #define RPC_INIT_REQ                                                                               \
-	RPC_PKT(0x04, 0x00, 0xff, 0x00, 0xff, 0x00, 'd', 'e', 'v', '_', 'i', 'n', 'f', 'o')
+	RPC_PKT(0x04, 0x00, 0xff, 0x00, 0xff, 0x00, 'r', 'p', 'c', '_', 'u', 't', 'i', 'l', 's')
 #define RPC_INIT_RSP                                                                               \
-	RPC_PKT(0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 'd', 'e', 'v', '_', 'i', 'n', 'f', 'o')
+	RPC_PKT(0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 'r', 'p', 'c', '_', 'u', 't', 'i', 'l', 's')
 #define RPC_CMD(cmd, ...) RPC_PKT(0x80, cmd, 0xff, 0x00, 0x00 __VA_OPT__(,) __VA_ARGS__, 0xf6)
 #define RPC_RSP(...)	  RPC_PKT(0x01, 0xff, 0x00, 0x00, 0x00 __VA_OPT__(,) __VA_ARGS__, 0xf6)
 #define NO_RSP		  RPC_PKT()

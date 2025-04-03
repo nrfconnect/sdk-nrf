@@ -11,8 +11,8 @@ project(nrf_rpc_dev_info_client_test)
 FILE(GLOB app_sources src/*.c)
 
 target_include_directories(app PRIVATE
-  ${ZEPHYR_NRF_MODULE_DIR}/subsys/nrf_rpc/dev_info/common
-  ${ZEPHYR_NRF_MODULE_DIR}/subsys/nrf_rpc/dev_info/client
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/nrf_rpc/rpc_utils/common
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/nrf_rpc/rpc_utils/client
   ../common
 )
 
