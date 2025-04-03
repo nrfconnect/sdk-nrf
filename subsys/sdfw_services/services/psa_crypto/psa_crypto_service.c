@@ -34,6 +34,7 @@ static K_HEAP_DEFINE(out_buffer_heap,
  *
  * If the original buffer is not aligned, a new buffer is allocated and the data is copied to it.
  * This is needed to achieve DCache DataUnit alignment.
+ * If the size is 0 there is no need to allocate a new buffer.
  *
  * @param original_buffer Original buffer
  * @param size Size of the buffer
@@ -45,8 +46,9 @@ static void *prepare_out_buffer(void *original_buffer, size_t size)
 {
 	void *out_buffer;
 
-	if ((IS_ALIGNED(original_buffer, CACHE_DATA_UNIT_SIZE)) &&
-	    (IS_ALIGNED(size, CACHE_DATA_UNIT_SIZE))) {
+	if (((IS_ALIGNED(original_buffer, CACHE_DATA_UNIT_SIZE)) &&
+	     (IS_ALIGNED(size, CACHE_DATA_UNIT_SIZE))) ||
+	    (size == 0)) {
 		out_buffer = original_buffer;
 	} else {
 		out_buffer = k_heap_alloc(&out_buffer_heap, size, K_NO_WAIT);
