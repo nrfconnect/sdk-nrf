@@ -538,13 +538,9 @@ hrt_read:
  #APP
 	csrr a4, 3018
  #NO_APP
-	lw	a3,60(s0)
 	srli	a4,a4,16
-	andi	a4,a4,0xff
-	sb	a4,0(a3)
-	lw	a3,60(s0)
-	sb	a4,1(a3)
-.L55:
+.L88:
+	sw	a4,72(s0)
  #APP
 	csrw 2000, 0
 	csrw 2001, 0
@@ -599,10 +595,8 @@ hrt_read:
  #APP
 	csrr a4, 3018
  #NO_APP
-	lw	a3,60(s0)
 	srli	a4,a4,24
-	sb	a4,0(a3)
-	j	.L55
+	j	.L88
 .L51:
 	li	a0,2
 	bne	a4,a0,.L82
@@ -739,9 +733,7 @@ hrt_read:
 	or	a3,a3,a2
 	and	a4,a4,a0
 	or	a4,a3,a4
-.L88:
-	sw	a4,72(s0)
-	j	.L55
+	j	.L88
 .L52:
 	lbu	a0,68(s0)
 	addi	a0,a0,-3
