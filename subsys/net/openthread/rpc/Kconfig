@@ -65,6 +65,16 @@ config OPENTHREAD_RPC_CLIENT_NUM_SENT_COAP_REQUESTS
 	  Defines the number of slots for storing a callback along with its context
 	  for ongoing CoAP requests awaiting a response.
 
+config OPENTHREAD_RPC_CLIENT_RADIO_TIME_REFRESH_PERIOD
+	int "Radio time sync period [s]"
+	default 30
+	help
+	  Defines how frequently the RPC client shall read the RPC server's
+	  radio time instead of extrapolating it from the last reading and the
+	  current local time. The purpose of this setting is to reduce the RPC
+	  traffic given that otLinkRawGetRadioTime() may be used extensively by
+	  the application.
+
 endmenu # "OpenThread over RPC client configuration"
 
 menu "OpenThread over RPC client configuration"
