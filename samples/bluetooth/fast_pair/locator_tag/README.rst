@@ -233,6 +233,31 @@ This restriction helps satisfy FMDN privacy requirements, which prohibit the loc
 Moreover, after entering the DFU mode, the SMP GATT Service UUID is present in the Fast Pair advertising payload which helps to filter and find the devices that are in the DFU mode.
 It is located in advertising data when Fast Pair advertising is in the discoverable mode, or in the scan response data when it is in the not discoverable mode.
 
+Android notifications about firmware updates
+--------------------------------------------
+
+You can receive Android notifications about the new firmware version for your accessory if you add it during the FMDN provisioning process to the `Find My Device app`_ of your Android device.
+The subsequent sections highlight the most important details to have this feature work properly.
+
+The default device model for this sample is configured to support the Android intent feature for firmware updates (the **Firmware Type** option) and to use the `nRF Connect Device Manager`_ application as the Android companion application for this accessory firmware.
+See the :ref:`fast_pair_locator_tag_google_device_model` section for configuration details.
+
+This sample also supports the firmware version read operation over Bluetooth and the GATT Device Information Service (DIS).
+This mechanism is used by the Android device to read the local firmware version of the Fast Pair accessory in the following cases:
+
+* During the Fast Pair procedure and the FMDN provisioning operation.
+* Asynchronously every 24 hours in the FMDN provisioning state.
+
+Whenever the Android device reads the local firmware version of this Fast Pair accessory, it compares the local version with the version registered in the **Firmware Version** field of the Google Nearby Console.
+If the local version is different than the registered version, the Android device generates the firmware update intent that is sent to the `nRF Connect Device Manager`_ application.
+Then, the `nRF Connect Device Manager`_ application processes the intent and displays the user notification about the new firmware version available for this accessory.
+
+.. note::
+   The example code for handling the Fast Pair firmware update intents in the Android companion application is available in the `nRF Connect Device Manager GitHub repository`_.
+   The code has been added as part of the `nRF Connect Device Manager GitHub PR with support for Fast Pair firmware update intents`_.
+
+To learn more about the Android intent feature for firmware updates, see the :ref:`ug_bt_fast_pair_provisioning_register_firmware_update_intent` section in the Fast Pair user guide.
+
 .. _fast_pair_locator_tag_google_device_model:
 
 Fast Pair device registration
