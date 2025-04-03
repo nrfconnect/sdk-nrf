@@ -492,6 +492,7 @@ Bluetooth samples
 
     * Loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.
     * Support for the :ref:`nRF2220 front-end module <ug_radio_fem_nrf2220ek>`.
+    * Workaround for the hardware errata HMPAN-216 for the nRF54H20 SoC.
 
 * :ref:`central_uart` sample:
 
@@ -724,6 +725,7 @@ Peripheral samples
 
     * Loading of radio trims and a fix of a hardware errata for the nRF54H20 SoC to improve the RF performance.
     * Support for the :ref:`nRF2220 front-end module <ug_radio_fem_nrf2220ek>`.
+    * Workaround for the hardware errata HMPAN-216 for the nRF54H20 SoC.
 
 PMIC samples
 ------------
