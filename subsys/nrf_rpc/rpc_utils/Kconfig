@@ -31,7 +31,40 @@ config NRF_RPC_DEV_INFO_CLIENT
 
 endchoice
 
-config DEV_INFO_RPC_INITIALIZE_NRF_RPC
+endif # NRF_RPC_DEV_INFO
+
+menuconfig NRF_RPC_CRASH_GEN
+	bool "nRF RPC crash generator"
+	depends on NRF_RPC
+	depends on NRF_RPC_CBOR
+	help
+	  nRF RPC crash generating functionalities
+
+if NRF_RPC_CRASH_GEN
+
+choice NRF_RPC_CRASH_GEN_ROLE_CHOICE
+	prompt "nRF RPC crash generator role selection"
+	default NRF_RPC_CRASH_GEN_CLIENT
+	help
+	  nRF RPC crash generator role selection
+
+config NRF_RPC_CRASH_GEN_SERVER
+	bool "nRF RPC crash generator server role"
+	help
+	  Enable nRF RPC crash generator server role.
+
+config NRF_RPC_CRASH_GEN_CLIENT
+	bool "nRF RPC crash generator client role"
+	help
+	  Enable nRF RPC crash generator client role.
+
+endchoice
+
+endif # NRF_RPC_CRASH_GEN
+
+if NRF_RPC_DEV_INFO || NRF_RPC_CRASH_GEN
+
+config RPC_UTILS_INITIALIZE_NRF_RPC
 	bool "Automatically initialize nRF RPC library"
 	help
 	  Initialize nRF RPC library during the system startup. Disabling this
@@ -49,4 +82,4 @@ config NRF_RPC_REMOTE_SHELL
 config SHELL_BACKEND_DUMMY_BUF_SIZE
 	default 1024 if NRF_RPC_REMOTE_SHELL
 
-endif # NRF_RPC_DEV_INFO
+endif
