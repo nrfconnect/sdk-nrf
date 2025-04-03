@@ -24,7 +24,7 @@
 #define VIO_SINGLE_BUS_MASK 0x0004
 #define VIO_QUAD_BUS_MASK   0x001E
 
-#define IN_REG_EMPTY 0xffff
+#define IN_REG_EMPTY UINT16_MAX
 
 /* Time in clock cycles required for RX transfer stop procedure in modes 1-3.
  * Which is min time between last two clock edges of transfer.
@@ -121,7 +121,7 @@ NRF_STATIC_INLINE void rx_end_procedure_mode_3(volatile hrt_xfer_t *hrt_xfer_par
 	}
 
 	last_word = (BSWAP_32(last_word) << hrt_xfer_params->bus_widths.data) |
-		    (in & bus_mask) >> bus_position;
+		    ((in & bus_mask) >> bus_position);
 	last_word = last_word << (BITS_IN_WORD -
 				  (hrt_xfer_params->xfer_data[HRT_FE_DATA].last_word_clocks + 1) *
 					  hrt_xfer_params->bus_widths.data);
@@ -442,12 +442,10 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 
 		if (hrt_xfer_params->bus_widths.data == 8) {
 			last_word = nrf_vpr_csr_vio_in_buffered_reversed_byte_get();
-			hrt_xfer_params->xfer_data[HRT_FE_DATA].data[0] =
-				(uint8_t)(last_word >> BYTE_2_SHIFT);
-			hrt_xfer_params->xfer_data[HRT_FE_DATA].data[1] =
-				(uint8_t)(last_word >> BYTE_2_SHIFT);
+			hrt_xfer_params->xfer_data[HRT_FE_DATA].last_word =
+				(uint16_t)(last_word >> BYTE_2_SHIFT);
 		} else {
-			hrt_xfer_params->xfer_data[HRT_FE_DATA].data[0] =
+			hrt_xfer_params->xfer_data[HRT_FE_DATA].last_word =
 				(uint8_t)(nrf_vpr_csr_vio_in_buffered_reversed_byte_get() >>
 					  BYTE_3_SHIFT);
 		}
