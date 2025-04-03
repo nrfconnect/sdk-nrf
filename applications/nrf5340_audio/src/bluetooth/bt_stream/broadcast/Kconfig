@@ -132,19 +132,40 @@ config BT_AUDIO_BROADCAST_ENCRYPTION_KEY
 	  characters. Encryption keys larger than BT_ISO_BROADCAST_CODE_SIZE will be truncated to
 	  BT_ISO_BROADCAST_CODE_SIZE.
 
+choice BT_AUDIO_BROADCAST_ID_TYPE
+	prompt "Broadcast ID"
+	depends on TRANSPORT_BIS
+	default BT_AUDIO_USE_BROADCAST_ID_FICR
+	help
+	  Select the broadcast ID to use for the broadcast.
+
+config BT_AUDIO_USE_BROADCAST_ID_FICR
+	bool "Use the FICR broadcast ID"
+	depends on TRANSPORT_BIS
+	help
+	  Use the FICR broadcast ID. This is a fixed broadcast ID that is unique to each device.
+	  It is stored in the FICR NFC.TAGHEADER0 register.
+
 config BT_AUDIO_USE_BROADCAST_ID_RANDOM
 	bool "Use a random broadcast ID"
 	depends on TRANSPORT_BIS
-	default y
 	help
 	  Use a randomly generated broadcast ID.
+
+config BT_AUDIO_USE_BROADCAST_ID_FIXED
+	bool "Use a fixed broadcast ID"
+	depends on TRANSPORT_BIS
+	help
+	  Use a fixed broadcast ID. This is useful for debugging purposes.
+
+endchoice
 
 config BT_AUDIO_BROADCAST_ID_FIXED
 	hex "Fixed broadcast ID"
 	depends on TRANSPORT_BIS
 	default 0x123456
 	help
-	  Fixed broadcast ID; 3 octets. Will only be used if BT_AUDIO_USE_BROADCAST_ID_RANDOM=n.
+	  Fixed broadcast ID; 3 octets. Will only be used if BT_AUDIO_USE_BROADCAST_ID_FIXED=y.
 	  Only use for debugging.
 
 config BT_AUDIO_BROADCAST_PBA_METADATA_SIZE
