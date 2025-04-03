@@ -449,12 +449,6 @@ static void button_pressed_isr(const struct device *gpio_dev,
 		return;
 	}
 
-	/* Scanning will be scheduled, switch off pins */
-	if (set_cols(0)) {
-		LOG_ERR("Cannot control pins");
-		err = -EFAULT;
-	}
-
 	/* This is a workaround. Zephyr will set any pin triggering interrupt
 	 * at the moment. Not only our pins.
 	 */
@@ -486,8 +480,17 @@ static void button_pressed_isr(const struct device *gpio_dev,
 
 static void button_pressed_fn(struct k_work *work)
 {
-	int err = callback_ctrl(0);
+	int err;
 
+	/* Scanning will be scheduled, switch off pins */
+	err = set_cols(0);
+	if (err) {
+		LOG_ERR("Cannot control pins");
+		module_set_state(MODULE_STATE_ERROR);
+		return;
+	}
+
+	err = callback_ctrl(0);
 	if (err) {
 		LOG_ERR("Cannot disable callbacks");
 		module_set_state(MODULE_STATE_ERROR);
