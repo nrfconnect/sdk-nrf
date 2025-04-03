@@ -38,6 +38,18 @@
 #include <nrfx_timer.h>
 #include <nrf_erratas.h>
 
+#define NRF54H20_ERRATA_216_PRESENT \
+	DT_NODE_HAS_STATUS(DT_NODELABEL(cpurad_cpusys_errata216_mboxes), okay)
+
+#if NRF54H20_ERRATA_216_PRESENT
+#include <zephyr/drivers/mbox.h>
+
+/* Delay time from triggering the task "ON" for SysCtrl to starting RADIO (setting RADIO TASK RXEN
+ * or TXEN)
+ */
+#define HMPAN_216_DELAY_US (40)
+#endif /* NRF54H20_ERRATA_216_PRESENT */
+
 #if defined(CONFIG_SOC_SERIES_NRF54HX)
 	#define DEFAULT_TIMER_INSTANCE            020
 	#define RADIO_IRQn                        RADIO_0_IRQn
@@ -442,6 +454,83 @@ static struct dtm_instance {
 	.fem.tx_power_control = FEM_USE_DEFAULT_TX_POWER_CONTROL,
 #endif
 };
+
+#if NRF54H20_ERRATA_216_PRESENT
+static const struct mbox_dt_spec on_channel =
+	MBOX_DT_SPEC_GET(DT_NODELABEL(cpurad_cpusys_errata216_mboxes), on_req);
+static const struct mbox_dt_spec off_channel =
+	MBOX_DT_SPEC_GET(DT_NODELABEL(cpurad_cpusys_errata216_mboxes), off_req);
+static K_SEM_DEFINE(errata216_sem, 0, 1);
+
+/**
+ * @brief Send errata HMPAN-216 on request signal to SysCtrl
+ *
+ * Also ensure RADIO is not started within 40 us after the signal is triggered,
+ * so execution is blocked until then by a semaphore.
+ *
+ * @return 0 if successful, otherwise a negative error code
+ */
+static int errata216_on_wait(void)
+{
+	int err = 0;
+
+	nrfx_timer_disable(&dtm_inst.timer);
+	nrf_timer_shorts_disable(dtm_inst.timer.p_reg, ~0);
+	nrf_timer_int_disable(dtm_inst.timer.p_reg, ~0);
+
+	nrfx_timer_compare(&dtm_inst.timer,
+		NRF_TIMER_CC_CHANNEL1,
+		nrfx_timer_us_to_ticks(&dtm_inst.timer, HMPAN_216_DELAY_US),
+		true);
+
+	err = mbox_send_dt(&on_channel, NULL);
+
+	if (!err) {
+		nrfx_timer_enable(&dtm_inst.timer);
+
+		/* Wait for the TIMER to count the required delay before starting the Radio*/
+		err = k_sem_take(&errata216_sem, K_FOREVER);
+	}
+
+	return err;
+}
+
+/**
+ * @brief Send errata HMPAN-216 off request signal to SysCtrl
+ *
+ * @return 0 if successful, otherwise a negative error code
+ */
+static int errata216_off(void)
+{
+	return mbox_send_dt(&off_channel, NULL);
+}
+
+/**
+ * @brief Return to code execution after the required delay for errata HMPAN-216 has elapsed.
+ */
+static void errata216_release(void)
+{
+	/* Release the waiting semaphore, coninue code execution and disable TIMER */
+	k_sem_give(&errata216_sem);
+	nrfx_timer_disable(&dtm_inst.timer);
+	nrf_timer_int_disable(dtm_inst.timer.p_reg, ~0);
+}
+#else
+static int errata216_on_wait(void)
+{
+	return 0;
+}
+
+static int errata216_off(void)
+{
+	return 0;
+}
+
+static void errata216_release(void)
+{
+	/* Do nothing */
+}
+#endif /* NRF54H20_ERRATA_216_PRESENT */
 
 /* The PRBS9 sequence used as packet payload.
  * The bytes in the sequence is in the right order, but the bits of each byte
@@ -1634,6 +1723,11 @@ static void dtm_test_done(void)
 
 static void radio_start(bool rx, bool force_egu)
 {
+	/* Send the nRF54H20 errata 216 on signal */
+	if (errata216_on_wait()) {
+		printk("Failed to send errata HMPAN-216 on signal\n");
+	}
+
 	if (IS_ENABLED(CONFIG_FEM) || force_egu) {
 		nrf_egu_event_clear(DTM_EGU, DTM_EGU_EVENT);
 		nrf_egu_task_trigger(DTM_EGU, DTM_EGU_TASK);
@@ -2453,6 +2547,11 @@ int dtm_test_end(uint16_t *pack_cnt)
 	*pack_cnt = dtm_inst.rx_pkt_count;
 	dtm_test_done();
 
+	/* Send the nRF54H20 errata 216 off signal */
+	if (errata216_off()) {
+		printk("Failed to send errata HMPAN-216 off signal\n");
+	}
+
 	return 0;
 }
 
@@ -2561,7 +2660,14 @@ static void radio_handler(const void *context)
 
 static void dtm_timer_handler(nrf_timer_event_t event_type, void *context)
 {
-	// Do nothing
+	/* The only event that needs processing in this function is the HMPAN-216
+	 * errata workaround for nRF54H20 SoCs
+	 */
+	if (event_type == NRF_TIMER_EVENT_COMPARE1) {
+		errata216_release();
+	} else {
+		/* Do nothing */
+	}
 }
 
 #if NRF52_ERRATA_172_PRESENT
