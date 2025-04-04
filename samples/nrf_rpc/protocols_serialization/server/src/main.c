@@ -29,6 +29,17 @@ void nrf_rpc_uart_initialized_hook(const struct device *uart_dev)
 		LOG_ERR("Failed to configure RPC alive GPIO: %d", ret);
 	}
 }
+
+void __real_z_fatal_error(unsigned int reason, const struct arch_esf *esf);
+
+void __wrap_z_fatal_error(unsigned int reason, const struct arch_esf *esf)
+{
+	const struct gpio_dt_spec alive_gpio = GPIO_DT_SPEC_GET(DT_ALIAS(rpc_alive_led), gpios);
+
+	(void)gpio_pin_configure_dt(&alive_gpio, GPIO_OUTPUT_INACTIVE);
+
+	__real_z_fatal_error(reason, esf);
+}
 #endif
 
 int main(void)
