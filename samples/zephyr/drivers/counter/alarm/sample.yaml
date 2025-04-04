@@ -1,0 +1,25 @@
+sample:
+  name: Counter RTC Driver Sample
+common:
+  tags:
+    - drivers
+    - counter
+    - ci_samples_zephyr_drivers_counter
+  harness: console
+  harness_config:
+    type: multi_line
+    ordered: true
+    regex:
+      - "Counter alarm sample"
+      - "Set alarm in 2 sec"
+      - "!!! Alarm !!!"
+      - "Now: [2|3]"
+  depends_on: counter
+tests:
+  nrf.extended.sample.drivers.counter.alarm:
+    platform_allow:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+      - nrf54lv10apdk/nrf54lv10a/cpuapp

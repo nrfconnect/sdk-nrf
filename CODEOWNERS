@@ -670,6 +670,7 @@
 /samples/zephyr/basic/blinky/             @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /samples/zephyr/boards/nordic/system_off/ @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/adc/              @nrfconnect/ncs-low-level-test
+/samples/zephyr/drivers/counter/          @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/audio/dmic/       @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/i2c/rtio_loopback/ @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/mbox/             @nrfconnect/ncs-low-level-test
