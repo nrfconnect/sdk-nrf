@@ -526,6 +526,7 @@ static int client_transfer(enum coap_method method,
 
 transfer_end:
 	xfer_ctx_release(xfer);
+	coap_client_cancel_request(cc, &request);
 	if (err == -ETIMEDOUT && IS_ENABLED(CONFIG_NRF_CLOUD_COAP_DISCONNECT_ON_FAILED_REQUEST)) {
 		nrf_cloud_coap_disconnect();
 	}
