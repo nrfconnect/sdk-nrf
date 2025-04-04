@@ -56,44 +56,16 @@ You can find an overview of the cryptography layer configuration supported for e
 Trusted storage
 ***************
 
-:ref:`trusted_storage_in_ncs` is a security mechanism designed to securely store and manage sensitive data, such as cryptographic keys, device credentials, and configuration data.
-The mechanism is essential for IoT devices, as it allows the implementation of secure communication between devices.
-
-The Trusted Storage can utilize one of the following backends to implement PSA Certified Secure Storage API:
-
-* TF-M Platform Root of Trust (PRoT).
-  This can only be utilized if the `ARM TrustZone`_ technology and hardware-accelerated firmware isolation are supported by the platform in use.
-* The :ref:`trusted_storage_readme` |NCS| software library.
-
-Currently all :ref:`matter_samples` in the |NCS| use the trusted storage library as a Trusted Storage backend for all supported platforms.
-
-The trusted storage library provides confidentiality, integrity, and authenticity for the assets it operates on.
-It handles sensitive data in two contexts:
-
-* Volatile - Before data is forwarded to the non-volatile storage and after it is retrieved from the non-volatile storage.
-* Non-volatile - When data is written to the non-volatile memory in encrypted form.
-
-In the case of the volatile context, the trusted storage library leverages the Authenticated Encryption with Associated Data (AEAD) encryption backend (:kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD`).
-It is used to encrypt and decrypt the assets that are being securely stored in the non-volatile memory.
-AEAD can be configured with the set of Kconfig options described in the library's :ref:`trusted_storage_configuration` section.
-
-An important setting, that depends on the hardware platform in use, is the way of generating the AEAD keys.
-The recommended and the most secure option is to use :ref:`lib_hw_unique_key` (HUK) library.
-HUK support is automatically enabled with the :kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK` Kconfig option for compatible configurations.
-
-The HUK library is supported for the nRF52840, nRF5340, and nRF54L platforms, but for :ref:`matter_samples` in the |NCS|, it is only enabled for the nRF5340 and nRF54L platforms:
-
-* For the nRF5340, nRF54L platforms, the HUK is generated at first boot and stored in the Key Management Unit (KMU).
-  No changes to the existing partition layout are needed for products in the field.
-* For the nRF54L15 NS platform, the HUK generation and management is handled by the Trusted Firmware-M (TF-M) library.
-* For the nRF52840 platform, AEAD keys are derived with a SHA-256 hash (:kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID`).
-  This approach is less secure than using the library for key derivation as it will only provide integrity of sensitive material.
-  It is also possible to implement a custom AEAD keys generation method when the :kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_CUSTOM` Kconfig option is selected.
-
-  Using the HUK library with nRF52840 SoC is possible, but it requires employing the :ref:`bootloader` that would generate the AEAD key at first boot and store it in the dedicated HUK partition that can be accessed only by the CryptoCell peripheral.
-  Note that adding another partition in the FLASH layout implies breaking the firmware backward compatibility with already deployed devices.
-
+The :ref:`trusted_storage_in_ncs` is a security mechanism designed to securely store and manage sensitive data.
+Currently, all :ref:`matter_samples` in the |NCS| use the :ref:`trusted_storage_readme` library as the Trusted Storage backend for all supported platforms.
 You can find an overview of the Trusted Storage layer configuration supported for each |NCS| Matter-enabled platform in the :ref:`matter_platforms_security_support` section.
+
+.. note::
+   For the nRF52840 devices, in regards to :ref:`matter_samples` in |NCS|, AEAD keys are derived using hashes of entry UIDs (:kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID`).
+   This approach is less secure than using the :ref:`lib_hw_unique_key` library for key derivation as it only provides integrity of sensitive material.
+   It is also possible to implement a custom AEAD key generation method when the :kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_CUSTOM` Kconfig option is selected.
+
+For more details about AEAD key generation and backend configuration, see the :ref:`trusted_storage_readme` readme.
 
 .. _matter_platforms_security_support:
 
