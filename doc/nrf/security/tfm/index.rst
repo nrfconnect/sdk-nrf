@@ -1,3 +1,4 @@
+.. _ug_tfm:
 .. _ug_tfm_index:
 
 Trusted Firmware-M in the |NCS|
@@ -38,4 +39,7 @@ For more information about TF-M, see the `Trusted Firmware-M documentation <TF-M
    tfm_supported_services
    tfm_architecture
    processing_environments
-   tfm
+   tfm_building
+   tfm_services
+   tfm_provisioning
+   tfm_logging
