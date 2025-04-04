@@ -5,8 +5,7 @@
 #
 
 menuconfig BT_RAS_RREQ
-	bool "GATT Ranging Requester Client [EXPERIMENTAL]"
-	select EXPERIMENTAL
+	bool "GATT Ranging Requester Client"
 	select BT_GATT_DM
 	select BT_GATT_CLIENT
 
