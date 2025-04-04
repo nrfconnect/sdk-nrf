@@ -296,3 +296,52 @@ The following two types of security risks are possible:
     The mechanism to determine if the device is compromised is up to the OEM developers.
 
 Additionally, after upgrading the device firmware with the key importer functionality enabled, and once the key import is complete, it is recommend to update device firmware with the key importer functionality disabled as soon as possible.
+
+Trusted storage
+---------------
+
+:ref:`trusted_storage_in_ncs` is a security mechanism designed to securely store and manage sensitive data, such as cryptographic keys, device credentials, and configuration data.
+The mechanism is essential for IoT devices, as it allows the implementation of secure communication between devices.
+
+The Trusted Storage can utilize one of the following backends to implement PSA Certified Secure Storage API:
+
+* TF-M Platform Root of Trust (PRoT).
+  This can only be utilized if the `ARM TrustZone`_ technology and hardware-accelerated firmware isolation are supported by the platform in use.
+* The :ref:`trusted_storage_readme` |NCS| software library.
+
+Currently all :ref:`mesh_samples` in the |NCS| use the trusted storage library as a Trusted Storage backend for all supported platforms.
+
+The trusted storage library provides confidentiality, integrity, and authenticity for the assets it operates on.
+It handles sensitive data in two contexts:
+
+* Volatile - Before data is forwarded to the non-volatile storage and after it is retrieved from the non-volatile storage.
+* Non-volatile - When data is written to the non-volatile memory in encrypted form.
+
+In the case of the volatile context, the trusted storage library leverages the Authenticated Encryption with Associated Data (AEAD) encryption backend (:kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD`).
+It is used to encrypt and decrypt the assets that are being securely stored in the non-volatile memory.
+AEAD can be configured with the set of Kconfig options described in the library's :ref:`trusted_storage_configuration` section.
+
+An important setting, that depends on the hardware platform in use, is the way of generating the AEAD keys.
+The recommended and the most secure option is to use :ref:`lib_hw_unique_key` (HUK) library.
+HUK support is automatically enabled with the :kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK` Kconfig option for compatible configurations.
+
+The HUK library is supported for both the nRF52840 and nRF5340 platforms, but for :ref:`mesh_samples` in the |NCS|, it is only enabled for the nRF5340 platform:
+
+* For the nRF5340 platform, the HUK is generated at first boot and stored in the Key Management Unit (KMU).
+  No changes to the existing partition layout are needed for products in the field.
+
+* For the nRF52840 platform, AEAD keys are derived using a SHA-256 hash of the device's UID (:kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID`).
+  This method provides only integrity protection of sensitive material, and is considered less secure than using the HUK library for key derivation.
+  If you wish to use HUK with the nRF52840 platform, additional steps are required, such as using a bootloader to manage key generation.
+
+  Using the HUK library with the nRF52840 SoC is possible, but it requires additional configuration, such as employing the :ref:`bootloader` to generate the AEAD key at first boot.
+  The AEAD key would then be stored in a dedicated HUK partition, which can only be accessed by the CryptoCell peripheral.
+  This method is optional and requires changes to the existing bootloader and FLASH layout.
+
+  Devices which don't have TrustZone separation (i.e. nRF52840) use hardware unique keys to reach level 1 PSA certification
+
+  .. note::
+     Modifying the partition layout will break firmware backward compatibility with already deployed devices.
+
+  .. note::
+     Any nRF52 devices that do not use NSIB would need to use e.g. UID hash for key derivation.
