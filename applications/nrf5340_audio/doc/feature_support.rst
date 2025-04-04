@@ -21,7 +21,19 @@ For an explanation of the maturity levels, see :ref:`Software maturity levels <s
 nRF5340 Audio QDIDs
 *******************
 
-The following QDIDs are related to the nRF5340 Audio application:
+The following DNs/QDIDs are related to the nRF5340 Audio application:
+
+nRF5340 DK Bluetooth DNs/QDIDs
+   A full Audio product QDID requires several DNs and QDIDs for the nRF5340 DK, as listed in the `nRF5340 DK Bluetooth DNs and QDIDs Compatibility Matrix`_.
+   The exact DN/QDID numbers depend on the project configuration and the features used in the application.
+   They might include DNs/QDIDs for the SoftDevice Controller subsystem, Host subsystem, or LE Audio Profiles and Services.
+   These in turn can depend on ISO transport and the SoC version.
+
+   .. note::
+      - The DNs/QDIDs listed in the Compatibility Matrix may not cover all use cases or combinations.
+
+      - The Audio applications do not demonstrate the full capabilities of the underlying DNs/QDIDs.
+        At the same time, the Audio applications may demonstrate features not available in the underlying DNs/QDIDs.
 
 .. ncs-include:: lc3/README.rst
    :docset: nrfxlib
