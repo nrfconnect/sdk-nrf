@@ -6,5 +6,9 @@ tests:
     platform_allow:
       - nrf54l09pdk/nrf54l09/cpuflpr
       - nrf54l20pdk/nrf54l20/cpuflpr
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54l20pdk/nrf54l20/cpuflpr
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
