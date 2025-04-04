@@ -7,9 +7,9 @@ Cellular overview
    :local:
    :depth: 2
 
-Nordic Semiconductor offers a wide range of cellular products that support cellular connectivity, particularly focusing on the LTE-M and NB-IoT standards.
+Nordic Semiconductor offers a wide range of cellular products, particularly focusing on the LTE-M and NB-IoT standards.
 For more information on the products, see `Cellular IoT SiPs`_.
-The following are main key features of cellular:
+The following are main key features of LTE-M and NB-IoT:
 
 * Purely packet-based.
 * Provides significantly high data rates.
@@ -133,8 +133,6 @@ The following are some of the key advantages of using software SIM:
 * Cost savings and simplified design by excluding the SIM hardware layer.
 * Power savings, especially in idle mode using :term:`Extended Discontinuous Reception (eDRX)`.
 
-The traditional carriers (not MVNOs like iBasis or Onomondo) do not allow their profiles to be provisioned or uploaded into SoftSIMs.
-These carriers need to use profiles from SoftSIM providers like Onomondo.
 See the software SIM support section of the `Cellular IoT unique features`_ documentation for information on software SIM.
 
 The software SIM support is available in the |NCS| from the v2.5.0 release.
