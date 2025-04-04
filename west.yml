@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: e48bca44dd596dc66d71378e97bf5ceff2c483d0
+      revision: v3.0.0-ncs-rc1
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -127,7 +127,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 6df89a84be878d912dad5d7a5c6a9c82d2bdbab2
+      revision: v3.0.0-ncs-rc1
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -144,11 +144,11 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 9a7b8e6aec3f031b520ff55c658462c748f0ed3e
+      revision: v3.0.0-ncs-rc1
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: 0002817d4e50c8832028c280996dfeac47938138
+      revision: v3.0.0-ncs-rc1
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
@@ -156,7 +156,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: df5368cb9beec725a7ccac725a4aecec272b1897
+      revision: v3.0.0-ncs-rc1
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
@@ -175,7 +175,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: 8058d3003bbcef71b1b3b052c6a11a7e9903c0ae
+      revision: v3.0.0-ncs-rc1
       groups:
         - nrf-802154
     - name: dragoon
@@ -196,7 +196,7 @@ manifest:
           compare-by-default: false
     - name: find-my
       repo-path: sdk-find-my
-      revision: 01af9578b7510f4f312c274465b92c27ef67c474
+      revision: v3.0.0-ncs-rc1
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -231,10 +231,10 @@ manifest:
           upstream-sha: c6eaeda5a1c1c5dbb24dce7e027340cb8893a77b
           compare-by-default: false
     - name: suit-generator
-      revision: 1817ea1aac7cd0cfae4d50b8aea897d9140833ef
+      revision: v3.0.0-ncs-rc1
       path: modules/lib/suit-generator
     - name: suit-processor
-      revision: 94effb7561b3a970195df76165e4b15e4ac0c34e
+      revision: v3.0.0-ncs-rc1
       path: modules/lib/suit-processor
     - name: doc-internal
       repo-path: doc-internal
