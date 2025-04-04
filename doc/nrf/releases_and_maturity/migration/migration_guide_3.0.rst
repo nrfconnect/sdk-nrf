@@ -1,3 +1,5 @@
+:orphan:
+
 .. _migration_3.0:
 
 Migration guide for |NCS| v3.0.0 (Working draft)
@@ -192,6 +194,9 @@ Build system
            nrfutil install device
 
      If you prefer to continue using ``nrfjprog`` for programming devices, :ref:`specify the west runner <programming_selecting_runner>` with ``west flash``.
+
+   * Erasing the external memory when programming a new firmware image with ``west flash`` series now always correctly honors the ``--erase`` flag (and its absence) both when using the ``nrfjprog`` and ``nrfutil`` backends.
+     Prior to this release, the ``nrjfprog`` backend would always erase only the sectors of the external flash used by the new firmware, and the ``nrfutil`` backend would always erase the whole external flash.
 
 Samples and applications
 ========================
