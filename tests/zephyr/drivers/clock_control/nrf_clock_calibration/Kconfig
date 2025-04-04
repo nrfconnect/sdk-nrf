@@ -1,0 +1,1 @@
+source "tests/drivers/clock_control/nrf_clock_calibration/Kconfig"

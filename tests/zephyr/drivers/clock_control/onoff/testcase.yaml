@@ -1,0 +1,12 @@
+tests:
+  nrf.extended.drivers.clock.clock_control_onoff:
+    tags:
+      - drivers
+      - clock_control
+      - ci_tests_zephyr_drivers_clock_control
+    platform_allow:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
