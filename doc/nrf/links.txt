@@ -80,6 +80,7 @@
 .. _`sdk-nrf PR #15892`: https://github.com/nrfconnect/sdk-nrf/pull/15892
 .. _`sdk-nrf PR #14474`: https://github.com/nrfconnect/sdk-nrf/pull/14474
 .. _`sdk-nrf PR #16242`: https://github.com/nrfconnect/sdk-nrf/pull/16242
+.. _`sdk-nrf PR #20177`: https://github.com/nrfconnect/sdk-nrf/pull/20177
 
 .. _`sdk-nrfxlib`: https://github.com/nrfconnect/sdk-nrfxlib
 
