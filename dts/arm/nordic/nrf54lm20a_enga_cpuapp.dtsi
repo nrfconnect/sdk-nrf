@@ -11,6 +11,10 @@ systick: &cpuapp_systick {};
 nvic: &cpuapp_nvic {};
 
 / {
+	chosen {
+		zephyr,entropy = &prng;
+	};
+
 	soc {
 		compatible = "simple-bus";
 		interrupt-parent = <&cpuapp_nvic>;
@@ -20,6 +24,11 @@ nvic: &cpuapp_nvic {};
 	psa_rng: psa-rng {
 		compatible = "zephyr,psa-crypto-rng";
 		status = "disabled";
+	};
+
+	prng: prng {
+		compatible = "nordic,entropy-prng";
+		status = "okay";
 	};
 };
 
