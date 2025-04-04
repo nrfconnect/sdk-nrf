@@ -1504,3 +1504,8 @@ ci_tests_zephyr_drivers_retained_mem:
   files:
     - nrf/tests/zephyr/drivers/retained_mem/
     - zephyr/tests/drivers/retained_mem/
+
+ci_samples_zephyr_drivers_counter:
+  files:
+    - nrf/samples/zephyr/drivers/counter/
+    - zephyr/samples/drivers/counter/
