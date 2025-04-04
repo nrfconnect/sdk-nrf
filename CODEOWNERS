@@ -776,6 +776,7 @@
 /subsys/bootloader/                       @nrfconnect/ncs-pluto
 /subsys/caf/                              @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /subsys/debug/                            @nordic-krch
+/subsys/debug/coredump/                   @nrfconnect/ncs-protocols-serialization
 /subsys/dfu/                              @nrfconnect/ncs-pluto
 /subsys/dfu/dfu_multi_image/              @Damian-Nordic
 /subsys/dm/                               @nrfconnect/ncs-si-muffin
