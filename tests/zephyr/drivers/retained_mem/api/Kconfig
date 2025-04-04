@@ -1,0 +1,1 @@
+source "tests/drivers/retained_mem/api/Kconfig"
