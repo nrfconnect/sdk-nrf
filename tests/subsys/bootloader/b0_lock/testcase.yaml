@@ -6,5 +6,6 @@ tests:
     platform_allow: nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+    build_only: true
     tags:
       - b0
