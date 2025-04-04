@@ -25,6 +25,9 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
   sample.aes_gcm.oberon:
     sysbuild: true
+    extra_args:
+      - CONFIG_PSA_CRYPTO_DRIVER_OBERON=y
+      - CONFIG_PSA_CRYPTO_DRIVER_CRACEN=n
     tags:
       - introduction
       - psa
@@ -33,6 +36,7 @@ tests:
       - ci_samples_crypto
     platform_allow:
       - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
       - nrf9161dk/nrf9161
       - nrf9161dk/nrf9161/ns
       - nrf9160dk/nrf9160/ns
@@ -46,6 +50,7 @@ tests:
         - .*Example finished successfully!.*
     integration_platforms:
       - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
       - nrf9160dk/nrf9160/ns
       - nrf9160dk/nrf9160
       - nrf9161dk/nrf9161
