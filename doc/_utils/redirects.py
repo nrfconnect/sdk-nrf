@@ -292,9 +292,10 @@ NRF = [
     ("app_dev/optimizing/power", "test_and_optimize/optimizing/power"),
     ("security_chapter", "security"), # Security (landing)
     ("security/security", "security"), # Security (subpage -- removed in v2.8.0)
-    ("ug_tfm", "security/tfm/tfm"), # Running applications with Trusted Firmware-M
-    ("app_dev/tfm/index", "security/tfm/tfm"),
-    ("security/tfm", "security/tfm/tfm"),
+    ("ug_tfm", "security/tfm/index"), # Running applications with Trusted Firmware-M (split into multiple files in v3.0.0)
+    ("app_dev/tfm/index", "security/tfm/index"),
+    ("security/tfm", "security/tfm/index"),
+    ("security/tfm/tfm", "security/tfm/index"),
     ("app_dev/ap_protect/index", "security/ap_protect"), # Enabling access port protection mechanism
     ("ug_ble_controller", "protocols/bt/index"), # Bluetooth LE Controller
     ("protocols/ble/index", "protocols/bt/index"),
