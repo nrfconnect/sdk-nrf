@@ -13,7 +13,7 @@
 #ifdef CONFIG_LOCK_PRINT_STORAGE_STATUS
 #ifdef CONFIG_SETTINGS_NVS
 #include <zephyr/fs/nvs.h>
-#elif CONFIG_SETTINGS_ZMS
+#elif CONFIG_SETTINGS_ZMS || CONFIG_SETTINGS_ZMS_LEGACY
 #include <zephyr/fs/zms.h>
 #endif /* CONFIG_SETTINGS_NVS */
 #include <zephyr/logging/log.h>
@@ -33,7 +33,7 @@ bool GetStorageFreeSpace(size_t &freeBytes)
 	}
 #ifdef CONFIG_SETTINGS_NVS
 	freeBytes = nvs_calc_free_space(static_cast<nvs_fs *>(storage));
-#elif CONFIG_SETTINGS_ZMS
+#elif CONFIG_SETTINGS_ZMS || CONFIG_SETTINGS_ZMS_LEGACY
 	freeBytes = zms_calc_free_space(static_cast<zms_fs *>(storage));
 #endif /* CONFIG_SETTINGS_NVS */
 	return true;

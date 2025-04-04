@@ -207,6 +207,27 @@ Serial LTE Modem
 
    * Errors that were previously notified to the application with the ``LWM2M_CARRIER_ERROR_RUN`` event type have instead been added to :c:macro:`LWM2M_CARRIER_ERROR_CONFIGURATION`.
 
+ZMS Settings backend
+--------------------
+
+.. toggle::
+
+   The new ZMS backend for Settings is not backward compatible with the old version.
+
+   To keep using the legacy backend, enable the :kconfig:option:`CONFIG_SETTINGS_ZMS_DOWN` Kconfig option.
+
+   You can now enable some performance optimizations using the following Kconfig options:
+
+   * :kconfig:option:`SETTINGS_ZMS_LL_CACHE`: Used for caching the linked list nodes related to Settings Key/Value entries.
+   * :kconfig:option:`SETTINGS_ZMS_LL_CACHE_SIZE`: The size of the linked list cache (each entry occupies 8B of RAM).
+   * :kconfig:option:`SETTINGS_ZMS_NAME_CACHE`: The cache used to keep status information of the Settings Keys.
+   * :kconfig:option:`SETTINGS_ZMS_NAME_CACHE_SIZE`: The size of the Name cache.
+   * :kconfig:option:`SETTINGS_ZMS_NO_LL_DELETE`: Disables deleting the linked list nodes when deleting a Settings Key.
+     Use this option only when the application is always using the same Settings Keys.
+     When the application uses random Keys, enabling this option could lead to incrementing the linked list nodes without corresponding Keys and cause excessive delays to loading of the Keys.
+     Use this option only to accelerate the delete operation for a fixed set of Settings elements.
+   * :kconfig:option:`SETTINGS_ZMS_LOAD_SUBTREE_PATH`: Loads only the subtree path passed in the argument.
+
 Libraries
 =========
 
