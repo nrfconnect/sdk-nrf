@@ -396,7 +396,8 @@ Common Application Framework
 Debug libraries
 ---------------
 
-|no_changes_yet_note|
+* Added an experimental :ref:`Zephyr Core Dump <zephyr:coredump>` backend that writes a core dump to an internal flash or RRAM partition.
+  To enable this backend, set the :kconfig:option:`CONFIG_DEBUG_COREDUMP_BACKEND_OTHER` and :kconfig:option:`CONFIG_DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION` Kconfig options.
 
 DFU libraries
 -------------
