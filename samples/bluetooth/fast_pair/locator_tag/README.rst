@@ -704,6 +704,12 @@ Testing
 
       #. Initiate the connection and trigger the Fast Pair procedure by tapping the :guilabel:`Connect` button.
          After the procedure is complete, you will see a pop-up with the Acceptable Use Policy for the `Find My Device app`_.
+
+         .. note::
+            If you use the default debug device model and you have the `nRF Connect Device Manager`_ application installed on your test Android device, you may get the Android notification from this mobile application about the new firmware update.
+            You can ignore this notification, as it is not related to the Fast Pair provisioning process.
+            To test the notification feature, follow the :ref:`fast_pair_locator_tag_testing_fw_update_notifications` test section.
+
       #. If you want to start the FMDN provisioning, accept the Acceptable Use Policy by tapping the :guilabel:`Agree and continue` button.
 
          .. figure:: /images/bt_fast_pair_locator_tag_acceptable_use_policy.png
@@ -768,6 +774,12 @@ Testing
 
       #. Initiate the connection and trigger the Fast Pair procedure by tapping the :guilabel:`Connect` button.
          After the procedure is complete, you will see a pop-up with the Acceptable Use Policy for the `Find My Device app`_.
+
+         .. note::
+            If you use the default debug device model and you have the `nRF Connect Device Manager`_ application installed on your test Android device, you may get the Android notification from this mobile application about the new firmware update.
+            You can ignore this notification, as it is not related to the Fast Pair provisioning process.
+            To test the notification feature, follow the :ref:`fast_pair_locator_tag_testing_fw_update_notifications` test section.
+
       #. If you want to start the FMDN provisioning, accept the Acceptable Use Policy by tapping the :guilabel:`Agree and continue` button.
 
          .. figure:: /images/bt_fast_pair_locator_tag_acceptable_use_policy.png
@@ -816,12 +828,17 @@ Testing
       #. Observe that the Android does not display a notification about the detected Fast Pair Provider, as the locator tag device disables advertising after the unprovisioning operation.
       #. Press **Button 0** to request turning on the Fast Pair advertising in discoverable mode and to restart the FMDN provisioning process.
 
+.. _fast_pair_locator_tag_testing_clock_sync:
 
 Clock synchronization
 ---------------------
 
 Testing steps for the clock synchronization feature require a second Android device.
 The device must be registered to a **different** Google account from the first Android device.
+Testing steps also require the `nRF Connect for Mobile`_ application on your second Android device.
+
+.. note::
+   You can execute these testing steps in combination with the :ref:`fast_pair_locator_tag_testing_fw_update_notifications` testing steps, as both test variants require you to wait for more than 24 hours.
 
 To test this feature, complete the following steps:
 
@@ -1028,8 +1045,12 @@ To test this feature, complete the following steps:
       #. Turn on your Android device.
       #. Observe that after up to few hours the **LED 1** goes off, which means that the motion detector has been deactivated, because the device is no longer in the Unwanted Tracking Protection mode.
 
+.. _fast_pair_locator_tag_testing_dfu:
+
 Performing the DFU procedure
 ----------------------------
+
+Testing steps for the DFU feature require the `nRF Connect Device Manager`_ application on your test Android device.
 
 To perform the DFU procedure, complete the following steps:
 
@@ -1068,6 +1089,101 @@ To perform the DFU procedure, complete the following steps:
       #. Perform DFU using the `nRF Connect Device Manager`_ mobile app:
 
          .. include:: /includes/suit_fota_update_nrfcdm_test_steps.txt
+
+.. _fast_pair_locator_tag_testing_fw_update_notifications:
+
+Android notifications about firmware updates
+--------------------------------------------
+
+Testing steps for the firmware update notification feature require the `nRF Connect Device Manager`_ application on your test Android device.
+
+.. note::
+   The support for the Android notifications about the firmware updates in the context of the FMDN extension is a new feature.
+   Before you start the testing, ensure that versions for the following applications and services are equal to or greater than the specified minimum versions:
+
+   * `Google Play Services`_ - ``v25.12.33``
+   * `nRF Connect Device Manager`_ - ``v2.5.0``
+
+.. note::
+   You can execute these testing steps in combination with the :ref:`fast_pair_locator_tag_testing_clock_sync` testing steps, as both test variants require you to wait for more than 24 hours.
+
+To test this feature, complete the following steps:
+
+.. tabs::
+
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      1. Go to the :ref:`fast_pair_locator_tag_testing` section and follow the instructions on performing the FMDN provisioning operation.
+      #. Observe that **LED 3** is lit, which indicates that the device is provisioned as an FMDN beacon.
+      #. Power off the development kit and wait for 24 hours.
+      #. Power off your test Android device.
+      #. Power on the development kit.
+      #. |connect_terminal_specific|
+      #. Power on your test Android device and unlock it after the smartphone screen is turned on.
+      #. Wait for the Android device to connect to the development kit, read the local firmware version, and disconnect.
+      #. Observe that you get the Android notification about the new firmware update on your test Android device.
+
+         .. figure:: /images/bt_fast_pair_locator_tag_android_fw_update_notification.png
+            :scale: 80 %
+            :alt: Firmware update notification in the Android notification center
+
+      #. Upgrade the sample firmware to the latest version:
+
+         a. Set the application firmware version to ``v99.99.99`` by modifying the following files:
+
+            * The :file:`VERSION` file.
+            * The :file:`configuration/prj.conf` file (the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_MAJOR`, :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_MINOR`, and :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_REVISION` Kconfig option group).
+
+            The new firmware version should match the version specified in the **Firmware Version** field from the :ref:`fast_pair_locator_tag_google_device_model` section.
+
+         #. Rebuild the sample application to generate the DFU package.
+         #. Follow the instructions from the :ref:`fast_pair_locator_tag_testing_dfu` section to perform the DFU procedure.
+
+      #. Validate the new firmware version is correct by reading the application boot banner.
+      #. Power off the development kit and wait again for 24 hours.
+      #. Power off your test Android device.
+      #. Power on the development kit.
+      #. |connect_terminal_specific|
+      #. Power on your test Android device and unlock it after the smartphone screen is turned on.
+      #. Wait for the Android device to connect to the development kit, read the local firmware version, and disconnect.
+      #. Observe that you no longer get the Android notification about the new firmware update on your test Android device.
+
+   .. group-tab:: nRF54 DKs
+
+      1. Go to the :ref:`fast_pair_locator_tag_testing` section and follow the instructions on performing the FMDN provisioning operation.
+      #. Observe that **LED 2** is lit, which indicates that the device is provisioned as an FMDN beacon.
+      #. Power off the development kit and wait for 24 hours.
+      #. Power off your test Android device.
+      #. Power on the development kit.
+      #. |connect_terminal_specific|
+      #. Power on your test Android device and unlock it after the smartphone screen is turned on.
+      #. Wait for the Android device to connect to the development kit, read the local firmware version, and disconnect.
+      #. Observe that you get the Android notification about the new firmware update on your test Android device.
+
+         .. figure:: /images/bt_fast_pair_locator_tag_android_fw_update_notification.png
+            :scale: 80 %
+            :alt: Firmware update notification in the Android notification center
+
+      #. Upgrade the sample firmware to the latest version:
+
+         a. Set the application firmware version to ``v99.99.99`` by modifying the following files:
+
+            * The :file:`VERSION` file.
+            * The :file:`configuration/prj.conf` file (the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_MAJOR`, :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_MINOR`, and :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_REVISION` Kconfig option group).
+
+            The new firmware version should match the version specified in the **Firmware Version** field from the :ref:`fast_pair_locator_tag_google_device_model` section.
+
+         #. Rebuild the sample application to generate the DFU package.
+         #. Follow the instructions from the :ref:`fast_pair_locator_tag_testing_dfu` section to perform the DFU procedure.
+
+      #. Validate the new firmware version is correct by reading the application boot banner.
+      #. Power off the development kit and wait again for 24 hours.
+      #. Power off your test Android device.
+      #. Power on the development kit.
+      #. |connect_terminal_specific|
+      #. Power on your test Android device and unlock it after the smartphone screen is turned on.
+      #. Wait for the Android device to connect to the development kit, read the local firmware version, and disconnect.
+      #. Observe that you no longer get the Android notification about the new firmware update on your test Android device.
 
 Disabling the locator tag
 -------------------------
