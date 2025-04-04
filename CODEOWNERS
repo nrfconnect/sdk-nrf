@@ -533,6 +533,7 @@
 /samples/sensor/bh1749/                   @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-cia
 /samples/nrf5340/empty_app_core/          @nrfconnect/ncs-si-muffin
+/samples/nrf5340/extxip_smp_svr/          @nrfconnect/ncs-pluto
 /samples/nrf_compress/                    @nordicjm
 /samples/nrf_profiler/                    @nrfconnect/ncs-si-bluebagel
 /samples/nrf_rpc/protocols_serialization/ @nrfconnect/ncs-protocols-serialization
