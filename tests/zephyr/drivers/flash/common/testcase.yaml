@@ -9,9 +9,22 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - SB_CONFIG_SDP=y
+      - SB_CONFIG_SDP_MSPI=y
   nrf.extended.drivers.flash.common.sdp.single:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-    extra_args: EXTRA_DTC_OVERLAY_FILE="single.overlay"
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="single.overlay"
+      - SB_CONFIG_SDP=y
+      - SB_CONFIG_SDP_MSPI=y
+  nrf.extended.drivers.flash.common.sqspi:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - DTC_OVERLAY_FILE="boards/nrf54l15dk_nrf54l15_cpuapp_sqspi.overlay"
