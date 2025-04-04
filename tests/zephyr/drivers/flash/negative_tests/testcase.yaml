@@ -1,0 +1,13 @@
+common:
+  tags:
+    - drivers
+    - flash
+    - ci_tests_zephyr_drivers_flash_negative_tests
+tests:
+  nrf.extended.drivers.flash.negative_tests:
+    platform_allow:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
