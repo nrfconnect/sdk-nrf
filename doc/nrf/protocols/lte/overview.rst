@@ -7,17 +7,17 @@ Cellular overview
    :local:
    :depth: 2
 
-Nordic Semiconductor offers a wide range of cellular products that support cellular connectivity, particularly focusing on the LTE-M and NB-IoT standards.
+Nordic Semiconductor offers a wide range of cellular products, particularly focusing on the LTE-M and NB-IoT standards.
 For more information on the products, see `Cellular IoT SiPs`_.
-The following are main key features of cellular:
+The following are the main key features of LTE-M and NB-IoT:
 
 * Purely packet-based.
 * Provides significantly high data rates.
 * Improves latency.
-* It uses the spectrum more efficiently.
-* It supports scalable carrier bandwidths.
-* It includes robust security features.
-* It is designed to be backward compatible.
+* Uses the spectrum more efficiently.
+* Supports scalable carrier bandwidths.
+* Includes robust security features.
+* Designed to be backward compatible.
 
 LTE-M and NB-IoT
 ****************
@@ -72,7 +72,7 @@ Half-duplex operation opens for much simpler multiband support and enables :term
 For LTE-M and NB-IoT, the only known deployment is FDD.
 
 nRF91 Series SiPs support up to 18 LTE bands for global operation.
-For details of LTE band support in an nRF91 Series SiP for LTE-M and NB-IoT, see `nRF9151 Product Specification`_, `nRF9161 Product Specification`_, or `nRF9160 Product Specification`_, depending on the SiP you are using.
+For details of LTE band support in an nRF91 Series SiP for LTE-M and NB-IoT, see the `nRF9151 Product Specification`_, the `nRF9161 Product Specification`_, or the `nRF9160 Product Specification`_, depending on the SiP you are using.
 
 Physical layer parameters
 -------------------------
@@ -110,7 +110,7 @@ Certifications
 Some MNOs, such as Verizon and Vodafone, have their own certification requirements.
 In such cases, it is advised to engage with the MNO certification programs and contact them at the earliest.
 This is to receive certification-related requirements and better understand the potential certification costs, processes, and timelines.
-But many operators only require GCF (Global Certification Forum) or PTCRB certifications that devices work as per standard, and regulatory certifications.
+But many operators only require GCF (Global Certification Forum) or PTCRB certifications that devices support as per standard, and regulatory certifications.
 
 For more information about certification related to the nRF91 Series SiP, refer to the following pages:
 
@@ -131,10 +131,13 @@ The nRF91 Series supports software SIM, which allows the usage of software SIM-b
 The following are some of the key advantages of using software SIM:
 
 * Cost savings and simplified design by excluding the SIM hardware layer.
-* Power savings, especially in idle mode using :term:`Extended Discontinuous Reception (eDRX)`.
+* Software SIMs, unlike traditional SIMs, support the suspend/resume feature required during eDRX intervals.
+  This feature saves power by eliminating the idle current of the SIM, which typically ranges from 30 µA to 60 µA.
 
-The traditional carriers (not MVNOs like iBasis or Onomondo) do not allow their profiles to be provisioned or uploaded into SoftSIMs.
-These carriers need to use profiles from SoftSIM providers like Onomondo.
+  .. note::
+     The ``AT%UICCPOWERSAVE`` AT Command, when using traditional SIMs, turns off the SIM during eDRX intervals to save power if the suspend/resume feature is not supported.
+     See `nRF91x1 UICC deactivation %UICCPOWERSAVE`_ for more information.
+
 See the software SIM support section of the `Cellular IoT unique features`_ documentation for information on software SIM.
 
 The software SIM support is available in the |NCS| from the v2.5.0 release.
@@ -143,7 +146,7 @@ The `Onomondo SoftSIM integration with the nRF91 Series`_ guide describes the in
 Power consumption
 =================
 
-Both LTE-M and NB-IoT support :term:`Power Saving Mode (PSM)`, eDRX, and :term:`Release Assistance Indication (RAI)` to minimize power consumption.
+Both LTE-M and NB-IoT support :term:`Power Saving Mode (PSM)`, :term:`Extended Discontinuous Reception (eDRX)`, and :term:`Release Assistance Indication (RAI)` to minimize power consumption.
 For more information on power-saving techniques, refer to the DevAcademy's `Power saving techniques`_ documentation.
 
 Security
