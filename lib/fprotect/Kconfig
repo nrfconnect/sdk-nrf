@@ -47,6 +47,7 @@ config FPROTECT_BLOCK_SIZE
 menuconfig FPROTECT
 	bool "Enable FPROTECT"
 	depends on SOC_FAMILY_NORDIC_NRF
+	depends on !(SOC_SERIES_NRF54LX && IS_SECURE_BOOTLOADER)
 	select NRFX_RRAMC if SOC_SERIES_NRF54LX
 	help
 	  Enable the software library FPROTECT that may or may not be used
