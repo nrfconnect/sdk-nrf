@@ -130,6 +130,32 @@ For example:
 
 .. include:: /includes/advanced_conf_matter.txt
 
+Matter template using only internal memory
+==========================================
+
+For the nRF54L15 DK, you can configure the sample to use only the internal RRAM for storage.
+It applies to the DFU as well, which means that both the currently running firmware and the new firmware to be updated will be stored within the device's internal RRAM memory.
+See the Device Firmware Upgrade support section above for information about the DFU process.
+
+The DFU image can fit in the internal flash memory thanks to the usage of :ref:`MCUboot image compression<ug_matter_device_bootloader_image_compression>`.
+
+This configuration is disabled by default for the Matter template sample.
+To enable it, set the ``FILE_SUFFIX`` CMake option to ``internal``.
+
+The following is an example command to build the sample for the nRF54L15 DK with support for Matter OTA DFU and DFU over Bluetooth SMP, and using internal RRAM only:
+
+.. code-block:: console
+
+    west build -p -b nrf54l15dk/nrf54l15/cpuapp -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DFILE_SUFFIX=internal
+
+To build the sample for the same purpose, but in the ``release`` configuration, use the following command:
+
+.. code-block:: console
+
+    west build -p -b nrf54l15dk/nrf54l15/cpuapp -- -DCONFIG_CHIP_DFU_OVER_BT_SMP=y -DFILE_SUFFIX=internal -Dtemplate_EXTRA_CONF_FILE=prj_release.conf
+
+In this case, the size of the MCUboot secondary partition used for storing the new application image is approximately 30%-40% smaller than it would be when using a configuration with external flash memory support.
+
 User interface
 **************
 
