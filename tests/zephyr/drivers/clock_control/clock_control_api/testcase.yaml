@@ -1,0 +1,15 @@
+common:
+  tags:
+    - drivers
+    - clock_control
+    - ci_tests_zephyr_drivers_clock_control
+  platform_allow:
+    - nrf54lm20apdk/nrf54lm20a/cpuapp
+    - nrf54lv10apdk/nrf54lv10a/cpuapp
+  integration_platforms:
+    - nrf54lm20apdk/nrf54lm20a/cpuapp
+    - nrf54lv10apdk/nrf54lv10a/cpuapp
+tests:
+  nrf.extended.drivers.clock.clock_control_nrf5: {}
+  nrf.extended.drivers.clock.clock_control_nrf5_lfclk_rc:
+    extra_args: CONF_FILE="nrf_lfclk_rc.conf"
