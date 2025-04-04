@@ -52,6 +52,9 @@ Building and running
 The |NCS| build system generates all essential binaries, including the application for internal and external QSPI flash, the networking stack, and MCUboot.
 The build process involves signing all the application binaries except for MCUboot which does not require signing in this configuration.
 
+.. note::
+   When building for the nRF5340 non-secure (TF-M) target, the direct-xip build is not supported.
+
 To upload MCUboot and a bundle of images to the nRF5340 SoC, use the ``west flash`` command.
 
 Testing
