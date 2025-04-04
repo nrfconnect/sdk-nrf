@@ -169,6 +169,12 @@ config MCUBOOT_SIGNATURE_USING_KMU
 	help
 	  The device needs to be provisioned with proper set of keys.
 
+config BOOT_SHARED_CRYPTO_ECDSA_P256
+	bool "Use external crypto from NSIB for ECDSA P256 signature"
+	depends on SECURE_BOOT_APPCORE && SECURE_BOOT_SIGNATURE_TYPE_ECDSA
+	depends on BOOT_SIGNATURE_TYPE_ECDSA_P256 && !SOC_SERIES_NRF54LX
+	default y
+
 endif
 
 config MCUBOOT_USE_ALL_AVAILABLE_RAM
