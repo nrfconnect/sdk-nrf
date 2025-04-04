@@ -65,7 +65,7 @@ You can change this with :kconfig:option:`CONFIG_CAF_BUTTONS_POLARITY_INVERSED`,
 Power management configuration
 ==============================
 
-If the :kconfig:option:`CONFIG_CAF_BUTTONS_PM_EVENTS` Kconfig option is enabled, the module interacts with power management events (:c:struct:`power_down_event` and :c:struct:`wake_up_event`).
+If the :kconfig:option:`CONFIG_CAF_BUTTONS_PM_EVENTS` Kconfig option is enabled, the module interacts with power management events (:c:struct:`power_down_event`, :c:struct:`power_off_event`, and :c:struct:`wake_up_event`).
 
 The module can be used to trigger an application wakeup event.
 By default, pressing any button wakes up the application.
@@ -159,6 +159,7 @@ In that case, the following additional states are available:
 The power management events that module can react to are the following:
 
 * :c:struct:`power_down_event`
+* :c:struct:`power_off_event`
 * :c:struct:`wake_up_event`
 
 If :c:struct:`power_down_event` comes while the module is in the ``STATE_SCANNING`` state, the module switches to ``STATE_SUSPENDING`` and remains in this state until no button is pressed.
@@ -168,3 +169,8 @@ If :c:struct:`power_down_event` comes while the module is in the ``STATE_ACTIVE`
 Similarly, as in ``STATE_ACTIVE``, in ``STATE_IDLE`` the module enables the GPIO interrupts and waits for the pin state to change.
 However, in ``STATE_IDLE`` the interrupts are enabled only for the subset of buttons that are configured to wake up the application.
 Pressing any of these buttons also invokes :c:struct:`wake_up_event` and sends it to all subscribing modules.
+
+.. note::
+  If the system enters the off state (indicated by :c:struct:`power_off_event`), a button press triggers an instant system reboot (:c:func:`sys_reboot`).
+  This is done to prevent entering the system off state with GPIO interrupts disabled (:c:func:`sys_poweroff` call may prevent the CAF Buttons module from scanning buttons and reenabling GPIO interrupts).
+  System reboot is anyway necessary to wake up from the system off state.
