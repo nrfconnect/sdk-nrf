@@ -70,6 +70,19 @@ tests:
     tags:
       - sysbuild
       - ci_samples_matter
+  sample.matter.template.release.internal:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - FILE_SUFFIX=internal
+      - CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS=y
+      - template_EXTRA_CONF_FILE=prj_release.conf
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow: nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_matter
   sample.matter.template.release.internal.smp_dfu:
     sysbuild: true
     build_only: true
@@ -77,6 +90,7 @@ tests:
       - FILE_SUFFIX=internal
       - CONFIG_CHIP_DFU_OVER_BT_SMP=y
       - CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS=y
+      - template_EXTRA_CONF_FILE=prj_release.conf
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow: nrf54l15dk/nrf54l15/cpuapp
