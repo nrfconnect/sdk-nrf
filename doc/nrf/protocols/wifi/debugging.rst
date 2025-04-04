@@ -46,8 +46,9 @@ With CMake
 
 .. note::
 
-   Enabling the :kconfig:option:`CONFIG_LOG_MODE_IMMEDIATE` Kconfig option can help prevent log buffer overflows.
+   By default, this feature enables the :kconfig:option:`CONFIG_LOG_MODE_IMMEDIATE` Kconfig option, which can help prevent log buffer overflows.
    However, it may impact system timing and performance.
+   If you experience issues with the system timing or performance, you can disable this option by setting the :kconfig:option:`CONFIG_LOG_MODE_IMMEDIATE` Kconfig option to ``n`` in your project configuration file.
 
 Driver debug logs
 =================
