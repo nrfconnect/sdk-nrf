@@ -808,7 +808,11 @@ Wi-Fi samples
 
 * Radio test samples:
 
-  * Added the :ref:`wifi_radio_test_sd` sample to demonstrate the Wi-Fi and Bluetooth LE radio test running on the application core.
+  * Added:
+
+    * The :ref:`wifi_radio_test_sd` sample to demonstrate the Wi-Fi and Bluetooth LE radio test running on the application core.
+    * The ``wifi_radio_test get_voltage`` command to read battery voltage.
+
   * Updated:
 
     * The :ref:`wifi_radio_test` sample is now moved to :zephyr_file:`samples/wifi/radio_test/multi_domain`.
