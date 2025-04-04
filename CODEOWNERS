@@ -925,6 +925,7 @@
 /tests/subsys/suit/                       @nrfconnect/ncs-charon
 /tests/tfm/                               @nrfconnect/ncs-aegir @stephen-nordic @magnev
 /tests/unity/                             @nordic-krch
+/tests/zephyr/boards/nrf/                 @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/adc/                @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/comparator/         @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/flash/common/       @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
@@ -934,7 +935,7 @@
 /tests/zephyr/drivers/i2c/i2c_target_api/ @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/i2s/                @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/mspi/api/           @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
-/tests/zephyr/boards/nrf/                 @nrfconnect/ncs-low-level-test
+/tests/zephyr/drivers/retained_mem/api/   @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/sensor/             @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/spi/                @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/timer/              @nrfconnect/ncs-low-level-test
