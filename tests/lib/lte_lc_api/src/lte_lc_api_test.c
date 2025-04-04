@@ -15,8 +15,10 @@
 
 #include "cmock_nrf_modem_at.h"
 #include "cmock_nrf_modem.h"
+#include "cmock_nrf_socket.h"
 
 #define TEST_EVENT_MAX_COUNT 20
+#define IGNORE NULL
 
 static struct lte_lc_evt test_event_data[TEST_EVENT_MAX_COUNT];
 static struct lte_lc_ncell test_neighbor_cells[CONFIG_LTE_NEIGHBOR_CELLS_MAX];
@@ -290,6 +292,17 @@ void test_lte_lc_on_modem_init_success(void)
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=3", EXIT_SUCCESS);
 	/* CONFIG_LTE_RAI_REQ=n */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%RAI=0", EXIT_SUCCESS);
+	/* CONFIG_LTE_LC_DNS_FALLBACK */
+	__cmock_nrf_inet_pton_ExpectAndReturn(NRF_AF_INET, IGNORE, IGNORE, 0 /* error */);
+	__cmock_nrf_inet_pton_IgnoreArg_src();
+	__cmock_nrf_inet_pton_IgnoreArg_dst();
+	/* Must try IPv6 if IPv4 fails */
+	__cmock_nrf_inet_pton_ExpectAndReturn(NRF_AF_INET6, IGNORE, IGNORE, 1 /* success */);
+	__cmock_nrf_inet_pton_IgnoreArg_src();
+	__cmock_nrf_inet_pton_IgnoreArg_dst();
+	__cmock_nrf_setdnsaddr_ExpectAndReturn(NRF_AF_INET6, IGNORE, sizeof(struct nrf_in6_addr),
+					       EXIT_SUCCESS);
+	__cmock_nrf_setdnsaddr_IgnoreArg_in_addr();
 
 	on_modem_init(0, NULL);
 }
@@ -347,6 +360,14 @@ void test_lte_lc_on_modem_init_rai_fail(void)
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=3", EXIT_SUCCESS);
 	/* CONFIG_LTE_RAI_REQ=n */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%RAI=0", -NRF_EFAULT);
+	/* CONFIG_LTE_LC_DNS_FALLBACK */
+	/* Let's check that IPv4 works */
+	__cmock_nrf_inet_pton_ExpectAndReturn(NRF_AF_INET, IGNORE, IGNORE, 1 /* success */);
+	__cmock_nrf_inet_pton_IgnoreArg_src();
+	__cmock_nrf_inet_pton_IgnoreArg_dst();
+	__cmock_nrf_setdnsaddr_ExpectAndReturn(NRF_AF_INET, IGNORE, sizeof(struct nrf_in_addr),
+					       EXIT_SUCCESS);
+	__cmock_nrf_setdnsaddr_IgnoreArg_in_addr();
 
 	on_modem_init(0, NULL);
 }

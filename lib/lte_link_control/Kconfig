@@ -40,6 +40,30 @@ config LTE_LC_MODEM_SLEEP_MODULE
 config LTE_LC_TAU_PRE_WARNING_MODULE
 	bool "Tracking Area Update (TAU) module"
 
+menuconfig LTE_LC_DNS_FALLBACK_MODULE
+	bool "Fallback DNS module"
+	default y
+	help
+	  The device might or might not receive a DNS server address by the network during a PDN connection.
+	  Even within the same network, the PDN connection establishment method (PCO vs ePCO) might
+	  change when the device operates in NB-IoT or LTE Cat-M1, resulting in missing DNS server
+	  addresses when one method is used, but not the other.
+	  Having a fallback DNS address ensures that the device always has a DNS to fallback to.
+
+if LTE_LC_DNS_FALLBACK_MODULE
+
+config LTE_LC_DNS_FALLBACK_ADDRESS
+	string "Fallback DNS address"
+	# Zephyr has an option to configure its own DNS servers.
+	# Using the DNS_SERVER1 address when the DNS_SERVER_IP_ADDRESSES is enabled
+	# lets us re-use the same DNS server as Zephyr's, so that the offloaded and
+	# non-offloaded implementations use the same server.
+	default DNS_SERVER1 if DNS_SERVER_IP_ADDRESSES
+	# Cloudflare DNS
+	default "1.1.1.1"
+
+endif # LTE_LC_DNS_FALLBACK_MODULE
+
 # End of modules Kconfig options
 
 config LTE_SHELL
