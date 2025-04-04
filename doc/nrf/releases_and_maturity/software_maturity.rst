@@ -2354,6 +2354,22 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - --
+      * - **nPM2100**
+        - --
+        - --
+        - --
+        - --
+        - --
+        - Supported
+        - Supported
+        - --
+        - --
+        - --
+        - Supported
+        - --
+        - --
+        - --
+        - --
       * - **nPM6001**
         - --
         - --
