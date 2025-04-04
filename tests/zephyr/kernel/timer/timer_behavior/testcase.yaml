@@ -1,0 +1,12 @@
+tests:
+  nrf.extended.kernel.timer.timer:
+    tags:
+      - kernel
+      - timer
+      - ci_tests_zephyr_kernel_timer_timer_behavior
+    platform_allow:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
