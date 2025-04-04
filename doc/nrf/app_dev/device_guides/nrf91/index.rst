@@ -49,9 +49,9 @@ Zephyr and the |NCS| provide support for developing cellular applications using 
      - --
      - | `nRF9131 System in Package (SiP) <nRF9131 product website_>`_
 
-The nRF Connect SDK also offers :ref:`samples <cellular_samples>` dedicated to these devices, as well as compatible :ref:`drivers` and :ref:`libraries`.
+The nRF Connect SDK also offers :ref:`Cellular samples <cellular_samples>` dedicated to these devices, :ref:`networking_samples`,  as well as compatible :ref:`drivers` and :ref:`libraries`.
 
-For development of asset tracker applications, it is recommended to base your application on the `Asset Tracker Template <Asset Tracker Template_>`_.
+For development of asset tracking applications, it is recommended to base your application on the `Asset Tracker Template <Asset Tracker Template_>`_.
 
 If you want to go through a hands-on online training to familiarize yourself with cellular IoT technologies and development of cellular applications, enroll in the `Cellular IoT Fundamentals course`_ in the `Nordic Developer Academy`_.
 
