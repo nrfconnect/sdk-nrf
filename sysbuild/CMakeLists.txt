@@ -473,10 +473,12 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         if(SB_CONFIG_SOC_SERIES_NRF54LX)
           set_config_bool(mcuboot CONFIG_BOOT_ECDSA_TINYCRYPT y)
         else()
-          add_overlay_config(
-            mcuboot
-            ${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/zephyr/external_crypto.conf
-            )
+          if(SB_CONFIG_BOOT_SHARED_CRYPTO_ECDSA_P256)
+            add_overlay_config(
+              mcuboot
+              ${ZEPHYR_MCUBOOT_MODULE_DIR}/boot/zephyr/external_crypto.conf
+              )
+            endif()
         endif()
       else()
         message(WARNING "MCUboot and secure boot (application core) are enabled but MCUboot signing key type is not set to ECDSA-P256, this is a non-optimal configuration")
