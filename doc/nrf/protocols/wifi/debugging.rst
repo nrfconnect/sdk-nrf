@@ -27,7 +27,9 @@ For example, to build the :ref:`wifi_shell_sample` sample for the nRF7002 DK wit
 WPA supplicant debug logs
 =========================
 
-To build with WPA supplicant debug logs enabled.
+The WPA supplicant manages the Wi-Fi® connection and is responsible for the 802.11 protocol.
+To debug issues related to the Wi-Fi connection, such as failure to initiate, failed connections, or disconnections, you can enable WPA supplicant debug logs.
+To build with WPA supplicant debug logs enabled, run the following commands:
 
 With west
 
@@ -50,6 +52,8 @@ With CMake
 Driver debug logs
 =================
 
+The nRF Wi-Fi driver manages the data path and control path between the host and the nRF70 firmware.
+To debug issues related to the data path and control path, such as not receiving or sending packets, failures in sending commands, or not receiving events, you can enable driver debug logs.
 To build with driver verbose, firmware interface, and BUS interface debug logs enabled, run the following commands:
 
 Basic driver debug
