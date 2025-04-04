@@ -12,21 +12,46 @@
 
 #include <openthread/link_raw.h>
 
+#include <zephyr/kernel.h>
+
+#define RADIO_TIME_REFRESH_PERIOD (CONFIG_OPENTHREAD_RPC_CLIENT_RADIO_TIME_REFRESH_PERIOD * 1000000)
+
+static bool sync_radio_time_valid;
+static uint64_t sync_local_time;
+static uint64_t sync_radio_time;
+
+static inline uint64_t get_local_time(void)
+{
+	return k_ticks_to_us_floor64(k_uptime_ticks());
+}
+
 uint64_t otLinkRawGetRadioTime(otInstance *aInstance)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	uint64_t time;
+	uint64_t now;
 
 	ARG_UNUSED(aInstance);
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
-	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_LINK_RAW_GET_RADIO_TIME, &ctx);
+	now = get_local_time();
 
-	time = nrf_rpc_decode_uint64(&ctx);
+	if (!sync_radio_time_valid || now >= sync_local_time + RADIO_TIME_REFRESH_PERIOD) {
+		NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
+		nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_LINK_RAW_GET_RADIO_TIME, &ctx);
 
-	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
-		ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_LINK_RAW_GET_RADIO_TIME);
+		/*
+		 * Calculate sync_local_time as if the radio time was read by the peer exactly
+		 * halfway between constructing a request and receiving the response.
+		 */
+		sync_radio_time_valid = true;
+		sync_local_time = now / 2;
+		now = get_local_time();
+		sync_local_time += now / 2;
+		sync_radio_time = nrf_rpc_decode_uint64(&ctx);
+
+		if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
+			ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_LINK_RAW_GET_RADIO_TIME);
+		}
 	}
 
-	return time;
+	return sync_radio_time + (now - sync_local_time);
 }
