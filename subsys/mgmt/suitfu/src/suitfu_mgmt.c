@@ -31,6 +31,16 @@ struct system_update_work {
 
 static struct k_work_q system_update_work_queue;
 
+/* Timeout duration for the semaphore which waits for envelope processing
+ * to complete. This needs to be quite long because, in cases
+ * where partitions in external memory are modified, the cleanup process
+ * involves erasing them, which can be time-consuming.
+ */
+#define ENVELOPE_PROCESSING_STOPPING_TIMEOUT K_SECONDS(20)
+
+K_SEM_DEFINE(envelope_processing_finished_sem, 0, 1);
+static atomic_t envelope_processing_in_progress;
+
 static void update_failure(void)
 {
 	if (suit_dfu_cleanup() < 0) {
@@ -42,23 +52,64 @@ static void schedule_envelope_processing(struct k_work *item)
 {
 	int ret = suit_dfu_candidate_preprocess();
 
+
+	if (atomic_get(&envelope_processing_in_progress) == 0) {
+		LOG_INF("Envelope processing has been interrupted");
+		ret = -ECANCELED;
+	}
+
 	if (ret < 0) {
 		LOG_ERR("Envelope processing error");
 		update_failure();
+		atomic_set(&envelope_processing_in_progress, 0);
+		k_sem_give(&envelope_processing_finished_sem);
 		return;
 	}
+
 	k_msleep(CONFIG_MGMT_SUITFU_TRIGGER_UPDATE_RESET_DELAY_MS);
 
+	LOG_INF("Rebooting to start firmware upgrade");
 	ret = suit_dfu_update_start();
 	if (ret < 0) {
 		LOG_ERR("Failed to start firmware upgrade!");
 		update_failure();
+		atomic_set(&envelope_processing_in_progress, 0);
+		k_sem_give(&envelope_processing_finished_sem);
 		return;
+	}
+
+	atomic_set(&envelope_processing_in_progress, 0);
+	k_sem_give(&envelope_processing_finished_sem);
+}
+
+static void stop_current_envelope_processing(void)
+{
+	if (atomic_get(&envelope_processing_in_progress) == 0) {
+		return;
+	}
+	LOG_INF("Stopping old envelope processing");
+
+#ifdef CONFIG_MGMT_SUITFU_GRP_SUIT_IMAGE_FETCH
+	suitfu_mgmt_suit_image_fetch_stop();
+#endif
+	/* Wait for the envelope processing to finish.
+	 * Note: If we have already finished envelope processing with success
+	 * and we are just waiting to send the response to the host,
+	 * this function will not stop the update anymore - the device will
+	 * reboot and start the update.
+	 */
+	atomic_set(&envelope_processing_in_progress, 0);
+	if (k_sem_take(&envelope_processing_finished_sem,
+		       ENVELOPE_PROCESSING_STOPPING_TIMEOUT) == 0) {
+		LOG_INF("Envelope processing stopped successfully");
+	} else {
+		LOG_WRN("Stopping envelope processing timed out");
 	}
 }
 
 int suitfu_mgmt_cleanup(void)
 {
+	stop_current_envelope_processing();
 	if (suit_dfu_cleanup() < 0) {
 		return MGMT_ERR_EUNKNOWN;
 	}
@@ -86,6 +137,12 @@ int suitfu_mgmt_candidate_envelope_process(void)
 	LOG_INF("Schedule envelope processing");
 	k_work_init_delayable(&suw.work, schedule_envelope_processing);
 
+	if (atomic_get(&envelope_processing_in_progress) == 1) {
+		LOG_WRN("Current envelope processing is already in progress, new request rejected");
+		return MGMT_ERR_EBUSY;
+	}
+	atomic_set(&envelope_processing_in_progress, 1);
+	k_sem_reset(&envelope_processing_finished_sem);
 	int ret = k_work_schedule_for_queue(&system_update_work_queue, &suw.work, K_NO_WAIT);
 
 	if (ret < 0) {
@@ -102,6 +159,8 @@ int suitfu_mgmt_erase(struct suit_nvm_device_info *device_info, size_t num_bytes
 	if (device_info == NULL || device_info->fdev == NULL) {
 		return MGMT_ERR_EINVAL;
 	}
+
+	stop_current_envelope_processing();
 
 	size_t erase_size = DIV_ROUND_UP(num_bytes, device_info->erase_block_size) *
 			    device_info->erase_block_size;
@@ -132,6 +191,8 @@ int suitfu_mgmt_write(struct suit_nvm_device_info *device_info, size_t req_img_o
 	static size_t offset;
 
 	int rc;
+
+	stop_current_envelope_processing();
 
 	if (device_info == NULL || device_info->fdev == NULL || chunk == NULL) {
 		LOG_ERR("Wrong parameters");
@@ -252,6 +313,7 @@ int suitfu_mgmt_write(struct suit_nvm_device_info *device_info, size_t req_img_o
 
 int suitfu_mgmt_init(void)
 {
+	atomic_set(&envelope_processing_in_progress, 0);
 	k_work_queue_init(&system_update_work_queue);
 	k_work_queue_start(&system_update_work_queue, system_update_stack_area,
 			   K_THREAD_STACK_SIZEOF(system_update_stack_area), K_HIGHEST_THREAD_PRIO,

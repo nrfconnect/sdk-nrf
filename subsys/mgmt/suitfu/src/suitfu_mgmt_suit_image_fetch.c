@@ -211,7 +211,6 @@ int suitfu_mgmt_suit_missing_image_upload(struct smp_streamer *ctx)
 
 		session->last_notify_ts = k_uptime_get();
 
-		component_unlock();
 	} else {
 		component_unlock();
 		return MGMT_ERR_EBADSTATE;
@@ -228,7 +227,6 @@ int suitfu_mgmt_suit_missing_image_upload(struct smp_streamer *ctx)
 		offset_in_image += req.img_data.len;
 	}
 
-	component_lock();
 	if (session->transfer_completed_cvar && session->uri && session->uri_length &&
 	    session->session_id == req.stream_session_id) {
 		if (rc != 0) {
@@ -243,14 +241,11 @@ int suitfu_mgmt_suit_missing_image_upload(struct smp_streamer *ctx)
 			session->return_code = SUIT_PLAT_SUCCESS;
 			k_condvar_signal(session->transfer_completed_cvar);
 		}
-
-		component_unlock();
-
 	} else {
-		component_unlock();
 		image_size = 0;
 		return MGMT_ERR_EBADSTATE;
 	}
+	component_unlock();
 
 	rc = MGMT_ERR_EOK;
 	if (zcbor_tstr_put_lit(zse, "rc") && zcbor_int32_put(zse, rc) &&
@@ -293,4 +288,17 @@ int suitfu_mgmt_suit_missing_image_state_read(struct smp_streamer *ctx)
 void suitfu_mgmt_suit_image_fetch_init(void)
 {
 	suit_dfu_fetch_source_register(suitfu_mgmt_suit_missing_image_request);
+}
+
+void suitfu_mgmt_suit_image_fetch_stop(void)
+{
+	component_lock();
+	stream_session_t *session = &stream_session;
+
+	if (session->uri) {
+		/* Stop fetching by signaling the transfer completion with error */
+		session->return_code = SUIT_PLAT_ERR_BUSY;
+		k_condvar_signal(session->transfer_completed_cvar);
+	}
+	component_unlock();
 }
