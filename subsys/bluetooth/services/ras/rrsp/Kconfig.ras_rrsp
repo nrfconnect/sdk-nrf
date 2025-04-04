@@ -5,8 +5,7 @@
 #
 
 menuconfig BT_RAS_RRSP
-	bool "GATT Ranging Responder Server [EXPERIMENTAL]"
-	select EXPERIMENTAL
+	bool "GATT Ranging Responder Server"
 
 if BT_RAS_RRSP
 
