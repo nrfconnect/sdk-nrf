@@ -12,7 +12,7 @@ This guide describes how to debug applications that use the nRF70 Series compani
 Software
 ********
 
-The scope of this section is limited to the nRF Wi-Fi driver, WPA supplicant and networking stack.
+The scope of this section is limited to the WPA supplicant, networking stack, and nRF Wi-Fi driver.
 
 Enable debug features
 *********************
@@ -23,9 +23,38 @@ You can enable debug features by using the :ref:`app_build_snippets` feature.
 
 For example, to build the :ref:`wifi_shell_sample` sample for the nRF7002 DK with debugging enabled, run the following commands.
 
+
+WPA supplicant debug logs
+=========================
+
+The WPA supplicant manages the Wi-Fi® connection and is responsible for the 802.11 protocol.
+To debug issues related to the Wi-Fi connection, such as failure to initiate, failed connections, or disconnections, you can enable WPA supplicant debug logs.
+To build with WPA supplicant debug logs enabled, run the following commands:
+
+With west
+
+ .. code-block:: console
+
+    west build -p -b nrf7002dk/nrf5340/cpuapp samples/wifi/shell -- -Dnrf_wifi_shell_SNIPPET="wpa-supplicant-debug"
+
+With CMake
+
+ .. code-block:: console
+
+    cmake -GNinja -Bbuild -DBOARD=nrf7002dk/nrf5340/cpuapp -Dnrf_wifi_shell_SNIPPET="wpa-supplicant-debug" samples/wifi/shell
+    ninja -C build
+
+.. note::
+
+   By default, this feature enables the :kconfig:option:`CONFIG_LOG_MODE_IMMEDIATE` Kconfig option, which can help prevent log buffer overflows.
+   However, it may impact system timing and performance.
+   If you experience issues with the system timing or performance, you can disable this option by setting the :kconfig:option:`CONFIG_LOG_MODE_IMMEDIATE` Kconfig option to ``n`` in your project configuration file.
+
 Driver debug logs
 =================
 
+The nRF Wi-Fi driver manages the data path and control path between the host and the nRF70 firmware.
+To debug issues related to the data path and control path, such as not receiving or sending packets, failures in sending commands, or not receiving events, you can enable driver debug logs.
 To build with driver verbose, firmware interface, and BUS interface debug logs enabled, run the following commands:
 
 Basic driver debug
@@ -59,29 +88,6 @@ With CMake
 
     cmake -GNinja -Bbuild -DBOARD=nrf7002dk/nrf5340/cpuapp -Dnrf_wifi_shell_SNIPPET="nrf70-driver-verbose-debug" samples/wifi/shell
     ninja -C build
-
-WPA supplicant debug logs
-=========================
-
-To build with WPA supplicant debug logs enabled.
-
-With west
-
- .. code-block:: console
-
-    west build -p -b nrf7002dk/nrf5340/cpuapp samples/wifi/shell -- -Dnrf_wifi_shell_SNIPPET="wpa-supplicant-debug"
-
-With CMake
-
- .. code-block:: console
-
-    cmake -GNinja -Bbuild -DBOARD=nrf7002dk/nrf5340/cpuapp -Dnrf_wifi_shell_SNIPPET="wpa-supplicant-debug" samples/wifi/shell
-    ninja -C build
-
-.. note::
-
-   Enabling the :kconfig:option:`CONFIG_LOG_MODE_IMMEDIATE` Kconfig option can help prevent log buffer overflows.
-   However, it may impact system timing and performance.
 
 Statistics
 ==========
