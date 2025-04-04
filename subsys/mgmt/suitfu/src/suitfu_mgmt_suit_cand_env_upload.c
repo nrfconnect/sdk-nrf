@@ -94,7 +94,7 @@ int suitfu_mgmt_suit_envelope_upload(struct smp_streamer *ctx)
 		}
 
 		/* Erases dfu_partition and dfu_cache_partition_0, leaves
-		 * dfu_partition_1..dfu_partition_n intact. suitfu_mgmt_claenup() may be used
+		 * dfu_partition_1..dfu_partition_n intact. suitfu_mgmt_cleanup() may be used
 		 * instead.
 		 */
 		int rc = suitfu_mgmt_erase(&device_info, req.size);
