@@ -12,7 +12,7 @@ This guide describes how to debug applications that use the nRF70 Series compani
 Software
 ********
 
-The scope of this section is limited to the nRF Wi-Fi driver, WPA supplicant and networking stack.
+The scope of this section is limited to the WPA supplicant, networking stack, and nRF Wi-Fi driver.
 
 Enable debug features
 *********************
@@ -22,6 +22,30 @@ The nRF Wi-Fi driver, WPA supplicant, and networking stack have debug features t
 You can enable debug features by using the :ref:`app_build_snippets` feature.
 
 For example, to build the :ref:`wifi_shell_sample` sample for the nRF7002 DK with debugging enabled, run the following commands.
+
+
+WPA supplicant debug logs
+=========================
+
+To build with WPA supplicant debug logs enabled.
+
+With west
+
+ .. code-block:: console
+
+    west build -p -b nrf7002dk/nrf5340/cpuapp samples/wifi/shell -- -Dnrf_wifi_shell_SNIPPET="wpa-supplicant-debug"
+
+With CMake
+
+ .. code-block:: console
+
+    cmake -GNinja -Bbuild -DBOARD=nrf7002dk/nrf5340/cpuapp -Dnrf_wifi_shell_SNIPPET="wpa-supplicant-debug" samples/wifi/shell
+    ninja -C build
+
+.. note::
+
+   Enabling the :kconfig:option:`CONFIG_LOG_MODE_IMMEDIATE` Kconfig option can help prevent log buffer overflows.
+   However, it may impact system timing and performance.
 
 Driver debug logs
 =================
@@ -59,29 +83,6 @@ With CMake
 
     cmake -GNinja -Bbuild -DBOARD=nrf7002dk/nrf5340/cpuapp -Dnrf_wifi_shell_SNIPPET="nrf70-driver-verbose-debug" samples/wifi/shell
     ninja -C build
-
-WPA supplicant debug logs
-=========================
-
-To build with WPA supplicant debug logs enabled.
-
-With west
-
- .. code-block:: console
-
-    west build -p -b nrf7002dk/nrf5340/cpuapp samples/wifi/shell -- -Dnrf_wifi_shell_SNIPPET="wpa-supplicant-debug"
-
-With CMake
-
- .. code-block:: console
-
-    cmake -GNinja -Bbuild -DBOARD=nrf7002dk/nrf5340/cpuapp -Dnrf_wifi_shell_SNIPPET="wpa-supplicant-debug" samples/wifi/shell
-    ninja -C build
-
-.. note::
-
-   Enabling the :kconfig:option:`CONFIG_LOG_MODE_IMMEDIATE` Kconfig option can help prevent log buffer overflows.
-   However, it may impact system timing and performance.
 
 Statistics
 ==========
