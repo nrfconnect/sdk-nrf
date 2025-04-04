@@ -843,6 +843,11 @@ ci_tests_lib_edge_impulse:
     - nrf/lib/edge_impulse/
     - nrf/tests/lib/edge_impulse/
 
+ci_tests_drivers_timer:
+  files:
+    - nrf/tests/drivers/timer/grtc_timer_lfrc/
+    - zephyr/drivers/timer/
+
 ci_samples_caf_sensor_manager:
   files:
     - nrf/samples/caf_sensor_manager/
