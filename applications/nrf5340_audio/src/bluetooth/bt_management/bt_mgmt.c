@@ -231,42 +231,6 @@ static int bonding_clear_check(void)
 	return 0;
 }
 
-static int ficr_static_addr_set(void)
-{
-	int ret;
-	static bt_addr_le_t addr;
-
-	if ((NRF_FICR->INFO.DEVICEID[0] != UINT32_MAX) ||
-	    ((NRF_FICR->INFO.DEVICEID[1] & UINT16_MAX) != UINT16_MAX)) {
-		/* Put the device ID from FICR into address */
-		sys_put_le32(NRF_FICR->INFO.DEVICEID[0], &addr.a.val[0]);
-		sys_put_le16(NRF_FICR->INFO.DEVICEID[1], &addr.a.val[4]);
-
-		/* The FICR value is a just a random number, with no knowledge
-		 * of the Bluetooth Specification requirements for random
-		 * static addresses.
-		 */
-		BT_ADDR_SET_STATIC(&addr.a);
-
-		addr.type = BT_ADDR_LE_RANDOM;
-
-		ret = bt_id_create(&addr, NULL);
-		if (ret < 0) {
-			LOG_ERR("Failed to create ID %d", ret);
-			return ret;
-		}
-
-		return 0;
-	}
-
-	/* If no address can be created (e.g. based on
-	 * FICR), then a random address is created
-	 */
-	LOG_WRN("Unable to read from FICR");
-
-	return 0;
-}
-
 /* This function generates a random address for bonding testing */
 static int random_static_addr_set(void)
 {
@@ -372,13 +336,6 @@ int bt_mgmt_conn_disconnect(struct bt_conn *conn, uint8_t reason)
 int bt_mgmt_init(void)
 {
 	int ret;
-
-	if (!IS_ENABLED(CONFIG_BT_PRIVACY)) {
-		ret = ficr_static_addr_set();
-		if (ret) {
-			return ret;
-		}
-	}
 
 	ret = bt_enable(bt_enabled_cb);
 	if (ret) {

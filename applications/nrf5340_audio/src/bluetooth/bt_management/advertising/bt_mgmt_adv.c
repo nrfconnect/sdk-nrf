@@ -437,6 +437,10 @@ int bt_mgmt_adv_start(uint8_t ext_adv_index, const struct bt_data *adv, size_t a
 	per_adv_local[ext_adv_index] = per_adv;
 	per_adv_local_size[ext_adv_index] = per_adv_size;
 
+	if (!IS_ENABLED(CONFIG_BT_PRIVACY)) {
+		ext_adv_param.options |= BT_LE_ADV_OPT_USE_IDENTITY;
+	}
+
 	if (connectable) {
 		ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_CONN_NAME, &adv_cb,
 					   &ext_adv[ext_adv_index]);
