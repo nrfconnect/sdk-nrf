@@ -90,6 +90,7 @@ static psa_status_t ctr_drbg_update(uint8_t *data)
 	char temp[CRACEN_PRNG_ENTROPY_SIZE + CRACEN_PRNG_NONCE_SIZE] __aligned(
 		CONFIG_DCACHE_LINE_SIZE);
 	size_t temp_length = 0;
+	_Static_assert(sizeof(temp) % SX_BLKCIPHER_AES_BLK_SZ == 0, "");
 
 	psa_key_attributes_t attr = PSA_KEY_ATTRIBUTES_INIT;
 
@@ -99,7 +100,6 @@ static psa_status_t ctr_drbg_update(uint8_t *data)
 
 	while (temp_length < sizeof(temp)) {
 		si_be_add(prng.V, SX_BLKCIPHER_AES_BLK_SZ, 1);
-		_Static_assert((sizeof(temp) % SX_BLKCIPHER_AES_BLK_SZ) == 0);
 
 		status = sx_blkcipher_ecb_simple(prng.key, sizeof(prng.key), prng.V, sizeof(prng.V),
 						 temp + temp_length, SX_BLKCIPHER_AES_BLK_SZ);

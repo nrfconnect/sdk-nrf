@@ -189,36 +189,6 @@ static void write_tag_and_length(struct sx_buf *buf, uint8_t tag)
 	memcpy(outbuf, ((uint8_t *)&length) + sizeof(length) - len_bytes, len_bytes);
 }
 
-static size_t calc_key_bits_from_pub_key_buffer_size(psa_ecc_family_t curve, size_t pub_key_size)
-{
-	switch (curve) {
-	case PSA_ECC_FAMILY_BRAINPOOL_P_R1:
-	case PSA_ECC_FAMILY_SECP_R1: {
-		size_t priv_key_size = (pub_key_size - 1) / 2;
-
-		if (priv_key_size == PSA_BITS_TO_BYTES(521)) {
-			/* The secpr1p521 is a special case since the number of
-			 * bits are not divisible by 8
-			 */
-			return 521;
-		}
-		return PSA_BYTES_TO_BITS(priv_key_size);
-	}
-	case PSA_ECC_FAMILY_MONTGOMERY:
-		if (pub_key_size == PSA_BITS_TO_BYTES(255)) {
-			return 255;
-		}
-		return PSA_BYTES_TO_BITS(pub_key_size);
-	case PSA_ECC_FAMILY_TWISTED_EDWARDS:
-		if (pub_key_size == PSA_BITS_TO_BYTES(255)) {
-			return 255;
-		}
-		return 0;
-	default:
-		return 0;
-	}
-}
-
 static psa_status_t import_ecc_private_key(const psa_key_attributes_t *attributes,
 					   const uint8_t *data, size_t data_length,
 					   uint8_t *key_buffer, size_t key_buffer_size,
