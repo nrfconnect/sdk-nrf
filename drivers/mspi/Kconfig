@@ -4,5 +4,6 @@
 if MSPI
 
 rsource "Kconfig.nrfe"
+rsource "Kconfig.sqspi"
 
 endif # MSPI
