@@ -189,14 +189,19 @@ template <> bool BridgeStorageManager::LoadBridgedDevice(BridgedDeviceV2 &device
 
 bool BridgeStorageManager::Init()
 {
-	bool result = Nrf::GetPersistentStorage().NonSecureInit();
+	const PSErrorCode status = Nrf::GetPersistentStorage().NonSecureInit(&mBridge);
 
-	if (!result) {
-		return result;
+	if (status != PSErrorCode::Success) {
+		return false;
 	}
 
 	/* Perform data migration from previous data structure versions if needed. */
 	return MigrateData();
+}
+
+void BridgeStorageManager::FactoryReset()
+{
+	Nrf::GetPersistentStorage().NonSecureFactoryReset();
 }
 
 #ifdef CONFIG_BRIDGE_MIGRATE_PRE_2_7_0

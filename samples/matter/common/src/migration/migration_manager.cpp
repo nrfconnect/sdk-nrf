@@ -43,7 +43,6 @@ namespace Migration
 #ifdef CONFIG_NCS_SAMPLE_MATTER_FACTORY_RESET_ON_KEY_MIGRATION_FAILURE
 		if (CHIP_NO_ERROR != err) {
 			LOG_ERR("Keystore migration failure due to %s. Performing Factory reset...", err.AsString());
-			GroupDataProviderImpl::Instance().WillBeFactoryReset();
 			chip::Server::GetInstance().ScheduleFactoryReset();
 			/* Return a success to not block the Matter event Loop and allow to call scheduled factory
 			 * reset. */
