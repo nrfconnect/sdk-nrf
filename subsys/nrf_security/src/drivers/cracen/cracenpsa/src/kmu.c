@@ -98,6 +98,8 @@ static const psa_key_usage_t metadata_usage_flags_mapping[] = {
 	/* EXPORT */ PSA_KEY_USAGE_EXPORT,
 	/* COPY */ PSA_KEY_USAGE_COPY};
 
+#ifdef PSA_NEED_CRACEN_KMU_ENCRYPTED_KEYS
+
 /**
  * @brief Retrieve the encryption key used to encrypt the key for a KMU slot.
  *
@@ -207,6 +209,8 @@ static psa_status_t cracen_kmu_decrypt(kmu_metadata *metadata, size_t number_of_
 				   sizeof(kmu_push_area), &outlen);
 }
 
+#endif /* PSA_NEED_CRACEN_KMU_ENCRYPTED_KEYS */
+
 /* Used internally in sxsymcrypt so we use sx return codes here. */
 int cracen_kmu_prepare_key(const uint8_t *user_data)
 {
@@ -266,7 +270,7 @@ static bool is_secondary_slot(kmu_metadata *metadata)
 {
 	const uint32_t value = SECONDARY_SLOT_METADATA_VALUE;
 
-	_Static_assert(sizeof(value) == sizeof(*metadata));
+	_Static_assert(sizeof(value) == sizeof(*metadata), "");
 	return memcmp(&value, metadata, sizeof(value)) == 0;
 }
 
