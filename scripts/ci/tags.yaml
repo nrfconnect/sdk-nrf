@@ -1509,3 +1509,8 @@ ci_samples_zephyr_drivers_counter:
   files:
     - nrf/samples/zephyr/drivers/counter/
     - zephyr/samples/drivers/counter/
+
+ci_tests_zephyr_drivers_flash_negative_tests:
+  files:
+    - nrf/tests/zephyr/drivers/flash/negative_tests/
+    - zephyr/tests/drivers/flash/negative_tests/
