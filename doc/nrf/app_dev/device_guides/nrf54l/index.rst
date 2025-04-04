@@ -37,7 +37,12 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
      - | `Datasheet <nRF54L15 Datasheet_>`_
      - | `nRF54L05 System-on-Chip (SoC) <nRF54L05_>`_
 
-Additionally, the nRF54L15 SoC supports :ref:`nrfxlib:soft_peripherals`, which you can use to emulate the hardware peripherals.
+.. note::
+
+   * The nRF54L15 SoC is not supported for production in the |NCS| v2.9.0.
+     Use v2.9.1 or later instead.
+   * The nRF54L05 and L10 SoCs are not supported for production in the |NCS| versions 2.9.0 or 2.9.1.
+     Use v3.0.0 or later instead.
 
 .. _ug_nrf54L15_revision:
 
