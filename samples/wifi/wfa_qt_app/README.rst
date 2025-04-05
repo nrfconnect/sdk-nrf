@@ -180,6 +180,144 @@ See `QuickTrack Test Tool Platform Integration Guide`_ for the installation proc
 
 See `Platform Intel Ax210 Integration Guide`_ for more details.
 
+QuickTrack Configuration settings
+---------------------------------
+
+Settings
+
+.. figure:: /images/test_setup_configuration.png
+     :width: 780px
+     :align: center
+     :alt: Wi-Fi QuickTrack test setup configuration
+
+     Test Setup Configuration
+
+Tool Platform:
+
+* Tool Platform IP Address: Ethernet IP Address of the QuickTrack Test Tool platform.
+* Tool Platform Port: Port number on which ControlAppC service is running on QuickTrack Test Tool platform.
+* Control Interface Port: It can usually be left at default.
+* Platform Wireless IP Address: Wireless IP Address of the QuickTrack Test Tool platform.
+
+DUT:
+
+* DUT Type: It should be set to ``Station`` for STAUT and ``Access Point`` for APUT.
+* DUT Control IP Address: Ethernet IP address of the DUT (It can be either a netUSB or SLIP IP).
+* DUT Port: Port number on which ControlAppC service is running on the DUT.
+* DUT Wireless IP Address: The wireless IP Address of the DUT, which is in the same subnet as the Platform Wireless IP Address.
+
+.. figure:: /images/test_case_global_configuration.png
+     :width: 780px
+     :align: center
+     :alt: Wi-Fi QuickTrack test case global configuration
+
+     Test Case Global Configuration
+
+Tool mode:
+
+* Refer to section 3.3.2 in the `QuickTrack Test Tool User Manual`_  for more information.
+
+.. figure:: /images/test_case_specific_configuration.png
+     :width: 780px
+     :align: center
+     :alt: Wi-Fi QuickTrack test case specific configuration
+
+     Test Case Specific Configuration
+
+.. figure:: /images/advanced_configuration.png
+     :width: 780px
+     :align: center
+     :alt: Wi-Fi QuickTrack advanced configuration
+
+     Advanced Configuration
+
+
+Certification Configuration
+
+Update Certification Bundle:
+
+* Select ``Update Certification Bundle`` to launch a file browser and upload the JSON bundle to open.
+
+.. figure:: /images/update_certification_bundle.png
+     :width: 780px
+     :align: center
+     :alt: Wi-Fi QuickTrack update certification bundle
+
+     Certification Configuration
+
+Install Private Key:
+
+*  Refer to section 3.4 in the `QuickTrack Test Tool User Manual`_  for more information.
+
+Merge Measurement Package:
+
+* If the user has multiple measurement data, this allows the user to merge them into one
+  measurement json file before uploading to the Certification System.
+
+
+Test cases
+
+* Select ``Load Application Profile`` to upload an application profile which includes all the required test cases.
+
+.. figure:: /images/test_cases_menu.png
+     :width: 780px
+     :align: center
+     :alt: Wi-Fi QuickTrack test cases
+
+     Test Cases
+
+Pre-requisites before starting test execution
+
+* DUT: Load the pre-compiled .hex file on DUT.
+
+.. figure:: /images/sample_output_dut.png
+     :width: 780px
+     :align: center
+     :alt: sample output DUT
+
+     sample output after loading netUSB related .hex file on DUT
+
+* OpenWRT AP: Start the ControlAppC service on OpenWRT AP.
+
+Command to start the ControlAppC service on OpenWRT AP:
+
+ .. code-block:: console
+
+      /usr/sbin/run.sh platform
+
+.. figure:: /images/sample_output_openwrt_ap.png
+     :width: 780px
+     :align: center
+     :alt: sample output openWRT AP
+
+     sample output on openWRT AP
+
+* Check the Test connection in the ``Test Setup Configuration`` tab.
+  If everything is proper, a green colour checkmark will be displayed.
+
+.. figure:: /images/test_connection.png
+     :width: 780px
+     :align: center
+     :alt: Test connection
+
+     Test Connection
+
+Tests Execution
+
+* Select the required test cases from the test case list and click on Run button.
+
+.. figure:: /images/running_tests.png
+     :width: 780px
+     :align: center
+     :alt: Running test cases
+
+     console output while running tests
+
+Test Logs
+
+* At the end of every test execution, Test Logs and Cloud Reports will be stored in the path specified in
+  the ``Test configuration`` tab.
+
 Dependencies
 ************
 
