@@ -22,9 +22,7 @@
 #include <silexpk/ik.h>
 #include <silexpk/sxops/eccweierstrass.h>
 #include <stddef.h>
-#include <sxsymcrypt/sha1.h>
-#include <sxsymcrypt/sha2.h>
-#include <sxsymcrypt/sha3.h>
+#include <sxsymcrypt/hashdefs.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/util.h>
 #include <psa/nrf_platform_key_ids.h>

@@ -4,15 +4,12 @@
  *  SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 #include "../include/sxsymcrypt/hash.h"
-#include "../include/sxsymcrypt/sha1.h"
-#include "../include/sxsymcrypt/sha2.h"
-#include "../include/sxsymcrypt/sm3.h"
+#include "../include/sxsymcrypt/hashdefs.h"
 #include <cracen/statuscodes.h>
 #include "../include/sxsymcrypt/internal.h"
 #include "crypmasterregs.h"
 #include "hw.h"
 #include "cmdma.h"
-#include "hashdefs.h"
 
 #define BA413_HMAC_CONF (1 << 8)
 #define HASH_HW_PAD	(1 << 9)
@@ -133,48 +130,6 @@ static int sx_hash_create_ba413(struct sxhash *c, size_t csz)
 	c->cntindescs = 1;
 
 	return SX_OK;
-}
-
-int sx_hash_create_sha256(struct sxhash *c, size_t csz)
-{
-	c->algo = &sxhashalg_sha2_256;
-
-	return sx_hash_create_ba413(c, csz);
-}
-
-int sx_hash_create_sha384(struct sxhash *c, size_t csz)
-{
-	c->algo = &sxhashalg_sha2_384;
-
-	return sx_hash_create_ba413(c, csz);
-}
-
-int sx_hash_create_sha512(struct sxhash *c, size_t csz)
-{
-	c->algo = &sxhashalg_sha2_512;
-
-	return sx_hash_create_ba413(c, csz);
-}
-
-int sx_hash_create_sha1(struct sxhash *c, size_t csz)
-{
-	c->algo = &sxhashalg_sha1;
-
-	return sx_hash_create_ba413(c, csz);
-}
-
-int sx_hash_create_sha224(struct sxhash *c, size_t csz)
-{
-	c->algo = &sxhashalg_sha2_224;
-
-	return sx_hash_create_ba413(c, csz);
-}
-
-int sx_hash_create_sm3(struct sxhash *c, size_t csz)
-{
-	c->algo = &sxhashalg_sm3;
-
-	return sx_hash_create_ba413(c, csz);
 }
 
 int sx_hash_create(struct sxhash *c, const struct sxhashalg *alg, size_t csz)

@@ -12,14 +12,16 @@
 #include <string.h>
 #include <sxsymcrypt/hash.h>
 #include <sxsymcrypt/internal.h>
-#include <sxsymcrypt/sha1.h>
-#include <sxsymcrypt/sha2.h>
-#include <sxsymcrypt/sha3.h>
+#include <sxsymcrypt/hashdefs.h>
 #include <cracen/statuscodes.h>
 #include <zephyr/sys/__assert.h>
 #include "common.h"
 #include <cracen/mem_helpers.h>
 #include "cracen_psa_primitives.h"
+
+_Static_assert(SX_HASH_MAX_ENABLED_BLOCK_SIZE != 1,
+	       "To compile this file you need at least one hash algorithm enabled in the driver. "
+	       "This is done using the CONFIG_PSA_WANT_* Kconfig options.");
 
 psa_status_t cracen_hash_compute(psa_algorithm_t alg, const uint8_t *input, size_t input_length,
 				 uint8_t *hash, size_t hash_size, size_t *hash_length)
