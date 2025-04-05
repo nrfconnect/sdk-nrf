@@ -143,12 +143,11 @@ function(zephyr_mcuboot_tasks)
   set(output_merged ${ZEPHYR_BINARY_DIR}/${KERNEL_NAME}.signed)
 
   if(CONFIG_BUILD_WITH_TFM)
-#    set(input ${APPLICATION_BINARY_DIR}/zephyr/tfm_merged)
-    message(FATAL_ERROR "TFM is not currently supported with QSPI XIP")
-  else()
-    set(input_internal ${ZEPHYR_BINARY_DIR}/${KERNEL_NAME}.internal)
-    set(input_external ${ZEPHYR_BINARY_DIR}/${KERNEL_NAME}.external)
+    set(input_tfm_s ${ZEPHYR_BINARY_DIR}/../tfm/bin/tfm_s)
   endif()
+
+  set(input_internal ${ZEPHYR_BINARY_DIR}/${KERNEL_NAME}.internal)
+  set(input_external ${ZEPHYR_BINARY_DIR}/${KERNEL_NAME}.external)
 
   # List of additional build byproducts.
   set(byproducts)
@@ -168,7 +167,14 @@ function(zephyr_mcuboot_tasks)
 
   # Set up .hex outputs.
   if(CONFIG_BUILD_OUTPUT_HEX)
-    set(unconfirmed_internal_args ${input_internal}.hex ${output_internal}.hex)
+    if(CONFIG_BUILD_WITH_TFM)
+      # Merge the TFM secure hex file with the internal hex file
+      set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/scripts/build/mergehex.py -o ${input_internal}.tfm.hex ${input_internal}.hex ${input_tfm_s}.hex)
+      set(unconfirmed_internal_args ${input_internal}.tfm.hex ${output_internal}.hex)
+    else()
+      set(unconfirmed_internal_args ${input_internal}.hex ${output_internal}.hex)
+    endif()
+
     set(unconfirmed_external_args ${input_external}.hex ${output_external}.hex)
     list(APPEND byproducts ${output_internal}.hex ${output_external}.hex)
 
@@ -199,7 +205,12 @@ function(zephyr_mcuboot_tasks)
       ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/scripts/build/mergehex.py -o ${output_merged}.hex ${output_internal}.hex ${output_external}.hex)
 
     if(NOT "${keyfile_enc}" STREQUAL "")
-      set(unconfirmed_internal_args ${input_internal}.hex ${output_internal}.encrypted.hex)
+      if(CONFIG_BUILD_WITH_TFM)
+        set(unconfirmed_internal_args ${input_internal}.tfm.hex ${output_internal}.encrypted.hex)
+      else()
+        set(unconfirmed_internal_args ${input_internal}.hex ${output_internal}.encrypted.hex)
+      endif()
+
       set(unconfirmed_external_args ${input_external}.hex ${output_external}.encrypted.hex)
       list(APPEND byproducts ${output_internal}.encrypted.hex ${output_external}.encrypted.hex)
       set(BYPRODUCT_KERNEL_SIGNED_ENCRYPTED_HEX_NAME "${output_merged}.encrypted.hex"
