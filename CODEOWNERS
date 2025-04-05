@@ -670,6 +670,7 @@
 /samples/zephyr/basic/blinky/             @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /samples/zephyr/boards/nordic/system_off/ @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/adc/              @nrfconnect/ncs-low-level-test
+/samples/zephyr/drivers/counter/          @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/audio/dmic/       @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/i2c/rtio_loopback/ @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/mbox/             @nrfconnect/ncs-low-level-test
@@ -924,20 +925,24 @@
 /tests/subsys/suit/                       @nrfconnect/ncs-charon
 /tests/tfm/                               @nrfconnect/ncs-aegir @stephen-nordic @magnev
 /tests/unity/                             @nordic-krch
+/tests/zephyr/boards/nrf/                 @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/adc/                @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/comparator/         @nrfconnect/ncs-low-level-test
+/tests/zephyr/drivers/clock_control/      @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/flash/common/       @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
+/tests/zephyr/drivers/flash/negative_tests/ @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/gpio/               @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/i2c/i2c_bme688/     @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/i2c/i2c_target_api/ @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/i2s/                @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/mspi/api/           @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
-/tests/zephyr/boards/nrf/                 @nrfconnect/ncs-low-level-test
+/tests/zephyr/drivers/retained_mem/api/   @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/sensor/             @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/spi/                @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/timer/              @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/uart/               @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/watchdog/           @nrfconnect/ncs-low-level-test
+/tests/zephyr/kernel/timer/timer_behavior/ @nrfconnect/ncs-low-level-test
 
 /tests/benchmarks/multicore/idle/*.rst    @nrfconnect/ncs-si-bluebagel-doc
 /tests/benchmarks/multicore/idle_gpio/*.rst @nrfconnect/ncs-si-bluebagel-doc

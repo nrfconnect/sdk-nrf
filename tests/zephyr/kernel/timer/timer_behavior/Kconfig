@@ -1,0 +1,1 @@
+source "tests/kernel/timer/timer_behavior/Kconfig"

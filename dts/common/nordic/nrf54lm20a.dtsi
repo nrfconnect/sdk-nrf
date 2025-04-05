@@ -42,6 +42,12 @@
 			clock-frequency = <DT_FREQ_M(16)>;
 		};
 
+		pclk32m: pclk32m {
+			compatible = "fixed-clock";
+			#clock-cells = <0>;
+			clock-frequency = <DT_FREQ_M(32)>;
+		};
+
 		lfxo: lfxo {
 			compatible = "nordic,nrf-lfxo";
 			#clock-cells = <0>;
@@ -530,6 +536,19 @@
 				status = "disabled";
 			};
 
+			tdm: tdm@e8000 {
+				compatible = "nordic,nrf-tdm";
+				easydma-maxcnt-bits = <15>;
+				#address-cells = <1>;
+				#size-cells = <0>;
+				reg = <0xe8000 0x1000>;
+				interrupts = <232 NRF_DEFAULT_IRQ_PRIORITY>;
+				status = "disabled";
+				clocks = <&pclk32m>;
+				nordic,clockpin-enable = <NRF_FUN_TDM_SCK_M>,
+							 <NRF_FUN_TDM_MCK>;
+			};
+
 			i2c23: i2c@ed000 {
 				compatible = "nordic,nrf-twim";
 				#address-cells = <1>;
@@ -657,6 +676,17 @@
 				status = "disabled";
 				endtx-stoptx-supported;
 				frame-timeout-supported;
+			};
+
+			comp: comparator@106000 {
+				/*
+				 * Use compatible "nordic,nrf-comp" to configure as COMP
+				 * Use compatible "nordic,nrf-lpcomp" to configure as LPCOMP
+				 */
+				compatible = "nordic,nrf-comp";
+				reg = <0x106000 0x1000>;
+				status = "disabled";
+				interrupts = <262 NRF_DEFAULT_IRQ_PRIORITY>;
 			};
 
 			wdt30: watchdog@108000 {
