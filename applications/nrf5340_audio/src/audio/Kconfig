@@ -37,7 +37,6 @@ config AUDIO_MIN_PRES_DLY_US
 	help
 	  The minimum allowable presentation delay in microseconds.
 	  This needs to allow time for decoding and internal routing.
-	  For 48kHz sampling rate and 96kbps bitrate this is about 4000 us.
 
 config AUDIO_MAX_PRES_DLY_US
 	int "The maximum presentation delay"
