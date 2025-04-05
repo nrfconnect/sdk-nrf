@@ -31,6 +31,8 @@
 /* Max RX frequency is 21.333333MHz which corresponds to counter period value of 2. */
 #define RX_CNT0_MIN_VALUE 2
 
+#define MODE_3_RX_MIN_CLOCKS 3
+
 #define PAD_BIAS_VALUE 1
 
 #define MAX_SHIFT_COUNT 63
