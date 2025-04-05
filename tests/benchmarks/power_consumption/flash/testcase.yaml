@@ -2,6 +2,7 @@ common:
   tags:
     - ppk_power_measure
     - ci_tests_benchmarks_current_consumption
+
 tests:
   benchmarks.power_consumption.flash_nrf54l:
     harness: pytest
