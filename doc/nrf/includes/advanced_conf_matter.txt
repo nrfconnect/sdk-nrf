@@ -3,6 +3,8 @@ Advanced configuration options
 
 This section describes other configuration options for the sample.
 
+.. _advanced_conf_matter_dfu:
+
 Device Firmware Upgrade support
 -------------------------------
 
