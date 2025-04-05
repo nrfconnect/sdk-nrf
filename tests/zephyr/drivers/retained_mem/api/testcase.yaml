@@ -1,0 +1,12 @@
+tests:
+  nrf.extended.drivers.retained_mem.api.ram:
+    platform_allow:
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+    tags:
+      - drivers
+      - retained_mem
+      - ci_tests_zephyr_drivers_retained_mem

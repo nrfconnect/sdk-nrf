@@ -1499,3 +1499,8 @@ ci_tests_zephyr_drivers_i2s:
   files:
     - nrf/tests/zephyr/drivers/i2s/
     - zephyr/tests/drivers/i2s/
+
+ci_tests_zephyr_drivers_retained_mem:
+  files:
+    - nrf/tests/zephyr/drivers/retained_mem/
+    - zephyr/tests/drivers/retained_mem/
