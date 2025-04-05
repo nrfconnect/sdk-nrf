@@ -13,7 +13,6 @@
 #include <suit_address_streamer_selector.h>
 #include "suit_dfu_cache_internal.h"
 #include "suit_ram_sink.h"
-#include "zcbor_noncanonical_decode.h"
 
 #ifdef CONFIG_FLASH_IPUC
 #include <drivers/flash/flash_ipuc.h>
@@ -55,6 +54,9 @@ suit_plat_err_t suit_dfu_cache_partition_slot_foreach(struct dfu_cache_pool *cac
 	LOG_DBG("Foreach on cache %p(size:%u)", (void *)cache_pool->address, cache_pool->size);
 
 	zcbor_new_decode_state(states, ZCBOR_ARRAY_SIZE(states), NULL, 0, 1, NULL, 0);
+
+	/* DFU cache uses non-canonical encoding. */
+	states[0].constant_state->enforce_canonical = false;
 
 	do {
 		uintptr_t current_address = (uintptr_t)cache_pool->address + current_offset;
@@ -116,7 +118,7 @@ suit_plat_err_t suit_dfu_cache_partition_slot_foreach(struct dfu_cache_pool *cac
 
 		zcbor_update_state(states, partition_header_storage, read_size);
 		if (first_iteration) {
-			result = zcbor_noncanonical_map_start_decode(states);
+			result = zcbor_map_start_decode(states);
 			first_iteration = false;
 			if (!result) {
 				err = SUIT_PLAT_ERR_CBOR_DECODING;
@@ -133,8 +135,7 @@ suit_plat_err_t suit_dfu_cache_partition_slot_foreach(struct dfu_cache_pool *cac
 
 		if (result) {
 			LOG_HEXDUMP_DBG(uri.value, uri.len, "Currently iterated URI");
-			result = zcbor_noncanonical_bstr_start_decode_fragment(states,
-									       &data_fragment);
+			result = zcbor_bstr_start_decode_fragment(states, &data_fragment);
 			result = result &&
 				 zcbor_process_backup(states,
 						      ZCBOR_FLAG_RESTORE | ZCBOR_FLAG_CONSUME |

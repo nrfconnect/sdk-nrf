@@ -11,7 +11,6 @@ target_link_libraries(suit_cache_interface INTERFACE suit_platform_err)
 zephyr_library()
 zephyr_library_sources(src/suit_dfu_cache.c)
 zephyr_library_sources(src/suit_dfu_cache_helpers.c)
-zephyr_library_sources(src/zcbor_noncanonical_decode.c)
 
 zephyr_library_sources_ifdef(CONFIG_SUIT_CACHE_RW src/suit_dfu_cache_rw.c)
 
