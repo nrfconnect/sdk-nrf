@@ -5,10 +5,9 @@
 #
 
 menuconfig BT_RAS
-	bool "Ranging Service [EXPERIMENTAL]"
+	bool "Ranging Service"
 	depends on BT_CHANNEL_SOUNDING
 	select BT_NRF_SERVICES
-	select EXPERIMENTAL
 	help
 	  Bluetooth GATT Ranging Service modules - RREQ and RRSP.
 

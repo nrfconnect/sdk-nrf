@@ -547,13 +547,12 @@ config BT_CTLR_SDC_CIS_SUBEVENT_LENGTH_US
 	  is chosen by the controller.
 
 config BT_CTLR_CHANNEL_SOUNDING
-	bool "Channel Sounding support [EXPERIMENTAL]"
-	select EXPERIMENTAL
+	bool "Channel Sounding support"
 	help
 	  Enable Channel Sounding support.
 
 config BT_CTLR_SDC_CS_COUNT
-	int "Number of concurrent connections supporting CS procedure [EXPERIMENTAL]"
+	int "Number of concurrent connections supporting CS procedures"
 	default 1
 	range 1 BT_MAX_CONN
 	depends on BT_CTLR_CHANNEL_SOUNDING
@@ -562,7 +561,7 @@ config BT_CTLR_SDC_CS_COUNT
 	  Needs to be equal to or less than BT_MAX_CONN.
 
 config BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS
-	int "Max number of Channel Sounding antenna paths supported by the controller [EXPERIMENTAL]"
+	int "Max number of Channel Sounding antenna paths supported by the controller"
 	default 1
 	range 1 4
 	depends on BT_CTLR_CHANNEL_SOUNDING
@@ -574,7 +573,7 @@ config BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS
 	  Reducing the value of this kconfig will reduce the RAM usage per CS context.
 
 config BT_CTLR_SDC_CS_NUM_ANTENNAS
-	int "Number of antennas used in Channel Sounding procedure supported by the controller [EXPERIMENTAL]"
+	int "Number of antennas used in Channel Sounding procedure supported by the controller"
 	default 1
 	range 1 BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS
 	depends on BT_CTLR_CHANNEL_SOUNDING
@@ -594,9 +593,8 @@ config BT_CTLR_SDC_CS_MULTIPLE_ANTENNA_SUPPORT
 	  Internal helper config. Not intended for use.
 
 config BT_CTLR_SDC_CS_STEP_MODE3
-	bool "Enable optional step mode-3 support [EXPERIMENTAL]"
+	bool "Enable optional step mode-3 support"
 	depends on BT_CTLR_CHANNEL_SOUNDING
-	select EXPERIMENTAL
 	help
 	  Enable optional step mode-3 support. Channel sounding will not automatically start using step mode-3 if this
 	  config is set. To use step mode-3, modify the configuration which is created using the LE CS Create config command.
