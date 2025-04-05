@@ -16,3 +16,4 @@ Documentation
 Official latest documentation at https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/index.html
 
 For earlier versions, open the latest version and use the drop-down under the title header.
+
