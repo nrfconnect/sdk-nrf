@@ -106,7 +106,7 @@ For more information, see the `Data mode control #XDATACTRL`_  command.
 Flow control in data mode
 =========================
 
-When SLM fills its UART receive buffers, it enables the UART hardware flow control, which disables UART reception.
+When SLM fills its UART receive buffers, it disables UART reception. If ``hw-flow-control`` is enabled for the UART, hardware flow control is imposed. Without hardware flow control, the SLM application will drop incoming data while the UART reception is disabled.
 SLM reenables UART reception when the data has been moved to the data mode buffer.
 If the data mode buffer fills, the data are transmitted to the LTE network.
 
