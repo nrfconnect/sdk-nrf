@@ -121,6 +121,11 @@ int suitfu_mgmt_suit_envelope_upload(struct smp_streamer *ctx);
 void suitfu_mgmt_suit_image_fetch_init(void);
 
 /**
+ * @brief	Stops Image fetching if it is in progress
+ */
+void suitfu_mgmt_suit_image_fetch_stop(void);
+
+/**
  * @brief	Process Get Missing Image State Request.
  *
  * @note	SMP Client sends that request periodically,
