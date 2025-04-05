@@ -35,6 +35,29 @@ tests:
       - CONFIG_NRFX_TIMER00=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=32000
       - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1600000
+  drivers.audio.pdm_loopback.nrf54l20.aclk.1000khz:
+    platform_allow:
+      - nrf54l20pdk/nrf54l20/cpuapp
+    extra_args:
+      - CONFIG_NRFX_TIMER00=y
+      - CONFIG_TEST_PDM_SAMPLING_RATE=20000
+      - DTC_OVERLAY_FILE="boards/nrf54l20pdk_nrf54l20_cpuapp_aclk.overlay"
+  drivers.audio.pdm_loopback.nrf54l20.aclk.1280khz:
+    platform_allow:
+      - nrf54l20pdk/nrf54l20/cpuapp
+    extra_args:
+      - CONFIG_NRFX_TIMER00=y
+      - CONFIG_TEST_PDM_SAMPLING_RATE=16000
+      - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1280000
+      - DTC_OVERLAY_FILE="boards/nrf54l20pdk_nrf54l20_cpuapp_aclk.overlay"
+  drivers.audio.pdm_loopback.nrf54l20.aclk.1600khz:
+    platform_allow:
+      - nrf54l20pdk/nrf54l20/cpuapp
+    extra_args:
+      - CONFIG_NRFX_TIMER00=y
+      - CONFIG_TEST_PDM_SAMPLING_RATE=32000
+      - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1600000
+      - DTC_OVERLAY_FILE="boards/nrf54l20pdk_nrf54l20_cpuapp_aclk.overlay"
   drivers.audio.pdm_loopback.nrf54h20.1000khz:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
@@ -51,6 +74,28 @@ tests:
       - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1600000
       - CONFIG_TEST_PDM_SAMPLING_TIME=10
       - CONFIG_TEST_USE_DMM=y
+  drivers.audio.pdm_loopback.nrf54h20.audiopll.44k1hz:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - CONFIG_NRFX_TIMER130=y
+      - CONFIG_TEST_PDM_SAMPLING_RATE=44100
+      - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1411200
+      - CONFIG_TEST_PDM_SAMPLING_TIME=10
+      - CONFIG_CLOCK_CONTROL=y
+      - CONFIG_TEST_USE_DMM=y
+      - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_audiopll_44k1.overlay"
+  drivers.audio.pdm_loopback.nrf54h20.audiopll.48khz:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - CONFIG_NRFX_TIMER130=y
+      - CONFIG_TEST_PDM_SAMPLING_RATE=48000
+      - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1536000
+      - CONFIG_TEST_PDM_SAMPLING_TIME=10
+      - CONFIG_CLOCK_CONTROL=y
+      - CONFIG_TEST_USE_DMM=y
+      - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_audiopll_48k.overlay"
   drivers.audio.pdm_loopback.nrf54h20.no_dmm:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
