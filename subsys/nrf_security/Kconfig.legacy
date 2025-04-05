@@ -290,6 +290,16 @@ config MBEDTLS_MPI_MAX_SIZE
 	default 384 if CC312_BACKEND
 	range 256 2048
 
+config MBEDTLS_HAVE_TIME
+	bool
+	default y
+	depends on DATE_TIME
+
+config MBEDTLS_HAVE_TIME_DATE
+	bool
+	default y
+	depends on DATE_TIME
+
 config MBEDTLS_LEGACY_CRYPTO_C_SILENCE_DEPRECATION
 	bool
 	help
