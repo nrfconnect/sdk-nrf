@@ -1,0 +1,9 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+name: crash_gen
+append:
+  EXTRA_CONF_FILE: crash_gen.conf
