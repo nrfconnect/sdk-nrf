@@ -32,7 +32,7 @@ The supported location methods are as follows:
 
 * GNSS positioning
 
-  * Uses :ref:`GNSS interface<gnss_interface>` for getting the location.
+  * Uses :ref:`GNSS interface <gnss_interface>` for getting the location.
   * A-GNSS and P-GPS are managed with :ref:`lib_nrf_cloud_agnss` and :ref:`lib_nrf_cloud_pgps`.
   * The application may also use some other source for the data and use :c:func:`location_agnss_data_process` and :c:func:`location_pgps_data_process` to pass the data to the Location library.
   * The data format of A-GNSS or P-GPS must be as received from :ref:`lib_nrf_cloud_agnss`.
@@ -372,7 +372,7 @@ Limitations
 
 * The Location library can only have one application registered at a time.
   If there is already an application handler registered, another initialization will override the existing handler.
-* The :ref:`GNSS interface<nrfxlib:gnss_interface>` should not be used directly by the application when using the Location library.
+* The :ref:`GNSS interface <nrfxlib:gnss_interface>` should not be used directly by the application when using the Location library.
   Using the GNSS interface from both the application and the Location library may lead to unexpected behavior.
 
 Dependencies
@@ -389,7 +389,7 @@ This library uses the following |NCS| libraries:
 
 It uses the following `sdk-nrfxlib`_ library:
 
-* :ref:`GNSS interface<nrfxlib:gnss_interface>`
+* :ref:`GNSS interface <nrfxlib:gnss_interface>`
 
 It uses the following Zephyr libraries:
 

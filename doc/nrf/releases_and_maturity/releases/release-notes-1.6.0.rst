@@ -408,7 +408,7 @@ Modem library
 * Updated :ref:`nrf_modem` to version 1.2.1.
   See the :ref:`nrfxlib:nrf_modem_changelog` for detailed information.
 * Added a new function-based GNSS API with support for new GNSS features in modem firmware v1.3.0.
-  See :ref:`GNSS interface<nrfxlib:gnss_interface>` for more information.
+  See :ref:`GNSS interface <nrfxlib:gnss_interface>` for more information.
 
   * GNSS socket API is now deprecated.
 

@@ -397,7 +397,7 @@ In the serial recovery DFU mode, the new image is transferred through an USB CDC
 The bootloader overwrites the existing application located on the primary slot with the new application image.
 If the transfer is interrupted, the device cannot boot the incomplete application, and the image upload must be performed again.
 
-Once the device enters the serial recovery mode, you can use the :ref:`mcumgr <zephyr:device_mgmt>` to:
+Once the device enters the serial recovery mode, you can use the :ref:`mcumgr <zephyr:device_mgmt>` to do the following:
 
 * Query information about the present image.
 * Upload the new image.
