@@ -14,8 +14,6 @@
 	status = "okay";
 	pinctrl-0 = <&uart2_default_alt>;
 	pinctrl-1 = <&uart2_sleep_alt>;
-	/delete-property/ rts-pin;
-	/delete-property/ cts-pin;
 	/delete-property/ hw-flow-control;
 
 	lpuart: nrf-sw-lpuart {
