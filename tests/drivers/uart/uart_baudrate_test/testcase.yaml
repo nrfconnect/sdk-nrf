@@ -66,12 +66,36 @@ tests:
     integration_platforms:
       - nrf54l20pdk/nrf54l20/cpuapp
     extra_args: DTC_OVERLAY_FILE="boards/nrf54l20pdk_nrf54l20_cpuapp_uart22.overlay"
+  drivers.uart.baudrate_test.lm20_uart00:
+    platform_allow:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+    extra_args: DTC_OVERLAY_FILE="boards/nrf54lm20apdk_nrf54lm20a_cpuapp_uart00.overlay"
+  drivers.uart.baudrate_test.lm20_uart21:
+    platform_allow:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+    extra_args: DTC_OVERLAY_FILE="boards/nrf54lm20apdk_nrf54lm20a_cpuapp_uart21.overlay"
+  drivers.uart.baudrate_test.lm20_uart22:
+    platform_allow:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+    extra_args: DTC_OVERLAY_FILE="boards/nrf54lm20apdk_nrf54lm20a_cpuapp_uart22.overlay"
   drivers.uart.baudrate_test.l09_uart21:
     platform_allow:
       - nrf54l09pdk/nrf54l09/cpuapp
     integration_platforms:
       - nrf54l09pdk/nrf54l09/cpuapp
     extra_args: DTC_OVERLAY_FILE="boards/nrf54l09pdk_nrf54l09_cpuapp_uart21.overlay"
+  drivers.uart.baudrate_test.lv10_uart21:
+    platform_allow:
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    extra_args: DTC_OVERLAY_FILE="boards/nrf54lv10apdk_nrf54lv10a_cpuapp_uart21.overlay"
   drivers.uart.baudrate_test.7120_uart00:
     platform_allow:
       - nrf7120pdk/nrf7120/cpuapp
