@@ -729,6 +729,7 @@
 /snippets/matter-power-consumption-tests/ @nrfconnect/ncs-matter
 /snippets/nordic-bt-rpc/                  @ppryga-nordic
 /snippets/nrf54l09-switch-uart/           @nrfconnect/ncs-low-level-test
+/snippets/nrf54lv10-switch-uart/          @nrfconnect/ncs-low-level-test
 /snippets/nrf70-driver-debug/             @krish2718 @sachinthegreen
 /snippets/nrf70-driver-verbose-debug/     @krish2718 @sachinthegreen
 /snippets/nrf70-fw-patch-ext-flash/       @krish2718 @sachinthegreen
