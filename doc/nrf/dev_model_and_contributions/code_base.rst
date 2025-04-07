@@ -218,6 +218,11 @@ In the case of OSS repositories, the git tag format reuses the upstream project'
 
 In this format, ``X``, ``Y`` and ``Z`` are the ``MAJOR``, ``MINOR`` and ``PATCH`` versions of the upstream project, and ``-ncsN`` is used to identify the number of |NCS| releases based on that particular version.
 
+In the case of |NCS| Add-ons, the git tag format might be different from the |NCS| version, that add-on is based on.
+Along with the version, it also has an optional ``-add-on`` suffix::
+
+  vX.Y.Z(-add-on)(-rcM)
+
 .. _dm-oss-downstreams:
 
 OSS repositories downstream project history
