@@ -1,0 +1,14 @@
+tests:
+  nrf.extended.boards.nrf.i2c.i2c_slave:
+    depends_on: i2c
+    tags:
+      - drivers
+      - i2c
+      - ci_tests_zephyr_boards_nrf_i2c
+    harness: ztest
+    harness_config:
+      fixture: i2c_loopback
+    platform_allow:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp

@@ -1524,3 +1524,8 @@ ci_tests_zephyr_kernel_timer_timer_behavior:
   files:
     - nrf/tests/zephyr/kernel/timer/timer_behavior/
     - tests/zephyr/kernel/timer/timer_behavior/
+
+ci_tests_zephyr_boards_nrf_i2c:
+  files:
+    - nrf/tests/zephyr/boards/nrf/i2c/
+    - zephyr/tests/boards/nrf/i2c/

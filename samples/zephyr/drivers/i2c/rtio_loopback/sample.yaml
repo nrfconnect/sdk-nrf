@@ -18,6 +18,11 @@ tests:
       - nrf54l20pdk/nrf54l20/cpuapp
     integration_platforms:
       - nrf54l20pdk/nrf54l20/cpuapp
+  nrf.extended.sample.drivers.i2c.rtio_loopback.lm20:
+    platform_allow:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
   nrf.extended.sample.drivers.i2c.rtio_loopback.l09:
     platform_allow:
       - nrf54l09pdk/nrf54l09/cpuapp
@@ -27,3 +32,12 @@ tests:
       - SNIPPET=nrf54l09-switch-uart
     tags:
       - nrf54l09-switch-uart
+  nrf.extended.sample.drivers.i2c.rtio_loopback.lv10:
+    platform_allow:
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    extra_args:
+      - SNIPPET=nrf54lv10-switch-uart
+    tags:
+      - nrf54lv10-switch-uart
