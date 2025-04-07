@@ -326,10 +326,10 @@ The following table indicates the software maturity levels of the support for ea
      - --
      - Supported\ :sup:`1`
      - Supported\ :sup:`2`
-     - Experimental
+     - Experimental\ :sup:`3`
      - --
      - --
-     - Experimental
+     - Experimental\ :sup:`3`
      - --
      - Supported\ :sup:`1`
      - Supported\ :sup:`1`
@@ -353,6 +353,7 @@ The following table indicates the software maturity levels of the support for ea
 
 | [1]: Only with nRF7002 EK, nRF7002 EK in nRF7000 emulation mode or nRF7002 EK in nRF7001 emulation mode
 | [2]: Only with nRF7002 DK, nRF7002 DK in nRF7001 emulation mode, nRF7002 EB, nRF7002 EK, nRF7002 EK in nRF7000 emulation mode or nRF7002 EK in nRF7001 emulation mode
+| [3]: Only with nRF7002-EB II
 
 Amazon Sidewalk features support
 ********************************
@@ -1651,7 +1652,7 @@ The following table indicates the software maturity levels of the support for ea
         - Experimental\ :sup:`4`
         - --
         - --
-        - Experimental\ :sup:`5`
+        - Experimental\ :sup:`4`
         - --
         - --
         - --
@@ -1662,16 +1663,16 @@ The following table indicates the software maturity levels of the support for ea
         - --
         - --
         - --
-        - Experimental\ :sup:`6`
-        - Supported\ :sup:`7`
-        - --
-        - --
-        - --
-        - --
-        - --
+        - Experimental\ :sup:`5`
         - Supported\ :sup:`6`
-        - Supported\ :sup:`6`
-        - Supported\ :sup:`6`
+        - --
+        - --
+        - --
+        - --
+        - --
+        - Supported\ :sup:`5`
+        - Supported\ :sup:`5`
+        - Supported\ :sup:`5`
       * - **SoftAP Mode (for Wi-Fi provisioning)**
         - --
         - --
@@ -1724,10 +1725,9 @@ The following table indicates the software maturity levels of the support for ea
    | [1]: Only with nRF7002 DK, nRF7002 DK in nRF7001 emulation mode, nRF7002 EB, nRF7002 EK or nRF7002 EK in nRF7001 emulation mode
    | [2]: Only with nRF7002 DK, nRF7002 DK in nRF7001 emulation mode or nRF7002 EK
    | [3]: Only with nRF7002 EK or nRF7002 EK in nRF7001 emulation mode
-   | [4]: Only with nrf7002 EB and nRF7002 EB-interposer
-   | [5]: Only with nrf7002 EB and nRF7002 EB-interposer
-   | [6]: Only with nRF7002 EK, nRF7002 EK in nRF7000 emulation mode or nRF7002 EK in nRF7001 emulation mode
-   | [7]: Only with nRF7002 DK, nRF7002 EB, nRF7002 EK, nRF7002 EK in nRF7000 emulation mode or nRF7002 EK in nRF7001 emulation mode
+   | [4]: Only with nRF7002-EB II
+   | [5]: Only with nRF7002 EK, nRF7002 EK in nRF7000 emulation mode or nRF7002 EK in nRF7001 emulation mode
+   | [6]: Only with nRF7002 DK, nRF7002 EB, nRF7002 EK, nRF7002 EK in nRF7000 emulation mode or nRF7002 EK in nRF7001 emulation mode
 
 Ecosystem support
 *****************
