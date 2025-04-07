@@ -14,37 +14,10 @@ You can also read the :ref:`app_build_system` section describing the |NCS| addit
 
 However, the multicore nature of the nRF54H20 DK required some changes to how devicetree files are organized.
 
-DTS file scheme
-***************
-
-.. note::
-   This file scheme is valid only for the nRF54H20 initial limited sampling version of |NCS|.
-   It is subject to changes or improvements in future releases.
-
-The following is the DTS file structure implemented for all the SoCs of the 54H family:
-
-* Arch-specific DTS files, located in the :file:`../dts/arm/nordic_nrf_next/` and :file:`dts/riscv/nordic_nrf_next folder` directories:
-
-    * Project-wide files (:file:`haltium_cpu.dtsi` and :file:`haltium_global_*.dtsi`)
-    * Core-specific files per product (:file:`nrf54h20_cpu*.dtsi`)
-
-* Common directory, located in the :file:`../common/nordic_nrf_next` folder:
-
-    * Arch-independent configurations
-    * Common platform overlays
-    * Common memory and peripherals overlay applicable across products
-    * Product-specific overlays applicable to all cores
-    * Project-wide overlays
-
-The following is the include tree for the application core of the nRF54H20 (cpuapp):
-
-.. figure:: images/cpuapp_include_tree.svg
-   :alt: nRF54H20 CPUAPP include tree
-
-The files shown in the figure are currently hosted in the ``ic-next`` repository.
-
 Customizing the DTS configuration
 *********************************
+
+The configuration details for the nRF54H20 DK are located under the :file:`soc/common/nordic` directory or the specific board directory itself.
 
 You can find documentation for the output files created in your application build directory in :ref:`zephyr:devicetree-in-out-files`.
 You can use overlay files to customize this configuration.
