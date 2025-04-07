@@ -6,25 +6,15 @@ Simultaneous multi-image DFU with nRF5340 DK
 The simultaneous update of multiple images is available for testing since |NCS| v1.7.0.
 It allows the updating of both the application core and the network core in one go.
 
-To enable the simultaneous update of multiple images in the MCUboot, set the following options:
+To enable the simultaneous update of multiple images by MCUboot, set the following options:
 
-* :kconfig:option:`CONFIG_BOOT_UPGRADE_ONLY` - The simultaneous update of multiple images does not support network core image reversion, so you need to disable application image reversion.
-* :kconfig:option:`CONFIG_PCD_APP` - Enable commands exchange with the network core.
-* :kconfig:option:`CONFIG_UPDATEABLE_IMAGE_NUMBER` - Enable support for multiple update partitions by setting this option to ``2``.
-
-As described in Zephyr's documentation about :ref:`sysbuild`, make sure to add the image prefix to the name of Kconfig options that are used when building MCUboot, which for MCUboot is ``mcuboot_`` (for example, ``mcuboot_CONFIG_PCD_APP``).
+* ``SB_CONFIG_SECURE_BOOT_NETCORE`` - Enables |NSIB| for the network core.
+* ``SB_CONFIG_NETCORE_APP_UPDATE`` - Enables firmware updates for the network core.
+* ``SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE`` - Performs network core updates in a single operation.
 
 .. note::
 
    The application core can be reverted, but doing so breaks the network core upon reversal, as the reversion process fills the network core with the content currently in the RAM that PCD uses.
-   To enable this, define the :kconfig:option:`CONFIG_USE_NRF53_MULTI_IMAGE_WITHOUT_UPGRADE_ONLY` Kconfig option in the project-level Kconfig file.
-   When this option is defined, you can enable it by setting :kconfig:option:`CONFIG_USE_NRF53_MULTI_IMAGE_WITHOUT_UPGRADE_ONLY`.
-
-The :kconfig:option:`CONFIG_NRF53_MULTI_IMAGE_UPDATE` option selects this feature by default if these options and all its other dependencies are asserted.
-
-To enable the simultaneous update of multiple images in the application, in addition to enabling the MCUboot support, set the following options:
-
-* :kconfig:option:`CONFIG_UPDATEABLE_IMAGE_NUMBER` - Enable support for multiple update partitions by setting this option to ``2``.
 
 Additionally, the memory partitions must be defined and include:
 
