@@ -7,8 +7,9 @@
 rsource "services/Kconfig"
 
 config SSF_CLIENT
-	def_bool $(dt_nodelabel_enabled_with_compat,cpusec_cpuapp_ipc,$(DT_COMPAT_ZEPHYR_IPC_ICMSG)) \
-	      || $(dt_nodelabel_enabled_with_compat,cpusec_cpurad_ipc,$(DT_COMPAT_ZEPHYR_IPC_ICMSG))
+	bool
+	default (! SSF_V_2) && ($(dt_nodelabel_enabled_with_compat,cpusec_cpuapp_ipc,$(DT_COMPAT_ZEPHYR_IPC_ICMSG)) \
+	      || $(dt_nodelabel_enabled_with_compat,cpusec_cpurad_ipc,$(DT_COMPAT_ZEPHYR_IPC_ICMSG)))
 
 config SDFW_SERVICES_ENABLED
 	bool
