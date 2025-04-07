@@ -47,26 +47,49 @@ By default, the timeout is set to 120 seconds.
 
 The :kconfig:option:`CONFIG_CAF_POWER_MANAGER_ERROR_TIMEOUT` option sets the period of time after which the device is turned off upon an internal error.
 
-Optional boolean for keeping the system on
-==========================================
+Blocking system off
+===================
 
-The :kconfig:option:`CONFIG_CAF_POWER_MANAGER_STAY_ON` Kconfig option lets the system stay on also when there are no active connections.
+The :kconfig:option:`CONFIG_CAF_POWER_MANAGER_STAY_ON` Kconfig option prevents system off (:c:func:`sys_poweroff`) even if there are no active :ref:`power state restrictions <caf_power_manager_power_state_restrictions>`.
+If you enable the option, the device stays in a suspended state, but will not enter the system off state.
+If you disable the power off functionality (:kconfig:option:`CONFIG_POWEROFF`), the module never enters the system off state (:kconfig:option:`CONFIG_CAF_POWER_MANAGER_STAY_ON` is enabled and has no prompt, and you cannot change the Kconfig option).
 
-For more information about configuration options, check the help in the configuration tool.
+Forcing power down
+==================
+
+If :c:struct:`force_power_down_event` is enabled in the configuration (:kconfig:option:`CONFIG_CAF_FORCE_POWER_DOWN_EVENTS`), any application module can submit the event to force a quick power down without waiting.
+The event triggers instantly suspending the application.
+
+Clearing reset reason
+=====================
+
+The module by default clears the reset reason register (``RESETREAS``) right before entering the system off state (right before calling :c:func:`sys_poweroff`).
+This is done to avoid starting MCUboot serial recovery if nobody has cleared it already.
+Disable the :kconfig:option:`CONFIG_CAF_POWER_MANAGER_CLEAR_RESET_REASON` Kconfig option to prevent this behavior.
+Clearing reset reason functionality is not used for the nRF54H Series SoC (:kconfig:option:`CONFIG_SOC_SERIES_NRF54HX`) as it uses SUIT DFU.
+
+.. note::
+  The reset reason register is not cleared in case system is turned off after a fatal error.
 
 Implementation details
 **********************
 
 The |power_manager| is started when the "main" is ready (which is reported using :c:struct:`module_state_event`).
+The module is responsible for controlling the application power state:
 
-When started, it can perform the following operations:
+* If the device is in use, the |power_manager| keeps everything active and temporarily allows for bigger power consumption to ensure high responsiveness.
+* When the device is not used for a longer period of time, the |power_manager| suspends the application to reduce the power consumption.
+  In case of user action while in a suspended state, the |power_manager| switches the application back to the active state.
+* In case of an error, the |power_manager| reports the error to the user and then turns off the application.
 
-* Manage `Power states`_
-* Trigger `Switching to low power`_
-* Handle `Wake-up scenarios`_ from suspended or off states
+A dedicated set of application events can be used to communicate with the |power_manager|.
+The predefined set of events is used while suspending or waking up the application.
+Another events can be used to affect policy used by the |power_manager|.
 
-Power states
-============
+See the following sections for detailed information about the used application power states, transitions between them and interactions of the |power_manager| with other application modules.
+
+Application power state
+=======================
 
 The application can be in the following power states:
 
@@ -74,26 +97,24 @@ The application can be in the following power states:
 * `Suspended`_
 * `Off`_
 * `Error`_
-
-The |power_manager| takes control of the overall operating system power state.
+* `Error Off`_
 
 .. figure:: images/caf_power_manager_states.svg
    :alt: Power manager state handling in CAF
 
    Power manager state handling in CAF
 
-See the following sections for more details about how the application state converts to the system power state.
+See the following sections for more details on every application power state.
 
 Idle
 ----
 
-In this state, the board power management is left totally to the operating system.
-The peripherals can be turned on, including LEDs.
+In this state, the |power_manager| does not perform any actions to limit power consumption of the application modules.
+The application modules can remain active and keep the controlled peripherals turned on, including LEDs.
 
-The application remains in this state indefinitely if any of the modules has restricted the allowed power level to :c:enum:`POWER_MANAGER_LEVEL_ALIVE`.
+If no application module applies :ref:`caf_power_manager_power_state_restrictions`, the power-down counter is active.
+On timeout, the |power_manager| enters the suspended state.
 
-If no module blocks other power states, the power-down counter is active.
-On timeout, the |power_manager| sets the application to either the suspended or the off state.
 There are some events that reset the power-down counter:
 
 * :c:struct:`keep_alive_event`
@@ -102,84 +123,78 @@ There are some events that reset the power-down counter:
 Suspended
 ---------
 
-Upon power-down timeout, the |power_manager| switches the application to the suspended state if there is at least one module that restricts power-down levels to :c:enum:`POWER_MANAGER_LEVEL_SUSPENDED` and there is no module that restricts power below level to any higher state (:c:enum:`POWER_MANAGER_LEVEL_ALIVE`).
+Upon the power-down timeout, the |power_manager| switches the application to the suspended state.
+The |power_manager| suspends application modules to reduce power consumption.
+After suspending the application modules, the |power_manager| might call :c:func:`sys_poweroff`, so that system enters the off state to reduce the power consumption further.
 
-The other modules of the application, if applicable, will turn off the peripherals or switch them to standby to conserve power.
-The operating system is kept in the :c:enum:`PM_STATE_ACTIVE` state.
+.. _caf_power_manager_suspending_application_modules:
 
+Suspending application modules
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The |power_manager| submits :c:struct:`power_down_event`.
+While handling the event, application modules turn off the used peripherals or switch them to standby to conserve power.
+Only after all application modules confirm that they have entered the low power state (by not consuming the :c:struct:`power_down_event`), the |power_manager| sets the required application power state.
+The |power_manager| registers itself as the final subscriber of :c:struct:`power_down_event`.
+Reception of :c:struct:`power_down_event` indicates that the |power_manager| can continue power down sequence.
+See the :c:struct:`power_down_event` documentation for details regarding handling the event in application modules.
+
+Suspending application modules is done to reduce CPU workload and suspend the peripherals.
 It is assumed that the operating system will conserve power by setting the CPU state to idle whenever possible.
-The established connection is maintained.
+If the system power management (:kconfig:option:`CONFIG_PM`) is enabled, reducing CPU workload also allows the system power management to enter deeper CPU sleep states.
+
+Wake-up scenarios
+~~~~~~~~~~~~~~~~~
+
+Any module can trigger the application to switch from the suspended state back to the idle state by submitting :c:struct:`wake_up_event`.
+This is normally done on some external event, for example, your interaction on the device.
+The |power_manager| sets the application to the idle state.
+Then application modules receive :c:struct:`wake_up_event`, which switches them back to the normal operation.
 
 Off
 ---
 
-Upon power-down timeout, the |power_manager| switches the application to the deep sleep mode if no module restricts it.
-This means that all the modules are restricted to :c:enum:`POWER_MANAGER_LEVEL_OFF` or :c:enum:`POWER_MANAGER_LEVEL_MAX`.
+After suspending the application modules, the |power_manager| can trigger entering the system off state (:c:func:`sys_poweroff`) to reduce the power consumption further.
+The |power_manager| switches the application to the deep sleep (system off) mode if no module :ref:`restricts the system off state <caf_power_manager_power_state_restrictions>` and :kconfig:option:`CONFIG_CAF_POWER_MANAGER_STAY_ON` Kconfig option is disabled.
 
-If applicable, the other modules of the application turn off the peripherals or switch them to standby to conserve power.
-The operating system switches to the :c:enum:`POWER_STATE_DEEP_SLEEP_1` state.
-The devices are suspended and the CPU is switched to the deep sleep (off) mode.
+Switching the application to the system off state is performed by submitting :c:struct:`power_off_event`.
+The |power_manager| registers itself as the final subscriber of :c:struct:`power_off_event`.
+Reception of :c:struct:`power_off_event` indicates that the |power_manager| can safely call the :c:func:`sys_poweroff` API to enter the system off state.
+See the :c:struct:`power_off_event` documentation for details regarding handling the event in application modules.
 
-A device reboot is required to exit this state.
+Eventually all of the application modules are suspended, and the CPU is switched to the deep sleep (off) mode.
+In the system off state, the CPU is not running.
+
+Wake-up scenarios
+~~~~~~~~~~~~~~~~~
+
+Before the application enters the off state, an application module must configure the peripheral under its control, so that it issues a hardware-related event capable of rebooting the CPU (that is, capable of leaving the CPU off mode) when you interact on the device.
+After the reboot, the application reinitializes itself.
 
 Error
 -----
 
-The |power_manager| checks if any application modules have reported an error condition.
+When any application module switches to the error state (that is, broadcasts :c:enumerator:`MODULE_STATE_ERROR` through :c:struct:`module_state_event`), the |power_manager| puts the application into the error state.
+The application modules are :ref:`suspended <caf_power_manager_suspending_application_modules>` using :c:struct:`power_down_event` with :c:member:`power_down_event.error` set to ``true``.
+The error field indicates that some of the application modules can stay active to report the error condition to the user (for example, :ref:`caf_leds` can keep working in the error state to display information about the error).
 
-When any application module switches to the error state (that is, broadcasts :c:enum:`MODULE_STATE_ERROR` through :c:struct:`module_state_event`), the |power_manager| puts the application into the error state.
-Then, after the period of time defined by :kconfig:option:`CONFIG_CAF_POWER_MANAGER_ERROR_TIMEOUT`, it puts the application to the off state.
-During this period, other modules can report the error condition to the user (for example, :ref:`caf_leds` can keep working in the error state).
+Then, after the period of time defined by the :kconfig:option:`CONFIG_CAF_POWER_MANAGER_ERROR_TIMEOUT` Kconfig option, the |power_manager| suspends the remaining application modules using :c:struct:`power_down_event` with :c:member:`power_down_event.error` set to ``false``.
 
-Restricting power states
+.. note::
+   In the error state, |power_manager| prevents waking up application by consuming the submitted :c:struct:`wake_up_event`.
+
+Error Off
+---------
+
+In the error state, after suspending all of the application modules, the |power_manager| unconditionally triggers entering the system error off state using :c:struct:`power_off_event` with :c:member:`power_off_event.error` set to ``true``.
+If entering the system off after the error, the :ref:`power state restrictions <caf_power_manager_power_state_restrictions>` and value of the :kconfig:option:`CONFIG_CAF_POWER_MANAGER_STAY_ON` Kconfig option are ignored.
+
+.. _caf_power_manager_power_state_restrictions:
+
+Power state restrictions
 ========================
 
-Any registered module can restrict the power state allowed by the usage of :c:struct:`power_manager_restrict_event`.
+Any application module can restrict the power state allowed by the usage of :c:struct:`power_manager_restrict_event`.
 It provides the module ID and the deepest allowed power state.
-The |power_manager| uses flags to restrict modes for any module.
-This means that you can repeatedly send the :c:struct:`power_manager_restrict_event`.
-
-Switching to low power
-======================
-
-When the |power_manager| detects that the application is about to enter the low power state (either suspended or off), it sends a :c:struct:`power_down_event`.
-Other application modules react to this event by changing their configuration to low power, for example by turning off LEDs.
-
-Some modules might not be ready to switch to the lower power state.
-In such case, the module that is not yet ready should consume the :c:struct:`power_down_event` and change its internal state, so that it enters the low power state when ready.
-
-After entering the low power state, each module must report this by sending a :c:struct:`module_state_event`.
-The |power_manager| continues with the low power state change when it gets a notification indicating that the module switched to the low power.
-
-Only after all modules confirmed that they have entered the low power state (by not consuming the :c:struct:`power_down_event`), the |power_manager| sets the required application's state.
-
-If a disconnection happens while the device is in the suspended state, the |power_manager| switches the application to the off state.
-
-However, the application can also be configured to keep the system in the suspended state when there are no active connections, instead of switching to the off state.
-To select this behavior, use the :kconfig:option:`CONFIG_CAF_POWER_MANAGER_STAY_ON` Kconfig option.
-
-Wake-up scenarios
-=================
-
-The application can be woken up in the following scenarios:
-
-* `Wake-up from the suspended state`_
-* `Wake-up from the off state`_
-
-Wake-up from the suspended state
---------------------------------
-
-Any module can trigger the application to switch from the suspended state back to the idle state by submitting a :c:struct:`wake_up_event`.
-This is normally done on some external event, for example upon interaction from the user of the device.
-
-The application modules receive a :c:struct:`wake_up_event`, which switches them back to the normal operation.
-The |power_manager| sets the application to the idle state.
-This also restarts the power-down counter if the device is not connected through USB.
-
-Wake-up from the off state
---------------------------
-
-In the off state, the CPU is not running and a CPU reboot is required.
-
-Before the application enters the off state, at least one module must configure the peripheral under its control, so that it issues a hardware-related event capable of rebooting the CPU (that is, capable of leaving the CPU off mode).
-After the reboot, the application initializes itself again.
+The |power_manager| uses flags to track restrictions imposed by an application module.
+This means that you can repeatedly send the :c:struct:`power_manager_restrict_event` to update restrictions applied by a given application module.
