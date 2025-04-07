@@ -593,6 +593,18 @@ Testing
 
          To calculate the TX power without issuing ``tx_power`` command, see :ref:`nrf70_wifi_tx_power_calculation`.
 
+         * To read battery voltage in volts, execute the following sequence of commands:
+
+           .. code-block:: console
+
+              wifi_radio_test get_voltage
+
+           The sample shows the following output:
+
+           .. code-block:: console
+
+               wifi_nrf: The battery voltage is = 3.55000 Volt
+
       .. group-tab:: FICR/OTP programming
 
          * Use the following reference command interface to read or write the OTP params:
