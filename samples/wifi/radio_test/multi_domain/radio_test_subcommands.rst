@@ -271,6 +271,11 @@ Wi-Fi radio test subcommands
      - 0
      - Configuration
      - Allows configuration of PTA for different Wi-Fi operating bands, antenna modes, and Short-Range protocols.
+   * - get_voltage
+     - | No arguments required
+     - N/A
+     - Action
+     - Get battery voltage.
 
 .. _wifi_radio_test_stats:
 
