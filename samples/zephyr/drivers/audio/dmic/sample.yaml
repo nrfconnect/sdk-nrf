@@ -2,8 +2,6 @@ sample:
   name: DMIC sample
 tests:
   nrf.extended.sample.drivers.audio.dmic:
-    depends_on:
-      - future_target
     tags:
       - dmic
       - ci_samples_zephyr_drivers_audio_dmic
@@ -15,3 +13,7 @@ tests:
       regex:
         - "DMIC sample"
         - "Exiting"
+    platform_allow:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
