@@ -85,7 +85,7 @@ Testing
       *** Booting Zephyr OS build v3.3.99-ncs1-26-ge405279d2134 ***
       [00:00:00.440,460] <inf> wifi_nrf: Firmware (v1.2.8.1) booted successfully
 
-      [00:00:00.638,397] <inf> scan: Starting nrf5340dk_nrf5340_cpuapp with CPU frequency: 64 MHz
+      [00:00:00.638,397] <inf> scan: Starting nrf5340dk/nrf5340/cpuapp with CPU frequency: 64 MHz
 
       [00:00:00.642,608] <inf> scan: Scan requested
 

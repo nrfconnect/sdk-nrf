@@ -326,7 +326,7 @@ Settings usage
     The data used within this partition may increase with updates to Matter and the |NCS|.
 
 To adjust the settings usage, you need to modify the :file:`pm_static` file related to your target board.
-For example, to modify the ``settings_storage`` partition in the :ref:`Matter Template <matter_template_sample>` sample for the ``nrf52840dk_nrf52840`` target, complete the following steps:
+For example, to modify the ``settings_storage`` partition in the :ref:`Matter Template <matter_template_sample>` sample for the ``nrf52840dk/nrf52840`` target, complete the following steps:
 
 1. Locate the :file:`pm_static_nrf52840dk_nrf52840.yml` in the sample directory
 #. Locate the ``settings_storage`` partition within the ``pm_static`` file.
