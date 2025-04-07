@@ -23,3 +23,17 @@ tests:
       - SNIPPET=nrf54l09-switch-uart
     tags:
       - nrf54l09-switch-uart
+  nrf.extended.drivers.i2c.target_api.single_role.lv10:
+    platform_allow:
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    extra_args:
+      - SNIPPET=nrf54lv10-switch-uart
+    tags:
+      - nrf54lv10-switch-uart
+  nrf.extended.drivers.i2c.target_api.single_role.lm20:
+    platform_allow:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
