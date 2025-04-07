@@ -12,10 +12,12 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
     extra_args: CONFIG_NRFX_TIMER00=y
   drivers.audio.pdm_loopback.nrf54l20.1000khz:
     platform_allow:
       - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
     extra_args:
       - CONFIG_NRFX_TIMER00=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=20000
@@ -23,6 +25,7 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
     extra_args:
       - CONFIG_NRFX_TIMER00=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=16000
@@ -31,6 +34,7 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
     extra_args:
       - CONFIG_NRFX_TIMER00=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=32000
@@ -38,26 +42,29 @@ tests:
   drivers.audio.pdm_loopback.nrf54l20.aclk.1000khz:
     platform_allow:
       - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
     extra_args:
       - CONFIG_NRFX_TIMER00=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=20000
-      - DTC_OVERLAY_FILE="boards/nrf54l20pdk_nrf54l20_cpuapp_aclk.overlay"
+      - EXTRA_DTC_OVERLAY_FILE="boards/nrf54l_aclk.overlay"
   drivers.audio.pdm_loopback.nrf54l20.aclk.1280khz:
     platform_allow:
       - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
     extra_args:
       - CONFIG_NRFX_TIMER00=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=16000
       - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1280000
-      - DTC_OVERLAY_FILE="boards/nrf54l20pdk_nrf54l20_cpuapp_aclk.overlay"
+      - EXTRA_DTC_OVERLAY_FILE="boards/nrf54l_aclk.overlay"
   drivers.audio.pdm_loopback.nrf54l20.aclk.1600khz:
     platform_allow:
       - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
     extra_args:
       - CONFIG_NRFX_TIMER00=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=32000
       - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1600000
-      - DTC_OVERLAY_FILE="boards/nrf54l20pdk_nrf54l20_cpuapp_aclk.overlay"
+      - EXTRA_DTC_OVERLAY_FILE="boards/nrf54l_aclk.overlay"
   drivers.audio.pdm_loopback.nrf54h20.1000khz:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp

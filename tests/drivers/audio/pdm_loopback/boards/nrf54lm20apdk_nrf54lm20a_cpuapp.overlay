@@ -26,7 +26,7 @@ pdm_dev: &pdm20 {
 	status = "okay";
 	pinctrl-0 = <&pdm20_default_alt>;
 	pinctrl-names = "default";
-	clock-source = "ACLK";
+	clock-source = "PCLK32M";
 };
 
 &gpio1 {
