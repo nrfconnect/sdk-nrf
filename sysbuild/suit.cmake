@@ -65,3 +65,11 @@ if(SB_CONFIG_SUIT_BUILD_AB_UPDATE)
     set_config_bool(${variant_image} CONFIG_NRF_REGTOOL_GENERATE_UICR n)
   endforeach()
 endif()
+
+if(SB_CONFIG_SUIT_SOC_FLASH_NRF_RADIO_SYNC_RPC)
+  get_property(images GLOBAL PROPERTY sysbuild_images)
+
+  foreach(image ${images})
+    set_config_bool(${image} CONFIG_SOC_FLASH_NRF_RADIO_SYNC_RPC y)
+  endforeach()
+endif()

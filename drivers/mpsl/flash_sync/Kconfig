@@ -6,6 +6,13 @@
 
 if SOC_FLASH_NRF || SOC_FLASH_NRF_RRAM || SOC_NRF54H20
 
+config SOC_FLASH_NRF_RADIO_SYNC_RPC
+	bool "Enable flash driver synchronization with radio protocols through RPC"
+	help
+	  Enable the flash synchronization between the application core and the radio core.
+	  This Kconfig option is set based on the value of the SB_CONFIG_SOC_FLASH_NRF_RADIO_SYNC_RPC
+	  sysbuild configuration option.
+
 choice SOC_FLASH_NRF_RADIO_SYNC_CHOICE
 	prompt "Nordic nRFx flash driver synchronization"
 	default SOC_FLASH_NRF_RADIO_SYNC_MPSL if MPSL
@@ -19,7 +26,8 @@ config SOC_FLASH_NRF_RADIO_SYNC_MPSL
 config SOC_FLASH_NRF_RADIO_SYNC_RPC_HOST
 	bool "Nordic nRFx flash driver synchronized on the application core via RPC"
 	depends on SOC_NRF54H20_CPUAPP
-	depends on BT # If synchronization with other radio protocols is needed, extend this
+	depends on BT  # If sync with other radio protocols is needed, extend this
+	depends on SOC_FLASH_NRF_RADIO_SYNC_RPC
 	select NRF_RPC
 	select NRF_RPC_CBOR
 	help
@@ -32,6 +40,7 @@ endif
 
 config SOC_FLASH_NRF_RADIO_SYNC_RPC_CONTROLLER
 	bool "Nordic nRFx flash driver RPC synchronization controller"
+	default y if SOC_FLASH_NRF_RADIO_SYNC_RPC
 	depends on SOC_FLASH_NRF_RADIO_SYNC_MPSL
 	select NRF_RPC
 	select NRF_RPC_CBOR
