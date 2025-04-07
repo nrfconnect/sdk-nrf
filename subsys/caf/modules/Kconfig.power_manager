@@ -24,13 +24,13 @@ config CAF_POWER_MANAGER
 if CAF_POWER_MANAGER
 
 config CAF_POWER_MANAGER_STAY_ON
-	bool "Stay on while no connections" if POWEROFF
+	bool "Block system off" if POWEROFF
 	default y if !POWEROFF
 	help
-	  If disabled the device will switch SoC to OFF mode after power
-	  manager timeout is done. If enabled the device will stay on
-	  but remain idle. If the device is connected it will always stay on
-	  and maintain the connection, regardless of the setting.
+	  If disabled, the device will switch SoC to OFF mode (system off) after
+	  power manager timeout is done in case no power state restrictions are
+	  applied. If enabled, the device will stay in suspended state, but will
+	  not enter system off state.
 
 config CAF_POWER_MANAGER_TIMEOUT
 	int "Power down timeout [s]"
