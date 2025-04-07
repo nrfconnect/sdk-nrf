@@ -391,8 +391,7 @@ static int dl_coap_init(struct downloader *dl, struct downloader_host_cfg *dl_ho
 	coap->sock.proto = IPPROTO_UDP;
 	coap->sock.type = SOCK_DGRAM;
 
-	if (strncmp(url, COAPS, (sizeof(COAPS) - 1)) == 0 ||
-	    (dl_host_cfg->sec_tag_count != 0 && dl_host_cfg->sec_tag_list != NULL)) {
+	if (strncmp(url, COAPS, (sizeof(COAPS) - 1)) == 0) {
 		coap->sock.proto = IPPROTO_DTLS_1_2;
 		coap->sock.type = SOCK_DGRAM;
 
