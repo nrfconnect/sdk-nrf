@@ -1405,6 +1405,11 @@ ci_samples_zephyr_drivers_audio_dmic:
     - nrf/samples/zephyr/drivers/audio/dmic/
     - zephyr/samples/drivers/audio/dmic/
 
+ci_tests_zephyr_drivers_audio_dmic_api:
+  files:
+    - nrf/tests/zephyr/drivers/audio/dmic_api/
+    - zephyr/tests/drivers/audio/dmic_api/
+
 ci_tests_zephyr_drivers_i2c_i2c_bme688:
   files:
     - nrf/tests/zephyr/drivers/i2c/i2c_bme688

@@ -1,0 +1,10 @@
+tests:
+  nrf.extended.drivers.audio.dmic_api:
+    tags:
+      - dmic
+      - ci_tests_zephyr_drivers_audio_dmic_api
+    harness: ztest
+    platform_allow:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
