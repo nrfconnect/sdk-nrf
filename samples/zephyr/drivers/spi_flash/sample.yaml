@@ -1,0 +1,23 @@
+sample:
+  name: SPI Flash Sample
+common:
+  tags:
+    - spi
+    - flash
+  harness: console
+  harness_config:
+    type: multi_line
+    ordered: true
+    regex:
+      - "Test 1: Flash erase"
+      - "Flash erase succeeded!"
+      - "Test 2: Flash write"
+      - "Attempting to write 4 bytes"
+      - "Data read matches data written. Good!!"
+tests:
+  sample.drivers.spi.flash.sqspi:
+    filter: CONFIG_MSPI_SQSPI and dt_compat_enabled("jedec,mspi-nor")
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - DTC_OVERLAY_FILE="boards/nrf54l15dk_nrf54l15_cpuapp_sqspi.overlay"
