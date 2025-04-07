@@ -594,7 +594,10 @@ Use the following UART configuration:
 
 .. note::
    The GPIO output level on the nRF91 Series device side must be 3 V.
-   You can set the VDD voltage with the **VDD IO** switch (**SW9**).
+
+   For nRF91x1 DK, you can set the VDD voltage with the `Board Configurator app`_.
+
+   For nRF9160 DK, you can set the VDD voltage with the **VDD IO** switch (**SW9**).
    See the `VDD supply rail section in the nRF9160 DK User Guide`_ for more information related to nRF9160 DK.
 
 .. _slm_connecting_thingy91:
