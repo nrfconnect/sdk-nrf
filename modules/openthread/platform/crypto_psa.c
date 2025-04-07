@@ -104,16 +104,6 @@ static otError getKeyRef(otCryptoKeyRef *aInputKeyRef, psa_key_attributes_t *aAt
 		if (psa_get_key_algorithm(aAttributes) == 0) {
 			psa_set_key_algorithm(aAttributes, PSA_ALG_HMAC(PSA_ALG_SHA_256));
 		}
-
-		/* KMU does not support deterministic ECDSA, so we need to set it to
-		 * PSA_ALG_ECDSA(PSA_ALG_SHA_256).
-		 * To keep backward compatibility with the previous functionality we must
-		 * leave PSA_ALG_DETERMINISTIC_ECDSA(PSA_ALG_SHA_256) for the ITS purposes.
-		 */
-		if (psa_get_key_algorithm(aAttributes) ==
-		    PSA_ALG_DETERMINISTIC_ECDSA(PSA_ALG_SHA_256)) {
-			psa_set_key_algorithm(aAttributes, PSA_ALG_ECDSA(PSA_ALG_SHA_256));
-		}
 	}
 #endif /* CONFIG_OPENTHREAD_PSA_NVM_BACKEND */
 
@@ -188,7 +178,16 @@ static psa_algorithm_t toPsaAlgorithm(otCryptoKeyAlgorithm aAlgorithm)
 	case OT_CRYPTO_KEY_ALG_HMAC_SHA_256:
 		return PSA_ALG_HMAC(PSA_ALG_SHA_256);
 	case OT_CRYPTO_KEY_ALG_ECDSA:
+/* KMU does not support deterministic ECDSA, so we need to set it to
+ * PSA_ALG_ECDSA(PSA_ALG_SHA_256).
+ * To keep backward compatibility with the previous functionality we must
+ * leave PSA_ALG_DETERMINISTIC_ECDSA(PSA_ALG_SHA_256) for the ITS purposes.
+ */
+#if defined(CONFIG_OPENTHREAD_PSA_NVM_BACKEND_KMU)
 		return PSA_ALG_ECDSA(PSA_ALG_SHA_256);
+#else
+		return PSA_ALG_DETERMINISTIC_ECDSA(PSA_ALG_SHA_256);
+#endif
 	default:
 		/*
 		 * There is currently no constant like PSA_ALG_NONE, but 0 is used
@@ -690,14 +689,9 @@ otError otPlatCryptoEcdsaSignUsingKeyRef(otCryptoKeyRef aKeyRef,
 
 	GET_KEY_REF(&aKeyRef, NULL);
 
-#if defined(CONFIG_OPENTHREAD_PSA_NVM_BACKEND_KMU)
-	psa_algorithm_t algorithm = PSA_ALG_ECDSA(PSA_ALG_SHA_256);
-#else
-	psa_algorithm_t algorithm = PSA_ALG_DETERMINISTIC_ECDSA(PSA_ALG_SHA_256);
-#endif
-
-	status = psa_sign_hash(aKeyRef, algorithm, aHash->m8, OT_CRYPTO_SHA256_HASH_SIZE,
-			       aSignature->m8, OT_CRYPTO_ECDSA_SIGNATURE_SIZE, &signature_length);
+	status = psa_sign_hash(aKeyRef, toPsaAlgorithm(OT_CRYPTO_KEY_ALG_ECDSA), aHash->m8,
+			       OT_CRYPTO_SHA256_HASH_SIZE, aSignature->m8,
+			       OT_CRYPTO_ECDSA_SIGNATURE_SIZE, &signature_length);
 	if (status != PSA_SUCCESS) {
 		goto out;
 	}
@@ -715,13 +709,7 @@ otError otPlatCryptoEcdsaVerifyUsingKeyRef(otCryptoKeyRef aKeyRef,
 
 	GET_KEY_REF(&aKeyRef, NULL);
 
-#if defined(CONFIG_OPENTHREAD_PSA_NVM_BACKEND_KMU)
-	psa_algorithm_t algorithm = PSA_ALG_ECDSA(PSA_ALG_SHA_256);
-#else
-	psa_algorithm_t algorithm = PSA_ALG_DETERMINISTIC_ECDSA(PSA_ALG_SHA_256);
-#endif
-
-	status = psa_verify_hash(aKeyRef, algorithm, aHash->m8,
+	status = psa_verify_hash(aKeyRef, toPsaAlgorithm(OT_CRYPTO_KEY_ALG_ECDSA), aHash->m8,
 				 OT_CRYPTO_SHA256_HASH_SIZE, aSignature->m8,
 				 OT_CRYPTO_ECDSA_SIGNATURE_SIZE);
 	if (status != PSA_SUCCESS) {
@@ -760,7 +748,7 @@ otError otPlatCryptoEcdsaGenerateAndImportKey(otCryptoKeyRef aKeyRef)
 	psa_key_id_t key_id = (psa_key_id_t)aKeyRef;
 
 	psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_VERIFY_HASH | PSA_KEY_USAGE_SIGN_HASH);
-	psa_set_key_algorithm(&attributes, PSA_ALG_DETERMINISTIC_ECDSA(PSA_ALG_SHA_256));
+	psa_set_key_algorithm(&attributes, toPsaAlgorithm(OT_CRYPTO_KEY_ALG_ECDSA));
 	psa_set_key_type(&attributes, PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1));
 	psa_set_key_lifetime(&attributes, PSA_KEY_LIFETIME_PERSISTENT);
 	psa_set_key_bits(&attributes, 256);
