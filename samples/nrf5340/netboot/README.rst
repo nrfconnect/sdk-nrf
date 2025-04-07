@@ -69,6 +69,11 @@ Building and running
 
 This sample can be found under :file:`samples/nrf5340/netboot/` in the |NCS| folder structure.
 
+.. caution::
+   You must include the |NSIB| as an image in a project using sysbuild, rather than building it stand-alone.
+   While it is technically possible to build the NSIB by itself and merge it into other application images, this process is not supported.
+   To reduce the development time and potential issues, the existing |NCS| infrastructure for sysbuild handles the integration.
+
 To include the sample as an image in a sysbuild project that contains a network core application, add the following sysbuild Kconfig options in the project:
 
 * ``SB_CONFIG_BOOTLOADER_MCUBOOT``

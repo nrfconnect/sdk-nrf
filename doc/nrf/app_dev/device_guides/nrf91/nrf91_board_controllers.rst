@@ -42,6 +42,6 @@ If you need to restore the original firmware at some point, download the `nRF916
 To program the HEX file, use `nRF Util's device command <Device command overview_>`_.
 
 If you want to route some pins differently from what is done in the preprogrammed firmware, program the :zephyr:code-sample:`hello_world` sample instead of the preprogrammed firmware.
-Build the sample (located under :file:`ncs/zephyr/samples/hello_world`) for the ``nrf9160dk_nrf52840`` board target.
+Build the sample (located under :file:`ncs/zephyr/samples/hello_world`) for the ``nrf9160dk/nrf52840`` board target.
 To change the routing options, enable or disable the corresponding devicetree nodes for that board as needed.
 See :ref:`zephyr:nrf9160dk_board_controller_firmware` for detailed information.

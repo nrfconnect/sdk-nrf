@@ -101,7 +101,7 @@ The flash memory layout is defined by the :file:`samples/bootloader/pm.yml` file
 * *S1* - Slot 1.
 
 The default location for placing the next image in the boot chain is *S0*.
-This would result, for example, in a flash memory layout like the following, when using the ``nrf52840dk_nrf52840`` board:
+This would result, for example, in a flash memory layout like the following, when using the ``nrf52840dk/nrf52840`` board target:
 
 .. figure:: ../../doc/nrf/images/b0_flash_layout.svg
    :alt: B0 flash memory layout
@@ -126,7 +126,7 @@ See :ref:`bootloader_monotonic_counter` for more information about versioning.
 
 If this image is faulty and cannot be booted, the other partition will always hold a working image that is booted instead.
 
-When using the ``nrf52840dk_nrf52840`` board, this would produce a flash memory layout like the following:
+When using the ``nrf52840dk/nrf52840`` board target, this would produce a flash memory layout like the following:
 
 .. figure:: ../../doc/nrf/images/b0_mcuboot_flash_layout.svg
    :alt: B0 flash memory layout with MCUboot
@@ -169,7 +169,7 @@ Building and running
 .. caution::
    |NSIB| should be included as an image in a project using sysbuild, rather than being built stand-alone.
    While it is technically possible to build the NSIB by itself and merge it into other application images, this process is not supported.
-   To reduce the development time and potential issues with this route, let the existing |NCS| infrastructure for multi-image builds handle the integration.
+   To reduce the development time and potential issues with this route, let the existing |NCS| infrastructure for sysbuild handle the integration.
 
    The NSIB is automatically added as an image when the ``SB_CONFIG_SECURE_BOOT_APPCORE`` sysbuild Kconfig option is set.
 
