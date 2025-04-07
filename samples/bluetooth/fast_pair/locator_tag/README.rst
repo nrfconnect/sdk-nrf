@@ -613,7 +613,7 @@ Assuming that your current working directory points to this sample directory, yo
    west ncs-provision upload -s <soc> -k sysbuild/configuration/<board_target>/boot_signature_key_file_<algorithm>.pem --keyname UROT_PUBKEY
 
 * The ``<soc>`` placeholder is the SoC name used in your board target (for example, ``nrf54l15``).
-* The ``<board_target>`` placeholder is your board target name (for example, ``nrf54l15dk_nrf54l15_cpuapp``).
+* The ``<board_target>`` placeholder is your board target name (for example, ``nrf54l15dk/nrf54l15/cpuapp``).
 * The ``<algorithm>`` placeholder is the algorithm used to generate the key pair for the application image signature generation and verification (for example, ``ed25519``).
 
 The examplary command for the ``nrf54l15dk/nrf54l15/cpuapp`` board target and the demonstration key file looks is as follows:

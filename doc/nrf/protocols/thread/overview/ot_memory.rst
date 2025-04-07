@@ -59,6 +59,6 @@ The following tables present memory requirements for samples running on the :ref
 nRF52840 DK RAM and flash memory requirements
 *********************************************
 
-The following tables present memory requirements for samples running on the :ref:`nRF52840 DK <programming_board_names>` (:ref:`nrf52840dk_nrf52840 <zephyr:nrf52840dk_nrf52840>`) with the cryptography support provided by the :ref:`nrf_security_drivers_oberon`.
+The following tables present memory requirements for samples running on the :ref:`nRF52840 DK <programming_board_names>` (:ref:`nrf52840dk <zephyr:nrf52840dk_nrf52840>`) with the cryptography support provided by the :ref:`nrf_security_drivers_oberon`.
 
 .. include:: memory_tables/nrf52840.txt

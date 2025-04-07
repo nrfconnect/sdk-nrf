@@ -17,8 +17,8 @@ The sample supports any one of the following development kits:
 .. table-from-sample-yaml::
 
 .. note::
-   For the nRF5340 DK, this sample is only supported on the network core (``nrf5340dk_nrf5340_cpunet``), and the :ref:`nrf5340_empty_app_core` sample must be programmed to the application core.
-   For the nRF54H20 DK, this sample is only supported on the radio core (``nrf54h20dk_nrf4h20_cpurad``).
+   For the nRF5340 DK, this sample is only supported on the network core (``nrf5340dk/nrf5340/cpunet``), and the :ref:`nrf5340_empty_app_core` sample must be programmed to the application core.
+   For the nRF54H20 DK, this sample is only supported on the radio core (``nrf54h20dk/nrf4h20/cpurad``).
 
 Overview
 ********
