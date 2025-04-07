@@ -674,7 +674,9 @@
 /samples/zephyr/drivers/counter/          @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/audio/dmic/       @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/i2c/rtio_loopback/ @nrfconnect/ncs-low-level-test
+/samples/zephyr/drivers/jesd216/          @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/mbox/             @nrfconnect/ncs-low-level-test
+/samples/zephyr/drivers/spi_flash/        @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/watchdog/         @nrfconnect/ncs-low-level-test
 /samples/zephyr/sensor/accel_polling/     @nrfconnect/ncs-low-level-test
 /samples/zephyr/sensor/bme680/            @nrfconnect/ncs-low-level-test
