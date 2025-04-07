@@ -500,9 +500,20 @@
 				gpio-controller;
 				reg = <0xd8200 0x300>;
 				#gpio-cells = <2>;
-				ngpios = <16>;
+				ngpios = <32>;
 				status = "disabled";
 				port = <1>;
+				gpiote-instance = <&gpiote20>;
+			};
+
+			gpio3: gpio@d8600 {
+				compatible = "nordic,nrf-gpio";
+				gpio-controller;
+				reg = <0xd8600 0x300>;
+				#gpio-cells = <2>;
+				ngpios = <13>;
+				status = "disabled";
+				port = <3>;
 				gpiote-instance = <&gpiote20>;
 			};
 
@@ -708,7 +719,7 @@
 				gpio-controller;
 				reg = <0x10a000 0x300>;
 				#gpio-cells = <2>;
-				ngpios = <5>;
+				ngpios = <10>;
 				status = "disabled";
 				port = <0>;
 				gpiote-instance = <&gpiote30>;
