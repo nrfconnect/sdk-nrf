@@ -143,7 +143,7 @@ jobs:
 
             # Patch links from Sphinx to Doxygen APIs
             find doc/_build/html/$docset -type f -name "*.html" -exec \
-              sed -ri "/href=\"([^\"]+)\/doxygen\/html\/([^\"]+)\"/{s//href=\"\1\/..\/..\/..\/$docset-apis-$VERSION\/page\/\2\"/; :a s/__/_/;ta; }" {} \;
+              sed -ri "/href=\"([^\"]+)\/doxygen\/html\/([^\"]+)\"/{s//href=\"\1\/..\/..\/..\/$docset-apis-$VERSION\/page\/\2\"/g; :a s/__/_/g;ta; }" {} \;
 
             pushd "$OUTDIR"
             ARCHIVE="$docset-apis-$VERSION.zip"
