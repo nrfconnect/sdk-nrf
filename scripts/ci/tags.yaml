@@ -1152,6 +1152,7 @@ ci_tests_benchmarks_current_consumption:
     - nrf/tests/benchmarks/power_consumption/
     - nrfxlib/nfc/
     - zephyr/boards/nordic/
+    - zephyr/drivers/clock_control/
     - zephyr/drivers/gpio/
     - zephyr/drivers/serial/
     - zephyr/dts/common/nordic/
