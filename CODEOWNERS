@@ -34,7 +34,7 @@
 /applications/matter_weather_station/     @nrfconnect/ncs-matter
 /applications/nrf5340_audio/              @nrfconnect/ncs-audio
 /applications/nrf_desktop/                @nrfconnect/ncs-si-bluebagel
-/applications/sdp/                        @nrfconnect/ncs-ll-ursus
+/applications/hpf/                        @nrfconnect/ncs-ll-ursus
 /applications/serial_lte_modem/           @nrfconnect/ncs-co-networking @nrfconnect/ncs-iot-oulu
 /applications/serial_lte_modem/src/lwm2m_carrier/ @nrfconnect/ncs-carrier
 /applications/connectivity_bridge/*.rst   @nrfconnect/ncs-cia-doc
@@ -44,7 +44,7 @@
 /applications/matter_weather_station/*.rst @nrfconnect/ncs-matter-doc
 /applications/nrf5340_audio/**/*.rst      @nrfconnect/ncs-audio-doc
 /applications/nrf_desktop/**/*.rst        @nrfconnect/ncs-si-bluebagel-doc
-/applications/sdp/**/*.rst                @annwoj
+/applications/hpf/**/*.rst                @annwoj
 /applications/serial_lte_modem/**/*.rst   @nrfconnect/ncs-iot-oulu-tampere-doc
 /applications/serial_lte_modem/doc/CARRIER_AT_commands.rst @nrfconnect/ncs-carrier-doc
 
@@ -348,11 +348,12 @@
 /include/drivers/flash/flash_ipuc.h       @nrfconnect/ncs-co-drivers @nrfconnect/ncs-charon
 /include/drivers/gpio/                    @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /include/drivers/bme68x_iaq.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
-/include/drivers/mspi/nrfe_mspi.h         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
+/include/drivers/mspi/hpf_mspi.h          @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /include/drivers/sensor_sim.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/drivers/sensor_stub.h            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/emds/                            @balaklaka @nrfconnect/ncs-paladin
 /include/fem_al/                          @nrfconnect/ncs-dragoon
+/include/hpf/                             @nrfconnect/ncs-ll-ursus
 /include/logging/                         @nrfconnect/ncs-protocols-serialization
 /include/mgmt/                            @nrfconnect/ncs-pluto
 /include/modem/                           @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
@@ -369,7 +370,6 @@
 /include/sdfw/                            @nrfconnect/ncs-aurora
 /include/sdfw/sdfw_services/extmem_remote.h @nrfconnect/ncs-charon
 /include/sdfw/sdfw_services/suit_service.h @nrfconnect/ncs-charon
-/include/sdp/                             @nrfconnect/ncs-ll-ursus
 /include/shell/                           @nordic-krch
 /include/util/                            @nrfconnect/ncs-aegir @nordic-krch
 /include/tfm/                             @nrfconnect/ncs-aegir
@@ -708,7 +708,7 @@
 /scripts/ncs-docker-version.txt           @nrfconnect/ncs-ci
 /scripts/print_docker_image.sh            @nrfconnect/ncs-ci
 /scripts/print_toolchain_checksum.sh      @nrfconnect/ncs-ci
-/scripts/sdp/                             @nrfconnect/ncs-ll-ursus
+/scripts/hpf/                             @nrfconnect/ncs-ll-ursus
 /scripts/generate_psa_key_attributes.py   @nrfconnect/ncs-aurora
 /scripts/tests/                           @nrfconnect/ncs-pluto @fundakol
 
@@ -725,7 +725,7 @@
 
 # Snippets
 /snippets/ci-shell/                       @nrfconnect/ncs-protocols-serialization
-/snippets/sdp/                            @nrfconnect/ncs-ll-ursus
+/snippets/hpf/                            @nrfconnect/ncs-ll-ursus
 /snippets/hw-flow-control/                @nrfconnect/ncs-low-level-test @miha-nordic
 /snippets/matter-diagnostic-logs/         @nrfconnect/ncs-matter
 /snippets/matter-debug/                   @nrfconnect/ncs-matter
