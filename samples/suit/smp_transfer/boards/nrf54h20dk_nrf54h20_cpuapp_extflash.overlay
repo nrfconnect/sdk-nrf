@@ -10,57 +10,6 @@
 	};
 };
 
-/* Legacy exmif driver overlay - currently needed for DFU from extmem */
-
-&exmif_default {
-	group1 {
-		psels = <NRF_PSEL(EXMIF_CK, 6, 0)>,
-			<NRF_PSEL(EXMIF_DQ0, 6, 7)>,
-			<NRF_PSEL(EXMIF_DQ1, 6, 5)>;
-		nordic,drive-mode = <NRF_DRIVE_H0H1>;
-	};
-};
-
-/delete-node/ &exmif;
-
-&global_peripherals {
-	exmif: spi@95000 {
-		compatible = "nordic,nrf-exmif-spi", "snps,designware-spi";
-		pinctrl-0 = <&exmif_default>;
-		pinctrl-names = "default";
-		#address-cells = <1>;
-		#size-cells = <0>;
-		reg = <0x95000 0x500 0x95500 0xb00>;
-		reg-names = "wrapper", "core";
-		interrupts = <149 NRF_DEFAULT_IRQ_PRIORITY>;
-		power-domains = <&gpd NRF_GPD_FAST_ACTIVE0>;
-		clock-frequency = <DT_FREQ_M(400)>;
-		fifo-depth = <32>;
-		max-xfer-size = <16>;
-		cs-gpios = <&gpio6 3 GPIO_ACTIVE_LOW>;
-	};
-};
-
-&exmif {
-	mx25uw63: mx25uw6345g@0 {
-		compatible = "jedec,spi-nor";
-		reg = <0>;
-		spi-max-frequency = <DT_FREQ_M(48)>;
-		jedec-id = [c2 84 37];
-		sfdp-bfp = [
-			e5 20 8a ff  ff ff ff 03  00 ff 00 ff  00 ff 00 ff
-			ee ff ff ff  ff ff 00 ff  ff ff 00 ff  0c 20 10 d8
-			00 ff 00 ff  87 79 01 00  84 12 00 c4  cc 04 67 46
-			30 b0 30 b0  f4 bd d5 5c  00 00 00 ff  10 10 00 20
-			00 00 00 00  00 00 7c 23  48 00 00 00  00 00 88 88
-		];
-		size = <67108864>;
-		has-dpd;
-		t-enter-dpd = <10000>;
-		t-exit-dpd = <30000>;
-	};
-};
-
 &mx25uw63 {
 	status = "okay";
 	partitions {
