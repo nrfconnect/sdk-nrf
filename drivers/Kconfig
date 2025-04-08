@@ -21,10 +21,10 @@ rsource "net/Kconfig"
 rsource "sensor/Kconfig"
 rsource "serial/Kconfig"
 
-config NRFE
+config HPF
 	bool
-	default y if GPIO_NRFE
-	default y if MSPI_NRFE
-	# Temporary kconfig to include DPPI channel allocation for NRFE
+	default y if GPIO_HPF
+	default y if MSPI_HPF
+	# Temporary kconfig to include DPPI channel allocation for HPF
 
 endmenu

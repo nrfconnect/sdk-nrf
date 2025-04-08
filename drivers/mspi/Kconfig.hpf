@@ -2,30 +2,30 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 #
-# MSPI_NRFE Driver
+# MSPI_HPF Driver
 #
-menuconfig MSPI_NRFE
-	bool "SDP MSPI driver"
+menuconfig MSPI_HPF
+	bool "HPF MSPI driver"
 	default y
-	depends on DT_HAS_NORDIC_NRFE_MSPI_CONTROLLER_ENABLED
+	depends on DT_HAS_NORDIC_HPF_MSPI_CONTROLLER_ENABLED
 	select MBOX
 	select IPC_SERVICE
 	select IPC_SERVICE_BACKEND_ICMSG
 	help
-	  Enable SDP MSPI driver.
+	  Enable HPF MSPI driver.
 
-if MSPI_NRFE
+if MSPI_HPF
 
-config MSPI_NRFE_INIT_PRIORITY
-	int "SDP MSPI init priority"
-	depends on MSPI_NRFE
+config MSPI_HPF_INIT_PRIORITY
+	int "HPF MSPI init priority"
+	depends on MSPI_HPF
 	default MSPI_INIT_PRIORITY
 	help
-	  SDP MSPI driver device initialization priority.
-	  SDP MSPI initialization depends on IPC initialization
+	  HPF MSPI driver device initialization priority.
+	  HPF MSPI initialization depends on IPC initialization
 	  which is done at the same init level and has init priority equal to 46.
 
-config MSPI_NRFE_IPC_NO_COPY
+config MSPI_HPF_IPC_NO_COPY
 	bool "IPC no copy mode"
 	default y
 	depends on SOC_NRF54L15
@@ -34,22 +34,22 @@ config MSPI_NRFE_IPC_NO_COPY
 	  this requires both cores to be able to access each others memory spaces.
 	  If n Data is passed through IPC by copy.
 
-config MSPI_NRFE_FAULT_TIMER
-	bool "SDP application fault timer"
+config MSPI_HPF_FAULT_TIMER
+	bool "HPF application fault timer"
 	select COUNTER
 	help
-	  Enable SDP application fault timer.
+	  Enable HPF application fault timer.
 	  Timer is used to detect application faults. If the timer expires,
 	  the application is considered to be in a fault state.
 
-if MSPI_NRFE_FAULT_TIMER
+if MSPI_HPF_FAULT_TIMER
 
-config MSPI_NRFE_FAULT_TIMEOUT
-	int "SDP application fault timeout"
+config MSPI_HPF_FAULT_TIMEOUT
+	int "HPF application fault timeout"
 	default 1000000
 	help
 	  Fault timeout in microseconds.
 
-endif # MSPI_NRFE_FAULT_TIMER
+endif # MSPI_HPF_FAULT_TIMER
 
-endif # MSPI_NRFE
+endif # MSPI_HPF
