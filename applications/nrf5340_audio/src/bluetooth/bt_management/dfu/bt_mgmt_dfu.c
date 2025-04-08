@@ -32,13 +32,17 @@ static const struct bt_data ad_peer[] = {
 /* Set aside space for name to be in scan response */
 static struct bt_data sd_peer[1];
 
+K_SEM_DEFINE(adv_sem, 1, 1);
+
 static void smp_adv(void)
 {
 	int ret;
 
 	ret = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad_peer, ARRAY_SIZE(ad_peer), sd_peer,
 			      ARRAY_SIZE(sd_peer));
-	if (ret) {
+	if (ret == -EALREADY) {
+		return;
+	} else if (ret) {
 		LOG_ERR("SMP_SVR Advertising failed to start (ret %d)", ret);
 		return;
 	}
@@ -58,9 +62,15 @@ static void dfu_disconnected_cb(struct bt_conn *conn, uint8_t reason)
 	LOG_INF("SMP disconnected 0x%02x\n", reason);
 }
 
+static void dfu_recycled_cb(void)
+{
+	k_sem_give(&adv_sem);
+}
+
 static struct bt_conn_cb dfu_conn_callbacks = {
 	.connected = dfu_connected_cb,
 	.disconnected = dfu_disconnected_cb,
+	.recycled = dfu_recycled_cb,
 };
 
 static void dfu_set_bt_name(void)
@@ -113,9 +123,10 @@ void bt_mgmt_dfu_start(void)
 
 	bt_conn_cb_register(&dfu_conn_callbacks);
 	dfu_set_bt_name();
-	smp_adv();
 
 	while (1) {
-		k_sleep(K_MSEC(100));
+		/* In DFU mode, the device should always advertise */
+		k_sem_take(&adv_sem, K_FOREVER);
+		smp_adv();
 	}
 }
