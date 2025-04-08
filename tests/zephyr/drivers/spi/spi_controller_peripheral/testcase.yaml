@@ -11,12 +11,15 @@ common:
 tests:
   nrf.extended.drivers.spi.spi_mode0:
     platform_allow:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=0
     extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/250khz.overlay"
+
   nrf.extended.drivers.spi.spi_mode0.l09:
     platform_allow:
       - nrf54l09pdk/nrf54l09/cpuapp
@@ -30,10 +33,25 @@ tests:
     tags:
       - nrf54l09-switch-uart
 
+  nrf.extended.drivers.spi.spi_mode0.lv10:
+    platform_allow:
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    extra_configs:
+      - CONFIG_TESTED_SPI_MODE=0
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/250khz.overlay"
+      - SNIPPET=nrf54lv10-switch-uart
+    tags:
+      - nrf54lv10-switch-uart
+
   nrf.extended.drivers.spi.spi_mode1:
     platform_allow:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=1
@@ -52,10 +70,25 @@ tests:
     tags:
       - nrf54l09-switch-uart
 
+  nrf.extended.drivers.spi.spi_mode1.lv10:
+    platform_allow:
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    extra_configs:
+      - CONFIG_TESTED_SPI_MODE=1
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/500khz.overlay"
+      - SNIPPET=nrf54lv10-switch-uart
+    tags:
+      - nrf54lv10-switch-uart
+
   nrf.extended.drivers.spi.spi_mode2:
     platform_allow:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=2
@@ -74,10 +107,25 @@ tests:
     tags:
       - nrf54l09-switch-uart
 
+  nrf.extended.drivers.spi.spi_mode2.lv10:
+    platform_allow:
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    extra_configs:
+      - CONFIG_TESTED_SPI_MODE=2
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/1mhz.overlay"
+      - SNIPPET=nrf54lv10-switch-uart
+    tags:
+      - nrf54lv10-switch-uart
+
   nrf.extended.drivers.spi.spi_mode3:
     platform_allow:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=3
@@ -96,10 +144,25 @@ tests:
     tags:
       - nrf54l09-switch-uart
 
+  nrf.extended.drivers.spi.spi_mode3.lv10:
+    platform_allow:
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    extra_configs:
+      - CONFIG_TESTED_SPI_MODE=3
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/2mhz.overlay"
+      - SNIPPET=nrf54lv10-switch-uart
+    tags:
+      - nrf54lv10-switch-uart
+
   nrf.extended.drivers.spi.spi_4MHz:
     platform_allow:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=2
@@ -118,10 +181,25 @@ tests:
     tags:
       - nrf54l09-switch-uart
 
+  nrf.extended.drivers.spi.spi_4MHz.lv10:
+    platform_allow:
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    extra_configs:
+      - CONFIG_TESTED_SPI_MODE=2
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/4mhz.overlay"
+      - SNIPPET=nrf54lv10-switch-uart
+    tags:
+      - nrf54lv10-switch-uart
+
   nrf.extended.drivers.spi.spi_8MHz:
     platform_allow:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=1
@@ -140,10 +218,25 @@ tests:
     tags:
       - nrf54l09-switch-uart
 
+  nrf.extended.drivers.spi.spi_8MHz.lv10:
+    platform_allow:
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    extra_configs:
+      - CONFIG_TESTED_SPI_MODE=1
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/boards/8mhz.overlay"
+      - SNIPPET=nrf54lv10-switch-uart
+    tags:
+      - nrf54lv10-switch-uart
+
   nrf.extended.drivers.spi.pm_runtime:
     platform_allow:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_PM_DEVICE=y
@@ -161,3 +254,16 @@ tests:
       - SNIPPET=nrf54l09-switch-uart
     tags:
       - nrf54l09-switch-uart
+
+  nrf.extended.drivers.spi.pm_runtime.lv10:
+    platform_allow:
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    extra_configs:
+      - CONFIG_PM_DEVICE=y
+      - CONFIG_PM_DEVICE_RUNTIME=y
+    extra_args:
+      - SNIPPET=nrf54lv10-switch-uart
+    tags:
+      - nrf54lv10-switch-uart
