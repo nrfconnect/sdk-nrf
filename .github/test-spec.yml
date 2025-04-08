@@ -176,6 +176,7 @@
   - "subsys/fw_info/**/*"
   - "subsys/mgmt/**/*"
   - "subsys/pcd/**/*"
+  - "subsys/nrf_security/**/*"
   - "subsys/nrf_compress/**/*"
   - "tests/subsys/bootloader/**/*"
   - "tests/subsys/dfu/**/*"
