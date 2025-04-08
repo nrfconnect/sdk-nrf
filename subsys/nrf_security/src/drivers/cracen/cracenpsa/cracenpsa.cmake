@@ -46,6 +46,8 @@ endif()
 if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/assymetric_signature.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_signature_ecc.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_signature_rsa.c
     ${CMAKE_CURRENT_LIST_DIR}/src/ecdsa.c
     ${CMAKE_CURRENT_LIST_DIR}/src/ecc.c
     ${CMAKE_CURRENT_LIST_DIR}/src/ed25519.c

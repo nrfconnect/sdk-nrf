@@ -48,6 +48,9 @@ enum asn1_tags {
 	ASN1_BIT_STRING = 0x3
 };
 
+#define SI_PSA_IS_KEY_FLAG(flag, attr) ((flag) == (psa_get_key_usage_flags((attr)) & (flag)))
+#define SI_PSA_IS_KEY_TYPE(flag, attr) ((flag) == (psa_get_key_type((attr)) & (flag)))
+
 /*!
  * \brief Get Cracen curve object based on the PSA attributes.
  *
@@ -287,3 +290,13 @@ int hash_input_with_context(struct sxhash *hashopctx, const char *input, const s
  * @return sxsymcrypt status code:
  */
 int rndinrange_create(const unsigned char *n, size_t nsz, unsigned char *out);
+
+/**
+ * @brief Hash a single element with a previously created hash context(sxhash)
+ *
+ * @param sxhashalg[out]       Double pointer to the sxhash algorithm to be set.
+ * @param alg[in]              The PSA algorithm identifier.
+ *
+ * @return sxsymcrypt error code.
+ */
+int cracen_signature_set_hashalgo(const struct sxhashalg **hashalg, psa_algorithm_t alg);
