@@ -16,6 +16,12 @@ This happens if the device is not advertising the SMP service UUID and the filte
 The device can still be discovered through a service discovery, for example using the `nRF Connect for Mobile`_ app.
 See `Discovering Bluetooth Mesh devices in nRF Connect Device Manager`_ for more details.
 
+Before performing a FOTA update, make sure that you have disabled the option to erase application settings.
+Otherwise, the device will be unprovisioned after the update.
+
+* In the `nRF Connect for Mobile`_ mobile app, open the :guilabel:`Settings` tab, select :guilabel:`Mcu Manager options`, and disable the **Erase application settings** option.
+* In the `nRF Connect Device Manager`_ mobile app, open the :guilabel:`Image` tab, tap the arrow icon next to **Firmware Upgrade**, and disable the **Erase application settings** option.
+
 Point-to point DFU over Bluetooth Low Energy in Bluetooth Mesh samples
 **********************************************************************
 
