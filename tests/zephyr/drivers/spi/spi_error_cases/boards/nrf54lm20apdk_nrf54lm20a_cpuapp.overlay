@@ -1,5 +1,11 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
 &pinctrl {
-	spi21_default_alt: spi21_default_alt {
+	spi22_default_alt: spi22_default_alt {
 		group1 {
 			psels = <NRF_PSEL(SPIM_SCK, 1, 9)>,
 				<NRF_PSEL(SPIM_MISO, 1, 10)>,
@@ -7,7 +13,7 @@
 		};
 	};
 
-	spi21_sleep_alt: spi21_sleep_alt {
+	spi22_sleep_alt: spi22_sleep_alt {
 		group1 {
 			psels = <NRF_PSEL(SPIM_SCK, 1, 9)>,
 				<NRF_PSEL(SPIM_MISO, 1, 10)>,
@@ -16,7 +22,7 @@
 		};
 	};
 
-	spi20_default_alt: spi20_default_alt {
+	spi21_default_alt: spi21_default_alt {
 		group1 {
 			psels = <NRF_PSEL(SPIS_SCK, 1, 8)>,
 				<NRF_PSEL(SPIS_MISO, 1, 11)>,
@@ -25,7 +31,7 @@
 		};
 	};
 
-	spi20_sleep_alt: spi20_sleep_alt {
+	spi21_sleep_alt: spi21_sleep_alt {
 		group1 {
 			psels = <NRF_PSEL(SPIS_SCK, 1, 8)>,
 				<NRF_PSEL(SPIS_MISO, 1, 11)>,
@@ -41,13 +47,13 @@
 	status = "okay";
 };
 
-&spi21 {
+&spi22 {
 	status = "okay";
-	pinctrl-0 = <&spi21_default_alt>;
-	pinctrl-1 = <&spi21_sleep_alt>;
+	pinctrl-0 = <&spi22_default_alt>;
+	pinctrl-1 = <&spi22_sleep_alt>;
 	pinctrl-names = "default", "sleep";
 	overrun-character = <0x00>;
-	cs-gpios = <&gpio1 0 GPIO_ACTIVE_LOW>;
+	cs-gpios = <&gpio2 10 GPIO_ACTIVE_LOW>;
 	dut_spi_dt: test-spi-dev@0 {
 		compatible = "vnd,spi-device";
 		reg = <0>;
@@ -55,13 +61,17 @@
 	};
 };
 
-dut_spis: &spi20 {
+dut_spis: &spi21 {
 	compatible = "nordic,nrf-spis";
 	status = "okay";
 	def-char = <0x00>;
-	pinctrl-0 = <&spi20_default_alt>;
-	pinctrl-1 = <&spi20_sleep_alt>;
+	pinctrl-0 = <&spi21_default_alt>;
+	pinctrl-1 = <&spi21_sleep_alt>;
 	pinctrl-names = "default", "sleep";
 	/delete-property/rx-delay-supported;
 	/delete-property/rx-delay;
+};
+
+&uicr {
+	nfct-pins-as-gpios;
 };
