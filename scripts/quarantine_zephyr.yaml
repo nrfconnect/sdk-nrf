@@ -365,8 +365,8 @@
     - kernel.threads.dynamic_thread.stack.pool.no_alloc.no_user
     - kernel.threads.dynamic_thread.stack.no_pool.no_alloc.user
     - kernel.scheduler.no_timeslicing
-    - kernel.scheduler.dumb_no_timeslicing
-    - kernel.scheduler.dumb_timeslicing
+    - kernel.scheduler.simple_no_timeslicing
+    - kernel.scheduler.simple_timeslicing
     - kernel.scheduler.multiq_no_timeslicing
     - kernel.scheduler.multiq
     - message_bus.zbus.hlp_priority_boost
