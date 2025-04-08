@@ -1,11 +1,11 @@
 sample:
-  name: SDP GPIO application
-  description: SDP GPIO application
+  name: HPF GPIO application
+  description: HPF GPIO application
 common:
   integration_platforms:
     - nrf54l15dk/nrf54l15/cpuflpr
 tests:
-  applications.sdp.gpio.mbox:
+  applications.hpf.gpio.mbox:
     build_only: true
     sysbuild: true
     platform_allow: nrf54l15dk/nrf54l15/cpuflpr
@@ -14,9 +14,9 @@ tests:
       - sysbuild
       - gpio
     required_snippets:
-      - sdp-gpio-mbox
+      - hpf-gpio-mbox
 
-  applications.sdp.gpio.icmsg:
+  applications.hpf.gpio.icmsg:
     build_only: true
     sysbuild: true
     platform_allow: nrf54l15dk/nrf54l15/cpuflpr
@@ -25,9 +25,9 @@ tests:
       - sysbuild
       - gpio
     required_snippets:
-      - sdp-gpio-icmsg
+      - hpf-gpio-icmsg
 
-  applications.sdp.gpio.icbmsg:
+  applications.hpf.gpio.icbmsg:
     sysbuild: true
     build_only: true
     platform_allow: nrf54l15dk/nrf54l15/cpuflpr
@@ -36,4 +36,4 @@ tests:
       - sysbuild
       - gpio
     required_snippets:
-      - sdp-gpio-icbmsg
+      - hpf-gpio-icbmsg

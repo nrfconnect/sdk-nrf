@@ -21,7 +21,7 @@ static void ep_recv(const void *data, size_t len, void *priv)
 	(void)len;
 	(void)priv;
 
-	cbck((nrfe_gpio_data_packet_t *)data);
+	cbck((hpf_gpio_data_packet_t *)data);
 }
 
 static struct ipc_ept_cfg ep_cfg = {

@@ -10,7 +10,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/dt-bindings/gpio/nordic-nrf-gpio.h>
-#include <drivers/gpio/nrfe_gpio.h>
+#include <drivers/gpio/hpf_gpio.h>
 #include <hal/nrf_vpr_csr.h>
 #include <hal/nrf_vpr_csr_vio.h>
 #include <haly/nrfy_gpio.h>
@@ -36,7 +36,7 @@ static nrf_gpio_pin_pull_t get_pull(gpio_flags_t flags)
 	return NRF_GPIO_PIN_NOPULL;
 }
 
-static int gpio_nrfe_pin_configure(uint8_t port, uint16_t pin, uint32_t flags)
+static int gpio_hpf_pin_configure(uint8_t port, uint16_t pin, uint32_t flags)
 {
 	if (port != 2) {
 		return -EINVAL;
@@ -105,28 +105,28 @@ static int gpio_nrfe_pin_configure(uint8_t port, uint16_t pin, uint32_t flags)
 	return 0;
 }
 
-void process_packet(nrfe_gpio_data_packet_t *packet)
+void process_packet(hpf_gpio_data_packet_t *packet)
 {
 	if (packet->port != 2) {
 		return;
 	}
 
 	switch (packet->opcode) {
-	case NRFE_GPIO_PIN_CONFIGURE: {
-		gpio_nrfe_pin_configure(packet->port, packet->pin, packet->flags);
+	case HPF_GPIO_PIN_CONFIGURE: {
+		gpio_hpf_pin_configure(packet->port, packet->pin, packet->flags);
 		break;
 	}
-	case NRFE_GPIO_PIN_CLEAR: {
+	case HPF_GPIO_PIN_CLEAR: {
 		irq_arg = packet->pin;
 		nrf_vpr_clic_int_pending_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_GPIO_CLEAR));
 		break;
 	}
-	case NRFE_GPIO_PIN_SET: {
+	case HPF_GPIO_PIN_SET: {
 		irq_arg = packet->pin;
 		nrf_vpr_clic_int_pending_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_GPIO_SET));
 		break;
 	}
-	case NRFE_GPIO_PIN_TOGGLE: {
+	case HPF_GPIO_PIN_TOGGLE: {
 		irq_arg = packet->pin;
 		nrf_vpr_clic_int_pending_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_GPIO_TOGGLE));
 		break;
