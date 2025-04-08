@@ -229,7 +229,8 @@ CONFIG_BT_POWER_PROFILING_LED_DISABLED - Disable LEDs
 CONFIG_BT_POWER_PROFILING_NFC_DISABLED - Disable NFC
    Disables the NFC to reduce power consumption.
 
-You can also consider using the following global configuration options to disable the console and UART, reducing power consumption:
+The console is disabled by default to reduce power consumption.
+To enable the console, set the following Kconfig options to ``y``:
 
 * :kconfig:option:`CONFIG_SERIAL`
 * :kconfig:option:`CONFIG_CONSOLE`
@@ -259,6 +260,12 @@ Testing with Bluetooth Low Energy app and Power Profiler Kit II (PPK2)
 
 1. Set up `Power Profiler Kit II (PPK2)`_ and prepare your development kit for current measurement.
 #. Run the `Power Profiler app`_ from nRF Connect for Desktop.
+#. To see terminal messages (at the cost of a very small increase in power consumption), enable the following Kconfig  options:
+
+   * :kconfig:option:`CONFIG_SERIAL`
+   * :kconfig:option:`CONFIG_CONSOLE`
+   * :kconfig:option:`CONFIG_UART_CONSOLE`
+
 #. |connect_terminal_ANSI|
 #. Reset your development kit.
 #. Observe that the sample starts.
