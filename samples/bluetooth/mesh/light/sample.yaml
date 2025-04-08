@@ -39,11 +39,15 @@ tests:
       - nrf21540dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf5340dk/nrf5340/cpuapp/ns
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf21540dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf5340dk/nrf5340/cpuapp/ns
     extra_args:
       - EXTRA_CONF_FILE=overlay-dfu.conf
       - SB_CONF_FILE=sysbuild-dfu.conf
