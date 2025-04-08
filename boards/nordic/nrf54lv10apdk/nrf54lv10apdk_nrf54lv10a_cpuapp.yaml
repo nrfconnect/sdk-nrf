@@ -12,5 +12,9 @@ sysbuild: true
 ram: 192
 flash: 200
 supported:
+  - adc
   - counter
   - gpio
+  - i2c
+  - spi
+  - watchdog
