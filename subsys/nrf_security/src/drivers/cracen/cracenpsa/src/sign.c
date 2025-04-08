@@ -371,8 +371,8 @@ static psa_status_t cracen_signature_ecc_sign(bool is_message,
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
-	if (alg == PSA_ALG_PURE_EDDSA && (IS_ENABLED(CONFIG_PSA_WANT_ALG_ED25519PH) ||
-					  IS_ENABLED(CONFIG_PSA_WANT_ALG_PURE_EDDSA))) {
+	if ((alg == PSA_ALG_PURE_EDDSA && IS_ENABLED(CONFIG_PSA_WANT_ALG_PURE_EDDSA)) ||
+	    (alg == PSA_ALG_ED25519PH && IS_ENABLED(CONFIG_PSA_WANT_ALG_ED25519PH))) {
 		return handle_eddsa_sign(is_message, attributes, key_buffer, alg, signature, input,
 					 input_length, ecurve, signature_length);
 	} else if (PSA_ALG_IS_ECDSA(alg) && (IS_ENABLED(CONFIG_PSA_WANT_ALG_ECDSA) ||
