@@ -18,7 +18,7 @@ The nRF70 Series devices support the following Wi-Fi enterprise security mode, `
 This mode uses the Extensible Authentication Protocol (EAP) with Transport Layer Security (TLS) for authentication.
 The client and the authentication server exchange certificates to authenticate each other.
 
-See `Zephyr Wi-Fi management`_ for more information on how to configure and use the Wi-Fi enterprise security mode.
+See :ref:`wifi_mgmt` for more information on how to configure and use the Wi-Fi enterprise security mode.
 
 
 .. _ug_nrf70_wifi_enterprise_mode:
