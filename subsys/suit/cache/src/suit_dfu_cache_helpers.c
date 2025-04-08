@@ -190,41 +190,6 @@ suit_plat_err_t suit_dfu_cache_partition_is_initialized(struct dfu_cache_pool *p
 	return SUIT_PLAT_ERR_INVAL;
 }
 
-suit_plat_err_t suit_dfu_cache_partition_is_empty(struct dfu_cache_pool *cache_pool)
-{
-	uint8_t *address = cache_pool->address;
-	size_t remaining = cache_pool->size;
-	uint8_t buffer[128];
-	const size_t chunk_size = sizeof(buffer);
-	suit_plat_err_t ret = SUIT_PLAT_SUCCESS;
-
-#ifdef CONFIG_FLASH_IPUC
-	if (is_cache_ipuc_uninitialized(cache_pool)) {
-		return SUIT_PLAT_SUCCESS;
-	}
-#endif /* CONFIG_FLASH_IPUC */
-
-	while (remaining > 0) {
-		size_t read_size = MIN(chunk_size, remaining);
-
-		ret = suit_dfu_cache_memcpy(buffer, (uintptr_t)address, read_size);
-		if (ret != SUIT_PLAT_SUCCESS) {
-			break;
-		}
-
-		for (int i = 0; i < read_size; i++) {
-			if (buffer[i] != 0xFF) {
-				return SUIT_PLAT_ERR_NOMEM;
-			}
-		}
-
-		address += read_size;
-		remaining -= read_size;
-	}
-
-	return ret;
-}
-
 static bool find_free_address(struct dfu_cache_pool *cache_pool, zcbor_state_t *state,
 			      const struct zcbor_string *uri, uintptr_t payload_offset,
 			      size_t payload_size, void *ctx)
