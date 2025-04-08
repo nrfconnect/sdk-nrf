@@ -236,7 +236,82 @@ static void erase_cache_partition(struct dfu_cache_partition_ext *partition)
 	}
 #endif /* CONFIG_SUIT_CACHE_APP_IPUC_ID */
 
-	erase_on_sink(partition->address, partition->size);
+	(void)flash_erase(partition->fdev, partition->offset, partition->size);
+}
+
+#ifdef CONFIG_FLASH_IPUC
+/* This function returns true if the given cache pool is an IPUC-based cache
+ * but is not initialized yet.
+ */
+static bool is_cache_ipuc_uninitialized(struct dfu_cache_pool *cache_pool)
+{
+	uintptr_t ipuc_address;
+	size_t ipuc_size;
+	struct device *ipuc_dev = flash_ipuc_find((uintptr_t)cache_pool->address, cache_pool->size,
+						  &ipuc_address, &ipuc_size);
+
+	if ((ipuc_dev != NULL) && (flash_ipuc_setup_pending(ipuc_dev))) {
+		return true;
+	}
+
+	return false;
+}
+#endif /* CONFIG_FLASH_IPUC */
+
+static suit_plat_err_t suit_dfu_cache_partition_is_empty(struct dfu_cache_partition_ext *partition)
+{
+	uint8_t buffer[CONFIG_SUIT_CACHE_RW_READ_BUF_SIZE];
+	const size_t chunk_size = sizeof(buffer);
+	suit_plat_err_t ret = SUIT_PLAT_SUCCESS;
+	size_t offset = partition->offset;
+	size_t remaining = partition->size;
+#ifdef CONFIG_FLASH_IPUC
+	struct dfu_cache_pool cache_pool = {
+		.address = partition->address,
+		.size = partition->size,
+	};
+
+#ifdef CONFIG_SUIT_CACHE_SDFW_IPUC_ID
+	if (partition->id == CONFIG_SUIT_CACHE_SDFW_IPUC_ID) {
+		if (is_cache_ipuc_uninitialized(&cache_pool)) {
+			return SUIT_PLAT_SUCCESS;
+		}
+	}
+#else
+	(void)cache_pool;
+#endif /* CONFIG_SUIT_CACHE_SDFW_IPUC_ID */
+
+#ifdef CONFIG_SUIT_CACHE_APP_IPUC_ID
+	if (partition->id == CONFIG_SUIT_CACHE_APP_IPUC_ID) {
+		if (is_cache_ipuc_uninitialized(&cache_pool)) {
+			return SUIT_PLAT_SUCCESS;
+		}
+	}
+#endif /* CONFIG_SUIT_CACHE_APP_IPUC_ID */
+#endif /* CONFIG_FLASH_IPUC */
+
+	while (remaining > 0) {
+		size_t read_size = MIN(chunk_size, remaining);
+
+		/* Note: reading memory directly is allowed only if access to
+		 * the external memory is not proxied through IPC.
+		 */
+		if (flash_read(partition->fdev, offset, buffer, read_size) != 0) {
+			ret = SUIT_PLAT_ERR_IO;
+			break;
+		}
+
+		for (int i = 0; i < read_size; i++) {
+			if (buffer[i] != 0xFF) {
+				return SUIT_PLAT_ERR_NOMEM;
+			}
+		}
+
+		offset += read_size;
+		remaining -= read_size;
+	}
+
+	return ret;
 }
 
 /**
@@ -260,7 +335,7 @@ static suit_plat_err_t cache_free_space_check(struct dfu_cache_partition_ext *pa
 
 	if ((part != NULL) && (slot != NULL)) {
 		part_tmp_address = (uintptr_t)part->address;
-		if (suit_dfu_cache_partition_is_empty(&cache_pool) != SUIT_PLAT_SUCCESS) {
+		if (suit_dfu_cache_partition_is_empty(part) != SUIT_PLAT_SUCCESS) {
 			ret = suit_dfu_cache_partition_find_free_space(
 				&cache_pool, &part_tmp_address, &needs_erase);
 			if (ret == SUIT_PLAT_ERR_CBOR_DECODING) {
@@ -450,13 +525,7 @@ static suit_plat_err_t cache_0_resize(bool drop_content)
 				(void *)partition->address, partition->size);
 
 			if (drop_content) {
-				struct dfu_cache_pool cache_pool = {
-					.address = partition->address,
-					.size = partition->size,
-				};
-
-				suit_plat_err_t err =
-					suit_dfu_cache_partition_is_empty(&cache_pool);
+				suit_plat_err_t err = suit_dfu_cache_partition_is_empty(partition);
 				if (err == SUIT_PLAT_ERR_NOMEM) {
 					LOG_INF("DFU Cache pool 0 is not empty... Erasing");
 					erase_on_sink(partition->address, partition->size);
@@ -502,7 +571,7 @@ suit_plat_err_t suit_dfu_cache_validate_content(void)
 				LOG_INF("DFU Cache pool, id: %d does not contain valid content",
 					partition->id);
 
-				err = suit_dfu_cache_partition_is_empty(&cache_pool);
+				err = suit_dfu_cache_partition_is_empty(partition);
 				if (err == SUIT_PLAT_ERR_NOMEM) {
 					LOG_INF("DFU Cache pool, id: %d is not empty... Erasing",
 						partition->id);
@@ -526,13 +595,7 @@ suit_plat_err_t suit_dfu_cache_drop_content(void)
 		struct dfu_cache_partition_ext *partition = &dfu_partitions_ext[i];
 
 		if (partition->address && partition->size) {
-
-			struct dfu_cache_pool cache_pool = {
-				.address = partition->address,
-				.size = partition->size,
-			};
-
-			suit_plat_err_t err = suit_dfu_cache_partition_is_empty(&cache_pool);
+			suit_plat_err_t err = suit_dfu_cache_partition_is_empty(partition);
 
 			if (err == SUIT_PLAT_ERR_NOMEM) {
 				LOG_INF("DFU Cache pool, id: %d is not empty... Dropping",

@@ -39,6 +39,14 @@ config SUIT_CACHE_RW
 	depends on SUIT_UTILS
 	depends on !SUIT_PLATFORM_VARIANT_SDFW
 
+config SUIT_CACHE_RW_READ_BUF_SIZE
+	int "Size of a stack-allocated buffer, used while checking DFU cache partition contents"
+	depends on SUIT_CACHE_RW
+	default 256
+	help
+	  Increasing this size will speed up the SUIT DFU module initialization.
+	  Reducing this size will allow to use smaller stack size.
+
 config SUIT_CACHE_SDFW_IPUC
 	bool "Enable IPUC-based partition, capable of performing SDFW updates"
 	depends on SUIT_CACHE_RW
