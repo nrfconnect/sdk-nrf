@@ -90,6 +90,14 @@ extern "C" {
 	 (BT_RAS_MAX_STEPS_PER_PROCEDURE * BT_RAS_STEP_MODE_LEN) +                                 \
 	 (BT_RAS_MAX_STEPS_PER_PROCEDURE * BT_RAS_MAX_STEP_DATA_LEN))
 
+/** @brief RAS Features as defined in RAS Specification, Table 3.3. */
+enum ras_feat {
+	RAS_FEAT_REALTIME_RD          = BIT(0),
+	RAS_FEAT_RETRIEVE_LOST_RD_SEG = BIT(1),
+	RAS_FEAT_ABORT_OP             = BIT(2),
+	RAS_FEAT_FILTER_RD            = BIT(3),
+};
+
 /** @brief Ranging Header structure as defined in RAS Specification, Table 3.7. */
 struct ras_ranging_header {
 	/** Ranging Counter is lower 12-bits of CS Procedure_Counter provided by the Core Controller
