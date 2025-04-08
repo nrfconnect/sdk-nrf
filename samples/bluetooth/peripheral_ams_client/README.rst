@@ -133,11 +133,13 @@ Testing with Bluetooth Low Energy app
 #. Reset the kit.
 #. Start the `Bluetooth Low Energy app`_ of `nRF Connect for Desktop`_ and select the connected dongle that is used for communication.
 #. Set up the server:
-   a. Select the **Server setup** tab.
+
+   a. Select the :guilabel:`SERVER SETUP` tab.
    #. Select :guilabel:`Dongle configuration` > :guilabel:`Load setup`.
    #. Load the :file:`AMS_central.ncs` file located under :file:`samples/bluetooth/peripheral_ams_client` in the |NCS| folder structure.
-#. Click :guilabel:`Apply to device`.
-#. Select the :guilabel:`Connection Map` tab.
+   #. Click :guilabel:`Apply to device`.
+
+#. Select the :guilabel:`CONNECTION MAP` tab.
 #. Select :guilabel:`Dongle configuration` > :guilabel:`Security parameters`.
 #. Check :guilabel:`Perform Bonding` and :guilabel:`Enable LE Secure Connection pairing`, and click :guilabel:`Apply`.
 #. Connect to the device from the app.
