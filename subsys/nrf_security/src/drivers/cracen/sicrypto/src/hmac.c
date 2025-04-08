@@ -13,6 +13,7 @@
 
 #include <string.h>
 #include <sxsymcrypt/hash.h>
+#include <sxsymcrypt/hashdefs.h>
 #include <cracen/statuscodes.h>
 #include <cracen/mem_helpers.h>
 #include "../include/sicrypto/hmac.h"

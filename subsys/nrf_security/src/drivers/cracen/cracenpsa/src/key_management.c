@@ -8,14 +8,14 @@
 #include <cracen/ec_helpers.h>
 #include <cracen/mem_helpers.h>
 #include "cracen_psa.h"
-#include "cracen_psa_ecdsa.h"
-#include "cracen_psa_eddsa.h"
-#include "cracen_psa_montgomery.h"
+#include <cracen_psa_eddsa.h>
+#include <cracen_psa_ecdsa.h>
+#include <cracen_psa_montgomery.h>
+#include <cracen_psa_ikg.h>
 #include "platform_keys/platform_keys.h"
 #include <nrf_security_mutexes.h>
 #include <sicrypto/drbghash.h>
 #include "ecc.h"
-#include <cracen_psa_ikg.h>
 #include <sicrypto/rsa_keygen.h>
 #include <sicrypto/util.h>
 #include <silexpk/sxops/rsa.h>
@@ -467,7 +467,7 @@ static psa_status_t import_srp_key(const psa_key_attributes_t *attributes, const
 		if (data_length != sizeof(cracen_N3072)) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
-		if (si_be_cmp(key_buffer, cracen_N3072, sizeof(cracen_N3072), 0) >= 0) {
+		if (cracen_be_cmp(key_buffer, cracen_N3072, sizeof(cracen_N3072), 0) >= 0) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 		break;
@@ -490,7 +490,7 @@ static psa_status_t generate_ecc_private_key(const psa_key_attributes_t *attribu
 	size_t key_size_bytes = PSA_BITS_TO_BYTES(key_bits_attr);
 	psa_ecc_family_t psa_curve = PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(attributes));
 	psa_status_t psa_status;
-	int si_status;
+	int sx_status;
 	const struct sx_pk_ecurve *sx_curve;
 	uint8_t workmem[PSA_KEY_EXPORT_ECC_KEY_PAIR_MAX_SIZE(PSA_VENDOR_ECC_MAX_CURVE_BITS)] = {};
 
@@ -539,9 +539,9 @@ static psa_status_t generate_ecc_private_key(const psa_key_attributes_t *attribu
 		memcpy(key_buffer, workmem, key_size_bytes);
 	} else {
 
-		si_status = ecc_create_genprivkey(sx_curve, key_buffer, key_buffer_size);
-		if (si_status != SX_OK) {
-			return silex_statuscodes_to_psa(si_status);
+		sx_status = ecc_genprivkey(sx_curve, key_buffer, key_buffer_size);
+		if (sx_status != SX_OK) {
+			return silex_statuscodes_to_psa(sx_status);
 		}
 	}
 
@@ -597,7 +597,7 @@ static psa_status_t handle_curve_family(psa_ecc_family_t psa_curve, size_t key_b
 		    IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1)) {
 			data[0] = SI_ECC_PUBKEY_UNCOMPRESSED;
 			return silex_statuscodes_to_psa(
-				ecc_create_genpubkey(key_buffer, data + 1, sx_curve));
+				ecc_genpubkey(key_buffer, data + 1, sx_curve));
 		} else {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
