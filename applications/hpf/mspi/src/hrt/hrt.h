@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <drivers/mspi/nrfe_mspi.h>
+#include <drivers/mspi/hpf_mspi.h>
 #include <zephyr/drivers/mspi.h>
 
 #define VPRCSR_NORDIC_OUT_HIGH 1
