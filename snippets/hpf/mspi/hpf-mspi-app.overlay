@@ -7,15 +7,15 @@
 &cpuflpr_vpr {
 	status = "okay";
 
-	sdp_mspi: sdp_mspi {
-		compatible = "nordic,nrfe-mspi-controller";
+	hpf_mspi: hpf_mspi {
+		compatible = "nordic,hpf-mspi-controller";
 		software-multiperipheral;
 		#address-cells = <1>;
 		#size-cells = <0>;
 	};
 };
 
-/* TIMER peripheral as a watchdog for SDP FW */
+/* TIMER peripheral as a watchdog for HPF FW */
 fault_timer: &timer20 {
 	status = "okay";
 	prescaler = <4>;
