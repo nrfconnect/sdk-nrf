@@ -1579,7 +1579,7 @@ static int nrf_wifi_radio_test_rx_cap(const struct shell *shell,
 	ret = 0;
 out:
 	if (rx_cap_buf)
-		k_free(rx_cap_buf);
+		nrf_wifi_osal_mem_free(rx_cap_buf);
 
 	ctx->rf_test_run = false;
 	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
