@@ -1,8 +1,10 @@
 common:
   platform_allow:
     - nrf54l20pdk/nrf54l20/cpuflpr
+    - nrf54lm20apdk/nrf54lm20a/cpuapp
   integration_platforms:
     - nrf54l20pdk/nrf54l20/cpuflpr
+    - nrf54lm20apdk/nrf54lm20a/cpuapp
   harness: ztest
   harness_config:
     fixture: gpio_loopback
