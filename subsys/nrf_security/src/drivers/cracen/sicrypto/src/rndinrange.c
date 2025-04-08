@@ -22,7 +22,6 @@
  */
 
 #include <string.h>
-#include "../include/sicrypto/sicrypto.h"
 #include <cracen/statuscodes.h>
 #include <cracen/mem_helpers.h>
 #include <cracen_psa.h>

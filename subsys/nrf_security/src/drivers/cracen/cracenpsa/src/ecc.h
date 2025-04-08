@@ -8,8 +8,8 @@
 
 #include <psa/crypto.h>
 
-int ecc_create_genpubkey(const char *priv_key, char *pub_key, const struct sx_pk_ecurve *curve);
+int ecc_genpubkey(const uint8_t *priv_key, uint8_t *pub_key, const struct sx_pk_ecurve *curve);
 
-int ecc_create_genprivkey(const struct sx_pk_ecurve *curve, char *priv_key, size_t priv_key_size);
+int ecc_genprivkey(const struct sx_pk_ecurve *curve, uint8_t *priv_key, size_t priv_key_size);
 
 #endif /* ECC_H */
