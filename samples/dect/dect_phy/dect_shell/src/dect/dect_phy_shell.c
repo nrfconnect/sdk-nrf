@@ -407,7 +407,7 @@ static const char dect_phy_rf_tool_cmd_usage_str[] =
 	"  -c, --channel <int>,               Channel. Default 1665.\n"
 	"                                     Ranges: band #1: 1657-1677 (only odd numbers as per\n"
 	"                                     ETSI EN 301 406-2, ch 4.3.2.3),\n"
-	"                                     band #2 1680-1700, band #4 524-552,\n"
+	"                                     band #2 1680-1700, band #4 525-551,\n"
 	"                                     band #9 1703-1711, band #22 1691-1711.\n"
 	"  -e  --rx_exp_rssi_level <int>,     Set expected RSSI level on RX (dBm).\n"
 	"                                     Default: from common rx settings.\n"
