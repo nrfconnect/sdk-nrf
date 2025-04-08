@@ -87,7 +87,7 @@
     - MarekPieta
 
 - scenarios:
-    - applications.sdp.gpio.mbox
+    - applications.hpf.gpio.mbox
   platforms:
     - all
   rom_size: 3800
@@ -96,7 +96,7 @@
     - nrfconnect/ncs-ll-ursus
 
 - scenarios:
-    - applications.sdp.gpio.icmsg
+    - applications.hpf.gpio.icmsg
   platforms:
     - all
   rom_size: 5300
@@ -105,7 +105,7 @@
     - nrfconnect/ncs-ll-ursus
 
 - scenarios:
-    - applications.sdp.gpio.icbmsg
+    - applications.hpf.gpio.icbmsg
   platforms:
     - all
   rom_size: 8700

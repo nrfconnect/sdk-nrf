@@ -6,16 +6,16 @@
 
 description: |
     This binding provides resources required to build and run the
-    tests/drivers/gpio/egpio_basic_api test in Zephyr.
+    tests/drivers/gpio/hpf_gpio_basic_api test in Zephyr.
 
-compatible: "test-egpio"
+compatible: "test-hpf-gpio"
 
 properties:
   out-gpios:
     type: phandle-array
     required: true
     description: |
-      Identity of an eGPIO that will be configured as an output.
+      Identity of an HPF GPIO that will be configured as an output.
       This must be on the GPIO instance to which FLPR has access,
       and physically connected to in-gpios.
 

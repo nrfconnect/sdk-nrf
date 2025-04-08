@@ -2,7 +2,7 @@ common:
   tags:
     - drivers
     - gpio
-    - ci_tests_drivers_sdp
+    - ci_tests_drivers_hpf
   depends_on: gpio
   harness: ztest
   harness_config:
@@ -10,29 +10,29 @@ common:
   timeout: 30
 
 tests:
-  drivers.egpio.loopback.icmsg:
+  drivers.hpf.gpio.loopback.icmsg:
     min_flash: 64
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     sysbuild: true
-    extra_args: SB_CONFIG_SDP_GPIO_BACKEND_ICMSG=y
+    extra_args: SB_CONFIG_HPF_GPIO_BACKEND_ICMSG=y
 
-  drivers.egpio.loopback.icbmsg:
+  drivers.hpf.gpio.loopback.icbmsg:
     min_flash: 64
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     sysbuild: true
-    extra_args: SB_CONFIG_SDP_GPIO_BACKEND_ICBMSG=y
+    extra_args: SB_CONFIG_HPF_GPIO_BACKEND_ICBMSG=y
 
-  drivers.egpio.loopback.mbox:
+  drivers.hpf.gpio.loopback.mbox:
     min_flash: 64
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     sysbuild: true
-    extra_args: SB_CONFIG_SDP_GPIO_BACKEND_MBOX=y
+    extra_args: SB_CONFIG_HPF_GPIO_BACKEND_MBOX=y

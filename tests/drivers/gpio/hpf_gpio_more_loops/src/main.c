@@ -5,7 +5,7 @@
  */
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(egpio_loops, LOG_LEVEL_INF);
+LOG_MODULE_REGISTER(hpf_gpio_loops, LOG_LEVEL_INF);
 
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
@@ -376,7 +376,7 @@ static void generic_moving_1(void (*fn)(uint32_t))
  * @brief test setting output GPIO high/low with
  * gpio_pin_configure()
  */
-ZTEST(egpio_extended, test_moving_1_with_configure_output)
+ZTEST(hpf_gpio_extended, test_moving_1_with_configure_output)
 {
 	generic_moving_1(&gpio_pin_configure_and_check);
 }
@@ -385,7 +385,7 @@ ZTEST(egpio_extended, test_moving_1_with_configure_output)
  * @brief test setting output GPIO high/low with
  * gpio_port_set_masked_raw()
  */
-ZTEST(egpio_extended, test_moving_1_with_port_set_masked_raw)
+ZTEST(hpf_gpio_extended, test_moving_1_with_port_set_masked_raw)
 {
 	generic_moving_1(&gpio_port_set_masked_raw_and_check);
 }
@@ -394,7 +394,7 @@ ZTEST(egpio_extended, test_moving_1_with_port_set_masked_raw)
  * @brief test setting output GPIO high/low with
  * gpio_port_set_masked()
  */
-ZTEST(egpio_extended, test_moving_1_with_port_set_masked)
+ZTEST(hpf_gpio_extended, test_moving_1_with_port_set_masked)
 {
 	generic_moving_1(&gpio_port_set_masked_and_check);
 }
@@ -403,7 +403,7 @@ ZTEST(egpio_extended, test_moving_1_with_port_set_masked)
  * @brief test setting output GPIO high/low with
  * gpio_port_set_bits_raw() and gpio_port_clear_bits_raw()
  */
-ZTEST(egpio_extended, test_moving_1_with_set_clear_bits_raw)
+ZTEST(hpf_gpio_extended, test_moving_1_with_set_clear_bits_raw)
 {
 	generic_moving_1(&gpio_port_set_clear_bits_raw_and_check);
 }
@@ -412,7 +412,7 @@ ZTEST(egpio_extended, test_moving_1_with_set_clear_bits_raw)
  * @brief test setting output GPIO high/low with
  * gpio_port_set_bits() and gpio_port_clear_bits()
  */
-ZTEST(egpio_extended, test_moving_1_with_set_clear_bits)
+ZTEST(hpf_gpio_extended, test_moving_1_with_set_clear_bits)
 {
 	generic_moving_1(&gpio_port_set_clear_bits_and_check);
 }
@@ -421,7 +421,7 @@ ZTEST(egpio_extended, test_moving_1_with_set_clear_bits)
  * @brief test setting output GPIO high/low with
  * gpio_port_toggle_bits()
  */
-ZTEST(egpio_extended, test_moving_1_with_gpio_port_toggle_bits)
+ZTEST(hpf_gpio_extended, test_moving_1_with_gpio_port_toggle_bits)
 {
 	generic_moving_1(&gpio_port_toggle_bits_and_check);
 }
@@ -430,7 +430,7 @@ ZTEST(egpio_extended, test_moving_1_with_gpio_port_toggle_bits)
  * @brief test setting output GPIO high/low with
  * gpio_port_set_clr_bits_raw()
  */
-ZTEST(egpio_extended, test_moving_1_with_gpio_port_set_clr_bits_raw)
+ZTEST(hpf_gpio_extended, test_moving_1_with_gpio_port_set_clr_bits_raw)
 {
 	generic_moving_1(&gpio_port_set_clr_bits_raw_and_check);
 }
@@ -439,7 +439,7 @@ ZTEST(egpio_extended, test_moving_1_with_gpio_port_set_clr_bits_raw)
  * @brief test setting output GPIO high/low with
  * gpio_port_set_clr_bits()
  */
-ZTEST(egpio_extended, test_moving_1_with_gpio_port_set_clr_bits)
+ZTEST(hpf_gpio_extended, test_moving_1_with_gpio_port_set_clr_bits)
 {
 	generic_moving_1(&gpio_port_set_clr_bits_and_check);
 }
@@ -448,7 +448,7 @@ ZTEST(egpio_extended, test_moving_1_with_gpio_port_set_clr_bits)
  * @brief test setting output GPIO high/low with
  * gpio_pin_set_raw()
  */
-ZTEST(egpio_extended, test_moving_1_with_gpio_pin_set_raw)
+ZTEST(hpf_gpio_extended, test_moving_1_with_gpio_pin_set_raw)
 {
 	generic_moving_1(&gpio_pin_set_raw_and_check);
 }
@@ -457,7 +457,7 @@ ZTEST(egpio_extended, test_moving_1_with_gpio_pin_set_raw)
  * @brief test setting output GPIO high/low with
  * gpio_pin_set()
  */
-ZTEST(egpio_extended, test_moving_1_with_gpio_pin_set)
+ZTEST(hpf_gpio_extended, test_moving_1_with_gpio_pin_set)
 {
 	generic_moving_1(&gpio_pin_set_and_check);
 }
@@ -466,7 +466,7 @@ ZTEST(egpio_extended, test_moving_1_with_gpio_pin_set)
  * @brief test setting output GPIO high/low with
  * gpio_pin_toggle()
  */
-ZTEST(egpio_extended, test_moving_1_with_gpio_pin_toggle)
+ZTEST(hpf_gpio_extended, test_moving_1_with_gpio_pin_toggle)
 {
 	generic_moving_1(&gpio_pin_toggle_and_check);
 }
@@ -474,7 +474,7 @@ ZTEST(egpio_extended, test_moving_1_with_gpio_pin_toggle)
 /**
  * @brief Stress test - send many GPIO requests one by one
  */
-ZTEST(egpio_extended, test_stress_gpio_set)
+ZTEST(hpf_gpio_extended, test_stress_gpio_set)
 {
 	int rc;
 	int rc_acc = 0;
@@ -515,11 +515,11 @@ static void *suite_setup(void)
 	TC_PRINT("Test executed on %s\n", CONFIG_BOARD_TARGET);
 
 	TC_PRINT("-> Test uses following backend: ");
-	if (IS_ENABLED(CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICMSG)) {
+	if (IS_ENABLED(CONFIG_GPIO_HPF_GPIO_BACKEND_ICMSG)) {
 		TC_PRINT("ICMsg\n");
-	} else if (IS_ENABLED(CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICBMSG)) {
+	} else if (IS_ENABLED(CONFIG_GPIO_HPF_GPIO_BACKEND_ICBMSG)) {
 		TC_PRINT("ICBMsg\n");
-	} else if (IS_ENABLED(CONFIG_GPIO_NRFE_EGPIO_BACKEND_MBOX)) {
+	} else if (IS_ENABLED(CONFIG_GPIO_HPF_GPIO_BACKEND_MBOX)) {
 		TC_PRINT("MBOX\n");
 	} else {
 		TC_PRINT("unknown\n");
@@ -543,4 +543,4 @@ static void *suite_setup(void)
 	return NULL;
 }
 
-ZTEST_SUITE(egpio_extended, NULL, suite_setup, NULL, NULL, NULL);
+ZTEST_SUITE(hpf_gpio_extended, NULL, suite_setup, NULL, NULL, NULL);
