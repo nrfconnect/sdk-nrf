@@ -11,6 +11,8 @@
       #. |exceptions_step|
       #. Open the nRF Connect extension in |VSC| by clicking its icon in the :guilabel:`Activity Bar`.
       #. In the extension's :guilabel:`Actions View`, click on :guilabel:`Flash`.
+         If you have more than one device connected, you will be prompted to select the device to program.
+         If the build system considers the build incomplete, using this action also triggers a rebuild before flashing.
 
       For instructions about programming with the |nRFVSC|, see `How to flash an application`_.
 

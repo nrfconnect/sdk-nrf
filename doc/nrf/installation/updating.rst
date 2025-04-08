@@ -174,6 +174,9 @@ If you disabled automatic updates:
 #. The :guilabel:`Update` button appears when an update is available.
    Click the button to install the update.
 
+Sometimes the extension can offer pre-release versions.
+In such cases, you can `switch to the pre-release version of the extension`_ to test the new features before they are released.
+
 .. _west_update:
 
 Updating west from command line
