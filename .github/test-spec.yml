@@ -583,7 +583,7 @@
   - "tests/subsys/suit/**/*"
 
 "CI-test-low-level":
-  - "applications/sdp/**/*"
+  - "applications/hpf/**/*"
   - "boards/nordic/nrf54lm20apdk/**/*"
   - "boards/nordic/nrf54lv10apdk/**/*"
   - "drivers/gpio/**/*"
@@ -601,7 +601,7 @@
   - "samples/peripheral/lpuart/**/*"
   - "samples/zephyr/sensor/qdec/**/*"
   - "samples/zephyr/subsys/settings/**/*"
-  - "snippets/sdp/**/*"
+  - "snippets/hpf/**/*"
   - "snippets/nrf54l09-switch-uart/**/*"
   - "soc/nordic/nrf54l/**/*"
   - "tests/benchmarks/multicore/idle/**/*"

@@ -1164,14 +1164,13 @@ ci_tests_benchmarks_current_consumption:
     - zephyr/soc/nordic/
     - zephyr/drivers/sensor/nordic/temp/
 
-ci_tests_drivers_sdp:
+ci_tests_drivers_hpf:
   files:
-    - nrf/applications/sdp/
+    - nrf/applications/hpf/
     - nrf/drivers/gpio/
     - nrf/drivers/mspi/
-    - nrf/snippets/sdp/
-    - nrf/tests/drivers/gpio/egpio_basic_api/
-    - nrf/tests/drivers/sdp_asm/
+    - nrf/snippets/hpf/
+    - nrf/tests/drivers/gpio/hpf_gpio_basic_api/
     - nrf/tests/zephyr/drivers/flash/
     - nrf/tests/zephyr/drivers/mspi/
     - zephyr/drivers/mbox/

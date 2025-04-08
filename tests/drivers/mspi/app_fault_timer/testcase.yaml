@@ -1,6 +1,6 @@
 common:
   tags:
-    - ci_tests_drivers_sdp
+    - ci_tests_drivers_hpf
     - drivers
     - mspi
   harness: ztest

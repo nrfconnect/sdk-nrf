@@ -36,7 +36,7 @@ static void fault_timer_before(void *arg)
 		.callback = timer_irq_handler,
 		.user_data = NULL,
 		.flags = 0,
-		.ticks = counter_us_to_ticks(flpr_fault_timer, CONFIG_MSPI_NRFE_FAULT_TIMEOUT)
+		.ticks = counter_us_to_ticks(flpr_fault_timer, CONFIG_MSPI_HPF_FAULT_TIMEOUT)
 	};
 
 	zassert_true(device_is_ready(flash_dev));
@@ -50,7 +50,7 @@ static void fault_timer_before(void *arg)
 /**
  * @brief Check if the timer is not triggered when the flash is being read.
  *        When we send commands to the flash the timer should be reset and stopped by FLPR.
- *        If it is not then we will get an IRQ after CONFIG_MSPI_NRFE_FAULT_TIMEOUT.
+ *        If it is not then we will get an IRQ after CONFIG_MSPI_HPF_FAULT_TIMEOUT.
  */
 ZTEST(hpf_fault_timer, test_timer_timeout)
 {
