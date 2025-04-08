@@ -10,6 +10,7 @@
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/hci.h>
+#include <zephyr/mgmt/mcumgr/transport/smp_bt.h>
 #include <zephyr/settings/settings.h>
 #include <zephyr/sys/byteorder.h>
 #include <nrfx.h>
@@ -392,6 +393,15 @@ int bt_mgmt_init(void)
 	}
 
 #endif /* CONFIG_AUDIO_BT_MGMT_DFU */
+
+#ifdef CONFIG_MCUMGR_TRANSPORT_BT_DYNAMIC_SVC_REGISTRATION
+	/* Unregister SMP (Simple Management Protocol) service if DFU is not enabled */
+	ret = smp_bt_unregister();
+	if (ret) {
+		LOG_ERR("Failed to unregister SMP service: %d", ret);
+		return ret;
+	}
+#endif
 
 	ret = bt_mgmt_ctlr_cfg_init(IS_ENABLED(CONFIG_WDT_CTLR));
 	if (ret) {
