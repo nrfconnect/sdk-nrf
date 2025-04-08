@@ -6,8 +6,8 @@
 &cpuflpr_vpr {
 	status = "okay";
 
-	egpio: gpio {
-		compatible = "nordic,nrfe-gpio";
+	hpf_gpio: gpio {
+		compatible = "nordic,hpf-gpio";
 		gpio-controller;
 		#gpio-cells = <0x2>;
 		ngpios = <0x10>;

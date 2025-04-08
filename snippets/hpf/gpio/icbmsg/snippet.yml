@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-name: sdp-gpio-mbox
+name: hpf-gpio-icbmsg
 
 boards:
   /.*/nrf54l15/cpuapp/:

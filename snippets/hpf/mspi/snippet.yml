@@ -4,14 +4,16 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-name: sdp-gpio-icmsg
+name: hpf-mspi
 
 boards:
+  /.*/cpuapp/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: hpf-mspi-app.overlay
+      EXTRA_CONF_FILE: app.conf
   /.*/nrf54l15/cpuapp/:
     append:
-      EXTRA_CONF_FILE: app.conf
       EXTRA_DTC_OVERLAY_FILE: soc/nrf54l15_cpuapp.overlay
-  /.*/nrf54l15/cpuflpr/:
+  /nrf54l15dk/nrf54l15/cpuapp/:
     append:
-      EXTRA_CONF_FILE: flpr.conf
-      EXTRA_DTC_OVERLAY_FILE: soc/nrf54l15_cpuflpr.overlay
+      EXTRA_DTC_OVERLAY_FILE: board/nrf54l15dk_nrf54l15_cpuapp.overlay

@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "../../sdp-gpio-app.overlay"
+#include "../../hpf-gpio-app.overlay"
 
 / {
 	soc {
@@ -75,6 +75,6 @@
 	status = "okay";
 };
 
-&egpio {
+&hpf_gpio {
 	status = "okay";
 };

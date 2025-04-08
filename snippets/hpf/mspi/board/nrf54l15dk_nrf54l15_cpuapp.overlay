@@ -7,7 +7,7 @@
 
 /delete-node/ &mx25r64;
 
-&sdp_mspi {
+&hpf_mspi {
 	mx25r64: mx25r6435f@0 {
 		compatible = "mxicy,mx25r","jedec,mspi-nor";
 		status = "okay";
