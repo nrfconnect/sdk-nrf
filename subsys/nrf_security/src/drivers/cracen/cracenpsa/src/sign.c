@@ -24,7 +24,6 @@
 #include <string.h>
 #include <sxsymcrypt/hashdefs.h>
 #include <sxsymcrypt/trng.h>
-#include "hashdefs.h"
 
 #include "common.h"
 #include "cracen_psa.h"
