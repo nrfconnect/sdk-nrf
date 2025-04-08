@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "../../sdp-gpio-app.overlay"
+#include "../../hpf-gpio-app.overlay"
 
 / {
 	soc {
@@ -35,15 +35,10 @@
 		};
 	};
 
-	ipc {
-		ipc0: ipc0 {
-			compatible = "zephyr,ipc-icmsg";
-			tx-region = <&sram_tx>;
-			rx-region = <&sram_rx>;
-			mboxes = <&cpuapp_vevif_rx 20>, <&cpuapp_vevif_tx 16>;
-			mbox-names = "rx", "tx";
-			status = "okay";
-		};
+	mbox_consumer {
+		compatible = "vnd,mbox-consumer";
+		mboxes = <&cpuapp_vevif_rx 20>, <&cpuapp_vevif_tx 16>;
+		mbox-names = "rx", "tx";
 	};
 };
 
@@ -73,6 +68,6 @@
 	status = "okay";
 };
 
-&egpio {
+&hpf_gpio {
 	status = "okay";
 };
