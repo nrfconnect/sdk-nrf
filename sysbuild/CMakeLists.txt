@@ -68,8 +68,8 @@ function(include_packaging)
   include(${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/cmake/packaging.cmake)
 endfunction()
 
-function(include_sdp)
-  include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/sdp.cmake)
+function(include_hpf)
+  include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/hpf.cmake)
 endfunction()
 
 function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
@@ -612,8 +612,8 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     endif()
   endif()
 
-  if(SB_CONFIG_SDP)
-    include_sdp()
+  if(SB_CONFIG_HPF)
+    include_hpf()
   endif()
 
   if(SB_CONFIG_APPROTECT_USE_UICR OR SB_CONFIG_APPROTECT_LOCK OR SB_CONFIG_APPROTECT_USER_HANDLING OR SB_CONFIG_APPROTECT_DISABLE OR
@@ -855,6 +855,6 @@ include(${CMAKE_CURRENT_LIST_DIR}/netcore.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/secureboot.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/mcuboot.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/suit.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/sdp.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/hpf.cmake)
 
 store_ncs_vars()
