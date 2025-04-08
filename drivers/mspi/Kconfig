@@ -3,7 +3,7 @@
 
 if MSPI
 
-rsource "Kconfig.nrfe"
+rsource "Kconfig.hpf"
 rsource "Kconfig.sqspi"
 
 endif # MSPI
