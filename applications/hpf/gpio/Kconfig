@@ -1,15 +1,15 @@
-choice SDP_GPIO_BACKEND
+choice HPF_GPIO_BACKEND
 	prompt "Backend"
-	default SDP_GPIO_BACKEND_ICMSG
+	default HPF_GPIO_BACKEND_ICMSG
 
-config SDP_GPIO_BACKEND_MBOX
+config HPF_GPIO_BACKEND_MBOX
 	bool "mbox"
 
-config SDP_GPIO_BACKEND_ICMSG
+config HPF_GPIO_BACKEND_ICMSG
 	bool "icmsg"
 	select IPC_SERVICE
 
-config SDP_GPIO_BACKEND_ICBMSG
+config HPF_GPIO_BACKEND_ICBMSG
 	bool "icbmsg"
 	select IPC_SERVICE
 
