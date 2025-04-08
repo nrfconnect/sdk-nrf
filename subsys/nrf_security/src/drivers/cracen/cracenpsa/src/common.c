@@ -932,3 +932,8 @@ int hash_input_with_context(struct sxhash *hashopctx, const char *input, const s
 {
 	return hash_all_inputs_with_context(hashopctx, &input, &input_length, 1, hashalg, digest);
 }
+
+int cracen_signature_set_hashalgo(const struct sxhashalg **hashalg, psa_algorithm_t alg)
+{
+	return hash_get_algo(PSA_ALG_SIGN_GET_HASH(alg), hashalg);
+}
