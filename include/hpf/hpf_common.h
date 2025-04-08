@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef SDP_NRFE_COMMON_H__
-#define SDP_NRFE_COMMON_H__
+#ifndef HPF_HPF_COMMON_H__
+#define HPF_HPF_COMMON_H__
 
 #include <zephyr/sys/atomic.h>
 
@@ -20,7 +20,7 @@ enum data_lock_state {
 	DATA_LOCK_STATE_READY,
 };
 
-struct nrfe_shared_data_lock {
+struct hpf_shared_data_lock {
 	uint32_t data_size;
 	atomic_t locked;
 };
@@ -29,4 +29,4 @@ struct nrfe_shared_data_lock {
 }
 #endif
 
-#endif /* SDP_NRFE_COMMON_H__ */
+#endif /* HPF_HPF_COMMON_H__ */
