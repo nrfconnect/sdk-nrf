@@ -111,7 +111,6 @@ psa_status_t cracen_signature_rsa_sign(bool is_message, const psa_key_attributes
 	/* Workmem for RSA signature task is rsa_modulus_size + 2*hash_digest_size + 4 */
 	char workmem[PSA_BITS_TO_BYTES(PSA_MAX_RSA_KEY_BITS) + 2 * PSA_HASH_MAX_SIZE + 4];
 
-	si_task_init(&t, workmem, sizeof(workmem));
 
 	if (alg == PSA_ALG_RSA_PKCS1V15_SIGN_RAW || key_bits_attr < 2048) {
 		return PSA_ERROR_NOT_SUPPORTED;
@@ -120,6 +119,13 @@ psa_status_t cracen_signature_rsa_sign(bool is_message, const psa_key_attributes
 	if (((is_message) && (!SI_PSA_IS_KEY_FLAG(PSA_KEY_USAGE_SIGN_MESSAGE, attributes))) ||
 	    ((!is_message) && (!SI_PSA_IS_KEY_FLAG(PSA_KEY_USAGE_SIGN_HASH, attributes)))) {
 		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	sign.sz = PSA_SIGN_OUTPUT_SIZE(PSA_KEY_TYPE_RSA_KEY_PAIR, key_bits_attr, alg);
+	sign.r = (char *)signature;
+
+	if ((size_t)signature_size < sign.sz) {
+		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
 	sx_status = set_internal_defs(alg, is_message, input_length,
@@ -135,12 +141,7 @@ psa_status_t cracen_signature_rsa_sign(bool is_message, const psa_key_attributes
 	}
 
 
-	sign.sz = PSA_SIGN_OUTPUT_SIZE(PSA_KEY_TYPE_RSA_KEY_PAIR, key_bits_attr, alg);
-	sign.r = (char *)signature;
-
-	if ((size_t)signature_size < sign.sz) {
-		return PSA_ERROR_BUFFER_TOO_SMALL;
-	}
+	si_task_init(&t, workmem, sizeof(workmem));
 
 	if (is_message) {
 		si_sig_create_sign(&t, &privkey, &sign);
@@ -183,16 +184,23 @@ psa_status_t cracen_signature_rsa_verify(bool is_message, const psa_key_attribut
 	/* Workmem for RSA verify task is  rsa_modulus_size + 2 * hash_digest_size + 4 */
 	char workmem[PSA_BITS_TO_BYTES(PSA_MAX_RSA_KEY_BITS) + 2 * PSA_HASH_MAX_SIZE + 4];
 
-	si_task_init(&t, workmem, sizeof(workmem));
 
 	if (alg == PSA_ALG_RSA_PKCS1V15_SIGN_RAW || key_bits_attr < 2048) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
+
 	if (((is_message) && (!SI_PSA_IS_KEY_FLAG(PSA_KEY_USAGE_VERIFY_MESSAGE, attributes))) ||
 	    ((!is_message) && (!SI_PSA_IS_KEY_FLAG(PSA_KEY_USAGE_VERIFY_HASH, attributes)))) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
+	if ((size_t)signature_length !=
+	    PSA_SIGN_OUTPUT_SIZE(PSA_KEY_TYPE_RSA_KEY_PAIR, key_bits_attr, alg)) {
+		return PSA_ERROR_INVALID_SIGNATURE;
+	}
+
+	sign.sz = signature_length;
+	sign.r = (char *)signature;
 
 	sx_status = set_internal_defs(alg, is_message, input_length,
 		  &pubkey.def, &pubkey.hashalg, &pubkey.saltsz);
@@ -208,13 +216,7 @@ psa_status_t cracen_signature_rsa_verify(bool is_message, const psa_key_attribut
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
-
-	if ((size_t)signature_length !=
-	    PSA_SIGN_OUTPUT_SIZE(PSA_KEY_TYPE_RSA_KEY_PAIR, key_bits_attr, alg)) {
-		return PSA_ERROR_INVALID_SIGNATURE;
-	}
-	sign.sz = signature_length;
-	sign.r = (char *)signature;
+	si_task_init(&t, workmem, sizeof(workmem));
 
 	if (is_message) {
 		si_sig_create_verify(&t, &pubkey, &sign);
