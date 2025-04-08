@@ -37,7 +37,7 @@ LOG_MODULE_DECLARE(cracen, CONFIG_CRACEN_LOG_LEVEL);
 
 #ifdef CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
 /* Address from the IPS. May come from the MDK in the future. */
-#define DEVICE_SECRET_LENGTH 4
+#define DEVICE_SECRET_LENGTH  4
 #define DEVICE_SECRET_ADDRESS ((uint32_t *)0x0E001620)
 #endif
 
@@ -397,7 +397,7 @@ psa_status_t rnd_in_range(uint8_t *n, size_t sz, const uint8_t *upperlimit, size
 		}
 		n[0] &= msb_mask;
 
-		int ge = si_be_cmp(n, upperlimit, sz, 0);
+		int ge = cracen_be_cmp(n, upperlimit, sz, 0);
 
 		if (ge == -1) {
 
@@ -903,7 +903,7 @@ psa_status_t cracen_get_opaque_size(const psa_key_attributes_t *attributes, size
 	return PSA_ERROR_INVALID_ARGUMENT;
 }
 
-void be_add(unsigned char *v, size_t sz, size_t summand)
+void cracen_be_add(uint8_t *v, size_t sz, size_t summand)
 {
 	while (sz > 0) {
 		sz--;
@@ -913,7 +913,7 @@ void be_add(unsigned char *v, size_t sz, size_t summand)
 	}
 }
 
-int be_cmp(const unsigned char *a, const unsigned char *b, size_t sz, int carry)
+int cracen_be_cmp(const uint8_t *a, const uint8_t *b, size_t sz, int carry)
 {
 	unsigned int neq = 0;
 	unsigned int gt = 0;
@@ -937,9 +937,9 @@ int be_cmp(const unsigned char *a, const unsigned char *b, size_t sz, int carry)
 	return (gt ? 1 : 0) - (lt ? 1 : 0);
 }
 
-int hash_all_inputs_with_context(struct sxhash *hashopctx, const char *inputs[],
-				 const size_t inputs_lengths[], size_t input_count,
-				 const struct sxhashalg *hashalg, char *digest)
+int cracen_hash_all_inputs_with_context(struct sxhash *hashopctx, const uint8_t *inputs[],
+					const size_t input_lengths[], size_t input_count,
+					const struct sxhashalg *hashalg, uint8_t *digest)
 {
 	int status;
 
@@ -949,7 +949,7 @@ int hash_all_inputs_with_context(struct sxhash *hashopctx, const char *inputs[],
 	}
 
 	for (size_t i = 0; i < input_count; i++) {
-		status = sx_hash_feed(hashopctx, inputs[i], inputs_lengths[i]);
+		status = sx_hash_feed(hashopctx, inputs[i], input_lengths[i]);
 		if (status != SX_OK) {
 			return status;
 		}
@@ -964,23 +964,25 @@ int hash_all_inputs_with_context(struct sxhash *hashopctx, const char *inputs[],
 	return status;
 }
 
-int hash_all_inputs(const char *inputs[], const size_t inputs_lengths[], size_t input_count,
-		    const struct sxhashalg *hashalg, char *digest)
+int cracen_hash_all_inputs(const uint8_t *inputs[], const size_t input_lengths[],
+			   size_t input_count, const struct sxhashalg *hashalg, uint8_t *digest)
 {
 	struct sxhash hashopctx;
 
-	return hash_all_inputs_with_context(&hashopctx, inputs, inputs_lengths, input_count,
-					    hashalg, digest);
+	return cracen_hash_all_inputs_with_context(&hashopctx, inputs, input_lengths, input_count,
+						   hashalg, digest);
 }
 
-int hash_input(const char *input, const size_t input_length, const struct sxhashalg *hashalg,
-	       char *digest)
+int cracen_hash_input(const uint8_t *input, const size_t input_length,
+		      const struct sxhashalg *hashalg, uint8_t *digest)
 {
-	return hash_all_inputs(&input, &input_length, 1, hashalg, digest);
+	return cracen_hash_all_inputs(&input, &input_length, 1, hashalg, digest);
 }
 
-int hash_input_with_context(struct sxhash *hashopctx, const char *input, const size_t input_length,
-			    const struct sxhashalg *hashalg, char *digest)
+int cracen_hash_input_with_context(struct sxhash *hashopctx, const uint8_t *input,
+				   const size_t input_length, const struct sxhashalg *hashalg,
+				   uint8_t *digest)
 {
-	return hash_all_inputs_with_context(hashopctx, &input, &input_length, 1, hashalg, digest);
+	return cracen_hash_all_inputs_with_context(hashopctx, &input, &input_length, 1, hashalg,
+						   digest);
 }

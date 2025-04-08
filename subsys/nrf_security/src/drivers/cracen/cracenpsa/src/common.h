@@ -55,7 +55,7 @@ enum asn1_tags {
  * \param[in]  curve_bits   Curve bits.
  * \param[out] sicurve      Pointer to curve struct for Cracen.
  *
- * \return PSA_SUCCESS on success or a valid PSA error code.
+ * \return PSA_SUCCESS on success or a valid PSA status code.
  */
 psa_status_t cracen_ecc_get_ecurve_from_psa(psa_ecc_family_t curve_family, size_t curve_bits,
 					    const struct sx_pk_ecurve **sicurve);
@@ -98,7 +98,7 @@ static inline size_t cracen_ecc_wstr_expected_pub_key_bytes(size_t priv_key_size
  * \param[in] in_pnt The public key to check.
  *
  * \return  PSA_SUCCESS if the public key passed the check, a valid
- *          PSA error code otherwise.
+ *          PSA status code otherwise.
  *
  */
 psa_status_t cracen_ecc_check_public_key(const struct sx_pk_ecurve *curve,
@@ -115,7 +115,7 @@ psa_status_t cracen_ecc_check_public_key(const struct sx_pk_ecurve *curve,
  * \param[out] modulus             Modulus (n) operand of n.
  * \param[out] exponent            Public or private exponent, depending on \ref extract_pubkey.
  *
- * \return sicrypto statuscode.
+ * \return sxsymcrypt status code.
  */
 int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bool is_key_pair,
 				 const unsigned char *key, size_t keylen, struct sx_buf *modulus,
@@ -146,7 +146,7 @@ int cracen_signature_asn1_get_operand(unsigned char **p, const unsigned char *en
  *
  * @note Output number and upper limit must be big endian numbers of size @ref sz.
  *
- * @return psa_status_t
+ * @return PSA status code.
  */
 psa_status_t rnd_in_range(uint8_t *n, size_t sz, const uint8_t *upperlimit, size_t retrylimit);
 
@@ -162,17 +162,26 @@ void cracen_xorbytes(char *a, const char *b, size_t sz);
 /**
  * @brief Loads key buffer and attributes.
  *
- * @return psa_status_t
+ * @return PSA status code.
  */
 psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
 				size_t key_buffer_size, struct sxkeyref *k);
+
+/**
+ * @brief Do ECB operation.
+ *
+ * @return PSA status code.
+ */
+psa_status_t cracen_cipher_crypt_ecb(const struct sxkeyref *key, const uint8_t *input,
+				     size_t input_length, uint8_t *output, size_t output_size,
+				     size_t *output_length, enum cipher_operation dir);
 
 /**
  * @brief Prepare ik key.
  *
  * @param user_data    Owner ID.
  *
- * @return sxsymcrypt error code.
+ * @return sxsymcrypt status code.
  */
 int cracen_prepare_ik_key(const uint8_t *user_data);
 
@@ -187,7 +196,7 @@ int cracen_prepare_ik_key(const uint8_t *user_data);
  * @param summand	Summand.
  *
  */
-void be_add(unsigned char *v, size_t v_size, size_t summand);
+void cracen_be_add(uint8_t *v, size_t v_size, size_t summand);
 
 /**
  * @brief Big-Endian compare with carry.
@@ -202,21 +211,21 @@ void be_add(unsigned char *v, size_t v_size, size_t summand);
  * \retval 1 if a > b.
  * \retval -1 if a < b.
  */
-int be_cmp(const unsigned char *a, const unsigned char *b, size_t sz, int carry);
+int cracen_be_cmp(const uint8_t *a, const uint8_t *b, size_t sz, int carry);
 
 /**
  * @brief Hash several elements at different locations in memory
  *
  * @param inputs[in]		Array of pointers to elements that will be hashed.
- * @param inputs_lengths[in]	Array of lengths of elements to be hashed.
+ * @param input_lengths[in]	Array of lengths of elements to be hashed.
  * @param input_count[in]	Number of elements to be hashed.
  * @param hashalg[in]		Hash algorithm to be used in sxhashalg format.
  * @param digest[out]		Buffer of at least sx_hash_get_alg_digestsz(hashalg) bytes.
  *
  * @return sxsymcrypt status code.
  */
-int hash_all_inputs(const char *inputs[], const size_t inputs_lengths[], size_t input_count,
-		    const struct sxhashalg *hashalg, char *digest);
+int cracen_hash_all_inputs(const uint8_t *inputs[], const size_t input_lengths[],
+			   size_t input_count, const struct sxhashalg *hashalg, uint8_t *digest);
 
 /**
  * @brief Hash several elements at different locations in memory with a previously created hash
@@ -224,29 +233,29 @@ int hash_all_inputs(const char *inputs[], const size_t inputs_lengths[], size_t 
  *
  * @param sxhashopctx[in]	Pointer to the sxhash context.
  * @param inputs[in]		Array of pointers to elements that will be hashed.
- * @param inputs_lengths[in]	Array of lengths of elements to be hashed.
+ * @param input_lengths[in]	Array of lengths of elements to be hashed.
  * @param input_count[in]	Number of elements to be hashed.
  * @param hashalg[in]		Hash algorithm to be used in sxhashalg format.
  * @param digest[out]		Buffer of at least sx_hash_get_alg_digestsz(hashalg) bytes.
  *
  * @return sxsymcrypt status code.
  */
-int hash_all_inputs_with_context(struct sxhash *sxhashopctx, const char *inputs[],
-				 const size_t inputs_lengths[], size_t input_count,
-				 const struct sxhashalg *hashalg, char *digest);
+int cracen_hash_all_inputs_with_context(struct sxhash *sxhashopctx, const uint8_t *inputs[],
+					const size_t input_lengths[], size_t input_count,
+					const struct sxhashalg *hashalg, uint8_t *digest);
 
 /**
  * @brief Hash a single element
  *
- * @param inputs[in]		Pointer to the element that will be hashed.
+ * @param input[in]		Pointer to the element that will be hashed.
  * @param input_length[in]	Length of the element to be hashed.
  * @param hashalg[in]		Hash algorithm to be used in sxhashalg format.
  * @param digest[out]		Buffer of at least sx_hash_get_alg_digestsz(hashalg) bytes.
  *
  * @return sxsymcrypt status code.
  */
-int hash_input(const char *input, const size_t input_length, const struct sxhashalg *hashalg,
-	       char *digest);
+int cracen_hash_input(const uint8_t *input, const size_t input_length,
+		      const struct sxhashalg *hashalg, uint8_t *digest);
 
 /**
  * @brief Hash a single element with a previously created hash context(sxhash)
@@ -259,8 +268,9 @@ int hash_input(const char *input, const size_t input_length, const struct sxhash
  *
  * @return sxsymcrypt status code.
  */
-int hash_input_with_context(struct sxhash *hashopctx, const char *input, const size_t input_length,
-			    const struct sxhashalg *hashalg, char *digest);
+int cracen_hash_input_with_context(struct sxhash *hashopctx, const uint8_t *input,
+				   const size_t input_length, const struct sxhashalg *hashalg,
+				   uint8_t *digest);
 
 /**
  * @brief Generate a random number within the specified range.
@@ -275,6 +285,6 @@ int hash_input_with_context(struct sxhash *hashopctx, const char *input, const s
  * @param out[out]      Buffer to store the generated random number.
  *                      The size of `out` should be at least `nsz`.
  *
- * @return sxsymcrypt status code:
+ * @return sxsymcrypt status code.
  */
-int rndinrange_create(const unsigned char *n, size_t nsz, unsigned char *out);
+int cracen_get_rnd_in_range(const uint8_t *n, size_t nsz, uint8_t *out);

@@ -670,6 +670,7 @@ static unsigned short int get_key_opsz(const struct si_sig_privkey *privkey)
 	return sx_pk_curve_opsize(privkey->key.eckey.curve);
 }
 
+
 const struct si_sig_def *const si_sig_def_ecdsa = &(const struct si_sig_def){
 	.sign = si_sig_create_ecdsa_sign,
 	.sign_digest = si_sig_create_ecdsa_sign_digest,
