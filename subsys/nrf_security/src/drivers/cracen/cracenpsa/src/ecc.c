@@ -12,19 +12,21 @@
 #include <silexpk/iomem.h>
 #include <silexpk/cmddefs/ecc.h>
 #include <cracen/statuscodes.h>
-#include "cracen_psa.h"
+#include <cracen_psa.h>
 #include "ecc.h"
 #include "common.h"
 
 #define MAX_ECC_ATTEMPTS 10
 
-int ecc_create_genpubkey(const char *priv_key, char *pub_key, const struct sx_pk_ecurve *curve)
+int ecc_genpubkey(const uint8_t *priv_key, uint8_t *pub_key, const struct sx_pk_ecurve *curve)
 {
-	const char **outputs;
+	const uint8_t **outputs;
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ecp_mult inputs;
 	int opsz;
 	int status;
+
+	opsz = sx_pk_curve_opsize(curve);
 
 	for (int i = 0; i <= MAX_ECC_ATTEMPTS; i++) {
 		pkreq = sx_pk_acquire_req(SX_PK_CMD_ECC_PTMUL);
@@ -37,8 +39,6 @@ int ecc_create_genpubkey(const char *priv_key, char *pub_key, const struct sx_pk
 			return pkreq.status;
 		}
 
-		opsz = sx_pk_curve_opsize(curve);
-
 		/* Write the private key (random) into ba414ep device memory */
 		sx_wrpkmem(inputs.k.addr, priv_key, opsz);
 		sx_pk_write_curve_gen(pkreq.req, curve, inputs.px, inputs.py);
@@ -49,7 +49,7 @@ int ecc_create_genpubkey(const char *priv_key, char *pub_key, const struct sx_pk
 		if (status != SX_OK) {
 			return status;
 		}
-		outputs = sx_pk_get_output_ops(pkreq.req);
+		outputs = (const uint8_t **)sx_pk_get_output_ops(pkreq.req);
 
 		/* When countermeasures are used, the operation may fail with error code
 		 * SX_ERR_NOT_INVERTIBLE. In this case we can try again.
@@ -69,11 +69,11 @@ int ecc_create_genpubkey(const char *priv_key, char *pub_key, const struct sx_pk
 	return status;
 }
 
-int ecc_create_genprivkey(const struct sx_pk_ecurve *curve, char *priv_key, size_t priv_key_size)
+int ecc_genprivkey(const struct sx_pk_ecurve *curve, uint8_t *priv_key, size_t priv_key_size)
 {
 	int status;
 	int opsz = sx_pk_curve_opsize(curve);
-	const char *curve_n = sx_pk_curve_order(curve);
+	const uint8_t *curve_n = (const uint8_t *)sx_pk_curve_order(curve);
 	size_t keysz = (size_t)sx_pk_curve_opsize(curve);
 
 	if (priv_key_size < keysz) {
@@ -83,7 +83,7 @@ int ecc_create_genprivkey(const struct sx_pk_ecurve *curve, char *priv_key, size
 	/* generate private key, a random number in [1, n-1], where n is the curve
 	 * order
 	 */
-	status = rndinrange_create((const unsigned char *)curve_n, opsz, priv_key);
+	status = get_rnd_in_range(curve_n, opsz, priv_key);
 
 	return status;
 }
