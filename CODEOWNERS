@@ -927,8 +927,9 @@
 /tests/tfm/                               @nrfconnect/ncs-aegir @stephen-nordic @magnev
 /tests/unity/                             @nordic-krch
 /tests/zephyr/drivers/adc/                @nrfconnect/ncs-low-level-test
-/tests/zephyr/drivers/comparator/         @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/clock_control/      @nrfconnect/ncs-low-level-test
+/tests/zephyr/drivers/comparator/         @nrfconnect/ncs-low-level-test
+/tests/zephyr/drivers/counter/            @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/flash/common/       @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /tests/zephyr/drivers/flash/negative_tests/ @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/gpio/               @nrfconnect/ncs-low-level-test

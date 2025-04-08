@@ -1529,3 +1529,8 @@ ci_tests_zephyr_boards_nrf_i2c:
   files:
     - nrf/tests/zephyr/boards/nrf/i2c/
     - zephyr/tests/boards/nrf/i2c/
+
+ci_tests_zephyr_drivers_counter:
+  files:
+    - nrf/tests/zephyr/drivers/counter/
+    - zephyr/tests/drivers/counter/

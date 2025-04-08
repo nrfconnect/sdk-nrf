@@ -1,0 +1,13 @@
+tests:
+  nrf.extended.drivers.counter.basic_api:
+    tags:
+      - drivers
+      - counter
+      - ci_tests_zephyr_drivers_counter
+    depends_on: counter
+    platform_allow:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
