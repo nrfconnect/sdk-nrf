@@ -66,6 +66,33 @@ static int cracen_signature_set_hashalgo_from_digestsz(const struct sxhashalg **
 	return SX_OK;
 }
 
+static int set_internal_defs(psa_algorithm_t alg, bool is_message, size_t input_length,
+			     const struct si_sig_def **def, const struct sxhashalg **hashalg,
+			     size_t *saltsz)
+{
+	int sx_status;
+
+	if (is_message) {
+		sx_status = cracen_signature_set_hashalgo(hashalg, alg);
+	} else {
+		sx_status = cracen_signature_set_hashalgo_from_digestsz(hashalg, alg, input_length);
+	}
+	if (sx_status) {
+		return sx_status;
+	}
+
+	if (PSA_ALG_IS_RSA_PSS(alg)) {
+		*def = si_sig_def_rsa_pss;
+		*saltsz = sx_hash_get_alg_digestsz(*hashalg);
+	} else if (PSA_ALG_IS_RSA_PKCS1V15_SIGN(alg)) {
+		*def = si_sig_def_rsa_pkcs1v15;
+	} else {
+		return SX_ERR_INCOMPATIBLE_HW;
+	}
+
+	return SX_OK;
+}
+
 psa_status_t cracen_signature_rsa_sign(bool is_message, const psa_key_attributes_t *attributes,
 				       const uint8_t *key_buffer, size_t key_buffer_size,
 				       psa_algorithm_t alg, const uint8_t *input,
@@ -95,12 +122,8 @@ psa_status_t cracen_signature_rsa_sign(bool is_message, const psa_key_attributes
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	if (is_message) {
-		sx_status = cracen_signature_set_hashalgo(&privkey.hashalg, alg);
-	} else {
-		sx_status = cracen_signature_set_hashalgo_from_digestsz(&privkey.hashalg, alg,
-									input_length);
-	}
+	sx_status = set_internal_defs(alg, is_message, input_length,
+		  &privkey.def, &privkey.hashalg, &privkey.saltsz);
 	if (sx_status) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
@@ -111,14 +134,6 @@ psa_status_t cracen_signature_rsa_sign(bool is_message, const psa_key_attributes
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	if (PSA_ALG_IS_RSA_PSS(alg)) {
-		privkey.def = si_sig_def_rsa_pss;
-		privkey.saltsz = sx_hash_get_alg_digestsz(privkey.hashalg);
-	} else if (PSA_ALG_IS_RSA_PKCS1V15_SIGN(alg)) {
-		privkey.def = si_sig_def_rsa_pkcs1v15;
-	} else {
-		return PSA_ERROR_NOT_SUPPORTED;
-	}
 
 	sign.sz = PSA_SIGN_OUTPUT_SIZE(PSA_KEY_TYPE_RSA_KEY_PAIR, key_bits_attr, alg);
 	sign.r = (char *)signature;
@@ -149,6 +164,7 @@ psa_status_t cracen_signature_rsa_sign(bool is_message, const psa_key_attributes
 #endif /* PSA_MAX_RSA_KEY_BITS > 0 */
 }
 
+
 psa_status_t cracen_signature_rsa_verify(bool is_message, const psa_key_attributes_t *attributes,
 					 const uint8_t *key_buffer, size_t key_buffer_size,
 					 psa_algorithm_t alg, const uint8_t *input,
@@ -177,12 +193,9 @@ psa_status_t cracen_signature_rsa_verify(bool is_message, const psa_key_attribut
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	if (is_message) {
-		sx_status = cracen_signature_set_hashalgo(&pubkey.hashalg, alg);
-	} else {
-		sx_status = cracen_signature_set_hashalgo_from_digestsz(&pubkey.hashalg, alg,
-									input_length);
-	}
+
+	sx_status = set_internal_defs(alg, is_message, input_length,
+		  &pubkey.def, &pubkey.hashalg, &pubkey.saltsz);
 	if (sx_status) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
@@ -195,14 +208,6 @@ psa_status_t cracen_signature_rsa_verify(bool is_message, const psa_key_attribut
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	if (PSA_ALG_IS_RSA_PSS(alg)) {
-		pubkey.def = si_sig_def_rsa_pss;
-		pubkey.saltsz = sx_hash_get_alg_digestsz(pubkey.hashalg);
-	} else if (PSA_ALG_IS_RSA_PKCS1V15_SIGN(alg)) {
-		pubkey.def = si_sig_def_rsa_pkcs1v15;
-	} else {
-		return PSA_ERROR_NOT_SUPPORTED;
-	}
 
 	if ((size_t)signature_length !=
 	    PSA_SIGN_OUTPUT_SIZE(PSA_KEY_TYPE_RSA_KEY_PAIR, key_bits_attr, alg)) {
