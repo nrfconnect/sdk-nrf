@@ -69,16 +69,6 @@ suit_plat_err_t suit_dfu_cache_partition_slot_foreach(struct dfu_cache_pool *cac
 suit_plat_err_t suit_dfu_cache_partition_is_initialized(struct dfu_cache_pool *cache_pool);
 
 /**
- * @brief Check if cache partition content is erased.
- *
- * @param cache_pool  Pointer to the SUIT cache structure.
- *
- * @return SUIT_PLAT_SUCCESS in case of success, SUIT_PLAT_ERR_NOMEM if partition is not empty,
- *         otherwise an error code
- */
-suit_plat_err_t suit_dfu_cache_partition_is_empty(struct dfu_cache_pool *cache_pool);
-
-/**
  * @brief Find a free slot in the cache partition.
  *
  * @param cache_pool  Pointer to the SUIT cache pool structure.
