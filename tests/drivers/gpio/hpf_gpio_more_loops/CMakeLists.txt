@@ -7,7 +7,7 @@
 cmake_minimum_required(VERSION 3.20.0)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
-project(egpio_more_loops)
+project(hpf_gpio_more_loops)
 
 FILE(GLOB app_sources src/main.c)
 target_sources(app PRIVATE ${app_sources})

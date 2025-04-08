@@ -6,20 +6,20 @@
 
 / {
 	aliases {
-		mspi0 = &sdp_mspi_api;
+		mspi0 = &hpf_mspi_api;
 	};
 };
 
 &cpuflpr_vpr {
 	status = "okay";
 
-	sdp_mspi_api: sdp_mspi_api {
-		compatible = "nordic,nrfe-mspi-controller";
+	hpf_mspi_api: hpf_mspi_api {
+		compatible = "nordic,hpf-mspi-controller";
 		#address-cells = <1>;
 		#size-cells = <0>;
 		clock-frequency = <DT_FREQ_M(64)>;
-		pinctrl-0 = <&sdp_mspi_default>;
-		pinctrl-1 = <&sdp_mspi_sleep>;
+		pinctrl-0 = <&hpf_mspi_default>;
+		pinctrl-1 = <&hpf_mspi_sleep>;
 		pinctrl-names = "default", "sleep";
 		status = "okay";
 
