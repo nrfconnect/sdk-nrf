@@ -15,9 +15,9 @@
 	test_gpios {
 		compatible = "gpio-leds";
 		out_gpios: out_gpios {
-			gpios = <&egpio 10 GPIO_ACTIVE_HIGH>, <&egpio 9 GPIO_ACTIVE_HIGH>,
-					<&egpio 8 GPIO_ACTIVE_HIGH>, <&egpio 7 GPIO_ACTIVE_HIGH>,
-					<&egpio 6 GPIO_ACTIVE_HIGH>;
+			gpios = <&hpf_gpio 10 GPIO_ACTIVE_HIGH>, <&hpf_gpio 9 GPIO_ACTIVE_HIGH>,
+				<&hpf_gpio 8 GPIO_ACTIVE_HIGH>, <&hpf_gpio 7 GPIO_ACTIVE_HIGH>,
+				<&hpf_gpio 6 GPIO_ACTIVE_HIGH>;
 		};
 
 		in_gpios: in_gpios {

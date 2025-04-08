@@ -1,6 +1,6 @@
 common:
   tags:
-    - ci_tests_drivers_sdp
+    - ci_tests_drivers_hpf
     - drivers
     - mspi
   sysbuild: true
@@ -8,7 +8,7 @@ common:
   harness_config:
     type: one_line
     regex:
-      - ">>> SDP APP FATAL ERROR"
+      - ">>> HPF APP FATAL ERROR"
 
 tests:
   drivers.mspi.hpf_trap_handler:
@@ -18,6 +18,6 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="./boards/nrf54l15dk_nrf54l15_cpuapp_memory.overlay"
-      - sdp_CONFIG_ASSERT=y
-      - sdp_CONFIG_ASSERT_TEST=y
-      - sdp_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/drivers/mspi/trap_handler/boards/nrf54l15dk_nrf54l15_cpuflpr_memory.overlay"
+      - hpf_CONFIG_ASSERT=y
+      - hpf_CONFIG_ASSERT_TEST=y
+      - hpf_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/drivers/mspi/trap_handler/boards/nrf54l15dk_nrf54l15_cpuflpr_memory.overlay"

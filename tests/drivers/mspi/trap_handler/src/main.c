@@ -9,7 +9,7 @@
 #include <zephyr/drivers/mspi_emul.h>
 #include <zephyr/ztest.h>
 
-#define MSPI_BUS_NODE DT_NODELABEL(sdp_mspi)
+#define MSPI_BUS_NODE DT_NODELABEL(hpf_mspi)
 
 static const struct device *mspi_devices[] = {
 	DT_FOREACH_CHILD_STATUS_OKAY_SEP(MSPI_BUS_NODE, DEVICE_DT_GET, (,))

@@ -6,8 +6,8 @@
 
 / {
 	resources {
-		compatible = "test-egpio";
-		out-gpios = <&egpio 10 0>;
+		compatible = "test-hpf-gpio";
+		out-gpios = <&hpf_gpio 10 0>;
 		in-gpios = <&gpio1 14 0>;
 	};
 };

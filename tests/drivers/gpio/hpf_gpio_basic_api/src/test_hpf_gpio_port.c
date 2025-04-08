@@ -5,7 +5,7 @@
  */
 
 
-#include "test_egpio.h"
+#include "test_hpf_gpio.h"
 
 #define ALL_BITS ((gpio_port_value_t)-1)
 
@@ -68,11 +68,11 @@ static int setup(void)
 	gpio_port_value_t v1;
 
 	TC_PRINT("-> Test uses following backend: ");
-	if (IS_ENABLED(CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICMSG)) {
+	if (IS_ENABLED(CONFIG_GPIO_HPF_GPIO_BACKEND_ICMSG)) {
 		TC_PRINT("ICMsg\n");
-	} else if (IS_ENABLED(CONFIG_GPIO_NRFE_EGPIO_BACKEND_ICBMSG)) {
+	} else if (IS_ENABLED(CONFIG_GPIO_HPF_GPIO_BACKEND_ICBMSG)) {
 		TC_PRINT("ICBMsg\n");
-	} else if (IS_ENABLED(CONFIG_GPIO_NRFE_EGPIO_BACKEND_MBOX)) {
+	} else if (IS_ENABLED(CONFIG_GPIO_HPF_GPIO_BACKEND_MBOX)) {
 		TC_PRINT("MBOX\n");
 	} else {
 		TC_PRINT("unknown\n");
@@ -503,7 +503,7 @@ static int stress_gpio_pin_set_raw(void)
 	return TC_PASS;
 }
 
-ZTEST(egpio_port, test_egpio_port)
+ZTEST(hpf_gpio_port, test_hpf_gpio_port)
 {
 	zassert_equal(setup(), TC_PASS,
 		      "device setup failed");
@@ -522,4 +522,4 @@ ZTEST(egpio_port, test_egpio_port)
 }
 
 /* Test GPIO port configuration */
-ZTEST_SUITE(egpio_port, NULL, NULL, NULL, NULL, NULL);
+ZTEST_SUITE(hpf_gpio_port, NULL, NULL, NULL, NULL, NULL);
