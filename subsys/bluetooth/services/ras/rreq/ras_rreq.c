@@ -195,6 +195,7 @@ static void data_receive_finished(struct bt_ras_rreq *rreq)
 
 	rreq->last_segment_received = false;
 	rreq->next_expected_segment_counter = 0;
+	rreq->data_error_status = 0;
 }
 
 static uint8_t ranging_data_overwritten_notify_func(struct bt_conn *conn,

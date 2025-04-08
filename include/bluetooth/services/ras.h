@@ -90,6 +90,14 @@ extern "C" {
 	 (BT_RAS_MAX_STEPS_PER_PROCEDURE * BT_RAS_STEP_MODE_LEN) +                                 \
 	 (BT_RAS_MAX_STEPS_PER_PROCEDURE * BT_RAS_MAX_STEP_DATA_LEN))
 
+/** @brief RAS Features as defined in RAS Specification, Table 3.3. */
+enum ras_feat {
+	RAS_FEAT_REALTIME_RD          = BIT(0),
+	RAS_FEAT_RETRIEVE_LOST_RD_SEG = BIT(1),
+	RAS_FEAT_ABORT_OP             = BIT(2),
+	RAS_FEAT_FILTER_RD            = BIT(3),
+};
+
 /** @brief Ranging Header structure as defined in RAS Specification, Table 3.7. */
 struct ras_ranging_header {
 	/** Ranging Counter is lower 12-bits of CS Procedure_Counter provided by the Core Controller
@@ -333,7 +341,7 @@ typedef void (*bt_ras_rreq_rd_overwritten_cb_t)(struct bt_conn *conn, uint16_t r
  * the peer.
  *
  * @param[in] conn            Connection Object.
- * @param[in] ranging_counter Ranging counter which has been received.
+ * @param[in] ranging_counter Ranging counter that has been received.
  * @param[in] err             Error code, 0 if successful. Otherwise a negative error code.
  */
 typedef void (*bt_ras_rreq_ranging_data_received_t)(struct bt_conn *conn, uint16_t ranging_counter,
@@ -372,7 +380,7 @@ int bt_ras_rreq_alloc_and_assign_handles(struct bt_gatt_dm *dm, struct bt_conn *
  * characteristic to which the device is already subscribed or unsubscribed (respectively).
  *
  * @param[in] conn Connection object.
- * @param[in] subscription_change_cb CCC write request response callback
+ * @param[in] subscription_change_cb CCC write request response callback.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a negative error code is returned.
@@ -525,7 +533,7 @@ int bt_ras_rreq_rd_overwritten_unsubscribe(struct bt_conn *conn);
  * @note The data callback will be called many times (for as long as the RRSP continues
  *       to send notifications).
  *
- * @param[in] conn Connection Object, which already has associated RREQ context.
+ * @param[in] conn Connection Object that already has an associated RREQ context.
  * @param[in] ranging_data_out     Simple buffer to store received ranging data.
  * @param[in] data_received_cb     Callback called when complete ranging data is received.
  *
@@ -540,7 +548,7 @@ int bt_ras_rreq_realtime_rd_subscribe(struct bt_conn *conn, struct net_buf_simpl
  * @note Calling from BT RX thread may return an error as bt_gatt_unsubscribe will not block if
  * there are no available TX buffers.
  *
- * @param[in] conn Connection Object, which already has associated RREQ context.
+ * @param[in] conn Connection Object that already has an associated RREQ context.
  *
  * @retval 0 If the operation was successful.
  *           Otherwise, a negative error code is returned.

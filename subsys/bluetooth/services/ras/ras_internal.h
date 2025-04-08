@@ -57,14 +57,6 @@ enum rascp_rsp_code {
 	RASCP_RESPONSE_NO_RECORDS_FOUND        = 0x08,
 };
 
-/** @brief RAS Features as defined in RAS Specification, Table 3.3. */
-enum ras_feat {
-	RAS_FEAT_REALTIME_RD          = BIT(0),
-	RAS_FEAT_RETRIEVE_LOST_RD_SEG = BIT(1),
-	RAS_FEAT_ABORT_OP             = BIT(2),
-	RAS_FEAT_FILTER_RD            = BIT(3),
-};
-
 /** @brief RAS ATT Application error codes as defined in RAS Specification, Table 2.1. */
 enum ras_att_error {
 	RAS_ATT_ERROR_CCC_CONFIG         = 0xFD,
