@@ -22,7 +22,7 @@
 menuconfig SSF_$(service_name)_SERVICE_ENABLED
 	bool "$(service_name_str) service"
 	default y if $(service_default_enabled)
-	depends on SDFW_SERVICES_ENABLED
+	depends on SDFW_SERVICES_ENABLED || SSF_V_2
 
 if SSF_$(service_name)_SERVICE_ENABLED
 
