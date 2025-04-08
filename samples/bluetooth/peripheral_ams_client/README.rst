@@ -139,7 +139,7 @@ Testing with Bluetooth Low Energy app
 #. Click :guilabel:`Apply to device`.
 #. Select the :guilabel:`Connection Map` tab.
 #. Select :guilabel:`Dongle configuration` > :guilabel:`Security parameters`.
-#. Check :guilabel:`Perform Bonding`, and click :guilabel:`Apply`.
+#. Check :guilabel:`Perform Bonding` and :guilabel:`Enable LE Secure Connection pairing`, and click :guilabel:`Apply`.
 #. Connect to the device from the app.
    The device is advertising as "Nordic_AMS".
 #. Wait until the bond is established.
