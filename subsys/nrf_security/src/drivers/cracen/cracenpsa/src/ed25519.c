@@ -45,46 +45,46 @@
  * It is used for domain separation between Ed25519 and Ed25519ph.
  * This can not be stored as a const due to hardware limitations
  */
-static char dom2[] = {0x53, 0x69, 0x67, 0x45, 0x64, 0x32, 0x35, 0x35, 0x31, 0x39, 0x20, 0x6e,
-		      0x6f, 0x20, 0x45, 0x64, 0x32, 0x35, 0x35, 0x31, 0x39, 0x20, 0x63, 0x6f,
-		      0x6c, 0x6c, 0x69, 0x73, 0x69, 0x6f, 0x6e, 0x73, 0x01, 0x00};
+static uint8_t dom2[] = {0x53, 0x69, 0x67, 0x45, 0x64, 0x32, 0x35, 0x35, 0x31, 0x39, 0x20, 0x6e,
+			 0x6f, 0x20, 0x45, 0x64, 0x32, 0x35, 0x35, 0x31, 0x39, 0x20, 0x63, 0x6f,
+			 0x6c, 0x6c, 0x69, 0x73, 0x69, 0x6f, 0x6e, 0x73, 0x01, 0x00};
 
-static int ed25519_calculate_r(char *workmem, const uint8_t *message, size_t message_length,
+static int ed25519_calculate_r(uint8_t *workmem, const uint8_t *message, size_t message_length,
 			       bool prehash)
 {
-	char const *hash_array[] = {dom2, workmem, message};
+	uint8_t const *hash_array[] = {dom2, workmem, message};
 	size_t hash_array_lengths[] = {sizeof(dom2), SX_ED25519_SZ, message_length};
 	size_t offset = prehash ? 0 : 1;
 	size_t input_count = 3 - offset;
 
-	return hash_all_inputs(hash_array + offset, hash_array_lengths + offset, input_count,
-			       &sxhashalg_sha2_512, workmem + SX_ED25519_DGST_SZ);
+	return cracen_hash_all_inputs(hash_array + offset, hash_array_lengths + offset, input_count,
+				      &sxhashalg_sha2_512, workmem + SX_ED25519_DGST_SZ);
 }
 
-static int ed25519_calculate_k(char *workmem, char *point_r, const char *message,
+static int ed25519_calculate_k(uint8_t *workmem, uint8_t *point_r, const uint8_t *message,
 			       size_t message_length, bool prehash)
 {
-	char const *hash_array[] = {dom2, point_r, workmem, message};
+	uint8_t const *hash_array[] = {dom2, point_r, workmem, message};
 	size_t hash_array_lengths[] = {sizeof(dom2), SX_ED25519_SZ, SX_ED25519_SZ, message_length};
 	size_t offset = prehash ? 0 : 1;
 	size_t input_count = 4 - offset;
 
-	return hash_all_inputs(&hash_array[offset], &hash_array_lengths[offset], input_count,
-			       &sxhashalg_sha2_512, workmem);
+	return cracen_hash_all_inputs(&hash_array[offset], &hash_array_lengths[offset], input_count,
+				      &sxhashalg_sha2_512, workmem);
 }
 
-static int ed25519_sign_internal(const uint8_t *priv_key, char *signature, const uint8_t *message,
-				 size_t message_length, bool prehash)
+static int ed25519_sign_internal(const uint8_t *priv_key, uint8_t *signature,
+				 const uint8_t *message, size_t message_length, bool prehash)
 {
 	int status;
-	char workmem[5 * SX_ED25519_SZ];
+	uint8_t workmem[5 * SX_ED25519_SZ];
 	uint8_t pnt_r[SX_ED25519_DGST_SZ];
-	char *area_1 = workmem;
-	char *area_2 = workmem + AREA2_MEM_OFFSET;
-	char *area_4 = workmem + AREA4_MEM_OFFSET;
+	uint8_t *area_1 = workmem;
+	uint8_t *area_2 = workmem + AREA2_MEM_OFFSET;
+	uint8_t *area_4 = workmem + AREA4_MEM_OFFSET;
 
 	/* Hash the private key, the digest is stored in the first 64 bytes of workmem*/
-	status = hash_input(priv_key, SX_ED25519_SZ, &sxhashalg_sha2_512, area_1);
+	status = cracen_hash_input(priv_key, SX_ED25519_SZ, &sxhashalg_sha2_512, area_1);
 	if (status != SX_OK) {
 		return status;
 	}
@@ -147,20 +147,21 @@ static int ed25519_sign_internal(const uint8_t *priv_key, char *signature, const
 	return status;
 }
 
-int cracen_ed25519_sign(const uint8_t *priv_key, char *signature, const uint8_t *message,
+int cracen_ed25519_sign(const uint8_t *priv_key, uint8_t *signature, const uint8_t *message,
 			size_t message_length)
 {
 	return ed25519_sign_internal(priv_key, signature, message, message_length, false);
 }
 
-int cracen_ed25519ph_sign(const uint8_t *priv_key, char *signature, const uint8_t *message,
+int cracen_ed25519ph_sign(const uint8_t *priv_key, uint8_t *signature, const uint8_t *message,
 			  size_t message_length, bool is_message)
 {
-	char hashedmessage[SX_ED25519_DGST_SZ];
+	uint8_t hashedmessage[SX_ED25519_DGST_SZ];
 	int status;
 
 	if (is_message) {
-		status = hash_input(message, message_length, &sxhashalg_sha2_512, hashedmessage);
+		status = cracen_hash_input(message, message_length, &sxhashalg_sha2_512,
+					   hashedmessage);
 		if (status != SX_OK) {
 			return status;
 		}
@@ -172,45 +173,46 @@ int cracen_ed25519ph_sign(const uint8_t *priv_key, char *signature, const uint8_
 	}
 }
 
-static int ed25519_verify_internal(const uint8_t *pub_key, const char *message,
-				   size_t message_length, const char *signature, bool prehash)
+static int ed25519_verify_internal(const uint8_t *pub_key, const uint8_t *message,
+				   size_t message_length, const uint8_t *signature, bool prehash)
 {
 	int status;
-	char digest[SX_ED25519_DGST_SZ];
+	uint8_t digest[SX_ED25519_DGST_SZ];
 	size_t ed25519_sz = SX_ED25519_SZ;
 	size_t offset = prehash ? 0 : 1;
 	size_t input_count = 4 - offset;
 
-	char const *hash_array[] = {dom2, signature, (const char *)pub_key, message};
+	uint8_t const *hash_array[] = {dom2, signature, pub_key, message};
 	size_t hash_array_lengths[] = {sizeof(dom2), ed25519_sz, ed25519_sz, message_length};
 
-	status = hash_all_inputs(&hash_array[offset], &hash_array_lengths[offset], input_count,
-				 &sxhashalg_sha2_512, digest);
+	status = cracen_hash_all_inputs(&hash_array[offset], &hash_array_lengths[offset],
+					input_count, &sxhashalg_sha2_512, digest);
 	if (status != SX_OK) {
 		return status;
 	}
-	status = sx_ed25519_verify((struct sx_ed25519_dgst *)digest,
-				   (struct sx_ed25519_pt *)pub_key,
-				   (const struct sx_ed25519_v *)(signature + SX_ED25519_SZ),
-				   (const struct sx_ed25519_pt *)signature);
+	status =
+		sx_ed25519_verify((struct sx_ed25519_dgst *)digest, (struct sx_ed25519_pt *)pub_key,
+				  (const struct sx_ed25519_v *)(signature + SX_ED25519_SZ),
+				  (const struct sx_ed25519_pt *)signature);
 
 	return status;
 }
 
-int cracen_ed25519_verify(const uint8_t *pub_key, const char *message, size_t message_length,
-			  const char *signature)
+int cracen_ed25519_verify(const uint8_t *pub_key, const uint8_t *message, size_t message_length,
+			  const uint8_t *signature)
 {
 	return ed25519_verify_internal(pub_key, message, message_length, signature, false);
 }
 
-int cracen_ed25519ph_verify(const uint8_t *pub_key, const char *message, size_t message_length,
-			    const char *signature, bool is_message)
+int cracen_ed25519ph_verify(const uint8_t *pub_key, const uint8_t *message, size_t message_length,
+			    const uint8_t *signature, bool is_message)
 {
 	int status;
-	char message_digest[SX_ED25519_DGST_SZ];
+	uint8_t message_digest[SX_ED25519_DGST_SZ];
 
 	if (is_message) {
-		status = hash_input(message, message_length, &sxhashalg_sha2_512, message_digest);
+		status = cracen_hash_input(message, message_length, &sxhashalg_sha2_512,
+					   message_digest);
 		if (status != SX_OK) {
 			return status;
 		}
@@ -224,10 +226,10 @@ int cracen_ed25519ph_verify(const uint8_t *pub_key, const char *message, size_t 
 int cracen_ed25519_create_pubkey(const uint8_t *priv_key, uint8_t *pub_key)
 {
 	int status;
-	char digest[SX_ED25519_DGST_SZ];
-	char *pub_key_A = digest + SX_ED25519_SZ;
+	uint8_t digest[SX_ED25519_DGST_SZ];
+	uint8_t *pub_key_A = digest + SX_ED25519_SZ;
 
-	status = hash_input(priv_key, SX_ED25519_SZ, &sxhashalg_sha2_512, digest);
+	status = cracen_hash_input(priv_key, SX_ED25519_SZ, &sxhashalg_sha2_512, digest);
 	if (status != SX_OK) {
 		return status;
 	}

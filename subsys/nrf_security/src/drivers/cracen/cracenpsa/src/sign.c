@@ -209,8 +209,7 @@ static int cracen_signature_prepare_ec_pubkey(const char *key_buffer, size_t key
 				return SX_OK;
 
 			} else {
-				status = ecc_create_genpubkey(key_buffer, pubkey_buffer, *sicurve);
-				return status;
+				status = ecc_genpubkey(key_buffer, pubkey_buffer, *sicurve);
 			}
 		}
 	}
@@ -330,13 +329,12 @@ static psa_status_t handle_ecdsa_sign(bool is_message, const uint8_t *key_buffer
 				      uint8_t *signature, size_t *signature_length)
 {
 	int status;
-	struct ecc_priv_key privkey;
+	struct cracen_ecc_priv_key privkey;
 	struct sxhashalg hashalg = {0};
 	const struct sxhashalg *hashalgpointer = &hashalg;
 
-	privkey.d = (const char *)key_buffer;
+	privkey.d = key_buffer;
 	status = hash_get_algo(alg, &hashalgpointer);
-
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
@@ -447,32 +445,30 @@ static psa_status_t cracen_signature_ecc_verify(bool is_message,
 		return status;
 	}
 
-	size_t public_key_size =
+	const size_t public_key_size =
 		PSA_EXPORT_PUBLIC_KEY_OUTPUT_SIZE(key_type, psa_get_key_bits(attributes));
 	if (public_key_size == 0) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	char pubkey_buffer[public_key_size];
+	uint8_t pubkey_buffer[public_key_size];
 	const struct sx_pk_ecurve *curve = NULL;
 
-	int sx_status = cracen_signature_prepare_ec_pubkey(
-		(const char *)key_buffer, key_buffer_size, &curve, alg, attributes, pubkey_buffer);
+	int sx_status =
+		cracen_signature_prepare_ec_pubkey(key_buffer, key_buffer_size,
+						   &curve, alg, attributes, pubkey_buffer);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
-
 	if (signature_length != 2 * curve->sz) {
 		return PSA_ERROR_INVALID_SIGNATURE;
 	}
-
 	if (alg == PSA_ALG_ED25519PH) {
-		sx_status = cracen_ed25519ph_verify(pubkey_buffer, (char *)input, input_length,
-						    signature, is_message);
+		sx_status = cracen_ed25519ph_verify(pubkey_buffer, input, input_length, signature,
+						    is_message);
 
 	} else if (alg == PSA_ALG_PURE_EDDSA) {
-		sx_status = cracen_ed25519_verify(pubkey_buffer, (char *)input, input_length,
-						  signature);
+		sx_status = cracen_ed25519_verify(pubkey_buffer, input, input_length, signature);
 
 	} else if (PSA_ALG_IS_ECDSA(alg) || PSA_ALG_IS_DETERMINISTIC_ECDSA(alg)) {
 		struct sxhashalg hashalg = {0};
@@ -483,18 +479,15 @@ static psa_status_t cracen_signature_ecc_verify(bool is_message,
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
-
 		status = hash_get_algo(alg, &hash_algorithm_ptr);
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
-
 		sx_status = is_message ? cracen_ecdsa_verify_message(pubkey_buffer,
 								     hash_algorithm_ptr, input,
 								     input_length, curve, signature)
 				       : cracen_ecdsa_verify_digest(pubkey_buffer, input,
 								    input_length, curve, signature);
-
 	} else {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}

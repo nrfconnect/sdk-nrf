@@ -3,8 +3,8 @@
  *
  *  SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include "../include/sxsymcrypt/hash.h"
-#include "../include/sxsymcrypt/hashdefs.h"
+#include <sxsymcrypt/hash.h>
+#include <sxsymcrypt/hashdefs.h>
 #include <cracen/statuscodes.h>
 #include "crypmasterregs.h"
 #include "hw.h"

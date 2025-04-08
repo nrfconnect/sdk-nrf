@@ -15,8 +15,6 @@ list(APPEND cracen_driver_sources
   ${CMAKE_CURRENT_LIST_DIR}/src/common.c
   ${CMAKE_CURRENT_LIST_DIR}/src/mem_helpers.c
   ${CMAKE_CURRENT_LIST_DIR}/src/ec_helpers.c
-  ${CMAKE_CURRENT_LIST_DIR}/src/ecc.c
-  ${CMAKE_CURRENT_LIST_DIR}/src/rndinrange.c
 
   # Note: We always need to have blkcipher.c and ctr_drbg.c since it
   # is used directly by many Cracen drivers.
@@ -50,6 +48,8 @@ if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
     ${CMAKE_CURRENT_LIST_DIR}/src/ecc.c
     ${CMAKE_CURRENT_LIST_DIR}/src/ed25519.c
     ${CMAKE_CURRENT_LIST_DIR}/src/hmac.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/rsapss.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/rndinrange.c
   )
 endif()
 
@@ -67,11 +67,10 @@ endif()
 
 if(CONFIG_PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER OR CONFIG_PSA_NEED_CRACEN_KMU_DRIVER OR CONFIG_MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS)
   list(APPEND cracen_driver_sources
-    ${CMAKE_CURRENT_LIST_DIR}/src/ed25519.c
     ${CMAKE_CURRENT_LIST_DIR}/src/key_management.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/ed25519.c
     ${CMAKE_CURRENT_LIST_DIR}/src/ecdsa.c
     ${CMAKE_CURRENT_LIST_DIR}/src/ecc.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/rndinrange.c
   )
 endif()
 
