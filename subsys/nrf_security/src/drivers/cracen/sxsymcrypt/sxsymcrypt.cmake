@@ -18,5 +18,4 @@ list(APPEND cracen_driver_sources
 
 list(APPEND cracen_driver_include_dirs
     ${CMAKE_CURRENT_LIST_DIR}/include
-    ${CMAKE_CURRENT_LIST_DIR}/src
 )
