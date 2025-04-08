@@ -31,7 +31,7 @@ static void mbox_callback(const struct device *instance, uint32_t channel, void 
 		return;
 	}
 
-	nrfe_gpio_mbox_data_t *rx_data = (nrfe_gpio_mbox_data_t *)user_data;
+	hpf_gpio_mbox_data_t *rx_data = (hpf_gpio_mbox_data_t *)user_data;
 
 	/* Try and get lock for the shared data structure */
 	if (!atomic_cas(&rx_data->lock.locked, DATA_LOCK_STATE_WITH_DATA, DATA_LOCK_STATE_BUSY)) {
@@ -40,7 +40,7 @@ static void mbox_callback(const struct device *instance, uint32_t channel, void 
 		return;
 	}
 
-	nrfe_gpio_data_packet_t *packet = (nrfe_gpio_data_packet_t *)&rx_data->data;
+	hpf_gpio_data_packet_t *packet = (hpf_gpio_data_packet_t *)&rx_data->data;
 
 	cbck(packet);
 
@@ -80,8 +80,8 @@ int backend_init(backend_callback_t callback)
 	int ret = 0;
 	cbck = callback;
 
-	static nrfe_gpio_mbox_data_t *rx_data =
-		(nrfe_gpio_mbox_data_t *)((uint8_t *)(DT_REG_ADDR(DT_NODELABEL(sram_rx))));
+	static hpf_gpio_mbox_data_t *rx_data =
+		(hpf_gpio_mbox_data_t *)((uint8_t *)(DT_REG_ADDR(DT_NODELABEL(sram_rx))));
 
 	ret = mbox_init((void *)rx_data);
 	if (ret < 0) {

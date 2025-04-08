@@ -7,11 +7,11 @@
 #ifndef _BACKEND_H__
 #define _BACKEND_H__
 
-#include <drivers/gpio/nrfe_gpio.h>
+#include <drivers/gpio/hpf_gpio.h>
 
-#if !defined(CONFIG_SDP_GPIO_BACKEND_ICMSG) && \
-	!defined(CONFIG_SDP_GPIO_BACKEND_MBOX) && \
-	!defined(CONFIG_SDP_GPIO_BACKEND_ICBMSG)
+#if !defined(CONFIG_HPF_GPIO_BACKEND_ICMSG) && \
+	!defined(CONFIG_HPF_GPIO_BACKEND_MBOX) && \
+	!defined(CONFIG_HPF_GPIO_BACKEND_ICBMSG)
 #error "Define communication backend type"
 #endif
 
@@ -20,7 +20,7 @@
  *
  * @param packet New packet.
  */
-typedef void (*backend_callback_t)(nrfe_gpio_data_packet_t *packet);
+typedef void (*backend_callback_t)(hpf_gpio_data_packet_t *packet);
 
 /**
  * @brief Initialize backend.

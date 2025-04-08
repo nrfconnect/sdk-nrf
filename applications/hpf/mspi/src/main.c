@@ -16,7 +16,7 @@
 #include <hal/nrf_timer.h>
 #include <haly/nrfy_gpio.h>
 
-#include <drivers/mspi/nrfe_mspi.h>
+#include <drivers/mspi/hpf_mspi.h>
 
 #define SUPPORTED_IO_MODES_COUNT 7
 
@@ -50,14 +50,14 @@
 #ifdef CONFIG_SOC_NRF54L15
 #define NRF_GPIOHSPADCTRL ((NRF_GPIOHSPADCTRL_Type *)NRF_P2_S_BASE)
 #else
-#error "Unsupported SoC for SDP MSPI"
+#error "Unsupported SoC for HPF MSPI"
 #endif
 
-#define DATA_LINE_INDEX(pinctr_fun) (pinctr_fun - NRF_FUN_SDP_MSPI_DQ0)
+#define DATA_LINE_INDEX(pinctr_fun) (pinctr_fun - NRF_FUN_HPF_MSPI_DQ0)
 
-BUILD_ASSERT(CONFIG_SDP_MSPI_MAX_RESPONSE_SIZE > 0, "Response max size should be greater that 0");
+BUILD_ASSERT(CONFIG_HPF_MSPI_MAX_RESPONSE_SIZE > 0, "Response max size should be greater that 0");
 
-static const uint8_t pin_to_vio_map[NRFE_MSPI_PINS_MAX] = {
+static const uint8_t pin_to_vio_map[HPF_MSPI_PINS_MAX] = {
 	4,  /* Physical pin 0 */
 	0,  /* Physical pin 1 */
 	1,  /* Physical pin 2 */
@@ -86,17 +86,17 @@ static volatile uint8_t ce_vios[DEVICES_MAX];
 static volatile uint8_t data_vios_count;
 static volatile uint8_t data_vios[DATA_PINS_MAX];
 static volatile uint8_t clk_vio;
-static volatile nrfe_mspi_dev_config_t nrfe_mspi_devices[DEVICES_MAX];
-static volatile nrfe_mspi_xfer_config_t nrfe_mspi_xfer_config;
-static volatile nrfe_mspi_xfer_config_t *nrfe_mspi_xfer_config_ptr = &nrfe_mspi_xfer_config;
+static volatile hpf_mspi_dev_config_t hpf_mspi_devices[DEVICES_MAX];
+static volatile hpf_mspi_xfer_config_t hpf_mspi_xfer_config;
+static volatile hpf_mspi_xfer_config_t *hpf_mspi_xfer_config_ptr = &hpf_mspi_xfer_config;
 
 static volatile hrt_xfer_t xfer_params;
 
-static volatile uint8_t response_buffer[CONFIG_SDP_MSPI_MAX_RESPONSE_SIZE];
+static volatile uint8_t response_buffer[CONFIG_HPF_MSPI_MAX_RESPONSE_SIZE];
 
 static struct ipc_ept ep;
 static atomic_t ipc_atomic_sem = ATOMIC_INIT(0);
-#if defined(CONFIG_SDP_MSPI_FAULT_TIMER)
+#if defined(CONFIG_HPF_MSPI_FAULT_TIMER)
 static NRF_TIMER_Type *fault_timer;
 #endif
 static volatile uint32_t *cpuflpr_error_ctx_ptr =
@@ -220,28 +220,28 @@ static void configure_clock(enum mspi_cpp_mode cpp_mode)
 	nrf_vpr_csr_vio_config_set(&vio_config);
 }
 
-static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile uint8_t *rx_buffer)
+static void xfer_execute(hpf_mspi_xfer_packet_msg_t *xfer_packet, volatile uint8_t *rx_buffer)
 {
 	nrf_vpr_csr_vio_config_t config;
-	volatile nrfe_mspi_dev_config_t *device =
-		&nrfe_mspi_devices[nrfe_mspi_xfer_config_ptr->device_index];
+	volatile hpf_mspi_dev_config_t *device =
+		&hpf_mspi_devices[hpf_mspi_xfer_config_ptr->device_index];
 	uint16_t dummy_cycles = 0;
 
-	if (xfer_packet->opcode == NRFE_MSPI_TXRX) {
+	if (xfer_packet->opcode == HPF_MSPI_TXRX) {
 		NRFX_ASSERT(device->cnt0_value >= RX_CNT0_MIN_VALUE);
 
 		nrf_vpr_csr_vio_config_get(&config);
 		config.input_sel = true;
 		nrf_vpr_csr_vio_config_set(&config);
 
-		dummy_cycles = nrfe_mspi_xfer_config_ptr->rx_dummy;
+		dummy_cycles = hpf_mspi_xfer_config_ptr->rx_dummy;
 	} else {
-		dummy_cycles = nrfe_mspi_xfer_config_ptr->tx_dummy;
+		dummy_cycles = hpf_mspi_xfer_config_ptr->tx_dummy;
 	}
 
 	xfer_params.counter_value = device->cnt0_value;
 	xfer_params.ce_vio = ce_vios[device->ce_index];
-	xfer_params.ce_hold = nrfe_mspi_xfer_config_ptr->hold_ce;
+	xfer_params.ce_hold = hpf_mspi_xfer_config_ptr->hold_ce;
 	xfer_params.cpp_mode = device->cpp;
 	xfer_params.ce_polarity = device->ce_polarity;
 	xfer_params.bus_widths = io_modes[device->io_mode];
@@ -251,10 +251,10 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile uint
 	 */
 	xfer_packet->command =
 		xfer_packet->command
-		<< (BITS_IN_WORD - nrfe_mspi_xfer_config_ptr->command_length * BITS_IN_BYTE);
+		<< (BITS_IN_WORD - hpf_mspi_xfer_config_ptr->command_length * BITS_IN_BYTE);
 	xfer_packet->address =
 		xfer_packet->address
-		<< (BITS_IN_WORD - nrfe_mspi_xfer_config_ptr->address_length * BITS_IN_BYTE);
+		<< (BITS_IN_WORD - hpf_mspi_xfer_config_ptr->address_length * BITS_IN_BYTE);
 
 	/* Configure command phase. */
 	xfer_params.xfer_data[HRT_FE_COMMAND].fun_out = HRT_FUN_OUT_WORD;
@@ -262,7 +262,7 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile uint
 	xfer_params.xfer_data[HRT_FE_COMMAND].word_count = 0;
 
 	adjust_tail(&xfer_params.xfer_data[HRT_FE_COMMAND], xfer_params.bus_widths.command,
-		    nrfe_mspi_xfer_config_ptr->command_length * BITS_IN_BYTE);
+		    hpf_mspi_xfer_config_ptr->command_length * BITS_IN_BYTE);
 
 	/* Configure address phase. */
 	xfer_params.xfer_data[HRT_FE_ADDRESS].fun_out = HRT_FUN_OUT_WORD;
@@ -270,7 +270,7 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile uint
 	xfer_params.xfer_data[HRT_FE_ADDRESS].word_count = 0;
 
 	adjust_tail(&xfer_params.xfer_data[HRT_FE_ADDRESS], xfer_params.bus_widths.address,
-		    nrfe_mspi_xfer_config_ptr->address_length * BITS_IN_BYTE);
+		    hpf_mspi_xfer_config_ptr->address_length * BITS_IN_BYTE);
 
 	/* Configure dummy_cycles phase. */
 	xfer_params.xfer_data[HRT_FE_DUMMY_CYCLES].fun_out = HRT_FUN_OUT_WORD;
@@ -278,7 +278,7 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile uint
 	xfer_params.xfer_data[HRT_FE_DUMMY_CYCLES].word_count = 0;
 
 	hrt_frame_element_t elem =
-		nrfe_mspi_xfer_config_ptr->address_length != 0 ? HRT_FE_ADDRESS : HRT_FE_COMMAND;
+		hpf_mspi_xfer_config_ptr->address_length != 0 ? HRT_FE_ADDRESS : HRT_FE_COMMAND;
 
 	/* Up to 63 clock pulses (including data from previous part) can be sent by simply
 	 * increasing shift count of last word in the previous part.
@@ -295,7 +295,7 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile uint
 	/* Configure data phase. */
 	xfer_params.xfer_data[HRT_FE_DATA].fun_out = HRT_FUN_OUT_BYTE;
 	xfer_params.xfer_data[HRT_FE_DATA].word_count = 0;
-	if (xfer_packet->opcode == NRFE_MSPI_TXRX) {
+	if (xfer_packet->opcode == HPF_MSPI_TXRX) {
 		xfer_params.xfer_data[HRT_FE_DATA].data = NULL;
 
 		adjust_tail(&xfer_params.xfer_data[HRT_FE_DATA], xfer_params.bus_widths.data,
@@ -316,7 +316,7 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile uint
 	 */
 	if (device->cpp == MSPI_CPP_MODE_2) {
 		/* Ommit data phase in rx mode */
-		for (uint8_t phase = xfer_packet->opcode == NRFE_MSPI_TXRX ? 1 : 0;
+		for (uint8_t phase = xfer_packet->opcode == HPF_MSPI_TXRX ? 1 : 0;
 		     phase < HRT_FE_MAX; phase++) {
 			if (xfer_params.xfer_data[HRT_FE_MAX - 1 - phase].word_count != 0) {
 				xfer_params.xfer_data[HRT_FE_MAX - 1 - phase].last_word_clocks++;
@@ -333,7 +333,7 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile uint
 	/* Read/write barrier to make sure that all configuration is done before jumping to HRT. */
 	nrf_barrier_rw();
 
-	if (xfer_packet->opcode == NRFE_MSPI_TXRX) {
+	if (xfer_packet->opcode == HPF_MSPI_TXRX) {
 		nrf_vpr_clic_int_pending_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_READ));
 
 		distribute_last_word_bits();
@@ -343,7 +343,7 @@ static void xfer_execute(nrfe_mspi_xfer_packet_msg_t *xfer_packet, volatile uint
 	}
 }
 
-static void config_pins(nrfe_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
+static void config_pins(hpf_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 {
 	ce_vios_count = 0;
 	data_vios_count = 0;
@@ -364,9 +364,9 @@ static void config_pins(nrfe_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 
 		uint8_t pin_number = NRF_PIN_NUMBER_TO_PIN(psel);
 
-		NRFX_ASSERT(pin_number < NRFE_MSPI_PINS_MAX);
+		NRFX_ASSERT(pin_number < HPF_MSPI_PINS_MAX);
 
-		if ((fun >= NRF_FUN_SDP_MSPI_CS0) && (fun <= NRF_FUN_SDP_MSPI_CS4)) {
+		if ((fun >= NRF_FUN_HPF_MSPI_CS0) && (fun <= NRF_FUN_HPF_MSPI_CS4)) {
 
 			ce_vios[ce_vios_count] = pin_to_vio_map[pin_number];
 			WRITE_BIT(xfer_params.tx_direction_mask, ce_vios[ce_vios_count],
@@ -375,7 +375,7 @@ static void config_pins(nrfe_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 				  VPRCSR_NORDIC_DIR_OUTPUT);
 			ce_vios_count++;
 
-		} else if ((fun >= NRF_FUN_SDP_MSPI_DQ0) && (fun <= NRF_FUN_SDP_MSPI_DQ7)) {
+		} else if ((fun >= NRF_FUN_HPF_MSPI_DQ0) && (fun <= NRF_FUN_HPF_MSPI_DQ7)) {
 
 			NRFX_ASSERT(DATA_LINE_INDEX(fun) < DATA_PINS_MAX);
 			NRFX_ASSERT(data_vios[DATA_LINE_INDEX(fun)] == DATA_PIN_UNUSED);
@@ -386,7 +386,7 @@ static void config_pins(nrfe_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 			WRITE_BIT(xfer_params.rx_direction_mask, data_vios[DATA_LINE_INDEX(fun)],
 				  VPRCSR_NORDIC_DIR_INPUT);
 			data_vios_count++;
-		} else if (fun == NRF_FUN_SDP_MSPI_SCK) {
+		} else if (fun == NRF_FUN_HPF_MSPI_SCK) {
 			clk_vio = pin_to_vio_map[pin_number];
 			WRITE_BIT(xfer_params.tx_direction_mask, clk_vio, VPRCSR_NORDIC_DIR_OUTPUT);
 			WRITE_BIT(xfer_params.rx_direction_mask, clk_vio, VPRCSR_NORDIC_DIR_OUTPUT);
@@ -396,18 +396,18 @@ static void config_pins(nrfe_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 
 	/* Set all devices as undefined. */
 	for (uint8_t i = 0; i < DEVICES_MAX; i++) {
-		nrfe_mspi_devices[i].ce_index = CE_PIN_UNUSED;
+		hpf_mspi_devices[i].ce_index = CE_PIN_UNUSED;
 	}
 }
 
 static void ep_bound(void *priv)
 {
-	atomic_set_bit(&ipc_atomic_sem, NRFE_MSPI_EP_BOUNDED);
+	atomic_set_bit(&ipc_atomic_sem, HPF_MSPI_EP_BOUNDED);
 }
 
 static void ep_recv(const void *data, size_t len, void *priv)
 {
-#ifdef CONFIG_SDP_MSPI_IPC_NO_COPY
+#ifdef CONFIG_HPF_MSPI_IPC_NO_COPY
 	data = *(void **)data;
 #endif
 
@@ -416,30 +416,30 @@ static void ep_recv(const void *data, size_t len, void *priv)
 	uint8_t opcode = *(uint8_t *)data;
 	uint32_t num_bytes = 0;
 
-#if defined(CONFIG_SDP_MSPI_FAULT_TIMER)
+#if defined(CONFIG_HPF_MSPI_FAULT_TIMER)
 	if (fault_timer != NULL) {
 		nrf_timer_task_trigger(fault_timer, NRF_TIMER_TASK_START);
 	}
 #endif
 
 	switch (opcode) {
-#if defined(CONFIG_SDP_MSPI_FAULT_TIMER)
-	case NRFE_MSPI_CONFIG_TIMER_PTR: {
-		const nrfe_mspi_flpr_timer_msg_t *timer_data =
-			(const nrfe_mspi_flpr_timer_msg_t *)data;
+#if defined(CONFIG_HPF_MSPI_FAULT_TIMER)
+	case HPF_MSPI_CONFIG_TIMER_PTR: {
+		const hpf_mspi_flpr_timer_msg_t *timer_data =
+			(const hpf_mspi_flpr_timer_msg_t *)data;
 
 		fault_timer = timer_data->timer_ptr;
 		break;
 	}
 #endif
-	case NRFE_MSPI_CONFIG_PINS: {
-		nrfe_mspi_pinctrl_soc_pin_msg_t *pins_cfg = (nrfe_mspi_pinctrl_soc_pin_msg_t *)data;
+	case HPF_MSPI_CONFIG_PINS: {
+		hpf_mspi_pinctrl_soc_pin_msg_t *pins_cfg = (hpf_mspi_pinctrl_soc_pin_msg_t *)data;
 
 		config_pins(pins_cfg);
 		break;
 	}
-	case NRFE_MSPI_CONFIG_DEV: {
-		nrfe_mspi_dev_config_msg_t *dev_config = (nrfe_mspi_dev_config_msg_t *)data;
+	case HPF_MSPI_CONFIG_DEV: {
+		hpf_mspi_dev_config_msg_t *dev_config = (hpf_mspi_dev_config_msg_t *)data;
 
 		NRFX_ASSERT(dev_config->device_index < DEVICES_MAX);
 		NRFX_ASSERT(dev_config->dev_config.io_mode < SUPPORTED_IO_MODES_COUNT);
@@ -448,40 +448,40 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		NRFX_ASSERT(dev_config->dev_config.ce_index < ce_vios_count);
 		NRFX_ASSERT(dev_config->dev_config.ce_polarity <= MSPI_CE_ACTIVE_HIGH);
 
-		nrfe_mspi_devices[dev_config->device_index] = dev_config->dev_config;
+		hpf_mspi_devices[dev_config->device_index] = dev_config->dev_config;
 
 		/* Configure CE pin. */
-		if (nrfe_mspi_devices[dev_config->device_index].ce_polarity == MSPI_CE_ACTIVE_LOW) {
+		if (hpf_mspi_devices[dev_config->device_index].ce_polarity == MSPI_CE_ACTIVE_LOW) {
 			nrf_vpr_csr_vio_out_or_set(
-				BIT(ce_vios[nrfe_mspi_devices[dev_config->device_index].ce_index]));
+				BIT(ce_vios[hpf_mspi_devices[dev_config->device_index].ce_index]));
 		} else {
 			nrf_vpr_csr_vio_out_clear_set(
-				BIT(ce_vios[nrfe_mspi_devices[dev_config->device_index].ce_index]));
+				BIT(ce_vios[hpf_mspi_devices[dev_config->device_index].ce_index]));
 		}
 
 		if (dev_config->dev_config.io_mode == MSPI_IO_MODE_SINGLE) {
-			if (data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ2)] != DATA_PIN_UNUSED &&
-			    data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ3)] != DATA_PIN_UNUSED) {
+			if (data_vios[DATA_LINE_INDEX(NRF_FUN_HPF_MSPI_DQ2)] != DATA_PIN_UNUSED &&
+			    data_vios[DATA_LINE_INDEX(NRF_FUN_HPF_MSPI_DQ3)] != DATA_PIN_UNUSED) {
 				nrf_vpr_csr_vio_out_or_set(
-					BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ2)]));
+					BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_HPF_MSPI_DQ2)]));
 				nrf_vpr_csr_vio_out_or_set(
-					BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ3)]));
+					BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_HPF_MSPI_DQ3)]));
 			}
 		} else {
 			nrf_vpr_csr_vio_out_clear_set(
-				BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ2)]));
+				BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_HPF_MSPI_DQ2)]));
 			nrf_vpr_csr_vio_out_clear_set(
-				BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_SDP_MSPI_DQ3)]));
+				BIT(data_vios[DATA_LINE_INDEX(NRF_FUN_HPF_MSPI_DQ3)]));
 		}
 
 		break;
 	}
-	case NRFE_MSPI_CONFIG_XFER: {
-		nrfe_mspi_xfer_config_msg_t *xfer_config = (nrfe_mspi_xfer_config_msg_t *)data;
+	case HPF_MSPI_CONFIG_XFER: {
+		hpf_mspi_xfer_config_msg_t *xfer_config = (hpf_mspi_xfer_config_msg_t *)data;
 
 		NRFX_ASSERT(xfer_config->xfer_config.device_index < DEVICES_MAX);
 		/* Check if device was configured. */
-		NRFX_ASSERT(nrfe_mspi_devices[xfer_config->xfer_config.device_index].ce_index <
+		NRFX_ASSERT(hpf_mspi_devices[xfer_config->xfer_config.device_index].ce_index <
 			    ce_vios_count);
 		NRFX_ASSERT(xfer_config->xfer_config.command_length <= sizeof(uint32_t));
 		NRFX_ASSERT(xfer_config->xfer_config.address_length <= sizeof(uint32_t));
@@ -489,50 +489,50 @@ static void ep_recv(const void *data, size_t len, void *priv)
 			    xfer_config->xfer_config.command_length != 0 ||
 			    xfer_config->xfer_config.address_length != 0);
 
-#ifdef CONFIG_SDP_MSPI_IPC_NO_COPY
-		nrfe_mspi_xfer_config_ptr = &xfer_config->xfer_config;
+#ifdef CONFIG_HPF_MSPI_IPC_NO_COPY
+		hpf_mspi_xfer_config_ptr = &xfer_config->xfer_config;
 #else
-		nrfe_mspi_xfer_config = xfer_config->xfer_config;
+		hpf_mspi_xfer_config = xfer_config->xfer_config;
 #endif
-		configure_clock(nrfe_mspi_devices[nrfe_mspi_xfer_config_ptr->device_index].cpp);
+		configure_clock(hpf_mspi_devices[hpf_mspi_xfer_config_ptr->device_index].cpp);
 
 		/* Tune up pad bias for frequencies above 32MHz */
-		if (nrfe_mspi_devices[nrfe_mspi_xfer_config_ptr->device_index].cnt0_value <=
+		if (hpf_mspi_devices[hpf_mspi_xfer_config_ptr->device_index].cnt0_value <=
 		    STD_PAD_BIAS_CNT0_THRESHOLD) {
 			NRF_GPIOHSPADCTRL->BIAS = PAD_BIAS_VALUE;
 		}
 
 		break;
 	}
-	case NRFE_MSPI_TX:
-		nrfe_mspi_xfer_packet_msg_t *packet = (nrfe_mspi_xfer_packet_msg_t *)data;
+	case HPF_MSPI_TX:
+		hpf_mspi_xfer_packet_msg_t *packet = (hpf_mspi_xfer_packet_msg_t *)data;
 
 		xfer_execute(packet, NULL);
 		break;
-	case NRFE_MSPI_TXRX: {
-		nrfe_mspi_xfer_packet_msg_t *packet = (nrfe_mspi_xfer_packet_msg_t *)data;
+	case HPF_MSPI_TXRX: {
+		hpf_mspi_xfer_packet_msg_t *packet = (hpf_mspi_xfer_packet_msg_t *)data;
 		if (packet->num_bytes > 0) {
-#ifdef CONFIG_SDP_MSPI_IPC_NO_COPY
+#ifdef CONFIG_HPF_MSPI_IPC_NO_COPY
 			xfer_execute(packet, packet->data);
 #else
 			NRFX_ASSERT(packet->num_bytes <=
-				    CONFIG_SDP_MSPI_MAX_RESPONSE_SIZE - sizeof(nrfe_mspi_opcode_t));
+				    CONFIG_HPF_MSPI_MAX_RESPONSE_SIZE - sizeof(hpf_mspi_opcode_t));
 			num_bytes = packet->num_bytes;
-			xfer_execute(packet, response_buffer + sizeof(nrfe_mspi_opcode_t));
+			xfer_execute(packet, response_buffer + sizeof(hpf_mspi_opcode_t));
 #endif
 		}
 		break;
 	}
 	default:
-		opcode = NRFE_MSPI_WRONG_OPCODE;
+		opcode = HPF_MSPI_WRONG_OPCODE;
 		break;
 	}
 
 	response_buffer[0] = opcode;
 	ipc_service_send(&ep, (const void *)response_buffer,
-			 sizeof(nrfe_mspi_opcode_t) + num_bytes);
+			 sizeof(hpf_mspi_opcode_t) + num_bytes);
 
-#if defined(CONFIG_SDP_MSPI_FAULT_TIMER)
+#if defined(CONFIG_HPF_MSPI_FAULT_TIMER)
 	if (fault_timer != NULL) {
 		nrf_timer_task_trigger(fault_timer, NRF_TIMER_TASK_CLEAR);
 		nrf_timer_task_trigger(fault_timer, NRF_TIMER_TASK_STOP);
@@ -570,7 +570,7 @@ static int backend_init(void)
 	}
 
 	/* Wait for endpoint to be bound. */
-	while (!atomic_test_and_clear_bit(&ipc_atomic_sem, NRFE_MSPI_EP_BOUNDED)) {
+	while (!atomic_test_and_clear_bit(&ipc_atomic_sem, HPF_MSPI_EP_BOUNDED)) {
 	}
 
 	return 0;
@@ -587,11 +587,11 @@ __attribute__((interrupt)) void hrt_handler_write(void)
 }
 
 /**
- * @brief Trap handler for SDP application.
+ * @brief Trap handler for HPF application.
  *
  * @details
  * This function is called on unhandled CPU exceptions. It's a good place to
- * handle critical errors and notify the core that the SDP application has
+ * handle critical errors and notify the core that the HPF application has
  * crashed.
  *
  * @param mcause  - cause of the exception (from mcause register)
@@ -601,7 +601,7 @@ __attribute__((interrupt)) void hrt_handler_write(void)
  */
 void trap_handler(uint32_t mcause, uint32_t mepc, uint32_t mtval, void *context)
 {
-	const uint8_t fault_opcode = NRFE_MSPI_SDP_APP_HARD_FAULT;
+	const uint8_t fault_opcode = HPF_MSPI_HPF_APP_HARD_FAULT;
 
 	/* It can be distinguish whether the exception was caused by an interrupt or an error:
 	 * On RV32, bit 31 of the mcause register indicates whether the event is an interrupt.
