@@ -30,8 +30,7 @@
 #include "sxsymcrypt/hash.h"
 #include "cracen_psa_ecdsa.h"
 #include "cracen_psa_primitives.h"
-#include "sxsymcrypt/hash.h"
-#include "hashdefs.h"
+#include "sxsymcrypt/hashdefs.h"
 #include "common.h"
 #include "hmac.h"
 
