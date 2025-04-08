@@ -8,7 +8,7 @@
 #include <zephyr/drivers/gpio/gpio_utils.h>
 #include <zephyr/ipc/ipc_service.h>
 
-#include "gpio_nrfe.h"
+#include "gpio_hpf.h"
 
 #if defined(CONFIG_MULTITHREADING)
 static K_SEM_DEFINE(bound_sem, 0, 1);
@@ -34,17 +34,17 @@ static struct ipc_ept_cfg ep_cfg = {
 
 static struct ipc_ept ep;
 
-int gpio_send(nrfe_gpio_data_packet_t *msg)
+int gpio_send(hpf_gpio_data_packet_t *msg)
 {
-	if (ipc_service_send(&ep, (void *)msg, sizeof(nrfe_gpio_data_packet_t)) ==
-	    sizeof(nrfe_gpio_data_packet_t)) {
+	if (ipc_service_send(&ep, (void *)msg, sizeof(hpf_gpio_data_packet_t)) ==
+	    sizeof(hpf_gpio_data_packet_t)) {
 		return 0;
 	} else {
 		return -EIO;
 	}
 }
 
-int gpio_nrfe_init(const struct device *port)
+int gpio_hpf_init(const struct device *port)
 {
 	const struct device *ipc0_instance = DEVICE_DT_GET(DT_NODELABEL(ipc0));
 	int ret = ipc_service_open_instance(ipc0_instance);

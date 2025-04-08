@@ -5,7 +5,7 @@
 #
 
 zephyr_library_amend()
-zephyr_library_sources_ifdef(CONFIG_MSPI_NRFE mspi_nrfe.c)
+zephyr_library_sources_ifdef(CONFIG_MSPI_HPF mspi_hpf.c)
 
 if(CONFIG_MSPI_NRF_SQSPI)
   set(SP_DIR ${ZEPHYR_NRFXLIB_MODULE_DIR}/softperipheral)

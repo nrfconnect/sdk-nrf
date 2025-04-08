@@ -1,50 +1,50 @@
 # Copyright (c) 2024 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-menuconfig GPIO_NRFE
-	bool "SDP GPIO"
+menuconfig GPIO_HPF
+	bool "HPF GPIO"
 	default y
-	depends on DT_HAS_NORDIC_NRFE_GPIO_ENABLED
+	depends on DT_HAS_NORDIC_HPF_GPIO_ENABLED
 	select IPC_SERVICE
 	select MBOX
 	help
-	  Use SDP GPIO driver.
+	  Use HPF GPIO driver.
 
-if GPIO_NRFE
+if GPIO_HPF
 
-config GPIO_NRFE_INIT_PRIORITY
-	int "SDP GPIO init priority"
-	depends on GPIO_NRFE
+config GPIO_HPF_INIT_PRIORITY
+	int "HPF GPIO init priority"
+	depends on GPIO_HPF
 	default 48
 	help
-	  SDP GPIO driver device initialization priority.
-	  SDP GPIO initialization depends on IPC initialization which is done at the same init level and
+	  HPF GPIO driver device initialization priority.
+	  HPF GPIO initialization depends on IPC initialization which is done at the same init level and
 	  has init priority equal to 46.
 
-choice GPIO_NRFE_EGPIO_BACKEND
-	prompt "SDP GPIO driver backend type"
-	default GPIO_NRFE_EGPIO_BACKEND_ICMSG
+choice GPIO_HPF_GPIO_BACKEND
+	prompt "HPF GPIO driver backend type"
+	default GPIO_HPF_GPIO_BACKEND_ICMSG
 	help
-	  Select the backend type for the SDP GPIO driver and application.
+	  Select the backend type for the HPF GPIO driver and application.
 
-config GPIO_NRFE_EGPIO_BACKEND_MBOX
+config GPIO_HPF_GPIO_BACKEND_MBOX
 	bool "MBOX"
 	help
-	  Use MBOX backend driver for SDP GPIO.
+	  Use MBOX backend driver for HPF GPIO.
 	  The MBOX version is more resource-efficient than the ICMSG backend,
 	  but needs to have a shared structure defined as a communication channel.
 
-config GPIO_NRFE_EGPIO_BACKEND_ICMSG
+config GPIO_HPF_GPIO_BACKEND_ICMSG
 	bool "ICMSG"
 	select IPC_SERVICE_BACKEND_ICMSG
 	help
-	  Use ICMSG backend driver for SDP GPIO.
+	  Use ICMSG backend driver for HPF GPIO.
 
-config GPIO_NRFE_EGPIO_BACKEND_ICBMSG
+config GPIO_HPF_GPIO_BACKEND_ICBMSG
 	bool "ICBMSG"
 	select IPC_SERVICE_BACKEND_ICBMSG
 	help
-	  Use ICBMSG backend driver for SDP GPIO.
+	  Use ICBMSG backend driver for HPF GPIO.
 
 endchoice
 
