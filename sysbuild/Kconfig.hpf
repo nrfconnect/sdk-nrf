@@ -1,0 +1,77 @@
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+menuconfig HPF
+	bool "High-Performance Framework"
+
+if HPF
+
+choice HPF_APPLICATION
+	prompt "HPF application selection"
+	help
+	  Select which HPF application should be flashed on FLPR.
+
+config HPF_GPIO
+	bool "HPF GPIO application"
+
+config HPF_MSPI
+	bool "HPF MSPI application"
+
+endchoice
+
+config HPF_DEVELOPER_MODE
+	bool "HPF developer mode"
+
+config HPF_IMAGE_PATH
+	string
+	default "${ZEPHYR_NRF_MODULE_DIR}/applications/hpf/gpio" if HPF_GPIO
+	default "${ZEPHYR_NRF_MODULE_DIR}/applications/hpf/mspi" if HPF_MSPI
+	help
+	  Source directory of HPF image.
+
+if HPF_GPIO
+
+choice HPF_GPIO_BACKEND
+	prompt "HPF GPIO backend type"
+	default HPF_GPIO_BACKEND_ICMSG
+	help
+	  Select the backend type for HPF.
+
+config HPF_GPIO_BACKEND_MBOX
+	bool "MBOX backend"
+	help
+	  The MBOX version is more resource-efficient than the ICMSG backend,
+	  but needs to have a shared structure defined as a communication channel.
+
+config HPF_GPIO_BACKEND_ICMSG
+	bool "ICMSG backend"
+
+config HPF_GPIO_BACKEND_ICBMSG
+	bool "ICBMSG backend"
+
+endchoice
+
+endif # HPF_GPIO
+
+if HPF_MSPI
+
+config HPF_FLPR_APP_FAULT_TIMER
+	bool "HPF FLPR application fault timer"
+	default y
+	help
+	  Enable HPF FLPR application fault timer.
+
+if HPF_FLPR_APP_FAULT_TIMER
+
+config HPF_FLPR_APP_FAULT_TIMEOUT
+	int "HPF FLPR application fault timeout"
+	default 1000000
+	help
+	  Fault timeout in microseconds.
+
+endif # HPF_FLPR_APP_FAULT_TIMER
+
+endif # HPF_MSPI
+
+endif # HPF
