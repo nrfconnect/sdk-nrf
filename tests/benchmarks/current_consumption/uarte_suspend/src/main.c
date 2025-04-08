@@ -95,13 +95,13 @@ void disable_uart_rx(void)
 {
 	int err;
 
-	k_msleep(250);
+	k_busy_wait(250000);
 	printk("Disable UART RX\n");
 	err = uart_rx_disable(uart_dev);
 	if (err != 0) {
 		printk("Unexpected error when disabling RX: %d\n", err);
 	}
-	k_msleep(250);
+	k_busy_wait(250000);
 }
 
 int main(void)
