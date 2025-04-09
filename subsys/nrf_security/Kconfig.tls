@@ -60,6 +60,11 @@ config MBEDTLS_X509_CSR_WRITE_C
 	help
 	  Enable creating X.509 Certificate Signing Requests (CSR).
 
+config MBEDTLS_X509_CRT_WRITE_C
+	bool "X.509 - CRT writing"
+	help
+	  Enable creating X.509 Certificates (CRT).
+
 config MBEDTLS_X509_REMOVE_INFO
 	bool "X.509 - Remove info"
 	default y
