@@ -58,9 +58,12 @@ The sample starts the Bluetooth® LE advertising automatically and prepares the 
 
 The Matter command ``SetLED`` is used to control the state of ``UserLED``.
 It takes one argument - the action to be performed (``0`` to turn the LED off, ``1`` to turn it on, ``2`` to toggle the state).
+The ``UserLED`` attribute is persistent and stored across the reboots.
 The ``UserButtonChanged`` event is generated when the ``UserButton`` attribute is changed.
 
 The ``NordicDevkit`` cluster introduces a writable ``DevKitName`` attribute, of string type as well.
+The ``DevKitName`` attribute is persistent and stored across the reboots.
+
 The sample additionally extends the ``Basic Information`` cluster with a ``RandomNumber`` attribute and ``GenerateRandom`` command that updates the ``RandomNumber`` with a random value.
 The ``RandomNumberChanged`` event is generated when the ``RandomNumber`` attribute is changed.
 The ``RandomNumber`` attribute value is not persistent and it is generated on each application's boot.

@@ -1287,6 +1287,11 @@ namespace app
 					static constexpr AttributeId Id = 0x00000008;
 				} // namespace TCAcknowledgementsRequired
 
+				namespace TCUpdateDeadline
+				{
+					static constexpr AttributeId Id = 0x00000009;
+				} // namespace TCUpdateDeadline
+
 				namespace GeneratedCommandList
 				{
 					static constexpr AttributeId Id = Globals::Attributes::GeneratedCommandList::Id;
