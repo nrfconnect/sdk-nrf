@@ -45,6 +45,7 @@ enum log_rpc_cmd_backend {
 	LOG_RPC_CMD_STOP_FETCH_HISTORY,
 	LOG_RPC_CMD_GET_CRASH_LOG,
 	LOG_RPC_CMD_ECHO,
+	LOG_RPC_CMD_SET_TIME,
 };
 
 #ifdef __cplusplus

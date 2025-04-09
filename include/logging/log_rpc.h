@@ -169,8 +169,26 @@ int log_rpc_get_crash_log(size_t offset, char *buffer, size_t buffer_length);
  * This function issues an nRF RPC command that requests the remote device to
  * generate a log message with the given level. This function can be used to
  * test other functions of Logging over nRF RPC library.
+ *
+ * @param level		Logging level, see @ref log_rpc_level.
+ * @param message	Log message C string.
  */
 void log_rpc_echo(enum log_rpc_level level, const char *message);
+
+/**
+ * @brief Sets the current time used for log timestamping.
+ *
+ * This function issues an nRF RPC command that configures the remote device
+ * with the current time that should be used for timestamping new log messages.
+ *
+ * @note The remote device may enable log buffering and log messages are time-
+ *	 stamped before they are enqueued in the log buffer, so this function
+ *	 may not have an immediate effect and you may still observe a few
+ *	 messages timestamped with the old time after this function exits.
+ *
+ * @param now_us	The current time in microseconds.
+ */
+void log_rpc_set_time(uint64_t now_us);
 
 #ifdef __cplusplus
 }
