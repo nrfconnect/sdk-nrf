@@ -16,7 +16,9 @@
 #ifdef CONFIG_FLASH_SIMULATOR
 #include <zephyr/drivers/flash/flash_simulator.h>
 #endif /* CONFIG_FLASH_SIMULATOR */
+#ifdef CONFIG_SOC_FLASH_NRF_RADIO_SYNC_RPC_HOST
 #include "soc_flash_nrf.h"
+#endif /* CONFIG_SOC_FLASH_NRF_RADIO_SYNC_RPC_HOST */
 
 /* __ALIGNED macro is not defined on NATIVE POSIX. This platform uses __aligned macro. */
 #ifndef __ALIGNED
