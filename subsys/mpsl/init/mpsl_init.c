@@ -161,6 +161,11 @@ BUILD_ASSERT((IPCT_SOURCE_CHANNELS & MPSL_RESERVED_IPCT_SOURCE_CHANNELS) ==
 	     "The required IPCT source channels are not reserved");
 
 #endif
+
+#if defined(CONFIG_SOC_SERIES_NRF54LX)
+BUILD_ASSERT(NRF_CONFIG_CPU_FREQ_MHZ == 128, "Currently mpsl only works when frequency is 128MHz");
+#endif
+
 #define MPSL_LOW_PRIO (4)
 
 #if IS_ENABLED(CONFIG_ZERO_LATENCY_IRQS)
