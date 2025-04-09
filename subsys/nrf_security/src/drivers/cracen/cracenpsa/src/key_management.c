@@ -8,6 +8,9 @@
 #include <cracen/ec_helpers.h>
 #include <cracen/mem_helpers.h>
 #include "cracen_psa.h"
+#include "cracen_psa_ecdsa.h"
+#include "cracen_psa_eddsa.h"
+#include "cracen_psa_montgomery.h"
 #include "platform_keys/platform_keys.h"
 #include <nrf_security_mutexes.h>
 #include <sicrypto/drbghash.h>
@@ -15,7 +18,6 @@
 #include "cracen_psa_ecdsa.h"
 #include "cracen_psa_eddsa.h"
 #include <sicrypto/ed448.h>
-#include <sicrypto/montgomery.h>
 #include <sicrypto/rsa_keygen.h>
 #include <sicrypto/util.h>
 #include <silexpk/ed448.h>
@@ -614,14 +616,10 @@ static psa_status_t handle_curve_family(psa_ecc_family_t psa_curve, size_t key_b
 	case PSA_ECC_FAMILY_MONTGOMERY:
 		if (key_bits_attr == 255 &&
 		    IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_MONTGOMERY_255)) {
-			priv_key->def = si_sig_def_x25519;
-			priv_key->key.x25519 = (struct sx_x25519_op *)key_buffer;
-			pub_key->key.x25519 = (struct sx_x25519_pt *)data;
+			return silex_statuscodes_to_psa(cracen_x25519_genpubkey(key_buffer, data));
 		} else if (key_bits_attr == 448 &&
 			   IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_MONTGOMERY_448)) {
-			priv_key->def = si_sig_def_x448;
-			priv_key->key.x448 = (struct sx_x448_op *)key_buffer;
-			pub_key->key.x448 = (struct sx_x448_pt *)data;
+			return silex_statuscodes_to_psa(cracen_x448_genpubkey(key_buffer, data));
 		} else {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
