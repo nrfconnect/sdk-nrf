@@ -298,7 +298,7 @@ This library uses the following |NCS| libraries:
 
 It uses the following `sdk-nrfxlib`_ library:
 
-* :ref:`GNSS interface<nrfxlib:gnss_interface>`
+* :ref:`GNSS interface <nrfxlib:gnss_interface>`
 
 It uses the following Zephyr subsystem:
 

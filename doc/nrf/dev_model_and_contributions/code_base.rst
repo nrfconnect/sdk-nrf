@@ -210,7 +210,7 @@ A release candidate suffix ``-rcN`` is attached if the tag identifies a candidat
 In between releases, there might be development tags, called preview tags.
 These are identified by a ``-previewN`` suffix included after the |NCS| version, for example ``v2.8.0-preview1``.
 Such versions are recommended for development for users who are in the initial phase of product development and need to add new features of the |NCS|.
-Unlike an |NCS| release, a ``-previewN`` version version is verified using automated test suites only.
+Unlike an |NCS| release, a ``-previewN`` version is verified using automated test suites only.
 
 In the case of OSS repositories, the git tag format reuses the upstream project's version along with some |NCS| specific postfixes::
 
