@@ -23,3 +23,4 @@ target_sources(app PRIVATE
   src/main.c
   ${ZEPHYR_NRF_MODULE_DIR}/drivers/flash/flash_ipuc/flash_ipuc.c
 )
+zephyr_include_directories(${ZEPHYR_BASE}/drivers/flash)
