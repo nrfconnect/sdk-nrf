@@ -103,7 +103,10 @@ Developing with PMICs
 Developing with Front-End Modules
 =================================
 
-|no_changes_yet_note|
+* For the nRF21540 Front-End Module the PDN pin is now activated by a call to the :c:func:`mpsl_fem_enable` function.
+  The PDN pin is no longer activated automatically during the ramp-up as a result of a call to the :c:func:`mpsl_fem_pa_configuration_set` or :c:func:`mpsl_fem_lna_configuration_set` functions.
+  The SoftDevice Controller and the nRF 802.15.4 Radio Driver already handle this change.
+  The ``tx-en-settle-time-us`` devicetree property of the node describing the nRF21540 Front-End Module can now take greater values allowing earlier activation of the TX_EN pin.
 
 Developing with custom boards
 =============================
