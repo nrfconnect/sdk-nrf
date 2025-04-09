@@ -317,7 +317,7 @@ To enable this feature, perform the following steps:
    Instead, set the :kconfig:option:`CONFIG_SUIT_INVOKE_APP_LOCAL_3_BEFORE_MAIN_APP` option in the recovery image.
    To do so, add ``-Drecovery_CONFIG_SUIT_INVOKE_APP_LOCAL_3_BEFORE_MAIN_APP=y`` to the build command when building the recovery application.
 
-   If you are not using the default SUIT maifests, you must modify the manifest templates as follows:
+   If you are not using the default SUIT manifests, you must modify the manifest templates as follows:
 
    a. In the ``APP_LOCAL_3`` manifest template, add the following code before the ``suit-directive-invoke`` directive on the companion image:
 
@@ -328,7 +328,7 @@ To enable this feature, perform the following steps:
               suit-synchronous-invoke: True
               suit-timeout: 1000
 
-  b. In the root manifest template, add the ``INSTLD_MFST`` component for the local manifest orchestrating the comapanion image.
+  b. In the root manifest template, add the ``INSTLD_MFST`` component for the local manifest orchestrating the companion image.
      You must ensure it is invoked before the main application images.
      If the modified template is based on the root manifest template from the |NCS|, it will in most cases be enough to add it as the first manifest in the component list.
      The following code snippet is responsible for this in the default root manifest template:

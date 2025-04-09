@@ -4,6 +4,10 @@
 Creating custom clusters in Matter application
 ##############################################
 
+.. contents::
+   :local:
+   :depth: 2
+
 This guide describes how you can create a custom cluster for the :ref:`matter_template_sample` sample.
 The :ref:`matter_manufacturer_specific_sample` sample already contains a custom ``NordicDevkit`` cluster that you can use as a reference.
 

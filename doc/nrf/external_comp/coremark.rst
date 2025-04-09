@@ -60,7 +60,7 @@ To include CoreMark in your build, complete the following steps:
 
      .. code-block:: console
 
-        COREMARK_MEMORY_METHOD_STACK=y
+        CONFIG_COREMARK_MEMORY_METHOD_STACK=y
         CONFIG_MAIN_STACK_SIZE=4096
 
    * Memory method heap:
