@@ -329,6 +329,10 @@
   - "subsys/mpsl/**/*"
   - "subsys/ieee802154/**/*"
   - "subsys/nrf_rpc/**/*"
+  - any:
+      - "subsys/nrf_security/**/*"
+      - "!subsys/nrf_security/doc/**/*"
+      - "!subsys/nrf_security/*.rst"
   - "drivers/mpsl/**/*"
   - "dts/bindings/radio_fem/**/*"
   - "applications/ipc_radio/**/*"
