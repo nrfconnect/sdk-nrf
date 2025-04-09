@@ -3283,25 +3283,6 @@ namespace app
 
 			namespace Commands
 			{
-				namespace MfgSpecificPing
-				{
-					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
-					{
-						DataModel::WrappedStructEncoder encoder{ aWriter, aTag };
-						return encoder.Finalize();
-					}
-
-					CHIP_ERROR DecodableType::Decode(TLV::TLVReader &reader)
-					{
-						detail::StructDecodeIterator __iterator(reader);
-						while (true) {
-							auto __element = __iterator.Next();
-							if (std::holds_alternative<CHIP_ERROR>(__element)) {
-								return std::get<CHIP_ERROR>(__element);
-							}
-						}
-					}
-				} // namespace MfgSpecificPing.
 				namespace GenerateRandom
 				{
 					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
@@ -3321,6 +3302,25 @@ namespace app
 						}
 					}
 				} // namespace GenerateRandom.
+				namespace MfgSpecificPing
+				{
+					CHIP_ERROR Type::Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const
+					{
+						DataModel::WrappedStructEncoder encoder{ aWriter, aTag };
+						return encoder.Finalize();
+					}
+
+					CHIP_ERROR DecodableType::Decode(TLV::TLVReader &reader)
+					{
+						detail::StructDecodeIterator __iterator(reader);
+						while (true) {
+							auto __element = __iterator.Next();
+							if (std::holds_alternative<CHIP_ERROR>(__element)) {
+								return std::get<CHIP_ERROR>(__element);
+							}
+						}
+					}
+				} // namespace MfgSpecificPing.
 			} // namespace Commands
 
 			namespace Attributes
@@ -4905,6 +4905,8 @@ namespace app
 						return DataModel::Decode(reader, TCAcknowledgements);
 					case Attributes::TCAcknowledgementsRequired::TypeInfo::GetAttributeId():
 						return DataModel::Decode(reader, TCAcknowledgementsRequired);
+					case Attributes::TCUpdateDeadline::TypeInfo::GetAttributeId():
+						return DataModel::Decode(reader, TCUpdateDeadline);
 					case Attributes::GeneratedCommandList::TypeInfo::GetAttributeId():
 						return DataModel::Decode(reader, generatedCommandList);
 					case Attributes::AcceptedCommandList::TypeInfo::GetAttributeId():

@@ -288,15 +288,15 @@ namespace app
 			namespace Commands
 			{
 
-				namespace MfgSpecificPing
-				{
-					static constexpr CommandId Id = 0x10020000;
-				} // namespace MfgSpecificPing
-
 				namespace GenerateRandom
 				{
 					static constexpr CommandId Id = 0x00000000;
 				} // namespace GenerateRandom
+
+				namespace MfgSpecificPing
+				{
+					static constexpr CommandId Id = 0x10020000;
+				} // namespace MfgSpecificPing
 
 			} // namespace Commands
 		} // namespace BasicInformation

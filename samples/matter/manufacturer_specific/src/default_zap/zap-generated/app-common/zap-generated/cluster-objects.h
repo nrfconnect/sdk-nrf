@@ -5117,60 +5117,22 @@ namespace app
 			{
 				// Forward-declarations so we can reference these later.
 
-				namespace MfgSpecificPing
-				{
-					struct Type;
-					struct DecodableType;
-				} // namespace MfgSpecificPing
-
 				namespace GenerateRandom
 				{
 					struct Type;
 					struct DecodableType;
 				} // namespace GenerateRandom
 
+				namespace MfgSpecificPing
+				{
+					struct Type;
+					struct DecodableType;
+				} // namespace MfgSpecificPing
+
 			} // namespace Commands
 
 			namespace Commands
 			{
-				namespace MfgSpecificPing
-				{
-					enum class Fields : uint8_t {};
-
-					struct Type {
-					public:
-						// Use GetCommandId instead of commandId directly to avoid naming
-						// conflict with CommandIdentification in ExecutionOfACommand
-						static constexpr CommandId GetCommandId()
-						{
-							return Commands::MfgSpecificPing::Id;
-						}
-						static constexpr ClusterId GetClusterId()
-						{
-							return Clusters::BasicInformation::Id;
-						}
-
-						CHIP_ERROR Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const;
-
-						using ResponseType = DataModel::NullObjectType;
-
-						static constexpr bool MustUseTimedInvoke() { return false; }
-					};
-
-					struct DecodableType {
-					public:
-						static constexpr CommandId GetCommandId()
-						{
-							return Commands::MfgSpecificPing::Id;
-						}
-						static constexpr ClusterId GetClusterId()
-						{
-							return Clusters::BasicInformation::Id;
-						}
-
-						CHIP_ERROR Decode(TLV::TLVReader &reader);
-					};
-				}; // namespace MfgSpecificPing
 				namespace GenerateRandom
 				{
 					enum class Fields : uint8_t {};
@@ -5209,6 +5171,44 @@ namespace app
 						CHIP_ERROR Decode(TLV::TLVReader &reader);
 					};
 				}; // namespace GenerateRandom
+				namespace MfgSpecificPing
+				{
+					enum class Fields : uint8_t {};
+
+					struct Type {
+					public:
+						// Use GetCommandId instead of commandId directly to avoid naming
+						// conflict with CommandIdentification in ExecutionOfACommand
+						static constexpr CommandId GetCommandId()
+						{
+							return Commands::MfgSpecificPing::Id;
+						}
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::BasicInformation::Id;
+						}
+
+						CHIP_ERROR Encode(TLV::TLVWriter &aWriter, TLV::Tag aTag) const;
+
+						using ResponseType = DataModel::NullObjectType;
+
+						static constexpr bool MustUseTimedInvoke() { return false; }
+					};
+
+					struct DecodableType {
+					public:
+						static constexpr CommandId GetCommandId()
+						{
+							return Commands::MfgSpecificPing::Id;
+						}
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::BasicInformation::Id;
+						}
+
+						CHIP_ERROR Decode(TLV::TLVReader &reader);
+					};
+				}; // namespace MfgSpecificPing
 			} // namespace Commands
 
 			namespace Attributes
@@ -9026,6 +9026,25 @@ namespace app
 						static constexpr bool MustUseTimedWrite() { return false; }
 					};
 				} // namespace TCAcknowledgementsRequired
+				namespace TCUpdateDeadline
+				{
+					struct TypeInfo {
+						using Type = chip::app::DataModel::Nullable<uint32_t>;
+						using DecodableType = chip::app::DataModel::Nullable<uint32_t>;
+						using DecodableArgType =
+							const chip::app::DataModel::Nullable<uint32_t> &;
+
+						static constexpr ClusterId GetClusterId()
+						{
+							return Clusters::GeneralCommissioning::Id;
+						}
+						static constexpr AttributeId GetAttributeId()
+						{
+							return Attributes::TCUpdateDeadline::Id;
+						}
+						static constexpr bool MustUseTimedWrite() { return false; }
+					};
+				} // namespace TCUpdateDeadline
 				namespace GeneratedCommandList
 				{
 					struct TypeInfo
@@ -9116,6 +9135,7 @@ namespace app
 							TCAcknowledgements = static_cast<uint16_t>(0);
 						Attributes::TCAcknowledgementsRequired::TypeInfo::DecodableType
 							TCAcknowledgementsRequired = static_cast<bool>(0);
+						Attributes::TCUpdateDeadline::TypeInfo::DecodableType TCUpdateDeadline;
 						Attributes::GeneratedCommandList::TypeInfo::DecodableType
 							generatedCommandList;
 						Attributes::AcceptedCommandList::TypeInfo::DecodableType
