@@ -7,88 +7,99 @@ Cellular: SLM Shell
    :local:
    :depth: 2
 
-The SLM Shell sample demonstrates how to send AT commands to modem through the :ref:`Serial LTE Modem <slm_description>` application running on nRF9160 SiP.
+The SLM Shell sample demonstrates how to send AT commands to modem through the :ref:`Serial LTE Modem <slm_description>` application running on nRF91 Series SiP.
 This sample enables an external MCU to send modem or SLM proprietary AT commands for LTE connection and IP services.
+See more information on the functionality of this sample from the :ref:`lib_modem_slm` library, which provides the core functionality for this sample.
 
 Requirements
 ************
 
-The SLM application should be configured to use UART_2 on the nRF9160 side with no hardware flow control.
+The SLM application should be configured to use UART_2 on the nRF91 Series DK side with no hardware flow control.
 
 The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-Connect the DK with a nRF9160 DK based on the pin configuration in DTS overlay files of both sides.
+Connect the DK with an nRF91 Series DK based on the pin configuration in DTS overlay files of both sides.
 
-The following table shows how to connect PCA10056 UART_1 to nRF9160 UART_2 for communication through UART:
+The following table shows how to connect UART_1 of the DK to the nRF91 Series DK's UART_2 for communication through UART:
 
-.. list-table::
-   :align: center
-   :header-rows: 1
+.. tabs::
 
-   * - nRF52840 DK
-     - nRF9160 DK
-   * - UART TX P1.02
-     - UART RX P0.11
-   * - UART RX P1.01
-     - UART TX P0.10
-   * - GPIO OUT P0.11 (Button1)
-     - GPIO IN P0.31
-   * - GPIO IN P0.13 (LED1 optional)
-     - GPIO OUT P0.30 (optional)
-   * - GPIO GND
-     - GPIO GND
+   .. group-tab:: nRF52840 DK
 
-.. note::
-   The GPIO output level on the nRF9160 side must be 3 V to work with the nRF52 series DK.
-   You can set the VDD voltage with the **VDD IO** switch (**SW9**).
+      .. list-table::
+         :header-rows: 1
 
-The following table shows how to connect PCA10095 UART_2 to nRF9160 UART_2 for communication through UART:
+         * - nRF52840 DK
+           - nRF91 Series DK
+         * - UART TX P1.02
+           - UART RX P0.11
+         * - UART RX P1.01
+           - UART TX P0.10
+         * - GPIO OUT P0.11 (Button1)
+           - GPIO IN P0.31
+         * - GPIO IN P0.13 (LED1 optional)
+           - GPIO OUT P0.30 (optional)
+         * - GPIO GND
+           - GPIO GND
 
-.. list-table::
-   :align: center
-   :header-rows: 1
+      .. note::
+         The GPIO output level on the nRF91 Series device side must be 3 V to work with the nRF52 Series DK.
 
-   * - nRF5340 DK
-     - nRF9160 DK
-   * - UART TX P1.04
-     - UART RX P0.11
-   * - UART RX P1.05
-     - UART TX P0.10
-   * - GPIO OUT P0.23 (Button1)
-     - GPIO IN P0.31
-   * - GPIO IN P0.28 (LED1 optional)
-     - GPIO OUT P0.30 (optional)
-   * - GPIO GND
-     - GPIO GND
+         * For nRF91x1 DK, you can set the VDD voltage with the `Board Configurator app`_.
+         * For nRF9160 DK, you can set the VDD voltage with the **VDD IO** switch (**SW9**).
+           See the `VDD supply rail section in the nRF9160 DK User Guide`_ for more information related to nRF9160 DK.
 
-.. note::
-   The GPIO output level on the nRF9160 side must be 3 V to work with the nRF53 series DK.
-   You can set the VDD voltage with the **VDD IO** switch (**SW9**).
+   .. group-tab:: nRF5340 DK
 
-The following table shows how to connect PCA10143 UART_2 to nRF9160 UART_2 for communication through UART:
+      .. list-table::
+         :header-rows: 1
 
-.. list-table::
-   :align: center
-   :header-rows: 1
+         * - nRF5340 DK
+           - nRF91 Series DK
+         * - UART TX P1.04
+           - UART RX P0.11
+         * - UART RX P1.05
+           - UART TX P0.10
+         * - GPIO OUT P0.23 (Button1)
+           - GPIO IN P0.31
+         * - GPIO IN P0.28 (LED1 optional)
+           - GPIO OUT P0.30 (optional)
+         * - GPIO GND
+           - GPIO GND
 
-   * - nRF7002 DK
-     - nRF9160 DK
-   * - UART TX P1.04
-     - UART RX P0.11
-   * - UART RX P1.05
-     - UART TX P0.10
-   * - GPIO OUT P0.31
-     - GPIO IN P0.31
-   * - GPIO IN P0.30 (optional)
-     - GPIO OUT P0.30 (optional)
-   * - GPIO GND
-     - GPIO GND
+      .. note::
+         The GPIO output level on the nRF91 Series device side must be 3 V to work with the nRF53 Series DK.
 
-.. note::
-   The GPIO output level on the nRF9160 side must be 1.8 V to work with the nRF70 series DK.
-   You can set the VDD voltage with the **VDD IO** switch (**SW9**).
+         * For nRF91x1 DK, you can set the VDD voltage with the `Board Configurator app`_.
+         * For nRF9160 DK, you can set the VDD voltage with the **VDD IO** switch (**SW9**).
+           See the `VDD supply rail section in the nRF9160 DK User Guide`_ for more information related to nRF9160 DK
+
+   .. group-tab:: nRF7002 DK
+
+      .. list-table::
+         :header-rows: 1
+
+         * - nRF7002 DK
+           - nRF91 Series DK
+         * - UART TX P1.04
+           - UART RX P0.11
+         * - UART RX P1.05
+           - UART TX P0.10
+         * - GPIO OUT P0.31
+           - GPIO IN P0.31
+         * - GPIO IN P0.30 (optional)
+           - GPIO OUT P0.30 (optional)
+         * - GPIO GND
+           - GPIO GND
+
+      .. note::
+         The GPIO output level on the nRF91 Series device side must be 1.8 V to work with the nRF7002 DK.
+
+         * For nRF91x1 DK, you can set the VDD voltage with the `Board Configurator app`_.
+         * For nRF9160 DK, you can set the VDD voltage with the **VDD IO** switch (**SW9**).
+           See the `VDD supply rail section in the nRF9160 DK User Guide`_ for more information related to nRF9160 DK.
 
 References
 **********
