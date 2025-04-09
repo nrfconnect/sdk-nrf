@@ -636,6 +636,35 @@ bool flash_component_ipuc_check(struct zcbor_string *component_id)
 	return false;
 }
 
+static struct device *replace_if_duplicate(struct device *ipuc_dev)
+{
+	struct ipuc_context *ipuc_ctx = NULL;
+	struct ipuc_context *ctx = NULL;
+	struct device *dev = NULL;
+
+	ipuc_ctx = (struct ipuc_context *)ipuc_dev->data;
+
+	for (size_t i = 0; i < ARRAY_SIZE(ipuc_devs); i++) {
+		dev = (struct device *)ipuc_devs[i];
+		ctx = (struct ipuc_context *)dev->data;
+		if ((ctx->component_id.value == NULL) || (dev == ipuc_dev)) {
+			continue;
+		}
+
+		if ((ctx->component_id.len == ipuc_ctx->component_id.len) &&
+		    (memcmp(ctx->component_id.value, ipuc_ctx->component_id.value,
+			    ctx->component_id.len) == 0) &&
+		    (ctx->read_access == ipuc_ctx->read_access)) {
+			LOG_DBG("Remove duplicate for IPUC (0x%lx, 0x%x)", ctx->address,
+				ctx->size);
+			flash_ipuc_release(ipuc_dev);
+			return dev;
+		}
+	}
+
+	return ipuc_dev;
+}
+
 static struct device *flash_cache_ipuc(uintptr_t min_address, uintptr_t *ipuc_address,
 				       size_t *ipuc_size, bool dry_run)
 {
@@ -724,8 +753,10 @@ static struct device *flash_cache_ipuc(uintptr_t min_address, uintptr_t *ipuc_ad
 	}
 
 	if (!dry_run) {
-		LOG_INF("Cache IPUC at idx %d for address range (0x%lx, 0x%x) created", i_max,
-			ctx->address, ctx->size);
+		dev = replace_if_duplicate(dev);
+		ctx = (struct ipuc_context *)dev->data;
+		LOG_INF("Cache IPUC for 0x%lx at idx %d for address range (0x%lx, 0x%x) created",
+			min_address, i_max, ctx->address, ctx->size);
 	}
 
 	ctx->setup_pending = true;
