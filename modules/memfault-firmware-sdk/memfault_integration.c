@@ -35,9 +35,11 @@ LOG_MODULE_REGISTER(memfault_ncs, CONFIG_MEMFAULT_NCS_LOG_LEVEL);
 #define MEMFAULT_URL	"https://goto.memfault.com/create-key/nrf"
 #endif
 
+#if defined(CONFIG_BT_MDS) || defined(CONFIG_MEMFAULT_HTTP_ENABLE)
 /* Project key check */
 BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_PROJECT_KEY) > 1,
 	"Memfault Project Key not configured. Please visit " MEMFAULT_URL " ");
+#endif
 
 /* Firmware type check */
 BUILD_ASSERT(sizeof(CONFIG_MEMFAULT_NCS_FW_TYPE) > 1, "Firmware type must be configured");
