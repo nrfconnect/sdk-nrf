@@ -312,8 +312,9 @@
                                                                                                                                                  \
 		/* Endpoint: 1, Cluster: NordicDevKit (server) */                                                                                \
 		{ ZAP_LONG_DEFAULTS_INDEX(8), 0xFFF10000, 255, ZAP_TYPE(CHAR_STRING),                                                            \
-		  ZAP_ATTRIBUTE_MASK(WRITABLE) }, /* DevKitName */                                                                               \
-		{ ZAP_SIMPLE_DEFAULT(false), 0xFFF10001, 1, ZAP_TYPE(BOOLEAN), 0 }, /* UserLED */                                                \
+		  ZAP_ATTRIBUTE_MASK(TOKENIZE) | ZAP_ATTRIBUTE_MASK(WRITABLE) }, /* DevKitName */                                                \
+		{ ZAP_SIMPLE_DEFAULT(false), 0xFFF10001, 1, ZAP_TYPE(BOOLEAN), ZAP_ATTRIBUTE_MASK(TOKENIZE) }, /* UserLED                        \
+														*/                               \
 		{ ZAP_SIMPLE_DEFAULT(false), 0xFFF10002, 1, ZAP_TYPE(BOOLEAN), 0 }, /* UserButton */                                             \
 		{ ZAP_SIMPLE_DEFAULT(0), 0x0000FFFC, 4, ZAP_TYPE(BITMAP32), 0 }, /* FeatureMap */                                                \
 		{ ZAP_SIMPLE_DEFAULT(1), 0x0000FFFD, 2, ZAP_TYPE(INT16U), 0 }, /* ClusterRevision */                                             \

@@ -5892,17 +5892,17 @@ bool emberAfActionsClusterDisableActionWithDurationCallback(
 	chip::app::CommandHandler *commandObj, const chip::app::ConcreteCommandPath &commandPath,
 	const chip::app::Clusters::Actions::Commands::DisableActionWithDuration::DecodableType &commandData);
 /**
- * @brief Basic Information Cluster MfgSpecificPing Command callback (from client)
- */
-bool emberAfBasicInformationClusterMfgSpecificPingCallback(
-	chip::app::CommandHandler *commandObj, const chip::app::ConcreteCommandPath &commandPath,
-	const chip::app::Clusters::BasicInformation::Commands::MfgSpecificPing::DecodableType &commandData);
-/**
  * @brief Basic Information Cluster GenerateRandom Command callback (from client)
  */
 bool emberAfBasicInformationClusterGenerateRandomCallback(
 	chip::app::CommandHandler *commandObj, const chip::app::ConcreteCommandPath &commandPath,
 	const chip::app::Clusters::BasicInformation::Commands::GenerateRandom::DecodableType &commandData);
+/**
+ * @brief Basic Information Cluster MfgSpecificPing Command callback (from client)
+ */
+bool emberAfBasicInformationClusterMfgSpecificPingCallback(
+	chip::app::CommandHandler *commandObj, const chip::app::ConcreteCommandPath &commandPath,
+	const chip::app::Clusters::BasicInformation::Commands::MfgSpecificPing::DecodableType &commandData);
 /**
  * @brief OTA Software Update Provider Cluster QueryImage Command callback (from client)
  */
@@ -5928,30 +5928,6 @@ bool emberAfOtaSoftwareUpdateRequestorClusterAnnounceOTAProviderCallback(
 	chip::app::CommandHandler *commandObj, const chip::app::ConcreteCommandPath &commandPath,
 	const chip::app::Clusters::OtaSoftwareUpdateRequestor::Commands::AnnounceOTAProvider::DecodableType
 		&commandData);
-/**
- * @brief General Commissioning Cluster ArmFailSafe Command callback (from client)
- */
-bool emberAfGeneralCommissioningClusterArmFailSafeCallback(
-	chip::app::CommandHandler *commandObj, const chip::app::ConcreteCommandPath &commandPath,
-	const chip::app::Clusters::GeneralCommissioning::Commands::ArmFailSafe::DecodableType &commandData);
-/**
- * @brief General Commissioning Cluster SetRegulatoryConfig Command callback (from client)
- */
-bool emberAfGeneralCommissioningClusterSetRegulatoryConfigCallback(
-	chip::app::CommandHandler *commandObj, const chip::app::ConcreteCommandPath &commandPath,
-	const chip::app::Clusters::GeneralCommissioning::Commands::SetRegulatoryConfig::DecodableType &commandData);
-/**
- * @brief General Commissioning Cluster CommissioningComplete Command callback (from client)
- */
-bool emberAfGeneralCommissioningClusterCommissioningCompleteCallback(
-	chip::app::CommandHandler *commandObj, const chip::app::ConcreteCommandPath &commandPath,
-	const chip::app::Clusters::GeneralCommissioning::Commands::CommissioningComplete::DecodableType &commandData);
-/**
- * @brief General Commissioning Cluster SetTCAcknowledgements Command callback (from client)
- */
-bool emberAfGeneralCommissioningClusterSetTCAcknowledgementsCallback(
-	chip::app::CommandHandler *commandObj, const chip::app::ConcreteCommandPath &commandPath,
-	const chip::app::Clusters::GeneralCommissioning::Commands::SetTCAcknowledgements::DecodableType &commandData);
 /**
  * @brief Diagnostic Logs Cluster RetrieveLogsRequest Command callback (from client)
  */
