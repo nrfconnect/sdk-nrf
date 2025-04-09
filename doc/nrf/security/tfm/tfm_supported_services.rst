@@ -165,16 +165,37 @@ The following table lists the isolation level support in Nordic Semiconductor's 
 Limitations
 ***********
 
-The following list summarizes the limitations of TF-M in the |NCS|:
+The following sections summarize the limitations of TF-M in the |NCS|, organized by category.
+
+Core features
+=============
 
 * TF-M profiles are not supported.
-* From among the TF-M Services, Firmware Update service is not supported.
-* The following crypto modules or ciphers are not supported:
-
-  * AES output feedback (AES-OFB) mode.
-  * AES cipher feedback (AES-CFB) mode.
-
 * Isolation level 3 is not supported.
-* In Isolation level 2 (and 3), the number of peripherals configured as secure in the Application Root of Trust (ARoT) is limited by the number of available MPU regions.
-* Nordic Semiconductor devices only support the GCC toolchain for building TF-M.
-* :zephyr:code-sample-category:`tfm_integration` samples available in Zephyr are not compatible with the :ref:`ug_tfm_supported_services_tfm_services` implemented in the |NCS| when these samples are built from the upstream Zephyr.
+* TF-M's second-stage bootloader (BL2) is not supported.
+  Instead, the |NCS| uses its own version of MCUboot (`sdk-mcuboot`_), which is supported with TF-M and provides.
+  See :ref:`ug_bootloader_mcuboot_nsib` for more information.
+* For Isolation level 2, the number of peripherals that are configurable as secure in the Application Root of Trust (ARoT) is limited by available MPU regions.
+
+Security services
+=================
+
+* Firmware Update service is not supported.
+* Firmware verification is not supported.
+* Firmware encryption is not supported.
+* Protected off-chip data storage and retrieval are not supported.
+* Audit logging is not supported.
+
+Cryptography
+============
+
+The following crypto modules and ciphers are not supported:
+
+* AES output feedback (AES-OFB) mode.
+* AES cipher feedback (AES-CFB) mode.
+
+Development and integration
+===========================
+
+* GCC is the only supported toolchain for building TF-M on Nordic Semiconductor devices.
+* :zephyr:code-sample-category:`tfm_integration` samples from upstream Zephyr are not compatible with the :ref:`ug_tfm_supported_services_tfm_services` implemented in the |NCS| when built from upstream Zephyr.
