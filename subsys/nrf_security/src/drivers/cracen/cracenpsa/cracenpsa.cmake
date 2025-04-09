@@ -103,6 +103,7 @@ endif()
 if(CONFIG_PSA_NEED_CRACEN_KEY_AGREEMENT_DRIVER)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/ed25519.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/montgomery.c
   )
 endif()
 
