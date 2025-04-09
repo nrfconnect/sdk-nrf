@@ -199,6 +199,7 @@ target_compile_definitions(ot-config INTERFACE
 target_compile_options(ot-config INTERFACE
     $<TARGET_PROPERTY:zephyr_interface,INTERFACE_COMPILE_OPTIONS>
     $<TARGET_PROPERTY:compiler,no_builtin>
+    $<$<CXX_COMPILER_ID:Clang>:-Wno-c99-extensions>
     -imacros ${AUTOCONF_H}
 )
 
