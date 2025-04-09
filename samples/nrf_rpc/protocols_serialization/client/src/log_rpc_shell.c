@@ -182,6 +182,27 @@ static int cmd_log_rpc_echo(const struct shell *sh, size_t argc, char *argv[])
 	return 0;
 }
 
+static int cmd_log_rpc_time(const struct shell *sh, size_t argc, char *argv[])
+{
+	int rc = 0;
+	uint64_t time_us;
+
+	if (strcmp(argv[1], "now") == 0) {
+		time_us = k_ticks_to_us_near64(k_uptime_ticks());
+	} else {
+		time_us = shell_strtoull(argv[1], 10, &rc);
+	}
+
+	if (rc) {
+		shell_error(sh, "Invalid argument: %d", rc);
+		return -EINVAL;
+	}
+
+	log_rpc_set_time(time_us);
+
+	return 0;
+}
+
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	log_rpc_cmds,
 	SHELL_CMD_ARG(stream_level, NULL, "Set log streaming level <0-4>", cmd_log_rpc_stream_level,
@@ -196,6 +217,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(crash, NULL, "Retrieve remote device crash log", cmd_log_rpc_crash, 1, 0),
 	SHELL_CMD_ARG(echo, NULL, "Generate log message on remote <0-4> <msg>", cmd_log_rpc_echo, 3,
 		      0),
+	SHELL_CMD_ARG(time, NULL, "Set current time <time_us|now>", cmd_log_rpc_time, 2, 0),
 	SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_ARG_REGISTER(log_rpc, &log_rpc_cmds, "RPC logging commands", NULL, 1, 0);

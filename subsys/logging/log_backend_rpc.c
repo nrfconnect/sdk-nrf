@@ -19,13 +19,19 @@
 #include <nrf_rpc_cbor.h>
 
 #include <zephyr/kernel.h>
+#include <zephyr/sys_clock.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_backend.h>
 #include <zephyr/logging/log_backend_std.h>
+#include <zephyr/logging/log_ctrl.h>
 #include <zephyr/logging/log_output.h>
 #include <zephyr/retention/retention.h>
 
 #include <string.h>
+
+LOG_MODULE_REGISTER(log_rpc);
+
+#define USEC_PER_TICK (1000000 / CONFIG_SYS_CLOCK_TICKS_PER_SEC)
 
 /*
  * Drop messages coming from nRF RPC to avoid the avalanche of logs:
@@ -46,6 +52,7 @@ static const uint32_t common_output_flags =
 static bool panic_mode;
 static uint32_t log_format = LOG_OUTPUT_TEXT;
 static enum log_rpc_level stream_level = LOG_RPC_LEVEL_NONE;
+static log_timestamp_t log_timestamp_delta;
 
 #ifdef CONFIG_LOG_BACKEND_RPC_HISTORY
 static enum log_rpc_level history_level = LOG_RPC_LEVEL_NONE;
@@ -670,3 +677,39 @@ NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_echo_handler, LOG_RPC_CMD_ECHO,
 			 log_rpc_echo_handler, NULL);
 
 #endif
+
+static log_timestamp_t log_rpc_timestamp(void)
+{
+	return sys_clock_tick_get() + log_timestamp_delta;
+}
+
+static void log_rpc_set_time_handler(const struct nrf_rpc_group *group,
+				     struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	log_timestamp_t log_time;
+	log_timestamp_t local_time;
+	log_timestamp_t old_delta;
+
+	log_time = (log_timestamp_t)k_us_to_ticks_near64(nrf_rpc_decode_uint64(ctx));
+	local_time = (log_timestamp_t)sys_clock_tick_get();
+
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		nrf_rpc_err(-EBADMSG, NRF_RPC_ERR_SRC_RECV, group, LOG_RPC_CMD_SET_TIME,
+			    NRF_RPC_PACKET_TYPE_CMD);
+		return;
+	}
+
+	k_sched_lock();
+	old_delta = log_timestamp_delta;
+	log_timestamp_delta = log_time - local_time;
+	log_set_timestamp_func(log_rpc_timestamp, CONFIG_SYS_CLOCK_TICKS_PER_SEC);
+	k_sched_unlock();
+
+	LOG_WRN("Log time shifted by %" PRId64 " us",
+		((int64_t)log_timestamp_delta - (int64_t)old_delta) * USEC_PER_TICK);
+
+	nrf_rpc_rsp_send_void(group);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_set_time_handler, LOG_RPC_CMD_SET_TIME,
+			 log_rpc_set_time_handler, NULL);

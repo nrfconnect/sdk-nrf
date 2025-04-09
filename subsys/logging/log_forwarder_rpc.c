@@ -256,3 +256,13 @@ void log_rpc_set_history_usage_threshold(log_rpc_history_threshold_reached_handl
 	nrf_rpc_cbor_cmd_no_err(&log_rpc_group, LOG_RPC_CMD_SET_HISTORY_USAGE_THRESHOLD, &ctx,
 				nrf_rpc_rsp_decode_void, NULL);
 }
+
+void log_rpc_set_time(uint64_t now_us)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+
+	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, 1 + sizeof(now_us));
+	nrf_rpc_encode_uint64(&ctx, now_us);
+	nrf_rpc_cbor_cmd_no_err(&log_rpc_group, LOG_RPC_CMD_SET_TIME, &ctx, nrf_rpc_rsp_decode_void,
+				NULL);
+}
