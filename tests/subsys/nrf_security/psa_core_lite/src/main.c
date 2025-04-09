@@ -253,15 +253,10 @@ static void set_kmu_key_attributes(psa_key_attributes_t *attributes, mbedtls_svc
 	psa_set_key_bits(attributes, key_bits);
 }
 
-static void provision_ed25519_public_key(mbedtls_svc_key_id_t key_id,
-					 psa_key_persistence_t persistence,
-					 uint8_t key_buffer[ED25519_PUBKEY_SIZE])
+static void init_attributes_ed25519_public_key(mbedtls_svc_key_id_t key_id,
+					       psa_key_persistence_t persistence,
+					       psa_key_attributes_t *attributes)
 {
-	psa_status_t err;
-	uint8_t temp_buffer[ED25519_PUBKEY_SIZE];
-	const size_t pubkey_size = ED25519_PUBKEY_SIZE;
-	size_t key_length;
-	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
 	/* KMU currently doesn't support stating Ed25519ph, using Ed25519 for both */
 	psa_algorithm_t alg = PSA_ALG_PURE_EDDSA;
 	psa_key_type_t key_type = PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS);
@@ -271,7 +266,37 @@ static void provision_ed25519_public_key(mbedtls_svc_key_id_t key_id,
 	psa_key_usage_t usage = PSA_KEY_USAGE_VERIFY_MESSAGE;
 	size_t key_bits = 255;
 
-	set_kmu_key_attributes(&attributes, key_id, alg, lifetime, usage, key_type, key_bits);
+	set_kmu_key_attributes(attributes, key_id, alg, lifetime, usage, key_type, key_bits);
+}
+
+static void init_attributes_ecdsa_secp256r1_public_key(mbedtls_svc_key_id_t key_id,
+						       psa_key_persistence_t persistence,
+						       psa_key_attributes_t *attributes)
+{
+
+	/* KMU currently doesn't support stating Deterministic ECDSA, using ECDSA for both */
+	psa_algorithm_t alg = PSA_ALG_ECDSA(PSA_ALG_SHA_256);
+	psa_key_type_t key_type = PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1);
+	psa_key_lifetime_t lifetime =
+		PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
+			persistence, PSA_KEY_LOCATION_CRACEN_KMU);
+	psa_key_usage_t usage = PSA_KEY_USAGE_VERIFY_MESSAGE | PSA_KEY_USAGE_VERIFY_HASH;
+	size_t key_bits = 256;
+
+	set_kmu_key_attributes(attributes, key_id, alg, lifetime, usage, key_type, key_bits);
+}
+
+static void provision_ed25519_public_key(mbedtls_svc_key_id_t key_id,
+					 psa_key_persistence_t persistence,
+					 uint8_t key_buffer[ED25519_PUBKEY_SIZE])
+{
+	psa_status_t err;
+	uint8_t temp_buffer[ED25519_PUBKEY_SIZE];
+	const size_t pubkey_size = ED25519_PUBKEY_SIZE;
+	size_t key_length;
+	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
+
+	init_attributes_ed25519_public_key(key_id, persistence, &attributes);
 
 	err = psa_import_key(&attributes, key_buffer, pubkey_size, &key_id);
 	zassert_equal(err, PSA_SUCCESS, "Failed to import Ed25519 key. slot_id: %d, err: %d",
@@ -300,16 +325,8 @@ static void provision_ecdsa_secp256r1_public_key(mbedtls_svc_key_id_t key_id,
 	const size_t pubkey_size = ECDSA_SECP256R1_PUBKEY_SIZE;
 	size_t key_length;
 	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
-	/* KMU currently doesn't support stating Deterministic ECDSA, using ECDSA for both */
-	psa_algorithm_t alg = PSA_ALG_ECDSA(PSA_ALG_SHA_256);
-	psa_key_type_t key_type = PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1);
-	psa_key_lifetime_t lifetime =
-		PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
-			persistence, PSA_KEY_LOCATION_CRACEN_KMU);
-	psa_key_usage_t usage = PSA_KEY_USAGE_VERIFY_MESSAGE;
-	size_t key_bits = 256;
 
-	set_kmu_key_attributes(&attributes, key_id, alg, lifetime, usage, key_type, key_bits);
+	init_attributes_ecdsa_secp256r1_public_key(key_id, persistence, &attributes);
 
 	err = psa_import_key(&attributes, key_buffer, pubkey_size, &key_id);
 	zassert_equal(err, PSA_SUCCESS,
@@ -380,7 +397,7 @@ static void provision_keys(void)
 	}
 
 	/* Ed25519ph public key */
-	if (IS_ENABLED_ALL(PSA_WANT_ALG_PURE_EDDSA, PSA_WANT_ECC_TWISTED_EDWARDS_255)) {
+	if (IS_ENABLED_ALL(PSA_WANT_ALG_ED25519PH, PSA_WANT_ECC_TWISTED_EDWARDS_255)) {
 		provision_ed25519_public_key(KMU_KEY_ID_PUBKEY_ED25519PH_REVOKABLE,
 					     CRACEN_KEY_PERSISTENCE_REVOKABLE,
 					     ed25519ph_pubkey);
@@ -782,13 +799,13 @@ static void test_lock_keys(void)
 {
 	bool ran_lock = false;
 
-	if (IS_ENABLED_ANY(PSA_WANT_ALG_PURE_EDDSA, PSA_WANT_ECC_TWISTED_EDWARDS_255)) {
+	if (IS_ENABLED_ALL(PSA_WANT_ALG_PURE_EDDSA, PSA_WANT_ECC_TWISTED_EDWARDS_255)) {
 		/* Try to lock the read-only Ed25519 key */
 		lock_key(KMU_KEY_ID_PUBKEY_ED25519_READ_ONLY);
 		ran_lock = true;
 	}
 
-	if (IS_ENABLED_ANY(PSA_WANT_ALG_ED25519PH, PSA_WANT_ECC_TWISTED_EDWARDS_255)) {
+	if (IS_ENABLED_ALL(PSA_WANT_ALG_ED25519PH, PSA_WANT_ECC_TWISTED_EDWARDS_255)) {
 		/* Try to lock the read-only Ed25519ph key */
 		lock_key(KMU_KEY_ID_PUBKEY_ED25519PH_READ_ONLY);
 		ran_lock = true;
@@ -815,28 +832,48 @@ static void test_lock_keys(void)
 void test_invalid_kmu(void)
 {
 	psa_status_t err;
-	mbedtls_svc_key_id_t key_id = KMU_KEY_ID_PUBKEY_ED25519_READ_ONLY;
-	const size_t pubkey_size = ED25519_PUBKEY_SIZE;
-	psa_key_persistence_t persistence = CRACEN_KEY_PERSISTENCE_READ_ONLY;
 	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
-	/* KMU currently doesn't support stating Ed25519ph, using Ed25519 for both */
-	psa_algorithm_t alg = PSA_ALG_PURE_EDDSA;
-	psa_key_type_t key_type = PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS);
-	psa_key_lifetime_t lifetime =
-		PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
-			persistence, PSA_KEY_LOCATION_CRACEN_KMU);
-	psa_key_usage_t usage = PSA_KEY_USAGE_VERIFY_MESSAGE;
-	size_t key_bits = 255;
 
-	set_kmu_key_attributes(&attributes, key_id, alg, lifetime, usage, key_type, key_bits);
+	mbedtls_svc_key_id_t key_id;
+	mbedtls_svc_key_id_t imported_key_id;
+	uint8_t *pubkey_buffer;
+	size_t pubkey_size;
 
-	/* Try to import on already existing  */
-	err = psa_import_key(&attributes, ed25519_pubkey, pubkey_size, &key_id);
+	if (IS_ENABLED_ALL(PSA_WANT_ALG_PURE_EDDSA, PSA_WANT_ECC_TWISTED_EDWARDS_255)) {
+		key_id = KMU_KEY_ID_PUBKEY_ED25519_READ_ONLY;
+		pubkey_size = ED25519_PUBKEY_SIZE;
+		pubkey_buffer = ed25519_pubkey;
+
+		init_attributes_ed25519_public_key(key_id, CRACEN_KEY_PERSISTENCE_READ_ONLY,
+						   &attributes);
+	} else if (IS_ENABLED_ALL(PSA_WANT_ALG_ED25519PH, PSA_WANT_ECC_TWISTED_EDWARDS_255)) {
+		key_id = KMU_KEY_ID_PUBKEY_ED25519PH_READ_ONLY;
+		pubkey_size = ED25519_PUBKEY_SIZE;
+		pubkey_buffer = ed25519ph_pubkey;
+
+		init_attributes_ed25519_public_key(key_id, CRACEN_KEY_PERSISTENCE_READ_ONLY,
+						   &attributes);
+	} else if (UTIL_AND(IS_ENABLED_ANY(PSA_WANT_ALG_ECDSA, PSA_WANT_ALG_DETERMINISTIC_ECDSA),
+			    IS_ENABLED_ALL(PSA_WANT_ALG_SHA_256, PSA_WANT_ECC_SECP_R1_256))) {
+		key_id = KMU_KEY_ID_PUBKEY_SECP256R1_READ_ONLY;
+		pubkey_size = ECDSA_SECP256R1_PUBKEY_SIZE;
+		pubkey_buffer = ecdsa_secp256r1_pubkey;
+
+		init_attributes_ecdsa_secp256r1_public_key(key_id, CRACEN_KEY_PERSISTENCE_READ_ONLY,
+							   &attributes);
+	} else {
+		zassert_false(true, "No valid public key for invalid KMU test");
+		return;
+	}
+
+	/* Try to import on already existing key */
+	err = psa_import_key(&attributes, pubkey_buffer, pubkey_size, &imported_key_id);
 	zassert_equal(err, PSA_ERROR_ALREADY_EXISTS,
 		"Failed on import on existing (expected PSA_ERROR_ALREADY_EXISTS) slot_id: %d, err: %d",
 		KMU_GET_SLOT_ID(key_id), err);
 
-	err = psa_destroy_key(KMU_KEY_ID_PUBKEY_ED25519_READ_ONLY);
+	/* Try to destroy an existing read-only key */
+	err = psa_destroy_key(key_id);
 	zassert_equal(err, PSA_ERROR_NOT_PERMITTED,
 		"Failed on erase of read-only-key (expected PSA_ERROR_ALREADY_EXISTS) slot_id: %d, err: %d",
 		KMU_GET_SLOT_ID(key_id), err);
