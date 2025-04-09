@@ -66,7 +66,10 @@ The library sends the termination character automatically after an AT command.
 Shell usage
 ***********
 
-To send AT commands in shell, use the following syntax:
+SLM
+---
+
+Send AT commands for SLM in shell:
 
   .. code-block:: console
 
@@ -82,6 +85,27 @@ To send AT commands in shell, use the following syntax:
      OK
 
 SLM accepts AT command characters in upper, lower, or mixed case.
+
+Host
+----
+
+Use ``slmsh`` command to see commands for the Modem SLM library functions.
+
+Request toggling of the power pin from the Modem SLM library to put the SLM device to sleep and then wake it up:
+
+  .. code-block:: console
+
+     uart:~$ slmsh powerpin
+     [00:00:17.973,510] <inf> mdm_slm: Enable power pin
+     [00:00:18.078,887] <inf> mdm_slm: Disable power pin
+
+     uart:~$ slmsh powerpin
+     [00:00:33.038,604] <inf> mdm_slm: Enable power pin
+     [00:00:33.143,951] <inf> mdm_slm: Disable power pin
+     Ready
+
+     [00:00:34.538,513] <inf> app: Data received (len=7): Ready
+     uart:~$
 
 SLM Monitor usage
 *****************
