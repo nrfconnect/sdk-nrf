@@ -68,6 +68,9 @@ enum data_module_event_type {
 	/** Send impact data, similar to DATA_EVT_UI_DATA_SEND */
 	DATA_EVT_IMPACT_DATA_SEND,
 
+	/** Light sensor data is ready to be sent. */
+	DATA_EVT_LIGHT_SENSOR_DATA_READY,
+
 	/** Send cloud location data.
 	 *  The event has an associated payload of type @ref data_module_data_buffers in
 	 *  the `data.buffer` member.

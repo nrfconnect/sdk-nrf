@@ -960,7 +960,8 @@ static void on_cloud_state_disconnected(struct data_msg_data *msg)
 /* Message handler for STATE_CLOUD_CONNECTED. */
 static void on_cloud_state_connected(struct data_msg_data *msg)
 {
-	if (IS_EVENT(msg, data, DATA_EVT_DATA_READY)) {
+	if ((IS_EVENT(msg, data, DATA_EVT_DATA_READY)) ||
+	    (IS_EVENT(msg, data, DATA_EVT_LIGHT_SENSOR_DATA_READY))) {
 		data_encode();
 		return;
 	}
@@ -977,6 +978,11 @@ static void on_cloud_state_connected(struct data_msg_data *msg)
 
 	if (IS_EVENT(msg, data, DATA_EVT_IMPACT_DATA_READY)) {
 		data_impact_send();
+		return;
+	}
+
+	if (IS_EVENT(msg, data, DATA_EVT_SHUTDOWN_READY)) {
+		state_set(STATE_SHUTDOWN);
 		return;
 	}
 
@@ -1160,6 +1166,26 @@ static void on_all_states(struct data_msg_data *msg)
 
 	if (IS_EVENT(msg, sensor, SENSOR_EVT_FUEL_GAUGE_NOT_SUPPORTED)) {
 		requested_data_status_set(APP_DATA_BATTERY);
+	}
+
+	if (IS_EVENT(msg, sensor, SENSOR_EVT_LIGHT_SENSOR_THRESHOLD_EXCEEDED)) {
+		/* Reuse the sensor buffer to store light sensor triggers */
+		struct cloud_data_sensors new_sensor_data = {
+			.env_ts = msg->module.sensor.data.sensors.timestamp,
+			.light_threshold_exceeded = true,
+			.red = msg->module.sensor.data.light.red,
+			.green = msg->module.sensor.data.light.green,
+			.blue = msg->module.sensor.data.light.blue,
+			.ir = msg->module.sensor.data.light.ir,
+			.queued = true
+		};
+
+		cloud_codec_populate_sensor_buffer(sensors_buf,
+						   &new_sensor_data,
+						   &head_sensor_buf,
+						   ARRAY_SIZE(sensors_buf));
+
+		SEND_EVENT(data, DATA_EVT_LIGHT_SENSOR_DATA_READY);
 	}
 
 	if (IS_EVENT(msg, sensor, SENSOR_EVT_ENVIRONMENTAL_DATA_READY)) {

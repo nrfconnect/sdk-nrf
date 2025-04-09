@@ -24,6 +24,8 @@ static char *get_evt_type_str(enum data_module_event_type type)
 		return "DATA_EVT_UI_DATA_SEND";
 	case DATA_EVT_IMPACT_DATA_READY:
 		return "DATA_EVT_IMPACT_DATA_READY";
+	case DATA_EVT_LIGHT_SENSOR_DATA_READY:
+		return "DATA_EVT_LIGHT_SENSOR_DATA_READY";
 	case DATA_EVT_IMPACT_DATA_SEND:
 		return "DATA_EVT_IMPACT_DATA_SEND";
 	case DATA_EVT_CLOUD_LOCATION_DATA_SEND:

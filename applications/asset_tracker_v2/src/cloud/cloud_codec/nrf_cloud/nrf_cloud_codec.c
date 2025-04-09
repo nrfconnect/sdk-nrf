@@ -501,6 +501,7 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 		case ENVIRONMENTALS: {
 			int err, len;
 			char humidity[10];
+			char light[50];
 			char temperature[10];
 			char pressure[10];
 			char bsec_air_quality[4];
@@ -514,6 +515,27 @@ static int add_batch_data(cJSON *array, enum batch_data_type type, void *buf, si
 			if (err) {
 				LOG_ERR("date_time_uptime_to_unix_time_ms, error: %d", err);
 				return -EOVERFLOW;
+			}
+
+			if (data[i].light_threshold_exceeded) {
+				len = snprintk(light, sizeof(light), "%d %d %d %d",
+					       data[i].red,
+					       data[i].green,
+					       data[i].blue,
+					       data[i].ir);
+				if ((len < 0) || (len >= sizeof(light))) {
+					LOG_ERR("Cannot convert light to string, buffer too small");
+					return -ERANGE;
+				}
+
+				err = add_data(array, NULL, APP_ID_LIGHT_THRESHOLD, light,
+					&data[i].env_ts, data[i].queued, NULL, false);
+				if (err && err != -ENODATA) {
+					return err;
+				}
+
+				data[i].queued = false;
+				break;
 			}
 
 			len = snprintk(humidity, sizeof(humidity), "%.2f",

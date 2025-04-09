@@ -23,6 +23,9 @@ zephyr_include_directories_ifdef(CONFIG_MEMFAULT configuration/memfault)
 add_subdirectory(src/modules)
 add_subdirectory(src/events)
 
+# Add local copy of the BH1749 driver
+add_subdirectory(drivers/bh1749)
+
 add_subdirectory_ifdef(CONFIG_CLOUD_MODULE src/cloud)
 add_subdirectory_ifdef(CONFIG_SENSOR_MODULE src/ext_sensors)
 add_subdirectory_ifdef(CONFIG_WATCHDOG_APPLICATION src/watchdog)

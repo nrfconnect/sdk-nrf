@@ -24,6 +24,11 @@ extern "C" {
 
 /** @brief Sensor event types submitted by the Sensor module. */
 enum sensor_module_event_type {
+	/** Light sensor threshold exceeded the configured value.
+	 *  Payload is of type @ref sensor_module_data (light).
+	 */
+	SENSOR_EVT_LIGHT_SENSOR_THRESHOLD_EXCEEDED,
+
 	/** Accelerometer reported activity.
 	 *  Acceleration exceeded the configured activity threshold.
 	 */
@@ -64,6 +69,19 @@ enum sensor_module_event_type {
 	 *  attached in the event structure.
 	 */
 	SENSOR_EVT_ERROR
+};
+
+struct sensor_module_data_light {
+	/** Uptime when the data was sampled. */
+	int64_t timestamp;
+	/** Red light value in lux. */
+	int red;
+	/** Green light value in lux. */
+	int green;
+	/** Blue light value in lux. */
+	int blue;
+	/** Infrared light value in lux. */
+	int ir;
 };
 
 /** @brief Structure used to provide environmental data. */
@@ -113,6 +131,7 @@ struct sensor_module_event {
 	/** Sensor module event type. */
 	enum sensor_module_event_type type;
 	union {
+		struct sensor_module_data_light light;
 		/** Variable that contains sensor readings. */
 		struct sensor_module_data sensors;
 		/** Variable that contains acceleration data. */

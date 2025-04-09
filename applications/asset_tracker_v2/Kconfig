@@ -45,6 +45,8 @@ rsource "src/cloud/cloud_codec/Kconfig"
 rsource "src/watchdog/Kconfig"
 rsource "src/events/Kconfig"
 
+rsource "drivers/bh1749/Kconfig"
+
 endmenu
 
 menu "Zephyr Kernel"

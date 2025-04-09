@@ -131,6 +131,18 @@ struct cloud_data_sensors {
 	double humidity;
 	/** Atmospheric pressure in kilopascal. */
 	double pressure;
+
+	/** Light sensor data in lux. */
+	int red;
+	int green;
+	int blue;
+	int ir;
+
+	/** If this flag is set it means that the light sensor threshold was exceeded, in that case
+	 *  only the provided light sensor values and the timestamp are valid.
+	 */
+	bool light_threshold_exceeded;
+
 	/** BSEC Air quality in Indoor-Air-Quality (IAQ) index.
 	 *  If -1, the value is not provided.
 	 */

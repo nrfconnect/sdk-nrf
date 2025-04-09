@@ -9,6 +9,44 @@ menuconfig EXTERNAL_SENSORS
 
 if EXTERNAL_SENSORS
 
+config EXTERNAL_SENSORS_LIGHT_THRESHOLD_TRIGGER_LUX
+	int "Light sensor threshold"
+	default 50
+	help
+	  Set the threshold for the light sensor. The value is in lux and will apply to all
+	  supported colors (RGB).
+
+config EXTERNAL_SENSORS_LIGHT_HYSTERESIS_TIMEOUT_SECONDS
+	int "Light sensor threshold timeout"
+	default 30
+	help
+	  Duration (in seconds) for which the light sensor remains suspended after exceeding
+	  the configured threshold, preventing additional triggers during this period.
+
+choice CONFIG_EXTERNAL_SENSORS_LIGHT_TRIGGER_COLOR
+	prompt "Light sensor trigger color"
+	default EXTERNAL_SENSORS_LIGHT_TRIGGER_COLOR_BLUE
+	help
+	  Color that the library enables threshold triggers for.
+	  The BH1749 sensor only supports adding interrupt callback for one color at a time.
+
+config EXTERNAL_SENSORS_LIGHT_TRIGGER_COLOR_RED
+	bool "Red"
+	help
+	  Enable this option to use the red color channel for the light sensor trigger.
+
+config EXTERNAL_SENSORS_LIGHT_TRIGGER_COLOR_GREEN
+	bool "Green"
+	help
+	  Enable this option to use the green color channel for the light sensor trigger.
+
+config EXTERNAL_SENSORS_LIGHT_TRIGGER_COLOR_BLUE
+	bool "Blue"
+	help
+	  Enable this option to use the blue color channel for the light sensor trigger.
+
+endchoice # CONFIG_EXTERNAL_SENSORS_LIGHT_TRIGGER_COLOR
+
 config EXTERNAL_SENSORS_IMPACT_DETECTION
 	bool "Impact detection"
 	select ADXL372

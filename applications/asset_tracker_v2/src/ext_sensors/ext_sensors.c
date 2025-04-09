@@ -10,6 +10,7 @@
 #include <zephyr/drivers/sensor.h>
 #include <stdlib.h>
 #include <math.h>
+#include <zephyr/pm/device.h>
 
 #if defined(CONFIG_BME68X_IAQ)
 #include <drivers/bme68x_iaq.h>
@@ -139,7 +140,99 @@ static struct env_sensor accel_sensor_hg = {
 };
 #endif
 
+static struct env_sensor light_sensor = {
+	.channel = SENSOR_CHAN_LIGHT,
+	.dev = DEVICE_DT_GET(DT_NODELABEL(bh1749))
+};
+
 static ext_sensor_handler_t evt_handler;
+
+/* Forward declarations */
+static void timer_work_fn(struct k_work *work);
+
+/* Delayable work used to schedule triggers */
+static K_WORK_DELAYABLE_DEFINE(timer_work, timer_work_fn);
+
+static int bh1479_set_attribute(const struct device *dev,
+				enum sensor_channel chan,
+				enum sensor_attribute attr, int value)
+{
+	int err;
+	struct sensor_value sensor_val;
+
+	sensor_val.val1 = (value);
+
+	err = sensor_attr_set(dev, chan, attr, &sensor_val);
+	if (err) {
+		LOG_ERR("sensor_attr_set failed err %d", err);
+	}
+
+	return err;
+}
+
+static void timer_work_fn(struct k_work *work)
+{
+	int err;
+
+	ARG_UNUSED(work);
+
+	LOG_DBG("Timer triggered, resuming light sensor");
+
+	err = pm_device_action_run(light_sensor.dev, PM_DEVICE_ACTION_RESUME);
+	if (err) {
+		LOG_ERR("PWM enable failed, pm_device_action_run: %d.", err);
+		return;
+	}
+}
+
+static void trigger_handler(const struct device *dev, const struct sensor_trigger *trigger)
+{
+	ARG_UNUSED(dev);
+
+	switch (trigger->type) {
+	case SENSOR_TRIG_THRESHOLD:
+		LOG_DBG("Threshold trigger for color: %s",
+		(trigger->chan == SENSOR_CHAN_RED) ? "red" :
+		(trigger->chan == SENSOR_CHAN_GREEN) ? "green" :
+		(trigger->chan == SENSOR_CHAN_BLUE) ? "blue" : "Unknown");
+
+		struct ext_sensor_light_sensor_data light_sensor_data = { 0 };
+		int err = ext_sensors_light_sensor_get(&light_sensor_data);
+
+		if (err) {
+			LOG_ERR("ext_sensors_light_sensor_get, error: %d", err);
+			return;
+		}
+
+		err = pm_device_action_run(dev, PM_DEVICE_ACTION_SUSPEND);
+		if (err) {
+			LOG_ERR("PWM enable failed, pm_device_action_run: %d.", err);
+			return;
+		}
+
+		LOG_DBG("Light sensor threshold exceeded");
+
+		struct ext_sensor_evt evt = {
+			.type = EXT_SENSOR_EVT_LIGHT_SENSOR_UPPER_THRESHOLD_EXCEEDED,
+			.light_sensor_data = light_sensor_data,
+		};
+
+		evt_handler(&evt);
+
+		err = k_work_reschedule(&timer_work,
+			K_SECONDS(CONFIG_EXTERNAL_SENSORS_LIGHT_HYSTERESIS_TIMEOUT_SECONDS));
+		if (err < 0) {
+			LOG_ERR("k_work_reschedule, error: %d", err);
+			__ASSERT_NO_MSG(false);
+			return;
+		}
+
+		break;
+	default:
+		LOG_ERR("Unknown trigger event %d", trigger->type);
+		break;
+	}
+}
 
 static void accelerometer_trigger_handler(const struct device *dev,
 					  const struct sensor_trigger *trig)
@@ -223,7 +316,15 @@ static void impact_trigger_handler(const struct device *dev,
 
 int ext_sensors_init(ext_sensor_handler_t handler)
 {
+	int err;
 	struct ext_sensor_evt evt = {0};
+	struct sensor_trigger trig_conf = {
+		.type = SENSOR_TRIG_THRESHOLD,
+		.chan = IS_ENABLED(CONFIG_EXTERNAL_SENSORS_LIGHT_TRIGGER_COLOR_RED) ?
+				   SENSOR_CHAN_RED :
+			IS_ENABLED(CONFIG_EXTERNAL_SENSORS_LIGHT_TRIGGER_COLOR_GREEN) ?
+				   SENSOR_CHAN_GREEN : SENSOR_CHAN_BLUE,
+	};
 
 	if (handler == NULL) {
 		LOG_ERR("External sensor handler NULL!");
@@ -240,6 +341,11 @@ int ext_sensors_init(ext_sensor_handler_t handler)
 	}
 #endif /* if defined(CONFIG_BME68X_IAQ) */
 
+	if (!device_is_ready(light_sensor.dev)) {
+		LOG_ERR("Light sensor device is not ready");
+		evt.type = EXT_SENSOR_EVT_LIGHT_ERROR;
+		evt_handler(&evt);
+	}
 
 	if (!device_is_ready(temp_sensor.dev)) {
 		LOG_ERR("Temperature sensor device is not ready");
@@ -259,6 +365,28 @@ int ext_sensors_init(ext_sensor_handler_t handler)
 		evt_handler(&evt);
 	}
 
+	err = bh1479_set_attribute(light_sensor.dev, SENSOR_CHAN_ALL,
+				   SENSOR_ATTR_LOWER_THRESH,
+				   0);
+	if (err) {
+		LOG_ERR("bh1479_set_attribute, error: %d", err);
+		return err;
+	}
+
+	err = bh1479_set_attribute(light_sensor.dev, SENSOR_CHAN_ALL,
+				   SENSOR_ATTR_UPPER_THRESH,
+				   CONFIG_EXTERNAL_SENSORS_LIGHT_THRESHOLD_TRIGGER_LUX);
+	if (err) {
+		LOG_ERR("bh1479_set_attribute, error: %d", err);
+		return err;
+	}
+
+	/* Use the same trigger handler for all colors. */
+	if (sensor_trigger_set(light_sensor.dev, &trig_conf, trigger_handler)) {
+		LOG_ERR("Could not set trigger");
+		return -EFAULT;
+	}
+
 #if defined(CONFIG_ADXL362) || defined(CONFIG_ADXL367)
 	if (!device_is_ready(accel_sensor_lp.dev)) {
 		LOG_ERR("Low-power accelerometer device is not ready");
@@ -273,8 +401,8 @@ int ext_sensors_init(ext_sensor_handler_t handler)
 		evt.type = EXT_SENSOR_EVT_ACCELEROMETER_ERROR;
 		evt_handler(&evt);
 	} else {
-		int err = sensor_trigger_set(accel_sensor_hg.dev,
-					     &adxl372_sensor_trigger, impact_trigger_handler);
+		err = sensor_trigger_set(accel_sensor_hg.dev,
+					 &adxl372_sensor_trigger, impact_trigger_handler);
 		if (err) {
 			LOG_ERR("Could not set trigger for device %s, error: %d",
 				accel_sensor_hg.dev->name, err);
@@ -282,6 +410,58 @@ int ext_sensors_init(ext_sensor_handler_t handler)
 		}
 	}
 #endif
+	return 0;
+}
+
+int ext_sensors_light_sensor_get(struct ext_sensor_light_sensor_data *light_sensor_data)
+{
+	int err;
+	struct sensor_value data = {0};
+
+	err = sensor_sample_fetch_chan(light_sensor.dev, SENSOR_CHAN_ALL);
+	if (err) {
+		LOG_ERR("sensor_sample_fetch, error: %d", err);
+		return -ENODATA;
+	}
+
+	err = sensor_channel_get(light_sensor.dev, SENSOR_CHAN_RED, &data);
+	if (err) {
+		LOG_ERR("sensor_sample_fetch, error: %d", err);
+		return -ENODATA;
+	}
+
+	light_sensor_data->red = data.val1;
+
+	err = sensor_channel_get(light_sensor.dev, SENSOR_CHAN_GREEN, &data);
+	if (err) {
+		LOG_ERR("sensor_sample_fetch, error: %d", err);
+		return -ENODATA;
+	}
+
+	light_sensor_data->green = data.val1;
+
+	err = sensor_channel_get(light_sensor.dev, SENSOR_CHAN_BLUE, &data);
+	if (err) {
+		LOG_ERR("sensor_sample_fetch, error: %d", err);
+		return -ENODATA;
+	}
+
+	light_sensor_data->blue = data.val1;
+
+	err = sensor_channel_get(light_sensor.dev, SENSOR_CHAN_IR, &data);
+	if (err) {
+		LOG_ERR("sensor_sample_fetch, error: %d", err);
+		return -ENODATA;
+	}
+
+	light_sensor_data->ir = data.val1;
+
+	LOG_DBG("Light sensor values: red: %d, green: %d, blue: %d, ir: %d",
+		light_sensor_data->red,
+		light_sensor_data->green,
+		light_sensor_data->blue,
+		light_sensor_data->ir);
+
 	return 0;
 }
 
