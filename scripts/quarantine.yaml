@@ -45,6 +45,7 @@
   platforms:
     - nrf54l20pdk/nrf54l20/cpuapp
     - nrf54lm20apdk/nrf54lm20a/cpuapp
+    - nrf54lm20apdk@0.0.0/nrf54lm20a/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-7255"
 
 - scenarios:
