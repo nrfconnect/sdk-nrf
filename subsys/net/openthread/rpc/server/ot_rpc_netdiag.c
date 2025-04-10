@@ -72,6 +72,7 @@ static size_t ot_rpc_network_diag_tlv_size(otNetworkDiagTlv *aNetworkDiagTlv)
 static void ot_rpc_encode_network_diag_tlv(struct nrf_rpc_cbor_ctx *ctx,
 					   otNetworkDiagTlv *aNetworkDiagTlv)
 {
+	uint8_t mode;
 	nrf_rpc_encode_uint(ctx, aNetworkDiagTlv->mType);
 
 	switch (aNetworkDiagTlv->mType) {
@@ -83,7 +84,7 @@ static void ot_rpc_encode_network_diag_tlv(struct nrf_rpc_cbor_ctx *ctx,
 		nrf_rpc_encode_buffer(ctx, aNetworkDiagTlv->mData.mEui64.m8, OT_EXT_ADDRESS_SIZE);
 		break;
 	case OT_NETWORK_DIAGNOSTIC_TLV_MODE:
-		uint8_t mode = 0;
+		mode = 0;
 
 		WRITE_BIT(mode, 0, aNetworkDiagTlv->mData.mMode.mRxOnWhenIdle);
 		WRITE_BIT(mode, 1, aNetworkDiagTlv->mData.mMode.mDeviceType);
@@ -210,7 +211,7 @@ static void ot_rpc_encode_network_diag_tlv(struct nrf_rpc_cbor_ctx *ctx,
 		nrf_rpc_encode_uint(ctx, aNetworkDiagTlv->mData.mChildTable.mCount);
 		zcbor_list_start_encode(ctx->zs, aNetworkDiagTlv->mData.mChildTable.mCount);
 		for (int i = 0; i < aNetworkDiagTlv->mData.mChildTable.mCount; i++) {
-			uint8_t mode = 0;
+			mode = 0;
 
 			nrf_rpc_encode_uint(ctx,
 				aNetworkDiagTlv->mData.mChildTable.mTable[i].mTimeout);
