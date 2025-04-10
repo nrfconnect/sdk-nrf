@@ -8,6 +8,7 @@ Wi-Fi Provisioning Service
    :depth: 2
 
 This library implements a Bluetooth® GATT service for Wi-Fi® provisioning.
+It is an implementation of the server side of the Wi-Fi provisioning protocol defined by Nordic Semiconductor.
 It is to be used with the :ref:`wifi_provisioning` sample.
 The Wi-Fi Provisioning Service forms a complete reference solution, together with the mobile application.
 For details, see the :ref:`wifi_provisioning` sample documentation.
@@ -17,9 +18,150 @@ Overview
 
 The service is divided into three parts:
 
-* GATT service interface: Defines GATT service and provides an interface for the configurator to exchange messages.
-* Task and event handling component: Handles provisioning-related tasks and events.
+* GATT service interface: Defines the GATT service and serves as the transport layer for the provisioning protocol.
+* Task and event handling component: Implements the provisioning protocol.
 * Configuration management component: Manages the provisioning data (in RAM and flash) accessed by multiple threads.
+
+.. _wifi_provisioning_protocol:
+
+Provisioning protocol
+*********************
+
+The protocol is designed to enable the provisioning of Wi-Fi products from Nordic Semiconductor.
+It is an application layer protocol, and the underlying transport layer can be arbitrary.
+It uses `Protocol Buffers`_ as the serialization scheme, to achieve platform independence.
+It adopts a client-server model.
+
+The target, which is the device having Wi-Fi products to be provisioned (for example, nRF5340 DK on nRF7002 DK), hosts the server.
+The configurator, which is the device that holds the information to be passed to and applied on the target (for example, a smartphone), acts as the client.
+The message is the basic unit for carrying information and is exchanged between the configurator and the target.
+
+Message types
+=============
+
+The protocol defines four message types:
+
+* ``Info``: The message is to indicate the ``version`` of the provisioning protocol implemented on the target.
+
+  The following table details the fields of the ``Info`` message.
+
+   =================== ======================= ======================== =======================================================================================
+   Name                Data type               Status                   Notes
+   =================== ======================= ======================== =======================================================================================
+   version             uint32                  Required                 The value represents the version of provisioning protocol implemented on the target.
+   =================== ======================= ======================== =======================================================================================
+
+* ``Request``: The message is for the configurator to request a particular action on the target.
+
+  The following table details the fields of the ``Request`` message.
+
+   =================== ======================= ======================== =======================================================================================
+   Name                Data type               Status                   Notes
+   =================== ======================= ======================== =======================================================================================
+   op_code             enum                    Optional                 The value represents the action to be taken by the target.
+   scan_params         enum                    Optional                 The value represents the scan parameters used for a scan action.
+   config              message                 Optional                 The value represents the Wi-Fi configuration used for a connection action.
+   =================== ======================= ======================== =======================================================================================
+
+  The following table details the five possible values of the ``op_code`` field.
+
+   =================== ================================================ =============================
+   Operation code      Description                                      Notes
+   =================== ================================================ =============================
+   GET_STATUS          Get the status of the device, such as
+                       provisioning state, Wi-Fi connection state,
+                       and more
+   START_SCAN          Trigger an access point (AP) scan                ``scan_params`` is optional
+   STOP_SCAN           Stop AP scan
+   SET_CONFIG          Store Wi-Fi configuration and connect to an AP   ``config`` is required
+   FORGET_CONFIG       Erase the configuration and disconnect
+   =================== ================================================ =============================
+
+* ``Response``: The message is for the target to provide the feedback on the result of an action to the configurator.
+
+  The following table details the fields of the ``Response`` message.
+
+   =================== ======================= ======================== =======================================================================================
+   Name                Data type               Status                   Notes
+   =================== ======================= ======================== =======================================================================================
+   request_op_code     enum                    Optional                 The action the message is to respond.
+   status              enum                    Optional                 The result of the action.
+   device_status       message                 Optional                 The status of the Wi-Fi on the target.
+   =================== ======================= ======================== =======================================================================================
+
+  The ``status`` field can take one of following values:
+
+  * ``SUCCESS``: The operation is dispatched successfully.
+  * ``INVALID_ARGUMENT``: The argument is invalid.
+  * ``INVALID_PROTO``: The message cannot be encoded or decoded.
+  * ``INTERNAL_ERROR``: The operation cannot be dispatched properly.
+
+* ``Result``: The message is for the target to provide feedback on the Wi-Fi status to the configurator asynchronously.
+
+  The following table details the fields of the ``Result`` message.
+
+   =================== ======================= ======================== =======================================================================================
+   Name                Data type               Status                   Notes
+   =================== ======================= ======================== =======================================================================================
+   scan_record         message                 Optional                 The information of the SSID found in the scan action.
+   state               enum                    Optional                 The state of the connection action.
+   reason              enum                    Optional                 The reason for the connection failure.
+   =================== ======================= ======================== =======================================================================================
+
+These definitions are available as :file:`.proto` files in the library path.
+See all definitions in the :file:`subsys/bluetooth/services/wifi_prov/proto/` folder.
+
+Workflow
+========
+
+Multiple workflows are defined in the form of message exchange.
+
+Determine provisioning protocol version
+---------------------------------------
+
+In this workflow, the configurator requests the ``Info`` message using a transport layer-specific method, and the target sends the ``Info`` message over the transport layer.
+
+Get Wi-Fi status
+----------------
+
+In this workflow, the configurator sends a ``Request`` message, in which the ``op_code`` is set as ``GET_STATUS``, over the transport layer.
+The target receives the message, retrieves the required information, and sets up a ``Response`` message.
+In the ``Response`` message, the ``request_op_code`` is ``GET_STATUS``, the ``status`` indicates whether the operation is successful and the possible failure reason, and ``device_status`` carries the Wi-Fi status if the operation is successful.
+
+Start SSID scan
+---------------
+
+In this workflow, the configurator sends a ``Request`` message, in which the ``op_code`` is set as ``START_SCAN``, over the transport layer.
+The target receives the message, triggers the scan using the given parameters, and sets up a ``Response`` message.
+In the ``Response`` message, the ``request_op_code`` is ``START_SCAN``, and the ``status`` indicates whether the operation is successful and the possible failure reason.
+
+When the scan is finished, the target will set up a ``Result`` message for each SSID found during the scan, and the information will be in the ``scan_record`` field.
+
+Stop SSID scan
+--------------
+
+In this workflow, the configurator sends a ``Request`` message, in which the ``op_code`` is set as ``STOP_SCAN``, over the transport layer.
+The target receives the message, stops the Wi-Fi scan, and sets up a ``Response`` message.
+In the ``Response`` message, the ``request_op_code`` is ``STOP_SCAN``, and the status indicates whether the operation is successful and the possible failure reason.
+
+Connect to AP
+-------------
+
+In this workflow, the configurator sends a ``Request`` message, in which the ``op_code`` is set as ``SET_CONFIG``, over the transport layer.
+The target receives the message, applies the Wi-Fi connection information, and sets up a ``Response`` message.
+In the ``Response`` message, the ``request_op_code`` is ``SET_CONFIG``, and the ``status`` indicates whether the operation is successful and the possible failure reason.
+
+When the connection state changes or an attempt fails, the target will set up a ``Result`` message.
+The ``state`` field indicates the current state of the Wi-Fi, and ``reason`` field indicates the failure reason.
+
+Disconnect from AP
+------------------
+
+In this workflow, the configurator sends a ``Request`` message, in which the ``op_code`` is set as ``FORGET_CONFIG``, over the transport layer.
+The target receives the message, triggers the Wi-Fi disconnection, and sets up a ``Response`` message.
+In the ``Response`` message, the ``request_op_code`` is ``FORGET_CONFIG``, and the ``status`` indicates whether the operation is successful and the possible failure reason.
+
+When the connection state changes or an attempt fails, the target will set up a ``Result`` message, and the ``state`` field indicates the current state of the Wi-Fi, and the ``reason`` field indicates the failure reason.
 
 Service declaration
 *******************
@@ -81,85 +223,16 @@ The purpose of each characteristic is as follows:
 * ``Operation Control Point``: For client to send ``Request`` message to server, and server to send ``Response`` message to client.
 * ``Data Out``: For server to send ``Result`` message to the client.
 
+It takes the functions exposed by the task and event handling part of reading the ``Info`` message and receiving the ``Request`` message as the callbacks of corresponding characteristics.
+It provides functions for the task and event handling part to send ``Response`` and ``Result`` messages.
+
 Task and event handling
 ***********************
 
-The Wi-Fi Provisioning Service uses `Protocol Buffers`_ to define platform-independent message formats.
-These definitions are available as :file:`.proto` files in the code.
+The service uses `nanopb`_ to instantiate the protocol buffers-based, platform-independent messages in the C language.
 
-The service also uses `nanopb`_ to convert encoded platform-independent messages to and from C language.
-
-The device performs actions according to messages it exchanges with a configurator (the peer that sends the message, such as a smartphone running the nRF Wi-Fi Provisioner app listed in :ref:`wifi_provisioning_app`).
-
-.. _wifi_provisioning_message_types:
-.. _ble_wifi_provision_message_types:
-
-Message types
-=============
-
-The service uses four message types:
-
-* ``Info``: Allows the configurator to know the capability of a device before the provisioning process happens.
-
-  The configurator reads this message before sending any other messages.
-  The info message contains a ``version`` field.
-
-* ``Request``: Contains a command and configuration.
-
-  The device takes action based on the command and applies the configuration if one is given.
-
-  The following table details the five commands that the service uses.
-
-   =================== ================================================ =============================
-   Command             Description                                      Notes
-   =================== ================================================ =============================
-   GET_STATUS          Get the status of the device, such as
-                       provisioning state, Wi-Fi connection state,
-                       and more
-   START_SCAN          Trigger an access point (AP) scan                ``scan_params`` is optional
-   STOP_SCAN           Stop AP scan
-   SET_CONFIG          Store Wi-Fi configuration and connect to an AP   ``config`` is required
-   FORGET_CONFIG       Erase the configuration and disconnect
-   =================== ================================================ =============================
-
-* ``Response``: Contains the command to which it is responding, the operation result, and any other data.
-
-  The device sends any additional data associated with this command to the configurator in a ``Result`` message.
-
-  The ``Response`` message contains one of following response codes:
-
-  * ``SUCCESS``: The operation is dispatched successfully.
-  * ``INVALID_ARGUMENT``: The argument is invalid.
-  * ``INVALID_PROTO``: The message cannot be encoded or decoded.
-  * ``INTERNAL_ERROR``: The operation cannot be dispatched properly.
-
-  If the command is ``GET_STATUS``, the response includes some or all of the following fields:
-
-  * ``state``: Describes the Wi-Fi connection state according to values defined in the :file:`common.proto` file.
-  * ``provisioning_info``: Includes Wi-Fi provisioning information stored in the non-volatile memory (NVM) of the device.
-  * ``connection_info``: Includes Wi-Fi connection details.
-  * ``scan_info``: Includes the parameters used for the AP scan.
-
-* ``Result``: Carries asynchronous data about the operation status.
-
-  * If the command is ``START_SCAN``, the result message sent to the configurator contains information about the AP.
-    Each ``Result`` contains information related to one AP.
-  * If the command is ``SET_CONFIG``, when the Wi-Fi status changes (for example, from disconnected to connected), the configurator receives a result message with the new status.
-    Meanwhile, the Wi-Fi credentials are stored in the non-volatile memory of the device.
-
-See all definitions in the :file:`.subsys/bluetooth/services/wifi_prov/proto/common.proto` file.
-
-Operations
-==========
-
-The message sequence is the same for all operations, with variations depending on the command:
-
-1. The configurator sends an encoded ``Request`` message with a command to the device.
-#. The device carries out the command.
-#. The device sends a ``Response`` message to the configurator.
-#. For some operations, the device also sends a ``Result`` message to the configurator with any additional data generated or reported.
-
-See :ref:`wifi_provisioning_message_types` for more information on the commands and additional parameters.
+It exposes the functions of reading the ``Info`` message and  receiving the ``Request`` message to transport layer.
+It uses the function of sending ``Response`` and ``Result`` messages provided by the transport layer to send these messages.
 
 Configuration management
 ************************
