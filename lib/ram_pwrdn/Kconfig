@@ -11,6 +11,7 @@ menuconfig RAM_POWER_DOWN_LIBRARY
 	# for security reasons. If necessary, this limitation could be
 	# addressed by a secure service in the future.
 	depends on ! BUILD_WITH_TFM
+	imply NRF_FORCE_RAM_ON_REBOOT
 	help
 	  This allows application to call API for disabling unused RAM segments
 	  in the System ON mode. Effectively the application looses possibility
