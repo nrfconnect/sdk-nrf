@@ -669,23 +669,3 @@ static unsigned short int get_key_opsz(const struct si_sig_privkey *privkey)
 {
 	return sx_pk_curve_opsize(privkey->key.eckey.curve);
 }
-
-const struct si_sig_def *const si_sig_def_ecdsa = &(const struct si_sig_def){
-	.sign = si_sig_create_ecdsa_sign,
-	.sign_digest = si_sig_create_ecdsa_sign_digest,
-	.verify = si_sig_create_ecdsa_verify,
-	.verify_digest = si_sig_create_ecdsa_verify_digest,
-	.pubkey = create_pubkey,
-	.getkeyopsz = get_key_opsz,
-	.sigcomponents = 2,
-};
-
-const struct si_sig_def *const si_sig_def_ecdsa_deterministic = &(const struct si_sig_def){
-	.sign = si_sig_create_ecdsa_sign_deterministic,
-	.sign_digest = si_sig_create_ecdsa_sign_digest_deterministic,
-	.verify = si_sig_create_ecdsa_verify,
-	.verify_digest = si_sig_create_ecdsa_verify_digest,
-	.pubkey = create_pubkey,
-	.getkeyopsz = get_key_opsz,
-	.sigcomponents = 2,
-};
