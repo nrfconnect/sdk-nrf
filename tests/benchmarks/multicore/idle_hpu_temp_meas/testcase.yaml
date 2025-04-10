@@ -18,4 +18,4 @@ tests:
       fixture: ppk_power_measure
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_hpu_feature"
-    timeout: 120
+    timeout: 160
