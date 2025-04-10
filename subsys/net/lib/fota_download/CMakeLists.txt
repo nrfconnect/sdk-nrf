@@ -30,3 +30,7 @@ zephyr_include_directories_ifdef(CONFIG_SECURE_BOOT
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/dfu/include)
 zephyr_include_directories_ifdef(CONFIG_DOWNLOADER
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/include)
+
+if(CONFIG_MCUBOOT_IMG_MANAGER)
+  zephyr_library_link_libraries(MCUBOOT_BOOTUTIL)
+endif()

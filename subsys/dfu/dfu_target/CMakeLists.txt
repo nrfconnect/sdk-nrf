@@ -27,12 +27,18 @@ zephyr_library_sources_ifdef(CONFIG_DFU_TARGET_SMP
   src/dfu_target_smp.c
   )
 zephyr_library_sources(src/dfu_stream_flatten.c)
-if (CONFIG_DFU_TARGET_SUIT)
+
+if(CONFIG_DFU_TARGET_SMP OR CONFIG_DFU_TARGET_MCUBOOT)
+  zephyr_library_link_libraries(MCUBOOT_BOOTUTIL)
+endif()
+
+if(CONFIG_DFU_TARGET_SUIT)
   zephyr_library_sources(src/dfu_target_suit.c)
   zephyr_library_link_libraries(suit_memory_layout_interface)
   zephyr_library_link_libraries(suit_envelope_info)
   zephyr_library_link_libraries_ifdef(CONFIG_SUIT_CACHE_RW suit_cache_interface)
-  if (CONFIG_SSF_SUIT_SERVICE_ENABLED)
+
+  if(CONFIG_SSF_SUIT_SERVICE_ENABLED)
     zephyr_library_link_libraries(suit_utils)
   endif()
 endif()
