@@ -52,7 +52,7 @@ psa_status_t cracen_cmac_setup(cracen_mac_operation_t *operation,
 	operation->bytes_left_for_next_block = AES_BLOCK_SIZE;
 	operation->cmac.is_first_block = true;
 
-	return status;
+	return PSA_SUCCESS;
 }
 
 psa_status_t cracen_cmac_update(cracen_mac_operation_t *operation, const uint8_t *input,
