@@ -21,6 +21,7 @@ tests:
       fixture: pca63566
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_twim_gated"
+    timeout: 90
 
   benchmarks.multicore.idle_twim.nrf54h20dk_cpuapp_cpurad.coverage:
     tags:

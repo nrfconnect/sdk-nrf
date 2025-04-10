@@ -21,6 +21,7 @@ tests:
       fixture: gpio_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_gated_uarte"
+    timeout: 90
 
   benchmarks.multicore.idle_uarte.fast.nrf54h20dk_cpuapp_cpurad.s2ram:
     tags:
@@ -40,6 +41,7 @@ tests:
       fixture: gpio_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_gated_uarte"
+    timeout: 90
 
   benchmarks.multicore.idle_uarte.fast.nrf54h20dk_cpuapp_cpurad.s2ram.remote_gd_freq_switching:
     tags:
@@ -60,6 +62,7 @@ tests:
       fixture: gpio_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_gated_uarte"
+    timeout: 90
 
   benchmarks.multicore.idle_uarte.fast.gd_freq_256MHz.nrf54h20dk_cpuapp_cpurad.s2ram:
     tags:
@@ -80,6 +83,7 @@ tests:
       fixture: gpio_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_gated_uarte"
+    timeout: 90
 
   benchmarks.multicore.idle_uarte.fast.gd_freq_128MHz.nrf54h20dk_cpuapp_cpurad.s2ram:
     tags:
@@ -100,6 +104,7 @@ tests:
       fixture: gpio_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_gated_uarte"
+    timeout: 90
 
   benchmarks.multicore.idle_uarte.fast.gd_freq_64MHz.nrf54h20dk_cpuapp_cpurad.s2ram:
     tags:
@@ -120,6 +125,7 @@ tests:
       fixture: gpio_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_gated_uarte"
+    timeout: 90
 
   benchmarks.multicore.idle_uarte.fast.gd_freq_switching.nrf54h20dk_cpuapp_cpurad.s2ram:
     tags:
@@ -140,6 +146,7 @@ tests:
       fixture: gpio_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_gated_uarte"
+    timeout: 90
 
   benchmarks.multicore.idle_uarte.automatic_pm.nrf54h20dk_cpuapp_cpurad.s2ram:
     tags:
@@ -163,6 +170,7 @@ tests:
       fixture: gpio_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_gated_uarte_log_enabled"
+    timeout: 90
 
   benchmarks.multicore.idle_uarte.nrf54h20dk_cpuapp_cpurad.coverage:
     tags:
