@@ -68,6 +68,7 @@ if(CONFIG_PSA_NEED_CRACEN_MAC_DRIVER)
   if(CONFIG_PSA_NEED_CRACEN_HMAC)
     list(APPEND cracen_driver_sources
       ${CMAKE_CURRENT_LIST_DIR}/src/cracen_mac_hmac.c
+      ${CMAKE_CURRENT_LIST_DIR}/src/hmac.c
     )
   endif()
 

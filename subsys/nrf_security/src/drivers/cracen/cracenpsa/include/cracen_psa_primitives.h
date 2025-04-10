@@ -195,9 +195,9 @@ struct cracen_mac_operation_s {
 	union {
 #if defined(PSA_NEED_CRACEN_HMAC)
 		struct {
-			struct sitask task;
-
-			uint8_t workmem[SX_HASH_MAX_ENABLED_BLOCK_SIZE + PSA_HASH_MAX_SIZE];
+			struct sxhash hashctx;
+			uint8_t workmem[SX_HASH_MAX_ENABLED_BLOCK_SIZE +
+					PSA_HASH_MAX_SIZE];
 		} hmac;
 #endif /* PSA_NEED_CRACEN_HMAC */
 #if defined(PSA_NEED_CRACEN_CMAC)
