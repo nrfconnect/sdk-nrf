@@ -163,8 +163,8 @@ To identify that the KMU is used as a persistent storage backend for a specific 
 | ``key lifetime`` (``psa_set_key_lifetime``)  | ``PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(persistence, location)``   | ``CRACEN_KEY_PERSISTENCE_REVOKABLE`` is a custom persistence mode, which will revoke the key slots when the key is destroyed.                      |
 |                                              | where persistence is set to one of the following:                           |                                                                                                                                                    |
 |                                              | ``PSA_KEY_PERSISTENCE_DEFAULT``,                                            | ``PSA_KEY_PERSISTENCE_DEFAULT`` should be used by applications that have no specific needs beyond what is met by implementation-specific features. |
-|                                              | ``PSA_KEY_PERSISTENCE_READ_ONLY``,                                          |                                                                                                                                                    |
-|                                              | ``CRACEN_KEY_PERSISTENCE_REVOKABLE``,                                       | ``PSA_KEY_PERSISTENCE_READ_ONLY`` is for read-only or write-once keys.                                                                             |
+|                                              | ``CRACEN_KEY_PERSISTENCE_READ_ONLY``,                                       |                                                                                                                                                    |
+|                                              | ``CRACEN_KEY_PERSISTENCE_REVOKABLE``,                                       | ``CRACEN_KEY_PERSISTENCE_READ_ONLY`` is for read-only or write-once keys.                                                                          |
 |                                              | and location must be ``PSA_KEY_LOCATION_CRACEN_KMU``                        | A key with this persistence level cannot be destroyed.                                                                                             |
 |                                              |                                                                             | Keys that are read-only due to policy restrictions, rather than physical limitations, should not have this persistence level.                      |
 +----------------------------------------------+-----------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -285,7 +285,7 @@ Applications can store keys in KMU slots using the standard PSA cryptographic ke
 Additionally, the KMU slots can be provisioned using the nRF Util development tool.
 
 .. note::
-   If a power failure occurs during provisioning of a key with persistence ``PSA_KEY_PERSISTENCE_READ_ONLY`` or ``CRACEN_KEY_PERSISTENCE_REVOKABLE``, it might not be possible to recover the key slot.
+   If a power failure occurs during provisioning of a key with persistence ``CRACEN_KEY_PERSISTENCE_READ_ONLY`` or ``CRACEN_KEY_PERSISTENCE_REVOKABLE``, it might not be possible to recover the key slot.
    Provisioning of read-only keys should be restricted to controlled environments (production environments).
 
 You might encounter the following KMU-specific error codes when storing keys in KMU:
