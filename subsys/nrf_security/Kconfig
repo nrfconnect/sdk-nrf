@@ -55,6 +55,13 @@ rsource "Kconfig.psa.nordic"
 config PSA_PROMPTLESS
 	bool
 
+config SSF_V_2
+	bool
+	default y if BOARD_NRF54H20DK_NRF54H20_CPUAPP_IRON
+	prompt "temporary option until iron and SSFv2 is available"
+	select MBOX
+	select IPC_SERVICE
+
 if NRF_SECURITY
 
 config MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS
