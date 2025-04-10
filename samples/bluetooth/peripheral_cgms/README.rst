@@ -31,9 +31,6 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/bluetooth/peripheral_cgms`
 
-.. note::
-   |54H_engb_2_8|
-
 .. include:: /includes/build_and_run_ns.txt
 
 Testing

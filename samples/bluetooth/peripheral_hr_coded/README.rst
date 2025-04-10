@@ -63,9 +63,6 @@ Building and running
 
 .. include:: /includes/ipc_radio_conf.txt
 
-.. note::
-   |54H_engb_2_8|
-
 Testing
 =======
 
