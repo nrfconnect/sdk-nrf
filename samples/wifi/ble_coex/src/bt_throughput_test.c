@@ -291,7 +291,8 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
 {
 	LOG_INF("Connection parameters update request received");
-	LOG_INF("Minimum interval: %d, Maximum interval: %d", param->interval_min, param->interval_max);
+	LOG_INF("Minimum interval: %d, Maximum interval: %d",
+			param->interval_min, param->interval_max);
 	LOG_INF("Latency: %d, Timeout: %d", param->latency, param->timeout);
 
 	return true;
@@ -300,7 +301,8 @@ static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
 static void le_param_updated(struct bt_conn *conn, uint16_t interval,
 				 uint16_t latency, uint16_t timeout)
 {
-	LOG_INF("Connection parameters updated. interval: %d, latency: %d, timeout: %d", interval, latency, timeout);
+	LOG_INF("Connection parameters updated. interval: %d, latency: %d, timeout: %d",
+			interval, latency, timeout);
 
 	k_sem_give(&throughput_sem);
 }
@@ -308,7 +310,8 @@ static void le_param_updated(struct bt_conn *conn, uint16_t interval,
 static void le_phy_updated(struct bt_conn *conn,
 			   struct bt_conn_le_phy_info *param)
 {
-	LOG_INF("LE PHY updated: TX PHY %s, RX PHY %s", phy2str(param->tx_phy), phy2str(param->rx_phy));
+	LOG_INF("LE PHY updated: TX PHY %s, RX PHY %s",
+			phy2str(param->tx_phy), phy2str(param->rx_phy));
 
 	k_sem_give(&throughput_sem);
 }
@@ -320,7 +323,8 @@ static void le_data_length_updated(struct bt_conn *conn,
 		return;
 	}
 
-	LOG_INF("LE data len updated: TX (len: %d time: %d) RX (len: %d time: %d)", info->tx_max_len, info->tx_max_time, info->rx_max_len, info->rx_max_time);
+	LOG_INF("LE data len updated: TX (len: %d time: %d) RX (len: %d time: %d)",
+			info->tx_max_len, info->tx_max_time, info->rx_max_len, info->rx_max_time);
 
 	data_length_req = false;
 	k_sem_give(&throughput_sem);
@@ -328,7 +332,8 @@ static void le_data_length_updated(struct bt_conn *conn,
 
 static uint8_t throughput_read(const struct bt_throughput_metrics *met)
 {
-	LOG_INF("[peer] received %u bytes (%u KB) in %u GATT writes at %u bps", met->write_len, met->write_len / 1024, met->write_count, met->write_rate);
+	LOG_INF("[peer] received %u bytes (%u KB) in %u GATT writes at %u bps",
+			met->write_len, met->write_len / 1024, met->write_count, met->write_rate);
 
 	k_sem_give(&throughput_sem);
 
@@ -353,7 +358,8 @@ static void throughput_received(const struct bt_throughput_metrics *met)
 
 static void throughput_send(const struct bt_throughput_metrics *met)
 {
-	LOG_INF("[local] received %u bytes (%u KB) in %u GATT writes at %u bps", met->write_len, met->write_len / 1024, met->write_count, met->write_rate);
+	LOG_INF("[local] received %u bytes (%u KB) in %u GATT writes at %u bps",
+			met->write_len, met->write_len / 1024, met->write_count, met->write_rate);
 }
 
 static const struct bt_throughput_cb throughput_cb = {
@@ -499,7 +505,7 @@ int bt_throughput_test_run(void)
 	}
 
 	if (!test_ready) {
-		LOG_INF("Device is not ready. Please wait for the service discovery and MTU exchange end");
+		LOG_INF("Service discovery and MTU exchange not complete, aborting");
 		return 0;
 	}
 
@@ -531,7 +537,8 @@ int bt_throughput_test_run(void)
 	delta = k_uptime_delta(&stamp);
 
 	LOG_INF("Done");
-	LOG_INF("[local] sent %u bytes (%u KB) in %lld ms at %llu kbps", data, data / 1024, delta, ((uint64_t)data * 8 / delta));
+	LOG_INF("[local] sent %u bytes (%u KB) in %lld ms at %llu kbps",
+			data, data / 1024, delta, ((uint64_t)data * 8 / delta));
 
 	/* read back char from peer */
 	err = bt_throughput_read(&throughput);
