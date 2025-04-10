@@ -205,8 +205,7 @@ Programming the project
 For the nRF5340 DK and other boards equipped with flash working in the QSPI mode, use the :ref:`standard programming command <programming>` (``west flash``).
 For other cases, set up a configuration file for nrfjprog, as described in the following section.
 
-.. note::
-      |nrfjprog_deprecation_note|
+##need edits
 
 Programming to external flash in SPI/DSPI mode
 ==============================================

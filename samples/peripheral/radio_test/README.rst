@@ -196,8 +196,6 @@ Building and running
 
 .. include:: /includes/nRF54H20_erase_UICR.txt
 
-.. note::
-   |54H_engb_2_8|
 
 .. note::
    On the nRF5340 or nRF7002 development kit, the Radio Test sample requires the :ref:`nrf5340_remote_shell` sample on the application core.
