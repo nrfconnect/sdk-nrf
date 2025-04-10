@@ -358,10 +358,14 @@ void hrt_read(volatile hrt_xfer_t *hrt_xfer_params)
 	/* Get state of all VIO to reset it correctly after transfer. */
 	prev_out = nrf_vpr_csr_vio_out_get();
 
-	/* Write only command address and dummy cycles and keep CS active. */
-	hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count = 0;
-	hrt_xfer_params->ce_hold = true;
-	hrt_write(hrt_xfer_params);
+	if ((hrt_xfer_params->xfer_data[HRT_FE_COMMAND].word_count != 0) ||
+	    (hrt_xfer_params->xfer_data[HRT_FE_ADDRESS].word_count != 0) ||
+	    (hrt_xfer_params->xfer_data[HRT_FE_DUMMY_CYCLES].word_count != 0)) {
+		/* Write only command, address and dummy cycles and keep CS active. */
+		hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count = 0;
+		hrt_xfer_params->ce_hold = true;
+		hrt_write(hrt_xfer_params);
+	}
 
 	/* Restore variables values for read phase. */
 	hrt_xfer_params->xfer_data[HRT_FE_DATA].word_count = word_count;
