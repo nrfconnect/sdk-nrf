@@ -370,6 +370,7 @@ static int run_deterministic_ecdsa_hmac_step(const struct sxhashalg *hashalg, si
 	uint8_t *V = K + digestsz;
 	uint8_t *T = V + digestsz;
 	uint8_t step = hmac_op->step;
+	size_t copylen;
 
 	switch (step) {
 	case 0: /* K = HMAC_K(V || 0x00 || privkey || h1) */
@@ -404,7 +405,7 @@ static int run_deterministic_ecdsa_hmac_step(const struct sxhashalg *hashalg, si
 		break;
 
 	case 5: /* T = T || V */
-		size_t copylen = MIN(digestsz, opsz - hmac_op->tlen);
+		copylen = MIN(digestsz, opsz - hmac_op->tlen);
 
 		memcpy(T + hmac_op->tlen, V, copylen);
 		hmac_op->tlen += copylen;
