@@ -29,7 +29,10 @@ LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
+
+#if defined(CONFIG_APP_SMP_CLIENT_FOTA_EXTERNAL)
 #include "fota_app_external.h"
+#endif
 
 #if defined(CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE)
 #include "ui_input.h"
@@ -571,13 +574,13 @@ int main(void)
 		return 0;
 	}
 
-	if (IS_ENABLED(CONFIG_APP_SMP_CLIENT_FOTA_EXTERNAL)) {
-		ret = fota_external_init();
-		if (ret < 0) {
-			LOG_ERR("Unable to init Fota external client (%d)", ret);
-			return 0;
-		}
+#if defined(CONFIG_APP_SMP_CLIENT_FOTA_EXTERNAL)
+	ret = fota_external_init();
+	if (ret < 0) {
+		LOG_ERR("Unable to init Fota external client (%d)", ret);
+		return 0;
 	}
+#endif
 
 	ret = app_event_manager_init();
 	if (ret) {
