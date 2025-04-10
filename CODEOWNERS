@@ -368,6 +368,7 @@
 /include/nrf_compress/                    @nordicjm
 /include/nrf_rpc/                         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-si-muffin @nrfconnect/ncs-protocols-serialization
 /include/power/                           @nrfconnect/ncs-co-drivers
+/include/ironside/                        @nrfconnect/ncs-aurora
 /include/sdfw/                            @nrfconnect/ncs-aurora
 /include/sdfw/sdfw_services/extmem_remote.h @nrfconnect/ncs-charon
 /include/sdfw/sdfw_services/suit_service.h @nrfconnect/ncs-charon
@@ -389,6 +390,7 @@
 /lib/bin/lwm2m_carrier/                   @nrfconnect/ncs-carrier
 /lib/boot_banner/                         @nordicjm
 /lib/contin_array/                        @nrfconnect/ncs-audio
+/lib/cpuconf/                             @nrfconnect/ncs-aurora
 /lib/data_fifo/                           @nrfconnect/ncs-audio
 /lib/date_time/                           @nrfconnect/ncs-modem-tre
 /lib/dk_buttons_and_leds/                 @nrfconnect/ncs-si-muffin
