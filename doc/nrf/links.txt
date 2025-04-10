@@ -1814,6 +1814,7 @@
 .. _`nRF54H20 SoC binaries v0.7.0 for EngB DKs`: https://files.nordicsemi.com/artifactory/SDSC/external/nrf54h20_soc_binaries_v0.7.0_engb.zip
 .. _`nRF54H20 SoC binaries v0.8.0`: https://files.nordicsemi.com/ui/native/SDSC/external/nrf54h20_soc_binaries_v0.8.0.zip
 .. _`nRF54H20 SoC binaries v0.9.2`: https://files.nordicsemi.com/ui/native/SDSC/external/nrf54h20_soc_binaries_v0.9.2.zip
+.. _`nRF54H20 SoC binaries v0.9.6`: https://files.nordicsemi.com/ui/native/SDSC/external/nrf54h20_soc_binaries_v0.9.6.zip
 
 .. _`BICR binary file`: https://files.nordicsemi.com/artifactory/SDSC/external/bicr_ext_loadcap.hex
 .. _`BICR new binary file`: https://files.nordicsemi.com/artifactory/SDSC/external/bicr/bicr.hex

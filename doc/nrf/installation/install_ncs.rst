@@ -38,6 +38,8 @@ Before you start setting up the toolchain, install available updates for your :r
 Install prerequisites
 *********************
 
+.. prerequisites-include-start
+
 Depending on your preferred development environment, install the following software tools.
 
 .. tabs::
@@ -56,6 +58,8 @@ Depending on your preferred development environment, install the following softw
 
       .. include:: /includes/install_sdk_common_prerequisites.txt
 
+.. prerequisites-include-end
+
 .. _gs_installing_toolchain:
 .. _gs_installing_tools:
 
@@ -63,6 +67,8 @@ Depending on your preferred development environment, install the following softw
 
 Install the |NCS| toolchain
 ***************************
+
+.. installncstoolchain-include-start
 
 The |NCS| :term:`toolchain` includes the Zephyr SDK and then adds tools and modules required to build |NCS| samples and applications on top of it.
 These include the :ref:`required SDK tools <requirements_toolchain_tools>`, the :ref:`Python dependencies <requirements_toolchain_python_deps>`, and the :ref:`GN tool <ug_matter_gs_tools_gn>` for creating :ref:`ug_matter` applications.
@@ -164,6 +170,8 @@ In this simplified structure preview, *<toolchain-installation>* corresponds to 
 
 You can check the versions of the required tools and Python dependencies on the :ref:`Requirements reference page <requirements_toolchain>`.
 
+.. installncstoolchain-include-end
+
 .. _cloning_the_repositories_win:
 .. _cloning_the_repositories:
 
@@ -171,6 +179,8 @@ You can check the versions of the required tools and Python dependencies on the 
 
 Get the |NCS| code
 ******************
+
+.. getncscode-include-start
 
 Every |NCS| release consists of a combination of :ref:`ncs_git_intro` repositories at different versions and revisions, managed together by :ref:`ncs_west_intro`.
 The revision of each of those repositories is determined by the current revision of the main (or :ref:`manifest <zephyr:west-manifests>`) repository, `sdk-nrf`_.
@@ -339,6 +349,8 @@ With the default location to install the toolchain (see the previous step) and t
 In this simplified structure preview, *<toolchain-installation>* corresponds to the toolchain version and *<west-workspace>* corresponds to the SDK version name.
 There are also additional directories, and the structure might change over time, for example if you later :ref:`change the state of development to a different revision <updating_repos>`.
 The full set of repositories and directories is defined in the :ref:`manifest file <zephyr:west-manifest-files>` (`see the file in the repository <west manifest file_>`_).
+
+.. getncscode-include-end
 
 .. _build_environment_cli:
 
@@ -623,5 +635,3 @@ To install the |NCS| system-wide, complete the following steps:
 #. If you want to build `Matter`_ applications, additionally install the `GN`_ meta-build system.
    This system generates the Ninja files that the |NCS| uses for Matter.
    See :ref:`manual_installation_gn` for more information.
-
-.. |install_latest_version| replace:: When you first install the |NCS|, it is recommended to install the latest released versions of the SDK and the toolchain.

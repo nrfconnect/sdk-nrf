@@ -79,7 +79,6 @@ Complete the following steps to program the sample:
 #. |open_terminal_window_with_environment|
 #. Run the following command to build the application code for the host and the remote:
 
-
    **nRF5340 DK**
 
    .. code-block:: console
@@ -107,9 +106,6 @@ Complete the following steps to program the sample:
       west flash
 
 .. include:: /includes/nRF54H20_erase_UICR.txt
-
-.. note::
-   |54H_engb_2_8|
 
 Testing
 =======
