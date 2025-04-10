@@ -5,11 +5,10 @@
 #
 
 config FLASH_IPUC
-	bool "Flash over SUIT IPUC [EXPERIMENTAL]"
+	bool "Flash over SUIT IPUC"
 	depends on SUIT
 	depends on SUIT_UTILS
 	depends on SUIT_IPUC
-	select EXPERIMENTAL
 
 if FLASH_IPUC
 
