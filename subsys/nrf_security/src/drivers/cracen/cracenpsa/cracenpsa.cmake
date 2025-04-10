@@ -64,6 +64,18 @@ if(CONFIG_PSA_NEED_CRACEN_MAC_DRIVER)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/mac.c
   )
+
+  if(CONFIG_PSA_NEED_CRACEN_HMAC)
+    list(APPEND cracen_driver_sources
+      ${CMAKE_CURRENT_LIST_DIR}/src/cracen_mac_hmac.c
+    )
+  endif()
+
+  if(CONFIG_PSA_NEED_CRACEN_CMAC)
+    list(APPEND cracen_driver_sources
+      ${CMAKE_CURRENT_LIST_DIR}/src/cracen_mac_cmac.c
+    )
+  endif()
 endif()
 
 if(CONFIG_PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER OR CONFIG_PSA_NEED_CRACEN_KMU_DRIVER OR CONFIG_MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS)

@@ -193,12 +193,14 @@ struct cracen_mac_operation_s {
 	uint8_t input_buffer[SX_MAX(SX_HASH_MAX_ENABLED_BLOCK_SIZE, SX_BLKCIPHER_PRIV_SZ)];
 
 	union {
+#if defined(PSA_NEED_CRACEN_HMAC)
 		struct {
 			struct sitask task;
 
 			uint8_t workmem[SX_HASH_MAX_ENABLED_BLOCK_SIZE + PSA_HASH_MAX_SIZE];
 		} hmac;
-
+#endif /* PSA_NEED_CRACEN_HMAC */
+#if defined(PSA_NEED_CRACEN_CMAC)
 		struct {
 			struct sxmac ctx;
 			bool is_first_block;
@@ -206,6 +208,8 @@ struct cracen_mac_operation_s {
 			struct sxkeyref keyref;
 			uint8_t key_buffer[CRACEN_MAX_AES_KEY_SIZE];
 		} cmac;
+#endif /* PSA_NEED_CRACEN_CMAC */
+		uint8_t _unused;
 	};
 };
 typedef struct cracen_mac_operation_s cracen_mac_operation_t;
