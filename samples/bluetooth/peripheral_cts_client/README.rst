@@ -27,7 +27,6 @@ The CTS client sample implements a Current Time Service client.
 It uses the Current Time Service to read the current time.
 The time received is printed on the UART.
 
-
 User interface
 **************
 
@@ -60,9 +59,6 @@ Building and running
 .. |sample path| replace:: :file:`samples/bluetooth/peripheral_cts_client`
 
 .. include:: /includes/build_and_run_ns.txt
-
-.. note::
-   |54H_engb_2_8|
 
 .. _peripheral_cts_client_testing:
 

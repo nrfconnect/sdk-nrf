@@ -63,10 +63,11 @@ Software requirements
 
 For this quick start guide, we will install the following software:
 
-* Toolchain Manager - An application for installing the full |NCS| toolchain.
+* The full |NCS| toolchain.
+  See :ref:`ug_nrf54h20_gs` for instructions on how to install the toolchain.
 * Microsoft's |VSC| - The recommended IDE for the |NCS|.
 * |nRFVSC| - An add-on for |VSC| that allows you to develop applications for the |NCS|.
-* nRF Command Line Tools - A set of mandatory tools for working with the |NCS|.
+* nRF Util.
 * Any additional requirements described in the :ref:`nrf54h_suit_sample` sample.
 
 Building the SUIT sample

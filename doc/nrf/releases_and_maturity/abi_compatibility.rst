@@ -7,16 +7,17 @@ ABI compatibility
    :local:
    :depth: 2
 
-Application Binary Interface (ABI) compatibility defines how software components, like libraries and applications, interact at the machine code level through their low-level binary interface, including:
+Application Binary Interface (ABI) compatibility defines how software components, such as libraries and applications, interact at the machine code level through their low-level binary interface.
+This includes:
 
 * Function-calling conventions
 * Data structure layouts in memory
 * Exception handling mechanisms
 * Register usage conventions
 
-When ABI compatibility is maintained, binaries of one component can interface correctly with another without needing recompilation.
+When ABI compatibility is maintained, binaries of one component can interface correctly with another without requiring recompilation.
 For example, adding a new function to a library is typically an ABI-compatible change, as existing binaries remain functional.
-However, changes that affect data structure layouts, such as altering field order or size, break ABI compatibility as they change the memory layout expected by existing binaries.
+However, changes that affect data structure layouts, such as altering field order or size, break ABI compatibility because they change the memory layout expected by existing binaries.
 
 ABI compatibility matrix for the nRF54H20 SoC binaries
 ******************************************************
@@ -28,6 +29,8 @@ The following table illustrates ABI compatibility between different versions of 
 
    * - |NCS| versions
      - Compatible nRF54H20 SoC binaries version
+   * - |NCS| v3.0.0
+     - `nRF54H20 SoC binaries v0.9.6`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
    * - |NCS| v2.9.0-nRF54H20-1
      - `nRF54H20 SoC binaries v0.9.2`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
    * - |NCS| v2.9.0
@@ -44,15 +47,75 @@ The following table illustrates ABI compatibility between different versions of 
    * - |NCS| v2.6.99-cs2
      - `nRF54H20 SoC binaries v0.3.3`_
 
-ABI compatibility ensures that the Secure Domain and System Controller firmware binaries do not need to be recompiled each time the application, radio binaries, or both are recompiled, as long as they are based on a compatible |NCS| version.
+Maintaining ABI compatibility ensures that the Secure Domain and System Controller firmware binaries do not need to be recompiled each time the application, radio binaries, or both are recompiled, as long as they are based on a compatible |NCS| version.
 Additionally, maintaining ABI compatibility allows the nRF54H20 SoC binary components to work together without recompilation when updating to newer |NCS| versions.
+
+.. note::
+    The nRF54H20 SoC binaries only support specific versions of the |NCS| and do not support rollbacks to previous versions.
+    Upgrading the nRF54H20 SoC binaries on your development kit might break the DK's compatibility with applications developed for earlier versions of the |NCS|.
+
+nRF54H20 SoC binaries v0.9.6 changelog
+**************************************
+
+The following sections provide detailed lists of changes by component.
+
+Secure Domain Firmware (SDFW) v10.3.3
+=====================================
+
+* Updated BINDESC to a new version.
+
+Secure Domain Firmware (SDFW) v10.3.1
+=====================================
+
+Added
+-----
+
+* Enabled pulling of Secure Domain images during SUIT manifest processing.
+
+Fixed
+-----
+
+* Adjusted file URIs to prevent SUIT envelope size overflow.
+* Resolved an issue where the IPUC write setup was being erased, ensuring proper SUIT AB operation.
+
+System Controller Firmware (SCFW) v4.2.3
+=========================================
+
+* Removed changing ``VREG1V0 VOUT`` for the high-power radio in power management temperature monitoring.
+  The actual value is now set by the SysCtrl ROM from FICR.
+
+System Controller Firmware (SCFW) v4.2.1
+=========================================
+
+* Updated PCRM configuration to set the BLE active parameter to ``0x0E``.
+
+System Controller Firmware (SCFW) v4.2.0
+=========================================
+
+* Updated the ``PCRM.LOAD`` value for radio on-demand operations using dedicated VEVIF channels.
+* Implemented a workaround for ICPS-1304.
+
+System Controller Firmware (SCFW) v4.1.0
+=========================================
+
+Added
+-----
+
+* Audio PLL service for local domains.
+* LFRC support.
+
+Updated
+-------
+
+* Clock initialization tree to support a new 32k clock source - LFRC.
+
+Removed
+-------
+
+* Split image partition.
 
 nRF54H20 SoC binaries v0.9.2 changelog
 **************************************
-
-.. note::
-    The nRF54H20 SoC binaries only support specific versions of the |NCS| and do not support rollbacks to a previous version.
-    Upgrading the nRF54H20 SoC binaries on your development kit might break the DK's compatibility with applications developed for previous versions of the |NCS|.
 
 The following sections provide detailed lists of changes by component.
 

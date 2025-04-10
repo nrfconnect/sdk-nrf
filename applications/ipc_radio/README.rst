@@ -122,9 +122,6 @@ For instructions on how to enable a specific configuration overlay file, see :re
 .. note::
    You cannot use :ref:`ble_rpc` together with the HCI :ref:`bluetooth_controller`.
 
-.. note::
-   |54H_engb_2_8|
-
 Dependencies
 ************
 

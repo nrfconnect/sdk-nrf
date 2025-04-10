@@ -193,7 +193,6 @@ SB_CONFIG_APP_CPUNET_RUN - Enable the benchmark execution also for the network c
 SB_CONFIG_APP_CPUPPR_RUN - Enable the benchmark execution also for the PPR core
    This option is only available for board targets that support the PPR core (for example, ``nrf54h20dk/nrf54h20/cpuapp``) in this sample.
 
-
 .. note::
    PPR code is run from RAM.
 
@@ -209,9 +208,6 @@ When running the benchmark, an extra build flag (:kconfig:option:`CONFIG_COMPILE
 After flashing, messages describing the benchmark state will appear in the console.
 
 .. include:: /includes/nRF54H20_erase_UICR.txt
-
-.. note::
-   |54H_engb_2_8|
 
 Alternative build configurations
 ================================
