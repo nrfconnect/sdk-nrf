@@ -38,6 +38,7 @@
 #define SI_PSA_IS_KEY_FLAG(flag, attr) ((flag) == (psa_get_key_usage_flags((attr)) & (flag)))
 #define SI_PSA_IS_KEY_TYPE(flag, attr) ((flag) == (psa_get_key_type((attr)) & (flag)))
 
+#if PSA_MAX_RSA_KEY_BITS > 0
 static int cracen_signature_set_hashalgo(const struct sxhashalg **hashalg, psa_algorithm_t alg)
 {
 	return hash_get_algo(PSA_ALG_SIGN_GET_HASH(alg), hashalg);
@@ -81,6 +82,7 @@ static int cracen_signature_set_hashalgo_from_digestsz(const struct sxhashalg **
 
 	return SX_OK;
 }
+#endif /* PSA_MAX_RSA_KEY_BITS > 0 */
 
 static int cracen_signature_prepare_ec_prvkey(struct si_sig_privkey *privkey, char *key_buffer,
 					      size_t key_buffer_size,

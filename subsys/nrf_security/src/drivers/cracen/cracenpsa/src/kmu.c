@@ -294,11 +294,14 @@ static psa_status_t get_kmu_slot_id_and_metadata(mbedtls_svc_key_id_t key_id,
 	return read_primary_slot_metadata(*slot_id, metadata);
 }
 
+#if defined(CONFIG_PSA_WANT_ALG_PURE_EDDSA) || defined(CONFIG_PSA_WANT_ALG_ED25519PH) || \
+	defined CONFIG_PSA_WANT_ALG_ECDSA || defined(CONFIG_PSA_WANT_ALG_HMAC)
 static bool can_sign(const psa_key_attributes_t *key_attr)
 {
 	return (psa_get_key_usage_flags(key_attr) & PSA_KEY_USAGE_SIGN_MESSAGE) ||
 	       (psa_get_key_usage_flags(key_attr) & PSA_KEY_USAGE_SIGN_HASH);
 }
+#endif /* defined(CONFIG_PSA_WANT_ALG_PURE_EDDSA) || define(CONFIG_PSA_WANT_ALG_ED25519PH) */
 
 /**
  * @brief Check provisioning state, and delete slots that were not completely provisioned.
