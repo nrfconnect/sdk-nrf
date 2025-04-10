@@ -38,6 +38,8 @@ Before you start setting up the toolchain, install available updates for your :r
 Install prerequisites
 *********************
 
+.. prerequisites-include-start
+
 Depending on your preferred development environment, install the following software tools.
 
 .. tabs::
@@ -56,6 +58,8 @@ Depending on your preferred development environment, install the following softw
 
       .. include:: /includes/install_sdk_common_prerequisites.txt
 
+.. prerequisites-include-end
+
 .. _gs_installing_toolchain:
 .. _gs_installing_tools:
 
@@ -63,6 +67,8 @@ Depending on your preferred development environment, install the following softw
 
 Install the |NCS| toolchain
 ***************************
+
+.. installncstoolchain-include-start
 
 The |NCS| :term:`toolchain` includes the Zephyr SDK and then adds tools and modules required to build |NCS| samples and applications on top of it.
 These include the :ref:`required SDK tools <requirements_toolchain_tools>`, the :ref:`Python dependencies <requirements_toolchain_python_deps>`, and the :ref:`GN tool <ug_matter_gs_tools_gn>` for creating :ref:`ug_matter` applications.
@@ -100,7 +106,7 @@ Depending on your preferred development environment, complete the following step
 
    .. group-tab:: Command line
 
-      1. Open a terminal window.
+      2. Open a terminal window.
       #. Run the following command to install the nRF Util's ``sdk-manager`` command:
 
          .. code-block:: console
@@ -164,6 +170,8 @@ In this simplified structure preview, *<toolchain-installation>* corresponds to 
 
 You can check the versions of the required tools and Python dependencies on the :ref:`Requirements reference page <requirements_toolchain>`.
 
+.. installncstoolchain-include-end
+
 .. _cloning_the_repositories_win:
 .. _cloning_the_repositories:
 
@@ -171,6 +179,8 @@ You can check the versions of the required tools and Python dependencies on the 
 
 Get the |NCS| code
 ******************
+
+.. getncscode-include-start
 
 Every |NCS| release consists of a combination of :ref:`ncs_git_intro` repositories at different versions and revisions, managed together by :ref:`ncs_west_intro`.
 The revision of each of those repositories is determined by the current revision of the main (or :ref:`manifest <zephyr:west-manifests>`) repository, `sdk-nrf`_.
@@ -217,7 +227,7 @@ For more information about the repository and development model, see the :ref:`d
 
       To clone the repositories, complete the following steps:
 
-      1. On the command line, open the directory :file:`ncs`.
+      2. On the command line, open the directory :file:`ncs`.
          By default, this is one level up from the location where you installed the toolchain.
          This directory will hold all |NCS| repositories.
 
@@ -332,6 +342,8 @@ With the default location to install the toolchain (see the previous step) and t
 In this simplified structure preview, *<toolchain-installation>* corresponds to the toolchain version and *<west-workspace>* corresponds to the SDK version name.
 There are also additional directories, and the structure might change over time, for example if you later :ref:`change the state of development to a different revision <updating_repos>`.
 The full set of repositories and directories is defined in the :ref:`manifest file <zephyr:west-manifest-files>` (`see the file in the repository <west manifest file_>`_).
+
+.. getncscode-include-end
 
 .. _build_environment_cli:
 

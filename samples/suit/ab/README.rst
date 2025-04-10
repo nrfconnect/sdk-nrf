@@ -421,8 +421,6 @@ Building and running
 
 This sample is located in the |sample path| directory in the |NCS| folder structure.
 
-.. note::
-   |54H_engb_2_8|
 
 .. note::
     |sysbuild_autoenabled_ncs|
