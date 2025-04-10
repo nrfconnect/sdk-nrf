@@ -33,7 +33,7 @@ For OS support for additional software tools from Nordic Semiconductor, see :ref
   * - `Windows 10`_
     - Built and tested with :ref:`Twister <running_unit_tests>`.
     - Not supported.
-  * - `Linux - Ubuntu 22.04 LTS`_
+  * - `Linux - Ubuntu 24.04 LTS`_
     - Built and tested with :ref:`Twister <running_unit_tests>`. Comprehensive testing with Nordic Semiconductor hardware.
     - Not supported.
   * - `macOS 14`_
@@ -332,7 +332,7 @@ For firmware OS support, see :ref:`the table at the top of the page <supported_O
     - Not supported
   * - `Linux - Ubuntu 20.04 LTS`_
     - Not supported
-    - Tier 2
+    - Not supported
     - Not supported
   * - `macOS 15`_
     - n/a
