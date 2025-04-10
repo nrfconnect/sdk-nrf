@@ -17,3 +17,11 @@
 		zephyr,sram = &cpuapp_sram;
 	};
 };
+
+&bt_hci_sdc {
+	status = "okay";
+};
+
+&bt_hci_controller {
+	status = "disabled";
+};
