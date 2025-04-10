@@ -661,6 +661,13 @@ static int api_dev_config(const struct device *dev, const struct mspi_dev_id *de
 		}
 	}
 
+	if (param_mask & MSPI_DEVICE_CONFIG_ENDIAN) {
+		if (cfg->endian != MSPI_XFER_BIG_ENDIAN) {
+			LOG_ERR("Only big endian mode is supported.");
+			return -ENOTSUP;
+		}
+	}
+
 	mspi_dev_config_msg.opcode = HPF_MSPI_CONFIG_DEV;
 	mspi_dev_config_msg.device_index = dev_id->dev_idx;
 	mspi_dev_config_msg.dev_config.io_mode = cfg->io_mode;
