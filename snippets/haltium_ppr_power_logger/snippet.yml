@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+name: haltium-ppr-power-logger
+boards:
+  /.*/nrf54h20/cpuapp/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf54h20_cpuapp.overlay
+      EXTRA_CONF_FILE: ppr_power_logger.conf
