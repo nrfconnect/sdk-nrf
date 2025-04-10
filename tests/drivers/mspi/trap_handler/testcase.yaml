@@ -8,7 +8,7 @@ common:
   harness_config:
     type: one_line
     regex:
-      - ">>> SDP APP FATAL ERROR"
+      - ">>> HPF APP FATAL ERROR"
 
 tests:
   drivers.mspi.hpf_trap_handler:
