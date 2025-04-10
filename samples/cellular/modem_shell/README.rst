@@ -452,13 +452,13 @@ Examples
 
   .. code-block:: console
 
-     location get --method wifi --wifi_timeout 60000 --method cellular --cellular_service nrf
+     location get --method wifi --wifi_timeout 60 --method cellular
 
 * Retrieve location periodically every hour with GNSS and if not found, use cellular positioning:
 
   .. code-block:: console
 
-     location get --interval 3600 --method gnss --gnss_timeout 300000 --method cellular
+     location get --interval 3600 --method gnss --gnss_timeout 300 --method cellular
 
 * Cancel ongoing location request or periodic location request:
 
