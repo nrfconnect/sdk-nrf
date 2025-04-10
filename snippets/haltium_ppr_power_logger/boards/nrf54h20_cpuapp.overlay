@@ -1,0 +1,31 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Remove IPC to PPR and reconfigure PPR memory */
+/delete-node/ &{/ipc/ipc-2-13};
+/delete-node/ &cpuppr_ram3x_region;
+/{
+	reserved-memory {
+
+		cpuppr_ram3x_region: memory@2fc00000 {
+			compatible = "nordic,owned-memory";
+			reg = <0x2fc00000 DT_SIZE_K(64)>;
+			status = "okay";
+			nordic,access = <NRF_OWNER_ID_APPLICATION NRF_PERM_RWX>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0x0 0x2fc00000 0x10000>;
+
+			cpuppr_code_data: memory@0 {
+				reg = <0x0 DT_SIZE_K(64)>;
+			};
+		};
+	};
+};
+
+&cpuppr_vpr {
+	status = "okay";
+};
