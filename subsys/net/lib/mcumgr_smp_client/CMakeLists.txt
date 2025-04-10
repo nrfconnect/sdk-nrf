@@ -12,4 +12,5 @@ zephyr_library_sources_ifdef(CONFIG_NRF_MCUMGR_SMP_CLIENT_SHELL
   src/mcumgr_smp_client_shell.c
   )
 
-zephyr_include_directories(./include)
+zephyr_library_link_libraries(MCUBOOT_BOOTUTIL)
+zephyr_include_directories(include)
