@@ -157,12 +157,14 @@ Add the following SHIELD options for the nRF7002 EK and nRF7001 EK.
   .. code-block:: console
 
      -Dthread_coex_SHIELD="nrf7002ek;nrf7002ek_coex"
+     -Dipc_radio_SHIELD="nrf7002ek_coex"
 
 * For nRF7001 EK:
 
   .. code-block:: console
 
      -Dthread_coex_SHIELD="nrf7002ek_nrf7001;nrf7002ek_coex"
+     -Dipc_radio_SHIELD="nrf7002ek_coex"
 
 * Overlay files
 
