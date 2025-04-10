@@ -50,9 +50,6 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-.. note::
-   |54H_engb_2_8|
-
 Testing
 =======
 
