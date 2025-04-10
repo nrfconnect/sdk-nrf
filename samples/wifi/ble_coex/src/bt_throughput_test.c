@@ -6,10 +6,12 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/console/console.h>
-#include <zephyr/sys/printk.h>
 #include <string.h>
 #include <stdlib.h>
 #include <zephyr/types.h>
+
+#include <zephyr/logging/log.h>
+LOG_MODULE_DECLARE(ble_coex, CONFIG_LOG_DEFAULT_LEVEL);
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/crypto.h>
@@ -76,22 +78,21 @@ static const char *phy2str(uint8_t phy)
 
 static void instruction_print(void)
 {
-	/* printk("\nType 'config' to change the configuration parameters.\n");
-	 * printk("You can use the Tab key to autocomplete your input.\n");
-	 * printk("Type 'run' when you are ready to run the test.\n");
+	/* LOG_INF("Type 'config' to change the configuration parameters.");
+	 * LOG_INF("You can use the Tab key to autocomplete your input.");
+	 * LOG_INF("Type 'run' when you are ready to run the test.");
 	 */
 }
 
 void scan_filter_match(struct bt_scan_device_info *device_info,
-		       struct bt_scan_filter_match *filter_match,
-		       bool connectable)
+			   struct bt_scan_filter_match *filter_match,
+			   bool connectable)
 {
 	char addr[BT_ADDR_LE_STR_LEN];
 
 	bt_addr_le_to_str(device_info->recv_info->addr, addr, sizeof(addr));
 
-	printk("Filters matched. Address: %s connectable: %d\n",
-		addr, connectable);
+	LOG_INF("Filters matched. Address: %s connectable: %d", addr, connectable);
 }
 
 void scan_filter_no_match(struct bt_scan_device_info *device_info,
@@ -101,13 +102,12 @@ void scan_filter_no_match(struct bt_scan_device_info *device_info,
 
 	bt_addr_le_to_str(device_info->recv_info->addr, addr, sizeof(addr));
 
-	printk("Filter not match. Address: %s connectable: %d\n",
-				addr, connectable);
+	LOG_INF("Filter not match. Address: %s connectable: %d", addr, connectable);
 }
 
 void scan_connecting_error(struct bt_scan_device_info *device_info)
 {
-	printk("Connecting failed\n");
+	LOG_ERR("Connecting failed");
 }
 
 BT_SCAN_CB_INIT(scan_cb, scan_filter_match, scan_filter_no_match,
@@ -119,11 +119,11 @@ static void exchange_func(struct bt_conn *conn, uint8_t att_err,
 	struct bt_conn_info info = {0};
 	int err;
 
-	printk("MTU exchange %s\n", att_err == 0 ? "successful" : "failed");
+	LOG_INF("MTU exchange %s", att_err == 0 ? "successful" : "failed");
 
 	err = bt_conn_get_info(conn, &info);
 	if (err) {
-		printk("Failed to get connection info %d\n", err);
+		LOG_ERR("Failed to get connection info %d", err);
 		return;
 	}
 
@@ -134,12 +134,12 @@ static void exchange_func(struct bt_conn *conn, uint8_t att_err,
 }
 
 static void discovery_complete(struct bt_gatt_dm *dm,
-			       void *context)
+				   void *context)
 {
 	int err;
 	struct bt_throughput *throughput = context;
 
-	printk("Service discovery completed\n");
+	LOG_INF("Service discovery completed");
 
 	bt_gatt_dm_data_print(dm);
 	bt_throughput_handles_assign(dm, throughput);
@@ -149,23 +149,23 @@ static void discovery_complete(struct bt_gatt_dm *dm,
 
 	err = bt_gatt_exchange_mtu(default_conn, &exchange_params);
 	if (err) {
-		printk("MTU exchange failed (err %d)\n", err);
+		LOG_ERR("MTU exchange failed (err %d)", err);
 	} else {
-		printk("MTU exchange pending\n");
+		LOG_INF("MTU exchange pending");
 	}
 }
 
 static void discovery_service_not_found(struct bt_conn *conn,
 					void *context)
 {
-	printk("Service not found\n");
+	LOG_INF("Service not found");
 }
 
 static void discovery_error(struct bt_conn *conn,
-			    int err,
-			    void *context)
+				int err,
+				void *context)
 {
-	printk("Error while discovering GATT database: (%d)\n", err);
+	LOG_ERR("Error while discovering GATT database: (%d)", err);
 }
 
 struct bt_gatt_dm_cb discovery_cb = {
@@ -185,12 +185,12 @@ static void connected(struct bt_conn *conn, uint8_t hci_err)
 			return;
 		}
 
-		printk("Connection failed (err 0x%02x)\n", hci_err);
+		LOG_ERR("Connection failed (err 0x%02x)", hci_err);
 		return;
 	}
 
 	if (default_conn) {
-		printk("Connection exists, disconnect second connection\n");
+		LOG_INF("Connection exists, disconnect second connection");
 		bt_conn_disconnect(conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
 		return;
 	}
@@ -199,22 +199,21 @@ static void connected(struct bt_conn *conn, uint8_t hci_err)
 
 	err = bt_conn_get_info(default_conn, &info);
 	if (err) {
-		printk("Failed to get connection info %d\n", err);
+		LOG_ERR("Failed to get connection info %d", err);
 		return;
 	}
 
-	printk("Connected as %s\n",
-	       info.role == BT_CONN_ROLE_CENTRAL ? "central" : "peripheral");
-	printk("Conn. interval is %u units\n", info.le.interval);
+	LOG_INF("Connected as %s", info.role == BT_CONN_ROLE_CENTRAL ? "central" : "peripheral");
+	LOG_INF("Conn. interval is %u units", info.le.interval);
 
 	if (info.role == BT_CONN_ROLE_CENTRAL) {
 		err = bt_gatt_dm_start(default_conn,
-				       BT_UUID_THROUGHPUT,
-				       &discovery_cb,
-				       &throughput);
+					   BT_UUID_THROUGHPUT,
+					   &discovery_cb,
+					   &throughput);
 
 		if (err) {
-			printk("Discover failed (err %d)\n", err);
+			LOG_ERR("Discover failed (err %d)", err);
 		}
 	}
 }
@@ -240,14 +239,13 @@ static void scan_init(void)
 
 	err = bt_scan_filter_add(BT_SCAN_FILTER_TYPE_UUID, uuid128);
 	if (err) {
-		printk("Scanning filters cannot be set\n");
-
+		LOG_ERR("Scanning filters cannot be set");
 		return;
 	}
 
 	err = bt_scan_filter_enable(BT_SCAN_UUID_FILTER, false);
 	if (err) {
-		printk("Filters cannot be turned on\n");
+		LOG_ERR("Filters cannot be turned on");
 	}
 }
 
@@ -257,7 +255,7 @@ static void scan_start(void)
 
 	err = bt_scan_start(BT_SCAN_TYPE_SCAN_PASSIVE);
 	if (err) {
-		printk("Starting scanning failed (err %d)\n", err);
+		LOG_ERR("Starting scanning failed (err %d)", err);
 		return;
 	}
 }
@@ -272,16 +270,16 @@ static void adv_start(void)
 	int err;
 
 	err = bt_le_adv_start(adv_param, ad, ARRAY_SIZE(ad), sd,
-			      ARRAY_SIZE(sd));
+				  ARRAY_SIZE(sd));
 	if (err) {
-		printk("Failed to start advertiser (%d)\n", err);
+		LOG_ERR("Failed to start advertiser (%d)", err);
 		return;
 	}
 }
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
-	printk("Disconnected (reason 0x%02x)\n", reason);
+	LOG_INF("Disconnected (reason 0x%02x)", reason);
 
 	test_ready = false;
 	if (default_conn) {
@@ -292,20 +290,17 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 
 static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
 {
-	printk("Connection parameters update request received.\n");
-	printk("Minimum interval: %d, Maximum interval: %d\n",
-	       param->interval_min, param->interval_max);
-	printk("Latency: %d, Timeout: %d\n", param->latency, param->timeout);
+	LOG_INF("Connection parameters update request received");
+	LOG_INF("Minimum interval: %d, Maximum interval: %d", param->interval_min, param->interval_max);
+	LOG_INF("Latency: %d, Timeout: %d", param->latency, param->timeout);
 
 	return true;
 }
 
 static void le_param_updated(struct bt_conn *conn, uint16_t interval,
-			     uint16_t latency, uint16_t timeout)
+				 uint16_t latency, uint16_t timeout)
 {
-	printk("Connection parameters updated.\n"
-	       " interval: %d, latency: %d, timeout: %d\n",
-	       interval, latency, timeout);
+	LOG_INF("Connection parameters updated. interval: %d, latency: %d, timeout: %d", interval, latency, timeout);
 
 	k_sem_give(&throughput_sem);
 }
@@ -313,8 +308,7 @@ static void le_param_updated(struct bt_conn *conn, uint16_t interval,
 static void le_phy_updated(struct bt_conn *conn,
 			   struct bt_conn_le_phy_info *param)
 {
-	printk("LE PHY updated: TX PHY %s, RX PHY %s\n",
-	       phy2str(param->tx_phy), phy2str(param->rx_phy));
+	LOG_INF("LE PHY updated: TX PHY %s, RX PHY %s", phy2str(param->tx_phy), phy2str(param->rx_phy));
 
 	k_sem_give(&throughput_sem);
 }
@@ -326,9 +320,7 @@ static void le_data_length_updated(struct bt_conn *conn,
 		return;
 	}
 
-	printk("LE data len updated: TX (len: %d time: %d)"
-	       " RX (len: %d time: %d)\n", info->tx_max_len,
-	       info->tx_max_time, info->rx_max_len, info->rx_max_time);
+	LOG_INF("LE data len updated: TX (len: %d time: %d) RX (len: %d time: %d)", info->tx_max_len, info->tx_max_time, info->rx_max_len, info->rx_max_time);
 
 	data_length_req = false;
 	k_sem_give(&throughput_sem);
@@ -336,10 +328,7 @@ static void le_data_length_updated(struct bt_conn *conn,
 
 static uint8_t throughput_read(const struct bt_throughput_metrics *met)
 {
-	printk("[peer] received %u bytes (%u KB)"
-	       " in %u GATT writes at %u bps\n",
-	       met->write_len, met->write_len / 1024, met->write_count,
-	       met->write_rate);
+	LOG_INF("[peer] received %u bytes (%u KB) in %u GATT writes at %u bps", met->write_len, met->write_len / 1024, met->write_count, met->write_rate);
 
 	k_sem_give(&throughput_sem);
 
@@ -352,23 +341,19 @@ static void throughput_received(const struct bt_throughput_metrics *met)
 
 	if (met->write_len == 0) {
 		kb = 0;
-		printk("\n");
-
+		LOG_INF("");
 		return;
 	}
 
 	if ((met->write_len / 1024) != kb) {
 		kb = (met->write_len / 1024);
-		printk("=");
+		LOG_INF("=");
 	}
 }
 
 static void throughput_send(const struct bt_throughput_metrics *met)
 {
-	printk("\n[local] received %u bytes (%u KB)"
-		" in %u GATT writes at %u bps\n",
-		met->write_len, met->write_len / 1024,
-		met->write_count, met->write_rate);
+	LOG_INF("[local] received %u bytes (%u KB) in %u GATT writes at %u bps", met->write_len, met->write_len / 1024, met->write_count, met->write_rate);
 }
 
 static const struct bt_throughput_cb throughput_cb = {
@@ -387,13 +372,13 @@ void select_role(bool is_central)
 	static bool role_selected;
 
 	if (role_selected) {
-		printk("\nCannot change role after it was selected once.\n");
+		LOG_INF("Cannot change role after it was selected once");
 		return;
 	} else if (is_central) {
-		printk("\nCentral. Starting scanning\n");
+		LOG_INF("Central. Starting scanning");
 		scan_start();
 	} else {
-		printk("\nPeripheral. Starting advertising\n");
+		LOG_INF("Peripheral. Starting advertising");
 		adv_start();
 	}
 
@@ -402,7 +387,7 @@ void select_role(bool is_central)
 	/* The role has been selected, button are not needed any more. */
 	err = dk_button_handler_remove(&button);
 	if (err) {
-		printk("Button disable error: %d\n", err);
+		LOG_ERR("Button disable error: %d", err);
 	}
 }
 
@@ -423,7 +408,7 @@ static void buttons_init(void)
 
 	err = dk_buttons_init(NULL);
 	if (err) {
-		printk("Buttons initialization failed.\n");
+		LOG_ERR("Buttons initialization failed");
 		return;
 	}
 
@@ -442,24 +427,24 @@ int connection_configuration_set(const struct bt_le_conn_param *conn_param,
 
 	err = bt_conn_get_info(default_conn, &info);
 	if (err) {
-		printk("Failed to get connection info %d", err);
+		LOG_ERR("Failed to get connection info %d", err);
 		return err;
 	}
 
 	if (info.role != BT_CONN_ROLE_CENTRAL) {
-		printk("'run' command shall be executed only on the central board");
+		LOG_INF("'run' command shall be executed only on the central board");
 	}
 
 	err = bt_conn_le_phy_update(default_conn, phy);
 	if (err) {
-		printk("PHY update failed: %d\n", err);
+		LOG_ERR("PHY update failed: %d", err);
 		return err;
 	}
 
-	printk("PHY update pending");
+	LOG_INF("PHY update pending");
 	err = k_sem_take(&throughput_sem, K_SECONDS(THROUGHPUT_CONFIG_TIMEOUT));
 	if (err) {
-		printk("PHY update timeout");
+		LOG_ERR("PHY update timeout");
 		return err;
 	}
 
@@ -468,15 +453,14 @@ int connection_configuration_set(const struct bt_le_conn_param *conn_param,
 
 		err = bt_conn_le_data_len_update(default_conn, data_len);
 		if (err) {
-			printk("LE data length update failed: %d",
-				    err);
+			LOG_ERR("LE data length update failed: %d", err);
 			return err;
 		}
 
-		printk("LE Data length update pending");
+		LOG_INF("LE Data length update pending");
 		err = k_sem_take(&throughput_sem, K_SECONDS(THROUGHPUT_CONFIG_TIMEOUT));
 		if (err) {
-			printk("LE Data Length update timeout");
+			LOG_ERR("LE Data Length update timeout");
 			return err;
 		}
 	}
@@ -484,15 +468,14 @@ int connection_configuration_set(const struct bt_le_conn_param *conn_param,
 	if (info.le.interval != conn_param->interval_max) {
 		err = bt_conn_le_param_update(default_conn, conn_param);
 		if (err) {
-			printk("Connection parameters update failed: %d",
-				    err);
+			LOG_ERR("Connection parameters update failed: %d", err);
 			return err;
 		}
 
-		printk("Connection parameters update pending");
+		LOG_INF("Connection parameters update pending");
 		err = k_sem_take(&throughput_sem, K_SECONDS(THROUGHPUT_CONFIG_TIMEOUT));
 		if (err) {
-			printk("Connection parameters update timeout");
+			LOG_ERR("Connection parameters update timeout");
 			return err;
 		}
 	}
@@ -511,23 +494,21 @@ int bt_throughput_test_run(void)
 	static char dummy[495];
 
 	if (!default_conn) {
-		printk("Device is disconnected %s",
-			    "Connect to the peer device before running test");
+		LOG_ERR("Device is disconnected. Connect to the peer device before running test");
 		return -EFAULT;
 	}
 
 	if (!test_ready) {
-		printk("Device is not ready."
-			"Please wait for the service discovery and MTU exchange end");
+		LOG_INF("Device is not ready. Please wait for the service discovery and MTU exchange end");
 		return 0;
 	}
 
-	printk("\n==== Starting throughput test ====\n");
+	LOG_INF("==== Starting throughput test ====");
 
 	/* reset peer metrics */
 	err = bt_throughput_write(&throughput, dummy, 1);
 	if (err) {
-		printk("Reset peer metrics failed.");
+		LOG_ERR("Reset peer metrics failed");
 		return err;
 	}
 
@@ -538,7 +519,7 @@ int bt_throughput_test_run(void)
 	while (true) {
 		err = bt_throughput_write(&throughput, dummy, 495);
 		if (err) {
-			printk("GATT write failed (err %d)", err);
+			LOG_ERR("GATT write failed (err %d)", err);
 			break;
 		}
 		data += 495;
@@ -549,14 +530,13 @@ int bt_throughput_test_run(void)
 
 	delta = k_uptime_delta(&stamp);
 
-	printk("\nDone\n");
-	printk("[local] sent %u bytes (%u KB) in %lld ms at %llu kbps\n",
-	       data, data / 1024, delta, ((uint64_t)data * 8 / delta));
+	LOG_INF("Done");
+	LOG_INF("[local] sent %u bytes (%u KB) in %lld ms at %llu kbps", data, data / 1024, delta, ((uint64_t)data * 8 / delta));
 
 	/* read back char from peer */
 	err = bt_throughput_read(&throughput);
 	if (err) {
-		printk("GATT read failed (err %d)", err);
+		LOG_ERR("GATT read failed (err %d)", err);
 		return err;
 	}
 
@@ -583,17 +563,17 @@ int bt_throughput_test_init(void)
 
 	err = bt_enable(NULL);
 	if (err) {
-		printk("Bluetooth init failed (err %d)\n", err);
+		LOG_ERR("Bluetooth init failed (err %d)", err);
 		return err;
 	}
 
-	printk("Bluetooth initialized\n");
+	LOG_INF("Bluetooth initialized");
 
 	scan_init();
 
 	err = bt_throughput_init(&throughput, &throughput_cb);
 	if (err) {
-		printk("Throughput service initialization failed.\n");
+		LOG_ERR("Throughput service initialization failed");
 		return err;
 	}
 
@@ -601,7 +581,7 @@ int bt_throughput_test_init(void)
 
 	select_role(true);
 
-	printk("Waiting for connection.\n");
+	LOG_INF("Waiting for connection");
 	stamp = k_uptime_get_32();
 	while (k_uptime_delta(&stamp) / MSEC_PER_SEC < THROUGHPUT_CONFIG_TIMEOUT) {
 		if (default_conn) {
@@ -611,7 +591,7 @@ int bt_throughput_test_init(void)
 	}
 
 	if (!default_conn) {
-		printk("Cannot set up connection.\n");
+		LOG_ERR("Cannot set up connection");
 		return -ENOTCONN;
 	}
 	return connection_configuration_set(
@@ -627,13 +607,13 @@ int bt_throughput_test_exit(void)
 	int err;
 
 	if (!default_conn) {
-		printk("Not connected!\n");
+		LOG_ERR("Not connected!");
 		return -ENOTCONN;
 	}
 
 	err = bt_conn_disconnect(default_conn, BT_HCI_ERR_REMOTE_USER_TERM_CONN);
 	if (err) {
-		printk("Cannot disconnect!\n");
+		LOG_ERR("Cannot disconnect!");
 		return err;
 	}
 	return 0;
