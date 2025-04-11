@@ -610,7 +610,13 @@ int main(void)
 				per_adv_buf_cnt, false);
 	ERR_CHK_MSG(ret, "Failed to start first advertiser");
 
-	LOG_INF("Broadcast source: %s started", CONFIG_BT_AUDIO_BROADCAST_NAME);
+	uint32_t broadcast_id = 0;
+
+	ret = broadcast_source_id_get(0, &broadcast_id);
+	ERR_CHK_MSG(ret, "Failed to get broadcast ID");
+
+	LOG_INF("Broadcast source: %s started, ID: 0x%06x", CONFIG_BT_AUDIO_BROADCAST_NAME,
+		broadcast_id);
 
 	return 0;
 }

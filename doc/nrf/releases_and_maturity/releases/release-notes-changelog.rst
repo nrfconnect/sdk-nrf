@@ -198,9 +198,10 @@ Matter bridge
 
 nRF5340 Audio
 -------------
-* Updated:
 
-  * The application to use the ``NFC.TAGHEADER0`` value from FICR as the broadcast ID instead of using a random ID.
+* Added print of broadcast ID when starting a :ref:`broadcast source <nrf53_audio_broadcast_source_app>`.
+
+* Updated the application to use the ``NFC.TAGHEADER0`` value from FICR as the broadcast ID instead of using a random ID.
 
 nRF Desktop
 -----------
