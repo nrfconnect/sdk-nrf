@@ -216,18 +216,14 @@ void AppTask::UpdateClusterStateHandler(const BoltLockManager::StateData &stateD
 
 		Nullable<uint16_t> userId;
 		Nullable<List<const LockOpCredentials>> credentials;
-/* Don't pass credentials to SetLockState until TC-DRLK-2.3 is fixed.
-   https://github.com/project-chip/connectedhomeip/issues/38222 */
-#if 0
+#ifdef CONFIG_LOCK_PASS_CREDENTIALS_TO_SET_LOCK_STATE
 		List<const LockOpCredentials> credentialList;
 #endif
 
 		if (!stateData.mValidatePINResult.IsNull()) {
 			userId = { stateData.mValidatePINResult.Value().mUserId };
 
-/* Don't pass credentials to SetLockState until TC-DRLK-2.3 is fixed.
-   https://github.com/project-chip/connectedhomeip/issues/38222 */
-#if 0
+#ifdef CONFIG_LOCK_PASS_CREDENTIALS_TO_SET_LOCK_STATE
 			/* `DoorLockServer::SetLockState` exptects list of `LockOpCredentials`,
 			   however in case of PIN validation it makes no sense to have more than one
 			   credential corresponding to validation result. For simplicity we wrap single
