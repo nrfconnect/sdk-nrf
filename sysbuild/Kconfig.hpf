@@ -30,6 +30,12 @@ config HPF_IMAGE_PATH
 	help
 	  Source directory of HPF image.
 
+config HPF_APPLY_SNIPPET
+	bool "Apply HPF overlay snippet"
+	default y
+	help
+	  Apply HPF overlay snippet to the build.
+
 if HPF_GPIO
 
 choice HPF_GPIO_BACKEND
