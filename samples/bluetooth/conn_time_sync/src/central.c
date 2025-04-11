@@ -234,7 +234,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	uint8_t conn_index = bt_conn_index(conn);
 
 	/* Reset state */
-	memset(&conn_state[conn_index], 0, sizeof(conn_state));
+	memset(&conn_state[conn_index], 0, sizeof(conn_state[0]));
 
 	const uint8_t peripheral_conn_count = 1;
 
