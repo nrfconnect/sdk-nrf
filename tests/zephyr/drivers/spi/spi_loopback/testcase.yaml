@@ -20,6 +20,7 @@ common:
     - nrf54lm20apdk/nrf54lm20a/cpuapp
     - nrf54lv10apdk/nrf54lv10a/cpuapp
     - nrf7120pdk/nrf7120/cpuapp
+  timeout: 15
 
 tests:
   nrf.extended.drivers.spi.loopback: {}
