@@ -39,11 +39,13 @@ LOG_MODULE_DECLARE(ble_coex, CONFIG_LOG_DEFAULT_LEVEL);
 #define DEVICE_NAME_LEN (sizeof(DEVICE_NAME) - 1)
 
 #define THROUGHPUT_CONFIG_TIMEOUT 20
+#define BLE_CONN_TIMEOUT CONFIG_BLE_TEST_DURATION
 
 static K_SEM_DEFINE(throughput_sem, 0, 1);
 
 static volatile bool data_length_req;
 static volatile bool test_ready;
+static K_SEM_DEFINE(wait_for_ble_conn, 0, 1);
 static struct bt_conn *default_conn;
 static struct bt_throughput throughput;
 static const struct bt_uuid *uuid128 = BT_UUID_THROUGHPUT;
@@ -129,7 +131,8 @@ static void exchange_func(struct bt_conn *conn, uint8_t att_err,
 
 	if (info.role == BT_CONN_ROLE_CENTRAL) {
 		instruction_print();
-		test_ready = true;
+		test_ready = att_err == 0;
+		k_sem_give(&wait_for_ble_conn);
 	}
 }
 
@@ -286,6 +289,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 		bt_conn_unref(default_conn);
 		default_conn = NULL;
 	}
+	k_sem_give(&wait_for_ble_conn);
 }
 
 static bool le_param_req(struct bt_conn *conn, struct bt_le_conn_param *param)
@@ -505,8 +509,22 @@ int bt_throughput_test_run(void)
 	}
 
 	if (!test_ready) {
-		LOG_INF("Service discovery and MTU exchange not complete, aborting");
-		return 0;
+		LOG_INF("Service discovery and MTU exchange not complete, waiting");
+		err = k_sem_take(&wait_for_ble_conn, K_SECONDS(BLE_CONN_TIMEOUT));
+		if (!err) {
+			LOG_INF("Service discovery and MTU exchange complete");
+			if (!test_ready) {
+				LOG_ERR("Service discovery failed, cannot run test");
+				return -EFAULT;
+			}
+		} else {
+			if (err == -EBUSY) {
+				LOG_ERR("Returned without waiting");
+			} else if (err == -EAGAIN) {
+				LOG_ERR("Timeout waiting for MTU exchange");
+			}
+			return err;
+		}
 	}
 
 	LOG_INF("==== Starting throughput test ====");
