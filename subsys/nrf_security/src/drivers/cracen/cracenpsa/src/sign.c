@@ -136,6 +136,27 @@ static int cracen_signature_prepare_ec_prvkey(struct si_sig_privkey *privkey, ch
 	return SX_ERR_INCOMPATIBLE_HW;
 }
 
+static psa_status_t generate_ikg_pub_key(const uint8_t *key_buffer, size_t key_buffer_size,
+					 const struct sx_pk_ecurve *sx_curve, char *pubkey_buffer)
+{
+	if (key_buffer_size != sizeof(ikg_opaque_key)) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+	struct si_sig_privkey priv_key;
+	struct si_sig_pubkey pub_key;
+
+	priv_key = si_sig_fetch_ikprivkey(sx_curve, *key_buffer);
+	pub_key.key.eckey.qx = pubkey_buffer;
+	pub_key.key.eckey.qy = pubkey_buffer + sx_pk_curve_opsize(sx_curve);
+	struct sitask t;
+
+	si_task_init(&t, NULL, 0);
+	si_sig_create_pubkey(&t, &priv_key, &pub_key);
+	si_task_run(&t);
+
+	return silex_statuscodes_to_psa(si_task_wait(&t));
+}
+
 static int cracen_signature_prepare_ec_pubkey(const char *key_buffer, size_t key_buffer_size,
 					      const struct sx_pk_ecurve **sicurve,
 					      psa_algorithm_t alg,
@@ -153,7 +174,11 @@ static int cracen_signature_prepare_ec_pubkey(const char *key_buffer, size_t key
 	}
 
 	status = SX_ERR_INCOMPATIBLE_HW;
-
+	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
+	    PSA_KEY_LOCATION_CRACEN) {
+		status = generate_ikg_pub_key(key_buffer, key_buffer_size, *sicurve, pubkey_buffer);
+		return status;
+	}
 	if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS)) {
 		if (alg == PSA_ALG_PURE_EDDSA || alg == PSA_ALG_ED25519PH) {
 			if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(psa_get_key_type(attributes))) {
@@ -169,7 +194,6 @@ static int cracen_signature_prepare_ec_pubkey(const char *key_buffer, size_t key
 	    IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_K1) ||
 	    IS_ENABLED(PSA_NEED_CRACEN_ECDSA_BRAINPOOL_P_R1)) {
 		if (PSA_ALG_IS_ECDSA(alg)) {
-
 			if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(psa_get_key_type(attributes))) {
 				/* public keys must start with 0x04(uncompressed header)
 				 * and must have double the size of the EC curve plus 1
