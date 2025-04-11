@@ -1,68 +1,65 @@
-#######################
-HPF Assembly Management
-#######################
+.. _hpf_assembly_management:
 
-Assembly Management is required to achieve following requirements defined in event handling:
+Assembly management
+###################
 
-- Modularity
-- Testability
+Assembly Management is a critical component in the development process, particularly when meeting the modularity and testability requirements defined in the event handling.
 
+Overview
+********
 
-Rationale
-=========
+During the compilation process, Hard Real-Time (HRT) functions are compiled into assembly code.
+This assembly code is then compared to a previously verified version that has undergone hardware characteristic tests.
+If the differences between the current and previous versions are within acceptable limits, the new code is considered to maintain timing accuracy.
 
-During a build, Hard Real-Time (HRT) functions will be compiled to assembly code.
-This code will be checked against previous version of the assembly code that was verified with HW characteristic tests.
-If the difference is none, or deemed small enough, new code is considered timing accurate as well.
-Application can be build in two modes: user or developer mode. In user mode, application will use pre-generated assembly file to build HRT part. In developer mode application will use newly-generated assembly file.
-By storing assembly files, it is possible to review changes introduced both by developer and toolchain.
+The application can be built in two modes: user mode and developer mode.
+In user mode, the application uses a pre-generated assembly file to construct the HRT component, while in developer mode, the application employs a newly generated assembly file.
+This approach not only facilitates the integration of updates but also allows for a thorough review of changes made by developers and modifications introduced by the toolchain.
+
+See following flow of the build-time assembly management process:
+
+.. IMG TBA
 
 Implementation
-==============
+**************
 
-Assembly management is implemented in build-time CMake scripts.
-In order to use it, application's CMakeLists.txt has to include ``sdp_assembly_install(app "${CMAKE_SOURCE_DIR}/file.c)``.
-Where ``file.c`` is C file containing only HRT functions.
+Assembly management is integrated into the build process through CMake scripts.
+To use this feature, you must include the command ``hpf_assembly_install(app "${CMAKE_SOURCE_DIR}/file.c")`` in your application's :file:`CMakeLists.txt` file, where ``file.c`` value is the C file containing only Hard Real-Time (HRT) functions.
 
-This allows following CMake functions to be used:
+You can manage assembly files with the following functions:
 
-- ``sdp_assembly_generate``
-- ``sdp_assembly_check``
-- ``sdp_assembly_prepare_install``
-- ``sdp_assembly_target_sources``
+* ``hpf_assembly_generate``
+* ``hpf_assembly_check``
+* ``hpf_assembly_prepare_install``
+* ``hpf_assembly_target_sources``
 
-sdp_assembly_generate
----------------------
+hpf_assembly_generate
+=====================
 
-This function adds a build target that generates a temporary ``file-soc-temp.s`` file in the FLPR application's build directory when ``ninja build`` is invoked.
-``soc`` is the SoC name for current build, such as ``nrf54l15``.
+The :c:func:`hpf_assembly_generate` function creates a build target that generates a temporary assembly file.
+Tis file is named :file:`file-soc-temp.s` and is located in the Fast Lightweight Peripheral Processor (FLPR) application's build directory when ``ninja build`` is invoked.
+Here, ``soc`` represents the System on Chip (SoC) name for the current build, such as ``nrf54l15``.
 
-sdp_assembly_check
-------------------
+hpf_assembly_check
+==================
 
-This function adds a build target that is called when ``ninja build`` is invoked, after one from ``sdk_assembly_generate``.
-It checks whether ``file-soc-temp.s`` file in build directory is identical to ``file-soc.s`` file in source directory (where ``file.c`` is located).
-If there is a difference between those files, a CMake error (in user mode) or warning (in developer mode) is generated.
-In user mode, developer should verify if changes between ``file-soc-temp.s`` and ``file-soc.s`` can be deemed small enough to be considered timing accurate.
-If yes, ``ninja asm_install`` should be called in the FLPR application's build directory.
-Otherwise, code needs to be adjusted or HW characterisation tests need to be rerun.
-In developer mode, ``file-soc-temps.s`` is included in the build. However, the file is not replaced in the source directory, to do that ``ninja asm_install`` should be called in the FLPR application's build directory.
+The :c:func:`hpf_assembly_check` function establishes a build target that is triggered when executing ``ninja build``, following the :c:func:`sdk_assembly_generate` function.
+It verifies whether the :file:`file-soc-temp.s` file in the build directory matches the :file:`file-soc.s` file in the source directory.
+If discrepancies are found, a CMake error (in user mode) or warning (in developer mode) is generated.
+In user mode, you should assess whether the differences between :file:`file-soc-temp.s` and :file:`file-soc.s` are minimal enough to be considered timing accurate.
+If they are, you must execute the ``ninja asm_install`` command in the FLPR application's build directory.
+If not, you need to adjust the code or re-run hardware characterization tests.
 
-sdp_assembly_prepare_install
-----------------------------
+In developer mode, :file:`file-soc-temp.s` is included in the build, but it is not automatically replaced in the source directory.
+To update the source directory, invoke the ``ninja asm_install`` command.
 
-This function adds a build target that replaces ``file-soc.s`` in source directory with ``file-soc-temp.s`` from build directory.
-It is invoked when developer calls ``ninja asm_install`` in the FLPR application's build directory.
+hpf_assembly_prepare_install
+============================
 
-sdp_assembly_target_sources
----------------------------
+The :c:func:`hpf_assembly_prepare_install` function creates a build target that replaces the :file:`file-soc.s` file in the source directory with :file:`file-soc-temp.s` from the build directory.
+It is activated when executing the ``ninja asm_install`` command in the FLPR application's build directory.
 
-This function adds ``file-soc.s`` from source directory to target sources.
+hpf_assembly_target_sources
+===========================
 
-Flow
-====
-
-Flow of build-time assembly management is presented below:
-
-.. raw:: html
-    :file: ./hpf_asm.drawio.html
+The :c:func:`hpf_assembly_target_sources` function includes the :file:`file-soc.s` from source directory in the target sources.

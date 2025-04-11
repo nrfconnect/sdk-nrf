@@ -206,8 +206,3 @@ HPF may require HW peripherals to be used by HPF FW.
 When VPR is started, it should initialize required peripherals. When Host signals a request to shutdown, peripherals should be uninitialized and powered off before signalling completion of preparation for shutdown.
 
 HPF FW must ensure optimal power state of HW peripherals, therefore it should use nrfx drivers that handle HW peripherals' power management.
-
-
-.. _`Device Runtime Power Management`: https://docs.zephyrproject.org/latest/services/pm/device_runtime.html#device-runtime-power-management
-.. _`System Power Off`: https://docs.zephyrproject.org/latest/doxygen/html/group__sys__poweroff.html
-.. _`System Power Management`: https://docs.zephyrproject.org/latest/services/pm/system.html#system-power-management

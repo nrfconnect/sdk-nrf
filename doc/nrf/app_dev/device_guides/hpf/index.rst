@@ -1,9 +1,12 @@
-===========================
-Developing with coprocesors
-===========================
+.. _coprocessors_index:
 
-Lumos and Haltium platforms are equipped with RISC-V coprocessor.
-It's main purpouse is to enable development of custom software defined peripherals.
+Developing with coprocesors
+###########################
+
+Thie following pages provide a detailed guide for developers aiming to utilize coprocessors effectively within the nRF54L and nRF54H platforms.
+The RISC-V coprocessor integrated into these platforms facilitates the development of custom, software-defined peripherals, enhancing the functionality and performance of the main processor.
+
+The subsequent sections explain practical aspects of using the High-Performance Framework (HPF).
 
 .. toctree::
    :maxdepth: 1
