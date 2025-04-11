@@ -93,19 +93,20 @@
 		};
 
 		cpuapp_sram: memory@20000000 {
-			reg = <0x20000000 DT_SIZE_K(143)>;
-			ranges = <0x0 0x20000000 DT_SIZE_K(143)>;
+			reg = <0x20000000 DT_SIZE_K(191)>;
+			ranges = <0x0 0x20000000 DT_SIZE_K(191)>;
 			compatible = "mmio-sram";
 			#address-cells = <1>;
 			#size-cells = <1>;
 		};
 
-		cpuflpr_sram: memory@20023c00 {
+		cpuflpr_sram: memory@2001fc00 {
+			reg = <0x2001fc00 DT_SIZE_K(64)>;
+			ranges = <0x0 0x2001fc00 DT_SIZE_K(64)>;
 			compatible = "mmio-sram";
-			reg = <0x20023c00 DT_SIZE_K(48)>;
 			#address-cells = <1>;
 			#size-cells = <1>;
-			ranges = <0x0 0x20023c00 DT_SIZE_K(48)>;
+
 		};
 
  #ifdef USE_NON_SECURE_ADDRESS_MAP
@@ -587,17 +588,16 @@
 			#size-cells = <1>;
 			interrupts = <75 NRF_DEFAULT_IRQ_PRIORITY>;
 
-			/* 952 + 60 = 1012KB */
 			cpuapp_rram: rram@0 {
+				reg = <0x0 DT_SIZE_K(1012)>;
 				compatible = "soc-nv-flash";
 				erase-block-size = <4096>;
 				write-block-size = <16>;
-				reg = <0x0 DT_SIZE_K(952)>;
 			};
 
-			cpuflpr_rram: rram@ee000 {
+			cpuflpr_rram: rram@ed000 {
+				reg = <0xed000 DT_SIZE_K(64)>;
 				compatible = "soc-nv-flash";
-				reg = <0xee000 DT_SIZE_K(60)>;
 				erase-block-size = <4096>;
 				write-block-size = <16>;
 			};
