@@ -34,19 +34,6 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_wifi
-  sample.nrf5340.radio_test_combo:
-    sysbuild: true
-    build_only: true
-    extra_args:
-      - SHIELD=nrf7002ek
-      - SB_CONFIG_SUPPORT_NETCORE_PERIPHERAL_RADIO_TEST=y
-    integration_platforms:
-      - nrf5340dk/nrf5340/cpuapp
-    platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags:
-      - ci_build
-      - sysbuild
-      - ci_samples_wifi
   sample.nrf7002_eks.radio_test:
     sysbuild: true
     build_only: true
