@@ -1965,7 +1965,7 @@ Trusted Firmware-M support
         - --
         - --
         - --
-        - Experimental\ :sup:`1`
+        - Experimental
         - --
         - Experimental
         - Experimental
@@ -1987,9 +1987,7 @@ Trusted Firmware-M support
         - Supported
         - Supported
 
-   | [1]: The attestation service is not supported.
-
-    .. tfm_ncs_profiles_support_table_end
+   .. tfm_ncs_profiles_support_table_end
 
    For more information about supported TF-M features in the |NCS|, see :ref:`ug_tfm_supported_services`.
 
@@ -2020,19 +2018,51 @@ PSA Crypto support
         - nRF9151
         - nRF9160
         - nRF9161
-      * - **Oberon PSA core**
+      * - **Oberon PSA core - nrf_cc3xx driver**
         - --
         - --
         - --
-        - Supported
-        - Supported
-        - Supported
-        - Supported
+        - --
         - --
         - Supported
         - Supported
-        - Supported
+        - --
+        - --
+        - --
+        - --
         - Experimental
+        - Supported
+        - Supported
+        - Supported
+      * - **Oberon PSA core - cracen driver**
+        - --
+        - --
+        - --
+        - --
+        - --
+        - --
+        - --
+        - --
+        - Supported
+        - Supported
+        - Supported
+        - --
+        - --
+        - --
+        - --
+      * - **Oberon PSA core - nrf_oberon driver**
+        - --
+        - --
+        - --
+        - Supported
+        - Supported
+        - Supported
+        - Supported
+        - --
+        - Supported
+        - Supported
+        - Supported
+        - Supported
         - Supported
         - Supported
         - Supported
