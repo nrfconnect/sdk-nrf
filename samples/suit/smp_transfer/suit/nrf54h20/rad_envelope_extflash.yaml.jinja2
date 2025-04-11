@@ -104,6 +104,26 @@ SUIT_Envelope_Tagged:
         suit-parameter-uri: "file://{{ radio['filename'] }}"
     - suit-directive-fetch:
       - suit-send-record-failure
+    - suit-directive-set-component-index: 1
+    - suit-directive-override-parameters:
+        suit-parameter-uri: "file://{{ radio['filename'] }}"
+        suit-parameter-image-digest:
+          suit-digest-algorithm-id: cose-alg-sha-256
+          suit-digest-bytes:
+            file: {{ radio['binary'] }}
+    - suit-directive-fetch:
+      - suit-send-record-failure
+    - suit-directive-try-each:
+      - - suit-condition-image-match:
+          - suit-send-record-success
+          - suit-send-record-failure
+          - suit-send-sysinfo-success
+          - suit-send-sysinfo-failure
+      - - suit-condition-image-match:
+          - suit-send-record-success
+          - suit-send-record-failure
+          - suit-send-sysinfo-success
+          - suit-send-sysinfo-failure
 {%- endif %}
 
     suit-install:
