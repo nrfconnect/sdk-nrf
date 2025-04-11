@@ -8,7 +8,7 @@ Developing with nRF54L Series
 
 .. include:: /includes/guides_complementary_to_app_dev.txt
 
-Zephyr and the |NCS| provide support and contain board definitions for developing on the following nRF54L Series device:
+Zephyr and the |NCS| provide support and contain board definitions for developing on the nRF54L Series devices:
 
 .. list-table::
    :header-rows: 1
@@ -37,6 +37,8 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
      - | `Datasheet <nRF54L15 Datasheet_>`_
      - | `nRF54L05 System-on-Chip (SoC) <nRF54L05_>`_
 
+Additionally, the nRF54L15 SoC supports :ref:`nrfxlib:soft_peripherals`, which you can use to emulate the hardware peripherals.
+
 .. _ug_nrf54L15_revision:
 
 Ensure to check the revision of your nRF54L15 device to see if it is supported:
@@ -46,6 +48,10 @@ Ensure to check the revision of your nRF54L15 device to see if it is supported:
 
    * - DK revision
      - Status
+   * - nRF54L15 DK v0.9.3
+     - Supported
+   * - nRF54L15 DK v0.9.2
+     - Supported
    * - nRF54L15 DK v0.9.1
      - Supported
    * - nRF54L15 PDK v0.8.1
@@ -55,7 +61,7 @@ Ensure to check the revision of your nRF54L15 device to see if it is supported:
 
 .. note::
 
-  The nRF54L15 DK v0.9.1 and the nRF54L15 PDK v0.8.1 are functionally equal and use the same board target (``nrf54l15dk/nrf54l15/cpuapp``).
+  The supported nRF54L15 DK revisions are functionally equal and use the same board target (``nrf54l15dk/nrf54l15/cpuapp``).
 
 .. toctree::
    :maxdepth: 2
