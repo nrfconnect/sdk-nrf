@@ -11,6 +11,11 @@
 	};
 };
 
+&uart0 {
+	hw-flow-control;
+};
+
+
 &uart2 {
 	compatible = "nordic,nrf-uarte";
 	current-speed = <115200>;
