@@ -83,6 +83,11 @@ static void button_msg_sub_thread(void)
 
 		switch (msg.button_pin) {
 		case BUTTON_PLAY_PAUSE:
+			if (!IS_ENABLED(CONFIG_BT_CONTENT_CTRL_MEDIA)) {
+				LOG_WRN("Play/pause not supported");
+				break;
+			}
+
 			if (IS_ENABLED(CONFIG_WALKIE_TALKIE_DEMO)) {
 				LOG_WRN("Play/pause not supported in walkie-talkie mode");
 				break;
