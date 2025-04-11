@@ -649,6 +649,22 @@ static psa_status_t handle_curve_family(psa_ecc_family_t psa_curve, size_t key_b
 	return PSA_SUCCESS;
 }
 
+static bool requires_sitask(const psa_key_attributes_t *attributes, psa_ecc_family_t curve)
+{
+	if (!(IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_MONTGOMERY_255) ||
+	      IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_MONTGOMERY_448) ||
+	      IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_R1_256))) {
+		return false;
+	}
+	if ((curve != PSA_ECC_FAMILY_TWISTED_EDWARDS && curve != PSA_ECC_FAMILY_SECP_R1 &&
+		curve != PSA_ECC_FAMILY_SECP_K1 && curve != PSA_ECC_FAMILY_BRAINPOOL_P_R1) ||
+	    (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
+	     PSA_KEY_LOCATION_CRACEN)) {
+		return true;
+	}
+	return false;
+}
+
 static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_t *attributes,
 						       const uint8_t *key_buffer,
 						       size_t key_buffer_size, uint8_t *data,
@@ -675,8 +691,8 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 
 	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
 	    PSA_KEY_LOCATION_CRACEN) {
-		return handle_identity_key(key_buffer, key_buffer_size, sx_curve, data, &priv_key,
-					   &pub_key);
+		status = handle_identity_key(key_buffer, key_buffer_size, sx_curve, data, &priv_key,
+					     &pub_key);
 	} else {
 		status = handle_curve_family(psa_curve, key_bits_attr, key_buffer, data, sx_curve,
 					     &priv_key, &pub_key);
@@ -684,23 +700,20 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
-	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_MONTGOMERY_255) ||
-	    IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_MONTGOMERY_448)) {
-		if (psa_curve != PSA_ECC_FAMILY_TWISTED_EDWARDS &&
-		    psa_curve != PSA_ECC_FAMILY_SECP_R1 && psa_curve != PSA_ECC_FAMILY_SECP_K1 &&
-		    psa_curve != PSA_ECC_FAMILY_BRAINPOOL_P_R1) {
-			char workmem[SX_ED448_DGST_SZ] = {};
-			struct sitask t;
+	bool is_sitask = requires_sitask(attributes, psa_curve);
 
-			si_task_init(&t, workmem, sizeof(workmem));
-			si_sig_create_pubkey(&t, &priv_key, &pub_key);
-			si_task_run(&t);
+	if (is_sitask) {
+		char workmem[SX_ED448_DGST_SZ] = {};
+		struct sitask t;
 
-			status = silex_statuscodes_to_psa(si_task_wait(&t));
-			safe_memzero(workmem, sizeof(workmem));
-			if (status != PSA_SUCCESS) {
-				return status;
-			}
+		si_task_init(&t, workmem, sizeof(workmem));
+		si_sig_create_pubkey(&t, &priv_key, &pub_key);
+		si_task_run(&t);
+
+		status = silex_statuscodes_to_psa(si_task_wait(&t));
+		safe_memzero(workmem, sizeof(workmem));
+		if (status != PSA_SUCCESS) {
+			return status;
 		}
 	}
 	*data_length = expected_pub_key_size;
