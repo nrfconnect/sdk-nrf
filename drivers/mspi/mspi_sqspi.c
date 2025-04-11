@@ -487,12 +487,13 @@ static int dev_init(const struct device *dev)
 		.cmd_bit_order = NRFX_QSPI2_DATA_FMT_BIT_ORDER_MSB_FIRST,
 		.addr_bit_order = NRFX_QSPI2_DATA_FMT_BIT_ORDER_MSB_FIRST,
 		.data_bit_order = NRFX_QSPI2_DATA_FMT_BIT_ORDER_MSB_FIRST,
-		.data_bit_reorder_unit = 0,
+		.data_bit_reorder_unit = 8,
 		.data_container = 32,
 		.data_swap_unit = 8,
 		.data_padding = NRFX_QSPI2_DATA_FMT_PAD_RAW,
 	};
 	int rc;
+	nrfx_err_t err;
 
 	k_sem_init(&dev_data->finished, 0, 1);
 	k_sem_init(&dev_data->ctx_lock, 1, 1);
@@ -513,9 +514,17 @@ static int dev_init(const struct device *dev)
 	IRQ_CONNECT(DT_IRQN(VPR_NODE), DT_IRQ(VPR_NODE, priority),
 		    nrfx_isr, nrfx_qspi2_irq_handler, 0);
 
-	nrfx_qspi2_init(&dev_config->qspi2, &qspi2_cfg);
+	err = nrfx_qspi2_init(&dev_config->qspi2, &qspi2_cfg);
+	if (err != NRFX_SUCCESS) {
+		LOG_ERR("nrfx_qspi2_init() failed: %08x", err);
+		return -EIO;
+	}
 
-	nrfx_qspi2_dev_data_fmt_set(&dev_config->qspi2, &qspi2_data_fmt);
+	err = nrfx_qspi2_dev_data_fmt_set(&dev_config->qspi2, &qspi2_data_fmt);
+	if (err != NRFX_SUCCESS) {
+		LOG_ERR("nrfx_qspi2_dev_data_fmt_set() failed: %08x", err);
+		return -EIO;
+	}
 
 	for (ce_gpio = dev_config->ce_gpios;
 	     ce_gpio < &dev_config->ce_gpios[dev_config->ce_gpios_len];
