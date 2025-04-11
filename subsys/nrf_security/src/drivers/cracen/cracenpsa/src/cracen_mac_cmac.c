@@ -44,7 +44,7 @@ psa_status_t cracen_cmac_setup(cracen_mac_operation_t *operation,
 	}
 
 	sx_status = sx_mac_create_aescmac(&operation->cmac.ctx, &operation->cmac.keyref);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 

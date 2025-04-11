@@ -27,14 +27,14 @@ psa_status_t cracen_hmac_setup(cracen_mac_operation_t *operation,
 
 	psa_status_t psa_status = hash_get_algo(PSA_ALG_HMAC_GET_HASH(alg), &sx_hash_algo);
 
-	if (psa_status) {
+	if (psa_status != PSA_SUCCESS) {
 		return psa_status;
 	}
 
 	/* HMAC task creation and configuration. */
 	status =  mac_create_hmac(sx_hash_algo, &operation->hmac.hashctx, key_buffer,
 		key_buffer_size, operation->hmac.workmem, sizeof(operation->hmac.workmem));
-	if(status != SX_OK) {
+	if (status != SX_OK) {
 		return silex_statuscodes_to_psa(status);
 	}
 
@@ -55,7 +55,7 @@ psa_status_t cracen_hmac_update(cracen_mac_operation_t *operation, const uint8_t
 	/* As the block size is needed several times we compute it once here */
 	psa_status_t psa_status = hash_get_algo(PSA_ALG_GET_HASH(operation->alg), &sx_hash_algo);
 
-	if (psa_status) {
+	if (psa_status != PSA_SUCCESS) {
 		return psa_status;
 	}
 	block_size = sx_hash_get_alg_blocksz(sx_hash_algo);
