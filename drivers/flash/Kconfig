@@ -78,3 +78,17 @@ module-str = Flash over nRF RPC
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
 endif # FLASH_RPC
+
+# To be added to Zephyr SOC_FLASH_NRF_MRAM Kconfig in the future
+config FLASH_NRF_MRAM
+	bool "Nordic Semiconductor flash driver for MRAM"
+	default y
+	depends on SOC_NRF7120_ENGA
+	select NRFX_MRAMC
+	select FLASH_HAS_DRIVER_ENABLED
+	select FLASH_HAS_PAGE_LAYOUT
+	select FLASH_HAS_NO_EXPLICIT_ERASE
+	imply MPU_ALLOW_FLASH_WRITE if ARM_MPU
+	help
+	  Enable NRFX driver for MRAM on nRF7120,
+	  Aligns to SOC_FLASH_NRF_MRAM in Zephyr

@@ -6,3 +6,4 @@
 
 osource "$(NCS_MEMFAULT_FIRMWARE_SDK_KCONFIG)"
 rsource "wfa-qt/Kconfig"
+rsource "hal_nordic/nrfx/Kconfig"

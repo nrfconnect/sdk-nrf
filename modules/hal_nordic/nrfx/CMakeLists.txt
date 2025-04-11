@@ -22,3 +22,6 @@ if(CONFIG_SOC_NRF7120_ENGA_CPUAPP)
   math(EXPR clock_frequency_mhz "${clock_frequency} / 1000000")
   zephyr_compile_definitions("NRF_CONFIG_CPU_FREQ_MHZ=${clock_frequency_mhz}")
 endif()
+
+set(SRC_DIR ${NRFX_DIR}/drivers/src)
+zephyr_library_sources_ifdef(CONFIG_NRFX_MRAMC   ${SRC_DIR}/nrfx_mramc.c)
