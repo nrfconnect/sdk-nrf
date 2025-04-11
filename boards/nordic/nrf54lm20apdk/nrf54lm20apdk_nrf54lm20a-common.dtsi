@@ -101,6 +101,11 @@
 	pinctrl-names = "default", "sleep";
 };
 
+&hfpll {
+	/* For now use 64 MHz clock for CPU and fast peripherals. */
+	clock-frequency = <DT_FREQ_M(64)>;
+};
+
 &pwm20 {
 	status = "okay";
 	pinctrl-0 = <&pwm20_default>;
