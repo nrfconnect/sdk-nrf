@@ -287,7 +287,7 @@ static int update_download(void)
 	int err;
 	const char *file;
 	int sec_tag = SEC_TAG;
-	uint8_t sec_tag_count = sec_tag < 0 ? 0 : 1;
+	uint8_t sec_tag_count = 1;
 
 	err = modem_info_string_get(MODEM_INFO_FW_VERSION, modem_version,
 				    MAX_MODEM_VERSION_LEN);

@@ -429,7 +429,7 @@ static int update_download(void)
 	int err;
 	const char *file;
 	int sec_tag = SEC_TAG;
-	uint8_t sec_tag_count = sec_tag < 0 ? 0 : 1;
+	uint8_t sec_tag_count = 1;
 	const struct dfu_target_full_modem_params params = {
 		.buf = fmfu_buf,
 		.len = sizeof(fmfu_buf),

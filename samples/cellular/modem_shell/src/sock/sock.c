@@ -260,7 +260,7 @@ static int sock_validate_parameters(
 			return -EINVAL;
 		}
 
-		if (sec_tag < 0) {
+		if (sec_tag == -1) {
 			mosh_error("Security tag must be given when security is enabled");
 			return -EINVAL;
 		}
