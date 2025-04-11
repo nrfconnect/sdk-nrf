@@ -207,7 +207,14 @@ For more information about the repository and development model, see the :ref:`d
       #. In the extension's :guilabel:`Welcome View`, click on :guilabel:`Manage SDKs`.
          The list of actions appears in the |VSC|'s quick pick.
       #. Click :guilabel:`Install SDK`.
-         The list of available stable SDK versions appears in the |VSC|'s quick pick.
+         The list of available stable SDK versions appears in the |VSC|'s quick pick, grouped into two categories:
+
+         * Pre-packaged SDKs - Bundled by Nordic Semiconductor.
+           Available mostly for stable releases and some preview tags.
+           Recommended for faster and more reliable download and installation.
+         * GitHub - Taken from the `nRF Connect by Nordic Semiconductor GitHub organization <nrfconnect GitHub organization_>`_.
+           Available for stable releases, but also preview tags and branches (after disabling the filter in the quick pick).
+
       #. Select the SDK version to install.
          |install_latest_version|
 

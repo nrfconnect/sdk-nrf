@@ -9,9 +9,8 @@ Sysbuild images
 
 :ref:`configuration_system_overview_sysbuild` allows you to add additional images to your builds.
 
-
 Enabling images
-===============
+***************
 
 To add an additional image using sysbuild, you must modify the central sysbuild configuration.
 This is typically done in a `sysbuild.conf` file within an application, which is a Kconfig fragment applied to the default sysbuild configuration when a project is configured.
@@ -55,7 +54,7 @@ These options determine whether the secure boot image is included on the network
 .. _sysbuild_images_adding_custom_images:
 
 Adding custom images
-====================
+********************
 
 Custom images can be added directly to a project (or board) or to a Zephyr module, making them accessible to multiple projects.
 
@@ -99,7 +98,7 @@ This method can be used to add a new image to the existing board target.
 .. _sysbuild_images_adding_custom_network_core_images:
 
 Adding custom network core images
----------------------------------
+=================================
 
 To add an image for a different board target (like for the network core of the nRF5340 SoC), you must use a different syntax.
 This can be handled using the following approach:
@@ -162,7 +161,7 @@ This file is optional and is only needed if custom configuration needs to be set
 .. _sysbuild_images_adding_to_a_single_board:
 
 Adding to a single board
-------------------------
+========================
 
 You can place the same code as in the :ref:`sysbuild_images_adding_to_single_project` section, without the Zephyr sourcing, in a board directory.
 This enables the use of those images for any sysbuild-based project being built for that board:
@@ -193,7 +192,7 @@ sysbuild.cmake:
 .. _sysbuild_images_adding_via_a_zephyr_module:
 
 Adding through a Zephyr module
-------------------------------
+==============================
 
 To add images in a Zephyr module, create a folder within the module to hold the `Kconfig.sysbuild` and (optionally, if needed) `CMakeLists.txt` files.
 Then, add this folder to the Zephyr module file:
@@ -241,3 +240,11 @@ Kconfig.sysbuild:
     endif # !NETCORE_NONE
 
     endmenu
+
+.. _sysbuild_images_editing_in_nrfvsc:
+
+Editing sysbuild images and domains in the |nRFVSC|
+***************************************************
+
+The |nRFVSC| provides a GUI for editing sysbuild images and domains.
+See the `How to work with sysbuild domains`_ page in the extension documentation for more information.
