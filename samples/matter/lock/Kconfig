@@ -22,6 +22,12 @@ config LOCK_MAX_CREDENTIAL_LENGTH
 	int "Maximum length of the single credential supported by the lock"
 	default 10
 
+config LOCK_PASS_CREDENTIALS_TO_SET_LOCK_STATE
+	bool "Pass used credentials when setting the lock state"
+	help
+	  This option should stay disabled until TC-DRLK-2.3 is fixed.
+	  Related issue: https://github.com/project-chip/connectedhomeip/issues/38222
+
 config LOCK_SCHEDULES
 	bool "Support for WeekDay, YearDay and Holiday schedules in lock"
 	help
