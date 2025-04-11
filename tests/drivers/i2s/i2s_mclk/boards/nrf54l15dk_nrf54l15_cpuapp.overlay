@@ -1,0 +1,41 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* i2s-node0 is the transmitter/receiver */
+
+/ {
+	aliases {
+		i2s-node0 = &i2s20;
+	};
+
+	zephyr,user {
+		gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>,  /* Connect with I2C_MCK */
+			<&gpio1 11 GPIO_ACTIVE_HIGH>;  /* Connect with I2S_LRCK_M */
+	};
+};
+
+&pinctrl {
+	i2s20_default_alt: i2s20_default_alt {
+		group1 {
+			psels = <NRF_PSEL(I2S_MCK, 1, 8)>,
+				<NRF_PSEL(I2S_SCK_M, 1, 2)>,
+				<NRF_PSEL(I2S_LRCK_M, 1, 10)>,
+				<NRF_PSEL(I2S_SDOUT, 1, 12)>,  /* I2S_SDOUT shorted to I2S_SDIN */
+				<NRF_PSEL(I2S_SDIN, 1, 13)>;
+		};
+	};
+};
+
+/* Disable NFCT on P1.02 and P1.03 */
+&uicr {
+	nfct-pins-as-gpios;
+};
+
+&i2s20 {
+	status = "okay";
+	pinctrl-0 = <&i2s20_default_alt>;
+	pinctrl-names = "default";
+};
