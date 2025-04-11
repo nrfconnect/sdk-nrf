@@ -17,6 +17,8 @@ common:
 tests:
   sample.drivers.spi.flash.sqspi:
     filter: CONFIG_MSPI_SQSPI and dt_compat_enabled("jedec,mspi-nor")
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
