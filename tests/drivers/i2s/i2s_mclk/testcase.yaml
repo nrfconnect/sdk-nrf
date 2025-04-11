@@ -1,0 +1,29 @@
+common:
+  tags:
+    - drivers
+    - i2s
+    - ci_tests_zephyr_drivers_i2s
+  depends_on:
+    - i2s
+    - gpio
+  filter: CONFIG_I2S_TEST_USE_GPIO_LOOPBACK
+  harness: ztest
+
+tests:
+  drivers.i2s.i2s_mclk.gpio_loopback:
+    harness_config:
+      fixture: gpio_loopback
+    platform_allow:
+      - nrf52840dk_nrf52840
+      - nrf54l15dk_nrf54l05_cpuapp
+      - nrf54l15dk_nrf54l10_cpuapp
+      - nrf54l15dk_nrf54l15_cpuapp
+      - nrf54l20pdk_nrf54l20_cpuapp
+
+  drivers.i2s.i2s_mclk.gpio_loopback.54h:
+    harness_config:
+      fixture: i2s_loopback
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
