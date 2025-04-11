@@ -8,16 +8,16 @@
 #include <cracen/ec_helpers.h>
 #include <cracen/mem_helpers.h>
 #include "cracen_psa.h"
+#include "cracen_psa_ecdsa.h"
 #include "cracen_psa_eddsa.h"
 #include "cracen_psa_montgomery.h"
 #include "platform_keys/platform_keys.h"
 #include <nrf_security_mutexes.h>
 #include <sicrypto/drbghash.h>
 #include "ecc.h"
-#include <sicrypto/ed448.h>
+#include <cracen_psa_ikg.h>
 #include <sicrypto/rsa_keygen.h>
 #include <sicrypto/util.h>
-#include <silexpk/ed448.h>
 #include <silexpk/sxops/rsa.h>
 #include <sicrypto/ik.h>
 #include <silexpk/ik.h>
@@ -569,30 +569,22 @@ static size_t get_expected_pub_key_size(psa_ecc_family_t psa_curve, size_t key_b
 }
 
 static psa_status_t handle_identity_key(const uint8_t *key_buffer, size_t key_buffer_size,
-					       const struct sx_pk_ecurve *sx_curve, uint8_t *data,
-					       struct si_sig_privkey *priv_key,
-					       struct si_sig_pubkey *pub_key)
+					       const struct sx_pk_ecurve *sx_curve, uint8_t *data)
 {
 	if (key_buffer_size != sizeof(ikg_opaque_key)) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_R1_256)) {
-		*priv_key = si_sig_fetch_ikprivkey(sx_curve, *key_buffer);
 		data[0] = SI_ECC_PUBKEY_UNCOMPRESSED;
-		pub_key->key.eckey.qx = &data[1];
-		pub_key->key.eckey.qy = &data[1 + sx_pk_curve_opsize(sx_curve)];
-	} else {
-		return PSA_ERROR_NOT_SUPPORTED;
+		return silex_statuscodes_to_psa(cracen_ikg_create_pub_key(key_buffer[0], data + 1));
 	}
-	return PSA_SUCCESS;
+	return PSA_ERROR_NOT_SUPPORTED;
 }
 
 static psa_status_t handle_curve_family(psa_ecc_family_t psa_curve, size_t key_bits_attr,
 					const uint8_t *key_buffer, uint8_t *data,
-					const struct sx_pk_ecurve *sx_curve,
-					struct si_sig_privkey *priv_key,
-					struct si_sig_pubkey *pub_key)
+					const struct sx_pk_ecurve *sx_curve)
 {
 
 	switch (psa_curve) {
@@ -629,9 +621,10 @@ static psa_status_t handle_curve_family(psa_ecc_family_t psa_curve, size_t key_b
 				cracen_ed25519_create_pubkey(key_buffer, data));
 		} else if (key_bits_attr == 448 &&
 			   IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_448)) {
-			priv_key->def = si_sig_def_ed448;
-			priv_key->key.ed448 = (struct sx_ed448_v *)key_buffer;
-			pub_key->key.ed448 = (struct sx_ed448_pt *)data;
+			/* This if-statement is kept to make it easier to add ed448 in the future
+			 * even though it does nothing.
+			 */
+			return PSA_ERROR_NOT_SUPPORTED;
 		} else {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
@@ -644,22 +637,11 @@ static psa_status_t handle_curve_family(psa_ecc_family_t psa_curve, size_t key_b
 	return PSA_SUCCESS;
 }
 
-static bool requires_sitask(const psa_key_attributes_t *attributes, psa_ecc_family_t curve)
-{
-	if (!IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_R1_256)) {
-		return false;
-	}
-	return PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
-	       PSA_KEY_LOCATION_CRACEN;
-}
-
 static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_t *attributes,
 						       const uint8_t *key_buffer,
 						       size_t key_buffer_size, uint8_t *data,
 						       size_t data_size, size_t *data_length)
 {
-	struct si_sig_privkey priv_key;
-	struct si_sig_pubkey pub_key;
 	psa_status_t status;
 
 	size_t key_bits_attr = psa_get_key_bits(attributes);
@@ -679,31 +661,14 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 
 	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
 	    PSA_KEY_LOCATION_CRACEN) {
-		status = handle_identity_key(key_buffer, key_buffer_size, sx_curve, data, &priv_key,
-					     &pub_key);
+		status = handle_identity_key(key_buffer, key_buffer_size, sx_curve, data);
 	} else {
-		status = handle_curve_family(psa_curve, key_bits_attr, key_buffer, data, sx_curve,
-					     &priv_key, &pub_key);
+		status = handle_curve_family(psa_curve, key_bits_attr, key_buffer, data, sx_curve);
 	}
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
-	bool is_sitask = requires_sitask(attributes, psa_curve);
 
-	if (is_sitask) {
-		char workmem[SX_ED448_DGST_SZ] = {};
-		struct sitask t;
-
-		si_task_init(&t, workmem, sizeof(workmem));
-		si_sig_create_pubkey(&t, &priv_key, &pub_key);
-		si_task_run(&t);
-
-		status = silex_statuscodes_to_psa(si_task_wait(&t));
-		safe_memzero(workmem, sizeof(workmem));
-		if (status != PSA_SUCCESS) {
-			return status;
-		}
-	}
 	*data_length = expected_pub_key_size;
 	return PSA_SUCCESS;
 }
