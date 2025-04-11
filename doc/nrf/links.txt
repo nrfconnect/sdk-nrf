@@ -630,6 +630,9 @@
 .. _`Zephyr Logging`: https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/services/logging/index.html
 .. _`Dictionary-based Logging`: https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/services/logging/index.html#dictionary-based_logging
 .. _`Run-time Filtering`: https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/services/logging/index.html#runtime_filtering
+.. _`Device Runtime Power Management`: https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/services/pm/device_runtime.html
+.. _`System Power Off`: https://docs.nordicsemi.com/bundle/zephyr-apis-latest/page/group_sys_poweroff.html
+.. _`System Power Management`: https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/services/pm/system.html
 
 .. _`nRF9160: GPS with SUPL client library`: https://docs.nordicsemi.com/bundle/ncs-1.2.0/page/nrf/samples/nrf9160/gps/README.html
 
