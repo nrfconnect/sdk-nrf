@@ -32,6 +32,12 @@ config SDP_IMAGE_PATH
 	help
 	  Source directory of SDP image.
 
+config SDP_APPLY_SNIPPET
+	bool "Apply SDP overlay snippet"
+	default y
+	help
+	  Apply SDP overlay snippet to the build.
+
 if SDP_GPIO
 
 choice SDP_GPIO_BACKEND
