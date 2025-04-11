@@ -30,8 +30,6 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/crypto/spake2p`
 
-.. note::
-   |54H_engb_2_8|
 
 
 Testing

@@ -28,6 +28,8 @@ The following table illustrates ABI compatibility between different versions of 
 
    * - |NCS| versions
      - Compatible nRF54H20 SoC binaries version
+   * - |NCS| v3.0.0
+     - `nRF54H20 SoC binaries v0.9.6`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
    * - |NCS| v2.9.0-nRF54H20-1
      - `nRF54H20 SoC binaries v0.9.2`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
    * - |NCS| v2.9.0

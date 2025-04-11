@@ -158,8 +158,6 @@ Building and running
 
 This sample can be found under |sample path| in the |NCS| folder structure.
 
-.. note::
-   |54H_engb_2_8|
 
 .. note::
     |sysbuild_autoenabled_ncs|
