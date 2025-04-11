@@ -552,7 +552,7 @@ static int backend_init(void)
 
 #if !defined(CONFIG_SYS_CLOCK_EXISTS)
 	/* Wait a little bit for IPC service to be ready on APP side. */
-	while (delay < 5000) {
+	while (delay < 6000) {
 		delay++;
 	}
 #endif
