@@ -3,6 +3,7 @@
 
 zephyr_library_sources(
   ${ZEPHYR_BASE}/soc/nordic/nrf54l/soc.c
+  ${ZEPHYR_BASE}/soc/nordic/validate_rram_partitions.c
   )
 
 # We need a buffer in memory in a static location which can be used by
