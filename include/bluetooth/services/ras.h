@@ -564,6 +564,17 @@ void bt_ras_rreq_rd_subevent_data_parse(struct net_buf_simple *peer_ranging_data
 					bt_ras_rreq_subevent_header_cb_t subevent_header_cb,
 					bt_ras_rreq_step_data_cb_t step_data_cb, void *user_data);
 
+/** @brief Convert CS procedure counter to RAS ranging counter
+ *
+ * @param[in] procedure_counter Procedure counter
+ *
+ * @retval RAS ranging counter
+ */
+static inline uint16_t bt_ras_rreq_get_ranging_counter(uint16_t procedure_counter)
+{
+	return procedure_counter & 0xFFF;
+}
+
 #ifdef __cplusplus
 }
 #endif

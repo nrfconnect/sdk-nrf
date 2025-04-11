@@ -160,7 +160,8 @@ static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subeve
 		return;
 	}
 
-	if (most_recent_local_ranging_counter != result->header.procedure_counter) {
+	if (most_recent_local_ranging_counter
+		!= bt_ras_rreq_get_ranging_counter(result->header.procedure_counter)) {
 		int sem_state = k_sem_take(&sem_local_steps, K_NO_WAIT);
 
 		if (sem_state < 0) {
@@ -169,7 +170,8 @@ static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subeve
 			return;
 		}
 
-		most_recent_local_ranging_counter = result->header.procedure_counter;
+		most_recent_local_ranging_counter =
+			bt_ras_rreq_get_ranging_counter(result->header.procedure_counter);
 	}
 
 	if (result->header.subevent_done_status == BT_CONN_LE_CS_SUBEVENT_ABORTED) {
@@ -193,7 +195,8 @@ static void subevent_result_cb(struct bt_conn *conn, struct bt_conn_le_cs_subeve
 	dropped_ranging_counter = PROCEDURE_COUNTER_NONE;
 
 	if (result->header.procedure_done_status == BT_CONN_LE_CS_PROCEDURE_COMPLETE) {
-		most_recent_local_ranging_counter = result->header.procedure_counter;
+		most_recent_local_ranging_counter =
+			bt_ras_rreq_get_ranging_counter(result->header.procedure_counter);
 	} else if (result->header.procedure_done_status == BT_CONN_LE_CS_PROCEDURE_ABORTED) {
 		LOG_WRN("Procedure %u aborted", result->header.procedure_counter);
 		net_buf_simple_reset(&latest_local_steps);
