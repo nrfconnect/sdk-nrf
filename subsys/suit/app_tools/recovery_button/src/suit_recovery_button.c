@@ -68,7 +68,33 @@ static int recovery_button_check(void)
 		(void)suit_invoke_confirm(ret);
 	}
 
+#if defined(CONFIG_SUIT_RECOVERY)
+	/* In case we are booting the recovery application as a companion image before
+	 * the main application, we must ensure that nothing happens in the companion
+	 * application after sending the invoke confirmation to SDFW.
+	 * Otherwise, interrupts from drivers initialized at the later stage could
+	 * interfere with the main application.
+	 * An example (and the root cause for adding this code) is the external flash
+	 * driver. If executed beyond this stage, the recovery application had enough
+	 * time to initialize the external flash chip, which then interfered with the
+	 * main application.
+	 */
+	if (mode == SUIT_BOOT_MODE_INVOKE) {
+		k_sleep(K_FOREVER);
+	}
+#endif /* CONFIG_SUIT_RECOVERY */
+
 	return ret;
 }
 
-SYS_INIT(recovery_button_check, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+#if defined(CONFIG_SPI_DW)
+#define EXTFLASH_SPI_INIT_PRIORITY CONFIG_SPI_INIT_PRIORITY
+#elif defined(CONFIG_MSPI)
+#define EXTFLASH_SPI_INIT_PRIORITY CONFIG_MSPI_INIT_PRIORITY
+#endif
+
+BUILD_ASSERT(CONFIG_SSF_CLIENT_SYS_INIT_PRIORITY < CONFIG_SUIT_RECOVERY_BUTTON_INIT_PRIORITY &&
+	     EXTFLASH_SPI_INIT_PRIORITY > CONFIG_SUIT_RECOVERY_BUTTON_INIT_PRIORITY,
+	     "The recovery button check init priority outside of the allowed range.");
+
+SYS_INIT(recovery_button_check, POST_KERNEL, CONFIG_SUIT_RECOVERY_BUTTON_INIT_PRIORITY);
