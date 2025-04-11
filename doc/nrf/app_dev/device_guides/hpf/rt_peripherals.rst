@@ -7,20 +7,15 @@ Real-time Peripherals
    :local:
    :depth: 2
 
-This document provides technical details and guidance on how to use the real-time (RT) peripherals integrated into the VPR CPU, specifically:
-
-* VPR Events (VEVIF)
-* VPR IO (VIO)
-* VPR Timer (VTIM)
-
-These peripherals are designed to enhance real-time performance and allow precise control over GPIO pads and other low-level hardware interactions.
+This document provides technical details and guidance on how to use the real-time (RT) peripherals integrated into the VPR CPU.
+They are designed to enhance real-time performance and allow precise control over GPIO pads and other low-level hardware interactions.
 
 Overview
 ********
 
 The real-time peripherals consist of the following main components that interact to deliver cycle-accurate control and synchronization of GPIO pads and events:
 
-* VPR Timer (VTIM) - Provides precise timing control and synchronization.
+* VPR TIMER (VTIM) - Provides precise timing control and synchronization.
 * VPR IO (VIO) - A GPIO controller that can handle up to 16 pins.
 * VPR Event Interface (VEVIF) - Enables the sourcing of interrupt requests (IRQs) from the VPR and interaction with the Distributed Programmable Peripheral Interconnect (DPPI).
 
@@ -30,23 +25,21 @@ They remain active even in wait, sleep, and deep sleep modes, making them ideal 
 Prerequisites
 *************
 
-Before you start using the RT Peripherals, ensure they are enabled.
-You can do this by calling the :c:func:`nrf_vpr_csr_rtperiph_enable_set` function.
+Before you start using the RT peripherals, enable them by calling the :c:func:`nrf_vpr_csr_rtperiph_enable_set` function.
 
-VPR Timer (VTIM)
+VPR TIMER (VTIM)
 ****************
 
-The VPR Timer (VTIM) offers the following features:
+The VPR TIMER (VTIM) offers the following features:
 
 * Two 16-bit timers (counter 0 and counter 1) that can operate independently or combine to form a 32-bit timer.
 * Precise synchronization with the VIO and VEVIF modules for generating event pulses upon timer completion.
 * Operation at the same clock frequency as the CPU without a prescaler.
 
-
 .. note::
    You can find the full API in the `nrfx documentation. <https://docs.nordicsemi.com/bundle/nrfx-apis-latest/page/group_nrf_vpr_csr_vtim_hal.html>`_
 
-Timer modes
+TIMER modes
 ===========
 
 Each timer can operate in several modes to control its counting behavior, which can be set using the :c:func:`nrf_vpr_csr_vtim_count_mode_set` function:
@@ -75,8 +68,7 @@ You must specify the counter index:
 * :c:func:`nrf_vpr_cst_vtim_simple_counter_add_set`
 * :c:func:`nrf_vpr_cst_vtim_simple_counter_wait_set`
 
-
-Use the following functions (``nrf_vpr_csr_vtim_combined_*`` ) to adjust combined counter:
+Use the following functions (``nrf_vpr_csr_vtim_combined_*`` ) to adjust the combined counter:
 
 * :c:func:`nrf_vpr_cst_vtim_combined_counter_get`
 * :c:func:`nrf_vpr_cst_vtim_combined_counter_set`
@@ -85,8 +77,10 @@ Use the following functions (``nrf_vpr_csr_vtim_combined_*`` ) to adjust combine
 * :c:func:`nrf_vpr_cst_vtim_combined_counter_add_set`
 * :c:func:`nrf_vpr_cst_vtim_combined_counter_wait_trigger`
 
-Operation
-=========
+Operational guidelines
+======================
+
+Familiarize yourself with the following guidelines for managing counters within the system:
 
 * Writing any non-zero value to a counter starts the counter.
   You can do this using ``nrf_vpr_csr_vtim_{combined,simple}_counter_set``, which sets the counter to a given value, or ``nrf_vpr_csr_vtim_{combined,simple}_counter_add_set``, which adds a value to the counter's current value.
@@ -113,7 +107,6 @@ CPU stalling
 ============
 
 CPU can be stalled until corresponding counter's event pulse is generated, using the :c:func:`nrf_vpr_csr_vtim_simple_wait_set` or :c:func:`nrf_vpr_csr_vtim_combined_wait_trigger` function.
-
 
 VPR IO (VIO)
 ************
@@ -166,7 +159,7 @@ To modify how frequently these values are updated, use :c:func:`nrf_vpr_csr_vio_
 * :c:enumerator:`NRF_VPR_CSR_VIO_MODE_IN_EVENT` - The value is updated only on a counter 1 event pulse, regardless of the CPU state.
 * :c:enumerator:`NRF_VPR_CSR_VIO_MODE_IN_SHIFT` - Similarly to event mode, the value is updated on a counter 1 event pulse.
   Additionally, input is shifted.
-  For more information, see the :ref:`sw-arch-hpf-rtperiph-input-shifting` documentation section.
+  For more information, see the :ref:`hpf_real_time_input_shifting` documentation section.
 
 When in continuous mode, VIO pin 0 generates an event pulse on any value change.
 This pulse can request the VPR clock to start, even if the CPU is in sleep mode or the clock is turned off.
@@ -175,8 +168,8 @@ Buffering
 =========
 
 VIO supports queuing updates that are applied on the next timer event pulse, allowing synchronized GPIO updates.
-Buffered analogues can be accessed using the ``nrf_vpr_csr_vio_*_buffered_*`` functions.
-Writing to buffers will set dirty bits, which can be checked using ``nrf_vpr_csr_vio_*_buffered_dirty_check``.
+You can access buffered analogues using the ``nrf_vpr_csr_vio_*_buffered_*`` functions.
+Writing to buffers will set dirty bits, which you can check with ``nrf_vpr_csr_vio_*_buffered_dirty_check``.
 A dirty buffer is transferred to its direct analogue on a counter 0 event pulse, clearing the corresponding dirty bit.
 Writing to a dirty buffer will stall the CPU to prevent overruns.
 Additionally, writing to a direct analogue will also write to the buffer, clearing the dirty bit (if set).
@@ -194,8 +187,8 @@ VIO supports serialized output operations, useful for reducing CPU load during h
 The shifting mode is configured using :c:struct:`nrf_vpr_csr_vio_mode_out_t`, where :c:member:`frame_width` defines frame width in bits.
 You can use the following shifting modes:
 
-* :c:enumerator:`NRF_VPR_CSR_VIO_SHIFT_NONE` - Shifting disabled.
-* :c:enumerator:`NRF_VPR_CSR_VIO_SHIFT_OUTB` - Shifting uses output and buffered output
+* :c:enumerator:`NRF_VPR_CSR_VIO_SHIFT_NONE` - Shifting is disabled.
+* :c:enumerator:`NRF_VPR_CSR_VIO_SHIFT_OUTB` - Shifting uses output and buffered output.
   This mode is optimized for wide parallel output streams, where output data needs to be loaded very frequently.
 * :c:enumerator:`NRF_VPR_CSR_VIO_SHIFT_OUTB_TOGGLE` - VIO 0 is reserved for the clock output pin.
   Shifting uses output and buffered output.
@@ -204,9 +197,9 @@ You can use the following shifting modes:
 You can set the advanced configuration for output shifting with the :c:func:`nrf_vpr_csr_vio_config_set` function.
 
 .. note::
-  For more information on output shifting, see the *Shifting modes and usage* section in VPR peripheral description.
+  For more information on output shifting, see the *Shifting modes and usage* section in the VPR peripheral description.
 
-.. _sw-arch-hpf-rtperiph-input-shifting:
+.. _hpf_real_time_input_shifting:
 
 Input shifting
 --------------
@@ -216,7 +209,7 @@ Shifting process aligns with the serial clock and sampling point based on counte
 This mode is intended to be used in conjunction with :c:enumerator:`NRF_VPR_CSR_VIO_SHIFT_OUTB_TOGGLE` output mode.
 
 .. note::
-  For more information on input shifting, see the *Input Shifting* section in VPR peripheral description.
+  For more information on input shifting, see the *Input Shifting* section in the VPR peripheral description.
 
 Combined access
 ===============
@@ -294,7 +287,7 @@ You can use VTIM to trigger GPIO updates:
 Toggle VIO pin on VTIM event
 ----------------------------
 
-In this example VTIM (in reload combined mode) is set to generate an event every 64 million CPU cycles.
+In this example, VTIM (in reload combined mode) is set to generate an event every 64 million CPU cycles.
 Whenever this event occurs, VIO is configured to toggle pin 9 (mapping to P2.09 - **LED0** on the nRF54L15 DK) using buffered output:
 
 .. code-block:: c

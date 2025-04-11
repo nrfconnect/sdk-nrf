@@ -62,4 +62,4 @@ It is activated when executing the ``ninja asm_install`` command in the FLPR app
 sdp_assembly_target_sources
 ===========================
 
-The :c:func:`sdp_assembly_target_sources` function includes the :fil:`file-soc.s` from source directory in the target sources.
+The :c:func:`sdp_assembly_target_sources` function includes the :file:`file-soc.s` from source directory in the target sources.

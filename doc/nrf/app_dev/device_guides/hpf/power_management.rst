@@ -174,7 +174,7 @@ HPF firmware
 HPF FW is responsible for managing power state of the following resources:
 
 * VPR CPU power state
-* Hardware peripherals used by the HPF firwmare
+* Hardware peripherals used by the HPF firmware
 
 VPR CPU power state
 ===================
@@ -201,7 +201,7 @@ Consider the following:
 Hardware peripherals
 ====================
 
-You might have to use specific hardware peripherals with the HPF firwmare.
+You might have to use specific hardware peripherals with the HPF firmware.
 
 When VPR starts, it must initialize the required peripherals.
 When the Host sends a request for shutdown, these peripherals should be deinitialized and powered down before signaling that preiparations for shutdown are complete.

@@ -1,9 +1,13 @@
 .. _hpf_index:
 
-High Performance Framework (HPF)
+High-Performance Framework (HPF)
 ################################
 
-High Performance Framework (HPF), is a framework designed to facilitate the creation and integration of software peripherals using coprocessors.
+.. note::
+
+   The HPF support in the |NCS| is currently experimental.
+
+High-Performance Framework, is a framework designed to facilitate the creation and integration of software peripherals using coprocessors.
 It includes targeted tools and code examples.
 These resources are intended to serve as foundational starting points, enabling you to create customized software peripherals tailored to specific application needs.
 
