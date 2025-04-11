@@ -7,13 +7,17 @@ Trusted storage in the |NCS|
    :local:
    :depth: 2
 
-There are several options for storing keys and other important data persistently when developing applications with the |NCS|.
-Different storage options have different features.
-One of the options is to use the :ref:`trusted_storage_readme` library.
+There are several options for storing keys and other important data persistently when developing applications with the |NCS|, each with different features.
+The implementation of the PSA Certified Secure Storage API can be provided using one of the following options:
 
-The trusted storage library enables you to provide features like integrity, confidentiality and authenticity of the stored data, without using the TF-M Platform Root of Trust (PRoT).
-The library implements the PSA Certified Secure Storage API.
-It consists of PSA Internal Trusted Storage API and PSA Protected Storage API.
+* TF-M Platform Root of Trust (PRoT).
+  This can only be used if the `ARM TrustZone`_ technology and hardware-accelerated firmware isolation are supported by the platform in use.
+* The :ref:`trusted_storage_readme` library, which enables you to provide features like integrity, confidentiality, and authenticity of the stored data without using the TF-M Platform Root of Trust (PRoT).
+
+The trusted storage library implements the PSA Certified Secure Storage API and is designed to securely store and manage sensitive data, such as cryptographic keys, device credentials, and configuration data.
+The mechanism is essential for IoT devices, as it allows the implementation of secure communication between devices.
+
+The PSA Certified Secure Storage API consists of PSA Internal Trusted Storage API and PSA Protected Storage API.
 
 The Internal Trusted Storage and the Protected Storage are designed to work in :ref:`environments both with and without security by separation <app_boards_spe_nspe>`.
 The two APIs used in the trusted storage library are also offered as secure services by TF-M.

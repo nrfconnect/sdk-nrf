@@ -296,3 +296,16 @@ The following two types of security risks are possible:
     The mechanism to determine if the device is compromised is up to the OEM developers.
 
 Additionally, after upgrading the device firmware with the key importer functionality enabled, and once the key import is complete, it is recommend to update device firmware with the key importer functionality disabled as soon as possible.
+
+Trusted storage
+---------------
+
+The :ref:`trusted_storage_in_ncs` is a security mechanism designed to securely store and manage sensitive data.
+Currently, all :ref:`bt_mesh_samples` in the |NCS| use the :ref:`trusted_storage_readme` library as the Trusted Storage backend for all supported platforms.
+
+.. note::
+   For the nRF52840 devices, in regards to :ref:`bt_mesh_samples` in |NCS|, AEAD keys are derived using hashes of entry UIDs (:kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID`).
+   This approach is less secure than using the :ref:`lib_hw_unique_key` library for key derivation as it only provides integrity of sensitive material.
+   It is also possible to implement a custom AEAD key generation method when the :kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_CUSTOM` Kconfig option is selected.
+
+For more details about AEAD key generation and backend configuration, see the :ref:`trusted_storage_readme` readme.
