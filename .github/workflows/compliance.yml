@@ -16,6 +16,7 @@ jobs:
       with:
         git-fetch-depth: 0
         git-ref: ${{ github.event.pull_request.head.sha }}
+        rebase: true
 
     - name: cache-pip
       uses: actions/cache@2f8e54208210a422b2efd51efaa6bd6d7ca8920f # v3
@@ -38,14 +39,9 @@ jobs:
         BASE_REF: ${{ github.base_ref }}
       working-directory: ncs/nrf
       run: |
-        git remote -v
         # Ensure there's no merge commits in the PR
         [[ "$(git rev-list --merges --count origin/${BASE_REF}..)" == "0" ]] || \
         (echo "::error ::Merge commits not allowed, rebase instead";false)
-
-        git rebase origin/${BASE_REF}
-        # debug
-        git log  --pretty=oneline | head -n 10
 
     - name: Run CODEOWNERS test
       id: codeowners

@@ -18,7 +18,6 @@ jobs:
       - name: Checkout sources
         uses: nrfconnect/action-checkout-west-update@main
         with:
-          git-ref: ${{ github.event.pull_request.head.sha }}
           west-update-args: '--narrow mcuboot zephyr'
 
       - name: Get python version
