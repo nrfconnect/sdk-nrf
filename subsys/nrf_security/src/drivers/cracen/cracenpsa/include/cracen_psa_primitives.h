@@ -190,7 +190,7 @@ struct cracen_mac_operation_s {
 	size_t bytes_left_for_next_block;
 
 	/* Buffer for input data to fill up the next block */
-	uint8_t input_buffer[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
+	uint8_t input_buffer[SX_MAX(SX_HASH_MAX_ENABLED_BLOCK_SIZE, SX_BLKCIPHER_PRIV_SZ)];
 
 	union {
 		struct {
@@ -214,7 +214,7 @@ struct cracen_key_derivation_operation {
 	psa_algorithm_t alg;
 	enum cracen_kd_state state;
 	uint64_t capacity;
-	uint8_t output_block[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
+	uint8_t output_block[SX_MAX(SX_HASH_MAX_ENABLED_BLOCK_SIZE, SX_BLKCIPHER_PRIV_SZ)];
 	uint8_t output_block_available_bytes;
 	union{
 		cracen_mac_operation_t mac_op;
