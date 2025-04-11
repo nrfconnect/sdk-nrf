@@ -1,0 +1,43 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <dt-bindings/led/led.h>
+
+/ {
+	audioleds: audioleds {
+		compatible = "gpio-leds";
+		status = "okay";
+
+		led_device_type: led_device_type {
+			gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>,
+					<&gpio0 25 GPIO_ACTIVE_HIGH>,
+					<&gpio0 26 GPIO_ACTIVE_HIGH>;
+			label = "RGB LED 0";
+		};
+
+		rgb2: rgb-2 {
+			gpios = <&gpio0 28 GPIO_ACTIVE_HIGH>,
+					<&gpio0 29 GPIO_ACTIVE_HIGH>,
+					<&gpio0 30 GPIO_ACTIVE_HIGH>;
+			label = "RGB LED 1";
+		};
+
+		led_conn_status: led_conn_status {
+			gpios = <&gpio0 31 GPIO_ACTIVE_HIGH>;
+			label = "Blue LED 0";
+		};
+
+		led_sync_status: led_sync_status {
+			gpios = <&gpio1 0 GPIO_ACTIVE_HIGH>;
+			label = "Green LED 0";
+		};
+
+		led_app_status: led_app_status {
+			gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>;
+			label = "Green LED 1";
+		};
+	};
+};

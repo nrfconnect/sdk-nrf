@@ -20,9 +20,10 @@
 #include "macros_common.h"
 #include "bt_mgmt.h"
 #include "lc3_streamer.h"
+#include "led_assignments.h"
+#include "led.h"
 
 #if CONFIG_BOARD_NRF5340_AUDIO_DK
-#include "led.h"
 #include "sd_card.h"
 #endif /* CONFIG_BOARD_NRF5340_AUDIO_DK */
 
@@ -673,13 +674,11 @@ void nrf_auraconfig_main(void)
 	ret -= NRFX_ERROR_BASE_NUM;
 	ERR_CHK_MSG(ret, "Failed to set HFCLK divider");
 
-#if CONFIG_BOARD_NRF5340_AUDIO_DK
 	ret = led_init();
 	ERR_CHK_MSG(ret, "Failed to initialize LED module");
 
-	ret = led_on(LED_APP_RGB, LED_COLOR_GREEN);
+	ret = led_on(LED_AUDIO_APP_STATUS, LED_COLOR_GREEN);
 	ERR_CHK(ret);
-#endif /* CONFIG_BOARD_NRF5340_AUDIO_DK */
 
 	ret = bt_mgmt_init();
 	ERR_CHK(ret);
@@ -1102,9 +1101,7 @@ static int cmd_start(const struct shell *shell, size_t argc, char **argv)
 		}
 	}
 
-#if CONFIG_BOARD_NRF5340_AUDIO_DK
-	led_blink(LED_APP_RGB, LED_COLOR_GREEN);
-#endif /* CONFIG_BOARD_NRF5340_AUDIO_DK */
+	led_blink(LED_AUDIO_APP_STATUS, LED_COLOR_GREEN);
 
 	return 0;
 }
@@ -1184,9 +1181,7 @@ static int cmd_stop(const struct shell *shell, size_t argc, char **argv)
 		}
 	}
 
-#if CONFIG_BOARD_NRF5340_AUDIO_DK
-	led_on(LED_APP_RGB, LED_COLOR_GREEN);
-#endif /* CONFIG_BOARD_NRF5340_AUDIO_DK */
+	led_on(LED_AUDIO_APP_STATUS, LED_COLOR_GREEN);
 
 	return 0;
 }
