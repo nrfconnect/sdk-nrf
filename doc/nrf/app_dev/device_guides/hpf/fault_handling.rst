@@ -1,34 +1,48 @@
-.. _sw-arch-coprocessor-examples-hpf-fault-handling:
+.. _hpf_fault_handling:
 
-##############
 Fault handling
 ##############
 
+The following page outlines mechanisms and strategies employed to manage faults in both the Host and High-Performance Framework (HPF) firmware environments.
+
 Host fault
-==========
+**********
 
-When Host crashes and is reset, handling of VPR state depends on architecture:
+In case of a Host crash followed by a reset, the management of the VPR state depends on the system architecture:
 
-* On Lumos platform, hardware ensures that when Application core (Host) is reset, HPF FW (FLPR) will be reset as well.
-* On Haltium platform, Secure Domain Firmware will reset all resources assigned to HPF FW's (FLPR's) owner (Host).
+* On the :ref:`nRF54L platform<ug_nrf54l>`, the hardware is designed to ensure that a reset of the application core (Host) simultaneously triggers a reset of the HPF firmware (:ref:`FLPR core<vpr_flpr_nrf54l>`).
+* On the :ref:`nRF54H platform<ug_nrf54h>`, the :ref:`Secure Domain Firmware<ug_nrf54h20_secure_domain>` is responsible for resetting all resources allocated to the owner of the HPF FW (FLPR), which is the Host.
 
-This means that there is no risk of two cores getting out of sync.
+This architecture ensures synchronization between the cores.
 
-HPF FW fault
-============
+Firmware fault
+**************
 
-When HPF FW crashes, this must be signalled to Host. As there is no HW resource that could handle it, solution needs to be done in SW.
+In case a HPF firmware crashes, it must be signalled to the Host.
+Since there are no hardware resources dedicated to this task, you must implement the solution in software.
+You can employ the following strategies individually or combined:
 
-There are two possible solutions:
+.. tabs::
 
-#. Create a hardware watchdog timer
+   .. tab:: TIMER peripheral
 
-   * Use TIMER peripheral as a watchdog. TIMER is set up by the Host and should be cleared periodically by HPF FW. If HPF FW fails to clear the TIMER, the Host receives an IRQ signalling an HPF FW error.
-   * Use WDT peripheral with STOP functionality. HPF FW has to feed the watchdog. If it fails to do so, the Host is configured to receive an interrupt and has to invoke TASK_STOP. This solution assumes host is always able to invoke TASK_STOP within 2 32kHz cycles. Otherwise, the WDT triggers a reset, which may be an unwanted side effect.
+      Use the TIMER peripheral as watchdog in one of the following ways:
 
-#. Implement a trap handler that will signal the condition to Host (for example, using VEVIF IRQ and a predefined location in memory to store error code).
+         * Set up the TIMER with the Host and ensure it is regularly cleared by the HPF firmware.
+           If the firmware fails to clear the TIMER, an Interrupt Request (IRQ) is sent to the Host indicating an HPF firmware error.
+         * Use the Watchdog Timer (WDT) peripheral with STOP functionality.
+           HPF firmware has to feed the watchdog.
+           If it fails to do so, the Host is receives an interrupt and must execute TASK_STOP.
+           This solution assumes that the Host is always able to invoke TASK_STOP within two 32kHz cycles. Otherwise, the WDT triggers a reset, which might be undesired.
 
-#. Create a flag in shared memory, which is periodically updated by HPF FW and checked by Host.
+   .. tab:: Trap handler
 
-Those solutions can be combined as well.
-Main disadvantage for using only second solution is not handling a situation where HPF FW is stuck in a while loop. Possibly that could be avoided by strict inspection of code.
+      Implement a trap handler that singals the fault condition to the Host, for example, using the VEVIF IRQ and a predefined memory location to store the error code.
+
+      .. note::
+          The drawback of relying only on this solution is its inability to address scenarios where the HPF firmware is caught in an infinite loop.
+          This risk might be mitigated through thorough code inspection and testing.
+
+   .. tab:: Shared memory flag
+
+      Create a flag within shared memory that is periodically updated by the HPF firmware and monitored by the Host.

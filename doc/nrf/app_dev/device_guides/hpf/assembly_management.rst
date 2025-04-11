@@ -24,26 +24,26 @@ Implementation
 **************
 
 Assembly management is integrated into the build process through CMake scripts.
-To use this feature, you must include the command ``hpf_assembly_install(app "${CMAKE_SOURCE_DIR}/file.c")`` in your application's :file:`CMakeLists.txt` file, where ``file.c`` value is the C file containing only Hard Real-Time (HRT) functions.
+To use this feature, you must include the command ``sdp_assembly_install(app "${CMAKE_SOURCE_DIR}/file.c")`` in your application's :file:`CMakeLists.txt` file, where ``file.c`` value is the C file containing only Hard Real-Time (HRT) functions.
 
 You can manage assembly files with the following functions:
 
-* ``hpf_assembly_generate``
-* ``hpf_assembly_check``
-* ``hpf_assembly_prepare_install``
-* ``hpf_assembly_target_sources``
+* ``sdp_assembly_generate``
+* ``sdp_assembly_check``
+* ``sdp_assembly_prepare_install``
+* ``sdp_assembly_target_sources``
 
-hpf_assembly_generate
+sdp_assembly_generate
 =====================
 
-The :c:func:`hpf_assembly_generate` function creates a build target that generates a temporary assembly file.
+The :c:func:`sdp_assembly_generate` function creates a build target that generates a temporary assembly file.
 Tis file is named :file:`file-soc-temp.s` and is located in the Fast Lightweight Peripheral Processor (FLPR) application's build directory when ``ninja build`` is invoked.
-Here, ``soc`` represents the System on Chip (SoC) name for the current build, such as ``nrf54l15``.
+``soc`` represents the System on Chip (SoC) name for the current build, such as ``nrf54l15``.
 
-hpf_assembly_check
+sdp_assembly_check
 ==================
 
-The :c:func:`hpf_assembly_check` function establishes a build target that is triggered when executing ``ninja build``, following the :c:func:`sdk_assembly_generate` function.
+The :c:func:`sdp_assembly_check` function establishes a build target that is triggered when executing ``ninja build``, following the :c:func:`sdk_assembly_generate` function.
 It verifies whether the :file:`file-soc-temp.s` file in the build directory matches the :file:`file-soc.s` file in the source directory.
 If discrepancies are found, a CMake error (in user mode) or warning (in developer mode) is generated.
 In user mode, you should assess whether the differences between :file:`file-soc-temp.s` and :file:`file-soc.s` are minimal enough to be considered timing accurate.
@@ -53,13 +53,13 @@ If not, you need to adjust the code or re-run hardware characterization tests.
 In developer mode, :file:`file-soc-temp.s` is included in the build, but it is not automatically replaced in the source directory.
 To update the source directory, invoke the ``ninja asm_install`` command.
 
-hpf_assembly_prepare_install
+sdp_assembly_prepare_install
 ============================
 
-The :c:func:`hpf_assembly_prepare_install` function creates a build target that replaces the :file:`file-soc.s` file in the source directory with :file:`file-soc-temp.s` from the build directory.
+The :c:func:`sdp_assembly_prepare_install` function creates a build target that replaces the :file:`file-soc.s` file in the source directory with :file:`file-soc-temp.s` from the build directory.
 It is activated when executing the ``ninja asm_install`` command in the FLPR application's build directory.
 
-hpf_assembly_target_sources
+sdp_assembly_target_sources
 ===========================
 
-The :c:func:`hpf_assembly_target_sources` function includes the :file:`file-soc.s` from source directory in the target sources.
+The :c:func:`sdp_assembly_target_sources` function includes the :fil:`file-soc.s` from source directory in the target sources.

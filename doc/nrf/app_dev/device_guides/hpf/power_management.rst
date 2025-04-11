@@ -1,36 +1,23 @@
-####################
-HPF Power Management
-####################
+.. _hpf_power_management:
 
-Power Management in HPF should be considered in two aspects:
+Power management
+################
 
-* Host side Power Management
-* HPF FW side Power Management
+The following page outlines the approaches and mechanisms employed to ensure efficient power management in High-Performance Framework (HPF) systems, focusing on resource allocation, system states, and interaction between different components.
 
-Host side Power Management
-==========================
+Power Management in HPF should be considered from the Host side and the HPF firmware side.
 
-Host is responsible for managing power state of following resources:
+Host side
+*********
 
-* VPR with HPF FW running on it
+The Host is responsible for managing power state of the following resources:
+
+* VPR core with HPF firmware running on it
 * RAM
 
-Optimal power state is achieved using `Device Runtime Power Management`_ and `System Power Off`_.
+To achieve optimal power state, you must use the `Device Runtime Power Management`_ and `System Power Off`_.
 
-Device Runtime Power Management
--------------------------------
-
-Each HPF device driver instance should call ``pm_device_runtime_get(hpf_dev)`` during its initialization
-and ``pm_device_runtime_put(hpf_dev)`` when deinitialized.
-This allows for the VPR driver to handle efficiently cases when multiple HPF peripherals are running on one VPR.
-
-VPR coprocessor driver should implement transitions to ``PM_DEVICE_ACTION_SUSPEND`` and ``PM_DEVICE_ACTION_RESUME`` by
-signalling to VPR about state change. Relevant handling will then be done on the HPF FW side.
-
-Flow
-----
-
-Host side Power Management flow example is presented below:
+See an example flow of the Host power management:
 
   .. uml::
 
@@ -105,7 +92,7 @@ Host side Power Management flow example is presented below:
     rnote over FLPR
     Configure emulated MSPI
     endrnote
-    return FLPR_MSPI_CONFIGURED  
+    return FLPR_MSPI_CONFIGURED
     deactivate "mSPI driver"
     return
     ...
@@ -171,38 +158,52 @@ Host side Power Management flow example is presented below:
     deactivate Zephyr
     @enduml
 
-HPF FW side Power Management
-============================
+Device runtime power management
+===============================
+
+Each HPF device driver instance should call ``pm_device_runtime_get(hpf_dev)`` during its initialization
+and ``pm_device_runtime_put(hpf_dev)`` upon deinitialization.
+This ensure efficient handling of cases where multiple HPF peripherals are running on a single VPR core.
+
+VPR coprocessor driver is responsible for managing transitions to ``PM_DEVICE_ACTION_SUSPEND`` and ``PM_DEVICE_ACTION_RESUME`` by signaling these state changes to the VPR.
+The HPF firmware on the other side handles the corresponding actions.
+
+HPF firmware
+************
 
 HPF FW is responsible for managing power state of the following resources:
 
 * VPR CPU power state
-* HW peripherals used by HPF FW
+* Hardware peripherals used by the HPF firwmare
 
 VPR CPU power state
--------------------
+===================
 
-Considering that HPF firmware will not use Zephyr libraries for `System Power Management`_ (since they rely on multithreading), a separate approach has to be implemented for this use case.
+HPF firmware does not use Zephyr libraries for `System Power Management`_ (since they rely on multithreading), you must implement a separate approach.
 
-HPF firmware should configure sleep mode that will be triggered (using both ``SLEEPSTATE`` and ``STACKONSLEEP`` fields in ``NORDIC.VPRNORDICSLEEPCTRL`` register - see ``Sleep mode operation`` section in VPR peripheral description), when:
+HPF firmware should configure a sleep mode that is activated using both the ``SLEEPSTATE`` and ``STACKONSLEEP`` fields in ``NORDIC.VPRNORDICSLEEPCTRL`` register.
+For details, see the *Sleep mode operation* section in the VPR peripheral description.
+This configuration should occur in the following cases:
 
-* VPR is started (sleep mode to set comes from a Kconfig option).
-* `SUSPEND` or `RESUME` signal is received from Host.
+* When the VPR starts (the sleep mode setting is derived from a Kconfig option).
+* When the Host receives the ``SUSPEND`` or ``RESUME`` signal.
 
-In the main loop, HPF FW should call ``k_cpu_idle`` to enter sleep mode.
-``k_cpu_idle()`` can only be called in the main loop. Calling it from other context is prohibited, as it could lead to VPR entering an incorrect power state.
+In the main loop, HPF firmware should call ``k_cpu_idle`` to enter sleep mode.
+Ensure that ``k_cpu_idle()`` is only called within the main loop to prevent the VPR from entering an incorrect power state.
 
-Sleep modes to use should be application-specific, taking into consideration:
+Sleep modes should be application-specific.
+Consider the following:
 
 * Latency requirements of the emulated protocol.
-* Minimum time in sleep mode that brings power benefits.
-* HW limitations (for example limits in wakeup from hibernation).
+* Minimum time in sleep mode that brings power savings.
+* Hardware limitations (for example, constraints on waking up from hibernation).
 
-HW peripherals used by HPF FW
------------------------------
+Hardware peripherals
+====================
 
-HPF may require HW peripherals to be used by HPF FW.
+You might have to use specific hardware peripherals with the HPF firwmare.
 
-When VPR is started, it should initialize required peripherals. When Host signals a request to shutdown, peripherals should be uninitialized and powered off before signalling completion of preparation for shutdown.
+When VPR starts, it must initialize the required peripherals.
+When the Host sends a request for shutdown, these peripherals should be deinitialized and powered down before signaling that preiparations for shutdown are complete.
 
-HPF FW must ensure optimal power state of HW peripherals, therefore it should use nrfx drivers that handle HW peripherals' power management.
+To ensure the optimal power state of hardware peripherals, the HPF firmware should employ nrfx drivers, which are designed to manage the power states of hardware peripherals effectively.
