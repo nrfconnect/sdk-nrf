@@ -7,6 +7,8 @@ nRF Connect Matter Manufacturer Cluster Editor tool
    :local:
    :depth: 2
 
+.. include:: /includes/matter_manufacturer_cluster_editor_note.txt
+
 This guide describes how to use the nRF Connect Matter Manufacturer Cluster Editor tool to create a new cluster or extend an existing cluster.
 
 Overview
@@ -28,7 +30,7 @@ The tool supports the following features:
    * Creating a new device type that is not listed in the Matter Device Type Library Specification.
 
 Based on your edits, the tool generates a new XML file with the cluster definition or an extension to the existing cluster.
-You can use the XML file as an argument in the :ref:`ug_matter_gs_tools_matter_west_commands_append` command to add the XML file to the Matter ZCL database.
+You can use the XML file as an argument in the :ref:`ug_matter_gs_tools_matter_west_commands_append` to add the XML file to the Matter ZCL database.
 
 The guide is divided into the following sections:
 
@@ -58,8 +60,6 @@ To take full advantage of this guide, you need to be familiar with the :ref:`ug_
 Downloading, installing and launching
 *************************************
 
-.. include:: /includes/matter_manufacturer_cluster_editor_note.txt
-
 To download the preview version of the tool and install it, complete the following steps:
 
  1. Download the preview version of the tool from the `Matter nRF Connect releases`_ GitHub page, depending on your operating system:
@@ -68,11 +68,16 @@ To download the preview version of the tool and install it, complete the followi
 
       .. group-tab:: Windows
 
-         ``nrfconnect-matter-manufacturer-cluster-editor_win64.zip``.
+         ``nrfconnect-matter-manufacturer-cluster-editor_win64.zip``
 
       .. group-tab:: Linux
 
-         ``nrfconnect-matter-manufacturer-cluster-editor_linux.AppImage``.
+         ``nrfconnect-matter-manufacturer-cluster-editor_linux.AppImage``
+
+      .. group-tab:: MacOS
+
+         - ``nrfconnect-matter-manufacturer-cluster-editor_macos_x64.app.zip`` for Intel-based Macs
+         - ``nrfconnect-matter-manufacturer-cluster-editor_macos_arm64.app.zip`` for Apple Silicon-based Macs
 
  #. Run the tool using one of the following methods depending on your operating system:
 
@@ -98,6 +103,11 @@ To download the preview version of the tool and install it, complete the followi
 
                 ./nrfconnect-matter-manufacturer-cluster-editor_linux.AppImage
 
+      .. group-tab:: MacOS
+
+         a. The application file should be automatically unpacked to the :file:`nRF Connect Matter Manufacturer Cluster Editor`, or :file:`nRF Connect Matter Manufacturer Cluster Editor.app` file.
+         #. Click twice on the downloaded file.
+         #. If a popup window appears indicating that the application was downloaded from the internet, click :guilabel:`Open`.
 
 .. _ug_nrfconnect_manufacturer_cluster_editor_tool_basic_functionalities:
 
@@ -112,8 +122,7 @@ Side panel
 
 On the left side of the tool, you can see the navigation panel with the following elements:
 
-* A name bar on the top of the panel with the name of the cluster.
-  It represents a name of the cluster, and the name of the file, where the cluster is saved.
+* A name bar on the top of the panel with text field that represents the name of the cluster, and the name of the file, where the cluster is saved.
   You can change the name of the cluster by clicking on the name bar and typing a new name.
   The new name shall be unique across all available clusters in the Matter data model.
 
@@ -254,7 +263,7 @@ To see the details of an element, click the arrow icon on the left side of the r
 
 The following elements can be displayed in the details depending on the type of the element and its content:
 
-* Various text fields with a specific information about the element.
+* Various text fields with specific information about the element.
 
   For example:
 
@@ -346,17 +355,29 @@ To create a new device type, complete the following steps:
    To see tooltips for the fields, hover your mouse over them.
 
 #. Click the :guilabel:`Add Cluster assignment to device type` button to add the required clusters to the device type.
-   You will see the dialog window with all the fields to be filled in.
+   You will see the dialog window with the following fields:
 
-   For example:
+   * :guilabel:`Cluster` - The cluster to be assigned to the device type.
+   * :guilabel:`Client` - Whether the cluster uses the client role for attributes, commands and events.
+   * :guilabel:`Server` - Whether the cluster uses the server role for attributes, commands and events.
+   * :guilabel:`Client Locked` - Whether the cluster should prevent to use other attributes, commands and events in client role than the ones assigned to the cluster.
+   * :guilabel:`Server Locked` - Whether the cluster should prevent to use other attributes, commands and events in server role than the ones assigned to the cluster.
+
+   Below the fields, you can see the four buttons:
+
+   * :guilabel:`Required Attributes` - Add a new assignment to the device type.
+   * :guilabel:`Required Commands` - Add a new assignment to the device type.
+   * :guilabel:`Required Events` - Add a new assignment to the device type.
+   * :guilabel:`Required Features` - Add a new assignment to the device type.
+
+   The following figure shows the dialog window to assign a cluster to the device type:
 
    .. figure:: images/matter_cluster_tool/matter_cluster_tool_device_type_add_cluster.png
       :alt: Add cluster assignment to device type
 
-#. Click the buttons in the dialog window to assign required Attributes, Commands and Events by the cluster.
-   To assign a new element, click the plus icon and write the exact name of the each element.
+#. Click one of the :guilabel:`Required` buttons, and in the new dialog window, add a new assignment by clicking the plus icon and filling in the exact name of the attribute, command or event.
 
-   For example:
+   For example, the following figure shows the dialog window to assign required attribute to the cluster:
 
    .. figure:: images/matter_cluster_tool/matter_cluster_tool_device_type_add_cluster_dialog.png
       :alt: Add cluster assignment to device type dialog

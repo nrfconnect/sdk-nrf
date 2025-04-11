@@ -428,3 +428,9 @@ Online Power Profiler for Matter over Thread
 It provides a graphical interface for configuring the parameters of your device, such as TX power, voltage supply, or ICD configuration and simulating its power consumption based on the simplified, theoretical model.
 The tool supports the nRF52840, nRF5340 and nRF54L15 platforms.
 It allows you to also estimate the power consumption of your device in a selected period of time and use the output for estimating the lifetime of the battery used as a power source.
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Subpages:
+
+   manufacturer_cluster_editor_tool
