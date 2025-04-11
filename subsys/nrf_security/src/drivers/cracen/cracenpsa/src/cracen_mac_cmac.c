@@ -44,7 +44,7 @@ psa_status_t cracen_cmac_setup(cracen_mac_operation_t *operation,
 	}
 
 	sx_status = sx_mac_create_aescmac(&operation->cmac.ctx, &operation->cmac.keyref);
-	if (sx_status) {
+	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
@@ -58,7 +58,7 @@ psa_status_t cracen_cmac_setup(cracen_mac_operation_t *operation,
 psa_status_t cracen_cmac_update(cracen_mac_operation_t *operation, const uint8_t *input,
 				       size_t input_length)
 {
-	int status;
+	int sx_status;
 	size_t block_bytes = 0;
 	size_t remaining_bytes = 0;
 
@@ -77,9 +77,9 @@ psa_status_t cracen_cmac_update(cracen_mac_operation_t *operation, const uint8_t
 	 * processed.
 	 */
 	if (!operation->cmac.is_first_block) {
-		status = sx_mac_resume_state(&operation->cmac.ctx);
-		if (status) {
-			return silex_statuscodes_to_psa(status);
+		sx_status = sx_mac_resume_state(&operation->cmac.ctx);
+		if (sx_status) {
+			return silex_statuscodes_to_psa(sx_status);
 		}
 	}
 
@@ -102,9 +102,10 @@ psa_status_t cracen_cmac_update(cracen_mac_operation_t *operation, const uint8_t
 	remaining_bytes = input_length - block_bytes;
 
 	if (operation->bytes_left_for_next_block == 0) {
-		status = sx_mac_feed(&operation->cmac.ctx, operation->input_buffer, AES_BLOCK_SIZE);
-		if (status) {
-			return silex_statuscodes_to_psa(status);
+		sx_status =
+			sx_mac_feed(&operation->cmac.ctx, operation->input_buffer, AES_BLOCK_SIZE);
+		if (sx_status) {
+			return silex_statuscodes_to_psa(sx_status);
 		}
 		/* Input buffer was processed, reset the bytes for the next block and
 		 * empty input buffer
@@ -114,22 +115,22 @@ psa_status_t cracen_cmac_update(cracen_mac_operation_t *operation, const uint8_t
 	}
 
 	if (block_bytes) {
-		status = sx_mac_feed(&operation->cmac.ctx, input, block_bytes);
-		if (status) {
-			return silex_statuscodes_to_psa(status);
+		sx_status = sx_mac_feed(&operation->cmac.ctx, input, block_bytes);
+		if (sx_status) {
+			return silex_statuscodes_to_psa(sx_status);
 		}
 		operation->cmac.is_first_block = false;
 	}
 
 	if (!operation->cmac.is_first_block) {
 		/* save state and wait until processed */
-		status = sx_mac_save_state(&operation->cmac.ctx);
-		if (status) {
-			return silex_statuscodes_to_psa(status);
+		sx_status = sx_mac_save_state(&operation->cmac.ctx);
+		if (sx_status) {
+			return silex_statuscodes_to_psa(sx_status);
 		}
-		status = sx_mac_wait(&operation->cmac.ctx);
-		if (status) {
-			return silex_statuscodes_to_psa(status);
+		sx_status = sx_mac_wait(&operation->cmac.ctx);
+		if (sx_status) {
+			return silex_statuscodes_to_psa(sx_status);
 		}
 
 		/* Clear the input_buffer only after the sx_mac_wait call is executed
@@ -149,34 +150,34 @@ psa_status_t cracen_cmac_update(cracen_mac_operation_t *operation, const uint8_t
 
 psa_status_t cracen_cmac_finish(cracen_mac_operation_t *operation)
 {
-	int status;
+	int sx_status;
 
 	if (operation->mac_size > AES_BLOCK_SIZE) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
 	if (!operation->cmac.is_first_block) {
-		status = sx_mac_resume_state(&operation->cmac.ctx);
-		if (status) {
-			return silex_statuscodes_to_psa(status);
+		sx_status = sx_mac_resume_state(&operation->cmac.ctx);
+		if (sx_status) {
+			return silex_statuscodes_to_psa(sx_status);
 		}
 	}
 
 	/* If there are data left in the input buffer feed them to the driver.
 	 */
 	if (operation->bytes_left_for_next_block != AES_BLOCK_SIZE) {
-		status = sx_mac_feed(&operation->cmac.ctx, operation->input_buffer,
+		sx_status = sx_mac_feed(&operation->cmac.ctx, operation->input_buffer,
 				     AES_BLOCK_SIZE - operation->bytes_left_for_next_block);
-		if (status) {
-			return silex_statuscodes_to_psa(status);
+		if (sx_status) {
+			return silex_statuscodes_to_psa(sx_status);
 		}
 	}
 
 	/* Generate the MAC. */
-	status = sx_mac_generate(&operation->cmac.ctx, operation->input_buffer);
-	if (status) {
-		return silex_statuscodes_to_psa(status);
+	sx_status = sx_mac_generate(&operation->cmac.ctx, operation->input_buffer);
+	if (sx_status) {
+		return silex_statuscodes_to_psa(sx_status);
 	}
-	status = sx_mac_wait(&operation->cmac.ctx);
-	return silex_statuscodes_to_psa(status);
+	sx_status = sx_mac_wait(&operation->cmac.ctx);
+	return silex_statuscodes_to_psa(sx_status);
 }

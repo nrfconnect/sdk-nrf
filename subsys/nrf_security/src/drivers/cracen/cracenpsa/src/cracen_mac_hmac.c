@@ -20,20 +20,20 @@ psa_status_t cracen_hmac_setup(cracen_mac_operation_t *operation,
 				      const uint8_t *key_buffer, size_t key_buffer_size,
 				      psa_algorithm_t alg)
 {
-	int status;
+	int sx_status;
 	const struct sxhashalg *sx_hash_algo = NULL;
 
 	psa_status_t psa_status = hash_get_algo(PSA_ALG_HMAC_GET_HASH(alg), &sx_hash_algo);
 
-	if (psa_status) {
+	if (psa_status != PSA_SUCCESS) {
 		return psa_status;
 	}
 
 	/* HMAC task creation and configuration. */
-	status =  mac_create_hmac(sx_hash_algo, &operation->hmac.hashctx, key_buffer,
+	sx_status =  mac_create_hmac(sx_hash_algo, &operation->hmac.hashctx, key_buffer,
 		key_buffer_size, operation->hmac.workmem, sizeof(operation->hmac.workmem));
-	if(status != SX_OK) {
-		return silex_statuscodes_to_psa(status);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	operation->bytes_left_for_next_block = sx_hash_get_alg_blocksz(sx_hash_algo);
@@ -44,7 +44,7 @@ psa_status_t cracen_hmac_setup(cracen_mac_operation_t *operation,
 psa_status_t cracen_hmac_update(cracen_mac_operation_t *operation, const uint8_t *input,
 				       size_t input_length)
 {
-	int status;
+	int sx_status;
 	size_t block_size;
 	size_t input_chunk_length = 0;
 	size_t remaining_bytes = 0;
@@ -53,7 +53,7 @@ psa_status_t cracen_hmac_update(cracen_mac_operation_t *operation, const uint8_t
 	/* As the block size is needed several times we compute it once here */
 	psa_status_t psa_status = hash_get_algo(PSA_ALG_GET_HASH(operation->alg), &sx_hash_algo);
 
-	if (psa_status) {
+	if (psa_status != PSA_SUCCESS) {
 		return psa_status;
 	}
 	block_size = sx_hash_get_alg_blocksz(sx_hash_algo);
@@ -72,10 +72,10 @@ psa_status_t cracen_hmac_update(cracen_mac_operation_t *operation, const uint8_t
 	}
 
 	/* Feed the data that are currently in the input buffer to the driver */
-	status = sx_hash_feed(&operation->hmac.hashctx, operation->input_buffer,
+	sx_status = sx_hash_feed(&operation->hmac.hashctx, operation->input_buffer,
 			(block_size - operation->bytes_left_for_next_block));
-	if (status != SX_OK) {
-		return silex_statuscodes_to_psa(status);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	/* Add fill up the next block and add as many full blocks as possible by
@@ -86,19 +86,19 @@ psa_status_t cracen_hmac_update(cracen_mac_operation_t *operation, const uint8_t
 	remaining_bytes = input_length - input_chunk_length;
 
 	/* forward the data to the driver */
-	status = sx_hash_feed(&operation->hmac.hashctx, input, input_chunk_length);
-	if (status != SX_OK) {
-		return silex_statuscodes_to_psa(status);
+	sx_status = sx_hash_feed(&operation->hmac.hashctx, input, input_chunk_length);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	status = sx_hash_save_state(&operation->hmac.hashctx);
-	if (status != SX_OK) {
-		return silex_statuscodes_to_psa(status);
+	sx_status = sx_hash_save_state(&operation->hmac.hashctx);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	status = sx_hash_wait(&operation->hmac.hashctx);
-	if (status != SX_OK) {
-		return silex_statuscodes_to_psa(status);
+	sx_status = sx_hash_wait(&operation->hmac.hashctx);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	/* Input buffer was processed, reset the bytes for the next block and
@@ -118,33 +118,33 @@ psa_status_t cracen_hmac_update(cracen_mac_operation_t *operation, const uint8_t
 
 psa_status_t cracen_hmac_finish(cracen_mac_operation_t *operation)
 {
-	int status;
+	int sx_status;
 	size_t block_size, digestsz;
 	const struct sxhashalg *sx_hash_algo = NULL;
 
-	status = hash_get_algo(PSA_ALG_GET_HASH(operation->alg), &sx_hash_algo);
-	if (status != SX_OK) {
-		return silex_statuscodes_to_psa(status);
+	sx_status = hash_get_algo(PSA_ALG_GET_HASH(operation->alg), &sx_hash_algo);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	digestsz = sx_hash_get_alg_digestsz(sx_hash_algo);
 	block_size = sx_hash_get_alg_blocksz(sx_hash_algo);
 
-	status = sx_hash_resume_state(&operation->hmac.hashctx);
-	if (status != SX_OK) {
-		return silex_statuscodes_to_psa(status);
+	sx_status = sx_hash_resume_state(&operation->hmac.hashctx);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	/* Process the data that are left in the input buffer. */
-	status = sx_hash_feed(&operation->hmac.hashctx, operation->input_buffer,
+	sx_status = sx_hash_feed(&operation->hmac.hashctx, operation->input_buffer,
 			block_size - operation->bytes_left_for_next_block);
-	if (status != SX_OK) {
-		return silex_statuscodes_to_psa(status);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	/* Generate the MAC. */
-	status = hmac_produce(&operation->hmac.hashctx, sx_hash_algo, operation->input_buffer,
+	sx_status = hmac_produce(&operation->hmac.hashctx, sx_hash_algo, operation->input_buffer,
 			      sizeof(operation->input_buffer), operation->hmac.workmem);
 
-	return silex_statuscodes_to_psa(status);
+	return silex_statuscodes_to_psa(sx_status);
 }
