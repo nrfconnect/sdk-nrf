@@ -84,7 +84,11 @@ To use nRF21540 in GPIO mode, complete the following steps:
    The nRF54L devices contain only four PPIB channels between PERI Power Domain and Low Power Domain.
    Due to this limitation, only two out of three pins from group ``tx-en-gpios``, ``rx-en-gpios`` and ``pdn-gpios`` (for example, ``tx-en-gpios`` and ``rx-en-gpios``) can be controlled by GPIO P0.
    Select other GPIO port for the one remaining pin of the pin group (for example ``pdn-gpios``).
-   To ensure proper timing, set the ``tx-en-settle-time-us`` and ``rx-en-settle-time-us`` devicetree properties of the ``nrf_radio_fem`` node to the value ``12``.
+   To ensure proper timing, set the following devicetree properties of the ``nrf_radio_fem`` node:
+
+   * ``tx-en-settle-time-us`` to the value ``27``.
+   * ``rx-en-settle-time-us`` to the value ``12``.
+
    Enable appropriate instances of the ``DPPIC`` and ``PPIB`` peripherals in the devicetree file:
 
    .. code-block:: devicetree
