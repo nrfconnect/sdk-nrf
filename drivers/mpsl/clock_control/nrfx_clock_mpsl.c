@@ -12,7 +12,11 @@ static nrfx_clock_event_handler_t event_handler;
 
 static void mpsl_hfclk_callback(void)
 {
+#if IS_ENABLED(CONFIG_SOC_SERIES_NRF54LX)
+	event_handler(NRFX_CLOCK_EVT_XO_TUNED);
+#else
 	event_handler(NRFX_CLOCK_EVT_HFCLK_STARTED);
+#endif
 }
 
 void nrfx_clock_start(nrf_clock_domain_t domain)

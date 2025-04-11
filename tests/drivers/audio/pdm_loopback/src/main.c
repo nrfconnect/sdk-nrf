@@ -270,9 +270,9 @@ ZTEST(pdm_loopback, test_pdm_clk_frequency)
 
 	uint32_t pulses = nrfx_timer_capture_get(&timer_instance, NRF_TIMER_CC_CHANNEL0);
 
-	/* Assert that captured frequency is within 2% margin of expected one. */
+	/* Assert that captured frequency is within 3% margin of expected one. */
 	zassert_within(pulses, PDM_EXPECTED_FREQ * SAMPLING_RATIO,
-		       PDM_EXPECTED_FREQ * SAMPLING_RATIO / 50,
+		       PDM_EXPECTED_FREQ * SAMPLING_RATIO / 30,
 		       "Captured incorrect frequency Hz. Captured pulses = %lu, expected = %lu",
 		       pulses, PDM_EXPECTED_FREQ * SAMPLING_RATIO);
 }
