@@ -1,0 +1,55 @@
+# Copyright (c) 2024 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+#
+# MSPI_HPF Driver
+#
+menuconfig MSPI_HPF
+	bool "HPF MSPI driver"
+	default y
+	depends on DT_HAS_NORDIC_HPF_MSPI_CONTROLLER_ENABLED
+	select MBOX
+	select IPC_SERVICE
+	select IPC_SERVICE_BACKEND_ICMSG
+	help
+	  Enable HPF MSPI driver.
+
+if MSPI_HPF
+
+config MSPI_HPF_INIT_PRIORITY
+	int "HPF MSPI init priority"
+	depends on MSPI_HPF
+	default MSPI_INIT_PRIORITY
+	help
+	  HPF MSPI driver device initialization priority.
+	  HPF MSPI initialization depends on IPC initialization
+	  which is done at the same init level and has init priority equal to 46.
+
+config MSPI_HPF_IPC_NO_COPY
+	bool "IPC no copy mode"
+	default y
+	depends on SOC_NRF54L15
+	help
+	  If y Data is passed through IPC by reference,
+	  this requires both cores to be able to access each others memory spaces.
+	  If n Data is passed through IPC by copy.
+
+config MSPI_HPF_FAULT_TIMER
+	bool "HPF application fault timer"
+	select COUNTER
+	help
+	  Enable HPF application fault timer.
+	  Timer is used to detect application faults. If the timer expires,
+	  the application is considered to be in a fault state.
+
+if MSPI_HPF_FAULT_TIMER
+
+config MSPI_HPF_FAULT_TIMEOUT
+	int "HPF application fault timeout"
+	default 1000000
+	help
+	  Fault timeout in microseconds.
+
+endif # MSPI_HPF_FAULT_TIMER
+
+endif # MSPI_HPF

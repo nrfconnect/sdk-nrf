@@ -2,25 +2,25 @@ common:
   tags:
     - drivers
     - flash
-    - ci_tests_drivers_sdp
+    - ci_tests_drivers_hpf
 tests:
-  nrf.extended.drivers.flash.common.sdp.quad:
+  nrf.extended.drivers.flash.common.hpf.quad:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
-      - SB_CONFIG_SDP=y
-      - SB_CONFIG_SDP_MSPI=y
-  nrf.extended.drivers.flash.common.sdp.single:
+      - SB_CONFIG_HPF=y
+      - SB_CONFIG_HPF_MSPI=y
+  nrf.extended.drivers.flash.common.hpf.single:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="single.overlay"
-      - SB_CONFIG_SDP=y
-      - SB_CONFIG_SDP_MSPI=y
+      - SB_CONFIG_HPF=y
+      - SB_CONFIG_HPF_MSPI=y
   nrf.extended.drivers.flash.common.sqspi:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp

@@ -1,0 +1,15 @@
+sample:
+  name: HPF mSPI application
+  description: HPF mSPI application
+common:
+  integration_platforms:
+    - nrf54l15dk/nrf54l15/cpuflpr
+tests:
+  applications.hpf.mspi:
+    build_only: true
+    sysbuild: true
+    platform_allow: nrf54l15dk/nrf54l15/cpuflpr
+    tags:
+      - ci_build
+      - sysbuild
+      - mspi

@@ -1,0 +1,28 @@
+# Copyright (c) 2024 Nordic Semiconductor
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+description: HPF GPIO node
+
+compatible: "nordic,hpf-gpio"
+
+include: [gpio-controller.yaml, base.yaml]
+
+properties:
+
+  "#gpio-cells":
+    const: 2
+
+  port:
+    type: int
+    required: true
+    description: |
+      The GPIO port number. GPIO port P0 has:
+
+        port = <0>;
+
+      And P1 has:
+
+        port = <1>;
+
+gpio-cells:
+  - pin
+  - flags
