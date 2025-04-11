@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+mainmenu "I2S MCLK Test"
+
+source "Kconfig.zephyr"
+
+config I2S_TEST_USE_GPIO_LOOPBACK
+	bool "Use GPIO loopback"
+	default y if DT_HAS_NORDIC_NRF_I2S_ENABLED || DT_HAS_NORDIC_NRF_TDM_ENABLED
+	help
+	  Use wiring between the data-out and data-in pins for looping back
+	  data. This option is intended to be used for devices that do not
+	  provide the internal loopback functionality.
+
+config I2S_TEST_ALLOWED_DATA_OFFSET
+	int "Allowed offset in received data"
+	default 2 if DT_HAS_NORDIC_NRF_I2S_ENABLED || DT_HAS_NORDIC_NRF_TDM_ENABLED
+	default 0
+	help
+	  Maximum allowed offset between sent and received samples. Non-zero
+	  value of this option may be needed when GPIO loopback is used.
+
+config I2S_TEST_SKIP_I2S_DIR_RX
+	bool "Skip testing when I2S direction is I2S_DIR_RX"
+	help
+	  When set to 'y', tests on I2S configured with I2S_DIR_RX
+	  will be skipped.
+
+config I2S_TEST_SKIP_I2S_DIR_TX
+	bool "Skip testing when I2S direction is I2S_DIR_TX"
+	help
+	  When set to 'y', tests on I2S configured with I2S_DIR_TX
+	  will be skipped.
