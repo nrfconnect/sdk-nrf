@@ -17,3 +17,10 @@ config SUIT_RECOVERY_BUTTON
 	  device tree is pressed on startup. If it is, the firmware will enter
 	  the "foreground update mode", in which the same SUIT manifests are booted
 	  as in case of the recovery mode.
+
+config SUIT_RECOVERY_BUTTON_INIT_PRIORITY
+	int "SUIT recovery button checking initialization priority"
+	default 49
+	help
+	  Make sure this is larger than SSF_CLIENT_SYS_INIT_PRIORITY
+	  and smaller than SPI_INIT_PRIORITY and MSPI_INIT_PRIORITY.
