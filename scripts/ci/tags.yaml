@@ -1441,6 +1441,12 @@ ci_samples_zephyr_drivers_mbox:
     - nrf/samples/zephyr/drivers/mbox/
     - zephyr/samples/drivers/mbox/
 
+ci_samples_zephyr_boards_nordic_spis_wakeup:
+  files:
+    - nrf/samples/zephyr/boards/nordic/spis_wakeup/
+    - zephyr/drivers/spi/
+    - zephyr/samples/boards/nordic/spis_wakeup/
+
 ci_samples_zephyr_boards_nordic_system_off:
   files:
     - nrf/samples/zephyr/boards/nordic/system_off/
