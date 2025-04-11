@@ -1,49 +1,51 @@
-##############
+.. _hpf_event_handling:
+
 Event handling
 ##############
 
+This page section outlines the critical requirements and implementation strategies for managing events within the system, ensuring that functionalities are both modular and precise in execution.
+
 Requirements
-============
+************
 
-#. Modularity
+The system must support the integration of multiple High-Performance Framework (HPF) peripherals, ensuring the following:
 
-   - Combining functionalities of multiple HPF peripherals should be possible.
-
-#. Timing accuracy
-
-   - Certain parts of code need to be handled with very accurate timings.
-
-#. Verification
-
-   - It should be possible to verify timing accuracy without a need for re-running a whole suite of HW characteristic tests.
+* Modularity, allowing to combine functionalities of multiple HPF peripherals.
+* Timing accuracy, focusing on handling certain parts of the code with very accurate timings.
+* Verification, ensuring it is possible verify timing accuracy without the need to rerun an entire suite of hardware characteristic tests.
 
 Implementation
-==============
+**************
 
-Parts of code that need to be handled with very accurate timings will be referred to as Hard-Real Time (HRT) functions.
+To ensure precise timing, specific sections of the code are identified and managed as Hard-Real Time (HRT) functions.
+These functions are kept separate from the main application code.
 
-HRT functions will reside separately from application code. (Modularity, Verification)
+During the build process, HRT functions are compiled into assembly code.
+This code is then compared to a previously verified version to ensure that there are no significant deviations.
+If the differences are minimal or non-existent, the new code will be deemed accurate in terms of timing.
 
-During a build, HRT functions will be compiled to assembly code. This code will be checked against previous version of the assembly code that was verified with HW characteristic tests.  If the difference is none, or deemed small enough, new code is considered timing accurate as well. (Verification)
+HRT functions are developed using the Hardware Abstraction Layer (HAL) and avoid any calls to external functions.
+While you can use macros that do not lead to external function calls, you must redefine locally any external macro that influences the assembly code to maintain the required timing accuracy.
 
-HRT functions will be written using HAL, without calls to external functions. Macros (including external ones) that do not expand to external functions are allowed. If external macro is changed and impacts the assembly code, it should be redefined locally. (Timing accuracy)
-
-HRT functions will be implemented as interrupt handlers, to ensure they are executed in correct order when triggered from multiple sources. (Timing accuracy)
+Furthermore, HRT functions are implemented as interrupt handlers.
+This implementation ensures that these functions are executed in the correct sequence when triggered by multiple sources, maintaining the system's timing accuracy.
 
 Interaction between HRT and non-HRT code
-========================================
+****************************************
 
-Communication
--------------
+Communication between HRT and non-HRT code is critical, especially since HRT functions operate within an Interrupt Service Routine (ISR) and cannot use function arguments for passing values.
+To facilitate this communication, you can use the following methods: specific VEVIF IRQs can be assigned to different HRT functions, and data can be stored in predefined memory addresses.
 
-HRT code is implemented in ISR and cannot use function arguments to pass values.
-Therefore, following methods to communicate between non-HRT and HRT contexts can be used:
+* VEVIF interrupt ID - You can assign separate HRT functions to certain VEVIF IRQs.
+* Shared memory - You can store data in the pre-defined memory addresses.
 
-   - VEVIF interrupt ID: Separate HRT functions can be assigned to certain VEVIF IRQ.
-   - Shared memory: Data can be stored in pre-defined memory addresses.
+The sequence flow is designed to handle initialization, transaction requests, and error handling efficiently.
+During initialization, the system boots up and prepares for operation by entering a wait state.
+For transaction requests, the system handles transmission and reception requests through IPC mechanisms, utilizing shared memory or IRQ numbers for communication between different parts of the system.
 
-Sequence flow
--------------
+In the event of an error, such as a memory fault, the system triggers an error handler which notifies the host of the error and then enters an infinite loop to halt further operations.
+This sequence ensures that the system maintains robust operation and handles errors effectively to prevent system failures:
+
 //TODO: check uml
    .. uml::
 
