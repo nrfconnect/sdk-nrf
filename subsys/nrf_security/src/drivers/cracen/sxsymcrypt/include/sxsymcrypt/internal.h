@@ -21,6 +21,8 @@ extern "C" {
 #define SX_BLKCIPHER_PRIV_SZ (16)
 #define SX_AEAD_PRIV_SZ	     (70)
 
+#define SX_MAX(p, q) ((p >= q) ? p : q)
+
 /** Mode Register value for context loading */
 #define BA417_MODEID_CTX_LOAD (1u << 5)
 /** Mode Register value for context saving */
