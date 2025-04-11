@@ -14,11 +14,15 @@
 	test_gpios {
 		compatible = "gpio-leds";
 		out_gpios: out_gpios {
-			gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>, <&gpio1 30 GPIO_ACTIVE_HIGH>;
+			gpios = <&gpio2 0 GPIO_ACTIVE_HIGH>, <&gpio2 2 GPIO_ACTIVE_HIGH>,
+					<&gpio2 4 GPIO_ACTIVE_HIGH>, <&gpio2 6 GPIO_ACTIVE_HIGH>,
+					<&gpio1 10 GPIO_ACTIVE_HIGH>;
 		};
 
 		in_gpios: in_gpios {
-			gpios = <&gpio1 3 GPIO_ACTIVE_HIGH>, <&gpio1 31 GPIO_ACTIVE_HIGH>;
+			gpios = <&gpio2 1 GPIO_ACTIVE_HIGH>, <&gpio2 3 GPIO_ACTIVE_HIGH>,
+					<&gpio2 5 GPIO_ACTIVE_HIGH>, <&gpio2 7 GPIO_ACTIVE_HIGH>,
+					<&gpio1 11 GPIO_ACTIVE_HIGH>;
 		};
 	};
 };
@@ -27,10 +31,10 @@
 	status = "okay";
 };
 
-&gpio0 {
+&gpio1 {
 	status = "okay";
 };
 
-&gpio1 {
+&gpio2 {
 	status = "okay";
 };
