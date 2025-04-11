@@ -334,8 +334,8 @@ int main(void)
 #ifdef CONFIG_NRF70_SR_COEX
 	enum nrf_wifi_pta_wlan_op_band wlan_band;
 	bool separate_antennas = IS_ENABLED(CONFIG_COEX_SEP_ANTENNAS);
-#endif /* CONFIG_NRF70_SR_COEX */
 	bool is_sr_protocol_ble = IS_ENABLED(CONFIG_SR_PROTOCOL_BLE);
+#endif /* CONFIG_NRF70_SR_COEX */
 
 #if !defined(CONFIG_COEX_SEP_ANTENNAS) && \
 	!(defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
@@ -481,10 +481,12 @@ int main(void)
 		bt_throughput_test_exit();
 	}
 
+#ifdef CONFIG_NRF70_SR_COEX
 	/* Disable coexistence hardware */
 	nrf_wifi_coex_hw_reset();
 
 	LOG_INF("\nCoexistence test complete\n");
+#endif /* CONFIG_NRF70_SR_COEX */
 
 	return 0;
 err:
