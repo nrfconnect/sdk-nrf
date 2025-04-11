@@ -52,7 +52,7 @@ static const struct bt_uuid *uuid128 = BT_UUID_THROUGHPUT;
 static struct bt_gatt_exchange_params exchange_params;
 
 static struct bt_le_conn_param *conn_param =
-	BT_LE_CONN_PARAM(CONFIG_INTERVAL_MIN, CONFIG_INTERVAL_MAX, 0, 400);
+	BT_LE_CONN_PARAM(CONFIG_INTERVAL_MIN, CONFIG_INTERVAL_MAX, 0, SUPERVISION_TIMEOUT);
 
 static const struct bt_data ad[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
