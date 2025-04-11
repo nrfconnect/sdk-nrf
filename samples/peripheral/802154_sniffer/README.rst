@@ -90,6 +90,21 @@ The ``sleep`` command disables the radio and ends the receive process.
 
       sleep
 
+bootloader - reboot the device to the bootloader
+================================================
+
+The ``bootloader`` command reboots the device in bootloader mode.
+
+   .. parsed-literal::
+      :class: highlight
+
+      bootloader
+
+The device reboots into bootloader mode, and the red LED starts pulsing.
+
+.. note::
+   The ``bootloader`` command is available only for the ``nrf52840dongle/nrf52840`` board.
+
 Configuration
 *************
 

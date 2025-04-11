@@ -14,6 +14,11 @@
 #include <stdlib.h>
 #include <dk_buttons_and_leds.h>
 
+#if defined(CONFIG_BOARD_NRF52840DONGLE)
+#include <zephyr/drivers/gpio.h>
+static const struct device *const gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
+#endif
+
 #define HEX_STRING_LENGTH (2 * MAX_PACKET_SIZE + 1)
 
 static const struct device *radio_dev =
@@ -127,6 +132,34 @@ static int cmd_sleep(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 SHELL_CMD_ARG_REGISTER(sleep, NULL, "Disable the radio", cmd_sleep, 1, 0);
+
+#if defined(CONFIG_BOARD_NRF52840DONGLE)
+static int cmd_bootloader(const struct shell *shell, size_t argc, char **argv)
+{
+	/*
+	 * nRF52840 dongle has pin P0.19 connected to reset. By setting it
+	 * in `GPIO_OUTPUT_LOW` mode, reset is pulled to GND,
+	 * which results in device rebooting without skipping the bootloader.
+	 */
+	ARG_UNUSED(shell);
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+
+	if (!device_is_ready(gpio_dev)) {
+		shell_print(shell, "GPIO device not ready");
+		return 0;
+	}
+
+	int err = gpio_pin_configure(gpio_dev, 19, GPIO_OUTPUT_LOW);
+
+	if (err) {
+		shell_print(shell, "Failed to configure GPIO pin. Error code: %d", err);
+	}
+
+	return 0;
+}
+SHELL_CMD_ARG_REGISTER(bootloader, NULL, "Reboot into bootloader", cmd_bootloader, 1, 0);
+#endif /* CONFIG_BOARD_NRF52840DONGLE */
 
 int main(void)
 {
