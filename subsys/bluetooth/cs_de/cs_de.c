@@ -272,7 +272,9 @@ static void calculate_dist_rtt(cs_de_report_t *p_report)
 		float rtt_distance_m = tof_ns * (SPEED_OF_LIGHT_M_PER_S / 1e9f);
 
 		for (uint8_t ap = 0; ap < p_report->n_ap; ap++) {
-			p_report->distance_estimates[ap].rtt = rtt_distance_m;
+			if (rtt_distance_m >= 0.0f) {
+				p_report->distance_estimates[ap].rtt = rtt_distance_m;
+			}
 		}
 	}
 }
