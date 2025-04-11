@@ -595,7 +595,7 @@ static int handle_at_udp_client(enum at_parser_cmd_type cmd_type, struct at_pars
 
 			if (param_count > 4) {
 				if (at_parser_num_get(parser, 4, &proxy.sec_tag)
-				|| proxy.sec_tag == INVALID_SEC_TAG || proxy.sec_tag < 0) {
+				|| proxy.sec_tag == INVALID_SEC_TAG) {
 					return -EINVAL;
 				}
 			}
