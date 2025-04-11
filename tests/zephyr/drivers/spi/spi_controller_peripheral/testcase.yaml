@@ -7,6 +7,7 @@ common:
   harness: ztest
   harness_config:
     fixture: gpio_spi_loopback
+  timeout: 15
 
 tests:
   nrf.extended.drivers.spi.spi_mode0:
