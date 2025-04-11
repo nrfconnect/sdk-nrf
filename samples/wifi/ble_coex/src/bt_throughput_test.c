@@ -641,5 +641,8 @@ int bt_throughput_test_exit(void)
 		LOG_ERR("Cannot disconnect!");
 		return err;
 	}
+
+	bt_disable();
+
 	return 0;
 }
