@@ -30,14 +30,16 @@ struct bt_ras_rreq_cp {
 };
 
 struct bt_ras_on_demand_rd {
-	int error_status;
-	struct bt_gatt_subscribe_params subscribe_params;
 	struct net_buf_simple *ranging_data_out;
-	bt_ras_rreq_ranging_data_get_complete_t cb;
-	uint16_t counter_in_progress;
-	uint8_t next_expected_segment_counter;
+	bt_ras_rreq_ranging_data_received_t data_cb;
+	struct bt_gatt_subscribe_params subscribe_params;
 	bool data_get_in_progress;
-	bool last_segment_received;
+};
+
+struct bt_ras_real_time_rd {
+	struct net_buf_simple *ranging_data_out;
+	bt_ras_rreq_ranging_data_received_t data_cb;
+	struct bt_gatt_subscribe_params subscribe_params;
 };
 
 struct bt_ras_rd_ready {
@@ -59,9 +61,17 @@ static struct bt_ras_rreq {
 	struct bt_conn *conn;
 	struct bt_ras_rreq_cp cp;
 	struct bt_ras_on_demand_rd on_demand_rd;
+	struct bt_ras_real_time_rd real_time_rd;
 	struct bt_ras_rd_ready rd_ready;
 	struct bt_ras_rd_overwritten rd_overwritten;
 	struct bt_ras_features_read features_read;
+
+	bt_gatt_subscribe_func_t subscribe_cb;
+	uint16_t counter_in_progress;
+	uint8_t next_expected_segment_counter;
+	bool last_segment_received;
+	int data_error_status;
+	bool realtime;
 } rreq_pool[CONFIG_BT_RAS_RREQ_MAX_ACTIVE_CONN];
 
 static struct bt_ras_rreq *ras_rreq_find(struct bt_conn *conn)
@@ -117,7 +127,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	}
 
 	if (rreq->on_demand_rd.data_get_in_progress) {
-		rreq->on_demand_rd.cb(conn, rreq->on_demand_rd.counter_in_progress, -ENOTCONN);
+		rreq->on_demand_rd.data_cb(conn, rreq->counter_in_progress, -ENOTCONN);
 	}
 
 	bt_ras_rreq_free(conn);
@@ -149,6 +159,11 @@ static uint8_t ranging_data_ready_notify_func(struct bt_conn *conn,
 		return BT_GATT_ITER_STOP;
 	}
 
+	if (rreq->realtime) {
+		LOG_DBG("Received unexpected ranging data ready indication in real-time mode.");
+		return BT_GATT_ITER_CONTINUE;
+	}
+
 	struct net_buf_simple rd_ready;
 
 	net_buf_simple_init_with_data(&rd_ready, (uint8_t *)data, length);
@@ -163,15 +178,23 @@ static uint8_t ranging_data_ready_notify_func(struct bt_conn *conn,
 
 static void data_receive_finished(struct bt_ras_rreq *rreq)
 {
-	if (rreq->on_demand_rd.error_status == 0 && !rreq->on_demand_rd.last_segment_received) {
+	if (rreq->data_error_status == 0 && !rreq->last_segment_received) {
 		LOG_WRN("Ranging data completed with missing segments");
-		rreq->on_demand_rd.error_status = -ENODATA;
+		rreq->data_error_status = -ENODATA;
 	}
 
-	rreq->on_demand_rd.data_get_in_progress = false;
+	if (rreq->realtime) {
+		rreq->real_time_rd.data_cb(rreq->conn, rreq->counter_in_progress,
+					   rreq->data_error_status);
+		net_buf_simple_reset(rreq->real_time_rd.ranging_data_out);
+	} else {
+		rreq->on_demand_rd.data_cb(rreq->conn, rreq->counter_in_progress,
+					   rreq->data_error_status);
+		rreq->on_demand_rd.data_get_in_progress = false;
+	}
 
-	rreq->on_demand_rd.cb(rreq->conn, rreq->on_demand_rd.counter_in_progress,
-			      rreq->on_demand_rd.error_status);
+	rreq->last_segment_received = false;
+	rreq->next_expected_segment_counter = 0;
 }
 
 static uint8_t ranging_data_overwritten_notify_func(struct bt_conn *conn,
@@ -196,13 +219,19 @@ static uint8_t ranging_data_overwritten_notify_func(struct bt_conn *conn,
 		return BT_GATT_ITER_STOP;
 	}
 
+	if (rreq->realtime) {
+		LOG_DBG("Received unexpected ranging data overwritten indication in real-time "
+			"mode.");
+		return BT_GATT_ITER_CONTINUE;
+	}
+
 	struct net_buf_simple rd_overwritten;
 
 	net_buf_simple_init_with_data(&rd_overwritten, (uint8_t *)data, length);
 	uint16_t ranging_counter = net_buf_simple_pull_le16(&rd_overwritten);
 
 	if (rreq->on_demand_rd.data_get_in_progress &&
-	    rreq->on_demand_rd.counter_in_progress == ranging_counter) {
+	    rreq->counter_in_progress == ranging_counter) {
 		if (rreq->cp.state != BT_RAS_RREQ_CP_STATE_NONE) {
 			LOG_DBG("Overwritten received while writing to RAS-CP, will continue "
 				"waiting for RAS-CP response");
@@ -210,7 +239,7 @@ static uint8_t ranging_data_overwritten_notify_func(struct bt_conn *conn,
 		}
 
 		LOG_DBG("Ranging counter %d overwritten whilst receiving", ranging_counter);
-		rreq->on_demand_rd.error_status = -EACCES;
+		rreq->data_error_status = -EACCES;
 		data_receive_finished(rreq);
 
 		return BT_GATT_ITER_CONTINUE;
@@ -227,7 +256,7 @@ static void ack_ranging_data(struct bt_ras_rreq *rreq)
 {
 	NET_BUF_SIMPLE_DEFINE(ack_buf, RASCP_CMD_OPCODE_LEN + sizeof(uint16_t));
 	net_buf_simple_add_u8(&ack_buf, RASCP_OPCODE_ACK_RD);
-	net_buf_simple_add_le16(&ack_buf, rreq->on_demand_rd.counter_in_progress);
+	net_buf_simple_add_le16(&ack_buf, rreq->counter_in_progress);
 
 	int err = bt_gatt_write_without_response(rreq->conn, rreq->cp.subscribe_params.value_handle,
 						 ack_buf.data, ack_buf.len, false);
@@ -240,7 +269,7 @@ static void ack_ranging_data(struct bt_ras_rreq *rreq)
 	}
 
 	rreq->cp.state = BT_RAS_RREQ_CP_STATE_ACK_RD_WRITTEN;
-	LOG_DBG("Ack Ranging data for counter %d", rreq->on_demand_rd.counter_in_progress);
+	LOG_DBG("Ack Ranging data for counter %d", rreq->counter_in_progress);
 }
 
 static void handle_rsp_code(uint8_t rsp_code, struct bt_ras_rreq *rreq)
@@ -250,8 +279,8 @@ static void handle_rsp_code(uint8_t rsp_code, struct bt_ras_rreq *rreq)
 		if (rreq->on_demand_rd.data_get_in_progress &&
 		    rsp_code == RASCP_RESPONSE_PROCEDURE_NOT_COMPLETED) {
 			LOG_DBG("Ranging counter %d aborted whilst receiving",
-				rreq->on_demand_rd.counter_in_progress);
-			rreq->on_demand_rd.error_status = -EACCES;
+				rreq->counter_in_progress);
+			rreq->data_error_status = -EACCES;
 			data_receive_finished(rreq);
 			break;
 		}
@@ -265,7 +294,7 @@ static void handle_rsp_code(uint8_t rsp_code, struct bt_ras_rreq *rreq)
 
 		if (rsp_code != RASCP_RESPONSE_SUCCESS) {
 			LOG_DBG("Get Ranging Data returned an error %d", rsp_code);
-			rreq->on_demand_rd.error_status = -ENOENT;
+			rreq->data_error_status = -ENOENT;
 			data_receive_finished(rreq);
 			break;
 		}
@@ -324,7 +353,7 @@ static uint8_t ras_cp_notify_func(struct bt_conn *conn, struct bt_gatt_subscribe
 		uint16_t ranging_counter = net_buf_simple_pull_le16(&rsp);
 
 		if (!rreq->on_demand_rd.data_get_in_progress ||
-		    rreq->on_demand_rd.counter_in_progress != ranging_counter) {
+		    rreq->counter_in_progress != ranging_counter) {
 			LOG_WRN("Received complete ranging data response with unexpected ranging "
 				"counter %d",
 				ranging_counter);
@@ -355,46 +384,8 @@ static uint8_t ras_cp_notify_func(struct bt_conn *conn, struct bt_gatt_subscribe
 	return BT_GATT_ITER_CONTINUE;
 }
 
-static uint8_t ras_on_demand_ranging_data_notify_func(struct bt_conn *conn,
-						      struct bt_gatt_subscribe_params *params,
-						      const void *data, uint16_t length)
+static void store_ranging_data_segment(struct bt_ras_rreq *rreq, const void *data, uint16_t length)
 {
-	LOG_DBG("On-demand Ranging Data notification received");
-
-	if (data == NULL) {
-		LOG_DBG("On demand ranging data unsubscribed");
-		return BT_GATT_ITER_STOP;
-	}
-
-	struct bt_ras_rreq *rreq = ras_rreq_find(conn);
-
-	if (rreq == NULL) {
-		LOG_WRN("On-demand ranging data notification received without associated RREQ "
-			"context, unsubscribing");
-		return BT_GATT_ITER_STOP;
-	}
-
-	if (!rreq->on_demand_rd.data_get_in_progress) {
-		LOG_WRN("Unexpected On-demand Ranging Data notification received");
-		return BT_GATT_ITER_CONTINUE;
-	}
-
-	if (rreq->on_demand_rd.last_segment_received) {
-		LOG_WRN("On-demand Ranging Data notification received after last segment");
-		return BT_GATT_ITER_CONTINUE;
-	}
-
-	if (rreq->on_demand_rd.error_status) {
-		/* Already had an error receiving this ranging counter, so exit here. */
-		return BT_GATT_ITER_CONTINUE;
-	}
-
-	if (length < 2) {
-		LOG_WRN("On-demand Ranging Data notification received invalid length");
-		rreq->on_demand_rd.error_status = -EINVAL;
-		return BT_GATT_ITER_CONTINUE;
-	}
-
 	struct net_buf_simple segment;
 
 	net_buf_simple_init_with_data(&segment, (uint8_t *)data, length);
@@ -406,42 +397,142 @@ static uint8_t ras_on_demand_ranging_data_notify_func(struct bt_conn *conn,
 	uint8_t rolling_segment_counter = segmentation_header >> 2;
 
 	if (first_segment && rolling_segment_counter != 0) {
-		LOG_WRN("On-demand Ranging Data notification received invalid "
+		LOG_WRN("Ranging Data notification received invalid "
 			"rolling_segment_counter %d",
 			rolling_segment_counter);
-		rreq->on_demand_rd.error_status = -EINVAL;
-		return BT_GATT_ITER_CONTINUE;
+		rreq->data_error_status = -EINVAL;
+		return;
 	}
 
-	if (rreq->on_demand_rd.next_expected_segment_counter != rolling_segment_counter) {
+	if (rreq->realtime && first_segment) {
+		struct ras_ranging_header *ranging_header =
+			(struct ras_ranging_header *)segment.data;
+		rreq->counter_in_progress = ranging_header->ranging_counter;
+	}
+
+	if (rreq->next_expected_segment_counter != rolling_segment_counter) {
 		LOG_WRN("No support for receiving segments out of order, expected counter %d, "
 			"received counter %d",
-			rreq->on_demand_rd.next_expected_segment_counter, rolling_segment_counter);
-		rreq->on_demand_rd.error_status = -ENODATA;
-		return BT_GATT_ITER_CONTINUE;
+			rreq->next_expected_segment_counter, rolling_segment_counter);
+		rreq->data_error_status = -ENODATA;
+		return;
 	}
 
 	uint16_t ranging_data_segment_length = segment.len;
+	struct net_buf_simple *ranging_data_out = rreq->realtime
+							  ? rreq->real_time_rd.ranging_data_out
+							  : rreq->on_demand_rd.ranging_data_out;
 
-	if (net_buf_simple_tailroom(rreq->on_demand_rd.ranging_data_out) <
-	    ranging_data_segment_length) {
+	if (net_buf_simple_tailroom(ranging_data_out) < ranging_data_segment_length) {
 		LOG_WRN("Ranging data out buffer not large enough for next segment");
-		rreq->on_demand_rd.error_status = -ENOMEM;
-		return BT_GATT_ITER_CONTINUE;
+		rreq->data_error_status = -ENOMEM;
+		return;
 	}
 
 	uint8_t *ranging_data_segment =
 		net_buf_simple_pull_mem(&segment, ranging_data_segment_length);
-	net_buf_simple_add_mem(rreq->on_demand_rd.ranging_data_out, ranging_data_segment,
-			       ranging_data_segment_length);
+	net_buf_simple_add_mem(ranging_data_out, ranging_data_segment, ranging_data_segment_length);
 
 	if (last_segment) {
-		rreq->on_demand_rd.last_segment_received = true;
+		rreq->last_segment_received = true;
 	}
 
 	/* Segment counter is between 0-63. */
-	rreq->on_demand_rd.next_expected_segment_counter =
-		(rolling_segment_counter + 1) & BIT_MASK(6);
+	rreq->next_expected_segment_counter = (rolling_segment_counter + 1) & BIT_MASK(6);
+}
+
+static uint8_t ras_on_demand_ranging_data_notify_func(struct bt_conn *conn,
+						      struct bt_gatt_subscribe_params *params,
+						      const void *data, uint16_t length)
+{
+	LOG_DBG("On-demand Ranging Data notification received");
+
+	if (data == NULL) {
+		LOG_DBG("Ignored Ranging Data notification with no data.");
+		return BT_GATT_ITER_CONTINUE;
+	}
+
+	struct bt_ras_rreq *rreq = ras_rreq_find(conn);
+
+	if (rreq == NULL) {
+		LOG_WRN("On-demand ranging data notification received without associated RREQ "
+			"context, unsubscribing");
+		return BT_GATT_ITER_STOP;
+	}
+
+	if (rreq->on_demand_rd.data_cb == NULL || rreq->on_demand_rd.ranging_data_out == NULL) {
+		LOG_WRN("Ranging data notification received without required buffer "
+			"or callback, unsubscribing");
+		return BT_GATT_ITER_STOP;
+	}
+
+	if (!rreq->on_demand_rd.data_get_in_progress) {
+		LOG_WRN("Unexpected On-demand Ranging Data notification received");
+		return BT_GATT_ITER_CONTINUE;
+	}
+
+	if (rreq->last_segment_received) {
+		LOG_WRN("On-demand Ranging Data notification received after last segment");
+		return BT_GATT_ITER_CONTINUE;
+	}
+
+	if (rreq->data_error_status) {
+		/* Already had an error receiving this ranging counter, so exit here. */
+		return BT_GATT_ITER_CONTINUE;
+	}
+
+	if (length < 2) {
+		LOG_WRN("On-demand Ranging Data notification received invalid length");
+		rreq->data_error_status = -EINVAL;
+		return BT_GATT_ITER_CONTINUE;
+	}
+
+	store_ranging_data_segment(rreq, data, length);
+
+	return BT_GATT_ITER_CONTINUE;
+}
+
+static uint8_t ras_real_time_ranging_data_notify_func(struct bt_conn *conn,
+						      struct bt_gatt_subscribe_params *params,
+						      const void *data, uint16_t length)
+{
+	LOG_DBG("Real-time Ranging Data notification received");
+
+	if (data == NULL) {
+		LOG_DBG("Ignored Ranging Data notification with no data.");
+		return BT_GATT_ITER_CONTINUE;
+	}
+
+	struct bt_ras_rreq *rreq = ras_rreq_find(conn);
+
+	if (rreq == NULL) {
+		LOG_WRN("Real-time ranging data notification received without associated RREQ "
+			"context, unsubscribing");
+		return BT_GATT_ITER_STOP;
+	}
+
+	if (rreq->real_time_rd.data_cb == NULL || rreq->real_time_rd.ranging_data_out == NULL) {
+		LOG_WRN("Ranging data notification received without required buffer "
+			"or callback, unsubscribing");
+		return BT_GATT_ITER_STOP;
+	}
+
+	if (rreq->data_error_status) {
+		/* Already had an error receiving this ranging counter, so exit here. */
+		return BT_GATT_ITER_CONTINUE;
+	}
+
+	if (length < 2) {
+		LOG_WRN("Real-time Ranging Data notification received invalid length");
+		rreq->data_error_status = -EINVAL;
+		return BT_GATT_ITER_CONTINUE;
+	}
+
+	store_ranging_data_segment(rreq, data, length);
+
+	if (rreq->last_segment_received || rreq->data_error_status) {
+		data_receive_finished(rreq);
+	}
 
 	return BT_GATT_ITER_CONTINUE;
 }
@@ -449,8 +540,39 @@ static uint8_t ras_on_demand_ranging_data_notify_func(struct bt_conn *conn,
 static void subscribed_func(struct bt_conn *conn, uint8_t err,
 			    struct bt_gatt_subscribe_params *params)
 {
-	if (err) {
-		LOG_ERR("Subscribe to ccc_handle %d failed, err %d", params->ccc_handle, err);
+	struct bt_ras_rreq *rreq = ras_rreq_find(conn);
+
+	if (rreq) {
+		if (!err) {
+			if (params->ccc_handle == rreq->real_time_rd.subscribe_params.ccc_handle) {
+				if (params->value != 0) {
+					rreq->realtime = true;
+					LOG_DBG("Subscribed to Real-time Ranging Data");
+				} else {
+					rreq->real_time_rd.data_cb = NULL;
+					rreq->real_time_rd.ranging_data_out = NULL;
+					rreq->realtime = false;
+					LOG_DBG("Unsubscribed to Real-time Ranging Data");
+				}
+			} else if (params->ccc_handle ==
+				   rreq->on_demand_rd.subscribe_params.ccc_handle) {
+				if (params->value != 0) {
+					LOG_DBG("Subscribed to On-demand Ranging Data");
+				} else {
+					LOG_DBG("Unsubscribed to On-demand Ranging Data");
+				}
+				rreq->real_time_rd.data_cb = NULL;
+				rreq->real_time_rd.ranging_data_out = NULL;
+				rreq->realtime = false;
+			}
+		} else {
+			LOG_WRN("Subscribe to ccc_handle %d failed, err %d", params->ccc_handle,
+				err);
+		}
+
+		if (rreq->subscribe_cb) {
+			rreq->subscribe_cb(conn, err, params);
+		}
 	}
 }
 
@@ -618,6 +740,40 @@ static int ondemand_rd_subscribe_params_populate(struct bt_gatt_dm *dm, struct b
 	return 0;
 }
 
+static int realtime_rd_subscribe_params_populate(struct bt_gatt_dm *dm, struct bt_ras_rreq *rreq)
+{
+	const struct bt_gatt_dm_attr *gatt_chrc;
+	const struct bt_gatt_dm_attr *gatt_data_desc;
+	const struct bt_gatt_dm_attr *gatt_ccc_desc;
+
+	/* RAS Real-time ranging data characteristic (optional). */
+	gatt_chrc = bt_gatt_dm_char_by_uuid(dm, BT_UUID_RAS_REALTIME_RD);
+	gatt_data_desc = bt_gatt_dm_desc_by_uuid(dm, gatt_chrc, BT_UUID_RAS_REALTIME_RD);
+	gatt_ccc_desc = bt_gatt_dm_desc_by_uuid(dm, gatt_chrc, BT_UUID_GATT_CCC);
+
+	if (!gatt_chrc && !gatt_data_desc && !gatt_ccc_desc) {
+		LOG_DBG("Real-time ranging data not supported on the RAS server.");
+		return 0;
+	} else if (!gatt_chrc) {
+		LOG_WRN("Could not locate Real-time ranging data characteristic");
+		return -EINVAL;
+	} else if (!gatt_data_desc) {
+		LOG_WRN("Could not locate Real-time ranging data descriptor");
+		return -EINVAL;
+	} else if (!gatt_ccc_desc) {
+		LOG_WRN("Could not locate Real-time ranging data CCC");
+		return -EINVAL;
+	}
+
+	rreq->real_time_rd.subscribe_params.value_handle = gatt_data_desc->handle;
+	rreq->real_time_rd.subscribe_params.ccc_handle = gatt_ccc_desc->handle;
+	rreq->real_time_rd.subscribe_params.notify = ras_real_time_ranging_data_notify_func;
+	rreq->real_time_rd.subscribe_params.value = BT_GATT_CCC_NOTIFY | BT_GATT_CCC_INDICATE;
+	rreq->real_time_rd.subscribe_params.subscribe = subscribed_func;
+
+	return 0;
+}
+
 static int rd_ready_subscribe_params_populate(struct bt_gatt_dm *dm, struct bt_ras_rreq *rreq)
 {
 	const struct bt_gatt_dm_attr *gatt_chrc;
@@ -691,13 +847,13 @@ int bt_ras_rreq_on_demand_rd_subscribe(struct bt_conn *conn)
 		return -EINVAL;
 	}
 
+	rreq->on_demand_rd.subscribe_params.value = BT_GATT_CCC_NOTIFY | BT_GATT_CCC_INDICATE;
+
 	err = bt_gatt_subscribe(conn, &rreq->on_demand_rd.subscribe_params);
 	if (err && err != -EALREADY) {
 		LOG_DBG("On-demand ranging data subscribe failed (err %d)", err);
 		return err;
 	}
-
-	LOG_DBG("On-demand ranging data subscribed");
 
 	return 0;
 }
@@ -717,8 +873,6 @@ int bt_ras_rreq_on_demand_rd_unsubscribe(struct bt_conn *conn)
 		return err;
 	}
 
-	LOG_DBG("On-demand ranging data unsubscribed");
-
 	return 0;
 }
 
@@ -730,6 +884,8 @@ int bt_ras_rreq_rd_ready_subscribe(struct bt_conn *conn, bt_ras_rreq_rd_ready_cb
 	if (!rreq || !cb) {
 		return -EINVAL;
 	}
+
+	rreq->real_time_rd.subscribe_params.value = BT_GATT_CCC_NOTIFY | BT_GATT_CCC_INDICATE;
 
 	err = bt_gatt_subscribe(conn, &rreq->rd_ready.subscribe_params);
 	if (err && err != -EALREADY) {
@@ -806,6 +962,49 @@ int bt_ras_rreq_rd_overwritten_unsubscribe(struct bt_conn *conn)
 	return 0;
 }
 
+int bt_ras_rreq_realtime_rd_subscribe(struct bt_conn *conn, struct net_buf_simple *ranging_data_out,
+				      bt_ras_rreq_ranging_data_received_t data_received_cb)
+{
+	int err;
+	struct bt_ras_rreq *rreq = ras_rreq_find(conn);
+
+	if (!rreq) {
+		return -EINVAL;
+	}
+
+	err = bt_gatt_subscribe(conn, &rreq->real_time_rd.subscribe_params);
+	if (err && err != -EINVAL) {
+		LOG_DBG("Real-time ranging data subscribe failed (err %d)", err);
+		return err;
+	}
+
+	if (!err) {
+		rreq->real_time_rd.data_cb = data_received_cb;
+		rreq->real_time_rd.ranging_data_out = ranging_data_out;
+		net_buf_simple_reset(ranging_data_out);
+	}
+
+	return 0;
+}
+
+int bt_ras_rreq_realtime_rd_unsubscribe(struct bt_conn *conn)
+{
+	int err;
+	struct bt_ras_rreq *rreq = ras_rreq_find(conn);
+
+	if (!rreq) {
+		return -EINVAL;
+	}
+
+	err = bt_gatt_unsubscribe(conn, &rreq->real_time_rd.subscribe_params);
+	if (err && err != -EINVAL) {
+		LOG_DBG("Real-time ranging data unsubscribe failed (err %d)", err);
+		return err;
+	}
+
+	return 0;
+}
+
 void bt_ras_rreq_free(struct bt_conn *conn)
 {
 	int err = 0;
@@ -835,6 +1034,11 @@ void bt_ras_rreq_free(struct bt_conn *conn)
 		err = bt_gatt_unsubscribe(conn, &rreq->on_demand_rd.subscribe_params);
 		if (err != 0 && err != -EINVAL) {
 			LOG_WRN("Failed to unsubscribe to ondemand ranging data: %d", err);
+		}
+
+		err = bt_gatt_unsubscribe(conn, &rreq->real_time_rd.subscribe_params);
+		if (err != 0 && err != -EINVAL) {
+			LOG_WRN("Failed to unsubscribe to real-time ranging data: %d", err);
 		}
 
 		err = bt_gatt_unsubscribe(conn, &rreq->rd_ready.subscribe_params);
@@ -875,6 +1079,12 @@ int bt_ras_rreq_alloc_and_assign_handles(struct bt_gatt_dm *dm, struct bt_conn *
 		return err;
 	}
 
+	err = realtime_rd_subscribe_params_populate(dm, rreq);
+	if (err) {
+		bt_ras_rreq_free(conn);
+		return err;
+	}
+
 	err = rd_ready_subscribe_params_populate(dm, rreq);
 	if (err) {
 		bt_ras_rreq_free(conn);
@@ -898,6 +1108,20 @@ int bt_ras_rreq_alloc_and_assign_handles(struct bt_gatt_dm *dm, struct bt_conn *
 		bt_ras_rreq_free(conn);
 		return err;
 	}
+
+	return 0;
+}
+
+int bt_ras_rreq_subscription_change_cb_register(struct bt_conn *conn,
+						bt_gatt_subscribe_func_t subscription_change_cb)
+{
+	struct bt_ras_rreq *rreq = ras_rreq_find(conn);
+
+	if (rreq == NULL) {
+		return -EINVAL;
+	}
+
+	rreq->subscribe_cb = subscription_change_cb;
 
 	return 0;
 }
@@ -933,13 +1157,17 @@ int bt_ras_rreq_read_features(struct bt_conn *conn, bt_ras_rreq_features_read_cb
 
 int bt_ras_rreq_cp_get_ranging_data(struct bt_conn *conn, struct net_buf_simple *ranging_data_out,
 				    uint16_t ranging_counter,
-				    bt_ras_rreq_ranging_data_get_complete_t cb)
+				    bt_ras_rreq_ranging_data_received_t cb)
 {
 	int err;
 	struct bt_ras_rreq *rreq = ras_rreq_find(conn);
 
 	if (rreq == NULL || ranging_data_out == NULL || cb == NULL) {
 		return -EINVAL;
+	}
+
+	if (rreq->realtime) {
+		return -EACCES;
 	}
 
 	if (rreq->cp.state != BT_RAS_RREQ_CP_STATE_NONE ||
@@ -949,15 +1177,15 @@ int bt_ras_rreq_cp_get_ranging_data(struct bt_conn *conn, struct net_buf_simple 
 
 	rreq->on_demand_rd.data_get_in_progress = true;
 	rreq->on_demand_rd.ranging_data_out = ranging_data_out;
-	rreq->on_demand_rd.counter_in_progress = ranging_counter;
-	rreq->on_demand_rd.cb = cb;
-	rreq->on_demand_rd.next_expected_segment_counter = 0;
-	rreq->on_demand_rd.last_segment_received = false;
-	rreq->on_demand_rd.error_status = 0;
+	rreq->counter_in_progress = ranging_counter;
+	rreq->on_demand_rd.data_cb = cb;
+	rreq->next_expected_segment_counter = 0;
+	rreq->last_segment_received = false;
+	rreq->data_error_status = 0;
 
 	NET_BUF_SIMPLE_DEFINE(get_ranging_data, RASCP_CMD_OPCODE_LEN + sizeof(uint16_t));
 	net_buf_simple_add_u8(&get_ranging_data, RASCP_OPCODE_GET_RD);
-	net_buf_simple_add_le16(&get_ranging_data, rreq->on_demand_rd.counter_in_progress);
+	net_buf_simple_add_le16(&get_ranging_data, rreq->counter_in_progress);
 
 	err = bt_gatt_write_without_response(conn, rreq->cp.subscribe_params.value_handle,
 					     get_ranging_data.data, get_ranging_data.len, false);
@@ -978,10 +1206,8 @@ void bt_ras_rreq_rd_subevent_data_parse(struct net_buf_simple *peer_ranging_data
 					bt_ras_rreq_subevent_header_cb_t subevent_header_cb,
 					bt_ras_rreq_step_data_cb_t step_data_cb, void *user_data)
 {
-	if (!peer_ranging_data_buf
-		|| !local_step_data_buf
-		|| peer_ranging_data_buf->len == 0
-		|| local_step_data_buf->len == 0) {
+	if (!peer_ranging_data_buf || !local_step_data_buf || peer_ranging_data_buf->len == 0 ||
+	    local_step_data_buf->len == 0) {
 		LOG_ERR("Tried to parse empty step data.");
 		return;
 	}
