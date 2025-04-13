@@ -12,7 +12,7 @@ Overview
 
 This library implements the Ranging Requestor for Channel Sounding with the corresponding set of characteristics defined in the `Ranging Service Specification`_ and the `Ranging Profile Specification`_.
 
-This library supports On Demand Ranging Data.
+This library supports On Demand Ranging Data and Real-time Ranging Data.
 
 Configuration
 *************

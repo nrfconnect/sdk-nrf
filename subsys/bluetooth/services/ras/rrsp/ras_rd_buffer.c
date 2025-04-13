@@ -104,8 +104,8 @@ static struct ras_rd_buffer *rd_buffer_alloc(struct bt_conn *conn, uint16_t rang
 		if (rd_buffer_pool[i].conn == conn) {
 			conn_buffer_count++;
 
-			const uint16_t ranging_counter_age = ranging_counter
-				- rd_buffer_pool[i].ranging_counter;
+			const uint16_t ranging_counter_age =
+				ranging_counter - rd_buffer_pool[i].ranging_counter;
 
 			/* Only overwrite buffers that have ranging data stored
 			 * and are not being read.
@@ -150,9 +150,8 @@ static struct ras_rd_buffer *rd_buffer_alloc(struct bt_conn *conn, uint16_t rang
 	return NULL;
 }
 
-static void cs_procedure_enable(struct bt_conn *conn,
-				uint8_t status,
-				struct bt_conn_le_cs_procedure_enable_complete *params)
+static void cs_procedure_enabled(struct bt_conn *conn, uint8_t status,
+				 struct bt_conn_le_cs_procedure_enable_complete *params)
 {
 	uint8_t conn_index = bt_conn_index(conn);
 
@@ -227,7 +226,7 @@ static void subevent_data_available(struct bt_conn *conn,
 		buf = rd_buffer_alloc(conn, result->header.procedure_counter);
 
 		if (!buf) {
-			LOG_ERR("Failed to allocate buffer for procedure %u",
+			LOG_INF("Failed to allocate buffer for procedure %u",
 				result->header.procedure_counter);
 			drop_procedure_counter[conn_index] = result->header.procedure_counter;
 
@@ -305,7 +304,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 }
 
 BT_CONN_CB_DEFINE(conn_callbacks) = {
-	.le_cs_procedure_enable_complete = cs_procedure_enable,
+	.le_cs_procedure_enable_complete = cs_procedure_enabled,
 	.le_cs_subevent_data_available = subevent_data_available,
 	.disconnected = disconnected,
 };

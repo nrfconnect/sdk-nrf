@@ -31,7 +31,7 @@ static struct bt_ras_rrsp {
 	struct k_work status_work;
 	struct k_timer rascp_timeout;
 
-	struct bt_gatt_indicate_params ondemand_ind_params;
+	struct bt_gatt_indicate_params ranging_data_ind_params;
 	struct bt_gatt_indicate_params rascp_ind_params;
 	struct bt_gatt_indicate_params rd_status_params;
 
@@ -50,19 +50,25 @@ static struct bt_ras_rrsp {
 } rrsp_pool[CONFIG_BT_RAS_RRSP_MAX_ACTIVE_CONN];
 
 static struct k_work_q rrsp_wq;
-static uint32_t ras_features; /* No optional features supported. */
+
+static uint32_t ras_optional_features = RAS_FEAT_REALTIME_RD;
 
 static void send_data_work_handler(struct k_work *work);
 static void rascp_work_handler(struct k_work *work);
 static void status_work_handler(struct k_work *work);
 static void rascp_timeout_handler(struct k_timer *timer);
 
-static int ondemand_rd_notify_or_indicate(struct bt_conn *conn, struct net_buf_simple *buf);
+static int ranging_data_notify_or_indicate(struct bt_conn *conn, struct net_buf_simple *buf);
 static int rd_status_notify_or_indicate(struct bt_conn *conn, const struct bt_uuid *uuid,
 					uint16_t ranging_counter);
 
 static void rascp_send_complete_rd_rsp(struct bt_conn *conn, uint16_t ranging_counter);
 static void rascp_cmd_handle(struct bt_ras_rrsp *rrsp);
+
+static ssize_t ondemand_rd_ccc_cfg_write_cb(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+					    uint16_t value);
+static ssize_t realtime_rd_ccc_cfg_write_cb(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+					    uint16_t value);
 
 static struct bt_ras_rrsp *rrsp_find(struct bt_conn *conn)
 {
@@ -131,7 +137,8 @@ void bt_ras_rrsp_free(struct bt_conn *conn)
 static ssize_t ras_features_read(struct bt_conn *conn, const struct bt_gatt_attr *attr, void *buf,
 				 uint16_t len, uint16_t offset)
 {
-	return bt_gatt_attr_read(conn, attr, buf, len, offset, &ras_features, sizeof(ras_features));
+	return bt_gatt_attr_read(conn, attr, buf, len, offset, &ras_optional_features,
+				 sizeof(ras_optional_features));
 }
 
 static ssize_t rd_ready_read(struct bt_conn *conn, const struct bt_gatt_attr *attr, void *buf,
@@ -185,11 +192,6 @@ static ssize_t ras_cp_write(struct bt_conn *conn, struct bt_gatt_attr const *att
 	return len;
 }
 
-static void ondemand_rd_ccc_cfg_changed(struct bt_gatt_attr const *attr, uint16_t value)
-{
-	LOG_DBG("On-demand Ranging Data CCCD changed: %u", value);
-}
-
 static void ras_cp_ccc_cfg_changed(struct bt_gatt_attr const *attr, uint16_t value)
 {
 	LOG_DBG("RAS-CP CCCD changed: %u", value);
@@ -203,6 +205,86 @@ static void rd_ready_ccc_cfg_changed(struct bt_gatt_attr const *attr, uint16_t v
 static void rd_overwritten_ccc_cfg_changed(struct bt_gatt_attr const *attr, uint16_t value)
 {
 	LOG_DBG("Ranging Data Overwritten CCCD changed: %u", value);
+}
+
+BT_GATT_SERVICE_DEFINE(
+	rrsp_svc, BT_GATT_PRIMARY_SERVICE(BT_UUID_RANGING_SERVICE),
+	/* RAS Features */
+	BT_GATT_CHARACTERISTIC(BT_UUID_RAS_FEATURES, BT_GATT_CHRC_READ, BT_GATT_PERM_READ_ENCRYPT,
+			       ras_features_read, NULL, NULL),
+	/* On-demand Ranging Data */
+	BT_GATT_CHARACTERISTIC(BT_UUID_RAS_ONDEMAND_RD, BT_GATT_CHRC_INDICATE | BT_GATT_CHRC_NOTIFY,
+			       BT_GATT_PERM_NONE, NULL, NULL, NULL),
+	BT_GATT_CCC_MANAGED(((struct _bt_gatt_ccc[]){BT_GATT_CCC_INITIALIZER(
+				    NULL, ondemand_rd_ccc_cfg_write_cb, NULL)}),
+			    BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT),
+	/* Real-time Ranging Data */
+	BT_GATT_CHARACTERISTIC(BT_UUID_RAS_REALTIME_RD, BT_GATT_CHRC_INDICATE | BT_GATT_CHRC_NOTIFY,
+			       BT_GATT_PERM_NONE, NULL, NULL, NULL),
+	BT_GATT_CCC_MANAGED(((struct _bt_gatt_ccc[]){BT_GATT_CCC_INITIALIZER(
+				    NULL, realtime_rd_ccc_cfg_write_cb, NULL)}),
+			    BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT),
+	/* RAS-CP */
+	BT_GATT_CHARACTERISTIC(BT_UUID_RAS_CP,
+			       BT_GATT_CHRC_WRITE_WITHOUT_RESP | BT_GATT_CHRC_INDICATE,
+			       BT_GATT_PERM_WRITE_ENCRYPT, NULL, ras_cp_write, NULL),
+	BT_GATT_CCC(ras_cp_ccc_cfg_changed, BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT),
+	/* Ranging Data Ready */
+	BT_GATT_CHARACTERISTIC(BT_UUID_RAS_RD_READY,
+			       BT_GATT_CHRC_READ | BT_GATT_CHRC_INDICATE | BT_GATT_CHRC_NOTIFY,
+			       BT_GATT_PERM_READ_ENCRYPT, rd_ready_read, NULL, NULL),
+	BT_GATT_CCC(rd_ready_ccc_cfg_changed,
+		    BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT),
+	/* Ranging Data Overwritten */
+	BT_GATT_CHARACTERISTIC(BT_UUID_RAS_RD_OVERWRITTEN,
+			       BT_GATT_CHRC_READ | BT_GATT_CHRC_INDICATE | BT_GATT_CHRC_NOTIFY,
+			       BT_GATT_PERM_READ_ENCRYPT, rd_overwritten_read, NULL, NULL),
+	BT_GATT_CCC(rd_overwritten_ccc_cfg_changed,
+		    BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT),
+);
+
+static ssize_t ondemand_rd_ccc_cfg_write_cb(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+					    uint16_t value)
+{
+	if (!value) {
+		LOG_DBG("Disabled On-demand Ranging Data mode.");
+	} else {
+		struct bt_gatt_attr *realtime_rd_attr =
+			bt_gatt_find_by_uuid(rrsp_svc.attrs, 0, BT_UUID_RAS_REALTIME_RD);
+
+		if (bt_gatt_is_subscribed(conn, realtime_rd_attr,
+					  BT_GATT_CCC_NOTIFY | BT_GATT_CCC_INDICATE)) {
+			LOG_DBG("On-demand Ranging Data CCCD write rejected because Real-time "
+				"Ranging Data is currently enabled.");
+			return BT_GATT_ERR(RAS_ATT_ERROR_CCC_CONFIG);
+		}
+
+		LOG_DBG("Enabled On-demand Ranging Data mode.");
+	}
+
+	return sizeof(value);
+}
+
+static ssize_t realtime_rd_ccc_cfg_write_cb(struct bt_conn *conn, const struct bt_gatt_attr *attr,
+					    uint16_t value)
+{
+	if (!value) {
+		LOG_DBG("Disabled Real-time Ranging Data mode.");
+	} else {
+		struct bt_gatt_attr *ondemand_rd_attr =
+			bt_gatt_find_by_uuid(rrsp_svc.attrs, 0, BT_UUID_RAS_ONDEMAND_RD);
+
+		if (bt_gatt_is_subscribed(conn, ondemand_rd_attr,
+					  BT_GATT_CCC_NOTIFY | BT_GATT_CCC_INDICATE)) {
+			LOG_DBG("Real-time Ranging Data CCCD write rejected because On-demand "
+				"Ranging Data is currently enabled.");
+			return BT_GATT_ERR(RAS_ATT_ERROR_CCC_CONFIG);
+		}
+
+		LOG_DBG("Enabled Real-time Ranging Data mode.");
+	}
+
+	return sizeof(value);
 }
 
 #if defined(CONFIG_BT_RAS_RRSP_AUTO_ALLOC_INSTANCE)
@@ -273,9 +355,9 @@ static int rd_segment_send(struct bt_ras_rrsp *rrsp)
 
 		(void)net_buf_simple_remove_mem(&segment_buf, (max_data_len - actual_data_len));
 
-		err = ondemand_rd_notify_or_indicate(rrsp->conn, &segment_buf);
+		err = ranging_data_notify_or_indicate(rrsp->conn, &segment_buf);
 		if (err) {
-			LOG_WRN("ondemand_rd_notify_or_indicate failed err %d", err);
+			LOG_WRN("ranging_data_notify_or_indicate failed err %d", err);
 
 			/* Keep retrying */
 			rrsp->active_buf_read_cursor -= actual_data_len;
@@ -292,10 +374,28 @@ static int rd_segment_send(struct bt_ras_rrsp *rrsp)
 		k_work_submit_to_queue(&rrsp_wq, &rrsp->send_data_work);
 	} else {
 		LOG_DBG("All segments sent");
-		rascp_send_complete_rd_rsp(rrsp->conn, rrsp->active_buf->ranging_counter);
+
 		rrsp->streaming = false;
 		k_work_cancel(&rrsp->send_data_work);
-		k_timer_start(&rrsp->rascp_timeout, RASCP_ACK_DATA_TIMEOUT, K_NO_WAIT);
+
+		struct bt_gatt_attr *ondemand_rd_attr =
+			bt_gatt_find_by_uuid(rrsp_svc.attrs, 0, BT_UUID_RAS_ONDEMAND_RD);
+
+		if (bt_gatt_is_subscribed(rrsp->conn, ondemand_rd_attr,
+					  BT_GATT_CCC_NOTIFY | BT_GATT_CCC_INDICATE)) {
+			rascp_send_complete_rd_rsp(rrsp->conn, rrsp->active_buf->ranging_counter);
+			k_timer_start(&rrsp->rascp_timeout, RASCP_ACK_DATA_TIMEOUT, K_NO_WAIT);
+		} else {
+			struct bt_gatt_attr *realtime_rd_attr =
+				bt_gatt_find_by_uuid(rrsp_svc.attrs, 0, BT_UUID_RAS_REALTIME_RD);
+
+			if (bt_gatt_is_subscribed(rrsp->conn, realtime_rd_attr,
+						  BT_GATT_CCC_NOTIFY | BT_GATT_CCC_INDICATE)) {
+				bt_ras_rd_buffer_release(rrsp->active_buf);
+				rrsp->active_buf = NULL;
+				rrsp->active_buf_read_cursor = 0;
+			}
+		}
 	}
 
 	return 0;
@@ -375,22 +475,49 @@ static void rascp_timeout_handler(struct k_timer *timer)
 	k_work_submit_to_queue(&rrsp_wq, &rrsp->status_work);
 }
 
-static void rd_ready_handle(struct bt_conn *conn, uint16_t ranging_counter)
+static void new_rd_handle(struct bt_conn *conn, uint16_t ranging_counter)
 {
 	struct bt_ras_rrsp *rrsp = rrsp_find(conn);
 
 	if (rrsp) {
-		rrsp->ready_ranging_counter = ranging_counter;
-		rrsp->notify_ready = true;
-		k_work_submit_to_queue(&rrsp_wq, &rrsp->status_work);
+		struct bt_gatt_attr *ondemand_rd_attr =
+			bt_gatt_find_by_uuid(rrsp_svc.attrs, 0, BT_UUID_RAS_ONDEMAND_RD);
+
+		if (bt_gatt_is_subscribed(conn, ondemand_rd_attr,
+					  BT_GATT_CCC_NOTIFY | BT_GATT_CCC_INDICATE)) {
+			rrsp->ready_ranging_counter = ranging_counter;
+			rrsp->notify_ready = true;
+			k_work_submit_to_queue(&rrsp_wq, &rrsp->status_work);
+		} else {
+			struct bt_gatt_attr *realtime_rd_attr =
+				bt_gatt_find_by_uuid(rrsp_svc.attrs, 0, BT_UUID_RAS_REALTIME_RD);
+
+			if (bt_gatt_is_subscribed(conn, realtime_rd_attr,
+						  BT_GATT_CCC_NOTIFY | BT_GATT_CCC_INDICATE)) {
+				if (!rrsp->streaming) {
+					rrsp->active_buf =
+						bt_ras_rd_buffer_claim(conn, ranging_counter);
+					rrsp->active_buf_read_cursor = 0;
+					rrsp->segment_counter = 0;
+					rrsp->streaming = true;
+
+					k_work_submit_to_queue(&rrsp_wq, &rrsp->send_data_work);
+				} else {
+					LOG_DBG("Dropped new ranging data.");
+				}
+			}
+		}
 	}
 }
 
 static void rd_overwritten_handle(struct bt_conn *conn, uint16_t ranging_counter)
 {
 	struct bt_ras_rrsp *rrsp = rrsp_find(conn);
+	struct bt_gatt_attr *ondemand_rd_attr =
+		bt_gatt_find_by_uuid(rrsp_svc.attrs, 0, BT_UUID_RAS_ONDEMAND_RD);
 
-	if (rrsp) {
+	if (rrsp && bt_gatt_is_subscribed(conn, ondemand_rd_attr,
+					  BT_GATT_CCC_NOTIFY | BT_GATT_CCC_INDICATE)) {
 		rrsp->overwritten_ranging_counter = ranging_counter;
 		rrsp->notify_overwritten = true;
 		k_work_submit_to_queue(&rrsp_wq, &rrsp->status_work);
@@ -398,7 +525,7 @@ static void rd_overwritten_handle(struct bt_conn *conn, uint16_t ranging_counter
 }
 
 static struct bt_ras_rd_buffer_cb rd_buffer_callbacks = {
-	.new_ranging_data_received = rd_ready_handle,
+	.new_ranging_data_received = new_rd_handle,
 	.ranging_data_overwritten = rd_overwritten_handle,
 };
 
@@ -417,43 +544,7 @@ static int ras_rrsp_init(void)
 
 SYS_INIT(ras_rrsp_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 
-BT_GATT_SERVICE_DEFINE(rrsp_svc,
-	BT_GATT_PRIMARY_SERVICE(BT_UUID_RANGING_SERVICE),
-	/* RAS Features */
-	BT_GATT_CHARACTERISTIC(BT_UUID_RAS_FEATURES,
-				BT_GATT_CHRC_READ,
-				BT_GATT_PERM_READ_ENCRYPT, ras_features_read, NULL, NULL),
-	/* On-demand Ranging Data */
-	BT_GATT_CHARACTERISTIC(BT_UUID_RAS_ONDEMAND_RD,
-				BT_GATT_CHRC_INDICATE | BT_GATT_CHRC_NOTIFY,
-				BT_GATT_PERM_NONE,
-				NULL, NULL, NULL),
-	BT_GATT_CCC(ondemand_rd_ccc_cfg_changed,
-				BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT),
-	/* RAS-CP */
-	BT_GATT_CHARACTERISTIC(BT_UUID_RAS_CP,
-				BT_GATT_CHRC_WRITE_WITHOUT_RESP | BT_GATT_CHRC_INDICATE,
-				BT_GATT_PERM_WRITE_ENCRYPT,
-				NULL, ras_cp_write, NULL),
-	BT_GATT_CCC(ras_cp_ccc_cfg_changed,
-				BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT),
-	/* Ranging Data Ready */
-	BT_GATT_CHARACTERISTIC(BT_UUID_RAS_RD_READY,
-				BT_GATT_CHRC_READ | BT_GATT_CHRC_INDICATE | BT_GATT_CHRC_NOTIFY,
-				BT_GATT_PERM_READ_ENCRYPT,
-				rd_ready_read, NULL, NULL),
-	BT_GATT_CCC(rd_ready_ccc_cfg_changed,
-				BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT),
-	/* Ranging Data Overwritten */
-	BT_GATT_CHARACTERISTIC(BT_UUID_RAS_RD_OVERWRITTEN,
-				BT_GATT_CHRC_READ | BT_GATT_CHRC_INDICATE | BT_GATT_CHRC_NOTIFY,
-				BT_GATT_PERM_READ_ENCRYPT,
-				rd_overwritten_read, NULL, NULL),
-	BT_GATT_CCC(rd_overwritten_ccc_cfg_changed,
-				BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT),
-);
-
-static void ondemand_rd_notify_sent_cb(struct bt_conn *conn, void *user_data)
+static void ranging_data_notify_sent_cb(struct bt_conn *conn, void *user_data)
 {
 	struct bt_ras_rrsp *rrsp = rrsp_find(conn);
 
@@ -463,8 +554,8 @@ static void ondemand_rd_notify_sent_cb(struct bt_conn *conn, void *user_data)
 	}
 }
 
-static void ondemand_rd_indicate_sent_cb(struct bt_conn *conn,
-					 struct bt_gatt_indicate_params *params, uint8_t err)
+static void ranging_data_indicate_sent_cb(struct bt_conn *conn,
+					  struct bt_gatt_indicate_params *params, uint8_t err)
 {
 	struct bt_ras_rrsp *rrsp = rrsp_find(conn);
 
@@ -474,10 +565,24 @@ static void ondemand_rd_indicate_sent_cb(struct bt_conn *conn,
 	}
 }
 
-static int ondemand_rd_notify_or_indicate(struct bt_conn *conn, struct net_buf_simple *buf)
+static int ranging_data_notify_or_indicate(struct bt_conn *conn, struct net_buf_simple *buf)
 {
-	struct bt_gatt_attr *attr =
-		bt_gatt_find_by_uuid(rrsp_svc.attrs, 0, BT_UUID_RAS_ONDEMAND_RD);
+	struct bt_gatt_attr *attr;
+
+	struct bt_ras_rrsp *rrsp = rrsp_find(conn);
+
+	__ASSERT_NO_MSG(rrsp);
+
+	attr = bt_gatt_find_by_uuid(rrsp_svc.attrs, 0, BT_UUID_RAS_REALTIME_RD);
+
+	if (!bt_gatt_is_subscribed(conn, attr, BT_GATT_CCC_INDICATE | BT_GATT_CCC_NOTIFY)) {
+		attr = bt_gatt_find_by_uuid(rrsp_svc.attrs, 0, BT_UUID_RAS_ONDEMAND_RD);
+	}
+
+	if (!bt_gatt_is_subscribed(conn, attr, BT_GATT_CCC_INDICATE | BT_GATT_CCC_NOTIFY)) {
+		LOG_WRN("Peer has not enabled Real-time or On-demand ranging data.");
+		return -EINVAL;
+	}
 
 	__ASSERT_NO_MSG(attr);
 
@@ -488,7 +593,7 @@ static int ondemand_rd_notify_or_indicate(struct bt_conn *conn, struct net_buf_s
 		params.uuid = NULL;
 		params.data = buf->data;
 		params.len = buf->len;
-		params.func = ondemand_rd_notify_sent_cb;
+		params.func = ranging_data_notify_sent_cb;
 
 		return bt_gatt_notify_cb(conn, &params);
 	} else if (bt_gatt_is_subscribed(conn, attr, BT_GATT_CCC_INDICATE)) {
@@ -496,17 +601,16 @@ static int ondemand_rd_notify_or_indicate(struct bt_conn *conn, struct net_buf_s
 
 		__ASSERT_NO_MSG(rrsp);
 
-		rrsp->ondemand_ind_params.attr = attr;
-		rrsp->ondemand_ind_params.uuid = NULL;
-		rrsp->ondemand_ind_params.data = buf->data;
-		rrsp->ondemand_ind_params.len = buf->len;
-		rrsp->ondemand_ind_params.func = ondemand_rd_indicate_sent_cb;
-		rrsp->ondemand_ind_params.destroy = NULL;
+		rrsp->ranging_data_ind_params.attr = attr;
+		rrsp->ranging_data_ind_params.uuid = NULL;
+		rrsp->ranging_data_ind_params.data = buf->data;
+		rrsp->ranging_data_ind_params.len = buf->len;
+		rrsp->ranging_data_ind_params.func = ranging_data_indicate_sent_cb;
+		rrsp->ranging_data_ind_params.destroy = NULL;
 
-		return bt_gatt_indicate(conn, &rrsp->ondemand_ind_params);
+		return bt_gatt_indicate(conn, &rrsp->ranging_data_ind_params);
 	}
 
-	LOG_WRN("Peer is not subscribed to ranging data characteristic.");
 	return -EINVAL;
 }
 
@@ -601,6 +705,16 @@ static void rascp_cmd_handle(struct bt_ras_rrsp *rrsp)
 
 	if (rrsp->streaming) {
 		rascp_send_rsp_code(rrsp->conn, RASCP_RESPONSE_SERVER_BUSY);
+		return;
+	}
+
+	struct bt_gatt_attr *realtime_rd_attr =
+		bt_gatt_find_by_uuid(rrsp_svc.attrs, 0, BT_UUID_RAS_REALTIME_RD);
+
+	if (bt_gatt_is_subscribed(rrsp->conn, realtime_rd_attr,
+				  BT_GATT_CCC_NOTIFY | BT_GATT_CCC_INDICATE)) {
+		LOG_WRN("Peer accessing RAS-CP while RRSP is operating in real-time mode.");
+		rascp_send_rsp_code(rrsp->conn, RASCP_RESPONSE_INVALID_PARAMETER);
 		return;
 	}
 
