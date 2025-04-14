@@ -53,12 +53,16 @@ tests:
     platform_allow:
       - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54lm20apdk/nrf54lm20a/cpuapp
+      - nrf54lm20apdk@0.2.0/nrf54lm20a/cpuapp
     harness_config:
       type: multi_line
       regex:
         - "HS bNumConfigurations 1"
         - "FS bNumConfigurations 1"
         - "HID keyboard sample is initialized"
+        - "USBD message: VBUS ready"
+        - "Actual device speed 2"
+        - "s-in-status finished"
   nrf.extended.sample.usbd.hid-keyboard.out-report.l20:
     integration_platforms:
       - nrf54l20pdk/nrf54l20/cpuapp
@@ -66,6 +70,7 @@ tests:
     platform_allow:
       - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54lm20apdk/nrf54lm20a/cpuapp
+      - nrf54lm20apdk@0.2.0/nrf54lm20a/cpuapp
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="out_report.overlay"
     harness_config:
@@ -74,6 +79,9 @@ tests:
         - "HS bNumConfigurations 1"
         - "FS bNumConfigurations 1"
         - "HID keyboard sample is initialized"
+        - "USBD message: VBUS ready"
+        - "Actual device speed 2"
+        - "s-in-status finished"
   nrf.extended.sample.usbd.hid-keyboard.large-report.l20:
     integration_platforms:
       - nrf54l20pdk/nrf54l20/cpuapp
@@ -81,6 +89,7 @@ tests:
     platform_allow:
       - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54lm20apdk/nrf54lm20a/cpuapp
+      - nrf54lm20apdk@0.2.0/nrf54lm20a/cpuapp
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="large_in_report.overlay"
     harness_config:
@@ -89,6 +98,9 @@ tests:
         - "HS bNumConfigurations 1"
         - "FS bNumConfigurations 1"
         - "HID keyboard sample is initialized"
+        - "USBD message: VBUS ready"
+        - "Actual device speed 2"
+        - "s-in-status finished"
   nrf.extended.sample.usbd.hid-keyboard.large-out-report.l20:
     integration_platforms:
       - nrf54l20pdk/nrf54l20/cpuapp
@@ -96,6 +108,7 @@ tests:
     platform_allow:
       - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54lm20apdk/nrf54lm20a/cpuapp
+      - nrf54lm20apdk@0.2.0/nrf54lm20a/cpuapp
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="large_out_report.overlay"
     harness_config:
@@ -104,3 +117,6 @@ tests:
         - "HS bNumConfigurations 1"
         - "FS bNumConfigurations 1"
         - "HID keyboard sample is initialized"
+        - "USBD message: VBUS ready"
+        - "Actual device speed 2"
+        - "s-in-status finished"

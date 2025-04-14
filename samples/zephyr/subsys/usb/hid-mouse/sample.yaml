@@ -37,6 +37,7 @@ tests:
     platform_allow:
       - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54lm20apdk/nrf54lm20a/cpuapp
+      - nrf54lm20apdk@0.2.0/nrf54lm20a/cpuapp
     extra_args:
       - CONF_FILE="usbd_next_prj.conf"
       - EXTRA_DTC_OVERLAY_FILE="usbd_next.overlay"
@@ -48,3 +49,4 @@ tests:
         - "HS bNumConfigurations 1"
         - "FS bNumConfigurations 1"
         - "Actual device speed 2"
+        - "s-in-status finished"
