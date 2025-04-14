@@ -1779,8 +1779,8 @@ The following table indicates the software maturity levels of the support for Go
         - Experimental
         - Experimental
         - Experimental
-        - --
-        - --
+        - Experimental
+        - Experimental
         - Experimental
         - --
         - --
@@ -1795,9 +1795,9 @@ The following table indicates the software maturity levels of the support for Go
         - Supported
         - Supported
         - Experimental
-        - --
-        - --
-        - --
+        - Experimental
+        - Experimental
+        - Experimental
         - Supported
         - --
         - --
@@ -1840,8 +1840,8 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Experimental
         - Experimental
-        - --
-        - --
+        - Experimental
+        - Experimental
         - Supported
         - --
         - --
@@ -1856,8 +1856,8 @@ The following table indicates the software maturity levels of the support for ea
         - Experimental
         - Experimental
         - Experimental
-        - --
-        - --
+        - Experimental
+        - Experimental
         - Experimental
         - --
         - --
@@ -1872,8 +1872,8 @@ The following table indicates the software maturity levels of the support for ea
         - Experimental
         - Experimental
         - Experimental
-        - --
-        - --
+        - Experimental
+        - Experimental
         - Experimental
         - --
         - --
@@ -1888,8 +1888,8 @@ The following table indicates the software maturity levels of the support for ea
         - Experimental
         - Experimental
         - Experimental
-        - --
-        - --
+        - Experimental
+        - Experimental
         - Experimental
         - --
         - --
@@ -1903,9 +1903,9 @@ The following table indicates the software maturity levels of the support for ea
         - Supported
         - Supported
         - Experimental
-        - --
-        - --
-        - --
+        - Experimental
+        - Experimental
+        - Experimental
         - Supported
         - --
         - --
