@@ -16,6 +16,7 @@ family:
           - name: nrf54lv10a
             cpuclusters:
               - name: cpuapp
+              - name: cpuflpr
 runners:
   run_once:
     '--recover':
@@ -25,6 +26,7 @@ runners:
         groups:
           - qualifiers:
               - nrf54lv10a/cpuapp
+              - nrf54lv10a/cpuflpr
           - qualifiers:
               - nrf54lm20a/cpuapp
               - nrf54lm20a/cpuflpr
@@ -36,6 +38,7 @@ runners:
         groups:
           - qualifiers:
               - nrf54lv10a/cpuapp
+              - nrf54lv10a/cpuflpr
           - qualifiers:
               - nrf54lm20a/cpuapp
               - nrf54lm20a/cpuflpr
@@ -46,6 +49,7 @@ runners:
         groups:
           - qualifiers:
               - nrf54lv10a/cpuapp
+              - nrf54lv10a/cpuflpr
           - qualifiers:
               - nrf54lm20a/cpuapp
               - nrf54lm20a/cpuflpr
