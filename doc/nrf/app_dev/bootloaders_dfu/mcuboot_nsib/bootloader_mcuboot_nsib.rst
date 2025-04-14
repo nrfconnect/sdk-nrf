@@ -20,6 +20,7 @@ Following that, you can :ref:`add an immutable bootloader<ug_bootloader_adding_s
    bootloader_quick_start
    bootloader_adding_sysbuild
    bootloader
+   bootloader_main_config
    bootloader_partitioning
    bootloader_dfu_image_versions
    bootloader_config
