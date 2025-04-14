@@ -91,6 +91,8 @@ Updating the application firmware on the nRF9151 SiP
 
 This section describes how you can update the application firmware of the nRF9151 SiP on the Nordic Thingy:91 X through USB or with an external debug probe.
 
+When updating the firmware through USB and MCUboot method, you must not connect the USB/UART0 with any terminal since it is used by this method.
+
 .. tabs::
 
    .. group-tab:: Through USB and MCUboot
@@ -166,4 +168,4 @@ To update the nRF9151 modem firmware using an external debug probe, complete the
 
    .. code-block:: console
 
-      nrfutil device program --firmware <modem.zip> --serial-number <J-Link Serial number> --traits jlink modem --x-family nrf91
+      nrfutil device program --firmware <modem.zip> --serial-number <J-Link Serial number> --traits jlink --x-family nrf91
