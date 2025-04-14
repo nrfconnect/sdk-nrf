@@ -10,5 +10,6 @@ tests:
       fixture: i2c_loopback
     platform_allow:
       - nrf54lm20apdk/nrf54lm20a/cpuapp
+      - nrf54lm20apdk@0.2.0/nrf54lm20a/cpuapp
     integration_platforms:
       - nrf54lm20apdk/nrf54lm20a/cpuapp
