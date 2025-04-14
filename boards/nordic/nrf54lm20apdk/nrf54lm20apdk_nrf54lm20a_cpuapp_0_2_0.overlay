@@ -29,7 +29,7 @@
 		compatible = "gpio-keys";
 
 		button0: button_0 {
-			gpios = <&gpio1 26 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			gpios = <&gpio1 24 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
 		};
 
 		button1: button_1 {
