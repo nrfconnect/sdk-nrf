@@ -3,10 +3,16 @@ common:
     - drivers
     - uart
     - ci_tests_zephyr_drivers_uart
+  timeout: 30
 tests:
   nrf.extended.drivers.uart.async_api:
     platform_allow:
       - nrf7120pdk/nrf7120/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+      - nrf54lm20apdk@0.2.0/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf7120pdk/nrf7120/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
     filter: CONFIG_SERIAL_SUPPORT_ASYNC and not CONFIG_UART_MCUX_LPUART
     harness: ztest
     harness_config:
@@ -15,6 +21,11 @@ tests:
   nrf.extended.drivers.uart.async_api.rtt:
     platform_allow:
       - nrf7120pdk/nrf7120/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+      - nrf54lm20apdk@0.2.0/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf7120pdk/nrf7120/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
     filter: CONFIG_SERIAL_SUPPORT_ASYNC and CONFIG_HAS_SEGGER_RTT
       and not CONFIG_UART_MCUX_LPUART and not CONFIG_UART_MCUX_FLEXCOMM
     extra_args: |

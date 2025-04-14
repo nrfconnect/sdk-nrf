@@ -12,10 +12,14 @@ tests:
     filter: CONFIG_SERIAL_SUPPORT_INTERRUPT
     platform_allow:
       - nrf7120pdk/nrf7120/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+      - nrf54lm20apdk@0.2.0/nrf54lm20a/cpuapp
   nrf.extended.drivers.uart.uart_errors.async:
     filter: CONFIG_SERIAL_SUPPORT_ASYNC
     platform_allow:
       - nrf7120pdk/nrf7120/cpuapp
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+      - nrf54lm20apdk@0.2.0/nrf54lm20a/cpuapp
     extra_configs:
       - CONFIG_UART_ASYNC_API=y
       - CONFIG_UART_INTERRUPT_DRIVEN=n
