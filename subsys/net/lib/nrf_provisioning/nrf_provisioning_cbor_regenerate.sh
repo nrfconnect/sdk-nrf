@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2023 Nordic Semiconductor ASA
+# Copyright (c) 2025 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
@@ -8,7 +8,7 @@ zcbor code --default-max-qty 1234567890 -c nrf_provisioning_cbor.cddl \
 	--oc  src/nrf_provisioning_cbor_encode.c \
 	--oh  include/nrf_provisioning_cbor_encode.h \
 	--oht include/nrf_provisioning_cbor_encode_types.h \
-	--file-header "Copyright (c) 2024 Nordic Semiconductor ASA
+	--file-header "Copyright (c) 2025 Nordic Semiconductor ASA
 
 SPDX-License-Identifier: LicenseRef-Nordic-5-Clause"
 
@@ -22,7 +22,7 @@ zcbor code --default-max-qty CONFIG_NRF_PROVISIONING_CBOR_RECORDS -c nrf_provisi
 	--oc  src/nrf_provisioning_cbor_decode.c \
 	--oh  include/nrf_provisioning_cbor_decode.h \
 	--oht include/nrf_provisioning_cbor_decode_types.h \
-	--file-header "Copyright (c) 2024 Nordic Semiconductor ASA
+	--file-header "Copyright (c) 2025 Nordic Semiconductor ASA
 
 SPDX-License-Identifier: LicenseRef-Nordic-5-Clause"
 
@@ -31,8 +31,8 @@ if [ $? -ne 0 ]; then
 	exit
 fi
 
-git add -A
-git commit -mdummy # Add dummy commit so apply works
+git add .
+git commit -mdummy --no-verify # Add dummy commit so apply works
 
 if [ $? -ne 0 ]; then
 	echo "dummy git commit failed!"
@@ -40,7 +40,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Apply required patch
-git apply -3 --apply nrf_provisioning_cbor.patch
+git apply nrf_provisioning_cbor.patch
 
 if [ $? -ne 0 ]; then
 	echo "Patching failed!"
