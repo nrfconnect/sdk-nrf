@@ -318,14 +318,14 @@ Deferred logs mode (:kconfig:option:`CONFIG_LOG_MODE_DEFERRED`) is enabled becau
   You cannot set the :ref:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS<CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS>` Kconfig option separately without adding the devicetree overlays contained in the snippet.
   Instead, if you want to use just some of the diagnostic logs functionality, use the snippet and set the Kconfig options for the other functionalities to ``n``.
 
-To use the snippet when building a sample, add ``-D<project_name>_SNIPPET=matter-diagnostic-logs`` to the west arguments list.
+To use the snippet when building a sample, add ``-D<project_name>_SNIPPET=diagnostic-logs`` to the west arguments list.
 
 Example for the ``nrf52840dk/nrf52840`` board target and the :ref:`matter_lock_sample` sample:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf52840dk/nrf52840 -- -Dlock_SNIPPET=matter-diagnostic-logs
+   west build -b nrf52840dk/nrf52840 -- -Dlock_SNIPPET=diagnostic-logs
 
 .. _ug_matter_debug_snippet:
 
