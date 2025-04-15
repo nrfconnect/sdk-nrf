@@ -31,8 +31,6 @@ The sample also requires the following pins to be shorted:
         - nRF21540 DK
         - nRF5340 DK pins
         - nRF54L15 DK pins
-        - nRF54L20 DK pins
-        - nRF54L09 DK pins
         - nRF9160 DK pins
       * - Request-Response Pins
         - P0.24-P0.25
@@ -41,8 +39,6 @@ The sample also requires the following pins to be shorted:
         - P1.07-P1.08
         - P1.14-P1.15
         - P1.08-P1.09
-        - P1.08-P1.09
-        - P1.08-P1.09
         - P0.12-P0.13
       * - UART RX-TX Pins
         - P0.22-P0.23
@@ -50,8 +46,6 @@ The sample also requires the following pins to be shorted:
         - P1.12-P1.13
         - P1.05-P1.06
         - P1.12-P1.13
-        - P1.10-P1.11
-        - P1.10-P1.11
         - P1.10-P1.11
         - P0.10-P0.11
 
