@@ -182,13 +182,13 @@ Main panel
 
 The main panel is the central part of the tool and contains the following tabs, each representing a different element of an XML cluster file:
 
-* :guilabel:`Cluster` - Contains the cluster definition, description, and code
-* :guilabel:`Commands` - Lists all commands assigned to the cluster
-* :guilabel:`Attributes` - Shows all attributes associated with the cluster
-* :guilabel:`Events` - Displays all events defined for the cluster
-* :guilabel:`Enums` - Contains all enumeration types used by the cluster
-* :guilabel:`Structs` - Lists all structure types defined for the cluster
-* :guilabel:`Device type` - Provides the device type definition
+* :guilabel:`CLUSTER` - Contains the cluster definition, description, and code
+* :guilabel:`COMMANDS` - Lists all commands assigned to the cluster
+* :guilabel:`ATTRIBUTES` - Shows all attributes associated with the cluster
+* :guilabel:`EVENTS` - Displays all events defined for the cluster
+* :guilabel:`STRUCTURES` - Lists all structure types defined for the cluster
+* :guilabel:`ENUMS` - Contains all enumeration types used by the cluster
+* :guilabel:`DEVICE TYPE` - Provides the device type definition
 
 
 The following figure shows the main panel of the tool:
@@ -196,20 +196,22 @@ The following figure shows the main panel of the tool:
 .. figure:: images/matter_cluster_tool/matter_cluster_tool_main_panel.png
    :alt: Main panel
 
-The :guilabel:`Cluster` and :guilabel:`Device type` tabs consist of fields that you can edit directly in the opened window.
-The :guilabel:`Commands`, :guilabel:`Attributes`, :guilabel:`Events`, :guilabel:`Enums`, and :guilabel:`Structs` tabs consist of a table with the list of elements.
-You can add, edit or delete the elements in the table using the edit box interface after clicking the :guilabel:`Edit` button in the table.
+The :guilabel:`CLUSTERS` and :guilabel:`DEVICE TYPE` tabs consist of fields that you can edit directly in the opened window.
+The :guilabel:`COMMANDS`, :guilabel:`ATTRIBUTES`, :guilabel:`EVENTS`, :guilabel:`ENUMS`, and :guilabel:`STRUCTURES` tabs consist of a table with the list of elements.
+You can add, edit or delete the elements in the table using the edit box interface after clicking a field in the table.
 
 Edit box
 --------
 
 The edit box is a dialog window that allows you to edit a row.
-Click the pencil icon on each row of the table or the :guilabel:`Add` button in the top of the table to start editing.
+Click the pencil icon on each row of the table or the :guilabel:`Add Attributes` button in the top of the table to start editing.
 
-The following figure shows location of the pencil icon and the :guilabel:`Add` button:
+The following figure shows location of the pencil icon and the :guilabel:`Add Attributes` button:
 
 .. figure:: images/matter_cluster_tool/matter_cluster_tool_start_edit.png
    :alt: Start edit
+
+   Start edit
 
 To remove a row from the table, click the trash can icon located under each element in the list.
 
@@ -217,6 +219,8 @@ The following figure shows an example of the trash icon location:
 
 .. figure:: images/matter_cluster_tool/matter_cluster_tool_remove_row.png
    :alt: Remove row
+
+   Remove row
 
 The contents of the edit box depends on the type of the tab, but in general it consists of the following elements:
 
@@ -229,26 +233,34 @@ The following figure shows an example of the edit box:
 .. figure:: images/matter_cluster_tool/matter_cluster_tool_edit_box.png
    :alt: Edit box
 
+   Edit box
+
 You must fill in all required fields marked with the asterisk before saving the element.
 If any of the required fields is not filled, you will see an error message when trying to save the element, see the figure:
 
 .. figure:: images/matter_cluster_tool/matter_cluster_tool_edit_box_error.png
    :alt: Edit box error
 
+   Edit box error
+
 After clicking an additional button in the edit box, you will see a new dialog with the list of elements.
 
 To add a new element, click the plus icon in the top of the list.
 To remove an element, click the trash can icon located under each element in the list.
 
-For example, the :guilabel:`Access` button in the edit box dialog window of the :guilabel:`Attributes` tab allows to add access control information for the attribute, see the figure:
+For example, the :guilabel:`Accesses` button in the edit box dialog window of the :guilabel:`ATTRIBUTES` tab allows to add access control information for the attribute, see the figure:
 
 .. figure:: images/matter_cluster_tool/matter_cluster_tool_edit_box_access.png
    :alt: Edit box access
+
+   Edit box access
 
 The number visible on the right upper corner of the additional button represents the current number of elements in the list, see the figure:
 
 .. figure:: images/matter_cluster_tool/matter_cluster_tool_edit_box_access_number.png
    :alt: Edit box access number
+
+   Edit box access number
 
 Details
 -------
@@ -259,7 +271,9 @@ Each tab has a dedicated details implementation, so the content depends on the t
 To see the details of an element, click the arrow icon on the left side of the row, see the figure:
 
 .. figure:: images/matter_cluster_tool/matter_cluster_tool_details_button.png
-   :alt: Details button
+   :alt: Details arrow
+
+   Details arrow
 
 The following elements can be displayed in the details depending on the type of the element and its content:
 
@@ -270,6 +284,8 @@ The following elements can be displayed in the details depending on the type of 
   .. figure:: images/matter_cluster_tool/matter_cluster_tool_edit_box_details_text_field.png
      :alt: Edit box details text field
 
+     Edit box details text field
+
 * List of additional elements.
   Click the button in this field to open a dedicated dialog with the list of elements.
 
@@ -278,11 +294,14 @@ The following elements can be displayed in the details depending on the type of 
   .. figure:: images/matter_cluster_tool/matter_cluster_tool_edit_box_details_list.png
      :alt: Edit box details list
 
+     Edit box details list
+
   The following figure shows an example of the details with a list of elements:
 
   .. figure:: images/matter_cluster_tool/matter_cluster_tool_edit_box_details_list_dialog.png
      :alt: Edit box details list dialog
 
+     Edit box details list dialog
 
 * List of boolean elements set to true.
 
@@ -291,12 +310,16 @@ The following elements can be displayed in the details depending on the type of 
   .. figure:: images/matter_cluster_tool/matter_cluster_tool_edit_box_details_boolean.png
      :alt: Edit box details boolean
 
+     Edit box details boolean
+
 * List of IDs of the clusters to which the element belongs.
 
   For example:
 
   .. figure:: images/matter_cluster_tool/matter_cluster_tool_edit_box_details_clusters.png
      :alt: Edit box details clusters
+
+     Edit box details clusters
 
 .. _ug_nrfconnect_manufacturer_cluster_editor_tool_creating_new_cluster:
 
@@ -306,16 +329,16 @@ Creating a new Matter cluster
 This section describes how you can create a new Matter cluster and save it as an XML file using the tool.
 To create a new cluster definition, complete the following steps:
 
-1. Open the :guilabel:`Cluster` tab and fill in the required fields marked with the asterisk.
+1. Open the :guilabel:`CLUSTERS` tab and fill in the required fields marked with the asterisk.
    You can fill also the optional fields.
    To see tooltips for the fields, hover your mouse over them.
 
-#. Open one by one the :guilabel:`Commands`, :guilabel:`Attributes`, and :guilabel:`Events` tabs and add the required elements to the cluster.
+#. Open one by one the :guilabel:`COMMANDS`, :guilabel:`ATTRIBUTES`, and :guilabel:`EVENTS` tabs and add the required elements to the cluster.
    Click the :guilabel:`Add` button on the top of each element tab to add a new element to the cluster.
    See the :ref:`ug_nrfconnect_manufacturer_cluster_editor_tool_basic_functionalities` section to learn how to add a new element to the cluster.
 
-#. Open one by one the :guilabel:`Enums` and :guilabel:`Structs` tabs and add the required elements.
-   The enums and structs do not belong to the cluster, but you can assign them to one or more clusters.
+#. Open one by one the :guilabel:`ENUMS` and :guilabel:`STRUCTURES` tabs and add the required elements.
+   The enums and structures do not belong to the cluster, but you can assign them to one or more clusters.
    See the :ref:`ug_nrfconnect_manufacturer_cluster_editor_tool_basic_functionalities` section to learn how to add a new element to the cluster.
 
 #. Click :guilabel:`Save` to save the cluster to a file.
@@ -332,11 +355,11 @@ To create a cluster extension, complete the following steps:
    Use the system file dialog to select the XML cluster file.
    If the file contains more than one cluster, the tool shows the list of available clusters in the context menu.
 
-#. Open one by one the :guilabel:`Commands`, :guilabel:`Attributes`, and :guilabel:`Events` tabs and add the required elements to the cluster.
+#. Open one by one the :guilabel:`COMMANDS`, :guilabel:`ATTRIBUTES`, and :guilabel:`EVENTS` tabs and add the required elements to the cluster.
    Click the :guilabel:`Add` button on the top of each element tab to add a new element to the cluster.
    See the :ref:`ug_nrfconnect_manufacturer_cluster_editor_tool_basic_functionalities` section to learn how to add a new element to the cluster.
 
-#. Open one by one the :guilabel:`Enums` and :guilabel:`Structs` tabs and add the required elements.
+#. Open one by one the :guilabel:`ENUMS` and :guilabel:`STRUCTURES` tabs and add the required elements.
    The enums and structs do not belong to the cluster, but you can assign them to one or more clusters.
    See the :ref:`ug_nrfconnect_manufacturer_cluster_editor_tool_basic_functionalities` section to learn how to add a new element to the cluster.
 
@@ -350,7 +373,7 @@ Creating a new device type
 This section describes how you can create a new device type and save it as an XML file using the tool.
 To create a new device type, complete the following steps:
 
-1. Open the :guilabel:`Device type` tab and fill in the required fields marked with the asterisk.
+1. Open the :guilabel:`DEVICE TYPE` tab and fill in the required fields marked with the asterisk.
    You can fill also the optional fields.
    To see tooltips for the fields, hover your mouse over them.
 
@@ -368,12 +391,14 @@ To create a new device type, complete the following steps:
    * :guilabel:`Required Attributes` - Add a new assignment to the device type.
    * :guilabel:`Required Commands` - Add a new assignment to the device type.
    * :guilabel:`Required Events` - Add a new assignment to the device type.
-   * :guilabel:`Required Features` - Add a new assignment to the device type.
+   * :guilabel:`Features` - Add a new assignment to the device type.
 
    The following figure shows the dialog window to assign a cluster to the device type:
 
    .. figure:: images/matter_cluster_tool/matter_cluster_tool_device_type_add_cluster.png
       :alt: Add cluster assignment to device type
+
+      Add cluster assignment to device type
 
 #. Click one of the :guilabel:`Required` buttons, and in the new dialog window, add a new assignment by clicking the plus icon and filling in the exact name of the attribute, command or event.
 
@@ -382,6 +407,8 @@ To create a new device type, complete the following steps:
    .. figure:: images/matter_cluster_tool/matter_cluster_tool_device_type_add_cluster_dialog.png
       :alt: Add cluster assignment to device type dialog
 
+      Add cluster assignment to device type dialog
+
 #. You can also specify the features of the device type by clicking the :guilabel:`Features` button.
    In the new dialog window, click the plus icon to add a new feature, and fill in the code and name of the feature.
 
@@ -389,5 +416,7 @@ To create a new device type, complete the following steps:
 
    .. figure:: images/matter_cluster_tool/matter_cluster_tool_device_type_add_feature.png
       :alt: Add feature to device type
+
+      Add feature to device type
 
 #. Click the :guilabel:`Save extension to file` or :guilabel:`Save cluster type to file` button depending on the purpose of the file.
