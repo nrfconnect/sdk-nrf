@@ -31,7 +31,7 @@ int main(void)
 	uint32_t counter = 0;
 
 	__ASSERT(gpio_is_ready_dt(&led), "GPIO Device not ready");
-	__ASSERT(gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE) == 0,
+	__ASSERT(gpio_pin_configure_dt(&led, GPIO_OUTPUT_INACTIVE) == 0,
 		 "Could not configure led GPIO");
 
 	while (1) {
@@ -45,8 +45,8 @@ int main(void)
 		} while (ret == -EAGAIN);
 		__ASSERT(ret == 0, "return code: %d", ret);
 		__ASSERT(res == 0, "response: %d", res);
-		k_msleep(1000);
 		gpio_pin_toggle_dt(&led);
+		k_msleep(1000);
 		ret = nrf_clock_control_release(lfclk_dev, clk_spec);
 		__ASSERT(ret == ONOFF_STATE_ON, "return code: %d", ret);
 	}
