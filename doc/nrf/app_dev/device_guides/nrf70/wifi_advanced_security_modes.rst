@@ -181,7 +181,7 @@ To build the nRF70 Series DK for the :ref:`wifi_shell_sample` sample with Enterp
 
       cd nrf/samples/wifi/shell
 
-      west build -p -b nrf7002dk/nrf5340/cpuapp -- -DEXTRA_CONF_FILE=overlay-enterprise.conf -DCONFIG_WIFI_NM_WPA_SUPPLICANT_LOG_LEVEL_DBG=y -DCONFIG_LOG_MODE_IMMEDIATE=y
+      west build -p -b nrf7002dk/nrf5340/cpuapp -S shell_SNIPPET=wifi-enterprise -- -DCONFIG_WIFI_NM_WPA_SUPPLICANT_LOG_LEVEL_DBG=y -DCONFIG_LOG_MODE_IMMEDIATE=y
 
       west flash
 
