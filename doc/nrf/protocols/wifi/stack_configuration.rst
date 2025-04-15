@@ -196,7 +196,9 @@ The nRF Wi-Fi driver can be used in the following profiles (not an exhaustive li
        ``CONFIG_NET_BUF_RX_COUNT=6``
        ``CONFIG_NRF70_RX_NUM_BUFS=6``
        ``CONFIG_NET_BUF_DATA_SIZE=800``
-       ``CONFIG_HEAP_MEM_POOL_SIZE=230000``
+       ``CONFIG_HEAP_MEM_POOL_SIZE=40144``
+       ``CONFIG_NRF_WIFI_CTRL_HEAP_SIZE=20000``
+       ``CONFIG_NRF_WIFI_DATA_HEAP_SIZE=199856``
        ``CONFIG_SPEED_OPTIMIZATIONS=y``
        ``CONFIG_NRF70_UTIL=n``
        ``CONFIG_NRF70_MAX_TX_AGGREGATION=1``
@@ -217,7 +219,9 @@ The nRF Wi-Fi driver can be used in the following profiles (not an exhaustive li
        ``CONFIG_NET_BUF_RX_COUNT=6``
        ``CONFIG_NRF70_RX_NUM_BUFS=6``
        ``CONFIG_NET_BUF_DATA_SIZE=500``
-       ``CONFIG_HEAP_MEM_POOL_SIZE=230000``
+       ``CONFIG_HEAP_MEM_POOL_SIZE=40144``
+       ``CONFIG_NRF_WIFI_CTRL_HEAP_SIZE=20000``
+       ``CONFIG_NRF_WIFI_DATA_HEAP_SIZE=199856``
        ``CONFIG_SPEED_OPTIMIZATIONS=y``
        ``CONFIG_NRF70_UTIL=n``
        ``CONFIG_NRF70_MAX_TX_AGGREGATION=1``
@@ -237,16 +241,18 @@ The nRF Wi-Fi driver can be used in the following profiles (not an exhaustive li
        ``CONFIG_NET_BUF_TX_COUNT=60``
        ``CONFIG_NET_BUF_RX_COUNT=30``
        ``CONFIG_NET_BUF_DATA_SIZE=1100``
-       ``CONFIG_HEAP_MEM_POOL_SIZE=230000``
+       ``CONFIG_HEAP_MEM_POOL_SIZE=40144``
+       ``CONFIG_NRF_WIFI_CTRL_HEAP_SIZE=20000``
+       ``CONFIG_NRF_WIFI_DATA_HEAP_SIZE=199856``
        ``CONFIG_SPEED_OPTIMIZATIONS=y``
        ``CONFIG_NRF70_UTIL=n``
        ``CONFIG_NRF70_MAX_TX_AGGREGATION=9``
        ``CONFIG_NRF70_MAX_TX_TOKENS=12``
      - High data rate IoT devices
-     - ``TCP-TX: 14.2 Mbps``
-       ``TCP-RX: 7.4  Mbps``
-       ``UDP-TX: 26.2 Mbps``
-       ``UDP-RX: 12.4 Mbps``
+     - ``TCP-TX: 13.8 Mbps``
+       ``TCP-RX: 9.1 Mbps``
+       ``UDP-TX: 27.4 Mbps``
+       ``UDP-RX: 19.7 Mbps``
    * - :abbr:`STA (Station)` mode
      - TX prioritized :abbr:`STA (Station)` mode
      - ``CONFIG_WIFI_NM_WPA_SUPPLICANT=y``
@@ -258,37 +264,41 @@ The nRF Wi-Fi driver can be used in the following profiles (not an exhaustive li
        ``CONFIG_NET_BUF_RX_COUNT=10``
        ``CONFIG_NRF70_RX_NUM_BUFS=10``
        ``CONFIG_NET_BUF_DATA_SIZE=1100``
-       ``CONFIG_HEAP_MEM_POOL_SIZE=230000``
+       ``CONFIG_HEAP_MEM_POOL_SIZE=40144``
+       ``CONFIG_NRF_WIFI_CTRL_HEAP_SIZE=20000``
+       ``CONFIG_NRF_WIFI_DATA_HEAP_SIZE=199856``
        ``CONFIG_SPEED_OPTIMIZATIONS=y``
        ``CONFIG_NRF70_UTIL=n``
        ``CONFIG_NRF70_MAX_TX_AGGREGATION=9``
        ``CONFIG_NRF70_MAX_TX_TOKENS=12``
      - Sensors with high data rate
-     - ``TCP-TX: 9.2  Mbps``
-       ``TCP-RX: 3.6  Mbps``
-       ``UDP-TX: 26.6 Mbps``
-       ``UDP-RX: 12.8 Mbps``
+     - ``TCP-TX: 13.7 Mbps``
+       ``TCP-RX: 9.3 Mbps``
+       ``UDP-TX: 27.6 Mbps``
+       ``UDP-RX: 19.6 Mbps``
    * - :abbr:`STA (Station)` mode
      - RX prioritized :abbr:`STA (Station)` mode
      - ``CONFIG_WIFI_NM_WPA_SUPPLICANT=y``
        ``CONFIG_NRF70_AP_MODE=n``
        ``CONFIG_NRF70_P2P_MODE=n``
-       ``CONFIG_NET_PKT_TX_COUNT=5``
+       ``CONFIG_NET_PKT_TX_COUNT=20``
        ``CONFIG_NET_PKT_RX_COUNT=64``
-       ``CONFIG_NET_BUF_TX_COUNT=10``
+       ``CONFIG_NET_BUF_TX_COUNT=40``
        ``CONFIG_NET_BUF_RX_COUNT=64``
        ``CONFIG_NRF70_RX_NUM_BUFS=64``
        ``CONFIG_NET_BUF_DATA_SIZE=1100``
-       ``CONFIG_HEAP_MEM_POOL_SIZE=230000``
+       ``CONFIG_HEAP_MEM_POOL_SIZE=40144``
+       ``CONFIG_NRF_WIFI_CTRL_HEAP_SIZE=20000``
+       ``CONFIG_NRF_WIFI_DATA_HEAP_SIZE=199856``
        ``CONFIG_SPEED_OPTIMIZATIONS=y``
        ``CONFIG_NRF70_UTIL=n``
        ``CONFIG_NRF70_MAX_TX_AGGREGATION=2``
        ``CONFIG_NRF70_MAX_TX_TOKENS=5``
      - Display devices streaming data
-     - ``TCP-TX: 5.3  Mbps``
-       ``TCP-RX: 7.9  Mbps``
-       ``UDP-TX: 8.6  Mbps``
-       ``UDP-RX: 12.7 Mbps``
+     - ``TCP-TX: 11 Mbps``
+       ``TCP-RX: 8.8 Mbps``
+       ``UDP-TX: 9.2 Mbps``
+       ``UDP-RX: 16.9 Mbps``
 
 .. note::
    The measured throughputs, as shown in the table above, are based on tests conducted using the nRF7002 DK.
