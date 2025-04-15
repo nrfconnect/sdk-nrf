@@ -7,12 +7,11 @@
 #include <zephyr/kernel.h>
 #include <zephyr/init.h>
 #include <fprotect.h>
-#include <pm_config.h>
 #include <zephyr/storage/flash_map.h>
 
-#define PRIORITY_LEVEL 0 /* Locking should be performed as soon as possible */
-
 #ifdef USE_PARTITION_MANAGER
+#include <pm_config.h>
+
 #define AREA_ADDRESS PM_ADDRESS
 #define AREA_SIZE PM_SIZE
 #else
@@ -20,6 +19,8 @@
 #define AREA_ADDRESS FIXED_PARTITION_NODE_OFFSET(CODE_PARTITION)
 #define AREA_SIZE FIXED_PARTITION_NODE_SIZE(CODE_PARTITION)
 #endif
+
+#define PRIORITY_LEVEL 0 /* Locking should be performed as soon as possible */
 
 BUILD_ASSERT(AREA_ADDRESS % CONFIG_FPROTECT_BLOCK_SIZE == 0,
 	     "Unable to protect app image since its start address does not "
