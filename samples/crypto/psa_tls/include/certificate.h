@@ -12,37 +12,15 @@
 #define PSK_TAG 3
 
 
-#if defined(CONFIG_PSA_TLS_CERTIFICATE_TYPE_RSA)
-
 static const unsigned char ca_certificate[] = {
 #include "root-cert.der.inc"
 };
 static const unsigned char server_certificate[] = {
-#include "echo-apps-cert.der.inc"
+#include "server-cert.der.inc"
 };
 /* This is the private key in pkcs#8 format. */
 static const unsigned char private_key[] = {
-#include "echo-apps-key.der.inc"
+#include "server-cert-key.der.inc"
 };
-
-#elif defined(CONFIG_PSA_TLS_CERTIFICATE_TYPE_ECDSA)
-
-static const unsigned char ca_certificate[] = {
-#include "ec-root-cert.der.inc"
-};
-static const unsigned char server_certificate[] = {
-#include "ec-echo-apps-cert.der.inc"
-};
-/* This is the private key in pkcs#8 format. */
-static const unsigned char private_key[] = {
-#include "ec-echo-apps-key.der.inc"
-};
-
-#else
-
-#error "No certificate type selected"
-
-#endif
-
 
 #endif /* __CERTIFICATE_H__ */

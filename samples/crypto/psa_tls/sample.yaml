@@ -10,7 +10,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf"
+      EXTRA_CONF_FILE="overlays/server.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf"
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - nrf9160dk/nrf9160
@@ -38,7 +38,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf;overlays/dtls.conf"
+      EXTRA_CONF_FILE="overlays/server.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf;overlays/dtls.conf"
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
@@ -67,7 +67,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf"
+      EXTRA_CONF_FILE="overlays/client.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf"
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
@@ -95,7 +95,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf;overlays/dtls.conf"
+      EXTRA_CONF_FILE="overlays/client.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf;overlays/dtls.conf"
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
@@ -124,7 +124,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf;overlays/tls_1_3.conf"
+      EXTRA_CONF_FILE="overlays/server.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf;overlays/tls_1_3.conf"
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
@@ -152,7 +152,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf;overlays/tls_1_3.conf"
+      EXTRA_CONF_FILE="overlays/client.conf;overlays/ecdsa.conf;overlays/cc3xx-oberon-psa.conf;overlays/tls_1_3.conf"
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - nrf5340dk/nrf5340/cpuapp/ns
@@ -183,7 +183,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/cracen-psa.conf"
+      EXTRA_CONF_FILE="overlays/server.conf;overlays/ecdsa.conf;overlays/cracen-psa.conf"
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -207,7 +207,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/cracen-psa.conf;overlays/dtls.conf"
+      EXTRA_CONF_FILE="overlays/server.conf;overlays/ecdsa.conf;overlays/cracen-psa.conf;overlays/dtls.conf"
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -232,7 +232,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/cracen-psa.conf"
+      EXTRA_CONF_FILE="overlays/client.conf;overlays/ecdsa.conf;overlays/cracen-psa.conf"
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -256,7 +256,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/cracen-psa.conf;overlays/dtls.conf"
+      EXTRA_CONF_FILE="overlays/client.conf;overlays/ecdsa.conf;overlays/cracen-psa.conf;overlays/dtls.conf"
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -276,11 +276,112 @@ tests:
       - cracen
       - sysbuild
       - ci_samples_crypto
+  sample.psa_tls.tls_server_secp384r1.ecdsa.cracen:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      EXTRA_CONF_FILE="overlays/server.conf;overlays/ecdsa_secp384r1.conf;overlays/cracen-psa.conf"
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
+    tags:
+      - ci_build
+      - cracen
+      - sysbuild
+      - ci_samples_crypto
+      - secp384r1
+  sample.psa_tls.dtls_server_secp384r1.ecdsa.cracen:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      EXTRA_CONF_FILE="overlays/server.conf;overlays/ecdsa_secp384r1.conf;overlays/cracen-psa.conf;overlays/dtls.conf"
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
+    tags:
+      - ci_build
+      - cracen
+      - dtls
+      - sysbuild
+      - ci_samples_crypto
+      - secp384r1
+  sample.psa_tls.tls_client_secp384r1.ecdsa.cracen:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      EXTRA_CONF_FILE="overlays/client.conf;overlays/ecdsa_secp384r1.conf;overlays/cracen-psa.conf"
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
+    tags:
+      - ci_build
+      - cracen
+      - sysbuild
+      - ci_samples_crypto
+      - secp384r1
+  sample.psa_tls.dtls_client_secp384r1.ecdsa.cracen:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      EXTRA_CONF_FILE="overlays/client.conf;overlays/ecdsa_secp384r1.conf;overlays/cracen-psa.conf;overlays/dtls.conf"
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpurad
+    tags:
+      - ci_build
+      - cracen
+      - sysbuild
+      - ci_samples_crypto
+      - secp384r1
   sample.psa_tls.tls_1_3_server.ecdsa.cracen:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/cracen-psa.conf;overlays/tls_1_3.conf"
+      EXTRA_CONF_FILE="overlays/server.conf;overlays/ecdsa.conf;overlays/cracen-psa.conf;overlays/tls_1_3.conf"
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -302,7 +403,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/cracen-psa.conf;overlays/tls_1_3.conf"
+      EXTRA_CONF_FILE="overlays/client.conf;overlays/ecdsa.conf;overlays/cracen-psa.conf;overlays/tls_1_3.conf"
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -327,7 +428,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/cracen-oberon-psa.conf;overlays/tls_1_3.conf"
+      EXTRA_CONF_FILE="overlays/server.conf;overlays/ecdsa.conf;overlays/cracen-oberon-psa.conf;overlays/tls_1_3.conf"
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -347,7 +448,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/cracen-oberon-psa.conf;overlays/tls_1_3.conf"
+      EXTRA_CONF_FILE="overlays/client.conf;overlays/ecdsa.conf;overlays/cracen-oberon-psa.conf;overlays/tls_1_3.conf"
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -370,7 +471,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG="overlays/server.conf;overlays/rsa.conf;overlays/cc3xx-legacy.conf"
+      EXTRA_CONF_FILE="overlays/server.conf;overlays/rsa.conf;overlays/cc3xx-legacy.conf"
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf9160dk/nrf9160
@@ -391,7 +492,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG="overlays/client.conf;overlays/rsa.conf;overlays/cc3xx-legacy.conf"
+      EXTRA_CONF_FILE="overlays/client.conf;overlays/rsa.conf;overlays/cc3xx-legacy.conf"
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf9160dk/nrf9160
@@ -412,7 +513,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/cc3xx-legacy.conf"
+      EXTRA_CONF_FILE="overlays/server.conf;overlays/ecdsa.conf;overlays/cc3xx-legacy.conf"
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf9160dk/nrf9160
@@ -433,7 +534,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/cc3xx-legacy.conf"
+      EXTRA_CONF_FILE="overlays/client.conf;overlays/ecdsa.conf;overlays/cc3xx-legacy.conf"
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf9160dk/nrf9160
@@ -457,7 +558,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG="overlays/server.conf;overlays/rsa.conf;overlays/oberon-legacy.conf"
+      EXTRA_CONF_FILE="overlays/server.conf;overlays/rsa.conf;overlays/oberon-legacy.conf"
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf9160dk/nrf9160
@@ -478,7 +579,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG="overlays/client.conf;overlays/rsa.conf;overlays/oberon-legacy.conf"
+      EXTRA_CONF_FILE="overlays/client.conf;overlays/rsa.conf;overlays/oberon-legacy.conf"
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf9160dk/nrf9160
@@ -499,7 +600,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG="overlays/server.conf;overlays/ecdsa.conf;overlays/oberon-legacy.conf"
+      EXTRA_CONF_FILE="overlays/server.conf;overlays/ecdsa.conf;overlays/oberon-legacy.conf"
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf9160dk/nrf9160
@@ -520,7 +621,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      OVERLAY_CONFIG="overlays/client.conf;overlays/ecdsa.conf;overlays/oberon-legacy.conf"
+      EXTRA_CONF_FILE="overlays/client.conf;overlays/ecdsa.conf;overlays/oberon-legacy.conf"
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf9160dk/nrf9160

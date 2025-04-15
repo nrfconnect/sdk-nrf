@@ -22,43 +22,46 @@ else()
 endif()
 
 if(CONFIG_PSA_TLS_SAMPLE_TYPE_SERVER)
-    target_sources(app PRIVATE src/${TLS_SRC_PATH}/psa_tls_credentials_server.c)
-    if(CONFIG_NET_SOCKETS_ENABLE_DTLS)
-        target_sources(app PRIVATE src/psa_dtls_functions_server.c)
-    else()
-        target_sources(app PRIVATE src/psa_tls_functions_server.c)
-    endif()
+  target_sources(app PRIVATE src/${TLS_SRC_PATH}/psa_tls_credentials_server.c)
+  if(CONFIG_NET_SOCKETS_ENABLE_DTLS)
+    target_sources(app PRIVATE src/psa_dtls_functions_server.c)
+  else()
+    target_sources(app PRIVATE src/psa_tls_functions_server.c)
+  endif()
 else()
-    target_sources(app PRIVATE src/${TLS_SRC_PATH}/psa_tls_credentials_client.c)
-    if(CONFIG_NET_SOCKETS_ENABLE_DTLS)
-        target_sources(app PRIVATE src/psa_dtls_functions_client.c)
-    else()
-        target_sources(app PRIVATE src/psa_tls_functions_client.c)
-    endif()
+  target_sources(app PRIVATE src/${TLS_SRC_PATH}/psa_tls_credentials_client.c)
+  if(CONFIG_NET_SOCKETS_ENABLE_DTLS)
+    target_sources(app PRIVATE src/psa_dtls_functions_client.c)
+  else()
+    target_sources(app PRIVATE src/psa_tls_functions_client.c)
+  endif()
 endif()
 
 set(gen_dir ${ZEPHYR_BINARY_DIR}/include/generated/)
 
-foreach(inc_file
-  ec-root-cert.der
-	ec-echo-apps-cert.der
-	ec-echo-apps-key.der
-    )
-  generate_inc_file_for_target(
-    app
-    certs/ecdsa/${inc_file}
-    ${gen_dir}/${inc_file}.inc
-    )
-endforeach()
+if(CONFIG_PSA_WANT_ECC_SECP_R1_256)
+  set(CURVE "_secp256r1")
+elseif(CONFIG_PSA_WANT_ECC_SECP_R1_384)
+  set(CURVE "_secp384r1")
+endif()
+
+if(CONFIG_PSA_TLS_CERTIFICATE_TYPE_RSA)
+  set(CTYPE "rsa")
+  set(CURVE "")
+elseif(CONFIG_PSA_TLS_CERTIFICATE_TYPE_ECDSA)
+  set(CTYPE "ec")
+endif()
+
 
 foreach(inc_file
-  root-cert.der
-	echo-apps-cert.der
-	echo-apps-key.der
-    )
+  root-cert
+  server-cert
+  server-cert-key
+)
+  set(modified_inc_file "${CTYPE}-${inc_file}${CURVE}.der")
   generate_inc_file_for_target(
     app
-    certs/rsa/${inc_file}
-    ${gen_dir}/${inc_file}.inc
-    )
+    certs/${modified_inc_file}
+    ${gen_dir}/${inc_file}.der.inc
+  )
 endforeach()
