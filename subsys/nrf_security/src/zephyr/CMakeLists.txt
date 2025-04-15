@@ -34,10 +34,12 @@ if(CONFIG_MBEDTLS_ENTROPY_POLL)
   )
 endif()
 
-# Include a late initialization of psa_crypto_init just-in-case
-list(APPEND src_zephyr
-  psa_crypto_init.c
-)
+if(CONFIG_PSA_CRYPTO_SYS_INIT)
+  # Include a late initialization of psa_crypto_init just-in-case
+  list(APPEND src_zephyr
+    psa_crypto_init.c
+  )
+endif()
 
 if(CONFIG_BUILD_WITH_TFM)
   # For some reason $<TARGET_PROPERTY:tfm,TFM_BINARY_DIR> does not work here
