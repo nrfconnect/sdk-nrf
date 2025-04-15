@@ -102,6 +102,7 @@
 .. _`Golioth Firmware SDK NCS doc`: https://github.com/golioth/golioth-firmware-sdk/tree/v0.13.1/examples/zephyr#using-with-nordics-nrf-connect-sdk
 
 .. _`nrfx`: https://github.com/NordicSemiconductor/nrfx/
+.. _`nrfx API documentation`: https://docs.nordicsemi.com/bundle/nrfx-apis-latest/page/index.html
 .. _`Changelog for nrfx 2.2.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-220---2020-04-28
 .. _`Changelog for nrfx 2.3.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-230---2020-08-19
 .. _`Changelog for nrfx 2.4.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-240---2020-11-13
@@ -630,6 +631,9 @@
 .. _`Zephyr Logging`: https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/services/logging/index.html
 .. _`Dictionary-based Logging`: https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/services/logging/index.html#dictionary-based_logging
 .. _`Run-time Filtering`: https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/services/logging/index.html#runtime_filtering
+.. _`Device Runtime Power Management`: https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/services/pm/device_runtime.html
+.. _`System Power Off`: https://docs.nordicsemi.com/bundle/zephyr-apis-latest/page/group_sys_poweroff.html
+.. _`System Power Management`: https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/services/pm/system.html
 
 .. _`nRF9160: GPS with SUPL client library`: https://docs.nordicsemi.com/bundle/ncs-1.2.0/page/nrf/samples/nrf9160/gps/README.html
 
