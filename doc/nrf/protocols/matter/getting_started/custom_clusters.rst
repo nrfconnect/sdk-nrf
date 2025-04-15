@@ -63,17 +63,19 @@ To learn more about the tool, see the :ref:`ug_nrfconnect_manufacturer_cluster_e
       Once you have the tool installed, you can create a new cluster description file.
       Complete the following steps:
 
-      1. Edit the :guilabel:`Cluster` tab contents.
+      1. Edit the :guilabel:`CLUSTER` tab contents.
 
-         a. Open the :guilabel:`Cluster` tab.
+         a. Open the :guilabel:`CLUSTER` tab.
          #. Fill in the domain, name, code, define, and description of the cluster as follows:
 
             .. figure:: images/matter_creating_custom_cluster_cluster_page.png
                :alt: Cluster tab
 
-      #. Add a new command in the :guilabel:`Commands` tab.
+               CLUSTER tab
 
-         a. Open the :guilabel:`Commands` tab.
+      #. Add a new command in the :guilabel:`COMMANDS` tab.
+
+         a. Open the :guilabel:`COMMANDS` tab.
          #. Click :guilabel:`Add command` to open edit box.
          #. In the edit box, set the following values:
 
@@ -94,6 +96,8 @@ To learn more about the tool, see the :ref:`ug_nrfconnect_manufacturer_cluster_e
             .. figure:: images/matter_creating_custom_cluster_arguments_page.png
                :alt: Arguments tab
 
+               Arguments tab
+
          #. Click :guilabel:`Save` to save the arguments.
 
             The following figure shows the filled in edit box dialog with the new command added:
@@ -101,11 +105,13 @@ To learn more about the tool, see the :ref:`ug_nrfconnect_manufacturer_cluster_e
             .. figure:: images/matter_creating_custom_cluster_commands_page.png
                :alt: Commands tab
 
+               Commands tab
+
          #. Click :guilabel:`Save` to save the command.
 
-      #. Add a new argument in the :guilabel:`Attributes` tab.
+      #. Add a new argument in the :guilabel:`ATTRIBUTES` tab.
 
-         a. Open the :guilabel:`Attributes` tab.
+         a. Open the :guilabel:`ATTRIBUTES` tab.
          #. Click :guilabel:`Add attribute` to open edit box dialog.
          #. Set the following values:
 
@@ -121,11 +127,13 @@ To learn more about the tool, see the :ref:`ug_nrfconnect_manufacturer_cluster_e
             .. figure:: images/matter_creating_custom_cluster_attributes_page.png
                :alt: Attributes tab
 
+               Attributes tab
+
          #. Click :guilabel:`Save` to save the attribute.
 
-      #. Add a new event in the :guilabel:`Events` tab.
+      #. Add a new event in the :guilabel:`EVENTS` tab.
 
-         a. Open the :guilabel:`Events` tab.
+         a. Open the :guilabel:`EVENTS` tab.
          #. Click :guilabel:`Add event` to open edit box dialog.
          #. In the edit box, set the following values:
 
@@ -148,6 +156,8 @@ To learn more about the tool, see the :ref:`ug_nrfconnect_manufacturer_cluster_e
             .. figure:: images/matter_creating_custom_cluster_fields_page.png
                :alt: Fields tab
 
+               Fields tab
+
          #. Click :guilabel:`Save` to save the field.
 
             The following figure shows the filled in edit box dialog with the new event added:
@@ -155,11 +165,13 @@ To learn more about the tool, see the :ref:`ug_nrfconnect_manufacturer_cluster_e
             .. figure:: images/matter_creating_custom_cluster_event_page.png
                :alt: Event page
 
-         #. Click on the :guilabel:`Save` button to save the event.
+               Events tab
 
-      #. Add a new structure in the :guilabel:`Structures` tab.
+         #. Click :guilabel:`Save` to save the event.
 
-         a. Open the :guilabel:`Structures` tab.
+      #. Add a new structure in the :guilabel:`STRUCTURES` tab.
+
+         a. Open the :guilabel:`STRUCTURES` tab.
          #. Click :guilabel:`Add structure` to open edit box dialog.
          #. In the edit box, set the following values:
 
@@ -180,6 +192,8 @@ To learn more about the tool, see the :ref:`ug_nrfconnect_manufacturer_cluster_e
             .. figure:: images/matter_creating_custom_cluster_structure_items_page.png
                :alt: Structure items tab
 
+               Structure items tab
+
          #. Click :guilabel:`Save` to save the item.
          #. Click :guilabel:`Assigned clusters` to open edit box dialog.
          #. In the new edit box, click the plus icon to create a new cluster assignment.
@@ -190,6 +204,8 @@ To learn more about the tool, see the :ref:`ug_nrfconnect_manufacturer_cluster_e
             .. figure:: images/matter_creating_custom_cluster_assigned_clusters_page.png
                :alt: Assigned clusters tab
 
+               Assigned clusters tab
+
          #. Click :guilabel:`Save` to save the cluster.
 
             The following figure shows the filled in edit box dialog with the new structure added:
@@ -197,11 +213,13 @@ To learn more about the tool, see the :ref:`ug_nrfconnect_manufacturer_cluster_e
             .. figure:: images/matter_creating_custom_cluster_structures_page.png
                :alt: Structures tab
 
+               Structures tab
+
          #. Click :guilabel:`Save` to save the structure.
 
-      #. Add a new enum in the :guilabel:`Enums` tab.
+      #. Add a new enum in the :guilabel:`ENUMS` tab.
 
-         a. Open the :guilabel:`Enums` tab.
+         a. Open the :guilabel:`ENUMS` tab.
          #. Click :guilabel:`Add enum` to open edit box dialog.
          #. Set the following values:
 
@@ -226,6 +244,8 @@ To learn more about the tool, see the :ref:`ug_nrfconnect_manufacturer_cluster_e
             .. figure:: images/matter_creating_custom_cluster_items_enum_page.png
                :alt: Items tab
 
+               Items tab
+
          #. Click :guilabel:`Save` to save the item.
          #. Click :guilabel:`Assigned clusters` to open edit box dialog.
          #. In the new edit box, click the plus icon to create a new cluster assignment.
@@ -236,6 +256,8 @@ To learn more about the tool, see the :ref:`ug_nrfconnect_manufacturer_cluster_e
             .. figure:: images/matter_creating_custom_cluster_assigned_clusters_page.png
                :alt: Assigned clusters tab
 
+               Assigned clusters tab
+
          #. Click :guilabel:`Save` to save the cluster.
 
             The following figure shows the filled in edit box dialog with the new enum added:
@@ -243,21 +265,27 @@ To learn more about the tool, see the :ref:`ug_nrfconnect_manufacturer_cluster_e
             .. figure:: images/matter_creating_custom_cluster_enums_page.png
                :alt: Enums tab
 
+               Enums tab
+
          #. Click :guilabel:`Save` to save the enum.
 
-      #. Add a new device type in the :guilabel:`Device Type` tab.
+      #. Add a new device type in the :guilabel:`DEVICE TYPE` tab.
 
-         a. Open the :guilabel:`Device Type` tab.
+         a. Open the :guilabel:`DEVICE TYPE` tab.
          #. Fill the fields as follows:
 
             .. figure:: images/matter_creating_custom_cluster_device_type_page.png
                :alt: Device type tab
+
+               Device type tab
 
          #. Click :guilabel:`Add cluster assignment to device type` to open edit box dialog.
          #. Fill the Cluster fields as follows:
 
             .. figure:: images/matter_creating_custom_cluster_device_type_cluster_assignment_page.png
                :alt: Device type cluster assignment tab
+
+               Device type cluster assignment tab
 
          #. Click :guilabel:`Save` to save the cluster assignment.
 
@@ -517,7 +545,7 @@ To learn more about the tool, see the :ref:`ug_nrfconnect_manufacturer_cluster_e
                </deviceType>
 
       .. note::
-         The descriptions of the elements above show only the basic functionality.
+         The descriptions of the elements show only the basic functionality.
          To see the full list of available elements for each part of the XML file, refer to the Matter Specification.
 
 For an example, you can use the following template for the :file:`MyCluster.xml` file:
@@ -622,21 +650,21 @@ This guide focuses on the :ref:`ug_matter_gs_tools_matter_west_commands_zap_tool
 
 #. Click the gear icon to open the cluster configuration and enable the attributes, commands, and events.
 
-   a. In the :guilabel:`ATTRIBUTES` tab, ensure that you have the required attributes enabled.
+   a. In the :guilabel:`Attributes` tab, ensure that you have the required attributes enabled.
 
       .. figure:: images/matter_creating_custom_cluster_attributes.png
          :alt: Attributes of the new custom cluster in ZAP tool
 
          Attributes of the new custom cluster in ZAP tool
 
-   #. In the :guilabel:`COMMANDS` tab, ensure that you have the required commands enabled.
+   #. In the :guilabel:`Commands` tab, ensure that you have the required commands enabled.
 
       .. figure:: images/matter_creating_custom_cluster_commands.png
          :alt: Commands of the new custom cluster in ZAP tool
 
          Commands of the new custom cluster in ZAP tool
 
-   #. In the :guilabel:`EVENTS` tab, ensure that you have the required events enabled.
+   #. In the :guilabel:`Events` tab, ensure that you have the required events enabled.
 
       .. figure:: images/matter_creating_custom_cluster_events.png
          :alt: Events of the new custom cluster in ZAP tool
