@@ -2044,6 +2044,28 @@ The issues in this section are related to the :ref:`nrf_desktop` application.
     nRF Desktop is also affected by :ref:`hogp_readme` library's issue :ref:`NCSDK-30288 <ncsdk_30288>`.
     The issue may cause accessing data under ``NULL`` pointer in case of Bluetooth disconnection while forwarding a configuration channel operation in the :ref:`nrf_desktop_hid_forward`.
 
+.. rst-class:: v2-9-0-nRF54H20-1 v2-9-1 v2-9-0 v2-8-0 v2-7-0
+
+NCSDK-30504: USB High-Speed slight report rate drop
+  Due to interoperability issues with Bluetooth, the nRF Desktop USBHS report rate is slightly lower than 8000 Hz.
+  The device is sometimes too slow to provide the report in time, which causes a report rate drop up to around 7997 Hz.
+
+  **Affected platforms:** nRF54H20
+
+  **Workaround:** Disable Bluetooth LE advertising completely by disabling the :ref:`CONFIG_DESKTOP_BLE_ADV <config_desktop_ble_adv>` Kconfig option.
+  Note that this is not a correct way of disabling Bluetooth completely and Bluetooth stack will still be compiled in.
+  The workaround can be used for testing the full 8000 Hz report rate.
+  You can also enable the :ref:`CONFIG_DESKTOP_USB_HID_REPORT_SENT_ON_SOF <config_desktop_app_options>` Kconfig option to further improve the report rate.
+
+.. rst-class:: v2-9-0-nRF54H20-1 v2-9-1 v2-9-0 v2-8-0
+
+NCSDK-30503: USB High-Speed report rate drop when motion is simulated
+  The USB High-Speed report rate drops to around 5100 Hz when motion is simulated (the :ref:`CONFIG_DESKTOP_MOTION_SIMULATED_ENABLE <config_desktop_app_options>` Kconfig option is enabled) due to the Power Management module interoperability issues.
+
+  **Affected platforms:** nRF54H20
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``5b2912dded7d71e701670eda14cdfbd5b837ac60``).
+
 .. rst-class:: v2-7-0
 
 NCSDK-27983: No Bluetooth advertising after a software reset
