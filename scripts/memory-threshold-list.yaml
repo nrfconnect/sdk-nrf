@@ -84,7 +84,7 @@
   rom_increase: 512
   ram_increase: 256
   codeowners:
-    - MarekPieta
+    - nrfconnect/ncs-si-bluebagel
 
 - scenarios:
     - applications.hpf.gpio.mbox
