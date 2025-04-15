@@ -1,0 +1,13 @@
+# The configurations resulting as a product of scenarios and platforms
+# will be skipped if quarantine is used. More details here:
+# https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
+
+# This file is used to quarantine test built using ARM LLVM compiler
+
+- scenarios:
+    - applications.nrf_desktop.zdebug.uart.kmu_provision
+    - applications.nrf_desktop.zdebug_fast_pair.gmouse.uart.kmu_provision
+    - applications.nrf_desktop.zdebug_keyboard.uart.kmu_provision
+    - applications.nrf_desktop.zrelease
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
