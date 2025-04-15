@@ -195,8 +195,8 @@ There are multiple ways to generate and register these certificates:
       #. Take note of the certificate ARN, as it will be required later.
       #. Download the `Amazon Root CA 1`_ PEM file as :file:`ca-cert.pem`.
          If the file is saved as :file:`.txt` file, you need to rename it back to a :file:`.pem` file.
-      #. Place the PEM files into the folder path specified by the :kconfig:option:`CONFIG_MQTT_HELPER_CERTIFICATES_FOLDER` option, default is :file:`<app_src_dir>/certs/`.
-         Ensure that the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` option is set.
+      #. Place the PEM files from steps 1 and 3 into the folder path specified by the :kconfig:option:`CONFIG_MQTT_HELPER_CERTIFICATES_FOLDER` option, default is :file:`<app_src_dir>/certs/`.
+         Ensure that the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option is set.
 
 		   .. note::
 		      It is not necessary to set the :kconfig:option:`CONFIG_MQTT_HELPER_CERTIFICATES_FOLDER` Kconfig option if the file is placed in a folder named :file:`certs` under the application source directory.
