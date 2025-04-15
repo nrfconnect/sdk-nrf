@@ -238,13 +238,13 @@ The snippets are in the :file:`nrf/snippets` directory of the |NCS|.
 For more information about using snippets, see :ref:`zephyr:using-snippets` in the Zephyr documentation.
 
 Specify the corresponding snippet names in the :makevar:`SNIPPET` CMake option for the application configuration.
-The following is an example command for the ``nrf52840dk/nrf52840`` board target that adds the ``matter-diagnostic-logs`` snippet to the :ref:`matter_lock_sample` sample:
+The following is an example command for the ``nrf52840dk/nrf52840`` board target that adds the ``diagnostic-logs`` snippet to the :ref:`matter_lock_sample` sample:
 
 .. code-block::
 
-   west build -b nrf52840dk/nrf52840 -- -Dlock_SNIPPET=matter-diagnostic-logs
+   west build -b nrf52840dk/nrf52840 -- -Dlock_SNIPPET=diagnostic-logs
 
 The following snippets are available:
 
-* ``matter-diagnostic-logs`` - Enables the set of configurations needed for full Matter diagnostic logs support.
+* ``diagnostic-logs`` - Enables the set of configurations needed for full Matter diagnostic logs support.
   See :ref:`ug_matter_diagnostic_logs_snippet` in the Matter protocol section for more information.
