@@ -54,6 +54,8 @@ You may experience the following issues:
 By default, MCUboot uses a single key.
 You can configure the number of key generations that MCUboot uses for application verification with the ``CONFIG_BOOT_SIGNATURE_KMU_SLOTS`` MCUboot's Kconfig option.
 
+NSIB for nRF54L SoCs supports three key generations.
+
 Limitations on key types and trade-offs
 ***************************************
 

@@ -87,7 +87,8 @@ To specify a signature key file for this bootloader, set the ``SB_CONFIG_SECURE_
 
       Escaped quotations avoid malformed-string warnings from Kconfig.
 
-This option only accepts the private key of an ECDSA key pair, as the build system scripts automatically extract the public key at build time.
+This option accepts the private key of an Ed25519 key pair for nRF54L SoCs and private key of an ECDSA key pair for the others.
+The build system scripts automatically extract the public key at build time.
 
 The file argument must be a string and is specified in one of the following ways:
 
@@ -142,6 +143,8 @@ For example, if a directory named :file:`_keys` located in :file:`/home/user/ncs
 You can find specific configuration options for keys with this bootloader in :file:`nrf/sysbuild/Kconfig.secureboot`.
 
 See :ref:`ug_fw_update_keys` for information on how to generate custom keys for a project.
+
+For SoCs using KMU for NSIB (nRF54L Series devices), the private key must be provisioned in the KMU before NSIB can be run.
 
 Additionally, the |NSIB| supports the following methods for signing images with private keys:
 
