@@ -46,9 +46,9 @@ int main(void)
 		__ASSERT(ret == 0, "return code: %d", ret);
 		__ASSERT(res == 0, "response: %d", res);
 		k_msleep(1000);
-		gpio_pin_toggle_dt(&led);
 		ret = nrf_clock_control_release(lfclk_dev, clk_spec);
 		__ASSERT(ret == ONOFF_STATE_ON, "return code: %d", ret);
+		gpio_pin_toggle_dt(&led);
 	}
 
 	return 0;
