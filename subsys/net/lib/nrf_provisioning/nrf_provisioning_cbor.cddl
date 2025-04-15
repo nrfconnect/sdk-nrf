@@ -17,7 +17,7 @@ at_command = (
 
 config = (
     object_type: 1,
-    properties: {0*100 tstr => tstr}    ; key value pair properties
+    properties: {0*10 tstr => tstr}    ; key value pair properties
 )
 
 finished = (
