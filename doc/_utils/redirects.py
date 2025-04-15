@@ -419,6 +419,7 @@ NRF = [
     ("ug_zigbee_tools", "protocols/zigbee/index"), # Zigbee tools (removed after v3.0.0)
     ("protocols/zigbee/tools", "protocols/zigbee/index"),
     ("applications/nrf5340_audio/README", "applications/nrf5340_audio/index"), # nRF5340 Audio applications (landing)
+    ("applications/sdp/gpio/README", "applications/hpf/gpio/README"), #High-Performance Framework applications
     ("samples/samples_bl", "samples/bl"), # Bluetooth samples (landing)
     ("samples/bluetooth/connection_event_trigger/README", "samples/bluetooth/event_trigger/README"),
     ("samples/bluetooth/broadcast_config_tool/README", "samples/bluetooth/nrf_auraconfig/README"),
