@@ -179,7 +179,7 @@ static int cracen_signature_prepare_ec_pubkey(const char *key_buffer, size_t key
 		status = generate_ikg_pub_key(key_buffer, key_buffer_size, *sicurve, pubkey_buffer);
 		return status;
 	}
-	if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS)) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_255)) {
 		if (alg == PSA_ALG_PURE_EDDSA || alg == PSA_ALG_ED25519PH) {
 			if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(psa_get_key_type(attributes))) {
 				memcpy(pubkey_buffer, key_buffer, key_buffer_size);
@@ -262,7 +262,7 @@ static psa_status_t handle_eddsa_sign(bool is_message, const psa_key_attributes_
 {
 	int status;
 
-	if (alg == PSA_ALG_ED25519PH && IS_ENABLED(CONFIG_PSA_WANT_ALG_ED25519PH)) {
+	if (alg == PSA_ALG_ED25519PH && IS_ENABLED(PSA_NEED_CRACEN_ED25519PH)) {
 		status = cracen_ed25519ph_sign(key_buffer, signature, input, input_length,
 					       is_message);
 		if (status == SX_OK) {
@@ -271,7 +271,7 @@ static psa_status_t handle_eddsa_sign(bool is_message, const psa_key_attributes_
 		return silex_statuscodes_to_psa(status);
 	}
 	if (alg == PSA_ALG_PURE_EDDSA && psa_get_key_bits(attributes) == 255 &&
-	    IS_ENABLED(CONFIG_PSA_WANT_ALG_PURE_EDDSA)) {
+	    IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_255)) {
 		status = cracen_ed25519_sign(key_buffer, signature, input, input_length);
 		if (status == SX_OK) {
 			*signature_length = 2 * ecurve->sz;
@@ -345,7 +345,7 @@ static psa_status_t handle_ecdsa_sign(bool is_message, const uint8_t *key_buffer
 	status = SX_ERR_INCOMPATIBLE_HW;
 
 	if (PSA_ALG_IS_DETERMINISTIC_ECDSA(alg) &&
-	    IS_ENABLED(CONFIG_PSA_WANT_ALG_DETERMINISTIC_ECDSA)) {
+	    IS_ENABLED(PSA_NEED_CRACEN_DETERMINISTIC_ECDSA)) {
 		if (is_message) {
 			status = cracen_ecdsa_sign_message_deterministic(
 				&privkey, hashalgpointer, ecurve, input, input_length, signature);
@@ -353,7 +353,8 @@ static psa_status_t handle_ecdsa_sign(bool is_message, const uint8_t *key_buffer
 			status = cracen_ecdsa_sign_digest_deterministic(
 				&privkey, hashalgpointer, ecurve, input, input_length, signature);
 		}
-	} else if (IS_ENABLED(CONFIG_PSA_WANT_ALG_ECDSA)) {
+	} else if ((PSA_ALG_IS_ECDSA(alg) && IS_ENABLED(PSA_NEED_CRACEN_ECDSA)) &&
+		   !PSA_ALG_IS_DETERMINISTIC_ECDSA(alg)) {
 		if (is_message) {
 			status = cracen_ecdsa_sign_message(&privkey, hashalgpointer, ecurve, input,
 							   input_length, signature);
@@ -397,12 +398,13 @@ static psa_status_t cracen_signature_ecc_sign(bool is_message,
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
-	if ((alg == PSA_ALG_PURE_EDDSA && IS_ENABLED(CONFIG_PSA_WANT_ALG_PURE_EDDSA)) ||
-	    (alg == PSA_ALG_ED25519PH && IS_ENABLED(CONFIG_PSA_WANT_ALG_ED25519PH))) {
+	if ((alg == PSA_ALG_PURE_EDDSA &&
+	     IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_255)) ||
+	    (alg == PSA_ALG_ED25519PH && IS_ENABLED(PSA_NEED_CRACEN_ED25519PH))) {
 		return handle_eddsa_sign(is_message, attributes, key_buffer, alg, signature, input,
 					 input_length, ecurve, signature_length);
-	} else if (PSA_ALG_IS_ECDSA(alg) && (IS_ENABLED(CONFIG_PSA_WANT_ALG_ECDSA) ||
-					     IS_ENABLED(CONFIG_PSA_WANT_ALG_DETERMINISTIC_ECDSA))) {
+	} else if (PSA_ALG_IS_ECDSA(alg) && (IS_ENABLED(PSA_NEED_CRACEN_ECDSA) ||
+					     IS_ENABLED(PSA_NEED_CRACEN_DETERMINISTIC_ECDSA))) {
 		return handle_ecdsa_sign(is_message, key_buffer, alg, input, input_length, ecurve,
 					 signature, signature_length);
 	}
@@ -466,15 +468,18 @@ static psa_status_t cracen_signature_ecc_verify(bool is_message,
 		return PSA_ERROR_INVALID_SIGNATURE;
 	}
 
-	if (alg == PSA_ALG_ED25519PH) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_ED25519PH) && alg == PSA_ALG_ED25519PH) {
 		sx_status = cracen_ed25519ph_verify(pubkey_buffer, (char *)input, input_length,
 						    signature, is_message);
 
-	} else if (alg == PSA_ALG_PURE_EDDSA) {
+	} else if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_255) &&
+		   alg == PSA_ALG_PURE_EDDSA) {
 		sx_status = cracen_ed25519_verify(pubkey_buffer, (char *)input, input_length,
 						  signature);
 
-	} else if (PSA_ALG_IS_ECDSA(alg) || PSA_ALG_IS_DETERMINISTIC_ECDSA(alg)) {
+	} else if ((PSA_ALG_IS_ECDSA(alg) && IS_ENABLED(PSA_NEED_CRACEN_ECDSA)) ||
+		   (IS_ENABLED(PSA_NEED_CRACEN_DETERMINISTIC_ECDSA) &&
+		    PSA_ALG_IS_DETERMINISTIC_ECDSA(alg))) {
 		struct sxhashalg hashalg = {0};
 		const struct sxhashalg *hash_algorithm_ptr = &hashalg;
 
