@@ -18,11 +18,11 @@ If you want to list applications available for one or more specific boards, `use
    :caption: Subpages:
 
    ../../applications/connectivity_bridge/README
-   ../../applications/hpf/gpio/README
    ../../applications/ipc_radio/README
    ../../applications/matter_bridge/README
    ../../applications/nrf5340_audio/index
    ../../applications/nrf_desktop/README
    ../../applications/machine_learning/README
+   ../../applications/hpf/hpf
    ../../applications/serial_lte_modem/README
    ../../applications/matter_weather_station/README
