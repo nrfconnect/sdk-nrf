@@ -417,7 +417,7 @@ tests:
   sample.nrf7002.enterprise_mode:
     sysbuild: true
     build_only: true
-    extra_args: EXTRA_CONF_FILE=overlay-enterprise.conf
+    extra_args: shell_SNIPPET=wifi-enterprise
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
