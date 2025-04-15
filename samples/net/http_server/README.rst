@@ -289,8 +289,8 @@ The following serial UART output is displayed in the terminal emulator when runn
          *** Booting nRF Connect SDK v3.4.99-ncs1-4667-g883c3709f9c8 ***
          [00:00:00.529,632] <inf> http_server: HTTP Server sample started
          [00:00:00.554,504] <inf> http_server: Network interface brought up
-         uart:~$ wifi_cred add -s "cia-asusgold" -k 1 -p thingy91rocks
-         uart:~$ wifi_cred auto_connect
+         uart:~$ wifi cred add -s "cia-asusgold" -k 1 -p thingy91rocks
+         uart:~$ wifi cred auto_connect
          [00:00:53.984,100] <inf> http_server: Network connected
          [00:00:53.985,778] <inf> http_server: Waiting for IPv6 HTTP connections on port 81, sock 9
          [00:00:54.986,511] <inf> http_server: Waiting for IPv4 HTTP connections on port 80, sock 10
