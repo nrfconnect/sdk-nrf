@@ -103,9 +103,20 @@ Once you have an unprovisioned SoC, upload keys to the board by running one of t
 
       For MCUboot, take note of the following:
 
+      * UROT_PUBKEY is the key name used by MCUboot.
       * By default, it uses one key.
+      * It might utilize multiple keys, which is intended for use with key revocation.
+        The number of keys is defined by the ``CONFIG_BOOT_SIGNATURE_KMU_SLOTS`` MCUboot's Kconfig option.
+        You can enable the key revocation mechanism with the  ``CONFIG_BOOT_KEYS_REVOCATION`` MCUboot's Kconfig option.
       * KMU support in its configuration needs to be enabled by setting the ``SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU`` sysbuild Kconfig option.
         Otherwise, MCUboot will fallback to the compiled-in key.
+
+      For NSIB, take note of the following:
+
+      * BL_PUBKEY is the key name used by NSIB.
+      * It utilizes tree keys, which is intended for use with key revocation.
+      * Keys must be provisioned before any run of the bootloader.
+        For details, see :ref:`note<ug_nrf54l_developing_basics_kmu_provisioning_keys>`.
 
       To provision one key to the board, run the following command:
 
