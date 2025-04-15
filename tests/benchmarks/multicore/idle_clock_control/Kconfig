@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config AT_LFRC
+	bool "BICR configured to use LFRC at LFCLK"
+	help
+	  Use this option if custom BICR (LFRC at LFCLK) is programmed.
+
+source "Kconfig.zephyr"

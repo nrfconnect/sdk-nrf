@@ -109,6 +109,13 @@ const struct nrf_clock_spec test_clk_specs_lfclk[] = {
 		.accuracy = 0,
 		.precision = NRF_CLOCK_CONTROL_PRECISION_DEFAULT,
 	},
+#if defined(CONFIG_AT_LFRC)
+	{
+		.frequency = 32768,
+		.accuracy = 30,
+		.precision = NRF_CLOCK_CONTROL_PRECISION_DEFAULT,
+	},
+#else
 	{
 		.frequency = 32768,
 		.accuracy = 20,
@@ -119,6 +126,7 @@ const struct nrf_clock_spec test_clk_specs_lfclk[] = {
 		.accuracy = 20,
 		.precision = NRF_CLOCK_CONTROL_PRECISION_HIGH,
 	},
+#endif
 };
 
 static const struct test_clk_ctx lfclk_test_clk_ctx[] = {
