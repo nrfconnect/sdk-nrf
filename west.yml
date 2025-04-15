@@ -148,7 +148,7 @@ manifest:
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: 72d31e0afae0df6c4f2c6c35374f92d7c8dc60d6
+      revision: 05b73d202bb81c4c339721a97d51d1ce62e37e57
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
