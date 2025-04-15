@@ -81,21 +81,21 @@ The following table lists the available triggers and their activation codes:
       The maximum time is UINT16_MAX s.
       The value is provided in HEX format.
   * - Diagnostic Logs User Data
-    - Enabled ``Diagnostic Logs`` cluster, and either the snippet ``matter-diagnostic-logs`` attached (``-D<application_name>_SNIPPET=matter-diagnostic-logs``) or both :ref:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS<CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS>` = ``y`` and :ref:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS<CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS>` = ``y``.
+    - Enabled ``Diagnostic Logs`` cluster, and either the snippet ``diagnostic-logs`` attached (``-D<application_name>_SNIPPET=diagnostic-logs``) or both :ref:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS<CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS>` = ``y`` and :ref:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS<CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS>` = ``y``.
     - Trigger writing a specific number of ``u`` characters to the user diagnostics logs.
       The number of characters is determined by the value at the end of the event trigger value.
       The current supported maximum is 1023 bytes for single trigger call, and 4096 bytes of total data written.
     - ``0xFFFFFFFF40000000`` - ``0xFFFFFFFF40000400``
     - The range of ``0x0000`` - ``0x0400`` (from 1 Bytes to 1024 Bytes), ``0x0000`` to clear logs.
   * - Diagnostic Logs Network Data
-    - Enabled ``Diagnostic Logs`` cluster, and either the snippet ``matter-diagnostic-logs`` attached (``-D<application_name>_SNIPPET=matter-diagnostic-logs``) or both :ref:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS<CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS>` = ``y`` and :ref:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS<CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS>` = ``y``.
+    - Enabled ``Diagnostic Logs`` cluster, and either the snippet ``diagnostic-logs`` attached (``-D<application_name>_SNIPPET=diagnostic-logs``) or both :ref:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS<CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS>` = ``y`` and :ref:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS<CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS>` = ``y``.
     - Trigger writing a specific number of ``n`` characters to the network diagnostics logs.
       The number of characters is determined by the value at the end of the event trigger value.
       The current supported maximum is 1023 bytes for single trigger call, and 4096 bytes of total data written.
     - ``0xFFFFFFFF50000000`` - ``0xFFFFFFFF50000400``
     - The range of ``0x0000`` - ``0x0400`` (from 1 Bytes to 1024 Bytes), ``0x0000`` to clear logs.
   * - Diagnostic Crash Logs
-    - Either the snippet ``matter-diagnostic-logs`` attached (``-D<application_name>_SNIPPET=matter-diagnostic-logs``) or both :ref:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS<CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS>` = ``y`` and :ref:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS<CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS>` = ``y``, and enabled ``Diagnostic Logs`` cluster.
+    - Either the snippet ``diagnostic-logs`` attached (``-D<application_name>_SNIPPET=diagnostic-logs``) or both :ref:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS<CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS>` = ``y`` and :ref:`CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS<CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS>` = ``y``, and enabled ``Diagnostic Logs`` cluster.
     - Trigger a simple crash that relies on execution of the undefined instruction attempt.
     - ``0xFFFFFFFF60000000``
     - No additional value supported.
