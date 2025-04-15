@@ -1,4 +1,31 @@
 - scenarios:
+    - sample.bluetooth.fast_pair.locator_tag.release
+  platforms: # configuration for small memory devices
+    - nrf52dk/nrf52832
+    - nrf52833dk/nrf52833
+    - nrf54l15dk/nrf54l05/cpuapp
+  rom_increase: 512
+  ram_increase: 512
+  codeowners:
+    - nrfconnect/ncs-si-bluebagel
+
+- scenarios:
+    - sample.bluetooth.fast_pair.locator_tag.release
+  platforms: # configuration for large memory devices
+    - nrf52840dk/nrf52840
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf54l15dk/nrf54l10/cpuapp
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54h20dk/nrf54h20/cpuapp
+    - thingy53/nrf5340/cpuapp
+    - thingy53/nrf5340/cpuapp/ns
+  rom_increase: 1024
+  ram_increase: 1024
+  codeowners:
+    - nrfconnect/ncs-si-bluebagel
+
+- scenarios:
     - sample.matter.template.release
   platforms:
     - nrf52840dk/nrf52840
