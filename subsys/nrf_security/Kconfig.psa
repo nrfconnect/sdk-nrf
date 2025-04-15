@@ -104,6 +104,19 @@ config PSA_ITS_ENCRYPTED
 	help
 	  Enables authenticated encryption for PSA Internal Trusted Storage files
 
+config PSA_CRYPTO_SYS_INIT
+	bool "Invoke psa_crypto_init during system initialization"
+	default y
+	help
+	  Enable a Zephyr SYS_INIT that invokes psa_crypto_init. This
+	  allows PSA Crypto API users that run after POST_KERNEL to omit
+	  their psa_crypto_init calls.
+
+	  This option can be disabled to allow finer grained control of
+	  how an error from psa_crypto_init should be handled. The
+	  SYS_INIT will invoke k_oops() when psa_crypto_init fails, which
+	  may not be desired behaviour.
+
 config PSA_CRYPTO_DRIVER_ALG_PRNG_TEST
 	bool
 	help
