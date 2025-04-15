@@ -37,3 +37,4 @@ For detailed integration instructions of specific technologies and components, c
    app_dev/device_guides/fem/index
    app_dev/device_guides/custom/index
    app_dev/device_guides/wifi_coex
+   app_dev/device_guides/coprocessors/index
