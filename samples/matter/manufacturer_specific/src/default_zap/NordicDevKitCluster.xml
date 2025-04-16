@@ -41,7 +41,7 @@
     <class>Simple</class>
     <scope>Endpoint</scope>
     <clusters lockOthers="true">
-      <include cluster="NordicDevKit" client="true" server="true" clientLocked="false" serverLocked="false"/>
+      <include cluster="NordicDevKit" client="false" server="true" clientLocked="false" serverLocked="false"/>
     </clusters>
   </deviceType>
 </configurator>
