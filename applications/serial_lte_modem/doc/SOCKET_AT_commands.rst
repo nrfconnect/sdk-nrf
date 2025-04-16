@@ -508,44 +508,44 @@ Syntax
 
 * The ``<name>`` parameter can accept one of the following values:
 
-  * ``2`` - :c:macro:`SO_REUSEADDR` (set-only).
+  * ``2`` - :c:macro:`AT_SO_REUSEADDR` (set-only).
 
     * ``<value>`` is an integer that indicates whether the reuse of local addresses is enabled.
       It is ``0`` for disabled or ``1`` for enabled.
 
-  * ``20`` - :c:macro:`SO_RCVTIMEO`.
+  * ``20`` - :c:macro:`AT_SO_RCVTIMEO`.
 
     * ``<value>`` is an integer that indicates the receive timeout in seconds.
 
-  * ``21`` - :c:macro:`SO_SNDTIMEO`.
+  * ``21`` - :c:macro:`AT_SO_SNDTIMEO`.
 
     * ``<value>`` is an integer that indicates the send timeout in seconds.
 
-  * ``30`` - :c:macro:`SO_SILENCE_ALL`.
+  * ``30`` - :c:macro:`AT_SO_SILENCE_ALL`.
 
     * ``<value>`` is an integer that indicates whether ICMP echo replies for IPv4 and IPv6 are disabled.
       It is ``0`` for allowing ICMP echo replies or ``1`` for disabling them.
 
-  * ``31`` - :c:macro:`SO_IP_ECHO_REPLY`.
+  * ``31`` - :c:macro:`AT_SO_IP_ECHO_REPLY`.
 
     * ``<value>`` is an integer that indicates whether ICMP echo replies for IPv4 are enabled.
       It is ``0`` for disabled or ``1`` for enabled.
 
-  * ``32`` - :c:macro:`SO_IPV6_ECHO_REPLY`.
+  * ``32`` - :c:macro:`AT_SO_IPV6_ECHO_REPLY`.
 
     * ``<value>`` is an integer that indicates whether ICMP echo replies for IPv6 are enabled.
       It is ``0`` for disabled or ``1`` for enabled.
 
-  * ``40`` - :c:macro:`SO_BINDTOPDN` (set-only).
+  * ``40`` - :c:macro:`AT_SO_BINDTOPDN` (set-only).
 
     * ``<value>`` is an integer that indicates the packet data network ID to bind to.
 
-  * ``55`` - :c:macro:`SO_TCP_SRV_SESSTIMEO`.
+  * ``55`` - :c:macro:`AT_SO_TCP_SRV_SESSTIMEO`.
 
     * ``<value>`` is an integer that indicates the TCP server session inactivity timeout for a socket.
       It accepts values from the range ``0`` to ``135``, where ``0`` is no timeout and ``135`` is 2 hours, 15 minutes.
 
-  * ``61`` - :c:macro:`SO_RAI` (set-only).
+  * ``61`` - :c:macro:`AT_SO_RAI` (set-only).
     Release Assistance Indication (RAI).
 
     * ``<value>`` The option accepts an integer, indicating the type of RAI.
@@ -571,7 +571,7 @@ Syntax
         Indicates that the socket is in active use by a server application.
         This lets the modem stay in connected mode longer.
 
-  * ``62`` - :c:macro:`SO_IPV6_DELAYED_ADDR_REFRESH`.
+  * ``62`` - :c:macro:`AT_SO_IPV6_DELAYED_ADDR_REFRESH`.
 
     * ``<value>`` is an integer that indicates whether delayed IPv6 address refresh is enabled.
       It is ``0`` for disabled or ``1`` for enabled.
@@ -651,31 +651,31 @@ Syntax
 
 * The ``<name>`` parameter can accept one of the following values:
 
-  * ``2`` - :c:macro:`TLS_HOSTNAME`.
+  * ``2`` - :c:macro:`AT_TLS_HOSTNAME`.
 
     * ``<value>`` is a string that indicates the hostname to check against during TLS handshakes.
       It can be ``NULL`` to disable hostname verification.
 
-  * ``4`` - :c:macro:`TLS_CIPHERSUITE_USED` (get-only).
+  * ``4`` - :c:macro:`AT_TLS_CIPHERSUITE_USED` (get-only).
     The TLS cipher suite chosen during the TLS handshake.
     This option is only supported with modem firmware 2.0.0 and newer.
 
-  * ``5`` - :c:macro:`TLS_PEER_VERIFY`.
+  * ``5`` - :c:macro:`AT_TLS_PEER_VERIFY`.
 
     * ``<value>`` is an integer that indicates what peer verification level should be used.
       It is ``0`` for none, ``1`` for optional or ``2`` for required.
 
-  * ``12`` - :c:macro:`TLS_SESSION_CACHE`.
+  * ``12`` - :c:macro:`AT_TLS_SESSION_CACHE`.
 
     * ``<value>`` is an integer that indicates whether TLS session caching should be used.
       It is ``0`` for disabled or ``1`` for enabled.
 
-  * ``13`` - :c:macro:`TLS_SESSION_CACHE_PURGE` (set-only).
+  * ``13`` - :c:macro:`AT_TLS_SESSION_CACHE_PURGE` (set-only).
     Indicates that the TLS session cache should be deleted.
 
     * ``<value>`` can be any integer value.
 
-  * ``14`` - :c:macro:`TLS_DTLS_CID` (set-only).
+  * ``14`` - :c:macro:`AT_TLS_DTLS_CID` (set-only).
 
     * ``<value>`` is an integer that indicates the DTLS connection identifier setting.
       It can be one of the following values:
@@ -687,13 +687,13 @@ Syntax
     This option is only supported with modem firmware 1.3.5 and newer.
     See :ref:`nrfxlib:dtls_cid_setting` for more details regarding the allowed values.
 
-  * ``15`` - :c:macro:`TLS_DTLS_CID_STATUS` (get-only).
+  * ``15`` - :c:macro:`AT_TLS_DTLS_CID_STATUS` (get-only).
     It is the DTLS connection identifier status.
     It can be retrieved after the DTLS handshake.
     This option is only supported with modem firmware 1.3.5 and newer.
     See :ref:`nrfxlib:dtls_cid_status` for more details regarding the returned values.
 
-  * ``18`` - :c:macro:`TLS_DTLS_HANDSHAKE_TIMEO`.
+  * ``18`` - :c:macro:`AT_TLS_DTLS_HANDSHAKE_TIMEO`.
 
     * ``<value>`` is an integer that indicates the DTLS handshake timeout in seconds.
       It can be one of the following values: ``1``, ``3``, ``7``, ``15``, ``31``, ``63``, ``123``.
