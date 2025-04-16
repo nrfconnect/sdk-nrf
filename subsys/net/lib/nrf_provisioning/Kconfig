@@ -80,6 +80,13 @@ config NRF_PROVISIONING_PRINT_ATTESTATION_TOKEN
 	  nRF Cloud. Display the attestation token
 	  needed for claiming the device.
 
+config NRF_PROVISIONING_STACK_SIZE
+	int "nRF Provisioning Stack size"
+	default 4096 if NRF_PROVISIONING_LOG_LEVEL_DBG
+	default 2048
+	help
+	  Stack size for the nRF Provisioning thread.
+
 rsource "Kconfig.nrf_provisioning_http"
 
 rsource "Kconfig.nrf_provisioning_coap"
