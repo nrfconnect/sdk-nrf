@@ -899,5 +899,8 @@ config MBEDTLS_PEM_WRITE_C
 	prompt "Support writing PEM files"
 	depends on MBEDTLS_BASE64_C
 
+config MBEDTLS_SSL_CLI_ALLOW_WEAK_CERTIFICATE_VERIFICATION_WITHOUT_HOSTNAME
+	bool
+	depends on WIFI_NM_WPA_SUPPLICANT
 
 endmenu # Legacy mbed TLS crypto APIs
