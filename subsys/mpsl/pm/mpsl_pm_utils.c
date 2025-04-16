@@ -37,7 +37,7 @@ static atomic_t m_pm_state = (atomic_val_t)MPSL_PM_UNINITIALIZED;
 #if defined(CONFIG_MPSL_PM_USE_MRAM_LATENCY_SERVICE)
 #define LOW_LATENCY_ATOMIC_BITS_NUM 2
 #define LOW_LATENCY_PM_BIT	    0
-#define LOW_LATENCY_MRAM_BIT	    0
+#define LOW_LATENCY_MRAM_BIT	    1
 #define LOW_LATENCY_BITS_MASK	    0x3
 
 static ATOMIC_DEFINE(m_low_latency_req_state, LOW_LATENCY_ATOMIC_BITS_NUM);
