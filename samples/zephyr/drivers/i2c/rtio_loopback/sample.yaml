@@ -16,8 +16,6 @@ tests:
   nrf.extended.sample.drivers.i2c.rtio_loopback.l20:
     platform_allow:
       - nrf54l20pdk/nrf54l20/cpuapp
-    integration_platforms:
-      - nrf54l20pdk/nrf54l20/cpuapp
   nrf.extended.sample.drivers.i2c.rtio_loopback.l09:
     platform_allow:
       - nrf54l09pdk/nrf54l09/cpuapp

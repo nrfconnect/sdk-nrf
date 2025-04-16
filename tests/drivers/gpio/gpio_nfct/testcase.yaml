@@ -19,6 +19,5 @@ tests:
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf7120pdk/nrf7120/cpuapp

@@ -12,8 +12,6 @@ tests:
   nrf.extended.sample.sensor.nrf_qdec_sensor:
     platform_allow:
       - nrf54l20pdk/nrf54l20/cpuapp
-    integration_platforms:
-      - nrf54l20pdk/nrf54l20/cpuapp
     harness_config:
       fixture: gpio_loopback
       type: multi_line

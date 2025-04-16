@@ -57,7 +57,6 @@ tests:
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
   sample.spake2p.cracen.crypto_service:

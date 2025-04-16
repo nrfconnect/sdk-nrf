@@ -48,7 +48,6 @@ tests:
       - EXTRA_DTC_OVERLAY_FILE="large_out_report.overlay"
   nrf.extended.sample.usbd.hid-keyboard.l20:
     integration_platforms:
-      - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54lm20apdk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf54l20pdk/nrf54l20/cpuapp
@@ -61,7 +60,6 @@ tests:
         - "HID keyboard sample is initialized"
   nrf.extended.sample.usbd.hid-keyboard.out-report.l20:
     integration_platforms:
-      - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54lm20apdk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf54l20pdk/nrf54l20/cpuapp
@@ -76,7 +74,6 @@ tests:
         - "HID keyboard sample is initialized"
   nrf.extended.sample.usbd.hid-keyboard.large-report.l20:
     integration_platforms:
-      - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54lm20apdk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf54l20pdk/nrf54l20/cpuapp
@@ -91,7 +88,6 @@ tests:
         - "HID keyboard sample is initialized"
   nrf.extended.sample.usbd.hid-keyboard.large-out-report.l20:
     integration_platforms:
-      - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54lm20apdk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf54l20pdk/nrf54l20/cpuapp
