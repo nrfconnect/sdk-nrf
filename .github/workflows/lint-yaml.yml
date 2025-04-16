@@ -1,0 +1,11 @@
+name: Lint yaml files
+
+on:
+  pull_request:
+
+jobs:
+  lint_yaml:
+    runs-on: ubuntu-latest
+    name: Execute yamllint
+    steps:
+      - uses: nrfconnect/action-yamllint@main
