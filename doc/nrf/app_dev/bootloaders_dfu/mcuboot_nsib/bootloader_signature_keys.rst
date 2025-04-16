@@ -146,22 +146,22 @@ You can add this feature to your own project and check its functionality as foll
 
       Use only absolute paths for ``SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE`` and ``SB_CONFIG_SECURE_BOOT_PUBLIC_KEY_FILES``.
 
-.. tabs::
+   .. tabs::
 
-    .. group-tab:: software keys storage
+      .. group-tab:: software keys storage
 
-      .. code-block:: console
+         .. code-block:: console
 
-         SB_CONFIG_SECURE_BOOT_APPCORE=y
-         SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE="/path/to/priv_a.pem"
-         SB_CONFIG_SECURE_BOOT_PUBLIC_KEY_FILES="/path/to/pub_b.pem,/path/to/pub_c.pem"
+            SB_CONFIG_SECURE_BOOT_APPCORE=y
+            SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE="/path/to/priv_a.pem"
+            SB_CONFIG_SECURE_BOOT_PUBLIC_KEY_FILES="/path/to/pub_b.pem,/path/to/pub_c.pem"
 
-    .. group-tab:: KMU
+      .. group-tab:: KMU
 
-      .. code-block:: console
+         .. code-block:: console
 
-         SB_CONFIG_SECURE_BOOT_APPCORE=y
-         b0_CONFIG_SB_CRYPTO_KMU_KEYS_REVOCATION=y
+            SB_CONFIG_SECURE_BOOT_APPCORE=y
+            b0_CONFIG_SB_CRYPTO_KMU_KEYS_REVOCATION=y
 
    .. caution::
 
