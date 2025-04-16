@@ -13,7 +13,6 @@ tests:
       - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54l09pdk/nrf54l09/cpuapp
     integration_platforms:
-      - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54l09pdk/nrf54l09/cpuapp
   nrf.extended.drivers.comparator.gpio_loopback.nrf_lpcomp:
     extra_args:
@@ -22,5 +21,4 @@ tests:
       - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54l09pdk/nrf54l09/cpuapp
     integration_platforms:
-      - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54l09pdk/nrf54l09/cpuapp

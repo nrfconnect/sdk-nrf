@@ -31,7 +31,6 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54l09pdk/nrf54l09/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
@@ -52,7 +51,6 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54l09pdk/nrf54l09/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     extra_configs:

@@ -11,8 +11,6 @@ tests:
     platform_allow:
       - nrf54l09pdk/nrf54l09/cpuapp
       - nrf54l20pdk/nrf54l20/cpuapp
-    integration_platforms:
-      - nrf54l20pdk/nrf54l20/cpuapp
     extra_args: mbox_SNIPPET=nordic-flpr
     sysbuild: true
     harness: console
@@ -26,8 +24,6 @@ tests:
   nrf.extended.sample.drivers.mbox.nrf54l_no_multithreading:
     platform_allow:
       - nrf54l09pdk/nrf54l09/cpuapp
-      - nrf54l20pdk/nrf54l20/cpuapp
-    integration_platforms:
       - nrf54l20pdk/nrf54l20/cpuapp
     extra_args:
       - mbox_SNIPPET=nordic-flpr
@@ -45,8 +41,6 @@ tests:
   nrf.extended.sample.drivers.mbox.nrf54l_remote_no_multithreading:
     platform_allow:
       - nrf54l09pdk/nrf54l09/cpuapp
-      - nrf54l20pdk/nrf54l20/cpuapp
-    integration_platforms:
       - nrf54l20pdk/nrf54l20/cpuapp
     extra_args:
       - mbox_SNIPPET=nordic-flpr

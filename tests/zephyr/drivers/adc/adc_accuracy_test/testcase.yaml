@@ -9,7 +9,6 @@ tests:
     #   fixture: adc_ref_volt
     integration_platforms:
       - nrf54l09pdk/nrf54l09/cpuapp
-      - nrf54l20pdk/nrf54l20/cpuapp
     platform_allow:
       - nrf54l09pdk/nrf54l09/cpuapp
       - nrf54l20pdk/nrf54l20/cpuapp
