@@ -248,13 +248,14 @@ To test with the `Bluetooth Low Energy app`_, complete the following steps:
          The first one has the value ``02000F0000000000``, the second has the value ``0200000000000000``.
          These values correspond to press and release of character "l" with the Shift key pressed.
       #. In the app, select the HID Report (which has UUID ``0x2A4D`` and the properties ``Read``, ``WriteWithoutResponse``, and ``Write``).
-         Enter ``02`` in the text box and click the :guilabel:`tick mark` button.
-         This sets the modifier bit of the Output Report to 02, which simulates turning Caps Lock ON.
+         Enter any number that has bit 1 set to ``1`` (for example ``02``) in the text box and click the :guilabel:`tick mark` button.
+         This sets the Output Report to the written value, in which setting bit 1 to ``1`` simulates turning Caps Lock ON.
+         Other bits are responsible for controlling other Output Report fields that are not reflected in the sample's UI, for example Num Lock.
 
          Observe that **LED 3** is lit.
       #. Select the same HID Report again.
-         Enter ``00`` in the text box and click :guilabel:`Write`.
-         This sets the modifier bit to 00, which simulates turning Caps Lock OFF.
+         Enter any number that has bit 1 set to ``0`` (for example ``00``) in the text box and click :guilabel:`Write`.
+         Setting this bit of the Output Report to ``0`` simulates turning Caps Lock OFF.
 
          Observe that **LED 3** turns off.
       #. Disconnect the device in the app.
@@ -301,13 +302,14 @@ To test with the `Bluetooth Low Energy app`_, complete the following steps:
          The first one has the value ``02000F0000000000``, the second has the value ``0200000000000000``.
          These values correspond to press and release of character "l" with the Shift key pressed.
       #. In the app, select the HID Report (which has UUID ``0x2A4D`` and the properties ``Read``, ``WriteWithoutResponse``, and ``Write``).
-         Enter ``02`` in the text box and click the :guilabel:`tick mark` button.
-         This sets the modifier bit of the Output Report to 02, which simulates turning Caps Lock ON.
+         Enter any number that has bit 1 set to ``1`` (for example ``02``) in the text box and click the :guilabel:`tick mark` button.
+         This sets the Output Report to the written value, in which setting bit 1 to ``1`` simulates turning Caps Lock ON.
+         Other bits are responsible for controlling other Output Report fields that are not reflected in the sample's UI, for example Num Lock.
 
          Observe that **LED 2** is lit.
       #. Select the same HID Report again.
-         Enter ``00`` in the text box and click :guilabel:`Write`.
-         This sets the modifier bit to 00, which simulates turning Caps Lock OFF.
+         Enter any number that has bit 1 set to ``0`` (for example ``00``) in the text box and click :guilabel:`Write`.
+         Setting this bit of the Output Report to ``0`` simulates turning Caps Lock OFF.
 
          Observe that **LED 2** turns off.
       #. Disconnect the device in the app.
