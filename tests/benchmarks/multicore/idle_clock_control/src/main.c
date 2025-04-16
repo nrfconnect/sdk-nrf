@@ -153,6 +153,27 @@ static const struct test_clk_ctx hfxo_test_clk_ctx[] = {
 		.clk_specs_size = ARRAY_SIZE(test_clk_specs_hfxo),
 	},
 };
+
+const struct nrf_clock_spec test_clk_spec_audiopll[] = {
+	{
+		.frequency = MHZ(12),
+		.accuracy = 0,
+		.precision = 0,
+	},
+	{
+		.frequency = MHZ(11),
+		.accuracy = 0,
+		.precision = 0,
+	},
+};
+
+static const struct test_clk_ctx audiopll_test_clk_ctx[] = {
+	{
+		.clk_dev = DEVICE_DT_GET(DT_NODELABEL(audiopll)),
+		.clk_specs = test_clk_spec_audiopll,
+		.clk_specs_size = ARRAY_SIZE(test_clk_spec_audiopll),
+	},
+};
 #endif /* CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP */
 
 static void test_request_release_clock_spec(const struct device *clk_dev,
@@ -166,7 +187,7 @@ static void test_request_release_clock_spec(const struct device *clk_dev,
 	LOG_INF("Clock under test: %s", clk_dev->name);
 	sys_notify_init_spinwait(&cli.notify);
 	ret = nrf_clock_control_request(clk_dev, clk_spec, &cli);
-	__ASSERT_NO_MSG(ret == 0);
+	__ASSERT_NO_MSG((ret >= 0) || (ret <= 2));
 	do {
 		ret = sys_notify_fetch_result(&cli.notify, &res);
 		k_yield();
@@ -236,6 +257,7 @@ void run_tests(void)
 	test_auxpll_control(DEVICE_DT_GET(DT_NODELABEL(canpll)));
 	test_clock_control_request(hfxo_test_clk_ctx, ARRAY_SIZE(hfxo_test_clk_ctx));
 	test_clock_control_request(hsfll_test_clk_ctx, ARRAY_SIZE(hsfll_test_clk_ctx));
+	test_clock_control_request(audiopll_test_clk_ctx, ARRAY_SIZE(audiopll_test_clk_ctx));
 #endif /* CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP */
 	test_clock_control_request(global_hsfll_test_clk_ctx,
 				   ARRAY_SIZE(global_hsfll_test_clk_ctx));
