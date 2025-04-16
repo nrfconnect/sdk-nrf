@@ -62,6 +62,7 @@ tests:
     extra_args:
       - ble_SHIELD="nrf7002eb2"
       - ble_SNIPPET=nrf70-wifi
+      - CONFIG_NRF_WIFI_CTRL_HEAP_SIZE=25000
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow:
