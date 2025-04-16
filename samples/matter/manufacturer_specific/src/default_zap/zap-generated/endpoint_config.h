@@ -430,7 +430,7 @@
 // clang-format on
 
 // This is an array of EmberAfCluster structures.
-#define GENERATED_CLUSTER_COUNT 14
+#define GENERATED_CLUSTER_COUNT 12
 // clang-format off
 #define GENERATED_CLUSTERS { \
   { \
@@ -453,19 +453,6 @@
       .attributeCount = 7, \
       .clusterSize = 4, \
       .mask = ZAP_CLUSTER_MASK(SERVER), \
-      .functions = NULL, \
-      .acceptedCommandList = nullptr, \
-      .generatedCommandList = nullptr, \
-      .eventList = nullptr, \
-      .eventCount = 0, \
-    },\
-  { \
-      /* Endpoint: 0, Cluster: Basic Information (client) */ \
-      .clusterId = 0x00000028, \
-      .attributes = ZAP_ATTRIBUTE_INDEX(13), \
-      .attributeCount = 0, \
-      .clusterSize = 0, \
-      .mask = ZAP_CLUSTER_MASK(CLIENT), \
       .functions = NULL, \
       .acceptedCommandList = nullptr, \
       .generatedCommandList = nullptr, \
@@ -590,19 +577,6 @@
       .eventCount = 0, \
     },\
   { \
-      /* Endpoint: 1, Cluster: NordicDevKit (client) */ \
-      .clusterId = 0xFFF1FC01, \
-      .attributes = ZAP_ATTRIBUTE_INDEX(86), \
-      .attributeCount = 0, \
-      .clusterSize = 0, \
-      .mask = ZAP_CLUSTER_MASK(CLIENT), \
-      .functions = NULL, \
-      .acceptedCommandList = nullptr, \
-      .generatedCommandList = nullptr, \
-      .eventList = nullptr, \
-      .eventCount = 0, \
-    },\
-  { \
       /* Endpoint: 1, Cluster: NordicDevKit (server) */ \
       .clusterId = 0xFFF1FC01, \
       .attributes = ZAP_ATTRIBUTE_INDEX(86), \
@@ -624,8 +598,8 @@
 // This is an array of EmberAfEndpointType structures.
 #define GENERATED_ENDPOINT_TYPES                                                                                       \
 	{                                                                                                              \
-		{ ZAP_CLUSTER_INDEX(0), 12, 86 },                                                                      \
-		{ ZAP_CLUSTER_INDEX(12), 2, 263 },                                                                     \
+		{ ZAP_CLUSTER_INDEX(0), 11, 86 },                                                                      \
+		{ ZAP_CLUSTER_INDEX(11), 1, 263 },                                                                     \
 	}
 
 // Largest attribute size is needed for various buffers
@@ -651,13 +625,7 @@ static_assert(ATTRIBUTE_LARGEST <= CHIP_CONFIG_MAX_ATTRIBUTE_STORE_ELEMENT_SIZE,
 #define FIXED_PROFILE_IDS { 0x0103, 0x0FFF }
 
 // Array of device types
-#define FIXED_DEVICE_TYPES                                                                                             \
-	{                                                                                                              \
-		{ 0x00000012, 1 }, { 0x00000016, 3 },                                                                  \
-		{                                                                                                      \
-			0x00000001, 1                                                                                  \
-		}                                                                                                      \
-	}
+#define FIXED_DEVICE_TYPES { { 0x00000012, 1 }, { 0x00000016, 3 }, { 0x00000001, 1 } }
 
 // Array of device type offsets
 #define FIXED_DEVICE_TYPE_OFFSETS { 0, 2 }
