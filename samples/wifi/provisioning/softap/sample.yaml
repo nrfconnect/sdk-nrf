@@ -11,3 +11,18 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_wifi
+  sample.nrf54l15.softap.wifi.provision:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - softap_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
+      - softap_SNIPPET=nrf70-wifi
+      - CONFIG_HEAP_MEM_POOL_IGNORE_MIN=n
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
