@@ -144,7 +144,8 @@ static int fem_nrf21540_gpio_spi_configure(void)
 		.fem_config = {
 			.pa_time_gap_us  =
 				DT_PROP(DT_NODELABEL(nrf_radio_fem),
-					tx_en_settle_time_us),
+					tx_en_settle_time_us) +
+					CONFIG_MPSL_FEM_NRF21540_PA_LEAD_TIME_ADDITIONAL_US,
 			.lna_time_gap_us =
 				DT_PROP(DT_NODELABEL(nrf_radio_fem),
 					rx_en_settle_time_us),
