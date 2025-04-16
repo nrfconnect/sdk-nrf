@@ -405,3 +405,11 @@ config OPENTHREAD_VERHOEFF_CHECKSUM
 
 config OPENTHREAD_CLI_VENDOR_EXTENSION
 	string "Path to CMake file to define and link Openthread CLI vendor extension"
+
+config OPENTHREAD_USE_NRF5_RADIO
+	bool "Use Nordic Semiconductor radio driver directly"
+	default y
+	depends on HAS_HW_NRF_RADIO_IEEE802154
+	help
+	  Use explicitly Nordic Semiconductor radio driver for OpenThread stack.
+	  This approach does not use Zephyr's net_pkt and net_time APIs.
