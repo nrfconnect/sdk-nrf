@@ -1,11 +1,18 @@
+/* Two loopbacks are used
+ * Each loopback is between analog input and GPIO.
+ * first-gpios (P1.19) -> AIN3 (P1.29)
+ * second-gpios (P1.30, AIN2) -> AIN1 (P1.31)
+ * AIN5 (P1.05) tied to low (UART1_RX)
+ */
+
 / {
 	aliases {
 		test-comp = &comp;
 	};
 
 	zephyr,user {
-		first-gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;
-		second-gpios = <&gpio1 13 GPIO_ACTIVE_HIGH>;
+		first-gpios = <&gpio1 19 GPIO_ACTIVE_HIGH>;
+		second-gpios = <&gpio1 30 GPIO_ACTIVE_HIGH>;
 	};
 };
 
