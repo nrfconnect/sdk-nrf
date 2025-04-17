@@ -88,7 +88,7 @@ With the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option enabled, the follo
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_BT_GATT` - The option configures the ringing timeout for connected peers that use DULT-based ringing mechanism.
       This option can only be used when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` is enabled.
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_MOTION_DETECTOR` - The option configures the ringing timeout for ringing requests from the DULT motion detector.
-      This option can only be used when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` is enabled.
+      This option can only be used when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR` Kconfig option is enabled.
 
   * There are following beacon clock service configuration options for the FMDN extension (see :ref:`ug_bt_fast_pair_prerequisite_ops_fmdn_clock_svc`):
 

@@ -18,9 +18,12 @@
 #include "app_dfu.h"
 #include "app_factory_reset.h"
 #include "app_fp_adv.h"
-#include "app_motion_detector.h"
 #include "app_ring.h"
 #include "app_ui.h"
+
+#ifdef CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR
+#include "app_motion_detector.h"
+#endif
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(fp_fmdn, LOG_LEVEL_INF);

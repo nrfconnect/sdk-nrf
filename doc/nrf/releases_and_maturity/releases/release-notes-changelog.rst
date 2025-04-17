@@ -245,7 +245,9 @@ Bluetooth Mesh samples
 Bluetooth Fast Pair samples
 ---------------------------
 
-|no_changes_yet_note|
+* :ref:`fast_pair_locator_tag` sample:
+
+  * Added possibility to build and run the sample without the motion detector support (with the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR` Kconfig option disabled).
 
 Cellular samples
 ----------------
@@ -387,7 +389,12 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
-|no_changes_yet_note|
+* :ref:`bt_fast_pair_readme` library:
+
+  * Updated:
+
+    * The :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_MOTION_DETECTOR` Kconfig option dependency.
+      The dependency has been updated from the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` Kconfig option to the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR` Kconfig option.
 
 Common Application Framework
 ----------------------------
