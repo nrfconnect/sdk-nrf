@@ -12,7 +12,7 @@ This section outlines example instructions to build the Wi-Fi® radio test sampl
 Stand-alone Wi-Fi Radio test
 ****************************
 
-For information on building the stand-alone Wi-Fi Radio test, see :ref:`Wi-Fi Radio test sample building and running <wifi_radio_sample_building_and_running>`.
+For information on building the stand-alone Wi-Fi Radio test, see either :ref:`wifi_radio_test` or :ref:`wifi_radio_test_sd` sample.
 
 Combined build for Radio test and Wi-Fi Radio test
 **************************************************
