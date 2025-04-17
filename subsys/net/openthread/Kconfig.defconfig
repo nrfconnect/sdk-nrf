@@ -8,7 +8,7 @@
 # This file only changes defaults and thus all symbols here must be prompltless
 # and safeguarded so that they only are applied when building Thread.
 
-if NET_L2_OPENTHREAD
+if OPENTHREAD
 
 choice OPENTHREAD_STACK_VERSION
 	default OPENTHREAD_THREAD_VERSION_1_4
@@ -53,20 +53,6 @@ config LOG_BUFFER_SIZE
 
 config INIT_STACKS
 	default y
-
-config NET_IPV6_NBR_CACHE
-	default n
-
-config NET_IPV6_MLD
-	default n
-
-config NET_PKT_RX_COUNT
-	default 4 if OPENTHREAD_COPROCESSOR_RCP
-	default 10
-
-config NET_PKT_TX_COUNT
-	default 4 if OPENTHREAD_COPROCESSOR_RCP
-	default 16
 
 config OPENTHREAD_MANUAL_START
 	default y
@@ -146,28 +132,6 @@ config MBEDTLS_HEAP_SIZE
 	default 15360 if OPENTHREAD_NRF_SECURITY_PSA
 	default 12440 if !OPENTHREAD_NRF_SECURITY_PSA
 
-if !OPENTHREAD_THREAD_VERSION_1_1
-
-# Thread 1.2 dependencies
-config NRF_802154_ENCRYPTION
-	default y
-
-config NET_PKT_TXTIME
-	default y
-
-config NET_PKT_TIMESTAMP
-	default y
-
-# CSL Transmitter configuration
-config IEEE802154_NRF5_DELAY_TRX_ACC
-	default 50 if BOARD_NRF52840DONGLE_NRF52840 || BOARD_NRF54L15DK
-	default 20
-
-config IEEE802154_CSL_ENDPOINT
-	default y if OPENTHREAD_CSL_RECEIVER
-
-endif # !OPENTHREAD_THREAD_VERSION_1_1
-
 if OPENTHREAD_COPROCESSOR_RCP
 
 config MBEDTLS_PSA_KEY_SLOT_COUNT
@@ -181,12 +145,6 @@ config IDLE_STACK_SIZE
 
 config MPSL_WORK_STACK_SIZE
 	default 512
-
-config NET_RX_STACK_SIZE
-	default 300
-
-config NET_TX_STACK_SIZE
-	default 300
 
 endif # OPENTHREAD_COPROCESSOR_RCP
 
@@ -223,4 +181,13 @@ config ZMS
 config NVS
 	default y if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
 
-endif # NET_L2_OPENTHREAD
+if !OPENTHREAD_THREAD_VERSION_1_1
+
+# Thread 1.2 dependencies
+config NRF_802154_ENCRYPTION
+	default y
+
+endif # !OPENTHREAD_THREAD_VERSION_1_1
+endif # OPENTHREAD
+
+rsource "Kconfig.defconfig.l2"
