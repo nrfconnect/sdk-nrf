@@ -44,16 +44,18 @@ void set_global_domain_frequency(uint32_t freq)
 int main(void)
 {
 	uint32_t counter = 0;
+	int32_t sync_timeout = 100;
 
 	gpio_pin_configure_dt(&led, GPIO_OUTPUT_INACTIVE);
 
 	printk("REMOTE starts");
-	while (*shared_var != HOST_IS_READY) {
+	while (*shared_var != HOST_IS_READY && sync_timeout > 0) {
 		k_msleep(1);
 		sys_cache_data_invd_range((void *) shared_var, sizeof(*shared_var));
 		printk("shared_var is: %u", *shared_var);
+		sync_timeout--;
 	}
-	printk("REMOTE found that HOST_IS_READY");
+	printk("REMOTE found that HOST_IS_READY or sync_timeout: %d too low", sync_timeout);
 	*shared_var = REMOTE_IS_READY;
 	sys_cache_data_flush_range((void *) shared_var, sizeof(*shared_var));
 	printk("REMOTE wrote REMOTE_IS_READY: %u", *shared_var);
