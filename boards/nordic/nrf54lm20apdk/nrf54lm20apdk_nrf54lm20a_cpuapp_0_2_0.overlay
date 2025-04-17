@@ -55,7 +55,7 @@
 };
 
 &gpio1 {
-	gpio-reserved-ranges = <10 5>, <22 4>, <27 2>;
+	gpio-reserved-ranges = <10 5>, <22 2>, <25 4>;
 };
 
 &gpio2 {
