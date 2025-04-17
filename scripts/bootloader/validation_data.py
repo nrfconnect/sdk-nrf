@@ -39,8 +39,8 @@ class BaseValidator(abc.ABC):
         """
         self.hashfunc = hashfunc
 
-    def get_hash(self, input_hex: IntelHex) -> bytes:
-        firmware_bytes = input_hex.tobinstr()
+    def get_hash(self, input_hex: IntelHex, input_data_offset: int) -> bytes:
+        firmware_bytes = (input_hex.tobinstr())[input_data_offset:]
         return self.hashfunc(firmware_bytes).digest()
 
     @abc.abstractmethod
@@ -56,16 +56,17 @@ class BaseValidator(abc.ABC):
         signature_bytes: bytes,
         input_hex: IntelHex,
         public_key,
-        magic_value: bytes
+        magic_value: bytes,
+        input_data_offset: int
     ) -> bytes:
-        hash_bytes = self.get_hash(input_hex)
+        hash_bytes = self.get_hash(input_hex, input_data_offset)
         public_key_bytes = self.to_string(public_key)
 
         # Will raise an exception if it fails
         self.verify(public_key, signature_bytes, hash_bytes)
 
         validation_bytes = magic_value
-        validation_bytes += struct.pack('<I', input_hex.addresses()[0])
+        validation_bytes += struct.pack('<I', input_hex.addresses()[0] + input_data_offset)
         validation_bytes += hash_bytes
         validation_bytes += public_key_bytes
         validation_bytes += signature_bytes
@@ -80,7 +81,8 @@ class BaseValidator(abc.ABC):
         offset: int,
         output_hex: TextIO,
         output_bin: BinaryIO | None,
-        magic_value: str
+        magic_value: str,
+        input_data_offset: int
     ) -> None:
         with open(input_file, 'r', encoding='UTF-8') as f:
             ih = IntelHex(f)
@@ -98,7 +100,8 @@ class BaseValidator(abc.ABC):
             signature_bytes=signature_bytes,
             input_hex=ih,
             public_key=public_key,
-            magic_value=parsed_magic_value
+            magic_value=parsed_magic_value,
+            input_data_offset=input_data_offset
         )
         validation_data_hex = IntelHex()
 
@@ -141,16 +144,17 @@ class EcdsaSignatureValidator(BaseValidator):
         signature_bytes: bytes,
         input_hex: IntelHex,
         public_key,
-        magic_value: bytes
+        magic_value: bytes,
+        input_data_offset: int
     ) -> bytes:
-        hash_bytes = self.get_hash(input_hex)
+        hash_bytes = self.get_hash(input_hex, input_data_offset)
         public_key_bytes = self.to_string(public_key)
 
         # Will raise an exception if it fails
         self.verify(public_key, signature_bytes, hash_bytes)
 
         validation_bytes = magic_value
-        validation_bytes += struct.pack('<I', input_hex.addresses()[0])
+        validation_bytes += struct.pack('<I', input_hex.addresses()[0] + input_data_offset)
         validation_bytes += hash_bytes
         validation_bytes += public_key_bytes
         validation_bytes += signature_bytes
@@ -205,17 +209,19 @@ class Ed25519SignatureValidator(BaseValidator):
         signature_bytes: bytes,
         input_hex: IntelHex,
         public_key: ed25519.Ed25519PublicKey,
-        magic_value: bytes
+        magic_value: bytes,
+        input_data_offset: int
     ) -> bytes:
         if self.hashfunc:
             return super().get_validation_data(
                 signature_bytes=signature_bytes,
                 input_hex=input_hex,
                 public_key=public_key,
-                magic_value=magic_value
+                magic_value=magic_value,
+                input_data_offset=input_data_offset
             )
         validation_bytes = magic_value
-        validation_bytes += struct.pack('<I', input_hex.addresses()[0])
+        validation_bytes += struct.pack('<I', input_hex.addresses()[0] + input_data_offset)
         validation_bytes += signature_bytes
 
         return validation_bytes
@@ -228,7 +234,8 @@ class Ed25519SignatureValidator(BaseValidator):
         offset: int,
         output_hex: TextIO,
         output_bin: BinaryIO | None,
-        magic_value: str
+        magic_value: str,
+        input_data_offset: int
     ) -> None:
         if self.hashfunc:
             return super().append_validation_data(
@@ -238,7 +245,8 @@ class Ed25519SignatureValidator(BaseValidator):
                 offset=offset,
                 output_hex=output_hex,
                 output_bin=output_bin,
-                magic_value=magic_value
+                magic_value=magic_value,
+                input_data_offset=input_data_offset
             )
 
         with open(input_file, 'r', encoding='UTF-8') as f:
@@ -256,13 +264,14 @@ class Ed25519SignatureValidator(BaseValidator):
         self.verify(
             public_key=public_key,
             signature_bytes=signature_bytes,
-            message_bytes=ih.tobinstr()
+            message_bytes=(ih.tobinstr())[input_data_offset:]
         )
         validation_data = self.get_validation_data(
             signature_bytes=signature_bytes,
             input_hex=ih,
             public_key=public_key,
-            magic_value=parsed_magic_value
+            magic_value=parsed_magic_value,
+            input_data_offset=input_data_offset
         )
         validation_data_hex = IntelHex()
 
@@ -309,6 +318,8 @@ def parse_args(argv=None):
                         help='.bin output file name.')
     parser.add_argument('--hash', default=None, choices=['sha512'],
                         help='Hash algorithm to use with ed25519.')
+    parser.add_argument('--input-data-offset', required=False, default=0,
+                        type=int, help='The offset in the input data that the validation data corresponds to.')
 
     args = parser.parse_args(argv)
     if args.output_hex is None:
@@ -337,7 +348,8 @@ def main(argv=None) -> int:
         offset=args.offset,
         output_hex=args.output_hex,
         output_bin=args.output_bin,
-        magic_value=args.magic_value
+        magic_value=args.magic_value,
+        input_data_offset=args.input_data_offset
     )
     return 0
 

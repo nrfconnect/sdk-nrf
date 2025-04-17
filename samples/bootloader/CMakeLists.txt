@@ -10,3 +10,5 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(bootloader)
 
 zephyr_library_sources(src/main.c)
+
+zephyr_compile_options("-include${CMAKE_CURRENT_LIST_DIR}/include//bl_partitions_dummy.h")

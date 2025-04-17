@@ -58,7 +58,7 @@ function(zephyr_mcuboot_tasks)
   # Fetch devicetree details for flash and slot information
   dt_chosen(flash_node PROPERTY "zephyr,flash")
   dt_nodelabel(slot0_flash NODELABEL "slot0_partition" REQUIRED)
-  dt_prop(slot_size PATH "${slot0_flash}" PROPERTY "reg" INDEX 1 REQUIRED)
+  dt_reg_size(slot_size PATH "${slot0_flash}" REQUIRED)
   dt_prop(write_block_size PATH "${flash_node}" PROPERTY "write-block-size")
 
   if(NOT write_block_size)
@@ -81,13 +81,17 @@ function(zephyr_mcuboot_tasks)
     endif()
   endif()
 
-  # Split fields, imgtool_sign_sysbuild is stored in cache which will have fields updated by
-  # sysbuild, imgtool_sign must not be stored in cache because it would then prevent those fields
-  # from being updated without a pristine build
-  # TODO: NCSDK-28461 sysbuild PM fields cannot be updated without a pristine build, will become
-  # invalid if a static PM file is updated without pristine build
-  set(imgtool_sign_sysbuild --slot-size @PM_MCUBOOT_PRIMARY_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_rom_command} CACHE STRING "imgtool sign sysbuild replacement")
-  set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} ${imgtool_sign_sysbuild})
+  if(CONFIG_PARTITION_MANAGER_ENABLED)
+    # Split fields, imgtool_sign_sysbuild is stored in cache which will have fields updated by
+    # sysbuild, imgtool_sign must not be stored in cache because it would then prevent those fields
+    # from being updated without a pristine build
+    # TODO: NCSDK-28461 sysbuild PM fields cannot be updated without a pristine build, will become
+    # invalid if a static PM file is updated without pristine build
+    set(imgtool_sign_sysbuild --slot-size @PM_MCUBOOT_PRIMARY_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_rom_command} CACHE STRING "imgtool sign sysbuild replacement")
+    set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} ${imgtool_sign_sysbuild})
+  else()
+    set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} --slot-size ${slot_size} --header-size ${CONFIG_ROM_START_OFFSET} ${imgtool_rom_command})
+  endif()
 
   # Arguments to imgtool.
   if(NOT CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS STREQUAL "")

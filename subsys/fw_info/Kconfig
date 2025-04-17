@@ -19,6 +19,7 @@ config FW_INFO_API
 config FW_INFO_OFFSET
 	hex "The location of firmware info inside this firmware"
 	default 0x600 if SOC_SERIES_NRF54LX
+	default 0x800 if SOC_SERIES_NRF54HX
 	default 0x200
 	help
 	  The location of firmware information inside the current firmware
@@ -77,6 +78,7 @@ config FW_INFO_HARDWARE_ID
 	default 52 if SOC_SERIES_NRF52X
 	default 53 if SOC_SERIES_NRF53X
 	default 54 if SOC_SERIES_NRF54LX
+	default 154 if SOC_SERIES_NRF54HX
 	default 91 if SOC_SERIES_NRF91X
 	default 0 if BOARD_NATIVE_SIM
 	help

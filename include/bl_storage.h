@@ -15,11 +15,13 @@
 #include <nrfx_nvmc.h>
 #elif defined(CONFIG_NRFX_RRAMC)
 #include <nrfx_rramc.h>
+#elif defined(CONFIG_DT_HAS_NORDIC_MRAM_ENABLED)
+/* No includes needed */
 #else
 #error "No NRFX storage technology supported backend selected"
 #endif
 #include <errno.h>
-#include <pm_config.h>
+#include <bl_partitions.h>
 
 
 #ifdef __cplusplus
@@ -32,6 +34,10 @@ typedef uint16_t lcs_data_t;
 typedef uint16_t lcs_reserved_t;
 #elif defined(CONFIG_NRFX_RRAMC)
 /* nRF54L15 only supports word writes */
+typedef uint32_t counter_t;
+typedef uint32_t lcs_data_t;
+typedef uint32_t lcs_reserved_t;
+#elif defined(CONFIG_DT_HAS_NORDIC_MRAM_ENABLED)
 typedef uint32_t counter_t;
 typedef uint32_t lcs_data_t;
 typedef uint32_t lcs_reserved_t;
@@ -173,7 +179,7 @@ struct bl_storage_data {
 	 */
 };
 
-#define BL_STORAGE ((const volatile struct bl_storage_data *)(PM_PROVISION_ADDRESS))
+#define BL_STORAGE ((const volatile struct bl_storage_data *)(NSIB_PROVISION_ADDRESS))
 
 /* This must be 32 bytes according to the IETF PSA token specification */
 #define BL_STORAGE_IMPLEMENTATION_ID_SIZE 32

@@ -7,16 +7,21 @@
 #include <soc.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/kernel.h>
-#include <pm_config.h>
+#include <bl_partitions.h>
 #include <fw_info.h>
 #include <fprotect.h>
+#ifdef CONFIG_NRFX_CLOCK
 #include <hal/nrf_clock.h>
+#endif
 #ifdef CONFIG_UART_NRFX_UART
 #include <hal/nrf_uart.h>
 #endif
 #ifdef CONFIG_UART_NRFX_UARTE
 #include <hal/nrf_uarte.h>
 #include <hal/nrf_gpio.h>
+#endif
+#ifdef CONFIG_NRF_GRTC_TIMER
+#include <nrfx_grtc.h>
 #endif
 
 #if defined(CONFIG_SB_DISABLE_SELF_RWX)
@@ -75,9 +80,17 @@ static void uninit_used_peripherals(void)
 #if defined(CONFIG_HAS_HW_NRF_UARTE20)
 	uninit_used_uarte(NRF_UARTE20);
 #endif
+#if defined(CONFIG_HAS_HW_NRF_UARTE136)
+	uninit_used_uarte(NRF_UARTE136);
+#endif
 #endif /* CONFIG_UART_NRFX */
 
+#ifdef CONFIG_NRFX_CLOCK
 	nrf_clock_int_disable(NRF_CLOCK, 0xFFFFFFFF);
+#endif
+#ifdef CONFIG_NRF_GRTC_TIMER
+	nrfx_grtc_uninit();
+#endif
 }
 
 #ifdef CONFIG_SW_VECTOR_RELAY
@@ -102,7 +115,7 @@ void bl_boot(const struct fw_info *fw_info)
 	 * application.
 	 */
 #if defined(CONFIG_FPROTECT)
-	int err = fprotect_area(PM_PROVISION_ADDRESS, PM_PROVISION_SIZE);
+	int err = fprotect_area(NSIB_PROVISION_ADDRESS, NSIB_PROVISION_SIZE);
 
 	if (err) {
 		printk("Failed to protect bootloader storage.\n\r");

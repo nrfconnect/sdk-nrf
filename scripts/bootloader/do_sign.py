@@ -40,6 +40,11 @@ def parse_args(argv=None):
         help='Signing algorithm (default: %(default)s)',
         action='store', choices=['ecdsa', 'ed25519'], default='ecdsa',
     )
+    parser.add_argument(
+        '--start-offset', dest='start_offset',
+        help='An offset in the data from which to start calculating the signature',
+        action='store', default=0, type=int
+    )
 
     args = parser.parse_args(argv)
 
@@ -66,7 +71,8 @@ def hex_to_binary(input_hex_file: str) -> bytes:
 
 
 def sign_with_ecdsa(
-    private_key_file: Path, input_file: Path, output_file: Path | None = None
+    private_key_file: Path, input_file: Path, output_file: Path | None = None,
+    start_offset: int = 0
 ) -> int:
     with open(private_key_file, 'rb') as f:
         private_key = load_pem_private_key(f.read(), password=None)
@@ -75,6 +81,7 @@ def sign_with_ecdsa(
 
     with open(input_file, 'rb') as f:
         data = f.read()
+    data = data[start_offset:]
     signature = private_key.sign(data, ec.ECDSA(hashes.SHA256()))
     asn1_signature_bytes = parse_asn1_signature(signature)
     with open_stream(output_file) as stream:
@@ -92,7 +99,8 @@ def parse_asn1_signature(signature: bytes, length=32) -> bytes:
 
 
 def sign_with_ed25519(
-    private_key_file: Path, input_file: Path, output_file: Path | None = None
+    private_key_file: Path, input_file: Path, output_file: Path | None = None,
+    start_offset: int = 0
 ) -> int:
     with open(private_key_file, 'rb') as f:
         private_key = load_pem_private_key(f.read(), password=None)
@@ -104,6 +112,7 @@ def sign_with_ed25519(
     else:
         with open(input_file, 'rb') as f:
             data = f.read()
+    data = data[start_offset:]
     signature = private_key.sign(data)
     with open_stream(output_file) as stream:
         stream.write(signature)
@@ -119,7 +128,7 @@ ALGORITHMS = {
 def main(argv=None) -> int:
     args = parse_args(argv)
     sign_function = ALGORITHMS[args.algorithm]
-    return sign_function(args.private_key, args.infile, args.outfile)
+    return sign_function(args.private_key, args.infile, args.outfile, args.start_offset)
 
 
 if __name__ == '__main__':

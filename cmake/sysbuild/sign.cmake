@@ -96,42 +96,48 @@ function(b0_sign_image slot cpunet_target)
   set(signed_hex ${CMAKE_BINARY_DIR}/signed_by_b0_${slot}.hex)
   set(signed_bin ${CMAKE_BINARY_DIR}/signed_by_b0_${slot}.bin)
 
-  if(NCS_SYSBUILD_PARTITION_MANAGER)
-    # A container can be merged, in which case we should use old style below,
-    # or it may be an actual image, where we know everything.
-    # Initial support disregards the merged hex files.
-    # In parent-child, everything is merged, even when having a single image in a
-    # container (where the original image == the merged image).
-    if(TARGET ${slot})
-      # If slot is a target of it's own, then it means we target the hex directly and not a merged hex.
-      sysbuild_get(${slot}_image_dir IMAGE ${slot} VAR APPLICATION_BINARY_DIR CACHE)
-      sysbuild_get(${slot}_kernel_name IMAGE ${slot} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
-      sysbuild_get(${slot}_kernel_elf IMAGE ${slot} VAR CONFIG_KERNEL_ELF_NAME KCONFIG)
-      sysbuild_get(${slot}_crypto_id IMAGE ${slot} VAR CONFIG_SB_VALIDATION_INFO_CRYPTO_ID KCONFIG)
-      sysbuild_get(${slot}_validation_offset IMAGE ${slot} VAR CONFIG_SB_VALIDATION_METADATA_OFFSET KCONFIG)
-
-      set(slot_bin ${${slot}_image_dir}/zephyr/${${slot}_kernel_name}.bin)
-      set(slot_hex ${${slot}_image_dir}/zephyr/${${slot}_kernel_name}.hex)
-      set(sign_depends ${${slot}_image_dir}/zephyr/${${slot}_kernel_name}.elf)
-      set(target_name ${slot})
-    elseif("${slot}" STREQUAL "s0_image")
-      if(SB_CONFIG_BOOTLOADER_MCUBOOT)
-        set(target_name mcuboot)
-      else()
-        set(target_name ${DEFAULT_IMAGE})
-      endif()
-
-      sysbuild_get(${target_name}_image_dir IMAGE ${target_name} VAR APPLICATION_BINARY_DIR CACHE)
-      sysbuild_get(${target_name}_kernel_name IMAGE ${target_name} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
-      sysbuild_get(${slot}_crypto_id IMAGE ${target_name} VAR CONFIG_SB_VALIDATION_INFO_CRYPTO_ID KCONFIG)
-      sysbuild_get(${slot}_validation_offset IMAGE ${target_name} VAR CONFIG_SB_VALIDATION_METADATA_OFFSET KCONFIG)
-
-      set(slot_bin ${${target_name}_image_dir}/zephyr/${${target_name}_kernel_name}.bin)
-      set(slot_hex ${${target_name}_image_dir}/zephyr/${${target_name}_kernel_name}.hex)
-      set(sign_depends ${target_name} ${${target_name}_image_dir}/zephyr/${${target_name}_kernel_name}.elf)
-    else()
-      message(FATAL_ERROR "Not supported")
+  # A container can be merged, in which case we should use old style below,
+  # or it may be an actual image, where we know everything.
+  # Initial support disregards the merged hex files.
+  # In parent-child, everything is merged, even when having a single image in a
+  # container (where the original image == the merged image).
+  if(TARGET ${slot})
+    # If slot is a target of it's own, then it means we target the hex directly and not a merged hex.
+    sysbuild_get(${slot}_image_dir IMAGE ${slot} VAR APPLICATION_BINARY_DIR CACHE)
+    sysbuild_get(${slot}_kernel_name IMAGE ${slot} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
+    sysbuild_get(${slot}_kernel_elf IMAGE ${slot} VAR CONFIG_KERNEL_ELF_NAME KCONFIG)
+    sysbuild_get(${slot}_crypto_id IMAGE ${slot} VAR CONFIG_SB_VALIDATION_INFO_CRYPTO_ID KCONFIG)
+    sysbuild_get(${slot}_validation_offset IMAGE ${slot} VAR CONFIG_SB_VALIDATION_METADATA_OFFSET KCONFIG)
+    if(NOT CONFIG_PARTITION_MANAGER_ENABLED)
+      sysbuild_get(input_data_start_offset_hex IMAGE ${slot} VAR CONFIG_ROM_START_OFFSET KCONFIG)
+      # CONFIG_ROM_START_OFFSET is a hex string, we need to convert it to a decimal integer
+      math(EXPR ${slot}_input_data_start_offset "${input_data_start_offset_hex}")
     endif()
+
+    set(slot_bin ${${slot}_image_dir}/zephyr/${${slot}_kernel_name}.bin)
+    set(slot_hex ${${slot}_image_dir}/zephyr/${${slot}_kernel_name}.hex)
+    set(sign_depends ${${slot}_image_dir}/zephyr/${${slot}_kernel_name}.elf)
+    set(target_name ${slot})
+  elseif("${slot}" STREQUAL "s0_image")
+    if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+      set(target_name mcuboot)
+    else()
+      set(target_name ${DEFAULT_IMAGE})
+    endif()
+
+    sysbuild_get(${target_name}_image_dir IMAGE ${target_name} VAR APPLICATION_BINARY_DIR CACHE)
+    sysbuild_get(${target_name}_kernel_name IMAGE ${target_name} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
+    sysbuild_get(${slot}_crypto_id IMAGE ${target_name} VAR CONFIG_SB_VALIDATION_INFO_CRYPTO_ID KCONFIG)
+    sysbuild_get(${slot}_validation_offset IMAGE ${target_name} VAR CONFIG_SB_VALIDATION_METADATA_OFFSET KCONFIG)
+    if(NOT CONFIG_PARTITION_MANAGER_ENABLED)
+      sysbuild_get(input_data_start_offset_hex IMAGE ${target_name} VAR CONFIG_ROM_START_OFFSET KCONFIG)
+      # CONFIG_ROM_START_OFFSET is a hex string, we need to convert it to a decimal integer
+      math(EXPR ${slot}_input_data_start_offset "${input_data_start_offset_hex}")
+    endif()
+
+    set(slot_bin ${${target_name}_image_dir}/zephyr/${${target_name}_kernel_name}.bin)
+    set(slot_hex ${${target_name}_image_dir}/zephyr/${${target_name}_kernel_name}.hex)
+    set(sign_depends ${target_name} ${${target_name}_image_dir}/zephyr/${${target_name}_kernel_name}.elf)
   else()
     message(FATAL_ERROR "Not supported")
   endif()
@@ -164,10 +170,16 @@ function(b0_sign_image slot cpunet_target)
 
   if(sign_cmd_hash_type)
     set(to_sign ${slot_hex})
+    if(NOT CONFIG_PARTITION_MANAGER_ENABLED)
+      set(sign_start_offset_arg --start-offset ${${slot}_input_data_start_offset})
+    else()
+      set(sign_start_offset_arg)
+    endif()
     set(hash_cmd
       ${PYTHON_EXECUTABLE}
       ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/hash.py
       --in ${to_sign} ${hash_cmd_type}
+      ${sign_start_offset_arg}
       > ${hash_file}
       )
   endif()
@@ -178,12 +190,18 @@ function(b0_sign_image slot cpunet_target)
     else()
       set(sign_cmd_signature_type)
     endif()
+    if(NOT sign_cmd_hash_type AND NOT CONFIG_PARTITION_MANAGER_ENABLED)
+      set(sign_start_offset_arg --start-offset ${${slot}_input_data_start_offset})
+    else()
+      set(sign_start_offset_arg)
+    endif()
 
     set(sign_cmd
       ${PYTHON_EXECUTABLE}
       ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/do_sign.py
       --private-key ${SIGNATURE_PRIVATE_KEY_FILE}
       --in ${hash_file} ${sign_cmd_signature_type}
+      ${sign_start_offset_arg}
       > ${signature_file}
       )
   elseif(SB_CONFIG_SECURE_BOOT_SIGNING_OPENSSL)
@@ -269,6 +287,12 @@ function(b0_sign_image slot cpunet_target)
     set(validation_signature_cmd)
   endif()
 
+  if(NOT CONFIG_PARTITION_MANAGER_ENABLED)
+    set(input_data_offset_arg --input-data-offset ${${slot}_input_data_start_offset})
+  else()
+    set(input_data_offset_arg)
+  endif()
+
   add_custom_command(
     OUTPUT
     ${signed_hex}
@@ -283,6 +307,7 @@ function(b0_sign_image slot cpunet_target)
     --signature ${signature_file}
     --public-key ${SIGNATURE_PUBLIC_KEY_FILE}
     --magic-value "${VALIDATION_INFO_MAGIC}"
+    ${input_data_offset_arg}
     DEPENDS
     ${SIGN_KEY_FILE_DEPENDS}
     ${signature_file}
@@ -303,17 +328,26 @@ function(b0_sign_image slot cpunet_target)
     signature_public_key_file_target
     )
 
-  # Set hex file and target for the ${slot) (s0/s1) container partition.
-  # This includes the hex file (and its corresponding target) to the build.
-  set_property(
-    GLOBAL PROPERTY
-    ${target_name}_PM_HEX_FILE
-    ${signed_hex}
-    )
+  if(CONFIG_PARTITION_MANAGER_ENABLED)
+    # Set hex file and target for the ${slot) (s0/s1) container partition.
+    # This includes the hex file (and its corresponding target) to the build.
+    set_property(
+      GLOBAL PROPERTY
+      ${target_name}_PM_HEX_FILE
+      ${signed_hex}
+      )
 
-  set_property(
-    GLOBAL PROPERTY
-    ${target_name}_PM_TARGET
-    ${slot}_signed_kernel_hex_target
-    )
+    set_property(
+      GLOBAL PROPERTY
+      ${target_name}_PM_TARGET
+      ${slot}_signed_kernel_hex_target
+      )
+  else()
+    if(NOT SB_CONFIG_BOOTLOADER_MCUBOOT)
+      set_property(
+        GLOBAL APPEND PROPERTY NORDIC_SECURE_BOOT_HEX_FILES_TO_MERGE
+        ${signed_hex}
+      )
+    endif()
+  endif()
 endfunction()

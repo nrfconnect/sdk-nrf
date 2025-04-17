@@ -11,6 +11,8 @@ config SECURE_BOOT
 	depends on !IS_SECURE_BOOTLOADER
 	select FW_INFO
 	select SW_VECTOR_RELAY if SOC_SERIES_NRF51X
+	select USE_DT_CODE_PARTITION if SOC_NRF54H20
+	select EXPERIMENTAL if SOC_NRF54H20
 	help
 	  Set this option to enable the first stage bootloader which
 	  verifies the signature of the app.
@@ -85,6 +87,7 @@ menuconfig IS_SECURE_BOOTLOADER
 	select SECURE_BOOT_VALIDATION
 	select SECURE_BOOT_STORAGE
 	select SW_VECTOR_RELAY if SOC_SERIES_NRF51X
+	select USE_DT_CODE_PARTITION if SOC_NRF54H20
 	imply NRFX_NVMC if !SOC_SERIES_NRF54LX
 	help
 	  This option is set by the first stage bootloader app to include all

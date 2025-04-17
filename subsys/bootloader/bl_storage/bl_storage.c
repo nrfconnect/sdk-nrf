@@ -48,6 +48,9 @@ static counter_t bl_storage_counter_get(uint32_t address)
 	return ~nrfx_nvmc_otp_halfword_read(address);
 #elif defined(CONFIG_NRFX_RRAMC)
 	return ~nrfx_rramc_otp_word_read(index_from_address(address));
+#elif defined(CONFIG_DT_HAS_NORDIC_MRAM_ENABLED)
+	/* TODO - proper OTP for nRF54H */
+	return ~(*(counter_t *)address);
 #endif
 }
 
@@ -57,6 +60,10 @@ static void bl_storage_counter_set(uint32_t address, counter_t value)
 	nrfx_nvmc_halfword_write((uint32_t)address, ~value);
 #elif defined(CONFIG_NRFX_RRAMC)
 	nrfx_rramc_otp_word_write(index_from_address((uint32_t)address), ~value);
+#elif defined(CONFIG_DT_HAS_NORDIC_MRAM_ENABLED)
+	/* TODO - proper OTP for nRF54H */
+	value = ~value;
+	memcpy((void *)address, &value, sizeof(value));
 #endif
 }
 
@@ -66,6 +73,8 @@ static uint32_t bl_storage_word_read(uint32_t address)
 	return nrfx_nvmc_uicr_word_read((uint32_t *)address);
 #elif defined(CONFIG_NRFX_RRAMC)
 	return nrfx_rramc_word_read(address);
+#elif defined(CONFIG_DT_HAS_NORDIC_MRAM_ENABLED)
+	return *(uint32_t *)address;
 #endif
 }
 
@@ -76,6 +85,9 @@ static uint32_t bl_storage_word_write(uint32_t address, uint32_t value)
 	return 0;
 #elif defined(CONFIG_NRFX_RRAMC)
 	nrfx_rramc_word_write(address, value);
+	return 0;
+#elif defined(CONFIG_DT_HAS_NORDIC_MRAM_ENABLED)
+	memcpy((void *)address, &value, sizeof(value));
 	return 0;
 #endif
 }
@@ -93,6 +105,9 @@ static uint16_t bl_storage_otp_halfword_read(uint32_t address)
 	} else {
 		halfword = (uint16_t)(word >> 16); /* Shift the upper half down */
 	}
+#elif defined(CONFIG_DT_HAS_NORDIC_MRAM_ENABLED)
+	/* TODO - proper OTP for nRF54H */
+	return *(uint16_t *)address;
 #endif
 	return halfword;
 }
@@ -396,6 +411,9 @@ static lcs_data_t bl_storage_lcs_get(uint32_t address)
 	return nrfx_nvmc_otp_halfword_read(address);
 #elif defined(CONFIG_NRFX_RRAMC)
 	return nrfx_rramc_otp_word_read(index_from_address(address));
+#elif defined(CONFIG_DT_HAS_NORDIC_MRAM_ENABLED)
+	/* TODO - not supported yet, will be probably handled by SSF */
+	return 0;
 #endif
 }
 
