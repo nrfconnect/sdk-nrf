@@ -6,7 +6,7 @@
  */
 
 #define LOG_MODULE_NAME net_openthread_alarm
-#define LOG_LEVEL CONFIG_OPENTHREAD_PLATFORM_LOG_LEVEL
+#define LOG_LEVEL	CONFIG_OPENTHREAD_PLATFORM_LOG_LEVEL
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(LOG_MODULE_NAME);
@@ -34,7 +34,11 @@ static void ot_timer_ms_fired(struct k_timer *timer)
 	ARG_UNUSED(timer);
 
 	timer_ms_fired = true;
+
+/* TODO: Remove this once the issue is fixed */
+#ifdef CONFIG_NET_L2_OPENTHREAD
 	otSysEventSignalPending();
+#endif
 }
 
 static void ot_timer_us_fired(struct k_timer *timer)
@@ -42,7 +46,11 @@ static void ot_timer_us_fired(struct k_timer *timer)
 	ARG_UNUSED(timer);
 
 	timer_us_fired = true;
+
+/* TODO: Remove this once the issue is fixed */
+#ifdef CONFIG_NET_L2_OPENTHREAD
 	otSysEventSignalPending();
+#endif
 }
 
 K_TIMER_DEFINE(ot_ms_timer, ot_timer_ms_fired, NULL);
