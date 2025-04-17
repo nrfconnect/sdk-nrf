@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y wget ca-certificates qemu-system-arm gi
     && rm -rf /var/lib/apt/lists/*
 RUN wget https://developer.nordicsemi.com/.pc-tools/nrfutil/x64-linux/nrfutil -q -O /usr/local/bin/nrfutil  \
     && chmod +x /usr/local/bin/nrfutil \
-    && nrfutil install device=2.7.7 \
+    && nrfutil install device=2.8.8 \
     && nrfutil install toolchain-manager=0.15.0
 RUN nrfutil toolchain-manager install --toolchain-bundle-id $VERSION \
     && nrfutil toolchain-manager env --as-script > /opt/toolchain-env.sh \
