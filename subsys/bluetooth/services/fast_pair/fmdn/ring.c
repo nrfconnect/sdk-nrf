@@ -385,6 +385,10 @@ static void dult_sound_start(enum dult_sound_src src)
 
 		break;
 	case DULT_SOUND_SRC_MOTION_DETECTOR:
+#if !CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR
+		__ASSERT(false, "FMDN Ring: Motion detector DULT source is not supported");
+		return;
+#else
 		ring_timeout = CONFIG_BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_MOTION_DETECTOR;
 		fmdn_ring_src = BT_FAST_PAIR_FMDN_RING_SRC_DULT_MOTION_DETECTOR;
 		/* No specific guidelines at the moment. */
@@ -394,6 +398,7 @@ static void dult_sound_start(enum dult_sound_src src)
 			BT_FAST_PAIR_FMDN_RING_VOLUME_HIGH : BT_FAST_PAIR_FMDN_RING_VOLUME_DEFAULT;
 
 		break;
+#endif
 	default:
 		__ASSERT(false,
 			 "FMDN Ring: unsupported DULT Sound source on the sound start action");
