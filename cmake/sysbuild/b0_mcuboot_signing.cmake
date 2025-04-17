@@ -10,6 +10,8 @@
 # Since this file is brought in via include(), we do the work in a
 # function to avoid polluting the top-level scope.
 
+include(${CMAKE_CURRENT_LIST_DIR}/bootloader_dts_utils.cmake)
+
 function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefix)
   find_program(IMGTOOL imgtool.py HINTS ${ZEPHYR_MCUBOOT_MODULE_DIR}/scripts/ NAMES imgtool NAMES_PER_DIR)
   set(keyfile "${SB_CONFIG_BOOT_SIGNATURE_KEY_FILE}")
@@ -26,7 +28,20 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
   sysbuild_get(CONFIG_BUILD_OUTPUT_HEX IMAGE ${application} VAR CONFIG_BUILD_OUTPUT_HEX KCONFIG)
 
   string(TOUPPER "${application}" application_uppercase)
-  set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION} --align 4 --slot-size $<TARGET_PROPERTY:partition_manager,${prefix}PM_${application_uppercase}_SIZE> --pad-header --header-size ${SB_CONFIG_PM_MCUBOOT_PAD})
+  if(SB_CONFIG_PARTITION_MANAGER)
+    set(slot_size $<TARGET_PROPERTY:partition_manager,${prefix}PM_${application_uppercase}_SIZE>)
+    set(mcuboot_pad ${SB_CONFIG_PM_MCUBOOT_PAD})
+    set(pad_header "--pad-header")
+  else()
+    dt_chosen(code_partition_node TARGET ${application} PROPERTY "zephyr,code-partition")
+    dt_reg_size(slot_size TARGET ${application} PATH ${code_partition_node})
+    sysbuild_get(mcuboot_pad IMAGE ${application} VAR CONFIG_ROM_START_OFFSET KCONFIG)
+
+    # The padding has already been added to the image by CONFIG_ROM_START_OFFSET
+    set(pad_header)
+  endif()
+
+  set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION} --align 4 --slot-size ${slot_size} ${pad_header} --header-size ${mcuboot_pad})
 
   if(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
     set(imgtool_extra --security-counter ${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE})
@@ -101,6 +116,11 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
       ${application_image_dir}/zephyr/.config
       ${CMAKE_BINARY_DIR}/signed_by_b0_${application}.hex
       )
+
+    set_property(
+      GLOBAL APPEND PROPERTY NORDIC_SECURE_BOOT_HEX_FILES_TO_MERGE
+      ${output}.hex
+    )
   endif()
 
   # Add the west sign calls and their byproducts to the post-processing
@@ -132,7 +152,12 @@ if(SB_CONFIG_BOOTLOADER_MCUBOOT)
 
     if(SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
       ncs_secure_boot_mcuboot_sign(s1_image "${bin_files}" "${signed_targets}" "")
-      set(extra_bin_data "signed_by_mcuboot_and_b0_s1_image.binload_address=$<TARGET_PROPERTY:partition_manager,PM_S1_ADDRESS>;signed_by_mcuboot_and_b0_s1_image.binslot=1")
+      if(SB_CONFIG_PARTITION_MANAGER)
+        set(slot1_addr $<TARGET_PROPERTY:partition_manager,PM_S1_ADDRESS>)
+      else()
+        nsib_get_s1_address(slot1_addr)
+      endif()
+      set(extra_bin_data "signed_by_mcuboot_and_b0_s1_image.binload_address=${slot1_addr};signed_by_mcuboot_and_b0_s1_image.binslot=1")
     endif()
 
     if(bin_files)
@@ -140,13 +165,19 @@ if(SB_CONFIG_BOOTLOADER_MCUBOOT)
 
       include(${ZEPHYR_NRF_MODULE_DIR}/cmake/fw_zip.cmake)
 
+      if(SB_CONFIG_PARTITION_MANAGER)
+        set(slot0_addr $<TARGET_PROPERTY:partition_manager,PM_S0_ADDRESS>)
+      else()
+        nsib_get_s0_address(slot0_addr)
+      endif()
+
       generate_dfu_zip(
         OUTPUT ${CMAKE_BINARY_DIR}/dfu_mcuboot.zip
         BIN_FILES ${bin_files}
         TYPE mcuboot
         IMAGE mcuboot
         SCRIPT_PARAMS
-        "signed_by_mcuboot_and_b0_mcuboot.binload_address=$<TARGET_PROPERTY:partition_manager,PM_S0_ADDRESS>"
+        "signed_by_mcuboot_and_b0_mcuboot.binload_address=${slot0_addr}"
         ${extra_bin_data}
         "version_MCUBOOT=${SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION}"
         "version_B0=${mcuboot_fw_info_firmware_version}"

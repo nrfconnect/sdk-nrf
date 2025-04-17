@@ -7,7 +7,6 @@
 #include <zephyr/types.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
-#include <pm_config.h>
 #include <fw_info.h>
 #if defined(CONFIG_FPROTECT)
 #include <fprotect.h>
@@ -19,10 +18,13 @@
 #include <bl_storage.h>
 #include <bl_boot.h>
 #include <bl_validation.h>
+#include <bl_partitions.h>
 #if defined(CONFIG_NRFX_NVMC)
 #include <nrfx_nvmc.h>
 #elif defined(CONFIG_NRFX_RRAMC)
 #include <nrfx_rramc.h>
+#elif defined(CONFIG_DT_HAS_NORDIC_MRAM_ENABLED)
+/* No includes needed */
 #else
 #error "No NRFX memory backend selected"
 #endif
@@ -44,6 +46,8 @@ int load_huk(void)
 			nrfx_nvmc_word_write(huk_flag_addr, 0);
 #elif defined(CONFIG_NRFX_RRAMC)
 			nrfx_rramc_word_write(huk_flag_addr, 0);
+#elif defined(CONFIG_DT_HAS_NORDIC_MRAM_ENABLED)
+			memcpy((void *)huk_flag_addr, (void *)&(uint32_t){0}, sizeof(uint32_t));
 #endif
 			return 0;
 		}
@@ -132,7 +136,7 @@ int main(void)
 {
 
 #if defined(CONFIG_FPROTECT)
-	int err = fprotect_area(PM_B0_ADDRESS, PM_B0_SIZE);
+	int err = fprotect_area(NSIB_B0_ADDRESS, NSIB_B0_SIZE);
 
 	if (err) {
 		printk("Failed to protect B0 flash, cancel startup.\r\n");

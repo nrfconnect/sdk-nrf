@@ -36,11 +36,15 @@ def parse_args():
         '--type', '-t', dest='hash_function', help='Hash function (default: %(default)s)',
         action='store', choices=HASH_FUNCTION_FACTORY.keys(), default='sha256'
     )
+    parser.add_argument(
+        '--start-offset', dest='start_offset', help='An offset in the data to start hashing from',
+        action='store', default=0, type=int
+    )
 
     return parser.parse_args()
 
 
-def generate_hash_digest(file: str, hash_function_name: str) -> bytes:
+def generate_hash_digest(file: str, hash_function_name: str, start_offset: int) -> bytes:
     if file.endswith('.hex'):
         ih = IntelHex(file)
         ih.padding = 0xff  # Allows hashing with empty regions
@@ -48,13 +52,15 @@ def generate_hash_digest(file: str, hash_function_name: str) -> bytes:
     else:
         to_hash = open(file, 'rb').read()
 
+    to_hash = to_hash[start_offset:]
+
     hash_function = HASH_FUNCTION_FACTORY[hash_function_name]
     return hash_function(to_hash).digest()
 
 
 def main():
     args = parse_args()
-    sys.stdout.buffer.write(generate_hash_digest(args.infile, args.hash_function))
+    sys.stdout.buffer.write(generate_hash_digest(args.infile, args.hash_function, args.start_offset))
     return 0
 
 
