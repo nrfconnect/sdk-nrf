@@ -18,6 +18,18 @@ tests:
     harness_config:
       fixture: gpio_loopback
     depends_on: gpio
+  nrf.extended.drivers.uart.async_api.fast:
+    platform_allow:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+      - nrf54lm20apdk@0.2.0/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20apdk/nrf54lm20a/cpuapp
+    extra_args:
+      - DTC_OVERLAY_FILE="boards/nrf54lm20apdk_nrf54lm20a_cpuapp_uart00.overlay"
+    filter: CONFIG_SERIAL_SUPPORT_ASYNC and not CONFIG_UART_MCUX_LPUART
+    harness: ztest
+    harness_config:
+      fixture: uart_fast_loopback
   nrf.extended.drivers.uart.async_api.rtt:
     platform_allow:
       - nrf7120pdk/nrf7120/cpuapp
