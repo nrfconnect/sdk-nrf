@@ -18,12 +18,15 @@ To enable the |power_manager|, set the :kconfig:option:`CONFIG_CAF_POWER_MANAGER
 Implied features
 ================
 
-The :kconfig:option:`CONFIG_CAF_POWER_MANAGER` option implies the following features that can be used to reduce power consumption:
+The |power_manager| controls the behavior of application modules to make the modules reduce power consumption when the device is inactive for a longer period of time.
+The :kconfig:option:`CONFIG_CAF_POWER_MANAGER` Kconfig option also implies the following Zephyr features that can be used to reduce power consumption:
 
 * System power off support (:kconfig:option:`CONFIG_POWEROFF`).
+  Entering the system power off state reduces the power consumption further.
   The option is not implied for an nRF54H Series SoC (:kconfig:option:`CONFIG_SOC_SERIES_NRF54HX`), because the :c:func:`sys_poweroff` API is not yet fully supported on the nRF54H Series SoC.
 * Device Power Management (:kconfig:option:`CONFIG_PM_DEVICE`).
   The option allows to reduce the power consumption of device drivers while they are inactive.
+  An application module that interacts with a driver supporting the device power management APIs can control the power state of the driver.
   It is recommended to disable the feature if your application does not use device drivers that integrate device power management.
   Disabling the feature reduces the memory footprint.
 
@@ -34,6 +37,9 @@ For the nRF54H Series SoC (:kconfig:option:`CONFIG_SOC_SERIES_NRF54HX`), the mod
 
 * Zephyr's :ref:`zephyr:pm-system` (:kconfig:option:`CONFIG_PM`).
   The nRF54H Series SoC (:kconfig:option:`CONFIG_SOC_SERIES_NRF54HX`) integrates the system power management to reduce power consumption when inactive.
+  When the |power_manager| switches the application modules to low power mode, the CPU workload is lowered.
+  That allows the system power management to enter deeper sleep states as the CPU stays in the idle state longer.
+  The system power management does not enter the system power off state (:c:func:`sys_poweroff`) automatically, no matter how long CPU is expected to stay in the idle state.
 * Zephyr's :ref:`zephyr:pm-device-runtime` (:kconfig:option:`CONFIG_PM_DEVICE_RUNTIME`).
   The option extends device power management and depends on the :kconfig:option:`CONFIG_PM_DEVICE` Kconfig option.
   Enabling the device runtime power management also prevents using system-managed device power management (:kconfig:option:`CONFIG_PM_DEVICE_SYSTEM_MANAGED`) by default.
