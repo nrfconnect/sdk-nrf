@@ -35,13 +35,6 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME, CONFIG_OPENTHREAD_L2_LOG_LEVEL);
 #include "nrf_802154.h"
 #include "nrf_802154_const.h"
 
-/******************************************************/
-/* TODO: To remove once L2 layer dependency is removed */
-#include <zephyr/net/ieee802154_radio.h>
-/******************************************************/
-
-/* Init, process and other functions required by platform.c */
-
 void platformRadioInit(void)
 {
 }
