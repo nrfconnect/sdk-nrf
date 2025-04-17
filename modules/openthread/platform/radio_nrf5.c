@@ -35,21 +35,6 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME, CONFIG_OPENTHREAD_L2_LOG_LEVEL);
 #include "nrf_802154.h"
 #include "nrf_802154_const.h"
 
-/******************************************************/
-/* TODO: To remove once L2 layer dependency is removed */
-#include <zephyr/net/ieee802154_radio.h>
-/******************************************************/
-
-/* Notifications, init, process and other functions required by platform.c */
-
-int notify_new_rx_frame(struct net_pkt *pkt)
-{
-}
-
-int notify_new_tx_frame(struct net_pkt *pkt)
-{
-}
-
 void platformRadioInit(void)
 {
 }
@@ -82,15 +67,10 @@ int8_t otPlatRadioGetReceiveSensitivity(otInstance *aInstance)
 {
 }
 
-/* TODO: This function is implemented in zephyr/subsys/net/l2/openthread, so we must remove that
- * dependency first and then implement this one
- */
 
- /*
 void otPlatRadioGetIeeeEui64(otInstance *aInstance, uint8_t *aIeeeEui64)
 {
 }
-*/
 
 void otPlatRadioSetPanId(otInstance *aInstance, otPanId aPanId)
 {
@@ -329,15 +309,3 @@ otError platformRadioTransmitModulatedCarrier(otInstance *aInstance, bool aEnabl
 }
 
 #endif /* CONFIG_IEEE802154_CARRIER_FUNCTIONS */
-
-/********************************************************************************/
-/* TODO: These functions are redundant because they're used by Zephyr L2 layer.
- * For now let's keep them here to allow building the project without failure.
- * Once L2 dependency is removed, we can remove these functions as well.
- */
-
-enum net_verdict ieee802154_handle_ack(struct net_if *iface, struct net_pkt *pkt)
-{
-}
-
-/********************************************************************************/
