@@ -16,6 +16,13 @@ LOG_MODULE_REGISTER(fp_fmdn_ring, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 #include "fp_fmdn_ring.h"
 #include "fp_fmdn_dult_integration.h"
 
+#ifdef CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR
+#define DULT_MOTION_DETECTOR_RING_REQ_TIMEOUT \
+	(CONFIG_BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_MOTION_DETECTOR)
+#else
+#define DULT_MOTION_DETECTOR_RING_REQ_TIMEOUT (-1)
+#endif
+
 /* Maximum timeout for the ringing request in deciseconds (10 minutes). */
 #define MAX_TIMEOUT_DSEC BT_FAST_PAIR_FMDN_RING_TIMEOUT_MS_TO_DS(10 * 60 * MSEC_PER_SEC)
 
@@ -385,7 +392,15 @@ static void dult_sound_start(enum dult_sound_src src)
 
 		break;
 	case DULT_SOUND_SRC_MOTION_DETECTOR:
-		ring_timeout = CONFIG_BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_MOTION_DETECTOR;
+		if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR)) {
+			__ASSERT(false, "FMDN Ring: Motion detector DULT source is not supported");
+			return;
+		}
+
+		__ASSERT(DULT_MOTION_DETECTOR_RING_REQ_TIMEOUT >= 0,
+			 "FMDN Ring: Motion detector DULT: ringing timeout is invalid");
+
+		ring_timeout = DULT_MOTION_DETECTOR_RING_REQ_TIMEOUT;
 		fmdn_ring_src = BT_FAST_PAIR_FMDN_RING_SRC_DULT_MOTION_DETECTOR;
 		/* No specific guidelines at the moment. */
 		dult_ring_req_param.active_comp_bm = BT_FAST_PAIR_FMDN_RING_COMP_BM_ALL;

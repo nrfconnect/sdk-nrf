@@ -408,7 +408,7 @@ config BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_BT_GATT
 config BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_MOTION_DETECTOR
 	int "Timeout in milliseconds in ringing request from DULT motion detector source"
 	default 1000
-	depends on BT_FAST_PAIR_FMDN_DULT
+	depends on BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR
 	help
 	  The default timeout parameter in milliseconds is used in the start
 	  ringing request that originates from the motion detector DULT source.
