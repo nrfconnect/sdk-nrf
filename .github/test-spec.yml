@@ -9,6 +9,7 @@
       - "!.github/**/*"
       - "!.vscode/**/*"
       - "!doc/**/*"
+      - "!scripts/docker/**/*"
       - "!test-manifests/**/*"
       - "!CODEOWNERS"
       - "!LICENSE"
