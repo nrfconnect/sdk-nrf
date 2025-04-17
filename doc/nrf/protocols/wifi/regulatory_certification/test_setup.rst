@@ -20,7 +20,7 @@ Wi-Fi Radio test sample
 The Wi-Fi® Radio test sample is used to configure and control the Wi-Fi radio on the nRF70 Series device.
 The Wi-Fi Radio test firmware supports the configuration of the Wi-Fi radio in specific modes and with various TX and RX parameters to test its performance.
 
-For an overall description, see :ref:`wifi_radio_sample_desc`.
+For an overall description, see either the :ref:`wifi_radio_test` sample or the :ref:`wifi_radio_test_sd` sample.
 The sub-commands that can be used to configure the radio are described in Wi-Fi :ref:`wifi_radio_subcommands`.
 For more information on using the sample for regulatory testing, see :ref:`Using the Wi-Fi Radio test sample <ug_wifi_radio_test_sample>`.
 
