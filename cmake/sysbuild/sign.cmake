@@ -109,6 +109,9 @@ function(b0_sign_image slot cpunet_target)
       sysbuild_get(${slot}_kernel_elf IMAGE ${slot} VAR CONFIG_KERNEL_ELF_NAME KCONFIG)
       sysbuild_get(${slot}_crypto_id IMAGE ${slot} VAR CONFIG_SB_VALIDATION_INFO_CRYPTO_ID KCONFIG)
       sysbuild_get(${slot}_validation_offset IMAGE ${slot} VAR CONFIG_SB_VALIDATION_METADATA_OFFSET KCONFIG)
+      sysbuild_get(input_data_start_offset_hex IMAGE ${slot} VAR CONFIG_ROM_START_OFFSET KCONFIG)
+      # CONFIG_ROM_START_OFFSET is a hex string, so we need to convert it to a decimal integer
+      math(EXPR ${slot}_input_data_start_offset "${input_data_start_offset_hex}")
 
       set(slot_bin ${${slot}_image_dir}/zephyr/${${slot}_kernel_name}.bin)
       set(slot_hex ${${slot}_image_dir}/zephyr/${${slot}_kernel_name}.hex)
@@ -125,6 +128,9 @@ function(b0_sign_image slot cpunet_target)
       sysbuild_get(${target_name}_kernel_name IMAGE ${target_name} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
       sysbuild_get(${slot}_crypto_id IMAGE ${target_name} VAR CONFIG_SB_VALIDATION_INFO_CRYPTO_ID KCONFIG)
       sysbuild_get(${slot}_validation_offset IMAGE ${target_name} VAR CONFIG_SB_VALIDATION_METADATA_OFFSET KCONFIG)
+      sysbuild_get(input_data_start_offset_hex IMAGE ${target_name} VAR CONFIG_ROM_START_OFFSET KCONFIG)
+      # CONFIG_ROM_START_OFFSET is a hex string, so we need to convert it to a decimal integer
+      math(EXPR ${slot}_input_data_start_offset "${input_data_start_offset_hex}")
 
       set(slot_bin ${${target_name}_image_dir}/zephyr/${${target_name}_kernel_name}.bin)
       set(slot_hex ${${target_name}_image_dir}/zephyr/${${target_name}_kernel_name}.hex)
@@ -163,13 +169,17 @@ function(b0_sign_image slot cpunet_target)
   endif()
 
   if(sign_cmd_hash_type)
+    set(sign_start_offset 0)
     set(to_sign ${slot_hex})
     set(hash_cmd
       ${PYTHON_EXECUTABLE}
       ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/hash.py
       --in ${to_sign} ${hash_cmd_type}
+      --start-offset ${${slot}_input_data_start_offset}
       > ${hash_file}
       )
+  else()
+    set(sign_start_offset ${${slot}_input_data_start_offset})
   endif()
 
   if(SB_CONFIG_SECURE_BOOT_SIGNING_PYTHON)
@@ -184,6 +194,7 @@ function(b0_sign_image slot cpunet_target)
       ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/do_sign.py
       --private-key ${SIGNATURE_PRIVATE_KEY_FILE}
       --in ${hash_file} ${sign_cmd_signature_type}
+      --start-offset ${sign_start_offset}
       > ${signature_file}
       )
   elseif(SB_CONFIG_SECURE_BOOT_SIGNING_OPENSSL)
@@ -283,6 +294,7 @@ function(b0_sign_image slot cpunet_target)
     --signature ${signature_file}
     --public-key ${SIGNATURE_PUBLIC_KEY_FILE}
     --magic-value "${VALIDATION_INFO_MAGIC}"
+    --input-data-offset ${${slot}_input_data_start_offset}
     DEPENDS
     ${SIGN_KEY_FILE_DEPENDS}
     ${signature_file}
@@ -303,17 +315,26 @@ function(b0_sign_image slot cpunet_target)
     signature_public_key_file_target
     )
 
-  # Set hex file and target for the ${slot) (s0/s1) container partition.
-  # This includes the hex file (and its corresponding target) to the build.
-  set_property(
-    GLOBAL PROPERTY
-    ${target_name}_PM_HEX_FILE
-    ${signed_hex}
-    )
+  if(CONFIG_PARTITION_MANAGER_ENABLED)
+    # Set hex file and target for the ${slot) (s0/s1) container partition.
+    # This includes the hex file (and its corresponding target) to the build.
+    set_property(
+      GLOBAL PROPERTY
+      ${target_name}_PM_HEX_FILE
+      ${signed_hex}
+      )
 
-  set_property(
-    GLOBAL PROPERTY
-    ${target_name}_PM_TARGET
-    ${slot}_signed_kernel_hex_target
-    )
+    set_property(
+      GLOBAL PROPERTY
+      ${target_name}_PM_TARGET
+      ${slot}_signed_kernel_hex_target
+      )
+  else()
+    if(NOT SB_CONFIG_BOOTLOADER_MCUBOOT)
+      set_property(
+        GLOBAL APPEND PROPERTY NORDIC_SECURE_BOOT_HEX_FILES_TO_MERGE
+        ${signed_hex}
+      )
+    endif()
+  endif()
 endfunction()
