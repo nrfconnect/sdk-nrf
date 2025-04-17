@@ -57,11 +57,6 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-Currently, the following configurations are supported:
-
-* nRF7002 DK + QSPI
-* nRF7002 EK + SPIM
-
 To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` board target.
 The following is an example of the CLI command:
 
