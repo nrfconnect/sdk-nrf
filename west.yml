@@ -91,7 +91,6 @@ manifest:
           - hal_st # required for ST sensors (unrelated to STM32 MCUs)
           - hal_tdk # required for Invensense sensors such as ICM42670
           - hal_wurthelektronik
-          - hostap
           - liblc3
           - libmetal
           - littlefs
@@ -117,6 +116,10 @@ manifest:
     #
     # Some of these are also Zephyr modules which have NCS-specific
     # changes.
+    - name: hostap
+      repo-path: sdk-hostap
+      path: modules/lib/hostap
+      revision: 2b5c82cd4e833c065075bc239a7bd138d4662e34
     - name: wfa-qt-control-app
       repo-path: sdk-wi-fiquicktrack-controlappc
       path: modules/lib/wfa-qt-control-app
