@@ -4,6 +4,7 @@ sample:
     nRF RPC
 tests:
   sample.nrf_rpc.protocols_serialization.server.rpc_ble:
+    sysbuild: true
     build_only: true
     platform_allow:
       - nrf52840dk/nrf52840
@@ -17,6 +18,7 @@ tests:
       - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
   sample.nrf_rpc.protocols_serialization.server.rpc_ot:
+    sysbuild: true
     build_only: true
     platform_allow:
       - nrf52840dk/nrf52840
@@ -30,6 +32,7 @@ tests:
       - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
   sample.nrf_rpc.protocols_serialization.server.rpc:
+    sysbuild: true
     build_only: true
     platform_allow:
       - nrf52840dk/nrf52840
