@@ -27,7 +27,7 @@ tests:
       SNIPPET="openthread"
   sample.nrf_rpc.protocols_serialization.server.rpc:
     extra_args: >
-      SNIPPET="ble;openthread;debug;coex;log_rpc"
+      SNIPPET="ble;openthread;debug;coex;log_rpc;hot_potato"
   sample.nrf_rpc.protocols_serialization.server.rpc_ci:
     extra_args: >
       SNIPPET="ble;openthread;debug;coex;log_rpc;ci-shell"
