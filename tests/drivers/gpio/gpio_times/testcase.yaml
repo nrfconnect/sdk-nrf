@@ -1,0 +1,15 @@
+common:
+  tags:
+    - drivers
+    - gpio
+    - ci_tests_drivers_gpio
+  depends_on: gpio
+  filter: not CONFIG_COVERAGE
+  harness: ztest
+
+tests:
+  drivers.gpio.gpio_times:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
