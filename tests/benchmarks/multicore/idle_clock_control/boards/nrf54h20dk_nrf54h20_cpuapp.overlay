@@ -12,7 +12,3 @@
 };
 
 /delete-node/ &led1;
-
-&audiopll {
-	status = "okay";
-};
