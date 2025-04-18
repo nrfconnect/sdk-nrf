@@ -88,10 +88,7 @@ endif # LOG_BACKEND_RPC_HISTORY
 
 config LOG_BACKEND_RPC_CRASH_LOG
 	bool "Crash log support"
-	select RETENTION
-	select RETENTION_MUTEX_FORCE_DISABLE
-	select RETAINED_MEM
-	select RETAINED_MEM_MUTEX_FORCE_DISABLE
+	depends on DEBUG_COREDUMP
 	help
 	  Enables saving the crash log in the "crash_log" retained RAM partition,
 	  and adds an nRF RPC command that allows a remote user to read the crash
