@@ -4417,6 +4417,13 @@ SoftDevice Controller
 The issues in this section are related to :ref:`nrfxlib:softdevice_controller`.
 In addition to the known issues listed here, see also :ref:`softdevice_controller_limitations` for permanent limitations.
 
+.. rst-class:: v2-9-0
+
+DRGN-24930: An assert could happen when receiving on the Coded PHY with 7.5 ms ACL connection interval
+  The controller could assert when receiving a packet over 27 bytes with a CRC error on the S8 Coded PHY.
+
+  **Workaround:** Use the ACL connection interval at least 10 ms more.
+
 .. rst-class:: v2-8-0
 
 DRGN-23776: Sending CIS packets with invalid MIC
