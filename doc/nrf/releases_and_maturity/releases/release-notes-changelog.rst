@@ -199,7 +199,7 @@ Matter bridge
 nRF5340 Audio
 -------------
 
-|no_changes_yet_note|
+* Added print of broadcast_ID when starting a broadcast_source
 
 nRF Desktop
 -----------
