@@ -221,6 +221,7 @@ struct cracen_key_derivation_operation {
 		cracen_hash_operation_t hash_op;
 	};
 	union {
+#if defined(PSA_NEED_CRACEN_HKDF)
 		struct {
 			uint8_t blk_counter;
 			uint8_t prk[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
@@ -229,7 +230,8 @@ struct cracen_key_derivation_operation {
 			size_t info_length;
 			bool info_set;
 		} hkdf;
-
+#endif /* PSA_NEED_CRACEN_HKDF */
+#if defined(PSA_NEED_CRACEN_PBKDF2_HMAC)
 		struct {
 			uint64_t input_cost;
 			char password[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
@@ -240,7 +242,8 @@ struct cracen_key_derivation_operation {
 			uint8_t uj[PSA_MAC_MAX_SIZE];
 			uint8_t tj[PSA_MAC_MAX_SIZE];
 		} pbkdf2;
-
+#endif /* PSA_NEED_CRACEN_PBKDF2_HMAC */
+#if defined(PSA_NEED_CRACEN_CTR_AES)
 		struct {
 			uint8_t key_buffer[CRACEN_MAX_AES_KEY_SIZE];
 			struct sxkeyref keyref;
@@ -256,11 +259,13 @@ struct cracen_key_derivation_operation {
 			uint32_t L;
 			uint8_t K_0[SX_BLKCIPHER_AES_BLK_SZ];
 		} cmac_ctr;
-
+#endif /* PSA_NEED_CRACEN_CTR_AES */
+#if defined(PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS)
 		struct {
 			uint8_t key[32];
 		} ecjpake_to_pms;
-
+#endif /* PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS */
+#if defined(PSA_NEED_CRACEN_TLS12_PRF)
 		struct {
 			/* May contain secret, length of secret as uint16be, other secret
 			 * and other secret length as uint16be.
@@ -274,6 +279,7 @@ struct cracen_key_derivation_operation {
 			size_t counter;
 			uint8_t a[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
 		} tls12;
+#endif /* PSA_NEED_CRACEN_TLS12_PRF */
 	};
 };
 typedef struct cracen_key_derivation_operation cracen_key_derivation_operation_t;
