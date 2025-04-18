@@ -41,7 +41,7 @@ Additionally, the nRF54L15 SoC supports :ref:`nrfxlib:soft_peripherals`, which y
 
 .. _ug_nrf54L15_revision:
 
-Ensure to check the revision of your nRF54L15 device to see if it is supported:
+Make sure to check the revision of your nRF54L15 development kit to see if it is supported:
 
 .. list-table::
    :header-rows: 1
@@ -62,6 +62,12 @@ Ensure to check the revision of your nRF54L15 device to see if it is supported:
 .. note::
 
   The supported nRF54L15 DK revisions are functionally equal and use the same board target (``nrf54l15dk/nrf54l15/cpuapp``).
+
+Refer to the compatibility matrices for the nRF54L Series devices to check the compatibility of various SoC revisions with different versions of the |NCS|:
+
+* `nRF54L05 Compatibility Matrix`_
+* `nRF54L10 Compatibility Matrix`_
+* `nRF54L15 Compatibility Matrix`_
 
 .. toctree::
    :maxdepth: 2
