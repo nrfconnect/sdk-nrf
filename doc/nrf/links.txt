@@ -1784,7 +1784,9 @@
 .. _`Git Credential Manager`: https://github.com/git-ecosystem/git-credential-manager
 .. _`Personal Access Token (PAT)`: https://github.com/settings/tokens
 .. _`Homebrew`: https://brew.sh/
-
+.. _`nRF54L05 Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54l05/page/COMP/nrf54l05/nrf54l05_nrf_connect_sdk.html
+.. _`nRF54L10 Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54l10/page/COMP/nrf54l10/nrf54l10_nrf_connect_sdk.html
+.. _`nRF54L15 Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54l15/page/COMP/nrf54l15/nrf54l15_nrf_connect_sdk.html
 
 .. _`10.23.3_ec 64-bit Windows, executable`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nRF-Command-Line-Tools-10.23.3-x64.exe
 
