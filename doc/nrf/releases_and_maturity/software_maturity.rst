@@ -2135,9 +2135,9 @@ PSA Crypto support
          - Supported
          - Supported
          - --
-         - --
-         - --
-         - --
+         - Experimental
+         - Experimental
+         - Experimental
          - --
          - Supported
          - Supported
@@ -2285,9 +2285,9 @@ The following table indicates the software maturity levels of the support for ea
          - Supported
          - Supported
          - --
-         - --
-         - --
-         - --
+         - Experimental
+         - Experimental
+         - Experimental
          - --
          - Supported
          - Supported
@@ -2298,16 +2298,16 @@ The following table indicates the software maturity levels of the support for ea
          - --
          - --
          - --
-         - Experimental
-         - Experimental
+         - Supported
+         - Supported
          - --
          - --
-         - Experimental
-         - Experimental
+         - Supported
+         - Supported
          - --
-         - Experimental
-         - Experimental
-         - Experimental
+         - Supported
+         - Supported
+         - Supported
        * - **hardware cryptography acceleration**
          - --
          - --
@@ -2324,6 +2324,38 @@ The following table indicates the software maturity levels of the support for ea
          - Supported
          - Supported
          - Supported
+       * - **multiple signature keys**
+         - --
+         - --
+         - --
+         - --
+         - --
+         - --
+         - --
+         - --
+         - Experimental
+         - Experimental
+         - Supported
+         - --
+         - --
+         - --
+         - --
+       * - **image encryption**
+         - --
+         - --
+         - --
+         - Experimental
+         - Experimental
+         - Experimental
+         - Experimental
+         - --
+         - Experimental
+         - Experimental
+         - Experimental
+         - --
+         - Experimental
+         - Experimental
+         - Experimental
 
 Power management device support
 *******************************
