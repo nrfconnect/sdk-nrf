@@ -129,7 +129,7 @@ typedef struct derived_key {
 } derived_key;
 
 typedef struct ikg_key {
-	uint32_t slot_number;
+	uint32_t id;
 	uint32_t domain;
 } ikg_key;
 
@@ -264,18 +264,23 @@ static key_type find_key(uint32_t id, platform_key *key)
 	}
 
 	if (usage == USAGE_IAK || usage == USAGE_MKEK || usage == USAGE_MEXT) {
-		key->ikg.domain = domain;
+		/* IKG keys are populated in cracen_load_keyref and cracen_get_builtin_key.
+		 * Here we only do the matching of platform key id to the internal
+		 * Cracen key id that the rest of the driver can understand.
+		 */
 		switch (usage) {
 		case USAGE_IAK:
-			key->ikg.slot_number = CRACEN_IDENTITY_KEY_SLOT_NUMBER;
+			key->ikg.id = CRACEN_BUILTIN_IDENTITY_KEY_ID;
 			break;
 		case USAGE_MKEK:
-			key->ikg.slot_number = CRACEN_MKEK_SLOT_NUMBER;
+			key->ikg.id = CRACEN_BUILTIN_MKEK_ID;
 			break;
 		case USAGE_MEXT:
-			key->ikg.slot_number = CRACEN_MEXT_SLOT_NUMBER;
+			key->ikg.id = CRACEN_BUILTIN_MEXT_ID;
 			break;
 		}
+
+		key->ikg.domain = domain;
 		return IKG;
 	}
 
@@ -424,17 +429,29 @@ psa_status_t cracen_platform_get_builtin_key(psa_drv_slot_number_t slot_number,
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 
+		uint32_t mkek_plat_key_id =
+			HALTIUM_PLATFORM_PSA_KEY_ID(ACCESS_INTERNAL, domain, USAGE_MKEK, 0);
+		/* The opaque key is populated by the PSA core when the IKG key is accessed from the
+		 * top level PSA APIs, now that we use the PSA driver APIs directly we need to
+		 * populate it manually.
+		 */
+		ikg_opaque_key mkek_ikg_opaque_key = {.slot_number = CRACEN_INTERNAL_HW_KEY1_ID,
+						      .owner_id = domain};
+
 		psa_key_attributes_t mkek_attr = PSA_KEY_ATTRIBUTES_INIT;
 
-		psa_set_key_id(&mkek_attr, mbedtls_svc_key_id_make(domain, CRACEN_BUILTIN_MKEK_ID));
+		psa_set_key_id(&mkek_attr, mbedtls_svc_key_id_make(domain, mkek_plat_key_id));
 		psa_set_key_lifetime(&mkek_attr, PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
 							 PSA_KEY_PERSISTENCE_READ_ONLY,
 							 PSA_KEY_LOCATION_CRACEN));
 		psa_set_key_type(&mkek_attr, PSA_KEY_TYPE_AES);
 
+
 		cracen_aead_operation_t op = {};
+
 		psa_status_t status = cracen_aead_decrypt_setup(
-			&op, &mkek_attr, NULL, 0,
+			&op, &mkek_attr, (uint8_t *)&mkek_ikg_opaque_key,
+			sizeof(mkek_ikg_opaque_key),
 			PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_GCM, key.sicr.mac_size));
 		if (status != PSA_SUCCESS) {
 			return status;
@@ -588,6 +605,19 @@ psa_status_t cracen_platform_keys_get_size(psa_key_attributes_t const *attribute
 	return PSA_ERROR_INVALID_ARGUMENT;
 }
 
+bool cracen_platform_keys_is_ikg_key(psa_key_attributes_t const *attributes)
+{
+	platform_key key;
+	key_type type = find_key(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)), &key);
+
+	return (type == IKG);
+}
+
+uint32_t cracen_platform_keys_get_owner(psa_key_attributes_t const *attributes)
+{
+	return PLATFORM_KEY_GET_DOMAIN(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)));
+}
+
 psa_status_t cracen_platform_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_lifetime_t *lifetime,
 					  psa_drv_slot_number_t *slot_number)
 {
@@ -616,7 +646,7 @@ psa_status_t cracen_platform_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_l
 	}
 
 	if (type == IKG) {
-		*slot_number = key.ikg.slot_number;
+		*slot_number = key.ikg.id;
 		*lifetime = PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
 			PSA_KEY_PERSISTENCE_READ_ONLY, PSA_KEY_LOCATION_CRACEN);
 
@@ -671,7 +701,16 @@ psa_status_t cracen_platform_keys_provision(const psa_key_attributes_t *attribut
 
 	psa_key_attributes_t mkek_attr = PSA_KEY_ATTRIBUTES_INIT;
 
-	psa_set_key_id(&mkek_attr, mbedtls_svc_key_id_make(domain, CRACEN_BUILTIN_MKEK_ID));
+	uint32_t mkek_plat_key_id =
+		HALTIUM_PLATFORM_PSA_KEY_ID(ACCESS_INTERNAL, domain, USAGE_MKEK, 0);
+	/* The opaque key is populated by the PSA core when the IKG key is accessed from the top
+	 * level PSA APIs, now that we use the PSA driver APIs directly we need to populate it
+	 * manually.
+	 */
+	ikg_opaque_key mkek_ikg_opaque_key = {.slot_number = CRACEN_INTERNAL_HW_KEY1_ID,
+					      .owner_id = domain};
+
+	psa_set_key_id(&mkek_attr, mbedtls_svc_key_id_make(domain, mkek_plat_key_id));
 	psa_set_key_lifetime(&mkek_attr,
 			     PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
 				     PSA_KEY_PERSISTENCE_READ_ONLY, PSA_KEY_LOCATION_CRACEN));
@@ -680,7 +719,7 @@ psa_status_t cracen_platform_keys_provision(const psa_key_attributes_t *attribut
 	cracen_aead_operation_t op = {};
 
 	status = cracen_aead_encrypt_setup(
-		&op, &mkek_attr, NULL, 0,
+		&op, &mkek_attr, (uint8_t *)&mkek_ikg_opaque_key, sizeof(mkek_ikg_opaque_key),
 		PSA_ALG_AEAD_WITH_SHORTENED_TAG(PSA_ALG_GCM, key.sicr.mac_size));
 	if (status != PSA_SUCCESS) {
 		return status;
