@@ -6,7 +6,6 @@
 
 #include <zephyr/kernel.h>
 #include <stdio.h>
-#include <zephyr/net/openthread.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/shell/shell.h>
 #include <zephyr/shell/shell_uart.h>
@@ -15,6 +14,10 @@
 #include <openthread/instance.h>
 
 #include "platform-zephyr.h"
+
+#ifdef CONFIG_NET_L2_OPENTHREAD
+#include <zephyr/net/openthread.h>
+#endif
 
 #define OT_SHELL_BUFFER_SIZE CONFIG_SHELL_CMD_BUFF_SIZE
 
@@ -74,9 +77,13 @@ static int ot_cmd(const struct shell *sh, size_t argc, char *argv[])
 
 	shell_p = sh;
 
+#ifdef CONFIG_NET_L2_OPENTHREAD
 	openthread_api_mutex_lock(openthread_get_default_context());
+#endif
 	otCliInputLine(rx_buffer);
+#ifdef CONFIG_NET_L2_OPENTHREAD
 	openthread_api_mutex_unlock(openthread_get_default_context());
+#endif
 
 	return 0;
 }
