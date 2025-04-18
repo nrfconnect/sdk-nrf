@@ -234,6 +234,10 @@ Amazon Sidewalk samples
 Bluetooth samples
 -----------------
 
+* :ref:`direct_test_mode` sample:
+
+   * Added support for the ``nRF54LM20A PDK``.
+
 |no_changes_yet_note|
 
 Bluetooth Mesh samples
