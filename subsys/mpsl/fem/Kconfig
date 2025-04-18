@@ -208,6 +208,18 @@ config MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL
 
 	  If this option is disabled the PA gain is constant and equal MPSL_FEM_NRF21540_TX_GAIN_DB.
 
+config MPSL_FEM_NRF21540_PA_LEAD_TIME_ADDITIONAL_US
+	int "Additional lead time in microseconds by which the PA of the nRF21540 is enabled earlier."
+	default 15
+	help
+	  Radio protocol drivers in the nRF Connect SDK usually set the target time point
+	  when the PA of a Front-End Module is expected to be fully ramped-up and ready
+	  for a transmission as the moment of the EVENTS_READY event of the RADIO peripheral.
+	  However the RF power on the SoC output starts to rise before this event.
+	  To avoid any spurious emission, at the moment when RF power starts to rise
+	  on the SoC output the PA of the FEM should be fully ramped-up.
+	  This parameter is added to the PA tx-en-settle-time-us device tree property
+	  to enable the PA of the FEM earlier and avoid spurious emission.
 
 endif   # (MPSL_FEM_NRF21540_GPIO || MPSL_FEM_NRF21540_GPIO_SPI) && MPSL_FEM
 

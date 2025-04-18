@@ -43,6 +43,7 @@ To use nRF21540 in GPIO mode, complete the following steps:
    * :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB_POUTB`
    * :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_RX_GAIN_DB`
    * :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL`
+   * :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_PA_LEAD_TIME_ADDITIONAL_US`
 
 #. Optionally replace the node name ``name_of_fem_node``.
 #. Replace the pin numbers provided for each of the required properties:

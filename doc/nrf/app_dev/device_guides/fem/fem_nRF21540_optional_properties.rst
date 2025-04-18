@@ -30,8 +30,9 @@ The following properties are optional for use with the :ref:`GPIO <ug_radio_fem_
 
 * Properties that control the timing of interface signals:
 
-  * ``tx-en-settle-time-us`` - Minimal time interval between asserting the ``TX_EN`` signal and starting the radio transmission, in microseconds.
-  * ``rx-en-settle-time-us`` - Minimal time interval between asserting the ``RX_EN`` signal and starting the radio transmission, in microseconds.
+  * ``tx-en-settle-time-us`` - Time between asserting the ``TX_EN`` signal and the readiness of the PA for transmission, in microseconds.
+    The value of :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_PA_LEAD_TIME_ADDITIONAL_US` option is added to the ``tx-en-settle-time-us`` to calculate the moment in time when the ``TX_EN`` signal is asserted before transmission.
+  * ``rx-en-settle-time-us`` - Time between asserting the ``RX_EN`` signal and the readiness of the LNA for reception, in microseconds.
 
     .. note::
         Values for these two properties cannot be higher than the Radio Ramp-Up time defined by :c:macro:`TX_RAMP_UP_TIME` and :c:macro:`RX_RAMP_UP_TIME`.
