@@ -360,6 +360,7 @@ int main(void)
 			K_SECONDS(CONFIG_RAW_TX_PKT_SAMPLE_WIFI_IFACE_OPER_UP_TIMEOUT_S)) != 0) {
 		LOG_ERR("Timeout waiting for iface to become operational after %d seconds",
 			CONFIG_RAW_TX_PKT_SAMPLE_WIFI_IFACE_OPER_UP_TIMEOUT_S);
+		return -1;
 	}
 
 	wifi_send_raw_tx_packets();
