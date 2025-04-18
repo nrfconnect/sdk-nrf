@@ -25,7 +25,7 @@ The sample also shows how to program the user region of FICR parameters on the d
 Requirements
 ************
 
-The sample supports the following development kits:
+The sample supports the following development kit:
 
 .. table-from-sample-yaml::
 
@@ -47,7 +47,8 @@ See :ref:`wifi_radio_ficr_prog_subcmds` for a list of available subcommands.
 .. note::
 
    All the FICR registers are stored in the one-time programmable (OTP) memory.
-   Consequently, the write commands are destructive. Once written, the contents of the OTP registers cannot be reprogrammed.
+   Consequently, the write commands are destructive.
+   Once written, the contents of the OTP registers cannot be reprogrammed.
 
 .. _wifi_radio_sd_sample_building_and_running:
 
@@ -69,7 +70,7 @@ See also :ref:`cmake_options` for instructions on how to provide CMake options.
 
 See the below links for detailed documentation on the sample and its features.
 
-* Testing : :ref:`wifi_radio_test_testing`
-* Peripheral radio test: :ref:`radio_test`
-* Radio test subcommands: :ref:`wifi_radio_subcommands`
-* FICR programming subcommands: :ref:`wifi_ficr_prog`
+* :ref:`wifi_radio_test_testing`
+* :ref:`Peripheral radio test <radio_test>`
+* :ref:`Radio test subcommands <wifi_radio_subcommands>`
+* :ref:`FICR programming subcommands <wifi_ficr_prog>`
