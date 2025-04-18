@@ -466,15 +466,17 @@ static psa_status_t cracen_signature_ecc_verify(bool is_message,
 		return PSA_ERROR_INVALID_SIGNATURE;
 	}
 
-	if (alg == PSA_ALG_ED25519PH) {
+	if (IS_ENABLED(PSA_WANT_ALG_ED25519PH) && alg == PSA_ALG_ED25519PH) {
 		sx_status = cracen_ed25519ph_verify(pubkey_buffer, (char *)input, input_length,
 						    signature, is_message);
 
-	} else if (alg == PSA_ALG_PURE_EDDSA) {
+	} else if (IS_ENABLED(PSA_WANT_ALG_PURE_EDDSA) && alg == PSA_ALG_PURE_EDDSA) {
 		sx_status = cracen_ed25519_verify(pubkey_buffer, (char *)input, input_length,
 						  signature);
 
-	} else if (PSA_ALG_IS_ECDSA(alg) || PSA_ALG_IS_DETERMINISTIC_ECDSA(alg)) {
+	} else if ((PSA_ALG_IS_ECDSA(alg) && IS_ENABLED(PSA_WANT_ALG_ECDSA)) ||
+		   (IS_ENABLED(PSA_WANT_ALG_DETERMINISTIC_ECDSA) &&
+		    PSA_ALG_IS_DETERMINISTIC_ECDSA(alg))) {
 		struct sxhashalg hashalg = {0};
 		const struct sxhashalg *hash_algorithm_ptr = &hashalg;
 
