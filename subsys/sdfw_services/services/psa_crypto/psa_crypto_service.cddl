@@ -674,7 +674,7 @@ psa_crypto_req = [
         psa_pake_output_req /
         psa_pake_input_req /
         psa_pake_get_shared_key_req /
-        psa_pake_abort_req /
+        psa_pake_abort_req
     ),
 ]
 
