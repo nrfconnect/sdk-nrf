@@ -121,3 +121,10 @@ Additionally, either :kconfig:option:`CONFIG_CC3XX_BACKEND` or :kconfig:option:`
 
 .. note::
    Enabling the CryptoCell by using :kconfig:option:`CONFIG_CC3XX_BACKEND` in a non-secure image of a TF-M build will have no effect.
+
+API documentation
+*****************
+
+| Header files: :file:`subsys/nrf_security/include/psa/crypto_driver_contexts_*.h`
+
+.. doxygengroup:: nrf_security_api_structures
