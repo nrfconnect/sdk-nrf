@@ -425,9 +425,6 @@ After programming the sample to your development kit, you can test it in three w
 .. note::
    For the |nRF5340DKnoref|, see :ref:`logging_cpunet` for information about the COM terminals on which the logging output is available.
 
-.. note::
-   |54H_engb_2_8|
-
 .. _direct_test_mode_testing_anritsu:
 
 Testing with a certified tester

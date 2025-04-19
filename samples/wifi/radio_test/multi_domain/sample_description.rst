@@ -58,7 +58,6 @@ Currently, the following configurations are supported:
 * nRF7002 DK + QSPI
 * nRF7002 EK + SPIM
 
-
 To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` board target.
 The following is an example of the CLI command:
 
@@ -74,10 +73,6 @@ The following is an example of the CLI command:
    west build -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf7002ek
 
 See also :ref:`cmake_options` for instructions on how to provide CMake options.
-
-.. note::
-   |54H_engb_2_8|
-
 
 Testing
 =======

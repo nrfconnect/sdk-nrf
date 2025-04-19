@@ -245,3 +245,5 @@
 .. |devicetree_bindings| replace:: The devicetree bindings provide the structure for the content of the devicetree nodes.
    The :ref:`compatible <zephyr:dt-bindings-compatible>` property defines the compatibility of a devicetree node with a devicetree binding.
    For more information, read the :ref:`documentation about devicetree bindings in Zephyr <zephyr:dt-binding-compat>`.
+
+.. |install_latest_version| replace:: When you first install the |NCS|, it is recommended to install the latest released versions of the SDK and the toolchain.

@@ -22,13 +22,8 @@ Make sure you have all the required hardware and that your computer has one of t
 Hardware
 ========
 
-* nRF54H20 DK version PCA10175 Engineering C - v0.9.0 and later revisions
-
+* nRF54H20 DK version PCA10175 Engineering C - v0.9.0 and later revisions.
   Check the version number on your DK's sticker to verify its compatibility with the |NCS|.
-
-.. note::
-   |54H_engb_2_8|
-
 * USB-C cable.
 
 Software
@@ -36,7 +31,7 @@ Software
 
 On your computer, one of the following operating systems:
 
-.. include:: ../../../../nrf/installation/recommended_versions.rst
+.. include:: ../../../installation/recommended_versions.rst
     :start-after: os_table_start
     :end-before: os_table_end
 
@@ -61,87 +56,21 @@ Installing the required software
 
 To work with the nRF54H20 DK, follow the instructions in the next sections to install the required tools.
 
-.. _ug_nrf54h20_install_toolchain:
+Install prerequisites
+=====================
 
-Installing the |NCS| and its toolchain
-======================================
-
-You can install the |NCS| and its toolchain by using Toolchain Manager.
-
-Toolchain Manager is a tool available from `nRF Connect for Desktop`_, a cross-platform tool that provides different applications that simplify installing the |NCS|.
-Both the tool and the application are available for Windows, Linux, and MacOS.
-
-To install the toolchain and the SDK using the Toolchain Manager app, complete the following steps:
-
-1. Install Toolchain Manager:
-
-   a. `Download nRF Connect for Desktop`_ for your operating system.
-   #. Install and run the tool on your machine.
-   #. In the :guilabel:`Apps` section, click :guilabel:`Install` next to Toolchain Manager.
-
-   The app installs on your machine, and the :guilabel:`Install` button changes to :guilabel:`Open`.
-
-#. Install the |NCS| source code:
-
-   a. Open Toolchain Manager in nRF Connect for Desktop.
-
-      .. figure:: ../../../../nrf/images/gs-assistant_tm.png
-         :alt: The Toolchain Manager window
-
-         The Toolchain Manager window
-
-   #. Click :guilabel:`SETTINGS` in the navigation bar to specify where you want to install the |NCS|.
-   #. In :guilabel:`SDK ENVIRONMENTS`, click the :guilabel:`Install` button next to the |NCS| version |release|.
-
-      The |NCS| version |release| installs on your machine.
-      The :guilabel:`Install` button changes to :guilabel:`Open VS Code`.
-
-#. Set up the preferred building method:
-
-   .. tabs::
-
-      .. tab:: nRF Connect for Visual Studio Code
-
-         To build on the |nRFVSC|, complete the following steps:
-
-         a. In Toolchain Manager, click the :guilabel:`Open VS Code` button.
-
-            A notification appears with a list of missing extensions that you need to install, including those from the `nRF Connect for Visual Studio Code`_ extension pack.
-         #. Click **Install missing extensions**, then close VS Code.
-         #. Once the extensions are installed, click **Open VS Code** button again.
-
-         You can then follow the instructions in :ref:`creating_vsc`.
-
-      .. tab:: Command line
-
-         To build on the command line, complete the following steps:
-
-         1. Restart the Toolchain Manager application.
-         #. Click the dropdown menu for the installed nRF Connect SDK version.
-
-            .. figure:: ../../../../nrf/images/gs-assistant_tm_dropdown.png
-               :alt: The Toolchain Manager dropdown menu for the installed nRF Connect SDK version, cropped
-
-               The Toolchain Manager dropdown menu options
-
-         #. Select :guilabel:`Open command prompt`.
-
-         You can then follow the instructions in :ref:`creating_cmd`.
-
-Installing a terminal application
-=================================
-
-Install a terminal emulator, such as the `Serial Terminal app`_ (from the nRF Connect for Desktop application) or the nRF Terminal (part of the `nRF Connect for Visual Studio Code`_ extension).
-Both of these terminal emulators start the required :ref:`toolchain environment <using_toolchain_environment>`.
+.. include:: ../../../installation/install_ncs.rst
+   :start-after: .. prerequisites-include-start
+   :end-before: .. prerequisites-include-end
 
 Installing nRF Util and its commands
-====================================
+------------------------------------
 
 Using the nRF54H20 DK with the |NCS| version |release| requires the following:
 
 * nRF Util v7.13.0 or higher
-* nRF Util ``device`` command v2.7.16
-* nRF Util ``trace`` command v3.1.0
+* nRF Util ``device`` command v2.8.8
+* nRF Util ``trace`` command v3.3.0
 * nRF Util ``suit`` command v0.9.0
 
 If you have not already installed nRF Util as part of :ref:`nRF Connect SDK prerequisites <installing_vsc>`, complete the following steps to install it:
@@ -170,6 +99,28 @@ If you have not already installed nRF Util as part of :ref:`nRF Connect SDK prer
    .. code-block::
 
       nrfutil install device=2.7.16 --force
+
+.. _ug_nrf54h20_install_toolchain:
+
+Installing the |NCS| toolchain
+==============================
+
+.. include:: ../../../installation/install_ncs.rst
+   :start-after: .. installncstoolchain-include-start
+   :end-before: .. installncstoolchain-include-end
+
+Getting the |NCS| code
+======================
+
+.. include:: ../../../installation/install_ncs.rst
+   :start-after: .. getncscode-include-start
+   :end-before: .. getncscode-include-end
+
+Installing a terminal application
+=================================
+
+Install a terminal emulator, such as the `Serial Terminal app`_ (from the nRF Connect for Desktop application) or the nRF Terminal (part of the `nRF Connect for Visual Studio Code`_ extension).
+Both of these terminal emulators start the required :ref:`toolchain environment <using_toolchain_environment>`.
 
 .. _ug_nrf54h20_gs_bringup:
 
@@ -211,7 +162,7 @@ After programming the BICR, program the nRF54H20 SoC with the :ref:`nRF54H20 SoC
 This bundle contains the precompiled firmware for the :ref:`Secure Domain <ug_nrf54h20_secure_domain>` and :ref:`System Controller <ug_nrf54h20_sys_ctrl>`.
 To program the nRF54H20 SoC binaries to the nRF54H20 DK, do the following:
 
-1. Download the `nRF54H20 SoC binaries v0.9.2`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
+1. Download the `nRF54H20 SoC binaries v0.9.6`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
 
    .. note::
       On MacOS, ensure that the ZIP file is not unpacked automatically upon download.

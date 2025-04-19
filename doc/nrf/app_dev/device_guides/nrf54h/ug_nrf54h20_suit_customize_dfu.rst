@@ -47,10 +47,11 @@ Software requirements
 
 This guide requires the following software:
 
-* Toolchain Manager - For installing the full |NCS| toolchain.
+* The full |NCS| toolchain.
+  See :ref:`ug_nrf54h20_gs` for instructions on how to install the toolchain.
 * Microsoft's |VSC| - The recommended IDE for |NCS|.
 * |nRFVSC| - An add-on for |VSC| for developing |NCS| applications.
-* nRF Command Line Tools - Mandatory tools for working with |NCS|.
+* nRF Util.
 * **suit-generator** - A Python package by Nordic Semiconductor for generating SUIT envelopes and manifests.
 
 Download instructions are in the README file in the `suit-generator`_ repository.

@@ -89,10 +89,7 @@ To debug a specific core using ``JLinkExe`` do the following:
    You can find the ``SEGGER-ID`` as follows:
 
    * Check the ``SEGGER ID`` printed on the label on the bottom side of the DK.
-   * Run the ``nrfjprog --ids`` command.
-
-      .. note::
-         |nrfjprog_deprecation_note|
+   * Run the ``nrfutil device list`` command.
 
    If you connect just one DK to the machine, defining ``SEGGER-ID`` is not necessary.
 

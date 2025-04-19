@@ -180,9 +180,6 @@ Building and running
 
 .. include:: /includes/nRF54H20_erase_UICR.txt
 
-.. note::
-   |54H_engb_2_8|
-
 Experimental nRF54H20 SoC radio core only build
 ===============================================
 
