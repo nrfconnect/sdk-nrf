@@ -1578,3 +1578,8 @@ ci_samples_zephyr_drivers_spi_flash:
   files:
     - nrf/samples/zephyr/drivers/spi_flash/
     - zephyr/samples/drivers/spi_flash/
+
+ci_tests_zephyr_subsys_settings_performance:
+  files:
+    - nrf/tests/zephyr/subsys/settings/performance/
+    - zephyr/tests/subsys/settings/performance/
