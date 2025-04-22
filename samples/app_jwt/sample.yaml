@@ -5,12 +5,14 @@ sample:
 
 common:
   build_only: true
-  tags: ci_build ci_application_jwt
+  tags:
+    - sysbuild
+    - ci_build
+    - ci_samples_app_jwt
 
 tests:
   application.jwt.logging.uart:
     sysbuild: true
-    tags: sysbuild ci_application_jwt
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
