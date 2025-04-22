@@ -5,6 +5,7 @@ on:
     types: [closed]
     branches:
       - main
+      - 'v*-branch'
 
 jobs:
   remove:
