@@ -945,6 +945,7 @@
 /tests/zephyr/drivers/timer/              @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/uart/               @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/watchdog/           @nrfconnect/ncs-low-level-test
+/tests/zephyr/subsys/settings/performance/ @nrfconnect/ncs-pluto @rghaddab
 
 /tests/benchmarks/multicore/idle/*.rst    @nrfconnect/ncs-si-bluebagel-doc
 /tests/benchmarks/multicore/idle_gpio/*.rst @nrfconnect/ncs-si-bluebagel-doc
