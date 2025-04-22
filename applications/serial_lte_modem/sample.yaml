@@ -12,7 +12,12 @@ tests:
       - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
     integration_platforms:
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
+      - nrf9131ek/nrf9131/ns
+      - thingy91/nrf9160/ns
+      - thingy91x/nrf9151/ns
     tags:
       - ci_build
       - sysbuild
