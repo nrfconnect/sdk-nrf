@@ -470,9 +470,35 @@ Battery Notification extension
 
 Complete the following steps to test `Fast Pair Battery Notification extension`_:
 
-#. Pair the Fast Pair Provider with at least one Fast Pair Seeker.
-#. Set the Fast Pair Provider in not discoverable advertising mode.
-#. Verify that the Provider is advertising sample battery data using the `nRF Connect for Mobile`_ application.
+.. tabs::
+
+   .. group-tab:: nRF52 and nRF53 DKs
+
+      #. Pair the Fast Pair Provider with at least one Fast Pair Seeker.
+      #. Disconnect the Fast Pair Seeker from the Fast Pair Provider.
+      #. After disconnection, the provider automatically switches from the discoverable advertising to the not discoverable advertising with the show UI indication mode and starts advertising sample battery data.
+         **LED 3** is blinking rapidly.
+      #. Verify that the Provider is advertising sample battery data using the `nRF Connect for Mobile`_ application:
+
+         a. Open the `nRF Connect for Mobile`_ application.
+         #. Open the :guilabel:`SCANNER` tab.
+         #. Identify your test device that acts as the Fast Pair Provider in the scanning list.
+         #. Tap on it to expand advertising details.
+         #. Verify that the sample battery level and charging status are displayed in the **Fast Pair** section.
+
+   .. group-tab:: nRF54 DKs
+
+      #. Pair the Fast Pair Provider with at least one Fast Pair Seeker.
+      #. Disconnect the Fast Pair Seeker from the Fast Pair Provider.
+      #. After disconnection, the provider automatically switches from the discoverable advertising to the not discoverable advertising with the show UI indication mode and starts advertising sample battery data.
+         **LED 2** is blinking rapidly.
+      #. Verify that the Provider is advertising sample battery data using the `nRF Connect for Mobile`_ application:
+
+         a. Open the `nRF Connect for Mobile`_ application.
+         #. Open the :guilabel:`SCANNER` tab.
+         #. Identify your test device that acts as the Fast Pair Provider in the scanning list.
+         #. Tap on it to expand advertising details.
+         #. Verify that the sample battery level and charging status are displayed in the **Fast Pair** section.
 
 .. note::
    Currently, Android phones have trouble with the Battery Notification extension and sometimes do not display battery information as a user indication.
