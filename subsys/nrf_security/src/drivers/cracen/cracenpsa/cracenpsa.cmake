@@ -49,7 +49,8 @@ if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
     ${CMAKE_CURRENT_LIST_DIR}/src/ed25519.c
     ${CMAKE_CURRENT_LIST_DIR}/src/hmac.c
     ${CMAKE_CURRENT_LIST_DIR}/src/rsapss.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/rndinrange.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/rsassa_pkcs1v15.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/rsamgf1xor.c
   )
 endif()
 

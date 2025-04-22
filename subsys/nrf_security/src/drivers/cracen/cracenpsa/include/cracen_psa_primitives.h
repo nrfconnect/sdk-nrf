@@ -391,4 +391,30 @@ struct cracen_ecc_keypair {
 	struct cracen_ecc_priv_key priv_key;
 	struct cracen_ecc_pub_key pub_key;
 };
+
+struct cracen_rsa_key {
+	const struct sx_pk_cmd_def *cmd;
+	unsigned int slotmask;
+	unsigned int dataidx;
+	const struct sx_buf *elements[5];
+};
+
+/** Asymmetric encryption plaintext or ciphertext.
+ *
+ * This structure is used to represent plaintexts and ciphertexts in asymmetric
+ * (i.e. public key) encryption and decryption operations. It is used with the
+ * tasks that implement the RSAES-OAEP and RSAES-PKCS1-v1_5 encryption
+ * schemes.
+ */
+struct cracen_crypt_text {
+	char *addr;
+	size_t sz;
+};
+
+struct cracen_signature {
+	size_t sz; /**< Total signature size, in bytes. */
+	char *r;   /**< Signature element "r". */
+	char *s;   /**< Signature element "s". */
+};
+
 #endif /* CRACEN_PSA_PRIMITIVES_H */

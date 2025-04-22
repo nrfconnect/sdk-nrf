@@ -133,7 +133,7 @@ int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bo
  * \retval SX_OK on success.
  * \retval SX_ERR_INVALID_PARAM if the ASN.1 integer cannot be extracted.
  */
-int cracen_signature_asn1_get_operand(unsigned char **p, const unsigned char *end,
+int cracen_signature_asn1_get_operand(uint8_t**p, const uint8_t *end,
 				      struct sx_buf *op);
 
 /**
@@ -292,3 +292,15 @@ int cracen_get_rnd_in_range(const uint8_t *n, size_t nsz, uint8_t *out);
 int temp_cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey, bool is_key_pair,
 	const unsigned char *key, size_t keylen, struct sx_buf *modulus,
 	struct sx_buf *exponent);
+
+int cracen_memdiff(const uint8_t *a, const uint8_t *b, size_t sz);
+
+/** Modular exponentiation (base^key mod n).
+ *
+ * This function is used by both the sign and the verify tasks. Note: if the
+ * base is greater than the modulus, SilexPK will return the SX_ERR_OUT_OF_RANGE
+ * status code.
+ */
+static int cracen_rsa_modexp(struct sx_pk_acq_req *pkreq, struct sx_pk_slot *inputs,
+			     struct cracen_rsa_key *rsa_key, uint8_t *base, size_t basez,
+			     int *sizes);
