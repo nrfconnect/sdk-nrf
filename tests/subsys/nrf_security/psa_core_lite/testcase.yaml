@@ -8,6 +8,9 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     tags:
       - sysbuild
+      - crypto
+      - ci_crypto
+      - ci_tests_crypto
     extra_args: >
       OVERLAY_CONFIG="overlays/lite.conf;overlays/eddsa.conf"
   # PSA core lite: ECDSA
@@ -61,6 +64,9 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     tags:
       - sysbuild
+      - crypto
+      - ci_crypto
+      - ci_tests_crypto
     extra_args: >
       OVERLAY_CONFIG="overlays/lite.conf;overlays/eddsa.conf;overlays/encrypt.conf;overlays/rng.conf"
   # PSA core lite: ECDSA + encrypt + RNG
