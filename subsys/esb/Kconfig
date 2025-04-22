@@ -151,7 +151,7 @@ config ESB_NEVER_DISABLE_TX
 
 config ESB_FAST_SWITCHING
 	select EXPERIMENTAL
-	depends on !ESB_NEVER_DISABLE_TX && (SOC_NRF54H20_CPURAD)
+	depends on SOC_NRF54H20_CPURAD
 	bool "Fast radio TX/RX and RX/TX switching [EXPERIMENTAL]"
 	help
 	  This option enables fast switching between transmit (TX) and receive (RX) modes
