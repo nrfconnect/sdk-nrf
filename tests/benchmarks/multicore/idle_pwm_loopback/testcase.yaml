@@ -54,6 +54,7 @@ tests:
       - idle_pwm_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_1.overlay"
     harness: console
     harness_config:
+      fixture: spi_loopback
       type: multi_line
       ordered: true
       regex:
