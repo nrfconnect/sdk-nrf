@@ -816,6 +816,11 @@
 .. _`nRF7002 companion IC`: https://docs.nordicsemi.com/bundle/ug_nrf7002_ek/page/UG/nrf7002_EK/hw_wifi_companion_ic.html
 .. _`Antenna gain compensation`: https://docs.nordicsemi.com/bundle/nan_046/page/APP/nan_046/antenna_compensation.html
 .. _`Band edge compensation`: https://docs.nordicsemi.com/bundle/nan_046/page/APP/nan_046/band_compensation.html
+.. _`overlay-iot-devices.conf`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/wifi/throughput/overlay-iot-devices.conf
+.. _`overlay-memory-optimized.conf`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/wifi/throughput/overlay-memory-optimized.conf
+.. _`overlay-high-performance.conf`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/wifi/throughput/overlay-high-performance.conf
+.. _`overlay-tx-prio.conf`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/wifi/throughput/overlay-tx-prio.conf
+.. _`overlay-rx-prio.conf`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/wifi/throughput/overlay-rx-prio.conf
 
 .. _`Programming SoCs with nrfjprog`: https://docs.nordicsemi.com/bundle/ug_nrf_cltools/page/UG/cltools/nrf_nrfjprogexe.html
 
