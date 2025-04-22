@@ -26,6 +26,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/util.h>
 #include <psa/nrf_platform_key_ids.h>
+#include "rsa_key.h"
 
 LOG_MODULE_DECLARE(cracen, CONFIG_CRACEN_LOG_LEVEL);
 
@@ -416,7 +417,7 @@ void cracen_xorbytes(char *a, const char *b, size_t sz)
 	}
 }
 
-static int cracen_asn1_get_len(unsigned char **p, const unsigned char *end, size_t *len)
+static int cracen_asn1_get_len(uint8_t **p, const uint8_t *end, size_t *len)
 {
 	if ((end - *p) < 1) {
 		return SX_ERR_INVALID_PARAM;
@@ -448,7 +449,7 @@ static int cracen_asn1_get_len(unsigned char **p, const unsigned char *end, size
 	return 0;
 }
 
-static int cracen_asn1_get_tag(unsigned char **p, const unsigned char *end, size_t *len, int tag)
+static int cracen_asn1_get_tag(uint8_t **p, const unsigned char *end, size_t *len, int tag)
 {
 	if ((end - *p) < 1) {
 		return SX_ERR_INVALID_PARAM;
@@ -506,7 +507,7 @@ static int cracen_asn1_get_int(unsigned char **p, const unsigned char *end, int 
 	return 0;
 }
 
-int cracen_signature_asn1_get_operand(unsigned char **p, const unsigned char *end,
+int cracen_signature_asn1_get_operand(uint8_t **p, const uint8_t *end,
 				      struct sx_buf *op)
 {
 	int ret;
@@ -656,6 +657,130 @@ int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bo
 
 	return SX_OK;
 }
+
+
+/*
+ * This function extracts a RSA key from a key pair.
+ * Depending on extract_pubkey, we extract the public key, or
+ * the private key.
+ */
+int temp_cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey, bool is_key_pair,
+				 const uint8_t *key, size_t keylen, struct sx_buf *modulus,
+				 struct sx_buf *exponent)
+{
+	int ret, version;
+	size_t len;
+	uint8_t *p;
+	uint8_t *end;
+
+	p = (uint8_t *)key;
+	end = p + keylen;
+
+	if (!extract_pubkey && !is_key_pair) {
+		return SX_ERR_INVALID_KEYREF;
+	}
+
+	/*
+	 * This function parses the RSA keys (PKCS#1)
+	 *
+	 *  RSAPrivateKey ::= SEQUENCE {
+	 *      version           Version,
+	 *      modulus           INTEGER,  -- n
+	 *      publicExponent    INTEGER,  -- e
+	 *      privateExponent   INTEGER,  -- d
+	 *      prime1            INTEGER,  -- p
+	 *      prime2            INTEGER,  -- q
+	 *      exponent1         INTEGER,  -- d mod (p-1)
+	 *      exponent2         INTEGER,  -- d mod (q-1)
+	 *      coefficient       INTEGER,  -- (inverse of q) mod p
+	 *      otherPrimeInfos   OtherPrimeInfos OPTIONAL
+	 *  }
+	 *
+	 *  RSAPublicKey ::= SEQUENCE {
+	 *      version           Version,
+	 *      modulus           INTEGER,  -- n
+	 *      publicExponent    INTEGER,  -- e
+	 *  }
+	 *
+	 *  OpenSSL wraps public keys with an RSA algorithm identifier that we skip
+	 *  if it is present.
+	 */
+	ret = cracen_asn1_get_tag(&p, end, &len, ASN1_CONSTRUCTED | ASN1_SEQUENCE);
+	if (ret) {
+		return SX_ERR_INVALID_KEYREF;
+	}
+
+	end = p + len;
+
+	if (is_key_pair) {
+		ret = cracen_asn1_get_int(&p, end, &version);
+		if (ret) {
+			return SX_ERR_INVALID_KEYREF;
+		}
+		if (version != 0) {
+			return SX_ERR_INVALID_KEYREF;
+		}
+	} else {
+		/* Skip algorithm identifier prefix. */
+		uint8_t *id_seq = p;
+
+		ret = cracen_asn1_get_tag(&id_seq, end, &len, ASN1_CONSTRUCTED | ASN1_SEQUENCE);
+		if (ret == 0) {
+			if (len != sizeof(RSA_ALGORITHM_IDENTIFIER)) {
+				return SX_ERR_INVALID_KEYREF;
+			}
+
+			if (memcmp(id_seq, RSA_ALGORITHM_IDENTIFIER, len) != 0) {
+				return SX_ERR_INVALID_KEYREF;
+			}
+
+			id_seq += len;
+
+			ret = cracen_asn1_get_tag(&id_seq, end, &len, ASN1_BIT_STRING);
+			if (ret != 0 || *id_seq != 0) {
+				return SX_ERR_INVALID_KEYREF;
+			}
+
+			p = id_seq + 1;
+
+			ret = cracen_asn1_get_tag(&p, end, &len, ASN1_CONSTRUCTED | ASN1_SEQUENCE);
+			if (ret) {
+				return SX_ERR_INVALID_KEYREF;
+			}
+		}
+	}
+
+	*rsa = CRACEN_KEY_INIT_RSA(modulus, exponent);
+
+	/* Import N */
+	ret = cracen_signature_asn1_get_operand(&p, end, modulus);
+	if (ret) {
+		return ret;
+	}
+
+	if (PSA_BYTES_TO_BITS(modulus->sz) > PSA_MAX_KEY_BITS) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	/* Import E */
+	ret = cracen_signature_asn1_get_operand(&p, end, exponent);
+	if (ret) {
+		return ret;
+	}
+
+	if (extract_pubkey) {
+		return SX_OK;
+	}
+
+	/* Import D */
+	ret = cracen_signature_asn1_get_operand(&p, end, exponent);
+	if (ret) {
+		return ret;
+	}
+
+	return SX_OK;
+}
+
 
 int cracen_prepare_ik_key(const uint8_t *user_data)
 {
@@ -933,4 +1058,39 @@ int cracen_hash_input_with_context(struct sxhash *hashopctx, const uint8_t *inpu
 {
 	return cracen_hash_all_inputs_with_context(hashopctx, &input, &input_length, 1, hashalg,
 						   digest);
+}
+
+int cracen_memdiff(const uint8_t *a, const uint8_t *b, size_t sz)
+{
+	const volatile uint8_t *a_v = (const volatile uint8_t *)a;
+	const volatile uint8_t *b_v = (const volatile uint8_t *)b;
+	int r = 0;
+
+	for (size_t i = 0; i < sz; i++) {
+		r |= a_v[i] ^ b_v[i];
+	}
+	return r;
+}
+
+int cracen_rsa_modexp(struct sx_pk_acq_req *pkreq, struct sx_pk_slot *inputs,
+		      struct cracen_rsa_key *rsa_key, uint8_t *base, size_t basez, int *sizes)
+{
+	*pkreq = sx_pk_acquire_req(rsa_key->cmd);
+	if (pkreq->status != SX_OK) {
+		return pkreq->status;
+	}
+
+	cracen_ffkey_write_sz(rsa_key, sizes);
+	CRACEN_FFKEY_REFER_INPUT(rsa_key, sizes) = basez;
+	pkreq->status = sx_pk_list_gfp_inslots(pkreq->req, sizes, inputs);
+	if (pkreq->status) {
+		return pkreq->status;
+	}
+
+	/* copy modulus and exponent to device memory */
+	cracen_ffkey_write(rsa_key, inputs);
+	sx_wrpkmem(CRACEN_FFKEY_REFER_INPUT(rsa_key, inputs).addr, base, basez);
+
+	sx_pk_run(pkreq->req);
+	return sx_pk_wait(pkreq->req);
 }

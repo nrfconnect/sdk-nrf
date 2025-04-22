@@ -38,6 +38,8 @@ endif()
 if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_ENCRYPTION_DRIVER)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/asymmetric.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/rsaes_pkcs1v15.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/rsaes_oaep.c
   )
 endif()
 
@@ -49,7 +51,8 @@ if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
     ${CMAKE_CURRENT_LIST_DIR}/src/ed25519.c
     ${CMAKE_CURRENT_LIST_DIR}/src/hmac.c
     ${CMAKE_CURRENT_LIST_DIR}/src/rsapss.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/rndinrange.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/rsassa_pkcs1v15.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/rsamgf1xor.c
   )
 endif()
 
