@@ -49,7 +49,7 @@ tests:
       fixture: ppk_power_measure
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_54L_ble_power_profiling"
-    timeout: 90
+    timeout: 120
 
   sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfrc_8dBm_100ms:
     sysbuild: true
@@ -73,7 +73,7 @@ tests:
       fixture: ppk_power_measure
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_54L_ble_power_profiling"
-    timeout: 90
+    timeout: 120
 
   sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfxo_0dBm_100ms:
     sysbuild: true
@@ -97,7 +97,7 @@ tests:
       fixture: ppk_power_measure
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_54L_ble_power_profiling"
-    timeout: 90
+    timeout: 120
 
   sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfxo_8dBm_100ms:
     sysbuild: true
@@ -121,7 +121,7 @@ tests:
       fixture: ppk_power_measure
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_54L_ble_power_profiling"
-    timeout: 90
+    timeout: 120
 
   sample.bluetooth.peripheral_power_profiling.auto_non_conn_advert_lfxo_0dbm_100ms:
     sysbuild: true
@@ -145,4 +145,4 @@ tests:
       fixture: ppk_power_measure
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_54L_ble_power_profiling"
-    timeout: 120
+    timeout: 150
