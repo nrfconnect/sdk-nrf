@@ -49,6 +49,7 @@ Apache-2.0: |
   ^nrf/samples/net/http_server/src/main.c
   ^nrf/tests/subsys/suit/common/tls_config/user-tls-conf.h
   ^nrf/subsys/settings/
+  ^nrf/tests/zephyr/subsys/settings/
 curl: "^nrf/ext/"
 MIT: "^nrf/ext/"
 BSD-3-CLAUSE: |

@@ -1498,3 +1498,8 @@ ci_tests_zephyr_drivers_i2s:
   files:
     - nrf/tests/zephyr/drivers/i2s/
     - zephyr/tests/drivers/i2s/
+
+ci_tests_zephyr_subsys_settings_performance:
+  files:
+    - nrf/tests/zephyr/subsys/settings/performance/
+    - zephyr/tests/subsys/settings/performance/
