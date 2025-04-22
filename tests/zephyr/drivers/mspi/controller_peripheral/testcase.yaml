@@ -1,0 +1,44 @@
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+common:
+  depends_on: spi
+  tags:
+    - drivers
+    - spi
+    - mspi
+    - ci_tests_drivers_hpf
+  harness: ztest
+  harness_config:
+    fixture: hpf_mspi_spi_loopback
+  platform_allow:
+    - nrf54l15dk/nrf54l15/cpuapp
+  integration_platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+
+tests:
+  drivers.mspi.spi_mode0:
+    extra_configs:
+      - CONFIG_TESTED_SPI_MODE=0
+      - CONFIG_TESTED_SPI_FREQUENCY=250000
+    extra_args: EXTRA_DTC_OVERLAY_FILE="boards/nrf54l15dk_spis.overlay"
+
+  drivers.mspi.spi_mode3:
+    extra_configs:
+      - CONFIG_TESTED_SPI_MODE=3
+      - CONFIG_TESTED_SPI_FREQUENCY=2000000
+    extra_args: EXTRA_DTC_OVERLAY_FILE="boards/nrf54l15dk_spis.overlay"
+
+  drivers.mspi.spi_4MHz:
+    extra_configs:
+      - CONFIG_TESTED_SPI_MODE=0
+      - CONFIG_TESTED_SPI_FREQUENCY=4000000
+    extra_args: EXTRA_DTC_OVERLAY_FILE="boards/nrf54l15dk_spis.overlay"
+
+  drivers.mspi.spi_8MHz:
+    extra_configs:
+      - CONFIG_TESTED_SPI_MODE=3
+      - CONFIG_TESTED_SPI_FREQUENCY=8000000
+    extra_args: EXTRA_DTC_OVERLAY_FILE="boards/nrf54l15dk_spis.overlay"

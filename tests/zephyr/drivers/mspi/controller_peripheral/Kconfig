@@ -1,0 +1,22 @@
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config TESTED_SPI_MODE
+	int "SPI mode"
+	default 0
+	help
+	  SPI mode value (clock polarity and phase) used in the test.
+	  0: CPOL 0 (Active high), CPHA 0 (leading)
+	  1: CPOL 0 (Active high), CPHA 1 (trailing)
+	  2: CPOL 1 (Active low), CPHA 0 (leading)
+	  3: CPOL 1 (Active low), CPHA 1 (trailing)
+
+config TESTED_SPI_FREQUENCY
+	int "SPI frequency"
+	default 1000000
+	help
+	  SPI frequency used in the test, in Hz.
+
+source "Kconfig.zephyr"
