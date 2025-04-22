@@ -85,3 +85,13 @@ tests:
       - SHIELD=pca63565
       - vpr_launcher_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/boards/shields/pca63565/boards/nrf54l15dk_nrf54l15_vpr_launcher.overlay"
     platform_allow: nrf54l15dk/nrf54l15/cpuflpr
+
+  nrf.extended.sample.sensor.bme680.nrf54lm20:
+    harness_config:
+      fixture: pca63565
+      type: one_line
+      regex:
+        - "^\\s*T:\\s*-?[0-9\\.]*; P:\\s*-?[0-9\\.]*; H: \\s*-?[0-9\\.]*; G:\\s*-?[0-9\\\
+        .]*$"
+    platform_allow:
+      - nrf54lm20apdk@0.2.0/nrf54lm20a/cpuapp
