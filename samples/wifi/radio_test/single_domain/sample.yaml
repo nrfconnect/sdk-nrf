@@ -22,6 +22,7 @@ tests:
     extra_args:
       - single_domain_SHIELD="nrf7002eb2"
       - single_domain_SNIPPET=nrf70-wifi
+      - CONFIG_NRF_WIFI_CTRL_HEAP_SIZE=51000
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow:
