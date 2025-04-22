@@ -1550,3 +1550,31 @@ ci_tests_zephyr_drivers_counter:
   files:
     - nrf/tests/zephyr/drivers/counter/
     - zephyr/tests/drivers/counter/
+
+ci_tests_lib_app_jwt:
+  files:
+    - nrf/include/app_jwt.h
+    - nrf/lib/app_jwt/
+    - nrf/subsys/nrf_security/
+    - nrf/tests/lib/app_jwt/
+
+ci_samples_app_jwt:
+  files:
+    - nrf/lib/app_jwt/
+    - nrf/samples/app_jwt/
+    - nrf/subsys/net/lib/nrf_cloud/
+
+ci_tests_zephyr_drivers_sensors:
+  files:
+    - nrf/tests/zephyr/drivers/sensor/
+    - zephyr/tests/drivers/sensor/
+
+ci_samples_zephyr_drivers_jesd216:
+  files:
+    - nrf/samples/zephyr/drivers/jesd216/
+    - zephyr/samples/drivers/jesd216/
+
+ci_samples_zephyr_drivers_spi_flash:
+  files:
+    - nrf/samples/zephyr/drivers/spi_flash/
+    - zephyr/samples/drivers/spi_flash/
