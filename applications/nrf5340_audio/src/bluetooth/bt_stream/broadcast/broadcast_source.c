@@ -41,7 +41,7 @@ ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_
 		 ZBUS_MSG_INIT(0));
 
 static struct bt_cap_broadcast_source *broadcast_sources[CONFIG_BT_ISO_MAX_BIG];
-struct bt_cap_initiator_broadcast_create_param create_param[CONFIG_BT_ISO_MAX_BIG];
+static struct bt_cap_initiator_broadcast_create_param create_param[CONFIG_BT_ISO_MAX_BIG];
 /* Make sure we have statically allocated streams for all potential BISes */
 static struct bt_cap_stream cap_streams[CONFIG_BT_ISO_MAX_BIG]
 				       [CONFIG_BT_BAP_BROADCAST_SRC_SUBGROUP_COUNT]
@@ -131,7 +131,7 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 	le_audio_event_publish(LE_AUDIO_EVT_STREAMING, &idx);
 
 	/* NOTE: The string below is used by the Nordic CI system */
-	LOG_INF("Broadcast source %p started", (void *)stream);
+	LOG_INF("Broadcast stream %p started", (void *)stream);
 
 	le_audio_print_codec(stream->codec_cfg, BT_AUDIO_DIR_SOURCE);
 }
@@ -169,7 +169,7 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 
 	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, &idx);
 
-	LOG_INF("Broadcast source %p stopped. Reason: %d", (void *)stream, reason);
+	LOG_INF("Broadcast stream %p stopped. Reason: %d", (void *)stream, reason);
 
 	if (delete_broadcast_src[idx.lvl1] && broadcast_sources[idx.lvl1] != NULL &&
 	    !source_has_streaming_streams(idx.lvl1)) {
@@ -750,7 +750,61 @@ void broadcast_source_default_create(struct broadcast_source_big *broadcast_para
 	}
 
 	bt_audio_codec_cfg_meta_set_lang(&subgroups.group_lc3_preset.codec_cfg, "eng");
+
+	memcpy(broadcast_param->broadcast_name, CONFIG_BT_AUDIO_BROADCAST_NAME,
+	       sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME));
 }
+
+void broadcast_started_cb(struct bt_cap_broadcast_source *source)
+{
+	if (!IS_ENABLED(CONFIG_DEBUG)) {
+		return;
+	}
+
+	int ret;
+	int idx = -EINVAL;
+
+	for (int i = 0; i < CONFIG_BT_ISO_MAX_BIG; i++) {
+		if (broadcast_sources[i] == source) {
+			idx = i;
+			break;
+		}
+	}
+
+	if (idx < 0) {
+		LOG_ERR("Broadcaster not found");
+		return;
+	}
+
+	uint32_t broadcast_id;
+
+	ret = broadcast_source_id_get(idx, &broadcast_id);
+	if (ret) {
+		LOG_ERR("Failed to get broadcast ID: %d", ret);
+		return;
+	}
+
+	LOG_INF("Source %p started", (void *)source);
+	LOG_INF("\tIndex: %u", idx);
+	LOG_INF("\tID: %u", broadcast_id);
+	LOG_INF("\tNum subgroups: %u", create_param[idx].subgroup_count);
+
+	if (create_param[idx].encryption) {
+		LOG_INF("\tEncrypted with key: %s", create_param[idx].broadcast_code);
+	} else {
+		LOG_INF("\tNot encrypted");
+	}
+}
+
+void broadcast_stopped_cb(struct bt_cap_broadcast_source *source, uint8_t reason)
+{
+	LOG_INF("Broadcast source %p stopped. Reason: %d", (void *)source, reason);
+}
+
+static struct bt_cap_initiator_cb cap_cbs = {
+	.broadcast_started = broadcast_started_cb,
+	.broadcast_stopped = broadcast_stopped_cb,
+};
 
 int broadcast_source_enable(struct broadcast_source_big const *const broadcast_param,
 			    uint8_t big_index)
@@ -767,7 +821,14 @@ int broadcast_source_enable(struct broadcast_source_big const *const broadcast_p
 		bt_le_audio_tx_init();
 	}
 
-	LOG_INF("Enabling broadcast_source %d", big_index);
+	ret = bt_cap_initiator_register_cb(&cap_cbs);
+
+	if (ret == -EALREADY) {
+		LOG_DBG("Callbacks already registered");
+	} else if (ret) {
+		LOG_ERR("Failed to register callbacks: %d", ret);
+		return ret;
+	}
 
 	ret = create_param_produce(big_index, broadcast_param, &create_param[big_index]);
 	if (ret) {
@@ -793,8 +854,8 @@ int broadcast_source_enable(struct broadcast_source_big const *const broadcast_p
 	}
 
 	initialized = true;
-
-	LOG_DBG("Broadcast source enabled");
+	LOG_INF("Created: %p %s", (void *)broadcast_sources[big_index],
+		broadcast_param->broadcast_name);
 
 	return 0;
 }

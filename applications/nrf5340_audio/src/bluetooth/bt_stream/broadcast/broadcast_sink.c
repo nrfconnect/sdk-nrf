@@ -542,7 +542,7 @@ static void syncable_cb(struct bt_bap_broadcast_sink *sink, const struct bt_iso_
 		 */
 		if (!broadcast_code_received && biginfo->encryption == true &&
 		    sink->broadcast_id != prev_broadcast_id) {
-			LOG_WRN("Stream is encrypted, but haven not received broadcast code");
+			LOG_WRN("Stream is encrypted, but have not received broadcast code");
 			return;
 		}
 
