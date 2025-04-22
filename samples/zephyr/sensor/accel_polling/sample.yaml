@@ -94,3 +94,16 @@ tests:
       - CONFIG_LOG=y
       - CONFIG_SENSOR_LOG_LEVEL_DBG=y
     platform_allow: nrf54l15dk/nrf54l15/cpuflpr
+
+  nrf.extended.sample.sensor.accel_polling.nrf54lm20:
+    harness_config:
+      fixture: pca63565
+      type: one_line
+      regex:
+        - "^\\s*[0-9A-Za-z_,+-.]*@[0-9A-Fa-f]* \\[m/s\\^2\\]:    \\(\\s*-?[0-9\\.]*,\\\
+        s*-?[0-9\\.]*,\\s*-?[0-9\\.]*\\)$"
+    extra_configs:
+      - CONFIG_LOG=y
+      - CONFIG_SENSOR_LOG_LEVEL_DBG=y
+    platform_allow:
+      - nrf54lm20apdk@0.2.0/nrf54lm20a/cpuapp
