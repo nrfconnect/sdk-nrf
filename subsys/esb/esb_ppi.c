@@ -23,7 +23,6 @@ static nrf_ppi_channel_t timer_compare1_radio_txen;
 static nrf_ppi_channel_t egu_ramp_up;
 static nrf_ppi_channel_t egu_timer_start;
 static nrf_ppi_channel_t disabled_egu;
-static nrf_ppi_channel_t radio_end_timer_start;
 
 static nrf_ppi_channel_group_t ramp_up_ppi_group;
 
@@ -45,17 +44,27 @@ void esb_ppi_for_fem_clear(void)
 
 void esb_ppi_for_txrx_set(bool rx, bool timer_start)
 {
+	nrf_radio_state_t state = nrf_radio_state_get(NRF_RADIO);
 	uint32_t channels_mask;
+	uint32_t radio_en_task;
 	uint32_t egu_event = nrf_egu_event_address_get(ESB_EGU, ESB_EGU_EVENT);
 	uint32_t egu_task = nrf_egu_task_address_get(ESB_EGU, ESB_EGU_TASK);
 	uint32_t group_disable_task =
 			nrf_ppi_task_group_disable_address_get(NRF_PPI, ramp_up_ppi_group);
-	uint32_t radio_en_task = nrf_radio_task_address_get(NRF_RADIO,
-						rx ? NRF_RADIO_TASK_RXEN : NRF_RADIO_TASK_TXEN);
 	uint32_t radio_disabled_event = nrf_radio_event_address_get(NRF_RADIO,
 						NRF_RADIO_EVENT_DISABLED);
 	uint32_t timer_task = nrf_timer_task_address_get(ESB_NRF_TIMER_INSTANCE,
 							 NRF_TIMER_TASK_START);
+
+	if (state == NRF_RADIO_STATE_TXIDLE || state == NRF_RADIO_STATE_TX) {
+		/* When CONFIG_ESB_NEVER_DISABLE_TX is enabled, the radio is running.
+		 * NRF_RADIO_TASK_START needs to be triggered.
+		 */
+		radio_en_task = nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_START);
+	} else {
+		radio_en_task = nrf_radio_task_address_get(NRF_RADIO,
+						rx ? NRF_RADIO_TASK_RXEN : NRF_RADIO_TASK_TXEN);
+	}
 
 	nrf_egu_event_clear(ESB_EGU, ESB_EGU_EVENT);
 	nrf_ppi_channel_and_fork_endpoint_setup(NRF_PPI, egu_ramp_up, egu_event, radio_en_task,
@@ -159,30 +168,6 @@ void esb_ppi_for_wait_for_ack_clear(void)
 	nrf_ppi_channel_endpoint_setup(NRF_PPI, timer_compare0_radio_disable, 0, 0);
 }
 
-void esb_ppi_for_wait_for_rx_set(void)
-{
-	uint32_t ppi_channels_mask;
-
-	nrf_ppi_channel_endpoint_setup(NRF_PPI, radio_end_timer_start,
-		nrf_radio_event_address_get(NRF_RADIO, NRF_RADIO_EVENT_END),
-		nrf_timer_task_address_get(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_START));
-
-	ppi_channels_mask = (BIT(radio_end_timer_start));
-
-	nrf_ppi_channels_enable(NRF_PPI, ppi_channels_mask);
-}
-
-void esb_ppi_for_wait_for_rx_clear(void)
-{
-	uint32_t ppi_channels_mask;
-
-	ppi_channels_mask = (BIT(radio_end_timer_start));
-
-	nrf_ppi_channels_disable(NRF_PPI, ppi_channels_mask);
-
-	nrf_ppi_channel_endpoint_setup(NRF_PPI, radio_end_timer_start, 0, 0);
-}
-
 int esb_ppi_init(void)
 {
 	nrfx_err_t err;
@@ -217,13 +202,6 @@ int esb_ppi_init(void)
 		goto error;
 	}
 
-	if (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX)) {
-		err = nrfx_ppi_channel_alloc(&radio_end_timer_start);
-		if (err != NRFX_SUCCESS) {
-			goto error;
-		}
-	}
-
 	err = nrfx_ppi_group_alloc(&ramp_up_ppi_group);
 	if (err != NRFX_SUCCESS) {
 		LOG_ERR("gppi_group_alloc failed with: %d\n", err);
@@ -249,9 +227,7 @@ void esb_ppi_disable_all(void)
 				  BIT(egu_timer_start) |
 				  BIT(radio_address_timer_stop) |
 				  BIT(timer_compare0_radio_disable) |
-				  BIT(radio_end_timer_start) |
-				  (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX) ?
-					BIT(timer_compare1_radio_txen) : 0));
+				  BIT(timer_compare1_radio_txen));
 
 	nrf_ppi_channels_disable(NRF_PPI, channels_mask);
 }
@@ -288,13 +264,6 @@ void esb_ppi_deinit(void)
 	err = nrfx_ppi_channel_free(timer_compare1_radio_txen);
 	if (err != NRFX_SUCCESS) {
 		goto error;
-	}
-
-	if (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX)) {
-		err = nrfx_ppi_channel_free(radio_end_timer_start);
-		if (err != NRFX_SUCCESS) {
-			goto error;
-		}
 	}
 
 	err = nrfx_ppi_group_free(ramp_up_ppi_group);
