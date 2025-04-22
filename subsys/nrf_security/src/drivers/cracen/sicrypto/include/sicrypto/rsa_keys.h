@@ -29,8 +29,8 @@ struct si_rsa_key {
 };
 
 /** Initialize an RSA key consisting of modulus and exponent. */
-#define SI_KEY_INIT_RSA(mod, expon)                                                                \
-	(struct si_rsa_key)                                                                        \
+#define CRACEN_KEY_INIT_RSA(mod, expon)                                                            \
+	(struct cracen_rsa_key)                                                                    \
 	{                                                                                          \
 		.cmd = SX_PK_CMD_MOD_EXP, .slotmask = (1 | (1 << 2)), .dataidx = 1, {mod, expon},  \
 	}
@@ -42,8 +42,8 @@ struct si_rsa_key {
  * have the highest bit set in their most significant byte. The full
  * key size in bits must be a multiple of 8.
  */
-#define SI_KEY_INIT_RSACRT(p, q, dp, dq, qinv)                                                     \
-	(struct si_rsa_key)                                                                        \
+#define CRACEN_KEY_INIT_RSACRT(p, q, dp, dq, qinv)                                                 \
+	(struct cracen_rsa_key)                                                                    \
 	{                                                                                          \
 		.cmd = SX_PK_CMD_MOD_EXP_CRT, .slotmask = (0x3 | (0x7 << 3)), .dataidx = 2,        \
 		{p, q, dp, dq, qinv},                                                              \
