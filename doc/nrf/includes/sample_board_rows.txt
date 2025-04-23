@@ -230,6 +230,16 @@
 
 | :ref:`nRF54L15 DK <ug_nrf54l>` | PCA10156 | :zephyr:board:`nrf54l15dk` | ``nrf54l15dk/nrf54l15/cpuapp`` |
 
+.. nrf54l15dk_nrf54l10_cpuapp_ns
+
+| :ref:`nRF54L15 DK (emulating nRF54L10) <ug_nrf54l>` | PCA10156 | :zephyr:board:`nrf54l15dk` | ``nrf54l15dk/nrf54l10/cpuapp/ns`` |
+
+.. nrf54l15dk_nrf54l10_cpuapp_and_cpuapp_ns
+
+| :ref:`nRF54L15 DK (emulating nRF54L10) <ug_nrf54l>` | PCA10156 | :zephyr:board:`nrf54l15dk` | ``nrf54l15dk/nrf54l10/cpuapp``    |
+|                                                     |          |                            |                                   |
+|                                                     |          |                            | ``nrf54l15dk/nrf54l10/cpuapp/ns`` |
+
 .. nrf54l15dk_nrf54l15_cpuapp_ns
 
 | :ref:`nRF54L15 DK <ug_nrf54l>` | PCA10156 | :zephyr:board:`nrf54l15dk` | ``nrf54l15dk/nrf54l15/cpuapp/ns`` |

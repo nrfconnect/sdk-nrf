@@ -189,6 +189,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
@@ -196,6 +197,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     tags:
@@ -213,6 +215,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
@@ -220,6 +223,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     tags:
@@ -238,6 +242,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
@@ -245,6 +250,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     tags:
@@ -262,6 +268,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
@@ -269,6 +276,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     tags:
@@ -386,12 +394,14 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     tags:
@@ -408,12 +418,14 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     tags:
@@ -434,11 +446,13 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
     tags:
       - ci_build
       - cracen_oberon
@@ -454,11 +468,13 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
     tags:
       - ci_build
       - cracen_oberon
