@@ -17,10 +17,17 @@ enum {
 	IRONSIDE_SE_IPC_INDEX_IN_LEN,
 	IRONSIDE_SE_IPC_INDEX_OUT_VEC,
 	IRONSIDE_SE_IPC_INDEX_OUT_LEN,
-	IRONSIDE_SE_IPC_INDEX_STATUS_PTR,
+	IRONSIDE_SE_IPC_INDEX_STATUS,
 	/* The last enum value is reserved for the size of the IPC buffer */
 	IRONSIDE_SE_IPC_DATA_LEN
 };
+
+/* IRONside call identifiers with implicit versions.
+ *
+ * With the initial "version 0", the service ABI is allowed to break until the
+ * first public release of IRONside SE.
+ */
+#define IRONSIDE_CALL_ID_PSA_CRYPTO_V0 0
 
 /* We are adding the source files for the TF-M crypto partition to the build.
  *
