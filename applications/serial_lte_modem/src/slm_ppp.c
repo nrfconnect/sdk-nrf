@@ -81,8 +81,8 @@ MODEM_PPP_DEFINE(ppp_module, NULL, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT,
 
 static struct modem_pipe *ppp_pipe;
 
-/* We use only the default PDP context. */
-enum { PDP_CID = 0 };
+/* Default PPP PDN is the default PDP context (CID 0). */
+static unsigned int ppp_pdn_cid;
 
 enum {
 	ZEPHYR_FD_IDX, /* Raw Zephyr socket to pass data to/from the PPP link. */
@@ -123,6 +123,18 @@ static bool open_ppp_sockets(void)
 		return false;
 	}
 
+	/* Bind PPP to PDN */
+	ret = zsock_setsockopt(
+		ppp_fds[MODEM_FD_IDX],
+		SOL_SOCKET, SO_BINDTOPDN,
+		&ppp_pdn_cid, sizeof(int));
+	if (ret == 0) {
+		LOG_INF("PPP socket bound to PDN %d", ppp_pdn_cid);
+	} else {
+		LOG_ERR("Failed to bind PPP to PDN %d (%d)", ppp_pdn_cid, -errno);
+		return false;
+	}
+
 	return true;
 }
 
@@ -147,7 +159,7 @@ static bool configure_ppp_link_ip_addresses(struct ppp_context *ctx)
 	char addr4[INET_ADDRSTRLEN];
 	char addr6[INET6_ADDRSTRLEN];
 
-	util_get_ip_addr(PDP_CID, addr4, addr6);
+	util_get_ip_addr(ppp_pdn_cid, addr4, addr6);
 
 	if (*addr4) {
 		if (zsock_inet_pton(AF_INET, addr4, &ctx->ipcp.my_options.address) != 1) {
@@ -190,7 +202,7 @@ static bool ppp_is_running(void)
 
 static void send_status_notification(void)
 {
-	rsp_send("\r\n#XPPP: %u,%u\r\n", ppp_is_running(), ppp_peer_connected);
+	rsp_send("\r\n#XPPP: %u,%u,%u\r\n", ppp_is_running(), ppp_peer_connected, ppp_pdn_cid);
 }
 
 static int ppp_start_failure(int ret)
@@ -204,7 +216,7 @@ static unsigned int ppp_retrieve_mtu(void)
 {
 	struct pdn_dynamic_info populated_info = { 0 };
 
-	if (!pdn_dynamic_info_get(PDP_CID, &populated_info)) {
+	if (!pdn_dynamic_info_get(ppp_pdn_cid, &populated_info)) {
 		if (populated_info.ipv6_mtu) {
 			/* Set the PPP MTU to that of the LTE link. */
 			/* IPv6's MTU has more priority on dual-stack.
@@ -339,24 +351,6 @@ static void ppp_stop(void)
 	}
 }
 
-/* Automatically starts/stops PPP when the default PDN connection goes up/down. */
-static void pdp_ctx_event_handler(uint8_t cid, enum pdn_event event, int reason)
-{
-	switch (event) {
-	case PDN_EVENT_ACTIVATED:
-		LOG_INF("Connection up. Starting PPP.");
-		k_work_submit_to_queue(&slm_work_q, &ppp_restart_work.work);
-		break;
-	case PDN_EVENT_DEACTIVATED:
-		LOG_DBG("Connection down.");
-		ppp_stop();
-		break;
-	default:
-		LOG_DBG("Default PDN connection event %d received.", event);
-		break;
-	}
-}
-
 /* We need to receive CGEV notifications at all times.
  * CGEREP AT commands are intercepted to prevent the user
  * from unsubcribing us and make that behavior invisible.
@@ -412,6 +406,39 @@ static void subscribe_cgev_notifications(void)
 
 	if (ret) {
 		LOG_ERR("Failed to subscribe to +CGEV notifications (%d).", ret);
+	}
+}
+
+AT_MONITOR(slm_ppp_on_cgev, "CGEV", at_notif_on_cgev);
+
+static void at_notif_on_cgev(const char *notify)
+{
+	char *str;
+	char *endptr;
+	uint8_t cid;
+	char cgev_pdn_act[] = "+CGEV: ME PDN ACT";
+
+	/* +2 for space and a number */
+	if (strlen(cgev_pdn_act) + 2 > strlen(notify)) {
+		/* Ignore notifications that are not long enough to be what we are interested in */
+		return;
+	}
+
+	/* Only activation of PPP PDN is monitored here.
+	 * Deactivation of PPP PDN or detach from network will cause PPP socket to get closed
+	 * from where stopping of PPP is triggered.
+	 */
+	str = strstr(notify, cgev_pdn_act);
+	if (str != NULL) {
+		str += strlen(cgev_pdn_act);
+		if (*str == ' ') {
+			str++;
+			cid = (uint8_t)strtoul(str, &endptr, 10);
+			if (endptr != str && cid == ppp_pdn_cid) {
+				LOG_INF("PPP PDN (%d) activated. Starting PPP.", ppp_pdn_cid);
+				k_work_submit_to_queue(&slm_work_q, &ppp_restart_work.work);
+			}
+		}
 	}
 }
 
@@ -523,8 +550,6 @@ int slm_ppp_init(void)
 
 	net_if_flag_set(ppp_iface, NET_IF_POINTOPOINT);
 
-	pdn_default_ctx_cb_reg(pdp_ctx_event_handler);
-
 	{
 		static struct net_mgmt_event_callback ppp_net_mgmt_event_cb;
 
@@ -553,7 +578,7 @@ static int handle_at_ppp(enum at_parser_cmd_type cmd_type, struct at_parser *par
 		send_status_notification();
 		return 0;
 	}
-	if (cmd_type != AT_PARSER_CMD_TYPE_SET || param_count != 2) {
+	if (cmd_type != AT_PARSER_CMD_TYPE_SET || param_count < 2 || param_count > 3) {
 		return -EINVAL;
 	}
 
@@ -564,9 +589,16 @@ static int handle_at_ppp(enum at_parser_cmd_type cmd_type, struct at_parser *par
 		return -EINVAL;
 	}
 
+	if (op == OP_STOP && param_count != 2) {
+		return -EINVAL;
+	}
+
 	/* Send "OK" first in case stopping PPP results in the CMUX AT channel switching. */
 	rsp_send_ok();
 	if (op == OP_START) {
+		ppp_pdn_cid = 0;
+		/* Store PPP PDN if given */
+		at_parser_num_get(parser, 2, &ppp_pdn_cid);
 		k_work_submit_to_queue(&slm_work_q, &ppp_start_work.work);
 	} else {
 		k_work_submit_to_queue(&slm_work_q, &ppp_stop_work.work);
@@ -607,6 +639,7 @@ static void ppp_data_passing_thread(void*, void*, void*)
 					LOG_WRN("Unexpected event 0x%x on %s socket.",
 						revents, ppp_socket_names[src]);
 				}
+				LOG_DBG("Socket closed or connection down. Stopping PPP.");
 				ppp_stop();
 				return;
 			}

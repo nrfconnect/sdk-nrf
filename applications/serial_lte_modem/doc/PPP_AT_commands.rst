@@ -27,11 +27,12 @@ Control PPP #XPPP
 Set command
 -----------
 
-The set command allows you to start and stop PPP.
+The set command allows you to start and stop PPP, and optionally define the PDN connection used for PPP.
 
 .. note::
 
-   PPP is automatically started and stopped by SLM when the default PDN connection is established and lost, respectively.
+   PPP is automatically started and stopped by SLM when the PDN connection requested for PPP
+   is established and lost, respectively.
    This happens even if PPP has previously been stopped or started with this command.
 
 Syntax
@@ -39,12 +40,16 @@ Syntax
 
 ::
 
-   #XPPP=<op>
+   #XPPP=<op>[,<cid>]
 
 * The ``<op>`` parameter can be the following:
 
   * ``0`` - Stop PPP.
   * ``1`` - Start PPP.
+
+* The ``<cid>`` parameter is an integer indicating the PDN connection to be used for PPP.
+  It represents ``cid`` in the ``+CGDCONT`` command.
+  Its default value is ``0``, which represents the default PDN connection.
 
 Unsolicited notification
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -53,7 +58,7 @@ Unsolicited notification
 
 ::
 
-   #XPPP: <running>,<peer_connected>
+   #XPPP: <running>,<peer_connected>,<cid>
 
 * The ``<running>`` parameter is an integer that indicates whether PPP is running.
   It is ``1`` for running or ``0`` for stopped.
@@ -61,10 +66,14 @@ Unsolicited notification
 * The ``<peer_connected>`` parameter is an integer that indicates whether a peer is connected to PPP.
   It is ``1`` for connected or ``0`` for not connected.
 
+* The ``<cid>`` parameter is an integer that indicates the PDN connection used for PPP.
+
 .. slm_ppp_status_notif_end
 
-Example
--------
+Examples
+--------
+
+PPP with default PDN connection:
 
 ::
 
@@ -72,8 +81,8 @@ Example
 
   OK
 
-  // PPP is automatically started when the modem is registered to the network.
-  #XPPP: 1,0
+  // PPP is automatically started when the default PDN is activated.
+  #XPPP: 1,0,0
 
   // Stop PPP.
   AT#XPPP=0
@@ -87,24 +96,53 @@ Example
 
   OK
 
-  #XPPP: 1,0
+  #XPPP: 1,0,0
 
   // Have the peer connect to SLM's PPP.
-  #XPPP: 1,1
+  #XPPP: 1,1,0
 
   // Peer disconnects.
-  #XPPP: 1,0
+  #XPPP: 1,0,0
 
   // SLM restarts PPP automatically when peer disconnects.
-  #XPPP: 0,0
+  #XPPP: 0,0,0
 
-  #XPPP: 1,0
+  #XPPP: 1,0,0
 
   AT+CFUN=4
 
   OK
 
   #XPPP: 0,0
+
+PPP with non-default PDN connection:
+
+::
+
+  // Exemplary PDN connection creation.
+  // Note: APN depends on operator and additional APNs may not be supported by the operator.
+  AT+CGDCONT=1,"IP","internet2"
+
+  OK
+
+  // Start PPP with the created PDN connection. This must be before AT+CFUN=1 command or
+  // otherwise PPP will be started for the default PDN connection.
+  AT#XPPP=1,1
+
+  OK
+
+  AT+CFUN=1
+
+  OK
+
+  // Activate the created PDN connection.
+  AT+CGACT=1,1
+
+  // PPP is automatically started when the PDN connection set for PPP has been activated.
+  #XPPP: 1,0,1
+
+  // Have the peer connect to SLM's PPP.
+  #XPPP: 1,1,1
 
 Read command
 ------------
@@ -128,20 +166,15 @@ Response syntax
 Testing on Linux
 ================
 
-You can test SLM's PPP on Linux by using the ``pppd`` command, though SLM must be compiled without CMUX because there is no widely available utility that allows multiplexing a device file on Linux.
-
-.. note::
-
-   If you have a utility that allows multiplexing a device file on Linux, you can use SLM's PPP with the ``pppd`` command through CMUX.
-   To do this, you must first set up the CMUX link.
-   Then, make sure to replace the device file argument in the ``pppd`` command with that of SLM's PPP channel, which will have been created by the CMUX utility.
-   See :ref:`SLM_AT_CMUX` for more information on SLM's CMUX.
+You can test SLM's PPP on Linux by using the ``pppd`` command.
+This section describes a configuration without CMUX.
+If you are using CMUX, see :ref:`slm_as_linux_modem` for more information on setting it up.
 
 For the process described here, SLM's UARTs must be connected to the Linux host.
 
 1. Get PPP running on SLM.
    To do this, start SLM and issue an ``AT+CFUN=1`` command.
-#. Wait for ``#XPPP: 1,0``, which is sent when the network registration succeeds and PPP has started successfully.
+#. Wait for ``#XPPP: 1,0,0``, which is sent when the network registration succeeds and PPP has started successfully with the default PDN connection.
 #. Run the following command on the Linux host:
 
    .. code-block:: console

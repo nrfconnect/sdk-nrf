@@ -221,7 +221,10 @@ nRF Machine Learning (Edge Impulse)
 Serial LTE modem
 ----------------
 
-|no_changes_yet_note|
+* Updated:
+
+  * The ``AT#XPPP`` command to support the CID parameter to specify the PDN connection used for PPP.
+  * The ``#XPPP`` notification to include the CID of the PDN connection used for PPP.
 
 Thingy:53: Matter weather station
 ---------------------------------
