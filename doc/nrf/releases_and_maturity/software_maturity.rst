@@ -2163,9 +2163,9 @@ Hardware Unique Key
         - nRF52840
         - nRF5340
         - nRF54H20
-        - nRF54L15
-        - nRF54L10
         - nRF54L05
+        - nRF54L10
+        - nRF54L15
         - nRF9131
         - nRF9151
         - nRF9160
@@ -2292,7 +2292,7 @@ The following table indicates the software maturity levels of the support for ea
          - Supported
          - Supported
          - Supported
-       * - **application image compression**
+       * - **Application image compression**
          - --
          - --
          - --
@@ -2308,7 +2308,7 @@ The following table indicates the software maturity levels of the support for ea
          - Supported
          - Supported
          - Supported
-       * - **hardware cryptography acceleration**
+       * - **Hardware cryptography acceleration**
          - --
          - --
          - --
@@ -2324,7 +2324,7 @@ The following table indicates the software maturity levels of the support for ea
          - Supported
          - Supported
          - Supported
-       * - **multiple signature keys**
+       * - **Multiple signature keys**
          - --
          - --
          - --
@@ -2340,7 +2340,7 @@ The following table indicates the software maturity levels of the support for ea
          - --
          - --
          - --
-       * - **image encryption**
+       * - **Image encryption**
          - --
          - --
          - --
