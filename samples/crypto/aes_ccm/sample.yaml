@@ -50,6 +50,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54l15dk/nrf54l05/cpuapp
     harness: console
     harness_config:
@@ -61,6 +62,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
       - nrf54l15dk/nrf54l05/cpuapp
   sample.aes_ccm.cracen.crypto_service:
     sysbuild: true
