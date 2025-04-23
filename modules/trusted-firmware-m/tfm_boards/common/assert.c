@@ -22,7 +22,7 @@
 	M2S(PM_TFM_NONSECURE_ADDRESS) \
 	"\nwhich is not aligned with the SPU/MPC HW requirements."				\
 	"\nIn nRF53/nRF91 series the flash region need to be aligned with the SPU region size." \
-	"\nIn nRF54L15 the flash region need to be aligned with the MPC region size." \
+	"\nIn nRF54L15/nRF54L10 the flash region need to be aligned with the MPC region size." \
 	"\nRefer to the documentation section 'TF-M partition alignment requirements'" \
 	"\nfor more information.\n\n"
 
@@ -33,7 +33,7 @@
 #pragma message \
 	"SRAM non-secure address is not aligned to SPU/MPC HW requirements" \
 	"\nIn nRF53/nRF91 series the RAM region need to be aligned with the SPU region size." \
-	"\nIn nRF54L15 the RAM region need to be aligned with the MPC region size.\n\n"
+	"\nIn nRF54L15/nRF54L10 the RAM region need to be aligned with the MPC region size.\n\n"
 
 #error "SRAM non-secure start address is not aligned to SPU/MPC HW requirements"
 #endif
