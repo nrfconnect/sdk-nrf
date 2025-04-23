@@ -9,13 +9,13 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/cache.h>
+#include <zephyr/drivers/firmware/nrf_ironside/call.h>
 
 #include <psa/client.h>
 #include <psa/error.h>
 
 #include <tfm/ironside/se/ipc_service.h>
 
-#include "ironside_se_psa_ns_ipc.h"
 #include "bounce_buffers.h"
 
 /* The correctness of the serialization depends on these asserts */
@@ -33,38 +33,26 @@ static psa_status_t psa_call_buffered_and_flushed(psa_handle_t handle, int32_t t
 	/* We have no need for this at this time */
 	ARG_UNUSED(type);
 
-	psa_status_t ipc_status = ironside_se_psa_ns_ipc_setup();
+	struct ironside_call_buf *const buf = ironside_call_alloc();
 
-	if (ipc_status != PSA_SUCCESS) {
-		return ipc_status;
-	}
+	buf->id = IRONSIDE_CALL_ID_PSA_CRYPTO_V0;
 
-	/* volatile and flushed because the cpusec core will usually
-	 * modify this variable
-	 */
-	psa_status_t volatile status = PSA_ERROR_COMMUNICATION_FAILURE;
-
-	sys_cache_data_flush_range((void *)&status, sizeof(status));
-
-	uint32_t ipc_service_buf[IRONSIDE_SE_IPC_DATA_LEN];
-
-	ipc_service_buf[IRONSIDE_SE_IPC_INDEX_HANDLE] =
+	buf->args[IRONSIDE_SE_IPC_INDEX_HANDLE] =
 		handle; /* i.e. TFM_CRYPTO_HANDLE defined to 0x40000100U */
-	ipc_service_buf[IRONSIDE_SE_IPC_INDEX_IN_VEC] = (uint32_t)in_vec;
-	ipc_service_buf[IRONSIDE_SE_IPC_INDEX_IN_LEN] = in_len;
-	ipc_service_buf[IRONSIDE_SE_IPC_INDEX_OUT_VEC] = (uint32_t)out_vec;
-	ipc_service_buf[IRONSIDE_SE_IPC_INDEX_OUT_LEN] = out_len;
-	ipc_service_buf[IRONSIDE_SE_IPC_INDEX_STATUS_PTR] = (uint32_t)&status;
+	buf->args[IRONSIDE_SE_IPC_INDEX_IN_VEC] = (uint32_t)in_vec;
+	buf->args[IRONSIDE_SE_IPC_INDEX_IN_LEN] = in_len;
+	buf->args[IRONSIDE_SE_IPC_INDEX_OUT_VEC] = (uint32_t)out_vec;
+	buf->args[IRONSIDE_SE_IPC_INDEX_OUT_LEN] = out_len;
 
-	int32_t ret = ironside_se_psa_ns_ipc_send(ipc_service_buf, sizeof(ipc_service_buf));
+	ironside_call_dispatch(buf);
 
-	if (ret != sizeof(ipc_service_buf)) {
-		return PSA_ERROR_COMMUNICATION_FAILURE;
+	psa_status_t status = PSA_ERROR_COMMUNICATION_FAILURE;
+
+	if (buf->status == IRONSIDE_CALL_STATUS_RSP_SUCCESS) {
+		status = buf->args[IRONSIDE_SE_IPC_INDEX_STATUS];
 	}
 
-	do {
-		sys_cache_data_flush_and_invd_range((void *)&status, sizeof(status));
-	} while (status == PSA_ERROR_COMMUNICATION_FAILURE);
+	ironside_call_release(buf);
 
 	return status;
 }
