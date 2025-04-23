@@ -1196,7 +1196,7 @@ static void start_tx_transaction(void)
 			esb_state = ESB_STATE_PTX_TX_ACK;
 			nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_DISABLED_MASK);
 		} else {
-			if (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX)) {
+			if (IS_ENABLED(CONFIG_ESB_KEEP_TX_IDLE)) {
 				nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
 				nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
 			} else {
@@ -1260,7 +1260,7 @@ static void on_radio_event_tx_noack(void)
 
 	if (tx_fifo.count == 0) {
 		esb_state = ESB_STATE_IDLE;
-		if (!IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX)) {
+		if (!IS_ENABLED(CONFIG_ESB_KEEP_TX_IDLE)) {
 			errata216_off();
 		}
 	} else {
@@ -1704,7 +1704,7 @@ static void radio_irq_handler(void)
 		/* Call the correct on_radio_event function, depending on the
 		 * current protocol state.
 		 */
-		if ((fast_switching || IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX)) && on_radio_event) {
+		if ((fast_switching || IS_ENABLED(CONFIG_ESB_KEEP_TX_IDLE)) && on_radio_event) {
 			on_radio_event();
 		}
 
