@@ -101,6 +101,7 @@
 /doc/nrf/drivers/suit_flash_ipuc.rst      @nrfconnect/ncs-charon-doc
 /doc/nrf/drivers/images/flash_ipuc/*      @nrfconnect/ncs-charon-doc
 /doc/nrf/drivers/hw_cc3xx.rst             @nrfconnect/ncs-aegir-doc
+/doc/nrf/drivers/mspi_sqspi.rst           @annwoj
 /doc/nrf/drivers/paw3212.rst              @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/drivers/pmw3360.rst              @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/drivers/sensor_sim.rst           @nrfconnect/ncs-cia-doc
