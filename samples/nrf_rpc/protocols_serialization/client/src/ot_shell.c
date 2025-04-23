@@ -530,14 +530,24 @@ static void handle_udp_receive(void *context, otMessage *message, const otMessag
 static int cmd_test_udp_init(const struct shell *sh, size_t argc, char *argv[])
 {
 	otSockAddr listen_sock_addr;
+	otError error;
 
 	memset(&udp_socket, 0, sizeof(udp_socket));
 	memset(&listen_sock_addr, 0, sizeof(listen_sock_addr));
 
 	listen_sock_addr.mPort = PORT;
 
-	otUdpOpen(NULL, &udp_socket, handle_udp_receive, (void *)sh);
-	otUdpBind(NULL, &udp_socket, &listen_sock_addr, OT_NETIF_THREAD);
+	error = otUdpOpen(NULL, &udp_socket, handle_udp_receive, (void *)sh);
+	if (error) {
+		shell_error(sh, "otUdpOpen() error: %u", error);
+		return -ENOEXEC;
+	}
+
+	error = otUdpBind(NULL, &udp_socket, &listen_sock_addr, OT_NETIF_THREAD);
+	if (error) {
+		shell_error(sh, "otUdpBind() error: %u", error);
+		return -ENOEXEC;
+	}
 
 	return 0;
 }
@@ -580,8 +590,13 @@ exit:
 
 static int cmd_test_udp_close(const struct shell *sh, size_t argc, char *argv[])
 {
-	otUdpClose(NULL, &udp_socket);
-	shell_print(sh, "Udp socket closed.");
+	otError error = otUdpClose(NULL, &udp_socket);
+
+	if (error) {
+		shell_error(sh, "otUdpClose() error: %u", error);
+		return -ENOEXEC;
+	}
+
 	return 0;
 }
 
@@ -874,10 +889,16 @@ static int cmd_test_srp_client_host_info(const struct shell *sh, size_t argc, ch
 
 static int cmd_test_srp_client_host_name(const struct shell *sh, size_t argc, char *argv[])
 {
+	otError error;
+
 	memset(srp_client_host_name, 0, sizeof(srp_client_host_name));
 	strncpy(srp_client_host_name, argv[1], sizeof(srp_client_host_name) - 1);
 
-	otSrpClientSetHostName(NULL, srp_client_host_name);
+	error = otSrpClientSetHostName(NULL, srp_client_host_name);
+	if (error) {
+		shell_error(sh, "otSrpClientSetHostName() error: %u", error);
+		return -ENOEXEC;
+	}
 
 	shell_print(sh, "Name set to: %s", argv[1]);
 
@@ -886,7 +907,12 @@ static int cmd_test_srp_client_host_name(const struct shell *sh, size_t argc, ch
 
 static int cmd_test_srp_client_host_address_auto(const struct shell *sh, size_t argc, char *argv[])
 {
-	otSrpClientEnableAutoHostAddress(NULL);
+	otError error = otSrpClientEnableAutoHostAddress(NULL);
+
+	if (error) {
+		shell_error(sh, "otSrpClientEnableAutoHostAddress() error: %u", error);
+		return -ENOEXEC;
+	}
 
 	return 0;
 }
@@ -896,6 +922,7 @@ static int cmd_test_srp_client_host_remove(const struct shell *sh, size_t argc, 
 	bool remove_key_lease = false;
 	bool send_unreg = false;
 	int err = 0;
+	otError error;
 
 	if (argc > 1) {
 		remove_key_lease = shell_strtobool(argv[1], 0, &err);
@@ -917,7 +944,11 @@ static int cmd_test_srp_client_host_remove(const struct shell *sh, size_t argc, 
 		}
 	}
 
-	otSrpClientRemoveHostAndServices(NULL, remove_key_lease, send_unreg);
+	error = otSrpClientRemoveHostAndServices(NULL, remove_key_lease, send_unreg);
+	if (error) {
+		shell_error(sh, "otSrpClientRemoveHostAndServices() error: %u", error);
+		return -ENOEXEC;
+	}
 
 	return 0;
 }
@@ -999,6 +1030,7 @@ static int cmd_test_srp_client_start(const struct shell *sh, size_t argc, char *
 {
 	otSockAddr sockaddr;
 	int err = 0;
+	otError error;
 
 	if (net_addr_pton(AF_INET6, argv[1], (struct in6_addr *)&sockaddr.mAddress)) {
 		shell_error(sh, "Invalid IPv6 address: %s", argv[1]);
@@ -1014,7 +1046,11 @@ static int cmd_test_srp_client_start(const struct shell *sh, size_t argc, char *
 		return -EINVAL;
 	}
 
-	otSrpClientStart(NULL, &sockaddr);
+	error = otSrpClientStart(NULL, &sockaddr);
+	if (error) {
+		shell_error(sh, "otSrpClientStart() error: %u", error);
+		return -ENOEXEC;
+	}
 
 	return 0;
 }
@@ -1061,9 +1097,25 @@ static int cmd_test_srp_client_ttl(const struct shell *sh, size_t argc, char *ar
 
 static int cmd_test_vendor_data(const struct shell *sh, size_t argc, char *argv[])
 {
-	otThreadSetVendorName(NULL, argv[1]);
-	otThreadSetVendorModel(NULL, argv[2]);
-	otThreadSetVendorSwVersion(NULL, argv[3]);
+	otError error;
+
+	error = otThreadSetVendorName(NULL, argv[1]);
+	if (error) {
+		shell_error(sh, "otThreadSetVendorName() error: %u", error);
+		return -EINVAL;
+	}
+
+	error = otThreadSetVendorModel(NULL, argv[2]);
+	if (error) {
+		shell_error(sh, "otThreadSetVendorModel() error: %u", error);
+		return -EINVAL;
+	}
+
+	error = otThreadSetVendorSwVersion(NULL, argv[3]);
+	if (error) {
+		shell_error(sh, "otThreadSetVendorSwVersion() error: %u", error);
+		return -EINVAL;
+	}
 
 	shell_print(sh, "Vendor name set to: %s", otThreadGetVendorName(NULL));
 	shell_print(sh, "Vendor model set to: %s", otThreadGetVendorModel(NULL));
@@ -1302,6 +1354,7 @@ static int cmd_test_net_diag(const struct shell *sh, size_t argc, char *argv[])
 	uint8_t tlv_types[35];
 	uint8_t count = 0;
 	otIp6Address addr;
+	otError error;
 
 	if (net_addr_pton(AF_INET6, argv[2], addr.mFields.m8)) {
 		shell_error(sh, "Failed to parse IPv6 address: %s", argv[1]);
@@ -1314,12 +1367,19 @@ static int cmd_test_net_diag(const struct shell *sh, size_t argc, char *argv[])
 	}
 
 	if (strcmp(argv[1], "get") == 0) {
-		otThreadSendDiagnosticGet(NULL, &addr, tlv_types, count,
-					  handle_receive_diagnostic_get, (void *)sh);
+		error = otThreadSendDiagnosticGet(NULL, &addr, tlv_types, count,
+						  handle_receive_diagnostic_get, (void *)sh);
+		if (error) {
+			shell_error(sh, "otThreadSendDiagnosticGet() error: %u", error);
+			return -ENOEXEC;
+		}
 
 	} else if (strcmp(argv[1], "reset") == 0) {
-		otThreadSendDiagnosticReset(NULL, &addr, tlv_types, count);
-
+		error = otThreadSendDiagnosticReset(NULL, &addr, tlv_types, count);
+		if (error) {
+			shell_error(sh, "otThreadSendDiagnosticGet() error: %u", error);
+			return -ENOEXEC;
+		}
 	} else {
 		shell_error(sh, "Invalid argument %s", argv[1]);
 		return -EINVAL;
@@ -1407,6 +1467,7 @@ static int cmd_test_mesh_diag(const struct shell *sh, size_t argc, char *argv[])
 		.mDiscoverIp6Addresses = false,
 		.mDiscoverChildTable = false,
 	};
+	otError error;
 
 	if (strcmp(argv[1], "cancel") == 0) {
 		otMeshDiagCancel(NULL);
@@ -1426,7 +1487,12 @@ static int cmd_test_mesh_diag(const struct shell *sh, size_t argc, char *argv[])
 			return -EINVAL;
 		}
 	}
-	otMeshDiagDiscoverTopology(NULL, &config, handle_mesh_diag_discover, (void *)sh);
+
+	error = otMeshDiagDiscoverTopology(NULL, &config, handle_mesh_diag_discover, (void *)sh);
+	if (error) {
+		shell_error(sh, "otMeshDiagDiscoverTopology() error: %u", error);
+		return -ENOEXEC;
+	}
 
 	return 0;
 }
@@ -1802,7 +1868,11 @@ static void dns_service_cb(otError error, const otDnsServiceResponse *response, 
 	uint8_t txtBuffer[CONFIG_OPENTHREAD_RPC_DNS_MAX_TXT_DATA_SIZE];
 	otDnsServiceInfo service_info;
 
-	otDnsServiceResponseGetServiceName(response, label, sizeof(label), name, sizeof(name));
+	if (otDnsServiceResponseGetServiceName(response, label, sizeof(label), name,
+					       sizeof(name))) {
+		shell_error(sh, "otDnsServiceResponseGetServiceName() error");
+		return;
+	}
 
 	if (error == OT_ERROR_NONE) {
 		shell_print(sh, "DNS service resolution response for %s for service %s", label,
@@ -1856,7 +1926,10 @@ static void dns_browse_cb(otError error, const otDnsBrowseResponse *response, vo
 	uint8_t txtBuffer[CONFIG_OPENTHREAD_RPC_DNS_MAX_TXT_DATA_SIZE];
 	otDnsServiceInfo info;
 
-	otDnsBrowseResponseGetServiceName(response, name, sizeof(name));
+	if (otDnsBrowseResponseGetServiceName(response, name, sizeof(name))) {
+		shell_error(sh, "otDnsBrowseResponseGetServiceName() error");
+		return;
+	}
 
 	shell_print(sh, "DNS browse response for: %s", name);
 

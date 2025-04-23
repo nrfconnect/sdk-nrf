@@ -20,6 +20,8 @@ static void *receive_diag_get_cb_context;
 
 void ot_rpc_decode_network_diag_tlv(struct nrf_rpc_cbor_ctx *ctx, otNetworkDiagTlv *aNetworkDiagTlv)
 {
+	uint8_t mode;
+
 	aNetworkDiagTlv->mType = nrf_rpc_decode_uint(ctx);
 
 	switch (aNetworkDiagTlv->mType) {
@@ -31,7 +33,7 @@ void ot_rpc_decode_network_diag_tlv(struct nrf_rpc_cbor_ctx *ctx, otNetworkDiagT
 		nrf_rpc_decode_buffer(ctx, aNetworkDiagTlv->mData.mEui64.m8, OT_EXT_ADDRESS_SIZE);
 		break;
 	case OT_NETWORK_DIAGNOSTIC_TLV_MODE:
-		uint8_t mode = nrf_rpc_decode_uint(ctx);
+		mode = nrf_rpc_decode_uint(ctx);
 
 		aNetworkDiagTlv->mData.mMode.mRxOnWhenIdle = (bool)(mode & BIT(0));
 		aNetworkDiagTlv->mData.mMode.mDeviceType = (bool)(mode & BIT(1));
