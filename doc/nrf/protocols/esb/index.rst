@@ -333,7 +333,7 @@ Experimental feature: Never disable transmission stage
 ======================================================
 
 If you need to reduce the delay between TX FIFO filling and reception to minimum, enabling fast ramp-up might not be sufficient.
-In this case, you can use the :kconfig:option:`CONFIG_ESB_NEVER_DISABLE_TX` Kconfig option.
+In this case, you can use the :kconfig:option:`CONFIG_ESB_KEEP_TX_IDLE` Kconfig option.
 It changes the ESB driver's behavior.
 If a packet is not acknowledged, the radio peripheral remains in TXIDLE state instead of TXDISABLE when transmission is pending.
 However, this process consumes more energy, because the radio transmitter stage remains enabled after the transmission has ended.

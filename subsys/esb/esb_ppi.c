@@ -57,7 +57,7 @@ void esb_ppi_for_txrx_set(bool rx, bool timer_start)
 							 NRF_TIMER_TASK_START);
 
 	if (state == NRF_RADIO_STATE_TXIDLE || state == NRF_RADIO_STATE_TX) {
-		/* When CONFIG_ESB_NEVER_DISABLE_TX is enabled the radio is running,
+		/* When CONFIG_ESB_KEEP_TX_IDLE is enabled the radio is running,
 		 * so we need to trigger NRF_RADIO_TASK_START.
 		 */
 		radio_en_task = nrf_radio_task_address_get(NRF_RADIO, NRF_RADIO_TASK_START);

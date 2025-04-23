@@ -100,11 +100,11 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_esb
-  sample.esb.ptx.never_disable_tx:
+  sample.esb.ptx.keep_tx_idle:
     sysbuild: true
     build_only: true
     extra_configs:
-      - CONFIG_ESB_NEVER_DISABLE_TX=y
+      - CONFIG_ESB_KEEP_TX_IDLE=y
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - nrf52840dk/nrf52840
@@ -120,13 +120,13 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_esb
-  sample.esb.ptx.fast_switching_never_disable_tx:
+  sample.esb.ptx.fast_switching_keep_tx_idle:
     sysbuild: true
     build_only: true
     extra_configs:
       - CONFIG_ESB_FAST_SWITCHING=y
       - CONFIG_ESB_FAST_CHANNEL_SWITCHING=y
-      - CONFIG_ESB_NEVER_DISABLE_TX=y
+      - CONFIG_ESB_KEEP_TX_IDLE=y
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpurad
     platform_allow:

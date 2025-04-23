@@ -139,7 +139,7 @@ config ESB_DYNAMIC_INTERRUPTS
 	  interrupts. This allows reconfiguring ESB_SYS_TIMER_IRQn, ESB_EVT_IRQ,
 	  and RADIO_IRQn handlers during runtime when ESB is uninitialized.
 
-config ESB_NEVER_DISABLE_TX
+config ESB_KEEP_TX_IDLE
 	select EXPERIMENTAL
 	bool "Never disable radio transmission stage"
 	help
