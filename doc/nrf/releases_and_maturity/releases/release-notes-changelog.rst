@@ -382,7 +382,7 @@ Drivers
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
-|no_changes_yet_note|
+* Added the :ref:`mspi_sqspi` that allows for communication with devices that use MSPI bus-based Zephyr drivers.
 
 Wi-Fi drivers
 -------------
