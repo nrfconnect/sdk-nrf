@@ -547,7 +547,7 @@ int test_run(const struct shell *shell,
 	uint32_t data = 0;
 
 	/* a dummy data buffer */
-	static char dummy[495];
+	static char dummy[CONFIG_BT_L2CAP_TX_MTU - 3];
 
 	if (!default_conn) {
 		shell_error(shell, "Device is disconnected %s",
@@ -585,12 +585,12 @@ int test_run(const struct shell *shell,
 	stamp = k_uptime_get_32();
 
 	while (true) {
-		err = bt_throughput_write(&throughput, dummy, 495);
+		err = bt_throughput_write(&throughput, dummy, sizeof(dummy));
 		if (err) {
 			shell_error(shell, "GATT write failed (err %d)", err);
 			break;
 		}
-		data += 495;
+		data += sizeof(dummy);
 		if (k_uptime_get_32() - stamp > CONFIG_BT_THROUGHPUT_DURATION) {
 			break;
 		}
