@@ -1,0 +1,1 @@
+source "tests/drivers/clock_control/clock_control_api/Kconfig"
