@@ -1,0 +1,28 @@
+;
+; Copyright (c) 2024 Nordic Semiconductor ASA
+;
+; SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+;
+
+; .. include_startingpoint_dvfs_cddl_rst
+
+stat = (SUCCESS: 0) /
+	(INTERNAL_ERROR: 16781313)
+
+dvfs_oppoint = (DVFS_FREQ_HIGH: 0) /
+	(DVFS_FREQ_MEDLOW: 1) /
+	(DVFS_FREQ_LOW: 2)
+
+dvfs_oppoint_req = (
+      1,
+      data: dvfs_oppoint,
+)
+
+; DVFS service response.
+dvfs_oppoint_rsp = (
+      1,
+      data: dvfs_oppoint,
+	status: stat,
+)
+
+; .. include_endingpoint_dvfs_cddl_rst

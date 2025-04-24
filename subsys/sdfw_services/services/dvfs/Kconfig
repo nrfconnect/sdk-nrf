@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+service_name = DVFS
+service_default_enabled = y
+service_id = 0xDD
+service_version = 1
+service_buffer_size = 32
+service_name_str = DVFS
+rsource "../Kconfig.template.service"
