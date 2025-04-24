@@ -1,8 +1,6 @@
-:orphan:
-
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v2.9.99
+Changelog for |NCS| v3.0.99
 ###########################
 
 .. contents::
@@ -25,7 +23,7 @@ Known issues
 ************
 
 Known issues are only tracked for the latest official release.
-See `known issues for nRF Connect SDK v2.9.0-nRF54H20-1`_ for the list of issues valid for the latest release.
+See `known issues for nRF Connect SDK v3.0.0`_ for the list of issues valid for the latest release.
 
 Changelog
 *********
@@ -526,7 +524,7 @@ DULT integration
 MCUboot
 =======
 
-The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``a2bc982b3379d51fefda3e17a6a067342dce1a8b``, with some |NCS| specific additions.
+The MCUboot fork in |NCS| (``sdk-mcuboot``) contains all commits from the upstream MCUboot repository up to and including ``1b2fc096d9a683a7481b13749d01ca8fa78e7afd``, with some |NCS| specific additions.
 
 The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/modules/mcuboot` folder.
 
