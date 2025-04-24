@@ -11,6 +11,11 @@
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
 
 #define REQUEST_SERVING_WAIT_TIME_US 10000
+#if defined(CONFIG_COVERAGE)
+#define DIFF_TOLERANCE 2
+#else
+#define DIFF_TOLERANCE 1
+#endif
 
 typedef enum {
 	NO_CHANGE = 0,
@@ -167,7 +172,7 @@ static void test_timer_compare(const struct accuracy_test_limit *test_limit,
 		 compare_count_value - compare_value);
 
 	zassert_true((compare_count_value - compare_value) <
-			     test_limit->final_max_ticks_count_difference,
+			     test_limit->final_max_ticks_count_difference * DIFF_TOLERANCE,
 		     "Maximal final ticks count difference is over the limit");
 	z_nrf_grtc_timer_chan_free(channel);
 }
