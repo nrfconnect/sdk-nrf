@@ -634,7 +634,12 @@
 "CI-ps-test":
   - "samples/nrf_rpc/protocols_serialization/**/*"
   - "subsys/net/openthread/rpc/**/*"
-  - "subsys/nrf_rpc/**/*"
+  - "subsys/bluetooth/rpc/**/*"
+  - "subsys/logging/**/*"
+  - "subsys/mpsl/cx/software/**/*"
+  - any:
+      - "subsys/nrf_rpc/**/*"
+      - "!subsys/nrf_rpc/nrf_rpc_ipc.c"
 
 "CI-secdom-test":
   - "samples/bluetooth/multiple_adv_sets/**/*"
