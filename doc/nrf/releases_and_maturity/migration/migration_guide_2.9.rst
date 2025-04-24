@@ -1,5 +1,3 @@
-:orphan:
-
 .. _migration_2.9:
 
 Migration guide for |NCS| v2.9.0
