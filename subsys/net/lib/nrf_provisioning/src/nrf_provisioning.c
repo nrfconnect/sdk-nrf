@@ -518,7 +518,7 @@ out:
 	/* To even the load on server side */
 	retry_s += spread_s;
 
-	LOG_INF("Checking for provisioning commands in %llds seconds", retry_s);
+	LOG_INF("Checking for provisioning commands in %lld seconds", retry_s);
 	reschedule = false;
 
 	return retry_s;
@@ -590,7 +590,7 @@ int nrf_provisioning_req(void)
 	k_mutex_unlock(&np_mtx);
 
 	while (true) {
-		backoff = 1; /* Backoff start interval */
+		backoff = CONFIG_NRF_PROVISIONING_INITIAL_BACKOFF; /* Backoff start interval */
 		settings_load_subtree(settings.name); /* Get the provisioning interval */
 
 		/* Reschedule as long as there's no network */
@@ -614,7 +614,12 @@ int nrf_provisioning_req(void)
 		}
 		dm.cb(NRF_PROVISIONING_EVENT_STOP, dm.user_data);
 
-		while (ret == -EBUSY) {
+		while (ret == -EBUSY || ret == -ETIMEDOUT) {
+			if (ret == -EBUSY) {
+				LOG_WRN("Busy, retrying in %d seconds", backoff);
+			} else {
+				LOG_WRN("Timeout, retrying in %d seconds", backoff);
+			}
 			/* Backoff */
 			k_condvar_wait(&np_cond, &np_mtx, K_SECONDS(backoff));
 			k_mutex_unlock(&np_mtx);

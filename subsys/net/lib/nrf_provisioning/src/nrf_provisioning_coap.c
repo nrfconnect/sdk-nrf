@@ -471,6 +471,8 @@ static int authenticate(struct coap_client *client, const char *auth_token,
 			   coap_ctx->code == COAP_RESPONSE_CODE_FORBIDDEN) {
 			LOG_ERR("Unauthorized, code %d", coap_ctx->code);
 			return -EACCES;
+		} else if (coap_ctx->code < 0) {
+			return coap_ctx->code;
 		}
 		LOG_ERR("Unknown result code %d", coap_ctx->code);
 		return -ENOTSUP;
@@ -535,6 +537,8 @@ static int send_response(struct coap_client *client,
 		} else if (coap_ctx->code == COAP_RESPONSE_CODE_BAD_REQUEST) {
 			LOG_ERR("Bad request");
 			return -EINVAL;
+		} else if (coap_ctx->code < 0) {
+			return coap_ctx->code;
 		}
 		LOG_ERR("Unknown result code %d", coap_ctx->code);
 		return -ENOTSUP;

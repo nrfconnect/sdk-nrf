@@ -87,6 +87,14 @@ config NRF_PROVISIONING_STACK_SIZE
 	help
 	  Stack size for the nRF Provisioning thread.
 
+config NRF_PROVISIONING_INITIAL_BACKOFF
+	int "Initial backoff time in seconds"
+	default 60
+	help
+	  Initial time for exponential backoff in seconds. The time is doubled
+	  after each failed (busy or timeout) attempt to connect to the server.
+	  The maximum time is 86400 seconds (24 hours).
+
 rsource "Kconfig.nrf_provisioning_http"
 
 rsource "Kconfig.nrf_provisioning_coap"
