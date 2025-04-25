@@ -172,7 +172,9 @@ static int ot_rpc_l2_enable(struct net_if *iface, bool state)
 		net_if_set_link_addr(iface, (uint8_t *)otLinkGetExtendedAddress(NULL)->m8,
 				     OT_EXT_ADDRESS_SIZE, NET_LINK_IEEE802154);
 		update_netif_addrs(iface);
-		otSetStateChangedCallback(NULL, ot_state_changed_handler, iface);
+		if (otSetStateChangedCallback(NULL, ot_state_changed_handler, iface)) {
+			NET_ERR("otSetStateChangedCallback failed");
+		}
 	}
 
 	return 0;
