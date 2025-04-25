@@ -4046,6 +4046,17 @@ NCSDK-33163: MCUboot does not boot new images
 
   **Affected platforms:** nRF54L
 
+  **Workaround:** To fix the issue, update the ``sdk-mcuboot`` repository by cherry-picking the upstream commits with the following hashes: ``85ed722d00dc4e60804b34a066f642d80a6bc67f``
+
+.. rst-class:: v3-0-0
+
+NCSDK-33207: MCUboot has its NVM protection disabled
+  MCUboot built as immutable bootloader has fprotect disabled by default on the nRF54L DK.
+
+  **Affected platforms:** nRF54L
+
+  **Workaround:** Enable protection manually using the :kconfig:option:`CONFIG_FPROTECT` and  :kconfig:option:`CONFIG_FPROTECT_ALLOW_COMBINED_REGIONS` Kconfig options of MCUboot.
+
 .. rst-class:: v3-0-0
 
 NCSDK-29460: Encryption: Build error for default configuration on the ``nrf52840dk/nrf52840`` board target (ECDSA_P256)
