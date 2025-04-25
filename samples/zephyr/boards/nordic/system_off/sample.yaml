@@ -40,7 +40,7 @@ tests:
       ordered: true
       regex:
         - "system off demo"
-        - "Retained data: INVALID"
+        - "Retained data: valid"
         - "Boot count: 1"
         - "Off count: 0"
         - "Active Ticks:"
@@ -83,7 +83,7 @@ tests:
       ordered: true
       regex:
         - "system off demo"
-        - "Retained data: INVALID"
+        - "Retained data: valid"
         - "Boot count: 1"
         - "Off count: 0"
         - "Active Ticks:"
