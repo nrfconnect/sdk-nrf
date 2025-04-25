@@ -2007,6 +2007,7 @@ static void cmd_uart_l_tx_process_next_packet(void)
 
 	if ((!ltx_info->is_infinite && (ltx_info->max_repeats_cnt <= ltx_info->repeats_cnt)) ||
 	    ltx_info->is_stop_requested) {
+		cmd_uart_send_rsp_l_tx_finished(ltx_info->repeats_cnt, ltx_info->ack_cnt);
 		cmd_uart_cmd_unlock();
 	} else {
 		++(ltx_info->repeats_cnt);

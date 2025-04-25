@@ -354,5 +354,6 @@ void cmd_uart_send_rsp_get_temp(ptt_evt_id_t evt_id);
 void cmd_uart_send_rsp_get_dcdc(ptt_evt_id_t evt_id);
 /* Sends current state of ICACHE through UART */
 void cmd_uart_send_rsp_get_icache(ptt_evt_id_t evt_id);
+void cmd_uart_send_rsp_l_tx_finished(uint8_t frames, uint8_t acks);
 
 #endif /* PTT_MODE_ZB_PERF_CMD_H__ */

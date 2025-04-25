@@ -444,6 +444,13 @@ For example:
 
       custom ltx *10* *1000*
 
+The statistics are shown in the following format:
+
+   .. parsed-literal::
+      :class: highlight
+
+      [packets]0x%x%x%x%x [acks]0x%x%x%x%x
+
 ltxend - Stop the burst transmission of packets
 ===============================================
 
