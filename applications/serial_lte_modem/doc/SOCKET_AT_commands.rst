@@ -33,7 +33,9 @@ Syntax
 
   * ``0`` - Close a socket.
   * ``1`` - Open a socket for IP protocol family version 4.
+    Protocol family is ignored with ``<type>`` parameter value ``3``.
   * ``2`` - Open a socket for IP protocol family version 6.
+    Protocol family is ignored with ``<type>`` parameter value ``3``.
 
   When ``0``, the highest-ranked socket is made active after the current one is closed.
 
@@ -41,14 +43,15 @@ Syntax
 
   * ``1`` - Set ``SOCK_STREAM`` for the stream socket type using the TCP protocol.
   * ``2`` - Set ``SOCK_DGRAM`` for the datagram socket type using the UDP protocol.
-  * ``3`` - Set ``SOCK_RAW`` for the raw socket type using a generic IP protocol.
+  * ``3`` - Set ``SOCK_RAW`` for the raw socket type using a generic packet protocol.
+    The ``<op>`` parameter can be either ``1`` or ``2`` as raw socket ignores the protocol family.
 
 * The ``<role>`` parameter can accept one of the following values:
 
   * ``0`` - Client.
   * ``1`` - Server.
 
-* The ``<cid>`` parameter is an integer.
+* The ``<cid>`` parameter is an integer indicating the used PDN connection.
   It represents ``cid`` in the ``+CGDCONT`` command.
   Its default value is ``0``.
 
@@ -139,9 +142,9 @@ Response syntax
 
   * ``1`` - Set ``SOCK_STREAM`` for the stream socket type using the TCP protocol.
   * ``2`` - Set ``SOCK_DGRAM`` for the datagram socket type using the UDP protocol.
-  * ``3`` - Set ``SOCK_RAW`` for the raw socket type using a generic IP protocol.
+  * ``3`` - Set ``SOCK_RAW`` for the raw socket type using a generic packet protocol.
 
-* The ``<cid>`` parameter is an integer.
+* The ``<cid>`` parameter is an integer indicating the used PDN connection.
   It represents ``cid`` in the ``+CGDCONT`` command.
 
 Example
@@ -230,7 +233,7 @@ Syntax
   * ``1`` - Optional.
   * ``2`` - Required (default for client role).
 
-* The ``<cid>`` parameter is an integer.
+* The ``<cid>`` parameter is an integer indicating the used PDN connection.
   It represents ``cid`` in the ``+CGDCONT`` command.
   Its default value is ``0``.
 
@@ -319,7 +322,7 @@ Response syntax
 * The ``<sec_tag>`` value is an integer.
   It indicates to the modem the credential of the security tag to be used for establishing a secure connection.
 
-* The ``<cid>`` value is an integer.
+* The ``<cid>`` value is an integer indicating the used PDN connection.
   It represents ``cid`` in the ``+CGDCONT`` command.
 
 Example
@@ -441,7 +444,7 @@ Response syntax
 * The ``<ranking>`` value is an integer.
   It indicates the ranking value of this socket, where the largest value means the highest ranking.
 
-* The ``<cid>`` value is an integer.
+* The ``<cid>`` value is an integer indicating the used PDN connection.
   It represents ``cid`` in the ``+CGDCONT`` command.
 
 * The ``<handle_active>`` value is an integer that indicates the handle of the active socket.
