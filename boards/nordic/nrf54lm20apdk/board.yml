@@ -5,8 +5,9 @@ board:
   socs:
   - name: nrf54lm20a
   revision:
-    format: major.minor.patch
+    format: custom
     default: "0.0.0"
     revisions:
     - name: "0.0.0"
     - name: "0.2.0"
+    - name: "0.2.0.csp"
