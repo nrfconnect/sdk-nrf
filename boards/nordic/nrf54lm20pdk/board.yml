@@ -1,0 +1,13 @@
+board:
+  name: nrf54lm20pdk
+  full_name: nRF54LM20 PDK
+  vendor: nordic
+  socs:
+  - name: nrf54lm20a
+  revision:
+    format: custom
+    default: "0.0.0"
+    revisions:
+    - name: "0.0.0"
+    - name: "0.2.0"
+    - name: "0.2.0.csp"
