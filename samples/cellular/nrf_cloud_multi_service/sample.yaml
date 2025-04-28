@@ -92,6 +92,28 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_cellular
+  sample.cellular.nrf_cloud_multi_service.mqtt.provisioning.trace:
+    sysbuild: true
+    build_only: true
+    platform_allow:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - thingy91/nrf9160/ns
+      - thingy91x/nrf9151/ns
+    integration_platforms:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - thingy91/nrf9160/ns
+      - thingy91x/nrf9151/ns
+    extra_args:
+      - EXTRA_CONF_FILE="overlay-http_nrf_provisioning.conf"
+      - nrf_cloud_multi_service_SNIPPET=nrf91-modem-trace-uart
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
   sample.cellular.nrf7002ek_wifi.scan:
     sysbuild: true
     build_only: true
