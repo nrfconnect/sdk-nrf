@@ -6,6 +6,7 @@
 
 #include <modem/modem_slm.h>
 #include <zephyr/logging/log.h>
+#include <string.h>
 
 LOG_MODULE_REGISTER(mdm_slm_mon, CONFIG_MODEM_SLM_LOG_LEVEL);
 
@@ -20,6 +21,8 @@ static K_FIFO_DEFINE(at_monitor_fifo);
 static K_HEAP_DEFINE(at_monitor_heap, 1024);
 static K_WORK_DEFINE(at_monitor_work, slm_monitor_task);
 
+extern char *strnstr(const char *haystack, const char *needle, size_t haystack_sz);
+
 static bool is_paused(const struct slm_monitor_entry *mon)
 {
 	return mon->paused;
@@ -30,34 +33,35 @@ static bool has_match(const struct slm_monitor_entry *mon, const char *notif)
 	return (mon->filter == MON_ANY || strstr(notif, mon->filter));
 }
 
-/* Dispatch AT notifications immediately, or schedules a workqueue task to do that.
- * Keep this function public so that it can be called by tests.
- * This function is called from an ISR.
- */
-void slm_monitor_dispatch(const char *notif)
+/* Schedules a workqueue to dispatch AT notifications. */
+void slm_monitor_dispatch(const char *notif, size_t len)
 {
-	bool monitored;
 	struct at_notif_fifo *at_notif;
 	size_t sz_needed;
+	size_t notif_len;
+	char *match = NULL;
 
-	if (notif == NULL) {
-		return;
-	}
-
-	monitored = false;
+	/* TODO:
+	 * To reliably separate AT notifications from AT commands, data and other
+	 * AT notifications would require that the AT notifications are separated with control
+	 * characters or possibly sent with a separate CMUX channel.
+	 */
 	STRUCT_SECTION_FOREACH(slm_monitor_entry, e) {
-		if (!is_paused(e) && has_match(e, notif)) {
-			/* Copy and schedule work-queue task */
-			monitored = true;
+		if (!is_paused(e)) {
+			match = strnstr(notif, e->filter, len);
+			if (match) {
+				notif_len = len - (size_t)(match - notif);
+				break;
+			}
 		}
 	}
 
-	if (!monitored) {
+	if (!match) {
 		/* Only copy monitored notifications to save heap */
 		return;
 	}
 
-	sz_needed = sizeof(struct at_notif_fifo) + strlen(notif) + sizeof(char);
+	sz_needed = sizeof(struct at_notif_fifo) + notif_len + sizeof(char);
 
 	at_notif = k_heap_alloc(&at_monitor_heap, sz_needed, K_NO_WAIT);
 	if (!at_notif) {
@@ -66,7 +70,8 @@ void slm_monitor_dispatch(const char *notif)
 		return;
 	}
 
-	strcpy(at_notif->data, notif);
+	strncpy(at_notif->data, match, notif_len);
+	at_notif->data[notif_len] = '\0';
 
 	k_fifo_put(&at_monitor_fifo, at_notif);
 	k_work_submit(&at_monitor_work);

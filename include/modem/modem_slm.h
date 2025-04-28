@@ -99,12 +99,6 @@ int modem_slm_register_ind(slm_ind_handler_t handler, bool wakeup);
 int modem_slm_power_pin_toggle(void);
 
 /**
- * @brief Reset the RX function of the serial interface
- *
- */
-void modem_slm_reset_uart(void);
-
-/**
  * @brief Function to send an AT command in SLM command mode
  *
  * This function wait until command result is received. The response of the AT command is received

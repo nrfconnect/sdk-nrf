@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <assert.h>
 #include <zephyr/drivers/uart.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/shell/shell.h>
@@ -17,11 +18,10 @@ LOG_MODULE_REGISTER(mdm_slm, CONFIG_MODEM_SLM_LOG_LEVEL);
 
 BUILD_ASSERT(CONFIG_MODEM_SLM_POWER_PIN >= 0, "Power pin not configured");
 
-#define UART_RX_BUF_NUM         2
-#define UART_RX_LEN             CONFIG_MODEM_SLM_DMA_MAXLEN
+#define UART_RX_MARGIN_MS	10
 #define UART_RX_TIMEOUT_US      2000
 #define UART_ERROR_DELAY_MS     500
-#define UART_RX_MARGIN_MS       10
+#define UART_TX_TIMEOUT_US      100000
 
 /* SLM has formatted AT response based on TS 27.007 */
 #define AT_CMD_OK_STR    "\r\nOK\r\n"
@@ -30,19 +30,44 @@ BUILD_ASSERT(CONFIG_MODEM_SLM_POWER_PIN >= 0, "Power pin not configured");
 #define AT_CMD_CME_STR   "\r\n+CME ERROR:"
 
 static const struct device *uart_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_slm_uart));
-static uint8_t uart_rx_buf[UART_RX_BUF_NUM][UART_RX_LEN];
-static uint8_t *next_buf;
-static uint8_t *uart_tx_buf;
-static K_SEM_DEFINE(tx_done, 0, 1);
-static bool uart_recovery_pending;
-static struct k_work_delayable uart_recovery_work;
+
+static struct k_work_delayable rx_process_work;
+struct rx_buf_t {
+	atomic_t ref_counter;
+	uint8_t buf[CONFIG_MODEM_SLM_UART_RX_BUF_SIZE];
+};
+BUILD_ASSERT(CONFIG_MODEM_SLM_AT_CMD_RESP_MAX_SIZE > CONFIG_MODEM_SLM_UART_RX_BUF_SIZE);
+
+/* Slabs for RX buffer. */
+#define UART_SLAB_BLOCK_SIZE sizeof(struct rx_buf_t)
+#define UART_SLAB_BLOCK_COUNT CONFIG_SLM_UART_RX_BUF_COUNT
+#define UART_SLAB_ALIGNMENT sizeof(uint32_t)
+BUILD_ASSERT(UART_SLAB_BLOCK_SIZE % UART_SLAB_ALIGNMENT == 0);
+K_MEM_SLAB_DEFINE_STATIC(rx_slab, UART_SLAB_BLOCK_SIZE, CONFIG_MODEM_SLM_UART_RX_BUF_COUNT,
+			 UART_SLAB_ALIGNMENT);
+
+/* Event queue for RX buffer usage. */
+struct rx_event_t {
+	uint8_t *buf;
+	size_t len;
+};
+#define UART_RX_EVENT_COUNT CONFIG_MODEM_SLM_UART_RX_BUF_COUNT
+K_MSGQ_DEFINE(rx_event_queue, sizeof(struct rx_event_t), UART_RX_EVENT_COUNT, 1);
+
+/* Ring buffer for TX data. */
+RING_BUF_DECLARE(tx_buf, CONFIG_MODEM_SLM_UART_TX_BUF_SIZE);
+static K_SEM_DEFINE(tx_done_sem, 0, 1);
+
+enum uart_recovery_state {
+	RECOVERY_DISABLED,
+	RECOVERY_IDLE,
+	RECOVERY_ONGOING
+};
+static atomic_t recovery_state;
+static K_SEM_DEFINE(at_rsp, 0, 1);
 
 static slm_data_handler_t data_handler;
-static K_SEM_DEFINE(at_rsp, 0, 1);
 static enum at_cmd_state slm_at_state;
-
-RING_BUF_DECLARE(slm_data_rb, SLM_AT_CMD_RESPONSE_MAX_LEN);
-static struct k_work slm_data_work;
 
 #if DT_HAS_CHOSEN(ncs_slm_gpio)
 static const struct device *gpio_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_slm_gpio));
@@ -57,8 +82,8 @@ static const struct shell *global_shell;
 static const char at_usage_str[] = "Usage: slm <at_command>";
 #endif
 
-/* global functions defined in different files */
-void slm_monitor_dispatch(const char *notif);
+extern void slm_monitor_dispatch(const char *notif, size_t len);
+extern char *strnstr(const char *haystack, const char *needle, size_t haystack_sz);
 
 #if (CONFIG_MODEM_SLM_INDICATE_PIN >= 0)
 static bool indicate_pin_enabled;
@@ -124,79 +149,106 @@ static void gpio_power_pin_disable_work_fn(struct k_work *work)
 	LOG_INF("Disable power pin");
 }
 
-static void slm_data_wk(struct k_work *work)
+static inline struct rx_buf_t *block_start_get(uint8_t *buf)
 {
-	uint8_t *data = NULL;
-	int size_send;
+	size_t block_num;
 
-	ARG_UNUSED(work);
+	/* Find the correct block. */
+	block_num = (((size_t)buf - offsetof(struct rx_buf_t, buf) - (size_t)rx_slab.buffer) /
+		     UART_SLAB_BLOCK_SIZE);
 
-	/* NOTE ring_buf_get_claim() might not return full size */
-	do {
-		size_send = ring_buf_get_claim(&slm_data_rb, &data, SLM_AT_CMD_RESPONSE_MAX_LEN);
-		if (data != NULL && size_send > 0) {
-#if defined(CONFIG_MODEM_SLM_SHELL)
-			shell_print(global_shell, "%.*s", size_send, (char *)data);
-#endif
-			if (data_handler) {
-				data_handler(data, size_send);
-			}
-			(void)ring_buf_get_finish(&slm_data_rb, size_send);
-		} else {
-			break;
-		}
-	} while (true);
+	return (struct rx_buf_t *) &rx_slab.buffer[block_num * UART_SLAB_BLOCK_SIZE];
 }
 
-static void uart_recovery_wk(struct k_work *work)
+static struct rx_buf_t *buf_alloc(void)
 {
-	ARG_UNUSED(work);
+	struct rx_buf_t *buf;
+	int err;
 
-	next_buf = uart_rx_buf[1];
-	int err = uart_rx_enable(uart_dev, uart_rx_buf[0], sizeof(uart_rx_buf[0]),
-				 UART_RX_TIMEOUT_US);
-
-	if (err && err != -EBUSY) {
-		LOG_ERR("UART recovery failed: %d", err);
-	} else {
-		LOG_DBG("UART recovered");
+	err = k_mem_slab_alloc(&rx_slab, (void **) &buf, K_NO_WAIT);
+	if (err) {
+		return NULL;
 	}
-	uart_recovery_pending = false;
+
+	atomic_set(&buf->ref_counter, 1);
+
+	return buf;
 }
 
-static int uart_send(const uint8_t *buffer, size_t len)
+static void buf_ref(void *buf)
 {
+	atomic_inc(&(block_start_get(buf)->ref_counter));
+}
+
+static void buf_unref(void *buf)
+{
+	struct rx_buf_t *uart_buf = block_start_get(buf);
+	atomic_t ref_counter = atomic_dec(&uart_buf->ref_counter);
+
+	/* atomic_dec returns the previous value of the atomic. */
+	if (ref_counter == 1) {
+		k_mem_slab_free(&rx_slab, (void *)uart_buf);
+	}
+}
+
+static int rx_enable(void)
+{
+	struct rx_buf_t *buf;
 	int ret;
 
-	LOG_HEXDUMP_DBG(buffer, len, "TX");
-
-	k_sem_take(&tx_done, K_FOREVER);
-
-	if ((uint32_t)buffer < CONFIG_PM_SRAM_BASE ||
-	    (uint32_t)buffer > CONFIG_PM_SRAM_BASE + CONFIG_PM_SRAM_SIZE) {
-		uart_tx_buf = k_malloc(len);
-		if (uart_tx_buf == NULL) {
-			LOG_WRN("No ram buffer");
-			k_sem_give(&tx_done);
-			return -ENOMEM;
-		}
-		memcpy(uart_tx_buf, buffer, len);
-		ret = uart_tx(uart_dev, uart_tx_buf, len, SYS_FOREVER_US);
-	} else {
-		uart_tx_buf = NULL; /* if NULL, no operation by k_free() */
-		ret = uart_tx(uart_dev, buffer, len, SYS_FOREVER_US);
+	buf = buf_alloc();
+	if (!buf) {
+		LOG_DBG("Failed to allocate RX buffer");
+		return -ENOMEM;
 	}
+
+	ret = uart_rx_enable(uart_dev, buf->buf, sizeof(buf->buf), UART_RX_TIMEOUT_US);
 	if (ret) {
-		LOG_WRN("uart_tx failed: %d", ret);
-		k_free(uart_tx_buf);
-		k_sem_give(&tx_done);
+		LOG_WRN("uart_rx_enable failed: %d", ret);
+		return ret;
 	}
 
-	return ret;
+	return 0;
+}
+
+static int rx_disable(void)
+{
+	int err;
+
+	/* Wait for possible rx_enable to complete. */
+	if (atomic_set(&recovery_state, RECOVERY_DISABLED) == RECOVERY_ONGOING) {
+		k_sleep(K_MSEC(10));
+	}
+
+	err = uart_rx_disable(uart_dev);
+	if (err) {
+		LOG_ERR("UART RX disable failed: %d", err);
+		atomic_set(&recovery_state, RECOVERY_IDLE);
+		return err;
+	}
+
+	return 0;
+}
+
+static void rx_recovery(void)
+{
+	int err;
+
+	if (atomic_get(&recovery_state) != RECOVERY_ONGOING) {
+		return;
+	}
+
+	err = rx_enable();
+	if (err) {
+		k_work_schedule(&rx_process_work, K_MSEC(UART_RX_MARGIN_MS));
+		return;
+	}
+
+	atomic_cas(&recovery_state, RECOVERY_ONGOING, RECOVERY_IDLE);
 }
 
 /* Attempts to find AT responses in the UART buffer. */
-static void parse_at_response(const char *data, size_t datalen)
+static size_t parse_at_response(const char *data, size_t datalen)
 {
 	/* SLM AT responses are formatted based on TS 27.007. */
 	static const char * const at_responses[] = {
@@ -205,107 +257,220 @@ static void parse_at_response(const char *data, size_t datalen)
 		[AT_CMD_ERROR_CMS] = "\r\n+CMS ERROR:",
 		[AT_CMD_ERROR_CME] = "\r\n+CME ERROR:"
 	};
-	static size_t at_response_lens[ARRAY_SIZE(at_responses)];
+	const char *match = NULL;
 
-	if (!at_response_lens[0]) {
-		/* Initialize the AT response lengths array. */
-		for (size_t at_state = 0; at_state != ARRAY_SIZE(at_responses); ++at_state) {
-			at_response_lens[at_state] = strlen(at_responses[at_state]);
-		}
-	}
-	/* Search the UART buffer in sequential order. */
-	for (size_t i = 0; i != datalen; ++i) {
-		/* Look for all the AT state responses. */
-		for (size_t at_state = 0; at_state != ARRAY_SIZE(at_responses); ++at_state) {
-			const char *at_response = at_responses[at_state];
-			const size_t at_response_len = at_response_lens[at_state];
-
-			if (i + at_response_len <= datalen
-			&& !strncmp(data + i, at_response, at_response_len)) {
+	/* Look for all the AT state responses. */
+	for (size_t at_state = 0; at_state != ARRAY_SIZE(at_responses); ++at_state) {
+		match = strnstr(data, at_responses[at_state], datalen);
+		if (match) {
+			if (at_state == AT_CMD_OK || at_state == AT_CMD_ERROR) {
 				/* Found a match. */
 				slm_at_state = at_state;
-				return;
+				return match - data + strlen(at_responses[at_state]);
+			}
+			/* Search for the "\r\n" at the end of the response. */
+			match += strlen(at_responses[at_state]);
+			match = strnstr(match, "\r\n", datalen - (match - data));
+			if (match) {
+				/* Found a match. */
+				slm_at_state = at_state;
+				return match - data + 2;
 			}
 		}
 	}
+
+	return 0;
 }
 
-static void uart_rx_handler(const uint8_t *data, size_t datalen)
+static void response_handler(const uint8_t *data, const size_t len)
 {
-	int ret;
+	static uint8_t at_cmd_resp[CONFIG_MODEM_SLM_AT_CMD_RESP_MAX_SIZE];
+	static size_t resp_len;
+	size_t copy_len;
 
-	LOG_HEXDUMP_DBG(data, datalen, "RX");
+	LOG_HEXDUMP_DBG(data, len, "RX");
 
-	/* save data to buffer */
-	ret = ring_buf_put(&slm_data_rb, data, datalen);
-	if (ret != datalen) {
-		LOG_WRN("enqueue data error (%d, %d)", datalen, ret);
-	}
+	copy_len = MIN(len, sizeof(at_cmd_resp) - resp_len);
+	memcpy(at_cmd_resp + resp_len, data, copy_len);
+	resp_len += copy_len;
 
-	/* handle AT response */
 	if (slm_at_state == AT_CMD_PENDING) {
-		parse_at_response(data, datalen);
-		if (slm_at_state != AT_CMD_PENDING) {
-			k_work_submit(&slm_data_work);
+		size_t processed = parse_at_response(at_cmd_resp, resp_len);
+
+		if (processed == 0 && resp_len == sizeof(at_cmd_resp)) {
+			LOG_ERR("AT-response overflow. Increase "
+				"CONFIG_MODEM_SLM_AT_CMD_RESP_MAX_SIZE");
+			processed = resp_len;
+		}
+		if (processed > 0) {
+#if defined(CONFIG_MODEM_SLM_SHELL)
+			shell_print(global_shell, "%.*s", processed, (char *)at_cmd_resp);
+#endif
+			if (processed < resp_len) {
+				/* In case there is data or unsolicited notification
+				 * after the AT-command response, shift the remaining data
+				 * to the beginning of the buffer.
+				 */
+				memmove(at_cmd_resp, at_cmd_resp + processed, resp_len - processed);
+			}
+			resp_len -= processed;
+
+			/* Copy the possibly remaining data to the buffer. */
+			if (copy_len < len) {
+				assert((sizeof(at_cmd_resp) - resp_len) >= (len - copy_len));
+
+				memcpy(at_cmd_resp + resp_len, data + copy_len, len - copy_len);
+				resp_len += len - copy_len;
+			}
+
 			k_sem_give(&at_rsp);
 		}
-	/* handle AT unsolicited */
-	} else {
-		slm_monitor_dispatch((const char *)data);
-		k_work_submit(&slm_data_work);
+	}
+
+	if (slm_at_state != AT_CMD_PENDING && resp_len > 0) {
+		slm_monitor_dispatch((const char *)at_cmd_resp, resp_len);
+
+#if defined(CONFIG_MODEM_SLM_SHELL)
+		shell_print(global_shell, "%.*s", resp_len, (char *)at_cmd_resp);
+#endif
+		resp_len = 0;
+	}
+
+	if (data_handler) {
+		data_handler(data, len);
 	}
 }
 
-static void uart_callback(const struct device *dev, struct uart_event *evt, void *user_data)
+static void rx_process(struct k_work *work)
 {
-	int err;
-	static uint16_t pos;
-	static bool enable_rx_retry;
+	struct rx_event_t rx_event;
 
-	ARG_UNUSED(dev);
-	ARG_UNUSED(user_data);
+	while (k_msgq_get(&rx_event_queue, &rx_event, K_NO_WAIT) == 0) {
+		response_handler(rx_event.buf, rx_event.len);
+		buf_unref(rx_event.buf);
+	}
+
+	rx_recovery();
+}
+
+static int tx_start(void)
+{
+	uint8_t *buf;
+	size_t len;
+	int err;
+
+	len = ring_buf_get_claim(&tx_buf, &buf, ring_buf_capacity_get(&tx_buf));
+	err = uart_tx(uart_dev, buf, len, UART_TX_TIMEOUT_US);
+	if (err) {
+		LOG_ERR("UART TX error: %d", err);
+		ring_buf_get_finish(&tx_buf, 0);
+		return err;
+	}
+
+	return 0;
+}
+
+/* Write the data to tx_buffer and trigger sending. */
+static int tx_write(const uint8_t *data, size_t len, bool flush)
+{
+	size_t ret;
+	size_t sent = 0;
+	int err;
+
+	LOG_HEXDUMP_DBG(data, len, "TX");
+
+	while (sent < len) {
+		ret = ring_buf_put(&tx_buf, data + sent, len - sent);
+		if (ret) {
+			sent += ret;
+		} else {
+			/* Buffer full, block and start TX. */
+			k_sem_take(&tx_done_sem, K_FOREVER);
+			err = tx_start();
+			if (err) {
+				LOG_ERR("TX buf overflow, %d dropped. Unable to send: %d",
+					len - sent,
+					err);
+				k_sem_give(&tx_done_sem);
+				return err;
+			}
+		}
+	}
+
+	if (flush && k_sem_take(&tx_done_sem, K_NO_WAIT) == 0) {
+		err = tx_start();
+		if (err) {
+			LOG_ERR("tx_start failed: %d", err);
+			k_sem_give(&tx_done_sem);
+			return err;
+		}
+	}
+
+	return 0;
+}
+
+static void uart_callback(const struct device*, struct uart_event *evt, void*)
+{
+	struct rx_buf_t *buf;
+	struct rx_event_t rx_event;
+	int err;
 
 	switch (evt->type) {
 	case UART_TX_DONE:
-		k_free(uart_tx_buf);
-		k_sem_give(&tx_done);
-		LOG_DBG("TX_DONE");
+		err = ring_buf_get_finish(&tx_buf, evt->data.tx.len);
+		if (err) {
+			LOG_ERR("UART_TX_%s, ring_buf_get_finish: %d", "DONE", err);
+		}
+		if (ring_buf_is_empty(&tx_buf)) {
+			k_sem_give(&tx_done_sem);
+			break;
+		}
+		err = tx_start();
+		if (err) {
+			LOG_ERR("tx_start failed: %d", err);
+			k_sem_give(&tx_done_sem);
+		}
 		break;
 	case UART_TX_ABORTED:
-		k_free(uart_tx_buf);
-		k_sem_give(&tx_done);
-		LOG_INF("TX_ABORTED");
+		err = ring_buf_get_finish(&tx_buf, evt->data.tx.len);
+		if (err) {
+			LOG_ERR("UART_TX_%s, ring_buf_get_finish: %d", "ABORTED", err);
+		}
+		LOG_WRN("UART_TX_ABORTED, dropped: %d bytes", ring_buf_size_get(&tx_buf));
+		ring_buf_reset(&tx_buf);
+		k_sem_give(&tx_done_sem);
 		break;
 	case UART_RX_RDY:
-		LOG_DBG("RX_RDY %d", evt->data.rx.len);
-		uart_rx_handler(&(evt->data.rx.buf[pos]), evt->data.rx.len);
-		pos += evt->data.rx.len;
+		buf_ref(evt->data.rx.buf);
+		rx_event.buf = &evt->data.rx.buf[evt->data.rx.offset];
+		rx_event.len = evt->data.rx.len;
+		err = k_msgq_put(&rx_event_queue, &rx_event, K_NO_WAIT);
+		if (err) {
+			LOG_ERR("RX_RDY failure: %d, dropped: %d", err, evt->data.rx.len);
+			buf_unref(evt->data.rx.buf);
+			break;
+		}
+		k_work_submit((struct k_work *)&rx_process_work);
 		break;
 	case UART_RX_BUF_REQUEST:
-		LOG_DBG("RX_BUF_REQ");
-		pos = 0;
-		err = uart_rx_buf_rsp(uart_dev, next_buf, sizeof(uart_rx_buf[0]));
+		buf = buf_alloc();
+		if (!buf) {
+			break;
+		}
+		err = uart_rx_buf_rsp(uart_dev, buf->buf, sizeof(buf->buf));
 		if (err) {
-			LOG_WRN("UART RX buf rsp: %d", err);
+			LOG_WRN("Disabling UART RX: %d", err);
+			buf_unref(buf);
 		}
 		break;
 	case UART_RX_BUF_RELEASED:
-		LOG_DBG("RX_BUF_REL");
-		next_buf = evt->data.rx_buf.buf;
-		break;
-	case UART_RX_STOPPED:
-		LOG_WRN("RX_STOPPED (%d)", evt->data.rx_stop.reason);
-		/* Retry automatically in case of UART ERROR interrupt */
-		if (evt->data.rx_stop.reason != 0) {
-			enable_rx_retry = true;
+		if (evt->data.rx_buf.buf) {
+			buf_unref(evt->data.rx_buf.buf);
 		}
 		break;
 	case UART_RX_DISABLED:
-		LOG_DBG("RX_DISABLED");
-		if (enable_rx_retry && !uart_recovery_pending) {
-			k_work_schedule(&uart_recovery_work, K_MSEC(UART_RX_MARGIN_MS));
-			enable_rx_retry = false;
-			uart_recovery_pending = true;
+		if (atomic_cas(&recovery_state, RECOVERY_IDLE, RECOVERY_ONGOING)) {
+			k_work_submit((struct k_work *)&rx_process_work);
 		}
 		break;
 	default:
@@ -324,11 +489,14 @@ static int uart_init(const struct device *uart_dev)
 	}
 
 	err = uart_config_get(uart_dev, &uart_conf);
-	if (err == 0) {
-		LOG_INF("UART baud: %d d/p/s-bits: %d/%d/%d HWFC: %d",
-			uart_conf.baudrate, uart_conf.data_bits, uart_conf.parity,
-			uart_conf.stop_bits, uart_conf.flow_ctrl);
+	if (err) {
+		LOG_ERR("uart_config_get: %d", err);
+		return err;
 	}
+
+	LOG_INF("UART baud: %d d/p/s-bits: %d/%d/%d HWFC: %d",
+		uart_conf.baudrate, uart_conf.data_bits, uart_conf.parity,
+		uart_conf.stop_bits, uart_conf.flow_ctrl);
 
 	/* Wait for the UART line to become valid */
 	uint32_t start_time = k_uptime_get_32();
@@ -353,14 +521,12 @@ static int uart_init(const struct device *uart_dev)
 		return -EFAULT;
 	}
 
-	/* Enable TX */
-	k_sem_give(&tx_done);
 	/* Enable RX */
-	next_buf = uart_rx_buf[1];
-	err = uart_rx_enable(uart_dev, uart_rx_buf[0], sizeof(uart_rx_buf[0]), UART_RX_TIMEOUT_US);
-	if (err && err != -EBUSY) {
-		LOG_ERR("UART RX failed: %d", err);
-	}
+	atomic_set(&recovery_state, RECOVERY_IDLE);
+	err = rx_enable();
+
+	/* Enable TX */
+	k_sem_give(&tx_done_sem);
 
 	return err;
 }
@@ -438,8 +604,7 @@ int modem_slm_init(slm_data_handler_t handler)
 	}
 
 	k_work_init_delayable(&gpio_power_pin_disable_work, gpio_power_pin_disable_work_fn);
-	k_work_init(&slm_data_work, slm_data_wk);
-	k_work_init_delayable(&uart_recovery_work, uart_recovery_wk);
+	k_work_init_delayable(&rx_process_work, rx_process);
 
 	/* Initialize shell pointer so it's available for printing in callbacks */
 #if defined(CONFIG_SHELL_BACKEND_SERIAL)
@@ -452,8 +617,7 @@ int modem_slm_init(slm_data_handler_t handler)
 
 int modem_slm_uninit(void)
 {
-	uart_rx_disable(uart_dev);
-	k_sleep(K_MSEC(10));
+	rx_disable();
 
 	gpio_pin_configure(gpio_dev, CONFIG_MODEM_SLM_POWER_PIN, GPIO_DISCONNECTED);
 
@@ -507,20 +671,6 @@ int modem_slm_power_pin_toggle(void)
 	return 0;
 }
 
-void modem_slm_reset_uart(void)
-{
-	int err;
-
-	uart_rx_disable(uart_dev);
-	k_sleep(K_MSEC(10));
-
-	next_buf = uart_rx_buf[1];
-	err = uart_rx_enable(uart_dev, uart_rx_buf[0], sizeof(uart_rx_buf[0]), UART_RX_TIMEOUT_US);
-	if (err && err != -EBUSY) {
-		LOG_ERR("UART RX failed: %d", err);
-	}
-}
-
 int modem_slm_send_cmd(const char *const command, uint32_t timeout)
 {
 	int ret;
@@ -531,17 +681,17 @@ int modem_slm_send_cmd(const char *const command, uint32_t timeout)
 	(void)indicate_pin_enable();
 
 	slm_at_state = AT_CMD_PENDING;
-	ret = uart_send(command, strlen(command));
+	ret = tx_write(command, strlen(command), false);
 	if (ret < 0) {
 		return ret;
 	}
 	/* send AT command terminator */
 #if defined(CONFIG_MODEM_SLM_CR_LF_TERMINATION)
-	ret = uart_send("\r\n", 2);
+	ret = tx_write("\r\n", 2, true);
 #elif defined(CONFIG_MODEM_SLM_CR_TERMINATION)
-	ret = uart_send("\r", 1);
+	ret = tx_write("\r", 1, true);
 #elif defined(CONFIG_MODEM_SLM_LF_TERMINATION)
-	ret = uart_send("\n", 1);
+	ret = tx_write("\n", 1, true);
 #endif
 	if (ret < 0) {
 		return ret;
@@ -551,7 +701,7 @@ int modem_slm_send_cmd(const char *const command, uint32_t timeout)
 	} else {
 		ret = k_sem_take(&at_rsp, K_FOREVER);
 	}
-	if (ret < 0 && ret != -EBUSY) {
+	if (ret) {
 		LOG_ERR("timeout");
 		return ret;
 	}
@@ -561,7 +711,7 @@ int modem_slm_send_cmd(const char *const command, uint32_t timeout)
 
 int modem_slm_send_data(const uint8_t *const data, size_t datalen)
 {
-	return uart_send(data, datalen);
+	return tx_write(data, datalen, true);
 }
 
 #if defined(CONFIG_MODEM_SLM_SHELL)
@@ -573,7 +723,7 @@ int modem_slm_shell(const struct shell *shell, size_t argc, char **argv)
 		return 0;
 	}
 
-	return modem_slm_send_cmd((char *)argv[1], 0);
+	return modem_slm_send_cmd(argv[1], 10);
 }
 
 int modem_slm_shell_slmsh_powerpin(const struct shell *shell, size_t argc, char **argv)
