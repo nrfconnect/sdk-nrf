@@ -44,27 +44,10 @@
 /**
  * @brief Callback for receiving Bluetooth LE Audio data.
  *
- * @param	data		Pointer to received data.
- * @param	size		Size of received data.
- * @param	bad_frame	Indicating if the frame is a bad frame or not.
- * @param	sdu_ref		ISO timestamp.
+ * @param	audio_frame	Pointer to audio data struct.
  * @param	channel_index	Audio channel index.
- * @param	desired_size	The expected data size.
  */
-typedef void (*le_audio_receive_cb)(const uint8_t *const data, size_t size, bool bad_frame,
-				    uint32_t sdu_ref, enum audio_channel channel_index,
-				    size_t desired_size);
-
-/**
- * @brief	Encoded audio data and information.
- *
- * @note	Container for SW codec (typically LC3) compressed audio data.
- */
-struct le_audio_encoded_audio {
-	uint8_t const *const data;
-	size_t size;
-	uint8_t num_ch;
-};
+typedef void (*le_audio_receive_cb)(struct audio_data *audio_frame, uint8_t channel_index);
 
 struct stream_index {
 	uint8_t lvl1; /* BIG / CIG */
