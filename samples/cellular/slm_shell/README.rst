@@ -14,7 +14,7 @@ See more information on the functionality of this sample from the :ref:`lib_mode
 Requirements
 ************
 
-The SLM application should be configured to use UART_2 on the nRF91 Series DK side with no hardware flow control.
+The SLM application should be configured to use UART2 on the nRF91 Series DK side with hardware flow control.
 
 The sample supports the following development kits:
 
@@ -22,7 +22,7 @@ The sample supports the following development kits:
 
 Connect the DK with an nRF91 Series DK based on the pin configuration in DTS overlay files of both sides.
 
-The following table shows how to connect UART_1 of the DK to the nRF91 Series DK's UART_2 for communication through UART:
+The following table shows how to connect UART1 of the DK to the nRF91 Series DK's UART2 for communication through UART:
 
 .. tabs::
 
@@ -37,6 +37,10 @@ The following table shows how to connect UART_1 of the DK to the nRF91 Series DK
            - UART RX P0.11
          * - UART RX P1.01
            - UART TX P0.10
+         * - UART CTS P1.06
+           - UART RTS P0.12
+         * - UART RTS P1.07
+           - UART CTS P0.13
          * - GPIO OUT P0.11 (Button1)
            - GPIO IN P0.31
          * - GPIO IN P0.13 (LED1 optional)
@@ -62,6 +66,10 @@ The following table shows how to connect UART_1 of the DK to the nRF91 Series DK
            - UART RX P0.11
          * - UART RX P1.05
            - UART TX P0.10
+         * - UART CTS P1.06
+           - UART RTS P0.12
+         * - UART RTS P1.07
+           - UART CTS P0.13
          * - GPIO OUT P0.23 (Button1)
            - GPIO IN P0.31
          * - GPIO IN P0.28 (LED1 optional)
@@ -87,6 +95,10 @@ The following table shows how to connect UART_1 of the DK to the nRF91 Series DK
            - UART RX P0.11
          * - UART RX P1.05
            - UART TX P0.10
+         * - UART CTS P1.06
+           - UART RTS P0.12
+         * - UART RTS P1.07
+           - UART CTS P0.13
          * - GPIO OUT P0.31
            - GPIO IN P0.31
          * - GPIO IN P0.30 (optional)
