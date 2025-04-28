@@ -33,4 +33,25 @@ config BT_RAS_MODE_3_SUPPORTED
 	  Must match the supported CS capabilities of the local device.
 	  This affects the per-instance memory usage of RAS.
 
+# CONFIG_BT_CHANNEL_SOUNDING_REASSEMBLY_BUFFER_SIZE is declared in Zephyr and also
+# here for a second time, to set a different range for the CS subevent result reassembly
+# buffer. Default values are also set based on RAS configs to help users reduce RAM usage.
+config BT_CHANNEL_SOUNDING_REASSEMBLY_BUFFER_SIZE
+	int "Subevent result reassembly buffer size"
+	depends on BT_CHANNEL_SOUNDING
+	range 239 4800
+	default 1920 if BT_RAS_MAX_ANTENNA_PATHS=1 && !BT_RAS_MODE_3_SUPPORTED
+	default 2560 if BT_RAS_MAX_ANTENNA_PATHS=2 && !BT_RAS_MODE_3_SUPPORTED
+	default 3200 if BT_RAS_MAX_ANTENNA_PATHS=3 && !BT_RAS_MODE_3_SUPPORTED
+	default 3840 if BT_RAS_MAX_ANTENNA_PATHS=4 && !BT_RAS_MODE_3_SUPPORTED
+	default 2880 if BT_RAS_MAX_ANTENNA_PATHS=1 && BT_RAS_MODE_3_SUPPORTED
+	default 3520 if BT_RAS_MAX_ANTENNA_PATHS=2 && BT_RAS_MODE_3_SUPPORTED
+	default 4160 if BT_RAS_MAX_ANTENNA_PATHS=3 && BT_RAS_MODE_3_SUPPORTED
+	default 4800
+	help
+	  When the results for a CS subevent cannot fit into a single HCI event,
+	  it will be split up into multiple events and consequently, reassembled into a
+	  full CS subevent. This config sets the size of the reassembly buffer.
+
+
 endif # BT_RAS
