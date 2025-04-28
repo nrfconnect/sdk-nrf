@@ -846,7 +846,7 @@
 /tests/bluetooth/iso/                     @nrfconnect/ncs-audio @Frodevan
 /tests/bluetooth/bsim/nrf_auraconfig/     @nrfconnect/ncs-audio
 /tests/bluetooth/tester/                  @carlescufi @nrfconnect/ncs-paladin
-/tests/crypto/                            @stephen-nordic @magnev
+/tests/crypto/                            @magnev
 /tests/drivers/audio/dmic_dump_buffer/    @nrfconnect/ncs-low-level-test
 /tests/drivers/audio/pdm_loopback/        @nrfconnect/ncs-low-level-test
 /tests/drivers/gpio/                      @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
@@ -938,7 +938,7 @@
 /tests/subsys/pcd/                        @nrfconnect/ncs-pluto
 /tests/subsys/sdfw_services/              @nrfconnect/ncs-aurora
 /tests/subsys/suit/                       @nrfconnect/ncs-charon
-/tests/tfm/                               @nrfconnect/ncs-aegir @stephen-nordic @magnev
+/tests/tfm/                               @nrfconnect/ncs-aegir @magnev
 /tests/unity/                             @nordic-krch
 /tests/zephyr/boards/nrf/                 @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/adc/                @nrfconnect/ncs-low-level-test
