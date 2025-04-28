@@ -1,0 +1,30 @@
+sample:
+  name: SPI Bitbang Driver Sample
+tests:
+  nrf.extended.sample.drivers.spi.bitbang:
+    tags:
+      - drivers
+      - spi
+      - gpio
+      - ci_samples_zephyr_drivers_spi_bitbang
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20apdk@0.0.0/nrf54lm20a/cpuapp
+      - nrf54lm20apdk@0.2.0/nrf54lm20a/cpuapp
+      - nrf54lv10apdk/nrf54lv10a/cpuapp
+    harness: console
+    harness_config:
+      fixture: gpio_loopback
+      type: multi_line
+      ordered: true
+      regex:
+        - "basic_write_9bit_words; ret: 0"
+        - "wrote 0101 00ff 00a5 0000 0102"
+        - "9bit_loopback_partial; ret: 0"
+        - "tx [(]i[)]  : 0101 0102"
+        - "tx [(]ii[)] : 0003 0004 0105"
+        - "rx [(]ii[)] : 0003 0004 0105"
+        - "8bit_loopback_partial; ret: 0"
+        - "tx [(]i[)]  : 01 02 03 04 05"
+        - "rx [(]i[)]  : 01 02 03 04 05"
