@@ -149,6 +149,7 @@ static dict_cache cache;
 #endif
 #endif
 
+static size_t lzma_output_limit = SIZE_MAX;
 static bool allocated_probs = false;
 #ifdef CONFIG_NRF_COMPRESS_LZMA_VERSION_LZMA2
 static CLzma2Dec lzma_decoder;
@@ -220,14 +221,14 @@ static int check_inst(void *inst)
 #define check_inst(...) 0
 #endif
 
-static int lzma_reset(void *inst);
+static int lzma_reset(void *inst, size_t decompressed_size);
 
-static int lzma_init(void *inst)
+static int lzma_init(void *inst, size_t decompressed_size)
 {
 	int rc = 0;
 
 #if defined(CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY)
-	if (inst == NULL) {
+	if (inst == NULL || ext_dict != NULL) {
 		return -EINVAL;
 	}
 
@@ -244,7 +245,7 @@ static int lzma_init(void *inst)
 	&& !defined(CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY)
 	if (lzma_dict != NULL) {
 		/* Already allocated */
-		lzma_reset(inst);
+		lzma_reset(inst, decompressed_size);
 
 		return rc;
 	}
@@ -260,6 +261,8 @@ static int lzma_init(void *inst)
 		rc = -ENOMEM;
 	}
 #endif
+
+	lzma_output_limit = decompressed_size != 0 ? decompressed_size : SIZE_MAX;
 
 	return rc;
 }
@@ -283,8 +286,7 @@ static int lzma_deinit(void *inst)
 		lzma_dict = NULL;
 	}
 #endif
-
-	rc = lzma_reset(inst);
+	rc = lzma_reset(inst, 0);
 
 #if defined(CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY)
 	ext_dict = NULL;
@@ -293,7 +295,7 @@ static int lzma_deinit(void *inst)
 	return rc;
 }
 
-static int lzma_reset(void *inst)
+static int lzma_reset(void *inst, size_t decompressed_size)
 {
 	int rc = check_inst(inst);
 
@@ -330,6 +332,8 @@ static int lzma_reset(void *inst)
 #endif
 	}
 
+	lzma_output_limit = decompressed_size != 0 ? decompressed_size : SIZE_MAX;
+
 	return rc;
 }
 
@@ -362,6 +366,15 @@ static int lzma_decompress(void *inst, const uint8_t *input, size_t input_size, 
 	int rc;
 	ELzmaStatus status;
 	size_t chunk_size = input_size;
+	ELzmaFinishMode finish_mode = LZMA_FINISH_ANY;
+	SizeT dic_limit = MAX_LZMA_DICT_SIZE;
+
+#ifdef CONFIG_NRF_COMPRESS_LZMA_VERSION_LZMA2 /* For convenience */
+	SizeT *dic_pos = &lzma_decoder.decoder.dicPos;
+#else
+	SizeT *dic_pos =  &lzma_decoder.dicPos;
+#endif
+	SizeT curr_dic_pos = *dic_pos;
 
 	ARG_UNUSED(inst);
 
@@ -388,8 +401,7 @@ static int lzma_decompress(void *inst, const uint8_t *input, size_t input_size, 
 #endif
 
 		if (rc) {
-			rc = -EINVAL;
-			goto done;
+			return -EINVAL;
 		}
 
 #ifdef CONFIG_NRF_COMPRESS_LZMA_VERSION_LZMA2
@@ -397,13 +409,12 @@ static int lzma_decompress(void *inst, const uint8_t *input, size_t input_size, 
 #else
 		if (lzma_decoder.prop.dicSize > MAX_LZMA_DICT_SIZE) {
 #endif
-			rc = -EINVAL;
 #ifdef CONFIG_NRF_COMPRESS_LZMA_VERSION_LZMA2
 			Lzma2Dec_FreeProbs(&lzma_decoder, &lzma_probs_allocator);
 #else
 			LzmaDec_FreeProbs(&lzma_decoder, &lzma_probs_allocator);
 #endif
-			goto done;
+			return -EINVAL;
 		}
 
 		allocated_probs = true;
@@ -427,45 +438,58 @@ static int lzma_decompress(void *inst, const uint8_t *input, size_t input_size, 
 		return 0;
 	}
 
+	if (MAX_LZMA_DICT_SIZE - curr_dic_pos >= lzma_output_limit) {
+		/* Limit the output size because we are reaching
+		 * the limit of expected decompressed data size.
+		 */
+		finish_mode = LZMA_FINISH_END;
+		dic_limit = lzma_output_limit + curr_dic_pos;
+	}
+
 #ifdef CONFIG_NRF_COMPRESS_LZMA_VERSION_LZMA2
-	rc = Lzma2Dec_DecodeToDic(&lzma_decoder, MAX_LZMA_DICT_SIZE, input, &chunk_size,
-					(last_part ? LZMA_FINISH_END : LZMA_FINISH_ANY), &status);
+	rc = Lzma2Dec_DecodeToDic(&lzma_decoder, dic_limit,
+				  input, &chunk_size, finish_mode, &status);
 #else
-	rc = LzmaDec_DecodeToDic(&lzma_decoder, MAX_LZMA_DICT_SIZE, input, &chunk_size,
-					(last_part ? LZMA_FINISH_END : LZMA_FINISH_ANY), &status);
+	rc = LzmaDec_DecodeToDic(&lzma_decoder, dic_limit,
+				 input, &chunk_size, finish_mode, &status);
 #endif
 
-	if (rc) {
-		rc = -EINVAL;
-		goto done;
+	if (rc || chunk_size == 0) {
+		return -EINVAL;
 	}
 
 	*offset = chunk_size;
+	lzma_output_limit -= (*dic_pos - curr_dic_pos);
 
-	if (last_part && (status == LZMA_STATUS_FINISHED_WITH_MARK ||
-			  status == LZMA_STATUS_MAYBE_FINISHED_WITHOUT_MARK) &&
+	if (last_part && status == LZMA_STATUS_FINISHED_WITH_MARK &&
 	    *offset < input_size) {
 		/* If last block, ensure offset matches complete file size */
 		*offset = input_size;
 	}
 
-#ifdef CONFIG_NRF_COMPRESS_LZMA_VERSION_LZMA2
-	if (lzma_decoder.decoder.dicPos >= lzma_decoder.decoder.dicBufSize ||
-	    (last_part && input_size == *offset)) {
-		*output = lzma_decoder.decoder.dic;
-		*output_size = lzma_decoder.decoder.dicPos;
-		lzma_decoder.decoder.dicPos = 0;
+	if (last_part && *offset == input_size) {
+		/* Check status of decompression on end of input stream.
+		 * We accept LZMA_STATUS_NEEDS_MORE_INPUT if we reached
+		 * the output limit (and only then) because we don't enforce that
+		 * end-of-stream marker needs to be present in the compressed data.
+		 */
+		if (status != LZMA_STATUS_MAYBE_FINISHED_WITHOUT_MARK
+		 && status != LZMA_STATUS_FINISHED_WITH_MARK
+		 && (status != LZMA_STATUS_NEEDS_MORE_INPUT && lzma_output_limit == 0)) {
+			return -EINVAL;
+		}
 	}
-#else
-	if (lzma_decoder.dicPos >= lzma_decoder.dicBufSize ||
-	    (last_part && input_size == *offset)) {
-		*output = lzma_decoder.dic;
-		*output_size = lzma_decoder.dicPos;
-		lzma_decoder.dicPos = 0;
-	}
-#endif
 
-done:
+	if (*dic_pos >= MAX_LZMA_DICT_SIZE || last_part) {
+#ifdef CONFIG_NRF_COMPRESS_LZMA_VERSION_LZMA2
+		*output = lzma_decoder.decoder.dic;
+#else
+		*output = lzma_decoder.dic;
+#endif
+		*output_size = *dic_pos;
+		*dic_pos = 0;
+	}
+
 	return rc;
 }
 #else
@@ -476,6 +500,9 @@ static int lzma_decompress(void *inst, const uint8_t *input, size_t input_size, 
 	ELzmaStatus status;
 	size_t chunk_size = input_size;
 	CLzmaDec *decoder;
+	ELzmaFinishMode finish_mode = LZMA_FINISH_ANY;
+	SizeT dic_limit;
+	SizeT curr_dic_pos;
 
 	rc = check_inst(inst);
 
@@ -496,6 +523,7 @@ static int lzma_decompress(void *inst, const uint8_t *input, size_t input_size, 
 #else
 	decoder = &lzma_decoder;
 #endif
+	curr_dic_pos = decoder->dicPos;
 
 	if (!allocated_probs) {
 #ifdef CONFIG_NRF_COMPRESS_LZMA_VERSION_LZMA2
@@ -538,27 +566,50 @@ static int lzma_decompress(void *inst, const uint8_t *input, size_t input_size, 
 		return 0;
 	}
 
+	if (decoder->dicHandle->dicBufSize - curr_dic_pos >= lzma_output_limit) {
+		/* Limit the output size because we are reaching
+		 * the limit of expected decompressed data size.
+		 */
+		finish_mode = LZMA_FINISH_END;
+		dic_limit = lzma_output_limit + curr_dic_pos;
+	} else {
+		dic_limit = decoder->dicHandle->dicBufSize;
+	}
+
 #ifdef CONFIG_NRF_COMPRESS_LZMA_VERSION_LZMA2
-	rc = Lzma2Dec_DecodeToDic(&lzma_decoder, decoder->dicHandle->dicBufSize, input, &chunk_size,
-					LZMA_FINISH_ANY, &status);
+	rc = Lzma2Dec_DecodeToDic(&lzma_decoder, dic_limit,
+				  input, &chunk_size, finish_mode, &status);
 #else
-	rc = LzmaDec_DecodeToDic(&lzma_decoder, decoder->dicHandle->dicBufSize, input, &chunk_size,
-					LZMA_FINISH_ANY, &status);
+	rc = LzmaDec_DecodeToDic(&lzma_decoder, dic_limit,
+				 input, &chunk_size, finish_mode, &status);
 #endif
-	if (rc) {
+	if (rc || chunk_size == 0) {
 		return -EINVAL;
 	}
 
 	*offset = chunk_size;
+	lzma_output_limit -= (decoder->dicPos - curr_dic_pos);
 
-	if (last_part && (status == LZMA_STATUS_FINISHED_WITH_MARK) &&
+	if (last_part && status == LZMA_STATUS_FINISHED_WITH_MARK &&
 	    *offset < input_size) {
 		/* If last block, ensure offset matches complete file size. */
 		*offset = input_size;
 	}
 
-	if (decoder->dicPos >= decoder->dicHandle->dicBufSize ||
-	    (last_part && input_size == *offset)) {
+	if (last_part && *offset == input_size) {
+		/* Check status of decompression on end of input stream.
+		 * We accept LZMA_STATUS_NEEDS_MORE_INPUT if we reached
+		 * the output limit (and only then) because we don't enforce that
+		 * end-of-stream marker needs to be present in the compressed data.
+		 */
+		if (status != LZMA_STATUS_MAYBE_FINISHED_WITHOUT_MARK
+		 && status != LZMA_STATUS_FINISHED_WITH_MARK
+		 && (status != LZMA_STATUS_NEEDS_MORE_INPUT && lzma_output_limit == 0)) {
+			return -EINVAL;
+		}
+	}
+
+	if (decoder->dicPos >= decoder->dicHandle->dicBufSize || last_part) {
 #if CONFIG_NRF_COMPRESS_DICTIONARY_CACHE_SIZE > 0
 		if (cache.invalid) {
 			rc = synchronize_cache(decoder->dicHandle);

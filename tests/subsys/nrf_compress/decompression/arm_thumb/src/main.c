@@ -34,7 +34,7 @@ ZTEST(nrf_compress_decompression, test_valid_implementation)
 
 	zassert_not_equal(implementation, NULL, "Expected implementation to not be NULL");
 
-	rc = implementation->init(NULL);
+	rc = implementation->init(NULL, 0);
 	zassert_ok(rc, "Expected init to be successful");
 
 	while (pos < sizeof(input_compressed)) {

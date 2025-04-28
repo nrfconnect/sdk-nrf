@@ -19,8 +19,8 @@ generate_inc_file_for_target(
 
 generate_inc_file_for_target(
   app
-  ${ZEPHYR_NRFXLIB_MODULE_DIR}/tests/subsys/nrf_compress/decompression/dummy_data_input_too_large.txt.lzma
-  ${ZEPHYR_BINARY_DIR}/include/generated/dummy_data_input_too_large.inc
+  ${ZEPHYR_NRFXLIB_MODULE_DIR}/tests/subsys/nrf_compress/decompression/dummy_data_input_large.txt.lzma
+  ${ZEPHYR_BINARY_DIR}/include/generated/dummy_data_input_large.inc
   )
 
 generate_inc_file_for_target(

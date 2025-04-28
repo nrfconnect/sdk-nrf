@@ -23,9 +23,14 @@ static uint8_t output_buffer[CONFIG_NRF_COMPRESS_CHUNK_SIZE + EXTRA_BUFFER_SIZE]
 static uint8_t temp_extra_buffer[EXTRA_BUFFER_SIZE];
 static uint32_t data_position = 0;
 static bool has_extra_buffer_data;
+static size_t output_limit = SIZE_MAX;
 
-static int arm_thumb_init(void *inst)
+static int arm_thumb_reset(void *inst, size_t decompressed_size);
+
+static int arm_thumb_init(void *inst, size_t decompressed_size)
 {
+	output_limit = decompressed_size != 0 ? decompressed_size : SIZE_MAX;
+
 	data_position = 0;
 	has_extra_buffer_data = false;
 
@@ -41,8 +46,10 @@ static int arm_thumb_deinit(void *inst)
 	return 0;
 }
 
-static int arm_thumb_reset(void *inst)
+static int arm_thumb_reset(void *inst, size_t decompressed_size)
 {
+	output_limit = decompressed_size != 0 ? decompressed_size : SIZE_MAX;
+
 	data_position = 0;
 	has_extra_buffer_data = false;
 	memset(output_buffer, 0x00, sizeof(output_buffer));
@@ -62,7 +69,7 @@ static int arm_thumb_decompress(void *inst, const uint8_t *input, size_t input_s
 	bool end_part_match = false;
 	bool extra_buffer_used = false;
 
-	if (input_size > CONFIG_NRF_COMPRESS_CHUNK_SIZE) {
+	if (input_size > CONFIG_NRF_COMPRESS_CHUNK_SIZE || output_limit < input_size) {
 		return -EINVAL;
 	}
 
@@ -88,6 +95,7 @@ static int arm_thumb_decompress(void *inst, const uint8_t *input, size_t input_s
 
 	*output = output_buffer;
 	*output_size = input_size;
+	output_limit -= *offset;
 
 	if (end_part_match == true && !last_part) {
 		/* Partial match at end of input, need to cut the final 2 bytes off and stash
