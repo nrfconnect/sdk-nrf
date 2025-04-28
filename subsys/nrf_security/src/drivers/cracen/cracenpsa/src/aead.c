@@ -336,7 +336,11 @@ psa_status_t cracen_aead_encrypt_setup(cracen_aead_operation_t *operation,
 				       const uint8_t *key_buffer, size_t key_buffer_size,
 				       psa_algorithm_t alg)
 {
+#ifdef CONFIG_SOC_NRF54L20
+	return PSA_ERROR_NOT_SUPPORTED;
+#else
 	return setup(operation, CRACEN_ENCRYPT, attributes, key_buffer, key_buffer_size, alg);
+#endif
 }
 
 psa_status_t cracen_aead_decrypt_setup(cracen_aead_operation_t *operation,
@@ -344,7 +348,11 @@ psa_status_t cracen_aead_decrypt_setup(cracen_aead_operation_t *operation,
 				       const uint8_t *key_buffer, size_t key_buffer_size,
 				       psa_algorithm_t alg)
 {
+#ifdef CONFIG_SOC_NRF54L20
+	return PSA_ERROR_NOT_SUPPORTED;
+#else
 	return setup(operation, CRACEN_DECRYPT, attributes, key_buffer, key_buffer_size, alg);
+#endif
 }
 
 static psa_status_t set_nonce(cracen_aead_operation_t *operation, const uint8_t *nonce,
@@ -363,6 +371,9 @@ static psa_status_t set_nonce(cracen_aead_operation_t *operation, const uint8_t 
 psa_status_t cracen_aead_set_nonce(cracen_aead_operation_t *operation, const uint8_t *nonce,
 				   size_t nonce_length)
 {
+#ifdef CONFIG_SOC_NRF54L20
+	return PSA_ERROR_NOT_SUPPORTED;
+#else
 	psa_status_t status;
 
 	status = set_nonce(operation, nonce, nonce_length);
@@ -382,15 +393,25 @@ psa_status_t cracen_aead_set_nonce(cracen_aead_operation_t *operation, const uin
 	}
 
 	return PSA_SUCCESS;
+#endif
+}
+
+static void set_lengths(cracen_aead_operation_t *operation, size_t ad_length,
+			size_t plaintext_length)
+{
+	operation->ad_length = ad_length;
+	operation->plaintext_length = plaintext_length;
 }
 
 psa_status_t cracen_aead_set_lengths(cracen_aead_operation_t *operation, size_t ad_length,
 				     size_t plaintext_length)
 {
-	operation->ad_length = ad_length;
-	operation->plaintext_length = plaintext_length;
-
+#ifdef CONFIG_SOC_NRF54L20
+	return PSA_ERROR_NOT_SUPPORTED;
+#else
+	set_lengths(operation, ad_length, plaintext_length);
 	return PSA_SUCCESS;
+#endif
 }
 
 static psa_status_t cracen_aead_update_internal(cracen_aead_operation_t *operation,
@@ -504,13 +525,20 @@ static psa_status_t cracen_aead_update_internal(cracen_aead_operation_t *operati
 psa_status_t cracen_aead_update_ad(cracen_aead_operation_t *operation, const uint8_t *input,
 				   size_t input_length)
 {
+#ifdef CONFIG_SOC_NRF54L20
+	return PSA_ERROR_NOT_SUPPORTED;
+#else
 	return cracen_aead_update_internal(operation, input, input_length, NULL, 0, NULL, true);
+#endif
 }
 
 psa_status_t cracen_aead_update(cracen_aead_operation_t *operation, const uint8_t *input,
 				size_t input_length, uint8_t *output, size_t output_size,
 				size_t *output_length)
 {
+#ifdef CONFIG_SOC_NRF54L20
+	return PSA_ERROR_NOT_SUPPORTED;
+#else
 	/*
 	 * Even if no plain/ciphertext is provided we still wanna have one block
 	 * of AD buffered before creating/verifying the tag
@@ -543,6 +571,7 @@ psa_status_t cracen_aead_update(cracen_aead_operation_t *operation, const uint8_
 
 	return cracen_aead_update_internal(operation, input, input_length, output, output_size,
 					   output_length, false);
+#endif
 }
 
 static psa_status_t finalize_aead_encryption(cracen_aead_operation_t *operation, uint8_t *tag,
@@ -573,6 +602,9 @@ psa_status_t cracen_aead_finish(cracen_aead_operation_t *operation, uint8_t *cip
 				size_t ciphertext_size, size_t *ciphertext_length, uint8_t *tag,
 				size_t tag_size, size_t *tag_length)
 {
+#ifdef CONFIG_SOC_NRF54L20
+	return PSA_ERROR_NOT_SUPPORTED;
+#else
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 
 	if (operation->ad_finished && (ciphertext_size < operation->unprocessed_input_bytes)) {
@@ -597,6 +629,7 @@ psa_status_t cracen_aead_finish(cracen_aead_operation_t *operation, uint8_t *cip
 	}
 
 	return finalize_aead_encryption(operation, tag, tag_size, tag_length);
+#endif
 }
 
 static psa_status_t finalize_aead_decryption(cracen_aead_operation_t *operation, const uint8_t *tag)
@@ -620,6 +653,9 @@ psa_status_t cracen_aead_verify(cracen_aead_operation_t *operation, uint8_t *pla
 				size_t plaintext_size, size_t *plaintext_length, const uint8_t *tag,
 				size_t tag_length)
 {
+#ifdef CONFIG_SOC_NRF54L20
+	return PSA_ERROR_NOT_SUPPORTED;
+#else
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 
 	if (operation->ad_finished && plaintext_size < operation->unprocessed_input_bytes) {
@@ -644,6 +680,7 @@ psa_status_t cracen_aead_verify(cracen_aead_operation_t *operation, uint8_t *pla
 	}
 
 	return finalize_aead_decryption(operation, tag);
+#endif
 }
 
 psa_status_t cracen_aead_abort(cracen_aead_operation_t *operation)
@@ -707,22 +744,18 @@ psa_status_t cracen_aead_encrypt(const psa_key_attributes_t *attributes, const u
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	cracen_aead_operation_t operation = {0};
-	size_t tag_length;
+	size_t tag_length = 0;
 
 	if (ciphertext_size < plaintext_length) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
-	status = cracen_aead_encrypt_setup(&operation, attributes,
-					   key_buffer, key_buffer_size, alg);
+	status = setup(&operation, CRACEN_ENCRYPT, attributes, key_buffer, key_buffer_size, alg);
 	if (status != PSA_SUCCESS) {
 		goto error_exit;
 	}
 
-	status = cracen_aead_set_lengths(&operation, additional_data_length, plaintext_length);
-	if (status != PSA_SUCCESS) {
-		goto error_exit;
-	}
+	set_lengths(&operation, additional_data_length, plaintext_length);
 
 	/* Do not call the cracen_aead_update*() functions to avoid using
 	 * HW context switching (process_on_hw()) in single-part operations.
@@ -775,8 +808,7 @@ psa_status_t cracen_aead_decrypt(const psa_key_attributes_t *attributes, const u
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	cracen_aead_operation_t operation = {0};
 
-	status = cracen_aead_decrypt_setup(&operation, attributes,
-					   key_buffer, key_buffer_size, alg);
+	status = setup(&operation, CRACEN_DECRYPT, attributes, key_buffer, key_buffer_size, alg);
 	if (status != PSA_SUCCESS) {
 		goto error_exit;
 	}
@@ -788,10 +820,7 @@ psa_status_t cracen_aead_decrypt(const psa_key_attributes_t *attributes, const u
 		goto error_exit;
 	}
 
-	status = cracen_aead_set_lengths(&operation, additional_data_length, *plaintext_length);
-	if (status != PSA_SUCCESS) {
-		goto error_exit;
-	}
+	set_lengths(&operation, additional_data_length, *plaintext_length);
 
 	/* Do not call the cracen_aead_update*() functions to avoid using
 	 * HW context switching (process_on_hw()) in single-part operations.
