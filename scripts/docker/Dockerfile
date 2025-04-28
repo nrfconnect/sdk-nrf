@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y wget ca-certificates qemu-system-arm gi
     && rm -rf /var/lib/apt/lists/*
 RUN wget https://developer.nordicsemi.com/.pc-tools/nrfutil/x64-linux/nrfutil -q -O /usr/local/bin/nrfutil  \
     && chmod +x /usr/local/bin/nrfutil \
-    && nrfutil install device=2.7.7 \
+    && nrfutil install device=2.8.8 \
     && nrfutil install toolchain-manager=0.15.0
 RUN nrfutil toolchain-manager install --toolchain-bundle-id $VERSION \
     && nrfutil toolchain-manager env --as-script > /opt/toolchain-env.sh \
@@ -16,7 +16,7 @@ RUN nrfutil toolchain-manager install --toolchain-bundle-id $VERSION \
 # Prepare JLink to be installed when user accepts license agreement
 COPY --chmod=0555 jlink/ /jlink
 RUN wget --post-data="accept_license_agreement=accepted&submit=Download+software" -O /jlink/JLink_Linux.deb \
-    https://www.segger.com/downloads/jlink/JLink_Linux_V794i_x86_64.deb
+    https://www.segger.com/downloads/jlink/JLink_Linux_V818_x86_64.deb
 
 # Add interactive-setup.sh which is called at the beginning of bash session, only if session is interactive
 # interactive-setup.sh is saved as bashrc file in root's home folder (/opt)
