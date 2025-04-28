@@ -47,7 +47,6 @@ LOG_MODULE_REGISTER(nrf_provisioning_coap, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 static const char *resp_path = "p/rsp";
 static const char *dtls_suspend = "/.dtls/suspend";
 
-static struct addrinfo *address;
 static struct coap_client client;
 static bool socket_keep_open;
 
@@ -161,7 +160,8 @@ static int dtls_setup(int fd)
 
 static int socket_connect(int *const fd)
 {
-	static struct zsock_addrinfo hints;
+	struct zsock_addrinfo hints = {};
+	struct zsock_addrinfo *address = NULL;
 	int st;
 	int ret = 0;
 	struct sockaddr *sa;
@@ -223,6 +223,10 @@ static int socket_connect(int *const fd)
 	LOG_INF("Connected");
 
 clean_up:
+
+	if (address) {
+		zsock_freeaddrinfo(address);
+	}
 
 	if (ret) {
 		if (*fd > -1) {
