@@ -5,7 +5,10 @@ import logging
 import os
 import subprocess
 import sys
+import time
 from typing import Dict
+
+from twister_harness import DeviceAdapter
 
 USB_SAMPLE_ID: str = "NordicSemiconductor USBD MSC sample"
 packet_size_vs_speed: Dict[int, str] = {
@@ -32,14 +35,18 @@ def excute_command(
     ).decode(sys.getdefaultencoding())
 
 
-def test_usb_negotaited_speed():
+def test_usb_negotaited_speed(dut: DeviceAdapter):
     """
     Test the USB device negotiated speed
     The nrf54h20 and nrf54lm20 devices
     must attach as High Speed USB device
     """
+    # wait for enumeration
+    time.sleep(2)
+
     usb_devices: str = excute_command("lsusb")
     logger.info(usb_devices)
+    dut.readlines()
 
     failure_info: str = f"{USB_SAMPLE_ID} not found in the USB devices"
 
