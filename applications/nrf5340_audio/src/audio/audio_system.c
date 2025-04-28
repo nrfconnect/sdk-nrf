@@ -8,6 +8,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/shell/shell.h>
+#include <zephyr/net_buf.h>
 #include <data_fifo.h>
 #include <contin_array.h>
 #include <pcm_stream_channel_modifier.h>
@@ -282,7 +283,7 @@ int audio_system_config_set(uint32_t encoder_sample_rate_hz, uint32_t encoder_bi
 }
 
 /* This function is only used on gateway using USB as audio source and bidirectional stream */
-int audio_system_decode(void const *const encoded_data, size_t encoded_data_size, bool bad_frame)
+int audio_system_decode(struct audio_data *audio_frame)
 {
 	int ret;
 	uint32_t blocks_alloced_num;
@@ -332,7 +333,9 @@ int audio_system_decode(void const *const encoded_data, size_t encoded_data_size
 		}
 	}
 
-	ret = sw_codec_decode(encoded_data, encoded_data_size, bad_frame, &pcm_raw_data,
+	struct net_buf *buf = audio_frame->data;
+
+	ret = sw_codec_decode(buf->data, buf->len, audio_frame->meta.bad_data, &pcm_raw_data,
 			      &pcm_block_size);
 	if (ret) {
 		LOG_ERR("Failed to decode");

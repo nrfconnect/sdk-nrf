@@ -21,6 +21,7 @@
 #include "macros_common.h"
 #include "zbus_common.h"
 #include "channel_assignment.h"
+#include "audio_defines.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(broadcast_sink, CONFIG_BROADCAST_SINK_LOG_LEVEL);
@@ -331,19 +332,32 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_recv_info *info,
 			   struct net_buf *buf)
 {
-	bool bad_frame = false;
+	struct audio_data audio_frame;
+
+	/* Populate the audio frame structure */
+	audio_frame.data = buf->data;
+	audio_frame.data_size = buf->len;
+	audio_frame.meta.bad_data = false;
+	audio_frame.meta.reference_ts_us = info->ts;
+	audio_frame.meta.locations = active_stream.codec->chan_allocation;
+	audio_frame.meta.sample_rate_hz = active_stream.codec->frequency;
+	audio_frame.meta.data_len_us = active_stream.codec->frame_duration_us;
+
+	if (active_stream.codec->id == BT_HCI_CODING_FORMAT_LC3) {
+		audio_frame.meta.data_coding = LC3;
+	}
 
 	if (receive_cb == NULL) {
 		LOG_ERR("The RX callback has not been set");
 		return;
 	}
 
-	if (!(info->flags & BT_ISO_FLAGS_VALID)) {
-		bad_frame = true;
+	if (!(info->flags & BT_ISO_FLAGS_VALID) ||
+	    buf->len != active_stream.codec->octets_per_sdu) {
+		audio_frame.meta.bad_data = true;
 	}
 
-	receive_cb(buf->data, buf->len, bad_frame, info->ts, active_stream_index,
-		   active_stream.codec->octets_per_sdu);
+	receive_cb(&audio_frame, active_stream_index);
 }
 
 static struct bt_bap_stream_ops stream_ops = {
@@ -424,6 +438,9 @@ static bool base_subgroup_cb(const struct bt_bap_base_subgroup *subgroup, void *
 		sync_stream_cnt = bis_num;
 		for (int i = 0; i < bis_num; i++) {
 			get_codec_info(&codec_cfg, &audio_codec_info[i]);
+			audio_codec_info[i].id = codec_id.id;
+			audio_codec_info[i].cid = codec_id.cid;
+			audio_codec_info[i].vid = codec_id.vid;
 		}
 
 		ret = bt_bap_base_subgroup_foreach_bis(subgroup, base_subgroup_bis_cb, NULL);
