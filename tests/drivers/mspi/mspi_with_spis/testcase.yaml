@@ -2,6 +2,7 @@ common:
   tags:
     - drivers
     - mspi
+    - ci_tests_drivers_sqspi
   harness: ztest
   harness_config:
     fixture: mspi_spis_loopback

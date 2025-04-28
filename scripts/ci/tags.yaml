@@ -1184,6 +1184,13 @@ ci_tests_drivers_hpf:
     - nrf/samples/zephyr/basic/blinky/
     - zephyr/samples/zephyr/basic/blinky/
 
+ci_tests_drivers_sqspi:
+  files:
+    - nrf/drivers/mspi/
+    - nrf/tests/drivers/mspi/mspi_with_spis/
+    - nrf/tests/zephyr/drivers/flash/common/
+    - nrfxlib/softperipheral/sQSPI
+
 ci_tests_drivers_gpio:
   files:
     - nrf/tests/drivers/gpio/
