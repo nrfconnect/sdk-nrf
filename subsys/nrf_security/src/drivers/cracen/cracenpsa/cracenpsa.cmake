@@ -19,9 +19,9 @@ list(APPEND cracen_driver_sources
   ${CMAKE_CURRENT_LIST_DIR}/src/rndinrange.c
   ${CMAKE_CURRENT_LIST_DIR}/src/ikg_signature.c
 
-  # Note: We always need to have blkcipher.c and ctr_drbg.c since it
+  # Note: We always need to have cipher.c and ctr_drbg.c since it
   # is used directly by many Cracen drivers.
-  ${CMAKE_CURRENT_LIST_DIR}/src/blkcipher.c
+  ${CMAKE_CURRENT_LIST_DIR}/src/cipher.c
   ${CMAKE_CURRENT_LIST_DIR}/src/ctr_drbg.c
   ${CMAKE_CURRENT_LIST_DIR}/src/prng_pool.c
 )
