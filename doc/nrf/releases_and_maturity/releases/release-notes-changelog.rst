@@ -390,7 +390,9 @@ SUIT samples
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
 
-|no_changes_yet_note|
+* :ref:`tfm_secure_peripheral_partition` sample:
+
+  * Added support for the ``nrf54l15dk/nrf54l15/cpuapp/ns`` board target.
 
 Thread samples
 --------------
