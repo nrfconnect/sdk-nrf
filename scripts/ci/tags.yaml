@@ -1575,6 +1575,11 @@ ci_samples_zephyr_drivers_jesd216:
     - nrf/samples/zephyr/drivers/jesd216/
     - zephyr/samples/drivers/jesd216/
 
+ci_samples_zephyr_drivers_spi_bitbang:
+  files:
+    - nrf/samples/zephyr/drivers/spi_bitbang/
+    - zephyr/samples/drivers/spi_bitbang/
+
 ci_samples_zephyr_drivers_spi_flash:
   files:
     - nrf/samples/zephyr/drivers/spi_flash/
