@@ -1,0 +1,1 @@
+source "tests/drivers/pwm/pwm_gpio_loopback/Kconfig"

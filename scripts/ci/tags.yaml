@@ -1584,3 +1584,8 @@ ci_tests_zephyr_subsys_settings_performance:
   files:
     - nrf/tests/zephyr/subsys/settings/performance/
     - zephyr/tests/subsys/settings/performance/
+
+ci_tests_zephyr_drivers_pwm:
+  files:
+    - nrf/tests/zephyr/drivers/pwm/
+    - zephyr/tests/drivers/pwm/
