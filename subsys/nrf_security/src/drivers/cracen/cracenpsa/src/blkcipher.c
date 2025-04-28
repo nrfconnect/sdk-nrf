@@ -23,10 +23,84 @@
 
 #include "cracen_psa_primitives.h"
 
-static psa_status_t cracen_cipher_crypt(cracen_cipher_operation_t *operation,
-					const psa_key_attributes_t *attributes, psa_algorithm_t alg,
-					const uint8_t *input, size_t input_length, uint8_t *output,
-					size_t output_size, size_t *output_length)
+static bool is_alg_supported(psa_algorithm_t alg, const psa_key_attributes_t *attributes)
+{
+	bool is_supported = false;
+
+	switch (alg) {
+	case PSA_ALG_STREAM_CIPHER:
+		/* This is needed because in the PSA APIs the PSA_ALG_STREAM_CIPHER
+		 *  relies on the key type to identify which algorithm to use. Here we
+		 *  make sure that the key type is supported before we continue.
+		 */
+		if (IS_ENABLED(PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20)) {
+			is_supported = (psa_get_key_type(attributes) == PSA_KEY_TYPE_CHACHA20)
+					       ? true
+					       : false;
+		}
+		break;
+	case PSA_ALG_CBC_NO_PADDING:
+		IF_ENABLED(PSA_NEED_CRACEN_CBC_NO_PADDING_AES,
+			   (is_supported = psa_get_key_type(attributes) == PSA_KEY_TYPE_AES));
+		break;
+	case PSA_ALG_CBC_PKCS7:
+		IF_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES,
+			   (is_supported = psa_get_key_type(attributes) == PSA_KEY_TYPE_AES));
+		break;
+	case PSA_ALG_CTR:
+		IF_ENABLED(PSA_NEED_CRACEN_CTR_AES,
+			   (is_supported = psa_get_key_type(attributes) == PSA_KEY_TYPE_AES));
+		break;
+	case PSA_ALG_ECB_NO_PADDING:
+		IF_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES,
+			   (is_supported = psa_get_key_type(attributes) == PSA_KEY_TYPE_AES));
+		break;
+	default:
+		is_supported = false;
+		break;
+	}
+
+	return is_supported;
+}
+
+static psa_status_t setup(enum cipher_operation dir, cracen_cipher_operation_t *operation,
+				    const psa_key_attributes_t *attributes,
+				    const uint8_t *key_buffer, size_t key_buffer_size,
+				    psa_algorithm_t alg)
+{
+	if (!is_alg_supported(alg, attributes)) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	/*
+	 * Copy the key into the operation struct as it is not guaranteed
+	 * to be valid longer than the function call.
+	 */
+
+	if (key_buffer_size > sizeof(operation->key_buffer)) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	memcpy(operation->key_buffer, key_buffer, key_buffer_size);
+
+	psa_status_t status = cracen_load_keyref(attributes, operation->key_buffer, key_buffer_size,
+						 &operation->keyref);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	operation->alg = alg;
+	operation->dir = dir;
+	operation->blk_size =
+		(alg == PSA_ALG_STREAM_CIPHER) ? SX_BLKCIPHER_MAX_BLK_SZ : SX_BLKCIPHER_AES_BLK_SZ;
+
+	return PSA_SUCCESS;
+}
+
+static psa_status_t crypt(cracen_cipher_operation_t *operation,
+			  const psa_key_attributes_t *attributes, psa_algorithm_t alg,
+			  const uint8_t *input, size_t input_length, uint8_t *output,
+			  size_t output_size, size_t *output_length)
 {
 	size_t update_output_length = 0;
 	size_t finish_output_length = 0;
@@ -51,9 +125,9 @@ static psa_status_t cracen_cipher_crypt(cracen_cipher_operation_t *operation,
  * the state between calls is not supported. This function is using the single part
  * APIs of Cracen to perform the AES ECB operations.
  */
-psa_status_t cracen_cipher_crypt_ecb(const struct sxkeyref *key, const uint8_t *input,
-				     size_t input_length, uint8_t *output, size_t output_size,
-				     size_t *output_length, enum cipher_operation dir)
+static psa_status_t crypt_ecb(const struct sxkeyref *key, const uint8_t *input,
+			      size_t input_length, uint8_t *output, size_t output_size,
+			      size_t *output_length, enum cipher_operation dir)
 {
 	int sx_status;
 	struct sxblkcipher blkciph;
@@ -122,13 +196,12 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 			if (status != PSA_SUCCESS) {
 				return status;
 			}
-			return cracen_cipher_crypt_ecb(&key, input, input_length, output,
-						       output_size, output_length, CRACEN_ENCRYPT);
+			return crypt_ecb(&key, input, input_length, output,
+					 output_size, output_length, CRACEN_ENCRYPT);
 		}
 	}
 
-	status = cracen_cipher_encrypt_setup(&operation, attributes, key_buffer, key_buffer_size,
-					     alg);
+	status = setup(CRACEN_ENCRYPT, &operation, attributes, key_buffer, key_buffer_size, alg);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
@@ -138,8 +211,8 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 		return status;
 	}
 
-	return cracen_cipher_crypt(&operation, attributes, alg, input, input_length, output,
-				   output_size, output_length);
+	return crypt(&operation, attributes, alg, input, input_length, output,
+		     output_size, output_length);
 }
 
 psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
@@ -171,8 +244,8 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 			if (status != PSA_SUCCESS) {
 				return status;
 			}
-			return cracen_cipher_crypt_ecb(&key, input, input_length, output,
-						       output_size, output_length, CRACEN_DECRYPT);
+			return crypt_ecb(&key, input, input_length, output,
+					 output_size, output_length, CRACEN_DECRYPT);
 		}
 	}
 
@@ -180,8 +253,7 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	status = cracen_cipher_decrypt_setup(&operation, attributes, key_buffer, key_buffer_size,
-					     alg);
+	status = setup(CRACEN_DECRYPT, &operation, attributes, key_buffer, key_buffer_size, alg);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
@@ -191,49 +263,8 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 		return status;
 	}
 
-	return cracen_cipher_crypt(&operation, attributes, alg, input + iv_size,
-				   input_length - iv_size, output, output_size, output_length);
-}
-
-static bool is_alg_supported(psa_algorithm_t alg, const psa_key_attributes_t *attributes)
-{
-
-	bool is_supported = false;
-
-	switch (alg) {
-	case PSA_ALG_STREAM_CIPHER:
-		/* This is needed because in the PSA APIs the PSA_ALG_STREAM_CIPHER
-		 *  relies on the key type to identify which algorithm to use. Here we
-		 *  make sure that the key type is supported before we continue.
-		 */
-		if (IS_ENABLED(PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20)) {
-			is_supported = (psa_get_key_type(attributes) == PSA_KEY_TYPE_CHACHA20)
-					       ? true
-					       : false;
-		}
-		break;
-	case PSA_ALG_CBC_NO_PADDING:
-		IF_ENABLED(PSA_NEED_CRACEN_CBC_NO_PADDING_AES,
-			   (is_supported = psa_get_key_type(attributes) == PSA_KEY_TYPE_AES));
-		break;
-	case PSA_ALG_CBC_PKCS7:
-		IF_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES,
-			   (is_supported = psa_get_key_type(attributes) == PSA_KEY_TYPE_AES));
-		break;
-	case PSA_ALG_CTR:
-		IF_ENABLED(PSA_NEED_CRACEN_CTR_AES,
-			   (is_supported = psa_get_key_type(attributes) == PSA_KEY_TYPE_AES));
-		break;
-	case PSA_ALG_ECB_NO_PADDING:
-		IF_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES,
-			   (is_supported = psa_get_key_type(attributes) == PSA_KEY_TYPE_AES));
-		break;
-	default:
-		is_supported = false;
-		break;
-	}
-
-	return is_supported;
+	return crypt(&operation, attributes, alg, input + iv_size,
+		     input_length - iv_size, output, output_size, output_length);
 }
 
 static psa_status_t initialize_cipher(cracen_cipher_operation_t *operation)
@@ -294,38 +325,18 @@ static psa_status_t initialize_cipher(cracen_cipher_operation_t *operation)
 	return silex_statuscodes_to_psa(sx_status);
 }
 
-static psa_status_t operation_setup(enum cipher_operation dir, cracen_cipher_operation_t *operation,
-				    const psa_key_attributes_t *attributes,
-				    const uint8_t *key_buffer, size_t key_buffer_size,
-				    psa_algorithm_t alg)
+static bool is_multi_part_supported(psa_algorithm_t alg)
 {
-	if (!is_alg_supported(alg, attributes)) {
-		return PSA_ERROR_NOT_SUPPORTED;
+	if (IS_ENABLED(CONFIG_SOC_NRF54L20)) {
+		switch (alg) {
+		case PSA_ALG_ECB_NO_PADDING:
+			return IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES);
+		default:
+			return false;
+		}
+	} else {
+		return true;
 	}
-
-	/*
-	 * Copy the key into the operation struct as it is not guaranteed
-	 * to be valid longer than the function call.
-	 */
-
-	if (key_buffer_size > sizeof(operation->key_buffer)) {
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
-
-	memcpy(operation->key_buffer, key_buffer, key_buffer_size);
-
-	psa_status_t status = cracen_load_keyref(attributes, operation->key_buffer, key_buffer_size,
-						 &operation->keyref);
-	if (status != PSA_SUCCESS) {
-		return status;
-	}
-
-	operation->alg = alg;
-	operation->dir = dir;
-	operation->blk_size =
-		(alg == PSA_ALG_STREAM_CIPHER) ? SX_BLKCIPHER_MAX_BLK_SZ : SX_BLKCIPHER_AES_BLK_SZ;
-
-	return PSA_SUCCESS;
 }
 
 psa_status_t cracen_cipher_encrypt_setup(cracen_cipher_operation_t *operation,
@@ -333,8 +344,10 @@ psa_status_t cracen_cipher_encrypt_setup(cracen_cipher_operation_t *operation,
 					 const uint8_t *key_buffer, size_t key_buffer_size,
 					 psa_algorithm_t alg)
 {
-	return operation_setup(CRACEN_ENCRYPT, operation, attributes, key_buffer, key_buffer_size,
-			       alg);
+	if (!is_multi_part_supported(alg)) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+	return setup(CRACEN_ENCRYPT, operation, attributes, key_buffer, key_buffer_size, alg);
 }
 
 psa_status_t cracen_cipher_decrypt_setup(cracen_cipher_operation_t *operation,
@@ -342,8 +355,10 @@ psa_status_t cracen_cipher_decrypt_setup(cracen_cipher_operation_t *operation,
 					 const uint8_t *key_buffer, size_t key_buffer_size,
 					 psa_algorithm_t alg)
 {
-	return operation_setup(CRACEN_DECRYPT, operation, attributes, key_buffer, key_buffer_size,
-			       alg);
+	if (!is_multi_part_supported(alg)) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+	return setup(CRACEN_DECRYPT, operation, attributes, key_buffer, key_buffer_size, alg);
 }
 
 psa_status_t cracen_cipher_set_iv(cracen_cipher_operation_t *operation, const uint8_t *iv,
@@ -444,7 +459,7 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 				if (operation->unprocessed_input_bytes) {
 					__ASSERT_NO_MSG(operation->unprocessed_input_bytes ==
 							operation->blk_size);
-					status = cracen_cipher_crypt_ecb(
+					status = crypt_ecb(
 						&operation->keyref, operation->unprocessed_input,
 						operation->unprocessed_input_bytes, output,
 						output_size, output_length, operation->dir);
@@ -456,7 +471,7 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 				}
 
 				if (block_bytes) {
-					status = cracen_cipher_crypt_ecb(
+					status = crypt_ecb(
 						&operation->keyref, input, block_bytes, output,
 						output_size, output_length, operation->dir);
 					if (status != PSA_SUCCESS) {
@@ -553,10 +568,9 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 	 */
 	if (IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES)) {
 		if (operation->alg == PSA_ALG_ECB_NO_PADDING) {
-			return cracen_cipher_crypt_ecb(&operation->keyref,
-						       operation->unprocessed_input,
-						       operation->unprocessed_input_bytes, output,
-						       output_size, output_length, operation->dir);
+			return crypt_ecb(&operation->keyref, operation->unprocessed_input,
+					 operation->unprocessed_input_bytes, output,
+					 output_size, output_length, operation->dir);
 		}
 	}
 
