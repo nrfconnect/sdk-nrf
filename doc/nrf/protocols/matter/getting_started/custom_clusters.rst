@@ -704,7 +704,7 @@ Generating the :file:`.zap` files with the ``--full`` option creates new source 
 They need to override the default files located in the Matter SDK in the :file:`zzz_generated/app-common` directory.
 To override the path, you need to set the ``CHIP_APP_ZAP_DIR`` variable in the :file:`CMakeLists.txt` file, pointing to the parent of the generated :file:`app-common` directory before initializing the Matter Data Model.
 
-As custom clusters are not part of the default Matter SDK, you need to additionally pass a list of all new cluster names in an ``EXTERNAL_CLUSTERS`` argument when calling ``chip_configure_data_model``.
+As custom clusters are not part of the default Matter SDK, you need to additionally pass a list of all new cluster names in an ``EXTERNAL_CLUSTERS`` argument when calling ``ncs_configure_data_model``.
 
 The following code snippet shows how to modify the Matter template :file:`CMakeLists.txt` file with the new cluster:
 
@@ -717,12 +717,9 @@ The following code snippet shows how to modify the Matter template :file:`CMakeL
 
       # Existing code in CMakeList.txt
 
-      chip_configure_data_model(app
-          INCLUDE_SERVER
-          BYPASS_IDL
-          GEN_DIR ${CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH}/zap-generated
-          ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/${CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH}/template.zap
-          EXTERNAL_CLUSTERS "MY_NEW_CLUSTER" # Add EXTERNAL_CLUSTERS flag
+      ncs_configure_data_model(
+         ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/${CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH}/template.zap
+         EXTERNAL_CLUSTERS "MY_NEW_CLUSTER" # Add EXTERNAL_CLUSTERS flag
       )
 
       # NORDIC SDK APP END
