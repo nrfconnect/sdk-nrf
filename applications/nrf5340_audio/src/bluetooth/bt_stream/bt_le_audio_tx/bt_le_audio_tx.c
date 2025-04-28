@@ -11,6 +11,7 @@
 #include <zephyr/zbus/zbus.h>
 #include <../subsys/bluetooth/audio/bap_stream.h>
 #include <bluetooth/hci_vs_sdc.h>
+#include <audio_defines.h>
 
 #include "zbus_common.h"
 #include "audio_sync_timer.h"
@@ -188,7 +189,7 @@ static int iso_conn_handle_set(struct bt_bap_stream *bap_stream, uint16_t *iso_c
 }
 
 int bt_le_audio_tx_send(struct le_audio_tx_info *tx, uint8_t num_tx,
-			struct le_audio_encoded_audio enc_audio)
+			struct audio_data const *const audio_frame)
 {
 	int ret;
 	size_t data_size_pr_stream = 0;
@@ -201,7 +202,16 @@ int bt_le_audio_tx_send(struct le_audio_tx_info *tx, uint8_t num_tx,
 		return -EINVAL;
 	}
 
-	data_size_pr_stream = enc_audio.size / enc_audio.num_ch;
+	/* Get number of channels in the audio frame */
+	uint8_t num_ch = audio_data_num_ch_get(audio_frame);
+
+	if (num_ch == 0 || (audio_frame->data_size % num_ch != 0)) {
+		LOG_ERR("Invalid number (%d) of channels in audio frame (%d)", num_ch,
+			audio_frame->data_size);
+		return -EINVAL;
+	}
+
+	data_size_pr_stream = audio_frame->data_size / num_ch;
 
 	/* When sending ISO data, we always send ts = 0 to the first active transmitting channel.
 	 * The controller will populate with a ts which is fetched using bt_iso_chan_get_tx_sync.
@@ -232,7 +242,7 @@ int bt_le_audio_tx_send(struct le_audio_tx_info *tx, uint8_t num_tx,
 			continue;
 		}
 
-		if (tx[i].audio_channel > enc_audio.num_ch) {
+		if (tx[i].audio_channel > num_ch) {
 			LOG_WRN("Unsupported audio_channel: %d", tx[i].audio_channel);
 			continue;
 		}
@@ -246,7 +256,8 @@ int bt_le_audio_tx_send(struct le_audio_tx_info *tx, uint8_t num_tx,
 		}
 
 		if (data_size_pr_stream != LE_AUDIO_SDU_SIZE_OCTETS(bitrate)) {
-			LOG_ERR("The encoded data size does not match the SDU size");
+			LOG_ERR("The encoded data size (%zu) does not match the SDU size (%d)",
+				data_size_pr_stream, LE_AUDIO_SDU_SIZE_OCTETS(bitrate));
 			return -EINVAL;
 		}
 
@@ -257,13 +268,14 @@ int bt_le_audio_tx_send(struct le_audio_tx_info *tx, uint8_t num_tx,
 		}
 		common_interval = tx[i].cap_stream->bap_stream.qos->interval;
 
+		struct net_buf *audio_buf = audio_frame->data;
 		/* Check if same audio is sent to all channels */
-		if (enc_audio.num_ch == 1) {
-			ret = iso_stream_send(enc_audio.data, data_size_pr_stream, tx[i].cap_stream,
-					      tx_info, common_tx_sync_ts_us);
+		if (num_ch == 1) {
+			ret = iso_stream_send(audio_buf->data, data_size_pr_stream,
+					      tx[i].cap_stream, tx_info, common_tx_sync_ts_us);
 		} else {
 			ret = iso_stream_send(
-				&enc_audio.data[(data_size_pr_stream * tx[i].audio_channel)],
+				&audio_buf->data[(data_size_pr_stream * tx[i].audio_channel)],
 				data_size_pr_stream, tx[i].cap_stream, tx_info,
 				common_tx_sync_ts_us);
 		}

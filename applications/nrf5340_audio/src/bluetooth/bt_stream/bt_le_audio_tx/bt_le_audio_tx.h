@@ -27,12 +27,12 @@ struct le_audio_tx_info {
  *
  * @param[in]	tx		Pointer to an array of le_audio_tx_info elements.
  * @param[in]	num_tx		Number of elements in @p tx.
- * @param[in]	enc_audio	Encoded audio data.
+ * @param[in]	audio_frame	Pointer to the encoded audio data.
  *
  * @return	0 if successful, error otherwise.
  */
 int bt_le_audio_tx_send(struct le_audio_tx_info *tx, uint8_t num_tx,
-			struct le_audio_encoded_audio enc_audio);
+			struct audio_data const *const audio_frame);
 
 /**
  * @brief	Initializes a stream. Must be called when a TX stream is started.

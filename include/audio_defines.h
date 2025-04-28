@@ -13,6 +13,7 @@
 
 #include <zephyr/types.h>
 #include <stdbool.h>
+#include <zephyr/bluetooth/audio/audio.h>
 
 /**
  * @brief Audio channel assignment values
@@ -101,5 +102,24 @@ struct audio_data {
 	 */
 	struct audio_metadata meta;
 };
+
+/**
+ * @brief Get the number of channels in the audio data.
+ *
+ * This function will count the number of bits set in the
+ * locations field of the audio metadata.
+ *
+ * @param audio_frame Pointer to the audio data structure.
+ *
+ * @return The number of channels.
+ */
+static inline uint8_t audio_data_num_ch_get(struct audio_data const *const audio_frame)
+{
+	if (audio_frame == NULL) {
+		return 0;
+	}
+
+	return bt_audio_get_chan_count(audio_frame->meta.locations);
+}
 
 #endif /* _AUDIO_DEFINES_H_ */
