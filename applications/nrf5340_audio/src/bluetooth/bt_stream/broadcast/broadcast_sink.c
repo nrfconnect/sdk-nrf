@@ -21,6 +21,7 @@
 #include "macros_common.h"
 #include "zbus_common.h"
 #include "channel_assignment.h"
+#include "audio_defines.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(broadcast_sink, CONFIG_BROADCAST_SINK_LOG_LEVEL);
@@ -331,19 +332,21 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_recv_info *info,
 			   struct net_buf *buf)
 {
-	bool bad_frame = false;
+	int ret;
+	struct audio_data audio_frame;
 
 	if (receive_cb == NULL) {
 		LOG_ERR("The RX callback has not been set");
 		return;
 	}
 
-	if (!(info->flags & BT_ISO_FLAGS_VALID)) {
-		bad_frame = true;
+	ret = le_audio_frame_create(&audio_frame, stream, info, buf);
+	if (ret) {
+		LOG_ERR("Failed to create RX frame: %d", ret);
+		return;
 	}
 
-	receive_cb(buf->data, buf->len, bad_frame, info->ts, active_stream_index,
-		   active_stream.codec->octets_per_sdu);
+	receive_cb(&audio_frame, active_stream_index);
 }
 
 static struct bt_bap_stream_ops stream_ops = {
@@ -424,6 +427,9 @@ static bool base_subgroup_cb(const struct bt_bap_base_subgroup *subgroup, void *
 		sync_stream_cnt = bis_num;
 		for (int i = 0; i < bis_num; i++) {
 			get_codec_info(&codec_cfg, &audio_codec_info[i]);
+			audio_codec_info[i].id = codec_id.id;
+			audio_codec_info[i].cid = codec_id.cid;
+			audio_codec_info[i].vid = codec_id.vid;
 		}
 
 		ret = bt_bap_base_subgroup_foreach_bis(subgroup, base_subgroup_bis_cb, NULL);

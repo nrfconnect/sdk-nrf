@@ -13,6 +13,7 @@
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/shell/shell.h>
 #include <nrfx_clock.h>
+#include <audio_defines.h>
 
 #include "presets.h"
 #include "broadcast_source.h"
@@ -41,6 +42,7 @@ static bool sd_card_present = true;
 static struct k_thread le_audio_msg_sub_thread_data;
 static k_tid_t le_audio_msg_sub_thread_id;
 K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE);
+NET_BUF_POOL_FIXED_DEFINE(ble_tx_pool, CONFIG_BT_ISO_TX_BUF_COUNT, CONFIG_BT_ISO_TX_MTU, 0, NULL);
 
 static void lecture_set(const struct shell *shell);
 static int big_enable(const struct shell *shell, uint8_t big_index);
@@ -213,27 +215,45 @@ static void subgroup_send(struct stream_index stream_idx)
 {
 	int ret;
 	static int prev_ret;
+	struct audio_data audio_frame = {0};
 
 	uint8_t num_bis = subgroups[stream_idx.lvl1][stream_idx.lvl2].num_bises;
 	size_t frame_size = lc3_stream_infos[stream_idx.lvl1][stream_idx.lvl2].frame_size;
-	uint8_t frame_buffer[num_bis][frame_size];
+	struct net_buf *audio_buf = net_buf_alloc(&ble_tx_pool, K_NO_WAIT);
+
+	if (audio_buf == NULL) {
+		LOG_ERR("Out of RX buffers");
+		return;
+	}
 
 	for (int i = 0; i < num_bis; i++) {
 		uint8_t *frame_ptr =
 			lc3_stream_infos[stream_idx.lvl1][stream_idx.lvl2].frame_ptrs[i];
 
-		if (frame_ptr == NULL) {
-			memset(frame_buffer[i], 0, frame_size);
-		} else {
-			memcpy(frame_buffer[i], frame_ptr, frame_size);
-		}
+		net_buf_add_mem(audio_buf, frame_ptr, frame_size);
+
+		audio_frame.meta.locations |=
+			(uint32_t)subgroups[stream_idx.lvl1][stream_idx.lvl2].location[i];
 	}
 
-	struct le_audio_encoded_audio enc_audio = {
-		.data = (uint8_t *)frame_buffer, .size = frame_size * num_bis, .num_ch = num_bis};
+	audio_frame.data = audio_buf;
+	audio_frame.data_size = frame_size * num_bis;
+	audio_frame.meta.data_coding = LC3;
 
-	ret = broadcast_source_send(stream_idx.lvl1, stream_idx.lvl2, enc_audio);
+	struct bt_audio_codec_cfg *codec_cfg =
+		&subgroups[stream_idx.lvl1][stream_idx.lvl2].group_lc3_preset.codec_cfg;
 
+	ret = le_audio_freq_hz_get(codec_cfg, &audio_frame.meta.sample_rate_hz);
+	if (ret) {
+		LOG_ERR("Failed to get frequency: %d", ret);
+	}
+
+	ret = le_audio_duration_us_get(codec_cfg, &audio_frame.meta.data_len_us);
+	if (ret) {
+		LOG_ERR("Failed to get frame duration: %d", ret);
+	}
+
+	ret = broadcast_source_send(stream_idx.lvl1, stream_idx.lvl2, &audio_frame);
 	if (ret != 0 && ret != prev_ret) {
 		if (ret == -ECANCELED) {
 			LOG_WRN("Sending cancelled");
@@ -241,6 +261,8 @@ static void subgroup_send(struct stream_index stream_idx)
 			LOG_WRN("broadcast_source_send returned: %d", ret);
 		}
 	}
+
+	net_buf_unref(audio_buf);
 
 	prev_ret = ret;
 }

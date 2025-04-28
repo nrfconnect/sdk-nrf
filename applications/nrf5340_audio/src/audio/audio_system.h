@@ -11,6 +11,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "audio_defines.h"
+
 #define VALUE_NOT_SET 0
 
 /**
@@ -66,13 +68,11 @@ int audio_system_config_set(uint32_t encoder_sample_rate_hz, uint32_t encoder_bi
 /**
  * @brief	Decode data and then add it to TX FIFO buffer.
  *
- * @param[in]	encoded_data		Pointer to encoded data.
- * @param[in]	encoded_data_size	Size of encoded data.
- * @param[in]	bad_frame		Indication on missed or incomplete frame.
+ * @param[in]	audio_frame	Pointer to the audio data.
  *
  * @return	0 on success, error otherwise.
  */
-int audio_system_decode(void const *const encoded_data, size_t encoded_data_size, bool bad_frame);
+int audio_system_decode(struct audio_data *audio_frame);
 
 /**
  * @brief	Initialize and start both HW and SW audio codec.

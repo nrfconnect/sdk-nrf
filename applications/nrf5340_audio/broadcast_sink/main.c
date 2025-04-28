@@ -563,11 +563,9 @@ uint8_t stream_state_get(void)
 	return strm_state;
 }
 
-void streamctrl_send(void const *const data, size_t size, uint8_t num_ch)
+void streamctrl_send(struct audio_data const *const audio_frame)
 {
-	ARG_UNUSED(data);
-	ARG_UNUSED(size);
-	ARG_UNUSED(num_ch);
+	ARG_UNUSED(audio_frame);
 
 	LOG_WRN("Sending is not possible for broadcast sink");
 }

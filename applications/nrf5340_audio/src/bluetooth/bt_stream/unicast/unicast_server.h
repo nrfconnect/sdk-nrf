@@ -54,11 +54,11 @@ int unicast_server_adv_populate(struct bt_data *adv_buf, uint8_t adv_buf_vacant)
 /**
  * @brief	Send data from the LE Audio unicast (CIS) server, if configured as a source.
  *
- * @param[in]	enc_audio	Encoded audio struct.
+ * @param[in]	audio_frame	Pointer to the audio data.
  *
  * @return	0 for success, error otherwise.
  */
-int unicast_server_send(struct le_audio_encoded_audio enc_audio);
+int unicast_server_send(struct audio_data const *const audio_frame);
 
 /**
  * @brief	Disable the Bluetooth LE Audio unicast (CIS) server.

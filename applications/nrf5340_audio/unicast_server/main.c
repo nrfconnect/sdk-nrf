@@ -506,15 +506,13 @@ uint8_t stream_state_get(void)
 	return strm_state;
 }
 
-void streamctrl_send(void const *const data, size_t size, uint8_t num_ch)
+void streamctrl_send(struct audio_data const *const audio_frame)
 {
 	int ret;
 	static int prev_ret;
 
-	struct le_audio_encoded_audio enc_audio = {.data = data, .size = size, .num_ch = num_ch};
-
 	if (strm_state == STATE_STREAMING) {
-		ret = unicast_server_send(enc_audio);
+		ret = unicast_server_send(audio_frame);
 
 		if (ret != 0 && ret != prev_ret) {
 			if (ret == -ECANCELED) {
