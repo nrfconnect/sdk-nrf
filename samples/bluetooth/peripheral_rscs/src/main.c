@@ -24,6 +24,13 @@
 
 #include <dk_buttons_and_leds.h>
 
+#ifdef CONFIG_PPR_PRL
+#include <ppr_prl.h>
+
+static bool start_ppr_prl = false;
+#endif
+
+
 #define RUN_STATUS_LED          DK_LED1
 #define CON_STATUS_LED          DK_LED2
 #define RUN_LED_BLINK_INTERVAL  1000
@@ -110,6 +117,9 @@ void evt_handler(enum bt_rscs_evt evt)
 	switch (evt) {
 	case RSCS_EVT_MEAS_NOTIFY_ENABLE:
 		printk("Measurement notify enable\n");
+#ifdef CONFIG_PPR_PRL
+		start_ppr_prl = true;
+#endif
 		break;
 	case RSCS_EVT_MEAS_NOTIFY_DISABLE:
 		printk("Measurement notify disable\n");
@@ -320,6 +330,15 @@ int main(void)
 		k_sleep(K_MSEC(RUN_LED_BLINK_INTERVAL));
 
 		rsc_simulation(&measurement);
+
+#ifdef CONFIG_PPR_PRL
+		if (start_ppr_prl) {
+			ppr_prl_configure(1536, 800);
+			ppr_prl_start();
+			start_ppr_prl = false;
+		}
+#endif
+
 		bt_rscs_measurement_send(current_conn, &measurement);
 	}
 }
