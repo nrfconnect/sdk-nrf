@@ -855,7 +855,7 @@
 /tests/drivers/flash/flash_rpc/           @nrfconnect/ncs-pluto
 /tests/drivers/flash_patch/               @nrfconnect/ncs-pluto
 /tests/drivers/fprotect/                  @nrfconnect/ncs-pluto
-/tests/drivers/lpuart/                    @nordic-krch
+/tests/drivers/lpuart/                    @nordic-krch @nrfconnect/ncs-low-level-test
 /tests/drivers/mspi/app_fault_timer/      @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /tests/drivers/mspi/trap_handler/         @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /tests/drivers/nrfx_integration_test/     @nrfconnect/ncs-co-drivers
