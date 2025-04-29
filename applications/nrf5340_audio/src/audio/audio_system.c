@@ -34,7 +34,8 @@ LOG_MODULE_REGISTER(audio_system, CONFIG_AUDIO_SYSTEM_LOG_LEVEL);
 K_THREAD_STACK_DEFINE(encoder_thread_stack, CONFIG_ENCODER_STACK_SIZE);
 
 DATA_FIFO_DEFINE(fifo_tx, FIFO_TX_BLOCK_COUNT, WB_UP(BLOCK_SIZE_BYTES));
-DATA_FIFO_DEFINE(fifo_rx, FIFO_RX_BLOCK_COUNT, WB_UP(BLOCK_SIZE_BYTES));
+DATA_FIFO_DEFINE(fifo_rx, FIFO_RX_BLOCK_COUNT, WB_UP(sizeof(struct audio_data)));
+NET_BUF_POOL_FIXED_DEFINE(fifo_rx_pool, FIFO_RX_BLOCK_COUNT, FRAME_SIZE_BYTES, 0, NULL);
 
 static K_SEM_DEFINE(sem_encoder_start, 0, 1);
 
@@ -118,7 +119,6 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 	int debug_trans_count = 0;
 	size_t encoded_data_size = 0;
 
-	void *tmp_pcm_raw_data[CONFIG_FIFO_FRAME_SPLIT_NUM];
 	char pcm_raw_data[FRAME_SIZE_BYTES];
 
 	static uint8_t *encoded_data;
@@ -128,6 +128,14 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 	while (1) {
 		/* Don't start encoding until the stream needing it has started */
 		ret = k_poll(&encoder_evt, 1, K_FOREVER);
+		struct audio_data audio_frame = {0};
+		struct net_buf *frame_buf = NULL;
+
+		frame_buf = net_buf_alloc(&fifo_rx_pool, K_NO_WAIT);
+		if (frame_buf == NULL) {
+			LOG_ERR("Out of RX buffers");
+			continue;
+		}
 
 		/* Get PCM data from I2S */
 		/* Since one audio frame is divided into a number of
@@ -135,15 +143,33 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 		 * blocks before copying it to a continuous area of memory
 		 * before sending it to the encoder
 		 */
+		/* TODO: Check data_len_us and adjust for-loop accordingly */
 		for (int i = 0; i < CONFIG_FIFO_FRAME_SPLIT_NUM; i++) {
-			ret = data_fifo_pointer_last_filled_get(&fifo_rx, &tmp_pcm_raw_data[i],
+			struct audio_data *audio_block = NULL;
+
+			ret = data_fifo_pointer_last_filled_get(&fifo_rx, (void *)&audio_block,
 								&pcm_block_size, K_FOREVER);
 			ERR_CHK(ret);
-			memcpy(pcm_raw_data + (i * BLOCK_SIZE_BYTES), tmp_pcm_raw_data[i],
-			       pcm_block_size);
 
-			data_fifo_block_free(&fifo_rx, tmp_pcm_raw_data[i]);
+			struct net_buf *buf = audio_block->data;
+
+			if (i == 0) {
+				/* Copy metadata from first block */
+				memcpy(&audio_frame, audio_block, sizeof(struct audio_data));
+			}
+
+			/* Extract the data from the block */
+			net_buf_add_mem(frame_buf, buf->data, buf->len);
+
+			/* Free the block */
+			net_buf_unref(buf);
+			data_fifo_block_free(&fifo_rx, audio_block);
 		}
+
+		audio_frame.data = frame_buf;
+		audio_frame.data_size = frame_buf->len;
+		audio_frame.meta.data_len_us =
+			audio_frame.meta.data_len_us * CONFIG_FIFO_FRAME_SPLIT_NUM;
 
 		if (sw_codec_cfg.encoder.enabled) {
 			if (test_tone_size) {
@@ -161,10 +187,10 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 				ERR_CHK(ret);
 			}
 
-			ret = sw_codec_encode(pcm_raw_data, FRAME_SIZE_BYTES, &encoded_data,
-					      &encoded_data_size);
-
+			ret = sw_codec_encode(&audio_frame, &encoded_data, &encoded_data_size);
 			ERR_CHK_MSG(ret, "Encode failed");
+
+			net_buf_unref(frame_buf);
 		}
 
 		/* Print block usage */

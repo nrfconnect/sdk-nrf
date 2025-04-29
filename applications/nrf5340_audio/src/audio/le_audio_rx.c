@@ -96,9 +96,9 @@ void le_audio_rx_data_handler(struct audio_data *audio_frame, uint8_t channel_in
 							&stale_size, K_NO_WAIT);
 		ERR_CHK(ret);
 
-		struct net_buf *buf = stale_data->data;
+		struct net_buf *stale_buf = stale_data->data;
 
-		net_buf_unref(buf);
+		net_buf_unref(stale_buf);
 		data_fifo_block_free(&ble_fifo_rx, stale_data);
 	}
 
@@ -113,8 +113,6 @@ void le_audio_rx_data_handler(struct audio_data *audio_frame, uint8_t channel_in
 		LOG_WRN("Out of RX buffers");
 		return;
 	}
-
-	net_buf_reserve(buf, audio_frame->data_size);
 
 	if (audio_frame->data_size && !audio_frame->meta.bad_data) {
 		net_buf_add_mem(buf, audio_frame->data, audio_frame->data_size);

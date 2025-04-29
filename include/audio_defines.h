@@ -13,6 +13,7 @@
 
 #include <zephyr/types.h>
 #include <stdbool.h>
+#include <zephyr/bluetooth/audio/audio.h>
 
 /**
  * @brief Audio channel assignment values

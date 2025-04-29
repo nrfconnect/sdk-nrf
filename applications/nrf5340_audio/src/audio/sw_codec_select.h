@@ -83,14 +83,13 @@ bool sw_codec_is_initialized(void);
  * @note	Takes in stereo PCM stream, will encode either one or two
  *		channels, based on channel_mode set during init.
  *
- * @param[in]	pcm_data	Pointer to PCM data.
- * @param[in]	pcm_size	Size of PCM data.
+ * @param[in]	audio_frame	Pointer to audio data.
  * @param[out]	encoded_data	Pointer to buffer to store encoded data.
  * @param[out]	encoded_size	Size of encoded data.
  *
  * @return	0 if success, error codes depends on sw_codec selected.
  */
-int sw_codec_encode(void *pcm_data, size_t pcm_size, uint8_t **encoded_data, size_t *encoded_size);
+int sw_codec_encode(struct audio_data *audio_frame, uint8_t **encoded_data, size_t *encoded_size);
 
 /**
  * @brief	Decode encoded data and output PCM data.

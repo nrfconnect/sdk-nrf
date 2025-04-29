@@ -83,7 +83,7 @@ bool sw_codec_is_initialized(void)
 	return m_config.initialized;
 }
 
-int sw_codec_encode(void *pcm_data, size_t pcm_size, uint8_t **encoded_data, size_t *encoded_size)
+int sw_codec_encode(struct audio_data *audio_frame, uint8_t **encoded_data, size_t *encoded_size)
 {
 	int ret;
 
@@ -96,6 +96,8 @@ int sw_codec_encode(void *pcm_data, size_t pcm_size, uint8_t **encoded_data, siz
 
 	size_t pcm_block_size_mono_system_sample_rate;
 	size_t pcm_block_size_mono;
+
+	struct net_buf *buf = audio_frame->data;
 
 	if (!m_config.encoder.enabled) {
 		LOG_ERR("Encoder has not been initialized");
@@ -111,7 +113,7 @@ int sw_codec_encode(void *pcm_data, size_t pcm_size, uint8_t **encoded_data, siz
 		/* Since LC3 is a single channel codec, we must split the
 		 * stereo PCM stream
 		 */
-		ret = pscm_two_channel_split(pcm_data, pcm_size, CONFIG_AUDIO_BIT_DEPTH_BITS,
+		ret = pscm_two_channel_split(buf->data, buf->len, CONFIG_AUDIO_BIT_DEPTH_BITS,
 					     pcm_data_mono_system_sample_rate[AUDIO_CH_L],
 					     pcm_data_mono_system_sample_rate[AUDIO_CH_R],
 					     &pcm_block_size_mono_system_sample_rate);
