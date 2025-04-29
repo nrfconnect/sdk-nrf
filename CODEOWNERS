@@ -463,7 +463,7 @@
 /samples/bluetooth/enocean/               @nrfconnect/ncs-paladin
 /samples/bluetooth/event_trigger/         @nrfconnect/ncs-dragoon
 /samples/bluetooth/fast_pair/             @nrfconnect/ncs-si-bluebagel
-/samples/bluetooth/hci_lpuart/            @nordic-krch
+/samples/bluetooth/hci_lpuart/            @nordic-krch @nrfconnect/ncs-low-level-test
 /samples/bluetooth/iso_combined_bis_and_cis/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/iso_time_sync/         @nrfconnect/ncs-dragoon
 /samples/bluetooth/llpm/                  @nrfconnect/ncs-dragoon
