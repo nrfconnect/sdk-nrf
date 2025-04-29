@@ -217,7 +217,9 @@ struct sx_pk_acq_req sx_pk_acquire_req(const struct sx_pk_cmd_def *cmd)
 
 	/* Wait until initialized. */
 	while (ba414ep_is_busy(req.req) || ik_is_busy(req.req)) {
+#ifndef CONFIG_CRACEN_HW_VERSION_LITE
 		cracen_wait_for_pke_interrupt();
+#endif
 	}
 
 	return req;
