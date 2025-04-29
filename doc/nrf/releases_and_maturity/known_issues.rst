@@ -1319,6 +1319,13 @@ The issues in this section are related to the :ref:`ug_wifi` protocol.
 
 .. rst-class:: v3-0-0
 
+SHEL-3604: Crash during Wi-Fi SoftAP mode initialization
+  When the :ref:`wifi_softap_sample` sample is built and run, a crash occurs during initialization due to a hostap stack overflow.
+
+  **Workaround:** Increase the hostap stack size to 5800 bytes or cherry-pick changes from PR #2822 in the `sdk-zephyr`_ repository.
+
+.. rst-class:: v3-0-0
+
 SHEL-3596: For nRF5340DK + nRF7002EK, XiP is not working after Wi-Fi interface down/up
   When using external flash for storing nRF70 firmware patches and XiPing, seeing a hang when XiP is re-enabled and accessing the code.
 
