@@ -177,7 +177,7 @@ struct at_token at_match_str(const char *at, const char **remainder)
 
 	SPACE = " ";
 	CRLF = "\r\n";
-	STR = [A-Za-z0-9][A-Za-z_\-.0-9 ]*;
+	STR = [A-Za-z0-9][A-Za-z_\-+.0-9 ]*;
 
 	str         = SPACE? @t1 STR @t2 CRLF?;
 

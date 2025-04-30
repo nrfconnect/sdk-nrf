@@ -431,6 +431,10 @@ Security libraries
 Modem libraries
 ---------------
 
+* :ref:`at_parser_readme` library:
+
+  * Added support for parsing DECT NR+ modem firmware names.
+
 * :ref:`lte_lc_readme` library:
 
   * Added the :kconfig:option:`CONFIG_LTE_LC_DNS_FALLBACK_MODULE` and :kconfig:option:`CONFIG_LTE_LC_DNS_FALLBACK_ADDRESS` Kconfig options to enable setting a fallback DNS address.
