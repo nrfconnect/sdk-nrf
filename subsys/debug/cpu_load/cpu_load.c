@@ -17,7 +17,7 @@
 #include <debug/ppi_trace.h>
 #include <zephyr/logging/log.h>
 
-LOG_MODULE_REGISTER(cpu_load, CONFIG_CPU_LOAD_LOG_LEVEL);
+LOG_MODULE_REGISTER(cpu_load, CONFIG_NRF_CPU_LOAD_LOG_LEVEL);
 
 /* Convert event address to associated publish register */
 #define PUBLISH_ADDR(evt) (volatile uint32_t *)(evt + 0x80)
@@ -26,20 +26,20 @@ LOG_MODULE_REGISTER(cpu_load, CONFIG_CPU_LOAD_LOG_LEVEL);
 #define CH_INVALID 0xFF
 
 /* Define to please compiler when periodic logging is disabled. */
-#ifdef CONFIG_CPU_LOAD_LOG_INTERVAL
-#define CPU_LOAD_LOG_INTERVAL CONFIG_CPU_LOAD_LOG_INTERVAL
+#ifdef CONFIG_NRF_CPU_LOAD_LOG_INTERVAL
+#define NRF_CPU_LOAD_LOG_INTERVAL CONFIG_NRF_CPU_LOAD_LOG_INTERVAL
 #else
-#define CPU_LOAD_LOG_INTERVAL 0
+#define NRF_CPU_LOAD_LOG_INTERVAL 0
 #endif
 
-static nrfx_timer_t timer = NRFX_TIMER_INSTANCE(CONFIG_CPU_LOAD_TIMER_INSTANCE);
+static nrfx_timer_t timer = NRFX_TIMER_INSTANCE(CONFIG_NRF_CPU_LOAD_TIMER_INSTANCE);
 static bool ready;
 static struct k_work_delayable cpu_load_log;
 static uint32_t cycle_ref;
 static uint32_t shared_ch_mask;
 
 #define IS_CH_SHARED(ch) \
-	(IS_ENABLED(CONFIG_CPU_LOAD_USE_SHARED_DPPI_CHANNELS) && \
+	(IS_ENABLED(CONFIG_NRF_CPU_LOAD_USE_SHARED_DPPI_CHANNELS) && \
 	(BIT(ch) & shared_ch_mask))
 
 
@@ -51,7 +51,7 @@ static nrfx_err_t ppi_alloc(uint8_t *ch, uint32_t evt)
 	nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(0);
 
 	if (*PUBLISH_ADDR(evt) != 0) {
-		if (!IS_ENABLED(CONFIG_CPU_LOAD_USE_SHARED_DPPI_CHANNELS)) {
+		if (!IS_ENABLED(CONFIG_NRF_CPU_LOAD_USE_SHARED_DPPI_CHANNELS)) {
 			return NRFX_ERROR_BUSY;
 		}
 		/* Use mask of one of subscribe registers in the system,
@@ -75,7 +75,7 @@ static nrfx_err_t ppi_free(uint8_t ch)
 #ifdef DPPI_PRESENT
 	nrfx_dppi_t dppi = NRFX_DPPI_INSTANCE(0);
 
-	if (!IS_ENABLED(CONFIG_CPU_LOAD_USE_SHARED_DPPI_CHANNELS)
+	if (!IS_ENABLED(CONFIG_NRF_CPU_LOAD_USE_SHARED_DPPI_CHANNELS)
 		|| ((BIT(ch) & shared_ch_mask) == 0)) {
 		return nrfx_dppi_channel_free(&dppi, ch);
 	} else {
@@ -90,7 +90,7 @@ static void ppi_cleanup(uint8_t ch_tick, uint8_t ch_sleep, uint8_t ch_wakeup)
 {
 	nrfx_err_t err = NRFX_SUCCESS;
 
-	if (IS_ENABLED(CONFIG_CPU_LOAD_ALIGNED_CLOCKS)) {
+	if (IS_ENABLED(CONFIG_NRF_CPU_LOAD_ALIGNED_CLOCKS)) {
 		err = ppi_free(ch_tick);
 	}
 
@@ -115,13 +115,13 @@ static void cpu_load_log_fn(struct k_work *item)
 
 	cpu_load_reset();
 	LOG_INF("Load:%d,%03d%%", percent, fraction);
-	k_work_schedule(&cpu_load_log, K_MSEC(CPU_LOAD_LOG_INTERVAL));
+	k_work_schedule(&cpu_load_log, K_MSEC(NRF_CPU_LOAD_LOG_INTERVAL));
 }
 
 static int cpu_load_log_init(void)
 {
 	k_work_init_delayable(&cpu_load_log, cpu_load_log_fn);
-	return k_work_schedule(&cpu_load_log, K_MSEC(CPU_LOAD_LOG_INTERVAL));
+	return k_work_schedule(&cpu_load_log, K_MSEC(NRF_CPU_LOAD_LOG_INTERVAL));
 }
 
 static void timer_handler(nrf_timer_event_t event_type, void *context)
@@ -147,7 +147,7 @@ int cpu_load_init(void)
 	config.frequency = NRFX_MHZ_TO_HZ(1);
 	config.bit_width = NRF_TIMER_BIT_WIDTH_32;
 
-	if (IS_ENABLED(CONFIG_CPU_LOAD_ALIGNED_CLOCKS)) {
+	if (IS_ENABLED(CONFIG_NRF_CPU_LOAD_ALIGNED_CLOCKS)) {
 		/* It's assumed that RTC1 is driving system clock. */
 		config.mode = NRF_TIMER_MODE_COUNTER;
 		err = ppi_alloc(&ch_tick,
@@ -203,7 +203,7 @@ int cpu_load_init(void)
 
 	cpu_load_reset();
 
-	if (IS_ENABLED(CONFIG_CPU_LOAD_LOG_PERIODIC)) {
+	if (IS_ENABLED(CONFIG_NRF_CPU_LOAD_LOG_PERIODIC)) {
 		ret = cpu_load_log_init();
 		if (ret >= 0) {
 			ret = 0;
@@ -223,7 +223,7 @@ void cpu_load_reset(void)
 
 static uint32_t sleep_ticks_to_us(uint32_t ticks)
 {
-	return IS_ENABLED(CONFIG_CPU_LOAD_ALIGNED_CLOCKS) ?
+	return IS_ENABLED(CONFIG_NRF_CPU_LOAD_ALIGNED_CLOCKS) ?
 	   (uint32_t)(((uint64_t)ticks * 1000000) / sys_clock_hw_cycles_per_sec()) :
 	   ticks;
 }
@@ -299,5 +299,5 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_cmd_cpu_load,
 	SHELL_SUBCMD_SET_END
 );
 
-SHELL_COND_CMD_ARG_REGISTER(CONFIG_CPU_LOAD_CMDS, cpu_load, &sub_cmd_cpu_load,
+SHELL_COND_CMD_ARG_REGISTER(CONFIG_NRF_CPU_LOAD_CMDS, cpu_load, &sub_cmd_cpu_load,
 			"CPU load", cmd_cpu_load_get, 1, 1);
