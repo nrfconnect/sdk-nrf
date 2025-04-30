@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menuconfig CPU_LOAD
+menuconfig NRF_CPU_LOAD
 	bool "Enable CPU load measurement"
 	select NRFX_PPI if HAS_HW_NRF_PPI
 	select NRFX_DPPI if HAS_HW_NRF_DPPIC
@@ -13,32 +13,32 @@ menuconfig CPU_LOAD
 	  Enable the CPU load measurement instrumentation. This tool is using
 	  one TIMER peripheral and PPI to perform accurate CPU load measurement.
 
-if CPU_LOAD
+if NRF_CPU_LOAD
 
-module = CPU_LOAD
+module = NRF_CPU_LOAD
 module-str = CPU load measurement
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
 
-config CPU_LOAD_CMDS
+config NRF_CPU_LOAD_CMDS
 	bool "Enable shell commands"
 	depends on SHELL
 	default y
 
 if LOG
 
-config CPU_LOAD_LOG_PERIODIC
+config NRF_CPU_LOAD_LOG_PERIODIC
 	bool "Periodically log current CPU load"
 	help
 	  INFO level must be enabled to get the log.
 
-config CPU_LOAD_LOG_INTERVAL
+config NRF_CPU_LOAD_LOG_INTERVAL
 	int "Logging interval for CPU load [ms]"
-	depends on CPU_LOAD_LOG_PERIODIC
+	depends on NRF_CPU_LOAD_LOG_PERIODIC
 	default 2000
 
 endif # LOG
 
-config CPU_LOAD_ALIGNED_CLOCKS
+config NRF_CPU_LOAD_ALIGNED_CLOCKS
 	bool "Enable aligned clock sources"
 	help
 	  After enabling this option, the sleep period measurement
@@ -50,7 +50,7 @@ config CPU_LOAD_ALIGNED_CLOCKS
 	  Enabling this option allows going to low power idle mode
 	  because the high frequency clock is not used by this module.
 
-config CPU_LOAD_USE_SHARED_DPPI_CHANNELS
+config NRF_CPU_LOAD_USE_SHARED_DPPI_CHANNELS
 	bool "Use shared DPPI channels"
 	depends on HAS_HW_NRF_DPPIC
 	help
@@ -64,37 +64,37 @@ config CPU_LOAD_USE_SHARED_DPPI_CHANNELS
 
 choice
 	prompt "Timer instance"
-	default CPU_LOAD_TIMER_2
+	default NRF_CPU_LOAD_TIMER_2
 
-config CPU_LOAD_TIMER_0
+config NRF_CPU_LOAD_TIMER_0
 	depends on $(dt_nodelabel_has_compat,timer0,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	bool "Timer 0"
 	select NRFX_TIMER0
-config CPU_LOAD_TIMER_1
+config NRF_CPU_LOAD_TIMER_1
 	depends on $(dt_nodelabel_has_compat,timer1,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	bool "Timer 1"
 	select NRFX_TIMER1
-config CPU_LOAD_TIMER_2
+config NRF_CPU_LOAD_TIMER_2
 	depends on $(dt_nodelabel_has_compat,timer2,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	bool "Timer 2"
 	select NRFX_TIMER2
-config CPU_LOAD_TIMER_3
+config NRF_CPU_LOAD_TIMER_3
 	depends on $(dt_nodelabel_has_compat,timer3,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	bool "Timer 3"
 	select NRFX_TIMER3
-config CPU_LOAD_TIMER_4
+config NRF_CPU_LOAD_TIMER_4
 	depends on $(dt_nodelabel_has_compat,timer4,$(DT_COMPAT_NORDIC_NRF_TIMER))
 	bool "Timer 4"
 	select NRFX_TIMER4
 
 endchoice
 
-config CPU_LOAD_TIMER_INSTANCE
+config NRF_CPU_LOAD_TIMER_INSTANCE
 	int
-	default 0 if CPU_LOAD_TIMER_0
-	default 1 if CPU_LOAD_TIMER_1
-	default 2 if CPU_LOAD_TIMER_2
-	default 3 if CPU_LOAD_TIMER_3
-	default 4 if CPU_LOAD_TIMER_4
+	default 0 if NRF_CPU_LOAD_TIMER_0
+	default 1 if NRF_CPU_LOAD_TIMER_1
+	default 2 if NRF_CPU_LOAD_TIMER_2
+	default 3 if NRF_CPU_LOAD_TIMER_3
+	default 4 if NRF_CPU_LOAD_TIMER_4
 
-endif # CPU_LOAD
+endif # NRF_CPU_LOAD
