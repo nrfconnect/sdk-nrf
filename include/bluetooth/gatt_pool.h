@@ -112,7 +112,7 @@ extern "C" {
 #define BT_GATT_POOL_CCC(_gp, _ccc, _ccc_changed, _perm)                       \
 	do {                                                                   \
 		int _ret;                                                      \
-		_ccc = (struct _bt_gatt_ccc)BT_GATT_CCC_INITIALIZER(\
+		_ccc = (struct bt_gatt_ccc_managed_user_data)BT_GATT_CCC_INITIALIZER(\
 			_ccc_changed, NULL, NULL);      \
 		_ret = bt_gatt_pool_ccc_alloc(_gp, &_ccc, _perm);              \
 		__ASSERT_NO_MSG(!_ret);                                        \
@@ -176,7 +176,7 @@ int bt_gatt_pool_desc_alloc(struct bt_gatt_pool *gp,
  *  @return 0 or negative error code.
  */
 int bt_gatt_pool_ccc_alloc(struct bt_gatt_pool *gp,
-			   struct _bt_gatt_ccc *ccc,
+			   struct bt_gatt_ccc_managed_user_data *ccc,
 			   uint8_t perm);
 
 /** @brief Free the whole dynamically created GATT service.
