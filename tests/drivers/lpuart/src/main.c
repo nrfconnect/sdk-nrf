@@ -31,6 +31,8 @@ static int test_time;
  */
 #define TX_TIMEOUT_US 10000
 
+static K_SEM_DEFINE(uart_rx_buf_possession_sem, 1, 1);
+
 static void kill_timer_handler(struct k_timer *timer)
 {
 	ARG_UNUSED(timer);
@@ -184,11 +186,13 @@ static void uart_callback(const struct device *dev, struct uart_event *evt, void
 		break;
 
 	case UART_RX_BUF_REQUEST:
+		zassert_equal(k_sem_take(&uart_rx_buf_possession_sem, K_NO_WAIT), 0);
 		on_rx_buf_req(dev);
 		break;
 
 	case UART_RX_BUF_RELEASED:
 		buf_released = true;
+		k_sem_give(&uart_rx_buf_possession_sem);
 		break;
 
 	case UART_RX_DISABLED:
@@ -246,6 +250,11 @@ ZTEST(test_lpuart_stress, test_stress)
 
 	err = uart_rx_disable(lpuart);
 	zassert_equal(err, 0, NULL);
+	TC_PRINT("UART RX disabled\n");
+
+	TC_PRINT("Waiting for UART RX buffer release\n");
+	zassert_equal(k_sem_take(&uart_rx_buf_possession_sem, K_MSEC(100)), 0);
+	TC_PRINT("UART RX BUFFER released\n");
 
 	if (IS_ENABLED(CONFIG_TEST_BUSY_SIM)) {
 		busy_sim_stop();
