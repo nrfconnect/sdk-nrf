@@ -379,7 +379,7 @@ int bt_gatt_pool_desc_alloc(struct bt_gatt_pool *gp,
 }
 
 int bt_gatt_pool_ccc_alloc(struct bt_gatt_pool *gp,
-			   struct _bt_gatt_ccc *ccc,
+			   struct bt_gatt_ccc_managed_user_data *ccc,
 			   uint8_t perm)
 {
 	struct bt_gatt_attr *attr;

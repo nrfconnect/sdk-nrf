@@ -582,14 +582,15 @@ static bool bt_ccc_cfg_match_call(struct bt_conn *conn, const struct bt_gatt_att
 
 static int add_ccc_attr(struct bt_gatt_attr *attr, uint16_t param)
 {
-	struct _bt_gatt_ccc *ccc;
+	struct bt_gatt_ccc_managed_user_data *ccc;
 
-	ccc = (struct _bt_gatt_ccc *)bt_rpc_gatt_add(&gatt_buffer, sizeof(struct _bt_gatt_ccc));
+	ccc = (struct bt_gatt_ccc_managed_user_data *)bt_rpc_gatt_add(&gatt_buffer,
+			sizeof(struct bt_gatt_ccc_managed_user_data));
 	if (!ccc) {
 		return -ENOMEM;
 	}
 
-	memset(ccc, 0, sizeof(struct _bt_gatt_ccc));
+	memset(ccc, 0, sizeof(struct bt_gatt_ccc_managed_user_data));
 
 	ccc->cfg_changed =
 		(param & BT_RPC_GATT_CCC_CFG_CHANGE_PRESENT_FLAG) ? bt_ccc_cfg_changed_call : NULL;
