@@ -316,8 +316,6 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 	if (event == NET_EVENT_L4_CONNECTED) {
 		LOG_INF("Network connectivity gained!");
 
-		k_sleep(K_MSEC(1000));
-
 		/* Set the network ready flag */
 		k_event_post(&cloud_events, NETWORK_READY);
 
