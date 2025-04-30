@@ -805,6 +805,7 @@ yy45:
 			yyt2 = cursor;
 			goto yy47;
 		case ' ':
+		case '+':
 		case '-':
 		case '.':
 		case '0':

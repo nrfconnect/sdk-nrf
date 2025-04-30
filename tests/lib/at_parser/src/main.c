@@ -1741,7 +1741,7 @@ ZTEST(at_parser, test_at_parser_string_get)
 {
 	int ret;
 	struct at_parser parser;
-	char buffer[32] = { 0 };
+	char buffer[64] = { 0 };
 	size_t len = sizeof(buffer);
 
 	const char *str1 = "+CGEV: ME PDN ACT 0";
@@ -1753,6 +1753,8 @@ ZTEST(at_parser, test_at_parser_string_get)
 	zassert_ok(ret);
 	zassert_mem_equal("ME PDN ACT 0", buffer, len);
 
+	len = sizeof(buffer);
+
 	const char *str2 = "+NOTIF: \"\"";
 
 	ret = at_parser_init(&parser, str2);
@@ -1761,6 +1763,17 @@ ZTEST(at_parser, test_at_parser_string_get)
 	ret = at_parser_string_get(&parser, 1, buffer, &len);
 	zassert_ok(ret);
 	zassert_mem_equal("", buffer, len);
+
+	len = sizeof(buffer);
+
+	const char *str3 = "mfw-nr+_nrf91x1_0.0.0-110.nr+-test\r\nOK\r\n";
+
+	ret = at_parser_init(&parser, str3);
+	zassert_ok(ret);
+
+	ret = at_parser_string_get(&parser, 0, buffer, &len);
+	zassert_ok(ret);
+	zassert_mem_equal("mfw-nr+_nrf91x1_0.0.0-110.nr+-test", buffer, len);
 }
 
 ZTEST(at_parser, test_at_parser_string_get_array)
