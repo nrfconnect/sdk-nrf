@@ -392,7 +392,7 @@ static void bt_conn_get_remote_info_rpc_rsp(const struct nrf_rpc_group *group,
 	bt_conn_remote_info_dec(ctx, res->conn, res->remote_info);
 }
 
-int bt_conn_get_remote_info(struct bt_conn *conn,
+int bt_conn_get_remote_info(const struct bt_conn *conn,
 			    struct bt_conn_remote_info *remote_info)
 {
 	struct nrf_rpc_cbor_ctx ctx;
