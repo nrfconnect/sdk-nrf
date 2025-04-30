@@ -36,7 +36,9 @@
  * to avoid deadlocks due to missing CMD buffers, if the host is only allocating the next command
  * once the previous is completed.
  */
-BUILD_ASSERT(BT_BUF_ACL_RX_COUNT < CONFIG_BT_BUF_CMD_TX_COUNT,
+#define BT_BUF_CMD_TX_COUNT CONFIG_BT_BUF_CMD_TX_COUNT
+
+BUILD_ASSERT(BT_BUF_ACL_RX_COUNT < BT_BUF_CMD_TX_COUNT,
 	     "Too low HCI command buffers compared to ACL Rx buffers.");
 #else  /* controller-only build */
 /*
@@ -46,7 +48,9 @@ BUILD_ASSERT(BT_BUF_ACL_RX_COUNT < CONFIG_BT_BUF_CMD_TX_COUNT,
  * do flow control, at least one more buffer is needed.
  *
  */
-BUILD_ASSERT((CONFIG_BT_BUF_CMD_TX_COUNT - 1) > 0,
+#define BT_BUF_CMD_TX_COUNT (BT_BUF_RX_COUNT + 1)
+
+BUILD_ASSERT((BT_BUF_CMD_TX_COUNT - 1) > 0,
 	     "We need at least two HCI command buffers to avoid deadlocks.");
 #endif /* CONFIG_BT_CONN && CONFIG_BT_HCI_HOST */
 
@@ -71,7 +75,7 @@ int sdc_hci_cmd_cb_host_buffer_size_wrapper(const sdc_hci_cmd_cb_host_buffer_siz
 	sdc_hci_cmd_cb_host_buffer_size_t ctrl_cmd_params = *cmd_params;
 
 	ctrl_cmd_params.host_total_num_acl_data_packets = MIN(
-		ctrl_cmd_params.host_total_num_acl_data_packets, (CONFIG_BT_BUF_CMD_TX_COUNT - 1));
+		ctrl_cmd_params.host_total_num_acl_data_packets, (BT_BUF_CMD_TX_COUNT - 1));
 
 	return sdc_hci_cmd_cb_host_buffer_size(&ctrl_cmd_params);
 }
