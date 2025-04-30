@@ -28,11 +28,10 @@ FAKE_VALUE_FUNC(struct net_if *, net_if_get_default);
 FAKE_VALUE_FUNC(ssize_t, z_impl_hwinfo_get_device_id, uint8_t *, size_t);
 FAKE_VALUE_FUNC_VARARG(int, nrf_modem_at_cmd, void *, size_t, const char *, ...);
 
-static uint8_t link_addr[6] = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66};
 static struct net_if_dev net_if_dev_example =  {
 	.link_addr = {
-		.addr = link_addr,
-		.len = ARRAY_SIZE(link_addr)
+		.addr = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66},
+		.len = 6,
 	}
 };
 static struct net_if net_if_example =  {
