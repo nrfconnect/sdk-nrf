@@ -265,7 +265,10 @@ Bluetooth Fast Pair samples
 Cellular samples
 ----------------
 
-|no_changes_yet_note|
+* :ref:`lte_sensor_gateway` sample:
+
+  * The sample is no longer maintained and is now deprecated.
+
 
 Cryptography samples
 --------------------

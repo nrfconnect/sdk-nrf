@@ -12,6 +12,11 @@ The LTE Sensor Gateway sample demonstrates how to transmit sensor data from an n
 The sensor data is collected using Bluetooth® Low Energy.
 Therefore, this sample acts as a gateway between the Bluetooth LE and the LTE connections to nRF Cloud.
 
+.. note::
+
+   This sample is deprecated and no longer maintained.
+   It will be removed from the |NCS| in a future release.
+
 Requirements
 ************
 
