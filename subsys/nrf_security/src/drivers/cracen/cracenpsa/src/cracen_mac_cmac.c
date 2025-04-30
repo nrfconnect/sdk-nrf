@@ -50,7 +50,7 @@ psa_status_t cracen_cmac_setup(cracen_mac_operation_t *operation,
 
 	/* As only AES is supported it is always the same block size*/
 	operation->bytes_left_for_next_block = AES_BLOCK_SIZE;
-	operation->cmac.is_first_block = true;
+	operation->is_first_block = true;
 
 	return PSA_SUCCESS;
 }
@@ -76,7 +76,7 @@ psa_status_t cracen_cmac_update(cracen_mac_operation_t *operation, const uint8_t
 	/* The state can only be resumed if is not the first time data are
 	 * processed.
 	 */
-	if (!operation->cmac.is_first_block) {
+	if (!operation->is_first_block) {
 		sx_status = sx_mac_resume_state(&operation->cmac.ctx);
 		if (sx_status) {
 			return silex_statuscodes_to_psa(sx_status);
@@ -111,7 +111,7 @@ psa_status_t cracen_cmac_update(cracen_mac_operation_t *operation, const uint8_t
 		 * empty input buffer
 		 */
 		operation->bytes_left_for_next_block = AES_BLOCK_SIZE;
-		operation->cmac.is_first_block = false;
+		operation->is_first_block = false;
 	}
 
 	if (block_bytes) {
@@ -119,10 +119,10 @@ psa_status_t cracen_cmac_update(cracen_mac_operation_t *operation, const uint8_t
 		if (sx_status) {
 			return silex_statuscodes_to_psa(sx_status);
 		}
-		operation->cmac.is_first_block = false;
+		operation->is_first_block = false;
 	}
 
-	if (!operation->cmac.is_first_block) {
+	if (!operation->is_first_block) {
 		/* save state and wait until processed */
 		sx_status = sx_mac_save_state(&operation->cmac.ctx);
 		if (sx_status) {
@@ -156,7 +156,7 @@ psa_status_t cracen_cmac_finish(cracen_mac_operation_t *operation)
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	if (!operation->cmac.is_first_block) {
+	if (!operation->is_first_block) {
 		sx_status = sx_mac_resume_state(&operation->cmac.ctx);
 		if (sx_status) {
 			return silex_statuscodes_to_psa(sx_status);

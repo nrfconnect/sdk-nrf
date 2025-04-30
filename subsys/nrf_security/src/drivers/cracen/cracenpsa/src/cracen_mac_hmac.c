@@ -37,6 +37,7 @@ psa_status_t cracen_hmac_setup(cracen_mac_operation_t *operation,
 	}
 
 	operation->bytes_left_for_next_block = sx_hash_get_alg_blocksz(sx_hash_algo);
+	operation->is_first_block = true;
 
 	return PSA_SUCCESS;
 }
@@ -70,6 +71,8 @@ psa_status_t cracen_hmac_update(cracen_mac_operation_t *operation, const uint8_t
 		/* can't fill a full block so nothing more to do here */
 		return PSA_SUCCESS;
 	}
+
+	operation->is_first_block = false;
 
 	/* Feed the data that are currently in the input buffer to the driver */
 	sx_status = sx_hash_feed(&operation->hmac.hashctx, operation->input_buffer,
@@ -130,9 +133,11 @@ psa_status_t cracen_hmac_finish(cracen_mac_operation_t *operation)
 	digestsz = sx_hash_get_alg_digestsz(sx_hash_algo);
 	block_size = sx_hash_get_alg_blocksz(sx_hash_algo);
 
-	sx_status = sx_hash_resume_state(&operation->hmac.hashctx);
-	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
+	if (!operation->is_first_block) {
+		sx_status = sx_hash_resume_state(&operation->hmac.hashctx);
+		if (sx_status != SX_OK) {
+			return silex_statuscodes_to_psa(sx_status);
+		}
 	}
 
 	/* Process the data that are left in the input buffer. */
