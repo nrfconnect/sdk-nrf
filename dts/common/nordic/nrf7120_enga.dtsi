@@ -265,7 +265,6 @@
 				compatible = "nordic,nrf-timer";
 				reg = <0x55000 0x1000>;
 				interrupts = <85 NRF_DEFAULT_IRQ_PRIORITY>;
-				max-frequency = <DT_FREQ_M(256)>;
 				cc-num = <6>;
 				max-bit-width = <32>;
 				prescaler = <0>;
@@ -314,7 +313,6 @@
 				compatible = "nordic,nrf-timer";
 				reg = <0x85000 0x1000>;
 				interrupts = <133 NRF_DEFAULT_IRQ_PRIORITY>;
-				max-frequency = <DT_FREQ_M(32)>;
 				cc-num = <8>;
 				max-bit-width = <32>;
 				prescaler = <0>;
@@ -495,7 +493,6 @@
 				compatible = "nordic,nrf-timer";
 				reg = <0xca000 0x1000>;
 				interrupts = <202 NRF_DEFAULT_IRQ_PRIORITY>;
-				max-frequency = <DT_FREQ_M(16)>;
 				cc-num = <6>;
 				max-bit-width = <32>;
 				prescaler = <0>;
@@ -506,7 +503,6 @@
 				compatible = "nordic,nrf-timer";
 				reg = <0xcb000 0x1000>;
 				interrupts = <203 NRF_DEFAULT_IRQ_PRIORITY>;
-				max-frequency = <DT_FREQ_M(16)>;
 				cc-num = <6>;
 				max-bit-width = <32>;
 				prescaler = <0>;
@@ -517,7 +513,6 @@
 				compatible = "nordic,nrf-timer";
 				reg = <0xcc000 0x1000>;
 				interrupts = <204 NRF_DEFAULT_IRQ_PRIORITY>;
-				max-frequency = <DT_FREQ_M(16)>;
 				cc-num = <6>;
 				max-bit-width = <32>;
 				prescaler = <0>;
@@ -528,7 +523,6 @@
 				compatible = "nordic,nrf-timer";
 				reg = <0xcd000 0x1000>;
 				interrupts = <205 NRF_DEFAULT_IRQ_PRIORITY>;
-				max-frequency = <DT_FREQ_M(16)>;
 				cc-num = <6>;
 				max-bit-width = <32>;
 				prescaler = <0>;
@@ -539,7 +533,6 @@
 				compatible = "nordic,nrf-timer";
 				reg = <0xce000 0x1000>;
 				interrupts = <206 NRF_DEFAULT_IRQ_PRIORITY>;
-				max-frequency = <DT_FREQ_M(16)>;
 				cc-num = <6>;
 				max-bit-width = <32>;
 				prescaler = <0>;
