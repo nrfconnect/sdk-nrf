@@ -37,18 +37,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-32042"
 
 - scenarios:
-    - nrf.extended.sample.usb_device_next.hid-mouse.l20
-    - nrf.extended.sample.usbd.hid-keyboard.l20
-    - nrf.extended.sample.usbd.hid-keyboard.out-report.l20
-    - nrf.extended.sample.usbd.hid-keyboard.large-report.l20
-    - nrf.extended.sample.usbd.hid-keyboard.large-out-report.l20
-  platforms:
-    - nrf54l20pdk/nrf54l20/cpuapp
-    - nrf54lm20apdk/nrf54lm20a/cpuapp
-    - nrf54lm20apdk@0.0.0/nrf54lm20a/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NRFX-7255"
-
-- scenarios:
     - nrf.extended.drivers.uart.uart_elementary_dual_l09
     - nrf.extended.drivers.uart.uart_elementary_dual_setup_mismatch_l09
   platforms:
