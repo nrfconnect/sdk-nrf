@@ -46,8 +46,8 @@ static bool first_sdu_sent;
 static uint32_t tx_sdu_timestamp_us;
 static uint32_t num_sdus_sent;
 
-static void sdu_timer_expired(struct k_timer *timer);
-static K_TIMER_DEFINE(sdu_timer, sdu_timer_expired, NULL);
+static void sdu_work_handler(struct k_work *work);
+static K_WORK_DELAYABLE_DEFINE(sdu_work, sdu_work_handler);
 
 static struct bt_iso_chan_ops iso_ops = {
 	.connected = iso_connected,
@@ -217,6 +217,7 @@ static void send_next_sdu_on_all_channels(void)
 			 * To avoid reading the timestamp both after sending SDUs and after
 			 * the first SDU, we break out early here the very first event.
 			 */
+			first_sdu_sent = true;
 			break;
 		}
 	}
@@ -289,8 +290,6 @@ static bool send_more_sdus_with_same_timestamp(struct bt_iso_chan *chan)
 		}
 	}
 
-	/* The very first SDU is sent on one channel only. */
-	first_sdu_sent = true;
 	return false;
 }
 
@@ -354,7 +353,7 @@ static void iso_sent(struct bt_iso_chan *chan)
 
 	iso_channels_awaiting_iso_sent_cb[chan_index] = false;
 
-	k_timer_start(&sdu_timer, K_USEC(time_to_next_sdu_us), K_NO_WAIT);
+	k_work_schedule(&sdu_work, K_USEC(time_to_next_sdu_us));
 
 	/* Increment the SDU timestamp with one SDU interval. */
 	tx_sdu_timestamp_us = assigned_timestamp + CONFIG_SDU_INTERVAL_US;
@@ -369,9 +368,9 @@ static void iso_sent(struct bt_iso_chan *chan)
 	}
 }
 
-static void sdu_timer_expired(struct k_timer *timer)
+static void sdu_work_handler(struct k_work *work)
 {
-	ARG_UNUSED(timer);
+	ARG_UNUSED(work);
 	send_next_sdu_on_all_channels();
 }
 
