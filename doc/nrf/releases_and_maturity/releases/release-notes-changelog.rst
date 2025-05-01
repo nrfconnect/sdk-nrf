@@ -240,6 +240,10 @@ Amazon Sidewalk samples
 
 Bluetooth samples
 -----------------
+* :ref:`bluetooth_isochronous_time_synchronization` sample:
+
+  * Fixed an issue where the sample would assert with the :kconfig:option:`CONFIG_ASSERT` Kconfig option enabled.
+    This was due to calling the :c:func:`bt_iso_chan_send` function from a timer ISR handler and sending SDUs to the controller with invalid timestamps.
 
 |no_changes_yet_note|
 
