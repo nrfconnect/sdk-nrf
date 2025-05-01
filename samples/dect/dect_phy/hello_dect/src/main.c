@@ -391,7 +391,7 @@ int main(void)
 	while (1) {
 		/** Transmitting message */
 		LOG_INF("Transmitting %d", tx_counter_value);
-		tx_len = sprintf(tx_buf, "Hello DECT! %d", tx_counter_value);
+		tx_len = sprintf(tx_buf, "Hello DECT! %d", tx_counter_value) + 1; /* Include \0 */
 
 		err = transmit(tx_handle, tx_buf, tx_len);
 		if (err) {
