@@ -215,13 +215,13 @@ BT_GATT_SERVICE_DEFINE(
 	/* On-demand Ranging Data */
 	BT_GATT_CHARACTERISTIC(BT_UUID_RAS_ONDEMAND_RD, BT_GATT_CHRC_INDICATE | BT_GATT_CHRC_NOTIFY,
 			       BT_GATT_PERM_NONE, NULL, NULL, NULL),
-	BT_GATT_CCC_MANAGED(((struct bt_gatt_ccc_managed_user_data[]){BT_GATT_CCC_INITIALIZER(
+	BT_GATT_CCC_MANAGED(((struct bt_gatt_ccc_managed_user_data[]){BT_GATT_CCC_MANAGED_USER_DATA_INIT(
 				    NULL, ondemand_rd_ccc_cfg_write_cb, NULL)}),
 			    BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT),
 	/* Real-time Ranging Data */
 	BT_GATT_CHARACTERISTIC(BT_UUID_RAS_REALTIME_RD, BT_GATT_CHRC_INDICATE | BT_GATT_CHRC_NOTIFY,
 			       BT_GATT_PERM_NONE, NULL, NULL, NULL),
-	BT_GATT_CCC_MANAGED(((struct bt_gatt_ccc_managed_user_data[]){BT_GATT_CCC_INITIALIZER(
+	BT_GATT_CCC_MANAGED(((struct bt_gatt_ccc_managed_user_data[]){BT_GATT_CCC_MANAGED_USER_DATA_INIT(
 				    NULL, realtime_rd_ccc_cfg_write_cb, NULL)}),
 			    BT_GATT_PERM_READ_ENCRYPT | BT_GATT_PERM_WRITE_ENCRYPT),
 	/* RAS-CP */
