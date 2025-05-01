@@ -355,9 +355,10 @@ static ssize_t data_export_ccc_write(struct bt_conn *conn,
 	return sizeof(value);
 }
 
-static struct bt_gatt_ccc_managed_user_data mds_data_export_ccc = BT_GATT_CCC_INITIALIZER(data_export_ccc_changed,
-									 data_export_ccc_write,
-									 NULL);
+static struct bt_gatt_ccc_managed_user_data mds_data_export_ccc =
+	BT_GATT_CCC_MANAGED_USER_DATA_INIT(data_export_ccc_changed,
+					   data_export_ccc_write,
+					   NULL);
 
 BT_GATT_SERVICE_DEFINE(mds_svc,
 BT_GATT_PRIMARY_SERVICE(BT_UUID_MEMFAULT_DIAG),
