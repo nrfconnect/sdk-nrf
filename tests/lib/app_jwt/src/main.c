@@ -31,21 +31,21 @@ static psa_key_id_t kid;
 
 #define EXPECTED_JWT_MIN                                                                           \
 	"eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9."                                                    \
-	"eyJzdWIiOiJucmYtMzU4Mjk5ODQwMTIzNDU2IiwiZXhwIjoxNzM5ODgxODg5fQ.cYGNV8-"                   \
-	"DxTKyV3MlsSALKlva3Aarx3u0Owj8cxAH5tm3WRPLC8-xZtTW0djJp-j3V8sU1Mt_xjm3OIzMx4RNcw"
+	"eyJzdWIiOiJucmYtMzU4Mjk5ODQwMTIzNDU2IiwiZXhwIjoxNzM5ODgxODg5fQ."                          \
+	"OG3Ug9iPJmKYoV5AbhlVuxXxRloNL80QsJmBexR40f5BVISYg4FjXc8FdVnCLMaRlMGTKRd5cFaST4_DB21Vkw"
 
 #define EXPECTED_JWT_MIN_UUID                                                                      \
 	"eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiJ9."                                                    \
 	"eyJzdWIiOiI2YzBmMTIyNi1mNTA2LTExZWYtYTViYi05Mzc2M2I0YmRmMTEiLCJleHAiOjE3Mzk4ODE4ODl9."    \
-	"oIDg_ptVr7EP0Bg4qxmj5jh53d30FaBtzHOdeQJXyakz9_WQALqPXIrPl4immMvYhgcQD12KWxFiHh4YPjhBaw"
+	"je3nWh-f5IaBsypVQReXZY1z10gYAwyfFckhkXDAJOK8bDpdS3UVNRpN5eBBGph-RVEgqZG5RhRLD8gENa7a0w"
 
 #define EXPECTED_JWT_NRF91                                                                         \
 	"eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NiIsImtpZCI6IjJhNTNkMjBmODcxYjFkZWVhYjUzYTFiZmNlMDJhZTVk" \
 	"NWVmYzEyZjFlMGY0YjVjZTY2YzRhMWMyOGRhZDExMmMifQ."                                          \
 	"eyJpYXQiOjE3Mzk4ODEyODksImp0aSI6Im5SRjkxNjAuNTY0YWIzNTYtZjUwNS0xMWVmLWIyODctYjc2OTAyMWQ1" \
 	"ZmQ2LjlmZjE3NTI0OWFmZTQ4OTQxMiIsImlzcyI6Im5SRjkxNjAuNTY0YWIzNTYtZjUwNS0xMWVmLWIyODctYjc2" \
-	"OTAyMWQ1ZmQ2Iiwic3ViIjoibnJmLTM1ODI5OTg0MDEyMzQ1NiIsImV4cCI6MTczOTg4MTg4OX0."             \
-	"i3xPhJ1dQw2bb_2OgaAZ8w-IP_EpLiDgt97agpAdIsWDSdzCWd2iwwCpV937mAyqXWe-eoc-VjnBlWfXk5nXqQ"
+	"OTAyMWQ1ZmQ2Iiwic3ViIjoibnJmLTM1ODI5OTg0MDEyMzQ1NiIsImV4cCI6MTczOTg4MTg4OX0.YhaArF-_"     \
+	"7NNOd4ngnTT_KCQCcNfarxDlDuRvsSbE_RX_r5HC1nXduc4KDjc-7FJ9NUaKNcPAHg3BwJ7kOZ3NAQ"
 
 #define EC_PRV_KEY                                                                                 \
 	"-----BEGIN PRIVATE KEY-----\n"                                                            \
