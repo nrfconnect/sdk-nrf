@@ -10,9 +10,20 @@ config SAMPLE_SEC_TAG
 	int "Security tag"
 	default 42
 
+config SAMPLE_PROVISION_CERT
+	bool "Provision root CA certificate"
+	default y
+	help
+	  Provision the root CA certificate for the server to the modem. This is needed for secure
+	  connections.
+	  Disable this option to avoid overwriting an existing root CA certificate already stored in
+	  the modem.
+
 config SAMPLE_CERT_FILE
 	string "Certificate file name"
 	default "cert/file-example.pem"
+	depends on SAMPLE_PROVISION_CERT
+
 endif
 
 choice SAMPLE_FILE

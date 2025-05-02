@@ -336,7 +336,10 @@ Matter samples
 Networking samples
 ------------------
 
-|no_changes_yet_note|
+* :ref:`download_sample` sample:
+
+  * Added the :ref:`CONFIG_SAMPLE_PROVISION_CERT <CONFIG_SAMPLE_PROVISION_CERT>` Kconfig option to provision the root CA certificate to the modem.
+    The certificate is provisioned only if the :ref:`CONFIG_SAMPLE_SECURE_SOCKET <CONFIG_SAMPLE_SECURE_SOCKET>` Kconfig option is set to ``y``.
 
 NFC samples
 -----------

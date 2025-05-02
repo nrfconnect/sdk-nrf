@@ -41,6 +41,8 @@ static struct net_if *net_if;
 static K_SEM_DEFINE(network_connected_sem, 0, 1);
 
 #if CONFIG_SAMPLE_SECURE_SOCKET
+static int sec_tag_list[] = { SEC_TAG };
+#if CONFIG_SAMPLE_PROVISION_CERT
 static const char cert[] = {
 	#include SAMPLE_CERT_FILE_INC
 
@@ -49,9 +51,9 @@ static const char cert[] = {
 	 */
 	IF_ENABLED(CONFIG_TLS_CREDENTIALS, (0x00))
 };
-static int sec_tag_list[] = { SEC_TAG };
 BUILD_ASSERT(sizeof(cert) < KB(4), "Certificate too large");
-#endif
+#endif /* CONFIG_SAMPLE_PROVISION_CERT */
+#endif /* CONFIG_SAMPLE_SECURE_SOCKET */
 
 static char dl_buf[2048];
 
@@ -78,7 +80,7 @@ static mbedtls_sha256_context sha256_ctx;
 
 static int64_t ref_time;
 
-#if CONFIG_SAMPLE_SECURE_SOCKET
+#if CONFIG_SAMPLE_PROVISION_CERT
 static int cert_provision(void)
 {
 	int err;
@@ -286,7 +288,7 @@ int main(void)
 		return err;
 	}
 
-#if CONFIG_SAMPLE_SECURE_SOCKET
+#if CONFIG_SAMPLE_PROVISION_CERT
 	/* Provision certificates before connecting to the network */
 	err = cert_provision();
 	if (err) {
