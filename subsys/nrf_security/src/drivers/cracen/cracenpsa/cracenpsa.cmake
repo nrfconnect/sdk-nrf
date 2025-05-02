@@ -131,5 +131,4 @@ if(CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/platform_keys/platform_keys.c
   )
-  zephyr_linker_sources(ROM_START SORT_KEY 0x1keys ${CMAKE_CURRENT_LIST_DIR}/src/platform_keys/platform_keys.ld)
 endif()

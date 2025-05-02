@@ -71,59 +71,6 @@ typedef struct sicr_key {
 	size_t mac_size;
 } sicr_key;
 
-typedef struct embedded_key {
-	uint32_t id;
-	uint8_t key_buffer[32];
-	size_t key_buffer_size;
-	psa_key_type_t type;
-	psa_key_bits_t bits;
-} embedded_key;
-
-const embedded_key embedded_keys[] __attribute__((section("_embedded_keys"))) = {
-	{0x4000BB00,
-		{
-#include <public_key_native_MANIFEST_PUBKEY_NRF_TOP_0.bin.inc>
-		},
-	 32,
-	 PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS),
-	 255},
-	{0x4000BB01,
-		{
-#include <public_key_native_MANIFEST_PUBKEY_NRF_TOP_1.bin.inc>
-		},
-	 32,
-	 PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS),
-	 255},
-	{0x4000BB02,
-		{
-#include <public_key_native_MANIFEST_PUBKEY_NRF_TOP_2.bin.inc>
-		},
-	 32,
-	 PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS),
-	 255},
-	{0x40082100,
-		{
-#include <public_key_native_MANIFEST_PUBKEY_SYSCTRL_0.bin.inc>
-		},
-	 32,
-	 PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS),
-	 255},
-	{0x40082101,
-		{
-#include <public_key_native_MANIFEST_PUBKEY_SYSCTRL_1.bin.inc>
-		},
-	 32,
-	 PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS),
-	 255},
-	{0x40082102,
-		{
-#include <public_key_native_MANIFEST_PUBKEY_SYSCTRL_2.bin.inc>
-		},
-	 32,
-	 PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS),
-	 255},
-};
-
 typedef struct derived_key {
 	char label[DERIVED_KEY_MAX_LABEL_SIZE];
 } derived_key;
@@ -135,14 +82,12 @@ typedef struct ikg_key {
 
 typedef union {
 	sicr_key sicr;
-	embedded_key embedded;
 	derived_key derived;
 	ikg_key ikg;
 } platform_key;
 
 typedef enum {
 	INVALID,
-	EMBEDDED,
 	DERIVED,
 	SICR,
 	IKG,
@@ -277,13 +222,6 @@ static key_type find_key(uint32_t id, platform_key *key)
 			break;
 		}
 		return IKG;
-	}
-
-	for (size_t i = 0; i < ARRAY_SIZE(embedded_keys); i++) {
-		if (id == embedded_keys[i].id) {
-			key->embedded = embedded_keys[i];
-			return EMBEDDED;
-		}
 	}
 
 	return INVALID;
@@ -487,33 +425,6 @@ cleanup:
 		return status;
 	}
 
-	if (type == EMBEDDED) {
-		psa_set_key_bits(attributes, key.embedded.bits);
-		psa_set_key_type(attributes, key.embedded.type);
-
-		if (key.embedded.type ==
-		    PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_TWISTED_EDWARDS)) {
-			psa_set_key_algorithm(attributes, PSA_ALG_PURE_EDDSA);
-			psa_set_key_usage_flags(attributes, PSA_KEY_USAGE_VERIFY_MESSAGE);
-		} else {
-			return PSA_ERROR_INVALID_HANDLE;
-		}
-
-		/* Note: PSA Driver wrapper API require that attributes are filled before returning
-		 * error.
-		 */
-		if (key.embedded.key_buffer_size > key_buffer_size) {
-			return PSA_ERROR_BUFFER_TOO_SMALL;
-		} else if (key_buffer == NULL || key_buffer_length == NULL) {
-			return PSA_ERROR_INVALID_ARGUMENT;
-		}
-
-		memcpy(key_buffer, key.embedded.key_buffer, key.embedded.key_buffer_size);
-		*key_buffer_length = key.embedded.key_buffer_size;
-
-		return PSA_SUCCESS;
-	}
-
 	if (type == DERIVED) {
 		psa_set_key_bits(attributes, 256);
 		psa_set_key_type(attributes, PSA_KEY_TYPE_AES);
@@ -604,7 +515,7 @@ psa_status_t cracen_platform_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_l
 		return status;
 	}
 
-	if (type == SICR || type == EMBEDDED || type == DERIVED) {
+	if (type == SICR || type == DERIVED) {
 		*slot_number = MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id);
 		*lifetime = PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
 			PSA_KEY_PERSISTENCE_READ_ONLY, PSA_KEY_LOCATION_CRACEN);
