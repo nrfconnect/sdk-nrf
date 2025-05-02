@@ -33,6 +33,26 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 #define SPI_MODE (SPI_MODE_DEFAULT)
 #endif
 
+#if CONFIG_DATA_FIELD == 4
+#if DT_PROP(DT_BUS(DT_NODELABEL(dut_spi_dt)), max_frequency) == 32000000
+/* fast instance */
+#define EXPECTED_TRANSCEIVE_COUNT 13700
+#else
+/* slow instance */
+#define EXPECTED_TRANSCEIVE_COUNT 12900
+#endif
+#endif
+
+#if CONFIG_DATA_FIELD == 16
+#if DT_PROP(DT_BUS(DT_NODELABEL(dut_spi_dt)), max_frequency) == 32000000
+/* fast instance */
+#define EXPECTED_TRANSCEIVE_COUNT 9100
+#else
+/* slow instance */
+#define EXPECTED_TRANSCEIVE_COUNT 8600
+#endif
+#endif
+
 static struct spi_dt_spec spim_spec = SPI_DT_SPEC_GET(DT_NODELABEL(dut_spi_dt), SPI_MODE, 0);
 
 static const struct gpio_dt_spec pin_in = GPIO_DT_SPEC_GET(DT_PATH(zephyr_user), test_gpios);
@@ -104,7 +124,8 @@ void gpio_input_edge_callback(const struct device *dev, struct gpio_callback *cb
 int main(void)
 {
 	int ret;
-	int counter = 0;
+	uint32_t loop_counter = 0;
+	uint32_t transceive_counter;
 	uint8_t switch_flag;
 	uint8_t acc = 0;
 	bool test_pass;
@@ -133,6 +154,7 @@ int main(void)
 	LOG_INF("Testing SPIM device %s", spim_spec.bus->name);
 	LOG_INF("GPIO loopback at %s, pin %d", pin_in.port->name, pin_in.pin);
 	LOG_INF("%d bytes of data exchanged at once", CONFIG_DATA_FIELD);
+	LOG_INF("Expect at least %d transceives during one run", EXPECTED_TRANSCEIVE_COUNT);
 #if defined(CONFIG_TEST_SPI_HOLD_ON_CS)
 	LOG_INF("SPI CS lock enabled");
 #endif
@@ -179,9 +201,10 @@ int main(void)
 		test_pass = true;
 		timer_expired = false;
 
-		/* Clear edge counters. */
+		/* Clear counters. */
 		high = 0;
 		low = 0;
+		transceive_counter = 0;
 
 		/* Start a one-shot timer that expires after 1 second. */
 		k_timer_start(&my_timer, K_MSEC(1000), K_NO_WAIT);
@@ -209,12 +232,14 @@ int main(void)
 
 			/* Transmit data. */
 			ret = spi_transceive_dt(&spim_spec, &tx_spi_buf_set, &rx_spi_buf_set);
-			if (ret != 0) {
+			if (ret == 0) {
+				transceive_counter++;
+			} else {
 				LOG_ERR("spi_transceive_dt, err: %d", ret);
 			}
 #if defined(CONFIG_GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING)
 			if (switch_flag) {
-				set_global_domain_frequency(freq[counter % ARRAY_SIZE(freq)]);
+				set_global_domain_frequency(freq[loop_counter % ARRAY_SIZE(freq)]);
 				switch_flag = 0;
 			}
 #endif
@@ -229,7 +254,7 @@ int main(void)
 					LOG_ERR("FAIL: rx[%d] = %d, expected %d", i, received,
 						transmitted);
 					test_pass = false;
-					__ASSERT(false, "Run %d - FAILED\n", counter);
+					__ASSERT(false, "Run %d - FAILED\n", loop_counter);
 				}
 			}
 
@@ -280,11 +305,17 @@ int main(void)
 		}
 		__ASSERT_NO_MSG(ret == 0);
 
+		if (transceive_counter < EXPECTED_TRANSCEIVE_COUNT) {
+			test_pass = false;
+		}
+
 		/* Report if communication was successful. */
 		if (test_pass) {
-			LOG_INF("Run %d - PASS; rising: %u, falling %u", counter, high, low);
+			LOG_INF("Run %d - PASS; transceives: %u, CS rising: %u, falling %u",
+				loop_counter, transceive_counter, high, low);
 		} else {
-			LOG_INF("Run %d - FAILED; rising: %u, falling %u", counter, high, low);
+			LOG_INF("Run %d - FAILED; transceives: %u, CS rising: %u, falling %u",
+				loop_counter, transceive_counter, high, low);
 		}
 
 #if defined(CONFIG_TEST_SPI_HOLD_ON_CS)
@@ -299,7 +330,7 @@ int main(void)
 		__ASSERT_NO_MSG(low == 1);
 #else  /* defined(CONFIG_TEST_SPI_RELEASE_BEFORE_SLEEP) */
 		/* SPI CS gets activated in the first iteration and stays active forever. */
-		if (counter == 0) {
+		if (loop_counter == 0) {
 			/* Observed edge depends on GPIO polarity. */
 			if (pin_in.dt_flags & GPIO_ACTIVE_LOW) {
 				/* GPIO_ACTIVE_LOW */
@@ -323,7 +354,7 @@ int main(void)
 		__ASSERT_NO_MSG(low >= 100);
 		__ASSERT_NO_MSG(low == high);
 #endif
-		counter++;
+		loop_counter++;
 
 		/* Sleep / enter low power state. */
 		gpio_pin_set_dt(&led, 0);
