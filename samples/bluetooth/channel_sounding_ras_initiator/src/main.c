@@ -173,7 +173,7 @@ static void ranging_data_cb(struct bt_conn *conn, uint16_t ranging_counter, int 
 
 	net_buf_simple_reset(&latest_local_steps);
 
-	if (ras_feature_bits & RAS_FEAT_REALTIME_RD) {
+	if (!(ras_feature_bits & RAS_FEAT_REALTIME_RD)) {
 		net_buf_simple_reset(&latest_peer_steps);
 	}
 
