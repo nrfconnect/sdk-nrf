@@ -1123,8 +1123,52 @@ struct coap_transmission_parameters coap_get_transmission_parameters_ok(void)
 	return coap_transmission_params;
 }
 
-K_PIPE_DEFINE(event_pipe, 10*sizeof(struct downloader_evt),
-	      _Alignof(struct downloader_evt));
+struct pipe {
+	struct downloader_evt data[10];
+	uint8_t wr_idx;
+	uint8_t rd_idx;
+};
+
+static struct pipe event_pipe;
+K_SEM_DEFINE(pipe_sem, 0, 10);
+
+static void pipe_reset(struct pipe *pipe)
+{
+	memset(pipe, 0, sizeof(struct pipe));
+}
+
+static int pipe_put(struct pipe *pipe, const struct downloader_evt *evt)
+{
+	if (k_sem_count_get(&pipe_sem) >= 10) {
+		return -ENOSPC;
+	}
+
+	memcpy(&pipe->data[pipe->wr_idx], evt, sizeof(struct downloader_evt));
+
+	pipe->wr_idx++;
+	pipe->wr_idx = CLAMP(pipe->wr_idx, 0, (sizeof(pipe->data) / sizeof(struct downloader_evt)) - 1);
+
+	k_sem_give(&pipe_sem);
+
+	return 0;
+}
+
+static int pipe_get(struct pipe *pipe, struct downloader_evt *evt, k_timeout_t timeo)
+{
+	int err;
+
+	err = k_sem_take(&pipe_sem, timeo);
+	if (err) {
+		return err;
+	}
+
+	memcpy(evt, &pipe->data[pipe->rd_idx], sizeof(struct downloader_evt));
+
+	pipe->rd_idx++;
+	pipe->rd_idx = CLAMP(pipe->rd_idx, 0, (sizeof(pipe->data) / sizeof(struct downloader_evt)) - 1);
+
+	return 0;
+}
 
 static const char *dl_event_id_str(int evt_id)
 {
@@ -1141,8 +1185,6 @@ static const char *dl_event_id_str(int evt_id)
 
 static int dl_callback(const struct downloader_evt *event)
 {
-	size_t written;
-
 	TEST_ASSERT(event != NULL);
 
 	printk("event: %s ", dl_event_id_str(event->id));
@@ -1156,15 +1198,13 @@ static int dl_callback(const struct downloader_evt *event)
 		printk("\n");
 	}
 
-	k_pipe_put(&event_pipe, (void *)event, sizeof(*event), &written, sizeof(*event), K_FOREVER);
+	pipe_put(&event_pipe, event);
 
 	return 0;
 }
 
 static int dl_callback_abort(const struct downloader_evt *event)
 {
-	size_t written;
-
 	TEST_ASSERT(event != NULL);
 
 	printk("event: %s\n", dl_event_id_str(event->id));
@@ -1172,7 +1212,7 @@ static int dl_callback_abort(const struct downloader_evt *event)
 		/* avoid spamming error events during development */
 		k_sleep(K_MSEC(100));
 	}
-	k_pipe_put(&event_pipe, (void *)event, sizeof(*event), &written, sizeof(*event), K_FOREVER);
+	pipe_put(&event_pipe, event);
 
 	return 1; /* stop download*/
 }
@@ -1180,13 +1220,11 @@ static int dl_callback_abort(const struct downloader_evt *event)
 static struct downloader_evt dl_wait_for_event(enum downloader_evt_id event,
 						     k_timeout_t timeout)
 {
-	size_t read;
 	struct downloader_evt evt;
 	int err;
 
 	while (true) {
-		err = k_pipe_get(&event_pipe, &evt, sizeof(evt), &read, sizeof(evt),
-				 timeout);
+		err = pipe_get(&event_pipe, &evt, K_FOREVER);
 		TEST_ASSERT_EQUAL(0, err);
 		if (evt.id == event) {
 			break;
@@ -2455,7 +2493,7 @@ void setUp(void)
 	RESET_FAKE(coap_get_transmission_parameters);
 	RESET_FAKE(coap_pending_init);
 
-	k_pipe_flush(&event_pipe);
+	pipe_reset(&event_pipe);
 }
 
 void tearDown(void)
