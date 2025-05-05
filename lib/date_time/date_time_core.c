@@ -218,6 +218,12 @@ void date_time_core_init(void)
 	if (!IS_ENABLED(CONFIG_DATE_TIME_AUTO_UPDATE)) {
 		date_time_core_schedule_update();
 	}
+
+	if (IS_ENABLED(CONFIG_BOARD_NATIVE_SIM) && !IS_ENABLED(CONFIG_UNITY)) {
+		LOG_DBG("Running on native_sim, consider time updated.");
+		k_sleep(K_MSEC(1));
+		date_time_last_update_uptime = k_uptime_get();
+	}
 }
 
 int date_time_core_now(int64_t *unix_time_ms)
@@ -230,7 +236,7 @@ int date_time_core_now(int64_t *unix_time_ms)
 		LOG_WRN("clock_gettime failed, errno %d", errno);
 		return -ENODATA;
 	}
-	*unix_time_ms = tp.tv_sec * 1000 + tp.tv_nsec / 1000000;
+	*unix_time_ms = (int64_t)tp.tv_sec * 1000 + (int64_t)tp.tv_nsec / 1000000;
 
 	return 0;
 }
