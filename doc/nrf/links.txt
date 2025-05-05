@@ -34,6 +34,7 @@
 .. _`GitHub fork`: https://docs.github.com/en/github/getting-started-with-github/quickstart/fork-a-repo
 .. _`GitHub duplicate`: https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/duplicating-a-repository
 .. _`RST source file of Documentation guidelines`: https://raw.githubusercontent.com/nrfconnect/sdk-nrf/main/doc/nrf/dev_model_and_contributions/documentation/styleguide.rst
+.. _`sdk-sidewalk`: https://github.com/nrfconnect/sdk-sidewalk
 .. _`Amazon Sidewalk Sample IoT App`: https://github.com/aws-samples/aws-iot-core-for-amazon-sidewalk-sample-app
 .. _`sdk-zephyr`: https://github.com/nrfconnect/sdk-zephyr
 .. _`official Zephyr repository`:
