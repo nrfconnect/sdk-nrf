@@ -588,8 +588,19 @@ static size_t cmd_rx_handler(const uint8_t *buf, const size_t len)
 		case 0x08: /* Backspace. */
 			/* Fall through. */
 		case 0x7F: /* DEL character */
+			if (at_cmd_len == 0) {
+				continue;
+			}
+
+			at_cmd_len--;
+			/* If the removed character was a quote, need to toggle the flag. */
+			if (prev_character == '"') {
+				inside_quotes = !inside_quotes;
+			}
 			if (at_cmd_len > 0) {
-				at_cmd_len--;
+				prev_character = slm_at_buf[at_cmd_len - 1];
+			} else {
+				prev_character = '\0';
 			}
 			continue;
 		}
