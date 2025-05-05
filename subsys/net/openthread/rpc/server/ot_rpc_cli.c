@@ -43,23 +43,13 @@ static int ot_cli_output_callback(void *aContext, const char *aFormat, va_list a
 static void ot_rpc_cmd_cli_init(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 				void *handler_data)
 {
-	struct nrf_rpc_cbor_ctx rsp_ctx;
-
-	/* Parse the input */
-
 	nrf_rpc_cbor_decoding_done(group, ctx);
-
-	/* Initialize OT CLI */
 
 	openthread_api_mutex_lock(openthread_get_default_context());
 	otCliInit(openthread_get_default_instance(), ot_cli_output_callback, NULL /* aContext*/);
 	openthread_api_mutex_unlock(openthread_get_default_context());
 
-	/* Encode and send the response */
-
-	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 0);
-
-	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
+	nrf_rpc_rsp_send_void(group);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_cli_init, OT_RPC_CMD_CLI_INIT, ot_rpc_cmd_cli_init,
@@ -68,10 +58,10 @@ NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_cli_init, OT_RPC_CMD_CLI_INIT, ot_
 static void ot_rpc_cmd_cli_input_line(const struct nrf_rpc_group *group,
 				      struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
-	struct nrf_rpc_cbor_ctx rsp_ctx;
-	char *buffer = NULL;
+	char *buffer;
 	const void *ptr;
 	size_t len;
+	bool reply_before_exec;
 
 	/* Parse the input */
 	ptr = nrf_rpc_decode_str_ptr_and_len(ctx, &len);
@@ -84,29 +74,33 @@ static void ot_rpc_cmd_cli_input_line(const struct nrf_rpc_group *group,
 		}
 	}
 
-	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+	nrf_rpc_cbor_decoding_done(group, ctx);
+
+	if (!ptr) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_CLI_INPUT_LINE);
-
-		free(buffer);
 		return;
 	}
 
-	if (!ptr || !buffer) {
+	if (!buffer) {
+		nrf_rpc_err(-ENOMEM, NRF_RPC_ERR_SRC_RECV, group, OT_RPC_CMD_CLI_INPUT_LINE,
+			    NRF_RPC_PACKET_TYPE_CMD);
 		return;
 	}
 
-	/* Execute OT CLI command */
+	reply_before_exec = !strcmp(buffer, "factoryreset");
+
+	if (reply_before_exec) {
+		nrf_rpc_rsp_send_void(group);
+	}
+
 	openthread_api_mutex_lock(openthread_get_default_context());
 	otCliInputLine(buffer);
 	openthread_api_mutex_unlock(openthread_get_default_context());
-
-	/* Encode and send the response */
-
-	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 0);
-
-	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
-
 	free(buffer);
+
+	if (!reply_before_exec) {
+		nrf_rpc_rsp_send_void(group);
+	}
 }
 
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_cli_input_line, OT_RPC_CMD_CLI_INPUT_LINE,
