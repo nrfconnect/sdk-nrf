@@ -5,7 +5,7 @@
 # This configurations come from tests/samples in sdk-zephyr
 
 - scenarios:
-    - libraries.hash_map.newlib.cxx_unordered_map.djb2
+    - sample.libraries.hash_map.newlib.cxx_unordered_map.djb2
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-21219"
 
 - scenarios:
