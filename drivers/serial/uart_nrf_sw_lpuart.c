@@ -791,14 +791,28 @@ static int api_rx_disable(const struct device *dev)
 
 	data->rx_state = RX_TO_OFF;
 
+	if (data->rx_buf) {
+		struct uart_event buf_rel_evt = {
+			.type = UART_RX_BUF_RELEASED,
+			.data = {
+				.rx_buf = {
+					.buf = data->rx_buf
+				}
+			}
+		};
+
+		data->rx_buf = NULL;
+		user_callback(dev, &buf_rel_evt);
+	}
+
 	err = uart_rx_disable(data->uart);
 	if (err == -EFAULT) {
+
 		struct uart_event event = {
 			.type = UART_RX_DISABLED
 		};
 
 		data->rx_state = RX_OFF;
-		data->rx_buf = NULL;
 		user_callback(dev, &event);
 	}
 
