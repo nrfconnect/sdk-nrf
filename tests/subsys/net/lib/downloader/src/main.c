@@ -1146,7 +1146,8 @@ static int pipe_put(struct pipe *pipe, const struct downloader_evt *evt)
 	memcpy(&pipe->data[pipe->wr_idx], evt, sizeof(struct downloader_evt));
 
 	pipe->wr_idx++;
-	pipe->wr_idx = CLAMP(pipe->wr_idx, 0, (sizeof(pipe->data) / sizeof(struct downloader_evt)) - 1);
+	pipe->wr_idx = CLAMP(pipe->wr_idx, 0,
+			     (sizeof(pipe->data) / sizeof(struct downloader_evt)) - 1);
 
 	k_sem_give(&pipe_sem);
 
@@ -1165,7 +1166,8 @@ static int pipe_get(struct pipe *pipe, struct downloader_evt *evt, k_timeout_t t
 	memcpy(evt, &pipe->data[pipe->rd_idx], sizeof(struct downloader_evt));
 
 	pipe->rd_idx++;
-	pipe->rd_idx = CLAMP(pipe->rd_idx, 0, (sizeof(pipe->data) / sizeof(struct downloader_evt)) - 1);
+	pipe->rd_idx = CLAMP(pipe->rd_idx, 0,
+			     (sizeof(pipe->data) / sizeof(struct downloader_evt)) - 1);
 
 	return 0;
 }
