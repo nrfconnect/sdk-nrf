@@ -9,6 +9,7 @@
  */
 
 #include <math.h>
+#include <stdlib.h>
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
 #include <zephyr/sys/reboot.h>
@@ -30,7 +31,7 @@ LOG_MODULE_REGISTER(app_main, LOG_LEVEL_INF);
 #define CS_CONFIG_ID	       0
 #define NUM_MODE_0_STEPS       3
 #define PROCEDURE_COUNTER_NONE (-1)
-#define DE_SLIDING_WINDOW_SIZE (10)
+#define DE_SLIDING_WINDOW_SIZE (9)
 #define MAX_AP		       (CONFIG_BT_RAS_MAX_ANTENNA_PATHS)
 
 #define LOCAL_PROCEDURE_MEM                                                                        \
@@ -80,6 +81,29 @@ static void store_distance_estimates(cs_de_report_t *p_report)
 	k_mutex_unlock(&distance_estimate_buffer_mutex);
 }
 
+static int float_cmp(const void *a, const void *b)
+{
+	float fa = *(const float *)a;
+	float fb = *(const float *)b;
+
+	return (fa > fb) - (fa < fb);
+}
+
+static float median_inplace(int count, float *values)
+{
+	if (count == 0) {
+		return NAN;
+	}
+
+	qsort(values, count, sizeof(float), float_cmp);
+
+	if (count % 2 == 0) {
+		return (values[count/2] + values[count/2 - 1]) / 2;
+	} else {
+		return values[count/2];
+	}
+}
+
 static cs_de_dist_estimates_t get_distance(uint8_t ap)
 {
 	cs_de_dist_estimates_t averaged_result = {};
@@ -87,38 +111,35 @@ static cs_de_dist_estimates_t get_distance(uint8_t ap)
 	uint8_t num_phase_slope = 0;
 	uint8_t num_rtt = 0;
 
+	static float temp_ifft[DE_SLIDING_WINDOW_SIZE];
+	static float temp_phase_slope[DE_SLIDING_WINDOW_SIZE];
+	static float temp_rtt[DE_SLIDING_WINDOW_SIZE];
+
 	int lock_state = k_mutex_lock(&distance_estimate_buffer_mutex, K_FOREVER);
 
 	__ASSERT_NO_MSG(lock_state == 0);
 
 	for (uint8_t i = 0; i < buffer_num_valid; i++) {
 		if (isfinite(distance_estimate_buffer[ap][i].ifft)) {
+			temp_ifft[num_ifft] = distance_estimate_buffer[ap][i].ifft;
 			num_ifft++;
-			averaged_result.ifft += distance_estimate_buffer[ap][i].ifft;
 		}
 		if (isfinite(distance_estimate_buffer[ap][i].phase_slope)) {
+			temp_phase_slope[num_phase_slope] =
+				distance_estimate_buffer[ap][i].phase_slope;
 			num_phase_slope++;
-			averaged_result.phase_slope += distance_estimate_buffer[ap][i].phase_slope;
 		}
 		if (isfinite(distance_estimate_buffer[ap][i].rtt)) {
+			temp_rtt[num_rtt] = distance_estimate_buffer[ap][i].rtt;
 			num_rtt++;
-			averaged_result.rtt += distance_estimate_buffer[ap][i].rtt;
 		}
 	}
 
 	k_mutex_unlock(&distance_estimate_buffer_mutex);
 
-	if (num_ifft) {
-		averaged_result.ifft /= num_ifft;
-	}
-
-	if (num_phase_slope) {
-		averaged_result.phase_slope /= num_phase_slope;
-	}
-
-	if (num_rtt) {
-		averaged_result.rtt /= num_rtt;
-	}
+	averaged_result.ifft = median_inplace(num_ifft, temp_ifft);
+	averaged_result.phase_slope = median_inplace(num_phase_slope, temp_phase_slope);
+	averaged_result.rtt = median_inplace(num_rtt, temp_rtt);
 
 	return averaged_result;
 }
