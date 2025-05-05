@@ -51,6 +51,24 @@
     - nrfconnect/ncs-si-bluebagel
 
 - scenarios:
+    - sample.find_my.switchable_networks.release.ui_switch
+  platforms:
+    - all
+  rom_increase: 1024
+  ram_increase: 1024
+  codeowners:
+    - nrfconnect/ncs-si-bluebagel
+
+- scenarios:
+    - sample.find_my.switchable_networks.release.dfu_switch*
+  platforms:
+    - all
+  rom_increase: 512
+  ram_increase: 512
+  codeowners:
+    - nrfconnect/ncs-si-bluebagel
+
+- scenarios:
     - sample.matter.template.release
   platforms:
     - nrf52840dk/nrf52840
