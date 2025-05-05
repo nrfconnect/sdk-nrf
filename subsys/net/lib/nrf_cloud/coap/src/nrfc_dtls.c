@@ -111,6 +111,7 @@ int nrfc_dtls_setup(int sock)
 		cid_supported = false;
 	}
 
+#if !defined(CONFIG_BOARD_NATIVE_SIM)
 	int timeout = TLS_DTLS_HANDSHAKE_TIMEO_123S;
 
 	LOG_DBG("  Set handshake timeout %d", timeout);
@@ -120,6 +121,7 @@ int nrfc_dtls_setup(int sock)
 	} else if ((err != EOPNOTSUPP) || (err != EINVAL)) {
 		LOG_ERR("Error setting handshake timeout: %d", -errno);
 	}
+#endif
 
 	int verify = TLS_PEER_VERIFY_REQUIRED;
 
