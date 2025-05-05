@@ -13,7 +13,7 @@ config OPENTHREAD
 	select ENTROPY_GENERATOR
 	select NRF_802154_RADIO_DRIVER if HAS_HW_NRF_RADIO_IEEE802154 && !NET_L2_OPENTHREAD
 	select NRF_802154_SER_HOST if !HAS_HW_NRF_RADIO_IEEE802154 && !NET_L2_OPENTHREAD
-	select NRF_802154_RADIO_CONFIG if !NET_L2_OPENTHREAD
+	select NRF_802154_RADIO_CONFIG if HAS_HW_NRF_RADIO_IEEE802154 && !NET_L2_OPENTHREAD
 	help
 	  This option enables the OpenThread library
 
@@ -29,7 +29,7 @@ config OPENTHREAD_SYS_INIT
 
 config OPENTHREAD_SYS_INIT_PRIORITY
 	int "OpenThread system initialization priority"
-	default 40
+	default 90
 	depends on OPENTHREAD_SYS_INIT
 	help
 	  This option sets the priority of the OpenThread system initialization.
@@ -355,6 +355,10 @@ endmenu
 
 menu "Thread Network configuration"
 rsource "Kconfig.thread"
+endmenu
+
+menu "NRF5 radio configuration"
+rsource "Kconfig.nrf5"
 endmenu
 
 endif # OPENTHREAD
