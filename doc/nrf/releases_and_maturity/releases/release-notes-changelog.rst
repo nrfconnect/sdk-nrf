@@ -318,7 +318,9 @@ Networking samples
 NFC samples
 -----------
 
-|no_changes_yet_note|
+* :ref:`record_text` sample:
+
+  * Added support for the ``nrf54l15dk/nrf54l15/cpuapp/ns`` board target.
 
 nRF5340 samples
 ---------------
