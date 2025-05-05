@@ -35,10 +35,7 @@ static void ot_timer_ms_fired(struct k_timer *timer)
 
 	timer_ms_fired = true;
 
-/* TODO: Remove this once the issue is fixed */
-#ifdef CONFIG_NET_L2_OPENTHREAD
 	otSysEventSignalPending();
-#endif
 }
 
 static void ot_timer_us_fired(struct k_timer *timer)
@@ -47,10 +44,7 @@ static void ot_timer_us_fired(struct k_timer *timer)
 
 	timer_us_fired = true;
 
-/* TODO: Remove this once the issue is fixed */
-#ifdef CONFIG_NET_L2_OPENTHREAD
 	otSysEventSignalPending();
-#endif
 }
 
 K_TIMER_DEFINE(ot_ms_timer, ot_timer_ms_fired, NULL);
@@ -58,6 +52,7 @@ K_TIMER_DEFINE(ot_us_timer, ot_timer_us_fired, NULL);
 
 void platformAlarmInit(void)
 {
+// TODO: AG: REMOVE?
 #if defined(CONFIG_NET_PKT_TXTIME)
 	time_offset_us =
 		(int32_t)((int64_t)otPlatAlarmMicroGetNow() - (uint32_t)otPlatRadioGetNow(NULL));
