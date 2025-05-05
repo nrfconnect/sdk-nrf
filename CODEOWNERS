@@ -708,6 +708,7 @@
 /scripts/west_commands/create_board/      @gmarull
 /scripts/west_commands/sbom/              @nrfconnect/ncs-co-scripts
 /scripts/west_commands/thingy91x_dfu.py   @nrfconnect/ncs-cia
+/scripts/west_commands/ncs_ironside_se_update.py @nrfconnect/ncs-aurora
 /scripts/west_commands/ncs_provision.py   @nrfconnect/ncs-pluto
 /scripts/bootloader/                      @nrfconnect/ncs-pluto
 /scripts/reglock.py                       @nrfconnect/ncs-pluto

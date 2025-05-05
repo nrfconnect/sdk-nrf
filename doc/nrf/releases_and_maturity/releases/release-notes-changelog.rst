@@ -516,7 +516,8 @@ See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:R
 Scripts
 =======
 
-|no_changes_yet_note|
+* Added the :file:`ncs_ironside_se_update.py` script in the :file:`scripts/west_commands` folder.
+  The script adds the west command ``west ncs-ironside-se-update`` for installing an IRONside SE update.
 
 Integrations
 ============
