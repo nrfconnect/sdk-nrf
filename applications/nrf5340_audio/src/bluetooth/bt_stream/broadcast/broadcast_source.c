@@ -619,8 +619,7 @@ int broadcast_source_id_get(uint8_t big_index, uint32_t *broadcast_id)
 	return 0;
 }
 
-int broadcast_source_send(uint8_t big_index, uint8_t subgroup_index,
-			  struct le_audio_encoded_audio enc_audio)
+int broadcast_source_send(uint8_t big_index, uint8_t subgroup_index, struct audio_data *audio_frame)
 {
 	int ret;
 	uint8_t num_active_streams = 0;
@@ -664,7 +663,7 @@ int broadcast_source_send(uint8_t big_index, uint8_t subgroup_index,
 		return -ECANCELED;
 	}
 
-	ret = bt_le_audio_tx_send(tx, num_active_streams, enc_audio);
+	ret = bt_le_audio_tx_send(tx, num_active_streams, audio_frame);
 	if (ret) {
 		return ret;
 	}

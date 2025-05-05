@@ -117,11 +117,9 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 	uint32_t blocks_locked_num;
 
 	int debug_trans_count = 0;
-	size_t encoded_data_size = 0;
 
 	char pcm_raw_data[FRAME_SIZE_BYTES];
 
-	static uint8_t *encoded_data;
 	static size_t pcm_block_size;
 	static uint32_t test_tone_finite_pos;
 
@@ -187,10 +185,8 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 				ERR_CHK(ret);
 			}
 
-			ret = sw_codec_encode(&audio_frame, &encoded_data, &encoded_data_size);
+			ret = sw_codec_encode(&audio_frame);
 			ERR_CHK_MSG(ret, "Encode failed");
-
-			net_buf_unref(frame_buf);
 		}
 
 		/* Print block usage */
@@ -206,8 +202,8 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 		}
 
 		if (sw_codec_cfg.encoder.enabled) {
-			streamctrl_send(encoded_data, encoded_data_size,
-					sw_codec_cfg.encoder.num_ch);
+			streamctrl_send(&audio_frame);
+			net_buf_unref(frame_buf);
 		}
 		STACK_USAGE_PRINT("encoder_thread", &encoder_thread_data);
 	}

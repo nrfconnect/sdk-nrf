@@ -83,14 +83,14 @@ bool sw_codec_is_initialized(void)
 	return m_config.initialized;
 }
 
-int sw_codec_encode(struct audio_data *audio_frame, uint8_t **encoded_data, size_t *encoded_size)
+int sw_codec_encode(struct audio_data *audio_frame)
 {
 	int ret;
 
 	/* Temp storage for split stereo PCM signal */
 	char pcm_data_mono_system_sample_rate[AUDIO_CH_NUM][PCM_NUM_BYTES_MONO] = {0};
 	/* Make sure we have enough space for two frames (stereo) */
-	static uint8_t m_encoded_data[ENC_MAX_FRAME_SIZE * AUDIO_CH_NUM];
+	uint8_t m_encoded_data[ENC_MAX_FRAME_SIZE * AUDIO_CH_NUM];
 
 	char pcm_data_mono_converted_buf[AUDIO_CH_NUM][PCM_NUM_BYTES_MONO] = {0};
 
@@ -172,8 +172,11 @@ int sw_codec_encode(struct audio_data *audio_frame, uint8_t **encoded_data, size
 			return -ENODEV;
 		}
 
-		*encoded_data = m_encoded_data;
-		*encoded_size = encoded_bytes_written;
+		audio_frame->meta.data_coding = LC3;
+		audio_frame->data_size = encoded_bytes_written;
+
+		net_buf_remove_mem(buf, buf->len);
+		net_buf_add_mem(buf, m_encoded_data, encoded_bytes_written);
 
 #endif /* (CONFIG_SW_CODEC_LC3) */
 		break;

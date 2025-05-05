@@ -103,4 +103,31 @@ struct audio_data {
 	struct audio_metadata meta;
 };
 
+/**
+ * @brief Get the number of channels in the audio data.
+ *
+ * This function will count the number of bits set in the
+ * locations field of the audio metadata.
+ *
+ * @param audio_frame Pointer to the audio data structure.
+ *
+ * @return The number of channels.
+ */
+inline uint8_t audio_data_num_ch_get(struct audio_data *audio_frame)
+{
+	uint32_t mask = audio_frame->meta.locations;
+	uint32_t count = 0;
+
+	if (mask == 0) {
+		return 1;
+	}
+
+	while (mask) {
+		count += mask & 1;
+		mask >>= 1;
+	}
+
+	return count;
+}
+
 #endif /* _AUDIO_DEFINES_H_ */
