@@ -28,8 +28,7 @@
 };
 
 &hfpll {
-	/* For now use 64 MHz clock for CPU and fast peripherals. */
-	clock-frequency = <DT_FREQ_M(64)>;
+	clock-frequency = <DT_FREQ_M(128)>;
 };
 
 &lfxo {
