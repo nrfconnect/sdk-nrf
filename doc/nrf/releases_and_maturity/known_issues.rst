@@ -568,6 +568,13 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v3-0-1 v3-0-0 v2-9-1 v2-9-0 v2-8-0 v2-7-0
+
+KRKNWK-20268: Certification test cast TC-ACE-2.2 fails with an unexpected error when testing access permissions for the ``NodeLabel`` attribute in the BridgedDeviceBasicInformation cluster
+  The ``NodeLabel`` attribute has invalid access permissions.
+
+  **Workaround:** Cherry-pick changes from the PR #604 in the `dedicated Matter fork`_ repository and regenerate the application ZAP files using ``west zap-generate``.
+
 .. rst-class:: v2-9-1 v2-9-0 v2-8-0
 
 KRKNWK-20035: Door Lock Attributes do not persist after reboot or reset
