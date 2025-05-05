@@ -174,9 +174,11 @@
 .. _`nRF Cloud JSON protocol schemas`: https://github.com/nRFCloud/application-protocols
 .. _`device_credentials_installer.py`: https://github.com/nRFCloud/utils/blob/main/src/nrfcloud_utils/device_credentials_installer.py
 .. _`nrf_cloud_onboard.py`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md#nrf-cloud-device-onboarding
-.. _`nRF Cloud Utilities Create CA Cert`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md#create-ca-cert
-.. _`nRF Cloud Utilities Create Device Credentials`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md#create-device-credentials
-.. _`nRF Cloud Utilities Prerequisites`: https://github.com/nRFCloud/utils/blob/main/README.md#requirements
+.. _`nRF Cloud Utils Create CA Cert`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md#create-ca-cert
+.. _`nRF Cloud Utils Create Device Credentials`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md#create-device-credentials
+.. _`nRF Cloud Utils`: https://github.com/nRFCloud/utils/tree/main
+.. _`nRF Cloud Utils requirements`: https://github.com/nRFCloud/utils/blob/main/README.md#requirements
+.. _`nRF Cloud Utils documentation`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md
 .. _`nRF Cloud Utilities documentation`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md
 
 .. _`zcbor`: https://github.com/NordicSemiconductor/zcbor
@@ -1389,7 +1391,8 @@
 
 .. _`nRF Cloud`:
 .. _`nRF Connect for Cloud`: https://nrfcloud.com/
-.. _`Provision Devices`: http://nrfcloud.com/#/provision-devices
+.. _`User Account`: https://nrfcloud.com/#/account
+.. _`Provision Devices`: https://nrfcloud.com/#/provision-devices
 
 .. _`nRF Cloud documentation`:
 .. _`nRF Connect for Cloud documentation`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/index.html
