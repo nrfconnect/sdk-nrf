@@ -77,13 +77,9 @@ static int ot_cmd(const struct shell *sh, size_t argc, char *argv[])
 
 	shell_p = sh;
 
-#ifdef CONFIG_NET_L2_OPENTHREAD
 	openthread_mutex_lock();
-#endif
 	otCliInputLine(rx_buffer);
-#ifdef CONFIG_NET_L2_OPENTHREAD
 	openthread_mutex_unlock();
-#endif
 
 	return 0;
 }
