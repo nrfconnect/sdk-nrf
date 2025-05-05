@@ -1042,6 +1042,58 @@ or
 
 These overlays show all the Kconfig settings changes needed to properly disable all but a single sensor.
 
+.. _nrf_cloud_multi_service_native_sim:
+
+Building with native simulator
+==============================
+
+You can run this sample on the :ref:`zephyr:native_sim` target.
+This enables you to try out connectivity without the need for embedded hardware.
+A Linux host or docker container is required to run the ``native_sim`` target.
+Some setup is needed to connect the application to the network.
+See :ref:`zephyr:networking_with_native_sim` for more information.
+This sample uses the :file:`nat.conf` configuration.
+Refer to :ref:`nrf_cloud_multi_service_create_device_cred_locally` for creating the necessary device credentials locally.
+Modify the :file:`overlay_native_sim.conf` file to use the client ID for the credentials you created.
+
+   .. code-block:: console
+
+      # build nrf_cloud_multi_service with native_sim configs, optionally use -DEXTRA_CONF_FILE="overlay_native_sim.conf;overlay_native_sim_coap.conf" for CoAP
+      west build -b native_sim -- -DEXTRA_CONF_FILE="overlay_native_sim.conf" -DSB_CONF_FILE="sysbuild_native_sim.conf"
+      # set up zephyr ethernet interface
+      ~/work/ncs/tools/net-tools$ sudo ./net-setup.sh --config nat.conf start
+      # run the application (use CTRL-C to exit)
+      ./build/nrf_cloud_multi_service/zephyr/zephyr.exe
+      # clean up zephyr ethernet interface
+      ~/work/ncs/tools/net-tools$ sudo ./net-setup.sh --config nat.conf stop
+
+If you intend to trace network traffic on the ``zeth`` interface, it can be useful to modify the :c:func:`ssl_tls12_populate_transform` function inside ``mbedtls`` close to ``MBEDTLS_SSL_KEY_EXPORT_TLS12_MASTER_SECRET`` to print the TLS ephemeral keys:
+
+   .. code-block:: c
+
+      printf("\nCLIENT_RANDOM ");
+
+      for (size_t i = 0; i < 32; i++) {
+         printf("%02x", randbytes[32+i]);
+      }
+
+      printf(" ");
+
+      for (size_t i = 0; i < 48; i++) {
+         printf("%02x", master[i]);
+      }
+
+      printf("\n\n");
+
+This allows you to decrypt the traffic using Wireshark.
+Copy the line starting with ``CLIENT_RANDOM`` from the serial output into the :file:`dtls_keys.log` file and use the following command to decrypt the traffic:
+
+   .. code-block:: console
+
+      editcap --inject-secrets tls,dtls_keys.log zeth.pcapng zeth_w_key.pcapng
+
+Afterwards, you can use Wireshark to analyze the decrypted traffic.
+
 .. _nrf_cloud_multi_service_provisioning_onboarding:
 
 Provisioning and onboarding

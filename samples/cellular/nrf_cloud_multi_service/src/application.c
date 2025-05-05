@@ -6,7 +6,9 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_ctrl.h>
+#if !defined(CONFIG_BOARD_NATIVE_SIM)
 #include <helpers/nrfx_reset_reason.h>
+#endif /* !defined(CONFIG_BOARD_NATIVE_SIM) */
 #include <date_time.h>
 #include <stdio.h>
 #include <net/nrf_cloud.h>
@@ -323,6 +325,7 @@ static void test_counter_send(void)
 	}
 }
 
+#if defined(CONFIG_DK_LIBRARY)
 static void button_handler(uint32_t button_state, uint32_t has_changed)
 {
 	if (has_changed & DK_BTN1_MSK) {
@@ -332,17 +335,21 @@ static void button_handler(uint32_t button_state, uint32_t has_changed)
 		}
 	}
 }
+#endif
 
 static void print_reset_reason(void)
 {
+#if !defined(CONFIG_BOARD_NATIVE_SIM)
 	uint32_t reset_reason;
 
 	reset_reason = nrfx_reset_reason_get();
 	LOG_INF("Reset reason: 0x%x", reset_reason);
+#endif /* !defined(CONFIG_BOARD_NATIVE_SIM) */
 }
 
 static void report_startup(void)
 {
+#if !defined(CONFIG_BOARD_NATIVE_SIM)
 	if (IS_ENABLED(CONFIG_SEND_ONLINE_ALERT)) {
 		uint32_t reset_reason;
 
@@ -350,6 +357,7 @@ static void report_startup(void)
 		nrfx_reset_reason_clear(reset_reason);
 		(void)nrf_cloud_alert_send(ALERT_TYPE_DEVICE_NOW_ONLINE, reset_reason, NULL);
 	}
+#endif /* !defined(CONFIG_BOARD_NATIVE_SIM) */
 }
 
 void main_application_thread_fn(void)
@@ -363,7 +371,9 @@ void main_application_thread_fn(void)
 		register_general_dev_msg_handler(handle_at_cmd_requests);
 	}
 
+#if defined(CONFIG_DK_LIBRARY)
 	dk_buttons_init(button_handler);
+#endif
 
 	/* Wait for first connection before starting the application. */
 	(void)await_cloud_ready(K_FOREVER);
@@ -373,12 +383,14 @@ void main_application_thread_fn(void)
 	/* Wait for the date and time to become known.
 	 * This is needed both for location services and for sensor sample timestamping.
 	 */
+#if !defined(CONFIG_BOARD_NATIVE_SIM)
 	LOG_INF("Waiting for modem to determine current date and time");
 	if (!await_date_time_known(K_SECONDS(CONFIG_DATE_TIME_ESTABLISHMENT_TIMEOUT_SECONDS))) {
 		LOG_WRN("Failed to determine valid date time. Proceeding anyways");
 	} else {
 		LOG_INF("Current date and time determined");
 	}
+#endif /* !defined(CONFIG_BOARD_NATIVE_SIM) */
 
 	const char *protocol = "";
 

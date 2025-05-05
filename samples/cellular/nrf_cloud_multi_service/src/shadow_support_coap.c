@@ -7,7 +7,9 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_ctrl.h>
+#if !defined(CONFIG_BOARD_NATIVE_SIM)
 #include <modem/location.h>
+#endif
 #include <date_time.h>
 #include <stdio.h>
 #include <net/nrf_cloud.h>
