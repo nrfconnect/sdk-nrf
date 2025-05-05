@@ -48,3 +48,16 @@
   platforms:
     - nrf54l20pdk/nrf54l20/cpuflpr
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-7267"
+
+- scenarios:
+    - sample.suit.*
+    - suit-platform.integration.*
+    - suit.integration.*
+    - suit-processor.integration.*
+    - suit.unit.*
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    - nrf52840dk/nrf52840
+    - unit.*
+    - native_sim.*
+  comment: "SUIT is planned to be removed from NCS soon"
