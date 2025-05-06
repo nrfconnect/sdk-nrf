@@ -60,7 +60,7 @@
     - nrfconnect/ncs-si-bluebagel
 
 - scenarios:
-    - sample.find_my.switchable_networks.release.dfu_switch*
+    - sample.find_my.switchable_networks.release.dfu_switch.*
   platforms:
     - all
   rom_increase: 512
