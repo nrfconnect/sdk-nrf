@@ -548,7 +548,9 @@ static void cmd_send(uint8_t *buf, size_t cmd_length, size_t buf_size)
 		return;
 	}
 
-	/* Send to modem, reserve space for CRLF in response buffer */
+	/* Send to modem. Same buffer used for sending and for the response.
+	 * Reserve space for CRLF in response buffer.
+	 */
 	err = nrf_modem_at_cmd(buf + strlen(CRLF_STR), buf_size - strlen(CRLF_STR), "%s", at_cmd);
 	if (err == -SILENT_AT_COMMAND_RET) {
 		return;
@@ -557,7 +559,8 @@ static void cmd_send(uint8_t *buf, size_t cmd_length, size_t buf_size)
 		rsp_send_error();
 		return;
 	} else if (err > 0) {
-		LOG_ERR("AT command error, type: %d", nrf_modem_at_err_type(err));
+		LOG_ERR("AT command error (%d), type: %d: value: %d",
+			err, nrf_modem_at_err_type(err), nrf_modem_at_err(err));
 	}
 
 	/** Format as TS 27.007 command V1 with verbose response format,
@@ -894,6 +897,33 @@ int slm_at_cb_wrapper(char *buf, size_t len, char *at_cmd, slm_at_callback *cb)
 		err = at_cmd_custom_respond(buf, len, "OK\r\n");
 		if (err) {
 			LOG_ERR("Failed to set OK response: %d", err);
+		}
+	} else if (err > 0) {
+		int at_cmd_err = err;
+
+		/* Reconstruct 'ERROR', 'CME ERROR' and 'CMS ERROR' response from
+		 * nrf_modem_at_cmd() return value, which is returned by some SLM specific
+		 * AT commands, such as AT#XSMS
+		 */
+		switch (nrf_modem_at_err_type(err)) {
+		case NRF_MODEM_AT_CME_ERROR:
+			err = at_cmd_custom_respond(buf, len, "+CME ERROR: %d\r\n",
+				nrf_modem_at_err(err));
+			break;
+		case NRF_MODEM_AT_CMS_ERROR:
+			err = at_cmd_custom_respond(buf, len, "+CMS ERROR: %d\r\n",
+				nrf_modem_at_err(err));
+			break;
+		case NRF_MODEM_AT_ERROR:
+		default:
+			err = at_cmd_custom_respond(buf, len, "ERROR\r\n");
+			break;
+		}
+		if (err) {
+			LOG_ERR("Failed to set error response: %d", err);
+		} else {
+			/* Return the original error code from 'cb()' */
+			err = at_cmd_err;
 		}
 	}
 
