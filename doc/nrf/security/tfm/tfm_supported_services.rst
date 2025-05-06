@@ -160,10 +160,55 @@ The following table lists the isolation level support in Nordic Semiconductor's 
      - Not supported
      - Maximum firmware isolation, with each Secure Partition sandboxed and only permitted to access its own resources.
 
+.. _ug_tfm_ncs_zephyr_differences:
+
+Differences between TF-M in the |NCS| and upstream Zephyr
+*********************************************************
+
+The TF-M implementation in the |NCS| differs from the implementation in :term:`upstream <Upstream repository>` Zephyr.
+These are the main differences:
+
+* Board support:
+
+  * The :ref:`ug_tfm_supported_services_tfm_services` implemented in the |NCS| are not recommended for use with boards in upstream Zephyr because these boards have limited TF-M support:
+
+    * Upstream Zephyr only fully supports TF-M for nRF91 Series DKs and nRF5340 DK.
+    * Upstream Zephyr's TF-M integration for nRF54L15 is limited to Zephyr's :zephyr:code-sample:`tfm_ipc` and the ``config_build`` samples (both part of :zephyr:code-sample-category:`tfm_integration`).
+    * In upstream Zephyr, TF-M integration for boards based on nRF5340 (other than the nRF5340 DK) is not supported.
+
+* TF-M configuration:
+
+  * The |NCS| allows for more customization of TF-M features:
+
+    * The |NCS| provides a :ref:`minimal build <tfm_minimal_build>` option that is enabled by default for nRF53 and nRF91 Series devices.
+    * The |NCS| offers a :ref:`configurable build <tfm_configurable_build>` that allows for more fine-grained control over TF-M features.
+
+  * Upstream Zephyr uses predefined, basic TF-M profiles that might result in larger memory footprint.
+
+* Logging:
+
+  * The |NCS| provides enhanced :ref:`logging capabilities <ug_tfm_logging>` with options to configure UART instances.
+  * The |NCS| allows TF-M and the application to share the same UART for logging.
+
+* Security features:
+
+  * The |NCS| integrates TF-M with :ref:`nrf_security` to enable hardware acceleration.
+  * The |NCS| provides additional security hardening measures specific to Nordic Semiconductor devices.
+
+* Bootloader integration:
+
+  * The |NCS| uses its own version of MCUboot (`sdk-mcuboot`_) that is specifically integrated with TF-M.
+  * Upstream Zephyr uses the standard MCUboot implementation.
+
+* Samples:
+
+  * The |NCS| provides its own set of :ref:`TF-M samples <tfm_samples>`.
+  * :zephyr:code-sample-category:`tfm_integration` samples from upstream Zephyr are not compatible with the :ref:`ug_tfm_supported_services_tfm_services` implemented in the |NCS| when built from upstream Zephyr.
+
 .. _ug_tfm_supported_services_limitations:
 
-Limitations
-***********
+Limitations of TF-M in the |NCS|
+********************************
 
 The following sections summarize the limitations of TF-M in the |NCS|, organized by category.
 
@@ -198,4 +243,3 @@ Development and integration
 ===========================
 
 * GCC is the only supported toolchain for building TF-M on Nordic Semiconductor devices.
-* :zephyr:code-sample-category:`tfm_integration` samples from upstream Zephyr are not compatible with the :ref:`ug_tfm_supported_services_tfm_services` implemented in the |NCS| when built from upstream Zephyr.
