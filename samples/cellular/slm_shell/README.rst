@@ -37,9 +37,9 @@ The following table shows how to connect UART1 of the DK to the nRF91 Series DK'
            - UART RX P0.11
          * - UART RX P1.01
            - UART TX P0.10
-         * - UART CTS P1.06
+         * - UART CTS P1.07
            - UART RTS P0.12
-         * - UART RTS P1.07
+         * - UART RTS P1.06
            - UART CTS P0.13
          * - GPIO OUT P0.11 (Button1)
            - GPIO IN P0.31
@@ -66,9 +66,9 @@ The following table shows how to connect UART1 of the DK to the nRF91 Series DK'
            - UART RX P0.11
          * - UART RX P1.05
            - UART TX P0.10
-         * - UART CTS P1.06
+         * - UART CTS P1.07
            - UART RTS P0.12
-         * - UART RTS P1.07
+         * - UART RTS P1.06
            - UART CTS P0.13
          * - GPIO OUT P0.23 (Button1)
            - GPIO IN P0.31
@@ -95,9 +95,9 @@ The following table shows how to connect UART1 of the DK to the nRF91 Series DK'
            - UART RX P0.11
          * - UART RX P1.05
            - UART TX P0.10
-         * - UART CTS P1.06
+         * - UART CTS P1.07
            - UART RTS P0.12
-         * - UART RTS P1.07
+         * - UART RTS P1.06
            - UART CTS P0.13
          * - GPIO OUT P0.31
            - GPIO IN P0.31

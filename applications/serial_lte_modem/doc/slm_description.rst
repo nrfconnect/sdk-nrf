@@ -574,9 +574,9 @@ The following table shows how to connect selected development kit to an nRF91 Se
            - UART RX P0.11
          * - UART RX P1.01
            - UART TX P0.10
-         * - UART CTS P1.06
+         * - UART CTS P1.07
            - UART RTS P0.12
-         * - UART RTS P1.07
+         * - UART RTS P1.06
            - UART CTS P0.13
          * - GPIO OUT P0.11
            - GPIO IN P0.31
@@ -596,9 +596,9 @@ The following table shows how to connect selected development kit to an nRF91 Se
            - UART RX P0.11
          * - UART RX P1.05
            - UART TX P0.10
-         * - UART CTS P1.06
+         * - UART CTS P1.07
            - UART RTS P0.12
-         * - UART RTS P1.07
+         * - UART RTS P1.06
            - UART CTS P0.13
          * - GPIO OUT P0.23
            - GPIO IN P0.31
