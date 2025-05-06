@@ -347,7 +347,7 @@ static void edge_impulse_thread_fn(void)
 		}
 
 		if (err) {
-			LOG_ERR("run_classifier err=%d", err);
+			LOG_ERR("run_classifier err=%d", (int)err);
 		}
 
 		processing_finished(err);
