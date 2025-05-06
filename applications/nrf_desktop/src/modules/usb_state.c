@@ -1137,12 +1137,14 @@ static uint32_t get_idle_next(const struct device *dev, const uint8_t id)
 	return usb_hid->idle_duration[id];
 }
 
-static void report_sent_cb_next(const struct device *dev)
+static void report_sent_cb_next(const struct device *dev, const uint8_t *report)
 {
 	struct usb_hid_device *usb_hid = dev_to_usb_hid(dev);
 	struct usb_hid_buf *buf = usb_hid_buf_find(usb_hid, USB_HID_BUF_SENDING);
 	/* USB next stack does not explicitly indicate failed transfers. */
 	bool error = !usb_hid->enabled;
+
+	ARG_UNUSED(report);
 
 	report_sent(usb_hid, buf, error);
 }
