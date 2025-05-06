@@ -428,11 +428,11 @@ static int lzma_decompress(void *inst, const uint8_t *input, size_t input_size, 
 	}
 
 #ifdef CONFIG_NRF_COMPRESS_LZMA_VERSION_LZMA2
-	rc = Lzma2Dec_DecodeToDic(&lzma_decoder, MAX_LZMA_DICT_SIZE, input, &chunk_size,
-					(last_part ? LZMA_FINISH_END : LZMA_FINISH_ANY), &status);
+	rc = Lzma2Dec_DecodeToDic(&lzma_decoder, MAX_LZMA_DICT_SIZE,
+				  input, &chunk_size, LZMA_FINISH_ANY, &status);
 #else
-	rc = LzmaDec_DecodeToDic(&lzma_decoder, MAX_LZMA_DICT_SIZE, input, &chunk_size,
-					(last_part ? LZMA_FINISH_END : LZMA_FINISH_ANY), &status);
+	rc = LzmaDec_DecodeToDic(&lzma_decoder, MAX_LZMA_DICT_SIZE,
+				 input, &chunk_size, LZMA_FINISH_ANY, &status);
 #endif
 
 	if (rc) {
@@ -442,8 +442,7 @@ static int lzma_decompress(void *inst, const uint8_t *input, size_t input_size, 
 
 	*offset = chunk_size;
 
-	if (last_part && (status == LZMA_STATUS_FINISHED_WITH_MARK ||
-			  status == LZMA_STATUS_MAYBE_FINISHED_WITHOUT_MARK) &&
+	if (last_part && status == LZMA_STATUS_FINISHED_WITH_MARK &&
 	    *offset < input_size) {
 		/* If last block, ensure offset matches complete file size */
 		*offset = input_size;
@@ -539,11 +538,11 @@ static int lzma_decompress(void *inst, const uint8_t *input, size_t input_size, 
 	}
 
 #ifdef CONFIG_NRF_COMPRESS_LZMA_VERSION_LZMA2
-	rc = Lzma2Dec_DecodeToDic(&lzma_decoder, decoder->dicHandle->dicBufSize, input, &chunk_size,
-					LZMA_FINISH_ANY, &status);
+	rc = Lzma2Dec_DecodeToDic(&lzma_decoder, decoder->dicHandle->dicBufSize,
+				  input, &chunk_size, LZMA_FINISH_ANY, &status);
 #else
-	rc = LzmaDec_DecodeToDic(&lzma_decoder, decoder->dicHandle->dicBufSize, input, &chunk_size,
-					LZMA_FINISH_ANY, &status);
+	rc = LzmaDec_DecodeToDic(&lzma_decoder, decoder->dicHandle->dicBufSize,
+				 input, &chunk_size, LZMA_FINISH_ANY, &status);
 #endif
 	if (rc) {
 		return -EINVAL;
@@ -551,7 +550,7 @@ static int lzma_decompress(void *inst, const uint8_t *input, size_t input_size, 
 
 	*offset = chunk_size;
 
-	if (last_part && (status == LZMA_STATUS_FINISHED_WITH_MARK) &&
+	if (last_part && status == LZMA_STATUS_FINISHED_WITH_MARK &&
 	    *offset < input_size) {
 		/* If last block, ensure offset matches complete file size. */
 		*offset = input_size;

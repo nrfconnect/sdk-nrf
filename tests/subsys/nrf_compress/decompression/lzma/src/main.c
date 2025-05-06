@@ -28,13 +28,13 @@ const uint8_t dummy_data_output_sha256[] = {
 };
 
 /* Input valid lzma2 compressed data whereby the output is larger than the dictionary size */
-const uint8_t dummy_data_too_large_input[] = {
-#include "dummy_data_input_too_large.inc"
+const uint8_t dummy_data_large_input[] = {
+#include "dummy_data_input_large.inc"
 };
 
-/* File size and sha256 hash of decompressed data for too large an output */
-const uint32_t dummy_data_too_large_output_size = 134061;
-const uint8_t dummy_data_too_large_output_sha256[] = {
+/* File size and sha256 hash of decompressed data for an output larger than dictionary size */
+const uint32_t dummy_data_large_output_size = 134061;
+const uint8_t dummy_data_large_output_sha256[] = {
 	0xc0, 0xc4, 0xac, 0xc7, 0xac, 0x69, 0x37, 0x4b,
 	0x60, 0xb4, 0x87, 0xe9, 0x3d, 0x65, 0xcf, 0xa2,
 	0x4b, 0x2b, 0xef, 0xd0, 0xb9, 0xbf, 0xf9, 0xc9,
@@ -205,7 +205,6 @@ ZTEST(nrf_compress_decompression, test_valid_data_decompression)
 			rc = implementation->decompress(inst, &dummy_data_input[pos],
 							(sizeof(dummy_data_input) - pos), true,
 							&offset, &output, &output_size);
-			pos += 1;
 		} else {
 			rc = implementation->decompress(inst, &dummy_data_input[pos], rc, false,
 							&offset, &output, &output_size);
@@ -257,14 +256,17 @@ ZTEST(nrf_compress_decompression, test_valid_data_decompression)
 #endif
 }
 
-ZTEST(nrf_compress_decompression, test_valid_data_too_large_decompression)
+ZTEST(nrf_compress_decompression, test_valid_data_large_decompression)
 {
 	int rc;
 	uint32_t pos;
 	uint32_t offset;
 	uint8_t *output;
 	uint32_t output_size;
+	uint32_t total_output_size = 0;
+	uint8_t output_sha[SHA256_SIZE] = { 0 };
 	struct nrf_compress_implementation *implementation;
+	mbedtls_sha256_context ctx;
 #if defined(CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY)
 	void *inst = &lzma_inst;
 
@@ -272,6 +274,10 @@ ZTEST(nrf_compress_decompression, test_valid_data_too_large_decompression)
 #else
 	void *inst = NULL;
 #endif
+
+	mbedtls_sha256_init(&ctx);
+	rc = mbedtls_sha256_starts(&ctx, false);
+	zassert_ok(rc, "Expected mbedtls sha256 start to be successful");
 
 	implementation = nrf_compress_implementation_find(NRF_COMPRESS_TYPE_LZMA);
 
@@ -283,12 +289,12 @@ ZTEST(nrf_compress_decompression, test_valid_data_too_large_decompression)
 	rc = implementation->decompress_bytes_needed(inst);
 	zassert_equal(rc, 2, "Expected to need 2 bytes for LZMA header");
 
-	rc = implementation->decompress(inst, &dummy_data_too_large_input[pos], rc, false, &offset,
+	rc = implementation->decompress(inst, &dummy_data_large_input[pos], rc, false, &offset,
 					&output, &output_size);
 	zassert_ok(rc, "Expected header decompress to be successful");
 	pos += offset;
 
-	while (pos < sizeof(dummy_data_too_large_input)) {
+	while (pos < sizeof(dummy_data_large_input)) {
 		rc = implementation->decompress_bytes_needed(inst);
 		zassert_equal(rc, CONFIG_NRF_COMPRESS_CHUNK_SIZE,
 			      "Expected to need chunk size bytes for LZMA data");
@@ -298,26 +304,43 @@ ZTEST(nrf_compress_decompression, test_valid_data_too_large_decompression)
 			rc = REDUCED_BUFFER_SIZE;
 		}
 
-		if ((pos + rc) > sizeof(dummy_data_too_large_input)) {
-			rc = implementation->decompress(inst, &dummy_data_too_large_input[pos],
-							(sizeof(dummy_data_too_large_input) - pos),
+		if ((pos + rc) > sizeof(dummy_data_large_input)) {
+			rc = implementation->decompress(inst, &dummy_data_large_input[pos],
+							(sizeof(dummy_data_large_input) - pos),
 							true, &offset, &output, &output_size);
-			pos += 1;
 		} else {
-			rc = implementation->decompress(inst, &dummy_data_too_large_input[pos], rc,
+			rc = implementation->decompress(inst, &dummy_data_large_input[pos], rc,
 							false, &offset, &output, &output_size);
 		}
 
-		if (rc != -EINVAL) {
-			zassert_ok(rc, "Expected data decompress to be successful");
+		zassert_ok(rc, "Expected data decompress to be successful");
+
+		total_output_size += output_size;
+
+		if (output_size > 0) {
+#if defined(CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY)
+			rc = mbedtls_sha256_update(&ctx, local_dictionary, output_size);
+#else
+			rc = mbedtls_sha256_update(&ctx, output, output_size);
+#endif
+			zassert_ok(rc, "Expected hash update to be successful");
 		}
 
 		pos += offset;
 	}
 
 	(void)implementation->deinit(inst);
+	zassert_ok(rc, "Expected deinit to be successful");
 
-	zassert_equal(rc, -EINVAL, "Expected data decompress with too large an output to fail");
+	zassert_equal(total_output_size, dummy_data_large_output_size,
+		      "Expected decompressed data size to match");
+
+	rc = mbedtls_sha256_finish(&ctx, output_sha);
+	mbedtls_sha256_free(&ctx);
+	zassert_ok(rc, "Expected mbedtls sha256 finish to be successful");
+
+	zassert_mem_equal(output_sha, dummy_data_large_output_sha256, SHA256_SIZE,
+			  "Expected hash to match");
 
 #if defined(CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY)
 	zassert_equal(open_dict_cnt, 1,
@@ -394,7 +417,7 @@ ZTEST(nrf_compress_decompression, test_invalid_data_data)
 	rc = implementation->decompress_bytes_needed(inst);
 	zassert_equal(rc, 2, "Expected to need 2 bytes for LZMA header");
 
-	rc = implementation->decompress(inst, &dummy_data_too_large_input[pos], rc, false, &offset,
+	rc = implementation->decompress(inst, &dummy_data_large_input[pos], rc, false, &offset,
 					&output, &output_size);
 	zassert_ok(rc, "Expected header decompress to be successful");
 	pos += offset;
@@ -413,7 +436,6 @@ ZTEST(nrf_compress_decompression, test_invalid_data_data)
 			rc = implementation->decompress(NULL, &dummy_data_input[pos],
 							(sizeof(dummy_data_input) - pos), true,
 							&offset, &output, &output_size);
-			pos += 1;
 		} else if (pos >= REDUCED_BUFFER_SIZE) {
 			/* Read in manipulated bad data */
 			uint8_t bad_data[REDUCED_BUFFER_SIZE];
@@ -508,7 +530,6 @@ ZTEST(nrf_compress_decompression, test_valid_data_decompression_random_sizes)
 			rc = implementation->decompress(inst, &dummy_data_input[pos],
 							(sizeof(dummy_data_input) - pos), true,
 							&offset, &output, &output_size);
-			pos += 1;
 		} else {
 			rc = implementation->decompress(inst, &dummy_data_input[pos], rc, false,
 							&offset, &output, &output_size);
@@ -627,7 +648,6 @@ ZTEST(nrf_compress_decompression, test_valid_data_decompression_reset)
 			rc = implementation->decompress(inst, &dummy_data_input[pos],
 							(sizeof(dummy_data_input) - pos), true,
 							&offset, &output, &output_size);
-			pos += 1;
 		} else {
 			rc = implementation->decompress(inst, &dummy_data_input[pos], rc, false,
 							&offset, &output, &output_size);
