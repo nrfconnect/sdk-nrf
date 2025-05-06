@@ -1,5 +1,5 @@
 tests:
-  debug.cpu_load:
+  debug.cpu_load.nrf:
     sysbuild: true
     platform_allow:
       - nrf52840dk/nrf52840
