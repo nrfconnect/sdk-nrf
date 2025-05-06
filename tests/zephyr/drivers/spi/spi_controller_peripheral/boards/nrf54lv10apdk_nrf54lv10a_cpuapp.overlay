@@ -4,6 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/* Test requires following loopbacks:
+ * SCK:  P1.09 - P1.08
+ * MISO: P1.10 - P1.11
+ * MOSI: P1.02 - P1.03
+ * CS:   P1.00 - P1.01
+ */
+
 &pinctrl {
 	spi21_default_alt: spi21_default_alt {
 		group1 {

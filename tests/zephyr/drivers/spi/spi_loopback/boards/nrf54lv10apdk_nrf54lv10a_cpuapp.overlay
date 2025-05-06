@@ -4,6 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/* Test requires following loopback:
+ * P1.09 - P1.08
+ */
+
 &pinctrl {
 	spi21_default: spi21_default {
 		group1 {

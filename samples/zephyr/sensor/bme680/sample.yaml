@@ -94,4 +94,5 @@ tests:
         - "^\\s*T:\\s*-?[0-9\\.]*; P:\\s*-?[0-9\\.]*; H: \\s*-?[0-9\\.]*; G:\\s*-?[0-9\\\
         .]*$"
     platform_allow:
-      - nrf54lm20apdk@0.2.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
