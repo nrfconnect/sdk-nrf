@@ -222,7 +222,7 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 Machine learning
 ----------------
 
-* Updated the application to enable the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` file system for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+* Updated the application to enable the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` file system for the :zephyr:board:`nrf54h20dk` board.
 
 IPC radio firmware
 ------------------
@@ -244,15 +244,15 @@ nRF Desktop
 * Updated:
 
   * The :ref:`nrf_desktop_settings_loader` to make the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` the default settings backend for all board targets that use the MRAM technology.
-    As a result, all :ref:`zephyr:nrf54h20dk_nrf54h20` configurations were migrated from the NVS settings backend to the ZMS settings backend.
-  * :ref:`nrf_desktop_watchdog` by adding the :ref:`zephyr:nrf54h20dk_nrf54h20` release configuration.
+    As a result, all :zephyr:board:`nrf54h20dk` configurations were migrated from the NVS settings backend to the ZMS settings backend.
+  * :ref:`nrf_desktop_watchdog` by adding the :zephyr:board:`nrf54h20dk` release configuration.
   * The configuration files of the :ref:`nrf_desktop_click_detector` (:file:`click_detector_def.h`) to allow them to be used even when Bluetooth LE peer control using a dedicated button (:ref:`CONFIG_DESKTOP_BLE_PEER_CONTROL <config_desktop_app_options>`) is disabled.
   * The DTS description for board targets with a different DTS overlay file for each build type to isolate the common configuration that is now defined in the :file:`app_common.dtsi` file.
-    The :ref:`zephyr:nrf54h20dk_nrf54h20` board configuration has been updated.
+    The :zephyr:board:`nrf54h20dk` board configuration has been updated.
   * The :ref:`nrf_desktop_failsafe` to use the Zephyr :ref:`zephyr:hwinfo_api` driver for getting and clearing the reset reason information (see the :c:func:`hwinfo_get_reset_cause` and :c:func:`hwinfo_clear_reset_cause` functions).
     The Zephyr :ref:`zephyr:hwinfo_api` driver replaces the dependency on the nrfx reset reason helper (see the :c:func:`nrfx_reset_reason_get` and :c:func:`nrfx_reset_reason_clear` functions).
 
-  * The release configuration for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target to enable the :ref:`nrf_desktop_failsafe` (see the :ref:`CONFIG_DESKTOP_FAILSAFE_ENABLE <config_desktop_app_options>` Kconfig option).
+  * The release configuration for the :zephyr:board:`nrf54h20dk` board target to enable the :ref:`nrf_desktop_failsafe` (see the :ref:`CONFIG_DESKTOP_FAILSAFE_ENABLE <config_desktop_app_options>` Kconfig option).
 
 Samples
 =======
@@ -299,12 +299,12 @@ Bluetooth samples
       * :ref:`peripheral_uart`
       * :ref:`ble_rpc_host`
 
-    As a result, all :ref:`zephyr:nrf54h20dk_nrf54h20` configurations of the affected samples were migrated from the NVS settings backend to the ZMS settings backend.
+    As a result, all :zephyr:board:`nrf54h20dk` configurations of the affected samples were migrated from the NVS settings backend to the ZMS settings backend.
   * Testing steps in the :ref:`peripheral_hids_mouse` to provide the build configuration that is compatible with the `Bluetooth Low Energy app`_ testing tool.
 
 * :ref:`power_profiling` sample:
 
-  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
+  * Added support for the :zephyr:board:`nrf54h20dk` board target.
 
 * :ref:`nrf_auraconfig` sample:
 
@@ -324,16 +324,16 @@ Bluetooth Fast Pair samples
 
 * :ref:`fast_pair_input_device` sample:
 
-  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
+  * Added support for the :zephyr:board:`nrf54h20dk` board target.
 
 * :ref:`fast_pair_locator_tag` sample:
 
-  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
+  * Added support for the :zephyr:board:`nrf54h20dk` board target.
 
 Edge Impulse samples
 --------------------
 
-* Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target in the following samples:
+* Added support for the :zephyr:board:`nrf54h20dk` board target in the following samples:
 
   * :ref:`ei_data_forwarder_sample`
   * :ref:`ei_wrapper_sample`
@@ -373,7 +373,7 @@ Other samples
 
   * Updated:
 
-    * Configuration for the :ref:`zephyr:nrf54h20dk_nrf54h20` board to support multi-domain logging using the ARM Coresight STM.
+    * Configuration for the :zephyr:board:`nrf54h20dk` board to support multi-domain logging using the ARM Coresight STM.
     * The logging format in the standard logging mode to align it with the format used in the multi-domain logging mode.
     * Support for alternative configurations to use the :ref:`file suffix feature from Zephyr <app_build_file_suffixes>`.
       The following file suffixes are supported as alternative configurations:
@@ -401,7 +401,7 @@ Bluetooth libraries and services
 * :ref:`bt_fast_pair_readme` library:
 
   * Added support in the build system for devices that do not support the :ref:`partition_manager`.
-    The :ref:`zephyr:nrf54h20dk_nrf54h20` board target is the only example of such a device.
+    The :zephyr:board:`nrf54h20dk` board target is the only example of such a device.
 
   * Updated the :c:func:`bt_fast_pair_info_cb_register` API to allow registration of multiple callbacks.
 
@@ -423,7 +423,7 @@ This section provides detailed lists of changes by :ref:`integration <integratio
 Google Fast Pair integration
 ----------------------------
 
-* Added instructions on how to provision the Fast Pair data onto devices without the :ref:`partition_manager` support, specifically for the :ref:`zephyr:nrf54h20dk_nrf54h20`.
+* Added instructions on how to provision the Fast Pair data onto devices without the :ref:`partition_manager` support, specifically for the :zephyr:board:`nrf54h20dk`.
 
 Zephyr
 ======

@@ -372,7 +372,7 @@ Enhanced ShockBurst (ESB)
 
 * Added:
 
-  * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and the nRF54L15 PDK.
+  * Support for the :zephyr:board:`nrf54h20dk` and the nRF54L15 PDK.
   * Fast switching between radio states for the nRF54H20 SoC.
   * Fast radio channel switching for the nRF54H20 SoC.
 
@@ -381,7 +381,7 @@ Wi-Fi
 
 * Added:
 
-  * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and nRF54L15 PDK boards with :ref:`nRF7002 EB <ug_nrf7002eb_gs>`.
+  * Support for the :zephyr:board:`nrf54h20dk` and nRF54L15 PDK boards with :ref:`nRF7002 EB <ug_nrf7002eb_gs>`.
   * General enhancements in low-power mode including watchdog based recovery.
 
 Applications
@@ -470,7 +470,7 @@ nRF Machine Learning (Edge Impulse)
 
 * Added:
 
-  * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20`.
+  * Support for the :zephyr:board:`nrf54h20dk`.
   * Support for :ref:`configuration_system_overview_sysbuild`.
 
 * Updated:
@@ -565,7 +565,7 @@ Matter Bridge
 IPC radio firmware
 ------------------
 
-* Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+* Added support for the :zephyr:board:`nrf54h20dk` board.
 
 Samples
 =======
@@ -584,7 +584,7 @@ Bluetooth samples
 
   * The :ref:`bluetooth_iso_combined_bis_cis` sample showcasing forwarding isochronous data from CIS to BIS.
   * The :ref:`bluetooth_isochronous_time_synchronization` sample showcasing time-synchronized processing of isochronous data.
-  * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board in the following samples:
+  * Support for the :zephyr:board:`nrf54h20dk` board in the following samples:
 
     * :ref:`central_bas` sample
     * :ref:`bluetooth_central_hr_coded` sample
@@ -601,7 +601,7 @@ Bluetooth samples
     * :ref:`peripheral_status` sample
     * :ref:`shell_bt_nus` sample
 
-  * Support for both the :ref:`zephyr:nrf54h20dk_nrf54h20` and the nRF54L15 PDK boards in the following samples:
+  * Support for both the :zephyr:board:`nrf54h20dk` and the nRF54L15 PDK boards in the following samples:
 
     * :ref:`peripheral_lbs` sample
     * :ref:`bluetooth_central_hids` sample
@@ -744,8 +744,8 @@ Cryptography samples
 
     * :ref:`crypto_spake2p` sample.
     * Support for the nRF54L15 PDK board for all crypto samples.
-    * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board in all crypto samples, except :ref:`crypto_persistent_key` and :ref:`crypto_tls`.
-    * Support for the :ref:`zephyr:nrf9151dk_nrf9151` board for all crypto samples.
+    * Support for the :zephyr:board:`nrf54h20dk` board in all crypto samples, except :ref:`crypto_persistent_key` and :ref:`crypto_tls`.
+    * Support for the :zephyr:board:`nrf9151dk` board for all crypto samples.
     * Support for the :ref:`nRF9161 DK <ug_nrf9161>` board for the :ref:`crypto_test`.
 
 Common samples
@@ -771,12 +771,12 @@ Enhanced ShockBurst samples
 
 * :ref:`esb_prx` sample:
 
-  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and nRF54L15 PDK boards.
+  * Added support for the :zephyr:board:`nrf54h20dk` and nRF54L15 PDK boards.
 
 Keys samples
 ------------
 
-* Added support for the :ref:`zephyr:nrf9151dk_nrf9151` and the :ref:`zephyr:nrf9161dk_nrf9161` boards for all keys samples.
+* Added support for the :zephyr:board:`nrf9151dk` and the :zephyr:board:`nrf9161dk` boards for all keys samples.
 
 Matter samples
 --------------
@@ -798,7 +798,7 @@ Matter samples
 
     DFU over Matter OTA and Bluetooth LE SMP are supported in all samples but require an external flash.
 
-  * Support for Matter over Thread on the :ref:`zephyr:nrf54h20dk_nrf54h20` with the ``nrf54h20dk/nrf54h20/cpuapp`` board target to the following Matter samples:
+  * Support for Matter over Thread on the :zephyr:board:`nrf54h20dk` with the ``nrf54h20dk/nrf54h20/cpuapp`` board target to the following Matter samples:
 
     * :ref:`matter_lock_sample` sample.
     * :ref:`matter_template_sample` sample.
@@ -866,7 +866,7 @@ NFC samples
 * Added:
 
   * Support for the nRF54L15 PDK board in the :ref:`nrf-nfc-system-off-sample` sample.
-  * Support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and nRF54L15 PDK boards in the following samples:
+  * Support for the :zephyr:board:`nrf54h20dk` and nRF54L15 PDK boards in the following samples:
 
     * :ref:`record_launch_app` sample
     * :ref:`record_text` sample
@@ -879,7 +879,7 @@ Peripheral samples
 
 * :ref:`radio_test` sample:
 
-  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` and nRF54L15 PDK boards.
+  * Added support for the :zephyr:board:`nrf54h20dk` and nRF54L15 PDK boards.
 
   * The CLI command ``fem tx_power_control <tx_power_control>`` replaces ``fem tx_gain <tx_gain>`` .
     This change applies to the sample built with the :ref:`CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC <CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC>` set to ``n``.
@@ -906,7 +906,7 @@ SUIT samples
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
 
-* Added support for the :ref:`zephyr:nrf9151dk_nrf9151` and the :ref:`zephyr:nrf9161dk_nrf9161` boards for all TF-M samples, except for the :ref:`provisioning_image_net_core` sample.
+* Added support for the :zephyr:board:`nrf9151dk` and the :zephyr:board:`nrf9161dk` boards for all TF-M samples, except for the :ref:`provisioning_image_net_core` sample.
 
 Thread samples
 --------------
@@ -964,13 +964,13 @@ Other samples
 
 * :ref:`bootloader` sample:
 
-  * Added support for the :ref:`zephyr:nrf9151dk_nrf9151` and the :ref:`zephyr:nrf9161dk_nrf9161` boards.
+  * Added support for the :zephyr:board:`nrf9151dk` and the :zephyr:board:`nrf9161dk` boards.
   * Updated the key revocation handling process to remove a security weakness found in the previous design.
     It is recommended to switch to the improved revocation handling in the newly manufactured devices.
 
 * :ref:`ipc_service_sample` sample:
 
-  * Removed support for the `OpenAMP`_ library backend on the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+  * Removed support for the `OpenAMP`_ library backend on the :zephyr:board:`nrf54h20dk` board.
 
 Drivers
 =======

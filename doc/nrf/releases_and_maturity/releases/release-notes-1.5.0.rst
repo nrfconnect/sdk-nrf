@@ -499,7 +499,7 @@ The following list summarizes the most important changes inherited from upstream
   * Added support for :ref:`board versioning <zephyr:application_board_version>`.
     With this concept, multiple board revisions can now share a single folder and board name.
   * Fixed arguments for the J-Link runners for nRF5340 DK and added the DAP Link (CMSIS-DAP) interface to the OpenOCD runner for nRF5340.
-  * Marked the nRF5340 PDK as deprecated and updated the nRF5340 documentation to point to the :ref:`zephyr:nrf5340dk_nrf5340`.
+  * Marked the nRF5340 PDK as deprecated and updated the nRF5340 documentation to point to the :zephyr:board:`nrf5340dk`.
   * Added enabling of LFXO pins (XL1 and XL2) for nRF5340.
   * Removed non-existing documentation links from partition definitions in the board devicetree files.
   * Updated documentation related to QSPI use.

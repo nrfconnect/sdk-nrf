@@ -309,16 +309,16 @@ nRF Desktop
 * Updated:
 
   * The :ref:`nrf_desktop_settings_loader` to make the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` the default settings backend for all board targets that use the MRAM technology.
-    As a result, all :ref:`zephyr:nrf54h20dk_nrf54h20` configurations were migrated from the NVS settings backend to the ZMS settings backend.
-  * :ref:`nrf_desktop_watchdog` by adding the :ref:`zephyr:nrf54h20dk_nrf54h20` release configuration.
+    As a result, all :zephyr:board:`nrf54h20dk` configurations were migrated from the NVS settings backend to the ZMS settings backend.
+  * :ref:`nrf_desktop_watchdog` by adding the :zephyr:board:`nrf54h20dk` release configuration.
   * The configuration files of the :ref:`nrf_desktop_click_detector` (:file:`click_detector_def.h`) to allow using them also when Bluetooth LE peer control using a dedicated button (:ref:`CONFIG_DESKTOP_BLE_PEER_CONTROL <config_desktop_app_options>`) is disabled.
   * The DTS description for board targets with a different DTS overlay file for each build type to isolate the common configuration that is now defined in the :file:`app_common.dtsi` file.
     The following board configurations have been updated:
 
-    * :ref:`zephyr:nrf52840dk_nrf52840`
-    * :ref:`zephyr:nrf52840dongle_nrf52840`
-    * :ref:`zephyr:nrf54l15dk_nrf54l15`
-    * :ref:`zephyr:nrf54h20dk_nrf54h20`
+    * :zephyr:board:`nrf52840dk`
+    * :zephyr:board:`nrf52840dongle`
+    * :zephyr:board:`nrf54l15dk`
+    * :zephyr:board:`nrf54h20dk`
 
   * MCUboot bootloader configurations to enable the following Kconfig options:
 
@@ -402,12 +402,12 @@ Bluetooth samples
       * :ref:`peripheral_uart`
       * :ref:`ble_rpc_host`
 
-    As a result, all :ref:`zephyr:nrf54h20dk_nrf54h20` configurations of the affected samples were migrated from the NVS settings backend to the ZMS settings backend.
+    As a result, all :zephyr:board:`nrf54h20dk` configurations of the affected samples were migrated from the NVS settings backend to the ZMS settings backend.
   * Testing steps in the :ref:`peripheral_hids_mouse` to provide the build configuration that is compatible with the `Bluetooth Low Energy app`_ testing tool.
 
 * :ref:`power_profiling` sample:
 
-  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
+  * Added support for the :zephyr:board:`nrf54h20dk` board target.
 
 * :ref:`nrf_auraconfig` sample:
 
@@ -419,11 +419,11 @@ Bluetooth Fast Pair samples
 
 * :ref:`fast_pair_locator_tag` sample:
 
-  * Updated the MCUboot bootloader configuration for the :ref:`zephyr:nrf54l15dk_nrf54l15` board target to enable the :kconfig:option:`CONFIG_FPROTECT` Kconfig option that is used to protect the bootloader partition against memory corruption.
+  * Updated the MCUboot bootloader configuration for the :zephyr:board:`nrf54l15dk` board target to enable the :kconfig:option:`CONFIG_FPROTECT` Kconfig option that is used to protect the bootloader partition against memory corruption.
 
 * :ref:`fast_pair_input_device` sample:
 
-  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
+  * Added support for the :zephyr:board:`nrf54h20dk` board target.
 
 Cellular samples
 ----------------
@@ -471,7 +471,7 @@ DECT NR+ samples
 Edge Impulse samples
 --------------------
 
-* Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target in the following samples:
+* Added support for the :zephyr:board:`nrf54h20dk` board target in the following samples:
 
   * :ref:`ei_data_forwarder_sample`
   * :ref:`ei_wrapper_sample`
@@ -497,7 +497,7 @@ Matter samples
 * :ref:`matter_template_sample` sample:
 
   * Added support for the ``nrf54l15dk/nrf54l10/cpuapp`` board target.
-  * Updated the internal configuration for the :ref:`zephyr:nrf54l15dk_nrf54l15` target to use the DFU image compression and provide more memory space for the application.
+  * Updated the internal configuration for the :zephyr:board:`nrf54l15dk` target to use the DFU image compression and provide more memory space for the application.
 
 * :ref:`matter_smoke_co_alarm_sample` sample:
 
@@ -537,7 +537,7 @@ Other samples
 
   * Updated:
 
-    * Configuration for the :ref:`zephyr:nrf54h20dk_nrf54h20` board to support multi-domain logging using the ARM Coresight STM.
+    * Configuration for the :zephyr:board:`nrf54h20dk` board to support multi-domain logging using the ARM Coresight STM.
     * The logging format in the standard logging mode to align it with the format used in the multi-domain logging mode.
     * Support for alternative configurations to use the :ref:`file suffix feature from Zephyr <app_build_file_suffixes>`.
       The following file suffixes are supported as alternative configurations:
@@ -583,7 +583,7 @@ Bluetooth libraries and services
 * :ref:`bt_fast_pair_readme` library:
 
   * Added support in build system for devices that do not support the :ref:`partition_manager`.
-    The :ref:`zephyr:nrf54h20dk_nrf54h20` board target is the only example of such a device.
+    The :zephyr:board:`nrf54h20dk` board target is the only example of such a device.
 
 Modem libraries
 ---------------

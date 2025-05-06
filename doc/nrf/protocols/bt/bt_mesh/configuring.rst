@@ -13,7 +13,7 @@ The Bluetooth® Mesh support is controlled by :kconfig:option:`CONFIG_BT_MESH`, 
 * :kconfig:option:`CONFIG_BT_OBSERVER` - Enables the Bluetooth Observer role.
 * :kconfig:option:`CONFIG_BT_PERIPHERAL` - Enables the Bluetooth Peripheral role.
 
-When the Bluetooth LE Controller is located on a separate image (like on the :ref:`zephyr:nrf5340dk_nrf5340` and :ref:`zephyr:thingy53_nrf5340` boards), the following configuration must be applied to the Bluetooth LE Controller configuration:
+When the Bluetooth LE Controller is located on a separate image (like on the :zephyr:board:`nrf5340dk` and :zephyr:board:`thingy53` boards), the following configuration must be applied to the Bluetooth LE Controller configuration:
 
 * :kconfig:option:`CONFIG_BT_EXT_ADV` =y.
 * :kconfig:option:`CONFIG_BT_EXT_ADV_MAX_ADV_SET` =5.

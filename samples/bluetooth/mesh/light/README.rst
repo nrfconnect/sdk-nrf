@@ -49,8 +49,8 @@ Take the flash size into consideration when using DFU over Bluetooth LE on other
 For example, both nRF52832 and nRF52833 have limited flash size.
 
 .. note::
-   Point-to-point DFU over Bluetooth Low Energy for :ref:`zephyr:thingy53_nrf5340` is supported by default.
-   See :ref:`thingy53_app_update` for more information about updating firmware image on :ref:`zephyr:thingy53_nrf5340`.
+   Point-to-point DFU over Bluetooth Low Energy for :zephyr:board:`thingy53` is supported by default.
+   See :ref:`thingy53_app_update` for more information about updating firmware image on :zephyr:board:`thingy53`.
 
 The DFU feature also requires a smartphone with Nordic Semiconductor's nRF Device Manager mobile app installed in one of the following versions:
 
@@ -93,8 +93,8 @@ The following table shows the mesh light composition data for this sample:
    =================  =================  =================  =================
 
 .. note::
-   When used with :ref:`zephyr:thingy53_nrf5340`, Element 4 is not available.
-   :ref:`zephyr:thingy53_nrf5340` supports only one RGB LED, and treats each RGB LED channel as a separate LED.
+   When used with :zephyr:board:`thingy53`, Element 4 is not available.
+   :zephyr:board:`thingy53` supports only one RGB LED, and treats each RGB LED channel as a separate LED.
 
 The models are used for the following purposes:
 

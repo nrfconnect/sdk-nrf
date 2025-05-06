@@ -9,7 +9,7 @@ Developing with nRF7002-EB II
 
 The nRF7002 :term:`Expansion Board (EB)` II (PCA63571), part of the `nRF70 Series Family <nRF70 Series product page_>`_, can be used to provide Wi-Fi® connectivity to compatible development or evaluation boards through the nRF7002 Wi-Fi 6 companion IC.
 
-You can use the nRF7002-EB II to provide Wi-Fi connectivity to the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`zephyr:nrf54l15dk_nrf54l15` board targets.
+You can use the nRF7002-EB II to provide Wi-Fi connectivity to the :zephyr:board:`nrf54h20dk` and :zephyr:board:`nrf54l15dk` board targets.
 
 .. figure:: images/nRF7002eb2.png
    :alt: nRF7002-EB II
