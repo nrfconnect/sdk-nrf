@@ -649,6 +649,13 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 {
 	int ret;
 	static bool initialized;
+	/* clang-format off */
+	const struct bt_pacs_register_param pacs_param = {
+		IF_ENABLED(CONFIG_BT_AUDIO_RX, (.snk_pac = true,))
+		IF_ENABLED(CONFIG_BT_AUDIO_RX, (.snk_loc = true,))
+		IF_ENABLED(CONFIG_BT_AUDIO_TX, (.src_pac = true,))
+		IF_ENABLED(CONFIG_BT_AUDIO_TX, (.src_loc = true,))};
+	/* clang-format on */
 
 	__ASSERT(strlen(CONFIG_BT_SET_IDENTITY_RESOLVING_KEY) == BT_CSIP_SIRK_SIZE,
 		 "SIRK incorrect size, must be 16 bytes");
@@ -681,10 +688,16 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 		memcpy(csip_param.sirk, CONFIG_BT_SET_IDENTITY_RESOLVING_KEY, BT_CSIP_SIRK_SIZE);
 	}
 
+	ret = bt_pacs_register(&pacs_param);
+	if (ret) {
+		printk("Could not register PACS (err %d)\n", ret);
+		return ret;
+	}
+
 	for (int i = 0; i < ARRAY_SIZE(caps); i++) {
 		ret = bt_pacs_cap_register(caps_dirs[i], &caps[i]);
 		if (ret) {
-			LOG_ERR("Capability register failed. Err: %d", ret);
+			LOG_ERR("Capability register failed. Err: %d (%d)", ret, i);
 			return ret;
 		}
 	}
@@ -716,30 +729,33 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 		}
 	}
 
-	ret = bt_pacs_set_supported_contexts(BT_AUDIO_DIR_SINK, AVAILABLE_SINK_CONTEXT);
+	if (IS_ENABLED(CONFIG_BT_AUDIO_RX)) {
+		ret = bt_pacs_set_supported_contexts(BT_AUDIO_DIR_SINK, AVAILABLE_SINK_CONTEXT);
 
-	if (ret) {
-		LOG_ERR("Supported context set failed. Err: %d", ret);
-		return ret;
+		if (ret) {
+			LOG_ERR("Supported context set failed (sink). Err: %d", ret);
+			return ret;
+		}
+
+		ret = bt_pacs_set_available_contexts(BT_AUDIO_DIR_SINK, AVAILABLE_SINK_CONTEXT);
+		if (ret) {
+			LOG_ERR("Available context set failed (sink). Err: %d", ret);
+			return ret;
+		}
 	}
 
-	ret = bt_pacs_set_available_contexts(BT_AUDIO_DIR_SINK, AVAILABLE_SINK_CONTEXT);
-	if (ret) {
-		LOG_ERR("Available context set failed. Err: %d", ret);
-		return ret;
-	}
+	if (IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
+		ret = bt_pacs_set_supported_contexts(BT_AUDIO_DIR_SOURCE, AVAILABLE_SOURCE_CONTEXT);
+		if (ret) {
+			LOG_ERR("Supported context set failed (source). Err: %d", ret);
+			return ret;
+		}
 
-	ret = bt_pacs_set_supported_contexts(BT_AUDIO_DIR_SOURCE, AVAILABLE_SOURCE_CONTEXT);
-
-	if (ret) {
-		LOG_ERR("Supported context set failed. Err: %d", ret);
-		return ret;
-	}
-
-	ret = bt_pacs_set_available_contexts(BT_AUDIO_DIR_SOURCE, AVAILABLE_SOURCE_CONTEXT);
-	if (ret) {
-		LOG_ERR("Available context set failed. Err: %d", ret);
-		return ret;
+		ret = bt_pacs_set_available_contexts(BT_AUDIO_DIR_SOURCE, AVAILABLE_SOURCE_CONTEXT);
+		if (ret) {
+			LOG_ERR("Available context set failed (source). Err: %d", ret);
+			return ret;
+		}
 	}
 
 	for (int i = 0; i < ARRAY_SIZE(cap_audio_streams); i++) {
