@@ -281,6 +281,39 @@
     - nrf52840dk/nrf52840
   comment: "Not compatible with NCS. https://nordicsemi.atlassian.net/browse/KRKNWK-20183"
 
+- scenarios:
+    - bluetooth.shell.shell_br
+  platforms:
+    - qemu_cortex_m3/ti_lm3s6965
+  comment: "https://github.com/zephyrproject-rtos/zephyr/issues/89488"
+
+- scenarios:
+    - portability.posix.xsi_realtime
+    - portability.posix.xsi_realtime.minimal
+    - portability.posix.xsi_realtime.newlib
+    - portability.posix.xsi_realtime.picolibc
+  platforms:
+    - qemu_cortex_m3/ti_lm3s6965
+  comment: "https://github.com/zephyrproject-rtos/zephyr/issues/89485"
+
+- scenarios:
+    - drivers.gpio.build
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuflpr
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-33288"
+
+- scenarios:
+    - kernel.scheduler.simple_timeslicing
+  platforms:
+    - nrf52dk/nrf52832
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-33279"
+
+- scenarios:
+    - usb.device_next.build_all
+  platforms:
+    - qemu_cortex_m3/ti_lm3s6965
+  comment: "https://github.com/zephyrproject-rtos/zephyr/issues/89484"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
@@ -441,6 +474,11 @@
     - .*secure_storage.*
     - kernel.scheduler.simple_timeslicing
     - kernel.scheduler.simple_no_timeslicing
+    - sample.input.input_dump_shell
+    - sample.harness.shell.vt100_colors_off
+    - sample.harness.shell
+    - filesystem.lib_link
+    - sample.pytest.shell.vt100_colors_off
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuppr
   comment: "region RAM/FLASH overflowed"
@@ -561,3 +599,9 @@
   platforms:
     - native_sim/native
   comment: "clang is not available in our toolchain"
+
+- scenarios:
+    - sample.bluetooth.peripheral_hr.frdm_kw41z_shield
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+  comment: "Not compatible"
