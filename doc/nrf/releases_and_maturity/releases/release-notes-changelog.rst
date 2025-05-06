@@ -534,6 +534,12 @@ Scripts
 * Added the :file:`ncs_ironside_se_update.py` script in the :file:`scripts/west_commands` folder.
   The script adds the west command ``west ncs-ironside-se-update`` for installing an IRONside SE update.
 
+* :ref:`nrf_desktop_config_channel_script` Python script:
+
+  * Updated the udev rules for Debian, Ubuntu, and Linux Mint HID host computers (replaced the :file:`99-hid.rules` file with :file:`60-hid.rules`).
+    This is done to ensure that the rules are properly applied for an nRF Desktop device connected directly over Bluetooth LE.
+    The new udev rules are applied to any HID device that uses the Nordic Semiconductor Vendor ID (regardless of Product ID).
+
 Integrations
 ============
 
