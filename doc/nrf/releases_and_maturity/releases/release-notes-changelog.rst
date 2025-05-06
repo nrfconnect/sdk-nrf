@@ -143,7 +143,10 @@ DECT NR+
 Enhanced ShockBurst (ESB)
 -------------------------
 
-|no_changes_yet_note|
+* Updated:
+
+  * By renaming the ``CONFIG_ESB_NEVER_DISABLE_TX`` Kconfig option to :kconfig:option:`CONFIG_ESB_KEEP_TX_IDLE`.
+  * By enabling runtime switching between ACK and non-ACK packets using the :kconfig:option:`CONFIG_ESB_KEEP_TX_IDLE` Kconfig option.
 
 Gazell
 ------
