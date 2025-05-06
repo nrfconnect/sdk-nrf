@@ -72,6 +72,13 @@ psa_status_t cracen_hmac_update(cracen_mac_operation_t *operation, const uint8_t
 		return PSA_SUCCESS;
 	}
 
+	if (!operation->is_first_block) {
+		sx_status = sx_hash_resume_state(&operation->hmac.hashctx);
+		if (sx_status != SX_OK) {
+			return silex_statuscodes_to_psa(sx_status);
+		}
+	}
+
 	operation->is_first_block = false;
 
 	/* Feed the data that are currently in the input buffer to the driver */
