@@ -66,10 +66,8 @@ jobs:
       - name: Build documentation
         working-directory: ncs/nrf
         run: |
-          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            BUILD_CONF="-DNO_DTS_BINDINGS=ON"
-          else
-            BUILD_CONF="-DHW_FEATURES=ON"
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            BUILD_CONF="-DDTS_BINDINGS=ON -DHW_FEATURES=ON"
           fi
 
           cmake -GNinja -Bdoc/_build -Sdoc -DSPHINXOPTS_EXTRA="-q" ${BUILD_CONF}
