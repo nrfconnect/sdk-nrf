@@ -22,7 +22,7 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE} COMPONENTS doc)
 
 set(SPHINXOPTS "-j auto -W --keep-going -T" CACHE STRING "Default Sphinx Options")
 set(SPHINXOPTS_EXTRA "" CACHE STRING "Extra Sphinx Options")
-set(NO_DTS_BINDINGS OFF CACHE BOOL "Do not generate dts bindings documentation")
+set(DTS_BINDINGS OFF CACHE BOOL "Generate dts bindings documentation")
 set(HW_FEATURES OFF CACHE BOOL "Generate hardware features")
 
 separate_arguments(SPHINXOPTS)
@@ -282,7 +282,7 @@ file(MAKE_DIRECTORY ${HTML_DIR})
 
 set(DTS_ARGS)
 
-if(NO_DTS_BINDINGS)
+if(NOT DTS_BINDINGS)
   list(APPEND DTS_ARGS --turbo-mode)
 endif()
 
