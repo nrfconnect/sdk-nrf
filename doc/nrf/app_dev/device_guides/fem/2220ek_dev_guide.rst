@@ -15,14 +15,14 @@ When combined with an nRF52, nRF53 or nRF54L Series SoC, the nRF2220 RF FEM's ou
 Preparation of a development kit to work with the nRF2220EK
 ***********************************************************
 
-On Arduino-compatible development kits like the :ref:`nrf52840dk_nrf52840` or :ref:`nrf5340dk_nrf5340`, plug the *Nordic Interposer Board A* (PCA64172) into the development kit.
+On Arduino-compatible development kits like the :zephyr:board:`nrf52840dk` or :zephyr:board:`nrf5340dk`, plug the *Nordic Interposer Board A* (PCA64172) into the development kit.
 Plug nRF2220 EK board into ``SLOT 2`` of the *Nordic Interposer Board A*.
 
-On the :ref:`nrf54l15dk_nrf54l15` development kit, plug the nRF2220 EK board into the ``PORT P0`` expansion slot.
+On the :zephyr:board:`nrf54l15dk` development kit, plug the nRF2220 EK board into the ``PORT P0`` expansion slot.
 
 .. caution::
 
-   On the :ref:`nrf54l15dk_nrf54l15` development kit pins **P0.00** ... **P0.03** of the nRF54L15 SoC are connected to the debugger chip and by default connect ``UART0`` of the debugger chip to the nRF54L15 SoC.
+   On the :zephyr:board:`nrf54l15dk` development kit pins **P0.00** ... **P0.03** of the nRF54L15 SoC are connected to the debugger chip and by default connect ``UART0`` of the debugger chip to the nRF54L15 SoC.
    Disable the UART0 function (VCOM0) of the debugger chip to allow the pins to be used as FEM control signals and FEM I2C interface.
    You can use the `Board Configurator app`_ , which is part of the `nRF Connect for Desktop`_, for this purpose.
    The pin **P0.04** of the nRF54L15 SoC is connected also to **Button 3** of the development kit.

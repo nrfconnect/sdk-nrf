@@ -169,7 +169,7 @@ Security
 
   * The :kconfig:option:`CONFIG_CRACEN_IKG_SEED_KMU_SLOT` Kconfig option to allow customization of the KMU slot used to store CRACEN's Internal Key Generator (IKG) seed.
     The default IKG seed slot is now 183 (previously 0).
-  * TF-M support for the :ref:`zephyr:nrf54l15dk_nrf54l15` (board target ``nrf54l15dk/nrf54l15/cpuapp/ns``), replacing the nRF54L15 PDK (board target ``nrf54l15pdk/nrf54l15/cpuapp/ns``).
+  * TF-M support for the :zephyr:board:`nrf54l15dk` (board target ``nrf54l15dk/nrf54l15/cpuapp/ns``), replacing the nRF54L15 PDK (board target ``nrf54l15pdk/nrf54l15/cpuapp/ns``).
 
 Protocols
 =========
@@ -296,7 +296,7 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 Machine learning
 ----------------
 
-* Added support for sampling ADXL362 sensor from PPR core on the :ref:`zephyr:nrf54h20dk_nrf54h20`.
+* Added support for sampling ADXL362 sensor from PPR core on the :zephyr:board:`nrf54h20dk`.
 
 Asset Tracker v2
 ----------------
@@ -321,7 +321,7 @@ Matter Bridge
 
   * The :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH` Kconfig option that specifies ZAP files location for the application.
     By default, the option points to the :file:`src/default_zap` directory and can be changed to any path relative to application's location that contains the ZAP file and :file:`zap-generated` directory.
-  * Experimental support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+  * Experimental support for the :zephyr:board:`nrf54h20dk` board.
   * Optional smart plug device functionality.
   * Experimental support for the Thread protocol.
   * The :ref:`multiprotocol_bt_thread` page.
@@ -364,16 +364,16 @@ nRF Desktop
     The value is now aligned with the Fast Pair requirements.
   * The :kconfig:option:`CONFIG_NRF_RRAM_WRITE_BUFFER_SIZE` Kconfig option value in the nRF54L15 PDK configurations to ensure short write slots.
     It prevents timeouts in the MPSL flash synchronization caused by allocating long write slots while maintaining a Bluetooth LE connection with short intervals and no connection latency.
-  * The method of obtaining hardware ID using Zephyr's :ref:`zephyr:hwinfo_api` on the :ref:`zephyr:nrf54h20dk_nrf54h20`.
-    Replaced the custom implementation of the :c:func:`z_impl_hwinfo_get_device_id` function in the nRF Desktop application with the native Zephyr driver function that now supports the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
+  * The method of obtaining hardware ID using Zephyr's :ref:`zephyr:hwinfo_api` on the :zephyr:board:`nrf54h20dk`.
+    Replaced the custom implementation of the :c:func:`z_impl_hwinfo_get_device_id` function in the nRF Desktop application with the native Zephyr driver function that now supports the :zephyr:board:`nrf54h20dk` board target.
     Removed the ``CONFIG_DESKTOP_HWINFO_BLE_ADDRESS_FICR_POSTFIX`` Kconfig option as a postfix constant is no longer needed for the Zephyr native driver.
     The driver uses ``BLE.ADDR``, ``BLE.IR``, and ``BLE.ER`` fields of the Factory Information Configuration Registers (FICR) to provide 8 bytes of unique hardware ID.
   * The :ref:`nrf_desktop_dfu_mcumgr` to recognize the MCUmgr custom group ID (:kconfig:option:`CONFIG_MGMT_GROUP_ID_SUIT`) from the SUITFU subsystem (:kconfig:option:`CONFIG_MGMT_SUITFU`) as a DFU-related command group.
   * All build configurations with the DFU over MCUmgr support to require encryption for operations on the Bluetooth GATT SMP service (see the :kconfig:option:`CONFIG_MCUMGR_TRANSPORT_BT_PERM_RW_ENCRYPT` Kconfig option).
     The Bluetooth pairing procedure of the unpaired Bluetooth peers must now be performed before the DFU operation.
   * The :ref:`nrf_desktop_dfu_mcumgr` to enable the MCUmgr handler that is used to report the bootloader information (see the :kconfig:option:`CONFIG_MCUMGR_GRP_OS_BOOTLOADER_INFO` Kconfig option).
-  * The MCUboot image configurations for the :ref:`zephyr:nrf54l15dk_nrf54l15` board to enable Link Time Optimization (LTO) (see the :kconfig:option:`CONFIG_LTO` Kconfig option) and reduce the memory footprint of the bootloader.
-  * The partition memory configurations for the :ref:`zephyr:nrf54l15dk_nrf54l15` board to optimize the size of the MCUboot bootloader partition.
+  * The MCUboot image configurations for the :zephyr:board:`nrf54l15dk` board to enable Link Time Optimization (LTO) (see the :kconfig:option:`CONFIG_LTO` Kconfig option) and reduce the memory footprint of the bootloader.
+  * The partition memory configurations for the :zephyr:board:`nrf54l15dk` board to optimize the size of the MCUboot bootloader partition.
   * The :ref:`nrf_desktop_constlat` to use the :c:func:`nrfx_power_constlat_mode_request` and :c:func:`nrfx_power_constlat_mode_free` functions instead of :c:func:`nrf_power_task_trigger` to control requesting Constant Latency sub-power mode.
     This ensures correct behavior if another source requests Constant Latency sub-power mode through the nrfx API.
   * The :ref:`CONFIG_DESKTOP_CONSTLAT_DISABLE_ON_STANDBY <config_desktop_app_options>` Kconfig option depends on :kconfig:option:`CONFIG_CAF_PM_EVENTS`.
@@ -432,7 +432,7 @@ Bluetooth samples
   * The :ref:`bluetooth_conn_time_synchronization` sample demonstrating microsecond-accurate synchronization of connections that are happening over Bluetooth® Low Energy Asynchronous Connection-oriented Logical transport (ACL).
   * The :ref:`ble_subrating` sample that showcases the effect of the LE Connection Subrating feature on the duty cycle of a connection.
   * The :ref:`nrf_auraconfig` sample that implements the :ref:`BIS gateway mode <nrf53_audio_app_overview>` and may act as an `Auracast™`_ broadcaster if you are using a preset compatible with Auracast.
-  * Support for the :ref:`zephyr:nrf54l15dk_nrf54l15` board in the following samples:
+  * Support for the :zephyr:board:`nrf54l15dk` board in the following samples:
 
     * :ref:`central_bas`
     * :ref:`bluetooth_central_hr_coded`
@@ -469,7 +469,7 @@ Bluetooth samples
 
 * :ref:`ble_llpm` sample:
 
-  * Added support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+  * Added support for the :zephyr:board:`nrf54h20dk` board.
 
 * :ref:`bluetooth_radio_coex_1wire_sample` sample:
 
@@ -493,7 +493,7 @@ Bluetooth Fast Pair samples
     * LED indication on development kits for the Fast Pair advertising state.
     * An application versioning using the :file:`VERSION` file.
     * The DFU support which can be enabled using the ``SB_CONFIG_APP_DFU`` sysbuild Kconfig option.
-      DFU is available for all supported targets except the ``debug`` configurations of :ref:`zephyr:nrf52dk_nrf52832` and :ref:`zephyr:nrf52833dk_nrf52833` due to size constraints.
+      DFU is available for all supported targets except the ``debug`` configurations of :zephyr:board:`nrf52dk` and :zephyr:board:`nrf52833dk` due to size constraints.
 
   * Updated:
 
@@ -507,8 +507,8 @@ Bluetooth Mesh samples
 
 * For all Bluetooth Mesh samples:
 
-  * Added support for the :ref:`zephyr:nrf54l15dk_nrf54l15` board.
-  * Added support for Zephyr Memory Storage (ZMS) when compiling for the :ref:`zephyr:nrf54l15dk_nrf54l15` board.
+  * Added support for the :zephyr:board:`nrf54l15dk` board.
+  * Added support for Zephyr Memory Storage (ZMS) when compiling for the :zephyr:board:`nrf54l15dk` board.
   * Removed support for the nRF54L15 PDK.
 
 * :ref:`bluetooth_ble_peripheral_lbs_coex` sample:
@@ -686,7 +686,7 @@ Peripheral samples
 PMIC samples
 ------------
 
-* Added support for the :ref:`zephyr:nrf54l15dk_nrf54l15` and :ref:`zephyr:nrf54h20dk_nrf54h20` to the PMIC samples.
+* Added support for the :zephyr:board:`nrf54l15dk` and :zephyr:board:`nrf54h20dk` to the PMIC samples.
 
 * :ref:`npm1300_fuel_gauge` sample:
 
@@ -729,7 +729,7 @@ Thread samples
 
 * :ref:`ot_cli_sample` sample:
 
-  * Added support for the :ref:`zephyr:nrf54l15dk_nrf54l15` in the low-power snippet.
+  * Added support for the :zephyr:board:`nrf54l15dk` in the low-power snippet.
   * Added experimental support for :ref:`Trusted Firmware-M <ug_tfm>` on the nRF54L15 SoC.
 
 Zigbee samples

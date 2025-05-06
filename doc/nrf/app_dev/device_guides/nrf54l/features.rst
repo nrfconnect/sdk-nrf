@@ -11,7 +11,7 @@ The nRF54L15 DK embeds an Arm® Cortex®-M33 processor with multiprotocol 2.4 GH
 
 For additional information, see the following documentation:
 
-* Zephyr page on the :ref:`zephyr:nrf54l15dk_nrf54l15`
+* Zephyr page on the :zephyr:board:`nrf54l15dk`
 * :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
 
 VPR core

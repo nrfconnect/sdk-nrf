@@ -638,7 +638,7 @@ Other samples
 
 * Enhanced ShockBurst: Transmitter/Receiver sample:
 
-  * Added support for front-end modules and :ref:`zephyr:nrf21540dk_nrf52840`.
+  * Added support for front-end modules and :zephyr:board:`nrf21540dk`.
 
 * :ref:`radio_test` sample:
 

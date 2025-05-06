@@ -1,6 +1,6 @@
 You can add support for the nRF21540 front-end module to this sample by using one of the following options, depending on your hardware:
 
-* Build the sample for one board that contains the nRF21540 FEM, such as :ref:`nrf21540dk/nrf52840 <zephyr:nrf21540dk_nrf52840>`.
+* Build the sample for one board that contains the nRF21540 FEM, such as :zephyr:board:`nrf21540dk`.
 * Manually create a devicetree overlay file that describes how the nRF21540 FEM is connected to the SoC.
   See :ref:`configuring_devicetree` for different ways of adding the overlay file.
 * Provide nRF21540 FEM capabilities by using a :ref:`shield <zephyr:shields>`, for example the :ref:`nRF21540 EK <ug_radio_fem_nrf21540ek>` shield that is available in the |NCS|.

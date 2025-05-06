@@ -59,7 +59,7 @@ This mobile application is also used to configure key bindings, and publication 
       After provisioning and configuring the mesh models supported by the sample in the `nRF Mesh mobile app`_, **Button 1** on the Mesh Light Dimmer device can be used to control the configured network nodes' LEDs, while **Button 2** can be used to store and restore scenes on the network nodes.
 
       .. note::
-        When running this sample on the :ref:`zephyr:nrf52840dongle_nrf52840`, the scene selection functionality will not be available as the device only has one button.
+        When running this sample on the :zephyr:board:`nrf52840dongle`, the scene selection functionality will not be available as the device only has one button.
         The single button of the dongle will be used for dimming and the on/off functionality as described for **Button 1** in this documentation.
 
    .. group-tab:: nRF54 DKs
@@ -67,7 +67,7 @@ This mobile application is also used to configure key bindings, and publication 
       After provisioning and configuring the mesh models supported by the sample in the `nRF Mesh mobile app`_, **Button 0** on the Mesh Light Dimmer device can be used to control the configured network nodes' LEDs, while **Button 1** can be used to store and restore scenes on the network nodes.
 
       .. note::
-        When running this sample on the :ref:`zephyr:nrf52840dongle_nrf52840`, the scene selection functionality will not be available as the device only has one button.
+        When running this sample on the :zephyr:board:`nrf52840dongle`, the scene selection functionality will not be available as the device only has one button.
         The single button of the dongle will be used for dimming and the on/off functionality as described for **Button 0** in this documentation.
 
 Provisioning
@@ -135,7 +135,7 @@ User interface
         On long press and release, **Button 2** will publish a Scene Store message using the configured publication parameters of its model instance, and store the current LED state of all the targets under the scene with the most recently recalled scene number.
 
         .. note::
-          On the :ref:`zephyr:nrf52840dongle_nrf52840`, the scene selection functionality will not be available as the device only has one button.
+          On the :zephyr:board:`nrf52840dongle`, the scene selection functionality will not be available as the device only has one button.
 
         .. tip::
           On Thingy:53, **Button 2** can be accessed by removing the top part of the casing.
@@ -144,7 +144,7 @@ User interface
         Show the OOB authentication value during provisioning if the "Push button" OOB method is used.
 
         .. note::
-          :ref:`zephyr:thingy53_nrf5340` supports only one RGB LED.
+          :zephyr:board:`thingy53` supports only one RGB LED.
           Each RGB LED channel is used as separate LED.
 
    .. group-tab:: nRF54 DKs
