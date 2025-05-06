@@ -596,7 +596,7 @@ Zigbee samples
 
   * Added:
 
-    * Support for :ref:`zephyr:nrf52840dongle_nrf52840`.
+    * Support for :zephyr:board:`nrf52840dongle`.
     * An option to build Zigbee shell sample with the nRF USB CDC ACM as shell backend.
 
 * Zigbee NCP sample:

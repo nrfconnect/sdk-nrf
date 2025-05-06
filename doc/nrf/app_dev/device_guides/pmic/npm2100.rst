@@ -39,19 +39,19 @@ These boards represent a subset of the boards that are compatible with nPM2100.
      - PCA number
      - Board target
      - Documentation
-   * - :ref:`zephyr:nrf54l15dk_nrf54l15`
+   * - :zephyr:board:`nrf54l15dk`
      - nPM2100 EK
      - PCA10156
      - ``nrf54l15dk/nrf54l15/cpuapp``
      - `User Guide <nRF54L15 DK User Guide_>`_
-   * - :ref:`zephyr:nrf5340dk_nrf5340`
+   * - :zephyr:board:`nrf5340dk`
      - nPM2100 EK
      - PCA10095
      - ``nrf5340dk/nrf5340/cpuapp``
      - | `Product Specification <nRF5340 Product Specification_>`_
        | `Quick Start app`_
        | `User Guide <nRF5340 DK User Guide_>`_
-   * - :ref:`zephyr:nrf52840dk_nrf52840`
+   * - :zephyr:board:`nrf52840dk`
      - nPM2100 EK
      - PCA10056
      - ``nrf52840dk/nrf52840``

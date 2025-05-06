@@ -91,8 +91,8 @@ The following table shows the mesh light switch composition data for this sample
    =================  =================  =================  =================
 
 .. note::
-   When used with :ref:`zephyr:thingy53_nrf5340`, Elements 3 and 4 are not available.
-   :ref:`zephyr:thingy53_nrf5340` supports only two buttons.
+   When used with :zephyr:board:`thingy53`, Elements 3 and 4 are not available.
+   :zephyr:board:`thingy53` supports only two buttons.
 
 The models are used for the following purposes:
 
@@ -192,7 +192,7 @@ LEDs:
    Once the provisioning and configuration are completed, the LEDs are used to reflect the status of actions, and they show the last known OnOff state of the corresponding button.
 
 .. note::
-   :ref:`zephyr:thingy53_nrf5340` supports only one RGB LED.
+   :zephyr:board:`thingy53` supports only one RGB LED.
    Each RGB LED channel is used as separate LED.
 
 The LPN assignments

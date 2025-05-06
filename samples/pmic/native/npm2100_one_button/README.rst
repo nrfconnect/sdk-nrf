@@ -102,7 +102,7 @@ To connect your DK to the nPM2100 EK, complete the following steps:
 
 .. note::
 
-   When using the :ref:`zephyr:nrf54l15dk_nrf54l15`, the nPM2100 **GPIO1** interrupt
+   When using the :zephyr:board:`nrf54l15dk`, the nPM2100 **GPIO1** interrupt
    pin assignment uses the **BUTTON 2** pin of the DK.
 
 Building and running

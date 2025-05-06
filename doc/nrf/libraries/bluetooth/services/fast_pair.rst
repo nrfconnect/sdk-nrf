@@ -163,7 +163,7 @@ Partition Manager
 -----------------
 
 The Fast Pair provisioning data is preprogrammed to a dedicated flash memory partition.
-The :ref:`zephyr:nrf54h20dk_nrf54h20` is the only device that does not support this feature.
+The :zephyr:board:`nrf54h20dk` is the only device that does not support this feature.
 
 Settings
 --------

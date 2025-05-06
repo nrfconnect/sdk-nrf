@@ -16,7 +16,7 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
      - PCA number
      - Board targets
      - Documentation
-   * - :ref:`zephyr:thingy53_nrf5340`
+   * - :zephyr:board:`thingy53`
      - PCA20053
      - ``thingy53/nrf5340/cpuapp``, ``thingy53/nrf5340/cpuapp/ns``, ``thingy53/nrf5340/cpunet``
      - | `Get started <Nordic Thingy:53 get started_>`_ on the product page

@@ -513,24 +513,24 @@ Bluetooth mesh samples
 
 * :ref:`bluetooth_mesh_light` sample:
 
-  * Removed support for the configuration with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` for :ref:`zephyr:thingy53_nrf5340`.
+  * Removed support for the configuration with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` for :zephyr:board:`thingy53`.
 
 * :ref:`bluetooth_mesh_light_lc` sample:
 
   * Added support for Composition Data Pages 1 and 2.
     Support for Composition Data Pages 1 and 2 has a dependency on Bluetooth mesh 1.1 support.
   * Fixed an issue where the sample could return an invalid Light Lightness Status message if the transition time was evaluated to zero.
-  * Removed support for the configuration with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` for :ref:`zephyr:thingy53_nrf5340`.
+  * Removed support for the configuration with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` for :zephyr:board:`thingy53`.
 
 * :ref:`bluetooth_mesh_light_dim` sample:
 
   * Added support for Composition Data Pages 1 and 2.
     Support for Composition Data Pages 1 and 2 has a dependency on Bluetooth mesh 1.1 support.
-  * Removed support for the configuration with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` for :ref:`zephyr:thingy53_nrf5340`.
+  * Removed support for the configuration with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` for :zephyr:board:`thingy53`.
 
 * :ref:`bluetooth_mesh_light_switch` sample:
 
-  * Removed support for the configuration with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` for :ref:`zephyr:thingy53_nrf5340`.
+  * Removed support for the configuration with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` for :zephyr:board:`thingy53`.
 
 * :ref:`bluetooth_mesh_sensor_server` sample:
 
@@ -541,7 +541,7 @@ Bluetooth mesh samples
     * A getter for the :c:var:`bt_mesh_sensor_rel_runtime_in_a_dev_op_temp_range` sensor.
 
   * Fixed an issue where the :c:var:`bt_mesh_sensor_time_since_presence_detected` sensor could report an invalid value when the time delta would exceed the range of the characteristic.
-  * Removed support for the configuration with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` for :ref:`zephyr:thingy53_nrf5340`.
+  * Removed support for the configuration with :ref:`CMSE enabled <app_boards_spe_nspe_cpuapp_ns>` for :zephyr:board:`thingy53`.
 
 Cryptography samples
 --------------------

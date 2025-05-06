@@ -449,7 +449,7 @@ Machine learning
 
 * Updated:
 
-  * The application to enable the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` file system for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
+  * The application to enable the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` file system for the :zephyr:board:`nrf54h20dk` board target.
   * The Edge Impulse URI configuration to use the new model location.
 
 Matter bridge
@@ -483,7 +483,7 @@ nRF Desktop
 
 * Added:
 
-  * System power management for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target on the application and radio cores.
+  * System power management for the :zephyr:board:`nrf54h20dk` board target on the application and radio cores.
   * Application configurations for the nRF54L05 and nRF54L10 SoCs (emulated on the nRF54L15 DK).
     The configurations are supported through ``nrf54l15dk/nrf54l10/cpuapp`` and ``nrf54l15dk/nrf54l05/cpuapp`` board targets.
     For details, see the :ref:`nrf_desktop_board_configuration`.
@@ -508,7 +508,7 @@ nRF Desktop
     The MCUboot bootloader provides logs over UART.
   * The :ref:`nrf_desktop_failsafe` to use the Zephyr :ref:`zephyr:hwinfo_api` driver for getting and clearing the reset reason information (see the :c:func:`hwinfo_get_reset_cause` and :c:func:`hwinfo_clear_reset_cause` functions).
     The Zephyr :ref:`zephyr:hwinfo_api` driver replaces the dependency on the nrfx reset reason helper (see the :c:func:`nrfx_reset_reason_get` and :c:func:`nrfx_reset_reason_clear` functions).
-  * The ``release`` configuration for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target to enable the :ref:`nrf_desktop_failsafe` (see the :ref:`CONFIG_DESKTOP_FAILSAFE_ENABLE <config_desktop_app_options>` Kconfig option).
+  * The ``release`` configuration for the :zephyr:board:`nrf54h20dk` board target to enable the :ref:`nrf_desktop_failsafe` (see the :ref:`CONFIG_DESKTOP_FAILSAFE_ENABLE <config_desktop_app_options>` Kconfig option).
   * By enabling Link Time Optimization (:kconfig:option:`CONFIG_LTO` and :kconfig:option:`CONFIG_ISR_TABLES_LOCAL_DECLARATION`) by default for an nRF Desktop application image.
     LTO was also explicitly enabled in configurations of other images built by sysbuild (bootloader, network core image).
   * Application configurations for nRF54L05, nRF54L10, and nRF54L15 SoCs to use Fast Pair PSA cryptography (:kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_PSA`).
@@ -708,7 +708,7 @@ Bluetooth Mesh samples
     * :ref:`ble_mesh_dfu_distributor`
     * :ref:`ble_mesh_dfu_target`
 
-  * :ref:`bluetooth_mesh_light_lc` sample by disabling the friend feature when the sample is compiled for the :ref:`zephyr:nrf52dk_nrf52832` board target to increase the amount of RAM available for the application.
+  * :ref:`bluetooth_mesh_light_lc` sample by disabling the friend feature when the sample is compiled for the :zephyr:board:`nrf52dk` board target to increase the amount of RAM available for the application.
 
 Bluetooth Fast Pair samples
 ---------------------------
@@ -736,7 +736,7 @@ Bluetooth Fast Pair samples
 
   * Added:
 
-    * Experimental support for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
+    * Experimental support for the :zephyr:board:`nrf54h20dk` board target.
     * Support for firmware update intents on the Android platform.
       The configuration of the default device model in the Google Nearby Console has been updated to properly support this feature.
       See the sample documentation for more information.
@@ -1006,7 +1006,7 @@ Other samples
   * Added:
 
     * Support for the nRF54L05 and nRF54L10 SoCs (emulated on nRF54L15 DK).
-    * FLPR core support for the :ref:`zephyr:nrf54l15dk_nrf54l15` and :ref:`zephyr:nrf54h20dk_nrf54h20` board targets.
+    * FLPR core support for the :zephyr:board:`nrf54l15dk` and :zephyr:board:`nrf54h20dk` board targets.
 
   * Removed the following compiler options that were set in the :kconfig:option:`CONFIG_COMPILER_OPT` Kconfig option:
 
@@ -1019,7 +1019,7 @@ Other samples
 
 * :ref:`caf_sensor_manager_sample` sample:
 
-  * Added low power configuration for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
+  * Added low power configuration for the :zephyr:board:`nrf54h20dk` board target.
 
 Drivers
 =======
@@ -1304,7 +1304,7 @@ Google Fast Pair integration
 
 * Added:
 
-  * Instructions on how to provision the Fast Pair data onto devices without the :ref:`partition_manager` support, specifically for the :ref:`zephyr:nrf54h20dk_nrf54h20`.
+  * Instructions on how to provision the Fast Pair data onto devices without the :ref:`partition_manager` support, specifically for the :zephyr:board:`nrf54h20dk`.
   * Information on how to support the firmware update intent feature on the Android platform.
     Expanded the documentation for the Fast Pair devices with the FMDN extension, which requires additional steps to support this feature.
 
