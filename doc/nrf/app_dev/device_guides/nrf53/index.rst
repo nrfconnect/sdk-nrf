@@ -18,12 +18,12 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
      - PCA number
      - Board targets
      - Documentation
-   * - :ref:`zephyr:nrf5340dk_nrf5340`
+   * - :zephyr:board:`nrf5340dk`
      - PCA10095
      - ``nrf5340dk/nrf5340/cpuapp``, ``nrf5340dk/nrf5340/cpuapp/ns``, ``nrf5340dk/nrf5340/cpunet``
      - | `Product Specification <nRF5340 Product Specification_>`_
        | `User Guide <nRF5340 DK User Guide_>`_
-   * - :ref:`zephyr:nrf5340_audio_dk_nrf5340`
+   * - :zephyr:board:`nrf5340_audio_dk`
      - PCA10121
      - ``nrf5340_audio_dk/nrf5340/cpuapp``, ``nrf5340_audio_dk/nrf5340/cpuapp/ns``, ``nrf5340_audio_dk/nrf5340/cpunet``
      - | `Hardware Specification <nRF5340 Audio DK Hardware_>`_
@@ -36,7 +36,7 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
 
    See the `nRF Connect SDK v1.4.0 documentation`_ for the last release supporting the nRF5340 PDK.
 
-:ref:`zephyr:nrf5340_audio_dk_nrf5340` is a custom reference hardware based on the nRF5340 DK.
+:zephyr:board:`nrf5340_audio_dk` is a custom reference hardware based on the nRF5340 DK.
 It is meant for use with for :ref:`nrf53_audio_app`, which integrate the LE Audio standard.
 Given their complexity, the applications use custom building and programming procedures.
 Refer to their documentation for more information.

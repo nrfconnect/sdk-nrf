@@ -19,7 +19,7 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
    * - DK
      - PCA number
      - Build target
-   * - :ref:`zephyr:nrf54h20dk_nrf54h20`
+   * - :zephyr:board:`nrf54h20dk`
      - PCA10175
      - | ``nrf54h20dk/nrf54h20/cpuapp``
        | ``nrf54h20dk/nrf54h20/cpurad``

@@ -177,8 +177,8 @@ nRF Machine Learning (Edge Impulse)
 
 * Added:
 
-  * Non-secure configuration for building :ref:`nrf_machine_learning_app` with :ref:`zephyr:thingy53_nrf5340`.
-  * Secure configuration for building :ref:`nrf_machine_learning_app` with :ref:`zephyr:nrf5340dk_nrf5340`.
+  * Non-secure configuration for building :ref:`nrf_machine_learning_app` with :zephyr:board:`thingy53`.
+  * Secure configuration for building :ref:`nrf_machine_learning_app` with :zephyr:board:`nrf5340dk`.
   * Power manager to the :ref:`nrf_machine_learning_app` application.
 
 * Updated:
@@ -270,7 +270,7 @@ Bluetooth samples
 
 * Added :ref:`central_and_peripheral_hrs` sample.
 * Updated some samples to use DTS overlay instead of Kconfig for external flash.
-* Updated some samples with support for :ref:`zephyr:thingy53_nrf5340` in non-secure configuration.
+* Updated some samples with support for :zephyr:board:`thingy53` in non-secure configuration.
 * Removed the ``pairing_confirm`` callback from the Bluetooth samples where it was incorrectly used, that is where pairing was accepted without user interaction.
 * :ref:`direct_test_mode`:
 
@@ -291,12 +291,12 @@ Bluetooth mesh samples
 * Added:
 
   * :ref:`bluetooth_ble_peripheral_lbs_coex`, demonstrating how to combine Bluetooth mesh and Bluetooth Low Energy features in a single application.
-  * Support for :ref:`zephyr:nrf21540dk_nrf52840`.
+  * Support for :zephyr:board:`nrf21540dk`.
 
 * Updated:
 
-  * :ref:`bluetooth_mesh_light` and :ref:`bluetooth_mesh_light_switch` with support for :ref:`zephyr:thingy53_nrf5340` in non-secure configuration.
-  * :ref:`bluetooth_mesh_light_lc` and :ref:`bluetooth_mesh_sensor_server` with support for :ref:`zephyr:thingy53_nrf5340`.
+  * :ref:`bluetooth_mesh_light` and :ref:`bluetooth_mesh_light_switch` with support for :zephyr:board:`thingy53` in non-secure configuration.
+  * :ref:`bluetooth_mesh_light_lc` and :ref:`bluetooth_mesh_sensor_server` with support for :zephyr:board:`thingy53`.
   * Updated some samples to use DTS overlays instead of Kconfig configuration files for setting up external flash memory.
 
 Gazell samples
@@ -397,7 +397,7 @@ OpenThread samples
 
 * Added:
 
-  * Support for ``nrf5340dk_nrf5340_cpuapp_ns`` build target for :ref:`zephyr:nrf5340dk_nrf5340`.
+  * Support for ``nrf5340dk_nrf5340_cpuapp_ns`` build target for :zephyr:board:`nrf5340dk`.
     This allows to build the OpenThread samples with Trusted Firmware-M and the PSA crypto API support.
     This platform is experimental, so :ref:`nrfxlib:ot_libs` are not generated for it.
 

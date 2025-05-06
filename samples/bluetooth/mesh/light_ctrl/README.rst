@@ -144,11 +144,11 @@ User interface
         If the :ref:`emds_readme` feature is enabled and **Button 4** is pressed **LEDs 2** to **LED 4** will light up to show that the board is halted.
 
       .. note::
-        :ref:`zephyr:thingy53_nrf5340` supports only one RGB LED.
+        :zephyr:board:`thingy53` supports only one RGB LED.
         Each RGB LED channel is used as separate LED.
 
       .. note::
-        :ref:`zephyr:thingy53_nrf5340` and the :ref:`zephyr:nrf52840dongle_nrf52840` do not support emergency data storage.
+        :zephyr:board:`thingy53` and the :zephyr:board:`nrf52840dongle` do not support emergency data storage.
 
    .. group-tab:: nRF54 DKs
 

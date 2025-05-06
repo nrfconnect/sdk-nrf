@@ -17,7 +17,7 @@ For example, you can use it with the :ref:`Nordic Thingy:53 <ug_thingy53>`, an I
       Support for the nRF7002 EB is deprecated for all boards except the Thingy:53.
       This support will be removed in the next major release of the |NCS|.
 
-You can also use the nRF7002 EB to provide Wi-Fi connectivity to the :ref:`zephyr:nrf54h20dk_nrf54h20` and :ref:`zephyr:nrf54l15dk_nrf54l15`.
+You can also use the nRF7002 EB to provide Wi-Fi connectivity to the :zephyr:board:`nrf54h20dk` and :zephyr:board:`nrf54l15dk`.
 
 .. figure:: images/nRF7002eb.png
    :alt: nRF7002 EB

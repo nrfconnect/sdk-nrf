@@ -30,28 +30,28 @@ Zephyr and the |NCS| provide support for developing networking applications with
      - PCA10143
      - ``nrf7002dk/nrf5340/cpuapp/nrf7001``
      - | `Product Specification <nRF7001 Product Specification_>`_
-   * - :ref:`zephyr:nrf5340dk_nrf5340`
+   * - :zephyr:board:`nrf5340dk`
      - nRF7002 EK
      - PCA10095
      - ``nrf5340dk/nrf5340/cpuapp``
      - | `Product Specification <nRF5340 Product Specification_>`_
        | `Quick Start app`_
        | `User Guide <nRF5340 DK User Guide_>`_
-   * - :ref:`zephyr:nrf52840dk_nrf52840`
+   * - :zephyr:board:`nrf52840dk`
      - nRF7002 EK
      - PCA10056
      - ``nrf52840dk/nrf52840``
      - | `Product Specification <nRF52840 Product Specification_>`_
        | `Quick Start app`_
        | `User Guide <nRF52840 DK User Guide_>`_
-   * - :ref:`zephyr:nrf9151dk_nrf9151`
+   * - :zephyr:board:`nrf9151dk`
      - nRF7002 EK
      - PCA10171
      - ``nrf9151dk/nrf9151/ns``
      - | `Product Specification <nRF9151 Product Specification_>`_
        | `Quick Start app`_
        | `User Guide <nRF9151 DK Hardware_>`_
-   * - :ref:`zephyr:nrf9161dk_nrf9161`
+   * - :zephyr:board:`nrf9161dk`
      - nRF7002 EK
      - PCA10153
      - ``nrf9161dk/nrf9161/ns``
@@ -65,19 +65,19 @@ Zephyr and the |NCS| provide support for developing networking applications with
      - | `Product Specification <nRF9160 Product Specification_>`_
        | :ref:`Getting started <ug_nrf9160_gs>`
        | `User Guide <nRF9160 DK Hardware_>`_
-   * - :ref:`zephyr:thingy53_nrf5340`
+   * - :zephyr:board:`thingy53`
      - nRF7002 EB
      - PCA20053
      - ``thingy53/nrf5340/cpuapp``
      - | :ref:`Getting started <ug_thingy53_gs>`
        | `User Guide <Nordic Thingy:53 Hardware_>`_
-   * - :ref:`zephyr:nrf54h20dk_nrf54h20`
+   * - :zephyr:board:`nrf54h20dk`
      - nRF7002 EB
      - PCA20053
      - ``nrf54h20dk/nrf54h20/cpuapp``
      - | `nRF54H20 Objective Product Specification 0.3.1`_
        | :ref:`Getting started <ug_nrf54h20_gs>`
-   * - :ref:`zephyr:nrf54l15dk_nrf54l15`
+   * - :zephyr:board:`nrf54l15dk`
      - nRF7002 EB
      - PCA20053
      - ``nrf54l15dk/nrf54l15/cpuapp``

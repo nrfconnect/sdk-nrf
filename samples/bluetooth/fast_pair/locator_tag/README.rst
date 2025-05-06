@@ -25,7 +25,7 @@ The sample supports the following development kits:
 .. table-from-sample-yaml::
 
 .. note::
-   In case of the :ref:`zephyr:nrf54h20dk_nrf54h20` board target, the application still has high power consumption as the Bluetooth LE controller running on the radio core requires disabling MRAM latency (:kconfig:option:`CONFIG_MRAM_LATENCY_AUTO_REQ`).
+   In case of the :zephyr:board:`nrf54h20dk` board target, the application still has high power consumption as the Bluetooth LE controller running on the radio core requires disabling MRAM latency (:kconfig:option:`CONFIG_MRAM_LATENCY_AUTO_REQ`).
    Enabling MRAM latency makes the Bluetooth LE controller unstable.
 
 Overview
