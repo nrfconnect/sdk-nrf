@@ -106,4 +106,5 @@ tests:
       - CONFIG_LOG=y
       - CONFIG_SENSOR_LOG_LEVEL_DBG=y
     platform_allow:
-      - nrf54lm20apdk@0.2.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp

@@ -12,13 +12,15 @@ common:
 tests:
   drivers.gpio.gpio_nfct:
     platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l20pdk/nrf54l20/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp

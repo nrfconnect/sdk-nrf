@@ -21,22 +21,23 @@ tests:
   lpuart.loopback.nrf54l:
     sysbuild: true
     platform_allow:
+      - nrf54l09pdk/nrf54l09/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l20pdk/nrf54l20/cpuapp
-      - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
       - nrf54lv10apdk/nrf54lv10a/cpuapp
-      - nrf54lm20apdk/nrf54lm20a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
+      - nrf54l09pdk/nrf54l09/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l20pdk/nrf54l20/cpuapp
-      - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lv10apdk/nrf54lv10a/cpuapp
-      - nrf54lm20apdk/nrf54lm20a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_TEST_LPUART_LOOPBACK=y
@@ -46,22 +47,23 @@ tests:
   lpuart.loopback.nrf54l.busy_sim:
     sysbuild: true
     platform_allow:
+      - nrf54l09pdk/nrf54l09/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l20pdk/nrf54l20/cpuapp
-      - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
       - nrf54lv10apdk/nrf54lv10a/cpuapp
-      - nrf54lm20apdk/nrf54lm20a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
+      - nrf54l09pdk/nrf54l09/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l20pdk/nrf54l20/cpuapp
-      - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lv10apdk/nrf54lv10a/cpuapp
-      - nrf54lm20apdk/nrf54lm20a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_TEST_LPUART_LOOPBACK=y
@@ -143,22 +145,23 @@ tests:
   lpuart.user_specific_config:
     sysbuild: true
     platform_allow:
+      - nrf54l09pdk/nrf54l09/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l20pdk/nrf54l20/cpuapp
-      - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
       - nrf54lv10apdk/nrf54lv10a/cpuapp
-      - nrf54lm20apdk/nrf54lm20a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
+      - nrf54l09pdk/nrf54l09/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l20pdk/nrf54l20/cpuapp
-      - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lv10apdk/nrf54lv10a/cpuapp
-      - nrf54lm20apdk/nrf54lm20a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_UART_INTERRUPT_DRIVEN=y
