@@ -29,15 +29,20 @@ cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/nrf_cloud_rest.h)
 # that CMock is not able to parse properly.
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/net_if.h
 	     FUNC_EXCLUDE ".*net_if_send_data"
+	     FUNC_EXCLUDE ".*net_if_try_send_data"
 	     FUNC_EXCLUDE ".*net_if_recv_data"
 	     FUNC_EXCLUDE ".*net_if_queue_tx"
+	     FUNC_EXCLUDE ".*net_if_try_queue_tx"
 	     FUNC_EXCLUDE ".*net_if_register_timestamp_cb"
 	     FUNC_EXCLUDE ".*net_if_call_timestamp_cb"
 	     FUNC_EXCLUDE ".*net_if_add_tx_timestamp"
 	     FUNC_EXCLUDE ".*net_if_ipv4_get_netmask"
 	     FUNC_EXCLUDE ".*net_if_ipv4_set_netmask"
 	     WORD_EXCLUDE ".*deprecated.*"
-	     WORD_EXCLUDE ".*struct net_pkt.*")
+	     WORD_EXCLUDE ".*net_if_send_data.*"
+	     WORD_EXCLUDE ".*net_if_try_send_data.*"
+	     WORD_EXCLUDE ".*net_if_try_queue_tx.*"
+	     WORD_EXCLUDE ".*net_if_register_timestamp_cb.*")
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/net_mgmt.h
 	     FUNC_EXCLUDE ".*net_mgmt_event_notify"
 	     FUNC_EXCLUDE ".*net_mgmt_event_notify_with_info"
