@@ -348,6 +348,7 @@ config PSA_WANT_KEY_TYPE_PEPPER
 
 config PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_BASIC
 	bool
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_BASIC if PSA_CRYPTO_DRIVER_CRACEN
 	default y
 	depends on PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_IMPORT	|| \
 		   PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_EXPORT	|| \
@@ -359,6 +360,7 @@ config PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_BASIC
 config PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_IMPORT
 	bool "SPAKE2+ key pair import support" if !PSA_PROMPTLESS
 	select PSA_WANT_KEY_TYPE_SPAKE2P_PUBLIC_KEY
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT if PSA_CRYPTO_DRIVER_CRACEN
 	default y if PSA_CRYPTO_ENABLE_ALL
 	help
 	  SPAKE2+ key pair: Import key for both the private and public key.
@@ -366,6 +368,7 @@ config PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_IMPORT
 config PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_EXPORT
 	bool "SPAKE2+ key pair export support" if !PSA_PROMPTLESS
 	select PSA_WANT_KEY_TYPE_SPAKE2P_PUBLIC_KEY
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT if PSA_CRYPTO_DRIVER_CRACEN
 	default y if PSA_CRYPTO_ENABLE_ALL
 	help
 	  SPAKE2+ key pair: Export key for both the private and public key.
@@ -373,6 +376,7 @@ config PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_EXPORT
 config PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_GENERATE
 	bool "SPAKE2+ key pair generate support" if !PSA_PROMPTLESS
 	select PSA_WANT_KEY_TYPE_SPAKE2P_PUBLIC_KEY
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE if PSA_CRYPTO_DRIVER_CRACEN
 	default y if PSA_CRYPTO_ENABLE_ALL
 	help
 	  SPAKE2+ key pair: Generate key for both the private and public key.
@@ -380,12 +384,14 @@ config PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_GENERATE
 config PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE
 	bool "SPAKE2+ key pair derive support" if !PSA_PROMPTLESS
 	select PSA_WANT_KEY_TYPE_SPAKE2P_PUBLIC_KEY
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE if PSA_CRYPTO_DRIVER_CRACEN
 	default y if PSA_CRYPTO_ENABLE_ALL
 	help
 	  SPAKE2+ key pair: Derive key for both the private and public key.
 
 config PSA_WANT_KEY_TYPE_SPAKE2P_PUBLIC_KEY
 	bool "SPAKE2+ public key support" if !PSA_PROMPTLESS
+	select PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY if PSA_CRYPTO_DRIVER_CRACEN
 	default y if PSA_CRYPTO_ENABLE_ALL
 	help
 	  SPAKE2+ public key support.
