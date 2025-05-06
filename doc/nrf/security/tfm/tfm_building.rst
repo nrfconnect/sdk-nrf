@@ -17,20 +17,20 @@ To add TF-M to your build, enable the :kconfig:option:`CONFIG_BUILD_WITH_TFM` co
 By default, TF-M is configured to build the :ref:`minimal version <tfm_minimal_build>`.
 To use the full TF-M, you must disable the :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_MINIMAL` option.
 
-You must build TF-M using a non-secure board target.
+Board targets supported by TF-M
+*******************************
+
+The :ref:`boards supported by the SDK <app_boards_names>` distinguish entries according which CPU is to be targeted (for multi-core SoCs) and whether the security by separation is to be used or not (addition of the ``*/ns`` :ref:`variant <app_boards_names>` if it is used).
+
+To build with TF-M in the |NCS|, you must use a board target with the ``*/ns`` variant.
 The following platforms are currently supported:
 
 * nRF54L15
 * nRF5340
 * nRF91 Series
 
-TF-M uses UART1 for logging from the secure application.
-To disable logging, enable the :kconfig:option:`CONFIG_TFM_LOG_LEVEL_SILENCE` option.
-When building TF-M with logging enabled, UART1 must be disabled in the non-secure application, otherwise the non-secure application will fail to run.
-The recommended way to do this is to copy the :file:`.overlay` file from the :ref:`tfm_hello_world` sample.
-
 Enabling secure services
-========================
+************************
 
 When using the :ref:`nrf_security`, if :kconfig:option:`CONFIG_BUILD_WITH_TFM` is enabled together with :kconfig:option:`CONFIG_NORDIC_SECURITY_BACKEND`, the TF-M secure image will enable the use of the hardware acceleration of Arm CryptoCell.
 In such case, the Kconfig configurations in the Nordic Security Backend control the features enabled through TF-M.
@@ -40,7 +40,7 @@ See :ref:`tfm_partition_crypto` for more information about the TF-M Crypto parti
 .. _tfm_minimal_build:
 
 Minimal build
-=============
+*************
 
 .. include:: tfm_supported_services.rst
    :start-after: minimal_build_overview_start
@@ -56,7 +56,7 @@ Instead, the default configuration must be used as a starting point.
 .. _tfm_configurable_build:
 
 Configurable build
-==================
+******************
 
 .. include:: tfm_supported_services.rst
    :start-after: configurable_build_overview_start
@@ -117,7 +117,7 @@ Following are the available Kconfig options for TF-M partitions:
      - CRYPTO
 
 Secure Partition Manager backend configuration
-----------------------------------------------
+==============================================
 
 TF-M's Secure Partition Manager (SPM) backend may also be configured, depending on the isolation requirements of the application.
 
@@ -154,7 +154,7 @@ To optimize the TF-M size, find the minimal set of features to satisfy the appli
 .. _ug_tfm_partition_alignment_requirements:
 
 TF-M partition alignment requirements
-=====================================
+*************************************
 
 TF-M requires that secure and non-secure partition addresses must be aligned to the flash region size :kconfig:option:`CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE`.
 The |NCS| ensures that they in fact are aligned and comply with the TF-M requirements.
@@ -258,7 +258,7 @@ We will decrease the size of the (optional) ``mcuboot_pad`` partition and thus t
       size: 0x4000
 
 Analyzing ``tfm_secure`` partition size
-=======================================
+***************************************
 
 You can analyze the size of the ``tfm_secure`` partition from the build output:
 
@@ -274,7 +274,7 @@ Similarly, the :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM_SRAM` option for th
 You can use this information to optimize the size of the TF-M, as long as it is within the alignment requirements explained in the previous section.
 
 Tools for analyzing the ``tfm_secure`` partition size
------------------------------------------------------
+=====================================================
 
 The TF-M build system is compatible with Zephyr's :ref:`zephyr:footprint_tools` tools that let you generate RAM and ROM usage reports (using :ref:`zephyr:sysbuild_dedicated_image_build_targets`).
 You can use the reports to analyze the memory usage of the different TF-M partitions and see how changing the Kconfig options affects the memory usage.
