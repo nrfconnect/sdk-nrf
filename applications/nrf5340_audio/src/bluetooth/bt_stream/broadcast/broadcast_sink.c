@@ -762,6 +762,10 @@ int broadcast_sink_enable(le_audio_receive_cb recv_cb)
 	int ret;
 	static bool initialized;
 	enum audio_channel channel;
+	const struct bt_pacs_register_param pacs_param = {
+		.snk_pac = true,
+		.snk_loc = true,
+	};
 
 	if (initialized) {
 		LOG_WRN("Already initialized");
@@ -776,6 +780,12 @@ int broadcast_sink_enable(le_audio_receive_cb recv_cb)
 	receive_cb = recv_cb;
 
 	channel_assignment_get(&channel);
+
+	ret = bt_pacs_register(&pacs_param);
+	if (ret) {
+		LOG_ERR("Could not register PACS (err %d)\n", ret);
+		return ret;
+	}
 
 	if (channel == AUDIO_CH_L) {
 		ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, BT_AUDIO_LOCATION_FRONT_LEFT);
