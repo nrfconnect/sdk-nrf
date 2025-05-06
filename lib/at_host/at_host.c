@@ -22,7 +22,7 @@ K_THREAD_STACK_DEFINE(at_host_stack_area, CONFIG_AT_HOST_STACK_SIZE);
 
 #define AT_BUF_SIZE CONFIG_AT_HOST_CMD_MAX_LEN
 
-AT_MONITOR(at_host, ANY, response_handler);
+AT_MONITOR(at_host, ANY, notification_handler);
 
 /** @brief Termination Modes. */
 enum term_modes {
@@ -60,16 +60,28 @@ static inline void write_uart_string(const char *str)
 		return;
 	}
 
+	/* Make sure there are both CR and LF between the command and the output (response or
+	 * notification). Otherwise the output will be printed on top of the command or the
+	 * output will have offset. 3GPP TS 27.007 specifies, that responses should be prefixed
+	 * by CRLF. However, the string from the modem does not contain the CRLF prefix.
+	 */
+#if defined(CONFIG_LF_TERMINATION)
+	uart_poll_out(uart_dev, '\r');
+#endif
+#if defined(CONFIG_CR_TERMINATION)
+	uart_poll_out(uart_dev, '\n');
+#endif
+
 	/* Send characters until, but not including, null */
 	for (size_t i = 0; str[i]; i++) {
 		uart_poll_out(uart_dev, str[i]);
 	}
 }
 
-static void response_handler(const char *response)
+static void notification_handler(const char *notification)
 {
 	/* Forward the data over UART */
-	write_uart_string(response);
+	write_uart_string(notification);
 }
 
 static void cmd_send(struct k_work *work)
