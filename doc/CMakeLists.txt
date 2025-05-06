@@ -23,6 +23,7 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE} COMPONENTS doc)
 set(SPHINXOPTS "-j auto -W --keep-going -T" CACHE STRING "Default Sphinx Options")
 set(SPHINXOPTS_EXTRA "" CACHE STRING "Extra Sphinx Options")
 set(NO_DTS_BINDINGS OFF CACHE BOOL "Do not generate dts bindings documentation")
+set(HW_FEATURES OFF CACHE BOOL "Generate hardware features")
 
 separate_arguments(SPHINXOPTS)
 separate_arguments(SPHINXOPTS_EXTRA)
@@ -107,6 +108,7 @@ endfunction()
 # - DODGY: Enable/disable "dodgy" mode. If enabled "-W" (warnings as errors)
 #   option will be disabled. It can be useful for external docsets that are
 #   likely to generate build warnings.
+# - SPHINXOPTS: Docset specific Sphinx options
 #
 # This function configures multiple targets which can be used to build a docset.
 # The docset configuration (conf.py) is expected to be at the ${name} folder
@@ -126,7 +128,7 @@ endfunction()
 # - ${name}-clean: Clean build artifacts.
 #
 function(add_docset name version)
-  cmake_parse_arguments(DOCSET "DODGY" "" "" ${ARGN})
+  cmake_parse_arguments(DOCSET "DODGY" "" "SPHINXOPTS" ${ARGN})
 
   set(DOCSET_CFG_DIR ${CMAKE_CURRENT_LIST_DIR}/${name})
   set(DOCSET_BUILD_DIR ${CMAKE_BINARY_DIR}/${name})
@@ -153,6 +155,7 @@ function(add_docset name version)
       -w ${DOCSET_BUILD_DIR}/inventory.log
       ${SPHINXOPTS}
       ${SPHINXOPTS_EXTRA}
+      ${DOCSET_SPHINXOPTS}
       ${DOCSET_SRC_DIR}
       ${DOCSET_HTML_DIR}
     USES_TERMINAL
@@ -170,6 +173,7 @@ function(add_docset name version)
       -w ${DOCSET_BUILD_DIR}/html.log
       ${SPHINXOPTS}
       ${SPHINXOPTS_EXTRA}
+      ${DOCSET_SPHINXOPTS}
       ${EXTRA_ARGS}
       ${DOCSET_SRC_DIR}
       ${DOCSET_HTML_DIR}
@@ -191,6 +195,7 @@ function(add_docset name version)
         -w ${DOCSET_BUILD_DIR}/html-live.log
         ${SPHINXOPTS}
         ${SPHINXOPTS_EXTRA}
+        ${DOCSET_SPHINXOPTS}
         ${EXTRA_ARGS}
         ${DOCSET_SRC_DIR}
         ${DOCSET_HTML_DIR}
@@ -210,6 +215,7 @@ function(add_docset name version)
       -w ${DOCSET_BUILD_DIR}/linkcheck.log
       ${SPHINXOPTS}
       ${SPHINXOPTS_EXTRA}
+      ${DOCSET_SPHINXOPTS}
       ${EXTRA_ARGS}
       ${DOCSET_SRC_DIR}
       ${DOCSET_LINKCHECK_DIR}
@@ -296,7 +302,11 @@ add_custom_target(
   COMMENT "Generating Devicetree bindings documentation..."
 )
 
-add_docset(zephyr ${Zephyr_VERSION})
+if(NOT HW_FEATURES)
+  set(ZEPHYR_SPHINXOPTS -t hw_features_turbo)
+endif()
+
+add_docset(zephyr ${Zephyr_VERSION} SPHINXOPTS ${ZEPHYR_SPHINXOPTS})
 add_doxygen_docset(zephyr ${ZEPHYR_BASE} ${Zephyr_VERSION})
 add_dependencies(zephyr zephyr-devicetree)
 add_dependencies(zephyr-all zephyr-devicetree)
