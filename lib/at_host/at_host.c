@@ -114,8 +114,14 @@ static void uart_rx_handler(uint8_t character)
 	/* Backspace and DEL character */
 	case 0x08:
 	case 0x7F:
-		if (at_cmd_len > 0) {
-			at_cmd_len--;
+		if (at_cmd_len == 0) {
+			return;
+		}
+
+		at_cmd_len--;
+		/* If the removed character was a quote, need to toggle the flag. */
+		if (at_buf[at_cmd_len] == '"') {
+			inside_quotes = !inside_quotes;
 		}
 		return;
 	}
