@@ -220,6 +220,14 @@ Thingy:53: Matter weather station
 
 |no_changes_yet_note|
 
+Thingy:53: Zigbee weather station
+---------------------------------
+
+* Added:
+
+  * A fix for logging negative temperature values.
+  * Logging unification.
+
 Samples
 =======
 
