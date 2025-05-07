@@ -91,9 +91,8 @@ int sensor_get_temperature(float *temperature)
 			if (err) {
 				LOG_ERR("Failed to get sensor channel: %d", err);
 			} else {
-				LOG_INF("Sensor    T:%3d.%06d [*C]",
-					sensor_temperature.val1, sensor_temperature.val2);
 				*temperature = convert_sensor_value(sensor_temperature);
+				LOG_INF("Sensor    T:%9.3f [*C]", (double)(*temperature));
 			}
 		} else {
 			LOG_ERR("Sensor not initialized");
@@ -121,9 +120,8 @@ int sensor_get_pressure(float *pressure)
 			if (err) {
 				LOG_ERR("Failed to get sensor channel: %d", err);
 			} else {
-				LOG_INF("Sensor    P:%3d.%06d [kPa]",
-					sensor_pressure.val1, sensor_pressure.val2);
 				*pressure = convert_sensor_value(sensor_pressure);
+				LOG_INF("Sensor    P:%9.3f [kPa]", (double)(*pressure));
 			}
 		} else {
 			LOG_ERR("Sensor not initialized");
@@ -151,9 +149,8 @@ int sensor_get_humidity(float *humidity)
 			if (err) {
 				LOG_ERR("Failed to get sensor channel: %d", err);
 			} else {
-				LOG_INF("Sensor    H:%3d.%06d [%%]",
-					sensor_humidity.val1, sensor_humidity.val2);
 				*humidity = convert_sensor_value(sensor_humidity);
+				LOG_INF("Sensor    H:%9.3f [%%]", (double)(*humidity));
 			}
 		} else {
 			LOG_ERR("Sensor not initialized");
