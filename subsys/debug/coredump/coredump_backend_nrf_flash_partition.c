@@ -37,10 +37,6 @@
 
 #define PARTITION_LABEL coredump_partition
 
-#if !FIXED_PARTITION_EXISTS(PARTITION_LABEL)
-#error "Missing fixed partition named 'coredump_partition'"
-#endif
-
 /* Extract DTS properties */
 
 #define FLASH_NODE	 DT_INST(0, soc_nv_flash)
@@ -56,9 +52,10 @@
 #define PARTITION_SIZE	 FIXED_PARTITION_SIZE(PARTITION_LABEL)
 #define PARTITION_ADDR	 (FLASH_ADDR + PARTITION_OFFSET)
 
-#if (PARTITION_OFFSET % FLASH_ERASE_SIZE) != 0
-#error "Core dump partition unaligned to erase block size"
-#endif
+BUILD_ASSERT(FIXED_PARTITION_EXISTS(PARTITION_LABEL),
+	     "Missing fixed partition named 'coredump_partition'");
+BUILD_ASSERT(PARTITION_OFFSET % FLASH_ERASE_SIZE == 0,
+	     "Core dump partition unaligned to erase block size");
 
 struct header {
 	uint8_t magic[4];    /* "CD01" */
@@ -136,13 +133,20 @@ static void write(uint32_t offset, const uint8_t *data, size_t size)
 #elif defined(CONFIG_NRFX_RRAMC)
 	nrf_rramc_config_t config = {
 		.mode_write = true,
-		.write_buff_size = 0,
+		.write_buff_size = 1,
 	};
 
 	nrf_rramc_config_set(NRF_RRAMC, &config);
 
 	memcpy((void *)(PARTITION_ADDR + offset), data, size);
 	barrier_dmem_fence_full();
+
+	/*
+	 * The write buffer flush trigger can be skipped as long as the write block size
+	 * divides the configured write buffer size (1 * 16B).
+	 */
+	BUILD_ASSERT(FLASH_WRITE_SIZE % 16 == 0,
+		     "Write block size not divisible by write buffer word size");
 
 	config.mode_write = false;
 	nrf_rramc_config_set(NRF_RRAMC, &config);
@@ -167,13 +171,20 @@ static void erase(uint32_t offset, size_t size)
 #elif defined(CONFIG_NRFX_RRAMC)
 	nrf_rramc_config_t config = {
 		.mode_write = true,
-		.write_buff_size = 0,
+		.write_buff_size = 1,
 	};
 
 	nrf_rramc_config_set(NRF_RRAMC, &config);
 
 	memset((void *)(PARTITION_ADDR + offset), 0xff, size);
 	barrier_dmem_fence_full();
+
+	/*
+	 * The write buffer flush trigger can be skipped as long as the erase block size
+	 * divides the configured write buffer size (1 * 16B).
+	 */
+	BUILD_ASSERT(FLASH_ERASE_SIZE % 16 == 0,
+		     "Erase block size not divisible by write buffer word size");
 
 	config.mode_write = false;
 	nrf_rramc_config_set(NRF_RRAMC, &config);
