@@ -330,6 +330,10 @@ nRF5340 samples
 Peripheral samples
 ------------------
 
+* :ref:`radio_test` sample:
+
+   * Added support for the nRF54LM20 PDK.
+
 |no_changes_yet_note|
 
 PMIC samples
