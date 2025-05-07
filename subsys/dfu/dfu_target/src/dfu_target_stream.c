@@ -238,10 +238,14 @@ int dfu_target_stream_reset(void)
 		return 0;
 	}
 
-	/* Erase just the first page. Stream write will take care of erasing remaining pages
-	 * on a next buffered_write round
-	 */
-	err = stream_flash_flatten_page(&stream, stream.offset);
+	err = flash_flatten(stream.fdev, stream.offset, stream.available);
+	if (err != 0) {
+		return err;
+	}
+	/* Reinitialize stream_flash */
+	err = stream_flash_init(&stream, stream.fdev, stream.buf,
+				stream.buf_len, stream.offset,
+				stream.available, NULL);
 	current_id = NULL;
 
 	return err;
