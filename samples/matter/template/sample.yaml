@@ -14,6 +14,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
@@ -21,6 +22,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     tags:
       - sysbuild
       - ci_samples_matter
@@ -37,6 +39,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
@@ -44,6 +47,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     tags:
       - sysbuild
       - ci_samples_matter
@@ -60,6 +64,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
@@ -67,6 +72,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     tags:
       - sysbuild
       - ci_samples_matter
@@ -75,11 +81,13 @@ tests:
     build_only: true
     extra_args:
       - FILE_SUFFIX=internal
-      - CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS=y
       - template_EXTRA_CONF_FILE=prj_release.conf
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-    platform_allow: nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     tags:
       - sysbuild
       - ci_samples_matter
@@ -89,11 +97,13 @@ tests:
     extra_args:
       - FILE_SUFFIX=internal
       - CONFIG_CHIP_DFU_OVER_BT_SMP=y
-      - CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS=y
       - template_EXTRA_CONF_FILE=prj_release.conf
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-    platform_allow: nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     tags:
       - sysbuild
       - ci_samples_matter
