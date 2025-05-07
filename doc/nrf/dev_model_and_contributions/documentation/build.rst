@@ -129,8 +129,10 @@ Here, *docset-name* is the name of the documentation set, for example, ``nrf``.
 Optimizing build speed
 **********************
 
-When working with documentation locally, you can enable the ``-DNO_DTS_BINDINGS=ON`` option when configuring the build.
-This option skips generating devicetree bindings pages, which speeds up the Zephyr documentation set build process.
+The documentation will by default skip generating certain parts like devicetree bindings or hardware feature tables.
+These options are enabled in CI when building the documentation before it is published.
+
+You can try them locally by enabling ``-DDTS_BINDINGS=ON`` and ``-DHW_FEATURES=ON``.
 
 .. _testing_versions:
 
