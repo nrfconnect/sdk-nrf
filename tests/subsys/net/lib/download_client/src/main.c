@@ -13,7 +13,6 @@
 #include "mock/socket.h"
 #include "mock/dl_coap.h"
 
-K_PIPE_DEFINE(event_pipe, 10, _Alignof(struct download_client_evt));
 static struct download_client client;
 static const struct sockaddr_in addr_coap_me_http = {
 	.sin_family = AF_INET,
@@ -26,16 +25,62 @@ static const struct sockaddr_in addr_example_com = {
 	.sin_addr.s4_addr = {93, 184, 216, 34},
 };
 
+struct pipe {
+	struct download_client_evt data[10];
+	uint8_t wr_idx;
+	uint8_t rd_idx;
+};
+
+static struct pipe event_pipe;
+K_SEM_DEFINE(pipe_sem, 0, 10);
+
+static void pipe_reset(struct pipe *pipe)
+{
+	memset(pipe, 0, sizeof(struct pipe));
+}
+
+static int pipe_put(struct pipe *pipe, const struct download_client_evt *evt)
+{
+	if (k_sem_count_get(&pipe_sem) >= 10) {
+		printk("Pipe is full! Please check size!");
+		return -ENOSPC;
+	}
+
+	memcpy(&pipe->data[pipe->wr_idx], evt, sizeof(struct download_client_evt));
+
+	pipe->wr_idx++;
+	pipe->wr_idx = CLAMP(pipe->wr_idx, 0, (sizeof(pipe->data) / sizeof(struct download_client_evt)) - 1);
+
+	k_sem_give(&pipe_sem);
+
+	return 0;
+}
+
+static int pipe_get(struct pipe *pipe, struct download_client_evt *evt, k_timeout_t timeo)
+{
+	int err;
+
+	err = k_sem_take(&pipe_sem, timeo);
+	if (err) {
+		return err;
+	}
+
+	memcpy(evt, &pipe->data[pipe->rd_idx], sizeof(struct download_client_evt));
+
+	pipe->rd_idx++;
+	pipe->rd_idx = CLAMP(pipe->rd_idx, 0, (sizeof(pipe->data) / sizeof(struct download_client_evt)) - 1);
+
+	return 0;
+}
+
 static int download_client_callback(const struct download_client_evt *event)
 {
-	size_t written;
-
 	if (event == NULL) {
 		return -EINVAL;
 	}
 
 	printk("event: %d\n", event->id);
-	k_pipe_put(&event_pipe, (void *)event, sizeof(*event), &written, sizeof(*event), K_FOREVER);
+	pipe_put(&event_pipe, event);
 
 	return 0;
 }
@@ -52,13 +97,11 @@ static void mock_return_values(const char *func, int32_t *val, size_t len)
 static struct download_client_evt wait_for_event(enum download_client_evt_id event,
 						 k_timeout_t timeout)
 {
-	size_t read;
 	struct download_client_evt evt;
 	int err;
 
 	while (true) {
-		err = k_pipe_get(&event_pipe, &evt, sizeof(evt), &read, sizeof(evt),
-				 timeout);
+		err = pipe_get(&event_pipe, &evt, timeout);
 		zassert_ok(err);
 		if (evt.id == event) {
 			break;
@@ -70,11 +113,10 @@ static struct download_client_evt wait_for_event(enum download_client_evt_id eve
 
 static struct download_client_evt get_next_event(k_timeout_t timeout)
 {
-	size_t read;
 	struct download_client_evt evt;
 	int err;
 
-	err = k_pipe_get(&event_pipe, &evt, sizeof(evt), &read, sizeof(evt), timeout);
+	err = pipe_get(&event_pipe, &evt, timeout);
 	zassert_ok(err);
 	return evt;
 }
@@ -95,7 +137,7 @@ static void init(void)
 		zassert_ok(err, NULL);
 		initialized = true;
 	}
-	k_pipe_flush(&event_pipe);
+	pipe_reset(&event_pipe);
 }
 
 static void dl_coap_start(void)

@@ -6,7 +6,7 @@
 menuconfig OPENTHREAD_REPORT
 	bool "OpenThread report generation"
 	default y
-	depends on NET_L2_OPENTHREAD
+	depends on OPENTHREAD
 	help
 	  Enables report generation that contains the OpenThread version,
 	  NCS revision, OpenThread library build information, List of enabled

@@ -143,7 +143,7 @@ static void bt_rpc_gatt_ccc_cfg_changed_cb_rpc_handler(const struct nrf_rpc_grou
 	uint32_t attr_index;
 	uint16_t ccc_value;
 	const struct bt_gatt_attr *attr;
-	struct _bt_gatt_ccc *ccc;
+	struct bt_gatt_ccc_managed_user_data *ccc;
 
 	attr_index = nrf_rpc_decode_uint(ctx);
 	ccc_value = nrf_rpc_decode_uint(ctx);
@@ -157,7 +157,7 @@ static void bt_rpc_gatt_ccc_cfg_changed_cb_rpc_handler(const struct nrf_rpc_grou
 		return;
 	}
 
-	ccc = (struct _bt_gatt_ccc *) attr->user_data;
+	ccc = (struct bt_gatt_ccc_managed_user_data *) attr->user_data;
 
 	if (ccc->cfg_changed) {
 		ccc->cfg_changed(attr, ccc_value);
@@ -181,7 +181,7 @@ static void bt_rpc_gatt_ccc_cfg_write_cb_rpc_handler(const struct nrf_rpc_group 
 	uint32_t attr_index;
 	struct bt_conn *conn;
 	const struct bt_gatt_attr *attr;
-	struct _bt_gatt_ccc *ccc;
+	struct bt_gatt_ccc_managed_user_data *ccc;
 	uint16_t ccc_value;
 	ssize_t write_len = 0;
 
@@ -198,7 +198,7 @@ static void bt_rpc_gatt_ccc_cfg_write_cb_rpc_handler(const struct nrf_rpc_group 
 		return;
 	}
 
-	ccc = (struct _bt_gatt_ccc *) attr->user_data;
+	ccc = (struct bt_gatt_ccc_managed_user_data *) attr->user_data;
 
 	if (ccc->cfg_write) {
 		write_len = ccc->cfg_write(conn, attr, ccc_value);
@@ -222,7 +222,7 @@ static void bt_rpc_gatt_ccc_cfg_match_cb_rpc_handler(const struct nrf_rpc_group 
 	uint32_t attr_index;
 	struct bt_conn *conn;
 	const struct bt_gatt_attr *attr;
-	struct _bt_gatt_ccc *ccc;
+	struct bt_gatt_ccc_managed_user_data *ccc;
 	bool match = false;
 
 	conn = bt_rpc_decode_bt_conn(ctx);
@@ -237,7 +237,7 @@ static void bt_rpc_gatt_ccc_cfg_match_cb_rpc_handler(const struct nrf_rpc_group 
 		return;
 	}
 
-	ccc = (struct _bt_gatt_ccc *) attr->user_data;
+	ccc = (struct bt_gatt_ccc_managed_user_data *) attr->user_data;
 
 	if (ccc->cfg_match) {
 		match = ccc->cfg_match(conn, attr);
@@ -511,7 +511,7 @@ static int bt_rpc_gatt_send_desc_attr(uint8_t special_attr, uint16_t param, uint
 
 static int send_ccc_attr(uint8_t special_attr, const struct bt_gatt_attr *attr)
 {
-	struct _bt_gatt_ccc *ccc = (struct _bt_gatt_ccc *)attr->user_data;
+	struct bt_gatt_ccc_managed_user_data *ccc = (struct bt_gatt_ccc_managed_user_data *)attr->user_data;
 	uint16_t data = attr->perm;
 
 	if (ccc->cfg_changed) {

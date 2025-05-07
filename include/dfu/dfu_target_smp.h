@@ -16,6 +16,7 @@
 
 #include <stddef.h>
 #include <dfu/dfu_target.h>
+#include <zephyr/mgmt/mcumgr/mgmt/mgmt.h>
 #include <zephyr/mgmt/mcumgr/grp/img_mgmt/img_mgmt_client.h>
 
 #ifdef __cplusplus

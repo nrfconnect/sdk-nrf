@@ -474,7 +474,7 @@ static void hids_input_report_ccc_changed(struct bt_gatt_attr const *attr,
 	LOG_DBG("Input Report CCCD has changed.");
 
 	struct bt_hids_inp_rep *inp_rep =
-	    CONTAINER_OF((struct _bt_gatt_ccc *)attr->user_data,
+	    CONTAINER_OF((struct bt_gatt_ccc_managed_user_data *)attr->user_data,
 			 struct bt_hids_inp_rep, ccc);
 
 	uint8_t report_id = inp_rep->id;
@@ -533,7 +533,7 @@ static void hids_boot_mouse_inp_rep_ccc_changed(struct bt_gatt_attr const *attr,
 	LOG_DBG("Boot Mouse Input Report CCCD has changed.");
 
 	struct bt_hids_boot_mouse_inp_rep *boot_mouse_rep =
-		CONTAINER_OF((struct _bt_gatt_ccc *)attr->user_data,
+		CONTAINER_OF((struct bt_gatt_ccc_managed_user_data *)attr->user_data,
 			     struct bt_hids_boot_mouse_inp_rep, ccc);
 
 	if (value == BT_GATT_CCC_NOTIFY) {
@@ -588,7 +588,7 @@ static void hids_boot_kb_inp_rep_ccc_changed(struct bt_gatt_attr const *attr,
 	LOG_DBG("Boot Keyboard Input Report CCCD has changed.");
 
 	struct bt_hids_boot_kb_inp_rep *boot_kb_inp_rep =
-		CONTAINER_OF((struct _bt_gatt_ccc *)attr->user_data,
+		CONTAINER_OF((struct bt_gatt_ccc_managed_user_data *)attr->user_data,
 			     struct bt_hids_boot_kb_inp_rep, ccc);
 
 	if (value == BT_GATT_CCC_NOTIFY) {

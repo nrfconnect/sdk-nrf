@@ -83,7 +83,7 @@ static struct bt_iso_info iso_infos[CONFIG_BT_ISO_MAX_CHAN];
 
 void iso_chan_info_print(struct bt_iso_info *info, uint8_t role)
 {
-	if (info->type == BT_ISO_CHAN_TYPE_CONNECTED) {
+	if (info->type == BT_ISO_CHAN_TYPE_CENTRAL || info->type == BT_ISO_CHAN_TYPE_PERIPHERAL) {
 		uint8_t bn;
 		uint32_t flush_timeout;
 		uint32_t transport_latency_us;
@@ -302,7 +302,8 @@ static uint32_t trigger_time_us_get(uint32_t sdu_sync_ref, uint8_t chan_index)
 	 * See Bluetooth Core Specification, Vol 6, Part G, Section 3.2.
 	 */
 
-	if (iso_infos[chan_index].type == BT_ISO_CHAN_TYPE_CONNECTED) {
+	if (iso_infos[chan_index].type == BT_ISO_CHAN_TYPE_CENTRAL ||
+	    iso_infos[chan_index].type == BT_ISO_CHAN_TYPE_PERIPHERAL) {
 		if (roles[chan_index] == BT_CONN_ROLE_CENTRAL) {
 			trigger_time_us += iso_infos[chan_index].unicast.central.latency;
 		}
