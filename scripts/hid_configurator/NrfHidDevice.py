@@ -196,23 +196,35 @@ class NrfHidDevice():
             self.hwid = hwid
 
     @staticmethod
+    def _add_nrf_hid_device(discovered_dev, dev_dictionary):
+        if discovered_dev.initialized():
+            hwid = discovered_dev.get_hwid()
+            if hwid not in dev_dictionary:
+                dev_dictionary[hwid] = discovered_dev
+                return True
+
+        return False
+
+    @staticmethod
     def open_devices(vid):
         dir_devs = {}
         non_dir_devs = {}
 
         try:
             devlist = hid.enumerate(vid=vid)
-            for d in devlist:
+        except Exception as e:
+            devlist = []
+            logging.error('Exception during hid.enumerate: {}'.format(e))
+
+        for d in devlist:
+            dev = None
+            dev_active = False
+            discovered_dev = None
+            discovered_peers = []
+
+            try:
                 dev = hid.Device(path=d['path'])
-                dev_active = False
-
                 discovered_dev = NrfHidDevice(dev, LOCAL_RECIPIENT)
-                if discovered_dev.initialized():
-                    hwid = discovered_dev.get_hwid()
-                    if hwid not in dir_devs:
-                        dir_devs[hwid] = discovered_dev
-                        dev_active = True
-
                 peers, peers_cache = NrfHidDevice._get_connected_peers(dev, LOCAL_RECIPIENT)
 
                 if peers_cache:
@@ -225,21 +237,19 @@ class NrfHidDevice():
                         cache_dev_descr = d['path']
                     logging.debug('Peers cache of {}: {} '.format(cache_dev_descr, peers_cache))
 
-                for p in peers:
-                    discovered_dev = NrfHidDevice(dev, peers[p])
-                    if discovered_dev.initialized():
-                        hwid = discovered_dev.get_hwid()
-                        if hwid not in non_dir_devs:
-                            non_dir_devs[hwid] = discovered_dev
-                            dev_active = True
+                discovered_peers = [NrfHidDevice(dev, peers[p]) for p in peers]
 
-                if not dev_active:
-                    dev.close()
+            except hid.HIDException as he:
+                logging.warning('HID exception during device open: {}'.format(he))
+            except Exception as e:
+                logging.error('Unknown exception during device open: {}'.format(e))
+            else:
+                dev_active = NrfHidDevice._add_nrf_hid_device(discovered_dev, dir_devs)
+                for dp in discovered_peers:
+                    dev_active = dev_active or NrfHidDevice._add_nrf_hid_device(dp, non_dir_devs)
 
-        except hid.HIDException:
-            pass
-        except Exception as e:
-            logging.error('Unknown exception: {}'.format(e))
+            if dev and not dev_active:
+                dev.close()
 
         devs = non_dir_devs.copy()
         devs.update(dir_devs)
