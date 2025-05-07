@@ -5,7 +5,6 @@
 #
 menuconfig NRF_PROVISIONING_CBOR
 	bool "nRF Provisioning CBOR content format"
-	select EXPERIMENTAL
 	depends on ZCBOR
 
 if NRF_PROVISIONING_CBOR
