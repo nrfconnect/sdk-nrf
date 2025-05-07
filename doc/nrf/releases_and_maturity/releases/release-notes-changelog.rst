@@ -140,10 +140,7 @@ Matter
 Matter fork
 +++++++++++
 
-* Added:
-
-  * A new ``kFactoryReset`` event that is posted during factory reset.
-    The application can register a handler and perform additional cleanup.
+|no_changes_yet_note|
 
 nRF IEEE 802.15.4 radio driver
 ------------------------------
@@ -158,8 +155,7 @@ Thread
 Zigbee
 ------
 
-* Fixed compilation errors that previously occurred when the :kconfig:option:`CONFIG_ZIGBEE_FACTORY_RESET` Kconfig option was disabled.
-* Fixed the :file:`zb_add_ota_header.py` script to allow a patch version higher than 9 in an ``APPLICATION_VERSION_STRING``.
+|no_changes_yet_note|
 
 Wi-Fi
 -----
@@ -224,10 +220,7 @@ Thingy:53: Matter weather station
 Thingy:53: Zigbee weather station
 ---------------------------------
 
-* Added:
-
-  * A fix for logging negative temperature values.
-  * Logging unification.
+|no_changes_yet_note|
 
 Samples
 =======
@@ -258,14 +251,7 @@ Bluetooth Mesh samples
 Cellular samples
 ----------------
 
-* Decreased the fragment size on the following cellular samples that include the :ref:`liblwm2m_carrier_readme` library:
-
-  * :ref:`slm_description`
-  * :ref:`http_application_update_sample`
-  * :ref:`lwm2m_carrier`
-  * :ref:`modem_shell_application`
-
-  This is done to ensure that FOTA issued from Verizon LwM2M servers has enough room for HTTP headers.
+|no_changes_yet_note|
 
 Cryptography samples
 --------------------
@@ -443,9 +429,7 @@ Multiprotocol Service Layer libraries
 Libraries for networking
 ------------------------
 
-* :ref:`lib_nrf_provisioning` library:
-
-  * Fixed an issue where the results from the :c:func:`zsock_getaddrinfo` function were not freed when the CoAP protocol was used for connection establishment.
+|no_changes_yet_note|
 
 Libraries for NFC
 -----------------

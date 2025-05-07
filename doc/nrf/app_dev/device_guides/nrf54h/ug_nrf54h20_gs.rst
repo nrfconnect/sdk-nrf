@@ -158,7 +158,7 @@ Installing nRF Util and its commands
 Using the nRF54H20 DK with the |NCS| version |release| requires the following:
 
 * nRF Util version 7.11.1 or higher
-* nRF Util ``device`` version 2.7.2
+* nRF Util ``device`` version 2.8.8
 
 1. Download the nrfutil executable file from the `nRF Util development tool`_ product page.
 #. Add nRF Util to the system path on Linux and MacOS, or environment variables on Windows, to run it from anywhere on the system.
@@ -180,9 +180,9 @@ Using the nRF54H20 DK with the |NCS| version |release| requires the following:
 
    For more information, consult the `nRF Util`_ documentation.
 
-#. Install the nRF Util ``device`` command version 2.7.2 as follows::
+#. Install the nRF Util ``device`` command version 2.8.8 as follows::
 
-      nrfutil install device=2.7.2 --force
+      nrfutil install device=2.8.8 --force
 
 .. _ug_nrf54h20_gs_bringup:
 

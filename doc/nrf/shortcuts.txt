@@ -2,12 +2,12 @@
 
 .. ### Versions
 
-.. |release| replace:: v2.9.1
-.. |release_tt| replace:: ``v2.9.1``
-.. |release_number_tt| replace:: ``2.9.1``
+.. |release| replace:: v2.9.2
+.. |release_tt| replace:: ``v2.9.2``
+.. |release_number_tt| replace:: ``2.9.2``
 
-.. |jlink_ver| replace:: v7.94i
-.. |jlink_ver_vsc| replace:: v7.94i
+.. |jlink_ver| replace:: v8.18
+.. |jlink_ver_vsc| replace:: v8.18
 
 .. ### Config shortcuts
 
