@@ -60,6 +60,18 @@
 			#clock-cells = <0>;
 			clock-frequency = <DT_FREQ_M(64)>;
 		};
+
+		hfxo32m: hfxo32m {
+			compatible = "fixed-clock";
+			#clock-cells = <0>;
+			clock-frequency = <DT_FREQ_M(32)>;
+		};
+
+		hfpll: hfpll {
+			compatible = "fixed-clock";
+			#clock-cells = <0>;
+			clock-frequency = <DT_FREQ_M(256)>;
+		};
 	};
 
 	reserved-memory {
@@ -265,6 +277,7 @@
 				compatible = "nordic,nrf-timer";
 				reg = <0x55000 0x1000>;
 				interrupts = <85 NRF_DEFAULT_IRQ_PRIORITY>;
+				clocks = <&hfpll>;
 				cc-num = <6>;
 				max-bit-width = <32>;
 				prescaler = <0>;
@@ -313,6 +326,7 @@
 				compatible = "nordic,nrf-timer";
 				reg = <0x85000 0x1000>;
 				interrupts = <133 NRF_DEFAULT_IRQ_PRIORITY>;
+				clocks = <&hfxo32m>;
 				cc-num = <8>;
 				max-bit-width = <32>;
 				prescaler = <0>;
