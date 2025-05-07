@@ -427,7 +427,9 @@ Multiprotocol Service Layer libraries
 Libraries for networking
 ------------------------
 
-|no_changes_yet_note|
+* :ref:`lib_nrf_provisioning` library:
+
+  * Fixed an issue where the results from the :c:func:`zsock_getaddrinfo` function were not freed when the CoAP protocol was used for connection establishment.
 
 Libraries for NFC
 -----------------
