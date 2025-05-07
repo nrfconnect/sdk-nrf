@@ -158,7 +158,7 @@ Thread
 Zigbee
 ------
 
-|no_changes_yet_note|
+* Fixed compilation errors that previously occurred when the :kconfig:option:`CONFIG_ZIGBEE_FACTORY_RESET` Kconfig option was disabled.
 
 Wi-Fi
 -----

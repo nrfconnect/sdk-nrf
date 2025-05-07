@@ -448,10 +448,12 @@ zb_ret_t zigbee_default_signal_handler(zb_bufid_t bufid)
 
 			if (zb_get_network_role() ==
 			    ZB_NWK_DEVICE_TYPE_COORDINATOR) {
+#if defined CONFIG_ZIGBEE_FACTORY_RESET
 				if (factory_reset_context.pibcache_pan_id_needs_reset) {
 					zigbee_pibcache_pan_id_clear();
 					factory_reset_context.pibcache_pan_id_needs_reset = false;
 				}
+#endif
 				/* For coordinator node,
 				 * start network formation.
 				 */
