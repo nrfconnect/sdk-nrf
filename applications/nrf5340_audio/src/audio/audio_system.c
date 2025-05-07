@@ -355,10 +355,7 @@ int audio_system_decode(struct audio_data *audio_frame)
 		}
 	}
 
-	struct net_buf *buf = audio_frame->data;
-
-	ret = sw_codec_decode(buf->data, buf->len, audio_frame->meta.bad_data, &pcm_raw_data,
-			      &pcm_block_size);
+	ret = sw_codec_decode(audio_frame, &pcm_raw_data, &pcm_block_size);
 	if (ret) {
 		LOG_ERR("Failed to decode");
 		return ret;

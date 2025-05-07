@@ -907,9 +907,9 @@ void audio_datapath_stream_out(struct audio_data *audio_frame)
 	}
 
 	/*** Check incoming data ***/
-	struct net_buf *buf = audio_frame->data;
+	struct net_buf *audio_buf = audio_frame->data;
 
-	if (!buf->data) {
+	if (!audio_buf->data) {
 		LOG_ERR("Buffer pointer is NULL");
 	}
 
@@ -962,8 +962,7 @@ void audio_datapath_stream_out(struct audio_data *audio_frame)
 	int ret;
 	size_t pcm_size;
 
-	ret = sw_codec_decode(buf->data, buf->len, audio_frame->meta.bad_data,
-			      &ctrl_blk.decoded_data, &pcm_size);
+	ret = sw_codec_decode(audio_frame, &ctrl_blk.decoded_data, &pcm_size);
 	if (ret) {
 		LOG_WRN("SW codec decode error: %d", ret);
 	}

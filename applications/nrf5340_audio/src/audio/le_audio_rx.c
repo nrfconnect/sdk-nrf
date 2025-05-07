@@ -38,7 +38,7 @@ void le_audio_rx_data_handler(struct audio_data *audio_frame, uint8_t channel_in
 	int ret;
 	uint32_t blocks_alloced_num, blocks_locked_num;
 	struct audio_data *audio_frame_received = NULL;
-	struct net_buf *buf;
+	struct net_buf *audio_buf;
 	static struct rx_stats rx_stats[AUDIO_CH_NUM];
 	static uint32_t num_overruns;
 	static uint32_t num_thrown;
@@ -108,17 +108,17 @@ void le_audio_rx_data_handler(struct audio_data *audio_frame, uint8_t channel_in
 	memcpy(audio_frame_received, audio_frame, sizeof(struct audio_data));
 	ERR_CHK_MSG(ret, "Unable to get FIFO pointer");
 
-	buf = net_buf_alloc(&ble_rx_pool, K_NO_WAIT);
-	if (buf == NULL) {
+	audio_buf = net_buf_alloc(&ble_rx_pool, K_NO_WAIT);
+	if (audio_buf == NULL) {
 		LOG_WRN("Out of RX buffers");
 		return;
 	}
 
 	if (audio_frame->data_size && !audio_frame->meta.bad_data) {
-		net_buf_add_mem(buf, audio_frame->data, audio_frame->data_size);
+		net_buf_add_mem(audio_buf, audio_frame->data, audio_frame->data_size);
 	}
 
-	audio_frame_received->data = buf;
+	audio_frame_received->data = audio_buf;
 
 	ret = data_fifo_block_lock(&ble_fifo_rx, (void *)&audio_frame_received,
 				   sizeof(struct audio_data));
@@ -146,9 +146,9 @@ static void audio_datapath_thread(void *dummy1, void *dummy2, void *dummy3)
 			audio_datapath_stream_out(audio_frame);
 		}
 
-		struct net_buf *buf = audio_frame->data;
+		struct net_buf *audio_buf = audio_frame->data;
 
-		net_buf_unref(buf);
+		net_buf_unref(audio_buf);
 		data_fifo_block_free(&ble_fifo_rx, (void *)audio_frame);
 
 		STACK_USAGE_PRINT("audio_datapath_thread", &audio_datapath_thread_data);
