@@ -68,7 +68,7 @@ static int settings_set(const char *key, size_t len_rd,
 
 		/* Zero bytes written - set last erased page to its default. */
 		if (stream.bytes_written == 0) {
-			stream.last_erased_page_start_offset = -1;
+			stream.erased_up_to = 0;
 			return 0;
 		}
 
@@ -85,7 +85,7 @@ static int settings_set(const char *key, size_t len_rd,
 		/* Update the last erased page to avoid deleting already
 		 * written data.
 		 */
-		stream.last_erased_page_start_offset = page.start_offset;
+		stream.erased_up_to = page.start_offset + page.size - stream.offset;
 	}
 
 	return 0;

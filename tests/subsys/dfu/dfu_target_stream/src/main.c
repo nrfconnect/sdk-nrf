@@ -216,7 +216,7 @@ ZTEST(dfu_target_stream_test, test_dfu_target_stream_save_progress)
 	/* Check that last erased page offset was set correctly when loading */
 	ctx = dfu_target_stream_get_stream();
 	zassert_not_null(ctx, "Expected non-null ctx.");
-	zassert_equal(erased_page_offset, ctx->last_erased_page_start_offset,
+	zassert_equal(0, ctx->erased_up_to,
 		      "Expected last erased page offset to be unchanged.");
 
 	/* Next, check that writes that end up right after a page boundary
