@@ -22,11 +22,11 @@ int stream_flash_flatten_page(struct stream_flash_ctx *ctx, off_t off)
 	}
 
 #if defined(CONFIG_STREAM_FLASH_ERASE)
-	if (ctx->erased_up_to == page.start_offset) {
+	if (ctx->erased_up_to >= (page.start_offset + page.size)) {
 		return 0;
 	}
 #else
-	if (ctx->bytes_written + ctx->offset > page.start_offset) {
+	if (ctx->bytes_written > (page.start_offset + page.size)) {
 		return 0;
 	}
 #endif
@@ -39,7 +39,7 @@ int stream_flash_flatten_page(struct stream_flash_ctx *ctx, off_t off)
 		LOG_ERR("Error %d while flattening page", rc);
 #if defined(CONFIG_STREAM_FLASH_ERASE)
 	} else {
-		ctx->erased_up_to = page.start_offset;
+		ctx->erased_up_to = page.start_offset + page.size - ctx->offset;
 #endif
 	}
 
