@@ -90,7 +90,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME, CONFIG_OPENTHREAD_PLATFORM_LOG_LEVEL);
 #define NRF5_BROADCAST_ADDRESS	       0xffff
 #define NRF5_NO_SHORT_ADDRESS_ASSIGNED 0xfffe
 
-#if defined(CONFIG_NET_TC_THREAD_COOPERATIVE)
+#if defined(CONFIG_COOP_ENABLED)
 #define OT_WORKER_PRIORITY K_PRIO_COOP(CONFIG_OPENTHREAD_THREAD_PRIORITY)
 #else
 #define OT_WORKER_PRIORITY K_PRIO_PREEMPT(CONFIG_OPENTHREAD_THREAD_PRIORITY)
@@ -151,12 +151,13 @@ struct nrf5_header_ie {
 
 // TODO: AG: replace with otRadioFrame?
 struct nrf5_rx_frame {
-	uint8_t *psdu; /* Pointer to a received frame. */
-	uint64_t time; /* RX timestamp. */
-	uint8_t lqi;   /* Last received frame LQI value. */
-	int8_t rssi;   /* Last received frame RSSI value. */
-	bool ack_fpb;  /* FPB value in ACK sent for the received frame. */
-	bool ack_seb;  /* SEB value in ACK sent for the received frame. */
+	void *fifo_reserved; /* 1st word reserved for use by fifo. */
+	uint8_t *psdu;	     /* Pointer to a received frame. */
+	uint64_t time;	     /* RX timestamp. */
+	uint8_t lqi;	     /* Last received frame LQI value. */
+	int8_t rssi;	     /* Last received frame RSSI value. */
+	bool ack_fpb;	     /* FPB value in ACK sent for the received frame. */
+	bool ack_seb;	     /* SEB value in ACK sent for the received frame. */
 };
 
 /** Energy scan callback */
@@ -238,6 +239,7 @@ K_SEM_DEFINE(radio_sem, 0, 1);
 // TODO: AG: move to nrf5_data
 static otRadioState sState = OT_RADIO_STATE_DISABLED;
 static otRadioFrame sTransmitFrame;
+static uint8_t tx_psdu[ACK_PKT_LENGTH];
 static otRadioFrame ack_frame;
 
 #if defined(CONFIG_OPENTHREAD_TIME_SYNC)
@@ -334,6 +336,17 @@ static int8_t get_transmit_power_for_channel(uint8_t aChannel)
 	}
 
 	return power;
+}
+
+static int nrf5_set_tx_power(uint16_t channel)
+{
+	int8_t tx_power = get_transmit_power_for_channel(channel);
+
+	LOG_DBG("set tx_power %d", tx_power);
+
+	nrf_802154_tx_power_set(tx_power);
+
+	return 0;
 }
 
 static int nrf5_ack_data_set(uint16_t short_addr, const otExtAddress *ext_addr,
@@ -520,21 +533,6 @@ static uint64_t convert_32bit_us_wrapped_to_64bit_ns(uint32_t target_time_us_wra
 	return result * NSEC_PER_USEC;
 }
 
-static void dataInit(void)
-{
-	// TODO: AG: replace with static buffer
-	sTransmitFrame.mPsdu = malloc(OT_RADIO_FRAME_MAX_SIZE);
-	__ASSERT_NO_MSG(sTransmitFrame.mPsdu != NULL);
-
-	for (size_t i = 0; i < CHANNEL_COUNT; i++) {
-		max_tx_power_table[i] = OT_RADIO_POWER_INVALID;
-	}
-
-#if defined(CONFIG_OPENTHREAD_TIME_SYNC)
-	sTransmitFrame.mInfo.mTxInfo.mIeInfo = &tx_ie_info;
-#endif
-}
-
 // TODO: AG: config
 #if !defined(CONFIG_NRF5_EXT_IRQ_MGMT)
 static void nrf5_radio_irq(const void *arg)
@@ -555,7 +553,15 @@ static void nrf5_irq_config(void)
 
 void platformRadioInit(void)
 {
-	dataInit();
+	sTransmitFrame.mPsdu = tx_psdu;
+
+#if defined(CONFIG_OPENTHREAD_TIME_SYNC)
+	sTransmitFrame.mInfo.mTxInfo.mIeInfo = &tx_ie_info;
+#endif
+
+	for (size_t i = 0; i < CHANNEL_COUNT; i++) {
+		max_tx_power_table[i] = OT_RADIO_POWER_INVALID;
+	}
 
 	nrf5_get_eui64(nrf5_data.mac);
 	nrf5_data.capabilities = nrf5_get_caps();
@@ -581,6 +587,8 @@ static void openthread_handle_received_frame(otInstance *instance, struct nrf5_r
 
 	ARG_UNUSED(instance);
 
+	__ASSERT_NO_MSG(rx_frame->psdu != NULL);
+
 	memset(&recv_frame, 0, sizeof(otRadioFrame));
 
 	recv_frame.mPsdu = &rx_frame->psdu[1];
@@ -593,9 +601,6 @@ static void openthread_handle_received_frame(otInstance *instance, struct nrf5_r
 	recv_frame.mInfo.mRxInfo.mTimestamp = rx_frame->time;
 
 	recv_frame.mInfo.mRxInfo.mAckedWithSecEnhAck = rx_frame->ack_seb;
-	// TODO: AG: ???
-	//  recv_frame.mInfo.mRxInfo.mAckFrameCounter = net_pkt_ieee802154_ack_fc(pkt);
-	//  recv_frame.mInfo.mRxInfo.mAckKeyId = net_pkt_ieee802154_ack_keyid(pkt);
 
 	if (IS_ENABLED(CONFIG_OPENTHREAD_DIAG) && otPlatDiagModeGet()) {
 		otPlatDiagRadioReceiveDone(instance, &recv_frame, OT_ERROR_NONE);
@@ -629,12 +634,6 @@ static int handle_ack(void)
 		goto free_nrf_ack;
 	}
 
-	// TODO: AG: validate
-	//  if (IS_ENABLED(CONFIG_IEEE802154_L2_PKT_INCL_FCS)) {
-	//  	ack_len = nrf5_radio->ack_frame.psdu[0];
-	//  } else {
-	//  	ack_len = nrf5_radio->ack_frame.psdu[0] - IEEE802154_FCS_LENGTH;
-	//  }
 	ack_len = nrf5_data.ack_frame.psdu[0];
 	if (ack_len > ACK_PKT_LENGTH) {
 		LOG_ERR("Invalid ACK length %u", ack_len);
@@ -847,7 +846,6 @@ static int nrf5_tx(enum ieee802154_tx_mode mode, otRadioFrame *frame)
 #if defined(CONFIG_NRF5_MULTIPLE_CCA)
 	case IEEE802154_OPENTHREAD_TX_MODE_TXTIME_MULTIPLE_CCA:
 #endif
-		__ASSERT_NO_MSG(pkt);
 		ret = nrf5_tx_at(frame, nrf5_data.tx_psdu, mode);
 		break;
 	default:
@@ -1139,6 +1137,8 @@ void otPlatRadioSetExtendedAddress(otInstance *aInstance, const otExtAddress *aE
 {
 	const uint8_t *ieee_addr = aExtAddress->m8;
 
+	ARG_UNUSED(aInstance);
+
 	LOG_DBG("IEEE address %02x:%02x:%02x:%02x:%02x:%02x:%02x:%02x", ieee_addr[7], ieee_addr[6],
 		ieee_addr[5], ieee_addr[4], ieee_addr[3], ieee_addr[2], ieee_addr[1], ieee_addr[0]);
 
@@ -1279,7 +1279,7 @@ void otPlatRadioSetMacKey(otInstance *aInstance, uint8_t aKeyIdMode, uint8_t aKe
 	uint8_t key_id_mode = aKeyIdMode >> 3;
 
 	if (key_id_mode == 1) {
-		__ASSERT_NO_MSG(NRF_802154_SECURITY_KEY_STORAGE_SIZE >= 3)
+		__ASSERT_NO_MSG(NRF_802154_SECURITY_KEY_STORAGE_SIZE >= 3);
 
 		/* aKeyId in range: (1, 0x80) means valid keys */
 		uint8_t prev_key_id = aKeyId == 1 ? 0x80 : aKeyId - 1;
@@ -1407,7 +1407,7 @@ otError otPlatRadioReceive(otInstance *aInstance, uint8_t aChannel)
 	channel = aChannel;
 
 	nrf5_set_channel(channel);
-	nrf_802154_tx_power_set(get_transmit_power_for_channel(channel));
+	nrf5_set_tx_power(channel);
 
 	if (!nrf_802154_receive()) {
 		LOG_ERR("Failed to enter receive state");

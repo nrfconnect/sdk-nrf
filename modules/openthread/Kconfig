@@ -31,7 +31,7 @@ config OPENTHREAD_SYS_INIT
 
 config OPENTHREAD_SYS_INIT_PRIORITY
 	int "OpenThread system initialization priority"
-	default 40
+	default 90
 	depends on OPENTHREAD_SYS_INIT
 	help
 	  This option sets the priority of the OpenThread system initialization.
