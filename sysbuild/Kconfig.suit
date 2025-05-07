@@ -9,6 +9,7 @@ menu "SUIT"
 menuconfig SUIT_ENVELOPE
 	bool "Create SUIT envelope"
 	default y if SOC_SERIES_NRF54HX
+	depends on !SOC_NRF54H20_IRON
 	help
 	  Enable DFU SUIT envelope creation
 
