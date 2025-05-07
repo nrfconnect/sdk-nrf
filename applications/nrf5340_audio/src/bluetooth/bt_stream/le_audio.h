@@ -49,17 +49,6 @@
  */
 typedef void (*le_audio_receive_cb)(struct audio_data *audio_frame, uint8_t channel_index);
 
-/**
- * @brief	Encoded audio data and information.
- *
- * @note	Container for SW codec (typically LC3) compressed audio data.
- */
-struct le_audio_encoded_audio {
-	uint8_t const *const data;
-	size_t size;
-	uint8_t num_ch;
-};
-
 struct stream_index {
 	uint8_t lvl1; /* BIG / CIG */
 	uint8_t lvl2; /* Subgroups (only applicable to Broadcast) */

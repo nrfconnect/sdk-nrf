@@ -132,11 +132,11 @@ static void audio_datapath_thread(void *dummy1, void *dummy2, void *dummy3)
 {
 	int ret;
 	struct audio_data *audio_frame = NULL;
-	size_t audio_frame_received_size;
+	size_t audio_frame_recv_size;
 
 	while (1) {
 		ret = data_fifo_pointer_last_filled_get(&ble_fifo_rx, (void *)&audio_frame,
-							&audio_frame_received_size, K_FOREVER);
+							&audio_frame_recv_size, K_FOREVER);
 		ERR_CHK(ret);
 
 		if (IS_ENABLED(CONFIG_AUDIO_SOURCE_USB) && (CONFIG_AUDIO_DEV == GATEWAY)) {

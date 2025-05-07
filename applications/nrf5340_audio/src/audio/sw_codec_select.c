@@ -97,7 +97,7 @@ int sw_codec_encode(struct audio_data *audio_frame)
 	size_t pcm_block_size_mono_system_sample_rate;
 	size_t pcm_block_size_mono;
 
-	struct net_buf *buf = audio_frame->data;
+	struct net_buf *audio_buf = audio_frame->data;
 
 	if (!m_config.encoder.enabled) {
 		LOG_ERR("Encoder has not been initialized");
@@ -113,7 +113,8 @@ int sw_codec_encode(struct audio_data *audio_frame)
 		/* Since LC3 is a single channel codec, we must split the
 		 * stereo PCM stream
 		 */
-		ret = pscm_two_channel_split(buf->data, buf->len, CONFIG_AUDIO_BIT_DEPTH_BITS,
+		ret = pscm_two_channel_split(audio_buf->data, audio_buf->len,
+					     CONFIG_AUDIO_BIT_DEPTH_BITS,
 					     pcm_data_mono_system_sample_rate[AUDIO_CH_L],
 					     pcm_data_mono_system_sample_rate[AUDIO_CH_R],
 					     &pcm_block_size_mono_system_sample_rate);
@@ -175,9 +176,8 @@ int sw_codec_encode(struct audio_data *audio_frame)
 		audio_frame->meta.data_coding = LC3;
 		audio_frame->data_size = encoded_bytes_written;
 
-		net_buf_remove_mem(buf, buf->len);
-		net_buf_add_mem(buf, m_encoded_data, encoded_bytes_written);
-
+		net_buf_remove_mem(audio_buf, audio_buf->len);
+		net_buf_add_mem(audio_buf, m_encoded_data, encoded_bytes_written);
 #endif /* (CONFIG_SW_CODEC_LC3) */
 		break;
 	}
@@ -304,7 +304,6 @@ int sw_codec_decode(struct audio_data *audio_frame, void **decoded_data, size_t 
 			if (ret) {
 				return ret;
 			}
-
 			break;
 		}
 		default:
@@ -315,7 +314,6 @@ int sw_codec_decode(struct audio_data *audio_frame, void **decoded_data, size_t 
 
 		*decoded_size = pcm_size_stereo;
 		*decoded_data = pcm_data_stereo;
-
 #endif /* (CONFIG_SW_CODEC_LC3) */
 		break;
 	}

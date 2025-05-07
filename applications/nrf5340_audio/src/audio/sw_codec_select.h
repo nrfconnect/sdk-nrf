@@ -92,7 +92,7 @@ int sw_codec_encode(struct audio_data *audio_frame);
 /**
  * @brief	Decode encoded data and output PCM data.
  *
- * @param[in/out]	audio_frame	Pointer to audio data.
+ * @param[in]	audio_frame	Pointer to audio data.
  * @param[out]	pcm_data	Pointer to buffer to store decoded PCM data.
  * @param[out]	pcm_size	Size of decoded data.
  *

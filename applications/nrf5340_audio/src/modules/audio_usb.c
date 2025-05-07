@@ -118,7 +118,7 @@ static void data_received(const struct device *dev, struct net_buf *buffer, size
 
 	ret = data_fifo_pointer_first_vacant_get(fifo_rx, (void *)&audio_block, K_NO_WAIT);
 
-	/* RX FIFO can fill up due to retransmissions or disconnect */
+	/* RX FIFO can fill up due to re-transmissions or disconnect */
 	if (ret == -ENOMEM) {
 		struct audio_data *temp;
 		size_t temp_size;
@@ -143,6 +143,7 @@ static void data_received(const struct device *dev, struct net_buf *buffer, size
 	ERR_CHK_MSG(ret, "RX failed to get block");
 
 	audio_block->data = buf_in;
+	audio_block->data_size = size;
 
 	/* Add meta data */
 	audio_block->meta.data_coding = PCM;

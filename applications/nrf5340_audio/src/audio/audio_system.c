@@ -151,8 +151,8 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 
 			struct net_buf *buf = audio_block->data;
 
+			/* Copy metadata from the first block */
 			if (i == 0) {
-				/* Copy metadata from first block */
 				memcpy(&audio_frame, audio_block, sizeof(struct audio_data));
 			}
 
@@ -164,6 +164,7 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 			data_fifo_block_free(&fifo_rx, audio_block);
 		}
 
+		/* Update metadata to reflect the full frame */
 		audio_frame.data = frame_buf;
 		audio_frame.data_size = frame_buf->len;
 		audio_frame.meta.data_len_us =

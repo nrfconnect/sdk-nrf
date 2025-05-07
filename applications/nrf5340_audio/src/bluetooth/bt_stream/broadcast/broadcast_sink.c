@@ -334,26 +334,29 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 {
 	struct audio_data audio_frame;
 
+	if (receive_cb == NULL) {
+		LOG_ERR("The RX callback has not been set");
+		return;
+	}
+
 	/* Populate the audio frame structure */
 	audio_frame.data = buf->data;
 	audio_frame.data_size = buf->len;
 	audio_frame.meta.bad_data = false;
 	audio_frame.meta.reference_ts_us = info->ts;
 	audio_frame.meta.locations = active_stream.codec->chan_allocation;
-	audio_frame.meta.sample_rate_hz = active_stream.codec->frequency;
-	audio_frame.meta.data_len_us = active_stream.codec->frame_duration_us;
+	le_audio_freq_hz_get(stream->codec_cfg, &audio_frame.meta.sample_rate_hz);
+	le_audio_duration_us_get(stream->codec_cfg, &audio_frame.meta.data_len_us);
 
-	if (active_stream.codec->id == BT_HCI_CODING_FORMAT_LC3) {
+	if (stream->codec_cfg->id == BT_HCI_CODING_FORMAT_LC3) {
 		audio_frame.meta.data_coding = LC3;
-	}
-
-	if (receive_cb == NULL) {
-		LOG_ERR("The RX callback has not been set");
+	} else {
+		LOG_ERR("Unsupported codec ID: %d", stream->codec_cfg->id);
 		return;
 	}
 
 	if (!(info->flags & BT_ISO_FLAGS_VALID) ||
-	    buf->len != active_stream.codec->octets_per_sdu) {
+	    buf->len != bt_audio_codec_cfg_get_octets_per_frame(stream->codec_cfg)) {
 		audio_frame.meta.bad_data = true;
 	}
 
