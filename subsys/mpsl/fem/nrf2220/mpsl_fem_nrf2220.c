@@ -210,6 +210,8 @@ SYS_INIT(mpsl_fem_init, POST_KERNEL, CONFIG_MPSL_FEM_INIT_PRIORITY);
 
 #if defined(CONFIG_MPSL_FEM_NRF2220_TEMPERATURE_COMPENSATION)
 
+#define NRF2220_TEMPERATURE_DEFAULT 25
+
 static K_SEM_DEFINE(fem_temperature_new_value_sem, 0, 1);
 
 #if defined(CONFIG_MPSL_FEM_NRF2220_TEMPERATURE_COMPENSATION_WITH_MPSL_SCHEDULER)
@@ -264,20 +266,24 @@ static int32_t fem_temperature_changed_update_now(void)
 static int8_t fem_temperature_sensor_value_get(void)
 {
 	const struct device *dev = DEVICE_DT_GET_ONE(nordic_nrf_temp);
+	struct sensor_value v = { .val1 = NRF2220_TEMPERATURE_DEFAULT };
+	int ret = 0;
 
 	if (!device_is_ready(dev)) {
 		__ASSERT(false, "Temperature sensor not ready");
+		ret = -EIO;
 	}
 
-	struct sensor_value v;
-	int ret = sensor_sample_fetch(dev);
+	if (ret == 0) {
+		ret = sensor_sample_fetch(dev);
+		__ASSERT(ret == 0, "Can't fetch temperature sensor sample");
+	}
 
-	__ASSERT(ret == 0, "Can't fetch temperature sensor sample");
-
-	ret = sensor_channel_get(dev, SENSOR_CHAN_DIE_TEMP, &v);
-	__ASSERT(ret == 0, "Can't get temperature of the die");
-
-	(void)ret;
+	if (ret == 0) {
+		ret = sensor_channel_get(dev, SENSOR_CHAN_DIE_TEMP, &v);
+		__ASSERT(ret == 0, "Can't get temperature of the die");
+		(void)ret;
+	}
 
 	return v.val1;
 }
@@ -286,8 +292,6 @@ static int8_t fem_temperature_sensor_value_get(void)
 #if defined(CONFIG_MPSL_FEM_NRF2220_TEMPERATURE_SOURCE_CUSTOM)
 
 #define FEM_TEMPERATURE_NEW_VALUE_SEM_TIMEOUT  K_FOREVER
-
-#define NRF2220_TEMPERATURE_DEFAULT 25
 
 static int8_t fem_temperature_value = NRF2220_TEMPERATURE_DEFAULT;
 
