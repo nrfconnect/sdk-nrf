@@ -539,9 +539,13 @@ Scripts
 
 * :ref:`nrf_desktop_config_channel_script` Python script:
 
-  * Updated the udev rules for Debian, Ubuntu, and Linux Mint HID host computers (replaced the :file:`99-hid.rules` file with :file:`60-hid.rules`).
-    This is done to ensure that the rules are properly applied for an nRF Desktop device connected directly over Bluetooth LE.
-    The new udev rules are applied to any HID device that uses the Nordic Semiconductor Vendor ID (regardless of Product ID).
+  * Updated:
+
+    * The udev rules for Debian, Ubuntu, and Linux Mint HID host computers (replaced the :file:`99-hid.rules` file with :file:`60-hid.rules`).
+      This is done to ensure that the rules are properly applied for an nRF Desktop device connected directly over Bluetooth LE.
+      The new udev rules are applied to any HID device that uses the Nordic Semiconductor Vendor ID (regardless of Product ID).
+    * The HID device discovery to ensure that a discovery failure of a HID device would not affect other HID devices.
+      Without this change, problems with discovery of a HID device could lead to skipping discovery and listing of other HID devices (even if the devices work properly).
 
 Integrations
 ============
