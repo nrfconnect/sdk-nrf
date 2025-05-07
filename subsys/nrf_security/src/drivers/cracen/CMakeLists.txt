@@ -50,6 +50,9 @@ if(BUILD_INSIDE_TFM)
       platform_s
       tfm_sp_log
   )
+else()
+  # Ensure zephyr/offsets.h is generated as this is a dependency for CRACEN driver
+  add_dependencies(cracen_psa_driver zephyr_generated_headers)
 endif()
 
 # Link oberon_psa_core with this PSA crypto driver
