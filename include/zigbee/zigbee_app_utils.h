@@ -263,6 +263,23 @@ void check_factory_reset_button(uint32_t button_state, uint32_t has_changed);
  */
 bool was_factory_reset_done(void);
 
+#else /* CONFIG_ZIGBEE_FACTORY_RESET */
+
+static inline void register_factory_reset_button(uint32_t)
+{
+	/* No action. Functionality is disabled. */
+}
+
+static inline void check_factory_reset_button(uint32_t, uint32_t)
+{
+	/* No action. Functionality is disabled. */
+}
+
+static inline bool was_factory_reset_done(void)
+{
+	return false; /* Functionality is disabled. */
+}
+
 #endif /* CONFIG_ZIGBEE_FACTORY_RESET */
 
 #ifdef __cplusplus
