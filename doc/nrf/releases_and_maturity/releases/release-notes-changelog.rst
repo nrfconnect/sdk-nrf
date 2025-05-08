@@ -389,7 +389,9 @@ Thread samples
 Wi-Fi samples
 -------------
 
-|no_changes_yet_note|
+* :ref:`wifi_radiotest_samples`:
+
+  * Updated :ref:`wifi_radio_test` and :ref:`wifi_radio_test_sd` samples to clarify platform support for single-domain and multi-domain radio tests.
 
 Other samples
 -------------
