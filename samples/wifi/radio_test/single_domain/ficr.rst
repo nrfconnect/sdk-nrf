@@ -1,4 +1,4 @@
-.. _wifi_ficr_prog:
+.. _wifi_ficr_prog_sd:
 
 FICR programming subcommands
 ############################
