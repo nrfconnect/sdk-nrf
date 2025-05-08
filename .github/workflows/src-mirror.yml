@@ -1,4 +1,5 @@
 name: src-mirror
+
 on:
   push:
     tags:
@@ -7,10 +8,12 @@ on:
 jobs:
   zip-and-upload:
     runs-on: ubuntu-24.04
+
     steps:
       - name: Checkout sources
         uses: nrfconnect/action-checkout-west-update@main
         with:
+          git-ref: ${{ github.ref_name }}
           git-fetch-depth: 0
           path: workspace/nrf
           west-update-args: '--group-filter=+babblesim'
@@ -18,12 +21,14 @@ jobs:
       - name: Configure git and run garbage collection
         run: |
           cd workspace/nrf
-          git config --global pack.windowMemory "32m" &&
+          git config --global pack.windowMemory "32m"
           west forall -c 'git gc --prune --aggressive'
 
       - name: Create tar archive
         run: |
-          tar -C ./workspace -czvf src.tar.gz .
+          REPO_NAME="${GITHUB_REPOSITORY##*/}"
+          TAG="${GITHUB_REF_NAME}"
+          tar -C workspace -czvf "${REPO_NAME}-${TAG}.tar.gz" .
 
       - name: Set up JFrog CLI
         uses: jfrog/setup-jfrog-cli@f748a0599171a192a2668afee8d0497f7c1069df # v4
@@ -32,10 +37,14 @@ jobs:
         env:
           ARTIFACTORY_URL: https://eu.files.nordicsemi.com/artifactory
           REPOSITORY: ncs-src-mirror
-          FILE_PATH: src.tar.gz
-          TARGET_PATH: external/${{ github.ref_name }}/
-        run: >
-          jfrog rt u $FILE_PATH $REPOSITORY/$TARGET_PATH
-          --url=$ARTIFACTORY_URL
-          --user=${{ secrets.COM_NORDICSEMI_FILES_USERNAME }}
-          --password=${{ secrets.COM_NORDICSEMI_FILES_PASSWORD }}
+          FILE_PATH: ${{ github.repository#*/ }}-${{ github.ref_name }}.tar.gz
+          TARGET_PATH: external/${{ github.repository }}/${{ github.ref_name }}/
+          ARTIFACTORY_USER: ${{ secrets.COM_NORDICSEMI_FILES_USERNAME }}
+          ARTIFACTORY_PASS: ${{ secrets.COM_NORDICSEMI_FILES_PASSWORD }}
+        run: |
+          jfrog rt u \
+            "$FILE_PATH" \
+            "$REPOSITORY/$TARGET_PATH" \
+            --url="$ARTIFACTORY_URL" \
+            --user="$ARTIFACTORY_USER" \
+            --password="$ARTIFACTORY_PASS"
