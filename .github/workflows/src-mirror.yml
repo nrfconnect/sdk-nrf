@@ -42,7 +42,7 @@ jobs:
       - name: Configure and Upload to Artifactory
         env:
           ARTIFACTORY_URL: https://eu.files.nordicsemi.com/artifactory
-          REPOSITORY: ncs-src-mirror
+          REPOSITORY: ncs-src-mirror-test
           FILE_PATH: ${{ github.repository#*/ }}-${{ github.ref_name }}.tar.gz
           TARGET_PATH: external/${{ github.repository }}/${{ github.ref_name }}/
           ARTIFACTORY_USER: ${{ secrets.COM_NORDICSEMI_FILES_USERNAME }}
