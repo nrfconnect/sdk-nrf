@@ -357,14 +357,50 @@ peripheral_depends=$(dt_nodelabel_has_compat,gpio2,$(DT_COMPAT_NORDIC_NRF_GPIO))
 rsource "Kconfig.template.peripheral_secure"
 
 config NRF_GPIOTE0_SECURE
-	bool "GPIOTE configured as secure peripheral"
+	bool "GPIOTE0 configured as secure peripheral"
 	depends on $(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_GPIOTE))
 	help
-	  GPIOTE0 is implemented with secure only security.
-	  This option only enables it to be used in the secure image.
+	  GPIOTE0 is implemented without split security. It has secure-only access.
+	  This option enables it to be used in the secure image.
+
+config NRF_GPIOTE20_SECURE
+	bool "GPIOTE20 configured as secure peripheral"
+	depends on $(dt_nodelabel_has_compat,gpiote20,$(DT_COMPAT_NORDIC_NRF_GPIOTE))
+	help
+	  GPIOTE20 supports split security. Individual channels can be assigned to different security domains.
+	  The mask NRF_GPIOTE20_SECURE_CHANNELS_MASK can be set to configure specific channels as secure.
+	  When the peripheral is configured as non-secure, both secure and non-secure code can access the peripheral.
+	  Secure code can access all channels. Non-secure code can only access channels not marked as secure in the mask.
+
+config NRF_GPIOTE20_SECURE_CHANNELS_MASK
+	hex "GPIOTE20 mask for secure channels"
+	default 0x00000000
+	depends on $(dt_nodelabel_has_compat,gpiote20,$(DT_COMPAT_NORDIC_NRF_GPIOTE))
+	help
+	  GPIOTE supports setting individual channels as secure and non-secure. Use this mask
+	  to set the secure channels in the GPIOTE20. This mask also sets the interrupt
+	  security for the secure channels.
+
+config NRF_GPIOTE30_SECURE
+	bool "GPIOTE30 configured as secure peripheral"
+	depends on $(dt_nodelabel_has_compat,gpiote30,$(DT_COMPAT_NORDIC_NRF_GPIOTE))
+	help
+	 GPIOTE30 supports split security. Individual channels can be assigned to different security domains.
+	 The mask NRF_GPIOTE30_SECURE_CHANNELS_MASK can be set to configure specific channels as secure.
+	 When the peripheral is configured as non-secure, both secure and non-secure code can access the peripheral.
+	 Secure code can access all channels. Non-secure code can only access channels not marked as secure in the mask.
+
+config NRF_GPIOTE30_SECURE_CHANNELS_MASK
+	hex "GPIOTE30 mask for secure channels"
+	default 0x00000000
+	depends on $(dt_nodelabel_has_compat,gpiote30,$(DT_COMPAT_NORDIC_NRF_GPIOTE))
+	help
+	  GPIOTE supports setting individual channels as secure and non-secure. Use this mask
+	  to set the secure channels in the GPIOTE30. This mask also sets the interrupt
+	  security for the secure channels.
 
 config NRF_GPIO0_PIN_MASK_SECURE
-	hex "Set GPIO0 PERM mask for Secure"
+	hex "Set GPIO0 PERM mask for secure channels"
 	default 0x00000003 if TFM_SECURE_UART30 # P0.0 and P0.1 are used by default when TFM_SECURE_UART30
 	default 0x00000000
 	depends on $(dt_nodelabel_has_compat,gpio0,$(DT_COMPAT_NORDIC_NRF_GPIO)) && !NRF_GPIO0_SECURE
@@ -376,7 +412,7 @@ config NRF_GPIO0_PIN_MASK_SECURE
 	  made to GPIO pins configured as non-secure.
 
 config NRF_GPIO1_PIN_MASK_SECURE
-	hex "Set GPIO1 PERM mask for Secure"
+	hex "Set GPIO1 PERM mask for Secure channels"
 	default 0x00000003 if TFM_SECURE_UART1 # P1.0 and P1.1 are used by default when TFM_SECURE_UART1
 	default 0x00000000
 	depends on $(dt_nodelabel_has_compat,gpio1,$(DT_COMPAT_NORDIC_NRF_GPIO)) && !NRF_GPIO1_SECURE
