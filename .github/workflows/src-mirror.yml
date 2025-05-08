@@ -1,9 +1,15 @@
 name: src-mirror
 
+
 on:
   push:
-    tags:
-      - '*'
+    branches:
+      - main
+
+# on:
+#   push:
+#     tags:
+#       - '*'
 
 jobs:
   zip-and-upload:
