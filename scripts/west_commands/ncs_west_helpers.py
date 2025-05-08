@@ -264,6 +264,11 @@ class RepoAnalyzer:
                     # so just ignore it.
                     if rsha == 'fe339b14b3effd069458f5e4710f17cda8295229':
                         continue
+                    # Revert 5156ca3db2741f009306aaa555c9bb70d9fe8777
+                    # references the wrong commit, the correct reference is
+                    # b381f5633df2f28c318bc86cf6fc9d059e57a056
+                    if sha == '5156ca3db2741f009306aaa555c9bb70d9fe8777':
+                        rsha = 'b381f5633df2f28c318bc86cf6fc9d059e57a056'
 
                 if rsha in downstream_out:
                     log.dbg('** commit {} ("{}") was reverted in {}'.
