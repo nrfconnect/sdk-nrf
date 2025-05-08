@@ -7,6 +7,7 @@
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_lock.h>
 #include <nrf_rpc/nrf_rpc_serialize.h>
 #include <nrf_rpc/nrf_rpc_cbkproxy.h>
 
@@ -46,10 +47,13 @@ static void ot_rpc_thread_discover_cb_rpc_handler(const struct nrf_rpc_group *gr
 		return;
 	}
 
+	ot_rpc_mutex_lock();
+
 	if (callback) {
 		callback(is_result_present ? &result : NULL, context);
 	}
 
+	ot_rpc_mutex_unlock();
 	nrf_rpc_rsp_send_void(group);
 }
 

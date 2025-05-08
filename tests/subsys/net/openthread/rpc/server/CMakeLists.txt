@@ -19,7 +19,6 @@ target_include_directories(app PRIVATE
 
 target_sources(app PRIVATE
   ${app_sources}
-  ../common/net_l2_openthread.c
   ../common/nrf_rpc_single_thread.c
 )
 

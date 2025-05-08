@@ -8,6 +8,7 @@
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_lock.h>
 
 #include <nrf_rpc_cbor.h>
 
@@ -24,7 +25,7 @@ static void ot_rpc_cmd_ip6_get_unicast_addrs(const struct nrf_rpc_group *group,
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	addr = otIp6GetUnicastAddresses(openthread_get_default_instance());
 	addr_count = 0;
 
@@ -53,7 +54,7 @@ static void ot_rpc_cmd_ip6_get_unicast_addrs(const struct nrf_rpc_group *group,
 		zcbor_list_end_encode(rsp_ctx.zs, 4);
 	}
 
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
@@ -67,7 +68,7 @@ static void ot_rpc_cmd_ip6_get_multicast_addrs(const struct nrf_rpc_group *group
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	addr = otIp6GetMulticastAddresses(openthread_get_default_instance());
 	addr_count = 0;
 
@@ -81,7 +82,7 @@ static void ot_rpc_cmd_ip6_get_multicast_addrs(const struct nrf_rpc_group *group
 		nrf_rpc_encode_buffer(&rsp_ctx, addr->mAddress.mFields.m8, OT_IP6_ADDRESS_SIZE);
 	}
 
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
@@ -99,9 +100,9 @@ static void ot_rpc_cmd_ip6_set_enabled(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otIp6SetEnabled(openthread_get_default_instance(), enabled);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 5);
 	nrf_rpc_encode_uint(&rsp_ctx, error);
@@ -116,9 +117,9 @@ static void ot_rpc_cmd_ip6_is_enabled(const struct nrf_rpc_group *group,
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	enabled = otIp6IsEnabled(openthread_get_default_instance());
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 1);
 	nrf_rpc_encode_bool(&rsp_ctx, enabled);
@@ -148,9 +149,9 @@ static void ot_rpc_cmd_ip6_subscribe_multicast_address(const struct nrf_rpc_grou
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otIp6SubscribeMulticastAddress(openthread_get_default_instance(), &addr);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 5);
 	nrf_rpc_encode_uint(&rsp_ctx, error);
@@ -183,9 +184,9 @@ static void ot_rpc_cmd_ip6_unsubscribe_multicast_address(const struct nrf_rpc_gr
 		goto out;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otIp6UnsubscribeMulticastAddress(openthread_get_default_instance(), &addr);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 out:
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 5);

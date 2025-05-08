@@ -8,6 +8,7 @@
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_lock.h>
 
 #include <nrf_rpc_cbor.h>
 
@@ -28,9 +29,9 @@ static void ot_rpc_cmd_set_poll_period(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otLinkSetPollPeriod(openthread_get_default_instance(), poll_period);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 5);
 	nrf_rpc_encode_uint(&rsp_ctx, error);
@@ -45,9 +46,9 @@ static void ot_rpc_cmd_get_poll_period(const struct nrf_rpc_group *group,
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	poll_period = otLinkGetPollPeriod(openthread_get_default_instance());
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 5);
 	nrf_rpc_encode_uint(&rsp_ctx, poll_period);
@@ -65,9 +66,9 @@ static void ot_rpc_cmd_set_max_frame_retries_direct(const struct nrf_rpc_group *
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	otLinkSetMaxFrameRetriesDirect(openthread_get_default_instance(), max_retries);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 	nrf_rpc_rsp_send_void(group);
 }
 
@@ -82,9 +83,9 @@ static void ot_rpc_cmd_set_max_frame_retries_indirect(const struct nrf_rpc_group
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	otLinkSetMaxFrameRetriesIndirect(openthread_get_default_instance(), max_retries);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 	nrf_rpc_rsp_send_void(group);
 }
 
@@ -99,9 +100,9 @@ static void ot_rpc_cmd_set_link_enabled(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otLinkSetEnabled(openthread_get_default_instance(), enabled);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 	nrf_rpc_rsp_send_uint(group, error);
 }
 
@@ -113,9 +114,9 @@ static void ot_rpc_cmd_get_factory_assigned_eui64(const struct nrf_rpc_group *gr
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	otLinkGetFactoryAssignedIeeeEui64(openthread_get_default_instance(), &ext_addr);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(ext_addr.m8) + 1);
 	nrf_rpc_encode_buffer(&rsp_ctx, &ext_addr, sizeof(ext_addr.m8));

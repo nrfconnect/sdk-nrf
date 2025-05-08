@@ -8,6 +8,7 @@
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_lock.h>
 
 #include <nrf_rpc_cbor.h>
 
@@ -41,9 +42,9 @@ static void ot_rpc_cmd_netdata_get(const struct nrf_rpc_group *group, struct nrf
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otNetDataGet(openthread_get_default_instance(), stable, netdata, &length);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	cbor_buffer_size += 1 + sizeof(error);
 	cbor_buffer_size += (error == OT_ERROR_NONE) ? 2 + length : 0;
@@ -73,10 +74,10 @@ static void ot_rpc_cmd_get_next_service(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otNetDataGetNextService(openthread_get_default_instance(), &iterator,
 					&service_config);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(error) + sizeof(service_config) + 7);
 
@@ -101,9 +102,9 @@ static void ot_rpc_cmd_netdata_get_next_on_mesh_prefix(const struct nrf_rpc_grou
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otNetDataGetNextOnMeshPrefix(openthread_get_default_instance(), &iterator, &config);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(error) + sizeof(config) + 14);
 

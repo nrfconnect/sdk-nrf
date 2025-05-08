@@ -8,6 +8,7 @@
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_lock.h>
 #include "ot_rpc_resource.h"
 
 #include <nrf_rpc_cbor.h>
@@ -259,9 +260,9 @@ static void ot_rpc_cmd_get_next_diagnostic_tlv(const struct nrf_rpc_group *group
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otThreadGetNextDiagnosticTlv(message, &iterator, &tlv);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	if (error != OT_ERROR_NONE) {
 		nrf_rpc_rsp_send_uint(group, error);
@@ -319,11 +320,11 @@ static void ot_rpc_cmd_send_diagnostic_get(const struct nrf_rpc_group *group,
 	tlvTypes = nrf_rpc_decode_buffer_ptr_and_size(ctx, &count);
 
 	if (tlvTypes) {
-		openthread_api_mutex_lock(openthread_get_default_context());
+		ot_rpc_mutex_lock();
 		error = otThreadSendDiagnosticGet(openthread_get_default_instance(), &addr,
 						  tlvTypes, count, handle_receive_diagnostic_get,
 						  NULL);
-		openthread_api_mutex_unlock(openthread_get_default_context());
+		ot_rpc_mutex_unlock();
 	}
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
@@ -347,10 +348,10 @@ static void ot_rpc_cmd_send_diagnostic_reset(const struct nrf_rpc_group *group,
 	tlvTypes = nrf_rpc_decode_buffer_ptr_and_size(ctx, &count);
 
 	if (tlvTypes) {
-		openthread_api_mutex_lock(openthread_get_default_context());
+		ot_rpc_mutex_lock();
 		error = otThreadSendDiagnosticReset(openthread_get_default_instance(), &addr,
 						    tlvTypes, count);
-		openthread_api_mutex_unlock(openthread_get_default_context());
+		ot_rpc_mutex_unlock();
 	}
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
@@ -374,9 +375,9 @@ static void ot_rpc_cmd_set_vendor_name(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otThreadSetVendorName(openthread_get_default_instance(), buffer);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, error);
 }
@@ -394,9 +395,9 @@ static void ot_rpc_cmd_set_vendor_model(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otThreadSetVendorModel(openthread_get_default_instance(), buffer);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, error);
 }
@@ -414,9 +415,9 @@ static void ot_rpc_cmd_set_vendor_sw_version(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otThreadSetVendorSwVersion(openthread_get_default_instance(), buffer);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, error);
 }
@@ -429,12 +430,12 @@ static void ot_rpc_cmd_get_vendor_name(const struct nrf_rpc_group *group,
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	data = otThreadGetVendorName(openthread_get_default_instance());
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 2 + strlen(data));
 	nrf_rpc_encode_str(&rsp_ctx, data, strlen(data));
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
@@ -447,12 +448,12 @@ static void ot_rpc_cmd_get_vendor_model(const struct nrf_rpc_group *group,
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	data = otThreadGetVendorModel(openthread_get_default_instance());
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 2 + strlen(data));
 	nrf_rpc_encode_str(&rsp_ctx, data, strlen(data));
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
@@ -465,12 +466,12 @@ static void ot_rpc_cmd_get_vendor_sw_version(const struct nrf_rpc_group *group,
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	data = otThreadGetVendorSwVersion(openthread_get_default_instance());
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 2 + strlen(data));
 	nrf_rpc_encode_str(&rsp_ctx, data, strlen(data));
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }

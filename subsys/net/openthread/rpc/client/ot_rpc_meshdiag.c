@@ -7,6 +7,7 @@
 #include <ot_rpc_client_common.h>
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
+#include <ot_rpc_lock.h>
 #include <nrf_rpc/nrf_rpc_serialize.h>
 
 #include <openthread/mesh_diag.h>
@@ -152,10 +153,13 @@ exit:
 		return;
 	}
 
+	ot_rpc_mutex_lock();
+
 	if (mesh_diag_discover_cb != NULL) {
 		mesh_diag_discover_cb(error, router_info, mesh_diag_discover_cb_context);
 	}
 
+	ot_rpc_mutex_unlock();
 	free(router_info);
 	nrf_rpc_rsp_send_void(group);
 }

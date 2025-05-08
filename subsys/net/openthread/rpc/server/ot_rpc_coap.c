@@ -11,6 +11,7 @@
 #include <ot_rpc_coap.h>
 #include <ot_rpc_common.h>
 #include <ot_rpc_types.h>
+#include <ot_rpc_lock.h>
 
 #include <nrf_rpc_cbor.h>
 
@@ -69,7 +70,7 @@ static void ot_rpc_cmd_coap_new_message(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	message = otCoapNewMessage(openthread_get_default_instance(), settings);
 	message_rep = ot_res_tab_msg_alloc(message);
 
@@ -81,7 +82,7 @@ static void ot_rpc_cmd_coap_new_message(const struct nrf_rpc_group *group,
 		otMessageFree(message);
 	}
 
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, message_rep);
 }
@@ -113,9 +114,9 @@ static void ot_rpc_cmd_coap_message_init(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	otCoapMessageInit(message, type, code);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_void(group);
 }
@@ -152,9 +153,9 @@ static void ot_rpc_cmd_coap_message_init_response(const struct nrf_rpc_group *gr
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otCoapMessageInitResponse(response, request, type, code);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, error);
 }
@@ -187,9 +188,9 @@ static void ot_rpc_cmd_coap_message_append_uri_path_options(const struct nrf_rpc
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otCoapMessageAppendUriPathOptions(message, uri);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, error);
 }
@@ -220,9 +221,9 @@ static void ot_rpc_cmd_coap_message_set_payload_marker(const struct nrf_rpc_grou
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otCoapMessageSetPayloadMarker(message);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, error);
 }
@@ -252,9 +253,9 @@ static void ot_rpc_cmd_coap_message_get_type(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	type = otCoapMessageGetType(message);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, type);
 }
@@ -283,9 +284,9 @@ static void ot_rpc_cmd_coap_message_get_code(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	code = otCoapMessageGetCode(message);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, code);
 }
@@ -314,9 +315,9 @@ static void ot_rpc_cmd_coap_message_get_message_id(const struct nrf_rpc_group *g
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	id = otCoapMessageGetMessageId(message);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, id);
 }
@@ -347,9 +348,9 @@ static void ot_rpc_cmd_coap_message_get_token_length(const struct nrf_rpc_group 
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	token_length = otCoapMessageGetTokenLength(message);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, token_length);
 }
@@ -381,10 +382,10 @@ static void ot_rpc_cmd_coap_message_get_token(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	token_length = otCoapMessageGetTokenLength(message);
 	memcpy(token, otCoapMessageGetToken(message), token_length);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 2 + token_length);
 	nrf_rpc_encode_buffer(&rsp_ctx, token, token_length);
@@ -408,9 +409,9 @@ static void ot_rpc_cmd_coap_start(const struct nrf_rpc_group *group, struct nrf_
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otCoapStart(openthread_get_default_instance(), port);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, error);
 }
@@ -428,9 +429,9 @@ static void ot_rpc_cmd_coap_stop(const struct nrf_rpc_group *group, struct nrf_r
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otCoapStop(openthread_get_default_instance());
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, error);
 }
@@ -481,7 +482,7 @@ static void ot_rpc_cmd_coap_add_resource(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 
 	if (find_coap_resource_by_uri(uri)) {
 		goto out;
@@ -506,7 +507,7 @@ static void ot_rpc_cmd_coap_add_resource(const struct nrf_rpc_group *group,
 	otCoapAddResource(openthread_get_default_instance(), &res_buf->resource);
 
 out:
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 	nrf_rpc_rsp_send_void(group);
 }
 
@@ -526,7 +527,7 @@ static void ot_rpc_cmd_coap_remove_resource(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 
 	res_buf = pop_coap_resource_by_uri(uri);
 
@@ -538,7 +539,7 @@ static void ot_rpc_cmd_coap_remove_resource(const struct nrf_rpc_group *group,
 	free(res_buf);
 
 out:
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 	nrf_rpc_rsp_send_void(group);
 }
 
@@ -584,10 +585,10 @@ static void ot_rpc_cmd_coap_set_default_handler(const struct nrf_rpc_group *grou
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	otCoapSetDefaultHandler(openthread_get_default_instance(),
 				enabled ? ot_rpc_coap_default_handler : NULL, NULL);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_void(group);
 }
@@ -651,7 +652,7 @@ static void ot_rpc_cmd_coap_send_request(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otCoapSendRequest(openthread_get_default_instance(), message, &message_info,
 				  ot_rpc_coap_response_handler, (void *)request_rep);
 
@@ -659,7 +660,7 @@ static void ot_rpc_cmd_coap_send_request(const struct nrf_rpc_group *group,
 		ot_res_tab_msg_free(message_rep);
 	}
 
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 	nrf_rpc_rsp_send_uint(group, error);
 }
 
@@ -689,14 +690,14 @@ static void ot_rpc_cmd_coap_send_response(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otCoapSendResponse(openthread_get_default_instance(), message, &message_info);
 
 	if (error == OT_ERROR_NONE) {
 		ot_res_tab_msg_free(message_rep);
 	}
 
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 	nrf_rpc_rsp_send_uint(group, error);
 }
 
