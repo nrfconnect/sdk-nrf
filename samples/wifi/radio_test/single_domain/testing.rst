@@ -1,4 +1,4 @@
-.. _wifi_radio_test_testing:
+.. _wifi_radio_test_testing_sd:
 
 Testing
 #######

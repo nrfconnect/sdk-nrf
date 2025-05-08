@@ -1,0 +1,18 @@
+Wi-Fi radio test statistics
+***************************
+
+.. list-table:: Wi-Fi radio test statistics
+   :header-rows: 1
+
+   * - Statistic
+     - Description
+   * - rssi_avg
+     - Average RSSI value in dBm.
+   * - ofdm_crc32_pass_cnt
+     - Number of OFDM frames whose CRC32 check passed.
+   * - ofdm_crc32_fail_cnt
+     - Number of OFDM frames whose CRC32 check failed.
+   * - dsss_crc32_pass_cnt
+     - Number of DSSS frames whose CRC32 check passed.
+   * - dsss_crc32_fail_cnt
+     - Number of DSSS frames whose CRC32 check failed.
