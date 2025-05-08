@@ -1,13 +1,11 @@
 name: src-mirror
 
-
 on:
   push:
-
-# on:
-#   push:
-#     tags:
-#       - '*'
+    tags:
+      - '*'
+  pull_request:
+  workflow_dispatch: {}
 
 jobs:
   zip-and-upload:
@@ -35,12 +33,12 @@ jobs:
           tar -C workspace -czvf "${REPO_NAME}-${TAG}.tar.gz" .
 
       - name: Set up JFrog CLI
-        uses: jfrog/setup-jfrog-cli@f748a0599171a192a2668afee8d0497f7c1069df # v4
+        uses: jfrog/setup-jfrog-cli@v4
 
       - name: Configure and Upload to Artifactory
         env:
           ARTIFACTORY_URL: https://eu.files.nordicsemi.com/artifactory
-          REPOSITORY: ncs-src-mirror-test
+          REPOSITORY: ncs-src-mirror
           FILE_PATH: ${{ github.repository#*/ }}-${{ github.ref_name }}.tar.gz
           TARGET_PATH: external/${{ github.repository }}/${{ github.ref_name }}/
           ARTIFACTORY_USER: ${{ secrets.COM_NORDICSEMI_FILES_USERNAME }}
