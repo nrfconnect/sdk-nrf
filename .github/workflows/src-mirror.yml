@@ -39,7 +39,7 @@ jobs:
         env:
           ARTIFACTORY_URL: https://eu.files.nordicsemi.com/artifactory
           REPOSITORY: ncs-src-mirror
-          FILE_PATH: ${{ github.repository#*/ }}-${{ github.ref_name }}.tar.gz
+          FILE_PATH: ${{ github.event.repository.name }}-${{ github.ref_name }}.tar.gz
           TARGET_PATH: external/${{ github.repository }}/${{ github.ref_name }}/
           ARTIFACTORY_USER: ${{ secrets.COM_NORDICSEMI_FILES_USERNAME }}
           ARTIFACTORY_PASS: ${{ secrets.COM_NORDICSEMI_FILES_PASSWORD }}
