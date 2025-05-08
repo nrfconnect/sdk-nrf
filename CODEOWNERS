@@ -35,7 +35,7 @@
 /applications/nrf5340_audio/              @nrfconnect/ncs-audio
 /applications/nrf_desktop/                @nrfconnect/ncs-si-bluebagel
 /applications/hpf/                        @nrfconnect/ncs-ll-ursus
-/applications/serial_lte_modem/           @nrfconnect/ncs-co-networking @nrfconnect/ncs-iot-oulu
+/applications/serial_lte_modem/           @nrfconnect/ncs-co-networking @nrfconnect/ncs-lr-slm
 /applications/serial_lte_modem/src/lwm2m_carrier/ @nrfconnect/ncs-carrier
 /applications/connectivity_bridge/*.rst   @nrfconnect/ncs-cia-doc
 /applications/ipc_radio/*.rst             @nrfconnect/ncs-si-muffin-doc
@@ -410,7 +410,7 @@
 /lib/modem_info/                          @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
 /lib/modem_jwt/                           @nrfconnect/ncs-iot-oulu @nrfconnect/ncs-modem
 /lib/modem_key_mgmt/                      @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
-/lib/modem_slm/                           @nrfconnect/ncs-iot-oulu
+/lib/modem_slm/                           @nrfconnect/ncs-lr-slm
 /lib/multithreading_lock/                 @nrfconnect/ncs-dragoon
 /lib/nrf_modem_lib/                       @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
 /lib/pcm_mix/                             @nrfconnect/ncs-audio
@@ -509,7 +509,7 @@
 /samples/cellular/nrf_cloud_*             @nrfconnect/ncs-nrf-cloud
 /samples/cellular/nrf_provisioning/       @nrfconnect/ncs-iot-oulu
 /samples/cellular/modem_trace_flash/      @nrfconnect/ncs-modem
-/samples/cellular/slm_shell/              @nrfconnect/ncs-iot-oulu
+/samples/cellular/slm_shell/              @nrfconnect/ncs-lr-slm
 /samples/cellular/sms/                    @nrfconnect/ncs-modem-tre
 /samples/cellular/uicc_lwm2m/             @stig-bjorlykke
 /samples/cellular/lte_ble_gateway/        @nrfconnect/ncs-cia
