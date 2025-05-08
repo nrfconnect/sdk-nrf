@@ -8,6 +8,7 @@
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_lock.h>
 
 #include <nrf_rpc_cbor.h>
 
@@ -287,9 +288,9 @@ static void ot_rpc_cmd_srp_client_add_service(const struct nrf_rpc_group *group,
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otSrpClientAddService(openthread_get_default_instance(), &service->service);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	if (error == OT_ERROR_NONE) {
 		sys_slist_prepend(&service_data, &service->node);
@@ -313,11 +314,11 @@ static void ot_rpc_cmd_srp_client_clear_host_and_services(const struct nrf_rpc_g
 {
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	otSrpClientClearHostAndServices(openthread_get_default_instance());
 	host_data_clear();
 	service_data_clear();
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_void(group);
 }
@@ -341,7 +342,7 @@ static void ot_rpc_cmd_srp_client_clear_service(const struct nrf_rpc_group *grou
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	service = service_data_find(client_service_id, &prev);
 
 	if (!service) {
@@ -353,7 +354,7 @@ static void ot_rpc_cmd_srp_client_clear_service(const struct nrf_rpc_group *grou
 	service_data_free(service, prev);
 
 out:
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 	nrf_rpc_rsp_send_uint(group, error);
 }
 
@@ -367,9 +368,9 @@ static void ot_rpc_cmd_srp_client_disable_auto_start_mode(const struct nrf_rpc_g
 {
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	otSrpClientDisableAutoStartMode(openthread_get_default_instance());
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_void(group);
 }
@@ -386,9 +387,9 @@ static void ot_rpc_cmd_srp_client_enable_auto_host_addr(const struct nrf_rpc_gro
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otSrpClientEnableAutoHostAddress(openthread_get_default_instance());
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	if (host_data.addresses) {
 		free(host_data.addresses);
@@ -428,10 +429,10 @@ static void ot_rpc_cmd_srp_client_enable_auto_start_mode(const struct nrf_rpc_gr
 {
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	otSrpClientEnableAutoStartMode(openthread_get_default_instance(),
 				       ot_rpc_srp_client_auto_start_cb, NULL);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_void(group);
 }
@@ -456,10 +457,10 @@ static void ot_rpc_cmd_srp_client_remove_host_and_services(const struct nrf_rpc_
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otSrpClientRemoveHostAndServices(openthread_get_default_instance(),
 						 remove_key_lease, send_unreg_to_server);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, error);
 }
@@ -482,7 +483,7 @@ static void ot_rpc_cmd_srp_client_remove_service(const struct nrf_rpc_group *gro
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	service = service_data_find(client_service_id, NULL);
 
 	if (!service) {
@@ -493,7 +494,7 @@ static void ot_rpc_cmd_srp_client_remove_service(const struct nrf_rpc_group *gro
 	error = otSrpClientRemoveService(openthread_get_default_instance(), &service->service);
 
 out:
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 	nrf_rpc_rsp_send_uint(group, error);
 }
 
@@ -552,10 +553,10 @@ static void ot_rpc_cmd_srp_client_set_callback(const struct nrf_rpc_group *group
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	otSrpClientSetCallback(openthread_get_default_instance(),
 			       callback_set ? ot_rpc_srp_client_callback : NULL, NULL);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_void(group);
 }
@@ -577,10 +578,10 @@ static void ot_rpc_cmd_srp_client_set_hostname(const struct nrf_rpc_group *group
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	strcpy(host_data.hostname, hostname);
 	error = otSrpClientSetHostName(openthread_get_default_instance(), host_data.hostname);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, error);
 }
@@ -602,9 +603,9 @@ static void ot_rpc_cmd_srp_client_set_key_lease_interval(const struct nrf_rpc_gr
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	otSrpClientSetKeyLeaseInterval(openthread_get_default_instance(), interval);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_void(group);
 }
@@ -626,9 +627,9 @@ static void ot_rpc_cmd_srp_client_set_lease_interval(const struct nrf_rpc_group 
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	otSrpClientSetLeaseInterval(openthread_get_default_instance(), interval);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_void(group);
 }
@@ -649,9 +650,9 @@ static void ot_rpc_cmd_srp_client_set_ttl(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	otSrpClientSetTtl(openthread_get_default_instance(), ttl);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_void(group);
 }
@@ -672,9 +673,9 @@ static void ot_rpc_cmd_srp_client_start(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otSrpClientStart(openthread_get_default_instance(), &sockaddr);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, error);
 }
@@ -687,9 +688,9 @@ static void ot_rpc_cmd_srp_client_stop(const struct nrf_rpc_group *group,
 {
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	otSrpClientStop(openthread_get_default_instance());
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_void(group);
 }
@@ -704,9 +705,9 @@ static void ot_rpc_cmd_srp_client_is_running(const struct nrf_rpc_group *group,
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	running = otSrpClientIsRunning(openthread_get_default_instance());
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_bool(group, running);
 }
@@ -725,12 +726,12 @@ static void ot_rpc_cmd_srp_client_get_server_address(const struct nrf_rpc_group 
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, rsp_ctx, OT_IP6_ADDRESS_SIZE + sizeof(uint32_t) + 2);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 
 	sockaddr = otSrpClientGetServerAddress(openthread_get_default_instance());
 	ot_rpc_encode_sockaddr(&rsp_ctx, sockaddr);
 
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
@@ -747,9 +748,9 @@ static void ot_rpc_cmd_srp_client_get_ttl(const struct nrf_rpc_group *group,
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	ttl = otSrpClientGetTtl(openthread_get_default_instance());
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, ttl);
 }
@@ -765,9 +766,9 @@ static void ot_rpc_cmd_srp_client_get_lease_interval(const struct nrf_rpc_group 
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	lease_int = otSrpClientGetLeaseInterval(openthread_get_default_instance());
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, lease_int);
 }
@@ -785,9 +786,9 @@ static void ot_rpc_cmd_srp_client_get_key_lease_interval(const struct nrf_rpc_gr
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	key_lease_int = otSrpClientGetKeyLeaseInterval(openthread_get_default_instance());
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, key_lease_int);
 }
@@ -805,7 +806,7 @@ static void ot_rpc_cmd_srp_client_set_host_addresses(const struct nrf_rpc_group 
 	size_t index = 0;
 	uint8_t num = nrf_rpc_decode_uint(ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 
 	/* Check if more memory is needed */
 	if (host_data.addresses && (num > host_data.addresses_num)) {
@@ -827,13 +828,13 @@ static void ot_rpc_cmd_srp_client_set_host_addresses(const struct nrf_rpc_group 
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_SRP_CLIENT_SET_HOST_ADDRESSES);
-		openthread_api_mutex_unlock(openthread_get_default_context());
+		ot_rpc_mutex_unlock();
 		return;
 	}
 
 	error = otSrpClientSetHostAddresses(openthread_get_default_instance(), host_data.addresses,
 					    index);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, error);
 }
@@ -850,9 +851,9 @@ static void ot_rpc_cmd_srp_client_is_auto_start_mode_enabled(const struct nrf_rp
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	enabled = otSrpClientIsAutoStartModeEnabled(openthread_get_default_instance());
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_bool(group, enabled);
 }

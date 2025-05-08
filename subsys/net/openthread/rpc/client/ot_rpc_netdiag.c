@@ -7,6 +7,7 @@
 #include <ot_rpc_client_common.h>
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
+#include <ot_rpc_lock.h>
 #include <nrf_rpc/nrf_rpc_serialize.h>
 
 #include <openthread/netdiag.h>
@@ -234,10 +235,13 @@ static void ot_rpc_cmd_thread_send_diagnostic_get_cb(const struct nrf_rpc_group 
 		return;
 	}
 
+	ot_rpc_mutex_lock();
+
 	if (receive_diag_get_cb != NULL) {
 		receive_diag_get_cb(error, message, &message_info, receive_diag_get_cb_context);
 	}
 
+	ot_rpc_mutex_unlock();
 	nrf_rpc_rsp_send_void(group);
 }
 

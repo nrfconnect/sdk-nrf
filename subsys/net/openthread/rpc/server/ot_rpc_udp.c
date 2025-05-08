@@ -10,6 +10,7 @@
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_lock.h>
 
 #include <nrf_rpc_cbor.h>
 
@@ -111,10 +112,10 @@ static void ot_rpc_udp_open(const struct nrf_rpc_group *group, struct nrf_rpc_cb
 		goto exit;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otUdpOpen(openthread_get_default_instance(), &socket->mSocket, handle_udp_receive,
 			  socket);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 exit:
 	if (error != OT_ERROR_NONE && socket != NULL) {
@@ -156,10 +157,10 @@ static void ot_rpc_udp_send(const struct nrf_rpc_group *group, struct nrf_rpc_cb
 		goto exit;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otUdpSend(openthread_get_default_instance(), &socket->mSocket, message,
 			  &message_info);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	if (error == OT_ERROR_NONE) {
 		ot_res_tab_msg_free(msg_key);
@@ -199,9 +200,9 @@ static void ot_rpc_udp_bind(const struct nrf_rpc_group *group, struct nrf_rpc_cb
 		goto exit;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otUdpBind(openthread_get_default_instance(), &socket->mSocket, &sock_name, netif);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 exit:
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(error) + 1);
@@ -230,9 +231,9 @@ static void ot_rpc_udp_close(const struct nrf_rpc_group *group, struct nrf_rpc_c
 		goto exit;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otUdpClose(openthread_get_default_instance(), &socket->mSocket);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_udp_free_socket(soc_key);
 
@@ -268,9 +269,9 @@ static void ot_rpc_udp_connect(const struct nrf_rpc_group *group, struct nrf_rpc
 		goto exit;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otUdpConnect(openthread_get_default_instance(), &socket->mSocket, &sock_name);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 exit:
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(error) + 1);

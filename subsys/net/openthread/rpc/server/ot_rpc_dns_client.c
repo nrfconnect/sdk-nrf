@@ -7,6 +7,7 @@
 #include <ot_rpc_common.h>
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
+#include <ot_rpc_lock.h>
 
 #include <nrf_rpc/nrf_rpc_serialize.h>
 #include <nrf_rpc/nrf_rpc_cbkproxy.h>
@@ -21,7 +22,7 @@ static void ot_rpc_dns_client_get_default_config(const struct nrf_rpc_group *gro
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 
 	config = otDnsClientGetDefaultConfig(openthread_get_default_instance());
 
@@ -29,7 +30,7 @@ static void ot_rpc_dns_client_get_default_config(const struct nrf_rpc_group *gro
 
 	ot_rpc_encode_dns_query_config(&rsp_ctx, config);
 
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
@@ -47,12 +48,12 @@ static void ot_rpc_dns_client_set_default_config(const struct nrf_rpc_group *gro
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 
 	otDnsClientSetDefaultConfig(openthread_get_default_instance(),
 				    (decoded_config ? &config : NULL));
 
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_void(group);
 }
@@ -143,7 +144,7 @@ static void resolve_address(enum ot_rpc_cmd_server cmd, const struct nrf_rpc_gro
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 
 	switch (cmd) {
 	case OT_RPC_CMD_DNS_CLIENT_RESOLVE_ADDRESS:
@@ -159,7 +160,7 @@ static void resolve_address(enum ot_rpc_cmd_server cmd, const struct nrf_rpc_gro
 		break;
 	}
 
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, error);
 }
@@ -202,12 +203,12 @@ static void ot_rpc_dns_client_browse(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 
 	error = otDnsClientBrowse(openthread_get_default_instance(), service_name, cb, cb_ctx,
 				  (decoded_config ? &config : NULL));
 
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, error);
 }
@@ -236,7 +237,7 @@ static void resolve_service(enum ot_rpc_cmd_server cmd, const struct nrf_rpc_gro
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 
 	switch (cmd) {
 	case OT_RPC_CMD_DNS_CLIENT_RESOLVE_SERVICE:
@@ -254,7 +255,7 @@ static void resolve_service(enum ot_rpc_cmd_server cmd, const struct nrf_rpc_gro
 		break;
 	}
 
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, error);
 }
@@ -302,7 +303,7 @@ static void resp_get_name(const struct nrf_rpc_group *group, struct nrf_rpc_cbor
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 
 	switch (cmd) {
 	case OT_RPC_CMD_DNS_ADDRESS_RESP_GET_HOST_NAME:
@@ -323,7 +324,7 @@ static void resp_get_name(const struct nrf_rpc_group *group, struct nrf_rpc_cbor
 		break;
 	}
 
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	if (error == OT_ERROR_NONE) {
 		name_len = strlen(name_buffer);
@@ -374,7 +375,7 @@ static void resp_get_address(const struct nrf_rpc_group *group, struct nrf_rpc_c
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 
 	switch (cmd) {
 	case OT_RPC_CMD_DNS_ADDRESS_RESP_GET_ADDRESS:
@@ -396,7 +397,7 @@ static void resp_get_address(const struct nrf_rpc_group *group, struct nrf_rpc_c
 		break;
 	}
 
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	resp_len = sizeof(uint32_t) + 1;
 	resp_len += (error == OT_ERROR_NONE) ? sizeof(otIp6Address) + sizeof(uint32_t) + 2 : 0;
@@ -453,7 +454,7 @@ static void resp_get_info(const struct nrf_rpc_group *group, struct nrf_rpc_cbor
 		info.mTxtDataSize = max_txt_size;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 
 	switch (cmd) {
 	case OT_RPC_CMD_DNS_BROWSE_RESP_GET_SERVICE_INFO:
@@ -469,7 +470,7 @@ static void resp_get_info(const struct nrf_rpc_group *group, struct nrf_rpc_cbor
 		break;
 	}
 
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	if (max_name_size) {
 		name_size = strlen(name);
@@ -557,11 +558,11 @@ static void ot_rpc_dns_browse_response_get_service_instance(const struct nrf_rpc
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 
 	error = otDnsBrowseResponseGetServiceInstance(response, index, instance, max_len);
 
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	if (error == OT_ERROR_NONE) {
 		name_len = strlen(instance);

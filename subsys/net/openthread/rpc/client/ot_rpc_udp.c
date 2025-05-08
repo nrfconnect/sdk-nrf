@@ -8,6 +8,7 @@
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_lock.h>
 
 #include <nrf_rpc_cbor.h>
 
@@ -105,10 +106,13 @@ static void ot_rpc_cmd_udp_receive_cb(const struct nrf_rpc_group *group,
 
 	socket = (otUdpSocket *)soc_key;
 
+	ot_rpc_mutex_lock();
+
 	if (socket != NULL && socket->mHandler != NULL) {
 		socket->mHandler(socket->mContext, (otMessage *)msg_key, &message_info);
 	}
 
+	ot_rpc_mutex_unlock();
 	nrf_rpc_rsp_send_void(group);
 }
 

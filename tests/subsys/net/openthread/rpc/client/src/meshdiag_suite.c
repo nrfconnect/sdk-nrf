@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "mocks.h"
+
 #include <mock_nrf_rpc_transport.h>
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
@@ -59,6 +61,7 @@ static void fake_handle_mesh_diag_discover(otError error, otMeshDiagRouterInfo *
 	otExtAddress expected_ext_addr = {{INT_SEQUENCE(OT_EXT_ADDRESS_SIZE)}};
 	uint8_t expected_link_qualities[] = {INT_SEQUENCE(MESHDIAG_LINK_QUALITIES_LEN)};
 
+	zassert_true(ot_rpc_is_mutex_locked());
 	zassert_equal(error, OT_ERROR_NONE);
 
 	zassert_mem_equal(router_info->mExtAddress.m8, expected_ext_addr.m8, OT_EXT_ADDRESS_SIZE);
