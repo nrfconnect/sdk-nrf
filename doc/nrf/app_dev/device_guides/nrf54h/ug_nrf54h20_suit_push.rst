@@ -28,7 +28,7 @@ Pushing images separately from the SUIT envelope can be useful in the following 
 DFU Cache Partitions
 ********************
 
-The payloads pushed to the device must be placed in so called “DFU cache partitions”, numbered 0..n.
+The payloads pushed to the device must be placed in so called *DFU cache partitions*, numbered from ``0`` to ``n``.
 The DFU cache partitions hold data using a CBOR map format, where the keys are URI strings and the values are binary images.
 
 When the Secure Domain processes the manifest and encounters a ``suit-directive-fetch`` directive it first checks if a given URI is present in its ``suit-integrated-payloads`` section.

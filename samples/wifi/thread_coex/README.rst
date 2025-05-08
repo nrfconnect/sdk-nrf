@@ -206,7 +206,7 @@ Testing
                       /dev/ttyACM3, vcom: 1
       traits          devkit, jlink, seggerUsb, serialPorts, usb
 
-      Found 2 supported device(s)
+      Found 2 supported device
 
    In this example, ``1050779496`` is the serial number of the first nRF7002 DK and ``1050759502`` is the serial number of the other one.
 

@@ -130,7 +130,9 @@ User interface
 
       Button 2:
         On short press and release, **Button 2** will publish a Scene Restore message using the configured publication parameters of its model instance, and restore the LED state of all the targets to the values stored under the current scene number.
-        Each press of the button will recall the next scene, meaning, the first press will recall scene 2, the next press will recall scene 3, and so on, before wrapping around back to scene 1.
+        Each press of the button recalls the next scene.
+        The first press recalls scene 2, the next press recalls scene 3, and the sequence continues incrementally until it wraps around back to scene 1.
+
 
         On long press and release, **Button 2** will publish a Scene Store message using the configured publication parameters of its model instance, and store the current LED state of all the targets under the scene with the most recently recalled scene number.
 
@@ -159,8 +161,9 @@ User interface
         On release, the button publishes another Generic Level move set message with the ``delta`` parameter set to 0 and stops the continuous level change from the previous message.
 
       Button 2:
-        On short press and release, **Button 1** will publish a Scene Restore message using the configured publication parameters of its model instance, and restore the LED state of all the targets to the values stored under the current scene number.
-        Each press of the button will recall the next scene, meaning, the first press will recall scene 2, the next press will recall scene 3, and so on, before wrapping around back to scene 1.
+        On short press and release, **Button 1** publishes a Scene Restore message using the configured publication parameters of its model instance, and restores the LED state of all targets to the values stored under the current scene number.
+        Each press of the button recalls the next scene.
+        The first press recalls scene 2, the next press recalls scene 3, and the sequence continues incrementally until it wraps around back to scene 1.
 
         On long press and release, **Button 1** will publish a Scene Store message using the configured publication parameters of its model instance, and store the current LED state of all the targets under the scene with the most recently recalled scene number.
 

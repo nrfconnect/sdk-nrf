@@ -14,8 +14,8 @@ Complete the following steps:
 #. Move this custom Mbed TLS header file to your source directory.
 #. In the project configuration, make the following changes:
 
-   * `CONFIG_GENERATE_MBEDTLS_CFG_FILE=n`.
-   * `CONFIG_MBEDTLS_CFG_FILE="custom-name-nrf-config.h"`.
+   * ``CONFIG_GENERATE_MBEDTLS_CFG_FILE=n``.
+   * ``CONFIG_MBEDTLS_CFG_FILE="custom-name-nrf-config.h"``.
 #. Edit :file:`custom-name-nrf-config.h` with your custom configuration.
 #. If the header files are not already in the include path, add them by editing the application build scripts.
 

@@ -181,7 +181,7 @@ Testing
 #. |connect_kit|
 #. |connect_terminal|
 #. Reset the development kit.
-#. And so on ...
+#. Add any additional step needed...
 
 .. note::
    * Use the shortcuts provided in :file:`doc/nrf/shortcuts.txt` to keep the wording consistent.
@@ -213,7 +213,7 @@ Related projects and applications*
 
 .. note::
    Add links to projects and/or applications that demonstrate or implement some or all of the features of this application.
-   For example, the :ref:`matter_weather_station_app` application is part of the `Matter`_ project, and so on.
+   For example, the :ref:`matter_weather_station_app` application is part of the `Matter`_ project.
 
 Related samples*
 ================

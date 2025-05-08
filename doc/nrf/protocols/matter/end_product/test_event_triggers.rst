@@ -198,19 +198,19 @@ For example:
 
 .. code-block:: c++
 
-    /* Prepare the factory data provider */
-    static chip::DeviceLayer::FactoryDataProvider<chip::DeviceLayer::InternalFlashFactoryData> sFactoryDataProvider;
-    sFactoryDataProvider.Init();
+     /* Prepare the factory data provider */
+     static chip::DeviceLayer::FactoryDataProvider<chip::DeviceLayer::InternalFlashFactoryData> sFactoryDataProvider;
+     sFactoryDataProvider.Init();
 
-    /* Prepare the buffer for enable key data */
-    uint8_t enableKeyData[chip::TestEventTriggerDelegate::kEnableKeyLength] = {};
-    MutableByteSpan enableKey(enableKeyData);
+     /* Prepare the buffer for enable key data */
+     uint8_t enableKeyData[chip::TestEventTriggerDelegate::kEnableKeyLength] = {};
+     MutableByteSpan enableKey(enableKeyData);
 
-    /* Load the enable key value from the factory data */
-    sFactoryDataProvider.GetEnableKey(enableKey);
+     /* Load the enable key value from the factory data */
+     sFactoryDataProvider.GetEnableKey(enableKey);
 
-    /* Call SetEnableKey method to load the read value to the TestEventTrigger class. */
-    Nrf::Matter::TestEventTrigger::Instance().SetEnableKey(enableKey);
+     /* Call SetEnableKey method to load the read value to the TestEventTrigger class. */
+     Nrf::Matter::TestEventTrigger::Instance().SetEnableKey(enableKey);
 
 Directly in the code
 ====================

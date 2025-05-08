@@ -590,7 +590,7 @@ This percentage value is first translated according to the quantified battery st
   This battery level is unavailable when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_DULT` Kconfig option is enabled.
 
 You can change the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_LEVEL_LOW_THR` and the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_BATTERY_LEVEL_CRITICAL_THR` Kconfig options to control the mapping of the battery percentage values to the battery levels as defined by the FMDN Accessory specification.
-The mapping is implementation-specific and is up to application developer to select threshold values that fit their application requirements.
+The mapping is implementation-specific and is up to you to select threshold values that fit your application requirements.
 
 If an application does not specify the battery level using the API, the default level, battery level indication unsupported, is encoded in the FMDN advertising payload.
 
@@ -629,7 +629,7 @@ TX power
 The Fast Pair Seeker receives the calibrated TX power from the Provider during the FMDN provisioning process and uses it to measure distance based on the RSSI value.
 The Provider includes the calibrated TX power value in the Read Beacon Parameters response.
 Typically, the Seeker displays different status messages based on the measured distance when its user is trying to find the Provider device.
-For example, the "It's here" status message is displayed in the "Hot & Cold" experience of the `Find My Device app`_ when the missing device is in very close proximity of the smartphone.
+For example, the :guilabel:`It's here` status message is displayed in the :guilabel:`Hot & Cold` experience of the `Find My Device app`_ when the missing device is in very close proximity of the smartphone.
 
 You can set the TX power for the FMDN advertising and connections using the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_TX_POWER` Kconfig option.
 The configured value is directly used to set the TX power in the Bluetooth LE controller using an HCI command.
@@ -639,7 +639,7 @@ By default, 0 dBm is used for the FMDN TX power configuration.
 You can use the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_TX_POWER_CORRECTION_VAL` Kconfig option to define a correction value that is added to TX power readout from the Bluetooth LE controller (usually equal to the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_TX_POWER` Kconfig option), when calculating the calibrated TX power reported in the Read Beacon Parameters response.
 The hardware configuration, for example used antenna and device casing, may affect the actual TX power of packets broadcasted by the Fast Pair Provider.
 The correction value allows to improve the accuracy of the Fast Pair Seeker's distance measurement.
-The calculated calibrated TX power should range between -100 dBm and 20 dBm.
+The calculated calibrated TX power should range between –100 dBm and 20 dBm.
 
 You need to adjust the correction value for both the FMDN extension and the TX power AD type in the Fast Pair advertising set.
 If your application uses the :ref:`bt_le_adv_prov_readme` library, see the :ref:`ug_bt_fast_pair_advertising_tx_power_provider` section for details on how to configure the TX power AD type in the Fast Pair advertising set.

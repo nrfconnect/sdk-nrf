@@ -84,7 +84,7 @@ See :ref:`ug_bt_fast_pair_provisioning` in the Fast Pair user guide for details.
 .. tip::
    The sample provides TX power in the Bluetooth advertising data.
    There is no need to provide the TX power value during device model registration.
-   The device is using only Bluetooth LE, so you must select **Skip connecting audio profiles (e.g. A2DP or HFP)** option when registering the device.
+   The device is using only Bluetooth LE, so you must select :guilabel:`Skip connecting audio profiles (e.g. A2DP or HFP)` option when registering the device.
 
 Seeker device
 =============

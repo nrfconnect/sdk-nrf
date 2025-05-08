@@ -788,7 +788,7 @@ The following list summarizes the most important changes inherited from upstream
 
     * Fixed mutex protection on :c:func:`mqtt_disconnect`.
     * Switched the library to use ``zsock_*`` socket functions instead of POSIX names.
-    * Changed the return value of :c:func:`mqtt_keepalive_time_left` to -1 when keep alive is disabled.
+    * Changed the return value of :c:func:`mqtt_keepalive_time_left` to –1 when keep alive is disabled.
 
   * Sockets:
 

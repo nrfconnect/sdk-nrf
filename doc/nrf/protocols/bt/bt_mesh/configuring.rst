@@ -206,8 +206,8 @@ The Bluetooth Mesh stack stores the following data persistently:
 * IV index
 * Sequence number
 * Heartbeat publication information
-* Application key(s) (the amount of entries is controlled by :kconfig:option:`CONFIG_BT_MESH_APP_KEY_COUNT`)
-* Network key(s) (the amount of entries is controlled by :kconfig:option:`CONFIG_BT_MESH_SUBNET_COUNT`)
+* Application keys (the amount of entries is controlled by :kconfig:option:`CONFIG_BT_MESH_APP_KEY_COUNT`)
+* Network keys (the amount of entries is controlled by :kconfig:option:`CONFIG_BT_MESH_SUBNET_COUNT`)
 * Label UUIDs for virtual addressing (the amount of entries is controlled by :kconfig:option:`CONFIG_BT_MESH_LABEL_COUNT`)
 * RPL entries (the RPL size is controlled by :kconfig:option:`CONFIG_BT_MESH_CRPL`)
 
@@ -215,7 +215,7 @@ The following data is stored for each model by the Bluetooth Mesh stack:
 
 * Model subscription state
 * Model publication state
-* Bound application key(s)
+* Bound application keys
 * Subscription list for group addresses
 * Subscription list for virtual addresses
 * Label UUIDs the model is subscribed to

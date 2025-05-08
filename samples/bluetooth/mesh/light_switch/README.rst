@@ -24,7 +24,7 @@ The sample supports the following development kits:
 You need at least two development kits:
 
 * One development kit where you program this sample application (the client)
-* One (or more) development kit(s) where you program the :ref:`bluetooth_mesh_light` sample application (the server(s)), and configure according to the mesh light sample's :ref:`testing guide <bluetooth_mesh_light_testing>`
+* At least one development kit where you program the :ref:`bluetooth_mesh_light` sample application (the server), and configure according to the mesh light sample's :ref:`testing guide <bluetooth_mesh_light_testing>`
 
 For provisioning and configuring of the mesh model instances, the sample requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
 
@@ -66,7 +66,7 @@ The sample instantiates up to four instances of the Generic OnOff Client model t
 One instance of the Generic OnOff Client model is instantiated in the light switch sample for each button available on the development kit that is used.
 When a user presses any of the buttons, an OnOff Set message is sent out to the configured destination address.
 
-After provisioning and configuring the mesh models supported by the sample using the `nRF Mesh mobile app`_, you can control the LEDs on the other (server) development kit(s) from the app.
+After provisioning and configuring the mesh models supported by the sample using the `nRF Mesh mobile app`_, you can control the LEDs on the other (server) development kits from the app.
 
 Provisioning
 ============

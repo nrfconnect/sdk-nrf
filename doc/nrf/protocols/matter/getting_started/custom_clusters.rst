@@ -443,7 +443,7 @@ To learn more about the tool, see the :ref:`ug_nrfconnect_manufacturer_cluster_e
             ``<enum>`` elements define the enumerated types that can be used in the cluster and consist of the following attributes and child elements:
 
             * ``name`` - The unique name of the enumerated type.
-            * ``<cluster code>`` - The cluster code(s) that the enumerated type is associated with.
+            * ``<cluster code>`` - The cluster codes that the enumerated type is associated with.
               An enumerated type can be associated with multiple clusters by defining multiple ``<cluster code>`` elements.
               If no cluster code is specified, the enumerated type has a global scope.
             * ``type`` - The data type of the enumerated values.
@@ -468,7 +468,7 @@ To learn more about the tool, see the :ref:`ug_nrfconnect_manufacturer_cluster_e
 
             * ``name`` - The unique name of the structure.
             * ``isFabricScoped`` - Indicates if the structure is fabric-scoped.
-            * ``<cluster code>`` - The cluster code(s) that the structure is associated with.
+            * ``<cluster code>`` - The cluster codes that the structure is associated with.
               A structure can be associated with multiple clusters by defining multiple ``<cluster code>`` elements.
               If no cluster code is specified, the structure has a global scope.
             * ``<item>`` - The definition of an individual item within the structure.

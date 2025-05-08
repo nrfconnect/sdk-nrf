@@ -217,7 +217,7 @@ Changes
 * Added preliminary support for Bell Canada subscriber ID.
   This carrier can be disabled or enabled with the Kconfig option :kconfig:option:`CONFIG_LWM2M_CARRIER_BELL_CA`.
 
-* Changed the default string of the Device Type resource to say "Module" instead of "Smart Device".
+* Changed the default string of the Device Type resource to say ``Module`` instead of ``Smart Device``.
   This can be changed to other strings using the Kconfig option :kconfig:option:`CONFIG_LWM2M_CARRIER_DEVICE_TYPE`.
 
 * Added ``disable_queue_mode`` to the configuration :c:macro:`lwm2m_carrier_config_t`.

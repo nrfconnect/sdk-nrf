@@ -99,7 +99,7 @@ This application type is suitable for the following development cases:
 * You want to take advantage of west to manage your own set of repositories.
 * You want to make changes to one or more of the repositories of the |NCS| when working on the application.
 * You want to develop a project that involves more than one board target, for example using a mesh networking protocol like :ref:`ug_matter` or :ref:`ug_bt_mesh`.
-* You want to run a big project that lets you develop most features without having to patch the |NCS| tree, for example with out-of-tree boards, drivers, SoCs, and so on.
+* You want to run a big project that lets you develop most features without having to patch the |NCS| tree, for example with out-of-tree boards, drivers, or SoCs.
 * You want to use out-of-tree applications from the `nRF Connect SDK Add-ons`_ index.
 
 For more information about applications placed in workspace in the |NCS|, see the :ref:`workflow 4 on the development model page <dm_workflow_4>`.

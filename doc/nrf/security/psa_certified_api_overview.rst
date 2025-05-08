@@ -112,7 +112,7 @@ See :ref:`nrf_security_drivers` for a list of supported functionalities.
 
 The Crypto API uses different libraries depending on hardware capabilities and user configuration:
 
-* cc3xx libraries - These provide support for the `CryptoCell 310 <nRF9160 CRYPTOCELL - Arm TrustZone CryptoCell 310_>`_ and `CryptoCell 312 <nRF5340 CRYPTOCELL — Arm TrustZone CryptoCell 312_>`_ hardware peripherals.
+* cc3xx libraries - These provide support for the `CryptoCell 310 <nRF9160 CRYPTOCELL - Arm TrustZone CryptoCell 310_>`_ and `CryptoCell 312 <nRF5340 CRYPTOCELL - Arm TrustZone CryptoCell 312_>`_ hardware peripherals.
 * nrf_oberon - :ref:`nrf_oberon <nrfxlib:nrf_oberon_readme>` is an optimized software library for cryptographic algorithms created by Oberon Microsystems and licensed to Nordic Semiconductor for redistribution.
 * CRACEN - Crypto Accelerator Engine (CRACEN) is a security subsystem developed by Nordic Semiconductor that provides hardware acceleration for cryptographic operations for nRF54L Series devices.
   For more information about it, see :ref:`ug_nrf54l_crypto_kmu_cracen_peripherals` on the :ref:`ug_nrf54l_cryptography` page.

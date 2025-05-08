@@ -17,7 +17,7 @@ The most relevant changes that are present on the main branch of the |NCS|, as c
    When adding a new PR, decide whether it needs an entry in the changelog.
    If it does, update this page.
    Add the sections you need, as only a handful of sections is kept when the changelog is cleaned.
-   "Protocols" section serves as a highlight section for all protocol-related changes, including those made to samples, libraries, and so on.
+   The "Protocols" section serves as a highlight section for all protocol-related changes, including those made to samples, libraries, and other components that implement or support protocol functionality.
 
 Known issues
 ************

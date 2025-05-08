@@ -25,7 +25,7 @@ The Sample sample demonstrates how to blink LEDs in the rhythm of the music that
 
    Think about use cases:
    "The XYZ sample shows how to use the XYZ library" is not a good introduction, because customers do not want to use the XYZ library, but they want to get a task done.
-   Instead, write something like "The XYZ sample shows how to do this awesome task. It uses the XYZ library".
+   Instead, write something like "The XYZ sample shows how to do this awesome task. It uses the XYZ library."
 
 
 Requirements
@@ -209,7 +209,7 @@ Testing
 #. |connect_terminal|
 #. Press a button on the development kit.
 #. Look at the flashing lights.
-#. And so on ...
+#. Add any additional step if needed.
 
 .. note::
    * Use the shortcuts provided in :file:`doc/nrf/shortcuts.txt` to keep the wording consistent.

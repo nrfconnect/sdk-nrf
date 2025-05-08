@@ -1051,7 +1051,7 @@ Libraries for networking
 
   * Updated:
 
-    * The Zephyr's LwM2M Connectivity Monitor object to use a 16-bit value for radio signal strength so that it does not roll over on values smaller than -126 dBm.
+    * The Zephyr's LwM2M Connectivity Monitor object to use a 16-bit value for radio signal strength so that it does not roll over on values smaller than –126 dBm.
     * The advanced LwM2M FOTA object to accept zero length of a firmware package for reset state and result resources.
       This fixes an interoperability issue with AVSystem's Coiote Device Management server related to firmware update by push-mode.
 

@@ -14,7 +14,7 @@ This Changelog reflects the most relevant changes from the latest official relea
    When adding a new PR, decide whether it needs an entry in the changelog.
    If it does, update this page.
    Add the sections you need, as only a handful of sections are kept when the changelog is cleaned.
-   The "Protocols" section serves as a highlight section for all protocol-related changes, including those made to samples, libraries, and so on.
+   The "Protocols" section serves as a highlight section for all protocol-related changes, including those made to samples, libraries, and other components that implement or support protocol functionality.
 
 Known issues
 ************
@@ -901,4 +901,4 @@ Documentation
   * The :ref:`dm-revisions` section of the :ref:`dm_code_base` page with information about the preview release tag, which replaces the development tag.
 
 * Removed the standalone page for getting started with Nordic Thingy:53.
-  The contents of this page have been moved to the :ref:`thingy53_precompiled` page and to the `Programmer app <Programming Nordic Thingy:53_>`_ documentation.
+  The contents of this page have been moved to the :ref:`thingy53_precompiled` page and to the `Programmer app <prog_thingy_53>`_ documentation.

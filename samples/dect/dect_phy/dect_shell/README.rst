@@ -151,7 +151,7 @@ The ``ping`` command uses its own proprietary PDU format and protocol.
 At end of a ping session, it prints out the statistics of the session.
 On the client side, also server side statistics are printed out if the client side ``PING_RESULT_REQ`` is responded with ``PING_RESULT_RESP`` by the server.
 
-Example 1: basic usage
+Example 1: Basic usage
 ----------------------
 
 * On both client and server side - scan for a free channel:
@@ -188,7 +188,7 @@ Example 1: basic usage
   .. note::
      You can use this command also on the client side to abort pinging.
 
-Example 2: automatic TX power tuning
+Example 2: Automatic TX power tuning
 ------------------------------------
 
 You can use the ``dect ping`` command line option ``--tx_pwr_ctrl_auto`` to enable automatic TX power tuning.
@@ -234,7 +234,7 @@ The ``perf`` command uses its own proprietary PDU format and protocol.
 At end of a session, it prints out the statistics.
 On the client side, also server side statistics are printed out if the client side ``PERF_RESULT_REQ`` is responded with ``PERF_RESULT_RESP`` by the server.
 
-Example 1: basic usage
+Example 1: Basic usage
 ----------------------
 
 * On both client and server side - scan for a free channel:
@@ -309,7 +309,7 @@ To configure the frame structure, use the following command options:
 
    rx_frame_start_offset : rx_subslot_count + rx_idle_subslot_count + tx_frame_start_offset + tx_subslot_count + tx_idle_subslot_count
 
-Example 1: bi-directional testing
+Example 1: Bi-directional testing
 ---------------------------------
 
 * On both client and server side - scan for a free channel:
@@ -331,7 +331,7 @@ Example 1: bi-directional testing
 
      dect rf_tool -m rx_tx --frame_repeat_count 15 --frame_repeat_count_intervals 10 -t 39 -c 1677
 
-Example 2: unidirectional testing
+Example 2: Unidirectional testing
 ---------------------------------
 
 * On both TX and RX side - scan for a free channel (see previous example).
@@ -371,7 +371,7 @@ Example 2: unidirectional testing
      RF tool results at transmitter id 39:
      - RX/TX Duty Cycle percentage: ...
 
-Example 3: duty cycle (RX+TX) testing
+Example 3: Duty cycle (RX+TX) testing
 -------------------------------------
 
 * On both TX and RX side - scan for a free channel (see previous examples).
@@ -450,7 +450,7 @@ The following abbreviations from MAC specification are used in the examples:
 * FT: Fixed Termination point
 * PT: Portable Termination point
 
-Example: starting of cluster beacon and sending RA data to it
+Example: Starting of cluster beacon and sending RA data to it
 -------------------------------------------------------------
 
 * FT/Beacon device - Start periodic cluster beacon TX on default band 1 and on the first free channel:
@@ -926,7 +926,7 @@ Example: starting of cluster beacon and sending RA data to it
       Stopping beacon.
       Beacon TX stopped, cause: User Initiated.
 
-Example: two devices sending data to each other
+Example: Two devices sending data to each other
 -----------------------------------------------
 
 * FT/Beacon device 1 - Start periodic cluster beacon TX on default band 1 and on the first free channel:
@@ -1019,7 +1019,7 @@ DeSh command: ``startup_cmd``.
 
 You can use the ``startup_cmd`` command to store shell commands to be run sequentially after bootup.
 
-Example: starting of cluster beacon and sending RA data to it
+Example: Starting of cluster beacon and sending RA data to it
 -------------------------------------------------------------
 
 * FT/Beacon device - Set a command to start a cluster beacon five seconds after bootup:

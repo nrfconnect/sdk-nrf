@@ -252,7 +252,7 @@ Functions
        * @param[in]  addr        Address to be copied from.
        * @param[in]  len         Number of bytes to copy.
 
-* If you include more than one ``@sa`` ("see also", optional), add them like this::
+* If you include more than one ``@sa`` ("see also" - optional), add them like this::
 
       @sa first_function
       @sa second_function
@@ -268,7 +268,7 @@ Functions
        *           content of the TX data.
 
   * Use ``@retval`` for specific return values (for example, ``@retval true``, ``@retval CONN_ERROR``).
-    Describe the condition for each of the return values (for example, "If the function completes successfully", "If the connection cannot be established").
+    Describe the condition for each of the return values (for example, "If the function completes successfully" or "If the connection cannot be established").
 
     .. code-block:: none
 

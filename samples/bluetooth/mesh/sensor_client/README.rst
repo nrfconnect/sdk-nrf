@@ -81,7 +81,7 @@ The models are used for the following purposes:
 * Config Server allows configurator devices to configure the node remotely.
 * Health Server provides ``attention`` callbacks that are used during provisioning to call your attention to the device.
   These callbacks trigger blinking of the LEDs.
-* Sensor Client gets sensor data from one or more :ref:`Sensor Server(s) <bt_mesh_sensor_srv_readme>`.
+* Sensor Client gets sensor data from one or more :ref:`Sensor Servers <bt_mesh_sensor_srv_readme>`.
 
 The model handling is implemented in :file:`src/model_handler.c`.
 A :c:struct:`k_work_delayable` item is submitted recursively to periodically request sensor data.

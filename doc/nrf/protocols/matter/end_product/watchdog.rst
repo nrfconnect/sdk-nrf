@@ -175,10 +175,10 @@ Feeding manually
 
      .. code-block:: c++
 
-        if(!Nrf::Watchdog::InstallSource(myWatchdog))
-        {
-            LOG_ERR("Watchdog source cannot be installed.");
-        }
+            if(!Nrf::Watchdog::InstallSource(myWatchdog))
+            {
+                LOG_ERR("Watchdog source cannot be installed.");
+            }
 
   3. Enable the Global Watchdog module and check the function result:
 
@@ -193,7 +193,7 @@ Feeding manually
 
      .. code-block:: c++
 
-        myWatchdog.Feed();
+            myWatchdog.Feed();
 
 
 .. note::

@@ -45,8 +45,7 @@ To distribute this sample as a new image over Bluetooth Mesh network, use the :r
 Provisioning
 ============
 
-The sample supports provisioning over both the Advertising and the GATT Provisioning Bearers (i.e.
-PB-ADV and PB-GATT).
+The sample supports provisioning over both the Advertising and the GATT Provisioning Bearers (that is PB-ADV and PB-GATT).
 The provisioning is handled by the :ref:`bt_mesh_dk_prov`.
 It supports four types of out-of-band (OOB) authentication methods, and uses the Hardware Information driver to generate a deterministic UUID to uniquely represent the device.
 
@@ -165,7 +164,7 @@ This has an effect on the Distributor and the Target node.
 Only 2 options are supported by this sample:
 
 :c:enum:`BT_MESH_DFU_EFFECT_NONE`
-   This effect is chosen if the composition data of the new firmware doesn't change.
+   This effect is chosen if the composition data of the new firmware does not change.
    In this case the device will stay provisioned after the new firmware is programmed.
 
 :c:enum:`BT_MESH_DFU_EFFECT_UNPROV`
@@ -190,7 +189,7 @@ After booting, the sample confirms the image so the old image does not get rever
 When the sample is used as a new firmware, independently of the provisioning state, it sets the Firmware Update Server model to Idle state after booting.
 If the device stays provisioned, it lets the Distributor successfully finalize the firmware distribution process.
 If the device is unprovisioned, it has no effect on the DFU Server.
-The firmware distribution process then succeeds on the Distributor side, if the Target node doesn't respond to the Distributor after programming the new firmware.
+The firmware distribution process then succeeds on the Distributor side, if the Target node does not respond to the Distributor after programming the new firmware.
 
 For more information about the firmware distribution process, see :ref:`zephyr:bluetooth_mesh_dfu`.
 

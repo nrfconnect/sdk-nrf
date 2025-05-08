@@ -44,8 +44,8 @@ This sample implements or demonstrates the following features:
 * Support for remote execution of modem AT commands using application-specific device messages.
 * Periodic cellular, Wi-Fi®, and GNSS location tracking using the :ref:`lib_location` library.
 * Periodic temperature sensor sampling on your `Nordic Thingy:91`_, or fake temperature  measurements on your `nRF9151 DK <Nordic nRF9151 DK_>`_ , `nRF9161 DK <Nordic nRF9161 DK_>`_, or `nRF9160 DK <Nordic nRF9160 DK_>`_.
-* Transmission of sensor and GNSS location samples to the nRF Cloud portal as `nRF Cloud device messages <nRF Cloud Device Messages_>`_.
-* Construction of valid `nRF Cloud device messages <nRF Cloud Device Messages_>`_.
+* Transmission of sensor and GNSS location samples to the nRF Cloud portal as `nRF Cloud Device Messages`_.
+* Construction of valid `nRF Cloud Device Messages`_.
 * Minimal LED status indication using the `Zephyr LED API`_.
 * Transmission of an alert on sample startup using the :ref:`lib_nrf_cloud_alert` library.
 * Transmission of additional alerts, whenever a specified temperature limit is exceeded.
@@ -277,7 +277,7 @@ It executes the modem AT command ``AT+CGMR`` and sends a device message similar 
    }
 
 
-To do this in the nRF Cloud portal, write `{"appId":"MODEM", "messageType":"CMD", "data":"AT+CGMR"}` into the **Send a message** box of the **Terminal** card and click :guilabel:`Send`.
+To do this in the nRF Cloud portal, write ``{"appId":"MODEM", "messageType":"CMD", "data":"AT+CGMR"}`` into the :guilabel:`Send a message` box of the :guilabel:`Terminal` card and click :guilabel:`Send`.
 
 .. _nrf_cloud_multi_service_led_status_indication:
 
@@ -1468,7 +1468,7 @@ To onboard devices manually, you can use the `Bulk Onboard Devices <nRF Cloud Po
 
    Once the `Bulk Onboard Devices`_ page is open, drag in the :file:`<device_id>_onboard.csv` file and click **Onboard**.
 
-   You should see a message stating that the file was uploaded successfully, and a device with the device ID(s) you created should appear in the `Devices <nRF Cloud Portal Devices_>`_ page.
+   You should see a message stating that the file was uploaded successfully, and a device with the device IDs you created should appear in the `Devices <nRF Cloud Portal Devices_>`_ page.
 
 If you were directed here as part of other instructions, proceed to the next step of those instructions.
 
