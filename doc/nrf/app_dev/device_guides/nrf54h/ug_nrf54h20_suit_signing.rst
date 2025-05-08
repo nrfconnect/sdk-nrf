@@ -134,8 +134,8 @@ To sign the envelopes, follow these steps:
    .. note::
       To revert to the LCS ``EMPTY`` (for example, when repeating the process for testing) use the following commands:
 
-      * ``nrfutil device recover --core Application`` – To transition the application core
-      * ``nrfutil device recover --core Network`` – To transition the radio core
+      * ``nrfutil device recover --core Application`` - To transition the application core
+      * ``nrfutil device recover --core Network`` - To transition the radio core
 
 .. _ug_suit_sign_recovery_envelopes:
 
@@ -273,18 +273,18 @@ If ``suit-generator`` is not installed, it can be installed using pip:
 
 The ``suit-generator sign`` command provides two subcommands:
 
-* ``single-level`` – Signs a SUIT envelope at a single level, without parsing its dependencies.
+* ``single-level`` - Signs a SUIT envelope at a single level, without parsing its dependencies.
   To see the available options, run ``suit-generator sign single-level --help``.
-* ``recursive`` – Signs an envelope and its dependencies recursively, based on a provided configuration file.
+* ``recursive`` - Signs an envelope and its dependencies recursively, based on a provided configuration file.
 
 Signing the envelope recursively
 --------------------------------
 
 The ``suit-generator sign recursive`` command accepts the following parameters:
 
-* ``--input-envelope`` – Path to the input envelope to be signed.
-* ``--output-envelope`` – Path to the file where the signed envelope will be stored.
-* ``--configuration`` – Path to the configuration file that contains information about the keys and signing process.
+* ``--input-envelope`` - Path to the input envelope to be signed.
+* ``--output-envelope`` - Path to the file where the signed envelope will be stored.
+* ``--configuration`` - Path to the configuration file that contains information about the keys and signing process.
 
 The configuration file is a JSON file with the following structure:
 
@@ -368,7 +368,7 @@ By default, the SUIT build system uses the KMS script located at :file:`modules/
 In this script, the *key management system* is represented by a local directory that stores the private keys.
 The script reads the private keys from the directory and uses them to sign or encrypt payloads.
 
-To use a custom KMS script, create a :file:`sysbuild.cmake` file in your application directory (if it doesn't already exist) and add the following line:
+To use a custom KMS script, create a :file:`sysbuild.cmake` file in your application directory (if it does not already exist) and add the following line:
 
 .. code-block:: cmake
 

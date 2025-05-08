@@ -27,7 +27,7 @@ Overview
 The host (network core) is running the full Bluetooth LE stack.
 It receives serialized function calls that it decodes and executes, then sends response data to the client (application core).
 
-When the sample starts, it displays the welcome prompt "Starting nRF RPC bluetooth host".
+When the sample starts, it displays the welcome prompt ``Starting nRF RPC bluetooth host``.
 
 Building and running
 ********************
@@ -88,7 +88,7 @@ After programming the sample build to your development kit, complete the followi
    The development kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
 #. |connect_terminal|
 #. Reset the development kit.
-#. Observe that the terminal connected to the network core displays "Starting nRF RPC Bluetooth host".
+#. Observe that the terminal connected to the network core displays ``Starting nRF RPC Bluetooth host``.
 #. On the terminal connected to the application core, you can observe your Bluetooth application is running.
 
 Dependencies

@@ -98,10 +98,10 @@ SUIT manifest contains the following command sequences:
 * ``suit-validate`` - Validates that the state of the device is correct and okay for booting.
   Typically involves image validation.
 
-* ``suit-load`` - Prepares payload(s) for execution.
+* ``suit-load`` - Prepares payloads for execution.
   A typical action of this sequence is to copy an image from the permanent storage into the RAM.
 
-* ``suit-invoke`` - Invokes (boots) image(s).
+* ``suit-invoke`` - Invokes (boots) images.
 * ``suit-dependency-resolution`` - Prepares the system for the update by identifying and fetching any missing dependency manifests.
 
 .. _ug_suit_dfu_suit_directives:
@@ -111,7 +111,7 @@ Directives
 
 The SUIT procedure defines the following directives:
 
-* ``set-component-index`` - Defines the component(s) to which successive directives and conditions will apply.
+* ``set-component-index`` - Defines the components to which successive directives and conditions will apply.
 * ``override-parameters`` - Allows the manifest to configure the behavior of future directives or conditions by changing (as in, setting or modifying) parameters that are read by those directives or conditions.
 * ``fetch`` - Retrieves the payload from a specified Uniform Resource Identifier (URI) and stores it in the destination component.
   A URI is provided in the ``override-parameters`` directive.

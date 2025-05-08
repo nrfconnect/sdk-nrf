@@ -680,7 +680,8 @@ Other libraries
 
       * The sections used by the event manager and stopped using orphaned sections.
 
-        * Event manager no longer uses orphaned sections to store information about event types, listeners, and subscribers.    Hence, the :kconfig:option:`CONFIG_LINKER_ORPHAN_SECTION_PLACE` option is no longer required in the config file.
+        * Event manager no longer uses orphaned sections to store information about event types, listeners, and subscribers.
+          Hence, the :kconfig:option:`CONFIG_LINKER_ORPHAN_SECTION_PLACE` option is no longer required in the config file.
 
       * Reworked priorities.
 

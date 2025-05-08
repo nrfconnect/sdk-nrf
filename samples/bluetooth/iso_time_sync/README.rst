@@ -115,7 +115,7 @@ Maximum transport latency and retransmission count
     For more details about how the SoftDevice Controller selects these parameters, see :ref:`Parameter selection <iso_parameter_selection>`.
 
 Presentation delay
-    The receiver(s) of isochronous data may receive their data at different points in time, but need to render or present it synchronously.
+    The receivers of isochronous data may receive their data at different points in time, but need to render or present it synchronously.
     Presentation delay represents the amount of time that is added to the received timestamp to obtain the presentation time of the data.
     In this sample, the presentation delay is configured with the :ref:`CONFIG_TIMED_LED_PRESENTATION_DELAY_US <CONFIG_TIMED_LED_PRESENTATION_DELAY_US>` Kconfig option.
 
@@ -317,9 +317,9 @@ After programming the sample to the development kits, perform the following step
       #. Configure one of the devices as an isochronous broadcaster by typing either ``b`` or ``c`` in the terminal emulator.
       #. Configure the number of retransmissions and maximum transport latency.
       #. Observe that the broadcaster starts and begins to transmit SDUs.
-      #. On the other terminal(s), type ``r`` to configure the device(s) as receivers of the broadcast isochronous stream.
+      #. On the other terminals, type ``r`` to configure the devices as receivers of the broadcast isochronous stream.
       #. Select which BIS the receiver should synchronize to.
-      #. Observe that the device(s) synchronize to the broadcaster and start receiving isochronous data.
+      #. Observe that the devices synchronize to the broadcaster and start receiving isochronous data.
       #. Press **Button 1** on the broadcaster.
       #. Observe that **LED 2** toggles on both the broadcaster and the receivers.
 
@@ -330,9 +330,9 @@ After programming the sample to the development kits, perform the following step
       #. Configure one of the devices as an isochronous broadcaster by typing either ``b`` or ``c`` in the terminal emulator.
       #. Configure the number of retransmissions and maximum transport latency.
       #. Observe that the broadcaster starts and begins to transmit SDUs.
-      #. On the other terminal(s), type ``r`` to configure the device(s) as receivers of the broadcast isochronous stream.
+      #. On the other terminals, type ``r`` to configure the devices as receivers of the broadcast isochronous stream.
       #. Select which BIS the receiver should synchronize to.
-      #. Observe that the device(s) synchronize to the broadcaster and start receiving isochronous data.
+      #. Observe that the devices synchronize to the broadcaster and start receiving isochronous data.
       #. Press **Button 0** on the broadcaster.
       #. Observe that **LED 1** toggles on both the broadcaster and the receivers.
 
@@ -352,9 +352,9 @@ After programming the sample to the development kits, perform the following step
       #. Select data direction.
          If the central is configured for transmission, it connects to multiple peripherals.
 
-      #. On the other terminal(s), type ``p`` to configure the device(s) as connected isochronous stream peripheral(s).
+      #. On the other terminals, type ``p`` to configure the devices as connected isochronous stream peripherals.
       #. Select data direction.
-      #. Observe that the peripheral(s) connect to the central and start receiving isochronous data.
+      #. Observe that the peripherals connect to the central and start receiving isochronous data.
       #. Press **Button 1** on the central device.
       #. Observe that **LED 2** toggles on both the central and peripheral devices.
 
@@ -367,9 +367,9 @@ After programming the sample to the development kits, perform the following step
       #. Select data direction.
          If the central is configured for transmission, it connects to multiple peripherals.
 
-      #. On the other terminal(s), type ``p`` to configure the device(s) as connected isochronous stream peripheral(s).
+      #. On the other terminals, type ``p`` to configure the devices as connected isochronous stream peripherals.
       #. Select data direction.
-      #. Observe that the peripheral(s) connect to the central and start receiving isochronous data.
+      #. Observe that the peripherals connect to the central and start receiving isochronous data.
       #. Press **Button 0** on the central device.
       #. Observe that **LED 1** toggles on both the central and peripheral devices.
 

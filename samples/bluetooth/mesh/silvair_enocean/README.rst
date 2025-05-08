@@ -22,7 +22,7 @@ The sample supports the following development kits:
 You need at least two development kits:
 
 * One development kit where you program this sample application (Silvair EnOcean Proxy Server model, including the Generic OnOff Client and the Generic Level Client)
-* One (or more) development kit(s) where you program the :ref:`bluetooth_mesh_light_lc` sample application (the server(s)), and configure according to the mesh light fixture sample's :ref:`testing guide <bluetooth_mesh_light_ctrl_testing>`
+* At least one development kit where you program the :ref:`bluetooth_mesh_light_lc` sample application (the server), and configure according to the mesh light fixture sample's :ref:`testing guide <bluetooth_mesh_light_ctrl_testing>`
 
 For provisioning and configuring of the mesh model instances, the sample requires a smartphone with Nordic Semiconductor's nRF Mesh mobile app installed in one of the following versions:
 
@@ -48,7 +48,7 @@ The sample uses a two (or one) button EnOcean switch to control the state of LED
 Two instances of the Generic OnOff Client model and two instances of the Generic Level Client model are instantiated in the Silvair EnOcean sample, one of each model for each button on the EnOcean switch that is used.
 When a user presses or holds any of the buttons on the EnOcean switch, an OnOff/Level Set message is sent out to the configured destination address.
 
-After provisioning and configuring the mesh models supported by the sample using the `nRF Mesh mobile app`_, you can control the LEDs on the other (server) development kit(s) from the app.
+After provisioning and configuring the mesh models supported by the sample using the `nRF Mesh mobile app`_, you can control the LEDs on the other (server) development kits from the app.
 
 Provisioning
 ============

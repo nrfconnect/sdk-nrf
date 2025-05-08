@@ -329,7 +329,7 @@ User interface
 
 LED 0:
    This LED is controlled by the application variant ``A``.
-   This LED is controlled as "active low", meaning it will turn on once the application is booted and blinks (turn off) in short intervals.
+   This LED is controlled as *active low*, meaning it will turn on once the application is booted and blinks (turn off) in short intervals.
    The :ref:`ab_CONFIG_N_BLINKS <ab_CONFIG_N_BLINKS>` Kconfig option sets the number of blinks.
    The default value of the option is set to ``1``, causing a single blink to indicate *Version 1*.
    You can increment this value to represent an update, such as set it to ``2`` to indicate *Version 2*.
@@ -338,7 +338,7 @@ LED 0:
 
 LED 1:
    This LED is controlled by the application variant ``B``.
-   This LED is controlled as "active low", meaning it will turn on once the application is booted and blinks (turn off) in short intervals.
+   This LED is controlled as *active low*, meaning it will turn on once the application is booted and blinks (turn off) in short intervals.
    Using the ``-Dab_slot_b_CONFIG_N_BLINKS`` command-line option, you can change the number of blinks just for the application variant ``B``.
    If the application variant ``A`` is started, this LED will not blink.
 

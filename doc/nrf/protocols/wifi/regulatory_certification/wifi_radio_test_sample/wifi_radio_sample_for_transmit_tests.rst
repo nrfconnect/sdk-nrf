@@ -17,16 +17,16 @@ The order of the Wi-Fi Radio sub-commands is very important.
 
 Use the following order of sub-commands:
 
-1. ``init`` – Disables any ongoing TX or RX testing and sets all configured parameters to default.
-#. ``tx_pkt_tput_mode`` – Sets the frame format of the transmitted packet.
+1. ``init`` - Disables any ongoing TX or RX testing and sets all configured parameters to default.
+#. ``tx_pkt_tput_mode`` - Sets the frame format of the transmitted packet.
 
    other commands...
-#. ``ru_tone`` – Configures the Resource Unit (RU) size.
-#. ``ru_index`` – Configures the location of RU in 20 MHz spectrum.
-#. ``tx_pkt_len`` – Packet data length to be used for the TX stream.
+#. ``ru_tone`` - Configures the Resource Unit (RU) size.
+#. ``ru_index`` - Configures the location of RU in 20 MHz spectrum.
+#. ``tx_pkt_len`` - Packet data length to be used for the TX stream.
 
    other commands...
-#. ``tx`` – Starts transmit.
+#. ``tx`` - Starts transmit.
 
    .. note::
       Use the command to start transmit (``tx 1``) only after all the parameters are configured.

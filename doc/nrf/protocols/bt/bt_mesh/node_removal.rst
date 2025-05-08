@@ -14,7 +14,7 @@ Though the unprovisioning of the node is a straightforward procedure, some addit
 The procedure consists of two steps:
 
 1. Removing the node.
-2. Replacing the network key(s), used by the removed node, in the rest of the nodes in the network.
+2. Replacing the network keys, used by the removed node, in the rest of the nodes in the network.
 
 Removing the node
 *****************
@@ -37,8 +37,8 @@ When using the nRF Mesh mobile app as a provisioner, do the following:
 Updating the network key
 ************************
 
-Even if the Config Node Reset message has been sent to the node, and the Config Node Reset Status message was received, this doesn't guarantee that the node has removed all configuration data.
-To ensure that the removed node is not able to decrypt network messages after being reset, update the network key(s) that were known to the removed node.
+Even if the Config Node Reset message has been sent to the node, and the Config Node Reset Status message was received, this does not guarantee that the node has removed all configuration data.
+To ensure that the removed node is not able to decrypt network messages after being reset, update the network keys that were known to the removed node.
 
 This procedure can be used in any other cases when a network key needs to be updated.
 For example, in cases where there is a suspicion of network credentials being compromised.

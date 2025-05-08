@@ -364,7 +364,7 @@ For reading the module descriptor, the following conditions must be met:
 * The module name should be provided as the first string in the module descriptor.
 * The following strings should indicate the module option names.
   The first option on the descriptor must be identified with Option ID equal to ``1``.
-  The following options will be identified by monotonically increasing Option ID values (second option by ``2``, third by ``3``, and so on).
+  The following options will be identified by monotonically increasing Option ID values, starting from ``2`` for the second option, ``3`` for the third, and continuing incrementally.
 * Once the descriptor is read, the module options can be accessed.
   When performing a set or fetch request on the option, the Event ID contains the Option ID and the Module ID of the module that owns the option.
 
@@ -406,8 +406,8 @@ Depending on the connection method:
    To prevent HID input report rate drop while forwarding config channel report set operation, nRF Desktop Dongle can forward the data using GATT write without response.
    In that case, the peripheral does not have to provide the GATT write response instead of sending the HID input report.
 
-   The "GATT write without response" operation cannot be performed on the HID feature report.
-   To allow the "GATT write without response", the Peripheral must provide an additional HID output report.
+   The *GATT write without response* operation cannot be performed on the HID feature report.
+   To allow the GATT write without response, the Peripheral must provide an additional HID output report.
    Use the :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_OUT_REPORT <config_desktop_app_options>` Kconfig option in the nRF Desktop peripheral configuration to add the mentioned HID output report.
    Disabling this option reduces the memory consumption.
 

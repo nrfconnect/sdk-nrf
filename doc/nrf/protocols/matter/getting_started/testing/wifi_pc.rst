@@ -57,8 +57,8 @@ To use this controller type, complete the following steps:
 
 #. Configure the CHIP Tool for Linux or macOS by following the steps in the sections of the :doc:`matter:chip_tool_guide` in the Matter documentation:
 
-   a. Build and run the CHIP Tool by completing the steps listed in "Building and running CHIP Tool".
-   #. Prepare the environment for testing by completing the steps listed in "Using CHIP Tool for Matter device testing".
+   a. Build and run the CHIP Tool by completing the steps listed in "Building and running CHIP Tool."
+   #. Prepare the environment for testing by completing the steps listed in "Using CHIP Tool for Matter device testing."
 
 .. rst-class:: numbered-step
 

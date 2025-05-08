@@ -142,7 +142,7 @@ Performing a Device Firmware Update
 -----------------------------------
 
 The Bluetooth Mesh defines the Firmware update Initiator role to control the firmware distribution.
-This sample supports, but doesn't require an external Initiator to control the DFU procedure.
+This sample supports, but does not require an external Initiator to control the DFU procedure.
 The Bluetooth Mesh DFU subsystem also provides a set of shell commands that can be used instead of the Initiator.
 Follow the description in the :ref:`dfu_over_bt_mesh` guide on how to perform the firmware distribution without the Initiator.
 
@@ -211,7 +211,7 @@ When the Distributor updates itself, the DFU transfer will end immediately after
 .. note::
    Do not add other Target nodes but the Distributor when performing a self-update.
    If the Firmware Distribution Server on the Distributor finds itself in the list of Target nodes, it skips the DFU transfer as the image is already stored on the device.
-   Thus, other nodes won't receive the image.
+   Thus, other nodes will not receive the image.
 
 When this sample is used as a Target, it behaves as described in :ref:`ble_mesh_dfu_target_upgrade`.
 
@@ -220,7 +220,7 @@ This sample also provides support for :ref:`dfu_over_ble`, so it is possible to 
 SMP over Bluetooth authentication
 =================================
 
-By default, the SMP characteristics don't require authentication when using SMP over Bluetooth to access the :ref:`management subsystem <zephyr:mcu_mgr>`.
+By default, the SMP characteristics do not require authentication when using SMP over Bluetooth to access the :ref:`management subsystem <zephyr:mcu_mgr>`.
 To prevent an unauthenticated access to the device over SMP, it is strongly recommended to enable the :kconfig:option:`CONFIG_MCUMGR_TRANSPORT_BT_PERM_RW_AUTHEN` option.
 This will enforce a remote device to initiate a pairing request before accessing SMP characteristics.
 See `Zephyr Bluetooth LE Security`_ for more details about securing the Bluetooth LE connection.

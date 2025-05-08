@@ -30,7 +30,7 @@ The Gazell Pairing library has the following features:
 
 Secure key exchange in Gazell Pairing is based on a Secret Key that is factory-programmed.
 Only nodes that share the same Secret Key for a desktop ecosystem, can form an encrypted link.
-After a pair of nodes have authenticated each other's Secret Key, the Gazell Host generates a random key termed the "Host ID".
+After a pair of nodes have authenticated each other's Secret Key, the Gazell Host generates a random key termed the "Host ID."
 This is encrypted with the Secret Key and sent to the Gazell Device.
 This Host ID key is used to transmit a dynamic key that is used for encrypting subsequent data.
 

@@ -333,7 +333,7 @@ The following configuration files are provided:
 
 * :file:`overlay-ppp-without-cmux.overlay` - Devicetree overlay that configures the UART to be used by PPP.
   This configuration file should be included when building SLM with PPP and without CMUX, in addition to :file:`overlay-ppp.conf`.
-  It can be customized to fit your configuration (UART, baud rate, and so on).
+  It can be customized to fit your configuration, such as UART settings, baud rate, and flow control.
   By default, it sets the baud rate of the PPP UART to 1 000 000.
 
 * :file:`overlay-memfault.conf` - Configuration file that enables `Memfault`_.

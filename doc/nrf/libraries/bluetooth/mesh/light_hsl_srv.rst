@@ -77,7 +77,7 @@ In the application code, this would look like this:
 The Light HSL Server does not contain any states on its own, but instead operates on the underlying Light Hue, Saturation and Lightness Server models' states.
 Because of this, the Light HSL Server does not have a message handler structure, but will instead defer its messages to the individual submodels' handler callbacks.
 
-It's also possible to combine the Light HSL Server model with a :ref:`bt_mesh_light_xyl_srv_readme`.
+It is also possible to combine the Light HSL Server model with a :ref:`bt_mesh_light_xyl_srv_readme`.
 See :ref:`bt_mesh_light_xyl_hsl_srv` for details.
 
 States

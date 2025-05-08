@@ -81,7 +81,7 @@ Forking a repository of the |NCS|
 In some cases, you might want to keep a :term:`Soft fork` of one or more repositories that are part of the |NCS|.
 The procedure to achieve that is the same regardless of whether you fork the manifest repository and/or one or more project repositories.
 
-There are two similar but slightly different meanings to the term "fork", as described in the :ref:`glossary`:
+As described in the :ref:`glossary`, there are two similar but slightly different meanings to the term "fork":
 
 * A fork in general terms is a server-hosted copy of an upstream repository with a few downstream changes on top of it.
   It can be hosted on GitHub or elsewhere.

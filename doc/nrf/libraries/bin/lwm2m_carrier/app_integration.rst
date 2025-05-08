@@ -90,7 +90,7 @@ Following are some of the general Kconfig options that you can configure:
 
   * This configuration specifies how often to send a Confirmable message instead of a Non-Confirmable message, according to RFC 7641 section 4.5.
   * Leaving this configuration empty (``0``) sets it to a default of 24 hours.
-  * Setting this to -1 will always use Confirmable notifications.
+  * Setting this to –1 will always use Confirmable notifications.
 
 * :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_APN`:
 
@@ -235,7 +235,7 @@ For example:
 * :c:macro:`LWM2M_CARRIER_EVENT_LTE_LINK_DOWN`- This event indicates that the device must disconnect from the LTE network.
   Your application might want to do some bookkeeping before disconnecting.
 
-* :c:macro:`LWM2M_CARRIER_EVENT_ERROR_CODE_RESET`- This event indicates that the server has reset the "Error Code" resource (3/0/11) of the LwM2M carrier library.
+* :c:macro:`LWM2M_CARRIER_EVENT_ERROR_CODE_RESET`- This event indicates that the server has reset the "Error Code" resource (``3/0/11``) of the LwM2M carrier library.
   When received, the application should re-evaluate the errors and signal relevant errors again using the :c:func:`lwm2m_carrier_error_code_add` function.
   This is not handled in the ``__weak`` implementation since the applicable errors to report is application dependent.
 

@@ -46,7 +46,7 @@ You can use the services offered by nRF Cloud in the following scenarios:
 
   The services can be used from the customer cloud service that communicates over REST to interact with the `nRF Cloud REST API`_ in a proxy configuration.
 
-Choosing a device ID format: prefix-IMEI, device UUID, or other
+Choosing a device ID format: Prefix-IMEI, device UUID, or other
 ***************************************************************
 
 nRF Cloud supports a variety of device ID formats:

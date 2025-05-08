@@ -14,7 +14,7 @@ This changelog reflects the most relevant changes from the latest official relea
    When adding a new PR, decide whether it needs an entry in the changelog.
    If it does, update this page.
    Add the sections you need, as only a handful of sections are kept when the changelog is cleaned.
-   The "Protocols" section serves as a highlight section for all protocol-related changes, including those made to samples, libraries, and so on.
+   The "Protocols" section serves as a highlight section for all protocol-related changes, including those made to samples, libraries, and other components that implement or support protocol functionality.
 
 Known issues
 ************
@@ -1137,7 +1137,7 @@ Documentation
   * The entire Zigbee protocol, application and samples documentation.
     It is now available as separate `Zigbee R22`_ and `Zigbee R23`_ add-on repositories.
   * The standalone page for getting started with Nordic Thingy:53.
-    The contents of this page have been moved to the :ref:`thingy53_precompiled` page and to the `Programmer app <Programming Nordic Thingy:53_>`_ documentation.
+    The contents of this page have been moved to the :ref:`thingy53_precompiled` page and to the `Programmer app <prog_thingy_53>`_ documentation.
   * The standalone page for getting started with Nordic Thingy:91.
     The contents of this page are covered by the `Cellular IoT Fundamentals course`_ in the `Nordic Developer Academy`_.
     The part about connecting the prototyping platform to nRF Cloud is now a standalone :ref:`thingy91_connect_to_cloud` page in the :ref:`thingy91_ug_intro` section.

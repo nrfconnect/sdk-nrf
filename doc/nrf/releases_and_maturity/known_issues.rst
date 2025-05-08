@@ -1433,7 +1433,7 @@ NCSIDB-1411: Clearing configuration data is not fully performed when processing 
 NCSIDB-1336: Zigbee Router device cannot rejoin after missing Network Key update or rotation
   If a Zigbee Router device does not receive a Network Key update or rotation messages (such as because of an ongoing reset or being powered off), it will not rejoin to a Zigbee Coordinator and will use old keys for communication.
 
-  The Zigbee R22 Core Specification, section 4.3.6.1 says that “A device that is operating in a network and has missed a network key update may also use these procedures to receive the latest network key”, referring to the procedure to get a new network key.
+  The Zigbee R22 Core Specification, section 4.3.6.1 says that “A device that is operating in a network and has missed a network key update may also use these procedures to receive the latest network key,” referring to the procedure to get a new network key.
   Since it uses the word MAY, not SHOULD, it means the ZBOSS stack implementation does not violate the specification.
   In addition, BDB 3.0 does not describe a procedure that can be used by a Zigbee Router device to verify if the security keys it uses are still valid.
 
@@ -2585,9 +2585,9 @@ OCX-188/OCX-227: The controller reserves some pins (0.28 - 0.31), which might co
 
 .. rst-class:: v2-4-3 v2-4-2 v2-4-1 v2-4-0
 
-OCX-189: When inputting -40 dBm to HCI_OPCODE_VS_SET_CONN_TX_PWR (0x3F6), the actual TX power is changed to -20 dBm
-  The TX power for a connection cannot be less than -20 dBm.
-  Controller still output -20 dBm if the setting is -40 dBm.
+OCX-189: When inputting –40 dBm to HCI_OPCODE_VS_SET_CONN_TX_PWR (0x3F6), the actual TX power is changed to –20 dBm
+  The TX power for a connection cannot be less than –20 dBm.
+  Controller still output –20 dBm if the setting is –40 dBm.
 
 .. rst-class:: v2-5-3 v2-5-2 v2-5-1 v2-5-0
 
@@ -4074,7 +4074,7 @@ NCSDK-33207: MCUboot has its NVM protection disabled
 .. rst-class:: v3-0-1 v3-0-0
 
 NCSDK-29460: Encryption: Build error for default configuration on the ``nrf52840dk/nrf52840`` board target (ECDSA_P256)
-  This happens because of inconsistency in the configuration of the signature check and the encryption key extraction – both must use the same base encryption algorithm.
+  This happens because of inconsistency in the configuration of the signature check and the encryption key extraction: both must use the same base encryption algorithm.
 
   **Affected platforms:** nRF52840
 
@@ -5177,7 +5177,8 @@ DRGN-15852: In rare cases on nRF53 Series, the scanner generates corrupted adver
 .. rst-class:: v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 DRGN-15586: "HCI LE Set Scan Parameters" accepts a scan window greater than the scan interval
-  This can result in undefined behavior. It should fail with the result "Invalid HCI Command Parameters (0x12)".
+  This can result in undefined behavior.
+  It should fail with the result ``Invalid HCI Command Parameters (0x12)``.
 
   **Workaround:** The application should make sure the scan window is set to less than or equal to the scan interval.
 
@@ -5259,7 +5260,7 @@ DRGN-15251: Very rare assertion fault when connected as peripheral on Coded PHY
 .. rst-class:: v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
 
 DRGN-15310: HCI Read RSSI fails
-  The command "HCI Read RSSI" always returns "Command Disallowed (0x0C)".
+  The command ``HCI Read RSSI`` always returns ``Command Disallowed (0x0C)``.
 
 .. rst-class:: v1-5-0
 
@@ -5292,7 +5293,7 @@ DRGN-15382: The SoftDevice Controller cannot be qualified on nRF52832
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
 
 DRGN-14008: The advertising data is cleared every time the advertising set is configured
-  This causes the "HCI LE Set Extended Advertising Parameters" command to accept data which cannot be fit within the advertising interval instead of returning "Packet Too Long (0x45)".
+  This causes the ``HCI LE Set Extended Advertising Parameters`` command to accept data which cannot be fit within the advertising interval instead of returning ``Packet Too Long (0x45)``.
   This would only occur if the advertising set is configured to use maximum data length on LE Coded PHY with an advertising interval less than 30 milliseconds.
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0
@@ -5302,15 +5303,15 @@ DRGN-15291: The generation of QoS Connection events is not disabled after an HCI
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
 
-DRGN-15226: Link disconnects with reason "LMP Response Timeout (0x22)"
-  If the slave receives an encryption request while the "HCI LE Long Term Key Request" event is disabled, the link disconnects with the reason "LMP Response Timeout (0x22)".
+DRGN-15226: Link disconnects with reason ``LMP Response Timeout (0x22)``
+  If the slave receives an encryption request while the ``HCI LE Long Term Key Request`` event is disabled, the link disconnects with the reason ``LMP Response Timeout (0x22)``.
   The event is disabled when :kconfig:option:`CONFIG_BT_SMP` and/or :kconfig:option:`CONFIG_BT_CTLR_LE_ENC` is disabled.
 
 .. rst-class:: v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0
 
 DRGN-11963: LL control procedures cannot be initiated at the same time
   The LL control procedures (LE start encryption and LE connection parameter update) cannot be initiated at the same time or more than once.
-  The controller will return an HCI error code "Controller Busy (0x3a)", as per specification's chapter 2.55.
+  The controller will return an HCI error code ``Controller Busy (0x3a)`` as per specification's chapter 2.55.
 
   **Workaround:** Do not initiate these procedures at the same time.
 

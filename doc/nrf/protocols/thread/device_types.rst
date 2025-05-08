@@ -84,7 +84,7 @@ They maintain the routing table and forward messages to other devices.
 Routers, unlike End Devices, can also be used to extend the network range and a Router is required for a Minimal End Device to join the network.
 The maximum number of active Routers in a single Thread network is 32.
 
-FEDs are End Devices that maintain a routing table, but they can't route messages.
+FEDs are End Devices that maintain a routing table, but they cannot route messages.
 FEDs are End Devices with FTDs capabilities to perform certain Thread management functionalities on behalf of their parent (Router), such as address resolution, effectively reducing the parent's computation power.
 They are child devices that require a parent to function, but they cannot become parents themselves.
 
@@ -133,7 +133,7 @@ Minimal Thread Devices can be further divided into three categories:
      - No data transmission*
 
 MEDs are the most basic MTDs, and their radio is always enabled.
-They don't keep a routing table and have a :ref:`more limited range of functionalities than FEDs <thread_types_ftd>`.
+They do not keep a routing table and have a :ref:`more limited range of functionalities than FEDs <thread_types_ftd>`.
 
 SEDs try to limit their power consumption by sleeping most of the time, waking up periodically to poll for messages from their parent.
 After waking up, they send a data request to their parent.
@@ -149,7 +149,7 @@ The SSED allows the transmission to finish if radio activity is detected during 
     If the length of the message exceeds the length of the transmission window, the first frame is received in the designated transmission window, but the rest is transmitted using regular Data Polls, exactly like SED.
 
 Conversely, if there is no radio activity during the specified duration of transmission window, this indicates that the parent has no messages for the SSED and the SSED returns to sleep.
-The SSED synchronization results in lower power consumption compared to an SED in some scenarios, primarily because the SSED doesn't need to poll for messages, keeping transmission windows short.
+The SSED synchronization results in lower power consumption compared to an SED in some scenarios, primarily because the SSED does not need to poll for messages, keeping transmission windows short.
 
 For more information about SSED activity, see the :ref:`thread_sed_ssed` page.
 

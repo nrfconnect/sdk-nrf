@@ -694,7 +694,7 @@ The assignments of hardware interface elements depend on the device type.
 
           1. Short-press to toggle between available peers.
              **LED1** blinks rapidly for each peer.
-             The amount of blinks corresponds to the number assigned to a peer: one blink for peer 1, two blinks for peer 2, and so on.
+             The amount of blinks corresponds to the number assigned to a peer (for example, one blink for peer 1, two blinks for peer 2), increasing incrementally with each peer.
           #. Double-press to confirm the peer selection.
              The peer is changed after the confirmation.
              **LED1** becomes solid for a short time and then turns itself off.

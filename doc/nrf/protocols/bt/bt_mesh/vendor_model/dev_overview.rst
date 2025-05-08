@@ -46,7 +46,7 @@ Below is an example of the simplest model initialization in the node composition
                          NULL,
                          NULL)
 
-The third argument, the :c:macro:`BT_MESH_MODEL_NO_OPS` macro, specifies an empty operation code (opcode) list, meaning that the model won't receive any messages.
+The third argument, the :c:macro:`BT_MESH_MODEL_NO_OPS` macro, specifies an empty operation code (opcode) list, meaning that the model will not receive any messages.
 The other arguments are optional and set to ``NULL``.
 The following sections describe how and when to use these arguments.
 

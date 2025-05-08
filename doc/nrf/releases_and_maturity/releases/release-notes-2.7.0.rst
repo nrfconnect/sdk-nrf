@@ -1329,7 +1329,7 @@ Documentation
 
       * :ref:`ug_nrf54h20_suit_intro` - An overview of the SUIT procedure.
       * :ref:`ug_nrf54h20_suit_manifest_overview` - An overview of the role and importance of the SUIT manifest.
-      * :ref:`ug_nrf54h20_suit_components` - An explanation of SUIT components, found within the manifest(s).
+      * :ref:`ug_nrf54h20_suit_components` - An explanation of SUIT components, found within the manifests.
       * :ref:`ug_nrf54h20_suit_hierarchical_manifests` - An explanation of the SUIT manifest topology that Nordic Semiconductor has implemented for the nRF54H20 SoC.
       * :ref:`ug_nrf54h20_suit_compare_other_dfu` - A comparison of SUIT with other bootloader and DFU procedures supported in the |NCS|.
 

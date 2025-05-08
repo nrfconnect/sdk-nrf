@@ -9,7 +9,7 @@ Scene models
 
 The Scene models allow storing the model state of the entire mesh network as a *scene*, which can be recalled at a later time.
 The Scene models are most commonly used to implement presets for different times and activities.
-Scenes typically show up in the end user application as user presets, like "Dinner lights", "Night time" or "Movie night".
+Scenes typically show up in the end user application as user presets, like ``Dinner lights``, ``Night time`` or ``Movie night``.
 
 The Scene models also feature their own common types, listed below.
 For types common to all models, see :ref:`bt_mesh_models`.

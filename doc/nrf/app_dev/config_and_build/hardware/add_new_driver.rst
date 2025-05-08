@@ -70,8 +70,8 @@ DevAcademy courses
 `Nordic Developer Academy`_ contains introductory courses to the |NCS| and Zephyr.
 See the following course lessons to get started with driver development:
 
-* `Lesson 6 – Serial communication (I2C)`_ in `nRF Connect SDK Fundamentals course`_ describes how to communicate with a sensor connected over I2C using I2C APIs.
-* `Lesson 5 – Serial Peripheral Interface (SPI)`_ in `nRF Connect SDK Intermediate course`_ describes how to communicate with sensors over SPI in Zephyr.
+* `Lesson 6 - Serial communication (I2C)`_ in `nRF Connect SDK Fundamentals course`_ describes how to communicate with a sensor connected over I2C using I2C APIs.
+* `Lesson 5 - Serial Peripheral Interface (SPI)`_ in `nRF Connect SDK Intermediate course`_ describes how to communicate with sensors over SPI in Zephyr.
 * `Lesson 7 - Device driver model`_ in `nRF Connect SDK Intermediate course`_ describes how to start with adding your own sensor driver in the Exercise 1.
 
 Related documentation

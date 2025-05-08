@@ -434,12 +434,14 @@ CONFIG_BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
 .. _CONFIG_BRIDGE_MIGRATE_PRE_2_7_0:
 
 CONFIG_BRIDGE_MIGRATE_PRE_2_7_0
-``bool`` - Enable migration of bridged device data stored in old scheme from pre |NCS| 2.7.0 releases.
+   ``bool`` - Enable migration of bridged device data stored in old scheme from pre |NCS| 2.7.0 releases.
 
 .. _CONFIG_BRIDGE_MIGRATE_VERSION_1:
 
 CONFIG_BRIDGE_MIGRATE_VERSION_1
-``bool`` - Enable migration of bridged device data stored in version 1 of new scheme.If you selected the simulated device implementation using the :ref:`CONFIG_BRIDGED_DEVICE_SIMULATED <CONFIG_BRIDGED_DEVICE_SIMULATED>` Kconfig option, also check and configure the following option:
+   ``bool`` - Enable migration of bridged device data stored in version 1 of new scheme.
+
+   If you selected the simulated device implementation using the :ref:`CONFIG_BRIDGED_DEVICE_SIMULATED <CONFIG_BRIDGED_DEVICE_SIMULATED>` Kconfig option, also check and configure the following option:
 
 .. _CONFIG_BRIDGED_DEVICE_SIMULATED_ONOFF_IMPLEMENTATION:
 

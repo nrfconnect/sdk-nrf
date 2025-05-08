@@ -439,7 +439,7 @@ Response syntax
 
 * The ``<sec_tag>`` value is an integer.
   It indicates to the modem the credential of the security tag to be used for establishing a secure connection.
-  For a non-secure socket, it returns the value of -1.
+  For a non-secure socket, it returns the value of –1.
 
 * The ``<ranking>`` value is an integer.
   It indicates the ranking value of this socket, where the largest value means the highest ranking.
