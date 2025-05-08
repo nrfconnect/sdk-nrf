@@ -33,7 +33,7 @@ Prerequisites
 
 To use this mode, ensure that the following prerequisites are met:
 
-* RADIUS server in addition to self-signed local certificate(s) and private key for both server-side and client-side (for EAP-TLS).
+* RADIUS server in addition to self-signed local certificates and private key for both server-side and client-side (for EAP-TLS).
 * Wi-Fi Access Point (AP) that supports Enterprise mode.
 * nRF70 Series device with certificates for Enterprise mode available in the :file:`zephyr/samples/net/wifi/test_certs` folder.
 

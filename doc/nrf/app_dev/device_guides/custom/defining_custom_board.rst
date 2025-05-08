@@ -13,7 +13,7 @@ This page lists resources about defining custom board files in the |NCS|.
 To read about how to program a custom board, see :ref:`programming_custom_board`.
 
 .. note::
-   If you want to go through a dedicated training related to some of the topics covered here, enroll in the `nRF Connect SDK Intermediate course`_ in the `Nordic Developer Academy`_. The `Lesson 3 – Adding custom board support`_ shows how to add custom board support using the |nRFVSC|.
+   If you want to go through a dedicated training related to some of the topics covered here, enroll in the `nRF Connect SDK Intermediate course`_ in the `Nordic Developer Academy`_. The `Lesson 3 - Adding custom board support`_ shows how to add custom board support using the |nRFVSC|.
 
 Guidelines for custom boards
 ****************************

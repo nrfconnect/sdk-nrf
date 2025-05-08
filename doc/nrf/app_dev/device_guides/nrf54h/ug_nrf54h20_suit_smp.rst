@@ -209,7 +209,7 @@ where:
 * *digest* - Digest of manifest carried in respective manifest authentication block.
   If the digest calculated on manifest content does not match the digest stored in the respective manifest authentication block, it is assumed that the manifest is not installed or corrupted.
   In such cases, the response will not contain the 'digest' field, and the remaining fields will not contain any meaningful information.
-* *digest_algorithm* - See ietf-suit-manifest, cose-alg-sha-256 = -16, cose-alg-sha-512 = -44,…
+* *digest_algorithm* - See ietf-suit-manifest, cose-alg-sha-256 = −16, cose-alg-sha-512 = −44,…
 * *signature_check* - Signature check status.
 * *sequence_number* - Value taken from the respective field of the manifest.
 * *semantic_version* - An array of up to 5 integers, taken from the respective field of the manifest, allowing expression of the semantic version, for example, 1.17.5-rc.2.
@@ -219,7 +219,7 @@ where:
   * *MGMT_ERR_ENOTSUP* - Unsupported command.
   * *MGMT_ERR_EMSGSIZE* - The device was unable to encode the answer.
 
-Example of human-readable response using Get SUIT Manifests List Request and Get SUIT Manifest State Request(s):
+Example of human-readable response using Get SUIT Manifests List Request and Get SUIT Manifest State Requests:
 
 .. code-block:: shell
 
