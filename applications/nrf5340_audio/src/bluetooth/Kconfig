@@ -117,13 +117,18 @@ endmenu # Log levels
 menu "Testing"
 
 config TESTING_BLE_ADDRESS_RANDOM
-	bool "Random address and bonding clear on every restart [EXPERIMENTAL]"
-	default n
+	bool "Create a random address on every restart [EXPERIMENTAL]"
 	select EXPERIMENTAL
 	help
 	  If enabled the system will generate a new address on every
-	  restart (i.e. reset, re-flash). Any bonding information will
-	  be cleared. This is only for testing purposes.
+	  restart (i.e. reset, re-flash). This is only for testing purposes.
+
+config TESTING_BLE_BONDING_CLEAR
+	bool "Clear bonding on every restart [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	help
+	  If enabled the system will clear any bonding information on every
+	  restart (i.e. reset, re-flash). This is only for testing purposes.
 
 endmenu # Testing
 endmenu # Bluetooth
