@@ -25,7 +25,7 @@
 #include <cracen_psa_primitives.h>
 #include "common.h"
 
-#define MAX_ECDSA_ATTEMPTS 255
+#define MAX_ATTEMPTS 255
 
 /** Convert a digest into an operand for ECDSA
  *
@@ -99,7 +99,7 @@ int cracen_ikg_sign_digest(int identity_key_index, const struct sxhashalg *hasha
 			   const struct sx_pk_ecurve *curve, const uint8_t *digest,
 			   size_t digest_length, uint8_t *signature)
 {
-	int status;
+	int status = SX_ERR_RETRY;
 	size_t opsz = sx_pk_curve_opsize(curve);
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ik_ecdsa_sign inputs;
@@ -113,15 +113,16 @@ int cracen_ikg_sign_digest(int identity_key_index, const struct sxhashalg *hasha
 
 	internal_signature.r = signature;
 	internal_signature.s = signature + opsz;
+	int i = 0;
 
-	for (int i = 0; i <= MAX_ECDSA_ATTEMPTS; i++) {
-
+	while (status != SX_OK && i <= MAX_ATTEMPTS) {
+		i++;
 		pkreq = sx_pk_acquire_req(SX_PK_CMD_IK_ECDSA_SIGN);
 		if (pkreq.status) {
 			return pkreq.status;
 		}
 		pkreq.status = sx_pk_list_ik_inslots(pkreq.req, identity_key_index,
-						     (struct sx_pk_slot *)&inputs);
+						    (struct sx_pk_slot *)&inputs);
 		if (pkreq.status) {
 			return pkreq.status;
 		}
@@ -129,18 +130,20 @@ int cracen_ikg_sign_digest(int identity_key_index, const struct sxhashalg *hasha
 		digest2op(workmem, digestsz, inputs.h.addr, opsz);
 		sx_pk_run(pkreq.req);
 		status = sx_pk_wait(pkreq.req);
-		if (status != SX_OK) {
-			return status;
+		if (status == SX_ERR_RETRY) {
+			status = exit_ikg(&pkreq);
+			if (status != SX_OK) {
+				return status;
+			}
+			status = SX_ERR_RETRY;
 		}
 
 		/* SX_ERR_NOT_INVERTIBLE may be due to silexpk countermeasures. */
 		if ((status == SX_ERR_INVALID_SIGNATURE) || (status == SX_ERR_NOT_INVERTIBLE)) {
 			sx_pk_release_req(pkreq.req);
-			if (i == MAX_ECDSA_ATTEMPTS) {
+			if (i == MAX_ATTEMPTS) {
 				return SX_ERR_TOO_MANY_ATTEMPTS;
 			}
-		} else {
-			break;
 		}
 	}
 	if (status != SX_OK) {
@@ -158,20 +161,34 @@ int cracen_ikg_sign_digest(int identity_key_index, const struct sxhashalg *hasha
 
 int cracen_ikg_create_pub_key(int identity_key_index, uint8_t *pub_key)
 {
-	int status;
+	int status = SX_ERR_RETRY;
 	struct sx_pk_acq_req pkreq;
+	int i = 0;
 
-	pkreq = sx_pk_acquire_req(SX_PK_CMD_IK_PUBKEY_GEN);
-	if (pkreq.status) {
-		return pkreq.status;
-	}
-	pkreq.status = sx_pk_list_ik_inslots(pkreq.req, identity_key_index, NULL);
-	if (pkreq.status) {
-		return pkreq.status;
-	}
+	/* The use of MAX_ATTEMPTS here is as an arbitrary value.
+	 * Needed to have a max value for this while loop and that was already defined.
+	 */
+	while (status != SX_OK && i <= MAX_ATTEMPTS) {
+		i++;
+		pkreq = sx_pk_acquire_req(SX_PK_CMD_IK_PUBKEY_GEN);
+		if (pkreq.status) {
+			return pkreq.status;
+		}
+		pkreq.status = sx_pk_list_ik_inslots(pkreq.req, identity_key_index, NULL);
+		if (pkreq.status) {
+			return pkreq.status;
+		}
 
-	sx_pk_run(pkreq.req);
-	status = sx_pk_wait(pkreq.req);
+		sx_pk_run(pkreq.req);
+		status = sx_pk_wait(pkreq.req);
+		if (status == SX_ERR_RETRY) {
+			status = exit_ikg(&pkreq);
+			if (status != SX_OK) {
+				return status;
+			}
+			status = SX_ERR_RETRY;
+		}
+	}
 	if (status != SX_OK) {
 		return status;
 	}
@@ -180,6 +197,5 @@ int cracen_ikg_create_pub_key(int identity_key_index, uint8_t *pub_key)
 
 	sx_rdpkmem(pub_key, outputs[0], opsz);
 	sx_rdpkmem(pub_key + opsz, outputs[1], opsz);
-
 	return exit_ikg(&pkreq);
 }
