@@ -9,12 +9,6 @@
 
 #include <stdint.h>
 
-#define LED_APP_RGB	0
-#define LED_NET_RGB	1
-#define LED_APP_1_BLUE	2
-#define LED_APP_2_GREEN 3
-#define LED_APP_3_GREEN 4
-
 #define RED   0
 #define GREEN 1
 #define BLUE  2

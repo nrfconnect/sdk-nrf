@@ -3,20 +3,22 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#include "peripherals.h"
 
 #include <nrfx_clock.h>
 
+#include "led_assignments.h"
 #include "led.h"
 #include "button_handler.h"
 #include "button_assignments.h"
 #include "sd_card.h"
-#include "board_version.h"
+#include "nrf5340_audio_dk_version.h"
 #include "channel_assignment.h"
 
 #include "sd_card_playback.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(nrf5340_audio_dk, CONFIG_MODULE_NRF5340_AUDIO_DK_LOG_LEVEL);
+LOG_MODULE_REGISTER(peripherals, CONFIG_PERIPHERALS_LOG_LEVEL);
 
 static struct board_version board_rev;
 
@@ -25,7 +27,7 @@ static int leds_set(void)
 	int ret;
 
 	/* Blink LED 3 to indicate that APP core is running */
-	ret = led_blink(LED_APP_3_GREEN);
+	ret = led_blink(LED_AUDIO_APP_STATUS);
 	if (ret) {
 		return ret;
 	}
@@ -36,12 +38,12 @@ static int leds_set(void)
 	channel_assignment_get(&channel);
 
 	if (channel == AUDIO_CH_L) {
-		ret = led_on(LED_APP_RGB, LED_COLOR_BLUE);
+		ret = led_on(LED_AUDIO_DEVICE_TYPE, LED_COLOR_BLUE);
 	} else {
-		ret = led_on(LED_APP_RGB, LED_COLOR_MAGENTA);
+		ret = led_on(LED_AUDIO_DEVICE_TYPE, LED_COLOR_MAGENTA);
 	}
 #elif (CONFIG_AUDIO_DEV == GATEWAY)
-	ret = led_on(LED_APP_RGB, LED_COLOR_GREEN);
+	ret = led_on(LED_AUDIO_DEVICE_TYPE, LED_COLOR_GREEN);
 #endif /* (CONFIG_AUDIO_DEV == HEADSET) */
 
 	if (ret) {
@@ -81,7 +83,7 @@ static int channel_assign_check(void)
 	return 0;
 }
 
-int nrf5340_audio_dk_init(void)
+int peripherals_init(void)
 {
 	int ret;
 
@@ -103,21 +105,31 @@ int nrf5340_audio_dk_init(void)
 		return ret;
 	}
 
-	ret = board_version_valid_check();
-	if (ret) {
-		return ret;
-	}
-
-	ret = board_version_get(&board_rev);
-	if (ret) {
-		return ret;
-	}
-
-	if (board_rev.mask & BOARD_VERSION_VALID_MSK_SD_CARD) {
-		ret = sd_card_init();
-		if (ret != -ENODEV && ret != 0) {
-			LOG_ERR("Failed to initialize SD card");
+	if (IS_ENABLED(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP)) {
+		ret = nrf5340_audio_dk_version_valid_check();
+		if (ret) {
 			return ret;
+		}
+
+		ret = nrf5340_audio_dk_version_get(&board_rev);
+		if (ret) {
+			return ret;
+		}
+
+		if (board_rev.mask & BOARD_VERSION_VALID_MSK_SD_CARD) {
+			ret = sd_card_init();
+			if (ret != -ENODEV && ret != 0) {
+				LOG_ERR("Failed to initialize SD card");
+				return ret;
+			}
+		}
+
+		if (IS_ENABLED(CONFIG_SD_CARD_PLAYBACK)) {
+			ret = sd_card_playback_init();
+			if (ret) {
+				LOG_ERR("Failed to initialize SD card playback");
+				return ret;
+			}
 		}
 	}
 
@@ -125,14 +137,6 @@ int nrf5340_audio_dk_init(void)
 	if (ret) {
 		LOG_ERR("Failed to set LEDs");
 		return ret;
-	}
-
-	if (IS_ENABLED(CONFIG_SD_CARD_PLAYBACK)) {
-		ret = sd_card_playback_init();
-		if (ret) {
-			LOG_ERR("Failed to initialize SD card playback");
-			return ret;
-		}
 	}
 
 	/* Use this to turn on 128 MHz clock for cpu_app */
