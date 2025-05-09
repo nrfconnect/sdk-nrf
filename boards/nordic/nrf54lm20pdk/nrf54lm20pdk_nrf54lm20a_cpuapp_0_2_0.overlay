@@ -46,10 +46,6 @@
 	};
 };
 
-&hfpll {
-	clock-frequency = <DT_FREQ_M(128)>;
-};
-
 &gpio0 {
 	gpio-reserved-ranges = <0 3>;
 };
