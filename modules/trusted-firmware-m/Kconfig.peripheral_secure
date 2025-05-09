@@ -220,9 +220,9 @@ config NRF_DPPI_SECURE
 	bool "DPPI configured as secure peripheral"
 	depends on $(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_DPPIC))
 	help
-	  DPPI is implemented with user-selectable security mapping.
-	  If it has been configured as a secure peripheral then only the secure
-	  processing environment is able to access the peripheral
+	  DPPI is implemented with security mapping selected by the user (split security).
+	  If it has been configured as a secure peripheral, only the secure
+	  processing environment is able to access the peripheral.
 
 peripheral=WDT0
 peripheral_depends=$(dt_nodelabel_has_compat,wdt0,$(DT_COMPAT_NORDIC_NRF_WDT))
@@ -439,8 +439,9 @@ config NRF_VMC_SECURE
 	default y
 	depends on $(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_VMC))
 	help
-	  The Non-secure app should not be able to turn off the RAM block of TF-M
-	  Therefore it needs to be configured as secure peripheral.
+	  When using security by separation, the non-secure part of the application should
+	  not be able to turn off the RAM block of Trusted Firmware-M.
+	  Therefore, the VMC peripheral needs to be configured as secure.
 
 endmenu # Peripheral Secure mapping
 
