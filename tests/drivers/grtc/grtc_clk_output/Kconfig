@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+
+config TEST_GRTC_FREQUENCY
+	int "Expected frequency (Hz) at GRTC output pin"
+	default 32768
+	help
+	  GRTC can output clock signal on dedicated pin.
+	  This can be 32768 Hz signal or fast clock which is
+	  16 MHz divided by (1..255 * 2).
+
+config TEST_GRTC_TOLERANCE
+	int "Amount of additional/missing clock edges"
+	default 100
+	help
+	  Define tolerance for expected number of clock edges
+	  counted during 1 second interval.
+
+source "Kconfig.zephyr"
