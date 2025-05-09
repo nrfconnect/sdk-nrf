@@ -1,0 +1,57 @@
+# SDK-nrf-specific OpenThread stack features for selection
+
+# Copyright (c) 2025 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+choice OPENTHREAD_PSA_NVM_BACKEND
+	prompt "Backend to store persistent crypto materials"
+	default OPENTHREAD_PSA_NVM_BACKEND_ITS
+	depends on OPENTHREAD_CRYPTO_PSA
+
+config OPENTHREAD_PSA_NVM_BACKEND_ITS
+	bool "Use Internal Trusted Storage (ITS) for storing crypto materials."
+	depends on OPENTHREAD_CRYPTO_PSA
+	help
+	  Store cryptographic materials in the PSA ITS.
+	  The PSA ITS location depends on the ITS configuration.
+
+config OPENTHREAD_PSA_NVM_BACKEND_KMU
+	bool "Use CRACEN KMU driver for storing crypto materials [EXPERIMENTAL]."
+	depends on PSA_NEED_CRACEN_KMU_DRIVER
+	select EXPERIMENTAL
+	help
+	  Store cryptographic materials in the Key Management Unit space instead of PSA ITS.
+	  The materials will be used by CRACEN driver.
+	  KMU slots range is defined as <OPENTHREAD_KMU_SLOT_START, OPENTHREAD_KMU_SLOT_END).
+	  Keys are not encrypted in KMU.
+
+endchoice # OPENTHREAD_PSA_NVM_BACKEND
+
+config OPENTHREAD_PSA_ITS_NVM_OFFSET
+	hex "Offset of IDs for OpenThread keys stored in the PSA ITS."
+	default 0x20000
+	help
+	  The offset value in the PSA ITS non-volatile space is dedicated to OpenThread
+	  key reference IDs. This offset must not overwrite any other ranges already in
+	  use within the PSA ITS non-volatile space.
+
+config OPENTHREAD_PSA_ITS_NVM_MAX_KEYS
+	int "Maximum ITS key reference amount to be assigned"
+	default 20
+	help
+	  The maximum ITS key reference amount that can be assigned for OpenThread crypto
+	  materials.
+
+if OPENTHREAD_PSA_NVM_BACKEND_KMU
+
+config OPENTHREAD_KMU_SLOT_START
+	int "OpenThread crypto materials KMU slot range start"
+	default 80
+	help
+	  The first KMU slot number under which the OpenThread crypto materials will be stored.
+	  The range defined by OPENTHREAD_KMU_SLOT_START must not overlap any other KMU slot
+	  range defined within the application. The slot amount dedicated for OpenThread is
+	  defined in the crypto_psa_key_allocator and can be modified according to changes in
+	  the OpenThread stack.
+
+endif # OPENTHREAD_PSA_NVM_BACKEND_KMU
