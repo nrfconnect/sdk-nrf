@@ -5,13 +5,13 @@
 #
 
 config CRACEN_HW_PRESENT
-	def_bool SOC_SERIES_NRF54LX || SOC_SERIES_NRF92X
+	def_bool false
 
 config CRACEN_HW_VERSION_BASE
-	def_bool SOC_SERIES_NRF54HX || SOC_NRF54L15 || SOC_NRF54L10 || SOC_NRF54L05
+	def_bool false
 
 config CRACEN_HW_VERSION_LITE
-	def_bool SOC_NRF54L20 || SOC_NRF54L09
+	def_bool false
 
 # Configure CRACEN_LOG_LEVEL
 module = CRACEN
