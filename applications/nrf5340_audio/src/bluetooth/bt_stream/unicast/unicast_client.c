@@ -1329,16 +1329,27 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 			   struct net_buf *buf)
 {
 	int ret;
-	bool bad_frame = false;
-	struct stream_index idx;
+	struct audio_data audio_frame;
 
 	if (receive_cb == NULL) {
 		LOG_ERR("The RX callback has not been set");
 		return;
 	}
 
-	if (!(info->flags & BT_ISO_FLAGS_VALID)) {
-		bad_frame = true;
+	/* Populate the audio frame structure */
+	audio_frame.data = buf->data;
+	audio_frame.data_size = buf->len;
+	audio_frame.meta.bad_data = false;
+	audio_frame.meta.reference_ts_us = info->ts;
+	le_audio_freq_hz_get(stream->codec_cfg, &audio_frame.meta.sample_rate_hz);
+	le_audio_duration_us_get(stream->codec_cfg, &audio_frame.meta.data_len_us);
+	/* TODO: Get channel allocation */
+
+	struct stream_index idx;
+
+	if (!(info->flags & BT_ISO_FLAGS_VALID) ||
+	    buf->len != bt_audio_codec_cfg_get_octets_per_frame(stream->codec_cfg)) {
+		audio_frame.meta.bad_data = true;
 	}
 
 	ret = device_index_get(stream->conn, &idx);
@@ -1347,8 +1358,7 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 		return;
 	}
 
-	receive_cb(buf->data, buf->len, bad_frame, info->ts, idx.lvl3,
-		   bt_audio_codec_cfg_get_octets_per_frame(stream->codec_cfg));
+	receive_cb(&audio_frame, idx.lvl3);
 }
 #endif /* (CONFIG_BT_AUDIO_RX) */
 
@@ -1748,7 +1758,7 @@ int unicast_client_stop(uint8_t cig_index)
 	return 0;
 }
 
-int unicast_client_send(uint8_t cig_index, struct le_audio_encoded_audio enc_audio)
+int unicast_client_send(uint8_t cig_index, struct audio_data *audio_frame)
 {
 #if (CONFIG_BT_AUDIO_TX)
 	int ret;
@@ -1793,7 +1803,7 @@ int unicast_client_send(uint8_t cig_index, struct le_audio_encoded_audio enc_aud
 		return -ECANCELED;
 	}
 
-	ret = bt_le_audio_tx_send(tx, num_active_streams, enc_audio);
+	ret = bt_le_audio_tx_send(tx, num_active_streams, audio_frame);
 	if (ret) {
 		return ret;
 	}
