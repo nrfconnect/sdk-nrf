@@ -46,9 +46,19 @@ static K_SEM_DEFINE(tx_sent, 0, 1);
 
 static void iso_connected(struct bt_iso_chan *chan)
 {
+	const struct bt_iso_chan_path hci_path = {
+		.pid = BT_ISO_DATA_PATH_HCI,
+		.format = BT_HCI_CODING_FORMAT_TRANSPARENT,
+	};
+
 	LOG_INF("ISO Channel %p connected", chan);
 
 	seq_num = 0U;
+
+	err = bt_iso_setup_data_path(chan, BT_HCI_DATAPATH_DIR_HOST_TO_CTLR, &hci_path);
+	if (err != 0) {
+		LOG_ERR("Failed to setup ISO TX data path: %d", err);
+	}
 
 	k_sem_give(&sem_big_cmplt);
 }

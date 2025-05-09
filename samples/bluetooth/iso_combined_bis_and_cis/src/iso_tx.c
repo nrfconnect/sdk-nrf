@@ -91,6 +91,11 @@ static void send_next_sdu_on_a_channel(void)
 
 static void iso_connected(struct bt_iso_chan *chan)
 {
+	const struct bt_iso_chan_path hci_path = {
+		.pid = BT_ISO_DATA_PATH_HCI,
+		.format = BT_HCI_CODING_FORMAT_TRANSPARENT,
+	};
+
 	int err;
 	struct bt_conn_info conn_info;
 	uint8_t chan_index = ARRAY_INDEX(iso_channels, chan);
@@ -113,6 +118,11 @@ static void iso_connected(struct bt_iso_chan *chan)
 	 */
 	send_next_sdu_on_a_channel();
 	LOG_INF("ISO TX Channel connected");
+
+	err = bt_iso_setup_data_path(chan, BT_HCI_DATAPATH_DIR_HOST_TO_CTLR, &hci_path);
+	if (err != 0) {
+		LOG_ERR("Failed to setup ISO TX data path: %d", err);
+	}
 }
 
 static void iso_disconnected(struct bt_iso_chan *chan, uint8_t reason)
