@@ -7,14 +7,13 @@
  */
 
 #include <string.h>
-#include "../include/sicrypto/sicrypto.h"
 #include <cracen/statuscodes.h>
 #include <cracen/mem_helpers.h>
 #include <cracen_psa.h>
 #include "common.h"
 
 /* Return 1 if the given byte string contains only zeros, 0 otherwise. */
-static int is_zero_bytestring(const char *a, size_t sz)
+static int is_zero_bytestring(const uint8_t *a, size_t sz)
 {
 	int acc = 0;
 
@@ -24,8 +23,8 @@ static int is_zero_bytestring(const char *a, size_t sz)
 	return !acc;
 }
 
-static int rndinrange_continue(unsigned char *out, size_t rndsz, const unsigned char *upper_limit,
-			       unsigned char msb_mask)
+static int rnd_in_range_continue(uint8_t *out, size_t rndsz, const uint8_t *upper_limit,
+				 uint8_t msb_mask)
 {
 	int z;
 	int ge;
@@ -34,8 +33,8 @@ static int rndinrange_continue(unsigned char *out, size_t rndsz, const unsigned 
 	out[0] &= msb_mask;
 
 	/* If the generated number is 0 or >= n, then discard it and repeat */
-	z = is_zero_bytestring((char *)out, rndsz);
-	ge = be_cmp(out, upper_limit, rndsz, 0);
+	z = is_zero_bytestring(out, rndsz);
+	ge = cracen_be_cmp(out, upper_limit, rndsz, 0);
 	if (z || (ge >= 0)) {
 		return SX_ERR_HW_PROCESSING;
 	}
@@ -44,32 +43,32 @@ static int rndinrange_continue(unsigned char *out, size_t rndsz, const unsigned 
 	return SX_OK;
 }
 
-static psa_status_t rndinrange_getrnd(unsigned char *out, size_t rndsz,
-				      const unsigned char *upper_limit, unsigned char msb_mask)
+static int rnd_in_range_get_rnd(uint8_t *out, size_t rndsz, const uint8_t *upper_limit,
+				uint8_t msb_mask)
 {
 	/* Get random octets from the PRNG in the environment.
 	 * Place them directly in the user's output buffer.
 	 */
-	int result;
-	psa_status_t status;
+	int sx_status;
+	psa_status_t psa_status;
 
 	do {
-		status = cracen_get_random(NULL, out, rndsz);
+		psa_status = cracen_get_random(NULL, out, rndsz);
 
-		if (status != PSA_SUCCESS) {
+		if (psa_status != PSA_SUCCESS) {
 			return SX_ERR_UNKNOWN_ERROR;
 		}
-		result = rndinrange_continue(out, rndsz, upper_limit, msb_mask);
+		sx_status = rnd_in_range_continue(out, rndsz, upper_limit, msb_mask);
 
-	} while (result == SX_ERR_HW_PROCESSING);
+	} while (sx_status == SX_ERR_HW_PROCESSING);
 
-	return result;
+	return SX_OK;
 }
 
-int rndinrange_create(const unsigned char *upper_limit, size_t upper_limit_sz, unsigned char *out)
+int cracen_get_rnd_in_range(const uint8_t *upper_limit, size_t upper_limit_sz, uint8_t *out)
 {
 	size_t index;
-	unsigned char msb_mask;
+	uint8_t msb_mask;
 
 	/* Error if the provided upper limit has size 0 */
 	if (upper_limit_sz == 0) {
@@ -93,16 +92,17 @@ int rndinrange_create(const unsigned char *upper_limit, size_t upper_limit_sz, u
 	}
 
 	/* Get bit mask of the most significant non-zero byte in n */
-	for (msb_mask = 0xFF; upper_limit[index] & msb_mask; msb_mask <<= 1) {
-		/* Do nothing; just increment 'index' */
+	msb_mask = 0xFF;
+	while (upper_limit[index] & msb_mask) {
+		msb_mask <<= 1;
 	}
 	msb_mask = ~msb_mask;
 
 	size_t rndsz = upper_limit_sz - index;
-	const unsigned char *adjusted_upper_limit = upper_limit + index;
-	unsigned char *adjusted_out = out + index;
+	const uint8_t *adjusted_upper_limit = upper_limit + index;
+	uint8_t *adjusted_out = out + index;
 
 	/* Write high-order zero bytes, if any, in the output buffer */
 	safe_memset(out, upper_limit_sz, 0, index);
-	return rndinrange_getrnd(adjusted_out, rndsz, adjusted_upper_limit, msb_mask);
+	return rnd_in_range_get_rnd(adjusted_out, rndsz, adjusted_upper_limit, msb_mask);
 }
