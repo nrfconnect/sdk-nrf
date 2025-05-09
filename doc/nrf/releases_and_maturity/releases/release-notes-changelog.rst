@@ -347,6 +347,10 @@ Peripheral samples
 
 |no_changes_yet_note|
 
+* :ref:`lpuart_sample` sample:
+
+  * Changed pins used for NRF52840 DK and NRF5340 DK.
+
 PMIC samples
 ------------
 
