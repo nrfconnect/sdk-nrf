@@ -801,6 +801,7 @@ static void transmit_message(void)
 			ret = nrf5_tx_csma_ca(&sTransmitFrame, nrf5_data.tx_psdu);
 		} else {
 			// TODO: AG: blocking
+			// can we replace this with .cca = true in nrf_802154_transmit_metadata_t ?
 			ret = nrf5_cca();
 
 			if (!ret) {
