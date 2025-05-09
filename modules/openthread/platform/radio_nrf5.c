@@ -225,7 +225,6 @@ K_SEM_DEFINE(radio_sem, 0, 1);
 // TODO: AG: move to nrf5_data
 static otRadioState sState = OT_RADIO_STATE_DISABLED;
 static otRadioFrame sTransmitFrame;
-static uint8_t tx_psdu[ACK_PKT_LENGTH];
 static otRadioFrame ack_frame;
 
 #if defined(CONFIG_OPENTHREAD_TIME_SYNC)
@@ -539,7 +538,7 @@ static void nrf5_irq_config(void)
 
 void platformRadioInit(void)
 {
-	sTransmitFrame.mPsdu = tx_psdu;
+	sTransmitFrame.mPsdu = &nrf5_data.tx_psdu[1];
 
 #if defined(CONFIG_OPENTHREAD_TIME_SYNC)
 	sTransmitFrame.mInfo.mTxInfo.mIeInfo = &tx_ie_info;
@@ -809,7 +808,6 @@ static int nrf5_tx(enum ieee802154_tx_mode mode)
 	LOG_DBG("%p (%u)", frame->mPsdu, frame->mLength);
 
 	nrf5_data.tx_psdu[0] = frame->mLength;
-	memcpy(nrf5_data.tx_psdu + 1, frame->mPsdu, frame->mLength);
 
 	switch (mode) {
 	case IEEE802154_TX_MODE_DIRECT:
@@ -850,20 +848,6 @@ static otError nrf5_tx_done_cb(nrf_802154_tx_error_t error,
 			       const nrf_802154_transmit_done_metadata_t *metadata)
 {
 	LOG_DBG("Result: %u", error);
-
-#if defined(CONFIG_NRF_802154_ENCRYPTION)
-	/*
-	 * When frame encryption by the radio driver is enabled, the frame stored in
-	 * the tx_psdu buffer is:
-	 * 1) authenticated and encrypted in place which causes that after an unsuccessful
-	 *    TX attempt, this frame must be propagated back to the upper layer for retransmission.
-	 *    The upper layer must ensure that the exact same secured frame is used for
-	 *    retransmission
-	 * 2) frame counters are updated in place and for keeping the link frame counter up to date,
-	 *    this information must be propagated back to the upper layer
-	 */
-	memcpy(sTransmitFrame.mPsdu, nrf5_data.tx_psdu + 1, sTransmitFrame.mLength);
-#endif
 
 	sTransmitFrame.mInfo.mTxInfo.mIsSecurityProcessed = metadata->frame_props.is_secured;
 	sTransmitFrame.mInfo.mTxInfo.mIsHeaderUpdated = metadata->frame_props.dynamic_data_is_set;
