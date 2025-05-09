@@ -98,7 +98,6 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME, CONFIG_OPENTHREAD_PLATFORM_LOG_LEVEL);
 #endif
 
 enum nrf5_pending_events {
-	// TODO: AG: remove or reuse to remove work queue
 	PENDING_EVENT_FRAME_TO_SEND,	  /* There is a tx frame to send  */
 	PENDING_EVENT_FRAME_RECEIVED,	  /* Radio has received new frame */
 	PENDING_EVENT_RX_FAILED,	  /* The RX failed */
@@ -207,11 +206,6 @@ struct nrf5_data {
 
 	otError rx_result;
 
-	/* TX synchronization semaphore. Unlocked when frame has been
-	 * sent or send procedure failed.
-	 */
-	struct k_sem tx_wait;
-
 	/* TX buffer. First byte is PHR (length), remaining bytes are
 	 * MPDU data.
 	 */
@@ -231,9 +225,6 @@ struct nrf5_data {
 };
 
 static struct nrf5_data nrf5_data;
-
-K_KERNEL_STACK_DEFINE(ot_task_stack, CONFIG_OPENTHREAD_RADIO_WORKQUEUE_STACK_SIZE);
-static struct k_work_q ot_work_q;
 
 K_SEM_DEFINE(radio_sem, 0, 1);
 
@@ -568,15 +559,10 @@ void platformRadioInit(void)
 	nrf5_data.capabilities = nrf5_get_caps();
 
 	k_fifo_init(&nrf5_data.rx_fifo);
-	k_sem_init(&nrf5_data.tx_wait, 0, 1);
 	k_sem_init(&nrf5_data.cca_wait, 0, 1);
 
 	nrf5_data.rx_on_when_idle = true;
 	nrf5_irq_config();
-
-	k_work_queue_start(&ot_work_q, ot_task_stack, K_KERNEL_STACK_SIZEOF(ot_task_stack),
-			   OT_WORKER_PRIORITY, NULL);
-	k_thread_name_set(&ot_work_q.thread, "ot_radio_workq");
 
 	nrf_802154_init();
 }
@@ -620,31 +606,32 @@ static void energy_detected(int16_t max_ed)
 	set_pending_event(PENDING_EVENT_DETECT_ENERGY_DONE);
 }
 
-static int handle_ack(void)
+static otError handle_ack(void)
 {
 	uint8_t ack_len;
 	uint8_t frame_type;
-	int err = 0;
+	otError err = OT_ERROR_NONE;
 
 	if (nrf5_data.ack_frame.time == NRF_802154_NO_TIMESTAMP) {
 		/* Ack timestamp is invalid and cannot be used by the upper layer.
 		 * Report the transmission as failed as if the Ack was not received at all.
 		 */
 		LOG_WRN("Invalid ACK timestamp.");
-		err = -ENOMSG;
+		err = OT_ERROR_NO_ACK;
 		goto free_nrf_ack;
 	}
 
 	ack_len = nrf5_data.ack_frame.psdu[0];
 	if (ack_len > ACK_PKT_LENGTH) {
 		LOG_ERR("Invalid ACK length %u", ack_len);
-		err = -EINVAL;
+		err = OT_ERROR_NO_ACK;
 		goto free_nrf_ack;
 	}
 
 	frame_type = nrf5_data.ack_frame.psdu[1] & FRAME_TYPE_MASK;
 	if (frame_type != FRAME_TYPE_ACK) {
 		LOG_ERR("Invalid frame type %u", frame_type);
+		err = OT_ERROR_NO_ACK;
 		goto free_nrf_ack;
 	}
 
@@ -815,8 +802,9 @@ static bool nrf5_tx_at(otRadioFrame *frame, uint8_t *payload, enum ieee802154_tx
 	return nrf_802154_transmit_raw_at(payload, tx_at, &metadata);
 }
 
-static int nrf5_tx(enum ieee802154_tx_mode mode, otRadioFrame *frame)
+static int nrf5_tx(enum ieee802154_tx_mode mode)
 {
+	otRadioFrame *frame = &sTransmitFrame;
 	bool ret = true;
 
 	if (frame->mLength > MAX_PACKET_SIZE) {
@@ -828,9 +816,6 @@ static int nrf5_tx(enum ieee802154_tx_mode mode, otRadioFrame *frame)
 
 	nrf5_data.tx_psdu[0] = frame->mLength;
 	memcpy(nrf5_data.tx_psdu + 1, frame->mPsdu, frame->mLength);
-
-	/* Reset semaphore in case ACK was received after timeout */
-	k_sem_reset(&nrf5_data.tx_wait);
 
 	switch (mode) {
 	case IEEE802154_TX_MODE_DIRECT:
@@ -864,8 +849,13 @@ static int nrf5_tx(enum ieee802154_tx_mode mode, otRadioFrame *frame)
 	LOG_DBG("Sending frame (ch:%d, txpower:%d)", nrf_802154_channel_get(),
 		nrf_802154_tx_power_get());
 
-	/* Wait for the callback from the radio driver. */
-	k_sem_take(&nrf5_data.tx_wait, K_FOREVER);
+	return 0;
+}
+
+// TODO: add arguments
+static otError nrf5_tx_done_cb(void)
+{
+	otRadioFrame *frame = &sTransmitFrame;
 
 	LOG_DBG("Result: %d", nrf5_data.tx_result);
 
@@ -890,22 +880,22 @@ static int nrf5_tx(enum ieee802154_tx_mode mode, otRadioFrame *frame)
 	case NRF_802154_TX_ERROR_NONE:
 		if (nrf5_data.ack_frame.psdu == NULL) {
 			/* No ACK was requested. */
-			return 0;
+			return OT_ERROR_NONE;
 		}
 		/* Handle ACK packet. */
 		return handle_ack();
 	case NRF_802154_TX_ERROR_NO_MEM:
-		return -ENOBUFS;
+		return OT_ERROR_NO_BUFS;
 	case NRF_802154_TX_ERROR_BUSY_CHANNEL:
-		return -EBUSY;
+		return OT_ERROR_CHANNEL_ACCESS_FAILURE;
 	case NRF_802154_TX_ERROR_INVALID_ACK:
 	case NRF_802154_TX_ERROR_NO_ACK:
-		return -ENOMSG;
+		return OT_ERROR_NO_ACK;
 	case NRF_802154_TX_ERROR_ABORTED:
 	case NRF_802154_TX_ERROR_TIMESLOT_DENIED:
 	case NRF_802154_TX_ERROR_TIMESLOT_ENDED:
 	default:
-		return -EIO;
+		return OT_ERROR_ABORT;
 	}
 }
 
@@ -923,11 +913,9 @@ static inline void handle_tx_done(otInstance *aInstance)
 	}
 }
 
-static void transmit_message(struct k_work *tx_job)
+static int transmit_message(void)
 {
-	int tx_err;
-
-	ARG_UNUSED(tx_job);
+	int err;
 
 #if defined(CONFIG_OPENTHREAD_TIME_SYNC)
 	if (sTransmitFrame.mInfo.mTxInfo.mIeInfo->mTimeIeOffset != 0) {
@@ -948,63 +936,23 @@ static void transmit_message(struct k_work *tx_job)
 
 	if ((nrf5_data.capabilities & OT_RADIO_CAPS_TRANSMIT_TIMING) &&
 	    (sTransmitFrame.mInfo.mTxInfo.mTxDelay != 0)) {
-		tx_err = nrf5_tx(IEEE802154_TX_MODE_TXTIME_CCA, &sTransmitFrame);
+		err = nrf5_tx(IEEE802154_TX_MODE_TXTIME_CCA);
 	} else if (sTransmitFrame.mInfo.mTxInfo.mCsmaCaEnabled) {
 		if (nrf5_data.capabilities & OT_RADIO_CAPS_CSMA_BACKOFF) {
-			tx_err = nrf5_tx(IEEE802154_TX_MODE_CSMA_CA, &sTransmitFrame);
+			err = nrf5_tx(IEEE802154_TX_MODE_CSMA_CA);
 		} else {
-			tx_err = nrf5_cca();
-			if (tx_err == 0) {
-				tx_err = nrf5_tx(IEEE802154_TX_MODE_DIRECT, &sTransmitFrame);
+			// TODO: AG: blocking
+			err = nrf5_cca();
+			if (err == 0) {
+				err = nrf5_tx(IEEE802154_TX_MODE_DIRECT);
 			}
 		}
 	} else {
-		tx_err = nrf5_tx(IEEE802154_TX_MODE_DIRECT, &sTransmitFrame);
+		err = nrf5_tx(IEEE802154_TX_MODE_DIRECT);
 	}
 
-	/*
-	 * OpenThread handles the following errors:
-	 * - OT_ERROR_NONE
-	 * - OT_ERROR_NO_ACK
-	 * - OT_ERROR_CHANNEL_ACCESS_FAILURE
-	 * - OT_ERROR_ABORT
-	 * Any other error passed to `otPlatRadioTxDone` will result in assertion.
-	 */
-	switch (tx_err) {
-	case 0:
-		nrf5_data.tx_result = OT_ERROR_NONE;
-		break;
-	case -ENOMSG:
-		nrf5_data.tx_result = OT_ERROR_NO_ACK;
-		break;
-	case -EBUSY:
-		nrf5_data.tx_result = OT_ERROR_CHANNEL_ACCESS_FAILURE;
-		break;
-	case -EIO:
-		nrf5_data.tx_result = OT_ERROR_ABORT;
-		break;
-	default:
-		nrf5_data.tx_result = OT_ERROR_CHANNEL_ACCESS_FAILURE;
-		break;
-	}
-
-	set_pending_event(PENDING_EVENT_TX_DONE);
-}
-
-static int run_tx_task(otInstance *aInstance)
-{
-	static K_WORK_DEFINE(tx_job, transmit_message);
-
-	ARG_UNUSED(aInstance);
-
-	if (!k_work_is_pending(&tx_job)) {
-		sState = OT_RADIO_STATE_TRANSMIT;
-
-		k_work_submit_to_queue(&ot_work_q, &tx_job);
-		return 0;
-	} else {
-		return -EBUSY;
-	}
+	// TODO: AG: handle error
+	return err;
 }
 
 void platformRadioProcess(otInstance *aInstance)
@@ -1028,6 +976,11 @@ void platformRadioProcess(otInstance *aInstance)
 		} else {
 			otPlatRadioReceiveDone(aInstance, NULL, nrf5_data.rx_result);
 		}
+	}
+
+	if (is_pending_event_set(PENDING_EVENT_FRAME_TO_SEND)) {
+		reset_pending_event(PENDING_EVENT_FRAME_TO_SEND);
+		transmit_message();
 	}
 
 	if (is_pending_event_set(PENDING_EVENT_TX_STARTED)) {
@@ -1462,10 +1415,9 @@ otError otPlatRadioTransmit(otInstance *aInstance, otRadioFrame *aFrame)
 	__ASSERT_NO_MSG(aFrame == &sTransmitFrame);
 
 	if (sState == OT_RADIO_STATE_RECEIVE || sState == OT_RADIO_STATE_SLEEP) {
-		// TODO: AG: remove and post send event?
-		if (run_tx_task(aInstance) == 0) {
-			error = OT_ERROR_NONE;
-		}
+		sState = OT_RADIO_STATE_TRANSMIT;
+		error = OT_ERROR_NONE;
+		set_pending_event(PENDING_EVENT_FRAME_TO_SEND);
 	}
 
 	return error;
@@ -1940,7 +1892,9 @@ void nrf_802154_transmitted_raw(uint8_t *frame, const nrf_802154_transmit_done_m
 		}
 	}
 
-	k_sem_give(&nrf5_data.tx_wait);
+	nrf5_data.tx_result = nrf5_tx_done_cb();
+
+	set_pending_event(PENDING_EVENT_TX_DONE);
 }
 
 void nrf_802154_transmit_failed(uint8_t *frame, nrf_802154_tx_error_t error,
@@ -1952,7 +1906,9 @@ void nrf_802154_transmit_failed(uint8_t *frame, nrf_802154_tx_error_t error,
 	nrf5_data.tx_frame_is_secured = metadata->frame_props.is_secured;
 	nrf5_data.tx_frame_mac_hdr_rdy = metadata->frame_props.dynamic_data_is_set;
 
-	k_sem_give(&nrf5_data.tx_wait);
+	nrf5_data.tx_result = nrf5_tx_done_cb();
+
+	set_pending_event(PENDING_EVENT_TX_DONE);
 }
 
 void nrf_802154_cca_done(bool channel_free)
