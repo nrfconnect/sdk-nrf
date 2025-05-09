@@ -1,4 +1,4 @@
-.. _wifi_radio_sample_desc:
+.. _wifi_radio_sample_desc_sd:
 
 Sample description
 ##################
@@ -7,7 +7,7 @@ Sample description
    :local:
    :depth: 2
 
-The Radio test (Multi domain) sample demonstrates how to configure the Wi-Fi® radio in a specific mode and then test its performance.
+The Bluetooth LE Wi-Fi Radio test (Single domain) sample demonstrates how to configure the Wi-Fi® radio in a specific mode and then test its performance.
 It provides a set of predefined commands that allow you to configure the radio in the following modes:
 
 * Modulated carrier TX
@@ -20,7 +20,7 @@ The sample also shows how to program the user region of FICR parameters on the d
 Requirements
 ************
 
-The sample supports the following development kits:
+The sample supports the following development kit:
 
 .. table-from-sample-yaml::
 
@@ -45,30 +45,25 @@ See :ref:`wifi_ficr_prog` for a list of available subcommands.
    Consequently, the write commands are destructive.
    Once written, the contents of the OTP registers cannot be reprogrammed.
 
-.. _wifi_radio_md_sample_building_and_running:
+.. _wifi_radio_sd_sample_building_and_running:
 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/wifi/radio_test/multi_domain`
+.. |sample path| replace:: :file:`samples/wifi/radio_test/single_domain`
 
 .. include:: /includes/build_and_run.txt
 
-To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` board target.
+To build for the nRF7002-EB II and nRF54L15 DK, use the ``nrf54l15dk/nrf54l15/cpuapp`` board target with the ``SHIELD`` CMake option set to ``nrf7002eb2``.
 The following is an example of the CLI command:
 
 .. code-block:: console
 
-   west build -b nrf7002dk/nrf5340/cpuapp
-
-To build for the nRF7002 EK and nRF5340 DK, use the ``nrf5340dk/nrf5340/cpuapp`` board target with the ``SHIELD`` CMake option set to ``nrf7002ek``.
-The following is an example of the CLI command:
-
-.. code-block:: console
-
-   west build -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf7002ek
+   west build -b nrf54l15dk/nrf54l15/cpuapp -- -DSHIELD=nrf7002eb2 -DSNIPPET=nrf70-wifi
 
 See also :ref:`cmake_options` for instructions on how to provide CMake options.
+
+See the :ref:`Peripheral radio test sample <radio_test>` for detailed documentation on the related features.
 
 Dependencies
 ************

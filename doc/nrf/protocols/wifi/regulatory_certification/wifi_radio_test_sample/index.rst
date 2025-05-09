@@ -8,7 +8,7 @@ The Wi-Fi Radio test firmware supports the configuration of the Wi-Fi radio in s
 
 For more information on the samples in |NCS|, see the following:
 
-* Overall description: :ref:`Wi-Fi Radio test sample <wifi_radio_sample_desc>`.
+* Overall description: See either the :ref:`wifi_radio_test` sample or the :ref:`wifi_radio_test_sd` sample.
 * Description of the sub-commands for configuring the radio: :ref:`Wi-Fi Radio test subcommands <wifi_radio_subcommands>`.
 
 .. toctree::
