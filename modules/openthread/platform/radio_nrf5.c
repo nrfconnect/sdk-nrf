@@ -644,7 +644,7 @@ free_nrf_ack:
 	return err;
 }
 
-static bool nrf5_tx_immediate(otRadioFrame *frame, uint8_t *payload)
+static bool nrf5_tx(otRadioFrame *frame, uint8_t *payload, bool cca)
 {
 	nrf_802154_transmit_metadata_t metadata = {
 		.frame_props =
@@ -652,7 +652,7 @@ static bool nrf5_tx_immediate(otRadioFrame *frame, uint8_t *payload)
 				.is_secured = frame->mInfo.mTxInfo.mIsSecurityProcessed,
 				.dynamic_data_is_set = frame->mInfo.mTxInfo.mIsHeaderUpdated,
 			},
-		.cca = false,
+		.cca = cca,
 		.tx_power =
 			{
 				.use_metadata_value = true,
@@ -681,6 +681,9 @@ static bool nrf5_tx_csma_ca(otRadioFrame *frame, uint8_t *payload)
 		.tx_channel = {.use_metadata_value = true, .channel = frame->mChannel},
 
 	};
+
+	// TODO: AG: do we need this?
+	nrf_802154_csma_ca_max_backoffs_set(frame->mInfo.mTxInfo.mMaxCsmaBackoffs);
 
 	return nrf_802154_transmit_csma_ca_raw(payload, &metadata);
 }
@@ -793,27 +796,13 @@ static void transmit_message(void)
 	    (sTransmitFrame.mInfo.mTxInfo.mTxDelay != 0)) {
 		ret = nrf5_tx_at(&sTransmitFrame, nrf5_data.tx_psdu);
 	} else if (sTransmitFrame.mInfo.mTxInfo.mCsmaCaEnabled) {
-		// TODO: AG:
-		// nrf_802154_max_num_csma_ca_backoffs_set(aFrame->mInfo.mTxInfo.mMaxCsmaBackoffs);
-
-		// TODO: AG: can we remove this?
 		if (nrf5_data.capabilities & OT_RADIO_CAPS_CSMA_BACKOFF) {
 			ret = nrf5_tx_csma_ca(&sTransmitFrame, nrf5_data.tx_psdu);
 		} else {
-			// TODO: AG: blocking
-			// can we replace this with .cca = true in nrf_802154_transmit_metadata_t ?
-			ret = nrf5_cca();
-
-			if (!ret) {
-				nrf5_data.tx_result = OT_ERROR_CHANNEL_ACCESS_FAILURE;
-				set_pending_event(PENDING_EVENT_TX_DONE);
-				return;
-			}
-
-			ret = nrf5_tx_immediate(&sTransmitFrame, nrf5_data.tx_psdu);
+			ret = nrf5_tx(&sTransmitFrame, nrf5_data.tx_psdu, true);
 		}
 	} else {
-		ret = nrf5_tx_immediate(&sTransmitFrame, nrf5_data.tx_psdu);
+		ret = nrf5_tx(&sTransmitFrame, nrf5_data.tx_psdu, false);
 	}
 
 	if (!ret) {
