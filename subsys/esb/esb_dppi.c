@@ -23,13 +23,15 @@ static uint8_t timer_compare1_radio_txen;
 static uint8_t disabled_phy_end_egu;
 static uint8_t egu_timer_start;
 static uint8_t egu_ramp_up;
-static uint8_t radio_end_timer_start;
 
 static nrf_dppi_channel_group_t ramp_up_dppi_group;
+
+static volatile bool tx_idle;
 
 void esb_ppi_for_txrx_set(bool rx, bool timer_start)
 {
 	uint32_t channels_mask;
+	nrf_radio_state_t state = nrf_radio_state_get(NRF_RADIO);
 
 	nrf_egu_event_clear(ESB_EGU, ESB_EGU_EVENT);
 	nrf_egu_event_clear(ESB_EGU, ESB_EGU_DPPI_EVENT);
@@ -40,8 +42,17 @@ void esb_ppi_for_txrx_set(bool rx, bool timer_start)
 	nrf_dppi_channels_include_in_group(ESB_DPPIC, BIT(egu_ramp_up), ramp_up_dppi_group);
 
 	nrf_egu_subscribe_set(ESB_EGU, ESB_EGU_DPPI_TASK, egu_timer_start);
-	nrf_radio_subscribe_set(NRF_RADIO, rx ? NRF_RADIO_TASK_RXEN : NRF_RADIO_TASK_TXEN,
-				egu_ramp_up);
+	if (state == NRF_RADIO_STATE_TXIDLE || state == NRF_RADIO_STATE_TX) {
+		/* When CONFIG_ESB_KEEP_TX_IDLE is enabled the radio is running,
+		 * so we need to trigger NRF_RADIO_TASK_START.
+		 */
+		nrf_radio_subscribe_set(NRF_RADIO, NRF_RADIO_TASK_START, egu_ramp_up);
+		tx_idle = true;
+	} else {
+		nrf_radio_subscribe_set(NRF_RADIO, rx ? NRF_RADIO_TASK_RXEN : NRF_RADIO_TASK_TXEN,
+					egu_ramp_up);
+		tx_idle = false;
+	}
 	nrf_dppi_subscribe_set(ESB_DPPIC,
 				nrf_dppi_group_disable_task_get((uint8_t)ramp_up_dppi_group),
 				egu_ramp_up);
@@ -72,7 +83,12 @@ void esb_ppi_for_txrx_clear(bool rx, bool timer_start)
 	nrf_egu_publish_clear(ESB_EGU, ESB_EGU_DPPI_EVENT);
 
 	nrf_egu_subscribe_clear(ESB_EGU, ESB_EGU_DPPI_TASK);
-	nrf_radio_subscribe_clear(NRF_RADIO, rx ? NRF_RADIO_TASK_RXEN : NRF_RADIO_TASK_TXEN);
+	if (tx_idle) {
+		nrf_radio_subscribe_clear(NRF_RADIO, NRF_RADIO_TASK_START);
+	} else {
+		nrf_radio_subscribe_clear(NRF_RADIO, rx ? NRF_RADIO_TASK_RXEN :
+							  NRF_RADIO_TASK_TXEN);
+	}
 	nrf_dppi_subscribe_clear(ESB_DPPIC,
 				 nrf_dppi_group_disable_task_get((uint8_t)ramp_up_dppi_group));
 	nrf_egu_subscribe_clear(ESB_EGU, ESB_EGU_TASK);
@@ -168,31 +184,6 @@ void esb_ppi_for_wait_for_ack_clear(void)
 	nrf_radio_subscribe_clear(NRF_RADIO, NRF_RADIO_TASK_DISABLE);
 }
 
-void esb_ppi_for_wait_for_rx_set(void)
-{
-	uint32_t channels_mask;
-
-	nrf_radio_publish_set(NRF_RADIO, ESB_RADIO_EVENT_END, radio_end_timer_start);
-	nrf_timer_subscribe_set(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_START,
-				radio_end_timer_start);
-
-	channels_mask = (BIT(radio_end_timer_start));
-
-	nrf_dppi_channels_enable(ESB_DPPIC, channels_mask);
-}
-
-void esb_ppi_for_wait_for_rx_clear(void)
-{
-	uint32_t channels_mask;
-
-	channels_mask = (BIT(radio_end_timer_start));
-
-	nrf_dppi_channels_disable(ESB_DPPIC, channels_mask);
-
-	nrf_radio_publish_clear(NRF_RADIO, ESB_RADIO_EVENT_END);
-	nrf_timer_subscribe_clear(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_START);
-}
-
 uint32_t esb_ppi_radio_disabled_get(void)
 {
 	return disabled_phy_end_egu;
@@ -210,7 +201,6 @@ int esb_ppi_init(void)
 	disabled_phy_end_egu = ESB_DPPI_FIRST_FIXED_CHANNEL + 3;
 	egu_timer_start = ESB_DPPI_FIRST_FIXED_CHANNEL + 4;
 	egu_ramp_up = ESB_DPPI_FIRST_FIXED_CHANNEL + 5;
-	radio_end_timer_start = ESB_DPPI_FIRST_FIXED_CHANNEL + 6;
 	ramp_up_dppi_group = ESB_DPPI_FIRST_FIXED_GROUP + 0;
 
 	ARG_UNUSED(err);
@@ -249,13 +239,6 @@ int esb_ppi_init(void)
 		goto error;
 	}
 
-	if (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX)) {
-		err = nrfx_dppi_channel_alloc(&dppi, &radio_end_timer_start);
-		if (err != NRFX_SUCCESS) {
-			goto error;
-		}
-	}
-
 	err = nrfx_dppi_group_alloc(&dppi, &ramp_up_dppi_group);
 	if (err != NRFX_SUCCESS) {
 		LOG_ERR("gppi_group_alloc failed with: %d\n", err);
@@ -286,9 +269,7 @@ void esb_ppi_disable_all(void)
 				  BIT(egu_timer_start) |
 				  BIT(radio_address_timer_stop) |
 				  BIT(timer_compare0_radio_disable) |
-				  BIT(radio_end_timer_start) |
-				  (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX) ?
-					BIT(timer_compare1_radio_txen) : 0));
+				  BIT(timer_compare1_radio_txen));
 
 	nrf_dppi_channels_disable(ESB_DPPIC, channels_mask);
 }
@@ -339,13 +320,6 @@ void esb_ppi_deinit(void)
 	err = nrfx_dppi_channel_free(&dppi, egu_ramp_up);
 	if (err != NRFX_SUCCESS) {
 		goto error;
-	}
-
-	if (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX)) {
-		err = nrfx_dppi_channel_free(&dppi, radio_end_timer_start);
-		if (err != NRFX_SUCCESS) {
-			goto error;
-		}
 	}
 
 	err = nrfx_dppi_group_free(&dppi, ramp_up_dppi_group);
