@@ -500,11 +500,6 @@ int start_execute(void)
 		LOG_ERR("Failed to enable ext XTAL: %d", err);
 		return err;
 	}
-	err = slm_at_host_init();
-	if (err) {
-		LOG_ERR("Failed to init at_host: %d", err);
-		return err;
-	}
 #if POWER_PIN_IS_ENABLED
 	/* Do not directly enable the poweroff interrupt so that only a full toggle triggers
 	 * power off. This is because power on is triggered on low level, so if the pin is held
@@ -512,10 +507,19 @@ int start_execute(void)
 	 */
 	err = configure_power_pin_interrupt(power_pin_callback_enable_poweroff,
 					    GPIO_INT_EDGE_FALLING);
-#endif
 	if (err) {
 		return err;
 	}
+#endif
+	/* This will send "READY" or "INIT ERROR" to UART so after this nothing
+	 * should be done that can fail
+	 */
+	err = slm_at_host_init();
+	if (err) {
+		LOG_ERR("Failed to init at_host: %d", err);
+		return err;
+	}
+
 	k_work_queue_start(&slm_work_q, slm_wq_stack_area,
 			   K_THREAD_STACK_SIZEOF(slm_wq_stack_area),
 			   SLM_WQ_PRIORITY, NULL);
@@ -554,12 +558,12 @@ int main(void)
 	}
 #endif
 
-	const int ret = nrf_modem_lib_init();
+	int ret = nrf_modem_lib_init();
 
 	if (ret) {
 		LOG_ERR("Modem library init failed, err: %d", ret);
 		if (ret != -EAGAIN && ret != -EIO) {
-			return ret;
+			goto exit;
 		} else if (ret == -EIO) {
 			LOG_ERR("Please program full modem firmware with the bootloader or "
 				"external tools");
@@ -576,5 +580,10 @@ int main(void)
 	}
 #endif /* CONFIG_SLM_START_SLEEP */
 
-	return start_execute();
+	ret = start_execute();
+exit:
+	if (ret) {
+		LOG_ERR("Failed to start SLM (%d). It's not operational!!!", ret);
+	}
+	return ret;
 }
