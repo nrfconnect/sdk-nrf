@@ -204,8 +204,16 @@ config SLM_CMUX_NOTIFICATION_TX_BUFFER_SIZE
 
 if SLM_CMUX && SLM_PPP
 
+config SLM_MODEM_CELLULAR
+	bool "Compatibility with cellular modem driver"
+	help
+	  Enables compatibility with a host that uses the cellular modem driver. Compared to clients,
+	  such as pppd, the cellular modem driver retains more control on how the PPP link
+	  is brought up and down.
+
 config SLM_CMUX_AUTOMATIC_FALLBACK_ON_PPP_STOPPAGE
 	bool "AT channel automatic fallback to DLCI 1 when PPP stops."
+	default y if SLM_MODEM_CELLULAR
 	help
 	  This is mainly intended for compatibility with Zephyr's cellular modem driver.
 	  If enabled, when PPP stops (which happens automatically when the LTE link goes down)
