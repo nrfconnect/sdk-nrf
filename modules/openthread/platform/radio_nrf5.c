@@ -38,7 +38,6 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME, CONFIG_OPENTHREAD_PLATFORM_LOG_LEVEL);
 
 // TODO: AG: config
 #define CONFIG_NRF5_RX_STACK_SIZE 1024
-#define CONFIG_NRF5_MULTIPLE_CCA  1
 
 #if defined(CONFIG_NRF_802154_SER_HOST)
 #include "nrf_802154_serialization_error.h"
@@ -192,11 +191,6 @@ struct nrf5_data {
 
 	/* Radio capabilities */
 	otRadioCaps capabilities;
-
-#if defined(CONFIG_NRF5_MULTIPLE_CCA)
-	/* The maximum number of extra CCA attempts to be performed before transmission. */
-	uint8_t max_extra_cca_attempts;
-#endif
 
 	otError rx_result;
 
@@ -731,29 +725,17 @@ enum ieee802154_tx_mode {
 
 	/** This and higher values are specific to the protocol- or driver-specific extensions. */
 	IEEE802154_TX_MODE_PRIV_START = IEEE802154_TX_MODE_COMMON_COUNT,
-
-	IEEE802154_OPENTHREAD_TX_MODE_TXTIME_MULTIPLE_CCA = IEEE802154_TX_MODE_PRIV_START
 };
 
 static bool nrf5_tx_at(otRadioFrame *frame, uint8_t *payload, enum ieee802154_tx_mode mode)
 {
 	bool cca = false;
-#if defined(CONFIG_NRF5_MULTIPLE_CCA)
-	uint8_t max_extra_cca_attempts = 0;
-#endif
 
 	switch (mode) {
 	case IEEE802154_TX_MODE_TXTIME:
 		break;
 	case IEEE802154_TX_MODE_TXTIME_CCA:
 		cca = true;
-		break;
-#if defined(CONFIG_NRF5_MULTIPLE_CCA)
-	case IEEE802154_OPENTHREAD_TX_MODE_TXTIME_MULTIPLE_CCA:
-		cca = true;
-		max_extra_cca_attempts = nrf5_data.max_extra_cca_attempts;
-		break;
-#endif
 		break;
 	default:
 		__ASSERT_NO_MSG(false);
@@ -779,9 +761,6 @@ static bool nrf5_tx_at(otRadioFrame *frame, uint8_t *payload, enum ieee802154_tx
 				.use_metadata_value = true,
 				.power = get_transmit_power_for_channel(frame->mChannel),
 			},
-#if defined(CONFIG_NRF5_MULTIPLE_CCA)
-		.extra_cca_attempts = max_extra_cca_attempts,
-#endif
 	};
 
 	/* The timestamp points to the start of PHR but `nrf_802154_transmit_raw_at`
