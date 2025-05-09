@@ -16,6 +16,9 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bt_mgmt_adv, CONFIG_BT_MGMT_ADV_LOG_LEVEL);
 
+struct k_work_q adv_work_q;
+K_THREAD_STACK_DEFINE(adv_work_q_stack_area, CONFIG_BT_MGMT_ADV_STACK_SIZE);
+
 ZBUS_CHAN_DECLARE(bt_mgmt_chan);
 
 #ifndef CONFIG_BT_MAX_PAIRED
@@ -417,7 +420,7 @@ int bt_mgmt_adv_start(uint8_t ext_adv_index, const struct bt_data *adv, size_t a
 			LOG_ERR("No space in the queue for adv_index");
 			return -ENOMEM;
 		}
-		k_work_submit(&adv_work);
+		k_work_submit_to_queue(&adv_work_q, &adv_work);
 
 		return 0;
 	}
@@ -465,7 +468,7 @@ int bt_mgmt_adv_start(uint8_t ext_adv_index, const struct bt_data *adv, size_t a
 		LOG_ERR("No space in the queue for adv_index");
 		return -ENOMEM;
 	}
-	k_work_submit(&adv_work);
+	k_work_submit_to_queue(&adv_work_q, &adv_work);
 
 	return 0;
 }
@@ -473,4 +476,8 @@ int bt_mgmt_adv_start(uint8_t ext_adv_index, const struct bt_data *adv, size_t a
 void bt_mgmt_adv_init(void)
 {
 	k_work_init(&adv_work, advertising_process);
+	k_work_queue_init(&adv_work_q);
+	k_work_queue_start(&adv_work_q, adv_work_q_stack_area,
+			   K_THREAD_STACK_SIZEOF(adv_work_q_stack_area),
+			   CONFIG_BT_MGMT_ADV_THREAD_PRIO, NULL);
 }

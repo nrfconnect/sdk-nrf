@@ -640,6 +640,17 @@ static int init(void)
 
 	LOG_DBG("Bluetooth initialized");
 
+	const struct bt_pacs_register_param pacs_param = {
+		.snk_pac = true,
+		.snk_loc = true,
+	};
+
+	err = bt_pacs_register(&pacs_param);
+	if (err) {
+		LOG_ERR("Could not register PACS (err %d)\n", err);
+		return err;
+	}
+
 	err = bt_pacs_cap_register(BT_AUDIO_DIR_SINK, &cap);
 	if (err) {
 		LOG_DBG("Capability register failed (err %d)", err);
