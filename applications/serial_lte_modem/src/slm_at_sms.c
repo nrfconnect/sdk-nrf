@@ -128,7 +128,7 @@ static int do_sms_start(void)
 
 	if (sms_handle >= 0) {
 		/* already registered */
-		return -EINVAL;
+		return -EBUSY;
 	}
 
 	sms_handle = sms_register_listener(sms_callback, NULL);
@@ -143,11 +143,6 @@ static int do_sms_start(void)
 
 static int do_sms_stop(void)
 {
-	if (sms_handle < 0) {
-		/* not registered yet */
-		return -EINVAL;
-	}
-
 	sms_unregister_listener(sms_handle);
 	sms_handle = -1;
 
@@ -159,8 +154,8 @@ static int do_sms_send(const char *number, const char *message)
 	int err;
 
 	if (sms_handle < 0) {
-		/* not registered yet */
-		return -EINVAL;
+		LOG_ERR("SMS not registered");
+		return -EPERM;
 	}
 
 	err = sms_send_text(number, message);
@@ -205,6 +200,7 @@ static int handle_at_sms(enum at_parser_cmd_type cmd_type, struct at_parser *par
 			err = do_sms_send(number, message);
 		} else {
 			LOG_WRN("Unknown SMS operation: %d", op);
+			err = -EINVAL;
 		}
 		break;
 
