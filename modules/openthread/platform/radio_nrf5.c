@@ -267,11 +267,11 @@ static inline void clear_pending_events(void)
 	atomic_clear(nrf5_data.pending_events);
 }
 
-static int nrf5_cca(void)
+static bool nrf5_cca(void)
 {
 	if (!nrf_802154_cca()) {
 		LOG_DBG("CCA failed");
-		return -EBUSY;
+		return false;
 	}
 
 	/* The nRF driver guarantees that a callback will be called once
@@ -281,7 +281,7 @@ static int nrf5_cca(void)
 
 	LOG_DBG("Channel free? %d", nrf5_data.channel_free);
 
-	return nrf5_data.channel_free ? 0 : -EBUSY;
+	return nrf5_data.channel_free;
 }
 
 static int nrf5_set_channel(uint16_t channel)
@@ -644,7 +644,7 @@ free_nrf_ack:
 	return err;
 }
 
-static bool nrf5_tx_immediate(otRadioFrame *frame, uint8_t *payload, bool cca)
+static bool nrf5_tx_immediate(otRadioFrame *frame, uint8_t *payload)
 {
 	nrf_802154_transmit_metadata_t metadata = {
 		.frame_props =
@@ -652,7 +652,7 @@ static bool nrf5_tx_immediate(otRadioFrame *frame, uint8_t *payload, bool cca)
 				.is_secured = frame->mInfo.mTxInfo.mIsSecurityProcessed,
 				.dynamic_data_is_set = frame->mInfo.mTxInfo.mIsHeaderUpdated,
 			},
-		.cca = cca,
+		.cca = false,
 		.tx_power =
 			{
 				.use_metadata_value = true,
@@ -684,71 +684,15 @@ static bool nrf5_tx_csma_ca(otRadioFrame *frame, uint8_t *payload)
 }
 #endif
 
-// TODO: AG: remove
-enum ieee802154_tx_mode {
-	/** Transmit packet immediately, no CCA. */
-	IEEE802154_TX_MODE_DIRECT,
-
-	/** Perform CCA before packet transmission. */
-	IEEE802154_TX_MODE_CCA,
-
-	/**
-	 * Perform full CSMA/CA procedure before packet transmission.
-	 *
-	 * @note requires IEEE802154_HW_CSMA capability.
-	 */
-	IEEE802154_TX_MODE_CSMA_CA,
-
-	/**
-	 * Transmit packet in the future, at the specified time, no CCA.
-	 *
-	 * @note requires IEEE802154_HW_TXTIME capability.
-	 *
-	 * @note capability IEEE802154_HW_SELECTIVE_TXCHANNEL may apply.
-	 */
-	IEEE802154_TX_MODE_TXTIME,
-
-	/**
-	 * Transmit packet in the future, perform CCA before transmission.
-	 *
-	 * @note requires IEEE802154_HW_TXTIME capability.
-	 *
-	 * @note Required for Thread 1.2 Coordinated Sampled Listening feature
-	 * (see Thread specification 1.2.0, ch. 3.2.6.3).
-	 *
-	 * @note capability IEEE802154_HW_SELECTIVE_TXCHANNEL may apply.
-	 */
-	IEEE802154_TX_MODE_TXTIME_CCA,
-
-	/** Number of modes defined in ieee802154_tx_mode. */
-	IEEE802154_TX_MODE_COMMON_COUNT,
-
-	/** This and higher values are specific to the protocol- or driver-specific extensions. */
-	IEEE802154_TX_MODE_PRIV_START = IEEE802154_TX_MODE_COMMON_COUNT,
-};
-
-static bool nrf5_tx_at(otRadioFrame *frame, uint8_t *payload, enum ieee802154_tx_mode mode)
+static bool nrf5_tx_at(otRadioFrame *frame, uint8_t *payload)
 {
-	bool cca = false;
-
-	switch (mode) {
-	case IEEE802154_TX_MODE_TXTIME:
-		break;
-	case IEEE802154_TX_MODE_TXTIME_CCA:
-		cca = true;
-		break;
-	default:
-		__ASSERT_NO_MSG(false);
-		return false;
-	}
-
 	nrf_802154_transmit_at_metadata_t metadata = {
 		.frame_props =
 			{
 				.is_secured = frame->mInfo.mTxInfo.mIsSecurityProcessed,
 				.dynamic_data_is_set = frame->mInfo.mTxInfo.mIsHeaderUpdated,
 			},
-		.cca = cca,
+		.cca = true,
 		.channel = frame->mChannel,
 		// TODO: AG: selective channel
 		// #if defined(CONFIG_IEEE802154_SELECTIVE_TXCHANNEL)
@@ -772,55 +716,6 @@ static bool nrf5_tx_at(otRadioFrame *frame, uint8_t *payload, enum ieee802154_tx
 		NSEC_PER_USEC);
 
 	return nrf_802154_transmit_raw_at(payload, tx_at, &metadata);
-}
-
-static int nrf5_tx(enum ieee802154_tx_mode mode)
-{
-	otRadioFrame *frame = &sTransmitFrame;
-	bool ret = true;
-
-	if (frame->mLength > MAX_PACKET_SIZE) {
-		LOG_ERR("Payload (with FCS) too large: %d", frame->mLength);
-		return -EMSGSIZE;
-	}
-
-	LOG_DBG("%p (%u)", frame->mPsdu, frame->mLength);
-
-	nrf5_data.tx_psdu[0] = frame->mLength;
-
-	switch (mode) {
-	case IEEE802154_TX_MODE_DIRECT:
-	case IEEE802154_TX_MODE_CCA:
-		ret = nrf5_tx_immediate(frame, nrf5_data.tx_psdu, mode == IEEE802154_TX_MODE_CCA);
-		break;
-#if NRF_802154_CSMA_CA_ENABLED
-	case IEEE802154_TX_MODE_CSMA_CA:
-		ret = nrf5_tx_csma_ca(frame, nrf5_data.tx_psdu);
-		break;
-#endif
-	case IEEE802154_TX_MODE_TXTIME:
-	case IEEE802154_TX_MODE_TXTIME_CCA:
-#if defined(CONFIG_NRF5_MULTIPLE_CCA)
-	case IEEE802154_OPENTHREAD_TX_MODE_TXTIME_MULTIPLE_CCA:
-#endif
-		ret = nrf5_tx_at(frame, nrf5_data.tx_psdu, mode);
-		break;
-	default:
-		LOG_ERR("TX mode %d not supported", mode);
-		return -ENOTSUP;
-	}
-
-	if (!ret) {
-		LOG_ERR("Cannot send frame");
-		return -EIO;
-	}
-
-	set_pending_event(PENDING_EVENT_TX_STARTED);
-
-	LOG_DBG("Sending frame (ch:%d, txpower:%d)", nrf_802154_channel_get(),
-		nrf_802154_tx_power_get());
-
-	return 0;
 }
 
 static otError nrf5_tx_done_cb(nrf_802154_tx_error_t error,
@@ -867,7 +762,18 @@ static inline void handle_tx_done(otInstance *aInstance)
 
 static void transmit_message(void)
 {
-	int error = 1;
+	bool ret = false;
+
+	if (sTransmitFrame.mLength > MAX_PACKET_SIZE) {
+		LOG_ERR("Payload (with FCS) too large: %d", sTransmitFrame.mLength);
+		nrf5_data.tx_result = OT_ERROR_ABORT;
+		set_pending_event(PENDING_EVENT_TX_DONE);
+		return;
+	}
+
+	LOG_DBG("%p (%u)", sTransmitFrame.mPsdu, sTransmitFrame.mLength);
+
+	nrf5_data.tx_psdu[0] = sTransmitFrame.mLength;
 
 #if defined(CONFIG_OPENTHREAD_TIME_SYNC)
 	if (sTransmitFrame.mInfo.mTxInfo.mIeInfo->mTimeIeOffset != 0) {
@@ -881,28 +787,46 @@ static void transmit_message(void)
 	}
 #endif
 
+	// TODO: fix setting channel
 	nrf5_set_channel(sTransmitFrame.mChannel);
 
 	if ((nrf5_data.capabilities & OT_RADIO_CAPS_TRANSMIT_TIMING) &&
 	    (sTransmitFrame.mInfo.mTxInfo.mTxDelay != 0)) {
-		error = nrf5_tx(IEEE802154_TX_MODE_TXTIME_CCA);
+		ret = nrf5_tx_at(&sTransmitFrame, nrf5_data.tx_psdu);
 	} else if (sTransmitFrame.mInfo.mTxInfo.mCsmaCaEnabled) {
+		// TODO: AG:
+		// nrf_802154_max_num_csma_ca_backoffs_set(aFrame->mInfo.mTxInfo.mMaxCsmaBackoffs);
+
+		// TODO: AG: can we remove this?
 		if (nrf5_data.capabilities & OT_RADIO_CAPS_CSMA_BACKOFF) {
-			error = nrf5_tx(IEEE802154_TX_MODE_CSMA_CA);
+			ret = nrf5_tx_csma_ca(&sTransmitFrame, nrf5_data.tx_psdu);
 		} else {
-			// TODO: AG:
-			// nrf_802154_max_num_csma_ca_backoffs_set(aFrame->mInfo.mTxInfo.mMaxCsmaBackoffs);
 			// TODO: AG: blocking
-			error = nrf5_cca();
-			if (error == 0) {
-				error = nrf5_tx(IEEE802154_TX_MODE_DIRECT);
+			ret = nrf5_cca();
+
+			if (!ret) {
+				nrf5_data.tx_result = OT_ERROR_CHANNEL_ACCESS_FAILURE;
+				set_pending_event(PENDING_EVENT_TX_DONE);
+				return;
 			}
+
+			ret = nrf5_tx_immediate(&sTransmitFrame, nrf5_data.tx_psdu);
 		}
 	} else {
-		error = nrf5_tx(IEEE802154_TX_MODE_DIRECT);
+		ret = nrf5_tx_immediate(&sTransmitFrame, nrf5_data.tx_psdu);
 	}
 
-	__ASSERT_NO_MSG(error == 0);
+	if (!ret) {
+		LOG_ERR("Cannot send frame");
+		nrf5_data.tx_result = OT_ERROR_ABORT;
+		set_pending_event(PENDING_EVENT_TX_DONE);
+		return;
+	}
+
+	set_pending_event(PENDING_EVENT_TX_STARTED);
+
+	LOG_DBG("Sending frame (ch:%d, txpower:%d)", nrf_802154_channel_get(),
+		nrf_802154_tx_power_get());
 }
 
 void platformRadioProcess(otInstance *aInstance)
