@@ -193,12 +193,6 @@ struct nrf5_data {
 	/* Radio capabilities */
 	otRadioCaps capabilities;
 
-	/* Indicates if currently processed TX frame is secured. */
-	bool tx_frame_is_secured;
-
-	/* Indicates if currently processed TX frame has dynamic data updated. */
-	bool tx_frame_mac_hdr_rdy;
-
 #if defined(CONFIG_NRF5_MULTIPLE_CCA)
 	/* The maximum number of extra CCA attempts to be performed before transmission. */
 	uint8_t max_extra_cca_attempts;
@@ -212,7 +206,7 @@ struct nrf5_data {
 	uint8_t tx_psdu[PHR_SIZE + MAX_PACKET_SIZE];
 
 	/* TX result, updated in radio transmit callbacks. */
-	uint8_t tx_result;
+	otError tx_result;
 
 	/* A buffer for the received ACK frame. psdu pointer be NULL if no
 	 * ACK was requested/received.
@@ -852,12 +846,10 @@ static int nrf5_tx(enum ieee802154_tx_mode mode)
 	return 0;
 }
 
-// TODO: add arguments
-static otError nrf5_tx_done_cb(void)
+static otError nrf5_tx_done_cb(nrf_802154_tx_error_t error,
+			       const nrf_802154_transmit_done_metadata_t *metadata)
 {
-	otRadioFrame *frame = &sTransmitFrame;
-
-	LOG_DBG("Result: %d", nrf5_data.tx_result);
+	LOG_DBG("Result: %u", error);
 
 #if defined(CONFIG_NRF_802154_ENCRYPTION)
 	/*
@@ -870,13 +862,13 @@ static otError nrf5_tx_done_cb(void)
 	 * 2) frame counters are updated in place and for keeping the link frame counter up to date,
 	 *    this information must be propagated back to the upper layer
 	 */
-	memcpy(frame->mPsdu, nrf5_data.tx_psdu + 1, frame->mLength);
+	memcpy(sTransmitFrame.mPsdu, nrf5_data.tx_psdu + 1, sTransmitFrame.mLength);
 #endif
 
-	frame->mInfo.mTxInfo.mIsSecurityProcessed = nrf5_data.tx_frame_is_secured;
-	frame->mInfo.mTxInfo.mIsHeaderUpdated = nrf5_data.tx_frame_mac_hdr_rdy;
+	sTransmitFrame.mInfo.mTxInfo.mIsSecurityProcessed = metadata->frame_props.is_secured;
+	sTransmitFrame.mInfo.mTxInfo.mIsHeaderUpdated = metadata->frame_props.dynamic_data_is_set;
 
-	switch (nrf5_data.tx_result) {
+	switch (error) {
 	case NRF_802154_TX_ERROR_NONE:
 		if (nrf5_data.ack_frame.psdu == NULL) {
 			/* No ACK was requested. */
@@ -901,9 +893,6 @@ static otError nrf5_tx_done_cb(void)
 
 static inline void handle_tx_done(otInstance *aInstance)
 {
-	sTransmitFrame.mInfo.mTxInfo.mIsSecurityProcessed = nrf5_data.tx_frame_is_secured;
-	sTransmitFrame.mInfo.mTxInfo.mIsHeaderUpdated = nrf5_data.tx_frame_mac_hdr_rdy;
-
 	if (IS_ENABLED(CONFIG_OPENTHREAD_DIAG) && otPlatDiagModeGet()) {
 		otPlatDiagRadioTransmitDone(aInstance, &sTransmitFrame, nrf5_data.tx_result);
 	} else {
@@ -913,9 +902,9 @@ static inline void handle_tx_done(otInstance *aInstance)
 	}
 }
 
-static int transmit_message(void)
+static void transmit_message(void)
 {
-	int err;
+	int error = 1;
 
 #if defined(CONFIG_OPENTHREAD_TIME_SYNC)
 	if (sTransmitFrame.mInfo.mTxInfo.mIeInfo->mTimeIeOffset != 0) {
@@ -929,30 +918,28 @@ static int transmit_message(void)
 	}
 #endif
 
-	nrf5_data.tx_frame_is_secured = sTransmitFrame.mInfo.mTxInfo.mIsSecurityProcessed;
-	nrf5_data.tx_frame_mac_hdr_rdy = sTransmitFrame.mInfo.mTxInfo.mIsHeaderUpdated;
-
 	nrf5_set_channel(sTransmitFrame.mChannel);
 
 	if ((nrf5_data.capabilities & OT_RADIO_CAPS_TRANSMIT_TIMING) &&
 	    (sTransmitFrame.mInfo.mTxInfo.mTxDelay != 0)) {
-		err = nrf5_tx(IEEE802154_TX_MODE_TXTIME_CCA);
+		error = nrf5_tx(IEEE802154_TX_MODE_TXTIME_CCA);
 	} else if (sTransmitFrame.mInfo.mTxInfo.mCsmaCaEnabled) {
 		if (nrf5_data.capabilities & OT_RADIO_CAPS_CSMA_BACKOFF) {
-			err = nrf5_tx(IEEE802154_TX_MODE_CSMA_CA);
+			error = nrf5_tx(IEEE802154_TX_MODE_CSMA_CA);
 		} else {
+			// TODO: AG:
+			// nrf_802154_max_num_csma_ca_backoffs_set(aFrame->mInfo.mTxInfo.mMaxCsmaBackoffs);
 			// TODO: AG: blocking
-			err = nrf5_cca();
-			if (err == 0) {
-				err = nrf5_tx(IEEE802154_TX_MODE_DIRECT);
+			error = nrf5_cca();
+			if (error == 0) {
+				error = nrf5_tx(IEEE802154_TX_MODE_DIRECT);
 			}
 		}
 	} else {
-		err = nrf5_tx(IEEE802154_TX_MODE_DIRECT);
+		error = nrf5_tx(IEEE802154_TX_MODE_DIRECT);
 	}
 
-	// TODO: AG: handle error
-	return err;
+	__ASSERT_NO_MSG(error == 0);
 }
 
 void platformRadioProcess(otInstance *aInstance)
@@ -1873,9 +1860,6 @@ void nrf_802154_transmitted_raw(uint8_t *frame, const nrf_802154_transmit_done_m
 {
 	ARG_UNUSED(frame);
 
-	nrf5_data.tx_result = NRF_802154_TX_ERROR_NONE;
-	nrf5_data.tx_frame_is_secured = metadata->frame_props.is_secured;
-	nrf5_data.tx_frame_mac_hdr_rdy = metadata->frame_props.dynamic_data_is_set;
 	nrf5_data.ack_frame.psdu = metadata->data.transmitted.p_ack;
 
 	if (nrf5_data.ack_frame.psdu) {
@@ -1892,7 +1876,7 @@ void nrf_802154_transmitted_raw(uint8_t *frame, const nrf_802154_transmit_done_m
 		}
 	}
 
-	nrf5_data.tx_result = nrf5_tx_done_cb();
+	nrf5_data.tx_result = nrf5_tx_done_cb(NRF_802154_TX_ERROR_NONE, metadata);
 
 	set_pending_event(PENDING_EVENT_TX_DONE);
 }
@@ -1902,11 +1886,7 @@ void nrf_802154_transmit_failed(uint8_t *frame, nrf_802154_tx_error_t error,
 {
 	ARG_UNUSED(frame);
 
-	nrf5_data.tx_result = error;
-	nrf5_data.tx_frame_is_secured = metadata->frame_props.is_secured;
-	nrf5_data.tx_frame_mac_hdr_rdy = metadata->frame_props.dynamic_data_is_set;
-
-	nrf5_data.tx_result = nrf5_tx_done_cb();
+	nrf5_data.tx_result = nrf5_tx_done_cb(error, metadata);
 
 	set_pending_event(PENDING_EVENT_TX_DONE);
 }
