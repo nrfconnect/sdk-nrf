@@ -226,6 +226,8 @@ Serial LTE modem
 
   * The ``AT#XPPP`` command to support the CID parameter to specify the PDN connection used for PPP.
   * The ``#XPPP`` notification to include the CID of the PDN connection used for PPP.
+  * The initialization of the application to ignore a failure in nRF Cloud module initialization.
+    This occurs sometimes especially during development.
 
 Thingy:53: Matter weather station
 ---------------------------------
