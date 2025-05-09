@@ -46,6 +46,8 @@ then update this error
 #define PK_BUSY_MASK_BA414EP 0x00010000
 #define PK_BUSY_MASK_IK	     0x00050000
 
+#define IK_ENTROPY_ERROR     0xc6
+
 struct sx_pk_cnx {
 	struct sx_pk_req instance;
 	struct sx_pk_capabilities caps;
@@ -105,7 +107,15 @@ int sx_pk_wait(sx_pk_req *req)
 		if (!sx_pk_is_ik_cmd(req)) {
 			cracen_wait_for_pke_interrupt();
 		}
+#elif CONFIG_CRACEN_HW_VERSION_LITE
+		/* In CRACEN Lite the IKG sometimes fails due to an entropy error.
+		 * Error code is returned here so the entire operation can be rerun
+		 */
+		if (sx_pk_rdreg(&req->regs, IK_REG_STATUS) == IK_ENTROPY_ERROR) {
+			return SX_ERR_RETRY;
+		}
 #endif
+
 	} while (is_busy(req));
 
 	return read_status(req);
