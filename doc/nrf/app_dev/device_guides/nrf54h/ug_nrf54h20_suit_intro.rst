@@ -24,7 +24,7 @@ See the :ref:`ug_nrf54h20_suit_manifest_overview` page to read more about the co
 
 The nRF54H Series contains multiple CPUs with one dedicated CPU for the Secure Domain.
 The Secure Domain CPU firmware is validated and started by the Secure Domain ROM.
-When it starts execution, it continues the SoC boot sequence according to the manifest(s).
+When it starts execution, it continues the SoC boot sequence according to the manifests.
 The local domain CPU firmware images are validated and started by the Secure Domain as instructed by the manifest.
 
 Once the invocation process is complete, the SDFW is still active and may serve specific requests from specified domains.
@@ -69,7 +69,7 @@ For example, to copy code or a data payload from the source component to the spe
 Condition
 ---------
 
-A test that passes or fails for a specific property of the recipient device or its component(s).
+A test that passes or fails for a specific property of the recipient device or its components.
 For example, to ensure that the digest of the code or data in a specific component is equal to the expected value.
 
 Envelope

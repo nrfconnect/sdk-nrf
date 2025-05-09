@@ -39,7 +39,12 @@ While the board name is always present, other elements, such as the board revisi
 
 * :ref:`CPU cluster <zephyr:glossary>` - You can use this board qualifier to build for a group of one or more CPU cores, all executing the same image within the same address space and in a symmetrical (SMP) configuration.
   The CPU cluster board qualifier varies depending on the SoC and SoC Series.
-  For example, :ref:`building <building>` for the ``thingy53/nrf5340/cpunet`` board target builds the network core firmware for Nordic Thingy:53, building for ``nrf54h20dk/nrf54h20/cpuapp`` builds the application core firmware for the nRF54H20 DK, building for ``nrf54h20dk/nrf54h20/cpurad`` builds the radio core firmware for the nRF54H20 DK, and so on.
+  See the following examples:
+
+  * :ref:`Building <building>` for the ``thingy53/nrf5340/cpunet`` board target builds the network core firmware for Nordic Thingy:53.
+  * Building for ``nrf54h20dk/nrf54h20/cpuapp`` builds the application core firmware for the nRF54H20 DK.
+  * Building for ``nrf54h20dk/nrf54h20/cpurad`` builds the radio core firmware for the nRF54H20 DK.
+
   Check the Product Specification of the given SoC for more information about the available CPU clusters.
 
 * :ref:`Variant <zephyr:glossary>` - You can use this board qualifier to build for a particular type or configuration of a build for a combination of SoC and CPU cluster.

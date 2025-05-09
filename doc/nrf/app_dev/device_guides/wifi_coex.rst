@@ -311,7 +311,7 @@ To add a custom coexistence implementation, complete following steps:
 #. Extend the Kconfig choice :kconfig:option:`CONFIG_MPSL_CX_CHOICE` with a Kconfig option allowing to select the new coex implementation.
 #. Write the implementation for your PTA.
    See the :file:`nrf/subsys/mpsl/cx/3wire/mpsl_cx_3wire.c` file for an example.
-   Add the C source file(s) with the implementation, which must contain the following parts:
+   Add the C source files with the implementation, which must contain the following parts:
 
    * The implementation of the functions required by the interface structure :c:struct:`mpsl_cx_interface_t`.
      Refer to :ref:`MPSL CX API <mpsl_api_sr_cx>` for details.
