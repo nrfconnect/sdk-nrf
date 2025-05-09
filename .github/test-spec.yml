@@ -126,6 +126,7 @@
   - "include/modem/pdn.h"
   - "include/modem/at_params.h"
   - "include/modem/modem_key_mgmt.h"
+  - "subsys/dfu/dfu_target/**/*"
 
 "CI-dfu-test":
   - "include/bl*"
