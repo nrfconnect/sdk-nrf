@@ -658,6 +658,7 @@ static bool nrf5_tx_immediate(otRadioFrame *frame, uint8_t *payload)
 				.use_metadata_value = true,
 				.power = get_transmit_power_for_channel(frame->mChannel),
 			},
+		.tx_channel = {.use_metadata_value = true, .channel = frame->mChannel},
 	};
 
 	return nrf_802154_transmit_raw(payload, &metadata);
@@ -676,7 +677,8 @@ static bool nrf5_tx_csma_ca(otRadioFrame *frame, uint8_t *payload)
 			{
 				.use_metadata_value = true,
 				.power = get_transmit_power_for_channel(frame->mChannel),
-			}
+			},
+		.tx_channel = {.use_metadata_value = true, .channel = frame->mChannel},
 
 	};
 
@@ -786,9 +788,6 @@ static void transmit_message(void)
 		sys_put_le64(offset_plat_time, time_ie);
 	}
 #endif
-
-	// TODO: fix setting channel
-	nrf5_set_channel(sTransmitFrame.mChannel);
 
 	if ((nrf5_data.capabilities & OT_RADIO_CAPS_TRANSMIT_TIMING) &&
 	    (sTransmitFrame.mInfo.mTxInfo.mTxDelay != 0)) {
