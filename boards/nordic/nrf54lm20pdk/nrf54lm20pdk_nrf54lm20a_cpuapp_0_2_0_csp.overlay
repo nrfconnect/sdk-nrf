@@ -46,10 +46,6 @@
 	};
 };
 
-&hfpll {
-	clock-frequency = <DT_FREQ_M(128)>;
-};
-
 &pinctrl {
 	/omit-if-no-ref/ uart20_default: uart20_default {
 		group1 {
