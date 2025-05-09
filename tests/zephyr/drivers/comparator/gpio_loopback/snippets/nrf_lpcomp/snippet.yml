@@ -13,3 +13,6 @@ boards:
   nrf54lv10apdk/nrf54lv10a/cpuapp:
     append:
       EXTRA_DTC_OVERLAY_FILE: boards/nrf54lv10apdk_nrf54lv10a_cpuapp.overlay
+  nrf54lm20apdk@0.2.0.csp/nrf54lm20a/cpuapp:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf54lm20apdk_nrf54lm20a_cpuapp_0_2_0_csp.overlay
