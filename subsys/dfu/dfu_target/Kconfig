@@ -152,6 +152,11 @@ config DFU_TARGET_REBOOT_RESET_DELAY_MS
 
 endif # DFU_TARGET_SUIT
 
+config DFU_TARGET_CUSTOM
+	bool "Custom application-controlled update support"
+	help
+	  Enable support for custom updates using DFU target
+
 module=DFU_TARGET
 module-dep=LOG
 module-str=Device Firmware Upgrade
