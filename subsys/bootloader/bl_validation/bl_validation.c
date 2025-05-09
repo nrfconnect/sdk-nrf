@@ -37,7 +37,7 @@ int set_monotonic_version(counter_t version, uint16_t slot)
 
 	if (num_cnt_slots == 0) {
 		LOG_ERR("Monotonic version counter is disabled.");
-		return -EINVAL;
+		return -ENOENT;
 	}
 
 	err = set_monotonic_counter(BL_MONOTONIC_COUNTERS_DESC_NSIB, (version << 1) | !slot);
