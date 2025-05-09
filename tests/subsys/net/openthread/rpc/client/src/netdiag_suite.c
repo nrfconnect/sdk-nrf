@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "mocks.h"
+
 #include <mock_nrf_rpc_transport.h>
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
@@ -121,6 +123,7 @@ static void fake_handle_receive_diagnostic_get(otError error, otMessage *message
 	otIp6Address expected_soc_addr = {.mFields.m8 = {ADDR_1}};
 	otIp6Address expected_peer_addr = {.mFields.m8 = {ADDR_2}};
 
+	zassert_true(ot_rpc_is_mutex_locked());
 	zassert_equal(error, OT_ERROR_NONE);
 	zassert_equal((ot_rpc_res_tab_key)message, RESOURCE_TABLE_KEY);
 	zassert_mem_equal(message_info->mSockAddr.mFields.m8, expected_soc_addr.mFields.m8,

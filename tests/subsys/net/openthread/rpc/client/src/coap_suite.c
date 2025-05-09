@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "mocks.h"
+
 #include <mock_nrf_rpc_transport.h>
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
@@ -260,6 +262,15 @@ ZTEST(ot_rpc_coap, test_otCoapStop)
 	zassert_equal(error, OT_ERROR_INVALID_STATE);
 }
 
+static void verify_coap_handler_locked(void *ctx, otMessage *msg, const otMessageInfo *msg_info)
+{
+	ARG_UNUSED(ctx);
+	ARG_UNUSED(msg);
+	ARG_UNUSED(msg_info);
+
+	zassert_true(ot_rpc_is_mutex_locked());
+}
+
 /* Test serialization of otCoapAddResource() and otCoapRemoveResource() */
 ZTEST(ot_rpc_coap, test_otCoapAddResource_otCoapRemoveResource)
 {
@@ -279,6 +290,7 @@ ZTEST(ot_rpc_coap, test_otCoapAddResource_otCoapRemoveResource)
 
 	/* Test remote call of the resource handler */
 	RESET_FAKE(ot_coap_handler);
+	ot_coap_handler_fake.custom_fake = verify_coap_handler_locked;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_COAP_RESOURCE_HANDLER, CBOR_LONG_URI,
@@ -288,6 +300,7 @@ ZTEST(ot_rpc_coap, test_otCoapAddResource_otCoapRemoveResource)
 	zassert_equal(ot_coap_handler_fake.call_count, 1);
 	zassert_equal(ot_coap_handler_fake.arg0_val, (void *)(UINT32_MAX - 1));
 	zassert_equal(ot_coap_handler_fake.arg1_val, (otMessage *)MSG_ADDR);
+	zassert_not_null(ot_coap_handler_fake.arg2_val);
 
 	/* Test serialization of otCoapRemoveResource() */
 	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_COAP_REMOVE_RESOURCE, CBOR_LONG_URI),
@@ -307,6 +320,7 @@ ZTEST(ot_rpc_coap, test_otCoapSetDefaultHandler)
 
 	/* Test remote call of the default handler */
 	RESET_FAKE(ot_coap_handler);
+	ot_coap_handler_fake.custom_fake = verify_coap_handler_locked;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
 	mock_nrf_rpc_tr_receive(
@@ -316,12 +330,24 @@ ZTEST(ot_rpc_coap, test_otCoapSetDefaultHandler)
 	zassert_equal(ot_coap_handler_fake.call_count, 1);
 	zassert_equal(ot_coap_handler_fake.arg0_val, (void *)(UINT32_MAX - 1));
 	zassert_equal(ot_coap_handler_fake.arg1_val, (otMessage *)MSG_ADDR);
+	zassert_not_null(ot_coap_handler_fake.arg2_val);
 
 	/* Test serialization of otCoapSetDefaultHandler() that takes null handler */
 	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_COAP_SET_DEFAULT_HANDLER, CBOR_FALSE),
 				   RPC_RSP());
 	otCoapSetDefaultHandler(NULL, NULL, NULL);
 	mock_nrf_rpc_tr_expect_done();
+}
+
+static void verify_coap_response_handler_locked(void *ctx, otMessage *msg,
+						const otMessageInfo *msg_info, otError error)
+{
+	ARG_UNUSED(ctx);
+	ARG_UNUSED(msg);
+	ARG_UNUSED(msg_info);
+	ARG_UNUSED(error);
+
+	zassert_true(ot_rpc_is_mutex_locked());
 }
 
 /* Test serialization of otCoapSendRequest() returning OT_ERROR_NONE */
@@ -354,6 +380,7 @@ ZTEST(ot_rpc_coap, test_otCoapSendRequest)
 
 	/* Test remote call of the resource handler */
 	RESET_FAKE(ot_coap_response_handler);
+	ot_coap_response_handler_fake.custom_fake = verify_coap_response_handler_locked;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_COAP_RESPONSE_HANDLER, request_rep,
@@ -364,6 +391,7 @@ ZTEST(ot_rpc_coap, test_otCoapSendRequest)
 	zassert_equal(ot_coap_response_handler_fake.call_count, 1);
 	zassert_equal(ot_coap_response_handler_fake.arg0_val, (void *)(UINT32_MAX - 1));
 	zassert_equal(ot_coap_response_handler_fake.arg1_val, (otMessage *)MSG_ADDR);
+	zassert_not_null(ot_coap_response_handler_fake.arg2_val);
 	zassert_equal(ot_coap_response_handler_fake.arg3_val, OT_ERROR_RESPONSE_TIMEOUT);
 
 	zassert_equal(error, OT_ERROR_NONE);

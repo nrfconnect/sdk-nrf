@@ -8,6 +8,7 @@
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_lock.h>
 #include "ot_rpc_resource.h"
 
 #include <nrf_rpc_cbor.h>
@@ -37,9 +38,9 @@ static void ot_rpc_cmd_get_next_ip6_address(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otMeshDiagGetNextIp6Address(iterator, &address);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	if (error != OT_ERROR_NONE) {
 		nrf_rpc_rsp_send_uint(group, error);
@@ -73,9 +74,9 @@ static void ot_rpc_cmd_get_next_child_info(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otMeshDiagGetNextChildInfo(iterator, &child_info);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	if (error != OT_ERROR_NONE) {
 		nrf_rpc_rsp_send_uint(group, error);
@@ -184,11 +185,11 @@ static void ot_rpc_cmd_mesh_diag_discover_topology(const struct nrf_rpc_group *g
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otMeshDiagDiscoverTopology(openthread_get_default_instance(),
 					   &mesh_diag_discover_config, handle_mesh_diag_discover,
 					   NULL);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, error);
 }
@@ -198,9 +199,9 @@ static void ot_rpc_cmd_mesh_diag_cancel(const struct nrf_rpc_group *group,
 {
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	otMeshDiagCancel(openthread_get_default_instance());
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_void(group);
 }

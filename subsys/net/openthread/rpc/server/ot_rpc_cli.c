@@ -7,6 +7,7 @@
 #include <nrf_rpc/nrf_rpc_serialize.h>
 #include <ot_rpc_ids.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_lock.h>
 
 #include <nrf_rpc_cbor.h>
 
@@ -45,9 +46,9 @@ static void ot_rpc_cmd_cli_init(const struct nrf_rpc_group *group, struct nrf_rp
 {
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	otCliInit(openthread_get_default_instance(), ot_cli_output_callback, NULL /* aContext*/);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_void(group);
 }
@@ -93,9 +94,9 @@ static void ot_rpc_cmd_cli_input_line(const struct nrf_rpc_group *group,
 		nrf_rpc_rsp_send_void(group);
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	otCliInputLine(buffer);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 	free(buffer);
 
 	if (!reply_before_exec) {

@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "mocks.h"
+
 #include <mock_nrf_rpc_transport.h>
 #include <nrf_rpc/nrf_rpc_cbkproxy.h>
 #include <ot_rpc_ids.h>
@@ -198,6 +200,7 @@ ZTEST(ot_rpc_dns_client, test_otDnsClientResolveIp4Address)
 static void verify_resolve_callback_args(otError error, const otDnsAddressResponse *response,
 					 void *context)
 {
+	zassert_true(ot_rpc_is_mutex_locked());
 	zassert_equal(error, 0);
 	zassert_equal(response, (const otDnsAddressResponse *)0xFACEFACE);
 	zassert_equal(context, (void *)UINT32_MAX);
@@ -369,6 +372,7 @@ ZTEST(ot_rpc_dns_client, test_otDnsClientBrowse)
 static void verify_browse_callback_args(otError error, const otDnsBrowseResponse *response,
 					void *context)
 {
+	zassert_true(ot_rpc_is_mutex_locked());
 	zassert_equal(error, 0);
 	zassert_equal(response, (const otDnsBrowseResponse *)0xFACEFACE);
 	zassert_equal(context, (void *)UINT32_MAX);
@@ -719,6 +723,7 @@ ZTEST(ot_rpc_dns_client, test_otDnsClientResolveServiceAndHostAddress)
 static void verify_service_callback_args(otError error, const otDnsServiceResponse *response,
 					 void *context)
 {
+	zassert_true(ot_rpc_is_mutex_locked());
 	zassert_equal(error, 0);
 	zassert_equal(response, (const otDnsServiceResponse *)0xFACEFACE);
 	zassert_equal(context, (void *)UINT32_MAX);

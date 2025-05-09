@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "mocks.h"
+
 #include "openthread/ip6.h"
 #include "openthread/message.h"
 #include <mock_nrf_rpc_transport.h>
@@ -196,6 +198,16 @@ ZTEST(ot_rpc_udp, test_otUdpSend_invalid)
 
 FAKE_VOID_FUNC(handle_udp_receive, void *, otMessage *, const otMessageInfo *);
 
+static void verify_handle_udp_receive_locked(void *ctx, otMessage *msg,
+					     const otMessageInfo *msg_info)
+{
+	ARG_UNUSED(ctx);
+	ARG_UNUSED(msg);
+	ARG_UNUSED(msg_info);
+
+	zassert_true(ot_rpc_is_mutex_locked());
+}
+
 ZTEST(ot_rpc_udp, test_udp_receive)
 {
 	otError error;
@@ -219,6 +231,7 @@ ZTEST(ot_rpc_udp, test_udp_receive)
 	mock_nrf_rpc_tr_expect_done();
 
 	RESET_FAKE(handle_udp_receive);
+	handle_udp_receive_fake.custom_fake = verify_handle_udp_receive_locked;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_UDP_RECEIVE_CB,

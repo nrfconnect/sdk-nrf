@@ -11,6 +11,7 @@
 #include <ot_rpc_common.h>
 #include <ot_rpc_ids.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_lock.h>
 
 static otDnsQueryConfig default_config;
 
@@ -404,11 +405,13 @@ static void ot_rpc_dns_address_cb_rpc_handler(const struct nrf_rpc_group *group,
 	decode_dns_callback(ctx, &error, (const void **)&response, (void **)&callback, &context);
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
+	ot_rpc_mutex_lock();
 
 	if (callback) {
 		callback(error, response, context);
 	}
 
+	ot_rpc_mutex_unlock();
 	nrf_rpc_rsp_send_void(group);
 }
 
@@ -426,11 +429,13 @@ static void ot_rpc_dns_browse_cb_rpc_handler(const struct nrf_rpc_group *group,
 	decode_dns_callback(ctx, &error, (const void **)&response, (void **)&callback, &context);
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
+	ot_rpc_mutex_lock();
 
 	if (callback) {
 		callback(error, response, context);
 	}
 
+	ot_rpc_mutex_unlock();
 	nrf_rpc_rsp_send_void(group);
 }
 
@@ -448,11 +453,13 @@ static void ot_rpc_dns_service_cb_rpc_handler(const struct nrf_rpc_group *group,
 	decode_dns_callback(ctx, &error, (const void **)&response, (void **)&callback, &context);
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
+	ot_rpc_mutex_lock();
 
 	if (callback) {
 		callback(error, response, context);
 	}
 
+	ot_rpc_mutex_unlock();
 	nrf_rpc_rsp_send_void(group);
 }
 

@@ -7,6 +7,7 @@
 #include <ot_rpc_common.h>
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
+#include <ot_rpc_lock.h>
 #include <nrf_rpc/nrf_rpc_serialize.h>
 
 #include <nrf_rpc_cbor.h>
@@ -582,10 +583,13 @@ static void ot_rpc_cmd_srp_client_cb(const struct nrf_rpc_group *group,
 		return;
 	}
 
+	ot_rpc_mutex_lock();
+
 	if (client_cb != NULL) {
 		client_cb(error, &host_info, services, removed_services, client_ctx);
 	}
 
+	ot_rpc_mutex_unlock();
 	nrf_rpc_rsp_send_void(group);
 }
 
@@ -605,10 +609,13 @@ static void ot_rpc_cmd_srp_client_auto_start_cb(const struct nrf_rpc_group *grou
 		return;
 	}
 
+	ot_rpc_mutex_lock();
+
 	if (auto_start_cb != NULL) {
 		auto_start_cb(&addr, auto_start_ctx);
 	}
 
+	ot_rpc_mutex_unlock();
 	nrf_rpc_rsp_send_void(group);
 }
 

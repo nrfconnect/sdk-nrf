@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "mocks.h"
+
 #include <mock_nrf_rpc_transport.h>
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
@@ -236,6 +238,19 @@ ZTEST(ot_rpc_srp_client, test_otSrpClientAddService_otSrpClientClearService)
 	zassert_equal(error, OT_ERROR_NOT_FOUND);
 }
 
+static void verify_ot_srp_client_cb_locked(otError error, const otSrpClientHostInfo *host,
+					   const otSrpClientService *services,
+					   const otSrpClientService *removed, void *context)
+{
+	ARG_UNUSED(error);
+	ARG_UNUSED(host);
+	ARG_UNUSED(services);
+	ARG_UNUSED(removed);
+	ARG_UNUSED(context);
+
+	zassert_true(ot_rpc_is_mutex_locked());
+}
+
 /* Test serialization of otSrpClientAddService() and SRP client callback */
 ZTEST(ot_rpc_srp_client, test_otSrpClientAddService_callback)
 {
@@ -289,6 +304,7 @@ ZTEST(ot_rpc_srp_client, test_otSrpClientAddService_callback)
 
 	/* Test remote call of the client callback that reports registered host & service */
 	RESET_FAKE(ot_srp_client_cb);
+	ot_srp_client_cb_fake.custom_fake = verify_ot_srp_client_cb_locked;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(
@@ -307,6 +323,7 @@ ZTEST(ot_rpc_srp_client, test_otSrpClientAddService_callback)
 
 	/* Test remote call of the client callback that reports removed service */
 	RESET_FAKE(ot_srp_client_cb);
+	ot_srp_client_cb_fake.custom_fake = verify_ot_srp_client_cb_locked;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(
@@ -363,6 +380,7 @@ ZTEST(ot_rpc_srp_client, test_otSrpClientEnableAutoHostAddress)
 
 static void ot_srp_client_auto_start_cb_custom(const otSockAddr *addr, void *context)
 {
+	zassert_true(ot_rpc_is_mutex_locked());
 	zassert_not_null(addr);
 	zexpect_mem_equal(addr->mAddress.mFields.m8, (uint8_t[]){ADDR_1}, OT_IP6_ADDRESS_SIZE);
 	zexpect_equal(addr->mPort, PORT_1);
