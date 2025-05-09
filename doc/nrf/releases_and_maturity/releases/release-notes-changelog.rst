@@ -280,6 +280,9 @@ Cellular samples
 
   * The sample is no longer maintained and is now deprecated.
 
+* :ref:`nrf_cloud_multi_service` sample:
+
+  * Added support for native simulator platform and updated the documentation accordingly.
 
 Cryptography samples
 --------------------
