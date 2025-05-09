@@ -32,6 +32,6 @@ uint32_t audio_sync_timer_capture(void);
  *
  * @retval The last captured timestamp of the audio sync timer.
  */
-uint32_t audio_sync_timer_capture_get(void);
+uint32_t audio_sync_timer_frame_start_capture_get(void);
 
 #endif /* _AUDIO_SYNC_TIMER_H_ */
