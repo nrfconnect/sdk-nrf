@@ -21,13 +21,14 @@
 #include <zephyr/sys/ring_buffer.h>
 LOG_MODULE_REGISTER(slm_at_host, CONFIG_SLM_LOG_LEVEL);
 
-#define SLM_SYNC_STR    "Ready\r\n"
-#define OK_STR		"\r\nOK\r\n"
-#define ERROR_STR	"\r\nERROR\r\n"
-#define CRLF_STR	"\r\n"
-#define CR		'\r'
-#define LF		'\n'
-#define HEXDUMP_LIMIT   16
+#define SLM_SYNC_STR     "Ready\r\n"
+#define SLM_SYNC_ERR_STR "INIT ERROR\r\n"
+#define OK_STR		 "\r\nOK\r\n"
+#define ERROR_STR	 "\r\nERROR\r\n"
+#define CRLF_STR	 "\r\n"
+#define CR		 '\r'
+#define LF		 '\n'
+#define HEXDUMP_LIMIT    16
 
 /* Operation mode variables */
 enum slm_operation_mode {
@@ -909,16 +910,21 @@ int slm_at_host_init(void)
 	at_mode = SLM_AT_COMMAND_MODE;
 	k_mutex_unlock(&mutex_mode);
 
-	err = slm_at_init();
-	if (err) {
-		return -EFAULT;
-	}
-
 	k_work_init(&raw_send_scheduled_work, raw_send_scheduled);
 
 	err = slm_uart_handler_enable();
 	if (err) {
 		return err;
+	}
+
+	err = slm_at_init();
+	if (err) {
+		/* Send "INIT ERROR" string to indicate that AT host init failed */
+		err = slm_at_send_str(SLM_SYNC_ERR_STR);
+		if (err) {
+			return err;
+		}
+		return -EFAULT;
 	}
 
 	if (!IS_ENABLED(CONFIG_SLM_SKIP_READY_MSG)) {

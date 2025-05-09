@@ -671,7 +671,13 @@ If you have an nRF52 Series DK running a client application, you can also use th
 #. Observe that the development kit sends a ``Ready\r\n`` message on UART.
 #. Send AT commands and observe the responses from the development kit.
 
-   See :ref:`slm_testing` for typical test cases.
+See :ref:`slm_testing` for typical test cases.
+
+.. note::
+
+   If the initialization of SLM fails, the application sends an ``INIT ERROR\r\n`` message on UART if it has managed to enable UART.
+   See the logs for more information about the error.
+   The logs are written to RTT by default.
 
 .. _slm_carrier_library_support:
 
