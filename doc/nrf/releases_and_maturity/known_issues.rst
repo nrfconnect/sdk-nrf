@@ -2307,6 +2307,7 @@ The issues in this section are related to the :ref:`nrf53_audio_app` application
 
 OCT-3368: For 16 and 24 kHz, the application may repeatedly print "audio_sync_timer: Unable to get new CC value"
   This may cause degraded audio quality.
+  This issue is a related to issue OCT-2585 and it shows the same behavior.
 
 .. rst-class:: v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-1 v2-9-0 v2-8-0
 
