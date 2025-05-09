@@ -14,7 +14,11 @@ config PM_PARTITION_SIZE_TFM_SRAM
 	# It has been observed for 54L that when Matter is enabled, then
 	# assigning 0x16000 of RAM to TFM will not leave enough RAM for
 	# Matter. So we use 0x13000 of RAM on 54L.
-	default 0x13000 if SOC_SERIES_NRF54LX
+	default 0x13000 if SOC_NRF54L15_CPUAPP
+	# Set the of TFM_SRAM to 0x10000(64kB) since the nR54L10
+	# has less RAM. The number was selected based on the observed memory
+	# usage of TFM in crypto samples and it can be changed later if needed.
+	default 0x10000 if SOC_NRF54L10_CPUAPP
 	default 0x16000 if SOC_SERIES_NRF91X
 	default 0x30000
 	help

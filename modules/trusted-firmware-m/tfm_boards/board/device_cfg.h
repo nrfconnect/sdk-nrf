@@ -13,17 +13,8 @@
 #undef ARRAY_SIZE
 #include <zephyr/devicetree.h>
 
-#if !defined(NRF54L15_XXAA)
 
-#if defined(CONFIG_TFM_SECURE_UART0) || DOMAIN_NS == 1U
-#define TFM_UART uart0
-#endif /* defined(CONFIG_TFM_SECURE_UART0) || DOMAIN_NS == 1U */
-
-#if defined(CONFIG_TFM_SECURE_UART1) && DOMAIN_NS != 1U
-#define TFM_UART uart1
-#endif /* defined(CONFIG_TFM_SECURE_UART1) */
-
-#else /* NRF54L15_XXAA */
+#if defined(NRF54L15_XXAA) || defined(NRF54L10_XXAA)
 
 #if defined(CONFIG_TFM_SECURE_UART00) && DOMAIN_NS != 1U
 #define TFM_UART uart00
@@ -45,7 +36,17 @@
 #define TFM_UART uart30
 #endif /* defined(CONFIG_TFM_SECURE_UART30) */
 
-#endif /* NRF54L15_XXAA */
+#else /* NRF54L15_XXAA || NRF54L10_XXAA */
+
+#if defined(CONFIG_TFM_SECURE_UART0) || DOMAIN_NS == 1U
+#define TFM_UART uart0
+#endif /* defined(CONFIG_TFM_SECURE_UART0) || DOMAIN_NS == 1U */
+
+#if defined(CONFIG_TFM_SECURE_UART1) && DOMAIN_NS != 1U
+#define TFM_UART uart1
+#endif /* defined(CONFIG_TFM_SECURE_UART1) */
+
+#endif /* NRF54L15_XXAA || NRF54L10_XXAA */
 
 #define DEFAULT_UART_BAUDRATE DT_PROP_OR(DT_NODELABEL(TFM_UART), current_speed, 115200)
 
