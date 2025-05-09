@@ -198,4 +198,7 @@ Development and integration
 ===========================
 
 * GCC is the only supported toolchain for building TF-M on Nordic Semiconductor devices.
-* :zephyr:code-sample-category:`tfm_integration` samples from upstream Zephyr are not compatible with the :ref:`ug_tfm_supported_services_tfm_services` implemented in the |NCS| when built from upstream Zephyr.
+* :zephyr:code-sample-category:`tfm_integration` samples from :term:`upstream <Upstream repository>` Zephyr are not compatible with the :ref:`ug_tfm_supported_services_tfm_services` implemented in the |NCS| when built from upstream Zephyr.
+* The :ref:`ug_tfm_supported_services_tfm_services` implemented in the |NCS| are not recommended for use with boards in upstream Zephyr because these boards have limited TF-M support.
+  Upstream Zephyr only supports TF-M for nRF91 Series DKs and nRF5340 DK.
+  TF-M integration in nRF54L15 or boards based on nRF5340 other than the nRF5340 DK is not supported in upstream Zephyr.
