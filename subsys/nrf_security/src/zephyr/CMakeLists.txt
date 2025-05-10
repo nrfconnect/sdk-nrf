@@ -87,7 +87,12 @@ if(TARGET mbedx509)
   target_link_libraries(mbedtls_external INTERFACE mbedx509)
 endif()
 
+# Link with legacy include library to get includes for Mbed TLS _ALT files
+if(TARGET mbedcrypto_legacy_includes)
+  zephyr_link_libraries(mbedcrypto_legacy_includes)
+endif()
+
 # Link with mbedcrypto library (in NS build or by default)
 target_link_libraries(mbedtls_external INTERFACE ${mbedcrypto_target})
 
-zephyr_link_libraries(mbedtls_external)
+target_link_libraries(zephyr PRIVATE mbedtls_external)

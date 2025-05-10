@@ -32,14 +32,6 @@ target_link_libraries(oberon_psa_core
     psa_interface
 )
 
-# Disable warnings showing up in Oberon PSA crypto code.
-target_compile_options(oberon_psa_core
-  PRIVATE
-    -Wno-stringop-overflow
-    -Wno-stringop-overread
-    -Wno-strict-aliasing
-)
-
 target_compile_definitions(oberon_psa_core
   PRIVATE
     BUILDING_MBEDTLS_CRYPTO

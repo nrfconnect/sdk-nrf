@@ -48,10 +48,19 @@ add_library(oberon_psa_driver STATIC
 target_compile_options(oberon_psa_driver
   PRIVATE
     -Wno-uninitialized
-    -Wno-maybe-uninitialized
     -Wno-unused-variable
     -Wno-unused-function
 )
+
+# Clang does not support -Wno-maybe-uninitialized so the following
+# warning option is only used for GNU (GCC)
+if(CMAKE_C_COMPILER_ID STREQUAL "GNU")
+  target_compile_options(oberon_psa_driver
+    PRIVATE
+      -Wno-maybe-uninitialized
+  )
+endif()
+
 
 target_include_directories(oberon_psa_driver
   PRIVATE

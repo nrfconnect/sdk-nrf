@@ -67,6 +67,12 @@ config BLE_ACL_ADV_SID
 	range 0x00 0x0F
 	default 0x00
 
+config BT_MGMT_ADV_STACK_SIZE
+	int "Stack size"
+	default 1024
+	help
+	  Stack size for the Bluetooth management advertising thread.
+
 #----------------------------------------------------------------------------#
 menu "Log level"
 

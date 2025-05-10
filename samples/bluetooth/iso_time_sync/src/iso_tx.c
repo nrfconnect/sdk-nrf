@@ -83,7 +83,7 @@ static struct bt_iso_info iso_infos[CONFIG_BT_ISO_MAX_CHAN];
 
 void iso_chan_info_print(struct bt_iso_info *info, uint8_t role)
 {
-	if (info->type == BT_ISO_CHAN_TYPE_CONNECTED) {
+	if (info->type == BT_ISO_CHAN_TYPE_CENTRAL || info->type == BT_ISO_CHAN_TYPE_PERIPHERAL) {
 		uint8_t bn;
 		uint32_t flush_timeout;
 		uint32_t transport_latency_us;
@@ -225,6 +225,11 @@ static void send_next_sdu_on_all_channels(void)
 
 static void iso_connected(struct bt_iso_chan *chan)
 {
+	const struct bt_iso_chan_path hci_path = {
+		.pid = BT_ISO_DATA_PATH_HCI,
+		.format = BT_HCI_CODING_FORMAT_TRANSPARENT,
+	};
+
 	int err;
 	struct bt_conn_info conn_info;
 	uint8_t chan_index = ARRAY_INDEX(iso_channels, chan);
@@ -245,6 +250,11 @@ static void iso_connected(struct bt_iso_chan *chan)
 
 	printk("ISO channel index %d connected: ", chan_index);
 	iso_chan_info_print(&iso_infos[chan_index], roles[chan_index]);
+
+	err = bt_iso_setup_data_path(chan, BT_HCI_DATAPATH_DIR_HOST_TO_CTLR, &hci_path);
+	if (err != 0) {
+		printk("Failed to setup ISO TX data path: %d\n", err);
+	}
 
 	if (iso_chan_connected_cb) {
 		iso_chan_connected_cb();
@@ -302,7 +312,8 @@ static uint32_t trigger_time_us_get(uint32_t sdu_sync_ref, uint8_t chan_index)
 	 * See Bluetooth Core Specification, Vol 6, Part G, Section 3.2.
 	 */
 
-	if (iso_infos[chan_index].type == BT_ISO_CHAN_TYPE_CONNECTED) {
+	if (iso_infos[chan_index].type == BT_ISO_CHAN_TYPE_CENTRAL ||
+	    iso_infos[chan_index].type == BT_ISO_CHAN_TYPE_PERIPHERAL) {
 		if (roles[chan_index] == BT_CONN_ROLE_CENTRAL) {
 			trigger_time_us += iso_infos[chan_index].unicast.central.latency;
 		}

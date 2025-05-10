@@ -64,7 +64,7 @@
 .. |Thingy91| replace:: Thingy:91 (PCA20035) - see :ref:`ug_thingy91`
 .. |nRF21540DK| replace:: nRF21540 DK board (PCA10112)
 
-.. |thingy52_not_supported_note| replace:: Despite being supported in :ref:`Zephyr <zephyr:thingy52_nrf52832>`, the |NCS| does not support `Nordic Thingy:52`_.
+.. |thingy52_not_supported_note| replace:: Despite :zephyr:board:`thingy52` being supported in Zephyr, the |NCS| does not support `Nordic Thingy:52`_.
 
 .. ### FOTA shortcuts
 

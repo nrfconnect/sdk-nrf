@@ -238,7 +238,7 @@ Devicetree (DTS)
 ~~~~~~~~~~~~~~~~
 
 For devices that do not support :ref:`partition_manager`, you must declare the ``bt_fast_pair_partition`` partition manually in the devicetree.
-Currently, the :ref:`zephyr:nrf54h20dk_nrf54h20` is the only device that requires manual partition definition.
+Currently, the :zephyr:board:`nrf54h20dk` is the only device that requires manual partition definition.
 To see how to do this, refer to the example in the :file:`samples/bluetooth/fast_pair/input_device/boards/nrf54h20dk_nrf54h20_cpuapp.overlay` file.
 
 .. note::

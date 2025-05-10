@@ -38,7 +38,7 @@ The following hardware platforms with :term:`Front-End Module (FEM)` are support
      - Board targets
      - Documentation
      - Product pages
-   * - :ref:`zephyr:nrf21540dk_nrf52840`
+   * - :zephyr:board:`nrf21540dk`
      - PCA10112
      - ``nrf21540dk/nrf52840``
      - | `Product Specification <nRF21540 Product Specification_>`_

@@ -21,9 +21,9 @@ The sample supports the following development kits:
 
 .. note::
    * The boards ``nrf52dk/nrf52810``, ``nrf52840dk/nrf52811``, and ``nrf52833dk/nrf52820`` only support the `Minimal sample variant`_.
-   * When used with :ref:`zephyr:thingy53_nrf5340`, the sample supports the MCUboot bootloader with serial recovery and SMP DFU over Bluetooth.
+   * When used with :zephyr:board:`thingy53`, the sample supports the MCUboot bootloader with serial recovery and SMP DFU over Bluetooth.
      Thingy:53 has no built-in SEGGER chip, so the UART 0 peripheral is not gated to a USB CDC virtual serial port.
-   * When used with :ref:`zephyr:nrf5340dk_nrf5340`, the sample might support the MCUboot bootloader with serial recovery of the networking core image.
+   * When used with :zephyr:board:`nrf5340dk`, the sample might support the MCUboot bootloader with serial recovery of the networking core image.
 
 The sample also requires using a compatible application for `Testing`_.
 You can use the `Bluetooth Low Energy app`_ for desktop or the `nRF Connect for Mobile`_ (or other similar applications, such as `nRF Blinky`_ or `nRF Toolbox`_).

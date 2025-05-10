@@ -66,7 +66,9 @@ jobs:
         git log --pretty=oneline | head -n 10
         # For now we run KconfigBasic, but we should transition to Kconfig
         $ZEPHYR_BASE/scripts/ci/check_compliance.py --annotate -e Kconfig \
-        -e KconfigBasicNoModules -e ClangFormat -e Ruff -c origin/${BASE_REF}..
+        -e KconfigBasicNoModules -e ClangFormat -e Ruff \
+        -e SysbuildKconfig -e SysbuildKconfigBasic -e SysbuildKconfigBasicNoModules \
+        -c origin/${BASE_REF}..
 
     - name: upload-results
       uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4
