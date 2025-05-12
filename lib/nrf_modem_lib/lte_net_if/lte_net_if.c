@@ -21,9 +21,13 @@ LOG_MODULE_REGISTER(nrf_modem_lib_netif, CONFIG_NRF_MODEM_LIB_NET_IF_LOG_LEVEL);
 /* Forward declarations */
 static void connection_timeout_work_fn(struct k_work *work);
 static void connection_timeout_schedule(void);
+static void modem_fault_work_fn(struct k_work *work);
 
 /* Delayable work used to handle LTE connection timeouts. */
 static K_WORK_DELAYABLE_DEFINE(connection_timeout_work, connection_timeout_work_fn);
+
+/* Work item for handling modem faults. */
+static K_WORK_DEFINE(modem_fault_handler_work, modem_fault_work_fn);
 
 static int lte_net_if_disconnect(struct conn_mgr_conn_binding *const if_conn);
 
@@ -55,6 +59,14 @@ static void fatal_error_notify_and_disconnect(void)
 
 /* Handler called on modem faults. */
 void lte_net_if_modem_fault_handler(void)
+{
+	/* The net_mgmt event notification cannot be handled in interrupt context, so we
+	 * defer it to the system workqueue.
+	 */
+	k_work_submit(&modem_fault_handler_work);
+}
+
+static void modem_fault_work_fn(struct k_work *work)
 {
 	net_mgmt_event_notify(NET_EVENT_CONN_IF_FATAL_ERROR, iface_bound);
 	net_if_dormant_on(iface_bound);
