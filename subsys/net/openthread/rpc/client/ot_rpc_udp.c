@@ -135,7 +135,7 @@ otError otUdpOpen(otInstance *aInstance, otUdpSocket *aSocket, otUdpReceive aCal
 	aSocket->mContext = aContext;
 	aSocket->mHandler = aCallback;
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(key) + 2);
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(key) + 1);
 	nrf_rpc_encode_uint(&ctx, key);
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_UDP_OPEN, &ctx, ot_rpc_decode_error, &error);
 
@@ -163,4 +163,26 @@ otError otUdpSend(otInstance *aInstance, otUdpSocket *aSocket, otMessage *aMessa
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_UDP_SEND, &ctx, ot_rpc_decode_error, &error);
 
 	return error;
+}
+
+bool otUdpIsOpen(otInstance *aInstance, const otUdpSocket *aSocket)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	ot_socket_key key = (ot_socket_key)aSocket;
+	bool open;
+
+	ARG_UNUSED(aInstance);
+	__ASSERT_NO_MSG(aSocket != NULL);
+
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(key) + 1);
+	nrf_rpc_encode_uint(&ctx, key);
+	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_UDP_IS_OPEN, &ctx);
+
+	open = nrf_rpc_decode_bool(&ctx);
+
+	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
+		ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_UDP_IS_OPEN);
+	}
+
+	return open;
 }
