@@ -237,7 +237,7 @@ Complete the following steps to program the nRF7002 DK:
 Test procedure
 ==============
 
-The following tables provide the procedure to run Wi-Fi only, Bluetooth LE-only, and combined throughput for different Thread roles.
+The following tables provide the procedure to run Wi-Fi only, Thread-only, and combined throughput for different Thread roles.
 
 #. Complete the following steps to run the Wi-Fi client and Thread client:
 
