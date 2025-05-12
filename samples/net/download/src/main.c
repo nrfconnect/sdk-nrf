@@ -169,8 +169,28 @@ static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
 				       uint32_t event,
 				       struct net_if *iface)
 {
+	int err;
 	if (event == NET_EVENT_CONN_IF_FATAL_ERROR) {
-		printk("Fatal error received from the connectivity layer, rebooting\n");
+		printk("Fatal error received from the connectivity layer, "
+		       "rebooting network interface\n");
+
+		(void)conn_mgr_if_disconnect(net_if);
+		(void)conn_mgr_all_if_down(true);
+
+		err = conn_mgr_all_if_up(true);
+		if (err) {
+			printk("conn_mgr_all_if_up, error: %d\n", err);
+			return;
+		}
+
+		printk("Reconnecting to network\n");
+
+		err = conn_mgr_all_if_connect(true);
+		if (err) {
+			printk("conn_mgr_all_if_connect, error: %d\n", err);
+			return;
+		}
+
 		return;
 	}
 }
@@ -247,12 +267,10 @@ static int callback(const struct downloader_evt *event)
 		return 0;
 
 	case DOWNLOADER_EVT_ERROR:
-		printk("Error %d during download\n", event->error);
 		if (event->error == -ECONNRESET) {
 			/* With ECONNRESET, allow library to attempt a reconnect by returning 0 */
 		} else {
-			(void)conn_mgr_if_disconnect(net_if);
-			(void)conn_mgr_all_if_down(true);
+			printk("Error %d during download\n", event->error);
 			/* Stop download */
 			return -1;
 		}
