@@ -279,11 +279,39 @@ exit:
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 
+static void ot_rpc_udp_is_open(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			       void *handler_data)
+{
+	bool open = false;
+	ot_socket_key soc_key;
+	nrf_udp_socket *socket;
+
+	soc_key = nrf_rpc_decode_uint(ctx);
+
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_UDP_IS_OPEN);
+		return;
+	}
+
+	ot_rpc_mutex_lock();
+	socket = nrf_udp_find_socket(soc_key);
+
+	if (socket) {
+		open = otUdpIsOpen(openthread_get_default_instance(), &socket->mSocket);
+	}
+
+	ot_rpc_mutex_unlock();
+	nrf_rpc_rsp_send_bool(group, open);
+}
+
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_udp_bind, OT_RPC_CMD_UDP_BIND, ot_rpc_udp_bind, NULL);
 
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_udp_close, OT_RPC_CMD_UDP_CLOSE, ot_rpc_udp_close, NULL);
 
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_udp_connect, OT_RPC_CMD_UDP_CONNECT, ot_rpc_udp_connect,
+			 NULL);
+
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_udp_is_open, OT_RPC_CMD_UDP_IS_OPEN, ot_rpc_udp_is_open,
 			 NULL);
 
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_udp_open, OT_RPC_CMD_UDP_OPEN, ot_rpc_udp_open, NULL);

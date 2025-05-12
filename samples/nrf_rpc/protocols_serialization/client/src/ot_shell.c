@@ -532,6 +532,11 @@ static int cmd_test_udp_init(const struct shell *sh, size_t argc, char *argv[])
 	otSockAddr listen_sock_addr;
 	otError error;
 
+	if (otUdpIsOpen(NULL, &udp_socket)) {
+		shell_info(sh, "Skipping initialization: socket already open");
+		return 0;
+	}
+
 	memset(&udp_socket, 0, sizeof(udp_socket));
 	memset(&listen_sock_addr, 0, sizeof(listen_sock_addr));
 

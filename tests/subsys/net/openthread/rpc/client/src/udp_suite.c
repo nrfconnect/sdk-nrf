@@ -243,4 +243,32 @@ ZTEST(ot_rpc_udp, test_udp_receive)
 	zassert_equal(handle_udp_receive_fake.arg1_val, (otMessage *)1);
 }
 
+ZTEST(ot_rpc_udp, test_otUdpIsOpen_true)
+{
+	bool open;
+	otUdpSocket socket;
+
+	mock_nrf_rpc_tr_expect_add(
+		RPC_CMD(OT_RPC_CMD_UDP_IS_OPEN, CBOR_UINT32((ot_socket_key)&socket)),
+		RPC_RSP(CBOR_TRUE));
+	open = otUdpIsOpen(NULL, &socket);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_true(open);
+}
+
+ZTEST(ot_rpc_udp, test_otUdpIsOpen_false)
+{
+	bool open;
+	otUdpSocket socket;
+
+	mock_nrf_rpc_tr_expect_add(
+		RPC_CMD(OT_RPC_CMD_UDP_IS_OPEN, CBOR_UINT32((ot_socket_key)&socket)),
+		RPC_RSP(CBOR_FALSE));
+	open = otUdpIsOpen(NULL, &socket);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_false(open);
+}
+
 ZTEST_SUITE(ot_rpc_udp, NULL, NULL, tc_setup, tc_clean, NULL);
