@@ -12,7 +12,7 @@ config APPCORE_REMOTE_BOARD_TARGET_CPUCLUSTER
 
 config APPCORE_REMOTE_DOMAIN
 	string
-	default "CPUAPP" if APPCORE_REMOTE_BOARD_NAME != ""
+	default "CPUAPP" if APPCORE_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
 
 menu "Application core configuration"
 	depends on SUPPORT_APPCORE
@@ -33,9 +33,9 @@ config NRF_DEFAULT_REMOTE_SHELL
 
 choice APPCORE
 	prompt "Appcore image"
-	default APPCORE_REMOTE_SHELL if NRF_DEFAULT_REMOTE_SHELL && APPCORE_REMOTE_BOARD_NAME != ""
-	default APPCORE_EMPTY if NRF_DEFAULT_EMPTY && APPCORE_REMOTE_BOARD_NAME != ""
-	depends on SUPPORT_APPCORE && !EXTERNAL_CONFIGURED_APPCORE
+	default APPCORE_REMOTE_SHELL if NRF_DEFAULT_REMOTE_SHELL
+	default APPCORE_EMPTY if NRF_DEFAULT_EMPTY
+	depends on SUPPORT_APPCORE
 
 config APPCORE_NONE
 	bool "None"
@@ -71,14 +71,6 @@ config APPCORE_IMAGE_PATH
 	default "${ZEPHYR_NRF_MODULE_DIR}/samples/nrf5340/remote_shell" if APPCORE_REMOTE_SHELL
 	help
 	  Source directory of appcore image.
-
-config APPCORE_IMAGE_BOARD
-	string
-	default APPCORE_REMOTE_BOARD_NAME
-	depends on APPCORE_EMPTY
-	help
-	  Remote board when building this sample.
-	  If not set, the board given to sysbuild is used.
 
 config APPCORE_IMAGE_DOMAIN
 	string
