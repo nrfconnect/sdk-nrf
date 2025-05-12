@@ -65,12 +65,10 @@ config USE_NRF53_MULTI_IMAGE_WITHOUT_UPGRADE_ONLY
 	  of bricking the network core upon reverts.
 
 config MCUBOOT_USE_ALL_AVAILABLE_RAM
-	bool "Allow MCUBoot to use all available RAM (security implications)"
+	bool "Allow MCUBoot to use all available RAM"
 	depends on ARM_TRUSTZONE_M
 	default y if BOARD_THINGY53_NRF5340_CPUAPP_NS || BOARD_THINGY53_NRF5340_CPUAPP
 	help
-	  By default MCUBoot uses only the secure RAM partition. Enabling this
-	  may allow secrets to be leaked to non-secure through the non-secure
-	  RAM partition.
+	  By default MCUBoot uses only the secure RAM partition.
 
 endmenu
