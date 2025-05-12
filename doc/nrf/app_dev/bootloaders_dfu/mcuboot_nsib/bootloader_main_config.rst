@@ -48,7 +48,7 @@ The choice of mode determines the specific scheme of the bootloader's operations
     * - Swap using move
       - Executes a dual-bank image swapping algorithm by moving sectors, offering greater efficiency than scratch-based swaps, suitable only for memories with consistent erase block sizes.
       - ``CONFIG_BOOT_SWAP_USING_MOVE``
-      - :kconfig:option:`SB_CONFIG_BOOT_SWAP_USING_MOVE`
+      - :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_SWAP_USING_MOVE`
       - Yes
     * - Swap using offset
       - Introduces a new dual-bank image swapping algorithm that moves sectors with optimizations for enhanced speed, applicable to memories with uniform erase block sizes.
@@ -58,26 +58,26 @@ The choice of mode determines the specific scheme of the bootloader's operations
     * - Overwrite
       - Employs a straightforward dual-bank image overwrite algorithm that directly replaces the image.
       - ``CONFIG_BOOT_UPGRADE_ONLY``
-      - :kconfig:option:`SB_CONFIG_BOOT_UPGRADE_ONLY`
+      - :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY`
       - Yes
     * - Direct-XIP
       - Facilitates dual-bank image execution directly from storage, updating by uploading a new image to an alternate bank, eliminating the need for swapping or overwriting NVM.
       - ``CONFIG_BOOT_DIRECT_XIP``
-      - :kconfig:option:`SB_CONFIG_BOOT_DIRECT_XIP`
+      - :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP`
       - Yes
     * - Direct-XIP with revert
       - Enables dual-bank image execution directly from storage with additional support for reverting to a previous image if necessary, enhancing system reliability.
-      - ``CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT``
+      - ``CONFIG_BOOT_DIRECT_XIP`` and ``CONFIG_BOOT_DIRECT_XIP_REVERT``
       - :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT`
       - Yes
     * - Firmware loader
       - Provides a dual-bank image firmware loading mode that allows dynamic selection of the image bank for booting the application, accommodating banks of different sizes.
-      - ``SB_CONFIG_MCUBOOT_MODE_FIRMWARE_LOADER``
+      - ``CONFIG_BOOT_FIRMWARE_LOADER``
       - :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER`
       - No
     * - Single application
       - Supports a single application image mode, utilized when only one application image is necessary and dual-bank operations are not required.
-      - ``CONFIG_MCUBOOT_MODE_SINGLE_APP``
+      - ``CONFIG_SINGLE_APPLICATION_SLOT``
       - :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_SINGLE_APP`
       - No
 
