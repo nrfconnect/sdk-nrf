@@ -324,7 +324,9 @@ Matter samples
 Networking samples
 ------------------
 
-|no_changes_yet_note|
+* :ref:`download_sample` sample:
+
+  * Fixed an issue where the network interface was not re-initialized after a fault.
 
 NFC samples
 -----------
