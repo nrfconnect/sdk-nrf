@@ -14,7 +14,6 @@
 /CMakeLists.txt                           @nrfconnect/ncs-co-build-system
 /CODEOWNERS                               @nrfconnect/ncs-code-owners
 /Jenkinsfile                              @nrfconnect/ncs-ci
-/ncs_version.h.in                         @nrfconnect/ncs-code-owners
 /LICENSE                                  @carlescufi
 /README.rst                               @carlescufi @nrfconnect/ncs-doc-leads
 /VERSION                                  @nrfconnect/ncs-code-owners
