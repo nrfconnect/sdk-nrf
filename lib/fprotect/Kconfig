@@ -4,7 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-if !ARM
+if X86
+
 config NRF_SPU_FLASH_REGION_SIZE
 	hex
 	default 0x1000
@@ -28,6 +29,7 @@ config NRF_ACL_FLASH_REGION_SIZE
 	default 0x1000
 	help
 	  Redefinition for the benefit of qemu_x86
+
 endif
 
 # Workaround for not being able to have commas in macro arguments
@@ -56,6 +58,7 @@ menuconfig FPROTECT
 	  May use the HW peripherals BPROT, ACL, or SPU to achieve this.
 
 if FPROTECT
+
 config FPROTECT_APP
 	bool "Lock image partition using FPROTECT"
 	help
