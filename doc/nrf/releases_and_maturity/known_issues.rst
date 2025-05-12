@@ -573,6 +573,20 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v3-0-1 v3-0-0
+
+KRKNWK-20308: The ``MyCluster.xml`` file example in the :ref:`ug_matter_creating_custom_cluster` user guide does not contain the ``ExtendedCommandResponse`` command
+  You cannot use the file properly without this command.
+
+  **Workaround:** Manually add the following entry to the local copy of the ``MyCluster.xml`` file inside the ``<clusterExtension code="0x0028">`` element:
+
+    .. code-block:: xml
+
+      <command source="server" code="0x01" name="ExtendedCommandResponse" optional="false" disableDefaultResponse="true">
+        <description>Response to ExtendedCommand.</description>
+        <arg name="arg1" type="int8u"/>
+      </command>
+
 .. rst-class:: v3-0-2 v3-0-1 v3-0-0 v2-9-1 v2-9-0 v2-8-0 v2-7-0
 
 KRKNWK-20268: Certification test cast TC-ACE-2.2 fails with an unexpected error when testing access permissions for the ``NodeLabel`` attribute in the BridgedDeviceBasicInformation cluster
