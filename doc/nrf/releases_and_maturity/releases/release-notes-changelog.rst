@@ -406,6 +406,7 @@ Networking samples
 
   * Added the :ref:`CONFIG_SAMPLE_PROVISION_CERT <CONFIG_SAMPLE_PROVISION_CERT>` Kconfig option to provision the root CA certificate to the modem.
     The certificate is provisioned only if the :ref:`CONFIG_SAMPLE_SECURE_SOCKET <CONFIG_SAMPLE_SECURE_SOCKET>` Kconfig option is set to ``y``.
+  * Fixed an issue where the network interface was not re-initialized after a fault.
 
 NFC samples
 -----------
