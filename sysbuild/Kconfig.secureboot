@@ -278,11 +278,9 @@ choice SECURE_BOOT_SIGNING
 
 config SECURE_BOOT_SIGNING_PYTHON
 	bool "Sign with Python ecdsa library"
-	select SECURE_BOOT_PRIVATE_KEY_PROVIDED
 
 config SECURE_BOOT_SIGNING_OPENSSL
 	bool "Sign with openssl command line tool"
-	select SECURE_BOOT_PRIVATE_KEY_PROVIDED
 
 config SECURE_BOOT_SIGNING_CUSTOM
 	bool "Sign with custom command"
@@ -343,7 +341,7 @@ config SECURE_BOOT_PUBLIC_KEY_FILES
 
 config SUPPORT_SECURE_BOOT_BOOTCONF_LOCK_WRITES
 	bool
-	depends on !FPROTECT_ALLOW_COMBINED_REGIONS
+	depends on !MCUBOOT_FPROTECT_ALLOW_COMBINED_REGIONS
 	default y if SOC_NRF54L15_CPUAPP
 
 config SECURE_BOOT_BOOTCONF_LOCK_WRITES
@@ -354,7 +352,6 @@ config SECURE_BOOT_BOOTCONF_LOCK_WRITES
 
 config SECURE_BOOT_DEBUG_SIGNATURE_PUBLIC_KEY_LAST
 	bool "[DEBUG] Place signing public key last"
-	default n
 	help
 	  Place the public key used for signing last in the list instead of first. This is meant to
 	  be used for testing looping through the public keys.
