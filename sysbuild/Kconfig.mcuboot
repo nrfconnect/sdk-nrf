@@ -178,12 +178,10 @@ config BOOT_SHARED_CRYPTO_ECDSA_P256
 endif
 
 config MCUBOOT_USE_ALL_AVAILABLE_RAM
-	bool "Allow MCUboot to use all available RAM (security implications)"
+	bool "Allow MCUboot to use all available RAM"
 	depends on BOARD_IS_NON_SECURE
 	help
-	  By default MCUboot uses only the secure RAM partition. Enabling this
-	  may allow secrets to be leaked to non-secure through the non-secure
-	  RAM partition.
+	  By default MCUboot uses only the secure RAM partition.
 
 config MCUBOOT_NRF53_MULTI_IMAGE_UPDATE
 	bool "Network core multi-image update (in single operation)"
