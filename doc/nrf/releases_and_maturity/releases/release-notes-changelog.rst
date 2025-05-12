@@ -211,7 +211,8 @@ nRF5340 Audio
 nRF Desktop
 -----------
 
-|no_changes_yet_note|
+* Updated application configurations for dongles on memory-limited SoCs (nRF52820) to reuse system workqueue for GATT Discovery Manager (:kconfig:option:`CONFIG_BT_GATT_DM_WORKQ_SYS`).
+  This change helps to reduce RAM usage.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
