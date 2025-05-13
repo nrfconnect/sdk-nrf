@@ -140,7 +140,7 @@ manifest:
     - name: oberon-psa-crypto
       path: modules/crypto/oberon-psa-crypto
       repo-path: sdk-oberon-psa-crypto
-      revision: a258e58246da0b34c7cb6fa27358807ffcd079ed
+      revision: 0c047bb1ab0bc92450906b451c706c7255938903
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
@@ -148,7 +148,7 @@ manifest:
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: 13e8eaf758e96888260b742f4df461e61aea76ae
+      revision: b23519df291d9c5475e13ee2b5ac700552a589a8
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
