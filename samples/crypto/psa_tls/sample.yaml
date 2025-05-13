@@ -187,14 +187,14 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
@@ -211,14 +211,14 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
@@ -236,14 +236,14 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
@@ -260,14 +260,14 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
@@ -284,14 +284,14 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
@@ -309,14 +309,14 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
@@ -335,14 +335,14 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
@@ -360,14 +360,14 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
@@ -432,12 +432,12 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
     tags:
       - ci_build
@@ -452,12 +452,12 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54l20pdk/nrf54l20/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
     tags:
       - ci_build
