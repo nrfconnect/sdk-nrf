@@ -15,7 +15,7 @@ Google Fast Pair standard also supports the Find My Device Network (FMDN) extens
 For detailed information, see the official `Fast Pair Find My Device Network extension`_ documentation.
 
 This sample follows the `Fast Pair Device Feature Requirements for Locator Tags`_ documentation and uses the Fast Pair configuration for the locator tag use case.
-The software maturity level for the locator tag use case is outlined in the :ref:`software_maturity_fast_pair_use_case` table.
+The software maturity level for the locator tag use case is outlined in the :ref:`Google Fast Pair use case support <software_maturity_fast_pair_use_case>` table.
 
 Requirements
 ************
