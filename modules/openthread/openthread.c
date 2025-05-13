@@ -13,6 +13,8 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(net_openthread_platform, CONFIG_OPENTHREAD_PLATFORM_LOG_LEVEL);
 
+#include <ctype.h>
+
 #include <zephyr/kernel.h>
 #include <zephyr/init.h>
 #include <zephyr/version.h>
@@ -158,6 +160,28 @@ static void ot_joiner_start_handler(otError error, void *context)
 	}
 }
 
+static int bytes_from_str(uint8_t *buf, int buf_len, const char *src)
+{
+	size_t i;
+	size_t src_len = strlen(src);
+	char *endptr;
+
+	for (i = 0U; i < src_len; i++) {
+		if (!isxdigit((unsigned char)src[i]) && src[i] != ':') {
+			return -EINVAL;
+		}
+	}
+
+	(void)memset(buf, 0, buf_len);
+
+	for (i = 0U; i < (size_t)buf_len; i++) {
+		buf[i] = (uint8_t)strtol(src, &endptr, 16);
+		src = ++endptr;
+	}
+
+	return 0;
+}
+
 static bool ot_setup_default_configuration(void)
 {
 	otExtendedPanId xpanid = {0};
@@ -182,7 +206,7 @@ static bool ot_setup_default_configuration(void)
 		return false;
 	}
 
-	net_bytes_from_str(xpanid.m8, 8, (char *)OT_XPANID);
+	bytes_from_str(xpanid.m8, 8, (char *)OT_XPANID);
 	error = otThreadSetExtendedPanId(openthread_instance, &xpanid);
 	if (error != OT_ERROR_NONE) {
 		LOG_ERR("Failed to set %s [%d]", "ext PAN ID", error);
@@ -190,7 +214,7 @@ static bool ot_setup_default_configuration(void)
 	}
 
 	if (strlen(OT_NETWORKKEY)) {
-		net_bytes_from_str(networkKey.m8, OT_NETWORK_KEY_SIZE, (char *)OT_NETWORKKEY);
+		bytes_from_str(networkKey.m8, OT_NETWORK_KEY_SIZE, (char *)OT_NETWORKKEY);
 		error = otThreadSetNetworkKey(openthread_instance, &networkKey);
 		if (error != OT_ERROR_NONE) {
 			LOG_ERR("Failed to set %s [%d]", "network key", error);
@@ -484,5 +508,20 @@ void openthread_mutex_unlock(void)
 }
 
 #ifdef CONFIG_OPENTHREAD_SYS_INIT
-SYS_INIT(openthread_init, POST_KERNEL, CONFIG_OPENTHREAD_SYS_INIT_PRIORITY);
+static int openthread_sys_init(void)
+{
+	int error;
+
+	error = openthread_init();
+
+	if (error == 0) {
+#ifndef CONFIG_OPENTHREAD_MANUAL_START
+		error = openthread_run();
+#endif
+	}
+
+	return error;
+}
+
+SYS_INIT(openthread_sys_init, POST_KERNEL, CONFIG_OPENTHREAD_SYS_INIT_PRIORITY);
 #endif /* CONFIG_OPENTHREAD_SYS_INIT */
