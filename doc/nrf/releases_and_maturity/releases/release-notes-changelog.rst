@@ -190,7 +190,8 @@ Applications
 Connectivity bridge
 -------------------
 
-|no_changes_yet_note|
+* Fixed to resume Bluetooth connectable advertising after a disconnect.
+
 
 IPC radio firmware
 ------------------
