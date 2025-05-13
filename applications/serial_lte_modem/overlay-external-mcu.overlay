@@ -18,3 +18,14 @@
 &uart0 {
 	status = "disabled";
 };
+
+/ {
+	slm_gpio_pins: slm_gpio_pins {
+		compatible = "slm-gpio-pins";
+		power-gpios = <&gpio0 31 GPIO_ACTIVE_LOW>;
+		power-gpios-active-time-ms = <100>;
+		power-gpios-debounce-time-ms = <50>;
+		indicate-gpios = <&gpio0 30 GPIO_ACTIVE_LOW>;
+		indicate-gpios-active-time-ms = <100>;
+	};
+};

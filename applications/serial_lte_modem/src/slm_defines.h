@@ -36,7 +36,7 @@ enum {
 #define SLM_NRF52_BLK_SIZE   4096 /** nRF52 flash block size for write operation */
 #define SLM_NRF52_BLK_TIME   2000 /** nRF52 flash block write time in millisecond (1.x second) */
 
-#define POWER_PIN_IS_ENABLED (CONFIG_SLM_POWER_PIN != -1)
-#define INDICATE_PIN_IS_ENABLED (CONFIG_SLM_INDICATE_PIN != -1)
+#define POWER_PIN_IS_ENABLED DT_NODE_HAS_PROP(DT_NODELABEL(slm_gpio_pins), power_gpios)
+#define INDICATE_PIN_IS_ENABLED DT_NODE_HAS_PROP(DT_NODELABEL(slm_gpio_pins), indicate_gpios)
 
 #endif

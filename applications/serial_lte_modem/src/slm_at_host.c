@@ -505,6 +505,7 @@ static int slm_at_send_indicate(const uint8_t *data, size_t len,
 		return -EFAULT;
 	}
 
+#if (INDICATE_PIN_IS_ENABLED)
 	if (indicate) {
 		enum pm_device_state state = PM_DEVICE_STATE_OFF;
 
@@ -513,6 +514,7 @@ static int slm_at_send_indicate(const uint8_t *data, size_t len,
 			slm_ctrl_pin_indicate();
 		}
 	}
+#endif
 
 	ret = at_backend.send(data, len);
 	if (!ret) {

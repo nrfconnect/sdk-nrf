@@ -26,6 +26,18 @@
 	pinctrl-names = "default", "sleep";
 };
 
+/ {
+	slm_gpio_pins: slm_gpio_pins {
+		compatible = "slm-gpio-pins";
+		power-gpios = <&gpio0 8 GPIO_ACTIVE_LOW>;
+		power-gpios-active-time-ms = <100>;
+		power-gpios-debounce-time-ms = <50>;
+		indicate-gpios = <&gpio0 0 GPIO_ACTIVE_LOW>;
+		indicate-gpios-active-time-ms = <100>;
+		//power-gpios = <&gpio0 8 (GPIO_INPUT | GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+	};
+};
+
 &i2c2 {
 	status = "disabled";
 };
