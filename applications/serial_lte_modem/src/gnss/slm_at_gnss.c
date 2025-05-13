@@ -302,7 +302,7 @@ static int gnss_shutdown(void)
 	gnss_running = false;
 
 #if CONFIG_SLM_GNSS_OUTPUT_NMEA_ON_CMUX_CHANNEL
-	slm_cmux_release(CMUX_GNSS_CHANNEL);
+	slm_cmux_release(CMUX_GNSS_CHANNEL, true);
 	gnss_pipe = NULL;
 #endif
 	return 0;

@@ -6,6 +6,8 @@
 #ifndef SLM_CMUX_
 #define SLM_CMUX_
 
+#include <stdbool.h>
+
 struct modem_pipe;
 
 void slm_cmux_init(void);
@@ -21,6 +23,6 @@ enum cmux_channel {
 	CMUX_EXT_CHANNEL_COUNT
 };
 struct modem_pipe *slm_cmux_reserve(enum cmux_channel);
-void slm_cmux_release(enum cmux_channel);
+void slm_cmux_release(enum cmux_channel, bool fallback);
 
 #endif

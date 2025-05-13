@@ -212,12 +212,12 @@ struct modem_pipe *slm_cmux_reserve(enum cmux_channel channel)
 	return cmux_get_dlci(channel)->pipe;
 }
 
-void slm_cmux_release(enum cmux_channel channel)
+void slm_cmux_release(enum cmux_channel channel, bool fallback)
 {
 	struct cmux_dlci *dlci = cmux_get_dlci(channel);
 
 #if defined(CONFIG_SLM_CMUX_AUTOMATIC_FALLBACK_ON_PPP_STOPPAGE)
-	if (channel == CMUX_PPP_CHANNEL) {
+	if (channel == CMUX_PPP_CHANNEL && fallback) {
 		cmux.at_channel = 0;
 	}
 #endif
