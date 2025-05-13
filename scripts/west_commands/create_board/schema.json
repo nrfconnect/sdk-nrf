@@ -1,5 +1,5 @@
 {
-  "title": "NCS board",
+  "title": "nRF Connect SDK Board",
   "type": "object",
   "required": [
     "board",
