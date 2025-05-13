@@ -109,23 +109,23 @@ enum esb_bitrate {
 	/** 2 Mb radio mode. */
 	ESB_BITRATE_2MBPS = NRF_RADIO_MODE_NRF_2MBIT,
 
-#if defined(RADIO_MODE_MODE_Nrf_250Kbit)
+#if defined(RADIO_MODE_MODE_Nrf_250Kbit) || defined(__DOXYGEN__)
 	/** 250 Kb radio mode. */
 	ESB_BITRATE_250KBPS = NRF_RADIO_MODE_NRF_250KBIT,
-#endif /* defined(RADIO_MODE_MODE_Nrf_250Kbit) */
+#endif /* defined(RADIO_MODE_MODE_Nrf_250Kbit) || defined(__DOXYGEN__) */
 
 	/** 1 Mb radio mode using @e Bluetooth low energy radio parameters. */
 	ESB_BITRATE_1MBPS_BLE = NRF_RADIO_MODE_BLE_1MBIT,
 
-#if defined(RADIO_MODE_MODE_Ble_2Mbit)
+#if defined(RADIO_MODE_MODE_Ble_2Mbit) || defined(__DOXYGEN__)
 	/** 2 Mb radio mode using @e Bluetooth low energy radio parameters. */
 	ESB_BITRATE_2MBPS_BLE = NRF_RADIO_MODE_BLE_2MBIT,
-#endif /* defined(RADIO_MODE_MODE_Ble_2Mbit) */
+#endif /* defined(RADIO_MODE_MODE_Ble_2Mbit) || defined(__DOXYGEN__) */
 
-#if defined(RADIO_MODE_MODE_Nrf_4Mbit0_5)
+#if defined(RADIO_MODE_MODE_Nrf_4Mbit0_5) || defined(__DOXYGEN__)
 	/** 4 Mb radio mode. */
 	ESB_BITRATE_4MBPS = NRF_RADIO_MODE_NRF_4MBIT_H_0_5,
-#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit0_5) */
+#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit0_5) || defined(__DOXYGEN__) */
 
 #if defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT6)
 	/** 4 Mb radio mode. */
@@ -142,123 +142,123 @@ enum esb_crc {
 
 /** @brief Enhanced ShockBurst radio transmission power modes. */
 enum esb_tx_power {
-#if defined(RADIO_TXPOWER_TXPOWER_Pos10dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Pos10dBm) || defined(__DOXYGEN__)
 	/** +10 dBm radio transmit power. */
 	ESB_TX_POWER_10DBM = RADIO_TXPOWER_TXPOWER_Pos10dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos9dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Pos9dBm) || defined(__DOXYGEN__)
 	/** +9 dBm radio transmit power. */
 	ESB_TX_POWER_9DBM = RADIO_TXPOWER_TXPOWER_Pos9dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos8dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Pos8dBm) || defined(__DOXYGEN__)
 	/** +8 dBm radio transmit power. */
 	ESB_TX_POWER_8DBM = RADIO_TXPOWER_TXPOWER_Pos8dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos7dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Pos7dBm) || defined(__DOXYGEN__)
 	/** +7 dBm radio transmit power. */
 	ESB_TX_POWER_7DBM = RADIO_TXPOWER_TXPOWER_Pos7dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos6dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Pos6dBm) || defined(__DOXYGEN__)
 	/** +6 dBm radio transmit power. */
 	ESB_TX_POWER_6DBM = RADIO_TXPOWER_TXPOWER_Pos6dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos5dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Pos5dBm) || defined(__DOXYGEN__)
 	/** +5 dBm radio transmit power. */
 	ESB_TX_POWER_5DBM = RADIO_TXPOWER_TXPOWER_Pos5dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos4dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Pos4dBm) || defined(__DOXYGEN__)
 	/** +4 dBm radio transmit power. */
 	ESB_TX_POWER_4DBM = RADIO_TXPOWER_TXPOWER_Pos4dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos3dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Pos3dBm) || defined(__DOXYGEN__)
 	/** +3 dBm radio transmit power. */
 	ESB_TX_POWER_3DBM = RADIO_TXPOWER_TXPOWER_Pos3dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos2dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Pos2dBm) || defined(__DOXYGEN__)
 	/** +2 dBm radio transmit power. */
 	ESB_TX_POWER_2DBM = RADIO_TXPOWER_TXPOWER_Pos2dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Pos1dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Pos1dBm) || defined(__DOXYGEN__)
 	/** +1 dBm radio transmit power. */
 	ESB_TX_POWER_1DBM = RADIO_TXPOWER_TXPOWER_Pos1dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_0dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_0dBm) || defined(__DOXYGEN__)
 	/** 0 dBm radio transmit power. */
 	ESB_TX_POWER_0DBM = RADIO_TXPOWER_TXPOWER_0dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg1dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Neg1dBm) || defined(__DOXYGEN__)
 	/** -1 dBm radio transmit power. */
 	ESB_TX_POWER_NEG1DBM = RADIO_TXPOWER_TXPOWER_Neg1dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg2dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Neg2dBm) || defined(__DOXYGEN__)
 	/** -2 dBm radio transmit power. */
 	ESB_TX_POWER_NEG2DBM = RADIO_TXPOWER_TXPOWER_Neg2dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg3dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Neg3dBm) || defined(__DOXYGEN__)
 	/** -3 dBm radio transmit power. */
 	ESB_TX_POWER_NEG3DBM = RADIO_TXPOWER_TXPOWER_Neg3dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg4dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Neg4dBm) || defined(__DOXYGEN__)
 	/** -4 dBm radio transmit power. */
 	ESB_TX_POWER_NEG4DBM = RADIO_TXPOWER_TXPOWER_Neg4dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg5dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Neg5dBm) || defined(__DOXYGEN__)
 	/** -5 dBm radio transmit power. */
 	ESB_TX_POWER_NEG5DBM = RADIO_TXPOWER_TXPOWER_Neg5dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg6dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Neg6dBm) || defined(__DOXYGEN__)
 	/** -6 dBm radio transmit power. */
 	ESB_TX_POWER_NEG6DBM = RADIO_TXPOWER_TXPOWER_Neg6dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg7dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Neg7dBm) || defined(__DOXYGEN__)
 	/** -7 dBm radio transmit power. */
 	ESB_TX_POWER_NEG7DBM = RADIO_TXPOWER_TXPOWER_Neg7dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg8dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Neg8dBm) || defined(__DOXYGEN__)
 	/** -8 dBm radio transmit power. */
 	ESB_TX_POWER_NEG8DBM = RADIO_TXPOWER_TXPOWER_Neg8dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg9dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Neg9dBm) || defined(__DOXYGEN__)
 	/** -9 dBm radio transmit power. */
 	ESB_TX_POWER_NEG9DBM = RADIO_TXPOWER_TXPOWER_Neg9dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg10dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Neg10dBm) || defined(__DOXYGEN__)
 	/** -10 dBm radio transmit power. */
 	ESB_TX_POWER_NEG10DBM = RADIO_TXPOWER_TXPOWER_Neg10dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg12dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Neg12dBm) || defined(__DOXYGEN__)
 	/** -12 dBm radio transmit power. */
 	ESB_TX_POWER_NEG12DBM = RADIO_TXPOWER_TXPOWER_Neg12dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg14dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Neg14dBm) || defined(__DOXYGEN__)
 	/** -14 dBm radio transmit power. */
 	ESB_TX_POWER_NEG14DBM = RADIO_TXPOWER_TXPOWER_Neg14dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg16dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Neg16dBm) || defined(__DOXYGEN__)
 	/** -16 dBm radio transmit power. */
 	ESB_TX_POWER_NEG16DBM = RADIO_TXPOWER_TXPOWER_Neg16dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg20dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Neg20dBm) || defined(__DOXYGEN__)
 	/** -20 dBm radio transmit power. */
 	ESB_TX_POWER_NEG20DBM = RADIO_TXPOWER_TXPOWER_Neg20dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg26dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Neg26dBm) || defined(__DOXYGEN__)
 	/** -26 dBm radio transmit power. */
 	ESB_TX_POWER_NEG26DBM = RADIO_TXPOWER_TXPOWER_Neg26dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg30dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Neg30dBm) || defined(__DOXYGEN__)
 	/** -30 dBm radio transmit power. */
 	ESB_TX_POWER_NEG30DBM = RADIO_TXPOWER_TXPOWER_Neg30dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg40dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Neg40dBm) || defined(__DOXYGEN__)
 	/** -40 dBm radio transmit power. */
 	ESB_TX_POWER_NEG40DBM = RADIO_TXPOWER_TXPOWER_Neg40dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg46dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Neg46dBm) || defined(__DOXYGEN__)
 	/** -46 dBm radio transmit power. */
 	ESB_TX_POWER_NEG46DBM = RADIO_TXPOWER_TXPOWER_Neg46dBm,
 #endif
-#if defined(RADIO_TXPOWER_TXPOWER_Neg70dBm) || defined(DOXYGEN)
+#if defined(RADIO_TXPOWER_TXPOWER_Neg70dBm) || defined(__DOXYGEN__)
 	/** -70 dBm radio transmit power. */
 	ESB_TX_POWER_NEG70DBM = RADIO_TXPOWER_TXPOWER_Neg70dBm,
 #endif
