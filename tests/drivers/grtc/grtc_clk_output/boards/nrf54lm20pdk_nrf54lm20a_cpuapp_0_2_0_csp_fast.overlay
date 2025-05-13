@@ -26,5 +26,5 @@
 	pinctrl-0 = <&grtc_default>;
 	pinctrl-1 = <&grtc_sleep>;
 	pinctrl-names = "default", "sleep";
-	clkout-fast-frequency = <32000>;  /* 16 MHz / (250 * 2) */
+	clkout-fast-frequency-hz = <32000>;  /* 16 MHz / (250 * 2) */
 };
