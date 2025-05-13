@@ -336,7 +336,7 @@ psa_status_t cracen_aead_encrypt_setup(cracen_aead_operation_t *operation,
 				       const uint8_t *key_buffer, size_t key_buffer_size,
 				       psa_algorithm_t alg)
 {
-#ifdef CONFIG_SOC_NRF54L20
+#ifdef CONFIG_SOC_NRF54LM20A
 	return PSA_ERROR_NOT_SUPPORTED;
 #else
 	return setup(operation, CRACEN_ENCRYPT, attributes, key_buffer, key_buffer_size, alg);
@@ -348,7 +348,7 @@ psa_status_t cracen_aead_decrypt_setup(cracen_aead_operation_t *operation,
 				       const uint8_t *key_buffer, size_t key_buffer_size,
 				       psa_algorithm_t alg)
 {
-#ifdef CONFIG_SOC_NRF54L20
+#ifdef CONFIG_SOC_NRF54LM20A
 	return PSA_ERROR_NOT_SUPPORTED;
 #else
 	return setup(operation, CRACEN_DECRYPT, attributes, key_buffer, key_buffer_size, alg);
@@ -371,7 +371,7 @@ static psa_status_t set_nonce(cracen_aead_operation_t *operation, const uint8_t 
 psa_status_t cracen_aead_set_nonce(cracen_aead_operation_t *operation, const uint8_t *nonce,
 				   size_t nonce_length)
 {
-#ifdef CONFIG_SOC_NRF54L20
+#ifdef CONFIG_SOC_NRF54LM20A
 	return PSA_ERROR_NOT_SUPPORTED;
 #else
 	psa_status_t status;
@@ -406,7 +406,7 @@ static void set_lengths(cracen_aead_operation_t *operation, size_t ad_length,
 psa_status_t cracen_aead_set_lengths(cracen_aead_operation_t *operation, size_t ad_length,
 				     size_t plaintext_length)
 {
-#ifdef CONFIG_SOC_NRF54L20
+#ifdef CONFIG_SOC_NRF54LM20A
 	return PSA_ERROR_NOT_SUPPORTED;
 #else
 	set_lengths(operation, ad_length, plaintext_length);
@@ -525,7 +525,7 @@ static psa_status_t cracen_aead_update_internal(cracen_aead_operation_t *operati
 psa_status_t cracen_aead_update_ad(cracen_aead_operation_t *operation, const uint8_t *input,
 				   size_t input_length)
 {
-#ifdef CONFIG_SOC_NRF54L20
+#ifdef CONFIG_SOC_NRF54LM20A
 	return PSA_ERROR_NOT_SUPPORTED;
 #else
 	return cracen_aead_update_internal(operation, input, input_length, NULL, 0, NULL, true);
@@ -536,7 +536,7 @@ psa_status_t cracen_aead_update(cracen_aead_operation_t *operation, const uint8_
 				size_t input_length, uint8_t *output, size_t output_size,
 				size_t *output_length)
 {
-#ifdef CONFIG_SOC_NRF54L20
+#ifdef CONFIG_SOC_NRF54LM20A
 	return PSA_ERROR_NOT_SUPPORTED;
 #else
 	/*
@@ -602,7 +602,7 @@ psa_status_t cracen_aead_finish(cracen_aead_operation_t *operation, uint8_t *cip
 				size_t ciphertext_size, size_t *ciphertext_length, uint8_t *tag,
 				size_t tag_size, size_t *tag_length)
 {
-#ifdef CONFIG_SOC_NRF54L20
+#ifdef CONFIG_SOC_NRF54LM20A
 	return PSA_ERROR_NOT_SUPPORTED;
 #else
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
@@ -653,7 +653,7 @@ psa_status_t cracen_aead_verify(cracen_aead_operation_t *operation, uint8_t *pla
 				size_t plaintext_size, size_t *plaintext_length, const uint8_t *tag,
 				size_t tag_length)
 {
-#ifdef CONFIG_SOC_NRF54L20
+#ifdef CONFIG_SOC_NRF54LM20A
 	return PSA_ERROR_NOT_SUPPORTED;
 #else
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;

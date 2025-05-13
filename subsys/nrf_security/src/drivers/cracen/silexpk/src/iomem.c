@@ -7,7 +7,7 @@
 #include <stdint.h>
 #include <silexpk/iomem.h>
 
-#ifndef CONFIG_SOC_NRF54L20
+#ifndef CONFIG_SOC_NRF54LM20A
 
 #define PTR_ALIGNMENT(ptr, type)	(((uintptr_t)ptr) & (sizeof(type) - 1))
 #define IS_NATURAL_ALIGNED(ptr, type)	!PTR_ALIGNMENT(ptr, type)
