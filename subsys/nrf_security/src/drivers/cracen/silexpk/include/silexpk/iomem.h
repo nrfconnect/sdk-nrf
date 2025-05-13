@@ -46,7 +46,7 @@ void sx_wrpkmem(void *dst, const void *src, size_t sz);
  * Will be modified after this call
  * @param[in] input_byte The byte value to be written.
  */
-#ifndef CONFIG_SOC_NRF54L20
+#ifndef CONFIG_SOC_NRF54LM20A
 static inline void sx_wrpkmem_byte(void *dst, char input_byte)
 {
 	volatile char *d = (volatile char *)dst;

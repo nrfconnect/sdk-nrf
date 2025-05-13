@@ -327,7 +327,7 @@ static psa_status_t initialize_cipher(cracen_cipher_operation_t *operation)
 
 static bool is_multi_part_supported(psa_algorithm_t alg)
 {
-	if (IS_ENABLED(CONFIG_SOC_NRF54L20)) {
+	if (IS_ENABLED(CONFIG_SOC_NRF54LM20A)) {
 		switch (alg) {
 		case PSA_ALG_ECB_NO_PADDING:
 			return IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES);
