@@ -1,5 +1,5 @@
 sample:
-  name: Low Power State Sample for nRF5x
+  name: Low Power State Sample for nRF5x and nRF71
 common:
   tags:
     - ci_samples_zephyr_boards_nordic_system_off
@@ -45,6 +45,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_GRTC_WAKEUP_ENABLE=y
       - CONFIG_GPIO_WAKEUP_ENABLE=n
@@ -68,6 +69,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_APP_USE_RETAINED_MEM=y
       - CONFIG_GRTC_WAKEUP_ENABLE=y
