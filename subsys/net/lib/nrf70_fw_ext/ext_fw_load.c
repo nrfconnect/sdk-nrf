@@ -14,6 +14,9 @@
 #include <zephyr/device.h>
 #if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP) && defined(CONFIG_NORDIC_QSPI_NOR)
 #include <zephyr/drivers/flash/nrf_qspi_nor.h>
+#if NRFX_CLOCK_ENABLED && (defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
+#include <nrfx_clock.h>
+#endif
 #endif /* CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP */
 
 #include <zephyr/logging/log.h>
@@ -239,26 +242,84 @@ out:
 	return status;
 }
 #elif CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP
+static nrf_clock_hfclk_div_t saved_divider = NRF_CLOCK_HFCLK_DIV_1;
+static void enable_xip_and_set_cpu_freq(void)
+{
+#if NRFX_CLOCK_ENABLED && (defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
+	/* Save the current divider */
+	saved_divider = nrfx_clock_divider_get(NRF_CLOCK_DOMAIN_HFCLK);
+
+	if (saved_divider == NRF_CLOCK_HFCLK_DIV_2) {
+		LOG_DBG("CPU frequency is already set to 64 MHz (DIV_2)");
+	} else {
+		/* Set CPU frequency to 64MHz (DIV_2) */
+		int ret = nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK, NRF_CLOCK_HFCLK_DIV_2);
+
+		if (ret != NRFX_SUCCESS) {
+			ret -= NRFX_ERROR_BASE_NUM;
+			LOG_ERR("Failed to set CPU frequency: %d", ret);
+			return;
+		}
+
+		LOG_DBG("CPU frequency set to 64 MHz");
+	}
+#endif
+
+#if defined(CONFIG_NORDIC_QSPI_NOR)
+	const struct device *flash_dev = DEVICE_DT_GET(DT_INST(0, nordic_qspi_nor));
+
+	nrf_qspi_nor_xip_enable(flash_dev, true);
+
+	LOG_DBG("XIP enabled");
+#endif
+}
+
+static void disable_xip_and_restore_cpu_freq(void)
+{
+#if defined(CONFIG_NORDIC_QSPI_NOR)
+	const struct device *flash_dev = DEVICE_DT_GET(DT_INST(0, nordic_qspi_nor));
+
+	nrf_qspi_nor_xip_enable(flash_dev, false);
+
+	LOG_DBG("XIP disabled");
+#endif
+
+#if NRFX_CLOCK_ENABLED && (defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
+	/* Restore CPU frequency to the saved value */
+	nrf_clock_hfclk_div_t current_divider = nrfx_clock_divider_get(NRF_CLOCK_DOMAIN_HFCLK);
+
+	if (current_divider != saved_divider) {
+		int ret = nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK, saved_divider);
+
+		if (ret != NRFX_SUCCESS) {
+			ret -= NRFX_ERROR_BASE_NUM;
+			LOG_ERR("Failed to restore CPU frequency: %d", ret);
+		} else {
+			LOG_DBG("CPU frequency restored to original value");
+		}
+	} else {
+		LOG_DBG("CPU frequency is already at the saved value");
+	}
+#endif
+}
+
 enum nrf_wifi_status nrf_wifi_fw_load(void *rpu_ctx)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_fmac_fw_info fw_info = { 0 };
-#if defined(CONFIG_NORDIC_QSPI_NOR)
-	const struct device *flash_dev = DEVICE_DT_GET(DT_INST(0, nordic_qspi_nor));
-#endif /* CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP */
 
-#if defined(CONFIG_NORDIC_QSPI_NOR)
-	nrf_qspi_nor_xip_enable(flash_dev, true);
-#endif /* CONFIG_NRF_WIFI */
+	enable_xip_and_set_cpu_freq();
 
 	status = nrf_wifi_fmac_fw_parse(rpu_ctx,
 			  nrf70_fw_patch,
 			  sizeof(nrf70_fw_patch),
 			  &fw_info);
+
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nrf_wifi_fmac_fw_parse failed", __func__);
-		return status;
+		goto out;
 	}
+
 	/* Load the FW patches to the RPU */
 	status = nrf_wifi_fmac_fw_load(rpu_ctx, &fw_info);
 
@@ -266,10 +327,8 @@ enum nrf_wifi_status nrf_wifi_fw_load(void *rpu_ctx)
 		LOG_ERR("%s: nrf_wifi_fmac_fw_load failed", __func__);
 	}
 
-#if defined(CONFIG_NORDIC_QSPI_NOR)
-	nrf_qspi_nor_xip_enable(flash_dev, false);
-#endif /* CONFIG_NRF_WIFI */
-
+out:
+	disable_xip_and_restore_cpu_freq();
 	return status;
 }
 #endif /* NRF_WIFI_PATCHES_EXT_FLASH_STORE */
