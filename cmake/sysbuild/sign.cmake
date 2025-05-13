@@ -96,48 +96,44 @@ function(b0_sign_image slot cpunet_target)
   set(signed_hex ${CMAKE_BINARY_DIR}/signed_by_b0_${slot}.hex)
   set(signed_bin ${CMAKE_BINARY_DIR}/signed_by_b0_${slot}.bin)
 
-  if(NCS_SYSBUILD_PARTITION_MANAGER)
-    # A container can be merged, in which case we should use old style below,
-    # or it may be an actual image, where we know everything.
-    # Initial support disregards the merged hex files.
-    # In parent-child, everything is merged, even when having a single image in a
-    # container (where the original image == the merged image).
-    if(TARGET ${slot})
-      # If slot is a target of it's own, then it means we target the hex directly and not a merged hex.
-      sysbuild_get(${slot}_image_dir IMAGE ${slot} VAR APPLICATION_BINARY_DIR CACHE)
-      sysbuild_get(${slot}_kernel_name IMAGE ${slot} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
-      sysbuild_get(${slot}_kernel_elf IMAGE ${slot} VAR CONFIG_KERNEL_ELF_NAME KCONFIG)
-      sysbuild_get(${slot}_crypto_id IMAGE ${slot} VAR CONFIG_SB_VALIDATION_INFO_CRYPTO_ID KCONFIG)
-      sysbuild_get(${slot}_validation_offset IMAGE ${slot} VAR CONFIG_SB_VALIDATION_METADATA_OFFSET KCONFIG)
-      sysbuild_get(input_data_start_offset_hex IMAGE ${slot} VAR CONFIG_ROM_START_OFFSET KCONFIG)
-      # CONFIG_ROM_START_OFFSET is a hex string, so we need to convert it to a decimal integer
-      math(EXPR ${slot}_input_data_start_offset "${input_data_start_offset_hex}")
+  # A container can be merged, in which case we should use old style below,
+  # or it may be an actual image, where we know everything.
+  # Initial support disregards the merged hex files.
+  # In parent-child, everything is merged, even when having a single image in a
+  # container (where the original image == the merged image).
+  if(TARGET ${slot})
+    # If slot is a target of it's own, then it means we target the hex directly and not a merged hex.
+    sysbuild_get(${slot}_image_dir IMAGE ${slot} VAR APPLICATION_BINARY_DIR CACHE)
+    sysbuild_get(${slot}_kernel_name IMAGE ${slot} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
+    sysbuild_get(${slot}_kernel_elf IMAGE ${slot} VAR CONFIG_KERNEL_ELF_NAME KCONFIG)
+    sysbuild_get(${slot}_crypto_id IMAGE ${slot} VAR CONFIG_SB_VALIDATION_INFO_CRYPTO_ID KCONFIG)
+    sysbuild_get(${slot}_validation_offset IMAGE ${slot} VAR CONFIG_SB_VALIDATION_METADATA_OFFSET KCONFIG)
+    sysbuild_get(input_data_start_offset_hex IMAGE ${slot} VAR CONFIG_ROM_START_OFFSET KCONFIG)
+    # CONFIG_ROM_START_OFFSET is a hex string, so we need to convert it to a decimal integer
+    math(EXPR ${slot}_input_data_start_offset "${input_data_start_offset_hex}")
 
-      set(slot_bin ${${slot}_image_dir}/zephyr/${${slot}_kernel_name}.bin)
-      set(slot_hex ${${slot}_image_dir}/zephyr/${${slot}_kernel_name}.hex)
-      set(sign_depends ${${slot}_image_dir}/zephyr/${${slot}_kernel_name}.elf)
-      set(target_name ${slot})
-    elseif("${slot}" STREQUAL "s0_image")
-      if(SB_CONFIG_BOOTLOADER_MCUBOOT)
-        set(target_name mcuboot)
-      else()
-        set(target_name ${DEFAULT_IMAGE})
-      endif()
-
-      sysbuild_get(${target_name}_image_dir IMAGE ${target_name} VAR APPLICATION_BINARY_DIR CACHE)
-      sysbuild_get(${target_name}_kernel_name IMAGE ${target_name} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
-      sysbuild_get(${slot}_crypto_id IMAGE ${target_name} VAR CONFIG_SB_VALIDATION_INFO_CRYPTO_ID KCONFIG)
-      sysbuild_get(${slot}_validation_offset IMAGE ${target_name} VAR CONFIG_SB_VALIDATION_METADATA_OFFSET KCONFIG)
-      sysbuild_get(input_data_start_offset_hex IMAGE ${target_name} VAR CONFIG_ROM_START_OFFSET KCONFIG)
-      # CONFIG_ROM_START_OFFSET is a hex string, so we need to convert it to a decimal integer
-      math(EXPR ${slot}_input_data_start_offset "${input_data_start_offset_hex}")
-
-      set(slot_bin ${${target_name}_image_dir}/zephyr/${${target_name}_kernel_name}.bin)
-      set(slot_hex ${${target_name}_image_dir}/zephyr/${${target_name}_kernel_name}.hex)
-      set(sign_depends ${target_name} ${${target_name}_image_dir}/zephyr/${${target_name}_kernel_name}.elf)
+    set(slot_bin ${${slot}_image_dir}/zephyr/${${slot}_kernel_name}.bin)
+    set(slot_hex ${${slot}_image_dir}/zephyr/${${slot}_kernel_name}.hex)
+    set(sign_depends ${${slot}_image_dir}/zephyr/${${slot}_kernel_name}.elf)
+    set(target_name ${slot})
+  elseif("${slot}" STREQUAL "s0_image")
+    if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+      set(target_name mcuboot)
     else()
-      message(FATAL_ERROR "Not supported")
+      set(target_name ${DEFAULT_IMAGE})
     endif()
+
+    sysbuild_get(${target_name}_image_dir IMAGE ${target_name} VAR APPLICATION_BINARY_DIR CACHE)
+    sysbuild_get(${target_name}_kernel_name IMAGE ${target_name} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
+    sysbuild_get(${slot}_crypto_id IMAGE ${target_name} VAR CONFIG_SB_VALIDATION_INFO_CRYPTO_ID KCONFIG)
+    sysbuild_get(${slot}_validation_offset IMAGE ${target_name} VAR CONFIG_SB_VALIDATION_METADATA_OFFSET KCONFIG)
+    sysbuild_get(input_data_start_offset_hex IMAGE ${target_name} VAR CONFIG_ROM_START_OFFSET KCONFIG)
+    # CONFIG_ROM_START_OFFSET is a hex string, so we need to convert it to a decimal integer
+    math(EXPR ${slot}_input_data_start_offset "${input_data_start_offset_hex}")
+
+    set(slot_bin ${${target_name}_image_dir}/zephyr/${${target_name}_kernel_name}.bin)
+    set(slot_hex ${${target_name}_image_dir}/zephyr/${${target_name}_kernel_name}.hex)
+    set(sign_depends ${target_name} ${${target_name}_image_dir}/zephyr/${${target_name}_kernel_name}.elf)
   else()
     message(FATAL_ERROR "Not supported")
   endif()

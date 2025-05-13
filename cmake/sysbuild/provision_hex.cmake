@@ -33,8 +33,7 @@ function(provision application prefix_name)
     endif()
 
     # Skip signing if MCUBoot is to be booted and its not built from source
-    if((CONFIG_SB_VALIDATE_FW_SIGNATURE OR CONFIG_SB_VALIDATE_FW_HASH) AND
-        NCS_SYSBUILD_PARTITION_MANAGER)
+    if(CONFIG_SB_VALIDATE_FW_SIGNATURE OR CONFIG_SB_VALIDATE_FW_HASH)
 
       if (${SB_CONFIG_SECURE_BOOT_DEBUG_SIGNATURE_PUBLIC_KEY_LAST})
         message(WARNING
@@ -197,28 +196,26 @@ function(provision application prefix_name)
   endif()
 endfunction()
 
-if(NCS_SYSBUILD_PARTITION_MANAGER)
-  b0_gen_keys()
+b0_gen_keys()
 
-  # Get the main app of the domain that secure boot should handle.
-  if(SB_CONFIG_SECURE_BOOT AND SB_CONFIG_SECURE_BOOT_APPCORE)
-    if(SB_CONFIG_BOOTLOADER_MCUBOOT)
-      provision("mcuboot" "app_")
-    else()
-      provision("${DEFAULT_IMAGE}" "app_")
-    endif()
-  elseif(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+# Get the main app of the domain that secure boot should handle.
+if(SB_CONFIG_SECURE_BOOT AND SB_CONFIG_SECURE_BOOT_APPCORE)
+  if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+    provision("mcuboot" "app_")
+  else()
     provision("${DEFAULT_IMAGE}" "app_")
   endif()
+elseif(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+  provision("${DEFAULT_IMAGE}" "app_")
+endif()
 
-  if(SB_CONFIG_SECURE_BOOT_NETCORE)
-    get_property(main_app GLOBAL PROPERTY DOMAIN_APP_CPUNET)
+if(SB_CONFIG_SECURE_BOOT_NETCORE)
+  get_property(main_app GLOBAL PROPERTY DOMAIN_APP_CPUNET)
 
-    if(NOT main_app)
-      message(FATAL_ERROR "Secure boot is enabled on domain CPUNET"
-                          " but no image is selected for this domain.")
-    endif()
-
-    provision("${main_app}" "net_")
+  if(NOT main_app)
+    message(FATAL_ERROR "Secure boot is enabled on domain CPUNET"
+                        " but no image is selected for this domain.")
   endif()
+
+  provision("${main_app}" "net_")
 endif()
