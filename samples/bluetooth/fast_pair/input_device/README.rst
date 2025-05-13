@@ -12,7 +12,7 @@ This sample demonstrates :ref:`how to use Google Fast Pair with the nRF Connect 
 Google Fast Pair Service (GFPS) is a standard for pairing Bluetooth® and Bluetooth LE devices with as little user interaction required as possible.
 Google also provides additional features built upon the Fast Pair standard.
 For detailed information about supported functionalities, see the official `Fast Pair`_ documentation.
-The software maturity level for the input device use case is outlined in the :ref:`software_maturity_fast_pair_use_case` table.
+The software maturity level for the input device use case is outlined in the :ref:`Google Fast Pair use case support <software_maturity_fast_pair_use_case>` table.
 
 .. note::
    Support for Fast Pair input device use case is also integrated into :ref:`nrf_desktop`.
