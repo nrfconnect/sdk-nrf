@@ -76,6 +76,7 @@ static const struct device *gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
 #endif
 static struct k_work_delayable gpio_power_pin_disable_work;
 static slm_ind_handler_t ind_handler;
+static slm_ind_handler_t ind_handler_backup;
 
 #if defined(CONFIG_MODEM_SLM_SHELL)
 static const struct shell *global_shell;
@@ -589,6 +590,7 @@ int modem_slm_init(slm_data_handler_t handler)
 
 	data_handler = handler;
 	ind_handler = NULL;
+	ind_handler_backup = NULL;
 	slm_at_state = AT_CMD_OK;
 
 	err = gpio_init();
@@ -625,6 +627,7 @@ int modem_slm_uninit(void)
 
 	data_handler = NULL;
 	ind_handler = NULL;
+	ind_handler_backup = NULL;
 	slm_at_state = AT_CMD_OK;
 
 	return 0;
@@ -633,6 +636,9 @@ int modem_slm_uninit(void)
 int modem_slm_register_ind(slm_ind_handler_t handler, bool wakeup)
 {
 #if (CONFIG_MODEM_SLM_INDICATE_PIN >= 0)
+	if (ind_handler != NULL) {
+		ind_handler_backup = ind_handler;
+	}
 	ind_handler = handler;
 
 	if (wakeup) {
@@ -737,12 +743,40 @@ int modem_slm_shell_slmsh_powerpin(const struct shell *shell, size_t argc, char 
 	return 0;
 }
 
+int modem_slm_shell_slmsh_indicate_enable(const struct shell *shell, size_t argc, char **argv)
+{
+	LOG_INF("Enable indicate pin callback");
+	(void)modem_slm_register_ind(ind_handler_backup, true);
+	(void)indicate_pin_enable();
+	return 0;
+}
+
+int modem_slm_shell_slmsh_indicate_disable(const struct shell *shell, size_t argc, char **argv)
+{
+	LOG_INF("Disable indicate pin callback");
+	/* indicate_pin_disable() is not called so we get one indication where we just log
+	 * a warning that indications are not coming and then disable the indication pin.
+	 */
+	return modem_slm_register_ind(NULL, true);
+}
+
 SHELL_CMD_REGISTER(slm, NULL, "Send AT commands to SLM device", modem_slm_shell);
+
+SHELL_STATIC_SUBCMD_SET_CREATE(
+	sub_indicate,
+	SHELL_CMD(enable, NULL, "Enable/disable indicate pin callback",
+		  modem_slm_shell_slmsh_indicate_enable),
+	SHELL_CMD(disable, NULL, "Disable indicate pin callback",
+		  modem_slm_shell_slmsh_indicate_disable),
+	SHELL_SUBCMD_SET_END
+);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_slmsh,
 	SHELL_CMD(powerpin, NULL, "Toggle power pin configured with CONFIG_MODEM_SLM_POWER_PIN",
 		  modem_slm_shell_slmsh_powerpin),
+	SHELL_CMD(indicate, &sub_indicate, "Enable/disable indicate pin callback",
+		  NULL),
 	SHELL_SUBCMD_SET_END
 );
 
