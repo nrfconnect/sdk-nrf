@@ -139,6 +139,10 @@ int dfu_target_full_modem_schedule_update(int img_num);
  */
 int dfu_target_full_modem_reset(void);
 
+#ifdef __cplusplus
+}
+#endif
+
 #endif /* DFU_TARGET_FULL_MODEM_H__ */
 
 /**@} */
