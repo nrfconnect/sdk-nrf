@@ -118,10 +118,10 @@ tests:
     extra_args: DTC_OVERLAY_FILE="boards/nrf54l09pdk_nrf54l09_cpuapp_uart21.overlay"
   drivers.uart.baudrate_test.lv10_uart21:
     platform_allow:
-      - nrf54lv10apdk/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
-      - nrf54lv10apdk/nrf54lv10a/cpuapp
-    extra_args: DTC_OVERLAY_FILE="boards/nrf54lv10apdk_nrf54lv10a_cpuapp_uart21.overlay"
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    extra_args: DTC_OVERLAY_FILE="boards/nrf54lv10dk_nrf54lv10a_cpuapp_uart21.overlay"
   drivers.uart.baudrate_test.7120_uart00:
     platform_allow:
       - nrf7120pdk/nrf7120/cpuapp
