@@ -27,3 +27,15 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_nfc
+  sample.nfc.shell.llvm:
+    toolchain_allow: llvm
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_nfc
