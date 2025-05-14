@@ -45,12 +45,12 @@
 #define FLASH_MAP_PM_SINGLE(x, _) FLASH_MAP_PM_ENTRY(UTIL_CAT(PM_, UTIL_CAT(PM_##x##_LABEL)))
 #define FLASH_MAP_PM_LIST LISTIFY(FLASH_MAP_NUM, FLASH_MAP_PM_SINGLE, ())
 
-const struct flash_area default_flash_map[] = {
+static const struct flash_area pm_flash_map[] = {
 	FLASH_MAP_PM_LIST
 };
 
-const int flash_map_entries = ARRAY_SIZE(default_flash_map);
-const struct flash_area *flash_map = default_flash_map;
+const int flash_map_entries = ARRAY_SIZE(pm_flash_map);
+const struct flash_area *flash_map = pm_flash_map;
 
 #else
 
