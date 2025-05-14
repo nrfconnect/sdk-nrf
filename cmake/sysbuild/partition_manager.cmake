@@ -575,12 +575,7 @@ sysbuild_get(num_bits IMAGE ${DEFAULT_IMAGE} VAR CONFIG_PM_EXTERNAL_FLASH_SIZE_B
 if(ext_flash_enabled)
   math(EXPR num_bytes "${num_bits} / 8")
 
-  sysbuild_get(custom_driver IMAGE ${DEFAULT_IMAGE} VAR CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK KCONFIG)
-  if (custom_driver)
-    set(external_flash_driver_kconfig CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK)
-  else()
-    set(external_flash_driver_kconfig CONFIG_NORDIC_QSPI_NOR)
-  endif()
+  set(external_flash_driver_kconfig CONFIG_PM_EXTERNAL_FLASH_HAS_DRIVER)
 
   sysbuild_get(external_flash_base IMAGE ${DEFAULT_IMAGE} VAR CONFIG_PM_EXTERNAL_FLASH_BASE KCONFIG)
   add_region(
