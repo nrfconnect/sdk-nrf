@@ -1106,6 +1106,8 @@ Testing steps for the firmware update notification feature require the `nRF Conn
    * `Google Play Services`_ - ``v25.12.33``
    * `nRF Connect Device Manager`_ - ``v2.5.0``
 
+   Also, ensure that Android notifications are enabled for the `nRF Connect Device Manager`_ application.
+
 .. note::
    You can execute these testing steps in combination with the :ref:`fast_pair_locator_tag_testing_clock_sync` testing steps, as both test variants require you to wait for more than 24 hours.
 
@@ -1122,8 +1124,16 @@ To test this feature, complete the following steps:
       #. Power on the development kit.
       #. |connect_terminal_specific|
       #. Power on your test Android device and unlock it after the smartphone screen is turned on.
-      #. Wait for the Android device to connect to the development kit, read the local firmware version, and disconnect.
+      #. Wait for the device to automatically connect to the development kit and read the local firmware version in the background.
+      #. In the terminal, verify that a message confirming that the firmware version is being read appears::
+
+            DIS Firmware Revision characteristic is being read
+
       #. Observe that you get the Android notification about the new firmware update on your test Android device.
+
+         .. note::
+            Notification delivery on Android may be delayed due to system conditions or background processing.
+            It is recommended to wait up to five minutes before concluding that this test step has failed.
 
          .. figure:: /images/bt_fast_pair_locator_tag_android_fw_update_notification.png
             :scale: 80 %
@@ -1147,7 +1157,8 @@ To test this feature, complete the following steps:
       #. Power on the development kit.
       #. |connect_terminal_specific|
       #. Power on your test Android device and unlock it after the smartphone screen is turned on.
-      #. Wait for the Android device to connect to the development kit, read the local firmware version, and disconnect.
+      #. Wait for the device to automatically connect to the development kit and read the local firmware version in the background.
+      #. In the terminal, verify that a message confirming that the firmware version is being read appears.
       #. Observe that you no longer get the Android notification about the new firmware update on your test Android device.
 
    .. group-tab:: nRF54 DKs
@@ -1159,8 +1170,16 @@ To test this feature, complete the following steps:
       #. Power on the development kit.
       #. |connect_terminal_specific|
       #. Power on your test Android device and unlock it after the smartphone screen is turned on.
-      #. Wait for the Android device to connect to the development kit, read the local firmware version, and disconnect.
+      #. Wait for the device to automatically connect to the development kit and read the local firmware version in the background.
+      #. In the terminal, verify that a message confirming that the firmware version is being read appears::
+
+            DIS Firmware Revision characteristic is being read
+
       #. Observe that you get the Android notification about the new firmware update on your test Android device.
+
+         .. note::
+            Notification delivery on Android may be delayed due to system conditions or background processing.
+            It is recommended to wait up to five minutes before concluding that this test step has failed.
 
          .. figure:: /images/bt_fast_pair_locator_tag_android_fw_update_notification.png
             :scale: 80 %
@@ -1184,7 +1203,8 @@ To test this feature, complete the following steps:
       #. Power on the development kit.
       #. |connect_terminal_specific|
       #. Power on your test Android device and unlock it after the smartphone screen is turned on.
-      #. Wait for the Android device to connect to the development kit, read the local firmware version, and disconnect.
+      #. Wait for the device to automatically connect to the development kit and read the local firmware version in the background.
+      #. In the terminal, verify that a message confirming that the firmware version is being read appears.
       #. Observe that you no longer get the Android notification about the new firmware update on your test Android device.
 
 Disabling the locator tag

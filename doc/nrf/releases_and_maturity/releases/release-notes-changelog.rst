@@ -277,6 +277,9 @@ Bluetooth Fast Pair samples
 
   * Added possibility to build and run the sample without the motion detector support (with the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR` Kconfig option disabled).
 
+  * Updated the :ref:`fast_pair_locator_tag_testing_fw_update_notifications` section to improve the test procedure.
+    The application provides now an additional log message to indicate that the firmware version is being read.
+
 Cellular samples
 ----------------
 
