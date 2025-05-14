@@ -565,7 +565,8 @@ ZTEST(nrf_wifi, test_raw_tx)
 
 	LOG_INF("starting transmit thread");
 	k_thread_start(transmit_thread_id);
-
+	/* provide a wait duration for the current main thread for the other thread to start */
+	k_busy_wait(1000);
 	/* get kernel ticks in milliseconds */
 	prev_time = k_uptime_get();
 
