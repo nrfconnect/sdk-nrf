@@ -1,8 +1,8 @@
 /* Two loopbacks are used
  * Each loopback is between analog input and GPIO.
- * first-gpios (P1.00) -> AIN3 (P1.29)
+ * first-gpios (P1.03) -> AIN6 (P1.04)
  * second-gpios (P1.30, AIN2) -> AIN1 (P1.31)
- * AIN5 (P1.05) tied to low (GND)
+ * AIN4 (P1.06) tied to VDD
  */
 
 / {
@@ -11,7 +11,7 @@
 	};
 
 	zephyr,user {
-		first-gpios = <&gpio1 0 GPIO_ACTIVE_HIGH>;
+		first-gpios = <&gpio1 3 GPIO_ACTIVE_HIGH>;
 		second-gpios = <&gpio1 30 GPIO_ACTIVE_HIGH>;
 	};
 };
