@@ -258,7 +258,14 @@ Bluetooth Mesh samples
 Cellular samples
 ----------------
 
-|no_changes_yet_note|
+* Decreased the fragment size on the following cellular samples that include the :ref:`liblwm2m_carrier_readme` library:
+
+  * :ref:`slm_description`
+  * :ref:`http_application_update_sample`
+  * :ref:`lwm2m_carrier`
+  * :ref:`modem_shell_application`
+
+  This is done to ensure that FOTA issued from Verizon LwM2M servers has enough room for HTTP headers.
 
 Cryptography samples
 --------------------
