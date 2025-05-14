@@ -286,28 +286,20 @@ This allows to build and run secure-only applications on the nRF5340 SoC.
 Building |NCS| applications with Arm TrustZone
 ==============================================
 
-Applications on nRF5340 can use Cortex-M Security Extensions (CMSE) and separate firmware for the application core between Secure Processing Environment (SPE) and Non-Secure Processing Environment (NSPE).
-You can build SPE using either |NCS| or `Trusted Firmware M`_ (TF-M).
-You must always build NSPE using |NCS|.
+Applications on nRF5340 can use the M33 TrustZone for :ref:`security by separation <ug_tfm_security_by_separation>`.
+When security by separation is used, the MCU always starts executing from the secure area at boot.
+When enabled, the :ref:`ug_bootloader` starts the :ref:`Trusted Firmware-M (TF-M) <ug_tfm>`, which configures a part of memory and peripherals to be non-secure, and then jumps to the user application located in the non-secure area.
 
-For information about Cortex-M Security Extensions (CMSE) and the difference between the two environments, see :ref:`app_boards_spe_nspe`.
-
-.. note::
-   By default, SPE for the nRF5340 application core is built using TF-M.
-
-Building the firmware with TF-M
--------------------------------
-
-If you want to use |NCS| to build the firmware image separated in SPE with TF-M and NSPE, complete the following steps:
+If you want to use |NCS| to build the firmware image with security by separation, complete the following steps:
 
 1. Build the |NCS| application for the application core using the ``nrf7002dk/nrf5340/cpuapp/ns`` board target.
 
-   To invoke the building of TF-M, the |NCS| build system requires the Kconfig option :kconfig:option:`CONFIG_BUILD_WITH_TFM` to be enabled, which is set by default when building |NCS| as an application that supports both NSPE and SPE.
+   To invoke the building of TF-M, the |NCS| build system requires the Kconfig option :kconfig:option:`CONFIG_BUILD_WITH_TFM` to be enabled, which is set by default when building |NCS| as an application that supports security by separation.
 
    The |NCS| build system performs the following steps automatically:
 
-      a. Build the NSPE firmware image as a regular |NCS| application.
-      #. Build an SPE firmware image (with TF-M).
+      a. Build the Non-Secure Processing Environment (NSPE) firmware image as a regular |NCS| application.
+      #. Build a Secure Processing Environment (SPE) firmware image (with TF-M).
       #. Merge the output image binaries.
       #. Optionally, build a bootloader image (MCUboot).
 
@@ -316,8 +308,8 @@ If you want to use |NCS| to build the firmware image separated in SPE with TF-M 
 
 #. Build the application firmware for the network core using the ``nrf7002dk/nrf5340/cpunet`` board target.
 
-Building application without CMSE
-=================================
+Building application without security by separation
+===================================================
 
 Build the |NCS| application as described in :ref:`building`, using the ``nrf7002dk/nrf5340/cpuapp`` board target for the firmware running on the nRF5340 application core and the ``nrf7002dk/nrf5340/cpunet`` board target for the firmware running on the nRF5340 network core.
 

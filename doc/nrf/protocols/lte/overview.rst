@@ -153,7 +153,7 @@ Security
 ========
 
 The nRF91 Series devices include a range of security features, such as Arm TrustZone and Arm CryptoCell for secure application and data handling.
-For more information, refer to the :ref:`app_boards_spe_nspe` documentation.
+For more information, refer to the :ref:`security` documentation.
 
 Security best practices are also implemented to protect data transmitted over the cellular network.
 This includes using Transport Layer Security (TLS) for Transmission Control Protocol (TCP) and Datagram Transport Layer Security (DTLS) for User Datagram Protocol (UDP).
