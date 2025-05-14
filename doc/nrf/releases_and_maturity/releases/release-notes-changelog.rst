@@ -395,7 +395,9 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
-|no_changes_yet_note|
+* :ref:`bt_mesh` library:
+
+  * Fixed an issue where the ``bt_mesh_adv_unref()`` function could assert when messaging to a proxy node.
 
 Common Application Framework
 ----------------------------
