@@ -909,9 +909,8 @@ Before you start testing the application, you can select one of the :ref:`nrf_de
 See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for information about how to select a build type.
 
 .. note::
-   If nRF Desktop is built with `Fast Pair`_ support, you must provide Fast Pair Model ID and Anti Spoofing private key as CMake options.
-   You can use either your own provisioning data or the provisioning data obtained by Nordic Semiconductor for development purposes.
-   The following debug devices are meant to be used with the nRF Desktop and have been registered:
+   An nRF Desktop device with `Fast Pair`_ support by default uses the debug Fast Pair Model ID and Anti Spoofing private key obtained by Nordic Semiconductor for development purposes.
+   The following debug Fast Pair Model IDs were registered to be used with the nRF Desktop application:
 
    * NCS keyboard - The Fast Pair Provider meant to be used with keyboards:
 
