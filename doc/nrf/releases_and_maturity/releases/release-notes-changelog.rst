@@ -333,6 +333,11 @@ Networking samples
 NFC samples
 -----------
 
+* Added experimental ``llvm`` toolchain support for the ``nrf54l15dk/nrf54l15/cpuapp`` board target to the following samples:
+
+  * :ref:`writable_ndef_msg`
+  * :ref:`nfc_shell`
+
 * :ref:`record_text` sample:
 
   * Added support for the ``nrf54l15dk/nrf54l15/cpuapp/ns`` board target.
