@@ -578,7 +578,7 @@ The peripheral supports one wireless connection at a time, but it can be bonded 
    See the :ref:`nrf_desktop_bluetooth_guide_fast_pair` section for details.
 
 The nRF Desktop Bluetooth Central device scans for all bonded peripherals that are not connected.
-Right after entering the scanning state, the scanning operation is uninterruptible for a predefined time (:kconfig:option:`CONFIG_DESKTOP_BLE_FORCED_SCAN_DURATION_S`) to speed up connection establishment with Bluetooth Peripherals.
+Right after entering the scanning state, the scanning operation is uninterruptible for a predefined time (:ref:`CONFIG_DESKTOP_BLE_FORCED_SCAN_DURATION_S <config_desktop_app_options>`) to speed up connection establishment with Bluetooth Peripherals.
 After the timeout, the scanning is interrupted when any device connected to the dongle through Bluetooth becomes active.
 A connected peripheral is considered active when it provides HID input reports.
 Continuing the scanning in such scenario would cause report rate drop.
