@@ -14,15 +14,5 @@
 
 	chosen {
 		zephyr,sram = &cpuapp_sram;
-		zephyr,console = &uart00;
-		zephyr,shell-uart = &uart00;
 	};
-};
-
-&uart00 {
-	status = "okay";
-	current-speed = <115200>;
-	pinctrl-0 = <&uart00_default>;
-	pinctrl-1 = <&uart00_sleep>;
-	pinctrl-names = "default", "sleep";
 };
