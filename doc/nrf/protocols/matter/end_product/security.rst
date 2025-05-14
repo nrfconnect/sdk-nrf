@@ -24,7 +24,7 @@ Depending on the board, Matter samples can use a secure processing environment.
 nRF54L with Trusted Firmware-M (TF-M)
 =====================================
 
-On the nRF54L SoC, Matter samples support :ref:`app_boards_spe_nspe` with Trusted Firmware-M (TF-M).
+On the nRF54L SoC, Matter samples support :ref:`security by separation <ug_tfm_security_by_separation>` with Trusted Firmware-M (TF-M).
 All cryptographic operations within the Matter stack are performed by utilizing the `Platform Security Architecture (PSA)`_ API and executed in the secure TF-M environment.
 The secure materials like Matter Session keys and other keys, except for the DAC private key, are stored in the TF-M secure storage using the :ref:`tfm_encrypted_its` module.
 Matter samples use the full TF-M library, so you cannot use the :ref:`tfm_minimal_build` version of TF-M.

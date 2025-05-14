@@ -165,8 +165,10 @@ The following options are used to configure the AEAD backend and its behavior:
 Usage
 *****
 
-The trusted storage library can only be used on a build using a board target with :ref:`CMSE disabled <app_boards_spe_nspe_cpuapp>` (``/cpuapp``).
-When you build for ``/cpuapp``, you build the firmware for the application core without CMSE and thus no TF-M.
+The trusted storage library can only be used on a build without Trusted Firmware-M.
+
+This means that you must use a board target without :ref:`security by separation <ug_tfm_security_by_separation>` (``/cpuapp``).
+When you build for ``/cpuapp``, you build the firmware for the application core without Cortex-M Security Extensions (CMSE) and so without TF-M.
 The library can be used directly on such a build to store important assets.
 However, for cryptographic keys we suggest to use the `PSA functions for key management`_.
 These APIs will internally use this library to store persistent keys.

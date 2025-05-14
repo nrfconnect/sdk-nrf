@@ -41,17 +41,14 @@ Application MCU
 The application core is a full-featured Arm Cortex-M33 processor including DSP instructions and FPU.
 Use this core for tasks that require high performance and for application-level logic.
 
-The M33 TrustZone, one of Cortex-M Security Extensions (CMSE), divides the application MCU into Secure Processing Environment (SPE) and Non-Secure Processing Environment (NSPE).
-When the MCU boots, it always starts executing from the secure area.
-The secure bootloader chain starts the :ref:`Trusted Firmware-M (TF-M) <ug_tfm>`, which configures a part of memory and peripherals to be non-secure, and then jumps to the user application located in the non-secure area.
-
-For information about CMSE and the difference between the two environments, see :ref:`app_boards_spe_nspe`.
+You can use :ref:`security by separation <ug_tfm_security_by_separation>` with the M33 TrustZone for the application MCU.
+When security by separation is used, the MCU always starts executing from the secure area at boot.
+When enabled, the :ref:`ug_bootloader` starts the :ref:`Trusted Firmware-M (TF-M) <ug_tfm>`, which configures a part of memory and peripherals to be non-secure, and then jumps to the user application located in the non-secure area.
 
 Secure bootloader chain
 =======================
 
-A secure bootloader chain protects your application against running unauthorized code, and it enables you to do device firmware updates (DFU).
-See :ref:`ug_bootloader` for more information.
+A :ref:`ug_bootloader` protects your application against running unauthorized code, and it enables you to do device firmware updates (DFU).
 
 A bootloader chain is optional.
 Not all of the nRF91 Series samples include a secure bootloader chain, but the ones that do use the :ref:`bootloader` sample and :doc:`MCUboot <mcuboot:index-ncs>`.

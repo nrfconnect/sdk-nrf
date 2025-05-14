@@ -41,14 +41,15 @@ While the board name is always present, other elements, such as the board revisi
   Check the Product Specification of the given SoC for more information about the available CPU clusters.
 
 * :ref:`Variant <zephyr:glossary>` - You can use this board qualifier to build for a particular type or configuration of a build for a combination of SoC and CPU cluster.
-  In the |NCS|, variants are used for indicating the usage of Cortex-M Security Extensions (CMSE):
+  In the |NCS|, variants are used for indicating the usage of Cortex-M Security Extensions (CMSE) (security by separation):
 
-  * Entries without ``*/ns`` - When you choose this target, you build the application core firmware as a single execution environment that does not use CMSE (:ref:`Trusted Firmware-M (TF-M) <ug_tfm>`).
-  * Entries with ``*/ns`` (for example, ``cpuapp/ns``) - When you choose this target, you build the application with CMSE.
+  * Entries without ``*/ns`` (for example, ``cpuapp``) - When you choose this target, you build the application core firmware as a single execution environment that does not use CMSE (:ref:`Trusted Firmware-M (TF-M) <ug_tfm>`).
+  * Entries with ``*/ns`` (for example, ``cpuapp/ns``) - Recommended for more security.
+    When you choose this target, you build the application with CMSE using security by separation.
     The application core firmware is placed in Non-Secure Processing Environment (NSPE) and uses Secure Processing Environment (SPE) for security features.
     By default, the build system automatically includes :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` in SPE and merges it with NSPE.
 
-  Read more about separation of processing environments on the :ref:`app_boards_spe_nspe` page.
+  Read more about separation of processing environments on the :ref:`ug_tfm_security_by_separation` page.
 
 .. note::
     This board name scheme was introduced in the |NCS| before the v2.7.0 release following changes in Zephyr v3.6.0.
