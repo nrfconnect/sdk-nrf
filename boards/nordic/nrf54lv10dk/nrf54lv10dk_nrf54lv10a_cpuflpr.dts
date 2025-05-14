@@ -6,11 +6,11 @@
 
 /dts-v1/;
 #include <nordic/nrf54lv10a_enga_cpuflpr.dtsi>
-#include "nrf54lv10apdk_nrf54lv10a-common.dtsi"
+#include "nrf54lv10dk_nrf54lv10a-common.dtsi"
 
 / {
-	model = "Nordic nRF54Lv10a PDK nRF54Lv10a FLPR MCU";
-	compatible = "nordic,nrf54lv10apdk_nrf54lv10a-cpuflpr";
+	model = "Nordic nRF54Lv10 DK nRF54Lv10a FLPR MCU";
+	compatible = "nordic,nrf54lv10dk_nrf54lv10a-cpuflpr";
 
 	chosen {
 		zephyr,console = &uart30;

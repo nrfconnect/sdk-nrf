@@ -29,7 +29,7 @@ tests:
       - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
       - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
       - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
-      - nrf54lv10apdk/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l09pdk/nrf54l09/cpuapp
@@ -37,7 +37,7 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
-      - nrf54lv10apdk/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_TEST_LPUART_LOOPBACK=y
@@ -55,7 +55,7 @@ tests:
       - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
       - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
       - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
-      - nrf54lv10apdk/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l09pdk/nrf54l09/cpuapp
@@ -63,7 +63,7 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
-      - nrf54lv10apdk/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_TEST_LPUART_LOOPBACK=y
@@ -153,7 +153,7 @@ tests:
       - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
       - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
       - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
-      - nrf54lv10apdk/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l09pdk/nrf54l09/cpuapp
@@ -161,7 +161,7 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
-      - nrf54lv10apdk/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
       - CONFIG_UART_INTERRUPT_DRIVEN=y
