@@ -4,6 +4,10 @@ on:
   push:
     tags:
       - 'v*'
+    branches: # Trigger on push to main and release branches
+      - main
+      - 'v*-branch'
+      - 'push-docker-with-tags' # TODO: REMOVE ME
 
 jobs:
   build:
@@ -23,9 +27,34 @@ jobs:
           username: NordicBuilder
           password: ${{ secrets.NCS_GITHUB_PKG_WRITE_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Check if Docker image exists
+        id: check-image
         run: |
-          TOOLCHAIN_ID=$(../print_toolchain_checksum.sh)
-          docker build -t ghcr.io/${{ github.repository }}-toolchain:${{ github.ref_name }} --build-arg VERSION=$TOOLCHAIN_ID .
-          docker push ghcr.io/${{ github.repository }}-toolchain:${{ github.ref_name }}
+          TOOLCHAIN_ID=$(./scripts/print_toolchain_checksum.sh)
+          echo "TOOLCHAIN_ID=$TOOLCHAIN_ID" >> $GITHUB_OUTPUT
+          IMAGE_NAME=ghcr.io/${{ github.repository }}-toolchain:$TOOLCHAIN_ID
+          if docker manifest inspect $IMAGE_NAME > /dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and push Docker image
+        if: steps.check-image.outputs.exists == 'false'
         working-directory: scripts/docker
+        run: |
+          IMAGE_NAME=ghcr.io/${{ github.repository }}-toolchain:${{steps.check-image.outputs.TOOLCHAIN_ID}}
+          docker build -t $IMAGE_NAME --build-arg VERSION=${{steps.check-image.outputs.TOOLCHAIN_ID}} .
+          docker push $IMAGE_NAME
+          if [[ ${{ github.ref_name }} == "main" ]]; then
+            docker tag $IMAGE_NAME ghcr.io/${{ github.repository }}-toolchain:latest
+            docker push ghcr.io/${{ github.repository }}-toolchain:latest
+          fi
+
+      - name: Tag and push Docker image for tags
+        if: github.event_name == 'push' && github.ref_type == 'tag'
+        run: |
+          IMAGE_NAME=ghcr.io/${{ github.repository }}-toolchain:${{steps.check-image.outputs.TOOLCHAIN_ID}}
+          docker pull $IMAGE_NAME
+          docker tag $IMAGE_NAME ghcr.io/${{ github.repository }}-toolchain:${{ github.ref_name }}
+          docker push ghcr.io/${{ github.repository }}-toolchain:${{ github.ref_name }}
