@@ -61,3 +61,18 @@
     - unit.*
     - native_sim.*
   comment: "SUIT is planned to be removed from NCS soon"
+
+- scenarios:
+    - nrf.extended.drivers.spi.loopback
+    - nrf.extended.drivers.spi.nrf_pm_runtime
+    - nrf.extended.drivers.spi.pm_runtime
+    - nrf.extended.drivers.spi.spi_4MHz
+    - nrf.extended.drivers.spi.spi_8MHz
+    - nrf.extended.drivers.spi.spi_error_cases
+    - nrf.extended.drivers.spi.spi_mode0
+    - nrf.extended.drivers.spi.spi_mode1
+    - nrf.extended.drivers.spi.spi_mode2
+    - nrf.extended.drivers.spi.spi_mode3
+  platforms:
+    - nrf7120pdk/nrf7120/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-7694"
