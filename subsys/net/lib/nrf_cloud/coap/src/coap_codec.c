@@ -364,7 +364,7 @@ int coap_codec_ground_fix_resp_decode(struct nrf_cloud_location_result *result,
 	}
 	if (err) {
 		LOG_ERR("Error decoding ground fix CBOR response: %d", err);
-		return err;
+		return -EINVAL;
 	}
 
 	const char *with = res.ground_fix_resp_fulfilledWith.value;
@@ -570,18 +570,26 @@ int coap_codec_pgps_resp_decode(struct nrf_cloud_pgps_result *result,
 	size_t resp_len;
 
 	err = cbor_decode_pgps_resp(buf, len, &resp, &resp_len);
-	if (!err) {
-		strncpy(result->host, resp.pgps_resp_host.value, result->host_sz);
-		if (result->host_sz > resp.pgps_resp_host.len) {
-			result->host[resp.pgps_resp_host.len] = '\0';
-		}
-		result->host_sz = resp.pgps_resp_host.len;
-		strncpy(result->path, resp.pgps_resp_path.value, result->path_sz);
-		if (result->path_sz > resp.pgps_resp_path.len) {
-			result->path[resp.pgps_resp_path.len] = '\0';
-		}
-		result->path_sz = resp.pgps_resp_path.len;
+	if (!err && (resp_len != len)) {
+		LOG_WRN("Different response length: expected:%zd, decoded:%zd",
+			len, resp_len);
 	}
+	if (err) {
+		LOG_ERR("Error decoding P-GPS CBOR response: %d", err);
+		return -EINVAL;
+	}
+
+	strncpy(result->host, resp.pgps_resp_host.value, result->host_sz);
+	if (result->host_sz > resp.pgps_resp_host.len) {
+		result->host[resp.pgps_resp_host.len] = '\0';
+	}
+	result->host_sz = resp.pgps_resp_host.len;
+	strncpy(result->path, resp.pgps_resp_path.value, result->path_sz);
+	if (result->path_sz > resp.pgps_resp_path.len) {
+		result->path[resp.pgps_resp_path.len] = '\0';
+	}
+	result->path_sz = resp.pgps_resp_path.len;
+
 	return err;
 }
 #endif /* CONFIG_NRF_CLOUD_PGPS */

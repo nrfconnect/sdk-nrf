@@ -515,7 +515,9 @@ Multiprotocol Service Layer libraries
 Libraries for networking
 ------------------------
 
-|no_changes_yet_note|
+* :ref:`lib_nrf_cloud` library:
+
+  * Updated to return negative :file:`errno.h` errors instead of positive ZCBOR errors.
 
 Libraries for NFC
 -----------------
