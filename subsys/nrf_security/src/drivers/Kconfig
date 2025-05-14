@@ -179,14 +179,14 @@ config PSA_USE_CRACEN_KEY_AGREEMENT_DRIVER
 	bool "Cracen key agreement driver"
 	default y
 
-config PSA_USE_CRACEN_ASYMMETRIC_DRIVER
-	bool "Cracen asymmetric encryption and signature driver"
+config PSA_USE_CRACEN_ASYMMETRIC_ENCRYPTION_DRIVER
+	bool "Cracen asymmetric encryption driver"
 	default y
 
 config PSA_USE_CRACEN_KEY_MANAGEMENT_DRIVER
 	bool "Cracen key management driver"
 	default y
-	depends on PSA_USE_CRACEN_ASYMMETRIC_DRIVER || \
+	depends on PSA_USE_CRACEN_ASYMMETRIC_ENCRYPTION_DRIVER || \
 		   PSA_USE_CRACEN_KEY_AGREEMENT_DRIVER
 
 

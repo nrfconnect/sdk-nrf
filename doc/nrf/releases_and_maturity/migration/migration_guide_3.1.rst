@@ -43,7 +43,10 @@ Libraries
 
 This section describes the changes related to libraries.
 
-|no_changes_yet_note|
+* :ref:`nrf_security_readme` library:
+
+  * The ``CONFIG_PSA_USE_CRACEN_ASYMMETRIC_DRIVER`` Kconfig option has been replaced by :kconfig:option:`CONFIG_PSA_USE_CRACEN_ASYMMETRIC_ENCRYPTION_DRIVER`.
+
 
 .. _migration_3.1_recommended:
 
