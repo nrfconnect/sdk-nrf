@@ -14,8 +14,8 @@ target_include_directories(psa_crypto_library_config
     ${NRF_CC3XX_MBEDCRYPTO_INCLUDE_PATH}
 )
 
-# Link oberon_psa_core with the imported libraries
-target_link_libraries(oberon_psa_core
+# Link psa_core with the imported libraries
+target_link_libraries(psa_core
   INTERFACE
     nrf_cc3xx_psa_crypto_imported
     nrf_cc3xx_core_imported
