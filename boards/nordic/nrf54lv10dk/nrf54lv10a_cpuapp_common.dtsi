@@ -7,7 +7,7 @@
 /* This file is common to the secure and non-secure domain */
 
 #include <nordic/nrf54lv10a_enga_cpuapp.dtsi>
-#include "nrf54lv10apdk_nrf54lv10a-common.dtsi"
+#include "nrf54lv10dk_nrf54lv10a-common.dtsi"
 
 / {
 	chosen {

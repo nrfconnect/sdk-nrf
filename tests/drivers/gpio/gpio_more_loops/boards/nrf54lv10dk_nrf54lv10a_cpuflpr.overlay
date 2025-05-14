@@ -4,4 +4,4 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "nrf54lv10apdk_nrf54lv10a_common.dtsi"
+#include "nrf54lv10dk_nrf54lv10a_common.dtsi"

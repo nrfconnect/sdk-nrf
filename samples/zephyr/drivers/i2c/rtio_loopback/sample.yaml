@@ -32,9 +32,9 @@ tests:
       - nrf54l09-switch-uart
   nrf.extended.sample.drivers.i2c.rtio_loopback.lv10:
     platform_allow:
-      - nrf54lv10apdk/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
-      - nrf54lv10apdk/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_args:
       - SNIPPET=nrf54lv10-switch-uart
     tags:
