@@ -54,6 +54,14 @@
 			pwms = <&pwm0 1 PWM_MSEC(8) PWM_POLARITY_NORMAL>;
 		};
 	};
+
+	/* Load switch controlling 3.3V supply and I/O voltage for external boards */
+	exp_board_enable: exp_board_enable {
+		compatible = "regulator-fixed";
+		regulator-name = "exp_board_enable";
+		enable-gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>;
+	};
+
 	zephyr,user {
 		nrf5340-reset-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
 	};
@@ -84,12 +92,6 @@
 	status = "okay";
 	/* Use PORT event rather than GPIOTE IN event, to save power */
 	sense-edge-mask = <0xffffffff>;
-	/* Load switch controlling 3.3V supply and I/O voltage for external boards */
-	exp_board_enable: exp_board_enable {
-		gpio-hog;
-		output-low;
-		gpios = <3 GPIO_ACTIVE_HIGH>;
-	};
 };
 
 /* PWM0 is intended for RGB LED control */
