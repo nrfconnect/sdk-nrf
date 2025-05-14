@@ -515,7 +515,7 @@ The Kconfig option :kconfig:option:`CONFIG_PSA_USE_CC3XX_ASYMMETRIC_ENCRYPTION_D
 
 Configuration of the :ref:`nrf_security_drivers_oberon` is automatically generated based on the user-enabled algorithms in `Asymmetric encryption configurations`_.
 
-The Kconfig option :kconfig:option:`CONFIG_PSA_USE_CRACEN_ASYMMETRIC_DRIVER` enables the :ref:`nrf_security_drivers_cracen` for all supported algorithms.
+The Kconfig option :kconfig:option:`CONFIG_PSA_USE_CRACEN_ASYMMETRIC_ENCRYPTION_DRIVER` enables the :ref:`nrf_security_drivers_cracen` for all supported algorithms.
 
 RSA key size configuration is supported as described in `RSA key size configuration`_.
 

@@ -486,7 +486,9 @@ Gazell libraries
 Security libraries
 ------------------
 
-|no_changes_yet_note|
+* :ref:`nrf_security_readme` library:
+
+  * Renamed the ``CONFIG_PSA_USE_CRACEN_ASYMMETRIC_DRIVER`` Kconfig option to :kconfig:option:`CONFIG_PSA_USE_CRACEN_ASYMMETRIC_ENCRYPTION_DRIVER`, which is more descriptive and more consistent with the options of the other drivers.
 
 Modem libraries
 ---------------
