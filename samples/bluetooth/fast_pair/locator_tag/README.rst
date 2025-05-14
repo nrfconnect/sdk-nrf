@@ -646,7 +646,7 @@ Assuming that your current working directory points to this sample directory, yo
 * The ``<board_target>`` placeholder is your board target name (for example, ``nrf54l15dk/nrf54l15/cpuapp``).
 * The ``<algorithm>`` placeholder is the algorithm used to generate the key pair for the application image signature generation and verification (for example, ``ed25519``).
 
-The examplary command for the ``nrf54l15dk/nrf54l15/cpuapp`` board target and the demonstration key file looks is as follows:
+The examplary command for the ``nrf54l15dk/nrf54l15/cpuapp`` board target and the demonstration key file is as follows:
 
 .. parsed-literal::
    :class: highlight
