@@ -1,41 +1,40 @@
 name: src-mirror
+
 on:
+  workflow_dispatch:
+    inputs:
+      git-ref:
+        description: 'Branch, tag or SHA to checkout'
+        required: true
+        default: 'main'
   push:
     tags:
       - '*'
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    paths:
+      - .github/workflows/src-mirror.yml
+
+concurrency:
+  group: src-mirror-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  zip-and-upload:
-    runs-on: ubuntu-24.04
+
+  # Tar entire project west workspace, prune, and upload to artifact service.
+  standard:
+    runs-on: ubuntu-24.04-16cores
     steps:
-      - name: Checkout sources
-        uses: nrfconnect/action-checkout-west-update@main
+      - name: Upload src.tar.gz
+        uses: nrfconnect/action-src-mirror@main
         with:
-          git-fetch-depth: 0
-          path: workspace/nrf
-          west-update-args: '--group-filter=+babblesim'
-
-      - name: Configure git and run garbage collection
-        run: |
-          cd workspace/nrf
-          git config --global pack.windowMemory "32m" &&
-          west forall -c 'git gc --prune --aggressive'
-
-      - name: Create tar archive
-        run: |
-          tar -C ./workspace -czvf src.tar.gz .
-
-      - name: Set up JFrog CLI
-        uses: jfrog/setup-jfrog-cli@f748a0599171a192a2668afee8d0497f7c1069df # v4
-
-      - name: Configure and Upload to Artifactory
-        env:
-          ARTIFACTORY_URL: https://eu.files.nordicsemi.com/artifactory
-          REPOSITORY: ncs-src-mirror
-          FILE_PATH: src.tar.gz
-          TARGET_PATH: external/${{ github.ref_name }}/
-        run: >
-          jfrog rt u $FILE_PATH $REPOSITORY/$TARGET_PATH
-          --url=$ARTIFACTORY_URL
-          --user=${{ secrets.COM_NORDICSEMI_FILES_USERNAME }}
-          --password=${{ secrets.COM_NORDICSEMI_FILES_PASSWORD }}
+          path: 'nrf'
+          west-update-args: ''
+          artifactory-path: >-
+            ${{ (github.ref_type != 'tag') &&
+              format('ncs-src-mirror/internal/{0}/{1}/src.tar.gz', github.event.repository.name, github.ref_name) ||
+              format('ncs-src-mirror/external/{1}/src.tar.gz', github.event.repository.name, github.ref_name) }}
+          artifactory-user: ${{ secrets.COM_NORDICSEMI_FILES_USERNAME }}
+          artifactory-pass: ${{ secrets.COM_NORDICSEMI_FILES_PASSWORD }}
