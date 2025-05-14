@@ -210,7 +210,7 @@ static void reset_image(enum dfu_target_image_type img_type)
 /****************************************************/
 /* End of transport-specific wrappers.              */
 /****************************************************/
-static void http_fota_dl_handler(const struct fota_download_evt *evt)
+static void fota_dl_handler(const struct fota_download_evt *evt)
 {
 	LOG_DBG("evt: %d", evt->id);
 
@@ -371,7 +371,7 @@ int nrf_cloud_fota_poll_init(struct nrf_cloud_fota_poll_ctx *ctx)
 		}
 	}
 
-	err = fota_download_init(http_fota_dl_handler);
+	err = fota_download_init(fota_dl_handler);
 	if (err) {
 		LOG_ERR("Failed to initialize FOTA download, error: %d", err);
 		return err;
@@ -389,7 +389,7 @@ int nrf_cloud_fota_poll_init(struct nrf_cloud_fota_poll_ctx *ctx)
 
 	k_work_init_delayable(&ctx->cancel_work, fota_dl_cancel_work_fn);
 
-	/* A copy of the ctx pointer is needed to use in http_fota_dl_handler  */
+	/* A copy of the ctx pointer is needed to use in fota_dl_handler  */
 	ctx_ptr = ctx;
 
 	initialized = true;
@@ -545,7 +545,7 @@ static int start_download(void)
 		.fota = {
 			.expected_type = ctx_ptr->img_type,
 			.img_sz = job.file_size,
-			.cb = http_fota_dl_handler
+			.cb = fota_dl_handler
 		}
 	};
 
