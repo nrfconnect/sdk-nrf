@@ -518,7 +518,9 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   endif()
 
   if(SB_CONFIG_SECURE_BOOT_BOOTCONF_LOCK_WRITES)
-    set_config_bool(b0 CONFIG_FPROTECT_ALLOW_COMBINED_REGIONS n)
+    foreach(image ${PRE_CMAKE_IMAGES})
+      set_config_bool(${image} CONFIG_FPROTECT_ALLOW_COMBINED_REGIONS n)
+    endforeach()
   endif()
 
   if(SB_CONFIG_SECURE_BOOT_NETCORE)
