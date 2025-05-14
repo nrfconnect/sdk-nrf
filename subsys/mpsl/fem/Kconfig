@@ -197,7 +197,7 @@ config MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL
 	  Enables run-time control of the PA gain.
 
 	  If MPSL_FEM_NRF21540_GPIO is selected, the PA gain is controlled by setting appropriate level
-	  of MODE pin of the nRF21540 device. Initial default gain is determined by
+	  of MODE pin of the nRF21540 device.
 
 	  If MPSL_FEM_NRF21540_GPIO_SPI is selected, the PA gain is controlled by SPI transfers to the
 	  nRF21540.
