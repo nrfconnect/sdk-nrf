@@ -242,7 +242,9 @@ out:
 	return status;
 }
 #elif CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP
+#if NRFX_CLOCK_ENABLED && (defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
 static nrf_clock_hfclk_div_t saved_divider = NRF_CLOCK_HFCLK_DIV_1;
+#endif
 static void enable_xip_and_set_cpu_freq(void)
 {
 #if NRFX_CLOCK_ENABLED && (defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
