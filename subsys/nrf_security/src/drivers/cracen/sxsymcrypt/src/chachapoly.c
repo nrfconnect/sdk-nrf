@@ -110,7 +110,8 @@ static int sx_aead_create_chacha20poly1305(struct sxaead *c, const struct sxkeyr
 		return SX_ERR_INVALID_KEY_SZ;
 	}
 
-	/* The context key need to be set before calling sx_aead_hw_reserve */
+	/* has countermeasures and the key need to be set before callling sx_aead_hw_reserve */
+	c->has_countermeasures = false;
 	c->key = key;
 	sx_aead_hw_reserve(c);
 
