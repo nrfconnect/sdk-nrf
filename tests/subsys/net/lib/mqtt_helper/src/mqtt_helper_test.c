@@ -242,6 +242,8 @@ void test_mqtt_helper_init_when_unitialized(void)
 		},
 	};
 
+	__cmock_mqtt_client_init_Expect(&mqtt_client);
+
 	TEST_ASSERT_EQUAL(0, mqtt_helper_init(&cfg));
 	TEST_ASSERT_EQUAL(mqtt_state_get(), MQTT_STATE_DISCONNECTED);
 }
@@ -272,8 +274,6 @@ void test_mqtt_helper_connect_when_disconnected(void)
 		},
 	};
 
-	__cmock_mqtt_client_init_Expect(&mqtt_client);
-
 	/* Make getddrinfo return a pointer that points to NULL. Otherwise the unit under test
 	 * would be dereferencing uninitialized memory location. The behavior of the unit
 	 * under test for when non-NULL values are returned is out of scope of this test.
@@ -298,8 +298,6 @@ void test_mqtt_helper_connect_when_disconnected(void)
 void test_mqtt_helper_connect_when_disconnected_mqtt_api_error(void)
 {
 	struct mqtt_helper_conn_params conn_params_dummy;
-
-	__cmock_mqtt_client_init_Expect(&mqtt_client);
 
 	__cmock_zsock_freeaddrinfo_ExpectAnyArgs();
 	__cmock_mqtt_connect_ExpectAndReturn(&mqtt_client, -2);
