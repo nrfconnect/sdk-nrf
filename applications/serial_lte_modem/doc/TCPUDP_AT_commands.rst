@@ -174,7 +174,7 @@ Syntax
 
 ::
 
-   #XTCPCLI=<op>[,<url>,<port>[,sec_tag[,peer_verify[,hostname_verify]]]]
+   #XTCPCLI=<op>[,<url>,<port>[,sec_tag[,peer_verify[,hostname_verify,[cid]]]]]
 
 * The ``<op>`` parameter can accept one of the following values:
 
@@ -206,6 +206,10 @@ Syntax
   * ``1`` - Verify the hostname against the received certificate (default).
 
 See :ref:`nRF socket options <nrfxlib:nrf_sockets>` ``peer_verify`` and ``tls_hostname`` for more information on ``<peer_verify>`` and ``<hostname_verify>``.
+
+* The ``<cid>`` parameter is an integer indicating the used PDN connection.
+  It represents ``cid`` in the ``+CGDCONT`` command.
+  Its default value is ``0``.
 
 Response syntax
 ~~~~~~~~~~~~~~~
@@ -275,7 +279,7 @@ Response syntax
 
 ::
 
-   #XTCPCLI: <list of ops>,<url>,<port>,<sec_tag>,<peer_verify>,<hostname_verify>
+   #XTCPCLI: <list of ops>,<url>,<port>,<sec_tag>,<peer_verify>,<hostname_verify>,<cid>
 
 Examples
 ~~~~~~~~
@@ -552,7 +556,7 @@ Syntax
 
 ::
 
-   #XUDPCLI=<op>[,<url>,<port>[,<sec_tag>[,<use_dtls_cid>[,peer_verify[,hostname_verify]]]]]
+   #XUDPCLI=<op>[,<url>,<port>[,<sec_tag>[,<use_dtls_cid>[,peer_verify[,hostname_verify,[cid]]]]]]
 
 * The ``<op>`` parameter can accept one of the following values:
 
@@ -588,6 +592,10 @@ Syntax
   * ``1`` - Verify the hostname against the received certificate (default).
 
 See :ref:`nRF socket options <nrfxlib:nrf_sockets>` ``peer_verify`` and ``tls_hostname`` for more information on ``<peer_verify>`` and ``<hostname_verify>``.
+
+* The ``<cid>`` parameter is an integer indicating the used PDN connection.
+  It represents ``cid`` in the ``+CGDCONT`` command.
+  Its default value is ``0``.
 
 Response syntax
 ~~~~~~~~~~~~~~~
@@ -650,7 +658,7 @@ Syntax
 
 ::
 
-   #XUDPCLI: <list of ops>,<url>,<port>,<sec_tag>,<use_dtls_cid>,<peer_verify>,<hostname_verify>
+   #XUDPCLI: <list of ops>,<url>,<port>,<sec_tag>,<use_dtls_cid>,<peer_verify>,<hostname_verify>,<cid>
 
 Examples
 ~~~~~~~~

@@ -184,7 +184,7 @@ static int do_udp_proxy_close(void)
 	return ret;
 }
 
-static int do_udp_client_connect(const char *url, uint16_t port)
+static int do_udp_client_connect(const char *url, uint16_t port, uint16_t cid)
 {
 	int ret;
 	struct sockaddr sa;
@@ -263,6 +263,18 @@ static int do_udp_client_connect(const char *url, uint16_t port)
 		if (ret) {
 			LOG_ERR("zsock_setsockopt(TLS_HOSTNAME) error: %d", errno);
 			ret = -errno;
+			goto cli_exit;
+		}
+	}
+
+	/* Explicitly bind to a PDP context if necessary */
+	if (cid > 0) {
+		int cid_int = cid;
+
+		ret = zsock_setsockopt(proxy.sock, SOL_SOCKET, SO_BINDTOPDN,
+				&cid_int, sizeof(int));
+		if (ret < 0) {
+			LOG_ERR("zsock_setsockopt(SO_BINDTOPDN) error: %d", -errno);
 			goto cli_exit;
 		}
 	}
@@ -579,6 +591,7 @@ static int handle_at_udp_client(enum at_parser_cmd_type cmd_type, struct at_pars
 			uint16_t port;
 			char url[SLM_MAX_URL];
 			int size = SLM_MAX_URL;
+			uint16_t cid = 0; /* CID0 for initial PDN connection */
 
 			if (socket_is_in_use()) {
 				return -EINVAL;
@@ -592,25 +605,26 @@ static int handle_at_udp_client(enum at_parser_cmd_type cmd_type, struct at_pars
 				return err;
 			}
 			proxy.sec_tag = INVALID_SEC_TAG;
-
-			if (param_count > 4) {
-				if (at_parser_num_get(parser, 4, &proxy.sec_tag)
-				|| proxy.sec_tag == INVALID_SEC_TAG || proxy.sec_tag < 0) {
+			if (param_count > 4) { /* optional param */
+				err = at_parser_num_get(parser, 4, &proxy.sec_tag);
+				if ((err != 0 && err != -EOPNOTSUPP)) {
 					return -EINVAL;
 				}
 			}
-			proxy.dtls_cid = INVALID_DTLS_CID;
-			if (param_count > 5) {
-				if (at_parser_num_get(parser, 5, &proxy.dtls_cid)
+			proxy.dtls_cid = TLS_DTLS_CID_DISABLED;
+			if (param_count > 5) { /* optional param */
+				err = at_parser_num_get(parser, 5, &proxy.dtls_cid);
+				if ((err != 0 && err != -EOPNOTSUPP)
 				|| !(proxy.dtls_cid == TLS_DTLS_CID_DISABLED
-					|| proxy.dtls_cid == TLS_DTLS_CID_SUPPORTED
-					|| proxy.dtls_cid == TLS_DTLS_CID_ENABLED)) {
+				|| proxy.dtls_cid == TLS_DTLS_CID_SUPPORTED
+				|| proxy.dtls_cid == TLS_DTLS_CID_ENABLED)) {
 					return -EINVAL;
 				}
 			}
 			proxy.peer_verify = TLS_PEER_VERIFY_REQUIRED;
-			if (param_count > 6) {
-				if (at_parser_num_get(parser, 6, &proxy.peer_verify) ||
+			if (param_count > 6) { /* optional param */
+				err = at_parser_num_get(parser, 6, &proxy.peer_verify);
+				if ((err != 0 && err != -EOPNOTSUPP) ||
 				    (proxy.peer_verify != TLS_PEER_VERIFY_NONE &&
 				     proxy.peer_verify != TLS_PEER_VERIFY_OPTIONAL &&
 				     proxy.peer_verify != TLS_PEER_VERIFY_REQUIRED)) {
@@ -618,17 +632,24 @@ static int handle_at_udp_client(enum at_parser_cmd_type cmd_type, struct at_pars
 				}
 			}
 			proxy.hostname_verify = true;
-			if (param_count > 7) {
-				uint16_t hostname_verify;
+			if (param_count > 7) { /* optional param */
+				uint16_t hostname_verify = 0;
 
-				if (at_parser_num_get(parser, 7, &hostname_verify) ||
+				err = at_parser_num_get(parser, 7, &hostname_verify);
+				if ((err != 0 && err != -EOPNOTSUPP) ||
 				    (hostname_verify != 0 && hostname_verify != 1)) {
 					return -EINVAL;
 				}
 				proxy.hostname_verify = (bool)hostname_verify;
 			}
+			if (param_count > 8) { /* optional param, last */
+				if (at_parser_num_get(parser, 8, &cid)) {
+					return -EINVAL;
+				}
+			}
+
 			proxy.family = (op == CLIENT_CONNECT) ? AF_INET : AF_INET6;
-			err = do_udp_client_connect(url, port);
+			err = do_udp_client_connect(url, port, cid);
 		} else if (op == CLIENT_DISCONNECT) {
 			err = do_udp_proxy_close();
 		} break;
