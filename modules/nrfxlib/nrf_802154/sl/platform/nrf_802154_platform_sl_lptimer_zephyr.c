@@ -59,7 +59,6 @@ struct hw_task_desc {
 static struct timer_desc m_timer;
 static struct timer_desc m_sync_timer;
 static struct hw_task_desc m_hw_task;
-static volatile bool m_clock_ready;
 static bool m_in_critical_section;
 
 void timer_handler(int32_t id, uint64_t expire_time, void *user_data)
