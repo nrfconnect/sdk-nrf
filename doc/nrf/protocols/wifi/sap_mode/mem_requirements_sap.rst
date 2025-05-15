@@ -11,7 +11,7 @@ Footprint values are provided in kilobytes (KB).
 
    .. tab:: nRF54H20 DK
 
-      The following table lists the memory requirements for :zephyr:board:`nrf54h20dk`).
+      The following table lists the memory requirements for :zephyr:board:`nrf54h20dk`.
 
       +---------------------------------------------------------------+-------------+--------------------+----------------------+----------------------+---------------------------------+--------------------+----------------------+
       | Sample                                                        |   Total ROM |   Wi-Fi driver ROM |   nRF70 FW Patch ROM |   WPA supplicant ROM |   Total RAM (incl. static HEAP) |   Wi-Fi driver RAM |   WPA supplicant RAM |
@@ -21,7 +21,7 @@ Footprint values are provided in kilobytes (KB).
 
    .. tab:: nRF54L15 DK
 
-      The following table lists the memory requirements for :zephyr:board:`nrf54l15dk`).
+      The following table lists the memory requirements for :zephyr:board:`nrf54l15dk`.
 
       +---------------------------------------------------------------+-------------+--------------------+----------------------+----------------------+---------------------------------+--------------------+----------------------+
       | Sample                                                        |   Total ROM |   Wi-Fi driver ROM |   nRF70 FW Patch ROM |   WPA supplicant ROM |   Total RAM (incl. static HEAP) |   Wi-Fi driver RAM |   WPA supplicant RAM |

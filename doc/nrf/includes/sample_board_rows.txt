@@ -1,6 +1,6 @@
 .. heading
 
-| Hardware platforms | PCA | Board name | Board target |
+| Hardware platforms | PCA | Board name | :ref:`Board target <app_boards>` |
 
 .. nrf52dk_nrf52832
 
@@ -16,21 +16,21 @@
 
 .. nrf9160dk_nrf9160
 
-| :ref:`nRF9160 DK <ug_nrf9160>` | PCA10090 | :ref:`nrf9160dk <nrf9160dk_nrf9160>` | ``nrf9160dk/nrf9160``  |
+| :ref:`nRF9160 DK <ug_nrf9160>` | PCA10090 | :ref:`nrf9160dk <zephyr:nrf9160dk_nrf9160>` | ``nrf9160dk/nrf9160``  |
 
 .. nrf9160dk_nrf9160_ns
 
-| :ref:`nRF9160 DK <ug_nrf9160>` | PCA10090 | :ref:`nrf9160dk <nrf9160dk_nrf9160>` | ``nrf9160dk/nrf9160/ns`` |
+| :ref:`nRF9160 DK <ug_nrf9160>` | PCA10090 | :ref:`nrf9160dk <zephyr:nrf9160dk_nrf9160>` | ``nrf9160dk/nrf9160/ns`` |
 
 .. nrf9160dk_nrf9160_and_ns
 
-| :ref:`nRF9160 DK <ug_nrf9160>` | PCA10090 | :ref:`nrf9160dk <nrf9160dk_nrf9160>` | ``nrf9160dk/nrf9160``    |
+| :ref:`nRF9160 DK <ug_nrf9160>` | PCA10090 | :ref:`nrf9160dk <zephyr:nrf9160dk_nrf9160>` | ``nrf9160dk/nrf9160``    |
 |                                |          |                                      |                          |
 |                                |          |                                      | ``nrf9160dk/nrf9160/ns`` |
 
 .. nrf9160dk_nrf52840
 
-| :ref:`nRF9160 DK <ug_nrf9160>` | PCA10090 | :ref:`nrf9160dk <nrf9160dk_nrf9160>` | ``nrf9160dk/nrf52840`` |
+| :ref:`nRF9160 DK <ug_nrf9160>` | PCA10090 | :ref:`nrf9160dk <zephyr:nrf9160dk_nrf52840>` | ``nrf9160dk/nrf52840`` |
 
 .. nrf9161dk_nrf9161
 
@@ -106,11 +106,11 @@
 
 .. nrf52dk_nrf52810
 
-| :ref:`nRF52 DK (emulating nRF52810) <ug_nrf52>` | PCA10040 | :zephyr:board:`nrf52dk` | ``nrf52dk/nrf52810`` |
+| :ref:`nRF52 DK (emulating nRF52810) <ug_nrf52>` | PCA10040 | :ref:`nrf52dk <zephyr:nrf52dk_nrf52810>` | ``nrf52dk/nrf52810`` |
 
 .. nrf52dk_nrf52805
 
-| :ref:`nRF52 DK (emulating nRF52805) <ug_nrf52>` | PCA10040 | :zephyr:board:`nrf52dk` | ``nrf52dk/nrf52805`` |
+| :ref:`nRF52 DK (emulating nRF52805) <ug_nrf52>` | PCA10040 | :ref:`nrf52dk <zephyr:nrf52dk_nrf52805>` | ``nrf52dk/nrf52805`` |
 
 .. nrf52kbd_nrf52832
 
@@ -118,7 +118,7 @@
 
 .. nrf52840dk_nrf52811
 
-| :ref:`nRF52840 DK (emulating nRF52811) <ug_nrf52>` | PCA10056 | :zephyr:board:`nrf52840dk` | ``nrf52840dk/nrf52811`` |
+| :ref:`nRF52840 DK (emulating nRF52811) <ug_nrf52>` | PCA10056 | :ref:`nrf52840dk <zephyr:nrf52840dk_nrf52811>` | ``nrf52840dk/nrf52811`` |
 
 .. nrf52840gmouse_nrf52840
 

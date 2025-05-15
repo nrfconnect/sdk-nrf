@@ -13,7 +13,7 @@ Footprint values are provided in kilobytes (KB).
 
    .. tab:: nRF52840 DK
 
-      The following table lists memory requirements for sample running on the :zephyr:board:`nrf52840dk`).
+      The following table lists memory requirements for sample running on the :zephyr:board:`nrf52840dk`.
 
       +--------------------------------------+-------------+-------------------------------------------+----------------------------+----------------------+---------------------------------+--------------------+----------------------+
       | Sample                               |   Total ROM |   Wi-Fi driver ROM                        |         nRF70 FW patch ROM |   WPA supplicant ROM |   Total RAM (incl. static heap) |   Wi-Fi driver RAM |   WPA supplicant RAM |
@@ -23,7 +23,7 @@ Footprint values are provided in kilobytes (KB).
 
    .. tab:: nRF54H20 DK
 
-      The following table lists the memory requirements for sample running on the :zephyr:board:`nrf54h20dk`).
+      The following table lists the memory requirements for sample running on the :zephyr:board:`nrf54h20dk`.
 
       +---------------------------------------------------------------+-------------+--------------------+----------------------+----------------------+---------------------------------+--------------------+----------------------+
       | Sample                                                        |   Total ROM |   Wi-Fi driver ROM |   nRF70 FW Patch ROM |   WPA supplicant ROM |   Total RAM (incl. static HEAP) |   Wi-Fi driver RAM |   WPA supplicant RAM |
@@ -33,7 +33,7 @@ Footprint values are provided in kilobytes (KB).
 
    .. tab:: nRF54L15 DK
 
-      The following table lists the memory requirements for sample running on the :zephyr:board:`nrf54l15dk`).
+      The following table lists the memory requirements for sample running on the :zephyr:board:`nrf54l15dk`.
 
       +---------------------------------------------------------------+-------------+--------------------+----------------------+----------------------+---------------------------------+--------------------+----------------------+
       | Sample                                                        |   Total ROM |   Wi-Fi driver ROM |   nRF70 FW Patch ROM |   WPA supplicant ROM |   Total RAM (incl. static HEAP) |   Wi-Fi driver RAM |   WPA supplicant RAM |
@@ -53,7 +53,7 @@ Footprint values are provided in kilobytes (KB).
 
    .. tab:: nRF9160 DK
 
-      The following table lists memory requirements for samples running on the :ref:`zephyr:nrf9160dk_nrf9160`).
+      The following table lists memory requirements for samples running on the :ref:`zephyr:nrf9160dk_nrf9160`.
 
       +-----------------------------------+-------------+-------------------------------------------+----------------------------+----------------------+---------------------------------+--------------------+----------------------+
       | Sample                            |   Total ROM |   Wi-Fi driver ROM                        |         nRF70 FW patch ROM |   WPA supplicant ROM |   Total RAM (incl. static heap) |   Wi-Fi driver RAM |   WPA supplicant RAM |
@@ -65,7 +65,7 @@ Footprint values are provided in kilobytes (KB).
 
    .. tab:: nRF9161 DK
 
-      The following table lists memory requirements for samples running on the :zephyr:board:`nrf9161dk`).
+      The following table lists memory requirements for samples running on the :zephyr:board:`nrf9161dk`.
 
       +-----------------------------------+-------------+-------------------------------------------+----------------------------+----------------------+---------------------------------+--------------------+----------------------+
       | Sample                            |   Total ROM |   Wi-Fi driver ROM                        |         nRF70 FW patch ROM |   WPA supplicant ROM |   Total RAM (incl. static heap) |   Wi-Fi driver RAM |   WPA supplicant RAM |
