@@ -510,7 +510,12 @@ Multiprotocol Service Layer libraries
 Libraries for networking
 ------------------------
 
-|no_changes_yet_note|
+* :ref:`lib_downloader` library:
+
+  * Fixed:
+
+    * A bug in the shell implementation causing endless download retries on errors.
+    * A bug in the shell to allow multiple downloads.
 
 Libraries for NFC
 -----------------
