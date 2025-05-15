@@ -189,7 +189,7 @@ static int cmd_time_set(const struct shell *shell, size_t argc, char **argv)
 
 static int cmd_cancel(const struct shell *shell, size_t argc, char **argv)
 {
-	radio_test_cancel();
+	radio_test_cancel(test_config.type);
 	test_in_progress = false;
 	return 0;
 }
@@ -219,7 +219,7 @@ static int cmd_tx_carrier_start(const struct shell *shell, size_t argc,
 				char **argv)
 {
 	if (test_in_progress) {
-		radio_test_cancel();
+		radio_test_cancel(test_config.type);
 		test_in_progress = false;
 	}
 
@@ -282,7 +282,7 @@ static int cmd_tx_modulated_carrier_start(const struct shell *shell,
 					  char **argv)
 {
 	if (test_in_progress) {
-		radio_test_cancel();
+		radio_test_cancel(test_config.type);
 		test_in_progress = false;
 	}
 
@@ -633,7 +633,7 @@ static int cmd_tx_sweep_start(const struct shell *shell, size_t argc,
 static int cmd_rx_start(const struct shell *shell, size_t argc, char **argv)
 {
 	if (test_in_progress) {
-		radio_test_cancel();
+		radio_test_cancel(test_config.type);
 		test_in_progress = false;
 	}
 
