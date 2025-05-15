@@ -314,6 +314,12 @@
     - qemu_cortex_m3/ti_lm3s6965
   comment: "https://github.com/zephyrproject-rtos/zephyr/issues/89484"
 
+- scenarios:
+    - libraries.encoding.json
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuflpr
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-33580"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
