@@ -108,16 +108,20 @@ int sx_aead_hw_reserve(struct sxaead *c)
 	int err = SX_OK;
 	uint32_t prng_value;
 
-	err = cracen_prng_value_from_pool(&prng_value);
-	if (err != SX_OK) {
-		return err;
+	if (c->has_countermeasures) {
+		err = cracen_prng_value_from_pool(&prng_value);
+		if (err != SX_OK) {
+			return err;
+		}
 	}
 
 	sx_hw_reserve(&c->dma);
 
-	err = sx_cm_load_mask(prng_value);
-	if (err != SX_OK) {
-		goto exit;
+	if (c->has_countermeasures) {
+		err = sx_cm_load_mask(prng_value);
+		if (err != SX_OK) {
+			goto exit;
+		}
 	}
 
 	if (c->key->prepare_key) {
@@ -149,6 +153,8 @@ static int sx_aead_create_aesgcm(struct sxaead *c, const struct sxkeyref *key, c
 		}
 	}
 
+	/* has countermeasures and the key need to be set before callling sx_aead_hw_reserve */
+	c->has_countermeasures = true;
 	c->key = key;
 	err = sx_aead_hw_reserve(c);
 	if (err != SX_OK) {
@@ -235,6 +241,8 @@ static int sx_aead_create_aesccm(struct sxaead *c, const struct sxkeyref *key, c
 		return SX_ERR_TOO_BIG;
 	}
 
+	/* has countermeasures and the key need to be set before callling sx_aead_hw_reserve */
+	c->has_countermeasures = true;
 	c->key = key;
 	err = sx_aead_hw_reserve(c);
 	if (err != SX_OK) {

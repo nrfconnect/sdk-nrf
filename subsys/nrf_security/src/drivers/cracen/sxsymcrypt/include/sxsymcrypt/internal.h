@@ -93,6 +93,7 @@ struct sxaead {
 	size_t totalaadsz;
 	uint8_t tagsz;
 	bool is_in_ctx;
+	bool has_countermeasures;
 	uint8_t ctxsz;
 	const struct sxkeyref *key;
 	struct sx_dmactl dma;
