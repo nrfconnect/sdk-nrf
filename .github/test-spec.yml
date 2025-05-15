@@ -382,6 +382,8 @@
   - "drivers/wifi/**/*"
   - "modules/hostap/**/*"
   - "modules/lib/hostap/**/*"
+  - "subsys/net/lib/nrf70_fw_ext/**/*"
+  - "subsys/net/lib/hostap_crypto/**/*"
   - "subsys/mpsl/**/*"
   - "subsys/ieee802154/**/*"
   - "subsys/bootloader/**/*"
@@ -526,6 +528,8 @@
   - "samples/wifi/**/*"
   - "modules/hostap/**/*"
   - "modules/lib/hostap/**/*"
+  - "subsys/net/lib/nrf70_fw_ext/**/*"
+  - "subsys/net/lib/hostap_crypto/**/*"
 
 "CI-cloud-test":
   - "include/caf/**/*"
