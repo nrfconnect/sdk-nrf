@@ -215,8 +215,10 @@ void radio_test_start(const struct radio_test_config *config);
 
 /**
  * @brief Function for stopping ongoing test (Radio and Timer operations).
+ *
+ * @param[in] type  Radio test mode.
  */
-void radio_test_cancel(void);
+void radio_test_cancel(enum radio_test_mode type);
 
 /**
  * @brief Function for get RX statistics.
