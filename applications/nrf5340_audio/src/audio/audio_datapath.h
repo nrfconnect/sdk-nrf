@@ -87,4 +87,10 @@ int audio_datapath_stop(void);
  */
 int audio_datapath_init(void);
 
+/**
+ * @brief Get pointer to RX FIFO
+ * @return Pointer to RX FIFO structure
+ */
+struct data_fifo *audio_datapath_get_rx_fifo(void);
+
 #endif /* _AUDIO_DATAPATH_H_ */
