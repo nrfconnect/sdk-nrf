@@ -1,16 +1,13 @@
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v3.0.99
-###########################
+Changelog for |NCS| v3.1.0-preview1
+###################################
 
 .. contents::
    :local:
    :depth: 2
 
-The most relevant changes that are present on the main branch of the |NCS|, as compared to the latest official release, are tracked in this file.
-
-.. note::
-   This file is a work in progress and might not cover all relevant changes.
+This changelog reflects the most relevant changes from the latest official release.
 
 .. HOWTO
 
@@ -155,11 +152,8 @@ Matter
 
 * Updated:
 
-   * The``west zap-generate`` command to remove previously generated ZAP files before generating new files.
-     To skip removing the files, use the ``--keep-previous`` argument.
-
-
-|no_changes_yet_note|
+  * The ``west zap-generate`` command to remove previously generated ZAP files before generating new files.
+    To skip removing the files, use the ``--keep-previous`` argument.
 
 Matter fork
 +++++++++++
@@ -211,7 +205,7 @@ nRF5340 Audio
 nRF Desktop
 -----------
 
-* Updated application configurations for dongles on memory-limited SoCs (nRF52820) to reuse system workqueue for GATT Discovery Manager (:kconfig:option:`CONFIG_BT_GATT_DM_WORKQ_SYS`).
+* Updated the application configurations for dongles on memory-limited SoCs (nRF52820) to reuse system workqueue for GATT Discovery Manager (:kconfig:option:`CONFIG_BT_GATT_DM_WORKQ_SYS`).
   This change helps to reduce RAM usage.
 
 nRF Machine Learning (Edge Impulse)
@@ -280,9 +274,8 @@ Bluetooth Fast Pair samples
 Cellular samples
 ----------------
 
-* :ref:`lte_sensor_gateway` sample:
-
-  * The sample is no longer maintained and is now deprecated.
+* Deprecated the :ref:`lte_sensor_gateway` sample.
+  It is no longer maintained.
 
 * :ref:`nrf_cloud_multi_service` sample:
 
@@ -355,7 +348,7 @@ Peripheral samples
 
 * :ref:`radio_test` sample:
 
-   * Added support for the nRF54LM20 PDK.
+  * Added support for the nRF54LM20 PDK.
 
 |no_changes_yet_note|
 
@@ -505,7 +498,7 @@ Modem libraries
 
       * The ``CONFIG_MODEM_SLM_DMA_MAXLEN`` Kconfig option.
         Use :kconfig:option:`CONFIG_MODEM_SLM_UART_RX_BUF_SIZE` instead.
-      * The ``modem_slm_reset_uart`` function as there is no longer need to reset the UART.
+      * The ``modem_slm_reset_uart`` function as there is no longer a need to reset the UART.
 
 Multiprotocol Service Layer libraries
 -------------------------------------
