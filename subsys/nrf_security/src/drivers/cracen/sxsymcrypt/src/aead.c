@@ -103,7 +103,7 @@ void sx_aead_free(struct sxaead *c)
 	sx_cmdma_release_hw(&c->dma);
 }
 
-static int sx_aead_hw_reserve(struct sxaead *c)
+int sx_aead_hw_reserve(struct sxaead *c)
 {
 	int err = SX_OK;
 	uint32_t prng_value;
