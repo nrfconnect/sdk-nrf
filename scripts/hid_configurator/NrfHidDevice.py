@@ -246,7 +246,8 @@ class NrfHidDevice():
             else:
                 dev_active = NrfHidDevice._add_nrf_hid_device(discovered_dev, dir_devs)
                 for dp in discovered_peers:
-                    dev_active = dev_active or NrfHidDevice._add_nrf_hid_device(dp, non_dir_devs)
+                    added = NrfHidDevice._add_nrf_hid_device(dp, non_dir_devs)
+                    dev_active = dev_active or added
 
             if dev and not dev_active:
                 dev.close()
