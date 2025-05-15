@@ -30,6 +30,6 @@ tests:
       SNIPPET="ble;openthread;debug;coex;log_rpc"
   sample.nrf_rpc.protocols_serialization.client.rpc_ci:
     extra_args: >
-      SNIPPET="ble;openthread;coex;log_rpc;ci-shell;zperf"
+      SNIPPET="ble;openthread;coex;log_rpc;ci-shell;zperf;hot_potato"
     extra_configs:
       - CONFIG_NRF_RPC_UTILS_CRASH_GEN=y
