@@ -55,16 +55,23 @@ static int dl_callback(const struct downloader_evt *event)
 		break;
 	case DOWNLOADER_EVT_DONE:
 		shell_print(shell_instance, "done (%d bytes)", downloaded);
+		in_progress = false;
 		downloaded = 0;
 		break;
 	case DOWNLOADER_EVT_ERROR:
 		shell_error(shell_instance, "error %d during download", event->error);
-		downloaded = 0;
-		in_progress = false;
-		break;
+		if (event->error == -ECONNRESET) {
+			/* Allow the downloader to retry. */
+			return 0;
+		}
+
+		/* Abort the download by returning an error. */
+		return event->error;
 	case DOWNLOADER_EVT_STOPPED:
 		shell_print(shell_instance, "download client closed");
 		in_progress = false;
+		downloaded = 0;
+		break;
 	case DOWNLOADER_EVT_DEINITIALIZED:
 		shell_print(shell_instance, "client deinitialized");
 		in_progress = false;
