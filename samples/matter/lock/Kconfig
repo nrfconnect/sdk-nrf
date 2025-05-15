@@ -88,6 +88,7 @@ config STATE_LEDS
 config THREAD_WIFI_SWITCHING
 	bool "Switching between Thread and Wi-Fi"
 	depends on SOC_SERIES_NRF53X
+	# TODO:
 	depends on NET_L2_OPENTHREAD
 	depends on CHIP_WIFI
 	depends on !CHIP_FACTORY_RESET_ERASE_SETTINGS
