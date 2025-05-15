@@ -10,42 +10,100 @@ from threading import Thread
 from os import system, path
 from typing import List
 from nrf5340_audio_dk_devices import DeviceConf, SelectFlags, AudioDevice
+import shutil
 
 MEM_ADDR_UICR_SNR = 0x00FF80F0
 MEM_ADDR_UICR_CH = 0x00FF80F4
 
 
+def get_prog_tool():
+    """Return the programming tool to use: 'nrfutil' if available, else 'nrfjprog'"""
+    return 'nrfutil' if shutil.which('nrfutil') else 'nrfjprog'
+
+
+def build_cmd(tool, action, dev, core=None, hex_path=None):
+    """Build the correct command for programming, recovery, or reset."""
+    if tool == 'nrfutil':
+        if action == 'program':
+            if core == 'net':
+                return (f"nrfutil.exe device program --core network --serial-number {dev.nrf5340_audio_dk_snr} "
+                        f"--firmware {hex_path} --family nrf53")
+            elif core == 'app':
+                return (f"nrfutil.exe device program --core application --serial-number {dev.nrf5340_audio_dk_snr} "
+                        f"--firmware {hex_path} --family nrf53")
+        elif action == 'recover':
+            if core == 'net':
+                return (f"nrfutil.exe device recover --core network --serial-number {dev.nrf5340_audio_dk_snr}")
+            elif core == 'app':
+                return (f"nrfutil.exe device recover --core application --serial-number {dev.nrf5340_audio_dk_snr}")
+            else:
+                # nrfutil does not support recover for CP_APPLICATION and CP_NETWORK
+                # so we use the generic command
+                return (f"nrfutil.exe device recover  --serial-number {dev.nrf5340_audio_dk_snr}")
+        elif action == 'reset':
+            return f"nrfutil.exe device reset --serial-number {dev.nrf5340_audio_dk_snr}"
+        else:
+            exit(1, "Invalid action")
+    else:  # nrfjprog
+        if action == 'program':
+            if core == 'net':
+                return (f"nrfjprog --program {hex_path}  -f NRF53  -q "
+                        f"--snr {dev.nrf5340_audio_dk_snr} --sectorerase --coprocessor CP_NETWORK")
+            elif core == 'app':
+                return (f"nrfjprog --program {hex_path} -f NRF53  -q "
+                        f"--snr {dev.nrf5340_audio_dk_snr} --chiperase --coprocessor CP_APPLICATION")
+        elif action == 'recover':
+            return (f"nrfjprog --recover --coprocessor {core} --snr {dev.nrf5340_audio_dk_snr}")
+        elif action == 'reset':
+            return f"nrfjprog -r --snr {dev.nrf5340_audio_dk_snr}"
+        else:
+            exit(1, "Invalid action")
+    return None
+
+
 def __populate_uicr(dev):
     """Program UICR in device with information from JSON file"""
+    tool = get_prog_tool()
     if dev.nrf5340_audio_dk_dev == AudioDevice.headset:
-        cmd = (f"nrfjprog --memwr {MEM_ADDR_UICR_CH} --val {dev.channel.value} "
-               f"--snr {dev.nrf5340_audio_dk_snr}")
-        # Write channel information to UICR
-        print("Programming UICR")
-        ret_val = system(cmd)
+        if tool == 'nrfutil':
+            cmd = (f"nrfutil.exe device write --serial-number {dev.nrf5340_audio_dk_snr} --address {MEM_ADDR_UICR_CH} --value {dev.channel.value}")
+            print("Programming UICR")
+            ret_val = system(cmd)
+            if ret_val:
+                return False
 
+        else:
+            cmd = (f"nrfjprog --memwr {MEM_ADDR_UICR_CH} --val {dev.channel.value} "
+                   f"--snr {dev.nrf5340_audio_dk_snr}")
+            print("Programming UICR")
+            ret_val = system(cmd)
+            if ret_val:
+                return False
+    if tool == 'nrfutil':
+        cmd = (f"nrfutil.exe device write --serial-number {dev.nrf5340_audio_dk_snr} --address {MEM_ADDR_UICR_SNR} --value {dev.nrf5340_audio_dk_snr}")
+        ret_val = system(cmd)
         if ret_val:
             return False
-
-    cmd = (f"nrfjprog --memwr {MEM_ADDR_UICR_SNR} --val {dev.nrf5340_audio_dk_snr} "
-           f"--snr {dev.nrf5340_audio_dk_snr}")
-
-    # Write segger nr to UICR
-    ret_val = system(cmd)
-    if ret_val:
-        return False
+        else:
+            return True
     else:
-        return True
+        cmd = (f"nrfjprog --memwr {MEM_ADDR_UICR_SNR} --val {dev.nrf5340_audio_dk_snr} "
+               f"--snr {dev.nrf5340_audio_dk_snr}")
+        ret_val = system(cmd)
+        if ret_val:
+            return False
+        else:
+            return True
 
 
 def _program_cores(dev: DeviceConf) -> int:
+    tool = get_prog_tool()
     if dev.core_net_programmed == SelectFlags.TBD:
         if not path.isfile(dev.hex_path_net):
             print(f"NET core hex not found. Built only for APP core. {dev.hex_path_net}")
         else:
             print(f"Programming net core on: {dev}")
-            cmd = (f"nrfjprog --program {dev.hex_path_net}  -f NRF53  -q "
-                   f"--snr {dev.nrf5340_audio_dk_snr} --sectorerase --coprocessor CP_NETWORK")
+            cmd = build_cmd(tool, 'program', dev, core='net', hex_path=dev.hex_path_net)
             ret_val = system(cmd)
             if ret_val != 0:
                 if not dev.recover_on_fail:
@@ -60,8 +118,7 @@ def _program_cores(dev: DeviceConf) -> int:
             return 1
         else:
             print(f"Programming app core on: {dev}")
-            cmd = (f"nrfjprog --program {dev.hex_path_app} -f NRF53  -q "
-                   f"--snr {dev.nrf5340_audio_dk_snr} --chiperase --coprocessor CP_APPLICATION")
+            cmd = build_cmd(tool, 'program', dev, core='app', hex_path=dev.hex_path_app)
             ret_val = system(cmd)
             if ret_val != 0:
                 if not dev.recover_on_fail:
@@ -77,7 +134,7 @@ def _program_cores(dev: DeviceConf) -> int:
 
     if dev.core_net_programmed != SelectFlags.NOT or dev.core_app_programmed != SelectFlags.NOT:
         print(f"Resetting {dev}")
-        cmd = f"nrfjprog -r --snr {dev.nrf5340_audio_dk_snr}"
+        cmd = build_cmd(tool, 'reset', dev)
         ret_val = system(cmd)
         if ret_val != 0:
             return ret_val
@@ -85,24 +142,23 @@ def _program_cores(dev: DeviceConf) -> int:
 
 
 def _recover(dev: DeviceConf):
+    tool = get_prog_tool()
     print(f"Recovering device: {dev}")
-    ret_val = system(
-        f"nrfjprog --recover --coprocessor CP_NETWORK --snr {dev.nrf5340_audio_dk_snr}"
-    )
-    if ret_val != 0:
-        dev.core_net_programmed = SelectFlags.FAIL
-
-    ret_val = system(
-        f"nrfjprog --recover --coprocessor CP_APPLICATION --snr {dev.nrf5340_audio_dk_snr}"
-    )
-    if ret_val != 0:
-        dev.core_app_programmed = SelectFlags.FAIL
+    for coprocessor in ['CP_NETWORK', 'CP_APPLICATION']:
+        cmd = build_cmd(tool, 'recover', dev, core=coprocessor)
+        ret_val = system(cmd)
+        if ret_val != 0:
+            if coprocessor == 'CP_NETWORK':
+                dev.core_net_programmed = SelectFlags.FAIL
+            else:
+                dev.core_app_programmed = SelectFlags.FAIL
 
 
 def __program_thread(dev: DeviceConf):
+    tool = get_prog_tool()
     if dev.only_reboot == SelectFlags.TBD:
         print(f"Resetting {dev}")
-        cmd = f"nrfjprog -r --snr {dev.nrf5340_audio_dk_snr}"
+        cmd = build_cmd(tool, 'reset', dev)
         ret_val = system(cmd)
         dev.only_reboot = SelectFlags.FAIL if ret_val else SelectFlags.DONE
         return
