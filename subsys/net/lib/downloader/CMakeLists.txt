@@ -8,7 +8,7 @@ zephyr_library_sources(
 	src/dl_parse.c
 	src/dl_socket.c
 	src/downloader.c
-	src/sanity.c
+	src/dl_sanity.c
 )
 
 zephyr_library_sources_ifdef(
@@ -23,7 +23,7 @@ zephyr_library_sources_ifdef(
 
 zephyr_library_sources_ifdef(
 	CONFIG_DOWNLOADER_SHELL
-	src/shell.c
+	src/dl_shell.c
 )
 
 zephyr_include_directories(./include)

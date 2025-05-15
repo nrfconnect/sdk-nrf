@@ -646,6 +646,13 @@ Libraries for networking
 
   * Fixed an issue where the results from the :c:func:`zsock_getaddrinfo` function were not freed when the CoAP protocol was used for connection establishment.
 
+* :ref:`lib_downloader` library:
+
+  * Fixed:
+
+    * A bug in the shell implementation causing endless download retries on errors.
+    * A bug in the shell to allow multiple downloads.
+
 Libraries for NFC
 -----------------
 

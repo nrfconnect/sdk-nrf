@@ -19,7 +19,7 @@ target_sources(app
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/src/downloader.c
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/src/dl_socket.c
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/src/dl_parse.c
-  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/src/sanity.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/src/dl_sanity.c
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/src/transports/coap.c
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/src/transports/http.c
 )
