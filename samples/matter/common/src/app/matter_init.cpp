@@ -9,6 +9,15 @@
 #include "app/fabric_table_delegate.h"
 #include "app/group_data_provider.h"
 #include "migration/migration_manager.h"
+#include <zephyr/logging/log.h>
+
+#ifdef CONFIG_OPENTHREAD
+// TODO: AG: fix
+extern "C" {
+void openthread_mutex_lock(void);
+void openthread_mutex_unlock(void);
+}
+#endif
 
 #ifdef CONFIG_NCS_SAMPLE_MATTER_SETTINGS_SHELL
 #include "persistent_storage/persistent_storage_shell.h"
@@ -277,6 +286,15 @@ void DoInitChipServer(intptr_t /* unused */)
 	SetDeviceInstanceInfoProvider(&DeviceInstanceInfoProviderMgrImpl());
 	SetDeviceAttestationCredentialsProvider(Examples::GetExampleDACProvider());
 	/* The default CommissionableDataProvider is set internally in the GenericConfigurationManagerImpl::Init(). */
+#endif
+
+#if CHIP_SYSTEM_CONFIG_USE_OPEN_THREAD_ENDPOINT
+	// Set up OpenThread configuration when OpenThread is included
+	chip::Inet::EndPointStateOpenThread::OpenThreadEndpointInitParam nativeParams;
+	nativeParams.lockCb = openthread_mutex_lock;
+	nativeParams.unlockCb = openthread_mutex_unlock;
+	nativeParams.openThreadInstancePtr = chip::DeviceLayer::ThreadStackMgrImpl().OTInstance();
+	sLocalInitData.mServerInitParams->endpointNativeParams = static_cast<void *>(&nativeParams);
 #endif
 
 #ifdef CONFIG_NCS_SAMPLE_MATTER_SETTINGS_SHELL

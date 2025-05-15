@@ -18,6 +18,7 @@
 #ifdef CONFIG_NET_L2_OPENTHREAD
 #include <zephyr/net/openthread.h>
 #else
+// TODO: AG: fix
 void openthread_mutex_lock(void);
 void openthread_mutex_unlock(void);
 #endif
