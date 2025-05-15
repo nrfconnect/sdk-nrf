@@ -26,12 +26,12 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
        | `User Guide <nRF54L15 DK User Guide_>`_
      - | `nRF54L15 DK product page <nRF54L15 DK_>`_
        | `nRF54L15 System-on-Chip (SoC) <nRF54L15 System-on-Chip_>`_
-   * - nRF54L10 emulation on the nRF54L15 DK
+   * - :ref:`nRF54L10 emulation on the nRF54L15 DK <zephyr:nrf54l15dk_nrf54l10>`
      - PCA10156
      - ``nrf54l15dk/nrf54l10/cpuapp``
      - | `Datasheet <nRF54L15 Datasheet_>`_
      - | `nRF54L10 System-on-Chip (SoC) <nRF54L10_>`_
-   * - nRF54L05 emulation on the nRF54L15 DK
+   * - :ref:`nRF54L05 emulation on the nRF54L15 DK <zephyr:nrf54l15dk_nrf54l05>`
      - PCA10156
      - ``nrf54l15dk/nrf54l05/cpuapp``
      - | `Datasheet <nRF54L15 Datasheet_>`_

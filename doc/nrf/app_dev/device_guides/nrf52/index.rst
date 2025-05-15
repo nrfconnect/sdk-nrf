@@ -31,9 +31,11 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
      - `Product Specification <nRF52811 Product Specification_>`_
    * - :zephyr:board:`nrf52833dk`
      - PCA10100
-     - ``nrf52833dk/nrf52833``
-     - | `Product Specification <nRF52833 Product Specification_>`_
-       | `User Guide <nRF52833 DK User Guide_>`_
+     - | ``nrf52833dk/nrf52833``
+       | ``nrf52833dk/nrf52820``
+     - | `nRF52833 Product Specification <nRF52833 Product Specification_>`_
+       | `nRF52820 Product Specification <nRF52833 Product Specification_>`_
+       | `nRF52833 User Guide <nRF52833 DK User Guide_>`_
    * - :zephyr:board:`nrf52833dk`
      - PCA10100
      - ``nrf52833dk/nrf52820``
@@ -43,11 +45,11 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
      - ``nrf52dk/nrf52832``
      - | `Product Specification <nRF52832 Product Specification_>`_
        | `User Guide <nRF52 DK User Guide_>`_
-   * - :zephyr:board:`nrf52dk`
+   * - :ref:`zephyr:nrf52dk_nrf52810`
      - PCA10040
      - ``nrf52dk/nrf52810``
      - `Product Specification <nRF52810 Product Specification_>`_
-   * - :zephyr:board:`nrf52dk`
+   * - :ref:`zephyr:nrf52dk_nrf52805`
      - PCA10040
      - ``nrf52dk/nrf52805``
      - `Product Specification <nRF52805 Product Specification_>`_

@@ -15,7 +15,7 @@ This means that the controlling chip can run a Zephyr application that seamlessl
 
 This is made possible by SLM's support of CMUX and PPP and Zephyr's cellular modem driver.
 
-The nRF52840 SoC present in the :ref:`zephyr:nrf9160dk_nrf9160` can even be made to be the controlling chip with the appropriate configuration (described below).
+The :ref:`nRF52840 SoC present in the nRF9160 DK <zephyr:nrf9160dk_nrf52840>` can even be made to be the controlling chip with the appropriate configuration (described below).
 This is only possible on the nRF9160 DK, not on the other nRF91 Series DKs.
 
 .. note::

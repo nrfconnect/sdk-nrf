@@ -60,7 +60,7 @@ Values are provided in kilobytes (KB).
 
    .. tab:: nRF52840 DK
 
-      The following table lists memory requirements for samples running on the :zephyr:board:`nrf52840dk`).
+      The following table lists memory requirements for samples running on the :zephyr:board:`nrf52840dk`.
 
       +------------------------------------------------------------------+---------------+-------------------+----------------+------------+-------------+---------------------------------+
       | Sample                                                           |   MCUboot ROM |   Application ROM |   Factory data |   Settings |   Total ROM |   Total RAM (incl. static HEAP) |
@@ -99,7 +99,7 @@ Values are provided in kilobytes (KB).
 
    .. tab:: nRF5340 DK
 
-      The following table lists memory requirements for samples running on the :zephyr:board:`nrf5340dk`).
+      The following table lists memory requirements for samples running on the :zephyr:board:`nrf5340dk`.
 
       +------------------------------------------------------------------+---------------+-------------------+----------------+------------+-------------+---------------------------------+
       | Sample                                                           |   MCUboot ROM |   Application ROM |   Factory data |   Settings |   Total ROM |   Total RAM (incl. static HEAP) |
@@ -142,7 +142,7 @@ Values are provided in kilobytes (KB).
 
    .. tab:: Thingy:53
 
-      The following table lists memory requirements for samples running on the :ref:`Thingy:53 <programming_board_names>` (:zephyr:board:`thingy53`).
+      The following table lists memory requirements for samples running on the :zephyr:board:`thingy53`.
 
       +---------------------------------------------------------------+---------------+-------------------+----------------+------------+-------------+---------------------------------+
       | Sample                                                        |   MCUboot ROM |   Application ROM |   Factory data |   Settings |   Total ROM |   Total RAM (incl. static HEAP) |
@@ -154,7 +154,7 @@ Values are provided in kilobytes (KB).
 
    .. tab:: nRF7002 DK
 
-      The following table lists memory requirements for samples running on the :zephyr:board:`nrf7002dk`).
+      The following table lists memory requirements for samples running on the :zephyr:board:`nrf7002dk`.
 
       +------------------------------------------------------------+---------------+-------------------+----------------+------------+-------------+---------------------------------+
       | Sample                                                     |   MCUboot ROM |   Application ROM |   Factory data |   Settings |   Total ROM |   Total RAM (incl. static HEAP) |
@@ -189,7 +189,7 @@ Values are provided in kilobytes (KB).
 
    .. tab:: nRF54L15 DK
 
-      The following table lists memory requirements for samples running on the :zephyr:board:`nrf54l15dk`).
+      The following table lists memory requirements for samples running on the :zephyr:board:`nrf54l15dk`.
 
       +--------------------------------------------------------------------+---------------+-------------------+----------------+------------+-------------+---------------------------------+
       | Sample                                                             |   MCUboot ROM |   Application ROM |   Factory data |   Settings |   Total ROM |   Total RAM (incl. static HEAP) |
@@ -230,7 +230,7 @@ Values are provided in kilobytes (KB).
 
    .. tab:: nRF54L15 DK with TF-M
 
-      The following table lists memory requirements for samples running on the :zephyr:board:`nrf54l15dk`).
+      The following table lists memory requirements for samples running on the :zephyr:board:`nrf54l15dk`.
 
       +----------------------------------------------------------------+---------------+------------+-------------------+----------------+------------+----------------+-------------+---------------------------------+
       | Sample                                                         |   MCUboot ROM |   TF-M ROM |   Application ROM |   Factory data |   Settings |   TF-M Storage |   Total ROM |   Total RAM (incl. static HEAP) |
@@ -253,7 +253,6 @@ Values are provided in kilobytes (KB).
       .. note::
          The ``release`` configurations are built with Link-Time Optimization (LTO).
 
-
 .. _ug_matter_hw_requirements_layouts:
 
 Reference Matter memory layouts
@@ -270,7 +269,7 @@ For more information about configuration of memory layouts in Matter, see :ref:`
 
    .. tab:: nRF52840 DK
 
-      The following memory map is valid for Matter applications running on the :zephyr:board:`nrf52840dk`).
+      The following memory map is valid for Matter applications running on the :zephyr:board:`nrf52840dk`.
 
       Internal flash (size: 0x100000 = 1024kB)
         +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-------------------+
@@ -307,7 +306,7 @@ For more information about configuration of memory layouts in Matter, see :ref:`
 
    .. tab:: nRF5340 DK
 
-      The following memory map is valid for Matter applications running on the :zephyr:board:`nrf5340dk`).
+      The following memory map is valid for Matter applications running on the :zephyr:board:`nrf5340dk`.
 
       Application core flash (size: 0x100000 = 1024kB)
         +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-------------------+
@@ -381,7 +380,7 @@ For more information about configuration of memory layouts in Matter, see :ref:`
 
    .. tab:: Nordic Thingy:53
 
-      The following memory map is valid for the :ref:`Matter weather station <matter_weather_station_app>` application running on the :ref:`Thingy:53 <programming_board_names>` (:zephyr:board:`thingy53`).
+      The following memory map is valid for the :ref:`Matter weather station <matter_weather_station_app>` application running on the :zephyr:board:`thingy53`.
       The values are valid for the ``debug`` and ``release`` build types.
 
       Application core flash (size: 0x100000 = 1024kB)
@@ -454,7 +453,7 @@ For more information about configuration of memory layouts in Matter, see :ref:`
 
    .. tab:: Nordic Thingy:53 (factory data)
 
-      The following memory map is valid for the :ref:`Matter weather station <matter_weather_station_app>` application running on the :ref:`Thingy:53 <programming_board_names>` (:zephyr:board:`thingy53`).
+      The following memory map is valid for the :ref:`Matter weather station <matter_weather_station_app>` application running on the :zephyr:board:`thingy53`.
       The values are valid for the ``factory_data`` build type.
 
       Application core flash (size: 0x100000 = 1024kB)
@@ -529,7 +528,7 @@ For more information about configuration of memory layouts in Matter, see :ref:`
 
    .. tab:: nRF7002 DK
 
-      The following memory map is valid for Matter applications running on the :ref:`nRF7002 DK <programming_board_names>` (:zephyr:board:`nrf7002dk`).
+      The following memory map is valid for Matter applications running on the :zephyr:board:`nrf7002dk`.
 
       Application core flash (size: 0x100000 = 1024kB)
         +-----------------------------------------+---------------------+-------------------+---------------------+-----------------+-------------------+
@@ -603,7 +602,7 @@ For more information about configuration of memory layouts in Matter, see :ref:`
 
    .. tab:: nRF54L15 DK
 
-      The following memory map is valid for Matter applications running on the :zephyr:board:`nrf54l15dk`).
+      The following memory map is valid for Matter applications running on the :zephyr:board:`nrf54l15dk`.
 
       Application core flash (size: 0x17D000 = 1524kB)
 
@@ -641,7 +640,7 @@ For more information about configuration of memory layouts in Matter, see :ref:`
 
    .. tab:: nRF54L15 DK with internal memory only
 
-      The following memory map is valid for Matter applications running on the :zephyr:board:`nrf54l15dk`).
+      The following memory map is valid for Matter applications running on the :zephyr:board:`nrf54l15dk`.
       You can use this DK with any application.
       However, it is currently integrated only by the :ref:`Matter Template sample <matter_template_sample>`.
 
@@ -676,7 +675,7 @@ For more information about configuration of memory layouts in Matter, see :ref:`
 
    .. tab:: nRF54L15 DK with TF-M
 
-      The following table lists memory requirements for samples running on the :zephyr:board:`nrf54l15dk`).
+      The following table lists memory requirements for samples running on the :zephyr:board:`nrf54l15dk`.
 
       Application core flash (size: 0x17D000 = 1524kB)
 
@@ -715,7 +714,7 @@ For more information about configuration of memory layouts in Matter, see :ref:`
 
    .. tab:: nRF54L10 emulation on nRF54L15 DK
 
-      The following memory map is valid for Matter applications running on the :zephyr:board:`nrf54l15dk`).
+      The following memory map is valid for Matter applications running on the :ref:`nRF54L15 DK (emulating nRF54L10) <zephyr:nrf54l15dk_nrf54l10>`.
 
       Application core flash (size: 0xFF800 = 1022kB)
 
@@ -770,7 +769,7 @@ The following tabs show the RAM memory layout defined for the default configurat
 
    .. tab:: nRF52840 DK
 
-    The following RAM memory layout is valid for Matter applications running on the :zephyr:board:`nrf52840dk`).
+    The following RAM memory layout is valid for Matter applications running on the :zephyr:board:`nrf52840dk`.
 
     Base Application core SRAM size (size: 0x40000 = 256kB)
     SRAM is located at the address ``0x20000000`` in the memory address space of the application.
@@ -789,7 +788,7 @@ The following tabs show the RAM memory layout defined for the default configurat
 
    .. tab:: nRF5340 DK
 
-    The following RAM memory layout is valid for Matter applications running on the :zephyr:board:`nrf5340dk`).
+    The following RAM memory layout is valid for Matter applications running on the :zephyr:board:`nrf5340dk`.
 
     Application core SRAM primary (size: 0x80000 = 512kB)
     SRAM is located at the address ``0x20000000`` in the memory address space of the application.
@@ -808,7 +807,7 @@ The following tabs show the RAM memory layout defined for the default configurat
 
    .. tab:: nRF7002 DK
 
-    The following RAM memory layout is valid for Matter applications running on the :ref:`nRF7002 DK <programming_board_names>` (:zephyr:board:`nrf7002dk`).
+    The following RAM memory layout is valid for Matter applications running on the :zephyr:board:`nrf7002dk`.
 
     Application core SRAM primary (size: 0x80000 = 512kB)
     SRAM is located at the address ``0x20000000`` in the memory address space of the application.
@@ -827,7 +826,7 @@ The following tabs show the RAM memory layout defined for the default configurat
 
    .. tab:: Nordic Thingy:53
 
-    The following RAM memory layout for the :ref:`Matter weather station <matter_weather_station_app>` application running on the :ref:`Thingy:53 <programming_board_names>` (:zephyr:board:`thingy53`).
+    The following RAM memory layout for the :ref:`Matter weather station <matter_weather_station_app>` application running on the :zephyr:board:`thingy53`.
 
     Application core SRAM primary (size: 0x80000 = 512kB)
     SRAM is located at the address ``0x20000000`` in the memory address space of the application.
@@ -846,7 +845,7 @@ The following tabs show the RAM memory layout defined for the default configurat
 
    .. tab:: nRF54L15 DK
 
-    The following RAM memory layout is valid for Matter applications running on the :zephyr:board:`nrf54l15dk`).
+    The following RAM memory layout is valid for Matter applications running on the :zephyr:board:`nrf54l15dk`.
 
     Base SRAM size (size: 0x40000 = 256kB)
     SRAM is located at the address ``0x20000000`` in the memory address space of the application.
