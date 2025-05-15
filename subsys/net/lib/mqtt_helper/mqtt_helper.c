@@ -452,8 +452,6 @@ static int client_connect(struct mqtt_helper_conn_params *conn_params)
 		.size = conn_params->password.size,
 	};
 
-	mqtt_client_init(&mqtt_client);
-
 	err = broker_init(&broker, conn_params);
 	if (err) {
 		return err;
@@ -575,6 +573,8 @@ int mqtt_helper_init(struct mqtt_helper_cfg *cfg)
 	}
 
 	current_cfg = *cfg;
+
+	mqtt_client_init(&mqtt_client);
 
 	mqtt_state_set(MQTT_STATE_DISCONNECTED);
 
