@@ -211,8 +211,12 @@ nRF5340 Audio
 nRF Desktop
 -----------
 
-* Updated the application configurations for dongles on memory-limited SoCs (nRF52820) to reuse the system workqueue for GATT Discovery Manager (:kconfig:option:`CONFIG_BT_GATT_DM_WORKQ_SYS`).
-  This helps to reduce RAM usage.
+* Updated:
+
+  * Application configurations for dongles on memory-limited SoCs (nRF52820) to reuse the system workqueue for GATT Discovery Manager (:kconfig:option:`CONFIG_BT_GATT_DM_WORKQ_SYS`).
+    This helps to reduce RAM usage.
+  * Link Time Optimization (:kconfig:option:`CONFIG_LTO`) to be enabled in MCUboot configurations of the nRF52840 DK (``mcuboot_smp``, ``mcuboot_qspi``).
+    LTO no longer causes boot failures and it reduces the memory footprint.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
