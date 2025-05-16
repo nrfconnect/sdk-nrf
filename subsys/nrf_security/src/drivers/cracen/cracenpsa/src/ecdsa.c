@@ -26,6 +26,8 @@
 #include <silexpk/core.h>
 #include <silexpk/iomem.h>
 #include <silexpk/cmddefs/ecc.h>
+#include "silexpk/core.h"
+#include "silexpk/ec_curves.h"
 #include <cracen/statuscodes.h>
 #include <sxsymcrypt/hash.h>
 #include <cracen_psa_ecdsa.h>

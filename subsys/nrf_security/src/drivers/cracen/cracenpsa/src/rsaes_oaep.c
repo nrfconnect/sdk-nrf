@@ -24,6 +24,7 @@
 
 #include <string.h>
 #include <silexpk/sxbuf/sxbufop.h>
+#include <sxsymcrypt/hash.h>
 #include <cracen/statuscodes.h>
 #include <cracen/mem_helpers.h>
 #include <cracen_psa.h>

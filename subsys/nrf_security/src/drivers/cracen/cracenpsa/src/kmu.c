@@ -1095,7 +1095,7 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 	if (key_buffer_size >= opaque_key_size) {
 		if (psa_get_key_type(attributes) ==
 		    PSA_KEY_TYPE_ECC_PUBLIC_KEY(PSA_ECC_FAMILY_SECP_R1)) {
-			*key_buffer = SI_ECC_PUBKEY_UNCOMPRESSED;
+			*key_buffer = CRACEN_ECC_PUBKEY_UNCOMPRESSED;
 			key_buffer++;
 			key_buffer_size--;
 		}
