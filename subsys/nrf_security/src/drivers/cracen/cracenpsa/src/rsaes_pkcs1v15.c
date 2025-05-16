@@ -15,6 +15,7 @@
 
 #include <string.h>
 #include <silexpk/sxbuf/sxbufop.h>
+#include <sxsymcrypt/hash.h>
 #include <cracen/statuscodes.h>
 #include <cracen_psa.h>
 #include <cracen_psa_rsa_signature_pkcs1v15.h>

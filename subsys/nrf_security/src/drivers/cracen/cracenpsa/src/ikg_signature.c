@@ -19,6 +19,7 @@
 #include <silexpk/iomem.h>
 #include <sxsymcrypt/hash.h>
 #include <sxsymcrypt/hashdefs.h>
+#include <silexpk/ec_curves.h>
 #include <silexpk/ik.h>
 #include <cracen/statuscodes.h>
 #include <cracen_psa_ikg.h>

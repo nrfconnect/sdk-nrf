@@ -9,6 +9,7 @@
  *      2. MGF1 output segment (size: digestsz).
  */
 
+#include <sxsymcrypt/hash.h>
 #include <cracen/statuscodes.h>
 #include "rsamgf1xor.h"
 #include "common.h"

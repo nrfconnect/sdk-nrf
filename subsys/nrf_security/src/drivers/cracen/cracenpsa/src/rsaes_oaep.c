@@ -33,7 +33,7 @@
 #include "rsamgf1xor.h"
 #include "rsa_key.h"
 
-#define WORKMEM_SIZE	   (PSA_BITS_TO_BYTES(PSA_MAX_RSA_KEY_BITS) + PSA_HASH_MAX_SIZE + 4)
+#define WORKMEM_SIZE (PSA_BITS_TO_BYTES(PSA_MAX_RSA_KEY_BITS) + PSA_HASH_MAX_SIZE + 4)
 
 #define NUMBER_OF_SLOTS 6
 
@@ -107,8 +107,8 @@ int cracen_rsa_oaep_decrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
 		safe_memzero(workmem.workmem, sizeof(workmem.workmem));
 		return sx_status;
 	}
-	sx_status = cracen_run_mgf1xor(workmem.workmem, sizeof(workmem.workmem), hashalg, workmem.seed,
-				       digestsz, xorinout, modulussz - digestsz - 1);
+	sx_status = cracen_run_mgf1xor(workmem.workmem, sizeof(workmem.workmem), hashalg,
+				       workmem.seed, digestsz, xorinout, modulussz - digestsz - 1);
 	if (sx_status != SX_OK) {
 		safe_memzero(workmem.workmem, sizeof(workmem.workmem));
 		return sx_status;
@@ -234,15 +234,17 @@ int cracen_rsa_oaep_encrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
 		return SX_ERR_UNKNOWN_ERROR;
 	}
 
-	sx_status = cracen_run_mgf1xor(workmem.workmem, sizeof(workmem.workmem), hashalg, workmem.seed,
-				       digestsz, workmem.datablock, modulussz - digestsz - 1);
+	sx_status =
+		cracen_run_mgf1xor(workmem.workmem, sizeof(workmem.workmem), hashalg, workmem.seed,
+				   digestsz, workmem.datablock, modulussz - digestsz - 1);
 	if (sx_status != SX_OK) {
 		safe_memzero(workmem.workmem, sizeof(workmem.workmem));
 		return sx_status;
 	}
 
-	sx_status = cracen_run_mgf1xor(workmem.workmem, sizeof(workmem.workmem), hashalg, workmem.datablock,
-				       modulussz - digestsz - 1, workmem.wmem + 1, digestsz);
+	sx_status = cracen_run_mgf1xor(workmem.workmem, sizeof(workmem.workmem), hashalg,
+				       workmem.datablock, modulussz - digestsz - 1,
+				       workmem.wmem + 1, digestsz);
 	if (sx_status != SX_OK) {
 		safe_memzero(workmem.workmem, sizeof(workmem.workmem));
 		return sx_status;

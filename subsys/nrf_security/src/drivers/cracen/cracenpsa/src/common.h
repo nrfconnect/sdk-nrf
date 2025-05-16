@@ -12,14 +12,15 @@
 
 #include <stddef.h>
 #include <zephyr/sys/util.h>
-#include <sicrypto/sicrypto.h>
 #include <silexpk/sxbuf/sxbufop.h>
 #include <sxsymcrypt/hashdefs.h>
+#include <silexpk/core.h>
+
 
 /* RFC5480 - first byte of ECC public key that indicates that the key
- * is uncompressed
+ * is uncompressed, per SEC1 v2 spec
  */
-#define SI_ECC_PUBKEY_UNCOMPRESSED (0x04)
+#define ECC_PUBKEY_UNCOMPRESSED (0x04)
 
 /* Cracen supports max 521 bits curves, the private key for such a curve
  * is 66 bytes. The public key in PSA APIs is stored with the
@@ -326,13 +327,12 @@ int cracen_rsa_modexp(struct sx_pk_acq_req *pkreq, struct sx_pk_slot *inputs,
 		      struct cracen_rsa_key *rsa_key, uint8_t *base, size_t basez, int *sizes);
 
 
-/** Initialize an RSA key consisting of modulus and exponent. */
-#define CRACEN_KEY_INIT_RSA(mod, expon)                                                            \
-	(struct cracen_rsa_key)                                                                    \
-	{                                                                                          \
-		.cmd = SX_PK_CMD_MOD_EXP,
-		.slotmask = (1 | (1 << 2)),
-		.dataidx = 1, {mod, expon},
+#define CRACEN_KEY_INIT_RSA(mod, expon)                                                      \
+	(struct cracen_rsa_key) {                                                            \
+		.cmd = SX_PK_CMD_MOD_EXP,                                                    \
+		.slotmask = (1 | (1 << 2)),                                                  \
+		.dataidx = 1,                                                                \
+		{ mod, expon }								     \
 	}
 
 /** Initialize an RSA CRT key consisting of 2 primes and derived values.
@@ -342,11 +342,10 @@ int cracen_rsa_modexp(struct sx_pk_acq_req *pkreq, struct sx_pk_slot *inputs,
  * have the highest bit set in their most significant byte. The full
  * key size in bits must be a multiple of 8.
  */
-#define CRACEN_KEY_INIT_RSACRT(p, q, dp, dq, qinv)                                                 \
-	(struct cracen_rsa_key)                                                                    \
-	{                                                                                          \
-		.cmd = SX_PK_CMD_MOD_EXP_CRT,
-		.slotmask = (0x3 | (0x7 << 3)),
-		.dataidx = 2,
-		{p, q, dp, dq, qinv},
+#define CRACEN_KEY_INIT_RSACRT(p, q, dp, dq, qinv)                                           \
+	(struct cracen_rsa_key) {                                                            \
+		.cmd = SX_PK_CMD_MOD_EXP_CRT,                                                \
+		.slotmask = (0x3 | (0x7 << 3)),                                              \
+		.dataidx = 2,                                                                \
+		{ p, q, dp, dq, qinv }							     \
 	}
