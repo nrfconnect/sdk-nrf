@@ -5,7 +5,6 @@
  */
 
 #include <stdlib.h>
-#include <malloc.h>
 
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
@@ -200,13 +199,9 @@ int sleep_shell(const struct shell *shell, size_t argc, char **argv)
 
 #if defined(CONFIG_SYS_HEAP_RUNTIME_STATS)
 extern struct sys_heap _system_heap;
-#endif
 
 int heap_shell(const struct shell *shell, size_t argc, char **argv)
 {
-	struct mallinfo system_stats;
-
-#if defined(CONFIG_SYS_HEAP_RUNTIME_STATS)
 	int err;
 	struct sys_memory_stats kernel_stats;
 
@@ -219,23 +214,10 @@ int heap_shell(const struct shell *shell, size_t argc, char **argv)
 		mosh_print("allocated:      %6d", kernel_stats.allocated_bytes);
 		mosh_print("max. allocated: %6d\n", kernel_stats.max_allocated_bytes);
 	}
-#endif /* CONFIG_SYS_HEAP_RUNTIME_STATS */
-
-	/* Calculate the system heap maximum size. */
-#define USED_RAM_END_ADDR POINTER_TO_UINT(&_end)
-#define HEAP_BASE USED_RAM_END_ADDR
-#define MAX_HEAP_SIZE (KB(CONFIG_SRAM_SIZE) - (HEAP_BASE - CONFIG_SRAM_BASE_ADDRESS))
-
-	system_stats = mallinfo();
-
-	mosh_print("system heap statistics:");
-	mosh_print("max. size:      %6d", MAX_HEAP_SIZE);
-	mosh_print("size:           %6d", system_stats.arena);
-	mosh_print("free:           %6d", system_stats.fordblks);
-	mosh_print("allocated:      %6d", system_stats.uordblks);
 
 	return 0;
 }
+#endif /* CONFIG_SYS_HEAP_RUNTIME_STATS */
 
 int version_shell(const struct shell *shell, size_t argc, char **argv)
 {
@@ -270,9 +252,11 @@ SHELL_CMD_ARG_REGISTER(sleep, NULL,
 	"Sleep for n seconds.",
 	sleep_shell, 2, 0);
 
+#if defined(CONFIG_SYS_HEAP_RUNTIME_STATS)
 SHELL_CMD_ARG_REGISTER(heap, NULL,
 	"Print heap usage statistics.",
 	heap_shell, 1, 0);
+#endif
 
 SHELL_CMD_ARG_REGISTER(version, NULL,
 	"Print application version information.",
