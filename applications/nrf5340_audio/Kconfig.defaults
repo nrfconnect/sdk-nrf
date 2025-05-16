@@ -67,12 +67,6 @@ config NRFX_CLOCK
 config I2C
 	default y
 
-choice LIBC_IMPLEMENTATION
-	# NOTE: Since we are not using minimal libc, error codes from
-	#       minimal libc are not used
-	default NEWLIB_LIBC
-endchoice
-
 # Audio codec LC3 related defines
 # FPU_SHARING enables preservation of the hardware floating point registers
 # across context switches to allow multiple threads to perform concurrent
