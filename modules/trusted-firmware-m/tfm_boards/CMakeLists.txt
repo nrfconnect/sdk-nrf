@@ -18,6 +18,7 @@ set(board_includes
   board
   ${CMAKE_BINARY_DIR}/../zephyr/misc/generated/syscalls_links/include
   ${ZEPHYR_BASE}/include
+  ${ZEPHYR_BASE}/soc/nordic/common
 )
 
 target_include_directories(platform_region_defs INTERFACE ${partition_includes})
