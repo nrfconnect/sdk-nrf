@@ -18,16 +18,16 @@
 #include <silexpk/iomem.h>
 #include <silexpk/core.h>
 #include <sxsymcrypt/hashdefs.h>
+#include <sxsymcrypt/hash.h>
 #include <cracen/statuscodes.h>
-#include "../include/sicrypto/mem.h"
 #include "rsa_key.h"
 #include "cracen_psa_primitives.h"
 #include <cracen_psa_rsa_signature_pkcs1v15.h>
 #include "common.h"
 
 #define WORKMEM_SIZE (PSA_BITS_TO_BYTES(PSA_MAX_RSA_KEY_BITS) + 2 * PSA_HASH_MAX_SIZE + 4)
-#define FIXED_BYTES 3
-#define INPUT_SLOTS 6
+#define FIXED_BYTES  3
+#define INPUT_SLOTS  6
 #define HEADER_BYTES 2
 
 /* Return a pointer to the DER encoding of the hash algorithm ID and write its
@@ -116,11 +116,7 @@ int cracen_rsa_pkcs1v15_sign_digest(struct cracen_rsa_key *rsa_key,
 		return SX_ERR_INPUT_BUFFER_TOO_SMALL;
 	}
 
-	if (digest_length > digestsz) {
-		return SX_ERR_TOO_BIG;
-	}
-
-	memcpy(workmem, digest, digest_length);
+	memcpy(workmem, digest, digestsz);
 
 	/* Complete message encoding and start the modular exponentiation. */
 	struct sx_pk_acq_req pkreq;
@@ -128,7 +124,6 @@ int cracen_rsa_pkcs1v15_sign_digest(struct cracen_rsa_key *rsa_key,
 	int input_sizes[INPUT_SLOTS] = {0};
 	size_t paddingstrsz;
 	size_t dersz;
-	size_t i;
 	const uint8_t *der;
 	uint8_t *encmsg;
 
@@ -244,12 +239,8 @@ int cracen_rsa_pkcs1v15_verify_digest(struct cracen_rsa_key *rsa_key,
 		return SX_ERR_INPUT_BUFFER_TOO_SMALL;
 	}
 
-	if (digest_length > digestsz) {
-		return SX_ERR_TOO_BIG;
-	}
-
 	/* Copy the message digest to workmem. */
-	memcpy(workmem, digest, digest_length);
+	memcpy(workmem, digest, digestsz);
 
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_slot inputs[6];

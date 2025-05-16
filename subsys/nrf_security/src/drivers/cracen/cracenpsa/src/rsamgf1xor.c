@@ -4,11 +4,12 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
- * Workmem layout for the MGF1XOR task:
+ * Workmem layout for the MGF1XOR function:
  *      1. MGF1 counter (size: MGF1_COUNTER_SZ)
  *      2. MGF1 output segment (size: digestsz).
  */
 
+#include <sxsymcrypt/hash.h>
 #include <cracen/statuscodes.h>
 #include "rsamgf1xor.h"
 #include "common.h"

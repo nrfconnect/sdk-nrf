@@ -9,10 +9,7 @@
 
 #include <psa/crypto.h>
 #include <psa/crypto_values.h>
-#include <sicrypto/rsa_keys.h>
-#include <sicrypto/rsaes_oaep.h>
-#include <sicrypto/sicrypto.h>
-#include <sicrypto/rsaes_pkcs1v15.h>
+#include <cracen/statuscodes.h>
 #include <silexpk/blinding.h>
 #include <cracen_psa_rsa_encryption.h>
 

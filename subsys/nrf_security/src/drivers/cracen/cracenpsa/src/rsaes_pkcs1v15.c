@@ -4,17 +4,18 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
- * Workmem layout for the RSAES-PKCS1-v1_5 encrypt and decrypt tasks:
+ * Workmem layout for the RSAES-PKCS1-v1_5 encrypt and decrypt functions:
  *      1. buffer of k bytes, where k is the size in bytes of the RSA modulus.
  *
- * In the encrypt task, the workmem area is first used to form the encoded
+ * In the encrypt function, the workmem area is first used to form the encoded
  * message, then to store the encrypted message.
- * In the decrypt task, the workmem area is used to store the result of the
+ * In the decrypt function, the workmem area is used to store the result of the
  * modular exponentiation, i.e. the encoded message.
  */
 
 #include <string.h>
 #include <silexpk/sxbuf/sxbufop.h>
+#include <sxsymcrypt/hash.h>
 #include <cracen/statuscodes.h>
 #include <cracen_psa.h>
 #include <cracen_psa_rsa_signature_pkcs1v15.h>
@@ -22,8 +23,8 @@
 #include "common.h"
 #include "rsa_key.h"
 
-#define WORKMEM_SIZE PSA_BITS_TO_BYTES(PSA_MAX_RSA_KEY_BITS)
-#define HEADER_BYTES 2
+#define WORKMEM_SIZE	PSA_BITS_TO_BYTES(PSA_MAX_RSA_KEY_BITS)
+#define HEADER_BYTES	2
 #define NUMBER_OF_SLOTS 6
 
 int cracen_rsa_pkcs1v15_decrypt(struct cracen_rsa_key *rsa_key, struct cracen_crypt_text *text,
