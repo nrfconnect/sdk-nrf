@@ -24,9 +24,10 @@ config BT_MESH_MBEDTLS_BACKEND_ENABLE
 	imply MBEDTLS_ENABLE_HEAP
 	imply PSA_WANT_GENERATE_RANDOM
 
-# NLC profile support requires more netkeys and appkeys thus more HEAP is needed by
-# MEBEDTLS to accommodate minimum number of keys needed by NLC profile support.
+# NLC profile or DFU distributor role support requires more netkeys and appkeys
+# thus more HEAP is needed by MEBEDTLS to accommodate minimum number of keys.
 config MBEDTLS_HEAP_SIZE
+	default 2048 if BT_MESH_DFD_SRV
 	default 1152 if BT_MESH_NLC_PERF_CONF
 	default 1024
 
