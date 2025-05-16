@@ -41,7 +41,7 @@ static int cmd_init(const struct shell *sh, size_t argc, char **argv)
 	ARG_UNUSED(argc);
 	ARG_UNUSED(argv);
 
-	nrf_provisioning_init(NULL, NULL);
+	nrf_provisioning_init(NULL);
 	return 0;
 }
 

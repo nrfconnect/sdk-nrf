@@ -18,6 +18,20 @@ config NRF_PROVISIONING_AUTO_INIT
 	help
 	  Initialize the client automatically after the modem library is initialized.
 
+config NRF_PROVISIONING_AUTO_START_ON_INIT
+	bool "Start provisioning automatically on initialization"
+	default y
+	help
+	  Start the client automatically after the client is initialized in the
+	  nrf_provisioning_init() function.
+
+config NRF_PROVISIONING_SCHEDULED
+	bool "Scheduled provisioning"
+	default y
+	help
+	  Activate scheduled provisioning. The client will try to perform provisioning
+	  at a given interval set by CONFIG_NRF_PROVISIONING_INTERVAL_S.
+
 config NRF_PROVISIONING_INTERVAL_S
 	int "Maximum provisioning interval in seconds"
 	default 86400
@@ -40,6 +54,7 @@ config NRF_PROVISIONING_WITH_CERT
 
 config NRF_PROVISIONING_ROOT_CA_SEC_TAG
 	int "Root CA for nRF Cloud Identity Service - security tag"
+	default 189298
 
 config NRF_PROVISIONING_SAVE_CMD_ID
 	bool "Save the latest command id to storage"

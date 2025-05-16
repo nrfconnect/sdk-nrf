@@ -19,6 +19,7 @@
 #include <nrf_provisioning_cbor_encode.h>
 #include "nrf_provisioning_cbor_decode_types.h"
 #include "nrf_provisioning_cbor_encode_types.h"
+#include "nrf_provisioning_internal.h"
 
 #include <modem/lte_lc.h>
 #include <modem/modem_key_mgmt.h>
@@ -41,7 +42,7 @@ LOG_MODULE_REGISTER(nrf_provisioning_codec, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 #define AT_RESP_MAX_SIZE 4096
 #define KEYGEN_BUFFER_SIZE 1024
 
-static struct nrf_provisioning_mm_change mm;
+static struct nrf_provisioning_callback_data callback_data_internal;
 
 static struct cdc_out_fmt_data {
 	/* Data */
@@ -69,10 +70,10 @@ char * const nrf_provisioning_codec_get_latest_cmd_id(void)
 	return nrf_provisioning_latest_corr_id;
 }
 
-int nrf_provisioning_codec_init(struct nrf_provisioning_mm_change *mmode)
+int nrf_provisioning_codec_init(struct nrf_provisioning_callback_data *callback_data)
 {
-	mm.cb = mmode->cb;
-	mm.user_data = mmode->user_data;
+	callback_data_internal.cb = callback_data->cb;
+	callback_data_internal.user_data = callback_data->user_data;
 
 	return 0;
 }
@@ -478,26 +479,22 @@ static void decode_fail_info(int err, void *payload, int len)
 
 int nrf_provisioning_codec_process_commands(void)
 {
-	int mret, ret;
+	int ret;
 	struct cdc_in_fmt_data *ifd = CDC_IFMT_DATA_PTR(cctx);
 	struct cdc_out_fmt_data *ofd = CDC_OFMT_DATA_PTR(cctx);
-	enum lte_lc_func_mode orig;
+
 	int fpos = -1;
 	bool cmee_orig;
 
 	ret = cbor_decode_commands(cctx->ipkt, cctx->ipkt_sz,
-					cctx->i_data, &cctx->i_data_sz);
+				   cctx->i_data, &cctx->i_data_sz);
 	if (ret != ZCBOR_SUCCESS) {
 		decode_fail_info(ret, cctx->ipkt, cctx->ipkt_sz);
 		ret = -EINVAL;
 		return ret;
 	}
-	LOG_HEXDUMP_DBG(cctx->ipkt, cctx->ipkt_sz, "received commands: ");
 
-	mret = lte_lc_func_mode_get(&orig);
-	if (mret < 0) {
-		return mret;
-	}
+	LOG_HEXDUMP_DBG(cctx->ipkt, cctx->ipkt_sz, "received commands: ");
 
 	cmee_orig = nrf_provisioning_at_cmee_enable();
 
@@ -516,9 +513,24 @@ int nrf_provisioning_codec_process_commands(void)
 			fpos = i; /* Defer writing FINISHED until we know if we have errors */
 			break;
 		case command_union_at_command_m_c:
-			mret = mm.cb(LTE_LC_FUNC_MODE_OFFLINE, mm.user_data);
-			if (mret < 0) {
+
+			enum lte_lc_func_mode func_mode;
+
+			ret = lte_lc_func_mode_get(&func_mode);
+			if (ret < 0) {
 				goto stop_provisioning;
+			}
+
+			if (func_mode != LTE_LC_FUNC_MODE_OFFLINE) {
+
+				LOG_WRN("Modem is not offline, setting it to offline");
+
+				callback_data_internal.cb(NRF_PROVISIONING_EVENT_NEED_OFFLINE, callback_data_internal.user_data);
+				ret = nrf_provisioning_wait_for_desired_mode(2, 60, true);
+				if (ret) {
+					LOG_ERR("Failed to set modem offline, err %d", ret);
+					goto stop_provisioning;
+				}
 			}
 
 			ret = exec_at_cmd(CDC_IFMT_CMD_I_GET(cctx, i), cctx->o_data);
@@ -553,11 +565,11 @@ stop_provisioning:
 		NRF_PROVISIONING_AT_CMEE_STATE_ENABLE :
 		NRF_PROVISIONING_AT_CMEE_STATE_DISABLE);
 
-	mret = mm.cb(orig, mm.user_data);
-
-	/* Can't send anything if modem connection is not restored */
-	if (mret < 0) {
-		return mret;
+	callback_data_internal.cb(NRF_PROVISIONING_EVENT_NEED_ONLINE, callback_data_internal.user_data);
+	ret = nrf_provisioning_wait_for_desired_mode(2, 60, false);
+	if (ret) {
+		LOG_ERR("Failed to set modem offline, err %d", ret);
+		return ret;
 	}
 
 	/* Respond to FINISHED only if there are no errors */

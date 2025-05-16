@@ -26,29 +26,6 @@ extern "C" {
  */
 
 /**
- * @typedef nrf_provisioning_mmode_cb_t
- * @brief Callback to request a modem state change, being it powering off, flight mode etc.
- *
- * @param new_mode New mode.
- * @param user_data Application-specific data.
- * @return <0 on error, previous mode on success.
- */
-typedef int (*nrf_provisioning_mmode_cb_t)(enum lte_lc_func_mode new_mode, void *user_data);
-
-/**
- * @struct nrf_provisioning_mm_change
- * @brief Holds the callback used for querying permission from the application to proceed when
- * modem's state changes. Together with data set by the callback provider.
- *
- * @param cb        The callback function.
- * @param user_data Application-specific data to be fed to the callback once it is called.
- */
-struct nrf_provisioning_mm_change {
-	nrf_provisioning_mmode_cb_t cb;
-	void *user_data;
-};
-
-/**
  * @brief nrf_provisioning callback events
  *
  * nrf_provisioning events are passed back to the nrf_provisioning_event_cb_t callback function.
@@ -59,7 +36,21 @@ enum nrf_provisioning_event {
 	/** Provisioning process stopped. All provisioning commands (if any) executed. */
 	NRF_PROVISIONING_EVENT_STOP,
 	/** Provisioning complete. "Finished" command received from the provisioning service. */
-	NRF_PROVISIONING_EVENT_DONE
+	NRF_PROVISIONING_EVENT_DONE,
+	/** Provisioning process failed, try again. */
+	NRF_PROVISIONING_EVENT_FAILED,
+	/** Provisioning process failed, device not claimed.
+	 *  Try again after the device is claimed using the attestation token.
+	 */
+	NRF_PROVISIONING_EVENT_FAILED_NOT_CLAIMED,
+	/** Provisioning process failed, wrong CA certificate. */
+	NRF_PROVISIONING_EVENT_FAILED_WRONG_CA,
+	/** Handling credentials internally, need the device to go offline. */
+	NRF_PROVISIONING_EVENT_NEED_OFFLINE,
+	/** Handling credentials internally, need the device to go online. */
+	NRF_PROVISIONING_EVENT_NEED_ONLINE,
+	/** Error occurred during provisioning. */
+	NRF_PROVISIONING_EVENT_ERROR
 };
 
 /**
@@ -72,14 +63,14 @@ enum nrf_provisioning_event {
 typedef void (*nrf_provisioning_event_cb_t)(enum nrf_provisioning_event event, void *user_data);
 
 /**
- * @struct nrf_provisioning_dm_change
+ * @struct nrf_provisioning_callback_data
  * @brief Holds the callback to be called once provisioning state changes together with data
  * set by the callback provider.
  *
  * @param cb        The callback function.
  * @param user_data Application-specific data to be fed to the callback once it is called.
  */
-struct nrf_provisioning_dm_change {
+struct nrf_provisioning_callback_data {
 	nrf_provisioning_event_cb_t cb;
 	void *user_data;
 };
@@ -91,12 +82,10 @@ struct nrf_provisioning_dm_change {
  * Feeding a null as a callback address means that the corresponding default callback function is
  * taken into use.
  *
- * @param mmode Modem mode change callback. Used when data is written to modem.
- * @param dmode Device mode callback. Used when provisioning state changes.
- * @return <0 on error, 0 on success.
+ * @param callback_data Library callback, called when provisioning state changes.
+ * @return < 0 on error, 0 on success.
  */
-int nrf_provisioning_init(struct nrf_provisioning_mm_change *mmode,
-				struct nrf_provisioning_dm_change *dmode);
+int nrf_provisioning_init(struct nrf_provisioning_callback_data *callback_data);
 
 /**
  * @brief Starts provisioning immediately.
