@@ -1,23 +1,20 @@
-.. _ncs_release_notes_changelog:
+.. _ncs_release_notes_310_preview1:
 
-Changelog for |NCS| v3.0.99
-###########################
+Changelog for |NCS| v3.1.0-preview1
+###################################
 
 .. contents::
    :local:
    :depth: 2
 
-The most relevant changes that are present on the main branch of the |NCS|, as compared to the latest official release, are tracked in this file.
-
-.. note::
-   This file is a work in progress and might not cover all relevant changes.
+This changelog reflects the most relevant changes from the latest official release.
 
 .. HOWTO
 
    When adding a new PR, decide whether it needs an entry in the changelog.
    If it does, update this page.
    Add the sections you need, as only a handful of sections are kept when the changelog is cleaned.
-   The "Protocols" section serves as a highlight section for all protocol-related changes, including those made to samples, libraries, and other components that implement or support protocol functionality.
+   The "Protocols" section serves as a highlight section for all protocol-related changes, including those made to samples, libraries, and so on.
 
 Known issues
 ************
@@ -155,11 +152,8 @@ Matter
 
 * Updated:
 
-   * The``west zap-generate`` command to remove previously generated ZAP files before generating new files.
-     To skip removing the files, use the ``--keep-previous`` argument.
-
-
-|no_changes_yet_note|
+  * The ``west zap-generate`` command to remove previously generated ZAP files before generating new files.
+    To skip removing the files, use the ``--keep-previous`` argument.
 
 Matter fork
 +++++++++++
@@ -280,9 +274,8 @@ Bluetooth Fast Pair samples
 Cellular samples
 ----------------
 
-* :ref:`lte_sensor_gateway` sample:
-
-  * The sample is no longer maintained and is now deprecated.
+* Deprecated the :ref:`lte_sensor_gateway` sample.
+  It is no longer maintained.
 
 * :ref:`nrf_cloud_multi_service` sample:
 
@@ -355,7 +348,7 @@ Peripheral samples
 
 * :ref:`radio_test` sample:
 
-   * Added support for the nRF54LM20 PDK.
+  * Added support for the nRF54LM20 PDK.
 
 |no_changes_yet_note|
 
@@ -505,7 +498,7 @@ Modem libraries
 
       * The ``CONFIG_MODEM_SLM_DMA_MAXLEN`` Kconfig option.
         Use :kconfig:option:`CONFIG_MODEM_SLM_UART_RX_BUF_SIZE` instead.
-      * The ``modem_slm_reset_uart`` function as there is no longer need to reset the UART.
+      * The ``modem_slm_reset_uart`` function as there is no longer a need to reset the UART.
 
 Multiprotocol Service Layer libraries
 -------------------------------------
