@@ -14,7 +14,7 @@ config AVERAGE_CURRENT_CONSUMPTION
 	  device, used to estimate the remaining battery time.
 
 # Application configuration used for Thread networking
-if NET_L2_OPENTHREAD
+if OPENTHREAD
 
 choice OPENTHREAD_NORDIC_LIBRARY_CONFIGURATION
 	default OPENTHREAD_NORDIC_LIBRARY_MTD
@@ -30,7 +30,7 @@ config IEEE802154_NRF5_RX_STACK_SIZE
 config CHIP_ENABLE_ICD_SUPPORT
 	default y
 
-endif # NET_L2_OPENTHREAD
+endif # OPENTHREAD
 
 if CHIP_WIFI
 
