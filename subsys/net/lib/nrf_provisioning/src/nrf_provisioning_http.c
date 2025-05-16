@@ -84,12 +84,12 @@ LOG_MODULE_REGISTER(nrf_provisioning_http, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 #define USER_AGENT_HDR (HDR_TYPE_USER_AGENT "/" ZEPHYR_VER CRLF)
 
 
-int nrf_provisioning_http_init(struct nrf_provisioning_mm_change *mmode)
+int nrf_provisioning_http_init(nrf_provisioning_event_cb_t callback)
 {
 	static bool initialized;
 	int ret;
 
-	nrf_provisioning_codec_init(mmode);
+	nrf_provisioning_codec_init(callback);
 
 	if (initialized) {
 		return 0;
@@ -457,8 +457,8 @@ int nrf_provisioning_http_req(struct nrf_provisioning_http_context *const rest_c
 		LOG_INF("Connected");
 
 		if (resp.http_status_code == NRF_PROVISIONING_HTTP_STATUS_NO_CONTENT) {
-			LOG_INF("No more commands to process on server side");
-			ret = 0;
+			LOG_INF("No commands to process on server side");
+			ret = -ENODATA;
 		} else if (resp.http_status_code == NRF_PROVISIONING_HTTP_STATUS_BAD_REQ) {
 			LOG_ERR("Bad request");
 			ret = -EINVAL;
