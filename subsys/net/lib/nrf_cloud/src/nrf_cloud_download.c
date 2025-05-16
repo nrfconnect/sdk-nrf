@@ -11,6 +11,11 @@
 #endif
 #if defined(CONFIG_NRF_CLOUD_COAP)
 #include "../coap/include/nrf_cloud_coap_transport.h"
+#include <zephyr/net/coap.h>
+#include <zephyr/net/socket.h>
+#include <zephyr/random/random.h>
+#include <errno.h>
+#include "nrf_cloud_mem.h"
 #endif
 #if defined(CONFIG_NRF_CLOUD_FOTA_SMP)
 #include <mcumgr_smp_client.h>
@@ -34,42 +39,101 @@ static K_MUTEX_DEFINE(active_dl_mutex);
 static struct nrf_cloud_download_data active_dl = { .type = NRF_CLOUD_DL_TYPE_NONE };
 
 #if defined(CONFIG_NRF_CLOUD_COAP_DOWNLOADS)
-/* CoAP client to be used for file downloads */
-static struct nrf_cloud_coap_client coap_client;
+
+const uint8_t coap_auth_request_template[] = {
+	0x48, 0x02, /* CoAP POST */
+	0xFF, 0xFF, /* Message ID */
+	0x90, 0x4A, 0x50, 0x61, 0xBF, 0x40, 0x33, 0x40, /* Token */
+	0xB4, 0x61, 0x75, 0x74, 0x68, /* URI: "auth" */
+	0x03, 0x6A, 0x77, 0x74, /* URI "jwt" */
+	0x10, /* Content-Type Text */
+	0xFF, /* Payload-Marker */
+};
+#define JWT_BUF_SZ 600
+#define COAP_AUTH_REQ_HEADER_SIZE (sizeof(coap_auth_request_template))
+#define COAP_AUTH_REQ_BUF_SIZE (JWT_BUF_SZ + COAP_AUTH_REQ_HEADER_SIZE)
+#define COAP_AUTH_REQ_MID_OFFSET 2
+#define COAP_AUTH_REQ_TOKEN_OFFSET 4
+#define COAP_REQ_WAIT_TIME_MS 300
 
 int nrf_cloud_download_handle_coap_auth(int socket)
 {
-	int err = 0;
-	struct nrf_cloud_coap_client *client = &coap_client;
+	int32_t err = 0;
+	struct coap_packet reply;
+	uint8_t token[COAP_TOKEN_MAX_LEN];
+	uint8_t *packet_buf = nrf_cloud_malloc(COAP_AUTH_REQ_BUF_SIZE);
+	uint8_t response_token[COAP_TOKEN_MAX_LEN];
+	uint16_t mid = sys_cpu_to_be16(coap_next_id());
+	size_t request_size;
 
-	/* Initialize client */
-	err = nrf_cloud_coap_transport_init(client);
+	/* Make new random token */
+	sys_rand_get(token, COAP_TOKEN_MAX_LEN);
+
+	/* Fill in CoAP header */
+	memcpy(packet_buf, coap_auth_request_template, COAP_AUTH_REQ_HEADER_SIZE);
+	memcpy(packet_buf + COAP_AUTH_REQ_MID_OFFSET, &mid, sizeof(mid));
+	memcpy(packet_buf + COAP_AUTH_REQ_TOKEN_OFFSET, token, COAP_TOKEN_MAX_LEN);
+
+	/* Generate JWT */
+	err = nrf_cloud_jwt_generate(
+		NRF_CLOUD_JWT_VALID_TIME_S_MAX,
+		packet_buf + COAP_AUTH_REQ_HEADER_SIZE, JWT_BUF_SZ
+	);
 	if (err) {
-		LOG_ERR("Failed to initialize CoAP client, error: %d", err);
-		return err;
+		LOG_ERR("Error generating JWT with modem: %d", err);
+		goto end;
 	}
 
-	/* We are already connected using the given socket */
-	k_mutex_lock(&client->mutex, K_FOREVER);
-	client->sock = socket;
-	client->cc.fd = socket;
-	k_mutex_unlock(&client->mutex);
+	request_size = COAP_AUTH_REQ_HEADER_SIZE
+		+ strnlen((char *)packet_buf + COAP_AUTH_REQ_HEADER_SIZE, JWT_BUF_SZ);
 
-	/* Authenticate */
-	err = nrf_cloud_coap_transport_authenticate(client);
-	if (err) {
-		LOG_ERR("Failed to authenticate CoAP client, error: %d", err);
-		return err;
+	/* Send the request */
+	LOG_DBG("Sending CoAP auth request, size %zu", request_size);
+	err = send(socket, packet_buf, request_size, 0);
+	if (err < 0) {
+		LOG_ERR("Failed to send CoAP request, errno %d", errno);
+		goto end;
 	}
 
-	/* Clean up client */
-	k_mutex_lock(&client->mutex, K_FOREVER);
-	client->sock = -1;
-	client->cc.fd = -1;
-	client->authenticated = false;
-	k_mutex_unlock(&client->mutex);
+	for (size_t i = 0; i < 10; ++i) {
+		k_sleep(K_MSEC(COAP_REQ_WAIT_TIME_MS));
+		/* Poll for response */
+		err = recv(socket, packet_buf, COAP_AUTH_REQ_BUF_SIZE, MSG_DONTWAIT);
+		if (err < 0) {
+			if (errno == EAGAIN || errno == EWOULDBLOCK) {
+				continue;
+			} else {
+				err = -errno;
+				LOG_ERR("Error receiving response: %d", err);
+				goto end;
+			}
+		}
+		LOG_DBG("Received CoAP auth response, size %d", err);
+		/* Parse response */
+		err = coap_packet_parse(&reply, packet_buf, err, NULL, 0);
+		if (err < 0) {
+			LOG_ERR("Error parsing response: %d", err);
+			continue;
+		}
+		/* Match token */
+		coap_header_get_token(&reply, response_token);
+		if (memcmp(response_token, token, COAP_TOKEN_MAX_LEN) != 0) {
+			continue;
+		}
+		/* Check response code */
+		if (coap_header_get_code(&reply) != COAP_RESPONSE_CODE_CREATED) {
+			LOG_ERR("Error in response: %d", coap_header_get_code(&reply));
+			continue;
+		} else {
+			err = 0;
+			goto end;
+		}
+	}
+	err = -ETIMEDOUT;
 
-	return 0;
+end:
+	nrf_cloud_free(packet_buf);
+	return err;
 }
 
 static int coap_dl(struct nrf_cloud_download_data *const dl)
