@@ -6,7 +6,7 @@
 mainmenu "Matter nRF Connect Light Bulb Example Application"
 
 # Sample configuration used for Thread networking
-if NET_L2_OPENTHREAD
+if OPENTHREAD
 
 choice OPENTHREAD_NORDIC_LIBRARY_CONFIGURATION
 	default OPENTHREAD_NORDIC_LIBRARY_FTD
@@ -16,7 +16,7 @@ choice OPENTHREAD_DEVICE_TYPE
 	default OPENTHREAD_FTD
 endchoice
 
-endif # NET_L2_OPENTHREAD
+endif # OPENTHREAD
 
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.features"
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.defaults"
