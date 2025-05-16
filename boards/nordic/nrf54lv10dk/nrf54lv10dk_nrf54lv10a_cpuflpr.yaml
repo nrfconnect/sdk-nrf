@@ -1,8 +1,8 @@
 # Copyright (c) 2025 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-identifier: nrf54lv10apdk/nrf54lv10a/cpuflpr
-name: nRF54Lv10a-PDK-nRF54Lv10a-Fast-Lightweight-Peripheral-Processor
+identifier: nrf54lv10dk/nrf54lv10a/cpuflpr
+name: nRF54Lv10-DK-nRF54Lv10a-Fast-Lightweight-Peripheral-Processor
 type: mcu
 arch: riscv
 toolchain:
