@@ -28,7 +28,6 @@
 #include <cracen/mem_helpers.h>
 #include <cracen_psa.h>
 #include <cracen_psa_primitives.h>
-#include "../include/sicrypto/mem.h"
 #include "common.h"
 #include "rsamgf1xor.h"
 #include "rsa_key.h"

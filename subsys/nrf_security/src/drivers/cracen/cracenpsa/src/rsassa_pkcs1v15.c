@@ -19,7 +19,6 @@
 #include <silexpk/core.h>
 #include <sxsymcrypt/hashdefs.h>
 #include <cracen/statuscodes.h>
-#include "../include/sicrypto/mem.h"
 #include "rsa_key.h"
 #include "cracen_psa_primitives.h"
 #include <cracen_psa_rsa_signature_pkcs1v15.h>

@@ -12,14 +12,15 @@
 
 #include <stddef.h>
 #include <zephyr/sys/util.h>
-#include <sicrypto/sicrypto.h>
 #include <silexpk/sxbuf/sxbufop.h>
 #include <sxsymcrypt/hashdefs.h>
+#include <silexpk/core.h>
+
 
 /* RFC5480 - first byte of ECC public key that indicates that the key
  * is uncompressed
  */
-#define SI_ECC_PUBKEY_UNCOMPRESSED (0x04)
+#define CRACEN_ECC_PUBKEY_UNCOMPRESSED (0x04)
 
 /* Cracen supports max 521 bits curves, the private key for such a curve
  * is 66 bytes. The public key in PSA APIs is stored with the
