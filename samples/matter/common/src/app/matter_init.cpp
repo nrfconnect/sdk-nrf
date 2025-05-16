@@ -150,7 +150,7 @@ void FeedFromMatter(Nrf::Watchdog::WatchdogSource *watchdogSource)
 #endif
 
 /* Matter stack design implies different initialization procedure for Thread and Wi-Fi backend. */
-#if defined(CONFIG_NET_L2_OPENTHREAD)
+#if defined(CONFIG_OPENTHREAD)
 CHIP_ERROR ConfigureThreadRole()
 {
 	using ThreadRole = ConnectivityManager::ThreadDeviceType;
@@ -194,7 +194,7 @@ CHIP_ERROR InitNetworkingStack()
 }
 #else
 #error "No valid L2 network backend selected");
-#endif /* CONFIG_NET_L2_OPENTHREAD */
+#endif /* CONFIG_OPENTHREAD */
 
 #define VerifyInitResultOrReturn(ec, msg)                                                                              \
 	VerifyOrReturn(ec == CHIP_NO_ERROR, LOG_ERR(msg " [Error: %d]", sInitResult.Format()))

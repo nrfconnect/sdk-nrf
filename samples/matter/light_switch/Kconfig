@@ -14,7 +14,7 @@ config STATE_LEDS
 	  'n' does not disable the LED indicating the state of the simulated bolt.
 
 # Sample configuration used for Thread networking
-if NET_L2_OPENTHREAD
+if OPENTHREAD
 
 choice OPENTHREAD_NORDIC_LIBRARY_CONFIGURATION
 	default OPENTHREAD_NORDIC_LIBRARY_MTD
@@ -32,7 +32,7 @@ config OPENTHREAD_DEFAULT_TX_POWER
 	int
 	default 0
 
-endif # NET_L2_OPENTHREAD
+endif # OPENTHREAD
 
 if CHIP_WIFI
 

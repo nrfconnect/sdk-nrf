@@ -164,7 +164,7 @@ config BRIDGE_SMART_PLUG_SUPPORT
 	default n
 
 # Sample configuration used for Thread networking
-if NET_L2_OPENTHREAD
+if OPENTHREAD
 
 choice OPENTHREAD_NORDIC_LIBRARY_CONFIGURATION
 	default OPENTHREAD_NORDIC_LIBRARY_FTD
@@ -174,12 +174,12 @@ choice OPENTHREAD_DEVICE_TYPE
 	default OPENTHREAD_FTD
 endchoice
 
-endif # NET_L2_OPENTHREAD
+endif # OPENTHREAD
 
 # Dummy Kconfig just to select experimental for some of the configurations.
 config BRIDGE_EXPERIMENTAL
 	bool
-	default y if NET_L2_OPENTHREAD || BRIDGE_SMART_PLUG_SUPPORT
+	default y if OPENTHREAD || BRIDGE_SMART_PLUG_SUPPORT
 	select EXPERIMENTAL
 
 source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.features"
