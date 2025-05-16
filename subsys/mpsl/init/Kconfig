@@ -6,7 +6,7 @@
 
 config MPSL_THREAD_COOP_PRIO
 	int
-	default 0 if NET_L2_OPENTHREAD
+	default 0 if OPENTHREAD
 	default BT_CTLR_SDC_RX_PRIO if BT_LL_SOFTDEVICE
 	default 8
 
