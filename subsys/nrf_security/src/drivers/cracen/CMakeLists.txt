@@ -10,7 +10,6 @@ set(cracen_driver_sources)
 # Add more CRACEN sources and include dirs from the ext directory
 include(sxsymcrypt/sxsymcrypt.cmake)
 include(silexpk/silexpk.cmake)
-include(sicrypto/sicrypto.cmake)
 include(cracenpsa/cracenpsa.cmake)
 
 # Add include-directories
@@ -41,7 +40,7 @@ target_link_libraries(cracen_psa_driver
 )
 
 # Give access to cmsis, nrfx and MDK inside TF-M build
-# to allow for referencing nRF events. Note that 
+# to allow for referencing nRF events. Note that
 # tfm_sp_log needs to be added because __assert.h requires
 # it
 if(BUILD_INSIDE_TFM)
