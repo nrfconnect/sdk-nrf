@@ -11,7 +11,7 @@
 /**
  * @brief Function to convert CRACEN SW library error codes to errno
  *
- * @param[in] sx_err	Error code from sxsymcrypt, silexpk or sicrypto.
+ * @param[in] sx_err	Error code from sxsymcrypt or silexpk.
  *
  * @return 0 or non-zero return codes from ernno.
  */
@@ -213,7 +213,7 @@ inline __attribute__((always_inline)) int sx_err2errno(int sx_err)
 		/* Resources not available for a new operation. Retry later */
 		return -EBUSY;
 	/* End of codes from silexpk */
-	/* Error codes from sicrypto */
+	/* Error codes that used to be from sicrypto */
 	case SX_ERR_INVALID_REQ_SZ:
 		/** The size passed as part of a request is not valid */
 		return -EINVAL;
@@ -244,8 +244,7 @@ inline __attribute__((always_inline)) int sx_err2errno(int sx_err)
 		 */
 		return -EDOM;
 	case SX_ERR_WORKMEM_BUFFER_TOO_SMALL:
-		/** Task needs bigger workmem buffer than what provided with
-		 * si_task_init()
+		/** Function needs bigger workmem buffer than what is provided
 		 */
 		return -ENOMEM;
 	case SX_ERR_INSUFFICIENT_ENTROPY:
@@ -265,7 +264,7 @@ inline __attribute__((always_inline)) int sx_err2errno(int sx_err)
  * @brief Function to convert CRACEN SW library error codes to strings for
  * logging
  *
- * @param[in] sx_err	Error code from sxsymcrypt, silexpk or sicrypto.
+ * @param[in] sx_err	Error code from sxsymcrypt or silexpk.
  *
  * @return String literal representing the error code.
  */
@@ -500,12 +499,11 @@ inline __attribute__((always_inline)) const char *sx_err2str(int sx_err)
 		 */
 		return "SX_ERR_RSA_PQ_RANGE_CHECK_FAIL";
 	case SX_ERR_WORKMEM_BUFFER_TOO_SMALL:
-		/** Task needs bigger workmem buffer than what provided with
-		 * si_task_init()
+		/** Function needs bigger workmem buffer than what is provided		 *
 		 */
 		return "SX_ERR_WORKMEM_BUFFER_TOO_SMALL";
-	/* End of error codes from sicrypto */
+	/* End of error codes from sx */
 	default:
-		return "(UNKNONN)";
+		return "(UNKNOWN)";
 	}
 }

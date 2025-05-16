@@ -4,19 +4,19 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
- * Workmem layout for the ECDSA sign task:
+ * Workmem layout for the ECDSA sign function:
  *      1. Hash digest of the message to be signed (size: digestsz).
- *      2. Output of the rndinrange subtask (size: curve_op_size, which is the
+ *      2. Output of the rndinrange subfunction (size: curve_op_size, which is the
  *         max size in bytes of parameters and operands for the selected curve).
  *
- * Workmem layout for the ECDSA Deterministic sign task:
- *      1. HMAC task requirements (size: digestsz + blocksz)
+ * Workmem layout for the ECDSA Deterministic sign function:
+ *      1. HMAC function requirements (size: digestsz + blocksz)
  *      2. Hash digest of the message to be signed (size: digestsz).
  *      4. K (HMAC key) (size: digestsz)
  *      5. V (size: digestsz)
  *      6. T (size: curve_op_size)
  *
- * Workmem layout for the ECDSA verify task:
+ * Workmem layout for the ECDSA verify function:
  *      1. Hash digest of the message whose signature is being verified
  *         (size: digestsz).
  */
@@ -26,6 +26,8 @@
 #include <silexpk/core.h>
 #include <silexpk/iomem.h>
 #include <silexpk/cmddefs/ecc.h>
+#include "silexpk/core.h"
+#include "silexpk/ec_curves.h"
 #include <cracen/statuscodes.h>
 #include <sxsymcrypt/hash.h>
 #include <cracen_psa_ecdsa.h>

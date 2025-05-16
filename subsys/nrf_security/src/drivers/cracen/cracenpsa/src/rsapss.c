@@ -4,18 +4,18 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
- * Workmem layout for the RSA PSS sign and verify task:
- *      1. MGF1XOR sub-task workmem (size: hLen + 4). In the verify task, once
- *         the MGF1XOR sub-task is not needed anymore, the first
+ * Workmem layout for the RSA PSS sign and verify function:
+ *      1. MGF1XOR sub-function workmem (size: hLen + 4). In the verify function, once
+ *         the MGF1XOR sub-function is not needed anymore, the first
  *         ZERO_PADDING_BYTES octets of this area are used to store the zeros of
  *         M' (see step 12 of EMSA-PSS-VERIFY in RFC 8017).
  *      2. EM: encoded message octet string (size: same as the size of the RSA
- *         modulus). In the verify task, the maskedDB portion of EM is decoded
- *         in place, hence it is overwritten with DB. In the sign task, DB is
+ *         modulus). In the verify function, the maskedDB portion of EM is decoded
+ *         in place, hence it is overwritten with DB. In the sign function, DB is
  *         prepared inside EM and then overwritten with maskedDB. Also in the
- *         sign task, the last 8 bytes of the EM area are initially used to
+ *         sign function, the last 8 bytes of the EM area are initially used to
  *         store the 8 zero octets that are part of M'
- *      3. mHash: message digest (size: hLen bytes). In the verify task, once
+ *      3. mHash: message digest (size: hLen bytes). In the verify function, once
  *         mHash is not needed anymore, this area is used to store H'
  *
  * The required workmem size is computed with:
@@ -28,7 +28,7 @@
  *
  * Assumptions
  * - All the byte strings (signature, key and message) given to the RSA PSS
- *   tasks are big endian (as in RFC 8017).
+ *   functions are big endian (as in RFC 8017).
  *
  * Notes
  * - We do not check that the length of the message M is <= max input size for
@@ -57,7 +57,7 @@
 #include "rsamgf1xor.h"
 #include "common.h"
 
-#define WORKMEM_SIZE (PSA_BITS_TO_BYTES(PSA_MAX_RSA_KEY_BITS) + 2 * PSA_HASH_MAX_SIZE + 4)
+#define WORKMEM_SIZE	(PSA_BITS_TO_BYTES(PSA_MAX_RSA_KEY_BITS) + 2 * PSA_HASH_MAX_SIZE + 4)
 #define NUMBER_OF_SLOTS 6
 
 enum {
@@ -144,7 +144,7 @@ int cracen_rsa_pss_sign_digest(struct cracen_rsa_key *rsa_key, struct cracen_sig
 	const size_t padding_offset = modulussz - ZERO_PADDING_BYTES;
 	const size_t wmem_sz = cracen_get_rsa_workmem_size(WORKMEM_SIZE, digestsz);
 
-	/* Workmem for RSA signature task is rsa_modulus_size + 2*hash_digest_size + 4 */
+	/* Workmem for RSA signature function is rsa_modulus_size + 2*hash_digest_size + 4 */
 	struct rsa_pss_workmem workmem;
 
 	rsa_pss_sign_init(&workmem, emsz, masksz, saltsz, digestsz, modulussz, padding_offset);
@@ -228,7 +228,8 @@ int cracen_rsa_pss_sign_digest(struct cracen_rsa_key *rsa_key, struct cracen_sig
 	struct sx_pk_slot inputs[NUMBER_OF_SLOTS];
 
 	/* modular exponentiation m^d mod n (RSASP1 sign primitive) */
-	sx_status = cracen_rsa_modexp(&pkreq, inputs, rsa_key, workmem.wmem, modulussz, input_sizes);
+	sx_status =
+		cracen_rsa_modexp(&pkreq, inputs, rsa_key, workmem.wmem, modulussz, input_sizes);
 	if (sx_status != SX_OK) {
 		return sx_status;
 	}
@@ -293,7 +294,7 @@ int cracen_rsa_pss_verify_digest(struct cracen_rsa_key *rsa_key, struct cracen_s
 	}
 	size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
 	size_t masksz = emsz - digestsz - 1;
-	/* Workmem for RSA signature task is rsa_modulus_size + 2*hash_digest_size + 4 */
+	/* Workmem for RSA signature function is rsa_modulus_size + 2*hash_digest_size + 4 */
 	struct rsa_pss_workmem workmem;
 
 	rsa_pss_verify_init(&workmem, emsz, masksz, saltsz, digestsz, modulussz);
@@ -329,7 +330,8 @@ int cracen_rsa_pss_verify_digest(struct cracen_rsa_key *rsa_key, struct cracen_s
 	struct sx_pk_slot inputs[NUMBER_OF_SLOTS];
 
 	/* modular exponentiation m^d mod n (RSASP1 sign primitive) */
-	sx_status = cracen_rsa_modexp(&pkreq, inputs, rsa_key, signature->r, signature->sz, input_sizes);
+	sx_status = cracen_rsa_modexp(&pkreq, inputs, rsa_key, signature->r, signature->sz,
+				      input_sizes);
 	if (sx_status != SX_OK) {
 		return sx_status;
 	}
@@ -384,7 +386,7 @@ int cracen_rsa_pss_verify_digest(struct cracen_rsa_key *rsa_key, struct cracen_s
 		return SX_ERR_INVALID_SIGNATURE;
 	}
 
-	/* hash task to produce H' (step 13 of EMSA-PSS-VERIFY in RFC 8017) */
+	/* hash function to produce H' (step 13 of EMSA-PSS-VERIFY in RFC 8017) */
 	uint8_t const *hash_array[] = {zeros, workmem.mHash, workmem.db + masksz - saltsz};
 	size_t hash_array_lengths[] = {ZERO_PADDING_BYTES, digestsz, saltsz};
 	size_t input_count = 3;

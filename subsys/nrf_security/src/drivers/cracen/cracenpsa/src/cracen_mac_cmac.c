@@ -12,6 +12,7 @@
 #include "common.h"
 #include <cracen/mem_helpers.h>
 #include "cracen_mac_cmac.h"
+#include <cracen/statuscodes.h>
 
 #define AES_BLOCK_SIZE (16)
 

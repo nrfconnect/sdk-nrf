@@ -135,7 +135,7 @@
 /** Range checks, performed on p and/or q during RSA key generation, failed */
 #define SX_ERR_RSA_PQ_RANGE_CHECK_FAIL 107
 
-/** Task needs bigger workmem buffer than what provided with si_task_init() */
+/** Function needs bigger workmem buffer than what is provided */
 #define SX_ERR_WORKMEM_BUFFER_TOO_SMALL 109
 
 /** Waiting on the hardware to process this operation */

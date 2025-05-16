@@ -10,7 +10,6 @@
 #include <psa/crypto_sizes.h>
 #include <psa/crypto_types.h>
 #include <psa/crypto_values.h>
-#include <sicrypto/sicrypto.h>
 #include <silexpk/blinding.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -416,12 +415,7 @@ struct cracen_rsa_key {
 /** Plaintext or ciphertext.
  *
  * This structure is used to represent plaintexts and ciphertexts. It is currently used with the
-<<<<<<< Updated upstream
- * tasks that implement the RSAES-OAEP and RSAES-PKCS1-v1_5 encryption
- * schemes.
-=======
  * functions that implement the RSAES-OAEP and RSAES-PKCS1-v1_5 encryption schemes.
->>>>>>> Stashed changes
  */
 struct cracen_crypt_text {
 	uint8_t *addr;

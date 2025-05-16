@@ -4,12 +4,12 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
- * Workmem layout for the RSA OAEP encrypt and decrypt tasks:
- *      1. MGF1XOR sub-task workmem (size: hLen + 4)
- *      2. encoded message (size: k). In the encrypt task, this area is used to
+ * Workmem layout for the RSA OAEP encrypt and decrypt functions:
+ *      1. MGF1XOR sub-function workmem (size: hLen + 4)
+ *      2. encoded message (size: k). In the encrypt function, this area is used to
  *         form the encoded message, which is created in place (seed is
  *         overwritten by maskedSeed, DB is overwritten by maskedDB). In the
- *         decrypt task, this area is used to store the encoded message, which
+ *         decrypt function, this area is used to store the encoded message, which
  *         is then decoded in place: maskedDB is overwritten by DB and maskedSeed
  *         is overwritten by seed. The seed is then overwritten by lHash.
  *
@@ -147,7 +147,7 @@ int cracen_rsa_oaep_decrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
 	/* The following memory access is never a problem, even in the case
 	 * where datab points one byte past the end of the EM. In fact, in such case,
 	 * datab would still be pointing inside the workmem area, more precisely in the
-	 * part dedicated to the MGF1XOR sub-task.
+	 * part dedicated to the MGF1XOR sub-function.
 	 */
 	r |= (*datab != 0x01);
 	datab++;

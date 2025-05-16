@@ -9,6 +9,7 @@
 #include <silexpk/sxbuf/sxbufop.h>
 #include <silexpk/sxops/rsa.h>
 #include <silexpk/iomem.h>
+#include <sxsymcrypt/hash.h>
 #include <cracen/statuscodes.h>
 #include <cracen_psa.h>
 #include <cracen_psa_primitives.h>
@@ -71,7 +72,7 @@ static int check_abs_diff(uint8_t *p, uint8_t *q, size_t sz)
 	p[12] &= 0xF0;
 	q[12] &= 0xF0;
 
-	/* Get sign of deltahigh. Since si_be_cmp() works on bytes, we are
+	/* Get sign of deltahigh. Since cracen_be_cmp() works on bytes, we are
 	 * comparing phigh*16 with qhigh*16 but that does not change the result.
 	 */
 	deltahigh_sign = cracen_be_cmp(p, q, 13, 0);
@@ -147,7 +148,7 @@ static uint8_t *get_candidate_prime(struct cracen_rsacheckpq *rsacheckpq)
 	}
 }
 
-/* Offset to the part of workmem that is specific to the 'genprivkey' task. */
+/* Offset to the part of workmem that is specific to the 'genprivkey' function. */
 #define GENPRIVKEY_WORKMEM_OFST(keysz) (keysz)
 
 /* Generate the remaining CRT parameters dp, dq and qinv. */
@@ -234,7 +235,7 @@ static int miller_rabin_get_random(uint8_t *workmem, struct cracen_rsacheckpq *r
 	 */
 	while (rsacheckpq->mrrounds > 0) {
 		/* step 5.2: get a random integer in [2, candidate prime - 2]
-		 * from the environment's PRNG task
+		 * from the environment's PRNG function
 		 */
 		psa_status_t status =
 			cracen_get_rnd_in_range((const uint8_t *)wmem, candidatesz, workmem);
@@ -292,15 +293,10 @@ static int miller_rabin_get_random(uint8_t *workmem, struct cracen_rsacheckpq *r
  * @param[in] workmem      Buffer that the function uses for intermediate results.
  *                         Its size must be \p 2*candidatesz bytes.
  * @param[in] rsagenpq     Structure that contains the parameters needed to
- * 			   generate p and q
+ *                         generate p and q
  *
-<<<<<<< Updated upstream
- *  The key size in bytes, \p keysz, is restricted to be even. Therefore this
- * task supports only RSA keys whose bit length is a multiple of 16.
-=======
  *  The key size in bytes, keysz in \p rsagenpq, is restricted to be even. Therefore this
  * function supports only RSA keys whose bit length is a multiple of 16.
->>>>>>> Stashed changes
  *
  * The public exponent pubexp in \p rsagenpq must not have a zero in its most significant
  * byte.
@@ -488,7 +484,7 @@ static int rsagenpq_get_random(uint8_t *workmem, struct cracen_rsagenpq *rsagenp
 	return miller_rabin_get_random(workmem, &rsacheckpq);
 }
 
-/* Task to generate an RSA private key, based on FIPS 186-4.
+/* function to generate an RSA private key, based on FIPS 186-4.
  *
  * Workmem layout:
  *     1. an area of keysz bytes:

@@ -12,6 +12,7 @@
 #include <sxsymcrypt/keyref.h>
 #include "common.h"
 #include <cracen/mem_helpers.h>
+#include <cracen/statuscodes.h>
 #include "cracen_psa_primitives.h"
 #include "hmac.h"
 
@@ -29,7 +30,7 @@ psa_status_t cracen_hmac_setup(cracen_mac_operation_t *operation,
 		return psa_status;
 	}
 
-	/* HMAC task creation and configuration. */
+	/* HMAC operation creation and configuration. */
 	sx_status =  mac_create_hmac(sx_hash_algo, &operation->hmac.hashctx, key_buffer,
 		key_buffer_size, operation->hmac.workmem, sizeof(operation->hmac.workmem));
 	if (sx_status != SX_OK) {

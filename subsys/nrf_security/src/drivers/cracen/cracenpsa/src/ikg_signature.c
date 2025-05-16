@@ -10,7 +10,7 @@
  * Workmem layout for the sign digest operation:
  *      1. Hash digest of the message to be signed (size: digestsz).
  *
- * Other IKG tasks don't need workmem memory.
+ * Other IKG functions don't need workmem memory.
  */
 
 #include <stdint.h>
@@ -19,6 +19,7 @@
 #include <silexpk/iomem.h>
 #include <sxsymcrypt/hash.h>
 #include <sxsymcrypt/hashdefs.h>
+#include <silexpk/ec_curves.h>
 #include <silexpk/ik.h>
 #include <cracen/statuscodes.h>
 #include <cracen_psa_ikg.h>
