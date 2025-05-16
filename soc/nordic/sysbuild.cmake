@@ -23,6 +23,7 @@ if(SB_CONFIG_VPR_LAUNCHER)
     APPLICATION ${image}
     SOURCE_DIR ${ZEPHYR_BASE}/samples/basic/minimal
     BOARD ${launcher_board}
+    BOARD_REVISION ${BOARD_REVISION}
   )
 
   string(CONCAT launcher_snippet "nordic-" ${launcher_vpr})
