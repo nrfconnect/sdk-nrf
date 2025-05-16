@@ -34,8 +34,8 @@ BUILD_ASSERT(sizeof(CONFIG_MOSH_LWM2M_PSK) > 1, "LwM2M pre-shared key (PSK) must
 #define MEMORY_TOTAL_RID 21
 
 #define IMEI_LEN 15
-static uint8_t imei_buf[IMEI_LEN + sizeof("\r\nOK\r\n")];
-#define ENDPOINT_NAME_LEN (IMEI_LEN + sizeof(CONFIG_MOSH_LWM2M_ENDPOINT_PREFIX) + 1)
+static uint8_t imei_buf[IMEI_LEN + 1];
+#define ENDPOINT_NAME_LEN (sizeof(CONFIG_MOSH_LWM2M_ENDPOINT_PREFIX) + IMEI_LEN)
 static uint8_t endpoint_name[ENDPOINT_NAME_LEN + 1];
 static struct lwm2m_ctx client;
 
