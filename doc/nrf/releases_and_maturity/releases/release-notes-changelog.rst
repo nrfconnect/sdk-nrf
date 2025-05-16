@@ -517,7 +517,10 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud` library:
 
-  * Updated to return negative :file:`errno.h` errors instead of positive ZCBOR errors.
+  * Updated:
+
+      * To return negative :file:`errno.h` errors instead of positive ZCBOR errors.
+      * The CoAP download authentication to no longer depend on the :ref:`CoAP Client library <zephyr:coap_client_interface>`.
 
 * :ref:`lib_nrf_provisioning` library:
 
