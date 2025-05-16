@@ -11,6 +11,7 @@
 #include <cracen_psa.h>
 #include <cracen/interrupts.h>
 #include <cracen/lib_kmu.h>
+#include <cracen/statuscodes.h>
 
 #include "common.h"
 #include "microcode_binary.h"

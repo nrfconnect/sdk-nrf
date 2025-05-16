@@ -10,7 +10,6 @@
 #include <psa/crypto_sizes.h>
 #include <psa/crypto_types.h>
 #include <psa/crypto_values.h>
-#include <sicrypto/sicrypto.h>
 #include <silexpk/blinding.h>
 #include <stdbool.h>
 #include <stdint.h>

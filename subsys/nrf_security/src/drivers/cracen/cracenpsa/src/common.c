@@ -14,9 +14,6 @@
 #include <cracen/statuscodes.h>
 #include <hal/nrf_cracen.h>
 #include <nrfx.h>
-#include <sicrypto/rsa_keys.h>
-#include <sicrypto/sicrypto.h>
-#include <sicrypto/util.h>
 #include <silexpk/core.h>
 #include <silexpk/ec_curves.h>
 #include <silexpk/ik.h>
@@ -24,6 +21,7 @@
 #include <silexpk/cmddefs/modexp.h>
 #include <silexpk/cmddefs/rsa.h>
 #include <stddef.h>
+#include <sxsymcrypt/hash.h>
 #include <sxsymcrypt/hashdefs.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/util.h>
@@ -672,7 +670,6 @@ int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey
 	if (ret) {
 		return ret;
 	}
-
 	if (extract_pubkey) {
 		return SX_OK;
 	}

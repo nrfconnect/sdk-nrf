@@ -33,7 +33,7 @@
  * Notes
  * - We do not check that the length of the message M is <= max input size for
  *   the hash function (see e.g. step 1 of the EMSA-PSS-ENCODE operation in
- *   RFC 8017): in fact the sx_hash_feed() function called by si_task_consume()
+ *   RFC 8017): in fact the sx_hash_feed() function called
  *   will impose a stricter limitation (see documentation of sx_hash_feed()).
  * - We do not perform the check in step 1 of MGF1 in RFC 8017: for practical
  *   RSA modulus lengths that error condition cannot occur.
@@ -45,11 +45,11 @@
 #include <silexpk/sxbuf/sxbufop.h>
 #include <silexpk/sxops/rsa.h>
 #include <silexpk/iomem.h>
+#include <sxsymcrypt/hash.h>
 #include <psa/crypto.h>
 #include <cracen/statuscodes.h>
 #include <cracen/mem_helpers.h>
 #include <cracen_psa.h>
-#include "../include/sicrypto/mem.h"
 #include "rsamgf1xor.h"
 #include "rsa_key.h"
 #include "cracen_psa_primitives.h"

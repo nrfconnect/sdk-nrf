@@ -11,6 +11,7 @@
 #include <sxsymcrypt/keyref.h>
 #include "common.h"
 #include <cracen/mem_helpers.h>
+#include <cracen/statuscodes.h>
 #include "cracen_psa_primitives.h"
 
 #define AES_BLOCK_SIZE (16)

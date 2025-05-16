@@ -9,6 +9,7 @@
 #include <silexpk/sxbuf/sxbufop.h>
 #include <silexpk/sxops/rsa.h>
 #include <silexpk/iomem.h>
+#include <sxsymcrypt/hash.h>
 #include <cracen/statuscodes.h>
 #include <cracen_psa.h>
 #include <cracen_psa_primitives.h>
@@ -71,7 +72,7 @@ static int check_abs_diff(uint8_t *p, uint8_t *q, size_t sz)
 	p[12] &= 0xF0;
 	q[12] &= 0xF0;
 
-	/* Get sign of deltahigh. Since si_be_cmp() works on bytes, we are
+	/* Get sign of deltahigh. Since cracen_be_cmp() works on bytes, we are
 	 * comparing phigh*16 with qhigh*16 but that does not change the result.
 	 */
 	deltahigh_sign = cracen_be_cmp(p, q, 13, 0);
