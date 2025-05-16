@@ -71,7 +71,7 @@ static volatile uint32_t high, low;
 
 /* Variables used to make SPI active for ~1 second */
 static struct k_timer my_timer;
-static bool timer_expired;
+static volatile bool timer_expired;
 
 #if defined(CONFIG_CLOCK_CONTROL)
 const uint32_t freq[] = {320, 256, 128, 64};
