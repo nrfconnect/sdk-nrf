@@ -15,8 +15,6 @@
 #include <sxsymcrypt/blkcipher.h>
 #include <cracen/statuscodes.h>
 #include <security/cracen.h>
-#include <sicrypto/sicrypto.h>
-#include <sicrypto/util.h>
 #include <sxsymcrypt/trng.h>
 #include <sxsymcrypt/aes.h>
 #include <sxsymcrypt/keyref.h>
@@ -99,7 +97,7 @@ static psa_status_t ctr_drbg_update(uint8_t *data)
 	psa_set_key_usage_flags(&attr, PSA_KEY_USAGE_ENCRYPT);
 
 	while (temp_length < sizeof(temp)) {
-		si_be_add(prng.V, SX_BLKCIPHER_AES_BLK_SZ, 1);
+		cracen_be_add(prng.V, SX_BLKCIPHER_AES_BLK_SZ, 1);
 
 		status = sx_blkcipher_ecb_simple(prng.key, sizeof(prng.key), prng.V, sizeof(prng.V),
 						 temp + temp_length, SX_BLKCIPHER_AES_BLK_SZ);
@@ -112,7 +110,7 @@ static psa_status_t ctr_drbg_update(uint8_t *data)
 	}
 
 	if (data) {
-		si_xorbytes(temp, data, sizeof(temp));
+		cracen_xorbytes(temp, data, sizeof(temp));
 	}
 
 	memcpy(prng.key, temp, sizeof(prng.key));
@@ -232,7 +230,7 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 		size_t cur_len = MIN(len_left, SX_BLKCIPHER_AES_BLK_SZ);
 		char temp[SX_BLKCIPHER_AES_BLK_SZ] __aligned(CONFIG_DCACHE_LINE_SIZE);
 
-		si_be_add(prng.V, SX_BLKCIPHER_AES_BLK_SZ, 1);
+		cracen_be_add(prng.V, SX_BLKCIPHER_AES_BLK_SZ, 1);
 		status = sx_blkcipher_ecb_simple(prng.key, sizeof(prng.key), prng.V, sizeof(prng.V),
 						 temp, sizeof(temp));
 

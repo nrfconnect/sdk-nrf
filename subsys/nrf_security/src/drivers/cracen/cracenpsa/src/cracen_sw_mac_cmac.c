@@ -6,10 +6,11 @@
 #include <stdint.h>
 #include <string.h>
 #include <psa/crypto.h>
+#include <cracen/statuscodes.h>
 #include <sxsymcrypt/blkcipher.h>
 #include <sxsymcrypt/keyref.h>
-#include "cracen_sw_mac_cmac.h"
 #include <sxsymcrypt/aes.h>
+#include "cracen_sw_mac_cmac.h"
 
 #define CMAC_PADDING_BYTE (0x80)
 #define AES_CMAC_MSB	  (0x80)

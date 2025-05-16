@@ -5,10 +5,10 @@
  *
  * The comments in this file use the notations and conventions from RFC 8032.
  *
- * Workmem layout for an Ed25519 signature verification task:
+ * Workmem layout for an Ed25519 signature verification function:
  *      1. digest (size: 64 bytes).
  *
- * Workmem layout for an Ed25519 signature generation task:
+ * Workmem layout for an Ed25519 signature generation function:
  *      The workmem is made of 5 areas of 32 bytes each (total size 160 bytes).
  *      In the following we refer to these areas using the numbers 1 to 5. The
  *      first hash operation computes the private key's digest, which is stored
@@ -21,7 +21,7 @@
  *      final operation (r + k * s) mod L computes S, which is written directly
  *      to the output buffer.
  *
- * Workmem layout for an Ed25519 public key generation task:
+ * Workmem layout for an Ed25519 public key generation function:
  *      1. digest (size: 64 bytes). The digest of the private key is written in
  *         this area. Then the secret scalar s is computed in place in the first
  *         32 bytes of this area.

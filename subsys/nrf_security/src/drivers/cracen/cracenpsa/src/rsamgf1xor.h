@@ -24,7 +24,7 @@
  * @param[in,out]  xorinout   Output buffer to which the mask is applied via xor.
  * @param[in] out_sz      Length of the output buffer in bytes.
  *
- * This task needs a workmem buffer with size:
+ * This function needs a workmem buffer with size:
  *      hash_digest_size + 4
  * where all sizes are expressed in bytes.
  */

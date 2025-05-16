@@ -7,7 +7,8 @@
 #include "common.h"
 #include <cracen/ec_helpers.h>
 #include <cracen/mem_helpers.h>
-#include "cracen_psa.h"
+#include <cracen/statuscodes.h>
+#include <cracen_psa.h>
 #include <cracen_psa_eddsa.h>
 #include <cracen_psa_ecdsa.h>
 #include <cracen_psa_montgomery.h>
@@ -15,12 +16,8 @@
 #include <cracen_psa_rsa_keygen.h>
 #include "platform_keys/platform_keys.h"
 #include <nrf_security_mutexes.h>
-#include <sicrypto/drbghash.h>
 #include "ecc.h"
-#include <sicrypto/rsa_keygen.h>
-#include <sicrypto/util.h>
 #include <silexpk/sxops/rsa.h>
-#include <sicrypto/ik.h>
 #include <silexpk/ik.h>
 #include <stddef.h>
 #include <string.h>
@@ -252,7 +249,7 @@ static psa_status_t check_wstr_pub_key_data(psa_algorithm_t key_alg, psa_ecc_fam
 	size_t expected_pub_key_size =
 		cracen_ecc_wstr_expected_pub_key_bytes(PSA_BITS_TO_BYTES(key_bits));
 
-	if (data[0] != SI_ECC_PUBKEY_UNCOMPRESSED) {
+	if (data[0] != CRACEN_ECC_PUBKEY_UNCOMPRESSED) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
@@ -522,7 +519,7 @@ static psa_status_t export_spake2p_public_key_from_keypair(const psa_key_attribu
 		if (priv_key_length != 2 * CRACEN_P256_KEY_SIZE) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
-		pub_key[CRACEN_P256_KEY_SIZE] = SI_ECC_PUBKEY_UNCOMPRESSED;
+		pub_key[CRACEN_P256_KEY_SIZE] = CRACEN_ECC_PUBKEY_UNCOMPRESSED;
 		status = silex_statuscodes_to_psa(
 			ecc_genpubkey(w1, &pub_key[CRACEN_P256_KEY_SIZE + 1], sx_curve));
 		if (status != PSA_SUCCESS) {
@@ -674,7 +671,7 @@ static psa_status_t handle_identity_key(const uint8_t *key_buffer, size_t key_bu
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_R1_256)) {
-		data[0] = SI_ECC_PUBKEY_UNCOMPRESSED;
+		data[0] = CRACEN_ECC_PUBKEY_UNCOMPRESSED;
 		return silex_statuscodes_to_psa(cracen_ikg_create_pub_key(key_buffer[0], data + 1));
 	}
 	return PSA_ERROR_NOT_SUPPORTED;
@@ -692,7 +689,7 @@ static psa_status_t handle_curve_family(psa_ecc_family_t psa_curve, size_t key_b
 		if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1) ||
 		    IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_K1) ||
 		    IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1)) {
-			data[0] = SI_ECC_PUBKEY_UNCOMPRESSED;
+			data[0] = CRACEN_ECC_PUBKEY_UNCOMPRESSED;
 			return silex_statuscodes_to_psa(
 				ecc_genpubkey(key_buffer, data + 1, sx_curve));
 		} else {

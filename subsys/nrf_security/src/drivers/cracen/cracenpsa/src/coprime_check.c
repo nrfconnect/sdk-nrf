@@ -64,9 +64,6 @@ static int modular_inversion_start(struct cracen_coprimecheck *coprimecheck)
 	sx_wrpkmem(inputs.b.addr, coprimecheck->a, asz);
 
 	sx_pk_run(pkreq.req);
-	if (sx_status != SX_OK) {
-		return sx_status;
-	}
 
 	sx_status = sx_pk_wait(pkreq.req);
 	return sx_status;

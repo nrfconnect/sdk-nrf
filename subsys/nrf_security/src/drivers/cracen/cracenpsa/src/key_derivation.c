@@ -8,13 +8,14 @@
 #include "cracen_psa_primitives.h"
 #include <cracen/ec_helpers.h>
 #include <cracen/mem_helpers.h>
+#include <cracen/statuscodes.h>
 #include <cracen_psa.h>
 #include <psa/crypto.h>
 #include <psa/crypto_types.h>
 #include <psa/crypto_values.h>
 #include <psa_crypto_driver_wrappers.h>
-#include <sicrypto/hash.h>
-#include <sicrypto/hmac.h>
+
+#include <sxsymcrypt/hash.h>
 #include <silexpk/ik.h>
 #include <silexpk/montgomery.h>
 #include <silexpk/sxbuf/sxbufop.h>
@@ -64,7 +65,7 @@ static psa_status_t cracen_ecdh_wrstr_calc_secret(const struct sx_pk_ecurve *cur
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	if (publ_key[0] != SI_ECC_PUBKEY_UNCOMPRESSED) {
+	if (publ_key[0] != CRACEN_ECC_PUBKEY_UNCOMPRESSED) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
@@ -149,7 +150,7 @@ static psa_status_t cracen_ecdh_montgmr_calc_secret(const struct sx_pk_ecurve *c
 }
 
 /**
- * \brief Initialize and set up the MAC task that will be used to generate pseudo-random
+ * \brief Initialize and set up the MAC operation that will be used to generate pseudo-random
  *        bytes for HDKF and PBKDF2.
  *
  * \param[in, out] operation        Cracen key derivation operation object.
