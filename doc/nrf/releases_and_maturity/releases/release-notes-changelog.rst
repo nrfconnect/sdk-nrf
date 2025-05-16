@@ -63,7 +63,8 @@ Developing with nRF70 Series
 Developing with nRF54L Series
 =============================
 
-|no_changes_yet_note|
+* Increased the default value of the :kconfig:option:`CONFIG_MPSL_HFCLK_LATENCY` Kconfig option to support slower crystals.
+  See the Kconfig description for a detailed description on how to select the correct value for a given application.
 
 Developing with nRF54H Series
 =============================
