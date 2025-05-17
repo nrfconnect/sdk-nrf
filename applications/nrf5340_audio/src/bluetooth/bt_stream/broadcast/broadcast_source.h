@@ -224,12 +224,12 @@ int broadcast_source_id_get(uint8_t big_index, uint32_t *broadcast_id);
  *
  * @param[in]	big_index	Index of the Broadcast Isochronous Group (BIG) to broadcast.
  * @param[in]	subgroup_index	Index of the subgroup to broadcast.
- * @param[in]	enc_audio	Encoded audio struct.
+ * @param[in]	audio_frame	Pointer to the audio to send.
  *
  * @return	0 for success, error otherwise.
  */
 int broadcast_source_send(uint8_t big_index, uint8_t subgroup_index,
-			  struct le_audio_encoded_audio enc_audio);
+			  struct audio_data const *const audio_frame);
 
 /**
  * @brief	Disable the LE Audio broadcast (BIS) source.
