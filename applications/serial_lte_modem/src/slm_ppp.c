@@ -511,12 +511,22 @@ static void ppp_net_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 			break;
 		}
 		send_status_notification();
-		/* For the peer to be able to successfully reconnect
-		 * (handshake issues observed with pppd and Windows dial-up),
-		 * for some reason the Zephyr PPP link needs to be restarted.
-		 */
-		LOG_INF("Peer disconnected. Restarting PPP...");
-		k_work_submit_to_queue(&slm_work_q, &ppp_restart_work.work);
+
+		if (IS_ENABLED(CONFIG_SLM_MODEM_CELLULAR)) {
+			/* With cellular modem driver, the restoration of connection
+			 * is handled by the driver.
+			 */
+			LOG_INF("Peer disconnected. Stopping PPP...");
+			k_work_submit_to_queue(&slm_work_q, &ppp_stop_work.work);
+		} else {
+			/* For the peer to be able to successfully reconnect
+			 * (handshake issues observed with pppd and Windows dial-up),
+			 * for some reason the Zephyr PPP link needs to be restarted.
+			 */
+			LOG_INF("Peer disconnected. Restarting PPP...");
+			k_work_submit_to_queue(&slm_work_q, &ppp_restart_work.work);
+
+		}
 		break;
 	}
 }
