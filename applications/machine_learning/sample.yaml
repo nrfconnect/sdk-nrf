@@ -93,3 +93,16 @@ tests:
       - machine_learning_SNIPPET=nordic-ppr
       - machine_learning_SHIELD=pca63566_fwd
       - remote_SHIELD=pca63566
+  applications.machine_learning.sensor_node.zdebug:
+    build_only: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_applications_machine_learning
+    extra_args:
+      - machine_learning_SHIELD=pca63565
+      - FILE_SUFFIX="sensor_node"
