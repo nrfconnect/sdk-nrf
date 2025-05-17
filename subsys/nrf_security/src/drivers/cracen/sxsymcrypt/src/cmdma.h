@@ -28,7 +28,7 @@
 #define DMATAG_CONFIG(offset) ((1 << 4) | (offset << 8))
 
 /* can be 0, 1 or 2 */
-#define DMATAG_DATATYPE(x)   (x << 6)
+#define DMATAG_DATATYPE(x) (x << 6)
 
 #define DMATAG_DATATYPE_HEADER	    (1 << 6)
 #define DMATAG_DATATYPE_REFERENCE   (3 << 6)
@@ -106,17 +106,18 @@
 		(dmactl).d++;                                                                      \
 	} while (0)
 
-#define ADD_INDESC_BITS(dmactl, baddr, bsz, tag, msk, bitsz)\
-	do {\
-		size_t bitmask = (msk << 3) | 0x7;\
-		size_t validbitsz = bitsz & bitmask;\
-		if (validbitsz == 0)\
-			validbitsz = bitmask + 1;\
-		uint32_t asz = ALIGN_SZA(bsz, msk);\
-		(dmactl).d->addr = sx_map_usrdatain((char *)(baddr), bsz);\
-		(dmactl).d->sz = asz | DMA_REALIGN;\
-		(dmactl).d->dmatag = tag | DMATAG_IGN((validbitsz - 1)); \
-		(dmactl).d++;\
+#define ADD_INDESC_BITS(dmactl, baddr, bsz, tag, msk, bitsz)                                       \
+	do {                                                                                       \
+		size_t bitmask = (msk << 3) | 0x7;                                                 \
+		size_t validbitsz = bitsz & bitmask;                                               \
+		if (validbitsz == 0) {                                                             \
+			validbitsz = bitmask + 1;                                                  \
+		}                                                                                  \
+		uint32_t asz = ALIGN_SZA(bsz, msk);                                                \
+		(dmactl).d->addr = sx_map_usrdatain((char *)(baddr), bsz);                         \
+		(dmactl).d->sz = asz | DMA_REALIGN;                                                \
+		(dmactl).d->dmatag = tag | DMATAG_IGN((validbitsz - 1));                           \
+		(dmactl).d++;                                                                      \
 	} while (0)
 
 #define SET_LAST_DESC_IGN(dmactl, bsz, msk)                                                        \
@@ -162,6 +163,11 @@ void sx_cmdma_newcmd(struct sx_dmactl *dma, struct sxdesc *d, uint32_t cmd, uint
 
 /** Start input/fetcher DMA at indescs and output/pusher DMA at outdescs */
 void sx_cmdma_start(struct sx_dmactl *dma, size_t privsz, struct sxdesc *indescs);
+
+#ifdef CONFIG_DCACHE
+/** Flush and invalidate the buffers for the output descriptors */
+void sx_cmdma_outdescs_flush_and_invd_dcache(const struct sx_dmactl *dma);
+#endif
 
 /** Return how the DMA is doing.
  *
