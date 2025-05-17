@@ -11,10 +11,13 @@
 #include <zephyr/shell/shell.h>
 #include <modem/at_parser.h>
 #include <modem/at_cmd_custom.h>
+#include <modem/nrf_modem_lib.h>
 #include <nrf_modem_at.h>
 
 #include "mosh_defines.h"
 #include "mosh_print.h"
+
+#include "at_cmd_mode_sett.h"
 
 #if defined(CONFIG_MOSH_PING)
 #include "icmp_ping.h"
@@ -23,6 +26,40 @@
 #define MOSH_AT_CMD_MAX_PARAM 8
 
 extern bool at_cmd_mode_dont_print;
+extern bool at_cmd_mode_echo_on;
+
+AT_CMD_CUSTOM(ate_custom, "ATE", ate_callback);
+NRF_MODEM_LIB_ON_CFUN(at_cmd_mode_cfun_hook, on_modem_lib_cfun, NULL);
+
+static int ate_callback(char *buf, size_t len, char *at_cmd)
+{
+	int err = 0;
+
+	if (at_cmd[3] == '\0') {
+		err = -EINVAL;
+	} else if (at_cmd[4] == '\r' || at_cmd[4] == '\n' || at_cmd[4] == '\0') {
+		if (at_cmd[3] == '0') {
+			/* ATE0 */
+			at_cmd_mode_echo_on = false;
+		} else if (at_cmd[3] == '1') {
+			/* ATE1 */
+			at_cmd_mode_echo_on = true;
+		} else {
+			err = -EINVAL;
+		}
+	} else {
+		err = -EINVAL;
+	}
+
+	return at_cmd_custom_respond(buf, len, "%s", err ? "ERROR\r\n" : "OK\r\n");
+}
+
+static void on_modem_lib_cfun(int mode, void *ctx)
+{
+	if (mode == 0) {
+		at_cmd_mode_sett_echo_on(at_cmd_mode_echo_on, false);
+	}
+}
 
 #if defined(CONFIG_MOSH_PING)
 
