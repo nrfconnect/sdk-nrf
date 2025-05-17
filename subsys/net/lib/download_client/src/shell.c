@@ -76,7 +76,7 @@ static int cmd_dc_config_pdn_id(const struct shell *shell, size_t argc,
 			     char **argv)
 {
 	if (argc != 2) {
-		shell_warn(shell, "usage: dc config pdn <pdn_id>\n");
+		shell_warn(shell, "usage: dc config pdn_id <pdn_id>\n");
 		return -EINVAL;
 	}
 
@@ -108,7 +108,7 @@ static int cmd_dc_set_host(const struct shell *shell, size_t argc, char **argv)
 	shell_instance = shell;
 
 	if (argc != 2) {
-		shell_warn(shell, "usage: dc connect <host>|<url>");
+		shell_warn(shell, "usage: dc set_host <host>|<url>");
 		return -EINVAL;
 	}
 
