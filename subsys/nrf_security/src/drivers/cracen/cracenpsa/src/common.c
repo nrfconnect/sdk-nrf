@@ -14,18 +14,17 @@
 #include <cracen/statuscodes.h>
 #include <hal/nrf_cracen.h>
 #include <nrfx.h>
-#include <sicrypto/rsa_keys.h>
-#include <sicrypto/sicrypto.h>
-#include <sicrypto/util.h>
 #include <silexpk/core.h>
 #include <silexpk/ec_curves.h>
 #include <silexpk/ik.h>
 #include <silexpk/sxops/eccweierstrass.h>
 #include <stddef.h>
+#include <sxsymcrypt/hash.h>
 #include <sxsymcrypt/hashdefs.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/util.h>
 #include <psa/nrf_platform_key_ids.h>
+#include "rsa_key.h"
 
 LOG_MODULE_DECLARE(cracen, CONFIG_CRACEN_LOG_LEVEL);
 #if CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
@@ -419,7 +418,7 @@ void cracen_xorbytes(char *a, const char *b, size_t sz)
 	}
 }
 
-static int cracen_asn1_get_len(unsigned char **p, const unsigned char *end, size_t *len)
+static int cracen_asn1_get_len(uint8_t **p, const uint8_t *end, size_t *len)
 {
 	if ((end - *p) < 1) {
 		return SX_ERR_INVALID_PARAM;
@@ -451,7 +450,7 @@ static int cracen_asn1_get_len(unsigned char **p, const unsigned char *end, size
 	return 0;
 }
 
-static int cracen_asn1_get_tag(unsigned char **p, const unsigned char *end, size_t *len, int tag)
+static int cracen_asn1_get_tag(uint8_t **p, const unsigned char *end, size_t *len, int tag)
 {
 	if ((end - *p) < 1) {
 		return SX_ERR_INVALID_PARAM;
@@ -509,7 +508,7 @@ static int cracen_asn1_get_int(unsigned char **p, const unsigned char *end, int 
 	return 0;
 }
 
-int cracen_signature_asn1_get_operand(unsigned char **p, const unsigned char *end,
+int cracen_signature_asn1_get_operand(uint8_t **p, const uint8_t *end,
 				      struct sx_buf *op)
 {
 	int ret;
@@ -544,15 +543,16 @@ int cracen_signature_asn1_get_operand(unsigned char **p, const unsigned char *en
  * Depending on extract_pubkey, we extract the public key, or
  * the private key.
  */
-int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bool is_key_pair,
-				 const unsigned char *key, size_t keylen, struct sx_buf *modulus,
+int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey, bool is_key_pair,
+				 const uint8_t *key, size_t keylen, struct sx_buf *modulus,
 				 struct sx_buf *exponent)
 {
 	int ret, version;
 	size_t len;
-	unsigned char *p, *end;
+	uint8_t *p;
+	uint8_t *end;
 
-	p = (unsigned char *)key;
+	p = (uint8_t *)key;
 	end = p + keylen;
 
 	if (!extract_pubkey && !is_key_pair) {
@@ -601,7 +601,7 @@ int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bo
 		}
 	} else {
 		/* Skip algorithm identifier prefix. */
-		unsigned char *id_seq = p;
+		uint8_t *id_seq = p;
 
 		ret = cracen_asn1_get_tag(&id_seq, end, &len, ASN1_CONSTRUCTED | ASN1_SEQUENCE);
 		if (ret == 0) {
@@ -629,7 +629,7 @@ int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bo
 		}
 	}
 
-	*rsa = SI_KEY_INIT_RSA(modulus, exponent);
+	*rsa = CRACEN_KEY_INIT_RSA(modulus, exponent);
 
 	/* Import N */
 	ret = cracen_signature_asn1_get_operand(&p, end, modulus);
@@ -646,7 +646,7 @@ int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bo
 	if (ret) {
 		return ret;
 	}
-
+0
 	if (extract_pubkey) {
 		return SX_OK;
 	}
@@ -659,6 +659,7 @@ int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bo
 
 	return SX_OK;
 }
+
 
 int cracen_prepare_ik_key(const uint8_t *user_data)
 {
@@ -985,4 +986,39 @@ int cracen_hash_input_with_context(struct sxhash *hashopctx, const uint8_t *inpu
 {
 	return cracen_hash_all_inputs_with_context(hashopctx, &input, &input_length, 1, hashalg,
 						   digest);
+}
+
+int cracen_memdiff(const uint8_t *a, const uint8_t *b, size_t sz)
+{
+	const volatile uint8_t *a_v = (const volatile uint8_t *)a;
+	const volatile uint8_t *b_v = (const volatile uint8_t *)b;
+	int r = 0;
+
+	for (size_t i = 0; i < sz; i++) {
+		r |= a_v[i] ^ b_v[i];
+	}
+	return r;
+}
+
+int cracen_rsa_modexp(struct sx_pk_acq_req *pkreq, struct sx_pk_slot *inputs,
+		      struct cracen_rsa_key *rsa_key, uint8_t *base, size_t basez, int *sizes)
+{
+	*pkreq = sx_pk_acquire_req(rsa_key->cmd);
+	if (pkreq->status != SX_OK) {
+		return pkreq->status;
+	}
+
+	cracen_ffkey_write_sz(rsa_key, sizes);
+	CRACEN_FFKEY_REFER_INPUT(rsa_key, sizes) = basez;
+	pkreq->status = sx_pk_list_gfp_inslots(pkreq->req, sizes, inputs);
+	if (pkreq->status) {
+		return pkreq->status;
+	}
+
+	/* copy modulus and exponent to device memory */
+	cracen_ffkey_write(rsa_key, inputs);
+	sx_wrpkmem(CRACEN_FFKEY_REFER_INPUT(rsa_key, inputs).addr, base, basez);
+
+	sx_pk_run(pkreq->req);
+	return sx_pk_wait(pkreq->req);
 }

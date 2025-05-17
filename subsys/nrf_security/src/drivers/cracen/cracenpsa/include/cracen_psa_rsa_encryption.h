@@ -1,0 +1,22 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#ifndef CRACEN_PSA_RSA_ENCRYPTION_H
+#define CRACEN_PSA_RSA_ENCRYPTION_H
+
+#include <psa/crypto.h>
+
+int cracen_rsa_oaep_encrypt(const struct sxhashalg *hashalg, struct cracen_rsa_key *rsa_key,
+			    struct cracen_crypt_text *text, struct sx_buf *label);
+
+int cracen_rsa_oaep_decrypt(const struct sxhashalg *hashalg, struct cracen_rsa_key *rsa_key,
+			    struct cracen_crypt_text *text, struct sx_buf *label);
+
+int cracen_rsa_pkcs1v15_decrypt(struct cracen_rsa_key *rsa_key, struct cracen_crypt_text *text);
+
+int cracen_rsa_pkcs1v15_encrypt(struct cracen_rsa_key *rsa_key, struct cracen_crypt_text *text);
+
+#endif /* CRACEN_PSA_RSA_ENCRYPTION_H */

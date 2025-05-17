@@ -10,7 +10,6 @@
 #include <psa/crypto_sizes.h>
 #include <psa/crypto_types.h>
 #include <psa/crypto_values.h>
-#include <sicrypto/sicrypto.h>
 #include <silexpk/blinding.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -379,6 +378,12 @@ struct cracen_ecdsa_signature {
 	uint8_t *s;   /** Signature element "s". */
 };
 
+struct cracen_signature {
+	size_t sz; /**< Total signature size, in bytes. */
+	char *r;   /**< Signature element "r". */
+	char *s;   /**< Signature element "s". */
+};
+
 struct cracen_ecc_priv_key {
 	const struct sx_pk_ecurve *curve;
 	const uint8_t *d; /** Private key value d */
@@ -394,4 +399,62 @@ struct cracen_ecc_keypair {
 	struct cracen_ecc_priv_key priv_key;
 	struct cracen_ecc_pub_key pub_key;
 };
+
+struct cracen_rsa_key {
+	const struct sx_pk_cmd_def *cmd;
+	unsigned int slotmask;
+	unsigned int dataidx;
+	const struct sx_buf *elements[5];
+};
+
+/** Asymmetric encryption plaintext or ciphertext.
+ *
+ * This structure is used to represent plaintexts and ciphertexts in asymmetric
+ * (i.e. public key) encryption and decryption operations. It is used with the
+ * tasks that implement the RSAES-OAEP and RSAES-PKCS1-v1_5 encryption
+ * schemes.
+ */
+struct cracen_crypt_text {
+	uint8_t *addr;
+	size_t sz;
+};
+
+struct cracen_coprimecheck {
+	const uint8_t *a;
+	size_t asz;
+	const uint8_t *b;
+	size_t bsz;
+};
+
+
+struct cracen_rsacheckpq {
+	const uint8_t *pubexp;
+	size_t pubexpsz;
+	uint8_t *p;
+	uint8_t *q;
+	uint8_t candidatesz;
+	size_t mrrounds;
+};
+
+struct cracen_rsagenpq {
+	const uint8_t *pubexp;
+	size_t pubexpsz;
+	uint8_t *p;
+	uint8_t *q;
+	uint8_t *rndout;
+	uint8_t *qptr;
+	size_t candidatesz;
+	size_t attempts;
+};
+
+
+struct rsagenprivkey {
+	struct cracen_rsagenpq genpq;
+	const uint8_t *pubexp;
+	size_t pubexpsz;
+	struct cracen_rsa_key *key;
+	size_t keysz;
+};
+
+
 #endif /* CRACEN_PSA_PRIMITIVES_H */
