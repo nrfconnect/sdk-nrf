@@ -17,16 +17,16 @@
 #include <zephyr/logging/log.h>
 
 #ifdef CONFIG_NRF_RPC_IPC_SERVICE
-NRF_RPC_IPC_TRANSPORT(dev_info_rpc_tr, DEVICE_DT_GET(DT_NODELABEL(ipc0)), "dev_info_rpc_ept");
+NRF_RPC_IPC_TRANSPORT(rpc_utils_rpc_tr, DEVICE_DT_GET(DT_NODELABEL(ipc0)), "rpc_utils_rpc_ept");
 #elif defined(CONFIG_NRF_RPC_UART_TRANSPORT)
-#define dev_info_rpc_tr NRF_RPC_UART_TRANSPORT(DT_CHOSEN(nordic_rpc_uart))
+#define rpc_utils_rpc_tr NRF_RPC_UART_TRANSPORT(DT_CHOSEN(nordic_rpc_uart))
 #elif defined(CONFIG_MOCK_NRF_RPC_TRANSPORT)
-#define dev_info_rpc_tr mock_nrf_rpc_tr
+#define rpc_utils_rpc_tr mock_nrf_rpc_tr
 #endif
-NRF_RPC_GROUP_DEFINE(dev_info_group, "dev_info", &dev_info_rpc_tr, NULL, NULL, NULL);
-LOG_MODULE_REGISTER(dev_info_rpc, LOG_LEVEL_DBG);
+NRF_RPC_GROUP_DEFINE(rpc_utils_group, "rpc_utils", &rpc_utils_rpc_tr, NULL, NULL, NULL);
+LOG_MODULE_REGISTER(rpc_utils, LOG_LEVEL_DBG);
 
-#ifdef CONFIG_DEV_INFO_RPC_INITIALIZE_NRF_RPC
+#ifdef CONFIG_RPC_UTILS_INITIALIZE_NRF_RPC
 static void err_handler(const struct nrf_rpc_err_report *report)
 {
 	LOG_ERR("nRF RPC error %d ocurred. See nRF RPC logs for more details", report->code);
@@ -46,4 +46,4 @@ static int serialization_init(void)
 }
 
 SYS_INIT(serialization_init, POST_KERNEL, CONFIG_APPLICATION_INIT_PRIORITY);
-#endif /* CONFIG_DEV_INFO_RPC_INITIALIZE_NRF_RPC */
+#endif /* CONFIG_RPC_UTILS_INITIALIZE_NRF_RPC */
