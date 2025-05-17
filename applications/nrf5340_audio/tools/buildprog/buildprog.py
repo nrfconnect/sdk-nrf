@@ -30,6 +30,7 @@ from nrf5340_audio_dk_devices import (
     Transport,
 )
 from program import program_threads_run
+from program import get_prog_tool
 
 
 BUILDPROG_FOLDER = Path(__file__).resolve().parent
@@ -175,10 +176,14 @@ def __build_module(build_config, options):
 def __find_snr():
     """Rebooting or programming requires connected programmer/debugger"""
 
-    # Use nrfjprog executable for WSL compatibility
-    stdout = subprocess.check_output(
+    tool = get_prog_tool()
+    if tool == "nrfutil":
+        stdout = subprocess.check_output("nrfutil.exe device list", shell=True).decode("utf-8")
+        snrs = re.findall(r"^\d+$", stdout, re.MULTILINE)
+    else:
+        stdout = subprocess.check_output(
         "nrfjprog --ids", shell=True).decode("utf-8")
-    snrs = re.findall(r"([\d]+)", stdout)
+        snrs = re.findall(r"([\d]+)", stdout)
 
     if not snrs:
         print("No programmer/debugger connected to PC")
