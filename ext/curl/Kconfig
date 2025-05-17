@@ -10,8 +10,7 @@ config NRF_CURL_PROMPTLESS
 
 config NRF_CURL
 	bool "Curl" if !NRF_CURL_PROMPTLESS
-	depends on POSIX_API && NEWLIB_LIBC
-	imply NEWLIB_LIBC_FLOAT_PRINTF
+	depends on POSIX_API
 	help
 	  Curl support for NRF.
 
