@@ -11,7 +11,7 @@ target_include_directories(psa_crypto_library_config
 )
 
 # Link the Oberon PSA core with nrf_cc3xx_platform
-target_link_libraries(oberon_psa_core
+target_link_libraries(psa_core
   PRIVATE
     nrf_cc3xx_platform
 )
