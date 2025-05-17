@@ -331,7 +331,9 @@ Matter samples
 Networking samples
 ------------------
 
-|no_changes_yet_note|
+* :ref:`download_sample` sample:
+
+  * Fixed an issue where the network interface was not re-initialized after a fault.
 
 NFC samples
 -----------
@@ -475,6 +477,10 @@ Security libraries
 
 Modem libraries
 ---------------
+
+* :ref:`nrf_modem_lib_readme`:
+
+  * Fixed an issue with modem fault handling in the :ref:`nrf_modem_lib_lte_net_if`, where the event must be deferred from interrupt context before it can be forwarded to the Zephyr's :ref:`net_mgmt_interface` module.
 
 * :ref:`at_parser_readme` library:
 
