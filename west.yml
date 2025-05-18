@@ -33,6 +33,8 @@ manifest:
       url-base: https://github.com/memfault
     - name: ant-nrfconnect
       url-base: https://github.com/ant-nrfconnect
+    - name: andriyhrabchak
+      url-base: https://github.com/andriyhrabchak
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -51,6 +53,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/introduction/index.html
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
+      remote: andriyhrabchak
       repo-path: sdk-zephyr
       revision: v3.2.99-ncs1
       import:
@@ -80,7 +83,7 @@ manifest:
           - libmetal
           - littlefs
           - loramac-node
-          - lvgl
+          # - lvgl
           - lz4
           - mbedtls
           - mipi-sys-t
@@ -125,19 +128,19 @@ manifest:
       repo-path: sdk-mcuboot
       path: modules/tee/tfm-mcuboot
       revision: v1.7.2-ncs3
-    - name: matter
-      repo-path: sdk-connectedhomeip
-      path: modules/lib/matter
-      revision: v2.2.0
-      submodules:
-        - name: nlio
-          path: third_party/nlio/repo
-        - name: nlassert
-          path: third_party/nlassert/repo
-        - name: nlunit-test
-          path: third_party/nlunit-test/repo
-        - name: pigweed
-          path: third_party/pigweed/repo
+    # - name: matter
+    #   repo-path: sdk-connectedhomeip
+    #   path: modules/lib/matter
+    #   revision: v2.2.0
+    #   submodules:
+    #     - name: nlio
+    #       path: third_party/nlio/repo
+    #     - name: nlassert
+    #       path: third_party/nlassert/repo
+    #     - name: nlunit-test
+    #       path: third_party/nlunit-test/repo
+    #     - name: pigweed
+    #       path: third_party/pigweed/repo
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
