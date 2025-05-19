@@ -8,6 +8,7 @@
 #if defined(CONFIG_SLM_PPP)
 #include "slm_ppp.h"
 #endif
+#include "slm_util.h"
 #include <zephyr/logging/log.h>
 #include <zephyr/modem/backend/uart.h>
 #include <zephyr/modem/cmux.h>
@@ -26,6 +27,9 @@ LOG_MODULE_REGISTER(slm_cmux, CONFIG_SLM_LOG_LEVEL);
  * 49 extra bytes was manually found to allow SLM_AT_MAX_RSP_LEN long responses.
  */
 #define TRANSMIT_BUF_LEN (49 + SLM_AT_MAX_RSP_LEN)
+
+#define DLCI_TO_INDEX(dlci) ((dlci) - 1)
+#define INDEX_TO_DLCI(index) ((index) + 1)
 
 static struct {
 	/* UART backend */
@@ -50,40 +54,87 @@ static struct {
 	} dlcis[CHANNEL_COUNT];
 	/* Index of the DLCI used for AT communication; defaults to 0. */
 	unsigned int at_channel;
+
+	/* Incoming data for DLCI's. */
+	atomic_t dlci_channel_rx;
+	struct k_work rx_work;
+
+	/* Outgoing data for AT DLCI. */
+	struct k_sem tx_sem;
+	struct ring_buf notif_rb;
+	uint8_t notif_buffer[CONFIG_SLM_CMUX_NOTIFICATION_TX_BUFFER_SIZE];
+	struct k_mutex notif_rb_mutex;
+	struct k_work tx_work;
+
 } cmux;
+
+static void rx_work_fn(struct k_work *work)
+{
+	static uint8_t recv_buf[RECV_BUF_LEN];
+	int ret;
+	bool is_at;
+
+	for (int i = 0; i < ARRAY_SIZE(cmux.dlcis); ++i) {
+		if (atomic_test_and_clear_bit(&cmux.dlci_channel_rx, i)) {
+			/* Incoming data for DLCI. */
+			is_at = (i == cmux.at_channel);
+
+			ret = modem_pipe_receive(cmux.dlcis[i].pipe, recv_buf, sizeof(recv_buf));
+			if (ret < 0) {
+				LOG_ERR("DLCI %u%s failed modem_pipe_receive. (%d)",
+					INDEX_TO_DLCI(i), is_at ? " (AT)" : "", ret);
+				continue;
+			}
+
+			if (!is_at) {
+				LOG_INF("DLCI %u discarding %u bytes of data.", INDEX_TO_DLCI(i),
+					ret);
+				continue;
+			}
+
+			LOG_DBG("DLCI %u (AT) received %u bytes of data.", INDEX_TO_DLCI(i), ret);
+			slm_at_receive(recv_buf, ret);
+		}
+	}
+}
 
 static void dlci_pipe_event_handler(struct modem_pipe *pipe,
 				    enum modem_pipe_event event, void *user_data)
 {
 	const struct cmux_dlci *const dlci = user_data;
+	bool is_at = (ARRAY_INDEX(cmux.dlcis, dlci) == cmux.at_channel);
 
 	switch (event) {
-	case MODEM_PIPE_EVENT_OPENED:
-	case MODEM_PIPE_EVENT_CLOSED:
 		/* The events of the DLCIs other than that of the AT channel
 		 * are received here when they haven't been attached to
 		 * by their respective implementations.
 		 */
-		LOG_INF("DLCI %u %s.", dlci->address,
-			(event == MODEM_PIPE_EVENT_OPENED) ? "opened" : "closed");
-		break;
-	case MODEM_PIPE_EVENT_RECEIVE_READY:
-		static uint8_t recv_buf[RECV_BUF_LEN];
-		const int recv_len = modem_pipe_receive(pipe, recv_buf, sizeof(recv_buf));
-
-		if (recv_len > 0) {
-			if (ARRAY_INDEX(cmux.dlcis, dlci) == cmux.at_channel) {
-				slm_at_receive(recv_buf, recv_len);
-			} else {
-				LOG_WRN("Discarding %u byte%s received on non-AT DLCI %u.",
-					recv_len, (recv_len > 1) ? "s" : "", dlci->address);
-			}
-		} else {
-			LOG_ERR("Failed to receive data on DLCI %u. (%d)",
-				dlci->address, recv_len);
+	case MODEM_PIPE_EVENT_OPENED:
+		LOG_INF("DLCI %u%s opened.", dlci->address, is_at ? " (AT)" : "");
+		if (is_at) {
+			k_sem_give(&cmux.tx_sem);
+			break;
 		}
 		break;
+
+	case MODEM_PIPE_EVENT_CLOSED:
+		LOG_INF("DLCI %u%s closed.", dlci->address, is_at ? " (AT)" : "");
+		if (is_at) {
+			k_sem_reset(&cmux.tx_sem);
+		}
+		break;
+
+	case MODEM_PIPE_EVENT_RECEIVE_READY:
+		LOG_DBG("DLCI %u%s receive ready.", dlci->address, is_at ? " (AT)" : "");
+		atomic_or(&cmux.dlci_channel_rx, BIT(DLCI_TO_INDEX(dlci->address)));
+		k_work_submit_to_queue(&slm_work_q, &cmux.rx_work);
+		break;
+
 	case MODEM_PIPE_EVENT_TRANSMIT_IDLE:
+		if (is_at &&
+		    cmux.dlcis[cmux.at_channel].instance.state == MODEM_CMUX_DLCI_STATE_OPEN) {
+			k_sem_give(&cmux.tx_sem);
+		}
 		break;
 	}
 }
@@ -113,24 +164,74 @@ static void init_dlci(size_t dlci_idx, uint16_t recv_buf_size,
 	modem_pipe_attach(dlci->pipe, dlci_pipe_event_handler, dlci);
 }
 
-static int cmux_write_at_channel(const uint8_t *data, size_t len)
+static int cmux_write(struct modem_pipe *pipe, const uint8_t *data, size_t len)
 {
+	int ret;
+	size_t sent_len = 0;
+
 	if (cmux.dlcis[cmux.at_channel].instance.state != MODEM_CMUX_DLCI_STATE_OPEN) {
+		LOG_INF("DLCI %u (AT) not open. Dropping %u bytes.",
+			INDEX_TO_DLCI(cmux.at_channel), len);
 		return 0;
 	}
 
-	int ret = modem_pipe_transmit(cmux.dlcis[cmux.at_channel].pipe, data, len);
-
-	if (ret != len) {
-		const int sent_len = MAX(0, ret);
-
-		if (ret >= 0) {
-			ret = 1;
+	do {
+		ret = k_sem_take(&cmux.tx_sem, K_SECONDS(1));
+		if (ret) {
+			LOG_WRN("TX idle timeout. (%d)", ret);
+			break;
 		}
-		LOG_ERR("Sent %u out of %u AT data bytes. (%d)", sent_len, len, ret);
+
+		ret = modem_pipe_transmit(pipe, data, len - sent_len);
+		if (ret > 0) {
+			sent_len += ret;
+			data += ret;
+		}
+	} while (ret >= 0 && sent_len < len);
+
+	if (ret < 0) {
+		LOG_ERR("DLCI %u (AT). Sent %u out of %u bytes. (%d)",
+			INDEX_TO_DLCI(cmux.at_channel), sent_len, len, ret);
 		return ret;
 	}
+
 	return 0;
+}
+
+static void tx_work_fn(struct k_work *work)
+{
+	uint8_t *data;
+	size_t len;
+
+	LOG_DBG("tx_work_fn()");
+	do {
+		/* Ignore errors when sending notification data. */
+		len = ring_buf_get_claim(&cmux.notif_rb, &data,
+					 ring_buf_capacity_get(&cmux.notif_rb));
+		(void)cmux_write(cmux.dlcis[cmux.at_channel].pipe, data, len);
+		ring_buf_get_finish(&cmux.notif_rb, len);
+
+	} while (!ring_buf_is_empty(&cmux.notif_rb));
+}
+
+static int cmux_write_at_channel(const uint8_t *data, size_t len)
+{
+	int ret;
+
+	/* Send only from SLM work queue. */
+	if (k_current_get() != &slm_work_q.thread) {
+		k_mutex_lock(&cmux.notif_rb_mutex, K_FOREVER);
+		ret = ring_buf_put(&cmux.notif_rb, data, len);
+		k_mutex_unlock(&cmux.notif_rb_mutex);
+		if (ret != len) {
+			LOG_WRN("CMUX notification buffer overflow. Dropping %u bytes.", len - ret);
+		}
+		k_work_submit_to_queue(&slm_work_q, &cmux.tx_work);
+
+		return 0;
+	}
+
+	return cmux_write(cmux.dlcis[cmux.at_channel].pipe, data, len);
 }
 
 static void close_pipe(struct modem_pipe **pipe)
@@ -185,6 +286,14 @@ void slm_cmux_init(void)
 	for (size_t i = 0; i != ARRAY_SIZE(cmux.dlcis); ++i) {
 		init_dlci(i, sizeof(cmux.dlcis[i].receive_buf), cmux.dlcis[i].receive_buf);
 	}
+
+	cmux.dlci_channel_rx = ATOMIC_INIT(0);
+	k_work_init(&cmux.rx_work, rx_work_fn);
+
+	k_sem_init(&cmux.tx_sem, 0, 1);
+	ring_buf_init(&cmux.notif_rb, sizeof(cmux.notif_buffer), cmux.notif_buffer);
+	k_mutex_init(&cmux.notif_rb_mutex);
+	k_work_init(&cmux.tx_work, tx_work_fn);
 }
 
 static struct cmux_dlci *cmux_get_dlci(enum cmux_channel channel)
@@ -305,7 +414,7 @@ static int handle_at_cmux(enum at_parser_cmd_type cmd_type, struct at_parser *pa
 		if (ret || (at_dlci != 1 && (!IS_ENABLED(CONFIG_SLM_PPP) || at_dlci != 2))) {
 			return -EINVAL;
 		}
-		const unsigned int at_channel = at_dlci - 1;
+		const unsigned int at_channel = DLCI_TO_INDEX(at_dlci);
 
 #if defined(CONFIG_SLM_PPP)
 		if (!slm_ppp_is_stopped() && at_channel != cmux.at_channel) {
