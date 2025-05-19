@@ -519,6 +519,10 @@ Libraries for networking
 
   * Updated to return negative :file:`errno.h` errors instead of positive ZCBOR errors.
 
+* :ref:`lib_nrf_provisioning` library:
+
+  * Fixed an issue where the results from the :c:func:`zsock_getaddrinfo` function were not freed when the CoAP protocol was used for connection establishment.
+
 Libraries for NFC
 -----------------
 
