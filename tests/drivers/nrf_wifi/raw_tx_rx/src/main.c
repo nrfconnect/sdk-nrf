@@ -388,12 +388,54 @@ static int wifi_send_single_raw_tx_packet(int sockfd, char *test_frame, size_t b
 	return 0;
 }
 
-static int wifi_send_raw_tx_packets()
+static char *g_test_frame = NULL;
+static unsigned int g_buf_length;
+
+static int wifi_send_raw_tx_packets_init(void)
+{
+	struct raw_tx_pkt_header packet;
+
+	fill_raw_tx_pkt_hdr(&packet);
+
+	g_test_frame = malloc(sizeof(struct raw_tx_pkt_header) + sizeof(test_beacon_frame));
+	if (!g_test_frame) {
+		LOG_ERR("Malloc failed for send buffer %d", errno);
+		return -1;
+	}
+
+	g_buf_length = sizeof(struct raw_tx_pkt_header) + sizeof(test_beacon_frame);
+	memcpy(g_test_frame, &packet, sizeof(struct raw_tx_pkt_header));
+
+	return 0;
+}
+
+static int wifi_send_raw_tx_packets_tx(void)
 {
 	int ret;
+
+	LOG_INF("Wi-Fi sending RAW TX Packet");
+	ret = wifi_send_single_raw_tx_packet(raw_socket_fd, g_test_frame, g_buf_length, &sa);
+	if (ret < 0) {
+		LOG_ERR("Failed to send raw tx packets");
+	}
+
+	return ret;
+}
+
+static void wifi_send_raw_tx_packets_deinit(void)
+{
+	if (g_test_frame) {
+		free(g_test_frame);
+		g_test_frame = NULL;
+	}
+}
+
+static int wifi_send_raw_tx_packets(void)
+{
 	struct raw_tx_pkt_header packet;
 	char *test_frame = NULL;
 	unsigned int buf_length;
+	int ret;
 
 	fill_raw_tx_pkt_hdr(&packet);
 
@@ -410,10 +452,12 @@ static int wifi_send_raw_tx_packets()
 	ret = wifi_send_single_raw_tx_packet(raw_socket_fd, test_frame, buf_length, &sa);
 	if (ret < 0) {
 		LOG_ERR("Failed to send raw tx packets");
+		free(test_frame);
+		return -1;
 	}
 
 	free(test_frame);
-	return ret;
+	return 0;
 }
 
 static int process_single_rx_packet(struct packet_data *packet)
@@ -603,9 +647,10 @@ ZTEST(nrf_wifi, test_raw_tx)
 	last_pkt_timestamp = 0;
 	/* Send burst packets without querying for throughput */
 	LOG_INF("TX burst count is set to  %d", CONFIG_RAW_TX_TRANSMIT_COUNT);
+	wifi_send_raw_tx_packets_init();
 	while (count--)
 	{
-		zassert_false(wifi_send_raw_tx_packets(), "Failed to send raw tx packet");
+		zassert_false(wifi_send_raw_tx_packets_tx(), "Failed to send raw tx packet");
 	}
 
 	LOG_INF("Total tx bytes sent is %d, duration is %d ms",
@@ -613,6 +658,8 @@ ZTEST(nrf_wifi, test_raw_tx)
 	uint32_t kbps = (total_tx_bytes * 8ULL * 1000) / (ONE_KB * (last_pkt_timestamp - first_pkt_timestamp));
 	uint32_t kbps_dec = ((total_tx_bytes * 8ULL * 1000 * 10) / (ONE_KB * (last_pkt_timestamp - first_pkt_timestamp))) % 10;
 	LOG_INF("Average transmit throughput in Kbps is %d.%d", kbps, kbps_dec);
+
+	wifi_send_raw_tx_packets_deinit();
 
 #endif
 	if (total_tx_bytes == 0) {
