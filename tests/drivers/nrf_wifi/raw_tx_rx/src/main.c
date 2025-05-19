@@ -58,6 +58,10 @@ struct sockaddr_ll dst;
 static void rx_thread_oneshot(void);
 static void tx_thread_transmit(void); 
 
+static unsigned int total_tx_bytes;
+static unsigned int first_pkt_timestamp;
+static unsigned int last_pkt_timestamp;
+
 K_THREAD_DEFINE(receiver_thread_id, STACK_SIZE, rx_thread_oneshot, NULL, NULL, NULL,
 		THREAD_PRIORITY, 0, -1);
 
@@ -354,7 +358,18 @@ static void fill_raw_tx_pkt_hdr(struct raw_tx_pkt_header *raw_tx_pkt)
 
 int wifi_send_raw_tx_pkt(int sockfd, char *test_frame, size_t buf_length, struct sockaddr_ll *sa)
 {
-	return sendto(sockfd, test_frame, buf_length, 0, (struct sockaddr *)sa, sizeof(*sa));
+	int ret = sendto(sockfd, test_frame, buf_length, 0, (struct sockaddr *)sa, sizeof(*sa));
+	if (ret < 0) {
+		LOG_ERR("Unable to send beacon frame: %s", strerror(errno));
+		return -1;
+	}
+
+	total_tx_bytes += ret;
+	if (!first_pkt_timestamp) {
+		first_pkt_timestamp = k_uptime_get_32();
+	} else {
+		last_pkt_timestamp = k_uptime_get_32();
+	}
 }
 
 static int wifi_send_single_raw_tx_packet(int sockfd, char *test_frame, size_t buf_length,
@@ -549,8 +564,6 @@ ZTEST(nrf_wifi, test_raw_tx_rx)
 #ifdef CONFIG_RAW_TX_BURST
 ZTEST(nrf_wifi, test_raw_tx)
 {
-	unsigned int total_tx_bytes = 0;
-
 	configurePlayoutCapture(0, 0, 0);
 	/**
 	 * Provide some time for TLM settings to take effect
@@ -586,6 +599,8 @@ ZTEST(nrf_wifi, test_raw_tx)
 	k_thread_join(transmit_thread_id, K_SECONDS(1));
 #else
 	int count = CONFIG_RAW_TX_TRANSMIT_COUNT;
+	first_pkt_timestamp = 0;
+	last_pkt_timestamp = 0;
 	/* Send burst packets without querying for throughput */
 	LOG_INF("TX burst count is set to  %d", CONFIG_RAW_TX_TRANSMIT_COUNT);
 	while (count--)
@@ -593,7 +608,6 @@ ZTEST(nrf_wifi, test_raw_tx)
 		zassert_false(wifi_send_raw_tx_packets(), "Failed to send raw tx packet");
 	}
 
-	nrf_wifi_fmac_get_throughput_bytes(ctx->rpu_ctx, &total_tx_bytes);
 	LOG_INF("Total tx bytes sent is %d, duration is %d ms",
 		total_tx_bytes, (last_pkt_timestamp - first_pkt_timestamp));
 	uint32_t kbps = (total_tx_bytes * 8ULL * 1000) / (ONE_KB * (last_pkt_timestamp - first_pkt_timestamp));
