@@ -32,7 +32,8 @@ static struct {
 	struct modem_pipe *uart_pipe;
 	bool uart_pipe_open;
 	struct modem_backend_uart uart_backend;
-	uint8_t uart_backend_receive_buf[CONFIG_SLM_CMUX_UART_BUFFER_SIZE];
+	uint8_t uart_backend_receive_buf[CONFIG_SLM_CMUX_UART_BUFFER_SIZE]
+		__aligned(sizeof(void *));
 	uint8_t uart_backend_transmit_buf[CONFIG_SLM_CMUX_UART_BUFFER_SIZE];
 
 	/* CMUX */
