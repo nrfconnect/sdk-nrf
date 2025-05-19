@@ -742,6 +742,11 @@ Other libraries
 
   * Updated the write handler of the accessory non-owner service (ANOS) GATT characteristic to no longer assert on write operations if the DULT was not enabled at least once.
 
+* :ref:`supl_client` library:
+
+  * Updated the SUPL client OS integration library to remove the dependency on the newlib C library.
+    To use SUPL with picolibc, v0.8.0 or later of the nRF91 Series SUPL client library is required.
+
 Shell libraries
 ---------------
 
