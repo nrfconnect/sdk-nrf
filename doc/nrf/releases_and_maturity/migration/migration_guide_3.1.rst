@@ -68,6 +68,10 @@ This section describes the changes related to libraries.
 
   * The ``CONFIG_PSA_USE_CRACEN_ASYMMETRIC_DRIVER`` Kconfig option has been replaced by :kconfig:option:`CONFIG_PSA_USE_CRACEN_ASYMMETRIC_ENCRYPTION_DRIVER`.
 
+* :ref:`supl_client` library:
+
+  * The SUPL client OS integration library dependency on the newlib C library has been removed.
+    To use SUPL with picolibc, v0.8.0 or later of the nRF91 Series SUPL client library is required.
 
 .. _migration_3.1_recommended:
 
