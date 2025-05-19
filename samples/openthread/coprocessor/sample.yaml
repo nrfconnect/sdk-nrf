@@ -19,6 +19,10 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
+    extra_args:
+      - CONFIG_OPENTHREAD=y
+      - CONFIG_NET_L2_OPENTHREAD=n
+      - CONFIG_NETWORKING=n
     integration_platforms:
       - nrf52833dk/nrf52833
       - nrf52840dk/nrf52840
