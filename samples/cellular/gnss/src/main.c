@@ -165,14 +165,15 @@ static void gnss_event_handler(int event)
 		break;
 
 	case NRF_MODEM_GNSS_EVT_AGNSS_REQ:
-#if !defined(CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE)
+#if !defined(CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE) && \
+	!defined(CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST_COLD_START)
 		retval = nrf_modem_gnss_read(&last_agnss,
 					     sizeof(last_agnss),
 					     NRF_MODEM_GNSS_DATA_AGNSS_REQ);
 		if (retval == 0) {
 			k_work_submit_to_queue(&gnss_work_q, &agnss_data_get_work);
 		}
-#endif /* !CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE */
+#endif /* !CONFIG_GNSS_SAMPLE_ASSISTANCE_NONE && !CONFIG_GNSS_SAMPLE_MODE_TTFF_TEST_COLD_START */
 		break;
 
 	default:
@@ -399,11 +400,13 @@ static void ttff_test_prepare_work_fn(struct k_work *item)
 			NRF_MODEM_GNSS_AGNSS_POSITION_REQUEST |
 			NRF_MODEM_GNSS_AGNSS_INTEGRITY_REQUEST;
 		last_agnss.system_count = 1;
+		last_agnss.system[0].system_id = NRF_MODEM_GNSS_SYSTEM_GPS;
 		last_agnss.system[0].sv_mask_ephe = 0xffffffff;
 		last_agnss.system[0].sv_mask_alm = 0xffffffff;
 #if defined(CONFIG_GNSS_SAMPLE_ASSISTANCE_NRF_CLOUD)
 		if (qzss_assistance_is_supported()) {
 			last_agnss.system_count = 2;
+			last_agnss.system[0].system_id = NRF_MODEM_GNSS_SYSTEM_QZSS;
 			last_agnss.system[1].sv_mask_ephe = 0x3ff;
 			last_agnss.system[1].sv_mask_alm = 0x3ff;
 		}
