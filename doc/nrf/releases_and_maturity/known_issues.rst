@@ -63,6 +63,11 @@ Amazon Sidewalk
 After the |NCS| release v2.9.1, the Amazon Sidewalk protocol is no longer a part of the |NCS|.
 For current known issues and release information, see the `Amazon Sidewalk documentation`_.
 
+.. rst-class:: v2-9-0-nRF54H20-1 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0
+
+KRKNWK-20330: The Amazon Sidewalk application crashes on startup when the :kconfig:option:`CONFIG_NANOPB` Kconfig option is enabled
+  The Amazon Sidewalk libraries include a nanopb implementation that conflicts with the one in Zephyr, causing the application to crash immediately after startup.
+
 .. rst-class:: v2-8-0
 
 KRKNWK-19647: nRF52 has high power consumption in sleep mode for sub-GHz sample
