@@ -1,0 +1,10 @@
+# Copyright (c) 2025 Nordic Semiconductor
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config SECURE_BOOT_APPCORE
+	default y if BOARD_NRF54H20DK_NRF54H20_CPUAPP_IRON_B0_MCUBOOT
+
+choice BOOTLOADER
+	default BOOTLOADER_MCUBOOT if BOARD_NRF54H20DK_NRF54H20_CPUAPP_IRON_B0_MCUBOOT
+
+endchoice

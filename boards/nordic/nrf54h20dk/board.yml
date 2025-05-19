@@ -1,0 +1,5 @@
+board:
+  extend: nrf54h20dk
+  variants:
+  - name: b0/mcuboot
+    qualifier: nrf54h20/cpuapp/iron
