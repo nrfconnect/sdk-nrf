@@ -9,7 +9,7 @@ SUPL client and SUPL client OS integration
 
 This section documents both the Secure User-Plane Location (SUPL) client library and the SUPL client OS integration library.
 
-The Secure User-Plane Location (SUPL) client library is an OS-independent library that is distributed separately with a different license than the |NCS|.
+The SUPL client library is an OS-independent library that is distributed separately with a different license than the |NCS|.
 This library can be used to receive A-GNSS data from a SUPL server using the SUPL protocol.
 
 The SUPL client OS integration library is a source code library distributed with the |NCS|.
@@ -21,7 +21,7 @@ For example, Google hosts a SUPL server (supl.google.com), but for commercial us
 Secure User-Plane Location
 **************************
 
-SUPL enables the transfer of assistance and network-based positioning data of a SUPL Enabled Terminal (SET), such as an nRF9160 DK or a Thingy:91, over an IP User Plane bearer.
+SUPL enables the transfer of assistance and network-based positioning data of a SUPL Enabled Terminal (SET), such as an nRF91 Series DK, a Thingy:91, or a Thingy:91 X, over an IP User Plane bearer.
 See `SUPL context model`_ for more information on the SUPL architecture.
 SUPL is designed to support future positioning technologies.
 The SUPL version supported by the SUPL client library is 2.0.4.
@@ -89,9 +89,9 @@ You must accept the license before you can download the library.
 Downloading and installing
 ==========================
 
-You can download the SUPL client library from the `nRF9160 DK product page <SUPL client download_>`_.
+You can download the nRF91 Series SUPL client library from the `nRF9160 DK product page <SUPL client download_>`_.
 
-Download the nRF9160 SiP SUPL client library zip file and extract it into the :file:`nrf/ext/lib/bin/` folder.
+Download the nRF91 Series SUPL client library zip file and extract it into the :file:`nrf/ext/lib/bin/` folder.
 Make sure to maintain the folder structure that is used in the zip file.
 
 Configuration
@@ -102,8 +102,7 @@ See :ref:`configure_application` for information on how to change configuration 
 
 .. note::
 
-   The SUPL client library requires that the newlib C library is used.
-   You can enable it using the :kconfig:option:`CONFIG_NEWLIB_LIBC` Kconfig option.
+   SUPL client library v0.8.0 or later is required when picolibc is used.
 
 Resource initialization and ownership
 =====================================
