@@ -530,7 +530,8 @@ int slm_ppp_init(void)
 
 	{
 		static struct modem_backend_uart ppp_uart_backend;
-		static uint8_t ppp_uart_backend_receive_buf[sizeof(ppp_data_buf)];
+		static uint8_t ppp_uart_backend_receive_buf[sizeof(ppp_data_buf)]
+			__aligned(sizeof(void *));
 		static uint8_t ppp_uart_backend_transmit_buf[sizeof(ppp_data_buf)];
 
 		const struct modem_backend_uart_config uart_backend_config = {
