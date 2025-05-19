@@ -549,6 +549,8 @@ ZTEST(nrf_wifi, test_raw_tx_rx)
 #ifdef CONFIG_RAW_TX_BURST
 ZTEST(nrf_wifi, test_raw_tx)
 {
+	unsigned int total_tx_bytes = 0;
+
 	configurePlayoutCapture(0, 0, 0);
 	/**
 	 * Provide some time for TLM settings to take effect
@@ -560,7 +562,6 @@ ZTEST(nrf_wifi, test_raw_tx)
 	unsigned int prev_time;
 	unsigned int curr_time;
 	unsigned int tx_received_bytes_last_interval = 0;
-	unsigned int total_tx_bytes = 0;
 	unsigned int throughput_count = 0;
 
 	LOG_INF("starting transmit thread");
@@ -600,6 +601,13 @@ ZTEST(nrf_wifi, test_raw_tx)
 	LOG_INF("Average transmit throughput in Kbps is %d.%d", kbps, kbps_dec);
 
 #endif
+	if (total_tx_bytes == 0) {
+		LOG_ERR("TX count is zero");
+		zassert_true(0, "TX count is zero");
+	} else {
+		LOG_INF("TX count is %d", total_tx_bytes);
+	}
+
 }
 #endif
 
