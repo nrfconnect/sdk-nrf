@@ -38,6 +38,7 @@ if(TARGET psa_interface)
     set(EXTERNAL_CRYPTO_CORE_HANDLED_PSA_INTERFACE True)
     target_include_directories(psa_interface
         INTERFACE
+            ${NRF_SECURITY_ROOT}/include
             $<BUILD_INTERFACE:${OBERON_PSA_CORE_PATH}/include>
             # Oberon library
             ${OBERON_PSA_CORE_PATH}/library
