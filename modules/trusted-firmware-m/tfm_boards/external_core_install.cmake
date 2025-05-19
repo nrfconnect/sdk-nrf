@@ -11,9 +11,6 @@ install(
       ${OBERON_PSA_CORE_PATH}/include/psa/crypto_adjust_config_synonyms.h
       ${OBERON_PSA_CORE_PATH}/include/psa/crypto_compat.h
       ${OBERON_PSA_CORE_PATH}/include/psa/crypto_driver_common.h
-      ${OBERON_PSA_CORE_PATH}/include/psa/crypto_driver_contexts_composites.h
-      ${OBERON_PSA_CORE_PATH}/include/psa/crypto_driver_contexts_key_derivation.h
-      ${OBERON_PSA_CORE_PATH}/include/psa/crypto_driver_contexts_primitives.h
       ${OBERON_PSA_CORE_PATH}/include/psa/crypto_extra.h
       ${OBERON_PSA_CORE_PATH}/include/psa/crypto_legacy.h
       ${OBERON_PSA_CORE_PATH}/include/psa/crypto_platform.h
@@ -23,6 +20,10 @@ install(
       ${OBERON_PSA_CORE_PATH}/include/psa/crypto_types.h
       ${OBERON_PSA_CORE_PATH}/include/psa/crypto_values.h
       ${OBERON_PSA_CORE_PATH}/include/psa/crypto.h
+      # The driver contexts are taken from nrf_security
+      ${NRF_SECURITY_ROOT}/include/psa/crypto_driver_contexts_key_derivation.h
+      ${NRF_SECURITY_ROOT}/include/psa/crypto_driver_contexts_primitives.h
+      ${NRF_SECURITY_ROOT}/include/psa/crypto_driver_contexts_composites.h
   DESTINATION ${INSTALL_INTERFACE_INC_DIR}/psa
 )
 
