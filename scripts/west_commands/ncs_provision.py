@@ -166,7 +166,7 @@ class NcsProvision(WestCommand):
             "--soc",
             type=str,
             help="SoC",
-            choices=["nrf54l05", "nrf54l10", "nrf54l15"],
+            choices=["nrf54l05", "nrf54l10", "nrf54l15", "nrf54lm20a"],
             required=True,
         )
         upload_parser.add_argument("--dev-id", help="Device serial number")
@@ -187,7 +187,7 @@ class NcsProvision(WestCommand):
 
     def do_run(self, args, unknown_args):
         if args.command == "upload":
-            if args.soc in ["nrf54l05", "nrf54l10", "nrf54l15"]:
+            if args.soc in ["nrf54l05", "nrf54l10", "nrf54l15", "nrf54lm20a"]:
                 self._upload_keys(args)
 
     def _upload_keys(self, args: argparse.Namespace) -> None:
