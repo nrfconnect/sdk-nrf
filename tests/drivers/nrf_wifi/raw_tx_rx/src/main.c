@@ -384,7 +384,7 @@ static int wifi_send_single_raw_tx_packet(int sockfd, char *test_frame, size_t b
 		return -1;
 	}
 
-	LOG_INF("Wi-Fi RaW TX Packet sent via socket returning success");
+	LOG_DBG("Wi-Fi RaW TX Packet sent via socket returning success");
 	return 0;
 }
 
@@ -413,7 +413,7 @@ static int wifi_send_raw_tx_packets_tx(void)
 {
 	int ret;
 
-	LOG_INF("Wi-Fi sending RAW TX Packet");
+	LOG_DBG("Wi-Fi sending RAW TX Packet");
 	ret = wifi_send_single_raw_tx_packet(raw_socket_fd, g_test_frame, g_buf_length, &sa);
 	if (ret < 0) {
 		LOG_ERR("Failed to send raw tx packets");
