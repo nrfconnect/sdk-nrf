@@ -657,7 +657,10 @@ ZTEST(nrf_wifi, test_raw_tx)
 		total_tx_bytes, (last_pkt_timestamp - first_pkt_timestamp));
 	uint32_t kbps = (total_tx_bytes * 8ULL * 1000) / (ONE_KB * (last_pkt_timestamp - first_pkt_timestamp));
 	uint32_t kbps_dec = ((total_tx_bytes * 8ULL * 1000 * 10) / (ONE_KB * (last_pkt_timestamp - first_pkt_timestamp))) % 10;
-	LOG_INF("Average transmit throughput in Kbps is %d.%d", kbps, kbps_dec);
+	LOG_INF("Average transmit throughput in Kbps = %d.%d, Rate = %d, RateFlag = %d, PayloadLen = %d",
+			kbps, kbps_dec, CONFIG_RAW_TX_PKT_SAMPLE_RATE_VALUE,
+			CONFIG_RAW_TX_PKT_SAMPLE_RATE_FLAGS, sizeof(test_beacon_frame));
+
 
 	wifi_send_raw_tx_packets_deinit();
 
