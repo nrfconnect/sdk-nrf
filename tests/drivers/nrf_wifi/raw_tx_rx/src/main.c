@@ -589,9 +589,16 @@ ZTEST(nrf_wifi, test_raw_tx)
 	LOG_INF("TX burst count is set to  %d", CONFIG_RAW_TX_TRANSMIT_COUNT);
 	while (count--)
 	{
-		k_sleep(K_MSEC(2));
 		zassert_false(wifi_send_raw_tx_packets(), "Failed to send raw tx packet");
 	}
+
+	nrf_wifi_fmac_get_throughput_bytes(ctx->rpu_ctx, &total_tx_bytes);
+	LOG_INF("Total tx bytes sent is %d, duration is %d ms",
+		total_tx_bytes, (last_pkt_timestamp - first_pkt_timestamp));
+	uint32_t kbps = (total_tx_bytes * 8ULL * 1000) / (ONE_KB * (last_pkt_timestamp - first_pkt_timestamp));
+	uint32_t kbps_dec = ((total_tx_bytes * 8ULL * 1000 * 10) / (ONE_KB * (last_pkt_timestamp - first_pkt_timestamp))) % 10;
+	LOG_INF("Average transmit throughput in Kbps is %d.%d", kbps, kbps_dec);
+
 #endif
 }
 #endif
