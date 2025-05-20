@@ -7,6 +7,7 @@
 #include "slm_ppp.h"
 #include "slm_at_host.h"
 #include "slm_util.h"
+#include "slm_ctrl_pin.h"
 #if defined(CONFIG_SLM_CMUX)
 #include "slm_cmux.h"
 #endif

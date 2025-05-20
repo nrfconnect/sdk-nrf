@@ -31,13 +31,6 @@ int slm_power_off_modem(void);
 /** @brief Performs a reset of the SiP. */
 FUNC_NORETURN void slm_reset(void);
 
-void slm_enter_idle(void);
-void slm_enter_sleep(void);
-void slm_enter_shutdown(void);
-
-/** @brief Temporarily sets the indicate pin high. */
-int slm_indicate(void);
-
 /** Replacement for @c nrf_modem_at_printf() that cannot be
  *  used so that the AT command interception works properly.
  */

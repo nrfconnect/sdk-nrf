@@ -23,6 +23,7 @@
 #include "ncs_version.h"
 
 #include "slm_util.h"
+#include "slm_ctrl_pin.h"
 #include "slm_settings.h"
 #include "slm_at_host.h"
 #include "slm_at_tcp_proxy.h"
