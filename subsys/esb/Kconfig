@@ -1,0 +1,179 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig ESB
+	bool "Enhanced ShockBurst"
+	select NRFX_PPI if HAS_HW_NRF_PPI
+	select NRFX_DPPI if HAS_HW_NRF_DPPIC
+	select MPSL
+	select MPSL_FEM_ONLY if !ESB_DYNAMIC_INTERRUPTS
+	default n
+	help
+	  Enable ESB functionality.
+
+if ESB
+
+config ESB_MAX_PAYLOAD_LENGTH
+	int "Maximum payload size"
+	default 32
+	range 1 252
+	help
+	  The maximum size of the payload.
+
+config ESB_TX_FIFO_SIZE
+	int "TX buffer length"
+	default 8
+	help
+	  The length of the TX FIFO buffer, in number of elements.
+
+config ESB_RX_FIFO_SIZE
+	int "RX buffer length"
+	default 8
+	help
+	  The length of the RX FIFO buffer, in number of elements.
+
+config ESB_PIPE_COUNT
+	int "Maximum number of pipes"
+	default 8
+	range 1 8
+	help
+	  The maximum number of pipes allowed in the API. Can be used if you
+	  need to restrict the number of pipes used. The purpose is to prevent
+	  accidental use of additional pipes, but it's not a problem leaving
+	  this at 8 even if fewer pipes are used.
+
+config ESB_RADIO_IRQ_PRIORITY
+	int "Radio interrupt priority"
+	range 0 5 if ZERO_LATENCY_IRQS
+	range 0 6
+	default 1
+
+config ESB_EVENT_IRQ_PRIORITY
+	int "Event interrupt priority"
+	range 0 5 if ZERO_LATENCY_IRQS
+	range 0 6
+	default 2
+
+menu "Hardware selection (alter with care)"
+
+choice ESB_SYS_TIMER
+	default ESB_SYS_TIMER021 if $(dt_nodelabel_has_compat,timer021,$(DT_COMPAT_NORDIC_NRF_TIMER))
+	default ESB_SYS_TIMER10 if $(dt_nodelabel_has_compat,timer10,$(DT_COMPAT_NORDIC_NRF_TIMER))
+	default ESB_SYS_TIMER2
+	prompt "Timer to use for the ESB system timer"
+
+config ESB_SYS_TIMER0
+	bool "TIMER0"
+	depends on $(dt_nodelabel_has_compat,timer0,$(DT_COMPAT_NORDIC_NRF_TIMER))
+	select NRFX_TIMER0
+
+config ESB_SYS_TIMER1
+	bool "TIMER1"
+	depends on $(dt_nodelabel_has_compat,timer1,$(DT_COMPAT_NORDIC_NRF_TIMER))
+	select NRFX_TIMER1
+
+config ESB_SYS_TIMER2
+	bool "TIMER2"
+	depends on $(dt_nodelabel_has_compat,timer2,$(DT_COMPAT_NORDIC_NRF_TIMER))
+	select NRFX_TIMER2
+
+config ESB_SYS_TIMER3
+	bool "TIMER3"
+	depends on $(dt_nodelabel_has_compat,timer3,$(DT_COMPAT_NORDIC_NRF_TIMER))
+	select NRFX_TIMER3
+
+config ESB_SYS_TIMER4
+	bool "TIMER4"
+	depends on $(dt_nodelabel_has_compat,timer4,$(DT_COMPAT_NORDIC_NRF_TIMER))
+	select NRFX_TIMER4
+
+config ESB_SYS_TIMER10
+	bool "TIMER10"
+	depends on $(dt_nodelabel_has_compat,timer10,$(DT_COMPAT_NORDIC_NRF_TIMER))
+	select NRFX_TIMER10
+
+config ESB_SYS_TIMER020
+	bool "TIMER020"
+	depends on $(dt_nodelabel_has_compat,timer020,$(DT_COMPAT_NORDIC_NRF_TIMER))
+	select NRFX_TIMER020
+
+config ESB_SYS_TIMER021
+	bool "TIMER021"
+	depends on $(dt_nodelabel_has_compat,timer021,$(DT_COMPAT_NORDIC_NRF_TIMER))
+	select NRFX_TIMER021
+
+config ESB_SYS_TIMER022
+	bool "TIMER022"
+	depends on $(dt_nodelabel_has_compat,timer022,$(DT_COMPAT_NORDIC_NRF_TIMER))
+	select NRFX_TIMER022
+
+endchoice
+
+config ESB_SYS_TIMER_INSTANCE
+	int
+	default 0 if ESB_SYS_TIMER0
+	default 1 if ESB_SYS_TIMER1
+	default 2 if ESB_SYS_TIMER2
+	default 3 if ESB_SYS_TIMER3
+	default 4 if ESB_SYS_TIMER4
+	default 10 if ESB_SYS_TIMER10
+	default 20 if ESB_SYS_TIMER020
+	default 21 if ESB_SYS_TIMER021
+	default 22 if ESB_SYS_TIMER022
+
+config ESB_SYS_TIMER_INSTANCE_LEADING_ZERO
+	bool
+	default y if ESB_SYS_TIMER020 || ESB_SYS_TIMER021 || ESB_SYS_TIMER022
+
+endmenu
+
+config ESB_DYNAMIC_INTERRUPTS
+	bool "Use direct dynamic interrupts"
+	select DYNAMIC_INTERRUPTS
+	select DYNAMIC_DIRECT_INTERRUPTS
+	help
+	  This option configures ESB IRQ handlers using direct dynamic
+	  interrupts. This allows reconfiguring ESB_SYS_TIMER_IRQn, ESB_EVT_IRQ,
+	  and RADIO_IRQn handlers during runtime when ESB is uninitialized.
+
+config ESB_NEVER_DISABLE_TX
+	select EXPERIMENTAL
+	bool "Never disable radio transmission stage"
+	help
+	  This option changes the radio behavior so that the
+	  transmitter remains IDLE between transmissions instead of being disabled.
+	  This is applicable only when the packet is not acknowledged. Otherwise,
+	  the radio emitter needs to be turned off to enable the radio receiver.
+	  This reduces delay between consecutive transmissions but consumes more energy.
+
+config ESB_FAST_SWITCHING
+	select EXPERIMENTAL
+	depends on !ESB_NEVER_DISABLE_TX && (SOC_NRF54H20_CPURAD)
+	bool "Fast radio TX/RX and RX/TX switching [EXPERIMENTAL]"
+	help
+	  This option enables fast switching between transmit (TX) and receive (RX) modes
+	  and vice versa for ESB configurations.
+	  For the PTX node, this switching occurs after transmitting a packet and before waiting
+	  for acknowledgment (TX -> RX).
+	  For the PRX node, this switching occurs after receiving a packet and before
+	  transmitting an acknowledgment (RX -> TX).
+	  Enabling this feature can improve the responsiveness and efficiency of the radio
+	  communication system by reducing the latency.
+
+config ESB_FAST_CHANNEL_SWITCHING
+	select EXPERIMENTAL
+	depends on SOC_NRF54H20_CPURAD
+	bool "Fast radio channel switching [EXPERIMENTAL]"
+	help
+	  This option enables fast radio channel switching.
+	  Allows the radio channel to be changed in RX radio state
+	  without the need to switch the radio to DISABLE state.
+
+module=ESB
+module-str=ESB
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # NRF_ENHANCED_SHOCKBURST

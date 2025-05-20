@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config APP_DFU
+	bool "Enable MCUmgr OTA DFU over Bluetooth"
+	select NCS_SAMPLE_MCUMGR_BT_OTA_DFU
+	depends on BOOTLOADER_MCUBOOT || SUIT
+	help
+	  Enable support for Device Firmware Update (DFU) over MCUmgr & SMP BT.
+
+if APP_DFU
+
+config MCUMGR_TRANSPORT_BT_DYNAMIC_SVC_REGISTRATION
+	default n
+
+# Do not allow for settings erase through MCUmgr. */
+config MCUMGR_GRP_ZBASIC
+	default n
+
+config MCUMGR_GRP_ZBASIC_STORAGE_ERASE
+	default n
+
+endif # APP_DFU

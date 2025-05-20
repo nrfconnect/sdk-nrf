@@ -1,0 +1,184 @@
+- scenarios:
+    - sample.bluetooth.fast_pair.locator_tag.release
+  platforms: # configuration for small memory devices
+    - nrf52dk/nrf52832
+    - nrf52833dk/nrf52833
+    - nrf54l15dk/nrf54l05/cpuapp
+  rom_increase: 512
+  ram_increase: 512
+  codeowners:
+    - nrfconnect/ncs-si-bluebagel
+
+- scenarios:
+    - sample.bluetooth.fast_pair.locator_tag.release
+  platforms: # configuration for large memory devices
+    - nrf52840dk/nrf52840
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf54l15dk/nrf54l10/cpuapp
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54h20dk/nrf54h20/cpuapp
+    - thingy53/nrf5340/cpuapp
+    - thingy53/nrf5340/cpuapp/ns
+  rom_increase: 1024
+  ram_increase: 1024
+  codeowners:
+    - nrfconnect/ncs-si-bluebagel
+
+- scenarios:
+    - sample.find_my.locator_tag.release
+  platforms: # configuration for small memory devices
+    - nrf52dk/nrf52832
+    - nrf52833dk/nrf52833
+    - nrf54l15dk/nrf54l05/cpuapp
+  rom_increase: 512
+  ram_increase: 512
+  codeowners:
+    - nrfconnect/ncs-si-bluebagel
+
+- scenarios:
+    - sample.find_my.locator_tag.release
+  platforms: # configuration for large memory devices
+    - nrf52840dk/nrf52840
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf54l15dk/nrf54l10/cpuapp
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54h20dk/nrf54h20/cpuapp
+  rom_increase: 1024
+  ram_increase: 1024
+  codeowners:
+    - nrfconnect/ncs-si-bluebagel
+
+- scenarios:
+    - sample.find_my.switchable_networks.release.ui_switch
+  platforms:
+    - all
+  rom_increase: 1024
+  ram_increase: 1024
+  codeowners:
+    - nrfconnect/ncs-si-bluebagel
+
+- scenarios:
+    - sample.find_my.switchable_networks.release.dfu_switch.*
+  platforms:
+    - all
+  rom_increase: 512
+  ram_increase: 512
+  codeowners:
+    - nrfconnect/ncs-si-bluebagel
+
+- scenarios:
+    - sample.matter.template.release
+  platforms:
+    - nrf52840dk/nrf52840
+  ram_size: 196608  # 25% free
+  rom_size: 828928  # 150kB free
+  rom_increase: 1024
+  ram_increase: 512
+  codeowners:
+    - kkasperczyk-no
+    - ArekBalysNordic
+    - markaj-nordic
+
+- scenarios:
+    - sample.matter.template.debug
+  platforms:
+    - nrf52840dk/nrf52840
+  ram_size: 196608  # 25% free
+  rom_size: 880128  # 100kB free
+  rom_increase: 2048
+  ram_increase: 1024
+  codeowners:
+    - kkasperczyk-no
+    - ArekBalysNordic
+    - markaj-nordic
+
+- scenarios:
+    - sample.matter.template.release
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+  ram_size: 393216  # 25% free
+  rom_size: 824832  # 150kB free
+  rom_increase: 1024
+  ram_increase: 512
+  codeowners:
+    - kkasperczyk-no
+    - ArekBalysNordic
+    - markaj-nordic
+
+- scenarios:
+    - sample.matter.template.debug
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+  ram_size: 393216  # 25% free
+  rom_size: 876032  # 100kB free
+  rom_increase: 2048
+  ram_increase: 1024
+  codeowners:
+    - kkasperczyk-no
+    - ArekBalysNordic
+    - markaj-nordic
+
+
+- scenarios:
+    - sample.matter.template.release
+  platforms:
+    - nrf7002dk/nrf5340/cpuapp
+  ram_size: 393216  # 25% free
+  rom_size: 808448  # 150kB free
+  rom_increase: 1024
+  ram_increase: 512
+  codeowners:
+    - kkasperczyk-no
+    - ArekBalysNordic
+    - markaj-nordic
+
+- scenarios:
+    - sample.matter.template.debug
+  platforms:
+    - nrf7002dk/nrf5340/cpuapp
+  ram_size: 393216  # 25% free
+  rom_size: 910848  # 50kB free
+  rom_increase: 2048
+  ram_increase: 1024
+  codeowners:
+    - kkasperczyk-no
+    - ArekBalysNordic
+    - markaj-nordic
+
+- scenarios:
+    - applications.nrf_desktop.z.*
+  platforms:
+    - all
+  rom_increase: 512
+  ram_increase: 256
+  codeowners:
+    - nrfconnect/ncs-si-bluebagel
+
+- scenarios:
+    - applications.hpf.gpio.mbox
+  platforms:
+    - all
+  rom_size: 3800
+  ram_size: 7100
+  codeowners:
+    - nrfconnect/ncs-ll-ursus
+
+- scenarios:
+    - applications.hpf.gpio.icmsg
+  platforms:
+    - all
+  rom_size: 5300
+  ram_size: 8600
+  codeowners:
+    - nrfconnect/ncs-ll-ursus
+
+- scenarios:
+    - applications.hpf.gpio.icbmsg
+  platforms:
+    - all
+  rom_size: 8700
+  ram_size: 12000
+  codeowners:
+    - nrfconnect/ncs-ll-ursus

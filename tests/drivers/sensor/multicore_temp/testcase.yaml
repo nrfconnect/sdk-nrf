@@ -1,0 +1,24 @@
+common:
+  sysbuild: true
+  tags:
+    - drivers
+    - sensors
+    - ci_tests_drivers_sensor
+  filter: dt_nodelabel_enabled("temp_sensor")
+
+tests:
+  drivers.sensor.multicore_temp.nrf54h20dk_cpuapp_cpurad:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+
+  drivers.sensor.multicore_temp.nrf54h20dk_cpurad_cpuapp:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpurad
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpurad
+    extra_args:
+      SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpuapp.conf

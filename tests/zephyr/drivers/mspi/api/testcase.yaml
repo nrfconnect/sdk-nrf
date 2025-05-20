@@ -1,0 +1,15 @@
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+common:
+  tags:
+    - drivers
+    - mspi
+    - ci_tests_drivers_hpf
+tests:
+  nrf.extended.drivers.mspi.api.hpf:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp

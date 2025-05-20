@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig AT_MONITOR
+	bool "AT notification monitor"
+
+if AT_MONITOR
+
+config AT_MONITOR_HEAP_SIZE
+	int "Heap size for notifications"
+	range 64 4096
+	default 256
+
+config SYSTEM_WORKQUEUE_STACK_SIZE
+	default 1152 if (LTE_LINK_CONTROL && LOG)
+
+module=AT_MONITOR
+module-dep=LOG
+module-str= AT notification monitor library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # AT_MONITOR

@@ -1,0 +1,8 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SHIELD_NRF2220EK
+	def_bool $(shields_list_contains,nrf2220ek)

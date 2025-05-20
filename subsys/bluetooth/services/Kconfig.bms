@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_BMS
+	bool "Bond Management Service"
+	select BT_NRF_SERVICES
+	depends on !BT_KEYS_OVERWRITE_OLDEST
+
+if BT_BMS
+
+module = BT_BMS
+module-str = BMS
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_BMS

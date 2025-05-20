@@ -1,0 +1,11 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config UICC_LWM2M
+	bool "UICC LwM2M bootstrap support"
+	depends on NRF_MODEM_LIB
+	help
+	  Enable UICC LwM2M bootstrap library

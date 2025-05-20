@@ -1,0 +1,4 @@
+WifiInfo.ssid max_size:32
+WifiInfo.bssid max_size:6
+WifiConfig.passphrase max_size:64
+ScanResults.results max_count:5

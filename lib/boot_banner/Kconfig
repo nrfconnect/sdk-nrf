@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NCS_BOOT_BANNER
+	bool "NCS boot banner"
+	default y
+	select PRINTK
+	select EARLY_CONSOLE
+	help
+	  This option provided an enhanced boot banner output that can include application name
+	  and version (if set), NCS version and underlying zephyr version.
+
+if NCS_BOOT_BANNER
+
+config NCS_APPLICATION_BOOT_BANNER_STRING
+	string "Boot banner string" if "$(APP_VERSION_EXTENDED_STRING)" != ""
+	default "My Application" if "$(APP_VERSION_EXTENDED_STRING)" != ""
+	help
+	  Use this option to set the application boot banner.
+
+config NCS_NCS_BOOT_BANNER_STRING
+	string
+	default "nRF Connect SDK"
+
+config NCS_ZEPHYR_BOOT_BANNER_STRING
+	string
+	default "Zephyr OS"
+
+endif # NCS_BOOT_BANNER

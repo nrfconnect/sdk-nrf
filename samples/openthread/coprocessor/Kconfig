@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
+
+module = OT_COPROCESSOR
+module-str = ot_coprocessor
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+config RCP_SAMPLE_HCI
+	bool "Enable  Bluetooth HCI USB support for the coprocessor sample"
+	select EXPERIMENTAL

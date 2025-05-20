@@ -1,0 +1,288 @@
+# The west manifest file (west.yml) for the nRF Connect SDK (NCS).
+#
+# The per-workspace west configuration file, ncs/.west/config,
+# specifies the location of this manifest file like this:
+#
+#     [manifest]
+#     path = nrf
+#
+# See the west documentation for more information:
+#
+# https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/west/index.html
+
+manifest:
+  version: "0.13"
+
+  # "remotes" is a list of locations where git repositories are cloned
+  # and fetched from.
+  remotes:
+    # nRF Connect SDK GitHub organization.
+    # NCS repositories are hosted here.
+    - name: ncs
+      url-base: https://github.com/nrfconnect
+    # Third-party repository sources:
+    - name: zephyrproject
+      url-base: https://github.com/zephyrproject-rtos
+    - name: throwtheswitch
+      url-base: https://github.com/ThrowTheSwitch
+    - name: dragoon
+      url-base: https://projecttools.nordicsemi.no/bitbucket/scm/drgn
+    - name: memfault
+      url-base: https://github.com/memfault
+    - name: babblesim
+      url-base: https://github.com/BabbleSim
+    - name: bosch
+      url-base: https://github.com/boschsensortec
+    - name: eembc
+      url-base: https://github.com/eembc
+
+  # If not otherwise specified, the projects below should be obtained
+  # from the ncs remote.
+  defaults:
+    remote: ncs
+
+  group-filter:
+    - -nrf-802154
+    - -dragoon
+    - -find-my
+    - -babblesim
+    - -libmodem
+    - -bsec
+    - -doc-internal
+    - +optional
+
+  # "projects" is a list of git repositories which make up the NCS
+  # source code.
+  #
+  # For 'userdata' fields in the projects area, please refer to:
+  # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/dm_code_base.html
+  projects:
+
+    # The Zephyr RTOS fork in the NCS, along with the subset of its
+    # modules which NCS imports directly.
+    #
+    # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/introduction/index.html
+    # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
+    - name: zephyr
+      repo-path: sdk-zephyr
+      revision: 59275b91844ebdb9e368c93405bf13fca26d34df
+      import:
+        # In addition to the zephyr repository itself, NCS also
+        # imports the contents of zephyr/west.yml at the above
+        # revision. Only the projects explicitly named in the
+        # following allowlist are imported.
+        #
+        # Note that the zephyr west extensions (like 'build', 'flash',
+        # 'debug', etc.) are automatically provided by this import, so
+        # there's no need to add a redundant west-commands: key for
+        # the zephyr project.
+        #
+        # Please keep this list sorted alphabetically.
+        name-allowlist:
+          - percepio
+          - canopennode
+          - chre
+          - cmsis
+          - cmsis-dsp
+          - cmsis-nn
+          - edtt
+          - fatfs
+          - hal_nordic
+          - hal_st # required for ST sensors (unrelated to STM32 MCUs)
+          - hal_tdk # required for Invensense sensors such as ICM42670
+          - hal_wurthelektronik
+          - hostap
+          - liblc3
+          - libmetal
+          - littlefs
+          - loramac-node
+          - lvgl
+          - lz4
+          - mipi-sys-t
+          - nanopb
+          - net-tools
+          - nrf_hw_models
+          - nrf_wifi
+          - open-amp
+          - picolibc
+          - segger
+          - tinycrypt
+          - tf-m-tests
+          - uoscore-uedhoc
+          - zcbor
+          - zscilib
+
+    # NCS repositories.
+    #
+    # Some of these are also Zephyr modules which have NCS-specific
+    # changes.
+    - name: wfa-qt-control-app
+      repo-path: sdk-wi-fiquicktrack-controlappc
+      path: modules/lib/wfa-qt-control-app
+      revision: af011c8a8d338ba529f17aed2cc2ef4c1c591a58
+      userdata:
+        ncs:
+          upstream-url: https://github.com/Wi-FiQuickTrack/Wi-FiQuickTrack-ControlAppC
+          upstream-sha: 1225729e8d84075f03bf9fc51eee85d84dfb0091
+          compare-by-default: true
+    - name: mcuboot
+      repo-path: sdk-mcuboot
+      revision: e110d7640aa34f207ced48ace1807054aa8492a9
+      path: bootloader/mcuboot
+    - name: qcbor
+      url: https://github.com/laurencelundblade/QCBOR
+      revision: 751d36583a9ce1a640900c57e13c9b6b8f3a2ba2
+      path: modules/tee/tf-m/qcbor
+    - name: mbedtls
+      path: modules/crypto/mbedtls
+      repo-path: sdk-mbedtls
+      revision: 44ce293d1d9bf4251e337160250d7dd477f52edd
+    - name: oberon-psa-crypto
+      path: modules/crypto/oberon-psa-crypto
+      repo-path: sdk-oberon-psa-crypto
+      revision: a258e58246da0b34c7cb6fa27358807ffcd079ed
+    - name: nrfxlib
+      repo-path: sdk-nrfxlib
+      path: nrfxlib
+      revision: 5e42daeb14322dde433cb8e1149750dbc20f0f7f
+    - name: trusted-firmware-m
+      repo-path: sdk-trusted-firmware-m
+      path: modules/tee/tf-m/trusted-firmware-m
+      revision: 13e8eaf758e96888260b742f4df461e61aea76ae
+    - name: psa-arch-tests
+      repo-path: sdk-psa-arch-tests
+      path: modules/tee/tf-m/psa-arch-tests
+      revision: 3da9313e64806d352c519e3205e81cf959067588
+    - name: matter
+      repo-path: sdk-connectedhomeip
+      path: modules/lib/matter
+      revision: c261ed9ecf3aefe8394cc2047d11a2db06f4a701
+      west-commands: scripts/west/west-commands.yml
+      submodules:
+        - name: nlio
+          path: third_party/nlio/repo
+        - name: nlassert
+          path: third_party/nlassert/repo
+        - name: pigweed
+          path: third_party/pigweed/repo
+        - name: jsoncpp
+          path: third_party/jsoncpp/repo
+      userdata:
+        ncs:
+          upstream-url: https://github.com/project-chip/connectedhomeip
+          upstream-sha: 181b0cb14ff007ec912f2ba6627e05dfb066c008
+          compare-by-default: false
+    - name: nrf-802154
+      repo-path: sdk-nrf-802154
+      path: nrf-802154
+      revision: 9ccd04d289e8c6e9140a7f72c6c57dce3cd478a9
+      groups:
+        - nrf-802154
+    - name: dragoon
+      # Only for internal Nordic development
+      repo-path: dragoon.git
+      remote: dragoon
+      revision: 87e5a82ebffcfb8bb86d3957fca3586916ef8dd8
+      groups:
+        - dragoon
+    - name: cjson
+      repo-path: sdk-cjson
+      path: modules/lib/cjson
+      revision: c6af068b7f05207b28d68880740e4b9ec1e4b50a
+      userdata:
+        ncs:
+          upstream-url: https://github.com/DaveGamble/cJSON
+          upstream-sha: d2735278ed1c2e4556f53a7a782063b31331dbf7
+          compare-by-default: false
+    - name: find-my
+      repo-path: sdk-find-my
+      revision: 4db433c910e32c984b10df49fbb7c47db07c7173
+      groups:
+        - find-my
+    - name: azure-sdk-for-c
+      repo-path: azure-sdk-for-c
+      path: modules/lib/azure-sdk-for-c
+      revision: 308c171cb4b5eed266649012a68406487ec81fb2
+      userdata:
+        ncs:
+          upstream-url: https://github.com/Azure/azure-sdk-for-c
+          upstream-sha: adc56bc6138a28b5490bce339a31a2581a072092
+          compare-by-default: false
+    - name: cirrus
+      repo-path: sdk-mcu-drivers
+      path: modules/hal/cirrus-logic
+      revision: 3873a08377d93a479105a75ac390d3bbcd31d690
+      userdata:
+        ncs:
+          upstream-url: https://github.com/CirrusLogic/mcu-drivers
+          upstream-sha: 1be6ca7253133a21a1e9fe0fbb4656e17d63a936
+          compare-by-default: false
+    - name: libmodem
+      revision: 5dc5bc768dda0ddf9974920c618b70da5d67c6c3
+      groups:
+        - libmodem
+    - name: openthread
+      repo-path: sdk-openthread
+      path: modules/lib/openthread
+      revision: ncs-thread-reference-20250402
+      userdata:
+        ncs:
+          upstream-url: https://github.com/openthread/openthread
+          upstream-sha: c6eaeda5a1c1c5dbb24dce7e027340cb8893a77b
+          compare-by-default: false
+    - name: suit-generator
+      revision: 0725f0c362ab8428048a977080045bb5e73e0d9d
+      path: modules/lib/suit-generator
+    - name: suit-processor
+      revision: 94effb7561b3a970195df76165e4b15e4ac0c34e
+      path: modules/lib/suit-processor
+    - name: doc-internal
+      repo-path: doc-internal
+      path: modules/doc-internal
+      revision: ae9f21960477636720a72ced869a6c342d502484
+      groups:
+        - doc-internal
+
+    # Other third-party repositories.
+    - name: cmock
+      path: test/cmock
+      submodules: true
+      revision: f65066f15d8248e6dcb778efb8739904a4512087
+      remote: throwtheswitch
+    - name: memfault-firmware-sdk
+      path: modules/lib/memfault-firmware-sdk
+      revision: 1.18.0
+      remote: memfault
+    - name: bsim
+      repo-path: bsim_west
+      remote: babblesim
+      revision: a88d3353451387ca490a6a7f7c478a90c4ee05b7
+      import:
+        path-prefix: tools
+    - name: bme68x
+      repo-path: Bosch-BME68x-Library
+      remote: bosch
+      path: modules/lib/bme68x
+      revision: v1.1.40407
+      groups:
+        - bsec
+    - name: bsec
+      repo-path: Bosch-BSEC2-Library
+      remote: bosch
+      path: modules/lib/bsec
+      revision: v1.5.2400
+      groups:
+        - bsec
+    - name: coremark
+      remote: eembc
+      path: modules/benchmark/coremark
+      revision: d5fad6bd094899101a4e5fd53af7298160ced6ab
+      groups:
+        - benchmark
+
+  # West-related configuration for the nrf repository.
+  self:
+    # This repository should be cloned to ncs/nrf.
+    path: nrf
+    # This line configures west extensions.
+    west-commands: scripts/west-commands.yml

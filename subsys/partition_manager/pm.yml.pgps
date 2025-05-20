@@ -1,0 +1,14 @@
+#include <zephyr/autoconf.h>
+
+pgps:
+  placement:
+    before: [tfm_storage, end]
+#ifdef CONFIG_PM_PGPS_ALIGN
+    align: {start: CONFIG_PM_PGPS_ALIGN}
+#endif
+#ifdef CONFIG_PM_PARTITION_REGION_PGPS_EXTERNAL
+  region: external_flash
+#else
+  inside: [nonsecure_storage]
+#endif
+  size: CONFIG_NRF_CLOUD_PGPS_PARTITION_SIZE

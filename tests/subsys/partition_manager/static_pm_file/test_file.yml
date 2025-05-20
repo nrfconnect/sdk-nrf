@@ -1,0 +1,62 @@
+app:
+  address: 0x10200
+  end_address: 0x54000
+  region: flash_primary
+  size: 0x43e00
+mcuboot:
+  address: 0x0
+  end_address: 0x10000
+  region: flash_primary
+  size: 0x10000
+mcuboot_pad:
+  address: 0x10000
+  end_address: 0x10200
+  region: flash_primary
+  size: 0x200
+mcuboot_primary:
+  address: 0x10000
+  end_address: 0x54000
+  orig_span: &id001
+  - mcuboot_pad
+  - app
+  region: flash_primary
+  size: 0x44000
+  span: *id001
+mcuboot_primary_app:
+  address: 0x10200
+  end_address: 0x54000
+  orig_span: &id002
+  - app
+  region: flash_primary
+  size: 0x43e00
+  span: *id002
+mcuboot_secondary:
+  address: 0x54000
+  end_address: 0x98000
+  region: flash_primary
+  size: 0x44000
+dummy_1:
+  address: 0x98000
+  end_address: 0x99000
+  region: flash_primary
+  size: 0x1000
+dummy_2:
+  address: 0x99000
+  end_address: 0x9a000
+  region: flash_primary
+  size: 0x1000
+dummy_3:
+  address: 0x9a000
+  end_address: 0x100000
+  region: flash_primary
+  size: 0x66000
+otp:
+  address: 0xff8100
+  end_address: 0xff83fc
+  region: otp
+  size: 0x2fc
+sram_primary:
+  address: 0x20002000
+  end_address: 0x20070000
+  region: sram_primary
+  size: 0x6e000

@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig ML_APP_EVENT_PROXY
+	bool "Event proxy module"
+	depends on SOC_SERIES_NRF54HX
+	depends on EVENT_MANAGER_PROXY
+	select APP_EVENT_MANAGER_POSTINIT_HOOK
+	help
+	  Enable and initialize event manager proxy subsystem on application
+	  start. Subscription to events is done based on configuration file.
+
+if ML_APP_EVENT_PROXY
+
+config ML_APP_REMOTE_CORE_INITIALIZATION_TIMEOUT
+	int "Remote core initialization timeout [ms]"
+	range 10 10000
+	default 2000
+	help
+	  The time to wait for remote cores to report its readiness. The time is
+	  given in milliseconds.
+
+module = ML_APP_EVENT_PROXY
+module-str = event proxy module
+source "subsys/logging/Kconfig.template.log_config"
+
+endif

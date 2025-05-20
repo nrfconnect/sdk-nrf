@@ -1,0 +1,14 @@
+tests:
+  nrf.extended.drivers.spi.dt_spec:
+    tags:
+      - drivers
+      - spi
+      - devicetree
+      - ci_tests_zephyr_drivers_spi
+    # depends_on:
+    #   - spi
+    #   - gpio
+    platform_allow:
+      - nrf54l09pdk/nrf54l09/cpuapp
+    integration_platforms:
+      - nrf54l09pdk/nrf54l09/cpuapp

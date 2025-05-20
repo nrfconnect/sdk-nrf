@@ -1,0 +1,69 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "HID State"
+
+config DESKTOP_HID_STATE_ENABLE
+	bool "Enable HID state"
+	depends on DESKTOP_ROLE_HID_PERIPHERAL
+	help
+	  The module generates HID reports based on user input.
+
+if DESKTOP_HID_STATE_ENABLE
+
+config DESKTOP_HID_STATE_HID_KEYMAP_DEF_PATH
+	string "File defining HID keymap"
+	default "hid_keymap_def.h"
+	help
+	  Location of configuration file that holds information about mapping
+	  between buttons and generated reports.
+
+config DESKTOP_HID_STATE_HID_KEYBOARD_LEDS_DEF_PATH
+	string "File defining HID keyboard LEDs"
+	default "hid_keyboard_leds_def.h"
+	help
+	  Location of configuration file that holds information about LEDs
+	  associated with HID keyboard LEDs report.
+
+config DESKTOP_HID_STATE_SUBSCRIBER_COUNT
+	int "Number of supported subscribers"
+	range 1 255
+	default 1
+	help
+	  The data structures representing subscribers are statically allocated.
+	  The number of allocated structures (specified by this Kconfig option)
+	  must be greater than or equal to the maximum number of simultaneously
+	  active subscribers.
+
+config DESKTOP_HID_STATE_PM_ENABLE
+	bool "Enable HID power manager integration"
+	depends on CAF_POWER_MANAGER
+	select CAF_KEEP_ALIVE_EVENTS
+	default y
+	help
+	  This enables small module that blocks power down if HID is active.
+
+config DESKTOP_HID_REPORT_EXPIRATION
+	int "HID report expiration [ms]"
+	default 500
+	help
+	  Define the time after which a HID report expires
+	  and is not sent again.
+
+config DESKTOP_HID_EVENT_QUEUE_SIZE
+	int "HID event queue size"
+	default 12
+	range 2 255
+	help
+	  Size of the HID event queue.
+
+module = DESKTOP_HID_STATE
+module-str = HID state
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+endmenu

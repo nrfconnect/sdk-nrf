@@ -1,0 +1,203 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_FAST_PAIR
+	bool "Google Fast Pair Service (GFPS)"
+	select BT_NRF_SERVICES
+	help
+	  Enable Google Fast Pair Service (GFPS).
+
+if BT_FAST_PAIR
+
+rsource "use_case/Kconfig"
+
+config BT_FAST_PAIR_SUBSEQUENT_PAIRING
+	bool "Fast Pair subsequent pairing [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	help
+	  Enable support for the subsequent pairing feature. Subsequent pairing
+	  refers to the procedure between a Fast Pair Provider, initially paired
+	  with your Google account, and another Fast Pair Seeker logged into the
+	  same account.
+
+config BT_FAST_PAIR_REQ_PAIRING
+	bool "Require Bluetooth Pairing during Fast Pair Procedure"
+	help
+	  Require the Bluetooth Pairing during the Fast Pair Procedure.
+	  With this option enabled, the Fast Pair modules rejects the Fast Pair
+	  procedure that is performed without the Bluetooth pairing operation.
+
+config BT_FAST_PAIR_PN
+	bool "Fast Pair Personalized Name extension [EXPERIMENTAL]"
+	select BT_FAST_PAIR_GATT_SERVICE_ADDITIONAL_DATA
+	select BT_FAST_PAIR_STORAGE_PN
+	select EXPERIMENTAL
+	help
+	  Enable Fast Pair Personalized Name extension.
+
+config BT_FAST_PAIR_BN
+	bool "Fast Pair Battery Notification extension [EXPERIMENTAL]"
+	select BT_FAST_PAIR_BATTERY
+	select EXPERIMENTAL
+	help
+	  Enable Fast Pair Battery Notification extension.
+
+rsource "fp_crypto/Kconfig.fp_crypto"
+rsource "fp_storage/Kconfig.fp_storage"
+rsource "fmdn/Kconfig"
+
+config BT_FAST_PAIR_ACTIVATION
+	bool
+	default y
+	help
+	  Add Fast Pair activation source files.
+
+config BT_FAST_PAIR_KEYS
+	bool
+	default y
+	depends on SYSTEM_WORKQUEUE_PRIORITY < 0
+	help
+	  Add Fast Pair key handling source files.
+
+config BT_FAST_PAIR_AUTH
+	bool
+	default y
+	select BT_SMP
+	select BT_SMP_APP_PAIRING_ACCEPT
+	select BT_SMP_ENFORCE_MITM
+	help
+	  Add Fast Pair Bluetooth authentication source files.
+
+config BT_FAST_PAIR_ADVERTISING
+	bool
+	default y
+	select BT_PERIPHERAL
+	select BT_PRIVACY
+	select ENTROPY_GENERATOR
+	help
+	  Add Fast Pair advertising source files.
+
+config BT_FAST_PAIR_GATT_SERVICE
+	bool
+	default y
+	select ENTROPY_GENERATOR
+	help
+	  Add Fast Pair GATT Service source files.
+
+if BT_FAST_PAIR_GATT_SERVICE
+
+config BT_FAST_PAIR_GATT_SERVICE_MODEL_ID
+	bool "Fast Pair Service's Model ID GATT characteristic"
+	help
+	  Add Fast Pair Service's Model ID GATT characteristic.
+
+config BT_FAST_PAIR_GATT_SERVICE_ADDITIONAL_DATA
+	bool
+	help
+	  Add Fast Pair Service's Additional Data GATT characteristic.
+
+# Override of the Bluetooth configuration defaults for the Google Fast Pair GATT service.
+config BT_GATT_AUTO_SEC_REQ
+	default n
+	help
+	  Disable automatic security re-establishment request as a peripheral
+	  to allow Fast Pair Seeker to control the security re-establishment.
+
+config BT_L2CAP_TX_MTU
+	default 83
+	help
+	  If Fast Pair is enabled, use MTU value of 83 (recommended by the specification).
+
+config BT_BUF_ACL_TX_SIZE
+	default 87
+	help
+	  If Fast Pair is enabled, use MTU value of 83 (recommended by the specification).
+
+config BT_BUF_ACL_RX_SIZE
+	default 87
+	help
+	  If Fast Pair is enabled, use MTU value of 83 (recommended by the specification).
+
+config BT_CTLR_DATA_LENGTH_MAX
+	default 87 if HAS_BT_CTLR
+	help
+	  If Fast Pair is enabled, use MTU value of 83 (recommended by the specification).
+
+endif # BT_FAST_PAIR_GATT_SERVICE
+
+config BT_FAST_PAIR_REGISTRATION_DATA
+	bool
+	default y
+	help
+	  Add Fast Pair registration data source files.
+
+if BT_FAST_PAIR_REGISTRATION_DATA
+
+config BT_FAST_PAIR_REGISTRATION_DATA_INIT_PRIORITY
+	int
+	range 0 9
+	default 0
+	help
+	  Fast Pair registration data module initialization priority.
+	  Used when registering initialization function to Fast Pair activation module.
+	  This module should be initialized before all other Fast Pair modules to avoid using
+	  Fast Pair subsystem when the Fast Pair provisioning data is not configured properly.
+
+endif # BT_FAST_PAIR_REGISTRATION_DATA
+
+config BT_FAST_PAIR_BATTERY
+	bool
+	help
+	  Add Fast Pair battery module source files.
+
+config BT_FAST_PAIR_STORAGE_INTEGRATION
+	bool
+	default y
+	help
+	  Add Fast Pair storage integration source files.
+
+if BT_FAST_PAIR_STORAGE_INTEGRATION
+
+config BT_FAST_PAIR_STORAGE_INTEGRATION_INIT_PRIORITY
+	int
+	range 0 9
+	default 4
+	help
+	  Fast Pair storage integration module initialization priority.
+	  Used when registering to Fast Pair activation module.
+
+endif # BT_FAST_PAIR_STORAGE_INTEGRATION
+
+config BT_FAST_PAIR_BOND_MANAGER
+	bool "Fast Pair bond management functionality [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	select BT_FAST_PAIR_STORAGE_AK_BOND
+	help
+	  When this functionality is enabled, the Fast Pair subsystem tracks the Bluetooth bonds
+	  created through the Fast Pair Procedure and unpairs them if the procedure is incomplete or
+	  the Account Key associated with the bonds is removed. It also unpairs the Fast Pair
+	  Bluetooth bonds on Fast Pair factory reset, because the factory reset removes all Account
+	  Keys stored on device.
+
+	  When the Fast Pair subsystem is disabled, the Bluetooth bonds are not tracked. Do not
+	  perform operations on Fast Pair Bluetooth bonds, except for the Fast Pair factory reset
+	  when the Fast Pair subsystem is disabled. Additionally, do not perform Bluetooth bonding
+	  when the Fast Pair subsystem is disabled and bond management functionality is enabled, as
+	  this could cause the subsystem to incorrectly identify new bonds as Fast Pair bonds. To
+	  conclude, the easiest and safest option is to keep the Fast Pair enabled while using
+	  Bluetooth to ensure proper behavior.
+
+	  With this functionality, the non-volatile storage is used to store the bond information.
+	  You can enable the functionality during DFU, but if you used it earlier, you cannot
+	  disable it during DFU unless you erase the entire Fast Pair non-volatile storage before
+	  the DFU. You can erase it by performing the Fast Pair factory reset. Otherwise, the Fast
+	  Pair enable operation will fail.
+
+module = BT_FAST_PAIR
+module-str = Fast Pair Service
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_FAST_PAIR

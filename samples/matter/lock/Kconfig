@@ -1,0 +1,181 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+mainmenu "Matter Lock sample application"
+
+config LOCK_MAX_NUM_USERS
+	int "Maximum number of users supported by the lock"
+	default 10
+
+config LOCK_MAX_NUM_CREDENTIALS_PER_USER
+	int "Maximum total number of credentials per one user supported by the lock"
+	default 4
+
+config LOCK_MAX_NUM_CREDENTIALS_PER_TYPE
+	int "Maximum number of credentials of given type supported by the lock"
+	default 15
+
+config LOCK_MAX_CREDENTIAL_LENGTH
+	int "Maximum length of the single credential supported by the lock"
+	default 10
+
+config LOCK_PASS_CREDENTIALS_TO_SET_LOCK_STATE
+	bool "Pass used credentials when setting the lock state"
+	help
+	  This option should stay disabled until TC-DRLK-2.3 is fixed.
+	  Related issue: https://github.com/project-chip/connectedhomeip/issues/38222
+
+config LOCK_SCHEDULES
+	bool "Support for WeekDay, YearDay and Holiday schedules in lock"
+	help
+	  This option adds support for an optional Timed Schedule Access Lock feature.
+	  You can use Week Day, Year Day and Holiday schedules to restrict access for a
+	  specific user for a defined time window. For example, use it to
+	  give the user access only for three days in week.
+
+if LOCK_SCHEDULES
+
+config LOCK_MAX_WEEKDAY_SCHEDULES_PER_USER
+	int "Maximum number of WeekDay schedules per one user supported by the lock"
+	default 5
+
+config LOCK_MAX_YEARDAY_SCHEDULES_PER_USER
+	int "Maximum number of YearDay schedules per one user supported by the lock"
+	default 5
+
+config LOCK_MAX_HOLIDAY_SCHEDULES
+	int "Maximum number of Holiday schedules supported by the lock"
+	default 5
+
+endif
+
+config LOCK_ENABLE_DEBUG
+	bool "Enable debug features to print users and credentials"
+	depends on SHELL
+	help
+	  Debug features allows to checking and printing current users, their state, and
+	  associated credentials. Use these with shell commands combinations to read saved credentials
+	  or users, and manage them (add, clear, read).
+
+if LOCK_ENABLE_DEBUG
+
+config LOCK_PRINT_STORAGE_STATUS
+	bool "Print storage status after each store call"
+	help
+	  Debug feature to print the debug-level log that contains information of the entry being stored
+	  to persistent storage and how many bytes are left to store the new entry. It can be used to verify
+	  whether credential, schedule or user entries are written properly to persistent storage.
+	  This option should be disabled in production firmware
+	  version.
+
+# This should be deterined based on the maximum possible command length that depends on the LOCK_MAX_CREDENTIAL_LENGTH
+config SHELL_CMD_BUFF_SIZE
+	default 300
+
+endif
+
+config STATE_LEDS
+	bool "Use LEDs to indicate the device state"
+	default y
+	help
+	  Use LEDs to render the current state of the device such as the progress of commissioning of
+	  the device into a network or the factory reset initiation. Note that setting this option to
+	  'n' does not disable the LED indicating the state of the simulated bolt.
+
+config THREAD_WIFI_SWITCHING
+	bool "Switching between Thread and Wi-Fi"
+	depends on SOC_SERIES_NRF53X
+	depends on NET_L2_OPENTHREAD
+	depends on CHIP_WIFI
+	depends on !CHIP_FACTORY_RESET_ERASE_SETTINGS
+	select EXPERIMENTAL
+	help
+	  Build the application with both Thread and Wi-Fi support and initialize
+	  either transport based on the current configuration. A user can switch
+	  between Thread and Wi-Fi by pressing and holding Button 3 for more than
+	  10 seconds. During the switching, the device is automatically factory
+	  reset and rebooted.
+
+if THREAD_WIFI_SWITCHING
+
+config THREAD_WIFI_SWITCHING_SHELL
+	bool "Shell command for switching between Thread and Wi-Fi"
+	default y if SHELL
+	help
+	  Add "switch_transport" shell command that initiates switching between
+	  Thread and Wi-Fi transport for Matter protocol stack.
+
+endif # THREAD_WIFI_SWITCHING
+
+# Sample configuration used for Thread networking
+if OPENTHREAD
+
+choice OPENTHREAD_NORDIC_LIBRARY_CONFIGURATION
+	default OPENTHREAD_NORDIC_LIBRARY_MTD
+endchoice
+
+choice OPENTHREAD_DEVICE_TYPE
+	default OPENTHREAD_MTD
+endchoice
+
+config CHIP_ENABLE_ICD_SUPPORT
+	default y
+
+# Reduce Thread TX output power to 0 dBm for SED device
+config OPENTHREAD_DEFAULT_TX_POWER
+	int
+	default 0
+
+endif # OPENTHREAD
+
+if CHIP_WIFI
+
+config NRF_WIFI_LOW_POWER
+	default y
+
+endif # CHIP_WIFI
+
+config NCS_SAMPLE_MATTER_PERSISTENT_STORAGE
+	default y
+
+# PSA SSF Crypto Client is not ready for the secure storage backend
+if !PSA_SSF_CRYPTO_CLIENT
+
+config NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND
+	default y if !CHIP_WIFI
+
+config NCS_SAMPLE_MATTER_SETTINGS_STORAGE_BACKEND
+	default n if !CHIP_WIFI
+
+endif
+
+# Increase the storage capacity if the schedules are enabled with secure storage
+# This also implies increasing of the OT and Matter stacks because some operations
+# performed during commissioning seem to allocate stack buffers based on the
+# maximum possible secure asset size.
+if LOCK_SCHEDULES && NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND
+
+config NCS_SAMPLE_MATTER_SECURE_STORAGE_MAX_ENTRY_NUMBER
+	default 128
+
+config TRUSTED_STORAGE_BACKEND_AEAD_MAX_DATA_SIZE
+	default 3072
+
+config OPENTHREAD_THREAD_STACK_SIZE
+	default 7168
+
+config CHIP_TASK_STACK_SIZE
+	default 10240
+
+config MAIN_STACK_SIZE
+	default 7168
+
+endif
+
+source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.features"
+source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.defaults"
+source "${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/Kconfig"
+source "Kconfig.zephyr"

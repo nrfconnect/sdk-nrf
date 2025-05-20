@@ -1,0 +1,29 @@
+common:
+  timeout: 10
+  tags:
+    - drivers
+    - watchdog
+    - ci_tests_zephyr_drivers_watchdog
+  harness: console
+  harness_config:
+    type: one_line
+    regex:
+      - "Test completed successfully"
+
+tests:
+  nrf.extended.drivers.watchdog.wdt_variables.default:
+    platform_allow:
+      - nrf54l20pdk/nrf54l20/cpuflpr
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuflpr
+      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuflpr
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuflpr
+      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuflpr
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuflpr
+    integration_platforms:
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp

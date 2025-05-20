@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2018 - 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config CLOCK_CONTROL_MPSL
+	bool
+	depends on MPSL
+	depends on CLOCK_CONTROL
+	depends on !MPSL_USE_EXTERNAL_CLOCK_CONTROL
+	default y
+	select CLOCK_CONTROL_NRF_FORCE_ALT
+	help
+	  Use the clock driver provided as part of the MPSL library.

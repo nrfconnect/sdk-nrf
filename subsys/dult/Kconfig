@@ -1,0 +1,218 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DULT
+	bool "Detecting Unwanted Location Trackers (DULT) [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	depends on BT
+	help
+	  Enable support for Detecting Unwanted Location Trackers (DULT) specification.
+
+if DULT
+
+config DULT_BATTERY
+	bool "DULT battery information"
+	help
+	  Enable support for battery information such as battery type and battery level.
+	  The battery information is an optional feature in the DULT specification and the
+	  support for it is not required. The battery information can be read by the
+	  connected peer over accessory non-owner service (ANOS).
+
+if DULT_BATTERY
+
+config DULT_BATTERY_LEVEL_CRITICAL_THR
+	int "Battery level upper threshold [%] for entering critical battery state"
+	range 0 100
+	default 10
+	help
+	  This option changes the upper range for the critically low battery state.
+	  The device stays in this battery state when the battery level is within
+	  the following range:
+	  [0; DULT_BATTERY_LEVEL_CRITICAL_THR].
+	  The battery level thresholds are used to encode the correct battery level in the
+	  Battery Level characteristic that is part of accessory non-owner service (ANOS).
+
+config DULT_BATTERY_LEVEL_LOW_THR
+	int "Battery level upper threshold [%] for entering low battery state"
+	range 0 100
+	default 40
+	help
+	  This option changes the upper range for the low battery state. The device
+	  stays in this battery state when the battery level is within the following
+	  range:
+	  (DULT_BATTERY_LEVEL_CRITICAL_THR;
+	   DULT_BATTERY_LEVEL_LOW_THR].
+	  The battery level thresholds are used to encode the correct battery level in the
+	  Battery Level characteristic that is part of accessory non-owner service (ANOS).
+
+config DULT_BATTERY_LEVEL_MEDIUM_THR
+	int "Battery level upper threshold [%] for entering medium battery state"
+	range 0 100
+	default 80
+	help
+	  This option changes the upper range for the medium battery state. The device
+	  stays in this battery state when the battery level is within the following
+	  range:
+	  (DULT_BATTERY_LEVEL_LOW_THR;
+	   DULT_BATTERY_LEVEL_MEDIUM_THR].
+	  The device enters the full battery state once the battery level is greater
+	  than the DULT_BATTERY_LEVEL_MEDIUM_THR threshold.
+	  The battery level thresholds are used to encode the correct battery level in the
+	  Battery Level characteristic that is part of accessory non-owner service (ANOS).
+
+choice DULT_BATTERY_TYPE
+	prompt "DULT battery type"
+	default DULT_BATTERY_TYPE_POWERED
+
+config DULT_BATTERY_TYPE_POWERED
+	bool "Powered"
+
+config DULT_BATTERY_TYPE_NON_RECHARGEABLE
+	bool "Non-rechargeable battery"
+
+config DULT_BATTERY_TYPE_RECHARGEABLE
+	bool "Rechargeable battery"
+
+endchoice
+
+endif # DULT_BATTERY
+
+config DULT_BT_ANOS
+	bool
+	default y
+	help
+	  Add DULT accessory non-owner service source file.
+
+if DULT_BT_ANOS
+
+config DULT_BT_ANOS_ID_PAYLOAD_LEN_MAX
+	int "Maximum length of DULT identifier payload"
+	default 18
+	help
+	  Set this to be higher or equal to the maximum accessory network identifier payload length.
+
+config DULT_BT_ANOS_INDICATION_COUNT
+	int "Number of simultaneously processed GATT indications in ANOS"
+	range 1 32
+	default 2
+	help
+	  Each GATT indication allocates one indicate params instance until the indication
+	  completes. To handle a new GATT indication, there has to be an unallocated indicate params
+	  instance present. Otherwise, an indication is not sent. Setting this Kconfig to n allows
+	  handling up to n simultaneous GATT indications. The default value is set to 2 to
+	  account for one information indication and one asynchronous sound indication at a time.
+
+endif # DULT_BT_ANOS
+
+config DULT_ID
+	bool
+	default y
+	help
+	  Add DULT identifier source files.
+
+if DULT_ID
+
+config DULT_ID_READ_STATE_TIMEOUT
+	int
+	default 5
+	help
+	  Identifier read state timeout in minutes. As stated in the DULT specification:
+	  "The identifier read state MUST be enabled for 5 minutes once the user action on
+	  the accessory is successfully performed.". Changing this value will break the
+	  specification.
+
+endif # DULT_ID
+
+config DULT_NEAR_OWNER_STATE
+	bool
+	default y
+	help
+	  Add DULT near owner state source files.
+
+config DULT_PROTOCOL_IMPLEMENTATION_VERSION
+	hex
+	default 0x00010000
+
+config DULT_SOUND
+	bool
+	default y
+	help
+	  Add DULT sound source files.
+
+config DULT_USER
+	bool
+	default y
+	help
+	  Add DULT user source files.
+
+config DULT_MOTION_DETECTOR
+	bool "Enable DULT Motion detector feature"
+	help
+	  The DULT Motion detector requests the device to ring if the accessory separated
+	  from owner is moving. For more details see
+	  https://www.ietf.org/archive/id/draft-detecting-unwanted-location-trackers-01.html#name-motion-detector.
+
+if DULT_MOTION_DETECTOR
+
+config DULT_MOTION_DETECTOR_TEST_MODE
+	bool "Enable DULT Motion detector test mode"
+	help
+	  The DULT Motion detector test mode allows to configure motion detector parameters
+	  for testing purposes. Those values are defined in the DULT specification and should
+	  not be changed in the production code.
+
+config DULT_MOTION_DETECTOR_SEPARATED_UT_SAMPLING_RATE1
+	int
+	default 10000
+	help
+	  Sampling rate in milliseconds when motion detector is enabled in separated state.
+
+config DULT_MOTION_DETECTOR_SEPARATED_UT_SAMPLING_RATE2
+	int
+	default 500
+	help
+	  Motion detector sampling rate in milliseconds when movement is detected in separated
+	  state.
+
+config DULT_MOTION_DETECTOR_SEPARATED_UT_BACKOFF_PERIOD
+	int "Period in minutes to disable motion detector if accessory is in separated state" if DULT_MOTION_DETECTOR_TEST_MODE
+	default 2 if DULT_MOTION_DETECTOR_TEST_MODE
+	default 360
+
+config DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN
+	int "Minimum time span in minutes in separated state before enabling motion detector" if DULT_MOTION_DETECTOR_TEST_MODE
+	default 3 if DULT_MOTION_DETECTOR_TEST_MODE
+	default 480
+
+config DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MAX
+	int "Maximum time span in minutes in separated state before enabling motion detector" if DULT_MOTION_DETECTOR_TEST_MODE
+	default DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN if DULT_MOTION_DETECTOR_TEST_MODE
+	default 1440
+
+config DULT_MOTION_DETECTOR_SEPARATED_UT_ACTIVE_POLL_DURATION
+	int
+	default 20
+	help
+	  Time span in seconds of motion detector active polling with
+	  CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_SAMPLING_RATE2 rate. After the timeout, the
+	  motion detector is disabled for CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_BACKOFF_PERIOD
+	  period.
+
+config DULT_MOTION_DETECTOR_SEPARATED_UT_MAX_SOUND_COUNT
+	int
+	default 10
+	help
+	  Maximum number of sound indications to be sent by motion detector before disabling it.
+	  After sending maximum number of sound indications, the motion detector is disabled for
+	  CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_BACKOFF_PERIOD period."
+
+endif # DULT_MOTION_DETECTOR
+
+module = DULT
+module-str = DULT
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # DULT

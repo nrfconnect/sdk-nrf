@@ -1,0 +1,26 @@
+sample:
+  description: Usage quadrature decoder sensor
+  name: qdec_sensor
+common:
+  tags:
+    - sensors
+    - ci_samples_zephyr_sensor_qdec
+  timeout: 5
+  harness: console
+
+tests:
+  nrf.extended.sample.sensor.nrf_qdec_sensor:
+    platform_allow:
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+    harness_config:
+      fixture: gpio_loopback
+      type: multi_line
+      ordered: true
+      regex:
+        - "Quadrature decoder sensor test"
+        - "Position = -[45678]\\d degrees"

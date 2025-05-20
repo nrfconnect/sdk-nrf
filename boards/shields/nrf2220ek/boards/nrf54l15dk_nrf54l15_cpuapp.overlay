@@ -1,0 +1,89 @@
+/* Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Pin mapping suitable for use nRF2220-EK PCA63558 with nRF54L15DK.
+ * The nRF2220-EK in Port P0.
+ *
+ * Important:
+ * On the nRF54L15 Development Kit pins P0.00...P0.03 are
+ * connected to the debugger chip and by default connect UART0 of the
+ * debugger chip to the nRF54L15. The UART0 function (VCOM0) of the debugger
+ * chip must be disabled to allow the pins to be used as FEM control signals
+ * and FEM I2C interface. The "Board Configurator" tool (v0.3.7) being part of
+ * "nRF Connect for Desktop" bundle can be used for this purpose.
+ *
+ * On the nRF54L15 Development Kit pin P0.04 is connected also to "Button 3".
+ * Please do not press this button while the firmware nRF2220-EK containing
+ * the code with this shield is running.
+ */
+
+/ {
+	nrf_radio_fem: nrf2220_fem {
+		compatible = "nordic,nrf2220-fem";
+		cs-gpios = <&gpio0 2 GPIO_ACTIVE_HIGH>;
+		md-gpios = <&gpio0 1 GPIO_ACTIVE_HIGH>;
+		twi-if = <&nrf_radio_fem_twi>;
+	};
+};
+
+&i2c30 {
+	status = "okay";
+
+	pinctrl-0 = <&i2c30_default>;
+	pinctrl-1 = <&i2c30_sleep>;
+	pinctrl-names = "default", "sleep";
+
+	nrf_radio_fem_twi: nrf2220_fem_twi@36 {
+		compatible = "nordic,nrf2220-fem-twi";
+		status = "okay";
+		reg = <0x36>;
+	};
+};
+
+&pinctrl {
+	i2c30_default: i2c30_default {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 0, 4)>,
+				<NRF_PSEL(TWIM_SCL, 0, 3)>;
+			bias-pull-up;
+		};
+	};
+
+	i2c30_sleep: i2c30_sleep {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 0, 4)>,
+				<NRF_PSEL(TWIM_SCL, 0, 3)>;
+			low-power-enable;
+		};
+	};
+};
+
+&dppic10 {
+	status = "okay";
+};
+
+&ppib11 {
+	status = "okay";
+};
+
+&ppib21 {
+	status = "okay";
+};
+
+&dppic20 {
+	status = "okay";
+};
+
+&ppib22 {
+	status = "okay";
+};
+
+&ppib30 {
+	status = "okay";
+};
+
+&dppic30 {
+	status = "okay";
+};

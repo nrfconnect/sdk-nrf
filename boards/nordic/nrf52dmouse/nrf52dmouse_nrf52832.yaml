@@ -1,0 +1,14 @@
+identifier: nrf52dmouse/nrf52832
+name: nRF52-DMouse-NRF52832
+type: mcu
+arch: arm
+toolchain:
+  - zephyr
+  - gnuarmemb
+  - xtools
+supported:
+  - ble
+  - gpio
+  - watchdog
+ram: 64
+flash: 512

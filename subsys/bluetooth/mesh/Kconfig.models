@@ -1,0 +1,688 @@
+#
+# Copyright (c) 2019 - 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "nRF BT mesh models"
+
+config BT_MESH_NRF_MODELS
+	bool
+	help
+	  Common mesh model support modules, required by all Nordic BT mesh
+	  models.
+
+menu "Configuration of the waiting time for acknowledged messages"
+
+config BT_MESH_MOD_ACKD_TIMEOUT_BASE
+	int "The base timeout for acknowledged messages"
+	default 3000
+	help
+	  The base timeout in milliseconds that the model waits for the response
+	  if it is required. The response is typically a status message.
+	  Mesh Protocol recommends a minimum waiting time of 30 seconds.
+
+config BT_MESH_MOD_ACKD_TIMEOUT_PER_HOP
+	int "The per hop timeout for acknowledged messages"
+	default 50
+	help
+	  The timeout in milliseconds that the model adds per hop
+	  to the base response time.
+
+endmenu
+
+rsource "vnd/Kconfig"
+
+config BT_MESH_ONOFF_SRV
+	bool "Generic OnOff Server"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable mesh Generic OnOff Server model.
+
+config BT_MESH_ONOFF_CLI
+	bool "Generic OnOff Client"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable mesh Generic OnOff Client model.
+
+config BT_MESH_TIME
+	bool
+
+menuconfig BT_MESH_TIME_SRV
+	bool "Time Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_TIME
+	select BT_MESH_MODEL_EXTENSIONS
+	help
+	  Enable mesh Time Server model.
+
+if BT_MESH_TIME_SRV
+
+config BT_MESH_TIME_SRV_PERSISTENT
+	bool "Store the Time Server context persistently"
+	default y
+	help
+	  Enable persistent storage for the Time state.
+
+config BT_MESH_TIME_MESH_HOP_UNCERTAINTY
+	int "Time model mesh hop uncertainty"
+	default 30
+	help
+	  This value defines the maximum delay of one mesh message
+	  hop in milliseconds.
+
+config BT_MESH_TIME_SRV_CLOCK_ACCURACY
+	int "Time model clock uncertainty"
+	default 20 if CLOCK_CONTROL_NRF_K32SRC_20PPM
+	default 30 if CLOCK_CONTROL_NRF_K32SRC_30PPM
+	default 50 if CLOCK_CONTROL_NRF_K32SRC_50PPM
+	default 75 if CLOCK_CONTROL_NRF_K32SRC_75PPM
+	default 100 if CLOCK_CONTROL_NRF_K32SRC_100PPM
+	default 150 if CLOCK_CONTROL_NRF_K32SRC_150PPM
+	default 250 if CLOCK_CONTROL_NRF_K32SRC_250PPM
+	default 500
+	help
+	  This value defines the clock drift in microseconds per second, and is
+	  used to calculate overall time uncertainty for the Bluetooth Mesh
+	  Time Server model.
+
+endif
+
+config BT_MESH_TIME_CLI
+	bool "Time Client"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_TIME
+	help
+	  Enable mesh Time Client model.
+
+config BT_MESH_LVL_SRV
+	bool "Generic Level Server"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable mesh Generic Level Server model.
+
+config BT_MESH_LVL_CLI
+	bool "Generic Level Client"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable mesh Generic Level Client model.
+
+
+menuconfig BT_MESH_DTT_SRV
+	bool "Generic Default Transition Time Server"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable mesh Generic Default Transition Time Server model.
+
+if BT_MESH_DTT_SRV && BT_SETTINGS
+
+config BT_MESH_DTT_SRV_PERSISTENT
+	bool "Store the Default Transition Time persistently"
+	default y
+	help
+	  Enable persistent storage for the Default Transition Time state.
+
+endif
+
+config BT_MESH_DTT_CLI
+	bool "Generic Default Transition Time Client"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable mesh Generic Default Transition Time Client model.
+
+
+config BT_MESH_PONOFF_SRV
+	bool "Generic Power OnOff Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_DTT_SRV
+	select BT_MESH_ONOFF_SRV
+	select BT_MESH_MODEL_EXTENSIONS
+	imply BT_SETTINGS
+	help
+	  Enable mesh Generic Power OnOff Server model.
+
+config BT_MESH_PONOFF_CLI
+	bool "Generic Power OnOff Client"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable mesh Generic Power OnOff Client model.
+
+
+config BT_MESH_PLVL_SRV
+	bool "Generic Power Level Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_LVL_SRV
+	select BT_MESH_PONOFF_SRV
+	select BT_MESH_MODEL_EXTENSIONS
+	help
+	  Enable mesh Generic Power Level Server model.
+
+config BT_MESH_PLVL_CLI
+	bool "Generic Power Level Client"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable mesh Generic Power Level Client model.
+
+
+config BT_MESH_BATTERY_SRV
+	bool "Generic Battery Server"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable mesh Generic Battery Server model.
+
+config BT_MESH_BATTERY_CLI
+	bool "Generic Battery Client"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable mesh Generic Battery Client model.
+
+
+config BT_MESH_LOC_SRV
+	bool "Generic Location Server"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable mesh Generic Location Server model.
+
+config BT_MESH_LOC_CLI
+	bool "Generic Location Client"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable mesh Generic Location Client model.
+
+config BT_MESH_PROP_SRV
+	bool "Generic Property Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_MODEL_EXTENSIONS
+	help
+	  Enable mesh Generic Property Server models.
+
+config BT_MESH_PROP_CLI
+	bool "Generic Property Client"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable mesh Generic Property Client model.
+
+if BT_MESH_PROP_SRV || BT_MESH_PROP_CLI
+menu "Generic Property Model configuration"
+
+config BT_MESH_PROP_MAXSIZE
+	int "Generic Property value max size"
+	default 8
+	range 1 376
+	help
+	  The upper boundary of a Generic Property value's size. The entire
+	  value with an 4 byte overhead must fit within a full TX packet
+	  payload (see BT_MESH_TX_SEG_MAX).
+
+config BT_MESH_PROP_MAXCOUNT
+	int "Generic Property value max count"
+	default 8
+	range 1 189
+	help
+	  The largest number of Generic Property values that can be listed by
+	  a Generic Property Server. Each Property ID is 2 bytes long, and
+	  the full list plus a 1 byte overhead must fit within a full TX packet
+	  payload (see BT_MESH_TX_SEG_MAX).
+
+endmenu
+endif
+
+
+config BT_MESH_LIGHTNESS_SRV
+	bool "Light Lightness Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_LVL_SRV
+	select BT_MESH_PONOFF_SRV
+	select BT_MESH_MODEL_EXTENSIONS
+	help
+	  Enable mesh Light Lightness Server model.
+
+config BT_MESH_LIGHTNESS_CLI
+	bool "Light Lightness Client"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable mesh Light Lightness Client model.
+
+if BT_MESH_LIGHTNESS_SRV || BT_MESH_LIGHTNESS_CLI
+menu "Light Lightness Model configuration"
+
+choice BT_MESH_LIGHTNESS_REPR
+	prompt "Light Lightness representation"
+	default BT_MESH_LIGHTNESS_ACTUAL
+
+config BT_MESH_LIGHTNESS_ACTUAL
+	bool "Actual"
+	help
+	  Represent the Light Lightness light level state on a perceptually
+	  uniform lightness scale.
+
+config BT_MESH_LIGHTNESS_LINEAR
+	bool "Linear"
+	help
+	  Represent the Light Lightness light level state on a linear scale.
+
+endchoice
+endmenu
+endif
+
+menuconfig BT_MESH_LIGHT_CTRL_REG
+	bool "Lightness PI Regulator"
+	help
+	  Enable the lightness PI regulator module
+
+if BT_MESH_LIGHT_CTRL_REG
+
+config BT_MESH_LIGHT_CTRL_REG_SPEC
+	bool "Spec Lightness PI Regulator"
+	select FPU
+	default y
+	help
+	  Enable specification-defined lightness PI regulator implementation.
+
+if BT_MESH_LIGHT_CTRL_REG_SPEC
+
+config BT_MESH_LIGHT_CTRL_REG_SPEC_INTERVAL
+	int "Update interval"
+	default 100
+	range 10 100
+	help
+	  Update interval of the specification-defined illuminance regulator (in milliseconds).
+
+endif #BT_MESH_LIGHT_CTRL_REG_SPEC
+
+config BT_MESH_LIGHT_CTRL_AMB_LIGHT_LEVEL_TIMEOUT
+	int "Ambient light level report timeout (seconds)"
+	default 300
+	range 0 16777
+	help
+	  Defines time in seconds the Light Lightness Control Server waits after receiving the
+	  Sensor Status message with the present ambient light level property ID before setting
+	  the ambient light level to zero and passing it to the regulator. This option helps
+	  avoiding an issue with the regulator getting stuck with an old output value, and not
+	  triggering new report from the sensor. When set to zero, the timeout is disabled.
+
+endif #BT_MESH_LIGHT_CTRL_REG
+
+menuconfig BT_MESH_LIGHT_CTRL_SRV
+	bool "Light Lightness Control (LC) Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_LIGHTNESS_SRV
+	select BT_MESH_SENSOR
+	select BT_MESH_MODEL_EXTENSIONS
+	help
+	  Enable mesh Light Lightness Control Server model.
+
+if BT_MESH_LIGHT_CTRL_SRV
+
+menuconfig BT_MESH_LIGHT_CTRL_SRV_REG
+	bool "Lightness Regulator"
+	select BT_MESH_LIGHT_CTRL_REG
+	default y
+	help
+	  Enable the use of a PI regulator for controlling the lightness level
+	  through an illuminance sensor feedback loop.
+
+if BT_MESH_LIGHT_CTRL_SRV_REG
+
+config BT_MESH_LIGHT_CTRL_SRV_REG_KIU
+	int "Default Kiu coefficient"
+	default 250
+	range 0 1000
+	help
+	  Default value for the Kiu (positive integral) coefficient for the
+	  lightness regulator. May be reconfigured at runtime by other models in
+	  the mesh network.
+
+config BT_MESH_LIGHT_CTRL_SRV_REG_KID
+	int "Default Kid coefficient"
+	default 25
+	range 0 1000
+	help
+	  Default value for the Kid (negative integral) coefficient for the
+	  lightness regulator. May be reconfigured at runtime by other models in
+	  the mesh network.
+
+config BT_MESH_LIGHT_CTRL_SRV_REG_KPU
+	int "Default Kpu coefficient"
+	default 80
+	range 0 1000
+	help
+	  Default value for the Kpu (positive proportional) coefficient for the
+	  lightness regulator. May be reconfigured at runtime by other models in
+	  the mesh network.
+
+config BT_MESH_LIGHT_CTRL_SRV_REG_KPD
+	int "Default Kpd coefficient"
+	default 80
+	range 0 1000
+	help
+	  Default value for the Kpd (negative proportional) coefficient for the
+	  lightness regulator. May be reconfigured at runtime by other models in
+	  the mesh network.
+
+config BT_MESH_LIGHT_CTRL_SRV_REG_ACCURACY
+	int "Default accuracy (percent)"
+	default 2
+	range 0 100
+	help
+	  Default value for the regulator's accuracy (in percent). The accuracy
+	  determines the regulator's dead zone around the target value, where
+	  no corrections are made for fluctuating sensor values. The accuracy
+	  should account for both sensor inaccuracies and system instability,
+	  to avoid making constant adjustments. May be reconfigured at runtime
+	  by other models in the mesh network.
+
+comment "Target Illuminance"
+
+config BT_MESH_LIGHT_CTRL_SRV_REG_LUX_ON
+	int "Default target illuminance in the On state"
+	range 0 167772
+	default 500
+	help
+	  Target ambient illuminance for the On state (in lux). May be
+	  reconfigured at runtime by other models in the mesh network.
+
+config BT_MESH_LIGHT_CTRL_SRV_REG_LUX_PROLONG
+	int "Default target illuminance in the Prolong state"
+	range 0 167772
+	default 80
+	help
+	  Target ambient illuminance for the Prolong state (in lux). May be
+	  reconfigured at runtime by other models in the mesh network.
+
+config BT_MESH_LIGHT_CTRL_SRV_REG_LUX_STANDBY
+	int "Default target illuminance in the Standby state"
+	range 0 167772
+	default 0
+	help
+	  Target ambient illuminance for the Standby state (in lux). May be
+	  reconfigured at runtime by other models in the mesh network.
+endif # BT_MESH_LIGHT_CTRL_SRV_REG
+
+config BT_MESH_LIGHT_CTRL_SRV_OCCUPANCY_DELAY
+	int "Default occupancy delay"
+	range 0 16777214
+	default 0
+	help
+	  Default delay (in milliseconds) from when an occupancy sensor detects
+	  occupancy until the server goes to the On state. May be reconfigured
+	  at runtime by other models in the mesh network.
+
+config BT_MESH_LIGHT_CTRL_SRV_OCCUPANCY_MODE
+	bool "Initial occupancy mode"
+	help
+	  If occupancy mode is enabled, lights will turn on when motion is
+	  detected. If occupancy mode is disabled, motion may only postpone
+	  dimming of lights that have been manually turned on. May be
+	  reconfigured at runtime by other models in the mesh network.
+
+comment "State timing"
+
+config BT_MESH_LIGHT_CTRL_SRV_TIME_FADE_ON
+	int "Default fade to On time"
+	range 0 16777214
+	default 500
+	help
+	  Default transition time (in milliseconds) for the controlled Lightness
+	  Server when entering the On state. May be reconfigured at runtime by
+	  other models in the mesh network.
+
+config BT_MESH_LIGHT_CTRL_SRV_TIME_FADE_PROLONG
+	int "Default fade to Prolong time"
+	range 0 16777214
+	default 5000
+	help
+	  Default transition time (in milliseconds) for the controlled Lightness
+	  Server when entering the Prolong state. May be reconfigured at runtime
+	  by other models in the mesh network.
+
+config BT_MESH_LIGHT_CTRL_SRV_TIME_FADE_STANDBY_AUTO
+	int "Default fade to Standby time (auto)"
+	range 0 16777214
+	default 5000
+	help
+	  Default transition time (in milliseconds) for the controlled Lightness
+	  Server when entering the Standby state in auto mode. May be
+	  reconfigured at runtime by other models in the mesh network.
+
+config BT_MESH_LIGHT_CTRL_SRV_TIME_FADE_STANDBY_MANUAL
+	int "Default fade to Standby time (manual)"
+	range 0 16777214
+	default 500
+	help
+	  Default transition time (in milliseconds) for the controlled Lightness
+	  Server when entering the Standby state in manual mode. May be
+	  reconfigured at runtime by other models in the mesh network.
+
+config BT_MESH_LIGHT_CTRL_SRV_TIME_ON
+	int "Default time in the On state (seconds)"
+	range 0 16777
+	default 60
+	help
+	  After fading to the right level, the controlled Lightness Server will
+	  remain in the On state until this timer expires, unless some activity
+	  occurs. May be reconfigured at runtime by other models in the mesh
+	  network.
+
+config BT_MESH_LIGHT_CTRL_SRV_TIME_PROLONG
+	int "Default time in the Prolong state (seconds)"
+	range 0 16777
+	default 30
+	help
+	  After fading to the right level, the controlled Lightness Server will
+	  remain in the Prolong state until this timer expires, unless some
+	  activity occurs. May be reconfigured at runtime by other models in the
+	  mesh network.
+
+config BT_MESH_LIGHT_CTRL_SRV_TIME_MANUAL
+	int "Manual mode timeout (seconds)"
+	range 0 16777
+	default 5
+	help
+	  When turning the lights off with a light switch, the Light LC Server
+	  enters manual mode, which disables input from occupancy sensors.
+	  Use this configuration option to control the duration of the manual
+	  mode (fade time included). Note that the occupancy sensors will always
+	  be disabled while fading to Standby in manual mode, so making the
+	  manual mode time shorter than this has no effect.
+
+config BT_MESH_LIGHT_CTRL_SRV_RESUME_DELAY
+	int "Resume delay (seconds)"
+	default 0
+	help
+	  Time (in seconds) before re-enabling the Light LC Server control after
+	  it has been disabled, or 0 to disable the resume timer.
+
+comment "Light levels"
+
+config BT_MESH_LIGHT_CTRL_SRV_LVL_ON
+	int "Default light level in the On state"
+	range 0 65535
+	default 65535
+	help
+	  Default target light level for the controlled Lightness Server in the
+	  On state. May be reconfigured at runtime by other models in the mesh
+	  network.
+
+config BT_MESH_LIGHT_CTRL_SRV_LVL_PROLONG
+	int "Default light level in the Prolong state"
+	range 0 65535
+	default 10000
+	help
+	  Default target light level for the controlled Lightness Server in the
+	  Prolong state. May be reconfigured at runtime by other models in the
+	  mesh network.
+
+config BT_MESH_LIGHT_CTRL_SRV_LVL_STANDBY
+	int "Default light level in the Standby state"
+	range 0 65535
+	default 0
+	help
+	  Default target light level for the controlled Lightness Server in the
+	  Standby state. May be reconfigured at runtime by other models in the
+	  mesh network.
+endif
+
+config BT_MESH_LIGHT_CTRL_CLI
+	bool "Light LC Client"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_SENSOR
+	help
+	  Enable mesh Light Lightness Control Client model.
+
+config BT_MESH_LIGHT_CTL_CLI
+	bool "Color Tunable Light (CTL) Client"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable mesh Light CTL Client model.
+
+config BT_MESH_LIGHT_CTL_SRV
+	bool "Color Tunable Light (CTL) Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_LIGHTNESS_SRV
+	select BT_MESH_LIGHT_TEMP_SRV
+	select BT_MESH_MODEL_EXTENSIONS
+	help
+	  Enable mesh Light CTL Server model.
+
+config BT_MESH_LIGHT_TEMP_SRV
+	bool "Color Tunable Light (CTL) Temperature Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_LVL_SRV
+	select BT_MESH_MODEL_EXTENSIONS
+	help
+	  Enable mesh Light CTL Temperature Server model.
+
+config BT_MESH_LIGHT_XYL_CLI
+	bool "xyL Client"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable Mesh Light xyL Client model.
+
+config BT_MESH_LIGHT_XYL_SRV
+	bool "xyL Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_LIGHTNESS_SRV
+	select BT_MESH_MODEL_EXTENSIONS
+	help
+	  Enable Mesh Light xyL Server model.
+
+config BT_MESH_LIGHT_HSL
+	bool # Hidden entry
+
+config BT_MESH_LIGHT_HSL_CLI
+	bool "Light HSL Client"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_LIGHT_HSL
+	help
+	  Enable Mesh Light HSL Client model.
+
+config BT_MESH_LIGHT_HSL_SRV
+	bool "Light HSL Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_LIGHTNESS_SRV
+	select BT_MESH_LIGHT_SAT_SRV
+	select BT_MESH_LIGHT_HUE_SRV
+	select BT_MESH_LIGHT_HSL
+	select BT_MESH_MODEL_EXTENSIONS
+	help
+	  Enable Mesh Light HSL Server model.
+
+config BT_MESH_LIGHT_SAT_SRV
+	bool "Light Saturation Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_LVL_SRV
+	select BT_MESH_LIGHT_HSL
+	select BT_MESH_MODEL_EXTENSIONS
+	help
+	  Enable Mesh Light Saturation Server model.
+
+config BT_MESH_LIGHT_HUE_SRV
+	bool "Light Hue Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_LVL_SRV
+	select BT_MESH_LIGHT_HSL
+	select BT_MESH_MODEL_EXTENSIONS
+	help
+	  Enable Mesh Light Hue Server model.
+
+menuconfig BT_MESH_SENSOR_SRV
+	bool "Sensor Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_SENSOR
+	select BT_MESH_MODEL_EXTENSIONS
+	help
+	  Enable mesh Sensor Server model.
+
+if BT_MESH_SENSOR_SRV
+
+config BT_MESH_SENSOR_SRV_SENSORS_MAX
+	int "Max number of sensors per server"
+	default 4
+	range 1 189
+	help
+	  The upper boundary of a Sensor Server's sensor count.
+
+
+config BT_MESH_SENSOR_SRV_SETTINGS_MAX
+	int "Max setting parameters per sensor in a server"
+	default 8
+	range 0 189
+	help
+	  Max number of settings parameters each sensor in the
+	  server can have. Only affects the stack allocated response buffer
+	  for the Settings Get message.
+
+endif
+
+config BT_MESH_SENSOR_CLI
+	bool "Sensor Client"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_SENSOR
+	help
+	  Enable mesh Sensor Client model.
+
+rsource "Kconfig.sensor"
+
+menuconfig BT_MESH_SCENE_SRV
+	bool "Scene Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_MODEL_EXTENSIONS
+	depends on BT_SETTINGS
+	help
+	  Enable mesh Scene Server model.
+
+config BT_MESH_SCENES_MAX
+	int "Max number of scenes"
+	default 16
+	range 1 65535
+	depends on BT_MESH_SCENE_SRV
+	help
+	  Maximum number of scenes that can be stored by a single Scene Server.
+	  According to the specification, this value should be 16.
+	  The Bluetooth Mesh Model specification v1.1 (MshMDLv1.1) defines the
+	  Scene Register state as a 16-element array of 16-bit values representing a Scene Number.
+
+config BT_MESH_SCENE_CLI
+	bool "Scene Client"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable mesh Scene Client model.
+
+config BT_MESH_SCHEDULER_CLI
+	bool "Scheduler Client"
+	select BT_MESH_NRF_MODELS
+	help
+	  Enable Mesh Scheduler Client model.
+
+config BT_MESH_SCHEDULER_SRV
+	bool "Scheduler Server"
+	select BT_MESH_NRF_MODELS
+	select BT_MESH_ONOFF_SRV
+	select BT_MESH_SCENE_SRV
+	select BT_MESH_TIME_SRV
+	select BT_MESH_MODEL_EXTENSIONS
+	help
+	  Enable Mesh Scheduler Server model.
+
+endmenu

@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "NFC"
+
+rsource "ndef/Kconfig"
+rsource "t2t/Kconfig"
+rsource "t4t/Kconfig"
+rsource "lib/Kconfig"
+rsource "tnep/Kconfig"
+rsource "rpc/Kconfig"
+
+endmenu

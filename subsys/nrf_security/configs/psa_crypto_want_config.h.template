@@ -1,0 +1,148 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ */
+
+#ifndef PSA_CRYPTO_CONFIG_H
+#define PSA_CRYPTO_CONFIG_H
+
+/*
+ * All PSA_WANT_ symbols in alphabetical order
+ */
+#cmakedefine PSA_WANT_AES_KEY_SIZE_128                          @PSA_WANT_AES_KEY_SIZE_128@
+#cmakedefine PSA_WANT_AES_KEY_SIZE_192                          @PSA_WANT_AES_KEY_SIZE_192@
+#cmakedefine PSA_WANT_AES_KEY_SIZE_256                          @PSA_WANT_AES_KEY_SIZE_256@
+#cmakedefine PSA_WANT_ALG_CBC_NO_PADDING                        @PSA_WANT_ALG_CBC_NO_PADDING@
+#cmakedefine PSA_WANT_ALG_CBC_PKCS7                             @PSA_WANT_ALG_CBC_PKCS7@
+#cmakedefine PSA_WANT_ALG_CCM                                   @PSA_WANT_ALG_CCM@
+#cmakedefine PSA_WANT_ALG_CCM_STAR_NO_TAG                       @PSA_WANT_ALG_CCM_STAR_NO_TAG@
+#cmakedefine PSA_WANT_ALG_CHACHA20_POLY1305                     @PSA_WANT_ALG_CHACHA20_POLY1305@
+#cmakedefine PSA_WANT_ALG_CMAC                                  @PSA_WANT_ALG_CMAC@
+#cmakedefine PSA_WANT_ALG_CTR                                   @PSA_WANT_ALG_CTR@
+#cmakedefine PSA_WANT_ALG_CTR_DRBG                              @PSA_WANT_ALG_CTR_DRBG@
+#cmakedefine PSA_WANT_ALG_DETERMINISTIC_ECDSA                   @PSA_WANT_ALG_DETERMINISTIC_ECDSA@
+#cmakedefine PSA_WANT_ALG_ECB_NO_PADDING                        @PSA_WANT_ALG_ECB_NO_PADDING@
+#cmakedefine PSA_WANT_ALG_ECDH                                  @PSA_WANT_ALG_ECDH@
+#cmakedefine PSA_WANT_ALG_ECDSA                                 @PSA_WANT_ALG_ECDSA@
+#cmakedefine PSA_WANT_ALG_ECDSA_ANY                             @PSA_WANT_ALG_ECDSA_ANY@
+#cmakedefine PSA_WANT_ALG_ED25519PH                             @PSA_WANT_ALG_ED25519PH@
+#cmakedefine PSA_WANT_ALG_ED448PH                               @PSA_WANT_ALG_ED448PH@
+#cmakedefine PSA_WANT_ALG_GCM                                   @PSA_WANT_ALG_GCM@
+#cmakedefine PSA_WANT_ALG_HKDF                                  @PSA_WANT_ALG_HKDF@
+#cmakedefine PSA_WANT_ALG_HKDF_EXPAND                           @PSA_WANT_ALG_HKDF_EXPAND@
+#cmakedefine PSA_WANT_ALG_HKDF_EXTRACT                          @PSA_WANT_ALG_HKDF_EXTRACT@
+#cmakedefine PSA_WANT_ALG_HMAC                                  @PSA_WANT_ALG_HMAC@
+#cmakedefine PSA_WANT_ALG_HMAC_DRBG                             @PSA_WANT_ALG_HMAC_DRBG@
+#cmakedefine PSA_WANT_ALG_JPAKE                                 @PSA_WANT_ALG_JPAKE@
+#cmakedefine PSA_WANT_ALG_MD5                                   @PSA_WANT_ALG_MD5@
+#cmakedefine PSA_WANT_ALG_PBKDF2_AES_CMAC_PRF_128               @PSA_WANT_ALG_PBKDF2_AES_CMAC_PRF_128@
+#cmakedefine PSA_WANT_ALG_PBKDF2_HMAC                           @PSA_WANT_ALG_PBKDF2_HMAC@
+#cmakedefine PSA_WANT_ALG_PURE_EDDSA                            @PSA_WANT_ALG_PURE_EDDSA@
+#cmakedefine PSA_WANT_ALG_RSA_OAEP                              @PSA_WANT_ALG_RSA_OAEP@
+#cmakedefine PSA_WANT_ALG_RSA_PKCS1V15_CRYPT                    @PSA_WANT_ALG_RSA_PKCS1V15_CRYPT@
+#cmakedefine PSA_WANT_ALG_RSA_PKCS1V15_SIGN                     @PSA_WANT_ALG_RSA_PKCS1V15_SIGN@
+#cmakedefine PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW                 @PSA_WANT_ALG_RSA_PKCS1V15_SIGN_RAW@
+#cmakedefine PSA_WANT_ALG_RSA_PSS                               @PSA_WANT_ALG_RSA_PSS@
+#cmakedefine PSA_WANT_ALG_RSA_PSS_ANY_SALT                      @PSA_WANT_ALG_RSA_PSS_ANY_SALT@
+#cmakedefine PSA_WANT_ALG_SHA3_224                              @PSA_WANT_ALG_SHA3_224@
+#cmakedefine PSA_WANT_ALG_SHA3_256                              @PSA_WANT_ALG_SHA3_256@
+#cmakedefine PSA_WANT_ALG_SHA3_384                              @PSA_WANT_ALG_SHA3_384@
+#cmakedefine PSA_WANT_ALG_SHA3_512                              @PSA_WANT_ALG_SHA3_512@
+#cmakedefine PSA_WANT_ALG_SHA_1                                 @PSA_WANT_ALG_SHA_1@
+#cmakedefine PSA_WANT_ALG_SHA_224                               @PSA_WANT_ALG_SHA_224@
+#cmakedefine PSA_WANT_ALG_SHA_256                               @PSA_WANT_ALG_SHA_256@
+#cmakedefine PSA_WANT_ALG_SHA_384                               @PSA_WANT_ALG_SHA_384@
+#cmakedefine PSA_WANT_ALG_SHA_512                               @PSA_WANT_ALG_SHA_512@
+#cmakedefine PSA_WANT_ALG_SHA_512_224                           @PSA_WANT_ALG_SHA_512_224@
+#cmakedefine PSA_WANT_ALG_SHA_512_256                           @PSA_WANT_ALG_SHA_512_256@
+#cmakedefine PSA_WANT_ALG_SPAKE2P_CMAC                          @PSA_WANT_ALG_SPAKE2P_CMAC@
+#cmakedefine PSA_WANT_ALG_SPAKE2P_HMAC                          @PSA_WANT_ALG_SPAKE2P_HMAC@
+#cmakedefine PSA_WANT_ALG_SPAKE2P_MATTER                        @PSA_WANT_ALG_SPAKE2P_MATTER@
+#cmakedefine PSA_WANT_ALG_SRP_6                                 @PSA_WANT_ALG_SRP_6@
+#cmakedefine PSA_WANT_ALG_SRP_PASSWORD_HASH                     @PSA_WANT_ALG_SRP_PASSWORD_HASH@
+#cmakedefine PSA_WANT_ALG_STREAM_CIPHER                         @PSA_WANT_ALG_STREAM_CIPHER@
+#cmakedefine PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS                  @PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS@
+#cmakedefine PSA_WANT_ALG_TLS12_PRF                             @PSA_WANT_ALG_TLS12_PRF@
+#cmakedefine PSA_WANT_ALG_TLS12_PSK_TO_MS                       @PSA_WANT_ALG_TLS12_PSK_TO_MS@
+#cmakedefine PSA_WANT_ALG_XTS                                   @PSA_WANT_ALG_XTS@
+#cmakedefine PSA_WANT_ECC_BRAINPOOL_P_R1_160                    @PSA_WANT_ECC_BRAINPOOL_P_R1_160@
+#cmakedefine PSA_WANT_ECC_BRAINPOOL_P_R1_192                    @PSA_WANT_ECC_BRAINPOOL_P_R1_192@
+#cmakedefine PSA_WANT_ECC_BRAINPOOL_P_R1_224                    @PSA_WANT_ECC_BRAINPOOL_P_R1_224@
+#cmakedefine PSA_WANT_ECC_BRAINPOOL_P_R1_256                    @PSA_WANT_ECC_BRAINPOOL_P_R1_256@
+#cmakedefine PSA_WANT_ECC_BRAINPOOL_P_R1_320                    @PSA_WANT_ECC_BRAINPOOL_P_R1_320@
+#cmakedefine PSA_WANT_ECC_BRAINPOOL_P_R1_384                    @PSA_WANT_ECC_BRAINPOOL_P_R1_384@
+#cmakedefine PSA_WANT_ECC_BRAINPOOL_P_R1_512                    @PSA_WANT_ECC_BRAINPOOL_P_R1_512@
+#cmakedefine PSA_WANT_ECC_FRP_V1_256                            @PSA_WANT_ECC_FRP_V1_256@
+#cmakedefine PSA_WANT_ECC_MONTGOMERY_255                        @PSA_WANT_ECC_MONTGOMERY_255@
+#cmakedefine PSA_WANT_ECC_MONTGOMERY_448                        @PSA_WANT_ECC_MONTGOMERY_448@
+#cmakedefine PSA_WANT_ECC_SECP_K1_192                           @PSA_WANT_ECC_SECP_K1_192@
+#cmakedefine PSA_WANT_ECC_SECP_K1_224                           @PSA_WANT_ECC_SECP_K1_224@
+#cmakedefine PSA_WANT_ECC_SECP_K1_256                           @PSA_WANT_ECC_SECP_K1_256@
+#cmakedefine PSA_WANT_ECC_SECP_R1_192                           @PSA_WANT_ECC_SECP_R1_192@
+#cmakedefine PSA_WANT_ECC_SECP_R1_224                           @PSA_WANT_ECC_SECP_R1_224@
+#cmakedefine PSA_WANT_ECC_SECP_R1_256                           @PSA_WANT_ECC_SECP_R1_256@
+#cmakedefine PSA_WANT_ECC_SECP_R1_384                           @PSA_WANT_ECC_SECP_R1_384@
+#cmakedefine PSA_WANT_ECC_SECP_R1_521                           @PSA_WANT_ECC_SECP_R1_521@
+#cmakedefine PSA_WANT_ECC_SECP_R2_160                           @PSA_WANT_ECC_SECP_R2_160@
+#cmakedefine PSA_WANT_ECC_SECT_K1_163                           @PSA_WANT_ECC_SECT_K1_163@
+#cmakedefine PSA_WANT_ECC_SECT_K1_233                           @PSA_WANT_ECC_SECT_K1_233@
+#cmakedefine PSA_WANT_ECC_SECT_K1_239                           @PSA_WANT_ECC_SECT_K1_239@
+#cmakedefine PSA_WANT_ECC_SECT_K1_283                           @PSA_WANT_ECC_SECT_K1_283@
+#cmakedefine PSA_WANT_ECC_SECT_K1_409                           @PSA_WANT_ECC_SECT_K1_409@
+#cmakedefine PSA_WANT_ECC_SECT_K1_571                           @PSA_WANT_ECC_SECT_K1_571@
+#cmakedefine PSA_WANT_ECC_SECT_R1_163                           @PSA_WANT_ECC_SECT_R1_163@
+#cmakedefine PSA_WANT_ECC_SECT_R1_233                           @PSA_WANT_ECC_SECT_R1_233@
+#cmakedefine PSA_WANT_ECC_SECT_R1_283                           @PSA_WANT_ECC_SECT_R1_283@
+#cmakedefine PSA_WANT_ECC_SECT_R1_409                           @PSA_WANT_ECC_SECT_R1_409@
+#cmakedefine PSA_WANT_ECC_SECT_R1_571                           @PSA_WANT_ECC_SECT_R1_571@
+#cmakedefine PSA_WANT_ECC_SECT_R2_163                           @PSA_WANT_ECC_SECT_R2_163@
+#cmakedefine PSA_WANT_ECC_TWISTED_EDWARDS_255                   @PSA_WANT_ECC_TWISTED_EDWARDS_255@
+#cmakedefine PSA_WANT_ECC_TWISTED_EDWARDS_448                   @PSA_WANT_ECC_TWISTED_EDWARDS_448@
+#cmakedefine PSA_WANT_GENERATE_RANDOM                           @PSA_WANT_GENERATE_RANDOM@
+#cmakedefine PSA_WANT_KEY_TYPE_AES                              @PSA_WANT_KEY_TYPE_AES@
+#cmakedefine PSA_WANT_KEY_TYPE_CHACHA20                         @PSA_WANT_KEY_TYPE_CHACHA20@
+#cmakedefine PSA_WANT_KEY_TYPE_DERIVE                           @PSA_WANT_KEY_TYPE_DERIVE@
+#cmakedefine PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_BASIC               @PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_BASIC@
+#cmakedefine PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE              @PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE@
+#cmakedefine PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT              @PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT@
+#cmakedefine PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE            @PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE@
+#cmakedefine PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT              @PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT@
+#cmakedefine PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY                   @PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY@
+#cmakedefine PSA_WANT_KEY_TYPE_HMAC                             @PSA_WANT_KEY_TYPE_HMAC@
+#cmakedefine PSA_WANT_KEY_TYPE_PASSWORD                         @PSA_WANT_KEY_TYPE_PASSWORD@
+#cmakedefine PSA_WANT_KEY_TYPE_PASSWORD_HASH                    @PSA_WANT_KEY_TYPE_PASSWORD_HASH@
+#cmakedefine PSA_WANT_KEY_TYPE_PEPPER                           @PSA_WANT_KEY_TYPE_PEPPER@
+#cmakedefine PSA_WANT_KEY_TYPE_RAW_DATA                         @PSA_WANT_KEY_TYPE_RAW_DATA@
+#cmakedefine PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_BASIC               @PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_BASIC@
+#cmakedefine PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE              @PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE@
+#cmakedefine PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_EXPORT              @PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_EXPORT@
+#cmakedefine PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_GENERATE            @PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_GENERATE@
+#cmakedefine PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_IMPORT              @PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_IMPORT@
+#cmakedefine PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY                   @PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY@
+#cmakedefine PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_BASIC           @PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_BASIC@
+#cmakedefine PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE          @PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE@
+#cmakedefine PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_EXPORT          @PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_EXPORT@
+#cmakedefine PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_GENERATE        @PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_GENERATE@
+#cmakedefine PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_IMPORT          @PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_IMPORT@
+#cmakedefine PSA_WANT_KEY_TYPE_SPAKE2P_PUBLIC_KEY               @PSA_WANT_KEY_TYPE_SPAKE2P_PUBLIC_KEY@
+#cmakedefine PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_BASIC               @PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_BASIC@
+#cmakedefine PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_DERIVE              @PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_DERIVE@
+#cmakedefine PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_EXPORT              @PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_EXPORT@
+#cmakedefine PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_IMPORT              @PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_IMPORT@
+#cmakedefine PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY                   @PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY@
+#cmakedefine PSA_WANT_RSA_KEY_SIZE_1024                         @PSA_WANT_RSA_KEY_SIZE_1024@
+#cmakedefine PSA_WANT_RSA_KEY_SIZE_1536                         @PSA_WANT_RSA_KEY_SIZE_1536@
+#cmakedefine PSA_WANT_RSA_KEY_SIZE_2048                         @PSA_WANT_RSA_KEY_SIZE_2048@
+#cmakedefine PSA_WANT_RSA_KEY_SIZE_3072                         @PSA_WANT_RSA_KEY_SIZE_3072@
+#cmakedefine PSA_WANT_RSA_KEY_SIZE_4096                         @PSA_WANT_RSA_KEY_SIZE_4096@
+#cmakedefine PSA_WANT_RSA_KEY_SIZE_6144                         @PSA_WANT_RSA_KEY_SIZE_6144@
+#cmakedefine PSA_WANT_RSA_KEY_SIZE_8192                         @PSA_WANT_RSA_KEY_SIZE_8192@
+#cmakedefine PSA_WANT_ALG_SP800_108_COUNTER_CMAC                @PSA_WANT_ALG_SP800_108_COUNTER_CMAC@
+#cmakedefine PSA_WANT_ALG_SP800_108_COUNTER_HMAC                @PSA_WANT_ALG_SP800_108_COUNTER_HMAC@
+
+/* The Adjusting is done in this file */
+#define PSA_CRYPTO_ADJUST_KEYPAIR_TYPES_H
+
+#endif /* PSA_CRYPTO_CONFIG_H */

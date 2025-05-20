@@ -1,0 +1,43 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig HW_ID_LIBRARY
+	bool "Hardware ID"
+	select HWINFO
+	help
+	  Provides a unified interface for fetching a unique device ID from hardware.
+
+if HW_ID_LIBRARY
+
+choice HW_ID_LIBRARY_SOURCE
+	prompt "HW ID source type"
+	default HW_ID_LIBRARY_SOURCE_DEVICE_ID
+
+config HW_ID_LIBRARY_SOURCE_IMEI
+	bool "IMEI"
+	depends on NRF_MODEM_LIB
+
+config HW_ID_LIBRARY_SOURCE_UUID
+	bool "UUID"
+	depends on MODEM_JWT
+	help
+	  This option requires modem firmware v1.3.0 or higher.
+
+config HW_ID_LIBRARY_SOURCE_BLE_MAC
+	bool "BLE MAC address"
+	depends on BT
+
+config HW_ID_LIBRARY_SOURCE_NET_MAC
+	bool "network MAC address"
+	depends on NETWORKING
+
+config HW_ID_LIBRARY_SOURCE_DEVICE_ID
+	bool "Device ID"
+	depends on HWINFO
+
+endchoice # HW_ID_LIBRARY_SOURCE
+
+endif # HW_ID_LIBRARY

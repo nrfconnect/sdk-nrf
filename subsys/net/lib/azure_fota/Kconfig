@@ -1,0 +1,66 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig AZURE_FOTA
+	bool "Azure FOTA library [EXPERIMENTAL]"
+	depends on FOTA_DOWNLOAD
+	depends on CJSON_LIB
+	depends on !BOARD_QEMU_X86
+	select EXPERIMENTAL
+	default y if AZURE_IOT_HUB
+
+if AZURE_FOTA
+
+config AZURE_FOTA_VERSION_MAX_LEN
+	int "Version string buffer size"
+	default 64
+
+config AZURE_FOTA_JOB_ID_MAX_LEN
+	int "Job ID string buffer size"
+	default 40
+
+config AZURE_FOTA_APP_VERSION_AUTO
+	bool "Automatically create application version"
+	help
+	  Automatically create app version string using the output from the
+	  git command 'git describe'
+
+config AZURE_FOTA_APP_VERSION
+	string "Application version"
+	default "0.0.0-dev"
+	help
+	  The application version is reported to the device twin and
+	  indicates the current firmware version on the device.
+
+config AZURE_FOTA_TLS
+	bool "Use HTTPS for downloads"
+	default y
+	help
+	  Currently, the transport protocol must be configured at compile time.
+	  Disable this option to use HTTP without security.
+
+config AZURE_FOTA_SEC_TAG
+	int "TLS sec tag"
+	default -1
+	help
+	  A security tag is a positive integer that serves as pointer to the
+	  location of the relevant certificates in the certificate storage of
+	  the device. A value of -1 indicates that no certificates are
+	  provisioned, which in most cases mean that a TLS connection will
+	  not be successfully established.
+
+config AZURE_FOTA_DOWNLOAD_PORT
+	int "Port number"
+	default 443 if AZURE_FOTA_TLS
+	default 80
+
+module=AZURE_FOTA
+module-dep=LOG
+module-str=Log level for Azure FOTA
+module-help=Enables Azure FOTA log messages.
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # AZURE_FOTA

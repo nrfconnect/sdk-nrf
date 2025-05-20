@@ -1,0 +1,94 @@
+Server setup
+------------
+
+The following instructions describe how to register your device to `Leshan Demo Server`_ or `Coiote Device Management server`_:
+
+1. To add the device to the LwM2M Server, complete the following steps:
+
+   .. tabs::
+
+      .. tab:: Leshan Demo Server
+
+         1. Open the `Leshan Demo Server web UI`_.
+         #. Click on :guilabel:`SECURITY` in the upper right corner in the UI.
+         #. Click on :guilabel:`ADD SECURITY INFORMATION`.
+         #. Enter the following data and click :guilabel:`ADD`:
+
+            * Endpoint - urn\:imei\:*your Device IMEI*
+            * Security Mode - psk
+            * Identity: - urn\:imei\:*your Device IMEI*
+            * Key - your key (for example, ``000102030405060708090a0b0c0d0e0f``)
+
+      .. tab:: Coiote Device Management
+
+         .. coiote_start
+
+         If bootstrap is enabled, you can skip the following steps.
+         The bootstrap server creates the management device automatically during the bootstrap.
+
+         1. Open `Coiote Device Management server`_.
+         #. Click on :guilabel:`Device inventory` in the left menu in the UI.
+         #. Click on :guilabel:`Add new device`.
+         #. Click on :guilabel:`Connect your LwM2M device directly via the management server`.
+         #. Enter the following data and click :guilabel:`Add device`:
+
+            * Endpoint - urn\:imei\:*your Device IMEI*
+            * Friendly Name - *recognizable name*
+            * Security mode - psk (Pre-Shared Key)
+            * Key - your key (for example, ``000102030405060708090a0b0c0d0e0f``)
+
+            Also, make sure to select the :guilabel:`Key in hexadecimal` checkbox.
+
+         .. coiote_end
+
+   .. _bootstrap_server_reg:
+
+2. To register the device to an LwM2M Bootstrap Server, complete the following steps:
+
+   .. tabs::
+
+      .. tab:: Leshan Demo Server
+
+         1. Open the `Leshan Bootstrap Server Demo web UI <public Leshan Bootstrap Server Demo_>`_.
+         #. Click on :guilabel:`BOOTSTRAP` in the top right corner.
+         #. In the :guilabel:`BOOTSTRAP` tab, click on :guilabel:`ADD CLIENTS CONFIGURATION`.
+         #. Click on :guilabel:`Add clients configuration`.
+         #. Enter your Client Endpoint name - urn\:imei\:*your device IMEI*.
+         #. Click :guilabel:`NEXT` and select :guilabel:`Using (D)TLS` and enter following data:
+
+            * Identity - urn\:imei\:*your device IMEI*
+            * Key - your key (for example, ``000102030405060708090a0b0c0d0e0f``)
+         #. Click :guilabel:`NEXT` and leave default paths to be deleted.
+         #. Click :guilabel:`NEXT` and in the :guilabel:`LWM2M Server Configuration` section, enter the following data:
+
+            * Server URL - ``coaps://leshan.eclipseprojects.io:5684``
+            * Select :guilabel:`Pre-shared Key` as the :guilabel:`Security Mode`
+            * Identity - urn\:imei\:*your device IMEI*
+            * Key - your key (for example, ``000102030405060708090a0b0c0d0e0f``)
+
+            This information is used when your client connects to the server.
+            If you choose :guilabel:`Pre-shared Key`, you must add the values for :guilabel:`Identity` and :guilabel:`Key` fields (the configured Key need not match the Bootstrap Server configuration).
+            |dtls_support|
+
+         #. Click :guilabel:`NEXT` and do not select :guilabel:`Add a Bootstrap Server`.
+         #. Click :guilabel:`ADD`.
+
+
+      .. tab:: Coiote Device Management
+
+         1. Open `Coiote Device Management server`_.
+         #. Click on :guilabel:`Device inventory` in the menu on the left.
+         #. Click on :guilabel:`Add new device`.
+         #. Click on :guilabel:`Connect your LwM2M device via the Bootstrap server`.
+         #. Enter the following data and click :guilabel:`Configuration`:
+
+            * Endpoint - urn\:imei\:*your Device IMEI*
+            * Friendly Name - *recognisable name*
+            * Security mode - psk (Pre-Shared Key)
+            * Key - your key (for example, ``000102030405060708090a0b0c0d0e0f``)
+
+            Also, make sure to select the :guilabel:`Key in hexadecimal` checkbox.
+
+            The Coiote Bootstrap server automatically creates an account for the LwM2M Server using the same device endpoint name and random PSK key.
+
+         #. Click :guilabel:`Add device`.

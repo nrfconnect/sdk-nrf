@@ -1,0 +1,71 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <zephyr/dt-bindings/ipc_service/static_vrings.h>
+
+/ {
+	/* The timer instance to use. */
+	chosen {
+		ncs,dm-timer = &timer2;
+	};
+
+	chosen {
+		/delete-property/ zephyr,ipc_shm;
+	};
+
+	reserved-memory {
+		/delete-node/ memory@20070000;
+
+		sram_ipc0: memory@20070000 {
+			reg = <0x20070000 0x8000>;
+		};
+
+		sram_ipc1: memory@20078000 {
+			reg = <0x20078000 0x8000>;
+		};
+	};
+
+	ipc {
+		/delete-node/ ipc0;
+
+		ipc0: ipc0 {
+			compatible = "zephyr,ipc-openamp-static-vrings";
+			memory-region = <&sram_ipc0>;
+			mboxes = <&mbox 0>, <&mbox 1>;
+			mbox-names = "rx", "tx";
+			role = "remote";
+			status = "okay";
+		};
+
+		ipc1: ipc1 {
+			compatible = "zephyr,ipc-openamp-static-vrings";
+			memory-region = <&sram_ipc1>;
+			mboxes = <&mbox 2>, <&mbox 3>;
+			mbox-names = "rx", "tx";
+			role = "remote";
+			zephyr,buffer-size = <2048>;
+			status = "okay";
+		};
+	};
+
+
+	/* The selected pins will be used by Distance Measurement module for debug purposes.
+	 *
+	 * Note: Pay attention to select the same GPIO pins
+	 * in the application core DTS overlay's gpio_fwd node.
+	 */
+	dm_gpio {
+		compatible = "gpio-leds";
+		dm_ranging: dm-ranging {
+			gpios = <&gpio0 27 GPIO_ACTIVE_LOW>;
+			label = "DM Ranging Pin";
+		};
+		dm_add_request: dm-add-request {
+			gpios = <&gpio0 26 GPIO_ACTIVE_LOW>;
+			label = "DM Add request Pin";
+		};
+	};
+};

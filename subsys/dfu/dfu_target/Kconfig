@@ -1,0 +1,165 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DFU_TARGET
+	bool "Device Firmware Upgrade target API"
+
+if (DFU_TARGET)
+
+config DFU_TARGET_MCUBOOT
+	bool "MCUBoot update support"
+	default y
+	depends on IMG_MANAGER
+	depends on BOOTLOADER_MCUBOOT
+	select DFU_TARGET_STREAM
+	imply MPU_ALLOW_FLASH_WRITE
+	help
+	  Enable support for updates that are performed by MCUboot.
+
+config DFU_TARGET_SMP
+	bool "DFU SMP target for external update support"
+	depends on SMP_CLIENT
+	depends on MCUMGR_GRP_IMG_CLIENT
+	depends on MCUMGR_GRP_OS_CLIENT
+	select MCUMGR_GRP_OS_CLIENT_RESET
+	select MCUMGR_GRP_OS_CLIENT_ECHO
+	help
+	  Enable support for Update external MCU by SMP client.
+
+if DFU_TARGET_SMP
+
+config DFU_TARGET_SMP_IMAGE_LIST_SIZE
+	int "Supported Image list size"
+	default 2
+	help
+	  Define size for Image cache list.
+
+endif
+
+config DFU_TARGET_STREAM
+	bool "Generic DFU stream target"
+	depends on STREAM_FLASH
+	select STREAM_FLASH_ERASE if FLASH_HAS_EXPLICIT_ERASE
+
+config DFU_TARGET_MCUBOOT_SAVE_PROGRESS
+	bool "Store write progress to flash (MCUboot) [DEPRECATED]"
+	select DFU_TARGET_STREAM_SAVE_PROGRESS
+	help
+	  DFU_TARGET_MCUBOOT_SAVE_PROGRESS is deprecated, please use
+	  DFU_TARGET_STREAM_SAVE_PROGRESS instead.
+
+if DFU_TARGET_MCUBOOT_SAVE_PROGRESS
+	comment "DFU_TARGET_MCUBOOT_SAVE_PROGRESS is deprecated, please use DFU_TARGET_STREAM_SAVE_PROGRESS instead"
+endif
+
+config DFU_TARGET_STREAM_SAVE_PROGRESS
+	bool "Store write progress to flash stream"
+	depends on DFU_TARGET_STREAM || ZTEST # ZTEST for testing purposes
+	depends on SETTINGS
+	depends on !SETTINGS_NONE
+	depends on !DFU_MULTI_IMAGE
+	help
+	  Enable this option to cause dfu_target_stream to store the current
+	  write progress to flash. In case of power failure or device reset,
+	  the operation can then resume from the latest state.
+
+config DFU_TARGET_MODEM_DELTA
+	bool "Modem delta update support"
+	default y
+	depends on SOC_SERIES_NRF91X
+	help
+	  Enable support for updates to the modem firmware.
+
+if (DFU_TARGET_MODEM_DELTA)
+
+config DFU_TARGET_MODEM_TIMEOUT
+	int "Erase pending timeout"
+	default 60
+	depends on DFU_TARGET_MODEM_DELTA
+	help
+	  Set the time in seconds that the code will wait for the modem delta DFU erase
+	  to complete before generating a DFU_TARGET_EVT_TIMEOUT event.
+	  Every time this timeout is reached, a DFU_TARGET_EVT_TIMEOUT event is sent
+	  and the counting timer is reset while the erasure continues.
+	  If this timeout is reached, a disconnect of the LTE link is recommended
+	  so that the modem has time to service the delta DFU erase request.
+	  It's also possible to reboot the device to achieve the same behavior.
+
+endif # DFU_TARGET_MODEM_DELTA
+
+config DFU_TARGET_FULL_MODEM
+	bool "Full Modem update support"
+	depends on SOC_SERIES_NRF91X
+	depends on DFU_TARGET_STREAM
+	depends on STREAM_FLASH
+	depends on FMFU_FDEV
+	help
+	  Enable support for full updates to the modem firmware.
+	  Note that this requires an external flash.
+
+# Flash size required for storing full modem image
+config DFU_TARGET_FULL_MODEM_EXT_FLASH_SIZE
+	hex
+	depends on DFU_TARGET_FULL_MODEM
+	default 0x400000 if SOC_SERIES_NRF91X
+
+config DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION
+	default PM_EXTERNAL_FLASH_ENABLED
+	depends on DFU_TARGET_FULL_MODEM
+	select PM_PARTITION_REGION_FMFU_STORAGE_EXTERNAL
+	bool "Use a dedicated FMFU partition on the external flash device"
+
+config DFU_TARGET_SUIT
+	bool "SUIT DFU target support"
+	default y
+	depends on SUIT
+	depends on SUIT_ENVELOPE_INFO
+	imply MPU_ALLOW_FLASH_WRITE
+	select SUIT_UTILS
+	select ZCBOR
+	select ZCBOR_CANONICAL
+	select FLASH
+	select STREAM_FLASH
+	select DFU_TARGET_STREAM
+	help
+	  Enable support for updates using DFU target based on SUIT
+
+if DFU_TARGET_SUIT
+
+config DFU_TARGET_SUIT_CACHE_PROCESSING
+	bool "SUIT cache processing"
+	default y
+	depends on SUIT_CACHE_RW
+	help
+	  Enable SUIT cache processing to process images IDs higher than 0.
+	  This allows to store the image in the cache partitions and
+	  assign them to be processed by SUIT.
+
+config DFU_TARGET_SUIT_INITIALIZE_SUIT
+	bool "Initialize the SUIT DFU library"
+	help
+	  Initialize the SUIT library during the system startup.
+
+config DFU_TARGET_REBOOT_RESET_DELAY_MS
+	int "Set reboot reset delay in milliseconds"
+	default 0
+	help
+	  Set the delay in milliseconds for resetting the device after a reboot
+	  function is called.
+
+endif # DFU_TARGET_SUIT
+
+config DFU_TARGET_CUSTOM
+	bool "Custom application-controlled update support"
+	help
+	  Enable support for custom updates using DFU target
+
+module=DFU_TARGET
+module-dep=LOG
+module-str=Device Firmware Upgrade
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # DFU_TARGET

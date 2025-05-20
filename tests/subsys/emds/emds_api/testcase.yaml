@@ -1,0 +1,13 @@
+tests:
+  emds.api:
+    sysbuild: true
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - emds
+      - sysbuild
+      - ci_tests_subsys_emds
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp

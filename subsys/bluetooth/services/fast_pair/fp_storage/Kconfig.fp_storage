@@ -1,0 +1,125 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_FAST_PAIR_STORAGE
+	bool
+	default y
+	select SETTINGS
+	select BT_FAST_PAIR_STORAGE_AK
+	help
+	  Add Fast Pair storage source files.
+
+if BT_FAST_PAIR_STORAGE
+
+config BT_FAST_PAIR_STORAGE_MANAGER
+	bool
+	default y
+	help
+	  Add Fast Pair storage manager source files.
+
+config BT_FAST_PAIR_STORAGE_USER_RESET_ACTION
+	bool "Enable user reset action during factory reset"
+	help
+	  Enable user reset action that executes together with the Fast Pair factory reset
+	  operation within the bt_fast_pair_factory_reset API function. To define the user reset
+	  action, you need to override the weak function definition of the
+	  bt_fast_pair_factory_reset_user_action_perform symbol.
+
+config BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY
+	bool
+	help
+	  Enable support for the Owner Account Key in the Storage module.
+
+config BT_FAST_PAIR_STORAGE_AK_BOND
+	bool
+	help
+	  Enable support for the bond management in the Storage module. If this options is enabled,
+	  the Storage module tracks the Bluetooth bonds created through the Fast Pair Procedure and
+	  requests to unpair them if the Fast Pair Procedure is incomplete or the Account Key
+	  associated with the bonds is removed. It also requests to unpair the Fast Pair Bluetooth
+	  bonds on Fast Pair factory reset.
+
+config BT_FAST_PAIR_STORAGE_AK
+	bool
+	depends on BT_FAST_PAIR_STORAGE_AK_BACKEND_STANDARD || \
+		   BT_FAST_PAIR_STORAGE_AK_BACKEND_MINIMAL
+	help
+	  Enable support for the Account Key in the Storage module.
+
+choice BT_FAST_PAIR_STORAGE_AK_BACKEND
+	prompt "Account Key storage backend selection"
+	help
+	  Select the Fast Pair Account Key storage backend.
+
+config BT_FAST_PAIR_STORAGE_AK_BACKEND_STANDARD
+	bool "Account Key storage standard backend"
+	depends on !BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY
+	help
+	  Select Account Key storage standard backend. It allows for storing multiple Account Keys.
+	  It doesn't support Owner Account Key storage so it can not be used with
+	  BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY.
+
+config BT_FAST_PAIR_STORAGE_AK_BACKEND_MINIMAL
+	bool "Account Key storage minimal backend"
+	depends on BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY
+	depends on !BT_FAST_PAIR_STORAGE_AK_BOND
+	help
+	  Select Account Key storage minimal backend. It allows for storing only one Account Key,
+	  that is assumed to be an Owner Account Key.
+
+endchoice
+
+config BT_FAST_PAIR_STORAGE_ACCOUNT_KEY_MAX
+	int "Maximum number of stored Account Keys"
+	range 5 10 if BT_FAST_PAIR_STORAGE_AK_BACKEND_STANDARD
+	default 5 if BT_FAST_PAIR_STORAGE_AK_BACKEND_STANDARD
+	range 1 1 if BT_FAST_PAIR_STORAGE_AK_BACKEND_MINIMAL
+	help
+	  Maximum number of stored account keys. According to Fast Pair specification, it should be
+	  at least equal to 5. It can not be larger than 10, because then Account Key Filter length
+	  would not fit in the "field length and type" data field specified in the non-discoverable
+	  advertising packet. Locator tags are a special use-case that relies on only 1 Account Key
+	  (the Owner Account Key).
+
+config BT_FAST_PAIR_STORAGE_EXPOSE_PRIV_API
+	bool "Expose private API"
+	depends on !BT_FAST_PAIR
+	help
+	  Expose Fast Pair storage's private data structures, definitions and functionalities.
+	  The option could be used by unit tests to prepopulate settings with mocked data.
+
+config BT_FAST_PAIR_STORAGE_PN
+	bool
+	help
+	  Add Fast Pair storage source files for Personalized Name extension.
+
+if BT_FAST_PAIR_STORAGE_PN
+
+config BT_FAST_PAIR_STORAGE_PN_LEN_MAX
+	int "Maximum length of stored Fast Pair Personalized Name"
+	range 64 1024
+	default 64
+	help
+	  Maximum length of stored Fast Pair Personalized Name. According to Fast Pair
+	  specification, it should be at least equal to 64.
+
+endif # BT_FAST_PAIR_STORAGE_PN
+
+config BT_FAST_PAIR_STORAGE_FMDN_CLOCK
+	bool
+	help
+	  Add Fast Pair storage source files for the Beacon Clock used in the FMDN extension.
+
+config BT_FAST_PAIR_STORAGE_FMDN_EIK
+	bool
+	help
+	  Add Fast Pair storage source files for the EIK used in the FMDN extension.
+
+module = FP_STORAGE
+module-str = Fast Pair storage library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_FAST_PAIR_STORAGE

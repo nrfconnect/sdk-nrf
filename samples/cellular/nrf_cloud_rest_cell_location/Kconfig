@@ -1,0 +1,56 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "nRF Cloud REST Cellular Location Sample"
+
+config REST_CELL_LOCATION_SAMPLE_VERSION
+	string "The sample's version string"
+	default "1.0.0"
+
+config REST_CELL_LOCATION_DO_JITP
+	bool "Ask to perform just-in-time provisioning (JITP) via REST on startup"
+	help
+	  If a device has JITP certificates and has not yet been provisioned to
+	  nRF Cloud, enable this option and press the configured button when
+	  prompted after the sample starts.
+
+config REST_CELL_GCI_COUNT
+	int "Maximum number of cells to be searched"
+	range 2 15
+	default 5
+
+config REST_CELL_CHANGE_CONFIG
+	bool "Change the location request configuration on button press"
+	default y
+	help
+	  After attempting both single and multi cell location requests,
+	  try the next combination of the struct nrf_cloud_location_config
+	  hi_conf and fallback flags. The do_reply flag is not modified.
+
+config REST_CELL_DEFAULT_DOREPLY_VAL
+	bool "Default value for the do_reply configuration flag"
+	default y
+
+config REST_CELL_DEFAULT_FALLBACK_VAL
+	bool "Default value for the fallback configuration flag"
+	default y
+
+config REST_CELL_DEFAULT_HICONF_VAL
+	bool "Default value for the hi_conf configuration flag"
+
+config REST_CELL_SEND_DEVICE_STATUS
+	bool "Send device status to nRF Cloud on initial connection"
+	default y
+
+endmenu
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
+
+module = NRF_CLOUD_REST_CELL_LOCATION_SAMPLE
+module-str = nRF Cloud REST Cellular Location Sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

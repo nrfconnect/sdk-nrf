@@ -1,0 +1,45 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# GATEWAY
+if AUDIO_DEV = 2
+
+if AUDIO_SOURCE_USB
+
+config USB_DEVICE_STACK
+	default y
+
+# Net buf options needed for USB stack
+config NET_BUF
+	default y
+
+config USB_DEVICE_AUDIO
+	default y
+
+## TODO: Nordic VID, change accordingly
+config USB_DEVICE_VID
+	default 0x1915
+
+## TODO: Change for final product
+config USB_DEVICE_PID
+	default 0x530A
+
+config USB_DEVICE_PRODUCT
+	default "nRF5340 USB Audio"
+
+config USB_DEVICE_MANUFACTURER
+	default "Nordic Semiconductor AS"
+
+## Avoid redundant warnings for endpoint setting in USB stack
+config USB_DRIVER_LOG_LEVEL
+	default 1
+
+config USB_DEVICE_LOG_LEVEL
+	default 1
+
+endif # AUDIO_SOURCE_USB
+
+endif # AUDIO_DEV = 2 (GATEWAY)

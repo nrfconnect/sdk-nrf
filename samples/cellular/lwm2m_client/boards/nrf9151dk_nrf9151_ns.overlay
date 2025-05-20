@@ -1,0 +1,10 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* External flash device is disabled by default */
+&gd25wb256 {
+	status = "okay";
+};

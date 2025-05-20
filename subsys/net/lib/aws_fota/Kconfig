@@ -1,0 +1,32 @@
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig AWS_FOTA
+	bool "AWS Jobs FOTA library"
+	select AWS_JOBS
+	select CJSON_LIB
+	select HTTP_PARSER_URL
+	depends on FOTA_DOWNLOAD
+	depends on !BOARD_QEMU_X86
+	default y if AWS_IOT
+
+if AWS_FOTA
+
+config AWS_FOTA_PAYLOAD_SIZE
+	int "MQTT payload reception buffer size for AWS IoT Jobs messages"
+	default 1350
+
+config AWS_FOTA_DOWNLOAD_SECURITY_TAG
+	int "Security tag to be used for downloads"
+	default -1
+
+
+module=AWS_FOTA
+module-dep=LOG
+module-str=Log level for AWS Jobs FOTA
+module-help=Enables AWS Jobs FOTA log messages.
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # AWS_FOTA

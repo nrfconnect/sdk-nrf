@@ -1,0 +1,20 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		ncs,slm-uart = &uart2;
+	};
+};
+
+&uart2 {
+	status = "okay";
+};
+
+/* uart0 is not needed if no logging is received there. */
+&uart0 {
+	status = "disabled";
+};

@@ -1,0 +1,2 @@
+1. Open the |nRFVSC|.
+#. Complete the steps listed on the `How to build an application`_ page in the |nRFVSC| documentation.

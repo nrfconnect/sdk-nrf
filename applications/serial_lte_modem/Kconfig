@@ -1,0 +1,236 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Nordic Serial LTE Modem"
+
+config SLM_CUSTOMER_VERSION
+	string "Customer version string"
+	help
+	   This version is reported together with baseline versions by AT command "#XSLMVER".
+
+config SLM_AT_MAX_PARAM
+	int "Maximum number of parameters in AT command"
+	default 42
+
+#
+# external XTAL for UART
+#
+config SLM_EXTERNAL_XTAL
+	bool "Use external XTAL for UARTE"
+	default y
+
+#
+# AT command terminator
+#
+choice
+	prompt "Termination mode"
+	default SLM_CR_LF_TERMINATION
+	help
+		Sets the command terminator used by the serial terminal.
+		Available options are:
+		-  CR termination
+		-  LF termination
+		-  CR+LF termination
+	config SLM_CR_TERMINATION
+		bool "CR termination"
+	config SLM_LF_TERMINATION
+		bool "LF termination"
+	config SLM_CR_LF_TERMINATION
+		bool "CR+LF termination"
+endchoice
+
+#
+# UART buffers (when CMUX is not in use)
+#
+config SLM_UART_RX_BUF_COUNT
+	int "Receive buffers for UART"
+	range 2 4
+	default 3
+	help
+	  Amount of buffers for receiving (RX) UART traffic.
+	  If the buffers are full, UART RX will be disabled until the buffers are processed.
+	  These buffers are not used when CMUX is in use.
+
+config SLM_UART_RX_BUF_SIZE
+	int "Receive buffer size for UART"
+	range 128 4096
+	default 256
+	help
+	  Amount of received (RX), unprocessed, UART traffic that can be held by single buffer.
+	  These buffers are not used when CMUX is in use.
+
+config SLM_UART_TX_BUF_SIZE
+	int "Send buffer size for UART"
+	range 128 4096
+	default 256
+	help
+	  Amount of UART traffic waiting to be sent (TX), that can be held.
+	  If the buffers are full, will send synchronously.
+	  These buffers are not used when CMUX is in use.
+
+#
+# GPIO functionality
+#
+config SLM_START_SLEEP
+	bool "Enter sleep on startup"
+	help
+	  If enabled, the SiP is put into deep sleep when powered on.
+	  It can then be started using SLM_POWER_PIN.
+
+config SLM_POWER_PIN
+	int "Power pin"
+	default -1
+	help
+	  Interface GPIO pin used to put the SiP into deep sleep and wake up from it or exit idle.
+	  The pin is configured with a pull up and must be pulled down shortly to perform one power off or wake up operation.
+
+config SLM_INDICATE_PIN
+	int "Indicate pin"
+	default -1
+	help
+	  Interface GPIO pin used to indicate that data is available when SLM is idle (after #XSLEEP=2 AT command).
+
+config SLM_INDICATE_TIME
+	int "Indication period"
+	default 100
+	help
+	  GPIO active indication time in milliseconds. This setting specify the period length for the pin to be active
+
+#
+# LTE network automatic attach
+#
+config SLM_AUTO_CONNECT
+	bool "Automatically connect to the LTE network on start-up or after a reset"
+	help
+	  Enables automatic connection to the LTE network using the PDN configuration defined in 'slm_auto_connect.h'.
+
+#
+# TCP/TLS proxy
+#
+config SLM_TCP_POLL_TIME
+	int "Poll time-out in seconds for TCP connection"
+	default 10
+
+config SLM_UDP_POLL_TIME
+	int "Poll time-out in seconds for UDP connection"
+	default 10
+
+#
+# Data mode
+#
+config SLM_DATAMODE_TERMINATOR
+	string "Pattern string to terminate data mode"
+	default "+++"
+	help
+	  Use a pattern to terminate data mode
+
+config SLM_DATAMODE_URC
+	bool "Send URC in data mode"
+	help
+	  Report result of data mode sending
+
+config SLM_DATAMODE_BUF_SIZE
+	int "Buffer size for data mode"
+	range 1024 8192
+	default 4096
+	help
+	  Size of the buffer for data received in data mode.
+
+#
+# Configurable services
+#
+config SLM_SMS
+	bool "SMS support in SLM"
+	default y
+	select SMS
+	help
+	  Support SMS send/receive in plain text
+
+config SLM_GNSS
+	bool "GNSS support in SLM"
+	default y
+
+config SLM_NRF_CLOUD
+	bool "nRF Cloud support in SLM"
+	default y
+
+config SLM_FULL_FOTA
+	bool "Full modem FOTA support in SLM"
+	default n
+	depends on !BOARD_THINGY91_NRF9160_NS
+
+config SLM_PPP
+	bool "PPP support in SLM"
+	help
+	  When enabled, SLM automatically brings up/down the PPP link
+	  when the LTE link (default PDN) is connected/disconnected,
+	  regardless of what is done with AT#XPPP.
+
+if SLM_PPP
+
+config SLM_PPP_FALLBACK_MTU
+	int "Fallback MTU to be used by PPP"
+	default 1280
+	help
+	  PPP tries to retrieve the cellular link MTU from the modem (using `AT+CGCONTRDP=0`).
+	  If no MTU is returned by the modem, this value will be used as a fallback.
+	  The MTU will be used for sending and receiving of data on both the PPP and cellular links.
+
+endif
+
+config SLM_CMUX
+	bool "CMUX support in SLM"
+
+config SLM_CMUX_UART_BUFFER_SIZE
+	int "UART buffer size for CMUX"
+	depends on SLM_CMUX
+	default 6000
+	help
+	  Size of the buffer for data received in CMUX mode.
+	  Same buffer size is used for both RX and TX.
+
+if SLM_CMUX && SLM_PPP
+
+config SLM_CMUX_AUTOMATIC_FALLBACK_ON_PPP_STOPPAGE
+	bool "AT channel automatic fallback to DLCI 1 when PPP stops."
+	help
+	  This is mainly intended for compatibility with Zephyr's cellular modem driver.
+	  If enabled, when PPP stops (which happens automatically when the LTE link goes down)
+	  CMUX will make the AT channel be on DLCI 1. This only has an effect if it had been
+	  configured to be elsewhere, e.g. with AT#XCMUX=2.
+
+endif
+
+if SLM_CMUX || SLM_PPP
+
+config SLM_MODEM_PIPE_TIMEOUT
+	int "Timeout for the CMUX and PPP modem pipe operations in seconds"
+	default 10
+
+endif
+
+config SLM_SKIP_READY_MSG
+	bool "Skip ready message"
+	help
+	  Skip sending the ready message when the application is powered on.
+
+
+module = SLM
+module-str = serial modem
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+rsource "src/ftp_c/Kconfig"
+rsource "src/mqtt_c/Kconfig"
+rsource "src/http_c/Kconfig"
+rsource "src/twi/Kconfig"
+rsource "src/gpio/Kconfig"
+rsource "src/lwm2m_carrier/Kconfig"
+rsource "src/gnss/Kconfig"
+rsource "src/nativetls/Kconfig"
+
+endmenu

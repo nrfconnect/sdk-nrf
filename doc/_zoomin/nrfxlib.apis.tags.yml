@@ -1,0 +1,10 @@
+# Document tags for Zoomin.
+
+# Tags for all topics:
+mapping_global:
+  - nrfxlib-apis
+  - nrfxlib-apis-__VERSION__
+  - cluster-nrfxlib-apis-__VERSION__
+
+# Tags for individual topics:
+mapping_topics: []

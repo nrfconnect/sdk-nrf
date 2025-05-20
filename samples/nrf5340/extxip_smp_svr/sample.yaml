@@ -1,0 +1,36 @@
+sample:
+  description: Simple Management Protocol sample (with external QSPI XIP flash support)
+  name: ext xip smp svr
+common:
+  sysbuild: true
+  harness: console
+  harness_config:
+    type: one_line
+    ordered: true
+    regex:
+      - "<inf> smp_sample: build time:"
+  platform_allow:
+    - nrf5340dk/nrf5340/cpuapp
+    - thingy53/nrf5340/cpuapp
+  integration_platforms:
+    - nrf5340dk/nrf5340/cpuapp
+    - thingy53/nrf5340/cpuapp
+  tags:
+    - ci_samples_nrf5340
+tests:
+  sample.mcumgr.smp_svr.ext_xip:
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp/ns
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp/ns
+  sample.mcumgr.smp_svr.ext_xip.no_network_core:
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp/ns
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp/ns
+    extra_args:
+      - FILE_SUFFIX=no_network_core
+  # direct-xip mode not supported on TF-M builds
+  sample.mcumgr.smp_svr.ext_xip.no_network_core.directxip:
+    extra_args:
+      - FILE_SUFFIX=no_network_core_directxip

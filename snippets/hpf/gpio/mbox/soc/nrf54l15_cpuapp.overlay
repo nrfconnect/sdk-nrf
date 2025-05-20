@@ -1,0 +1,73 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../../hpf-gpio-app.overlay"
+
+/ {
+	soc {
+		reserved-memory {
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			cpuflpr_code_partition: image@17a000 {
+				reg = <0x17a000 DT_SIZE_K(12)>;
+			};
+
+			sram_rx: memory@2003c000 {
+				reg = <0x2003c000 0x0800>;
+			};
+
+			sram_tx: memory@2003c800 {
+				reg = <0x2003c800 0x0800>;
+			};
+		};
+
+
+		cpuflpr_sram_code_data: memory@2003d000 {
+			compatible = "mmio-sram";
+			reg = <0x2003d000 DT_SIZE_K(12)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0x0 0x2003d000 0x3000>;
+		};
+	};
+
+	mbox_consumer {
+		compatible = "vnd,mbox-consumer";
+		mboxes = <&cpuapp_vevif_rx 20>, <&cpuapp_vevif_tx 16>;
+		mbox-names = "rx", "tx";
+	};
+};
+
+&cpuapp_rram {
+	reg = <0x0 DT_SIZE_K(1512)>;
+};
+
+&cpuapp_sram {
+	reg = <0x20000000 DT_SIZE_K(244)>;
+	ranges = <0x0 0x20000000 0x3d000>;
+};
+
+&cpuflpr_vpr {
+	execution-memory = <&cpuflpr_sram_code_data>;
+	source-memory = <&cpuflpr_code_partition>;
+};
+
+&gpio2 {
+	status = "disabled";
+};
+
+&cpuapp_vevif_rx {
+	status = "okay";
+};
+
+&cpuapp_vevif_tx {
+	status = "okay";
+};
+
+&hpf_gpio {
+	status = "okay";
+};

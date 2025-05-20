@@ -1,0 +1,218 @@
+name: Documentation Build
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+      - 'v*-branch'
+    paths:
+      - '.github/workflows/docbuild.yml'
+      - '**.rst'
+      - '**/Kconfig'
+      - '**/sample.yaml'
+      - 'doc/**'
+      - 'applications/**'
+      - 'include/**'
+      - 'lib/**'
+      - 'doc/requirements.txt'
+      - 'scripts/tools-versions-*.yml'
+      - 'west.yml'
+  push:
+    branches:
+      - main
+      - 'v*-branch'
+    tags:
+      - v*
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - name: Checkout sources
+        uses: nrfconnect/action-checkout-west-update@main
+        with:
+          git-fetch-depth: 0
+
+      - name: cache-pip
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-doc-pip
+
+      - name: Install packages
+        run: |
+          sudo apt update
+          sudo apt-get install -y ninja-build mscgen plantuml
+          sudo snap install yq
+          DOXYGEN_VERSION=$(yq ".doxygen.version" ./ncs/nrf/scripts/tools-versions-linux.yml)
+          wget --no-verbose "https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_VERSION//./_}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz"
+          tar xf doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
+          echo "${PWD}/doxygen-${DOXYGEN_VERSION}/bin" >> $GITHUB_PATH
+
+      - name: Install Python dependencies
+        working-directory: ncs
+        run: |
+          pip install -r nrf/doc/requirements.txt
+
+      - name: West zephyr-export
+        working-directory: ncs
+        run: |
+          west zephyr-export
+
+      - name: Build documentation
+        working-directory: ncs/nrf
+        run: |
+          if [[ "${{ github.event_name }}" == "push" ]]; then
+            BUILD_CONF="-DDTS_BINDINGS=ON -DHW_FEATURES=ON"
+          fi
+
+          cmake -GNinja -Bdoc/_build -Sdoc -DSPHINXOPTS_EXTRA="-q" ${BUILD_CONF}
+          ninja -C doc/_build
+
+      - name: Check version
+        run: |
+          VERSION_REGEX="^v([0-9a-zA-Z\.\-]+)$"
+          if [[ ${GITHUB_REF#refs/tags/} =~ $VERSION_REGEX ]]; then
+            VERSION=${BASH_REMATCH[1]}
+          elif [[ ${GITHUB_REF#refs/heads/} == "main" ]]; then
+            VERSION="latest"
+          elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            VERSION="pr-${{ github.event.number }}"
+          fi
+
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+
+      - name: Prepare legacy upload
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'external') || contains(github.event.pull_request.labels.*.name, 'CI-trusted-author') }}
+        working-directory: ncs/nrf
+        run: |
+          MONITOR="monitor_${{ github.run_id }}.txt"
+
+          # Create documentation upload files
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            ARCHIVE="legacy-ncs-pr-${{ github.event.number }}.zip"
+            echo "publish2 dev PR-${{ github.event.number }} ${ARCHIVE}" > "${MONITOR}"
+            echo "${{ github.event.number }}" > pr.txt
+          else
+            if [ -z "${VERSION}" ]; then
+              echo "Not a release or latest, skipping publish"
+              exit 0
+            fi
+
+            ARCHIVE="legacy-ncs-${VERSION}.zip"
+            echo "publish2 main ${VERSION} ${ARCHIVE}" > "${MONITOR}"
+          fi
+
+          cd doc/_build/html
+          zip -rq "${ARCHIVE}" .
+          mv "${ARCHIVE}" ../../../
+
+      - name: Prepare Zoomin upload
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'external') || contains(github.event.pull_request.labels.*.name, 'CI-trusted-author') }}
+        working-directory: ncs/nrf
+        run: |
+          ROOT="$PWD"
+
+          # Doxygen APIs combined with Sphinx
+          declare -a SPHINX_DOXYGEN=("nrf" "nrfxlib" "zephyr")
+
+          mkdir doc/_build/html-doxygen
+
+          for docset in "${SPHINX_DOXYGEN[@]}"; do
+            OUTDIR=doc/_build/html-doxygen/$docset-apis
+            mv doc/_build/html/$docset/doxygen/html "$OUTDIR"
+
+            # Populate custom.properties, tags.yml
+            cp doc/_zoomin/$docset.apis.custom.properties "$OUTDIR/custom.properties"
+            sed -i 's/__VERSION__/'"$VERSION"'/g' "$OUTDIR/custom.properties"
+
+            cp doc/_zoomin/$docset.apis.tags.yml "$OUTDIR/tags.yml"
+            sed -i 's/__VERSION__/'"$VERSION"'/g' "$OUTDIR/tags.yml"
+
+            # Patch links from Sphinx to Doxygen APIs
+            find doc/_build/html/$docset -type f -name "*.html" -exec \
+              sed -ri "/href=\"([^\"]+)\/doxygen\/html\/([^\"]+)\"/{s//href=\"\1\/..\/..\/..\/$docset-apis-$VERSION\/page\/\2\"/g; :a s/__/_/g;ta; }" {} \;
+
+            pushd "$OUTDIR"
+            ARCHIVE="$docset-apis-$VERSION.zip"
+            zip -rq "$ARCHIVE" .
+            mv "$ARCHIVE" "$ROOT"
+            popd
+          done
+
+          # Doxygen APIs standalone
+          declare -a DOXYGEN=("nrfx" "wifi")
+
+          for docset in "${DOXYGEN[@]}"; do
+            OUTDIR=doc/_build/html-doxygen/$docset-apis
+            mv doc/_build/html/$docset/html "$OUTDIR"
+
+            # Populate custom.properties, tags.yml
+            cp doc/_zoomin/$docset.apis.custom.properties "$OUTDIR/custom.properties"
+            sed -i 's/__VERSION__/'"$VERSION"'/g' "$OUTDIR/custom.properties"
+
+            cp doc/_zoomin/$docset.apis.tags.yml "$OUTDIR/tags.yml"
+            sed -i 's/__VERSION__/'"$VERSION"'/g' "$OUTDIR/tags.yml"
+
+            pushd "$OUTDIR"
+            ARCHIVE="$docset-apis-$VERSION.zip"
+            zip -rq "$ARCHIVE" .
+            mv "$ARCHIVE" "$ROOT"
+            popd
+          done
+
+          # NCS
+          OUTDIR=doc/_build/html
+
+          # Populate custom.properties, tags.yml
+          cp doc/_zoomin/ncs.custom.properties "$OUTDIR/custom.properties"
+          sed -i 's/__VERSION__/'"$VERSION"'/g' "$OUTDIR/custom.properties"
+
+          cp doc/_zoomin/ncs.tags.yml "$OUTDIR/tags.yml"
+          sed -i 's/__VERSION__/'"$VERSION"'/g' "$OUTDIR/tags.yml"
+
+          ARCHIVE="ncs-$VERSION.zip"
+          pushd "$OUTDIR"
+          zip -rq "$ARCHIVE" .
+          mv "$ARCHIVE" "$ROOT"
+          popd
+
+      - name: Find nRF Connect SDK Edited Documents
+        working-directory: ncs/nrf
+        run: |
+          COMMENT="comment.txt"
+          PREFIX="https://ncsdoc.z6.web.core.windows.net/PR-${{ github.event.pull_request.number }}/"
+          CHANGED=$(git diff --name-only --diff-filter=d "${{ github.event.pull_request.base.sha }}..HEAD")
+
+          echo "You can find the documentation preview for this PR [here](${PREFIX})." >> $COMMENT
+
+          NRF=$(echo "$CHANGED" | \
+                grep -e "doc/nrf/" | \
+                grep -e ".rst" | \
+                sed -e "s#^doc/nrf\(.*\)\.rst#${PREFIX}nrf\1.html#g")
+
+          NRF_EXT=$(echo "$CHANGED" | \
+                    grep -e "applications/" -e "samples/" -e "scripts/" -e "tests/" | \
+                    grep -e ".rst" | \
+                    sed -e "s#^\(applications\|samples\|scripts\|tests\)\(.*\)\.rst#${PREFIX}nrf\/\1\2.html#g")
+
+          NRF_ALL=$(printf "$NRF\n$NRF_EXT")
+
+          if [ ! -z "$NRF_ALL" ]; then
+            printf "\nPreview links for modified nRF Connect SDK documents:\n\n$NRF_ALL" >> $COMMENT
+          fi
+
+      - name: Store
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'external') || contains(github.event.pull_request.labels.*.name, 'CI-trusted-author') }}
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4
+        with:
+          name: docs
+          path: |
+            ncs/nrf/*.zip
+            ncs/nrf/monitor*.txt
+            ncs/nrf/pr.txt
+            ncs/nrf/comment.txt

@@ -1,0 +1,64 @@
+sample:
+  name: LwM2M carrier sample
+tests:
+  sample.cellular.lwm2m_carrier:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+    platform_allow:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
+  sample.cellular.lwm2m_carrier.shell:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+    platform_allow:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+    extra_args: EXTRA_CONF_FILE="overlay-shell.conf"
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
+  sample.cellular.lwm2m_carrier.softbank:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+    platform_allow:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+    extra_args:
+      - EXTRA_CONF_FILE="overlay-softbank.conf"
+      - SB_EXTRA_CONF_FILE="sysbuild-softbank.conf"
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
+  sample.cellular.lwm2m_carrier.lgu:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+    platform_allow:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+    extra_args:
+      - EXTRA_CONF_FILE="overlay-lgu.conf"
+      - SB_EXTRA_CONF_FILE="sysbuild-lgu.conf"
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular

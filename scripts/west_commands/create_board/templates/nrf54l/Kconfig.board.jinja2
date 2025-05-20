@@ -1,0 +1,5 @@
+config BOARD_{{ board | upper }}
+	select SOC_{{ soc | upper }}_CPUAPP if BOARD_{{ board | upper }}_{{ soc | upper }}_CPUAPP
+	select SOC_{{ soc | upper }}_CPUFLPR if \
+		BOARD_{{ board | upper }}_{{ soc | upper }}_CPUFLPR || \
+		BOARD_{{ board | upper }}_{{ soc | upper }}_CPUFLPR_XIP

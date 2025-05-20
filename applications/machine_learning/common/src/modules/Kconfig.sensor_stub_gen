@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig ML_APP_SENSOR_STUB_GEN
+	bool "Sensor stub data generator"
+
+if ML_APP_SENSOR_STUB_GEN
+
+config ML_APP_SENSOR_STUB_GEN_TRIG_TIMEOUT_MS
+	int "Wave signal change timeout [ms]"
+	default 1000
+	help
+	  The timeout triggers selecting next simulated wave signal.
+
+module = ML_APP_SENSOR_STUB_GEN
+module-str = sensor stub gen
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # ML_APP_SENSOR_STUB_GEN

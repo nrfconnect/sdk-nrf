@@ -1,0 +1,71 @@
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Location"
+
+menu "Cellular/Wi-Fi"
+
+config NRF_CLOUD_LOCATION
+	bool "Enable nRF Cloud Location (cellular and/or Wi-Fi) over MQTT"
+	imply FPU
+	depends on NRF_CLOUD_MQTT
+	select CJSON_LIB
+
+config NRF_CLOUD_LOCATION_ANCHOR_LIST
+	bool "Include the list of anchor names when receiving location results from the callback"
+	depends on NRF_CLOUD_LOCATION
+	depends on WIFI
+	select NRF_CLOUD_LOCATION_PARSE_ANCHORS
+
+config NRF_CLOUD_LOCATION_ANCHOR_LIST_BUFFER_SIZE
+	int "Size of the buffer to contain the anchor name list"
+	depends on NRF_CLOUD_LOCATION_ANCHOR_LIST
+	default 185
+	help
+	  The maximum length of an anchor name is 32 characters.
+	  Anchor names are returned to the user in a singly-linked list,
+	  which requires 37 bytes for each anchor name on a 32-bit system.
+
+config NRF_CLOUD_LOCATION_PARSE_ANCHORS
+	bool "Parse anchor data in location result"
+	help
+	  If enabled, the anchor buffer in the result structure must be properly initialized.
+
+choice NRF_CLOUD_WIFI_LOCATION_ENCODE_OPT
+	prompt "Encoding options for Wi-Fi location requests"
+	default NRF_CLOUD_WIFI_LOCATION_ENCODE_OPT_MAC_RSSI
+
+config NRF_CLOUD_WIFI_LOCATION_ENCODE_OPT_MAC_ONLY
+	bool "Encode only the MAC address"
+	help
+		The MAC address is the only required parameter.
+
+config NRF_CLOUD_WIFI_LOCATION_ENCODE_OPT_MAC_RSSI
+	bool "Encode the MAC address and the RSSI value"
+	help
+		The RSSI value may improve location accuracy.
+
+config NRF_CLOUD_WIFI_LOCATION_ENCODE_OPT_ALL
+	bool "Encode all available parameters"
+	help
+		This option increases the memory required for creating requests.
+		It also increases the amount of data sent to nRF Cloud.
+endchoice
+
+endmenu
+
+rsource "Kconfig.nrf_cloud_agnss"
+
+rsource "Kconfig.nrf_cloud_pgps"
+
+if NRF_CLOUD_AGNSS || NRF_CLOUD_PGPS
+
+module = NRF_CLOUD_GPS
+module-str = nRF Cloud GPS Assistance
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+endmenu

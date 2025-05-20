@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_CONN_CTX
+	bool
+	prompt "Connection context library"
+	default n
+	help
+	  Enable the Bluetooth connection context library.
+	  This library helps maintaining per-connection context data.
+
+if BT_CONN_CTX
+
+config BT_CONN_CTX_MEM_BUF_ALIGN
+	int "Memory slab buffer alignment"
+	default 4
+	help
+	 The memory buffer must be aligned to an N-byte boundary,
+	 where N is a power of 2 larger than 2 (i.e. 4, 8, 16, …).
+
+module = BT_CONN_CTX
+module-str = connection context library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_CONN_CTX

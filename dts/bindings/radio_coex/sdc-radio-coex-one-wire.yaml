@@ -1,0 +1,10 @@
+# Copyright (c) 2021 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: |
+    This is a representation of an external radio coexistence setup that has a
+    one-pin control interface (GRANT).
+
+compatible: "sdc-radio-coex-one-wire"
+
+include: generic-radio-coex-one-wire.yaml

@@ -1,0 +1,49 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Wheel configuration"
+	depends on QDEC_NRFX
+
+config DESKTOP_WHEEL_ENABLE
+	bool "Enable wheel hardware interface"
+	depends on QDEC_NRFX
+	depends on PINCTRL
+	help
+	  This option enables wheel hardware interface for nRF Desktop application.
+	  Wheel hardware interface is responsible for generating events related to rotation of the
+	  mouse wheel.
+
+config DESKTOP_WHEEL_SENSOR_VALUE_DIVIDER
+	int "Wheel sensor value divider"
+	depends on DESKTOP_WHEEL_ENABLE
+	range 1 2048
+	default 1
+	help
+	  A value obtained from the wheel sensor will be divided
+	  by provided argument before being processed further.
+
+config DESKTOP_WHEEL_SENSOR_IDLE_TIMEOUT
+	int "Wheel sensor idle timeout"
+	depends on DESKTOP_WHEEL_ENABLE
+	range 0 3600
+	default 0
+	help
+	  Time in seconds before sensor goes to idle state.
+	  If set to zero sensor is always active.
+
+config DESKTOP_WHEEL_INVERT_AXIS
+	bool "Invert wheel axis"
+	depends on DESKTOP_WHEEL_ENABLE
+	help
+	  Switch the orientation of the wheel sensor.
+
+if DESKTOP_WHEEL_ENABLE
+module = DESKTOP_WHEEL
+module-str = wheel module
+source "subsys/logging/Kconfig.template.log_config"
+endif
+
+endmenu

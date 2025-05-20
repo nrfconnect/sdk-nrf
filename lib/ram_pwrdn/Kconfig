@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig RAM_POWER_DOWN_LIBRARY
+	bool "Enable API for turning off unused RAM segments"
+	depends on SOC_NRF52840 || SOC_NRF52833 || SOC_NRF5340_CPUAPP || SOC_SERIES_NRF54LX
+	# Powering down RAM blocks can only be done from the secure domain
+	# for security reasons. If necessary, this limitation could be
+	# addressed by a secure service in the future.
+	depends on ! BUILD_WITH_TFM
+	imply NRF_FORCE_RAM_ON_REBOOT
+	help
+	  This allows application to call API for disabling unused RAM segments
+	  in the System ON mode. Effectively the application looses possibility
+	  to use disabled portion of RAM.
+	  This is usually not needed, but can improve battery lifetime for
+	  applications that spend most of the time in the sleep mode with most
+	  peripherals disabled.
+
+if RAM_POWER_DOWN_LIBRARY
+
+config RAM_POWER_ADJUST_ON_HEAP_RESIZE
+	bool "Automatically adjust RAM power mask on libc heap resize"
+	depends on NEWLIB_LIBC && !NEWLIB_LIBC_NANO
+	select NEWLIB_LIBC_HEAP_LISTENER
+	select EXPERIMENTAL
+	help
+	  When this option is enabled, the RAM sections not used by the application
+	  image will get automatically disabled at boot time, and then RAM power
+	  configuration will be adjusted when the libc heap (which uses the memory
+	  area following the application image) is increased or trimmed.
+
+module =  RAM_POWERDOWN
+module-str = RAM power-down library
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
+
+endif # RAM_POWER_DOWN_LIBRARY

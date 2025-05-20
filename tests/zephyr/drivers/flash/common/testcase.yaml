@@ -1,0 +1,42 @@
+common:
+  tags:
+    - drivers
+    - flash
+    - ci_tests_drivers_hpf
+tests:
+  nrf.extended.drivers.flash.common.hpf.quad:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - SB_CONFIG_HPF=y
+      - SB_CONFIG_HPF_MSPI=y
+  nrf.extended.drivers.flash.common.hpf.single:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="single.overlay"
+      - SB_CONFIG_HPF=y
+      - SB_CONFIG_HPF_MSPI=y
+  nrf.extended.drivers.flash.common.sqspi:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - DTC_OVERLAY_FILE="boards/nrf54l15dk_nrf54l15_cpuapp_sqspi.overlay"
+  nrf.extended.drivers.flash.common.default:
+    filter: ((CONFIG_FLASH_HAS_DRIVER_ENABLED and not CONFIG_TRUSTED_EXECUTION_NONSECURE)
+      and (dt_label_with_parent_compat_enabled("storage_partition", "fixed-partitions")
+      or dt_label_with_parent_compat_enabled("storage_partition", "nordic,owned-partitions")))
+    platform_allow:
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+    harness_config:
+      fixture: external_flash

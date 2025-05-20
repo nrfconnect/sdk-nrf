@@ -1,0 +1,43 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_MESH_DK_PROV
+	bool "Bluetooth Mesh provisioning handler for Nordic DKs"
+	depends on HWINFO
+	help
+	  Basic implementation of a Bluetooth Mesh provisioning handler for the
+	  nRF5x development kits. Configures the UUID and handles some basic OOB
+	  methods. Used in samples as a reference implementation for
+	  provisioning handlers.
+
+if BT_MESH_DK_PROV
+
+config BT_MESH_DK_PROV_OOB_BLINK
+	bool "Enable blink output OOB method"
+	depends on DK_LIBRARY
+	default y
+
+config BT_MESH_DK_PROV_OOB_BUTTON
+	bool "Enable button input OOB method"
+	depends on DK_LIBRARY
+	default y
+
+config BT_MESH_DK_PROV_OOB_LOG
+	bool "Enable log based OOB methods"
+	depends on LOG_PRINTK
+	default y
+
+config BT_MESH_DK_LEGACY_UUID_GEN
+	bool "Use legacy generation of UUID"
+	help
+	  Use legacy generation of UUID. For most platforms this will generate UUIDs
+	  with trailing zeros.
+
+module = BT_MESH_DK_PROV
+module-str = DK BT mesh provisioning library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_MESH_DK_PROV

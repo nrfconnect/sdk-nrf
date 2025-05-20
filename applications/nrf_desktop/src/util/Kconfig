@@ -1,0 +1,79 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Utilities"
+
+config DESKTOP_HID_REPORTQ
+	bool "Enable HID report queue utility"
+	depends on DESKTOP_ROLE_HID_DONGLE
+	help
+	  The HID report queue utility can be used to enqueue HID reports from
+	  connected HID peripherals. The queue simplifies integrating new
+	  modules that receive HID reports from peripherals.
+
+	  On the HID peripheral, the HID state module is used as a source of HID
+	  input reports. The HID state module does not use the HID report queue
+	  utility.
+
+if DESKTOP_HID_REPORTQ
+
+config DESKTOP_HID_REPORTQ_MAX_ENQUEUED_REPORTS
+	int "Maximum number of enqueued HID reports"
+	range 1 255
+	default 2
+	help
+	  Maximum number of enqueued HID report events is limited to control
+	  memory usage. The limit is defined separately for every HID input
+	  report ID.
+
+config DESKTOP_HID_REPORTQ_QUEUE_COUNT
+	int "Number of supported HID report queues"
+	range 1 1024
+	default DESKTOP_HID_DONGLE_BOND_COUNT
+	default 1
+	help
+	  Maximum number of HID report queues that can be used simultaneously.
+
+module = DESKTOP_HID_REPORTQ
+module-str = HID report queue
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+config DESKTOP_HWID
+	bool "Hardware ID module"
+	select HWINFO
+	help
+	  Enable nRF Desktop hardware ID utility. The hardware ID is obtained
+	  from Zephyr hwinfo driver.
+
+config DESKTOP_ADV_PROV_UUID16_ALL
+	bool "UUID16 advertising provider"
+	depends on BT_ADV_PROV
+	depends on (DESKTOP_HIDS_ENABLE || DESKTOP_BAS_ENABLE)
+	help
+	  Adds all UUID16 to the advertising payload if used Bluetooth local
+	  identity has no bond.
+
+config DESKTOP_DFU_LOCK
+	bool "DFU lock module"
+	default y if (DESKTOP_CONFIG_CHANNEL_DFU_ENABLE && DESKTOP_DFU_MCUMGR_ENABLE)
+	help
+	  Enable nRF Desktop DFU lock module for synchronizing multiple DFU
+	  methods.
+
+	  The module is automatically enabled when the Config Channel DFU and
+	  the MCUmgr DFU are both enabled.
+
+if DESKTOP_DFU_LOCK
+
+module = DESKTOP_DFU_LOCK
+module-str = DFU Lock
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+endmenu

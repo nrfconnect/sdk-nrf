@@ -1,0 +1,47 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "BLE HID Client"
+
+config DESKTOP_HID_FORWARD_ENABLE
+	bool "Enable HID forward"
+	select BT_HOGP
+	select DESKTOP_HID_REPORTQ
+	depends on DESKTOP_ROLE_HID_DONGLE
+	depends on DESKTOP_BT_CENTRAL
+	help
+	  This option enables HID over GATT Client.
+	  The reports received from the BLE are forwarded to the USB.
+
+if DESKTOP_HID_FORWARD_ENABLE
+
+config DESKTOP_HID_FORWARD_SUBSCRIBER_COUNT
+	int "Number of HID subscribers"
+	range 1 255
+	default DESKTOP_HID_DONGLE_BOND_COUNT
+	help
+	  By default, the module uses a dedicated HID subscriber (USB HID class
+	  instance) for every BLE bonded HID peripheral. Set this option to 1 to
+	  forward all of the HID reports received from HID peripherals to one
+	  subscriber (required if using a single USB HID instance).
+
+	  The configured number of HID subscribers must match number of USB HID
+	  class instances.
+
+config BT_HOGP_REPORTS_MAX
+	default 12
+	help
+	  By default, nRF Desktop dongle supports up to 12 HID reports to allow
+	  for connecting two peripherals with up to 6 HID reports each on
+	  average.
+
+module = DESKTOP_HID_FORWARD
+module-str = HID over GATT client
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+endmenu

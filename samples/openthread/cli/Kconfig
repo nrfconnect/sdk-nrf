@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
+
+module = OT_COMMAND_LINE_INTERFACE
+module-str = ot_cli
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+config CLI_SAMPLE_LOW_POWER
+	bool "Enable low power mode for the CLI sample"
+
+config CLI_SAMPLE_MULTIPROTOCOL
+	bool "Enable multiprotocol for the CLI sample"

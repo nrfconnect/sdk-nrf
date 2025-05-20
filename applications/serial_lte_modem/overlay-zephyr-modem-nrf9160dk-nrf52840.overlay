@@ -1,0 +1,18 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <nrf9160/nrf9160dk_uart1_on_if0_3.dtsi>
+
+/ {
+	chosen {
+		ncs,slm-uart = &uart1;
+	};
+};
+
+&uart1 {
+        current-speed = <115200>;
+        hw-flow-control;
+};

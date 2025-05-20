@@ -1,0 +1,31 @@
+python:
+  version: 3.12.4
+git:
+  version: 2.37.3
+cmake:
+  version: 3.21.0
+ninja:
+  version: 1.10.2
+gperf:
+  version: 3.1
+dtc:
+  version: 1.5.1-1
+west:
+  version: 1.2.0
+gn:
+  version: 71305b07d708830ed7b96006dfa773a79ff313fe
+nanopb:
+  version: 0.4.6
+zephyr-sdk:
+  version: 0.17.0
+  architectures: # https://github.com/zephyrproject-rtos/sdk-ng/releases/tag/v0.17.0
+    - arm-zephyr-eabi
+    - riscv64-zephyr-elf
+ccache:
+  version: 4.8.2
+dfu_util:
+  version: 0.9-1
+doxygen:
+  version: 1.12.0
+pip:
+  version: 24.2

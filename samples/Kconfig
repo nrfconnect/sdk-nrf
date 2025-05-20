@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config NCS_SAMPLES_DEFAULTS
+	bool "Enable NCS sample default settings"
+	default n
+	imply LOG
+	imply LOG_DEFAULT_MINIMAL
+	imply ASSERT
+	imply ASSERT_NO_COND_INFO
+	imply ASSERT_NO_MSG_INFO
+	imply HW_STACK_PROTECTION if ARCH_HAS_STACK_PROTECTION
+	imply RESET_ON_FATAL_ERROR if !DEBUG && !BOARD_NATIVE_SIM && !QEMU_TARGET && !TEST
+	help
+	  Use the default configuration for NCS samples.
+
+menu "Image build variants"
+
+# These are set by CMake, and they need a prompt.
+# Keep them in a separate menu to avoid cluttering the top-level menu
+
+config NCS_MCUBOOT_IN_BUILD
+	bool "MCUBoot is included in the build [READ ONLY]"
+	help
+	  Helper option used to communicate to images that MCUboot is included in the build.
+
+endmenu
+
+rsource "common/Kconfig"

@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "nRF5340 Network Core Bootloader Sample Settings"
+
+config NETBOOT_MIN_PARTITION_SIZE
+	bool "Use minimimum partition size"
+
+config B0N_SIZE
+	hex
+	prompt "Size of the B0n partition"
+	default 0x2580 if PM_PARTITION_SIZE_PROVISION=0x280 && NETBOOT_MIN_PARTITION_SIZE
+	default 0x8580 if PM_PARTITION_SIZE_PROVISION=0x280
+	default 0x8800
+	help
+		Since the locking granularity is 2kB, ensure that B0N_SIZE is
+		set such that the size of the `b0n_container` is aligned to this
+		size. If the minimal config is enabled the binary will be around
+		5kB. Note: The provision partition is 0x280 bytes.
+
+endmenu
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu

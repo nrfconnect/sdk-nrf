@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Include and define MOCK_* Kconfigs
+rsource "../mocks/Kconfig"
+
+config MAX_NUMBER_OF_MANIFEST_CLASS_IDS
+	int  "Maximum number of supported manifest class IDs that can be handled"
+	range 1 200
+	default 8 if SOC_SOC_SERIES_NRF54HX
+	default 5 if SOC_NRF52840
+	default 5 if SOC_POSIX
+	help
+	  Check SUIT_STORAGE_N_ENVELOPES
+
+source "Kconfig.zephyr"

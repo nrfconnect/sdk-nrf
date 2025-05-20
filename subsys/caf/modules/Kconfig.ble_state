@@ -1,0 +1,76 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig CAF_BLE_STATE
+	bool "Bluetooth LE state module"
+	depends on BT
+	depends on BT_SMP
+	select CAF_BLE_COMMON_EVENTS
+	help
+	  Module that enables Bluetooth, handles Zephyr's connection callbacks,
+	  propagates information about the connection state and parameters by
+	  using Application Event Manager events and exchanges GATT MTU on GATT
+	  Client.
+
+if CAF_BLE_STATE
+
+config CAF_BLE_STATE_SECURITY_REQ
+	bool "Request connection encryption (security level 2)"
+	help
+	  Automatically request connection encryption right after the connection is established.
+
+config CAF_BLE_STATE_MAX_LOCAL_ID_BONDS
+	int "Number of allowed bonds per Bluetooth local identity"
+	depends on BT_PERIPHERAL
+	range 1 BT_MAX_PAIRED
+	default 1
+	help
+	  The available Bluetooth bonds are shared among Bluetooth local
+	  identities. Limiting number of bonds allowed per local identity
+	  prevents from situation where one local identity uses too many bonds.
+	  In that case, other local identities may be unable to bond.
+
+config CAF_BLE_STATE_MAX_LOCAL_ID_BONDS
+	depends on !BT_PERIPHERAL
+	default 0
+
+config CAF_BLE_STATE_PM
+	bool "Enable bluetooth LE power manager integration"
+	depends on CAF_BLE_STATE
+	depends on CAF_POWER_MANAGER
+	select CAF_KEEP_ALIVE_EVENTS
+	default y
+	help
+	  This enables small module that keeps track on active connections.
+	  If there is any active connection the power down modes would be limited to SUSPENDED.
+	  Full POWER OFF mode would be only allowed if we have no active connection.
+
+config CAF_BLE_STATE_EXCHANGE_MTU
+	bool "Exchange MTU"
+	depends on BT_GATT_CLIENT
+	default y
+	help
+	  Use the bt_gatt_exchange_mtu to set the MTU to the maximum possible size the buffers can
+	  hold.
+
+config CAF_BLE_USE_LLPM
+	bool "Enable Low Latency Packet Mode (LLPM)"
+	depends on (BT_CTLR_SDC_LLPM || !HAS_BT_CTLR)
+	depends on !SOC_SERIES_NRF53X
+	default y if HAS_BT_CTLR
+	help
+	  LLPM is a proprietary Bluetooth extension from Nordic Semiconductor. It is designed for
+	  applications in which the interface response time is critical for the user. It introduces
+	  the possibility to reduce the connection interval to 1 ms for one link. LLPM parameters
+	  can be used for a given connection only if it's supported by both peripheral and central.
+
+	  nRF53 SoC Series does not support the LLPM extension.
+
+module = CAF_BLE_STATE
+module-str = caf module BLE state
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # CAF_BLE_STATE

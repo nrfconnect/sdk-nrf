@@ -1,0 +1,231 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "HID configuration"
+
+choice DESKTOP_ROLE
+	prompt "Select nRF Desktop device role"
+	default DESKTOP_ROLE_HID_PERIPHERAL
+
+config DESKTOP_ROLE_HID_PERIPHERAL
+	bool "HID peripheral"
+	imply DESKTOP_HID_STATE_ENABLE
+	help
+	  The option enables support for the nRF Desktop HID peripheral role.
+	  The peripheral uses HID state module to generate HID reports based
+	  on user input. All of the generated HID reports must be supported by
+	  the peripheral.
+
+config DESKTOP_ROLE_HID_DONGLE
+	bool "HID dongle"
+	imply DESKTOP_USB_ENABLE
+	help
+	  The option enables support for the nRF Desktop HID dongle role. The
+	  dongle forwards HID reports from the HID peripherals to the host
+	  connected over USB. The dongle does not generate HID reports by
+	  itself.
+
+endchoice # DESKTOP_ROLE
+
+if DESKTOP_ROLE_HID_DONGLE
+
+config DESKTOP_HID_DONGLE_BOND_COUNT
+	int "Supported number of HID peripherals"
+	default 2
+	help
+	  Supported number of HID peripherals bonded to the dongle. By default
+	  dongle supports two HID peripherals - mouse and keyboard.
+
+config DESKTOP_HID_DONGLE_CONN_COUNT
+	int "Supported number of simultaneously connected HID peripherals"
+	default 2
+	help
+	  Supported number of HID peripherals simultaneously connected to the
+	  dongle. By default dongle can handle up to two HID peripherals at the
+	  same time - mouse and keyboard.
+
+endif # DESKTOP_ROLE_HID_DONGLE
+
+config DESKTOP_HID_DONGLE_ENABLED_REPORTS
+	bool
+	default y if DESKTOP_ROLE_HID_DONGLE
+	imply DESKTOP_HID_REPORT_MOUSE_SUPPORT
+	imply DESKTOP_HID_REPORT_KEYBOARD_SUPPORT
+	imply DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT
+	imply DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT
+	help
+	  The dongle must support all of the forwarded HID reports.
+
+choice DESKTOP_PERIPHERAL_TYPE
+	prompt "Select nRF Desktop peripheral type"
+	depends on DESKTOP_ROLE_HID_PERIPHERAL
+	default DESKTOP_PERIPHERAL_TYPE_OTHER
+	help
+	  The selected peripheral type by default enables support for used HID
+	  reports.
+
+config DESKTOP_PERIPHERAL_TYPE_MOUSE
+	bool "Mouse"
+	imply DESKTOP_HID_REPORT_MOUSE_SUPPORT
+	help
+	  The option by default enables support for HID mouse report.
+
+config DESKTOP_PERIPHERAL_TYPE_KEYBOARD
+	bool "Keyboard"
+	imply DESKTOP_HID_REPORT_KEYBOARD_SUPPORT
+	imply DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT
+	imply DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT
+	help
+	  The option by default enables support for HID keyboard reports, HID
+	  system control report and HID consumer control report.
+
+config DESKTOP_PERIPHERAL_TYPE_OTHER
+	bool "Other"
+	help
+	  The option does not enable support for any of the HID reports.
+	  The used HID reports must be explicitly specified.
+
+endchoice # DESKTOP_PERIPHERAL_TYPE
+
+menu "HID Reports"
+
+config DESKTOP_USE_DEFAULT_REPORT_DESCR
+	bool "Use default HID report descriptor"
+	default y
+	help
+	  By default, nRF Desktop uses predefined HID report descriptor shared
+	  among all of the devices. Disable this option to provide custom HID
+	  report descriptor.
+
+if DESKTOP_USE_DEFAULT_REPORT_DESCR
+
+config DESKTOP_HID_REPORT_DESC
+	string
+	default "configuration/common/hid_report_desc.c"
+
+endif
+
+if !DESKTOP_USE_DEFAULT_REPORT_DESCR
+
+config DESKTOP_HID_REPORT_DESC
+	string "HID report descriptor"
+	default ""
+	help
+	  This option specifies a path to the HID report descriptor file.
+
+endif
+
+config DESKTOP_HID_REPORT_MOUSE_SUPPORT
+	bool "HID mouse report support"
+	help
+	  The option enables support for HID mouse input report.
+
+	  If default HID report descriptor is used, the HID mouse report with
+	  predefined format is automatically added to the HID report
+	  descriptor. Otherwise, make sure to add the HID mouse report to the
+	  used report descriptor.
+
+config DESKTOP_HID_REPORT_KEYBOARD_SUPPORT
+	bool "HID keyboard reports support"
+	help
+	  The option enables support for HID keyboard input report and HID
+	  keyboard LEDs output report.
+
+	  If default HID report descriptor is used, the HID keyboard reports
+	  with predefined formats are automatically added to the HID report
+	  descriptor. Otherwise, make sure to add the HID keyboard reports to
+	  the used report descriptor.
+
+config DESKTOP_HID_REPORT_SYSTEM_CTRL_SUPPORT
+	bool "HID system control report support"
+	help
+	  The option enables support for HID system control input report.
+
+	  If default HID report descriptor is used, the HID system control
+	  report with predefined format is automatically added to the HID report
+	  descriptor. Otherwise, make sure to add the HID system control report
+	  to the used report descriptor.
+
+config DESKTOP_HID_REPORT_CONSUMER_CTRL_SUPPORT
+	bool "HID consumer control report support"
+	help
+	  The option enables support for HID consumer control input report.
+
+	  If default HID report descriptor is used, the HID consumer control
+	  report with predefined format is automatically added to the HID report
+	  descriptor. Otherwise, make sure to add the HID consumer control
+	  report to the used report descriptor.
+
+choice
+	prompt "Select boot protocol interface"
+	default DESKTOP_HID_BOOT_INTERFACE_DISABLED
+
+config DESKTOP_HID_BOOT_INTERFACE_DISABLED
+	bool "None"
+
+config DESKTOP_HID_BOOT_INTERFACE_MOUSE
+	bool "Mouse"
+	depends on DESKTOP_HID_REPORT_MOUSE_SUPPORT
+
+config DESKTOP_HID_BOOT_INTERFACE_KEYBOARD
+	bool "Keyboard"
+	depends on DESKTOP_HID_REPORT_KEYBOARD_SUPPORT
+
+endchoice
+
+endmenu
+
+menu "HID device identification"
+
+config DESKTOP_DEVICE_PRODUCT
+	string "Product name"
+	default "Dongle nRF Desktop" if DESKTOP_ROLE_HID_DONGLE
+	default "Mouse nRF Desktop" if DESKTOP_PERIPHERAL_TYPE_MOUSE
+	default "Keyboard nRF Desktop" if DESKTOP_PERIPHERAL_TYPE_KEYBOARD
+	default "HID nRF Desktop"
+	help
+	  Product name used for both GATT Device Information Service and USB
+	  device. By default, name is determined by nRF Desktop device role and
+	  nRF Desktop peripheral type.
+
+config DESKTOP_DEVICE_MANUFACTURER
+	string "Manufacturer"
+	default "Nordic Semiconductor ASA"
+	help
+	  Device manufacturer used for both GATT Device Information Service and
+	  USB device. By default, device manufacturer is set to Nordic
+	  Semiconductor ASA.
+
+config DESKTOP_DEVICE_VID
+	hex "Vendor ID"
+	range 0 0XFFFF
+	default 0x1915
+	help
+	  Device Vendor ID used for GATT Device Information Service, USB device
+	  and configuration channel. By default, Vendor ID of Nordic
+	  Semiconductor ASA is used.
+
+config DESKTOP_DEVICE_PID
+	hex "Product ID"
+	range 0 0XFFFF
+	default 0
+	help
+	  Device Product ID used for GATT Device Information Service, USB device
+	  and configuration channel. Product ID is used to distinguish products
+	  made by the given vendor. Value must be configured in the application
+	  configuration.
+
+config DESKTOP_DEVICE_GENERATION
+	string "Device generation"
+	default "default"
+	help
+	  The Kconfig option is used to specify device generation. The option
+	  allows to distinguish configurations that use the same board and
+	  bootloader, but are not interoperable.
+
+endmenu
+
+endmenu

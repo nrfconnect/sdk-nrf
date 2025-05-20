@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig AUDIO_BT_MGMT_DFU
+	bool "Enable BT MGMT DFU module"
+	default n
+	select EXPERIMENTAL
+	select BT_DEVICE_NAME_DYNAMIC
+	select MCUMGR
+	select NET_BUF
+	select ZCBOR
+	select CRC
+	select MCUMGR_TRANSPORT_BT
+	select IMG_ERASE_PROGRESSIVELY
+	imply MCUMGR_TRANSPORT_BT_CONN_PARAM_CONTROL
+	imply IMG_MANAGER
+	imply STREAM_FLASH
+	imply FLASH_MAP
+	imply FLASH
+	imply MCUMGR_GRP_IMG
+	imply MCUMGR_GRP_OS
+	imply MCUMGR_GRP_OS_MCUMGR_PARAMS
+	imply MCUMGR_GRP_OS_BOOTLOADER_INFO
+	imply MCUMGR_TRANSPORT_BT_REASSEMBLY
+	depends on BT_PERIPHERAL
+	depends on BOOTLOADER_MCUBOOT
+	help
+	  Enable the BT MGMT module. This module adds the DFU mode
+	  that can be entered from the main application.
+
+if AUDIO_BT_MGMT_DFU
+
+module = BT_MGMT_DFU
+module-str = bt-mgmt-dfu
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # AUDIO_BT_MGMT_DFU

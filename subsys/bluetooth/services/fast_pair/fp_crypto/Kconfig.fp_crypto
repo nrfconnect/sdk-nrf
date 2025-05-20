@@ -1,0 +1,77 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_FAST_PAIR_CRYPTO
+	bool
+	default y
+	help
+	  Add Fast Pair crypto source files.
+
+if BT_FAST_PAIR_CRYPTO
+
+choice BT_FAST_PAIR_CRYPTO_BACKEND
+	prompt "Cryptographic backend selection"
+	default BT_FAST_PAIR_CRYPTO_OBERON
+	help
+	  Select the Fast Pair cryptographic backend.
+
+config BT_FAST_PAIR_CRYPTO_TINYCRYPT
+	bool "Fast Pair with Tinycrypt cryptographic backend"
+	select TINYCRYPT
+	select TINYCRYPT_SHA256
+	select TINYCRYPT_SHA256_HMAC
+	select TINYCRYPT_AES
+	select TINYCRYPT_ECC_DH
+	help
+	  Select Tinycrypt cryptographic backend for Fast Pair.
+
+config BT_FAST_PAIR_CRYPTO_OBERON
+	bool "Fast Pair with Oberon cryptographic backend"
+	select NRF_OBERON
+	select BT_FAST_PAIR_CRYPTO_AES256_ECB_SUPPORT
+	select BT_FAST_PAIR_CRYPTO_SECP160R1_SUPPORT
+	select BT_FAST_PAIR_CRYPTO_SECP256R1_SUPPORT
+	help
+	  Select Oberon cryptographic backend for Fast Pair.
+
+config BT_FAST_PAIR_CRYPTO_PSA
+	bool "Fast Pair with PSA cryptographic backend [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	select NRF_SECURITY
+	select MBEDTLS_PSA_CRYPTO_C
+	select MBEDTLS_ENABLE_HEAP
+	select PSA_WANT_ALG_SHA_256
+	select PSA_WANT_ALG_HMAC
+	select PSA_WANT_ALG_ECDH
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE
+	select PSA_WANT_ECC_SECP_R1_256
+	select PSA_WANT_KEY_TYPE_AES
+	select PSA_WANT_ALG_ECB_NO_PADDING
+	depends on !TFM_PROFILE_TYPE_MINIMAL
+	help
+	  Select PSA cryptographic backend for Fast Pair. The backend relies on
+	  PSA crypto APIs for cryptographical operations.
+
+endchoice
+
+# A backend supporting a given crypto operation selects a related Kconfig option.
+config BT_FAST_PAIR_CRYPTO_AES256_ECB_SUPPORT
+	bool
+
+config BT_FAST_PAIR_CRYPTO_SECP160R1_SUPPORT
+	bool
+
+config BT_FAST_PAIR_CRYPTO_SECP256R1_SUPPORT
+	bool
+
+module = FP_CRYPTO
+module-str = Fast Pair crypto library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_FAST_PAIR_CRYPTO

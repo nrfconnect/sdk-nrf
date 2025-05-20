@@ -1,0 +1,61 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig MOCK_NRF_MODEM_AT
+	bool "Custom mock for nrf_modem_at"
+
+if MOCK_NRF_MODEM_AT
+
+config MOCK_NRF_MODEM_AT_PRINTF
+	bool "Mock for nrf_modem_at_printf"
+	default y
+	help
+	  Mock for nrf_modem_at_printf.
+
+config MOCK_NRF_MODEM_AT_SCANF
+	bool "Mock for nrf_modem_at_scanf"
+	default y
+	help
+	  Mock for nrf_modem_at_scanf.
+
+if MOCK_NRF_MODEM_AT_PRINTF
+
+config MOCK_NRF_MODEM_AT_PRINTF_CALL_COUNT
+	int "Maximum number nrf_modem_at_printf calls"
+	default 50
+	help
+	  Maximum number nrf_modem_at_printf calls that can be added before
+	  resetting expected calls. Normally resetting is done before each test case.
+
+endif # MOCK_NRF_MODEM_AT_PRINTF
+
+if MOCK_NRF_MODEM_AT_SCANF
+
+config MOCK_NRF_MODEM_AT_SCANF_CALL_COUNT
+	int "Maximum number nrf_modem_at_scanf calls"
+	default 10
+	help
+	  Maximum number nrf_modem_at_scanf calls that can be added before
+	  resetting expected calls. Normally resetting is done before each test case.
+
+config MOCK_NRF_MODEM_AT_SCANF_VARGS_COUNT
+	int "Maximum number nrf_modem_at_scanf variable arguments"
+	default 10
+	help
+	  Maximum number nrf_modem_at_scanf calls that can be added before
+	  resetting expected calls.
+
+config MOCK_NRF_MODEM_AT_SCANF_VARGS_STR_SIZE
+	int "Maximum size of a string variable in nrf_modem_at_scanf variable arguments"
+	default 20
+	help
+	  Maximum size of a string variable in nrf_modem_at_scanf variable arguments.
+	  If you use __mock_nrf_modem_at_scanf_ReturnVarg_string() function
+	  with a longer string, you need to increase this value.
+
+endif # MOCK_NRF_MODEM_AT_SCANF
+
+endif # MOCK_NRF_MODEM_AT

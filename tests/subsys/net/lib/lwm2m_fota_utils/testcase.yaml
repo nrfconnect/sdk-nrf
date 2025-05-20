@@ -1,0 +1,20 @@
+tests:
+  subsys.net.lib.lwm2m_fota_utils.unittest_adv:
+    sysbuild: true
+    tags:
+      - unittest
+      - sysbuild
+      - ci_tests_subsys_net
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
+  subsys.net.lib.lwm2m_fota_utils.unittest_obj5:
+    sysbuild: true
+    extra_args: FILE_SUFFIX=obj5
+    tags:
+      - unittest
+      - sysbuild
+      - ci_tests_subsys_net
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim

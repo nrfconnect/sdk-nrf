@@ -1,0 +1,88 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DESKTOP_BLE_SCAN_ENABLE
+	bool "Bluetooth LE scan module"
+	select BT_SCAN
+	select BT_SCAN_FILTER_ENABLE
+	depends on DESKTOP_BT_CENTRAL
+	help
+	  Enable device to scan for peripheral devices.
+
+if DESKTOP_BLE_SCAN_ENABLE
+
+config BT_SCAN_NAME_CNT
+	default 2
+	help
+	  The nRF Desktop by default uses two name filters. The peripheral
+	  device may advertise either as mouse or as keyboard.
+
+config BT_SCAN_ADDRESS_CNT
+	default BT_MAX_PAIRED
+	help
+	  The nRF Desktop needs an address filter per every bonded peripheral.
+
+config BT_SCAN_CONN_ATTEMPTS_FILTER
+	default y
+	help
+	  The connection attempts filter is enabled by default to limit number
+	  of attempts to connect to the device.
+
+config DESKTOP_BLE_SCAN_START_TIMEOUT_S
+	int "Scan start timeout [s]"
+	default 5
+	help
+	  After disabled, scanning is re-enabled after defined time of connected
+	  peripherals inactivity (scanning has negative impact on user
+	  experience - e.g. may cause mouse pointer lags).
+
+config DESKTOP_BLE_SCAN_DURATION_S
+	int "Scan duration [s]"
+	default 30
+	help
+	  After this time scan is disabled if any peripheral is connected.
+
+config DESKTOP_BLE_FORCED_SCAN_DURATION_S
+	int "Forced scan duration [s]"
+	default 4
+	help
+	  Duration of the forced scan operation in seconds. The module enters a
+	  forced scan state right after boot or wakeup, on successful peripheral
+	  discovery, on peripheral disconnection, on connection failure, on bond
+	  erase and on scan request.
+
+	  Setting forced scan duration to 0 disables the feature.
+
+config DESKTOP_BLE_SCAN_MOUSE_LIMIT
+	int "Maximum number of bonded mice"
+	default 1
+	range 0 255
+
+config DESKTOP_BLE_SCAN_KEYBOARD_LIMIT
+	int "Maximum number of bonded keyboards"
+	default 1
+	range 0 255
+
+config DESKTOP_BLE_NEW_PEER_SCAN_ON_BOOT
+	bool "Look for peers after boot"
+	depends on DESKTOP_BLE_NEW_PEER_SCAN_REQUEST
+	help
+	  When enabled the device will look for new peers also after it was
+	  booted.
+
+config DESKTOP_BLE_SCAN_PM_EVENTS
+	bool "Stop and block scanning in the power down mode"
+	default y
+	depends on CAF_PM_EVENTS
+	help
+	  Stop and block scanning for peers if the central switched to the power down mode
+	  to reduce power consumption.
+
+module = DESKTOP_BLE_SCAN
+module-str = BLE scan
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # DESKTOP_BLE_SCAN_ENABLE

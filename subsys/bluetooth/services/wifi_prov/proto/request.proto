@@ -1,0 +1,23 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+syntax = "proto2";
+
+import "common.proto";
+
+option java_multiple_files = true;
+option java_package = "no.nordicsemi.android.wifi.provisioning";
+
+message WifiConfig {
+  optional WifiInfo wifi          = 1;
+  optional bytes passphrase       = 2;
+  optional bool volatileMemory    = 3;
+}
+
+message Request {
+  optional OpCode op_code         = 1;
+  optional ScanParams scan_params = 10;
+  optional WifiConfig config      = 11;
+}

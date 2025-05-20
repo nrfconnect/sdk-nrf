@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Nordic Wi-Fi Monitor mode sample"
+
+config MONITOR_MODE_REG_DOMAIN_ALPHA2
+	string "Configure the regulatory domain for Monitor mode sample"
+	default "00"
+	help
+	  Specify the regulatory domain for the Monitor mode sample.
+	  The regulatory domain is a two-letter country code (alpha2).
+
+config MONITOR_MODE_CHANNEL
+	int "Configure the channel for Monitor mode sample"
+	default 1
+	help
+	  Specify the channel for receiving Wi-Fi packets in Monitor mode.
+	  The valid channel range depends on the regulatory domain.
+
+config RX_THREAD_STACK_SIZE
+	int "Thread Stack Size"
+	default 4096
+	help
+	  This option sets the stack size for the threads used in the sample.
+
+config STATS_PRINT_TIMEOUT
+	int "Periodic statistics print timeout"
+	default 5
+	help
+	  This option sets the timeout for periodic statistics print in seconds.
+
+endmenu

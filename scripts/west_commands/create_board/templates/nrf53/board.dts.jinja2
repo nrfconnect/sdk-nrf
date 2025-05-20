@@ -1,0 +1,83 @@
+{% if target['core'] == "cpuapp" %}
+{% if target['ns'] %}
+/dts-v1/;
+#include <nordic/nrf5340_cpuappns_qkaa.dtsi>
+#include "{{ board }}-pinctrl.dtsi"
+
+/ {
+	model = "{{ board_desc }} (CPUAPP Non-Secure)";
+	compatible = "{{ vendor }},{{ board | replace("_", "-") }}-cpuapp-ns";
+
+	chosen {
+		zephyr,sram = &sram0_ns;
+		zephyr,flash = &flash0;
+		zephyr,code-partition = &slot0_ns_partition;
+	};
+};
+{% else %}
+/dts-v1/;
+#include <nordic/nrf5340_cpuapp_qkaa.dtsi>
+#include "{{ board }}-pinctrl.dtsi"
+
+/ {
+	model = "{{ board_desc }} (CPUAPP)";
+	compatible = "{{ vendor }},{{ board | replace("_", "-") }}-cpuapp";
+
+	chosen {
+		zephyr,sram = &sram0_image;
+		zephyr,flash = &flash0;
+		zephyr,code-partition = &slot0_partition;
+		zephyr,sram-secure-partition = &sram0_s;
+		zephyr,sram-non-secure-partition = &sram0_ns;
+	};
+};
+{% endif %}
+
+#include "{{ board }}-cpuapp_partitioning.dtsi"
+#include "{{ board }}-shared_sram.dtsi"
+{% else %}
+/dts-v1/;
+#include <nordic/nrf5340_cpunet_qkaa.dtsi>
+#include "{{ board }}-pinctrl.dtsi"
+
+/ {
+	model = "{{ board_desc }}";
+	compatible = "{{ vendor }},{{ board | replace("_", "-") }}-cpunet";
+
+	chosen {
+		zephyr,sram = &sram1;
+		zephyr,flash = &flash1;
+		zephyr,code-partition = &slot0_partition;
+	};
+};
+
+&flash1 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(48)>;
+		};
+
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000c000 DT_SIZE_K(92)>;
+		};
+
+		slot1_partition: partition@23000 {
+			label = "image-1";
+			reg = <0x00023000 DT_SIZE_K(92)>;
+		};
+
+		storage_partition: partition@3a000 {
+			label = "storage";
+			reg = <0x0003a000 DT_SIZE_K(24)>;
+		};
+	};
+};
+
+#include "{{ board }}-shared_sram.dtsi"
+{% endif %}

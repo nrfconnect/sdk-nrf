@@ -1,0 +1,26 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+ / {
+	chosen {
+		zephyr,code-partition = &cpuapp_recovery_partition;
+		nrf,tz-secure-image = &cpuapp_recovery_partition;
+	};
+};
+
+&cpusec_cpuapp_ipc {
+    status = "okay";
+};
+
+&cpusec_bellboard {
+    status = "okay";
+};
+
+/ {
+    chosen {
+        zephyr,bt-hci-ipc = &ipc0;
+    };
+};

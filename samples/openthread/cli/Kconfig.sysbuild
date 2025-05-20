@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Do not use partition manager on nRF52840 dongle.
+config PARTITION_MANAGER
+	default n if BOARD_NRF52840DONGLE_NRF52840
+
+config NRF_DEFAULT_IPC_RADIO
+	default y
+
+source "share/sysbuild/Kconfig"

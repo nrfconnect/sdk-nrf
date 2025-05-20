@@ -1,0 +1,49 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig MODEM_BATTERY
+	bool "nRF9160 modem battery library"
+	depends on NRF_MODEM_LIB
+	depends on AT_MONITOR
+
+if MODEM_BATTERY
+
+config MODEM_BATTERY_LOW_LEVEL
+	int "Modem battery low level voltage threshold (mV)"
+	range 3100 3500
+	default 3300
+
+choice MODEM_BATTERY_POFWARN
+	bool "POFWARN voltage choice"
+	default MODEM_BATTERY_POFWARN_3000
+
+config MODEM_BATTERY_POFWARN_3000
+	bool "3000 mV"
+
+config MODEM_BATTERY_POFWARN_3100
+	bool "3100 mV"
+
+config MODEM_BATTERY_POFWARN_3200
+	bool "3200 mV"
+
+config MODEM_BATTERY_POFWARN_3300
+	bool "3300 mV"
+
+endchoice
+
+config MODEM_BATTERY_POFWARN_VOLTAGE
+	int
+	default 30 if MODEM_BATTERY_POFWARN_3000
+	default 31 if MODEM_BATTERY_POFWARN_3100
+	default 32 if MODEM_BATTERY_POFWARN_3200
+	default 33 if MODEM_BATTERY_POFWARN_3300
+
+module = MODEM_BATTERY
+module-dep = LOG
+module-str = Modem battery library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # MODEM_BATTERY

@@ -1,0 +1,129 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+rsource "Kconfig.defaults"
+
+menu "Bluetooth"
+
+rsource "bt_management/Kconfig"
+
+#----------------------------------------------------------------------------#
+menu "Bluetooth audio"
+
+if TRANSPORT_BIS
+rsource "bt_stream/broadcast/Kconfig"
+endif # TRANSPORT_BIS
+
+if TRANSPORT_CIS
+rsource "bt_stream/unicast/Kconfig"
+endif # TRANSPORT_CIS
+
+config BT_AUDIO_PACKING_INTERLEAVED
+	bool "Interleaved packing"
+	default n
+	help
+	  ISO channels can either be interleaved or sequentially packed; sequential is the default one.
+
+config BT_AUDIO_PREF_SAMPLE_RATE_VALUE
+	hex
+	default 0x03 if BT_AUDIO_PREF_SAMPLE_RATE_16KHZ
+	default 0x05 if BT_AUDIO_PREF_SAMPLE_RATE_24KHZ
+	default 0x08 if BT_AUDIO_PREF_SAMPLE_RATE_48KHZ
+
+choice BT_AUDIO_PREF_SAMPLE_RATE
+	prompt "Preferred BT audio sample rate"
+	default BT_AUDIO_PREF_SAMPLE_RATE_16KHZ if BT_BAP_BROADCAST_16_2_1
+	default BT_AUDIO_PREF_SAMPLE_RATE_16KHZ if BT_BAP_BROADCAST_16_2_2
+	default BT_AUDIO_PREF_SAMPLE_RATE_16KHZ if BT_BAP_UNICAST_16_2_1
+	default BT_AUDIO_PREF_SAMPLE_RATE_24KHZ if STREAM_BIDIRECTIONAL
+	default BT_AUDIO_PREF_SAMPLE_RATE_24KHZ if BT_BAP_BROADCAST_24_2_1
+	default BT_AUDIO_PREF_SAMPLE_RATE_24KHZ if BT_BAP_BROADCAST_24_2_2
+	default BT_AUDIO_PREF_SAMPLE_RATE_24KHZ if BT_BAP_UNICAST_24_2_1
+	default BT_AUDIO_PREF_SAMPLE_RATE_48KHZ
+	help
+	  Select the preferred sample rate to stream if there are more than one to choose from.
+	  Only valid when used by unicast_client if CONFIG_SAMPLE_RATE_CONVERTER=y and
+	  CONFIG_AUDIO_SAMPLE_RATE_48000_HZ=y, meaning 16, 24, and 48kHz are supported.
+
+config  BT_AUDIO_PREF_SAMPLE_RATE_48KHZ
+	bool "48 kHz"
+	help
+	  Select 48000 Hz as the preferred sample rate.
+
+config  BT_AUDIO_PREF_SAMPLE_RATE_24KHZ
+	bool "24 kHz"
+	help
+	  Select 24000 Hz as the preferred sample rate.
+
+config  BT_AUDIO_PREF_SAMPLE_RATE_16KHZ
+	bool "16 kHz"
+	help
+	  Select 16000 Hz as the preferred sample rate.
+endchoice
+
+#----------------------------------------------------------------------------#
+menu "QoS"
+
+config BT_AUDIO_PRESENTATION_DELAY_US
+	int "Presentation delay"
+	range AUDIO_MIN_PRES_DLY_US AUDIO_MAX_PRES_DLY_US
+	default AUDIO_MIN_PRES_DLY_US
+	help
+	  The audio source/client defined presentation delay if within
+	  AUDIO_MIN_PRES_DLY_US and AUDIO_MAX_PRES_DLY_US range. This will
+	  override the audio receivers presentation delay as long as it
+	  is in range of the max and min supported by the audio receivers.
+	  If it is outside this range, then it will revert to the closest
+	  supported value.
+
+config BT_AUDIO_MAX_TRANSPORT_LATENCY_MS
+	int "Max transport latency"
+	range 5 4000
+	default 10
+	help
+	  Max transport latency for the ISO link.
+
+config BT_AUDIO_RETRANSMITS
+	int "Number of re-transmits"
+	range 0 30
+	default 2
+	help
+	  Number of re-transmits for the ISO link. 2 re-transmits means a total
+	  of 3 packets sent per stream.
+
+endmenu # QoS
+endmenu # Bluetooth audio
+
+rsource "bt_rendering_and_capture/Kconfig"
+rsource "bt_content_control/Kconfig"
+
+#----------------------------------------------------------------------------#
+menu "Log levels"
+
+module = BLE
+module-str = ble
+source "subsys/logging/Kconfig.template.log_config"
+
+module = BT_LE_AUDIO_TX
+module-str = bt_le_audio_tx
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu # Log levels
+
+#----------------------------------------------------------------------------#
+menu "Testing"
+
+config TESTING_BLE_ADDRESS_RANDOM
+	bool "Random address and bonding clear on every restart [EXPERIMENTAL]"
+	default n
+	select EXPERIMENTAL
+	help
+	  If enabled the system will generate a new address on every
+	  restart (i.e. reset, re-flash). Any bonding information will
+	  be cleared. This is only for testing purposes.
+
+endmenu # Testing
+endmenu # Bluetooth

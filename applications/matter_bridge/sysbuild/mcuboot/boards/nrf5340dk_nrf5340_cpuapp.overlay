@@ -1,0 +1,17 @@
+/*
+ * Copyright (c) 2023 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		nordic,pm-ext-flash = &mx25r64;
+		zephyr,code-partition = &boot_partition;
+	};
+};
+
+// Disable GPIO forwarder for nRF7002 EK compatibility
+&gpio_fwd {
+	status = "disabled";
+};

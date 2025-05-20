@@ -1,0 +1,20 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+ #include "app_aliases_common.overlay"
+
+/ {
+	gpio_fwd: nrf-gpio-forwarder {
+		compatible = "nordic,nrf-gpio-forwarder";
+		status = "okay";
+		button_1 {
+			gpios = < &gpio0 0x18 (GPIO_PULL_UP | GPIO_ACTIVE_LOW) >;
+		};
+		led_1 {
+			gpios = < &gpio0 0x1d GPIO_ACTIVE_LOW >;
+		};
+	};
+};

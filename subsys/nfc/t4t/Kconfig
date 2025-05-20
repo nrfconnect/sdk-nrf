@@ -1,0 +1,120 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config NFC_T4T_NDEF_FILE
+	bool "NFC Type 4 Tag NDEF File"
+	default y if (NFC_T4T_NRFXLIB && NFC_NDEF_MSG) || NFC_T4T_HL_PROCEDURE
+	help
+	  Enable NFC Type 4 Tag NDEF File generator library.
+
+config NFC_T4T_ISODEP
+	bool "NFC Type 4 Tag isodep"
+	help
+	  Enable NFC Type 4 Tag ISO-DEP.
+
+
+if NFC_T4T_ISODEP
+
+config NFC_T4T_ISODEP_RATS_RETRY
+	int "NFC-A Type 4 Tag RATS retry"
+	default 0
+	range 0 1
+	help
+	  NFC-A Type 4 Tag RATS retry count. According to NFC Forum
+	  Digital Specification 2.0 14.7.1.1.
+
+config NFC_T4T_ISODEP_ACK_RETRY
+	int "NFC-A Type 4 Tag ISO-DEP ACK retry"
+	default 2
+	range 2 5
+	help
+	  NFC-A Type 4 Tag ISO-DEP ACK retry count. According to NFC Forum
+	  Digital Specification 2.0 16.2.6.
+
+config NFC_T4T_ISODEP_NAK_RETRY
+	int "NFC-A Type 4 Tag NAK retry"
+	default 2
+	range 2 5
+	help
+	  NFC-A Type 4 Tag ISO-DEP NAK retry count. According to NFC Forum
+	  Digital Specification 2.0 16.2.6.
+
+config NFC_T4T_ISODEP_WTX_RETRY
+	int "NFC-A Type 4 Tag S(WTX) retry"
+	default 2
+	range 2 5
+	help
+	  NFC-A Type 4 Tag ISO-DEP S(WTX) retry count. According to NFC Forum
+	  Digital Specification 2.0 16.2.6.5.
+
+config NFC_T4T_ISODEP_DESELECT_RETRY
+	int "NFC-A Type 4 Tag S(DESELECT) retry"
+	default 0
+	range 0 5
+	help
+	  NFC-A Type 4 Tag ISO-DEP S(WTX) retry count. According to NFC Forum
+	  Digital Specification 2.0 16.2.7.
+
+module = NFC_T4T_ISODEP
+module-str = ISODEP
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # NFC_T4T_ISODEP
+
+config NFC_T4T_APDU
+	bool "NFC Type 4 Tag APDU"
+	help
+	  Enable NFC Type 4 TAG APDU codec
+
+if NFC_T4T_APDU
+
+module = NFC_T4T_APDU
+module-str = APDU
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # NFC_T4T_APDU
+
+config NFC_T4T_CC_FILE
+	bool "NFC Type 4 Tag CC file"
+	help
+	  Enable NFC Type 4 TAG CC file
+
+if NFC_T4T_CC_FILE
+
+module = NFC_T4T_CC_FILE
+module-str = CC_FILE
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # NFC_T4T_CC_FILE
+
+config NFC_T4T_HL_PROCEDURE
+	bool "NFC Type 4 Tag High Level Procedure"
+	select NFC_T4T_CC_FILE
+	select NFC_T4T_APDU
+	select NFC_T4T_ISODEP
+	help
+	  Enable NFC Type 4 Tag High Level Procedure
+
+if NFC_T4T_HL_PROCEDURE
+
+config NFC_T4T_HL_PROCEDURE_CC_BUFFER_SIZE
+	int "NFC Type 4 Tag Capability Container buffer size"
+	default 64
+	help
+	  NFC Type 4 Tag Capability Container buffer size in bytes
+
+config NFC_T4T_HL_PROCEDURE_APDU_BUF_SIZE
+	int "NFC Type 4 Tag APDU buffer size"
+	range 0 255
+	default 255
+	help
+	  NFC Type 4 Tag APDU command buffer size in bytes
+
+module = NFC_T4T_HL_PROCEDURE
+module-str = HL_PROCEDURE
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # NFC_T4T_HL_PROCEDURE

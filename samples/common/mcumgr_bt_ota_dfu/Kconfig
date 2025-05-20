@@ -1,0 +1,149 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config NCS_SAMPLE_MCUMGR_BT_OTA_DFU
+	bool "MCUmgr OTA DFU over Bluetooth"
+	select CRC
+	select FLASH
+	select FLASH_MAP
+	select MCUMGR
+	select MCUMGR_TRANSPORT_BT
+	select NET_BUF
+	select ZCBOR
+	imply MCUMGR_GRP_OS
+	imply MCUMGR_GRP_OS_BOOTLOADER_INFO
+	imply MCUMGR_TRANSPORT_BT_CONN_PARAM_CONTROL
+	imply MCUMGR_TRANSPORT_BT_REASSEMBLY
+	imply NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP
+	depends on BT_PERIPHERAL
+	depends on BOOTLOADER_MCUBOOT || SUIT
+	help
+	  Enable this option to include MCUmgr in the build which will enable
+	  the Bluetooth transport and image management group, which allows
+	  for firmware over the air update support of the device.
+
+if NCS_SAMPLE_MCUMGR_BT_OTA_DFU
+
+config NCS_SAMPLE_MCUMGR_BT_OTA_DFU_BACKEND_MCUBOOT
+	bool
+	default y
+	select IMG_MANAGER
+	select MCUMGR_GRP_IMG
+	select STREAM_FLASH
+	imply MCUMGR_GRP_IMG_REJECT_DIRECT_XIP_MISMATCHED_SLOT if \
+	      MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP || MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT
+	depends on BOOTLOADER_MCUBOOT
+	help
+	  This option enables the necessary configuration for the MCUboot-based DFU.
+
+config NCS_SAMPLE_MCUMGR_BT_OTA_DFU_BACKEND_SUIT
+	bool
+	default y
+	select MCUMGR_SMP_LEGACY_RC_BEHAVIOUR
+	select MGMT_SUITFU
+	select MGMT_SUITFU_GRP_SUIT
+	select SSF_SUIT_SERVICE_ENABLED
+	select ZCBOR_CANONICAL
+	depends on SUIT
+	help
+	  This option enables the necessary configuration for the SUIT-based DFU.
+
+choice MCUMGR_TRANSPORT_BT_PERM
+	default MCUMGR_TRANSPORT_BT_PERM_RW
+endchoice
+
+config IMG_ERASE_PROGRESSIVELY
+	default y
+
+if MCUMGR_TRANSPORT_BT_REASSEMBLY
+
+config MCUMGR_TRANSPORT_NETBUF_SIZE
+	default 2475
+
+config MCUMGR_GRP_OS_MCUMGR_PARAMS
+	default y
+
+endif # MCUMGR_TRANSPORT_BT_REASSEMBLY
+
+if (SETTINGS_FCB || SETTINGS_NVS || SETTINGS_ZMS || SETTINGS_ZMS_LEGACY)
+
+config MCUMGR_GRP_ZBASIC
+	default y
+
+config MCUMGR_GRP_ZBASIC_STORAGE_ERASE
+	default y
+
+endif # (SETTINGS_FCB || SETTINGS_NVS || SETTINGS_ZMS || SETTINGS_ZMS_LEGACY)
+
+if NORDIC_QSPI_NOR
+
+config NORDIC_QSPI_NOR_FLASH_LAYOUT_PAGE_SIZE
+	default 4096
+
+config NORDIC_QSPI_NOR_STACK_WRITE_BUFFER_SIZE
+	default 16
+
+endif # NORDIC_QSPI_NOR
+
+# Align supported targets with their default MCUboot configuration.
+
+# nRF53 series
+if SOC_SERIES_NRF53X
+
+# Thingy53: mcuboot/boot/zephyr/boards/thingy53_nrf5340_cpuapp.conf
+if BOARD_THINGY53_NRF5340_CPUAPP || BOARD_THINGY53_NRF5340_CPUAPP_NS
+
+config UPDATEABLE_IMAGE_NUMBER
+	default 2
+
+config NRF53_UPGRADE_NETWORK_CORE
+	default y
+
+endif # BOARD_THINGY53_NRF5340_CPUAPP || BOARD_THINGY53_NRF5340_CPUAPP_NS
+
+# nRF5340 DK and the rest of the targets from the nRF53 series: mcuboot/boot/zephyr/prj.conf
+# Defaults below for the nRF53 series are overridden by the target-specific
+# defaults that are defined above (e.g. for the Thingy:53 target).
+config NRF53_UPGRADE_NETWORK_CORE
+	default n
+
+endif # SOC_SERIES_NRF53X
+
+endif # NCS_SAMPLE_MCUMGR_BT_OTA_DFU
+
+config NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP
+	bool "MCUmgr OTA DFU speedup"
+	depends on HAS_BT_CTLR || BT_HCI_HOST
+	help
+	  Enable this option to speed up the OTA DFU transfer over Bluetooth.
+	  This option extends the Bluetooth buffers to extend Bluetooth MTU
+	  size. The buffer configuration should be the same in the Network Core
+	  and Application Core image.
+
+if NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP
+
+config BT_L2CAP_TX_MTU
+	default 498 if BT_HCI_HOST
+
+config BT_BUF_ACL_TX_SIZE
+	default 251
+
+config BT_BUF_ACL_RX_SIZE
+	default 502
+
+config BT_CTLR_DATA_LENGTH_MAX
+	default 251 if HAS_BT_CTLR
+
+endif # NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP
+
+config NCS_SAMPLE_MCUMGR_BT_OTA_DFU_VALIDATION
+	bool "MCUmgr OTA DFU build time validation"
+	default y
+	depends on NCS_SAMPLE_MCUMGR_BT_OTA_DFU || NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP
+	help
+	  Enable this option to validate the MCUmgr OTA DFU configuration at the
+	  build time. If the project configuration does not match predefined
+	  defaults, the build system issues a warning for each misaligned item.

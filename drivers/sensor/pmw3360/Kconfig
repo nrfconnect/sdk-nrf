@@ -1,0 +1,68 @@
+# Sensor data simulator
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig PMW3360
+	bool "PMW3360 mouse optical sensor"
+	help
+	  Enable PMW3360 mouse optical sensor.
+
+if PMW3360
+
+config PMW3360_CPI
+	int "PMW3360's default CPI"
+	default 1600
+	range 100 12000
+	help
+	  Default CPI value.
+
+config PMW3360_RUN_DOWNSHIFT_TIME_MS
+	int "PMW3360's default RUN mode downshift time"
+	default 500
+	range 10 2550
+	help
+	  Default RUN mode downshift down time in milliseconds.
+	  Time after which sensor goes from RUN to REST1 mode.
+
+config PMW3360_REST1_DOWNSHIFT_TIME_MS
+	int "PMW3360's default REST1 mode downshift time"
+	default 9220
+	range 320 81600
+	help
+	  Default REST1 mode downshift down time in milliseconds.
+	  Time after which sensor goes from REST1 to REST2 mode.
+
+config PMW3360_REST2_DOWNSHIFT_TIME_MS
+	int "PMW3360's default REST2 mode downshift time"
+	default 150000
+	range 3200 816000
+	help
+	  Default REST2 mode downshift down time in milliseconds.
+	  Time after which sensor goes from REST2 to REST3 mode.
+
+choice
+	prompt "Select PMW3360 sensor orientation"
+	default PMW3360_ORIENTATION_0
+
+config PMW3360_ORIENTATION_0
+	bool "PMW3360 not rotated"
+
+config PMW3360_ORIENTATION_90
+	bool "PMW3360 rotated 90 deg clockwise"
+
+config PMW3360_ORIENTATION_180
+	bool "PMW3360 rotated 180 deg clockwise"
+
+config PMW3360_ORIENTATION_270
+	bool "PMW3360 rotated 270 deg clockwise"
+
+endchoice
+
+module = PMW3360
+module-str = PMW3360
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif #PMW3360

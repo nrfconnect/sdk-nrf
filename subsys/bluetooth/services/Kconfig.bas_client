@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_BAS_CLIENT
+	bool "Battery service client"
+	select BT_NRF_SERVICES
+	help
+	  Enable Battery Service Client.
+
+if BT_BAS_CLIENT
+
+module = BT_BAS_CLIENT
+module-str = BAS Client
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_BAS_CLIENT

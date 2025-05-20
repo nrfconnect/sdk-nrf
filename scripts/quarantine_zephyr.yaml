@@ -1,0 +1,613 @@
+# The configurations resulting as a product of scenarios and platforms
+# will be skipped if quarantine is used. More details here:
+# https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
+
+# This configurations come from tests/samples in sdk-zephyr
+
+- scenarios:
+    - sample.libraries.hash_map.newlib.cxx_unordered_map.djb2
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-21219"
+
+- scenarios:
+    - mcuboot.recovery.retention
+    - mcuboot.recovery.retention.mem
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24920"
+
+- scenarios:
+    - mgmt.mcumgr.all.options
+    - mgmt.mcumgr.all.options.other
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24921"
+
+- scenarios:
+    - sample.bluetooth.central.multilink
+    - sample.bluetooth.peripheral_identity
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24923"
+
+- scenarios:
+    - display.cfb.basic.mono01
+    - display.cfb.basic.mono01.lsbfirst
+    - display.cfb.basic.mono01.lsbfirst.msbfirst_font
+    - display.cfb.basic.mono01.msbfirst_font
+    - display.cfb.basic.mono10
+    - display.cfb.basic.mono10.lsbfirst
+    - display.cfb.basic.mono10.lsbfirst.msbfirst_font
+    - display.cfb.basic.mono10.msbfirst_font
+    - drivers.display.default
+    - drivers.display.read_write.sdl.argb8888
+    - drivers.display.read_write.sdl.bgr565
+    - drivers.display.read_write.sdl.mono01
+    - drivers.display.read_write.sdl.mono01.lsbfirst
+    - drivers.display.read_write.sdl.mono10
+    - drivers.display.read_write.sdl.mono10.lsbfirst
+    - drivers.display.read_write.sdl.rgb565
+    - drivers.display.read_write.sdl.rgb888
+    - sample.boards.nrf.nrf_led_matrix
+    - sample.display.builtin
+    - sample.display.lvgl.gui
+    - sample.modules.lvgl.accelerometer_chart
+    - sample.modules.lvgl.demo_music
+    - sample.modules.lvgl.demo_benchmark
+    - sample.modules.lvgl.demo_stress
+    - sample.modules.lvgl.demo_widgets
+    - sample.smf.smf_calculator
+  platforms:
+    - native_sim/native
+    - native_sim/native/64
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24924"
+
+- scenarios:
+    - sample.ipc.openamp
+  platforms:
+    - mps2_an521
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24926"
+
+- scenarios:
+    - sample.mcumgr.smp_svr.mcuboot_flags.direct_xip_withrevert
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24927"
+
+- scenarios:
+    - sample.mgmt.osdp.control_panel
+    - sample.mgmt.osdp.control_panel_sc
+    - sample.mgmt.osdp.peripheral_device
+    - sample.mgmt.osdp.peripheral_device_sc
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24928"
+
+- scenarios:
+    - examples.nrfx_uarte.tx_rx_non_blocking
+  platforms:
+    - nrf9160dk@0.14.0/nrf9160
+    - nrf52840dk/nrf52840
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-3395"
+
+- scenarios:
+    - examples.nrfx_uarte.rx_double_buffered
+  platforms:
+    - nrf52840dk/nrf52840
+    - nrf9160dk@0.14.0/nrf9160
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf52833dk/nrf52833
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-3468"
+
+- scenarios:
+    - examples.nrfx_uarte.tx_rx_non_blocking
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf52833dk/nrf52833
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-3468"
+
+- scenarios:
+    - examples.nrfx_saadc.maximum_performance
+  platforms:
+    - nrf52840dk/nrf52840
+    - nrf52833dk/nrf52833
+    - nrf9160dk@0.14.0/nrf9160
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-3813"
+
+- scenarios:
+    - kernel.timer.timer
+  platforms:
+    - nrf52dk/nrf52832
+  comment: "RAM overflow in NCS specifically - vanilla Zephyr build still fits."
+
+- scenarios:
+    - drivers.flash.common.default
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-27852"
+
+- scenarios:
+    - arch.interrupt.gen_isr_table.riscv_no_direct
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
+    - nrf54l15dk/nrf54l15/cpuflpr
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-27981"
+
+- scenarios:
+    - sample.net.sockets.big_http_download
+    - sample.net.sockets.big_http_download.ci
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "to be fixed in https://github.com/zephyrproject-rtos/zephyr/pull/73777"
+
+- scenarios:
+    - sample.net.sockets.http.server
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
+  comment: "to be fixed in https://github.com/zephyrproject-rtos/zephyr/pull/73777"
+
+- scenarios:
+    - sample.drivers.spi.flash
+    - sample.drivers.spi.flash_dpd
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "Test not aligned for nrf54l15 but selected due to jedec,spi-nor"
+
+- scenarios:
+    - llext.*
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
+    - nrf52dk/nrf52832
+    - nrf5340dk/nrf5340/cpunet
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
+    - nrf54l15dk/nrf54l15/cpuflpr
+    - qemu_cortex_m3/ti_lm3s6965
+  comment: "overflow, to report/fix in the upstream @permac and put ticket # here"
+
+- scenarios:
+    - sample.net.mqtt.nrf70.tls
+  comment: "To report @chaitanya and put ticket # here"
+
+- scenarios:
+    - storage.flash_map
+  platforms:
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-29462"
+
+- scenarios:
+    - sample.filesystem.fat_fs.nrf54l15dk
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "Test not aligned for nrf54l15 - missing PM configuration"
+
+- scenarios:
+    - sample.bluetooth.hci_uart.nrf54l15.all
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "Test not aligned for nrf54l15 - missing snippet settings"
+
+- scenarios:
+    - net.sockets.tls12.ec_kex
+    - net.sockets.tls13.ephemeral_kex
+    - net.sockets.tls13.psk_kex.tickets
+    - net.sockets.tls13.ephemeral_kex.tickets
+  platforms:
+    - native_sim/native
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-30873"
+
+- scenarios:
+    - drivers.power_domain.build.pm
+    - drivers.power_domain.build
+  platforms:
+    - native_sim/native
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-30877"
+
+- scenarios:
+    - sample.mcumgr.smp_svr.ram_load.*
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24488"
+
+- scenarios:
+    - net.iface.iid.stable
+  platforms:
+    - nrf9160dk@0.14.0/nrf9160/ns
+    - nrf5340dk/nrf5340/cpuapp/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31574"
+
+- scenarios:
+    - drivers.eeprom.emul.build
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31589"
+
+- scenarios:
+    - llext.writable
+    - llext.writable_relocatable
+    - llext.writable_slid_linking
+    - llext.writable_relocatable_slid_linking
+  platforms:
+    - nrf9160dk@0.14.0/nrf9160
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31590"
+
+- scenarios:
+    - drivers.stepper.shell
+    - drivers.stepper.shell_async
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31591"
+
+- scenarios:
+    - portability.posix.common.dynamic_stack
+  platforms:
+    - qemu_cortex_m3/ti_lm3s6965
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31667"
+
+- scenarios:
+    - sample.bluetooth.central.multilink
+    - sample.bluetooth.peripheral_identity
+  platforms:
+    - qemu_cortex_m3/ti_lm3s6965
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31671"
+
+- scenarios:
+    - init.check_init_priorities
+    - shell.device_filter
+  platforms:
+    - native_sim/native
+  comment: "clash of entropy configurations, will be resolved in upstream (Frank Kvamtro)"
+
+- scenarios:
+    - mgmt.mcumgr.fs.mgmt.hash.supported.sha256
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "needs porting, owner not clear"
+
+- scenarios:
+    - libraries.encoding.jwt.rsa.psa
+    - libraries.encoding.jwt.rsa.legacy
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31783"
+
+- scenarios:
+    - sample.net.openthread.coprocessor
+    - sample.net.openthread.coprocessor.usb
+    - sample.openthread.coprocessor.rcp
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "Not compatible with NCS. https://nordicsemi.atlassian.net/browse/KRKNWK-20183"
+
+- scenarios:
+    - bluetooth.shell.shell_br
+  platforms:
+    - qemu_cortex_m3/ti_lm3s6965
+  comment: "https://github.com/zephyrproject-rtos/zephyr/issues/89488"
+
+- scenarios:
+    - portability.posix.xsi_realtime
+    - portability.posix.xsi_realtime.minimal
+    - portability.posix.xsi_realtime.newlib
+    - portability.posix.xsi_realtime.picolibc
+  platforms:
+    - qemu_cortex_m3/ti_lm3s6965
+  comment: "https://github.com/zephyrproject-rtos/zephyr/issues/89485"
+
+- scenarios:
+    - drivers.gpio.build
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuflpr
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-33288"
+
+- scenarios:
+    - kernel.scheduler.simple_timeslicing
+  platforms:
+    - nrf52dk/nrf52832
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-33279"
+
+- scenarios:
+    - usb.device_next.build_all
+  platforms:
+    - qemu_cortex_m3/ti_lm3s6965
+  comment: "https://github.com/zephyrproject-rtos/zephyr/issues/89484"
+
+- scenarios:
+    - libraries.encoding.json
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuflpr
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-33580"
+
+# ---------------------------------   Won't fix section -----------------------------------
+
+- scenarios:
+    - libraries.encoding.jwt
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-15508"
+
+- scenarios:
+    - net.mqtt.tls
+  platforms:
+    - nrf9160dk@0.14.0/nrf9160/ns
+    - nrf5340dk/nrf5340/cpuapp/ns
+  comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-24922"
+
+- scenarios:
+    - net.socket.register.tls
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-18853"
+
+- scenarios:
+    - sample.tfm.regression_ipc_lvl1
+    - sample.tfm.regression_ipc_lvl2
+    - sample.tfm.regression_sfn
+    - sample.tfm.psa_test_protected_storage
+    - sample.tfm.psa_test_internal_trusted_storage
+    - sample.tfm.psa_test_storage
+    - sample.tfm.psa_test_crypto
+  comment: "Won't be fixed - We have our own copy of these regression tests in nrf"
+
+- scenarios:
+    - libraries.uoscore
+  comment: "Won't be fixes - We don't support uoscore since it doesn't use NRF security"
+
+- scenarios:
+    - sample.drivers.crypto.mbedtls
+  platforms:
+    - nrf9160dk@0.14.0/nrf9160/ns
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-15306"
+
+- scenarios:
+    - sample.net.sockets.websocket_client
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-24929"
+
+- scenarios:
+    - sample.psa_crypto
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-22771"
+
+- scenarios:
+    - sample.net.sockets.http.server
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "Same reason as in https://nordicsemi.atlassian.net/browse/NCSDK-22771"
+
+- scenarios:
+    - kernel.common.picolibc
+    - kernel.common.misra
+    - kernel.common.tls
+    - kernel.common.minimallibc
+    - kernel.common.nano32
+    - kernel.common.nano64
+    - kernel.threads.apis
+    - kernel.threads.dynamic_thread.stack.pool.alloc.user
+    - kernel.threads.dynamic_thread.stack.pool.alloc.no_user
+    - kernel.threads.dynamic_thread.stack.pool.no_alloc.user
+    - kernel.threads.dynamic_thread.stack.no_pool.no_alloc.no_user
+    - kernel.threads.dynamic_thread.stack.no_pool.alloc.user
+    - kernel.threads.dynamic_thread.stack.no_pool.alloc.no_user
+    - kernel.threads.dynamic_thread.stack.pool.no_alloc.no_user
+    - kernel.threads.dynamic_thread.stack.no_pool.no_alloc.user
+    - kernel.scheduler.no_timeslicing
+    - kernel.scheduler.dumb_no_timeslicing
+    - kernel.scheduler.dumb_timeslicing
+    - kernel.scheduler.multiq_no_timeslicing
+    - kernel.scheduler.multiq
+    - message_bus.zbus.hlp_priority_boost
+    - message_bus.zbus.general_unittests_without_priority_boost
+    - message_bus.zbus.general_unittests
+    - logging.thread
+    - logging.immediate.*
+    - libraries.heap
+    - libraries.libc.c11_threads.minimal
+    - libraries.libc.c11_threads.picolibc.notls
+    - libraries.libc.c11_threads.picolibc
+    - libraries.libc.c11_threads.picolibc.module
+    - libraries.libc.c11_threads.newlib_nano
+    - libraries.libc.c11_threads.newlib
+    - libraries.libc.common
+    - libraries.libc.common.minimal
+    - libraries.libc.common.newlib
+    - libraries.libc.common.newlib_nano
+    - libraries.libc.common.picolibc
+    - libraries.libc.common.picolibc.module
+    - libraries.libc.common.picolibc.notls
+    - libraries.encoding.json
+    - libraries.net_buf.buf
+    - libraries.ring_buffer
+    - libraries.hash_map.cxx.djb2
+    - cpp.libcxx.glibcxx.picolibc
+    - portability.posix.eventfd
+    - portability.posix.headers.newlib.without_posix_api
+    - portability.posix.headers.newlib.with_posix_api
+    - portability.posix.headers.picolibc.with_posix_api
+    - portability.posix.headers.picolibc.without_posix_api
+    - portability.posix.headers.with_posix_api
+    - portability.posix.headers.without_posix_api
+    - portability.cmsis_rtos_v2
+    - portability.cmsis_rtos_v1
+    - mgmt.mcumgr.os.info
+    - mgmt.mcumgr.os.info.no_hooks
+    - drivers.eeprom.shell
+    - drivers.can.shell
+    - shell.shell_custom_header
+    - crypto.tinycrypt
+    - crypto.tinycrypt.hmac_prng
+    - net.mqtt_sn.packet
+    - net.http.server.common
+    - net.coap.server.common
+    - sample.zbus.msg_subscriber.*
+    - sample.sensor.shell.pytest
+    - sample.sensor.shell
+    - benchmark.kernel.core
+    - sample.posix.eventfd
+    - sample.pytest.shell
+    - kernel.lifo.usage
+    - sample.shell.shell_module.getopt
+    - sample.shell.shell_module.login
+    - kernel.scheduler.slice_perthread
+    - kernel.workqueue
+    - kernel.semaphore
+    - sample.posix.uname
+    - kernel.scheduler
+    - sample.drivers.flash.shell
+    - kernel.timer.timer
+    - sample.smf.hsm_psicc2
+    - sample.net.sockets.socketpair
+    - sample.drivers.crypto.mbedtls
+    - kernel.workqueue.api
+    - sample.posix.env
+    - sample.shell.shell_module
+    - kernel.common
+    - net.http.server.crime
+    - drivers.gpio.build
+    - sample.perf
+    - .*secure_storage.*
+    - kernel.scheduler.simple_timeslicing
+    - kernel.scheduler.simple_no_timeslicing
+    - sample.input.input_dump_shell
+    - sample.harness.shell.vt100_colors_off
+    - sample.harness.shell
+    - filesystem.lib_link
+    - sample.pytest.shell.vt100_colors_off
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
+  comment: "region RAM/FLASH overflowed"
+
+- scenarios:
+    - cpp.libcxx.glibcxx.picolibc
+    - crypto.mbedtls
+    - crypto.tinycrypt
+    - crypto.tinycrypt.hmac_prng
+    - drivers.can.shell
+    - kernel.common
+    - kernel.common.minimallibc
+    - kernel.common.misra
+    - kernel.common.nano32
+    - kernel.common.nano64
+    - kernel.common.picolibc
+    - kernel.common.tls
+    - kernel.timer.timer
+    - libraries.encoding.jwt.rsa.psa
+    - net.coap.server.common
+    - net.http.server.common
+    - net.http.server.crime
+    - net.http.server.prototype
+    - portability.cmsis_rtos_v1
+    - portability.cmsis_rtos_v2
+    - portability.posix.common
+    - portability.posix.common.dynamic_stack
+    - portability.posix.common.newlib
+    - portability.posix.common.no_spin_validate
+    - portability.posix.common.picolibc
+    - portability.posix.common.signal.big_nsig
+    - portability.posix.common.signal.strsignal_no_desc
+    - portability.posix.common.static_stack
+    - portability.posix.common.tls
+    - portability.posix.common.tls.newlib
+    - portability.posix.eventfd
+    - portability.posix.headers.newlib.with_posix_api
+    - portability.posix.headers.newlib.without_posix_api
+    - portability.posix.headers.picolibc.with_posix_api
+    - portability.posix.headers.picolibc.without_posix_api
+    - portability.posix.headers.with_posix_api
+    - portability.posix.headers.without_posix_api
+    - sample.drivers.flash.shell
+    - sample.net.sockets.dumb_http_server
+    - sample.net.sockets.http_get
+    - sample.net.sockets.socketpair
+    - sample.posix.eventfd
+    - sample.posix.gettimeofday
+    - sample.sensor.shell
+    - sample.sensor.shell.pytest
+    - sample.shell.shell_module
+    - sample.shell.shell_module.getopt
+    - sample.shell.shell_module.login
+    - .*secure_storage.*
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuflpr
+  comment: "region RAM/FLASH overflowed"
+
+- scenarios:
+    - libraries.libc.newlib_nano.thread_safety.userspace.stress
+    - libraries.libc.newlib.thread_safety.userspace.stress
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+  comment: "region FLASH overflowed"
+
+- scenarios:
+    - libraries.cmsis_dsp.matrix.unary_f64
+    - libraries.cmsis_dsp.matrix.unary_f64.fpu
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
+  comment: "Won't be fixed, 'rodata will not fit in region FLASH' - no ticket"
+
+- scenarios:
+    - examples.nrfx_spim.blocking
+    - examples.nrfx_spim.non_blocking
+  comment: "Not fixable during upmerge, fix will be included in next upmerge"
+
+- scenarios:
+    - sample.filesystem.fat_fs.nrf54l15dk
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "partition manager configuration need to be fixed/provided"
+
+- scenarios:
+    - drivers.hwinfo.api
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
+  comment: "Unsupported device"
+
+- scenarios:
+    - .*secure_storage.*
+  platforms:
+    - qemu_cortex_m3/ti_lm3s6965
+    - mps2/an521/cpu0
+  comment: "redundant due to natve_sim already in scope"
+
+- scenarios:
+    - sample.net.prometheus
+  comment: "not compatible with NCS (Frank Audun Kvamtro)"
+
+- scenarios:
+    - drivers.wifi.build.spi
+  platforms:
+    - native_sim/native
+  comment: "requires pulling in hal_atmel but is actually not very useful"
+
+- scenarios:
+    - bluetooth.bt_crypto
+    - bluetooth.bt_crypto.psa
+  platforms:
+    - qemu_cortex_m3/ti_lm3s6965
+  comment: "not supported in NCS anymore"
+
+- scenarios:
+    - kernel.common.toolchain
+  platforms:
+    - native_sim/native
+  comment: "clang is not available in our toolchain"
+
+- scenarios:
+    - sample.bluetooth.peripheral_hr.frdm_kw41z_shield
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+  comment: "Not compatible"

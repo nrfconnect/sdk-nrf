@@ -1,0 +1,50 @@
+/* Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	cpuapp_sram@2003E340 {
+		compatible = "zephyr,memory-region", "mmio-sram";
+		reg = <0x2003E340 0x1CC0>;
+		zephyr,memory-region = "DiagnosticLogMem";
+		status = "okay";
+		retainedmem {
+			compatible = "zephyr,retained-ram";
+			status = "okay";
+			#address-cells = <1>;
+			#size-cells = <1>;
+			/* Reserve 192 B for the crash logs. */
+			crash_retention: retention@0 {
+					compatible = "zephyr,retention";
+					status = "okay";
+					reg = <0x0 0xC0>;
+					prefix = [08 04];
+					checksum = <2>;
+			};
+
+			/* Reserve 6 kB for the network logs. */
+			network_logs_retention: retention@c0 {
+					compatible = "zephyr,retention";
+					status = "okay";
+					reg = <0xC0 0x1800>;
+					prefix = [06 03];
+					checksum = <2>;
+			};
+
+			/* Reserve 1 kB for the end user logs. */
+			end_user_logs_retention: retention@18c0 {
+					compatible = "zephyr,retention";
+					status = "okay";
+					reg = <0x18C0 0x400>;
+					prefix = [05 02];
+					checksum = <2>;
+			};
+		};
+	};
+};
+
+/* Reduce cpuapp_sram usage by 7360 B to account for non-init area */
+&cpuapp_sram {
+	reg = <0x20000000 0x3E340>;
+};

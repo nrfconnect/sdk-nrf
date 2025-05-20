@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Nordic Sta sample"
+
+config CONNECTION_IDLE_TIMEOUT
+	int "Time to be waited for a station to connect"
+	default 30
+
+config NRF70_QSPI_ENCRYPTION_KEY
+	string "16 bytes QSPI encryption key, only for testing purposes"
+	depends on BOARD_NRF7002DK_NRF5340_CPUAPP
+	help
+	  Specify the QSPI encryption key
+
+config STA_CONN_TIMEOUT_SEC
+	int "Overall Connection timeout i.e., time to be waited for a station to connect and get an IP address"
+	# Zephyr DHCP retry is 1 minute, so set the default to 70 seconds
+	default 70
+	# 512 has no special meaning, just a reasonable upper limit
+	range 0 512
+	help
+	  Specify the connection timeout, in seconds. This is the overall timeout i.e., time to be waited for
+	  a station to connect and get an IP address. DHCP retries should be taken into account when setting
+	  this value. If the timeout is set to 0, the connection will not timeout.
+
+config STA_SAMPLE_START_WIFI_THREAD_STACK_SIZE
+	int "Stack size for Wi-Fi start thread"
+	default 4096
+	help
+	  Set the stack size for the Wi-Fi start thread.
+endmenu

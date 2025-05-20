@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_ANCS_CLIENT
+	bool "Apple Notification Center Service client"
+	select BT_NRF_SERVICES
+	help
+	  Enable Apple Notification Center Service client.
+
+if BT_ANCS_CLIENT
+
+config BT_ANCS_CLIENT_CP_BUFF_SIZE
+	int "Control Point transmit buffer size"
+	default 160
+	range 20 65535
+	help
+	  Transmit buffer size for Control Point characteristic.
+
+module = BT_ANCS_CLIENT
+module-str = ANCS Client
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_ANCS_CLIENT

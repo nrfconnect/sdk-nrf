@@ -1,0 +1,167 @@
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+# Zephyr Kconfig for some samples
+config NET_CORE_IMAGE_HCI_IPC
+	bool
+
+config EXTERNAL_CONFIGURED_NETCORE
+	bool
+	default y
+	depends on NET_CORE_IMAGE_HCI_IPC # Zephyr Kconfig enabling HCI IPC on netcore
+
+config SUPPORT_NETCORE
+	bool
+	default y if (SOC_NRF5340_CPUAPP || SOC_NRF54H20_CPUAPP)
+
+config NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER
+	string
+	default "cpunet" if SOC_NRF5340_CPUAPP
+	default "cpurad" if SOC_NRF54H20_CPUAPP
+
+config NETCORE_REMOTE_DOMAIN
+	string
+	default "CPUNET" if NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
+
+menu "Network core configuration"
+	depends on SUPPORT_NETCORE
+
+config SUPPORT_NETCORE_EMPTY
+	bool
+	default y
+
+config SUPPORT_NETCORE_HCI_IPC
+	bool
+	default y
+
+config SUPPORT_NETCORE_RPC_HOST
+	bool
+	default y
+
+config SUPPORT_NETCORE_802154_RPMSG
+	bool
+	default y
+
+config SUPPORT_NETCORE_IPC_RADIO
+	bool
+	default y
+
+config NRF_DEFAULT_EMPTY
+	bool
+
+config NRF_DEFAULT_BLUETOOTH
+	bool
+
+config NRF_DEFAULT_RPC_HOST
+	bool
+
+config NRF_DEFAULT_802154
+	bool
+
+config NRF_DEFAULT_IPC_RADIO
+	bool
+
+choice NETCORE
+	prompt "Netcore image"
+	default NETCORE_HCI_IPC if NRF_DEFAULT_BLUETOOTH && NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
+	default NETCORE_RPC_HOST if NRF_DEFAULT_RPC_HOST && NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
+	default NETCORE_802154_RPMSG if NRF_DEFAULT_802154 && NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
+	default NETCORE_IPC_RADIO if NRF_DEFAULT_IPC_RADIO && NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
+	default NETCORE_EMPTY if NRF_DEFAULT_EMPTY && NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
+	depends on SUPPORT_NETCORE && !EXTERNAL_CONFIGURED_NETCORE
+
+config NETCORE_NONE
+	bool "None"
+	help
+	  Do not include a netcore image in the build.
+
+config NETCORE_EMPTY
+	bool "Empty"
+	depends on SUPPORT_NETCORE_EMPTY
+	help
+	  Include empty image as the netcore image to use.
+
+config NETCORE_HCI_IPC
+	bool "hci_ipc"
+	depends on SUPPORT_NETCORE_HCI_IPC
+	help
+	  Include hci_ipc as the netcore image to use.
+
+config NETCORE_RPC_HOST
+	bool "rpc_host"
+	depends on SUPPORT_NETCORE_RPC_HOST
+	help
+	  Include rpc_host as the netcore image to use.
+
+config NETCORE_802154_RPMSG
+	bool "802154_rpmsg"
+	depends on SUPPORT_NETCORE_802154_RPMSG
+	help
+	  Include 802154_rpmsg as the netcore image to use.
+
+menuconfig NETCORE_IPC_RADIO
+	bool "ipc_radio"
+	depends on SUPPORT_NETCORE_IPC_RADIO
+	help
+	  Add ipc_radio as a netcore image to use.
+	  The image can be configured as Bluetooth radio and/or IEEE 802.15.4 radio.
+
+if NETCORE_IPC_RADIO
+
+config NETCORE_IPC_RADIO_BT_HCI_IPC
+	bool "HCI serialization for Bluetooth"
+	help
+	  Use HCI serialization for Bluetooth.
+
+config NETCORE_IPC_RADIO_BT_RPC
+	bool "nRF RPC serialization for Bluetooth"
+	help
+	  Use nRF RPC serialization for Bluetooth.
+
+config NETCORE_IPC_RADIO_IEEE802154
+	bool "Spinel serialization for IEEE 802.15.4"
+	help
+	  Use Spinel serialization for IEEE 802.15.4.
+
+endif # NETCORE_IPC_RADIO
+
+endchoice
+
+if !NETCORE_NONE
+
+config NETCORE_IMAGE_NAME
+	string
+	default "empty_net_core" if NETCORE_EMPTY
+	default "hci_ipc" if NETCORE_HCI_IPC
+	default "rpc_host" if NETCORE_RPC_HOST
+	default "802154_rpmsg" if NETCORE_802154_RPMSG
+	default "ipc_radio" if NETCORE_IPC_RADIO
+	help
+	  Name of netcore image.
+
+config NETCORE_IMAGE_PATH
+	string
+	default "${ZEPHYR_NRF_MODULE_DIR}/samples/nrf5340/empty_net_core" if NETCORE_EMPTY
+	default "${ZEPHYR_BASE}/samples/bluetooth/hci_ipc" if NETCORE_HCI_IPC
+	default "${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/rpc_host" if NETCORE_RPC_HOST
+	default "${ZEPHYR_BASE}/samples/boards/nordic/ieee802154/802154_rpmsg" if NETCORE_802154_RPMSG
+	default "${ZEPHYR_NRF_MODULE_DIR}/applications/ipc_radio" if NETCORE_IPC_RADIO
+	help
+	  Source directory of netcore image.
+
+config NETCORE_IMAGE_DOMAIN
+	string
+	default NETCORE_REMOTE_DOMAIN
+
+config NETCORE_APP_UPDATE
+	bool "Network core updates"
+	depends on BOOTLOADER_MCUBOOT
+	depends on SECURE_BOOT_NETCORE
+	help
+	  Enabling this will add support for network core updates from the application core,
+	  requires b0n for network core and MCUboot for application core.
+
+endif # !NETCORE_NONE
+
+endmenu

@@ -1,0 +1,107 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NRF_CPU_LOAD
+	bool "Enable CPU load measurement"
+	select NRFX_GPPI
+	depends on !SOC_SERIES_NRF51X # Lack of required HW events
+	depends on !SOC_SERIES_NRF54HX # Lack of required HW events
+	depends on !SOC_SERIES_NRF54LX # Not ported
+	depends on !RISCV # Lack of required HW events
+	help
+	  Enable the CPU load measurement instrumentation. This tool is using
+	  POWER peripheral events with one TIMER peripheral and PPI to perform
+	  accurate CPU load measurement.
+
+if NRF_CPU_LOAD
+
+module = NRF_CPU_LOAD
+module-str = CPU load measurement
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+config NRF_CPU_LOAD_CMDS
+	bool "Enable shell commands"
+	depends on SHELL
+	default y
+
+if LOG
+
+config NRF_CPU_LOAD_LOG_PERIODIC
+	bool "Periodically log current CPU load"
+	help
+	  INFO level must be enabled to get the log.
+
+config NRF_CPU_LOAD_LOG_INTERVAL
+	int "Logging interval for CPU load [ms]"
+	depends on NRF_CPU_LOAD_LOG_PERIODIC
+	default 2000
+
+endif # LOG
+
+config NRF_CPU_LOAD_ALIGNED_CLOCKS
+	bool "Enable aligned clock sources"
+	help
+	  After enabling this option, the sleep period measurement
+	  is done using the same clock source as the active period,
+	  and one additional PPI channel is used.
+	  If you use the internal RC oscillator for at least one
+	  of the clock sources (high or low frequency), this option
+	  will ensure more accurate results.
+	  Enabling this option allows going to low power idle mode
+	  because the high frequency clock is not used by this module.
+
+config NRF_CPU_LOAD_USE_SHARED_DPPI_CHANNELS
+	bool "Use shared DPPI channels"
+	depends on HAS_HW_NRF_DPPIC
+	help
+	  DPPIC tasks and events can be assigned only to a single channel. When
+	  enabled, module will use channels to which events are already
+	  subscribed but will not enable it, relying on primary owner of the
+	  channel. Without special care, it may lead to cpu_load misfunction.
+	  On the other hand, it enables usage of cpu_load when events are used
+	  by the system. If disabled, cpu_load initialization fails when cannot
+	  allocate a DPPI channel.
+
+choice
+	prompt "Timer instance"
+	default NRF_CPU_LOAD_TIMER_2
+
+config NRF_CPU_LOAD_TIMER_0
+	depends on $(dt_nodelabel_has_compat,timer0,$(DT_COMPAT_NORDIC_NRF_TIMER))
+	bool "Timer 0"
+	select NRFX_TIMER0
+
+config NRF_CPU_LOAD_TIMER_1
+	depends on $(dt_nodelabel_has_compat,timer1,$(DT_COMPAT_NORDIC_NRF_TIMER))
+	bool "Timer 1"
+	select NRFX_TIMER1
+
+config NRF_CPU_LOAD_TIMER_2
+	depends on $(dt_nodelabel_has_compat,timer2,$(DT_COMPAT_NORDIC_NRF_TIMER))
+	bool "Timer 2"
+	select NRFX_TIMER2
+
+config NRF_CPU_LOAD_TIMER_3
+	depends on $(dt_nodelabel_has_compat,timer3,$(DT_COMPAT_NORDIC_NRF_TIMER))
+	bool "Timer 3"
+	select NRFX_TIMER3
+
+config NRF_CPU_LOAD_TIMER_4
+	depends on $(dt_nodelabel_has_compat,timer4,$(DT_COMPAT_NORDIC_NRF_TIMER))
+	bool "Timer 4"
+	select NRFX_TIMER4
+
+endchoice
+
+config NRF_CPU_LOAD_TIMER_INSTANCE
+	int
+	default 0 if NRF_CPU_LOAD_TIMER_0
+	default 1 if NRF_CPU_LOAD_TIMER_1
+	default 2 if NRF_CPU_LOAD_TIMER_2
+	default 3 if NRF_CPU_LOAD_TIMER_3
+	default 4 if NRF_CPU_LOAD_TIMER_4
+
+endif # NRF_CPU_LOAD

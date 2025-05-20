@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_THROUGHPUT
+	bool "Throughput service"
+	select BT_NRF_SERVICES
+	help
+	 Enable Nordic GATT throughput BLE service.
+
+if BT_THROUGHPUT
+
+module = BT_THROUGHPUT
+module-str = THROUGHPUT
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_THROUGHPUT

@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_RADIO_NOTIFICATION_CONN_CB
+	bool "Radio Notification connection callback"
+	depends on BT_LL_SOFTDEVICE || \
+		   (BT_LL_SOFTDEVICE_HEADERS_INCLUDE && !SOC_COMPATIBLE_NRF5340_CPUAPP)
+	select BT_HCI_VS_EVT_USER
+	select BT_CTLR_SDC_CONN_ANCHOR_POINT_REPORT
+	help
+	  Enables the support for setting up a radio notification
+	  callback to trigger a configurable amount of time before the
+	  connection event starts.
+	  This feature can be used to synchronize data sampling
+	  with on-air data transmission.

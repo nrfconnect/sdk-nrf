@@ -1,0 +1,30 @@
+# Copyright (c) 2024 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: |
+  This is an abstract device that represents TWI registers of nRF22xx Front-End Module
+  to be written at boot-time.
+
+  Here is an example configuration for nRF2240 Front-End Module TWI interface that defines
+  initialization registers:
+
+  nrf_radio_fem_twi: fem_twi@30 {
+    /* Other properties related to this node go here, including "compatible" and "reg". */
+    status = "okay";
+      init-regs = <0x11 0xaa>, <0x22 0xbb>, <0x33 0xcc>;
+  };
+
+  The above configuration will cause the registers of given nRF22xx device with internal addresses
+  0x11, 0x22 and 0x33 to be written with values 0xAA, 0xBB and 0xCC respectively.
+
+  The property is optional. If it is not specified, no TWI registers to be written at boot-time
+  are provided to the Front-End Module driver.
+
+include: base.yaml
+
+properties:
+  init-regs:
+    type: array
+    description:
+      Array that contains pairs of internal offsets of nRF22xx registers to be written at
+      boot-time and the values of these registers.

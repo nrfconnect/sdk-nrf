@@ -1,0 +1,41 @@
+name: src-mirror
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  zip-and-upload:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout sources
+        uses: nrfconnect/action-checkout-west-update@main
+        with:
+          git-fetch-depth: 0
+          path: workspace/nrf
+          west-update-args: '--group-filter=+babblesim'
+
+      - name: Configure git and run garbage collection
+        run: |
+          cd workspace/nrf
+          git config --global pack.windowMemory "32m" &&
+          west forall -c 'git gc --prune --aggressive'
+
+      - name: Create tar archive
+        run: |
+          tar -C ./workspace -czvf src.tar.gz .
+
+      - name: Set up JFrog CLI
+        uses: jfrog/setup-jfrog-cli@f748a0599171a192a2668afee8d0497f7c1069df # v4
+
+      - name: Configure and Upload to Artifactory
+        env:
+          ARTIFACTORY_URL: https://eu.files.nordicsemi.com/artifactory
+          REPOSITORY: ncs-src-mirror
+          FILE_PATH: src.tar.gz
+          TARGET_PATH: external/${{ github.ref_name }}/
+        run: >
+          jfrog rt u $FILE_PATH $REPOSITORY/$TARGET_PATH
+          --url=$ARTIFACTORY_URL
+          --user=${{ secrets.COM_NORDICSEMI_FILES_USERNAME }}
+          --password=${{ secrets.COM_NORDICSEMI_FILES_PASSWORD }}

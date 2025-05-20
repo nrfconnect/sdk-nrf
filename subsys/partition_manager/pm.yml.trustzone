@@ -1,0 +1,11 @@
+# Create a span for the RAM to be configured as SECURE by TF-M.
+sram_secure:
+  region: sram_primary
+  span:
+    - pcd_sram
+
+sram_nonsecure:
+  region: sram_primary
+  span:
+    - sram_primary /* Here, sram_primary refers to the (NS) app's RAM. */
+    - rpmsg_nrf53_sram

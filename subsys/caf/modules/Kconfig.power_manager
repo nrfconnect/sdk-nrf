@@ -1,0 +1,61 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Power manager"
+
+config CAF_POWER_MANAGER
+	bool "Enable power management"
+	select CAF_PM_EVENTS
+	select CAF_POWER_MANAGER_EVENTS
+	imply POWEROFF if !SOC_SERIES_NRF54HX
+	imply PM if SOC_SERIES_NRF54HX
+	imply PM_DEVICE
+	imply PM_DEVICE_RUNTIME if SOC_SERIES_NRF54HX
+	help
+	  Enable power management, which will put the device to low-power mode
+	  if it is idle.
+
+	  The sys_poweroff API is not yet fully supported on nRF54H SoC Series.
+	  Because of that, it's not enabled by default for now.
+
+if CAF_POWER_MANAGER
+
+config CAF_POWER_MANAGER_STAY_ON
+	bool "Block system off" if POWEROFF
+	default y if !POWEROFF
+	help
+	  If disabled, the device will switch SoC to OFF mode (system off) after
+	  power manager timeout is done in case no power state restrictions are
+	  applied. If enabled, the device will stay in suspended state, but will
+	  not enter system off state.
+
+config CAF_POWER_MANAGER_TIMEOUT
+	int "Power down timeout [s]"
+	default 120
+	help
+	  Time in seconds after which the device will enter low-power mode.
+
+config CAF_POWER_MANAGER_ERROR_TIMEOUT
+	int "Power manager timeout on error [s]"
+	default 30
+	help
+	 Time in seconds after which the device will be turned off after an error.
+
+config CAF_POWER_MANAGER_CLEAR_RESET_REASON
+	bool "Clear RESETREAS on system_off"
+	default y
+	depends on !SOC_SERIES_NRF54HX
+	help
+	  Clear RESETREAS on system_off to avoid starting serial recovery if nobody
+	  has cleared it already.
+
+module = CAF_POWER_MANAGER
+module-str = power manager
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+endmenu

@@ -1,0 +1,40 @@
+[
+	{
+		"name": "HID report propagation",
+		"start_event": {
+			"name": "hid_report_event"
+		},
+		"end_event": {
+			"name": "hid_report_sent_event"
+		}
+	},
+	{
+		"name": "HID report sending",
+		"start_event": {
+			"name": "hid_report_sent_event"
+		},
+		"end_event": {
+			"name": "hid_report_sent_event"
+		}
+	},
+	{
+		"name": "Next HID report generation",
+		"start_event": {
+			"name": "hid_report_sent_event"
+		},
+		"end_event": {
+			"name": "hid_report_event"
+		}
+	},
+	{
+		"name": "Next HID report generation traced",
+		"start_event": {
+			"name": "hid_report_sent_event",
+			"state": "submit"
+		},
+		"end_event": {
+			"name": "hid_report_event",
+			"state": "processing_end"
+		}
+	}
+]

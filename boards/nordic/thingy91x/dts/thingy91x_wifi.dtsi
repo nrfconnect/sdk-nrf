@@ -1,0 +1,29 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Enable short range RF */
+&ldsw_rf_fe_sr_en {
+	/delete-property/ output-low;
+	output-high;
+};
+
+/* Set pmic_wifi enable signal */
+&ldsw_nPM6001_en {
+	/delete-property/ regulator-boot-off;
+	regulator-boot-on;
+};
+
+/* Enable pmic_wifi */
+&pmic_wifi {
+	status = "okay";
+	regulators {
+		status = "okay";
+	};
+};
+
+/* enable nRF70 */
+&nrf70 {
+	status = "okay";
+};

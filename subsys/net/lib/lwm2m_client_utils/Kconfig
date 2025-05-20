@@ -1,0 +1,294 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig LWM2M_CLIENT_UTILS
+	bool "LWM2M client utilities library"
+	select LWM2M if !ZTEST
+	imply LTE_LC_EDRX_MODULE
+	imply LTE_LC_NEIGHBOR_CELL_MEAS_MODULE
+	imply LTE_LC_PSM_MODULE
+	imply LTE_LC_TAU_PRE_WARNING_MODULE
+
+if LWM2M_CLIENT_UTILS
+
+config LWM2M_CLIENT_UTILS_DEVICE_OBJ_SUPPORT
+	bool "Device object support"
+	default y
+
+config LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT
+	bool "Security object support"
+	default y
+
+if LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT
+
+config LWM2M_CLIENT_UTILS_SERVER
+	string "LwM2M server address"
+	help
+	  Choose the LwM2M server you wish to connect to. Address must be full URI containing
+	  protocol and port numbers, unless it is same as CONFIG_LWM2M_PEER_PORT.
+	  For example "coaps://server.example.com:5684".
+	  Protocol must be "coap" when no security is used, or "coaps" when DTLS is used.
+
+config LWM2M_CLIENT_UTILS_SERVER_TLS_TAG
+	int "LwM2M server TLS tag"
+	default 35724861
+	help
+	  This security tag is used when connecting to LwM2M server.
+	  Client utilities will overwrite credentials of this security tag if bootstrap
+	  server writes new keys for device.
+
+config LWM2M_CLIENT_UTILS_BOOTSTRAP_TLS_TAG
+	int "LwM2M bootstrap server TLS tag"
+	default 35724862
+	help
+	  This security tag is used when connecting to LwM2M Bootstrap server.
+	  Credentials could be provisioned to the modem for this security tag or application
+	  may write credentials into first LwM2M security instance "0/0/5".
+	  Client utilities only write to this security tag if it is empty.
+
+endif # LWM2M_CLIENT_UTILS_SECURITY_OBJ_SUPPORT
+
+config LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT
+	bool "Connection Monitor object support"
+	default y
+	select LWM2M_CONN_MON_OBJ_SUPPORT if !ZTEST
+
+if LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT
+
+config LWM2M_CONN_MON_BEARER_MAX
+	int "Max number of bearers"
+	default 2
+
+config LWM2M_CONN_HOLD_TIME_RSRP
+	int "Minimum time [s] between RSRP notification messages"
+	default 60
+	help
+	  The minimum time in seconds that notifications can be sent to observers of the
+	  Connectivity Monitoring data.
+
+endif # LWM2M_CLIENT_UTILS_CONN_MON_OBJ_SUPPORT
+
+config LWM2M_CLIENT_UTILS_LOCATION_OBJ_SUPPORT
+	bool "Location object support"
+	default y
+	select LWM2M_LOCATION_OBJ_SUPPORT
+
+config LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT
+	bool "Firmware Update object support"
+	default y
+	select LWM2M_FIRMWARE_UPDATE_OBJ_SUPPORT if (!LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT && !ZTEST)
+	select DFU_TARGET
+	select BOOTLOADER_MCUBOOT if !ZTEST
+	select IMG_MANAGER if !ZTEST
+	select IMG_ERASE_PROGRESSIVELY if !ZTEST
+	select FLASH if !ZTEST
+	select MPU_ALLOW_FLASH_WRITE if !ZTEST
+	select FOTA_DOWNLOAD_PROGRESS_EVT if FOTA_DOWNLOAD
+
+if LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT
+
+config LWM2M_CLIENT_UTILS_DOWNLOADER_SEC_TAG
+	int "Security tag for FOTA download library"
+	default 16842753
+	help
+	  This security tag is used when firmware image is fetch from
+	  https:// or coaps:// URI. It has no effect on usage of http:// or coap://
+	  -1 disables the usage of security tag.
+
+config LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_THREAD_STACK_SIZE
+	int "FOTA thread stack size"
+	default 2048
+
+endif # LWM2M_CLIENT_UTILS_FIRMWARE_UPDATE_OBJ_SUPPORT
+
+config LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT
+	bool "Advanced Firmware Update object support (EXPERIMENTAL)"
+	default n
+	select EXPERIMENTAL
+	help
+	  This is a non standard Advanced Firmware Update object which is still
+	  under development. Server support might be lacking and the implementation
+	  might not match latest specification from OMA working group.
+
+if LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT
+
+config LWM2M_CLIENT_UTILS_ADV_FOTA_INSTANCE_COUNT
+	int "Firmware object instance count"
+	default 3 if DFU_TARGET_SMP
+	default 2
+	help
+	  Number of supported instances for Advanced Firmware object.
+
+endif # LWM2M_CLIENT_UTILS_ADV_FIRMWARE_UPDATE_OBJ_SUPPORT
+
+config LWM2M_CLIENT_UTILS_GROUND_FIX_OBJ_SUPPORT
+	bool "Support ground fix object"
+	select EXPERIMENTAL
+	select LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE
+
+config LWM2M_CLIENT_UTILS_GNSS_ASSIST_OBJ_SUPPORT
+	bool "Support GNSS assistance obj"
+	select EXPERIMENTAL
+	select LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE
+	bool
+
+if LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_CELL
+	bool "Use location based on current cell and possibly neighboring cells"
+	imply LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
+	help
+	  Information of current cell and neighboring cells are sent to lwm2m server to
+	  obtain coarse location.
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS
+	bool "Use location based on A-GNSS"
+	help
+	  A-GNSS assistance data is requested from lwm2m server and fed to the GNSS module
+	  after the data has been received.
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS
+	bool "Use location based on P-GPS"
+	help
+	  P-GPS assistance data is requested from lwm2m server and fed to the GNSS module
+	  after the data has been received.
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS_PREDICTION_COUNT
+	int "Number of predictions to be requested"
+	default 42
+	range 1 168
+	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS
+	help
+	  Default values give 6 predictions per day for a week. Depends on the starting day
+	  and the prediction interval.
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS_PREDICTION_INTERVAL
+	int "Interval between predictions in minutes"
+	default 240
+	range 120 480
+	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS
+	help
+	  By default, 240 (4 hours) is used. Valid values are: 120, 240, 360, 480
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS_STARTING_DAY
+	int "Starting day of the predictions as GPS day"
+	default 0
+	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS
+	help
+	  Do not override if you are not sure about the date. By default, the value
+	  is not provided to the server and the current GPS day is used.
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS_STARTING_TIME
+	int "Starting time of the day of predictions"
+	default 0
+	range 0 86399
+	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS
+	help
+	  The starting time of the predictions.
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS_BUF_SIZE
+	int "Size of the buffer for storing the assistance data coming from server"
+	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS
+	default 4096
+
+config LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS_ELEVATION_MASK
+	int "Minimum elevation angle for visible satellites"
+	depends on LWM2M_CLIENT_UTILS_LOCATION_ASSIST_AGNSS
+	default -1
+	help
+	  Minimum elevation angle for visible satellites. The range is 0...90.
+	  Set -1 to disabled. Disabled by default.
+
+config LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
+	bool "Signal measurement information object support (ID 10256)"
+	help
+	  This object is used in combination with Connectivity Monitor object (ID 4)
+	  and provides information about neighbouring cells. It is used to assist
+	  with the device location services.
+
+config LWM2M_CLIENT_UTILS_VISIBLE_WIFI_AP_OBJ_SUPPORT
+	bool "Visible Wi-Fi AP object support (ID 33627)"
+	help
+	  This object is used in combination with Ground Fix object (ID 33626)
+	  and provides information about nearby Wi-Fi access points. It is used to
+	  assist with the device location services.
+
+config LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_INSTANCE_COUNT
+	int "Maximum # of signal measurement objects"
+	default 3
+	depends on LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
+
+config LWM2M_CLIENT_UTILS_NEIGHBOUR_CELL_LISTENER
+	bool "Use a listener to populate signal measurement objects"
+	depends on LWM2M_CLIENT_UTILS_SIGNAL_MEAS_INFO_OBJ_SUPPORT
+
+config LWM2M_CLIENT_UTILS_VISIBLE_WIFI_AP_INSTANCE_COUNT
+	int "Maximum # of visible Wi-Fi access point objects"
+	default 5
+	depends on LWM2M_CLIENT_UTILS_VISIBLE_WIFI_AP_OBJ_SUPPORT
+
+config LWM2M_CLIENT_UTILS_WIFI_AP_SCANNER
+	bool "Use a scanner to populate visible Wi-Fi AP objects"
+	depends on LWM2M_CLIENT_UTILS_VISIBLE_WIFI_AP_OBJ_SUPPORT
+
+endif # LWM2M_CLIENT_UTILS_LOCATION_ASSISTANCE
+
+config LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT
+	bool "Support for cellular connectivity object (ID 10)"
+
+if LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT
+
+config LWM2M_CELL_CONN_OBJ_VERSION_1_1
+	bool "Use cellular connectivity object version 1.1"
+	default y
+
+config LWM2M_CELL_CONN_APN_PROFILE_COUNT
+	int "Maximum number of APN connection profiles"
+	default 3
+
+endif #LWM2M_CLIENT_UTILS_CELL_CONN_OBJ_SUPPORT
+
+config LWM2M_CLIENT_UTILS_RAI
+	bool "Enable release assistance indication (RAI)"
+	help
+	  This option enables RAI for access stratum (AS) which was introduced in REL14.
+	  When AS RAI is configured, device may indicate that no further data is
+	  expected in the near future and the connection may be released.
+
+config LWM2M_CLIENT_UTILS_LTE_CONNEVAL
+	bool "Enable connection pre-evaluation [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	help
+	  Connection pre-evaluation allows the application to get an estimation of the
+	  energy efficiency in a cell that the modem would use for data transmission.
+	  The information is used to determine when the actual data transmission is
+	  started.
+
+config LWM2M_CLIENT_UTILS_DTLS_CID
+	bool "[Deprecated] Enable DTLS Connection Identifier"
+	select LWM2M_DTLS_CID
+	help
+	  Deprecated. Use CONFIG_LWM2M_DTLS_CID instead.
+
+if LWM2M_DTLS_CID
+
+config LWM2M_CLIENT_UTILS_DTLS_CON_MANAGEMENT
+	bool "Enable DTLS connection save and load"
+	depends on LWM2M_RD_CLIENT_STOP_POLLING_AT_IDLE
+	help
+	  Enable DTLS connection identifier save at idle and load exit from idle.
+	  This requires modem firmware v1.3.5 or newer.
+
+endif #LWM2M_DTLS_CID
+
+module = LWM2M_CLIENT_UTILS
+module-dep = LOG
+module-str = LwM2M client utilities library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # LWM2M_CLIENT_UTILS

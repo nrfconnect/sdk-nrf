@@ -1,0 +1,13 @@
+common:
+  tags:
+    - partition_manager
+    - ci_tests_subsys_partition_manager
+tests:
+  static_pm_file.sysbuild:
+    sysbuild: true
+    platform_allow: nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    extra_args:
+      - PM_STATIC_YML_FILE=test_file.yml
+    tags: sysbuild

@@ -1,0 +1,7 @@
+/ {
+	aliases {
+		/delete-property/ led1;
+	};
+};
+
+/delete-node/ &led1;

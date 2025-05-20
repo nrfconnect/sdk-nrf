@@ -1,0 +1,31 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+ / {
+	agg0: agg0 {
+		compatible = "caf,aggregator";
+		sensor_descr = "void_basic_test_sensor";
+		buf_data_length = <160>;
+		sample_size = <2>;
+		status = "okay";
+	};
+
+	agg1: agg1 {
+		compatible = "caf,aggregator";
+		sensor_descr = "void_order_test_sensor";
+		buf_data_length = <80>;
+		sample_size = <1>;
+		status = "okay";
+	};
+
+	agg2: agg2 {
+		compatible = "caf,aggregator";
+		sensor_descr = "void_status_test_sensor";
+		buf_data_length = <80>;
+		sample_size = <1>;
+		status = "okay";
+	};
+};

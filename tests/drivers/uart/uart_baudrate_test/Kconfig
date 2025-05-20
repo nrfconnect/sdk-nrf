@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+config ALLOWED_DEVIATION
+	int "Allowed deviation (%) for UART timing checks"
+	default 25
+	range 0 100
+	help
+	  Maximum allowed deviation (%) from the programmed values for the test to be
+	  considered a PASS. For example, if set to 5, the measured period of bit
+	  can deviate by up to 5% from the programmed values for the test to pass.

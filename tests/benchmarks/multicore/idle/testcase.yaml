@@ -1,0 +1,269 @@
+common:
+  sysbuild: true
+  tags:
+    - ci_build
+    - ci_tests_benchmarks_multicore
+  harness_config:
+    type: multi_line
+    ordered: true
+    regex:
+      - "Multicore idle test on"
+      - "Multicore idle test iteration 0"
+      - "Multicore idle test iteration 1"
+
+tests:
+  benchmarks.multicore.idle.nrf5340dk_cpuapp_cpunet:
+    harness: console
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    extra_args: SB_CONF_FILE=sysbuild/nrf5340dk_nrf5340_cpunet.conf
+
+  benchmarks.multicore.idle.nrf5340dk_cpuapp_cpunet_mcuboot:
+    harness: console
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    extra_configs:
+      - CONFIG_BOOTLOADER_MCUBOOT=y
+    extra_args: SB_CONF_FILE=sysbuild/nrf5340dk_nrf5340_cpunet.conf
+
+  benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpuppr:
+    harness: console
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpuppr.conf
+      - idle_SNIPPET=nordic-ppr
+      - CONFIG_FIRST_SLEEP_OFFSET=y
+
+  benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpuppr_xip:
+    harness: console
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpuppr_xip.conf
+      - idle_SNIPPET=nordic-ppr-xip
+      - CONFIG_FIRST_SLEEP_OFFSET=y
+
+  benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad:
+    harness: console
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+      - CONFIG_FIRST_SLEEP_OFFSET=y
+
+  benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad.unexpected_reboot:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+      - CONFIG_FIRST_SLEEP_OFFSET=y
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_unexected_reboot_occurrence"
+    tags: ppk_power_measure
+    timeout: 110
+
+  benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad.s2ram:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+      - CONFIG_FIRST_SLEEP_OFFSET=y
+      - CONFIG_PM=y
+      - CONFIG_PM_S2RAM=y
+      - CONFIG_POWEROFF=y
+      - CONFIG_PM_S2RAM_CUSTOM_MARKING=y
+      - CONFIG_CONSOLE=n
+      - CONFIG_UART_CONSOLE=n
+      - CONFIG_SERIAL=n
+      - CONFIG_GPIO=n
+      - CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_PM=y
+      - remote_CONFIG_POWEROFF=y
+      - remote_CONFIG_CONSOLE=n
+      - remote_CONFIG_UART_CONSOLE=n
+      - remote_CONFIG_SERIAL=n
+      - remote_CONFIG_GPIO=n
+      - remote_CONFIG_BOOT_BANNER=n
+    harness: pytest
+    harness_config:
+      fixture: lfclk_at_lfxo
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption"
+    tags: ppk_power_measure
+
+  benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad.ram_retention_high_usage:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+      - CONFIG_FIRST_SLEEP_OFFSET=y
+      - CONFIG_PM=y
+      - CONFIG_PM_S2RAM=y
+      - CONFIG_POWEROFF=y
+      - CONFIG_PM_S2RAM_CUSTOM_MARKING=y
+      - CONFIG_CONSOLE=n
+      - CONFIG_UART_CONSOLE=n
+      - CONFIG_SERIAL=n
+      - CONFIG_GPIO=n
+      - CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_PM=y
+      - remote_CONFIG_POWEROFF=y
+      - remote_CONFIG_CONSOLE=n
+      - remote_CONFIG_UART_CONSOLE=n
+      - remote_CONFIG_SERIAL=n
+      - remote_CONFIG_GPIO=n
+      - remote_CONFIG_BOOT_BANNER=n
+      - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_ram_high_usage.overlay"
+    harness: pytest
+    harness_config:
+      fixture: lfclk_at_lfxo
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_ram_retention_high_usage"
+    tags: ppk_power_measure
+
+  benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad.ram_retention_low_usage:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+      - CONFIG_FIRST_SLEEP_OFFSET=y
+      - CONFIG_PM=y
+      - CONFIG_PM_S2RAM=y
+      - CONFIG_POWEROFF=y
+      - CONFIG_PM_S2RAM_CUSTOM_MARKING=y
+      - CONFIG_CONSOLE=n
+      - CONFIG_UART_CONSOLE=n
+      - CONFIG_SERIAL=n
+      - CONFIG_GPIO=n
+      - CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_PM=y
+      - remote_CONFIG_POWEROFF=y
+      - remote_CONFIG_CONSOLE=n
+      - remote_CONFIG_UART_CONSOLE=n
+      - remote_CONFIG_SERIAL=n
+      - remote_CONFIG_GPIO=n
+      - remote_CONFIG_BOOT_BANNER=n
+      - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_ram_low_usage.overlay"
+    harness: pytest
+    harness_config:
+      fixture: lfclk_at_lfxo
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_ram_retention_low_usage"
+    tags: ppk_power_measure
+
+  benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad.s2ram.lfrc:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+      - CONFIG_FIRST_SLEEP_OFFSET=y
+      - CONFIG_PM=y
+      - CONFIG_PM_S2RAM=y
+      - CONFIG_POWEROFF=y
+      - CONFIG_PM_S2RAM_CUSTOM_MARKING=y
+      - CONFIG_CONSOLE=n
+      - CONFIG_UART_CONSOLE=n
+      - CONFIG_SERIAL=n
+      - CONFIG_GPIO=n
+      - CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_PM=y
+      - remote_CONFIG_POWEROFF=y
+      - remote_CONFIG_CONSOLE=n
+      - remote_CONFIG_UART_CONSOLE=n
+      - remote_CONFIG_SERIAL=n
+      - remote_CONFIG_GPIO=n
+      - remote_CONFIG_BOOT_BANNER=n
+    harness: pytest
+    harness_config:
+      fixture: lfclk_at_lfrc
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_lfrc"
+    tags: ppk_power_measure
+
+  benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad.ram_retention_high_usage.lfrc:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+      - CONFIG_FIRST_SLEEP_OFFSET=y
+      - CONFIG_PM=y
+      - CONFIG_PM_S2RAM=y
+      - CONFIG_POWEROFF=y
+      - CONFIG_PM_S2RAM_CUSTOM_MARKING=y
+      - CONFIG_CONSOLE=n
+      - CONFIG_UART_CONSOLE=n
+      - CONFIG_SERIAL=n
+      - CONFIG_GPIO=n
+      - CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_PM=y
+      - remote_CONFIG_POWEROFF=y
+      - remote_CONFIG_CONSOLE=n
+      - remote_CONFIG_UART_CONSOLE=n
+      - remote_CONFIG_SERIAL=n
+      - remote_CONFIG_GPIO=n
+      - remote_CONFIG_BOOT_BANNER=n
+      - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_ram_high_usage.overlay"
+    harness: pytest
+    harness_config:
+      fixture: lfclk_at_lfrc
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_ram_retention_high_usage_lfrc"
+    tags: ppk_power_measure
+
+  benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad.ram_retention_low_usage.lfrc:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+      - CONFIG_FIRST_SLEEP_OFFSET=y
+      - CONFIG_PM=y
+      - CONFIG_PM_S2RAM=y
+      - CONFIG_POWEROFF=y
+      - CONFIG_PM_S2RAM_CUSTOM_MARKING=y
+      - CONFIG_CONSOLE=n
+      - CONFIG_UART_CONSOLE=n
+      - CONFIG_SERIAL=n
+      - CONFIG_GPIO=n
+      - CONFIG_BOOT_BANNER=n
+      - remote_CONFIG_PM=y
+      - remote_CONFIG_POWEROFF=y
+      - remote_CONFIG_CONSOLE=n
+      - remote_CONFIG_UART_CONSOLE=n
+      - remote_CONFIG_SERIAL=n
+      - remote_CONFIG_GPIO=n
+      - remote_CONFIG_BOOT_BANNER=n
+      - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_ram_low_usage.overlay"
+    harness: pytest
+    harness_config:
+      fixture: lfclk_at_lfrc
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_ram_retention_low_usage_lfrc"
+    tags: ppk_power_measure

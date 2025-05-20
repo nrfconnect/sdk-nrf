@@ -1,0 +1,10 @@
+tests:
+  subsys.net.lib.mcumgr_smp_client.unittest:
+    sysbuild: true
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
+    tags:
+      - unittest
+      - sysbuild
+      - ci_tests_subsys_net

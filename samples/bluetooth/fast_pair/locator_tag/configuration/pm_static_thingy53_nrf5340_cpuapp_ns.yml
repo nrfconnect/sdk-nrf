@@ -1,0 +1,93 @@
+mcuboot:
+  address: 0x0
+  region: flash_primary
+  size: 0xc000
+
+mcuboot_primary:
+  address: 0xc000
+  orig_span: &id001
+  - mcuboot_pad
+  - tfm
+  - app
+  region: flash_primary
+  size: 0xe8000
+  span: *id001
+mcuboot_pad:
+  address: 0xc000
+  region: flash_primary
+  size: 0x200
+tfm:
+  address: 0xc200
+  region: flash_primary
+  size: 0x17e00
+tfm_secure:
+  address: 0xc000
+  size: 0x18000
+  span: [mcuboot_pad, tfm]
+tfm_nonsecure:
+  address: 0x24000
+  size: 0xd0000
+  span: [app]
+app:
+  address: 0x24000
+  region: flash_primary
+  size: 0xd0000
+mcuboot_primary_app:
+  address: 0xc200
+  orig_span: &id002
+  - tfm
+  - app
+  region: flash_primary
+  size: 0xe7e00
+  span: *id002
+
+nonsecure_storage:
+  address: 0xf4000
+  size: 0x8000
+  span: [bt_fast_pair, settings_storage]
+bt_fast_pair:
+  address: 0xf4000
+  region: flash_primary
+  size: 0x1000
+settings_storage:
+  address: 0xf5000
+  region: flash_primary
+  size: 0x7000
+
+tfm_storage:
+  address: 0xfc000
+  size: 0x4000
+  span: [tfm_its]
+tfm_its:
+  address: 0xfc000
+  region: flash_primary
+  size: 0x4000
+
+mcuboot_primary_1:
+  address: 0x0
+  size: 0x40000
+  device: flash_ctrl
+  region: ram_flash
+
+mcuboot_secondary:
+  address: 0x0
+  size: 0xe8000
+  device: MX25R64
+  region: external_flash
+
+mcuboot_secondary_1:
+  address: 0xe8000
+  size: 0x40000
+  device: MX25R64
+  region: external_flash
+
+external_flash:
+  address: 0x128000
+  size: 0x6d8000
+  device: MX25R64
+  region: external_flash
+
+pcd_sram:
+  address: 0x20000000
+  size: 0x2000
+  region: sram_primary

@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Nordic Bluetooth Mesh chat client sample"
+
+config BT_MESH_CHAT_CLI_MESSAGE_LENGTH
+	int "Max length of the message to be sent over mesh"
+	default 90
+	range 0 255
+	help
+	  Impacts on memory size occupied by the buffer of a message to be
+	  published. This does not include null terminator. The message must also
+	  fit into the application SDU. Adjust BT_MESH_TX_SEG_MAX and
+	  BT_MESH_RX_SEG_MAX to be able to receive the longest messages.
+
+config BT_MESH_CHAT_SAMPLE_PRESENCE_CACHE_SIZE
+	int "Presence cache size"
+	default 10
+	range 0 32767
+	help
+	  Presence cache stores previously received presence of chat clients.
+	  Recommended to be as big as number of chat clients in the mesh network.
+
+endmenu
+
+module = BT_MESH_CHAT_CLI
+module-str = BT Mesh Chat Client model
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

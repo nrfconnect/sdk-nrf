@@ -1,0 +1,10 @@
+choice CLOUD_SERVICE
+
+config $(module)
+	bool
+	prompt "$(module-prompt)"
+	select $(module)_CHOICE
+
+endchoice
+
+module := $(module)_CHOICE

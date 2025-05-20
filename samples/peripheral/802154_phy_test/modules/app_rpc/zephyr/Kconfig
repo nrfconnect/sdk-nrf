@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config APP_RPC
+	bool "Enables application module features requiring interaction between cores"
+	depends on SOC_NRF5340_CPUNET || SOC_NRF5340_CPUAPP || SOC_NRF54H20_CPUAPP \
+		|| SOC_NRF54H20_CPURAD
+	select NRF_RPC
+	select NRF_RPC_CBOR

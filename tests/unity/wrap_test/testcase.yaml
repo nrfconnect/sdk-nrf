@@ -1,0 +1,11 @@
+tests:
+  unity.wrap_test:
+    sysbuild: true
+    tags:
+      - wrap_test
+      - sysbuild
+      - ci_tests_unity
+    platform_allow:
+      - native_sim
+    integration_platforms:
+      - native_sim

@@ -1,0 +1,8 @@
+#include <zephyr/autoconf.h>
+
+# Use the last partition in flash to store the Hardware Unique Key (HUK)
+# The size of the partition matches the fprotect block size since it will
+# be locked by fprotect.
+hw_unique_key_partition:
+  placement: {before: end}
+  size: CONFIG_HW_UNIQUE_KEY_PARTITION_SIZE

@@ -1,0 +1,195 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <dt-bindings/regulator/npm1300.h>
+#include <dt-bindings/regulator/npm6001.h>
+
+&i2c2 {
+	compatible = "nordic,nrf-twim";
+	status = "disabled";
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+
+	pinctrl-0 = <&i2c2_default>;
+	pinctrl-1 = <&i2c2_sleep>;
+	pinctrl-names = "default", "sleep";
+
+	bme680: bme680@76 {
+		status = "disabled";
+		compatible = "bosch,bme680";
+		reg = <0x76>;
+	};
+
+	pmic_main: npm1300@6b {
+		compatible = "nordic,npm1300";
+		status = "disabled";
+		pmic-int-pin = <3>;
+		reg = <0x6b>;
+
+		gpios_pmic: npm1300_gpios {
+			compatible = "nordic,npm1300-gpio";
+			status = "disabled";
+			gpio-controller;
+			#gpio-cells = <2>;
+			ngpios = <5>;
+			npm13_button: GPIO0 {
+				gpio-hog;
+				gpios = <0 GPIO_ACTIVE_HIGH>;
+			};
+			/* GPIO1 switches power to the short range RF front end */
+			ldsw_rf_fe_sr_en: GPIO1 {
+				gpio-hog;
+				output-low;
+				gpios = <1 (GPIO_ACTIVE_LOW | GPIO_OPEN_DRAIN | GPIO_PULL_UP)>;
+			};
+			power_switch: GPIO2 {
+				gpio-hog;
+				gpios = <2 GPIO_ACTIVE_HIGH>;
+			};
+			npm6001_ready: GPIO4 {
+				gpio-hog;
+				gpios = <4 GPIO_ACTIVE_HIGH>;
+			};
+		};
+
+		regulators {
+			compatible = "nordic,npm1300-regulator";
+			status = "disabled";
+			/* Main 3.3 V regulator, enabled by GPIO2 (power switch) */
+			reg_3v3: BUCK2 {
+				regulator-min-microvolt = <3300000>;
+				regulator-max-microvolt = <3300000>;
+				enable-gpios = <&gpios_pmic 2 GPIO_ACTIVE_HIGH>;
+			};
+			/* LDO1 is used as a load switch pulling the nPM6001 enable line to VSYS */
+			ldsw_nPM6001_en: LDO1 {
+				regulator-initial-mode = <NPM1300_LDSW_MODE_LDSW>;
+				regulator-allowed-modes = <NPM1300_LDSW_MODE_LDSW>;
+				regulator-boot-off;
+			};
+			/* LDO2 is used as a load switch for sensor power supply */
+			ldsw_sensors: LDO2 {
+				regulator-initial-mode = <NPM1300_LDSW_MODE_LDSW>;
+				regulator-allowed-modes = <NPM1300_LDSW_MODE_LDSW>;
+				regulator-boot-on;
+			};
+		};
+
+		npm1300_charger: charger {
+			compatible = "nordic,npm1300-charger";
+			status = "disabled";
+			vbus-limit-microamp = <500000>;
+			/* Battery specs from LiPol LP803448 datasheet (Dwg. nr. FD_3245_70) */
+			term-microvolt = <4200000>;
+			current-microamp = <675000>; /* 0.5C charging current */
+			dischg-limit-microamp = <1000000>; /* Maximum value for PMIC */
+			thermistor-cold-millidegrees = <0>;
+			thermistor-cool-millidegrees = <0>;
+			thermistor-warm-millidegrees = <45000>;
+			thermistor-hot-millidegrees = <45000>;
+			thermistor-ohms = <10000>;
+			thermistor-beta = <3435>;
+			charging-enable;
+		};
+	};
+
+	pmic_wifi: npm6001@70 {
+		/* refer to thingy91x_wifi.dtsi for enabling wifi */
+		status = "disabled";
+
+		compatible = "nordic,npm6001";
+		reg = <0x70>;
+
+		regulators {
+			compatible = "nordic,npm6001-regulator";
+			status = "disabled";
+			pmic_wifi_buck0: BUCK0 {
+				regulator-boot-off;
+			};
+			pmic_wifi_buck1: BUCK1 {
+				regulator-boot-off;
+			};
+			pmic_wifi_buck2: BUCK2 {
+				regulator-boot-off;
+			};
+			/* Dedicated 3.3 V regulator for nRF70 */
+			reg_wifi: BUCK3 {
+				regulator-min-microvolt = <3300000>;
+				regulator-max-microvolt = <3300000>;
+				regulator-initial-mode = <NPM6001_MODE_HYS>;
+				regulator-boot-on;
+			};
+		};
+	};
+
+	accel: accelerometer_lp: adxl367@1d {
+		status = "disabled";
+		compatible = "adi,adxl367";
+		odr = <3>;
+		reg = <0x1d>;
+	};
+
+	magnetometer: bmm350@14 {
+		status = "disabled";
+		compatible = "bosch,bmm350";
+		reg = <0x14>;
+	};
+};
+
+&spi3 {
+	compatible = "nordic,nrf-spim";
+	status = "disabled";
+
+	pinctrl-0 = <&spi3_default>;
+	pinctrl-1 = <&spi3_sleep>;
+	pinctrl-names = "default", "sleep";
+
+	flash_ext: GD25LE255E@0 {
+		compatible = "jedec,spi-nor";
+		status = "disabled";
+		reg = <0>;
+		spi-max-frequency = <8000000>;
+		size = <268435456>;
+		has-dpd;
+		t-enter-dpd = <3000>;
+		t-exit-dpd = <20000>;
+		sfdp-bfp = [e5 20 f3 ff  ff ff ff 0f  44 eb 08 6b  08 3b 42 bb
+			    fe ff ff ff  ff ff 00 ff  ff ff 42 eb  0c 20 0f 52
+			    10 d8 00 ff  d4 31 a5 fe  84 df 14 4f  ec 62 16 33
+			    7a 75 7a 75  04 b3 d5 5c  19 06 14 00  08 50 00 01];
+		jedec-id = [c8 60 19];
+	};
+
+	nrf70: wifi@1 {
+		compatible = "nordic,nrf7002-spi";
+		status = "disabled";
+		reg = <1>;
+		spi-max-frequency = <DT_FREQ_M(8)>;
+
+		iovdd-ctrl-gpios = <&gpio0 4 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
+		bucken-gpios = <&gpio0 7 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
+		host-irq-gpios = <&gpio0 5 GPIO_ACTIVE_HIGH>;
+
+		nordic_wlan0: wlan0 {
+			compatible = "nordic,wlan";
+		};
+
+		wifi-max-tx-pwr-2g-dsss = <21>;
+		wifi-max-tx-pwr-2g-mcs0 = <16>;
+		wifi-max-tx-pwr-2g-mcs7 = <16>;
+		wifi-max-tx-pwr-5g-low-mcs0 = <9>;
+		wifi-max-tx-pwr-5g-low-mcs7 = <9>;
+		wifi-max-tx-pwr-5g-mid-mcs0 = <11>;
+		wifi-max-tx-pwr-5g-mid-mcs7 = <11>;
+		wifi-max-tx-pwr-5g-high-mcs0 = <13>;
+		wifi-max-tx-pwr-5g-high-mcs7 = <13>;
+	};
+
+	accelerometer_hp: bmi270@2 {
+		compatible = "bosch,bmi270";
+		status = "disabled";
+		reg = <2>;
+		spi-max-frequency = <DT_FREQ_M(10)>;
+	};
+};

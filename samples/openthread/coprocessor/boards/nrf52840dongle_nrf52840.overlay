@@ -1,0 +1,21 @@
+/* Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	/*
+	 * nRF52840 dongle has pin P0.19 connected to reset. By setting it
+	 * in `GPIO_OUTPUT_ACTIVE` mode, reset is pulled to GND,
+	 * which results in device rebooting without skipping the bootloader.
+	 * openthread_config node enables doing so using `reset bootloader` command.
+	 */
+	openthread_config: openthread {
+		compatible = "openthread,config";
+		bootloader-gpios = <&gpio0 19 GPIO_ACTIVE_LOW>;
+	};
+
+	chosen {
+		zephyr,ot-uart = &board_cdc_acm_uart;
+	};
+};

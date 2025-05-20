@@ -1,0 +1,182 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "thingy91x_nrf9151_common-pinctrl.dtsi"
+#include "thingy91x_common.dtsi"
+
+/ {
+	model = "Nordic Thingy:91 X nRF9151";
+	compatible = "nordic,thingy91x-nrf9151";
+
+	chosen {
+		zephyr,console = &uart0;
+		zephyr,shell-uart = &uart0;
+		zephyr,uart-mcumgr = &uart0;
+		nordic,pm-ext-flash = &flash_ext;
+	};
+
+	buttons {
+		compatible = "gpio-keys";
+
+		button0: button_0 {
+			gpios = <&gpio0 26 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Button 1";
+		};
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		red_led: led_1 {
+			gpios = <&gpio0 29 0>;
+			label = "RGB red channel";
+		};
+		green_led: led_2 {
+			gpios = <&gpio0 31 0>;
+			label = "RGB green channel";
+		};
+		blue_led: led_3 {
+			gpios = <&gpio0 30 0>;
+			label = "RGB blue channel";
+		};
+	};
+
+	pwmleds {
+		compatible = "pwm-leds";
+		pwm_led0: pwm_led_0 {
+			pwms = <&pwm0 0 PWM_MSEC(8) PWM_POLARITY_NORMAL>;
+		};
+		pwm_led1: pwm_led_1 {
+			pwms = <&pwm0 2 PWM_MSEC(8) PWM_POLARITY_NORMAL>;
+		};
+		pwm_led2: pwm_led_2 {
+			pwms = <&pwm0 1 PWM_MSEC(8) PWM_POLARITY_NORMAL>;
+		};
+	};
+
+	/* Load switch controlling 3.3V supply and I/O voltage for external boards */
+	exp_board_enable: exp_board_enable {
+		compatible = "regulator-fixed";
+		regulator-name = "exp_board_enable";
+		enable-gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>;
+	};
+
+	zephyr,user {
+		nrf5340-reset-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
+	};
+
+	aliases {
+		sw0 = &button0;
+		led0 = &red_led;
+		led1 = &green_led;
+		led2 = &blue_led;
+		pwm-led0 = &pwm_led0;
+		pwm-led1 = &pwm_led1;
+		pwm-led2 = &pwm_led2;
+		rgb-pwm = &pwm0;
+		mcuboot-button0 = &button0;
+		spi-flash0 = &flash_ext;
+	};
+};
+
+&adc {
+	status = "okay";
+};
+
+&gpiote {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+	/* Use PORT event rather than GPIOTE IN event, to save power */
+	sense-edge-mask = <0xffffffff>;
+};
+
+/* PWM0 is intended for RGB LED control */
+&pwm0 {
+	status = "okay";
+	pinctrl-0 = <&pwm0_default>;
+	pinctrl-1 = <&pwm0_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pmic_main {
+	host-int-gpios = <&gpio0 2 GPIO_ACTIVE_HIGH>; //INT1
+};
+&accelerometer_hp {
+	irq-gpios = <&gpio0 6 GPIO_ACTIVE_LOW>; //INT2
+};
+&magnetometer {
+	drdy-gpios = <&gpio0 7 GPIO_ACTIVE_LOW>; //INT3
+};
+&accelerometer_lp {
+	int1-gpios = <&gpio0 11 GPIO_ACTIVE_HIGH>; //INT4
+};
+
+&flash_ext {
+	status = "okay";
+};
+
+&nrf70 {
+	iovdd-ctrl-gpios = <&gpio0 27 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
+	bucken-gpios = <&gpio0 28 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
+	host-irq-gpios = <&gpio0 16 GPIO_ACTIVE_HIGH>;
+};
+
+&i2c2 {
+	status = "okay";
+};
+&spi3 {
+	status = "okay";
+	cs-gpios = <&gpio0 12 GPIO_ACTIVE_LOW>, // FLASH_CS
+		   <&gpio0 17 GPIO_ACTIVE_LOW>, // WIFI_CS
+		   <&gpio0 10 GPIO_ACTIVE_LOW>; // BMI270_CS
+};
+
+&pmic_main {
+	status = "okay";
+	npm1300_gpios {
+		status = "okay";
+	};
+	regulators {
+		status = "okay";
+	};
+	charger {
+		status = "okay";
+	};
+};
+
+&timer0 {
+	status = "okay";
+};
+
+&timer1 {
+	status = "okay";
+};
+
+&timer2 {
+	status = "okay";
+};
+
+&uart0 {
+	compatible = "nordic,nrf-uarte";
+	current-speed = <115200>;
+	status = "okay";
+	pinctrl-0 = <&uart0_default>;
+	pinctrl-1 = <&uart0_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&uart1 {
+	current-speed = <1000000>;
+	status = "okay";
+	pinctrl-0 = <&uart1_default>;
+	pinctrl-1 = <&uart1_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+/* Include default memory partition configuration file. */
+/* This is not the layout that's actually used! It's overridden by Partition Manager. */
+#include <common/nordic/nrf91xx_partition.dtsi>

@@ -1,0 +1,74 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DESKTOP_DFU_MCUMGR_ENABLE
+	bool "Enable DFU using MCUmgr [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	select CAF_BLE_SMP_TRANSFER_EVENTS if MCUMGR_TRANSPORT_BT
+	select MCUMGR
+	select MCUMGR_GRP_OS
+	select MCUMGR_GRP_OS_BOOTLOADER_INFO
+	select MCUMGR_MGMT_NOTIFICATION_HOOKS
+	select MCUMGR_SMP_COMMAND_STATUS_HOOKS
+	select CRC
+	select NET_BUF
+	select FLASH
+	select FLASH_MAP
+	select ZCBOR
+	help
+	  This option enables an alternative method of performing DFU using the
+	  MCUmgr module.
+
+if DESKTOP_DFU_MCUMGR_ENABLE
+
+config DESKTOP_DFU_MCUMGR_MCUBOOT_DIRECT_XIP
+	bool "Device uses MCUboot bootloader in direct-xip mode"
+	default y if MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP
+	help
+	  The option informs the MCUmgr DFU module that the MCUboot bootloader
+	  supports direct-xip mode. In this mode, the image is booted directly from
+	  the secondary slot instead of moving it to the primary slot. The module by
+	  default assumes that MCUboot with direct-xip is used when direct-xip
+	  variant image is built.
+
+	  The MCUmgr DFU module assumes that MCUboot direct-xip bootloader simply
+	  boots the image with a higher version. The module does not confirm the
+	  newly updated image after a successful boot.
+
+choice DESKTOP_DFU_MCUMGR_BACKEND
+	prompt "Choose DFU backend"
+	default DESKTOP_DFU_BACKEND_MCUBOOT if BOOTLOADER_MCUBOOT
+	default DESKTOP_DFU_BACKEND_SUIT if SUIT
+
+config DESKTOP_DFU_BACKEND_MCUBOOT
+	bool "Use MCUboot as DFU backend"
+	select MCUBOOT_BOOTUTIL_LIB
+	select IMG_MANAGER
+	select MCUMGR_GRP_IMG
+	select MCUMGR_GRP_IMG_MUTEX if DESKTOP_DFU_LOCK
+	select STREAM_FLASH
+	depends on BOOTLOADER_MCUBOOT
+	help
+	  This option enables the MCUboot bootloader as the backend for the MCUmgr DFU module.
+
+config DESKTOP_DFU_BACKEND_SUIT
+	bool "Use SUIT as DFU backend"
+	select MCUMGR_SMP_LEGACY_RC_BEHAVIOUR
+	select MGMT_SUITFU
+	select MGMT_SUITFU_GRP_SUIT
+	select SSF_SUIT_SERVICE_ENABLED
+	select ZCBOR_CANONICAL
+	depends on SUIT
+	help
+	  This option enables the SUIT as the backend for the MCUmgr DFU module.
+
+endchoice
+
+module = DESKTOP_DFU_MCUMGR
+module-str = DFU MCUmgr
+source "subsys/logging/Kconfig.template.log_config"
+
+endif

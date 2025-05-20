@@ -1,0 +1,270 @@
+# Configurations excluded to limit resources usage in CI integration builds.
+# To use with "quarantine-list" twister argument.
+
+# This configurations come from tests/samples in sdk-zephyr
+
+- scenarios:
+    - modem.backends.tty
+    - modem.modem_chat
+    - modem.modem_cmux
+    - modem.modem_ppp
+  platforms:
+    - native_sim/native
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - net.lwm2m.content_json
+    - net.lwm2m.content_link_format
+    - net.lwm2m.content_oma_tlv
+    - net.lwm2m.content_plain_text
+    - net.lwm2m.content_raw_cbor
+    - net.lwm2m.content_senml_cbor
+    - net.lwm2m.engine
+    - net.lwm2m.lwm2m_engine
+    - net.lwm2m.lwm2m_registry
+    - net.lwm2m.block_transfer
+  platforms:
+    - nrf9160dk@0.14.0/nrf9160
+    - native_sim/native
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - net.lwm2m.interop
+  platforms:
+    - qemu_cortex_m3
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - net.coap.simple
+  platforms:
+    - nrf52840dk/nrf52840
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - bluetooth.audio_shell.no_audio_rx
+    - bluetooth.audio_shell.no_audio_tx
+    - bluetooth.audio_shell.no_broadcast_sink
+    - bluetooth.audio_shell.no_broadcast_source
+    - bluetooth.audio_shell.no_cap_acceptor
+    - bluetooth.audio_shell.no_cap_acceptor_set_member
+    - bluetooth.audio_shell.no_cap_initiator
+    - bluetooth.audio_shell.no_client_ase_snk
+    - bluetooth.audio_shell.no_client_ase_src
+    - bluetooth.audio_shell.no_has
+    - bluetooth.audio_shell.no_has_client
+    - bluetooth.audio_shell.no_pac_snk
+    - bluetooth.audio_shell.no_pac_src
+    - bluetooth.audio_shell.no_server_ase_snk
+    - bluetooth.audio_shell.no_server_ase_src
+    - bluetooth.audio_shell.no_unicast_client
+    - bluetooth.audio_shell.no_unicast_serve
+    - bluetooth.shell.audio.gtbs_only_client
+    - bluetooth.shell.audio.micp_mic_ctlr_no_aics_client
+    - bluetooth.shell.audio.no_aics
+    - bluetooth.shell.audio.no_aics_vocs
+    - bluetooth.shell.audio.no_mcc
+    - bluetooth.shell.audio.no_mcc_ots
+    - bluetooth.shell.audio.no_mcs
+    - bluetooth.shell.audio.no_micp_mic_ctlr
+    - bluetooth.shell.audio.no_micp_mic_dev
+    - bluetooth.shell.audio.no_micp_mic_dev_micp_mic_ctlr
+    - bluetooth.shell.audio.no_ots
+    - bluetooth.shell.audio.no_otsc
+    - bluetooth.shell.audio.no_tbs
+    - bluetooth.shell.audio.no_tbs_clien
+    - bluetooth.shell.audio.no_vcp_vol_ctlr
+    - bluetooth.shell.audio.no_vcs
+    - bluetooth.shell.audio.no_vcs_vcp_vol_ctlr
+    - bluetooth.shell.audio.no_voc
+  platforms:
+    - native_sim/native
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - crypto.rand32
+    - crypto.rand32.random_ctr_drbg
+    - crypto.rand32.random_hw_xoshiro
+    - crypto.rand32.random_sw_systimer
+    - drivers.rand32.random_psa_crypto
+    - crypto.tinycrypt
+    - crypto.mbedtls
+    - crypto.tinycrypt.hmac_prng
+  platforms:
+    - mps2_an521
+    - native_sim/native
+    - nrf52840dk/nrf52840
+    - nrf52dk/nrf52832
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf5340dk/nrf5340/cpunet
+    - nrf9160dk@0.14.0/nrf9160
+    - nrf9160dk@0.14.0/nrf9160/ns
+    - qemu_cortex_m3
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - crypto.hash
+  platforms:
+    - native_sim/native
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.net.openthread.coprocessor
+    - sample.net.openthread.coprocessor.usb
+    - sample.openthread.coprocessor.rcp
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.net.lwm2m_client.bt
+    - sample.net.lwm2m_client.wnc_m14a2a
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.sensor.iaqcore
+  platforms:
+    - nrf52840dk/nrf52840
+    - nrf52dk/nrf52832
+    - nrf9160dk@0.14.0/nrf9160
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.tfm.protected_storage
+    - sample.tfm.secure_partition
+    - sample.tfm_ipc
+  platforms:
+    - nrf9160dk@0.14.0/nrf9160/ns
+    - nrf5340dk/nrf5340/cpuapp/ns
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - net.conn_mgr.conn
+  platforms:
+    - native_sim/native
+    - nrf52840dk/nrf52840
+    - nrf5340dk/nrf5340/cpuapp
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - net.conn_mgr.dad
+    - net.conn_mgr.nodad
+  platforms:
+    - native_sim/native
+    - nrf52840dk/nrf52840
+    - nrf5340dk/nrf5340/cpuapp
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - libraries.cmsis_dsp.*
+    - libraries.libc.*
+    - cpp.main.*
+    - cpp.libcxx.*
+    - libraries.cbprintf.*
+    - libraries.spsc_pbuf.*
+    - libraries.hash_map.*
+    - libraries.devicetree.*
+    - libraries.hash_function.*
+    - libraries.smf.*
+    - libraries.linear_range
+    - libraries.mem_blocks
+    - libraries.ring_buffer
+    - libraries.cmsis_nn
+    - libraries.mem_blocks.*
+    - libraries.heap
+    - libraries.fdtable
+    - libraries.p4wq
+    - libraries.heap_align
+    - libraries.data_structures
+    - libraries.sys_util
+    - libraries.onoff
+    - libraries.libc.time
+    - libraries.mpsc_pbuf.*
+    - libraries.encoding.*
+    - sample.modules.cmsis_dsp.moving_average
+    - math.interpolation
+    - sample.drivers.misc.timeaware_gpio
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - mgmt.mcumgr.os.info
+    - mgmt.mcumgr.os.info.build_date
+    - mgmt.mcumgr.os.info.limited_size
+    - mgmt.mcumgr.os.info.no_hooks
+  platforms:
+    - nrf52dk/nrf52832
+    - nrf5340dk/nrf5340/cpunet
+    - nrf9160dk@0.14.0/nrf9160
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - mgmt.mcumgr.os.info
+    - mgmt.mcumgr.os.info.build_date
+    - mgmt.mcumgr.os.info.limited_size
+    - mgmt.mcumgr.os.info.net
+    - mgmt.mcumgr.os.info.no_hooks
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - mgmt.mcumgr.fs.mgmt.hash.supported.all
+    - mgmt.mcumgr.fs.mgmt.hash.supported.crc32
+    - mgmt.mcumgr.fs.mgmt.hash.supported.sha256
+  platforms:
+    - mps2_an521
+    - nrf52dk/nrf52832
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf5340dk/nrf5340/cpunet
+    - nrf9160dk@0.14.0/nrf9160
+    - nrf9160dk@0.14.0/nrf9160/ns
+    - qemu_cortex_m3
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - mgmt.mcumgr.smp.version
+    - mgmt.mcumgr.smp.version_no_legacy
+  platforms:
+    - mps2_an521
+    - nrf52dk/nrf52832
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf5340dk/nrf5340/cpunet
+    - nrf9160dk@0.14.0/nrf9160
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - mgmt.mcumgr.os.echo
+  platforms:
+    - mps2_an521
+    - nrf52dk/nrf52832
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf5340dk/nrf5340/cpunet
+    - nrf9160dk@0.14.0/nrf9160
+    - nrf9160dk@0.14.0/nrf9160/ns
+    - qemu_cortex_m3
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.usb.dfu
+    - sample.usb.dfu.permanent.download
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.mcumgr.smp_svr.bt
+  platforms:
+    - nrf52dk/nrf52832
+  comment: "Configurations excluded to limit resources usage in integration builds"

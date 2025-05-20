@@ -1,0 +1,57 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# nRF Desktop specific configuration overlay for CAF settings loader module.
+
+config DESKTOP_SETTINGS_LOADER
+	bool "Settings loader module (CAF)"
+	select CAF_SETTINGS_LOADER
+	select SETTINGS
+	imply ZMS if (SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+	imply NVS if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+	imply FLASH
+	imply FLASH_MAP
+	imply FLASH_PAGE_LAYOUT
+	help
+	  nRF Desktop uses settings loader module from Common Application
+	  Framework (CAF).
+
+	  The settings partition is located in internal non-volatile memory.
+	  By default, nRF Desktop application, depending on the non-volatile
+	  memory technology used by the device, uses either the Zephyr Memory
+	  Storage (ZMS) or Non-Volatile Storage (NVS) settings backend.
+	  ZMS is used for the devices with the RRAM or MRAM non-volatile memory
+	  that do not require explicit erase. Otherwise, the NVS is used.
+
+if DESKTOP_SETTINGS_LOADER
+
+if NVS
+
+config NVS_LOG_LEVEL
+	default 2
+	help
+	  The nRF Desktop shows only warning and error logs related to the NVS.
+	  This is done to avoid flooding logs.
+
+endif # NVS
+
+if ZMS
+
+config ZMS_LOG_LEVEL
+	default 2
+	help
+	  The nRF Desktop shows only warning and error logs related to the ZMS.
+	  This is done to avoid flooding logs.
+
+endif # ZMS
+
+config SETTINGS_DYNAMIC_HANDLERS
+	default n
+	help
+	  The nRF Desktop does not use dynamic settings handlers. Disable the
+	  functionality by default to save memory.
+
+endif # DESKTOP_SETTINGS_LOADER

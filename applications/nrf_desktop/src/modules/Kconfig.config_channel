@@ -1,0 +1,129 @@
+#
+# Copyright (c) 2018 - 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "User configuration channel"
+
+config DESKTOP_CONFIG_CHANNEL_ENABLE
+	bool "Enable user configuration channel"
+	select DESKTOP_HWID
+	help
+	  Enables user to change firmware parameters at runtime over the
+	  configuration channel.
+
+config DESKTOP_CONFIG_CHANNEL_OUT_REPORT
+	bool "Enable additional HID output report"
+	depends on DESKTOP_CONFIG_CHANNEL_ENABLE
+	depends on DESKTOP_ROLE_HID_PERIPHERAL
+	help
+	  Use additional HID output report for configuration channel data
+	  transfer. The HID output report is used only by nRF Desktop dongle,
+	  other hosts use the HID feature report.
+
+	  For HID output reports, the dongle can use write without response.
+	  In that case LLPM peripheral does not have to respond instead of
+	  providing HID notification during one connection event.
+
+	  Using HID output report prevents report rate drops when forwarding
+	  configuration channel data, but it increases memory consumption of
+	  the peripheral.
+
+	  The config channel HID output report is handled in a dedicated way.
+	  It does not use the same infrastructure as other HID output reports.
+
+config DESKTOP_CONFIG_CHANNEL_TIMEOUT
+	int "Transaction timeout on configuration channel in seconds"
+	depends on DESKTOP_CONFIG_CHANNEL_ENABLE
+	default 10
+	help
+	  Timeout [s] after which config channel transaction is dropped.
+
+if DESKTOP_CONFIG_CHANNEL_ENABLE
+
+module = DESKTOP_CONFIG_CHANNEL
+module-str = Config channel
+source "subsys/logging/Kconfig.template.log_config"
+
+module = DESKTOP_INFO
+module-str = Info
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+comment "DFU"
+
+config DESKTOP_CONFIG_CHANNEL_DFU_ENABLE
+	bool "DFU over the config channel"
+	depends on DESKTOP_CONFIG_CHANNEL_ENABLE
+	depends on (SSF_SUIT_SERVICE_ENABLED || !SUIT)
+	help
+	  This option enables DFU over the config channel.
+
+if DESKTOP_CONFIG_CHANNEL_DFU_ENABLE
+
+config DESKTOP_CONFIG_CHANNEL_DFU_SYNC_BUFFER_SIZE
+	int "Size (in words) of sync buffer"
+	range 1 16383
+	default 128
+	help
+	  Number of words DFU data synchronization buffer will use. The new
+	  image data is first transmitted to this RAM located buffer. When host
+	  performs progress synchronization the data is moved from RAM to flash.
+	  The host must perform progress synchronization at least
+	  every synchronization buffer bytes count.
+
+config DESKTOP_CONFIG_CHANNEL_DFU_MCUBOOT_DIRECT_XIP
+	bool "Device uses MCUboot bootloader in direct-xip mode"
+	depends on BOOTLOADER_MCUBOOT
+	default y if MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP
+	help
+	  The option informs the DFU module that the MCUboot bootloader supports
+	  direct-xip mode. In this mode, the image is booted directly from the
+	  secondary slot instead of moving it to the primary slot. The module by
+	  default assumes that MCUboot with direct-xip is used when direct-xip
+	  variant image is built.
+
+	  The DFU module assumes that MCUboot direct-xip bootloader simply boots
+	  the image with a higher version. The module does not mark the newly
+	  uploaded image as pending nor confirm it after a successful boot.
+
+config DESKTOP_CONFIG_CHANNEL_DFU_VID
+	hex "Configuration channel Vendor ID"
+	range 0 0XFFFF
+	default DESKTOP_DEVICE_VID
+	help
+	  Configuration channel allows devices to report their Vendor ID. The
+	  Vendor ID is reported together with Product ID and device generation.
+
+	  The information is useful if nRF Desktop peripheral is connected
+	  through nRF Desktop dongle and host computer has no direct access to
+	  the VID and PID.
+
+config DESKTOP_CONFIG_CHANNEL_DFU_PID
+	hex "Configuration channel Product ID"
+	range 0 0XFFFF
+	default DESKTOP_DEVICE_PID
+	help
+	  Configuration channel allows devices to report their Product ID. The
+	  Product ID is reported together with Vendor ID and device generation.
+
+	  The information is useful if nRF Desktop peripheral is connected
+	  through nRF Desktop dongle and host computer has no direct access to
+	  the VID and PID.
+
+config DESKTOP_CONFIG_CHANNEL_DFU_GENERATION
+	string "Device generation"
+	default DESKTOP_DEVICE_GENERATION
+	help
+	  Configuration channel allows devices to report their generation. The
+	  generation is reported together with Vendor ID and Product ID.
+
+module = DESKTOP_CONFIG_CHANNEL_DFU
+module-str = Config channel DFU
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+endmenu

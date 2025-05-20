@@ -1,0 +1,11 @@
+board:
+  name: thingy91x
+  vendor: nordic
+  socs:
+    - name: nrf9151
+      variants:
+        - name: ns
+    - name: nrf5340
+      variants:
+        - name: ns
+          cpucluster: 'cpuapp'

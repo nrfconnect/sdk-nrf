@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Drivers"
+
+menuconfig NRF5340_AUDIO_CS47L63_DRIVER
+	bool "CS47L63 HW codec driver"
+	select HW_CODEC_CIRRUS_LOGIC
+	help
+	  Include the driver for the Cirrus Logic CS47L63 hardware codec chip
+
+if NRF5340_AUDIO_CS47L63_DRIVER
+
+config CS47L63_THREAD_PRIO
+	int "Priority for CS47L63 thread"
+	default 5
+	help
+	  This is a preemptible thread
+
+config CS47L63_STACK_SIZE
+	int "Stack size for CS47L63"
+	default 700
+
+module = CS47L63
+module-str = cs47l63
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # NRF5340_AUDIO_CS47L63_DRIVER
+endmenu # Drivers

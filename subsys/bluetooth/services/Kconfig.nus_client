@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_NUS_CLIENT
+	bool "Nordic UART service client"
+	select BT_NRF_SERVICES
+	help
+	  Enable BLE GATT Nordic UART service client.
+
+if BT_NUS_CLIENT
+
+module = BT_NUS_CLIENT
+module-str = NUS Client
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_NUS_CLIENT

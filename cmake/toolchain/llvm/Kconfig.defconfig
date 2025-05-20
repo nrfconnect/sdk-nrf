@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# When using LLVM with NCS we want to default to Compiler RT lib and LLD.
+choice LLVM_LINKER
+	default LLVM_USE_LLD
+endchoice
+
+choice RTLIB_IMPLEMENTATION
+	default COMPILER_RT_RTLIB
+endchoice

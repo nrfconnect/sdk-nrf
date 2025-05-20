@@ -1,0 +1,13 @@
+tests:
+  bootloader.bl_validation.unittest:
+    sysbuild: true
+    platform_allow:
+      - native_sim
+    integration_platforms:
+      - native_sim
+    tags:
+      - b0
+      - bl_validation
+      - unittest
+      - sysbuild
+      - ci_tests_subsys_bootloader

@@ -1,0 +1,28 @@
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig GCF_SMS
+	bool "Custom SMS commands for GCF certification"
+	depends on SOC_SERIES_NRF91X
+	select AT_CMD_CUSTOM
+	help
+	  Add implementations in the application for the following AT commands:
+	  AT+CPMS
+	  AT+CSMS
+	  AT+CSCA
+	  AT+CSCS
+	  AT+CMGD
+	  AT+CMSS
+	  AT+CMGW
+	  AT+CMGF=0
+	  AT+CMMS
+
+if GCF_SMS
+
+module = GCF_SMS
+module-str = GCF SMS Lib
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # GCF_SMS

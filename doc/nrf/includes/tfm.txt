@@ -1,0 +1,3 @@
+For more security, it is recommended to use the ``*/ns`` :ref:`variant <app_boards_names>` of the board target.
+When built for this variant, the sample is configured to compile and run as a non-secure application using :ref:`security by separation <ug_tfm_security_by_separation>`.
+Therefore, it automatically includes :ref:`Trusted Firmware-M <ug_tfm>` that prepares the required peripherals and secure services to be available for the application.

@@ -1,0 +1,56 @@
+tests:
+  hw_id.device_id:
+    sysbuild: true
+    integration_platforms:
+      - native_sim
+    platform_allow: native_sim
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_tests_lib_hw_id
+    extra_args:
+      - CONFIG_HW_ID_OVERRIDE_FILE="kconfig_override_device_id.h"
+  hw_id.uuid:
+    sysbuild: true
+    integration_platforms:
+      - native_sim
+    platform_allow: native_sim
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_tests_lib_hw_id
+    extra_args:
+      - CONFIG_HW_ID_OVERRIDE_FILE="kconfig_override_uuid.h"
+  hw_id.imei:
+    sysbuild: true
+    integration_platforms:
+      - native_sim
+    platform_allow: native_sim
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_tests_lib_hw_id
+    extra_args:
+      - CONFIG_HW_ID_OVERRIDE_FILE="kconfig_override_imei.h"
+  hw_id.ble:
+    sysbuild: true
+    integration_platforms:
+      - native_sim
+    platform_allow: native_sim
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_tests_lib_hw_id
+    extra_args:
+      - CONFIG_HW_ID_OVERRIDE_FILE="kconfig_override_ble.h"
+  hw_id.net:
+    sysbuild: true
+    integration_platforms:
+      - native_sim
+    platform_allow: native_sim
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_tests_lib_hw_id
+    extra_args:
+      - CONFIG_HW_ID_OVERRIDE_FILE="kconfig_override_net.h"

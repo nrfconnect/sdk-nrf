@@ -1,0 +1,63 @@
+# The configurations resulting as a product of scenarios and platforms
+# will be skipped if quarantine is used. More details here:
+# https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
+
+- scenarios:
+    - net.lib.wifi_credentials_backend_psa
+  comment: "Fix not known at time of upmerge, temporarily excluded to be fixed after upmerge"
+
+- scenarios:
+    - sample.nrf7002.shell.otbr
+  platforms:
+    - nrf7002dk/nrf5340/cpuapp
+  comment: https://nordicsemi.atlassian.net/browse/NCSDK-31155
+
+- platforms:
+    - native_posix
+  comment: "native_posix will be removed soon - native_sim platform is the default simulator now"
+
+- scenarios:
+    - sample.benchmark.coremark.heap_memory
+    - sample.benchmark.coremark.multiple_threads
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31409"
+
+- scenarios:
+    - sample.matter.light_bulb.aws
+  platforms:
+    - nrf7002dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31774"
+
+- scenarios:
+    - sample.bluetooth.direction_finding_central_nrf
+    - sample.bluetooth.direction_finding_central_nrf.aod
+  platforms:
+    - nrf52833dk/nrf52820
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-32042"
+
+- scenarios:
+    - nrf.extended.drivers.uart.uart_elementary_dual_l09
+    - nrf.extended.drivers.uart.uart_elementary_dual_setup_mismatch_l09
+  platforms:
+    - nrf54l09pdk/nrf54l09/cpuflpr
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-7265"
+
+- scenarios:
+    - nrf.extended.drivers.sensor.qdec.pm_runtime
+  platforms:
+    - nrf54l20pdk/nrf54l20/cpuflpr
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-7267"
+
+- scenarios:
+    - sample.suit.*
+    - suit-platform.integration.*
+    - suit.integration.*
+    - suit-processor.integration.*
+    - suit.unit.*
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    - nrf52840dk/nrf52840
+    - unit.*
+    - native_sim.*
+  comment: "SUIT is planned to be removed from NCS soon"

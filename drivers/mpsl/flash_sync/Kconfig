@@ -1,0 +1,68 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if SOC_FLASH_NRF || SOC_FLASH_NRF_RRAM || SOC_NRF54H20
+
+config SOC_FLASH_NRF_RADIO_SYNC_RPC
+	bool "Enable flash driver synchronization with radio protocols through RPC"
+	help
+	  Enable the flash synchronization between the application core and the radio core.
+	  This Kconfig option is set based on the value of the SB_CONFIG_SOC_FLASH_NRF_RADIO_SYNC_RPC
+	  sysbuild configuration option.
+
+choice SOC_FLASH_NRF_RADIO_SYNC_CHOICE
+	prompt "Nordic nRFx flash driver synchronization"
+	default SOC_FLASH_NRF_RADIO_SYNC_MPSL if MPSL
+
+config SOC_FLASH_NRF_RADIO_SYNC_MPSL
+	bool "Nordic nRFx flash driver synchronized using MPSL"
+	depends on MPSL
+	help
+	  Enable synchronization between flash memory driver and MPSL.
+
+config SOC_FLASH_NRF_RADIO_SYNC_RPC_HOST
+	bool "Nordic nRFx flash driver synchronized on the application core via RPC"
+	depends on SOC_NRF54H20_CPUAPP
+	depends on BT  # If sync with other radio protocols is needed, extend this
+	depends on SOC_FLASH_NRF_RADIO_SYNC_RPC
+	select NRF_RPC
+	select NRF_RPC_CBOR
+	help
+	  Enable synchronization between the flash memory driver on the application core
+	  and radio protocols on the radio core using RPC communication.
+
+endchoice
+
+endif
+
+config SOC_FLASH_NRF_RADIO_SYNC_RPC_CONTROLLER
+	bool "Nordic nRFx flash driver RPC synchronization controller"
+	default y if SOC_FLASH_NRF_RADIO_SYNC_RPC
+	depends on SOC_FLASH_NRF_RADIO_SYNC_MPSL
+	select NRF_RPC
+	select NRF_RPC_CBOR
+	help
+	  Enable the RPC controller (radio core part) for the flash driver synchronization
+	  via RPC. This controller calls the proper flash sync MPSL API.
+
+if SOC_FLASH_NRF_RADIO_SYNC_RPC_CONTROLLER
+
+config SOC_FLASH_NRF_RADIO_SYNC_RPC_CONTROLLER_SWI_NUM
+	int "SWI number to be used by the flash synchronization RPC controller"
+	default 5
+	range 0 7
+	help
+	  The interrupt coming from MPSL cannot be used to give semaphores.
+	  Thus, the SWI is used as an "offload" to give the semaphore to the waiting thread.
+	  This Kconfig option allows the user to select the SWI number to be used by the controller
+	  for this purpose.
+
+endif
+
+config SOC_FLASH_NRF_RADIO_SYNC_MPSL_TIMESLOT_SESSION_COUNT
+	int
+	default 1 if SOC_FLASH_NRF_RADIO_SYNC_MPSL
+	default 0

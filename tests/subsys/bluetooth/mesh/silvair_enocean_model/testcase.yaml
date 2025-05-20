@@ -1,0 +1,11 @@
+tests:
+  bluetooth.mesh.silvair_enocean_model:
+    sysbuild: true
+    platform_allow:
+      - native_sim
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild
+    integration_platforms:
+      - native_sim

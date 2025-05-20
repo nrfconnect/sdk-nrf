@@ -1,0 +1,11 @@
+tests:
+  dfu.dfu_target.smp:
+    sysbuild: true
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
+    tags:
+      - dfu
+      - smp
+      - sysbuild
+      - ci_tests_subsys_dfu

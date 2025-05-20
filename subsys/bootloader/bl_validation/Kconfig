@@ -1,0 +1,98 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Secure Boot firmware validation"
+
+config SECURE_BOOT_VALIDATION
+	bool "Enable Secure Boot validation code"
+	select FW_INFO
+	depends on SECURE_BOOT_CRYPTO
+	depends on SECURE_BOOT_STORAGE
+
+config SB_VALIDATION_INFO_MAGIC
+	hex "Magic word used for validation info structs (32 bits)"
+	default 0x86518483
+	help
+	  Magic word value specific to validation info structs (after firmware).
+	  For more info, see FW_INFO_MAGIC_COMMON.
+
+config SB_VALIDATION_POINTER_MAGIC
+	hex "Magic word used for validation info pointer structs (32 bits)"
+	default 0x6919b47e
+	help
+	  Magic word value specific to validation info pointer structs.
+	  For more info, see FW_INFO_MAGIC_COMMON.
+
+config SB_VALIDATION_INFO_CRYPTO_ID
+	int
+	range 0 255
+	default 1 # if SB_ECDSA_SECP256R1 && SB_SHA256
+	help
+	  The algorithm used for signing the firmware (8 bits).
+	  Used to ensure compatibility.
+	  For more info, see FW_INFO_MAGIC_COMMON.
+
+config SB_VALIDATION_INFO_VERSION
+	int "Version number of the fw_validation_info* structs (8 bits)"
+	range 0 255
+	default 2
+	help
+	  Used to ensure binary compatibility.
+	  For more info, see FW_INFO_MAGIC_COMMON.
+
+config SB_VALIDATION_METADATA_OFFSET
+	int "Offset at which to store validation metadata"
+	default 0
+	help
+	  Must be either 0 or larger than the size of the application. If 0,
+	  the metadata is appended directly after the application image,
+	  aligned to the closest word.
+
+config SB_VALIDATION_STRUCT_HAS_HASH
+	bool
+	default y if !SB_CRYPTO_PSA_ED25519
+	help
+	  Set if the struct should contain the hash field.
+
+config SB_VALIDATION_STRUCT_HAS_PUBLIC_KEY
+	bool
+	default y if !SB_CRYPTO_PSA_ED25519
+	help
+	  Set if the struct should contain the public key field.
+
+if SECURE_BOOT_VALIDATION
+
+EXT_API = BL_VALIDATE_FW
+id = 0x1101
+flags = 3
+ver = 1
+source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"
+
+endif # SECURE_BOOT_VALIDATION
+
+config SB_VALIDATE_FW_SIGNATURE
+	bool
+	default y if !SOC_NRF5340_CPUNET
+	help
+	  Signature validation.
+
+config SB_VALIDATE_FW_HASH
+	bool
+	default y
+	depends on SOC_NRF5340_CPUNET
+	help
+	  Hash validation (not secure). Only meant for nRF5340 network core
+	  since the app core will do the signature validation.
+
+if SECURE_BOOT_VALIDATION
+
+module = SECURE_BOOT_VALIDATION
+module-str = Secure Bootloader Validation
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # SECURE_BOOT_VALIDATION
+
+endmenu

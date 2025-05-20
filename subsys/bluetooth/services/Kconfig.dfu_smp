@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_DFU_SMP
+	bool "DFU SMP service client"
+	select BT_NRF_SERVICES
+	help
+	  Enable GATT DFU SMP Service Client.
+
+if BT_DFU_SMP
+
+module = BT_DFU_SMP
+module-str = DFU SMP Client
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_DFU_SMP

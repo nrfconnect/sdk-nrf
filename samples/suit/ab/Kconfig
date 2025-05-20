@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config N_BLINKS
+	int "Number of fast blinks"
+	default 1
+
+config ID_VAR_BOOT_STATUS
+	int "Id of Manfiest-controlled variable representing a boot status"
+	default 256
+
+config ID_VAR_BOOT_PREFERENCE
+	int "Id of Manfiest-controlled variable representing a boot prefrence"
+	default 0
+
+config ID_VAR_SET_TO_UPDATE
+	int "Id of Manfiest-controlled variable representing image set to be updated"
+	default 1
+
+config ID_VAR_CONFIRM_SET_A
+	int "Id of Manfiest-controlled variable representing after-update confirmation state for image set A"
+	default 2
+
+config ID_VAR_CONFIRM_SET_B
+	int "Id of Manfiest-controlled variable representing after-update confirmation state for image set B"
+	default 3
+
+config EMULATE_APP_HEALTH_CHECK_FAILURE
+	bool "Blocks confirmation of being healthy after the update"
+
+source "Kconfig.zephyr"

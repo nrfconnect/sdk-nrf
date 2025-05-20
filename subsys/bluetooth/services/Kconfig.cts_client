@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_CTS_CLIENT
+	bool "Current Time Service client"
+	select BT_NRF_SERVICES
+	help
+	  Enable Current Time Service client.
+
+if BT_CTS_CLIENT
+
+module = BT_CTS_CLIENT
+module-str = CTS Client
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_CTS_CLIENT

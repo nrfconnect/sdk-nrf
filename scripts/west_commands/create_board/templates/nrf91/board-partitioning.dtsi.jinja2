@@ -1,0 +1,83 @@
+/*
+ * Default Flash planning
+ *
+ * Zephyr build with ARM TrustZone-M support, implies building Secure and
+ * Non-Secure Zephyr images.
+ *
+ * Secure image will be placed, by default, in flash0 (or in slot0, if MCUboot
+ * is present). Secure image will use sram0 for system memory.
+ *
+ * Non-Secure image will be placed in slot0_ns, and use sram0_ns for system
+ * memory.
+ *
+ * Note that the Secure image only requires knowledge of the beginning of the
+ * Non-Secure image (not its size).
+ */
+&flash0 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x00000000 DT_SIZE_K(64)>;
+		};
+
+		slot0_partition: partition@10000 {
+			label = "image-0";
+			reg = <0x00010000 DT_SIZE_K(256)>;
+		};
+
+		slot0_ns_partition: partition@50000 {
+			label = "image-0-nonsecure";
+			reg = <0x00050000 DT_SIZE_K(212)>;
+		};
+
+		slot1_partition: partition@85000 {
+			label = "image-1";
+			reg = <0x00085000 DT_SIZE_K(256)>;
+		};
+
+		slot1_ns_partition: partition@c5000 {
+			label = "image-1-nonsecure";
+			reg = <0x000c5000 DT_SIZE_K(212)>;
+		};
+
+		storage_partition: partition@fa000 {
+			label = "storage";
+			reg = <0x000fa000 DT_SIZE_K(24)>;
+		};
+	};
+};
+
+
+/* Default SRAM planning when building with ARM TrustZone-M support:
+ * - Lowest 88 kB SRAM allocated to Secure image (sram0_s).
+ * - 40 kB SRAM reserved for and used by the modem library (sram0_modem). This
+ *   memory is Non-Secure.
+ * - Upper 128 kB allocated to Non-Secure image (sram0_ns). When building with
+ *   TF-M, both sram0_modem and sram0_ns are allocated to the Non-Secure image.
+ */
+/ {
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		/* Secure image memory */
+		sram0_s: image_s@20000000 {
+			reg = <0x20000000 DT_SIZE_K(88)>;
+		};
+
+		/* Modem (shared) memory */
+		sram0_modem: image_modem@20016000 {
+			reg = <0x20016000 DT_SIZE_K(40)>;
+		};
+
+		/* Non-Secure image memory */
+		sram0_ns: image_ns@20020000 {
+			reg = <0x20020000 DT_SIZE_K(128)>;
+		};
+	};
+};

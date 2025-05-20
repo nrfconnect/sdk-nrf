@@ -1,0 +1,19 @@
+# Copyright (c) 2022 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: |
+  This is binding for the UART over IPC.
+
+include: [uart-controller.yaml, pinctrl-device.yaml]
+
+compatible: "nordic,nrf-ipc-uart"
+
+properties:
+  ipc:
+    type: phandle
+    required: true
+    description: IPC instance for sending UART data.
+  ept-name:
+    type: string
+    required: true
+    description: Remote IPC endpoint name

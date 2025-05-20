@@ -1,0 +1,74 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig ML_APP_EI_DATA_FORWARDER
+	bool "Edge Impulse data forwarder"
+	depends on NEWLIB_LIBC
+	depends on NEWLIB_LIBC_FLOAT_PRINTF
+	depends on CAF_SENSOR_EVENTS
+
+if ML_APP_EI_DATA_FORWARDER
+
+choice
+	prompt "Select data forwarder interface"
+	default ML_APP_EI_DATA_FORWARDER_UART
+
+config ML_APP_EI_DATA_FORWARDER_UART
+	bool "UART"
+	depends on UART_ASYNC_API
+	select ML_APP_EI_DATA_FORWARDER_EVENTS
+
+config ML_APP_EI_DATA_FORWARDER_BT_NUS
+	bool "Nordic UART Service (NUS)"
+	depends on BT_NUS
+	depends on BT_GAP_AUTO_UPDATE_CONN_PARAMS
+	select ML_APP_EI_DATA_FORWARDER_EVENTS
+
+endchoice
+
+config ML_APP_EI_DATA_FORWARDER_SENSOR_EVENT_DESCR
+	string "Description of forwarded sensor event"
+	default ML_APP_SENSOR_EVENT_DESCR
+	help
+	  The module forwards data related to sensor events with predefined description.
+	  Other sensor events are ignored.
+
+config ML_APP_EI_DATA_FORWARDER_BUF_SIZE
+	int "Data buffer size"
+	default 256 if ML_APP_EI_DATA_FORWARDER_UART && CAF_SENSOR_DATA_AGGREGATOR_EVENTS
+	default 64
+	range 6 4096
+	help
+	  Size of the buffer used to temporarily store forwarded data.
+	  The buffer must be big enough to store a single line of forwarded data.
+
+config ML_APP_EI_DATA_FORWARDER_PIPELINE_COUNT
+	int "Number of samples pipelined in the Bluetooth stack"
+	depends on ML_APP_EI_DATA_FORWARDER_BT_NUS
+	default 2
+	range 1 BT_CONN_TX_MAX
+	help
+	  Number of sensor samples pipelined in the Bluetooth stack. Pipelining samples in the
+	  Bluetooth stack reduces latency related to delivering subsequent sensor samples to
+	  the stack.
+
+config ML_APP_EI_DATA_FORWARDER_BUF_COUNT
+	int "Data buffer count"
+	depends on ML_APP_EI_DATA_FORWARDER_BT_NUS
+	default 10 if CAF_SENSOR_DATA_AGGREGATOR_EVENTS
+	default 3
+	range 0 16
+	help
+	  Up to CONFIG_ML_APP_EI_DATA_FORWARDER_PIPELINE_COUNT sensor samples are pipelined in the
+	  Bluetooth stack. In case the pipeline is full, additional samples are buffered by the
+	  application module. This Kconfig option specifies number of sensor samples temporarily
+	  stored by the application module.
+
+module = ML_APP_EI_DATA_FORWARDER
+module-str = EI data forwarder
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # ML_APP_EI_DATA_FORWARDER

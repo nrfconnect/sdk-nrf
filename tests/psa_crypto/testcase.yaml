@@ -1,0 +1,15 @@
+tests:
+  crypto.cracen:
+    sysbuild: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+
+    tags:
+      - tfm
+      - psa_crypto
+      - sysbuild
+      - ci_tests_tfm
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns

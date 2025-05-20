@@ -1,0 +1,27 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&uart20 {
+	current-speed = <1000000>;
+	status = "okay";
+	hw-flow-control;
+};
+
+/ {
+	chosen {
+		zephyr,ot-uart = &uart20;
+	};
+};
+
+// restore full RRAM and SRAM space - by default some parts are dedicated to FLPR
+&cpuapp_rram {
+	reg = <0x0 DT_SIZE_K(1022)>;
+};
+
+&cpuapp_sram {
+	reg = <0x20000000 DT_SIZE_K(192)>;
+	ranges = <0x0 0x20000000  DT_SIZE_K(192)>;
+};

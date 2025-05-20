@@ -1,0 +1,52 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+ / {
+	sensor_stub: sensor_stub {
+		compatible = "nordic,sensor-stub";
+		generator = "sensor_stub_gen";
+		status = "okay";
+	};
+
+	agg0: agg0 {
+		compatible = "caf,aggregator";
+		sensor_descr = "accel_sim_xyz";
+		buf_data_length = <240>;
+		sample_size = <3>;
+		memory-region = <&ram3x_agg_area0>;
+	};
+};
+
+/* Place aggregator buffers in PPR memory region. */
+&cpuppr_ram3x_region {
+	cpuppr_code_data: memory@0 {
+		reg = <0x0 0xf200>;
+	};
+
+	ram3x_agg_area0: memory@f200 {
+		reg = <0xf200 0x600>;
+	};
+};
+
+/* Enabled nodes required by IPC
+ * Two mboxes, one for each sides and one ipc instance
+ */
+
+&cpuppr_vevif {
+	status = "okay";
+};
+
+&cpuapp_bellboard {
+	status = "okay";
+};
+
+&uart135 {
+	/delete-property/ hw-flow-control;
+};
+
+ipc0: &cpuapp_cpuppr_ipc {
+	status = "okay";
+};

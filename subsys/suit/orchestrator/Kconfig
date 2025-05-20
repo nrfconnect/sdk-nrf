@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig SUIT_ORCHESTRATOR
+	bool "Enable SUIT orchestrator module"
+	depends on SUIT_CRYPTO
+	depends on SUIT_PROCESSOR
+	depends on SUIT_STORAGE
+	depends on SUIT_UTILS
+	depends on SUIT_MCI
+	depends on SUIT_METADATA
+	depends on SUIT_PLATFORM_VARIANT_SDFW
+
+if SUIT_ORCHESTRATOR
+
+config SUIT_UPDATE_REBOOT_ENABLED
+	bool "Reboot the system after successful execution of the update path"
+	depends on REBOOT
+
+config SUIT_BOOT_RECOVERY_REBOOT_ENABLED
+	bool "Reboot the system after unsuccessful execution of the boot path"
+	depends on REBOOT
+
+config APP_LINK_WITH_SUIT_ORCHESTRATOR_INTERFACE
+	bool
+	default y
+
+endif # SUIT_ORCHESTRATOR

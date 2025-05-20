@@ -1,0 +1,42 @@
+SUIT_Envelope_Tagged:
+  suit-authentication-wrapper:
+    SuitDigest:
+      suit-digest-algorithm-id: cose-alg-sha-256
+  suit-manifest:
+    suit-manifest-version: 1
+    suit-manifest-sequence-number: 1
+    suit-common:
+      suit-components:
+      - - CAND_MFST
+        - 0
+      suit-shared-sequence:
+      - suit-directive-override-parameters:
+          suit-parameter-vendor-identifier:
+            RFC4122_UUID: nordicsemi.com
+          suit-parameter-class-identifier:
+            RFC4122_UUID:
+              namespace: nordicsemi.com
+              name: test_sample_root
+          suit-parameter-device-identifier:
+            RFC4122_UUID:
+              namespace: nordicsemi.com
+              name: unsupported_device_identifier_value
+      suit-dependencies:
+        # Key is the index of suit-components that describe the dependency manifest
+        "0": {}
+
+    suit-validate:
+    - suit-directive-set-component-index: 0
+
+    suit-load:
+    - suit-directive-set-component-index: 0
+    - suit-condition-device-identifier: []
+
+    suit-invoke:
+    - suit-directive-set-component-index: 0
+
+    suit-manifest-component-id:
+    - INSTLD_MFST
+    - RFC4122_UUID:
+        namespace: nordicsemi.com
+        name: test_sample_root

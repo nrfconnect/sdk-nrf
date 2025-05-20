@@ -1,0 +1,51 @@
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Client ID (nRF Cloud Device ID)"
+choice NRF_CLOUD_CLIENT_ID_SRC
+	prompt "Client ID Source"
+	default NRF_CLOUD_CLIENT_ID_SRC_IMEI
+
+config NRF_CLOUD_CLIENT_ID_SRC_IMEI
+	depends on NRF_MODEM_LIB
+	bool "IMEI based value"
+
+config NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME
+	bool "Compile time value"
+
+config NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID
+	bool "Modem internal UUID value"
+	depends on MODEM_JWT
+	help
+		Requires modem firmware version 1.3 or later.
+
+config NRF_CLOUD_CLIENT_ID_SRC_HW_ID
+	depends on HW_ID_LIBRARY
+	bool "Hardware ID based value"
+
+config NRF_CLOUD_CLIENT_ID_SRC_RUNTIME
+	bool "Runtime value"
+	help
+		NULL-terminated client ID string must be set using the provided library function.
+		For MQTT, this can also be set with library initialization function.
+endchoice
+
+if NRF_CLOUD_CLIENT_ID_SRC_IMEI
+config NRF_CLOUD_CLIENT_ID_PREFIX
+	string "Prefix used when constructing the client ID from the IMEI"
+	default "nrf-"
+	help
+		The nrf- prefix is reserved on nRF Connect for Cloud for official Nordic
+		devices (e.g. the nRF9160 DK or the Thingy:91).
+		In case you wish to use nrf_cloud with your own devices you need to modify
+		the prefix used to generate the client ID from the IMEI.
+endif
+
+if NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME
+config NRF_CLOUD_CLIENT_ID
+	string "Client ID used for connection to nRF Cloud"
+	default "my-client-id"
+endif
+endmenu

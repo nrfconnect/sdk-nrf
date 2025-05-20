@@ -1,0 +1,93 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NRF_PROVISIONING
+	bool "nRF Provisioning"
+	depends on NRF_MODEM_LIB
+	depends on SETTINGS
+	imply FCB
+
+if NRF_PROVISIONING
+
+config NRF_PROVISIONING_AUTO_INIT
+	bool "Initialize the client automatically"
+	help
+	  Initialize the client automatically after the modem library is initialized.
+
+config NRF_PROVISIONING_INTERVAL_S
+	int "Maximum provisioning interval in seconds"
+	default 86400
+
+config NRF_PROVISIONING_SPREAD_S
+	int "Provisioning time spread in seconds"
+	default 0
+
+config NRF_PROVISIONING_SHELL
+	bool "Shell utilities"
+	depends on SHELL
+	help
+	  Activate shell module that provides nRF Provisioning commands to the console.
+
+config NRF_PROVISIONING_WITH_CERT
+	bool "Include the certificate"
+	default y
+	help
+	  Includes the root certificate used by the server side and provisions it if needed.
+
+config NRF_PROVISIONING_ROOT_CA_SEC_TAG
+	int "Root CA for nRF Cloud Identity Service - security tag"
+
+config NRF_PROVISIONING_SAVE_CMD_ID
+	bool "Save the latest command id to storage"
+	help
+	  Saves the latest command id to storage after successful Finished command.
+
+config NRF_PROVISIONING_CUSTOM_AT
+	bool "Custom AT commands"
+	depends on AT_CMD_CUSTOM
+	help
+	  Activate custom AT commands.
+
+config NRF_PROVISIONING_SETTINGS_STORAGE_PATH
+	string "Settings storage path for provisioning"
+	default "provisioning"
+
+config NRF_PROVISIONING_RX_BUF_SZ
+	int "RX buffer size"
+	default 1024
+
+config NRF_PROVISIONING_TX_BUF_SZ
+	int "TX buffer size"
+	default 2048
+
+config NRF_PROVISIONING_JWT_SEC_TAG
+	int "Provision Service's security tag, private Device Identity key used by default"
+	default 0
+
+config NRF_PROVISIONING_JWT_MAX_VALID_TIME_S
+	int "Maximum JWT valid lifetime (seconds)"
+	range 0 360
+	default 300
+
+config NRF_PROVISIONING_PRINT_ATTESTATION_TOKEN
+	bool "Display attestation token when unauthorized"
+	default y if !NRF_PROVISIONING_SHELL
+	help
+	  Unauthorized errors occur when the device is not yet claimed on
+	  nRF Cloud. Display the attestation token
+	  needed for claiming the device.
+
+rsource "Kconfig.nrf_provisioning_http"
+
+rsource "Kconfig.nrf_provisioning_coap"
+
+module=NRF_PROVISIONING
+module-dep=LOG
+module-str=Log level for nRF Provisioning
+module-help=Enables nRF Provisioning log messages.
+source "subsys/logging/Kconfig.template.log_config"
+
+endif

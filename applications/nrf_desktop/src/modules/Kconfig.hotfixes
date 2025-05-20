@@ -1,0 +1,64 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Hotfix set"
+
+config DESKTOP_HFCLK_LOCK_ENABLE
+	bool "Keep HF clock enabled [DEPRECATED]"
+	depends on CAF_BLE_USE_LLPM
+	depends on !SOC_SERIES_NRF54HX
+	select DEPRECATED
+	help
+	  The HF clock needs to be enabled during data transmission over BLE.
+	  Enabling the HF clock right before the data transmission adds an extra
+	  latency of around 1.4 ms (0.85 ms in case of nRF54L Series SoCs) for
+	  the first packet (in a row) that is transmitted. The extra latency is
+	  caused by the HF clock startup latency. Keeping the HF clock enabled
+	  all the time removes the extra latency caused by the clock startup at
+	  the cost of increased power consumption.
+
+	  The HF clock lock hotfix is not supported for nRF54H Series SoCs. For
+	  these SoCs, a part of the Bluetooth stack runs on the radio core.
+	  Keeping the HF clock enabled by the application running on application
+	  core does not mitigate the extra HID report latency caused by the HF
+	  clock startup, because the application cannot notify a part of the
+	  Bluetooth stack running on the radio core that HF clock is already
+	  enabled. The clock startup latency unconditionally affects the first
+	  transmitted packet.
+
+	  The hotfix is deprecated and will be removed in the future. Use the
+	  CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK instead. Setting the peripheral
+	  latency LLPM connection parameter to `0` on a peripheral leads to
+	  keeping the HF clock enabled. That mitigates the extra HID report
+	  latency caused by the HF clock startup delay.
+
+config DESKTOP_CONSTLAT_ENABLE
+	bool "Constant latency interrupts"
+	depends on !SOC_SERIES_NRF54LX
+	depends on !SOC_SERIES_NRF54HX
+	select NRFX_POWER
+	help
+	  When enabled, the SoC uses configuration for constant latency
+	  interrupts. This reduces interrupt propagation time but increases
+	  power consumption.
+
+	  Currently, the nRF54L Series SoCs do not support the nrfx POWER driver
+	  (CONFIG_NRFX_POWER). Because of that, the hotfix cannot be used by
+	  these SoCs.
+
+	  nRF54H Series SoCs do not enable constant latency interrupts through
+	  the nrfx POWER driver. This SoC series is currently not supported
+	  by the hotfix.
+
+config DESKTOP_CONSTLAT_DISABLE_ON_STANDBY
+	bool "Disable constant latency interrupts on standby"
+	depends on CAF_PM_EVENTS
+	depends on DESKTOP_CONSTLAT_ENABLE
+	help
+	  When enabled constant latency interrupts will be disabled when
+	  the devices switches to standby.
+
+endmenu

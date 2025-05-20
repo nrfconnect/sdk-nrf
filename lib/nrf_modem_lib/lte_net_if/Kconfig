@@ -1,0 +1,84 @@
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NRF_MODEM_LIB_NET_IF
+	bool "Zephyr networking API support"
+	select PDN
+	select PDN_ESM_STRERROR
+	select LTE_LINK_CONTROL
+	depends on NRF_MODEM_LIB
+	depends on NET_CONNECTION_MANAGER
+	depends on NET_IPV4 || NET_IPV6
+	depends on !NET_IPV6_NBR_CACHE
+	depends on !NET_IPV6_MLD
+	help
+	  Add support for controlling the nRF91 modem using Zephyr networking API.
+
+if NRF_MODEM_LIB_NET_IF
+
+config NRF_MODEM_LIB_NET_IF_AUTO_START
+	bool "Network interface auto-start"
+	help
+	  If this option is enabled, the modem is automatically initialized from the main context
+	  at SYS init.
+	  Initialization of the modem might take some time, so bear in mind that the main context
+	  will be blocked for that duration.
+	  If this option is disabled the modem must be manually initialized by bringing
+	  the network interface's administrative state up by calling net_if_up().
+
+config NRF_MODEM_LIB_NET_IF_WORKQUEUE_STACK_SIZE
+	int "Workqueue stack size"
+	default 1024
+	help
+	  Stack size of the internal workqueue.
+
+config NRF_MODEM_LIB_NET_IF_CONNECT_TIMEOUT_SECONDS
+	int "Connect timeout in seconds"
+	default 0
+	help
+	  Time period in seconds that the library will try to establish an LTE connection,
+	  before timing out. The connect timeout can be updated by calling
+	  conn_mgr_if_set_timeout(). Default value is 0 (timeout disabled).
+	  When the timeout is disabled, the library relies solely on the modem's internal
+	  connection handling to upkeep the connection.
+
+config NRF_MODEM_LIB_NET_IF_CONNECTION_PERSISTENCE
+	bool "Connection persistency"
+	default y
+	help
+	  Persistent connection. If the connection is lost the modem will try to reconnect
+	  itself without the need for explicit calls to the network interface.
+	  Persistence can be updated run-time by calling conn_mgr_if_set_flag() with
+	  CONN_MGR_IF_PERSISTENT as flag parameter.
+
+config NRF_MODEM_LIB_NET_IF_AUTO_CONNECT
+	bool "Auto connect"
+	help
+	 If this option is set the Connection Manager will automatically call connect after the
+	 network interface has been brought up. This option sets the default value, the option has
+	 a corresponding flag that can be set at run time by calling conn_mgr_if_set_flag().
+
+config NRF_MODEM_LIB_NET_IF_AUTO_DOWN
+	bool "Auto down"
+	help
+	 If this option is set the Connection Manager will automatically take the network interface
+	 down when it stops trying to connect. This option sets the default value, the option has
+	 a corresponding flag that can be set at run time by calling conn_mgr_if_set_flag().
+
+config NRF_MODEM_LIB_NET_IF_DOWN_DEFAULT_LTE_DISCONNECT
+	bool "Disconnect on iface down"
+	help
+	 If this option is set, the LTE iface will disconnect LTE instead of shutting down the
+	 modem when being brought down.
+
+# LTE_NET_IF require a bigger stack than the default
+config NET_CONNECTION_MANAGER_MONITOR_STACK_SIZE
+	default 1024
+
+module = NRF_MODEM_LIB_NET_IF
+module-str = Modem network interface
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # NRF_MODEM_LIB_NETIF

@@ -1,0 +1,47 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Adds UART to the trace backend choice.
+choice NRF_MODEM_LIB_TRACE_BACKEND
+	default NRF_MODEM_LIB_TRACE_BACKEND_UART if $(dt_chosen_enabled,$(DT_CHOSEN_NORDIC_MODEM_TRACE_UART))
+
+config NRF_MODEM_LIB_TRACE_BACKEND_UART
+	bool "UART"
+	depends on SERIAL
+	depends on UART_ASYNC_API
+	select UART_USE_RUNTIME_CONFIGURE
+
+if NRF_MODEM_LIB_TRACE_BACKEND_UART
+
+config NRF_MODEM_LIB_TRACE_BACKEND_UART_CHUNK_SZ
+	int "Trace chunk size"
+	# This default is the max DMA transfer length
+	default 8191
+	range 8 8191
+	help
+	  Trace data is processed in chunks. Every time a whole chunk of trace data is processed, it is freed from the shared memory.
+	  By reducing the chunk size, it is possible to free the shared memory more often, albeit by a smaller amount.
+	  This, however, can improve the availability of shared memory, thus reducing the chance of losing traces.
+
+choice NRF_MODEM_LIB_TRACE_BACKEND_UART_VERSION
+	prompt "UART trace backend version [DEPRECATED]"
+	optional
+
+config NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR
+	bool "UART"
+	depends on SERIAL
+	depends on UART_ASYNC_API
+	select UART_USE_RUNTIME_CONFIGURE
+	select DEPRECATED
+	help
+	  Modem tracing with UART require the chosen `nordic,modem-trace-uart` to be set in the Device tree.
+	  Deprecated. Use NRF_MODEM_LIB_TRACE_BACKEND_UART directly instead.
+
+endchoice
+
+endif # NRF_MODEM_LIB_TRACE_BACKEND_UART
+
+endchoice # NRF_MODEM_LIB_TRACE_BACKEND

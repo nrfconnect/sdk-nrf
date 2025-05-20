@@ -1,0 +1,193 @@
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# The purpose of this file is to define new default values of settings related
+# to building Thread from sources.
+# This file only changes defaults and thus all symbols here must be prompltless
+# and safeguarded so that they only are applied when building Thread.
+
+if OPENTHREAD
+
+choice OPENTHREAD_STACK_VERSION
+	default OPENTHREAD_THREAD_VERSION_1_4
+endchoice
+
+config OPENTHREAD_LIBRARY_AVAILABLE
+	bool
+	# Switch:
+	# - To `y` when libraries for the current OpenThread revision are provided
+	# - To `n` on the next OpenThread upmerge
+	default y
+	depends on OPENTHREAD_THREAD_VERSION_1_4
+	depends on (OPENTHREAD_NORDIC_LIBRARY_MASTER && (SOC_NRF52840 || SOC_SERIES_NRF54LX)) || \
+		    OPENTHREAD_NORDIC_LIBRARY_FTD || OPENTHREAD_NORDIC_LIBRARY_MTD
+	depends on !OPENTHREAD_COPROCESSOR
+	depends on SOC_NRF52840 || SOC_NRF5340_CPUAPP || SOC_SERIES_NRF54LX
+
+choice OPENTHREAD_IMPLEMENTATION
+	default OPENTHREAD_LIBRARY if OPENTHREAD_LIBRARY_AVAILABLE
+endchoice
+
+choice LIBC_IMPLEMENTATION
+	default NEWLIB_LIBC
+endchoice
+
+config NEWLIB_LIBC_NANO
+	default y if NEWLIB_LIBC
+
+config NUM_METAIRQ_PRIORITIES
+	default 1
+
+config SYSTEM_WORKQUEUE_STACK_SIZE
+	default 320 if OPENTHREAD_COPROCESSOR_RCP
+	default 1120
+
+config MAIN_STACK_SIZE
+	default 1024 if OPENTHREAD_COPROCESSOR_RCP
+	default 2560
+
+config LOG_BUFFER_SIZE
+	default 4048 if LOG
+
+config INIT_STACKS
+	default y
+
+config OPENTHREAD_MANUAL_START
+	default y
+
+choice OPENTHREAD_SECURITY
+	default OPENTHREAD_NRF_SECURITY_PSA_CHOICE if SOC_FAMILY_NORDIC_NRF
+endchoice
+
+config MBEDTLS_PROMPTLESS
+	default n
+
+config MBEDTLS_SSL_PROTO_DTLS
+	default n if !(OPENTHREAD_JOINER || OPENTHREAD_COMMISSIONER || OPENTHREAD_COAPS || OPENTHREAD_BLE_TCAT)
+	default y
+
+config MBEDTLS_SSL_MAX_FRAGMENT_LENGTH
+	default n if !(OPENTHREAD_JOINER || OPENTHREAD_COMMISSIONER || OPENTHREAD_COAPS || OPENTHREAD_BLE_TCAT)
+	default y
+
+config MBEDTLS_ENTROPY_C
+	default y
+
+config MBEDTLS_CIPHER_MODE_CBC
+	default n
+
+config MBEDTLS_CIPHER_MODE_CTR
+	default n
+
+config MBEDTLS_CHACHA20_C
+	default n
+
+config MBEDTLS_POLY1305_C
+	default n
+
+config MBEDTLS_CHACHAPOLY_C
+	default n
+
+config MBEDTLS_DHM_C
+	default n
+
+config MBEDTLS_RSA_C
+	default n
+
+config MBEDTLS_SHA512_C
+	default n
+
+config MBEDTLS_GCM_C
+	default n
+
+config MBEDTLS_CIPHER_MODE_XTS
+	default n
+
+if !(OPENTHREAD_BORDER_AGENT || OPENTHREAD_COMMISSIONER || OPENTHREAD_COAPS || OPENTHREAD_BLE_TCAT)
+
+config MBEDTLS_SSL_SRV_C
+	default n
+
+config MBEDTLS_SSL_COOKIE_C
+	default n
+
+endif # !(OPENTHREAD_BORDER_AGENT || OPENTHREAD_COMMISSIONER || OPENTHREAD_COAPS || OPENTHREAD_BLE_TCAT)
+
+if !(OPENTHREAD_JOINER || OPENTHREAD_COMMISSIONER || OPENTHREAD_COAPS || OPENTHREAD_BLE_TCAT)
+
+config MBEDTLS_SSL_CLI_C
+	default n
+
+config MBEDTLS_SSL_TLS_C
+	default n
+
+endif # !(OPENTHREAD_JOINER || OPENTHREAD_COMMISSIONER || OPENTHREAD_COAPS)
+
+# Note: MBEDTLS_HEAP_SIZE value for OPENTHREAD_NRF_SECURITY_PSA is experimental.
+# It might be changed in the future.
+config MBEDTLS_HEAP_SIZE
+	default 20360 if OPENTHREAD_BLE_TCAT
+	default 15360 if OPENTHREAD_NRF_SECURITY_PSA
+	default 12440 if !OPENTHREAD_NRF_SECURITY_PSA
+
+if OPENTHREAD_COPROCESSOR_RCP
+
+config MBEDTLS_PSA_KEY_SLOT_COUNT
+	default 1
+
+config ISR_STACK_SIZE
+	default 640
+
+config IDLE_STACK_SIZE
+	default 128
+
+config MPSL_WORK_STACK_SIZE
+	default 512
+
+endif # OPENTHREAD_COPROCESSOR_RCP
+
+if OPENTHREAD_BLE_TCAT
+
+config MBEDTLS_GCM_C
+	default y
+
+config MBEDTLS_SSL_OUT_CONTENT_LEN
+	default 2048
+
+config MBEDTLS_SSL_IN_CONTENT_LEN
+	default 2048
+
+config MBEDTLS_KEY_EXCHANGE_PSK_ENABLED
+	default y
+
+config OPENTHREAD_BLE_TCAT_THREAD_STACK_SIZE
+	default 8196 if SOC_NRF54L15
+	default 6144
+
+endif # OPENTHREAD_BLE_TCAT
+
+config OPENTHREAD_NUM_MESSAGE_BUFFERS
+	range 96 65535 if OPENTHREAD_FTD
+	range 64 65535
+	default 96 if OPENTHREAD_FTD
+	default 64
+
+# File system configuration
+config ZMS
+	default y if SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM
+
+config NVS
+	default y if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+
+if !OPENTHREAD_THREAD_VERSION_1_1
+
+# Thread 1.2 dependencies
+config NRF_802154_ENCRYPTION
+	default y
+
+endif # !OPENTHREAD_THREAD_VERSION_1_1
+endif # OPENTHREAD
+
+rsource "Kconfig.defconfig.l2"

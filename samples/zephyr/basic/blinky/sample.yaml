@@ -1,0 +1,69 @@
+sample:
+  name: Blinky Sample
+common:
+  tags:
+    - LED
+    - gpio
+    - ci_tests_drivers_hpf
+  depends_on: gpio
+tests:
+
+  nrf.extended.sample.basic.blinky.hpf.gpio.icmsg:
+    sysbuild: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - SB_CONFIG_HPF=y
+      - SB_CONFIG_HPF_GPIO=y
+      - SB_CONFIG_HPF_GPIO_BACKEND_ICMSG=y
+      - SB_CONFIG_PARTITION_MANAGER=n
+      - EXTRA_DTC_OVERLAY_FILE="./boards/nrf54l15dk_nrf54l15_cpuapp_hpf_gpio.overlay"
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "LED state: ON"
+        - "LED state: OFF"
+
+  nrf.extended.sample.basic.blinky.hpf.gpio.mbox:
+    sysbuild: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - SB_CONFIG_HPF=y
+      - SB_CONFIG_HPF_GPIO=y
+      - SB_CONFIG_HPF_GPIO_BACKEND_MBOX=y
+      - SB_CONFIG_PARTITION_MANAGER=n
+      - EXTRA_DTC_OVERLAY_FILE="./boards/nrf54l15dk_nrf54l15_cpuapp_hpf_gpio.overlay"
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "LED state: ON"
+        - "LED state: OFF"
+
+  nrf.extended.sample.basic.blinky.hpf.gpio.icbmsg:
+    sysbuild: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - SB_CONFIG_HPF=y
+      - SB_CONFIG_HPF_GPIO=y
+      - SB_CONFIG_HPF_GPIO_BACKEND_ICBMSG=y
+      - SB_CONFIG_PARTITION_MANAGER=n
+      - EXTRA_DTC_OVERLAY_FILE="./boards/nrf54l15dk_nrf54l15_cpuapp_hpf_gpio.overlay"
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "LED state: ON"
+        - "LED state: OFF"

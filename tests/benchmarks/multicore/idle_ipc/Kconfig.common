@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config APP_IPC_SERVICE_MESSAGE_LEN
+	int "Length of single IPC message in bytes"
+	default 100
+
+config TEST_START_DELAY_MS
+	int "Delay for test startup [ms]"
+	default 0
+
+config SLEEP_TIME_MS
+	int "Core sleep time [ms]"
+	default 1000

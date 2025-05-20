@@ -1,0 +1,34 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include "../nrf7002eb_interposer_p1_gpio_map_1.dtsi"
+
+&pinctrl {
+	spi22_default: spi22_default {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK,  1, 11)>,
+				<NRF_PSEL(SPIM_MISO, 1, 9)>,
+				<NRF_PSEL(SPIM_MOSI, 1, 10)>;
+		};
+	};
+
+	spi22_sleep: spi22_sleep {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK,  1, 11)>,
+				<NRF_PSEL(SPIM_MISO, 1, 9)>,
+				<NRF_PSEL(SPIM_MOSI, 1, 10)>;
+			low-power-enable;
+		};
+	};
+};
+
+edge_connector_spi: &spi22 {
+	status = "okay";
+	cs-gpios = <&edge_connector 18 GPIO_ACTIVE_LOW>;
+	pinctrl-0 = <&spi22_default>;
+	pinctrl-1 = <&spi22_sleep>;
+	pinctrl-names = "default", "sleep";
+};

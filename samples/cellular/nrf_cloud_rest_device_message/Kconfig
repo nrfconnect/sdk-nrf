@@ -1,0 +1,50 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "nRF Cloud REST Device Message Sample"
+
+config REST_DEVICE_MESSAGE_SAMPLE_VERSION
+	string "The sample's version string"
+	default "1.0.0"
+
+config REST_DEVICE_MESSAGE_LTE_LED_NUM
+	int "The LED number to use for indicating LTE connection success"
+	default 0
+
+config REST_DEVICE_MESSAGE_SEND_LED_NUM
+	int "The LED number to use for indicating outgoing REST request"
+	default 1
+
+config REST_DEVICE_MESSAGE_DO_JITP
+	bool "Ask to perform just-in-time provisioning (JITP) via REST on startup"
+	help
+	  If a device has JITP certificates and has not yet been provisioned to
+	  nRF Cloud, enable this option and press the configured button when
+	  prompted after the sample starts.
+
+config REST_DEVICE_MESSAGE_KEEP_ALIVE
+	bool "Keep connection alive during button handling"
+	default y
+	help
+	  Keep the HTTP connection open after sending the button message so the
+	  direct logging message can reuse it. This reduces data and power
+	  consumption, but is not compatible with the cloud logging backend.
+
+config SEND_ONLINE_ALERT
+	bool "Sends a routine ALERT_TYPE_DEVICE_NOW_ONLINE on startup"
+	help
+	  Enable this to demonstrate the alert feature of nRF Cloud. Reception of this alert
+	  indicates the device has rebooted.
+
+endmenu
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
+
+module = NRF_CLOUD_REST_DEVICE_MESSAGE_SAMPLE
+module-str = nRF Cloud Rest Sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

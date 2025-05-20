@@ -1,0 +1,193 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if BT_MESH
+
+menu "Bluetooth Mesh"
+
+if BT_MESH_SETTINGS_WORKQ
+
+config BT_MESH_SETTINGS_WORKQ_STACK_SIZE
+	default 1400
+
+endif
+
+if BT_MESH_USES_MBEDTLS_PSA
+
+config BT_MESH_MBEDTLS_BACKEND_ENABLE
+	bool
+	default y
+	imply NRF_SECURITY
+	imply MBEDTLS_ENABLE_HEAP
+	imply PSA_WANT_GENERATE_RANDOM
+
+# NLC profile or DFU distributor role support requires more netkeys and appkeys
+# thus more HEAP is needed by MEBEDTLS to accommodate minimum number of keys.
+config MBEDTLS_HEAP_SIZE
+	default 2048 if BT_MESH_DFD_SRV
+	default 1152 if BT_MESH_NLC_PERF_CONF
+	default 1024
+
+if BT_SETTINGS
+
+config BT_MESH_SECURE_STORAGE
+	bool
+	default y
+	imply TRUSTED_STORAGE
+	imply MBEDTLS_PSA_CRYPTO_STORAGE_C
+
+choice TRUSTED_STORAGE_BACKEND_AEAD_KEY
+	default TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID if SOC_SERIES_NRF52X
+
+endchoice # TRUSTED_STORAGE_BACKEND_AEAD_KEY
+
+config BT_MESH_CRYPTO_KEY_INITIALIZER
+	bool
+	default y if TRUSTED_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK
+	imply HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT if HW_UNIQUE_KEY_SUPPORTED
+
+endif # BT_SETTINGS
+
+endif # BT_MESH_USES_MBEDTLS_PSA
+
+if BT_MESH_ADV_EXT
+
+# Set the optimal advertiser configuration to improve performance of the Relay, GATT and Friend
+# features.
+#
+# <num of adv sets> = 1 (local msgs) + 2 (relay msgs) + 1 (GATT advs) + 1 (Friend msgs)
+config BT_EXT_ADV_MAX_ADV_SET
+	default 5
+
+config BT_MESH_RELAY_ADV_SETS
+	depends on BT_MESH_RELAY
+	default 2
+
+config BT_MESH_ADV_EXT_GATT_SEPARATE
+	depends on BT_MESH_GATT_SERVER
+	default y
+
+config BT_MESH_ADV_EXT_FRIEND_SEPARATE
+	depends on BT_MESH_FRIEND
+	default y
+
+if BT_MESH_RELAY
+
+config BT_MESH_RELAY_RETRANSMIT_COUNT
+	default 0
+
+config BT_MESH_RELAY_BUF_COUNT
+	default 10
+
+endif # BT_MESH_RELAY
+
+endif
+
+config BT_MESH_NLC_PERF_CONF
+	bool "Enable NLC performance configurations"
+	select BT_MESH_COMP_PAGE_2
+	select BT_MESH_COMP_PAGE_1
+	help
+	  Enables performance configurations required for NLC profiles.
+	  When implementing the NLC Basic Lightness Controller profile
+	  individually or in conjunction with other NLC profiles, also
+	  enable CONFIG_BT_MESH_NLC_PERF_LIGHTNESS_CTRL.
+
+choice BT_MESH_NLC_PERF_OPTIONS
+	prompt "NLC configuration options"
+	depends on BT_MESH_NLC_PERF_CONF
+
+config BT_MESH_NLC_PERF_DEFAULT
+	bool "Default"
+	help
+	  Enables performance configurations required for the NLC Basic Scene Selector,
+	  Dimming Control, Energy Monitor, Occupancy Sensor and Ambient Light Sensor profiles.
+	  When implementing the NLC Basic Lightness Controller profile individually or in
+	  conjunction with other NLC profiles, use CONFIG_BT_MESH_NLC_PERF_LIGHTNESS_CTRL instead.
+
+config BT_MESH_NLC_PERF_LIGHTNESS_CTRL
+	bool "Enable strict performance configurations required for the Basic Lightness Controller"
+	help
+	  Enables required performance configurations for the
+	  NLC Basic Lightness Controller. The NLC Basic Lightness Controller
+	  share most performance configurations with the common NLC profiles
+	  (CONFIG_BT_MESH_NLC_PERF_DEFAULT) but with more strict requirements for a
+	  subset of the configurations.
+
+endchoice
+
+config BT_MESH_CRPL
+	default 32 if BT_MESH_NLC_PERF_DEFAULT
+	default 255 if BT_MESH_NLC_PERF_LIGHTNESS_CTRL
+	range 32 65535 if BT_MESH_NLC_PERF_DEFAULT
+	range 255 65535 if BT_MESH_NLC_PERF_LIGHTNESS_CTRL
+
+config BT_MESH_MODEL_GROUP_COUNT
+	default 32 if BT_MESH_NLC_PERF_LIGHTNESS_CTRL
+	range 32 4096 if BT_MESH_NLC_PERF_LIGHTNESS_CTRL
+
+if BT_MESH_NLC_PERF_CONF
+
+config BT_MESH_MSG_CACHE_SIZE
+	default 64
+	range 64 65535
+
+config BT_MESH_APP_KEY_COUNT
+	default 3
+	range 3 4096
+
+config BT_MESH_SUBNET_COUNT
+	default 2
+	range 2 4096
+
+config BT_MESH_PROXY_FILTER_SIZE
+	default 8
+	range 8 32767
+
+endif
+
+config BT_MESH_USES_TFM_PSA
+	bool
+	select PSA_WANT_GENERATE_RANDOM
+	select PSA_WANT_ALG_CCM
+	select PSA_WANT_ALG_ECB_NO_PADDING
+	select PSA_WANT_ALG_CMAC
+	select PSA_WANT_ALG_HMAC
+	select PSA_WANT_ALG_ECDH
+	select PSA_WANT_ECC_SECP_R1_256
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT
+
+config BT_MESH_KEY_IMPORTER
+	bool "Use key importer"
+	help
+	  Use key importer to read out the keys stored in settings subsystem
+	  and import them into PSA internal trusted storage. This is required if
+	  a provisioned device is still going to stay provisioned after changing
+	  from an image using TinyCrypt to an image that uses PSA crypto.
+
+config BT_MESH_KEY_IMPORTER_PRIO
+	int "Initialization priority for key importer"
+	depends on BT_MESH_KEY_IMPORTER
+	default KERNEL_INIT_PRIORITY_DEFAULT
+	help
+	  The key importer is initialized before the main application. It is initialized
+	  using system initialization macro with application level.
+
+choice TFM_PROFILE_TYPE
+	depends on BT_MESH_USES_TFM_PSA
+	default TFM_PROFILE_TYPE_NOT_SET
+endchoice
+
+rsource "Kconfig.models"
+rsource "Kconfig.dk_prov"
+rsource "shell/Kconfig"
+rsource "Kconfig.rpl"
+
+endmenu
+
+endif # BT_MESH

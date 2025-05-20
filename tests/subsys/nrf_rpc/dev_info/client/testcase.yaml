@@ -1,0 +1,10 @@
+tests:
+  nrf_rpc.dev_info.client:
+    sysbuild: true
+    platform_allow: native_sim
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_tests_subsys_nrf_rpc
+    integration_platforms:
+      - native_sim

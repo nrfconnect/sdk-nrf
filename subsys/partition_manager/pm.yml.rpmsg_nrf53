@@ -1,0 +1,7 @@
+#include <zephyr/autoconf.h>
+
+# This block of RAM is used for IPC
+rpmsg_nrf53_sram:
+  placement: {before: end}
+  size: CONFIG_RPMSG_NRF53_SRAM_SIZE
+  region: sram_primary

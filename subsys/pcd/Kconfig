@@ -1,0 +1,72 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Peripheral CPU DFU (PCD)"
+
+config PCD
+	bool "Peripheral CPU DFU Support [DEPRECATED]"
+	select PCD_APP
+	select PCD_NET
+
+if PCD
+	comment "The PCD option is deprecated, please use PCD_APP or PCD_NET instead"
+endif
+
+config PCD_APP
+	bool "Peripheral CPU DFU Support for Application Processor"
+	default y if SOC_SERIES_NRF53X && MCUBOOT && BT_HCI_IPC
+
+config PCD_VERSION_PAGE_BUF_SIZE
+	int
+	default 2046
+
+config PCD_NET
+	bool "Peripheral CPU DFU Support for Network Processor"
+	default y if SOC_NRF5340_CPUNET && IS_SECURE_BOOTLOADER
+	select FLASH_PAGE_LAYOUT
+	select STREAM_FLASH
+	select STREAM_FLASH_ERASE
+
+if PCD_APP || PCD_NET
+
+config PCD_READ_NETCORE_APP_VERSION
+	bool "Include PCD command to read network core application version"
+	depends on FW_INFO || FW_INFO_API
+
+config PCD_USE_CONSTANTS
+	bool "Use KConfig constants rather than pm_config.h"
+	depends on !PCD_LOCK_NETCORE_DEBUG
+
+config PCD_CMD_ADDRESS
+	hex "PCD Command Address in RAM"
+	depends on PCD_USE_CONSTANTS
+
+config PCD_NET_CORE_APP_OFFSET
+	hex "Network Core Application Offset in Flash"
+	depends on PCD_USE_CONSTANTS
+
+module=PCD
+module-dep=LOG
+module-str=Peripheral Core DFU
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
+
+endif # PCD_NET || PCD_APP
+
+if PCD_NET
+
+config PCD_BUF_SIZE
+	int
+	default 512
+	help
+	  Must be <= the page size of the flash device.
+
+config PCD_LOCK_NETCORE_DEBUG
+	bool "Include PCD command to lock network core debug"
+	default n
+
+endif # PCD_NET
+
+endmenu

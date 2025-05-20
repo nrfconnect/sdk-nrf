@@ -1,0 +1,6 @@
+Shows the overall state of the device and its connectivity.
+The following states are possible:
+
+* Short Flash On (50 ms on/950 ms off) - The device is in the unprovisioned (unpaired) state and is waiting for a commissioning application to connect.
+* Rapid Even Flashing (100 ms on/100 ms off) - The device is in the unprovisioned state and a commissioning application is connected over Bluetooth LE.
+* Solid On - The device is fully provisioned.

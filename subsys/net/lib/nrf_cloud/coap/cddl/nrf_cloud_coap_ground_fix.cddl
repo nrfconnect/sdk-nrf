@@ -1,0 +1,86 @@
+;
+; Copyright (c) 2023 Nordic Semiconductor ASA
+;
+; SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+;
+
+; ******************
+; Ground Fix Request
+; ******************
+
+ncell = {
+	earfcn => uint,
+	pci => uint,
+	? rsrp => int,
+	? rsrq => float .size 4 / int,
+	? timeDiff => int
+}
+
+cell = {
+	mcc => uint,
+	mnc => uint,
+	eci => uint,
+	tac => uint,
+	? earfcn => uint,
+	? adv => uint,
+	? nmr => [0*5 ncells: ncell],
+	? rsrp => int,
+	? rsrq => float .size 4 / int
+}
+
+lte_ar = [1*5 cell]
+
+ap = {
+	macAddress => bstr,
+	? age => uint,
+	? signalStrength => int,
+	? channel => uint,
+	? frequency => uint,
+	? ssid => tstr
+}
+
+wifi_ob = {
+	accessPoints => [2*20 ap]
+}
+
+ground_fix_req = {
+	? lte => lte_ar,
+	? wifi => wifi_ob
+}
+
+earfcn = 1
+pci = 2
+rsrp = 3
+rsrq = 4
+timeDiff = 5
+mcc = 6
+mnc = 7
+eci = 8
+tac = 9
+adv = 10
+nmr = 11
+macAddress = 12
+age = 13
+signalStrength = 14
+channel = 15
+frequency = 16
+ssid = 17
+accessPoints = 18
+lte = 19
+wifi = 20
+
+; *******************
+; Ground Fix Response
+; *******************
+
+ground_fix_resp = {
+	lat => float .size 8,
+	lon => float .size 8,
+	uncertainty => int/float,
+	fulfilledWith => tstr
+}
+
+lat = 1
+lon = 2
+uncertainty = 3
+fulfilledWith = 4

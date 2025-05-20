@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_FAST_PAIR_STORAGE_FMDN_CLOCK
+	default y
+	help
+	  Unit test enables this option to be able to use API of the Beacon Clock used in the FMDN
+	  extension.
+
+config BT_FAST_PAIR_STORAGE_FMDN_EIK
+	default y
+	help
+	  Unit test enables this option to be able to use API of the Ephemeral Identity Key (EIK)
+	  used in the FMDN extension.
+
+config BT_FAST_PAIR_STORAGE_PN
+	default y
+	help
+	  Unit test enables this option to be able to use API of Personalized Name extension.
+
+config TEST_BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY
+	bool "Enable support for the Owner Account Key in the Storage module to be able to test it."
+	select BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY
+	help
+	  Enable support for the Owner Account Key in the Storage module to be able to test it.
+
+menu "Test configuration"
+source "$(ZEPHYR_NRF_MODULE_DIR)/subsys/bluetooth/services/fast_pair/fp_storage/Kconfig.fp_storage"
+endmenu
+
+menu "Zephyr"
+source "Kconfig.zephyr"
+endmenu

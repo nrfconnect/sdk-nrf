@@ -1,0 +1,3 @@
+name: nrf70-driver-verbose-debug
+append:
+  EXTRA_CONF_FILE: overlay-nrf70-driver-verbose-debug.conf

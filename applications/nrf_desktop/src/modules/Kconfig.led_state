@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if CAF_LED_EVENTS
+
+menu "LED state"
+
+config DESKTOP_LED_STATE_DEF_PATH
+	string "File defining used LED effects"
+	default "led_state_def.h"
+	help
+	  Location of configuration file that holds information about the used
+	  LED effects.
+
+module = DESKTOP_LED_STATE
+module-str = LED state
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu
+
+endif

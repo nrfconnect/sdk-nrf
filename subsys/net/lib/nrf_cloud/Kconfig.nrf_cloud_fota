@@ -1,0 +1,180 @@
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+menu "Firmware Over-the-Air (FOTA) Updates"
+
+menuconfig NRF_CLOUD_FOTA
+	bool "nRF Cloud MQTT FOTA library"
+	select FOTA_DOWNLOAD
+	select FOTA_DOWNLOAD_PROGRESS_EVT
+	select DFU_TARGET
+	select DOWNLOADER
+	select REBOOT
+	select CJSON_LIB
+	select SETTINGS
+	depends on FOTA_USE_NRF_CLOUD_SETTINGS_AREA
+	default y if NRF_CLOUD_MQTT
+
+if NRF_CLOUD_FOTA
+config NRF_CLOUD_FOTA_AUTO_START_JOB
+	bool "Start FOTA job automatically"
+	default y
+	help
+	  When enabled, the FOTA update job is started immediately upon receipt
+	  of the job information from nRF Cloud.
+	  When disabled, the application is responsible for starting the job.
+
+config NRF_CLOUD_FOTA_PROGRESS_PCT_INCREMENT
+	int "Percentage increment at which FOTA download progress is reported"
+	range 0 100
+	default 10
+	help
+	  0 disables progress report.
+
+config NRF_CLOUD_FOTA_BLE_DEVICES
+	bool "Enable API for FOTA of BLE devices"
+	depends on BT
+
+endif # NRF_CLOUD_FOTA
+
+config FOTA_USE_NRF_CLOUD_SETTINGS_AREA
+	bool "Use the settings area defined by nRF Cloud FOTA library"
+	default y
+	help
+	  Using the same settings area as the nRF Cloud FOTA library will
+	  allow this sample to perform application-FOTA updates to applications
+	  built with CONFIG_NRF_CLOUD_FOTA enabled.
+
+config NRF_CLOUD_FOTA_POLL
+	bool "FOTA job polling helpers (REST/CoAP)"
+	depends on !NRF_CLOUD_FOTA
+	depends on FOTA_DOWNLOAD
+	select FOTA_DOWNLOAD_PROGRESS_EVT
+	help
+	  When enabled, nRF Cloud FOTA job polling helpers will be built.  These
+	  functions make it easy to request, download, and handle modem, boot,
+	  and application FOTA updates when using the REST or CoAP interfaces
+	  to nRF Cloud.
+if NRF_CLOUD_FOTA_POLL
+
+config FOTA_SETTINGS_NAME
+	depends on !FOTA_USE_NRF_CLOUD_SETTINGS_AREA
+	string "Settings identifier for the FOTA support library"
+	default "nrf_cloud_fota_poll"
+	help
+	  The root settings identifier for this application.
+	  For application-FOTA, this value should also be found in your target application
+	  so that the FOTA status can be properly reported to nRF Cloud.
+
+config FOTA_SETTINGS_KEY_PENDING_JOB
+	depends on !FOTA_USE_NRF_CLOUD_SETTINGS_AREA
+	string "Settings item key for pending FOTA job info"
+	default "pending_job"
+	help
+	  The settings item key where pending FOTA job info will be stored.
+	  For application-FOTA, this value should also be found in your target application
+	  so that the FOTA status can be properly reported to nRF Cloud.
+
+config FOTA_DL_TIMEOUT_MIN
+	int "The time (minutes) allotted for a FOTA download to complete"
+	default REST_FOTA_DL_TIMEOUT_MIN if NRF_CLOUD_REST
+	default 15
+	help
+	  If the FOTA download does not complete in the allotted time,
+	  the download will be cancelled and the job status will be
+	  set as failed.
+
+module = NRF_CLOUD_FOTA_POLL
+module-str = nRF Cloud FOTA Poll
+source "subsys/logging/Kconfig.template.log_config"
+endif # NRF_CLOUD_FOTA_POLL
+
+config NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE
+	int "Fragment size for FOTA downloads"
+	depends on FOTA_DOWNLOAD
+	range 128 1900
+	default 1700
+if NRF_CLOUD_REST
+
+config REST_FOTA_DL_TIMEOUT_MIN
+	int "The time (minutes) allotted for a FOTA download to complete"
+	default 30
+
+endif # NRF_CLOUD_REST
+
+menuconfig NRF_CLOUD_FOTA_FULL_MODEM_UPDATE
+	bool "Full modem FOTA updates"
+	depends on NRF_MODEM_LIB
+	select ZCBOR
+	select DFU_TARGET
+	select DFU_TARGET_FULL_MODEM
+	select DFU_TARGET_STREAM
+	select STREAM_FLASH_ERASE
+	select STREAM_FLASH
+	select FLASH
+	select MBEDTLS_SHA256_C
+	select FMFU_FDEV
+	select OBERON_BACKEND
+	select NORDIC_SECURITY_BACKEND
+	default n
+	help
+	  Requires flash device of at least 4MB.
+
+if NRF_CLOUD_FOTA_FULL_MODEM_UPDATE
+config NRF_CLOUD_FOTA_FULL_MODEM_UPDATE_BUF_SIZE
+	int "Size of buffer used for stream flash writing full modem updates"
+	range 512 4096
+	default 4096
+endif # NRF_CLOUD_FOTA_FULL_MODEM_UPDATE
+
+config NRF_CLOUD_FOTA_SMP
+	bool "SMP FOTA updates"
+	select NRF_MCUMGR_SMP_CLIENT
+	select EXPERIMENTAL
+	help
+	  Enables FOTA updates to an auxiliary MCU using SMP.
+
+config NRF_CLOUD_FOTA_TRANSPORT_ENABLED
+	bool
+	default y if (NRF_CLOUD_REST || NRF_CLOUD_COAP || NRF_CLOUD_FOTA)
+	help
+	  This symbol is y when a FOTA transport type is enabled in the configuration.
+
+config NRF_CLOUD_FOTA_TYPE_APP_SUPPORTED
+	bool
+	default y if (BOOTLOADER_MCUBOOT && NRF_CLOUD_FOTA_TRANSPORT_ENABLED) 
+	help
+	  This symbol is y when application FOTA is supported by the configuration.
+
+config NRF_CLOUD_FOTA_TYPE_BOOT_SUPPORTED
+	bool
+	default y if (BOOTLOADER_MCUBOOT && MCUBOOT_MCUBOOT_IMAGE_NUMBER != -1 && \
+		      NRF_CLOUD_FOTA_TRANSPORT_ENABLED)
+	help
+	  This symbol is y when bootloader FOTA is supported by the configuration.
+
+config NRF_CLOUD_FOTA_TYPE_MODEM_DELTA_SUPPORTED
+	bool
+	default y if (NRF_MODEM && NRF_CLOUD_FOTA_TRANSPORT_ENABLED)
+	help
+	  This symbol is y when modem delta FOTA is supported by the configuration.
+
+config NRF_CLOUD_FOTA_TYPE_MODEM_FULL_SUPPORTED
+	bool
+	default y if (NRF_MODEM && NRF_CLOUD_FOTA_FULL_MODEM_UPDATE && \
+		      NRF_CLOUD_FOTA_TRANSPORT_ENABLED)
+	help
+	  This symbol is y when full modem FOTA is supported by the configuration.
+
+config NRF_CLOUD_FOTA_TYPE_SMP_SUPPORTED
+	bool
+	default y if NRF_CLOUD_FOTA_SMP
+	help
+	  This symbol is y when SMP FOTA is supported by the configuration.
+
+module = NRF_CLOUD_FOTA
+module-str = nRF Cloud FOTA
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu

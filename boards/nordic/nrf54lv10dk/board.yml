@@ -1,0 +1,6 @@
+board:
+  name: nrf54lv10dk
+  full_name: nRF54LV10 DK
+  vendor: nordic
+  socs:
+  - name: nrf54lv10a

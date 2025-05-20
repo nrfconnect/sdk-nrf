@@ -1,0 +1,60 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config LOCATION_TEST_AGNSS
+	bool "USe A-GNSS configuration for Location library tests"
+	default y
+
+config LOCATION_METHOD_GNSS
+	bool "Internal"
+	#depends on NRF_MODEM_LIB
+	depends on LTE_LINK_CONTROL
+	imply LTE_LC_NEIGHBOR_CELL_MEAS_MODULE
+	imply LTE_LC_PSM_MODULE
+	imply LTE_LC_MODEM_SLEEP_MODULE
+	default y
+	help
+	  Redefinition to disable modemlib requirement from the tests as we want to mock it.
+
+config LOCATION_METHOD_CELLULAR
+	bool "Internal"
+	#depends on NRF_MODEM_LIB
+	depends on LTE_LINK_CONTROL
+	default y
+	help
+	  Redefinition to disable modemlib requirement from the tests as we want to mock it.
+
+config LOCATION_METHOD_WIFI
+	bool "Internal"
+	#depends on WIFI
+	select NET_MGMT if LOCATION_METHOD_WIFI_NET_MGMT
+	select NET_MGMT_EVENT if LOCATION_METHOD_WIFI_NET_MGMT
+	select NET_MGMT_EVENT_INFO if LOCATION_METHOD_WIFI_NET_MGMT
+	select NET_L2_WIFI_MGMT if LOCATION_METHOD_WIFI_NET_MGMT
+	help
+	  Redefinition to disable Wi-Fi requirement from the tests as we want to mock it.
+
+config LOCATION_METHOD_WIFI_NET_MGMT
+	bool
+	default n
+	help
+	  Used in tests to enable mocking of Wi-Fi.
+
+config LOCATION_REST_CLIENT
+	bool
+	default n
+	help
+	  Used in tests to enable mocking of REST client library.
+
+config LOCATION_MODEM_KEY_MGMT
+	bool
+	default n
+	help
+	  Used in tests to enable mocking of Modem key management library.
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu

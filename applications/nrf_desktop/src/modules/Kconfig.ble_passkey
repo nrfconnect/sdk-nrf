@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DESKTOP_BLE_ENABLE_PASSKEY
+	bool "Bluetooth LE passkey module"
+	depends on !DESKTOP_PASSKEY_NONE
+	depends on !BT_FAST_PAIR
+	depends on DESKTOP_BT_PERIPHERAL
+	help
+	  Enable passkey based pairing for increased security.
+
+	  The feature should not be used together with Fast Pair,
+	  because Fast Pair currently does not support devices that
+	  use screen or keyboard for Bluetooth authentication.
+
+if DESKTOP_BLE_ENABLE_PASSKEY
+
+config BT_SMP_ENFORCE_MITM
+	default n
+	help
+	  Disable to allow bonding with the nRF Desktop dongle that has no
+	  MITM capabilities.
+
+module = DESKTOP_BLE_PASSKEY
+module-str = BLE passkey
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # DESKTOP_BLE_ENABLE_PASSKEY

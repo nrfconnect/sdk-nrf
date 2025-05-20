@@ -1,0 +1,51 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DESKTOP_BLE_LATENCY_ENABLE
+	bool "BLE latency module"
+	depends on DESKTOP_BT_PERIPHERAL
+	help
+	  Enable BLE latency module that controls Bluetooth LE connection
+	  latency. The module lowers the connection latency when configuration
+	  channel is in use or when firmware update is received by SMP (low
+	  latency ensures quick data exchange).
+
+	  The module also keeps the connection latency low for LLPM connections
+	  to improve performance and disconnects Bluetooth peer if connection
+	  has not been secured in the predefined amount of time after the
+	  connection occurred.
+
+if DESKTOP_BLE_LATENCY_ENABLE
+
+config DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S
+	int "Security fail timeout [s]"
+	default 10
+	help
+	  After this time peripheral device disconnects if security is not
+	  established.
+
+config DESKTOP_BLE_LOW_LATENCY_LOCK
+	bool "Keep the slave latency low for LLPM connections"
+	depends on CAF_BLE_USE_LLPM
+	help
+	  When this option is selected, the slave latency is kept low
+	  for the LLPM connection unless device is in low power mode. This
+	  speeds up sending the first HID report after not sending a report for
+	  some connection intervals. Enabling this option increases the power
+	  consumption of the device.
+
+config DESKTOP_BLE_LATENCY_PM_EVENTS
+	bool "Power management events support"
+	depends on CAF_PM_EVENTS
+	default y
+	help
+	  React on power management events in BLE latency module.
+
+module = DESKTOP_BLE_LATENCY
+module-str = BLE latency
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # DESKTOP_BLE_LATENCY_ENABLE

@@ -1,0 +1,82 @@
+/ {
+	chosen {
+		/*
+		 * In some default configurations within the nRF Connect SDK,
+		 * e.g. on nRF52840 and nRF9160, the chosen zephyr,entropy node
+		 * is &cryptocell. This devicetree overlay ensures that default
+		 * is overridden wherever it is set, as this application uses
+		 * the RNG node for entropy exclusively.
+		 */
+		zephyr,entropy = &rng;
+	};
+	/* Configure DTS nodes used for USB next HID support. */
+	hid_dev_0: hid_dev_0 {
+		compatible = "zephyr,hid-device";
+		interface-name = "HID0";
+		protocol-code = "mouse";
+		in-polling-period-us = <1000>;
+		in-report-size = <64>;
+	};
+
+	pwmleds0 {
+		compatible = "pwm-leds";
+		status = "okay";
+
+		led0_r: led_pwm_0 {
+			pwms = <&pwm0 0 PWM_MSEC(1) PWM_POLARITY_NORMAL>;
+			label = "LED0 Red";
+		};
+
+		led0_g: led_pwm_1 {
+			pwms = <&pwm0 1 PWM_MSEC(1) PWM_POLARITY_NORMAL>;
+			label = "LED0 Green";
+		};
+
+		led0_b: led_pwm_2 {
+			pwms = <&pwm0 2 PWM_MSEC(1) PWM_POLARITY_NORMAL>;
+			label = "LED0 Blue";
+		};
+	};
+
+	pwmleds1 {
+		compatible = "pwm-leds";
+		status = "okay";
+
+		led1_r: led_pwm_3 {
+			pwms = <&pwm1 0 PWM_MSEC(1) PWM_POLARITY_NORMAL>;
+			label = "LED1 Red";
+		};
+
+		led1_g: led_pwm_4 {
+			pwms = <&pwm1 1 PWM_MSEC(1) PWM_POLARITY_NORMAL>;
+			label = "LED1 Green";
+		};
+
+		led1_b: led_pwm_5 {
+			pwms = <&pwm1 2 PWM_MSEC(1) PWM_POLARITY_NORMAL>;
+			label = "LED1 Blue";
+		};
+	};
+
+	battery_charger: battery_charger {
+		compatible = "battery-charger";
+		cso-gpios = <&gpio0 8 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+		cso-switching-freq = <1>;
+		enable-gpios = <&gpio0 14 GPIO_ACTIVE_LOW>;
+	};
+};
+
+&usbd {
+	compatible = "nordic,nrf-usbd";
+	status = "okay";
+	num-bidir-endpoints = <0>;
+	num-in-endpoints = <2>;
+	num-out-endpoints = <2>;
+	num-isoin-endpoints = <0>;
+	num-isoout-endpoints = <0>;
+};
+
+&spi1 {
+	compatible = "nordic,nrf-spim";
+	status = "okay";
+};

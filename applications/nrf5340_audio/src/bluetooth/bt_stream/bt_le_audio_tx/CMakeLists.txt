@@ -1,0 +1,10 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if (CONFIG_BT_AUDIO_TX)
+	target_sources(app PRIVATE
+		${CMAKE_CURRENT_SOURCE_DIR}/bt_le_audio_tx.c)
+endif()

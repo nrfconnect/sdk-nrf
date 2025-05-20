@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config TEST_SLEEP_DURATION_MS
+	int "Core sleep duration (miliseconds)"
+	default 1000
+	help
+	  Set sleep duration to TEST_SLEEP_DURATION_MS miliseconds.
+	  Based on the value of 'min-residency-us' specified for each power state defined in the DTS,
+	  core enters the lowest possible power state.
+
+config GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING
+	bool "Enable global domain frequency changing"
+	select CLOCK_CONTROL
+
+source "Kconfig.zephyr"

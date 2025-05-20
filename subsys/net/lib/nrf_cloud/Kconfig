@@ -1,0 +1,169 @@
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config NRF_CLOUD
+	bool "nRF Cloud support"
+	help
+	  Enable configuration options for nRF Cloud.
+
+if NRF_CLOUD
+
+menu "nRF Cloud"
+
+menu "Transport"
+
+rsource "Kconfig.nrf_cloud_mqtt"
+
+rsource "Kconfig.nrf_cloud_rest"
+
+if NRF_CLOUD_MQTT || NRF_CLOUD_REST
+
+config NRF_CLOUD_HOST_NAME
+	string "nRF Cloud server hostname"
+	default "mqtt.nrfcloud.com"
+	help
+	  Used for MQTT and JITP performed with REST
+
+endif # NRF_CLOUD_MQTT || NRF_CLOUD_REST
+
+rsource "Kconfig.nrf_cloud_coap"
+
+endmenu # "Transport"
+
+menu "Credentials"
+
+config NRF_CLOUD_SEC_TAG
+	int "Security tag to use for nRF Cloud connection"
+	default 16842753
+
+if NRF_CLOUD_MQTT || NRF_CLOUD_REST || NRF_CLOUD_PGPS || MODEM_JWT || NRF_CLOUD_COAP
+
+config NRF_CLOUD_PROVISION_CERTIFICATES
+	bool "Install credentials for nRF Cloud connection"
+	select EXPERIMENTAL
+	default y if BOARD_QEMU_X86
+	imply MBEDTLS_PEM_CERTIFICATE_FORMAT if MBEDTLS
+	help
+	  Enable run-time provisioning of certificates from the
+	  certificates header file selected by using NRF_CLOUD_CERTIFICATES_FILE
+	  Please note that this option stores your device's private key in unprotected memory.
+	  It is not secure, and for testing purposes only.
+
+if NRF_CLOUD_PROVISION_CERTIFICATES
+
+config NRF_CLOUD_PROVISION_CA_CERT
+	bool "Install the CA certificate"
+	default y
+
+config NRF_CLOUD_PROVISION_CLIENT_CERT
+	bool "Install the client certificate"
+	default y
+
+config NRF_CLOUD_PROVISION_PRV_KEY
+	bool "Install the private key"
+	default y
+
+config NRF_CLOUD_CERTIFICATES_FILE
+	string "nRF Cloud certificates"
+	default "../include/nrf_cloud-certs.h"
+	help
+	  The default path for a header file that contains definitions for certificates that are
+	  used during run-time provisioning of TLS credentials.
+	  By default, the library expects the credentials to be in
+	  Privacy Enhanced Mail (PEM) format. See "nrf_cloud-certs.h" for a template.
+
+endif # NRF_CLOUD_PROVISION_CERTIFICATES
+
+config NRF_CLOUD_CHECK_CREDENTIALS
+	bool "Enable the ability to check if nRF Cloud credentials are present"
+
+choice NRF_CLOUD_CREDENTIALS_MGMT
+	prompt "Select how credentials are managed"
+	depends on NRF_CLOUD_CHECK_CREDENTIALS || NRF_CLOUD_PROVISION_CERTIFICATES
+	default NRF_CLOUD_CREDENTIALS_MGMT_MODEM if NRF_MODEM_LIB
+	default NRF_CLOUD_CREDENTIALS_MGMT_TLS_CRED if !NRF_MODEM_LIB
+
+config NRF_CLOUD_CREDENTIALS_MGMT_MODEM
+	depends on NRF_MODEM_LIB
+	select MODEM_KEY_MGMT
+	imply AT_SHELL_UNESCAPE_LF if AT_SHELL
+	bool "Credentials are managed by the modem"
+
+config NRF_CLOUD_CREDENTIALS_MGMT_TLS_CRED
+	bool "Credentials are managed by the TLS credentials module"
+	select TLS_CREDENTIALS
+endchoice
+
+endif # NRF_CLOUD_MQTT || NRF_CLOUD_REST || NRF_CLOUD_PGPS || MODEM_JWT || NRF_CLOUD_COAP
+
+config NRF_CLOUD_JWT_SOURCE_CUSTOM
+	bool "Custom JWT creation and signing"
+	select EXPERIMENTAL
+	select TLS_CREDENTIALS
+	select BASE64
+	select APP_JWT
+	help
+	  JWTs are created and signed by the nRF Cloud library, not the modem.
+	  The signing key is obtained from the TLS credentials module.
+
+config NRF_CLOUD_AWS_CA_CERT_SIZE_THRESHOLD
+	int "Root CA size above which AWS cert is likely present"
+	default 1150
+	help
+	  This value is necessarily inexact as the underlying PEM data varies
+	  a bit in size when credentials are rotated or replaced. This is useful
+	  to determine if a sectag likely contains only an AWS root CA
+	  certificate.
+
+config NRF_CLOUD_COAP_CA_CERT_SIZE_THRESHOLD
+	int "Root CA size above which a CoAP cert is likely present"
+	default 550
+	help
+	  This necessarily inexact value is useful to determine if a sectag
+	  likely contains only a CoAP root CA certificate.
+
+endmenu # "Credentials"
+
+rsource "Kconfig.nrf_cloud_client_id"
+
+rsource "Kconfig.nrf_cloud_fota"
+
+rsource "Kconfig.nrf_cloud_location"
+
+rsource "Kconfig.nrf_cloud_alert"
+
+rsource "Kconfig.nrf_cloud_log"
+
+rsource "Kconfig.nrf_cloud_shadow_info"
+
+config NRF_CLOUD_PRINT_DETAILS
+	bool "Log info about cloud connection"
+	default y
+	help
+	  Log at the INF level the device ID.
+
+config NRF_CLOUD_VERBOSE_DETAILS
+	bool "Log more info about cloud connection"
+	depends on NRF_CLOUD_PRINT_DETAILS
+	default y if NRF_CLOUD_PRINT_DETAILS
+	help
+	  Log at INF level the protocol, sec tag, host name, and team ID,
+	  in addition to device ID.
+
+config NRF_CLOUD_GATEWAY
+	bool "nRF Cloud Gateway"
+	help
+	  Enables functionality in this device to be compatible with
+	  nRF Cloud LTE gateway support.
+
+module=NRF_CLOUD
+module-dep=LOG
+module-str=Log level for nRF Cloud
+module-help=Enables nRF Cloud log messages.
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu # "nRF Cloud"
+
+endif # NRF_CLOUD

@@ -1,0 +1,72 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DATE_TIME
+	bool "Date time library"
+	select POSIX_TIMERS
+
+if DATE_TIME
+
+config DATE_TIME_AUTO_UPDATE
+	bool "Trigger date-time update when LTE is connected"
+	select AT_MONITOR if DATE_TIME_MODEM
+	default y if (DATE_TIME_MODEM || DATE_TIME_NTP)
+	help
+	  Date-time update is triggered automatically when the LTE network becomes available.
+
+config DATE_TIME_UPDATE_INTERVAL_SECONDS
+	int "Date time update interval, in seconds"
+	default 14400
+	help
+	  Setting this option to 0 disables sequential date time updates.
+
+config DATE_TIME_TOO_OLD_SECONDS
+	int "After which time current date time is considered too old, in seconds"
+	default 3600
+	help
+	  If the library is triggered to perform date time update or a notification provides it
+	  outside of the periodic date time updates, it will be applied if previous update was
+	  done earlier than given number of seconds ago.
+	  This must be smaller than or equal to DATE_TIME_UPDATE_INTERVAL_SECONDS.
+
+config DATE_TIME_RETRY_COUNT
+	int "Reattempt date-time updates at a reduced interval, up to this many times in a row"
+	default 0
+	help
+	  If this value is nonzero, failed date-time updates will be retried at a reduced interval,
+	  up to the number of times specified.
+
+config DATE_TIME_RETRY_INTERVAL_SECONDS
+	int "Time between date-time update retries, in seconds"
+	default 60
+	help
+	  The number of seconds to wait between date-time update retries.
+
+config DATE_TIME_MODEM
+	bool "Get date time from the nRF9160 onboard modem"
+	depends on NRF_MODEM_LIB
+	depends on LTE_LINK_CONTROL
+	default y
+
+config DATE_TIME_NTP
+	bool "Get date time from NTP servers"
+	select SNTP
+	default y
+
+config DATE_TIME_THREAD_STACK_SIZE
+	int "Stack size of the thread maintaining date time"
+	default 1280
+
+config DATE_TIME_NTP_QUERY_TIME_SECONDS
+	int "Duration in which the library will query for NTP time, in seconds"
+	default 5
+
+module=DATE_TIME
+module-dep=LOG
+module-str=Date time module
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # DATE_TIME

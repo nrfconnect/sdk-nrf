@@ -1,0 +1,43 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Application modules"
+
+rsource "Kconfig.caf_ble_state.default"
+rsource "Kconfig.caf_ble_adv.default"
+rsource "Kconfig.caf_power_manager.default"
+rsource "Kconfig.caf_settings_loader.default"
+
+rsource "Kconfig.hid_state"
+rsource "Kconfig.led_state"
+rsource "Kconfig.led_stream"
+rsource "Kconfig.usb_state"
+rsource "Kconfig.ble_bond"
+rsource "Kconfig.ble_conn_params"
+rsource "Kconfig.ble_latency"
+rsource "Kconfig.ble_passkey"
+rsource "Kconfig.ble_discovery"
+rsource "Kconfig.ble_scan"
+rsource "Kconfig.ble_qos"
+rsource "Kconfig.dev_descr"
+rsource "Kconfig.dfu_mcumgr"
+rsource "Kconfig.factory_reset"
+rsource "Kconfig.fast_pair"
+rsource "Kconfig.swift_pair"
+rsource "Kconfig.hids"
+rsource "Kconfig.hid_forward"
+rsource "Kconfig.bas"
+rsource "Kconfig.qos"
+rsource "Kconfig.config_channel"
+rsource "Kconfig.fn_keys"
+rsource "Kconfig.watchdog"
+rsource "Kconfig.hotfixes"
+rsource "Kconfig.failsafe"
+rsource "Kconfig.cpu_meas"
+rsource "Kconfig.nrf_profiler_sync"
+rsource "Kconfig.dvfs"
+
+endmenu

@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SUIT_UTILS
+	bool "Enable SUIT utilities"
+	depends on ZCBOR
+	depends on ZCBOR_CANONICAL
+
+if SUIT_UTILS
+
+config APP_LINK_WITH_SUIT_UTILS
+	bool
+	default y if SUIT
+
+endif # SUIT_UTILS

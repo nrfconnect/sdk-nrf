@@ -1,0 +1,43 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "BT management"
+
+rsource "controller_config/Kconfig"
+
+#----------------------------------------------------------------------------#
+config WDT_CTLR
+	bool "Enable watchdog for controller"
+	default y
+	help
+	  When true, the controller will be polled at regular intervals to check that it is alive.
+	  Turn off to reduce overhead, or HCI traffic.
+	  The watchdog will be deactivated automatically for DFU procedures.
+
+menu "Thread priorities"
+
+config CTLR_POLL_WORK_Q_PRIO
+	int "Work queue priority for controller poll"
+	default 2
+	help
+	  This is a preemptible work queue.
+	  This work queue will poll the controller to check it is alive.
+
+endmenu # Thread priorities
+
+rsource "dfu/Kconfig"
+rsource "advertising/Kconfig"
+rsource "scanning/Kconfig"
+
+#----------------------------------------------------------------------------#
+menu "Log level"
+
+module = BT_MGMT
+module-str = bt-mgmt
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu # Log level
+endmenu # BT management

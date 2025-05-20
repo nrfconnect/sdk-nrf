@@ -1,0 +1,49 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "MCUboot IDs (informative only, do not change)"
+
+config MCUBOOT_APPLICATION_IMAGE_NUMBER
+	int "Application image number (informative only, do not change)"
+	default -1
+
+config MCUBOOT_NETWORK_CORE_IMAGE_NUMBER
+	int "Netcore core image number (informative only, do not change)"
+	default -1
+
+config MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER
+	int "WiFi patches image number (informative only, do not change)"
+	default -1
+
+config MCUBOOT_QSPI_XIP_IMAGE_NUMBER
+	int "QSPI XIP image number (informative only, do not change)"
+	default -1
+
+config MCUBOOT_MCUBOOT_IMAGE_NUMBER
+	int "MCUboot (S0/S1) image number (informative only, do not change)"
+	default -1
+
+if MCUBOOT
+
+config MCUBOOT_MCUBOOT_S0_S1_VERSION_MAJOR
+	int "MCUboot (S0/S1) package major version number (informative only, do not change)"
+	default -1
+
+config MCUBOOT_MCUBOOT_S0_S1_VERSION_MINOR
+	int "MCUboot (S0/S1) package minor version number (informative only, do not change)"
+	default -1
+
+config MCUBOOT_MCUBOOT_S0_S1_VERSION_REVISION
+	int "MCUboot (S0/S1) package revision version number (informative only, do not change)"
+	default -1
+
+config MCUBOOT_MCUBOOT_S0_S1_VERSION_BUILD_NUMBER
+	int "MCUboot (S0/S1) package build number version number (informative only, do not change)"
+	default -1
+
+endif # MCUBOOT
+
+endmenu

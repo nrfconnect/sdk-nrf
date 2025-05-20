@@ -1,0 +1,19 @@
+choice HPF_GPIO_BACKEND
+	prompt "Backend"
+	default HPF_GPIO_BACKEND_ICMSG
+
+config HPF_GPIO_BACKEND_MBOX
+	bool "mbox"
+
+config HPF_GPIO_BACKEND_ICMSG
+	bool "icmsg"
+	select IPC_SERVICE
+
+config HPF_GPIO_BACKEND_ICBMSG
+	bool "icbmsg"
+	select IPC_SERVICE
+
+endchoice
+
+rsource "../Kconfig"
+source "Kconfig.zephyr"

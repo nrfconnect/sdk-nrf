@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config OUTPUT_BOOT_MESSAGE
+	bool "Output message on boot"
+	help
+	  Will output a dummy message on boot, this is to allow for generating a different image
+	  that can be used to test the compressed firmware update.
+
+source "Kconfig.zephyr"

@@ -1,0 +1,14 @@
+#include <zephyr/autoconf.h>
+
+provision:
+  size: CONFIG_PM_PARTITION_SIZE_PROVISION
+#if defined(CONFIG_SOC_SERIES_NRF91X) || defined(CONFIG_SOC_NRF5340_CPUAPP) || defined(CONFIG_SOC_NRF54L15_CPUAPP)
+  region: otp
+#elif defined(CONFIG_SOC_NRF5340_CPUNET)
+  placement:
+    after: b0n
+#else
+  placement:
+    after: b0
+    align: {start: CONFIG_FPROTECT_BLOCK_SIZE}
+#endif

@@ -1,0 +1,47 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig IDENTITY_KEY
+	bool "Identity key support"
+	depends on NRF_CC3XX_PLATFORM
+	depends on NRF_SECURITY
+	depends on !TRUSTED_EXECUTION_NONSECURE
+	depends on MAIN_STACK_SIZE >= 2048
+	help
+	  This option adds support for an identity key stored in the KMU.
+	  The key is stored in an encrypted form and is decrypted
+	  by the identity key APIs.
+	  The identity key is an ECC secp256r1 key pair.
+
+if IDENTITY_KEY
+
+config IDENTITY_KEY_RANDOM
+	bool "Enable writing random Identity Keys"
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT
+	select PSA_WANT_ECC_SECP_R1_256
+	help
+	  Enable the identity_key_write_random() function.
+	  This uses the PSA APIs to generate a random identity key.
+	  Disable to save space.
+
+config IDENTITY_KEY_DUMMY
+	bool "Write a dummy identity key (not for production)"
+	help
+	  This option adds support for writing a dummy identity key in an encrypted
+	  form in the KMU. This option should only be enabled for debugging and
+	  testing purposes.
+
+endif # IDENTITY_KEY
+
+config IDENTITY_KEY_TFM
+	bool "Identity key support in TF-M"
+	depends on HAS_HW_NRF_CC3XX
+	depends on TRUSTED_EXECUTION_NONSECURE
+	help
+	  This option adds support for an identity key stored in the KMU to TF-M.
+	  The key is stored in an encrypted form and is decrypted by the identity key library.
+	  The identity key is an ECC secp256r1 key pair.

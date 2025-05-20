@@ -1,0 +1,116 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+module = BRIDGE_UART
+module-str = UART device
+source "subsys/logging/Kconfig.template.log_config"
+
+config BRIDGE_CDC_ENABLE
+	bool "Enable USB CDC ACM"
+	depends on USB_DEVICE_STACK
+	select USB_CDC_ACM
+	help
+		This option enables USB CDC ACM
+		and exposes two COM ports, bridging the two UART interfaces.
+
+if BRIDGE_CDC_ENABLE
+
+module = BRIDGE_CDC
+module-str = USB CDC ACM device
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+config BRIDGE_CMSIS_DAP_BULK_ENABLE
+	bool "Enable USB Bulk"
+	depends on USB_DEVICE_STACK
+	select USB_DEVICE_BOS
+
+config BRIDGE_CMSIS_DAP_NORDIC_COMMANDS
+	bool "Enable Nordic specific commands"
+	depends on BRIDGE_CMSIS_DAP_BULK_ENABLE
+	help
+	  This option enables Nordic specific commands for CMSIS-DAP Bulk.
+	  Currently, these are only relevant for the Thingy:91 X board.
+
+if BRIDGE_CMSIS_DAP_BULK_ENABLE
+
+module = BRIDGE_BULK
+module-str = USB Bulk device
+source "subsys/logging/Kconfig.template.log_config"
+
+config BULK_USB_THREAD_STACK_SIZE
+	int "USB Bulk thread stack size"
+	default 1024
+	help
+	  Size of stack for USB Bulk handler thread.
+
+endif
+
+config BRIDGE_MSC_ENABLE
+	bool "Enable USB Mass Storage"
+	depends on BRIDGE_CDC_ENABLE
+	select USB_MASS_STORAGE
+	select FILE_SYSTEM
+	help
+		This option enables USB Mass Storage Device Class,
+		and exposes utility files via USB.
+
+if BRIDGE_MSC_ENABLE
+
+module = BRIDGE_MSC
+module-str = USB mass storage device
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+config BRIDGE_BLE_ENABLE
+	bool "Enable BLE UART Service"
+	depends on BT_NUS
+	help
+	  This option enables BLE NUS Service.
+	  BLE advertisement will run continuously when not connected.
+	  NOTE: There is no encryption or authentication enabled for the BLE link.
+
+if BRIDGE_BLE_ENABLE
+
+module = BRIDGE_BLE
+module-str = BLE UART Service
+source "subsys/logging/Kconfig.template.log_config"
+
+config BRIDGE_BLE_ALWAYS_ON
+	bool "Enable BLE always active"
+	help
+	  This option sets BLE as always active.
+	  When not always active, it has to be enabled via config file change.
+
+endif
+
+if PM_DEVICE
+
+module = BRIDGE_POWER_MGMT
+module-str = Bridge power management
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+config BRIDGE_BUF_SIZE
+	int "Transport interface buffer size"
+	default 4096
+	help
+	  Size of transmit/receive buffer for transfer between interfaces.
+
+config BRIDGE_UART_BUF_COUNT
+	int "UART buffer block count"
+	default 16 if BOARD_THINGY91X_NRF5340_CPUAPP
+	default 3
+	range 3 255
+	help
+	  Number of buffer blocks assigned for UART instances.
+	  This value is scaled with the number of interfaces.
+	  With the default instance count of 2, and for example 3 buffers,
+	  the total will be 6 buffers.
+	  Note that all buffers are shared between UART instances.

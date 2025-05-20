@@ -1,0 +1,10 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+name: hci
+append:
+  EXTRA_CONF_FILE: rcp_hci.conf
+  EXTRA_DTC_OVERLAY_FILE: rcp_hci.overlay

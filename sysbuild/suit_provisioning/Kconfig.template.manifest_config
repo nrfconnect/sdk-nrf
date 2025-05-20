@@ -1,0 +1,54 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if SUIT_MPI_$(manifest)
+
+config SUIT_MPI_$(manifest)_VENDOR_NAME
+	string "Vendor name to generate vendor UUID"
+	default "nordicsemi.com"
+
+config SUIT_MPI_$(manifest)_CLASS_NAME
+	string "Vendor name to generate class UUID"
+	default "$(manifest-class)"
+
+config SUIT_MPI_$(manifest)_DOWNGRADE_PREVENTION
+	bool "Enable downgrade prevention policy"
+	default $(manifest-downgrade-prevention-enabled)
+
+config SUIT_MPI_$(manifest)_INDEPENDENT_UPDATE
+	bool "Enable independent updateability policy"
+	default $(manifest-independent-updates)
+
+choice "SUIT_MPI_$(manifest)_SIGNATURE_CHECK"
+	prompt "Manifest digest signature check"
+	default SUIT_MPI_$(manifest)_SIGNATURE_CHECK_$(manifest-signature-check)
+
+config SUIT_MPI_$(manifest)_SIGNATURE_CHECK_DISABLED
+	bool "Disabled"
+	help
+	  Do not require or verify manifest digest signature check
+
+config SUIT_MPI_$(manifest)_SIGNATURE_CHECK_ENABLED_ON_UPDATE
+	bool "Enabled on update"
+	help
+	  Require and verify manifest digest signature check on update
+
+config SUIT_MPI_$(manifest)_SIGNATURE_CHECK_ENABLED_ON_UPDATE_AND_BOOT
+	bool "Enabled on update and boot"
+	help
+	  Require and verify manifest digest signature check on update and boot
+
+endchoice # SUIT_MPI_$(manifest)_SIGNATURE_CHECK
+
+config SUIT_MPI_$(manifest)_OFFSET
+	hex # Constant for all devices using Nordic's SDFW
+	default $(manifest-mpi-offset)
+
+config SUIT_MPI_$(manifest)_PATH
+	string "Path to the output MPI HEX file"
+	default "suit_mpi_$(manifest).hex"
+
+endif # SUIT_MPI_$(manifest)

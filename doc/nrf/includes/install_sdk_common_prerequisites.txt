@@ -1,0 +1,18 @@
+* All operating systems:
+
+  * The latest version of nRF Util, a unified command-line utility for Nordic Semiconductor products.
+    Check :ref:`operating system versions that support this tool <additional_nordic_sw_tools>` and `download the executable <nRF Util Downloads_>`_.
+
+    .. note::
+        After downloading the nRF Util executable, move it to a directory that is in the system :envvar:`PATH`.
+        On macOS and Linux, the downloaded file also needs to be given execute permission by typing `chmod +x nrfutil` or by checking the checkbox in the file properties.
+
+  * In nRF Util, the latest version of the ``device`` command.
+    Check `Installing and upgrading nRF Util commands`_ for installation information.
+  * The |jlink_ver| of SEGGER J-Link.
+    Download it from the `J-Link Software and Documentation Pack`_ page.
+    On Windows, `install it manually together with SEGGER USB Driver for J-Link <nRF Util prerequisites_>`_.
+
+* Additionally, for Windows users: SEGGER USB Driver for J-Link, required for support of older Nordic Semiconductor devices.
+  For information on how to install the USB Driver, see the `nRF Util prerequisites`_ documentation.
+* Additionally, for Linux users: the `nrf-udev`_ module with udev rules required to access USB ports on Nordic Semiconductor devices and program the firmware.

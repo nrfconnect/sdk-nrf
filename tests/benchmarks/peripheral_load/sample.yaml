@@ -1,0 +1,71 @@
+sample:
+  name: Peripheral stress test
+
+common:
+  depends_on:
+    - adc
+    - gpio
+    - i2c
+    - pwm
+    - spi
+    - watchdog
+  tags:
+    - drivers
+    - spi
+    - sensors
+    - ci_tests_benchmarks_peripheral_load
+  harness: console
+
+tests:
+  sample.benchmarks.peripheral_stress_test.nrf54h:
+    filter: not CONFIG_COVERAGE
+    harness_config:
+      fixture: pca63566
+      type: multi_line
+      ordered: false
+      regex:
+        - ".*Accelerometer thread has completed"
+        - ".*ADC thread has completed"
+        - ".*BME680 thread has completed"
+        - ".*CAN thread has completed"
+        - ".*Counter thread has completed"
+        - ".*Flash thread has completed"
+        - ".*GPIO thread has completed"
+        - ".*PWM thread has completed"
+        - ".*TEMP thread has completed"
+        - ".*Timer thread has completed"
+        - ".*WDT thread has completed"
+        - ".*CPU load thread has completed"
+        - ".*Clock thread has completed"
+        - ".*all \\d{1,} threads have completed"
+    extra_args:
+      - SHIELD=pca63566
+    platform_allow: nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+
+  sample.benchmarks.peripheral_stress_test.nrf54l:
+    filter: not CONFIG_COVERAGE
+    harness_config:
+      fixture: pca63565
+      type: multi_line
+      ordered: false
+      regex:
+        - ".*Accelerometer thread has completed"
+        - ".*ADC thread has completed"
+        - ".*BME680 thread has completed"
+        - ".*Counter thread has completed"
+        - ".*Flash thread has completed"
+        - ".*GPIO thread has completed"
+        - ".*I2S thread has completed"
+        - ".*PWM thread has completed"
+        - ".*TEMP thread has completed"
+        - ".*Timer thread has completed"
+        - ".*WDT thread has completed"
+        - ".*CPU load thread has completed"
+        - ".*all \\d{1,} threads have completed"
+    extra_args:
+      - SHIELD=pca63565
+    platform_allow: nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp

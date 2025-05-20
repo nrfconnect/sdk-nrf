@@ -1,0 +1,7 @@
+This sample can be found under |sample path| in the |NCS| folder structure.
+
+To build the sample, follow the instructions in :ref:`building` for your preferred building environment.
+See also :ref:`programming` for programming steps and :ref:`testing` for general information about testing and debugging in the |NCS|.
+
+.. note::
+    |sysbuild_autoenabled_ncs|

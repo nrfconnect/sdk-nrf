@@ -1,0 +1,34 @@
+sample:
+  name: Bluetooth Mesh DFU Distributor
+tests:
+  sample.bluetooth.mesh_dfu_distributor:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild
+  sample.bluetooth.mesh_dfu_distributor.smp_bt_auth:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+    extra_args: OVERLAY_CONFIG=overlay-smp-bt-auth.conf
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild

@@ -1,0 +1,96 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+menuconfig NRF_PROFILER
+	bool "System nrf_profiler"
+	default n
+
+if NRF_PROFILER
+
+config NRF_PROFILER_MAX_NUMBER_OF_APP_EVENTS
+	int "Maximum number of stored application event types"
+	default 32
+	range 0 255
+	help
+	  Maximum number of stored event types.
+
+config NRF_PROFILER_CUSTOM_EVENT_BUF_LEN
+	int "Length of data buffer for custom event data (in bytes)"
+	default 64
+	range 5 1023
+
+config NRF_PROFILER_MAX_LENGTH_OF_CUSTOM_EVENTS_DESCRIPTIONS
+	int "Maximum number of characters used to describe single event type"
+	default 128
+
+config NRF_PROFILER_SHELL
+	bool "Enable shell integration"
+	depends on SHELL
+	default y
+	help
+	  Enable nRF Profiler shell commands to list the profiled event types
+	  and to enable or disable profiling of specified event types.
+
+choice
+	prompt "Profiler selection"
+	default NRF_PROFILER_NORDIC
+	depends on NRF_PROFILER
+
+config NRF_PROFILER_NORDIC
+	bool "Nordic nrf_profiler"
+	select USE_SEGGER_RTT
+
+endchoice
+
+config NRF_PROFILER_NUMBER_OF_INTERNAL_EVENTS
+	int
+	default 1 if NRF_PROFILER_NORDIC
+	default 0
+	help
+	  Number of internal events.
+
+menu "Nordic nrf_profiler advanced"
+	depends on NRF_PROFILER_NORDIC
+
+config NRF_PROFILER_NORDIC_START_LOGGING_ON_SYSTEM_START
+	bool "Start logging on system start"
+	depends on NRF_PROFILER_NORDIC
+	default n
+
+config NRF_PROFILER_NORDIC_COMMAND_BUFFER_SIZE
+	int "Command buffer size"
+	default 16
+
+config NRF_PROFILER_NORDIC_DATA_BUFFER_SIZE
+	int "Data buffer size"
+	default 2048
+
+config NRF_PROFILER_NORDIC_INFO_BUFFER_SIZE
+	int "Info buffer size"
+	default 256
+
+config NRF_PROFILER_NORDIC_RTT_CHANNEL_DATA
+	int "Data up channel index"
+	default 1
+
+config NRF_PROFILER_NORDIC_RTT_CHANNEL_INFO
+	int "Info up channel index"
+	default 2
+
+config NRF_PROFILER_NORDIC_RTT_CHANNEL_COMMANDS
+	int "Command down channel index"
+	default 1
+
+config NRF_PROFILER_NORDIC_STACK_SIZE
+	int "Stack size for thread handling host input"
+	default 512
+
+config NRF_PROFILER_NORDIC_THREAD_PRIORITY
+	int "Priority of thread handling host input"
+	default 10
+
+endmenu # Advanced
+
+endif # NRF_PROFILER

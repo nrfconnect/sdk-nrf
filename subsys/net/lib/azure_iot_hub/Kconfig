@@ -1,0 +1,150 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+module = AZURE_IOT_HUB
+module-prompt = "Azure IoT Hub"
+orsource "../Kconfig.cloud_$(CLOUD_SERVICE_SELECTOR)"
+
+menuconfig $(module)
+	bool
+	prompt "Azure IoT Hub" if !CLOUD_SERVICE_MUTUAL_EXCLUSIVE
+	select AZURE_SDK
+	select MQTT_HELPER
+	select MQTT_LIB_TLS
+	select EXPERIMENTAL
+
+if AZURE_IOT_HUB
+
+config AZURE_IOT_HUB_DEVICE_ID
+	string "Device ID"
+	help
+	  Device ID to be used when connecting to IoT hub and optionally DPS.
+	  Providing a device ID can also be done at run-time using the appropriate APIs.
+
+config AZURE_IOT_HUB_HOSTNAME
+	string "Azure IoT Hub hostname"
+	help
+	  Hostname to Azure IoT Hub instance.
+
+config AZURE_IOT_HUB_AUTO_DEVICE_TWIN_REQUEST
+	bool "Request device twin automatically when connected"
+	default y
+	help
+	  When enabled, the library will automatically request the device twin upon connection to
+	  the IoT Hub.
+
+config AZURE_IOT_HUB_DPS
+	bool "Device Provisioning Service"
+	select CJSON_LIB
+	depends on SETTINGS
+	help
+	  Enabling DPS will make the device connect to the specified DPS
+	  host name, provision the device and retrieve the IoT hub host name to
+	  use.
+
+config AZURE_IOT_HUB_USER_NAME_BUF_SIZE
+	int "User name max length"
+	default 160
+	help
+	  Maximum length of the user name.
+
+config AZURE_IOT_HUB_TOPIC_MAX_LEN
+	int "Max length of topic"
+	default 100
+	help
+	  Sets the maximum length of a topic. If you plan to use message properties,
+	  it should be considered to increase this value to fit the topic into the allocated
+	  buffers.
+
+config AZURE_IOT_HUB_MSG_PROPERTY_RECV_MAX_COUNT
+	int "Maximum number of property bag elements"
+	default 3
+	help
+	  The maximum number of message properties that can be parsed from a topic in an incoming
+	  MQTT message.
+	  Increasing this value will increase stack usage when parsing topics,
+	  and vice versa if decreasing it.
+
+config AZURE_IOT_HUB_MSG_PROPERTY_BUFFER_SIZE
+	int "Message property buffer size"
+	default 128
+	help
+	  Message properties are converted to a string before sending to Azure. This option
+	  can be used to configure the buffer size for the property string. The buffer is
+	  allocated on the stack, so it's beneficial to reduce it if message properties will not
+	  be used for device-originated messages.
+
+
+if AZURE_IOT_HUB_DPS
+
+config AZURE_IOT_HUB_DPS_ID_SCOPE
+	string "DPS ID scope"
+	help
+	  ID scope to be used in the provisioning request to DPS. The ID scope can also be provided
+	  at runtime.
+
+config AZURE_IOT_HUB_DPS_REG_ID
+	string "Registration ID"
+	help
+	  The registration ID to be used in the provisioning request to DPS.
+	  The registation ID can also be provided at runtime.
+
+config AZURE_IOT_HUB_DPS_HOSTNAME
+	string "DPS host name"
+	default "global.azure-devices-provisioning.net"
+	help
+	  Hostname for the DPS instance to use.
+
+config AZURE_IOT_HUB_DPS_TIMEOUT_SEC
+	int "DPS timeout"
+	default 90
+	help
+	  Timeout in seconds for device provisioning. If the device has not been assigned within
+	  the timeout, the provisioning attempt is terminated.
+	  This timeout is useful if the device can't reach the server and vice versa in the middle
+	  of the registration process.
+	  The timer is reset on every incoming MQTT message from the server.
+	  Note the difference between this timeout and MQTT_HELPER_SEND_TIMEOUT, which only
+	  affects send() calls.
+
+config AZURE_IOT_HUB_DPS_HOSTNAME_MAX_LEN
+	int "Azure IoT Hub name max length"
+	default 64
+	help
+	  Maximum length for IoT Hub hostname.
+
+config AZURE_IOT_HUB_DPS_DEVICE_ID_MAX_LEN
+	int "Maximum length of device ID"
+	default 128
+
+config AZURE_IOT_HUB_DPS_TOPIC_BUFFER_SIZE
+	int "Topic buffer size"
+	default 224
+	help
+	  Topic buffer size for the topic used when sending registration request and status request to DPS.
+	  The buffer can be adjusted depending on the registration ID length and expected operation ID length.
+	  The operation ID is received from DPS after registration request is sent.
+
+config AZURE_IOT_HUB_DPS_USER_NAME_BUFFER_SIZE
+	int "User name buffer size"
+	default 256
+	help
+	  Size of the buffer where the user name is stored.
+
+config AZURE_IOT_HUB_DPS_OPERATION_ID_BUFFER_SIZE
+	int "Operation ID buffer size"
+	default 68
+	help
+	  Size of the buffer where the received operation ID is stored.
+
+endif # AZURE_IOT_HUB_DPS
+
+module=AZURE_IOT_HUB
+module-dep=LOG
+module-str=Azure IoT Hub
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # AZURE_IOT_HUB

@@ -1,0 +1,76 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config TEST_SLEEP_DURATION_MS
+	int "Amount of time (in milliseconds) the core is sleeping"
+	default 1000
+	help
+	  Set sleep duration to TEST_SLEEP_DURATION_MS milliseconds.
+	  Based on the value of 'min-residency-us' specified for each power state defined in the DTS,
+	  core enters the lowest possible power state.
+
+config DATA_FIELD
+	int "Number of bytes exchanged in single SPI transceive operation"
+	default 4
+	help
+	  Set number of bytes exchanged in single spi_transceive() operation.
+	  Values from 1 to 16 bytes are confirmed to work correctly.
+
+config TEST_SPI_HOLD_ON_CS
+	bool "Enable / Disable test for SPI chip select hold"
+	help
+	  By default, each spi_transceive_dt() activates SPI CS signal before transmission and
+	  deactivates it after the transmission has completed.
+	  When this KConfig is enabled, first SPI transmission activates SPI CS signal and
+	  it is kept active until spi_release() is executed.
+
+config TEST_SPI_LOCK_ON
+	bool "Test with SPI lock enabled/disabled"
+	help
+	  Keep the device locked after the transaction for the current config.
+	  When this KConfig is enabled, SPI device is locked until spi_release() is executed.
+
+config TEST_SPI_RELEASE_BEFORE_SLEEP
+	bool "Enable / Disable release of the SPI device"
+	depends on TEST_SPI_HOLD_ON_CS || TEST_SPI_LOCK_ON
+	default y
+	help
+	  When this KConfig is enabled, SPI is released before entering low power state.
+	  When TEST_SPI_HOLD_ON_CS=y and TEST_SPI_RELEASE_BEFORE_SLEEP=y then
+	  each test iteration will see one rising and one falling edge on SPI CS signal.
+	  When TEST_SPI_HOLD_ON_CS=y and TEST_SPI_RELEASE_BEFORE_SLEEP=n then
+	  first test iteration will see SPI CS signal activation. Next test iterations
+	  will NOT observe changes on SPI CS signal.
+
+choice GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION
+	prompt "Global domain clock frequency"
+	default GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_320MHZ
+
+config GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_320MHZ
+	bool "320MHz"
+
+config GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_256MHZ
+	bool "256MHz"
+
+config GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_128MHZ
+	bool "128MHz"
+
+config GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_64MHZ
+	bool "64MHz"
+
+endchoice
+
+config GLOBAL_DOMAIN_CLOCK_FREQUENCY_MHZ
+	int
+	default 320 if GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_320MHZ
+	default 256 if GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_256MHZ
+	default 128 if GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_128MHZ
+	default 64 if GLOBAL_DOMAIN_CLOCK_FREQUENCY_OPTION_64MHZ
+
+config GLOBAL_DOMAIN_CLOCK_FREQUENCY_SWITCHING
+	bool "Enable global domain frequency changing when driver is active"
+
+source "Kconfig.zephyr"

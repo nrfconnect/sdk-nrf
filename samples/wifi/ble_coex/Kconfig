@@ -1,0 +1,113 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Nordic Coex sample"
+
+choice TEST_TYPE
+	prompt "Test type"
+	default TEST_TYPE_WLAN_BLE
+
+config TEST_TYPE_WLAN_ONLY
+	bool "WLAN only"
+	help
+	  Enable WLAN only
+
+config TEST_TYPE_BLE_ONLY
+	bool "BLE only"
+	help
+	  Enable BLE only
+
+config TEST_TYPE_WLAN_BLE
+	bool "WLAN and BLE"
+	help
+	  Enable WLAN and BLE
+
+endchoice
+
+config TEST_TYPE_WLAN
+	bool "WLAN"
+	default y if TEST_TYPE_WLAN_ONLY || TEST_TYPE_WLAN_BLE
+	select WIFI
+	help
+	  Enable WLAN
+
+config TEST_TYPE_BLE
+	bool "BLE"
+	default y if TEST_TYPE_BLE_ONLY || TEST_TYPE_WLAN_BLE
+	help
+	  Enable BLE
+
+config NET_CONFIG_PEER_IPV4_ADDR
+	string "Peer IPv4 address"
+	default "192.168.1.253"
+
+config NET_CONFIG_PEER_IPV4_PORT
+	int "Peer IPv4 port"
+	default 5001
+
+config WIFI_THREAD_STACK_SIZE
+	int "Wi-Fi thread stack size"
+	default 4096
+
+config WIFI_THREAD_PRIORITY
+	int "Wi-Fi thread priority"
+	default 5
+
+config WIFI_ZPERF_SERVER
+	bool "Zperf role: server or client"
+	default n
+
+config WIFI_ZPERF_PROT_UDP
+	bool "UDP or TCP"
+	default y
+
+config WIFI_ZPERF_PKT_SIZE
+	int "packet size"
+	default 1024
+
+config WIFI_ZPERF_RATE
+	int "rate in kbps"
+	default 10000
+
+config INTERVAL_MIN
+	int "BLE min connection interval. Each unit 1.25milliseconds"
+	default 80
+
+config INTERVAL_MAX
+	int "BLE max connection interval. Each unit 1.25milliseconds"
+	default 80
+
+config COEX_ENABLE
+	bool "Control if coexistence HW is enable"
+	default y
+
+config COEX_WLAN_2PT4G
+	bool "Indicates if WLAN operating band is 2.4GHz or 5GHz"
+	default y
+
+config WIFI_TEST_DURATION
+	int "test duration in milliseconds"
+	default 20000
+
+config BLE_TEST_DURATION
+	int "test duration in milliseconds"
+	default 20000
+
+config COEX_BT_CENTRAL
+	bool "BT device role"
+	default y
+
+config COEX_SEP_ANTENNAS
+	bool "Control if the antennas are shared/separate for BT and WLAN"
+	default y
+
+config SR_PROTOCOL_BLE
+	bool "Indicates if the Short Range protocol is Bluetooth LE or not"
+	default y
+
+endmenu

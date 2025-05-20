@@ -1,0 +1,11 @@
+/*
+ * Copyright (c) 2022 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* The direct use of SHIELD=nrf21540ek_fwd is no more necessary and deprecated.
+ * Please use just -DSHIELD=nrf21540ek or -D<app_image>_SHIELD=nrf21540ek.
+ * For multi-core devices appropriate overlay for the shield will be picked
+ * by the build system automatically.
+ */

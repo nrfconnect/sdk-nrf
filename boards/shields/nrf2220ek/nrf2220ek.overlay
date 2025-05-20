@@ -1,0 +1,10 @@
+/* Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Integration of this shield differs depending on board. The proper overlay file
+ * is provided through one of suitable overlays in the 'boards' directory.
+ * However the file here must exist here to satisfy the way the Zephyr finds
+ * a shield support.
+ */

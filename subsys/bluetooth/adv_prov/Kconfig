@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_ADV_PROV
+	bool "Bluetooth LE advertising providers"
+	depends on BT_BROADCASTER
+	help
+	  Enable Bluetooth LE advertising providers. The subsystem manages
+	  advertising packets and scan response packets. It does not control
+	  advertising start and stop.
+
+if BT_ADV_PROV
+
+module = BT_ADV_PROV
+module-str = Bluetooth LE advertising providers
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+rsource "providers/Kconfig"
+
+endif # BT_ADV_PROV

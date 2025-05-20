@@ -1,0 +1,87 @@
+# Copyright (c) 2020 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: |
+    This is a representation of the Skyworks SKY66112-11 Radio Front-End module.
+    It is supplementing the generic representation of FEM with settling time and
+    gain values appropriate for SKY66112-11 device.
+
+compatible: "skyworks,sky66112-11"
+
+include: generic-fem-two-ctrl-pins.yaml
+
+properties:
+    ctx-settle-time-us:
+        type: int
+        default: 23
+        description: |
+            Settling time in microseconds from activation of CTX to transmit.
+
+            The default value has been determined experimentally: it is the
+            minimum time interval between asserting the CTX signal and starting
+            the radio transmission, which does not generate unacceptable
+            interference level on adjacent channels. The tests concerned a
+            configuration in which nRF5x SoC controlling the SKY66112-11.
+            The value can be adjusted for other tuned configurations.
+
+    crx-settle-time-us:
+        type: int
+        default: 5
+        description: |
+            Settling time in microseconds from activation of CRX to receive.
+
+            The default value has been determined experimentally: it is the
+            minimum time interval between asserting the CRX signal and starting
+            the radio reception, which does not degrade transmission quality
+            indicators (compared to a constantly turned on FEM LNA). The tests
+            concerned a configuration in which nRF5x SoC controlling
+            the SKY66112-11. The value can be adjusted for other tuned
+            configurations.
+
+    tx-gain-db:
+        type: int
+        default: 22
+        description: |
+            TX gain of the PA amplifier of SKY66112-11 in dB.
+
+            Default value is based on Table 5 of the SKY66112-11 data sheet
+            (July 19, 2019). This is a fixed parameter of the device. The value
+            can be changed if, instead of SKY66112-11, another device with
+            different gain, but compatible with the control interface via the
+            CTX, CRX pins is used.
+
+    rx-gain-db:
+        type: int
+        default: 11
+        description: |
+            RX gain of the LNA amplifier of SKY66112-11 in dB.
+
+            Default value is based on Table 5 of the SKY66112-11 data sheet
+            (July 19, 2019). This is a fixed parameter of the device. The value
+            can be changed if, instead of SKY66112-11, another device with
+            different gain, but compatible with the control interface via the
+            CTX, CRX pins is used.
+
+    ant-sel-gpios:
+        type: phandle-array
+        required: false
+        description: |
+            Gpio of the SOC controlling ANT-SEL pin of the SKY66112-11 device.
+
+    csd-gpios:
+        type: phandle-array
+        required: false
+        description: |
+            Gpio of the SOC controlling CSD pin of the SKY66112-11 device.
+
+    cps-gpios:
+        type: phandle-array
+        required: false
+        description: |
+            Gpio of the SOC controlling CPS pin of the SKY66112-11 device.
+
+    chl-gpios:
+        type: phandle-array
+        required: false
+        description: |
+            Gpio of the SOC controlling CHL pin of the SKY66112-11 device.

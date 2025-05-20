@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Bluetooth ISO time sync sample"
+
+config SDU_INTERVAL_US
+	int "SDU interval to be used in microseconds"
+	default 10000
+	help
+	  The SDU interval determines how often the button
+	  value will be transmitted to the receiving devices.
+
+config TIMED_LED_PRESENTATION_DELAY_US
+	int "The delay of presenting the new value of the LED"
+	default 5000
+	help
+	  The presentation delay of the LED represents the time
+	  from the SDU synchronization reference until the value
+	  is applied.
+	  The application needs to ensure it can process the
+	  received SDU within this amount of time.
+	  The end-to-end latency will be at least the sum
+	  of the configured transport latency and presentation delay
+
+config LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE
+	bool "Enable immediate LED toggling upon sending or receiving data"
+	help
+	  Enable immediate toggling of LED2 when isochronous
+	  data is sent or received. This allows for measurment
+	  of the mimimum end-to-end latency.
+
+endmenu
+
+source "Kconfig.zephyr"

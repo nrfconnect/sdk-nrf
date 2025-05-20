@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config SLM_NATIVE_TLS
+	bool "Use Zephyr's Mbed TLS for TLS connections"
+
+config SLM_NATIVE_TLS_CREDENTIAL_BUFFER_SIZE
+	int "Buffer space reserved for loading credentials"
+	default 4096
+	help
+	  Buffer space available for a single sec_tag when loading credentials for Mbed TLS.
+
+config SLM_NATIVE_TLS_CREDENTIAL_BUFFER_COUNT
+	int "Amount of buffers for loading credentials"
+	default 1
+	range 1 2
+	help
+	  Amount of buffers available for loading sec_tag credentials for Mbed TLS.
+	  TLS client needs the buffer only when connecting whereas TLS server needs the buffer as long as it is running.
+	  Increase the value, if you need TLS client and server running simultaneously with different sec_tags.

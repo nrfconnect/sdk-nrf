@@ -1,0 +1,46 @@
+name: Manifest
+on: pull_request_target
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  manifest:
+    runs-on: ubuntu-24.04
+    name: Manifest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          path: ncs/nrf
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: west setup
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        working-directory: ncs/nrf
+        run: |
+          pip3 install west
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
+          west init -l . || true
+          # We only import the zephyr manifest
+          west update zephyr
+
+      - name: Manifest
+        uses: zephyrproject-rtos/action-manifest@ea38f222cddfbbb9debb5f0239f4139ae2677ebb # v1.8.0
+        with:
+          github-token: ${{ secrets.NCS_GITHUB_TOKEN }}
+          manifest-path: 'west.yml'
+          checkout-path: 'ncs/nrf'
+          use-tree-checkout: 'true'
+          west-import-flag: 'self'
+          check-impostor-commits: 'true'
+          label-prefix: 'manifest-'
+          verbosity-level: '1'
+          labels: 'manifest'
+          dnm-labels: 'DNM'
+          allowed-unreachables: 'dragoon'

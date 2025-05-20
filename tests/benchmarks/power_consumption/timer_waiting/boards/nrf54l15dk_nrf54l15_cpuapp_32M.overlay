@@ -1,0 +1,12 @@
+/* TIMER10, 32MHz */
+
+/ {
+	aliases {
+		led = &button3;
+		counter = &timer10;
+	};
+};
+
+&timer10 {
+	status = "okay";
+};

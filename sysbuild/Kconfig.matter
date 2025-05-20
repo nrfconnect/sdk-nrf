@@ -1,0 +1,40 @@
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+menuconfig MATTER
+	bool "Matter"
+	depends on ZEPHYR_CONNECTEDHOMEIP_MODULE
+
+if MATTER
+
+config MATTER_FACTORY_DATA_GENERATE
+	bool "Create matter factory data"
+	help
+	  Generate Matter factory data set and the HEX file for the sample during the building
+	  process.
+
+config MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE
+	bool "Merge generated factory data with merged.hex output"
+	depends on MATTER_FACTORY_DATA_GENERATE
+	default y
+	help
+	  Enables merging the generated factory data with the merged.hex output build file. As a
+	  result, the merged.hex build output file, which is used when flashing the firmware using
+	  the west tool, includes the factory data as well.
+
+config MATTER_OTA
+	bool "Matter OTA Software Update"
+	default y
+	help
+	  Enables over-the-air (OTA) Requestor role that allows the node to perform Device Firmware
+	  Update by querying and downloading a new firmware image from a peer OTA Provider node.
+
+config MATTER_OTA_IMAGE_FILE_NAME
+	string "OTA image file name"
+	default "matter.ota"
+	depends on MATTER_OTA
+	help
+	  Provides the file name of the generated Matter OTA image in the build directory.
+
+endif # MATTER

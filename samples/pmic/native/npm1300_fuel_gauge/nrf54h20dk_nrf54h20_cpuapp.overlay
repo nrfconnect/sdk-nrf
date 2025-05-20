@@ -1,0 +1,26 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+ #include <dt-bindings/regulator/npm1300.h>
+
+&i2c130_default {
+	group1 {
+		bias-pull-up;
+	};
+};
+
+&i2c130 {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&npm1300_ek_pmic {
+	host-int-gpios = <&gpio0 5 0>;
+	pmic-int-pin = <3>;
+};

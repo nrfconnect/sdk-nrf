@@ -1,0 +1,118 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "WiFi and Thread Coex sample"
+
+config NET_CONFIG_PEER_IPV4_ADDR
+	string "Peer IPv4 address"
+	default "192.168.1.253"
+
+config NET_CONFIG_PEER_IPV4_PORT
+	int "Peer IPv4 port"
+	default 5001
+
+config WIFI_THREAD_STACK_SIZE
+	int "Wi-Fi thread stack size"
+	default 4096
+
+config WIFI_THREAD_PRIORITY
+	int "Wi-Fi thread priority"
+	default 5
+
+config WIFI_ZPERF_SERVER
+	bool "Zperf role: server or client"
+	default n
+
+config WIFI_ZPERF_PROT_UDP
+	bool "UDP or TCP"
+	default y
+
+config WIFI_ZPERF_PKT_SIZE
+	int "packet size"
+	default 1024
+
+config WIFI_ZPERF_RATE
+	int "rate in kbps"
+	default 10000
+
+# Thread configurations
+config OT_CHANNEL
+	int "Thread device operating channel"
+	default 18
+
+config OT_PAN_ID
+	int "Thread device PAN ID"
+	default 1
+
+config OT_ROLE_CLIENT
+	bool "Thread device role"
+	default y
+
+config OT_PACKET_SIZE
+	int "Thread device packet size"
+	default 256
+
+config OT_RATE_BPS
+	int "Thread device rate in bits per seconds"
+	default 10000
+
+config NET_CONFIG_THREAD_PORT
+	int "Port for Thread zperf"
+	default 5001
+
+config OT_ZPERF_PROT_UDP
+	bool "UDP or TCP"
+	default y
+
+# Test parameters
+choice TEST_TYPE
+	prompt "Test type"
+	default TEST_TYPE_WLAN_OT
+
+config TEST_TYPE_WLAN_ONLY
+	bool "WLAN only"
+	help
+	  Enable WLAN only
+
+config TEST_TYPE_OT_ONLY
+	bool "Thread only"
+	help
+	  Enable Thread only
+
+config TEST_TYPE_WLAN_OT
+	bool "WLAN and Thread"
+	help
+	  Enable WLAN and Thread
+endchoice
+
+config TEST_TYPE_WLAN
+	bool "WLAN"
+	default y if TEST_TYPE_WLAN_ONLY || TEST_TYPE_WLAN_OT
+	select WIFI
+	help
+	  Enable WLAN
+
+config TEST_TYPE_OT
+	bool "Thread"
+	default y if TEST_TYPE_OT_ONLY || TEST_TYPE_WLAN_OT
+	help
+	  Enable Thread
+
+config COEX_TEST_DURATION
+	int "test duration in milliseconds"
+	default 20000
+
+config COEX_SEP_ANTENNAS
+	bool "No support for shared antenna in Thread and WLAN. Set it to yes"
+	default y
+
+config SR_PROTOCOL_BLE
+	bool "Indicates if the SR protocol is Bluetooth LE or not"
+	default n
+
+endmenu

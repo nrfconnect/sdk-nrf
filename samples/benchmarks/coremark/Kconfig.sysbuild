@@ -1,0 +1,22 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "share/sysbuild/Kconfig"
+
+config APP_CPUFLPR_RUN
+	bool "Run the CoreMark benchmark on the FLPR core"
+	depends on SUPPORT_FLPRCORE
+	default y
+
+config APP_CPUNET_RUN
+	bool "Run the CoreMark benchmark on the network or radio core"
+	depends on SUPPORT_NETCORE
+	default y
+
+config APP_CPUPPR_RUN
+	bool "Run the CoreMark benchmark on the PPR core"
+	depends on SUPPORT_PPRCORE
+	default y

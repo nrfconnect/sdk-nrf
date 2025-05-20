@@ -1,0 +1,44 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&i2c2 {
+	status = "disabled";
+};
+
+&spi3 {
+	status = "disabled";
+};
+
+/* disable pmic_wifi */
+&pmic_wifi {
+	status = "disabled";
+	regulators {
+		status = "disabled";
+	};
+};
+
+/* disable nrf70 */
+&nrf70 {
+	status = "disabled";
+};
+
+/* disable external flash */
+&flash_ext {
+	status = "disabled";
+};
+
+/* disable pmic_main */
+&pmic_main {
+	status = "disabled";
+	npm1300_gpios {
+		status = "disabled";
+	};
+	regulators {
+		status = "disabled";
+	};
+	charger {
+		status = "disabled";
+	};
+};

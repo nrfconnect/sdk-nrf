@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "CoAP client sample"
+
+config COAP_SAMPLE_RESOURCE
+	string "CoAP resource - defaults to Californium observable resource"
+	default "obs"
+
+config COAP_SAMPLE_SERVER_HOSTNAME
+	string "CoAP server hostname"
+	default "californium.eclipseprojects.io"
+
+config COAP_SAMPLE_SERVER_PORT
+	int "CoAP server port"
+	default 5683
+
+config COAP_SAMPLE_REQUEST_INTERVAL_SECONDS
+	int "Request interval in seconds"
+	default 5
+
+endmenu
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
+
+module = COAP_CLIENT_SAMPLE
+module-str = CoAP client sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

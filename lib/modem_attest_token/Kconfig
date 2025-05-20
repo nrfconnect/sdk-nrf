@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig MODEM_ATTEST_TOKEN
+	bool "Modem Attestation Token Library"
+	depends on NRF_MODEM_LIB
+	help
+	  Functionality requires modem firmware version 1.3 or greater.
+	  User is responsible for initializing the libraries upon which
+	  this library is dependent.
+
+if MODEM_ATTEST_TOKEN
+
+config MODEM_ATTEST_TOKEN_PARSING
+	bool "Enable parsing of the attestation token"
+	select ZCBOR
+	select BASE64
+	default y
+
+module=MODEM_ATTEST_TOKEN
+module-str=Modem Attestation Token
+
+endif # MODEM_ATTEST_TOKEN

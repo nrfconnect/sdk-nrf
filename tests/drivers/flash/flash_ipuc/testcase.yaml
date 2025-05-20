@@ -1,0 +1,15 @@
+common:
+  tags:
+    - drivers
+    - flash
+    - ci_tests_drivers_flash
+tests:
+  drivers.flash.flash_ipuc:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - native_sim
+      - native_sim/native/64
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - native_sim
+      - native_sim/native/64

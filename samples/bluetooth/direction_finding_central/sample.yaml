@@ -1,0 +1,34 @@
+sample:
+  name: Direction Finding Central
+  description: Sample application showing central role of Direction Finding in connected
+    mode
+tests:
+  sample.bluetooth.direction_finding_central_nrf:
+    sysbuild: true
+    build_only: true
+    platform_allow:
+      - nrf52833dk/nrf52833
+      - nrf52833dk/nrf52820
+      - nrf5340dk/nrf5340/cpuapp
+    tags:
+      - bluetooth
+      - sysbuild
+    integration_platforms:
+      - nrf52833dk/nrf52833
+      - nrf52833dk/nrf52820
+      - nrf5340dk/nrf5340/cpuapp
+  sample.bluetooth.direction_finding_central_nrf.aod:
+    sysbuild: true
+    extra_args: OVERLAY_CONFIG="overlay-aod.conf"
+    build_only: true
+    platform_allow:
+      - nrf52833dk/nrf52833
+      - nrf52833dk/nrf52820
+      - nrf5340dk/nrf5340/cpuapp
+    tags:
+      - bluetooth
+      - sysbuild
+    integration_platforms:
+      - nrf52833dk/nrf52833
+      - nrf52833dk/nrf52820
+      - nrf5340dk/nrf5340/cpuapp

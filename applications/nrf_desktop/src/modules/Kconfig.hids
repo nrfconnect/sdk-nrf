@@ -1,0 +1,103 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "BLE HID Service"
+
+config DESKTOP_HIDS_ENABLE
+	bool "Enable GATT HID Service"
+	depends on DESKTOP_BT_PERIPHERAL
+	select BT_HIDS
+	select BT_CONN_CTX
+	help
+	  This option enables HID over GATT Service application module.
+
+if DESKTOP_HIDS_ENABLE
+
+config DESKTOP_HIDS_FIRST_REPORT_DELAY
+	int "First HID report delay [ms]"
+	default 500 if DESKTOP_PERIPHERAL_TYPE_KEYBOARD
+	default 0
+	range 0 2000
+	help
+	  If set to non-zero, the peripheral will delay sending first HID
+	  report after the connection security was established. This is done to
+	  ensure that central will be ready to receive the data. nRF Desktop
+	  centrals reenable the subscriptions on every reconnection. HID report
+	  is dropped if received before the subscription was reenabled.
+
+	  By default, nRF Desktop keyboard uses a delay of 500 ms to prevent
+	  dropping HID reports right after reconnection.
+
+config DESKTOP_HIDS_SUBSCRIBER_PRIORITY
+	int "HID service reports subscriber priority"
+	default 1
+	range 1 255
+	help
+	  HID Service over GATT reports subscriber priority. The lower value means the lower
+	  priority in subscription to HID reports. By default, the HID service uses the lowest
+	  possible priority.
+
+choice BT_HIDS_DEFAULT_PERM
+	default BT_HIDS_DEFAULT_PERM_RW_ENCRYPT
+	help
+	  nRF Desktop Bluetooth peripherals require encryption to access HID
+	  attributes. This is consistent with HID over GATT profile
+	  specification.
+endchoice
+
+config BT_HIDS_ATTR_MAX
+	default 19 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
+		       !DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	default 22 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
+		      DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	default 32 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
+		       !DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	default 35 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
+		       DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	help
+	  The maximum number of GATT attribute descriptors for HIDS is set
+	  assuming that nRF Desktop peripheral supports all of the HID input
+	  and output reports defined in default configuration for the selected
+	  peripheral type, boot protocol and HID feature report used by the
+	  configuration channel.
+
+	  Make sure to update the value if you enable additional HID reports.
+
+config BT_HIDS_INPUT_REP_MAX
+	default 1 if DESKTOP_PERIPHERAL_TYPE_MOUSE
+	default 3 if DESKTOP_PERIPHERAL_TYPE_KEYBOARD
+	help
+	  nRF Desktop mouse by default uses only HID mouse input report.
+	  nRF Desktop keyboard by default uses HID keyboard, system control and
+	  consumer control input reports.
+
+	  Make sure to update the value if you enable an additional HID input
+	  report.
+
+config BT_HIDS_OUTPUT_REP_MAX
+	default 2 if (DESKTOP_CONFIG_CHANNEL_OUT_REPORT && \
+		      DESKTOP_HID_REPORT_KEYBOARD_SUPPORT)
+	default 1 if (DESKTOP_CONFIG_CHANNEL_OUT_REPORT || \
+		      DESKTOP_HID_REPORT_KEYBOARD_SUPPORT)
+	default 0
+	help
+	  nRF Desktop Bluetooth peripheral by default uses HID output reports
+	  for configuration channel and keyboard LEDs.
+
+config BT_HIDS_FEATURE_REP_MAX
+	default 1 if DESKTOP_CONFIG_CHANNEL_ENABLE
+	default 0
+	help
+	  nRF Desktop Bluetooth peripheral by default uses HID feature report
+	  only for the configuration channel.
+
+module = DESKTOP_HIDS
+module-str = HID over GATT service
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+endmenu

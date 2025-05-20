@@ -1,0 +1,15 @@
+identifier: {{ board }}/{{ soc }}{{ '/ns' if target['ns'] else '' }}
+name: {{ board_desc }}
+vendor: {{ vendor }}
+type: mcu
+arch: arm
+{% if target['ns'] %}
+ram: 128
+flash: 212
+{% else %}
+ram: 88
+flash: 1024
+{% endif %}
+toolchain:
+  - zephyr
+supported: []

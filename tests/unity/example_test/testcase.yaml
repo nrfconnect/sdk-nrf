@@ -1,0 +1,11 @@
+tests:
+  unity.example_test:
+    sysbuild: true
+    tags:
+      - example
+      - sysbuild
+      - ci_tests_unity
+    integration_platforms:
+      - native_sim
+    platform_allow:
+      - native_sim

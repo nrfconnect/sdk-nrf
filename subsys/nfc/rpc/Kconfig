@@ -1,0 +1,64 @@
+#
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NFC_RPC
+	bool "NFC over RPC [EXPERIMENTAL]"
+	select NRF_RPC
+	select NRF_RPC_CBOR
+	select EXPERIMENTAL
+	help
+	  Enables NFC serialization over RPC
+
+if NFC_RPC
+
+choice NFC_RPC_ROLE_CHOICE
+	prompt "NFC over RPC role selection"
+	default NFC_RPC_CLIENT
+	help
+	  Selects the device role for NFC over RPC. The default role is
+	  a client role.
+
+config NFC_RPC_CLIENT
+	bool "NFC over RPC client"
+	help
+	  Enables NFC over RPC client role that uses nRF RPC library to
+	  invoke NFC functions on the remote core.
+
+config NFC_RPC_SERVER
+	bool "NFC over RPC server"
+	help
+	  Enables NFC over RPC server role that runs the full NFC
+	  stack and exposes NFC functions using nRF RPC library to a client
+	  running on the remote core.
+
+endchoice
+
+config NFC_RPC_T2T
+	bool "NFC T2T over RPC"
+	default y
+	help
+	  Enables serialization NFC T2T API over RPC.
+
+config NFC_RPC_T4T
+	bool "NFC T4T over RPC"
+	select NFC_NDEF
+	select NFC_NDEF_MSG
+	default y
+	help
+	  Enables serialization NFC T4T API over RPC.
+
+config NFC_RPC_INITIALIZE_NRF_RPC
+	bool "Automatically initialize nRF RPC library"
+	help
+	  Initialize nRF RPC library during the system startup. Disabling this
+	  option allow user to initialize it in a different way.
+
+if NFC_RPC_T4T
+rsource "../ndef/Kconfig"
+endif
+
+endif # NFC_RPC

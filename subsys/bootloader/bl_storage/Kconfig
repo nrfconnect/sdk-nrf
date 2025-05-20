@@ -1,0 +1,9 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SECURE_BOOT_STORAGE
+	bool "Library for accessing the bootloader storage"
+	select NRFX_RRAMC if SOC_SERIES_NRF54LX && !TRUSTED_EXECUTION_NONSECURE

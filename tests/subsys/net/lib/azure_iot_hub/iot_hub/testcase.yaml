@@ -1,0 +1,13 @@
+tests:
+  net.lib.azure_iot_hub.iot_hub:
+    sysbuild: true
+    platform_allow:
+      - qemu_cortex_m3
+      - native_sim
+    integration_platforms:
+      - qemu_cortex_m3
+      - native_sim
+    tags:
+      - azure_iot_hub
+      - sysbuild
+      - ci_tests_subsys_net

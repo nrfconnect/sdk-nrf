@@ -1,0 +1,29 @@
+# The configurations resulting as a product of scenarios and platforms
+# will be skipped if quarantine is used. More details here:
+# https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
+# To have an empty list use:
+# - scenarios:
+#    - None
+#  platforms:
+#    - None
+
+- platforms:
+    - native_.*
+    - qemu_cortex_m3.*
+    - qemu_x86.*
+  comment: "Cannot build samples for Native POSIX and QEMU on Windows OS"
+
+- scenarios:
+    - sample.nrf7001_eks.ble-wifi-provision
+    - sample.nrf7002_eks.ble-wifi-provision
+    - sample.nrf7002.ble-wifi-provision
+    - sample.nrf7002_eb.thingy53.ble-wifi-provision
+    - sample.softap.wifi.provision
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf7002dk/nrf5340/cpuapp
+    - nrf7002dk/nrf5340/cpuapp/ns
+    - thingy53/nrf5340/cpuapp/ns
+    - thingy53/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/SHEL-3161"

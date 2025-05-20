@@ -1,0 +1,254 @@
+.. |NCS| replace:: nRF Connect SDK
+
+.. ### Versions
+
+.. |release| replace:: v3.0.0
+.. |release_tt| replace:: ``v3.0.0``
+.. |release_number_tt| replace:: ``3.0.0``
+
+.. |jlink_ver| replace:: v8.18
+
+.. ### Config shortcuts
+
+.. |how_to_configure| replace:: See :ref:`configure_application` for information on how to set the required configuration options temporarily or permanently.
+
+.. |config| replace:: See :ref:`configure_application` for information about how to permanently or temporarily change the configuration.
+
+.. |test_sample| replace:: After programming the sample to your development kit, complete the following steps to test it:
+
+.. |test_application| replace:: After programming the application to your development kit, complete the following steps to test it:
+
+.. |connect_generic| replace:: Connect the device to the computer using a USB cable.
+   The device is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+
+.. |connect_kit| replace:: Connect the kit to the computer using a USB cable.
+   The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+
+.. |connect_terminal_generic| replace:: Connect to the device with a terminal emulator (for example, the `Serial Terminal app`_).
+   See :ref:`test_and_optimize` for the required settings and steps.
+
+.. |connect_terminal| replace:: Connect to the kit with a terminal emulator (for example, the `Serial Terminal app`_).
+   See :ref:`test_and_optimize` for the required settings and steps.
+
+.. |connect_terminal_specific| replace:: Connect to the kit that runs this sample with a terminal emulator (for example, the `Serial Terminal app`_).
+   See :ref:`test_and_optimize` for the required settings and steps.
+
+.. |connect_terminal_both| replace:: Connect to both kits with a terminal emulator (for example, the `Serial Terminal app`_).
+   See :ref:`test_and_optimize` for the required settings and steps.
+
+.. |connect_terminal_ANSI| replace:: Open a serial port connection to the kit using a terminal emulator that supports VT100/ANSI escape characters (for example, the `Serial Terminal app`_).
+   See :ref:`test_and_optimize` for the required settings and steps.
+
+.. |connect_terminal_specific_ANSI| replace:: Connect to the kit that runs this sample with a terminal emulator that supports VT100/ANSI escape characters (for example, the `Serial Terminal app`_).
+   See :ref:`test_and_optimize` for the required settings and steps.
+
+.. |connect_terminal_both_ANSI| replace:: Connect to both kits with a terminal emulator that supports VT100/ANSI escape characters (for example, the `Serial Terminal app`_).
+   See :ref:`test_and_optimize` for the required settings and steps.
+
+.. |ANSI| replace:: that supports VT100/ANSI escape characters
+
+.. |open_terminal_window_with_environment| replace:: Start the :ref:`toolchain environment <using_toolchain_environment>` in a terminal window.
+
+.. ### Board shortcuts
+
+.. |nRF5340DKnoref| replace:: nRF5340 DK board (PCA10095)
+.. |nRF7002DKnoref| replace:: nRF7002 DK board (PCA10143)
+
+.. |nRF9160DK| replace:: nRF9160 DK board (PCA10090) - see :ref:`ug_nrf9160`
+.. |nRF5340DK| replace:: nRF5340 DK board (PCA10095) - see :ref:`ug_nrf5340`
+.. |nRF52840DK| replace:: nRF52840 DK board (PCA10056) - see :ref:`ug_nrf52`
+.. |nRF52833DK| replace:: nRF52833 DK board (PCA10100) - see :ref:`ug_nrf52`
+.. |nRF51DK| replace:: nRF51 DK board (PCA10028)
+.. |nRF52DK| replace:: nRF52 DK board (PCA10040) - see :ref:`ug_nrf52`
+.. |nRF52840Dongle| replace:: nRF52840 Dongle (PCA10059) - see :ref:`ug_nrf52`
+.. |Thingy91| replace:: Thingy:91 (PCA20035) - see :ref:`ug_thingy91`
+.. |nRF21540DK| replace:: nRF21540 DK board (PCA10112)
+
+.. |thingy52_not_supported_note| replace:: Despite :zephyr:board:`thingy52` being supported in Zephyr, the |NCS| does not support `Nordic Thingy:52`_.
+
+.. ### FOTA shortcuts
+
+.. |fota_upgrades_def| replace:: You can update the firmware of the device over the air, thus without a wired connection.
+   Such an update is called a FOTA (firmware over-the-air) update.
+
+.. |fota_upgrades_building| replace:: To create a binary file for an application update, build the application with the :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` option enabled.
+
+.. ### VSC shortcuts
+
+.. |vsc_extension_description| replace:: The |nRFVSC| is a complete IDE for developing applications compatible with the |NCS|.
+   The extension includes an interface for managing SDK and toolchain installations, an interface to the compiler and linker, an RTOS-aware debugger, a seamless interface to the |NCS|, and a serial terminal.
+.. |VSC| replace:: Visual Studio Code
+.. |nRFVSC| replace:: nRF Connect for VS Code extension
+
+.. ### Deprecation shortcuts
+
+.. |file_suffix_related_deprecation_note| replace:: This feature is deprecated and is being replaced by :ref:`suffix-based configurations <app_build_file_suffixes>`.
+    You can continue to use it until the transition is complete in the |NCS| and the feature is removed in one of the upcoming |NCS| releases.
+
+.. |nrfjprog_deprecation_note| replace:: Starting with the |NCS| v2.8.0, nrfjprog is in the process of being archived.
+   It will remain available for download, but `nRF Util (device command) <Device command overview_>`_ will gradually replace it.
+
+.. |nrf_CLT_deprecation_note| replace:: The `nRF Command Line Tools`_ have been archived and replaced by `nRF Util`_.
+   No further updates will be made to the nRF Command Line Tools.
+   Last supported operating systems are Windows 10, Linux Ubuntu 22.04, and macOS 13.
+   The nRF Command Line Tools will remain available for download, but do not install the SEGGER J-Link version they provide if you have a newer version installed.
+
+.. ### Thread usage shortcuts
+
+.. |enable_thread_before_testing| replace:: Make sure to enable the OpenThread stack before building and testing this sample.
+   See :ref:`ug_thread` for more information.
+.. |thread_hwfc_enabled| replace:: This sample has Hardware Flow Control mechanism enabled by default in serial communication.
+   When enabled, it allows devices to manage transmission by informing each other about their current state, and ensures more reliable connection in high-speed communication scenarios.
+
+.. ### nRF Desktop shortcuts
+
+.. |battery_meas| replace:: Battery measurement module
+.. |ble_adv| replace:: Bluetooth LE advertising module
+.. |ble_bond| replace:: Bluetooth LE bond module
+.. |ble_conn_params| replace:: Bluetooth LE connection parameters module
+.. |ble_discovery| replace:: Bluetooth LE discovery module
+.. |ble_latency| replace:: Bluetooth LE latency module
+.. |ble_scan| replace:: Bluetooth LE scanning module
+.. |ble_state| replace:: Bluetooth LE state module
+.. |ble_state_pm| replace:: Bluetooth state power manager module
+.. |button_sim| replace:: button simulator module
+.. |buttons_pm_keep_alive| replace:: Power manager keep alive module for buttons
+.. |click_detector| replace:: click detector module
+.. |device_pm_note| replace:: Not all device power states might be supported by the sensor's device.
+   Check the sensor's driver implementation before configuring :c:member:`sm_sensor_config.suspend`.
+.. |conf_channel| replace:: Configuration channel
+.. |GATT_HID| replace:: GATT HID Service
+.. |hid_forward| replace:: HID forward module
+.. |hid_state| replace:: HID state module
+.. |hid_state_pm| replace:: HID state power manager module
+.. |led_note| replace:: A breathing LED indicates that the device has entered either scanning or advertising mode.
+   This happens when the device is looking for a peer to connect to.
+.. |led_state| replace:: LED state module
+.. |led_stream| replace:: LED stream module
+.. |net_state| replace:: network state module
+.. |nrf_desktop_module_event_note| replace:: See the :ref:`nrf_desktop_architecture` for more information about the event-based communication in the nRF Desktop application and about how to read this table.
+.. |nrf_desktop_command_note_with_dfu_lock| replace:: With the :ref:`CONFIG_DESKTOP_DFU_LOCK <config_desktop_app_options>` option enabled, the device only executes this command when it holds the DFU owner status.
+.. |nRF_Desktop_confirmation_effect| replace:: After the confirmation, Bluetooth advertising using a new local identity is started.
+   When a new Bluetooth Central device successfully connects and bonds, the old bond is removed and the new bond is used instead.
+   If the new peer does not connect in the predefined period of time, the advertising ends and the application switches back to the old peer.
+.. |nRF_Desktop_cancel_operation| replace:: You can cancel the ongoing peer operation with a standard button press.
+.. |only_configured_module_note| replace:: Only the configured module should include the configuration file.
+   Do not include the configuration file in other source files.
+.. |power_manager| replace:: power manager module
+.. |preconfigured_build_types| replace:: The preconfigured build types configure the device without the bootloader in debug mode and with MCUboot bootloader in release mode due to memory size limits.
+.. |sensor_manager| replace:: sensor manager module
+.. |sensor_data_aggregator| replace:: sensor data aggregator module
+.. |settings_loader| replace:: Settings loader module
+.. |smp| replace:: simple management protocol module
+.. |usb_state| replace:: USB state module
+.. |usb_state_pm| replace:: USB state power manager module
+.. |nrf_desktop_HID_ref| replace:: Apart from HID samples, the |NCS| provides a complete reference application design of :term:`Human Interface Device (HID)`.
+   Depending on the configuration, the application can work as a desktop mouse, gaming mouse, keyboard, or connection dongle.
+   It supports connection over Bluetooth® LE, USB, or both.
+   For details, see the :ref:`nrf_desktop` documentation.
+
+.. ### Matter shortcuts
+
+.. |matter_intro| replace:: `Matter`_ (formerly Project Connected Home over IP or Project CHIP) is an open-source application layer that aims at creating a unified communication standard across smart home devices, mobile applications, and cloud services.
+   It supports a wide range of existing technologies, including Wi-Fi, Thread, and Bluetooth® LE, and uses IPv6-based transport protocols like TCP and UDP to ensure connectivity between different kinds of networks.
+.. |matter_gn_required_note| replace:: Matter requires the GN tool.
+   If you are updating from the |NCS| version earlier than v1.5.0, see the :ref:`GN installation instructions <manual_installation_gn>`.
+.. |matter_controller_def| replace:: The Matter controller is a node in the Matter network and a role within the :ref:`Matter development environment <ug_matter_gs_testing>`.
+   The controller device is used to pair and control the Matter accessory device remotely over a network, interacting with it using Bluetooth® LE and the regular IPv6 communication.
+.. |matter_controller_def_nolink| replace:: The Matter controller is a node in the Matter network and a role within the Matter development environment.
+   The controller device is used to pair and control the Matter accessory device remotely over a network, interacting with it using Bluetooth® LE and the regular IPv6 communication.
+.. |matter_chip_tool_pc_default_line| replace:: CHIP Tool for Linux or macOS is the default implementation of the :ref:`ug_matter_configuring_controller` role, recommended for the nRF Connect platform.
+.. |matter_cd_definition| replace:: a cryptographic document created by the CSA for each device type, used to confirm that a given type of device was certified
+.. |matter_cd_info_note_for_samples| replace:: This data payload also includes test Device Attestation, with test Certification Declaration, Product ID, and Vendor ID.
+   These are used for :ref:`ug_matter_device_attestation_commissioning_info`, and you can generate your own test Certification Declaration when you :ref:`work on Matter end product <ug_matter_device_attestation_testing_da>`.
+
+.. ### Other shortcuts
+
+.. |ncs_oot_sample_note| replace:: Some samples in the |NCS| are currently not designed to work out-of-tree.
+   You may need to manually configure your sample to work correctly in the |nRFVSC|.
+.. |ncs_repo| replace:: https://github.com/nrfconnect/sdk-nrf
+
+.. |ncs_nrfxlib_repo| replace:: https://github.com/nrfconnect/sdk-nrfxlib
+.. |ncs_unchanged_samples_note| replace:: If you are working with embedded devices, it is a good practice to first test your setup by programming an unchanged :ref:`sample<samples>` to your development kit.
+
+.. |application_sample_definition| replace:: For simplicity, this guide will refer to both :ref:`samples<samples>` and :ref:`applications<applications>` as "applications".
+.. |application_sample_long_path_windows| replace:: On Windows, because of the `Windows path length limitations`_, the build can fail with errors related to permissions or missing files if some paths in the build are too long.
+   To avoid this issue, shorten the build folder name, for example to ``build``, or shorten the path to the build folder in some other way.
+
+.. |common_sample_components_desc| replace:: Code found in the :file:`samples/common` are not intended to be used independently, but in addition to other compatible samples for development purposes.
+   For example, the file path :file:`samples/common/mcumgr_bt_ota_dfu` contains the source for the :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU` Kconfig option.
+   This Kconfig option can be used with specific Nordic Semiconductor devices to enable MCUmgr to perform firmware over-the-air (FOTA) updates using Bluetooth® Low Energy.
+
+.. |NSIB| replace:: nRF Secure Immutable Bootloader
+
+.. |external_flash_size| replace:: external flash memory with minimum 4 MB
+
+.. |gnss_tradeoffs| replace:: For more information on the various trade-offs of using A-GNSS compared to using P-GPS, see the `nRF Cloud Location Services documentation`_.
+
+.. |thingy53_sample_note| replace:: If you build this application for Thingy:53, it enables additional features. See :ref:`thingy53_app_guide` for details.
+
+.. |nrf5340_mesh_sample_note| replace:: For nRF5340 and Thingy:53, the extended advertiser has to be set manually for the network core, because the Bluetooth® Low Energy does not know that the Bluetooth Mesh is enabled when built for this core. This is already done for this sample by setting ``CONFIG_BT_EXT_ADV=y`` for the network core.
+
+.. |nrf5340_audio_external_devices_note| replace:: Nordic Semiconductor seeks to provide seamless interoperability with as many LE Audio devices as possible.
+   However, vendors have reached different levels of maturity in their implementation.
+   Also, different platforms have different methods of connecting, pairing, and streaming.
+   For these reasons, providing a general guide on how to test with external devices is challenging.
+   The suggested approach is to test with Nordic Semiconductor devices on both sides first to verify basic functionalities and get familiar with the solution before using custom devices.
+   Contact `Technical Support team <DevZone_>`_ if you need assistance.
+
+.. |usb_known_issues| replace:: Make sure to check the :ref:`nRF5340 Audio application known issues <known_issues_nrf5340audio>` related to serial connection with the USB.
+
+.. |trusted_execution| replace:: nRF5340 and nRF9160
+
+.. |samples_tfm_info| replace:: Starting from the |NCS| v2.0.0, TF-M is the only way to use :ref:`security by separation <ug_tfm_security_by_separation>` with ARM TrustZone.
+   In addition, the TF-M implementation is enabled by default for all samples and applications in the |NCS| when you build for the ``*/ns`` :ref:`variant <app_boards_names>` of the boards.
+
+.. |plusminus| unicode:: U+000B1 .. PLUS-MINUS SIGN
+   :rtrim:
+
+.. |Google_CCLicense| replace:: Portions of this page are reproduced from work created and `shared by Google`_, and used according to terms described in the `Creative Commons 4.0 Attribution License`_.
+
+.. |nfc_nfct_driver_note| replace:: If you are using debug messages in the NFCT driver, the driver might not be working properly if you have :kconfig:option:`CONFIG_LOG_MODE_IMMEDIATE` enabled.
+   The NFCT driver is part of the nrfx driver package.
+   For more information about this driver, see the NFCT driver page in the `nrfx`_ repository.
+
+.. |Supported OS| replace:: The operating system versions that support the |NCS| firmware are listed in the :ref:`supported_OS` section.
+   Some additional tools for working with Nordic Semiconductor devices might have :ref:`different OS requirements <additional_nordic_sw_tools_os_support>`.
+
+.. |no_changes_yet_note| replace:: No changes since the latest |NCS| release.
+
+.. |serial_port_sec_tag| replace:: where ``<serial port>`` is the serial port of your device and ``<sec tag>`` is the previously chosen unused security tag.
+
+.. |hex_format| replace:: The certificate is automatically converted to a HEX format in the :file:`CMakeLists.txt` file.
+   The generated :file:`.inc` file is then included in the code, where it is provisioned to the modem.
+
+.. |board_target| replace:: Replace the *board_target* with the board target of the nRF91 Series device you are using (see the Requirements section).
+
+.. |sysbuild_autoenabled_ncs| replace:: When building :ref:`repository applications <create_application_types_repository>` in the :ref:`SDK repositories <dm_repo_types>`, building with sysbuild is :ref:`enabled by default <sysbuild_enabled_ncs>`.
+   If you work with out-of-tree :ref:`freestanding applications <create_application_types_freestanding>`, you need to manually pass the ``--sysbuild`` parameter to every build command or :ref:`configure west to always use it <sysbuild_enabled_ncs_configuring>`.
+
+.. |parameters_override_west_config| replace:: The parameters and options passed in the command line always take precedence over ``west config`` settings.
+
+.. |migration_contact_devzone| replace:: While we strive to document all breaking changes, the migration guides might not include the detailed migration steps for your use case.
+   If you need assistance, contact Nordic Semiconductor's technical support on `DevZone`_.
+
+.. |nrf54_buttons_leds_numbering| replace:: The nRF54 DKs use a different numbering pattern for LED and buttons.
+   See the User interface section for full overview.
+
+.. |toolchain_management_ncs_versions| replace:: The Toolchain Manager installation is recommended only when using the nRF54H20 DK with the |NCS| v2.7.0.
+   When using any other DK, the Toolchain Manager installation is recommended for the |NCS| v1.9.x and earlier versions.
+
+.. |ATv2_maintenance_note| replace:: The Asset Tracker v2 application is in maintenance mode.
+   For new projects, it is recommended to use the :ref:`nrf_cloud_multi_service` sample instead.
+
+.. |filter_samples_by_board| replace:: If you want to list samples available for one or more specific boards, `use the nRF Connect for Visual Studio Code extension to filter them <Browse samples_>`_.
+
+.. |54H_engb_2_8| replace:: The nRF54H20 DK Engineering A and B (up to version 0.8.2) are no longer supported starting with |NCS| v2.9.0.
+
+.. |devicetree_bindings| replace:: The devicetree bindings provide the structure for the content of the devicetree nodes.
+   The :ref:`compatible <zephyr:dt-bindings-compatible>` property defines the compatibility of a devicetree node with a devicetree binding.
+   For more information, read the :ref:`documentation about devicetree bindings in Zephyr <zephyr:dt-binding-compat>`.
+
+.. |install_latest_version| replace:: When you first install the |NCS|, it is recommended to install the latest released versions of the SDK and the toolchain.
+
+.. |connection_options_limited| replace:: Spinel connections through SPI and USB are not currently available in the |NCS|.

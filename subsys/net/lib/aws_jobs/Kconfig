@@ -1,0 +1,25 @@
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig AWS_JOBS
+	bool "AWS Jobs library"
+
+if AWS_JOBS
+
+config CLIENT_ID_MAX_LEN
+	int "MQTT Client ID length"
+	default 64
+
+config UPDATE_JOB_PAYLOAD_LEN
+	int "Update job document buffer size"
+	default 1350
+
+module=AWS_JOBS
+module-dep=LOG
+module-str=Log level for AWS Jobs
+module-help=Enables AWS Jobs log messages.
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # AWS_JOBS

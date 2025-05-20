@@ -1,0 +1,32 @@
+;
+; Copyright (c) 2023 Nordic Semiconductor ASA
+;
+; SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+;
+; ************
+; PGPS Request
+; ************
+
+pgps_req = {
+	predictionCount => uint,
+	predictionIntervalMinutes => uint,
+	startGPSDay => uint,
+	startGPSTimeOfDaySeconds => uint
+}
+
+predictionCount = 1
+predictionIntervalMinutes = 2
+startGPSDay = 3
+startGPSTimeOfDaySeconds = 4
+
+; *************
+; PGPS Response
+; *************
+
+pgps_resp = {
+	host => tstr,
+	path => tstr
+}
+
+host = 1
+path = 2

@@ -1,0 +1,44 @@
+tests:
+  date_time.unit_test:
+    sysbuild: true
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
+    tags:
+      - date_time_unity
+      - sysbuild
+      - ci_tests_lib_date_time_unity
+  date_time.unit_test.no_modem_time:
+    sysbuild: true
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
+    extra_configs:
+      - CONFIG_DATE_TIME_MODEM=n
+    tags:
+      - date_time_unity
+      - sysbuild
+      - ci_tests_lib_date_time_unity
+  date_time.unit_test.no_ntp_time:
+    sysbuild: true
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
+    extra_configs:
+      - CONFIG_DATE_TIME_NTP=n
+    tags:
+      - date_time_unity
+      - sysbuild
+      - ci_tests_lib_date_time_unity
+  date_time.unit_test.no_modem_or_ntp_time:
+    sysbuild: true
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
+    extra_configs:
+      - CONFIG_DATE_TIME_MODEM=n
+      - CONFIG_DATE_TIME_NTP=n
+    tags:
+      - date_time_unity
+      - sysbuild
+      - ci_tests_lib_date_time_unity

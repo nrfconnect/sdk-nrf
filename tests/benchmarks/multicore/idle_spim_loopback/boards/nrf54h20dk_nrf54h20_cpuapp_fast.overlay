@@ -1,0 +1,78 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Test requires two wire connections:
+ *  - SPIM_MOSI with SPIM_MISO -> P7.06 - P7.07;
+ *  - SPI cs-gpios with test-gpios -> P0.10 - P0.11.
+ * Test-gpios and cs-gpios must have identical active level flag.
+ */
+
+/ {
+	aliases {
+		led = &led0;
+		/delete-property/ led1;
+	};
+
+	zephyr,user {
+		test-gpios = <&gpio0 11 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+/delete-node/ &led1;
+
+&gpiote130 {
+	status = "okay";
+	owned-channels = <0>;
+};
+
+&pinctrl {
+	spi120_default: spi120_default {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 7, 3)>,
+				<NRF_PSEL(SPIM_MISO, 7, 6)>,
+				<NRF_PSEL(SPIM_MOSI, 7, 7)>;
+		};
+	};
+
+	spi120_sleep: spi120_sleep {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 7, 3)>,
+				<NRF_PSEL(SPIM_MISO, 7, 6)>,
+				<NRF_PSEL(SPIM_MOSI, 7, 7)>;
+			low-power-enable;
+		};
+	};
+};
+
+&spi130 {
+	status = "disabled";
+	/delete-property/ dut_spi_dt;
+};
+
+&spi120 {
+	compatible = "nordic,nrf-spim";
+	status = "okay";
+	pinctrl-0 = <&spi120_default>;
+	pinctrl-1 = <&spi120_sleep>;
+	pinctrl-names = "default", "sleep";
+	overrun-character = <0x00>;
+	memory-regions = <&dma_fast_region>;
+	cs-gpios = <&gpio0 10 GPIO_ACTIVE_HIGH>;
+	zephyr,pm-device-runtime-auto;
+	dut_spi_dt: test-spi-dev@0 {
+		compatible = "vnd,spi-device";
+		reg = <0>;
+		spi-max-frequency = <DT_FREQ_M(4)>;
+	};
+};
+
+&dma_fast_region {
+	status = "okay";
+};
+
+&exmif {
+	status = "disabled";
+};

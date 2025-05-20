@@ -1,0 +1,21 @@
+# Add one pattern per line.
+#
+# The patterns listed in this file will be compared with the list of files
+# changed in a patch series (Pull Request) and if all files in the pull request
+# are matched, then twister will not do a full run and optionally will only
+# run on changed tests or boards.
+#
+nrf/.gitlint
+nrf/.checkpatch.conf
+nrf/.clang-format
+nrf/.gitignore
+# GH action have no impact on code
+nrf/.github/*
+nrf/CODEOWNERS
+nrf/LICENSE
+nrf/doc/*
+*.rst
+*.md
+nrf/scripts/ci/test_plan.py
+nrf/scripts/ci/twister_ignore.txt
+nrf/scripts/checkpatch/*

@@ -1,0 +1,97 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Vendor models"
+
+config BT_MESH_VENDOR_MODELS
+	bool
+	select BT_MESH_NRF_MODELS
+	help
+	  Vendor model modules, required by all Nordic-provided vendor models
+
+menuconfig BT_MESH_SILVAIR_ENOCEAN_SRV
+	bool "Silvair EnOcean Proxy Server"
+	select BT_MESH_VENDOR_MODELS
+	select BT_MESH_ONOFF_CLI
+	select BT_MESH_LVL_CLI
+	select BT_ENOCEAN
+	depends on BT_MESH_DTT_SRV
+	help
+	  Enable Mesh Silvair EnOcean Proxy Server model.
+
+if BT_MESH_SILVAIR_ENOCEAN_SRV
+
+config BT_MESH_SILVAIR_ENOCEAN_AUTO_COMMISSION
+	bool "Automatically commission"
+	help
+	  Automatically commission/decommission EnOcean switches.
+
+endif
+
+config BT_MESH_DM_CLI
+	bool "Distance Measurement Client"
+	select BT_MESH_VENDOR_MODELS
+	select EXPERIMENTAL
+	depends on DM_MODULE
+	help
+	  Enable Distance Measurement Client model.
+
+config BT_MESH_DM_SRV
+	bool "Distance Measurement Server"
+	select BT_MESH_VENDOR_MODELS
+	select EXPERIMENTAL
+	depends on DM_MODULE
+	depends on NEWLIB_LIBC
+	help
+	  Enable Distance Measurement Server model.
+
+if BT_MESH_DM_SRV
+
+config BT_MESH_DM_SRV_DEFAULT_TTL
+	int "Default distance measurement Time to Live"
+	default 0
+	help
+	  Default Time to Live for distance measurement attempt.
+	  The value of '1' is an invalid value and shall not be used.
+
+config BT_MESH_DM_SRV_DEFAULT_TIMEOUT
+	int "Default distance measurement timeout"
+	default 20
+	range 10 100
+	help
+	  Default timeout for distance measurement attempt, in 100 milliseconds steps.
+
+config BT_MESH_DM_SRV_REFLECTOR_DELAY
+	int "Reflector start delay"
+	default 0
+	help
+	  Distance measurement reflector role start delay in microseconds.
+
+config BT_MESH_DM_SRV_INITIATOR_RANGING_WINDOW_US
+	int "Ranging window for the initiator in microseconds"
+	default 50000
+	help
+	  Ranging window for the initiator in microseconds.
+
+config BT_MESH_DM_SRV_REFLECTOR_RANGING_WINDOW_US
+	int "Ranging window for the reflector in microseconds"
+	default 70000
+	help
+	  Ranging window for the reflector in microseconds.
+
+endif # BT_MESH_DM_SRV
+
+config BT_MESH_LE_PAIR_RESP
+	bool "LE Pairing Responder model"
+	select BT_MESH_VENDOR_MODELS
+	select EXPERIMENTAL
+	depends on BT_FIXED_PASSKEY
+	depends on BT_SMP_SC_ONLY
+	help
+	  Enable the LE Pairing Responder model. The LE Pairing Responder model is used to generate
+	  and transfer a passkey used for LE pairing over a mesh network to the pairing initiator.
+
+endmenu

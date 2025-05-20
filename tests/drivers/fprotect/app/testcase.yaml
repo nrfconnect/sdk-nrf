@@ -1,0 +1,18 @@
+tests:
+  lib.fprotect.sys_init_fprotect:
+    sysbuild: true
+    platform_allow:
+      - nrf9160dk/nrf9160
+      - nrf52840dk/nrf52840
+      - nrf52dk/nrf52832
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf9160dk/nrf9160
+      - nrf52840dk/nrf52840
+      - nrf52dk/nrf52832
+      - nrf5340dk/nrf5340/cpuapp
+    tags:
+      - b0
+      - fprotect
+      - sysbuild
+      - ci_tests_drivers_fprotect

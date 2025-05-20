@@ -1,0 +1,15 @@
+# ADP536x
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config ADP536X
+	bool "ADP536x"
+	default y
+	depends on !IS_BOOTLOADER_IMG
+	depends on DT_HAS_ADI_ADP5360_ENABLED
+	select I2C
+	help
+	  Enable ADP536x

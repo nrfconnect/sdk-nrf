@@ -1,0 +1,8 @@
+board:
+  name: thingy91
+  vendor: nordic
+  socs:
+    - name: nrf52840
+    - name: nrf9160
+      variants:
+        - name: ns

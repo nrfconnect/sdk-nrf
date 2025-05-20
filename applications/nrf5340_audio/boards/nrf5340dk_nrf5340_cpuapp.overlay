@@ -1,0 +1,82 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	audioleds: audioleds {
+		compatible = "gpio-leds";
+		status = "okay";
+
+		led_conn_status: led_conn_status {
+			gpios = <&gpio0 28 GPIO_ACTIVE_LOW>;
+			label = "Green LED 0";
+		};
+
+		led_sync_status: led_sync_status {
+			gpios = <&gpio0 29 GPIO_ACTIVE_LOW>;
+			label = "Green LED 1";
+		};
+
+		led_app_status: led_app_status {
+			gpios = <&gpio0 30 GPIO_ACTIVE_LOW>;
+			label = "Green LED 2";
+		};
+	};
+
+	ramdisk0: ramdisk0 {
+		compatible = "zephyr,ram-disk";
+		disk-name = "RAM";
+		sector-size = <512>;
+		sector-count = <80>;
+	};
+};
+
+&usbd {
+	hs_0: hs_0 {
+		compatible = "usb-audio-hs";
+		mic-feature-mute;
+		mic-channel-l;
+		mic-channel-r;
+
+		hp-feature-mute;
+		hp-channel-l;
+		hp-channel-r;
+	};
+};
+
+&pinctrl {
+	i2s0_default: i2s0_default {
+		group1 {
+			psels = <NRF_PSEL(I2S_MCK, 0, 12)>;
+			nordic,drive-mode = <NRF_DRIVE_H0H1>;
+		};
+
+		group2 {
+			psels = <NRF_PSEL(I2S_SCK_M, 0, 14)>,
+			<NRF_PSEL(I2S_LRCK_M, 0, 16)>,
+			<NRF_PSEL(I2S_SDOUT, 0, 13)>,
+			<NRF_PSEL(I2S_SDIN, 0, 15)>;
+		};
+	};
+
+	i2s0_sleep: i2s0_sleep {
+		group1 {
+			psels = <NRF_PSEL(I2S_MCK, 0, 12)>,
+			<NRF_PSEL(I2S_SCK_M, 0, 14)>,
+			<NRF_PSEL(I2S_LRCK_M, 0, 16)>,
+			<NRF_PSEL(I2S_SDOUT, 0, 13)>,
+			<NRF_PSEL(I2S_SDIN, 0, 15)>;
+			low-power-enable;
+		};
+	};
+};
+
+&i2s0 {
+	compatible = "nordic,nrf-i2s";
+	status = "okay";
+	pinctrl-0 = <&i2s0_default>;
+	pinctrl-1 = <&i2s0_sleep>;
+	pinctrl-names = "default", "sleep";
+};

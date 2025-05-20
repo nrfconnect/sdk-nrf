@@ -1,0 +1,11 @@
+identifier: thingy91x/nrf9151/ns
+name: Thingy91X-nRF9151-Non-Secure
+type: mcu
+arch: arm
+toolchain:
+  - gnuarmemb
+  - zephyr
+ram: 128
+flash: 256
+supported:
+  - i2c

@@ -1,0 +1,8 @@
+#include <zephyr/autoconf.h>
+
+# This block of RAM is used for communicating Network Core firmware update
+# metadata
+pcd_sram:
+  placement: {after: [start]}
+  size: CONFIG_NRF_SPU_RAM_REGION_SIZE
+  region: sram_primary

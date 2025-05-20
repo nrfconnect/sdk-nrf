@@ -1,0 +1,50 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+
+/ {
+	dp0 {
+		compatible = "zephyr,swdp-gpio";
+		status = "okay";
+		clk-gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
+		dio-gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
+		noe-gpios = <&gpio0 17 GPIO_ACTIVE_HIGH>;
+		port-write-cycles = <2>;
+	};
+
+	rtt0: rtt_chan0 {
+		compatible = "segger,rtt-uart";
+		status = "okay";
+	};
+
+	ramdisk0 {
+		compatible = "zephyr,ram-disk";
+		disk-name = "RAM";
+		sector-size = <512>;
+		sector-count = <128>;
+	};
+	chosen {
+		zephyr,console = &rtt0;
+		zephyr,shell-uart = &rtt0;
+		zephyr,uart-mcumgr = &rtt0;
+		zephyr,bt-mon-uart = &rtt0;
+		zephyr,bt-c2h-uart = &rtt0;
+	};
+};
+
+&uart1 {
+	status = "okay";
+};
+
+&zephyr_udc0 {
+	cdc_acm_uart0: cdc_acm_uart0 {
+		compatible = "zephyr,cdc-acm-uart";
+	};
+
+	cdc_acm_uart1: cdc_acm_uart1 {
+		compatible = "zephyr,cdc-acm-uart";
+	};
+};

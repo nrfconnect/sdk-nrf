@@ -1,0 +1,43 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig EVENT_MANAGER_PROXY
+	depends on APP_EVENT_MANAGER
+	bool "Event manager proxy"
+	depends on IPC_SERVICE
+	select EVENTS
+	select APP_EVENT_MANAGER_PROVIDE_EVENT_SIZE
+	select APP_EVENT_MANAGER_POSTPROCESS_HOOKS
+	help
+	  Event manager proxy would take care of passing the events between the different cores.
+
+if EVENT_MANAGER_PROXY
+
+config EVENT_MANAGER_PROXY_CH_COUNT
+	int "Number of IPC instances to be used"
+	range 1 32
+	default 1
+	help
+	  Number of the communication channels to be supported.
+	  It covers the information with how many cores we wish to communicate.
+
+config EVENT_MANAGER_PROXY_BIND_TIMEOUT_MS
+	int "Timeout while waiting for the endpoint to bind in ms"
+	range 1 5000
+	default 100
+	help
+	  Miliseconds to wait for endpoint binding.
+	  This timeout depends on the time to initialize all the cores
+	  the event proxy manager is going to communicate.
+
+config EVENT_MANAGER_PROXY_SEND_RETRIES
+	int "Number IPC transmission retries"
+	range 0 100
+	default 5
+	help
+	  Number of retries if an error occurs when transmitting event to the core.
+
+endif # EVENT_MANAGER_PROXY

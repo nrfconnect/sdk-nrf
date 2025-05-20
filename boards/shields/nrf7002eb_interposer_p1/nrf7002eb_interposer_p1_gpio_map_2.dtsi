@@ -1,0 +1,20 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/{
+	edge_connector: connector {
+		compatible = "nordic-edge-connector";
+		#gpio-cells = <2>;
+		gpio-map-mask = <0xffffffff 0xffffffc0>;
+		gpio-map-pass-thru = <0 0x3f>;
+		gpio-map = <5  0 &gpio1 7 0>, /* ST0 / STAT  */
+			   <6  0 &gpio1 8 0>, /* REQ         */
+			   <9  0 &gpio1 0 0>, /* EN / ENB    */
+			   <15 0 &gpio1 3 0>, /* GRT / GRANT */
+			   <18 0 &gpio1 4 0>, /* CS          */
+			   <19 0 &gpio1 2 0>; /* IRQ         */
+	};
+};

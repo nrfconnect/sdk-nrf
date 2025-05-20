@@ -1,0 +1,13 @@
+tests:
+  unity.qos:
+    sysbuild: true
+    platform_allow:
+      - qemu_cortex_m3
+      - native_sim
+    integration_platforms:
+      - qemu_cortex_m3
+      - native_sim
+    tags:
+      - qos
+      - sysbuild
+      - ci_tests_lib_qos

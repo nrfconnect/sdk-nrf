@@ -1,0 +1,290 @@
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Redefine this symbol here and give it a non-zero default value
+# so that the Zephyr system heap is enabled, the offloading layer
+# depends on it
+config HEAP_MEM_POOL_SIZE
+	int
+	default 512
+
+# Redefine this symbol as Zephyr defines this as y by
+# default, but the offloading layer does not support it.
+config COAP_CLIENT_TRUNCATE_MSGS
+	bool
+	default n if NRF_MODEM_LIB
+
+menu "Memory configuration"
+
+config NRF_MODEM_LIB_HEAP_SIZE
+	int "Library heap size"
+	default 1024
+	range 512 4096
+	help
+	  Size of the library heap.
+	  This heap is allocated from the application's RAM region.
+
+config NRF_MODEM_LIB_SHMEM_CTRL_SIZE
+	hex
+	default NRF_MODEM_SHMEM_CTRL_SIZE
+	help
+	  Size of the shared memory area used for control structures.
+	  This is a constant for a given library build, and is exported
+	  by the library via NRF_MODEM_SHMEM_CTRL_SIZE.
+
+if SOC_SERIES_NRF91X || UNITY
+
+config NRF_MODEM_LIB_SHMEM_TX_SIZE
+	int "TX region size"
+	range 1024 32768
+	# Set default to 8k plus Zephyr heap overhead (128 bytes)
+	default 8320
+	help
+	  Size of the shared memory region owned by the application. This area holds all outgoing
+	  data from the application to the modem, e.g. buffers passed to `send()`, AT commands.
+	  The size must be a multiple of four to keep the memory partitions word-aligned.
+
+config NRF_MODEM_LIB_SHMEM_RX_SIZE
+	int "RX region size"
+	range 2488 32768 if SOC_NRF9160
+	range 2616 32768 if SOC_NRF9120
+	default 8192
+	help
+	  Size of the shared memory region owned by the modem.
+	  This area holds all incoming data from the modem, plus the modem's own control structures.
+	  The size must be a multiple of four to keep the memory partitions word-aligned.
+
+config NRF_MODEM_LIB_SHMEM_TRACE_SIZE_OVERRIDE
+	bool "Custom trace region size"
+	depends on NRF_MODEM_LIB_TRACE
+	help
+	  Override the default size of the Trace region (16384 bytes).
+
+config NRF_MODEM_LIB_SHMEM_TRACE_SIZE
+	int "Trace region size" if NRF_MODEM_LIB_SHMEM_TRACE_SIZE_OVERRIDE
+	default 16384 if NRF_MODEM_LIB_TRACE
+	default 0
+	help
+	  Size of the shared memory region used to receive modem traces.
+
+endif # SOC_SERIES_NRF91X || UNITY
+
+if SOC_SERIES_NRF92X
+
+config NRF_MODEM_LIB_TRANSPORT_MBOX
+	bool
+	default y
+	select MBOX
+	select IPC_SERVICE
+	select IPC_SERVICE_ICMSG
+	select IPC_SERVICE_ICMSG_SHMEM_ACCESS_SYNC
+
+endif # SOC_SERIES_NRF92X
+
+config NRF_MODEM_LIB_SENDMSG_BUF_SIZE
+	int "Size of the sendmsg intermediate buffer"
+	default 128
+	help
+	  Size of an intermediate buffer used by `sendmsg` to repack data and
+	  therefore limit the number of `sendto` calls. The buffer is created
+	  in a static memory, so it does not impact stack/heap usage. In case
+	  the repacked message would not fit into the buffer, `sendmsg` sends
+	  each message part separately.
+
+menuconfig NRF_MODEM_LIB_MEM_DIAG
+	bool "Memory diagnostic"
+	select SYS_HEAP_LISTENER
+	select SYS_HEAP_RUNTIME_STATS
+	help
+	  Keep track of the library and shared memory heap usage.
+
+if (NRF_MODEM_LIB_MEM_DIAG && LOG)
+
+config NRF_MODEM_LIB_MEM_DIAG_ALLOC
+	bool "Log all memory allocations"
+	help
+	   Log all nrf_modem_os_alloc(), nrf_modem_os_free()
+	   nrf_modem_os_shm_tx_alloc() and nrf_modem_os_shm_tx_free() calls.
+
+config NRF_MODEM_LIB_MEM_DIAG_DUMP
+	bool "Periodically log shared memory and heap statistics"
+	help
+	  Schedule a periodic system workqueue task to print
+	  the library and shared memory heap runtime statistics.
+
+config NRF_MODEM_LIB_MEM_DIAG_DUMP_PERIOD_MS
+	depends on NRF_MODEM_LIB_MEM_DIAG_DUMP
+	int "Period (millisec)"
+	default 20000
+
+endif # NRF_MODEM_LIB_MEM_DIAG && LOG
+endmenu # Memory config
+
+menuconfig NRF_MODEM_LIB_TRACE
+	bool "Tracing"
+	depends on SOC_SERIES_NRF91X || SOC_SERIES_NRF92X || UNITY
+	help
+	  When enabled, a portion of RAM (called Trace region) will be shared with the modem to receive modem's trace data.
+	  The size of the Trace region is defined by the NRF_MODEM_LIB_SHMEM_TRACE_SIZE option.
+	  Trace data is output on the chosen trace backend.
+
+if NRF_MODEM_LIB_TRACE
+
+# Add trace backends
+rsource "trace_backends/Kconfig"
+
+config NRF_MODEM_LIB_TRACE_STACK_SIZE
+	int "Modem trace thread stack size"
+	default 768 if SIZE_OPTIMIZATIONS
+	default 1024
+
+config NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE
+	bool "Override trace level"
+	default y
+
+if NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE
+
+choice NRF_MODEM_LIB_TRACE_LEVEL_CHOICE
+	prompt "Trace level"
+
+config NRF_MODEM_LIB_TRACE_LEVEL_FULL
+	bool "Full"
+config NRF_MODEM_LIB_TRACE_LEVEL_LTE_AND_IP
+	bool "IP and LTE"
+config NRF_MODEM_LIB_TRACE_LEVEL_IP_ONLY
+	bool "IP only"
+config NRF_MODEM_LIB_TRACE_LEVEL_COREDUMP_ONLY
+	bool "Coredump only"
+config NRF_MODEM_LIB_TRACE_LEVEL_OFF
+	bool "Off"
+
+endchoice
+
+config NRF_MODEM_LIB_TRACE_LEVEL
+	int
+	default 0 if NRF_MODEM_LIB_TRACE_LEVEL_OFF
+	default 1 if NRF_MODEM_LIB_TRACE_LEVEL_COREDUMP_ONLY
+	default 2 if NRF_MODEM_LIB_TRACE_LEVEL_FULL
+	default 4 if NRF_MODEM_LIB_TRACE_LEVEL_IP_ONLY
+	default 5 if NRF_MODEM_LIB_TRACE_LEVEL_LTE_AND_IP
+
+endif # NRF_MODEM_LIB_TRACE_LEVEL_OVERRIDE
+
+config NRF_MODEM_LIB_TRACE_THREAD_PRIO_OVERRIDE
+	bool "Override trace thread priority"
+
+config NRF_MODEM_LIB_TRACE_THREAD_PRIO
+	int "Priority of the trace processing thread"
+	depends on NRF_MODEM_LIB_TRACE_THREAD_PRIO_OVERRIDE
+	default 0
+
+config NRF_MODEM_LIB_TRACE_BACKEND_SUSPEND_DELAY_MS
+	int "Time to wait before suspending trace backend"
+	default 5000
+
+config NRF_MODEM_LIB_TRACE_BITRATE_LOG
+	depends on NRF_MODEM_LIB_LOG_LEVEL_INF || NRF_MODEM_LIB_LOG_LEVEL_DBG
+	bool "Log trace bitrate"
+	help
+	  Log the speed at which the modem emits traces, in bps.
+
+config NRF_MODEM_LIB_TRACE_BITRATE_LOG_PERIOD_MS
+	int "Bitrate log interval (millisec)"
+	depends on NRF_MODEM_LIB_TRACE_BITRATE_LOG
+	default 1000
+
+config NRF_MODEM_LIB_TRACE_BACKEND_BITRATE
+	bool "Measure trace backend bitrate"
+	help
+	  Measure the speed at which the backend processes traces, in bps.
+	  Enables compilation of nrf_modem_lib_trace_backend_bitrate_get().
+
+config NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_PERIOD_MS
+	int "Rolling interval where the bitrate is measured (millisec)"
+	depends on NRF_MODEM_LIB_TRACE_BACKEND_BITRATE
+	default 1000
+
+config NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG
+	bool "Log trace backend bitrate"
+	depends on NRF_MODEM_LIB_TRACE_BACKEND_BITRATE
+	help
+	  Log the speed at which the selected backend is processing traces, in bps.
+
+config NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG_PERIOD_MS
+	int "Bitrate log interval (millisec)"
+	depends on NRF_MODEM_LIB_TRACE_BACKEND_BITRATE_LOG
+	default 5000
+
+endif # NRF_MODEM_LIB_TRACE
+
+choice NRF_MODEM_LIB_ON_FAULT
+	prompt "Action on modem fault"
+	default NRF_MODEM_LIB_ON_FAULT_LTE_NET_IF if NRF_MODEM_LIB_NET_IF
+	default NRF_MODEM_LIB_ON_FAULT_DO_NOTHING
+
+config NRF_MODEM_LIB_ON_FAULT_DO_NOTHING
+	bool "Do nothing"
+	depends on !NRF_MODEM_LIB_NET_IF
+	help
+	  Let the fault handler log the fault and return.
+
+config NRF_MODEM_LIB_ON_FAULT_RESET_MODEM
+	bool "Reset modem"
+	depends on !NRF_MODEM_LIB_NET_IF
+	help
+	  Let the fault handler reset the modem.
+
+config NRF_MODEM_LIB_ON_FAULT_APPLICATION_SPECIFIC
+	bool "Application defined"
+	depends on !NRF_MODEM_LIB_NET_IF
+	help
+	  Let the application define the fault handler function.
+
+config NRF_MODEM_LIB_ON_FAULT_LTE_NET_IF
+	bool "Raise a fatal connectivity error network event"
+	depends on NRF_MODEM_LIB_NET_IF
+	help
+	  Pass modem faults to the network interface driver.
+	  The network interface driver will throw a NET_EVENT_CONN_IF_FATAL_ERROR event.
+
+endchoice # NRF_MODEM_LIB_ON_FAULT
+
+if NRF_MODEM_LIB_ON_FAULT_RESET_MODEM
+
+config NRF_MODEM_LIB_FAULT_THREAD_STACK_SIZE
+	int "Modem fault thread stack size"
+	default 768 if SIZE_OPTIMIZATIONS
+	default 2048
+
+endif
+
+config NRF_MODEM_LIB_CFUN_HOOKS
+	bool "Modem CFUN hooks"
+	default y
+	help
+	  Allow the application to subscribe to functional mode changes in the modem
+	  using the NRF_MODEM_LIB_ON_CFUN macro.
+
+config NRF_MODEM_LIB_FAULT_STRERROR
+	bool "Compile fault reason table"
+	help
+	  Compile a table with a textual description of fault reasons.
+	  The description can be retrieved with nrf_modem_lib_fault_strerror().
+
+rsource "lte_net_if/Kconfig"
+rsource "shell/Kconfig"
+
+DT_IPC := $(dt_nodelabel_path,ipc)
+config NRF_MODEM_LIB_IPC_IRQ_PRIO
+	int
+	default $(dt_node_array_prop_int,$(DT_IPC),interrupts,1)
+
+module = NRF_MODEM_LIB
+module-str = Modem library
+source "subsys/logging/Kconfig.template.log_config"
+
+config NRF_MODEM_LIB_LOG_FW_VERSION_UUID
+	depends on LOG
+	bool "Log FW version and UUID during initialization"

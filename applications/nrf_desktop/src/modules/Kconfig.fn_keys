@@ -1,0 +1,47 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Function keys"
+
+config DESKTOP_FN_KEYS_ENABLE
+	bool "Enable function keys support"
+	help
+	  Button remapper adds fn bit to all key ids while fn key is pressed.
+
+if DESKTOP_FN_KEYS_ENABLE
+
+config DESKTOP_FN_KEYS_SWITCH
+	hex "Fn button"
+	default 0x0
+	help
+	  Define button used as a function key.
+
+config DESKTOP_FN_KEYS_LOCK
+	hex "Fn lock button"
+	default 0x0
+	help
+	  Define button used as a function key lock.
+
+config DESKTOP_STORE_FN_LOCK
+	bool "Store Fn lock state"
+	default y
+	depends on SETTINGS
+	help
+	  Define if device should store Fn lock state after reboot.
+
+config DESKTOP_FN_KEYS_MAX_ACTIVE
+	int "Max Fn key pressed"
+	default 8
+	help
+	  Maximum number of function keys pressed at the same time.
+
+module = DESKTOP_FN_KEYS
+module-str = Fn keys
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+endmenu

@@ -1,0 +1,26 @@
+# Requirement file for native tools on Darwin 86 and aarch64
+python:
+  version: 3.12.4
+git:
+  version: 2.37.3
+cmake:
+  version: 3.21.0
+ninja:
+  version: 1.10.2
+gperf:
+  version: 3.1
+dtc:
+  version: 1.6.1
+west:
+  version: 1.2.0
+nanopb:
+  version: 0.4.6
+zephyr-sdk:
+  version: 0.17.0
+  architectures: # https://github.com/zephyrproject-rtos/sdk-ng/releases/tag/v0.17.0
+    - arm-zephyr-eabi
+    - riscv64-zephyr-elf
+doxygen:
+  version: 1.12.0
+pip:
+  version: 24.2

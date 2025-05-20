@@ -1,0 +1,21 @@
+The following sections describe the various features of |thingy| apart from the ones on the :ref:`ug_nrf91_features` page.
+
+GNSS
+****
+
+|thingy| has a GNSS receiver, which, if activated, allows the device to be located globally using GNSS signals.
+
+LTE Band Lock
+*************
+
+For |thingy|, you can configure the modem to use specific LTE bands by using the band lock AT command.
+See :ref:`nrf9160_ug_band_lock` and the |band_lock| for additional information.
+The preprogrammed firmware configures the modem to use the bands currently certified on the |thingy| hardware.
+When building the firmware, you can configure which bands must be enabled.
+
+LTE-M / NB-IoT switching
+************************
+
+|thingy| has a multimode modem that enables it to support automatic switching between LTE-M and NB-IoT.
+A built-in parameter in the |thingy| firmware determines whether the modem first attempts to connect in LTE-M or NB-IoT mode.
+If the modem fails to connect using this preferred mode within the default timeout period (10 minutes), it switches to the other mode.

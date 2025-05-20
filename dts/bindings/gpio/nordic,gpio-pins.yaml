@@ -1,0 +1,18 @@
+# Copyright (c) 2023 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: |
+  This binding allows to assign a GPIO to the domain.
+  It does not provide any specific driver.
+  The binding enables the following functionalities:
+
+  - Add an entry in UICR that marks the domain to own the selected pin.
+  - Allow access to pins using the macros from the `zephyr/devicetree/gpio.h` file,
+    which increases the hardware abstraction.
+
+compatible: "nordic,gpio-pins"
+
+properties:
+  gpios:
+    type: phandle-array
+    required: true

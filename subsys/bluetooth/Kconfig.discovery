@@ -1,0 +1,77 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_GATT_DM
+	bool "GATT Discovery Manager library"
+	help
+	  Enable BLE GATT Discovery Manager library
+
+if BT_GATT_DM
+
+choice BT_GATT_DM_WORKQ_CHOICE
+	prompt "GATT Discovery Manager workqueue selection"
+	default BT_GATT_DM_WORKQ_OWN
+	help
+	  Select the workqueue implementation for GATT Discovery Manager.
+
+config BT_GATT_DM_WORKQ_OWN
+	bool "Use own workqueue"
+	help
+	  Use own workqueue for GATT Discovery Manager.
+
+config BT_GATT_DM_WORKQ_SYS
+	bool "Use system workqueue"
+	select EXPERIMENTAL
+	help
+	  Use system workqueue for GATT Discovery Manager. Can be used if creating a new thread
+	  is not viable due to memory constraints, but it is not recommended to have potential
+	  blocking calls in the system workqueue.
+
+endchoice
+
+if BT_GATT_DM_WORKQ_OWN
+
+config BT_GATT_DM_WORKQ_STACK_SIZE
+	# Hidden option for workqueue stack size. Should be derived from system
+	# requirements.
+	int
+	default 1300 if BT_GATT_CACHING
+	default 1024
+
+config BT_GATT_DM_WORKQ_PRIO
+	int "GATT Discovery Manager workqueue priority."
+	default 10
+	help
+	  Priority level for the GATT Discovery Manager workqueue.
+
+config BT_GATT_DM_WORKQ_INIT_PRIO
+	int "GATT Discovery Manager workqueue init priority"
+	default 50
+	help
+	  Init priority level to setup the GATT Discovery Manager workqueue.
+
+endif # BT_GATT_DM_WORKQ_OWN
+
+config BT_GATT_DM_MAX_ATTRS
+	int "Maximum number of attributes that can be present in the discovered service"
+	default 35
+	help
+	  Maximum number of attributes that can be present in the discovered service.
+
+config BT_GATT_DM_DATA_PRINT
+	bool "Enable functions for printing discovery related data"
+	help
+	  Enable functions for printing discovery related data
+
+config HEAP_MEM_POOL_ADD_SIZE_BT_GATT_DM
+	int
+	default 512
+
+module = BT_GATT_DM
+module-str = GATT database discovery
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_GATT_DM

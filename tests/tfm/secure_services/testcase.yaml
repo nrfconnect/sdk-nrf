@@ -1,0 +1,18 @@
+tests:
+  tfm.secure_services:
+    sysbuild: true
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+    tags:
+      - tfm
+      - secure_services
+      - sysbuild
+      - ci_tests_tfm
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns

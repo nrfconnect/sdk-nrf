@@ -1,0 +1,10 @@
+tests:
+  modem_key_mgmt.unit_test:
+    sysbuild: true
+    tags:
+      - modem_key_mgmt
+      - sysbuild
+      - ci_tests_lib_modem_key_mgmt
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim

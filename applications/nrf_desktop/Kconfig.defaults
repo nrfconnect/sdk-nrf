@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config DESKTOP_COMMON
+	bool
+	default y
+	select APP_EVENT_MANAGER
+	select CAF
+
+config DESKTOP_COMMON_MODULES
+	bool
+	default y
+	imply DESKTOP_SETTINGS_LOADER
+	imply DESKTOP_POWER_MANAGER
+
+config DESKTOP_LTO_DEFAULTS
+	bool
+	default y
+	imply LTO
+	imply ISR_TABLES_LOCAL_DECLARATION
+	help
+	  nRF Desktop enables LTO to limit memory usage and improve performance.

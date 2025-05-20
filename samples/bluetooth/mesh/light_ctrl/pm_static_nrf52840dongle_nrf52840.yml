@@ -1,0 +1,40 @@
+# For samples using the build-in Nordic bootloader ONLY.
+
+app:
+  address: 0x1000
+  end_address: 0xD8000
+  region: flash_primary
+  size: 0xD7000
+nrf5_mbr:
+  address: 0x0
+  end_address: 0x1000
+  placement:
+    after:
+    - start
+  region: flash_primary
+  size: 0x1000
+settings_storage:
+  address: 0xD8000
+  end_address: 0xE0000
+  placement:
+    align:
+      start: 0x1000
+    before:
+    - end
+  region: flash_primary
+  size: 0x8000
+legacy_bootloader_storage:
+  address: 0xE0000
+  end_address: 0x100000
+  placement:
+    align:
+      start: 0x1000
+    before:
+    - end
+  region: flash_primary
+  size: 0x20000
+sram_primary:
+  address: 0x20000000
+  end_address: 0x20040000
+  region: sram_primary
+  size: 0x40000

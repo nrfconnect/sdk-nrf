@@ -1,0 +1,112 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config NCS_SAMPLE_MATTER_APP_TASK_QUEUE_SIZE
+	int "Maximum amount of tasks delegated to be run in the application queue"
+	default 10
+	help
+	  Define the maximum size of the queue dedicated for application tasks that
+	  have to be run in the application thread context.
+
+config NCS_SAMPLE_MATTER_APP_TASK_MAX_SIZE
+	int "Maximum size of application task in bytes"
+	default 16
+	help
+	  Defines the maximum size of a functor that can be put in the application
+	  thread's task queue.
+
+config NCS_SAMPLE_MATTER_CUSTOM_BLUETOOTH_ADVERTISING
+	bool "Define the custom behavior of the Bluetooth advertisement in the application code"
+	help
+	  Disable the default Bluetooth advertising start which is defined in the board.cpp file and
+	  allow to use the custom one.
+
+config NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS
+	bool "Enable operational keys migration feature"
+	depends on CHIP_CRYPTO_PSA
+	help
+	  Enables migration of the operational keys stored in the persistent storage to the PSA ITS secure storage.
+	  Enable this feature while updating the firmware of in-field devices that run Mbed TLS cryptography backend
+	  to the firmware based on PSA Crypto API.
+
+config NCS_SAMPLE_MATTER_FACTORY_RESET_ON_KEY_MIGRATION_FAILURE
+	bool "Perform factory reset if the operational key migration failed"
+	default y
+	depends on NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS
+	help
+	  Allow device to perform factory reset if the operational key for Fabric has not been migrated
+	  properly to PSA ITS storage.
+
+config NCS_SAMPLE_MATTER_LEDS
+	bool "Enable LEDs usage"
+	default y
+	depends on DK_LIBRARY
+	help
+	  Enables LEDs module to be used in the application.
+
+config NCS_SAMPLE_MATTER_SETTINGS_SHELL
+	bool "Settings shell for Matter purposes"
+	default y if CHIP_MEMORY_PROFILING
+	depends on SHELL
+	depends on NVS || ZMS
+	help
+	  Allows using matter_settings shell commands.
+	  You can use the following commands:
+	  peak - to read the maximum settings usage.
+	  reset - to reset peak value.
+	  get_size - to read the size of specific value.
+	  current - to read current settings usage.
+	  free - to read free settings space.
+
+config NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
+	bool "Test event triggers support"
+	default y
+	help
+	  Enables support for test event triggers for the specific use-cases.
+
+config NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX
+	int "Maximum amount of event triggers"
+	default 8
+	depends on NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
+	help
+	  Defines the maximum amount of event triggers.
+
+config NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_REGISTER_DEFAULTS
+	bool "Register default triggers for Matter sample"
+	depends on NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
+	default y
+	help
+	  Automatically register default triggers such as factory reset,
+	  device reboot, OTA start query.
+
+config NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS_MAX_TRIGGERS_DELEGATES
+	int "Maximum amount of the trigger delegates"
+	default 2
+	depends on NCS_SAMPLE_MATTER_TEST_EVENT_TRIGGERS
+	help
+	  Defines the maximum number for the TestEventTriggerDelegate implementations
+	  to be registered in the nRF test event triggers class.
+
+config NCS_SAMPLE_MATTER_TEST_SHELL
+	bool "Test - specific shell commands support for Matter samples"
+	depends on CHIP_LIB_SHELL
+	help
+	  Enables support for test - specific shell commands in Matter samples.
+
+config NCS_SAMPLE_MATTER_PERSISTENT_STORAGE
+	bool "Persistent storage support for Matter samples"
+	help
+	  Matter persistent storage support with the configurable backend.
+
+config NCS_SAMPLE_MATTER_ZAP_FILES_PATH
+	string "Path in sample, under which ZAP files are located"
+	default "src/default_zap"
+	help
+	  Path in sample, under which ZAP files are located
+
+rsource "persistent_storage/Kconfig"
+rsource "watchdog/Kconfig"
+rsource "diagnostic/Kconfig"

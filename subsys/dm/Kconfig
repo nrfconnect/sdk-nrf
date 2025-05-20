@@ -1,0 +1,78 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DM_MODULE
+	bool "nRF DM (Distance Measurement) [EXPERIMENTAL]"
+	select NRF_DM
+	select EXPERIMENTAL
+	help
+	  Enable the DM (Distance Measurement) module.
+
+if DM_MODULE
+
+config DM_HIGH_PRECISION_CALC
+	# Due to memory limitations, functionality is not provided for nrf52832.
+	depends on !SOC_NRF52832
+	default n
+	bool "Use high-precision distance estimation"
+	help
+	  Use a more compute-intensive algorithm for the distance estimation.
+	  Works only with MCPD ranging mode.
+
+config DM_TIMESLOT_RESCHEDULE
+	bool "Timeslot reschedule"
+	default n
+	help
+	  Enable allocation of the next timeslot after the previous timeslot has succeeded.
+
+config DM_INITIATOR_DELAY_US
+	int "Initiator start delay"
+	default 1000
+	help
+	  Additional Initiator Start delay time.
+	  Used to adjust synchronization.
+
+config DM_MIN_TIME_BETWEEN_TIMESLOTS_US
+	int "Minimum time between two timeslots"
+	default 180000 if DM_HIGH_PRECISION_CALC
+	default 8000
+	help
+	  Minimum time between two timeslots.
+	  This should account for processing of the ranging data after the timeslot.
+
+config DM_RANGING_OFFSET_US
+	int "Ranging offset"
+	default 1200000
+	help
+	  Time between the synchronisation and the ranging.
+	  Increasing this allows for more rangings to different peers but also increases latency.
+
+config DM_GPIO_DEBUG
+	bool "Debugging with output pins"
+	default n
+	select PPI_TRACE
+	help
+	  Indication of distance measurement events by output pins.
+
+config DM_TIMESLOT_QUEUE_LENGTH
+	int "Timeslot queue length"
+	default 40
+	help
+	  The maximum number of timeslots that can be scheduled.
+
+config DM_TIMESLOT_QUEUE_COUNT_SAME_PEER
+	int "The number of the same peer in the queue"
+	default 10
+	help
+	  The maximum number of timeslots that can be scheduled for a single peer.
+
+module = DM_MODULE
+module-str = DM_MODULE
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif #DM_MODULE
+
+rsource "rpc/Kconfig"

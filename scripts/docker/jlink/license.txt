@@ -1,0 +1,11 @@
+By accessing and using Software and Materials provided by SEGGER as free download, you acknowledge and agree to the following Terms of Use. If you do not agree to these Terms, do not download or use any Software or Material.
+
+1) You agree that you will not use the Software or Material for any purpose that is unlawful or illegal.
+2) You agree to use the Software only in accordance with the license regulations included in the Software.
+3) You acknowledge that the Software and Material is provided by SEGGER on "as is" basis without any express or implied warranty of any kind.
+4) You confirm that you are not a person, entity or organization designated by the European Community as a terrorist, terror organization or entity pursuant to the applicable European Council Regulations.
+5) You confirm that you are not located in a prohibited or embargoed country and confirm that you will not ship, distribute, transfer and/or export our Software or Material to any prohibited or embargoed country as mentioned in any such European Union law or regulation.
+
+Further information with regard to the listed persons, entities and organizations can be obtained from the official EU website. If there is any doubt if you are on this list it is strongly recommended to review such lists or get in touch with SEGGER prior download of any Software or Material.
+
+Copyright (c) SEGGER Microcontroller GmbH

@@ -1,0 +1,53 @@
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Application protocols"
+
+config CLOUD_SERVICE_MUTUAL_EXCLUSIVE
+	bool
+	default y if "$(CLOUD_SERVICE_SELECTOR)" = "choice"
+	help
+	  Internal setting which indicates that the Cloud Service is mutually
+	  exclusive.
+	  An application defconfig can indicate that the Cloud Service is
+	  mutually exclusive by requesting that selection of cloud services should
+	  be selectable using a choice menu.
+	  The choice selection can be enabled in the application Kconfig by
+	  setting the `CLOUD_SERVICE_SELECTOR` variable to `choice`, that is
+	  adding a line as:
+	  CLOUD_SERVICE_SELECTOR := choice
+
+choice CLOUD_SERVICE
+	bool
+	prompt "Cloud Service"
+	depends on CLOUD_SERVICE_MUTUAL_EXCLUSIVE
+	optional
+endchoice
+
+rsource "nrf_cloud/Kconfig"
+rsource "rest_client/Kconfig"
+rsource "download_client/Kconfig"
+rsource "downloader/Kconfig"
+rsource "fota_download/Kconfig"
+rsource "aws_iot/Kconfig"
+rsource "aws_jobs/Kconfig"
+rsource "aws_fota/Kconfig"
+rsource "azure_fota/Kconfig"
+rsource "azure_iot_hub/Kconfig"
+rsource "zzhc/Kconfig"
+rsource "icalendar_parser/Kconfig"
+rsource "ftp_client/Kconfig"
+rsource "coap_utils/Kconfig"
+rsource "lwm2m_client_utils/Kconfig"
+rsource "tls_credentials/Kconfig"
+rsource "softap_wifi_provision/Kconfig"
+rsource "wifi_ready/Kconfig"
+rsource "mqtt_helper/Kconfig"
+rsource "nrf_provisioning/Kconfig"
+rsource "mcumgr_smp_client/Kconfig"
+rsource "nrf70_fw_ext/Kconfig"
+rsource "hostap_crypto/Kconfig"
+
+endmenu

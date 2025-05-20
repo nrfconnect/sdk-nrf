@@ -1,0 +1,22 @@
+config HPF_MSPI_MAX_RESPONSE_SIZE
+	int "Max size of response that can be sent to APP core. In bytes."
+	default 524
+
+config HPF_MSPI_IPC_NO_COPY
+	bool "IPC no copy mode"
+	default y
+	depends on SOC_NRF54L15
+	help
+	  If y Data is passed through IPC by reference,
+	  this requires both cores to be able to access each others memory spaces.
+	  If n Data is passed through IPC by copy.
+
+config HPF_MSPI_FAULT_TIMER
+	bool "HPF application fault timer"
+	help
+	  Enable HPF application fault timer.
+	  Timer is used to detect application faults. If the timer expires,
+	  the application is considered to be in a fault state.
+
+rsource "../Kconfig"
+source "Kconfig.zephyr"

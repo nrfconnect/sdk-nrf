@@ -1,0 +1,128 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config MBEDTLS_PSA_CRYPTO_C
+	bool
+	prompt "Enable PSA crypto APIs"
+	default y
+	help
+	  Enable the Platform Security Architecture cryptography API.
+	  Corresponds to setting in mbed TLS config file.
+
+if MBEDTLS_PSA_CRYPTO_C
+
+config MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER
+	bool
+
+osource "modules/mbedtls/Kconfig.psa"
+
+rsource "src/core/Kconfig"
+
+rsource "src/ssf_secdom/Kconfig"
+
+comment "PSA Driver Support"
+
+config MBEDTLS_PSA_CRYPTO_DRIVERS
+	bool
+	default y
+
+config PSA_DEFAULT_OFF
+	bool
+
+config MBEDTLS_PSA_CRYPTO_CLIENT
+	bool
+	default y
+
+rsource "src/drivers/Kconfig"
+
+
+
+menu "PSA API support"
+
+config MBEDTLS_PSA_CRYPTO_SPM
+	bool
+	help
+	  Configation that enables alternate naming of mbedcrypto symbols in
+	  scope of TF-M build (Prefixes with mbedcrypto__)
+
+config MBEDTLS_PSA_CRYPTO_STORAGE_C
+	bool "PSA storage for persistent keys" if !BUILD_WITH_TFM
+	default y if BUILD_WITH_TFM
+	help
+	  Corresponds to MBEDTLS_PSA_CRYPTO_STORAGE_C setting in mbed TLS config file.
+
+config MBEDTLS_USE_PSA_CRYPTO
+	bool "PSA APIs for X.509 and TLS library"
+	default y if !MBEDTLS_LEGACY_CRYPTO_C
+	help
+	  Corresponds to MBEDTLS_USE_PSA_CRYPTO setting in mbed TLS config file.
+
+config MBEDTLS_PSA_KEY_SLOT_COUNT
+	int "Number of PSA key slots available"
+	default 32
+	range 1 65535
+	help
+	  Describes the number of available PSA key slots. A key slot is used in PSA
+	  for each transparent key in use. So this number defines the sum of volatile and
+	  transparent keys that we can have open concurrently.
+	  The default value comes from MBedTLS.
+
+config MBEDTLS_PSA_STATIC_KEY_SLOTS
+	bool "Static key slots for PSA"
+	help
+	  When this option is enabled the PSA core doesn't use the heap to store keys.
+	  It uses a static buffer to hold the key material.
+
+config MBEDTLS_PSA_KEY_STORE_DYNAMIC
+	bool
+	help
+	  This option is incompatible with nrf_security when builtin keys are being used.
+	  Since the builtin keys are considered an integral part of nrf_security this option
+	  should not be enabled.
+	  This option is not forwarded to the header files of nrf_security and it is kept
+	  here only for visibility. The PSA key store design defines the hydrid key store
+	  implicitely when both this option and the option regarding the static key slots
+	  are disabled so it is valuable in the build to see that this is disabled.
+
+config MBEDTLS_PSA_STATIC_KEY_SLOT_BUFFER_SIZE
+	int "PSA static key slot buffer size in bytes"
+	depends on MBEDTLS_PSA_STATIC_KEY_SLOTS
+	default 16
+	help
+	  The size in bytes of the static buffer used to hold the key material
+	  when MBEDTLS_PSA_STATIC_KEY_SLOTS is enabled.
+	  16 bytes is the smallest reasonable buffer size (needed for an 128-bit AES key)
+	  to set here. The applications need to increase this buffer size in accordance
+	  with the enabled key types and sizes.
+
+config PSA_ITS_ENCRYPTED
+	bool
+	depends on MBEDTLS_PSA_CRYPTO_STORAGE_C
+	help
+	  Enables authenticated encryption for PSA Internal Trusted Storage files
+
+config PSA_CRYPTO_SYS_INIT
+	bool "Invoke psa_crypto_init during system initialization"
+	default y
+	help
+	  Enable a Zephyr SYS_INIT that invokes psa_crypto_init. This
+	  allows PSA Crypto API users that run after POST_KERNEL to omit
+	  their psa_crypto_init calls.
+
+	  This option can be disabled to allow finer grained control of
+	  how an error from psa_crypto_init should be handled. The
+	  SYS_INIT will invoke k_oops() when psa_crypto_init fails, which
+	  may not be desired behaviour.
+
+config PSA_CRYPTO_DRIVER_ALG_PRNG_TEST
+	bool
+	help
+	  Internal option used for testing. User provided function will be called
+	  to get random bytes.
+
+endmenu # PSA API support
+
+endif # MBEDTLS_PSA_CRYPTO_C

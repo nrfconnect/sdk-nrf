@@ -1,0 +1,28 @@
+common:
+  sysbuild: true
+  tags:
+    - compress
+    - decompression
+    - lzma
+    - sysbuild
+    - ci_tests_subsys_nrf_compress
+  platform_allow:
+    - native_sim
+    - nrf52840dk/nrf52840
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf5340dk/nrf5340/cpuapp/ns
+  integration_platforms:
+    - native_sim
+    - nrf52840dk/nrf52840
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf5340dk/nrf5340/cpuapp/ns
+tests:
+  nrf_compress.decompression.lzma.static: {}
+  nrf_compress.decompression.lzma.dynamic:
+    extra_configs:
+      - CONFIG_NRF_COMPRESS_MEMORY_TYPE_MALLOC=y
+      - CONFIG_COMMON_LIBC_MALLOC=y
+      - CONFIG_COMMON_LIBC_MALLOC_ARENA_SIZE=162000
+  nrf_compress.decompression.lzma.external_dict:
+    extra_configs:
+      - CONFIG_NRF_COMPRESS_EXTERNAL_DICTIONARY=y

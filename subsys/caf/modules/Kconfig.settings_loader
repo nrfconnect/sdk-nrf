@@ -1,0 +1,45 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig CAF_SETTINGS_LOADER
+	bool "Settings loader module"
+	depends on SETTINGS
+
+if CAF_SETTINGS_LOADER
+
+config CAF_SETTINGS_LOADER_DEF_PATH
+	string "Configuration file"
+	default "settings_loader_def.h"
+	help
+	  Location of configuration file for settings loader module.
+
+config CAF_SETTINGS_LOADER_USE_THREAD
+	bool "Enable loading of setting by separate thead"
+	help
+	  The option enables loading of settings by separate
+	  thread in background instead of use of system
+	  work queue for that purpose.
+
+config CAF_SETTINGS_LOADER_THREAD_STACK_SIZE
+	int "Settings module thread stack size"
+	depends on CAF_SETTINGS_LOADER_USE_THREAD
+	range 0 4096
+	default 1200
+	help
+	  Stack size for thread responsible for loading
+	  settings from flash memory.
+
+if !CAF_SETTINGS_LOADER_USE_THREAD
+config CAF_SETTINGS_LOADER_THREAD_STACK_SIZE
+	int
+	default 0
+endif
+
+module = CAF_SETTINGS_LOADER
+module-str = caf module settings loader
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # CAF_SETTINGS_LOADER

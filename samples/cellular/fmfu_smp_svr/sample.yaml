@@ -1,0 +1,19 @@
+sample:
+  description: Full modem firmware update Simple Management Protocol sample
+  name: Full modem serial update sample
+tests:
+  sample.cellular.fmfu_smp_svr:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+    platform_allow:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular

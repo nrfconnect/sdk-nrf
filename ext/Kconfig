@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "External libraries"
+
+rsource "freebsd-getopt/Kconfig"
+rsource "iperf3/Kconfig"
+rsource "curl/Kconfig"
+
+endmenu

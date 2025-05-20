@@ -1,0 +1,173 @@
+sample:
+  description: Low Power UART sample
+  name: Low Power UART
+
+common:
+  tags:
+    - ci_build
+    - sysbuild
+    - ci_samples_peripheral_lpuart
+  timeout: 30
+
+tests:
+  sample.peripheral.lpuart:
+    sysbuild: true
+    platform_allow:
+      - nrf52dk/nrf52832
+      - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
+      - nrf9160dk/nrf9160/ns
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf21540dk/nrf52840
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf52dk/nrf52832
+      - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
+      - nrf9160dk/nrf9160/ns
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf21540dk/nrf52840
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_exclude: native_sim
+    tags: ppk_power_measure
+    harness: pytest
+    harness_config:
+      fixture: gpio_loopback
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_lpuart"
+    timeout: 90
+  sample.peripheral.lpuart.debug:
+    sysbuild: true
+    platform_allow:
+      - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
+      - nrf9160dk/nrf9160/ns
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf21540dk/nrf52840
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf52840dk/nrf52840
+    extra_configs:
+      - CONFIG_ASSERT=y
+      - CONFIG_CONSOLE=y
+      - CONFIG_UART_CONSOLE=y
+      - CONFIG_LOG=y
+      - CONFIG_NRF_SW_LPUART_LOG_LEVEL_DBG=y
+    harness: console
+    harness_config:
+      fixture: gpio_loopback
+      type: multi_line
+      ordered: true
+      regex:
+        - ".*app: ASYNC Tx sent 5 bytes"
+        - ".*app: ASYNC Received data 5 bytes"
+        - ".*app: ASYNC Received data 1 bytes"
+        - ".*app: ASYNC Tx sent 5 bytes"
+        - ".*app: ASYNC Received data 5 bytes"
+        - ".*app: ASYNC Received data 1 bytes"
+        - ".*app: ASYNC Tx sent 5 bytes"
+        - ".*app: ASYNC Received data 5 bytes"
+  sample.peripheral.lpuart_int_driven:
+    sysbuild: true
+    extra_configs:
+      - CONFIG_NRF_SW_LPUART_INT_DRIVEN=y
+    integration_platforms:
+      - nrf52dk/nrf52832
+      - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
+      - nrf9160dk/nrf9160/ns
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf21540dk/nrf52840
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf52dk/nrf52832
+      - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
+      - nrf9160dk/nrf9160/ns
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf21540dk/nrf52840
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
+    tags: ppk_power_measure
+    harness: pytest
+    harness_config:
+      fixture: gpio_loopback
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_lpuart"
+    timeout: 90
+  sample.peripheral.lpuart_int_driven.debug:
+    sysbuild: true
+    extra_configs:
+      - CONFIG_NRF_SW_LPUART_INT_DRIVEN=y
+      - CONFIG_ASSERT=y
+      - CONFIG_CONSOLE=y
+      - CONFIG_UART_CONSOLE=y
+      - CONFIG_LOG=y
+      - CONFIG_NRF_SW_LPUART_LOG_LEVEL_DBG=y
+    integration_platforms:
+      - nrf52dk/nrf52832
+      - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
+      - nrf9160dk/nrf9160/ns
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf21540dk/nrf52840
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf52dk/nrf52832
+      - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
+      - nrf9160dk/nrf9160/ns
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf21540dk/nrf52840
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
+    harness: console
+    harness_config:
+      fixture: gpio_loopback
+      type: multi_line
+      ordered: true
+      regex:
+        - ".*app: IRQ Tx sent 5 bytes"
+        - ".*app: IRQ Received data 5 bytes"
+        - ".*app: IRQ Received data 1 bytes"
+        - ".*app: IRQ Tx sent 5 bytes"
+        - ".*app: IRQ Received data 5 bytes"
+        - ".*app: IRQ Received data 1 bytes"
+        - ".*app: IRQ Tx sent 5 bytes"
+        - ".*app: IRQ Received data 5 bytes"

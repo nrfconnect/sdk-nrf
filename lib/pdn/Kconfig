@@ -1,0 +1,102 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig PDN
+	bool "Packet Domain Network library"
+	depends on NRF_MODEM_LIB && AT_MONITOR
+	# library uses heap
+	depends on HEAP_MEM_POOL_SIZE > 0
+
+if PDN
+
+config PDN_LEGACY_PCO
+	bool "Use legacy PCO mode"
+	help
+	  If selected, PCO will be used instead of ePCO during PDN connection establishment.
+
+config PDN_ESM_TIMEOUT
+	int "ESM timeout (ms)"
+	default 1000
+	help
+	  Timeout for waiting for an ESM notification when activating a PDN, in milliseconds.
+
+config PDN_INIT_PRIORITY
+	int "Initialization priority"
+	default APPLICATION_INIT_PRIORITY
+
+config PDN_DEFAULTS_OVERRIDE
+	bool "Override defaults for PDP context 0"
+	help
+	  The defaults are overridden automatically as soon as the modem has been initialized.
+
+if PDN_DEFAULTS_OVERRIDE
+
+config PDN_DEFAULT_APN
+	string "Access point name (APN)"
+
+choice
+	prompt "Address family"
+	default PDN_DEFAULT_FAM_IPV4V6
+
+config PDN_DEFAULT_FAM_IPV4
+	bool "IPv4"
+config PDN_DEFAULT_FAM_IPV6
+	bool "IPv6"
+config PDN_DEFAULT_FAM_IPV4V6
+	bool "IPv4v6"
+config PDN_DEFAULT_FAM_NONIP
+	bool "Non-IP"
+
+endchoice
+
+config PDN_DEFAULT_FAM
+	int
+	default 0 if PDN_DEFAULT_FAM_IPV4
+	default 1 if PDN_DEFAULT_FAM_IPV6
+	default 2 if PDN_DEFAULT_FAM_IPV4V6
+	default 3 if PDN_DEFAULT_FAM_NONIP
+
+choice
+	prompt "Authentication method"
+	default PDN_DEFAULT_AUTH_NONE
+
+config PDN_DEFAULT_AUTH_NONE
+	bool "None"
+config PDN_DEFAULT_AUTH_PAP
+	bool "PAP"
+config PDN_DEFAULT_AUTH_CHAP
+	bool "CHAP"
+endchoice
+
+config PDN_DEFAULT_AUTH
+	int
+	default 0 if PDN_DEFAULT_AUTH_NONE
+	default 1 if PDN_DEFAULT_AUTH_PAP
+	default 2 if PDN_DEFAULT_AUTH_CHAP
+
+config PDN_DEFAULT_USERNAME
+	string "Username"
+	depends on !PDN_DEFAULT_AUTH_NONE
+
+config PDN_DEFAULT_PASSWORD
+	string "Password"
+	depends on !PDN_DEFAULT_AUTH_NONE
+
+endif # PDN_DEFAULTS_OVERRIDE
+
+config PDN_ESM_STRERROR
+	bool "Compile ESM error table"
+	help
+	  Compile a table with a textual description of ESM error reasons.
+	  The description can be retrieved with pdn_esm_strerror().
+	  The table and function take about 2 KB of FLASH.
+
+module=PDN
+module-dep=LOG
+module-str=PDN library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # PDN

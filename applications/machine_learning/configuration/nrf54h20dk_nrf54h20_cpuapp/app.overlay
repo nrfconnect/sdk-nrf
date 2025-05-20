@@ -1,0 +1,115 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		zephyr,console = &uart136;
+	};
+
+	/* Redefine leds to fit CAF requirements. */
+	/delete-node/ leds;
+
+	leds012 {
+		compatible = "gpio-leds";
+		status = "okay";
+		label = "ML State LED";
+
+		led0: led_0 {
+			gpios = < &gpio9 0 GPIO_ACTIVE_HIGH >;
+			label = "Green LED 0";
+		};
+
+		led1: led_1 {
+			gpios = < &gpio9 1 GPIO_ACTIVE_HIGH >;
+			label = "Green LED 1";
+		};
+
+		led2: led_2 {
+			gpios = < &gpio9 2 GPIO_ACTIVE_HIGH >;
+			label = "Green LED 2";
+		};
+	};
+
+	leds3 {
+		compatible = "gpio-leds";
+		led3: led_3 {
+			gpios = < &gpio9 3 GPIO_ACTIVE_HIGH >;
+			label = "Green LED 3";
+		};
+	};
+};
+
+&cpuppr_vevif {
+	status = "okay";
+};
+
+ipc1: &cpuapp_cpuppr_ipc {
+	status = "okay";
+};
+
+/* Expand APP slot partition and remove DFU partition. */
+/delete-node/ &cpuapp_rx_partitions;
+/delete-node/ &cpuapp_rw_partitions;
+
+&cpuppr_ram3x_region {
+	cpuppr_code_data: memory@0 {
+		reg = <0x0 0xf200>;
+	};
+
+	ram3x_agg_area0: memory@f200{
+		reg = <0xf200 0x600>;
+	};
+};
+
+&mram1x {
+       cpuapp_rx_partitions: cpuapp-rx-partitions {
+	       compatible = "nordic,owned-partitions", "fixed-partitions";
+	       status = "okay";
+	       nordic,access = <NRF_OWNER_ID_APPLICATION NRF_PERM_RXS>;
+	       #address-cells = <1>;
+	       #size-cells = <1>;
+
+	       cpuapp_slot0_partition: partition@a6000 {
+		       reg = <0xa6000 DT_SIZE_K(512)>;
+	       };
+
+	       cpuppr_code_partition: partition@126000 {
+		       reg = <0x126000 DT_SIZE_K(64)>;
+	       };
+       };
+
+       cpuapp_rw_partitions: cpuapp-rw-partitions {
+	       compatible = "nordic,owned-partitions", "fixed-partitions";
+	       status = "okay";
+	       nordic,access = <NRF_OWNER_ID_APPLICATION NRF_PERM_RW>;
+	       #address-cells = < 0x1 >;
+	       #size-cells = < 0x1 >;
+
+	       storage_partition: partition@136000 {
+		       reg = < 0x136000 DT_SIZE_K(24) >;
+	       };
+       };
+};
+
+/* Remove DTS nodes associated with the cpuflpr target as they refer to the
+ * cpuflpr_code_partition label from the cpuapp_rx_partitions node. The label has
+ * been removed in this file due to the modification of the cpuapp_rx_partitions
+ * node. The cpuflpr_vpr and cpuapp_cpuflpr_ipc DTS nodes are removed to prevent
+ * build failures.
+ */
+/delete-node/ &cpuflpr_vpr;
+/delete-node/ &cpuapp_cpuflpr_ipc;
+
+/* Disable unused sensors and peripherals. */
+/delete-node/ &bme688;
+
+&i2c130 {
+	status = "disabled";
+};
+
+&bmi270 {
+	status = "disabled";
+};

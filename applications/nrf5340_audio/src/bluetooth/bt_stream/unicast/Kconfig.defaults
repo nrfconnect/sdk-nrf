@@ -1,0 +1,60 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_GATT_CLIENT
+	default y
+
+config BT_BONDABLE
+	default y
+
+config BT_PRIVACY
+	default y
+
+config BT_FILTER_ACCEPT_LIST
+	default y
+
+config BT_SMP
+	default y
+
+config BT_GAP_AUTO_UPDATE_CONN_PARAMS
+	default n
+
+config BT_AUTO_PHY_UPDATE
+	default n
+
+config BT_AUTO_DATA_LEN_UPDATE
+	default n
+
+config BT_L2CAP_TX_BUF_COUNT
+	default 12
+
+config BT_BUF_ACL_RX_SIZE
+	default 502 if (AUDIO_DFU > 0)
+	default 259
+
+config BT_BUF_EVT_RX_COUNT
+	default 14
+
+config BT_BUF_ACL_TX_COUNT
+	default 12
+
+config SETTINGS
+	default y
+
+config BT_SETTINGS
+	default y
+
+config FLASH
+	default y
+
+config FLASH_MAP
+	default y
+
+config NVS
+	default y
+
+config NVS_LOG_LEVEL
+	default 2

@@ -1,0 +1,53 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_GATT_POOL
+	bool "GATT Attribute pools"
+	help
+	  Enable pools for UUID, characteristics and CCCD descriptors.
+
+if BT_GATT_POOL
+
+config BT_GATT_UUID16_POOL_SIZE
+	int "Number of 16-bit UUID descriptors"
+	default 10
+	range 0 255
+	help
+	  Maximum number of 16-bit UUID descriptors that can be stored in the pool.
+
+config BT_GATT_UUID32_POOL_SIZE
+	int "Number of 32-bit UUID descriptors"
+	default 0
+	range 0 255
+	help
+	  Maximum number of 32-bit UUID descriptors that can be stored in the pool.
+
+config BT_GATT_UUID128_POOL_SIZE
+	int "Number of 128-bit UUID descriptors"
+	default 0
+	range 0 255
+	help
+	  Maximum number of 128-bit UUID descriptors that can be stored in the pool.
+
+config BT_GATT_CHRC_POOL_SIZE
+	int "Number of characteristic descriptors"
+	default 5
+	range 0 255
+	help
+	  Maximum number of characteristic descriptors that can be stored in the pool.
+
+config BT_GATT_POOL_STATS
+	bool
+	prompt "Enable functions for printing module statistics"
+	default n
+	help
+	  Enable functions for printing module statistics
+
+module = BT_GATT_POOL
+module-str = GATT_POOL
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_GATT_POOL

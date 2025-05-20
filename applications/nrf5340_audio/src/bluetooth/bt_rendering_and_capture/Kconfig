@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "BT renderer"
+
+rsource "volume/Kconfig"
+
+#----------------------------------------------------------------------------#
+menu "Log level"
+
+module = BT_RENDERING_AND_CAPTURE
+module-str = bt-rendering-and-capture
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu # Log level
+endmenu # BT renderer

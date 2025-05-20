@@ -1,0 +1,27 @@
+# Thingy:91 X board configuration
+#
+# Copyright (c) 2024 Nordic Semiconductor
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+rsource "Kconfig.defconfig.nrf9151"
+rsource "Kconfig.defconfig.nrf5340"
+
+if !IS_BOOTLOADER_IMG
+
+# For on-board regulators
+config REGULATOR
+	default y
+
+# nPM6001 must be initialized after it is powered from nPM1300 (REGULATOR_NPM1300_INIT_PRIORITY)
+config MFD_NPM6001_INIT_PRIORITY
+	default 87
+config REGULATOR_NPM6001_INIT_PRIORITY
+	default 88
+config WIFI_INIT_PRIORITY
+	default 89
+
+# GPIO hogs must be initialized after nPM1300 (GPIO_NPM1300_INIT_PRIORITY)
+config GPIO_HOGS_INIT_PRIORITY
+	default 86
+
+endif # !IS_BOOTLOADER_IMG

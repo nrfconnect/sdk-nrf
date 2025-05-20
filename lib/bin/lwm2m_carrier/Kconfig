@@ -1,0 +1,379 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig LWM2M_CARRIER
+	bool "LwM2M carrier library"
+	depends on PICOLIBC || NEWLIB_LIBC || EXTERNAL_LIBC
+	depends on NRF_MODEM_LIB
+	depends on PDN
+	# Only have hard-float variant
+	depends on FP_HARDABI
+	# Need a source of entropy
+	depends on ENTROPY_HAS_DRIVER
+	# Flash settings
+	depends on FLASH && FLASH_PAGE_LAYOUT
+	depends on MPU_ALLOW_FLASH_WRITE
+	depends on NVS
+	# Heap and stack requirements
+	depends on (HEAP_MEM_POOL_SIZE >= 4096)
+	depends on (SYSTEM_WORKQUEUE_STACK_SIZE >= 1536)
+	# NCS dependencies
+	# Networking - Zephyr
+	depends on NETWORKING
+	depends on NET_SOCKETS
+	depends on NET_SOCKETS_OFFLOAD
+	# Networking NCS
+	depends on DOWNLOADER
+	depends on NET_IPV4
+	depends on (DOWNLOADER_MAX_HOSTNAME_SIZE >= 64)
+	depends on (DOWNLOADER_MAX_FILENAME_SIZE >= 192)
+	# AT libraries
+	depends on AT_MONITOR
+	depends on (AT_MONITOR_HEAP_SIZE >= 320)
+	# reboot functionality
+	depends on REBOOT
+	# Firmware upgrade functionality
+	depends on DFU_TARGET
+	help
+	  A library for cellular connection management.
+
+if LWM2M_CARRIER
+
+menu "Enabled Carriers"
+
+config LWM2M_CARRIER_GENERIC
+	bool "Generic"
+	help
+	  Enable Carrier Library to connect using the LWM2M_CARRIER_CUSTOM_URI and
+	  LWM2M_CARRIER_SERVER_SEC_TAG. Generic mode is applied when outside the selected carriers.
+
+config LWM2M_CARRIER_VERIZON
+	bool "Verizon"
+	default y
+	help
+	  If the Verizon SIM Subscriber ID is detected (device is in the Verizon network),
+	  the LwM2M Carrier library will connect to a LwM2M Device Management server specified by
+	  Verizon.
+
+config LWM2M_CARRIER_LG_UPLUS
+	bool "LG U+"
+	depends on DFU_TARGET_MCUBOOT
+	depends on FLASH_MAP
+	default y
+	help
+	  If the LG U+ SIM Subscriber ID is detected (device is in the LG U+ network),
+	  the LwM2M Carrier library will connect to a LwM2M Device Management server specified by
+	  LG U+.
+if LWM2M_CARRIER_LG_UPLUS
+
+config LWM2M_CARRIER_LG_UPLUS_SERVICE_CODE
+	string "LG U+ Service Code"
+	help
+	  Service Code registered for this device with LG U+.
+
+choice LWM2M_CARRIER_LG_UPLUS_DEVICE_SERIAL_NUMBER
+	prompt "Device Serial Number used in LG U+ network"
+	default LWM2M_CARRIER_LG_UPLUS_IMEI
+
+config LWM2M_CARRIER_LG_UPLUS_IMEI
+	bool "Use IMEI as LG U+ Device Serial Number"
+	help
+	  Use the IMEI as the Device Serial Number registered for this device with LG U+.
+
+config LWM2M_CARRIER_LG_UPLUS_2DID
+	bool "Use 2DID as LG U+ Device Serial Number"
+	help
+	  Use the two-dimensional barcode of the SiP as the Device Serial Number
+	  registered for this device with LG U+.
+
+endchoice
+
+endif # LWM2M_CARRIER_LG_UPLUS
+
+config LWM2M_CARRIER_T_MOBILE
+	bool "T-Mobile"
+	default y
+	help
+	  If the T-Mobile SIM Subscriber ID is detected (device is in the T-Mobile network),
+	  the LwM2M Carrier library will connect to a LwM2M Device Management server specified by
+	  T-Mobile.
+
+config LWM2M_CARRIER_SOFTBANK
+	bool "SoftBank"
+	depends on DFU_TARGET_MCUBOOT
+	depends on FLASH_MAP
+	default y
+	help
+	  If the Softbank SIM Subscriber ID is detected (device is in the Softbank network),
+	  the LwM2M Carrier library will connect to a LwM2M Device Management server specified by
+	  Softbank.
+
+if LWM2M_CARRIER_SOFTBANK
+
+config LWM2M_CARRIER_SOFTBANK_DIVIDED_FOTA
+	bool "SoftBank divided application FOTA support"
+	depends on DFU_TARGET_MCUBOOT
+	help
+	  Enable support for SoftBank proprietary divided FOTA.
+
+endif
+
+config LWM2M_CARRIER_BELL_CA
+	bool "Bell Canada"
+	default y
+	help
+	  If the Bell Canada SIM Subscriber ID is detected (device is in the Bell Canada network),
+	  the LwM2M Carrier library will connect to a LwM2M Device Management server specified by
+	  Bell Canada.
+
+menu "Server settings"
+
+if LWM2M_CARRIER_GENERIC
+comment "Server settings configure a generic server"
+endif
+if !LWM2M_CARRIER_GENERIC && LWM2M_CARRIER_VERIZON && !LWM2M_CARRIER_LG_UPLUS && !LWM2M_CARRIER_T_MOBILE && !LWM2M_CARRIER_SOFTBANK && !LWM2M_CARRIER_BELL_CA
+comment "Server settings override the Verizon server"
+endif
+if !LWM2M_CARRIER_GENERIC && !LWM2M_CARRIER_VERIZON && LWM2M_CARRIER_LG_UPLUS && !LWM2M_CARRIER_T_MOBILE && !LWM2M_CARRIER_SOFTBANK && !LWM2M_CARRIER_BELL_CA
+comment "Server settings override the LG U+ server"
+endif
+if !LWM2M_CARRIER_GENERIC && !LWM2M_CARRIER_VERIZON && !LWM2M_CARRIER_LG_UPLUS && LWM2M_CARRIER_T_MOBILE && !LWM2M_CARRIER_SOFTBANK && !LWM2M_CARRIER_BELL_CA
+comment "Server settings override the T-Mobile server"
+endif
+if !LWM2M_CARRIER_GENERIC && !LWM2M_CARRIER_VERIZON && !LWM2M_CARRIER_LG_UPLUS && !LWM2M_CARRIER_T_MOBILE && LWM2M_CARRIER_SOFTBANK && !LWM2M_CARRIER_BELL_CA
+comment "Server settings override the Softbank server"
+endif
+if !LWM2M_CARRIER_GENERIC && !LWM2M_CARRIER_VERIZON && !LWM2M_CARRIER_LG_UPLUS && !LWM2M_CARRIER_T_MOBILE && !LWM2M_CARRIER_SOFTBANK && LWM2M_CARRIER_BELL_CA
+comment "Server settings override the Bell Canada server"
+endif
+
+config LWM2M_CARRIER_CUSTOM_URI
+	string "LwM2M carrier custom URI"
+	default ""
+	help
+	  URI of the custom server.
+
+if LWM2M_CARRIER_CUSTOM_URI != ""
+
+config LWM2M_CARRIER_IS_BOOTSTRAP_SERVER
+	bool "Bootstrap-Server"
+	default y
+	help
+	  Configure whether the custom server is a LwM2M Bootstrap-Server
+	  or a standard LwM2M Server.
+
+endif # LWM2M_CARRIER_CUSTOM_URI
+
+config LWM2M_CARRIER_SERVER_LIFETIME
+	int "Server lifetime"
+	default 0
+	help
+	  Default server lifetime in seconds (Not used for bootstrap server).
+
+menu "Server Binding"
+
+config LWM2M_CARRIER_SERVER_BINDING_UDP
+	bool "UDP"
+	help
+	  Set server binding to UDP (Not used for bootstrap server).
+
+config LWM2M_CARRIER_SERVER_BINDING_NONIP
+	bool "Non-IP"
+	help
+	  Set server binding to Non-IP (Not used for bootstrap server).
+
+endmenu
+
+config LWM2M_CARRIER_SERVER_SEC_TAG
+	int "LwM2M carrier custom server security tag"
+	default 0
+	help
+	  Custom server security tag. Stores the PSK of the LwM2M
+	  Bootstrap-Server.
+
+endmenu # Server settings
+endmenu # Enabled servers
+
+menu "Custom APN"
+
+config LWM2M_CARRIER_CUSTOM_APN
+	string "LwM2M carrier custom APN"
+	default ""
+	help
+	  Add an optional custom APN.
+
+choice LWM2M_CARRIER_PDN_TYPE_CHOICE
+	prompt "PDN Type"
+	default LWM2M_CARRIER_PDN_IPV4V6
+
+config LWM2M_CARRIER_PDN_IPV4V6
+	bool "IPv4v6"
+
+config LWM2M_CARRIER_PDN_IPV4
+	bool "IPv4"
+
+config LWM2M_CARRIER_PDN_IPV6
+	bool "IPv6"
+
+config LWM2M_CARRIER_PDN_NONIP
+	bool "Non-IP"
+
+endchoice
+
+endmenu # Custom APN
+
+config LWM2M_CARRIER_PDN_TYPE
+	int
+	default 0 if LWM2M_CARRIER_PDN_IPV4V6
+	default 1 if LWM2M_CARRIER_PDN_IPV4
+	default 2 if LWM2M_CARRIER_PDN_IPV6
+	default 3 if LWM2M_CARRIER_PDN_NONIP
+	help
+	  PDN type for custom APN.
+
+config LWM2M_CARRIER_QUEUE_MODE
+	bool "Enable queue mode"
+	default y
+	help
+	  Configure whether the LwM2M device is to inform the LwM2M server that
+	  it may be disconnected for an extended period of time.
+
+menu "Device info"
+
+config LWM2M_CARRIER_DEVICE_MANUFACTURER
+	string "Device manufacturer"
+	default ""
+	help
+	  Set the LwM2M device manufacturer name.
+	  If left blank, the default value will be read from the modem.
+	  Some carriers may override this value.
+
+config LWM2M_CARRIER_DEVICE_MODEL_NUMBER
+	string "Device model number"
+	default ""
+	help
+	  Set the LwM2M device model number (manufacturer-specified string).
+	  If left blank, the default value will be read from the modem.
+	  Some carriers may override this value.
+
+config LWM2M_CARRIER_DEVICE_TYPE
+	string "Device type"
+	default ""
+	help
+	  Set the LwM2M device type (manufacturer-specified string).
+	  Some carriers may override this value.
+
+config LWM2M_CARRIER_DEVICE_HARDWARE_VERSION
+	string "Device hardware version"
+	default ""
+	help
+	  Set the LwM2M device hardware version.
+	  If left blank, the default value will be read from the modem.
+
+config LWM2M_CARRIER_DEVICE_SOFTWARE_VERSION
+	string "Device software version"
+	default ""
+	help
+	  Set the LwM2M device software version.
+	  Some carriers may override this value.
+
+endmenu # Device info
+
+config LWM2M_CARRIER_SESSION_IDLE_TIMEOUT
+	int "UDP session idle timeout"
+	default 60
+	help
+	  Number of seconds, for which a UDP session used by this library can be idle
+	  before it is closed. Setting this to 0 will use the default value (60 seconds).
+	  Setting this to -1 disables the session idle timeout.
+
+config LWM2M_CARRIER_COAP_CON_INTERVAL
+	int "CoAP Confirmable interval"
+	range -1 86400
+	default 86400
+	help
+	  This interval defines how often a CoAP Non-Confirmable notification
+	  is sent as Confirmable, according to RFC 7641 section 4.5.
+	  Setting this to 0 will use the default value (86400s).
+	  Setting this to -1 will always use Confirmable notifications.
+
+config LWM2M_CARRIER_FIRMWARE_DOWNLOAD_TIMEOUT
+	int "Firmware download timeout"
+	range 0 65535
+	default 0
+	help
+	  Number of minutes allowed for a single firmware image download.
+	  If the download is not completed by the time the specified number of minutes elapses,
+	  the download shall be aborted. This configuration is currently only supported for
+	  PUSH delivery method of firmware images.
+	  Setting this to 0 will disable the use of this timer.
+
+config LWM2M_CARRIER_FIRMWARE_DOWNLOAD_BUF_SIZE
+	int "Firmware download buffer size"
+	range 128 65535
+	default 2048
+	help
+	  Size of the buffer used for the downloader library to download a new firmware image.
+	  Must be large enough to hold the message used to request data from the server, e.g. a
+	  HTTP header.
+
+config LWM2M_CARRIER_AUTO_REGISTER
+	bool "Auto registration on LTE Attach"
+	default y
+	help
+	  Configure whether the LwM2M device is to automatically register to the LwM2M Server
+	  upon connecting to the cellular network or after finalizing a bootstrap. Setting this
+	  to false will require the operations in the registration interface to be triggered
+	  manually. Consequently, registrations must be triggered manually after network
+	  coverage is lost.
+
+
+config LWM2M_CARRIER_WORKQ_STACK_SIZE
+	int "LwM2M carrier work queue stack size"
+	default 2048 if NEWLIB_LIBC
+	default 1536
+	help
+	  Stack size for the LwM2M carrier client work queue threads.
+
+config LWM2M_CARRIER_THREAD_STACK_SIZE
+	int "LwM2M carrier thread stack size"
+	default 2048 if NEWLIB_LIBC
+	default 1536
+	help
+	  Stack size for the LwM2M carrier thread.
+
+config LWM2M_CARRIER_STORAGE_AREA_SIZE
+	hex "Size of the lwm2m_carrier partition"
+	default 0x3000
+	help
+	  Size of the dynamic flash partition used for LwM2M carrier library storage.
+	  Should be a multiple of CONFIG_LWM2M_CARRIER_STORAGE_SECTOR_SIZE.
+
+DT_ZEPHYR_FLASH := zephyr,flash
+config LWM2M_CARRIER_STORAGE_SECTOR_SIZE
+	hex
+	default $(dt_node_int_prop_hex,$(dt_chosen_path,$(DT_ZEPHYR_FLASH)),erase-block-size)
+
+config LWM2M_CARRIER_SETTINGS
+	bool "LwM2M carrier settings"
+	depends on SETTINGS
+	help
+	  Include LwM2M carrier settings
+
+config LWM2M_CARRIER_SHELL
+	bool "LwM2M carrier shell"
+	depends on SHELL
+	depends on LWM2M_CARRIER_SETTINGS
+	depends on MODEM_KEY_MGMT
+	help
+	  Include LwM2M carrier shell
+
+module=LWM2M_CARRIER
+module-dep=LOG
+module-str=LwM2M carrier library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # LWM2M_CARRIER

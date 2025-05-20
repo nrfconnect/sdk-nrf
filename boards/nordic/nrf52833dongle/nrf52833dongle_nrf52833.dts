@@ -1,0 +1,153 @@
+/*
+ * Copyright (c) 2020 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/dts-v1/;
+#include <nordic/nrf52833_qiaa.dtsi>
+
+/ {
+	model = "Nordic nRF52833 Dongle NRF52833";
+	compatible = "nordic,nrf52833-dongle-nrf52833";
+
+	chosen {
+		zephyr,console = &uart0;
+		zephyr,sram = &sram0;
+		zephyr,flash = &flash0;
+		zephyr,code-partition = &slot0_partition;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		led0_green: led_0 {
+			gpios = <&gpio0 15 GPIO_ACTIVE_LOW>;
+			label = "Green LED 0";
+		};
+		led1_red: led_1 {
+			gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
+			label = "Red LED 1";
+		};
+		led1_green: led_2 {
+			gpios = <&gpio0 28 GPIO_ACTIVE_LOW>;
+			label = "Green LED 1";
+		};
+		led1_blue: led_3 {
+			gpios = <&gpio0 29 GPIO_ACTIVE_LOW>;
+			label = "Blue LED 1";
+		};
+	};
+
+	buttons {
+		compatible = "gpio-keys";
+		button0: button_0 {
+			gpios = <&gpio0 17 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Push button switch 0";
+		};
+	};
+
+	/* These aliases are provided for compatibility with samples */
+	aliases {
+		sw0 = &button0;
+		led0 = &led0_green;
+		led1 = &led1_red;
+		led2 = &led1_green;
+		led3 = &led1_blue;
+		led0-green = &led0_green;
+		led1-red   = &led1_red;
+		led1-green = &led1_green;
+		led1-blue  = &led1_blue;
+		mcuboot-button0 = &button0;
+		mcuboot-led0 = &led1_blue;
+		watchdog0 = &wdt0;
+	};
+};
+
+&reg1 {
+	regulator-initial-mode = <NRF5X_REG_MODE_DCDC>;
+};
+
+&uicr {
+	nfct-pins-as-gpios;
+	gpio-as-nreset;
+};
+
+&gpiote {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&uart0 {
+	compatible = "nordic,nrf-uart";
+	status = "okay";
+	current-speed = <115200>;
+	pinctrl-0 = <&uart0_default>;
+	pinctrl-1 = <&uart0_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pinctrl {
+	uart0_default: uart0_default {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 0, 31)>,
+				<NRF_PSEL(UART_RTS, 0, 2)>,
+				<NRF_PSEL(UART_RX, 0, 30)>,
+				<NRF_PSEL(UART_CTS, 0, 3)>;
+		};
+	};
+
+	uart0_sleep: uart0_sleep {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 0, 31)>,
+				<NRF_PSEL(UART_RTS, 0, 2)>,
+				<NRF_PSEL(UART_RX, 0, 30)>,
+				<NRF_PSEL(UART_CTS, 0, 3)>;
+			low-power-enable;
+		};
+	};
+};
+
+&flash0 {
+	/*
+	 * For more information, see:
+	 * http://docs.zephyrproject.org/latest/guides/dts/index.html#flash-partitions
+	 */
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x000000000 0xC000>;
+		};
+		slot0_partition: partition@c000 {
+			label = "image-0";
+			reg = <0x0000C000 0x32000>;
+		};
+		slot1_partition: partition@3e000 {
+			label = "image-1";
+			reg = <0x0003E000 0x32000>;
+		};
+		scratch_partition: partition@70000 {
+			label = "image-scratch";
+			reg = <0x00070000 0xA000>;
+		};
+		storage_partition: partition@7a000 {
+			label = "storage";
+			reg = <0x0007A000 0x00006000>;
+		};
+	};
+};
+
+zephyr_udc0: &usbd {
+	compatible = "nordic,nrf-usbd";
+	status = "okay";
+};

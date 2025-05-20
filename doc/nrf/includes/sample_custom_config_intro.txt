@@ -1,0 +1,5 @@
+The sample uses a :file:`prj.conf` configuration file located in the sample root directory for the default configuration.
+It also provides additional files for different custom configurations.
+When you build the sample, you can select one of these configurations using the :makevar:`FILE_SUFFIX` variable.
+
+See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information.

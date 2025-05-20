@@ -1,0 +1,79 @@
+common:
+  sysbuild: true
+  tags:
+    - ci_build
+    - ci_tests_benchmarks_multicore
+  required_snippets:
+    - nordic-log-stm
+  platform_allow:
+    - nrf54h20dk/nrf54h20/cpuapp
+  integration_platforms:
+    - nrf54h20dk/nrf54h20/cpuapp
+
+tests:
+  benchmarks.multicore.idle_stm.nrf54h20dk_cpuapp_cpurad_cpuppr.no_sleep:
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: false
+      regex:
+        - "Main sleeps for 1000 ms"
+        - "Multicore idle_stm test on"
+        - "app/idle_stm: Run 0"
+        - "rad/idle_stm: Run 0"
+        - "ppr/idle_stm: Run 0"
+        - "app/idle_stm: Run 1"
+        - "rad/idle_stm: Run 1"
+        - "ppr/idle_stm: Run 1"
+        - "app/idle_stm: Run 2"
+        - "rad/idle_stm: Run 2"
+        - "ppr/idle_stm: Run 2"
+
+  benchmarks.multicore.idle_stm.nrf54h20dk_cpuapp_cpurad_cpuppr.idle:
+    extra_args:
+      - idle_stm_CONF_FILE=prj_s2ram.conf
+      - remote_rad_CONF_FILE=prj_s2ram.conf
+      - remote_ppr_CONF_FILE=prj_s2ram.conf
+      - idle_stm_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - remote_rad_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - remote_ppr_CONFIG_TEST_SLEEP_DURATION_MS=500
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: false
+      regex:
+        - "Main sleeps for 500 ms"
+        - "Multicore idle_stm test on"
+        - "app/idle_stm: Run 0"
+        - "rad/idle_stm: Run 0"
+        - "ppr/idle_stm: Run 0"
+        - "app/idle_stm: Run 1"
+        - "rad/idle_stm: Run 1"
+        - "ppr/idle_stm: Run 1"
+        - "app/idle_stm: Run 2"
+        - "rad/idle_stm: Run 2"
+        - "ppr/idle_stm: Run 2"
+        - "ppr/power_off: Wait Sleep State"
+
+  benchmarks.multicore.idle_stm.nrf54h20dk_cpuapp_cpurad_cpuppr.s2ram:
+    extra_args:
+      - idle_stm_CONF_FILE=prj_s2ram.conf
+      - remote_rad_CONF_FILE=prj_s2ram.conf
+      - remote_ppr_CONF_FILE=prj_s2ram.conf
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: false
+      regex:
+        - "Main sleeps for 1000 ms"
+        - "Multicore idle_stm test on"
+        - "app/idle_stm: Run 0"
+        - "rad/idle_stm: Run 0"
+        - "ppr/idle_stm: Run 0"
+        - "app/idle_stm: Run 1"
+        - "rad/idle_stm: Run 1"
+        - "ppr/idle_stm: Run 1"
+        - "app/idle_stm: Run 2"
+        - "rad/idle_stm: Run 2"
+        - "ppr/idle_stm: Run 2"
+        - "ppr/power_off: Hibernate Sleep State"

@@ -1,0 +1,136 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+DT_COMPAT_CX_NRF70 := nordic,nrf7002-coex
+DT_COMPAT_CX_SOFTWARE := nordic,software-coex
+
+config MPSL_CX_ANY_SUPPORT
+	bool
+	default $(dt_nodelabel_enabled,nrf_radio_coex)
+	help
+	  Indicates that the device tree contains a nrf_radio_coex node.
+
+config MPSL_CX_NRF70_SUPPORT
+	bool
+	default $(dt_nodelabel_has_compat,nrf_radio_coex,$(DT_COMPAT_CX_NRF70))
+	help
+	  Indicates that the device tree contains a nrf_radio_coex node compatible with "nordic,nrf700x-coex".
+
+config MPSL_CX_SOFTWARE_SUPPORT
+	bool
+	default $(dt_nodelabel_has_compat,nrf_radio_coex,$(DT_COMPAT_CX_SOFTWARE))
+	help
+	  Indicates that the device tree contains a nrf_radio_coex node compatible with "nordic,software-coex".
+
+config MPSL_CX
+	bool "Radio Coexistence interface support"
+	depends on MPSL_CX_ANY_SUPPORT
+	depends on !(BT_CTLR_PHY_CODED && MPSL_FEM && SOC_SERIES_NRF53X)
+	help
+	  Controls if Radio Coexistence interface is to be configured and enabled
+	  when MPSL is initialized.
+
+	  Radio Coexistence interface connects nRF5 radio protocols with external
+	  Packet Traffic Arbiter (PTA) which denies or grants access to RF.
+
+	  This is not supported with Coded Phy and FEM on the nRF5340 SoC.
+
+config MPSL_CX_PIN_FORWARDER
+	bool
+	depends on SOC_NRF5340_CPUAPP
+	depends on MPSL_CX
+	default y
+
+if MPSL_CX
+
+config MPSL_CX_INIT_PRIORITY
+	int "Initialization priority of the Radio Coexistence interface"
+	default KERNEL_INIT_PRIORITY_DEFAULT
+	help
+	  Set the initialization priority number. Do not mess with it unless
+	  you know what you are doing.
+
+choice MPSL_CX_CHOICE
+	prompt "Radio Coexistence interface implementation"
+
+config MPSL_CX_NRF700X
+	depends on MPSL_CX_NRF70_SUPPORT
+	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
+	select GPIO if !MPSL_CX_PIN_FORWARDER
+	imply NRF_RPC if SOC_SERIES_NRF53X
+	imply NRF_RPC_CBOR if SOC_SERIES_NRF53X
+	bool "nRF700x Radio Coexistence"
+	help
+	  Radio Coexistence supporting nRF700x interface.
+
+config MPSL_CX_3WIRE
+	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
+	select GPIO if !MPSL_CX_PIN_FORWARDER
+	bool "Three-wire Radio Coexistence [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	help
+	  Radio Coexistence interface implementation according to Thread Radio
+	  Coexistence Practical recommendations for using a three-wire PTA
+	  implementation for co-located 2.4 GHz radios.
+
+config MPSL_CX_BT_1WIRE
+	select DEPRECATED
+	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
+	select GPIO if !MPSL_CX_PIN_FORWARDER
+	bool "Bluetooth Radio One-wire Coexistence [DEPRECATED]"
+	help
+	  Radio Coexistence interface implementation using a simple one-wire PTA
+	  implementation for co-located radios. This option has been replaced
+	  with MPSL_CX_1WIRE and will be removed in a future release.
+
+config MPSL_CX_1WIRE
+	select NRFX_GPIOTE if !MPSL_CX_PIN_FORWARDER
+	select GPIO if !MPSL_CX_PIN_FORWARDER
+	bool "One-wire Radio Coexistence"
+	help
+	  Radio Coexistence interface implementation using a simple one-wire PTA
+	  implementation for co-located radios.
+
+config MPSL_CX_SOFTWARE
+	bool "Software Coexistence"
+	depends on MPSL_CX_SOFTWARE_SUPPORT
+	# If MPSL is not enabled in the current build, this option implies
+	# the Software Coexistence RPC client role.
+	select MPSL_CX_SOFTWARE_RPC if !MPSL
+	help
+	  Radio Coexistence interface implementation using software APIs to
+	  configure currently granted radio operations.
+
+endchoice # MPSL_CX_CHOICE
+
+if MPSL_CX_SOFTWARE
+
+config MPSL_CX_SOFTWARE_RPC_CLIENT
+	bool
+
+config MPSL_CX_SOFTWARE_RPC_SERVER
+	bool
+
+config MPSL_CX_SOFTWARE_RPC
+	bool "Software Coexistence RPC"
+	default y
+	depends on MPSL_CX_SOFTWARE
+	select MPSL_CX_SOFTWARE_RPC_SERVER if MPSL
+	select MPSL_CX_SOFTWARE_RPC_CLIENT if !MPSL
+	select NRF_RPC
+	select NRF_RPC_CBOR
+	help
+	  Remote procedure call (RPC) layer for Software Coexistence implementation.
+	  Enables the Software Coexistence RPC server role if MPSL is enabled, or
+	  the Software Coexistence RPC client role otherwise.
+
+endif # MPSL_CX_SOFTWARE
+
+module=MPSL_CX
+module-str=MPSL_CX
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif	# MPSL_CX

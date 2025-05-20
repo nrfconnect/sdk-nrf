@@ -1,0 +1,10 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Application does not use cpuflpr core. Assign whole RRAM to cpuapp. */
+&cpuapp_rram {
+	reg = < 0x0 DT_SIZE_K(1524) >;
+};

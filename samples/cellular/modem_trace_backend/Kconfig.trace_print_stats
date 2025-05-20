@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if NRF_MODEM_LIB_TRACE
+
+# Adds NRF_MODEM_LIB_TRACE_BACKEND_CUSTOM to the trace backend choice.
+choice NRF_MODEM_LIB_TRACE_BACKEND
+
+config NRF_MODEM_LIB_TRACE_BACKEND_CUSTOM
+	bool "Count modem traces and print to terminal"
+	depends on NRF_CPU_LOAD
+	depends on FPU
+	depends on NEWLIB_LIBC_FLOAT_PRINTF || PICOLIBC_IO_FLOAT
+	help
+	  Print modem trace data statistics
+	  and cpu utilization.
+
+endchoice # NRF_MODEM_LIB_TRACE_BACKEND
+
+if NRF_MODEM_LIB_TRACE_BACKEND_CUSTOM
+
+config CUSTOM_BACKEND_PRINT_PERIOD_MSEC
+	int "Statistics print interval (millisec)"
+	default 500
+
+endif # NRF_MODEM_LIB_TRACE_BACKEND_CUSTOM
+
+endif # NRF_MODEM_LIB_TRACE

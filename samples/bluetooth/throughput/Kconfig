@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Nordic BLE throughput sample"
+
+config BT_THROUGHPUT_DURATION
+	int "Throughput test duration in milliseconds"
+	default 20000
+
+endmenu

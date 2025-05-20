@@ -1,0 +1,10 @@
+# Document tags for Zoomin.
+
+# Tags for all topics:
+mapping_global:
+  - zephyr-apis
+  - zephyr-apis-__VERSION__
+  - cluster-zephyr-apis-__VERSION__
+
+# Tags for individual topics:
+mapping_topics: []

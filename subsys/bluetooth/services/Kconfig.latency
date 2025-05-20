@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_LATENCY
+	bool "Latency service"
+	select BT_NRF_SERVICES
+	help
+	 Enable Nordic GATT Latency BLE service.
+
+if BT_LATENCY
+
+module = BT_LATENCY
+module-str = LATENCY
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_LATENCY

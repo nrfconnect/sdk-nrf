@@ -1,0 +1,26 @@
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+menu "Alerts"
+
+menuconfig NRF_CLOUD_ALERT
+	bool "nRF Cloud Alert System"
+
+if NRF_CLOUD_ALERT
+
+config NRF_CLOUD_ALERT_SEQ_ALWAYS
+	bool "Always include the sequence number in the alert message"
+	default y
+	help
+	  If set, send the seq field regardless of whether the ts field
+	  is set.  If not set, only send the seq field when ts is not
+	  available.
+
+endif # NRF_CLOUD_ALERT
+
+module = NRF_CLOUD_ALERT
+module-str = nRF Cloud Alert
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu

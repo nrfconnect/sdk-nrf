@@ -1,0 +1,16 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config APP_BATTERY_POLL_INTERVAL
+	int "Battery measurement polling interval [s]"
+	depends on APP_PLATFORM_THINGY
+	default 60
+
+config APP_BATTERY_LEVEL_DECREMENT
+	int "Battery level decrement [%] used to simulate battery level on the DK"
+	depends on APP_PLATFORM_DK
+	range 0 100
+	default 10

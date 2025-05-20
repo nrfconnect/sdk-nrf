@@ -1,0 +1,50 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&cpuapp_rx_partitions {
+	/delete-node/ partition@94000;
+	cpuapp_recovery_partition: partition@9d000 {
+		reg = <0x9d000 DT_SIZE_K(72)>;
+	};
+
+	cpuapp_recovery_rfu_partition: partition@af000 {
+		reg = <0xaf000 DT_SIZE_K(56)>;
+	};
+
+	cpuapp_slot0_partition: partition@bd000 {
+		reg = <0xbd000 DT_SIZE_K(268)>;
+	};
+
+	/* Delete PPR code partition */
+	/delete-node/ partition@e4000;
+
+	/* Delete FLPR code partition */
+	/delete-node/ partition@f4000;
+};
+
+&cpuflpr_vpr {
+	/delete-property/ source-memory;
+};
+
+&cpuppr_vpr {
+	/delete-property/ source-memory;
+};
+
+&cpurad_rx_partitions {
+	compatible = "nordic,owned-partitions", "fixed-partitions";
+	nordic,access = <NRF_OWNER_ID_RADIOCORE NRF_PERM_RXS>;
+	#address-cells = < 0x1 >;
+	#size-cells = < 0x1 >;
+
+	/delete-node/ partition@54000;
+	cpurad_recovery_partition: partition@54000 {
+		reg = < 0x54000 DT_SIZE_K(92) >;
+	};
+
+	cpurad_slot0_partition: partition@6b000 {
+		reg = < 0x6b000 DT_SIZE_K(200) >;
+	};
+};

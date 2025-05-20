@@ -1,0 +1,39 @@
+&dppic130 {
+	status = "okay";
+
+	// Use channel 4 to connect the PPIB to the LED/GPIO
+	owned-channels = <4>;
+	sink-channels = <4>;
+};
+
+&dppic132 {
+	status = "okay";
+
+	// Use channel 4 to connect the GRTC to the PPIB.
+	source-channels = < 4 >;
+	owned-channels = <4>;
+};
+
+&grtc {
+	status = "okay";
+
+	// Change channel 6 to be owned by the application (not child)
+	child-owned-channels = < 0x5>;
+	// Change channel 6 to be secure
+	nonsecure-channels = < 0x5>;
+	owned-channels = < 0x4 0x5 0x6>;
+};
+
+// Enable PSA RNG
+/ {
+	chosen {
+		zephyr,entropy = &psa_rng;
+	};
+
+	psa_rng: psa-rng {
+		compatible = "zephyr,psa-crypto-rng";
+		status = "okay";
+	};
+
+	/delete-node/ prng;
+};

@@ -1,0 +1,9 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SUPPORT_SUIT_STORAGE_LAYOUT_TEST
+	default y
+	depends on SUIT_STORAGE

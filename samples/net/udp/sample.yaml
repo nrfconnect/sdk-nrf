@@ -1,0 +1,61 @@
+sample:
+  name: UDP sample
+tests:
+  sample.net.udp:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
+      - thingy91/nrf9160/ns
+      - nrf7002dk/nrf5340/cpuapp/ns
+    platform_allow:
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
+      - thingy91/nrf9160/ns
+      - nrf7002dk/nrf5340/cpuapp/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+  sample.net.udp.emulation:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - native_sim
+    platform_allow:
+      - native_sim
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+  sample.net.udp.nrf54l15.wifi:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+    extra_args:
+      - udp_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
+      - udp_SNIPPET=nrf70-wifi
+  sample.net.udp.nrf54l15_nrf7002eb2.wifi:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+    extra_args:
+      - udp_SHIELD="nrf7002eb2"
+      - udp_SNIPPET=nrf70-wifi

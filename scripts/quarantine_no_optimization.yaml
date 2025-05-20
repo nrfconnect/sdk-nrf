@@ -1,0 +1,12 @@
+# The configurations resulting as a product of scenarios and platforms
+# will be skipped if quarantine is used. More details here:
+# https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
+# To have an empty list use:
+# - scenarios:
+#     - None
+
+- scenarios:
+    - nrf5340_audio.sd_card_test
+  platforms:
+    - native_sim/native
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-30885"

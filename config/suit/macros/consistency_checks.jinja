@@ -1,0 +1,45 @@
+{%- macro suit_verify_signature_check(manifest_role, target_image, sysbuild) -%}
+
+{%- if manifest_role == "APP_LOCAL_1" or manifest_role == "APP_LOCAL_2" or manifest_role == "APP_LOCAL_3" or
+   manifest_role == "RAD_LOCAL_1" or manifest_role == "RAD_LOCAL_2" or manifest_role == "RAD_RECOVERY" %}
+  {%- set target_name = ( target_image['filename'].split('.')[0] ) + " image" %}
+  {%- set signed_config = "CONFIG_SUIT_ENVELOPE_TARGET_SIGN" %}
+{%- elif manifest_role == "ROOT" or manifest_role == "APP_RECOVERY" %}
+  {%- set target_name = ( manifest_role ) + " envelope" %}
+  {%- set signed_config = "SB_CONFIG_SUIT_ENVELOPE_" + ( manifest_role ) + "_SIGN" %}
+{%- else %}
+  {{ raise_err( "Unknown manifest role: " + ( manifest_role ) ) }}
+{%- endif %}
+
+{%- set signed = ( signed_config in target_image['config'] and target_image['config'][signed_config] != '' ) %}
+{%- set mpi_generate = ( 'SB_CONFIG_SUIT_MPI_GENERATE' in sysbuild['config'] and sysbuild['config']['SB_CONFIG_SUIT_MPI_GENERATE'] != '' ) %}
+{%- set sig_check_boot_config = "SB_CONFIG_SUIT_MPI_" + ( manifest_role ) + "_SIGNATURE_CHECK_ENABLED_ON_UPDATE_AND_BOOT" %}
+{%- set sig_check_update_config = "SB_CONFIG_SUIT_MPI_" + ( manifest_role ) + "_SIGNATURE_CHECK_ENABLED_ON_UPDATE" %}
+{%- set sig_check_boot = ( sig_check_boot_config in sysbuild['config'] and sysbuild['config'][sig_check_boot_config] != '' ) %}
+{%- set sig_check_update = ( sig_check_update_config in sysbuild['config'] and sysbuild['config'][sig_check_update_config] != '' ) %}
+
+{%- if mpi_generate %}
+  {%- if signed %}
+    {%- if not ( sig_check_boot or sig_check_update)  %}
+      {{ raise_err( ( signed_config ) + " is set for " + ( target_name ) +
+         " but neither " + (sig_check_boot_config) + " nor " + (sig_check_update_config) + " is set in MPI configuration." +
+         " The signature will not be verified on the device!") }}
+    {%- endif %}
+  {%- else %}
+    {% set sig_check_config = '' %}
+    {%- if sig_check_boot %}
+        {% set sig_check_config = sig_check_boot_config %}
+        {% set sig_check_when = 'boot' %}
+    {%- elif sig_check_update %}
+        {% set sig_check_config = sig_check_update_config %}
+        {% set sig_check_when = 'update' %}
+    {%- endif %}
+    {%- if sig_check_boot or sig_check_update %}
+      {{ raise_err( ( sig_check_config ) + " is set in MPI configuration" +
+         " but " +  ( signed_config ) + " is not set for " + ( target_name ) +
+         ". The device will fail to " + ( sig_check_when ) + "!" ) }}
+    {%- endif %}
+  {%- endif %}
+{%- endif %}
+
+{%- endmacro -%}

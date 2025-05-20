@@ -1,0 +1,130 @@
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+module = NRF_CLOUD_MQTT
+module-prompt = "nRF Cloud MQTT library"
+orsource "../Kconfig.cloud_$(CLOUD_SERVICE_SELECTOR)"
+
+menuconfig $(module)
+	bool
+	prompt "nRF Cloud MQTT Library" if !CLOUD_SERVICE_MUTUAL_EXCLUSIVE
+	select MQTT_LIB
+	select MQTT_LIB_TLS
+	select SETTINGS if !MQTT_CLEAN_SESSION
+	select CJSON_LIB
+	depends on NET_IPV4 || NET_IPV6
+
+if NRF_CLOUD_MQTT
+
+config NRF_CLOUD_STATIC_IPV4
+	bool "Enable use of static IPv4"
+	depends on NET_IPV4
+	select DEPRECATED
+	default n
+	help
+	  This config is now deprecated. Support for use of a static nRF Cloud IP address will
+	  soon be removed. Leave this config disabled to use automatic DNS lookup.
+
+config NRF_CLOUD_STATIC_IPV4_ADDR
+	string "Static IPv4 address"
+	depends on NRF_CLOUD_STATIC_IPV4
+	default "192.168.2.2"
+	help
+	  This config is now deprecated. Support for use of a static nRF Cloud IP address will
+	  soon be removed.
+
+config NRF_CLOUD_PORT
+	int "nRF Cloud server port"
+	default 8883
+
+config NRF_CLOUD_IPV6
+	bool "Force nRF Cloud library to use IPv6"
+	default n
+	select DEPRECATED
+	help
+	  This config is now deprecated. Enable or disable NET_IPV4 and NET_IPV6 instead.
+
+choice NRF_CLOUD_SEND_SOCKET
+	prompt "Socket behavior when sending"
+	default NRF_CLOUD_SEND_BLOCKING
+
+config NRF_CLOUD_SEND_BLOCKING
+	bool "Send data using blocking socket"
+	help
+	  Send data using a blocking socket. Selecting this option will make call to
+	  send data block until the data is processed by the network stack.
+
+config NRF_CLOUD_SEND_NONBLOCKING
+	bool "Send data using non-blocking socket"
+	help
+	  When using a blocking socket, the application can in certain situations
+	  fail and hang indefinitely if a watchdog timer is not used.
+	  Using a non-blocking socket for data transfers can help avoid getting
+	  into such a situation, at the cost of failing in situations where
+	  a short period of blocking would have sent the data.
+
+config NRF_CLOUD_SEND_TIMEOUT
+	bool "Send data with socket timeout"
+	help
+	  Configures a timeout on the nRF Cloud socket to ensure that a call to
+	  te send function will not block indefinitely.
+	  To configure the length of the timeout, use NRF_CLOUD_SEND_TIMEOUT_SEC.
+
+endchoice
+
+config NRF_CLOUD_SEND_TIMEOUT_SEC
+	int "Send timeout"
+	default 60
+	help
+	  Timeout in seconds to use when the nRF Cloud socket is configured to
+	  send with a timeout by enabling NRF_CLOUD_SEND_TIMEOUT.
+
+config NRF_CLOUD_MQTT_MESSAGE_BUFFER_LEN
+	int "Size of the buffer for MQTT library"
+	default 256
+	help
+	  Specifies maximum message size can be transmitted/received through
+	  MQTT (exluding MQTT PUBLISH payload).
+
+config NRF_CLOUD_MQTT_PAYLOAD_BUFFER_LEN
+	int "Size of the buffer for MQTT PUBLISH payload"
+	default 2144 if NRF_CLOUD_AGNSS
+	default 2048
+
+config NRF_CLOUD_CONNECTION_POLL_THREAD
+	bool "Poll cloud connection in a separate thread"
+	default y
+
+if NRF_CLOUD_CONNECTION_POLL_THREAD
+
+config NRF_CLOUD_CONNECTION_POLL_THREAD_STACK_SIZE
+	int "Stack size for nRF Cloud connection poll thread."
+	default 4096 if BOARD_QEMU_X86
+	default 3072
+
+endif
+
+config NRF_CLOUD_MQTT_KEEPALIVE
+	int "Keep alive time for MQTT (in seconds)"
+	default 1200
+	help
+	  Keep alive time for MQTT connection to nRF Cloud, in seconds. This option overwrites
+	  the CONFIG_MQTT_KEEPALIVE value. Default is set to the maximum specified MQTT keepalive
+	  for nRF Cloud.
+
+config NRF_CLOUD_MQTT_UA_WAIT_KEEPALIVE
+	int "Keepalive time while waiting for user to associate the device with the cloud"
+	default 30
+	help
+	  Keep alive time for MQTT connection to nRF Cloud, in seconds.
+	  Default is set to a short time so device receives notification of association
+	  more rapidly for better user experience.
+
+config NRF_CLOUD_MQTT_SHADOW_TRANSFORMS
+	bool "Enable requesting shadow data using a JSONata expression"
+	help
+	  This feature allows the device to request specific parts of its shadow.
+
+endif # NRF_CLOUD_MQTT

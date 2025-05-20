@@ -1,0 +1,55 @@
+family:
+  - name: nordic_nrf
+    series:
+      - name: nrf71
+        socs:
+          - name: nrf7120
+            cpuclusters:
+              - name: cpuapp
+              - name: cpuflpr
+      - name: nrf54l
+        socs:
+          - name: nrf54lm20a
+            cpuclusters:
+              - name: cpuapp
+              - name: cpuflpr
+          - name: nrf54lv10a
+            cpuclusters:
+              - name: cpuapp
+              - name: cpuflpr
+runners:
+  run_once:
+    '--recover':
+      - runners:
+          - nrfutil
+        run: first
+        groups:
+          - qualifiers:
+              - nrf54lv10a/cpuapp
+              - nrf54lv10a/cpuflpr
+          - qualifiers:
+              - nrf54lm20a/cpuapp
+              - nrf54lm20a/cpuflpr
+    '--erase':
+      - runners:
+          - jlink
+          - nrfutil
+        run: first
+        groups:
+          - qualifiers:
+              - nrf54lv10a/cpuapp
+              - nrf54lv10a/cpuflpr
+          - qualifiers:
+              - nrf54lm20a/cpuapp
+              - nrf54lm20a/cpuflpr
+    '--reset':
+      - runners:
+          - nrfutil
+        run: last
+        groups:
+          - qualifiers:
+              - nrf54lv10a/cpuapp
+              - nrf54lv10a/cpuflpr
+          - qualifiers:
+              - nrf54lm20a/cpuapp
+              - nrf54lm20a/cpuflpr

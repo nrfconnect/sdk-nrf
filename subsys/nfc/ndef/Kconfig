@@ -1,0 +1,138 @@
+#
+# Copyright (c) 2017 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config NFC_NDEF
+	bool
+	prompt "NDEF libraries"
+	help
+	  Enable NFC Data Exchange Format libraries
+
+config NFC_NDEF_PARSER
+	bool "NDEF parser libraries"
+	help
+	  Enable NFC Data Exchange Format parser libraries
+
+config NFC_NDEF_PAYLOAD_TYPE_COMMON
+	bool "Standard NDEF Record Type definitions"
+	help
+	  Enable NFC Data Exchange Format Record Type definitions
+
+if NFC_NDEF
+
+config NFC_NDEF_MSG
+	bool
+	prompt "NDEF Message generator library"
+
+config NFC_NDEF_RECORD
+	bool
+	prompt "NDEF Record generator library"
+
+config NFC_NDEF_LE_OOB_REC
+	bool
+	select NFC_NDEF_PAYLOAD_TYPE_COMMON
+	prompt "NDEF LE OOB record generator library"
+	depends on BT_HCI_HOST
+
+config NFC_NDEF_TEXT_RECORD
+	bool
+	prompt "Encoding data for a text record for NFC Tag"
+
+config NFC_NDEF_TNEP_RECORD
+	bool
+	prompt "Encoding data for a tnep record for NFC Tag"
+
+config NFC_NDEF_URI_MSG
+	bool
+	prompt "NDEF URI messages generator library"
+
+config NFC_NDEF_URI_REC
+	bool
+	prompt "NDEF URI record generator library"
+
+config NFC_NDEF_CH_MSG
+	bool "NDEF pairing Connection Handover message generator library"
+	select NFC_NDEF_CH_REC
+	help
+	  Enable NDEF Connection Handover message generator library
+
+config NFC_NDEF_CH_REC
+	bool "NDEF Connection Handover records generator library"
+	help
+	  Enable NDEF Connection Handover records generator library
+
+config NFC_NDEF_LAUNCHAPP_MSG
+	bool "NDEF Launch App message library"
+	select NFC_NDEF_LAUNCHAPP_REC
+	help
+	  Enable NDEF Launch App message generator library
+
+config NFC_NDEF_LAUNCHAPP_REC
+	bool "NDEF Launch App records"
+	help
+	  Enable NDEF Launch App records library
+
+
+config NDEF_FILE_SIZE
+	int
+	prompt "NDEF file maximal size"
+	default 1024
+	help
+		Set maximal NDEF file size
+
+endif # NFC_NDEF
+
+if NFC_NDEF_CH_MSG
+
+config NFC_NDEF_CH_MAJOR_VERSION
+	int "Connection Handover major version"
+	default 1
+	help
+	  The major version of the Connection Handover specification.
+
+
+config NFC_NDEF_CH_MINOR_VERSION
+	int "Connection Handover minor version"
+	default 5
+	help
+	  The minor version of the Connection Handover specification.
+
+endif # NFC_NDEF_PAIR_MSG
+
+if NFC_NDEF_PARSER
+
+module = NFC_NDEF_PARSER
+module-str = nfc_ndef_parser
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+config NFC_NDEF_LE_OOB_REC_PARSER
+	bool
+	select NFC_NDEF_PAYLOAD_TYPE_COMMON
+	select NET_BUF
+	prompt "NDEF LE OOB record parser library"
+
+config NFC_NDEF_CH_PARSER
+	bool
+	select NFC_NDEF_PAYLOAD_TYPE_COMMON
+	select NET_BUF
+	prompt "NDEF Connection Handover parser library"
+
+if NFC_NDEF_LE_OOB_REC_PARSER
+
+module = NFC_NDEF_LE_OOB_REC_PARSER
+module-str = nfc_ndef_le_oob_rec_parser
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # NFC_NDEF_LE_OOB_REC_PARSER
+
+if NFC_NDEF_CH_PARSER
+
+module = NFC_NDEF_CH_REC_PARSER
+module-str = nfc_ndef_ch_rec_parser
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # NFC_NDEF_CH_PARSER
+
+endif # NFC_NDEF_PARSER

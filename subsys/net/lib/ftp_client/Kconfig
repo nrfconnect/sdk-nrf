@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig FTP_CLIENT
+	bool "FTP client"
+
+if FTP_CLIENT
+config FTP_CLIENT_KEEPALIVE_TIME
+	int "Keep-alive time in seconds after connection"
+	default 60
+	help
+	  Define the heart-beat time.
+
+config FTP_CLIENT_LISTEN_TIME
+	int "Poll time in seconds in receiving FTP message"
+	default 10
+	help
+	  Define the wait time for receiving.
+
+config FTP_CLIENT_TLS
+	bool "Connection over TLS"
+
+module=FTP_CLIENT
+module-dep=LOG
+module-str=FTP client
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+if FTP_CLIENT_LOG_LEVEL_DBG
+
+config FTP_CLIENT_LOG_HEADERS
+	bool "Log FTP headers to Console [Debug]"
+
+endif
+
+endif

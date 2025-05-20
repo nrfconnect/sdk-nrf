@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_LBS
+	bool "Led Button service"
+	select BT_NRF_SERVICES
+	help
+	  Enable Led Button service.
+
+if BT_LBS
+
+config BT_LBS_POLL_BUTTON
+	bool
+	default n
+	prompt "Support button state polling"
+	help
+	  Enable support for button state polling
+	  (button state change notify always supported)
+
+module = BT_LBS
+module-str = LBS
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_LBS

@@ -1,0 +1,448 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if BUILD_WITH_TFM
+
+menu "Peripheral Secure mapping"
+
+peripheral=UARTE00
+peripheral_depends=$(dt_nodelabel_has_compat,uart00,$(DT_COMPAT_NORDIC_NRF_UARTE))
+rsource "Kconfig.template.peripheral_secure"
+peripheral=UARTE20
+peripheral_depends=$(dt_nodelabel_has_compat,uart20,$(DT_COMPAT_NORDIC_NRF_UARTE))
+rsource "Kconfig.template.peripheral_secure"
+peripheral=UARTE21
+peripheral_depends=$(dt_nodelabel_has_compat,uart21,$(DT_COMPAT_NORDIC_NRF_UARTE))
+rsource "Kconfig.template.peripheral_secure"
+peripheral=UARTE22
+peripheral_depends=$(dt_nodelabel_has_compat,uart22,$(DT_COMPAT_NORDIC_NRF_UARTE))
+rsource "Kconfig.template.peripheral_secure"
+peripheral=UARTE30
+peripheral_depends=$(dt_nodelabel_has_compat,uart30,$(DT_COMPAT_NORDIC_NRF_UARTE))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=FPU
+peripheral_depends=CPU_HAS_FPU
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=DCNF
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_DCNF))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=OSCILLATORS
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_OSCILLATORS))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=REGULATORS
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_REGULATORS))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=CLOCK
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_CLOCK))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=POWER
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_POWER))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=RESET
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_RESET))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=CTRLAP
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_CTRLAPPERI))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIM0
+peripheral_depends=$(dt_nodelabel_has_compat,spi0,$(DT_COMPAT_NORDIC_NRF_SPIM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIM00
+peripheral_depends=$(dt_nodelabel_has_compat,spi00,$(DT_COMPAT_NORDIC_NRF_SPIM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIM20
+peripheral_depends=$(dt_nodelabel_has_compat,spi20,$(DT_COMPAT_NORDIC_NRF_SPIM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIM21
+peripheral_depends=$(dt_nodelabel_has_compat,spi21,$(DT_COMPAT_NORDIC_NRF_SPIM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIM22
+peripheral_depends=$(dt_nodelabel_has_compat,spi22,$(DT_COMPAT_NORDIC_NRF_SPIM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIM23
+peripheral_depends=$(dt_nodelabel_has_compat,spi23,$(DT_COMPAT_NORDIC_NRF_SPIM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIM30
+peripheral_depends=$(dt_nodelabel_has_compat,spi30,$(DT_COMPAT_NORDIC_NRF_SPIM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIS0
+peripheral_depends=$(dt_nodelabel_has_compat,spi0,$(DT_COMPAT_NORDIC_NRF_SPIS))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TWIM0
+peripheral_depends=$(dt_nodelabel_has_compat,i2c0,$(DT_COMPAT_NORDIC_NRF_TWIM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TWIS0
+peripheral_depends=$(dt_nodelabel_has_compat,i2c0,$(DT_COMPAT_NORDIC_NRF_TWIS))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=UARTE0
+peripheral_depends=$(dt_nodelabel_has_compat,uart0,$(DT_COMPAT_NORDIC_NRF_UARTE))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIM1
+peripheral_depends=$(dt_nodelabel_has_compat,spi1,$(DT_COMPAT_NORDIC_NRF_SPIM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIS1
+peripheral_depends=$(dt_nodelabel_has_compat,spi1,$(DT_COMPAT_NORDIC_NRF_SPIS))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TWIM1
+peripheral_depends=$(dt_nodelabel_has_compat,i2c1,$(DT_COMPAT_NORDIC_NRF_TWIM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TWIS1
+peripheral_depends=$(dt_nodelabel_has_compat,i2c1,$(DT_COMPAT_NORDIC_NRF_TWIS))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=UARTE1
+peripheral_depends=$(dt_nodelabel_has_compat,uart1,$(DT_COMPAT_NORDIC_NRF_UARTE))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIM4
+peripheral_depends=$(dt_nodelabel_has_compat,spi4,$(DT_COMPAT_NORDIC_NRF_SPIM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIM2
+peripheral_depends=$(dt_nodelabel_has_compat,spi2,$(DT_COMPAT_NORDIC_NRF_SPIM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIS2
+peripheral_depends=$(dt_nodelabel_has_compat,spi2,$(DT_COMPAT_NORDIC_NRF_SPIS))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TWIM2
+peripheral_depends=$(dt_nodelabel_has_compat,i2c2,$(DT_COMPAT_NORDIC_NRF_TWIM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TWIS2
+peripheral_depends=$(dt_nodelabel_has_compat,i2c2,$(DT_COMPAT_NORDIC_NRF_TWIS))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=UARTE2
+peripheral_depends=$(dt_nodelabel_has_compat,uart2,$(DT_COMPAT_NORDIC_NRF_UARTE))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIM3
+peripheral_depends=$(dt_nodelabel_has_compat,spi3,$(DT_COMPAT_NORDIC_NRF_SPIM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SPIS3
+peripheral_depends=$(dt_nodelabel_has_compat,spi3,$(DT_COMPAT_NORDIC_NRF_SPIS))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TWIM3
+peripheral_depends=$(dt_nodelabel_has_compat,i2c3,$(DT_COMPAT_NORDIC_NRF_TWIM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TWIS3
+peripheral_depends=$(dt_nodelabel_has_compat,i2c3,$(DT_COMPAT_NORDIC_NRF_TWIS))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=UARTE3
+peripheral_depends=$(dt_nodelabel_has_compat,uart3,$(DT_COMPAT_NORDIC_NRF_UARTE))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=SAADC
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_SAADC))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TIMER0
+peripheral_depends=$(dt_nodelabel_has_compat,timer0,$(DT_COMPAT_NORDIC_NRF_TIMER))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TIMER1
+peripheral_depends=$(dt_nodelabel_has_compat,timer1,$(DT_COMPAT_NORDIC_NRF_TIMER))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TIMER2
+peripheral_depends=$(dt_nodelabel_has_compat,timer2,$(DT_COMPAT_NORDIC_NRF_TIMER))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TIMER00
+peripheral_depends=$(dt_nodelabel_has_compat,timer00,$(DT_COMPAT_NORDIC_NRF_TIMER))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TIMER10
+peripheral_depends=$(dt_nodelabel_has_compat,timer10,$(DT_COMPAT_NORDIC_NRF_TIMER))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TIMER20
+peripheral_depends=$(dt_nodelabel_has_compat,timer20,$(DT_COMPAT_NORDIC_NRF_TIMER))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TIMER21
+peripheral_depends=$(dt_nodelabel_has_compat,timer21,$(DT_COMPAT_NORDIC_NRF_TIMER))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TIMER22
+peripheral_depends=$(dt_nodelabel_has_compat,timer22,$(DT_COMPAT_NORDIC_NRF_TIMER))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TIMER23
+peripheral_depends=$(dt_nodelabel_has_compat,timer23,$(DT_COMPAT_NORDIC_NRF_TIMER))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=TIMER24
+peripheral_depends=$(dt_nodelabel_has_compat,timer24,$(DT_COMPAT_NORDIC_NRF_TIMER))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=RTC0
+peripheral_depends=$(dt_nodelabel_has_compat,rtc0,$(DT_COMPAT_NORDIC_NRF_RTC))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=RTC1
+peripheral_depends=$(dt_nodelabel_has_compat,rtc1,$(DT_COMPAT_NORDIC_NRF_RTC))
+rsource "Kconfig.template.peripheral_secure"
+
+config NRF_DPPI_SECURE
+	bool "DPPI configured as secure peripheral"
+	depends on $(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_DPPIC))
+	help
+	  DPPI is implemented with security mapping selected by the user (split security).
+	  If it has been configured as a secure peripheral, only the secure
+	  processing environment is able to access the peripheral.
+
+peripheral=WDT0
+peripheral_depends=$(dt_nodelabel_has_compat,wdt0,$(DT_COMPAT_NORDIC_NRF_WDT))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=WDT1
+peripheral_depends=$(dt_nodelabel_has_compat,wdt1,$(DT_COMPAT_NORDIC_NRF_WDT))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=COMP
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_COMP))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=LPCOMP
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_LPCOMP))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=EGU0
+peripheral_depends=$(dt_nodelabel_has_compat,egu0,$(DT_COMPAT_NORDIC_NRF_EGU))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=EGU1
+peripheral_depends=$(dt_nodelabel_has_compat,egu1,$(DT_COMPAT_NORDIC_NRF_EGU))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=EGU2
+peripheral_depends=$(dt_nodelabel_has_compat,egu2,$(DT_COMPAT_NORDIC_NRF_EGU))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=EGU3
+peripheral_depends=$(dt_nodelabel_has_compat,egu3,$(DT_COMPAT_NORDIC_NRF_EGU))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=EGU4
+peripheral_depends=$(dt_nodelabel_has_compat,egu4,$(DT_COMPAT_NORDIC_NRF_EGU))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=EGU5
+peripheral_depends=$(dt_nodelabel_has_compat,egu5,$(DT_COMPAT_NORDIC_NRF_EGU))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=EGU10
+peripheral_depends=$(dt_nodelabel_has_compat,egu10,$(DT_COMPAT_NORDIC_NRF_EGU))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=EGU20
+peripheral_depends=$(dt_nodelabel_has_compat,egu20,$(DT_COMPAT_NORDIC_NRF_EGU))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=PWM0
+peripheral_depends=$(dt_nodelabel_has_compat,pwm0,$(DT_COMPAT_NORDIC_NRF_PWM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=PWM1
+peripheral_depends=$(dt_nodelabel_has_compat,pwm1,$(DT_COMPAT_NORDIC_NRF_PWM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=PWM2
+peripheral_depends=$(dt_nodelabel_has_compat,pwm2,$(DT_COMPAT_NORDIC_NRF_PWM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=PWM3
+peripheral_depends=$(dt_nodelabel_has_compat,pwm3,$(DT_COMPAT_NORDIC_NRF_PWM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=PWM20
+peripheral_depends=$(dt_nodelabel_has_compat,pwm20,$(DT_COMPAT_NORDIC_NRF_PWM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=PWM21
+peripheral_depends=$(dt_nodelabel_has_compat,pwm21,$(DT_COMPAT_NORDIC_NRF_PWM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=PWM22
+peripheral_depends=$(dt_nodelabel_has_compat,pwm22,$(DT_COMPAT_NORDIC_NRF_PWM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=PDM
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_PDM))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=I2S
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_I2S))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=IPC
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_IPC))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=QSPI
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_QSPI))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=NFCT
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_NFCT))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=MUTEX
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_MUTEX))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=QDEC0
+peripheral_depends=$(dt_nodelabel_has_compat,qdec0,$(DT_COMPAT_NORDIC_NRF_QDEC))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=QDEC1
+peripheral_depends=$(dt_nodelabel_has_compat,qdec1,$(DT_COMPAT_NORDIC_NRF_QDEC))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=USBD
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_USBD))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=USBREG
+peripheral_depends=$(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_USBREG))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=NVMC
+peripheral_depends=y
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=GPIO0
+peripheral_depends=$(dt_nodelabel_has_compat,gpio0,$(DT_COMPAT_NORDIC_NRF_GPIO))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=GPIO1
+peripheral_depends=$(dt_nodelabel_has_compat,gpio1,$(DT_COMPAT_NORDIC_NRF_GPIO))
+rsource "Kconfig.template.peripheral_secure"
+
+peripheral=GPIO2
+peripheral_depends=$(dt_nodelabel_has_compat,gpio2,$(DT_COMPAT_NORDIC_NRF_GPIO))
+rsource "Kconfig.template.peripheral_secure"
+
+config NRF_GPIOTE0_SECURE
+	bool "GPIOTE0 configured as secure peripheral"
+	depends on $(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_GPIOTE))
+	help
+	  GPIOTE0 is implemented without split security. It has secure-only access.
+	  This option enables it to be used in the secure image.
+
+config NRF_GPIOTE20_SECURE
+	bool "GPIOTE20 configured as secure peripheral"
+	depends on $(dt_nodelabel_has_compat,gpiote20,$(DT_COMPAT_NORDIC_NRF_GPIOTE))
+	help
+	  GPIOTE20 supports split security. Individual channels can be assigned to different security domains.
+	  The mask NRF_GPIOTE20_SECURE_CHANNELS_MASK can be set to configure specific channels as secure.
+	  When the peripheral is configured as non-secure, both secure and non-secure code can access the peripheral.
+	  Secure code can access all channels. Non-secure code can only access channels not marked as secure in the mask.
+
+config NRF_GPIOTE20_SECURE_CHANNELS_MASK
+	hex "GPIOTE20 mask for secure channels"
+	default 0x00000000
+	depends on $(dt_nodelabel_has_compat,gpiote20,$(DT_COMPAT_NORDIC_NRF_GPIOTE))
+	help
+	  GPIOTE supports setting individual channels as secure and non-secure. Use this mask
+	  to set the secure channels in the GPIOTE20. This mask also sets the interrupt
+	  security for the secure channels.
+
+config NRF_GPIOTE30_SECURE
+	bool "GPIOTE30 configured as secure peripheral"
+	depends on $(dt_nodelabel_has_compat,gpiote30,$(DT_COMPAT_NORDIC_NRF_GPIOTE))
+	help
+	 GPIOTE30 supports split security. Individual channels can be assigned to different security domains.
+	 The mask NRF_GPIOTE30_SECURE_CHANNELS_MASK can be set to configure specific channels as secure.
+	 When the peripheral is configured as non-secure, both secure and non-secure code can access the peripheral.
+	 Secure code can access all channels. Non-secure code can only access channels not marked as secure in the mask.
+
+config NRF_GPIOTE30_SECURE_CHANNELS_MASK
+	hex "GPIOTE30 mask for secure channels"
+	default 0x00000000
+	depends on $(dt_nodelabel_has_compat,gpiote30,$(DT_COMPAT_NORDIC_NRF_GPIOTE))
+	help
+	  GPIOTE supports setting individual channels as secure and non-secure. Use this mask
+	  to set the secure channels in the GPIOTE30. This mask also sets the interrupt
+	  security for the secure channels.
+
+config NRF_GPIO0_PIN_MASK_SECURE
+	hex "Set GPIO0 PERM mask for secure channels"
+	default 0x00000003 if TFM_SECURE_UART30 # P0.0 and P0.1 are used by default when TFM_SECURE_UART30
+	default 0x00000000
+	depends on $(dt_nodelabel_has_compat,gpio0,$(DT_COMPAT_NORDIC_NRF_GPIO)) && !NRF_GPIO0_SECURE
+	help
+	  GPIO is implemented with split security. If it has been configured as
+	  non-secure it can be accessed by both secure and non-secure accesses.
+	  A bitmask can be set to configure a subset of the GPIO pins as secure
+	  to prevent non-secure from accessing these pin. Secure accesses can be
+	  made to GPIO pins configured as non-secure.
+
+config NRF_GPIO1_PIN_MASK_SECURE
+	hex "Set GPIO1 PERM mask for Secure channels"
+	default 0x00000003 if TFM_SECURE_UART1 # P1.0 and P1.1 are used by default when TFM_SECURE_UART1
+	default 0x00000000
+	depends on $(dt_nodelabel_has_compat,gpio1,$(DT_COMPAT_NORDIC_NRF_GPIO)) && !NRF_GPIO1_SECURE
+	help
+	  GPIO is implemented with split security. If it has been configured as
+	  non-secure it can be accessed by both secure and non-secure accesses.
+	  A bitmask can be set to configure a subset of the GPIO pins as secure
+	  to prevent non-secure from accessing these pin. Secure accesses can be
+	  made to GPIO pins configured as non-secure.
+
+config NRF_DPPI_CHANNEL_MASK_SECURE
+	hex "Set DPPI PERM mask for Secure"
+	default 0x00000000
+	depends on HAS_HW_NRF_DPPIC && !NRF_DPPI_SECURE
+	help
+	  DPPI is implemented with split securety. If it has been configured as
+	  non-secure it can be accessed by both secure and non-secure accesses.
+	  A bitmask can be set to configure a subset of the DPPI channels as
+	  secure to prevent non-secure from accessing these channels. Secure
+	  accesses can be made to the DPPI pins configured as non-secure.
+
+config NRF_VMC_SECURE
+	bool
+	default y
+	depends on $(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_VMC))
+	help
+	  When using security by separation, the non-secure part of the application should
+	  not be able to turn off the RAM block of Trusted Firmware-M.
+	  Therefore, the VMC peripheral needs to be configured as secure.
+
+endmenu # Peripheral Secure mapping
+
+endif # BUILD_WITH_TFM

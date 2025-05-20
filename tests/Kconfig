@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Test"
+
+rsource "unity/Kconfig"
+rsource "mocks/Kconfig"
+
+endmenu

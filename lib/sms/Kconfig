@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig SMS
+	bool "SMS subscriber"
+	select AT_MONITOR
+	help
+	  A library for managing SMS subscriptions.
+
+if SMS
+
+config SMS_SUBSCRIBERS_MAX_CNT
+	int "Maximum number of subscribers"
+	default 2
+	help
+	  Maximum number of subscribers that can register to SMS library.
+
+config SMS_STATUS_REPORT
+	bool "SMS status reports"
+	default y
+	help
+	  Request SMS status report by setting TP-SRR bit in SMS header, and
+	  setting <ds> field enabled in SMS registration with AT+CNMI.
+
+module=SMS
+module-dep=LOG
+module-str= SMS library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # SMS

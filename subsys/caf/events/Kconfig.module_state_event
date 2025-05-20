@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config CAF_MODULE_STATE_EVENTS
+	bool "Enable module state events"
+	help
+	  Enable support for module state events.
+
+config CAF_INIT_LOG_MODULE_STATE_EVENTS
+	bool "Log module state events"
+	depends on CAF_MODULE_STATE_EVENTS
+	depends on LOG
+	default y
+
+config CAF_MODULES_FLAGS_COUNT
+	int "Number of supported modules"
+	depends on CAF_MODULE_STATE_EVENTS
+	default 32
+	help
+	  Configure number of supported modules by modules flags variable.
+	  The flags count should be big enough to have a bit for every module.
+	  Bigger number allows more modules to be controllerd.
+	  Smaller minimizes the footprint.
+	  The memory is allocated in 32 bits chunks.

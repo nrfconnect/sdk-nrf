@@ -1,0 +1,233 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+rsource "Kconfig.defaults"
+
+menu "Modules"
+
+config BUTTON_DEBOUNCE_MS
+	int "Button debounce time in ms"
+	default 50
+
+config AUDIO_SYNC_TIMER_USES_RTC
+	bool
+	default y
+	select NRFX_RTC0
+
+#----------------------------------------------------------------------------#
+menuconfig NRF5340_AUDIO_POWER_MEASUREMENT
+	bool "Power measurement"
+	help
+	  Include the power measurement driver for the nRF5340 Audio DK
+
+if NRF5340_AUDIO_POWER_MEASUREMENT
+
+config POWER_MEAS_INTERVAL_MS
+	int "Power measurement interval in milliseconds"
+	default 8500
+	help
+	  Power measurement runs continuously, this option just establishes the
+	  results polling period. Note that this value needs to be >= the configured
+	  sampling interval on the current sensor. When below, repeated measurements
+	  will be observed.
+
+config POWER_MEAS_START_ON_BOOT
+	bool "Start power measurements for all rails on boot"
+	help
+	  This option will automatically start and periodically print
+	  the voltage, current consumption, and power usage for the
+	  following rails: VBAT, VDD1_CODEC, VDD2_CODEC, and VDD2_NRF
+
+endif # NRF5340_AUDIO_POWER_MEASUREMENT
+
+#----------------------------------------------------------------------------#
+menu "I2S"
+
+config I2S_LRCK_FREQ_HZ
+	int
+	default AUDIO_SAMPLE_RATE_HZ
+	help
+	 The sample rate of I2S. For now this is tied directly to
+	 AUDIO_SAMPLE_RATE_HZ
+	 Note that this setting is only valid in I2S master mode.
+
+config I2S_CH_NUM
+	int
+	default 2
+	help
+	 The I2S driver itself supports both mono and stereo.
+	 Parts of the implementation are configured for only stereo.
+
+endmenu # I2S
+
+#----------------------------------------------------------------------------#
+menu "Log levels"
+
+module = MODULE_AUDIO_USB
+module-str = module-audio-usb
+source "subsys/logging/Kconfig.template.log_config"
+
+module = MODULE_BUTTON_HANDLER
+module-str = module-button-handler
+source "subsys/logging/Kconfig.template.log_config"
+
+module = MODULE_HW_CODEC
+module-str = module-hw-codec
+source "subsys/logging/Kconfig.template.log_config"
+
+module = MODULE_LED
+module-str = module-led
+source "subsys/logging/Kconfig.template.log_config"
+
+module = MODULE_POWER
+module-str = module-power
+source "subsys/logging/Kconfig.template.log_config"
+
+module = MODULE_NRF5340_AUDIO_DK
+module-str = module-nrf5340-audio_dk
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu # Log levels
+
+#----------------------------------------------------------------------------#
+menu "Thread priorities"
+
+config POWER_MEAS_THREAD_PRIO
+	int "Priority for power measurement thread"
+	default 6
+	help
+	  This is a preemptible thread.
+
+config BUTTON_PUBLISH_THREAD_PRIO
+	int "Priority for button publish thread"
+	default 5
+	help
+	  This is a preemptible thread.
+	  This thread will publish button events to zbus.
+
+config VOLUME_MSG_SUB_THREAD_PRIO
+	int "Priority for volume message subscribe thread"
+	default 5
+	help
+	  This is a preemptible thread.
+	  This thread will subscribe to volume events from zbus.
+
+endmenu # Thread priorities
+
+#----------------------------------------------------------------------------#
+menu "Stack sizes"
+
+config POWER_MEAS_STACK_SIZE
+	int "Stack size for power measurement thread"
+	default 1152
+
+config BUTTON_PUBLISH_STACK_SIZE
+	int "Stack size for button publish thread"
+	default 450
+
+config VOLUME_MSG_SUB_STACK_SIZE
+	int "Stack size for volume message subscribe thread"
+	default 768
+
+endmenu # Stack sizes
+
+#----------------------------------------------------------------------------#
+menu "Zbus"
+
+config VOLUME_MSG_SUB_QUEUE_SIZE
+	int "Queue size for volume message subscriber"
+	default 4
+
+endmenu # Zbus
+
+#----------------------------------------------------------------------------#
+config NRF5340_AUDIO_SD_CARD_MODULE
+	bool "Audio SD Card Module"
+	help
+	  Include the audio SD card module to support streaming audio files from an SD card.
+
+if NRF5340_AUDIO_SD_CARD_MODULE
+
+module = MODULE_SD_CARD
+module-str = module-sd-card
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # NRF5340_AUDIO_SD_CARD_MODULE
+
+config NRF5340_AUDIO_SD_CARD_LC3_FILE
+	bool "SD card LC3 file support"
+	depends on NRF5340_AUDIO_SD_CARD_MODULE
+	default n
+	help
+	  Include support for reading and parsing LC3 files from an SD card.
+
+if NRF5340_AUDIO_SD_CARD_LC3_FILE
+
+module = MODULE_SD_CARD_LC3_FILE
+module-str = module-sd-card-lc3-file
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # NRF5340_AUDIO_SD_CARD_LC3_FILE
+
+menuconfig SD_CARD_PLAYBACK
+	bool "Enable playback from SD card"
+	depends on NRF5340_AUDIO_SD_CARD_MODULE
+	select EXPERIMENTAL
+	default n
+	select RING_BUFFER
+
+if SD_CARD_PLAYBACK
+
+config SD_CARD_PLAYBACK_STACK_SIZE
+	int "Stack size for the SD card playback thread"
+	default 4096
+
+config SD_CARD_PLAYBACK_RING_BUF_SIZE
+	int "Size of the ring buffer for the SD card playback module"
+	default 960
+
+config SD_CARD_PLAYBACK_THREAD_PRIO
+	int "Priority for the SD card playback thread"
+	default 7
+
+
+module = MODULE_SD_CARD_PLAYBACK
+module-str = module-sd-card-playback
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # SD_CARD_PLAYBACK
+
+menuconfig NRF5340_AUDIO_SD_CARD_LC3_STREAMER
+	bool "Audio SD Card LC3 Streamer"
+	depends on NRF5340_AUDIO_SD_CARD_LC3_FILE
+	select EXPERIMENTAL
+
+if NRF5340_AUDIO_SD_CARD_LC3_STREAMER
+
+config SD_CARD_LC3_STREAMER_STACK_SIZE
+	int "Stack size for the SD card LC3 streamer thread"
+	default 1500
+
+config SD_CARD_LC3_STREAMER_THREAD_PRIO
+	int "Priority for the SD card LC3 streamer thread"
+	default 4
+
+config SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS
+	int "Maximum number of concurrent LC3 streams"
+	default 5
+	range 0 255
+
+config SD_CARD_LC3_STREAMER_MAX_FRAME_SIZE
+	int "Maximum frame size for LC3 streams"
+	default 251
+
+module = MODULE_SD_CARD_LC3_STREAMER
+module-str = module-sd-card-lc3-streamer
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # NRF5340_AUDIO_SD_CARD_LC3_STREAMER
+
+endmenu # Modules

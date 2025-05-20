@@ -1,0 +1,14 @@
+/*
+ * Copyright (c) 2023 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+ &arduino_spi {
+	status = "okay";
+
+        bme680@0 {
+                compatible = "bosch,bme680";
+                reg = <0x0 >;
+		spi-max-frequency = <DT_FREQ_M(8)>;
+        };
+};

@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DESKTOP_BLE_DISCOVERY_ENABLE
+	bool "Bluetooth LE discovery module"
+	depends on DESKTOP_BLE_SCAN_ENABLE
+	select BT_GATT_DM
+	help
+	  Enable device to read device description (custom GATT Service),
+	  Device Information Service and discover HIDS.
+
+if DESKTOP_BLE_DISCOVERY_ENABLE
+
+module = DESKTOP_BLE_DISCOVERY
+module-str = BLE discovery
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # DESKTOP_BLE_DISCOVERY_ENABLE

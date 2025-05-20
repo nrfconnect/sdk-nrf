@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig MODEM_JWT
+	bool "Modem JWT Library"
+	depends on NRF_MODEM_LIB
+	select BASE64
+	help
+	  Functionality requires modem firmware version 1.3 or greater.
+
+if MODEM_JWT
+
+config MODEM_JWT_MAX_LEN
+	int "Buffer size to allocate for JWT"
+	default 850
+	help
+	  Minimum JWT response is ~420 bytes.
+
+module=MODEM_JWT
+module-str=Modem JWT
+
+endif # MODEM_JWT

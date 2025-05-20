@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_AMS_CLIENT
+	bool "Apple Media Service client"
+	select BT_NRF_SERVICES
+	help
+	  Enable Apple Media Service client.
+
+if BT_AMS_CLIENT
+
+module = BT_AMS_CLIENT
+module-str = AMS Client
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_AMS_CLIENT

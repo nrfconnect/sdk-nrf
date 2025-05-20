@@ -1,0 +1,46 @@
+# Keep the help strings in sync with the values in the .py files!
+west-commands:
+  - file: scripts/west_commands/ncs_commands.py
+    commands:
+      - name: ncs-loot
+        class: NcsLoot
+        help: list out of tree unreverted NCS patches
+      - name: ncs-compare
+        class: NcsCompare
+        help: compare upstream manifest with NCS
+      - name: ncs-upmerger
+        class: NcsUpmerger
+        help: perform upmerge for project (e.g. Zephyr)
+  - file: scripts/west_commands/sbom/ncs_sbom_command.py
+    commands:
+      - name: ncs-sbom
+        class: NcsSbom
+        help: generate Software Bill Of Materials including license information
+  - file: scripts/west_commands/thingy91x_dfu.py
+    commands:
+      - name: thingy91x-dfu
+        class: Thingy91XDFU
+        help: Flash the Thingy:91 X with a new firmware
+      - name: thingy91x-reset
+        class: Thingy91XReset
+        help: Reset the Thingy:91 X
+  - file: scripts/west_commands/suit_manifest.py
+    commands:
+      - name: suit-manifest
+        class: SuitManifest
+        help: SUIT manifest utility
+  - file: scripts/west_commands/create_board/ncs_create_board.py
+    commands:
+      - name: ncs-create-board
+        class: NcsCreateBoard
+        help: create board skeleton files for any Nordic SoC
+  - file: scripts/west_commands/ncs_provision.py
+    commands:
+      - name: ncs-provision
+        class: NcsProvision
+        help: Provision utility
+  - file: scripts/west_commands/ncs_ironside_se_update.py
+    commands:
+      - name: ncs-ironside-se-update
+        class: NcsIRONsideSEUpdate
+        help: IRONside SE update utility

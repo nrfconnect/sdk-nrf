@@ -1,0 +1,57 @@
+sample:
+  name: AWS IoT sample
+tests:
+  sample.net.aws_iot:
+    sysbuild: true
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+    build_only: true
+    build_on_all: true
+    integration_platforms:
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
+      - thingy91/nrf9160/ns
+      - thingy91x/nrf9151/ns
+      - nrf7002dk/nrf5340/cpuapp/ns
+      - native_sim
+    platform_allow:
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
+      - thingy91/nrf9160/ns
+      - thingy91x/nrf9151/ns
+      - nrf7002dk/nrf5340/cpuapp/ns
+      - native_sim
+  sample.net.aws_iot.nrf54l15.wifi:
+    sysbuild: true
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+    build_only: true
+    build_on_all: true
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - aws_iot_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
+      - aws_iot_SNIPPET=nrf70-wifi
+  sample.net.aws_iot.nrf54l15_nrf7002eb2.wifi:
+    sysbuild: true
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+    build_only: true
+    build_on_all: true
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - aws_iot_SHIELD="nrf7002eb2"
+      - aws_iot_SNIPPET=nrf70-wifi

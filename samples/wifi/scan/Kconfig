@@ -1,0 +1,135 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Nordic Scan sample"
+
+config WIFI_MAC_ADDRESS
+	string "WiFi MAC address"
+	default "F6:CE:36:00:00:01"
+	help
+		Wi-Fi MAC address to be used by the sample. If not set, the sample will
+		use the default MAC address (locally administrative). This is only used
+		when the nRF7002 OTP is not programmed with a MAC address.
+
+config WIFI_SCAN_INTERVAL_S
+	int "Scan interval (seconds)"
+	default 10
+	help
+	  Specifies the scan interval in seconds.
+
+config WIFI_SCAN_BANDS_LIST
+	string "Frequency bands to scan"
+	default "2" if WIFI_SCAN_PROFILE_2_4GHz_ACTIVE || WIFI_SCAN_PROFILE_2_4GHz_PASSIVE || WIFI_SCAN_PROFILE_2_4GHz_NON_OVERLAP_CHAN
+	default "5" if WIFI_SCAN_PROFILE_5GHz_ACTIVE || WIFI_SCAN_PROFILE_5GHz_PASSIVE || WIFI_SCAN_PROFILE_5GHz_NON_DFS_CHAN
+	default "2,5" if WIFI_SCAN_PROFILE_2_4GHz_NON_OVERLAP_AND_5GHz_NON_DFS_CHAN
+	default ""
+	help
+	  Specifies the frequency bands to scan, as follows:
+	  2 - 2.4 GHz,
+	  5 - 5 GHz,
+	  6 - 6 GHz,
+	  "" - All bands allowed by the regulatory domain.
+	  Multiple bands can be specified as comma separated band values.
+	  Only regulatory domain permitted values are allowed.
+
+config WIFI_SCAN_CHAN_LIST
+	string "Channel list for scan"
+	default "2:1,6,11" if WIFI_SCAN_PROFILE_2_4GHz_NON_OVERLAP_CHAN
+	default "5:36,40,44,48,149,153,157,161,165" if WIFI_SCAN_PROFILE_5GHz_NON_DFS_CHAN
+	default "2:1,6,11_5:36,40,44,48,149,153,157,161,165" if WIFI_SCAN_PROFILE_2_4GHz_NON_OVERLAP_AND_5GHz_NON_DFS_CHAN
+	default ""
+	help
+	  Specifies the list of channels used to perform scan.
+
+config WIFI_SCAN_DWELL_TIME_ACTIVE
+	int "Active scan dwell time"
+	default 50
+	range 5 1000
+	help
+	  Active scan dwell time (in ms) per channel.
+
+config WIFI_SCAN_DWELL_TIME_PASSIVE
+	int "Passive scan dwell time"
+	default 130
+	range 10 1000
+	help
+	  Passive scan dwell time (in ms) per channel.
+
+# Hidden options to select the scan type
+config WIFI_SCAN_TYPE_ACTIVE
+	bool
+
+config WIFI_SCAN_TYPE_PASSIVE
+	bool
+
+choice
+	prompt "Choose a WiFi Scan Profile"
+
+config WIFI_SCAN_PROFILE_DEFAULT
+	bool "Scan in all bands and channels"
+	help
+	  Enable this profile to do Wi-Fi scan in all supported bands and channels.
+
+config WIFI_SCAN_PROFILE_ACTIVE
+	bool "Active scan"
+	select WIFI_SCAN_TYPE_ACTIVE
+	help
+	  Enable this profile to do active scan where allowed.
+
+config WIFI_SCAN_PROFILE_PASSIVE
+	bool "Passive scan"
+	select WIFI_SCAN_TYPE_PASSIVE
+	help
+	  Enable this profile to do passive scan on all channels.
+
+config WIFI_SCAN_PROFILE_2_4GHz_ACTIVE
+	bool "Scan in the 2.4 GHz band using active scan"
+	select WIFI_SCAN_TYPE_ACTIVE
+	help
+	  Enable this profile to scan in the 2.4 GHz band using active scanning where allowed.
+
+config WIFI_SCAN_PROFILE_2_4GHz_PASSIVE
+	bool "Scan in the 2.4 GHz band using passive scan"
+	select WIFI_SCAN_TYPE_PASSIVE
+	help
+	  Enable this profile to scan in the 2.4 GHz band using passive scanning on all channels.
+
+config WIFI_SCAN_PROFILE_5GHz_ACTIVE
+	bool "Scan in the 5 GHz band using active scan"
+	select WIFI_SCAN_TYPE_ACTIVE
+	help
+	  Enable this profile to scan in the 5 GHz band using active scanning where allowed.
+
+config WIFI_SCAN_PROFILE_5GHz_PASSIVE
+	bool "Scan in the 5 GHz band using passive scan"
+	select WIFI_SCAN_TYPE_PASSIVE
+	help
+	  Enable this profile to scan in the 5 GHz band using passive scanning on all channels.
+
+config WIFI_SCAN_PROFILE_2_4GHz_NON_OVERLAP_CHAN
+	bool "Scan only non-overlapping channels"
+	help
+	  Enable this profile to scan only non-overlapping channels (1, 6, 11)
+	  in the 2.4 GHz band.
+
+config WIFI_SCAN_PROFILE_5GHz_NON_DFS_CHAN
+	bool "Scan only non-DFS channels"
+	help
+	  Enable this profile to scan only non-DFS channels (36, 40, 44,
+	  48, 149, 153, 157, 161, 165) in the 5 GHz band.
+
+config WIFI_SCAN_PROFILE_2_4GHz_NON_OVERLAP_AND_5GHz_NON_DFS_CHAN
+	bool "Scan only non-overlapping and non-DFS channels"
+	help
+	  Enable this profile to scan only non-overlapping channels
+	  (1, 6, 11) in the 2.4 GHz band and non-DFS channels (36, 40, 44,
+	  48, 149, 153, 157, 161, 165) in the 5 GHz band.
+
+endchoice
+
+endmenu

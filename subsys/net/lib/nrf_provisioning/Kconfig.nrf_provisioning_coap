@@ -1,0 +1,27 @@
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NRF_PROVISIONING_COAP
+	bool "nRF Provisioning COAP"
+	imply COAP
+	imply COAP_CLIENT
+
+if NRF_PROVISIONING_COAP
+
+config NRF_PROVISIONING_COAP_HOSTNAME
+	string "nRF Provisioning COAP API hostname"
+	default "coap.nrfcloud.com"
+
+config NRF_PROVISIONING_COAP_PORT
+	string "Provision Service's port"
+	default "5684"
+
+config NRF_PROVISIONING_COAP_DTLS_SESSION_CACHE
+	bool "DTLS session cache usage"
+	default y
+
+rsource "Kconfig.nrf_provisioning_codec"
+
+endif

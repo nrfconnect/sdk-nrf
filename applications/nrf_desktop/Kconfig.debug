@@ -1,0 +1,188 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Debug configuration"
+
+config DESKTOP_LOG
+	bool "nRF Desktop logging"
+	help
+	  The option enables support for the nRF Desktop Logging.
+	  By default, the nRF Desktop Logging uses the RTT backend and
+	  slightly modifies the default configuration of the Logging
+	  subsystem to tailor it to the application needs.
+
+if DESKTOP_LOG
+
+config LOG
+	default y
+	help
+	  nRF Desktop Logging configuration enables the Logging subsystem that
+	  is required for this functionality.
+
+choice LOG_MODE
+	default LOG_MODE_DEFERRED
+	help
+	  nRF Desktop Logging uses the deferred logging mode to minimize the
+	  impact of the debug tools on the application.
+
+endchoice
+
+config LOG_MODE_OVERFLOW
+	default y
+	help
+	  nRF Desktop Logging configuration drops the oldest logs if there is
+	  no more space left in the buffers.
+
+config LOG_PRINTK
+	default y
+	help
+	  nRF Desktop Logging configuration enables the processing of printk
+	  messages by the Logging subsystem.
+
+config LOG_BUFFER_SIZE
+	default 4096
+	help
+	  nRF Desktop Logging configuration increases the default buffer
+	  size in the Logging subsystem to prevent logs from dropping.
+
+config LOG_PROCESS_THREAD_STACK_SIZE
+	default 1024
+	help
+	  nRF Desktop Logging configuration increases the default stack size
+	  for the log processing thread to prevent stack overflows.
+
+config LOG_BACKEND_RTT
+	default y if !SHELL_LOG_BACKEND
+	help
+	  nRF Desktop Logging configuration uses the RTT Logging backend
+	  as nRF Desktop targets use RTT for debug information. This option
+	  needs to be disabled when both the Logging and the Shell subsystems
+	  are active as the Shell backend is responsible for collecting logs
+	  in that case.
+
+if LOG_BACKEND_RTT
+
+config LOG_BACKEND_SHOW_COLOR
+	default n
+	help
+	  nRF Desktop Logging configuration disables colors in the Logging
+	  subsystem backends.
+
+config LOG_BACKEND_FORMAT_TIMESTAMP
+	default n
+	help
+	  nRF Desktop Logging configuration disables formatting of timestamps
+	  in the Logging subsystem backends.
+
+choice LOG_BACKEND_RTT_MODE
+	default LOG_BACKEND_RTT_MODE_DROP
+	help
+	  nRF Desktop Logging configuration drops the oldest logs in the RTT
+	  backend libraries if there is no more space left in the buffers.
+
+endchoice
+
+config LOG_BACKEND_RTT_MESSAGE_SIZE
+	default 256
+	help
+	  nRF Desktop Logging configuration increases the default maximum
+	  message size for the RTT backend in the Logging subsystem to enhance
+	  its capacity.
+
+endif # LOG_BACKEND_RTT
+
+endif # DESKTOP_LOG
+
+config DESKTOP_SHELL
+	bool "nRF Desktop shell"
+	help
+	  The option enables support for the nRF Desktop Shell.
+	  By default, the nRF Desktop Shell uses the RTT backend and
+	  slightly modifies the default configuration of the Shell
+	  subsystem to tailor it to the application needs.
+
+if DESKTOP_SHELL
+
+config SHELL
+	default y
+	help
+	  nRF Desktop Shell configuration enables the Shell subsystem that
+	  is required for this functionality.
+
+config SHELL_BACKEND_SERIAL
+	default n
+	help
+	  nRF Desktop Shell configuration disables the Shell Serial backend
+	  as nRF Desktop targets do not use a Serial interface for debug
+	  information.
+
+config SHELL_BACKEND_RTT
+	default y
+	help
+	  nRF Desktop Shell configuration enables the Shell RTT backend
+	  as nRF Desktop targets use RTT for debug information.
+
+if SHELL_BACKEND_RTT
+
+config SHELL_PROMPT_RTT
+	default "nrf_desktop:~$ "
+	help
+	  nRF Desktop Shell configuration sets a custom prompt.
+
+endif # SHELL_BACKEND_RTT
+
+config DEVICE_SHELL
+	default y
+	help
+	  nRF Desktop Shell configuration enables access to basic device data.
+
+config KERNEL_SHELL
+	default y
+	help
+	  nRF Desktop Shell configuration enables access to basic kernel data.
+
+config INIT_STACKS
+	default y
+	help
+	  nRF Desktop Shell configuration enables stack area initialization
+	  with a fixed value to easily calculate stack usage.
+
+config THREAD_MONITOR
+	default y
+	help
+	  nRF Desktop Shell configuration enables the monitoring option to
+	  inspect all running threads in runtime.
+
+config THREAD_NAME
+	default y
+	help
+	  nRF Desktop Shell configuration enables an option to set a name
+	  for a thread.
+
+endif # DESKTOP_SHELL
+
+config DESKTOP_RTT
+	bool "Enable RTT backend for logs or shell"
+	default y
+	select USE_SEGGER_RTT
+	depends on DESKTOP_LOG || DESKTOP_SHELL
+	help
+	  The option enables support for SEGGER J-Link RTT in the nRF Desktop.
+
+	  Disable the option only if you would like to use other backend for
+	  nRF Desktop logs or shell.
+
+if DESKTOP_RTT
+
+config SEGGER_RTT_BUFFER_SIZE_UP
+	default 4096
+	help
+	  nRF Desktop RTT configuration increases the default buffer size
+	  in the SEGGER J-Link RTT libraries to enhance logging capacity.
+
+endif # DESKTOP_RTT
+
+endmenu

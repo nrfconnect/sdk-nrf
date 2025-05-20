@@ -1,0 +1,9 @@
+# Copyright (c) 2024 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: |
+    This is a TWI device interface to the nRF2240 Radio Front-End module
+
+compatible: "nordic,nrf2240-fem-twi"
+
+include: [i2c-device.yaml, nordic-nrf22xx-fem-twi-init-reg.yaml]

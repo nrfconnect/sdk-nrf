@@ -1,0 +1,52 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Zephyr"
+source "Kconfig.zephyr"
+endmenu
+
+menu "Sample configuration"
+
+choice BATTERY_MODEL
+	prompt "Initial battery model"
+	default BATTERY_MODEL_ALKALINE_AA
+	help
+	  Select the initial battery model to use.
+	  The battery model can be changed at runtime using shell commands.
+
+config BATTERY_MODEL_ALKALINE_AA
+	bool "Alkaline AA"
+	help
+	  Alkaline AA cylindrical battery.
+
+config BATTERY_MODEL_ALKALINE_AAA
+	bool "Alkaline AAA"
+	help
+	  Alkaline AAA cylindrical battery.
+
+config BATTERY_MODEL_ALKALINE_2SAA
+	bool "Alkaline 2SAA"
+	help
+	  Two Alkaline AA cylindrical batteries in series.
+
+config BATTERY_MODEL_ALKALINE_2SAAA
+	bool "Alkaline 2SAAA"
+	help
+	  Two Alkaline AAA cylindrical batteries in series.
+
+config BATTERY_MODEL_ALKALINE_LR44
+	bool "Alkaline LR44"
+	help
+	  Alkaline LR44 coin cell battery.
+
+config BATTERY_MODEL_LITHIUM_CR2032
+	bool "Lithium CR2032"
+	help
+	  Lithium-manganese dioxide CR2032 coin cell battery.
+
+endchoice
+
+endmenu

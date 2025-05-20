@@ -1,0 +1,11 @@
+tests:
+  nrf5340_audio.lc3_file:
+    sysbuild: true
+    platform_allow: qemu_cortex_m3
+    integration_platforms:
+      - qemu_cortex_m3
+    tags:
+      - lc3_file
+      - nrf5340_audio_unit_tests
+      - sysbuild
+      - ci_tests_nrf5340_audio

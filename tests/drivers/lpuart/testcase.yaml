@@ -1,0 +1,172 @@
+common:
+  tags:
+    - lpuart
+    - sysbuild
+    - ci_tests_drivers_lpuart
+  timeout: 30
+
+tests:
+  lpuart.loopback_busy_sim:
+    sysbuild: true
+    platform_allow: nrf9160dk/nrf9160
+    integration_platforms:
+      - nrf9160dk/nrf9160
+    extra_args: DTC_OVERLAY_FILE="boards/nrf9160dk_nrf9160_loopback.overlay"
+    extra_configs:
+      - CONFIG_TEST_LPUART_LOOPBACK=y
+      - CONFIG_TEST_BUSY_SIM=y
+    harness: ztest
+    harness_config:
+      fixture: gpio_loopback
+  lpuart.loopback.nrf54l:
+    sysbuild: true
+    platform_allow:
+      - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp
+    integration_platforms:
+      - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp
+    extra_configs:
+      - CONFIG_TEST_LPUART_LOOPBACK=y
+    harness: ztest
+    harness_config:
+      fixture: gpio_loopback
+  lpuart.loopback.nrf54l.busy_sim:
+    sysbuild: true
+    platform_allow:
+      - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp
+    integration_platforms:
+      - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp
+    extra_configs:
+      - CONFIG_TEST_LPUART_LOOPBACK=y
+      - CONFIG_TEST_BUSY_SIM=y
+    harness: ztest
+    harness_config:
+      fixture: gpio_loopback
+  lpuart.loopback_busy_sim_no_hfxo:
+    sysbuild: true
+    platform_allow: nrf9160dk/nrf9160
+    integration_platforms:
+      - nrf9160dk/nrf9160
+    extra_args: DTC_OVERLAY_FILE="boards/nrf9160dk_nrf9160_loopback.overlay"
+    extra_configs:
+      - CONFIG_NRF_SW_LPUART_HFXO_ON_RX=n
+      - CONFIG_TEST_LPUART_LOOPBACK=y
+      - CONFIG_TEST_BUSY_SIM=y
+    harness: ztest
+    harness_config:
+      fixture: gpio_loopback
+  lpuart.loopback:
+    sysbuild: true
+    platform_allow: nrf9160dk/nrf9160
+    integration_platforms:
+      - nrf9160dk/nrf9160
+    extra_configs:
+      - CONFIG_TEST_LPUART_LOOPBACK=y
+    extra_args: DTC_OVERLAY_FILE="boards/nrf9160dk_nrf9160_loopback.overlay"
+    harness: ztest
+    harness_config:
+      fixture: gpio_loopback
+  lpuart.loopback_no_hfxo:
+    sysbuild: true
+    platform_allow: nrf9160dk/nrf9160
+    integration_platforms:
+      - nrf9160dk/nrf9160
+    extra_args: DTC_OVERLAY_FILE="boards/nrf9160dk_nrf9160_loopback.overlay"
+    extra_configs:
+      - CONFIG_NRF_SW_LPUART_HFXO_ON_RX=n
+      - CONFIG_TEST_LPUART_LOOPBACK=y
+    harness: ztest
+    harness_config:
+      fixture: gpio_loopback
+  lpuart.two_chip_test:
+    sysbuild: true
+    platform_allow:
+      - nrf9160dk/nrf9160
+      - nrf9160dk/nrf52840
+    integration_platforms:
+      - nrf9160dk/nrf9160
+      - nrf9160dk/nrf52840
+    build_only: true
+    extra_configs:
+      - CONFIG_TEST_LPUART_TIMEOUT=10
+  lpuart.two_chip_test_busy_sim:
+    sysbuild: true
+    platform_allow:
+      - nrf9160dk/nrf9160
+      - nrf9160dk/nrf52840
+    integration_platforms:
+      - nrf9160dk/nrf9160
+      - nrf9160dk/nrf52840
+    build_only: true
+    extra_configs:
+      - CONFIG_TEST_LPUART_TIMEOUT=10
+      - CONFIG_TEST_BUSY_SIM=y
+  lpuart.two_chip_test_debug:
+    sysbuild: true
+    platform_allow:
+      - nrf9160dk/nrf9160
+      - nrf9160dk/nrf52840
+    integration_platforms:
+      - nrf9160dk/nrf9160
+      - nrf9160dk/nrf52840
+    build_only: true
+    extra_args: OVERLAY_CONFIG=dbg.conf
+    extra_configs:
+      - CONFIG_TEST_LPUART_TIMEOUT=10
+  lpuart.user_specific_config:
+    sysbuild: true
+    platform_allow:
+      - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp
+    integration_platforms:
+      - nrf54l09pdk/nrf54l09/cpuapp
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp
+    extra_configs:
+      - CONFIG_UART_INTERRUPT_DRIVEN=y
+      - CONFIG_NRF_SW_LPUART_INT_DRIVEN=n
+      - CONFIG_TEST_LPUART_LOOPBACK=y
+    harness: ztest
+    harness_config:
+      fixture: gpio_loopback

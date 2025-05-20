@@ -1,0 +1,105 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Rev. 0.8.1:
+ * P0.00 - TX_0
+ * P0.01 - RX_0
+ * P0.02 - RTS_0
+ * P0.03 - CTS_0
+ * P0.04 - Button_3
+ *
+ * P1.00 - 32k_XTAL1
+ * P1.01 - 32k_XTAL2
+ * P1.02 - NFC_1
+ * P1.03 - NFC_2
+ * P1.04 - TX_1
+ * P1.05 - RX_1
+ * P1.06 - RTS_1
+ * P1.07 - CTS_1
+ * P1.08 - Button_1 / I2S_SDOUT
+ * P1.09 - Button_2 / I2S_SDIN
+ * P1.10 - LED_1 / I2S_LRCK_M
+ * P1.11 - TWIM_SCL to BME680 + ADC_ch0
+ * P1.12 - TWIM_SDA to BME680 + ADC_ch1
+ * P1.13 - Button_4 / CS_BME680
+ * P1.14 - LED_3 / IRQ / I2S_SCK_M
+ *
+ * P2.00 - QSPI
+ * P2.01 - QSPI
+ * P2.02 - QSPI
+ * P2.03 - QSPI
+ * P2.04 - QSPI
+ * P2.05 - QSPI
+ * P2.06 - SPIM_SCK
+ * P2.07 - LED_2
+ * P2.08 - SPIM_MOSI to ADXL362
+ * P2.09 - LED_0 / SPIM_MISO to ADXL362
+ * P2.10 - CS_ADXL362
+ */
+
+/ {
+	aliases {
+		i2s-node0 = &i2s20;
+		test-counter = &timer24;
+	};
+
+	zephyr,user {
+		io-channels = <&adc 0>, <&adc 1>;
+	};
+};
+
+&pinctrl {
+	i2s20_default_alt: i2s20_default_alt {
+		group1 {
+			psels = <NRF_PSEL(I2S_SCK_M, 1, 14)>,
+				<NRF_PSEL(I2S_LRCK_M, 1, 10)>,
+				<NRF_PSEL(I2S_SDOUT, 1, 8)>,
+				<NRF_PSEL(I2S_SDIN, 1, 9)>;
+		};
+	};
+};
+
+&adc {
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	channel@0 {
+		reg = <0>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_MICROSECONDS, 10)>;
+		zephyr,input-positive = <NRF_SAADC_AIN4>; /* P1.11 - I2C SCL on sensor shield */
+		zephyr,resolution = <10>;
+	};
+
+	channel@1 {
+		reg = <1>;
+		zephyr,gain = "ADC_GAIN_1_4";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+		zephyr,input-positive = <NRF_SAADC_AIN5>; /* P1.12 - I2C SDA on sensor shield */
+		zephyr,resolution = <12>;
+	};
+};
+
+&i2s20 {
+	status = "okay";
+	pinctrl-0 = <&i2s20_default_alt>;
+	pinctrl-names = "default";
+};
+
+&timer24 {
+	status = "okay";
+	prescaler = <4>;
+};
+
+temp_sensor: &temp {
+	status = "okay";
+};
+
+&wdt31 {
+	status = "okay";
+};

@@ -1,0 +1,78 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig CAF_BLE_BOND
+	bool "Enable CAF implementation of Bluetooth LE bond"
+	depends on BT_BONDABLE
+	depends on BT_SETTINGS
+	depends on CAF_SETTINGS_LOADER
+	depends on CAF_BLE_COMMON_EVENTS
+	select CAF_BLE_BOND_SUPPORTED
+	help
+	  The simple CAF implementation that supports only bond erase for default Bluetooth local
+	  identity when predefined button click is detected (if enabled with Kconfig).
+
+if CAF_BLE_BOND
+
+config CAF_BLE_BOND_PEER_ERASE_CLICK
+	bool "Erase bonds using selected button click"
+	depends on CAF_CLICK_EVENTS
+	help
+	  To remove bonds, predefined click type of a predefined button must be detected.
+
+config CAF_BLE_BOND_PEER_ERASE_CLICK_KEY_ID
+	hex "Key ID of a button click used to erase bonds"
+	range 0x0000 0xffff
+	depends on CAF_BLE_BOND_PEER_ERASE_CLICK
+
+config CAF_BLE_BOND_PEER_ERASE_CLICK_TIMEOUT
+	int "Click detection after system start timeout [ms]"
+	default -1
+	depends on CAF_BLE_BOND_PEER_ERASE_CLICK
+	help
+	  This Kconfig option limits time of waiting for the button click detection after boot.
+	  Negative value disables the time limit. A non-negative value sets time limit to defined
+	  value.
+
+	  The timeout may need to be longer for some applications (for example if click event
+	  submission or processing is delayed by operations in system workqueue context).
+
+choice
+	prompt "Select click type"
+	depends on CAF_BLE_BOND_PEER_ERASE_CLICK
+	default CAF_BLE_BOND_PEER_ERASE_CLICK_DOUBLE
+	help
+	  The click types are directly mapped from the click enum in click_event.
+
+config CAF_BLE_BOND_PEER_ERASE_CLICK_SHORT
+	bool "Short click"
+	help
+	  Button pressed and released after a short time.
+
+config CAF_BLE_BOND_PEER_ERASE_CLICK_LONG
+	bool "Long click"
+	help
+	  Button pressed and held for a long period of time.
+
+config CAF_BLE_BOND_PEER_ERASE_CLICK_DOUBLE
+	bool "Double click"
+	help
+	  Two sequences of the button press and release in a short time interval.
+
+endchoice
+
+module = CAF_BLE_BOND
+module-str = caf module ble bond
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+config CAF_BLE_BOND_SUPPORTED
+	bool
+	help
+	  Kconfig option used to inform that Bluetooth LE bond functionality is supported by the
+	  application. This option must be selected by Kconfig option that enables Bluetooth LE
+	  bond support.

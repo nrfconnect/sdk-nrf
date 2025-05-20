@@ -1,0 +1,39 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig APP_JWT
+	bool "Application JWT Library"
+	select BASE64
+	# Needed for time and date
+	select DATE_TIME
+	select NET_SOCKETS
+	select NETWORKING
+	# Needed to print integer values in JSON
+	select CJSON_LIB
+	select CBPRINTF_FP_SUPPORT
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT
+	select PSA_WANT_ALG_ECDSA
+	select PSA_WANT_ECC_SECP_R1_256
+	select PSA_WANT_ALG_SHA_256
+
+if APP_JWT
+
+config APP_JWT_DEFAULT_TIMESTAMP
+	int "Default timestamp to use in case time value is 0"
+	default 1735682400
+
+config APP_JWT_VERIFY_SIGNATURE
+	bool "Verify signature after signing"
+	default y
+
+config APP_JWT_PRINT_EXPORTED_PUBKEY_DER
+	bool "Print to terminal the DER formatted public key"
+
+module=APP_JWT
+module-str=User App JWT
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # APP_JWT

@@ -1,0 +1,74 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+mainmenu "Nordic ipc_radio firmware"
+
+config IPC_RADIO_802154
+	bool "IPC IEEE 802.15.4 radio"
+	select NRF_802154_SER_RADIO
+	help
+	  Enable the IPC IEEE 802.15.4 radio serialization.
+
+config IPC_RADIO_BT
+	bool "IPC Bluetooth"
+	help
+	  Enable the IPC Bluetooth radio serialization.
+
+if IPC_RADIO_BT
+
+choice IPC_RADIO_BT_SER
+	default IPC_RADIO_BT_HCI_IPC
+	prompt "Bluetooth serialization type"
+	help
+	  Type of the IPC Bluetooth radio serialization used.
+
+config IPC_RADIO_BT_HCI_IPC
+	bool "Bluetooth HCI serialization"
+	depends on IPC_SERVICE
+	depends on IPC_SERVICE_BACKEND_ICBMSG || IPC_SERVICE_BACKEND_RPMSG
+	depends on BT_HCI_RAW
+	help
+	  Use Bluetooth HCI serialization over ipc_service.
+
+config IPC_RADIO_BT_RPC
+	bool "Bluetooth host API serialization over RPC"
+	depends on BT_RPC_HOST
+	help
+	  Use nRF RPC serialization for Bluetooth.
+
+endchoice # IPC_RADIO_BT_SER
+
+if IPC_RADIO_BT_HCI_IPC
+
+config QUEUE_THREAD_STACK_SIZE
+	int "Queue thread stack size"
+	default 512
+	help
+	  Stack size for the queue thread.
+
+config QUEUE_THREAD_PRIO
+	int "Queue thread priority"
+	default 7
+	help
+	  Priority for the queue thread.
+
+endif # IPC_RADIO_BT_HCI_IPC
+
+config SETTINGS
+	imply ZMS if SOC_FLASH_NRF_MRAM
+	imply NVS if !SOC_FLASH_NRF_MRAM
+
+config BT_MAX_CONN
+	default 4 if IPC_RADIO_802154
+	default 16 if !IPC_RADIO_802154
+
+endif # IPC_RADIO_BT
+
+module = IPC_RADIO
+module-str = "ipc_radio"
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+source "Kconfig.zephyr"

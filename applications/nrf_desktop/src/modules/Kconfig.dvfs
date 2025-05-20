@@ -1,0 +1,96 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DESKTOP_DVFS
+	bool "DVFS module [EXPERIMENTAL]"
+	depends on SOC_NRF54H20_CPUAPP
+	select EXPERIMENTAL
+	select NRFS_DVFS_SERVICE_ENABLED
+	select CLOCK_CONTROL
+	select CLOCK_CONTROL_NRF2
+	default y
+	help
+	  This option enable DVFS module which switches frequency and voltage according
+	  to application needs.
+
+if DESKTOP_DVFS
+
+config DESKTOP_DVFS_FREQ_HIGH
+	int
+	default 320000000
+
+config DESKTOP_DVFS_FREQ_MED
+	int
+	default 128000000
+
+config DESKTOP_DVFS_FREQ_LOW
+	int
+	default 64000000
+
+config DESKTOP_DVFS_RETRY_BUSY_TIMEOUT_MS
+	int "Retry timeout"
+	default 1
+	range 1 10000
+	help
+	  Timeout in milliseconds specifying time after which DVFS module will retry
+	  DVFS frequency change. This timeout is applied in case another DVFS change
+	  request is still in progress which causes the current request to fail.
+
+config DESKTOP_DVFS_RETRY_INIT_TIMEOUT_MS
+	int "Retry timeout"
+	default 500
+	range 1 10000
+	help
+	  Timeout in milliseconds specifying time after which DVFS module will retry
+	  DVFS frequency change. This timeout is applied in case DVFS is not yet initialized
+	  which causes the current request to fail.
+
+config DESKTOP_DVFS_RETRY_COUNT
+	int "Number of retries"
+	default 5
+	range 1 255
+	help
+	  Number of retries of DVFS frequency change after which DVFS module will report
+	  MODULE_STATE_ERROR.
+
+module = DESKTOP_DVFS
+module-str = DVFS
+source "subsys/logging/Kconfig.template.log_config"
+
+dvfs_state = INITIALIZING
+dfvs_frequency = FREQ_HIGH
+dvfs_timeout = 0
+rsource "Kconfig.dvfs_state_template"
+
+if CAF_BLE_COMMON_EVENTS && (BT_MAX_CONN = 1)
+dvfs_state = LLPM_CONNECTED
+dfvs_frequency = FREQ_MEDLOW
+dvfs_timeout = 0
+rsource "Kconfig.dvfs_state_template"
+endif # CAF_BLE_COMMON_EVENTS && (BT_MAX_CONN = 1)
+
+if DESKTOP_USB_ENABLE
+dvfs_state = USB_CONNECTED
+dfvs_frequency = FREQ_HIGH
+dvfs_timeout = 0
+rsource "Kconfig.dvfs_state_template"
+endif # DESKTOP_USB_ENABLE
+
+if DESKTOP_CONFIG_CHANNEL_ENABLE
+dvfs_state = CONFIG_CHANNEL
+dfvs_frequency = FREQ_HIGH
+dvfs_timeout = 5000
+rsource "Kconfig.dvfs_state_template"
+endif # DESKTOP_CONFIG_CHANNEL_ENABLE
+
+if CAF_BLE_SMP_TRANSFER_EVENTS
+dvfs_state = SMP_TRANSFER
+dfvs_frequency = FREQ_HIGH
+dvfs_timeout = 5000
+rsource "Kconfig.dvfs_state_template"
+endif # CAF_BLE_SMP_TRANSFER_EVENTS
+
+endif # DESKTOP_DVFS

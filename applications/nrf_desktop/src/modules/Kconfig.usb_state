@@ -1,0 +1,228 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DESKTOP_USB_ENABLE
+	bool "Enable USB module"
+	help
+	  Enables USB module. The module allows to transfer HID reports over
+	  USB.
+
+if DESKTOP_USB_ENABLE
+
+config DESKTOP_USB_REMOTE_WAKEUP
+	bool "Enable USB remote wakeup"
+	default y
+	depends on DESKTOP_USB_PM_ENABLE
+	help
+	  Enable USB remote wakeup functionality. The USB wakeup request is
+	  triggered on wake_up_event.
+
+config DESKTOP_USB_SUBSCRIBER_REPORT_PRIORITY
+	int "USB HID reports subscriber priority"
+	default 255
+	range 1 255
+	help
+	  USB reports subscriber priority. The lower value means the lower
+	  priority in subscription to HID reports. By default, the USB uses the highest
+	  possible priority.
+
+config DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION
+	bool "Subscribe only for predefined subset of HID reports"
+	depends on DESKTOP_HID_STATE_ENABLE
+	help
+	  By default, every USB HID instance subscribes for all the HID reports.
+	  Enable this option to specify a subset of HID reports for every USB
+	  HID instance. The subset of HID reports must be specified in
+	  usb_state_def.h file in application configuration directory for given
+	  board and configuration.
+
+config DESKTOP_USB_PM_ENABLE
+	bool "Enable USB power manager integration"
+	depends on CAF_PM_EVENTS
+	select CAF_FORCE_POWER_DOWN_EVENTS
+	default y
+	help
+	  This enables small module that blocks power down if the USB is active.
+
+config DESKTOP_USB_PM_REQ_NO_PM_LATENCY
+	bool "Require zero latency in Power Management while USB is active"
+	default y
+	depends on PM
+	depends on DESKTOP_USB_PM_ENABLE
+	help
+	  The zero latency prevents entering power states that introduce wakeup
+	  latency and ensures high performance. While USB is active, application
+	  power down is blocked anyway.
+
+config DESKTOP_USB_HID_REPORT_SENT_ON_SOF
+	bool "Submit HID report sent event on USB Start of Frame (SOF) [EXPERIMENTAL]"
+	default y if SOC_SERIES_NRF54HX
+	select EXPERIMENTAL
+	help
+	  Delay submitting hid_report_sent_event until subsequent USB Start of
+	  Frame (SOF). The feature reduces the negative impact of jitter related
+	  to USB polls. However, it also increases HID data latency, as a HID
+	  report pipeline with two sequential reports is required to ensure that
+	  the USB peripheral can provide a HID report on every USB poll.
+
+	  The feature is enabled by default for nRF54H Series SoC, because the
+	  negative impact of USB polling jitter is more visible in case of USB
+	  High-Speed.
+
+choice DESKTOP_USB_STACK
+	prompt "USB stack"
+	default DESKTOP_USB_STACK_LEGACY
+
+config DESKTOP_USB_STACK_NEXT
+	bool "USB next stack [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	select USB_DEVICE_STACK_NEXT
+	help
+	  Use experimental integration of USB next stack.
+
+config DESKTOP_USB_STACK_LEGACY
+	bool "USB legacy stack"
+	select USB_DEVICE_STACK
+	select USB_DEVICE_HID
+	select USB_DEVICE_REMOTE_WAKEUP if DESKTOP_USB_REMOTE_WAKEUP
+	select USB_DEVICE_SOF if DESKTOP_USB_HID_REPORT_SENT_ON_SOF
+
+endchoice
+
+if DESKTOP_USB_STACK_LEGACY
+
+config USB_HID_POLL_INTERVAL_MS
+	default 1
+	help
+	  Use small USB HID Device polling interval to ensure low latency.
+
+config USB_HID_DEVICE_COUNT
+	default DESKTOP_HID_DONGLE_BOND_COUNT if DESKTOP_ROLE_HID_DONGLE
+	default 1 if DESKTOP_ROLE_HID_PERIPHERAL
+	help
+	  By default, dongle uses a dedicated USB HID instance to forward data
+	  from given peripheral to the host. On memory-limited dongles, a
+	  single USB HID instance can be used to forward HID reports from all
+	  of the connected peripherals.
+
+	  By default, peripheral uses a single USB HID instance to send all of
+	  the HID reports.
+
+config USB_HID_BOOT_PROTOCOL
+	default y if DESKTOP_HID_BOOT_INTERFACE_MOUSE
+	default y if DESKTOP_HID_BOOT_INTERFACE_KEYBOARD
+
+config DESKTOP_USB_HID_PROTOCOL_CODE
+	int
+	default 2 if DESKTOP_HID_BOOT_INTERFACE_MOUSE
+	default 1 if DESKTOP_HID_BOOT_INTERFACE_KEYBOARD
+	default -1
+
+config USB_DEVICE_MANUFACTURER
+	default DESKTOP_DEVICE_MANUFACTURER
+	help
+	  nRF Desktop defines common HID device identification values
+	  and passes them as defaults to the USB subsystem configuration.
+
+config USB_DEVICE_PRODUCT
+	default DESKTOP_DEVICE_PRODUCT
+	help
+	  nRF Desktop defines common HID device identification values
+	  and passes them as defaults to the USB subsystem configuration.
+
+config USB_DEVICE_VID
+	default DESKTOP_DEVICE_VID
+	help
+	  nRF Desktop defines common HID device identification values
+	  and passes them as defaults to the USB subsystem configuration.
+
+config USB_DEVICE_PID
+	default DESKTOP_DEVICE_PID
+	help
+	  nRF Desktop defines common HID device identification values
+	  and passes them as defaults to the USB subsystem configuration.
+
+choice USB_DEVICE_LOG_LEVEL_CHOICE
+	default USB_DEVICE_LOG_LEVEL_OFF
+	help
+	  Disable USB device logs to avoid flooding logs.
+endchoice
+
+choice USB_DRIVER_LOG_LEVEL_CHOICE
+	default USB_DRIVER_LOG_LEVEL_OFF
+	help
+	  Disable USB driver logs to avoid flooding logs.
+endchoice
+
+choice USB_HID_LOG_LEVEL_CHOICE
+	default USB_HID_LOG_LEVEL_WRN
+	help
+	  Reduce USB HID log level to avoid flooding logs on USB state changes.
+endchoice
+
+endif # DESKTOP_USB_STACK_LEGACY
+
+if DESKTOP_USB_STACK_NEXT
+
+config USBD_HID_IN_BUF_COUNT
+	default 2 if DESKTOP_USB_HID_REPORT_SENT_ON_SOF
+	default 1
+	help
+	  nRF Desktop queues HID reports at the source. Generally there is no
+	  need to use multiple buffers in the IN pool per HID instance.
+
+	  An exception is use-case where HID reports are submitted from USB sent
+	  callback (when synchronizing hid_report_sent to USB Start of Frame
+	  (SOF) enforces using pipeline size of 2). An extra buffer must be
+	  allocated to allow providing data to the USB next stack before the
+	  previously allocated buffer is freed.
+
+config DESKTOP_USB_STACK_NEXT_DISABLE_ON_VBUS_REMOVAL
+	bool
+	default y if SOC_SERIES_NRF54HX
+	help
+	  Disable the USB stack on VBUS removal and enable it on VBUS ready to
+	  workaround UDC driver limitations of the nRF54HX SoC.
+
+	  After the USB cable is removed, the USB driver is powered down and
+	  doesn't call appropriate callbacks to the USB stack. It may lead to
+	  the USB stack ending in a broken state. Calling usbd_disable() on VBUS
+	  removal workarounds this issue.
+
+	  The usbd_enable() function blocks until USB cable is connected. If the
+	  cable is not connected during the predefined wait period
+	  (CONFIG_UDC_DWC2_USBHS_VBUS_READY_TIMEOUT), the function returns
+	  earlier with a timeout error. The function is called on VBUS ready to
+	  avoid calling usbd_enable() periodically.
+
+config UDC_DWC2_USBHS_VBUS_READY_TIMEOUT
+	int
+	depends on SOC_SERIES_NRF54HX
+	default 100
+	help
+	  For the nRF54HX SoC the timeout must be set to a non-zero value to
+	  prevent the usbd_enable() function from blocking the application
+	  forever when the USB cable is not connected.
+
+choice USBD_LOG_LEVEL_CHOICE
+	default USBD_LOG_LEVEL_WRN
+	help
+	  Reduce USBD log level to avoid flooding logs.
+endchoice
+
+choice UDC_DRIVER_LOG_LEVEL_CHOICE
+	default UDC_DRIVER_LOG_LEVEL_WRN
+	help
+	  Reduce USB driver log level to avoid flooding logs.
+endchoice
+
+endif # DESKTOP_USB_STACK_NEXT
+
+module = DESKTOP_USB_STATE
+module-str = USB state
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # DESKTOP_USB_ENABLE

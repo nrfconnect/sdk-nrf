@@ -1,0 +1,53 @@
+# Copyright (c) 2023 Panasonic Industrial Devices Europe GmbH
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: |
+  This is a representation of the Skyworks SKY66407-11 Radio Front-End module.
+  It is supplementing the generic representation of FEM with settling time and
+  gain values appropriate for SKY66407-11 device.
+
+compatible: "skyworks,sky66407-11"
+
+include: generic-fem-two-ctrl-pins.yaml
+
+properties:
+  ctx-settle-time-us:
+    type: int
+    default: 23
+    description: |
+      Settling time in microseconds from activation of CTX to transmit.
+
+      The default value is based on the experimentally determined settle
+      time, that was observed on SKY66112-11 device.
+
+  crx-settle-time-us:
+    type: int
+    default: 5
+    description: |
+      Settling time in microseconds from activation of CRX to receive.
+
+      The default value is based on the experimentally determined settle
+      time, that was observed on SKY66112-11 device.
+
+  tx-gain-db:
+    type: int
+    default: 12
+    description: |
+      TX gain of the PA amplifier of SKY66407-11 in dB.
+
+      Default value is based on Table 5 of the SKY66407-11 data sheet
+      (February 27, 2023). This is not a fixed parameter of the device.
+      Table 7 lists the relationship between CTX voltage/current and
+      bias resistance.
+
+  rx-gain-db:
+    type: int
+    default: 0
+    description: |
+      RX gain of the LNA amplifier of SKY66407-11 in dB.
+
+      Based on the data sheet (February 27, 2023) for SKY66407-11 has no
+      receiving gain. This is a fixed parameter of the device. The
+      value can be changed if, instead of SKY66407-11, another device
+      with different gain, but compatible with the control interface
+      via the CTX, CRX pins is used.

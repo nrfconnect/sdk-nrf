@@ -1,0 +1,84 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config NFC_TNEP_CH
+	bool "NFC TNEP Connection Handover"
+	select NFC_NDEF_CH_MSG
+	select NFC_NDEF_CH_PARSER
+	help
+	  Enable NFC TNEP Connection Handover service
+
+if NFC_TNEP_CH
+
+if NFC_TNEP_TAG
+
+config NFC_TNEP_CH_MAX_NDEF_SIZE
+	int "Maximum TNEP NDEF Message size"
+	default 1024
+	help
+	  The maximum NDEF Message size for the Connection Handover Service.
+	  The NFC Tag Device can limit the maximum NDEF message size for each
+	  of its offered Services. The maximum NDEF message size is equal to
+	  or smaller than the maximum NDEF message size that fits in the data
+	  area announced during the NDEF Detection Procedure.
+
+config NFC_TNEP_CH_MIN_WAIT_TIME
+	int "Minimum waiting time"
+	default 44
+	range 0 63
+	help
+	  The minimum waiting time measured. The minimum waiting time is the
+	  time measured between the end of the last write command of an NDEF
+	  Write Procedure and the start of the first command of the first
+	  NDEF Read.
+
+config NFC_TNEP_CH_MAX_TIME_EXTENSION
+	int "Maximum number of Waiting Time Extension"
+	default 2
+	range 0 15
+	help
+	  The maximum number of requested waiting time extensions. The TNEP
+	  Tag Device can request more time for NDEF data processing when
+	  Tag Device is not responding with the NDEF Message.
+
+endif # NFC_TNEP_TAG
+
+if NFC_TNEP_POLLER
+
+config NFC_TNEP_CH_POLLER_RX_BUF_SIZE
+	int "Connection Handover Poller receive buffer size"
+	default 256
+	help
+	  Size of the Poller receive buffer.
+
+endif # NFC_TNEP_POLLER
+
+config NFC_TNEP_CH_MAX_RECORD_COUNT
+	int "Maximum Record count in received NDEF Message"
+	default 3 if NFC_TNEP_POLLER
+	default 2
+	help
+	  The maximum expected NDEF Records count in received main NDEF
+	  Message.
+
+config NFC_TNEP_CH_MAX_LOCAL_RECORD_COUNT
+	int "Maximum local Records count in the nested Connection Handover Message"
+	default 2
+	help
+	  The maximum expected local NDEF Record count in the nested Connection
+	  Handover Message.
+
+config NFC_TNEP_CH_PARSER_BUFFER_SIZE
+	int "Connection Handover parser buffer size"
+	default 512
+	help
+	  Size of the Connection Handover parser buffer.
+
+module = NFC_TNEP_CH
+module-str = TNEP_CH
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # NFC_TNEP_CH

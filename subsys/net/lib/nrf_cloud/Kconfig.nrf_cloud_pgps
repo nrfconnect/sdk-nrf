@@ -1,0 +1,186 @@
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NRF_CLOUD_PGPS
+	bool "nRF Cloud Predicted GPS (P-GPS)"
+	depends on MODEM_INFO
+	depends on MODEM_INFO_ADD_NETWORK
+	depends on DATE_TIME
+	imply DOWNLOADER
+	select STREAM_FLASH_ERASE
+	select SETTINGS
+	select CJSON_LIB
+
+if NRF_CLOUD_PGPS
+
+config NRF_CLOUD_PGPS_REQUEST_UPON_INIT
+	bool "Request required P-GPS data upon initialization"
+	default y
+	help
+	  If this option is enabled, the P-GPS library init function will
+	  request P-GPS data from the cloud for three reasons:
+	  if no P-GPS data has previously been stored to flash,
+	  if only some of the predictions are in storage,
+	  or if the replacement threshold is reached.
+
+choice NRF_CLOUD_PGPS_PREDICTION_PERIOD
+	prompt "Desired time between predictions"
+	default NRF_CLOUD_PGPS_PREDICTION_PERIOD_240_MIN
+	help
+	  This value is used when requesting predicted GPS data from the
+	  cloud. More frequent predictions will result in more accurate
+	  ephemeris values for any given time, but will take more storage
+	  space in flash.
+
+config NRF_CLOUD_PGPS_PREDICTION_PERIOD_120_MIN
+	bool "120 min prediction period"
+	help
+	  Each prediction is used to cover 120 minutes. May increase fix
+	  accuracy compared to 240 minute prediction period, but doubles
+	  the amount of data transferred and storage space needed in flash.
+
+config NRF_CLOUD_PGPS_PREDICTION_PERIOD_240_MIN
+	bool "240 min prediction period"
+	help
+	  Each prediction is used to cover 240 minutes.
+
+endchoice
+
+config NRF_CLOUD_PGPS_NUM_PREDICTIONS
+	int "Desired number of predictions"
+	range 2 84
+	default 42
+	help
+	  This value, together with the prediction period, determines the
+	  overall timespan that the GPS predictions will cover. The
+	  default values allows for one week of predictions. Odd numbers
+	  are not allowed.
+
+config NRF_CLOUD_PGPS_REPLACEMENT_THRESHOLD
+	int "Number of predictions remaining before fetching more"
+	range 0 82
+	default 0
+	help
+	  When set to 0, no attempt will be made to update the prediction
+	  set from the cloud until all predictions have expired. When set
+	  to an even number less than or equal to
+	  NRF_CLOUD_PGPS_NUM_PREDICTIONS - 2, any expired predictions will be
+	  replaced with predictions following the last remaining valid
+	  prediction. Odd numbers are not allowed.
+
+config NRF_CLOUD_PGPS_DOWNLOAD_FRAGMENT_SIZE
+	int "Fragment size for P-GPS downloads"
+	range 128 1500
+	default 1500
+	help
+	  Due to the finite size of the nrf9160 modem's TLS buffer, this
+	  value needs to be small enough to leave room for the HTTP
+	  headers.
+
+choice NRF_CLOUD_PGPS_TRANSPORT
+	prompt "nRF Cloud P-GPS transport for requests and responses"
+	default NRF_CLOUD_PGPS_TRANSPORT_MQTT if NRF_CLOUD_MQTT
+	default NRF_CLOUD_PGPS_TRANSPORT_NONE
+
+config NRF_CLOUD_PGPS_TRANSPORT_NONE
+	bool "Application-provided transport"
+	help
+	  Enabling this option will make the nRF Cloud P-GPS library not request
+	  or receive data from nRF Cloud when its APIs are called. This will
+	  instead let it be up to the user to request, receive and process P-GPS
+	  data.
+
+config NRF_CLOUD_PGPS_TRANSPORT_MQTT
+	bool "MQTT transport"
+	depends on NRF_CLOUD_MQTT
+	depends on NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP
+	help
+	  Use nRF Cloud library's MQTT implementation to send requests for P-GPS
+	  data and receive responses. Responses indicate where the device can
+	  download predictions from, using the NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT.
+
+endchoice # NRF_CLOUD_PGPS_TRANSPORT
+
+choice NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT
+	prompt "nRF Cloud P-GPS download transport"
+	default NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP
+
+config NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_HTTP
+	bool "Transport P-GPS prediction data over HTTP(S)"
+	help
+	  Enabling this option will make the nRF Cloud P-GPS library use the
+	  downloader library to download prediction data.
+
+config NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT_CUSTOM
+	bool "Transport P-GPS data using application-supplied transport"
+	help
+	  Enabling this option bypasses the built-in HTTP(S) transport and
+	  replaces it with an application-specific transport for downloading
+	  prediction data.
+
+endchoice # NRF_CLOUD_PGPS_DOWNLOAD_TRANSPORT
+
+config NRF_CLOUD_PGPS_SOCKET_RETRIES
+	int "Number of times to retry a P-GPS download"
+	default 2
+	help
+	  This sets the maximum number of times to retry a download.
+
+choice NRF_CLOUD_PGPS_STORAGE
+	prompt "nRF Cloud P-GPS persistent storage location"
+#TODO: Add MCUBOOT_BOOTLOADER_MODE_RAM_LOAD once included via next upmerge
+	default NRF_CLOUD_PGPS_STORAGE_PARTITION if MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP || MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT
+	default NRF_CLOUD_PGPS_STORAGE_MCUBOOT_SECONDARY if BOARD_THINGY91_NRF9160_NS
+	help
+	  The P-GPS subsystem requires a contiguous section of flash memory in
+	  which to store predictions. The amount required is 2048 bytes times
+	  the number of predictions set by NRF_CLOUD_PGPS_NUM_PREDICTIONS.
+	  If mcuboot DFU is enabled, default to NRF_CLOUD_PGPS_STORAGE_PARTITION.
+	  Otherwise, P-GPS will prevent a successful mcuboot update, causing it
+	  to revert to the previous image.
+
+config NRF_CLOUD_PGPS_STORAGE_PARTITION
+	bool "Define P-GPS subsystem flash partition"
+	help
+	  If set, allocates flash for storing predictions.
+
+config NRF_CLOUD_PGPS_STORAGE_MCUBOOT_SECONDARY
+	bool "Reuse MCUboot secondary partition for P-GPS storage"
+	depends on BOOTLOADER_MCUBOOT
+	depends on IMG_MANAGER
+#TODO: Add MCUBOOT_BOOTLOADER_MODE_RAM_LOAD once included via next upmerge
+	depends on !MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP && !MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT
+	help
+	  If set, use the secondary MCUboot partition to also store P-GPS data.
+	  Note that when a FOTA job executes, this data will be lost and will
+	  have to be downloaded again after the FOTA job is complete. This is
+	  not compatible with FOTA updates of MUCboot itself, which is possible
+	  when SECURE_BOOT is enabled.
+
+config NRF_CLOUD_PGPS_STORAGE_CUSTOM
+	bool "Use application-provided location and size in flash"
+	help
+	  The application is responsible for providing the location in flash
+	  in which to store P-GPS data.  The location must be aligned to a
+	  flash page boundary (4096 bytes), and the size must be at least 2048
+	  bytes times NRF_COUND_PGPS_NUM_PREDICTIONS.
+
+endchoice # NRF_CLOUD_PGPS_STORAGE
+
+if NRF_CLOUD_PGPS_STORAGE_PARTITION
+
+config NRF_CLOUD_PGPS_PARTITION_SIZE
+	hex "Size of flash partition for P-GPS data storage"
+	default 0x15000
+	help
+	  This must be at least 2048 bytes times NRF_COUND_PGPS_NUM_PREDICTIONS.
+
+config NRF_CLOUD_PGPS_PARTITION_ALIGN
+	hex "Align P-GPS partition to flash block boundary"
+	default $(dt_node_int_prop_hex,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
+
+endif # NRF_CLOUD_PGPS_STORAGE_PARTITION
+
+endif # NRF_CLOUD_PGPS

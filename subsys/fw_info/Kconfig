@@ -1,0 +1,138 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig FW_INFO
+	bool
+	prompt "Firmware Metadata"
+	imply NRFX_NVMC if !SOC_SERIES_NRF54LX
+
+if (FW_INFO)
+
+config FW_INFO_API
+	bool "Only provide APIs to locate metadata"
+	help
+	  Only provide APIs to locate metadata.
+
+config FW_INFO_OFFSET
+	hex "The location of firmware info inside this firmware"
+	default 0x600 if SOC_SERIES_NRF54LX
+	default 0x200
+	help
+	  The location of firmware information inside the current firmware
+	  image. Valid values are 0x0, 0x200, 0x400, 0x600, 0x800, 0xe00, and 0x1000.
+	  Compatible readers of firmware information should search all possible
+	  offsets. Note that all space between the vector table and this address
+	  is unused.
+
+config FW_INFO_FIRMWARE_VERSION
+	int "Version number of the firmware"
+	range 0 32766 if SB_MONOTONIC_COUNTER
+	default 1
+	help
+	  When SB_MONOTONIC_COUNTER is enabled, the firmware version is limited
+	  to 15 bits since the monotonic counters are 16 bits and one bit is
+	  used to denote the slot the firwmare is in.
+
+config FW_INFO_MAGIC_COMMON
+	hex
+	default 0x281ee6de
+	help
+	  Magic word for all structs (32 bits).
+	  This is used by different metadata structs (in fw_info.h and
+	  elsewhere). They each have their own magic word composed of three
+	  uint32_t values, where one is always this option (FW_INFO_MAGIC_COMMON).
+	  One of the uint32_ts is a compatibility ID constructed from
+	  FW_INFO_HARDWARE_ID, FW_INFO_VERSION, FW_CRYPTO_ID, and
+	  FW_INFO_MAGIC_COMPATIBILITY_ID, while the final uint32_t is completely
+	  different for each struct, e.g. FW_INFO_MAGIC_FIRMWARE_INFO.
+	  The bootloader expects a certain value for each struct, and if it
+	  attempts to read a struct without a matching magic word, the struct
+	  will be rejected. The config values here apply both to this build of
+	  the bootloader and to the metadata constructed for the app.
+	  Refer to this module's CMakeLists.txt to see how the magic words are
+	  composed.
+
+config FW_INFO_MAGIC_FIRMWARE_INFO
+	hex
+	default 0x8fcebb4c
+	help
+	  Magic word for firmware information structs (32 bits).
+	  Magic word value specific to firmware information structs (inside
+	  the firmware). For more information, see FW_INFO_MAGIC_COMMON.
+
+config FW_INFO_MAGIC_EXT_API
+	hex
+	default 0xb845acea
+	help
+	  Magic word value specific to EXT_API structs.
+	  For more information, see FW_INFO_MAGIC_COMMON.
+
+config FW_INFO_HARDWARE_ID
+	int "The SoC a firmware is built to run on (8 bits)"
+	range 0 255
+	default 51 if SOC_SERIES_NRF51X
+	default 52 if SOC_SERIES_NRF52X
+	default 53 if SOC_SERIES_NRF53X
+	default 54 if SOC_SERIES_NRF54LX
+	default 91 if SOC_SERIES_NRF91X
+	default 0 if BOARD_NATIVE_SIM
+	help
+	  Used to ensure binary compatibility.
+	  For more information, see FW_INFO_MAGIC_COMMON.
+
+config FW_INFO_VERSION
+	int
+	range 0 255
+	default 2
+	help
+	  Version number of the fw_*_info structs (8 bits).
+	  Used to ensure binary compatibility.
+	  For more information, see FW_INFO_MAGIC_COMMON.
+
+config FW_INFO_CRYPTO_ID
+	int
+	default 0
+
+config FW_INFO_MAGIC_COMPATIBILITY_ID
+	int "Compatibility ID for user-defined purposes (8 bits)"
+	range 0 255
+	default 0
+	help
+	  User defined value.
+	  Used to ensure compatibility between bootloader and metadata.
+	  For more information, see FW_INFO_MAGIC_COMMON.
+
+config FW_INFO_MAGIC_LEN
+	int
+	default 12
+	help
+	  Total length of magic words (in bytes).
+	  For more information, see FW_INFO_MAGIC_COMMON.
+
+config FW_INFO_VALID_VAL
+	hex
+	default 0x9102FFFF
+	help
+	  The value fw_info::valid will have when valid.
+
+config FW_INFO_PROVIDE_ENABLE
+	bool
+	help
+	  Hidden option, set if at least one *_EXT_API_ENABLED option is enabled.
+
+EXT_API = EXT_API_PROVIDE
+id = 0x1200
+flags = 0
+ver = 1
+source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"
+
+config EXT_API_PROVIDE_EXT_API_ATLEAST_OPTIONAL
+	bool "Set the PROVIDE EXT_API as at least optional"
+	help
+	  When this is enabled MCUBOOT requires the presence of a FW_INFO struct in the firmware
+	  image being booted.
+
+endif # FW_INFO

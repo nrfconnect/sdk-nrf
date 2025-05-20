@@ -1,0 +1,209 @@
+/*
+ * Wiring required for the test:
+ * - P7.0 <-> P0.0
+ * - P7.1 <-> P0.5
+ * - P7.2 <-> P0.6
+ * - P7.3 <-> P0.7
+ * - P7.4 <-> P0.8
+ * - P7.5 <-> P0.9
+ */
+
+&pinctrl {
+	sqspi_default: sqspi_default {
+		group1 {
+			psels = <NRF_PSEL(SDP_MSPI_SCK, 7, 0)>,
+				<NRF_PSEL(SDP_MSPI_CS0, 7, 5)>,
+				<NRF_PSEL(SDP_MSPI_DQ0, 7, 1)>;
+			nordic,drive-mode = <NRF_DRIVE_E0E1>;
+		};
+		group2 {
+			psels = <NRF_PSEL(SDP_MSPI_DQ1, 7, 2)>,
+				<NRF_PSEL(SDP_MSPI_DQ2, 7, 3)>,
+				<NRF_PSEL(SDP_MSPI_DQ3, 7, 4)>;
+			nordic,drive-mode = <NRF_DRIVE_E0E1>;
+			bias-pull-up;
+		};
+	};
+
+	sqspi_sleep: sqspi_sleep {
+		group1 {
+			low-power-enable;
+			psels = <NRF_PSEL(SDP_MSPI_SCK, 7, 0)>,
+				<NRF_PSEL(SDP_MSPI_CS0, 7, 5)>,
+				<NRF_PSEL(SDP_MSPI_DQ0, 7, 1)>,
+				<NRF_PSEL(SDP_MSPI_DQ1, 7, 2)>,
+				<NRF_PSEL(SDP_MSPI_DQ2, 7, 3)>,
+				<NRF_PSEL(SDP_MSPI_DQ3, 7, 4)>;
+		};
+	};
+
+	spis130_default_alt: spis130_default_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIS_SCK, 0, 0)>,
+				<NRF_PSEL(SPIS_MOSI, 0, 5)>,
+				<NRF_PSEL_DISCONNECTED(SPIS_MISO)>,
+				<NRF_PSEL(SPIS_CSN, 0, 9)>;
+		};
+	};
+
+	spis130_sleep_alt: spis130_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIS_SCK, 0, 0)>,
+				<NRF_PSEL(SPIS_MOSI, 0, 5)>,
+				<NRF_PSEL_DISCONNECTED(SPIS_MISO)>,
+				<NRF_PSEL(SPIS_CSN, 0, 9)>;
+			low-power-enable;
+		};
+	};
+
+	spis131_default_alt: spis131_default_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIS_SCK, 0, 0)>,
+				<NRF_PSEL(SPIS_MOSI, 0, 6)>,
+				<NRF_PSEL_DISCONNECTED(SPIS_MISO)>,
+				<NRF_PSEL(SPIS_CSN, 0, 9)>;
+		};
+	};
+
+	spis131_sleep_alt: spis131_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIS_SCK, 0, 0)>,
+				<NRF_PSEL(SPIS_MOSI, 0, 6)>,
+				<NRF_PSEL_DISCONNECTED(SPIS_MISO)>,
+				<NRF_PSEL(SPIS_CSN, 0, 9)>;
+			low-power-enable;
+		};
+	};
+
+	spis132_default_alt: spis132_default_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIS_SCK, 0, 0)>,
+				<NRF_PSEL(SPIS_MOSI, 0, 7)>,
+				<NRF_PSEL_DISCONNECTED(SPIS_MISO)>,
+				<NRF_PSEL(SPIS_CSN, 0, 9)>;
+		};
+	};
+
+	spis132_sleep_alt: spis132_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIS_SCK, 0, 0)>,
+				<NRF_PSEL(SPIS_MOSI, 0, 7)>,
+				<NRF_PSEL_DISCONNECTED(SPIS_MISO)>,
+				<NRF_PSEL(SPIS_CSN, 0, 9)>;
+			low-power-enable;
+		};
+	};
+
+	spis133_default_alt: spis133_default_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIS_SCK, 0, 0)>,
+				<NRF_PSEL(SPIS_MOSI, 0, 8)>,
+				<NRF_PSEL_DISCONNECTED(SPIS_MISO)>,
+				<NRF_PSEL(SPIS_CSN, 0, 9)>;
+		};
+	};
+
+	spis133_sleep_alt: spis133_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIS_SCK, 0, 0)>,
+				<NRF_PSEL(SPIS_MOSI, 0, 8)>,
+				<NRF_PSEL_DISCONNECTED(SPIS_MISO)>,
+				<NRF_PSEL(SPIS_CSN, 0, 9)>;
+			low-power-enable;
+		};
+	};
+};
+
+&cpuflpr_vpr {
+	pinctrl-0 = <&sqspi_default>;
+	pinctrl-1 = <&sqspi_sleep>;
+	pinctrl-names = "default", "sleep";
+	interrupts = <212 NRF_DEFAULT_IRQ_PRIORITY>;
+	status = "okay";
+	/delete-property/ execution-memory;
+};
+
+/delete-node/ &cpuflpr_code_data;
+/delete-node/ &cpuapp_cpuflpr_ipc_shm;
+/delete-node/ &cpuflpr_cpuapp_ipc_shm;
+/delete-node/ &cpuapp_cpuflpr_ipc;
+
+&ram21_region {
+	status = "okay";
+
+	softperiph_ram: memory@0 {
+		reg = <0 0x4000>;
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		dut: sqspi: sqspi@3e00 {
+			compatible = "nordic,nrf-sqspi";
+			#address-cells = <1>;
+			#size-cells = <0>;
+			reg = <0x3e00 0x200>;
+			zephyr,pm-device-runtime-auto;
+			memory-regions = <&sqspi_buffers>;
+		};
+	};
+
+	sqspi_buffers: memory@4000 {
+		compatible = "zephyr,memory-region";
+		reg = <0x4000 0x4000>;
+		#memory-region-cells = <0>;
+		zephyr,memory-region = "SQSPI_BUFFERS";
+		zephyr,memory-attr = <DT_MEM_CACHEABLE>;
+	};
+};
+
+&cpuapp_dma_region {
+	status = "okay";
+};
+
+test_line0: &spi130 {
+	compatible = "nordic,nrf-spis";
+	status = "okay";
+	def-char = <0x00>;
+	pinctrl-0 = <&spis130_default_alt>;
+	pinctrl-1 = <&spis130_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuapp_dma_region>;
+	/delete-property/rx-delay-supported;
+	/delete-property/rx-delay;
+};
+
+test_line1: &spi131 {
+	compatible = "nordic,nrf-spis";
+	status = "okay";
+	def-char = <0x00>;
+	pinctrl-0 = <&spis131_default_alt>;
+	pinctrl-1 = <&spis131_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuapp_dma_region>;
+	/delete-property/rx-delay-supported;
+	/delete-property/rx-delay;
+};
+
+test_line2: &spi132 {
+	compatible = "nordic,nrf-spis";
+	status = "okay";
+	def-char = <0x00>;
+	pinctrl-0 = <&spis132_default_alt>;
+	pinctrl-1 = <&spis132_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuapp_dma_region>;
+	/delete-property/rx-delay-supported;
+	/delete-property/rx-delay;
+};
+
+test_line3: &spi133 {
+	compatible = "nordic,nrf-spis";
+	status = "okay";
+	def-char = <0x00>;
+	pinctrl-0 = <&spis133_default_alt>;
+	pinctrl-1 = <&spis133_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuapp_dma_region>;
+	/delete-property/rx-delay-supported;
+	/delete-property/rx-delay;
+};

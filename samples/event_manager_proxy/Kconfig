@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
+
+menu "Event manager proxy sample application settings"
+
+config APP_EVENT_MANAGER_REMOTE_WAIT_TO
+	int "Waiting period for the remote core to finish the initialization"
+	range 10 5000
+	default 1000
+	help
+	  The time to wait for second core to report its readiness to transport the events.
+	  The time is given in milliseconds.
+
+rsource "common_events/Kconfig"
+rsource "modules/Kconfig"
+endmenu

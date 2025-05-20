@@ -1,0 +1,12 @@
+#include <zephyr/autoconf.h>
+
+lwm2m_carrier:
+  placement:
+    before: [tfm_storage, end]
+#ifdef CONFIG_BUILD_WITH_TFM
+    align: {start: CONFIG_NRF_TRUSTZONE_FLASH_REGION_SIZE}
+#else
+    align: {start: CONFIG_LWM2M_CARRIER_STORAGE_SECTOR_SIZE}
+#endif
+  size: CONFIG_LWM2M_CARRIER_STORAGE_AREA_SIZE
+  inside: [nonsecure_storage]

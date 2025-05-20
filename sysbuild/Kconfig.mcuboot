@@ -1,0 +1,199 @@
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+menu "MCUboot configuration"
+	depends on BOOTLOADER_MCUBOOT
+
+config MCUBOOT_BUILD_DIRECT_XIP_VARIANT
+	bool "Build DirectXIP variant image"
+	depends on MCUBOOT_MODE_DIRECT_XIP || MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT
+	default y
+	help
+	  Will build the alternative slot (variant) image of the main application.
+
+menuconfig MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
+	bool "Downgrade prevention using hardware security counters"
+	depends on (SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91X)
+	depends on !SECURE_BOOT_APPCORE
+	depends on !QSPI_XIP_SPLIT_IMAGE
+	help
+	  This option can be enabled by the application and will ensure that the
+	  MCUBOOT_HW_DOWNGRADE_PREVENTION Kconfig option is enabled in the MCUboot image.
+
+	  Note that this can only be used on first image, it will not be applied to the second
+	  image (network core updates) on nRF5340 which will use software downgrade protection
+	  on the network core CPU instead.
+
+if MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
+
+config MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS
+	int "Number of available hardware counter slots"
+	default 240
+	range 2 300
+	help
+	  When MCUBOOT_HW_DOWNGRADE_PREVENTION is enabled, MCUboot will use one hardware counter
+	  for each updatable image (UPDATEABLE_IMAGE_NUMBER). This configuration specifies how many
+	  counter slots will be allocated for each hardware counter. The hardware counters are
+	  stored in OTP storage. The rationale for the default number (240): Assume one update a
+	  month for 10 years, then double that value just in case. This default fits comfortably
+	  within the OTP region of UICR.
+
+config MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE
+	int "Security counter value"
+	default 1
+	range 1 65535
+	help
+	  The security counter value for this image.
+	  This is the value that will be passed to the --security-counter parameter of imgtool.py
+
+endif # MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
+
+config MCUBOOT_COMPRESSED_IMAGE_SUPPORT
+	bool "Compressed image support"
+	depends on MCUBOOT_MODE_OVERWRITE_ONLY
+	help
+	  When enabled, supports loading compressed images using LZMA2 to the secondary slot which
+	  will then be decompressed and loaded to the primary slot.
+
+config MCUBOOT_MAX_UPDATEABLE_IMAGES
+	int
+	default 1 if MCUBOOT_MODE_SINGLE_APP
+	default 4
+
+config MCUBOOT_APPLICATION_IMAGE_NUMBER
+	int
+	default 0
+
+config MCUBOOT_NETWORK_CORE_IMAGE_NUMBER
+	int
+	default 1 if NETCORE_APP_UPDATE && !MCUBOOT_MODE_SINGLE_APP
+	default -1
+
+config MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER
+	int
+	default 2 if (WIFI_PATCHES_EXT_FLASH_XIP || WIFI_PATCHES_EXT_FLASH_STORE) && MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1
+	default 1 if (WIFI_PATCHES_EXT_FLASH_XIP || WIFI_PATCHES_EXT_FLASH_STORE)
+	default -1
+
+config MCUBOOT_QSPI_XIP_IMAGE_NUMBER
+	int
+	default 3 if QSPI_XIP_SPLIT_IMAGE && MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1 && MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER != -1
+	default 2 if QSPI_XIP_SPLIT_IMAGE && MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1
+	default 1 if QSPI_XIP_SPLIT_IMAGE
+	default -1
+
+config MCUBOOT_MCUBOOT_IMAGE_NUMBER
+	int
+	default 4 if SECURE_BOOT_APPCORE && MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1 && MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER != -1 && MCUBOOT_QSPI_XIP_IMAGE_NUMBER != 1
+	default 3 if SECURE_BOOT_APPCORE && ((MCUBOOT_QSPI_XIP_IMAGE_NUMBER != -1 && (MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1 || MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER != -1)) || (MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1 && MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER != -1))
+	default 2 if SECURE_BOOT_APPCORE && (MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1 || MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER != -1 || MCUBOOT_QSPI_XIP_IMAGE_NUMBER != -1)
+	default 1 if SECURE_BOOT_APPCORE
+	default -1
+
+config MCUBOOT_MIN_UPDATEABLE_IMAGES
+	int
+	default 4 if MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1 && MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER != -1 && MCUBOOT_QSPI_XIP_IMAGE_NUMBER != -1
+	default 3 if (MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1 && MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER != -1) || (MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1 && MCUBOOT_QSPI_XIP_IMAGE_NUMBER != -1) || (MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER != -1 && MCUBOOT_QSPI_XIP_IMAGE_NUMBER != -1)
+	default 2 if MCUBOOT_NETWORK_CORE_IMAGE_NUMBER != -1 || MCUBOOT_WIFI_PATCHES_IMAGE_NUMBER != -1 || MCUBOOT_QSPI_XIP_IMAGE_NUMBER != -1
+	default 1
+
+config MCUBOOT_MIN_ADDITIONAL_UPDATEABLE_IMAGES
+	int
+	default 1 if MCUBOOT_MCUBOOT_IMAGE_NUMBER != -1
+	default 0
+
+config MCUBOOT_UPDATEABLE_IMAGES
+	int "Updateable images"
+	range MCUBOOT_MIN_UPDATEABLE_IMAGES MCUBOOT_MAX_UPDATEABLE_IMAGES
+	help
+	  The number of images that MCUboot will be built with. Note that if
+	  ``MCUBOOT_ADDITIONAL_UPDATEABLE_IMAGES`` is set to a non-zero value then that value will
+	  be added to the MCUboot updateable image number but not the application, this is to allow
+	  for features like NSIB updates of MCUboot itself.
+
+config MCUBOOT_ADDITIONAL_UPDATEABLE_IMAGES
+	int "Additional MCUboot-only updateable images"
+	range MCUBOOT_MIN_ADDITIONAL_UPDATEABLE_IMAGES MCUBOOT_MIN_ADDITIONAL_UPDATEABLE_IMAGES
+	default MCUBOOT_MIN_ADDITIONAL_UPDATEABLE_IMAGES
+	help
+	  The number of additional images that MCUboot will be built with.
+
+config MCUBOOT_APP_SYNC_UPDATEABLE_IMAGES
+	bool "Sync updateable image value to main application"
+	default y
+	help
+	  If enabled then will synchronise the value of ``MCUBOOT_UPDATEABLE_IMAGES`` to MCUboot
+	  and the main application, if disabled then will only set this value to MCUboot.
+
+	  Note: ``MCUBOOT_MIN_ADDITIONAL_UPDATEABLE_IMAGES`` will be applied to MCUboot only
+	  irrespective of this option.
+
+config SECURE_BOOT_MCUBOOT_VERSION
+	string "MCUboot S0/S1 image update version"
+	default "0.0.0+0"
+	depends on SECURE_BOOT
+	depends on BOOTLOADER_MCUBOOT
+	help
+	  The version of the MCUboot S0/S1 upgrade package
+
+if BOOTLOADER_MCUBOOT
+
+choice BOOT_SIGNATURE_TYPE
+	default BOOT_SIGNATURE_TYPE_RSA if THINGY91_STATIC_PARTITIONS_FACTORY
+	default BOOT_SIGNATURE_TYPE_ED25519 if SOC_SERIES_NRF54LX
+	default BOOT_SIGNATURE_TYPE_ECDSA_P256 if ((SOC_NRF52840 || SOC_SERIES_NRF91X) && !BOARD_THINGY91_NRF9160 && !BOARD_THINGY91_NRF52840)
+	default BOOT_SIGNATURE_TYPE_ECDSA_P256 if SECURE_BOOT_APPCORE
+
+endchoice
+
+config MCUBOOT_FPROTECT_ALLOW_COMBINED_REGIONS
+	bool
+	default y
+	depends on SOC_SERIES_NRF54LX && !SECURE_BOOT_APPCORE
+
+config BOOT_SIGNATURE_TYPE_PURE
+	bool "Verify signature directly over image"
+	depends on SOC_SERIES_NRF54LX
+	depends on BOOT_SIGNATURE_TYPE_ED25519
+	help
+	  The image signature will be verified over image rather than
+	  hash of an image.
+	  This option is currently only supported with ED25519 and configurations
+	  where both image slots are within internal SoC device storage.
+
+config MCUBOOT_SIGNATURE_USING_KMU
+	bool "Use KMU stored keys for signature verification"
+	depends on SOC_SERIES_NRF54LX
+	depends on BOOT_SIGNATURE_TYPE_ED25519
+	help
+	  The device needs to be provisioned with proper set of keys.
+
+config BOOT_SHARED_CRYPTO_ECDSA_P256
+	bool "Use external crypto from NSIB for ECDSA P256 signature"
+	depends on SECURE_BOOT_APPCORE && SECURE_BOOT_SIGNATURE_TYPE_ECDSA
+	depends on BOOT_SIGNATURE_TYPE_ECDSA_P256 && !SOC_SERIES_NRF54LX
+	default y
+
+endif
+
+config MCUBOOT_USE_ALL_AVAILABLE_RAM
+	bool "Allow MCUboot to use all available RAM (security implications)"
+	depends on BOARD_IS_NON_SECURE
+	help
+	  By default MCUboot uses only the secure RAM partition. Enabling this
+	  may allow secrets to be leaked to non-secure through the non-secure
+	  RAM partition.
+
+config MCUBOOT_NRF53_MULTI_IMAGE_UPDATE
+	bool "Network core multi-image update (in single operation)"
+	depends on NETCORE_APP_UPDATE
+	depends on !MCUBOOT_MODE_SINGLE_APP
+	help
+	  If selected, network core image updates can be applied in a single operation. This is
+	  required if the secondary partition resides in off-chip memory.
+
+	  Note: if not using overwrite only mode for MCUboot, this can result in a bricked device
+	  upon firmware reverts.
+
+endmenu

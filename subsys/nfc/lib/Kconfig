@@ -1,0 +1,159 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+config NFC_PLATFORM
+	bool "Common NFC configuration"
+	default y if NFC_T2T_NRFXLIB || NFC_T4T_NRFXLIB
+	select NRFX_NFCT
+	select CLOCK_CONTROL
+	help
+	  Enable common configuration for the NFC
+
+if NFC_PLATFORM
+
+config NFCT_IRQ_PRIORITY
+	int "Interrupt priority"
+	range 0 5 if ZERO_LATENCY_IRQS
+	range 0 6
+	default 1
+	help
+	  Sets NFC interrupt priority.
+	  Levels are from 0 (highest priority) to 6 (lowest priority)
+
+config NFC_THREAD_CALLBACK
+	bool "Thread context for NFC callbacks"
+	select RING_BUFFER
+	default y
+	help
+	  Use this option to decouple the user NFC callback
+	  from the NFC interrupt context. When enabled, the user
+	  callback is called from a thread (System Workqueue
+	  or a dedicated thread depending on the CONFIG_NFC_OWN_THREAD
+	  setting) instead of being called from the interrupt context.
+	  Using this option ensures robust NFC communication
+	  (deterministic time of the interrupt handling) and allows
+	  deferred callback execution, while it results in higher memory
+	  footprint and CPU load.
+
+if NFC_THREAD_CALLBACK
+
+config HEAP_MEM_POOL_SIZE
+	default 512
+
+config NFC_RING_SIZE
+	int "Size of ring buffer in bytes"
+	default 2048
+	help
+	  Size of the ring buffer.
+	  The specified size is expressed as n bytes.
+
+config NFC_LIB_CTX_MAX_SIZE
+	int "Maximum size of NFC library context in bytes"
+	default 16
+	range 16 255
+	help
+	  Maximum size of the NFC library context in bytes.
+	  The specified size should be divisible by 4.
+
+config NFC_OWN_THREAD
+	bool "Call NFC callback from its own thread"
+	default n
+	help
+	  Use dedicated a thread to call NFC callback.
+	  Otherwise use the system workqueue thread.
+
+if NFC_OWN_THREAD
+
+config NFC_THREAD_STACK_SIZE
+	int "Size of NFC thread stack"
+	default 256
+	help
+	  Size of the NFC dedicated thread stack in bytes.
+
+config NFC_THREAD_PRIORITY
+	int "Priority of NFC callback thread"
+	default -1
+	help
+	  Priority of the dedicated NFC callback thread.
+	  Cooperative thread priority is preferred,
+	  because it might decrease latency and fifo usage
+
+endif# NFC_OWN_THREAD
+
+config NFC_LOW_LATENCY_IRQ
+	bool "Use low latency IRQ for NFC"
+	# NFC low latency interrupt requires software interrupt being supported.
+	default y if $(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_EGU)) || \
+		     $(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_SWI))
+	depends on !SOC_SERIES_NRF54HX
+	select ZERO_LATENCY_IRQS
+	help
+	  Using this option ensures fast NFC interrupt
+	  execution on the cost of using additional interrupt (SWI).
+
+if NFC_LOW_LATENCY_IRQ
+
+config NFC_SWI_NUMBER
+	int
+	default 0 if NFC_SWI0
+	default 1 if NFC_SWI1
+	default 2 if NFC_SWI2
+	default 3 if NFC_SWI3
+	default 4 if NFC_SWI4
+	default 5 if NFC_SWI5
+
+choice NFC_SWI
+	default NFC_SWI1
+	prompt "Software interrupt to use for NFC callback request"
+	help
+	  Software interrupt instantion to use for NFC callback request.
+
+config NFC_SWI0
+	bool "SWI0"
+	depends on HAS_HW_NRF_EGU0 || HAS_HW_NRF_SWI0 || SOC_SERIES_NRF54LX
+	help
+	  Use SWI0 for NFC.
+
+config NFC_SWI1
+	bool "SWI1"
+	depends on HAS_HW_NRF_EGU1 || HAS_HW_NRF_SWI1 || SOC_SERIES_NRF54LX
+	help
+	  Use SWI1 for NFC.
+
+config NFC_SWI2
+	bool "SWI2"
+	depends on HAS_HW_NRF_EGU2 || HAS_HW_NRF_SWI2 || SOC_SERIES_NRF54LX
+	help
+	  Use SWI2 for NFC.
+
+config NFC_SWI3
+	bool "SWI3"
+	depends on HAS_HW_NRF_EGU3 || HAS_HW_NRF_SWI3 || SOC_SERIES_NRF54LX
+	help
+	  Use SWI3 for NFC.
+
+config NFC_SWI4
+	bool "SWI4"
+	depends on HAS_HW_NRF_EGU4 || HAS_HW_NRF_SWI4
+	help
+	  Use SWI4 for NFC.
+
+config NFC_SWI5
+	bool "SWI5"
+	depends on HAS_HW_NRF_EGU5 || HAS_HW_NRF_SWI5
+	help
+	  Use SWI5 for NFC.
+
+endchoice
+
+endif
+
+endif # NFC_THREAD_CALLBACK
+
+module = NFC_PLATFORM
+module-str = nfc_platform
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # NFC_PLATFORM

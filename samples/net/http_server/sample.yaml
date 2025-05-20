@@ -1,0 +1,82 @@
+sample:
+  name: HTTP server sample
+tests:
+  sample.net.http_server.wifi:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf7002dk/nrf5340/cpuapp/ns
+    platform_allow: nrf7002dk/nrf5340/cpuapp/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+  sample.net.http_server.wifi.tls:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf7002dk/nrf5340/cpuapp/ns
+    platform_allow: nrf7002dk/nrf5340/cpuapp/ns
+    extra_args: OVERLAY_CONFIG=overlay-tls-nrf7002dk.conf
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+  sample.net.http_server.lte:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - thingy91/nrf9160/ns
+    platform_allow:
+      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - thingy91/nrf9160/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+  sample.net.http_server.lte.tls:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - thingy91/nrf9160/ns
+    platform_allow:
+      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - thingy91/nrf9160/ns
+    extra_args: OVERLAY_CONFIG=overlay-tls-nrf91.conf
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+  sample.net.http_server.emulation:
+    build_only: true
+    integration_platforms:
+      - native_sim
+    platform_allow:
+      - native_sim
+    tags:
+      - ci_build
+      - ci_samples_net
+  sample.net.http_server.nrf54l15_nrf7002eb2.wifi:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+    extra_args:
+      - http_server_SHIELD="nrf7002eb2"
+      - http_server_SNIPPET=nrf70-wifi

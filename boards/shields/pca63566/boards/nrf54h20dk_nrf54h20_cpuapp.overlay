@@ -1,0 +1,22 @@
+/*
+ * Copyright (C) 2024 Nordic Semiconductor ASA
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		sensor-bme688 = &i2c130;
+		accel0 = &adxl362;
+		accel-gyro = &bmi270;
+	};
+};
+
+#include "nrf54h20dk_nrf54h20_common.dtsi"
+
+&i2c130 {
+	memory-regions = <&cpuapp_dma_region>;
+};
+
+&spi131 {
+	memory-regions = <&cpuapp_dma_region>;
+};

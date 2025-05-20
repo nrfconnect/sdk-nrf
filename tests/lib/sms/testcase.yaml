@@ -1,0 +1,21 @@
+tests:
+  unity.sms_test:
+    sysbuild: true
+    tags:
+      - sms
+      - sysbuild
+      - ci_tests_lib_sms
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
+  unity.sms_test.no_status_report:
+    sysbuild: true
+    tags:
+      - sms
+      - sysbuild
+      - ci_tests_lib_sms
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
+    extra_configs:
+      - CONFIG_SMS_STATUS_REPORT=n

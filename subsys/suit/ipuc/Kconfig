@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SUIT_IPUC
+	bool "Enable in-place updateable components"
+	depends on SUIT_METADATA
+	help
+	  SUIT manifest may instruct the platform that component is inactive, by overriding
+	  image-size parameter with value 0. Such component may be updated in place,
+	  also memory associated to such component may be utilized for other purposes.
+
+if SUIT_IPUC
+
+choice SUIT_IPUC_IMPL
+	prompt "Implementation selection"
+	default SUIT_IPUC_IMPL_SDFW if SUIT_PLATFORM_VARIANT_SDFW
+	default SUIT_IPUC_IMPL_IPC if SUIT_PLATFORM_VARIANT_APP
+
+config SUIT_IPUC_IMPL_SDFW
+	bool "SDFW"
+	depends on SUIT_PLATFORM_VARIANT_SDFW
+
+config SUIT_IPUC_IMPL_IPC
+	bool "IPC"
+	depends on SUIT_PLATFORM_VARIANT_APP
+	depends on SSF_SUIT_SERVICE_ENABLED
+
+endchoice
+
+if SUIT_IPUC_IMPL_SDFW
+
+config SUIT_IPUC_SIZE
+	int "Maximum number of supported in-place updateable components"
+	default 8
+
+endif
+
+endif

@@ -1,0 +1,33 @@
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig REST_CLIENT
+	bool "REST client library"
+	select HTTP_CLIENT
+
+if REST_CLIENT
+
+config REST_CLIENT_REQUEST_TIMEOUT
+	int "REST request timeout, in seconds"
+	default 60
+	help
+	  Sets the default timeout duration in seconds to wait for socket connection
+	  creation and data transfer. The timeout is set individually for these phases
+	  meaning REST request can take longer than this given timeout.
+	  To disable, set the timeout duration to 0.
+
+config REST_CLIENT_SCKT_TLS_SESSION_CACHE_IN_USE
+	bool "TLS session cache usage"
+	default y
+	help
+	  TLS session cache, disable or enable.
+
+module=REST_CLIENT
+module-dep=LOG
+module-str=Log level for REST Client lib
+module-help=Enables REST Client log messages.
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # REST_CLIENT

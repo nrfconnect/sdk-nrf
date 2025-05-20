@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NRF_PROVISIONING_HTTP
+	bool "nRF Provisioning HTTP"
+	imply REST_CLIENT
+
+if NRF_PROVISIONING_HTTP
+
+config NRF_PROVISIONING_HTTP_HOSTNAME
+	string "nRF Provisioning HTTP API hostname"
+	default "provisioning-http.nrfcloud.com"
+
+config NRF_PROVISIONING_HTTP_PORT
+	int "Provision Service's port"
+	default 443
+
+config NRF_PROVISIONING_HTTP_TIMEOUT_MS
+	int "Provision Service's timeout for HTTP connection"
+	default 30000
+
+rsource "Kconfig.nrf_provisioning_codec"
+
+endif

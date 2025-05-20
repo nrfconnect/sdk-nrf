@@ -1,0 +1,46 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+ /{
+	chosen {
+		zephyr,console = &uart136;
+		zephyr,shell-uart = &uart136;
+	};
+};
+
+&uart135 {
+	status = "disabled";
+};
+
+&cpurad_dma_region {
+	status = "disabled";
+};
+
+/* Take Application's DMA region, which is larger and unused. */
+cpurad_dma_region_alt: &cpuapp_dma_region {
+	status = "okay";
+	nordic,access = <NRF_OWNER_ID_RADIOCORE NRF_PERM_RW>;
+};
+
+&uart136 {
+	status = "okay";
+	memory-regions = <&cpurad_dma_region_alt>;
+};
+
+&dppic020 {
+	status = "okay";
+	source-channels = < 0 1 >;
+	sink-channels = < 2 3 >;
+};
+
+/ {
+	cpurad_cpusys_errata216_mboxes: errata216_mboxes {
+		compatible = "zephyr,mbox-ipm";
+		status = "okay";
+		mboxes = < &cpusys_vevif 0x14 >, < &cpusys_vevif 0x15 >;
+		mbox-names = "on_req", "off_req";
+	};
+};

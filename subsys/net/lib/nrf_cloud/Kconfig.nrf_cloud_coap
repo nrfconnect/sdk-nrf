@@ -1,0 +1,87 @@
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NRF_CLOUD_COAP
+	bool "nRF Cloud COAP"
+	select CJSON_LIB
+	select ZCBOR
+	select COAP
+	select COAP_EXTENDED_OPTIONS_LEN
+	select COAP_CLIENT
+	select LTE_PROPRIETARY_PSM_REQ if (SOC_NRF9161_LACA || SOC_NRF9151_LACA || SOC_NRF9131_LACA)
+	depends on NET_IPV4 || NET_IPV6
+
+if NRF_CLOUD_COAP
+
+config NRF_CLOUD_COAP_SERVER_HOSTNAME
+	string "CoAP server hostname"
+	default "coap.nrfcloud.com"
+
+config NRF_CLOUD_COAP_SEC_TAG
+	int "Security tag for credentials"
+	default NRF_CLOUD_SEC_TAG
+	help
+	  Security tag containing the nRF Cloud CoAP CA certificate and private key required for
+	  the DTLS connection to nRF Cloud.
+	  NRF_CLOUD_COAP_JWT_SEC_TAG defaults to the same sec tag value, so the private key
+	  is also used for authentication.
+
+config NRF_CLOUD_COAP_JWT_SEC_TAG
+	int "[For Debug Use] Security tag for JWT credentials"
+	default NRF_CLOUD_COAP_SEC_TAG
+	help
+	  Security tag containing the private key used to sign CoAP JWTs for nRF Cloud
+	  authentication.
+	  The private key in this sec tag must have its corresponding public key registered for
+	  the device on nRF Cloud.
+	  Using this option allows for a different private key to be stored in
+	  NRF_CLOUD_COAP_SEC_TAG that can be used to decrypt DTLS traffic.
+
+config NRF_CLOUD_COAP_SERVER_PORT
+	int "CoAP server port"
+	default 5684
+
+config NRF_CLOUD_COAP_KEEPOPEN
+	bool "Enable SO_KEEPOPEN to prevent unnecessary socket closures"
+	default y
+	depends on SOC_NRF9161_LACA || SOC_NRF9151_LACA || SOC_NRF9131_LACA
+	help
+	  Improve benefit from using DTLS Connection ID by keeping the socket
+	  open when temporary LTE PDN connection loss occurs.
+
+if WIFI
+
+config NRF_CLOUD_COAP_SEND_SSIDS
+	bool "Include access point SSIDs with scan results"
+	default n
+	help
+	  The nRF Cloud Wi-Fi location service does not require the human-
+	  readable SSIDs in order to determine the device location. It does
+	  require the access point MAC addresses. By not including SSIDs
+	  the amount of data sent to the cloud is greatly reduced.
+
+endif # WIFI
+
+config NRF_CLOUD_COAP_DOWNLOADS
+	bool "Download files using CoAP instead of HTTP [EXPERIMENTAL]"
+	depends on NRF_CLOUD_COAP
+	select DOWNLOADER_TRANSPORT_COAP
+	select EXPERIMENTAL
+	help
+	  Use nRF Cloud CoAP's proxy download resource to download files for FOTA and P-GPS.
+	  When enabled, the Kconfig option COAP_EXTENDED_OPTIONS_LEN_VALUE must be increased
+	  from the default value. Safe values are 80 for P-GPS and 192 for FOTA.
+
+config NRF_CLOUD_COAP_DISCONNECT_ON_FAILED_REQUEST
+	bool "Disconnect on failed request"
+	help
+	  Enabling this option will ensure that the CoAP client is disconnected when a request
+	  fails to be sent. (Maximum retransmissions reached).
+
+module = NRF_CLOUD_COAP
+module-str = nRF Cloud COAP
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # NRF_CLOUD_COAP

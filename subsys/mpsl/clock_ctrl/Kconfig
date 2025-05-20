@@ -1,0 +1,51 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config MPSL_USE_EXTERNAL_CLOCK_CONTROL
+	bool "Use external clock control [EXPERIMENTAL]"
+	depends on MPSL
+	select CLOCK_CONTROL
+	default y if SOC_SERIES_NRF54HX
+	select EXPERIMENTAL if SOC_SERIES_NRF52X || SOC_SERIES_NRF53X
+	help
+	  This option configures MPSL to use an external clock driver, and
+	  not the clock driver provided as part of the MPSL library.
+
+if MPSL_USE_EXTERNAL_CLOCK_CONTROL
+
+config MPSL_EXT_CLK_CTRL_CLOCK_REQUEST_WAIT_TIMEOUT_MS
+	int "Timeout value that MPSL will wait for request to be completed by a clock driver, in milliseconds"
+	default CLOCK_CONTROL_NRF2_NRFS_CLOCK_TIMEOUT_MS if CLOCK_CONTROL_NRF2
+	default 1000
+	help
+	  The option specifies a timeout value that MPSL clock control integration layer
+	  will wait for completion of a request put to a clock driver. Note that the value
+	  depends on the clock driver used, for example if nrf2 clock driver is used,
+	  it must be greater or equalt than internal clock driver timeout value.
+
+config MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST
+	bool "Enables a request for a non-volatile memory clock"
+	depends on CLOCK_CONTROL_NRF2_GLOBAL_HSFLL
+	depends on SOC_SERIES_NRF54HX
+	default y
+	help
+	  This option enables MPSL to request a clock for non-volatile memory,
+	  ensuring it operates at a frequency that prevents code execution being
+	  too slow. This is crucial to meet meet radio protocols requirements.
+
+config MPSL_EXT_CLK_CTRL_LFCLK_REQ_TIMEOUT_ALLOW
+	bool "Enables a workaround for LFCLK request timeout"
+	depends on SOC_SERIES_NRF54HX
+	default y
+	help
+	  This option enables a workaround in MPSL external clock control
+	  integration layer, to ignore the -NRF_ETIMEDOUT response for LFCLK
+	  request. This workaround is safe to use for cases where there is no
+	  other clock requests in the radio core FW or available requests are
+	  for a clock with better accuracy than the one requested by the MPSL.
+	  It is user responsibility to make sure these requirements are fulfilled.
+
+endif # MPSL_USE_EXTERNAL_CLOCK_CONTROL

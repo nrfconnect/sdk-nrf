@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Mocks"
+
+rsource "nrf_modem_at/Kconfig"
+rsource "nrf_rpc/Kconfig"
+
+endmenu

@@ -1,0 +1,55 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	zephyr,user {
+		coex-pta-grant-gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>;
+	};
+
+	coex_pta_node {
+		status = "okay";
+		coex-pta-grant-gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>;
+		compatible = "coex-pta-grant-gpios";
+	};
+
+	nrf_radio_coex: radio_coex_one_wire {
+		status = "okay";
+		compatible = "sdc-radio-coex-one-wire";
+		grant-gpios = <&gpio0 2 GPIO_ACTIVE_HIGH>;
+		concurrency-mode = <0>;
+	};
+
+	aliases {
+		egu = &egu020;
+	};
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpiote130 {
+	status = "okay";
+	owned-channels = <0>;
+};
+
+&radio {
+	coex = <&nrf_radio_coex>;
+};
+
+// Enable PSA RNG
+/ {
+	chosen {
+		zephyr,entropy = &psa_rng;
+	};
+
+	psa_rng: psa-rng {
+		compatible = "zephyr,psa-crypto-rng";
+		status = "okay";
+	};
+
+	/delete-node/ prng;
+};

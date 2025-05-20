@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SSF_NRF_RPC
+	bool
+	default y
+	imply NRF_RPC
+
+if SSF_NRF_RPC
+rsource "nrf_rpc/Kconfig"
+endif

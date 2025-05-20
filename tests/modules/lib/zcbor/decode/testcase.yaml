@@ -1,0 +1,10 @@
+tests:
+  modules.lib.zcbor.decode:
+    sysbuild: true
+    tags:
+      - zcbor
+      - sysbuild
+      - ci_tests_modules_lib_zcbor
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim

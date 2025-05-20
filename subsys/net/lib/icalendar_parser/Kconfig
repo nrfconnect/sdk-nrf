@@ -1,0 +1,52 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig  ICAL_PARSER
+	bool "iCalendar parser"
+
+if ICAL_PARSER
+
+config ICAL_PARSER_BUFFER_SIZE
+	int "Buffer size for unparsed data"
+	default 2048
+	help
+	  Size for internal buffer to store unparsed data.
+
+config ICAL_PARSER_MAX_PROPERTY_SIZE
+	int "Maximum size of an iCalendar property"
+	default 1024
+
+config ICAL_PARSER_DESCRIPTION_SIZE
+	int "Maximum size of a DESCRIPTION property"
+	range 32 ICAL_PARSER_MAX_PROPERTY_SIZE
+	default 128
+
+config ICAL_PARSER_DTEND_SIZE
+	int "Maximum size of a DTEND property"
+	range 16 ICAL_PARSER_MAX_PROPERTY_SIZE
+	default 16
+
+config ICAL_PARSER_DTSTART_SIZE
+	int "Maximum size of a DTSTART property"
+	range 16 ICAL_PARSER_MAX_PROPERTY_SIZE
+	default 16
+
+config ICAL_PARSER_LOCATION_SIZE
+	int "Maximum size of a LOCATION property"
+	range 32 ICAL_PARSER_MAX_PROPERTY_SIZE
+	default 64
+
+config ICAL_PARSER_SUMMARY_SIZE
+	int "Maximum size of a SUMMARY property"
+	range 32 ICAL_PARSER_MAX_PROPERTY_SIZE
+	default 64
+
+module=ICAL_PARSER
+module-dep=LOG
+module-str=iCalendar parser
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif

@@ -1,0 +1,97 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	soc {
+		reserved-memory {
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			sram_tx: memory@2003b400 {
+				reg = <0x2003b400 0x07f0>;
+			};
+
+			sram_rx: memory@2003bbf0 {
+				reg = <0x2003bbf0 0x07f0>;
+			};
+
+			cpuflpr_error_code: memory@2003c3e0 {
+				reg = <0x2003c3e0 0x0020>; /* 32bytes */
+			};
+		};
+	};
+
+	ipc {
+		ipc0: ipc0 {
+			compatible = "zephyr,ipc-icmsg";
+			tx-region = <&sram_tx>;
+			rx-region = <&sram_rx>;
+			mboxes = <&cpuflpr_vevif_rx 16>, <&cpuflpr_vevif_tx 20>;
+			mbox-names = "rx", "tx";
+			status = "okay";
+		};
+	};
+};
+
+&cpuflpr_rram {
+	reg = <0x179400 DT_SIZE_K(15)>;
+};
+
+&cpuflpr_code_partition {
+	reg = <0x0 DT_SIZE_K(15)>;
+};
+
+&cpuflpr_sram {
+	reg = <0x2003c400 DT_SIZE_K(15)>;
+	ranges = <0x0 0x2003c400 0x3c00>;
+};
+
+&cpuflpr_vevif_rx {
+	status = "okay";
+	interrupts = <16 NRF_DEFAULT_IRQ_PRIORITY>;
+	nordic,tasks = <1>;
+	nordic,tasks-mask = <0x00010000>;
+};
+
+&cpuflpr_vevif_tx {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "disabled";
+};
+
+&gpio1 {
+	status = "disabled";
+};
+
+&gpio2 {
+	status = "disabled";
+};
+
+&gpiote20 {
+	status = "disabled";
+};
+
+&gpiote30 {
+	status = "disabled";
+};
+
+&grtc {
+	status = "disabled";
+};
+
+&uart20 {
+	status = "disabled";
+};
+
+&uart30 {
+	status = "disabled";
+};
+
+&pwm20 {
+	status = "disabled";
+};

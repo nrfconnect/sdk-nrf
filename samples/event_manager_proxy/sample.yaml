@@ -1,0 +1,44 @@
+sample:
+  description: Sample showing usage of sending the events to another core via Event
+    Manager Proxy
+  name: Event Manager proxy sample
+
+common:
+  sysbuild: true
+  tags:
+    - ipc
+    - ci_build
+    - ci_samples_event_manager_proxy
+  harness: console
+  harness_config:
+    type: multi_line
+    ordered: false
+    regex:
+      - "Event Manager Proxy demo started"
+      - "main: Event manager proxy started"
+      - "main: All remotes ready"
+      - "app_event_manager: e:config_event"
+      - "main: Initialization finished successfully"
+      - "app_event_manager: e:measurement_event"
+      - "app_event_manager: e: control_event"
+      - "stats: Control event count:"
+      - "stats: Average value3:"
+
+tests:
+  sample.event_manager_proxy:
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+  sample.event_manager_proxy.nrf5340dk_nrf5340_cpuapp.icmsg:
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    extra_args: FILE_SUFFIX=icmsg
+  sample.event_manager_proxy.nrf54h20dk_cpuapp:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    timeout: 20

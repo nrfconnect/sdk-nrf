@@ -1,0 +1,22 @@
+sample:
+  description: Sample showing usage of profiling Application Event Manager events
+  name: Application Event Manager profiler tracer sample
+tests:
+  sample.app_event_manager_profiler_tracer:
+    sysbuild: true
+    build_only: true
+    platform_exclude: native_sim
+    platform_allow:
+      - nrf52dk/nrf52832
+      - nrf52840dk/nrf52840
+      - nrf9160dk/nrf9160/ns
+      - nrf21540dk/nrf52840
+    integration_platforms:
+      - nrf52dk/nrf52832
+      - nrf52840dk/nrf52840
+      - nrf9160dk/nrf9160/ns
+      - nrf21540dk/nrf52840
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_app_event_manager_profiler_tracer

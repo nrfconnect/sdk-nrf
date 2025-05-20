@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DK_LIBRARY
+	bool "Button and LED Library for Nordic DKs"
+	select GPIO
+
+if DK_LIBRARY
+
+config DK_LIBRARY_BUTTON_SCAN_INTERVAL
+	int "Scanning interval of buttons in milliseconds"
+	default 10
+
+config DK_LIBRARY_DYNAMIC_BUTTON_HANDLERS
+	bool "Enable the runtime assignable button handler API"
+	default y
+
+module = DK_LIBRARY
+module-str = DK library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+config DK_LIBRARY_SHELL
+	bool "DK_LIBRARY SHELL"
+	depends on SHELL
+	help
+	  DK_LIBRARY shell allows to simulate button press
+
+endif # DK_LIBRARY

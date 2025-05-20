@@ -1,0 +1,111 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig COREMARK
+	bool "CoreMark benchmark"
+	imply CBPRINTF_FP_SUPPORT
+
+if COREMARK
+
+config COREMARK_ITERATIONS
+	int "Number of iterations to run"
+	range 10 10000
+	default 2000
+	help
+	  Specify the number of iterations to run the benchmark.
+	  CoreMark should execute for at least 10 seconds to have valid results.
+	  The minimum number of iterations depends on the platform and its configuration.
+
+config COREMARK_THREADS_NUMBER
+	int "Number of threads for the parallel benchmark execution"
+	default 1
+	range 1 1 if COREMARK_MEMORY_METHOD_STATIC
+	help
+	  Specify the number of threads to use for the CoreMark execution.
+	  1 - means the execution only from the main thread.
+	  Each thread will execute the CoreMark algorithm COREMARK_ITERATIONS number of times in parallel.
+
+config COREMARK_THREADS_PRIORITY
+	int "CoreMark thread priority"
+	default 0
+	depends on COREMARK_THREADS_NUMBER > 1
+	help
+	  Specify the piority of threads to use for the CoreMark execution.
+
+config COREMARK_THREADS_TIMEOUT_MS
+	int
+	default 60000
+	depends on COREMARK_THREADS_NUMBER > 1
+	help
+	  Timeout after which thread k_join operaton will timeout and signalize error.
+
+choice COREMARK_RUN_TYPE
+	prompt "Coremark run type"
+	default COREMARK_RUN_TYPE_PERFORMANCE
+	help
+	   Specify the purpose of the CoreMark execution. The required memory size may vary
+	   depending on the type.
+
+config COREMARK_RUN_TYPE_PERFORMANCE
+	bool "Performance run"
+	help
+	  Predefined CoreMark run type which sets CoreMark data to 2000 bytes.
+
+config COREMARK_RUN_TYPE_PROFILE
+	bool "Profile run"
+	help
+	  Predefined CoreMark run type which sets CoreMark data to 1000 bytes.
+
+config COREMARK_RUN_TYPE_VALIDATION
+	bool "Validation run"
+	help
+	  Predefined CoreMark run type which sets CoreMark data to 500 bytes.
+
+endchoice # COREMARK_RUN_TYPE
+
+config COREMARK_DATA_SIZE
+	int "Total size for the data algorithms will operate on"
+	default 500 if COREMARK_RUN_TYPE_VALIDATION
+	default 1200 if COREMARK_RUN_TYPE_PROFILE
+	default 2000 if COREMARK_RUN_TYPE_PERFORMANCE
+	range 100 2000
+	help
+	  Specify the size for the data algorithms. You can choose different values
+	  for it. For registering your results, you need to
+	  run CoreMark with default values for PROFILE and PERFORMANCE run types.
+
+choice COREMARK_MEMORY_METHOD
+	prompt "Memory Method"
+	default COREMARK_MEMORY_METHOD_STACK
+	help
+	  This option defines the method to get a block of memory.
+
+config COREMARK_MEMORY_METHOD_STACK
+	bool "Stack"
+	help
+	  The main thread stack is used for this memory method. Make sure that there
+	  is enough memory allocated with the MAIN_STACK_SIZE option. The size depends
+	  on the size of the data that CoreMark operates on and a number of threads. It should
+	  be higher than:
+	    COREMARK_DATA_SIZE * COREMARK_THREADS_NUMBER + main thread context.
+
+config COREMARK_MEMORY_METHOD_STATIC
+	bool "Static"
+	help
+	   Data is allocated in the RAM as a regular static variable.
+	   In this case, you do not need to be aware of the main thread stack size or heap memory pool size.
+
+config COREMARK_MEMORY_METHOD_MALLOC
+	bool "Malloc"
+	help
+	  To use this option, you need to set up the system heap size using the
+	  HEAP_MEM_POOL_SIZE option. The size depends on the number of parallel
+	  contexts executed and COREMARK_RUN_TYPE. It should be higher than
+	  COREMARK_DATA_SIZE * COREMARK_THREADS_NUMBER.
+
+endchoice # COREMARK_MEMORY_METHOD
+
+endif # COREMARK

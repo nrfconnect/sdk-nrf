@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig WAVE_GEN_LIB
+	bool "Enable wave signal generating library"
+	select REQUIRES_FULL_LIBC
+	help
+	  The library can be used to generate a value of a wave signal for given time.
+	  Generated signal's type, amplitude, period and offset can be customized.
+	  Amplitude of added noise can be specified too.
+
+if WAVE_GEN_LIB
+
+module = WAVE_GEN_LIB
+module-str = Wave generating library
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
+
+endif # WAVE_GEN_LIB

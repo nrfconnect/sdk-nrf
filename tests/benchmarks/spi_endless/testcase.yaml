@@ -1,0 +1,29 @@
+common:
+  depends_on: spi
+  tags:
+    - drivers
+    - spi
+    - ci_tests_benchmarks_spi_endless
+  harness: console
+  harness_config:
+    fixture: gpio_spi_bridge_two_boards
+  build_only: true
+  platform_allow:
+    - nrf52840dk/nrf52840
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54h20dk/nrf54h20/cpuapp
+  integration_platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+
+tests:
+  drivers.spi.spi_endless.host:
+    extra_configs:
+      - CONFIG_ROLE_HOST=1
+      - CONFIG_TESTED_SPI_MODE=1
+    extra_args: EXTRA_DTC_OVERLAY_FILE="boards/2mhz.overlay"
+
+  drivers.spi.spi_endless.device:
+    extra_configs:
+      - CONFIG_ROLE_HOST=0
+      - CONFIG_TESTED_SPI_MODE=1
+    extra_args: EXTRA_DTC_OVERLAY_FILE="boards/2mhz.overlay"

@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config NFC_T2T_PARSER
+	bool "NFC Type 2 Tag parser libraries"
+	help
+	  Enable NFC Type 2 Tag parser libraries
+
+if NFC_T2T_PARSER
+
+module = NFC_T2T_PARSER
+module-str = nfc_t2t_parser
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # NFC_NDEF_PARSER

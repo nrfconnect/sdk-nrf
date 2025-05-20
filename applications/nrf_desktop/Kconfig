@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "nRF Desktop"
+rsource "Kconfig.hid"
+rsource "Kconfig.ble"
+rsource "Kconfig.debug"
+rsource "src/events/Kconfig"
+rsource "src/hw_interface/Kconfig"
+rsource "src/modules/Kconfig"
+rsource "src/util/Kconfig"
+rsource "Kconfig.defaults"
+endmenu
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu

@@ -1,0 +1,56 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	buttons {
+		compatible = "gpio-keys";
+		button1: button_1 {
+			gpios = < &gpio0 0x9 0x11 >;
+			label = "Push button 1";
+			zephyr,code = < 0x2 >;
+		};
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		led1: led_1 {
+			gpios = < &gpio9 0x1 0x0 >;
+			label = "Green LED 1";
+		};
+	};
+
+	aliases {
+		button = &button1;
+		led = &led1;
+	};
+ };
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio9 {
+	status = "okay";
+};
+
+&gpiote130 {
+	owned-channels = <6>;
+	status = "okay";
+};
+
+/* Disable the default UART node for the radio core, as logs are forwarded
+ * with STM and the application core UART. This setting also prevents access
+ * issues to the same UART instance from two or more different cores.
+ */
+&uart135 {
+	status = "disabled";
+};
+
+/* DTS nodes required for the STM standalone logging, imported from the nordic-log-stm snippet. */
+&tddconf {
+	status = "okay";
+	etrsources = <(NRF_TDDCONF_SOURCE_STMMAINCORE)>;
+};

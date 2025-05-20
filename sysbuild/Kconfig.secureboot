@@ -1,0 +1,366 @@
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+menu "Secure Bootloader"
+
+config SECURE_BOOT
+	bool
+	help
+	  This option will be set if the first stage bootloader which verifies the signature of the
+	  application is enabled for one or multiple cores.
+
+menuconfig SECURE_BOOT_APPCORE
+	bool "Appcore"
+	select SECURE_BOOT
+	help
+	  Enable first stage bootloader for application core.
+
+if SECURE_BOOT_APPCORE
+
+config SECURE_BOOT_APPCORE_SUPPORTED_HASH_HARDWARE
+	bool
+	default y if SECURE_BOOT_HASH_TYPE_SHA256 && (SOC_SERIES_NRF91X || SOC_NRF52840)
+
+config SECURE_BOOT_APPCORE_SUPPORTED_HASH_SOFTWARE
+	bool
+	default y if !SECURE_BOOT_HASH_TYPE_NONE
+
+config SECURE_BOOT_APPCORE_SUPPORTED_HASH_UNUSED
+	bool
+	default y if !SECURE_BOOT_HASH_TYPE_NONE
+
+config SECURE_BOOT_APPCORE_SUPPORTED_HASH_NONE
+	bool
+	default y if SECURE_BOOT_HASH_TYPE_NONE
+
+config SECURE_BOOT_APPCORE_SUPPORTED_SIGNATURE_HARDWARE
+	bool
+	default y if SECURE_BOOT_SIGNATURE_TYPE_ECDSA && (SOC_SERIES_NRF91X || SOC_NRF52840)
+	default y if SECURE_BOOT_SIGNATURE_TYPE_ED25519 && SOC_SERIES_NRF54LX
+
+config SECURE_BOOT_APPCORE_SUPPORTED_SIGNATURE_SOFTWARE
+	bool
+	default y if !SECURE_BOOT_SIGNATURE_TYPE_NONE && !SECURE_BOOT_SIGNATURE_TYPE_ED25519
+
+config SECURE_BOOT_APPCORE_SUPPORTED_SIGNATURE_UNUSED
+	bool
+	default y
+
+choice SECURE_BOOT_APPCORE_HASH_TYPE
+	prompt "Hash mode"
+	default SECURE_BOOT_APPCORE_HASH_TYPE_HARDWARE if SECURE_BOOT_APPCORE_SUPPORTED_HASH_HARDWARE
+	default SECURE_BOOT_APPCORE_HASH_TYPE_SOFTWARE if SECURE_BOOT_APPCORE_SUPPORTED_HASH_SOFTWARE
+	default SECURE_BOOT_APPCORE_HASH_TYPE_UNUSED if SECURE_BOOT_APPCORE_SUPPORTED_HASH_UNUSED
+	default SECURE_BOOT_APPCORE_HASH_TYPE_NONE if SECURE_BOOT_APPCORE_SUPPORTED_HASH_NONE
+
+config SECURE_BOOT_APPCORE_HASH_TYPE_HARDWARE
+	bool "Hardware"
+	depends on SECURE_BOOT_APPCORE_SUPPORTED_HASH_HARDWARE
+	help
+	  Hashing using hardware acceleration.
+
+config SECURE_BOOT_APPCORE_HASH_TYPE_SOFTWARE
+	bool "Software"
+	depends on SECURE_BOOT_APPCORE_SUPPORTED_HASH_SOFTWARE
+	help
+	  Hashing using software implementation.
+
+config SECURE_BOOT_APPCORE_HASH_TYPE_UNUSED
+	bool "Unused"
+	depends on SECURE_BOOT_APPCORE_SUPPORTED_HASH_UNUSED
+	help
+	  Hash present but not used/verified.
+
+config SECURE_BOOT_APPCORE_HASH_TYPE_NONE
+	bool "None"
+	depends on SECURE_BOOT_APPCORE_SUPPORTED_HASH_NONE
+	help
+	  Disables hashing and excludes hash.
+
+endchoice
+
+choice SECURE_BOOT_APPCORE_SIGNATURE_TYPE
+	prompt "Signature mode"
+	default SECURE_BOOT_APPCORE_SIGNATURE_TYPE_HARDWARE if SECURE_BOOT_APPCORE_SUPPORTED_SIGNATURE_HARDWARE
+	default SECURE_BOOT_APPCORE_SIGNATURE_TYPE_SOFTWARE if SECURE_BOOT_APPCORE_SUPPORTED_SIGNATURE_SOFTWARE
+	default SECURE_BOOT_APPCORE_SIGNATURE_TYPE_UNUSED if SECURE_BOOT_APPCORE_SUPPORTED_SIGNATURE_UNUSED
+
+config SECURE_BOOT_APPCORE_SIGNATURE_TYPE_HARDWARE
+	bool "Hardware"
+	depends on SECURE_BOOT_APPCORE_SUPPORTED_SIGNATURE_HARDWARE
+	help
+	  Signature verification using hardware acceleration.
+
+config SECURE_BOOT_APPCORE_SIGNATURE_TYPE_SOFTWARE
+	bool "Software"
+	depends on SECURE_BOOT_APPCORE_SUPPORTED_SIGNATURE_SOFTWARE
+	help
+	  Signatures verification using software implementation.
+
+config SECURE_BOOT_APPCORE_SIGNATURE_TYPE_UNUSED
+	bool "Unused"
+	depends on SECURE_BOOT_APPCORE_SUPPORTED_SIGNATURE_UNUSED
+	help
+	  Signature present but not used/verified.
+
+endchoice
+
+endif # SECURE_BOOT_APPCORE
+
+menuconfig SECURE_BOOT_NETCORE
+	bool "Netcore"
+	depends on SUPPORT_NETCORE
+	select SECURE_BOOT
+	help
+	  Enable first stage bootloader for network core.
+
+if SECURE_BOOT_NETCORE
+
+config SECURE_BOOT_NETCORE_SUPPORTED_HASH_SOFTWARE
+	bool
+	default y if !SECURE_BOOT_HASH_TYPE_NONE
+
+config SECURE_BOOT_NETCORE_SUPPORTED_HASH_UNUSED
+	bool
+	default y if !SECURE_BOOT_HASH_TYPE_NONE
+
+config SECURE_BOOT_NETCORE_SUPPORTED_HASH_NONE
+	bool
+	default y if SECURE_BOOT_HASH_TYPE_NONE
+
+config SECURE_BOOT_NETCORE_SUPPORTED_SIGNATURE_SOFTWARE
+	bool
+	default y
+
+config SECURE_BOOT_NETCORE_SUPPORTED_SIGNATURE_UNUSED
+	bool
+	default y
+
+choice SECURE_BOOT_NETCORE_HASH_TYPE
+	prompt "Hash mode"
+	default SECURE_BOOT_NETCORE_HASH_TYPE_SOFTWARE if SECURE_BOOT_NETCORE_SUPPORTED_HASH_SOFTWARE
+	default SECURE_BOOT_NETCORE_HASH_TYPE_UNUSED if SECURE_BOOT_NETCORE_SUPPORTED_HASH_UNUSED
+	default SECURE_BOOT_NETCORE_HASH_TYPE_NONE if SECURE_BOOT_NETCORE_SUPPORTED_HASH_NONE
+
+config SECURE_BOOT_NETCORE_HASH_TYPE_SOFTWARE
+	bool "Software"
+	depends on SECURE_BOOT_NETCORE_SUPPORTED_HASH_SOFTWARE
+	help
+	  Hashing using software implementation.
+
+config SECURE_BOOT_NETCORE_HASH_TYPE_UNUSED
+	bool "Unused"
+	depends on SECURE_BOOT_NETCORE_SUPPORTED_HASH_UNUSED
+	help
+	  Hash present but not used/verified.
+
+config SECURE_BOOT_NETCORE_HASH_TYPE_NONE
+	bool "None"
+	depends on SECURE_BOOT_NETCORE_SUPPORTED_HASH_NONE
+	help
+	  Disables hashing and excludes hash.
+
+endchoice
+
+choice SECURE_BOOT_NETCORE_SIGNATURE_TYPE
+	# Application core verifies image, network core signature checking support is disabled by
+	# default selection to reduce flash usage
+	prompt "Signature mode"
+	default SECURE_BOOT_NETCORE_SIGNATURE_TYPE_UNUSED if SECURE_BOOT_NETCORE_SUPPORTED_SIGNATURE_UNUSED
+
+config SECURE_BOOT_NETCORE_SIGNATURE_TYPE_SOFTWARE
+	bool "Software"
+	depends on SECURE_BOOT_NETCORE_SUPPORTED_SIGNATURE_SOFTWARE
+	help
+	  Signatures verification using software implementation.
+
+config SECURE_BOOT_NETCORE_SIGNATURE_TYPE_UNUSED
+	bool "Unused"
+	depends on SECURE_BOOT_NETCORE_SUPPORTED_SIGNATURE_UNUSED
+	help
+	  Signature present but not used/verified.
+
+endchoice
+
+endif # SECURE_BOOT_NETCORE
+
+if SECURE_BOOT
+
+config SECURE_BOOT_SUPPORTED_HASH_SHA512
+	bool
+
+config SECURE_BOOT_SUPPORTED_HASH_SHA256
+	bool
+	default y if !SECURE_BOOT_SIGNATURE_TYPE_ED25519
+
+config SECURE_BOOT_SUPPORTED_HASH_NONE
+	bool
+	default y if SECURE_BOOT_SIGNATURE_TYPE_ED25519
+
+config SECURE_BOOT_SUPPORTED_SIGNATURE_ECDSA
+	bool
+	default y
+
+config SECURE_BOOT_SUPPORTED_SIGNATURE_ED25519
+	bool
+	default y if SOC_SERIES_NRF54LX
+
+choice SECURE_BOOT_HASH_TYPE
+	prompt "Hash type"
+	default SECURE_BOOT_HASH_TYPE_SHA512 if SECURE_BOOT_SUPPORTED_HASH_SHA512
+	default SECURE_BOOT_HASH_TYPE_SHA256 if SECURE_BOOT_SUPPORTED_HASH_SHA256
+	default SECURE_BOOT_HASH_TYPE_NONE if SECURE_BOOT_SUPPORTED_HASH_NONE
+
+config SECURE_BOOT_HASH_TYPE_SHA512
+	bool "SHA512"
+	depends on SECURE_BOOT_SUPPORTED_HASH_SHA512
+	help
+	  SHA512 hash.
+
+config SECURE_BOOT_HASH_TYPE_SHA256
+	bool "SHA256"
+	depends on SECURE_BOOT_SUPPORTED_HASH_SHA256
+	help
+	  SHA256 hash.
+
+config SECURE_BOOT_HASH_TYPE_NONE
+	bool "None"
+	depends on SECURE_BOOT_SUPPORTED_HASH_NONE
+	help
+	  Disables hashing and excludes hash.
+
+endchoice
+
+choice SECURE_BOOT_SIGNATURE_TYPE
+	prompt "Signature type"
+	default SECURE_BOOT_SIGNATURE_TYPE_ED25519 if SECURE_BOOT_SUPPORTED_SIGNATURE_ED25519
+	default SECURE_BOOT_SIGNATURE_TYPE_ECDSA if SECURE_BOOT_SUPPORTED_SIGNATURE_ECDSA
+	default SECURE_BOOT_SIGNATURE_TYPE_NONE
+
+config SECURE_BOOT_SIGNATURE_TYPE_ED25519
+	bool "ED25519"
+	depends on SECURE_BOOT_SUPPORTED_SIGNATURE_ED25519
+	help
+	  ED25519 signatures using hardware acceleration.
+
+config SECURE_BOOT_SIGNATURE_TYPE_ECDSA
+	bool "ECDSA"
+	depends on SECURE_BOOT_SUPPORTED_SIGNATURE_ECDSA
+	help
+	  ECDSA signatures using hardware acceleration.
+
+config SECURE_BOOT_SIGNATURE_TYPE_NONE
+	bool "None"
+	help
+	  Disables signatures and excludes public key.
+
+endchoice
+
+config SECURE_BOOT_NETWORK_BOARD_TARGET_CPUCLUSTER
+	string
+	default "cpunet" if SOC_NRF5340_CPUAPP
+	depends on SECURE_BOOT_NETCORE
+	help
+	  Remote CPU cluster when building the secure boot application for the network core. If not
+	  set, the board given to sysbuild is used.
+
+config SECURE_BOOT_BUILD_S1_VARIANT_IMAGE
+	bool
+	default y
+	depends on SECURE_BOOT_APPCORE
+	help
+	  Will build an S1 variant image for the second slot.
+
+choice SECURE_BOOT_SIGNING
+	prompt "Firmware signing method"
+	default SECURE_BOOT_SIGNING_PYTHON
+
+config SECURE_BOOT_SIGNING_PYTHON
+	bool "Sign with Python ecdsa library"
+
+config SECURE_BOOT_SIGNING_OPENSSL
+	bool "Sign with openssl command line tool"
+
+config SECURE_BOOT_SIGNING_CUSTOM
+	bool "Sign with custom command"
+
+endchoice
+
+config SECURE_BOOT_SIGNING_KEY_FILE
+	string
+	prompt "Private key PEM file" if !SECURE_BOOT_SIGNING_CUSTOM
+	default ""
+	help
+	  Absolute (or relative to APPLICATION_CONFIG_DIR) path to the private key PEM file.
+
+	  Specifies the private key used for signing the firmware image. The hash of the
+	  corresponding public key is stored as the first entry in the list of public key hashes
+	  in the provision hex file.
+
+	  See also SECURE_BOOT_PUBLIC_KEY_FILES.
+
+config SECURE_BOOT_SIGNING_COMMAND
+	string
+	prompt "Custom signing command" if SECURE_BOOT_SIGNING_CUSTOM
+	default ""
+	help
+	  This command will be called to produce a signature of the firmware. It will be called as:
+	  "${SB_CONFIG_SECURE_BOOT_SIGNING_COMMAND} <file>"
+
+	  The command must calculate the signature over the contents of the <file> and write the
+	  signature to stdout. The signature must be in DER format.
+
+config SECURE_BOOT_SIGNING_PUBLIC_KEY
+	string
+	prompt "Public key PEM file" if SECURE_BOOT_SIGNING_CUSTOM
+	default ""
+	help
+	  Path to a PEM file.
+	  When using a custom signing command, specify the corresponding public key here. This
+	  public key is checked during building, and added as the first entry in the provisioned
+	  data. See SECURE_BOOT_PUBLIC_KEY_FILES.
+
+config SECURE_BOOT_PUBLIC_KEY_FILES
+	string "Public Key PEM files"
+	default ""
+	help
+	  Comma-separated list of absolute (or relative to APPLICATION_CONFIG_DIR) paths to public
+	  key pem files. The provision hex file will contain a list of hashes of public keys. The
+	  first public key hash is the one corresponding to the private signing key used to sign
+	  the image. See SECURE_BOOT_SIGNING_KEY_FILE. The hashes of the public keys specified in
+	  this configuration will be placed after the aforementioned public key hash, in the order
+	  they appear in this config. The order is significant since if an image is successfully
+	  validated against a public key in the list, all public keys before it in the list will be
+	  invalidated.
+
+	  Example value: ~/keys/pk1.pem,~/keys/pk2.pem,~/keys/pk3.pem
+	  If config is the string "debug", 2 generated debug files will be used. If config is an
+	  empty string then only the public key hash corresponding to the private signing key used
+	  to sign the image is included in provision.hex.
+
+config SUPPORT_SECURE_BOOT_BOOTCONF_LOCK_WRITES
+	bool
+	depends on !MCUBOOT_FPROTECT_ALLOW_COMBINED_REGIONS
+	default y if SOC_NRF54L15_CPUAPP
+
+config SECURE_BOOT_BOOTCONF_LOCK_WRITES
+	bool "Protect bootloader's NVM from writes"
+	depends on SUPPORT_SECURE_BOOT_BOOTCONF_LOCK_WRITES
+	help
+	  Sets RRAMC's BOOTCONF region protection to disable writes.
+
+config SECURE_BOOT_DEBUG_SIGNATURE_PUBLIC_KEY_LAST
+	bool "[DEBUG] Place signing public key last"
+	help
+	  Place the public key used for signing last in the list instead of first. This is meant to
+	  be used for testing looping through the public keys.
+
+config SECURE_BOOT_DEBUG_NO_VERIFY_HASHES
+	bool
+	help
+	  [DEBUG] Don't check public key hashes for applicability. Only Use this in (negative) tests!
+
+endif
+
+endmenu

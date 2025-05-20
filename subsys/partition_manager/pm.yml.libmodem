@@ -1,0 +1,28 @@
+#include <zephyr/autoconf.h>
+
+nrf_modem_lib_sram:
+  span: [nrf_modem_lib_ctrl, nrf_modem_lib_tx, nrf_modem_lib_rx, nrf_modem_lib_trace]
+
+nrf_modem_lib_ctrl:
+  placement: {after: [tfm_sram, spm_sram, start]}
+  size: CONFIG_NRF_MODEM_LIB_SHMEM_CTRL_SIZE
+  region: sram_primary
+  inside: sram_nonsecure
+
+nrf_modem_lib_tx:
+  placement: {after: [nrf_modem_lib_ctrl]}
+  size: CONFIG_NRF_MODEM_LIB_SHMEM_TX_SIZE
+  region: sram_primary
+  inside: sram_nonsecure
+
+nrf_modem_lib_rx:
+  placement: {after: [nrf_modem_lib_tx]}
+  size: CONFIG_NRF_MODEM_LIB_SHMEM_RX_SIZE
+  region: sram_primary
+  inside: sram_nonsecure
+
+nrf_modem_lib_trace:
+  placement: {after: [nrf_modem_lib_rx]}
+  size: CONFIG_NRF_MODEM_LIB_SHMEM_TRACE_SIZE
+  region: sram_primary
+  inside: sram_nonsecure

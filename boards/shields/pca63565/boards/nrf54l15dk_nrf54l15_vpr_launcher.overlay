@@ -1,0 +1,31 @@
+/*
+ * Copyright (C) 2024 Nordic Semiconductor ASA
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * SHIELD is applied to both FLPR and Application cores.
+ * Disable sensors on Application core because:
+ *   - vpr_launcher is not using them;
+ *   - prevent collision when both cores try to initialize same resource;
+ */
+
+&i2c22 {
+    status = "disabled";
+};
+
+&bme688 {
+    status = "disabled";
+};
+
+&spi21 {
+    status = "disabled";
+};
+
+&bmi270 {
+    status = "disabled";
+};
+
+&adxl362 {
+    status = "disabled";
+};

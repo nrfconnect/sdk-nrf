@@ -1,0 +1,114 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig APP_EVENT_MANAGER
+	bool
+	prompt "Application Event Manager"
+	help
+	  Enable Application Event Manager.
+
+if APP_EVENT_MANAGER
+
+config APP_EVENT_MANAGER_REBOOT_ON_EVENT_ALLOC_FAIL
+	bool "Reboot on event allocation failure"
+	depends on REBOOT
+	default y
+	help
+	  The default event allocator triggers assertion failure on event
+	  allocation failure. Then, depending on the value of this Kconfig
+	  option, the default allocator either triggers a system reboot or
+	  kernel panic.
+
+config APP_EVENT_MANAGER_SHOW_EVENTS
+	bool "Show events"
+	depends on LOG
+	default y
+	help
+	  This option controls if events are logged.
+
+config APP_EVENT_MANAGER_SHOW_EVENT_HANDLERS
+	bool "Show event handlers"
+	depends on APP_EVENT_MANAGER_SHOW_EVENTS
+	help
+	  This option controls if event handlers are printed to console.
+
+config APP_EVENT_MANAGER_TRACE_EVENT_DATA
+	bool "Enables tracing information"
+	help
+	  This option allows to gather information about events for tracing purposes.
+
+config APP_EVENT_MANAGER_SHELL
+	bool "Enable shell integration"
+	depends on SHELL
+	default y
+	help
+	  Enable Event Manager shell commands to display information about
+	  listeners, subscribers and events. The commands also allow to
+	  dynamically enable or disable logging for given event types.
+
+module = APP_EVENT_MANAGER
+module-str = Application Event Manager
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+config APP_EVENT_MANAGER_EVENT_LOG_BUF_LEN
+	int "Length of buffer for processing event message"
+	depends on APP_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN
+	default 128
+	range 2 1024
+	help
+	  This option is only needed for deprecated event logging approach.
+
+config APP_EVENT_MANAGER_USE_DEPRECATED_LOG_FUN
+	bool "Allow using both logging functions current and deprecated one"
+	help
+	  This option is only needed for deprecated event logging approach.
+
+config APP_EVENT_MANAGER_LOG_EVENT_TYPE
+	bool "Include event type in the event log output"
+	default y
+
+config APP_EVENT_MANAGER_MAX_EVENT_CNT
+	int "Maximum number of event types"
+	default 32
+	help
+	  Maximum number of declared event types in Application Event Manager.
+
+config APP_EVENT_MANAGER_PROVIDE_EVENT_SIZE
+	bool "Provide information about the event size"
+	help
+	  This option enables the information about event size.
+	  This would require to store more information with event type
+	  and should be enabled only if such an information is required.
+
+config APP_EVENT_MANAGER_POSTINIT_HOOK
+	bool "Enable postinit hook"
+	help
+	  Enable postinit hooks support.
+	  This option is here for optimisation purposes.
+	  When postinit hook is not in use the related code may be removed.
+
+config APP_EVENT_MANAGER_SUBMIT_HOOKS
+	bool "Enable event submit hooks"
+	help
+	  Enable event submit hooks support.
+	  This option is here for optimisation purposes.
+	  When submit hook is not in use the related code may be removed.
+
+config APP_EVENT_MANAGER_PREPROCESS_HOOKS
+	bool "Enable event preprocess hooks"
+	help
+	  Enable event preprocess hooks support.
+	  This option is here for optimisation purposes.
+	  When preprocess hook is not in use the related code may be removed.
+
+config APP_EVENT_MANAGER_POSTPROCESS_HOOKS
+	bool "Enable event postprocess hooks"
+	help
+	  Enable event postprocess hooks support.
+	  This option is here for optimisation purposes.
+	  When postprocess hook is not in use the related code may be removed.
+
+endif # APP_EVENT_MANAGER

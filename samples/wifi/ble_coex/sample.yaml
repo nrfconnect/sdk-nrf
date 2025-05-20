@@ -1,0 +1,94 @@
+sample:
+  description: Wi-Fi Bluetooth Low Energy coex sample
+  name: Wi-Fi Bluetooth LE coex
+tests:
+  sample.nrf7002.ble_coex_sep_ant:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf7002dk/nrf5340/cpuapp
+    extra_args:
+      - CONFIG_MPSL_CX=y
+      - ipc_radio_CONFIG_MPSL_CX=y
+      - CONFIG_COEX_SEP_ANTENNAS=y
+    platform_allow: nrf7002dk/nrf5340/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf7002.ble_coex_sha_ant:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf7002dk/nrf5340/cpuapp
+    extra_args:
+      - CONFIG_MPSL_CX=y
+      - ipc_radio_CONFIG_MPSL_CX=y
+      - CONFIG_COEX_SEP_ANTENNAS=n
+    platform_allow: nrf7002dk/nrf5340/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf7001.ble_coex:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf7002dk/nrf5340/cpuapp/nrf7001
+    extra_args:
+      - CONFIG_MPSL_CX=y
+      - ipc_radio_CONFIG_MPSL_CX=y
+      - CONFIG_COEX_SEP_ANTENNAS=y
+    platform_allow: nrf7002dk/nrf5340/cpuapp/nrf7001
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  # Daughter boards (EK's/EB's) do not have a shared antenna
+  sample.nrf7002ek.ble_coex:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    extra_args:
+      - ble_coex_SHIELD="nrf7002ek;nrf7002ek_coex"
+      - ipc_radio_SHIELD="nrf7002ek_coex"
+      - CONFIG_MPSL_CX=y
+      - ipc_radio_CONFIG_MPSL_CX=y
+      - CONFIG_COEX_SEP_ANTENNAS=y
+    platform_allow: nrf5340dk/nrf5340/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf7001ek.ble_coex:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    extra_args:
+      - ble_coex_SHIELD="nrf7002ek_nrf7001;nrf7002ek_coex"
+      - ipc_radio_SHIELD="nrf7002ek_coex"
+      - CONFIG_MPSL_CX=y
+      - ipc_radio_CONFIG_MPSL_CX=y
+      - CONFIG_COEX_SEP_ANTENNAS=y
+    platform_allow: nrf5340dk/nrf5340/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf7002_eb.thingy53.ble_coex:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - ble_coex_SHIELD=nrf7002eb
+      - CONFIG_MPSL_CX=y
+      - ipc_radio_CONFIG_MPSL_CX=y
+      - CONFIG_COEX_SEP_ANTENNAS=y
+    integration_platforms:
+      - thingy53/nrf5340/cpuapp
+    platform_allow: thingy53/nrf5340/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi

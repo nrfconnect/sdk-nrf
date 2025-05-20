@@ -1,0 +1,74 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA.
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+{
+  "psa_framework_version": 1.1,
+  "name": "TFM_SP_SPP",
+  "type": "APPLICATION-ROT",
+  "priority": "NORMAL",
+  "model": "IPC",
+  "entry_point": "tfm_spp_main",
+  "stack_size": "0x800",
+
+  # Service definitions for IPC mode.
+  "services": [
+    {
+      "name": "TFM_SPP_PROCESS",
+      # bits [31:12]: Vendor (change this)
+      # bits [11:0] : Arbitrary at the discretion of the vendor
+      "sid": "0xFFFFF001",
+      "connection_based": false,
+      "non_secure_clients": true,
+      "stateless_handle": "auto",
+      "version": 1,
+      "version_policy": "STRICT",
+    },
+    {
+      "name": "TFM_SPP_SEND",
+      # bits [31:12]: Vendor (change this)
+      # bits [11:0] : Arbitrary at the discretion of the vendor
+      "sid": "0xFFFFF002",
+      "connection_based": false,
+      "non_secure_clients": true,
+      "stateless_handle": "auto",
+      "version": 1,
+      "version_policy": "STRICT",
+    },
+  ],
+
+  "mmio_regions": [
+    {
+      "name": "${TFM_PERIPHERAL_TIMER_N}",
+      "permission": "READ-WRITE"
+    },
+    {
+      "name": "${TFM_PERIPHERAL_SPIM_N}",
+      "permission": "READ-WRITE"
+    },
+    @GPIOTE_MMIO@
+  ],
+  "irqs": [
+    {
+      "source": "${TFM_TIMER_N_IRQ}",
+      "name": "${TFM_TIMER_N_IRQ}",
+      "handling": "FLIH"
+    },
+    {
+      "source": "${TFM_SPIM_N_IRQ}",
+      "name": "${TFM_SPIM_N_IRQ}",
+      "handling": "SLIH"
+    },
+    {
+      "source": "${TFM_GPIOTE_N_IRQ}",
+      "name": "${TFM_GPIOTE_N_IRQ}",
+      "handling": "FLIH"
+    },
+  ],
+
+  "dependencies": [
+    "TFM_CRYPTO"
+  ],
+}

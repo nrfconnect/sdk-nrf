@@ -1,0 +1,58 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		led = &led1;
+		pwm-led0 = &pwm_gpio;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		led1: led_1 {
+			gpios = <&gpio9 1 GPIO_ACTIVE_HIGH>;
+			label = "Green LED 1";
+		};
+	};
+
+	pwmleds {
+		compatible = "pwm-leds";
+		pwm_gpio: pwm_gpio {
+			pwms = <&pwm131 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+		};
+	};
+};
+
+&pinctrl {
+	/omit-if-no-ref/ pwm131_default: pwm131_default {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 0, 7)>;
+		};
+	};
+
+	/omit-if-no-ref/ pwm131_sleep: pwm131_sleep {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 0, 7)>;
+			low-power-enable;
+		};
+	};
+};
+
+&gpio9 {
+	status = "okay";
+};
+
+&gpiote130 {
+	status = "okay";
+};
+
+&pwm131 {
+	status = "okay";
+	pinctrl-0 = <&pwm131_default>;
+	pinctrl-1 = <&pwm131_sleep>;
+	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpurad_dma_region>;
+};

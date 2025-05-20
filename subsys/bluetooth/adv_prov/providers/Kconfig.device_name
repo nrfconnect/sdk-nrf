@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_ADV_PROV_DEVICE_NAME
+	bool "Bluetooth device name"
+	help
+	  Adds Bluetooth device name to scan response data or advertising data.
+
+if BT_ADV_PROV_DEVICE_NAME
+
+config BT_ADV_PROV_DEVICE_NAME_PAIRING_MODE_ONLY
+	bool "Provide device name only in pairing mode"
+	default y
+	help
+	  If the option is enabled, the Bluetooth device name is not provided
+	  outside of pairing mode.
+
+config BT_ADV_PROV_DEVICE_NAME_SD
+	bool "Move device name to scan response"
+	default y
+	help
+	  Adds Bluetooth device name to scan response data. If this option is
+	  disabled, the device name is included in the advertising data.
+
+endif # BT_ADV_PROV_DEVICE_NAME

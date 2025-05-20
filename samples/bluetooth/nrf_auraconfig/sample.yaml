@@ -1,0 +1,17 @@
+sample:
+  name: Bluetooth Low Energy nRF Auraconfig
+  description: Bluetooth LE shell configurable Auracast tool
+common:
+  integration_platforms:
+    - nrf5340_audio_dk/nrf5340/cpuapp
+  platform_allow:
+    - nrf5340_audio_dk/nrf5340/cpuapp
+  sysbuild: true
+  build_only: true
+  tags:
+    - ci_build
+    - sysbuild
+    - bluetooth
+tests:
+  sample.bluetooth.nrf_auraconfig.build:
+    extra_args: []

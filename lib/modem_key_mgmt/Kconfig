@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config MODEM_KEY_MGMT
+	bool "nRF9160 modem key management library"
+	depends on NRF_MODEM_LIB
+
+if MODEM_KEY_MGMT
+
+module = MODEM_KEY_MGMT
+module-dep = LOG
+module-str = Modem key management
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # MODEM_KEY_MGMT

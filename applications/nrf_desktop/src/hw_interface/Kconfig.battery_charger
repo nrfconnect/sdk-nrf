@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Battery charger configuration"
+
+choice
+	prompt "Select battery charging interface"
+	default DESKTOP_BATTERY_CHARGER_NONE
+
+config DESKTOP_BATTERY_CHARGER_NONE
+	bool "No battery charging"
+	help
+	  If selected, battery charging is disabled.
+
+config DESKTOP_BATTERY_CHARGER_DISCRETE
+	bool "Discrete battery charger"
+	help
+	  If selected, battery charging is enabled.
+
+endchoice
+
+if DESKTOP_BATTERY_CHARGER_DISCRETE
+module = DESKTOP_BATTERY_CHARGER
+module-str = battery charger module
+source "subsys/logging/Kconfig.template.log_config"
+endif
+
+endmenu

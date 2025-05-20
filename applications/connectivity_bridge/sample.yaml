@@ -1,0 +1,16 @@
+sample:
+  description: Connectivity Bridge application
+  name: Connectivity Bridge
+tests:
+  applications.connectivity_bridge:
+    sysbuild: true
+    build_only: true
+    platform_allow:
+      - thingy91/nrf52840
+      - thingy91x/nrf5340/cpuapp
+    integration_platforms:
+      - thingy91/nrf52840
+      - thingy91x/nrf5340/cpuapp
+    tags:
+      - ci_build
+      - sysbuild

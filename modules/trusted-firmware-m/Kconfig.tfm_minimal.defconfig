@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config TFM_MCUBOOT_IMAGE_NUMBER
+	int
+	default 1
+
+config TFM_CRYPTO_RNG_MODULE_ENABLED
+	bool
+	default y
+
+config TFM_PARTITION_CRYPTO
+	bool
+	default y
+
+config TFM_PARTITION_PLATFORM
+	bool
+	default y

@@ -1,0 +1,92 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+ / {
+	agg0: agg0 {
+		compatible = "caf,aggregator";
+		sensor_descr = "accel_xyz";
+		buf_data_length = <240>;
+		sample_size = <3>;
+		buf_count = <6>;
+		memory-region = <&ram3x_agg_area0>;
+		status = "okay";
+	};
+};
+
+/* Expand APP slot partition and remove DFU partition. */
+/delete-node/ &cpuapp_rx_partitions;
+/delete-node/ &cpuapp_rw_partitions;
+
+/*
+ * Place aggregator buffers in PPR memory region.
+ */
+&cpuppr_ram3x_region {
+	cpuppr_code_data: memory@0 {
+		reg = <0x0 0xf200>;
+	};
+
+	ram3x_agg_area0: memory@f200{
+		reg = <0xf200 0x600>;
+	};
+};
+
+/* This duplicates the Application core configuration to build PPR image under valid address. */
+&mram1x {
+       cpuapp_rx_partitions: cpuapp-rx-partitions {
+	       compatible = "nordic,owned-partitions", "fixed-partitions";
+	       status = "okay";
+	       nordic,access = <NRF_OWNER_ID_APPLICATION NRF_PERM_RXS>;
+	       #address-cells = <1>;
+	       #size-cells = <1>;
+
+	       cpuapp_slot0_partition: partition@a6000 {
+		       reg = <0xa6000 DT_SIZE_K(512)>;
+	       };
+
+	       cpuppr_code_partition: partition@126000 {
+		       reg = <0x126000 DT_SIZE_K(64)>;
+	       };
+       };
+
+       cpuapp_rw_partitions: cpuapp-rw-partitions {
+	       compatible = "nordic,owned-partitions", "fixed-partitions";
+	       status = "okay";
+	       nordic,access = <NRF_OWNER_ID_APPLICATION NRF_PERM_RW>;
+	       #address-cells = < 0x1 >;
+	       #size-cells = < 0x1 >;
+
+	       storage_partition: partition@136000 {
+		       reg = < 0x136000 DT_SIZE_K(24) >;
+	       };
+       };
+};
+
+ipc1: &cpuapp_cpuppr_ipc {
+	status = "okay";
+};
+
+&cpuppr_vevif {
+	status = "okay";
+};
+
+&cpuapp_bellboard {
+	status = "okay";
+};
+
+&uart135 {
+	/delete-property/ hw-flow-control;
+};
+
+/* Disable unused sensors and peripherals. */
+/delete-node/ &bme688;
+
+&bmi270 {
+	status = "disabled";
+};
+
+&i2c130 {
+	status = "disabled";
+};

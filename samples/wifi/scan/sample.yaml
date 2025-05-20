@@ -1,0 +1,106 @@
+sample:
+  description: Wi-Fi scan sample application
+  name: Wi-Fi scan
+tests:
+  sample.nrf7002dk.scan:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf7002dk/nrf5340/cpuapp
+    platform_allow:
+      - nrf7002dk/nrf5340/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf7000_eks.scan:
+    sysbuild: true
+    build_only: true
+    extra_args: SHIELD=nrf7002ek_nrf7000
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf52840dk/nrf52840
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf52840dk/nrf52840
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf7000_eks.raw_scan:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - SHIELD=nrf7002ek_nrf7000
+      - CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS=y
+    integration_platforms:
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+    platform_allow:
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf7002_eb.thingy53.scan:
+    sysbuild: true
+    build_only: true
+    extra_args: scan_SHIELD=nrf7002eb
+    integration_platforms:
+      - thingy53/nrf5340/cpuapp
+    platform_allow: thingy53/nrf5340/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.thingy91x_nrf7000.scan:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - thingy91x/nrf9151/ns
+    platform_allow: thingy91x/nrf9151/ns
+    extra_args:
+      - SB_CONFIG_WIFI_NRF70=y
+      - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf7002eb_interposer_p1.nrf7002eb.scan:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - scan_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
+      - scan_SNIPPET=nrf70-wifi
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf7002eb2.scan:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - scan_SHIELD="nrf7002eb2"
+      - scan_SNIPPET=nrf70-wifi
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi

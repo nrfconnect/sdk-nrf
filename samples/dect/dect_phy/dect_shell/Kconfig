@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Nordic Dect NR+ Phy Shell config"
+
+config DESH_PRINT_BUFFER_SIZE
+	int "Buffer size used when printing shell output"
+	default 1024
+	help
+	  If the printed string exceeds this buffer, an error message is printed first and
+	  then the requested string cut into the length of this buffer.
+
+config DESH_DECT_PHY
+	bool "DECT NR+ PHY api shell tools"
+	default y
+	help
+	  DECT NR+ PHY api shell tools
+
+config DESH_STARTUP_CMDS
+	bool "Possibility to run stored shell commands from settings after bootup"
+	default y
+
+endmenu

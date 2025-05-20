@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Set lower default sizes for TF-M partition when using the TF-M Profile Small.
+# This is done using defaults instead of in a conf file in order to set the
+# correctly aligned size depending on the presence of the bootloader or not.
+
+# Declared before sourcing "Kconfig.zephyr" in order to give precedence
+# to these application-specific defaults instead of the unconditional default
+# in the Zephyr Kconfig tree.
+configdefault PM_PARTITION_SIZE_TFM
+	default 0x17e00 if TFM_PROFILE_TYPE_SMALL && BOOTLOADER_MCUBOOT
+	default 0x18000 if TFM_PROFILE_TYPE_SMALL
+
+source "Kconfig.zephyr"

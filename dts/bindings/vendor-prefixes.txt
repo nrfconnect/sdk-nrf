@@ -1,0 +1,2 @@
+pixart	PixArt Imaging Inc.
+caf	Common Application Framework

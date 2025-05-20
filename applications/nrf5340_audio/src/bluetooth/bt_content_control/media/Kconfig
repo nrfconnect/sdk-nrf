@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Media"
+
+#----------------------------------------------------------------------------#
+menu "Log level"
+
+module = BT_CONTENT_CTRL_MEDIA
+module-str = bt_content_ctrl_media
+source "subsys/logging/Kconfig.template.log_config"
+
+config BT_CONTENT_CTRL_MEDIA
+	bool "Bluetooth content control media"
+	select BT_MCC if BT_BAP_UNICAST_SERVER
+	select BT_MCC_READ_MEDIA_STATE if BT_BAP_UNICAST_SERVER
+	select BT_MCC_SET_MEDIA_CONTROL_POINT if BT_BAP_UNICAST_SERVER
+	select BT_MCS if BT_BAP_UNICAST_CLIENT
+	select BT_MPL if BT_BAP_UNICAST_CLIENT
+	select MCTL if BT_BAP_UNICAST_CLIENT
+	select MCTL_LOCAL_PLAYER_CONTROL if BT_BAP_UNICAST_CLIENT
+	select MCTL_LOCAL_PLAYER_REMOTE_CONTROL if BT_BAP_UNICAST_CLIENT
+	help
+	  Bluetooth content control media module.
+
+endmenu # Log level
+endmenu # Media

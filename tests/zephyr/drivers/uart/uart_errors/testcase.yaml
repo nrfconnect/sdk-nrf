@@ -1,0 +1,30 @@
+common:
+  tags:
+    - drivers
+    - uart
+    - ci_tests_zephyr_drivers_uart
+  depends_on: gpio
+  harness: ztest
+  harness_config:
+    fixture: gpio_loopback
+tests:
+  nrf.extended.drivers.uart.uart_errors.int_driven:
+    filter: CONFIG_SERIAL_SUPPORT_INTERRUPT
+    platform_allow:
+      - nrf7120pdk/nrf7120/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
+  nrf.extended.drivers.uart.uart_errors.async:
+    filter: CONFIG_SERIAL_SUPPORT_ASYNC
+    platform_allow:
+      - nrf7120pdk/nrf7120/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
+    extra_configs:
+      - CONFIG_UART_ASYNC_API=y
+      - CONFIG_UART_INTERRUPT_DRIVEN=n
+      - CONFIG_PM_DEVICE=n

@@ -1,0 +1,99 @@
+#
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig OPENTHREAD_RPC
+	bool "OpenThread over RPC [EXPERIMENTAL]"
+	select NRF_RPC
+	select NRF_RPC_CBOR
+	select EXPERIMENTAL
+	help
+	  Enables OpenThread serialization over RPC
+
+if OPENTHREAD_RPC
+
+config OPENTHREAD_RPC_DNS_MAX_TXT_DATA_SIZE
+	int "Maximum size of TXT data that can be serialized by DNS API"
+	default 255
+	help
+	  During serialization of a service information the server must allocate
+	  a stack allocated buffer for storing TXT data. This value controls the
+	  buffer size.
+
+choice OPENTHREAD_RPC_ROLE_CHOICE
+	prompt "OpenThread over RPC role selection"
+	default OPENTHREAD_RPC_CLIENT
+	help
+	  Selects the device role for OpenThread over RPC. The default role is
+	  a client role.
+
+config OPENTHREAD_RPC_CLIENT
+	bool "OpenThread over RPC client"
+	help
+	  Enables OpenThread over RPC client role that uses nRF RPC library to
+	  invoke OpenThread functions on the remote core.
+
+config OPENTHREAD_RPC_SERVER
+	bool "OpenThread over RPC server"
+	depends on NET_L2_OPENTHREAD || ZTEST
+	help
+	  Enables OpenThread over RPC server role that runs the full OpenThread
+	  stack and exposes OpenThread functions using nRF RPC library to a client
+	  running on the remote core.
+
+endchoice
+
+config OPENTHREAD_RPC_NET_IF
+	bool "OpenThread over RPC network interface"
+	default y
+	depends on NETWORKING
+	help
+	  Enables OpenThread RPC commands for sending and receiving IPv6 packets
+	  to/from the OpenThread stack. For the RPC client role, it additionally
+	  creates a Zephyr network interface that employs these commands.
+
+menu "OpenThread over RPC client configuration"
+	depends on OPENTHREAD_RPC_CLIENT
+
+config OPENTHREAD_RPC_CLIENT_NUM_SENT_COAP_REQUESTS
+	int "Maximum number of ongoing sent CoAP messages"
+	default 8
+	help
+	  Defines the number of slots for storing a callback along with its context
+	  for ongoing CoAP requests awaiting a response.
+
+config OPENTHREAD_RPC_CLIENT_RADIO_TIME_REFRESH_PERIOD
+	int "Radio time sync period [s]"
+	default 30
+	help
+	  Defines how frequently the RPC client shall read the RPC server's
+	  radio time instead of extrapolating it from the last reading and the
+	  current local time. The purpose of this setting is to reduce the RPC
+	  traffic given that otLinkRawGetRadioTime() may be used extensively by
+	  the application.
+
+endmenu # "OpenThread over RPC client configuration"
+
+menu "OpenThread over RPC client configuration"
+	depends on OPENTHREAD_RPC_SERVER
+
+config OPENTHREAD_RPC_MESSAGE_POOL
+	int "Maximum number of messages key identifiers that can be allocated on server"
+	default 8
+	help
+	  Defines maximum number of messages key indentifiers that can be allocated on server at
+	  the same time.
+
+endmenu
+
+config OPENTHREAD_RPC_INITIALIZE_NRF_RPC
+	bool "Automatically initialize nRF RPC library"
+	default n
+	help
+	  Initialize nRF RPC library during the system startup. Disabling this
+	  option allow user to initialize it in a different way.
+
+endif # OPENTHREAD_RPC

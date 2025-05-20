@@ -1,0 +1,436 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_FAST_PAIR_FMDN
+	bool "Find My Device Network extension for Fast Pair"
+	select BT_FAST_PAIR_STORAGE_OWNER_ACCOUNT_KEY
+	select BT_FAST_PAIR_FMDN_CRYPTO
+	help
+	  Enable Find My Device Network (FMDN) extension for Fast Pair.
+
+if BT_FAST_PAIR_FMDN
+
+config BT_FAST_PAIR_FMDN_TX_POWER
+	int "TX power set in Bluetooth LE controller [dBm]"
+	default 0
+	range 0 127
+	help
+	  Define the TX power configuration used for the extension advertising and
+	  connections in dBm. The value is passed to the Bluetooth LE controller
+	  using a HCI command for all extension transmit activities. The desired TX
+	  power configuration may be different from the actual one if a chosen HW
+	  platform does not support it. In this case, the FMDN module displays
+	  a warning notifying the user about the real TX power during the enabling
+	  procedure of this library. The actual TX power value will be as close to
+	  the desired configuration as possible.
+
+	  This Kconfig option must be set to zero at minimum. The Fast Pair specification
+	  requires that the conducted Bluetooth transmit power for FMDN advertisements
+	  must be set to at least 0 dBm.
+
+config BT_FAST_PAIR_FMDN_TX_POWER_CORRECTION_VAL
+	int "TX power correction value [dBm]"
+	default 0
+	help
+	  The configured value is added to the TX power readout from Bluetooth
+	  LE controller to calculate the calibrated TX power value included in
+	  the Read Beacon Parameters response. The correction may be needed to
+	  take into acccount hardware configuration (for example, used antenna
+	  or device's casing).
+
+	  The calibrated TX power included in the Read Beacon Parameters
+	  response has to be in the following dBm range: [-100, 20].
+
+config BT_FAST_PAIR_FMDN_MAX_CONN
+	int "Maximum number of FMDN connections"
+	default 2
+	range 2 BT_MAX_CONN
+	help
+	  Define the maximum number of connections that can be established using
+	  the FMDN advertising payload. The configured pool of the connection
+	  slots must always be available to the extension that is in the
+	  provisioned state. Other advertising sets than the FMDN advertising
+	  set cannot use the connection slots from this pool for their activities.
+	  In the typical locator tag use case, the BT_MAX_CONN configuration should
+	  be greater than the BT_FAST_PAIR_FMDN_MAX_CONN configuration to provide
+	  also connection slots for the standard Fast Pair advertising set.
+
+choice BT_FAST_PAIR_FMDN_ECC_TYPE
+	prompt "Elliptic Curve selection"
+	default BT_FAST_PAIR_FMDN_ECC_SECP160R1
+	help
+	  Select the Elliptic Curve used for encryption in FMDN modules.
+
+config BT_FAST_PAIR_FMDN_ECC_SECP160R1
+	bool "FMDN with the SECP160R1 Elliptic Curve"
+	depends on BT_FAST_PAIR_CRYPTO_SECP160R1_SUPPORT
+	help
+	  Select the SECP160R1 Elliptic Curve for FMDN. This curve type
+	  is less secure than the SECP256R1 variant, but it can be used with
+	  Bluetooth Legacy Advertising because of its limited size (160 bits).
+
+config BT_FAST_PAIR_FMDN_ECC_SECP256R1
+	bool "FMDN with the SECP256R1 Elliptic Curve"
+	depends on BT_FAST_PAIR_CRYPTO_SECP256R1_SUPPORT
+	help
+	  Select the SECP256R1 Elliptic Curve for FMDN. This curve type
+	  is more secure than the SECP160R1 variant but requires using
+	  Bluetooth Extended Advertising due to its extended size (256 bits).
+
+endchoice
+
+config BT_FAST_PAIR_FMDN_ECC_LEN
+	int
+	depends on BT_FAST_PAIR_FMDN_ECC_SECP160R1 || BT_FAST_PAIR_FMDN_ECC_SECP256R1
+	default 20 if BT_FAST_PAIR_FMDN_ECC_SECP160R1
+	default 32 if BT_FAST_PAIR_FMDN_ECC_SECP256R1
+	help
+	  Indicate the byte length of the chosen Elliptic Curve type.
+
+config BT_FAST_PAIR_FMDN_CRYPTO
+	bool
+	depends on BT_FAST_PAIR_CRYPTO_AES256_ECB_SUPPORT
+	depends on BT_FAST_PAIR_FMDN_ECC_SECP160R1 || BT_FAST_PAIR_FMDN_ECC_SECP256R1
+	help
+	  Declare the list of FMDN dependencies on the Fast Pair crypto operations.
+
+config BT_FAST_PAIR_FMDN_RANDOM_NONCE_LEN
+	int
+	default 8
+	help
+	  Indicate the byte length of the random nonce used to generate
+	  Beacon Actions requests and responses.
+
+config BT_FAST_PAIR_FMDN_AUTH_SEG_LEN
+	int
+	default 8
+	help
+	  Indicate the byte length of the authentication segment used
+	  to generate the Beacon Actions requests and responses.
+
+choice BT_FAST_PAIR_FMDN_RING_COMP
+	prompt "Ringing component selection"
+	default BT_FAST_PAIR_FMDN_RING_COMP_NONE
+	help
+	  Select the number of components capable of ringing.
+
+config BT_FAST_PAIR_FMDN_RING_COMP_NONE
+	bool "No component capable of ringing"
+
+config BT_FAST_PAIR_FMDN_RING_COMP_ONE
+	bool "Single component capable of ringing"
+
+config BT_FAST_PAIR_FMDN_RING_COMP_TWO
+	bool "Two components (left and right buds) capable of ringing"
+
+config BT_FAST_PAIR_FMDN_RING_COMP_THREE
+	bool "Three components (left and right buds and case) capable of ringing"
+
+endchoice
+
+config BT_FAST_PAIR_FMDN_RING_VOLUME
+	bool "Ringing volume support"
+	depends on !BT_FAST_PAIR_FMDN_RING_COMP_NONE
+	help
+	  Enable this option to indicate ringing volume support.
+
+config BT_FAST_PAIR_FMDN_VERSION_MAJOR
+	int
+	default 1
+	help
+	  Major version number of the FMDN protocol.
+
+config BT_FAST_PAIR_FMDN_AUTH
+	bool
+	default y
+	help
+	  Add Fast Pair FMDN Authentication source file.
+
+config BT_FAST_PAIR_FMDN_BATTERY
+	bool
+	default y
+	help
+	  Add Fast Pair FMDN Battery source file.
+
+if BT_FAST_PAIR_FMDN_BATTERY
+
+config BT_FAST_PAIR_FMDN_BATTERY_DULT
+	bool "FMDN integration with DULT battery information"
+	select DULT_BATTERY
+	depends on BT_FAST_PAIR_FMDN_DULT
+	help
+	  Enable the FMDN integration with the battery information feature from
+	  the DULT module. The battery information is an optional feature and does
+	  not have to be enabled. The DULT battery configurations for setting the
+	  battery type and battery level thresholds can be found in the DULT module
+	  Kconfig.
+
+config BT_FAST_PAIR_FMDN_BATTERY_LEVEL_CRITICAL_THR
+	int "Battery level upper threshold [%] for entering critical battery state"
+	range 0 100
+	default 10
+	help
+	  This option changes the upper range for the critically low battery state.
+	  The device stays in this battery state when the battery level is within
+	  the following range:
+	  [0; BT_FAST_PAIR_FMDN_BATTERY_LEVEL_CRITICAL_THR].
+	  The battery level thresholds are used to encode the correct battery mode in
+	  FMDN advertising set.
+
+config BT_FAST_PAIR_FMDN_BATTERY_LEVEL_LOW_THR
+	int "Battery level upper threshold [%] for entering low battery state"
+	range 0 100
+	default 40
+	help
+	  This option changes the upper range for the low battery state. The device
+	  stays in this battery state when the battery level is within the following
+	  range:
+	  (BT_FAST_PAIR_FMDN_BATTERY_LEVEL_CRITICAL_THR;
+	   BT_FAST_PAIR_FMDN_BATTERY_LEVEL_LOW_THR].
+	  The device enters the normal battery state once the battery level is greater
+	  than the BT_FAST_PAIR_FMDN_BATTERY_LEVEL_LOW_THR threshold.
+	  The battery level thresholds are used to encode the correct battery mode in
+	  FMDN advertising set.
+
+endif # BT_FAST_PAIR_FMDN_BATTERY
+
+config BT_FAST_PAIR_FMDN_BEACON_ACTIONS
+	bool
+	default y
+	help
+	  Add Fast Pair FMDN Beacon Actions source file.
+
+config BT_FAST_PAIR_FMDN_CALLBACKS
+	bool
+	default y
+	help
+	  Add Fast Pair FMDN callbacks source file.
+
+config BT_FAST_PAIR_FMDN_CLOCK
+	bool
+	default y
+	select BT_FAST_PAIR_STORAGE_FMDN_CLOCK
+	help
+	  Add Fast Pair FMDN Clock source file.
+
+if BT_FAST_PAIR_FMDN_CLOCK
+
+config BT_FAST_PAIR_FMDN_CLOCK_NVM_UPDATE_TIME
+	int "NVM update time of the FMDN Clock in minutes"
+	default 1440
+	help
+	  Use this configuration to change the update frequency of the FMDN
+	  Clock in non-volatile memory. The device recovers the FMDN Clock
+	  from NVM at boot time since Ephemeral Identifier (EID) resolving is
+	  strongly tied to this parameter. With the recommended default value,
+	  updates occur once a day (1440 minutes = 24 hours).
+
+config BT_FAST_PAIR_FMDN_CLOCK_NVM_UPDATE_RETRY_TIME
+	int "NVM update retry time of the FMDN Clock in seconds"
+	default 60
+	help
+	  Use this configuration to change the retry frequency of the FMDN
+	  Clock updates in non-volatile memory. The device uses retry time to
+	  determine the next storage attempt in case of a storage operation
+	  failure.
+
+config BT_FAST_PAIR_FMDN_CLOCK_UPTIME_PERSISTENCE
+	bool
+	default y if NRF_GRTC_TIMER && SOC_SERIES_NRF54LX
+	help
+	  Apply the workaround for the kernel uptime persistence after a system reset.
+	  The FMDN clock module assumes that the kernel uptime starts from zero after
+	  the system reboot.
+
+	  Activate the workaround only for devices from the nRF54L series that use the
+	  GRTC timer as the system clock source (the default configuration). For this
+	  configuration, the kernel uptime persists after a system reset if the reset
+	  reason is of a specific type, such as a software reset (for example, triggered
+	  by the sys_reboot API).
+
+	  The kernel uptime does not persist for devices from the nRF54H series even
+	  though they use the GRTC timer as the system clock source. The workaround
+	  is not applied for this device series.
+
+endif # BT_FAST_PAIR_FMDN_CLOCK
+
+config BT_FAST_PAIR_FMDN_DULT
+	bool "Enable Detecting Unwanted Location Trackers (DULT) support in FMDN"
+	default y
+	select DULT
+	help
+	  The DULT support is required for small and not easily discoverable accessories.
+	  For large accessories it is recommended. For details see
+	  https://www.ietf.org/archive/id/draft-detecting-unwanted-location-trackers-01.html#name-applicability.
+
+if BT_FAST_PAIR_FMDN_DULT
+
+config BT_FAST_PAIR_FMDN_DULT_INTEGRATION
+	bool
+	default y
+	help
+	  Add Fast Pair FMDN DULT Integration source file.
+
+if BT_FAST_PAIR_FMDN_DULT_INTEGRATION
+
+config BT_FAST_PAIR_FMDN_DULT_INTEGRATION_INIT_PRIORITY
+	int
+	range 0 9
+	default 4
+	help
+	  Fast Pair FMDN DULT integration module initialization priority.
+	  Used when registering initialization function to Fast Pair activation module.
+
+config BT_FAST_PAIR_FMDN_DULT_INTEGRATION_INIT_PRIORITY_LATE
+	int
+	range 0 9
+	default 6
+	help
+	  Fast Pair FMDN DULT integration module initialization late priority.
+	  Used when registering late initialization function to Fast Pair activation module.
+
+endif # BT_FAST_PAIR_FMDN_DULT_INTEGRATION
+
+config BT_FAST_PAIR_FMDN_DULT_MANUFACTURER_NAME
+	string "Manufacturer name"
+	help
+	  The name should match the value provided in the Google Nearby Console.
+
+config BT_FAST_PAIR_FMDN_DULT_MODEL_NAME
+	string "Model name"
+	help
+	  The name should match the value provided in the Google Nearby Console.
+
+config BT_FAST_PAIR_FMDN_DULT_ACCESSORY_CATEGORY
+	int "The category value from DULT specification the accessory most closely resembles"
+	range 1 167
+	help
+	  See https://www.ietf.org/archive/id/draft-detecting-unwanted-location-trackers-01.html#name-accessory-category-value
+	  for specific category value.
+
+config BT_FAST_PAIR_FMDN_DULT_CAPABILITY_PLAY_SOUND
+	bool
+	default y
+	depends on !BT_FAST_PAIR_FMDN_RING_COMP_NONE
+	help
+	  Support for play sound capability is required.
+
+config BT_FAST_PAIR_FMDN_DULT_CAPABILITY_MOTION_DETECTOR_UT
+	bool
+	help
+	  Motion detector unwanted tracking capability support.
+
+config BT_FAST_PAIR_FMDN_DULT_CAPABILITY_ID_LOOKUP_BLE
+	bool
+	default y
+	help
+	  Identifier Lookup by BLE support.
+
+menu "Firmware version"
+
+config BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_MAJOR
+	int "FMDN Firmware major version"
+	default 1
+	range 0 65535
+	help
+	  Default is set to 1, because Major.Minor.Revision value of 0.0.0 is not supported by
+	  the Fast Pair Validator Android app.
+
+config BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_MINOR
+	int "FMDN Firmware major version"
+	default 0
+	range 0 255
+
+config BT_FAST_PAIR_FMDN_DULT_FIRMWARE_VERSION_REVISION
+	int "FMDN Firmware revision version"
+	default 0
+	range 0 255
+
+endmenu
+
+config BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR
+	bool "Enable DULT Motion detector support in FMDN"
+	select DULT_MOTION_DETECTOR
+	select BT_FAST_PAIR_FMDN_DULT_CAPABILITY_MOTION_DETECTOR_UT
+	help
+	  The DULT Motion detector requests the device to ring if the accessory separated
+	  from owner is moving. For more details see
+	  https://www.ietf.org/archive/id/draft-detecting-unwanted-location-trackers-01.html#name-motion-detector.
+
+endif # BT_FAST_PAIR_FMDN_DULT
+
+config BT_FAST_PAIR_FMDN_READ_MODE
+	bool
+	default y
+	help
+	  Add Fast Pair FMDN Read Mode source file.
+
+if BT_FAST_PAIR_FMDN_READ_MODE
+
+config BT_FAST_PAIR_FMDN_READ_MODE_FMDN_RECOVERY_TIMEOUT
+	int "EIK recovery read mode timeout in minutes"
+	default 1
+	help
+	  EIK recovery read mode timeout in minutes. This option is used to change
+	  the timeout of the EIK recovery mode as the EIK reading capability should
+	  be available only for limited time after the explicit user consent (for
+	  example, upon a physical button press).
+
+endif # BT_FAST_PAIR_FMDN_READ_MODE
+
+config BT_FAST_PAIR_FMDN_RING
+	bool
+	default y
+	help
+	  Add Fast Pair FMDN Ring source file.
+
+if BT_FAST_PAIR_FMDN_RING
+
+config BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_BT_GATT
+	int "Timeout in milliseconds in ringing request from DULT GATT source"
+	default 12000
+	depends on BT_FAST_PAIR_FMDN_DULT
+	help
+	  The default timeout parameter in milliseconds is used in the start
+	  ringing request that originates from the Bluetooth GATT DULT source.
+	  The application can override this default parameter and use a different
+	  timeout using the bt_fast_pair_fmdn_ring_state_update API. This Kconfig
+	  value cannot be lower than the minimum timeout (5 seconds) defined in the
+	  DULT specification. Additionally, it is not recommended to set a timeout
+	  value that is lower than 10 seconds, as it can cause a failure of the
+	  "Ringing using the accessory non-owner service" test in the Fast Pair
+	  Validator app. This Kconfig default value (12 seconds) is the recommended
+	  configuration.
+
+config BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_MOTION_DETECTOR
+	int "Timeout in milliseconds in ringing request from DULT motion detector source"
+	default 1000
+	depends on BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR
+	help
+	  The default timeout parameter in milliseconds is used in the start
+	  ringing request that originates from the motion detector DULT source.
+	  The application can override this default parameter and use a different
+	  timeout using the bt_fast_pair_fmdn_ring_state_update API. This Kconfig
+	  value is recommended to be fairly short to allow the motion detector for
+	  detecting multiple motion events inside the 20 seconds active motion
+	  polling interval.
+
+endif # BT_FAST_PAIR_FMDN_RING
+
+config BT_FAST_PAIR_FMDN_STATE
+	bool
+	default y
+	select BT_EXT_ADV
+	select BT_FAST_PAIR_STORAGE_FMDN_EIK
+	help
+	  Add Fast Pair FMDN State source file.
+
+# The FMDN extension requires the system workqueue to execute at
+# a cooperative priority.
+config SYSTEM_WORKQUEUE_PRIORITY
+	range -256 -1
+
+endif # BT_FAST_PAIR_FMDN

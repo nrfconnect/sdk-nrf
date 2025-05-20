@@ -1,0 +1,20 @@
+/*
+ * Copyright (c) 2021 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#ifndef SCAN_CELLULAR_H
+#define SCAN_CELLULAR_H
+
+#include <modem/lte_lc.h>
+
+int scan_cellular_init(void);
+void scan_cellular_execute(int32_t timeout, uint8_t cell_count);
+struct lte_lc_cells_info *scan_cellular_results_get(void);
+int scan_cellular_cancel(void);
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+void scan_cellular_details_get(struct location_data_details *details);
+#endif
+
+#endif /* SCAN_CELLULAR_H */

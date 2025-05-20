@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_GATTP
+	bool "Generic Attribute Profile"
+	select BT_NRF_SERVICES
+	help
+	  Enable Generic Attribute Profile. It can be used to receive
+	  service changed indications from a connected peer.
+
+if BT_GATTP
+
+module = BT_GATTP
+module-str = GATT Profile
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_GATTP

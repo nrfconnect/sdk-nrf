@@ -1,0 +1,17 @@
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig PCM_MIX
+	bool "PCM - Pulse Code Modulation mix library"
+	help
+	  Library for mixing multiple audio streams
+
+if PCM_MIX
+
+module = PCM_MIX
+module-str = pcm-mix
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif #PCM_MIX

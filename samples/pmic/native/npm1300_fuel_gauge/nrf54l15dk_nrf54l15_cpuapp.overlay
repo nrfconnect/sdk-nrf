@@ -1,0 +1,20 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&i2c21_default {
+	group1 {
+		bias-pull-up;
+	};
+};
+
+&i2c21 {
+	status = "okay";
+};
+
+&npm1300_ek_pmic {
+	host-int-gpios = <&gpio1 10 0>;
+	pmic-int-pin = <3>;
+};

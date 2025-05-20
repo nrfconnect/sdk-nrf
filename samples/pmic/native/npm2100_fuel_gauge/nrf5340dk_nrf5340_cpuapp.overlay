@@ -1,0 +1,15 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&i2c1_default {
+	group1 {
+		bias-pull-up;
+	};
+};
+
+&arduino_i2c {
+	#include "npm2100ek_pmic.dtsi"
+};

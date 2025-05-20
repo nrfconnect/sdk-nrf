@@ -1,0 +1,17 @@
+sample:
+  description: Sample demonstrating basic usage of the EnOcean library
+  name: EnOcean
+tests:
+  sample.bluetooth.enocean:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf52dk/nrf52832
+      - nrf52840dk/nrf52840
+    platform_allow:
+      - nrf52dk/nrf52832
+      - nrf52840dk/nrf52840
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild

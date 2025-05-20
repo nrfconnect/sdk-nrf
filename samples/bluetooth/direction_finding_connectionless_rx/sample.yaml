@@ -1,0 +1,33 @@
+sample:
+  name: Direction Finding Connectionless Locator
+  description: Sample application showing connectionless Direction Finding reception
+tests:
+  sample.bluetooth.direction_finding_connectionless_rx_nrf:
+    sysbuild: true
+    build_only: true
+    platform_allow:
+      - nrf52833dk/nrf52833
+      - nrf52833dk/nrf52820
+      - nrf5340dk/nrf5340/cpuapp
+    tags:
+      - bluetooth
+      - sysbuild
+    integration_platforms:
+      - nrf52833dk/nrf52833
+      - nrf52833dk/nrf52820
+      - nrf5340dk/nrf5340/cpuapp
+  sample.bluetooth.direction_finding_connectionless_rx_nrf.aod:
+    sysbuild: true
+    extra_args: OVERLAY_CONFIG="overlay-aod.conf"
+    build_only: true
+    platform_allow:
+      - nrf52833dk/nrf52833
+      - nrf52833dk/nrf52820
+      - nrf5340dk/nrf5340/cpuapp
+    tags:
+      - bluetooth
+      - sysbuild
+    integration_platforms:
+      - nrf52833dk/nrf52833
+      - nrf52833dk/nrf52820
+      - nrf5340dk/nrf5340/cpuapp

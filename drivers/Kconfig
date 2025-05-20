@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2018-2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Device Drivers"
+
+rsource "bluetooth/Kconfig"
+rsource "entropy/Kconfig"
+rsource "flash/Kconfig"
+rsource "gpio/Kconfig"
+rsource "hw_cc3xx/Kconfig"
+
+if !MPSL_FEM_ONLY
+rsource "mpsl/Kconfig"
+endif
+
+rsource "mspi/Kconfig"
+rsource "net/Kconfig"
+rsource "sensor/Kconfig"
+rsource "serial/Kconfig"
+
+config HPF
+	bool
+	default y if GPIO_HPF
+	default y if MSPI_HPF
+	# Temporary kconfig to include DPPI channel allocation for HPF
+
+endmenu

@@ -1,0 +1,332 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Bluetooth LE configuration"
+
+config DESKTOP_BT
+	bool "Support for Bluetooth connectivity"
+	default y
+	imply DESKTOP_BLE_STATE
+	imply DESKTOP_BLE_BOND_ENABLE
+	select BT
+	select BT_SETTINGS
+	select BT_SIGNING
+	select BT_SMP
+	imply BT_CONN_TX_NOTIFY_WQ if BT_LL_SOFTDEVICE
+	help
+	  Enable support for Bluetooth connectivity in the nRF Desktop
+	  application. Specific Bluetooth configurations and application
+	  modules are selected according to the HID device role. Apart from
+	  that, the defaults of Bluetooth-related Kconfigs are aligned with
+	  the nRF Desktop use case.
+
+	  nRF Desktop conditionally implies using a separate workqueue for
+	  connection TX notify processing. This is done to work around HCI
+	  command timeout e.g. while erasing secondary image slot in the
+	  background.
+
+if DESKTOP_BT
+
+config DESKTOP_BT_PERIPHERAL
+	bool
+	default y if DESKTOP_ROLE_HID_PERIPHERAL
+	imply DESKTOP_BLE_ADV
+	imply DESKTOP_BLE_LATENCY_ENABLE
+	imply DESKTOP_BAS_ENABLE
+	imply DESKTOP_HIDS_ENABLE
+	imply BT_DIS
+	imply DESKTOP_DEV_DESCR_ENABLE
+	select BT_PERIPHERAL
+	help
+	  HID peripherals are configured to use the GAP Peripheral role as
+	  required in the HID over GATT profile specification for the HID
+	  Device. This specification defines how to implement the HID Device
+	  using Bluetooth connectivity.
+
+	  The nRF Desktop peripheral enables CAF Bluetooth LE advertising
+	  module, Bluetooth LE latency module and GATT Services required for a
+	  HID Device (HID Service, Battery Service and Device Information
+	  Service).
+
+	  Additionally, the nRF Desktop peripheral enables device description
+	  module. The module implements a custom GATT Service which is required
+	  to connect with nRF Desktop dongles.
+
+if DESKTOP_BT_PERIPHERAL
+
+config BT_ID_UNPAIR_MATCHING_BONDS
+	default y
+	help
+	  Delete bond with the same peer on another Bluetooth local identity
+	  when bonding to prevent bonding failures. That improves user
+	  experience during the erase advertising procedure.
+
+	  By default, overwriting bond requires authenticated pairing.
+
+	  Enabling this option is needed to pass the Fast Pair Validator's
+	  end-to-end integration tests.
+
+config BT_ID_ALLOW_UNAUTH_OVERWRITE
+	default y
+	help
+	  Allow overwriting of an unauthenticated bond from a different local
+	  identity. This setting improves the user experience as it is no
+	  longer required to delete the bonding information from the old
+	  identity to pair using the new one.
+
+config BT_DATA_LEN_UPDATE
+	default n
+	help
+	  nRF Desktop peripherals disable the Data Length Exchange (DLE)
+	  procedure as it expects this procedure to be initiated by the
+	  the central.
+
+config BT_AUTO_PHY_UPDATE
+	default n
+	help
+	  nRF Desktop peripherals disable the automatic PHY Update procedure
+	  as it expects this procedure to be initiated by the central.
+
+config BT_PERIPHERAL_PREF_MIN_INT
+	default 6
+	help
+	  nRF Desktop peripherals use the shortest available connection
+	  interval to lower the latency of HID reports.
+
+config BT_PERIPHERAL_PREF_MAX_INT
+	default 6
+	help
+	  nRF Desktop peripherals use the shortest available connection
+	  interval to lower the latency of HID reports.
+
+config BT_PERIPHERAL_PREF_LATENCY
+	default 99
+	help
+	  nRF Desktop peripherals use the non-zero value for the Bluetooth
+	  latency to lower the battery energy consumption. HID reports are
+	  sent as GATT notifications, so this parameter has no impact on their
+	  latency.
+
+config BT_PERIPHERAL_PREF_TIMEOUT
+	default 400
+	help
+	  nRF Desktop peripherals use the moderate value for the supervision
+	  timeout parameter as they do not have to be fast in the disconnect
+	  detection. The moderate value also provides connection stability as
+	  both devices take more time before reporting the connection timeout.
+
+config BT_CONN_PARAM_UPDATE_TIMEOUT
+	default 1000
+	help
+	  nRF Desktop peripherals update connection parameters earlier to lower
+	  HID data latency.
+
+config BT_ATT_SENT_CB_AFTER_TX
+	default y
+	help
+	  nRF Desktop peripherals delay ATT sent callback until data
+	  transmission is done by BLE controller. This is needed to ensure low
+	  latency of provided HID data. The ATT sent callback is used by the
+	  application to trigger sending subsequent HID report.
+
+config BT_GATT_CHRC_POOL_SIZE
+	default 7 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
+		      !DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	default 8 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
+		      DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	default 11 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
+		       !DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	default 12 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
+		       DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	help
+	  The maximum number of GATT characteristic descriptors in GATT pool is
+	  set assuming that nRF Desktop peripheral uses default configuration
+	  specified for the selected peripheral type.
+
+	  By default, the GATT pool is used only by GATT HID Service. Make sure
+	  to update the pool size if your configuration uses more descriptors.
+
+config BT_GATT_UUID16_POOL_SIZE
+	default 10 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
+		      !DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	default 12 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
+		      DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	default 17 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
+		       !DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	default 19 if (DESKTOP_PERIPHERAL_TYPE_KEYBOARD && \
+		       DESKTOP_CONFIG_CHANNEL_OUT_REPORT)
+	help
+	  The maximum number of GATT 16-bit UUID descriptors in GATT pool is set
+	  assuming that nRF Desktop peripheral uses default configuration
+	  specified for the selected peripheral type.
+
+	  By default, the GATT pool is used only by GATT HID Service. Make sure
+	  to update the pool size if your configuration uses more descriptors.
+
+if BT_DIS
+
+config BT_DIS_MANUF_NAME
+	default y
+	help
+	  nRF Desktop enables the Manufacturer Name String characteristic as
+	  part of the DIS configuration.
+
+config BT_DIS_MANUF_NAME_STR
+	default DESKTOP_DEVICE_MANUFACTURER
+	help
+	  nRF Desktop defines common HID device identification values
+	  and passes them as defaults to the Bluetooth DIS configuration.
+
+config BT_DIS_MODEL_NUMBER
+	default y
+	help
+	  nRF Desktop enables the Model Number String characteristic as
+	  part of the DIS configuration.
+
+config BT_DIS_MODEL_NUMBER_STR
+	default DESKTOP_DEVICE_PRODUCT
+	help
+	  nRF Desktop defines common HID device identification values
+	  and passes them as defaults to the Bluetooth DIS configuration.
+
+config BT_DIS_PNP
+	default y
+	help
+	  The PnP ID characteristic is required for a HID Device.
+
+config BT_DIS_PNP_VID_SRC
+	default 2
+	help
+	  By default, nRF Desktop relies on Vendor ID of Nordic Semiconductor
+	  ASA assigned by the USB IF.
+
+config BT_DIS_PNP_VID
+	default DESKTOP_DEVICE_VID
+	help
+	  nRF Desktop defines common HID device identification values
+	  and passes them as defaults to the Bluetooth DIS configuration.
+
+config BT_DIS_PNP_PID
+	default DESKTOP_DEVICE_PID
+	help
+	  nRF Desktop defines common HID device identification values
+	  and passes them as defaults to the Bluetooth DIS configuration.
+
+config BT_DIS_PNP_VER
+	default 0x0100
+	help
+	  nRF Desktop by default defines product version representing major
+	  version number of 1, minor version number of 0 and sub-minor version
+	  number of 0.
+
+endif # BT_DIS
+
+endif # DESKTOP_BT_PERIPHERAL
+
+config DESKTOP_BT_CENTRAL
+	bool
+	default y if DESKTOP_ROLE_HID_DONGLE
+	imply DESKTOP_HID_FORWARD_ENABLE
+	imply DESKTOP_BLE_CONN_PARAMS_ENABLE
+	imply DESKTOP_BLE_SCAN_ENABLE
+	imply DESKTOP_BLE_DISCOVERY_ENABLE
+	select BT_CENTRAL
+	help
+	  nRF Desktop dongles are configured to use the GAP Central role as
+	  required in the HID over GATT profile specification for the Report
+	  and Boot Host. This specification defines how to implement the Host
+	  using Bluetooth connectivity.
+
+	  Application modules that control Bluetooth LE scanning, discovery and
+	  connection parameters are automatically enabled.
+
+if DESKTOP_BT_CENTRAL
+
+config BT_GATT_CLIENT
+	default y
+	help
+	  nRF Desktop dongles are configured to use the GATT Client role as
+	  required in the HID over GATT profile specification for the Report
+	  and Boot Host.
+
+config BT_GATT_SERVICE_CHANGED
+	default n
+	help
+	  GATT Service Changed support is not needed for nRF Desktop dongles.
+	  The dongles do not change their GATT Services, they work mainly as
+	  GATT Clients and receive HID reports from BLE connected peripherals.
+
+config BT_MAX_CONN
+	default DESKTOP_HID_DONGLE_CONN_COUNT
+	help
+	  Change the default value for the maximum number of simultaneous
+	  connections to be compatible with the dongle connection count.
+
+config BT_MAX_PAIRED
+	default DESKTOP_HID_DONGLE_BOND_COUNT
+	help
+	  Change the default value for the maximum number of paired devices
+	  to be compatible with the dongle bond count.
+
+endif # DESKTOP_BT_CENTRAL
+
+if HAS_BT_CTLR
+
+choice BT_CTLR_TX_PWR
+	default BT_CTLR_TX_PWR_0
+	help
+	  nRF Desktop devices use the 0dBm TX power configuration by default.
+endchoice
+
+config BT_CTLR_CONN_PARAM_REQ
+	default n
+	help
+	  nRF Desktop devices disable support for the Connection Parameter
+	  Request feature as it is not needed.
+
+endif # HAS_BT_CTLR
+
+config BT_DEVICE_NAME
+	default DESKTOP_DEVICE_PRODUCT
+	help
+	  By default, nRF Desktop devices use their product name as Bluetooth
+	  device name.
+
+config BT_DEVICE_APPEARANCE
+	default 962 if DESKTOP_PERIPHERAL_TYPE_MOUSE
+	default 961 if DESKTOP_PERIPHERAL_TYPE_KEYBOARD
+	default 961 if DESKTOP_ROLE_HID_DONGLE
+	default 960
+	help
+	  By default, nRF Desktop mice use Bluetooth appearance of mouse,
+	  nRF Desktop keyboards and dongles use Bluetooth appearance of
+	  keyboard. Other nRF Desktop devices use Bluetooth appearance of
+	  generic human interface device.
+
+config BT_SETTINGS_CCC_STORE_ON_WRITE
+	default y
+	help
+	  nRF Desktop devices require to store the CCC descriptor in the
+	  context of the GATT write operation. This behaviour prevents
+	  discrepancies in the CCC descriptor configuration between the
+	  connected peers in case of a sudden shutdown or reset.
+
+config BT_SETTINGS_CCC_LAZY_LOADING
+	default n
+	help
+	  nRF Desktop devices disable the lazy loading feature for the CCC
+	  descriptor to speed up reconnections and reduce delay for the
+	  first HID report.
+
+choice BT_HCI_CORE_LOG_LEVEL_CHOICE
+	default BT_HCI_CORE_LOG_LEVEL_WRN
+	help
+	  Reduce Bluetooth HCI core log level to avoid flooding logs.
+endchoice
+
+endif # DESKTOP_BT
+
+endmenu

@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig ML_APP_DATA_AGGREGATOR_RELEASE
+	bool "Data aggregator buffer automatic release"
+	depends on CAF_SENSOR_DATA_AGGREGATOR_EVENTS
+	default y if ML_APP_EI_DATA_FORWARDER
+	help
+	  The module registers as a last listener for data aggregator event
+	  and automatically request the buffer release.
+
+if ML_APP_DATA_AGGREGATOR_RELEASE
+
+module = ML_APP_DATA_AGGREGATOR_RELEASE
+module-str = Data aggregator release
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # ML_APP_DATA_AGGREGATOR_RELEASE

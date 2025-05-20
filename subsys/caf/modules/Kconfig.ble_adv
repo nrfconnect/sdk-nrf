@@ -1,0 +1,195 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig CAF_BLE_ADV
+	bool "Enable Bluetooth LE advertising"
+	depends on BT_PERIPHERAL
+	depends on CAF_BLE_COMMON_EVENTS
+	depends on CAF_BLE_STATE
+	select BT_ADV_PROV
+
+if CAF_BLE_ADV
+
+config CAF_BLE_ADV_PM_EVENTS
+	bool "Power management events support"
+	depends on CAF_PM_EVENTS
+	default y
+
+config CAF_BLE_ADV_POWER_DOWN_ON_DISCONNECTION_REASON_0X15
+	bool "Force power down on disconnection with reason 0x15"
+	depends on CAF_BLE_ADV_PM_EVENTS
+	select CAF_FORCE_POWER_DOWN_EVENTS
+	help
+	  Force power down when a bonded peer disconnects with reason 0x15
+	  (Remote Device Terminated due to Power Off). The module instantly
+	  stops Bluetooth LE advertising and submits a force_power_down event.
+
+config CAF_BLE_ADV_DIRECT_ADV
+	bool "Advertise to bonded peer directly"
+	depends on SETTINGS
+	depends on CAF_BLE_BOND_SUPPORTED
+	help
+	  Device will use direct advertising if bonded. The device will not advertise directly
+	  towards a central that uses Resolvable Private Address (RPA). The module does not read
+	  the Central Address Resolution GATT characteristic of the central, so it does not know
+	  if the remote device supports the address resolution of directed advertisements.
+
+config CAF_BLE_ADV_FAST_ADV
+	bool "Enable period of fast advertising"
+
+config CAF_BLE_ADV_SLOW_INT_MIN
+	hex "Minimum Advertising Interval during slow advertising (N * 0.625 milliseconds)"
+	range 0x0020 0x4000
+	default 0x00a0 # 100 ms
+	help
+	  Minimum Advertising Interval shall be less than or equal to the
+	  Maximum Advertising Interval. The Minimum Advertising Interval and
+	  Maximum Advertising Interval should not be the same value (as stated
+	  in Bluetooth Core Spec 5.2, section 7.8.5)
+
+config CAF_BLE_ADV_SLOW_INT_MAX
+	hex "Maximum Advertising Interval during slow advertising (N * 0.625 milliseconds)"
+	range 0x0020 0x4000
+	default 0x00f0 # 150 ms
+	help
+	  Minimum Advertising Interval shall be less than or equal to the
+	  Maximum Advertising Interval. The Minimum Advertising Interval and
+	  Maximum Advertising Interval should not be the same value (as stated
+	  in Bluetooth Core Spec 5.2, section 7.8.5)
+
+if CAF_BLE_ADV_FAST_ADV
+
+config CAF_BLE_ADV_FAST_INT_MIN
+	hex "Minimum Advertising Interval during fast advertising (N * 0.625 milliseconds)"
+	range 0x0020 0x4000
+	default 0x0030 # 30 ms
+	help
+	  Minimum Advertising Interval shall be less than or equal to the
+	  Maximum Advertising Interval. The Minimum Advertising Interval and
+	  Maximum Advertising Interval should not be the same value (as stated
+	  in Bluetooth Core Spec 5.2, section 7.8.5)
+
+config CAF_BLE_ADV_FAST_INT_MAX
+	hex "Maximum Advertising Interval during fast advertising (N * 0.625 milliseconds)"
+	range 0x0020 0x4000
+	default 0x0060 # 60 ms
+	help
+	  Minimum Advertising Interval shall be less than or equal to the
+	  Maximum Advertising Interval. The Minimum Advertising Interval and
+	  Maximum Advertising Interval should not be the same value (as stated
+	  in Bluetooth Core Spec 5.2, section 7.8.5)
+
+config CAF_BLE_ADV_FAST_ADV_TIMEOUT
+	int "Time of initial fast advertising [s]"
+	default 30
+	help
+	  Device will initially advertise with shorter interval to enable quicker discovery by
+	  hosts. After this time it will shift to normal cadence advertising.
+
+endif
+
+if !CAF_BLE_ADV_FAST_ADV
+
+config CAF_BLE_ADV_FAST_INT_MIN
+	hex
+	default 0x0
+
+config CAF_BLE_ADV_FAST_INT_MAX
+	hex
+	default 0x0
+
+config CAF_BLE_ADV_FAST_ADV_TIMEOUT
+	int
+	default 0
+
+endif
+
+config CAF_BLE_ADV_FILTER_ACCEPT_LIST
+	bool "Enable filter accept list"
+	select BT_FILTER_ACCEPT_LIST
+	select BT_CTLR_FILTER_ACCEPT_LIST if HAS_BT_CTLR
+	select BT_CTLR_PRIVACY if HAS_BT_CTLR
+	help
+	  If the used local identity already has bond, the device will filter
+	  incoming scan response data requests and connection requests. In
+	  that case, only the bonded peer can connect or request scan response
+	  data.
+
+config CAF_BLE_ADV_GRACE_PERIOD
+	bool "Enable grace period feature"
+	depends on CAF_BLE_ADV_PM_EVENTS
+	default y if BT_ADV_PROV_SWIFT_PAIR
+	help
+	  The module advertises in grace period for predefined time before
+	  advertising is turned off. During the grace period, the module
+	  advertises modified payload.
+
+	  The feature is used for example for devices that advertise Microsoft
+	  Swift Pair data. To ensure users would not try to connect to a device
+	  which is no longer available, Swift Pair vendor section is removed
+	  and advertising is continued without Swift Pair data for additional
+	  time before the advertising is stopped.
+
+config CAF_BLE_ADV_ROTATE_RPA
+	bool "Rotate RPA together with advertising data"
+	depends on BT_PRIVACY
+	default y if BT_ADV_PROV_FAST_PAIR
+	help
+	  During active advertising, the module periodically triggers RPA
+	  rotation combined with advertising data update. This prevents
+	  automatic RPA rotations triggered by Zephyr in the background.
+
+	  Synchronizing RPA rotation with advertising data update is needed if
+	  an advertising provider uses a random value when generating data. In
+	  that case lack of synchronization could lead to compromising privacy.
+
+if CAF_BLE_ADV_ROTATE_RPA
+
+config CAF_BLE_ADV_ROTATE_RPA_TIMEOUT
+	int "RPA rotation timeout [s]"
+	range 60 900 if BT_ADV_PROV_FAST_PAIR
+	range 60 3600
+	default 720
+	help
+	  Period of time in seconds between subsequent RPA rotations
+	  triggered by module.
+
+config CAF_BLE_ADV_ROTATE_RPA_TIMEOUT_RAND
+	int "RPA rotation timeout randomization [s]"
+	range 10 50
+	default 30
+	help
+	  Used RPA timeout value is randomized by subtracting a random value
+	  that is between zero and randomization_timeout.
+
+endif # CAF_BLE_ADV_ROTATE_RPA
+
+if !CAF_BLE_ADV_ROTATE_RPA
+
+config CAF_BLE_ADV_ROTATE_RPA_TIMEOUT
+	int
+	default 0
+
+config CAF_BLE_ADV_ROTATE_RPA_TIMEOUT_RAND
+	int
+	default 0
+
+endif # !CAF_BLE_ADV_ROTATE_RPA
+
+config CAF_BLE_ADV_BLE_BOND_SUPPORTED
+	bool
+	default CAF_BLE_BOND_SUPPORTED
+	help
+	  Kconfig option used to inform that Bluetooth LE bond functionality is supported by the
+	  application. If an application supports Bluetooth LE bond module, the Bluetooth LE
+	  advertising module should not start advertising before the Bluetooth LE bond module is
+	  initialized.
+
+module = CAF_BLE_ADV
+module-str = caf module BLE advertising
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # CAF_BLE_ADV

@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+choice PSA_CORE
+	prompt "PSA Core implementation"
+
+config PSA_CORE_DISABLED
+	bool
+	prompt "PSA core-less for SSF crypto client support"
+	depends on SSF_CLIENT && SSF_PSA_CRYPTO_SERVICE_ENABLED
+
+config PSA_CORE_OBERON
+	bool
+	prompt "PSA Core implementation - Oberon"
+	select PSA_WANT_AES_KEY_SIZE_128
+	select PSA_WANT_AES_KEY_SIZE_192
+	select PSA_WANT_AES_KEY_SIZE_256
+
+config PSA_CORE_LITE
+	bool "PSA core created for tiny footprint"
+	depends on SOC_SERIES_NRF54LX
+	help
+	  The PSA core with tiny footprint is created to be used e.g. for bootloader
+	  or similar use cases where there are severe size restrictions. This PSA core
+	  will only provide limited algorithm support and a limited amount of features
+	  from the PSA Crypto key management APIs. Note that the volatile key-store is
+	  not possible to use. Also note that PSA core lite is not thread-safe.
+
+endchoice
+
+config PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS
+	bool "Optimized Ed25519 (only) support for NSIB usage"
+	depends on PSA_CORE_LITE
+	help
+	  This configuration calls low-level APIs in CRACEN for Ed25519 instead of
+	  going through PSA crypto driver wrappers APIs. This optimization limits
+	  supported algorithms for signature verification to only Pure Ed25519 and
+	  Ed25519ph.

@@ -1,0 +1,71 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig MODEM_INFO
+	bool "nRF91 modem information library"
+	depends on NRF_MODEM_LIB
+	select AT_PARSER
+	select AT_MONITOR
+
+if MODEM_INFO
+
+config MODEM_INFO_MAX_AT_PARAMS_RSP
+	int "Maximum number of response parameters"
+	default 10
+	help
+	  Set the maximum number of parameters the parser
+	  will check for in any given string.
+
+config MODEM_INFO_BUFFER_SIZE
+	int "Size of buffer used to read data from the socket"
+	default 128
+	help
+	  Set the size of the buffer that contains the returned
+	  string after an AT command. The buffer is processed
+	  through the parser.
+
+config MODEM_INFO_ADD_NETWORK
+	bool "Read the network information from the modem"
+	default y
+	help
+	  Add the network information to outgoing deviceInfo device messages.
+
+config MODEM_INFO_ADD_DATE_TIME
+	bool "Read the real-time clock value from the modem"
+	depends on MODEM_INFO_ADD_NETWORK
+	default y
+	help
+	  Include the real-time clock value read from the modem in the network
+	  information. Note, that if no time information is available in the
+	  network, the modem info readout might fail.
+
+config MODEM_INFO_ADD_SIM
+	bool "Read the SIM card information from the modem"
+	default y
+	help
+	  Add the SIM card information to outgoing deviceInfo device messages.
+
+config MODEM_INFO_ADD_SIM_ICCID
+	bool "Read the SIM card ICCID from the modem"
+	depends on MODEM_INFO_ADD_SIM
+	default y
+	help
+	  Add the SIM card ICCID to outgoing deviceInfo device messages.
+
+config MODEM_INFO_ADD_SIM_IMSI
+	bool "Read the SIM card IMSI from the modem"
+	depends on MODEM_INFO_ADD_SIM
+	default y
+	help
+	  Add the SIM card IMSI to outgoing deviceInfo device messages.
+
+config MODEM_INFO_ADD_DEVICE
+	bool "Add the device information to the modem informer"
+	default y
+	help
+	  Add the device information to outgoing deviceInfo device messages.
+
+endif # MODEM_INFO

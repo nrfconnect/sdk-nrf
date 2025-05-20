@@ -1,0 +1,10 @@
+identifier: {{ board }}/{{ soc }}
+name: {{ board_desc }}
+vendor: {{ vendor }}
+type: mcu
+arch: arm
+ram: {{ target["ram"] }}
+flash: {{ target["flash"] }}
+toolchain:
+  - zephyr
+supported: []

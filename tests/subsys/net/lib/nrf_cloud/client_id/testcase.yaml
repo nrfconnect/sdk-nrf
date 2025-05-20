@@ -1,0 +1,56 @@
+common:
+  platform_allow: nrf9160dk/nrf9160/ns
+  integration_platforms:
+    - nrf9160dk/nrf9160/ns
+  tags:
+    - ci_build
+    - nrf_cloud_test
+    - nrf_cloud_lib
+    - ci_tests_subsys_net
+tests:
+  net.lib.nrf_cloud.client_id.imei:
+    sysbuild: true
+    timeout: 60
+    extra_args:
+      - CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI=y
+    tags:
+      - sysbuild
+      - ci_tests_subsys_net
+  net.lib.nrf_cloud.client_id.runtime:
+    sysbuild: true
+    timeout: 60
+    extra_args:
+      - CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI=n
+      - CONFIG_NRF_CLOUD_CLIENT_ID_SRC_RUNTIME=y
+    tags:
+      - sysbuild
+      - ci_tests_subsys_net
+  net.lib.nrf_cloud.client_id.uuid:
+    sysbuild: true
+    timeout: 60
+    extra_args:
+      - CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI=n
+      - CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID=y
+      - CONFIG_MODEM_JWT=y
+    tags:
+      - sysbuild
+      - ci_tests_subsys_net
+  net.lib.nrf_cloud.client_id.hwid:
+    sysbuild: true
+    timeout: 60
+    extra_args:
+      - CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI=n
+      - CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID=y
+      - CONFIG_HW_ID_LIBRARY=y
+    tags:
+      - sysbuild
+      - ci_tests_subsys_net
+  net.lib.nrf_cloud.client_id.comptime:
+    sysbuild: true
+    timeout: 60
+    extra_args:
+      - CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI=n
+      - CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y
+    tags:
+      - sysbuild
+      - ci_tests_subsys_net

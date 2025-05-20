@@ -1,0 +1,162 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_SCAN
+	depends on BT_OBSERVER
+	bool "Scan library"
+	default n
+	help
+	  Enable BLE Scan library
+
+if BT_SCAN
+
+config BT_SCAN_NAME_MAX_LEN
+	int "Maximum size for the name to search in the advertisement report"
+	default 32
+	help
+	  "Maximum size for the name to search in the advertisement report."
+
+config BT_SCAN_SHORT_NAME_MAX_LEN
+	int "Maximum size of the short name to search for in the advertisement report"
+	default 32
+	help
+	  Maximum size of the short name to search for in the advertisement report.
+
+config BT_SCAN_FILTER_ENABLE
+	bool "Enabling filters for the Scan library"
+	default n
+	help
+	  Enabling filters for the Scan library.
+
+config BT_SCAN_MANUFACTURER_DATA_MAX_LEN
+	int "Maximum size for the manufacturer data to search in the advertisement report"
+	default 32
+	help
+	  "Maximum size for the manufacturer data to search in the advertisement report."
+
+if BT_SCAN_FILTER_ENABLE
+
+config BT_SCAN_UUID_CNT
+	int "Number of filters for UUIDs"
+	default 0
+	help
+	  Number of filters for UUIDs
+
+config BT_SCAN_NAME_CNT
+	int "Number of name filters"
+	default 0
+	help
+	  Number of name filters
+
+config BT_SCAN_SHORT_NAME_CNT
+	int "Number of short name filters"
+	default 0
+	help
+	  Number of short name filters
+
+config BT_SCAN_ADDRESS_CNT
+	int "Number of address filters"
+	default 0
+	help
+	  Number of address filters
+
+config BT_SCAN_APPEARANCE_CNT
+	int "Number of appearance filters"
+	default 0
+	help
+	  Number of appearance filters
+
+config BT_SCAN_MANUFACTURER_DATA_CNT
+	int "Number of manufacturer data filters"
+	default 0
+	help
+	  Number of manufacturer data filters
+endif
+
+if !BT_SCAN_FILTER_ENABLE
+
+config BT_SCAN_UUID_CNT
+	int
+	default 0
+	help
+	  Number of filters for UUIDs
+
+config BT_SCAN_NAME_CNT
+	int
+	default 0
+	help
+	  Number of name filters
+
+config BT_SCAN_SHORT_NAME_CNT
+	int
+	default 0
+	help
+	  Number of short name filters
+
+config BT_SCAN_ADDRESS_CNT
+	int
+	default 0
+	help
+	  Number of address filters
+
+config BT_SCAN_APPEARANCE_CNT
+	int
+	default 0
+	help
+	  Number of appearance filters
+
+config BT_SCAN_MANUFACTURER_DATA_CNT
+	int
+	default 0
+	help
+	  Number of manufacturer data filters
+
+endif
+
+config BT_SCAN_CONN_ATTEMPTS_FILTER
+	bool "Connection attempts filter"
+	help
+	 Connection attempts filter. This filter limits the number of attempts
+	 to connect to the device.
+
+if BT_SCAN_CONN_ATTEMPTS_FILTER
+
+config BT_SCAN_CONN_ATTEMPTS_FILTER_LEN
+	int "Connection attempts filtered device count"
+	default 2
+	help
+	  The maximum number of the filtered devices by
+	  the connection attempts filter.
+
+config BT_SCAN_CONN_ATTEMPTS_COUNT
+	int "Connection attempts count"
+	default 2
+	help
+	 Connection attempts count. Defines how many times the device will
+	 try to connect with a given peripheral.
+endif
+
+config BT_SCAN_BLOCKLIST
+	bool "Scanning device blocklist"
+	help
+	  Scanning device blocklist. Scanning module ignores
+	  any devices which are on this list.
+
+if BT_SCAN_BLOCKLIST
+
+config BT_SCAN_BLOCKLIST_LEN
+	int "Blocklist maximum device count"
+	default 2
+	help
+	  Maximum blocklist devices count.
+
+endif # BT_SCAN_BLOCKLIST
+
+module = BT_SCAN
+module-str = scan library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_SCAN

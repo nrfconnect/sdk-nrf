@@ -1,0 +1,12 @@
+&rtc2 {
+	status = "okay";
+};
+
+/ {
+        chosen {
+                zephyr,entropy = &rng;
+        };
+	zephyr,user {
+		ppi-trace-rtc = <&rtc2>;
+	};
+};

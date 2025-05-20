@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "CoreMark sample"
+
+config APP_BUTTON_AND_LED_SUPPORTED
+	bool
+	default y if $(dt_alias_enabled,button) && $(dt_alias_enabled,led)
+
+config APP_MODE_FLASH_AND_RUN
+	bool "Run CoreMark benchmark on start up" if APP_BUTTON_AND_LED_SUPPORTED
+	default y if !APP_BUTTON_AND_LED_SUPPORTED
+	help
+	  If enabled, CoreMark will start execution immediately after the CPU starts up.
+	  It also disables LEDs and buttons.
+	  Otherwise, it will wait for the button press.
+
+endmenu
+
+menu "Zephyr Kernel"
+	source "Kconfig.zephyr"
+endmenu

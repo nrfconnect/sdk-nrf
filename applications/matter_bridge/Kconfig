@@ -1,0 +1,189 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+mainmenu "Matter nRF Connect Bridge Example Application"
+
+config BRIDGE_ONOFF_LIGHT_BRIDGED_DEVICE
+	bool "Support for OnOff Light bridged device"
+	default y
+
+config BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
+	bool "Support for Temperature Sensor bridged device"
+	default y
+
+config BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
+	bool "Support for Humidity Sensor bridged device"
+	default y
+
+choice BRIDGE_SWITCH_BRIDGED_DEVICE
+	prompt "Bridged device switch implementation"
+	default BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE
+
+config BRIDGE_GENERIC_SWITCH_BRIDGED_DEVICE
+	bool "Support for Generic Switch bridged device"
+
+config BRIDGE_ONOFF_LIGHT_SWITCH_BRIDGED_DEVICE
+	bool "Support for OnOff Light Switch bridged device"
+
+endchoice
+
+choice BRIDGED_DEVICE_IMPLEMENTATION
+	prompt "Bridged Device implementation"
+	default BRIDGED_DEVICE_SIMULATED
+
+	config BRIDGED_DEVICE_SIMULATED
+		bool "Simulated Bridged Device"
+		help
+		  Enables using simulated bridged devices that do not perform
+		  real operations, but emulate exemplary data to imitate the real
+		  device behavior.
+
+	config BRIDGED_DEVICE_BT
+		bool "Bluetooth LE Bridged Device"
+		help
+		  Enables using real bridged devices that communicate with the Matter bridge device
+		  over Bluetooth LE.
+
+endchoice
+
+if BRIDGED_DEVICE_SIMULATED
+
+choice BRIDGED_DEVICE_SIMULATED_ONOFF_IMPLEMENTATION
+	prompt "Simulated bridged onoff device implementation"
+	default BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL
+
+	config BRIDGED_DEVICE_SIMULATED_ONOFF_AUTOMATIC
+		bool "Automatically simulated bridged onoff device"
+		help
+		  Enables using simulated bridged onoff device that
+		  automatically changes its state periodically.
+
+	config BRIDGED_DEVICE_SIMULATED_ONOFF_SHELL
+		bool "Shell controlled simulated bridged onoff device"
+		help
+		  Enables using simulated bridged onoff device that is
+		  controlled by shell commands.
+
+endchoice
+
+endif
+
+if BRIDGED_DEVICE_BT
+
+config BT_CENTRAL
+	default y
+
+config BT_SCAN
+	default y
+
+# Configure how many Bluetooth LE devices the Matter bridge can support (the final number is given value - 1, as 1 connection is used for the Matter Bluetooth LE service).
+config BT_MAX_CONN
+	default 10
+
+config BT_SCAN_FILTER_ENABLE
+	default y
+
+# Configure how many Bluetooth LE service UUIDs the Matter bridge can scan.
+config BT_SCAN_UUID_CNT
+	default 2
+
+config BT_SCAN_ADDRESS_CNT
+	default 1
+
+config BT_GATT_CLIENT
+	default y
+
+config BT_GATT_DM
+	default y
+
+config BT_EXT_ADV
+	default y
+
+config BT_SMP
+	default y
+
+if BT_SMP
+
+config BT_SETTINGS
+	default y
+
+# Configure how many Bluetooth LE devices will be paired with Matter bridge. Assuming it will be only bridged devices, it should be set to BT_MAX_CONN - 1.
+config BT_MAX_PAIRED
+	default 9
+
+# Use two Bluetooth LE identities. The first one is used by the peripheral for Matter service advertising purposes, and the other is used by the Matter bridge central.
+config BT_ID_MAX
+	default 2
+
+config BT_EXT_ADV_LEGACY_SUPPORT
+	default y
+
+endif
+
+config BRIDGE_BLE_DEVICE_POLLING_INTERVAL
+	int "BLE humidity measurement readout polling interval in ms"
+	default 3000
+
+endif
+
+if BRIDGE_TEMPERATURE_SENSOR_BRIDGED_DEVICE
+
+config BRIDGE_TEMPERATURE_SENSOR_MIN_MEASURED_VALUE
+	int "Default minimum measured value allowed by the bridged temperature sensor device"
+	default -20
+
+config BRIDGE_TEMPERATURE_SENSOR_MAX_MEASURED_VALUE
+	int "Default maximum measured value allowed by the bridged temperature sensor device"
+	default 60
+
+endif
+
+if BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
+
+config BRIDGE_HUMIDITY_SENSOR_MIN_MEASURED_VALUE
+	int "Default minimum measured value allowed by the bridged humidity sensor device"
+	default 0
+
+config BRIDGE_HUMIDITY_SENSOR_MAX_MEASURED_VALUE
+	int "Default maximum measured value allowed by the bridged humidity sensor device"
+	default 100
+
+endif
+
+# Enable Read Client functionality for all build configurations.
+config CHIP_ENABLE_READ_CLIENT
+	default y
+
+config NCS_SAMPLE_MATTER_PERSISTENT_STORAGE
+	default y
+
+config BRIDGE_SMART_PLUG_SUPPORT
+	bool "Enables additional endpoint implementing Matter smart plug functionality"
+	default n
+
+# Sample configuration used for Thread networking
+if OPENTHREAD
+
+choice OPENTHREAD_NORDIC_LIBRARY_CONFIGURATION
+	default OPENTHREAD_NORDIC_LIBRARY_FTD
+endchoice
+
+choice OPENTHREAD_DEVICE_TYPE
+	default OPENTHREAD_FTD
+endchoice
+
+endif # OPENTHREAD
+
+# Dummy Kconfig just to select experimental for some of the configurations.
+config BRIDGE_EXPERIMENTAL
+	bool
+	default y if OPENTHREAD || BRIDGE_SMART_PLUG_SUPPORT
+	select EXPERIMENTAL
+
+source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.features"
+source "${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/Kconfig.defaults"
+source "${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/Kconfig"
+source "${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/Kconfig"
+source "Kconfig.zephyr"

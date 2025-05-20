@@ -1,0 +1,17 @@
+/* Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&cpuflpr_vpr {
+	status = "okay";
+
+	hpf_gpio: gpio {
+		compatible = "nordic,hpf-gpio";
+		gpio-controller;
+		#gpio-cells = <0x2>;
+		ngpios = <0x10>;
+		status = "disabled";
+		port = <0x2>;
+	};
+};

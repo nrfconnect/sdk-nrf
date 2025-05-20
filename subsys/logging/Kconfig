@@ -1,0 +1,110 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Logging over RPC"
+
+config LOG_RPC
+	bool
+	select NRF_RPC
+	select NRF_RPC_CBOR
+
+config LOG_FORWARDER_RPC
+	bool "nRF RPC logging forwarder"
+	depends on LOG
+	select LOG_RPC
+	help
+	  Enables receiving log messages as nRF RPC events and forwarding them to
+	  the Zephyr logging subsystem.
+
+menuconfig LOG_BACKEND_RPC
+	bool "nRF RPC logging backend"
+	depends on LOG_MODE_DEFERRED
+	depends on LOG_PROCESS_THREAD
+	depends on !LOG_FORWARDER_RPC
+	select LOG_OUTPUT
+	select LOG_RPC
+	help
+	  Enables Zephyr logging backend that sends log messages as nRF RPC events.
+
+if LOG_BACKEND_RPC
+
+config LOG_BACKEND_RPC_OUTPUT_BUFFER_SIZE
+	int "Output buffer size"
+	default 128
+	help
+	  Defines the size of stack buffer that is used by the RPC logging backend
+	  while formatting a log message.
+
+config LOG_BACKEND_RPC_HISTORY
+	bool "Log history support"
+	help
+	  Enables the feature to continuously store logs in a large ring buffer,
+	  and adds nRF RPC commands for configuring and fetching the log history.
+
+if LOG_BACKEND_RPC_HISTORY
+
+choice LOG_BACKEND_RPC_HISTORY_STORAGE_CHOICE
+	prompt "Log history storage type"
+	default LOG_BACKEND_RPC_HISTORY_STORAGE_RAM
+
+config LOG_BACKEND_RPC_HISTORY_STORAGE_RAM
+	bool "RAM buffer"
+
+config LOG_BACKEND_RPC_HISTORY_STORAGE_FCB
+	bool "Flash Circular Buffer"
+	depends on FCB
+	help
+	  Stores the log history in Flash Circular Buffer located in the "log_history"
+	  flash partition. Note that enabling this option may significantly increase
+	  the flash wear, so this option is not meant the production environments,
+	  and extra caution should be taken when using this functionality.
+
+endchoice # LOG_BACKEND_RPC_HISTORY_STORAGE_CHOICE
+
+config LOG_BACKEND_RPC_HISTORY_UPLOAD_THREAD_STACK_SIZE
+	int "Log history upload thread stack size"
+	default 1024
+
+config LOG_BACKEND_RPC_HISTORY_UPLOAD_CHUNK_SIZE
+	int "Log history upload chunk size"
+	default 1024
+
+config LOG_BACKEND_RPC_HISTORY_SIZE
+	hex "Log history size"
+	default 0x4000 if LOG_BACKEND_RPC_HISTORY_STORAGE_RAM
+	default 0x8000 if LOG_BACKEND_RPC_HISTORY_STORAGE_FCB
+	help
+	  Size of the ring buffer used to store the log history, in bytes.
+
+config LOG_BACKEND_RPC_HISTORY_STORAGE_FCB_NUM_SECTORS
+	int "Log history FCB maximum number of flash sectors"
+	default 64
+	depends on LOG_BACKEND_RPC_HISTORY_STORAGE_FCB
+
+endif # LOG_BACKEND_RPC_HISTORY
+
+config LOG_BACKEND_RPC_CRASH_LOG
+	bool "Crash log support"
+	depends on DEBUG_COREDUMP
+	help
+	  Enables saving the crash log in the "crash_log" retained RAM partition,
+	  and adds an nRF RPC command that allows a remote user to read the crash
+	  log after the device reboots.
+	  The crash log contains any log messages passed to the nRF RPC logging
+	  backend after the logging subsystem has been put in the panic mode.
+	  Setting this option requires that the devicetree contains the "crash_log"
+	  retained RAM partition.
+
+config LOG_BACKEND_RPC_ECHO
+	bool "Echo command support"
+	help
+	  Enables the support for "echo" nRF RPC command that allows the remote to
+	  generate a log message on the local device. This can be used for testing
+	  Logging over RPC functionality.
+
+endif # LOG_BACKEND_RPC
+
+endmenu # "Logging over nRF RPC"

@@ -1,0 +1,88 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# This file contains extra images which can be used with sysbuild based builds.
+
+menuconfig PARTITION_MANAGER
+	bool "Partition Manager"
+	default y if SOC_FAMILY_NORDIC_NRF
+	depends on !(SOC_SERIES_NRF54HX || SOC_SERIES_NRF92X)
+	depends on !EXTERNAL_CONFIGURED_NETCORE
+
+if PARTITION_MANAGER
+
+config PM_MCUBOOT_PAD
+	hex "Memory reserved for MCUBOOT_PAD"
+	default 0x800 if SOC_SERIES_NRF54LX
+	default 0x200
+	depends on BOOTLOADER_MCUBOOT
+	help
+	  MCUBOOT_PAD size in partition file.
+	  This value is default 0x200 but if using static partitions having a
+	  different padding size, then this value must be updated to correspond
+	  to the value in the static partition file.
+
+config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
+	bool "Place MCUboot secondary in external flash"
+	depends on BOOTLOADER_MCUBOOT
+	select MCUBOOT_NRF53_MULTI_IMAGE_UPDATE if NETCORE_APP_UPDATE
+	help
+	  Place the secondary partition of MCUboot in the external flash instead
+	  of the internal flash. This option should only be enabled by the user
+	  in sysbuild.
+
+config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
+	bool "Override external driver check"
+	help
+	  When enabled, will include all external flash stroage areas without
+	  being gated on the NORDIC_QSPI_NOR Kconfig, can be enabled to use
+	  non-QSPI external flash chips from partition manager.
+
+endif # PARTITION_MANAGER
+
+config BUILD_OUTPUT_BIN
+	bool "Build a binary in BIN format"
+	default y
+	help
+	  Build a "raw" binary zephyr/zephyr.bin in the build directory.
+	  The name of this file can be customized with CONFIG_KERNEL_BIN_NAME.
+	  This will be applied to all target images.
+
+config BUILD_OUTPUT_HEX
+	bool "Build a binary in HEX format"
+	default y
+	help
+	  Build an Intel HEX binary zephyr/zephyr.hex in the build directory.
+	  The name of this file can be customized with CONFIG_KERNEL_BIN_NAME.
+	  This will be applied to all target images.
+
+# TODO: NCSDK-28330
+# This check will fail for variants
+BOARD_NS_QUALIFIER_CHECK := $(substring,$(BOARD_QUALIFIERS),-3)
+
+config BOARD_IS_NON_SECURE
+	bool
+	default y if "$(BOARD_NS_QUALIFIER_CHECK)" = "/ns"
+
+rsource "Kconfig.appcore"
+rsource "Kconfig.flprcore"
+rsource "Kconfig.netcore"
+rsource "Kconfig.pprcore"
+rsource "Kconfig.secureboot"
+rsource "Kconfig.mcuboot"
+rsource "Kconfig.dfu"
+rsource "Kconfig.xip"
+rsource "Kconfig.bt_fast_pair"
+rsource "Kconfig.zip"
+rsource "Kconfig.matter"
+rsource "Kconfig.wifi"
+rsource "Kconfig.suit"
+rsource "Kconfig.suit_provisioning"
+rsource "Kconfig.hpf"
+rsource "Kconfig.approtect"
+rsource "Kconfig.lwm2m_carrier"
+rsource "Kconfig.cracen"
+rsource "Kconfig.tfm"

@@ -1,0 +1,113 @@
+tests:
+  # PSA core lite: Ed25519
+  psa_core_lite.ed25519:
+    sysbuild: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - sysbuild
+      - crypto
+      - ci_crypto
+      - ci_tests_crypto
+    extra_args: >
+      OVERLAY_CONFIG="overlays/lite.conf;overlays/eddsa.conf"
+  # PSA core lite: ECDSA
+  psa_core_lite.ecdsa:
+    sysbuild: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - crypto
+      - ci_crypto
+      - ci_tests_crypto
+      - sysbuild
+    extra_args: >
+      OVERLAY_CONFIG="overlays/lite.conf;overlays/ecdsa.conf"
+  # Oberon PSA crypto: Ed25519
+  psa_core_oberon.ed25519:
+    sysbuild: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - crypto
+      - ci_crypto
+      - ci_tests_crypto
+      - sysbuild
+    extra_args: >
+      OVERLAY_CONFIG="overlays/eddsa.conf"
+  # Oberon PSA crypto: ECDSA
+  psa_core_oberon.ecdsa:
+    sysbuild: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - crypto
+      - ci_crypto
+      - ci_tests_crypto
+      - sysbuild
+    extra_args: >
+      OVERLAY_CONFIG="overlays/ecdsa.conf"
+  # PSA core lite: Ed25519 + encrypt + RNG
+  psa_core_lite.ed25519.encrypt.rng:
+    sysbuild: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - sysbuild
+      - crypto
+      - ci_crypto
+      - ci_tests_crypto
+    extra_args: >
+      OVERLAY_CONFIG="overlays/lite.conf;overlays/eddsa.conf;overlays/encrypt.conf;overlays/rng.conf"
+  # PSA core lite: ECDSA + encrypt + RNG
+  psa_core_lite.ecdsa.encrypt.rng:
+    sysbuild: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - crypto
+      - ci_crypto
+      - ci_tests_crypto
+      - sysbuild
+    extra_args: >
+      OVERLAY_CONFIG="overlays/lite.conf;overlays/ecdsa.conf;overlays/encrypt.conf;overlays/rng.conf"
+  # Oberon PSA crypto: Ed25519 + encrypt + RNG
+  psa_core_oberon.ed25519.encrypt.rng:
+    sysbuild: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - crypto
+      - ci_crypto
+      - ci_tests_crypto
+      - sysbuild
+    extra_args: >
+      OVERLAY_CONFIG="overlays/eddsa.conf;overlays/encrypt.conf;overlays/rng.conf"
+  # ECDSA + Oberon PSA crypto: ECDSA + encrypt + RNG
+  psa_core_oberon.ecdsa.encrypt.rng:
+    sysbuild: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - crypto
+      - ci_crypto
+      - ci_tests_crypto
+      - sysbuild
+    extra_args: >
+      OVERLAY_CONFIG="overlays/ecdsa.conf;overlays/encrypt.conf;overlays/rng.conf"

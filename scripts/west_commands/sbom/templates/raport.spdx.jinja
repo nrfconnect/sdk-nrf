@@ -1,0 +1,62 @@
+# Document Information
+
+SPDXVersion: SPDX-2.2
+DataLicense: CC0-1.0
+SPDXID: SPDXRef-DOCUMENT
+DocumentName: west-ncs-sbom-report
+DocumentNamespace: http://spdx.org/spdxdocs/west-ncs-sbom-{{report_uuid}}
+
+# Creation Info
+
+Creator: Tool: west-ncs-sbom
+Created: {{func.timestamp()}}
+CreatorComment:<text>Generated with west-ncs-sbom. For details, see https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/introduction.html#licenses.</text>
+
+{% set files_by_package = func.group_by(files, 'package') -%}
+
+{% for package_id in files_by_package -%}
+
+# Package Information
+
+PackageName: {{packages[package_id].name or packages[package_id].url or 'unknown-package'}}
+SPDXID: SPDXRef-package-{{func.counter()}}
+{% if packages[package_id].version -%}
+PackageVersion: {{packages[package_id].version}}
+{% endif -%}
+PackageDownloadLocation: {{packages[package_id].url or 'NONE'}}
+FilesAnalyzed: true
+PackageVerificationCode: {{files_by_package[package_id] | verification_code}}
+PackageLicenseConcluded: NOASSERTION
+PackageLicenseInfoFromFiles: NOASSERTION
+PackageLicenseDeclared: NOASSERTION
+PackageCopyrightText: NOASSERTION
+
+{% for file in files_by_package[package_id] -%}
+
+# File
+
+FileName: {{func.relative_path(file.file_path)}}
+SPDXID: SPDXRef-file-{{func.counter()}}
+FileChecksum: SHA1: {{file.sha1}}
+{% if file.local_modifications -%}
+FileComment: <text>This file is modified locally.</text>
+{% endif -%}
+LicenseConcluded: {{ file.license_expr | adjust_identifier if file.license_expr != '' else 'NOASSERTION' }}
+LicenseInfoInFile: NOASSERTION
+FileCopyrightText: NOASSERTION
+
+{% endfor -%}
+
+{% endfor -%}
+
+# Extracted Licenses
+{% for license in licenses_sorted if not licenses[license].is_expr and licenses[license].text %}
+LicenseID: {{licenses[license].friendly_id}}
+{% if licenses[license].name -%}
+LicenseName: {{licenses[license].name}}
+{% endif -%}
+{% if licenses[license].url -%}
+LicenseCrossReference: {{licenses[license].url}}
+{% endif -%}
+ExtractedText: <text>{{ licenses[license].text }}</text>
+{% endfor %}

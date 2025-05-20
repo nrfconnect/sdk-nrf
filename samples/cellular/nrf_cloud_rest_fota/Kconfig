@@ -1,0 +1,48 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "nRF Cloud REST FOTA Sample"
+
+config REST_FOTA_SAMPLE_VERSION
+	string "The sample's version string"
+	default "1.0.0"
+
+config REST_FOTA_JOB_CHECK_RATE_MIN
+	int "Rate (minutes) at which this sample will check for FOTA updates"
+	range 1 10080
+	default 15
+
+config REST_FOTA_ENABLE_LED
+	depends on DK_LIBRARY
+	bool "Turn on LED when connected to network"
+	default y
+
+if REST_FOTA_ENABLE_LED
+config REST_FOTA_LED_NUM
+	int "LED number to use"
+	default 0
+endif
+
+config REST_FOTA_BUTTON_EVT_NUM
+	int "Button number to use for device interactions"
+	default 1
+
+config REST_FOTA_DO_JITP
+	bool "Ask to perform just-in-time provisioning (JITP) via REST on startup"
+	help
+	  If a device has JITP certificates and has not yet been provisioned to
+	  nRF Cloud, enable this option and press the configured button when
+	  prompted after the sample starts.
+
+endmenu
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
+
+module = NRF_CLOUD_REST_FOTA_SAMPLE
+module-str = nRF Cloud Rest FOTA Sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

@@ -1,0 +1,97 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+choice BT_FAST_PAIR_USE_CASE
+	prompt "Use case selection"
+	default BT_FAST_PAIR_USE_CASE_UNKNOWN
+	help
+	  Select the Fast Pair use case to configure the Fast Pair features and extensions
+	  that satisfy the device feature requirements from the Google Fast Pair specification:
+	  https://developers.google.com/nearby/fast-pair/specifications/devicefeaturerequirement.
+	  The use case selection should match the device type selection for your Fast Pair Model
+	  in the Google Nearby Console.
+
+config BT_FAST_PAIR_USE_CASE_UNKNOWN
+	bool "Unknown use case"
+	help
+	  Select the unknown Fast Pair use case. This use case configuration is neutral and is the
+	  default choice selection. The unknown use case does not enable any Fast Pair features and
+	  extensions or impose restrictions on Fast Pair Kconfig options.
+
+config BT_FAST_PAIR_USE_CASE_INPUT_DEVICE
+	bool "Input device use case [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	select BT_FAST_PAIR_GATT_SERVICE_MODEL_ID
+	select BT_FAST_PAIR_PN
+	select BT_FAST_PAIR_REQ_PAIRING
+	select BT_FAST_PAIR_SUBSEQUENT_PAIRING
+	select BT_DIS
+	select BT_DIS_FW_REV
+	imply BT_FAST_PAIR_BOND_MANAGER
+	help
+	  Select the input device Fast Pair use case. Input device is a Human Interface Device
+	  (HID) such as a mouse, keyboard, remote control or a gaming pad that lets the user
+	  interact with electronic devices such as a PC, TV or a console. This Kconfig option
+	  configures the Fast Pair features and extensions to provide the best UX for the input
+	  device use case. This option is experimental, as the input device feature requirements
+	  are not yet defined in the Google Fast Pair specification.
+
+config BT_FAST_PAIR_USE_CASE_LOCATOR_TAG
+	bool "Locator tag use case"
+	select BT_FAST_PAIR_FMDN
+	select BT_FAST_PAIR_FMDN_DULT
+	select BT_FAST_PAIR_USE_CASE_UNSUPPORTED_BOND_MANAGER
+	select BT_FAST_PAIR_USE_CASE_UNSUPPORTED_GATT_SERVICE_MODEL_ID
+	select BT_FAST_PAIR_USE_CASE_UNSUPPORTED_SUBSEQUENT_PAIRING
+	select BT_FAST_PAIR_USE_CASE_UNSUPPORTED_PN
+	select BT_FAST_PAIR_USE_CASE_UNSUPPORTED_BN
+	help
+	  Select the locator tag Fast Pair use case. Locator tag is a small electronic device that
+	  can be attached to an object or a person, and is designed to help locate them in case
+	  they are missing. This Kconfig option configures the Fast Pair features and extensions
+	  to satisfy the locator tag device feature requirements from the Google Fast Pair
+	  specification:
+	  https://developers.google.com/nearby/fast-pair/specifications/devicefeaturerequirement/devicefeaturerequirement_locatortags.
+
+config BT_FAST_PAIR_USE_CASE_MOUSE
+	bool "Mouse use case [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	select BT_FAST_PAIR_GATT_SERVICE_MODEL_ID
+	select BT_FAST_PAIR_PN
+	select BT_FAST_PAIR_REQ_PAIRING
+	select BT_FAST_PAIR_SUBSEQUENT_PAIRING
+	select BT_DIS
+	select BT_DIS_FW_REV
+	imply BT_FAST_PAIR_BOND_MANAGER
+	help
+	  Select the mouse Fast Pair use case. Mouse is a Human Interface Device (HID) that lets
+	  the user interact with electronic devices such as a PC. This Kconfig option configures
+	  the Fast Pair features and extensions to provide the best UX for the mouse use case.
+	  This option is experimental, as the mouse feature requirements are not yet defined
+	  in the Google Fast Pair specification.
+
+endchoice
+
+# Collection of unsupported Fast Pair features that can be selected by the use case Kconfig.
+config BT_FAST_PAIR_USE_CASE_UNSUPPORTED_BOND_MANAGER
+	bool
+	depends on !BT_FAST_PAIR_BOND_MANAGER
+
+config BT_FAST_PAIR_USE_CASE_UNSUPPORTED_GATT_SERVICE_MODEL_ID
+	bool
+	depends on !BT_FAST_PAIR_GATT_SERVICE_MODEL_ID
+
+config BT_FAST_PAIR_USE_CASE_UNSUPPORTED_SUBSEQUENT_PAIRING
+	bool
+	depends on !BT_FAST_PAIR_SUBSEQUENT_PAIRING
+
+config BT_FAST_PAIR_USE_CASE_UNSUPPORTED_PN
+	bool
+	depends on !BT_FAST_PAIR_PN
+
+config BT_FAST_PAIR_USE_CASE_UNSUPPORTED_BN
+	bool
+	depends on !BT_FAST_PAIR_BN

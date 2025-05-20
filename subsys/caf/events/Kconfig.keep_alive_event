@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config CAF_KEEP_ALIVE_EVENTS
+	bool "Enable keep alive events"
+	help
+	  This enables keep alive event.
+	  This event is processed by power manager and reschedule power down timer.
+	  It works only if power manager is in IDLE state.
+	  It cannot wake up the device from any sleep states.
+
+config CAF_INIT_LOG_KEEP_ALIVE_EVENTS
+	bool "Log power manager keep alive events"
+	depends on LOG
+	depends on CAF_KEEP_ALIVE_EVENTS
+	default y
+	help
+	  Log the keep alive events.

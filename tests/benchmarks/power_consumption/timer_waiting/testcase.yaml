@@ -1,0 +1,69 @@
+common:
+  tags:
+    - ppk_power_measure
+    - ci_tests_benchmarks_current_consumption
+tests:
+  benchmarks.power_consumption.timer_waiting_128M_nrf54l:
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - DTC_OVERLAY_FILE="boards/nrf54l15dk_nrf54l15_cpuapp_128M.overlay"
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_for_timer_waiting_54L_128M"
+  benchmarks.power_consumption.timer_waiting_32M_nrf54l:
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - DTC_OVERLAY_FILE="boards/nrf54l15dk_nrf54l15_cpuapp_32M.overlay"
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_for_timer_waiting_54L_32M"
+  benchmarks.power_consumption.timer_waiting_16M_nrf54l:
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - DTC_OVERLAY_FILE="boards/nrf54l15dk_nrf54l15_cpuapp_16M.overlay"
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_for_timer_waiting_54L_16M"
+  benchmarks.power_consumption.timer_waiting_16M_nrf54h:
+    sysbuild: true
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_16M.overlay"
+      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_for_timer_waiting_54H_16M"
+  benchmarks.power_consumption.timer_waiting_320M_nrf54h:
+    sysbuild: true
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_320M.overlay"
+      - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_for_timer_waiting_54H_320M"

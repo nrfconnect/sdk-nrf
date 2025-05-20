@@ -1,0 +1,62 @@
+;
+; Copyright (c) 2023 Nordic Semiconductor ASA
+;
+; SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+;============================;
+; Template version: 1.0
+;============================;
+commands = [1* command]
+responses = [1* response]
+
+at_command = (
+    object_type: 0,
+    set_command: tstr,              ; AT set command, like: %ATTESTTOKEN, %KEYGEN, %KEYINJECT, %CMNG
+    parameters: tstr,               ; sub parameters
+    ignore_cme_errors: [0*6 uint]   ; ignore CME errors
+)
+
+config = (
+    object_type: 1,
+    properties: {0*100 tstr => tstr}    ; key value pair properties
+)
+
+finished = (
+    object_type: 2,
+)
+
+nonce = (bstr .size 16)
+command_with_nonce = [at_command / config / finished, nonce]
+
+;============================;
+
+correlation = (correlation_id: tstr)
+
+command = [correlation, at_command / config / finished]
+
+
+;;; RESPONSES ;;;
+
+; generic error response for any command
+error_response = (
+    object_type: 99,
+    cme_error: uint,                ; 0 - no cme error
+    message: tstr
+)
+
+; successful response for at command
+at_response = (
+    object_type: 100,
+    message: tstr
+)
+
+; successful response for config command
+config_ack = (
+    object_type: 101,
+)
+
+; successful response for finished command
+finished_ack = (
+    object_type: 102,
+)
+
+response = [correlation, error_response / at_response / config_ack / finished_ack]

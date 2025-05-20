@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Nordic Fast Pair Locator tag sample"
+
+choice APP_PLATFORM
+	prompt "Application platform"
+
+config APP_PLATFORM_DK
+	bool "Application runs on the Development Kit"
+	depends on !BOARD_THINGY53
+
+config APP_PLATFORM_THINGY
+	bool "Application runs on the Thingy:53"
+	depends on BOARD_THINGY53
+
+endchoice
+
+rsource "src/Kconfig.dfu"
+rsource "src/ui/Kconfig.ui"
+rsource "src/battery/Kconfig.battery"
+
+config SETTINGS
+	default y
+
+config ZMS
+	default y if (SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+
+config NVS
+	default y if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+
+endmenu
+
+source "Kconfig.zephyr"

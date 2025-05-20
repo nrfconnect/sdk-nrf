@@ -1,0 +1,4 @@
+&spi0 {
+	compatible = "nordic,nrf-spi";
+	status = "okay";
+};

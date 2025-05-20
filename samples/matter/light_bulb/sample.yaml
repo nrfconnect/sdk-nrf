@@ -1,0 +1,117 @@
+sample:
+  description: Matter Light Bulb example
+  name: Matter Light Bulb
+tests:
+  sample.matter.light_bulb.debug:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf7002dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf7002dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+    tags:
+      - sysbuild
+      - ci_samples_matter
+  sample.matter.light_bulb.release:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - FILE_SUFFIX=release
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - SB_CONFIG_PARTITION_MANAGER=y
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf7002dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf7002dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_matter
+  sample.matter.light_bulb.ffs:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - CONFIG_CHIP_COMMISSIONABLE_DEVICE_TYPE=y
+      - CONFIG_CHIP_ROTATING_DEVICE_ID=y
+      - CONFIG_CHIP_DEVICE_TYPE=257
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf7002dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf7002dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_matter
+  sample.matter.light_bulb.debug.nrf21540ek:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - light_bulb_SHIELD=nrf21540ek
+    integration_platforms:
+      - nrf52840dk/nrf52840
+    platform_allow: nrf52840dk/nrf52840
+    tags:
+      - sysbuild
+      - ci_samples_matter
+  sample.matter.light_bulb.debug.nrf21540ek_fwd:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - light_bulb_SHIELD=nrf21540ek
+      - ipc_radio_SHIELD=nrf21540ek
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    platform_allow: nrf5340dk/nrf5340/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_matter
+  # Sample to execute load tests
+  sample.matter.light_bulb.memory_profiling.persistent_subscriptions:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - CONFIG_CHIP_PERSISTENT_SUBSCRIPTIONS=y
+      - CONFIG_CHIP_MEMORY_PROFILING=y
+      - CONFIG_SHELL_MINIMAL=y
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf7002dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf7002dk/nrf5340/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_matter
+  sample.matter.light_bulb.aws:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - EXTRA_CONF_FILE="overlay-aws-iot-integration.conf"
+    platform_allow: nrf7002dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf7002dk/nrf5340/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_matter

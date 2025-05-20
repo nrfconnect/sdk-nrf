@@ -1,0 +1,192 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_RPC
+	bool "Bluetooth over RPC [EXPERIMENTAL]"
+	default y if BT_RPC_STACK
+	select NRF_RPC
+	select NRF_RPC_CBOR
+	select EXPERIMENTAL
+	depends on BT
+	depends on !BT_ISO_UNICAST
+	depends on !BT_ISO_BROADCAST
+	depends on !BT_MESH
+	depends on !BT_AUDIO
+	depends on !BT_HCI_RAW
+	depends on !BT_DF
+	depends on !BT_OTS
+	depends on !BT_CLASSIC
+	help
+	  Enables Bluetooth serialization over RPC
+
+if BT_RPC
+
+choice BT_RPC_ROLE_CHOICE
+	prompt "Bluetooth over RPC role selection"
+	default BT_RPC_CLIENT if BT_RPC_STACK
+	default BT_RPC_HOST
+	help
+	  Select the device role for Bluetooth over RPC. The default role is
+	  a client role.
+
+config BT_RPC_CLIENT
+	bool "Bluetooth over RPC Client"
+	depends on BT_RPC_STACK
+	help
+	  Bluetooth Low Energy API will use nRF RPC library to access host on
+	  the remote core.
+
+config BT_RPC_HOST
+	bool "Bluetooth over RPC Host"
+	help
+	  Bluetooth Low Energy API will use nRF RPC library to provide API for
+	  client on the remote core.
+
+endchoice
+
+config BT_RPC_INITIALIZE_NRF_RPC
+	bool "Automatically initialize nRF RPC library"
+	default y
+	help
+	  Initialize nRF RPC library during the system startup. Disabling this
+	  option allow user to initialize it in a different way.
+
+config BT_RPC_GATT_SRV_MAX
+	int "Maximum number of GATT services"
+	default 4
+	range 0 64
+	help
+	  Maximum number of GATT services that BT_RPC client can define and register on a host.
+	  It must be at least equal to sum of static and dynamic services which you plan to register
+	  on a client.
+
+module = BT_RPC
+module-str = BLE over nRF RPC
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+if BT_RPC_CLIENT
+
+config HEAP_MEM_POOL_SIZE
+	default 4096
+
+# BT_SHELL config in Zephyr depends on BT_HCI, the default stack implementation that is mutually
+# exclusive with BT_RPC_STACK, so this config must be duplicated to make shell commands work with
+# the RPC-based stack.
+config BT_SHELL
+	bool "Bluetooth shell"
+	select SHELL
+	select BT_PRIVATE_SHELL
+
+endif # BT_RPC_CLIENT
+
+if BT_RPC_HOST
+
+config BT_RPC_GATT_BUFFER_SIZE
+	int "Size of the buffer for GATT data"
+	default 2048
+	help
+	  The GATT buffer is used to keep GATT services data from client on a host.
+	  The GATT attributes are allocated on this buffer and registered to the BLE stack.
+
+endif # BT_RPC_HOST
+
+config BT_RPC_INTERNAL_FUNCTIONS
+	bool "Internal functions"
+	default n
+	help
+	  Enable functionality required for internal purposes e.g. testing.
+
+endif # BT_RPC
+
+choice BT_STACK_SELECTION
+
+config BT_RPC_STACK
+	bool "Bluetooth over RPC Client"
+	help
+	  Bluetooth serialized stack
+
+endchoice
+
+# BLE configuration copy. It is necessary to keep configuration copy since
+# BLE header files have dependencies to it and original samples or application
+# might use it.
+if BT_RPC_STACK
+
+config BT_CENTRAL
+	bool "Central Role support"
+	select BT_OBSERVER
+	select BT_CONN
+	help
+	  Select this for LE Central role support.
+
+config BT_PERIPHERAL
+	bool "Peripheral Role support"
+	select BT_BROADCASTER
+	select BT_CONN
+	help
+	  Select this for LE Peripheral role support.
+
+config BT_OBSERVER
+	bool "Observer Role support"
+	help
+	  Select this for LE Observer role support.
+
+menu "Broadcaster"
+	visible if !BT_PERIPHERAL
+
+config BT_BROADCASTER
+	bool "Broadcaster Role support"
+	default y if !BT_OBSERVER
+	help
+	  Select this for LE Broadcaster role support.
+
+endmenu
+
+config BT_CONN
+	bool
+
+config BT_MAX_CONN
+	int "Maximum number of simultaneous connections"
+	depends on BT_CONN
+	range 1 64
+	default 1
+	help
+	  Maximum number of simultaneous Bluetooth connections
+	  supported.
+
+if BT_CONN
+
+config BT_REMOTE_VERSION
+	bool "Remote version fetching"
+	# Enable if building a Controller-only build
+	default y if BT_HCI_RAW
+	help
+	  Enable this to get access to the remote version through
+	  the remote_version_available callback. The host will automatically ask
+	  the remote device after the connection has been established.
+
+config BT_PHY_UPDATE
+	bool "PHY Update"
+	default y
+	help
+	  Enable support for Bluetooth 5.0 PHY Update Procedure.
+
+config BT_DATA_LEN_UPDATE
+	bool "Data Length Update"
+	default y
+	help
+	  Enable support for Bluetooth v4.2 LE Data Length Update procedure.
+
+endif # BT_CONN
+
+source "$(ZEPHYR_BASE)/subsys/bluetooth/Kconfig.adv"
+source "$(ZEPHYR_BASE)/subsys/bluetooth/Kconfig.logging"
+source "$(ZEPHYR_BASE)/subsys/bluetooth/services/Kconfig"
+source "$(ZEPHYR_BASE)/subsys/bluetooth/common/Kconfig"
+source "$(ZEPHYR_BASE)/subsys/bluetooth/host/Kconfig"
+source "$(ZEPHYR_BASE)/subsys/bluetooth/crypto/Kconfig"
+
+endif # BT_RPC_STACK

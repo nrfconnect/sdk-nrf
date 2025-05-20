@@ -1,0 +1,62 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config CRACEN_HW_PRESENT
+	def_bool SOC_SERIES_NRF54LX || SOC_SERIES_NRF92X
+
+config CRACEN_HW_VERSION_BASE
+	def_bool SOC_SERIES_NRF54HX || SOC_NRF54L15 || SOC_NRF54L10 || SOC_NRF54L05
+
+config CRACEN_HW_VERSION_LITE
+	def_bool SOC_NRF54LM20A || SOC_NRF54L09
+
+# Configure CRACEN_LOG_LEVEL
+module = CRACEN
+module-str = CRACEN
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+if PSA_CRYPTO_DRIVER_CRACEN
+
+config CRACEN_LOAD_MICROCODE
+	bool "Load CRACEN microcode"
+	depends on CRACEN_HW_VERSION_BASE
+	default y
+	help
+	  Whether to load the CRACEN microcode on startup.
+	  This is required to use the PKE/IKG engine. Note that this is not
+	  required when a bootloader has already loaded the microcode.
+
+config CRACEN_LIB_KMU
+	bool "CRACEN KMU library"
+	depends on SOC_SERIES_NRF54LX
+	select NRFX_RRAMC if !BUILD_WITH_TFM
+	default y
+	help
+	  The CRACEN KMU library.
+
+config CRACEN_IKG_SEED_LOAD
+	bool "Load the CRACEN IKG seed"
+	depends on CRACEN_LIB_KMU
+	default y
+	help
+	  The IKG seed is used to derive the keys in the IKG.
+	  If there is no seed in KMU, it is expected to be generated.
+	  Note that this is not required to be used if a bootloader is loading
+	  KMU seed.
+
+config CRACEN_IKG_SEED_KMU_SLOT
+	int "KMU slot of the CRACEN IKG seed"
+	range 0 183
+	default 183
+	help
+	  The CRACEN IKG seed spans over 3 KMU slots:
+	  the one defined here and the two subsequent ones.
+	  This defines the KMU slot (along with the two following it) to which
+	  the IKG seed is provisioned and that is pushed when loading the IKG seed.
+
+rsource 'psa_driver.Kconfig'
+
+endif # PSA_CRYPTO_DRIVER_CRACEN

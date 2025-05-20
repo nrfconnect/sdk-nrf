@@ -1,0 +1,24 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Selector configuration"
+
+config DESKTOP_SELECTOR_HW_ENABLE
+	depends on CAF
+	bool "Enable HW based selector"
+	help
+	  This option enables hardware based selector for nRF Desktop application.
+	  If selector state changes, selector_event is sent.
+
+if DESKTOP_SELECTOR_HW_ENABLE
+
+module = DESKTOP_SELECTOR_HW
+module-str = selector hw module
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+endmenu

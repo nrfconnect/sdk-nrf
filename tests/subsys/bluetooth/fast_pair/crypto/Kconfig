@@ -1,0 +1,38 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config TEST_BT_FAST_PAIR_CRYPTO_PSA
+	bool "Enable PSA backend and dependencies"
+	help
+	  The helper Kconfig option is used by the test to enable PSA backend
+	  and set proper TFM build profile. Used to avoid board-specific Kconfig
+	  overlays.
+
+if TEST_BT_FAST_PAIR_CRYPTO_PSA
+
+choice BT_FAST_PAIR_CRYPTO_BACKEND
+	default BT_FAST_PAIR_CRYPTO_PSA
+endchoice
+
+if BUILD_WITH_TFM
+
+choice TFM_PROFILE_TYPE
+	default TFM_PROFILE_TYPE_NOT_SET
+	help
+	  The minimal TFM build profile is not configurable and cannot be used.
+endchoice
+
+endif # BUILD_WITH_TFM
+
+endif # TEST_BT_FAST_PAIR_CRYPTO_PSA
+
+menu "Test configuration"
+source "$(ZEPHYR_NRF_MODULE_DIR)/subsys/bluetooth/services/fast_pair/fp_crypto/Kconfig.fp_crypto"
+endmenu
+
+menu "Zephyr"
+source "Kconfig.zephyr"
+endmenu

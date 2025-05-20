@@ -1,0 +1,89 @@
+sample:
+  description: Wi-Fi SoftAP sample application
+  name: Wi-Fi SoftAP
+tests:
+  sample.nrf7002.softap:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf7002dk/nrf5340/cpuapp
+    platform_allow: nrf7002dk/nrf5340/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf7002_eks.softap:
+    sysbuild: true
+    build_only: true
+    extra_args: SHIELD=nrf7002ek
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    platform_allow: nrf5340dk/nrf5340/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf7001.softap:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf7002dk/nrf5340/cpuapp/nrf7001
+    platform_allow: nrf7002dk/nrf5340/cpuapp/nrf7001
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf7001_eks.softap:
+    sysbuild: true
+    build_only: true
+    extra_args: SHIELD=nrf7002ek_nrf7001
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    platform_allow: nrf5340dk/nrf5340/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf54h20.softap:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - softap_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
+      - softap_SNIPPET=nrf70-wifi
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf54l15.softap:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - softap_SHIELD="nrf7002eb_interposer_p1;nrf7002eb"
+      - softap_SNIPPET=nrf70-wifi
+      - CONFIG_HEAP_MEM_POOL_IGNORE_MIN=n
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf7002eb2.softap:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - softap_SHIELD="nrf7002eb2"
+      - softap_SNIPPET=nrf70-wifi
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi

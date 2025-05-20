@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Bluetooth Services"
+
+config BT_NRF_SERVICES
+	bool
+	help
+	  Common Bluetooth GATT Services support modules, required by all Nordic
+	  Services.
+
+rsource "Kconfig.ams_client"
+rsource "Kconfig.ancs_client"
+rsource "Kconfig.bas_client"
+rsource "Kconfig.bms"
+rsource "Kconfig.cts_client"
+rsource "Kconfig.dfu_smp"
+rsource "Kconfig.gattp"
+rsource "Kconfig.hids"
+rsource "Kconfig.hogp"
+rsource "Kconfig.lbs"
+rsource "Kconfig.nsms"
+rsource "Kconfig.nus"
+rsource "Kconfig.nus_client"
+rsource "Kconfig.rscs"
+rsource "Kconfig.throughput"
+rsource "Kconfig.latency"
+rsource "Kconfig.latency_c"
+rsource "Kconfig.hrs_client"
+rsource "Kconfig.ddfs"
+rsource "Kconfig.mds"
+rsource "cgms/Kconfig.cgms"
+rsource "fast_pair/Kconfig.fast_pair"
+rsource "ras/Kconfig.ras"
+rsource "wifi_prov/Kconfig.wifi_prov"
+
+endmenu

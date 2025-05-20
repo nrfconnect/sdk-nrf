@@ -1,0 +1,121 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Nordic Raw Tx Packet sample"
+
+config RAW_TX_PKT_SAMPLE_CONNECTION_TIMEOUT
+	int "Time to wait for a station to connect"
+	default 30
+
+config RAW_TX_PKT_SAMPLE_DHCP_TIMEOUT_S
+	int "DHCP timeout in seconds"
+	default 20
+
+config RAW_TX_PKT_SAMPLE_STA_ONLY_MODE
+	bool "Set Wi-Fi Station mode"
+	default n
+	help
+	  Set the device operating mode as Station mode.
+
+config RAW_TX_PKT_SAMPLE_INJECTION_ENABLE
+	bool "Set Wi-Fi TX injection mode"
+	default y
+	help
+	  Set the device operating mode as TX injection mode.
+
+choice RAW_TX_PKT_SAMPLE_OP_MODE
+	prompt "Choose Wi-Fi operation mode"
+	default RAW_TX_PKT_SAMPLE_NON_CONNECTED_MODE
+
+config RAW_TX_PKT_SAMPLE_CONNECTION_MODE
+	bool "Connected Station mode"
+	help
+	  Enable the option to select Connected Station mode.
+
+config RAW_TX_PKT_SAMPLE_NON_CONNECTED_MODE
+	bool "Non-connected Station mode"
+	help
+	  Enable the option to select non-connected Station mode.
+endchoice
+
+config RAW_TX_PKT_SAMPLE_CHANNEL
+	int "Channel for non-connected Station mode"
+	depends on RAW_TX_PKT_SAMPLE_NON_CONNECTED_MODE
+	range 1 233
+	help
+	  Specify the Wi-Fi channel for transmitting raw TX packets in non-connected Station mode.
+	  The valid channel range is 1 to 233.
+
+config RAW_TX_PKT_SAMPLE_RATE_VALUE
+	int "MCS index or Data rate value"
+	default 0
+	help
+	  Specify the Wi-Fi data rate value for raw TX packet transmission.
+	  The value represents either the data rate in Mbps or Modulation and coding (MCS) index.
+	  Note: 5.5Mbps is treated specially as 55 to avoid floating point usage.
+	  Legacy: 1, 2, 55, 11, 6, 9, 12, 18, 24, 36, 48, 54
+	  MCS index: 0-7
+
+config RAW_TX_PKT_SAMPLE_RATE_FLAGS
+	int "Rate flag value"
+	range 0 4
+	default 1
+	help
+	  Specify the rate flag value to be used for raw TX packet transmission.
+	  Rate Flags:
+	  0 - Legacy
+	  1 - 11n format
+	  2 - VHT format
+	  3 - HE_SU
+	  4 - HE_ER_SU
+
+config RAW_TX_PKT_SAMPLE_QUEUE_NUM
+	int "Queue number"
+	default 0
+	range 0 4
+	help
+	  Specify the transmission queue number for raw TX packets.
+	  0 - Background
+	  1 - Best effort
+	  2 - Video
+	  3 - Voice
+	  4 - Beacon.
+
+choice
+	prompt "Select transmission mode"
+	default RAW_TX_PKT_SAMPLE_TX_MODE_CONTINUOUS
+
+config RAW_TX_PKT_SAMPLE_TX_MODE_CONTINUOUS
+	bool "Continuous transmission mode"
+
+config RAW_TX_PKT_SAMPLE_TX_MODE_FIXED
+	bool "Fixed transmission mode"
+
+endchoice
+
+if RAW_TX_PKT_SAMPLE_TX_MODE_FIXED
+config RAW_TX_PKT_SAMPLE_FIXED_NUM_PACKETS
+	int "Number of packets"
+	default 1
+	help
+	  Specify the number of packets to be sent when using Fixed mode of transmission.
+endif
+
+config RAW_TX_PKT_SAMPLE_INTER_FRAME_DELAY_MS
+	int "Inter-Frame Delay (milliseconds)"
+	default 10
+	help
+	  Specify the inter-frame delay duration for raw TX packet transmission.
+
+config RAW_TX_PKT_SAMPLE_WIFI_IFACE_OPER_UP_TIMEOUT_S
+	int "Timeout for checking interface operational up status (seconds)"
+	default 10 if RAW_TX_PKT_SAMPLE_NON_CONNECTED_MODE
+	default 40 if RAW_TX_PKT_SAMPLE_CONNECTION_MODE
+	help
+	  specify the timeout (seconds) for checking if the Wi-Fi interface is operationally up.
+endmenu

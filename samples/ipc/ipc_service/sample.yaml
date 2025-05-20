@@ -1,0 +1,110 @@
+sample:
+  name: IPC Service integration test
+  description: IPC Service integration and efficiency test
+
+common:
+  sysbuild: true
+  tags:
+    - ipc
+    - ci_samples_ipc
+  harness: console
+  harness_config:
+    type: multi_line
+    ordered: true
+    regex:
+      - "IPC-service .* demo started"
+      - "Δpkt: (?!0)\\d* ((?!0)\\d* B/pkt) | throughput: (?!0)\\d* bit/s"
+      - "Δpkt: (?!0)\\d* ((?!0)\\d* B/pkt) | throughput: (?!0)\\d* bit/s"
+      - "Δpkt: (?!0)\\d* ((?!0)\\d* B/pkt) | throughput: (?!0)\\d* bit/s"
+
+tests:
+  sample.ipc.ipc_service.nrf5340dk_rpmsg_default:
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+  sample.ipc.ipc_service.nrf5340dk_rpmsg_cpuapp_sending:
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    extra_configs:
+      - CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=1
+    extra_args:
+      - remote_CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=200000000
+  sample.ipc.ipc_service.nrf5340dk_rpmsg_cpunet_sending:
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    extra_configs:
+      - CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=200000000
+    extra_args:
+      - remote_CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=1
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "IPC-service .* demo started"
+        # there will be only single tranfser from this core
+        - "Δpkt: (?!0)\\d+ ((?!0)\\d+ B/pkt) | throughput: (?!0)\\d+ bit/s"
+        - "Δpkt: \\d+ (\\d+ B/pkt) | throughput: \\d+ bit/s"
+        - "Δpkt: \\d+ (\\d+ B/pkt) | throughput: \\d+ bit/s"
+  sample.ipc.ipc_service.nrf5340dk_icmsg_default:
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    extra_args:
+      - FILE_SUFFIX=icmsg
+  sample.ipc.ipc_service.nrf5340dk_icbmsg_default:
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    extra_args:
+      - FILE_SUFFIX=icbmsg
+  sample.ipc.ipc_service.nrf5340dk_icmsg_cpuapp_sending:
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    extra_configs:
+      - CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=35
+    extra_args:
+      - FILE_SUFFIX=icmsg
+      - remote_CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=200000000
+  sample.ipc.ipc_service.nrf5340dk_icmsg_cpunet_sending:
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    extra_configs:
+      - CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=200000000
+    extra_args:
+      - FILE_SUFFIX=icmsg
+      - remote_CONFIG_APP_IPC_SERVICE_SEND_INTERVAL=1
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "IPC-service .* demo started"
+        # there will be only single tranfser from this core
+        - "Δpkt: (?!0)\\d+ ((?!0)\\d+ B/pkt) | throughput: (?!0)\\d+ bit/s"
+        - "Δpkt: \\d+ (\\d+ B/pkt) | throughput: \\d+ bit/s"
+        - "Δpkt: \\d+ (\\d+ B/pkt) | throughput: \\d+ bit/s"
+  sample.ipc.ipc_service.nrf54h20dk_cpuapp_cpurad_icmsg:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    timeout: 20
+  sample.ipc.ipc_service.nrf54h20dk_cpuapp_cpuppr_icmsg:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - FILE_SUFFIX=cpuppr
+      - ipc_service_SNIPPET=nordic-ppr
+    timeout: 20

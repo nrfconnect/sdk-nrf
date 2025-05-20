@@ -1,0 +1,54 @@
+diff --git a/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_cbor_encode.h b/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_cbor_encode.h
+--- a/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_cbor_encode.h
++++ b/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_cbor_encode.h
+@@ -21,7 +21,7 @@
+extern "C" {
+#endif
+
+-#if DEFAULT_MAX_QTY != 1234567890
++#if DEFAULT_MAX_QTY != CONFIG_NRF_PROVISIONING_CBOR_RECORDS
+#error "The type file was generated with a different default_max_qty than this file"
+#endif
+
+diff --git a/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_cbor_encode_types.h b/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_cbor_encode_types.h
+--- a/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_cbor_encode_types.h
++++ b/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_cbor_encode_types.h
+@@ -27,7 +27,7 @@ extern "C" {
+ *
+ *  See `zcbor --help` for more information about --default-max-qty
+ */
+-#define DEFAULT_MAX_QTY 1234567890
++#define DEFAULT_MAX_QTY CONFIG_NRF_PROVISIONING_CBOR_RECORDS
+
+struct error_response {
+	uint32_t error_response_cme_error;
+@@ -53,7 +53,7 @@ struct response {
+};
+
+struct responses {
+-	struct response responses_response_m[1234567890];
++	struct response responses_response_m[CONFIG_NRF_PROVISIONING_CBOR_RECORDS];
+	size_t responses_response_m_count;
+};
+
+diff --git a/subsys/net/lib/nrf_provisioning/src/nrf_provisioning_cbor_encode.c b/subsys/net/lib/nrf_provisioning/src/nrf_provisioning_cbor_encode.c
+--- a/subsys/net/lib/nrf_provisioning/src/nrf_provisioning_cbor_encode.c
++++ b/subsys/net/lib/nrf_provisioning/src/nrf_provisioning_cbor_encode.c
+@@ -16,7 +16,7 @@
+#include "nrf_provisioning_cbor_encode.h"
+#include "zcbor_print.h"
+
+-#if DEFAULT_MAX_QTY != 1234567890
++#if DEFAULT_MAX_QTY != CONFIG_NRF_PROVISIONING_CBOR_RECORDS
+#error "The type file was generated with a different default_max_qty than this file"
+#endif
+
+@@ -90,7 +90,7 @@ static bool encode_responses(
+{
+	zcbor_log("%s\r\n", __func__);
+
+-	bool tmp_result = (((zcbor_list_start_encode(state, 1234567890) && ((zcbor_multi_encode_minmax(1, 1234567890, &(*input).responses_response_m_count, (zcbor_encoder_t *)encode_response, state, (&(*input).responses_response_m), sizeof(struct response))) || (zcbor_list_map_end_force_encode(state), false)) && zcbor_list_end_encode(state, 1234567890))));
++	bool tmp_result = (((zcbor_list_start_encode(state, DEFAULT_MAX_QTY) && ((zcbor_multi_encode_minmax(1, DEFAULT_MAX_QTY, &(*input).responses_response_m_count, (zcbor_encoder_t *)encode_response, state, (&(*input).responses_response_m), sizeof(struct response))) || (zcbor_list_map_end_force_encode(state), false)) && zcbor_list_end_encode(state, DEFAULT_MAX_QTY))));
+
+	if (!tmp_result) {
+		zcbor_trace_file(state);

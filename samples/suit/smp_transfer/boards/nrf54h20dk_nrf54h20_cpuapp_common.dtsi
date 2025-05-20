@@ -1,0 +1,48 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+ #include "../sysbuild/nrf54h20dk_nrf54h20_memory_map.dtsi"
+
+/ {
+	chosen {
+		zephyr,entropy = &psa_rng;
+		zephyr,uart-mcumgr = &uart136;
+		zephyr,bt-hci-ipc = &ipc0;
+	};
+
+	psa_rng: psa-rng {
+		compatible = "zephyr,psa-crypto-rng";
+		status = "okay";
+	};
+};
+
+&cpusec_cpuapp_ipc {
+	status = "okay";
+};
+
+&cpuapp_ram0x_region {
+	status = "okay";
+};
+
+&cpusec_bellboard {
+	status = "okay";
+};
+
+ipc0: &cpuapp_cpurad_ipc {
+	status = "okay";
+};
+
+&cpurad_bellboard {
+	status = "okay";
+};
+
+&cpuapp_bellboard {
+	status = "okay";
+};
+
+&uart136 {
+	/delete-property/ hw-flow-control;
+};

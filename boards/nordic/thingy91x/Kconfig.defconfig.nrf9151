@@ -1,0 +1,109 @@
+# Thingy:91 X nRF9151 board configuration
+#
+# Copyright (c) 2024 Nordic Semiconductor
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+if BOARD_THINGY91X_NRF9151 || BOARD_THINGY91X_NRF9151_NS
+
+# By default, if we build for a Non-Secure version of the board,
+# enable building with TF-M as the Secure Execution Environment.
+config BUILD_WITH_TFM
+	default y if BOARD_THINGY91X_NRF9151_NS
+
+if BUILD_WITH_TFM
+
+# By default, if we build with TF-M, instruct build system to
+# flash the combined TF-M (Secure) & Zephyr (Non Secure) image
+config TFM_FLASH_MERGED_BINARY
+	bool
+	default y
+
+config PM_PARTITION_SIZE_TFM_SRAM
+	hex
+	default 0xa000
+
+endif # BUILD_WITH_TFM
+
+# For the secure version of the board the firmware is linked at the beginning
+# of the flash, or into the code-partition defined in DT if it is intended to
+# be loaded by MCUboot. If the secure firmware is to be combined with a non-
+# secure image (TRUSTED_EXECUTION_SECURE=y), the secure FW image shall always
+# be restricted to the size of its code partition.
+# For the non-secure version of the board, the firmware
+# must be linked into the code-partition (non-secure) defined in DT, regardless.
+# Apply this configuration below by setting the Kconfig symbols used by
+# the linker according to the information extracted from DT partitions.
+
+if BOARD_THINGY91X && TRUSTED_EXECUTION_SECURE
+
+config FLASH_LOAD_SIZE
+	default $(dt_chosen_reg_size_hex,$(DT_CHOSEN_Z_CODE_PARTITION))
+
+endif # BOARD_THINGY91X && TRUSTED_EXECUTION_SECURE
+
+if BOARD_THINGY91X_NRF9151_NS
+
+config FLASH_LOAD_OFFSET
+	default $(dt_chosen_reg_addr_hex,$(DT_CHOSEN_Z_CODE_PARTITION))
+
+config FLASH_LOAD_SIZE
+	default $(dt_chosen_reg_size_hex,$(DT_CHOSEN_Z_CODE_PARTITION))
+
+endif # BOARD_THINGY91X_NRF9151_NS
+
+config BT_HCI_VS
+	default y if BT
+
+config HW_STACK_PROTECTION
+	default ARCH_HAS_STACK_PROTECTION
+
+# check if we are building for any bootloader
+if !IS_BOOTLOADER_IMG
+
+config SECURE_BOOT
+	default y
+
+config BOOTLOADER_MCUBOOT
+	default y
+
+config I2C
+	default y
+
+config MODEM_ANTENNA
+	depends on NRF_MODEM_LIB
+	default y
+
+if MODEM_ANTENNA
+
+config MODEM_ANTENNA_AT_MIPIRFFEDEV
+	default "AT%XMIPIRFFEDEV=1,4,71,198,248"
+config MODEM_ANTENNA_AT_MIPIRFFECTRL_INIT
+	default "AT%XMIPIRFFECTRL=1,0,1,28,248"
+config MODEM_ANTENNA_AT_MIPIRFFECTRL_ON
+	default "AT%XMIPIRFFECTRL=1,1,1,28,56,13,0,0,8,8,715,4,4,770,12,12,829,11,11,863,130,130,892,1,1,939,129,129,978,26,26,1042,8,8,1118,4,4,1270,12,12,1386,14,14,1523,130,130,2200"
+config MODEM_ANTENNA_AT_MIPIRFFECTRL_OFF
+	default "AT%XMIPIRFFECTRL=1,2,1,28,184"
+config MODEM_ANTENNA_AT_MIPIRFFECTRL_PWROFF
+	default "AT%XMIPIRFFECTRL=1,3,1,28,184"
+config MODEM_ANTENNA_AT_COEX0
+	default "AT\%XCOEX0=1,1,1565,1586"
+
+endif # MODEM_ANTENNA
+
+endif # !IS_BOOTLOADER_IMG
+
+# disable interfaces that should not be included in bootloaders
+if IS_BOOTLOADER_IMG
+
+config I2C
+	default n
+
+config GPIO_HOGS
+	default n
+
+config GPIO_NPM1300
+	default n
+
+endif # IS_BOOTLOADER_IMG
+
+endif # BOARD_THINGY91X_NRF9151 || BOARD_THINGY91X_NRF9151_NS

@@ -1,0 +1,194 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "nRF RPC (Remote Procedure Call) library"
+
+if NRF_RPC
+
+# Zephyr port dependencies selection
+
+config _NRF_RPC_DUMMY_SELECT
+	bool
+	default y
+	select THREAD_CUSTOM_DATA
+
+choice NRF_RPC_TRANSPORT
+	prompt "NRF RPC transport"
+	default NRF_RPC_IPC_SERVICE
+
+config NRF_RPC_IPC_SERVICE
+	bool "nRF RPC over IPC Service"
+	select IPC_SERVICE
+	select MBOX
+	select EVENTS
+	help
+	  If enabled, selects the IPC Service as a transport layer for the nRF RPC.
+
+config NRF_RPC_UART_TRANSPORT
+	bool "nRF RPC over UART"
+	select UART_NRFX
+	select RING_BUFFER
+	select CRC
+	help
+	  If enabled, selects the UART as a transport layer for the nRF RPC.
+
+endchoice
+
+if NRF_RPC_IPC_SERVICE
+
+# Redefine this symbol here and give it a non-zero default value
+# so that the Zephyr system heap is enabled, the nRF IPC IPC service
+# depends on it
+config HEAP_MEM_POOL_SIZE
+	int
+	default 2048
+
+config NRF_RPC_IPC_SERVICE_BIND_TIMEOUT_MS
+	int "Timeout while waiting for the endpoint to bind in ms"
+	range 1 1000
+	default 500 if SOC_SERIES_NRF54HX
+	default 100
+	help
+	  Time in miliseconds to wait for endpoint binding.
+	  This timeout depends on the time to initialize all the remote devices
+	  the nRF RPC is going to communicate with.
+
+endif # NRF_RPC_IPC_SERVICE
+
+
+menu "nRF RPC over UART configuration"
+	depends on NRF_RPC_UART_TRANSPORT
+
+config NRF_RPC_UART_MAX_PACKET_SIZE
+	int "Maximum packet size"
+	default 1536
+	help
+	  Defines the maximum size of an nRF RPC packet that can be sent or received
+	  using the UART transport.
+
+config NRF_RPC_UART_RX_RINGBUF_SIZE
+	int "RX ring buffer size"
+	default 2048
+	help
+	  Defines the size of the ring buffer used to relay received bytes between
+	  the UART interrupt service routine and the UART transport RX worker thread.
+
+config NRF_RPC_UART_RX_THREAD_STACK_SIZE
+	int "RX thread stack size"
+	default 4096
+	help
+	  Defines the stack size of the UART transport RX worker thread. The worker
+	  thread is responsible for consuming data received over the UART, and
+	  passing decoded nRF RPC packets to the nRF RPC core.
+
+config NRF_RPC_UART_RELIABLE
+	bool "UART reliability"
+	help
+	  Enables acknowledgment functionality for each frame sent over UART.
+
+if NRF_RPC_UART_RELIABLE
+
+config NRF_RPC_UART_ACK_WAITING_TIME
+	int "Time window to receive acknowledgment"
+	default 50
+	help
+	   Defines time in milliseconds during which the device waits
+	   for acknowledgment for sent data.
+
+config NRF_RPC_UART_TX_ATTEMPTS
+	int "Number of transmitting attempts"
+	default 3
+	help
+	   Number of transmitting attempts, after which sender gives up if
+	   acknowledgment has not been received yet.
+
+endif # NRF_RPC_UART_RELIABLE
+
+endmenu # "nRF RPC over UART configuration"
+
+config NRF_RPC_CBOR
+	bool
+	select ZCBOR
+	select ZCBOR_STOP_ON_ERROR
+
+# End of Zephyr port dependencies selection
+
+config NRF_RPC_THREAD_STACK_SIZE
+	int "Stack size of thread from thread pool"
+	default 1024
+	help
+	  Stack size for each thread in local thread pool.
+
+config NRF_RPC_THREAD_PRIORITY
+	int "Priority of thread from thread pool"
+	default 2
+	help
+	  Thread priority of each thread in local thread pool.
+
+config NRF_RPC_SERIALIZE_API
+	bool "API for serialization"
+	default y
+	help
+	  API for serialization and deserialization of several major CBOR types.
+
+config NRF_RPC_CALLBACK_PROXY
+	bool "Proxy functionality for remote callbacks"
+	default y
+	help
+	  Proxy functionality that allows to register callbacks on the local side
+	  and to match the invoked callbacks on the remote side to registered
+	  callbacks on the local side.
+
+if NRF_RPC_CALLBACK_PROXY
+
+config NRF_RPC_CBKPROXY_OUT_SLOTS
+	int "Maximum number of RPC callback proxy output slots"
+	default 16
+	range 0 16383
+	help
+	  Output slot is used to save context for one callback that is called
+	  on local side, encoded, sent and finally executed on the remote side.
+	  Each output slot takes 8 bytes of flash memory. Maximum number of
+	  input slots on the remote side should be the same as this value.
+
+
+config NRF_RPC_CBKPROXY_IN_SLOTS
+	int "Maximum number of RPC callback proxy input slots"
+	default 16
+	range 0 16383
+	help
+	  Input slot is used to save context for one callback that is called
+	  on remote side, encoded, sent and finally executed on the local side.
+	  Each output slot takes 8 bytes of RAM memory. Maximum number of
+	  output slots on the remote side should be the same as this value.
+
+endif # NRF_RPC_CALLBACK_PROXY
+
+module = NRF_RPC
+module-str = NRF_RPC
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+module = NRF_RPC_TR
+module-str = NRF_RPC_TR
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+module = NRF_RPC_OS
+module-str = NRF_RPC_OS
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+if NRF_RPC_CBOR
+
+module = NRF_RPC_CBOR
+module-str = NRF_RPC_CBOR
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # NRF_RPC_CBOR
+
+rsource "dev_info/Kconfig"
+
+endif # NRF_RPC
+
+endmenu

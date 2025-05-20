@@ -1,0 +1,75 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_HIDS
+	bool "Human Interface Device service"
+	select BT_NRF_SERVICES
+	select BT_GATT_POOL
+	select BT_GATT_DYNAMIC_DB
+	help
+	  Enable BLE GATT Human Interface Device service.
+
+if BT_HIDS
+
+config BT_HIDS_MAX_CLIENT_COUNT
+	int "Maximum HIDS clients"
+	default 1
+	range 1 BT_MAX_CONN
+	help
+	 The maximum number of devices that HID can connect to.
+
+config BT_HIDS_ATTR_MAX
+	int "Maximum number of GATT attribute descriptors"
+	default 30
+	range 0 50
+	help
+	  Maximum number of GATT attribute descriptors that can be set for HIDS.
+
+config BT_HIDS_INPUT_REP_MAX
+	int "Maximum number of HIDS Input Report descriptors"
+	default 5
+	range 0 10
+	help
+	  Maximum number of HIDS Input Reports that can be set for HIDS.
+
+config BT_HIDS_OUTPUT_REP_MAX
+	int "Maximum number of HIDS Output Report descriptors"
+	default 5
+	range 0 10
+	help
+	  Maximum number of HIDS Output Reports that can be set for HIDS.
+
+config BT_HIDS_FEATURE_REP_MAX
+	int "Maximum number of HIDS Feature Report descriptors"
+	default 5
+	range 0 10
+	help
+	  Maximum number of HIDS Feature Reports that can be set for HIDS.
+
+choice BT_HIDS_DEFAULT_PERM
+	prompt "Default permissions used for HID attributes"
+	default BT_HIDS_DEFAULT_PERM_RW
+	help
+	  Default permissions for HID characteristic attributes
+	  used when no permission is set for the report.
+	  Used also for boot reports.
+
+config BT_HIDS_DEFAULT_PERM_RW
+	bool "Read and write allowed"
+
+config BT_HIDS_DEFAULT_PERM_RW_ENCRYPT
+	bool "Require encryption for access"
+
+config BT_HIDS_DEFAULT_PERM_RW_AUTHEN
+	bool "Require encryption using authenticated link-key for access"
+
+endchoice
+
+module = BT_HIDS
+module-str = HIDS
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_HIDS

@@ -1,0 +1,3 @@
+# Add here warnings caused by upstream docs, and that cannot be fixed due to
+# our build process tweaks
+.*None:any reference target not found: ../../src/app/tests/suites/README

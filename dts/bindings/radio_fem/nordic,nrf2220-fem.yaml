@@ -1,0 +1,88 @@
+# Copyright (c) 2024 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: |
+  This is a representation of the nRF2220 Radio Front-End module.
+
+  See the "nordic,nrf2220-fem-twi" binding to configure the TWI (I2C)
+  interface. The TWI interface should be configured as a child node
+  of the TWI (I2C) bus you have connected to the FEM. Then you "connect"
+  the FEM and TWI configurations using the twi-if property.
+
+  Here is an example nRF2220 configuration with a TWI interface
+  selected, using the TWIM0 peripheral found on several nRF5 SoCs:
+
+  &i2c0 {
+    status = "okay";
+
+    my_twi_if: nrf2220_fem_twi@36 {
+      compatible = "nordic,nrf2220-fem-twi";
+      status = "okay";
+      reg = <0x36>;
+    };
+  };
+
+  nrf_radio_fem: nrf2220_fem {
+    compatible = "nordic,nrf2220-fem";
+    cs-gpios = <&gpio1 7 GPIO_ACTIVE_HIGH>;
+    md-gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
+    twi-if = <&my_twi_if>;
+    output-power-dbm = <10>;
+    bypass-gain-db = <-1>;
+    /* ... other nRF2220 properties go here ... */
+  };
+
+  &radio {
+    fem = <&nrf_radio_fem>;
+  };
+
+  In the above example, the nRF2220 is configured for use with:
+
+  - CS on P1.7 (from 'cs-gpios')
+  - MD on P1.11 (from 'md-gpios')
+  - TWI/I2C communication via TWIM0 (the bus, or parent node, of the 'my_twi_if' node)
+  - Output power of 10dBm when using power amplifier
+  - Bypass attenuation used for calculations of 1dB
+
+  You must perform any additional required TWI/I2C pin configuration
+  (nRF2220 CLK and DATA pins) within the TWIM bus node
+  ('i2c0' in the above example). See your TWI/I2C node's binding for
+  details on these pin mux properties. You can use any TWI/I2C node
+  available in your SoC's devicetree.
+
+compatible: "nordic,nrf2220-fem"
+
+include: base.yaml
+
+properties:
+  cs-gpios:
+    type: phandle-array
+    required: true
+    description:
+      GPIO of the SoC controlling the CS pin of the nRF2220 family member device.
+
+  md-gpios:
+    type: phandle-array
+    required: true
+    description: |
+      GPIO of the SoC controlling the MD pin of the nRF2220 family member device.
+
+  output-power-dbm:
+    type: int
+    default: 10
+    description: |
+      Output power in dBm at FEM output, when the FEM is in Transmit state
+      (power amplifier is used).
+
+  bypass-gain-db:
+    type: int
+    default: -1
+    description: |
+      Gain of the Front End Module's bypass in dB. This parameter is usually negative
+      to express attenuation.
+
+  twi-if:
+    type: phandle
+    description: |
+      Reference to the TWI/I2C bus interface.
+      This must be present to support TWI control of the FEM.

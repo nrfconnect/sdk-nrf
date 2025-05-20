@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Protocols serialization client"
+
+config RPC_CRASH_LOG_READ_BUFFER_SIZE
+	int "Crash log read buffer size"
+	depends on LOG_FORWARDER_RPC
+	default 256
+	help
+	  Size of the stack buffer used for reading a single chunk of the crash
+	  log from the server device.
+
+module = NRF_PS_CLIENT
+module-str = nrf_ps_client
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endmenu # "Protocols serialization client"
+
+if SETTINGS
+
+config ZMS
+	default y if (SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+
+config NVS
+	default y if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+
+endif # SETTINGS
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu

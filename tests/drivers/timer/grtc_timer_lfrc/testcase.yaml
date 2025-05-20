@@ -1,0 +1,10 @@
+tests:
+  drivers.timer.grtc_timer_lfrc:
+    tags:
+      - drivers
+      - clock_control
+      - ci_tests_drivers_timer
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp

@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Network"
+	depends on NRF_MODEM_LIB_NET_IF || WIFI_NRF70 || BOARD_NATIVE_SIM
+
+config MQTT_SAMPLE_NETWORK_THREAD_STACK_SIZE
+	int "Thread stack size"
+	default 4096
+
+module = MQTT_SAMPLE_NETWORK
+module-str = Network
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu # Network

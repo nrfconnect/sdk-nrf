@@ -1,0 +1,49 @@
+common:
+  build_only: true
+  platform_allow: nrf52840dk/nrf52840
+  tags:
+    - bluetooth
+    - ci_build
+  integration_platforms:
+    - nrf52840dk/nrf52840
+tests:
+  bluetooth.mesh.build_models:
+    sysbuild: true
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE=dm.overlay
+    # Explicitly disabling settings to ensure they're not "imply"'d by anything:
+    extra_configs:
+      - CONFIG_BT_SETTINGS=n
+    tags: sysbuild
+  bluetooth.mesh.build_models.settings:
+    sysbuild: true
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE=dm.overlay
+    # Include persistent storage:
+    # Some models depend on BT_SETTINGS, and have to be excluded from the
+    # no-settings build. These should be listed here, and be wrapped
+    # in an #ifdef CONFIG_BT_SETTINGS in main.c.
+    extra_configs:
+      - CONFIG_SETTINGS=y
+      - CONFIG_BT_SETTINGS=y
+      - CONFIG_NVS=y
+      - CONFIG_BT_MESH_SCENE_SRV=y
+      - CONFIG_BT_MESH_SCHEDULER_SRV=y
+    tags: sysbuild
+  bluetooth.mesh.build_models.shell:
+    sysbuild: true
+    extra_args:
+      - OVERLAY_CONFIG=overlay-mesh-shell.conf
+      - EXTRA_DTC_OVERLAY_FILE=dm.overlay
+    extra_configs:
+      - CONFIG_BT_SETTINGS=n
+    tags: sysbuild
+  bluetooth.mesh.build_models.emds:
+    sysbuild: true
+    # Include emergency data storage (EMDS):
+    # The models that uses the EMDS is already included, remove the models that
+    # does not use EMDS.
+    extra_args:
+      - OVERLAY_CONFIG=overlay-mesh-emds.conf
+      - EXTRA_DTC_OVERLAY_FILE=dm.overlay
+    tags: sysbuild

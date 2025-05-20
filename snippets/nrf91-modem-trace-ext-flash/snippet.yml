@@ -1,0 +1,11 @@
+name: nrf91-modem-trace-ext-flash
+append:
+  EXTRA_CONF_FILE: modem-trace-ext-flash.conf
+  EXTRA_DTC_OVERLAY_FILE: modem-trace-uart.overlay
+boards:
+  nrf9160dk/nrf9160/ns:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: nrf9160dk-ext-flash.overlay
+  /nrf91[356]1[de]k\/nrf91[356]1\/ns/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: gd25wb256-ext-flash.overlay

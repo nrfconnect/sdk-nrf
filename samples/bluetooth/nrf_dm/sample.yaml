@@ -1,0 +1,40 @@
+sample:
+  description: nRF Distance Measurement sample
+  name: Distance measurement sample
+tests:
+  sample.bluetooth.nrf_dm.timeslot:
+    sysbuild: true
+    build_only: true
+    extra_configs:
+      - CONFIG_DM_HIGH_PRECISION_CALC=n
+    integration_platforms:
+      - nrf52dk/nrf52832
+      - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+    platform_allow:
+      - nrf52dk/nrf52832
+      - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild
+  sample.bluetooth.nrf_dm.timeslot.high_precision:
+    sysbuild: true
+    build_only: true
+    extra_configs:
+      - CONFIG_DM_HIGH_PRECISION_CALC=y
+    integration_platforms:
+      - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+    platform_allow:
+      - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild

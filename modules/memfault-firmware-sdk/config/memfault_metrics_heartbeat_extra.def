@@ -1,0 +1,101 @@
+/* Definitions for optional metrics. */
+
+#if defined(CONFIG_MODEM_INFO)
+#include <modem/modem_info.h>
+#endif /* defined(CONFIG_MODEM_INFO) */
+
+#ifdef CONFIG_MEMFAULT_NCS_STACK_METRICS
+MEMFAULT_METRICS_KEY_DEFINE(ncs_connection_poll_unused_stack, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_bt_rx_unused_stack, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_bt_tx_unused_stack, kMemfaultMetricType_Unsigned)
+#endif /* CONFIG_MEMFAULT_NCS_STACK_METRICS */
+
+#ifdef CONFIG_MEMFAULT_NCS_LTE_METRICS
+
+#if defined(CONFIG_MODEM_INFO)
+MEMFAULT_METRICS_STRING_KEY_DEFINE(ncs_lte_modem_fw_version, MODEM_INFO_FWVER_SIZE)
+MEMFAULT_METRICS_STRING_KEY_DEFINE(ncs_lte_operator, MODEM_INFO_SHORT_OP_NAME_SIZE)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_snr_decibels, kMemfaultMetricType_Signed)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_rsrp_dbm, kMemfaultMetricType_Signed)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_tx_kilobytes, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_rx_kilobytes, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_band, kMemfaultMetricType_Unsigned)
+#endif /* defined(CONFIG_MODEM_INFO) */
+
+MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_time_to_connect_ms, kMemfaultMetricType_Timer)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_connection_loss_count, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_psm_tau_seconds, kMemfaultMetricType_Signed)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_psm_active_time_seconds, kMemfaultMetricType_Signed)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_edrx_interval_ms, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_edrx_ptw_ms, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_mode, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_on_time_ms, kMemfaultMetricType_Timer)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_reset_loop_detected_count, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_cell_id, kMemfaultMetricType_Signed)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_tracking_area_code, kMemfaultMetricType_Signed)
+#endif /* CONFIG_MEMFAULT_NCS_LTE_METRICS */
+
+#ifdef CONFIG_MEMFAULT_NCS_BT_METRICS
+MEMFAULT_METRICS_KEY_DEFINE(ncs_bt_connection_time_ms, kMemfaultMetricType_Timer)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_bt_connection_count, kMemfaultMetricType_Unsigned)
+MEMFAULT_METRICS_KEY_DEFINE(ncs_bt_bond_count, kMemfaultMetricType_Unsigned)
+#endif /* CONFIG_MEMFAULT_NCS_BT_METRICS */
+
+#ifdef CONFIG_MEMFAULT_NCS_LOCATION_METRICS
+
+/*
+ * Heartbeat metrics
+ */
+MEMFAULT_METRICS_KEY_DEFINE(ncs_loc_search_request_count, kMemfaultMetricType_Unsigned)
+
+/*
+ * Session metrics
+ */
+MEMFAULT_METRICS_SESSION_KEY_DEFINE(ncs_loc)
+
+/* Successful search metrics */
+MEMFAULT_METRICS_KEY_DEFINE_WITH_SESSION(ncs_loc_search_success, kMemfaultMetricType_Unsigned, ncs_loc)
+MEMFAULT_METRICS_KEY_DEFINE_WITH_SESSION(ncs_loc_search_time_ms, kMemfaultMetricType_Unsigned, ncs_loc)
+MEMFAULT_METRICS_KEY_DEFINE_WITH_SESSION(ncs_loc_accuracy_cm, kMemfaultMetricType_Unsigned, ncs_loc)
+
+/* Failed search metrics */
+MEMFAULT_METRICS_KEY_DEFINE_WITH_SESSION(ncs_loc_search_failure, kMemfaultMetricType_Unsigned, ncs_loc)
+
+/*
+ * Method-specific metrics (GNSS, Cellular, Wi-Fi)
+ * - All reported in both successful and failed searches unless noted
+ * - *_method_result metric values map to the location_event_id enumeration in
+ * nrf/include/modem/location.h
+ */
+
+/* GNSS */
+#if defined(CONFIG_LOCATION_METHOD_GNSS)
+MEMFAULT_METRICS_KEY_DEFINE_WITH_SESSION(ncs_loc_gnss_method_time_ms, kMemfaultMetricType_Unsigned, ncs_loc)
+MEMFAULT_METRICS_KEY_DEFINE_WITH_SESSION(ncs_loc_gnss_method_result, kMemfaultMetricType_Unsigned, ncs_loc)
+MEMFAULT_METRICS_KEY_DEFINE_WITH_SESSION(ncs_loc_gnss_satellites_tracked_count, kMemfaultMetricType_Unsigned, ncs_loc)
+MEMFAULT_METRICS_KEY_DEFINE_WITH_SESSION(ncs_loc_gnss_satellites_used_count, kMemfaultMetricType_Unsigned, ncs_loc)
+/* Maps to elapsed_time_gnss in nrf/include/modem/location.h */
+MEMFAULT_METRICS_KEY_DEFINE_WITH_SESSION(ncs_loc_gnss_on_time_ms, kMemfaultMetricType_Unsigned, ncs_loc)
+/* Maps to execution_time in nrfxlib/nrf_modem/include/nrf_modem_gnss.h */
+MEMFAULT_METRICS_KEY_DEFINE_WITH_SESSION(ncs_loc_gnss_exec_time_ms, kMemfaultMetricType_Unsigned, ncs_loc)
+
+/* Only reported in successful session */
+MEMFAULT_METRICS_KEY_DEFINE_WITH_SESSION(ncs_loc_gnss_time_to_fix_ms, kMemfaultMetricType_Unsigned, ncs_loc)
+#endif /* CONFIG_LOCATION_METHOD_GNSS */
+
+/* Cellular */
+#if defined(CONFIG_LOCATION_METHOD_CELLULAR)
+MEMFAULT_METRICS_KEY_DEFINE_WITH_SESSION(ncs_loc_lte_method_time_ms, kMemfaultMetricType_Unsigned, ncs_loc)
+MEMFAULT_METRICS_KEY_DEFINE_WITH_SESSION(ncs_loc_lte_method_result, kMemfaultMetricType_Unsigned, ncs_loc)
+MEMFAULT_METRICS_KEY_DEFINE_WITH_SESSION(ncs_loc_lte_neighbor_cells_count, kMemfaultMetricType_Unsigned, ncs_loc)
+MEMFAULT_METRICS_KEY_DEFINE_WITH_SESSION(ncs_loc_lte_gci_cells_count, kMemfaultMetricType_Unsigned, ncs_loc)
+#endif /* CONFIG_LOCATION_METHOD_CELLULAR */
+
+/* Wi-Fi */
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+MEMFAULT_METRICS_KEY_DEFINE_WITH_SESSION(ncs_loc_wifi_method_time_ms, kMemfaultMetricType_Unsigned, ncs_loc)
+MEMFAULT_METRICS_KEY_DEFINE_WITH_SESSION(ncs_loc_wifi_method_result, kMemfaultMetricType_Unsigned, ncs_loc)
+MEMFAULT_METRICS_KEY_DEFINE_WITH_SESSION(ncs_loc_wifi_ap_count, kMemfaultMetricType_Unsigned, ncs_loc)
+#endif /* CONFIG_LOCATION_METHOD_WIFI */
+
+#endif /* CONFIG_MEMFAULT_NCS_LOCATION_METRICS */

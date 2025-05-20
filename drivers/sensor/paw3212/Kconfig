@@ -1,0 +1,49 @@
+# PAW3212 optical motion sensor
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig PAW3212
+	bool "PAW3212 mouse optical sensor"
+	help
+	  Enable PAW3212 mouse optical sensor.
+
+if PAW3212
+
+choice
+	prompt "Select PAW3212 sensor orientation"
+	default PAW3212_ORIENTATION_0
+
+config PAW3212_ORIENTATION_0
+	bool "PAW3212 not rotated"
+
+config PAW3212_ORIENTATION_90
+	bool "PAW3212 rotated 90 deg clockwise"
+
+config PAW3212_ORIENTATION_180
+	bool "PAW3212 rotated 180 deg clockwise"
+
+config PAW3212_ORIENTATION_270
+	bool "PAW3212 rotated 270 deg clockwise"
+
+endchoice
+
+choice
+	prompt "Select PAW3212 sensor motion data length"
+	default PAW3212_8_BIT_MODE
+
+config PAW3212_8_BIT_MODE
+	bool "PAW3212 8-bit motion data length"
+
+config PAW3212_12_BIT_MODE
+	bool "PAW3212 12-bit motion data length"
+
+endchoice
+
+module = PAW3212
+module-str = PAW3212
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif #PAW3212

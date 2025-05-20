@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+module = WFA_QT
+module-str = Log level for WFA Quick Track
+module-help = Sets log level for WFA Quick Track
+source "subsys/logging/Kconfig.template.log_config"
+
+config WFA_QT_CONTROL_APP
+	# Need full POSIX from libc, Zephyr's POSIX support is only partial
+	select POSIX_API
+	select POSIX_THREADS
+	select POSIX_SIGNALS
+	bool "WFA Quicktrack control app"
+
+config WFA_QT_THREAD_STACK_SIZE
+	int "WFA QT thread stack size"
+	default 5200
+	help
+	  Set the stack size for WFA QT thread.
+
+config WFA_QT_REBOOT_TIMEOUT_MS
+	int "Timeout for reboot (in milliseconds)"
+	default 1000
+	help
+	  Set the timeout value (in milliseconds) for reboot operation.
+
+config WFA_QT_DEFAULT_INTERFACE
+	string "Default Wi-Fi interface"
+	default "wlan0"
+	help
+	  Set the default Wi-Fi interface.
+
+config WPAS_READY_TIMEOUT_MS
+	int "WPA supplicant ready timeout (ms)"
+	default 10000
+	help
+	  Set the timeout for WPA supplicant to be ready.

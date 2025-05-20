@@ -1,0 +1,350 @@
+#
+# Copyright (c) 2019 - 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+DT_COMPAT_NORDIC_NRF21540_GPIO := nordic,nrf21540-fem
+DT_COMPAT_GENERIC_FEM_2_CTRL_PIN := generic-fem-two-ctrl-pins
+DT_COMPAT_NORDIC_NRF2220 := nordic,nrf2220-fem
+DT_COMPAT_NORDIC_NRF2240 := nordic,nrf2240-fem
+
+config MPSL_FEM_ANY_SUPPORT
+	bool
+	default $(dt_nodelabel_enabled,nrf_radio_fem)
+
+config MPSL_FEM_NRF21540_GPIO_SUPPORT
+	bool
+	default $(dt_nodelabel_has_compat,nrf_radio_fem,$(DT_COMPAT_NORDIC_NRF21540_GPIO))
+
+config MPSL_FEM_NRF21540_GPIO_SPI_SUPPORT
+	bool
+	depends on MPSL_FEM_NRF21540_GPIO_SUPPORT
+	default $(dt_nodelabel_has_prop,nrf_radio_fem,spi-if)
+
+config MPSL_FEM_GENERIC_TWO_CTRL_PINS_SUPPORT
+	bool
+	default $(dt_nodelabel_has_compat,nrf_radio_fem,$(DT_COMPAT_GENERIC_FEM_2_CTRL_PIN))
+
+config MPSL_FEM_NRF2220_SUPPORT
+	bool
+	default $(dt_nodelabel_has_compat,nrf_radio_fem,$(DT_COMPAT_NORDIC_NRF2220))
+
+config MPSL_FEM_NRF2220_TWI_SUPPORT
+	bool
+	depends on MPSL_FEM_NRF2220_SUPPORT
+	default $(dt_nodelabel_has_prop,nrf_radio_fem,twi-if)
+
+config MPSL_FEM_NRF2240_SUPPORT
+	bool
+	default $(dt_nodelabel_has_compat,nrf_radio_fem,$(DT_COMPAT_NORDIC_NRF2240))
+
+config MPSL_FEM_NRF2240_TWI_SUPPORT
+	bool
+	depends on MPSL_FEM_NRF2240_SUPPORT
+	default $(dt_nodelabel_has_prop,nrf_radio_fem,twi-if)
+
+config MPSL_FEM_NCS_SUPPORTED_FEM_USED
+	bool
+	default n
+
+config MPSL_FEM_API_AVAILABLE
+	bool
+	# Must be set to y for MPSL FEM protocol API to be available
+	depends on MPSL
+	default y
+
+config MPSL_FEM
+	bool "Radio front-end module (FEM) support"
+	depends on MPSL
+	depends on MPSL_FEM_ANY_SUPPORT
+	default y
+	help
+	  Controls if front-end module (FEM) is to be configured and enabled
+	  when MPSL is initialized. Default type of FEM to use depends on which
+	  compatible nodes are in devicetree.
+
+config MPSL_FEM_PIN_FORWARDER
+	bool "Forward pin control for front-end module (FEM) to the radio core"
+	depends on SOC_NRF5340_CPUAPP
+	depends on MPSL_FEM_ANY_SUPPORT
+	depends on !TRUSTED_EXECUTION_NONSECURE || BUILD_WITH_TFM
+	default y
+
+if MPSL_FEM || MPSL_FEM_PIN_FORWARDER
+
+choice MPSL_FEM_CHOICE
+	prompt "Radio front-end module (FEM) type"
+
+config MPSL_FEM_NRF21540_GPIO
+	depends on MPSL_FEM_NRF21540_GPIO_SUPPORT
+	select NRFX_GPIOTE
+	select GPIO if ($(dt_nodelabel_has_prop,nrf_radio_fem,mode-gpios) || \
+		$(dt_nodelabel_has_prop,nrf_radio_fem,ant-sel-gpios))
+	select NRFX_PPI if HAS_HW_NRF_PPI
+	select NRFX_DPPI if HAS_HW_NRF_DPPIC
+	select NRFX_GPPI if SOC_SERIES_NRF54LX
+	select NRFX_DPPI10 if SOC_SERIES_NRF54LX
+	select NRFX_DPPI20 if SOC_SERIES_NRF54LX
+	select NRFX_PPIB11 if SOC_SERIES_NRF54LX
+	select NRFX_PPIB21 if SOC_SERIES_NRF54LX
+	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
+	bool "nRF21540 front-end module in GPIO mode"
+	help
+	  FEM device is nRF21540 and its control mode is GPIO.
+
+config MPSL_FEM_NRF21540_GPIO_SPI
+	depends on MPSL_FEM_NRF21540_GPIO_SPI_SUPPORT
+	select NRFX_GPIOTE
+	select GPIO if ($(dt_nodelabel_has_prop,nrf_radio_fem,mode-gpios) || \
+		$(dt_nodelabel_has_prop,nrf_radio_fem,ant-sel-gpios))
+	select NRFX_PPI if HAS_HW_NRF_PPI
+	select NRFX_DPPI if HAS_HW_NRF_DPPIC
+	select PINCTRL
+	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
+	imply MPSL_FEM_POWER_MODEL if MPSL_FEM   # Don't force the model, but make it a default
+	bool "nRF21540 front-end module in GPIO + SPI mode"
+	help
+	  FEM device is nRF21540 and it uses both GPIO and SPI.
+
+config MPSL_FEM_SIMPLE_GPIO
+	depends on MPSL_FEM_GENERIC_TWO_CTRL_PINS_SUPPORT
+	select NRFX_GPIOTE
+	select NRFX_PPI if HAS_HW_NRF_PPI
+	select NRFX_DPPI if HAS_HW_NRF_DPPIC
+	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
+	bool "Generic front-end module with two-pin control"
+	help
+	  FEM device has a generic two-pin control interface.
+	  This option was originally designed to support the SKY66112-11,
+	  but is potentially compatible with other devices with the same
+	  control method.
+
+config MPSL_FEM_NRF2220
+	depends on MPSL_FEM_NRF2220_SUPPORT
+	select NRFX_GPIOTE
+	select NRFX_PPI if SOC_SERIES_NRF52X
+	select NRFX_DPPI0 if SOC_SERIES_NRF53X
+	select NRFX_GPPI if SOC_SERIES_NRF54LX
+	select NRFX_DPPI10 if SOC_SERIES_NRF54LX
+	select NRFX_DPPI20 if SOC_SERIES_NRF54LX
+	select NRFX_PPIB11 if SOC_SERIES_NRF54LX
+	select NRFX_PPIB21 if SOC_SERIES_NRF54LX
+	select PINCTRL
+	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
+	bool "nRF2220 front-end module"
+	help
+	  FEM device is nRF2220.
+
+config MPSL_FEM_NRF2240
+	depends on MPSL_FEM_NRF2240_SUPPORT
+	select EXPERIMENTAL
+	select NRFX_GPIOTE
+	select NRFX_PPI if SOC_SERIES_NRF52X
+	select NRFX_DPPI0 if SOC_SERIES_NRF53X
+	select NRFX_GPPI if SOC_SERIES_NRF54LX
+	select NRFX_DPPI10 if SOC_SERIES_NRF54LX
+	select NRFX_DPPI20 if SOC_SERIES_NRF54LX
+	select NRFX_PPIB11 if SOC_SERIES_NRF54LX
+	select NRFX_PPIB21 if SOC_SERIES_NRF54LX
+	select PINCTRL
+	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
+	bool "nRF2240 front-end module"
+	help
+	  FEM device is nRF2240.
+
+endchoice	# MPSL_FEM_CHOICE
+
+if (MPSL_FEM_NRF21540_GPIO || MPSL_FEM_NRF21540_GPIO_SPI) && MPSL_FEM
+
+config MPSL_FEM_NRF21540_TX_GAIN_DB
+	int "TX gain of the nRF21540 PA amplifier in dB"
+	default MPSL_FEM_NRF21540_TX_GAIN_DB_POUTB
+	help
+	  With the GPIO implementation, the Kconfig can be set either to TX gain of POUTA
+	  or TX gain of POUTB. Using an unsupported value results in build assertion.
+
+config MPSL_FEM_NRF21540_TX_GAIN_DB_POUTA
+	int "TX gain value (POUTA)"
+	default 20
+	help
+	  The default value of 20 dB is based on nRF21540 Product Specification (v1.0) and it
+	  corresponds to the configuration in which the pin MODE=0 and register POUTA_SEL=0.
+
+	  Alternatively, if register POUTA_SEL=1, FEM will use TX gain value defined by the UICR.
+	  In that case user must set value of this Kconfig option to match UICR content.
+
+config MPSL_FEM_NRF21540_TX_GAIN_DB_POUTB
+	int "TX gain value (POUTB)"
+	default 10
+	help
+	  The default value of 10 dB is based on nRF21540 Product Specification (v1.0) and it
+	  corresponds to the configuration in which the pin MODE=1 and register POUTB_SEL=0.
+
+	  Alternatively, if register POUTB_SEL=1, FEM will use TX gain value defined by the UICR.
+	  In that case user must set value of this Kconfig option to match UICR content.
+
+config MPSL_FEM_NRF21540_RX_GAIN_DB
+	int "RX gain of the nRF21540 LNA amplifier in dB"
+	default 13
+	help
+	  The default value of 13 dB is based on nRF21540 Product Specification
+	  (v1.0)
+
+config MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL
+	bool "Support for a run-time PA gain control of the nRF21540 FEM"
+	help
+	  Enables run-time control of the PA gain.
+
+	  If MPSL_FEM_NRF21540_GPIO is selected, the PA gain is controlled by setting appropriate level
+	  of MODE pin of the nRF21540 device.
+
+	  If MPSL_FEM_NRF21540_GPIO_SPI is selected, the PA gain is controlled by SPI transfers to the
+	  nRF21540.
+
+	  Initial default gain is determined by MPSL_FEM_NRF21540_TX_GAIN_DB. The gain is switched in
+	  run-time based on required transmit power and selects between two possible values:
+	  MPSL_FEM_NRF21540_TX_GAIN_DB_POUTA and MPSL_FEM_NRF21540_TX_GAIN_DB_POUTB.
+
+	  If this option is disabled the PA gain is constant and equal MPSL_FEM_NRF21540_TX_GAIN_DB.
+
+
+endif   # (MPSL_FEM_NRF21540_GPIO || MPSL_FEM_NRF21540_GPIO_SPI) && MPSL_FEM
+
+endif	# MPSL_FEM || MPSL_FEM_PIN_FORWARDER
+
+config MPSL_FEM_POWER_MODEL
+	bool "Use a model to split the requested TX power into values used to control the internal state of the FEM"
+	depends on MPSL_FEM
+	default n
+	help
+	  Use a model to split the requested TX power into values used to control
+	  the internal state of the FEM. This model can be used for compensating for external
+	  conditions such as temperature.
+	  If this option is set to y the user must select a model from the MPSL_FEM_POWER_MODEL
+	  Kconfig choice or provide his own FEM power model and implement the
+	  mpsl_fem_power_model_to_use_get function which returns the users model API which
+	  can be used by the MPSL FEM subsystem. Optionally, an additional option can
+	  be added to the MPSL_FEM_POWER_MODEL Kconfig choice
+	  If this option is disabled MPSL will split the power without performing any compensation.
+
+if MPSL_FEM_POWER_MODEL
+
+choice MPSL_FEM_POWER_MODEL_CHOICE
+	prompt "Model used to split the requested TX power into values used to control the internal state of the FEM"
+	default MPSL_FEM_POWER_MODEL_NRF21540_USE_BUILTIN if MPSL_FEM_NRF21540_GPIO_SPI
+	help
+	  The model which is used to split the requested TX power into values used to control
+	  the internal state of the FEM. This model can be used for compensating for external
+	  conditions such as temperature.
+	  The user can add his own FEM power model which can be connected to MPSL by providing
+	  an mpsl_fem_power_model_to_use_get function implementation.
+	  The user can then optionally add new options to this choice.
+
+config MPSL_FEM_POWER_MODEL_NRF21540_USE_BUILTIN
+	depends on MPSL_FEM_NRF21540_GPIO_SPI
+	bool "Use built-in MPSL model for gain control and compensation of the nRF21540 FEM"
+	help
+	  If this option is enabled a model which is contained in the MPSL is used for calculating
+	  values used to control the internal state of the nRF21540 FEM.
+	  If MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL is set to n, this model ensures that the FEM
+	  gain is kept as close as possible to the constant value specified by
+	  MPSL_FEM_NRF21540_TX_GAIN_DB, compensating for changes in conditions such as temperature,
+	  voltage, frequency or FEM input power.
+	  If MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL is set to y, this model ensures that the
+	  overall transmit power of the device in dBm is as close as possible to the power requested
+	  by the user. The FEM gain is tweaked by a few dBs from its operating points
+	  (MPSL_FEM_NRF21540_TX_GAIN_DB_POUTA and MPSL_FEM_NRF21540_TX_GAIN_DB_POUTB) to compensate
+	  for the low granularity of the SoC output power. Compensation for other factors such
+	  as temperature, frequency and operating voltage is also done.
+
+endchoice	# MPSL_FEM_POWER_MODEL_CHOICE
+
+config MPSL_FEM_BUILTIN_POWER_MODEL_UPDATE_PERIOD
+	int "Builtin model update period in ms"
+	depends on MPSL_FEM_POWER_MODEL_NRF21540_USE_BUILTIN
+	default 2000
+	help
+	  The builtin power model for FEM device compensates for external factors in order to provide
+	  accurate power output. This setting specifies how frequently the model will be updated
+	  to account for changing external conditions.
+
+endif   # MPSL_FEM_POWER_MODEL
+
+config MPSL_FEM_DEVICE_CONFIG_254
+	bool "Apply device configuration 254"
+	default MPSL_FEM
+	help
+	  Device configuration 254 may be required to conform to the requirements
+	  in section TP/154/PHY24/TRANSMIT-05 of the ZigBee IEEE 802.15.4 Test
+	  Specification, especially when an external PA is present.
+	  Device configuration 254 may be required to improve RX blocking,
+	  especially when an external LNA is present.
+
+config MPSL_FEM_USE_TWI_DRV
+	bool
+	depends on (MPSL_FEM_NRF2220 && MPSL_FEM_NRF2220_TWI_SUPPORT) || \
+		   (MPSL_FEM_NRF2240 && MPSL_FEM_NRF2240_TWI_SUPPORT)
+	select I2C
+	default y
+
+config MPSL_FEM_NRF2220_TEMPERATURE_COMPENSATION
+	bool "Temperature compensation of the nRF2220 Front-End Module [EXPERIMENTAL]"
+	depends on MPSL_FEM_NRF2220 && MPSL_FEM_USE_TWI_DRV
+	select EXPERIMENTAL
+	help
+	  This allows to achieve better accuracy in output power among all
+	  temperature ranges for the nRF2220 Front-End modules.
+
+config MPSL_FEM_NRF2220_TEMPERATURE_COMPENSATION_WITH_MPSL_SCHEDULER
+	bool
+	depends on MPSL_FEM_NRF2220_TEMPERATURE_COMPENSATION
+	default y if MPSL && !MPSL_FEM_ONLY
+	help
+	  Enable this option when using protocols relying on the MPSL scheduler.
+	  After it turns out that for the current temperature some registers
+	  of the nRF2220 must be written, the writes are performed within a timeslot
+	  negotiated with the MPSL scheduler. For operation with Bluetooth, the timeslot
+	  for the nRF2220 register update is between other Bluetooth timeslots.
+	  For operation with the nRF 802.15.4 Radio Driver, the grant for the timeslot
+	  for the nRF2220 register update causes short inability to transmit or receive.
+
+choice MPSL_FEM_NRF2220_TEMPERATURE_SOURCE
+	prompt "Source of temperature measurement of the nRF2220"
+	depends on MPSL_FEM_NRF2220_TEMPERATURE_COMPENSATION
+	default MPSL_FEM_NRF2220_TEMPERATURE_SOURCE_SOC
+
+config MPSL_FEM_NRF2220_TEMPERATURE_SOURCE_SOC
+	bool "Temperature of the SoC as the temperature of the nRF2220"
+	select SENSOR
+	help
+	  The temperature of the SoC controlling the nRF2220 Front-End Module
+	  is taken as an input for the temperature compensation.
+	  Use this option if there is good thermal coupling between the
+	  temperature of the SoC and the nRF2220 Front-End Module.
+
+config MPSL_FEM_NRF2220_TEMPERATURE_SOURCE_CUSTOM
+	bool "Custom nRF2220 temperature measurement provider"
+	help
+	  Use this option if you have a custom temperature sensor measuring the
+	  temperature of the nRF2220 device. Your custom code must call
+	  the fem_temperature_change() function to notify the module handling the FEM
+	  that the new temperature value is to be processed.
+
+endchoice # MPSL_FEM_NRF2220_TEMPERATURE_SOURCE
+
+config MPSL_FEM_NRF2220_TEMPERATURE_POLL_PERIOD
+	int "Temperature measurement poll period (in ms) for temperature compensation of the nRF2220"
+	depends on MPSL_FEM_NRF2220_TEMPERATURE_SOURCE_SOC
+	default 5000
+
+config MPSL_FEM_INIT_PRIORITY
+	int "Init priority of the Front-End Module support code"
+	depends on MPSL_FEM
+	default 51 if (MPSL_FEM_NRF2220 && MPSL_FEM_NRF2220_TWI_SUPPORT) || \
+		      (MPSL_FEM_NRF2240 && MPSL_FEM_NRF2240_TWI_SUPPORT)
+	default KERNEL_INIT_PRIORITY_DEVICE
+
+module=MPSL_FEM
+module-str=MPSL_FEM
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

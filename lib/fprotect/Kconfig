@@ -1,0 +1,87 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if X86
+
+config NRF_SPU_FLASH_REGION_SIZE
+	hex
+	default 0x1000
+	help
+	  Redefinition for the benefit of qemu_x86
+
+config NRF_MPU_FLASH_REGION_SIZE
+	hex
+	default 0x1000
+	help
+	  Redefinition for the benefit of qemu_x86
+
+config NRF_BPROT_FLASH_REGION_SIZE
+	hex
+	default 0x1000
+	help
+	  Redefinition for the benefit of qemu_x86
+
+config NRF_ACL_FLASH_REGION_SIZE
+	hex
+	default 0x1000
+	help
+	  Redefinition for the benefit of qemu_x86
+
+endif
+
+# Workaround for not being able to have commas in macro arguments
+DT_ZEPHYR_FLASH := zephyr,flash
+DT_CHOSEN_ZEPHYR_FLASH := $(dt_chosen_path,$(DT_ZEPHYR_FLASH))
+
+# This option is used even when FPROTECT is disabled so we add it unconditionally.
+config FPROTECT_BLOCK_SIZE
+	hex
+	default NRF_SPU_FLASH_REGION_SIZE if CPU_HAS_NRF_IDAU
+	default NRF_MPU_FLASH_REGION_SIZE if HAS_HW_NRF_MPU
+	default NRF_BPROT_FLASH_REGION_SIZE if HAS_HW_NRF_BPROT
+	default NRF_ACL_FLASH_REGION_SIZE if HAS_HW_NRF_ACL
+	default NRF_RRAM_REGION_SIZE_UNIT if SOC_SERIES_NRF54LX && FLASH
+	default $(dt_node_int_prop_hex,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
+
+menuconfig FPROTECT
+	bool "Enable FPROTECT"
+	depends on SOC_FAMILY_NORDIC_NRF
+	depends on !(SOC_SERIES_NRF54LX && IS_SECURE_BOOTLOADER)
+	select NRFX_RRAMC if SOC_SERIES_NRF54LX
+	help
+	  Enable the software library FPROTECT that may or may not be used
+	  by other systems to protect flash from writes and possibly also
+	  reads. Does not protect against execution.
+	  May use the HW peripherals BPROT, ACL, or SPU to achieve this.
+
+if FPROTECT
+
+config FPROTECT_APP
+	bool "Lock image partition using FPROTECT"
+	help
+	  The flash partition which contains the image hex file should never be
+	  written to. Set this option to enable a module which will perform
+	  a 'fprotect_area' operation during system initialization before
+	  the kernel is initialized. This will ensure that the appropriate
+	  locking mechanism is configured to not allow write operations to the
+	  memory partition which contains the image hex file. Note that this
+	  imposes a requirement to the start address and size of the image
+	  hex file: they must both be aligned with the locking granularity
+	  of the locking mechanism available for the current hardware. See
+	  'FPROTECT_BLOCK_SIZE' and set the partition sizes in the system so
+	  that this is aligned with the 'app' partition. The start and size
+	  of the 'app' partition can be found by either inspecting the file
+	  'pm_config.h' in your build directory, or by invoking the
+	  'partition_manager_report' target.
+
+config FPROTECT_ALLOW_COMBINED_REGIONS
+	bool "Use both RRAMC_regions"
+	depends on SOC_SERIES_NRF54LX && MCUBOOT
+	help
+	  Intended for use with NRF54L series devices. Gives total of 62kB
+	  lockable memory.
+
+endif # FPROTECT

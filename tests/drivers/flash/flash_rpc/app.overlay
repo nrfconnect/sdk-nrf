@@ -1,0 +1,19 @@
+/ {
+	soc {
+		rpc_flash_controller: rpc-flash-controller@0 {
+			compatible = "nordic,rpc-flash-controller";
+			reg = <0x00000000 DT_SIZE_K(256)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			erase-value = <0xff>;
+			status = "okay";
+			flash_rpc: flash_rpc@0 {
+				status = "okay";
+				compatible = "soc-nv-flash";
+				erase-block-size = <4096>;
+				write-block-size = <4>;
+				reg = <0x00000000 DT_SIZE_K(256)>;
+			};
+		};
+	};
+};

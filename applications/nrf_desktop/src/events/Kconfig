@@ -1,0 +1,121 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if LOG
+
+menu "Event options"
+
+comment "Initially logged events"
+
+config DESKTOP_INIT_LOG_BATTERY_STATE_EVENT
+	bool "Log battery state events"
+	default y
+	help
+	  Log battery state events in nRF Desktop application.
+
+config DESKTOP_INIT_LOG_BATTERY_LEVEL_EVENT
+	bool "Log battery level events"
+	default y
+	help
+	  Log battery level events in nRF Desktop application.
+
+config DESKTOP_INIT_LOG_BLE_DISC_COMPLETE_EVENT
+	bool "Log Bluetooth LE discovery complete events"
+	default y
+	help
+	  Log Bluetooth LE discovery complete events in nRF Desktop application.
+
+config DESKTOP_INIT_LOG_BLE_QOS_EVENT
+	bool "Log Bluetooth LE QoS events"
+	default y
+	help
+	  Log Bluetooth LE QoS events in nRF Desktop application.
+
+config DESKTOP_INIT_LOG_BLE_DONGLE_PEER_EVENT
+	bool "Log Bluetooth dongle peer event"
+	default y
+	help
+	  Log Bluetooth dongle peer event in nRF Desktop application.
+
+config DESKTOP_INIT_LOG_CPU_LOAD_EVENT
+	bool "Log CPU load events"
+	depends on DESKTOP_CPU_MEAS_ENABLE
+	default y
+	help
+	  Log CPU load events in nRF Desktop application.
+
+config DESKTOP_INIT_LOG_SELECTOR_EVENT
+	bool "Log selector events"
+	default y
+	help
+	  Log selector events in nRF Desktop application.
+
+config DESKTOP_INIT_LOG_PASSKEY_EVENT
+	bool "Log passkey events"
+	default y
+	help
+	  Log passkey events in nRF Desktop application.
+
+config DESKTOP_INIT_LOG_CONFIG_EVENT
+	bool "Log config events"
+	depends on DESKTOP_CONFIG_CHANNEL_ENABLE
+	default y
+	help
+	  Log config events in nRF Desktop application.
+
+config DESKTOP_INIT_LOG_HID_SUBSCRIBER_EVENT
+	bool "Log HID report subscriber events"
+	default y
+	help
+	  Log HID report subscriber events in nRF Desktop application.
+
+config DESKTOP_INIT_LOG_HID_SUBSCRIPTION_EVENT
+	bool "Log HID report subscription events"
+	default y
+	help
+	  Log HID report subscription events in nRF Desktop application.
+
+config DESKTOP_INIT_LOG_HID_REPORT_EVENT
+	bool "Log HID report events"
+	default y
+	help
+	  Log HID report events in nRF Desktop application.
+
+config DESKTOP_INIT_LOG_HID_REPORT_SENT_EVENT
+	bool "Log HID report sent events"
+	default y
+	help
+	  Log HID report sent events in nRF Desktop application.
+
+config DESKTOP_INIT_LOG_MOTION_EVENT
+	bool "Log motion events"
+	default y
+	help
+	  Log motion events in nRF Desktop application.
+
+config DESKTOP_INIT_LOG_USB_STATE_EVENT
+	bool "Log USB state events"
+	depends on DESKTOP_USB_ENABLE
+	default y
+	help
+	  Log USB state events in nRF Desktop application.
+
+config DESKTOP_INIT_LOG_WHEEL_EVENT
+	bool "Log wheel events"
+	default y
+	help
+	  Log wheel events in nRF Desktop application.
+
+config DESKTOP_INIT_LOG_HID_NOTIFICATION_EVENT
+	bool "Log HID notification events"
+	depends on DESKTOP_HIDS_ENABLE
+	default y
+	help
+	  Log HID notification events in nRF Desktop application.
+
+endmenu
+
+endif

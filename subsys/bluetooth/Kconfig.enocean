@@ -1,0 +1,66 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_ENOCEAN
+	bool "EnOcean library"
+	depends on BT_OBSERVER
+	depends on BT_HOST_CCM
+	help
+	  The EnOcean library implements support for commissioning and observing
+	  of BLE enabled EnOcean devices, such as the PTM 215B Pushbutton
+	  transmitter module.
+
+if BT_ENOCEAN
+
+config BT_ENOCEAN_DEVICES_MAX
+	int "Maximum number of EnOcean devices"
+	range 1 999
+	default 1
+	help
+	  This value defines the maximum number of EnOcean devices this library
+	  can manage at a time. Each device requires about 30 bytes of RAM.
+
+menuconfig BT_ENOCEAN_STORE
+	bool "Store EnOcean device data persistently"
+	depends on BT_SETTINGS
+	default y
+	help
+	  Stores all commissioned devices persistently, including periodic
+	  samples of the device sequence number.
+
+if BT_ENOCEAN_STORE
+
+menuconfig BT_ENOCEAN_STORE_SEQ
+	bool "Continuously store the EnOcean sequence number"
+	default y
+	help
+	  Defines whether the sequence numbers of incoming EnOcean packets
+	  should be stored persistently. The sequence number is used in
+	  replay attack protection, and unless it is stored, third parties
+	  will be able to replay EnOcean messages after a power cycle.
+
+if BT_ENOCEAN_STORE_SEQ
+
+config BT_ENOCEAN_STORE_TIMEOUT
+	int "Delay (in seconds) before storing EnOcean data persistently"
+	range 0 10000000
+	default 5
+	help
+	  This parameter controls the duration of the write delay.
+	  Whenever new EnOcean data is received, the library will start a timer
+	  that stores the sequence number when it expires. Reducing this timer
+	  shortens the timespan in which attackers could replay a message, but
+	  increases the wear on the storage medium.
+
+endif
+
+endif
+
+module = BT_ENOCEAN
+module-str = EnOcean library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif

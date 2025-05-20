@@ -1,0 +1,35 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config MPSL_USE_ZEPHYR_PM
+	bool "Use Zephyr's Power Management API"
+	depends on SOC_SERIES_NRF54HX
+	depends on MPSL
+	depends on PM
+	default y
+	help
+	  This option configures MPSL to use Zephyr's Power Management.
+
+if MPSL_USE_ZEPHYR_PM
+
+config MPSL_PM_NO_RADIO_EVENT_PERIOD_LATENCY_US
+	int "Latency value the MPSL PM allows in periods outside of radio events, in microseconds"
+	default 499999
+	help
+	  The option specifies the latency in microseconds that is allowed by MPSL PM
+	  outside of radio events.
+
+config MPSL_PM_USE_MRAM_LATENCY_SERVICE
+	bool "Use Zephyr's MRAM latency service"
+	select MRAM_LATENCY
+	default y
+	help
+	  This option enables MPSL PM integration with MRAM latency service.
+	  Use of MRAM latency service ensures there is no latency due to code
+	  fetching from disabled MRAM in REM events. It decreases power consumption
+	  on nRF54H20 SoC.
+
+endif # MPSL_USE_ZEPHYR_PM

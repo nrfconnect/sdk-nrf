@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+# Copyright (c) 2025 Nordic Semiconductor ASA
+
+config SYS_CLOCK_TICKS_PER_SEC
+	default 16384 if NRF_RTC_TIMER && TICKLESS_KERNEL
+
+source "Kconfig.zephyr"

@@ -1,0 +1,71 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Bluetooth Low Energy"
+
+if BT
+
+config BT_COMPANY_ID_NORDIC
+	hex
+	# Will never change
+	default 0x0059
+
+config BT_COMPANY_ID
+	hex
+	default BT_COMPANY_ID_NORDIC
+
+# BT_MAX_CONN is declared in Zephyr, here we add the range and default for
+# BT_LL_SOFTDEVICE which is tested with 20 connections.
+# When both connection roles are enabled there has to be one for each role.
+config BT_MAX_CONN
+	int
+	range 1 20 if BT_LL_SOFTDEVICE
+	default 2 if BT_LL_SOFTDEVICE && BT_CENTRAL && BT_PERIPHERAL
+	help
+	  When using the SoftDevice controller, the application needs to configure
+	  the number of peripheral and central links explicity.
+	  See BT_CTLR_SDC_PERIPHERAL_COUNT
+
+config BT_LL_SOFTDEVICE_HEADERS_INCLUDE
+	bool
+	depends on (SOC_SERIES_BSIM_NRFXX || SOC_FAMILY_NORDIC_NRF)
+	default y if !HAS_BT_CTLR
+	help
+	  Include SoftDevice header files provided with the library.
+
+config BT_LL_SOFTDEVICE_HEADERS_INCLUDE_PATH_OVERRIDE
+	bool
+
+config BT_LONG_WQ_STACK_SIZE
+	int
+	default 2100 if (BT_ECC || BT_GATT_CACHING) && SOC_SERIES_NRF54LX
+	default 1800 if (BT_ECC || BT_GATT_CACHING)
+	default 1024
+
+rsource "controller/Kconfig"
+rsource "host_extensions/Kconfig"
+rsource "cs_de/Kconfig"
+
+comment "BLE Libraries"
+rsource "Kconfig.pool"
+rsource "Kconfig.discovery"
+rsource "adv_prov/Kconfig"
+rsource "Kconfig.scan"
+rsource "Kconfig.link"
+rsource "Kconfig.enocean"
+rsource "mesh/Kconfig"
+
+rsource "services/Kconfig"
+
+endif # BT
+
+menu "BLE over nRF RPC"
+
+rsource "rpc/Kconfig"
+
+endmenu
+
+endmenu

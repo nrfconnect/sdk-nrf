@@ -1,0 +1,57 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_RAS
+	bool "Ranging Service"
+	depends on BT_CHANNEL_SOUNDING
+	select BT_NRF_SERVICES
+	help
+	  Bluetooth GATT Ranging Service modules - RREQ and RRSP.
+
+if BT_RAS
+
+rsource "rreq/Kconfig.ras_rreq"
+rsource "rrsp/Kconfig.ras_rrsp"
+
+config BT_RAS_MAX_ANTENNA_PATHS
+	int "Maximum number of antenna paths supported"
+	default 4
+	range 1 4
+	help
+	  The number of antenna paths per step that can be stored inside RAS.
+	  Must match the supported CS capabilities of the local device.
+	  This affects the per-instance memory usage of RAS.
+
+config BT_RAS_MODE_3_SUPPORTED
+	bool "Support storing Mode 3 CS steps"
+	default y
+	help
+	  If enabled, RAS will allocate memory for storing Mode 3 CS steps.
+	  Must match the supported CS capabilities of the local device.
+	  This affects the per-instance memory usage of RAS.
+
+# CONFIG_BT_CHANNEL_SOUNDING_REASSEMBLY_BUFFER_SIZE is declared in Zephyr and also
+# here for a second time, to set a different range for the CS subevent result reassembly
+# buffer. Default values are also set based on RAS configs to help users reduce RAM usage.
+config BT_CHANNEL_SOUNDING_REASSEMBLY_BUFFER_SIZE
+	int "Subevent result reassembly buffer size"
+	depends on BT_CHANNEL_SOUNDING
+	range 239 4800
+	default 1920 if BT_RAS_MAX_ANTENNA_PATHS=1 && !BT_RAS_MODE_3_SUPPORTED
+	default 2560 if BT_RAS_MAX_ANTENNA_PATHS=2 && !BT_RAS_MODE_3_SUPPORTED
+	default 3200 if BT_RAS_MAX_ANTENNA_PATHS=3 && !BT_RAS_MODE_3_SUPPORTED
+	default 3840 if BT_RAS_MAX_ANTENNA_PATHS=4 && !BT_RAS_MODE_3_SUPPORTED
+	default 2880 if BT_RAS_MAX_ANTENNA_PATHS=1 && BT_RAS_MODE_3_SUPPORTED
+	default 3520 if BT_RAS_MAX_ANTENNA_PATHS=2 && BT_RAS_MODE_3_SUPPORTED
+	default 4160 if BT_RAS_MAX_ANTENNA_PATHS=3 && BT_RAS_MODE_3_SUPPORTED
+	default 4800
+	help
+	  When the results for a CS subevent cannot fit into a single HCI event,
+	  it will be split up into multiple events and consequently, reassembled into a
+	  full CS subevent. This config sets the size of the reassembly buffer.
+
+
+endif # BT_RAS

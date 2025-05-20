@@ -1,0 +1,27 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		led = &button3;
+		test-comp = &comp;
+	};
+
+	zephyr,user {
+		test-gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&comp {
+	compatible = "nordic,nrf-lpcomp";
+	psel = "AIN4"; /* P1.11 */
+	refsel = "VDD_4_8";
+	status = "okay";
+};

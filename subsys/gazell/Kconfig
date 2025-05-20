@@ -1,0 +1,174 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig GAZELL
+	bool "Gazell"
+	depends on GZLL && CLOCK_CONTROL_NRF
+	select NRFX_PPI if HAS_HW_NRF_PPI
+	help
+	  Enable Gazell functionality.
+
+if GAZELL
+
+module = GAZELL
+module-str = Gazell
+source "subsys/logging/Kconfig.template.log_config"
+
+config GAZELL_PAIRING
+	bool "Gazell Pairing"
+	help
+	  Enable Gazell Pairing.
+
+if GAZELL_PAIRING
+
+choice GAZELL_PAIRING_ROLE
+	prompt "Gazell Pairing role"
+
+config GAZELL_PAIRING_DEVICE
+	bool "Device"
+
+config GAZELL_PAIRING_HOST
+	bool "Host"
+	depends on ENTROPY_GENERATOR
+
+endchoice # GAZELL_PAIRING_ROLE
+
+config GAZELL_PAIRING_USER_CONFIG_ENABLE
+	bool "Use application-specific Gazell Pairing configuration file"
+
+if GAZELL_PAIRING_USER_CONFIG_ENABLE
+config GAZELL_PAIRING_USER_CONFIG_FILE
+	string "Gazell Pairing configuration file name"
+	default "gzp_user_config.h"
+	help
+	  Modify the file name to use an application-specific Gazell Pairing configuration file.
+
+endif # GAZELL_PAIRING_USER_CONFIG_ENABLE
+
+if GAZELL_PAIRING_DEVICE
+
+config GAZELL_PAIRING_DEVICE_MSGQ_LEN
+	int "Gazell Pairing Device message queue length"
+	range 1 20
+	help
+	  Specify the length of message queue in the device pairing module.
+	  The module stores various events in the message queue. e.g. The
+	  Gazell Link Layer callbacks are stored as events. The default of 1
+	  works well for pairing and encypting data. Some applications
+	  such as a computer mouse may send multiple packets at a time and
+	  they will need a longer message queue.
+
+endif # GAZELL_PAIRING_DEVICE
+
+config GAZELL_PAIRING_CRYPT
+	bool "Gazell Pairing encryption"
+	depends on ENTROPY_GENERATOR && CRYPTO_NRF_ECB
+	help
+	  Enable Gazell Pairing encryption.
+
+config GAZELL_PAIRING_SETTINGS
+	bool "Gazell Pairing settings persistent storage"
+	depends on SETTINGS
+	help
+	  Enable Gazell Pairing settings persistent storage.
+
+endif # GAZELL_PAIRING
+
+config GAZELL_ZERO_LATENCY_IRQS
+	bool "Gazell zero-latency interrupts [EXPERIMENTAL]"
+	depends on ZERO_LATENCY_IRQS
+	select EXPERIMENTAL
+	help
+	  Enable zero-latency interrupt for Gazell's radio and timer IRQ so
+	  that they will not be blocked by interrupt locking.
+
+config GAZELL_HIGH_IRQ_PRIO
+	int "Gazell high IRQ priority"
+	range 0 0 if GAZELL_ZERO_LATENCY_IRQS
+	range 0 5 if ZERO_LATENCY_IRQS
+	range 0 6
+	default 0
+	help
+	  The interrupt priority for Gazell's radio and timer IRQ. This value
+	  shall be less than the Gazell's low IRQ priority value.
+
+config GAZELL_LOW_IRQ_PRIO_MIN
+	int
+	default 0 if (GAZELL_ZERO_LATENCY_IRQS)
+	default 1 if (GAZELL_HIGH_IRQ_PRIO = 0)
+	default 2 if (GAZELL_HIGH_IRQ_PRIO = 1)
+	default 3 if (GAZELL_HIGH_IRQ_PRIO = 2)
+	default 4 if (GAZELL_HIGH_IRQ_PRIO = 3)
+	default 5 if (GAZELL_HIGH_IRQ_PRIO = 4)
+	default 6 if (GAZELL_HIGH_IRQ_PRIO = 5)
+	default 7 if (GAZELL_HIGH_IRQ_PRIO = 6)
+
+config GAZELL_LOW_IRQ_PRIO
+	int "Gazell low IRQ priority"
+	range GAZELL_LOW_IRQ_PRIO_MIN 6 if ZERO_LATENCY_IRQS
+	range GAZELL_LOW_IRQ_PRIO_MIN 7
+	default GAZELL_LOW_IRQ_PRIO_MIN
+	help
+	  The interrupt priority for Gazell's SWI IRQ. This value shall
+	  be greater than the Gazell's high IRQ priority value.
+
+choice GAZELL_TIMER
+	default GAZELL_TIMER2
+	prompt "Timer to use for the Gazell timer"
+
+config GAZELL_TIMER0
+	bool "TIMER0"
+	depends on $(dt_nodelabel_has_compat,timer0,$(DT_COMPAT_NORDIC_NRF_TIMER))
+
+config GAZELL_TIMER1
+	bool "TIMER1"
+	depends on $(dt_nodelabel_has_compat,timer1,$(DT_COMPAT_NORDIC_NRF_TIMER))
+
+config GAZELL_TIMER2
+	bool "TIMER2"
+	depends on $(dt_nodelabel_has_compat,timer2,$(DT_COMPAT_NORDIC_NRF_TIMER))
+
+config GAZELL_TIMER3
+	bool "TIMER3"
+	depends on $(dt_nodelabel_has_compat,timer3,$(DT_COMPAT_NORDIC_NRF_TIMER))
+
+config GAZELL_TIMER4
+	bool "TIMER4"
+	depends on $(dt_nodelabel_has_compat,timer4,$(DT_COMPAT_NORDIC_NRF_TIMER))
+
+endchoice
+
+choice GAZELL_SWI
+	default GAZELL_SWI0
+	prompt "Software interrupt to use for Gazell event report"
+
+config GAZELL_SWI0
+	bool "SWI0"
+	depends on HAS_HW_NRF_SWI0
+
+config GAZELL_SWI1
+	bool "SWI1"
+	depends on HAS_HW_NRF_SWI1
+
+config GAZELL_SWI2
+	bool "SWI2"
+	depends on HAS_HW_NRF_SWI2
+
+config GAZELL_SWI3
+	bool "SWI3"
+	depends on HAS_HW_NRF_SWI3
+
+config GAZELL_SWI4
+	bool "SWI4"
+	depends on HAS_HW_NRF_SWI4
+
+config GAZELL_SWI5
+	bool "SWI5"
+	depends on HAS_HW_NRF_SWI5
+
+endchoice
+
+endif # GAZELL

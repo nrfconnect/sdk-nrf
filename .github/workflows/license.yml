@@ -1,0 +1,9 @@
+name: License Check
+
+on: pull_request
+
+jobs:
+  call-workflow:
+    uses: ./.github/workflows/license-reusable.yml
+    with:
+      path: nrf

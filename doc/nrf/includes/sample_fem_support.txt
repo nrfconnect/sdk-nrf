@@ -1,0 +1,32 @@
+You can add support for the nRF21540 front-end module to this sample by using one of the following options, depending on your hardware:
+
+* Build the sample for one board that contains the nRF21540 FEM, such as :zephyr:board:`nrf21540dk`.
+* Manually create a devicetree overlay file that describes how the nRF21540 FEM is connected to the SoC.
+  See :ref:`configuring_devicetree` for different ways of adding the overlay file.
+* Provide nRF21540 FEM capabilities by using a :ref:`shield <zephyr:shields>`, for example the :ref:`nRF21540 EK <ug_radio_fem_nrf21540ek>` shield that is available in the |NCS|.
+  In this case, build the project for a board connected to the shield you are using with an appropriate variable included in the build command, for example ``-DSHIELD=nrf21540ek``.
+  This variable instructs the build system to append the appropriate devicetree overlay file.
+
+  .. tabs::
+
+     .. group-tab:: nRF Connect for VS Code
+
+        To build the sample in the |nRFVSC| for an nRF52840 DK with the nRF21540 EK attached, add the shield variable in the build configuration's :guilabel:`Extra CMake arguments` and rebuild the build configuration.
+        For example: ``-DSHIELD=nrf21540ek``.
+
+        See `How to work with build configurations`_ in the |nRFVSC| documentation for more information.
+
+     .. group-tab:: Command line
+
+        To build the sample from the command line for an nRF52840 DK with the nRF21540 EK attached, use the following command within the sample directory:
+
+        .. code-block:: console
+
+           west build -b nrf52840dk/nrf52840 -- -DSHIELD=nrf21540ek
+
+  See :ref:`Programming nRF21540 EK <ug_radio_fem_nrf21540ek_programming>` for information about how to program when you are using a board with a network core, for example the nRF5340 DK.
+
+Each of these options adds the description of the nRF21540 FEM to the devicetree.
+See :ref:`ug_radio_fem` for more information about FEM in the |NCS|.
+
+To add support for other front-end modules, add the respective devicetree file entries to the board devicetree file or the devicetree overlay file.

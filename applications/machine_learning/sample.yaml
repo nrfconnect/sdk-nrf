@@ -1,0 +1,95 @@
+sample:
+  name: nRF Machine Learning
+  description: Machine learning application reference design
+tests:
+  applications.machine_learning.zdebug:
+    sysbuild: true
+    build_only: true
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - thingy53/nrf5340/cpuapp
+      - thingy53/nrf5340/cpuapp/ns
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - thingy53/nrf5340/cpuapp
+      - thingy53/nrf5340/cpuapp/ns
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_applications_machine_learning
+  applications.machine_learning.zdebug_nus:
+    sysbuild: true
+    build_only: true
+    platform_allow:
+      - nrf52840dk/nrf52840
+    integration_platforms:
+      - nrf52840dk/nrf52840
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_applications_machine_learning
+    extra_args: FILE_SUFFIX=nus
+  applications.machine_learning.zdebug_rtt:
+    sysbuild: true
+    build_only: true
+    platform_allow:
+      - thingy53/nrf5340/cpuapp
+      - thingy53/nrf5340/cpuapp/ns
+    integration_platforms:
+      - thingy53/nrf5340/cpuapp
+      - thingy53/nrf5340/cpuapp/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_applications_machine_learning
+    extra_args: FILE_SUFFIX=rtt
+  applications.machine_learning.zrelease:
+    sysbuild: true
+    build_only: true
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - thingy53/nrf5340/cpuapp
+      - thingy53/nrf5340/cpuapp/ns
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - thingy53/nrf5340/cpuapp
+      - thingy53/nrf5340/cpuapp/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_applications_machine_learning
+    extra_args: FILE_SUFFIX=release
+  applications.machine_learning.sensor_hub.zdebug.singlecore:
+    build_only: true
+    sysbuild: true
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_applications_machine_learning
+    extra_args:
+      - machine_learning_SHIELD=pca63566
+      - FILE_SUFFIX="singlecore"
+  applications.machine_learning.sensor_hub.zdebug:
+    build_only: true
+    sysbuild: true
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_applications_machine_learning
+    extra_args:
+      - SB_CONFIG_ML_APP_INCLUDE_REMOTE_IMAGE=y
+      - machine_learning_SNIPPET=nordic-ppr
+      - machine_learning_SHIELD=pca63566_fwd
+      - remote_SHIELD=pca63566

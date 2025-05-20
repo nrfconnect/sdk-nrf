@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_CGMS
+	bool "Enable GATT continuous glucose service"
+	select EXPERIMENTAL
+	select BT_NRF_SERVICES
+
+if BT_CGMS
+
+config BT_CGMS_MAX_MEASUREMENT_RECORD
+	int "Maximum number of stored records"
+	default 100
+	help
+	  The maximum number of stored measurement records. This value
+	  should be large enough to hold measurements that are generated
+	  in a session.
+
+module = BT_CGMS
+module-str = CGMS
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # BT_CGMS

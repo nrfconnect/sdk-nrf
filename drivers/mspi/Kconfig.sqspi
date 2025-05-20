@@ -1,0 +1,9 @@
+# Copyright (c) 2025 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config MSPI_NRF_SQSPI
+	bool "sQSPI driver"
+	default y
+	depends on DT_HAS_NORDIC_NRF_SQSPI_ENABLED
+	select PINCTRL
+	select GPIO if $(dt_compat_any_has_prop,$(DT_COMPAT_NORDIC_NRF_SQSPI),ce-gpios)

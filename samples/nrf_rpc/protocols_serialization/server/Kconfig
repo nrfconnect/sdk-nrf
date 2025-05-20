@@ -1,0 +1,74 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Protocols serialization server"
+
+config NRF_PS_SERVER_FATAL_ERROR_TRIGGER
+	bool "Fatal error trigger"
+	select DK_LIBRARY
+	help
+	  Enables triggering a fatal error by pressing Button 1 on the development
+	  kit. This trigger allows for testing the feature of logging over RPC that
+	  provides an RPC client with access to the crash log stored in the retained
+	  RAM partition.
+
+config NRF_PS_SERVER_RPC_ALIVE_LED
+	bool "RPC alive LED"
+	default y
+	depends on $(dt_alias_enabled,rpc-alive-led)
+	help
+	  Turns on the LED selected with "/alias/rpc-alive-led" DTS property when
+	  the UART transport is alive and ready to receive nRF RPC packets.
+
+module = NRF_PS_SERVER
+module-str = nrf_ps_server
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endmenu # "Protocols serialization server"
+
+config ZMS
+	default y if (SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+
+config NVS
+	default y if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+
+config SHELL_BACKEND_SERIAL
+	default n if NRF_RPC_REMOTE_SHELL
+
+if LOG
+
+choice LOG_MODE
+	default LOG_MODE_DEFERRED
+endchoice
+
+config LOG_BUFFER_SIZE
+	default 8192
+
+config LOG_FUNC_NAME_PREFIX_DBG
+	default n
+
+config LOG_BACKEND_RTT
+	default n
+
+config LOG_BACKEND_UART
+	default n
+
+endif # LOG
+
+if SOC_NRF54L15
+
+config BT_LONG_WQ_STACK_SIZE
+	default 2048
+
+choice TRUSTED_STORAGE_BACKEND_AEAD_KEY
+	default TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID if TRUSTED_STORAGE_BACKEND_AEAD
+endchoice
+
+endif # SOC_NRF54L15
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu

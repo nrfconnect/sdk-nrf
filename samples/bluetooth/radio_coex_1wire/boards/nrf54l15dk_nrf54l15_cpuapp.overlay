@@ -1,0 +1,34 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	zephyr,user {
+		coex-pta-grant-gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>;
+	};
+
+	nrf_radio_coex: radio_coex_one_wire {
+		status = "okay";
+		compatible = "sdc-radio-coex-one-wire";
+		grant-gpios = <&gpio0 2 GPIO_ACTIVE_HIGH>;
+		concurrency-mode = <0>;
+	};
+
+	aliases {
+		egu = &egu10;
+	};
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpiote30 {
+	status = "okay";
+};
+
+&radio {
+	coex = <&nrf_radio_coex>;
+};

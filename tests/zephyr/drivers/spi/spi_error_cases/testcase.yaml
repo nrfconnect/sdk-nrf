@@ -1,0 +1,41 @@
+common:
+  # depends_on: spi
+  tags:
+    - drivers
+    - spi
+    - ci_tests_zephyr_drivers_spi
+  harness: ztest
+  harness_config:
+    fixture: gpio_spi_loopback
+  timeout: 30
+tests:
+  nrf.extended.drivers.spi.spi_error_cases:
+    platform_allow:
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp
+    integration_platforms:
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp
+
+  nrf.extended.drivers.spi.spi_error_cases.l09:
+    platform_allow:
+      - nrf54l09pdk/nrf54l09/cpuapp
+    integration_platforms:
+      - nrf54l09pdk/nrf54l09/cpuapp
+    extra_args:
+      - SNIPPET=nrf54l09-switch-uart
+    tags:
+      - nrf54l09-switch-uart
+
+  nrf.extended.drivers.spi.spi_error_cases.lv10:
+    platform_allow:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    extra_args:
+      - SNIPPET=nrf54lv10-switch-uart
+    tags:
+      - nrf54lv10-switch-uart

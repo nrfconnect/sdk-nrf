@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Nordic HIDS BLE GATT mouse service sample"
+
+config BT_HIDS_SECURITY_ENABLED
+	bool "Enable security"
+	default y
+	imply BT_PRIVACY
+	select BT_SMP
+	select BT_SETTINGS
+	select FLASH
+	select FLASH_PAGE_LAYOUT
+	select FLASH_MAP
+	select SETTINGS
+	imply ZMS if (SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+	imply NVS if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+	help
+	  "Enable BLE security for the HIDS service"
+
+config BT_DIRECTED_ADVERTISING
+	bool "Enable directed advertising"
+	default y
+	depends on BT_HIDS_SECURITY_ENABLED
+
+endmenu

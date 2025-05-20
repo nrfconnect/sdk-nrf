@@ -1,0 +1,31 @@
+#
+# Copyright (c) 2019 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "LED stream"
+
+config DESKTOP_LED_STREAM_ENABLE
+	bool "Enable LED stream"
+	depends on CAF_LED_EVENTS && DESKTOP_CONFIG_CHANNEL_ENABLE
+	help
+	  Enable RGB LED effect streaming.
+
+config DESKTOP_LED_STREAM_QUEUE_SIZE
+	int "Stream led event queue size"
+	depends on DESKTOP_LED_STREAM_ENABLE
+	default 15
+	range 2 254
+	help
+	  Size of the LED stream event queue.
+
+if DESKTOP_LED_STREAM_ENABLE
+
+module = DESKTOP_LED_STREAM
+module-str = LED stream
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+endmenu

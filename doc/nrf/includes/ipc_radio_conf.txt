@@ -1,0 +1,3 @@
+When building this |sample_or_app| with :ref:`configuration_system_overview_sysbuild` for an SoC that has a network core, the :ref:`ipc_radio` is automatically applied to the build.
+The IPC radio is one of the :ref:`companion components <companion_components>` in the |NCS| and allows to use the radio peripheral from another core in a multicore device.
+If needed, you can modify the IPC radio configuration in the :file:`prj.conf` source file in the |sample_or_app|'s |ipc_radio_dir| directory.

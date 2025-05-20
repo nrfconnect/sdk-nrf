@@ -1,0 +1,388 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+rsource "Kconfig.defaults"
+
+menu "Audio"
+
+choice AUDIO_FRAME_DURATION
+	prompt "Select frame duration - 7.5 ms frame duration is not tested"
+	default AUDIO_FRAME_DURATION_10_MS
+	help
+	  LC3 supports frame duration of 7.5 and 10 ms.
+	  If USB is selected as audio source, we should
+	  have a frame duration of 10 ms since USB sends 1ms at a time.
+
+config AUDIO_FRAME_DURATION_7_5_MS
+	bool "7.5 ms"
+
+config AUDIO_FRAME_DURATION_10_MS
+	bool "10 ms"
+endchoice
+
+config AUDIO_FRAME_DURATION_US
+	int
+	default 7500 if AUDIO_FRAME_DURATION_7_5_MS
+	default 10000 if AUDIO_FRAME_DURATION_10_MS
+	help
+	  Audio frame duration in µs.
+
+config AUDIO_MIN_PRES_DLY_US
+	int "The minimum presentation delay"
+	default 5000 if STREAM_BIDIRECTIONAL
+	default 3000
+	help
+	  The minimum allowable presentation delay in microseconds.
+	  This needs to allow time for decoding and internal routing.
+
+config AUDIO_MAX_PRES_DLY_US
+	int "The maximum presentation delay"
+	default 60000
+	help
+	  The maximum allowable presentation delay in microseconds.
+	  Increasing this will also increase the FIFO buffers to allow buffering.
+
+choice AUDIO_SYSTEM_SAMPLE_RATE
+	prompt "System audio sample rate"
+	default AUDIO_SAMPLE_RATE_16000_HZ if BT_BAP_BROADCAST_16_2_1
+	default AUDIO_SAMPLE_RATE_16000_HZ if BT_BAP_BROADCAST_16_2_2
+	default AUDIO_SAMPLE_RATE_16000_HZ if BT_BAP_UNICAST_16_2_1
+	default AUDIO_SAMPLE_RATE_24000_HZ if BT_BAP_BROADCAST_24_2_1
+	default AUDIO_SAMPLE_RATE_24000_HZ if BT_BAP_BROADCAST_24_2_2
+	default AUDIO_SAMPLE_RATE_24000_HZ if BT_BAP_UNICAST_24_2_1
+	default AUDIO_SAMPLE_RATE_48000_HZ
+	help
+	  This configuration reflects the system sample rate, but the audio data may be resampled to
+	  another sample rate before encoding, and after decoding.
+
+config AUDIO_SAMPLE_RATE_16000_HZ
+	bool "16 kHz"
+	help
+	  Sample rate of 16kHz is currently only valid for I2S/line-in.
+
+config AUDIO_SAMPLE_RATE_24000_HZ
+	bool "24 kHz"
+	help
+	  Sample rate of 24kHz is currently only valid for I2S/line-in.
+
+config AUDIO_SAMPLE_RATE_48000_HZ
+	bool "48 kHz"
+	help
+	  Sample rate of 48kHz is valid for both I2S/line-in and USB.
+endchoice
+
+config AUDIO_SAMPLE_RATE_HZ
+	int
+	default 16000 if AUDIO_SAMPLE_RATE_16000_HZ
+	default 24000 if AUDIO_SAMPLE_RATE_24000_HZ
+	default 48000 if AUDIO_SAMPLE_RATE_48000_HZ
+	help
+	  I2S supports 16, 24, and 48 kHz sample rates for both input and output.
+	  USB supports only 48 kHz for input.
+
+choice AUDIO_BIT_DEPTH
+	prompt "Audio bit depth"
+	default AUDIO_BIT_DEPTH_16
+	help
+	  Select the bit depth for audio.
+
+config AUDIO_BIT_DEPTH_16
+	bool "16 bit audio"
+
+config AUDIO_BIT_DEPTH_32
+	bool "32 bit audio"
+endchoice
+
+config AUDIO_BIT_DEPTH_BITS
+	int
+	default 16 if AUDIO_BIT_DEPTH_16
+	default 32 if AUDIO_BIT_DEPTH_32
+	help
+	  Bit depth of one sample in storage.
+
+config AUDIO_BIT_DEPTH_OCTETS
+	int
+	default 2 if AUDIO_BIT_DEPTH_16
+	default 4 if AUDIO_BIT_DEPTH_32
+	help
+	  Bit depth of one sample in storage given in octets.
+
+choice AUDIO_SOURCE_GATEWAY
+	prompt "Audio source for gateway"
+	default AUDIO_SOURCE_I2S if WALKIE_TALKIE_DEMO
+	default AUDIO_SOURCE_USB
+	help
+	  Select audio source for the gateway.
+
+config AUDIO_SOURCE_USB
+	bool "Use USB as audio source"
+	help
+	  Set USB as audio source. Note that this forces the
+	  stream to be unidirectional because of CPU load.
+
+config AUDIO_SOURCE_I2S
+	bool "Use I2S as audio source"
+endchoice
+
+choice AUDIO_HEADSET_CHANNEL
+	prompt "Headset audio channel assignment"
+	default AUDIO_HEADSET_CHANNEL_RUNTIME
+	help
+	  Set whether audio channel assignment for the headset
+	  should happen at runtime or compile-time.
+
+config AUDIO_HEADSET_CHANNEL_RUNTIME
+	bool "Select at runtime"
+	help
+	  Make channel selection at runtime. Selected value is stored in persistent memory.
+	  Left channel: Hold volume-down button on headset while resetting headset.
+	  Right channel: Hold volume-up button on headset while resetting headset.
+
+config AUDIO_HEADSET_CHANNEL_COMPILE_TIME
+	bool "Set at compile-time"
+	help
+	  Set channel selection at compile-time.
+endchoice
+
+config AUDIO_TEST_TONE
+	bool "Test tone instead of doing user defined action"
+	select TONE
+	default y
+	help
+	  Use button 4 to set a test tone
+	  instead of doing a user defined action.
+	  The test tone is generated on the device itself.
+
+config AUDIO_MUTE
+	bool "Mute instead of doing user defined action"
+	default y
+	help
+	  Use button 5 to mute audio instead of
+	  doing a user defined action.
+
+if AUDIO_HEADSET_CHANNEL_COMPILE_TIME
+
+config AUDIO_HEADSET_CHANNEL
+	int "Audio channel used by headset"
+	range 0 1
+	default 0
+	help
+	  Audio channel compile-time selection.
+	  Left = 0.
+	  Right = 1.
+
+endif # AUDIO_HEADSET_CHANNEL_COMPILE_TIME
+
+#----------------------------------------------------------------------------#
+menu "SW Codec"
+
+choice SW_CODEC_DEFAULT
+	prompt "Starting SW codec"
+	default SW_CODEC_LC3
+	help
+	  Select the default codec to use on start up.
+
+config SW_CODEC_LC3
+	bool "LC3"
+	select SW_CODEC_LC3_T2_SOFTWARE
+	help
+	  LC3 is the mandatory codec for LE Audio.
+
+config SW_CODEC_NONE
+	bool "None"
+	help
+	  Choose this if no software (SW) codec is needed.
+
+# Leave room for other codecs
+endchoice
+
+config SW_CODEC_PLC_DISABLED
+	bool "Skip PLC on a bad frame and fill the output buffer(s) with zeros instead"
+	default n
+	select LC3_PLC_DISABLED
+
+#----------------------------------------------------------------------------#
+menu "LC3"
+visible if SW_CODEC_LC3
+
+config LC3_BITRATE_MAX
+	int "Max bitrate for LC3"
+	default 124000
+
+config LC3_BITRATE_MIN
+	int "Min bitrate for LC3"
+	default 32000
+
+config LC3_BITRATE
+	int
+	range LC3_BITRATE_MIN LC3_BITRATE_MAX
+	default 96000
+
+osource "../nrfxlib/lc3/Kconfig"
+
+endmenu # LC3
+endmenu # SW Codec
+
+#----------------------------------------------------------------------------#
+menu "Stream"
+
+config BUF_BLE_RX_PACKET_NUM
+	int
+	default 5
+	range 2 5
+	help
+	  Value can be adjusted to affect the overall latency.
+	  This adjusts the number packets in the BLE FIFO RX buffer,
+	  which is where the main latency resides. A low value will decrease
+	  latency and reduce stability, and vice-versa.
+	  Two is recommended minimum to reduce the likelyhood of audio
+	  gaps due to BLE retransmits.
+
+config STREAM_BIDIRECTIONAL
+	depends on TRANSPORT_CIS
+	bool "Bidirectional stream"
+	default n
+	help
+	  Bidirectional stream enables encoder and decoder on both sides,
+	  and one device can both send and receive audio.
+
+config WALKIE_TALKIE_DEMO
+	select STREAM_BIDIRECTIONAL
+	bool "Walkie talkie demo"
+	default n
+	help
+	  The walkie talkie demo will set up a bidirectional stream using PDM
+	  microphones on each side.
+
+config MONO_TO_ALL_RECEIVERS
+	bool "Send mono (first/left channel) to all receivers"
+	default y if BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT = 1
+	default y if BT_BAP_BROADCAST_SRC_STREAM_COUNT = 1
+	default n
+	help
+	  With this flag set, the gateway will encode and send the same (first/left)
+	  channel on all ISO channels.
+
+endmenu # Stream
+
+#----------------------------------------------------------------------------#
+menu "Log levels"
+
+module = AUDIO_SYSTEM
+module-str = audio-system
+source "subsys/logging/Kconfig.template.log_config"
+
+module = SW_CODEC_SELECT
+module-str = sw-codec-select
+source "subsys/logging/Kconfig.template.log_config"
+
+module = STREAMCTRL
+module-str = streamctrl
+source "subsys/logging/Kconfig.template.log_config"
+
+module = AUDIO_DATAPATH
+module-str = audio-datapath
+source "subsys/logging/Kconfig.template.log_config"
+
+module = AUDIO_SYNC_TIMER
+module-str = audio-sync-timer
+source "subsys/logging/Kconfig.template.log_config"
+
+module = LE_AUDIO_RX
+module-str = le-audio-rx
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu # Log levels
+
+#----------------------------------------------------------------------------#
+menu "Thread priorities"
+
+config ENCODER_THREAD_PRIO
+	int "Priority for encoder thread"
+	default 3
+	help
+	  This is a preemptible thread.
+
+config AUDIO_DATAPATH_THREAD_PRIO
+	int "Priority for audio datapath thread"
+	default 4
+	help
+	  This is a preemptible thread.
+
+config BUTTON_MSG_SUB_THREAD_PRIO
+	int "Thread priority for button subscriber"
+	default 5
+	help
+	  This is a preemptible thread.
+	  This thread will subscribe to button events from zbus.
+
+config LE_AUDIO_MSG_SUB_THREAD_PRIO
+	int "Thread priority for LE Audio subscriber"
+	default 5
+	help
+	  This is a preemptible thread.
+	  This thread will subscribe to LE Audio events from zbus.
+
+config BT_MGMT_MSG_SUB_THREAD_PRIO
+	int "Thread priority for bt_mgmt subscriber"
+	default 5
+	help
+	  This is a preemptible thread.
+	  This thread will subscribe to BT management events from zbus.
+
+config CONTENT_CONTROL_MSG_SUB_THREAD_PRIO
+	int "Thread priority for content control subscriber"
+	default 5
+	help
+	  This is a preemptible thread.
+	  This thread will subscribe to content control events from zbus.
+
+endmenu # Thread priorities
+
+#----------------------------------------------------------------------------#
+menu "Stack sizes"
+
+config ENCODER_STACK_SIZE
+	int "Stack size for encoder thread"
+	default 11000 if AUDIO_BIT_DEPTH_16
+	default 21400 if AUDIO_BIT_DEPTH_32
+
+config AUDIO_DATAPATH_STACK_SIZE
+	int "Stack size for audio datapath thread"
+	default 7600 if AUDIO_BIT_DEPTH_16
+	default 14700 if AUDIO_BIT_DEPTH_32
+
+config BUTTON_MSG_SUB_STACK_SIZE
+	int "Stack size for button subscriber"
+	default 2048
+
+config LE_AUDIO_MSG_SUB_STACK_SIZE
+	int "Stack size for LE Audio subscriber"
+	default 2048
+
+config BT_MGMT_MSG_SUB_STACK_SIZE
+	int "Stack size for bt_mgmt subscriber"
+	default 2048
+
+config CONTENT_CONTROL_MSG_SUB_STACK_SIZE
+	int "Stack size for content control subscriber"
+	default 1024
+
+endmenu # Stack sizes
+
+#----------------------------------------------------------------------------#
+menu "Zbus"
+
+config BUTTON_MSG_SUB_QUEUE_SIZE
+	int "Queue size for button subscriber"
+	default 4
+
+config CONTENT_CONTROL_MSG_SUB_QUEUE_SIZE
+	int "Queue size for content control subscriber"
+	default 4
+
+endmenu # Zbus
+endmenu # Audio

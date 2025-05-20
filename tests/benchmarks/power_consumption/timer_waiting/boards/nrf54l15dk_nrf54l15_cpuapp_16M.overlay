@@ -1,0 +1,12 @@
+/* TIMER20, 16MHz */
+
+/ {
+	aliases {
+		led = &button3;
+		counter = &timer20;
+	};
+};
+
+&timer20 {
+	status = "okay";
+};

@@ -1,0 +1,135 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* This file is common to the secure and non-secure domain */
+
+#include "arm/nordic/nrf7120_enga_cpuapp.dtsi"
+#include "nrf7120pdk_nrf7120-common.dtsi"
+
+/ {
+	chosen {
+		zephyr,console = &uart20;
+		zephyr,shell-uart = &uart20;
+		zephyr,uart-mcumgr = &uart20;
+		zephyr,flash = &cpuapp_mram;
+		zephyr,ieee802154 = &ieee802154;
+		zephyr,wifi = &wlan0;
+	};
+};
+
+&cpuapp_sram {
+	status = "okay";
+};
+
+&grtc {
+	owned-channels = <0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15>;
+	/* Channels 7-11 reserved for Zero Latency IRQs, 3-4 for FLPR */
+	child-owned-channels = <3 4 7 8 9 10 11>;
+	status = "okay";
+};
+
+&cpuapp_mram {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			label = "mcuboot";
+			reg = <0x0 DT_SIZE_K(64)>;
+		};
+
+		slot0_partition: partition@10000 {
+			label = "image-0";
+			reg = <0x10000 DT_SIZE_K(960)>;
+		};
+
+		slot0_ns_partition: partition@100000 {
+			label = "image-0-nonsecure";
+			reg = <0x100000 DT_SIZE_K(960)>;
+		};
+
+		slot1_partition: partition@1f0000 {
+			label = "image-1";
+			reg = <0x1f0000 DT_SIZE_K(960)>;
+		};
+
+		slot1_ns_partition: partition@2e0000 {
+			label = "image-1-nonsecure";
+			reg = <0x2e0000 DT_SIZE_K(960)>;
+		};
+
+		/* 32k from 0x3d0000 to 0x2d7fff reserved for TF-M partitions */
+		storage_partition: partition@3d8000 {
+			label = "storage";
+			reg = < 0x3d8000 DT_SIZE_K(36)>;
+		};
+	};
+};
+
+&uart20 {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&gpio2 {
+	status = "okay";
+};
+
+&gpio3 {
+	status = "okay";
+};
+
+&gpio4 {
+	status = "okay";
+};
+
+&gpiote20 {
+	status = "okay";
+};
+
+&gpiote30 {
+	status = "okay";
+};
+
+&radio {
+	status = "okay";
+};
+
+&ieee802154 {
+	status = "okay";
+};
+
+&temp {
+	status = "okay";
+};
+
+&clock {
+	status = "okay";
+};
+
+&spi00 {
+	status = "okay";
+	cs-gpios = <&gpio2 5 GPIO_ACTIVE_LOW>;
+	pinctrl-0 = <&spi00_default>;
+	pinctrl-1 = <&spi00_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&adc {
+	status = "okay";
+};
+
+&wifi {
+	status = "okay";
+};

@@ -1,0 +1,43 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <dt-bindings/regulator/npm2100.h>
+
+npm2100ek_pmic: pmic@74 {
+	compatible = "nordic,npm2100";
+	reg = <0x74>;
+
+	npm2100ek_gpio: gpio-controller {
+		compatible = "nordic,npm2100-gpio";
+		gpio-controller;
+		#gpio-cells = <2>;
+		ngpios = <2>;
+	};
+
+	npm2100ek_regulators: regulators {
+		compatible = "nordic,npm2100-regulator";
+
+		/* limits are set to min/max allowed values */
+		npm2100ek_boost: BOOST {
+			regulator-min-microvolt = <1800000>;
+			regulator-max-microvolt = <3300000>;
+			regulator-init-microamp = <0>;
+		};
+
+		npm2100ek_ldosw: LDOSW {
+			regulator-min-microvolt = <800000>;
+			regulator-max-microvolt = <3000000>;
+		};
+	};
+
+	npm2100ek_wdt: watchdog {
+		compatible = "nordic,npm2100-wdt";
+	};
+
+	npm2100ek_vbat: vbat {
+		compatible = "nordic,npm2100-vbat";
+	};
+};

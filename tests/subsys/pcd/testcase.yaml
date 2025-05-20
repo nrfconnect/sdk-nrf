@@ -1,0 +1,10 @@
+tests:
+  dfu.pcd.sysbuild:
+    sysbuild: true
+    platform_allow: nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    tags:
+      - pcd
+      - sysbuild
+      - ci_tests_subsys_pcd

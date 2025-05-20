@@ -1,0 +1,76 @@
+b0_container:
+  address: 0x0
+  size: 0x8000
+  span: [b0]
+b0:
+  address: 0x0
+  size: 0x8000
+
+s0:
+  address: 0x8000
+  size: 0x10000
+  span: [s0_pad, mcuboot]
+s0_pad:
+  address: 0x8000
+  size: 0x200
+s0_image:
+  address: 0x8200
+  size: 0xfe00
+  span: [mcuboot]
+mcuboot:
+  address: 0x8200
+  size: 0xfe00
+
+s1:
+  address: 0x18000
+  size: 0x10000
+  span: [s1_pad, s1_image]
+s1_pad:
+  address: 0x18000
+  size: 0x200
+s1_image:
+  address: 0x18200
+  size: 0xfe00
+
+mcuboot_primary:
+  address: 0x28000
+  size: 0x68000
+  span: [mcuboot_pad, tfm, app]
+tfm_secure:
+  address: 0x28000
+  size: 0x8000
+  span: [mcuboot_pad, tfm]
+mcuboot_pad:
+  address: 0x28000
+  size: 0x200
+tfm:
+  address: 0x28200
+  size: 0x7e00
+app_image:
+  address: 0x28200
+  size: 0x67e00
+  span: [tfm, app]
+mcuboot_primary_app:
+  address: 0x28200
+  size: 0x67e00
+  span: [app, tfm]
+
+tfm_nonsecure:
+  address: 0x30000
+  size: 0x60000
+  span: [app]
+
+mcuboot_secondary:
+  address: 0x90000
+  size: 0x68000
+
+nonsecure_storage:
+  address: 0xf8000
+  size: 0x2000
+  span: [settings_storage]
+settings_storage:
+  address: 0xf8000
+  size: 0x2000
+EMPTY_0:
+  address: 0xfa000
+  size: 0x6000

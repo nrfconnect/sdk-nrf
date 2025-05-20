@@ -1,0 +1,65 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "nRF Profiler sync"
+
+config DESKTOP_NRF_PROFILER_SYNC_GPIO_ENABLE
+	bool "Enable nrf_profiler sync based on GPIO"
+	depends on GPIO
+	depends on APP_EVENT_MANAGER_PROFILER_TRACER
+	help
+	  This option can be used to synchronize timestamps for nrf_profiler events
+	  on two devices.
+
+	  When this option is enabled nRF Desktop devices generate nrf_profiler
+	  event (sync_event) that is used for synchronization. Central generates
+	  square wave using GPIO, peripheral reacts on the edges. Make sure that
+	  selected pins of the central and the peripheral are connected
+	  together.
+
+if DESKTOP_NRF_PROFILER_SYNC_GPIO_ENABLE
+
+choice
+	prompt "Select device role"
+	default DESKTOP_NRF_PROFILER_SYNC_PERIPHERAL
+
+config DESKTOP_NRF_PROFILER_SYNC_CENTRAL
+	bool "Central"
+	help
+	  This is the default option, the device is central.
+
+config DESKTOP_NRF_PROFILER_SYNC_PERIPHERAL
+	bool "Peripheral"
+	help
+	  If selected, the device is peripheral.
+
+endchoice
+
+config DESKTOP_NRF_PROFILER_SYNC_GPIO_PORT
+	int "Sync GPIO port"
+	range 0 1
+	default 0
+	help
+	  This option defines which GPIO port is to be used to generate/receive
+	  synchronization signal. The signal is used to synchronize timestamps
+	  between two different devices.
+
+config DESKTOP_NRF_PROFILER_SYNC_GPIO_PIN
+	int "Sync GPIO pin"
+	range 0 31
+	default 0
+	help
+	  This option defines which GPIO pin is to be used to generate/receive
+	  synchronization signal. The signal is used to synchronize timestamps
+	  between two different devices.
+
+module = DESKTOP_NRF_PROFILER_SYNC
+module-str = nrf_profiler_sync
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
+
+endmenu

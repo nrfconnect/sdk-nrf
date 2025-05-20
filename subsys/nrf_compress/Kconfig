@@ -1,0 +1,133 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NRF_COMPRESS
+	bool "Compression/decompression library"
+
+if NRF_COMPRESS
+
+config NRF_COMPRESS_COMPRESSION
+	bool
+	help
+	  Enables support for compression functions in library.
+
+config NRF_COMPRESS_DECOMPRESSION
+	bool "Decompression support"
+	help
+	  Enables support for decompression functions in library.
+
+menu "Type support"
+	depends on NRF_COMPRESS_COMPRESSION || NRF_COMPRESS_DECOMPRESSION
+
+config NRF_COMPRESS_TYPE_SELECTED
+	bool
+	help
+	  Hidden option to know if at least one implementation has been selected.
+
+menuconfig NRF_COMPRESS_LZMA
+	bool "LZMA"
+	depends on NRF_COMPRESS_DECOMPRESSION
+	select NRF_COMPRESS_TYPE_SELECTED
+	help
+	  Enables LZMA support for decompression.
+
+if NRF_COMPRESS_LZMA
+
+choice NRF_COMPRESS_LZMA_VERSION
+	prompt "Version"
+	default NRF_COMPRESS_LZMA_VERSION_LZMA2
+
+config NRF_COMPRESS_LZMA_VERSION_LZMA1
+	bool "lzma1"
+
+config NRF_COMPRESS_LZMA_VERSION_LZMA2
+	bool "lzma2"
+
+endchoice
+
+endif # NRF_COMPRESS_LZMA
+
+config NRF_COMPRESS_ARM_THUMB
+	bool "ARM Thumb"
+	depends on NRF_COMPRESS_DECOMPRESSION
+	select NRF_COMPRESS_TYPE_SELECTED
+	help
+	  Enables ARM thumb support for decompression.
+
+endmenu
+
+config NRF_COMPRESS_CHUNK_SIZE
+	int "Chunk size"
+	default 256
+	help
+	  The chunk size is the default maximum amount of data that if returned by the
+	  decompress_bytes_needed() function. The value is returned by the decompress bytes
+	  function that is available. Strive to provide the exact amount returned and not more.
+	  If not possible otherwise, for example because of streaming or end of input, a lower
+	  amount can be provided as well.
+
+config NRF_COMPRESS_MIN_MEMORY_REQUIRED
+	hex
+	default 0x26f80 if NRF_COMPRESS_DECOMPRESSION && NRF_COMPRESS_LZMA
+	default 0
+	help
+	  Hidden symbol indicating minimum buffer size for operation if operating in malloc mode.
+
+choice NRF_COMPRESS_MEMORY_TYPE
+	prompt "Memory type for buffers"
+	default NRF_COMPRESS_MEMORY_TYPE_STATIC
+
+config NRF_COMPRESS_MEMORY_TYPE_STATIC
+	bool "Static buffers"
+	help
+	  Use static buffers to hold the data for decompression. This will reduce the
+	  memory available to everything else in the application.
+
+config NRF_COMPRESS_MEMORY_TYPE_MALLOC
+	bool "Malloc"
+	depends on COMMON_LIBC_MALLOC
+	depends on (COMMON_LIBC_MALLOC_ARENA_SIZE = -1) || (COMMON_LIBC_MALLOC_ARENA_SIZE >= NRF_COMPRESS_MIN_MEMORY_REQUIRED)
+	help
+	  Use the dynamic memory allocation to hold the data for decompression. If there is
+	  insufficient free contiguous space, decompression will not be usable.
+
+endchoice
+
+config NRF_COMPRESS_EXTERNAL_DICTIONARY
+	bool "External dictionary"
+	help
+	  Use external dictionary API for LZMA decompression. It provides the user with
+	  possibility to store dictionary data in memory areas of their choice (e.g. MRAM).
+
+config NRF_COMPRESS_DICTIONARY_CACHE_SIZE
+	int "Dictionary cache size"
+	default 1024
+	depends on NRF_COMPRESS_EXTERNAL_DICTIONARY
+	help
+	  Cache for last written dictionary data. It limits the number of external dictionary API calls:
+	  'write' and (possibly but not optimized for) 'read'.
+
+config NRF_COMPRESS_MEMORY_ALIGNMENT
+	int "Buffer memory alignment"
+	default 4
+	range 1 32
+	help
+	  Memory alignment of the output decompression buffer. Set to 1 to disable.
+
+config NRF_COMPRESS_CLEANUP
+	bool "Clean up buffers on deinitialization"
+	default y
+	help
+	  If enabled, will clean up all memory buffers in the deinitialization function. This
+	  prevents leakage of the information, for example to other boot targets.
+
+	  This option can be disabled if it is not needed and the data contains nothing sensitive.
+
+module = NRF_COMPRESS
+module-str = compression/decompression library
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # NRF_COMPRESS

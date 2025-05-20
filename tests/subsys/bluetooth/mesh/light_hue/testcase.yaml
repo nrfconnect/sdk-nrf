@@ -1,0 +1,11 @@
+tests:
+  bluetooth.mesh.light_hue:
+    sysbuild: true
+    platform_allow:
+      - native_sim
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild
+    integration_platforms:
+      - native_sim

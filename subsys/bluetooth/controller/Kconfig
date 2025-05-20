@@ -1,0 +1,620 @@
+#
+# Copyright (c) 2019 - 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_LL_SOFTDEVICE
+	bool "SoftDevice Link Layer"
+	default y
+	select HAS_BT_CTLR
+	select MPSL
+	select ZERO_LATENCY_IRQS if !SOC_SERIES_BSIM_NRFXX
+	select BT_CTLR_CRYPTO_SUPPORT
+	select BT_CTLR_ENTROPY_SUPPORT
+	select BT_CTLR_LE_ENC_SUPPORT
+	select BT_CTLR_EXT_REJ_IND_SUPPORT
+	select BT_CTLR_PRIVACY_SUPPORT
+	select BT_CTLR_EXT_SCAN_FP_SUPPORT
+	select BT_CTLR_PHY_UPDATE_SUPPORT
+	select BT_CTLR_CHAN_SEL_2_SUPPORT
+	select BT_CTLR_CONN_RSSI_SUPPORT
+	select BT_CTLR_DATA_LEN_UPDATE_SUPPORT
+	select BT_CTLR_ADV_EXT_SUPPORT
+	select BT_CTLR_ADV_PERIODIC_SUPPORT
+	select BT_CTLR_ADV_PERIODIC_RSP_SUPPORT
+	select BT_CTLR_SYNC_PERIODIC_SUPPORT
+	select BT_CTLR_SYNC_PERIODIC_RSP_SUPPORT
+	select BT_CTLR_SYNC_TRANSFER_SENDER_SUPPORT
+	select BT_CTLR_SYNC_TRANSFER_RECEIVER_SUPPORT
+	select BT_CTLR_SCA_UPDATE_SUPPORT
+	select BT_CTLR_PERIPHERAL_ISO_SUPPORT
+	select BT_CTLR_CENTRAL_ISO_SUPPORT
+	select BT_CTLR_SYNC_ISO_SUPPORT
+	select BT_CTLR_ADV_ISO_SUPPORT
+	select BT_CTLR_PHY_2M_SUPPORT if HAS_HW_NRF_RADIO_BLE_2M
+	select BT_CTLR_PHY_CODED_SUPPORT if HAS_HW_NRF_RADIO_BLE_CODED
+	select BT_CTLR_ADV_EXT_CODING_SELECTION_SUPPORT if BT_CTLR_PHY_CODED_SUPPORT
+	select BT_CTLR_CHANNEL_SOUNDING_SUPPORT if HAS_HW_NRF_RADIO_CS
+	select BT_HAS_HCI_VS
+	select BT_CTLR_DF_SUPPORT if HAS_HW_NRF_RADIO_DFE
+	select BT_CTLR_LE_POWER_CONTROL_SUPPORT
+	select BT_CTLR_LE_PATH_LOSS_MONITORING_SUPPORT
+	select BT_CTLR_SUBRATING_SUPPORT
+	select BT_LL_SOFTDEVICE_HEADERS_INCLUDE
+	select MRAM_LATENCY if (SOC_NRF54H20_CPURAD && !MPSL_PM_USE_MRAM_LATENCY_SERVICE)
+	select MRAM_LATENCY_AUTO_REQ if (SOC_NRF54H20_CPURAD && !MPSL_PM_USE_MRAM_LATENCY_SERVICE)
+	depends on (SOC_SERIES_BSIM_NRFXX || SOC_SERIES_NRF52X || SOC_COMPATIBLE_NRF5340_CPUNET ||\
+			    SOC_NRF54H20_CPURAD || SOC_SERIES_NRF54LX)
+	depends on DT_HAS_NORDIC_BT_HCI_SDC_ENABLED
+	help
+	  Use SoftDevice Link Layer implementation.
+
+config BT_CTLR_DF_SUPPORT
+	select BT_CTLR_DF_CTE_TX_SUPPORT
+
+if BT_LL_SOFTDEVICE
+menu "SoftDevice Controller"
+
+choice BT_LL_SOFTDEVICE_BUILD_TYPE
+	prompt "SoftDevice Controller build type"
+
+config BT_LL_SOFTDEVICE_BUILD_TYPE_LIB
+	bool "Use library"
+
+endchoice
+
+config BT_CTLR_SDC_BSIM_BUILD
+	bool
+	default y if SOC_SERIES_BSIM_NRFXX
+	select EXPERIMENTAL
+	help
+	  Convenience config to indicate the SDC is being built for a babblesim
+	  target. Internal use only.
+
+# BT_HCI_TX_STACK_SIZE is declared in Zephyr and also here for a second time,
+# for set the valid default size of the HCI Tx stack.
+config BT_HCI_TX_STACK_SIZE
+	# NOTE: This value is derived from other symbols and should only be
+	# changed if required by architecture
+	int
+	default 1536 if BT_LL_SOFTDEVICE
+	help
+	  Stack size needed for executing bt_send with specified driver.
+	  NOTE: This is an advanced setting and should not be changed unless
+	  absolutely necessary
+
+config BT_RX_STACK_SIZE
+	int
+	depends on BT_HCI_HOST
+	default 512 if BT_HCI_RAW
+	default 2600 if BT_MESH
+	default 2200 if BT_SETTINGS
+	default 3200 if BT_SMP && SOC_SERIES_NRF54LX
+	default 1536 if BT_SMP
+	default 1024
+	range 512 65536 if BT_HCI_RAW
+	range 1100 65536 if BT_MESH
+	range 1024 65536
+	help
+	  Size of the receiving thread stack. This is the context from
+	  which all event callbacks to the application occur. The
+	  default value is sufficient for basic operation, but if the
+	  application needs to do advanced things in its callbacks that
+	  require extra stack space, this value can be increased to
+	  accommodate for that.
+
+# SYSTEM_WORKQUEUE_STACK_SIZE is declared in Zephyr and also here for a second
+# time, because Central side Bluetooth sample needs a different workqueue size
+# when the SoftDevice Controller is used.
+config SYSTEM_WORKQUEUE_STACK_SIZE
+	int
+	default 2048 if BT_LL_SOFTDEVICE
+
+config BT_CTLR_SDC_LLPM
+	bool "Enable Low Latency Packet Mode support"
+	select BT_CONN_PARAM_ANY if !BT_HCI_RAW
+	depends on (SOC_SERIES_NRF52X || SOC_SERIES_NRF54LX || SOC_SERIES_NRF54HX || \
+		    SOC_SERIES_BSIM_NRF52X || SOC_SERIES_BSIM_NRF54LX)
+	help
+	  Low Latency Packet Mode (LLPM) is a Nordic proprietary addition
+	  which lets the application use connection intervals down to 1 ms.
+
+config BT_CTLR_SDC_QOS_CHANNEL_SURVEY
+	bool "Enable channel survey"
+	select EXPERIMENTAL
+	help
+	  Channel survey feature support
+
+config BT_CTLR_SDC_ALLOW_PARALLEL_SCANNING_AND_INITIATING
+	bool "Allow scanning and initiating at the same time"
+	depends on BT_CENTRAL
+	default BT_SCAN_AND_INITIATE_IN_PARALLEL
+	help
+	  Enables support for scanning and initiating at the same time.
+	  This feature can be used to reduce the time needed to connect
+	  to many devices.
+
+config BT_CTLR_SDC_PERIPHERAL_COUNT
+	int "Number of concurrent peripheral roles"
+	default BT_MAX_CONN if (BT_PERIPHERAL && !BT_CENTRAL)
+	default 1 if BT_PERIPHERAL
+	default 0
+	range 0 BT_MAX_CONN
+	help
+	  Number of concurrent peripheral roles defines how many simultaneous
+	  connections can be created with the device working as a peripheral.
+	  NOTE: the number of central roles is defined as
+	  BT_MAX_CONN - BT_CTLR_SDC_PERIPHERAL_COUNT
+
+config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT_OVERRIDE
+	bool "Override event length default"
+
+config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
+	int "Default max connection event length [us]"
+	depends on BT_CONN
+	default 0 if BT_ISO && !BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT_OVERRIDE
+	default 7500 if !BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT_OVERRIDE
+	range 0 4000000
+	help
+	  The time set aside for connections on every connection interval in
+	  microseconds. The event length and the connection interval are the
+	  primary parameters for setting the throughput of a connection.
+	  When connection event extension is enabled, more time may be used.
+	  The event length may be set to a value that is shorter than the time needed
+	  for a single packet pair on a given PHY.
+	  In that case the controller will reserve time for receiving 27 bytes and transmitting
+	  the number of bytes configured with BT_CTLR_MIN_VAL_OF_MAX_ACL_TX_PAYLOAD_DEFAULT.
+
+config BT_CTLR_SDC_CONN_EVENT_EXTEND_DEFAULT
+	bool "Enable connection event extension by default"
+	default y if !NRF_802154_RADIO_DRIVER
+	help
+	  When Extended Connection Events are disabled, the maximum connection event length is
+	  configured with BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT.
+	  When Extended Connection Events are enabled, the controller
+	  will extend the connection event as much as possible, if
+	  - Either of the peers has more data to send.
+	    See also: Bluetooth Core Specification, Vol 6, Part B, Section 4.5.6.
+	  - There are no conflicts with other roles of equal or higher priority.
+
+config BT_CTLR_SDC_CENTRAL_ACL_EVENT_SPACING_DEFAULT
+	int "Default central ACL event spacing [us]"
+	depends on BT_CENTRAL
+	default 30000 if BT_ISO
+	default BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
+	help
+	  On the central, sets the time ACL connections are spaced apart assuming that
+	  they are using the same connection interval.
+	  This configuration allows the application to set a different value for event spacing
+	  than BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT. This will result in holes in the scheduling
+	  timeline if the connection interval is longer than the ACL event spacing.
+	  This gap can be used for other scheduling activites like isochronous streams.
+
+config BT_CTLR_MIN_VAL_OF_MAX_ACL_TX_PAYLOAD_DEFAULT
+	int "Default minimum value that will be used as maximum Tx octets for ACL connections"
+	default 27
+	range 10 27
+	depends on BT_ISO && BT_CONN
+	help
+	  This configuration sets the minimum value of maximum ACL payload length that can be sent
+	  in each packet. If the configured event length is shorter than what is required to
+	  send a packet pair of 27 bytes in each direction, the controller will use this value to
+	  determine how much it can reduce the payload size to satisfy the event length requirements.
+	  LL Control PDUs are not affected by this API.
+	  Together with BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT this allows the controller to schedule
+	  ACLs events closer together with other activities.
+	  Setting this parameter to a lower value will result in more link layer fragmentation,
+	  reducing the maximum throughput.
+	  Setting this parameter to a value lower than 27 bytes may result in interoperability
+	  issues with older Bluetooth products. It is therefore not recommended to use this API
+	  for applications interacting with devices qualified for Bluetooth Specification 5.1 or
+	  older.
+
+config BT_CTLR_SDC_PERIODIC_ADV_EVENT_LEN_DEFAULT_OVERRIDE
+	bool "Override periodic adv event length default"
+
+config BT_CTLR_SDC_PERIODIC_ADV_EVENT_LEN_DEFAULT
+	int "Default periodic advertising event length [us]"
+	depends on BT_PER_ADV
+	default 2500 if BT_ISO && !BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT_OVERRIDE
+	default 7500 if !BT_CTLR_SDC_PERIODIC_ADV_EVENT_LEN_DEFAULT_OVERRIDE
+	range 0 4000000
+	help
+	  The time set aside for periodic advertising each periodic advertising
+	  interval in microseconds. The event length is the primary parameter for
+	  how much data can be transmitted by the periodic advertiser without
+	  scheduling conflicts occurring.
+
+config BT_CTLR_SDC_TX_PACKET_COUNT
+	int "Number of Link Layer ACL TX buffers"
+	default 3
+	range 1 20
+	help
+	  The number Link Layer ACL TX packets reserved per connection.
+	  With the default count, the application is expected to be able to refill
+	  the buffers during a connection event. That is, non-default values (>3) should only
+	  be used when the CPU utilization is so high that the application is not able to
+	  provide data fast enough during connection events. Values 1 or 2
+	  should be used to save memory when reduced throughput is accepted.
+
+config BT_CTLR_SDC_RX_PACKET_COUNT
+	int "Number of Link Layer ACL RX buffers"
+	default 2
+	range 1 20
+	help
+	  The number Link Layer ACL RX packets reserved per connection.
+	  With the default count, the application is expected to be able to empty the buffers
+	  during a connection event. That is, non-default values (>2) should only be used when
+	  the CPU utilization is so high that the application is not able to read data
+	  fast enough during connection events.
+	  Value 1 should be used to save memory when reduced throughput is accepted.
+
+config BT_CTLR_SDC_SCAN_BUFFER_COUNT
+	int "Number of buffers available in the scanner"
+	depends on BT_OBSERVER
+	default 3
+	range 2 20
+	help
+	  The buffers are used for processing incoming packets
+	  and storing advertising reports.
+	  It is recommended to support at least three buffers,
+	  otherwise the scan response report will likely not be generated.
+
+config BT_CTLR_SDC_PERIODIC_SYNC_BUFFER_COUNT
+	int "Number of periodic synchronization receive buffers"
+	default 3
+	range 2 20
+	help
+	  The buffers are used for processing incoming packets
+	  and storing periodic advertising reports.
+	  The minimum amount of buffers to allow receiving chains is 3.
+
+# CONFIG_BT_CTLR_SYNC_PERIODIC_ADV_LIST_SIZE is declared in Zephyr and also
+# here for a second time, to set different range for the SoftDevice Controller.
+config BT_CTLR_SYNC_PERIODIC_ADV_LIST_SIZE
+	int "LE Periodic Advertiser List size"
+	range 0 8
+	default 0
+	depends on BT_CTLR_SYNC_PERIODIC_ADV_LIST
+	help
+	  Set Periodic Advertiser List size, this will be return in the HCI LE
+	  Read Periodic Advertiser List Command.
+
+config BT_CTLR_SDC_RX_PRIO
+	# Hidden option to set the priority of the controller receive thread
+	int
+	default BT_DRIVER_RX_HIGH_PRIO
+
+# CONFIG_BT_CTLR_DF is declared in Zephyr and also here for a second time,
+# to avoid BT_CTLR_DF_SUPPORT dependency.
+config BT_CTLR_DF
+	bool "Enable CTE Transmitter support"
+	help
+	  Enable support for the Bluetooth v5.1 Connectionless CTE Transmitter
+	  and the Connection CTE transmitter features in the controller.
+
+config BT_CTLR_DF_CONN_CTE_RSP
+	bool "Connection CTE Response feature"
+	depends on BT_CTLR_DF_CONN_CTE_TX
+	help
+	  Enable support for Bluetooth v5.1 Connection CTE Response feature
+	  in controller.
+
+# As CONFIG_BT_CTLR_ADV_EXT_PDU_EXTRA_DATA_MEMORY is defined for the Zephyr LL
+# only, and BT_CLTR_DF_ADV_CTE_TX expects it existence, we define it as an empty
+# configuration here.
+config BT_CTLR_ADV_EXT_PDU_EXTRA_DATA_MEMORY
+	bool
+
+choice BT_LL_SOFTDEVICE_VARIANT
+	prompt "SoftDevice Controller variant"
+	default BT_LL_SOFTDEVICE_MULTIROLE if ((BT_OBSERVER && BT_BROADCASTER) || \
+						     BT_CTLR_SDC_LLPM || \
+						     BT_CTLR_ADV_EXT || \
+						     BT_CTLR_PHY_CODED || \
+						     BT_CTLR_ADV_PERIODIC || \
+						     BT_CTLR_DF_CTE_TX || \
+						     MPSL_CX || \
+						     BT_CTLR_SYNC_PERIODIC || \
+						     BT_CTLR_SCA_UPDATE || \
+						     BT_CTLR_SUBRATING || \
+						     BT_CTLR_SDC_PAWR_ADV || \
+						     BT_CTLR_SDC_PAWR_SYNC || \
+						     BT_ISO || \
+						     BT_CTLR_CHANNEL_SOUNDING || \
+						     SOC_COMPATIBLE_NRF5340_CPUNET || \
+						     SOC_NRF54H20_CPURAD || \
+						     (SOC_COMPATIBLE_NRF54LX && TRUSTED_EXECUTION_NONSECURE))
+	default BT_LL_SOFTDEVICE_CENTRAL if BT_OBSERVER
+	default BT_LL_SOFTDEVICE_PERIPHERAL if BT_BROADCASTER
+	help
+	  Select a SoftDevice Controller variant.
+
+config BT_LL_SOFTDEVICE_PERIPHERAL
+	bool "SoftDevice Controller peripheral library optimized for peripheral role applications"
+	depends on !BT_OBSERVER && !BT_CTLR_SDC_LLPM && !BT_CTLR_ADV_EXT && !BT_CTLR_PHY_CODED
+	help
+	  The peripheral library variant is optimized for simpler applications only
+	  requiring the peripheral role.
+
+config BT_LL_SOFTDEVICE_CENTRAL
+	bool "SoftDevice Controller optimized for central role applications"
+	depends on !BT_BROADCASTER && !BT_CTLR_SDC_LLPM && !BT_CTLR_ADV_EXT && !BT_CTLR_PHY_CODED
+	help
+	  The central library variant is optimized for simpler applications only
+	  requiring the central role.
+
+config BT_LL_SOFTDEVICE_MULTIROLE
+	bool "SoftDevice Controller optimized for multirole and other advanced configurations"
+	help
+	  The multirole library variant is contains all supported features and can be used
+	  for more advanced applications. Using this library may give slightly larger applications.
+	  However, the library is designed in such a way that unused functionality is removed
+	  by the linker.
+
+endchoice
+
+config BT_CTLR_FAL_SIZE
+	int "Configures the maximum number of addresses in the Filter Accept List"
+	range 0 255
+	default 8
+	help
+	  Size of the Filter Accept List.
+
+config BT_CTLR_SDC_EVENT_TRIGGER
+	bool "Event Trigger"
+	help
+	  Enable support for the Event Trigger feature.
+	  The event trigger is a proprietary SDC feature which can be used
+	  to perform tasks in synchronization with radio activity.
+	  When enabled, this feature will trigger a peripheral task at the start of radio events.
+
+config BT_CTLR_SDC_CONN_ANCHOR_POINT_REPORT
+	bool "Connection event anchor point reports"
+	depends on BT_CONN
+	help
+	  Enable support for obtaining connection anchor point reports.
+	  This is a proprietary SDC feature which allows the controller
+	  to produce timestamps for ACL connection anchor points.
+	  A new timestamp is generated whenever a connection's anchor point changes.
+	  The reporting is enabled through an HCI command.
+	  See Bluetooth Core Specification, Vol 6, Part B, Section 4.5.1.
+
+config BT_CTLR_SDC_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT
+	int "BT_CTLR_SDC_ISO_RX_PDU_BUFFER_PER_STREAM_COUNT"
+	depends on BT_CTLR_SYNC_ISO || BT_CTLR_CONN_ISO
+	range 0 32
+	default 4 if BT_CTLR_SYNC_ISO
+	default 3
+	help
+	  Configures the number of RX PDU buffers allocated per ISO stream.
+	  This is the number of maximum size (251 bytes) PDU buffers.
+	  When PDU size is smaller than the maximum size, the pool will be repartitioned
+	  into a larger number of adjusted PDUs.
+	  For BIS, this value determines how many pretransmissions can be stored and utilized.
+
+config BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT
+	int "BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT"
+	depends on BT_CTLR_ADV_ISO || BT_CTLR_CONN_ISO
+	range 0 10
+	default 3
+	help
+	  Configures the number of HCI TX buffers allocated for ISO.
+	  The HCI buffers are shared between the different streams.
+	  This number may need to be larger if there is high CPU utilization or lots of
+	  SDUs are being sent to the controller in quick succession, such as if using
+	  a very small SDU interval or lots of ISO streams concurrently.
+	  When using Testmode, the number of HCI TX buffers must be larger than the number
+	  of streams using Testmode at one time.
+
+config BT_CTLR_SDC_ISO_TX_PDU_BUFFER_PER_STREAM_COUNT
+	int "BT_CTLR_SDC_ISO_TX_PDU_BUFFER_PER_STREAM_COUNT"
+	depends on BT_CTLR_ADV_ISO || BT_CTLR_CONN_ISO
+	range 0 32
+	default 3
+	help
+	  Configures the number of TX PDU buffers allocated per ISO stream.
+	  This is the number of maximum size (251 bytes) PDU buffers.
+	  When PDU size is smaller than the maximum size, the pool will be repartitioned
+	  into a larger number of adjusted PDUs.
+	  For BIS, this value determines the number of PDUs that can be cached in the controller,
+	  therefore limiting the number of pretransmission subevents and value of pretransmission
+	  offset (PTO) that the controller can use.
+
+config BT_UNINIT_MPSL_ON_DISABLE
+	bool "Uninitializes MPSL on BT disable"
+	depends on MPSL_DYNAMIC_INTERRUPTS
+	help
+	  This option unitializes MPSL on BT disable. HCI driver close calls
+	  mpsl_lib_uninit, which releases all peripherals and allows the user to
+	  override any interrupt handlers used by MPSL.
+
+config BT_CTLR_SDC_PAWR_ADV
+	bool "LE Periodic Advertising with Responses Advertising State"
+	depends on BT_PER_ADV
+	depends on BT_CTLR_SYNC_TRANSFER_SENDER
+	default y if BT_PER_ADV_RSP
+	help
+	  Enable support for Periodic Advertising with Responses - Advertiser.
+
+if BT_CTLR_SDC_PAWR_ADV
+config BT_CTLR_SDC_PAWR_ADV_COUNT
+	int "Periodic Advertising with Responses - Advertiser sets"
+	range 0 BT_EXT_ADV_MAX_ADV_SET
+	default 1
+	help
+	  Maximum number of concurrent Periodic Advertising with Responses
+	  advertisers supported.
+
+config BT_CTLR_SDC_PERIODIC_ADV_RSP_TX_BUFFER_COUNT
+	int "Number of PAwR advertiser TX buffers"
+	range 1 128
+	default 3
+	help
+	  Maximum number of subevent indications that can be buffered at a time.
+	  When using a larger value the controller will send data requests for more
+	  subevents at a time.
+
+config BT_CTLR_SDC_PERIODIC_ADV_RSP_TX_MAX_DATA_SIZE
+	int "Maximum size of PawR advertiser TX buffers"
+	range 1 249
+	default 73
+	help
+	  Maximum size of subevent indications. Decreasing this will reduce memory
+	  usage and increase scheduling performance. The controller will disallow
+	  sending a subevent indication with a larger payload.
+
+config BT_CTLR_SDC_PERIODIC_ADV_RSP_RX_BUFFER_COUNT
+	int "Number of PAwR advertiser RX buffers"
+	range 0 255
+	default 2
+	help
+	  Maximum number of periodic advertising response reports that can be
+	  buffered at a time. This should be increased when a short response slot
+	  spacing is used so that the controller is able to buffer all responses
+	  until the host is able to pull the periodic advertising response reports.
+
+	  A value of 0 will disable reception of subevent responses.
+
+config BT_CTLR_SDC_PERIODIC_ADV_RSP_RX_FAILURE_REPORTING
+	bool "Response reports for when the PAwR advertiser fails to receive responses"
+	help
+	  Enables generating reports for failing to receive responses.
+endif
+
+
+config BT_CTLR_SDC_PAWR_SYNC
+	bool "LE Periodic Advertising with Responses Synchronization State"
+	depends on BT_CTLR_SYNC_PERIODIC
+	depends on BT_CTLR_SYNC_TRANSFER_SENDER
+	depends on BT_CTLR_SYNC_TRANSFER_RECEIVER
+	default y if BT_PER_ADV_SYNC_RSP
+	help
+	  Enable support for Periodic Advertising with Responses - Scanner.
+
+if BT_CTLR_SDC_PAWR_SYNC
+config BT_CTLR_SDC_PERIODIC_SYNC_RSP_TX_BUFFER_COUNT
+	int "BT_CTLR_SDC_PERIODIC_SYNC_RSP_TX_BUFFER_COUNT"
+	range 1 255
+	default 1
+	help
+	  Maximum number of response data packets that can be buffered at a time.
+	  Increasing this will make it possible to prepare multiple responses ahead of time.
+
+endif
+
+config BT_CTLR_SDC_SILENCE_UNEXPECTED_MSG_TYPE
+	bool
+	help
+	  Convenience config to silence unexpected incoming msg type
+
+config BT_CTLR_SDC_IGNORE_HCI_ISO_DATA_TS_FROM_HOST
+	bool "Configure the controller to ignore timestamps in HCI ISO data packets."
+	depends on BT_CTLR_PERIPHERAL_ISO || BT_CTLR_CENTRAL_ISO || BT_CTLR_ADV_ISO
+	select DEPRECATED
+	help
+	  Configures the SoftDevice Controller to ignore timestamps on HCI ISO data packets.
+	  The only use-case for this option is if the host uses timestamps which are not based
+	  on the clock of the controller. Instead of this configuration, the host should
+	  not add timestamps to the HCI ISO data packets if the timestamp is not based on the clock
+	  of the controller.
+
+config BT_CTLR_SDC_BIG_RESERVED_TIME_US
+	int "BIG reserved time [us]"
+	depends on BT_CTLR_ADV_ISO
+	range 0 4000000
+	default 1600
+	help
+	  The time reserved for other roles in each ISO interval, used when selecting BIG parameters.
+
+config BT_CTLR_SDC_CIG_RESERVED_TIME_US
+	int "CIG reserved time [us]"
+	depends on BT_CTLR_CENTRAL_ISO
+	range 0 4000000
+	default 1300
+	help
+	  The time reserved for other roles in each ISO interval, used when selecting CIG parameters.
+
+config BT_CTLR_SDC_CIS_SUBEVENT_LENGTH_US
+	int "CIS subevent length [us]"
+	depends on BT_CTLR_CENTRAL_ISO
+	default 0
+	help
+	  Sets the subevent length to be used for CISes in microseconds.
+	  If the configured subevent length is too small, the
+	  HCI command used to configure the CIG will fail.
+	  If this parameter is set to zero, the subevent length
+	  is chosen by the controller.
+
+config BT_CTLR_CHANNEL_SOUNDING
+	bool "Channel Sounding support"
+	help
+	  Enable Channel Sounding support.
+
+config BT_CTLR_SDC_CS_COUNT
+	int "Number of concurrent connections supporting CS procedures"
+	default 1
+	range 1 BT_MAX_CONN
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	help
+	  Set the number of concurrent connections that can support Channel Sounding.
+	  Needs to be equal to or less than BT_MAX_CONN.
+
+config BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS
+	int "Max number of Channel Sounding antenna paths supported by the controller"
+	default 1
+	range 1 4
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	help
+	  Sets the max number of antenna paths the controller supports.
+	  The number of antenna paths used during channel sounding
+	  depends on the tone antenna configuration index selected in the procedure parameters.
+	  For instance, an A2_B2 configuration requires four antenna paths.
+	  Reducing the value of this kconfig will reduce the RAM usage per CS context.
+
+config BT_CTLR_SDC_CS_NUM_ANTENNAS
+	int "Number of antennas used in Channel Sounding procedure supported by the controller"
+	default 1
+	range 1 BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	help
+	  Configure the maximum number of antennas the local controller can support.
+	  Must be equal to or less than BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS.
+	  This value also configures whether to use the antenna switching API or not.
+	  When this value is not 1, the controller requires an antenna switching callback to function.
+	  For more information see the Multiple antennas support documentation in SDC.
+
+config BT_CTLR_SDC_CS_MULTIPLE_ANTENNA_SUPPORT
+	bool
+	default y if BT_CTLR_SDC_CS_NUM_ANTENNAS > 1
+	select GPIO
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	help
+	  Internal helper config. Not intended for use.
+
+config BT_CTLR_SDC_CS_STEP_MODE3
+	bool "Enable optional step mode-3 support"
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	help
+	  Enable optional step mode-3 support. Channel sounding will not automatically start using step mode-3 if this
+	  config is set. To use step mode-3, modify the configuration which is created using the LE CS Create config command.
+
+config BT_CTLR_SDC_LE_POWER_CLASS_1
+	bool "Device supports transmitting at LE Power Class 1 level"
+	default y if BT_CTLR_TX_PWR_ANTENNA >= 10
+	help
+	  This should be set if the device supports transmitting above +10dBm.
+	  See Bluetooth Core Specification, Vol 6, Part A, Section 3
+	  Transmitter Characteristics for more information.
+
+config BT_LL_SOFTDEVICE_INIT_PRIORITY
+	int
+	default 53 if MPSL_USE_EXTERNAL_CLOCK_CONTROL
+	default KERNEL_INIT_PRIORITY_DEFAULT
+	help
+	  This option configures the LL_SOFTDEVICE initialization priority level. The priority
+	  must be lower than the CONFIG_MPSL_INIT_PRIORITY due to dependency on the MPSL library.
+
+endmenu
+endif  # BT_LL_SOFTDEVICE

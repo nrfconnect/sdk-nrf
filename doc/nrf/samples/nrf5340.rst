@@ -1,0 +1,18 @@
+.. _nrf5340_samples:
+
+nRF5340 samples
+###############
+
+This section lists the |NCS| samples specific to :ref:`developing with the nRF5340 SoC <ug_nrf53>`.
+
+.. include:: ../samples.rst
+    :start-after: samples_general_info_start
+    :end-before: samples_general_info_end
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Subpages
+   :glob:
+
+   ../../../samples/nrf5340/*/README
+   ../../../samples/nrf_rpc/entropy_nrf53/README

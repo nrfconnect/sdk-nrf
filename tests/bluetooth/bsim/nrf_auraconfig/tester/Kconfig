@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Logging"
+
+module = MAIN
+module-str = main
+source "subsys/logging/Kconfig.template.log_config"
+
+module = NAC_TESTER
+module-str = nac_tester
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu # Log levels
+
+source "Kconfig.zephyr"

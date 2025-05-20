@@ -1,0 +1,44 @@
+#
+# Copyright (c) 2019-2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Buttons simulation configuration"
+
+config DESKTOP_BUTTONS_SIM_ENABLE
+	bool "Enable simulated button presses generator"
+	depends on CAF_BUTTON_EVENTS
+	help
+	  This option enables simulated button presses in nRF Desktop application.
+	  Could be used for debugging purposes.
+
+if DESKTOP_BUTTONS_SIM_ENABLE
+
+config DESKTOP_BUTTONS_SIM_INTERVAL
+	int "Interval between subsequent simulated button presses [ms]"
+	default 1000
+	range 1 60000
+	help
+	  Time interval between the subsequent simulated button presses [ms].
+
+config DESKTOP_BUTTONS_SIM_LOOP_FOREVER
+	bool "Generate buttons in infinite loop"
+	help
+	  When this option is disabled sequence of buttons is generated once.
+	  Enabling this option makes the sequence start from the beginning
+	  after it ends.
+
+config DESKTOP_BUTTONS_SIM_TRIGGER_KEY_ID
+	hex "Button used to start/stop generating button presses"
+	default 0x0000
+	help
+	  This option defines KEY ID of the button used to start/stop generation of simulated
+	  button presses in the nRF Desktop application.
+
+module = DESKTOP_BUTTONS_SIM
+module-str = buttons sim module
+source "subsys/logging/Kconfig.template.log_config"
+endif
+
+endmenu

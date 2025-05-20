@@ -1,0 +1,13 @@
+;
+; Copyright (c) 2024 Nordic Semiconductor ASA
+;
+; SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+;
+
+
+; The SSF Header
+ssf_header_req = [
+    remote_id: int,
+    service_id: int,
+    service_version: int,
+]

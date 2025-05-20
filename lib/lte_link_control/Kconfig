@@ -1,0 +1,436 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Note: the naming of the Kconfig options is inconsistent in this file as a result of gradual
+# development. It will be fixed in a future version.
+
+menuconfig LTE_LINK_CONTROL
+	bool "LTE link control library"
+	select AT_PARSER
+	select AT_MONITOR
+
+if LTE_LINK_CONTROL
+
+# Modules: these Kconfig options enable specific features of the library.
+
+config LTE_LC_CONN_EVAL_MODULE
+	bool "Connection Parameters Evaluation module"
+
+config LTE_LC_EDRX_MODULE
+	bool "Extended Discountinuous Reception (eDRX) module"
+
+config LTE_LC_NEIGHBOR_CELL_MEAS_MODULE
+	bool "Neighboring Cell Measurements module"
+
+config LTE_LC_PERIODIC_SEARCH_MODULE
+	bool "Periodic Search Configuration module"
+
+config LTE_LC_PSM_MODULE
+	bool "Power Saving Mode (PSM) module"
+
+config LTE_LC_RAI_MODULE
+	bool "Release Assistance Indication (RAI) module"
+
+config LTE_LC_MODEM_SLEEP_MODULE
+	bool "Modem Sleep module"
+
+config LTE_LC_TAU_PRE_WARNING_MODULE
+	bool "Tracking Area Update (TAU) module"
+
+menuconfig LTE_LC_DNS_FALLBACK_MODULE
+	bool "Fallback DNS module"
+	default y
+	help
+	  The device might or might not receive a DNS server address by the network during a PDN connection.
+	  Even within the same network, the PDN connection establishment method (PCO vs ePCO) might
+	  change when the device operates in NB-IoT or LTE Cat-M1, resulting in missing DNS server
+	  addresses when one method is used, but not the other.
+	  Having a fallback DNS address ensures that the device always has a DNS to fallback to.
+
+if LTE_LC_DNS_FALLBACK_MODULE
+
+config LTE_LC_DNS_FALLBACK_ADDRESS
+	string "Fallback DNS address"
+	# Zephyr has an option to configure its own DNS servers.
+	# Using the DNS_SERVER1 address when the DNS_SERVER_IP_ADDRESSES is enabled
+	# lets us re-use the same DNS server as Zephyr's, so that the offloaded and
+	# non-offloaded implementations use the same server.
+	default DNS_SERVER1 if DNS_SERVER_IP_ADDRESSES
+	# Cloudflare DNS
+	default "1.1.1.1"
+
+endif # LTE_LC_DNS_FALLBACK_MODULE
+
+# End of modules Kconfig options
+
+config LTE_SHELL
+	bool "Enable LTE shell commands"
+	default y
+	depends on SHELL
+
+config LTE_LOCK_BANDS
+	bool "Enable LTE band lock"
+	help
+	  Enable LTE band lock. Bands not enabled in LTE_LOCK_BAND_MASK
+	  are not used when this setting is enabled.
+
+if LTE_LOCK_BANDS
+config LTE_LOCK_BAND_MASK
+	string "LTE band lock mask bit string"
+	default "10000001000000001100"
+	help
+	  Bit string of enabled bands. LSB is band 1. Leading zeroes
+	  can be omitted. The maximum length is 88 characters.
+endif # LTE_LOCK_BANDS
+
+config LTE_PLMN_SELECTION_OPTIMIZATION
+	bool "PLMN selection optimization"
+	default y
+	help
+	  Enable PLMN selection optimization during initial search.
+	  This optimization typically makes PLMN selection faster, especially for stationary devices.
+	  Refer to the AT%FEACONF command in the AT command manual for more details.
+
+config LTE_LOCK_PLMN
+	bool "Enable LTE PLMN lock"
+	help
+	  Enable PLMN lock for network selection.
+
+if LTE_LOCK_PLMN
+config LTE_LOCK_PLMN_STRING
+	string "LTE PLMN lock string"
+	default "00101"
+	help
+	  Mobile Country Code (MCC) and Mobile Network Code (MNC) values.
+	  Only numeric string format supported.
+endif # LTE_LOCK_PLMN
+
+config LTE_UNLOCK_PLMN
+	bool "Disable LTE PLMN lock"
+	depends on !LTE_LOCK_PLMN
+	help
+	  Disable PLMN lock for network selection.
+
+if LTE_LC_PSM_MODULE
+
+config LTE_PSM_REQ
+	bool "Enable PSM request"
+	help
+	  Enable request for use of PSM using AT+CPSMS.
+	  If this option is set the library will automatically request PSM when
+	  the modem is initialized. This will cause the modem to include a PSM request in
+	  every subsequent LTE attach request.
+
+choice LTE_PSM_REQ_FORMAT
+	prompt "Format for PSM configuration"
+	default LTE_PSM_REQ_FORMAT_STRING
+	help
+	  Select the format in which default parameters for PSM are given.
+
+config LTE_PSM_REQ_FORMAT_STRING
+	bool "Use PSM configs given as bit field strings"
+	help
+	  Use LTE_PSM_REQ_RPTAU and LTE_PSM_REQ_RAT.
+
+config LTE_PSM_REQ_FORMAT_SECONDS
+	bool "Use PSM configs given in seconds"
+	help
+	  Use LTE_PSM_REQ_RPTAU_SECONDS and LTE_PSM_REQ_RAT_SECONDS.
+
+endchoice
+
+config LTE_PSM_REQ_RPTAU
+	string "Requested periodic TAU for PSM"
+	default "00000011" # 30 minutes
+	help
+	  Power saving mode setting for requested periodic TAU.
+	  See 3GPP 27.007 Ch. 7.38.
+	  And 3GPP 24.008 Ch. 10.5.7.4a for data format.
+
+config LTE_PSM_REQ_RAT
+	string "Requested active time for PSM"
+	default "00100001" # 1 minute
+	help
+	  Power saving mode setting for requested active time.
+	  See 3GPP 27.007 Ch. 7.38.
+	  And 3GPP 24.008 Ch. 10.5.7.3 for data format.
+
+config LTE_PSM_REQ_RPTAU_SECONDS
+	int "Requested periodic TAU for PSM in seconds"
+	default 1800
+	help
+	  Power saving mode setting for requested periodic TAU in seconds.
+	  See lte_lc_psm_param_set_seconds() on limitations although any
+	  non-negative value can be given.
+
+config LTE_PSM_REQ_RAT_SECONDS
+	int "Requested active time for PSM in seconds"
+	default 60
+	help
+	  Power saving mode setting for requested active time in seconds.
+	  See lte_lc_psm_param_set_seconds() on limitations although any
+	  non-negative value can be given.
+
+config LTE_PROPRIETARY_PSM_REQ
+	bool "Enable use of proprietary PSM"
+	help
+	  Enable use of proprietary PSM using AT%FEACONF. To use this feature, also PSM request
+	  must be enabled using CONFIG_LTE_PSM_REQ or lte_lc_psm_req().
+	  Refer to the AT command guide for guidance and limitations of this feature.
+
+endif # LTE_LC_PSM_MODULE
+
+if LTE_LC_EDRX_MODULE
+
+config LTE_EDRX_REQ
+	bool "Enable eDRX request"
+	help
+	  Enable request for use of eDRX using AT+CEDRXS.
+	  For reference, see 3GPP 27.007 Ch. 7.40.
+
+config LTE_EDRX_REQ_VALUE_LTE_M
+	string "Requested eDRX value for LTE-M"
+	default "1001"
+	help
+	  Sets the eDRX value to be requested when LTE-M is used.
+	  The format is half a byte in a four-bit format.
+	  The eDRX value refers to bit 4 to 1 of octet 3 of the
+	  Extended DRX parameters information element.
+	  See 3GPP TS 24.008, subclause 10.5.5.32.
+	  The value 1001 corresponds to 163.84 seconds.
+
+config LTE_EDRX_REQ_VALUE_NBIOT
+	string "Requested eDRX value for NB-IoT"
+	default "1001"
+	help
+	  Sets the eDRX value to be requested when NB-IoT is used.
+	  The format is half a byte in a four-bit format.
+	  The eDRX value refers to bit 4 to 1 of octet 3 of the
+	  Extended DRX parameters information element.
+	  See 3GPP TS 24.008, subclause 10.5.5.32.
+	  The value 1001 corresponds to 163.84 seconds.
+
+config LTE_PTW_VALUE_LTE_M
+	string "Requested PTW value for LTE-M"
+	help
+	  Sets the Paging Time Window value to be requested when enabling
+	  eDRX. The value applies to LTE-M.
+	  The format is a string with half a byte in 4-bit format,
+	  corresponding to bits 8 to 5 in octet 3 of eDRX information
+	  element according to 10.5.5.32 of 3GPP TS 24.008.
+	  Requesting a specific PTW configuration should be done with
+	  caution. The requested value must be compliant with the eDRX
+	  value that is configured, and it's usually best to let the modem
+	  use default PTW values.
+
+config LTE_PTW_VALUE_NBIOT
+	string "Requested PTW value for NB-IoT"
+	help
+	  Sets the Paging Time Window value to be requested when enabling
+	  eDRX. The value applies to NB-IoT.
+	  The format is a string with half a byte in 4-bit format,
+	  corresponding to bits 8 to 5 in octet 3 of eDRX information
+	  element according to 10.5.5.32 of 3GPP TS 24.008.
+	  Requesting a specific PTW configuration should be done with
+	  caution. The requested value must be compliant with the eDRX
+	  value that is configured, and it's usually best to let the modem
+	  use default PTW values.
+
+endif # LTE_LC_EDRX_MODULE
+
+choice LTE_NETWORK_MODE
+	prompt "Select network mode"
+	default LTE_NETWORK_MODE_LTE_M_NBIOT_GPS
+	help
+	  Select the modem system mode.
+
+config LTE_NETWORK_MODE_DEFAULT
+	bool "Use default"
+	help
+	  Use the system mode that is currently set in the modem.
+
+config LTE_NETWORK_MODE_LTE_M
+	bool "LTE-M"
+
+config LTE_NETWORK_MODE_LTE_M_GPS
+	bool "LTE-M and GPS"
+
+config LTE_NETWORK_MODE_NBIOT
+	bool "NB-IoT"
+
+config LTE_NETWORK_MODE_NBIOT_GPS
+	bool "NB-IoT and GPS"
+
+config LTE_NETWORK_MODE_LTE_M_NBIOT
+	bool "LTE-M and NB-IoT"
+
+config LTE_NETWORK_MODE_LTE_M_NBIOT_GPS
+	bool "LTE-M, NB-IoT and GPS"
+
+endchoice
+
+choice LTE_MODE_PREFERENCE
+	prompt "LTE mode preference"
+	default LTE_MODE_PREFERENCE_LTE_M_PLMN_PRIO if LTE_NETWORK_MODE_LTE_M_NBIOT || \
+		LTE_NETWORK_MODE_LTE_M_NBIOT_GPS
+	default LTE_MODE_PREFERENCE_AUTO
+	help
+	  Selects which LTE mode the modem should use if more than one is
+	  available. Note that the LTE preference must match the system modes
+	  that are enabled.
+
+config LTE_MODE_PREFERENCE_AUTO
+	bool "No preference"
+	help
+	  No LTE preference, automatically selected by the modem.
+
+config LTE_MODE_PREFERENCE_LTE_M
+	bool "LTE-M"
+	depends on LTE_NETWORK_MODE_LTE_M_NBIOT || LTE_NETWORK_MODE_LTE_M_NBIOT_GPS
+	help
+	  LTE-M is preferred over PLMN selection. The modem will prioritize to
+	  use LTE-M and switch over to a PLMN where LTE-M is available whenever
+	  possible.
+
+config LTE_MODE_PREFERENCE_NBIOT
+	bool "NB-IoT"
+	depends on LTE_NETWORK_MODE_LTE_M_NBIOT || LTE_NETWORK_MODE_LTE_M_NBIOT_GPS
+	help
+	  NB-IoT is preferred over PLMN selection. The modem will prioritize to
+	  use NB-IoT and switch over to a PLMN where NB-IoT is available
+	  whenever possible.
+
+config LTE_MODE_PREFERENCE_LTE_M_PLMN_PRIO
+	bool "LTE-M, PLMN prioritized"
+	depends on LTE_NETWORK_MODE_LTE_M_NBIOT || LTE_NETWORK_MODE_LTE_M_NBIOT_GPS
+	help
+	  LTE-M is preferred, but PLMN selection is more important. The modem
+	  will prioritize to stay on home network and switch over to NB-IoT
+	  if LTE-M is not available.
+
+config LTE_MODE_PREFERENCE_NBIOT_PLMN_PRIO
+	bool "NB-IoT, PLMN prioritized"
+	depends on LTE_NETWORK_MODE_LTE_M_NBIOT || LTE_NETWORK_MODE_LTE_M_NBIOT_GPS
+	help
+	  NB-IoT is preferred, but PLMN selection is more important. The modem
+	  will prioritize to stay on home network and switch over to LTE-M
+	  if NB-IoT is not available.
+
+endchoice
+
+config LTE_MODE_PREFERENCE_VALUE
+	int
+	default 0 if LTE_MODE_PREFERENCE_AUTO
+	default 1 if LTE_MODE_PREFERENCE_LTE_M
+	default 2 if LTE_MODE_PREFERENCE_NBIOT
+	default 3 if LTE_MODE_PREFERENCE_LTE_M_PLMN_PRIO
+	default 4 if LTE_MODE_PREFERENCE_NBIOT_PLMN_PRIO
+
+if LTE_LC_RAI_MODULE
+
+config LTE_RAI_REQ
+	bool "Release Assistance Indication (RAI) request"
+	help
+	  Request use of RAI using AT%RAI. When RAI is enabled, the application needs to use
+	  the RAI socket option (SO_RAI) to inform the modem when no more data is expected
+	  and the RRC connection can be released.
+
+endif # LTE_LC_RAI_MODULE
+
+config LTE_NETWORK_TIMEOUT
+	int "Time period to attempt establishing connection"
+	default 600
+	help
+	  Time period in seconds to attempt establishing an LTE link, before timing out.
+
+if LTE_LC_TAU_PRE_WARNING_MODULE
+
+config LTE_LC_TAU_PRE_WARNING_NOTIFICATIONS
+	bool "Get notifications prior to Tracking Area Updates"
+	help
+	  TAU pre-warning notifications can be used to determine when it is optimal for the
+	  application to send user data. If user data is sent prior to the scheduled TAU, the
+	  TAU will be sent together with the user data, thus saving power and data transfer.
+
+config LTE_LC_TAU_PRE_WARNING_TIME_MS
+	int "TAU pre-warning time"
+	range 500 3600000
+	default 5000
+	help
+	  Time in milliseconds before a TAU that a pre-warning is to be received.
+
+config LTE_LC_TAU_PRE_WARNING_THRESHOLD_MS
+	int "TAU pre-warning threshold"
+	range 10240 3456000000
+	default 1200000
+	help
+	  Minimum value of the given T3412 timer in milliseconds that will trigger TAU
+	  pre-warnings.
+
+endif # LTE_LC_TAU_PRE_WARNING_MODULE
+
+if LTE_LC_NEIGHBOR_CELL_MEAS_MODULE
+
+config LTE_NEIGHBOR_CELLS_MAX
+	int "Max number of neighbor cells"
+	range 1 17
+	default 10
+	help
+	  Maximum number of neighbor cells to allocate space for when
+	  performing neighbor cell measurements.
+	  Increasing the maximum number of neighbor cells requires
+	  more heap space.
+	  The modem can deliver information for a maximum of 17 neighbor
+	  cells, so there's a trade-off between heap requirements and
+	  the risk of not being able to parse all neighbor cell information.
+
+endif # LTE_LC_NEIGHBOR_CELL_MEAS_MODULE
+
+if LTE_LC_MODEM_SLEEP_MODULE
+
+config LTE_LC_MODEM_SLEEP_NOTIFICATIONS
+	bool "Modem sleep notifications"
+	help
+	  If this option is enabled the application will get notifications when the modem
+	  enters and exits sleep. The application will also get pre-warning notifications
+	  prior to when the modem exits sleep depending on the configured pre-warning time.
+
+config LTE_LC_MODEM_SLEEP_PRE_WARNING_TIME_MS
+	int "Modem sleep pre-warning time"
+	range 500 3600000
+	default 5000
+	help
+	  Time in milliseconds before modem exits sleep that a pre-warning is to be received.
+
+config LTE_LC_MODEM_SLEEP_NOTIFICATIONS_THRESHOLD_MS
+	int "Modem sleep notifications threshold"
+	range 10240 3456000000
+	default 1200000
+	help
+	  Minimum value of the duration of the scheduled modem sleep in milliseconds
+	  that triggers a notification.
+
+endif # LTE_LC_MODEM_SLEEP_MODULE
+
+config LTE_LC_TRACE
+	bool "LTE link control tracing"
+	help
+	  Enables tracing of LTE link control events. The tracing differs
+	  from regular link control events in that they only indicate
+	  what has happened and has no associated payload.
+	  It is intended to be used for debugging purposes.
+
+config LTE_LC_WORKQUEUE_STACK_SIZE
+	int "Stack size for the library work queue"
+	default 1280 if LOG_MODE_IMMEDIATE
+	default 1024
+
+module = LTE_LINK_CONTROL
+module-dep = LOG
+module-str = LTE link control library
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # LTE_LINK_CONTROL

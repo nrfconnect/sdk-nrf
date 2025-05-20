@@ -1,0 +1,75 @@
+#
+# Copyright (c) 2018 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig AT_HOST_LIBRARY
+	bool "AT Host Library for nrf91"
+	depends on NRF_MODEM_LIB
+	select AT_MONITOR
+
+if AT_HOST_LIBRARY
+
+config AT_HOST_UART_INIT_TIMEOUT
+	int "Timeout waiting for a valid UART line on init (ms)"
+	help
+		If the selected UART has error conditions during init caused by
+		e. g. a floating RX line during boot, at_host will clear the
+		errors and retry for this amount of time.
+	default 500
+
+choice
+	prompt "Termination Mode"
+	default CR_TERMINATION
+	depends on AT_HOST_LIBRARY
+	help
+		Sets the termination ending from the serial terminal
+		Levels are:
+		-  NULL Termination
+		-  CR Termination
+		-  LF Termination
+		-  CR+LF Termination
+
+		WARNING! Some AT commands (like AT+CMGS) use CR internally.
+		Selecting CR Termination will render those commands unavailable.
+	config NULL_TERMINATION
+		bool "NULL Termination"
+	config CR_TERMINATION
+		bool "CR Termination"
+	config LF_TERMINATION
+		bool "LF Termination"
+	config CR_LF_TERMINATION
+		bool "CR+LF Termination"
+endchoice
+
+config AT_HOST_TERMINATION
+	int
+	default 0 if NULL_TERMINATION
+	default 1 if CR_TERMINATION
+	default 2 if LF_TERMINATION
+	default 3 if CR_LF_TERMINATION
+
+config AT_HOST_CMD_MAX_LEN
+	int "Maximum AT command length"
+	help
+		The maximum allowed length of an AT command passed through the
+		AT host. The space is allocated statically.
+	range 0 4096
+	default 4096
+
+config AT_HOST_THREAD_PRIO
+	int "AT host workqueue thread priority level"
+	range 0 NUM_PREEMPT_PRIORITIES
+	default 0 if !MULTITHREADING
+	default 10
+
+config AT_HOST_STACK_SIZE
+	int "AT host workqueue thread stack size (in bytes)"
+	default 1024
+
+module = AT_HOST
+module-str = AT host
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # AT_HOST_LIBRARY

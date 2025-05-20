@@ -1,0 +1,64 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+module = AWS_IOT
+module-prompt = "AWS IoT library"
+orsource "../Kconfig.cloud_$(CLOUD_SERVICE_SELECTOR)"
+
+menuconfig $(module)
+	bool
+	prompt "AWS IoT library" if !CLOUD_SERVICE_MUTUAL_EXCLUSIVE
+	select MQTT_HELPER
+	select MQTT_LIB_TLS
+
+if AWS_IOT
+
+config AWS_IOT_BROKER_HOST_NAME
+	string "AWS IoT server hostname"
+
+config AWS_IOT_CLIENT_ID_STATIC
+	string "Static client id"
+	default "my-thing"
+
+config AWS_IOT_CLIENT_ID_MAX_LEN
+	int "Maximum length of client id"
+	default 40
+
+config AWS_IOT_CONNECT_TIMEOUT_SECONDS
+	int "Connect timeout in seconds"
+	default 30
+
+config AWS_IOT_AUTO_DEVICE_SHADOW_REQUEST
+	bool "Request the device shadow automatically upon a connection to AWS"
+	default y
+
+config AWS_IOT_TOPIC_GET_ACCEPTED_SUBSCRIBE
+	bool "Subscribe to get accepted shadow topic, $aws/things/<thing-name>/shadow/get/accepted"
+
+config AWS_IOT_TOPIC_GET_REJECTED_SUBSCRIBE
+	bool "Subscribe to get rejected shadow topic, $aws/things/<thing-name>/shadow/get/rejected"
+
+config AWS_IOT_TOPIC_UPDATE_ACCEPTED_SUBSCRIBE
+	bool "Subscribe to update accepted shadow topic, $aws/things/<thing-name>/shadow/update/accepted"
+
+config AWS_IOT_TOPIC_UPDATE_REJECTED_SUBSCRIBE
+	bool "Subscribe to update rejected shadow topic, $aws/things/<thing-name>/shadow/update/rejected"
+
+config AWS_IOT_TOPIC_UPDATE_DELTA_SUBSCRIBE
+	bool "Subscribe to update delta shadow topic, $aws/things/<thing-name>/shadow/update/delta"
+
+config AWS_IOT_TOPIC_DELETE_ACCEPTED_SUBSCRIBE
+	bool "Subscribe to delete accepted shadow topic, $aws/things/<thing-name>/shadow/delete/accepted"
+
+config AWS_IOT_TOPIC_DELETE_REJECTED_SUBSCRIBE
+	bool "Subscribe to delete rejected shadow topic, $aws/things/<thing-name>/shadow/delete/rejected"
+
+module = AWS_IOT
+module-dep = LOG
+module-str = AWS IoT
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # AWS_IOT

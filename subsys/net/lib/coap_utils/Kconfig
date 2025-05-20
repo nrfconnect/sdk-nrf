@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+config COAP_UTILS
+	bool "Support for communication with CoAP"
+	depends on COAP
+	help
+	  Send and receive CoAP non-confirmable requests.
+	  Utilize CoAP and Modem libraries.
+
+if COAP_UTILS
+
+module = COAP_UTILS
+module-str = CoAP utils
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif

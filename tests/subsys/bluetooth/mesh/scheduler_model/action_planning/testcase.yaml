@@ -1,0 +1,10 @@
+tests:
+  bluetooth.mesh.scheduler_model.action_planning:
+    sysbuild: true
+    platform_allow: native_sim
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild
+    integration_platforms:
+      - native_sim

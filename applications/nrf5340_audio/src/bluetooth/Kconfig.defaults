@@ -1,0 +1,25 @@
+#
+# Copyright (c) 2022 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config BT_AUDIO
+	default y
+
+config BT_DEVICE_NAME
+	default BT_AUDIO_BROADCAST_NAME if TRANSPORT_BIS
+	default "NRF5340_AUDIO"
+
+config BT_DEVICE_NAME_DYNAMIC
+	default y
+
+config BT_ECC
+	default y if BT
+
+config BT_EXT_ADV
+	default y
+
+# Mandatory to support at least 1 for ASCS
+config BT_ATT_PREPARE_COUNT
+	default 1

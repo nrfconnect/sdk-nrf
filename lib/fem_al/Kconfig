@@ -1,0 +1,70 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config FEM_AL_LIB
+	bool "FEM Abstraction Layer library"
+	default n
+
+if FEM_AL_LIB
+
+config FEM
+	bool "Front-end module (FEM) support"
+	default y
+	select MPSL
+	select MPSL_FEM_ONLY
+	depends on MPSL_FEM_ANY_SUPPORT
+	help
+	  Controls if front-end module (FEM) is to be configured and enabled.
+	  Default type of FEM to use depends on which compatible nodes are in devicetree.
+
+if FEM
+
+# Helper symbol for detecting nRF21540 Front-end module.
+config NRF21540_FEM
+	bool
+	default y
+	select MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL
+	depends on MPSL_FEM_NRF21540_GPIO || MPSL_FEM_NRF21540_GPIO_SPI
+
+config MPSL_FEM_NRF21540_TX_GAIN_DB
+	depends on NRF21540_FEM
+	default MPSL_FEM_NRF21540_TX_GAIN_DB_POUTA
+
+choice MPSL_FEM_CHOICE
+	depends on MPSL_FEM_NRF21540_GPIO_SPI_SUPPORT
+	default MPSL_FEM_NRF21540_GPIO_SPI
+endchoice
+
+if MPSL_FEM_SIMPLE_GPIO
+
+# The Skyworks front-end module devices specific configuration.
+choice SKYWORKS_MODE
+	prompt "Skyworks front-end module mode"
+	default SKYWORKS_LOW_POWER_MODE
+
+config SKYWORKS_LOW_POWER_MODE
+	bool "Low power-mode"
+	help
+	  Skywork front-end module low-power mode or mode selection is handled by user hardware.
+
+config SKYWORKS_HIGH_POWER_MODE
+	bool "High power-mode"
+	depends on $(dt_nodelabel_has_prop,nrf_radio_fem,chl-gpios)
+	help
+	  Skyworks front-end module high-power mode.
+
+config SKYWORKS_BYPASS_MODE
+	bool "Bypass mode"
+	depends on $(dt_nodelabel_has_prop,nrf_radio_fem,cps-gpios)
+	help
+	  Skyworks front-end module bypass mode. Bypass path for the integrated LNA.
+	  For more details check your device product specification.
+
+endchoice # SKYWORKS_MODE
+
+endif # MPSL_FEM_SIMPLE_GPIO
+endif # FEM
+endif # FEM_AL_LIB

@@ -1,0 +1,529 @@
+#
+# Copyright (c) 2021 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# The Kconfig of the TF-M module in zephyr is split into several files.
+# This is done to facilitate providing out-of-tree definitions of these
+# symbols. This is typically done to modify what options are exposed, and their
+# values. This repo (sdk-nrf) also includes TF-M as a module, and its
+# module definition takes presedence over that of zephyr. If TFM_PROFILE_TYPE_MINIMAL
+# is not set, we include the top level module Kconfig, which again includes
+# all parts of the TF-M module kconfig. If, however, TFM_PROFILE_TYPE_MINIMAL is set,
+# only a subset of these kconfig files will be included.
+
+rsource "Kconfig.tfm.defconfig"
+
+source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm"
+
+if !TFM_PROFILE_TYPE_MINIMAL
+# When enabling full TFM support, then partitions and crypto modules shall be available.
+source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm.partitions"
+source "$(ZEPHYR_BASE)/modules/trusted-firmware-m/Kconfig.tfm.crypto_modules"
+endif
+
+if BUILD_WITH_TFM
+
+# Copied from secure_fw/partitions/platform/Kconfig, appended the TFM prefix
+menu "Platform partition component configs"
+	depends on TFM_PARTITION_PLATFORM
+
+config TFM_PLATFORM_SERVICE_INPUT_BUFFER_SIZE
+	int "Size of input buffer"
+	default 64
+
+config TFM_PLATFORM_SERVICE_OUTPUT_BUFFER_SIZE
+	int "Size of output buffer"
+	default 64
+
+config TFM_PLATFORM_SP_STACK_SIZE
+	hex "Stack size"
+	default 0x500
+
+config TFM_PLATFORM_NV_COUNTER_MODULE_DISABLED
+	bool "Disable Non-volatile counter module"
+	default y if TFM_PROFILE_TYPE_MINIMAL
+	default y if !TFM_PARTITION_PROTECTED_STORAGE
+
+endmenu
+
+# Copied from secure_fw/partitions/crypto/Kconfig, appended the TFM prefix
+menu "Crypto component configs"
+	depends on TFM_PARTITION_CRYPTO
+
+config TFM_CRYPTO_SINGLE_PART_FUNCS_DISABLED
+	bool "Only enable multi-part operations"
+	default n
+	help
+	  Only enable multi-part operations in Hash, MAC, AEAD and symmetric
+	  ciphers, to optimize memory footprint in resource-constrained devices
+
+# Nordic additions to Crypto Kconfigs
+config TFM_CRYPTO_BUILTIN_KEYS
+	bool
+	prompt "TF-M crypto builtin keys"
+	default y
+	depends on !TFM_PROFILE_TYPE_MINIMAL
+	depends on !CRACEN_HW_PRESENT
+	select PSA_WANT_ALG_HKDF
+	select PSA_WANT_ALG_HMAC
+	select PSA_WANT_ALG_SHA_256
+	help
+	  Whether to allow crypto service to store builtin keys.
+	  Without this, ALL builtin keys must be stored in a platform-specific location.
+	  Builtin keys require HKDF with HMAC and SHA-256 to derive sub-keys.
+
+config TFM_CRYPTO_ENGINE_BUF_SIZE
+	int
+	prompt "TF-M Crypto - Engine buffer size" if !TFM_PROFILE_TYPE_MINIMAL
+	default 1 if TFM_PROFILE_TYPE_MINIMAL
+	default 12288 if PSA_NEED_CC3XX_RSA_OAEP || \
+		PSA_NEED_CC3XX_RSA_PKCS1V15_CRYPT || \
+		PSA_NEED_CC3XX_RSA_PKCS1V15_SIGN
+	default 8320
+	help
+	  Buffer used by Mbed Crypto for its own allocations at runtime.
+	  This is a buffer allocated in static memory.
+	  To be configured based on the desired use case and application requirements.
+
+config TFM_CRYPTO_CONC_OPER_NUM
+	int
+	prompt "TF-M Crypto - Number of concurrent operations" if !TFM_PROFILE_TYPE_MINIMAL
+	default 1 if TFM_PROFILE_TYPE_MINIMAL
+	default 8
+	help
+	  This parameter defines the maximum number of possible
+	  concurrent operation contexts (cipher, MAC, hash and key derivation)
+	  for multi-part operations, that can be allocated simultaneously
+	  at any time. To be configured based on the desired use case and
+	  application requirements.
+
+config TFM_CRYPTO_IOVEC_BUFFER_SIZE
+	int
+	prompt "TF-M Crypto - PSA FF IO vector buffer size" if !TFM_PROFILE_TYPE_MINIMAL
+	default 1024 if TFM_PROFILE_TYPE_MINIMAL
+	default 16384 if TFM_REGRESSION_S || TFM_REGRESSION_NS
+	default 8192 if TFM_PARTITION_PROTECTED_STORAGE && TFM_PS_MAX_ASSET_SIZE > 2048
+	default 5120
+	help
+	  This parameter applies only to IPC model builds. In IPC model,
+	  during a Service call, input and outputs are allocated
+	  temporarily in an internal scratch buffer whose size is
+	  determined by this parameter. To be configured based on the
+	  desired use case and application requirements.
+
+config TFM_CRYPTO_PARTITION_STACK_SIZE
+	hex
+	prompt "TF-M Crypto Partition - Stack size" if !TFM_PROFILE_TYPE_MINIMAL
+	default 0x800 if TFM_PROFILE_TYPE_MINIMAL
+	default 0x4000 if PSA_WANT_RSA_KEY_SIZE_4096 || PSA_WANT_RSA_KEY_SIZE_3072
+	default 0x2000
+	help
+	  The stack size of the Crypto Secure Partition
+
+endmenu
+
+# Copied from secure_fw/partitions/initial_attestation/Kconfig, appended the TFM prefix
+menu "Attestation component configs"
+	depends on TFM_PARTITION_INITIAL_ATTESTATION
+
+config TFM_ATTEST_INCLUDE_OPTIONAL_CLAIMS
+	bool "Include optional claims in initial attestation token"
+	default y
+
+config TFM_ATTEST_VERIFICATION_SERVICE_URL
+	string "TF-M attestation verification service URL"
+	default ""
+	depends on TFM_ATTEST_INCLUDE_OPTIONAL_CLAIMS
+	help
+	  Optional claim of URL of the verification service in the TF-M attestation token.
+
+config TFM_ATTEST_INCLUDE_COSE_KEY_ID
+	bool "Include COSE key-id in initial attestation token"
+	default n
+
+# Only the PSA_IOT_1 profile is supported
+choice TFM_ATTEST_TOKEN_PROFILE
+	prompt "Token profile"
+	default TFM_ATTEST_TOKEN_PROFILE_PSA_IOT_1
+
+config TFM_ATTEST_TOKEN_PROFILE_PSA_IOT_1
+	bool "PSA_IOT_1"
+
+config TFM_ATTEST_TOKEN_PROFILE_PSA_2_0_0
+	bool "PSA_2_0_0"
+
+config TFM_ATTEST_TOKEN_PROFILE_ARM_CCA
+	bool "ARM_CCA"
+endchoice
+
+config TFM_ATTEST_STACK_SIZE
+	hex "Attestation service stack size"
+	default 0x700
+endmenu
+
+# Copied from secure_fw/partitions/internal_trusted_storage/Kconfig, appended the TFM prefix
+menu "ITS component configs"
+	depends on TFM_PARTITION_INTERNAL_TRUSTED_STORAGE
+
+config TFM_ITS_CREATE_FLASH_LAYOUT
+	bool "Create flash FS"
+	default y
+	help
+	  Create flash FS if it doesn't exist for Internal Trusted Storage
+	  partition
+
+config TFM_ITS_RAM_FS
+	bool "Emulated RAM FS"
+	default n
+	help
+	  Enable emulated RAM FS for platforms that don't have flash for
+	  Internal Trusted Storage partition
+
+config TFM_ITS_VALIDATE_METADATA_FROM_FLASH
+	bool "Validate filesystem metadata"
+	default y
+	help
+	  Validate filesystem metadata every time it is read from flash
+
+config TFM_ITS_MAX_ASSET_SIZE
+	range 256 4096
+	default 512
+	help
+	  The maximum asset size to be stored in the Internal Trusted Storage. The maximum value
+	  is limited by the memory block size and by the bookkeeping data that may be stored
+	  in the same memory block when PM_PARTITION_SIZE_TFM_INTERNAL_TRUSTED_STORAGE is minimal.
+	  The actual size of the stored asset is not affected by this configuration.
+
+config TFM_ITS_NUM_ASSETS
+	range 1 120
+	default 10
+	help
+	  The maximum number of assets to be stored in the Internal Trusted Storage.
+	  (TF-M does not guarantee that the Internal Trusted Storage is large
+	  enough to store the maximum amount of assets with the maximum size.) Set
+	  PM_PARTITION_SIZE_TFM_INTERNAL_TRUSTED_STORAGE according to the needs of the
+	  application.
+
+config TFM_ITS_BUF_SIZE
+	int "Size of the ITS internal data transfer buffer"
+	default TFM_PS_MAX_ASSET_SIZE if TFM_PARTITION_PROTECTED_STORAGE && \
+		TFM_PS_MAX_ASSET_SIZE > TFM_ITS_MAX_ASSET_SIZE
+	default TFM_ITS_MAX_ASSET_SIZE
+	help
+	  Size of the ITS internal data transfer buffer. Set to the maximum asset size
+	  to minimize the number of write and erase operations to the flash.
+
+config TFM_ITS_STACK_SIZE
+	hex "Stack size"
+	default 0x1000 if SOC_SERIES_NRF54LX
+	default 0x720 if !SOC_SERIES_NRF54LX
+
+# Nordic additions to ITS Kconfig
+config TFM_ITS_ENCRYPTED
+	bool
+	prompt "PSA Internal Trusted Storage with encryption"
+	default y if SOC_SERIES_NRF54LX
+	select PSA_ITS_ENCRYPTED
+	select PSA_WANT_GENERATE_RANDOM
+	help
+	  Enables authenticated encryption for PSA Internal Trusted Storage files
+
+endmenu
+
+# Copied from secure_fw/partitions/protected_storage/Kconfig, appended the TFM prefix
+menu "PS component configs"
+	depends on TFM_PARTITION_PROTECTED_STORAGE
+
+config TFM_PS_CREATE_FLASH_LAYOUT
+	bool "Create flash FS"
+	default y
+	help
+	  Create flash FS if it doesn't exist for Protected Storage partition
+
+config TFM_PS_RAM_FS
+	bool "Emulated RAM FS"
+	default n
+	help
+	  Enable emulated RAM FS for platforms that don't have flash for
+	  Protected Storage partition
+
+config TFM_PS_ROLLBACK_PROTECTION
+	bool "Rollback protection"
+	default y
+	help
+	  Enable rollback protection for Protected Storage partition
+
+config TFM_PS_VALIDATE_METADATA_FROM_FLASH
+	bool "Validate filesystem metadata"
+	default y
+	help
+	  Validate filesystem metadata every time it is read from flash
+
+config TFM_PS_MAX_ASSET_SIZE
+	int "Maximum stored asset size"
+	range 512 4024
+	default 2048
+	help
+	  The maximum asset size to be stored in the Protected Storage area. The maximum value
+	  is limited by the memory block size, which must also hold the encryption header.
+	  The actual size of the stored asset is not affected by this configuration.
+
+config TFM_PS_NUM_ASSETS
+	int "Maximum stored assets number"
+	range 1 120
+	default 10
+	help
+	  The maximum number of assets to be stored in the Protected Storage area.
+	  (TF-M does not guarantee that the Protected Storage area is large
+	  enough to store the maximum amount of assets with the maximum size.) Set
+	  PM_PARTITION_SIZE_TFM_PROTECTED_STORAGE according to the needs of the
+	  application.
+
+config TFM_PS_STACK_SIZE
+	hex "Stack size"
+	default 0x1200 if TFM_PS_NUM_ASSETS > 70
+	default 0xC00 if TFM_PS_NUM_ASSETS > 30
+	default 0x700
+endmenu
+
+# Copied from secure_fw/spm/Kconfig, removed CONFIG prefix
+menu "TF-M SPM component configs"
+
+config TFM_CONN_HANDLE_MAX_NUM
+	int "Maximal number of handling secure services"
+	default 8
+	depends on TFM_IPC
+	help
+	  The maximal number of secure services that are connected or requested at
+	  the same time
+
+config TFM_DOORBELL_API
+	bool "Doorbell APIs"
+	depends on TFM_IPC
+	default n
+endmenu
+
+rsource "Kconfig.tfm.pm"
+
+# Pull in full list of peripherals
+rsource "Kconfig.peripheral_secure"
+
+choice TFM_PROFILE_TYPE
+config TFM_PROFILE_TYPE_MINIMAL
+	bool "TF-M build profile: minimal"
+	select PSA_DEFAULT_OFF
+	select PSA_WANT_GENERATE_RANDOM
+	select PSA_WANT_ALG_HMAC_DRBG
+	help
+	  Minimal TF-M build profile. This will make the TF-M image fit within 32kB.
+	  No configuration of the size of the partition nor the features of the
+	  TF-M image can be done when this option is selected. If your application
+	  needs a different TF-M configuration you have to disable this option
+	  and reproduce the desired configuration through kconfig fragments.
+endchoice
+
+config TFM_CPU_FREQ_MHZ
+	int
+	default $(div, $(dt_node_int_prop_int,/clocks/hfpll,clock-frequency), 1000000) \
+		if SOC_SERIES_NRF54LX
+	default $(div, $(dt_node_int_prop_int,/cpus/cpu@0,clock-frequency), 1000000) \
+		if $(dt_node_has_prop,/cpus/cpu@0,clock-frequency)
+	default $(div, $(dt_node_int_prop_int,/cpus/cpu@1,clock-frequency), 1000000) \
+		if $(dt_node_has_prop,/cpus/cpu@1,clock-frequency)
+	default 128
+	help
+	  Gives access to the cpu-clock frequency from the device tree when
+	  building with TF-m.
+
+config TFM_NFCT_PINS_AS_GPIOS
+	bool
+	default y if !DT_HAS_NORDIC_NRF_NFCT_ENABLED
+	depends on SOC_NRF5340_CPUAPP
+	help
+	  Two pins are usually reserved for NFC in SoCs that implement the
+	  NFCT peripheral. This option switches them to normal GPIO mode.
+	  HW enabling happens once in the device lifetime, during the first
+	  system startup. Disabling this option will not switch back these
+	  pins to NFCT mode. Doing this requires UICR erase prior to
+	  flashing device using the image which has this option disabled.
+
+	  NFC pins in nRF5340: P0.02 and P0.03
+
+	  TF-M configures these pins as GPIOS when the NFCT peripheral is not
+	  enabled in the device-tree of the target.
+
+config TFM_SECURE_UART
+	bool "TF-M configure UART instance as secure peripheral"
+	default y if !TFM_LOG_LEVEL_SILENCE
+	help
+	  Configure the UART instance as a secure peripheral for TF-M logging.
+	  This makes the UART instance unavailable to the non-secure unless
+	  TFM_SECURE_UART_SHARE_INSTANCE is enabled.
+	  When this option is selected the device tree node for
+	  the UART instance needs to be disabled for the non-secure application.
+
+if TFM_SECURE_UART
+
+config TFM_SECURE_UART_SHARE_INSTANCE
+	bool
+	prompt "Share TF-M's UART instance with the non-secure application"
+	help
+	  Configure the UART instance in TF-M to be shared between TF-M secure
+	  firmware and the non-secure application.
+	  When enabled, TF-M's logging will be reduced to logging when booting
+	  up, and when handling a fatal error.
+
+choice TFM_SECURE_UART_INSTANCE
+	prompt "TF-M logging UART instance"
+	default TFM_SECURE_UART30 if SOC_SERIES_NRF54LX
+	default TFM_SECURE_UART1
+
+config TFM_SECURE_UART0
+	bool "TF-M logging will use UART0 instance"
+	depends on $(dt_nodelabel_has_prop,uart0,pinctrl-names)
+	select NRF_UARTE0_SECURE
+	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE0 || HAS_HW_NRF_UARTE0
+
+config TFM_SECURE_UART1
+	bool "TF-M logging will use UART1 instance"
+	depends on $(dt_nodelabel_has_prop,uart1,pinctrl-names)
+	select NRF_UARTE1_SECURE
+	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE1 || HAS_HW_NRF_UARTE1
+
+config TFM_SECURE_UART00
+	bool "TF-M logging will use UART00 instance"
+	depends on $(dt_nodelabel_has_prop,uart00,pinctrl-names)
+	select NRF_UARTE00_SECURE
+	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE00 || HAS_HW_NRF_UARTE00
+
+config TFM_SECURE_UART20
+	bool "TF-M logging will use UART20 instance"
+	depends on $(dt_nodelabel_has_prop,uart20,pinctrl-names)
+	select NRF_UARTE20_SECURE
+	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE20 || HAS_HW_NRF_UARTE20
+
+config TFM_SECURE_UART21
+	bool "TF-M logging will use UART21 instance"
+	depends on $(dt_nodelabel_has_prop,uart21,pinctrl-names)
+	select NRF_UARTE21_SECURE
+	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE21 || HAS_HW_NRF_UARTE21
+
+config TFM_SECURE_UART22
+	bool "TF-M logging will use UART22 instance"
+	depends on $(dt_nodelabel_has_prop,uart22,pinctrl-names)
+	select NRF_UARTE22_SECURE
+	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE22 || HAS_HW_NRF_UARTE22
+
+config TFM_SECURE_UART30
+	bool "TF-M logging will use UART30 instance"
+	depends on $(dt_nodelabel_has_prop,uart30,pinctrl-names)
+	select NRF_UARTE30_SECURE
+	select TFM_SECURE_UART_SHARE_INSTANCE if NRFX_UARTE30 || HAS_HW_NRF_UARTE30
+
+endchoice
+
+endif # TFM_SECURE_UART
+
+config TFM_EXPERIMENTAL
+	bool
+	select EXPERIMENTAL
+	default y if !TFM_PROFILE_TYPE_MINIMAL
+
+config TFM_HW_INIT_RESET_ON_BOOT
+	bool "Initialize internal architecture state at boot"
+	depends on ARCH_SUPPORTS_ARCH_HW_INIT
+	help
+	  This option instructs TF-M to force the initialization
+	  of the internal architectural state (for example ARCH-level
+	  HW registers and system control blocks) during boot to
+	  the reset values as specified by the corresponding
+	  architecture manual. The option is useful when the TF-M
+	  image is chain-loaded, for example, by a debugger
+	  or a bootloader, and we need to guarantee that the internal
+	  states of the architecture core blocks are restored to the
+	  reset values (as specified by the architecture).
+
+	  Note: This option is not needed when using an MCUBoot with the
+	  CONFIG_MCUBOOT_CLEANUP_ARM_CORE configuration enabled.
+
+config TFM_HW_INIT_NRF_PERIPHERALS
+	bool "Initialize peripherals state at boot"
+	depends on TFM_HW_INIT_RESET_ON_BOOT
+	help
+	  This options instructs TF-M to force the initializion of a select set
+	  of nRF peripherals to the reset values as specified by the product
+	  specification. The option is useful when the TF-M image is
+	  chain-loaded, for example, by a debugger or a bootloader, and we need
+	  to guarantee that the internal states of the peripheral blocks are
+	  restored to the reset values.
+
+	  The set of peripherals that are reset are:
+	  - RTC instances 0..2
+	  - UARTE instances 0..1
+	  - PPI or DPPI
+	  - CLOCK
+
+	  Note: This option is not needed when using an MCUBoot with the
+	  CONFIG_MCUBOOT_NRF_CLEANUP_PERIPHERAL configuration enabled.
+
+config TFM_HALT_ON_CORE_PANIC
+	bool "Halt TF-M on core panic"
+	default y if !RESET_ON_FATAL_ERROR
+	help
+	  On fatal errors in the TF-m secure image, halt instead of rebooting.
+
+config TFM_ALLOW_NON_SECURE_RESET
+	bool "Allow system reset calls from Non-Secure"
+	select TFM_PARTITION_PLATFORM_CUSTOM_REBOOT if TFM_PARTITION_PLATFORM
+	default y
+	help
+	  This will allow the application running in Non-Secure from being able
+	  to issue a system reset of the chip without going through a secure
+	  service.
+
+config TFM_ALLOW_NON_SECURE_FAULT_HANDLING
+	bool "Handle faults originating from non-secure code in Zephyr"
+	default y
+	depends on TFM_PARTITION_PLATFORM
+	depends on TFM_EXCEPTION_INFO_DUMP
+	help
+	  When a BusFault or SecureFault originates from non-secure code,
+	  allow the Zephyr fault handler to handle the exception. This is
+	  beneficial as it allows fault information to be dumped to the
+	  Zephyr shell for quick debug and for error data to be extracted
+	  remotely using tools such as Memfault. Any error from the fault
+	  handling path itself, will trap back into the secure HardFault
+	  handler for processing.
+
+config TFM_S_CODE_VECTOR_TABLE_SIZE
+	hex
+	default 0x144 if SOC_SERIES_NRF91X
+	default 0x154 if SOC_NRF5340_CPUAPP
+	default 0x47c if SOC_SERIES_NRF54LX
+	default 0xffffffff # Invalid value to discover missing SOC support.
+	help
+	  The TF-M interrupt vector table size.
+
+config TFM_NRF_PROVISIONING
+	bool "Provision the device"
+	depends on !TFM_PROFILE_TYPE_MINIMAL
+	depends on NRF_APPROTECT_LOCK
+	depends on NRF_SECURE_APPROTECT_LOCK
+	select TFM_INITIAL_ATTESTATION_KEY
+	select SECURE_BOOT_STORAGE
+	help
+	  Provision the TF-M image. When enabled, TF-M must be in the PSA
+	  provisioning lifecycle state in order to boot. Find more information
+	  about provisioning in Running applications with Trusted Firmware-M.
+
+config TFM_PSA_FRAMEWORK_HAS_MM_IOVEC
+	bool
+	prompt "TF-M MM-IOVEC"
+	depends on TFM_ISOLATION_LEVEL = 1
+	help
+	  Memory-mapped iovecs provide direct mapping of client input and output vectors into
+	  the Secure Partition.
+
+endif # BUILD_WITH_TFM
