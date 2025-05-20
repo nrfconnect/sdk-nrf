@@ -43,8 +43,13 @@ s1_image:
   region: flash_primary
 mcuboot_primary:
   address: 0x30000
-  size: 0xD0000
-  span: [mcuboot_pad, app]
+  size: 0xcc000
+  span: [mcuboot_pad, app, tfm]
+  region: flash_primary
+tfm_secure:
+  address: 0x30000
+  size: 0x8000
+  span: [mcuboot_pad, tfm]
   region: flash_primary
 mcuboot_pad:
   address: 0x30000
@@ -53,16 +58,24 @@ mcuboot_pad:
 mcuboot_primary_app:
   address: 0x30200
   size: 0xcbe00
-  span: [app]
+  span: [tfm, app]
   region: flash_primary
 app_image:
   address: 0x30200
   size: 0xcbe00
-  span: [app]
+  span: [tfm, app]
+  region: flash_primary
+tfm:
+  address: 0x30200
+  size: 0x7e00
+  region: flash_primary
+tfm_nonsecure:
+  address: 0x38000
+  size: 0xc8000
   region: flash_primary
 app:
-  address: 0x30200
-  size: 0xcbe00
+  address: 0x38000
+  size: 0xc4000
   region: flash_primary
 settings_storage:
   address: 0xfc000

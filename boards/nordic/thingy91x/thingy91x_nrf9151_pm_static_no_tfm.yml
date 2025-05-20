@@ -43,61 +43,41 @@ s1_image:
   region: flash_primary
 mcuboot_primary:
   address: 0x30000
-  size: 0x44000
-  span: [mcuboot_pad, app, tfm]
+  size: 0xD0000
+  span: [mcuboot_pad, app]
   region: flash_primary
-tfm_secure:
-  address: 0x30000
-  size: 0x8000
-  span: [mcuboot_pad, tfm]
 mcuboot_pad:
   address: 0x30000
   size: 0x200
   region: flash_primary
 mcuboot_primary_app:
   address: 0x30200
-  size: 0x43e00
-  span: [tfm, app]
+  size: 0xcfe00
+  span: [app]
   region: flash_primary
 app_image:
   address: 0x30200
-  size: 0x43e00
-  span: [tfm, app]
-  region: flash_primary
-tfm:
-  address: 0x30200
-  size: 0x7e00
-  region: flash_primary
-tfm_nonsecure:
-  address: 0x38000
-  size: 0x3c000
+  size: 0xcfe00
   span: [app]
   region: flash_primary
 app:
-  address: 0x38000
-  size: 0x3c000
+  address: 0x30200
+  size: 0xcfe00
   region: flash_primary
+
 mcuboot_secondary:
-  address: 0x74000
-  size: 0x44000
-  region: flash_primary
-mcuboot_secondary_1:
-  address: 0xB8000
-  region: flash_primary
-  size: 0x40000
-settings_storage:
-  address: 0xf8000
-  size: 0x8000
-  region: flash_primary
-pcd_sram:
-  address: 0x20000000
-  size: 0x2000
-  region: sram_primary
-sram_retained_mem:
-  region: sram_primary
-  address: 0x2007FC00
-  size: 0x400
-mcuboot_primary_1:
+  device: DT_CHOSEN(nordic_pm_ext_flash)
   address: 0x0
-  region: ram_flash
-  size: 0x40000
+  size: 0xD0000
+  share_size: [mcuboot_primary]
+  region: external_flash
+fmfu_storage:
+  address: 0xD0000
+  device: DT_CHOSEN(nordic_pm_ext_flash)
+  region: external_flash
+  size: 0x400000
+settings_storage:
+  device: DT_CHOSEN(nordic_pm_ext_flash)
+  address: 0x4D0000
+  size: 0x2000
+  region: external_flash
