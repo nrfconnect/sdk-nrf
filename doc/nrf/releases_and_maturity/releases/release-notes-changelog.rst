@@ -38,7 +38,10 @@ IDE, OS, and tool support
 Board support
 =============
 
-* Added bias-pull-up for Thingy:91 X nRF9151 UART RX pins.
+* Added:
+
+  * Bias-pull-up for Thingy:91 X nRF9151 UART RX pins.
+  * Alternative partition tables for Thingy:91 X.
 
 Build and configuration system
 ==============================
