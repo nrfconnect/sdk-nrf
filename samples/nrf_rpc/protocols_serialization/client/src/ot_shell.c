@@ -5,6 +5,7 @@
  */
 
 #include "ot_shell.h"
+#include <net/ot_rpc.h>
 
 #include <zephyr/shell/shell.h>
 #include <zephyr/net/net_ip.h>
@@ -1978,6 +1979,33 @@ static int cmd_dns_client_browse(const struct shell *sh, size_t argc, char *argv
 	return 0;
 }
 
+static otError ot_cli_command_eui64(const struct shell *sh, size_t argc, char *argv[])
+{
+	otExtAddress ext_addr;
+
+	if (argc == 1) {
+		/* Read current EUI64 */
+		otLinkGetFactoryAssignedIeeeEui64(NULL, &ext_addr);
+		shell_print(sh, "%02x%02x%02x%02x%02x%02x%02x%02x", ext_addr.m8[0], ext_addr.m8[1],
+			    ext_addr.m8[2], ext_addr.m8[3], ext_addr.m8[4], ext_addr.m8[5],
+			    ext_addr.m8[6], ext_addr.m8[7]);
+		return OT_ERROR_NONE;
+	}
+
+	/* Set new EUI64 */
+	if (hex2bin(argv[1], strlen(argv[1]), ext_addr.m8, sizeof(ext_addr.m8)) !=
+	    sizeof(ext_addr.m8)) {
+		return OT_ERROR_INVALID_ARGS;
+	}
+
+	return ot_rpc_set_factory_assigned_ieee_eui64(&ext_addr);
+}
+
+static int cmd_eui64(const struct shell *sh, size_t argc, char *argv[])
+{
+	return ot_cli_command_invoke(ot_cli_command_eui64, sh, argc, argv);
+}
+
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	ot_cmds, SHELL_CMD_ARG(ifconfig, NULL, "Interface management", cmd_ifconfig, 1, 1),
 	SHELL_CMD_ARG(ipmaddr, NULL, "IPv6 multicast configuration", cmd_ipmaddr, 1, 2),
@@ -1987,6 +2015,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(thread, NULL, "Role management", cmd_thread, 2, 0),
 	SHELL_CMD_ARG(discover, NULL, "Thread discovery scan", cmd_discover, 1, 4),
 	SHELL_CMD_ARG(radio, NULL, "Radio configuration", cmd_radio, 1, 1),
+	SHELL_CMD_ARG(eui64, NULL, "EUI64 configuration", cmd_eui64, 1, 1),
 	SHELL_CMD_ARG(test_message, NULL, "Test message API", cmd_test_message, 1, 0),
 	SHELL_CMD_ARG(test_udp_init, NULL, "Test udp init API", cmd_test_udp_init, 1, 0),
 	SHELL_CMD_ARG(test_udp_send, NULL, "Test udp send API", cmd_test_udp_send, 1, 0),
@@ -2067,8 +2096,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      "Network diag, args: <get|reset> <IPv6-address>"
 		      " <tlv-type ...>",
 		      cmd_test_net_diag, 4, 255),
-	SHELL_CMD_ARG(test_mesh_diag, NULL, "Mesh diag topology discovery, args: <start|cancel>"
-					    "[ip6] [children]",
+	SHELL_CMD_ARG(test_mesh_diag, NULL,
+		      "Mesh diag topology discovery, args: <start|cancel>"
+		      "[ip6] [children]",
 		      cmd_test_mesh_diag, 2, 2),
 	SHELL_SUBCMD_SET_END);
 

@@ -12,9 +12,17 @@
 
 #include <nrf_rpc_cbor.h>
 
+#include <zephyr/net/net_if.h>
 #include <zephyr/net/openthread.h>
+#include <zephyr/sys/byteorder.h>
 
 #include <openthread/link.h>
+
+#ifdef CONFIG_IEEE802154_NRF5_UICR_EUI64_ENABLE
+#ifdef CONFIG_NRFX_RRAMC
+#include <nrfx_rramc.h>
+#endif
+#endif
 
 static void ot_rpc_cmd_set_poll_period(const struct nrf_rpc_group *group,
 				       struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
@@ -123,6 +131,55 @@ static void ot_rpc_cmd_get_factory_assigned_eui64(const struct nrf_rpc_group *gr
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 
+static void ot_rpc_cmd_set_factory_assigned_eui64(const struct nrf_rpc_group *group,
+						  struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	otError error = OT_ERROR_NOT_CAPABLE;
+	otExtAddress ext_addr;
+
+	nrf_rpc_decode_buffer(ctx, ext_addr.m8, OT_EXT_ADDRESS_SIZE);
+
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_LINK_SET_FACTORY_ASSIGNED_EUI64);
+		return;
+	}
+
+#ifdef CONFIG_IEEE802154_NRF5_UICR_EUI64_ENABLE
+#ifdef CONFIG_NRFX_RRAMC
+	if (nrfx_rramc_otp_word_write(CONFIG_IEEE802154_NRF5_UICR_EUI64_REG + 1,
+				      sys_get_le32(ext_addr.m8)) &&
+	    nrfx_rramc_otp_word_write(CONFIG_IEEE802154_NRF5_UICR_EUI64_REG,
+				      sys_get_le32(ext_addr.m8 + 4))) {
+		error = OT_ERROR_NONE;
+	} else {
+		error = OT_ERROR_FAILED;
+	}
+#endif
+#endif
+
+	/*
+	 * The IEEE EUI64 is only copied from UICR to the network interface once, during
+	 * the network interface initialization, so the network interface must also be
+	 * updated after writing the new identifier to UICR.
+	 */
+	if (IS_ENABLED(CONFIG_NET_L2_OPENTHREAD) && error == OT_ERROR_NONE) {
+		struct net_if *iface = net_if_get_first_by_type(&NET_L2_GET_NAME(OPENTHREAD));
+		struct net_linkaddr *addr;
+
+		__ASSERT_NO_MSG(iface != NULL);
+
+		net_if_lock(iface);
+		addr = net_if_get_link_addr(iface);
+
+		__ASSERT_NO_MSG(addr != NULL && addr->len == OT_EXT_ADDRESS_SIZE);
+
+		memcpy(addr->addr, ext_addr.m8, OT_EXT_ADDRESS_SIZE);
+		net_if_unlock(iface);
+	}
+
+	nrf_rpc_rsp_send_uint(group, error);
+}
+
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_set_poll_period, OT_RPC_CMD_LINK_SET_POLL_PERIOD,
 			 ot_rpc_cmd_set_poll_period, NULL);
 
@@ -143,3 +200,7 @@ NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_set_link_enabled, OT_RPC_CMD_LINK_
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_get_factory_assigned_eui64,
 			 OT_RPC_CMD_LINK_GET_FACTORY_ASSIGNED_EUI64,
 			 ot_rpc_cmd_get_factory_assigned_eui64, NULL);
+
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_set_factory_assigned_eui64,
+			 OT_RPC_CMD_LINK_SET_FACTORY_ASSIGNED_EUI64,
+			 ot_rpc_cmd_set_factory_assigned_eui64, NULL);
