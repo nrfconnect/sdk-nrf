@@ -9,6 +9,7 @@
 #include "slm_at_socket.h"
 #include "slm_uart_handler.h"
 #include "slm_util.h"
+#include "slm_ctrl_pin.h"
 #if defined(CONFIG_SLM_PPP)
 #include "slm_ppp.h"
 #endif

@@ -12,6 +12,7 @@ project(serial_lte_modem)
 # NORDIC SDK APP START
 target_sources(app PRIVATE src/main.c)
 target_sources(app PRIVATE src/slm_util.c)
+target_sources(app PRIVATE src/slm_ctrl_pin.c)
 target_sources(app PRIVATE src/slm_settings.c)
 target_sources(app PRIVATE src/slm_at_host.c)
 target_sources(app PRIVATE src/slm_at_commands.c)
