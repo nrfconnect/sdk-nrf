@@ -122,15 +122,10 @@ enum esb_bitrate {
 	ESB_BITRATE_2MBPS_BLE = NRF_RADIO_MODE_BLE_2MBIT,
 #endif /* defined(RADIO_MODE_MODE_Ble_2Mbit) || defined(__DOXYGEN__) */
 
-#if defined(RADIO_MODE_MODE_Nrf_4Mbit0_5) || defined(__DOXYGEN__)
+#if defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT6) || defined(__DOXYGEN__)
 	/** 4 Mb radio mode. */
-	ESB_BITRATE_4MBPS = NRF_RADIO_MODE_NRF_4MBIT_H_0_5,
-#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit0_5) || defined(__DOXYGEN__) */
-
-#if defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT6)
-	/** 4 Mb radio mode. */
-	ESB_BITRATE_4MBPS = RADIO_MODE_MODE_Nrf_4Mbit_0BT6,
-#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT6) */
+	ESB_BITRATE_4MBPS = NRF_RADIO_MODE_NRF_4MBIT_BT_0_6,
+#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT6) || defined(__DOXYGEN__) */
 };
 
 /** @brief Enhanced ShockBurst CRC modes. */
