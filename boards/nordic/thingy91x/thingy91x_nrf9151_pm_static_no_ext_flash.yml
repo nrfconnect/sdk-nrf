@@ -43,25 +43,26 @@ s1_image:
   region: flash_primary
 mcuboot_primary:
   address: 0x30000
-  size: 0x44000
+  size: 0x67000
   span: [mcuboot_pad, app, tfm]
   region: flash_primary
 tfm_secure:
   address: 0x30000
   size: 0x8000
   span: [mcuboot_pad, tfm]
+  region: flash_primary
 mcuboot_pad:
   address: 0x30000
   size: 0x200
   region: flash_primary
 mcuboot_primary_app:
   address: 0x30200
-  size: 0x43e00
+  size: 0x66e00
   span: [tfm, app]
   region: flash_primary
 app_image:
   address: 0x30200
-  size: 0x43e00
+  size: 0x66e00
   span: [tfm, app]
   region: flash_primary
 tfm:
@@ -70,34 +71,19 @@ tfm:
   region: flash_primary
 tfm_nonsecure:
   address: 0x38000
-  size: 0x3c000
+  size: 0x5f000
   span: [app]
   region: flash_primary
 app:
   address: 0x38000
-  size: 0x3c000
+  size: 0x5f000
   region: flash_primary
 mcuboot_secondary:
-  address: 0x74000
-  size: 0x44000
+  address: 0x97000
+  size: 0x67000
+  share_size: [mcuboot_primary]
   region: flash_primary
-mcuboot_secondary_1:
-  address: 0xB8000
-  region: flash_primary
-  size: 0x40000
 settings_storage:
-  address: 0xf8000
-  size: 0x8000
-  region: flash_primary
-pcd_sram:
-  address: 0x20000000
+  address: 0xfe000
   size: 0x2000
-  region: sram_primary
-sram_retained_mem:
-  region: sram_primary
-  address: 0x2007FC00
-  size: 0x400
-mcuboot_primary_1:
-  address: 0x0
-  region: ram_flash
-  size: 0x40000
+  region: flash_primary
