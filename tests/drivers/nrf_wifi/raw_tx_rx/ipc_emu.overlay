@@ -1,0 +1,10 @@
+/ {
+    chosen {
+        zephyr,shell-uart = &uart00;
+    };
+};
+
+
+&uart20 {
+    status = "disabled";
+};
