@@ -31,8 +31,6 @@ extern "C" {
 #define ZMS_NAMECNT_ID     0x80000000
 #define ZMS_NAME_ID_OFFSET 0x40000000
 
-#define SETTINGS_FULL_NAME_LEN SETTINGS_MAX_NAME_LEN + SETTINGS_EXTRA_LEN + 1
-
 struct settings_zms {
 	struct settings_store cf_store;
 	struct zms_fs cf_zms;
