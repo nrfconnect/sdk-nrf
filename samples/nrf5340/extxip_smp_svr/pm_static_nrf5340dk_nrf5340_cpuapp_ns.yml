@@ -103,31 +103,39 @@ ram_flash:
   region: ram_flash
   size: 0x0
 mcuboot_sram:
-  address: 0x20000000
+  address: 0x20002000
   end_address: 0x20080000
   orig_span: &id004
-  - pcd_sram
   - sram_primary
   - rpmsg_nrf53_sram
   region: sram_primary
-  size: 0x80000
+  size: 0x7e000
   span: *id004
 sram_secure:
-  address: 0x20000000
-  end_address: 0x2000a000
-  orig_span: &id005
-  - pcd_sram
+  address: 0x20002000
+  end_address: 0x20010000
+  orig_span: &id007
+  - tfm_sram
   region: sram_primary
-  size: 0xa000
-  span: *id005
+  size: 0xe000
+  span: *id007
+tfm_sram:
+  address: 0x20002000
+  inside:
+  - sram_secure
+  placement:
+    after:
+    - start
+  region: sram_primary
+  size: 0xe000
 sram_nonsecure:
-  address: 0x2000a000
+  address: 0x20010000
   end_address: 0x20080000
   orig_span: &id006
   - sram_primary
   - rpmsg_nrf53_sram
   region: sram_primary
-  size: 0x76000
+  size: 0x70000
   span: *id006
 rpmsg_nrf53_sram:
   address: 0x20070000
@@ -143,7 +151,7 @@ settings_storage:
   region: flash_primary
   size: 0x10000
 sram_primary:
-  address: 0x2000a000
+  address: 0x20010000
   end_address: 0x20070000
   region: sram_primary
-  size: 0x66000
+  size: 0x60000
