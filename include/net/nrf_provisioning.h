@@ -32,7 +32,7 @@ extern "C" {
  */
 enum nrf_provisioning_event {
 	/** Provisioning process started. Client will connect to the provisioning service. */
-	NRF_PROVISIONING_EVENT_START,
+	NRF_PROVISIONING_EVENT_START = 0x1,
 	/** Provisioning process stopped. All provisioning commands (if any) executed. */
 	NRF_PROVISIONING_EVENT_STOP,
 	/** Provisioning complete. "Finished" command received from the provisioning service. */
@@ -41,6 +41,9 @@ enum nrf_provisioning_event {
 	NRF_PROVISIONING_EVENT_FAILED,
 	/** Provisioning process failed, device not claimed.
 	 *  Try again after the device is claimed using the attestation token.
+	 *
+	 *  The event carries a pointer to the modem's attestation token in the 'token' field and is
+	 *  only provided if CONFIG_NRF_PROVISIONING_PRINT_ATTESTATION_TOKEN is enabled.
 	 */
 	NRF_PROVISIONING_EVENT_FAILED_NOT_CLAIMED,
 	/** Provisioning process failed, wrong CA certificate. */
@@ -50,17 +53,8 @@ enum nrf_provisioning_event {
 	/** Handling credentials internally, need the device to go online. */
 	NRF_PROVISIONING_EVENT_NEED_ONLINE,
 	/** Error occurred during provisioning. */
-	NRF_PROVISIONING_EVENT_ERROR
+	NRF_PROVISIONING_EVENT_ERROR,
 };
-
-/**
- * @typedef nrf_provisioning_event_cb_t
- * @brief Called when provisioning state changes.
- *
- * @param event nrf_provisioning event code.
- * @param user_data Application-specific data.
- */
-typedef void (*nrf_provisioning_event_cb_t)(enum nrf_provisioning_event event, void *user_data);
 
 /**
  * @struct nrf_provisioning_callback_data
@@ -71,21 +65,31 @@ typedef void (*nrf_provisioning_event_cb_t)(enum nrf_provisioning_event event, v
  * @param user_data Application-specific data to be fed to the callback once it is called.
  */
 struct nrf_provisioning_callback_data {
-	nrf_provisioning_event_cb_t cb;
-	void *user_data;
+	enum nrf_provisioning_event type;
+
+	/** Modem attestation token for device claiming. */
+	struct nrf_attestation_token *token;
 };
 
 /**
- * @brief Initializes the provisioning library and registers callback handlers.
+ * @typedef nrf_provisioning_event_cb_t
+ * @brief Called when provisioning state changes.
+ *
+ * @param event nrf_provisioning event structure.
+ */
+typedef void (*nrf_provisioning_event_cb_t)(const struct nrf_provisioning_callback_data *event);
+
+/**
+ * @brief Initializes the provisioning library and registers a callback handler.
  *
  * Consequent calls will only change callback functions used.
  * Feeding a null as a callback address means that the corresponding default callback function is
  * taken into use.
  *
- * @param callback_data Library callback, called when provisioning state changes.
+ * @param callback_handler Pointer to a library callback handler to receieve notifications.
  * @return < 0 on error, 0 on success.
  */
-int nrf_provisioning_init(struct nrf_provisioning_callback_data *callback_data);
+int nrf_provisioning_init(nrf_provisioning_event_cb_t callback_handler);
 
 /**
  * @brief Starts provisioning immediately.

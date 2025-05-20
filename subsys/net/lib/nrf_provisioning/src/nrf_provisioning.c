@@ -68,7 +68,7 @@ static bool initialized;
 
 static time_t nxt_provisioning;
 
-static struct nrf_provisioning_callback_data callback_data_local;
+static nrf_provisioning_event_cb_t callback_local;
 
 NRF_MODEM_LIB_ON_INIT(nrf_provisioning_init_hook, nrf_provisioning_on_modem_init, NULL);
 
@@ -127,16 +127,15 @@ static int cert_provision(void)
 		return 0;
 	}
 
-	callback_data_local.cb(NRF_PROVISIONING_EVENT_NEED_OFFLINE, callback_data_local.user_data);
-	ret = nrf_provisioning_wait_for_desired_mode(2, 60, true);
+	ret = nrf_provisioning_notify_event_and_wait_for_functional_mode(
+		120, NRF_PROVISIONING_EVENT_NEED_OFFLINE, callback_local);
 	if (ret) {
-		LOG_ERR("Failed to set modem offline, err %d", ret);
+		LOG_ERR("Failed to set modem online, err %d", ret);
 		return ret;
 	}
 
 	LOG_INF("Provisioning new certificate");
 	LOG_HEXDUMP_DBG(cert, cert_size, "New certificate: ");
-
 
 	ret = modem_key_mgmt_write(CONFIG_NRF_PROVISIONING_ROOT_CA_SEC_TAG,
 				   MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
@@ -147,14 +146,14 @@ static int cert_provision(void)
 		return ret;
 	}
 
-	callback_data_local.cb(NRF_PROVISIONING_EVENT_NEED_ONLINE, callback_data_local.user_data);
-	ret = nrf_provisioning_wait_for_desired_mode(2, 60, false);
+	ret = nrf_provisioning_notify_event_and_wait_for_functional_mode(
+		120, NRF_PROVISIONING_EVENT_NEED_ONLINE, callback_local);
 	if (ret) {
-		LOG_ERR("Failed to set modem offline, err %d", ret);
+		LOG_ERR("Failed to set modem online, err %d", ret);
 		return ret;
 	}
 
-	return ret;
+	return 0;
 }
 
 int nrf_provisioning_set(const char *key, size_t len_rd,
@@ -211,37 +210,55 @@ int nrf_provisioning_set(const char *key, size_t len_rd,
 	return -ENOENT;
 }
 
-int nrf_provisioning_wait_for_desired_mode(int timeout,
-					   int iterations,
-					   bool offline_needed)
+int nrf_provisioning_notify_event_and_wait_for_functional_mode(
+				int timeout_seconds,
+				enum nrf_provisioning_event event,
+				nrf_provisioning_event_cb_t callback)
 {
 	int ret;
 	enum lte_lc_func_mode fmode;
 
-	for (int i = 0; i < iterations; i++) {
+	if (callback == NULL) {
+		LOG_ERR("Callback data is NULL");
+		return -EINVAL;
+	}
+
+	if ((event != NRF_PROVISIONING_EVENT_NEED_OFFLINE) &&
+	    (event != NRF_PROVISIONING_EVENT_NEED_ONLINE)) {
+		LOG_ERR("Invalid event");
+		return -EINVAL;
+	}
+
+	struct nrf_provisioning_callback_data event_data = {
+		.type = event,
+	};
+
+	callback(&event_data);
+
+	for (int i = 0; i < timeout_seconds; i++) {
 		ret = lte_lc_func_mode_get(&fmode);
 		if (ret) {
 			LOG_ERR("Failed to read modem functional mode");
 			return ret;
 		}
 
-		if (offline_needed) {
+		if (event == NRF_PROVISIONING_EVENT_NEED_OFFLINE) {
 			if (fmode == LTE_LC_FUNC_MODE_OFFLINE) {
-				LOG_WRN("Modem is offline");
+				LOG_DBG("Modem is offline");
 				return 0;
 			}
-		} else {
+		} else if (event == NRF_PROVISIONING_EVENT_NEED_ONLINE) {
 			if ((fmode == LTE_LC_FUNC_MODE_NORMAL) ||
 			    (fmode == LTE_LC_FUNC_MODE_ACTIVATE_LTE)) {
-				LOG_WRN("Modem is online");
+				LOG_DBG("Modem is online");
 				return 0;
 			}
 		}
 
-		k_sleep(K_SECONDS(timeout));
+		k_sleep(K_SECONDS(1));
 	}
 
-	LOG_ERR("Timeout waiting for desired functional mode");
+	LOG_ERR("Timeout waiting for the desired functional mode");
 
 	return -ETIMEDOUT;
 }
@@ -283,12 +300,11 @@ static int settings_init(void)
 	return 0;
 }
 
-static void nrf_provisioning_callback(enum nrf_provisioning_event event, void *user_data)
+static void nrf_provisioning_callback(const struct nrf_provisioning_callback_data *event)
 {
-	(void)user_data;
 
 #if !CONFIG_UNITY
-	switch (event) {
+	switch (event->type) {
 	case NRF_PROVISIONING_EVENT_ERROR:
 		LOG_ERR("Provisioning error");
 		break;
@@ -371,24 +387,22 @@ static void nrf_provisioning_lte_handler(const struct lte_lc_evt *const evt)
 	}
 }
 
-int nrf_provisioning_init(struct nrf_provisioning_callback_data *callback_data)
+int nrf_provisioning_init(nrf_provisioning_event_cb_t callback_handler)
 {
 	int ret;
 
 	k_mutex_lock(&np_mtx, K_FOREVER);
 
-	if (!callback_data) {
-		callback_data_local.cb = nrf_provisioning_callback;
-		callback_data_local.user_data = NULL;
+	if (!callback_handler) {
+		callback_local = nrf_provisioning_callback;
 	} else {
-		callback_data_local.cb = callback_data->cb;
-		callback_data_local.user_data = callback_data->user_data;
+		callback_local = callback_handler;
 	}
 
 	if (IS_ENABLED(CONFIG_NRF_PROVISIONING_HTTP)) {
-		ret = nrf_provisioning_http_init(&callback_data_local);
+		ret = nrf_provisioning_http_init(callback_local);
 	} else {
-		ret = nrf_provisioning_coap_init(&callback_data_local);
+		ret = nrf_provisioning_coap_init(callback_local);
 	}
 
 	if (ret) {
@@ -569,6 +583,7 @@ void nrf_provisioning_set_interval(int interval)
 int nrf_provisioning_req(void)
 {
 	int ret;
+	struct nrf_provisioning_callback_data event_data = { 0 };
 
 	while (true) {
 
@@ -579,7 +594,8 @@ int nrf_provisioning_req(void)
 			ret = cert_provision();
 			if (ret) {
 				LOG_ERR("Failed to provision certificate, err %d", ret);
-				callback_data_local.cb(NRF_PROVISIONING_EVENT_ERROR, callback_data_local.user_data);
+				event_data.type = NRF_PROVISIONING_EVENT_ERROR;
+				callback_local(&event_data);
 				return ret;
 			}
 		}
@@ -601,7 +617,8 @@ int nrf_provisioning_req(void)
 			} while (!nw_connected || reschedule);
 		}
 
-		callback_data_local.cb(NRF_PROVISIONING_EVENT_START, callback_data_local.user_data);
+		event_data.type = NRF_PROVISIONING_EVENT_START;
+		callback_local(&event_data);
 
 		if (IS_ENABLED(CONFIG_NRF_PROVISIONING_HTTP)) {
 			ret = nrf_provisioning_http_req(&rest_ctx);
@@ -609,7 +626,8 @@ int nrf_provisioning_req(void)
 			ret = nrf_provisioning_coap_req(&coap_ctx);
 		}
 
-		callback_data_local.cb(NRF_PROVISIONING_EVENT_STOP, callback_data_local.user_data);
+		event_data.type = NRF_PROVISIONING_EVENT_STOP;
+		callback_local(&event_data);
 
 		if (IS_ENABLED(CONFIG_NRF_PROVISIONING_SCHEDULED)) {
 			while (ret == -EBUSY || ret == -ETIMEDOUT) {
@@ -630,19 +648,24 @@ int nrf_provisioning_req(void)
 					backoff = SRV_TIMEOUT_BACKOFF_MAX_S;
 				}
 
-				callback_data_local.cb(NRF_PROVISIONING_EVENT_START, callback_data_local.user_data);
+				event_data.type = NRF_PROVISIONING_EVENT_START;
+				callback_local(&event_data);
+
 				if (IS_ENABLED(CONFIG_NRF_PROVISIONING_HTTP)) {
 					ret = nrf_provisioning_http_req(&rest_ctx);
 				} else {
 					ret = nrf_provisioning_coap_req(&coap_ctx);
 				}
 
-				callback_data_local.cb(NRF_PROVISIONING_EVENT_STOP, callback_data_local.user_data);
+				event_data.type = NRF_PROVISIONING_EVENT_STOP;
+				callback_local(&event_data);
 			}
 		}
 
 		if (ret == -EACCES) {
 			LOG_WRN("Unauthorized access: device is not yet claimed.");
+
+			event_data.type = NRF_PROVISIONING_EVENT_FAILED_NOT_CLAIMED;
 
 			if (IS_ENABLED(CONFIG_NRF_PROVISIONING_PRINT_ATTESTATION_TOKEN)) {
 				struct nrf_attestation_token token = { 0 };
@@ -652,32 +675,37 @@ int nrf_provisioning_req(void)
 				if (err) {
 					LOG_ERR("Failed to get token, err %d", err);
 				} else {
-					printk("\nAttestation token "
-					       "for claiming device on nRFCloud:\n");
-					printk("%.*s.%.*s\n\n", token.attest_sz, token.attest,
-					       token.cose_sz, token.cose);
+					event_data.token = &token;
+					callback_local(&event_data);
+
 					modem_attest_token_free(&token);
 				}
+
+			} else {
+				callback_local(&event_data);
 			}
 
-			callback_data_local.cb(NRF_PROVISIONING_EVENT_FAILED_NOT_CLAIMED, callback_data_local.user_data);
-		}
-
-		if (ret == -EINVAL) {
+		} else if (ret == -EINVAL) {
 			__ASSERT(false, "Invalid exchange, abort");
 			LOG_ERR("Invalid exchange");
 
-			callback_data_local.cb(NRF_PROVISIONING_EVENT_FAILED, callback_data_local.user_data);
+			event_data.type = NRF_PROVISIONING_EVENT_FAILED;
+			callback_local(&event_data);
+
 		} else if (ret == -ECONNREFUSED) {
 			LOG_ERR("Connection refused");
 			LOG_WRN("Please check the CA certificate stored in sectag "
 				STRINGIFY(CONFIG_NRF_PROVISIONING_ROOT_CA_SEC_TAG)"");
 
-			callback_data_local.cb(NRF_PROVISIONING_EVENT_FAILED_WRONG_CA, callback_data_local.user_data);
+			event_data.type = NRF_PROVISIONING_EVENT_FAILED_WRONG_CA;
+			callback_local(&event_data);
+
 		} else if (ret < 0) {
 			LOG_ERR("Provisioning failed, error: %d", ret);
 
-			callback_data_local.cb(NRF_PROVISIONING_EVENT_FAILED, callback_data_local.user_data);
+			event_data.type = NRF_PROVISIONING_EVENT_FAILED;
+			callback_local(&event_data);
+
 		} else if (ret > 0) {
 			/* Provisioning finished */
 
@@ -686,7 +714,8 @@ int nrf_provisioning_req(void)
 				commit_latest_cmd_id();
 			}
 
-			callback_data_local.cb(NRF_PROVISIONING_EVENT_DONE, callback_data_local.user_data);
+			event_data.type = NRF_PROVISIONING_EVENT_DONE;
+			callback_local(&event_data);
 		}
 
 #if CONFIG_UNITY

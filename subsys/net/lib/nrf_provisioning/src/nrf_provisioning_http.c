@@ -83,7 +83,7 @@ LOG_MODULE_REGISTER(nrf_provisioning_http, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 #define USER_AGENT_HDR (HDR_TYPE_USER_AGENT "/" ZEPHYR_VER CRLF)
 
 
-int nrf_provisioning_http_init(struct nrf_provisioning_callback_data *mmode)
+int nrf_provisioning_http_init(nrf_provisioning_event_cb_t callback);
 {
 	static bool initialized;
 	int ret;

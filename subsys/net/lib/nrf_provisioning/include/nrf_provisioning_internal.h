@@ -47,24 +47,27 @@ int nrf_provisioning_set(const char *key, size_t len_rd,
 
 
 /**
- * @brief Wait for the modem to enter the desired functional mode.
- *	  Can be used to verify the modem's functional mode prior to writing credentials / AT
- *	  commands.
+ * @brief Notify a provisioning event and wait for the modem to enter the desired functional mode.
  *
- * This function waits for the modem to enter the desired functional mode.
- * It checks the current functional mode at regular intervals and returns
- * when the desired mode is reached or the timeout is reached.
+ * This function notifies the provided provisioning event via the callback and waits for the modem
+ * to enter the corresponding functional mode. It periodically checks the modem's functional mode
+ * and returns when the desired mode is reached or the timeout expires.
  *
- * @param timeout The time to wait between checks in seconds.
- * @param iterations The number of times to check the functional mode.
- * @param offline_needed If true, waits for the modem to enter offline mode. If not, either
- *			 normal or lte activation mode is accepted.
+ * @param timeout_seconds Number of seconds to wait for the modem to reach the desired mode.
+ * @param event The provisioning event to notify. Must be either NRF_PROVISIONING_EVENT_NEED_OFFLINE
+ *              or NRF_PROVISIONING_EVENT_NEED_ONLINE.
+ * @param callback_data_internal Pointer to callback data structure containing the callback function
+ *                              and user data. Must not be NULL.
  *
- * @return 0 on success, negative error code on failure.
+ * @retval 0 If the modem entered the desired functional mode within the timeout.
+ * @retval -EINVAL If the callback data is NULL or the event is invalid.
+ * @retval -ETIMEDOUT If the modem did not enter the desired mode within the timeout.
+ * @retval < 0 Other negative error codes from lte_lc_func_mode_get() on failure.
  */
-int nrf_provisioning_wait_for_desired_mode(int timeout,
-					   int iterations,
-					   bool offline_needed);
+int nrf_provisioning_notify_event_and_wait_for_functional_mode(
+				int timeout_seconds,
+				enum nrf_provisioning_event event,
+				nrf_provisioning_event_cb_t callback);
 
 #ifdef __cplusplus
 }

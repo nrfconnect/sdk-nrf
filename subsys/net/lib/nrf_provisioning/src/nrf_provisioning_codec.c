@@ -42,7 +42,7 @@ LOG_MODULE_REGISTER(nrf_provisioning_codec, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 #define AT_RESP_MAX_SIZE 4096
 #define KEYGEN_BUFFER_SIZE 1024
 
-static struct nrf_provisioning_callback_data callback_data_internal;
+static nrf_provisioning_event_cb_t callback_local;
 
 static struct cdc_out_fmt_data {
 	/* Data */
@@ -70,10 +70,9 @@ char * const nrf_provisioning_codec_get_latest_cmd_id(void)
 	return nrf_provisioning_latest_corr_id;
 }
 
-int nrf_provisioning_codec_init(struct nrf_provisioning_callback_data *callback_data)
+int nrf_provisioning_codec_init(nrf_provisioning_event_cb_t callback)
 {
-	callback_data_internal.cb = callback_data->cb;
-	callback_data_internal.user_data = callback_data->user_data;
+	callback_local = callback;
 
 	return 0;
 }
@@ -525,11 +524,11 @@ int nrf_provisioning_codec_process_commands(void)
 
 				LOG_WRN("Modem is not offline, setting it to offline");
 
-				callback_data_internal.cb(NRF_PROVISIONING_EVENT_NEED_OFFLINE, callback_data_internal.user_data);
-				ret = nrf_provisioning_wait_for_desired_mode(2, 60, true);
+				ret = nrf_provisioning_notify_event_and_wait_for_functional_mode(
+					120, NRF_PROVISIONING_EVENT_NEED_OFFLINE, callback_local);
 				if (ret) {
-					LOG_ERR("Failed to set modem offline, err %d", ret);
-					goto stop_provisioning;
+					LOG_ERR("Failed to set modem online, err %d", ret);
+					return ret;
 				}
 			}
 
@@ -565,10 +564,10 @@ stop_provisioning:
 		NRF_PROVISIONING_AT_CMEE_STATE_ENABLE :
 		NRF_PROVISIONING_AT_CMEE_STATE_DISABLE);
 
-	callback_data_internal.cb(NRF_PROVISIONING_EVENT_NEED_ONLINE, callback_data_internal.user_data);
-	ret = nrf_provisioning_wait_for_desired_mode(2, 60, false);
+	ret = nrf_provisioning_notify_event_and_wait_for_functional_mode(
+		120, NRF_PROVISIONING_EVENT_NEED_ONLINE, callback_local);
 	if (ret) {
-		LOG_ERR("Failed to set modem offline, err %d", ret);
+		LOG_ERR("Failed to set modem online, err %d", ret);
 		return ret;
 	}
 

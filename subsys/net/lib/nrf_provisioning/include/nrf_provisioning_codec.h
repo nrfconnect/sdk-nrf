@@ -39,7 +39,7 @@ struct cdc_context {
 /**
  *  @brief Initialize the codec used encoding the data to the cloud.
  */
-int nrf_provisioning_codec_init(struct nrf_provisioning_callback_data *callback_data);
+int nrf_provisioning_codec_init(nrf_provisioning_event_cb_t callback);
 
 /**
  * @brief For each provisioning request setup the environment

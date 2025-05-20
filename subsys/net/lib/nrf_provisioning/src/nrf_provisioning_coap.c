@@ -60,12 +60,12 @@ static bool socket_keep_open;
 
 static K_SEM_DEFINE(coap_response, 0, 1);
 
-int nrf_provisioning_coap_init(struct nrf_provisioning_callback_data *callback_data)
+int nrf_provisioning_coap_init(nrf_provisioning_event_cb_t callback)
 {
 	static bool initialized;
 	int ret;
 
-	nrf_provisioning_codec_init(callback_data);
+	nrf_provisioning_codec_init(callback);
 
 	if (initialized) {
 		return 0;
