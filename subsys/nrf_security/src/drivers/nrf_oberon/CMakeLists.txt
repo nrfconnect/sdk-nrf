@@ -82,8 +82,8 @@ target_link_libraries(oberon_psa_driver
     mbedcrypto_oberon_imported
 )
 
-# Link oberon_psa_core with this driver
-target_link_libraries(oberon_psa_core
+# Link psa_core with this driver
+target_link_libraries(psa_core
   PRIVATE
     oberon_psa_driver
 )
