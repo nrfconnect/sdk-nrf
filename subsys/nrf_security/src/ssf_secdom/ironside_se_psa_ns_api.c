@@ -127,5 +127,5 @@ exit:
 		out_vec[i].len = out_vec_copy[i].len;
 	}
 
-	return status;
+	return 1;
 }
