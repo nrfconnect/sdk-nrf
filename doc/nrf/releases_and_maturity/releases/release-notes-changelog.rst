@@ -248,16 +248,6 @@ Amazon Sidewalk samples
 Bluetooth samples
 -----------------
 
-* Added support for the nRF54LM20 PDK in the following samples:
-
-   * :ref:`peripheral_lbs`
-   * :ref:`central_uart`
-   * :ref:`peripheral_uart`
-   * :ref:`peripheral_hids_mouse`
-   * :ref:`peripheral_hids_keyboard`
-   * :ref:`bluetooth_central_hids`
-   * :ref:`direct_test_mode`
-
 * :ref:`bluetooth_isochronous_time_synchronization` sample:
 
   * Fixed an issue where the sample would assert with the :kconfig:option:`CONFIG_ASSERT` Kconfig option enabled.
@@ -355,10 +345,6 @@ nRF5340 samples
 
 Peripheral samples
 ------------------
-
-* :ref:`radio_test` sample:
-
-   * Added support for the nRF54LM20 PDK.
 
 |no_changes_yet_note|
 
