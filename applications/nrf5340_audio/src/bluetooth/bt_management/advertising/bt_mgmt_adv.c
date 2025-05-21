@@ -44,7 +44,7 @@ static struct bt_le_adv_param ext_adv_param = {
 	.id = BT_ID_DEFAULT,
 	.sid = CONFIG_BLE_ACL_ADV_SID,
 	.secondary_max_skip = 0,
-	.options = BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_USE_NAME,
+	.options = BT_LE_ADV_OPT_EXT_ADV,
 	.interval_min = CONFIG_BLE_ACL_EXT_ADV_INT_MIN,
 	.interval_max = CONFIG_BLE_ACL_EXT_ADV_INT_MAX,
 	.peer = NULL,
@@ -320,10 +320,10 @@ void bt_mgmt_dir_adv_timed_out(uint8_t ext_adv_index)
 	}
 
 	if (IS_ENABLED(CONFIG_BT_FILTER_ACCEPT_LIST)) {
-		ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_CONN_NAME_FILTER, &adv_cb,
+		ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_CONN_FILTER, &adv_cb,
 					   &ext_adv[ext_adv_index]);
 	} else {
-		ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_CONN_NAME, &adv_cb,
+		ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_CONN, &adv_cb,
 					   &ext_adv[ext_adv_index]);
 	}
 
@@ -449,7 +449,7 @@ int bt_mgmt_adv_start(uint8_t ext_adv_index, const struct bt_data *adv, size_t a
 	}
 
 	if (connectable) {
-		ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_CONN_NAME, &adv_cb,
+		ret = bt_le_ext_adv_create(LE_AUDIO_EXTENDED_ADV_CONN, &adv_cb,
 					   &ext_adv[ext_adv_index]);
 		if (ret) {
 			LOG_ERR("Unable to create a connectable extended advertising set: %d", ret);
