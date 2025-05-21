@@ -101,9 +101,11 @@ tests:
       - multi_domain_SNIPPET=nrf70-wifi
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
       - nrf54l15dk/nrf54l15/cpuapp
     tags:
       - ci_build
@@ -118,9 +120,11 @@ tests:
       - multi_domain_SNIPPET=nrf70-wifi
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
       - nrf54l15dk/nrf54l15/cpuapp
     tags:
       - ci_build

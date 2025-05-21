@@ -14,6 +14,7 @@ tests:
   drivers.pwm.gpio_loopback:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
@@ -22,6 +23,7 @@ tests:
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
@@ -29,16 +31,20 @@ tests:
   drivers.pwm.gpio_loopback.fast_p7_0:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_0.overlay"
       - CONFIG_TEST_PWM_PERIOD_USEC=10000
   drivers.pwm.gpio_loopback.fast_p7_1:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_1.overlay"
       - CONFIG_TEST_PWM_PERIOD_USEC=10000
@@ -46,8 +52,10 @@ tests:
     build_only: true
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_6.overlay"
       - CONFIG_TEST_PWM_PERIOD_USEC=10000
@@ -55,8 +63,10 @@ tests:
     build_only: true
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_7.overlay"
       - CONFIG_TEST_PWM_PERIOD_USEC=10000

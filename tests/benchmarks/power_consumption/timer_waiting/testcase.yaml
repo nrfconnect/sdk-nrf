@@ -43,8 +43,10 @@ tests:
     sysbuild: true
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_16M.overlay"
       - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
@@ -57,8 +59,10 @@ tests:
     sysbuild: true
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_320M.overlay"
       - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf

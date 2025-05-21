@@ -21,6 +21,7 @@ common:
     - nrf54l15dk/nrf54l10/cpuapp
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54h20dk/nrf54h20/cpuapp/iron
     - nrf9160dk/nrf9160/ns
     - qemu_cortex_m3
     - thingy91x/nrf9151/ns
@@ -33,6 +34,7 @@ common:
     - nrf54l15dk/nrf54l10/cpuapp
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54h20dk/nrf54h20/cpuapp/iron
     - nrf9160dk/nrf9160/ns
     - qemu_cortex_m3
   platform_exclude:

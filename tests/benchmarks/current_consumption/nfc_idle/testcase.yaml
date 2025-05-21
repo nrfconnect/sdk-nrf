@@ -19,8 +19,10 @@ tests:
   benchmarks.current_consumption.nfc_idle_nrf54h:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - CONFIG_PM=y
       - CONFIG_PM_S2RAM=y

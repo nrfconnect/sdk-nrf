@@ -5,8 +5,10 @@ common:
     - ci_tests_benchmarks_multicore
   platform_allow:
     - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54h20dk/nrf54h20/cpuapp/iron
   integration_platforms:
     - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54h20dk/nrf54h20/cpuapp/iron
 
 tests:
   benchmarks.multicore.idle_ppr.no_sleep:

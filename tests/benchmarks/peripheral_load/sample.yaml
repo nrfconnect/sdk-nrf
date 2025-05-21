@@ -47,6 +47,7 @@ tests:
     platform_allow: nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
 
   sample.benchmarks.peripheral_stress_test.nrf54l:
     filter: not CONFIG_COVERAGE
