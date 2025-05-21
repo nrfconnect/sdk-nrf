@@ -11,17 +11,16 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/audio/audio.h>
 
-#define LE_AUDIO_EXTENDED_ADV_NAME                                                                 \
-	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_USE_NAME,                            \
+#define LE_AUDIO_EXTENDED_ADV                                                                      \
+	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV, CONFIG_BLE_ACL_EXT_ADV_INT_MIN,                     \
+			CONFIG_BLE_ACL_EXT_ADV_INT_MAX, NULL)
+
+#define LE_AUDIO_EXTENDED_ADV_CONN                                                                 \
+	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_CONN,                                \
 			CONFIG_BLE_ACL_EXT_ADV_INT_MIN, CONFIG_BLE_ACL_EXT_ADV_INT_MAX, NULL)
 
-#define LE_AUDIO_EXTENDED_ADV_CONN_NAME                                                            \
-	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_CONN | BT_LE_ADV_OPT_USE_NAME,       \
-			CONFIG_BLE_ACL_EXT_ADV_INT_MIN, CONFIG_BLE_ACL_EXT_ADV_INT_MAX, NULL)
-
-#define LE_AUDIO_EXTENDED_ADV_CONN_NAME_FILTER                                                     \
-	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_CONN | BT_LE_ADV_OPT_USE_NAME |      \
-				BT_LE_ADV_OPT_FILTER_CONN,                                         \
+#define LE_AUDIO_EXTENDED_ADV_CONN_FILTER                                                          \
+	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_CONN | BT_LE_ADV_OPT_FILTER_CONN,    \
 			CONFIG_BLE_ACL_EXT_ADV_INT_MIN, CONFIG_BLE_ACL_EXT_ADV_INT_MAX, NULL)
 
 #define LE_AUDIO_PERIODIC_ADV                                                                      \

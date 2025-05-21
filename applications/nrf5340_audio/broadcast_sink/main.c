@@ -537,6 +537,11 @@ static int ext_adv_populate(struct bt_data *ext_adv_buf, size_t ext_adv_buf_size
 		return ret;
 	}
 
+	ext_adv_buf[ext_adv_buf_cnt].type = BT_DATA_NAME_COMPLETE;
+	ext_adv_buf[ext_adv_buf_cnt].data = CONFIG_BT_DEVICE_NAME;
+	ext_adv_buf[ext_adv_buf_cnt].data_len = sizeof(CONFIG_BT_DEVICE_NAME) - 1;
+	ext_adv_buf_cnt++;
+
 	ret = broadcast_sink_adv_populate(&ext_adv_buf[ext_adv_buf_cnt],
 					  ext_adv_buf_size - ext_adv_buf_cnt);
 
