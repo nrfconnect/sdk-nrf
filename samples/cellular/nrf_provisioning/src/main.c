@@ -18,89 +18,63 @@
 
 LOG_MODULE_REGISTER(nrf_provisioning_sample, CONFIG_NRF_PROVISIONING_SAMPLE_LOG_LEVEL);
 
-static struct nrf_provisioning_dm_change dmode;
-static struct nrf_provisioning_mm_change mmode;
-
-static int modem_mode_cb(enum lte_lc_func_mode new_mode, void *user_data)
+static void nrf_provisioning_callback(const struct nrf_provisioning_callback_data *event)
 {
-	enum lte_lc_func_mode fmode;
-	char time_buf[64];
 	int ret;
 
-	ARG_UNUSED(user_data);
-
-	if (lte_lc_func_mode_get(&fmode)) {
-		LOG_ERR("Failed to read modem functional mode");
-		ret = -EFAULT;
-		return ret;
-	}
-
-	if (fmode == new_mode) {
-		ret = fmode;
-	} else if (new_mode == LTE_LC_FUNC_MODE_NORMAL) {
-		/* Use the blocking call, because in next step
-		 * the service will create a socket and call connect()
-		 */
-		ret = lte_lc_connect();
-
-		if (ret) {
-			LOG_ERR("lte_lc_connect() failed %d", ret);
-		}
-		LOG_INF("Modem connection restored");
-
-		LOG_INF("Waiting for modem to acquire network time...");
-
-		do {
-			k_sleep(K_SECONDS(3));
-			ret = nrf_provisioning_at_time_get(time_buf, sizeof(time_buf));
-		} while (ret != 0);
-
-		LOG_INF("Network time obtained");
-		ret = fmode;
-	} else {
-		ret = lte_lc_func_mode_set(new_mode);
-		if (ret == 0) {
-			LOG_DBG("Modem set to requested state %d", new_mode);
-			ret = fmode;
-		}
-	}
-
-	return ret;
-}
-
-static void reboot_device(void)
-{
-	/* Disconnect from network gracefully */
-	int ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
-
-	if (ret != 0) {
-		LOG_ERR("Unable to set modem offline, error %d", ret);
-	}
-
-	while (log_process()) {
-		;
-	}
-
-	sys_reboot(SYS_REBOOT_WARM);
-}
-
-static void device_mode_cb(enum nrf_provisioning_event event, void *user_data)
-{
-	ARG_UNUSED(user_data);
-
-	switch (event) {
+	switch (event->type) {
 	case NRF_PROVISIONING_EVENT_START:
 		LOG_INF("Provisioning started");
 		break;
 	case NRF_PROVISIONING_EVENT_STOP:
 		LOG_INF("Provisioning stopped");
 		break;
+	case NRF_PROVISIONING_EVENT_NEED_LTE_DEACTIVATED:
+		LOG_INF("nRF Provisioning requires device to activate network");
+
+		ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
+		if (ret) {
+			LOG_ERR("lte_lc_func_mode_set, error: %d", ret);
+			return;
+		}
+
+		break;
+	case NRF_PROVISIONING_EVENT_NEED_LTE_ACTIVATED:
+		LOG_INF("nRF Provisioning requires device to deactivate network");
+
+		ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_LTE);
+		if (ret) {
+			LOG_ERR("lte_lc_func_mode_set, error: %d", ret);
+			return;
+		}
+
+		break;
+	case NRF_PROVISIONING_EVENT_FAILED:
+		LOG_ERR("Provisioning failed, try again...");
+		break;
+	case NRF_PROVISIONING_EVENT_FAILED_DEVICE_NOT_CLAIMED:
+		LOG_WRN("Provisioning failed, device not claimed");
+		LOG_WRN("Claim the device using the device's attestation token on nrfcloud.com");
+
+		if (IS_ENABLED(CONFIG_NRF_PROVISIONING_PROVIDE_ATTESTATION_TOKEN)) {
+			LOG_WRN("Attestation token:\r\n\n%.*s.%.*s\r\n", event->token->attest_sz,
+						       			 event->token->attest,
+						       			 event->token->cose_sz,
+						       			 event->token->cose);
+		}
+
+		break;
+	case NRF_PROVISIONING_EVENT_FAILED_WRONG_ROOT_CA:
+		LOG_ERR("Provisioning failed, wrong root CA certificate for nRF Cloud provisioned");
+		break;
+	case NRF_PROVISIONING_EVENT_FATAL_ERROR:
+		LOG_ERR("Provisioning error, irrecoverable");
+		break;
 	case NRF_PROVISIONING_EVENT_DONE:
-		LOG_INF("Provisioning done, rebooting...");
-		reboot_device();
+		LOG_WRN("Provisioning successful");
 		break;
 	default:
-		LOG_ERR("Unknown event");
+		/* Don't care */
 		break;
 	}
 }
@@ -109,30 +83,27 @@ int main(void)
 {
 	int ret;
 
-	mmode.cb = modem_mode_cb;
-	mmode.user_data = NULL;
-	dmode.cb = device_mode_cb;
-	dmode.user_data = NULL;
-
 	LOG_INF("nRF Device Provisioning Sample");
 
 	ret = nrf_modem_lib_init();
 	if (ret < 0) {
 		LOG_ERR("Unable to init modem library (%d)", ret);
-		return 0;
+		return ret;
 	}
 
 	LOG_INF("Establishing LTE link ...");
+
 	ret = lte_lc_connect();
 	if (ret) {
 		LOG_ERR("LTE link could not be established (%d)", ret);
-		return 0;
+		return ret;
 	}
 
 	if (!IS_ENABLED(CONFIG_NRF_PROVISIONING_AUTO_INIT)) {
-		ret = nrf_provisioning_init(&mmode, &dmode);
+		ret = nrf_provisioning_init(nrf_provisioning_callback);
 		if (ret) {
 			LOG_ERR("Failed to initialize provisioning client");
+			return ret;
 		}
 	}
 

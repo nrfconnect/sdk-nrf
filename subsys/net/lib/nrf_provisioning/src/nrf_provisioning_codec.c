@@ -524,8 +524,8 @@ int nrf_provisioning_codec_process_commands(void)
 
 				LOG_WRN("Modem is not offline, setting it to offline");
 
-				ret = nrf_provisioning_notify_event_and_wait_for_functional_mode(
-					120, NRF_PROVISIONING_EVENT_NEED_OFFLINE, callback_local);
+				ret = nrf_provisioning_notify_event_and_wait_for_modem_state(
+					120, NRF_PROVISIONING_EVENT_NEED_LTE_DEACTIVATED, callback_local);
 				if (ret) {
 					LOG_ERR("Failed to set modem online, err %d", ret);
 					return ret;
@@ -564,8 +564,8 @@ stop_provisioning:
 		NRF_PROVISIONING_AT_CMEE_STATE_ENABLE :
 		NRF_PROVISIONING_AT_CMEE_STATE_DISABLE);
 
-	ret = nrf_provisioning_notify_event_and_wait_for_functional_mode(
-		120, NRF_PROVISIONING_EVENT_NEED_ONLINE, callback_local);
+	ret = nrf_provisioning_notify_event_and_wait_for_modem_state(
+		120, NRF_PROVISIONING_EVENT_NEED_LTE_ACTIVATED, callback_local);
 	if (ret) {
 		LOG_ERR("Failed to set modem online, err %d", ret);
 		return ret;

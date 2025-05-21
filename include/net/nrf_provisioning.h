@@ -15,6 +15,7 @@
 #include <stddef.h>
 
 #include <modem/lte_lc.h>
+#include <modem/modem_attest_token.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -43,17 +44,17 @@ enum nrf_provisioning_event {
 	 *  Try again after the device is claimed using the attestation token.
 	 *
 	 *  The event carries a pointer to the modem's attestation token in the 'token' field and is
-	 *  only provided if CONFIG_NRF_PROVISIONING_PRINT_ATTESTATION_TOKEN is enabled.
+	 *  only provided if CONFIG_NRF_PROVISIONING_PROVIDE_ATTESTATION_TOKEN is enabled.
 	 */
-	NRF_PROVISIONING_EVENT_FAILED_NOT_CLAIMED,
+	NRF_PROVISIONING_EVENT_FAILED_DEVICE_NOT_CLAIMED,
 	/** Provisioning process failed, wrong CA certificate. */
-	NRF_PROVISIONING_EVENT_FAILED_WRONG_CA,
+	NRF_PROVISIONING_EVENT_FAILED_WRONG_ROOT_CA,
 	/** Handling credentials internally, need the device to go offline. */
-	NRF_PROVISIONING_EVENT_NEED_OFFLINE,
+	NRF_PROVISIONING_EVENT_NEED_LTE_DEACTIVATED,
 	/** Handling credentials internally, need the device to go online. */
-	NRF_PROVISIONING_EVENT_NEED_ONLINE,
+	NRF_PROVISIONING_EVENT_NEED_LTE_ACTIVATED,
 	/** Error occurred during provisioning. */
-	NRF_PROVISIONING_EVENT_ERROR,
+	NRF_PROVISIONING_EVENT_FATAL_ERROR,
 };
 
 /**

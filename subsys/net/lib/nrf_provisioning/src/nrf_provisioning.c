@@ -127,8 +127,8 @@ static int cert_provision(void)
 		return 0;
 	}
 
-	ret = nrf_provisioning_notify_event_and_wait_for_functional_mode(
-		120, NRF_PROVISIONING_EVENT_NEED_OFFLINE, callback_local);
+	ret = nrf_provisioning_notify_event_and_wait_for_modem_state(
+		120, NRF_PROVISIONING_EVENT_NEED_LTE_DEACTIVATED, callback_local);
 	if (ret) {
 		LOG_ERR("Failed to set modem online, err %d", ret);
 		return ret;
@@ -146,8 +146,8 @@ static int cert_provision(void)
 		return ret;
 	}
 
-	ret = nrf_provisioning_notify_event_and_wait_for_functional_mode(
-		120, NRF_PROVISIONING_EVENT_NEED_ONLINE, callback_local);
+	ret = nrf_provisioning_notify_event_and_wait_for_modem_state(
+		120, NRF_PROVISIONING_EVENT_NEED_LTE_ACTIVATED, callback_local);
 	if (ret) {
 		LOG_ERR("Failed to set modem online, err %d", ret);
 		return ret;
@@ -210,7 +210,7 @@ int nrf_provisioning_set(const char *key, size_t len_rd,
 	return -ENOENT;
 }
 
-int nrf_provisioning_notify_event_and_wait_for_functional_mode(
+int nrf_provisioning_notify_event_and_wait_for_modem_state(
 				int timeout_seconds,
 				enum nrf_provisioning_event event,
 				nrf_provisioning_event_cb_t callback)
@@ -223,8 +223,8 @@ int nrf_provisioning_notify_event_and_wait_for_functional_mode(
 		return -EINVAL;
 	}
 
-	if ((event != NRF_PROVISIONING_EVENT_NEED_OFFLINE) &&
-	    (event != NRF_PROVISIONING_EVENT_NEED_ONLINE)) {
+	if ((event != NRF_PROVISIONING_EVENT_NEED_LTE_DEACTIVATED) &&
+	    (event != NRF_PROVISIONING_EVENT_NEED_LTE_ACTIVATED)) {
 		LOG_ERR("Invalid event");
 		return -EINVAL;
 	}
@@ -242,15 +242,14 @@ int nrf_provisioning_notify_event_and_wait_for_functional_mode(
 			return ret;
 		}
 
-		if (event == NRF_PROVISIONING_EVENT_NEED_OFFLINE) {
+		if (event == NRF_PROVISIONING_EVENT_NEED_LTE_DEACTIVATED) {
 			if (fmode == LTE_LC_FUNC_MODE_OFFLINE) {
 				LOG_DBG("Modem is offline");
 				return 0;
 			}
-		} else if (event == NRF_PROVISIONING_EVENT_NEED_ONLINE) {
-			if ((fmode == LTE_LC_FUNC_MODE_NORMAL) ||
-			    (fmode == LTE_LC_FUNC_MODE_ACTIVATE_LTE)) {
-				LOG_DBG("Modem is online");
+		} else if (event == NRF_PROVISIONING_EVENT_NEED_LTE_ACTIVATED) {
+			if (nw_connected) {
+				LOG_DBG("Modem is registered to LTE network");
 				return 0;
 			}
 		}
@@ -305,7 +304,7 @@ static void nrf_provisioning_callback(const struct nrf_provisioning_callback_dat
 
 #if !CONFIG_UNITY
 	switch (event->type) {
-	case NRF_PROVISIONING_EVENT_ERROR:
+	case NRF_PROVISIONING_EVENT_FATAL_ERROR:
 		LOG_ERR("Provisioning error");
 		break;
 	case NRF_PROVISIONING_EVENT_DONE:
@@ -321,7 +320,7 @@ static void nrf_provisioning_callback(const struct nrf_provisioning_callback_dat
 
 		sys_reboot(SYS_REBOOT_WARM);
 		break;
-	case NRF_PROVISIONING_EVENT_NEED_OFFLINE:
+	case NRF_PROVISIONING_EVENT_NEED_LTE_DEACTIVATED:
 		LOG_INF("Modem offline needed");
 
 		enum lte_lc_func_mode mode = LTE_LC_FUNC_MODE_OFFLINE;
@@ -333,7 +332,7 @@ static void nrf_provisioning_callback(const struct nrf_provisioning_callback_dat
 		}
 
 		break;
-	case NRF_PROVISIONING_EVENT_NEED_ONLINE: {
+	case NRF_PROVISIONING_EVENT_NEED_LTE_ACTIVATED: {
 		LOG_INF("Modem online needed");
 
 		char time_buf[64];
@@ -594,7 +593,7 @@ int nrf_provisioning_req(void)
 			ret = cert_provision();
 			if (ret) {
 				LOG_ERR("Failed to provision certificate, err %d", ret);
-				event_data.type = NRF_PROVISIONING_EVENT_ERROR;
+				event_data.type = NRF_PROVISIONING_EVENT_FATAL_ERROR;
 				callback_local(&event_data);
 				return ret;
 			}
@@ -665,9 +664,9 @@ int nrf_provisioning_req(void)
 		if (ret == -EACCES) {
 			LOG_WRN("Unauthorized access: device is not yet claimed.");
 
-			event_data.type = NRF_PROVISIONING_EVENT_FAILED_NOT_CLAIMED;
+			event_data.type = NRF_PROVISIONING_EVENT_FAILED_DEVICE_NOT_CLAIMED;
 
-			if (IS_ENABLED(CONFIG_NRF_PROVISIONING_PRINT_ATTESTATION_TOKEN)) {
+			if (IS_ENABLED(CONFIG_NRF_PROVISIONING_PROVIDE_ATTESTATION_TOKEN)) {
 				struct nrf_attestation_token token = { 0 };
 				int err;
 
@@ -697,7 +696,7 @@ int nrf_provisioning_req(void)
 			LOG_WRN("Please check the CA certificate stored in sectag "
 				STRINGIFY(CONFIG_NRF_PROVISIONING_ROOT_CA_SEC_TAG)"");
 
-			event_data.type = NRF_PROVISIONING_EVENT_FAILED_WRONG_CA;
+			event_data.type = NRF_PROVISIONING_EVENT_FAILED_WRONG_ROOT_CA;
 			callback_local(&event_data);
 
 		} else if (ret < 0) {
