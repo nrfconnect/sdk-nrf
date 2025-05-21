@@ -351,7 +351,9 @@ nRF5340 samples
 Peripheral samples
 ------------------
 
-|no_changes_yet_note|
+* :ref:`radio_test` sample:
+
+  * Added experimental ``llvm`` toolchain support for the ``nrf54l15dk/nrf54l15/cpuapp`` board target.
 
 PMIC samples
 ------------
