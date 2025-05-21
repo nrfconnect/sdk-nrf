@@ -82,6 +82,7 @@ tests:
   drivers.audio.pdm_loopback.nrf54h20.1000khz:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - CONFIG_NRFX_TIMER130=y
       - CONFIG_TEST_PDM_SAMPLING_TIME=10
@@ -89,6 +90,7 @@ tests:
   drivers.audio.pdm_loopback.nrf54h20.1600khz:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - CONFIG_NRFX_TIMER130=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=16000
@@ -98,6 +100,7 @@ tests:
   drivers.audio.pdm_loopback.nrf54h20.audiopll.44k1hz:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - CONFIG_NRFX_TIMER130=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=44100
@@ -109,6 +112,7 @@ tests:
   drivers.audio.pdm_loopback.nrf54h20.audiopll.48khz:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - CONFIG_NRFX_TIMER130=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=48000
@@ -120,6 +124,7 @@ tests:
   drivers.audio.pdm_loopback.nrf54h20.no_dmm:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - CONFIG_NRFX_TIMER130=y
       - CONFIG_TEST_PDM_SAMPLING_TIME=10

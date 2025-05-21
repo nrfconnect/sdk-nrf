@@ -11,8 +11,10 @@ tests:
       - ppk_power_measure
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - SHIELD=pca63566
       - EXTRA_DTC_OVERLAY_FILE=boards/nrf54h20dk_nrf54h20_cpuapp_pm.overlay

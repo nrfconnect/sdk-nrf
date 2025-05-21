@@ -34,8 +34,10 @@ tests:
     harness: console
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpuppr.conf
       - idle_SNIPPET=nordic-ppr
@@ -45,8 +47,10 @@ tests:
     harness: console
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpuppr_xip.conf
       - idle_SNIPPET=nordic-ppr-xip
@@ -56,8 +60,10 @@ tests:
     harness: console
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
       - CONFIG_FIRST_SLEEP_OFFSET=y
@@ -65,8 +71,10 @@ tests:
   benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad.unexpected_reboot:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
       - CONFIG_FIRST_SLEEP_OFFSET=y
@@ -81,8 +89,10 @@ tests:
   benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad.s2ram:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
       - CONFIG_FIRST_SLEEP_OFFSET=y
@@ -112,8 +122,10 @@ tests:
   benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad.ram_retention_high_usage:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
       - CONFIG_FIRST_SLEEP_OFFSET=y
@@ -144,8 +156,10 @@ tests:
   benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad.ram_retention_low_usage:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
       - CONFIG_FIRST_SLEEP_OFFSET=y
@@ -176,8 +190,10 @@ tests:
   benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad.s2ram.lfrc:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
       - CONFIG_FIRST_SLEEP_OFFSET=y
@@ -207,8 +223,10 @@ tests:
   benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad.ram_retention_high_usage.lfrc:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
       - CONFIG_FIRST_SLEEP_OFFSET=y
@@ -239,8 +257,10 @@ tests:
   benchmarks.multicore.idle.nrf54h20dk_cpuapp_cpurad.ram_retention_low_usage.lfrc:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
       - CONFIG_FIRST_SLEEP_OFFSET=y

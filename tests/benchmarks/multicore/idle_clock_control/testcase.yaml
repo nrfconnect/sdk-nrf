@@ -11,8 +11,10 @@ tests:
     harness: pytest
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     harness_config:
       fixture: lfclk_at_lfxo
       pytest_root:
@@ -55,8 +57,10 @@ tests:
     harness: pytest
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     harness_config:
       fixture: lfclk_at_lfrc
       pytest_root:
@@ -109,3 +113,4 @@ tests:
       - SHIELD=coverage_support
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
