@@ -159,6 +159,7 @@
 
 .. _`conversion example Pull Request`: https://github.com/zephyrproject-rtos/example-application/pull/58
 
+.. _`sdk-oberon-psa-crypto`: https://github.com/nrfconnect/sdk-oberon-psa-crypto
 .. _`Oberon PSA core changelog`: https://github.com/nrfconnect/sdk-oberon-psa-crypto/blob/main/CHANGELOG.md
 
 .. ### Matter links that need updated SHA per release
@@ -635,6 +636,7 @@
 .. _`CONFIG_SSF_PSA_CRYPTO_SERVICE_ENABLED`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CONFIG_SSF_PSA_CRYPTO_SERVICE_ENABLED
 .. _`Matter factory data Kconfig options`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CHIP_FACTORY_DATA
 .. _`Kconfig search results`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CONFIG_PM_PARTITION_SIZE
+.. _`CONFIG_PSA_WANT_ALG_*`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CONFIG_PSA_WANT_ALG
 
 .. _`Threads`: https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/kernel/services/threads/index.html
 

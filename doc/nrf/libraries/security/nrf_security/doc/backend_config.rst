@@ -1,44 +1,66 @@
 .. _nrf_security_backend_config:
 .. _nrf_security_legacy_config:
+.. _legacy_crypto_support:
+.. _nrf_security_drivers_legacy:
 
-Legacy configurations and supported features
-############################################
+Configuring nRF Security with legacy crypto APIs
+################################################
 
 .. contents::
    :local:
    :depth: 2
 
-This section covers the configurations available when using :ref:`legacy_crypto_support`.
+.. legacy_crypto_support_def_start
+
+The legacy crypto is a subsystem for software that requires Mbed TLS crypto toolbox API functions that are prefixed with ``mbedtls_``.
+It provides TLS and DTLS support and backwards compatibility with older applications that do not use :ref:`PSA Crypto APIs <psa_crypto_support>`.
+The legacy crypto uses *alternative implementations* (called backends) of the drivers that are also used for the PSA Crypto API support.
+
+To enable the legacy crypto support mode of nRF Security:
+
+1. Set the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option.
+2. :ref:`Configure the legacy crypto backend <nrf_security_legacy_backend_config>`.
+
+.. legacy_crypto_support_def_end
+
+Deprecation of legacy crypto support
+************************************
 
 .. caution::
-   Legacy crypto toolbox APIs are marked as deprecated in the |NCS| version 2.8.0, and will be removed in a future version.
-   It is not recommended to use the legacy crypto toolbox APIs and the related configurations in any new designs.
+   |legacy_crypto_deprecation_note|
 
-.. note::
-   Legacy crypto toolbox APIs are not supported on nRF54L Series devices.
+The following changes have been made to the legacy crypto support with the deprecation announcement:
 
+* Enabling the Kconfig option :kconfig:option:`CONFIG_NRF_SECURITY` replaces using the Kconfig option :kconfig:option:`CONFIG_NORDIC_SECURITY_BACKEND` to enable the legacy crypto support.
+  Setting :kconfig:option:`CONFIG_NORDIC_SECURITY_BACKEND` also enables :kconfig:option:`CONFIG_MBEDTLS_LEGACY_CRYPTO_C`, which shows a deprecation warning in the build output.
+* The legacy Mbed TLS APIs no longer support the glued functionality.
+* Legacy configurations no longer have an effect on the configurations for the secure image of a TF-M build.
+
+.. _nrf_security_legacy_backend_config:
 .. _nrf_security_backend_config_multiple:
-
-Configuring backends
-********************
-
-The legacy configuration does not allow multiple backends being enabled at the same time.
-
-The choice of implementation is controlled by setting :kconfig:option:`CONFIG_CC3XX_BACKEND` for devices with the CryptoCell hardware peripheral, or :kconfig:option:`CONFIG_OBERON_BACKEND`.
-
 .. _nrf_security_backends_cc3xx:
-
-cc3xx backend
-=============
-
-Setting the Kconfig option :kconfig:option:`CONFIG_CC3XX_BACKEND` enables legacy crypto support for hardware accelerated cryptography using :ref:`nrf_cc3xx_mbedcrypto_readme`.
-
 .. _nrf_security_backends_oberon:
 
-Oberon backend
-==============
+Configuring the legacy crypto backend
+*************************************
 
-Setting the Kconfig option :kconfig:option:`CONFIG_CC3XX_OBERON` enables legacy crypto support using :ref:`nrf_oberon_readme`.
+The legacy crypto backend is a term describing a set of configurations that provide low-level integration with Mbed TLS that were used before the adoption of PSA Crypto APIs in the |NCS|.
+These legacy crypto backends are provided as *alternative implementations* of the drivers that are also used for the PSA Crypto API support.
+
+The legacy crypto configuration only allows one backend to be enabled at the same time.
+
+The following table lists the available legacy crypto backends with their respective Kconfig options and the corresponding hardware platforms.
+
++-----------------------------------------------+-----------------------------------------+----------------------------------------------------------+
+|                Driver library                 |          Legacy crypto backend          |               Supported hardware platforms               |
++===============================================+=========================================+==========================================================+
+| :ref:`nrf_cc3xx_mbedcrypto_readme`            | :kconfig:option:`CONFIG_CC3XX_BACKEND`  | nRF52840, nRF5340, nRF91 Series devices                  |
++-----------------------------------------------+-----------------------------------------+----------------------------------------------------------+
+| :ref:`nrf_oberon <nrfxlib:nrf_oberon_readme>` | :kconfig:option:`CONFIG_OBERON_BACKEND` | nRF devices with Arm Cortex®-M0, -M4, or -M33 processors |
++-----------------------------------------------+-----------------------------------------+----------------------------------------------------------+
+
+.. note::
+   Enabling the CryptoCell by using :kconfig:option:`CONFIG_CC3XX_BACKEND` in a non-secure image of a TF-M build will have no effect.
 
 AES configuration
 *****************
@@ -77,6 +99,9 @@ Feature support
 
 .. note::
    The :ref:`nrf_security_backends_oberon` uses some functionality from the original Mbed TLS for AES operations.
+
+.. note::
+   |original_mbedtls_def_note|
 
 AES cipher configuration
 ************************
