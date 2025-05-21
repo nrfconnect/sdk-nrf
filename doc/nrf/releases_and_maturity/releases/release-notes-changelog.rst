@@ -204,9 +204,12 @@ Matter bridge
 
 nRF5340 Audio
 -------------
+
 * Updated:
 
   * The application to use the ``NFC.TAGHEADER0`` value from FICR as the broadcast ID instead of using a random ID.
+  * The application now supports the nRF5340 DK for the LED state indications and button controls.
+
 
 nRF Desktop
 -----------
