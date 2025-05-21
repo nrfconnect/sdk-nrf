@@ -1,0 +1,10 @@
+sample:
+  description: Mcuboot minimal configuration sample
+  name: smp_svr_mini_boot
+common:
+  sysbuild: true
+  build_only: true
+tests:
+  sample.smp_svr_mini_boot:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
