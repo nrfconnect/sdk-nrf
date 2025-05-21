@@ -1,0 +1,19 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		led = &led0;
+		watchdog0 = &wdt010;
+		/delete-property/ led1;
+	};
+};
+
+/delete-node/ &led1;
+
+&wdt010 {
+	status = "okay";
+};

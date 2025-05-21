@@ -1,0 +1,86 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../sysbuild/nrf54h20dk_nrf54h20_memory_map.dtsi"
+
+/* Enable partitions, belonging to the application domain. */
+&cpuapp_rx_partitions {
+	status = "okay";
+};
+
+&cpuapp_rw_partitions {
+	status = "okay";
+};
+
+/* Enable IPC: Application <-> Secure */
+&cpusec_cpuapp_ipc {
+	status = "okay";
+};
+
+&cpuapp_ram0x_region {
+	status = "okay";
+};
+
+&cpusec_bellboard {
+	status = "okay";
+};
+
+/* Enable IPC: Application <-> Radio */
+&cpuapp_cpurad_ipc {
+	status = "okay";
+};
+
+&cpurad_bellboard {
+	status = "okay";
+};
+
+&cpuapp_bellboard {
+	status = "okay";
+};
+
+/* Disable HW flow control on the UART 0 */
+&uart136 {
+	/delete-property/ hw-flow-control;
+};
+
+/ {
+	psa_rng: psa-rng {
+		compatible = "zephyr,psa-crypto-rng";
+		status = "okay";
+	};
+
+	aliases {
+		suit-active-code-partition = &cpuapp_slot_a_partition;
+		suit-inactive-code-partition = &cpuapp_slot_b_partition;
+	};
+
+	chosen {
+		zephyr,code-partition = &cpuapp_slot_a_partition;
+		zephyr,bt-hci-ipc = &cpuapp_cpurad_ipc;
+		zephyr,entropy = &psa_rng;
+		zephyr,uart-mcumgr = &uart136;
+	};
+};
+
+/* UART 1 is configured for App Core console output. In order to use it for other
+ * purpose, i.e. to output logs form the Radio core, remove section below.
+ */
+&uart135 {
+	status = "okay";
+	memory-regions = <&cpuapp_dma_region>;
+	current-speed = <115200>;
+	pinctrl-0 = <&uart135_default>;
+	pinctrl-1 = <&uart135_sleep>;
+	pinctrl-names = "default", "sleep";
+
+	/delete-property/ hw-flow-control;
+};
+
+/ {
+	chosen {
+		zephyr,console = &uart135;
+	};
+};
