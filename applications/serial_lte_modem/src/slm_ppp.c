@@ -17,6 +17,7 @@
 #include <zephyr/net/ethernet.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/ppp.h>
+#include <zephyr/posix/sys/eventfd.h>
 #include <zephyr/posix/sys/socket.h>
 #include <zephyr/random/random.h>
 #include <assert.h>
@@ -88,11 +89,13 @@ static unsigned int ppp_pdn_cid;
 enum {
 	ZEPHYR_FD_IDX, /* Raw Zephyr socket to pass data to/from the PPP link. */
 	MODEM_FD_IDX, /* Raw modem socket to pass data to/from the LTE link. */
+	EVENT_FD_IDX, /* Eventfd to signal the PPP thread. */
 	PPP_FDS_COUNT
 };
 const char *const ppp_socket_names[PPP_FDS_COUNT] = {
 	[ZEPHYR_FD_IDX] = "Zephyr",
-	[MODEM_FD_IDX] = "modem"
+	[MODEM_FD_IDX] = "modem",
+	[EVENT_FD_IDX] = "eventfd"
 };
 static int ppp_fds[PPP_FDS_COUNT] = { -1, -1 };
 
@@ -117,7 +120,7 @@ static bool open_ppp_sockets(void)
 	ppp_fds[ZEPHYR_FD_IDX] = zsock_socket(AF_PACKET, SOCK_DGRAM | SOCK_NATIVE,
 					      htons(ETH_P_ALL));
 	if (ppp_fds[ZEPHYR_FD_IDX] < 0) {
-		LOG_ERR("Zephyr socket creation failed (%d).", errno);
+		LOG_ERR("Zephyr socket creation failed (%d).", -errno);
 		return false;
 	}
 
@@ -129,13 +132,13 @@ static bool open_ppp_sockets(void)
 	ret = zsock_bind(ppp_fds[ZEPHYR_FD_IDX],
 		   (const struct sockaddr *)&ppp_zephyr_dst_addr, sizeof(ppp_zephyr_dst_addr));
 	if (ret < 0) {
-		LOG_ERR("Failed to bind Zephyr socket (%d).", errno);
+		LOG_ERR("Failed to bind Zephyr socket (%d).", -errno);
 		return false;
 	}
 
 	ppp_fds[MODEM_FD_IDX] = zsock_socket(AF_PACKET, SOCK_RAW, 0);
 	if (ppp_fds[MODEM_FD_IDX] < 0) {
-		LOG_ERR("Modem socket creation failed (%d).", errno);
+		LOG_ERR("Modem socket creation failed (%d).", -errno);
 		return false;
 	}
 
@@ -151,6 +154,12 @@ static bool open_ppp_sockets(void)
 		return false;
 	}
 
+	ppp_fds[EVENT_FD_IDX] = eventfd(0, 0);
+	if (ppp_fds[EVENT_FD_IDX] < 0) {
+		LOG_ERR("Eventfd creation failed (%d).", -errno);
+		return false;
+	}
+
 	return true;
 }
 
@@ -162,7 +171,7 @@ static void close_ppp_sockets(void)
 		}
 		if (zsock_close(ppp_fds[i])) {
 			LOG_WRN("Failed to close %s socket (%d).",
-				ppp_socket_names[i], errno);
+				ppp_socket_names[i], -errno);
 		}
 		ppp_fds[i] = -1;
 	}
@@ -218,7 +227,7 @@ static void delegate_ppp_event(enum ppp_action action, enum ppp_reason reason)
 	LOG_DBG("PPP %s, reason: %d", ppp_action_str(event.action), event.reason);
 
 	if (k_msgq_put(&ppp_work.queue, &event, K_NO_WAIT)) {
-		LOG_ERR("Failed to queue PPP event (%d).", errno);
+		LOG_ERR("Failed to queue PPP event.");
 	}
 
 	k_work_submit_to_queue(&slm_work_q, &ppp_work.work);
@@ -371,9 +380,11 @@ static int ppp_stop(enum ppp_reason reason)
 
 	net_if_carrier_off(ppp_iface);
 
-	close_ppp_sockets();
-
+	/* Close the thread. */
+	eventfd_write(ppp_fds[EVENT_FD_IDX], 1);
 	k_thread_join(&ppp_data_passing_thread_id, K_SECONDS(1));
+
+	close_ppp_sockets();
 
 	ppp_state = PPP_STATE_STOPPED;
 	send_status_notification();
@@ -667,7 +678,7 @@ static void ppp_data_passing_thread(void*, void*, void*)
 		const int poll_ret = zsock_poll(fds, ARRAY_SIZE(fds), -1);
 
 		if (poll_ret <= 0) {
-			LOG_ERR("Sockets polling failed (%d, %d).", poll_ret, errno);
+			LOG_ERR("Sockets polling failed (%d, %d). Restart.", poll_ret, -errno);
 			delegate_ppp_event(PPP_RESTART, PPP_REASON_DEFAULT);
 			return;
 		}
@@ -678,15 +689,20 @@ static void ppp_data_passing_thread(void*, void*, void*)
 			if (!revents) {
 				continue;
 			}
+
+			if (src == EVENT_FD_IDX) {
+				LOG_DBG("Exit thread.");
+				return;
+			}
+
 			if (!(revents & ZSOCK_POLLIN)) {
-				/* ZSOCK_POLLERR/ZSOCK_POLLNVAL happen when the sockets are closed
-				 * or when the connection goes down.
-				 */
-				if ((revents ^ ZSOCK_POLLERR) && (revents ^ ZSOCK_POLLNVAL)) {
-					LOG_WRN("Unexpected event 0x%x on %s socket.",
+				/* ZSOCK_POLLERR comes when the connection goes down (AT+CFUN=0). */
+				if (revents ^ ZSOCK_POLLERR) {
+					LOG_WRN("Unexpected event 0x%x on %s socket. Stop.",
 						revents, ppp_socket_names[src]);
+				} else {
+					LOG_DBG("Connection down. Stop.");
 				}
-				LOG_DBG("Socket closed or connection down.");
 				delegate_ppp_event(PPP_STOP, PPP_REASON_DEFAULT);
 				return;
 			}
@@ -696,7 +712,7 @@ static void ppp_data_passing_thread(void*, void*, void*)
 			if (len <= 0) {
 				if (len != -1 || (errno != EAGAIN && errno != EWOULDBLOCK)) {
 					LOG_ERR("Failed to receive data from %s socket (%d, %d).",
-						ppp_socket_names[src], len, errno);
+						ppp_socket_names[src], len, -errno);
 				}
 				continue;
 			}
@@ -722,7 +738,7 @@ static void ppp_data_passing_thread(void*, void*, void*)
 				zsock_sendto(fds[dst].fd, ppp_data_buf, len, 0, dst_addr, addrlen);
 			if (send_ret == -1) {
 				LOG_ERR("Failed to send %zd bytes to %s socket (%d).",
-					len, ppp_socket_names[dst], errno);
+					len, ppp_socket_names[dst], -errno);
 			} else if (send_ret != len) {
 				LOG_ERR("Only sent %zd out of %zd bytes to %s socket.",
 					send_ret, len, ppp_socket_names[dst]);
