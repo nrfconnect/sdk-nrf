@@ -36,6 +36,9 @@ config MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE
 
 endif # MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
 
+config UPDATEABLE_IMAGE_NUMBER
+	default 1
+
 # HACK: NCS temphack to keep our imgtool integration working now that
 # there is no CONFIG_DT_* CMake namespace anymore. Use Zephyr
 # kconfigfunctions to thread the flash write block size through
