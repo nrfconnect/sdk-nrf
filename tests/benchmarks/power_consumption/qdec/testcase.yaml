@@ -19,8 +19,10 @@ tests:
   benchmarks.power_consumption.qdec_nrf54h:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
     harness_config:

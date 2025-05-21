@@ -13,8 +13,10 @@ tests:
     harness: pytest
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - FILE_SUFFIX=s2ram
     harness_config:
@@ -30,8 +32,10 @@ tests:
     filter: CONFIG_COVERAGE
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - CONF_FILE=coverage.conf
       - SHIELD=coverage_support

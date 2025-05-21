@@ -21,8 +21,10 @@ tests:
     sysbuild: true
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - SHIELD=pca63566
       - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf

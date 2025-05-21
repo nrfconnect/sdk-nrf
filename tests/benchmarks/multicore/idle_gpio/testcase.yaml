@@ -14,8 +14,10 @@ tests:
   benchmarks.multicore.idle_gpio.nrf54h20dk_cpuapp_cpurad.s2ram:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - FILE_SUFFIX=s2ram
       - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
@@ -31,8 +33,10 @@ tests:
   benchmarks.multicore.idle_gpio.nrf54h20dk_cpuapp_cpurad.s2ram.wakeup_from_uart_pins:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - FILE_SUFFIX=s2ram
       - SB_CONF_FILE=sysbuild/nrf54h20dk_nrf54h20_cpurad.conf
