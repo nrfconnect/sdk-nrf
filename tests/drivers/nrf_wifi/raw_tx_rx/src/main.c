@@ -123,44 +123,10 @@ static struct beacon test_beacon_frame  = {
 		0XFF, 0XDD, 0X18, 0X00, 0X50, 0XF2, 0X02, 0X01, 0X01, 0X01, 0X00, 0X03, 0XA4, 0X00,
 		0X00, 0X27, 0XA4, 0X00, 0X00, 0X42, 0X43, 0X5E, 0X00, 0X62, 0X32, 0X2F, 0X00}};
 
-#if 0
-void configurePlayoutCapture(uint32_t pktLen, uint32_t holdOff, uint32_t flushBytes, bool burst)
-{
-	unsigned int value;
-	
-	LOG_INF("%s: Setting Playout capture settings",__func__);
-	// Set AXI Master to APP so we can access the RF
-	NRF_WIFICORE_RPURFBUS->RFCTRL.AXIMASTERACCESS = 0x31;
-	while(NRF_WIFICORE_RPURFBUS->RFCTRL.AXIMASTERACCESS != 0x31);
 
-	WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x0, 0x3);
-
-	value = RDW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x0);
-	LOG_INF("%s: WRW setting to value 0x03 is 0x%x",__func__, value);
-
-	if(burst)
-	{
-		WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x4, 0x7F);
-		WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x8, 0);
-	}
-	else
-	{
-		WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x4, holdOff);
-		value = RDW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x4);
-		LOG_INF("%s: WRW setting to value 0x04 is 0x%x",__func__, value);
-
-		WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x8, (pktLen + holdOff + flushBytes));
-		value = RDW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x8);
-		LOG_INF("%s: WRW setting to value 0x08 is 0x%x",__func__, value);
-	}
-
-	// Switch to the RF playout
-	WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0xC, 0x1);
-	LOG_INF("%s: Playput capture settings configured",__func__);
-}
-#endif
 void configurePlayoutCapture(uint32_t pktLen, uint32_t holdOff, uint32_t flushBytes)
 {
+#if (CONFIG_BOARD_NRF7120PDK_NRF7120_CPUAPP && CONFIG_EMULATOR_SYSTEMC) || (CONFIG_BOARD_NRF7120PDK_NRF7120_CPUAPP_EMU)
 	unsigned int value;
 	LOG_INF("%s: Setting Playout capture settings",__func__);
 	// Set AXI Master to APP so we can access the RF
@@ -202,6 +168,7 @@ void configurePlayoutCapture(uint32_t pktLen, uint32_t holdOff, uint32_t flushBy
 	// Switch to the RF playout
 	WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0xC, 0x1);
 	LOG_INF("%s: Playput capture settings configured",__func__);
+#endif /* (CONFIG_BOARD_NRF7120PDK_NRF7120_CPUAPP && CONFIG_EMULATOR_SYSTEMC) || (CONFIG_BOARD_NRF7120PDK_NRF7120_CPUAPP_EMU) */
 }
 
 static void wifi_set_mode(int mode_val)
