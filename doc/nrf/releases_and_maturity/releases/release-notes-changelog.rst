@@ -288,6 +288,10 @@ Cellular samples
 
   * Added support for native simulator platform and updated the documentation accordingly.
 
+* :ref:`nrf_provisioning_sample` sample:
+
+  * Updated the sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
+
 Cryptography samples
 --------------------
 
