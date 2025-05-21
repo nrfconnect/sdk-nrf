@@ -59,9 +59,9 @@ CONFIG_NRF_PROVISIONING_ROOT_CA_SEC_TAG
    Root CA security tag for the nRF Cloud Provisioning Service.
    Needs to be set explicitly and if not, the compilation fails.
 
-.. _CONFIG_RF_PROVISIONING_RX_BUF_S:
+.. _CONFIG_NRF_PROVISIONING_RX_BUF_SZ:
 
-CONFIG_RF_PROVISIONING_RX_BUF_S
+CONFIG_NRF_PROVISIONING_RX_BUF_SZ
    Configures the response payload buffer size.
 
 .. _CONFIG_NRF_PROVISIONING_TX_BUF_SZ:
@@ -115,12 +115,34 @@ The following files are available:
 * :file:`prj.conf` - Standard default configuration file.
 * :file:`overlay-coap.conf` - Enables CoAP transfer protocol support.
 * :file:`overlay-at_shell.conf` - Enables writing of large certificates from AT shell.
-* :file:`overlay-large_cert.conf` - Adjusts buffer sizes to handle nRF Cloud certificates.
 
 Building and running
 ********************
 
 .. |sample path| replace:: :file:`samples/cellular/nrf_provisioning`
+
+.. note::
+
+   This service is only compatible with nRF91x1 devices.
+
+To build the sample, you can use either HTTP or CoAP transfer protocols.
+
+.. tabs::
+
+   .. group-tab:: HTTP
+
+      .. code-block:: console
+
+         west build -p -b *board_target*
+
+   .. group-tab:: CoAP
+
+      .. code-block:: console
+
+         west build -p -b *board_target* -- -DEXTRA_CONF_FILE="overlay-coap.conf"
+
+.. note::
+	To use AT shell support, consider including the ``overlay-at_shell.conf`` configuration file.
 
 .. include:: /includes/build_and_run_ns.txt
 
@@ -143,41 +165,60 @@ The following is an example output of the sample when there is no provisioning c
 
 .. code-block:: console
 
-	<inf> nrf_provisioning_sample: Establishing LTE link ...
+	<inf> nrf_provisioning_sample: nRF Device Provisioning Sample
+	<inf> nrf_provisioning_sample: Enabling connectivity...
+	<inf> nrf_provisioning_sample: Network connectivity gained!
+	<inf> nrf_provisioning_sample: Initializing the nRF Provisioning library...
+	<inf> nrf_provisioning: Checking for provisioning commands in 2s seconds
 	<inf> nrf_provisioning_sample: Provisioning started
 	<inf> nrf_provisioning_http: Requesting commands
 	<inf> nrf_provisioning_http: Connected
 	<inf> nrf_provisioning_http: No more commands to process on server side
-	<inf> nrf_provisioning_sample: Provisioning stopped
+	<inf> nrf_provisioning: Checking for provisioning commands in 86403s seconds
+	<inf> nrf_provisioning_sample: Provisioning is idle.
 
 The following is an example output when the sample is processing commands from the server:
 
 .. code-block:: console
 
-	<inf> nrf_provisioning_sample: Establishing LTE link ...
 	<inf> nrf_provisioning_sample: Provisioning started
+	<inf> nrf_provisioning: Externally initiated provisioning
 	<inf> nrf_provisioning_http: Requesting commands
 	<inf> nrf_provisioning_http: Connected
 	<inf> nrf_provisioning_http: Processing commands
+	<inf> nrf_provisioning_sample: Provisioning library requests offline mode
+	<inf> nrf_provisioning: Disconnected from network - provisioning paused
+	<inf> nrf_provisioning_sample: Network connectivity lost!
+	<inf> nrf_provisioning_sample: Provisioning library requests offline mode
+	<inf> nrf_provisioning_sample: Provisioning library requests offline mode
+	<inf> nrf_provisioning_sample: Provisioning library requests offline mode
+	<inf> nrf_provisioning_sample: Provisioning library requests offline mode
+	<inf> nrf_provisioning_sample: Provisioning library requests normal mode
 	<inf> nrf_provisioning: Disconnected from network - provisioning paused
 	<inf> nrf_provisioning: Connected; home network - provisioning resumed
-	<inf> nrf_provisioning_sample: Modem connection restored
-	<inf> nrf_provisioning_sample: Waiting for modem to acquire network time...
-	<inf> nrf_provisioning_sample: Network time obtained
+	<inf> nrf_provisioning_sample: Network connectivity gained!
 	<inf> nrf_provisioning_http: Sending response to server
 	<inf> nrf_provisioning_http: Requesting commands
 	<inf> nrf_provisioning_http: Connected
-	<inf> nrf_provisioning_http: No more commands to process on server side
-	<inf> nrf_provisioning_sample: Provisioning stopped
+	<inf> nrf_provisioning_http: Processing commands
+	<inf> nrf_provisioning_sample: Provisioning library requests offline mode
+	<inf> nrf_provisioning: Disconnected from network - provisioning paused
+	<inf> nrf_provisioning_sample: Network connectivity lost!
+	<inf> nrf_provisioning_sample: Provisioning library requests offline mode
+	<inf> nrf_provisioning_sample: Provisioning library requests normal mode
+	<inf> nrf_provisioning: Disconnected from network - provisioning paused
+	<inf> nrf_provisioning: Connected; home network - provisioning resumed
+	<inf> nrf_provisioning_sample: Network connectivity gained!
+	<inf> nrf_provisioning_http: Sending response to server
 	<inf> nrf_provisioning_sample: Provisioning done, rebooting...
 	<inf> nrf_provisioning: Disconnected from network - provisioning paused
+	<inf> nrf_provisioning_sample: Network connectivity lost!
+	<inf> nrf_provisioning_sample: Provisioning is idle.
 
 Provisioning with the nRF Cloud Provisioning Service using auto-onboarding
 ==========================================================================
 
 Auto-onboarding is the easiest method to provision and onboard devices to the nRF Cloud.
-
-To enable support of large certificates when building the sample, add the ``-DEXTRA_CONF_FILE=overlay-large_cert.conf`` option to the build command.
 
 Complete the following steps to provision your device:
 
