@@ -1,8 +1,4 @@
 / {
-    chosen {
-        zephyr,shell-uart = &uart20;
-    };
-
     ipc_shm_area_cpuapp_cpuuma: memory@200C0000 {
         compatible = "mmio-sram";
         reg = <0x200C0000 0x2000>;
@@ -57,30 +53,6 @@
 
 &wifi_bellboard {
     status = "okay";
-};
-
-&uart20 {
-    status = "okay";
-};
-
-&grtc {
-    status = "okay";
-};
-
-&systick {
-    status = "disabled";
-};
-
-&psa_rng {
-    status = "okay";
-};
-
-&uicr {
-    status = "disabled";
-};
-
-&clock {
-    status = "disabled";
 };
 
 &cpuapp_sram {

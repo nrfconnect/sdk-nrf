@@ -1,0 +1,29 @@
+/ {
+    chosen {
+        zephyr,shell-uart = &uart20;
+    };
+};
+
+&uart20 {
+    status = "okay";
+};
+
+&grtc {
+    status = "okay";
+};
+
+&systick {
+    status = "disabled";
+};
+
+&clock {
+    status = "disabled";
+};
+
+&uicr {
+    status = "disabled";
+};
+
+&psa_rng {
+    status = "okay";
+};
