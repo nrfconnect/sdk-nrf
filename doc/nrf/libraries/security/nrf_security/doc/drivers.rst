@@ -7,63 +7,61 @@ nRF Security drivers
    :local:
    :depth: 2
 
-The nRF Security subsystem supports multiple enabled PSA drivers at the same time.
-This mechanism is intended to extend the available feature set of hardware-accelerated cryptography or to provide alternative implementations of the PSA Crypto APIs.
+.. ncs-include:: ../../../../security/psa_certified_api_overview.rst
+   :start-after: psa_crypto_lib_table_start
+   :end-before: psa_crypto_lib_table_end
 
-You can enable a cryptographic feature or algorithm using PSA Crypto API configurations that follow the format ``PSA_WANT_ALG_XXXX``.
-
-Enabling more than one PSA driver might add support for additional key sizes or modes of operation.
-
-It is possible to disable specific features on the PSA driver level to optimize the code size.
-
-The nRF Security supports the following PSA drivers:
-
-* Arm CryptoCell cc3xx binary
-* nrf_oberon binary
-* CRACEN sources
-
-.. note::
-   Whenever this documentation mentions 'original' Mbed TLS, it refers to the open-source `Arm Mbed TLS project`_, not the customized version available in Zephyr.
-   There is an option to utilize a 'built-in' driver, which corresponds to the software-implemented cryptography from the 'original' Mbed TLS deliverables.
-   This is provided to ensure that the cryptographic toolbox supports all requested features.
+In addition, the nRF Security subsystem supports the :ref:`legacy crypto toolbox APIs <legacy_crypto_support>`.
+It also integrated and configures the PSA Oberon core through `sdk-oberon-psa-crypto`_, which provides the :ref:`nrf_security_drivers_oberon`.
 
 .. _nrf_security_drivers_cc3xx:
 
-Arm CryptoCell cc3xx driver
-***************************
+Arm CryptoCell cc3xx drivers
+****************************
 
-The Arm CryptoCell cc3xx driver is a is a closed-source binary that provides hardware-accelerated cryptography using the Arm CryptoCell cc310/cc312 hardware.
++---------------------------------------------------------------------+----------------------------------------------------------+
+|                           Driver library                            |               Supported hardware platforms               |
++=====================================================================+==========================================================+
+| :ref:`nrf_cc3xx_platform and nrf_cc3xx_mbedcrypto <nrfxlib:crypto>` | nRF52840, nRF5340, nRF91 Series devices                  |
++---------------------------------------------------------------------+----------------------------------------------------------+
 
-The Arm CryptoCell cc3xx driver is only available on the following devices:
+Arm CryptoCell cc3xx drivers, namely ``nrf_cc3xx_platform`` and ``nrf_cc3xx_mbedcrypto``, are closed-source binaries that provide low-level functionalities for hardware-accelerated cryptography using `CryptoCell 310 <nRF9160 CRYPTOCELL - Arm TrustZone CryptoCell 310_>`_ and `CryptoCell 312 <nRF5340 CRYPTOCELL - Arm TrustZone CryptoCell 312_>`_ hardware peripherals.
 
-* nRF52840
-* nRF91 Series
-* nRF5340
+* The :ref:`nrf_cc3xx_platform_readme` provides low-level functionality needed by the CC310/CC312 mbedcrypto library.
+* The :ref:`nrf_cc3xx_mbedcrypto_readme` provides low-level integration with the Mbed TLS version provided in the |NCS|.
+  It also includes legacy crypto API functions from the Mbed TLS crypto toolbox (prefixed with ``mbedtls_``).
 
+Both these drivers should not be used directly.
+Use them only through nRF Security.
 
-Enabling the Arm CryptoCell cc3xx driver
-========================================
+For configuration details, see the following pages:
 
-The Arm CryptoCell cc3xx driver can be enabled by setting the :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_CC3XX` Kconfig option.
+* :ref:`nrf_security_driver_config` (both drivers)
+* :ref:`nrf_security_legacy_backend_config` (:ref:`nrf_cc3xx_mbedcrypto_readme` used as legacy backend)
 
-
-Using the Arm CryptoCell cc3xx driver
-=====================================
-
-To use the :ref:`nrf_cc3xx_mbedcrypto_readme` PSA driver, the Arm CryptoCell cc310/cc312 hardware must be first initialized.
-
-The Arm CryptoCell cc3xx hardware is initialized in the :file:`hw_cc3xx.c` file, located under :file:`nrf/drivers/hw_cc3xx/`, and is controlled with the :kconfig:option:`CONFIG_HW_CC3XX` Kconfig option.
-The Kconfig option has a default value of ``y`` when cc3xx is available in the SoC.
+.. note::
+      The :ref:`nrfxlib:crypto` in nrfxlib also include the :ref:`nrf_cc310_bl_readme`.
+      This library is not used by the nRF Security subsystem.
 
 .. _nrf_security_drivers_oberon:
 
 nrf_oberon driver
 *****************
 
-The :ref:`nrf_oberon_readme` is distributed as a closed-source binary that provides select cryptographic algorithms optimized for use in nRF devices.
++---------------------------------------------------------------------+----------------------------------------------------------+
+|                           Driver library                            |               Supported hardware platforms               |
++=====================================================================+==========================================================+
+| :ref:`nrf_oberon <nrfxlib:nrf_oberon_readme>`                       | nRF devices with Arm Cortex®-M0, -M4, or -M33 processors |
++---------------------------------------------------------------------+----------------------------------------------------------+
+
+The :ref:`nrf_oberon_readme` is a driver provided through `sdk-oberon-psa-crypto`_, a lightweight PSA Crypto API implementation optimized for resource-constrained microcontrollers.
+The driver is distributed as a closed-source binary that provides select cryptographic algorithms optimized for use in nRF devices.
 This provides faster execution than the original Mbed TLS implementation.
 
-The nrf_oberon driver provides support for the following:
+.. note::
+   |original_mbedtls_def_note|
+
+The nrf_oberon driver provides support for the following encryption algorithms:
 
 * AES ciphers
 * SHA-1
@@ -73,54 +71,28 @@ The nrf_oberon driver provides support for the following:
 * ECDH and ECDSA using NIST curve secp224r1 and secp256r1
 * ECJPAKE using NIST curve secp256r1
 
-Enabling the nrf_oberon driver
-==============================
+The nrf_oberon driver also provides Mbed TLS legacy crypto integration for selected features.
 
-To enable the :ref:`nrf_oberon_readme` PSA driver, set the :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_OBERON` Kconfig option.
+For configuration details, see the following pages:
+
+* :ref:`nrf_security_driver_config`
+* :ref:`nrf_security_legacy_backend_config` (nrf_oberon used as legacy backend)
 
 .. _nrf_security_drivers_cracen:
 
 CRACEN driver
 *************
 
++---------------------------------------------------------------------+----------------------------------------------------------+
+|                           Driver library                            |               Supported hardware platforms               |
++=====================================================================+==========================================================+
+| :ref:`CRACEN <ug_nrf54l_cryptography>`                              | nRF54L Series devices                                    |
++---------------------------------------------------------------------+----------------------------------------------------------+
+
 The CRACEN driver provides entropy and hardware-accelerated cryptography using the Crypto Accelerator Engine (CRACEN) peripheral.
-This driver is only available on nRF54L Series devices.
+For more information about it, see :ref:`ug_nrf54l_crypto_kmu_cracen_peripherals` on the :ref:`ug_nrf54l_cryptography` page.
 
-Enabling the CRACEN driver
-==========================
-
-The CRACEN driver can be enabled by setting the :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_CRACEN` Kconfig option.
-
-The nrf_oberon driver may then be disabled by using the Kconfig option :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_OBERON` (``CONFIG_PSA_CRYPTO_DRIVER_OBERON=n``).
-
-For more details on nRF54L Series cryptography operations and the related configuration, see :ref:`ug_nrf54l_cryptography`.
-
-.. note::
-   On nRF54L Series devices, CRACEN is the only source of entropy.
-   Therefore, it is not possible to disable the :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_CRACEN` option when the Zephyr entropy driver is enabled.
-
-.. _nrf_security_drivers_legacy:
-
-Legacy Mbed TLS
-***************
-
-Some legacy Mbed TLS APIs are still supported, for instance for TLS and DTLS support and backwards compatibility.
-
-Enabling legacy APIs requires enabling one of the available PSA drivers.
-
-.. note::
-   * The legacy Mbed TLS APIs no longer support the glued functionality.
-   * Legacy configurations no longer have an effect on the configurations for the secure image of a TF-M build.
-
-Enabling legacy Mbed TLS support
-================================
-
-To configure the legacy Mbed TLS APIs, set the option :kconfig:option:`CONFIG_NORDIC_SECURITY_BACKEND` instead of :kconfig:option:`CONFIG_NRF_SECURITY`.
-
-Additionally, either :kconfig:option:`CONFIG_CC3XX_BACKEND` or :kconfig:option:`CONFIG_OBERON_BACKEND` must be enabled.
-
-.. note::
-   Enabling the CryptoCell by using :kconfig:option:`CONFIG_CC3XX_BACKEND` in a non-secure image of a TF-M build will have no effect.
+For configuration details in the nRF Security subsystem, see :ref:`nrf_security_driver_config`.
 
 API documentation
 *****************

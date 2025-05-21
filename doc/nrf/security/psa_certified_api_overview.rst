@@ -107,18 +107,23 @@ Supported operations include the following:
 * Authenticated encryption
 * Signature generation and verification
 
-See :ref:`crypto_samples` for usage examples.
+.. psa_crypto_lib_table_start
+
+The PSA Crypto in the |NCS| uses different libraries depending on hardware capabilities and user configuration:
+
++---------------------------------------------------------------------+----------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                           Driver library                            |               Supported hardware platforms               |                                                                                                  Description                                                                                                  |
++=====================================================================+==========================================================+===============================================================================================================================================================================================================+
+| :ref:`nrf_cc3xx_platform and nrf_cc3xx_mbedcrypto <nrfxlib:crypto>` | nRF52840, nRF5340, nRF91 Series devices                  | Provide support for the `CryptoCell 310 <nRF9160 CRYPTOCELL - Arm TrustZone CryptoCell 310_>`_ and `CryptoCell 312 <nRF5340 CRYPTOCELL - Arm TrustZone CryptoCell 312_>`_ hardware peripherals                |
++---------------------------------------------------------------------+----------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :ref:`nrf_oberon <nrfxlib:nrf_oberon_readme>`                       | nRF devices with Arm Cortex®-M0, -M4, or -M33 processors | Optimized software library for cryptographic algorithms created by Oberon Microsystems                                                                                                                        |
++---------------------------------------------------------------------+----------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :ref:`CRACEN <ug_nrf54l_crypto_kmu_cracen_peripherals>`             | nRF54L Series                                            | Security subsystem providing hardware acceleration for cryptographic operations. For more information about it, see :ref:`ug_nrf54l_crypto_kmu_cracen_peripherals` on the :ref:`ug_nrf54l_cryptography` page. |
++---------------------------------------------------------------------+----------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+.. psa_crypto_lib_table_end
+
 See :ref:`nrf_security_drivers` for a list of supported functionalities.
-
-The Crypto API uses different libraries depending on hardware capabilities and user configuration:
-
-* cc3xx libraries - These provide support for the `CryptoCell 310 <nRF9160 CRYPTOCELL - Arm TrustZone CryptoCell 310_>`_ and `CryptoCell 312 <nRF5340 CRYPTOCELL - Arm TrustZone CryptoCell 312_>`_ hardware peripherals.
-* nrf_oberon - :ref:`nrf_oberon <nrfxlib:nrf_oberon_readme>` is an optimized software library for cryptographic algorithms created by Oberon Microsystems and licensed to Nordic Semiconductor for redistribution.
-* CRACEN - Crypto Accelerator Engine (CRACEN) is a security subsystem developed by Nordic Semiconductor that provides hardware acceleration for cryptographic operations for nRF54L Series devices.
-  For more information about it, see :ref:`ug_nrf54l_crypto_kmu_cracen_peripherals` on the :ref:`ug_nrf54l_cryptography` page.
-
-See :ref:`nrfxlib:crypto` for more information on these libraries.
-
 For specific cryptographic operations, the PSA Crypto API uses the library :ref:`configured <nrf_security_drivers>` for them.
 If multiple libraries have been enabled, cc3xx is prioritized, given that the CryptoCell supports the cryptographic operation.
 
@@ -131,6 +136,8 @@ The following figure illustrates the library selection:
    PSA Crypto API library selection
 
 Keys from the PSA Crypto API are typically stored in the Internal Trusted Storage (ITS, one of :ref:`ug_tfm_architecture_rot_services_platform`) or the Key Management Unit (KMU, a hardware peripheral that belongs to :ref:`ug_tfm_architecture_rots`).
+
+See :ref:`crypto_samples` for usage examples.
 
 .. _ug_psa_certified_api_overview_attestation:
 
