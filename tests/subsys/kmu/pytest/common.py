@@ -76,15 +76,13 @@ def flash_board(build_dir: Path | str, dev_id: str | None, erase: bool = False):
 def provision_keys_for_kmu(
         keys: list[str] | str,
         keyname: str = "UROT_PUBKEY",  # UROT_PUBKEY, BL_PUBKEY, APP_PUBKEY
-        soc: str = "nrf54l15",  # nrf54l15, nrf54l10, nrf54l05
         policy: str | None = None,  # revokable, lock, lock-last (default)
         dev_id: str | None = None
 ):
     logger.info("Provision keys using west command.")
     command = [
         'west', 'ncs-provision', 'upload',
-        '--keyname', keyname,
-        '--soc', soc
+        '--keyname', keyname
     ]
     if policy:
         command += ['--policy', policy]
