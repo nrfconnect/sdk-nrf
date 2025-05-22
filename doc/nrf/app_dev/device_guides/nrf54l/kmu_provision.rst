@@ -58,9 +58,7 @@ Once you have an unprovisioned SoC, upload keys to the board by running one of t
       .. parsed-literal::
         :class: highlight
 
-          west ncs-provision upload -s nrf54l15 -k ed25519.pem -k ed25519-1.pem -k ed25519-2.pem --keyname UROT_PUBKEY
-
-      * Parameter ``-s (-–soc)`` specifies the target device.
+          west ncs-provision upload -k ed25519.pem -k ed25519-1.pem -k ed25519-2.pem --keyname UROT_PUBKEY
 
       * Parameter ``-k (-–key)`` specifies the private key PEM files to be provisioned to the SoC.
         You can specify up to three keys.
@@ -123,7 +121,7 @@ Once you have an unprovisioned SoC, upload keys to the board by running one of t
       .. parsed-literal::
         :class: highlight
 
-          west ncs-provision upload -s nrf54l15 -k ed25519.pem --keyname UROT_PUBKEY
+          west ncs-provision upload -k ed25519.pem --keyname UROT_PUBKEY
 
    .. tab:: nRF Util
 
