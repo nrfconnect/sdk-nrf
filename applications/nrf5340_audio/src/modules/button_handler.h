@@ -28,4 +28,13 @@ int button_handler_init(void);
  */
 int button_pressed(gpio_pin_t button_pin, bool *button_pressed);
 
+/** @brief Convert a button's GPIO pin number to it's name.
+ *
+ * @param[in] button_pin Button pin
+ * @param[out] button_name Pointer to the button's name.
+ *
+ * @return 0 if success, an error code otherwise.
+ */
+int button_handler_pin_to_name(gpio_pin_t button_pin, char **button_name);
+
 #endif /* _BUTTON_HANDLER_H_ */
