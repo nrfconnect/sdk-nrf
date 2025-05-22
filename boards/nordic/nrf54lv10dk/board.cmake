@@ -1,4 +1,4 @@
-# Copyright (c) 2024 Nordic Semiconductor ASA
+# Copyright (c) 2025 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 if(CONFIG_SOC_NRF54LV10A_ENGA_CPUAPP)
