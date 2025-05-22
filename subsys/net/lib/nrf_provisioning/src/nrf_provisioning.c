@@ -122,9 +122,14 @@ static int cert_provision(void)
 	}
 
 	/* Don't overwrite certificate if one has been provisioned */
-	if (exists || !cert_size) {
-		ret = 0;
+	if (exists) {
+		LOG_DBG("Certificate already provisioned");
 		return 0;
+	}
+
+	if (!cert_size) {
+		LOG_ERR("Provided certificate size is 0");
+		return -EINVAL;
 	}
 
 	ret = nrf_provisioning_notify_event_and_wait_for_modem_state(
@@ -299,7 +304,7 @@ static int settings_init(void)
 	return 0;
 }
 
-static void nrf_provisioning_callback(const struct nrf_provisioning_callback_data *event)
+static void nrf_provisioning_callback_handler(const struct nrf_provisioning_callback_data *event)
 {
 
 #if !CONFIG_UNITY
@@ -393,7 +398,7 @@ int nrf_provisioning_init(nrf_provisioning_event_cb_t callback_handler)
 	k_mutex_lock(&np_mtx, K_FOREVER);
 
 	if (!callback_handler) {
-		callback_local = nrf_provisioning_callback;
+		callback_local = nrf_provisioning_callback_handler;
 	} else {
 		callback_local = callback_handler;
 	}
@@ -489,11 +494,6 @@ int nrf_provisioning_schedule(void)
 		} else {
 			/* Backoff... */
 			retry_s = retry_s * 2;
-
-			/* ...up to a degree */
-			if (retry_s > CONFIG_NRF_PROVISIONING_INTERVAL_S) {
-				retry_s = CONFIG_NRF_PROVISIONING_INTERVAL_S;
-			}
 		}
 
 		goto out;
@@ -519,10 +519,19 @@ out:
 	spread_s = rand() %
 		(CONFIG_NRF_PROVISIONING_SPREAD_S ? CONFIG_NRF_PROVISIONING_SPREAD_S : 1);
 
+	/* Limit provisioning interval to the maximum configured */
+	if (retry_s > CONFIG_NRF_PROVISIONING_INTERVAL_S) {
+		LOG_DBG("Interval exceeding maximum, setting to %d",
+			CONFIG_NRF_PROVISIONING_INTERVAL_S);
+		retry_s = CONFIG_NRF_PROVISIONING_INTERVAL_S;
+	}
+
 	/* To even the load on server side */
 	retry_s += spread_s;
 
-	LOG_INF("Checking for provisioning commands in %lld seconds", retry_s);
+	LOG_DBG("Checking for provisioning commands in %lld seconds", retry_s);
+	LOG_DBG("%lld seconds base + %lld seconds spread", (retry_s - spread_s), spread_s);
+
 	reschedule = false;
 
 	return retry_s;
@@ -541,6 +550,23 @@ static void commit_latest_cmd_id(void)
 	} else {
 		LOG_DBG("%s", nrf_provisioning_codec_get_latest_cmd_id());
 	}
+}
+
+static int wait_for_valid_datetime(int timeout_seconds)
+{
+	int waited = 0;
+
+	while (waited < timeout_seconds) {
+		if (date_time_is_valid()) {
+			LOG_DBG("Valid date time obtained");
+			return 0;
+		}
+
+		k_sleep(K_SECONDS(1));
+		waited++;
+	}
+
+	return -ETIMEDOUT;
 }
 
 void nrf_provisioning_set_interval(int interval)
@@ -579,41 +605,117 @@ void nrf_provisioning_set_interval(int interval)
 	}
 }
 
-int nrf_provisioning_req(void)
+static void check_return_code_and_notify(int ret)
+{
+	struct nrf_provisioning_callback_data event_data = { 0 };
+
+	if (ret == -EACCES) {
+		LOG_WRN("Unauthorized access: device is not yet claimed.");
+
+		event_data.type = NRF_PROVISIONING_EVENT_FAILED_DEVICE_NOT_CLAIMED;
+
+		if (IS_ENABLED(CONFIG_NRF_PROVISIONING_PROVIDE_ATTESTATION_TOKEN)) {
+			struct nrf_attestation_token token = { 0 };
+			int err;
+
+			err = modem_attest_token_get(&token);
+			if (err) {
+				LOG_ERR("Failed to get token, err %d", err);
+			} else {
+				event_data.token = &token;
+				callback_local(&event_data);
+
+				modem_attest_token_free(&token);
+			}
+
+		} else {
+			callback_local(&event_data);
+		}
+
+	} else if (ret == -EINVAL) {
+		__ASSERT(false, "Invalid exchange, abort");
+		LOG_ERR("Invalid exchange");
+
+		event_data.type = NRF_PROVISIONING_EVENT_FAILED;
+		callback_local(&event_data);
+
+	} else if (ret == -ECONNREFUSED) {
+		LOG_ERR("Connection refused");
+		LOG_WRN("Please check the CA certificate stored in sectag "
+			STRINGIFY(CONFIG_NRF_PROVISIONING_ROOT_CA_SEC_TAG)"");
+
+		event_data.type = NRF_PROVISIONING_EVENT_FAILED_WRONG_ROOT_CA;
+		callback_local(&event_data);
+
+	} else if (ret < 0) {
+		LOG_ERR("Provisioning failed, error: %d", ret);
+
+		event_data.type = NRF_PROVISIONING_EVENT_FAILED;
+		callback_local(&event_data);
+
+	} else if (ret > 0) {
+		/* Provisioning finished */
+
+		if (IS_ENABLED(CONFIG_NRF_PROVISIONING_SAVE_CMD_ID)) {
+			LOG_DBG("Saving the latest command id");
+			commit_latest_cmd_id();
+		}
+
+		event_data.type = NRF_PROVISIONING_EVENT_DONE;
+		callback_local(&event_data);
+	}
+}
+
+static void scheduled_provisioning(void)
 {
 	int ret;
 	struct nrf_provisioning_callback_data event_data = { 0 };
 
-	while (true) {
+	settings_load_subtree(settings.name); /* Get the provisioning interval */
 
-		k_condvar_wait(&np_cond, &np_mtx, K_FOREVER);
-		k_mutex_unlock(&np_mtx);
-
-		if (IS_ENABLED(CONFIG_NRF_PROVISIONING_WITH_CERT)) {
-			ret = cert_provision();
-			if (ret) {
-				LOG_ERR("Failed to provision certificate, err %d", ret);
-				event_data.type = NRF_PROVISIONING_EVENT_FATAL_ERROR;
-				callback_local(&event_data);
-				return ret;
-			}
+	/* Reschedule as long as there's no network */
+	do {
+		ret = nrf_provisioning_schedule();
+		if (ret < 0) {
+			LOG_ERR("Provisioning client terminated");
+			__ASSERT(false, "Provisioning client terminated");
+			break; /* Terminates the thread */
 		}
 
-		if (IS_ENABLED(IS_ENABLED(CONFIG_NRF_PROVISIONING_SCHEDULED))) {
-			settings_load_subtree(settings.name); /* Get the provisioning interval */
+		LOG_DBG("Next provisioning in %d seconds", ret);
 
-			/* Reschedule as long as there's no network */
-			do {
-				ret = nrf_provisioning_schedule();
-				if (ret < 0) {
-					LOG_ERR("Provisioning client terminated");
-					__ASSERT(false, "Provisioning client terminated");
-					break; /* Terminates the thread */
-				}
+		k_condvar_wait(&np_cond, &np_mtx, K_SECONDS(ret));
+		k_mutex_unlock(&np_mtx);
+	} while (!nw_connected || reschedule);
 
-				k_condvar_wait(&np_cond, &np_mtx, K_SECONDS(ret));
-				k_mutex_unlock(&np_mtx);
-			} while (!nw_connected || reschedule);
+	event_data.type = NRF_PROVISIONING_EVENT_START;
+	callback_local(&event_data);
+
+	if (IS_ENABLED(CONFIG_NRF_PROVISIONING_HTTP)) {
+		ret = nrf_provisioning_http_req(&rest_ctx);
+	} else {
+		ret = nrf_provisioning_coap_req(&coap_ctx);
+	}
+
+	event_data.type = NRF_PROVISIONING_EVENT_STOP;
+	callback_local(&event_data);
+
+	while (ret == -EBUSY || ret == -ETIMEDOUT) {
+		int backoff = CONFIG_NRF_PROVISIONING_INITIAL_BACKOFF;
+
+		if (ret == -EBUSY) {
+			LOG_WRN("Busy, retrying in %d seconds", backoff);
+		} else {
+			LOG_WRN("Timeout, retrying in %d seconds", backoff);
+		}
+
+		/* Backoff */
+		k_condvar_wait(&np_cond, &np_mtx, K_SECONDS(backoff));
+		k_mutex_unlock(&np_mtx);
+
+		backoff = backoff * 2;
+		if (backoff > SRV_TIMEOUT_BACKOFF_MAX_S) {
+			backoff = SRV_TIMEOUT_BACKOFF_MAX_S;
 		}
 
 		event_data.type = NRF_PROVISIONING_EVENT_START;
@@ -627,94 +729,66 @@ int nrf_provisioning_req(void)
 
 		event_data.type = NRF_PROVISIONING_EVENT_STOP;
 		callback_local(&event_data);
+	}
 
-		if (IS_ENABLED(CONFIG_NRF_PROVISIONING_SCHEDULED)) {
-			while (ret == -EBUSY || ret == -ETIMEDOUT) {
-				int backoff = CONFIG_NRF_PROVISIONING_INITIAL_BACKOFF;
+	check_return_code_and_notify(ret);
+}
 
-				if (ret == -EBUSY) {
-					LOG_WRN("Busy, retrying in %d seconds", backoff);
-				} else {
-					LOG_WRN("Timeout, retrying in %d seconds", backoff);
-				}
+static void on_demand_provisioning(void)
+{
+	int ret;
+	struct nrf_provisioning_callback_data event_data = { 0 };
 
-				/* Backoff */
-				k_condvar_wait(&np_cond, &np_mtx, K_SECONDS(backoff));
-				k_mutex_unlock(&np_mtx);
+	event_data.type = NRF_PROVISIONING_EVENT_START;
+	callback_local(&event_data);
 
-				backoff = backoff * 2;
-				if (backoff > SRV_TIMEOUT_BACKOFF_MAX_S) {
-					backoff = SRV_TIMEOUT_BACKOFF_MAX_S;
-				}
+	if (IS_ENABLED(CONFIG_NRF_PROVISIONING_HTTP)) {
+		ret = nrf_provisioning_http_req(&rest_ctx);
+	} else {
+		ret = nrf_provisioning_coap_req(&coap_ctx);
+	}
 
-				event_data.type = NRF_PROVISIONING_EVENT_START;
-				callback_local(&event_data);
+	event_data.type = NRF_PROVISIONING_EVENT_STOP;
+	callback_local(&event_data);
 
-				if (IS_ENABLED(CONFIG_NRF_PROVISIONING_HTTP)) {
-					ret = nrf_provisioning_http_req(&rest_ctx);
-				} else {
-					ret = nrf_provisioning_coap_req(&coap_ctx);
-				}
+	check_return_code_and_notify(ret);
+}
 
-				event_data.type = NRF_PROVISIONING_EVENT_STOP;
-				callback_local(&event_data);
-			}
+int nrf_provisioning_req(void)
+{
+	int ret;
+	struct nrf_provisioning_callback_data event_data = { 0 };
+
+	k_condvar_wait(&np_cond, &np_mtx, K_FOREVER);
+	k_mutex_unlock(&np_mtx);
+
+	if (IS_ENABLED(CONFIG_NRF_PROVISIONING_WITH_CERT)) {
+		ret = cert_provision();
+		if (ret) {
+			LOG_ERR("Failed to provision certificate, err %d", ret);
+			event_data.type = NRF_PROVISIONING_EVENT_FATAL_ERROR;
+			callback_local(&event_data);
+			return ret;
 		}
+	}
 
-		if (ret == -EACCES) {
-			LOG_WRN("Unauthorized access: device is not yet claimed.");
+	ret = wait_for_valid_datetime(CONFIG_NRF_PROVISIONING_WAIT_FOR_VALID_DATETIME);
+	if (ret) {
+		LOG_ERR("Failed to get valid date time, err %d", ret);
+		event_data.type = NRF_PROVISIONING_EVENT_FAILED_NO_VALID_DATETIME;
+		callback_local(&event_data);
+		return ret;
+	}
 
-			event_data.type = NRF_PROVISIONING_EVENT_FAILED_DEVICE_NOT_CLAIMED;
+	while (true) {
+		if (IS_ENABLED(CONFIG_NRF_PROVISIONING_SCHEDULED)) {
+			scheduled_provisioning();
+		} else {
+			on_demand_provisioning();
 
-			if (IS_ENABLED(CONFIG_NRF_PROVISIONING_PROVIDE_ATTESTATION_TOKEN)) {
-				struct nrf_attestation_token token = { 0 };
-				int err;
-
-				err = modem_attest_token_get(&token);
-				if (err) {
-					LOG_ERR("Failed to get token, err %d", err);
-				} else {
-					event_data.token = &token;
-					callback_local(&event_data);
-
-					modem_attest_token_free(&token);
-				}
-
-			} else {
-				callback_local(&event_data);
-			}
-
-		} else if (ret == -EINVAL) {
-			__ASSERT(false, "Invalid exchange, abort");
-			LOG_ERR("Invalid exchange");
-
-			event_data.type = NRF_PROVISIONING_EVENT_FAILED;
-			callback_local(&event_data);
-
-		} else if (ret == -ECONNREFUSED) {
-			LOG_ERR("Connection refused");
-			LOG_WRN("Please check the CA certificate stored in sectag "
-				STRINGIFY(CONFIG_NRF_PROVISIONING_ROOT_CA_SEC_TAG)"");
-
-			event_data.type = NRF_PROVISIONING_EVENT_FAILED_WRONG_ROOT_CA;
-			callback_local(&event_data);
-
-		} else if (ret < 0) {
-			LOG_ERR("Provisioning failed, error: %d", ret);
-
-			event_data.type = NRF_PROVISIONING_EVENT_FAILED;
-			callback_local(&event_data);
-
-		} else if (ret > 0) {
-			/* Provisioning finished */
-
-			if (IS_ENABLED(CONFIG_NRF_PROVISIONING_SAVE_CMD_ID)) {
-				LOG_DBG("Saving the latest command id");
-				commit_latest_cmd_id();
-			}
-
-			event_data.type = NRF_PROVISIONING_EVENT_DONE;
-			callback_local(&event_data);
+			/* Wait for the next provisioning request */
+			k_condvar_wait(&np_cond, &np_mtx, K_FOREVER);
+			k_mutex_unlock(&np_mtx);
 		}
 
 #if CONFIG_UNITY

@@ -30,7 +30,7 @@ static void nrf_provisioning_callback(const struct nrf_provisioning_callback_dat
 		LOG_INF("Provisioning stopped");
 		break;
 	case NRF_PROVISIONING_EVENT_NEED_LTE_DEACTIVATED:
-		LOG_INF("nRF Provisioning requires device to activate network");
+		LOG_INF("nRF Provisioning requires device to deactivate network");
 
 		ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
 		if (ret) {
@@ -40,7 +40,7 @@ static void nrf_provisioning_callback(const struct nrf_provisioning_callback_dat
 
 		break;
 	case NRF_PROVISIONING_EVENT_NEED_LTE_ACTIVATED:
-		LOG_INF("nRF Provisioning requires device to deactivate network");
+		LOG_INF("nRF Provisioning requires device to activate network");
 
 		ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_LTE);
 		if (ret) {
@@ -67,14 +67,17 @@ static void nrf_provisioning_callback(const struct nrf_provisioning_callback_dat
 	case NRF_PROVISIONING_EVENT_FAILED_WRONG_ROOT_CA:
 		LOG_ERR("Provisioning failed, wrong root CA certificate for nRF Cloud provisioned");
 		break;
+	case NRF_PROVISIONING_EVENT_FAILED_NO_VALID_DATETIME:
+		LOG_ERR("Provisioning failed, no valid datetime reference");
+		break;
 	case NRF_PROVISIONING_EVENT_FATAL_ERROR:
 		LOG_ERR("Provisioning error, irrecoverable");
 		break;
 	case NRF_PROVISIONING_EVENT_DONE:
-		LOG_WRN("Provisioning successful");
+		LOG_WRN("Provisioning done, rebooting...");
 		break;
 	default:
-		/* Don't care */
+		LOG_WRN("Unknown event type: %d", event->type);
 		break;
 	}
 }

@@ -49,6 +49,8 @@ enum nrf_provisioning_event {
 	NRF_PROVISIONING_EVENT_FAILED_DEVICE_NOT_CLAIMED,
 	/** Provisioning process failed, wrong CA certificate. */
 	NRF_PROVISIONING_EVENT_FAILED_WRONG_ROOT_CA,
+	/** Provisioning process failed, no valid datetime reference. */
+	NRF_PROVISIONING_EVENT_FAILED_NO_VALID_DATETIME,
 	/** Handling credentials internally, need the device to go offline. */
 	NRF_PROVISIONING_EVENT_NEED_LTE_DEACTIVATED,
 	/** Handling credentials internally, need the device to go online. */

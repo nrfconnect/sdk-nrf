@@ -29,9 +29,17 @@ config NRF_PROVISIONING_AUTO_START_ON_INIT
 config NRF_PROVISIONING_SCHEDULED
 	bool "Scheduled provisioning"
 	default y
+	depends on NRF_PROVISIONING_AUTO_START_ON_INIT
 	help
 	  Activate scheduled provisioning. The client will try to perform provisioning
 	  at a given interval set by CONFIG_NRF_PROVISIONING_INTERVAL_S.
+
+config NRF_PROVISIONING_WAIT_FOR_VALID_DATETIME
+	int "Time to wait for valid date time in seconds"
+	default 60
+	help
+	  Time to wait for valid date time before starting provisioning. The provisioniong library
+	  depends on JWT generation, which requires a valid date time.
 
 config NRF_PROVISIONING_INTERVAL_S
 	int "Maximum provisioning interval in seconds"

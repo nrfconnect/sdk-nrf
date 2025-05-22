@@ -300,6 +300,7 @@ static int exec_at_cmd(struct command *cmd_req, struct cdc_out_fmt_data *out)
 		resp = k_malloc(resp_sz);
 		if (!resp) {
 			LOG_ERR("Unable to write response msg field");
+			__ASSERT_NO_MSG(false);
 			return -ENOMEM;
 		}
 		memset(resp, 0, resp_sz);
@@ -521,9 +522,6 @@ int nrf_provisioning_codec_process_commands(void)
 			}
 
 			if (func_mode != LTE_LC_FUNC_MODE_OFFLINE) {
-
-				LOG_WRN("Modem is not offline, setting it to offline");
-
 				ret = nrf_provisioning_notify_event_and_wait_for_modem_state(
 					120, NRF_PROVISIONING_EVENT_NEED_LTE_DEACTIVATED, callback_local);
 				if (ret) {
