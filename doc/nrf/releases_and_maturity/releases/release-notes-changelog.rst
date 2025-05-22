@@ -236,6 +236,7 @@ Serial LTE modem
   * The initialization of the application to ignore a failure in nRF Cloud module initialization.
     This occurs sometimes especially during development.
   * The initialization of the application to send "INIT ERROR" over to UART and show clear error log to indicate that the application is not operational in case of failing initialization.
+  * The PPP downlink data to trigger the indicate pin when SLM is in idle.
 
 Thingy:53: Matter weather station
 ---------------------------------
