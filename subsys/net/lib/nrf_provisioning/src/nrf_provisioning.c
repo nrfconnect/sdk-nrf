@@ -360,6 +360,7 @@ static void nrf_provisioning_callback_handler(const struct nrf_provisioning_call
 	};
 		break;
 	default:
+		/* Don't care */
 		break;
 	}
 #endif
@@ -684,6 +685,10 @@ static void scheduled_provisioning(void)
 
 		LOG_DBG("Next provisioning in %d seconds", ret);
 
+		event_data.type = NRF_PROVISIONING_EVENT_SCHEDULED_PROVISIONING;
+		event_data.next_attempt_time_seconds = ret;
+		callback_local(&event_data);
+
 		k_condvar_wait(&np_cond, &np_mtx, K_SECONDS(ret));
 		k_mutex_unlock(&np_mtx);
 	} while (!nw_connected || reschedule);
@@ -710,6 +715,10 @@ static void scheduled_provisioning(void)
 		}
 
 		/* Backoff */
+		event_data.type = NRF_PROVISIONING_EVENT_SCHEDULED_PROVISIONING;
+		event_data.next_attempt_time_seconds = ret;
+		callback_local(&event_data);
+
 		k_condvar_wait(&np_cond, &np_mtx, K_SECONDS(backoff));
 		k_mutex_unlock(&np_mtx);
 

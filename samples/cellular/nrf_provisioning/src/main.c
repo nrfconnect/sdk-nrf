@@ -73,6 +73,10 @@ static void nrf_provisioning_callback(const struct nrf_provisioning_callback_dat
 	case NRF_PROVISIONING_EVENT_FATAL_ERROR:
 		LOG_ERR("Provisioning error, irrecoverable");
 		break;
+	case NRF_PROVISIONING_EVENT_SCHEDULED_PROVISIONING:
+		LOG_INF("Provisioning scheduled, next attempt in %lld seconds",
+			event->next_attempt_time_seconds);
+		break;
 	case NRF_PROVISIONING_EVENT_DONE:
 		LOG_WRN("Provisioning done, rebooting...");
 		break;

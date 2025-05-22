@@ -55,6 +55,14 @@ enum nrf_provisioning_event {
 	NRF_PROVISIONING_EVENT_NEED_LTE_DEACTIVATED,
 	/** Handling credentials internally, need the device to go online. */
 	NRF_PROVISIONING_EVENT_NEED_LTE_ACTIVATED,
+	/** Provisioning attempt scheduled
+	 *
+	 *  The event carries the time until the next provisioning attempt in seconds in the
+	 *  'next_attempt_time_seconds' field.
+	 *
+	 *  This event is only provided if CONFIG_NRF_PROVISIONING_SCHEDULED is enabled.
+	 */
+	NRF_PROVISIONING_EVENT_SCHEDULED_PROVISIONING,
 	/** Error occurred during provisioning. */
 	NRF_PROVISIONING_EVENT_FATAL_ERROR,
 };
@@ -69,9 +77,12 @@ enum nrf_provisioning_event {
  */
 struct nrf_provisioning_callback_data {
 	enum nrf_provisioning_event type;
-
-	/** Modem attestation token for device claiming. */
-	struct nrf_attestation_token *token;
+	union {
+		/** Modem attestation token for device claiming. */
+		struct nrf_attestation_token *token;
+		/** Time until next provisioning attempt time in seconds. */
+		int64_t next_attempt_time_seconds;
+	};
 };
 
 /**
