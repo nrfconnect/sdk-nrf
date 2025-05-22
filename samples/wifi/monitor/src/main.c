@@ -328,6 +328,57 @@ static int wifi_set_channel(void)
 	return 0;
 }
 
+static int wifi_set_packet_filter(void)
+{
+	int ret;
+	struct net_if *iface;
+	struct wifi_filter_info filter_info = { 0 };
+	uint32_t filter = 0;
+
+	iface = net_if_get_first_wifi();
+	if (iface == NULL) {
+		LOG_ERR("No Wi-Fi interface found");
+		return -1;
+	}
+
+	filter_info.if_index = net_if_get_by_iface(iface);
+
+#if defined(CONFIG_MONITOR_MODE_WIFI_PACKET_FILTER_ALL)
+	filter |= WIFI_PACKET_FILTER_ALL;
+#elif defined(CONFIG_MONITOR_MODE_WIFI_PACKET_FILTER_CUSTOM)
+#if defined(CONFIG_MONITOR_MODE_WIFI_PACKET_FILTER_MGMT)
+	filter |= WIFI_PACKET_FILTER_MGMT;
+#endif
+#if defined(CONFIG_MONITOR_MODE_WIFI_PACKET_FILTER_CTRL)
+	filter |= WIFI_PACKET_FILTER_CTRL;
+#endif
+#if defined(CONFIG_MONITOR_MODE_WIFI_PACKET_FILTER_DATA)
+	filter |= WIFI_PACKET_FILTER_DATA;
+#endif
+
+	if (filter == 0) {
+		LOG_WRN("CUSTOM filter mode is selected "
+			"but no packet type (MGMT, CTRL, DATA) is enabled");
+		return -1;
+	}
+#endif
+
+	filter_info.filter = filter;
+
+	filter_info.buffer_size = CONFIG_MONITOR_MODE_WIFI_PACKET_FILTER_CAPTURE_LEN;
+	filter_info.oper = WIFI_MGMT_SET;
+
+	ret = net_mgmt(NET_REQUEST_WIFI_PACKET_FILTER, iface, &filter_info, sizeof(filter_info));
+	if (ret) {
+		LOG_ERR("Failed to set packet filter %d", ret);
+		return -1;
+	}
+
+	LOG_INF("Packet filter set successfully");
+
+	return 0;
+}
+
 static int wifi_set_mode(void)
 {
 	int ret;
@@ -539,6 +590,11 @@ int main(void)
 	k_sleep(K_SECONDS(2));
 
 	ret = wifi_set_mode();
+	if (ret) {
+		return -1;
+	}
+
+	ret = wifi_set_packet_filter();
 	if (ret) {
 		return -1;
 	}
