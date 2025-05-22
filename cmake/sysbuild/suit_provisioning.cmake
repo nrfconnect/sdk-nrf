@@ -14,9 +14,9 @@ set(MPI_BINARY_DIR ${DEFAULT_BINARY_DIR}/zephyr)
 # Store the absolute address of the SUIT storage inside CMake cache.
 #
 function(configure_storage_address_cache)
-  sysbuild_dt_nodelabel(
+  dt_nodelabel(
     suit_storage_dev
-    IMAGE
+    TARGET
     ${DEFAULT_IMAGE}
     NODELABEL
     "suit_storage_partition"
@@ -28,9 +28,9 @@ function(configure_storage_address_cache)
   endif()
 
   # Calculate SUIT storage address, based on the DTS
-  sysbuild_dt_reg_addr(
+  dt_reg_addr(
     suit_storage_address
-    IMAGE
+    TARGET
     ${DEFAULT_IMAGE}
     PATH
     "${suit_storage_dev}"
