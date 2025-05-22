@@ -39,7 +39,6 @@ struct dect_harq_tx_payload_data {
 /**************************************************************************************************/
 
 /* Callback definitions from DECT PHY API scheduler */
-
 typedef void (*dect_phy_api_scheduler_op_interval_count_callback_t)(uint32_t handle);
 
 typedef void (*dect_phy_api_scheduler_op_completed_callback_t)(
@@ -83,6 +82,7 @@ struct dect_phy_api_scheduler_list_item_config_tx {
 
 	uint16_t encoded_payload_pdu_size;
 	uint8_t *encoded_payload_pdu;
+	bool random_data_payload; /* If true, payload is filled of random data by scheduler */
 
 	/* HARQ */
 	bool harq_feedback_requested;

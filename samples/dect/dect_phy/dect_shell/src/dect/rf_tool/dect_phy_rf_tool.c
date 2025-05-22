@@ -72,8 +72,9 @@ struct dect_phy_rf_tool_scheduler_rx_data {
 
 struct dect_phy_rf_tool_scheduler_tx_data {
 	uint16_t tx_data_len;
+#if !defined(CONFIG_XOSHIRO_RANDOM_GENERATOR)
 	uint8_t tx_data[DECT_DATA_MAX_LEN]; /* max data size in bytes when MCS4 + 4 slots */
-
+#endif
 	union nrf_modem_dect_phy_hdr tx_phy_header;
 	struct nrf_modem_dect_phy_tx_params tx_op;
 };
@@ -960,9 +961,12 @@ static int dect_phy_rf_tool_tx_op_schedule(uint64_t start_time, uint32_t interva
 	list_item->priority = DECT_PRIORITY1_TX;
 
 	list_item_conf->tx.encoded_payload_pdu_size = rf_tool_data.scheduler_tx_data.tx_data_len;
+#if defined(CONFIG_XOSHIRO_RANDOM_GENERATOR)
+	list_item_conf->tx.random_data_payload = true;
+#else
 	memcpy(list_item_conf->tx.encoded_payload_pdu, rf_tool_data.scheduler_tx_data.tx_data,
 	       list_item_conf->tx.encoded_payload_pdu_size);
-
+#endif
 	list_item_conf->tx.header_type = DECT_PHY_HEADER_TYPE2;
 	memcpy(&list_item_conf->tx.phy_header.type_2, &rf_tool_data.scheduler_tx_data.tx_phy_header,
 	       sizeof(phy_header.type_2));
@@ -1109,9 +1113,12 @@ static int dect_phy_rf_tool_start(struct dect_phy_rf_tool_params *params, bool r
 			desh_error("%s: Too long TX data: %d bytes", __func__, len_bytes);
 			return -1;
 		}
-
+#if !defined(CONFIG_XOSHIRO_RANDOM_GENERATOR)
+		desh_warn("Note: Fast enough random generator not enabled - "
+			  "using repeating pattern");
 		dect_common_utils_fill_with_repeating_pattern(scheduler_tx_data->tx_data,
 							      len_bytes);
+#endif
 		scheduler_tx_data->tx_data_len = len_bytes;
 
 		memset(tx_header, 0, sizeof(struct dect_phy_header_type2_format1_t));

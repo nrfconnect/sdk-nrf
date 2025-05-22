@@ -7,6 +7,7 @@
 #include <zephyr/init.h>
 
 #include <dk_buttons_and_leds.h>
+#include <zephyr/random/random.h>
 
 #include "dect_phy_common.h"
 
@@ -1037,6 +1038,11 @@ dect_phy_api_scheduler_core_mdm_phy_op(struct dect_phy_api_scheduler_list_item *
 
 			tx_op.data_size = list_item->sched_config.tx.encoded_payload_pdu_size;
 			tx_op.data = list_item->sched_config.tx.encoded_payload_pdu;
+			if (list_item->sched_config.tx.random_data_payload) {
+				for (int i = 0; i < tx_op.data_size; i++) {
+					tx_op.data[i] = sys_rand8_get();
+				}
+			}
 			tx_op.lbt_period = list_item->sched_config.tx.phy_lbt_period;
 			tx_op.lbt_rssi_threshold_max =
 				list_item->sched_config.tx.phy_lbt_rssi_threshold_max;
