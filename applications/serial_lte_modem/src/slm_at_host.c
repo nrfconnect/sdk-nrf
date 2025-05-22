@@ -177,6 +177,11 @@ static void write_data_buf(const uint8_t *buf, size_t len)
 	size_t ret;
 	size_t index = 0;
 
+	/* Reset the ring buffer so that UDP packets have enough continuous space. */
+	if (ring_buf_is_empty(&data_rb)) {
+		ring_buf_reset(&data_rb);
+	}
+
 	while (index < len) {
 		ret = ring_buf_put(&data_rb, buf + index, len - index);
 		if (ret) {
