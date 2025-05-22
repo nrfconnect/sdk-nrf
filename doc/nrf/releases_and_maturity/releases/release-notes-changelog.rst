@@ -153,13 +153,12 @@ Gazell
 Matter
 ------
 
+* Added FastTrack Recertification and Portfolio Certification programs.
+
 * Updated:
 
    * The``west zap-generate`` command to remove previously generated ZAP files before generating new files.
      To skip removing the files, use the ``--keep-previous`` argument.
-
-
-|no_changes_yet_note|
 
 Matter fork
 +++++++++++
