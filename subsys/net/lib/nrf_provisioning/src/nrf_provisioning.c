@@ -360,6 +360,7 @@ static void nrf_provisioning_callback_handler(const struct nrf_provisioning_call
 	};
 		break;
 	default:
+		/* Don't care */
 		break;
 	}
 #endif
@@ -632,6 +633,12 @@ static void check_return_code_and_notify(int ret)
 			callback_local(&event_data);
 		}
 
+	} else if (ret == -ENOMEM) {
+		LOG_ERR("Not enough memory to process the incoming list of commands");
+
+		event_data.type = NRF_PROVISIONING_EVENT_FAILED_TOO_MANY_COMMANDS;
+		callback_local(&event_data);
+
 	} else if (ret == -EINVAL) {
 		__ASSERT(false, "Invalid exchange, abort");
 		LOG_ERR("Invalid exchange");
@@ -647,6 +654,11 @@ static void check_return_code_and_notify(int ret)
 		event_data.type = NRF_PROVISIONING_EVENT_FAILED_WRONG_ROOT_CA;
 		callback_local(&event_data);
 
+	} else if (ret == -ENODATA) {
+		LOG_DBG("No commands to process");
+
+		event_data.type = NRF_PROVISIONING_EVENT_NO_COMMANDS,
+		callback_local(&event_data);
 	} else if (ret < 0) {
 		LOG_ERR("Provisioning failed, error: %d", ret);
 
@@ -684,6 +696,10 @@ static void scheduled_provisioning(void)
 
 		LOG_DBG("Next provisioning in %d seconds", ret);
 
+		event_data.type = NRF_PROVISIONING_EVENT_SCHEDULED_PROVISIONING;
+		event_data.next_attempt_time_seconds = ret;
+		callback_local(&event_data);
+
 		k_condvar_wait(&np_cond, &np_mtx, K_SECONDS(ret));
 		k_mutex_unlock(&np_mtx);
 	} while (!nw_connected || reschedule);
@@ -710,6 +726,10 @@ static void scheduled_provisioning(void)
 		}
 
 		/* Backoff */
+		event_data.type = NRF_PROVISIONING_EVENT_SCHEDULED_PROVISIONING;
+		event_data.next_attempt_time_seconds = ret;
+		callback_local(&event_data);
+
 		k_condvar_wait(&np_cond, &np_mtx, K_SECONDS(backoff));
 		k_mutex_unlock(&np_mtx);
 

@@ -300,6 +300,7 @@ static int exec_at_cmd(struct command *cmd_req, struct cdc_out_fmt_data *out)
 		resp = k_malloc(resp_sz);
 		if (!resp) {
 			LOG_ERR("Unable to write response msg field");
+			LOG_ERR("No enough memory for AT response, size %d", resp_sz);
 			__ASSERT_NO_MSG(false);
 			return -ENOMEM;
 		}
@@ -470,11 +471,6 @@ static void decode_fail_info(int err, void *payload, int len)
 
 	LOG_ERR("Decoding commands response failed, reason %d", err);
 	LOG_HEXDUMP_ERR(payload, len, "Payload: ");
-
-	switch (err) {
-	case ZCBOR_ERR_HIGH_ELEM_COUNT:
-		LOG_ERR("CONFIG_NRF_PROVISIONING_CBOR_RECORDS is too small");
-	}
 }
 
 int nrf_provisioning_codec_process_commands(void)
@@ -490,8 +486,13 @@ int nrf_provisioning_codec_process_commands(void)
 				   cctx->i_data, &cctx->i_data_sz);
 	if (ret != ZCBOR_SUCCESS) {
 		decode_fail_info(ret, cctx->ipkt, cctx->ipkt_sz);
-		ret = -EINVAL;
-		return ret;
+
+		if (ret == ZCBOR_ERR_HIGH_ELEM_COUNT) {
+			LOG_ERR("CONFIG_NRF_PROVISIONING_CBOR_RECORDS is too small");
+			return -ENOMEM;
+		}
+
+		return -EINVAL;
 	}
 
 	LOG_HEXDUMP_DBG(cctx->ipkt, cctx->ipkt_sz, "received commands: ");

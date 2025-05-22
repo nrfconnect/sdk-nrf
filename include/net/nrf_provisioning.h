@@ -40,6 +40,13 @@ enum nrf_provisioning_event {
 	NRF_PROVISIONING_EVENT_DONE,
 	/** Provisioning process failed, try again. */
 	NRF_PROVISIONING_EVENT_FAILED,
+	/** Provisioning process done, no commands received from the server. */
+	NRF_PROVISIONING_EVENT_NO_COMMANDS,
+	/** Provisioning process failed, too many commands for the device to handle.
+	 *  Increase CONFIG_NRF_PROVISIONING_CBOR_RECORDS to allow more commands.
+	 *  It also might be needed to increase heap size to allocate the larger number of commands.
+	 */
+	NRF_PROVISIONING_EVENT_FAILED_TOO_MANY_COMMANDS,
 	/** Provisioning process failed, device not claimed.
 	 *  Try again after the device is claimed using the attestation token.
 	 *
@@ -55,6 +62,14 @@ enum nrf_provisioning_event {
 	NRF_PROVISIONING_EVENT_NEED_LTE_DEACTIVATED,
 	/** Handling credentials internally, need the device to go online. */
 	NRF_PROVISIONING_EVENT_NEED_LTE_ACTIVATED,
+	/** Provisioning attempt scheduled
+	 *
+	 *  The event carries the time until the next provisioning attempt in seconds in the
+	 *  'next_attempt_time_seconds' field.
+	 *
+	 *  This event is only provided if CONFIG_NRF_PROVISIONING_SCHEDULED is enabled.
+	 */
+	NRF_PROVISIONING_EVENT_SCHEDULED_PROVISIONING,
 	/** Error occurred during provisioning. */
 	NRF_PROVISIONING_EVENT_FATAL_ERROR,
 };
@@ -69,9 +84,12 @@ enum nrf_provisioning_event {
  */
 struct nrf_provisioning_callback_data {
 	enum nrf_provisioning_event type;
-
-	/** Modem attestation token for device claiming. */
-	struct nrf_attestation_token *token;
+	union {
+		/** Modem attestation token for device claiming. */
+		struct nrf_attestation_token *token;
+		/** Time until next provisioning attempt time in seconds. */
+		int64_t next_attempt_time_seconds;
+	};
 };
 
 /**

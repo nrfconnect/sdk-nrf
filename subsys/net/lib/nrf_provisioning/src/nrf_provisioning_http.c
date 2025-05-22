@@ -455,7 +455,7 @@ int nrf_provisioning_http_req(struct nrf_provisioning_http_context *const rest_c
 		LOG_INF("Connected");
 
 		if (resp.http_status_code == NRF_PROVISIONING_HTTP_STATUS_NO_CONTENT) {
-			LOG_INF("No more commands to process on server side");
+			LOG_INF("No commands to process on server side");
 			ret = 0;
 		} else if (resp.http_status_code == NRF_PROVISIONING_HTTP_STATUS_BAD_REQ) {
 			LOG_ERR("Bad request");
