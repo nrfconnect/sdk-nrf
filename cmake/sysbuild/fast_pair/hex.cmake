@@ -86,9 +86,9 @@ function(fast_pair_hex_dts)
 
   set(fp_partition_name bt_fast_pair_partition)
 
-  sysbuild_dt_nodelabel(
+  dt_nodelabel(
     bt_fast_pair_partition_node_full_path
-    IMAGE
+    TARGET
     ${DEFAULT_IMAGE}
     NODELABEL
     "${fp_partition_name}"
@@ -101,9 +101,9 @@ function(fast_pair_hex_dts)
             "data generation with the SB_CONFIG_BT_FAST_PAIR_PROV_DATA Kconfig.")
   endif()
 
-  sysbuild_dt_reg_addr(
+  dt_reg_addr(
     bt_fast_pair_partition_relative_address
-    IMAGE
+    TARGET
     ${DEFAULT_IMAGE}
     PATH
     "${bt_fast_pair_partition_node_full_path}"
@@ -120,9 +120,9 @@ function(fast_pair_hex_dts)
     nvm_node_full_path
     "${bt_fast_pair_partition_node_parent_full_path}"
     )
-  sysbuild_dt_reg_addr(
+  dt_reg_addr(
     nvm_base_address
-    IMAGE
+    TARGET
     ${DEFAULT_IMAGE}
     PATH
     "${nvm_node_full_path}"

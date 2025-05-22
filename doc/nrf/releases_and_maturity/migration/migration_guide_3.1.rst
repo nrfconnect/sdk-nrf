@@ -40,6 +40,48 @@ This section describes the changes related to libraries.
 
 .. _migration_3.1_recommended:
 
+Build system
+============
+
+.. toggle::
+
+   * In sysbuild, the following CMake extensions have been removed:
+
+     * ``sysbuild_dt_nodelabel``
+     * ``sysbuild_dt_alias``
+     * ``sysbuild_dt_node_exists``
+     * ``sysbuild_dt_node_has_status``
+     * ``sysbuild_dt_prop``
+     * ``sysbuild_dt_comp_path``
+     * ``sysbuild_dt_num_regs``
+     * ``sysbuild_dt_reg_addr``
+     * ``sysbuild_dt_reg_size``
+     * ``sysbuild_dt_has_chosen``
+     * ``sysbuild_dt_chosen``
+
+     You must now use pre-existing devicetree extensions, such as ``dt_nodelabel``, without the ``sysbuild_`` prefix.
+     To specify the sysbuild image, use the ``TARGET`` argument in place of ``IMAGE``.
+
+     The following example shows one of the removed functions:
+
+     .. code-block:: none
+
+        sysbuild_dt_chosen(
+          flash_node
+          IMAGE ${DEFAULT_IMAGE}
+          PROPERTY "zephyr,flash"
+        )
+
+     It should now be modified as follows:
+
+     .. code-block:: none
+
+        dt_chosen(
+          flash_node
+          TARGET ${DEFAULT_IMAGE}
+          PROPERTY "zephyr,flash"
+        )
+
 Recommended changes
 *******************
 
