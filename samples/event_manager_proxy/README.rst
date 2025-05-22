@@ -110,14 +110,14 @@ Complete the following steps to program the sample:
 Testing
 =======
 
-After programming the sample to your development kit for both cores, test it by performing the following steps:
+|test_sample|
 
 1. |connect_terminal|
 #. Reset the kit.
 #. Observe that output logged on two UART serial terminals.
    One for the host and the other for the remote core.
 
-   * On the host core, we expect the following messages:
+   * On the host core, the following messages are expected:
 
      .. code-block:: console
 
@@ -174,7 +174,7 @@ After programming the sample to your development kit for both cores, test it by 
         [00:00:07.015,502] <inf> event_manager: e: ack_event
 
 Now all the measurement and control events are generated on the remote core and passed to the host core, where the statistics are generated.
-On the remote core, we can also see an :c:type:`ack_event`, which is not passed to the host core.
+On the remote core, you can also see an :c:type:`ack_event` that is not passed to the host core.
 
 Dependencies
 ************

@@ -234,8 +234,8 @@ The following static partition snippet shows a non-aligned configuration for nRF
       size: 0x4000
 
 In the above example, the ``tfm_nonsecure`` partition starts at address 0x8200, which is not aligned with the requirement of 0x4000.
-Since ``tfm_secure`` spans the ``mcuboot_pad`` and ``tfm`` partitions we can decrease the size of any of them by 0x200 to fix the alignment issue.
-We will decrease the size of the (optional) ``mcuboot_pad`` partition and thus the size of the ``tfm_secure`` partition as follows:
+Since ``tfm_secure`` spans the ``mcuboot_pad`` and ``tfm`` partitions, you can decrease the size of any of them by 0x200 to fix the alignment issue.
+Decrease the size of the (optional) ``mcuboot_pad`` partition, and thus the size of the ``tfm_secure`` partition, as follows:
 
 .. code-block:: console
 

@@ -960,7 +960,7 @@ liblwm2m_carrier 0.6.0
 
 Initial public release for modem firmware version 1.0.1.
 This release is intended to let users begin the integration on the Verizon Wireless device management platform and start the certification process with Verizon Wireless.
-We recommend upgrading to the next release when it becomes available.
+It is recommended to upgrade to the next release when it becomes available.
 The testing performed on this release does not meet Nordic standard for mass production release testing.
 
 

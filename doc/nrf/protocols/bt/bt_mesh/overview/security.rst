@@ -51,7 +51,7 @@ Transport encryption
 
 	As an example, consider a mesh network deployed in a hotel.
 	In this example it is desirable to limit some features that are to be controlled by the staff (like configuration of key cards or access to storage areas), and some features to be available to guests (like controlling room lighting or air conditioning).
-	For this, we can have one application key for the guests and one for the staff, allowing the messages to be relayed across the same network, while preventing the guests and the staff from reading each other's messages.
+	For this, you can have one application key for the guests and one for the staff, allowing the messages to be relayed across the same network, while preventing the guests and the staff from reading each other's messages.
 
 While application keys are used to separate access rights to different applications in the network, the device keys are used to manage devices in the network.
 

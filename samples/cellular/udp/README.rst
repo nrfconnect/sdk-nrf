@@ -128,9 +128,7 @@ The following configurations are recommended for low power behavior:
 * :ref:`CONFIG_UDP_RAI_ENABLE <CONFIG_UDP_RAI_ENABLE>` enabled.
 
 .. note::
-   In applications where downlink messaging from the cloud to the device is expected, we recommend setting
-   the :kconfig:option:`CONFIG_LTE_PSM_REQ_RAT` option to a higher value than ``0`` to ensure data is received
-   before the device enters PSM.
+   In applications where downlink messaging from the cloud to the device is expected, it is recommended to set the :kconfig:option:`CONFIG_LTE_PSM_REQ_RAT` option to a value higher than ``0`` to ensure data is received before the device enters PSM.
 
 PSM and eDRX timers are set with binary strings that signify a time duration in seconds.
 For a conversion chart of these timer values, see the `Power saving mode setting`_ section in the nRF9160 AT Commands Reference Guide or the `same section <nRF91x1 Power saving mode setting_>`_ in the nRF91x1 AT Commands Reference Guide, depending on the SiP you are using.
