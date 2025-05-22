@@ -61,7 +61,7 @@ For this quick start guide, you need the following development kit:
 Software requirements
 =====================
 
-For this quick start guide, we will install the following software:
+For this quick start guide, install the following software:
 
 * The full |NCS| toolchain.
   See :ref:`ug_nrf54h20_gs` for instructions on how to install the toolchain.

@@ -1722,7 +1722,7 @@ KRKNWK-11602: Zigbee device becomes not operable after receiving malformed packe
   * Before the |NCS| v1.9.0: Power-cycle the Zigbee device.
   * After and including the |NCS| v1.9.0: Wait for the device to restart automatically.
 
-Given these two options, we recommend to upgrade your |NCS| version to the latest available one.
+  Given these two options, it is recommended to upgrade your |NCS| version to the latest available one.
 
 .. rst-class:: v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0
 

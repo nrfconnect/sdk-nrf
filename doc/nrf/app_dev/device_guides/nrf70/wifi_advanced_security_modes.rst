@@ -120,7 +120,7 @@ To  build the hostapd executable, complete the following steps:
       # RADIUS clients configuration
       radius_server_clients=hostapd.radius_clients
       radius_server_auth_port=1812
-      # Enable eap_server when we use hostapd integrated EAP server instead of external RADIUS authentication
+      # Enable eap_server when using hostapd integrated EAP server instead of external RADIUS authentication
       eap_server=1
       # EAP server user database
       eap_user_file=hostapd.eap_user_tls
