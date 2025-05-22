@@ -1,8 +1,8 @@
 # Copyright (c) 2025 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-identifier: nrf54lv10dk/nrf54lv10a/cpuapp
-name: nRF54LV10-DK-nRF54LV10A-Application
+identifier: nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
+name: nRF54LV10-DK-nRF54LV10A-Application (rev. 0.2.0)
 type: mcu
 arch: arm
 toolchain:
