@@ -117,8 +117,7 @@
 /doc/nrf/external_comp/edge_impulse.rst   @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/external_comp/memfault.rst       @nrfconnect/ncs-cia-doc
 /doc/nrf/external_comp/nrf_cloud.rst      @nrfconnect/ncs-nrf-cloud-doc
-/doc/nrf/gsg_guides/                      @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc @nrfconnect/ncs-wayland-doc
-/doc/nrf/gsg_guides/nrf7002_gs.rst        @nrfconnect/ncs-wifi-doc
+/doc/nrf/gsg_guides.rst                   @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc @nrfconnect/ncs-wayland-doc
 /doc/nrf/includes/                        @nrfconnect/ncs-doc-leads
 /doc/nrf/includes/boardname_tables/sample_boardnames.txt @nrfconnect/ncs-co-doc
 /doc/nrf/installation/                    @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc @nrfconnect/ncs-wayland-doc
