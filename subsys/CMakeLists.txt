@@ -55,7 +55,6 @@ add_subdirectory(debug)
 add_subdirectory_ifdef(CONFIG_PARTITION_MANAGER_ENABLED partition_manager)
 
 add_subdirectory_ifdef(CONFIG_NRF_RPC nrf_rpc)
-add_subdirectory_ifdef(CONFIG_NRF_802154_RADIO_DRIVER ieee802154)
 add_subdirectory_ifdef(CONFIG_NRF_DM dm)
 add_subdirectory_ifdef(CONFIG_EMDS emds)
 add_subdirectory_ifdef(CONFIG_NET_CORE_MONITOR net_core_monitor)
