@@ -14,9 +14,36 @@
 #include <modem/lte_lc.h>
 #include <modem/nrf_modem_lib.h>
 #include <net/nrf_provisioning.h>
+#include <net/nrf_cloud_coap.h>
 #include "nrf_provisioning_at.h"
 
 LOG_MODULE_REGISTER(nrf_provisioning_sample, CONFIG_NRF_PROVISIONING_SAMPLE_LOG_LEVEL);
+
+K_SEM_DEFINE(nrf_provisioning_done_sem, 0, 1);
+
+#if defined(CONFIG_NRF_CLOUD_COAP)
+static void coap_connect(void)
+{
+	int ret;
+
+	ret = nrf_cloud_coap_init();
+	if (ret) {
+		LOG_ERR("nrf_cloud_coap_init, error: %d", ret);
+		return ret;
+	}
+
+	LOG_INF("Connecting to nRF Cloud CoAP...");
+
+	ret = nrf_cloud_coap_connect(NULL);
+	if (ret == 0) {
+		LOG_INF("nRF Cloud CoAP connection successful");
+	} else if (ret == -EACCES || ret == -ENOEXEC) {
+		LOG_WRN("nRF Cloud CoAP connection failed, unauthorized");
+	} else {
+		LOG_WRN("nRF Cloud CoAP connection refused");
+	}
+}
+#endif /* CONFIG_NRF_CLOUD_COAP */
 
 static void nrf_provisioning_callback(const struct nrf_provisioning_callback_data *event)
 {
@@ -73,8 +100,16 @@ static void nrf_provisioning_callback(const struct nrf_provisioning_callback_dat
 	case NRF_PROVISIONING_EVENT_FATAL_ERROR:
 		LOG_ERR("Provisioning error, irrecoverable");
 		break;
+	case NRF_PROVISIONING_EVENT_SCHEDULED_PROVISIONING:
+		LOG_INF("Provisioning scheduled, next attempt in %lld seconds",
+			event->next_attempt_time_seconds);
+		break;
 	case NRF_PROVISIONING_EVENT_DONE:
-		LOG_WRN("Provisioning done, rebooting...");
+		LOG_INF("Provisioning done");
+		LOG_INF("The device can now connect to the provisionined cloud service");
+#if defined(CONFIG_NRF_CLOUD_COAP)
+		coap_connect();
+#endif /* CONFIG_NRF_CLOUD_COAP */
 		break;
 	default:
 		LOG_WRN("Unknown event type: %d", event->type);
