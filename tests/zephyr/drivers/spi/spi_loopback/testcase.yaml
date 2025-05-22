@@ -48,6 +48,8 @@ tests:
     harness: ztest
     harness_config:
       fixture: spi_fast_loopback
+    extra_configs :
+      - CONFIG_NRFX_POWER=y
     extra_args:
       - DTC_OVERLAY_FILE="boards/nrf54lm20pdk_nrf54lm20a_cpuapp_spi00.overlay"
     platform_allow:
