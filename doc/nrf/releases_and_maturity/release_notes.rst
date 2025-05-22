@@ -22,6 +22,7 @@ This page is included only in the latest documentation, because it might contain
 
    releases/release-notes-changelog
    releases/release-notes-3.1.0-preview1
+   releases/release-notes-3.0.2
    releases/release-notes-3.0.1
    releases/release-notes-3.0.0
    releases/release-notes-3.0.0-preview2
