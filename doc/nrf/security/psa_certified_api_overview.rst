@@ -80,7 +80,7 @@ PSA Crypto API
 
 This section summarizes some of the features of the PSA Crypto API and how they can be specific to the implementation in the |NCS|.
 For a full explanation, see the `PSA Certified Crypto API`_ official documentation.
-See PSA's `crypto.h`_ file for versioning.
+For definitions of the PSA Crypto API functions, see `crypto.h`_.
 
 Among the advantages of the PSA Crypto API are the following:
 
