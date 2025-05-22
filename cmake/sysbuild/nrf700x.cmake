@@ -5,8 +5,8 @@
 #
 
 function(setup_nrf700x_xip_data)
-  sysbuild_dt_nodelabel(qspi_nodelabel IMAGE ${DEFAULT_IMAGE} NODELABEL "qspi")
-  sysbuild_dt_reg_addr(qspi_xip_address IMAGE ${DEFAULT_IMAGE} PATH "${qspi_nodelabel}" NAME "qspi_mm")
+  dt_nodelabel(qspi_nodelabel TARGET ${DEFAULT_IMAGE} NODELABEL "qspi")
+  dt_reg_addr(qspi_xip_address TARGET ${DEFAULT_IMAGE} PATH "${qspi_nodelabel}" NAME "qspi_mm")
 
   set(NRF70_FW_BINS ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_wifi/bin/ncs)
 
