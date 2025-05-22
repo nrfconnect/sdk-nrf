@@ -286,23 +286,52 @@ Nordic Semiconductor provides the following certification identifiers:
 
 You can visit the following pages to check the Bluetooth QDIDs and Thread CIDs valid for SoCs that support Matter applications:
 
-* `nRF5340 DK Compatibility Matrix`_
-* `nRF52840 DK Compatibility Matrix`_
+* `nRF52840 Compatibility Matrix <nRF52840 DK Compatibility Matrix_>`_
+* `nRF5340 Compatibility Matrix <nRF5340 DK Compatibility Matrix_>`_
+* `nRF54L15 Compatibility Matrix <nRF54L15 DK Compatibility Matrix_>`_
 
 Matter certification process variants
 *************************************
 
 The standard Matter certification process has several variants that you can use if you have already obtained the certification or you want to certify several products of the same family.
+There are separate processes for certification for different devices and recertification for devices that are already certified.
+
+Matter recertification process variants
+=======================================
+
+The following variants are meant for devices that are already certified.
+
+FastTrack Recertification program
+---------------------------------
+
+Matter FastTrack Recertification is a program for recertification of previously certified Matter products.
+With FastTrack, you can test updated products and obtain a Matter certification based on the test results.
+
+The procedure is to validate the quality of the Matter solution by the device maker as follows:
+
+1. Execute the certification test cases valid for the device.
+#. Validate the results if all of the test cases pass (save the logs and results for proof).
+#. Register the device for certification with all needed documentation.
+#. Wait for CSA response regarding acceptance of results.
+
+In case of critical and security fixes that need to be applied as soon as possible, the client may launch and update devices with new version without waiting for acceptance from CSA.
+
+The conformance of every certified Matter product undergoing initial certification is validated by an Alliance-approved Authorized Test Lab (ATL), but with FastTrack, you can validate the conformance of software updates to your certified Matter product without returning to the ATL.
+However, you need to send the updated firmware to the CSA Interoperability Lab.
+
+.. figure:: images/matter_device_certification_process_ft.svg
+   :alt: Matter's FastTrack Recertification program overview
+
+   Matter's FastTrack Recertification program overview
+
+The scope of changes permitted under this program is broad — covering not only bug fixes and interoperability improvements, but also updates to newer specification versions.
+For more details, read a dedicated document in the `Matter Resource Kit`_.
 
 Rapid Recertification program
-=============================
-
-.. note::
-   The Rapid Recertification program is currently experimental.
-   You can read more about it in a dedicated document in the `Matter Resource Kit`_.
+-----------------------------
 
 The Rapid Recertification program lets you perform the product testing using the services of a qualified CSA Member, even your own organization, instead of an ATL.
-This allows for a potentially more streamlined recertification process when you want to certify
+This allows for a potentially more streamlined recertification process when you want to certify.
 The first certification must still be done at an ATL.
 
 .. figure:: images/matter_device_certification_process_rr.svg
@@ -310,8 +339,27 @@ The first certification must still be done at an ATL.
 
    Matter's Rapid Recertification program overview
 
-Product Family certification
-============================
+Matter portfolio certification process variants
+===============================================
+
+The following variants are meant for several products of the same family.
+
+Portfolio Certification program
+-------------------------------
+
+This certification program applies to both Zigbee and Matter products.
+It simplifies the certification process by allowing manufacturers to certify multiple Portfolio Member Products within a single application, using a Parent Product as the basis.
+This program offers greater flexibility compared to the existing Certification by Similarity and Product Family Certification Programs.
+Over time, it may potentially supersede these programs, making it a highly efficient option for manufacturers seeking certification.
+
+The basic difference lies in the scope of certification between product family and portfolio certifications.
+Product family certification applies to the same device, allowing variations only in aspects like housing, language, and power plug, as these do not alter the device's core functionality from a Matter standpoint.
+In contrast, portfolio certification accommodates devices that may differ at the Matter level, where a parent certificate covers a master set of the device, and other devices with certain features removed can still leverage the product portfolio certification.
+
+For more details, read a dedicated document in the `Matter Resource Kit`_.
+
+Product Family Certification
+----------------------------
 
 The Product Family certification lets you certify several variants of the same product.
 In this certification path, the first product must be tested according to the original certification process at an ATL.
@@ -329,7 +377,7 @@ To be considered of the same family, the other products must meet the following 
    Matter's Product Family certification overview
 
 Certification by Similarity
-===========================
+---------------------------
 
 Certification by Similarity lets you certify products that derive from a previously certified product.
 This variant is meant for Matter components that use Matter software that was already certified as part of either the standard procedure or the `Product Family certification`_.
