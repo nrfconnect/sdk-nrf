@@ -789,7 +789,6 @@
 /subsys/event_manager_proxy/              @nrfconnect/ncs-si-muffin
 /subsys/fw_info/                          @nrfconnect/ncs-pluto
 /subsys/gazell/                           @leewkb4567
-/subsys/ieee802154/                       @nrfconnect/ncs-co-networking @nrfconnect/ncs-radio-sw
 /subsys/logging/                          @nrfconnect/ncs-protocols-serialization
 /subsys/mgmt/                             @nrfconnect/ncs-pluto
 /subsys/mgmt/suitfu/                      @nrfconnect/ncs-charon
