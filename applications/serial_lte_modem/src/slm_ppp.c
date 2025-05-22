@@ -20,6 +20,7 @@
 #include <zephyr/posix/sys/eventfd.h>
 #include <zephyr/posix/sys/socket.h>
 #include <zephyr/random/random.h>
+#include <zephyr/pm/device.h>
 #include <assert.h>
 
 LOG_MODULE_REGISTER(slm_ppp, CONFIG_SLM_LOG_LEVEL);
@@ -33,6 +34,7 @@ bool slm_fwd_cgev_notifs;
 #if defined(CONFIG_SLM_CMUX)
 BUILD_ASSERT(!DT_NODE_EXISTS(DT_CHOSEN(ncs_slm_ppp_uart)),
 	"When CMUX is enabled PPP is usable only through it so it cannot have its own UART.");
+static const struct device *ppp_uart_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_slm_uart));
 #else
 static const struct device *ppp_uart_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_slm_ppp_uart));
 #endif
@@ -668,6 +670,7 @@ static void ppp_data_passing_thread(void*, void*, void*)
 {
 	const size_t mtu = net_if_get_mtu(ppp_iface);
 	struct zsock_pollfd fds[PPP_FDS_COUNT];
+	enum pm_device_state state = PM_DEVICE_STATE_OFF;
 
 	for (size_t i = 0; i != ARRAY_SIZE(fds); ++i) {
 		fds[i].fd = ppp_fds[i];
@@ -705,6 +708,15 @@ static void ppp_data_passing_thread(void*, void*, void*)
 				}
 				delegate_ppp_event(PPP_STOP, PPP_REASON_DEFAULT);
 				return;
+			}
+
+			/* When DL data is received from the network, check if UART is suspended */
+			if (src == MODEM_FD_IDX) {
+				pm_device_state_get(ppp_uart_dev, &state);
+				if (state != PM_DEVICE_STATE_ACTIVE) {
+					LOG_DBG("PPP data received but UART not active");
+					slm_indicate();
+				}
 			}
 			const ssize_t len =
 				zsock_recv(fds[src].fd, ppp_data_buf, mtu, ZSOCK_MSG_DONTWAIT);
