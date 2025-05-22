@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: f791c49f492c40da0d18efd51087b6fe1ec56aa0
+      revision: v4.0.99-ncs1-2
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -130,7 +130,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: v2.1.0-ncs5-1
+      revision: v2.1.0-ncs5-2
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -139,19 +139,19 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: v3.6.3-ncs1-1
+      revision: v3.6.3-ncs1-2
     - name: oberon-psa-crypto
       path: modules/crypto/oberon-psa-crypto
       repo-path: sdk-oberon-psa-crypto
-      revision: v1.3.4-ncs1-1
+      revision: v1.3.4-ncs1-2
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 3a14dbc326c385a0161fc122f72b6d9be308f7d6
+      revision: v3.0.2
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: v2.1.1-ncs4-1
+      revision: v2.1.1-ncs4-2
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
@@ -159,7 +159,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: b16d42678846cacd5ef9cadd01ceab00e2119bf6
+      revision: v3.0.2
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
@@ -178,7 +178,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: v3.0.1
+      revision: v3.0.2
       groups:
         - nrf-802154
     - name: dragoon
@@ -199,7 +199,7 @@ manifest:
           compare-by-default: false
     - name: find-my
       repo-path: sdk-find-my
-      revision: v3.0.1
+      revision: v3.0.2
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -234,10 +234,10 @@ manifest:
           upstream-sha: c6eaeda5a1c1c5dbb24dce7e027340cb8893a77b
           compare-by-default: false
     - name: suit-generator
-      revision: v3.0.1
+      revision: v3.0.2
       path: modules/lib/suit-generator
     - name: suit-processor
-      revision: v3.0.1
+      revision: v3.0.2
       path: modules/lib/suit-processor
     - name: doc-internal
       repo-path: doc-internal
