@@ -66,7 +66,7 @@ For this reason, the |NCS| provides a minimal version of the TF-M secure applica
 
 The secure services supported by the minimal version allow for:
 
-* Generating random numbers using the random generator available in the device (see `crypto.h`_).
+* Generating random numbers using the random generator available in the device (see ``psa_generate_random()`` in `crypto.h`_).
 * Using the :ref:`platform services <ug_tfm_services_platform>` with `tfm_platform_api.h`_ from the non-secure side (except the ``tfm_platform_nv_counter_*`` functions).
   This includes sending platform-specific service requests using `tfm_ioctl_core_api.h`_ and `tfm_ioctl_api.h`_.
 * Reading secure memory from the non-secure application (strictly restricted to a list of allowed addresses).

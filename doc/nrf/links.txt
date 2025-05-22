@@ -231,7 +231,7 @@
 .. _`nRF Connect SDK Add-ons`: https://nrfconnect.github.io/ncs-app-index/
 .. _`ncs-app-index`: https://github.com/nrfconnect/ncs-app-index
 
-.. _`crypto.h`: https://github.com/nrfconnect/sdk-trusted-firmware-m/blob/master/interface/include/psa/crypto.h
+.. _`crypto.h`: https://github.com/nrfconnect/sdk-oberon-psa-crypto/blob/main/include/psa/crypto.h
 .. _`protected_storage.h`: https://github.com/nrfconnect/sdk-trusted-firmware-m/blob/master/interface/include/psa/protected_storage.h
 .. _`initial_attestation.h`: https://github.com/nrfconnect/sdk-trusted-firmware-m/blob/main/interface/include/psa/initial_attestation.h.in
 .. _`tfm_platform_api.h`: https://github.com/nrfconnect/sdk-trusted-firmware-m/blob/main/interface/include/tfm_platform_api.h
