@@ -50,11 +50,19 @@ static bool debounce_is_ongoing;
 #pragma error("No buttons node found")
 #endif
 
+#define BUTTON_NAME(b)                                                                             \
+	((b) == BUTTON_VOLUME_DOWN  ? "BUTTON_VOLUME_DOWN"                                         \
+	 : (b) == BUTTON_VOLUME_UP  ? "BUTTON_VOLUME_UP"                                           \
+	 : (b) == BUTTON_PLAY_PAUSE ? "BUTTON_PLAY_PAUSE"                                          \
+	 : (b) == BUTTON_4	    ? "BUTTON_4"                                                   \
+	 : (b) == BUTTON_5	    ? "BUTTON_5"                                                   \
+				    : NULL)
+
 #define BUTTON_GPIO(button_node_id)                                                                \
 	{                                                                                          \
-		.name = STRINGIFY(BUTTON_##button_node_id),                                        \
-				  .gpio = GPIO_DT_SPEC_GET(button_node_id, gpios),                 \
-		},
+		.name = BUTTON_NAME(DT_GPIO_PIN(button_node_id, gpios)),                           \
+		.gpio = GPIO_DT_SPEC_GET(button_node_id, gpios),                                   \
+	},
 
 static struct btn_cfg_data btn_config_data[] = {DT_FOREACH_CHILD(BUTTON, BUTTON_GPIO)};
 
