@@ -130,6 +130,7 @@ int nrf_modem_os_rpc_open(struct nrf_modem_os_rpc *instance,
 	instance->conf.mbox_rx.dev = (struct device *)config->rx.sigdev;
 	instance->conf.mbox_tx.channel_id = config->tx.ch;
 	instance->conf.mbox_rx.channel_id = config->rx.ch;
+	instance->conf.unbound_mode = ICMSG_UNBOUND_MODE_DISABLE;
 
 	instance->cb.bound = config->cb.bound;
 	instance->cb.received = config->cb.received;
