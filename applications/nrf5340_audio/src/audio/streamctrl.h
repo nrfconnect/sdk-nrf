@@ -9,7 +9,7 @@
 
 #include <stddef.h>
 #include <zephyr/kernel.h>
-#include <audio_defines.h>
+#include <zephyr/net_buf.h>
 
 /* State machine states for peer or stream. */
 enum stream_state {
@@ -29,6 +29,6 @@ uint8_t stream_state_get(void);
  *
  * @param audio_frame		Pointer to the audio data to send.
  */
-void streamctrl_send(struct audio_data const *const audio_frame);
+void streamctrl_send(struct net_buf const *const audio_frame);
 
 #endif /* _STREAMCTRL_H_ */

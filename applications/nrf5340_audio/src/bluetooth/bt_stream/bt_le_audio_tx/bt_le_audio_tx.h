@@ -32,7 +32,7 @@ struct le_audio_tx_info {
  * @return	0 if successful, error otherwise.
  */
 int bt_le_audio_tx_send(struct le_audio_tx_info *tx, uint8_t num_tx,
-			struct audio_data const *const audio_frame);
+			struct net_buf const *const audio_frame);
 
 /**
  * @brief	Initializes a stream. Must be called when a TX stream is started.
