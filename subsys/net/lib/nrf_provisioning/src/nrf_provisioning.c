@@ -177,18 +177,34 @@ static int nrf_provisioning_set(const char *key, size_t len_rd,
 	key_len = settings_name_next(key, &next);
 
 	if (strncmp(key, "interval-sec", key_len) == 0) {
-		len = read_cb(cb_arg, &time_str, sizeof(time_str));
-		if (len <= 0) {
-			LOG_ERR("Unable to read the timestamp of next provisioning");
-			memset(&time_str, 0, sizeof(time_str));
+		if (len_rd >= sizeof(time_str)) {
+			return -ENOMEM;
 		}
 
-		if (strlen(time_str) == 0) {
+		len = read_cb(cb_arg, &time_str, len_rd);
+		if (len < 0) {
+			LOG_ERR("Unable to read the timestamp of next provisioning");
+			return len;
+		}
+
+		time_str[len] = 0;
+
+		if (len == 0) {
 			nxt_provisioning = 0;
 			LOG_INF("Initial provisioning");
 		} else {
-			nxt_provisioning = (time_t) strtoll(time_str, NULL, 10);
-			LOG_DBG("Stored interval: \"%jd\"", nxt_provisioning);
+			errno = 0;
+			time_t interval = (time_t) strtoll(time_str, NULL, 0);
+
+			if (interval < 0 || errno != 0) {
+				LOG_ERR("Invalid interval value: %s", time_str);
+				return -EINVAL;
+			}
+
+			LOG_DBG("Stored interval: \"%jd\"", interval);
+			if (nxt_provisioning != interval) {
+				nxt_provisioning = interval;
+			}
 		}
 
 		return 0;
@@ -198,19 +214,21 @@ static int nrf_provisioning_set(const char *key, size_t len_rd,
 			return 0;
 		}
 
-		len = read_cb(cb_arg, latest_cmd_id,
-			NRF_PROVISIONING_CORRELATION_ID_SIZE);
-		if (len <= 0) {
-			LOG_INF("No provisioning information stored");
+		if (len_rd >= NRF_PROVISIONING_CORRELATION_ID_SIZE) {
+			return -ENOMEM;
+		}
+		memset(latest_cmd_id, 0, NRF_PROVISIONING_CORRELATION_ID_SIZE);
+		len = read_cb(cb_arg, latest_cmd_id, len_rd);
+		if (len < 0) {
+			return len;
 		}
 
-		if (strlen(latest_cmd_id) == 0) {
-			LOG_INF("Initial provisioning");
+		if (len == 0) {
+			LOG_INF("No provisioning information stored");
 		}
 
 		return 0;
 	}
-
 
 	return -ENOENT;
 }
@@ -508,7 +526,7 @@ static void commit_latest_cmd_id(void)
 {
 	int ret = settings_save_one(SETTINGS_STORAGE_PREFIX "/" NRF_PROVISIONING_CORRELATION_ID_KEY,
 		nrf_provisioning_codec_get_latest_cmd_id(),
-		strlen(nrf_provisioning_codec_get_latest_cmd_id()) + 1);
+		strlen(nrf_provisioning_codec_get_latest_cmd_id()));
 
 	if (ret) {
 		LOG_ERR("Unable to store key: %s; value: %s; err: %d",
@@ -521,6 +539,12 @@ static void commit_latest_cmd_id(void)
 
 void nrf_provisioning_set_interval(int interval)
 {
+
+	if (interval < 0) {
+		LOG_ERR("Invalid interval %d", interval);
+		return;
+	}
+
 	LOG_DBG("Provisioning interval set to %d", interval);
 
 	if (interval != nxt_provisioning) {
@@ -546,7 +570,7 @@ void nrf_provisioning_set_interval(int interval)
 		}
 
 		ret = settings_save_one(SETTINGS_STORAGE_PREFIX "/interval-sec",
-			time_str, strlen(time_str) + 1);
+			time_str, strlen(time_str));
 		if (ret) {
 			LOG_ERR("Unable to store interval, err: %d", ret);
 			return;

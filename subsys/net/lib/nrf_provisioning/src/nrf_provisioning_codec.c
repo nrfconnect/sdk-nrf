@@ -350,10 +350,8 @@ static int write_config(struct command *cmd_req, struct cdc_out_fmt_data *out)
 {
 	struct config *aconf = &cmd_req->command_union_config_m;
 	int max_key_sz = 1;
-	int max_value_sz = 1;
 	struct properties_tstrtstr *pair;
 	char *key;
-	char *value = NULL;
 	int ret = 0;
 
 	char *resp = NULL;
@@ -364,17 +362,10 @@ static int write_config(struct command *cmd_req, struct cdc_out_fmt_data *out)
 		pair = &aconf->properties_tstrtstr[i];
 
 		max_key_sz = MAX(max_key_sz, pair->config_properties_tstrtstr_key.len + 1);
-		max_value_sz = MAX(max_value_sz, pair->properties_tstrtstr.len + 1);
 	}
 
 	key = k_malloc(max_key_sz);
 	if (!key) {
-		ret = -ENOMEM;
-		goto exit;
-	}
-
-	value = k_malloc(max_value_sz);
-	if (!value) {
 		ret = -ENOMEM;
 		goto exit;
 	}
@@ -393,25 +384,22 @@ static int write_config(struct command *cmd_req, struct cdc_out_fmt_data *out)
 		ret = charseq2cstr(key, &pair->config_properties_tstrtstr_key, max_key_sz);
 		if (ret < 0) {
 			LOG_WRN("Unable to store key: %s; err: %d", key, ret);
-			snprintk(resp, resp_sz, "key [%d](0-indexed) too big", i);
+			snprintk(resp, resp_sz, "Key [%d](0-indexed) too big", i);
 			goto exit;
 		}
 
-		ret = charseq2cstr(value, &pair->properties_tstrtstr, max_value_sz);
-		if (ret < 0) {
-			LOG_WRN("Unable to store value: %s; err: %d", value, ret);
-			snprintk(resp, resp_sz, "value [%d](0-indexed) too big", i);
-			goto exit;
-		}
-
-		ret = settings_save_one(key, value, strlen(value)+1);
+		ret = settings_save_one(key, pair->properties_tstrtstr.value,
+					pair->properties_tstrtstr.len);
 		if (ret) {
-			snprintk(resp, resp_sz,
-				"unable to store [%d](0-indexed) key-value-pair", i);
-			LOG_WRN("Unable to store key: %s; value: %s; err: %d", key, value, ret);
+			snprintk(resp, resp_sz, "Unable to store [%d](0-indexed) key-value-pair",
+				 i);
+			LOG_WRN("Unable to store key: %s, err: %d", key, ret);
+			LOG_HEXDUMP_WRN(pair->properties_tstrtstr.value,
+					pair->properties_tstrtstr.len, "Value");
 			goto exit;
 		}
-		LOG_DBG("Stored key: \"%s\"; value: \"%s\"", key, value);
+		LOG_HEXDUMP_DBG(pair->properties_tstrtstr.value, pair->properties_tstrtstr.len,
+				key);
 	}
 
 	/* No error to report */
@@ -421,9 +409,6 @@ static int write_config(struct command *cmd_req, struct cdc_out_fmt_data *out)
 exit:
 	if (key) {
 		k_free(key);
-	}
-	if (value) {
-		k_free(value);
 	}
 
 	/* Keeps track of response messages to be freed once the whole responses request is send */
