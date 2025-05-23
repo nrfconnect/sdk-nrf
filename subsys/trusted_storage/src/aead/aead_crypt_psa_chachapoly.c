@@ -4,8 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <psa/crypto.h>
-#include <psa/crypto_extra.h>
 #include "psa_crypto_driver_wrappers.h"
 #include <stdint.h>
 #include <string.h>
