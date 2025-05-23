@@ -222,14 +222,14 @@ int broadcast_source_id_get(uint8_t big_index, uint32_t *broadcast_id);
 /**
  * @brief	Broadcast the Bluetooth LE Audio data.
  *
+ * @param[in]	audio_frame	Pointer to the audio buffer.
  * @param[in]	big_index	Index of the Broadcast Isochronous Group (BIG) to broadcast.
  * @param[in]	subgroup_index	Index of the subgroup to broadcast.
- * @param[in]	audio_frame	Pointer to the audio to send.
  *
  * @return	0 for success, error otherwise.
  */
-int broadcast_source_send(uint8_t big_index, uint8_t subgroup_index,
-			  struct audio_data const *const audio_frame);
+int broadcast_source_send(struct net_buf const *const audio_frame, uint8_t big_index,
+			  uint8_t subgroup_index);
 
 /**
  * @brief	Disable the LE Audio broadcast (BIS) source.

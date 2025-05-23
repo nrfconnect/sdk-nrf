@@ -494,13 +494,13 @@ uint8_t stream_state_get(void)
 	return strm_state;
 }
 
-void streamctrl_send(struct audio_data const *const audio_frame)
+void streamctrl_send(struct net_buf const *const audio_frame)
 {
 	int ret;
 	static int prev_ret;
 
 	if (strm_state == STATE_STREAMING) {
-		ret = broadcast_source_send(0, 0, audio_frame);
+		ret = broadcast_source_send(audio_frame, 0, 0);
 
 		if (ret != 0 && ret != prev_ret) {
 			if (ret == -ECANCELED) {

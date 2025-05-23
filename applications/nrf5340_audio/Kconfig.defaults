@@ -57,9 +57,6 @@ config PCM_MIX
 config PSCM
 	default y
 
-config DATA_FIFO
-	default y
-
 # Enable NRFX_CLOCK for ACLK control
 config NRFX_CLOCK
 	default y

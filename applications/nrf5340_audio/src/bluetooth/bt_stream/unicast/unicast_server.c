@@ -335,23 +335,23 @@ static const struct bt_bap_unicast_server_cb unicast_server_cb = {
 
 #if (CONFIG_BT_AUDIO_RX)
 static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_recv_info *info,
-			   struct net_buf *buf)
+			   struct net_buf *audio_frame)
 {
 	int ret;
-	struct audio_data audio_frame;
+	struct audio_metadata meta;
 
 	if (receive_cb == NULL) {
 		LOG_ERR("The RX callback has not been set");
 		return;
 	}
 
-	ret = le_audio_frame_create(&audio_frame, stream, info, buf);
+	ret = le_audio_metadata_populate(&meta, stream, info, audio_frame);
 	if (ret) {
-		LOG_ERR("Failed to create RX frame: %d", ret);
+		LOG_ERR("Failed to populate meta data: %d", ret);
 		return;
 	}
 
-	receive_cb(&audio_frame, 0);
+	receive_cb(audio_frame, &meta, 0);
 }
 #endif /* (CONFIG_BT_AUDIO_RX) */
 
@@ -603,7 +603,7 @@ int unicast_server_adv_populate(struct bt_data *adv_buf, uint8_t adv_buf_vacant)
 	return adv_buf_cnt;
 }
 
-int unicast_server_send(struct audio_data const *const audio_frame)
+int unicast_server_send(struct net_buf const *const audio_frame)
 {
 #if (CONFIG_BT_AUDIO_TX)
 	int ret;
@@ -631,7 +631,7 @@ int unicast_server_send(struct audio_data const *const audio_frame)
 		num_active_streams++;
 	}
 
-	ret = bt_le_audio_tx_send(tx, num_active_streams, audio_frame);
+	ret = bt_le_audio_tx_send(audio_frame, tx, num_active_streams);
 	if (ret) {
 		return ret;
 	}

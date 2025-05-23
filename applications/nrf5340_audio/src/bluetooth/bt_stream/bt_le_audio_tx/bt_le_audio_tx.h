@@ -25,14 +25,14 @@ struct le_audio_tx_info {
  * @note	Send all available channels in a single call.
  *		Do not call this for each channel.
  *
+ * @param[in]	audio_frame	Pointer to the encoded audio data.
  * @param[in]	tx		Pointer to an array of le_audio_tx_info elements.
  * @param[in]	num_tx		Number of elements in @p tx.
- * @param[in]	audio_frame	Pointer to the encoded audio data.
  *
  * @return	0 if successful, error otherwise.
  */
-int bt_le_audio_tx_send(struct le_audio_tx_info *tx, uint8_t num_tx,
-			struct audio_data const *const audio_frame);
+int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio_tx_info *tx,
+			uint8_t num_tx);
 
 /**
  * @brief	Initializes a stream. Must be called when a TX stream is started.

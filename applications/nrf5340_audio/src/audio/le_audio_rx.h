@@ -8,20 +8,23 @@
 #define _LE_AUDIO_RX_H_
 
 #include <zephyr/bluetooth/audio/audio.h>
+#include <zephyr/net_buf.h>
 #include <audio_defines.h>
 
 /**
- * @brief Data handler when ISO data has been received.
+ * @brief	Data handler when ISO data has been received.
  *
- * @param[in] audio_frame	Pointer to the received data.
- * @param[in] channel_index	Which channel is received.
+ * @param[in]	audio_frame_rx	Pointer to the audio buffer.
+ * @param[in]	meta		Pointer to the audio metadata.
+ * @param[in]	channel_index	Which channel is received.
  */
-void le_audio_rx_data_handler(struct audio_data *audio_frame, uint8_t channel_index);
+void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metadata *meta,
+			      uint8_t channel_index);
 
 /**
- * @brief Initialize the receive audio path.
+ * @brief	Initialize the receive audio path.
  *
- * @return 0 if successful, error otherwise.
+ * @return	0 if successful, error otherwise.
  */
 int le_audio_rx_init(void);
 

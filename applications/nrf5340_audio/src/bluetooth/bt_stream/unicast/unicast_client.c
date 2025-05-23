@@ -72,8 +72,7 @@ struct temp_cap_storage {
 /* Since there is no subgroups for CIG we will use 1 as a hard coded value */
 static struct le_audio_unicast_server unicast_servers[CONFIG_BT_ISO_MAX_CIG][1][CONFIG_BT_MAX_CONN];
 
-K_MSGQ_DEFINE(cap_start_msgq, sizeof(struct stream_index), CONFIG_BT_ISO_MAX_CHAN,
-	      sizeof(uint32_t));
+K_MSGQ_DEFINE(cap_start_q, sizeof(struct stream_index), CONFIG_BT_ISO_MAX_CHAN, sizeof(void *));
 
 static struct temp_cap_storage temp_cap[CONFIG_BT_ISO_MAX_CHAN];
 
@@ -134,7 +133,7 @@ static void cap_start_worker(struct k_work *work)
 	int stream_iterator = 0;
 
 	/* Check msgq for a pending start procedure */
-	ret = k_msgq_get(&cap_start_msgq, &idx, K_NO_WAIT);
+	ret = k_msgq_get(&cap_start_q, &idx, K_NO_WAIT);
 	if (ret) {
 		LOG_ERR("Failed to get device index for pending cap start procedure: %d", ret);
 		return;
@@ -241,7 +240,7 @@ static void cap_start_worker(struct k_work *work)
 	ret = bt_cap_initiator_unicast_audio_start(&param);
 	if (ret == -EBUSY) {
 		/* Try again once the ongoing start procedure is completed */
-		ret = k_msgq_put(&cap_start_msgq, &idx, K_NO_WAIT);
+		ret = k_msgq_put(&cap_start_q, &idx, K_NO_WAIT);
 		if (ret) {
 			LOG_ERR("Failed to put device_index on the queue: %d", ret);
 		}
@@ -1084,7 +1083,7 @@ static void discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
 		return;
 	}
 
-	ret = k_msgq_put(&cap_start_msgq, &idx, K_NO_WAIT);
+	ret = k_msgq_put(&cap_start_q, &idx, K_NO_WAIT);
 	if (ret) {
 		LOG_ERR("Failed to put device_index on the queue: %d", ret);
 		return;
@@ -1327,19 +1326,19 @@ static void stream_released_cb(struct bt_bap_stream *stream)
 
 #if (CONFIG_BT_AUDIO_RX)
 static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_recv_info *info,
-			   struct net_buf *buf)
+			   struct net_buf *audio_frame)
 {
 	int ret;
-	struct audio_data audio_frame;
+	struct audio_metadata meta;
 
 	if (receive_cb == NULL) {
 		LOG_ERR("The RX callback has not been set");
 		return;
 	}
 
-	ret = le_audio_frame_create(&audio_frame, stream, info, buf);
+	ret = le_audio_metadata_populate(&meta, stream, info, audio_frame);
 	if (ret) {
-		LOG_ERR("Failed to create RX frame: %d", ret);
+		LOG_ERR("Failed to populate meta data: %d", ret);
 		return;
 	}
 
@@ -1351,7 +1350,7 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 		return;
 	}
 
-	receive_cb(&audio_frame, idx.lvl3);
+	receive_cb(audio_frame, &meta, idx.lvl3);
 }
 #endif /* (CONFIG_BT_AUDIO_RX) */
 
@@ -1443,7 +1442,7 @@ static void unicast_start_complete_cb(int err, struct bt_conn *conn)
 	}
 
 	LOG_DBG("Unicast start complete cb");
-	ret = k_msgq_peek(&cap_start_msgq, &idx);
+	ret = k_msgq_peek(&cap_start_q, &idx);
 	if (ret == 0) {
 		/* Pending start procedure found, call k_work */
 		k_work_submit(&cap_start_work);
@@ -1480,7 +1479,7 @@ static void unicast_stop_complete_cb(int err, struct bt_conn *conn)
 					.lvl2 = 0,
 					.lvl3 = j,
 				};
-				ret = k_msgq_put(&cap_start_msgq, &idx, K_NO_WAIT);
+				ret = k_msgq_put(&cap_start_q, &idx, K_NO_WAIT);
 				if (ret) {
 					LOG_ERR("Failed to put device_index %d on the queue: %d", j,
 						ret);
@@ -1751,7 +1750,7 @@ int unicast_client_stop(uint8_t cig_index)
 	return 0;
 }
 
-int unicast_client_send(uint8_t cig_index, struct audio_data const *const audio_frame)
+int unicast_client_send(struct net_buf const *const audio_frame, uint8_t cig_index)
 {
 #if (CONFIG_BT_AUDIO_TX)
 	int ret;
@@ -1796,7 +1795,7 @@ int unicast_client_send(uint8_t cig_index, struct audio_data const *const audio_
 		return -ECANCELED;
 	}
 
-	ret = bt_le_audio_tx_send(tx, num_active_streams, audio_frame);
+	ret = bt_le_audio_tx_send(audio_frame, tx, num_active_streams);
 	if (ret) {
 		return ret;
 	}

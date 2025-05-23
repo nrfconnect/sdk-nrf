@@ -330,23 +330,23 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 }
 
 static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_recv_info *info,
-			   struct net_buf *buf)
+			   struct net_buf *audio_frame)
 {
 	int ret;
-	struct audio_data audio_frame;
+	struct audio_metadata meta;
 
 	if (receive_cb == NULL) {
 		LOG_ERR("The RX callback has not been set");
 		return;
 	}
 
-	ret = le_audio_frame_create(&audio_frame, stream, info, buf);
+	ret = le_audio_metadata_populate(&meta, stream, info, audio_frame);
 	if (ret) {
-		LOG_ERR("Failed to create RX frame: %d", ret);
+		LOG_ERR("Failed to populate meta data: %d", ret);
 		return;
 	}
 
-	receive_cb(&audio_frame, active_stream_index);
+	receive_cb(audio_frame, &meta, active_stream_index);
 }
 
 static struct bt_bap_stream_ops stream_ops = {

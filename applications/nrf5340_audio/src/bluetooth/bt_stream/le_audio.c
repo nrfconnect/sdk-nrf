@@ -12,36 +12,34 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(le_audio, CONFIG_BLE_LOG_LEVEL);
 
-int le_audio_frame_create(struct audio_data *audio_frame, const struct bt_bap_stream *stream,
-			  const struct bt_iso_recv_info *info, const struct net_buf *buf)
+int le_audio_metadata_populate(struct audio_metadata *meta, const struct bt_bap_stream *stream,
+			       const struct bt_iso_recv_info *info,
+			       const struct net_buf *audio_frame)
 {
 	int ret;
 
 	/* Populate the audio frame structure */
-	audio_frame->data = buf->data;
-	audio_frame->data_size = buf->len;
-	audio_frame->meta.bad_data = false;
-	audio_frame->meta.reference_ts_us = info->ts;
-	le_audio_freq_hz_get(stream->codec_cfg, &audio_frame->meta.sample_rate_hz);
-	le_audio_duration_us_get(stream->codec_cfg, &audio_frame->meta.data_len_us);
+	meta->bad_data = false;
+	meta->reference_ts_us = info->ts;
+	le_audio_freq_hz_get(stream->codec_cfg, &meta->sample_rate_hz);
+	le_audio_duration_us_get(stream->codec_cfg, &meta->data_len_us);
 
-	ret = bt_audio_codec_cfg_get_chan_allocation(stream->codec_cfg,
-						     &audio_frame->meta.locations, true);
+	ret = bt_audio_codec_cfg_get_chan_allocation(stream->codec_cfg, &meta->locations, true);
 	if (ret < 0) {
 		LOG_ERR("Failed to get channel allocation: %d", ret);
 		return ret;
 	}
 
 	if (stream->codec_cfg->id == BT_HCI_CODING_FORMAT_LC3) {
-		audio_frame->meta.data_coding = LC3;
+		meta->data_coding = LC3;
 	} else {
 		LOG_ERR("Unsupported codec ID: %d", stream->codec_cfg->id);
 		return -EINVAL;
 	}
 
 	if (!(info->flags & BT_ISO_FLAGS_VALID) ||
-	    buf->len != bt_audio_codec_cfg_get_octets_per_frame(stream->codec_cfg)) {
-		audio_frame->meta.bad_data = true;
+	    audio_frame->len != bt_audio_codec_cfg_get_octets_per_frame(stream->codec_cfg)) {
+		meta->bad_data = true;
 	}
 
 	return 0;

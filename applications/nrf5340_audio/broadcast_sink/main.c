@@ -568,7 +568,7 @@ uint8_t stream_state_get(void)
 	return strm_state;
 }
 
-void streamctrl_send(struct audio_data const *const audio_frame)
+void streamctrl_send(struct net_buf const *const audio_frame)
 {
 	ARG_UNUSED(audio_frame);
 

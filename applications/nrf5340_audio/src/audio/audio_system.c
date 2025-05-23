@@ -8,8 +8,6 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/shell/shell.h>
-#include <zephyr/net_buf.h>
-#include <data_fifo.h>
 #include <contin_array.h>
 #include <pcm_stream_channel_modifier.h>
 #include <tone.h>
@@ -33,9 +31,13 @@ LOG_MODULE_REGISTER(audio_system, CONFIG_AUDIO_SYSTEM_LOG_LEVEL);
 
 K_THREAD_STACK_DEFINE(encoder_thread_stack, CONFIG_ENCODER_STACK_SIZE);
 
-DATA_FIFO_DEFINE(fifo_tx, FIFO_TX_BLOCK_COUNT, WB_UP(BLOCK_SIZE_BYTES));
-DATA_FIFO_DEFINE(fifo_rx, FIFO_RX_BLOCK_COUNT, WB_UP(sizeof(struct audio_data)));
-NET_BUF_POOL_FIXED_DEFINE(fifo_rx_pool, FIFO_RX_BLOCK_COUNT, FRAME_SIZE_BYTES, 0, NULL);
+K_MSGQ_DEFINE(audio_q_tx, sizeof(struct net_buf *), FIFO_TX_BLOCK_COUNT, sizeof(void *));
+K_MSGQ_DEFINE(audio_q_rx, sizeof(struct net_buf *), FIFO_RX_BLOCK_COUNT, sizeof(void *));
+
+NET_BUF_POOL_FIXED_DEFINE(audio_q_rx_pool, FIFO_RX_BLOCK_COUNT, FRAME_SIZE_BYTES,
+			  sizeof(struct audio_metadata), NULL);
+NET_BUF_POOL_FIXED_DEFINE(audio_q_tx_pool, FIFO_TX_BLOCK_COUNT, USB_BLOCK_SIZE_STEREO,
+			  sizeof(struct audio_metadata), NULL);
 
 static K_SEM_DEFINE(sem_encoder_start, 0, 1);
 
@@ -113,23 +115,17 @@ static void audio_headset_configure(void)
 static void encoder_thread(void *arg1, void *arg2, void *arg3)
 {
 	int ret;
-	uint32_t blocks_alloced_num;
-	uint32_t blocks_locked_num;
-
-	int debug_trans_count = 0;
-
+	uint32_t audio_q_num_used;
 	char pcm_raw_data[FRAME_SIZE_BYTES];
-
-	static size_t pcm_block_size;
 	static uint32_t test_tone_finite_pos;
+	int debug_trans_count = 0;
 
 	while (1) {
 		/* Don't start encoding until the stream needing it has started */
 		ret = k_poll(&encoder_evt, 1, K_FOREVER);
-		struct audio_data audio_frame = {0};
-		struct net_buf *frame_buf = net_buf_alloc(&fifo_rx_pool, K_NO_WAIT);
+		struct net_buf *audio_frame = net_buf_alloc(&audio_q_rx_pool, K_NO_WAIT);
 
-		if (frame_buf == NULL) {
+		if (audio_frame == NULL) {
 			LOG_ERR("Out of RX buffers");
 			continue;
 		}
@@ -140,44 +136,37 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 		 * blocks before copying it to a continuous area of memory
 		 * before sending it to the encoder
 		 */
-		struct audio_data *audio_block = NULL;
+		struct net_buf *audio_block = NULL;
 
-		ret = data_fifo_pointer_last_filled_get(&fifo_rx, (void *)&audio_block,
-							&pcm_block_size, K_FOREVER);
-		ERR_CHK(ret);
-
-		struct net_buf *block_buf = audio_block->data;
+		/* Wait for the first block to arrive */
+		ret = k_msgq_get(&audio_q_rx, (void *)&audio_block, K_FOREVER);
+		ERR_CHK_MSG(ret, "Failed to get audio block from RX queue");
 
 		/* Copy metadata from the first block */
-		memcpy(&audio_frame, audio_block, sizeof(struct audio_data));
+		ret = net_buf_user_data_copy(audio_frame, audio_block);
+		ERR_CHK_MSG(ret, "Failed to copy user data");
 
 		/* Extract the data from the block */
-		net_buf_add_mem(frame_buf, block_buf->data, block_buf->len);
+		net_buf_add_mem(audio_frame, audio_block->data, audio_block->len);
 
 		/* Free the block */
-		net_buf_unref(block_buf);
-		data_fifo_block_free(&fifo_rx, audio_block);
+		net_buf_unref(audio_block);
+		struct audio_metadata *meta = net_buf_user_data(audio_frame);
 
 		/* Loop until we have a full frame */
-		while (audio_frame.meta.data_len_us < CONFIG_AUDIO_FRAME_DURATION_US) {
-			ret = data_fifo_pointer_last_filled_get(&fifo_rx, (void *)&audio_block,
-								&pcm_block_size, K_FOREVER);
-			ERR_CHK(ret);
+		while (meta->data_len_us < CONFIG_AUDIO_FRAME_DURATION_US) {
+			ret = k_msgq_get(&audio_q_rx, (void *)&audio_block, K_FOREVER);
+			ERR_CHK_MSG(ret, "Failed to get audio block from RX queue");
 
-			block_buf = audio_block->data;
+			struct audio_metadata *block_meta = net_buf_user_data(audio_block);
 
 			/* Extract the data from the block */
-			net_buf_add_mem(frame_buf, block_buf->data, block_buf->len);
-			audio_frame.meta.data_len_us += audio_block->meta.data_len_us;
+			net_buf_add_mem(audio_frame, audio_block->data, audio_block->len);
+			meta->data_len_us += block_meta->data_len_us;
 
 			/* Free the block */
-			net_buf_unref(block_buf);
-			data_fifo_block_free(&fifo_rx, audio_block);
+			net_buf_unref(audio_block);
 		}
-
-		/* Update metadata to reflect the full frame */
-		audio_frame.data = frame_buf;
-		audio_frame.data_size = frame_buf->len;
 
 		if (sw_codec_cfg.encoder.enabled) {
 			if (test_tone_size) {
@@ -195,25 +184,23 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 				ERR_CHK(ret);
 			}
 
-			ret = sw_codec_encode(&audio_frame);
+			ret = sw_codec_encode(audio_frame);
 			ERR_CHK_MSG(ret, "Encode failed");
 		}
 
 		/* Print block usage */
 		if (debug_trans_count == DEBUG_INTERVAL_NUM) {
-			ret = data_fifo_num_used_get(&fifo_rx, &blocks_alloced_num,
-						     &blocks_locked_num);
+			audio_q_num_used = k_msgq_num_used_get(&audio_q_rx);
 			ERR_CHK(ret);
-			LOG_DBG(COLOR_CYAN "RX alloced: %d, locked: %d" COLOR_RESET,
-				blocks_alloced_num, blocks_locked_num);
+			LOG_DBG(COLOR_CYAN "RX filled: %d" COLOR_RESET, audio_q_num_used);
 			debug_trans_count = 0;
 		} else {
 			debug_trans_count++;
 		}
 
 		if (sw_codec_cfg.encoder.enabled) {
-			streamctrl_send(&audio_frame);
-			net_buf_unref(frame_buf);
+			streamctrl_send(audio_frame);
+			net_buf_unref(audio_frame);
 		}
 		STACK_USAGE_PRINT("encoder_thread", &encoder_thread_data);
 	}
@@ -315,13 +302,10 @@ int audio_system_config_set(uint32_t encoder_sample_rate_hz, uint32_t encoder_bi
 }
 
 /* This function is only used on gateway using USB as audio source and bidirectional stream */
-int audio_system_decode(struct audio_data *audio_frame)
+int audio_system_decode(struct net_buf *audio_frame)
 {
 	int ret;
-	uint32_t blocks_alloced_num;
-	uint32_t blocks_locked_num;
 	static int debug_trans_count;
-	static void *tmp_pcm_raw_data[CONFIG_FIFO_FRAME_SPLIT_NUM];
 	static void *pcm_raw_data;
 	size_t pcm_block_size;
 
@@ -334,61 +318,44 @@ int audio_system_decode(struct audio_data *audio_frame)
 		return -EPERM;
 	}
 
-	ret = data_fifo_num_used_get(&fifo_tx, &blocks_alloced_num, &blocks_locked_num);
-	if (ret) {
-		return ret;
-	}
-
-	uint8_t free_blocks_num = FIFO_TX_BLOCK_COUNT - blocks_locked_num;
-
-	/* If not enough space for a full frame, remove oldest samples to make room */
-	if (free_blocks_num < CONFIG_FIFO_FRAME_SPLIT_NUM) {
-		void *old_data;
-		size_t size;
-
-		for (int i = 0; i < (CONFIG_FIFO_FRAME_SPLIT_NUM - free_blocks_num); i++) {
-			ret = data_fifo_pointer_last_filled_get(&fifo_tx, &old_data, &size,
-								K_NO_WAIT);
-			if (ret == -ENOMSG) {
-				/* If there are no more blocks in FIFO, break */
-				break;
-			}
-
-			data_fifo_block_free(&fifo_tx, old_data);
-		}
-	}
-
-	for (int i = 0; i < CONFIG_FIFO_FRAME_SPLIT_NUM; i++) {
-		ret = data_fifo_pointer_first_vacant_get(&fifo_tx, &tmp_pcm_raw_data[i], K_FOREVER);
-		if (ret) {
-			return ret;
-		}
-	}
-
 	ret = sw_codec_decode(audio_frame, &pcm_raw_data, &pcm_block_size);
 	if (ret) {
 		LOG_ERR("Failed to decode");
 		return ret;
 	}
 
+	/* If not enough space for a full frame, remove oldest samples to make room */
+	while (k_msgq_num_free_get(&audio_q_tx) < CONFIG_FIFO_FRAME_SPLIT_NUM) {
+		struct net_buf *stale_buf;
+
+		ret = k_msgq_get(&audio_q_tx, (void *)&stale_buf, K_NO_WAIT);
+		if (ret == -ENOMSG) {
+			/* If there are no more blocks in FIFO, break */
+			break;
+		}
+
+		net_buf_unref(stale_buf);
+	}
+
 	/* Split decoded frame into CONFIG_FIFO_FRAME_SPLIT_NUM blocks */
 	for (int i = 0; i < CONFIG_FIFO_FRAME_SPLIT_NUM; i++) {
-		memcpy(tmp_pcm_raw_data[i], (char *)pcm_raw_data + (i * (BLOCK_SIZE_BYTES)),
-		       BLOCK_SIZE_BYTES);
+		struct net_buf *audio_block = net_buf_alloc(&audio_q_tx_pool, K_NO_WAIT);
 
-		ret = data_fifo_block_lock(&fifo_tx, &tmp_pcm_raw_data[i], BLOCK_SIZE_BYTES);
+		net_buf_add_mem(audio_block, (char *)pcm_raw_data + (i * (BLOCK_SIZE_BYTES)),
+				BLOCK_SIZE_BYTES);
+
+		ret = k_msgq_put(&audio_q_tx, (void *)&audio_block, K_NO_WAIT);
 		if (ret) {
-			LOG_ERR("Failed to lock block");
+			LOG_ERR("Failed to put block onto queue");
+			net_buf_unref(audio_block);
 			return ret;
 		}
 	}
 	if (debug_trans_count == DEBUG_INTERVAL_NUM) {
-		ret = data_fifo_num_used_get(&fifo_tx, &blocks_alloced_num, &blocks_locked_num);
-		if (ret) {
-			return ret;
-		}
-		LOG_DBG(COLOR_MAGENTA "TX alloced: %d, locked: %d" COLOR_RESET, blocks_alloced_num,
-			blocks_locked_num);
+		uint32_t audio_q_num_used = k_msgq_num_used_get(&audio_q_tx);
+
+		LOG_DBG(COLOR_MAGENTA "TX fill grade: %d/%d" COLOR_RESET, audio_q_num_used,
+			CONFIG_FIFO_TX_FRAME_COUNT);
 		debug_trans_count = 0;
 	} else {
 		debug_trans_count++;
@@ -412,16 +379,6 @@ void audio_system_start(void)
 		ERR_CHK(-EINVAL);
 	}
 
-	if (!fifo_tx.initialized) {
-		ret = data_fifo_init(&fifo_tx);
-		ERR_CHK_MSG(ret, "Failed to set up tx FIFO");
-	}
-
-	if (!fifo_rx.initialized) {
-		ret = data_fifo_init(&fifo_rx);
-		ERR_CHK_MSG(ret, "Failed to set up rx FIFO");
-	}
-
 	ret = sw_codec_init(sw_codec_cfg);
 	ERR_CHK_MSG(ret, "Failed to set up codec");
 
@@ -437,7 +394,7 @@ void audio_system_start(void)
 	}
 
 #if ((CONFIG_AUDIO_SOURCE_USB) && (CONFIG_AUDIO_DEV == GATEWAY))
-	ret = audio_usb_start(&fifo_tx, &fifo_rx);
+	ret = audio_usb_start(&audio_q_tx, &audio_q_rx);
 	ERR_CHK(ret);
 #else
 	if (IS_ENABLED(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP)) {
@@ -445,7 +402,7 @@ void audio_system_start(void)
 		ERR_CHK(ret);
 	}
 
-	ret = audio_datapath_start(&fifo_rx);
+	ret = audio_datapath_start(&audio_q_rx);
 	ERR_CHK(ret);
 #endif /* ((CONFIG_AUDIO_SOURCE_USB) && (CONFIG_AUDIO_DEV == GATEWAY))) */
 }
@@ -476,24 +433,21 @@ void audio_system_stop(void)
 	ret = sw_codec_uninit(sw_codec_cfg);
 	ERR_CHK_MSG(ret, "Failed to uninit codec");
 	sw_codec_cfg.initialized = false;
-
-	data_fifo_empty(&fifo_rx);
-	data_fifo_empty(&fifo_tx);
 }
 
 int audio_system_fifo_rx_block_drop(void)
 {
 	int ret;
-	void *temp;
-	size_t temp_size;
 
-	ret = data_fifo_pointer_last_filled_get(&fifo_rx, &temp, &temp_size, K_NO_WAIT);
+	struct net_buf *audio_block = NULL;
+
+	ret = k_msgq_get(&audio_q_rx, (void *)&audio_block, K_NO_WAIT);
 	if (ret) {
 		LOG_WRN("Failed to get last filled block");
 		return -ECANCELED;
 	}
 
-	data_fifo_block_free(&fifo_rx, temp);
+	net_buf_unref(audio_block);
 
 	LOG_DBG("Block dropped");
 	return 0;

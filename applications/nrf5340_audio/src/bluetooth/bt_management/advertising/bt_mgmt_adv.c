@@ -37,8 +37,8 @@ static const struct bt_data *per_adv_local[CONFIG_BT_EXT_ADV_MAX_ADV_SET];
 static size_t per_adv_local_size[CONFIG_BT_EXT_ADV_MAX_ADV_SET];
 
 /* Bonded address queue */
-K_MSGQ_DEFINE(bonds_queue, sizeof(bt_addr_le_t), BONDS_QUEUE_SIZE, 4);
-K_MSGQ_DEFINE(adv_queue, sizeof(uint8_t), CONFIG_BT_EXT_ADV_MAX_ADV_SET, 4);
+K_MSGQ_DEFINE(bonds_q, sizeof(bt_addr_le_t), BONDS_QUEUE_SIZE, sizeof(void *));
+K_MSGQ_DEFINE(adv_q, sizeof(uint8_t), CONFIG_BT_EXT_ADV_MAX_ADV_SET, sizeof(void *));
 
 static struct bt_le_adv_param ext_adv_param = {
 	.id = BT_ID_DEFAULT,
@@ -80,7 +80,7 @@ static void bond_find(const struct bt_bond_info *info, void *user_data)
 		bt_conn_unref(conn);
 	}
 
-	ret = k_msgq_put(&bonds_queue, (void *)&info->addr, K_NO_WAIT);
+	ret = k_msgq_put(&bonds_q, (void *)&info->addr, K_NO_WAIT);
 	if (ret) {
 		LOG_WRN("No space in the queue for the bond");
 	}
@@ -236,13 +236,13 @@ static void advertising_process(struct k_work *work)
 	struct bt_mgmt_msg msg;
 	uint8_t ext_adv_index;
 
-	ret = k_msgq_get(&adv_queue, &ext_adv_index, K_NO_WAIT);
+	ret = k_msgq_get(&adv_q, &ext_adv_index, K_NO_WAIT);
 	if (ret) {
 		LOG_ERR("No ext_adv_index found");
 		return;
 	}
 
-	k_msgq_purge(&bonds_queue);
+	k_msgq_purge(&bonds_q);
 
 	if (IS_ENABLED(CONFIG_BT_BONDABLE)) {
 		bt_foreach_bond(BT_ID_DEFAULT, bond_find, NULL);
@@ -260,7 +260,7 @@ static void advertising_process(struct k_work *work)
 
 	bt_addr_le_t addr;
 
-	if (!k_msgq_get(&bonds_queue, &addr, K_NO_WAIT) && !dir_adv_timed_out) {
+	if (!k_msgq_get(&bonds_q, &addr, K_NO_WAIT) && !dir_adv_timed_out) {
 		ret = direct_adv_create(ext_adv_index, addr);
 		if (ret) {
 			LOG_WRN("Failed to create direct advertisement: %d", ret);
@@ -415,7 +415,7 @@ int bt_mgmt_adv_start(uint8_t ext_adv_index, const struct bt_data *adv, size_t a
 			return -ENOENT;
 		}
 
-		ret = k_msgq_put(&adv_queue, &ext_adv_index, K_NO_WAIT);
+		ret = k_msgq_put(&adv_q, &ext_adv_index, K_NO_WAIT);
 		if (ret) {
 			LOG_ERR("No space in the queue for adv_index");
 			return -ENOMEM;
@@ -463,7 +463,7 @@ int bt_mgmt_adv_start(uint8_t ext_adv_index, const struct bt_data *adv, size_t a
 		}
 	}
 
-	ret = k_msgq_put(&adv_queue, &ext_adv_index, K_NO_WAIT);
+	ret = k_msgq_put(&adv_q, &ext_adv_index, K_NO_WAIT);
 	if (ret) {
 		LOG_ERR("No space in the queue for adv_index");
 		return -ENOMEM;

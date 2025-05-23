@@ -10,76 +10,76 @@
 #include <zephyr/kernel.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <data_fifo.h>
+#include <zephyr/net_buf.h>
 
 #include "sw_codec_select.h"
 #include "audio_defines.h"
 
 /**
- * @brief Mixes a tone into the I2S TX stream
+ * @brief	Mixes a tone into the I2S TX stream.
  *
- * @param freq Tone frequency [Hz]
- * @param dur_ms Tone duration [ms]. 0 = forever
- * @param amplitude Tone amplitude [0, 1]
+ * @param	freq		Tone frequency [Hz].
+ * @param	dur_ms		Tone duration [ms]. (0 == forever)
+ * @param	amplitude	Tone amplitude [0, 1].
  *
- * @return 0 if successful, error otherwise
+ * @return	0 if successful, error otherwise.
  */
 int audio_datapath_tone_play(uint16_t freq, uint16_t dur_ms, float amplitude);
 
 /**
- * @brief Stops tone playback
+ * @brief	Stops tone playback.
  */
 void audio_datapath_tone_stop(void);
 
 /**
- * @brief Set the presentation delay
+ * @brief	Set the presentation delay.
  *
- * @param delay_us The presentation delay in µs
+ * @param	delay_us	The presentation delay in µs.
  *
- * @return 0 if successful, error otherwise
+ * @return	0 if successful, error otherwise.
  */
 int audio_datapath_pres_delay_us_set(uint32_t delay_us);
 
 /**
- * @brief Get the current presentation delay
+ * @brief	Get the current presentation delay.
  *
- * @param delay_us  The presentation delay in µs
+ * @param	delay_us	The presentation delay in µs.
  */
 void audio_datapath_pres_delay_us_get(uint32_t *delay_us);
 
 /**
- * @brief Input an audio data frame which is processed and outputted over I2S
+ * @brief	Input an audio data frame which is processed and outputted over I2S.
  *
- * @note A frame of raw encoded audio data is inputted, and this data then is decoded
- *       and processed before being outputted over I2S. The audio is synchronized
- *       using sdu_ref_us
+ * @note	A frame of raw encoded audio data is inputted, and this data then is decoded
+ *		and processed before being outputted over I2S. The audio is synchronized
+ *		using sdu_ref_us.
  *
- * @param audio_frame Pointer to the audio data frame to be processed
+ * @param	audio_frame	Pointer to the audio buffer.
  */
-void audio_datapath_stream_out(struct audio_data *audio_frame);
+void audio_datapath_stream_out(struct net_buf *audio_frame);
 
 /**
- * @brief Start the audio datapath module
+ * @brief	Start the audio datapath module.
  *
- * @note The continuously running I2S is started
+ * @note	The continuously running I2S is started.
  *
- * @param fifo_rx Pointer to FIFO structure where I2S RX data is put
+ * @param	queue_rx	Pointer to the queue structure where I2S RX data is put.
  *
- * @return 0 if successful, error otherwise
+ * @return	0 if successful, error otherwise.
  */
-int audio_datapath_start(struct data_fifo *fifo_rx);
+int audio_datapath_start(struct k_msgq *queue_rx);
 
 /**
- * @brief Stop the audio datapath module
+ * @brief	Stop the audio datapath module.
  *
- * @return 0 if successful, error otherwise
+ * @return	0 if successful, error otherwise.
  */
 int audio_datapath_stop(void);
 
 /**
- * @brief Initialize the audio datapath module
+ * @brief	Initialize the audio datapath module.
  *
- * @return 0 if successful, error otherwise
+ * @return	0 if successful, error otherwise.
  */
 int audio_datapath_init(void);
 

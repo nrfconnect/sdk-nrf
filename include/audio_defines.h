@@ -13,7 +13,6 @@
 
 #include <zephyr/types.h>
 #include <stdbool.h>
-#include <zephyr/bluetooth/audio/audio.h>
 
 /**
  * @brief Audio channel assignment values
@@ -83,43 +82,32 @@ struct audio_metadata {
 };
 
 /**
- * @brief A unit of audio.
- *
- * This unit can be used anywhere, so it may be an audio block, a frame or something else.
- * It may contain encoded or raw data, as well as a single or multiple channels.
- */
-struct audio_data {
-	/* A pointer to the raw or coded data (e.g., PCM, LC3, etc.) buffer. */
-	void *data;
-
-	/* The size in bytes of the data buffer.
-	 * To get the size of each channel, this value must be divided by the number of
-	 * used channels. Metadata is not included in this figure.
-	 */
-	size_t data_size;
-
-	/* Additional information describing the audio data.
-	 */
-	struct audio_metadata meta;
-};
-
-/**
- * @brief Get the number of channels in the audio data.
+ * @brief Get the number of channels in the meta data.
  *
  * This function will count the number of bits set in the
  * locations field of the audio metadata.
  *
- * @param audio_frame Pointer to the audio data structure.
+ * @param meta Pointer to the meta data structure.
  *
  * @return The number of channels.
  */
-static inline uint8_t audio_data_num_ch_get(struct audio_data const *const audio_frame)
+static inline uint8_t metadata_num_ch_get(struct audio_metadata const *const meta)
 {
-	if (audio_frame == NULL) {
+	if (meta == NULL) {
 		return 0;
 	}
 
-	return bt_audio_get_chan_count(audio_frame->meta.locations);
+	uint32_t mask = meta->locations;
+	uint8_t count = 0;
+
+	if (mask == 0) {
+		return 1;
+	}
+	while (mask) {
+		count += mask & 1;
+		mask >>= 1;
+	}
+	return count;
 }
 
 #endif /* _AUDIO_DEFINES_H_ */

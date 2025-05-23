@@ -10,6 +10,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <zephyr/net_buf.h>
 
 #include "audio_defines.h"
 
@@ -72,7 +73,7 @@ int audio_system_config_set(uint32_t encoder_sample_rate_hz, uint32_t encoder_bi
  *
  * @return	0 on success, error otherwise.
  */
-int audio_system_decode(struct audio_data *audio_frame);
+int audio_system_decode(struct net_buf *audio_frame);
 
 /**
  * @brief	Initialize and start both HW and SW audio codec.

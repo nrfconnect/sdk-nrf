@@ -8,6 +8,7 @@
 #define _LE_AUDIO_H_
 
 #include <zephyr/bluetooth/audio/bap.h>
+#include <zephyr/net_buf.h>
 #include <audio_defines.h>
 
 #define LE_AUDIO_ZBUS_EVENT_WAIT_TIME	  K_MSEC(5)
@@ -44,10 +45,12 @@
 /**
  * @brief Callback for receiving Bluetooth LE Audio data.
  *
- * @param	audio_frame	Pointer to audio data struct.
+ * @param	audio_frame	Pointer to audio buffer.
+ * @param	meta		Pointer to audio metadata.
  * @param	channel_index	Audio channel index.
  */
-typedef void (*le_audio_receive_cb)(struct audio_data *audio_frame, uint8_t channel_index);
+typedef void (*le_audio_receive_cb)(struct net_buf *audio_frame, struct audio_metadata *meta,
+				    uint8_t channel_index);
 
 struct stream_index {
 	uint8_t lvl1; /* BIG / CIG */
@@ -56,23 +59,24 @@ struct stream_index {
 };
 
 /**
- * @brief Function to handle the audio frame.
+ * @brief Function to populate the audio metadata.
  *
- * @param[in] audio_frame	Pointer to the audio frame.
- * @param[in] stream		Pointer to the stream.
- * @param[in] info		Pointer to the ISO information.
- * @param[in] buf		Pointer to the buffer.
+ * @param[in] meta	Pointer to the audio metadata.
+ * @param[in] stream	Pointer to the stream.
+ * @param[in] info	Pointer to the ISO information.
+ * @param[in] audio_frame	Pointer to the buffer.
  *
  * @return 0 if successful, error otherwise.
  */
-int le_audio_frame_create(struct audio_data *audio_frame, const struct bt_bap_stream *stream,
-			  const struct bt_iso_recv_info *info, const struct net_buf *buf);
+int le_audio_metadata_populate(struct audio_metadata *meta, const struct bt_bap_stream *stream,
+			       const struct bt_iso_recv_info *info,
+			       const struct net_buf *audio_frame);
 
 /**
  * @brief	Get the current state of an endpoint.
  *
- * @param[in]	ep       The endpoint to check.
- * @param[out]	state    The state of the endpoint.
+ * @param[in]	ep	The endpoint to check.
+ * @param[out]	state	The state of the endpoint.
  *
  * @return	0 for success, error otherwise.
  */
@@ -83,8 +87,8 @@ int le_audio_ep_state_get(struct bt_bap_ep *ep, uint8_t *state);
  *		If the endpoint is NULL, it is not in the
  *		given state, and this function returns false.
  *
- * @param[in]	ep       The endpoint to check.
- * @param[in]	state    The state to check for.
+ * @param[in]	ep	The endpoint to check.
+ * @param[in]	state	The state to check for.
  *
  * @retval	true	The endpoint is in the given state.
  * @retval	false	Otherwise.
@@ -95,7 +99,7 @@ bool le_audio_ep_state_check(struct bt_bap_ep *ep, enum bt_bap_ep_state state);
  * @brief	Check if an endpoint has had the QoS configured.
  *		If the endpoint is NULL, it is not in the state, and this function returns false.
  *
- * @param[in]	ep       The endpoint to check.
+ * @param[in]	ep	The endpoint to check.
  *
  * @retval	true	The endpoint QoS is configured.
  * @retval	false	Otherwise.
