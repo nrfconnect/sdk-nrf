@@ -1,0 +1,19 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		/delete-property/ sw2;
+		/delete-property/ sw3;
+	};
+};
+
+/delete-node/ &button2;
+/delete-node/ &button3;
+
+&uart20 {
+	zephyr,pm-device-runtime-auto;
+};
