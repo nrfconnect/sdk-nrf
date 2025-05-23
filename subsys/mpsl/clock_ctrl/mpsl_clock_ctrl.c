@@ -8,6 +8,7 @@
 #include <zephyr/drivers/clock_control.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
 #include <zephyr/logging/log.h>
+#include <mpsl/mpsl_clock_ctrl_cb.h>
 
 #if defined(CONFIG_CLOCK_CONTROL_NRF)
 #include <nrfx_clock.h>
@@ -57,6 +58,10 @@ static struct clock_onoff_state m_nvm_clock_state = {
 	.m_clock_request_release = m_nvm_clock_release
 };
 #endif /* CONFIG_MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST */
+
+/* External callbacks used to notify of clock control events */
+static mpsl_clock_ctrl_cb_t m_hfclk_requested_cb;
+static mpsl_clock_ctrl_cb_t m_hfclk_released_cb;
 
 /** @brief A clock request callback.
  *
@@ -190,6 +195,11 @@ static void m_hfclk_request(void)
 	}
 
 	z_nrf_clock_bt_ctlr_hf_request();
+
+	/* Notify that HFCLK is requested */
+	if (m_hfclk_requested_cb) {
+		m_hfclk_requested_cb();
+	}
 }
 
 static void m_hfclk_release(void)
@@ -208,6 +218,11 @@ static void m_hfclk_release(void)
 	}
 
 	z_nrf_clock_bt_ctlr_hf_release();
+
+	/* Notify that HFCLK is released */
+	if (m_hfclk_released_cb) {
+		m_hfclk_released_cb();
+	}
 }
 
 static bool m_hfclk_is_running(void)
@@ -531,4 +546,14 @@ int32_t mpsl_clock_ctrl_uninit(void)
 #endif /* CONFIG_MPSL_EXT_CLK_CTRL_LFCLK_REQ_TIMEOUT_ALLOW */
 
 	return mpsl_clock_ctrl_source_unregister();
+}
+
+void mpsl_clock_ctrl_cb_register_hfclk_requested(mpsl_clock_ctrl_cb_t cb)
+{
+	m_hfclk_requested_cb = cb;
+}
+
+void mpsl_clock_ctrl_cb_register_hfclk_released(mpsl_clock_ctrl_cb_t cb)
+{
+	m_hfclk_released_cb = cb;
 }
