@@ -1,0 +1,80 @@
+# Copyright (c) 2025 Nordic Semiconductor
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config SECURE_STORAGE_TRUSTED_STORAGE_COMPATIBILITY
+	bool "Trusted storage backward compatibility [EXPERIMENTAL]"
+	depends on SECURE_STORAGE_ITS_STORE_IMPLEMENTATION_SETTINGS || \
+		   SECURE_STORAGE_ITS_STORE_IMPLEMENTATION_CUSTOM
+	depends on (SETTINGS_ZMS || SETTINGS_ZMS_LEGACY || \
+		    (SETTINGS_NVS && !SOC_SERIES_NRF54LX)) || \
+		   SECURE_STORAGE_ITS_STORE_IMPLEMENTATION_CUSTOM
+	select EXPERIMENTAL
+	select SECURE_STORAGE_ITS_STORE_SETTINGS_NAME_CUSTOM \
+	       if SECURE_STORAGE_ITS_STORE_IMPLEMENTATION_SETTINGS
+	help
+	  Enable to make the Secure storage subsystem compatible with
+	  an existing installation that was previously using the Trusted storage library.
+	  This allows the Secure storage subsystem to operate and store entries
+	  like the Trusted storage library would.
+
+# Replace the upstream AEAD implementation by a Trusted Storage Backward Compatible (TSBC) one.
+# The custom option (SECURE_STORAGE_ITS_TRANSFORM_IMPLEMENTATION_CUSTOM) remains usable.
+choice SECURE_STORAGE_ITS_TRANSFORM_IMPLEMENTATION
+	default SECURE_STORAGE_ITS_TRANSFORM_IMPLEMENTATION_TSBC \
+		if SECURE_STORAGE_TRUSTED_STORAGE_COMPATIBILITY
+
+config SECURE_STORAGE_ITS_TRANSFORM_IMPLEMENTATION_TSBC
+	bool "ITS transform module implementation compatible with the Trusted storage library"
+	depends on SECURE_STORAGE_TRUSTED_STORAGE_COMPATIBILITY
+	select PSA_WANT_GENERATE_RANDOM
+	select PSA_WANT_KEY_TYPE_CHACHA20
+	select PSA_WANT_ALG_CHACHA20_POLY1305
+
+endchoice # SECURE_STORAGE_ITS_TRANSFORM_IMPLEMENTATION
+
+if SECURE_STORAGE_TRUSTED_STORAGE_COMPATIBILITY
+
+if SECURE_STORAGE_ITS_TRANSFORM_IMPLEMENTATION_TSBC
+
+config SECURE_STORAGE_ITS_MAX_DATA_SIZE
+	default 256
+
+config SECURE_STORAGE_ITS_TRANSFORM_OUTPUT_OVERHEAD
+	# create_flags diff (3) + entry size (4) + nonce (12) + authentication tag (16)
+	default 35
+
+# Make the same key providers available as trusted storage.
+choice SECURE_STORAGE_ITS_TRANSFORM_TSBC_KEY_PROVIDER
+	prompt "AEAD key provider"
+	default SECURE_STORAGE_ITS_TRANSFORM_TSBC_KEY_PROVIDER_HUK_LIBRARY
+
+config SECURE_STORAGE_ITS_TRANSFORM_TSBC_KEY_PROVIDER_ENTRY_UID_HASH
+	bool "Key provider equivalent to TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID"
+	select PSA_WANT_ALG_SHA_256
+
+config SECURE_STORAGE_ITS_TRANSFORM_TSBC_KEY_PROVIDER_HUK_LIBRARY
+	bool "Key provider equivalent to TRUSTED_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK"
+	depends on HW_UNIQUE_KEY_SUPPORTED
+	select HW_UNIQUE_KEY
+	select HW_UNIQUE_KEY_RANDOM
+
+endchoice # SECURE_STORAGE_ITS_TRANSFORM_TSBC_KEY_PROVIDER
+
+endif # SECURE_STORAGE_ITS_TRANSFORM_IMPLEMENTATION_TSBC
+
+if SECURE_STORAGE_ITS_STORE_IMPLEMENTATION_SETTINGS
+
+config PSA_PROTECTED_STORAGE_PREFIX
+	string "PS entry setting prefix"
+	default "ps"
+
+config PSA_INTERNAL_TRUSTED_STORAGE_PREFIX
+	string "ITS entry setting prefix"
+	default "its"
+
+config SECURE_STORAGE_ITS_STORE_SETTINGS_NAME_MAX_LEN
+	default 20
+
+endif # SECURE_STORAGE_ITS_STORE_IMPLEMENTATION_SETTINGS
+
+endif # SECURE_STORAGE_TRUSTED_STORAGE_COMPATIBILITY
