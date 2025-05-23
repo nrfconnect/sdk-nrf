@@ -1354,7 +1354,8 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 		return PSA_ERROR_DOES_NOT_EXIST;
 	}
 
-	if (PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
+	if (PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes)) ||
+	    (psa_get_key_type(attributes) == PSA_KEY_TYPE_HMAC)) {
 		size_t key_bits;
 
 		return cracen_import_key(attributes, source_key, source_key_length,
