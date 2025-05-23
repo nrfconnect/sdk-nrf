@@ -60,12 +60,12 @@ static bool socket_keep_open;
 
 static K_SEM_DEFINE(coap_response, 0, 1);
 
-int nrf_provisioning_coap_init(struct nrf_provisioning_mm_change *mmode)
+int nrf_provisioning_coap_init(nrf_provisioning_event_cb_t callback)
 {
 	static bool initialized;
 	int ret;
 
-	nrf_provisioning_codec_init(mmode);
+	nrf_provisioning_codec_init(callback);
 
 	if (initialized) {
 		return 0;
@@ -469,6 +469,8 @@ static int authenticate(struct coap_client *client, const char *auth_token,
 			   coap_ctx->code == COAP_RESPONSE_CODE_FORBIDDEN) {
 			LOG_ERR("Unauthorized, code %d", coap_ctx->code);
 			return -EACCES;
+		} else if (coap_ctx->code < 0) {
+			return coap_ctx->code;
 		}
 		LOG_ERR("Unknown result code %d", coap_ctx->code);
 		return -ENOTSUP;
@@ -532,6 +534,8 @@ static int send_response(struct coap_client *client,
 		} else if (coap_ctx->code == COAP_RESPONSE_CODE_BAD_REQUEST) {
 			LOG_ERR("Bad request");
 			return -EINVAL;
+		} else if (coap_ctx->code < 0) {
+			return coap_ctx->code;
 		}
 		LOG_ERR("Unknown result code %d", coap_ctx->code);
 		return -ENOTSUP;
