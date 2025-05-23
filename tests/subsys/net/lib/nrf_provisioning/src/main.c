@@ -876,6 +876,7 @@ void test_codec_endorsement_keygen_invalid(void)
  * - To see that a configuration is decoded, written and responded to successfully
  * - Encoded output corresponds to the encoded input
  */
+
 void test_codec_config_store1_valid(void)
 {
 	struct cdc_context cdc_ctx;
@@ -900,8 +901,10 @@ void test_codec_config_store1_valid(void)
 
 	nrf_provisioning_codec_setup(&cdc_ctx, at_buff, sizeof(at_buff));
 
+	/* CBOR data is not null terminated */
+	char interval[] = {'9', '9'};
 	__cmock_settings_save_one_ExpectAndReturn(
-		"provisioning/interval-sec", "99", sizeof("99"), 0);
+		"provisioning/interval-sec", interval, sizeof(interval), 0);
 
 	int ret = nrf_provisioning_codec_process_commands();
 
@@ -911,7 +914,6 @@ void test_codec_config_store1_valid(void)
 
 	nrf_provisioning_codec_teardown();
 }
-
 /*
  * - Detect invalid CBOR payload
  * - To see that an invalid encoding is detected
