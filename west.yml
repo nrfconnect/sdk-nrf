@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 47828ecc8435640c7cb86bb565683871d54662af
+      revision: pull/2903/head
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -156,7 +156,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 4ec4f3bcbcabd69969a628f9bb328501566a8cd7
+      revision: pull/617/head
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
