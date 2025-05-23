@@ -52,6 +52,7 @@
 /boards/nordic/nrf54l*/                   @nrfconnect/ncs-co-boards @kl-cruz
 /boards/nordic/nrf52*                     @nrfconnect/ncs-co-boards @nrfconnect/ncs-si-bluebagel
 /boards/nordic/thingy91*                  @nrfconnect/ncs-co-boards @nrfconnect/ncs-cia
+/boards/nordic/nrf54h20dk/                @nrfconnect/ncs-charon
 /boards/shields/coverage_support/         @nrfconnect/ncs-low-level-test
 /boards/shields/nrf2220ek/                @nrfconnect/ncs-radio-sw
 /boards/shields/nrf2240ek/                @nrfconnect/ncs-radio-sw
@@ -345,6 +346,7 @@
 /include/dfu/dfu_target_suit.h            @nrfconnect/ncs-charon
 /include/dfu/suit_dfu_fetch_source.h      @nrfconnect/ncs-charon
 /include/dfu/suit_dfu.h                   @nrfconnect/ncs-charon
+/include/bl_partitions.h                  @nrfconnect/ncs-charon
 /include/drivers/flash/                   @nrfconnect/ncs-co-drivers
 /include/drivers/flash/flash_ipuc.h       @nrfconnect/ncs-co-drivers @nrfconnect/ncs-charon
 /include/drivers/gpio/                    @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
@@ -688,6 +690,7 @@
 /samples/zephyr/sensor/qdec/              @nrfconnect/ncs-low-level-test
 /samples/zephyr/subsys/settings/          @nrfconnect/ncs-low-level-test
 /samples/zephyr/subsys/usb/               @nrfconnect/ncs-low-level-test
+/samples/zephyr/subsys/mgmt/mcumgr/smp_svr/ @nrfconnect/ncs-charon
 
 /samples/**/*.svg                         @nrfconnect/ncs-doc-leads
 /samples/**/*.png                         @nrfconnect/ncs-doc-leads

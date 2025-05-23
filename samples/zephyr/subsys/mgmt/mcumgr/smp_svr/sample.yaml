@@ -1,0 +1,12 @@
+sample:
+  description: Simple Management Protocol sample
+  name: smp svr
+common:
+  sysbuild: true
+  build_only: true
+tests:
+  nrf.extended.sample.mcumgr.smp_svr.serial:
+    extra_args:
+      - EXTRA_CONF_FILE="${ZEPHYR_BASE}/samples/subsys/mgmt/mcumgr/smp_svr/overlay-serial.conf"
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp/iron/b0/mcuboot

@@ -9,6 +9,7 @@
 
 include(${CMAKE_CURRENT_LIST_DIR}/sign.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/debug_keys.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/bootloader_dts_utils.cmake)
 
 function(provision application prefix_name)
   ExternalProject_Get_Property(${application} BINARY_DIR)
@@ -18,7 +19,8 @@ function(provision application prefix_name)
   set(PROVISION_HEX_NAME     ${prefix_name}provision.hex)
   set(PROVISION_HEX          ${CMAKE_BINARY_DIR}/${PROVISION_HEX_NAME})
 
-  if(CONFIG_SOC_SERIES_NRF54LX)
+  # TODO: decide on the OTP word size for nRF54H
+  if(CONFIG_SOC_SERIES_NRF54LX OR CONFIG_SOC_SERIES_NRF54HX)
     set(otp_write_width 4) # OTP writes are in words (4 bytes)
   else()
     set(otp_write_width 2) # OTP writes are in half-words (2 bytes)
@@ -31,8 +33,7 @@ function(provision application prefix_name)
     endif()
 
     # Skip signing if MCUBoot is to be booted and its not built from source
-    if((CONFIG_SB_VALIDATE_FW_SIGNATURE OR CONFIG_SB_VALIDATE_FW_HASH) AND
-        NCS_SYSBUILD_PARTITION_MANAGER)
+    if(CONFIG_SB_VALIDATE_FW_SIGNATURE OR CONFIG_SB_VALIDATE_FW_HASH)
 
       if (${SB_CONFIG_SECURE_BOOT_DEBUG_SIGNATURE_PUBLIC_KEY_LAST})
         message(WARNING
@@ -61,17 +62,32 @@ function(provision application prefix_name)
       )
     endif()
 
-    # Adjustment to be able to load into sysbuild
-    if(CONFIG_SOC_NRF5340_CPUNET OR "${domain}" STREQUAL "CPUNET")
-      set(partition_manager_target partition_manager_CPUNET)
-      set(s0_arg --s0-addr $<TARGET_PROPERTY:${partition_manager_target},PM_APP_ADDRESS>)
-      set(s1_arg)
-      set(cpunet_target y)
-    else()
-      set(partition_manager_target partition_manager)
-      set(s0_arg --s0-addr $<TARGET_PROPERTY:${partition_manager_target},PM_S0_ADDRESS>)
-      set(s1_arg --s1-addr $<TARGET_PROPERTY:${partition_manager_target},PM_S1_ADDRESS>)
+    if(CONFIG_PARTITION_MANAGER_ENABLED)
+      get_property(TARGETS DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY BUILDSYSTEM_TARGETS)
+      # Adjustment to be able to load into sysbuild
+      if(CONFIG_SOC_NRF5340_CPUNET OR "${domain}" STREQUAL "CPUNET")
+        set(partition_manager_target partition_manager_CPUNET)
+        set(s0_arg --s0-addr $<TARGET_PROPERTY:${partition_manager_target},PM_APP_ADDRESS>)
+        set(s1_arg)
+        set(cpunet_target y)
+      else()
+        set(partition_manager_target partition_manager)
+        set(s0_arg --s0-addr $<TARGET_PROPERTY:${partition_manager_target},PM_S0_ADDRESS>)
+        set(s1_arg --s1-addr $<TARGET_PROPERTY:${partition_manager_target},PM_S1_ADDRESS>)
+        set(cpunet_target n)
+      endif()
+      set(provision_arg --provision-addr $<TARGET_PROPERTY:${partition_manager_target},PM_PROVISION_ADDRESS>)
+    elseif(CONFIG_SOC_SERIES_NRF54HX)
+      nsib_get_provision_address(provision_addr)
+      nsib_get_s0_address(s0_addr)
+      nsib_get_s1_address(s1_addr)
+      set(s0_arg --s0-addr ${s0_addr})
+      set(s1_arg --s1-addr ${s1_addr})
+      set(provision_arg --provision-addr ${provision_addr})
+
       set(cpunet_target n)
+    else()
+      message(FATAL_ERROR "NSIB without partition manager is currently only supported for nRF54H.")
     endif()
 
     if(SB_CONFIG_SECURE_BOOT_DEBUG_NO_VERIFY_HASHES)
@@ -101,7 +117,7 @@ function(provision application prefix_name)
       ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/provision.py
       ${s0_arg}
       ${s1_arg}
-      --provision-addr $<TARGET_PROPERTY:${partition_manager_target},PM_PROVISION_ADDRESS>
+      ${provision_arg}
       ${public_keys_file_arg}
       --output ${PROVISION_HEX}
       --max-size ${CONFIG_PM_PARTITION_SIZE_PROVISION}
@@ -144,57 +160,62 @@ function(provision application prefix_name)
     )
   endif()
 
-  add_custom_target(
-    ${prefix_name}provision_target
-    DEPENDS
-    ${PROVISION_HEX}
-    ${PROVISION_DEPENDS}
-    )
-
-  get_property(
-    ${prefix_name}provision_set
-    GLOBAL PROPERTY ${prefix_name}provision_PM_HEX_FILE SET
-    )
-
-  if(NOT ${prefix_name}provision_set)
-    # Set hex file and target for the 'provision' placeholder partition.
-    # This includes the hex file (and its corresponding target) to the build.
-    set_property(
-      GLOBAL PROPERTY
-      ${prefix_name}provision_PM_HEX_FILE
-      ${PROVISION_HEX}
-      )
-
-    set_property(
-      GLOBAL PROPERTY
-      ${prefix_name}provision_PM_TARGET
+  if(CONFIG_PARTITION_MANAGER_ENABLED)
+    add_custom_target(
       ${prefix_name}provision_target
+      DEPENDS
+      ${PROVISION_HEX}
+      ${PROVISION_DEPENDS}
       )
+
+    get_property(
+      ${prefix_name}provision_set
+      GLOBAL PROPERTY ${prefix_name}provision_PM_HEX_FILE SET
+      )
+
+    if(NOT ${prefix_name}provision_set)
+      # Set hex file and target for the 'provision' placeholder partition.
+      # This includes the hex file (and its corresponding target) to the build.
+      set_property(
+        GLOBAL PROPERTY
+        ${prefix_name}provision_PM_HEX_FILE
+        ${PROVISION_HEX}
+        )
+
+      set_property(
+        GLOBAL PROPERTY
+        ${prefix_name}provision_PM_TARGET
+        ${prefix_name}provision_target
+        )
+    endif()
+  else()
+    set_property(
+      GLOBAL APPEND PROPERTY NORDIC_SECURE_BOOT_HEX_FILES_TO_MERGE
+      ${PROVISION_HEX}
+    )
   endif()
 endfunction()
 
-if(NCS_SYSBUILD_PARTITION_MANAGER)
-  b0_gen_keys()
+b0_gen_keys()
 
-  # Get the main app of the domain that secure boot should handle.
-  if(SB_CONFIG_SECURE_BOOT AND SB_CONFIG_SECURE_BOOT_APPCORE)
-    if(SB_CONFIG_BOOTLOADER_MCUBOOT)
-      provision("mcuboot" "app_")
-    else()
-      provision("${DEFAULT_IMAGE}" "app_")
-    endif()
-  elseif(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+# Get the main app of the domain that secure boot should handle.
+if(SB_CONFIG_SECURE_BOOT AND SB_CONFIG_SECURE_BOOT_APPCORE)
+  if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+    provision("mcuboot" "app_")
+  else()
     provision("${DEFAULT_IMAGE}" "app_")
   endif()
+elseif(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+  provision("${DEFAULT_IMAGE}" "app_")
+endif()
 
-  if(SB_CONFIG_SECURE_BOOT_NETCORE)
-    get_property(main_app GLOBAL PROPERTY DOMAIN_APP_CPUNET)
+if(SB_CONFIG_SECURE_BOOT_NETCORE)
+  get_property(main_app GLOBAL PROPERTY DOMAIN_APP_CPUNET)
 
-    if(NOT main_app)
-      message(FATAL_ERROR "Secure boot is enabled on domain CPUNET"
-                          " but no image is selected for this domain.")
-    endif()
-
-    provision("${main_app}" "net_")
+  if(NOT main_app)
+    message(FATAL_ERROR "Secure boot is enabled on domain CPUNET"
+                        " but no image is selected for this domain.")
   endif()
+
+  provision("${main_app}" "net_")
 endif()

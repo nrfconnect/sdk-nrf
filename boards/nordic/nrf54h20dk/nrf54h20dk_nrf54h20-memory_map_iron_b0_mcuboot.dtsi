@@ -1,0 +1,117 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+
+/* This file is to be merged with the original memory_map.dtsi in the future.
+ * The following nodes will be replaced:
+ */
+/delete-node/ &cpuapp_cpusec_ipc_shm;
+/delete-node/ &cpuapp_cpusys_ipc_shm;
+/delete-node/ &cpurad_cpusec_ipc_shm;
+/delete-node/ &cpurad_cpusys_ipc_shm;
+/delete-node/ &cpusec_cpuapp_ipc_shm;
+/delete-node/ &cpusec_cpurad_ipc_shm;
+/delete-node/ &cpusys_cpuapp_ipc_shm;
+/delete-node/ &cpusys_cpurad_ipc_shm;
+/delete-node/ &cpuapp_rw_partitions;
+/delete-node/ &cpuapp_rx_partitions;
+/delete-node/ &cpurad_rx_partitions;
+
+/ {
+	reserved-memory {
+		cpuapp_cpusys_ipc_shm: memory@2f88f600 {
+			reg = <0x2f88f600 0x80>;
+		};
+
+		cpusys_cpuapp_ipc_shm: memory@2f88f680 {
+			reg = <0x2f88f680 0x80>;
+		};
+
+		cpurad_cpusys_ipc_shm: memory@2f88f700 {
+			reg = <0x2f88f700 0x80>;
+		};
+
+		cpusys_cpurad_ipc_shm: memory@2f88f780 {
+			reg = <0x2f88f780 0x80>;
+		};
+
+		cpusec_cpurad_ipc_shm: memory@2f88f800 {
+			reg = <0x2f88f800 0x80>;
+		};
+
+		cpurad_ironside_se_event_report: memory@2f88f880 {
+			reg = <0x2f88f880 0x100>;
+		};
+
+		cpurad_ironside_se_boot_report: memory@2f88f980 {
+			reg = <0x2f88f980 0x200>;
+		};
+
+		cpusec_cpuapp_ipc_shm: memory@2f88fb80 {
+			reg = <0x2f88fb80 0x80>;
+		};
+
+		cpuapp_ironside_se_event_report: memory@2f88fc00 {
+			reg = <0x2f88fc00 0x100>;
+		};
+
+		cpuapp_ironside_se_boot_report: memory@2f88fd00 {
+			reg = <0x2f88fd00 0x200>;
+		};
+	};
+};
+
+&mram1x {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		cpuapp_b0_partition: partition@2c000 {
+			reg = <0x2c000 DT_SIZE_K(62)>;
+		};
+
+		cpuapp_provision_partition: partition@3b800 {
+			reg = <0x3b800 DT_SIZE_K(2)>;
+		};
+
+		cpuapp_s0_partition: partition@3c000 {
+			reg = <0x3c000 DT_SIZE_K(64)>;
+		};
+
+		cpuapp_s1_partition: partition@4c000 {
+			reg = <0x4c000 DT_SIZE_K(64)>;
+		};
+
+		cpuapp_slot0_partition: partition@5c000 {
+			reg = <0x5c000 DT_SIZE_K(336)>;
+		};
+
+		cpurad_slot0_partition: partition@b0000 {
+			reg = <0xb0000 DT_SIZE_K(272)>;
+		};
+
+		cpuppr_code_partition: partition@f4000 {
+			reg = <0xf4000 DT_SIZE_K(64)>;
+		};
+
+		cpuflpr_code_partition: partition@104000 {
+			reg = <0x104000 DT_SIZE_K(48)>;
+		};
+
+		cpuapp_slot1_partition: partition@110000 {
+			reg = <0x110000 DT_SIZE_K(336)>;
+		};
+
+		cpurad_slot1_partition: partition@164000 {
+			reg = <0x164000 DT_SIZE_K(272)>;
+		};
+
+		storage_partition: partition@1a8000 {
+			reg = <0x1a8000 DT_SIZE_K(40)>;
+		};
+	};
+};

@@ -51,6 +51,11 @@ function(restore_ncs_vars)
   endforeach()
 endfunction()
 
+function(verify_bootloader_dts)
+  include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootloader_dts_utils.cmake)
+  verify_bootloader_dts_configuration()
+endfunction()
+
 function(include_provision_hex)
   include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/provision_hex.cmake)
 endfunction()
@@ -148,7 +153,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
   set(target_length)
 
   if(SB_CONFIG_BOOTLOADER_MCUBOOT)
-    if(SB_CONFIG_PARTITION_MANAGER)
+    if(SB_CONFIG_PARTITION_MANAGER OR SB_CONFIG_SECURE_BOOT)
       # Make mcuboot a build only target as the main application will flash this from the
       # merged hex file
       set_target_properties(mcuboot PROPERTIES BUILD_ONLY true)
@@ -287,7 +292,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       set_config_bool(mcuboot CONFIG_BOOT_FIH_PROFILE_DEFAULT_LOW y)
     endif()
 
-    if(SB_CONFIG_PARTITION_MANAGER)
+    if(SB_CONFIG_PARTITION_MANAGER OR SB_CONFIG_SECURE_BOOT)
       # Use NCS signing script with support for PM
       if(SB_CONFIG_QSPI_XIP_SPLIT_IMAGE)
         set(${DEFAULT_IMAGE}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_split.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
@@ -731,6 +736,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     nrfconnect_generate_factory_data()
   endif()
 
+  if(SB_CONFIG_SECURE_BOOT AND NOT SB_CONFIG_PARTITION_MANAGER)
+    verify_bootloader_dts()
+  endif()
+
   include_packaging()
   if(NOT SB_CONFIG_SOC_NRF54H20_IRON)
     include_suit_provisioning()
@@ -829,6 +838,8 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
       --------------------------------------------------------------------------------------------
       ")
     endif()
+  elseif(SB_CONFIG_SECURE_BOOT)
+    include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/secureboot_merge.cmake OPTIONAL)
   endif()
   foreach(image ${IMAGES})
     configure_cache(IMAGE ${image})
@@ -840,23 +851,17 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
   ExternalProject_Get_Property(${DEFAULT_IMAGE} BINARY_DIR)
   set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${BINARY_DIR}/zephyr/.config)
 
-  if(NCS_SYSBUILD_PARTITION_MANAGER)
-    if(SB_CONFIG_SECURE_BOOT AND SB_CONFIG_SECURE_BOOT_APPCORE AND SB_CONFIG_BOOTLOADER_MCUBOOT)
-      ExternalProject_Get_Property(mcuboot BINARY_DIR)
-      set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${BINARY_DIR}/zephyr/.config)
-    endif()
+  if(SB_CONFIG_SECURE_BOOT AND SB_CONFIG_SECURE_BOOT_APPCORE AND SB_CONFIG_BOOTLOADER_MCUBOOT)
+    ExternalProject_Get_Property(mcuboot BINARY_DIR)
+    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${BINARY_DIR}/zephyr/.config)
+  endif()
 
-    if(SB_CONFIG_SECURE_BOOT_NETCORE)
-      get_property(main_app GLOBAL PROPERTY DOMAIN_APP_CPUNET)
-      ExternalProject_Get_Property(${main_app} BINARY_DIR)
-      set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${BINARY_DIR}/zephyr/.config)
-    endif()
+  if(SB_CONFIG_SECURE_BOOT_NETCORE)
+    get_property(main_app GLOBAL PROPERTY DOMAIN_APP_CPUNET)
+    ExternalProject_Get_Property(${main_app} BINARY_DIR)
+    set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${BINARY_DIR}/zephyr/.config)
   endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
-
-# Enable use of partition manager with sysbuild.
-# Consider if this shoulc come through Sysbuild Kconfig flag.
-set(NCS_SYSBUILD_PARTITION_MANAGER TRUE)
 
 list(APPEND CMAKE_MODULE_PATH ${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/modules)
 include(ncs_sysbuild_extensions)
