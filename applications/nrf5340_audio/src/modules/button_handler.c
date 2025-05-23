@@ -40,7 +40,7 @@ struct btn_unit_cfg {
 #define BASE_10 10
 
 /* Only allow one button msg at a time, as a mean of debounce */
-K_MSGQ_DEFINE(button_queue, sizeof(struct button_msg), 1, 4);
+K_MSGQ_DEFINE(button_q, sizeof(struct button_msg), 1, sizeof(void *));
 
 static bool debounce_is_ongoing;
 
@@ -133,7 +133,7 @@ static void button_publish_thread(void)
 	struct button_msg msg;
 
 	while (1) {
-		k_msgq_get(&button_queue, &msg, K_FOREVER);
+		k_msgq_get(&button_q, &msg, K_FOREVER);
 
 		ret = zbus_chan_pub(&button_chan, &msg, K_NO_WAIT);
 		if (ret) {
@@ -171,7 +171,7 @@ static void button_isr(const struct device *port, struct gpio_callback *cb, uint
 	msg.button_pin = btn_pin;
 	msg.button_action = BUTTON_PRESS;
 
-	ret = k_msgq_put(&button_queue, (void *)&msg, K_NO_WAIT);
+	ret = k_msgq_put(&button_q, (void *)&msg, K_NO_WAIT);
 	if (ret == -EAGAIN) {
 		LOG_WRN("Btn msg queue full");
 	}

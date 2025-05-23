@@ -8,6 +8,7 @@
 #define _SW_CODEC_SELECT_H_
 
 #include <zephyr/kernel.h>
+#include <zephyr/net_buf.h>
 #include "channel_assignment.h"
 
 #if (CONFIG_SW_CODEC_LC3)
@@ -83,22 +84,22 @@ bool sw_codec_is_initialized(void);
  * @note	Takes in stereo PCM stream, will encode either one or two
  *		channels, based on channel_mode set during init.
  *
- * @param[in]	audio_frame	Pointer to audio data.
+ * @param[in]	audio_frame	Pointer to the audio buffer.
  *
  * @return	0 if success, error codes depends on sw_codec selected.
  */
-int sw_codec_encode(struct audio_data *audio_frame);
+int sw_codec_encode(struct net_buf *audio_frame);
 
 /**
  * @brief	Decode encoded data and output PCM data.
  *
- * @param[in]	audio_frame	Pointer to audio data.
- * @param[out]	pcm_data	Pointer to buffer to store decoded PCM data.
+ * @param[in]	audio_frame	Pointer to the audio buffer.
+ * @param[out]	pcm_data	Pointer to the buffer to store the decoded PCM data.
  * @param[out]	pcm_size	Size of decoded data.
  *
  * @return	0 if success, error codes depends on sw_codec selected.
  */
-int sw_codec_decode(struct audio_data const *const audio_frame, void **pcm_data, size_t *pcm_size);
+int sw_codec_decode(struct net_buf const *const audio_frame, void **pcm_data, size_t *pcm_size);
 
 /**
  * @brief	Uninitialize the software codec and free the allocated space.

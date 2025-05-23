@@ -58,7 +58,7 @@ int unicast_server_adv_populate(struct bt_data *adv_buf, uint8_t adv_buf_vacant)
  *
  * @return	0 for success, error otherwise.
  */
-int unicast_server_send(struct audio_data const *const audio_frame);
+int unicast_server_send(struct net_buf const *const audio_frame);
 
 /**
  * @brief	Disable the Bluetooth LE Audio unicast (CIS) server.

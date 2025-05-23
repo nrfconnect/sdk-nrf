@@ -214,7 +214,9 @@ nRF5340 Audio
 
   * The application to use the ``NFC.TAGHEADER0`` value from FICR as the broadcast ID instead of using a random ID.
   * The application to change from Newlib to Picolib to align with |NCS| and Zephyr.
-  * The application to use an audio struct that contains meta data about the audio stream.
+  * The application to use the :ref:`net_buf_interface` API to pass audio data between threads.
+    The :ref:`net_buf_interface` will also contain the metadata about the audio stream in the ``user_data`` section of the API.
+    This change was done to transition to standard Zephyr APIs, as well as to have a structured way to pass N-channel audio between modules.
   * The optional buildprog tool to use `nRF Util`_ instead of nrfjprog that has been deprecated.
 
 nRF Desktop

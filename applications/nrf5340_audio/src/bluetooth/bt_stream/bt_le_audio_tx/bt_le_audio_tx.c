@@ -188,8 +188,8 @@ static int iso_conn_handle_set(struct bt_bap_stream *bap_stream, uint16_t *iso_c
 	return 0;
 }
 
-int bt_le_audio_tx_send(struct le_audio_tx_info *tx, uint8_t num_tx,
-			struct audio_data const *const audio_frame)
+int bt_le_audio_tx_send(struct net_buf const *const audio_frame, struct le_audio_tx_info *tx,
+			uint8_t num_tx)
 {
 	int ret;
 	size_t data_size_pr_stream = 0;
@@ -203,15 +203,16 @@ int bt_le_audio_tx_send(struct le_audio_tx_info *tx, uint8_t num_tx,
 	}
 
 	/* Get number of channels in the audio frame */
-	uint8_t num_ch = audio_data_num_ch_get(audio_frame);
+	struct audio_metadata *meta = net_buf_user_data(audio_frame);
+	uint8_t num_ch = metadata_num_ch_get(meta);
 
-	if (num_ch == 0 || (audio_frame->data_size % num_ch != 0)) {
+	if (num_ch == 0 || (audio_frame->len % num_ch != 0)) {
 		LOG_ERR("Invalid number (%d) of channels in audio frame (%d)", num_ch,
-			audio_frame->data_size);
+			audio_frame->len);
 		return -EINVAL;
 	}
 
-	data_size_pr_stream = audio_frame->data_size / num_ch;
+	data_size_pr_stream = audio_frame->len / num_ch;
 
 	/* When sending ISO data, we always send ts = 0 to the first active transmitting channel.
 	 * The controller will populate with a ts which is fetched using bt_iso_chan_get_tx_sync.
@@ -268,16 +269,15 @@ int bt_le_audio_tx_send(struct le_audio_tx_info *tx, uint8_t num_tx,
 		}
 		common_interval = tx[i].cap_stream->bap_stream.qos->interval;
 
-		struct net_buf *audio_buf = audio_frame->data;
 		/* Check if same audio is sent to all channels */
 		if (num_ch == 1) {
-			ret = iso_stream_send(audio_buf->data, data_size_pr_stream,
+			ret = iso_stream_send(audio_frame->data, data_size_pr_stream,
 					      tx[i].cap_stream, tx_info, common_tx_sync_ts_us);
 		} else {
-			ret = iso_stream_send(
-				&audio_buf->data[(data_size_pr_stream * tx[i].audio_channel)],
-				data_size_pr_stream, tx[i].cap_stream, tx_info,
-				common_tx_sync_ts_us);
+			ret = iso_stream_send(audio_frame->data +
+						      (tx[i].audio_channel * data_size_pr_stream),
+					      data_size_pr_stream, tx[i].cap_stream, tx_info,
+					      common_tx_sync_ts_us);
 		}
 
 		if (ret) {

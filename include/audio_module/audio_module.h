@@ -89,6 +89,27 @@ enum audio_module_state {
 };
 
 /**
+ * @brief A unit of audio.
+ *
+ * This unit can be used anywhere, so it may be an audio block, a frame or something else.
+ * It may contain encoded or raw data, as well as a single or multiple channels.
+ */
+struct audio_data {
+	/* A pointer to the raw or coded data (e.g., PCM, LC3, etc.) buffer. */
+	void *data;
+
+	/* The size in bytes of the data buffer.
+	 * To get the size of each channel, this value must be divided by the number of
+	 * used channels. Metadata is not included in this figure.
+	 */
+	size_t data_size;
+
+	/* Additional information describing the audio data.
+	 */
+	struct audio_metadata meta;
+};
+
+/**
  * @brief Module's private handle.
  */
 struct audio_module_handle_private;

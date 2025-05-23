@@ -29,7 +29,14 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
-|no_changes_yet_note|
+nRF5340 Audio applications
+--------------------------
+
+.. toggle::
+
+   * The :ref:`nrf53_audio_app` has been updated to use the :ref:`net_buf_interface` API to handle audio data.
+     This change requires you to update your application code to use the new APIs for audio data handling.
+     See :ref:`ncs_release_notes_changelog` for more information.
 
 Libraries
 =========
