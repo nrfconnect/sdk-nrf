@@ -71,4 +71,15 @@
 #define FIXED_PARTITION_EXISTS(label) IS_ENABLED(PM_IS_ENABLED(label))
 #define FLASH_AREA_LABEL_EXISTS(label) FIXED_PARTITION_EXISTS(label)
 
+#define FIXED_PARTITION(label)							\
+	((const struct flash_area *)&UTIL_CAT(global_pm_partition_, label))
+
+#define DECLARE_PARTITION(label)						\
+	extern const struct flash_area UTIL_CAT(global_pm_partition_, label)
+
+/* For each partition found in PM config generate the extern declaration */
+#define MAKE_LABEL(id, _) UTIL_CAT(PM_, UTIL_CAT(PM_##id##_LABEL))
+FOR_EACH(DECLARE_PARTITION, (;), LISTIFY(PM_NUM, MAKE_LABEL, (,)));
+#undef MAKE_LABEL
+
 #endif /* FLASH_MAP_PM_H_*/
