@@ -106,17 +106,6 @@ static void data_received(const struct device *dev, struct net_buf *buffer, size
 		return;
 	}
 
-	audio_buf_in = net_buf_alloc(&pool_in, K_NO_WAIT);
-	if (audio_buf_in == NULL) {
-		LOG_WRN("Out of RX buffers");
-		net_buf_unref(buffer);
-		return;
-	}
-
-	/* Copy data to RX FIFO */
-	net_buf_add_mem(audio_buf_in, buffer->data, size);
-	net_buf_unref(buffer);
-
 	ret = data_fifo_pointer_first_vacant_get(fifo_rx, (void *)&audio_block, K_NO_WAIT);
 
 	/* RX FIFO can fill up due to re-transmissions or disconnect */
@@ -142,6 +131,15 @@ static void data_received(const struct device *dev, struct net_buf *buffer, size
 	}
 
 	ERR_CHK_MSG(ret, "RX failed to get block");
+
+	audio_buf_in = net_buf_alloc(&pool_in, K_NO_WAIT);
+	if (audio_buf_in == NULL) {
+		ERR_CHK_MSG(-ENOMEM, "Out of RX buffers for USB");
+	}
+
+	/* Copy data to RX FIFO */
+	net_buf_add_mem(audio_buf_in, buffer->data, size);
+	net_buf_unref(buffer);
 
 	audio_block->data = audio_buf_in;
 	audio_block->data_size = size;
