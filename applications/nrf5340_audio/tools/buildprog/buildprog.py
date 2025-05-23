@@ -175,10 +175,8 @@ def __build_module(build_config, options):
 def __find_snr():
     """Rebooting or programming requires connected programmer/debugger"""
 
-    # Use nrfjprog executable for WSL compatibility
-    stdout = subprocess.check_output(
-        "nrfjprog --ids", shell=True).decode("utf-8")
-    snrs = re.findall(r"([\d]+)", stdout)
+    stdout = subprocess.check_output("nrfutil device list", shell=True).decode("utf-8")
+    snrs = re.findall(r"^\d+$", stdout, re.MULTILINE)
 
     if not snrs:
         print("No programmer/debugger connected to PC")
@@ -270,7 +268,7 @@ def __main():
         action="store_true",
         dest="sequential_prog",
         default=False,
-        help="Run nrfjprog sequentially instead of in parallel",
+        help="Run nrfutil sequentially instead of in parallel. This may be required in virtual machines",
     )
     parser.add_argument(
         "-f",

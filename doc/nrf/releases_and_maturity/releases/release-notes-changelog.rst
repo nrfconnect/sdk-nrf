@@ -209,6 +209,7 @@ nRF5340 Audio
   * The application to use the ``NFC.TAGHEADER0`` value from FICR as the broadcast ID instead of using a random ID.
   * The application to change from Newlib to Picolib to align with |NCS| and Zephyr.
   * The application to use an audio struct that contains meta data about the audio stream.
+  * The optional buildprog tool to use `nRF Util`_ instead of nrfjprog that has been deprecated.
 
 
 nRF Desktop
