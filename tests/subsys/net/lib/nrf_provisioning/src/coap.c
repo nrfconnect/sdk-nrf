@@ -113,6 +113,10 @@ int zsock_getaddrinfo(const char *host, const char *service, const struct zsock_
 	return 0;
 }
 
+void zsock_freeaddrinfo(struct zsock_addrinfo *ai)
+{
+}
+
 int z_impl_zsock_connect(int sock, const struct sockaddr *addr, socklen_t addrlen)
 {
 	return 0;
