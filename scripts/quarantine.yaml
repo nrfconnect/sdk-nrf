@@ -61,3 +61,11 @@
     - unit.*
     - native_sim.*
   comment: "SUIT is planned to be removed from NCS soon"
+
+- scenarios:
+    - nrf5340_audio.audio_module_template
+    - nrf5340_audio.audio_module_test
+    - nrf5340_audio.pscm_test
+  platforms:
+    - qemu_cortex_m3/ti_lm3s6965
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-33747"
