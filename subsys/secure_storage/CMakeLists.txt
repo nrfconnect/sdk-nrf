@@ -13,4 +13,8 @@ zephyr_library_link_libraries_ifdef(CONFIG_MBEDTLS mbedTLS)
 
 if(CONFIG_SECURE_STORAGE_TRUSTED_STORAGE_COMPATIBILITY)
   add_subdirectory(compatibility)
+else()
+  zephyr_library_sources_ifdef(CONFIG_SECURE_STORAGE_ITS_TRANSFORM_AEAD_KEY_PROVIDER_HUK_LIBRARY
+    src/its_transform_aead_get_key_huk.c
+  )
 endif()
