@@ -508,7 +508,7 @@ static void commit_latest_cmd_id(void)
 {
 	int ret = settings_save_one(SETTINGS_STORAGE_PREFIX "/" NRF_PROVISIONING_CORRELATION_ID_KEY,
 		nrf_provisioning_codec_get_latest_cmd_id(),
-		strlen(nrf_provisioning_codec_get_latest_cmd_id()) + 1);
+		strlen(nrf_provisioning_codec_get_latest_cmd_id()));
 
 	if (ret) {
 		LOG_ERR("Unable to store key: %s; value: %s; err: %d",
@@ -546,7 +546,7 @@ void nrf_provisioning_set_interval(int interval)
 		}
 
 		ret = settings_save_one(SETTINGS_STORAGE_PREFIX "/interval-sec",
-			time_str, strlen(time_str) + 1);
+			time_str, strlen(time_str));
 		if (ret) {
 			LOG_ERR("Unable to store interval, err: %d", ret);
 			return;
