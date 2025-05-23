@@ -4156,6 +4156,17 @@ NCSDK-15494: Unable to build with RSA and ECIES-X25519 image encryptions
 Recovery with the USB does not work
   The MCUboot recovery feature using the USB interface does not work.
 
+.. rst-class:: v3-0-2 v3-0-1 v3-0-0 v2-9-1 v2-9-0 v2-8-0 v2-7-0
+
+NCSDK-33173: MCUboot might fail on booting an application when LTO is enabled
+  The MCUboot might fail on booting an application when it is built with Link Time Optimization enabled.
+  This issue is transient and affects only some MCUboot builds for which it is 100% reproducible.
+
+  **Affected platforms:** All ARM Cortex-M nRF CPUs
+
+  **Workaround:** To fix the issue, update the ``sdk-mcuboot`` repository by cherry-picking the upstream commits with the following hash: ``766081bd6dfe26057fdbe3dca5d8eb5f64681beb``
+
+
 nrfxlib
 *******
 

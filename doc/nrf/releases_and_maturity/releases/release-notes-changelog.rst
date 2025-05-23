@@ -630,7 +630,8 @@ The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/mod
 
 The following list summarizes both the main changes inherited from upstream MCUboot and the main changes applied to the |NCS| specific additions:
 
-|no_changes_yet_note|
+
+* Fixed an issue related to referencing the ARM Vector table of the application, which causes jumping to wrong address instead of the application reset vector for some builds when Zephyr LTO (Link Time Optimization) was enabled.
 
 Zephyr
 ======
