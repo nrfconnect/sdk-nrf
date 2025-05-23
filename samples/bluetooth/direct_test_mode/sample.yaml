@@ -13,6 +13,7 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     platform_allow:
       - nrf5340dk/nrf5340/cpunet
@@ -22,6 +23,7 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     tags:
       - bluetooth
