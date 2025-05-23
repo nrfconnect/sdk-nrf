@@ -1,6 +1,19 @@
 # Copyright (c) 2025 Nordic Semiconductor
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-# Secure storage subsystem integration into NCS
+# Secure storage subsystem integration into the nRF Connect SDK
+
+# Add the HUK library as the default AEAD key provider when supported.
+# It provides the highest level of security.
+choice SECURE_STORAGE_ITS_TRANSFORM_AEAD_KEY_PROVIDER
+	default SECURE_STORAGE_ITS_TRANSFORM_AEAD_KEY_PROVIDER_HUK_LIBRARY
+
+config SECURE_STORAGE_ITS_TRANSFORM_AEAD_KEY_PROVIDER_HUK_LIBRARY
+	bool "Keys derived using the HUK library"
+	depends on HW_UNIQUE_KEY_SUPPORTED && NRF_SECURITY
+	select HW_UNIQUE_KEY
+	select HW_UNIQUE_KEY_RANDOM
+
+endchoice # SECURE_STORAGE_ITS_TRANSFORM_AEAD_KEY_PROVIDER
 
 rsource "compatibility/Kconfig"
