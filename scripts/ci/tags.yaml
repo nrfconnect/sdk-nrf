@@ -810,6 +810,7 @@ ci_tests_subsys_audio_module:
     - nrf/tests/subsys/audio_module/
     - nrf/subsys/audio/
     - nrf/tests/subsys/audio/
+    - nrf/include/audio_defines.h
 
 ci_tests_subsys_bluetooth_controller:
   files:
@@ -1039,6 +1040,7 @@ ci_tests_lib_pcm_stream_channel_modifier:
   files:
     - nrf/lib/pcm_stream_channel_modifier/
     - nrf/tests/lib/pcm_stream_channel_modifier/
+    - nrf/include/audio_defines.h
 
 ci_tests_lib_pdn:
   files:
