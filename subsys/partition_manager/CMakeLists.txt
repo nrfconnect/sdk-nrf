@@ -73,7 +73,7 @@ if (CONFIG_NRF_MODEM_LIB)
   ncs_add_partition_manager_config(pm.yml.libmodem)
 endif()
 
-if(CONFIG_SOC_NRF54L15_CPUAPP)
+if(CONFIG_SOC_NRF54L15_CPUAPP OR CONFIG_SOC_NRF54L05_CPUAPP OR CONFIG_SOC_NRF54L10_CPUAPP)
   ncs_add_partition_manager_config(pm.yml.bootconf)
 endif()
 
