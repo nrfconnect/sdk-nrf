@@ -93,6 +93,10 @@
    Last supported operating systems are Windows 10, Linux Ubuntu 22.04, and macOS 13.
    The nRF Command Line Tools will remain available for download, but do not install the SEGGER J-Link version they provide if you have a newer version installed.
 
+.. |legacy_crypto_deprecation_note| replace:: Legacy crypto toolbox APIs are marked as deprecated in the |NCS| version 2.8.0, and will be removed in a future version.
+   Do not use the legacy crypto toolbox APIs prefixed with ``mbedtls_`` and the related configurations in any new designs.
+   Instead, use the equivalent functionality from PSA Crypto APIs.
+
 .. ### Thread usage shortcuts
 
 .. |enable_thread_before_testing| replace:: Make sure to enable the OpenThread stack before building and testing this sample.
@@ -252,3 +256,7 @@
 .. |install_latest_version| replace:: When you first install the |NCS|, it is recommended to install the latest released versions of the SDK and the toolchain.
 
 .. |connection_options_limited| replace:: Spinel connections through SPI and USB are not currently available in the |NCS|.
+
+.. |original_mbedtls_def_note| replace:: Whenever this documentation mentions 'original' Mbed TLS, it refers to the open-source `Arm Mbed TLS project`_, not the customized version available in Zephyr.
+   There is an option to utilize a 'built-in' driver, which corresponds to the software-implemented cryptography from the 'original' Mbed TLS deliverables.
+   This is provided to ensure that the cryptographic toolbox supports all requested features.
