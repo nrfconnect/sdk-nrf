@@ -80,7 +80,7 @@ PSA Crypto API
 
 This section summarizes some of the features of the PSA Crypto API and how they can be specific to the implementation in the |NCS|.
 For a full explanation, see the `PSA Certified Crypto API`_ official documentation.
-See PSA's `crypto.h`_ file for versioning.
+See the `crypto.h`_ file in the Oberon PSA Crypto repository for versioning.
 
 Among the advantages of the PSA Crypto API are the following:
 
