@@ -702,14 +702,6 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts_us, uint32_t
 			ERR_CHK_MSG(-ENOMEM, "No RX data available");
 		}
 
-		buf_in = net_buf_alloc(&pool_i2s_rx, K_NO_WAIT);
-		if (buf_in == NULL) {
-			ERR_CHK_MSG(-ENOMEM, "Out of RX buffers for I2S");
-		}
-
-		/* Store RX buffer in net_buf */
-		net_buf_add_mem(buf_in, rx_buf_released, BLK_STEREO_SIZE_OCTETS);
-
 		/* Get first available audio block */
 		ret = data_fifo_pointer_first_vacant_get(ctrl_blk.in.fifo, (void *)&rx_audio_block,
 							 K_NO_WAIT);
@@ -739,6 +731,14 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts_us, uint32_t
 			LOG_WRN("I2S RX continuing stream");
 			prev_ret = ret;
 		}
+
+		buf_in = net_buf_alloc(&pool_i2s_rx, K_NO_WAIT);
+		if (buf_in == NULL) {
+			ERR_CHK_MSG(-ENOMEM, "Out of RX buffers for I2S");
+		}
+
+		/* Store RX buffer in net_buf */
+		net_buf_add_mem(buf_in, rx_buf_released, BLK_STEREO_SIZE_OCTETS);
 
 		rx_audio_block->data = buf_in;
 		rx_audio_block->data_size = BLK_STEREO_SIZE_OCTETS;
