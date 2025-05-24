@@ -361,6 +361,10 @@ Peripheral samples
 
   * Added experimental ``llvm`` toolchain support for the ``nrf54l15dk/nrf54l15/cpuapp`` board target.
 
+* :ref:`lpuart_sample` sample:
+
+  * Updated the sample by changing the pins used for nRF52840 DK and nRF5340 DK.
+
 PMIC samples
 ------------
 
