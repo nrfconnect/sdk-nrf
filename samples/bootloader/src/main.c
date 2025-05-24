@@ -108,17 +108,15 @@ static void validate_and_boot(const struct fw_info *fw_info, counter_t slot)
 	if (fw_info->version > stored_version) {
 		int err = set_monotonic_version(fw_info->version, slot);
 
-		if (err) {
+		if (err && err != -ENOENT) {
 			/*
-			 * Errors in writing the firmware version are assumed to be
-			 * due to the firmware version not being enabled. When the
-			 * firmware version is disabled, no version updates should
-			 * be done and this case can be ignored.
-			 *
-			 * The body of this if-statement is intentionally empty.
-			 * It is left here solely for documentation purposes,
-			 * describing why we ignore the error.
+			 * Only accept an ENOENT error meaning that monotonic counter support is
+			 * disabled
 			 */
+			printk("Failed to update monotonic counter, permanently "
+			       "invalidating!\r\n");
+			fw_info_invalidate(fw_info);
+			return;
 		}
 	}
 
