@@ -39,7 +39,7 @@ static uint8_t dppi_channel_i2s_frame_start;
 #define AUDIO_SYNC_LF_TIMER_I2S_FRAME_START_EVT_CAPTURE		NRF_RTC_TASK_CAPTURE_0
 #define AUDIO_SYNC_LF_TIMER_CURR_TIME_CAPTURE_CHANNEL		1
 #define AUDIO_SYNC_LF_TIMER_CURR_TIME_CAPTURE			NRF_RTC_TASK_CAPTURE_1
-#define CC_GET_CALLS_MAX					30
+#define CC_GET_CALLS_MAX					20
 
 static uint8_t dppi_channel_curr_time_capture;
 
@@ -107,18 +107,19 @@ uint32_t audio_sync_timer_capture(void)
 	return timestamp_from_rtc_and_timer_get(tick, remainder_us);
 }
 
-uint32_t audio_sync_timer_capture_get(void)
+uint32_t audio_sync_timer_frame_start_capture_get(void)
 {
 	uint32_t cc_get_calls = 0;
 	uint32_t tick = 0;
 	static uint32_t prev_tick;
 	uint32_t remainder_us = 0;
-	static uint32_t prev_remainder_us;
 
-	/* This function is called too soon after I2S frame start may
-	 * result in values not yet being updated in the *_cc_get calls.
-	 * Ref: OCT-2585. To ensure new values are fetched, they are
-	 * read in a while-loop with a timeout.
+	/* This ISR is called before the I2S FRAMESTART event which does timer capture,
+	 * resulting in values not yet being updated in the *_cc_get calls.
+	 * To ensure new values are fetched, they are read in a while-loop with a timeout.
+	 * Depending on variables such as sample frequency, this delay varies.
+	 * For 16 kHz sampling rate is about 20 us. Less for 24 kHz and 48 kHz.
+	 * Ref: OCT-2585 and OCT-3368.
 	 */
 
 	do {
@@ -126,25 +127,21 @@ uint32_t audio_sync_timer_capture_get(void)
 				      AUDIO_SYNC_LF_TIMER_I2S_FRAME_START_EVT_CAPTURE_CHANNEL);
 		cc_get_calls++;
 		if (cc_get_calls > CC_GET_CALLS_MAX) {
-			LOG_WRN("Unable to get new CC value");
+			LOG_ERR("Unable to get new tick from nrf_rtc_cc_get");
 			break;
 		}
+		k_busy_wait(1);
 	} while (tick == prev_tick);
 
 	cc_get_calls = 0;
 
-	do {
-		remainder_us = nrf_timer_cc_get(
-			NRF_TIMER1, AUDIO_SYNC_HF_TIMER_I2S_FRAME_START_EVT_CAPTURE_CHANNEL);
-		cc_get_calls++;
-		if (cc_get_calls > CC_GET_CALLS_MAX) {
-			LOG_WRN("Unable to get new CC value");
-			break;
-		}
-	} while (remainder_us == prev_remainder_us);
+	/* The HF timer is cleared on every I2S frame. Hence, this value can be
+	 * the same many times in a row.
+	 */
+	remainder_us = nrf_timer_cc_get(NRF_TIMER1,
+					AUDIO_SYNC_HF_TIMER_I2S_FRAME_START_EVT_CAPTURE_CHANNEL);
 
 	prev_tick = tick;
-	prev_remainder_us = remainder_us;
 
 	return timestamp_from_rtc_and_timer_get(tick, remainder_us);
 }
@@ -217,7 +214,7 @@ static int audio_sync_timer_init(void)
 	/* Initialize capturing of current timestamps */
 	ret = nrfx_dppi_channel_alloc(&dppi, &dppi_channel_curr_time_capture);
 	if (ret - NRFX_ERROR_BASE_NUM) {
-		LOG_ERR("nrfx DPPI channel alloc error (I2S frame start) - Return value: %d", ret);
+		LOG_ERR("nrfx DPPI channel alloc error (I2S frame start): %d", ret);
 		return -ENOMEM;
 	}
 
@@ -233,7 +230,7 @@ static int audio_sync_timer_init(void)
 
 	ret = nrfx_dppi_channel_enable(&dppi, dppi_channel_curr_time_capture);
 	if (ret - NRFX_ERROR_BASE_NUM) {
-		LOG_ERR("nrfx DPPI channel enable error (I2S frame start) - Return value: %d", ret);
+		LOG_ERR("nrfx DPPI channel enable error (I2S frame start): %d", ret);
 		return -EIO;
 	}
 
