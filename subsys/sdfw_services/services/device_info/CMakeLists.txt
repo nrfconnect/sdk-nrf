@@ -7,6 +7,6 @@
 zephyr_sources(device_info_service.c)
 
 generate_and_add_cbor_files(device_info_service.cddl zcbor_generated
-  device_info_service_req
-  device_info_service_rsp
+  device_info_req
+  device_info_resp
 )
