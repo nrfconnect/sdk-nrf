@@ -107,7 +107,7 @@ Sample dongle (``nrf5340dk/nrf5340``)
       * The configuration with the B0 bootloader is set as default.
 
 Sample mouse or keyboard (``nrf54l15dk/nrf54l05/cpuapp``)
-      * The configuration emulates the nRF54L05 SoC on the nRF54L15 Development Kit.
+      * The configuration :ref:`emulates the nRF54L05 SoC <zephyr:nrf54l15dk_nrf54l05>` on the nRF54L15 Development Kit.
       * The build types allow to build the application as a mouse or a keyboard.
       * Inputs are simulated based on the hardware button presses.
       * On the nRF54L05 SoC, you can only use the **GPIO1** port for PWM hardware peripheral output.
@@ -127,7 +127,7 @@ Sample mouse or keyboard (``nrf54l15dk/nrf54l05/cpuapp``)
       * The board supports the ``release`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration that acts as a mouse  (``release_fast_pair`` file suffix).
 
 Sample mouse or keyboard (``nrf54l15dk/nrf54l10/cpuapp``)
-      * The configuration emulates the nRF54L10 SoC on the nRF54L15 Development Kit.
+      * The configuration :ref:`emulates the nRF54L10 SoC <zephyr:nrf54l15dk_nrf54l10>` on the nRF54L15 Development Kit.
       * The build types allow to build the application as a mouse or a keyboard.
       * Inputs are simulated based on the hardware button presses.
       * On the nRF54L10 SoC, you can only use the **GPIO1** port for PWM hardware peripheral output.

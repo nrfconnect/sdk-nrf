@@ -16,7 +16,7 @@ Overview
 Gazell Pairing determines the channel set used by Gazell.
 See the :ref:`ug_gzp` user guide for more information, such as the features of this library.
 
-This library is used in the :ref:`gzp_dynamic_pairing_host` and :ref:`gzp_dynamic_pairing_device` samples.'
+This library is used in the :ref:`gzp_dynamic_pairing_host` and :ref:`gzp_dynamic_pairing_device` samples.
 
 Requirements
 ************
