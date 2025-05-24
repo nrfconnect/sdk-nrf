@@ -8,6 +8,7 @@
 #define _SW_CODEC_SELECT_H_
 
 #include <zephyr/kernel.h>
+#include <zephyr/net_buf.h>
 #include "channel_assignment.h"
 
 #if (CONFIG_SW_CODEC_LC3)
@@ -87,7 +88,7 @@ bool sw_codec_is_initialized(void);
  *
  * @return	0 if success, error codes depends on sw_codec selected.
  */
-int sw_codec_encode(struct audio_data *audio_frame);
+int sw_codec_encode(struct net_buf *audio_frame);
 
 /**
  * @brief	Decode encoded data and output PCM data.
@@ -98,7 +99,7 @@ int sw_codec_encode(struct audio_data *audio_frame);
  *
  * @return	0 if success, error codes depends on sw_codec selected.
  */
-int sw_codec_decode(struct audio_data const *const audio_frame, void **pcm_data, size_t *pcm_size);
+int sw_codec_decode(struct net_buf const *const audio_frame, void **pcm_data, size_t *pcm_size);
 
 /**
  * @brief	Uninitialize the software codec and free the allocated space.

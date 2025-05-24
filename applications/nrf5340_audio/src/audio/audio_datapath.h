@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <data_fifo.h>
+#include <zephyr/net_buf.h>
 
 #include "sw_codec_select.h"
 #include "audio_defines.h"
@@ -56,7 +57,7 @@ void audio_datapath_pres_delay_us_get(uint32_t *delay_us);
  *
  * @param audio_frame Pointer to the audio data frame to be processed
  */
-void audio_datapath_stream_out(struct audio_data *audio_frame);
+void audio_datapath_stream_out(struct net_buf *audio_frame);
 
 /**
  * @brief Start the audio datapath module
@@ -67,7 +68,7 @@ void audio_datapath_stream_out(struct audio_data *audio_frame);
  *
  * @return 0 if successful, error otherwise
  */
-int audio_datapath_start(struct data_fifo *fifo_rx);
+int audio_datapath_start(struct k_msgq *queue_rx);
 
 /**
  * @brief Stop the audio datapath module

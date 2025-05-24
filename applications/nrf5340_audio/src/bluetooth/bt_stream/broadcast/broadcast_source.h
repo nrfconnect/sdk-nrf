@@ -229,7 +229,7 @@ int broadcast_source_id_get(uint8_t big_index, uint32_t *broadcast_id);
  * @return	0 for success, error otherwise.
  */
 int broadcast_source_send(uint8_t big_index, uint8_t subgroup_index,
-			  struct audio_data const *const audio_frame);
+			  struct net_buf const *const audio_frame);
 
 /**
  * @brief	Disable the LE Audio broadcast (BIS) source.
