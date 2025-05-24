@@ -28,6 +28,7 @@
 			compatible = "zephyr,mspi-emul-device";
 			reg = <0x0>;
 			mspi-max-frequency = <DT_FREQ_M(1)>;
+			mspi-endian = "MSPI_BIG_ENDIAN";
 		};
 	};
 };
