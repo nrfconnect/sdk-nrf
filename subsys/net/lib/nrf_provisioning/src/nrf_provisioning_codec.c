@@ -404,7 +404,7 @@ static int write_config(struct command *cmd_req, struct cdc_out_fmt_data *out)
 			goto exit;
 		}
 
-		ret = settings_save_one(key, value, strlen(value)+1);
+		ret = settings_save_one(key, value, strlen(value));
 		if (ret) {
 			snprintk(resp, resp_sz,
 				"unable to store [%d](0-indexed) key-value-pair", i);
