@@ -12,14 +12,15 @@
 
 #include <stddef.h>
 #include <zephyr/sys/util.h>
-#include <sicrypto/sicrypto.h>
 #include <silexpk/sxbuf/sxbufop.h>
 #include <sxsymcrypt/hashdefs.h>
+#include <silexpk/core.h>
+
 
 /* RFC5480 - first byte of ECC public key that indicates that the key
  * is uncompressed
  */
-#define SI_ECC_PUBKEY_UNCOMPRESSED (0x04)
+#define CRACEN_ECC_PUBKEY_UNCOMPRESSED (0x04)
 
 /* Cracen supports max 521 bits curves, the private key for such a curve
  * is 66 bytes. The public key in PSA APIs is stored with the
@@ -117,7 +118,7 @@ psa_status_t cracen_ecc_check_public_key(const struct sx_pk_ecurve *curve,
  *
  * \return sxsymcrypt status code.
  */
-int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bool is_key_pair,
+int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey, bool is_key_pair,
 				 const unsigned char *key, size_t keylen, struct sx_buf *modulus,
 				 struct sx_buf *exponent);
 
@@ -133,8 +134,7 @@ int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bo
  * \retval SX_OK on success.
  * \retval SX_ERR_INVALID_PARAM if the ASN.1 integer cannot be extracted.
  */
-int cracen_signature_asn1_get_operand(unsigned char **p, const unsigned char *end,
-				      struct sx_buf *op);
+int cracen_signature_asn1_get_operand(uint8_t **p, const uint8_t *end, struct sx_buf *op);
 
 /**
  * @brief Use psa_generate_random up to generate a random number in the range [1, upperlimit).
@@ -288,3 +288,14 @@ int cracen_hash_input_with_context(struct sxhash *hashopctx, const uint8_t *inpu
  * @return sxsymcrypt status code.
  */
 int cracen_get_rnd_in_range(const uint8_t *n, size_t nsz, uint8_t *out);
+
+int cracen_memdiff(const uint8_t *a, const uint8_t *b, size_t sz);
+
+/** Modular exponentiation (base^key mod n).
+ *
+ * This function is used by both the sign and the verify tasks. Note: if the
+ * base is greater than the modulus, SilexPK will return the SX_ERR_OUT_OF_RANGE
+ * status code.
+ */
+int cracen_rsa_modexp(struct sx_pk_acq_req *pkreq, struct sx_pk_slot *inputs,
+		      struct cracen_rsa_key *rsa_key, uint8_t *base, size_t basez, int *sizes);

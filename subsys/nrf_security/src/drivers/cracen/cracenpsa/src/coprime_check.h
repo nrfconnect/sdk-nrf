@@ -8,9 +8,7 @@
 #define COPRIME_CHECK_HEADER_FILE
 
 /** Create a task to check if two integer numbers are coprime.
- *
- * @param[in,out] t        Task structure to use.
- * @param[in] a            Unsigned integer stored as a big endian byte array.
+ * * @param[in] a            Unsigned integer stored as a big endian byte array.
  * @param[in] asz          Size in bytes of \p a.
  * @param[in] b            Unsigned integer stored as a big endian byte array.
  * @param[in] bsz          Size in bytes of \p b.
@@ -27,7 +25,8 @@
  *      min(asz, bsz)
  * where all sizes are expressed in bytes.
  */
-void si_create_coprime_check(struct sitask *t, const char *a, size_t asz, const char *b,
-			     size_t bsz);
+
+int cracen_coprime_check(uint8_t *workmem, size_t workmemsz, const uint8_t *a, size_t asz,
+			 const uint8_t *b, size_t bsz);
 
 #endif

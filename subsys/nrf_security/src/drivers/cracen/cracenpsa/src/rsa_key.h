@@ -4,14 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef RSAKEY_HEADER_FILE
-#define RSAKEY_HEADER_FILE
+#ifndef RSAKEY_HEADER_1_FILE
+#define RSAKEY_HEADER_1_FILE
 
 #include <silexpk/iomem.h>
-#include "../include/sicrypto/rsa_keys.h"
-
+#include <cracen_psa_primitives.h>
+#include <silexpk/sxbuf/sxbufop.h>
 /** Write the sizes of the elements of a RSA key. */
-static void si_ffkey_write_sz(const struct si_rsa_key *key, int *sizes)
+static void cracen_ffkey_write_sz(const struct cracen_rsa_key *key, int *sizes)
 {
 	int slotidx = 0;
 	int i = 0;
@@ -28,7 +28,7 @@ static void si_ffkey_write_sz(const struct si_rsa_key *key, int *sizes)
 }
 
 /** Write the elements of a RSA key into the input slots. */
-static void si_ffkey_write(const struct si_rsa_key *key, struct sx_pk_slot *inputs)
+static void cracen_ffkey_write(const struct cracen_rsa_key *key, struct sx_pk_slot *inputs)
 {
 	int slotidx = 0;
 	int i = 0;
@@ -45,9 +45,9 @@ static void si_ffkey_write(const struct si_rsa_key *key, struct sx_pk_slot *inpu
 	}
 }
 
-#define SI_FFKEY_REFER_INPUT(key, array) (array)[key->dataidx]
+#define CRACEN_FFKEY_REFER_INPUT(key, array) (array)[key->dataidx]
 
-static inline unsigned int si_op_bitsz(const struct sx_buf *op)
+static inline unsigned int cracen_op_bitsz(const struct sx_buf *op)
 {
 	unsigned int bitsz;
 	size_t i;
@@ -69,19 +69,19 @@ static inline unsigned int si_op_bitsz(const struct sx_buf *op)
 	return bitsz;
 }
 
-static inline unsigned int si_ffkey_bitsz(const struct si_rsa_key *key)
+static inline unsigned int cracen_ffkey_bitsz(const struct cracen_rsa_key *key)
 {
 	unsigned int bitsz = 0;
 	int szelements = (key->slotmask >> 3) ? 2 : 1;
 
 	for (int i = 0; i < szelements; i++) {
-		bitsz += si_op_bitsz(key->elements[i]);
+		bitsz += cracen_op_bitsz(key->elements[i]);
 	}
 
 	return bitsz;
 }
 
-#define SI_RSA_KEY_OPSZ(key)                                                                       \
+#define CRACEN_RSA_KEY_OPSZ(key)                                                                   \
 	((key)->elements[0]->sz + (((key)->slotmask >> 3) ? (key)->elements[1]->sz : 0))
 
 #endif
