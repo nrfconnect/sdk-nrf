@@ -131,6 +131,7 @@ config NRF_RPC_THREAD_PRIORITY
 config NRF_RPC_SERIALIZE_API
 	bool "API for serialization"
 	default y
+	depends on NET_BUF
 	help
 	  API for serialization and deserialization of several major CBOR types.
 
