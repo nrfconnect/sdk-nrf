@@ -38,6 +38,8 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_BRIDGE_BLE_LOG_LEVEL);
 #define ATT_MIN_PAYLOAD 20 /* Minimum L2CAP MTU minus ATT header */
 
 static void bt_send_work_handler(struct k_work *work);
+static void bt_adv_resume_work_handler(struct k_work *work);
+static void adv_start(bool resume);
 
 K_MEM_SLAB_DEFINE(ble_rx_slab, BLE_RX_BLOCK_SIZE, BLE_RX_BUF_COUNT, BLE_SLAB_ALIGNMENT);
 RING_BUF_DECLARE(ble_tx_ring_buf, BLE_TX_BUF_SIZE);
@@ -45,6 +47,7 @@ RING_BUF_DECLARE(ble_tx_ring_buf, BLE_TX_BUF_SIZE);
 static K_SEM_DEFINE(ble_tx_sem, 0, 1);
 
 static K_WORK_DEFINE(bt_send_work, bt_send_work_handler);
+static K_WORK_DEFINE(bt_adv_resume_work, bt_adv_resume_work_handler);
 
 static struct bt_conn *current_conn;
 static struct bt_gatt_exchange_params exchange_params;
@@ -130,9 +133,18 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	APP_EVENT_SUBMIT(event);
 }
 
+static void recycled(void)
+{
+	if (atomic_get(&active)) {
+		/* Resume advertising outside of ISR context */
+		k_work_submit(&bt_adv_resume_work);
+	}
+}
+
 static struct bt_conn_cb conn_callbacks = {
 	.connected    = connected,
 	.disconnected = disconnected,
+	.recycled = recycled,
 };
 
 static void bt_send_work_handler(struct k_work *work)
@@ -164,6 +176,11 @@ static void bt_send_work_handler(struct k_work *work)
 		/* Peer has not enabled notifications: don't accumulate data */
 		ring_buf_reset(&ble_tx_ring_buf);
 	}
+}
+
+static void bt_adv_resume_work_handler(struct k_work *work)
+{
+	adv_start(true);
 }
 
 static void bt_receive_cb(struct bt_conn *conn, const uint8_t *const data,
@@ -211,7 +228,7 @@ static struct bt_nus_cb nus_cb = {
 	.sent = bt_sent_cb,
 };
 
-static void adv_start(void)
+static void adv_start(bool resume)
 {
 	int err;
 
@@ -229,7 +246,7 @@ static void adv_start(void)
 		ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 	if (err) {
 		LOG_ERR("bt_le_adv_start: %d", err);
-	} else {
+	} else if (!resume) {
 		module_set_state(MODULE_STATE_READY);
 	}
 }
@@ -287,7 +304,7 @@ static void bt_ready(int err)
 #endif
 
 	if (atomic_get(&active)) {
-		adv_start();
+		adv_start(false);
 	}
 }
 
@@ -377,7 +394,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		case BLE_CTRL_ENABLE:
 			if (!atomic_set(&active, true)) {
 				short_range_rf_front_end_enable();
-				adv_start();
+				adv_start(false);
 			}
 			break;
 		case BLE_CTRL_DISABLE:
