@@ -12,7 +12,7 @@ Google also provides additional features built upon the Fast Pair standard.
 For detailed information about supported functionalities, see the official `Fast Pair`_ documentation.
 
 .. note::
-   The software maturity level for the Fast Pair support in the |NCS| is indicated at the use case level in the :ref:`software_maturity_fast_pair_use_case` table and at the feature level in the :ref:`software_maturity_fast_pair_feature` table.
+   The software maturity level for the Fast Pair support in the |NCS| is indicated at the use case level in the :ref:`Google Fast Pair use case support <software_maturity_fast_pair_use_case>` table and at the feature level in the :ref:`Google Fast Pair feature support <software_maturity_fast_pair_feature>` table.
 
 Integration prerequisites
 *************************
@@ -1091,7 +1091,7 @@ For certain device types, you may need to implement some of these requirements a
 In this case, refer to the following subsections describing Fast Pair use cases supported by the |NCS|.
 
 .. note::
-   To learn about the software maturity levels for Google Fast Pair use cases supported by the |NCS|, see the :ref:`software_maturity_fast_pair_use_case` table.
+   To learn about the software maturity levels for Google Fast Pair use cases supported by the |NCS|, see the :ref:`Google Fast Pair use case support <software_maturity_fast_pair_use_case>` table.
 
 .. _ug_bt_fast_pair_use_case_unknown:
 
