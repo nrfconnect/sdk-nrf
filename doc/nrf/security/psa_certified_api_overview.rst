@@ -125,7 +125,7 @@ The PSA Crypto in the |NCS| uses different libraries depending on hardware capab
 
 See :ref:`nrf_security_drivers` for a list of supported functionalities.
 For specific cryptographic operations, the PSA Crypto API uses the library :ref:`configured <nrf_security_drivers>` for them.
-If multiple libraries have been enabled, cc3xx is prioritized, given that the CryptoCell supports the cryptographic operation.
+If multiple libraries have been enabled, nrf_cc3xx is prioritized, given that the CryptoCell supports the cryptographic operation.
 
 The following figure illustrates the library selection:
 

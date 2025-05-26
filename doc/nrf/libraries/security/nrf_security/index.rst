@@ -9,7 +9,7 @@ The nRF Security subsystem (``nrf_security``) integrates cryptographic services 
 The nRF Security subsystem provides:
 
 * A unified interface to both :ref:`PSA Crypto APIs <ug_psa_certified_api_overview_crypto>` and `Mbed TLS`_ APIs
-* Hardware acceleration through dedicated cryptographic libraries on selected SoCs (``cc3xx``, CRACEN), with binary versions of the libraries listed in :ref:`nrfxlib:crypto`
+* Hardware acceleration through dedicated cryptographic libraries on selected SoCs (``nrf_cc3xx``, CRACEN), with binary versions of the libraries listed in :ref:`nrfxlib:crypto`
 * Software fallbacks when hardware acceleration is unavailable (``nrf_oberon``)
 * A PSA driver abstraction layer enabling simultaneous use of hardware and software implementations
 * Compatibility with the specific Mbed TLS version included in the |NCS| through `sdk-mbedtls`_
