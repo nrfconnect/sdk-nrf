@@ -15,9 +15,7 @@
 
 #include "platform-zephyr.h"
 
-#ifdef CONFIG_NET_L2_OPENTHREAD
-#include <zephyr/net/openthread.h>
-#endif
+#include <openthread.h>
 
 #define OT_SHELL_BUFFER_SIZE CONFIG_SHELL_CMD_BUFF_SIZE
 
