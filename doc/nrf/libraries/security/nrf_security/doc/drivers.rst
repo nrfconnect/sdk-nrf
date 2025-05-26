@@ -27,7 +27,7 @@ Arm CryptoCell cc3xx drivers
 
 Arm CryptoCell cc3xx drivers, namely ``nrf_cc3xx_platform`` and ``nrf_cc3xx_mbedcrypto``, are closed-source binaries that provide low-level functionalities for hardware-accelerated cryptography using `CryptoCell 310 <nRF9160 CRYPTOCELL - Arm TrustZone CryptoCell 310_>`_ and `CryptoCell 312 <nRF5340 CRYPTOCELL - Arm TrustZone CryptoCell 312_>`_ hardware peripherals.
 
-* The :ref:`nrf_cc3xx_platform_readme` provides low-level functionality needed by the CC310/CC312 mbedcrypto library.
+* The :ref:`nrf_cc3xx_platform_readme` provides low-level functionality needed by the nrf_cc310/nrf_cc312 mbedcrypto library.
 * The :ref:`nrf_cc3xx_mbedcrypto_readme` provides low-level integration with the Mbed TLS version provided in the |NCS|.
   It also includes legacy crypto API functions from the Mbed TLS crypto toolbox (prefixed with ``mbedtls_``).
 

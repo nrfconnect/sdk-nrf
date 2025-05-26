@@ -53,7 +53,7 @@ The table mirrors the test setup used for TLS verification.
          * - ``nrf52840dk/nrf52840``
              ``nrf9160dk/nrf9160``
              ``nrf9151dk/nrf9151``
-           - :ref:`Mbed TLS legacy c33xx backend <nrf_security_backends_cc3xx>`
+           - :ref:`Mbed TLS legacy nrf_cc3xx backend <nrf_security_backends_cc3xx>`
            - No
            - No
            - AES256, AES-GCM, SHA-512
@@ -67,32 +67,32 @@ The table mirrors the test setup used for TLS verification.
            -
            -
          * - ``nrf52840dk/nrf52840``
-           - :ref:`PSA Crypto cc3xx driver<nrf_security_drivers_cc3xx>`
+           - :ref:`PSA Crypto nrf_cc3xx driver<nrf_security_drivers_cc3xx>`
            - No (secure only)
            - Yes
            - RSA not supported
            - Also supports :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
          * - ``nrf9160dk/nrf9160``
              ``nrf9151dk/nrf9151``
-           - :ref:`PSA Crypto cc3xx driver<nrf_security_drivers_cc3xx>`
+           - :ref:`PSA Crypto nrf_cc3xx driver<nrf_security_drivers_cc3xx>`
            - Yes
            - Yes
            - RSA not supported
            - Also supports :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
          * - ``nrf5340dk/nrf5340/cpuapp``
-           - :ref:`Mbed TLS legacy c33xx backend <nrf_security_backends_cc3xx>`
+           - :ref:`Mbed TLS legacy nrf_cc3xx backend <nrf_security_backends_cc3xx>`
            - No
            - No
            -
            -
          * - ``nrf5340dk/nrf5340/cpuapp``
-           - :ref:`Mbed TLS legacy oberon backend<nrf_security_backends_oberon>`
+           - :ref:`Mbed TLS legacy nrf_oberon backend<nrf_security_backends_oberon>`
            - No
            - No
            -
            -
          * - ``nrf5340dk/nrf5340/cpuapp``
-           - :ref:`PSA Crypto cc3xx driver<nrf_security_drivers_cc3xx>`
+           - :ref:`PSA Crypto nrf_cc3xx driver<nrf_security_drivers_cc3xx>`
            - Yes
            - Yes
            - RSA not supported
@@ -234,12 +234,12 @@ Cipher suites not listed may still work but have not been verified.
       * TLS_AES_128_CCM_SHA256
       * TLS_AES_128_CCM_8_SHA256
 
-AES256 is supported on all compatible board targets with the CMSE enabled because of the :ref:`cc3xx_oberon<nrf_security_backends_oberon>` backend.
+AES256 is supported on all compatible board targets with the CMSE enabled because it enables :ref:`both nrf_cc3xx and nrf_oberon as backends<nrf_security_backends_oberon>` for devices with Arm CryptoCell.
 
 The following combinations are *not* supported:
 
 * RSA is not supported in applications that use the PSA Crypto configuration (which includes the CMSE).
-* AES CCM-256 and AES GCM are not supported for nRF52840 and for the nRF91 Series devices when using the :ref:`cc3xx legacy <nrf_security_backends_cc3xx>` crypto configuration.
+* AES CCM-256 and AES GCM are not supported for nRF52840 and for the nRF91 Series devices when using the :ref:`nrf_cc3xx legacy <nrf_security_backends_cc3xx>` crypto configuration.
 
 Configuration options
 *********************
