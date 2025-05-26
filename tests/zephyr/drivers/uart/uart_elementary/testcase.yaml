@@ -23,7 +23,9 @@ tests:
       - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
       - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuflpr
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuflpr
+      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuflpr
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l09pdk/nrf54l09/cpuapp
@@ -46,7 +48,9 @@ tests:
     filter: CONFIG_SERIAL_SUPPORT_INTERRUPT
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuflpr
+      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuflpr
     extra_args:
       - DTC_OVERLAY_FILE="boards/nrf54lv10dk_nrf54lv10a_dual_uart.overlay"
     extra_configs:
@@ -113,7 +117,9 @@ tests:
     filter: CONFIG_SERIAL_SUPPORT_INTERRUPT
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuflpr
+      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuflpr
     extra_args:
       - DTC_OVERLAY_FILE="boards/nrf54lv10dk_nrf54lv10a_dual_uart.overlay"
     extra_configs:
