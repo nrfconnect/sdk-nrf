@@ -175,11 +175,37 @@ config OPENTHREAD_NUM_MESSAGE_BUFFERS
 	default 64
 
 # File system configuration
+if SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM
+
 config ZMS
-	default y if SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM
+	default y
+
+config ZMS_LOOKUP_CACHE
+	default y
+
+config ZMS_LOOKUP_CACHE_SIZE
+	default 512
+
+config ZMS_LOOKUP_CACHE_FOR_SETTINGS
+	default y
+
+endif
+
+if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
 
 config NVS
-	default y if !(SOC_FLASH_NRF_RRAM || SOC_FLASH_NRF_MRAM)
+	default y
+
+config NVS_LOOKUP_CACHE
+	default y
+
+config NVS_LOOKUP_CACHE_SIZE
+	default 512
+
+config NVS_LOOKUP_CACHE_FOR_SETTINGS
+	default y
+
+endif
 
 if !OPENTHREAD_THREAD_VERSION_1_1
 
