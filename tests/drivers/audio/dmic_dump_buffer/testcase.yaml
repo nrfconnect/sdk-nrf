@@ -16,9 +16,25 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+  drivers.audio.dmic_dump_buffer.stereo:
+    filter: dt_nodelabel_enabled("dmic_dev")
+    extra_args:
+      - CONFIG_TEST_STEREO_CONFIGURATION=y
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
   drivers.audio.dmic_dump_buffer.dmm:
     filter: dt_nodelabel_enabled("dmic_dev")
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       - CONFIG_TEST_USE_DMM=y
+  drivers.audio.dmic_dump_buffer.dmm.stereo:
+    filter: dt_nodelabel_enabled("dmic_dev")
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - CONFIG_TEST_USE_DMM=y
+      - CONFIG_TEST_STEREO_CONFIGURATION=y

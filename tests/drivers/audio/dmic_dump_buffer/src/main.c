@@ -67,9 +67,16 @@ int main(void)
 		},
 		.streams = &stream,
 		.channel = {
-			.req_num_chan = 1,
 			.req_num_streams = 1,
+#if defined(CONFIG_TEST_STEREO_CONFIGURATION)
+			.req_num_chan = 2,
+			.req_chan_map_lo =
+				dmic_build_channel_map(0, 0, PDM_CHAN_LEFT) |
+				dmic_build_channel_map(1, 0, PDM_CHAN_RIGHT),
+#else
+			.req_num_chan = 1,
 			.req_chan_map_lo = dmic_build_channel_map(0, 0, PDM_CHAN_LEFT),
+#endif
 		},
 	};
 
