@@ -452,6 +452,8 @@ static void subscribe_cgev_notifications(void)
 	}
 }
 
+#if defined(CONFIG_SLM_PPP_AUTO_ENABLE)
+
 AT_MONITOR(slm_ppp_on_cgev, "CGEV", at_notif_on_cgev);
 
 static void at_notif_on_cgev(const char *notify)
@@ -484,6 +486,7 @@ static void at_notif_on_cgev(const char *notify)
 		}
 	}
 }
+#endif
 
 /* Notification subscriptions are reset on CFUN=0.
  * We intercept CFUN set commands to automatically subscribe.
@@ -502,7 +505,10 @@ static int at_cfun_set_callback(char *buf, size_t len, char *at_cmd)
 	}
 
 	if (mode == LTE_LC_FUNC_MODE_NORMAL || mode == LTE_LC_FUNC_MODE_ACTIVATE_LTE) {
-		subscribe_cgev_notifications();
+		/* +CGEV notifications only needed when PPP link is brought up automatically */
+		if (IS_ENABLED(CONFIG_SLM_PPP_AUTO_ENABLE)) {
+			subscribe_cgev_notifications();
+		}
 	} else if (mode == LTE_LC_FUNC_MODE_POWER_OFF) {
 		/* Unsubscribe the user as would normally happen. */
 		slm_fwd_cgev_notifs = false;

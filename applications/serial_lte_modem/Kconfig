@@ -161,17 +161,22 @@ config SLM_NRF_CLOUD
 
 config SLM_FULL_FOTA
 	bool "Full modem FOTA support in SLM"
-	default n
 	depends on !BOARD_THINGY91_NRF9160_NS
 
 config SLM_PPP
 	bool "PPP support in SLM"
-	help
-	  When enabled, SLM automatically brings up/down the PPP link
-	  when the LTE link (default PDN) is connected/disconnected,
-	  regardless of what is done with AT#XPPP.
 
 if SLM_PPP
+
+config SLM_PPP_AUTO_ENABLE
+	bool "Bring up PPP link automatically when PDN is connected"
+	default y
+	help
+	  When enabled, SLM automatically brings up/down the PPP link
+	  when the PDN assigned for PPP (the default PDN by default) is connected/disconnected,
+	  regardless of what is done with AT#XPPP.
+	  When disabled, PPP link is brought up when AT#XPPP=1 is issued after
+	  the PDN assigned for PPP (the default PDN by default) is connected.
 
 config SLM_PPP_FALLBACK_MTU
 	int "Fallback MTU to be used by PPP"
