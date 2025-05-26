@@ -8,7 +8,9 @@
 
 #include "app/fabric_table_delegate.h"
 #include "app/group_data_provider.h"
+#ifdef CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS
 #include "migration/migration_manager.h"
+#endif
 
 #ifdef CONFIG_NCS_SAMPLE_MATTER_SETTINGS_SHELL
 #include "persistent_storage/persistent_storage_shell.h"
