@@ -36,7 +36,9 @@ static int ot_cli_output_callback(void *aContext, const char *aFormat, va_list a
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
 	nrf_rpc_encode_str(&ctx, output_line_buffer, num_written);
 
+	ot_rpc_mutex_unlock();
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_CLI_OUTPUT, &ctx, ot_rpc_decode_void, NULL);
+	ot_rpc_mutex_lock();
 
 	return num_written;
 }

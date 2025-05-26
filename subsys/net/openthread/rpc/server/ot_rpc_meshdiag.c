@@ -120,8 +120,11 @@ static void handle_mesh_diag_discover(otError aError, otMeshDiagRouterInfo *aRou
 		NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
 
 		nrf_rpc_encode_uint(&ctx, aError);
+
+		ot_rpc_mutex_unlock();
 		nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_MESH_DIAG_DISCOVER_TOPOLOGY_CB, &ctx,
 					nrf_rpc_rsp_decode_void, NULL);
+		ot_rpc_mutex_lock();
 		return;
 	}
 
@@ -161,8 +164,10 @@ static void handle_mesh_diag_discover(otError aError, otMeshDiagRouterInfo *aRou
 	nrf_rpc_encode_uint(&ctx, ip6_iterator_key);
 	nrf_rpc_encode_uint(&ctx, child_iterator_key);
 
+	ot_rpc_mutex_unlock();
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_MESH_DIAG_DISCOVER_TOPOLOGY_CB, &ctx,
 				nrf_rpc_rsp_decode_void, NULL);
+	ot_rpc_mutex_lock();
 
 	ot_res_tab_meshdiag_ip6_it_free(ip6_iterator_key);
 	ot_res_tab_meshdiag_child_it_free(child_iterator_key);

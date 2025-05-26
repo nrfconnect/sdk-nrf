@@ -8,6 +8,7 @@
 
 #include <mock_nrf_rpc_transport.h>
 #include <ot_rpc_ids.h>
+#include <ot_rpc_lock.h>
 #include <test_rpc_env.h>
 
 #include <zephyr/ztest.h>
@@ -112,7 +113,9 @@ ZTEST(ot_rpc_thread, test_tx_discover_cb)
 					   CBOR_UINT8(0x44), 0x0f, CBOR_FALSE, CBOR_TRUE,
 					   CBOR_FALSE, CBOR_UINT32(0xdeadbeef), 0),
 				   RPC_RSP());
+	ot_rpc_mutex_lock();
 	(void)ot_thread_discover_cb_encoder(0, 0, 0, 0, &result, (void *)0xdeadbeef);
+	ot_rpc_mutex_unlock();
 	mock_nrf_rpc_tr_expect_done();
 }
 
@@ -124,7 +127,9 @@ ZTEST(ot_rpc_thread, test_tx_discover_cb_null)
 	mock_nrf_rpc_tr_expect_add(
 		RPC_CMD(OT_RPC_CMD_THREAD_DISCOVER_CB, CBOR_NULL, CBOR_UINT32(0xdeadbeef), 0),
 		RPC_RSP());
+	ot_rpc_mutex_lock();
 	(void)ot_thread_discover_cb_encoder(0, 0, 0, 0, NULL, (void *)0xdeadbeef);
+	ot_rpc_mutex_unlock();
 	mock_nrf_rpc_tr_expect_done();
 }
 

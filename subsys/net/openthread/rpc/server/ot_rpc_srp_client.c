@@ -419,8 +419,10 @@ static void ot_rpc_srp_client_auto_start_cb(const otSockAddr *server_sock_addr, 
 
 	ot_rpc_encode_sockaddr(&ctx, server_sock_addr);
 
+	ot_rpc_mutex_unlock();
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_SRP_CLIENT_AUTO_START_CB, &ctx,
 				nrf_rpc_rsp_decode_void, NULL);
+	ot_rpc_mutex_lock();
 }
 
 static void ot_rpc_cmd_srp_client_enable_auto_start_mode(const struct nrf_rpc_group *group,
@@ -537,8 +539,10 @@ static void ot_rpc_srp_client_callback(otError error, const otSrpClientHostInfo 
 		service_data_free(sd, prev);
 	}
 
+	ot_rpc_mutex_unlock();
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_SRP_CLIENT_CB, &ctx, nrf_rpc_rsp_decode_void,
 				NULL);
+	ot_rpc_mutex_lock();
 }
 
 static void ot_rpc_cmd_srp_client_set_callback(const struct nrf_rpc_group *group,

@@ -6,6 +6,7 @@
 
 #include <mock_nrf_rpc_transport.h>
 #include <ot_rpc_ids.h>
+#include <ot_rpc_lock.h>
 #include <ot_rpc_resource.h>
 #include <test_rpc_env.h>
 
@@ -287,8 +288,10 @@ ZTEST(ot_rpc_netdiag, test_otThreadSendDiagnosticGet)
 	mock_nrf_rpc_tr_expect_add(
 		RPC_CMD(OT_RPC_CMD_THREAD_SEND_DIAGNOSTIC_GET_CB, OT_ERROR_NONE, RESOURCE_TABLE_KEY,
 			CBOR_MSG_INFO), RPC_RSP());
+	ot_rpc_mutex_lock();
 	otThreadSendDiagnosticGet_fake.arg4_val(OT_ERROR_NONE, (otMessage *)MSG_ADDR,
 						&message_info, NULL);
+	ot_rpc_mutex_unlock();
 	mock_nrf_rpc_tr_expect_done();
 }
 

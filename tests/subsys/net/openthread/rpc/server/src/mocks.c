@@ -12,8 +12,10 @@
 #include <ot_rpc_lock.h>
 
 #include <zephyr/net/openthread.h>
+#include <zephyr/ztest.h>
 
 static struct openthread_context ot_context;
+static bool locked;
 
 struct otInstance *openthread_get_default_instance(void)
 {
@@ -22,10 +24,17 @@ struct otInstance *openthread_get_default_instance(void)
 
 void ot_rpc_mutex_lock(void)
 {
-	(void)k_mutex_lock(&ot_context.api_lock, K_FOREVER);
+	/*
+	 * The unit tests are executed in a single thread but implement these mocks to
+	 * validate that each command decoder unlocks the stack after processing command,
+	 * and each callback encoder locks the stack after invoking the callback.
+	 */
+	zassert_false(locked);
+	locked = true;
 }
 
 void ot_rpc_mutex_unlock(void)
 {
-	(void)k_mutex_unlock(&ot_context.api_lock);
+	zassert_true(locked);
+	locked = false;
 }
