@@ -40,6 +40,7 @@ tests:
   nrf.extended.drivers.spi.spi_mode0.lv10:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_configs:
@@ -80,6 +81,7 @@ tests:
   nrf.extended.drivers.spi.spi_mode1.lv10:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_configs:
@@ -120,6 +122,7 @@ tests:
   nrf.extended.drivers.spi.spi_mode2.lv10:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_configs:
@@ -160,6 +163,7 @@ tests:
   nrf.extended.drivers.spi.spi_mode3.lv10:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_configs:
@@ -200,6 +204,7 @@ tests:
   nrf.extended.drivers.spi.spi_4MHz.lv10:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_configs:
@@ -240,6 +245,7 @@ tests:
   nrf.extended.drivers.spi.spi_8MHz.lv10:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_configs:
@@ -280,6 +286,7 @@ tests:
   nrf.extended.drivers.spi.pm_runtime.lv10:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_configs:
