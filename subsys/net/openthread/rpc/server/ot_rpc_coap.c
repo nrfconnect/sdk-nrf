@@ -463,8 +463,11 @@ static void ot_rpc_coap_resource_handler(void *aContext, otMessage *aMessage,
 	nrf_rpc_encode_str(&ctx, uri, -1);
 	nrf_rpc_encode_uint(&ctx, message_rep);
 	ot_rpc_encode_message_info(&ctx, aMessageInfo);
+
+	ot_rpc_mutex_unlock();
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_COAP_RESOURCE_HANDLER, &ctx,
 				nrf_rpc_rsp_decode_void, NULL);
+	ot_rpc_mutex_lock();
 
 	ot_res_tab_msg_free(message_rep);
 }
@@ -567,8 +570,11 @@ static void ot_rpc_coap_default_handler(void *aContext, otMessage *aMessage,
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
 	nrf_rpc_encode_uint(&ctx, message_rep);
 	ot_rpc_encode_message_info(&ctx, aMessageInfo);
+
+	ot_rpc_mutex_unlock();
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_COAP_DEFAULT_HANDLER, &ctx,
 				nrf_rpc_rsp_decode_void, NULL);
+	ot_rpc_mutex_lock();
 
 	ot_res_tab_msg_free(message_rep);
 }
@@ -621,8 +627,11 @@ static void ot_rpc_coap_response_handler(void *context, otMessage *message,
 	nrf_rpc_encode_uint(&ctx, message_rep);
 	ot_rpc_encode_message_info(&ctx, message_info);
 	nrf_rpc_encode_uint(&ctx, error);
+
+	ot_rpc_mutex_unlock();
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_COAP_RESPONSE_HANDLER, &ctx,
 				nrf_rpc_rsp_decode_void, NULL);
+	ot_rpc_mutex_lock();
 
 	ot_res_tab_msg_free(message_rep);
 }

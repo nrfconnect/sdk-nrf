@@ -56,8 +56,10 @@ static void ot_thread_discover_cb(otActiveScanResult *result, void *context, uin
 	nrf_rpc_encode_uint(&ctx, (uintptr_t)context);
 	nrf_rpc_encode_uint(&ctx, callback_slot);
 
+	ot_rpc_mutex_unlock();
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_THREAD_DISCOVER_CB, &ctx, ot_rpc_decode_void,
 				NULL);
+	ot_rpc_mutex_lock();
 }
 
 NRF_RPC_CBKPROXY_HANDLER(ot_thread_discover_cb_encoder, ot_thread_discover_cb,

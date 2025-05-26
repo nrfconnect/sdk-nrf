@@ -8,6 +8,7 @@
 
 #include <mock_nrf_rpc_transport.h>
 #include <ot_rpc_ids.h>
+#include <ot_rpc_lock.h>
 #include <test_rpc_env.h>
 
 #include <zephyr/fff.h>
@@ -138,11 +139,13 @@ ZTEST(ot_rpc_dns_client, test_response_callbacks)
 	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_DNS_SERVICE_RESPONSE_CB, 0,
 				   CBOR_UINT32(0xcccccccc), 0, 0), RPC_RSP());
 
+	ot_rpc_mutex_lock();
 	(void)address_response_callback_encoder(0, 0, 0, 0, OT_ERROR_NONE, (void *)0xaaaaaaaa,
 						NULL);
 	(void)browse_response_callback_encoder(0, 0, 0, 0, OT_ERROR_NONE, (void *)0xbbbbbbbb, NULL);
 	(void)service_response_callback_encoder(0, 0, 0, 0, OT_ERROR_NONE, (void *)0xcccccccc,
 						NULL);
+	ot_rpc_mutex_unlock();
 
 	mock_nrf_rpc_tr_expect_done();
 }

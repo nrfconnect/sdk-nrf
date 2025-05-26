@@ -301,8 +301,10 @@ void handle_receive_diagnostic_get(otError aError, otMessage *aMessage,
 	nrf_rpc_encode_uint(&ctx, message_rep);
 	ot_rpc_encode_message_info(&ctx, aMessageInfo);
 
+	ot_rpc_mutex_unlock();
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_THREAD_SEND_DIAGNOSTIC_GET_CB, &ctx,
 				nrf_rpc_rsp_decode_void, NULL);
+	ot_rpc_mutex_lock();
 
 	ot_res_tab_msg_free(message_rep);
 }

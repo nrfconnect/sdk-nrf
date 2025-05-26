@@ -81,7 +81,10 @@ static void handle_udp_receive(void *context, otMessage *message, const otMessag
 	nrf_rpc_encode_uint(&ctx, soc_key);
 	nrf_rpc_encode_uint(&ctx, msg_key);
 	ot_rpc_encode_message_info(&ctx, message_info);
+
+	ot_rpc_mutex_unlock();
 	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_UDP_RECEIVE_CB, &ctx);
+	ot_rpc_mutex_lock();
 
 	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
 		ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_UDP_RECEIVE_CB);

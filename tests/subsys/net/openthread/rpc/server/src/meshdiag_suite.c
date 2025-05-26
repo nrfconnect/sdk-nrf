@@ -6,6 +6,7 @@
 
 #include <mock_nrf_rpc_transport.h>
 #include <ot_rpc_ids.h>
+#include <ot_rpc_lock.h>
 #include <ot_rpc_resource.h>
 #include <test_rpc_env.h>
 
@@ -105,7 +106,9 @@ ZTEST(ot_rpc_meshdiag, test_otMeshDiagDiscoverTopology)
 			CBOR_UINT16(RLOC16), MESHDIAG_ROUTER_ID, THREAD_VERSION,
 			MESHDIAG_ROUTER_INFO_FLAGS, MESHDIAG_LINK_QUALITIES, RESOURCE_TABLE_KEY,
 			RESOURCE_TABLE_KEY), RPC_RSP());
+	ot_rpc_mutex_lock();
 	otMeshDiagDiscoverTopology_fake.arg2_val(OT_ERROR_NONE, &router_info, NULL);
+	ot_rpc_mutex_unlock();
 	mock_nrf_rpc_tr_expect_done();
 }
 

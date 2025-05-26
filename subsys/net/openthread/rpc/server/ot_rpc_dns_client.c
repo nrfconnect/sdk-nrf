@@ -71,8 +71,10 @@ static void address_response_callback(otError error, const otDnsAddressResponse 
 	nrf_rpc_encode_uint(&ctx, (uintptr_t)context);
 	nrf_rpc_encode_uint(&ctx, callback_slot);
 
+	ot_rpc_mutex_unlock();
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_DNS_ADDRESS_RESPONSE_CB, &ctx,
 				ot_rpc_decode_void, NULL);
+	ot_rpc_mutex_lock();
 }
 
 
@@ -93,8 +95,10 @@ static void browse_response_callback(otError error, const otDnsBrowseResponse *r
 	nrf_rpc_encode_uint(&ctx, (uintptr_t)context);
 	nrf_rpc_encode_uint(&ctx, callback_slot);
 
+	ot_rpc_mutex_unlock();
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_DNS_BROWSE_RESPONSE_CB, &ctx,
 				ot_rpc_decode_void, NULL);
+	ot_rpc_mutex_lock();
 }
 
 NRF_RPC_CBKPROXY_HANDLER(browse_response_callback_encoder, browse_response_callback,
@@ -114,8 +118,10 @@ static void service_response_callback(otError error, const otDnsServiceResponse 
 	nrf_rpc_encode_uint(&ctx, (uintptr_t)context);
 	nrf_rpc_encode_uint(&ctx, callback_slot);
 
+	ot_rpc_mutex_unlock();
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_DNS_SERVICE_RESPONSE_CB, &ctx,
 				ot_rpc_decode_void, NULL);
+	ot_rpc_mutex_lock();
 }
 
 NRF_RPC_CBKPROXY_HANDLER(service_response_callback_encoder, service_response_callback,
