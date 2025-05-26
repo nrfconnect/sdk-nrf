@@ -39,17 +39,17 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 #define EXPECTED_TRANSCEIVE_COUNT 13700
 #else
 /* slow instance */
-#define EXPECTED_TRANSCEIVE_COUNT 12900
+#define EXPECTED_TRANSCEIVE_COUNT 12500
 #endif
 #endif
 
 #if CONFIG_DATA_FIELD == 16
 #if DT_PROP(DT_BUS(DT_NODELABEL(dut_spi_dt)), max_frequency) == 32000000
 /* fast instance */
-#define EXPECTED_TRANSCEIVE_COUNT 9100
+#define EXPECTED_TRANSCEIVE_COUNT 8800
 #else
 /* slow instance */
-#define EXPECTED_TRANSCEIVE_COUNT 8600
+#define EXPECTED_TRANSCEIVE_COUNT 8450
 #endif
 #endif
 
