@@ -89,7 +89,7 @@ int nrf_cloud_download_handle_coap_auth(int socket)
 
 	/* Send the request */
 	LOG_DBG("Sending CoAP auth request, size %zu", request_size);
-	err = send(socket, packet_buf, request_size, 0);
+	err = zsock_send(socket, packet_buf, request_size, 0);
 	if (err < 0) {
 		LOG_ERR("Failed to send CoAP request, errno %d", errno);
 		goto end;
@@ -98,7 +98,7 @@ int nrf_cloud_download_handle_coap_auth(int socket)
 	for (size_t i = 0; i < 10; ++i) {
 		k_sleep(K_MSEC(COAP_REQ_WAIT_TIME_MS));
 		/* Poll for response */
-		err = recv(socket, packet_buf, COAP_AUTH_REQ_BUF_SIZE, MSG_DONTWAIT);
+		err = zsock_recv(socket, packet_buf, COAP_AUTH_REQ_BUF_SIZE, ZSOCK_MSG_DONTWAIT);
 		if (err < 0) {
 			if (errno == EAGAIN || errno == EWOULDBLOCK) {
 				continue;
