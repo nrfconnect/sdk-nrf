@@ -39,7 +39,8 @@
 #define DECT_PHY_CTRL_OP_RADIO_DEACTIVATED		21
 #define DECT_PHY_CTRL_OP_RADIO_MODE_CONFIGURED		22
 
-#define DECT_PHY_CTRL_OP_TEST_RF_TX_CW_CONTROL		23
+#define DECT_PHY_CTRL_OP_TEST_RF_TX_CW_CONFIG_DONE	23
+#define DECT_PHY_CTRL_OP_TEST_STF_COVER_SEQ_CONFIG_DONE	24
 
 /******************************************************************************/
 
