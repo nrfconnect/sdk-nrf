@@ -662,7 +662,11 @@ static psa_status_t export_ecc_public_key_from_keypair(const psa_key_attributes_
 
 	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
 	    PSA_KEY_LOCATION_CRACEN) {
-		status = handle_identity_key(key_buffer, key_buffer_size, sx_curve, data);
+		if (IS_ENABLED(CONFIG_CRACEN_IKG)) {
+			status = handle_identity_key(key_buffer, key_buffer_size, sx_curve, data);
+		} else {
+			status = PSA_ERROR_NOT_SUPPORTED;
+		}
 	} else {
 		status = handle_curve_family(psa_curve, key_bits_attr, key_buffer, data, sx_curve);
 	}
@@ -1168,9 +1172,10 @@ static void cracen_set_ikg_key_buffer(psa_key_attributes_t *attributes,
 	ikg_key->owner_id = MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(psa_get_key_id(attributes));
 }
 
-psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
-				    psa_key_attributes_t *attributes, uint8_t *key_buffer,
-				    size_t key_buffer_size, size_t *key_buffer_length)
+static psa_status_t cracen_ikg_get_builtin_key(psa_drv_slot_number_t slot_number,
+					       psa_key_attributes_t *attributes,
+					       uint8_t *key_buffer, size_t key_buffer_size,
+					       size_t *key_buffer_length)
 {
 	size_t opaque_key_size;
 	psa_status_t status = PSA_ERROR_INVALID_ARGUMENT;
@@ -1236,6 +1241,29 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 			return PSA_ERROR_BUFFER_TOO_SMALL;
 		}
 
+	default:
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+}
+
+psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
+				    psa_key_attributes_t *attributes, uint8_t *key_buffer,
+				    size_t key_buffer_size, size_t *key_buffer_length)
+{
+	/* According to the PSA Crypto Driver specification, the PSA core will set the `id`
+	 * and the `lifetime` field of the attribute struct. We will fill all the other
+	 * attributes, and update the `lifetime` field to be more specific.
+	 */
+	switch (slot_number) {
+	case CRACEN_BUILTIN_IDENTITY_KEY_ID:
+	case CRACEN_BUILTIN_MKEK_ID:
+	case CRACEN_BUILTIN_MEXT_ID:
+		if (IS_ENABLED(CONFIG_CRACEN_IKG)) {
+			return cracen_ikg_get_builtin_key(slot_number, attributes, key_buffer,
+							  key_buffer_size, key_buffer_length);
+		} else {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
 	default:
 #if CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
 		return cracen_kmu_get_builtin_key(slot_number, attributes, key_buffer,

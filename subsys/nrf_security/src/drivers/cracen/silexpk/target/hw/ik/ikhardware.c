@@ -43,43 +43,6 @@ int sx_ik_read_status(sx_pk_req *req)
 	return convert_ba414_status(status);
 }
 
-void sx_pk_run(sx_pk_req *req)
-{
-	/* Selection of operands ignore by hardware if in IK mode */
-	sx_pk_select_ops(req);
-	wmb(); /* comment for compliance */
-	if (sx_pk_is_ik_cmd(req)) {
-		sx_pk_wrreg(&req->regs, IK_REG_PK_CONTROL,
-			    IK_PK_CONTROL_START_OP | IK_PK_CONTROL_CLEAR_IRQ);
-#ifdef CONFIG_CRACEN_HW_VERSION_LITE
-		/* Workaround to handle IKG freezing on CRACEN lite.
-		 * THE PKE-IKG interrupt can not be cleared from software, but can
-		 * be cleared by hardware when in PK mode.
-		 * So the interrupt is disabled after leaving PK mode and enabled when entering.
-		 */
-		if (req->cmd != SX_PK_CMD_IK_EXIT) {
-			nrf_cracen_int_enable(NRF_CRACEN, CRACEN_INTENCLR_PKEIKG_Msk);
-		}
-#endif
-	} else {
-		sx_pk_wrreg(&req->regs, PK_REG_CONTROL,
-			    PK_RB_CONTROL_START_OP | PK_RB_CONTROL_CLEAR_IRQ);
-	}
-}
-
-int sx_pk_get_status(sx_pk_req *req)
-{
-	rmb(); /* comment for compliance */
-
-	if (sx_pk_is_ik_cmd(req)) {
-		return sx_ik_read_status(req);
-	}
-
-	uint32_t status = sx_pk_rdreg(&req->regs, PK_REG_STATUS);
-
-	return convert_ba414_status(status);
-}
-
 int sx_pk_list_ik_inslots(sx_pk_req *req, unsigned int key, struct sx_pk_slot *inputs)
 {
 	int slots = req->cmd->inslots;

@@ -673,7 +673,7 @@ int cracen_prepare_ik_key(const uint8_t *user_data)
 	}
 #endif
 
-	struct sx_pk_config_ik cfg = {};
+	__attribute__((unused)) struct sx_pk_config_ik cfg = {};
 
 #ifdef CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
 	cfg.device_secret = DEVICE_SECRET_ADDRESS;
@@ -720,7 +720,12 @@ int cracen_prepare_ik_key(const uint8_t *user_data)
 	}
 #endif
 
+
+#if defined(CONFIG_CRACEN_IKG)
 	return sx_pk_ik_derive_keys(&cfg);
+#else
+	return PSA_ERROR_NOT_SUPPORTED;
+#endif
 }
 
 static int cracen_clean_ik_key(const uint8_t *user_data)
@@ -817,7 +822,12 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 	    PSA_KEY_LOCATION_CRACEN) {
 
 		if (cracen_is_ikg_key(attributes)) {
-			return cracen_load_ikg_keyref(attributes, key_buffer, key_buffer_size, k);
+			if (IS_ENABLED(CONFIG_CRACEN_IKG)) {
+				return cracen_load_ikg_keyref(attributes, key_buffer,
+							      key_buffer_size, k);
+			} else {
+				return PSA_ERROR_NOT_SUPPORTED;
+			}
 		}
 
 		k->owner_id = MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(psa_get_key_id(attributes));

@@ -17,9 +17,6 @@ list(APPEND cracen_driver_sources
 
   ${CMAKE_CURRENT_LIST_DIR}/target/baremetal_ba414e_with_ik/pk_baremetal.c
 
-  ${CMAKE_CURRENT_LIST_DIR}/target/hw/ik/ikhardware.c
-  ${CMAKE_CURRENT_LIST_DIR}/target/hw/ik/cmddefs_ik.c
-
   ${CMAKE_CURRENT_LIST_DIR}/target/hw/ba414/pkhardware_ba414e.c
   ${CMAKE_CURRENT_LIST_DIR}/target/hw/ba414/ba414_status.c
   ${CMAKE_CURRENT_LIST_DIR}/target/hw/ba414/ec_curves.c
@@ -34,3 +31,10 @@ list(APPEND cracen_driver_include_dirs
   ${CMAKE_CURRENT_LIST_DIR}/target/baremetal_ba414e_with_ik
   ${CMAKE_CURRENT_LIST_DIR}/include
 )
+
+if(CONFIG_CRACEN_IKG)
+  list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/target/hw/ik/ikhardware.c
+    ${CMAKE_CURRENT_LIST_DIR}/target/hw/ik/cmddefs_ik.c
+  )
+endif()

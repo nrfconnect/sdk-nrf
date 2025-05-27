@@ -104,12 +104,15 @@ static int cracen_signature_prepare_ec_pubkey(const char *key_buffer, size_t key
 	status = SX_ERR_INCOMPATIBLE_HW;
 	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
 	    PSA_KEY_LOCATION_CRACEN) {
-		if (key_buffer_size != sizeof(ikg_opaque_key)) {
-			return PSA_ERROR_INVALID_ARGUMENT;
+		if (IS_ENABLED(CONFIG_CRACEN_IKG)) {
+			if (key_buffer_size != sizeof(ikg_opaque_key)) {
+				return PSA_ERROR_INVALID_ARGUMENT;
+			}
+			status = cracen_ikg_create_pub_key(key_buffer[0], pubkey_buffer);
 		}
-		status = cracen_ikg_create_pub_key(key_buffer[0], pubkey_buffer);
 		return status;
 	}
+
 	if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_255)) {
 		if (alg == PSA_ALG_PURE_EDDSA || alg == PSA_ALG_ED25519PH) {
 			if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(psa_get_key_type(attributes))) {
@@ -300,8 +303,12 @@ static psa_status_t cracen_signature_ecc_sign(bool is_message,
 	if (IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_R1_256) &&
 	    PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
 		    PSA_KEY_LOCATION_CRACEN) {
-		return handle_ikg_sign(is_message, key_buffer, key_buffer_size, alg, input,
-				       input_length, ecurve, signature, signature_length);
+		if (IS_ENABLED(CONFIG_CRACEN_IKG)) {
+			return handle_ikg_sign(is_message, key_buffer, key_buffer_size, alg, input,
+					       input_length, ecurve, signature, signature_length);
+		} else {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
 	}
 
 	status = validate_key_attributes(attributes, key_buffer_size, &ecurve);
