@@ -69,7 +69,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: aa34a5632971262ce4002e73ed0fb09e9bd14808
+      revision: v3.7.99-ncs2-2
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -130,7 +130,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: v2.1.0-ncs3-1
+      revision: v2.1.0-ncs3-2
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -139,7 +139,7 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: v3.6.2-ncs2-1
+      revision: v3.6.2-ncs2-2
     - name: oberon-psa-crypto
       path: modules/crypto/oberon-psa-crypto
       repo-path: sdk-oberon-psa-crypto
@@ -147,11 +147,11 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 1143aee1e0521b5309e891b44a0a8048f83074d2
+      revision: v2.9.2
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: e200da60e1c82bbf442fcaa9d03f2e5a7c246040
+      revision: v2.1.1-ncs2-2
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
@@ -159,7 +159,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 88e08ccd278ab8991632812d509b59ac726dccde
+      revision: v2.9.2
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
@@ -178,7 +178,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: v2.9.1
+      revision: v2.9.2
       groups:
         - nrf-802154
     - name: soc-hwmv1
@@ -206,12 +206,12 @@ manifest:
           compare-by-default: false
     - name: sidewalk
       repo-path: sdk-sidewalk
-      revision: v2.9.1
+      revision: v2.9.2
       groups:
         - sidewalk
     - name: find-my
       repo-path: sdk-find-my
-      revision: v2.9.1
+      revision: v2.9.2
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -242,10 +242,10 @@ manifest:
           upstream-sha: c6eaeda5a1c1c5dbb24dce7e027340cb8893a77b
           compare-by-default: false
     - name: suit-generator
-      revision: v2.9.1
+      revision: v2.9.2
       path: modules/lib/suit-generator
     - name: suit-processor
-      revision: v2.9.1
+      revision: v2.9.2
       path: modules/lib/suit-processor
     - name: doc-internal
       repo-path: doc-internal
