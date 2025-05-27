@@ -204,6 +204,7 @@ static int nrf_provisioning_set(const char *key, size_t len_rd,
 			LOG_DBG("Stored interval: \"%jd\"", interval);
 			if (nxt_provisioning != interval) {
 				nxt_provisioning = interval;
+				reschedule = true;
 			}
 		}
 
@@ -493,7 +494,8 @@ int nrf_provisioning_schedule(void)
 		goto out;
 	}
 
-	if (now_s > deadline_s) {
+	if (now_s > deadline_s || reschedule) {
+
 		/* Provision now */
 		if (!nxt_provisioning && !deadline_s) {
 			deadline_s = now_s + CONFIG_NRF_PROVISIONING_INTERVAL_S;
