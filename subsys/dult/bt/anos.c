@@ -519,17 +519,17 @@ static ssize_t write_accessory_non_owner(struct bt_conn *conn,
 	const struct dult_user *dult_user;
 	enum dult_near_owner_state_mode mode;
 
-	/* The Accessory Non-owner characteristic should be used to handle the GATT Write
-	 * operations and to send GATT indications.
-	 */
-	__ASSERT_NO_MSG(attr == anos_chrc_indicate_attr);
-
 	if (!dult_user_is_ready()) {
 		res = BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 		LOG_INF("Accessory non-owner write: res=%d conn=%p, "
 			"Return error because DULT is not enabled", res, (void *)conn);
 		return res;
 	}
+
+	/* The Accessory Non-owner characteristic should be used to handle the GATT Write
+	 * operations and to send GATT indications.
+	 */
+	__ASSERT_NO_MSG(attr == anos_chrc_indicate_attr);
 
 	if (offset != 0) {
 		LOG_WRN("Invalid offset: off=%" PRIu16 " (Accessory non-owner write)", offset);
