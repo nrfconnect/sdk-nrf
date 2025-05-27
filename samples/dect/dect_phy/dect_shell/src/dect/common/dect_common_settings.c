@@ -60,8 +60,8 @@ static const struct dect_phy_settings_certification phy_certification_common_set
 	.tx_cw_ctrl_on = false,
 	.tx_cw_ctrl_channel = 1665,
 	.tx_cw_ctrl_pwr_dbm = DECT_PHY_SETT_DEFAULT_TX_POWER_DBM,
-	/* .stf_cover_seq_enabled_rx = true,*/
-	/*.stf_cover_seq_enabled_tx = true, */
+	.tx_stf_cover_seq_on = true,
+	.rx_stf_cover_seq_on = true,
 };
 
 static const struct dect_phy_settings phy_settings_data_defaults = {
