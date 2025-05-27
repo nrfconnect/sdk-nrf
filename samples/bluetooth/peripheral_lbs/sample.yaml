@@ -4,7 +4,6 @@ sample:
 tests:
   sample.bluetooth.peripheral_lbs:
     sysbuild: true
-    build_only: true
     integration_platforms:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
@@ -35,6 +34,14 @@ tests:
       - bluetooth
       - ci_build
       - sysbuild
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "Starting Bluetooth Peripheral LBS sample"
+        - "Bluetooth initialized"
+        - "Advertising successfully started"
   sample.bluetooth.peripheral_lbs_minimal:
     sysbuild: true
     build_only: true

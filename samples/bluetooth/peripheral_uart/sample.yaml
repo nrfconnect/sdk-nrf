@@ -4,7 +4,6 @@ sample:
 tests:
   sample.bluetooth.peripheral_uart:
     sysbuild: true
-    build_only: true
     platform_allow:
       - nrf52dk/nrf52832
       - nrf52833dk/nrf52833
@@ -41,6 +40,12 @@ tests:
       - bluetooth
       - ci_build
       - sysbuild
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "Starting Nordic UART service sample"
   sample.bluetooth.peripheral_uart_cdc:
     sysbuild: true
     build_only: true
