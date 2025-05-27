@@ -17,8 +17,9 @@
 #include <softperipheral_regif.h>
 #include <nrfx_qspi2.h>
 #if defined(CONFIG_SOC_SERIES_NRF54LX)
-#include <hal/nrf_spu.h>
+#include <hal/nrf_memconf.h>
 #include <hal/nrf_oscillators.h>
+#include <hal/nrf_spu.h>
 #endif
 #if defined(CONFIG_SOC_NRF54H20_GPD)
 #include <nrf/gpd.h>
@@ -439,6 +440,10 @@ static int dev_pm_action_cb(const struct device *dev,
 		}
 #endif
 		nrfx_qspi2_activate(&dev_config->qspi2);
+#if defined(CONFIG_SOC_SERIES_NRF54LX)
+		nrf_memconf_ramblock_ret_enable_set(NRF_MEMCONF,
+			1, MEMCONF_POWER_RET_MEM0_Pos, false);
+#endif
 
 		dev_data->suspended = false;
 
@@ -466,6 +471,10 @@ static int dev_pm_action_cb(const struct device *dev,
 			return -EBUSY;
 		}
 
+#if defined(CONFIG_SOC_SERIES_NRF54LX)
+		nrf_memconf_ramblock_ret_enable_set(NRF_MEMCONF,
+			1, MEMCONF_POWER_RET_MEM0_Pos, true);
+#endif
 		nrfx_qspi2_deactivate(&dev_config->qspi2);
 
 		k_sem_give(&dev_data->ctx_lock);
