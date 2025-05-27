@@ -1552,6 +1552,10 @@ enum {
 	DECT_SHELL_SETT_CERT_TX_CW_CTRL_OFF,
 	DECT_SHELL_SETT_CERT_TX_CW_CTRL_CHANNEL,
 	DECT_SHELL_SETT_CERT_TX_CW_CTRL_PWR_DBM,
+	DECT_SHELL_SETT_CERT_TX_STF_COVER_SEQ_ON,
+	DECT_SHELL_SETT_CERT_TX_STF_COVER_SEQ_OFF,
+	DECT_SHELL_SETT_CERT_RX_STF_COVER_SEQ_ON,
+	DECT_SHELL_SETT_CERT_RX_STF_COVER_SEQ_OFF,
 	DECT_SHELL_SETT_RESET_ALL,
 };
 
@@ -1624,12 +1628,16 @@ static const char dect_phy_sett_cmd_usage_str[] =
 	"                                                    Default: 4 (subslots)."
 	"Following only for certification purposes - set to modem after a bootup:\n"
 	"      Note: changing all of these requires a reboot.\n"
-	"      --tx_cw_ctrl_on                Enable Continuous Wave (CW) TX. Default: disabled.\n"
-	"      --tx_cw_ctrl_off               Disable Continuous Wave (CW) TX.\n"
+	"      --tx_cw_ctrl_on                Enable Continuous Wave (CW) TX.\n"
+	"      --tx_cw_ctrl_off               Disable Continuous Wave (CW) TX. Default.\n"
 	"      --tx_cw_ctrl_channel <int>,    Channel/carrier for the CW TX.\n"
 	"                                     Default: 1665.\n"
 	"      --tx_cw_ctrl_pwr_dbm <int>,    TX power for CW TX.\n"
-	"                                     Default: as with --tx_pwr.\n";
+	"                                     Default: as with --tx_pwr.\n"
+	"       --tx_stf_cover_seq_on,        Enable STF cover sequence on TX. Default.\n"
+	"       --tx_stf_cover_seq_off,       Disable STF cover sequence on TX.\n"
+	"       --rx_stf_cover_seq_on,        Enable STF cover sequence on RX. Default.\n"
+	"       --rx_stf_cover_seq_off,       Disable STF cover sequence on RX.\n";
 
 
 /* Specifying the expected options (both long and short): */
@@ -1663,6 +1671,11 @@ static struct option long_options_settings[] = {
 	{"tx_cw_ctrl_off", no_argument, 0, DECT_SHELL_SETT_CERT_TX_CW_CTRL_OFF},
 	{"tx_cw_ctrl_channel", required_argument, 0, DECT_SHELL_SETT_CERT_TX_CW_CTRL_CHANNEL},
 	{"tx_cw_ctrl_pwr_dbm", required_argument, 0, DECT_SHELL_SETT_CERT_TX_CW_CTRL_PWR_DBM},
+	{"tx_stf_cover_seq_on", no_argument, 0, DECT_SHELL_SETT_CERT_TX_STF_COVER_SEQ_ON},
+	{"tx_stf_cover_seq_off", no_argument, 0, DECT_SHELL_SETT_CERT_TX_STF_COVER_SEQ_OFF},
+	{"rx_stf_cover_seq_on", no_argument, 0, DECT_SHELL_SETT_CERT_RX_STF_COVER_SEQ_ON},
+	{"rx_stf_cover_seq_off", no_argument, 0, DECT_SHELL_SETT_CERT_RX_STF_COVER_SEQ_OFF},
+	{"help", no_argument, 0, 'h'},
 	{"reset", no_argument, 0, DECT_SHELL_SETT_RESET_ALL},
 	{"read", no_argument, 0, 'r'},
 	{0, 0, 0, 0}};
@@ -1729,6 +1742,10 @@ static void dect_phy_sett_cmd_print(struct dect_phy_settings *dect_sett)
 	} else {
 		desh_print("  Continuous Wave (CW) TX..................................Disabled");
 	}
+	desh_print("  STF cover sequence on TX.................................%s",
+		   dect_sett->cert.tx_stf_cover_seq_on ? "Enabled" : "Disabled");
+	desh_print("  STF cover sequence on RX.................................%s",
+		   dect_sett->cert.rx_stf_cover_seq_on ? "Enabled" : "Disabled");
 }
 
 static int dect_phy_sett_cmd(const struct shell *shell, size_t argc, char **argv)
@@ -1925,6 +1942,30 @@ static int dect_phy_sett_cmd(const struct shell *shell, size_t argc, char **argv
 		}
 		case DECT_SHELL_SETT_CERT_TX_CW_CTRL_PWR_DBM: {
 			newsettings.cert.tx_cw_ctrl_pwr_dbm = atoi(optarg);
+			break;
+		}
+		case DECT_SHELL_SETT_CERT_TX_STF_COVER_SEQ_ON: {
+			newsettings.cert.tx_stf_cover_seq_on = true;
+			desh_warn("STF cover sequence on TX enabled. "
+				  "Requires a reboot to have an impact.");
+			break;
+		}
+		case DECT_SHELL_SETT_CERT_TX_STF_COVER_SEQ_OFF: {
+			newsettings.cert.tx_stf_cover_seq_on = false;
+			desh_warn("STF cover sequence on TX disabled. "
+				  "Requires a reboot to have an impact.");
+			break;
+		}
+		case DECT_SHELL_SETT_CERT_RX_STF_COVER_SEQ_ON: {
+			newsettings.cert.rx_stf_cover_seq_on = true;
+			desh_warn("STF cover sequence on RX enabled. "
+				  "Requires a reboot to have an impact.");
+			break;
+		}
+		case DECT_SHELL_SETT_CERT_RX_STF_COVER_SEQ_OFF: {
+			newsettings.cert.rx_stf_cover_seq_on = false;
+			desh_warn("STF cover sequence on RX disabled. "
+				  "Requires a reboot to have an impact.");
 			break;
 		}
 		case DECT_SHELL_SETT_RESET_ALL: {

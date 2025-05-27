@@ -106,12 +106,12 @@ struct dect_phy_settings_rssi_scan {
 
 };
 struct dect_phy_settings_certification {
-	bool tx_cw_ctrl_on; /* Enable Continuous Wave (CW) TX */
+	bool tx_cw_ctrl_on;          /* Enable Continuous Wave (CW) TX */
 	uint16_t tx_cw_ctrl_channel; /* Channel/carrier for the CW TX */
-	int8_t tx_cw_ctrl_pwr_dbm; /* TX power for CW TX */
+	int8_t tx_cw_ctrl_pwr_dbm;   /* TX power for CW TX */
 
-	bool stf_cover_seq_enabled_rx; /* TODO */
-	bool stf_cover_seq_enabled_tx; /* TODO */
+	bool tx_stf_cover_seq_on; /* Enable STF cover sequence on TX */
+	bool rx_stf_cover_seq_on; /* Enable STF cover sequence on RX */
 };
 
 struct dect_phy_settings_common {

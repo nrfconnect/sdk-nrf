@@ -102,6 +102,7 @@ K_SEM_DEFINE(rssi_scan_sema, 0, 1);
 
 K_SEM_DEFINE(dect_phy_ctrl_mdm_api_init_sema, 0, 1);
 K_SEM_DEFINE(tx_cw_sema, 0, 1);
+K_SEM_DEFINE(stf_cover_seq_sema, 0, 1);
 K_SEM_DEFINE(dect_phy_ctrl_mdm_api_op_cancel_sema, 0, 1);
 K_SEM_DEFINE(dect_phy_ctrl_mdm_api_radio_mode_config_sema, 0, 1);
 K_MUTEX_DEFINE(dect_phy_ctrl_mdm_api_op_cancel_all_mutex);
@@ -456,7 +457,7 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 			}
 			break;
 		}
-		case DECT_PHY_CTRL_OP_TEST_RF_TX_CW_CONTROL: {
+		case DECT_PHY_CTRL_OP_TEST_RF_TX_CW_CONFIG_DONE: {
 			struct nrf_modem_dect_phy_test_rf_tx_cw_control_event *evt =
 				(struct nrf_modem_dect_phy_test_rf_tx_cw_control_event *)event.data;
 			struct dect_phy_settings *current_settings = dect_common_settings_ref_get();
@@ -471,6 +472,17 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 				desh_error("CW TX start failed with error %d", evt->err);
 			}
 			k_sem_give(&tx_cw_sema);
+			break;
+		}
+		case DECT_PHY_CTRL_OP_TEST_STF_COVER_SEQ_CONFIG_DONE: {
+			struct nrf_modem_dect_phy_stf_control_event *evt =
+				(struct nrf_modem_dect_phy_stf_control_event *)event.data;
+
+			if (evt->err != NRF_MODEM_DECT_PHY_SUCCESS) {
+				desh_error("STF cover sequence config failed with error %d",
+					evt->err);
+			}
+			k_sem_give(&stf_cover_seq_sema);
 			break;
 		}
 		case DECT_PHY_CTRL_OP_PHY_API_MDM_INITIALIZED: {
@@ -722,13 +734,21 @@ K_THREAD_DEFINE(dect_phy_ctrl_msgq_th, DECT_PHY_CTRL_STACK_SIZE, dect_phy_ctrl_m
 
 /**************************************************************************************************/
 
-static void dect_phy_ctrl_mdm_test_rf_tx_cw_control_config_cb(
+static void dect_phy_ctrl_mdm_test_rf_tx_cw_config_cb(
 	const struct nrf_modem_dect_phy_test_rf_tx_cw_control_event *evt)
 {
-	dect_phy_ctrl_msgq_data_op_add(DECT_PHY_CTRL_OP_TEST_RF_TX_CW_CONTROL,
+	dect_phy_ctrl_msgq_data_op_add(DECT_PHY_CTRL_OP_TEST_RF_TX_CW_CONFIG_DONE,
 				       (void *)evt,
 				       sizeof(
 					struct nrf_modem_dect_phy_test_rf_tx_cw_control_event));
+}
+
+static void dect_phy_ctrl_mdm_test_stf_cover_seq_config_cb(
+	const struct nrf_modem_dect_phy_stf_control_event *evt)
+{
+	dect_phy_ctrl_msgq_data_op_add(DECT_PHY_CTRL_OP_TEST_STF_COVER_SEQ_CONFIG_DONE,
+				       (void *)evt,
+				       sizeof(struct nrf_modem_dect_phy_stf_control_event));
 }
 
 static void dect_phy_ctrl_mdm_initialize_cb(const struct nrf_modem_dect_phy_init_event *evt)
@@ -1059,8 +1079,12 @@ void dect_phy_ctrl_mdm_evt_handler(const struct nrf_modem_dect_phy_event *evt)
 
 	switch (evt->id) {
 	case NRF_MODEM_DECT_PHY_EVT_TEST_RF_TX_CW_CONTROL_CONFIG:
-		dect_phy_ctrl_mdm_test_rf_tx_cw_control_config_cb(
+		dect_phy_ctrl_mdm_test_rf_tx_cw_config_cb(
 			&evt->test_rf_tx_cw_control);
+		break;
+	case NRF_MODEM_DECT_PHY_EVT_STF_CONFIG:
+		dect_phy_ctrl_mdm_test_stf_cover_seq_config_cb(
+			&evt->stf_cover_seq_control);
 		break;
 	case NRF_MODEM_DECT_PHY_EVT_INIT:
 		dect_phy_ctrl_mdm_initialize_cb(&evt->init);
@@ -1882,6 +1906,23 @@ static void dect_phy_ctrl_on_modem_lib_init(int ret, void *ctx)
 		} else {
 			return; /* CW is ongoing, cannot do other operations */
 		}
+	}
+	/* Set STF cover sequence for RX and TX.
+	 * But 1st of all, print warning message if non default is used.
+	 */
+	if (!current_settings->cert.tx_stf_cover_seq_on ||
+	    !current_settings->cert.rx_stf_cover_seq_on) {
+		desh_warn("Note: STF cover sequence not set.");
+	}
+	err = nrf_modem_dect_phy_stf_cover_seq_control(
+		current_settings->cert.rx_stf_cover_seq_on,
+		current_settings->cert.tx_stf_cover_seq_on);
+	if (err) {
+		desh_error("Failed to set STF cover sequence: %d", err);
+	}
+	err = k_sem_take(&stf_cover_seq_sema, K_SECONDS(5));
+	if (err) {
+		desh_error("%s: timeout for waiting stf_cover_seq_sema: %d", (__func__), err);
 	}
 
 	if (!ctrl_data.phy_api_initialized) {
