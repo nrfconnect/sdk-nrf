@@ -834,7 +834,6 @@ static void dect_phy_rf_tool_tx_to_mdm_cb(
 {
 	if (params->status == NRF_MODEM_DECT_PHY_SUCCESS) {
 		rf_tool_data.tx_metrics.tx_last_tx_scheduled_frame_time_mdm_ticks = frame_time;
-		rf_tool_data.tx_metrics.tx_last_tx_scheduled_frame_time_mdm_ticks = frame_time;
 	} else {
 		rf_tool_data.tx_metrics.tx_op_to_mdm_failure_count++;
 	}

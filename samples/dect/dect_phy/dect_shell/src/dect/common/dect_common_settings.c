@@ -56,6 +56,13 @@ static const struct dect_phy_settings_common phy_common_settings_data = {
 	.activate_at_startup = true,
 	.startup_radio_mode = NRF_MODEM_DECT_PHY_RADIO_MODE_LOW_LATENCY,
 };
+static const struct dect_phy_settings_certification phy_certification_common_settings = {
+	.tx_cw_ctrl_on = false,
+	.tx_cw_ctrl_channel = 1665,
+	.tx_cw_ctrl_pwr_dbm = DECT_PHY_SETT_DEFAULT_TX_POWER_DBM,
+	/* .stf_cover_seq_enabled_rx = true,*/
+	/*.stf_cover_seq_enabled_tx = true, */
+};
 
 static const struct dect_phy_settings phy_settings_data_defaults = {
 	.common = phy_common_settings_data,
@@ -64,6 +71,7 @@ static const struct dect_phy_settings phy_settings_data_defaults = {
 	.harq = phy_harq_common_settings,
 	.tx = phy_tx_common_settings,
 	.rx = phy_rx_common_settings,
+	.cert = phy_certification_common_settings,
 };
 static struct dect_phy_settings phy_settings_data = phy_settings_data_defaults;
 

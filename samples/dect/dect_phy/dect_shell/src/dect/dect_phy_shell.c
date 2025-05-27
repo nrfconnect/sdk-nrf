@@ -1548,6 +1548,10 @@ enum {
 	DECT_SHELL_SETT_COMMON_RX_EXP_RSSI_LEVEL,
 	DECT_SHELL_SETT_COMMON_TX_PWR,
 	DECT_SHELL_SETT_COMMON_TX_MCS,
+	DECT_SHELL_SETT_CERT_TX_CW_CTRL_ON,
+	DECT_SHELL_SETT_CERT_TX_CW_CTRL_OFF,
+	DECT_SHELL_SETT_CERT_TX_CW_CTRL_CHANNEL,
+	DECT_SHELL_SETT_CERT_TX_CW_CTRL_PWR_DBM,
 	DECT_SHELL_SETT_RESET_ALL,
 };
 
@@ -1617,7 +1621,16 @@ static const char dect_phy_sett_cmd_usage_str[] =
 	"                                                    starting a TX for providing\n"
 	"                                                    HARQ feedback if requested by\n"
 	"                                                    client.\n"
-	"                                                    Default: 4 (subslots).\n";
+	"                                                    Default: 4 (subslots)."
+	"Following only for certification purposes - set to modem after a bootup:\n"
+	"      Note: changing all of these requires a reboot.\n"
+	"      --tx_cw_ctrl_on                Enable Continuous Wave (CW) TX. Default: disabled.\n"
+	"      --tx_cw_ctrl_off               Disable Continuous Wave (CW) TX.\n"
+	"      --tx_cw_ctrl_channel <int>,    Channel/carrier for the CW TX.\n"
+	"                                     Default: 1665.\n"
+	"      --tx_cw_ctrl_pwr_dbm <int>,    TX power for CW TX.\n"
+	"                                     Default: as with --tx_pwr.\n";
+
 
 /* Specifying the expected options (both long and short): */
 static struct option long_options_settings[] = {
@@ -1646,6 +1659,10 @@ static struct option long_options_settings[] = {
 	 DECT_SHELL_SETT_COMMON_RSSI_SCAN_BUSY_THRESHOLD},
 	{"rssi_scan_suitable_percent", required_argument, 0,
 	 DECT_SHELL_SETT_COMMON_RSSI_SCAN_SUITABLE_PERCENT},
+	{"tx_cw_ctrl_on", no_argument, 0, DECT_SHELL_SETT_CERT_TX_CW_CTRL_ON},
+	{"tx_cw_ctrl_off", no_argument, 0, DECT_SHELL_SETT_CERT_TX_CW_CTRL_OFF},
+	{"tx_cw_ctrl_channel", required_argument, 0, DECT_SHELL_SETT_CERT_TX_CW_CTRL_CHANNEL},
+	{"tx_cw_ctrl_pwr_dbm", required_argument, 0, DECT_SHELL_SETT_CERT_TX_CW_CTRL_PWR_DBM},
 	{"reset", no_argument, 0, DECT_SHELL_SETT_RESET_ALL},
 	{"read", no_argument, 0, 'r'},
 	{0, 0, 0, 0}};
@@ -1702,6 +1719,16 @@ static void dect_phy_sett_cmd_print(struct dect_phy_settings *dect_sett)
 		   dect_sett->harq.harq_feedback_rx_subslot_count);
 	desh_print("  HARQ feedback TX delay (subslots)........................%d",
 		   dect_sett->harq.harq_feedback_tx_delay_subslot_count);
+	desh_print("Certification settings:");
+	if (dect_sett->cert.tx_cw_ctrl_on) {
+		desh_print("  Continuous Wave (CW) TX..................................Enabled");
+		desh_print("  CW TX channel/carrier....................................%d",
+			   dect_sett->cert.tx_cw_ctrl_channel);
+		desh_print("  CW TX power (dBm)........................................%d",
+			   dect_sett->cert.tx_cw_ctrl_pwr_dbm);
+	} else {
+		desh_print("  Continuous Wave (CW) TX..................................Disabled");
+	}
 }
 
 static int dect_phy_sett_cmd(const struct shell *shell, size_t argc, char **argv)
@@ -1868,6 +1895,36 @@ static int dect_phy_sett_cmd(const struct shell *shell, size_t argc, char **argv
 			}
 			newsettings.rssi_scan.type_subslots_params.scan_suitable_percent =
 				tmp_value;
+			break;
+		}
+		case DECT_SHELL_SETT_CERT_TX_CW_CTRL_ON: {
+			newsettings.cert.tx_cw_ctrl_on = true;
+			desh_warn("Continuous Wave (CW) TX enabled. "
+				   "This is for certification purposes only, "
+				   "not for normal operation and no other operations can be done."
+				   "Requires a reboot to have an impact.");
+			break;
+		}
+		case DECT_SHELL_SETT_CERT_TX_CW_CTRL_OFF: {
+			newsettings.cert.tx_cw_ctrl_on = false;
+			desh_warn("Continuous Wave (CW) TX disabled. "
+				  "Requires a reboot to have an impact.");
+			break;
+		}
+		case DECT_SHELL_SETT_CERT_TX_CW_CTRL_CHANNEL: {
+			newsettings.cert.tx_cw_ctrl_channel = atoi(optarg);
+			if (!dect_common_utils_channel_is_supported(
+				    newsettings.common.band_nbr,
+				    newsettings.cert.tx_cw_ctrl_channel, false)) {
+				desh_error("Channel %d is not supported on set band #%d.\n",
+					   newsettings.cert.tx_cw_ctrl_channel,
+					   newsettings.common.band_nbr);
+				return -1;
+			}
+			break;
+		}
+		case DECT_SHELL_SETT_CERT_TX_CW_CTRL_PWR_DBM: {
+			newsettings.cert.tx_cw_ctrl_pwr_dbm = atoi(optarg);
 			break;
 		}
 		case DECT_SHELL_SETT_RESET_ALL: {
