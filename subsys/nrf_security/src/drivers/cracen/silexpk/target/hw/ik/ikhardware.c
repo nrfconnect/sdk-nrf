@@ -219,26 +219,6 @@ int sx_pk_ik_derive_keys(struct sx_pk_config_ik *cfg)
 	return r;
 }
 
-int sx_pk_ik_mode_exit(struct sx_pk_cnx *cnx)
-{
-	int sx_status;
-	struct sx_pk_acq_req pkreq = sx_pk_acquire_req(SX_PK_CMD_IK_EXIT);
-
-	if (pkreq.status) {
-		return pkreq.status;
-	}
-
-	pkreq.status = sx_pk_list_ik_inslots(pkreq.req, 0, NULL);
-	if (pkreq.status) {
-		return pkreq.status;
-	}
-
-	sx_pk_run(pkreq.req);
-	sx_status = sx_pk_wait(pkreq.req);
-	sx_pk_release_req(pkreq.req);
-	return sx_status;
-}
-
 int sx_pk_ik_rng_reconfig(struct sx_pk_cnx *cnx, struct sx_pk_config_rng *cfg)
 {
 	if (cfg->personalization && cfg->personalization_sz) {
