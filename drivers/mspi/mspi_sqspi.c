@@ -517,10 +517,12 @@ static int dev_init(const struct device *dev)
 #if defined(CONFIG_SOC_SERIES_NRF54LX)
 	nrf_oscillators_pll_freq_set(NRF_OSCILLATORS,
 				     NRF_OSCILLATORS_PLL_FREQ_128M);
+#if !defined(CONFIG_TRUSTED_EXECUTION_NONSECURE)
 	nrf_spu_periph_perm_secattr_set(NRF_SPU00,
 		nrf_address_slave_get(DT_REG_ADDR(DT_NODELABEL(cpuflpr_vpr))),
 		true);
 #endif
+#endif /* defined(CONFIG_SOC_SERIES_NRF54LX) */
 
 	IRQ_CONNECT(DT_IRQN(VPR_NODE), DT_IRQ(VPR_NODE, priority),
 		    nrfx_isr, nrfx_qspi2_irq_handler, 0);
