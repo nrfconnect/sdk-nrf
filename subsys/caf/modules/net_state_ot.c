@@ -229,9 +229,9 @@ static bool handle_reset_event(void)
 	__ASSERT_NO_MSG(!initialized);
 
 	LOG_WRN("Storage reset requested");
-	openthread_api_mutex_lock(ot_context);
+	openthread_mutex_lock();
 	err = otInstanceErasePersistentInfo(ot_context->instance);
-	openthread_api_mutex_unlock(ot_context);
+	openthread_mutex_unlock();
 	/* It can fail only if called with OpenThread stack enabled.
 	 * This event should not appear after the OpenThread is started.
 	 * If it does - there is some huge coding error.
