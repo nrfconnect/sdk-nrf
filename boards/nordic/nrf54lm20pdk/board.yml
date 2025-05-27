@@ -9,7 +9,7 @@ board:
       cpucluster: cpuflpr
   revision:
     format: custom
-    default: "0.2.0"
+    default: "0.2.0.csp"
     revisions:
     - name: "0.0.0"
     - name: "0.2.0"
