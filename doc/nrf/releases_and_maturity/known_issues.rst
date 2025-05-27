@@ -4427,6 +4427,24 @@ Multiprotocol Service Layer (MPSL)
 
 The issues in this section are related to :ref:`nrfxlib:mpsl`.
 
+.. rst-class:: v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-1 v2-9-0 v2-8-0
+
+DRGN-25261: Radio events can stop running after a big temperature change triggers HFXO tuning
+  MPSL needs to take XO tuning time into account.
+
+  **Affected platforms:** nRF54L15, nRF54L10, nRF54L05
+
+  **Workaround:** Increase the value of the :kconfig:option:`CONFIG_MPSL_HFCLK_LATENCY` Kconfig option by 512 microseconds to allow tuning to complete.
+
+.. rst-class:: v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-1 v2-9-0 v2-8-0
+
+DRGN-25262: The default value of the :kconfig:option:`CONFIG_MPSL_HFCLK_LATENCY` Kconfig option is too small on nRF54L Series devices for some crystals
+  This might prevent MPSL from running Bluetooth events.
+
+  **Affected platforms:** nRF54L15, nRF54L10, nRF54L05
+
+  **Workaround:** Increase the configured HFXO startup time to 1650 microseconds.
+
 .. rst-class:: v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-0
 
 UARTE will have a frequency error beyond the specific limits
