@@ -8,9 +8,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <strings.h>
+#include <zephyr/net/net_ip.h>
 #include <zephyr/net/socket.h>
 #include <zephyr/net/tls_credentials.h>
-#include <zephyr/net/net_ip.h>
+#include <zephyr/posix/sys/eventfd.h>
 #include "slm_util.h"
 #include "slm_at_host.h"
 #include "slm_at_socket.h"
@@ -21,7 +22,8 @@
 
 LOG_MODULE_REGISTER(slm_sock, CONFIG_SLM_LOG_LEVEL);
 
-#define SLM_MAX_SOCKET_COUNT CONFIG_POSIX_OPEN_MAX
+#define SLM_FDS_COUNT CONFIG_POSIX_OPEN_MAX
+#define SLM_MAX_SOCKET_COUNT (SLM_FDS_COUNT - 1)
 
 /*
  * Known limitation in this version
@@ -51,6 +53,12 @@ enum slm_socket_role {
 static char udp_url[SLM_MAX_URL];
 static uint16_t udp_port;
 
+struct slm_async_poll {
+	atomic_t update_events; /* Update events to poll for this socket. */
+	bool specific: 1;	/* Specific socket to poll. */
+	bool disable: 1;	/* Poll needs to stay disabled for this socket. */
+};
+
 static struct slm_socket {
 	int type;          /* SOCK_STREAM or SOCK_DGRAM */
 	uint16_t role;     /* Client or Server */
@@ -60,10 +68,30 @@ static struct slm_socket {
 	int fd_peer;       /* Socket descriptor for peer. */
 	int ranking;       /* Ranking of socket */
 	uint16_t cid;      /* PDP Context ID, 0: primary; 1~10: secondary */
+	struct slm_async_poll async_poll; /* Async poll info */
 } socks[SLM_MAX_SOCKET_COUNT];
 
 static struct zsock_pollfd fds[SLM_MAX_SOCKET_COUNT];
 static struct slm_socket *sock = &socks[0]; /* Current socket in use */
+
+enum EFD_COMMAND {
+	EFD_POLL = 0x1,
+	EFD_CLOSE = 0x2
+};
+
+struct async_poll_ctx {
+	struct k_work update_work; /* Work to update async poll */
+	int efd;		   /* Event file descriptor for async poll */
+	int poll_events;	   /* Events to poll for async poll. */
+	bool poll_all: 1;	   /* Poll all the sockets. */
+	bool poll_running: 1;	   /* Async poll is running. */
+};
+static struct async_poll_ctx poll_ctx = {
+	.efd = -1,
+};
+
+static struct k_thread apoll_thread_id;
+static K_THREAD_STACK_DEFINE(apoll_thread_stack, KB(2));
 
 /* forward declarations */
 #define SOCKET_SEND_TMO_SEC 30
@@ -86,17 +114,16 @@ static void init_socket(struct slm_socket *socket)
 	socket->fd_peer = INVALID_SOCKET;
 	socket->ranking = 0;
 	socket->cid = 0;
+	socket->async_poll = (struct slm_async_poll){0};
 }
 
 static bool is_opened_socket(int fd)
 {
-	if (fd == INVALID_SOCKET) {
-		return false;
-	}
-
-	for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
-		if (socks[i].fd == fd) {
-			return true;
+	if (fd != INVALID_SOCKET) {
+		for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
+			if (socks[i].fd == fd) {
+				return true;
+			}
 		}
 	}
 
@@ -154,6 +181,44 @@ static int bind_to_pdn(uint16_t cid)
 	return ret;
 }
 
+static void update_work_fn(struct k_work *work)
+{
+	/* Update async poll events after AT-operation has completed. */
+	if (poll_ctx.poll_running) {
+		LOG_DBG("Update poll events");
+		if (eventfd_write(poll_ctx.efd, EFD_POLL)) {
+			LOG_ERR("eventfd_write() failed: %d", -errno);
+		}
+	}
+}
+
+static void delegate_poll_event(struct slm_socket *s, int events)
+{
+	if (poll_ctx.poll_running && (poll_ctx.poll_all || s->async_poll.specific)) {
+		LOG_DBG("Delegate poll events %d for socket %d", events, s->fd);
+		atomic_or(&s->async_poll.update_events, (poll_ctx.poll_events & events));
+
+		k_work_submit(&poll_ctx.update_work);
+	}
+
+}
+
+void slm_at_socket_notify_datamode_exit(void)
+{
+	if (poll_ctx.poll_running) {
+		for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
+			if (socks[i].fd == INVALID_SOCKET) {
+				continue;
+			}
+			/* When we exit data mode, we will refresh
+			 * POLLIN, POLLERR, POLLHUP, and POLLNVAL for all monitored sockets.
+			 */
+			socks[i].async_poll.disable = false;
+			delegate_poll_event(&socks[i], ZSOCK_POLLIN);
+		}
+	}
+}
+
 static int do_socket_open(void)
 {
 	int ret = 0;
@@ -196,6 +261,8 @@ static int do_socket_open(void)
 
 	sock->ranking = socket_ranking++;
 	rsp_send("\r\n#XSOCKET: %d,%d,%d\r\n", sock->fd, sock->type, proto);
+
+	delegate_poll_event(sock, ZSOCK_POLLIN | ZSOCK_POLLOUT);
 
 	return 0;
 
@@ -282,6 +349,8 @@ static int do_secure_socket_open(int peer_verify)
 
 	sock->ranking = socket_ranking++;
 	rsp_send("\r\n#XSSOCKET: %d,%d,%d\r\n", sock->fd, sock->type, proto);
+
+	delegate_poll_event(sock, ZSOCK_POLLIN | ZSOCK_POLLOUT);
 
 	return 0;
 
@@ -708,6 +777,7 @@ static int do_send(const uint8_t *data, int len)
 
 	if (!in_datamode()) {
 		rsp_send("\r\n#XSEND: %d\r\n", sent);
+		delegate_poll_event(sock, ZSOCK_POLLOUT);
 	}
 
 	return sent > 0 ? sent : ret;
@@ -752,6 +822,8 @@ static int do_recv(int timeout, int flags)
 		rsp_send("\r\n#XRECV: %d\r\n", ret);
 		data_send(slm_data_buf, ret);
 		ret = 0;
+
+		delegate_poll_event(sock, ZSOCK_POLLIN);
 	}
 
 	return ret;
@@ -793,7 +865,9 @@ static int do_sendto(const char *url, uint16_t port, const uint8_t *data, int le
 
 	if (!in_datamode()) {
 		rsp_send("\r\n#XSENDTO: %d\r\n", sent);
+		delegate_poll_event(sock, ZSOCK_POLLOUT);
 	}
+
 
 	return sent > 0 ? sent : ret;
 }
@@ -830,6 +904,8 @@ static int do_recvfrom(int timeout, int flags)
 		util_get_peer_addr(&remote, peer_addr, &peer_port);
 		rsp_send("\r\n#XRECVFROM: %d,\"%s\",%d\r\n", ret, peer_addr, peer_port);
 		data_send(slm_data_buf, ret);
+
+		delegate_poll_event(sock, ZSOCK_POLLIN);
 	}
 
 	return 0;
@@ -906,6 +982,7 @@ static int socket_datamode_callback(uint8_t op, const uint8_t *data, int len, ui
 	} else if (op == DATAMODE_EXIT) {
 		LOG_DBG("datamode exit");
 		memset(udp_url, 0, sizeof(udp_url));
+		delegate_poll_event(sock, ZSOCK_POLLOUT);
 	}
 
 	return ret;
@@ -1343,6 +1420,10 @@ static int handle_at_accept(enum at_parser_cmd_type cmd_type, struct at_parser *
 
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
+		if (poll_ctx.poll_running) {
+			LOG_ERR("%s cannot be used with AT#XAPOLL", "AT#XACCEPT");
+			return -EBUSY;
+		}
 		err = at_parser_num_get(parser, 1, &timeout);
 		if (err) {
 			return err;
@@ -1593,6 +1674,10 @@ static int handle_at_poll(enum at_parser_cmd_type cmd_type, struct at_parser *pa
 
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
+		if (poll_ctx.poll_running) {
+			LOG_ERR("%s cannot be used with AT#XAPOLL", "AT#XPOLL");
+			return -EBUSY;
+		}
 		err = at_parser_num_get(parser, 1, &timeout);
 		if (err) {
 			return err;
@@ -1632,6 +1717,284 @@ static int handle_at_poll(enum at_parser_cmd_type cmd_type, struct at_parser *pa
 	return err;
 }
 
+static void update_apoll_fds(struct zsock_pollfd *afds, size_t count)
+{
+	for (size_t i = 0; i < count && i < ARRAY_SIZE(socks); ++i) {
+		/* Skip sockets that are not opened or are disabled for async poll. */
+		if (socks[i].fd == INVALID_SOCKET || socks[i].async_poll.disable) {
+			afds[i].fd = INVALID_SOCKET;
+			afds[i].events = 0;
+			continue;
+		}
+		/* Skip sockets that are not in async poll mode. */
+		if (!poll_ctx.poll_all && !socks[i].async_poll.specific) {
+			afds[i].fd = INVALID_SOCKET;
+			continue;
+		}
+		afds[i].fd = socks[i].fd;
+
+		/* atomic_clear returns the value before clear. */
+		afds[i].events |= atomic_clear(&socks[i].async_poll.update_events);
+		LOG_DBG("fd: %d, events: 0x%04x", afds[i].fd, afds[i].events);
+	}
+}
+
+static eventfd_t get_efd_event(struct zsock_pollfd *efd)
+{
+	eventfd_t value = 0;
+
+	if (efd->revents & ZSOCK_POLLIN) {
+		efd->revents &= ~ZSOCK_POLLIN;
+		eventfd_read(efd->fd, &value);
+	}
+	if (efd->revents) {
+		LOG_ERR("efd revents: 0x%04x", efd->revents);
+	}
+
+	return value;
+}
+
+static inline void handle_apoll_socket_event(struct slm_socket *s, struct zsock_pollfd *fd)
+{
+	if (fd->revents) {
+		if (fd->revents & (ZSOCK_POLLERR | ZSOCK_POLLNVAL | ZSOCK_POLLHUP)) {
+			/* Remove socket from poll until closed. */
+			s->async_poll.disable = true;
+		} else {
+			/* Remove POLLIN/POLLOUT from poll, until AT-operation. */
+			fd->events &= ~fd->revents;
+		}
+		if (!in_datamode()) {
+			rsp_send_indicate("\r\n#XAPOLL: %d,%d\r\n", fd->fd, fd->revents);
+		}
+	}
+}
+
+static void apoll_thread(void*, void*, void*)
+{
+	int ret;
+	struct zsock_pollfd afds[SLM_FDS_COUNT] = {
+		[0 ... SLM_FDS_COUNT - 1] = {
+			.fd = INVALID_SOCKET
+		}
+	};
+
+	LOG_DBG("Asynchronous polling thread started");
+
+	/* Always poll the EFD socket. */
+	afds[ARRAY_SIZE(afds) - 1].fd = poll_ctx.efd;
+	afds[ARRAY_SIZE(afds) - 1].events = ZSOCK_POLLIN;
+
+	while (poll_ctx.poll_running) {
+		update_apoll_fds(afds, ARRAY_SIZE(afds) - 1);
+
+		ret = zsock_poll(afds, ARRAY_SIZE(afds), -1);
+		if (ret < 0) {
+			LOG_ERR("zsock_poll() failed: %d, exit thread...", -errno);
+			poll_ctx.poll_running = false;
+			break;
+		}
+		for (int i = 0; i < ARRAY_SIZE(afds); ++i) {
+			if (afds[i].fd == INVALID_SOCKET) {
+				continue;
+			}
+
+			if (afds[i].fd == poll_ctx.efd) {
+				if (get_efd_event(&afds[i]) == EFD_CLOSE) {
+					/* Exit thread. */
+					poll_ctx.poll_running = false;
+				}
+			} else {
+				handle_apoll_socket_event(&socks[i], &afds[i]);
+			}
+		}
+	}
+	LOG_DBG("Asynchronous polling thread stopped");
+}
+
+static int apoll_start(void)
+{
+	if (poll_ctx.poll_running) {
+		LOG_DBG("Restart asynchronous polling");
+		return eventfd_write(poll_ctx.efd, EFD_POLL);
+	}
+
+	LOG_DBG("Start asynchronous polling");
+	if (poll_ctx.efd != INVALID_SOCKET) {
+		zsock_close(poll_ctx.efd);
+	}
+	poll_ctx.efd = eventfd(0, 0);
+	if (poll_ctx.efd < 0) {
+		LOG_ERR("eventfd() failed: %d", -errno);
+		return -errno;
+	}
+	poll_ctx.poll_running = true;
+	k_thread_create(&apoll_thread_id, apoll_thread_stack,
+			K_THREAD_STACK_SIZEOF(apoll_thread_stack),
+			apoll_thread, NULL, NULL, NULL,
+			K_LOWEST_APPLICATION_THREAD_PRIO, 0, K_NO_WAIT);
+	k_thread_name_set(&apoll_thread_id, "Asynchronous polling");
+
+	return 0;
+}
+
+static int apoll_stop(void)
+{
+	int err = 0;
+
+	if (poll_ctx.poll_running) {
+		LOG_DBG("Stop asynchronous polling");
+		err = eventfd_write(poll_ctx.efd, EFD_CLOSE);
+		if (err < 0) {
+			LOG_ERR("eventfd_write() failed: %d", -errno);
+		}
+		err = k_thread_join(&apoll_thread_id, K_SECONDS(1));
+		if (err) {
+			LOG_WRN("k_thread_join() failed: %d", err);
+		}
+	}
+
+	if (poll_ctx.efd != INVALID_SOCKET) {
+		zsock_close(poll_ctx.efd);
+		poll_ctx.efd = INVALID_SOCKET;
+	}
+	poll_ctx.poll_events = 0;
+
+	return 0;
+}
+
+static void format_apoll_read_response(char *response, size_t size)
+{
+	int offset = 0;
+
+	offset = snprintf(response, size, "\r\n#XAPOLL: %d,%d", poll_ctx.poll_running,
+			  poll_ctx.poll_events);
+
+	for (int i = 0; i < SLM_MAX_SOCKET_COUNT && offset < size; i++) {
+		if (socks[i].fd != INVALID_SOCKET &&
+		    (poll_ctx.poll_all || socks[i].async_poll.specific)) {
+			offset += snprintf(&response[offset], size - offset, ",%d", socks[i].fd);
+		}
+	}
+
+	if (offset > size - sizeof("\r\n")) {
+		offset = size - sizeof("\r\n");
+	}
+	snprintf(&response[offset], size - offset, "\r\n");
+}
+
+static void set_apoll_all_sockets(void)
+{
+	poll_ctx.poll_all = true;
+	for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
+		if (socks[i].fd != INVALID_SOCKET) {
+			atomic_set(&socks[i].async_poll.update_events, poll_ctx.poll_events);
+		}
+	}
+}
+
+static int set_apoll_specific_sockets(struct at_parser *parser, uint32_t param_count)
+{
+	int handle;
+	int err;
+	bool socket_found;
+
+	/* Clear previously set values. */
+	poll_ctx.poll_all = false;
+	for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
+		socks[i].async_poll.specific = false;
+	}
+
+	/* Go through all the given handles. */
+	for (int i = 3; i < param_count; i++) {
+		err = at_parser_num_get(parser, i, &handle);
+		if (err) {
+			return err;
+		}
+		socket_found = false;
+
+		/* Match given handles to socket handles. */
+		for (int j = 0; j < SLM_MAX_SOCKET_COUNT; j++) {
+			if (socks[j].fd == handle) {
+				socks[j].async_poll.specific = true;
+				atomic_set(&socks[j].async_poll.update_events,
+					   poll_ctx.poll_events);
+				socket_found = true;
+				break;
+			}
+		}
+		if (!socket_found) {
+			LOG_ERR("Socket %d not found", handle);
+			return -EINVAL;
+		}
+	}
+
+	return 0;
+}
+
+SLM_AT_CMD_CUSTOM(xapoll, "AT#XAPOLL", handle_at_apoll);
+static int handle_at_apoll(enum at_parser_cmd_type cmd_type, struct at_parser *parser,
+			  uint32_t param_count)
+{
+	int err = -EINVAL;
+	int op;
+
+	enum async_poll_operation {
+		AT_ASYNCPOLL_STOP = 0,
+		AT_ASYNCPOLL_START = 1,
+	};
+
+	switch (cmd_type) {
+	case AT_PARSER_CMD_TYPE_SET:
+		if (at_parser_num_get(parser, 1, &op) ||
+		    (op != AT_ASYNCPOLL_START && op != AT_ASYNCPOLL_STOP)) {
+			return -EINVAL;
+		}
+		if (op == AT_ASYNCPOLL_STOP) {
+			return apoll_stop();
+		}
+
+		/* APOLL START */
+		err = at_parser_num_get(parser, 2, &poll_ctx.poll_events);
+		if (err) {
+			return err;
+		}
+		if (poll_ctx.poll_events & ~(ZSOCK_POLLIN | ZSOCK_POLLOUT)) {
+			LOG_ERR("Invalid poll events: 0x%02x", poll_ctx.poll_events);
+			return -EINVAL;
+		}
+		if (param_count == 3) {
+			set_apoll_all_sockets();
+		} else {
+			err = set_apoll_specific_sockets(parser, param_count);
+			if (err) {
+				return err;
+			}
+		}
+		err = apoll_start();
+		break;
+
+	case AT_PARSER_CMD_TYPE_READ:
+		char response[64];
+
+		format_apoll_read_response(response, sizeof(response));
+		err = slm_at_send_str(response);
+		break;
+
+	case AT_PARSER_CMD_TYPE_TEST:
+		rsp_send("\r\n#XAPOLL: (%d,%d),<0,%d,%d,%d>,<handle1>,<handle2>,...\r\n",
+			 AT_ASYNCPOLL_STOP, AT_ASYNCPOLL_START, ZSOCK_POLLIN, ZSOCK_POLLOUT,
+			 ZSOCK_POLLIN | ZSOCK_POLLOUT);
+		err = 0;
+		break;
+
+	default:
+		break;
+	}
+
+	return err;
+}
+
 /**@brief API to initialize Socket AT commands handler
  */
 int slm_at_socket_init(void)
@@ -1642,6 +2005,8 @@ int slm_at_socket_init(void)
 	}
 	socket_ranking = 1;
 
+	k_work_init(&poll_ctx.update_work, update_work_fn);
+
 	return 0;
 }
 
@@ -1649,6 +2014,8 @@ int slm_at_socket_init(void)
  */
 int slm_at_socket_uninit(void)
 {
+	apoll_stop();
+
 	(void)do_socket_close();
 	for (int i = 0; i < SLM_MAX_SOCKET_COUNT; i++) {
 		if (socks[i].fd_peer != INVALID_SOCKET) {

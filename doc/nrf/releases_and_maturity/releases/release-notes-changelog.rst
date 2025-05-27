@@ -241,6 +241,8 @@ nRF Machine Learning (Edge Impulse)
 Serial LTE modem
 ----------------
 
+* Added the ``AT#XAPOLL`` command to asynchronously poll sockets for data.
+
 * Updated:
 
   * The ``AT#XPPP`` command to support the CID parameter to specify the PDN connection used for PPP.
