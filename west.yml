@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: ba8fd23f0a7e96d53015259dd499f0afea2afa6d
+      revision: 9761288d1c61d676cf5e7501563c199db9007ae0
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -85,6 +85,7 @@ manifest:
           - cmsis
           - cmsis-dsp
           - cmsis-nn
+          - cmsis_6
           - edtt
           - fatfs
           - hal_nordic
@@ -148,7 +149,7 @@ manifest:
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: b23519df291d9c5475e13ee2b5ac700552a589a8
+      revision: bf3105bd6f49a758dee722e124e0dc0db9119afe
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
