@@ -800,6 +800,8 @@ static void radio_disable(void)
 		(void)fem_power_down();
 	}
 #endif /* CONFIG_FEM */
+
+	test_is_running = false;
 }
 
 static void mltpan_6(nrf_radio_mode_t mode)
@@ -1124,8 +1126,6 @@ void radio_test_cancel(enum radio_test_mode type)
 		} else {
 			cancel();
 		}
-
-		test_is_running = false;
 	}
 }
 
