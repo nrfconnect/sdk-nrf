@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "../config/partitions_nrf54l15dk_nrf54l15_cpuapp.overlay"
+
  / {
 	chosen {
 		nordic,rpc-uart = &uart21;
@@ -54,19 +56,4 @@
 	pinctrl-1 = <&uart21_sleep>;
 	pinctrl-names = "default", "sleep";
 	hw-flow-control;
-};
-
-/* restore full RRAM and SRAM space - by default some parts are dedicated to FLRP */
-&cpuapp_rram {
-	reg = <0x0 DT_SIZE_K(1524)>;
-};
-
-&cpuapp_sram {
-	reg = <0x20000000 DT_SIZE_K(256)>;
-	ranges = <0x0 0x20000000  0x40000>;
-};
-
-&rram_controller {
-	/delete-node/ cpuflpr_sram;
-	/delete-node/ cpuflpr_rram;
 };
