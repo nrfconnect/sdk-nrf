@@ -39,6 +39,8 @@
 #define DECT_PHY_CTRL_OP_RADIO_DEACTIVATED		21
 #define DECT_PHY_CTRL_OP_RADIO_MODE_CONFIGURED		22
 
+#define DECT_PHY_CTRL_OP_TEST_RF_TX_CW_CONTROL		23
+
 /******************************************************************************/
 
 int dect_phy_ctrl_msgq_non_data_op_add(uint16_t event_id);

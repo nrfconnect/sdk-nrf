@@ -105,6 +105,15 @@ struct dect_phy_settings_rssi_scan {
 	int32_t busy_threshold; /* if higher considered as busy */
 
 };
+struct dect_phy_settings_certification {
+	bool tx_cw_ctrl_on; /* Enable Continuous Wave (CW) TX */
+	uint16_t tx_cw_ctrl_channel; /* Channel/carrier for the CW TX */
+	int8_t tx_cw_ctrl_pwr_dbm; /* TX power for CW TX */
+
+	bool stf_cover_seq_enabled_rx; /* TODO */
+	bool stf_cover_seq_enabled_tx; /* TODO */
+};
+
 struct dect_phy_settings_common {
 	uint32_t network_id;
 	uint32_t transmitter_id;
@@ -120,6 +129,9 @@ struct dect_phy_settings {
 
 	struct dect_phy_settings_common_tx tx;
 	struct dect_phy_settings_common_rx rx;
+
+	/* Certification settings */
+	struct dect_phy_settings_certification cert;
 
 	/* Common HARQ settings */
 	struct dect_phy_settings_harq harq;
