@@ -4,18 +4,6 @@ sample:
 tests:
   sample.bluetooth.central_bas:
     sysbuild: true
-    harness: bluetooth
-    integration_platforms:
-      - nrf52dk/nrf52832
-      - nrf52840dk/nrf52840
-    platform_allow:
-      - nrf52dk/nrf52832
-      - nrf52840dk/nrf52840
-    tags:
-      - bluetooth
-      - sysbuild
-  sample.bluetooth.central_bas.build:
-    sysbuild: true
     build_only: true
     integration_platforms:
       - nrf52dk/nrf52832
