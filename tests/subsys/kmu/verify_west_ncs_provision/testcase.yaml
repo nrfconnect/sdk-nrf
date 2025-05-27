@@ -7,6 +7,7 @@ common:
   platform_allow:
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54lm20pdk/nrf54lm20a/cpuapp
+    - nrf54lv10dk/nrf54lv10a/cpuapp
 tests:
   kmu.west.provision.verify_keys_in_app:
     harness: pytest
