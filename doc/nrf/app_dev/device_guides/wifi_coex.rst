@@ -102,16 +102,16 @@ To enable Wi-Fi coexistence on the nRF70 Series device, complete the following s
    .. code-block::
 
       / {
-            nrf_radio_coex: nrf7002-coex {
-               status = "okay";
-               compatible = "nordic,nrf700x-coex";
-               req-gpios =     <&gpio0 24 (GPIO_ACTIVE_HIGH)>;
-               status0-gpios = <&gpio0 14 (GPIO_ACTIVE_HIGH)>;
-               grant-gpios =   <&gpio0 25 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
-         };
+            nrf_radio_coex: coex {
+                status = "okay";
+                compatible = "nordic,nrf7002-coex";
+                req-gpios = <&gpio0 28 GPIO_ACTIVE_HIGH>;
+                status0-gpios = <&gpio0 30 GPIO_ACTIVE_HIGH>;
+                grant-gpios = <&gpio0 24 (GPIO_PULL_DOWN | GPIO_ACTIVE_LOW)>;
+            };
       };
 
-#. Optionally, replace the node name ``nrf7002-coex`` with a custom one.
+#. Optionally, replace the node name ``coex`` with a custom one.
 #. Replace the pin numbers provided for each of the required properties:
 
    * ``req-gpios`` - GPIO characteristic of the device that controls the ``COEX_REQ`` signal of the nRF70 Series device.
@@ -119,9 +119,8 @@ To enable Wi-Fi coexistence on the nRF70 Series device, complete the following s
    * ``grant-gpios`` - GPIO characteristic of the device that controls the ``COEX_GRANT`` signal of the nRF70 Series device.
 
    .. note::
-      ``GPIO_PULL_UP`` is added to avoid a floating input pin and is required on some boards only.
-      If the target board is designed to avoid this signal being left floating, you can remove ``GPIO_PULL_UP`` to save power.
-
+      * ``GPIO_ACTIVE_LOW`` is added to ``grant-gpios`` to indicate that the grant signal is active when driven low.
+      * ``GPIO_PULL_DOWN`` is added to ``grant-gpios`` to ensure a known low state when the line is not actively driven, allowing SR to be granted when the nRF70 Series device is powered off.
 
    The ``phandle-array`` type is used, as it is commonly used in Zephyr's devicetree to describe GPIO signals.
    The first element ``&gpio0`` indicates the GPIO port (``port 0`` has been selected in the example shown).
