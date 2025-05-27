@@ -288,6 +288,8 @@ static int process_packet(const struct device *dev,
 {
 	const struct mspi_sqspi_config *dev_config = dev->config;
 	nrfx_qspi2_xfer_t qspi2_xfer = {
+		/* Use TX direction when there is no data to transfer. */
+		.dir = NRFX_QSPI2_XFER_DIR_TX,
 		.cmd = packet->cmd,
 		.address = packet->address,
 		.data_length = packet->num_bytes,
