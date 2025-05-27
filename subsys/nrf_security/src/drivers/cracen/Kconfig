@@ -37,6 +37,12 @@ config CRACEN_LIB_KMU
 	help
 	  The CRACEN KMU library.
 
+config CRACEN_IKG
+	bool "Enable CRACEN IKG"
+	default y
+	help
+	  Enable the Cracen Isolated Key Generator.
+
 config CRACEN_IKG_SEED_LOAD
 	bool "Load the CRACEN IKG seed"
 	depends on CRACEN_LIB_KMU
