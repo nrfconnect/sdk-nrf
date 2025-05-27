@@ -1208,6 +1208,12 @@ Poll sockets #XPOLL
 
 The ``#XPOLL`` command allows you to poll selected or all sockets that have already been opened.
 
+.. note::
+   .. deprecated:: v3.1.0
+      Support for the ``#XPOLL`` command is deprecated.
+      Use the ``#XAPOLL`` command instead.
+      ``#XPOLL`` command will be removed in the next major release of the |NCS|.
+
 Set command
 -----------
 
@@ -1239,7 +1245,7 @@ Response syntax
 * The ``<error>`` value is an error code when the poll fails.
 * The ``<handle>`` value is an integer. It is the handle of a socket that have events returned, so-called ``revents``.
 * The ``<revents>`` value is a hexadecimal string.
-  It represents the returned events, which could be a combination of ``ZSOCK_POLLIN``, ``ZSOCK_POLLERR``, ``ZSOCK_POLLHUP`` and ``ZSOCK_POLLNVAL``.
+  It represents the returned events, which could be a combination of ``POLLIN``, ``POLLERR``, ``POLLHUP`` and ``POLLNVAL``.
 
 Examples
 ~~~~~~~~
@@ -1268,6 +1274,197 @@ Test command
 ------------
 
 The test command is not supported.
+
+Asynchronous socket polling #XAPOLL
+===================================
+
+The ``#XAPOLL`` command allows you to receive URC notifications for events on all opened sockets or for selected sockets that have already been opened.
+
+Set command
+-----------
+
+The set command allows you to activate or deactivate asynchronous polling for sockets.
+
+Syntax
+~~~~~~
+
+::
+
+   #XAPOLL=<op>,<events>[,<handle1>[,<handle2> ...<handle8>]
+
+* The ``<op>`` value can accept one of the following values:
+
+  * ``0`` stop asynchronous polling.
+  * ``1`` start asynchronous polling.
+
+* The ``<events>`` value is an integer.
+  It represents the events to poll for, which can be a combination of ``POLLIN`` and ``POLLOUT``.
+  Permanent error and closure events (``POLLERR``, ``POLLHUP`` and ``POLLNVAL``) are polled by default.
+  The value can be set to one of the following:
+
+  * ``0`` Poll only the default events.
+  * ``1`` Read events (``POLLIN``) are polled, in addition to the default events.
+  * ``4`` Write events (``POLLOUT``) are polled, in addition to the default events.
+  * ``5`` Read and write events are polled, in addition to the default events.
+
+* The ``<handleN>`` value sets the socket handle to poll.
+  Handles are sent in the ``AT#XSOCKET`` response. Handles can also be obtained with ``AT#XSOCKET?`` or ``AT#XSOCKETSELECT?`` commands.
+  If no handles values are specified, all open sockets will be polled.
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+When the asynchronous socket pollign in enabled, SLM sends polling events as URC notifications.
+
+* For ``POLLIN`` events, the URC notification is sent only for the first incoming data on the socket.
+  ``AT#XRECV`` or ``AT#XRECVFROM`` command will re-enable the URC notification for the next incoming data.
+
+* For ``POLLOUT`` events, the URC notification is sent only for the first time when the socket is ready for writing.
+  ``AT#XSEND`` or ``AT#XSENDTO`` command will re-enable the URC notification for the next time when the socket is ready for writing.
+
+* For ``POLLERR``, ``POLLHUP`` and ``POLLNVAL`` events, the URC notification is sent only once for each socket.
+  No further URC notifications will be sent for the same socket.
+
+::
+
+   #XAPOLL: <handle>,<revents>
+
+* The ``<handle>`` value is an integer. It is the handle of the socket that has events.
+* The ``<revents>`` value is a hexadecimal.
+  It represents the returned events, which is a combination of ``POLLIN`` (0x01), ``POLLOUT`` (0x04), ``POLLERR`` (0x08), ``POLLHUP`` (0x10) and ``POLLNVAL`` (0x20).
+
+Example
+~~~~~~~
+
+::
+
+   AT#XAPOLL=1,1
+
+   OK
+
+   AT#XSOCKET=1,1,0
+
+   #XSOCKET: 0,1,6
+
+   OK
+
+   AT#XCONNECT="test.server.com",1234
+
+   #XCONNECT: 1
+   OK
+
+   AT#XSEND="echo"
+
+   #XSEND: 4
+
+   OK
+
+   #XAPOLL: 0,0x01
+
+   AT#XRECV=1
+
+   #XRECV: 4
+   echo
+   OK
+
+   AT#XSOCKET=0
+
+   #XSOCKET: 0,"closed"
+
+   OK
+
+   #XAPOLL: 0,0x20
+
+   AT#XAPOLL=0
+
+   OK
+
+Read command
+------------
+
+The read command allows you to check the status of asynchronous polling.
+
+Syntax
+~~~~~~
+
+::
+
+   #XAPOLL?
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XAPOLL: <running>,<events>,[<handle1> ...<handle8>]
+
+* The ``<running>`` value can be one of the following integers:
+
+  * ``0`` - Asynchronous polling is not running.
+  * ``1`` - Asynchronous polling is running.
+
+* The ``<events>`` value returns the events that are being polled for.
+  It can be one of the following hexadecimal values:
+
+  * ``0x00`` - Poll only default events.
+  * ``0x01`` - Poll read events (``POLLIN``) in addition to the default events.
+  * ``0x04`` - Poll write events (``POLLOUT``) in addition to the default events.
+  * ``0x05`` - Poll read and write events in addition to the default events.
+
+* The ``<handleN>`` values return the socket handles that are being polled.
+
+Example
+~~~~~~~~
+
+::
+
+   AT#XSOCKET=1,1,0
+
+
+   #XSOCKET: 0,1,6
+
+   OK
+   AT#XAPOLL=1,1
+
+
+   OK
+   AT#XAPOLL?
+
+
+   #XAPOLL: 1,0x01,0
+
+   OK
+
+Test command
+------------
+
+The test command provides information about the command and its parameters.
+
+Syntax
+~~~~~~
+
+::
+
+   AT#XAPOLL=?
+
+Response syntax
+~~~~~~~~~~~~~~~
+
+::
+
+   #XAPOLL: <stop/start>,<events>,<handle1>,<handle2>,...
+
+Example
+~~~~~~~~
+
+::
+
+   AT#XAPOLL=?
+
+
+   #XAPOLL: (0,1),<0,1,4,5>,<handle1>,<handle2>,...
+
+   OK
 
 Resolve hostname #XGETADDRINFO
 ==============================
