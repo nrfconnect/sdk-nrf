@@ -526,6 +526,19 @@ static int ext_adv_populate(uint8_t big_index, struct broadcast_source_ext_adv_d
 	ext_adv_buf[ext_adv_buf_cnt].data = ext_adv_data->uuid_buf->data;
 	ext_adv_buf_cnt++;
 
+	ext_adv_buf[ext_adv_buf_cnt].type = BT_DATA_NAME_COMPLETE;
+	if (strnlen(broadcast_param[big_index].adv_name,
+		    ARRAY_SIZE(broadcast_param[big_index].adv_name)) > 0) {
+		/* Use custom advertising name */
+		ext_adv_buf[ext_adv_buf_cnt].data = broadcast_param[big_index].adv_name;
+		ext_adv_buf[ext_adv_buf_cnt].data_len = strlen(broadcast_param[big_index].adv_name);
+	} else {
+		/* Use default device name */
+		ext_adv_buf[ext_adv_buf_cnt].data = CONFIG_BT_DEVICE_NAME;
+		ext_adv_buf[ext_adv_buf_cnt].data_len = strlen(CONFIG_BT_DEVICE_NAME);
+	}
+	ext_adv_buf_cnt++;
+
 	ret = bt_mgmt_manufacturer_uuid_populate(ext_adv_data->uuid_buf,
 						 CONFIG_BT_DEVICE_MANUFACTURER_ID);
 	if (ret) {
