@@ -139,15 +139,6 @@ struct sx_pk_config_ik {
  */
 int sx_pk_ik_derive_keys(struct sx_pk_config_ik *cfg);
 
-/** Exit IK mode.
- *
- * @param[in,out] cnx Connection structure obtained through sx_pk_open() at
- * startup
- *
- * @return Any \ref SX_PK_STATUS "status code"
- */
-int sx_pk_ik_mode_exit(struct sx_pk_cnx *cnx);
-
 struct sx_pk_config_rng {
 	/** Personalization string */
 	uint32_t *personalization;
