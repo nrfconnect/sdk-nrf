@@ -43,7 +43,8 @@ static void audio_frame_add(struct net_buf *audio_frame, struct net_buf *audio_f
 		net_buf_add_mem(audio_frame, audio_frame_rx->data, audio_frame_rx->len);
 	} else {
 		/* Increment len to account for bad_data */
-		net_buf_add(audio_frame, meta->bytes_per_location * metadata_num_ch_get(meta));
+		net_buf_add(audio_frame, meta->bytes_per_location *
+						 device_location_to_chan_num(meta->locations));
 	}
 }
 
@@ -157,8 +158,10 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 
 	/* Check if we have received all frames, send if we have */
 check_send:
+	struct audio_metadata *existing_meta = net_buf_user_data(audio_frame);
+
 	if (le_audio_concurrent_sync_num_get() ==
-	    metadata_num_ch_get(net_buf_user_data(audio_frame))) {
+	    device_location_to_chan_num(existing_meta->locations)) {
 		/* We have received all frames we are waiting for, pass data on to
 		 * the next module
 		 */
