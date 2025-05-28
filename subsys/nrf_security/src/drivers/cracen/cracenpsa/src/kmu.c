@@ -864,10 +864,10 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 	/* Provisioning data for encrypted keys:
 	 *     - Nonce
 	 *     - Key material (first 128 bits)
-	 *     - Key material (optional for keys > 128 bits.)
+	 *     - Key material (optional for keys > 128 bits. Up to 512 bits.)
 	 *     - Tag
 	 */
-	uint8_t encrypted_workmem[CRACEN_KMU_SLOT_KEY_SIZE * 4] = {};
+	uint8_t encrypted_workmem[CRACEN_KMU_SLOT_KEY_SIZE * 6] = {};
 #endif
 	psa_status_t status = clean_up_unfinished_provisioning();
 

@@ -236,7 +236,8 @@ SUIT also has the following options in the sysbuild configuration:
      The envelope is used directly as a DFU update file by the DFU tools.
 
 .. note::
-   The ``SB_CONFIG_SUIT_ENVELOPE_SIGN`` is disabled, so the generated SUIT envelope is not signed.
+   The nRF Desktop application configurations do not enable signing of SUIT envelopes.
+   See the :ref:`ug_nrf54h20_suit_signing` documentation for details on how to sign the envelopes.
 
 By default, the SUIT generator sets the values inside the manifest based on the content of the :file:`VERSION` file, used for :ref:`zephyr:app-version-details` in Zephyr and the |NCS|:
 

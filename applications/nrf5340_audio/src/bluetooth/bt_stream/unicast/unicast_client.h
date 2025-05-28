@@ -114,11 +114,11 @@ int unicast_client_stop(uint8_t cig_index);
  * @brief	Send encoded audio using the Bluetooth LE Audio unicast.
  *
  * @param[in]	cig_index	Index of the Connected Isochronous Group (CIG) to send to.
- * @param[in]	enc_audio	Encoded audio struct.
+ * @param[in]	audio_frame	Pointer to the audio to send.
  *
  * @return	0 for success, error otherwise.
  */
-int unicast_client_send(uint8_t cig_index, struct le_audio_encoded_audio enc_audio);
+int unicast_client_send(uint8_t cig_index, struct audio_data const *const audio_frame);
 
 /**
  * @brief       Disable the Bluetooth LE Audio unicast (CIS) client.

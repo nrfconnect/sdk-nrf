@@ -40,7 +40,7 @@ If you want to program your Nordic Thingy:53 with other precompiled firmware, yo
 
 * The `Nordic Thingy:53 Downloads`_ page (the Precompiled application firmware section).
   The package contains a :file:`CONTENTS.txt` file listing the locations and names of different firmware images.
-* The `nRF Programmer`_ mobile application (available for Android and iOS).
+* The `nRF Programmer mobile app`_ (available for Android and iOS).
   The application lists the available precompiled firmware images when you open it.
 
 .. _thingy53_gs_updating_ble:
@@ -102,11 +102,11 @@ You can update the precompiled firmware using any of the following methods:
 
    .. tab:: Programmer app (USB)
 
-      See the `Programming Nordic Thingy:53`_ in the tool documentation for detailed steps.
+      See the `Programming Nordic Thingy:53 <prog_thingy_53>`_ in the tool documentation for detailed steps.
 
    .. tab:: Programmer app (external debug probe)
 
-      See the `Programming Nordic Thingy:53`_ in the tool documentation for detailed steps.
+      See the `Programming Nordic Thingy:53 <prog_thingy_53>`_ in the tool documentation for detailed steps.
 
    .. tab:: nRF Util
 

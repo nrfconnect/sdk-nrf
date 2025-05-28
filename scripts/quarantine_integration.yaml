@@ -659,6 +659,18 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
+    - sample.find_my.switchable_networks.release.ui_switch
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - sample.find_my.switchable_networks.debug.ui_switch
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
     - application.find_my.thingy.release
   platforms:
     - thingy53/nrf5340/cpuapp/ns

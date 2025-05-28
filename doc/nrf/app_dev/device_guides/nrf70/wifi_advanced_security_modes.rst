@@ -33,7 +33,7 @@ Prerequisites
 
 To use this mode, ensure that the following prerequisites are met:
 
-* RADIUS server in addition to self-signed local certificate(s) and private key for both server-side and client-side (for EAP-TLS).
+* RADIUS server in addition to self-signed local certificates and private key for both server-side and client-side (for EAP-TLS).
 * Wi-Fi Access Point (AP) that supports Enterprise mode.
 * nRF70 Series device with certificates for Enterprise mode available in the :file:`zephyr/samples/net/wifi/test_certs` folder.
 
@@ -120,7 +120,7 @@ To  build the hostapd executable, complete the following steps:
       # RADIUS clients configuration
       radius_server_clients=hostapd.radius_clients
       radius_server_auth_port=1812
-      # Enable eap_server when we use hostapd integrated EAP server instead of external RADIUS authentication
+      # Enable eap_server when using hostapd integrated EAP server instead of external RADIUS authentication
       eap_server=1
       # EAP server user database
       eap_user_file=hostapd.eap_user_tls

@@ -27,7 +27,7 @@ Secure and Non-Secure Processing environments
 
 The key TF-M concept is the :ref:`security by separation <ug_tfm_security_by_separation>` into the Secure Processing Environment (SPE, Trusted world) and Non-Secure Processing Environments (NSPE, Non-Trusted world).
 
-* The Main User Application, Libraries (Including Network Stack, middleware, and so on), and the Zephyr RTOS seen under the Non-Secure Processing Environment (NSPE) represent the functional application firmware as it is normally known.
+* The Main User Application, Libraries (including the network stack and middleware), and the Zephyr RTOS seen under the Non-Secure Processing Environment (NSPE) represent the functional application firmware as it is normally known.
 * Trusted Firmware-M and bootloader components seen under the Secure Processing Environment (SPE) are isolated from the Non-Secure Processing Environment and implement security-critical functionality.
 
 Multiple levels of isolation can be achieved between the environments through a combination of `ARM TrustZone`_ and other hardware memory protection features.

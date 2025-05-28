@@ -9,16 +9,42 @@ menuconfig MODEM_SLM
 	depends on UART_ASYNC_API
 	depends on RING_BUFFER
 	select EXPERIMENTAL
+	select UART_USE_RUNTIME_CONFIGURE
 	bool "Modem SLM Library for MCU [EXPERIMENTAL]"
 
 if MODEM_SLM
 
-config MODEM_SLM_DMA_MAXLEN
-	int "Buffer size for UART RX EasyDMA"
-	range 256 2048
-	default 1024
+#
+# UART buffers
+#
+config MODEM_SLM_UART_RX_BUF_COUNT
+	int "Receive buffers for UART"
+	range 2 4
+	default 3
 	help
-	  The maximum number of bytes in receive buffer.
+	  Number of buffers for receiving (RX) UART traffic.
+	  If the buffers are full, UART RX will be disabled until the buffers are processed.
+
+config MODEM_SLM_UART_RX_BUF_SIZE
+	int "Receive buffer size for UART"
+	range 16 4096
+	default 256
+	help
+	  Amount of received (RX), unprocessed, UART traffic that can be held by a single buffer.
+
+config MODEM_SLM_UART_TX_BUF_SIZE
+	int "Send buffer size for UART"
+	range 16 4096
+	default 256
+	help
+	  Amount of UART traffic waiting to be sent (TX), which can be held.
+	  If the buffers are full, all messages will be sent synchronously.
+
+config MODEM_SLM_AT_CMD_RESP_MAX_SIZE
+	int "Maximum size of AT command response from SLM"
+	default 2100
+	help
+	  The maximum size of the AT command response.
 
 config MODEM_SLM_SHELL
 	bool "SLM Shell"

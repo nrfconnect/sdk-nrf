@@ -97,11 +97,24 @@ void otLinkGetFactoryAssignedIeeeEui64(otInstance *aInstance, otExtAddress *aEui
 
 	ARG_UNUSED(aInstance);
 
-	if (aEui64 == NULL) {
-		return;
-	}
+	__ASSERT_NO_MSG(aEui64 != NULL);
 
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_LINK_GET_FACTORY_ASSIGNED_EUI64, &ctx,
 				ot_rpc_decode_eui64, aEui64->m8);
+}
+
+otError ot_rpc_set_factory_assigned_ieee_eui64(const otExtAddress *eui64)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	otError error;
+
+	__ASSERT_NO_MSG(eui64 != NULL);
+
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + OT_EXT_ADDRESS_SIZE);
+	nrf_rpc_encode_buffer(&ctx, &eui64->m8, OT_EXT_ADDRESS_SIZE);
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_LINK_SET_FACTORY_ASSIGNED_EUI64, &ctx,
+				ot_rpc_decode_error, &error);
+
+	return error;
 }

@@ -4,9 +4,18 @@
 nRF Security
 ############
 
-The nRF Security subsystem (nrf_security) provides an integration between `Mbed TLS`_ and software libraries that provide hardware-accelerated cryptographic functionality on selected Nordic Semiconductor SoCs as well as alternate software-based implementations of the Mbed TLS APIs.
-These libraries include the binary versions of accelerated cryptographic libraries listed in :ref:`nrfxlib:crypto`, and the open source Mbed TLS implementation in the |NCS| located in `sdk-mbedtls`_.
-The subsystem includes a PSA driver abstraction layer to enable both hardware-accelerated and software-based implementation at the same time.
+The nRF Security subsystem (``nrf_security``) integrates cryptographic services for SoCs from Nordic Semiconductor.
+
+The nRF Security subsystem provides:
+
+* A unified interface to both :ref:`PSA Crypto APIs <ug_psa_certified_api_overview_crypto>` and `Mbed TLS`_ APIs
+* Hardware acceleration through dedicated cryptographic libraries on selected SoCs (``cc3xx``, CRACEN), with binary versions of the libraries listed in :ref:`nrfxlib:crypto`
+* Software fallbacks when hardware acceleration is unavailable (``nrf_oberon``)
+* A PSA driver abstraction layer enabling simultaneous use of hardware and software implementations
+* Compatibility with the specific Mbed TLS version included in the |NCS| through `sdk-mbedtls`_
+* Integration logic for the PSA Oberon core (`sdk-oberon-psa-crypto`_)
+* Source code for the CRACEN driver used for the :ref:`ug_nrf54l_cryptography`
+* Integration with the |NCS| build system
 
 The nRF Security subsystem can interface with the :ref:`nrf_cc3xx_mbedcrypto_readme`.
 This library conforms to the specific revision of Mbed TLS that is supplied through the |NCS|.
@@ -15,8 +24,8 @@ This library conforms to the specific revision of Mbed TLS that is supplied thro
    :maxdepth: 2
    :caption: Subpages:
 
-   doc/configuration
    doc/drivers
+   doc/configuration
    doc/driver_config
-   doc/mbed_tls_header
    doc/backend_config
+   doc/mbed_tls_header

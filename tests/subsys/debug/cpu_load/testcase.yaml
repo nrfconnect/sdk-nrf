@@ -1,5 +1,5 @@
 tests:
-  debug.cpu_load:
+  debug.cpu_load.nrf:
     sysbuild: true
     platform_allow:
       - nrf52840dk/nrf52840
@@ -25,4 +25,4 @@ tests:
       - sysbuild
       - ci_tests_subsys_debug
     extra_configs:
-      - CONFIG_CPU_LOAD_USE_SHARED_DPPI_CHANNELS=y
+      - CONFIG_NRF_CPU_LOAD_USE_SHARED_DPPI_CHANNELS=y

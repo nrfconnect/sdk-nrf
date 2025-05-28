@@ -121,27 +121,13 @@ Complete the following steps:
        In versions earlier than 5.44, the HID device attached by BlueZ could obtain wrong VID and PID values (ignoring values in Device Information Service), which would stop HIDAPI from opening the device.
        In versions earlier than 5.56, the HID device attached by BlueZ might provide incomplete HID feature report on get operation.
 
-#. If you do not want to use the root access to run the Python script, copy the provided udev rule from the :file:`99-hid.rules` file to the :file:`/etc/udev/rules.d` and reconnect the device.
-#. If you want to connect to a device with a different Vendor or Product ID other than the one specified in the file, use one of the following options:
+#. If you do not want to use the root access to run the Python script, copy the provided udev rule from the :file:`60-hid.rules` file to the :file:`/etc/udev/rules.d` and reconnect the device.
+#. If you want to connect to a device with Vendor ID other than the one specified in the file (other than Nordic Semiconductor's Vendor ID of ``1915``), use one of the following options:
 
    * Run the script with the root permission.
-   * Complete the following steps to run the script without root permission:
-
-     a. Add a new entry to the :file:`99-hid.rules` file with your Vendor and Product ID.
-     #. Copy the provided udev rule from the :file:`99-hid.rules` file to the :file:`/etc/udev/rules.d`.
-     #. Reconnect the device.
-
-   Vendor and Product ID can be specified in the configuration file related to the nRF Desktop application.
-   The following examples shows the entry to add to the :file:`99-hid.rules` file to add device connected with USB and Bluetooth:
-
-   .. parsed-literal::
-      :class: highlight
-
-      Device connected using USB:
-      ATTRS{idVendor}=="my Vendor ID", ATTRS{idProduct}=="my Product ID", MODE="0666", SYMLINK+="nrf-desktop-my-dev-name"
-
-      Device connected using Bluetooth:
-      ATTRS{name}=="Name of my Bluetooth device ", SUBSYSTEMS=="input", MODE="0666", SYMLINK+="nrf-desktop-my-dev-name"
+   * Add entries for your Vendor ID (and optionally Product ID) to the :file:`60-hid.rules` file.
+     Use the existing entries as a base.
+     Make sure to reconnect the HID device after updating the file.
 
 #. If you want to display an LED stream based on sound data, you must also install the additional requirements using the following commands:
 

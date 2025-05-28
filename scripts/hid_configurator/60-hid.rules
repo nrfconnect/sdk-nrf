@@ -1,0 +1,24 @@
+# udev rules that allow using configuration channel for nRF Desktop without
+# root permissions on Linux. Adapted from HIDAPI project.
+
+# To apply the rule, drop this file into `/etc/udev/rules.d` and unplug
+# and replug your device. These are the only steps necessary to see the new
+# permissions. You do not need to restart udev.
+
+# Rules add the "uaccess" tag to allow the physically present users to access the hidraw/usb interfaces
+# with Nordic Semiconductor's Vendor ID (1915).
+
+# HIDAPI - hidraw implementation
+KERNEL=="hidraw*", ATTRS{idVendor}=="1915", TAG+="uaccess"
+# HID devices connected directly over Bluetooth LE do not report the "idVendor" attribute.
+# Match against the Vendor ID included in the kernel names of the device as a workaround.
+KERNEL=="hidraw*", KERNELS=="????:1915:????.????", TAG+="uaccess"
+
+# HIDAPI - libusb implementation
+SUBSYSTEM=="usb", ATTRS{idVendor}=="1915", TAG+="uaccess"
+
+# Commented out examples of rules matching specified combination of Vendor and Product ID.
+# Using Product ID of nRF Desktop gaming mouse (52de).
+#KERNEL=="hidraw*", ATTRS{idVendor}=="1915", ATTRS{idProduct}=="52de", TAG+="uaccess"
+#KERNEL=="hidraw*", KERNELS=="????:1915:52DE.????", TAG+="uaccess"
+#SUBSYSTEM=="usb", ATTRS{idVendor}=="1915", ATTRS{idProduct}=="52de", TAG+="uaccess"

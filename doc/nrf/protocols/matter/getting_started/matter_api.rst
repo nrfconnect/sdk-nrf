@@ -168,7 +168,7 @@ Combining both aforementioned nRF Connect Matter APIs, you can develop an applic
    {
          switch (event->Type) {
          case DeviceEventType::kCommissioningComplete:
-             /* Custom code, e.g. control LED */
+             /* Custom code, for example, control LED */
              break;
          }
    }
@@ -184,7 +184,7 @@ Combining both aforementioned nRF Connect Matter APIs, you can develop an applic
          /* Register custom Matter event handler. */
          ReturnErrorOnFailure(Nrf::Matter::RegisterEventHandler(CustomMatterEventHandler, 0));
 
-         /* Application specific initialization, e.g. hardware initialization.
+         /* Application specific initialization, for example, hardware initialization.
 
             ...
          */

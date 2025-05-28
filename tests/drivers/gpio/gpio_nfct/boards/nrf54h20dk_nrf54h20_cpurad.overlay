@@ -21,7 +21,9 @@
 };
 
 &nfct {
-	status = "okay";  /* APP is the default owner of NFCT */
+	compatible = "nordic,nrf-nfct-v2";
+	status = "reserved";
+	nfct-pins-as-gpios;
 };
 
 &gpiote130 {

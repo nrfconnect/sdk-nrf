@@ -94,9 +94,7 @@ There are several ways to create the flash IPUC driver instance, depending on th
 * :c:func:`flash_cache_ipuc_create`: creates a flash IPUC driver, based on the minimum (absolute) address.
   This API is designed to create DFU cache partitions, allocated on top of IPUC memory.
   It can create only read-write driver instances.
-  The minimum address requirement is used to make sure that firmware updates, that have
-  limitations on the update candidate address (i.e. the Nordic SDFW update) can be safely triggered
-  from any address within the cache partition.
+  The minimum address requirement is used to make sure that firmware updates, that have limitations on the update candidate address (the Nordic SDFW update) can be safely triggered from any address within the cache partition.
 
   .. figure:: images/flash_ipuc/flash_cache_ipuc_create.png
      :alt: Flash IPUC: :c:func:`flash_cache_ipuc_create` constructor
@@ -105,8 +103,7 @@ There are several ways to create the flash IPUC driver instance, depending on th
 
   These drivers can be released using the :c:func:`flash_ipuc_release` API.
 
-* :c:func:`flash_cache_ipuc_check`: checks if it is possible to create a flash IPUC driver,
-  based on the minimum (absolute) address.
+* :c:func:`flash_cache_ipuc_check`: checks if it is possible to create a flash IPUC driver, based on the minimum (absolute) address.
   This API requires a spare flash IPUC driver instance.
 
   .. figure:: images/flash_ipuc/flash_cache_ipuc_check.png

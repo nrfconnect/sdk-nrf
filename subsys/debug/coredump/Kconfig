@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION
+menuconfig DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION
 	bool "Core dump backend using nRF internal flash/RRAM partition [EXPERIMENTAL]"
 	depends on DEBUG_COREDUMP_BACKEND_OTHER
 	depends on DT_HAS_NORDIC_NRF51_FLASH_CONTROLLER_ENABLED || \
@@ -23,3 +23,11 @@ config DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION
 	  nrfx library directly. This minimizes the dependencies needed to write
 	  the core dump and bypasses synchronization primitives incorporated
 	  into the Zephyr flash drivers.
+
+if DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION
+
+config DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION_WRITE_BUF_SIZE
+	int "Write buffer size"
+	default 128
+
+endif # DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION

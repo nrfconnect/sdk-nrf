@@ -1323,7 +1323,7 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
          226 Transfer complete.
          OK
 
-   #. Navigate to the :file:`upload` folder, switch to binary transfer mode, and create a binary file with the content "DEADBEEF".
+   #. Navigate to the :file:`upload` folder, switch to binary transfer mode, and create a binary file with the content ``DEADBEEF``.
 
       .. parsed-literal::
          :class: highlight
@@ -1342,7 +1342,7 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
          226 Transfer complete.
          OK
 
-   #. Switch to ASCII transfer mode and create a text file with the content "TEXTDATA".
+   #. Switch to ASCII transfer mode and create a text file with the content ``TEXTDATA``.
 
       .. parsed-literal::
          :class: highlight
@@ -1366,7 +1366,7 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
          221 Goodbye.
          OK
 
-#. Test an FTP connection to "ftp.dlptest.com".
+#. Test an FTP connection to ``ftp.dlptest.com``.
 
    This server does not support anonymous login.
    Go to `DLPTest.com`_ to get the latest login information.
@@ -1441,7 +1441,7 @@ Complete the following steps to test the functionality provided by the :ref:`SLM
          250 OK. Current directory is /newfolder
          OK
 
-   #. Switch to binary transfer mode and create a binary file with the content "DEADBEEF".
+   #. Switch to binary transfer mode and create a binary file with the content ``DEADBEEF``.
 
       .. parsed-literal::
          :class: highlight

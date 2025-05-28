@@ -194,6 +194,14 @@ config SLM_CMUX_UART_BUFFER_SIZE
 	  Size of the buffer for data received in CMUX mode.
 	  Same buffer size is used for both RX and TX.
 
+config SLM_CMUX_NOTIFICATION_TX_BUFFER_SIZE
+	int "TX buffer size for unsolicited notifications in CMUX"
+	depends on SLM_CMUX
+	default 256
+	help
+	  Unsolicited notifications need to be buffered with CMUX.
+	  Notifications longer than this size will get truncated.
+
 if SLM_CMUX && SLM_PPP
 
 config SLM_CMUX_AUTOMATIC_FALLBACK_ON_PPP_STOPPAGE

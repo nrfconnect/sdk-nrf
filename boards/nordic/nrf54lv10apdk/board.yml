@@ -1,6 +1,0 @@
-board:
-  name: nrf54lv10apdk
-  full_name: nRF54LV10A PDK
-  vendor: nordic
-  socs:
-  - name: nrf54lv10a

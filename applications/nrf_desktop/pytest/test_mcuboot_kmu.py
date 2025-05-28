@@ -39,9 +39,8 @@ def _mcuboot_key_path(dut: DeviceAdapter):
 
 
 def mcuboot_provision(dut: DeviceAdapter):
-    soc = dut.device_config.platform.split("/")[1]
     key_path = _mcuboot_key_path(dut)
-    command = ["west", "ncs-provision", "upload", "-s", soc, "-k", key_path]
+    command = ["west", "ncs-provision", "upload", "-k", key_path]
     if dut.device_config.id:
         command.extend(["--dev-id", dut.device_config.id])
 

@@ -11,11 +11,18 @@
 	};
 };
 
+/* Shell UART */
+&uart0 {
+	current-speed = <115200>;
+	status = "okay";
+};
+
+/* SLM Shell <-> SLM UART */
 &uart2 {
 	compatible = "nordic,nrf-uarte";
 	current-speed = <115200>;
 	status = "okay";
-
+	hw-flow-control;
 	pinctrl-0 = <&uart2_default>;
 	pinctrl-1 = <&uart2_sleep>;
 	pinctrl-names = "default", "sleep";
@@ -24,10 +31,12 @@
 &pinctrl {
 	uart2_default: uart2_default {
 		group1 {
-			psels = <NRF_PSEL(UART_TX, 1, 4)>;
+			psels = <NRF_PSEL(UART_TX, 1, 4)>,
+				<NRF_PSEL(UART_RTS, 1, 6)>;
 		};
 		group2 {
-			psels = <NRF_PSEL(UART_RX, 1, 5)>;
+			psels = <NRF_PSEL(UART_RX, 1, 5)>,
+				<NRF_PSEL(UART_CTS, 1, 7)>;
 			bias-pull-up;
 		};
 	};
@@ -35,7 +44,9 @@
 	uart2_sleep: uart2_sleep {
 		group1 {
 			psels = <NRF_PSEL(UART_TX, 1, 4)>,
-				<NRF_PSEL(UART_RX, 1, 5)>;
+				<NRF_PSEL(UART_RX, 1, 5)>,
+				<NRF_PSEL(UART_RTS, 1, 6)>,
+				<NRF_PSEL(UART_CTS, 1, 7)>;
 			low-power-enable;
 		};
 	};

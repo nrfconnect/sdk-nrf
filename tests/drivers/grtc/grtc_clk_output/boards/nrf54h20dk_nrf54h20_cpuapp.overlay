@@ -1,0 +1,30 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Required loopback between:
+ * GPIO P0.3 and P0.1 (GRTC 32k; defined @board; no other option)
+ */
+
+/ {
+	zephyr,user {
+		gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>;  /* Connect to dedicated GRTC output */
+	};
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpiote130 {
+	status = "okay";
+};
+
+&grtc {
+	pinctrl-0 = <&grtc_default>;
+	pinctrl-1 = <&grtc_sleep>;
+	pinctrl-names = "default", "sleep";
+	clkout-32k;
+};

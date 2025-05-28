@@ -49,7 +49,7 @@ This is the notification syntax when an SMS message is received:
 
   * The ``<datetime>`` value is a string.
     It represents the time when the SMS is received.
-    It has a format of "YY-MM-DD HH:MM:SS".
+    It has a format of ``YY-MM-DD HH:MM:SS``.
   * The ``<number>`` value is a string.
     It represents the SMS sender's phone number.
   * The ``<text>`` value is a string.

@@ -13,6 +13,7 @@
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/shell/shell.h>
 #include <nrfx_clock.h>
+#include <audio_defines.h>
 
 #include "presets.h"
 #include "broadcast_source.h"
@@ -20,14 +21,15 @@
 #include "macros_common.h"
 #include "bt_mgmt.h"
 #include "lc3_streamer.h"
-
-#if CONFIG_BOARD_NRF5340_AUDIO_DK
+#include "led_assignments.h"
 #include "led.h"
 #include "sd_card.h"
-#endif /* CONFIG_BOARD_NRF5340_AUDIO_DK */
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
+
+static struct zbus_observer_node zbus_obs_node_mgmt;
+static struct zbus_observer_node zbus_obs_node_audio;
 
 ZBUS_CHAN_DECLARE(bt_mgmt_chan);
 ZBUS_CHAN_DECLARE(sdu_ref_chan);
@@ -40,6 +42,7 @@ static bool sd_card_present = true;
 static struct k_thread le_audio_msg_sub_thread_data;
 static k_tid_t le_audio_msg_sub_thread_id;
 K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE);
+NET_BUF_POOL_FIXED_DEFINE(ble_tx_pool, CONFIG_BT_ISO_TX_BUF_COUNT, CONFIG_BT_ISO_TX_MTU, 0, NULL);
 
 static void lecture_set(const struct shell *shell);
 static int big_enable(const struct shell *shell, uint8_t big_index);
@@ -212,27 +215,45 @@ static void subgroup_send(struct stream_index stream_idx)
 {
 	int ret;
 	static int prev_ret;
+	struct audio_data audio_frame = {0};
 
 	uint8_t num_bis = subgroups[stream_idx.lvl1][stream_idx.lvl2].num_bises;
 	size_t frame_size = lc3_stream_infos[stream_idx.lvl1][stream_idx.lvl2].frame_size;
-	uint8_t frame_buffer[num_bis][frame_size];
+	struct net_buf *audio_buf = net_buf_alloc(&ble_tx_pool, K_NO_WAIT);
+
+	if (audio_buf == NULL) {
+		LOG_ERR("Out of RX buffers");
+		return;
+	}
 
 	for (int i = 0; i < num_bis; i++) {
 		uint8_t *frame_ptr =
 			lc3_stream_infos[stream_idx.lvl1][stream_idx.lvl2].frame_ptrs[i];
 
-		if (frame_ptr == NULL) {
-			memset(frame_buffer[i], 0, frame_size);
-		} else {
-			memcpy(frame_buffer[i], frame_ptr, frame_size);
-		}
+		net_buf_add_mem(audio_buf, frame_ptr, frame_size);
+
+		audio_frame.meta.locations |=
+			(uint32_t)subgroups[stream_idx.lvl1][stream_idx.lvl2].location[i];
 	}
 
-	struct le_audio_encoded_audio enc_audio = {
-		.data = (uint8_t *)frame_buffer, .size = frame_size * num_bis, .num_ch = num_bis};
+	audio_frame.data = audio_buf;
+	audio_frame.data_size = frame_size * num_bis;
+	audio_frame.meta.data_coding = LC3;
 
-	ret = broadcast_source_send(stream_idx.lvl1, stream_idx.lvl2, enc_audio);
+	struct bt_audio_codec_cfg *codec_cfg =
+		&subgroups[stream_idx.lvl1][stream_idx.lvl2].group_lc3_preset.codec_cfg;
 
+	ret = le_audio_freq_hz_get(codec_cfg, &audio_frame.meta.sample_rate_hz);
+	if (ret) {
+		LOG_ERR("Failed to get frequency: %d", ret);
+	}
+
+	ret = le_audio_duration_us_get(codec_cfg, &audio_frame.meta.data_len_us);
+	if (ret) {
+		LOG_ERR("Failed to get frame duration: %d", ret);
+	}
+
+	ret = broadcast_source_send(stream_idx.lvl1, stream_idx.lvl2, &audio_frame);
 	if (ret != 0 && ret != prev_ret) {
 		if (ret == -ECANCELED) {
 			LOG_WRN("Sending cancelled");
@@ -240,6 +261,8 @@ static void subgroup_send(struct stream_index stream_idx)
 			LOG_WRN("broadcast_source_send returned: %d", ret);
 		}
 	}
+
+	net_buf_unref(audio_buf);
 
 	prev_ret = ret;
 }
@@ -461,13 +484,15 @@ static int zbus_link_producers_observers(void)
 		return -ENOTSUP;
 	}
 
-	ret = zbus_chan_add_obs(&bt_mgmt_chan, &bt_mgmt_evt_listen, ZBUS_ADD_OBS_TIMEOUT_MS);
+	ret = zbus_chan_add_obs(&bt_mgmt_chan, &bt_mgmt_evt_listen, &zbus_obs_node_mgmt,
+				ZBUS_ADD_OBS_TIMEOUT_MS);
 	if (ret) {
 		LOG_ERR("Failed to add bt_mgmt listener");
 		return ret;
 	}
 
-	ret = zbus_chan_add_obs(&le_audio_chan, &le_audio_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
+	ret = zbus_chan_add_obs(&le_audio_chan, &le_audio_evt_sub, &zbus_obs_node_audio,
+				ZBUS_ADD_OBS_TIMEOUT_MS);
 	if (ret) {
 		LOG_ERR("Failed to add le_audio sub");
 		return ret;
@@ -645,7 +670,7 @@ static uint32_t num_files_added;
 
 static int sd_card_toc_gen(void)
 {
-#if CONFIG_BOARD_NRF5340_AUDIO_DK
+
 	/* Traverse SD tree */
 	int ret;
 
@@ -658,7 +683,6 @@ static int sd_card_toc_gen(void)
 	num_files_added = ret;
 
 	LOG_INF("Number of *.lc3 files on SD card: %d", num_files_added);
-#endif /* CONFIG_BOARD_NRF5340_AUDIO_DK */
 
 	return 0;
 }
@@ -673,13 +697,11 @@ void nrf_auraconfig_main(void)
 	ret -= NRFX_ERROR_BASE_NUM;
 	ERR_CHK_MSG(ret, "Failed to set HFCLK divider");
 
-#if CONFIG_BOARD_NRF5340_AUDIO_DK
 	ret = led_init();
 	ERR_CHK_MSG(ret, "Failed to initialize LED module");
 
-	ret = led_on(LED_APP_RGB, LED_COLOR_GREEN);
+	ret = led_on(LED_AUDIO_APP_STATUS, LED_COLOR_GREEN);
 	ERR_CHK(ret);
-#endif /* CONFIG_BOARD_NRF5340_AUDIO_DK */
 
 	ret = bt_mgmt_init();
 	ERR_CHK(ret);
@@ -1102,9 +1124,7 @@ static int cmd_start(const struct shell *shell, size_t argc, char **argv)
 		}
 	}
 
-#if CONFIG_BOARD_NRF5340_AUDIO_DK
-	led_blink(LED_APP_RGB, LED_COLOR_GREEN);
-#endif /* CONFIG_BOARD_NRF5340_AUDIO_DK */
+	led_blink(LED_AUDIO_APP_STATUS, LED_COLOR_GREEN);
 
 	return 0;
 }
@@ -1184,9 +1204,7 @@ static int cmd_stop(const struct shell *shell, size_t argc, char **argv)
 		}
 	}
 
-#if CONFIG_BOARD_NRF5340_AUDIO_DK
-	led_on(LED_APP_RGB, LED_COLOR_GREEN);
-#endif /* CONFIG_BOARD_NRF5340_AUDIO_DK */
+	led_on(LED_AUDIO_APP_STATUS, LED_COLOR_GREEN);
 
 	return 0;
 }
@@ -1685,7 +1703,7 @@ static int cmd_program_info(const struct shell *shell, size_t argc, char **argv)
 
 static int cmd_file_list(const struct shell *shell, size_t argc, char **argv)
 {
-#if CONFIG_BOARD_NRF5340_AUDIO_DK
+
 	int ret;
 	char buf[FILE_LIST_BUF_SIZE];
 	size_t buf_size = FILE_LIST_BUF_SIZE;
@@ -1712,7 +1730,6 @@ static int cmd_file_list(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	shell_print(shell, "%s", buf);
-#endif /* CONFIG_BOARD_NRF5340_AUDIO_DK */
 
 	return 0;
 }

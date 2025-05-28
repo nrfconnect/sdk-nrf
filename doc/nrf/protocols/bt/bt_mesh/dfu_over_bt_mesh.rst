@@ -145,18 +145,18 @@ When the Firmware Distribution Server starts applying the transferred image, the
 After applying the new firmware, the Firmware Distribution Server will immediately request firmware ID of the currently running firmware on the Target nodes to confirm that the new firmware has been applied successfully.
 Depending on the :c:enum:`bt_mesh_dfu_effect` value received from the Target nodes after the DFU transfer is started, the following cases are possible:
 
-* If the image effect for a particular Target node is :c:enum:`BT_MESH_DFU_EFFECT_UNPROV`, the Firmware Distribution Server doesn't expect any reply from that Target node.
-  If the Distributor doesn't receive any reply, it will repeat the request several times.
+* If the image effect for a particular Target node is :c:enum:`BT_MESH_DFU_EFFECT_UNPROV`, the Firmware Distribution Server does not expect any reply from that Target node.
+  If the Distributor does not receive any reply, it will repeat the request several times.
   If the Distributor eventually receives a reply, the DFU for this particular Target node is considered unsuccessful.
   Otherwise, the DFU is considered successful.
 * In all other cases, the Distributor expects a reply from the Target node with the firmware ID equal to the firmware ID of the transferred image.
-  If the Target node responds with a different firmware ID or doesn't respond at all after several requests, the DFU for this particular Target node is considered unsuccessful.
+  If the Target node responds with a different firmware ID or does not respond at all after several requests, the DFU for this particular Target node is considered unsuccessful.
   Otherwise, the DFU is considered successful.
 
 The DFU ends after the Distributor stops polling the Target nodes.
 If the DFU completes successfully for at least one Target node, the firmware distribution is considered as successful.
 In this case, the distribution phase is set to :c:enum:`BT_MESH_DFD_PHASE_COMPLETED`.
-If the DFU doesn't complete successfully, the distribution phase is set to :c:enum:`BT_MESH_DFD_PHASE_FAILED`.
+If the DFU does not complete successfully, the distribution phase is set to :c:enum:`BT_MESH_DFD_PHASE_FAILED`.
 
 Cancelling the distribution
 ***************************

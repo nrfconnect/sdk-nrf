@@ -10,6 +10,7 @@
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_lock.h>
 
 #include <nrf_rpc_cbor.h>
 
@@ -80,7 +81,10 @@ static void handle_udp_receive(void *context, otMessage *message, const otMessag
 	nrf_rpc_encode_uint(&ctx, soc_key);
 	nrf_rpc_encode_uint(&ctx, msg_key);
 	ot_rpc_encode_message_info(&ctx, message_info);
+
+	ot_rpc_mutex_unlock();
 	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_UDP_RECEIVE_CB, &ctx);
+	ot_rpc_mutex_lock();
 
 	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
 		ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_UDP_RECEIVE_CB);
@@ -111,10 +115,10 @@ static void ot_rpc_udp_open(const struct nrf_rpc_group *group, struct nrf_rpc_cb
 		goto exit;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otUdpOpen(openthread_get_default_instance(), &socket->mSocket, handle_udp_receive,
 			  socket);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 exit:
 	if (error != OT_ERROR_NONE && socket != NULL) {
@@ -156,10 +160,10 @@ static void ot_rpc_udp_send(const struct nrf_rpc_group *group, struct nrf_rpc_cb
 		goto exit;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otUdpSend(openthread_get_default_instance(), &socket->mSocket, message,
 			  &message_info);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	if (error == OT_ERROR_NONE) {
 		ot_res_tab_msg_free(msg_key);
@@ -199,9 +203,9 @@ static void ot_rpc_udp_bind(const struct nrf_rpc_group *group, struct nrf_rpc_cb
 		goto exit;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otUdpBind(openthread_get_default_instance(), &socket->mSocket, &sock_name, netif);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 exit:
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(error) + 1);
@@ -230,9 +234,9 @@ static void ot_rpc_udp_close(const struct nrf_rpc_group *group, struct nrf_rpc_c
 		goto exit;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otUdpClose(openthread_get_default_instance(), &socket->mSocket);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_udp_free_socket(soc_key);
 
@@ -268,9 +272,9 @@ static void ot_rpc_udp_connect(const struct nrf_rpc_group *group, struct nrf_rpc
 		goto exit;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otUdpConnect(openthread_get_default_instance(), &socket->mSocket, &sock_name);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 exit:
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(error) + 1);
@@ -278,11 +282,39 @@ exit:
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 
+static void ot_rpc_udp_is_open(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+			       void *handler_data)
+{
+	bool open = false;
+	ot_socket_key soc_key;
+	nrf_udp_socket *socket;
+
+	soc_key = nrf_rpc_decode_uint(ctx);
+
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_UDP_IS_OPEN);
+		return;
+	}
+
+	ot_rpc_mutex_lock();
+	socket = nrf_udp_find_socket(soc_key);
+
+	if (socket) {
+		open = otUdpIsOpen(openthread_get_default_instance(), &socket->mSocket);
+	}
+
+	ot_rpc_mutex_unlock();
+	nrf_rpc_rsp_send_bool(group, open);
+}
+
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_udp_bind, OT_RPC_CMD_UDP_BIND, ot_rpc_udp_bind, NULL);
 
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_udp_close, OT_RPC_CMD_UDP_CLOSE, ot_rpc_udp_close, NULL);
 
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_udp_connect, OT_RPC_CMD_UDP_CONNECT, ot_rpc_udp_connect,
+			 NULL);
+
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_udp_is_open, OT_RPC_CMD_UDP_IS_OPEN, ot_rpc_udp_is_open,
 			 NULL);
 
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_udp_open, OT_RPC_CMD_UDP_OPEN, ot_rpc_udp_open, NULL);

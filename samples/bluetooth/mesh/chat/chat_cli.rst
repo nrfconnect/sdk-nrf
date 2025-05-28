@@ -9,7 +9,7 @@ Chat Client model
 
 The Chat Client model is a vendor model that allows communication with other such models, by sending text messages and providing the presence of the model instance.
 It demonstrates basics of a vendor model implementation.
-The model doesn't have a limitation on per-node instantiations of the model, and therefore can be instantiated on each element of the node.
+The model does not have a limitation on per-node instantiations of the model, and therefore can be instantiated on each element of the node.
 
 Overview
 ********
@@ -52,7 +52,7 @@ Presence
 Presence Get
    Used to retrieve the current model presence.
    Upon receiving the Presence Get message, the Chat Client model will send the Presence message with the current model presence stored in the response.
-   The message doesn't have any payload.
+   The message does not have any payload.
 
 Message
    Used to send a non-private text message.
@@ -67,7 +67,7 @@ Private Message
 
 Message Reply
    Used to reply on the received Private Message to confirm the reception.
-   The message doesn't have any payload.
+   The message does not have any payload.
 
 Configuration
 *************

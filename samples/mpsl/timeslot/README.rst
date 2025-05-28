@@ -28,8 +28,8 @@ The sample opens a timeslot session and starts requesting timeslots when a key i
 * If ``a`` is pressed, the callback for the first timeslot requests a new timeslot.
 * If ``b`` is pressed, the callback for the first timeslot ends the timeslot.
 
-The first timeslot is always of type "earliest".
-Any following timeslots are of type "normal".
+The first timeslot is always of type ``earliest``.
+Any following timeslots are of type ``normal``.
 In each timeslot callback, the signal type of the callback is posted to a message queue.
 Upon reception of the timeslot start signal, ``mpsl timer0`` is configured to be triggered before the timeslot ends.
 A separate thread reads the message queue and prints the timeslot signal type.

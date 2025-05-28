@@ -24,5 +24,5 @@ endif()
 
 # Link OpenThread CLI even though OPENTHREAD_SHELL is not selected
 if(CONFIG_OPENTHREAD_RPC)
-  zephyr_link_libraries(openthread-cli-ftd)
+  target_link_libraries(zephyr PRIVATE openthread-cli-ftd)
 endif()

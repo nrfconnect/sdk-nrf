@@ -36,7 +36,7 @@ Application
 
 The Application layer defines the business logic for a given end product.
 For example, for a door lock application, the business logic could be opening and closing a specific model of the door bolt in reaction to a voice command from a specific virtual assistant technology.
-It could also define input from a specific PIN keyboard UI, reaction on a specific LED on the door bolt model, and so on.
+It could also define input from a specific PIN keyboard UI, reaction on a specific LED on the door bolt model, and other device-specific user interface behaviors.
 
 .. _ug_matter_architecture_overview_dm:
 

@@ -8,7 +8,7 @@ Identity key
    :depth: 2
 
 The identity key library manages an asymmetric key used for identity services on devices with the Arm CryptoCell and KMU peripherals.
-It's used to provision identity keys and can only be used by a Zephyr image in Secure Processing Environment (SPE).
+It is used to provision identity keys and can only be used by a Zephyr image in Secure Processing Environment (SPE).
 It is not supported from images for Non-Secure Processing Environment (NSPE), from a Trusted Firmware-M image, or from MCUboot.
 
 The identity key is equivalent to the Initial Attestation Key (IAK), as described in the `ARM Platform Security Model 1.1`_, when Trusted Firmware-M (TF-M) is enabled.

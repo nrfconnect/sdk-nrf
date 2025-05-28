@@ -19,7 +19,7 @@ Highlights
 **********
 
 * Fixed bugs related to Bluetooth® LE conformance, Thread, TF-M, and to nRF Machine Learning application for Thingy:53.
-  See `Changelog`_ for details.
+  See :ref:`ncs_release_notes_191_changelog` for details.
 
 Release tag
 ***********
@@ -69,6 +69,8 @@ Known issues
 
 Known issues are only tracked for the latest official release.
 See `known issues for nRF Connect SDK v1.9.1`_ for the list of issues valid for the latest release.
+
+.. _ncs_release_notes_191_changelog:
 
 Changelog
 *********

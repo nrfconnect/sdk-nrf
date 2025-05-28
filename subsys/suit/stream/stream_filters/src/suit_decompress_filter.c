@@ -150,7 +150,8 @@ static suit_plat_err_t erase(void *ctx)
 		suit_plat_err_t size_ret;
 
 		codec_impl = decompress_ctx->codec_impl;
-		(void)codec_impl->reset(decompress_ctx->codec_ctx);
+		(void)codec_impl->reset(decompress_ctx->codec_ctx,
+					decompress_ctx->decompressed_image_size);
 
 		zeroize(decompress_ctx->last_chunk, sizeof(decompress_ctx->last_chunk));
 		decompress_ctx->last_chunk_size = 0;
@@ -348,7 +349,8 @@ static suit_plat_err_t flush(void *ctx)
 		res = SUIT_PLAT_ERR_CRASH;
 	}
 
-	(void)codec_impl->reset(decompress_ctx->codec_ctx);
+	(void)codec_impl->reset(decompress_ctx->codec_ctx,
+				decompress_ctx->decompressed_image_size);
 
 	if (res == SUIT_PLAT_SUCCESS) {
 		LOG_INF("Firmware decompression successful");
@@ -448,7 +450,7 @@ suit_plat_err_t suit_decompress_filter_get(struct stream_sink *in_sink,
 		return SUIT_PLAT_ERR_CRASH;
 	}
 
-	rc = ctx.codec_impl->init(ctx.codec_ctx);
+	rc = ctx.codec_impl->init(ctx.codec_ctx, compress_info->decompressed_image_size);
 	if (rc != 0) {
 		LOG_ERR("Failed to initialize lzma codec");
 		ctx.codec_impl = NULL;

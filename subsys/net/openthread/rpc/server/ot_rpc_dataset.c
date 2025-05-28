@@ -9,6 +9,7 @@
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_lock.h>
 
 #include <zephyr/net/openthread.h>
 
@@ -24,9 +25,9 @@ static void ot_rpc_dataset_is_commissioned_handler(const struct nrf_rpc_group *g
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	result = otDatasetIsCommissioned(openthread_get_default_instance());
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_bool(group, result);
 }
@@ -56,9 +57,9 @@ static void ot_rpc_dataset_set_tlvs_handler(const struct nrf_rpc_group *group,
 	}
 
 	if (dataset) {
-		openthread_api_mutex_lock(openthread_get_default_context());
+		ot_rpc_mutex_lock();
 		error = handler_params->set(openthread_get_default_instance(), dataset);
-		openthread_api_mutex_unlock(openthread_get_default_context());
+		ot_rpc_mutex_unlock();
 	} else {
 		error = OT_ERROR_INVALID_ARGS;
 	}
@@ -111,9 +112,9 @@ static void ot_rpc_dataset_get_tlvs_handler(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = handler_params->get(openthread_get_default_instance(), &dataset);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	ot_rpc_rsp_send_dataset(error == OT_ERROR_NONE ? &dataset : NULL);
 }
@@ -157,9 +158,9 @@ static void ot_rpc_dataset_set_handler(const struct nrf_rpc_group *group,
 	}
 
 	if (dataset) {
-		openthread_api_mutex_lock(openthread_get_default_context());
+		ot_rpc_mutex_lock();
 		error = handler_params->set(openthread_get_default_instance(), dataset);
-		openthread_api_mutex_unlock(openthread_get_default_context());
+		ot_rpc_mutex_unlock();
 	} else {
 		error = OT_ERROR_INVALID_ARGS;
 	}
@@ -202,9 +203,9 @@ static void ot_rpc_dataset_get_handler(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = handler_params->get(openthread_get_default_instance(), &dataset);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	if (error != OT_ERROR_NONE) {
 		NRF_RPC_CBOR_ALLOC(&ot_group, tx_ctx, 1);

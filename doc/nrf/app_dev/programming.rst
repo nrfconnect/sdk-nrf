@@ -89,7 +89,7 @@ For example, if you are working with an nRF9160 DK, you need to select the corre
 Programming to Thingy:91 also requires a :ref:`similar step <building_pgming>`, but using a different switch (**SW2**).
 
 Programming the nRF52840 Dongle
-  To program the nRF52840 Dongle instead of a development kit, follow the programming instructions in :ref:`zephyr:nrf52840dongle_nrf52840` or use the `Programmer app <Programming the nRF52840 Dongle_>`_.
+  To program the nRF52840 Dongle instead of a development kit, follow the programming instructions in :zephyr:board:`nrf52840dongle` or use the `Programmer app <Programming the nRF52840 Dongle_>`_.
 
 Programming the nRF54H20 DK
    To program the nRF54H20 DK, follow the programming instructions in the :ref:`nRF54H20 device guide <ug_nrf54h20_gs_sample>`.

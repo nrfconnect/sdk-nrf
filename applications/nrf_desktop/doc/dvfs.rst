@@ -79,7 +79,7 @@ You can configure each DVFS state using the following Kconfig options:
   Some of the tracked application states have associated events that inform when the state is turned on and off (for example, USB connection).
   Other states have associated application events emitted periodically when active.
   There is no event explicitly informing that state is no longer active (for example, config channel).
-  For such states, we need to define a timeout that is used to turn off the tracked state after associated application events are no longer emitted.
+  For such states, you need to define a timeout that turns off the tracked state after associated application events are no longer emitted.
 
 Frequency change retry
 ======================

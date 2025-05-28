@@ -64,7 +64,7 @@
 .. |Thingy91| replace:: Thingy:91 (PCA20035) - see :ref:`ug_thingy91`
 .. |nRF21540DK| replace:: nRF21540 DK board (PCA10112)
 
-.. |thingy52_not_supported_note| replace:: Despite being supported in :ref:`Zephyr <zephyr:thingy52_nrf52832>`, the |NCS| does not support `Nordic Thingy:52`_.
+.. |thingy52_not_supported_note| replace:: Despite :zephyr:board:`thingy52` being supported in Zephyr, the |NCS| does not support `Nordic Thingy:52`_.
 
 .. ### FOTA shortcuts
 
@@ -92,6 +92,10 @@
    No further updates will be made to the nRF Command Line Tools.
    Last supported operating systems are Windows 10, Linux Ubuntu 22.04, and macOS 13.
    The nRF Command Line Tools will remain available for download, but do not install the SEGGER J-Link version they provide if you have a newer version installed.
+
+.. |legacy_crypto_deprecation_note| replace:: Legacy crypto toolbox APIs are marked as deprecated in the |NCS| version 2.8.0, and will be removed in a future version.
+   Do not use the legacy crypto toolbox APIs prefixed with ``mbedtls_`` and the related configurations in any new designs.
+   Instead, use the equivalent functionality from PSA Crypto APIs.
 
 .. ### Thread usage shortcuts
 
@@ -200,6 +204,9 @@
 
 .. |trusted_execution| replace:: nRF5340 and nRF9160
 
+.. |samples_tfm_info| replace:: Starting from the |NCS| v2.0.0, TF-M is the only way to use :ref:`security by separation <ug_tfm_security_by_separation>` with ARM TrustZone.
+   In addition, the TF-M implementation is enabled by default for all samples and applications in the |NCS| when you build for the ``*/ns`` :ref:`variant <app_boards_names>` of the boards.
+
 .. |plusminus| unicode:: U+000B1 .. PLUS-MINUS SIGN
    :rtrim:
 
@@ -247,3 +254,9 @@
    For more information, read the :ref:`documentation about devicetree bindings in Zephyr <zephyr:dt-binding-compat>`.
 
 .. |install_latest_version| replace:: When you first install the |NCS|, it is recommended to install the latest released versions of the SDK and the toolchain.
+
+.. |connection_options_limited| replace:: Spinel connections through SPI and USB are not currently available in the |NCS|.
+
+.. |original_mbedtls_def_note| replace:: Whenever this documentation mentions 'original' Mbed TLS, it refers to the open-source `Arm Mbed TLS project`_, not the customized version available in Zephyr.
+   There is an option to utilize a 'built-in' driver, which corresponds to the software-implemented cryptography from the 'original' Mbed TLS deliverables.
+   This is provided to ensure that the cryptographic toolbox supports all requested features.

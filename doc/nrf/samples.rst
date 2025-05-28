@@ -24,6 +24,7 @@ However, Zephyr samples and applications are not tested and verified to work wit
 General information about samples in the |NCS|
    * |ncs_unchanged_samples_note|
    * |ncs_oot_sample_note|
+   * |samples_tfm_info|
    * All samples in the |NCS| use :ref:`lib_fatal_error` library and are configured to perform a system reset if a fatal error occurs.
      This behavior is different from how fatal errors are handled in the Zephyr samples.
      You can change the default behavior by updating the configuration option :kconfig:option:`CONFIG_RESET_ON_FATAL_ERROR`.

@@ -5,7 +5,6 @@
 
 menuconfig NRF_PROVISIONING_COAP
 	bool "nRF Provisioning COAP"
-	select EXPERIMENTAL
 	imply COAP
 	imply COAP_CLIENT
 

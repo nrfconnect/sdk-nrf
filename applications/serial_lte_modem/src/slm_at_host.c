@@ -21,13 +21,14 @@
 #include <zephyr/sys/ring_buffer.h>
 LOG_MODULE_REGISTER(slm_at_host, CONFIG_SLM_LOG_LEVEL);
 
-#define SLM_SYNC_STR    "Ready\r\n"
-#define OK_STR		"\r\nOK\r\n"
-#define ERROR_STR	"\r\nERROR\r\n"
-#define CRLF_STR	"\r\n"
-#define CR		'\r'
-#define LF		'\n'
-#define HEXDUMP_LIMIT   16
+#define SLM_SYNC_STR     "Ready\r\n"
+#define SLM_SYNC_ERR_STR "INIT ERROR\r\n"
+#define OK_STR		 "\r\nOK\r\n"
+#define ERROR_STR	 "\r\nERROR\r\n"
+#define CRLF_STR	 "\r\n"
+#define CR		 '\r'
+#define LF		 '\n'
+#define HEXDUMP_LIMIT    16
 
 /* Operation mode variables */
 enum slm_operation_mode {
@@ -175,6 +176,11 @@ static void write_data_buf(const uint8_t *buf, size_t len)
 {
 	size_t ret;
 	size_t index = 0;
+
+	/* Reset the ring buffer so that UDP packets have enough continuous space. */
+	if (ring_buf_is_empty(&data_rb)) {
+		ring_buf_reset(&data_rb);
+	}
 
 	while (index < len) {
 		ret = ring_buf_put(&data_rb, buf + index, len - index);
@@ -547,7 +553,9 @@ static void cmd_send(uint8_t *buf, size_t cmd_length, size_t buf_size)
 		return;
 	}
 
-	/* Send to modem, reserve space for CRLF in response buffer */
+	/* Send to modem. Same buffer used for sending and for the response.
+	 * Reserve space for CRLF in response buffer.
+	 */
 	err = nrf_modem_at_cmd(buf + strlen(CRLF_STR), buf_size - strlen(CRLF_STR), "%s", at_cmd);
 	if (err == -SILENT_AT_COMMAND_RET) {
 		return;
@@ -556,7 +564,8 @@ static void cmd_send(uint8_t *buf, size_t cmd_length, size_t buf_size)
 		rsp_send_error();
 		return;
 	} else if (err > 0) {
-		LOG_ERR("AT command error, type: %d", nrf_modem_at_err_type(err));
+		LOG_ERR("AT command error (%d), type: %d: value: %d",
+			err, nrf_modem_at_err_type(err), nrf_modem_at_err(err));
 	}
 
 	/** Format as TS 27.007 command V1 with verbose response format,
@@ -588,8 +597,19 @@ static size_t cmd_rx_handler(const uint8_t *buf, const size_t len)
 		case 0x08: /* Backspace. */
 			/* Fall through. */
 		case 0x7F: /* DEL character */
+			if (at_cmd_len == 0) {
+				continue;
+			}
+
+			at_cmd_len--;
+			/* If the removed character was a quote, need to toggle the flag. */
+			if (prev_character == '"') {
+				inside_quotes = !inside_quotes;
+			}
 			if (at_cmd_len > 0) {
-				at_cmd_len--;
+				prev_character = slm_at_buf[at_cmd_len - 1];
+			} else {
+				prev_character = '\0';
 			}
 			continue;
 		}
@@ -883,6 +903,33 @@ int slm_at_cb_wrapper(char *buf, size_t len, char *at_cmd, slm_at_callback *cb)
 		if (err) {
 			LOG_ERR("Failed to set OK response: %d", err);
 		}
+	} else if (err > 0) {
+		int at_cmd_err = err;
+
+		/* Reconstruct 'ERROR', 'CME ERROR' and 'CMS ERROR' response from
+		 * nrf_modem_at_cmd() return value, which is returned by some SLM specific
+		 * AT commands, such as AT#XSMS
+		 */
+		switch (nrf_modem_at_err_type(err)) {
+		case NRF_MODEM_AT_CME_ERROR:
+			err = at_cmd_custom_respond(buf, len, "+CME ERROR: %d\r\n",
+				nrf_modem_at_err(err));
+			break;
+		case NRF_MODEM_AT_CMS_ERROR:
+			err = at_cmd_custom_respond(buf, len, "+CMS ERROR: %d\r\n",
+				nrf_modem_at_err(err));
+			break;
+		case NRF_MODEM_AT_ERROR:
+		default:
+			err = at_cmd_custom_respond(buf, len, "ERROR\r\n");
+			break;
+		}
+		if (err) {
+			LOG_ERR("Failed to set error response: %d", err);
+		} else {
+			/* Return the original error code from 'cb()' */
+			err = at_cmd_err;
+		}
 	}
 
 	return err;
@@ -898,16 +945,21 @@ int slm_at_host_init(void)
 	at_mode = SLM_AT_COMMAND_MODE;
 	k_mutex_unlock(&mutex_mode);
 
-	err = slm_at_init();
-	if (err) {
-		return -EFAULT;
-	}
-
 	k_work_init(&raw_send_scheduled_work, raw_send_scheduled);
 
 	err = slm_uart_handler_enable();
 	if (err) {
 		return err;
+	}
+
+	err = slm_at_init();
+	if (err) {
+		/* Send "INIT ERROR" string to indicate that AT host init failed */
+		err = slm_at_send_str(SLM_SYNC_ERR_STR);
+		if (err) {
+			return err;
+		}
+		return -EFAULT;
 	}
 
 	if (!IS_ENABLED(CONFIG_SLM_SKIP_READY_MSG)) {

@@ -39,7 +39,7 @@ Glossary
       It is possible to create a programmable image from it, as it includes a ``main()`` entry point.
 
    Application Programming Interface (API)
-      A language and message format used by an application program to communicate with an operating system, application, or other services.
+      A language and message format used by a program to communicate with an operating system, application, or other services.
 
    Assisted GNSS (A-GNSS)
       A form of assistance provided to devices trying to obtain a :term:`Global Navigation Satellite System (GNSS)` fix.
@@ -407,7 +407,7 @@ Glossary
       A unique code consisting of 14 digits and one check digit for identifying 3GPP-based mobile devices.
 
    Internet Control Message Protocol (ICMP)
-      The control protocol of the IP stack that enables the establishment of reachability, routes, and so on.
+      The control protocol of the IP stack that enables the establishment of reachability and routes.
       This protocol is an integral part of any IP but is unique as it is not a transport protocol to exchange data between hosts.
 
    Internet Protocol version 4 (IPv4)
@@ -998,7 +998,7 @@ Glossary
       A string that identifies a project release.
 
    VPR Core
-      Pronounced "Viper Core", a :term:`Core` that is compatible with the RISC-V instruction set, meaning the industry-standard RISC-V development tools can be used.
+      Pronounced "Viper Core," a :term:`Core` that is compatible with the RISC-V instruction set, meaning the industry-standard RISC-V development tools can be used.
       VPR implements the RV32E instruction set (Base Integer Instruction Set (embedded) - 32 bit, 16 registers) and the following extensions:
 
          * M: Multiply and divide extension

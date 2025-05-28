@@ -415,8 +415,11 @@ int slm_at_init(void)
 #if defined(CONFIG_SLM_NRF_CLOUD)
 	err = slm_at_nrfcloud_init();
 	if (err) {
+		/* Allow nRF Cloud initialization to fail as sometimes JWT is missing
+		 * especially during development.
+		 */
 		LOG_ERR("nRF Cloud could not be initialized: %d", err);
-		return -EFAULT;
+		err = 0;
 	}
 #endif
 #if defined(CONFIG_SLM_GNSS)

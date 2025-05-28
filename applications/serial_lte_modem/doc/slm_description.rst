@@ -333,7 +333,7 @@ The following configuration files are provided:
 
 * :file:`overlay-ppp-without-cmux.overlay` - Devicetree overlay that configures the UART to be used by PPP.
   This configuration file should be included when building SLM with PPP and without CMUX, in addition to :file:`overlay-ppp.conf`.
-  It can be customized to fit your configuration (UART, baud rate, and so on).
+  It can be customized to fit your configuration, such as UART settings, baud rate, and flow control.
   By default, it sets the baud rate of the PPP UART to 1 000 000.
 
 * :file:`overlay-memfault.conf` - Configuration file that enables `Memfault`_.
@@ -574,9 +574,9 @@ The following table shows how to connect selected development kit to an nRF91 Se
            - UART RX P0.11
          * - UART RX P1.01
            - UART TX P0.10
-         * - UART CTS P1.06
+         * - UART CTS P1.07
            - UART RTS P0.12
-         * - UART RTS P1.07
+         * - UART RTS P1.06
            - UART CTS P0.13
          * - GPIO OUT P0.11
            - GPIO IN P0.31
@@ -596,9 +596,9 @@ The following table shows how to connect selected development kit to an nRF91 Se
            - UART RX P0.11
          * - UART RX P1.05
            - UART TX P0.10
-         * - UART CTS P1.06
+         * - UART CTS P1.07
            - UART RTS P0.12
-         * - UART RTS P1.07
+         * - UART RTS P1.06
            - UART CTS P0.13
          * - GPIO OUT P0.23
            - GPIO IN P0.31
@@ -671,7 +671,13 @@ If you have an nRF52 Series DK running a client application, you can also use th
 #. Observe that the development kit sends a ``Ready\r\n`` message on UART.
 #. Send AT commands and observe the responses from the development kit.
 
-   See :ref:`slm_testing` for typical test cases.
+See :ref:`slm_testing` for typical test cases.
+
+.. note::
+
+   If the initialization of SLM fails, the application sends an ``INIT ERROR\r\n`` message on UART if it has managed to enable UART.
+   See the logs for more information about the error.
+   The logs are written to RTT by default.
 
 .. _slm_carrier_library_support:
 

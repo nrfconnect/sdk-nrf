@@ -37,10 +37,6 @@
 
 #define PARTITION_LABEL coredump_partition
 
-#if !FIXED_PARTITION_EXISTS(PARTITION_LABEL)
-#error "Missing fixed partition named 'coredump_partition'"
-#endif
-
 /* Extract DTS properties */
 
 #define FLASH_NODE	 DT_INST(0, soc_nv_flash)
@@ -56,9 +52,10 @@
 #define PARTITION_SIZE	 FIXED_PARTITION_SIZE(PARTITION_LABEL)
 #define PARTITION_ADDR	 (FLASH_ADDR + PARTITION_OFFSET)
 
-#if (PARTITION_OFFSET % FLASH_ERASE_SIZE) != 0
-#error "Core dump partition unaligned to erase block size"
-#endif
+BUILD_ASSERT(FIXED_PARTITION_EXISTS(PARTITION_LABEL),
+	     "Missing fixed partition named 'coredump_partition'");
+BUILD_ASSERT(PARTITION_OFFSET % FLASH_ERASE_SIZE == 0,
+	     "Core dump partition unaligned to erase block size");
 
 struct header {
 	uint8_t magic[4];    /* "CD01" */
@@ -72,13 +69,15 @@ static const uint8_t MAGIC[4] = {'C', 'D', '0', '1'};
 
 enum {
 	HEADER_SIZE = ROUND_UP(sizeof(struct header), FLASH_WRITE_SIZE),
+	WRITE_BUF_SIZE = ROUND_UP(CONFIG_DEBUG_COREDUMP_BACKEND_NRF_FLASH_PARTITION_WRITE_BUF_SIZE,
+				  FLASH_WRITE_SIZE),
 };
 
-static int write_error;			    /* Error occurred when writing a core dump */
-static uint8_t write_buf[FLASH_WRITE_SIZE]; /* Write buffer to assure aligned flash access */
-static size_t write_buf_pos;		    /* # of dump data bytes buffered in the write buffer */
-static size_t write_pos;		    /* # of dump data bytes already written to flash */
-static uint16_t dump_crc;		    /* CRC16 of already written or buffered bytes */
+static int write_error;			  /* Error occurred when writing a core dump */
+static uint8_t write_buf[WRITE_BUF_SIZE]; /* Write buffer to assure aligned flash access */
+static size_t write_buf_pos;		  /* # of dump data bytes buffered in the write buffer */
+static size_t write_pos;		  /* # of dump data bytes already written to flash */
+static uint16_t dump_crc;		  /* CRC16 of already written or buffered bytes */
 
 static inline const struct header *get_stored_header(void)
 {
@@ -136,13 +135,20 @@ static void write(uint32_t offset, const uint8_t *data, size_t size)
 #elif defined(CONFIG_NRFX_RRAMC)
 	nrf_rramc_config_t config = {
 		.mode_write = true,
-		.write_buff_size = 0,
+		.write_buff_size = 1,
 	};
 
 	nrf_rramc_config_set(NRF_RRAMC, &config);
 
 	memcpy((void *)(PARTITION_ADDR + offset), data, size);
 	barrier_dmem_fence_full();
+
+	/*
+	 * The write buffer flush trigger can be skipped as long as the write block size
+	 * divides the configured write buffer size (1 * 16B).
+	 */
+	BUILD_ASSERT(FLASH_WRITE_SIZE % 16 == 0,
+		     "Write block size not divisible by write buffer word size");
 
 	config.mode_write = false;
 	nrf_rramc_config_set(NRF_RRAMC, &config);
@@ -167,13 +173,20 @@ static void erase(uint32_t offset, size_t size)
 #elif defined(CONFIG_NRFX_RRAMC)
 	nrf_rramc_config_t config = {
 		.mode_write = true,
-		.write_buff_size = 0,
+		.write_buff_size = 1,
 	};
 
 	nrf_rramc_config_set(NRF_RRAMC, &config);
 
 	memset((void *)(PARTITION_ADDR + offset), 0xff, size);
 	barrier_dmem_fence_full();
+
+	/*
+	 * The write buffer flush trigger can be skipped as long as the erase block size
+	 * divides the configured write buffer size (1 * 16B).
+	 */
+	BUILD_ASSERT(FLASH_ERASE_SIZE % 16 == 0,
+		     "Erase block size not divisible by write buffer word size");
 
 	config.mode_write = false;
 	nrf_rramc_config_set(NRF_RRAMC, &config);
@@ -218,8 +231,8 @@ static void coredump_nrf_flash_backend_end(void)
 
 	if (write_buf_pos > 0) {
 		/* Flush the write buffer */
-		memset(&write_buf[write_buf_pos], 0, FLASH_WRITE_SIZE - write_buf_pos);
-		write(HEADER_SIZE + write_pos, write_buf, FLASH_WRITE_SIZE);
+		memset(&write_buf[write_buf_pos], 0, WRITE_BUF_SIZE - write_buf_pos);
+		write(HEADER_SIZE + write_pos, write_buf, WRITE_BUF_SIZE);
 		write_pos += write_buf_pos;
 	}
 
@@ -241,41 +254,25 @@ static void coredump_nrf_flash_backend_buffer_output(uint8_t *data, size_t size)
 {
 	size_t chunk_size;
 
-	dump_crc = crc16_ccitt(dump_crc, data, size);
+	/*
+	 * Write all data using intermediate buffer to assure proper write alignment,
+	 * and to calculate a valid CRC even if the data keeps changing during write
+	 * (for example, if the data is within the IRQ stack region).
+	 */
 
-	/* If the write buffer is non-empty, append it with new data. */
-
-	if (write_buf_pos > 0) {
-		chunk_size = MIN(size, FLASH_WRITE_SIZE - write_buf_pos);
+	while (size > 0) {
+		chunk_size = MIN(size, WRITE_BUF_SIZE - write_buf_pos);
 		memcpy(&write_buf[write_buf_pos], data, chunk_size);
+		dump_crc = crc16_ccitt(dump_crc, &write_buf[write_buf_pos], chunk_size);
 		write_buf_pos += chunk_size;
 		data += chunk_size;
 		size -= chunk_size;
-	}
 
-	/* Flush the write buffer if it's full. */
-
-	if (write_buf_pos == FLASH_WRITE_SIZE) {
-		write(HEADER_SIZE + write_pos, write_buf, FLASH_WRITE_SIZE);
-		write_pos += write_buf_pos;
-		write_buf_pos = 0;
-	}
-
-	/* Write the remaining full write blocks directly to flash. */
-
-	if (size >= FLASH_WRITE_SIZE) {
-		chunk_size = ROUND_DOWN(size, FLASH_WRITE_SIZE);
-		write(HEADER_SIZE + write_pos, data, chunk_size);
-		write_pos += chunk_size;
-		data += chunk_size;
-		size -= chunk_size;
-	}
-
-	/* Store the remaining data in the write buffer. */
-
-	if (size > 0) {
-		memcpy(write_buf, data, size);
-		write_buf_pos = size;
+		if (write_buf_pos == WRITE_BUF_SIZE) {
+			write(HEADER_SIZE + write_pos, write_buf, WRITE_BUF_SIZE);
+			write_pos += WRITE_BUF_SIZE;
+			write_buf_pos = 0;
+		}
 	}
 }
 

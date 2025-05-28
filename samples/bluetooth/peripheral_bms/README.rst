@@ -64,7 +64,7 @@ Testing
 #. Start `nRF Connect for Desktop`_.
 #. Open the `Bluetooth Low Energy app`_ and select the connected device that is used for communication.
 #. Connect to the device from the app.
-   The device is advertising as "Nordic_BMS".
+   The device is advertising as ``Nordic_BMS``.
 #. Bind with the device:
 
    a. Click the :guilabel:`Settings` button for the device in the app.
@@ -89,7 +89,7 @@ Testing
 #. Reconnect the devices and verify that the connection security is not updated.
 #. Bond both devices again.
 #. Write ``06 41 42 43 44`` to the Bond Management Service Control Point Characteristic.
-   ``06`` is the command to delete all bonds on the Server, followed by the authorization code "ABCD".
+   ``06`` is the command to delete all bonds on the server, followed by the authorization code ``ABCD``.
 #. Disconnect the device to trigger the bond deletion procedures.
 #. Reconnect the devices again and verify that the connection security is not updated.
 

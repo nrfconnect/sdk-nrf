@@ -9,25 +9,43 @@
 
 #include <zephyr/devicetree.h>
 #include <mpsl_fem_nrf22xx_twi_config_common.h>
+#include <nrfx_twim.h>
 
-/**
- * @brief Initializer of structure @c mpsl_fem_twi_if_t allowing to use TWI interface.
- *
- * @param node_id Devicetree node identifier for the TWI part for the FEM device.
- */
-#define MPSL_FEM_TWI_DRV_IF_INITIALIZER(node_id) \
-	(mpsl_fem_twi_if_t){ \
-		.enabled = true, \
-		.slave_address = ((uint8_t)DT_REG_ADDR(node_id)), \
-		.p_instance = (void *)DEVICE_DT_GET(DT_BUS(node_id)), \
-		.p_xfer_read = mpsl_fem_twi_drv_impl_xfer_read, \
-		.p_xfer_write = mpsl_fem_twi_drv_impl_xfer_write, \
+/** @brief Structure representing an I2C bus driver for a Front-End Module. */
+typedef struct {
+	const struct device *dev;
+	nrfx_twim_evt_handler_t nrfx_twim_callback_saved;
+	void *nrfx_twim_callback_ctx_saved;
+	mpsl_fem_twi_async_xfer_write_cb_t fem_twi_async_xfwr_write_cb;
+	void *fem_twi_async_xfwr_write_cb_ctx;
+} mpsl_fem_twi_drv_t;
+
+#define MPSL_FEM_TWI_DRV_INITIALIZER(node_id)		\
+	(mpsl_fem_twi_drv_t){				\
+		.dev = DEVICE_DT_GET(DT_BUS(node_id)),	\
 	}
 
-int32_t mpsl_fem_twi_drv_impl_xfer_read(void *p_instance, uint8_t slave_address,
-			uint8_t internal_address, uint8_t *p_data, uint8_t data_length);
+/** @brief Prepare the FEM TWI interface structure.
+ *
+ * @note This function prepares just synchronous part of the interface.
+ * If Front-End Module driver requires an asynchronous part of the interface call
+ * the @ref mpsl_fem_twi_drv_fem_twi_if_prepare_add_async function afterwards.
+ *
+ * @param drv     Pointer to the FEM TWI driver instance object initialized with
+ *                MPSL_FEM_TWI_DRV_INITIALIZER.
+ * @param twi_if  Pointer to the FEM TWI interface structure to fill.
+ * @param address The address of the FEM device on the TWI bus.
+ */
+void mpsl_fem_twi_drv_fem_twi_if_prepare(mpsl_fem_twi_drv_t *drv, mpsl_fem_twi_if_t *twi_if,
+					 uint8_t address);
 
-int32_t mpsl_fem_twi_drv_impl_xfer_write(void *p_instance, uint8_t slave_address,
-			uint8_t internal_address, const uint8_t *p_data, uint8_t data_length);
+/** @brief Prepare the asynchronous part of the FEM TWI interface structure.
+ *
+ * @note Assumes that the @ref mpsl_fem_twi_drv_fem_twi_if_prepare function
+ * has already been called.
+ *
+ * @param twi_if  Pointer to the interface structure to fill.
+ */
+void mpsl_fem_twi_drv_fem_twi_if_prepare_add_async(mpsl_fem_twi_if_t *twi_if);
 
 #endif /* MPSL_FEM_TWI_DRV__ */

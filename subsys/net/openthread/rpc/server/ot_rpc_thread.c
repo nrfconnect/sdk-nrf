@@ -9,6 +9,7 @@
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_lock.h>
 
 #include <zephyr/net/openthread.h>
 
@@ -55,8 +56,10 @@ static void ot_thread_discover_cb(otActiveScanResult *result, void *context, uin
 	nrf_rpc_encode_uint(&ctx, (uintptr_t)context);
 	nrf_rpc_encode_uint(&ctx, callback_slot);
 
+	ot_rpc_mutex_unlock();
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_THREAD_DISCOVER_CB, &ctx, ot_rpc_decode_void,
 				NULL);
+	ot_rpc_mutex_lock();
 }
 
 NRF_RPC_CBKPROXY_HANDLER(ot_thread_discover_cb_encoder, ot_thread_discover_cb,
@@ -85,10 +88,10 @@ static void ot_rpc_thread_discover_rpc_handler(const struct nrf_rpc_group *group
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otThreadDiscover(openthread_get_default_instance(), scan_channels, pan_id, joiner,
 				 enable_eui64_filtering, cb, cb_ctx);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	nrf_rpc_rsp_send_uint(group, error);
 }
@@ -109,9 +112,9 @@ static void ot_rpc_cmd_thread_set_enabled(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otThreadSetEnabled(openthread_get_default_instance(), enabled);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 5);
 	nrf_rpc_encode_uint(&rsp_ctx, error);
@@ -129,9 +132,9 @@ static void ot_rpc_cmd_thread_get_device_role(const struct nrf_rpc_group *group,
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	role = otThreadGetDeviceRole(openthread_get_default_instance());
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 1);
 	nrf_rpc_encode_uint(&rsp_ctx, role);
@@ -160,9 +163,9 @@ static void ot_rpc_cmd_set_link_mode(const struct nrf_rpc_group *group,
 	mode.mDeviceType = (mode_mask & BIT(OT_RPC_LINK_MODE_DEVICE_TYPE_OFFSET)) != 0;
 	mode.mNetworkData = (mode_mask & BIT(OT_RPC_LINK_MODE_NETWORK_DATA_OFFSET)) != 0;
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	error = otThreadSetLinkMode(openthread_get_default_instance(), mode);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 5);
 	nrf_rpc_encode_uint(&rsp_ctx, error);
@@ -181,9 +184,9 @@ static void ot_rpc_cmd_get_link_mode(const struct nrf_rpc_group *group,
 
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	mode = otThreadGetLinkMode(openthread_get_default_instance());
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	if (mode.mRxOnWhenIdle) {
 		mode_mask |= BIT(OT_RPC_LINK_MODE_RX_ON_WHEN_IDLE_OFFSET);

@@ -13,7 +13,8 @@
 
 #include "broadcast_source.h"
 #include "zbus_common.h"
-#include "nrf5340_audio_dk.h"
+#include "peripherals.h"
+#include "led_assignments.h"
 #include "led.h"
 #include "button_assignments.h"
 #include "macros_common.h"
@@ -23,6 +24,11 @@
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
+
+static struct zbus_observer_node zbus_obs_node_ref;
+static struct zbus_observer_node zbus_obs_node_button;
+static struct zbus_observer_node zbus_obs_node_audio;
+static struct zbus_observer_node zbus_obs_node_mgmt;
 
 ZBUS_SUBSCRIBER_DEFINE(button_evt_sub, CONFIG_BUTTON_MSG_SUB_QUEUE_SIZE);
 
@@ -206,7 +212,7 @@ static void le_audio_msg_sub_thread(void)
 
 			audio_system_start();
 			stream_state_set(STATE_STREAMING);
-			ret = led_blink(LED_APP_1_BLUE);
+			ret = led_blink(LED_AUDIO_CONN_STATUS);
 			ERR_CHK(ret);
 
 			break;
@@ -223,7 +229,7 @@ static void le_audio_msg_sub_thread(void)
 
 			stream_state_set(STATE_PAUSED);
 			audio_system_stop();
-			ret = led_on(LED_APP_1_BLUE);
+			ret = led_on(LED_AUDIO_CONN_STATUS);
 			ERR_CHK(ret);
 
 			break;
@@ -271,7 +277,8 @@ static int zbus_subscribers_create(void)
 		return ret;
 	}
 
-	ret = zbus_chan_add_obs(&sdu_ref_chan, &sdu_ref_msg_listen, ZBUS_ADD_OBS_TIMEOUT_MS);
+	ret = zbus_chan_add_obs(&sdu_ref_chan, &sdu_ref_msg_listen, &zbus_obs_node_ref,
+				ZBUS_ADD_OBS_TIMEOUT_MS);
 	if (ret) {
 		LOG_ERR("Failed to add timestamp listener");
 		return ret;
@@ -329,19 +336,22 @@ static int zbus_link_producers_observers(void)
 		return -ENOTSUP;
 	}
 
-	ret = zbus_chan_add_obs(&button_chan, &button_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
+	ret = zbus_chan_add_obs(&button_chan, &button_evt_sub, &zbus_obs_node_button,
+				ZBUS_ADD_OBS_TIMEOUT_MS);
 	if (ret) {
 		LOG_ERR("Failed to add button sub");
 		return ret;
 	}
 
-	ret = zbus_chan_add_obs(&le_audio_chan, &le_audio_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
+	ret = zbus_chan_add_obs(&le_audio_chan, &le_audio_evt_sub, &zbus_obs_node_audio,
+				ZBUS_ADD_OBS_TIMEOUT_MS);
 	if (ret) {
 		LOG_ERR("Failed to add le_audio sub");
 		return ret;
 	}
 
-	ret = zbus_chan_add_obs(&bt_mgmt_chan, &bt_mgmt_evt_listen, ZBUS_ADD_OBS_TIMEOUT_MS);
+	ret = zbus_chan_add_obs(&bt_mgmt_chan, &bt_mgmt_evt_listen, &zbus_obs_node_mgmt,
+				ZBUS_ADD_OBS_TIMEOUT_MS);
 	if (ret) {
 		LOG_ERR("Failed to add bt_mgmt listener");
 		return ret;
@@ -484,15 +494,13 @@ uint8_t stream_state_get(void)
 	return strm_state;
 }
 
-void streamctrl_send(void const *const data, size_t size, uint8_t num_ch)
+void streamctrl_send(struct audio_data const *const audio_frame)
 {
 	int ret;
 	static int prev_ret;
 
-	struct le_audio_encoded_audio enc_audio = {.data = data, .size = size, .num_ch = num_ch};
-
 	if (strm_state == STATE_STREAMING) {
-		ret = broadcast_source_send(0, 0, enc_audio);
+		ret = broadcast_source_send(0, 0, audio_frame);
 
 		if (ret != 0 && ret != prev_ret) {
 			if (ret == -ECANCELED) {
@@ -568,7 +576,7 @@ int main(void)
 	size_t ext_adv_buf_cnt = 0;
 	size_t per_adv_buf_cnt = 0;
 
-	ret = nrf5340_audio_dk_init();
+	ret = peripherals_init();
 	ERR_CHK(ret);
 
 	ret = fw_info_app_print();

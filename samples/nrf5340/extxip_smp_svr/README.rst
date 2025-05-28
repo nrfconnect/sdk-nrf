@@ -109,7 +109,7 @@ See the Partition manager (PM) label for slot-to-``<image>`` translation:
 
 .. note::
 
-   The ``-e`` option means "no erase", and is provided to the MCUmgr to prevent it from sending the erase command to the target before updating the image.
+   The ``-e`` option means ``no erase``, and is provided to the MCUmgr to prevent it from sending the erase command to the target before updating the image.
    This option is always needed when ``-n`` is used for image selection, as the erase command is hardcoded to erase slot-1 (``image-1``), regardless of which slot is uploaded at the time.
 
 Upload the signed image

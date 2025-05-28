@@ -8,6 +8,7 @@
 #include <ot_rpc_coap.h>
 #include <ot_rpc_common.h>
 #include <ot_rpc_types.h>
+#include <ot_rpc_lock.h>
 #include <nrf_rpc/nrf_rpc_serialize.h>
 
 #include <nrf_rpc_cbor.h>
@@ -336,12 +337,14 @@ static void ot_rpc_cmd_coap_resource_handler(const struct nrf_rpc_group *group,
 		return;
 	}
 
+	ot_rpc_mutex_lock();
 	resource = find_coap_resource_by_uri(uri);
 
 	if (resource && resource->mHandler != NULL) {
 		resource->mHandler(resource->mContext, message, &message_info);
 	}
 
+	ot_rpc_mutex_unlock();
 	nrf_rpc_rsp_send_void(group);
 }
 
@@ -381,10 +384,13 @@ static void ot_rpc_cmd_coap_default_handler(const struct nrf_rpc_group *group,
 		return;
 	}
 
+	ot_rpc_mutex_lock();
+
 	if (default_handler != NULL) {
 		default_handler(default_handler_ctx, (otMessage *)message_rep, &message_info);
 	}
 
+	ot_rpc_mutex_unlock();
 	nrf_rpc_rsp_send_void(group);
 }
 
@@ -453,6 +459,7 @@ static void ot_rpc_cmd_coap_response_handler(const struct nrf_rpc_group *group,
 		return;
 	}
 
+	ot_rpc_mutex_lock();
 	request = &requests[request_rep - 1];
 
 	if (request->handler) {
@@ -460,6 +467,7 @@ static void ot_rpc_cmd_coap_response_handler(const struct nrf_rpc_group *group,
 		request->handler = NULL;
 	}
 
+	ot_rpc_mutex_unlock();
 	nrf_rpc_rsp_send_void(group);
 }
 

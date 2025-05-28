@@ -19,9 +19,9 @@ list(APPEND cracen_driver_sources
   ${CMAKE_CURRENT_LIST_DIR}/src/rndinrange.c
   ${CMAKE_CURRENT_LIST_DIR}/src/ikg_signature.c
 
-  # Note: We always need to have blkcipher.c and ctr_drbg.c since it
+  # Note: We always need to have cipher.c and ctr_drbg.c since it
   # is used directly by many Cracen drivers.
-  ${CMAKE_CURRENT_LIST_DIR}/src/blkcipher.c
+  ${CMAKE_CURRENT_LIST_DIR}/src/cipher.c
   ${CMAKE_CURRENT_LIST_DIR}/src/ctr_drbg.c
   ${CMAKE_CURRENT_LIST_DIR}/src/prng_pool.c
 )
@@ -51,6 +51,7 @@ if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
     ${CMAKE_CURRENT_LIST_DIR}/src/ecc.c
     ${CMAKE_CURRENT_LIST_DIR}/src/ed25519.c
     ${CMAKE_CURRENT_LIST_DIR}/src/hmac.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/rndinrange.c
   )
 endif()
 
@@ -64,15 +65,27 @@ if(CONFIG_PSA_NEED_CRACEN_MAC_DRIVER)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/mac.c
   )
+
+  if(CONFIG_PSA_NEED_CRACEN_HMAC)
+    list(APPEND cracen_driver_sources
+      ${CMAKE_CURRENT_LIST_DIR}/src/cracen_mac_hmac.c
+      ${CMAKE_CURRENT_LIST_DIR}/src/hmac.c
+    )
+  endif()
+
+  if(CONFIG_PSA_NEED_CRACEN_CMAC)
+    list(APPEND cracen_driver_sources
+      ${CMAKE_CURRENT_LIST_DIR}/src/cracen_mac_cmac.c
+    )
+  endif()
 endif()
 
 if(CONFIG_PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER OR CONFIG_PSA_NEED_CRACEN_KMU_DRIVER OR CONFIG_MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS)
   list(APPEND cracen_driver_sources
-    ${CMAKE_CURRENT_LIST_DIR}/src/ed25519.c
     ${CMAKE_CURRENT_LIST_DIR}/src/key_management.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/ed25519.c
     ${CMAKE_CURRENT_LIST_DIR}/src/ecdsa.c
     ${CMAKE_CURRENT_LIST_DIR}/src/ecc.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/rndinrange.c
   )
 endif()
 
@@ -118,5 +131,4 @@ if(CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/platform_keys/platform_keys.c
   )
-  zephyr_linker_sources(ROM_START SORT_KEY 0x1keys ${CMAKE_CURRENT_LIST_DIR}/src/platform_keys/platform_keys.ld)
 endif()

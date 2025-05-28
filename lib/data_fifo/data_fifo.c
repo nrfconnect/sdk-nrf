@@ -59,7 +59,7 @@ int data_fifo_block_lock(struct data_fifo *data_fifo, void **data, size_t size)
 	int ret;
 
 	if (size > data_fifo->block_size_max) {
-		LOG_ERR("Size %zu too big", size);
+		LOG_ERR("Size %zu too big, max: %zu", size, data_fifo->block_size_max);
 		return -ENOMEM;
 	} else if (size == 0) {
 		LOG_ERR("Size is zero");

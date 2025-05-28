@@ -110,7 +110,11 @@ static int sx_aead_create_chacha20poly1305(struct sxaead *c, const struct sxkeyr
 		return SX_ERR_INVALID_KEY_SZ;
 	}
 
-	sx_hw_reserve(&c->dma);
+	/* has countermeasures and the key need to be set before callling sx_aead_hw_reserve */
+	c->has_countermeasures = false;
+	c->key = key;
+	sx_aead_hw_reserve(c);
+
 	c->cfg = &ba417chachapolycfg;
 
 	sx_cmdma_newcmd(&c->dma, c->descs, c->cfg->mode | dir, c->cfg->dmatags->cfg);
@@ -135,7 +139,6 @@ static int sx_aead_create_chacha20poly1305(struct sxaead *c, const struct sxkeyr
 	c->totalaadsz = 0;
 	c->datainsz = 0;
 	c->dataintotalsz = 0;
-	c->key = key;
 
 	return SX_OK;
 }

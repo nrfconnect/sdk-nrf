@@ -23,7 +23,7 @@
 #include <security/cracen.h>
 #include <nrf_security_mutexes.h>
 
-#if CONFIG_CRACEN_HW_VERSION_LITE && !CONFIG_SOC_NRF54L20 && !CONFIG_SOC_NRF54L09
+#if CONFIG_CRACEN_HW_VERSION_LITE && !CONFIG_SOC_NRF54LM20A && !CONFIG_SOC_NRF54LV10A
 #error Check to see if the current board needs the IKG-PKE interrupt workaround or not, \
 then update this error
 #endif
@@ -45,6 +45,8 @@ then update this error
 
 #define PK_BUSY_MASK_BA414EP 0x00010000
 #define PK_BUSY_MASK_IK	     0x00050000
+
+#define IK_ENTROPY_ERROR     0xc6
 
 struct sx_pk_cnx {
 	struct sx_pk_req instance;
@@ -105,7 +107,15 @@ int sx_pk_wait(sx_pk_req *req)
 		if (!sx_pk_is_ik_cmd(req)) {
 			cracen_wait_for_pke_interrupt();
 		}
+#elif CONFIG_CRACEN_HW_VERSION_LITE
+		/* In CRACEN Lite the IKG sometimes fails due to an entropy error.
+		 * Error code is returned here so the entire operation can be rerun
+		 */
+		if (sx_pk_rdreg(&req->regs, IK_REG_STATUS) == IK_ENTROPY_ERROR) {
+			return SX_ERR_RETRY;
+		}
 #endif
+
 	} while (is_busy(req));
 
 	return read_status(req);
@@ -217,7 +227,9 @@ struct sx_pk_acq_req sx_pk_acquire_req(const struct sx_pk_cmd_def *cmd)
 
 	/* Wait until initialized. */
 	while (ba414ep_is_busy(req.req) || ik_is_busy(req.req)) {
+#ifndef CONFIG_CRACEN_HW_VERSION_LITE
 		cracen_wait_for_pke_interrupt();
+#endif
 	}
 
 	return req;

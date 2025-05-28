@@ -44,33 +44,29 @@
 /**
  * @brief Callback for receiving Bluetooth LE Audio data.
  *
- * @param	data		Pointer to received data.
- * @param	size		Size of received data.
- * @param	bad_frame	Indicating if the frame is a bad frame or not.
- * @param	sdu_ref		ISO timestamp.
+ * @param	audio_frame	Pointer to audio data struct.
  * @param	channel_index	Audio channel index.
- * @param	desired_size	The expected data size.
  */
-typedef void (*le_audio_receive_cb)(const uint8_t *const data, size_t size, bool bad_frame,
-				    uint32_t sdu_ref, enum audio_channel channel_index,
-				    size_t desired_size);
-
-/**
- * @brief	Encoded audio data and information.
- *
- * @note	Container for SW codec (typically LC3) compressed audio data.
- */
-struct le_audio_encoded_audio {
-	uint8_t const *const data;
-	size_t size;
-	uint8_t num_ch;
-};
+typedef void (*le_audio_receive_cb)(struct audio_data *audio_frame, uint8_t channel_index);
 
 struct stream_index {
 	uint8_t lvl1; /* BIG / CIG */
 	uint8_t lvl2; /* Subgroups (only applicable to Broadcast) */
 	uint8_t lvl3; /* BIS / CIS */
 };
+
+/**
+ * @brief Function to handle the audio frame.
+ *
+ * @param[in] audio_frame	Pointer to the audio frame.
+ * @param[in] stream		Pointer to the stream.
+ * @param[in] info		Pointer to the ISO information.
+ * @param[in] buf		Pointer to the buffer.
+ *
+ * @return 0 if successful, error otherwise.
+ */
+int le_audio_frame_create(struct audio_data *audio_frame, const struct bt_bap_stream *stream,
+			  const struct bt_iso_recv_info *info, const struct net_buf *buf);
 
 /**
  * @brief	Get the current state of an endpoint.

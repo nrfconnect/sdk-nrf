@@ -278,7 +278,7 @@ Timeslots
 *********
 
 Timeslot is a core parameter in Gazell.
-It can be seen as the internal Gazell "heartbeat".
+It can be seen as the internal Gazell "heartbeat."
 
 In a Device, any packet transmission (both new packets and retransmitted packets) starts at the beginning of a timeslot, and only one packet transmission (including ACK) can take place within a timeslot.
 
@@ -317,7 +317,7 @@ Following are the core parameters deciding the channel hopping behavior:
 * ``timeslots_per_channel_when_device_out_of_sync`` (applies to "out of sync" Device only, set by :c:func:`nrf_gzll_set_timeslots_per_channel_when_device_out_of_sync()`).
 * ``channel_selection_policy`` (applies to "in sync" Device only, set by :c:func:`nrf_gzll_set_device_channel_selection_policy()`).
 
-Which one to use depends on whether Gazell is "in sync" or "out of sync", see :ref:`gazell_sync`.
+Which one to use depends on whether Gazell is "in sync" or "out of sync," see :ref:`gazell_sync`.
 Therefore, ``timeslots_per_channel`` is used instead of these terms.
 
 The ``timeslots_per_channel`` parameter sets the number of timeslots Gazell has on a single channel before the channel is changed.
@@ -358,7 +358,7 @@ The application can reconfigure the channel table during runtime to overcome thi
 The channel selection policy only applies to the initially transmitted packet.
 If the transmission of this initial packet fails, the following retransmission attempts are always sent in the channel the Device believes the Host is monitoring.
 
-If Gazell is "out of sync", it always starts the packet transmission immediately using the previous successful transmission channel.
+If Gazell is "out of sync," it always starts the packet transmission immediately using the previous successful transmission channel.
 If Gazell has not transmitted a successful packet and thus has no previous successful channel to relate to, it starts using the first channel in the channel table.
 
 .. _gazell_sync:
@@ -366,7 +366,7 @@ If Gazell has not transmitted a successful packet and thus has no previous succe
 Synchronization
 ***************
 
-The internal timeslot, or "heartbeat", mechanism of Gazell is used to obtain synchronous communication while still enabling efficient channel switching.
+The internal timeslot, or "heartbeat," mechanism of Gazell is used to obtain synchronous communication while still enabling efficient channel switching.
 This mechanism is useful when a Device needs to switch to a new channel while there is radio interference on the current channel.
 
 Each Gazell Device has two synchronization states: in sync and out of sync.

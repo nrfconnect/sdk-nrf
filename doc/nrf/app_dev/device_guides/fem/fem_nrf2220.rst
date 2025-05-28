@@ -22,6 +22,8 @@ To use nRF2220, complete the following steps:
          };
       };
 
+   Additionally, you can consider setting the :kconfig:option:`CONFIG_MPSL_FEM_NRF2220_TEMPERATURE_COMPENSATION` Kconfig option.
+
 #. Optionally replace the device name ``name_of_fem_node``.
 #. Replace the pin numbers provided for each of the required properties:
 

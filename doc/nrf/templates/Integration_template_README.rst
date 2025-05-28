@@ -11,7 +11,7 @@ Template: Integration
    Provide a short introductory description of the product or service, indicating the value it brings to |NCS|.
    Refer to the following instructions to create the description:
 
-   * Provide a title that starts with the product or service name with "integration" as a suffix, for example, "Memfault integration".
+   * Provide a title that starts with the product or service name with "integration" as a suffix, for example, "Memfault integration."
    * Place the documentation inside the :file:`nrf/doc/nrf/external_comp` folder.
    * List the file name with path in the ``.. toctree:`` of the :file:`integrations` RST file.
    * Sections with * are optional and can be left out.

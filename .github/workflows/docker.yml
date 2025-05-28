@@ -4,6 +4,12 @@ on:
   push:
     tags:
       - 'v*'
+    branches: # Trigger on push to main and release branches
+      - main
+      - 'v*-branch'
+
+env:
+  IMAGE_NAME: ghcr.io/${{ github.repository }}-toolchain
 
 jobs:
   build:
@@ -23,9 +29,31 @@ jobs:
           username: NordicBuilder
           password: ${{ secrets.NCS_GITHUB_PKG_WRITE_TOKEN }}
 
-      - name: Build and push Docker image
+      - name: Check if Docker image exists
+        id: check-image
         run: |
-          TOOLCHAIN_ID=$(../print_toolchain_checksum.sh)
-          docker build -t ghcr.io/${{ github.repository }}-toolchain:${{ github.ref_name }} --build-arg VERSION=$TOOLCHAIN_ID .
-          docker push ghcr.io/${{ github.repository }}-toolchain:${{ github.ref_name }}
+          TOOLCHAIN_ID=$(./scripts/print_toolchain_checksum.sh)
+          echo "TOOLCHAIN_ID=$TOOLCHAIN_ID" >> $GITHUB_OUTPUT
+          if docker manifest inspect ${IMAGE_NAME}:$TOOLCHAIN_ID > /dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and push Docker image
+        if: steps.check-image.outputs.exists == 'false'
         working-directory: scripts/docker
+        run: |
+          docker build -t ${IMAGE_NAME}:${{steps.check-image.outputs.TOOLCHAIN_ID}} --build-arg VERSION=${{steps.check-image.outputs.TOOLCHAIN_ID}} .
+          docker push ${IMAGE_NAME}:${{steps.check-image.outputs.TOOLCHAIN_ID}}
+          if [[ ${{ github.ref_name }} == "main" ]]; then
+            docker tag ${IMAGE_NAME}:${{steps.check-image.outputs.TOOLCHAIN_ID}} ${IMAGE_NAME}:latest
+            docker push ${IMAGE_NAME}:latest
+          fi
+
+      - name: Tag and push Docker image for tags
+        if: github.event_name == 'push' && github.ref_type == 'tag'
+        run: |
+          docker pull ${IMAGE_NAME}:${{steps.check-image.outputs.TOOLCHAIN_ID}}
+          docker tag ${IMAGE_NAME}:${{steps.check-image.outputs.TOOLCHAIN_ID}} ${IMAGE_NAME}:${{ github.ref_name }}
+          docker push ${IMAGE_NAME}:${{ github.ref_name }}

@@ -14,12 +14,21 @@
 #define EGU_INT_PRIO 4
 static K_SEM_DEFINE(spp_process_sem, 0, 1);
 
+#if defined(CONFIG_SOC_SERIES_NRF53X) || defined(CONFIG_SOC_SERIES_NRF91X)
+#define NRF_EGU_N  NRF_EGU0
+#define EGU_N_IRQn EGU0_IRQn
+
+#elif defined(CONFIG_SOC_SERIES_NRF54LX)
+#define NRF_EGU_N NRF_EGU10
+#define EGU_N_IRQn EGU10_IRQn
+#endif
+
 static struct k_work process_work;
 static struct k_work_delayable send_work;
 
-static void egu0_handler(const void *context)
+static void egu_handler(const void *context)
 {
-	nrf_egu_event_clear(NRF_EGU0, NRF_EGU_EVENT_TRIGGERED0);
+	nrf_egu_event_clear(NRF_EGU_N, NRF_EGU_EVENT_TRIGGERED0);
 
 	k_work_submit(&process_work);
 }
@@ -54,9 +63,9 @@ static void send(struct k_work *work)
 
 int main(void)
 {
-	IRQ_CONNECT(EGU0_IRQn, EGU_INT_PRIO, egu0_handler, NULL, 0);
-	nrf_egu_int_enable(NRF_EGU0, NRF_EGU_INT_TRIGGERED0);
-	NVIC_EnableIRQ(EGU0_IRQn);
+	IRQ_CONNECT(EGU_N_IRQn, EGU_INT_PRIO, egu_handler, NULL, 0);
+	nrf_egu_int_enable(NRF_EGU_N, NRF_EGU_INT_TRIGGERED0);
+	NVIC_EnableIRQ(EGU_N_IRQn);
 
 	k_work_init(&process_work, process);
 	k_work_init_delayable(&send_work, send);

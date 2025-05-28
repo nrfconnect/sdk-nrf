@@ -206,7 +206,7 @@ Testing
                       /dev/ttyACM3, vcom: 1
       traits          devkit, jlink, seggerUsb, serialPorts, usb
 
-      Found 2 supported device(s)
+      Found 2 supported device
 
    In this example, ``1050779496`` is the serial number of the first nRF7002 DK and ``1050759502`` is the serial number of the other one.
 
@@ -237,7 +237,7 @@ Complete the following steps to program the nRF7002 DK:
 Test procedure
 ==============
 
-The following tables provide the procedure to run Wi-Fi only, Bluetooth LE-only, and combined throughput for different Thread roles.
+The following tables provide the procedure to run Wi-Fi only, Thread-only, and combined throughput for different Thread roles.
 
 #. Complete the following steps to run the Wi-Fi client and Thread client:
 

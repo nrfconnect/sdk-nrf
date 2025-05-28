@@ -578,7 +578,7 @@ The peripheral supports one wireless connection at a time, but it can be bonded 
    See the :ref:`nrf_desktop_bluetooth_guide_fast_pair` section for details.
 
 The nRF Desktop Bluetooth Central device scans for all bonded peripherals that are not connected.
-Right after entering the scanning state, the scanning operation is uninterruptible for a predefined time (:kconfig:option:`CONFIG_DESKTOP_BLE_FORCED_SCAN_DURATION_S`) to speed up connection establishment with Bluetooth Peripherals.
+Right after entering the scanning state, the scanning operation is uninterruptible for a predefined time (:ref:`CONFIG_DESKTOP_BLE_FORCED_SCAN_DURATION_S <config_desktop_app_options>`) to speed up connection establishment with Bluetooth Peripherals.
 After the timeout, the scanning is interrupted when any device connected to the dongle through Bluetooth becomes active.
 A connected peripheral is considered active when it provides HID input reports.
 Continuing the scanning in such scenario would cause report rate drop.
@@ -633,7 +633,9 @@ The assignments of hardware interface elements depend on the device type.
             * Middle position: Select the Bluetooth LE peers.
             * Bottom position: Mouse turned off.
 
-          When the dongle peer is selected, the peer control is disabled until the switch is set to another position.
+          By default, when the dongle peer is selected, the peer control is disabled until the switch is set to another position.
+          You can enable the dongle peer erase in the configuration.
+          The feature is enabled in the :ref:`Fast Pair <nrf_desktop_bluetooth_guide_fast_pair>` configurations, because the dongle peer is intended to be used for all of the peers that are not Fast Pair Seekers.
 
       Peer control button
           * The button is located on the left side of the mouse, in the thumb area.
@@ -654,7 +656,7 @@ The assignments of hardware interface elements depend on the device type.
                **LED1** stops blinking.
 
                .. note::
-                   |led_note|
+                  |led_note|
 
           * Long-press to initialize the peer erase.
             When **LED1** starts blinking rapidly, double-press to confirm the operation.
@@ -694,13 +696,13 @@ The assignments of hardware interface elements depend on the device type.
 
           1. Short-press to toggle between available peers.
              **LED1** blinks rapidly for each peer.
-             The amount of blinks corresponds to the number assigned to a peer: one blink for peer 1, two blinks for peer 2, and so on.
+             The amount of blinks corresponds to the number assigned to a peer (for example, one blink for peer 1, two blinks for peer 2), increasing incrementally with each peer.
           #. Double-press to confirm the peer selection.
              The peer is changed after the confirmation.
              **LED1** becomes solid for a short time and then turns itself off.
 
              .. note::
-                  |led_note|
+                |led_note|
 
         * Long-press to initialize the peer erase.
           When **LED1** starts blinking rapidly, double-press to confirm the operation.
@@ -726,9 +728,67 @@ The assignments of hardware interface elements depend on the device type.
           After the forced scan timeout, the scan is interrupted if another peripheral connected to the dongle is active.
 
           .. note::
-              |led_note|
+             |led_note|
 
         * |nRF_Desktop_cancel_operation|
+
+   .. tab:: nRF54 DK
+
+      The following predefined button is assigned to peer control operations for an nRF54 Series DK.
+
+      Button 0
+         * If the DK acts as a dongle:
+
+            * Long-press the **Button 0** to initialize peer erase.
+              When **LED1** starts blinking rapidly, double-press to confirm the operation.
+              After the confirmation, all the Bluetooth bonds are removed for the dongle.
+            * Short-press to start scanning for both bonded and non-bonded Bluetooth Peripherals.
+              After the forced scan timeout, the scan is interrupted if another peripheral connected to the dongle is active.
+
+              .. note::
+                 |led_note|
+
+            * |nRF_Desktop_cancel_operation|
+
+         * If the DK acts as a peripheral:
+
+            * Press the **Button 0** before the DK is powered up with the on/off switch.
+              Long-press to initialize and confirm the peer erase.
+              |nRF_Desktop_confirmation_effect|
+
+              .. note::
+                 |led_note|
+
+            * |nRF_Desktop_cancel_operation|
+
+   .. tab:: nRF52 and nRF53 DKs
+
+      The following predefined button is assigned to peer control operations for an nRF52 or nRF53 Series DK.
+
+      Button 1
+         * If the DK acts as a dongle:
+
+            * Long-press the **Button 1** to initialize peer erase.
+              When **LED2** starts blinking rapidly, double-press to confirm the operation.
+              After the confirmation, all the Bluetooth bonds are removed for the dongle.
+            * Short-press to start scanning for both bonded and non-bonded Bluetooth Peripherals.
+              After the forced scan timeout, the scan is interrupted if another peripheral connected to the dongle is active.
+
+              .. note::
+                 |led_note|
+
+         * |nRF_Desktop_cancel_operation|
+
+      * If the DK acts as a peripheral:
+
+         * Press the **Button 1** before the DK is powered up with the on/off switch.
+           Long-press to initialize and confirm the peer erase.
+           |nRF_Desktop_confirmation_effect|
+
+           .. note::
+              |led_note|
+
+         * |nRF_Desktop_cancel_operation|
 
 ..
 
@@ -755,6 +815,14 @@ This system state LED is kept lit when the device is active.
 
       **LED1** is used for the system state indication.
       It is located in the bottom right corner of the dongle, next to the USB connector.
+
+   .. tab:: nRF54 DK
+
+      **LED0** is used for the system state indication.
+
+   .. tab:: nRF52 and nRF53 DKs
+
+      **LED1** is used for the system state indication.
 
 ..
 
@@ -909,9 +977,8 @@ Before you start testing the application, you can select one of the :ref:`nrf_de
 See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for information about how to select a build type.
 
 .. note::
-   If nRF Desktop is built with `Fast Pair`_ support, you must provide Fast Pair Model ID and Anti Spoofing private key as CMake options.
-   You can use either your own provisioning data or the provisioning data obtained by Nordic Semiconductor for development purposes.
-   The following debug devices are meant to be used with the nRF Desktop and have been registered:
+   An nRF Desktop device with `Fast Pair`_ support by default uses the debug Fast Pair Model ID and Anti Spoofing private key obtained by Nordic Semiconductor for development purposes.
+   The following debug Fast Pair Model IDs were registered to be used with the nRF Desktop application:
 
    * NCS keyboard - The Fast Pair Provider meant to be used with keyboards:
 
@@ -973,7 +1040,12 @@ Testing
 =======
 
 You can build and test the application in various configurations.
-The following procedure refers to the scenario where the gaming mouse (nRF52840 Gaming Mouse) and the keyboard (nRF52832 Desktop Keyboard) are connected simultaneously to the dongle (nRF52840 USB Dongle).
+
+.. note::
+   The following procedure refers to the scenario where the gaming mouse (nRF52840 Gaming Mouse) and the keyboard (nRF52832 Desktop Keyboard) are connected simultaneously to the dongle (nRF52840 USB Dongle).
+
+   You can perform similar tests with nRF52, nRF53, or nRF54 Series DKs.
+   Depending on the selected build type, the DK can act either as HID peripheral or HID dongle.
 
 After building the application with or without :ref:`specifying the build type <nrf_desktop_selecting_build_types>`, test the nRF Desktop application by performing the following steps:
 

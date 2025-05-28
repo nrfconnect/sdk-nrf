@@ -255,7 +255,7 @@ Key functions, such as :c:func:`hrt_write`, :c:func:`hrt_tx`, and :c:func:`hrt_r
        3. Transfers the frame elements sequentially via :c:func:`hrt_tx`.
        4. Manages clock timing and CE pin behavior.
    * - :c:func:`hrt_tx`
-     - Handles the low-level data transfer for a specific frame element (e.g., ``command``, ``address``, ``dummy_cycles``, or ``data``).
+     - Handles the low-level data transfer for a specific frame element (for example, ``command``, ``address``, ``dummy_cycles``, or ``data``).
      - 1. Configures the shift controller (:c:func:`nrf_vpr_csr_vio_shift_ctrl_buffered_set`).
        2. Writes each word from the data buffer to the output register.
        3. Starts the hardware counter for generating clock signal.

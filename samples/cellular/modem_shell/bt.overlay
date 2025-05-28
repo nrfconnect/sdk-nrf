@@ -19,8 +19,6 @@
 &uart2 {
 	current-speed = <1000000>;
 	status = "okay";
-	/delete-property/ rts-pin;
-	/delete-property/ cts-pin;
 	/delete-property/ hw-flow-control;
 
 	pinctrl-0 = <&uart2_default_alt>;

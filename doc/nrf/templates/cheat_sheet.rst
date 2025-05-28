@@ -142,7 +142,7 @@ Tables
 | body row 2             | ...        | ...      |          |
 +------------------------+------------+----------+----------+
 
-We can create more complex tables as ASCII art:
+You can create more complex tables as ASCII art:
 
 +------------------------+------------+----------+----------+
 | Header row, column 1   | Header 2   | Header 3 | Header 4 |
@@ -177,7 +177,7 @@ We can create more complex tables as ASCII art:
      - On a stick!
    * - Crunchy Frog
      - 1.49
-     - If we took the bones out, it wouldn't be
+     - If you took the bones out, it wouldn't be
        crunchy, now would it?
    * - Gannet Ripple
      - 1.99
@@ -192,7 +192,7 @@ We can create more complex tables as ASCII art:
    :widths: 15, 10, 30
 
    "Albatross", 2.99, "On a stick!"
-   "Crunchy Frog", 1.49, "If we took the bones out, it wouldn't be
+   "Crunchy Frog", 1.49, "If you took the bones out, it wouldn't be
    crunchy, now would it?"
    "Gannet Ripple", 1.99, "On a stick!"
 
@@ -618,7 +618,7 @@ Read out an objects.inv file::
 Doxygen
 =======
 
-We usually include doxygen groups::
+Doxygen groups are included in the API documents::
 
    .. doxygengroup:: group_name
 

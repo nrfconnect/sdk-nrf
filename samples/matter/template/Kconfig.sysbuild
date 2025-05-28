@@ -63,17 +63,12 @@ config DFU_MULTI_IMAGE_PACKAGE_NET
 
 endif # SOC_SERIES_NRF53X
 
-if BOARD_NRF54L15DK
+if (BOARD_NRF54L15DK || BOARD_NRF54LM20PDK)
 
-# Disable checking the external drivers for nRF54L15 DKs.
 config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
 	default y
 
-# override the mcuboot pad size, because it is not set globally for NS build.
-config PM_MCUBOOT_PAD
-	default 0x800
-
-endif # BOARD_NRF54L15DK
+endif # (BOARD_NRF54L15DK || BOARD_NRF54LM20PDK)
 
 endif # BOOTLOADER_MCUBOOT
 

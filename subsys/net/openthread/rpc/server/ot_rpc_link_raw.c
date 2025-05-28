@@ -8,6 +8,7 @@
 #include <ot_rpc_ids.h>
 #include <ot_rpc_types.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_lock.h>
 
 #include <nrf_rpc_cbor.h>
 
@@ -26,9 +27,9 @@ static void ot_rpc_cmd_get_radio_time(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	ot_rpc_mutex_lock();
 	time = otLinkRawGetRadioTime(openthread_get_default_instance());
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	ot_rpc_mutex_unlock();
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 1 + sizeof(time));
 	nrf_rpc_encode_uint64(&rsp_ctx, time);

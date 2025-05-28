@@ -105,6 +105,6 @@ To implement the custom Fabric Table delegation, complete the following points:
    Not all actions implemented in the ``OnFabricRemoved`` can be called directly from the method body, and should be delegated to be done in Zephyr thread of Matter.
    This is because the device needs to confirm the removal of the fabric and send the acknowledgment to the Matter controller.
    To postpone running the chosen action, delegate its invocation to the Zephyr thread of Matter using the ``chip::DeviceLayer::PlatformMgr().ScheduleWork`` method.
-   If the device doesn't complete all activities that need to be done before clearing non-volatile storage, use a timer to delay the action execution.
+   If the device does not complete all activities that need to be done before clearing non-volatile storage, use a timer to delay the action execution.
 
 To see an example implementation of the Fabric Table delegation, see the :file:`fabric_table_delegate.h` file which is located in the Matter samples common directory.

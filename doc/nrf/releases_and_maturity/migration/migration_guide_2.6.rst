@@ -413,7 +413,7 @@ Matter
                *
                * If IPv6 networking and service provisioned, keep the LED On constantly.
                *
-               * If the system has BLE connection(s) uptill the stage above, THEN blink the LED at an even
+               * If the system has BLE connections uptill the stage above, THEN blink the LED at an even
                * rate of 100ms.
                *
                * Otherwise, blink the LED for a very short time. */
@@ -832,7 +832,7 @@ Bluetooth® Mesh
      * :c:struct:`bt_mesh_sensor_value` with a valid format can be converted to and from integer, float and :c:struct:`sensor_value` through ``bt_mesh_sensor_value_to/from*`` functions.
      * Where the applications previously just added values directly to :c:member:`sensor_value.val1` and :c:member:`sensor_value.val2`, the correct way is to use ``bt_mesh_sensor_value_to/from*`` functions to either set or extract the values.
 
-     Example of changes that need to be done for a sensor using sensor values, from e.g. the file :file:`drivers/sensor.h`:
+     Example of changes that need to be done for a sensor using sensor values from the file :file:`drivers/sensor.h`:
 
        ..  code-block:: diff
 

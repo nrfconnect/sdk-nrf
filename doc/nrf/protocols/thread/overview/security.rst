@@ -27,7 +27,7 @@ Depending on the board, Thread samples can use a secure processing environment.
 nRF54L with Trusted Firmware-M (TF-M)
 =====================================
 
-On the nRF54L15 SoC, Thread samples support :ref:`app_boards_spe_nspe` with Trusted Firmware-M (TF-M).
+On the nRF54L15 SoC, Thread samples support :ref:`security by separation <ug_tfm_security_by_separation>` with Trusted Firmware-M (TF-M).
 All cryptographic operations within the Thread stack are performed by utilizing the `Platform Security Architecture (PSA)`_ API and executed in the secure TF-M environment.
 The secure materials like Thread network key are stored in the TF-M secure storage using the :ref:`tfm_encrypted_its` module.
 

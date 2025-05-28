@@ -127,17 +127,23 @@ static void at_cmd_mode_cmd_rx_handler(uint8_t character)
 	case 0x08: /* Backspace. */
 		/* Fall through. */
 	case 0x7F: /* DEL character */
-		if (at_cmd_len > 0) {
-			/* Reprint with DEL/Backspace  */
-			k_mutex_lock(&at_buf_mutex, K_FOREVER);
-			at_buf[at_cmd_len] = '\0';
-			at_cmd_len--;
-			at_buf[at_cmd_len] = ' ';
-			printk("\r%s", at_buf);
-			at_buf[at_cmd_len] = '\0';
-			printk("\r%s", at_buf);
-			k_mutex_unlock(&at_buf_mutex);
+		if (at_cmd_len == 0) {
+			return;
 		}
+
+		/* Reprint with DEL/Backspace  */
+		k_mutex_lock(&at_buf_mutex, K_FOREVER);
+		at_buf[at_cmd_len] = '\0';
+		at_cmd_len--;
+		/* If the removed character was a quote, need to toggle the flag. */
+		if (at_buf[at_cmd_len] == '"') {
+			inside_quotes = !inside_quotes;
+		}
+		at_buf[at_cmd_len] = ' ';
+		printk("\r%s", at_buf);
+		at_buf[at_cmd_len] = '\0';
+		printk("\r%s", at_buf);
+		k_mutex_unlock(&at_buf_mutex);
 		return;
 	}
 

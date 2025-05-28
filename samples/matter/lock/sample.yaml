@@ -107,6 +107,18 @@ tests:
     tags:
       - sysbuild
       - ci_samples_matter
+  sample.matter.lock.schedules:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - lock_SNIPPET=schedules
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    tags:
+      - sysbuild
+      - ci_samples_matter
   sample.matter.lock.release.power_consumption:
     sysbuild: true
     build_only: true

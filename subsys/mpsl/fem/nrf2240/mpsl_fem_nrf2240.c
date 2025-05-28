@@ -35,7 +35,8 @@
 #endif
 
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), twi_if)
-#define MPSL_FEM_TWI_IF     DT_PHANDLE(DT_NODELABEL(nrf_radio_fem), twi_if)
+#define MPSL_FEM_TWI_IF      DT_PHANDLE(DT_NODELABEL(nrf_radio_fem), twi_if)
+#define MPSL_FEM_TWI_ADDRESS DT_REG_ADDR(MPSL_FEM_TWI_IF)
 #endif
 
 #define FEM_OUTPUT_POWER_DBM     DT_PROP(DT_NODELABEL(nrf_radio_fem), output_power_dbm)
@@ -74,7 +75,9 @@ static void fem_nrf2240_twi_init_regs_configure(mpsl_fem_nrf2240_interface_confi
 
 static void fem_nrf2240_twi_configure(mpsl_fem_nrf2240_interface_config_t *cfg)
 {
-	cfg->twi_if = MPSL_FEM_TWI_DRV_IF_INITIALIZER(MPSL_FEM_TWI_IF);
+	static mpsl_fem_twi_drv_t fem_twi_drv = MPSL_FEM_TWI_DRV_INITIALIZER(MPSL_FEM_TWI_IF);
+
+	mpsl_fem_twi_drv_fem_twi_if_prepare(&fem_twi_drv, &cfg->twi_if, MPSL_FEM_TWI_ADDRESS);
 }
 #endif /* DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), twi_if) */
 

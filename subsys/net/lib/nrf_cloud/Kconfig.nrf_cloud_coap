@@ -10,7 +10,6 @@ menuconfig NRF_CLOUD_COAP
 	select COAP
 	select COAP_EXTENDED_OPTIONS_LEN
 	select COAP_CLIENT
-	select EXPERIMENTAL
 	select LTE_PROPRIETARY_PSM_REQ if (SOC_NRF9161_LACA || SOC_NRF9151_LACA || SOC_NRF9131_LACA)
 	depends on NET_IPV4 || NET_IPV6
 
@@ -66,10 +65,10 @@ config NRF_CLOUD_COAP_SEND_SSIDS
 endif # WIFI
 
 config NRF_CLOUD_COAP_DOWNLOADS
-	bool "Download files using CoAP instead of HTTP [EXPERIMENTAL]"
+	bool "Download files using CoAP instead of HTTP"
 	depends on NRF_CLOUD_COAP
 	select DOWNLOADER_TRANSPORT_COAP
-	select EXPERIMENTAL
+	default y
 	help
 	  Use nRF Cloud CoAP's proxy download resource to download files for FOTA and P-GPS.
 	  When enabled, the Kconfig option COAP_EXTENDED_OPTIONS_LEN_VALUE must be increased

@@ -28,6 +28,7 @@ target_sources_ifdef(CONFIG_NRF5340_AUDIO_SD_CARD_LC3_STREAMER app PRIVATE ${ZEP
 
 target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/nrf_auraconfig/src/nrf_auraconfig.c)
 
+target_sources(app PRIVATE src/led_mock.c)
 target_sources(app PRIVATE src/audio_sync_timer_mock.c)
 target_sources(app PRIVATE src/main.c)
 

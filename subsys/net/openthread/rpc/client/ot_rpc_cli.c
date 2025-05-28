@@ -6,6 +6,7 @@
 
 #include <ot_rpc_ids.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_lock.h>
 #include <nrf_rpc/nrf_rpc_serialize.h>
 #include <nrf_rpc_cbor.h>
 
@@ -71,7 +72,9 @@ static void ot_rpc_cmd_cli_output(const struct nrf_rpc_group *group, struct nrf_
 
 	/* Invoke the client's CLI output callback and release the input packet */
 
+	ot_rpc_mutex_lock();
 	invoke_cli_output_callback("%.*s", output_line.len, output_line.value);
+	ot_rpc_mutex_unlock();
 	nrf_rpc_cbor_decoding_done(group, ctx);
 
 	/* Encode and send the response */

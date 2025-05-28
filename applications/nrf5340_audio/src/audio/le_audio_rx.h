@@ -7,19 +7,16 @@
 #ifndef _LE_AUDIO_RX_H_
 #define _LE_AUDIO_RX_H_
 
+#include <zephyr/bluetooth/audio/audio.h>
+#include <audio_defines.h>
+
 /**
  * @brief Data handler when ISO data has been received.
  *
- * @param[in] p_data		Pointer to the received data.
- * @param[in] data_size		Size of the received data.
- * @param[in] bad_frame		Bad frame flag. (I.e. set for missed ISO data).
- * @param[in] sdu_ref		SDU reference timestamp.
+ * @param[in] audio_frame	Pointer to the received data.
  * @param[in] channel_index	Which channel is received.
- * @param[in] desired_data_size	The expected data size.
  */
-void le_audio_rx_data_handler(uint8_t const *const p_data, size_t data_size, bool bad_frame,
-			      uint32_t sdu_ref, enum audio_channel channel_index,
-			      size_t desired_data_size);
+void le_audio_rx_data_handler(struct audio_data *audio_frame, uint8_t channel_index);
 
 /**
  * @brief Initialize the receive audio path.

@@ -67,6 +67,19 @@ config BLE_ACL_ADV_SID
 	range 0x00 0x0F
 	default 0x00
 
+config BT_MGMT_ADV_STACK_SIZE
+	int "Stack size"
+	default 1024
+	help
+	  Stack size for the Bluetooth management advertising thread.
+
+config BT_MGMT_ADV_THREAD_PRIO
+	int "Thread priority for bt_mgmt advertising"
+	default 5
+	help
+	  This is a preemptible thread.
+	  This thread will subscribe to BT management advertising work items.
+
 #----------------------------------------------------------------------------#
 menu "Log level"
 

@@ -42,7 +42,7 @@ Temperature: ``uint16_t``
 Delta UV: ``int16_t``
     The Temperature state represents the distance from the black body curve.
     The color temperatures all fall on the black body locus (curve).
-    This is a 16-bit signed integer representation of a -1 to +1 scale using the formula:
+    This is a 16-bit signed integer representation of a –1 to +1 scale using the formula:
 
     .. code-block:: console
 

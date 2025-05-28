@@ -12,3 +12,10 @@ config TEST_USE_DMM
 	  The test will use it to determine whether to prealocate DMM
 	  buffer or use regular mem slab and allocate dmm buffer inside
 	  PDM driver.
+
+config TEST_STEREO_CONFIGURATION
+	bool "Select mono / stereo operation"
+	help
+	  When set to 'y' PDM driver will be configured in stereo mode.
+	  In such case, import RAW audio data using following configuration:
+	  Signed 16-bit PCM; little-endian; stereo; 16000Hz.

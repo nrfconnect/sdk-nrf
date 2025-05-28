@@ -49,6 +49,7 @@ The DFU target library supports the following types of firmware upgrades:
 * Modem delta upgrades
 * Full modem firmware upgrades
 * SUIT-style upgrades
+* Custom upgrades
 
 MCUboot-style upgrades
 ----------------------
@@ -167,6 +168,13 @@ When all image data transfers are completed, the application using the DFU targe
    The application must schedule the upgrade of all images at once using the :c:func:`dfu_target_schedule_update` function.
    During this operation, the manifests stored in the ``dfu_partition`` partition will be processed.
 
+Custom upgrades
+---------------
+
+This firmware upgrade supports custom updates for external peripherals or other custom firmware.
+To use this feature, the application must implement the custom upgrade logic by applying the functions defined in the :file:`include/dfu/dfu_target_custom.h` file.
+
+
 Configuration
 *************
 
@@ -193,6 +201,7 @@ You can disable support for specific DFU targets using the following options:
 * :kconfig:option:`CONFIG_DFU_TARGET_MCUBOOT`
 * :kconfig:option:`CONFIG_DFU_TARGET_MODEM_DELTA`
 * :kconfig:option:`CONFIG_DFU_TARGET_FULL_MODEM`
+* :kconfig:option:`CONFIG_DFU_TARGET_CUSTOM`
 
 Maintaining writing progress after reboot
 =========================================

@@ -23,7 +23,7 @@ The pages will guide you through the following getting started process:
 #. :ref:`ug_matter_gs_testing` will guide you through the process of setting up the development environment for Matter.
    Several options are available based on your choice of the IPv6 network and the Matter controller type.
    During this process, you will have to program a Matter sample.
-   We recommend using :ref:`Matter light bulb <matter_light_bulb_sample>`.
+   It is recommended to use the :ref:`Matter light bulb <matter_light_bulb_sample>` sample.
    You will also use some of the :ref:`ug_matter_tools` for this process.
 #. :ref:`ug_matter_gs_kconfig` describes the basic Kconfig configuration if you want to start developing your own Matter application.
 #. In :ref:`ug_matter_device_advanced_kconfigs`, you will learn about more advanced Kconfig options related to Matter.

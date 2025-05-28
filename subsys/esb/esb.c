@@ -646,11 +646,11 @@ static void update_rf_payload_format_esb_dpl(uint32_t payload_length)
 	}
 #endif /* defined(RADIO_MODE_MODE_Ble_2Mbit) */
 
-#if defined(RADIO_MODE_MODE_Nrf_4Mbit0_5) || defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT6)
+#if defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT6)
 	if (esb_cfg.bitrate == ESB_BITRATE_4MBPS) {
 		packet_config.plen = NRF_RADIO_PREAMBLE_LENGTH_16BIT;
 	}
-#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit0_5) || defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT6) */
+#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT6) */
 
 #endif /* defined(RADIO_PCNF0_PLEN_Msk) */
 
@@ -896,11 +896,11 @@ static bool update_radio_bitrate(void)
 
 	switch (esb_cfg.bitrate) {
 
-#if defined(RADIO_MODE_MODE_Nrf_4Mbit0_5) || defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT6)
+#if defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT6)
 	case ESB_BITRATE_4MBPS:
 		wait_for_ack_timeout_us = RX_ACK_TIMEOUT_US_4MBPS;
 		break;
-#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit0_5) || define(RADIO_MODE_MODE_Nrf_4Mbit_0BT6) */
+#endif /* defined(RADIO_MODE_MODE_Nrf_4Mbit_0BT6) */
 
 	case ESB_BITRATE_2MBPS:
 

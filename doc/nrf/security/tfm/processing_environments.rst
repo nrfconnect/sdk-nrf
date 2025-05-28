@@ -53,7 +53,8 @@ You can use Trusted Firmware-M to increase the security level of the application
 
 You can use the PSA Secure Storage API exposed by TF-M to store secrets in memory not accessible to the user application.
 In addition, the I2C peripheral can be designated as secure to prevent access from the non-secure application and only expose a defined interface towards the user application.
-For example, you can define this interface to allow the user application to perform a specific task (such as retrieving the value of a sensor, locking or unlocking a door, and so on) only under certain conditions that are decided by the code running within the associated partition in TF-M.
+For example, you can define this interface to allow the user application to perform a specific task only under certain conditions determined by the code running within the associated partition in TF-M.
+Such tasks can include retrieving the value of a sensor, locking or unlocking a door, triggering an alarm, among others.
 
 For an example of how hardware peripherals can be separated with secure/non-secure access restrictions, see the :ref:`tfm_secure_peripheral_partition` sample.
 
@@ -111,7 +112,7 @@ The application is built as a non-secure image and TF-M is built as the secure i
 The build system merges both images to form a combined image that will be used for programming or updating the device.
 
 .. note::
-   A common misunderstanding comes from the naming of the builds: because "ns" is short for "non-secure", it is easy to think that building for ``nrfd9160dk/nrf9160/ns`` is less secure.
+   A common misunderstanding comes from the naming of the builds: because "ns" is short for "non-secure," it is easy to think that building for ``nrfd9160dk/nrf9160/ns`` is less secure.
    But it is indeed the other way around!
 
 TF-M enables hardware-supported separation of firmware.

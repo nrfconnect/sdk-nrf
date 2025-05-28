@@ -14,7 +14,6 @@
 /CMakeLists.txt                           @nrfconnect/ncs-co-build-system
 /CODEOWNERS                               @nrfconnect/ncs-code-owners
 /Jenkinsfile                              @nrfconnect/ncs-ci
-/ncs_version.h.in                         @nrfconnect/ncs-code-owners
 /LICENSE                                  @carlescufi
 /README.rst                               @carlescufi @nrfconnect/ncs-doc-leads
 /VERSION                                  @nrfconnect/ncs-code-owners
@@ -34,8 +33,8 @@
 /applications/matter_weather_station/     @nrfconnect/ncs-matter
 /applications/nrf5340_audio/              @nrfconnect/ncs-audio
 /applications/nrf_desktop/                @nrfconnect/ncs-si-bluebagel
-/applications/hpf/                        @nrfconnect/ncs-ll-ursus
-/applications/serial_lte_modem/           @nrfconnect/ncs-co-networking @nrfconnect/ncs-iot-oulu
+/applications/hpf/                        @nrfconnect/ncs-ll-ursus @ncs-lowlevel-doc
+/applications/serial_lte_modem/           @nrfconnect/ncs-co-networking @nrfconnect/ncs-lr-slm
 /applications/serial_lte_modem/src/lwm2m_carrier/ @nrfconnect/ncs-carrier
 /applications/connectivity_bridge/*.rst   @nrfconnect/ncs-cia-doc
 /applications/ipc_radio/*.rst             @nrfconnect/ncs-si-muffin-doc
@@ -44,7 +43,7 @@
 /applications/matter_weather_station/*.rst @nrfconnect/ncs-matter-doc
 /applications/nrf5340_audio/**/*.rst      @nrfconnect/ncs-audio-doc
 /applications/nrf_desktop/**/*.rst        @nrfconnect/ncs-si-bluebagel-doc
-/applications/hpf/**/*.rst                @annwoj
+/applications/hpf/**/*.rst                @ncs-lowlevel-doc
 /applications/serial_lte_modem/**/*.rst   @nrfconnect/ncs-iot-oulu-tampere-doc
 /applications/serial_lte_modem/doc/CARRIER_AT_commands.rst @nrfconnect/ncs-carrier-doc
 
@@ -101,6 +100,7 @@
 /doc/nrf/drivers/suit_flash_ipuc.rst      @nrfconnect/ncs-charon-doc
 /doc/nrf/drivers/images/flash_ipuc/*      @nrfconnect/ncs-charon-doc
 /doc/nrf/drivers/hw_cc3xx.rst             @nrfconnect/ncs-aegir-doc
+/doc/nrf/drivers/mspi_sqspi.rst           @ncs-lowlevel-doc
 /doc/nrf/drivers/paw3212.rst              @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/drivers/pmw3360.rst              @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/drivers/sensor_sim.rst           @nrfconnect/ncs-cia-doc
@@ -409,7 +409,7 @@
 /lib/modem_info/                          @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
 /lib/modem_jwt/                           @nrfconnect/ncs-iot-oulu @nrfconnect/ncs-modem
 /lib/modem_key_mgmt/                      @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
-/lib/modem_slm/                           @nrfconnect/ncs-iot-oulu
+/lib/modem_slm/                           @nrfconnect/ncs-lr-slm
 /lib/multithreading_lock/                 @nrfconnect/ncs-dragoon
 /lib/nrf_modem_lib/                       @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
 /lib/pcm_mix/                             @nrfconnect/ncs-audio
@@ -508,9 +508,10 @@
 /samples/cellular/nrf_cloud_*             @nrfconnect/ncs-nrf-cloud
 /samples/cellular/nrf_provisioning/       @nrfconnect/ncs-iot-oulu
 /samples/cellular/modem_trace_flash/      @nrfconnect/ncs-modem
-/samples/cellular/slm_shell/              @nrfconnect/ncs-iot-oulu
+/samples/cellular/slm_shell/              @nrfconnect/ncs-lr-slm
 /samples/cellular/sms/                    @nrfconnect/ncs-modem-tre
 /samples/cellular/uicc_lwm2m/             @stig-bjorlykke
+/samples/cellular/lte_ble_gateway/        @nrfconnect/ncs-cia
 /samples/common/                          @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/crypto/                          @nrfconnect/ncs-aegir
 /samples/debug/memfault/                  @nrfconnect/ncs-cia
@@ -541,7 +542,7 @@
 /samples/openthread/                      @nrfconnect/ncs-co-networking @nrfconnect/ncs-thread
 /samples/peripheral/802154_phy_test/      @nrfconnect/ncs-radio-sw
 /samples/peripheral/802154_sniffer/       @e-rk
-/samples/peripheral/lpuart/               @nordic-krch
+/samples/peripheral/lpuart/               @nordic-krch @nrfconnect/ncs-low-level-test
 /samples/peripheral/radio_test/           @nrfconnect/ncs-si-muffin
 /samples/pmic/native/                     @nordic-auko
 /samples/sensor/bh1749/                   @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
@@ -706,6 +707,7 @@
 /scripts/west_commands/create_board/      @gmarull
 /scripts/west_commands/sbom/              @nrfconnect/ncs-co-scripts
 /scripts/west_commands/thingy91x_dfu.py   @nrfconnect/ncs-cia
+/scripts/west_commands/ncs_ironside_se_update.py @nrfconnect/ncs-aurora
 /scripts/west_commands/ncs_provision.py   @nrfconnect/ncs-pluto
 /scripts/bootloader/                      @nrfconnect/ncs-pluto
 /scripts/reglock.py                       @nrfconnect/ncs-pluto
@@ -855,8 +857,11 @@
 /tests/drivers/flash/flash_rpc/           @nrfconnect/ncs-pluto
 /tests/drivers/flash_patch/               @nrfconnect/ncs-pluto
 /tests/drivers/fprotect/                  @nrfconnect/ncs-pluto
+/tests/drivers/grtc/                      @nrfconnect/ncs-low-level-test
 /tests/drivers/lpuart/                    @nordic-krch @nrfconnect/ncs-low-level-test
 /tests/drivers/mspi/app_fault_timer/      @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
+/tests/drivers/mspi/error_cases/          @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
+/tests/drivers/mspi/mspi_with_spis/       @nrfconnect/ncs-low-level-test
 /tests/drivers/mspi/trap_handler/         @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /tests/drivers/nrf_wifi/                  @sachinthegreen @krish2718
 /tests/drivers/nrfx_integration_test/     @nrfconnect/ncs-co-drivers

@@ -21,7 +21,8 @@
 };
 
 &nfct {
-	status = "okay";  /* not needed - APP is the default owner of NFCT */
+	status = "disabled";
+	nfct-pins-as-gpios;
 };
 
 &gpiote130 {

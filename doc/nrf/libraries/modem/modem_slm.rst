@@ -32,7 +32,8 @@ The library is enabled and configured entirely using the Kconfig system.
 Configure the following Kconfig options to enable this library:
 
 * :kconfig:option:`CONFIG_MODEM_SLM` - Enables the Modem SLM library.
-* :kconfig:option:`CONFIG_MODEM_SLM_DMA_MAXLEN` - Configures UART RX EasyDMA buffer size, which is configured to 1024 bytes by default.
+* :kconfig:option:`CONFIG_MODEM_SLM_AT_CMD_RESP_MAX_SIZE` - Configures the size of the AT command response buffer.
+  The default size is 2100 bytes, which is aligned with SLM.
 * :kconfig:option:`CONFIG_MODEM_SLM_POWER_PIN` - Configures the mandatory power pin GPIO, which is not configured by default.
 * :kconfig:option:`CONFIG_MODEM_SLM_POWER_PIN_TIME` - Sets the toggle time value in milliseconds for power pin GPIO, by default 100 ms.
 
@@ -40,6 +41,12 @@ Optionally configure the following Kconfig options based on need:
 
 * :kconfig:option:`CONFIG_MODEM_SLM_SHELL` - Enables the shell function in the Modem SLM library, which is not enabled by default.
 * :kconfig:option:`CONFIG_MODEM_SLM_INDICATE_PIN` - Configures the optional indicator GPIO, which is not configured by default.
+* :kconfig:option:`CONFIG_MODEM_SLM_UART_RX_BUF_COUNT` - Configures the number of RX buffers for the UART device.
+  The default value is 3.
+* :kconfig:option:`CONFIG_MODEM_SLM_UART_RX_BUF_SIZE` - Configures the size of the RX buffer for the UART device.
+  The default value is 256 bytes.
+* :kconfig:option:`CONFIG_MODEM_SLM_UART_TX_BUF_SIZE` - Configures the size of the TX buffer for the UART device.
+  The default value is 256 bytes.
 
 The application must use Zephyr ``chosen`` nodes in devicetree to select UART device.
 Additionally, GPIO can also be selected.
@@ -115,8 +122,6 @@ The SLM Monitor has similar functions to the :ref:`at_monitor_readme` library, e
   .. code-block:: console
 
      SLM_MONITOR(network, "\r\n+CEREG:", cereg_mon);
-
-     SLM_MONITOR(download, "\r\n#XDFUGET: 0,", download_mon, MON_PAUSED);
 
 API documentation
 *****************

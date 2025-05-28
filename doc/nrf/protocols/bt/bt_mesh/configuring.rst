@@ -13,7 +13,7 @@ The Bluetooth® Mesh support is controlled by :kconfig:option:`CONFIG_BT_MESH`, 
 * :kconfig:option:`CONFIG_BT_OBSERVER` - Enables the Bluetooth Observer role.
 * :kconfig:option:`CONFIG_BT_PERIPHERAL` - Enables the Bluetooth Peripheral role.
 
-When the Bluetooth LE Controller is located on a separate image (like on the :ref:`zephyr:nrf5340dk_nrf5340` and :ref:`zephyr:thingy53_nrf5340` boards), the following configuration must be applied to the Bluetooth LE Controller configuration:
+When the Bluetooth LE Controller is located on a separate image (like on the :zephyr:board:`nrf5340dk` and :zephyr:board:`thingy53` boards), the following configuration must be applied to the Bluetooth LE Controller configuration:
 
 * :kconfig:option:`CONFIG_BT_EXT_ADV` =y.
 * :kconfig:option:`CONFIG_BT_EXT_ADV_MAX_ADV_SET` =5.
@@ -206,8 +206,8 @@ The Bluetooth Mesh stack stores the following data persistently:
 * IV index
 * Sequence number
 * Heartbeat publication information
-* Application key(s) (the amount of entries is controlled by :kconfig:option:`CONFIG_BT_MESH_APP_KEY_COUNT`)
-* Network key(s) (the amount of entries is controlled by :kconfig:option:`CONFIG_BT_MESH_SUBNET_COUNT`)
+* Application keys (the amount of entries is controlled by :kconfig:option:`CONFIG_BT_MESH_APP_KEY_COUNT`)
+* Network keys (the amount of entries is controlled by :kconfig:option:`CONFIG_BT_MESH_SUBNET_COUNT`)
 * Label UUIDs for virtual addressing (the amount of entries is controlled by :kconfig:option:`CONFIG_BT_MESH_LABEL_COUNT`)
 * RPL entries (the RPL size is controlled by :kconfig:option:`CONFIG_BT_MESH_CRPL`)
 
@@ -215,7 +215,7 @@ The following data is stored for each model by the Bluetooth Mesh stack:
 
 * Model subscription state
 * Model publication state
-* Bound application key(s)
+* Bound application keys
 * Subscription list for group addresses
 * Subscription list for virtual addresses
 * Label UUIDs the model is subscribed to

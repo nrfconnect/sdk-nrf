@@ -18,7 +18,7 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
      - Board target
      - Documentation
      - Product pages
-   * - :ref:`zephyr:nrf54l15dk_nrf54l15`
+   * - :zephyr:board:`nrf54l15dk`
      - PCA10156
      - ``nrf54l15dk/nrf54l15/cpuapp``
      - | `Datasheet <nRF54L15 Datasheet_>`_

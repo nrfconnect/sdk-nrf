@@ -6,6 +6,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/net/socket.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
+#include <zephyr/net/conn_mgr_monitor.h>
 #include <zephyr/logging/log.h>
 #include <stdio.h>
 #include <date_time.h>
@@ -663,8 +664,11 @@ void cloud_connection_thread_fn(void)
 		if (IS_ENABLED(CONFIG_LED_VERBOSE_INDICATION)) {
 			long_led_pattern(LED_WAITING);
 		}
-
-		(void)await_network_ready(K_FOREVER);
+		if (!IS_ENABLED(CONFIG_BOARD_NATIVE_SIM)) {
+			(void)await_network_ready(K_FOREVER);
+		} else {
+			conn_mgr_mon_resend_status();
+		}
 
 		LOG_INF("Network is ready");
 

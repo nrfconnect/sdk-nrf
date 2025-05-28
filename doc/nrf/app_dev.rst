@@ -7,7 +7,7 @@ Application development
 The user guides in this section cover topics related to the general processes governing the application development in the |NCS|, from :ref:`creating an application <create_application>` to its customization for a specific device.
 Read these guides together with Zephyr's :ref:`zephyr:application` documentation.
 
-For detailed integration instructions of specific technologies and components, check the pages in other top sections of the documentation (Protocols, Applications, Samples, and so on).
+For detailed integration instructions of specific technologies and components, check the pages in other top sections of the documentation (like Protocols, Applications, or Samples).
 
 .. figure:: /images/ncs_app_dev.svg
    :alt: Application development section overview

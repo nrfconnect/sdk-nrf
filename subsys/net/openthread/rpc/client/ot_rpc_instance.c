@@ -6,6 +6,7 @@
 
 #include <ot_rpc_ids.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_lock.h>
 #include <nrf_rpc/nrf_rpc_serialize.h>
 
 #include <nrf_rpc_cbor.h>
@@ -133,8 +134,10 @@ static void ot_rpc_cmd_state_changed(const struct nrf_rpc_group *group,
 		return;
 	}
 
+	ot_rpc_mutex_lock();
 	/* TODO: implement callback & address pseudonymization. */
 	((otStateChangedCallback)callback)(flags, (void *)context);
+	ot_rpc_mutex_unlock();
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 0);
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);

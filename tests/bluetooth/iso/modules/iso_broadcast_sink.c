@@ -239,8 +239,19 @@ static void iso_recv(struct bt_iso_chan *chan, const struct bt_iso_recv_info *in
 
 static void iso_connected(struct bt_iso_chan *chan)
 {
+	const struct bt_iso_chan_path hci_path = {
+		.pid = BT_ISO_DATA_PATH_HCI,
+		.format = BT_HCI_CODING_FORMAT_TRANSPARENT,
+	};
+	int err;
+
 	LOG_INF("ISO Channel %p connected", chan);
 	k_sem_give(&sem_big_sync);
+
+	err = bt_iso_setup_data_path(chan, BT_HCI_DATAPATH_DIR_CTLR_TO_HOST, &hci_path);
+	if (err != 0) {
+		LOG_ERR("Failed to setup ISO RX data path: %d", err);
+	}
 }
 
 static void iso_disconnected(struct bt_iso_chan *chan, uint8_t reason)

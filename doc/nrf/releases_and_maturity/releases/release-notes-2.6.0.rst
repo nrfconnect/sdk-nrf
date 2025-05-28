@@ -641,33 +641,33 @@ Bluetooth Mesh samples
 
 * :ref:`ble_mesh_dfu_target` sample:
 
-  * Added support for the :ref:`zephyr:nrf52840dongle_nrf52840`.
+  * Added support for the :zephyr:board:`nrf52840dongle`.
 
 * :ref:`bluetooth_mesh_light_dim` sample:
 
-  * Added support for the :ref:`zephyr:nrf52840dongle_nrf52840`.
-  * Fixed an issue where Bluetooth could not be initialized due to a misconfiguration between the Bluetooth host and the Bluetooth LE Controller when building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` and :ref:`zephyr:thingy53_nrf5340` boards.
+  * Added support for the :zephyr:board:`nrf52840dongle`.
+  * Fixed an issue where Bluetooth could not be initialized due to a misconfiguration between the Bluetooth host and the Bluetooth LE Controller when building with :ref:`zephyr:sysbuild` for the :zephyr:board:`nrf5340dk` and :zephyr:board:`thingy53` boards.
 
 * :ref:`bluetooth_mesh_light_lc` sample:
 
-  * Added support for the :ref:`zephyr:nrf52840dongle_nrf52840`.
-  * Fixed an issue where Bluetooth could not be initialized due to a misconfiguration between the Bluetooth host and the Bluetooth LE Controller when building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` and :ref:`zephyr:thingy53_nrf5340` boards.
+  * Added support for the :zephyr:board:`nrf52840dongle`.
+  * Fixed an issue where Bluetooth could not be initialized due to a misconfiguration between the Bluetooth host and the Bluetooth LE Controller when building with :ref:`zephyr:sysbuild` for the :zephyr:board:`nrf5340dk` and :zephyr:board:`thingy53` boards.
 
 * :ref:`bluetooth_mesh_light` sample:
 
-  * Fixed an issue where Bluetooth could not be initialized due to a misconfiguration between the Bluetooth host and the Bluetooth LE Controller when building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` and :ref:`zephyr:thingy53_nrf5340` boards.
+  * Fixed an issue where Bluetooth could not be initialized due to a misconfiguration between the Bluetooth host and the Bluetooth LE Controller when building with :ref:`zephyr:sysbuild` for the :zephyr:board:`nrf5340dk` and :zephyr:board:`thingy53` boards.
 
 * :ref:`bluetooth_mesh_light_switch` sample:
 
-  * Fixed an issue where Bluetooth could not be initialized due to a misconfiguration between the Bluetooth host and the Bluetooth LE Controller when building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` and :ref:`zephyr:thingy53_nrf5340` boards.
+  * Fixed an issue where Bluetooth could not be initialized due to a misconfiguration between the Bluetooth host and the Bluetooth LE Controller when building with :ref:`zephyr:sysbuild` for the :zephyr:board:`nrf5340dk` and :zephyr:board:`thingy53` boards.
 
 * :ref:`bluetooth_mesh_sensor_server` sample:
 
-  * Fixed an issue where Bluetooth could not be initialized due to a misconfiguration between the Bluetooth host and the Bluetooth LE Controller when building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` and :ref:`zephyr:thingy53_nrf5340` boards.
+  * Fixed an issue where Bluetooth could not be initialized due to a misconfiguration between the Bluetooth host and the Bluetooth LE Controller when building with :ref:`zephyr:sysbuild` for the :zephyr:board:`nrf5340dk` and :zephyr:board:`thingy53` boards.
 
 * :ref:`bluetooth_mesh_silvair_enocean` sample:
 
-  * Fixed an issue where Bluetooth could not be initialized due to a misconfiguration between the Bluetooth host and the Bluetooth LE Controller when building with :ref:`zephyr:sysbuild` for the :ref:`zephyr:nrf5340dk_nrf5340` board.
+  * Fixed an issue where Bluetooth could not be initialized due to a misconfiguration between the Bluetooth host and the Bluetooth LE Controller when building with :ref:`zephyr:sysbuild` for the :zephyr:board:`nrf5340dk` board.
 
 Cellular samples
 ----------------

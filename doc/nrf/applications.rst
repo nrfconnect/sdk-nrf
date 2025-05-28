@@ -26,3 +26,6 @@ If you want to list applications available for one or more specific boards, `use
    ../../applications/hpf/hpf
    ../../applications/serial_lte_modem/README
    ../../applications/matter_weather_station/README
+
+Applications are also available through the `nRF Connect SDK Add-ons`_, a curated collection of supplementary |NCS| components.
+The `Asset Tracker Template <Asset Tracker Template_>`_ is a Nordic-specific application add-on, on which you can base your application.

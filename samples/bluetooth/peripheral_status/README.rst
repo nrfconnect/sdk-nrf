@@ -143,11 +143,11 @@ After programming the sample to your dongle or development kit, test it by perfo
 #. Connect to the device from the application.
    The device is advertising as ``Nordic_Status``.
    The services of the connected device are shown.
-#. Find **Nordic Status Message Service** by its UUID listed in :ref:`nsms_readme`.
-#. Read its **Characteristic User Description** to check which button it relates to.
-#. Read **Nordic Status Message Service** message characteristic to check the initial status - if no button was pressed, it should be "Unknown".
+#. Find :guilabel:`Nordic Status Message Service` by its UUID listed in :ref:`nsms_readme`.
+#. Read its :guilabel:`Characteristic User Description` to check which button it relates to.
+#. Read :guilabel:`Nordic Status Message Service` message characteristic to check the initial status: if no button was pressed, it should be ``Unknown``.
 #. Enable notification for the characteristic found.
-#. Press the related button and observe the message change between "Pressed" and "Released".
+#. Press the related button and observe the message change between ``Pressed`` and ``Released``.
 
 .. tabs::
 

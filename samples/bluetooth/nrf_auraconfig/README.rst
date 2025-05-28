@@ -513,7 +513,7 @@ Example:
 
    nac adv_name "Lecture hall" 0
 
-This command sets the advertising name for the BIG 0 to "Lecture hall".
+This command sets the advertising name for the BIG 0 to ``Lecture hall``.
 
 .. note::
     The name must be enclosed in quotation marks if it contains spaces.
@@ -537,7 +537,7 @@ Example:
 
    nac program_info "Mathematics 101" 0 0
 
-This command sets the program info for the subgroup 0 in the BIG 0 to "Mathematics 101".
+This command sets the program info for the subgroup 0 in the BIG 0 to ``Mathematics 101``.
 
 ----
 

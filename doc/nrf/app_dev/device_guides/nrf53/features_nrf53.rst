@@ -51,26 +51,14 @@ Application core
 The application core is a full-featured Arm Cortex-M33 processor including DSP instructions and FPU.
 Use this core for tasks that require high performance and for application-level logic.
 
-The M33 TrustZone, one of Cortex-M Security Extensions (CMSE), divides the application MCU into Secure Processing Environment (SPE) and Non-Secure Processing Environment (NSPE).
-When the MCU boots, it always starts executing from the secure area.
+You can use :ref:`security by separation <ug_tfm_security_by_separation>` with the M33 TrustZone for the application core.
+When security by separation is used, the MCU always starts executing from the secure area at boot.
+When enabled, the secure bootloader chain starts the :ref:`Trusted Firmware-M (TF-M) <ug_tfm>`, which configures a part of memory and peripherals to be non-secure, and then jumps to the user application located in the non-secure area.
 
-In Zephyr, the firmware of the application core is built using one of the following board targets:
+The firmware of the application core is built using one of the following board targets:
 
-* ``nrf5340dk/nrf5340/cpuapp`` for board targets with CMSE disabled.
-* ``nrf5340dk/nrf5340/cpuapp/ns`` for board targets that have CMSE enabled and have the SPE firmware alongside the NSPE firmware.
-
-For information about CMSE and the difference between the two environments, see :ref:`app_boards_spe_nspe`.
-
-Trusted Firmware-M (TF-M)
--------------------------
-
-Trusted Firmware-M provides a configurable set of software components to create a Trusted Execution Environment.
-It has replaced Secure Partition Manager as the solution used by |NCS| applications and samples.
-This means that when you build your application with CMSE enabled, the :ref:`TF-M <ug_tfm>` is automatically included in the build.
-It is a framework for functions and use cases beyond the scope of Secure Partition Manager.
-
-For more information about the TF-M, see :ref:`ug_tfm`.
-See also :ref:`tfm_hello_world` for a sample that demonstrates how to add TF-M to an application.
+* ``nrf5340dk/nrf5340/cpuapp`` for board targets with security by separation disabled.
+* ``nrf5340dk/nrf5340/cpuapp/ns`` for board targets with security by separation enabled.
 
 .. _ug_nrf5340_intro_inter_core:
 

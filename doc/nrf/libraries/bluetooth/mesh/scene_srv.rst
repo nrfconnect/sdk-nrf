@@ -32,7 +32,7 @@ Operation
 The Scene Server stores all scene data persistently using the :ref:`zephyr:settings_api` subsystem.
 Every scene is stored as a serialized concatenation of each registered model's state, and only exists in RAM during storing and loading.
 
-It's up to the individual model implementation to correctly serialize and deserialize its state from scene data when prompted.
+It is up to the individual model implementation to correctly serialize and deserialize its state from scene data when prompted.
 
 Models with scene data
 **********************
@@ -124,7 +124,7 @@ The serialized scene data includes 4 bytes of overhead for every stored SIG mode
 .. note::
 
    As the Scene Server will store data for every model for every scene, the persistent storage space required for the Scene Server is significant.
-   It's important to monitor the storage requirements actively during development to ensure the allocated flash pages aren't worn out too early.
+   It is important to monitor the storage requirements actively during development to ensure the allocated flash pages are not worn out too early.
 
 API documentation
 ==================

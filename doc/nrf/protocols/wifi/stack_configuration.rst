@@ -96,7 +96,7 @@ The nRF Wi-Fi driver provides the following software configurations to fine-tune
        The coalescing greatly improves the throughput for small frames or under high traffic load.
      - Performance tuning and Memory savings
      - This specifies the maximum number of frames that can be coalesced into a single Wi-Fi frame.
-       More frames imply more coalescing opportunities but can add latency to the TX path as we wait for more frames to arrive.
+       More frames imply more coalescing opportunities but can add latency to the TX path as more frames are expected to arrive.
    * - :kconfig:option:`CONFIG_NRF70_RX_NUM_BUFS`
      - ``1`` to ``Unlimited`` (based on available memory in nRF70 Series device)
      - Number of RX buffers

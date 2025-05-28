@@ -2,10 +2,13 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
+# Zephyr Kconfig for some samples
+config NET_CORE_IMAGE_HCI_IPC
+	bool
+
 config EXTERNAL_CONFIGURED_NETCORE
 	bool
 	default y
-	select NETCORE_REMOTE_NRF5340_CPUNET if NET_CORE_BOARD = "nrf5340dk/nrf5340/cpunet"
 	depends on NET_CORE_IMAGE_HCI_IPC # Zephyr Kconfig enabling HCI IPC on netcore
 
 config SUPPORT_NETCORE

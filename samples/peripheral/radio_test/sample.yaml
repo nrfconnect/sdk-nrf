@@ -13,6 +13,8 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     platform_allow:
       - nrf52dk/nrf52832
@@ -22,6 +24,8 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     tags:
       - ci_build
@@ -98,6 +102,20 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_peripheral_radio_test
+  sample.peripheral.radio_test.llvm:
+    toolchain_allow: llvm
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     tags:
       - ci_build
       - sysbuild

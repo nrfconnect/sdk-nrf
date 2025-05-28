@@ -348,7 +348,7 @@ Testing NFC API serialization
 
 #. Start any application on smartphone or tablet that is able to read NFC tags.
 
-#. Touch the NFC antenna with the smartphone or tablet and observe it displays the encoded text "Hello world!".
+#. Touch the NFC antenna with the smartphone or tablet and observe it displays the encoded text ``Hello world!``.
 
 #. Run the following commands on the client's terminal emulator to set and encode a custom message on the server device:
 

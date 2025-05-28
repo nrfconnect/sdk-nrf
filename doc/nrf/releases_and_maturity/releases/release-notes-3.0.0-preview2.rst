@@ -14,7 +14,7 @@ This changelog reflects the most relevant changes from the latest official relea
    When adding a new PR, decide whether it needs an entry in the changelog.
    If it does, update this page.
    Add the sections you need, as only a handful of sections are kept when the changelog is cleaned.
-   The "Protocols" section serves as a highlight section for all protocol-related changes, including those made to samples, libraries, and so on.
+   The "Protocols" section serves as a highlight section for all protocol-related changes, including those made to samples, libraries, and other components that implement or support protocol functionality.
 
 Known issues
 ************
@@ -242,7 +242,7 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 Machine learning
 ----------------
 
-* Updated the application to enable the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` file system for the :ref:`zephyr:nrf54h20dk_nrf54h20` board.
+* Updated the application to enable the :ref:`Zephyr Memory Storage (ZMS) <zephyr:zms_api>` file system for the :zephyr:board:`nrf54h20dk` board.
 
 Asset Tracker v2
 ----------------
@@ -278,7 +278,7 @@ nRF Desktop
 
 * Added:
 
-  * System Power Management for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target on the application and radio cores.
+  * System Power Management for the :zephyr:board:`nrf54h20dk` board target on the application and radio cores.
   * Application configurations for the nRF54L05 and nRF54L10 SoCs (emulated on the nRF54L15 DK).
     The configurations are supported through ``nrf54l15dk/nrf54l10/cpuapp`` and ``nrf54l15dk/nrf54l05/cpuapp`` board targets.
     For details, see the :ref:`nrf_desktop_board_configuration`.
@@ -296,7 +296,7 @@ nRF Desktop
 
   * The :ref:`nrf_desktop_failsafe` to use the Zephyr :ref:`zephyr:hwinfo_api` driver for getting and clearing the reset reason information (see the :c:func:`hwinfo_get_reset_cause` and :c:func:`hwinfo_clear_reset_cause` functions).
     The Zephyr :ref:`zephyr:hwinfo_api` driver replaces the dependency on the nrfx reset reason helper (see the :c:func:`nrfx_reset_reason_get` and :c:func:`nrfx_reset_reason_clear` functions).
-  * The release configuration for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target to enable the :ref:`nrf_desktop_failsafe` (see the :ref:`CONFIG_DESKTOP_FAILSAFE_ENABLE <config_desktop_app_options>` Kconfig option).
+  * The release configuration for the :zephyr:board:`nrf54h20dk` board target to enable the :ref:`nrf_desktop_failsafe` (see the :ref:`CONFIG_DESKTOP_FAILSAFE_ENABLE <config_desktop_app_options>` Kconfig option).
   * Enabled Link Time Optimization (:kconfig:option:`CONFIG_LTO` and :kconfig:option:`CONFIG_ISR_TABLES_LOCAL_DECLARATION`) by default for an nRF Desktop application image.
     LTO was also explicitly enabled in configurations of other images built by sysbuild (bootloader, network core image).
   * Application configurations for nRF54L05, nRF54L10, and nRF54L15 SoCs to use Fast Pair PSA cryptography (:kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_PSA`).
@@ -439,7 +439,7 @@ Bluetooth Mesh samples
 
 * :ref:`bluetooth_mesh_light_lc` sample:
 
-  * Updated by disabling the Friend feature when the sample is compiled for the :ref:`zephyr:nrf52dk_nrf52832` board target to increase the amount of RAM available for the application.
+  * Updated by disabling the Friend feature when the sample is compiled for the :zephyr:board:`nrf52dk` board target to increase the amount of RAM available for the application.
 
 Bluetooth Fast Pair samples
 ---------------------------
@@ -467,7 +467,7 @@ Bluetooth Fast Pair samples
 
   * Added support for the following:
 
-    * :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
+    * :zephyr:board:`nrf54h20dk` board target.
     * Firmware update intents on the Android platform.
       Integrated the new connection authentication callback from the FMDN module and the Device Information Service (DIS) to support firmware version read operation over the Firmware Revision characteristic.
       For further details on the Android intent feature for firmware updates, see the :ref:`ug_bt_fast_pair_provisioning_register_firmware_update_intent` section of the Fast Pair integration guide.
@@ -728,7 +728,7 @@ Other samples
   * Added:
 
     * Support for the nRF54L05 and nRF54L10 SoCs (emulated on nRF54L15 DK).
-    * FLPR core support for the :ref:`zephyr:nrf54l15dk_nrf54l15` and :ref:`zephyr:nrf54h20dk_nrf54h20` board targets.
+    * FLPR core support for the :zephyr:board:`nrf54l15dk` and :zephyr:board:`nrf54h20dk` board targets.
 
   * Removed the following compiler options that were set in the :kconfig:option:`CONFIG_COMPILER_OPT` Kconfig option:
 
@@ -741,7 +741,7 @@ Other samples
 
 * :ref:`caf_sensor_manager_sample` sample:
 
-  * Added low power configuration for the :ref:`zephyr:nrf54h20dk_nrf54h20` board target.
+  * Added low power configuration for the :zephyr:board:`nrf54h20dk` board target.
 
 Drivers
 =======
@@ -1011,7 +1011,7 @@ Google Fast Pair integration
 
 * Added:
 
-  * Instructions on how to provision the Fast Pair data onto devices without the :ref:`partition_manager` support, specifically for the :ref:`zephyr:nrf54h20dk_nrf54h20`.
+  * Instructions on how to provision the Fast Pair data onto devices without the :ref:`partition_manager` support, specifically for the :zephyr:board:`nrf54h20dk`.
   * Information on how to support the firmware update intent feature on the Android platform.
     Expanded the documentation for the Fast Pair devices with the FMDN extension, which requires additional steps to support this feature.
 
@@ -1137,7 +1137,7 @@ Documentation
   * The entire Zigbee protocol, application and samples documentation.
     It is now available as separate `Zigbee R22`_ and `Zigbee R23`_ add-on repositories.
   * The standalone page for getting started with Nordic Thingy:53.
-    The contents of this page have been moved to the :ref:`thingy53_precompiled` page and to the `Programmer app <Programming Nordic Thingy:53_>`_ documentation.
+    The contents of this page have been moved to the :ref:`thingy53_precompiled` page and to the `Programmer app <prog_thingy_53>`_ documentation.
   * The standalone page for getting started with Nordic Thingy:91.
     The contents of this page are covered by the `Cellular IoT Fundamentals course`_ in the `Nordic Developer Academy`_.
     The part about connecting the prototyping platform to nRF Cloud is now a standalone :ref:`thingy91_connect_to_cloud` page in the :ref:`thingy91_ug_intro` section.

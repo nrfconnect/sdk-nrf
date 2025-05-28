@@ -6,7 +6,6 @@
 
 menuconfig NRF_PROVISIONING_HTTP
 	bool "nRF Provisioning HTTP"
-	select EXPERIMENTAL
 	imply REST_CLIENT
 
 if NRF_PROVISIONING_HTTP

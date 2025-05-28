@@ -10,6 +10,7 @@
 #include <zephyr/usb/usb_device.h>
 #include <zephyr/usb/class/usb_audio.h>
 #include <data_fifo.h>
+#include <audio_defines.h>
 
 #include "macros_common.h"
 
@@ -23,6 +24,8 @@ static struct data_fifo *fifo_tx;
 static struct data_fifo *fifo_rx;
 
 NET_BUF_POOL_FIXED_DEFINE(pool_out, CONFIG_FIFO_FRAME_SPLIT_NUM, USB_FRAME_SIZE_STEREO, 8,
+			  net_buf_destroy);
+NET_BUF_POOL_FIXED_DEFINE(pool_in, CONFIG_FIFO_FRAME_SPLIT_NUM, USB_FRAME_SIZE_STEREO, 8,
 			  net_buf_destroy);
 
 static uint32_t rx_num_overruns;
@@ -42,9 +45,9 @@ static void data_write(const struct device *dev)
 
 	void *data_out;
 	size_t data_out_size;
-	struct net_buf *buf_out;
+	struct net_buf *audio_buf_out;
 
-	buf_out = net_buf_alloc(&pool_out, K_NO_WAIT);
+	audio_buf_out = net_buf_alloc(&pool_out, K_NO_WAIT);
 
 	ret = data_fifo_pointer_last_filled_get(fifo_tx, &data_out, &data_out_size, K_NO_WAIT);
 	if (ret) {
@@ -52,19 +55,20 @@ static void data_write(const struct device *dev)
 		if ((tx_num_underruns % 100) == 1) {
 			LOG_WRN("USB TX underrun. Num: %d", tx_num_underruns);
 		}
-		net_buf_unref(buf_out);
+		net_buf_unref(audio_buf_out);
 
 		return;
 	}
 
-	memcpy(buf_out->data, data_out, data_out_size);
+	memcpy(audio_buf_out->data, data_out, data_out_size);
 	data_fifo_block_free(fifo_tx, data_out);
 
 	if (data_out_size == usb_audio_get_in_frame_size(dev)) {
-		ret = usb_audio_send(dev, buf_out, data_out_size);
+		ret = usb_audio_send(dev, audio_buf_out, data_out_size);
 		if (ret) {
 			LOG_WRN("USB TX failed, ret: %d", ret);
-			net_buf_unref(buf_out);
+			net_buf_unref(audio_buf_out);
+			return;
 		}
 
 	} else {
@@ -81,7 +85,8 @@ static void data_write(const struct device *dev)
 static void data_received(const struct device *dev, struct net_buf *buffer, size_t size)
 {
 	int ret;
-	void *data_in;
+	struct audio_data *audio_block = NULL;
+	struct net_buf *audio_buf_in;
 
 	if (fifo_rx == NULL) {
 		/* Throwing away data */
@@ -101,34 +106,57 @@ static void data_received(const struct device *dev, struct net_buf *buffer, size
 		return;
 	}
 
-	ret = data_fifo_pointer_first_vacant_get(fifo_rx, &data_in, K_NO_WAIT);
+	audio_buf_in = net_buf_alloc(&pool_in, K_NO_WAIT);
+	if (audio_buf_in == NULL) {
+		LOG_WRN("Out of RX buffers");
+		net_buf_unref(buffer);
+		return;
+	}
 
-	/* RX FIFO can fill up due to retransmissions or disconnect */
+	/* Copy data to RX FIFO */
+	net_buf_add_mem(audio_buf_in, buffer->data, size);
+	net_buf_unref(buffer);
+
+	ret = data_fifo_pointer_first_vacant_get(fifo_rx, (void *)&audio_block, K_NO_WAIT);
+
+	/* RX FIFO can fill up due to re-transmissions or disconnect */
 	if (ret == -ENOMEM) {
-		void *temp;
-		size_t temp_size;
+		struct audio_data *stale_usb_data;
+		size_t stale_size;
 
 		rx_num_overruns++;
 		if ((rx_num_overruns % 100) == 1) {
 			LOG_WRN("USB RX overrun. Num: %d", rx_num_overruns);
 		}
 
-		ret = data_fifo_pointer_last_filled_get(fifo_rx, &temp, &temp_size, K_NO_WAIT);
+		ret = data_fifo_pointer_last_filled_get(fifo_rx, (void *)&stale_usb_data,
+							&stale_size, K_NO_WAIT);
 		ERR_CHK(ret);
 
-		data_fifo_block_free(fifo_rx, temp);
+		struct net_buf *buf = stale_usb_data->data;
 
-		ret = data_fifo_pointer_first_vacant_get(fifo_rx, &data_in, K_NO_WAIT);
+		net_buf_unref(buf);
+		data_fifo_block_free(fifo_rx, stale_usb_data);
+
+		ret = data_fifo_pointer_first_vacant_get(fifo_rx, (void *)&audio_block, K_NO_WAIT);
 	}
 
 	ERR_CHK_MSG(ret, "RX failed to get block");
 
-	memcpy(data_in, buffer->data, size);
+	audio_block->data = audio_buf_in;
+	audio_block->data_size = size;
 
-	ret = data_fifo_block_lock(fifo_rx, &data_in, size);
+	/* Add meta data */
+	audio_block->meta.data_coding = PCM;
+	audio_block->meta.data_len_us = 1000;
+	audio_block->meta.sample_rate_hz = CONFIG_AUDIO_SAMPLE_RATE_HZ;
+	audio_block->meta.bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS;
+	audio_block->meta.carried_bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS;
+	audio_block->meta.locations = BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT;
+	audio_block->meta.bad_data = false;
+
+	ret = data_fifo_block_lock(fifo_rx, (void *)&audio_block, sizeof(struct audio_data));
 	ERR_CHK_MSG(ret, "Failed to lock block");
-
-	net_buf_unref(buffer);
 
 	if (!rx_first_data) {
 		LOG_INF("USB RX first data received.");

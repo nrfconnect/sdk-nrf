@@ -11,7 +11,8 @@
 
 #include "broadcast_sink.h"
 #include "zbus_common.h"
-#include "nrf5340_audio_dk.h"
+#include "peripherals.h"
+#include "led_assignments.h"
 #include "led.h"
 #include "button_assignments.h"
 #include "macros_common.h"
@@ -34,6 +35,11 @@ struct ble_iso_data {
 } __packed;
 
 static uint32_t last_broadcast_id = BRDCAST_ID_NOT_USED;
+
+static struct zbus_observer_node zbus_obs_node_button;
+static struct zbus_observer_node zbus_obs_node_audio;
+static struct zbus_observer_node zbus_obs_node_volume;
+static struct zbus_observer_node zbus_obs_node_mgmt;
 
 ZBUS_SUBSCRIBER_DEFINE(button_evt_sub, CONFIG_BUTTON_MSG_SUB_QUEUE_SIZE);
 
@@ -208,7 +214,7 @@ static void le_audio_msg_sub_thread(void)
 
 			audio_system_start();
 			stream_state_set(STATE_STREAMING);
-			ret = led_blink(LED_APP_1_BLUE);
+			ret = led_blink(LED_AUDIO_CONN_STATUS);
 			ERR_CHK(ret);
 
 			break;
@@ -223,7 +229,7 @@ static void le_audio_msg_sub_thread(void)
 
 			stream_state_set(STATE_PAUSED);
 			audio_system_stop();
-			ret = led_on(LED_APP_1_BLUE);
+			ret = led_on(LED_AUDIO_CONN_STATUS);
 			ERR_CHK(ret);
 
 			break;
@@ -265,7 +271,7 @@ static void le_audio_msg_sub_thread(void)
 			if (strm_state == STATE_STREAMING) {
 				stream_state_set(STATE_PAUSED);
 				audio_system_stop();
-				ret = led_on(LED_APP_1_BLUE);
+				ret = led_on(LED_AUDIO_CONN_STATUS);
 				ERR_CHK(ret);
 			}
 
@@ -459,25 +465,31 @@ static int zbus_link_producers_observers(void)
 		return -ENOTSUP;
 	}
 
-	ret = zbus_chan_add_obs(&button_chan, &button_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
+	ret = zbus_chan_add_obs(&button_chan, &button_evt_sub, &zbus_obs_node_button,
+				ZBUS_ADD_OBS_TIMEOUT_MS);
 	if (ret) {
 		LOG_ERR("Failed to add button sub");
 		return ret;
 	}
 
-	ret = zbus_chan_add_obs(&le_audio_chan, &le_audio_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
+	ret = zbus_chan_add_obs(&le_audio_chan, &le_audio_evt_sub, &zbus_obs_node_audio,
+				ZBUS_ADD_OBS_TIMEOUT_MS);
 	if (ret) {
 		LOG_ERR("Failed to add le_audio sub");
 		return ret;
 	}
 
-	ret = zbus_chan_add_obs(&volume_chan, &volume_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
-	if (ret) {
-		LOG_ERR("Failed to add add volume sub");
-		return ret;
+	if (IS_ENABLED(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP)) {
+		ret = zbus_chan_add_obs(&volume_chan, &volume_evt_sub, &zbus_obs_node_volume,
+					ZBUS_ADD_OBS_TIMEOUT_MS);
+		if (ret) {
+			LOG_ERR("Failed to add add volume sub");
+			return ret;
+		}
 	}
 
-	ret = zbus_chan_add_obs(&bt_mgmt_chan, &bt_mgmt_evt_sub, ZBUS_ADD_OBS_TIMEOUT_MS);
+	ret = zbus_chan_add_obs(&bt_mgmt_chan, &bt_mgmt_evt_sub, &zbus_obs_node_mgmt,
+				ZBUS_ADD_OBS_TIMEOUT_MS);
 	if (ret) {
 		LOG_ERR("Failed to add bt_mgmt sub");
 		return ret;
@@ -525,6 +537,11 @@ static int ext_adv_populate(struct bt_data *ext_adv_buf, size_t ext_adv_buf_size
 		return ret;
 	}
 
+	ext_adv_buf[ext_adv_buf_cnt].type = BT_DATA_NAME_COMPLETE;
+	ext_adv_buf[ext_adv_buf_cnt].data = CONFIG_BT_DEVICE_NAME;
+	ext_adv_buf[ext_adv_buf_cnt].data_len = sizeof(CONFIG_BT_DEVICE_NAME) - 1;
+	ext_adv_buf_cnt++;
+
 	ret = broadcast_sink_adv_populate(&ext_adv_buf[ext_adv_buf_cnt],
 					  ext_adv_buf_size - ext_adv_buf_cnt);
 
@@ -551,11 +568,9 @@ uint8_t stream_state_get(void)
 	return strm_state;
 }
 
-void streamctrl_send(void const *const data, size_t size, uint8_t num_ch)
+void streamctrl_send(struct audio_data const *const audio_frame)
 {
-	ARG_UNUSED(data);
-	ARG_UNUSED(size);
-	ARG_UNUSED(num_ch);
+	ARG_UNUSED(audio_frame);
 
 	LOG_WRN("Sending is not possible for broadcast sink");
 }
@@ -566,7 +581,7 @@ int main(void)
 
 	LOG_DBG("Main started");
 
-	ret = nrf5340_audio_dk_init();
+	ret = peripherals_init();
 	ERR_CHK(ret);
 
 	ret = fw_info_app_print();

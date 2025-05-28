@@ -478,10 +478,105 @@ static int cmd_input(const struct shell *shell, size_t argc, char **argv)
 	return 0;
 }
 
-SHELL_STATIC_SUBCMD_SET_CREATE(hw_codec_cmd,
-			       SHELL_COND_CMD(CONFIG_SHELL, input, NULL,
-					      " Select input\n\t0: LINE_IN\n\t\t1: PDM_MIC",
-					      cmd_input),
-			       SHELL_SUBCMD_SET_END);
+static int analog_out1l_disconnect(void)
+{
+	int ret;
+
+	ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_OUT1L_INPUT1, 0x808000);
+	if (ret) {
+		return ret;
+	}
+
+	ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_OUT1L_INPUT2, 0x808000);
+	if (ret) {
+		return ret;
+	}
+
+	return 0;
+}
+
+/**
+ * @brief Shell command to choose between left, right, and mixed stereo as the I2S output
+ *
+ * @param shell Shell instance
+ * @param argc Number of arguments
+ * @param argv Array of arguments
+ *
+ * @return 0 on success, -EINVAL on error
+ */
+static int cmd_i2s_to_output_mapping(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret;
+	uint8_t idx;
+
+	enum hw_codec_i2s_channel_to_mono_output {
+		LEFT,
+		RIGHT,
+		MIXED_STEREO,
+		NUM_OUTPUTS,
+	};
+
+	if (argc != 2) {
+		shell_error(shell, "Only one argument required, provided: %d", argc);
+		return -EINVAL;
+	}
+
+	if (!isdigit((int)argv[1][0])) {
+		shell_error(shell, "Supplied argument is not numeric");
+		return -EINVAL;
+	}
+	/* Remove all outputs */
+	ret = analog_out1l_disconnect();
+	if (ret) {
+		shell_error(shell, "Failed to clear outputs");
+		return ret;
+	}
+
+	idx = strtoul(argv[1], NULL, BASE_10);
+
+	switch (idx) {
+	case LEFT:
+		ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_OUT1L_INPUT1, 0x808020);
+		if (ret) {
+			shell_error(shell, "Failed to route I2S to left channel");
+			return ret;
+		}
+		break;
+	case RIGHT:
+		ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_OUT1L_INPUT2, 0x808021);
+		if (ret) {
+			shell_error(shell, "Failed to route I2S to right channel");
+			return ret;
+		}
+		break;
+	case MIXED_STEREO:
+		ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_OUT1L_INPUT1, 0x808020);
+		if (ret) {
+			shell_error(shell, "Failed to route I2S to left channel");
+			return ret;
+		}
+
+		ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_OUT1L_INPUT2, 0x808021);
+		if (ret) {
+			shell_error(shell, "Failed to route I2S to right channel");
+			return ret;
+		}
+		break;
+	default:
+		shell_error(shell, "Invalid output");
+		return -EINVAL;
+	}
+
+	return 0;
+}
+
+SHELL_STATIC_SUBCMD_SET_CREATE(
+	hw_codec_cmd,
+	SHELL_COND_CMD(CONFIG_SHELL, input, NULL, " Select input\n\t0: LINE_IN\n\t\t1: PDM_MIC",
+		       cmd_input),
+	SHELL_COND_CMD(CONFIG_SHELL, i2s_output, NULL,
+		       " Select I2S output\n\t0: Left\n\t1: Right\n\t2: Mixed stereo",
+		       cmd_i2s_to_output_mapping),
+	SHELL_SUBCMD_SET_END);
 
 SHELL_CMD_REGISTER(hw_codec, &hw_codec_cmd, "Change settings on HW codec", NULL);

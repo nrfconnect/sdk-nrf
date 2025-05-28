@@ -222,7 +222,7 @@ The procedure is structured into the following steps:
 
 4. The commissioner validates the information received from the commissionee.
    During the validation, the commissioner confirms the attestation information received against information contained on the device.
-   For example, the Vendor ID from the attestation information packet is vetted against the Vendor ID in the DAC and the Basic Information cluster, the Certificate ID from the CD is verified against the entry in the DCL, and so on.
+   For example, the Vendor ID from the attestation information packet is vetted against the Vendor ID in the DAC and the Basic Information cluster, and the Certificate ID from the CD is verified against the entry in the DCL, along with other consistency checks defined in the specification.
    For the detailed list of what information undergoes verification, see chapter 6.2.3.1 (Attestation Validation Information) in the `Matter Core Specification <CSA Specifications Download Request_>`_.
 
 A device that passes the Device Attestation procedure has been verified as an authentic Matter device.

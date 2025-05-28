@@ -238,29 +238,64 @@ For more information about the repository and development model, see the :ref:`d
          By default, this is one level up from the location where you installed the toolchain.
          This directory will hold all |NCS| repositories.
 
-      #. Start the toolchain environment for your operating system using the following command:
+      #. Start the toolchain environment for your operating system using the following command pattern, with ``--ncs-version`` corresponding to the toolchain version you have installed in the :ref:`previous step <gs_installing_tools>`:
 
          .. tabs::
 
             .. tab:: Windows
 
-               .. code-block:: console
+               .. parsed-literal::
+                  :class: highlight
 
-                  nrfutil sdk-manager toolchain launch --terminal
+                  nrfutil sdk-manager toolchain launch --ncs-version *version* --terminal
+
+               For example:
+
+               .. parsed-literal::
+                  :class: highlight
+
+                  nrfutil sdk-manager toolchain launch --ncs-version |release| --terminal
+
+               This example command starts the toolchain environment for the |NCS| |release|.
 
             .. tab:: Linux
 
-               .. code-block:: console
+               .. parsed-literal::
+                  :class: highlight
 
-                  nrfutil sdk-manager toolchain launch --shell
+                  nrfutil sdk-manager toolchain launch --ncs-version *version* --shell
+
+               For example:
+
+               .. parsed-literal::
+                  :class: highlight
+
+                  nrfutil sdk-manager toolchain launch --ncs-version |release| --shell
+
+               This example command starts the toolchain environment for the |NCS| |release|.
 
             .. tab:: macOS
 
-               .. code-block:: console
+               .. parsed-literal::
+                  :class: highlight
 
-                  nrfutil sdk-manager toolchain launch --shell
+                  nrfutil sdk-manager toolchain launch --ncs-version *version* --shell
+
+               For example:
+
+               .. parsed-literal::
+                  :class: highlight
+
+                  nrfutil sdk-manager toolchain launch --ncs-version |release| --shell
+
+               This example command starts the toolchain environment for the |NCS| |release|.
 
          ..
+
+         .. note::
+
+            You can also use other options instead of ``--ncs-version``.
+            See the `sdk-manager command documentation <sdk-manager Starting and inspecting the toolchain environment_>`_ for more information.
 
       #. Determine the identifier of the revision of the |NCS| you want to work with.
          See the table above for more information.

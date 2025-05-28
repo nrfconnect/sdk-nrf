@@ -8,14 +8,14 @@
 #include <cracen/ec_helpers.h>
 #include <cracen/mem_helpers.h>
 #include "cracen_psa.h"
-#include "cracen_psa_ecdsa.h"
-#include "cracen_psa_eddsa.h"
-#include "cracen_psa_montgomery.h"
+#include <cracen_psa_eddsa.h>
+#include <cracen_psa_ecdsa.h>
+#include <cracen_psa_montgomery.h>
+#include <cracen_psa_ikg.h>
 #include "platform_keys/platform_keys.h"
 #include <nrf_security_mutexes.h>
 #include <sicrypto/drbghash.h>
 #include "ecc.h"
-#include <cracen_psa_ikg.h>
 #include <sicrypto/rsa_keygen.h>
 #include <sicrypto/util.h>
 #include <silexpk/sxops/rsa.h>
@@ -24,6 +24,7 @@
 #include <stddef.h>
 #include <string.h>
 #include <sxsymcrypt/trng.h>
+#include <sxsymcrypt/keyref.h>
 #include <zephyr/sys/__assert.h>
 #include <zephyr/sys/byteorder.h>
 
@@ -466,7 +467,7 @@ static psa_status_t import_srp_key(const psa_key_attributes_t *attributes, const
 		if (data_length != sizeof(cracen_N3072)) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
-		if (si_be_cmp(key_buffer, cracen_N3072, sizeof(cracen_N3072), 0) >= 0) {
+		if (cracen_be_cmp(key_buffer, cracen_N3072, sizeof(cracen_N3072), 0) >= 0) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 		break;
@@ -489,7 +490,7 @@ static psa_status_t generate_ecc_private_key(const psa_key_attributes_t *attribu
 	size_t key_size_bytes = PSA_BITS_TO_BYTES(key_bits_attr);
 	psa_ecc_family_t psa_curve = PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(attributes));
 	psa_status_t psa_status;
-	int si_status;
+	int sx_status;
 	const struct sx_pk_ecurve *sx_curve;
 	uint8_t workmem[PSA_KEY_EXPORT_ECC_KEY_PAIR_MAX_SIZE(PSA_VENDOR_ECC_MAX_CURVE_BITS)] = {};
 
@@ -538,9 +539,9 @@ static psa_status_t generate_ecc_private_key(const psa_key_attributes_t *attribu
 		memcpy(key_buffer, workmem, key_size_bytes);
 	} else {
 
-		si_status = ecc_create_genprivkey(sx_curve, key_buffer, key_buffer_size);
-		if (si_status != SX_OK) {
-			return silex_statuscodes_to_psa(si_status);
+		sx_status = ecc_genprivkey(sx_curve, key_buffer, key_buffer_size);
+		if (sx_status != SX_OK) {
+			return silex_statuscodes_to_psa(sx_status);
 		}
 	}
 
@@ -596,7 +597,7 @@ static psa_status_t handle_curve_family(psa_ecc_family_t psa_curve, size_t key_b
 		    IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1)) {
 			data[0] = SI_ECC_PUBKEY_UNCOMPRESSED;
 			return silex_statuscodes_to_psa(
-				ecc_create_genpubkey(key_buffer, data + 1, sx_curve));
+				ecc_genpubkey(key_buffer, data + 1, sx_curve));
 		} else {
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
@@ -1147,6 +1148,25 @@ psa_status_t cracen_generate_key(const psa_key_attributes_t *attributes, uint8_t
 	return PSA_ERROR_NOT_SUPPORTED;
 }
 
+static void cracen_set_ikg_key_buffer(psa_key_attributes_t *attributes,
+				      psa_drv_slot_number_t slot_number, uint8_t *key_buffer)
+{
+	ikg_opaque_key *ikg_key = (ikg_opaque_key *)key_buffer;
+
+	switch (slot_number) {
+	case CRACEN_BUILTIN_IDENTITY_KEY_ID:
+		/* The slot_number is not used with the identity key */
+		break;
+	case CRACEN_BUILTIN_MKEK_ID:
+		ikg_key->slot_number = CRACEN_INTERNAL_HW_KEY1_ID;
+		break;
+	case CRACEN_BUILTIN_MEXT_ID:
+		ikg_key->slot_number = CRACEN_INTERNAL_HW_KEY2_ID;
+		break;
+	}
+
+	ikg_key->owner_id = MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(psa_get_key_id(attributes));
+}
 
 psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 				    psa_key_attributes_t *attributes, uint8_t *key_buffer,
@@ -1160,7 +1180,7 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 	 * attributes, and update the `lifetime` field to be more specific.
 	 */
 	switch (slot_number) {
-	case CRACEN_IDENTITY_KEY_SLOT_NUMBER:
+	case CRACEN_BUILTIN_IDENTITY_KEY_ID:
 		psa_set_key_lifetime(attributes, PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
 							 CRACEN_KEY_PERSISTENCE_READ_ONLY,
 							 PSA_KEY_LOCATION_CRACEN));
@@ -1183,18 +1203,15 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 		 */
 		if (key_buffer_size >= opaque_key_size) {
 			*key_buffer_length = opaque_key_size;
-			*((ikg_opaque_key *)key_buffer) =
-				(ikg_opaque_key){.slot_number = slot_number,
-						 .owner_id = MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(
-							 psa_get_key_id(attributes))};
+			cracen_set_ikg_key_buffer(attributes, slot_number, key_buffer);
 			return PSA_SUCCESS;
 		} else {
 			return PSA_ERROR_BUFFER_TOO_SMALL;
 		}
 		break;
 
-	case CRACEN_MKEK_SLOT_NUMBER:
-	case CRACEN_MEXT_SLOT_NUMBER:
+	case CRACEN_BUILTIN_MKEK_ID:
+	case CRACEN_BUILTIN_MEXT_ID:
 		psa_set_key_lifetime(attributes, PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
 							 CRACEN_KEY_PERSISTENCE_READ_ONLY,
 							 PSA_KEY_LOCATION_CRACEN));
@@ -1213,10 +1230,7 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 		 */
 		if (key_buffer_size >= opaque_key_size) {
 			*key_buffer_length = opaque_key_size;
-			*((ikg_opaque_key *)key_buffer) =
-				(ikg_opaque_key){.slot_number = slot_number,
-						 .owner_id = MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(
-							 psa_get_key_id(attributes))};
+			cracen_set_ikg_key_buffer(attributes, slot_number, key_buffer);
 			return PSA_SUCCESS;
 		} else {
 			return PSA_ERROR_BUFFER_TOO_SMALL;
@@ -1239,21 +1253,30 @@ psa_status_t mbedtls_psa_platform_get_builtin_key(mbedtls_svc_key_id_t key_id,
 						  psa_key_lifetime_t *lifetime,
 						  psa_drv_slot_number_t *slot_number)
 {
+/* For nRF54H20 devices all the builtin keys are considered platform keys,
+ * these include the IKG keys. The IKG keys in these devices don't directly
+ * use the CRACEN_BUILTIN_ ids, they use the IDs defined in  the file
+ * nrf_platform_key_ids.h.
+ * The function cracen_platform_get_key_slot will do the matching between the
+ * platform key ids and the Cracen bulitin ids.
+ */
+#if CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
+	return cracen_platform_get_key_slot(key_id, lifetime, slot_number);
+#else
+
 	switch (MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id)) {
 	case CRACEN_BUILTIN_IDENTITY_KEY_ID:
-		*slot_number = CRACEN_IDENTITY_KEY_SLOT_NUMBER;
+		*slot_number = CRACEN_BUILTIN_IDENTITY_KEY_ID;
 		break;
 	case CRACEN_BUILTIN_MKEK_ID:
-		*slot_number = CRACEN_MKEK_SLOT_NUMBER;
+		*slot_number = CRACEN_BUILTIN_MKEK_ID;
 		break;
 	case CRACEN_BUILTIN_MEXT_ID:
-		*slot_number = CRACEN_MEXT_SLOT_NUMBER;
+		*slot_number = CRACEN_BUILTIN_MEXT_ID;
 		break;
 	default:
 #if CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
 		return cracen_kmu_get_key_slot(key_id, lifetime, slot_number);
-#elif CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
-		return cracen_platform_get_key_slot(key_id, lifetime, slot_number);
 #else
 		return PSA_ERROR_DOES_NOT_EXIST;
 #endif
@@ -1263,6 +1286,7 @@ psa_status_t mbedtls_psa_platform_get_builtin_key(mbedtls_svc_key_id_t key_id,
 								   PSA_KEY_LOCATION_CRACEN);
 
 	return PSA_SUCCESS;
+#endif /* CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS */
 }
 
 psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
@@ -1330,7 +1354,8 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 		return PSA_ERROR_DOES_NOT_EXIST;
 	}
 
-	if (PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
+	if (PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes)) ||
+	    (psa_get_key_type(attributes) == PSA_KEY_TYPE_HMAC)) {
 		size_t key_bits;
 
 		return cracen_import_key(attributes, source_key, source_key_length,

@@ -272,7 +272,11 @@ static void subevent_data_available(struct bt_conn *conn,
 		hdr->num_steps_reported = result->header.num_steps_reported;
 
 		if (result->step_data_buf) {
+			struct net_buf_simple_state buf_state;
+
+			net_buf_simple_save(result->step_data_buf, &buf_state);
 			bt_le_cs_step_data_parse(result->step_data_buf, process_step_data, buf);
+			net_buf_simple_restore(result->step_data_buf, &buf_state);
 		}
 	}
 

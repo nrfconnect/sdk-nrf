@@ -30,16 +30,20 @@ extern "C" {
 #endif
 
 /**
- * @typedef		nrf_compress_init_func_t
- * @brief		Initialize compression implementation.
+ * @typedef			nrf_compress_init_func_t
+ * @brief			Initialize compression implementation.
  *
- * @param[in] inst	Implementation specific initialization context.
- *			Concrete implementation may cast it to predefined type.
+ * @param[in] inst		Implementation specific initialization context.
+ *				Concrete implementation may cast it to predefined type.
+ * @param[in] decompressed_size	Expected size of entire decompressed data stream. It is used
+ *				for checking that output produced during streaming does not
+ *				exceed the expected size. Set it to 0 if the size is not known;
+ *				there will be no output size checking then.
  *
- * @retval		0 Success.
- * @retval		-errno Negative errno code on other failure.
+ * @retval			0 Success.
+ * @retval			-errno Negative errno code on other failure.
  */
-typedef int (*nrf_compress_init_func_t)(void *inst);
+typedef int (*nrf_compress_init_func_t)(void *inst, size_t decompressed_size);
 
 /**
  * @typedef		nrf_compress_deinit_func_t
@@ -54,17 +58,21 @@ typedef int (*nrf_compress_init_func_t)(void *inst);
 typedef int (*nrf_compress_deinit_func_t)(void *inst);
 
 /**
- * @typedef		nrf_compress_reset_func_t
- * @brief		Reset compression state function. Used to abort current compression or
- *			decompression task before starting a new one.
+ * @typedef			nrf_compress_reset_func_t
+ * @brief			Reset compression state function. Used to abort current
+ *				compression or decompression task before starting a new one.
  *
- * @param[in] inst	Implementation specific initialization context.
- *			Concrete implementation may cast it to predefined type.
+ * @param[in] inst		Implementation specific initialization context.
+ *				Concrete implementation may cast it to predefined type.
+ * @param[in] decompressed_size	Expected size of entire decompressed data stream. It is used
+ *				for checking that output produced during streaming does not
+ *				exceed the expected size. Set it to 0 if the size is not known;
+ *				there will be no output size checking then.
  *
- * @retval		0 Success.
- * @retval		-errno Negative errno code on other failure.
+ * @retval			0 Success.
+ * @retval			-errno Negative errno code on other failure.
  */
-typedef int (*nrf_compress_reset_func_t)(void *inst);
+typedef int (*nrf_compress_reset_func_t)(void *inst, size_t decompressed_size);
 
 /**
  * @typedef		nrf_compress_compress_func_t

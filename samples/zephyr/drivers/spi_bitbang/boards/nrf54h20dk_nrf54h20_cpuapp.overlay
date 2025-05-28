@@ -4,6 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * Test requires loopback between P0.06 and P0.07.
+ * No other driver on SPI_CLK and SPI_CS.
+ */
+
 / {
 	spibb0: spibb0 {
 		compatible = "zephyr,spi-bitbang";

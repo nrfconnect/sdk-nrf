@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "mocks.h"
+
 #include "openthread/ip6.h"
 #include "openthread/message.h"
 #include <mock_nrf_rpc_transport.h>
@@ -196,6 +198,16 @@ ZTEST(ot_rpc_udp, test_otUdpSend_invalid)
 
 FAKE_VOID_FUNC(handle_udp_receive, void *, otMessage *, const otMessageInfo *);
 
+static void verify_handle_udp_receive_locked(void *ctx, otMessage *msg,
+					     const otMessageInfo *msg_info)
+{
+	ARG_UNUSED(ctx);
+	ARG_UNUSED(msg);
+	ARG_UNUSED(msg_info);
+
+	zassert_true(ot_rpc_is_mutex_locked());
+}
+
 ZTEST(ot_rpc_udp, test_udp_receive)
 {
 	otError error;
@@ -219,6 +231,7 @@ ZTEST(ot_rpc_udp, test_udp_receive)
 	mock_nrf_rpc_tr_expect_done();
 
 	RESET_FAKE(handle_udp_receive);
+	handle_udp_receive_fake.custom_fake = verify_handle_udp_receive_locked;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_UDP_RECEIVE_CB,
@@ -228,6 +241,34 @@ ZTEST(ot_rpc_udp, test_udp_receive)
 	zassert_equal(handle_udp_receive_fake.call_count, 1);
 	zassert_equal(handle_udp_receive_fake.arg0_val, (void *)NULL);
 	zassert_equal(handle_udp_receive_fake.arg1_val, (otMessage *)1);
+}
+
+ZTEST(ot_rpc_udp, test_otUdpIsOpen_true)
+{
+	bool open;
+	otUdpSocket socket;
+
+	mock_nrf_rpc_tr_expect_add(
+		RPC_CMD(OT_RPC_CMD_UDP_IS_OPEN, CBOR_UINT32((ot_socket_key)&socket)),
+		RPC_RSP(CBOR_TRUE));
+	open = otUdpIsOpen(NULL, &socket);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_true(open);
+}
+
+ZTEST(ot_rpc_udp, test_otUdpIsOpen_false)
+{
+	bool open;
+	otUdpSocket socket;
+
+	mock_nrf_rpc_tr_expect_add(
+		RPC_CMD(OT_RPC_CMD_UDP_IS_OPEN, CBOR_UINT32((ot_socket_key)&socket)),
+		RPC_RSP(CBOR_FALSE));
+	open = otUdpIsOpen(NULL, &socket);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_false(open);
 }
 
 ZTEST_SUITE(ot_rpc_udp, NULL, NULL, tc_setup, tc_clean, NULL);

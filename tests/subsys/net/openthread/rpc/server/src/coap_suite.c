@@ -6,6 +6,7 @@
 
 #include <mock_nrf_rpc_transport.h>
 #include <ot_rpc_ids.h>
+#include <ot_rpc_lock.h>
 #include <ot_rpc_resource.h>
 #include <test_rpc_env.h>
 
@@ -391,8 +392,10 @@ ZTEST(ot_rpc_coap, test_otCoapAddResource_otCoapRemoveResource)
 	mock_nrf_rpc_tr_expect_add(
 		RPC_CMD(OT_RPC_CMD_COAP_RESOURCE_HANDLER, CBOR_URI, message_rep, CBOR_MSG_INFO),
 		RPC_RSP());
+	ot_rpc_mutex_lock();
 	otCoapAddResource_fake.arg1_val->mHandler(otCoapAddResource_fake.arg1_val->mContext,
 						  (otMessage *)MSG_ADDR, &message_info);
+	ot_rpc_mutex_unlock();
 	mock_nrf_rpc_tr_expect_done();
 	zassert_is_null(ot_res_tab_msg_get(message_rep));
 
@@ -439,8 +442,10 @@ ZTEST(ot_rpc_coap, test_otCoapSetDefaultHandler)
 	/* Test serialization of the default handler call */
 	mock_nrf_rpc_tr_expect_add(
 		RPC_CMD(OT_RPC_CMD_COAP_DEFAULT_HANDLER, message_rep, CBOR_MSG_INFO), RPC_RSP());
+	ot_rpc_mutex_lock();
 	otCoapSetDefaultHandler_fake.arg1_val(otCoapSetDefaultHandler_fake.arg2_val,
 					      (otMessage *)MSG_ADDR, &message_info);
+	ot_rpc_mutex_unlock();
 	mock_nrf_rpc_tr_expect_done();
 	zassert_is_null(ot_res_tab_msg_get(message_rep));
 
@@ -497,9 +502,11 @@ ZTEST(ot_rpc_coap, test_otCoapSendRequest)
 	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_COAP_RESPONSE_HANDLER, request_rep,
 					   response_rep, CBOR_MSG_INFO, OT_ERROR_PARSE),
 				   RPC_RSP());
+	ot_rpc_mutex_lock();
 	otCoapSendRequestWithParameters_fake.arg3_val(otCoapSendRequestWithParameters_fake.arg4_val,
 						      (otMessage *)MSG_ADDR, &message_info,
 						      OT_ERROR_PARSE);
+	ot_rpc_mutex_unlock();
 	mock_nrf_rpc_tr_expect_done();
 }
 

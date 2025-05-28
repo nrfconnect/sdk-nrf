@@ -19,7 +19,7 @@ It covers essential concepts, practical steps for implementation, and references
 Learning resources
 ******************
 
-In case you do not have experience with bootloaders, we recommend going through the following learning resources first:
+In case you do not have experience with bootloaders, read through the following learning resources first:
 
 * `Bootloaders and DFU/FOTA`_ - The page is a part of the `Nordic Developer Academy`_ courses and offers is an introduction to bootloaders, DFU, and various transport features available in the |NCS|.
 * `Adding Device Firmware Update (DFU/FOTA) Support in nRF Connect SDK`_ - The webinar provides an overview of fundamental principles and best practices for adding DFU/FOTA support in an nRF Connect SDK-based firmware.
@@ -55,7 +55,7 @@ Explore MCUboot functionality using the samples provided.
 Note that some samples are located in the `sdk-nrf`_ repository, while others are in `sdk-zephyr`_.
 All supported samples are regularly tested to ensure reliability.
 
-We recommend beginning with the :zephyr:code-sample:`smp-svr` sample and using :ref:`zephyr:mcu_mgr` for interaction from a host.
+It is recommended to begin with the :zephyr:code-sample:`smp-svr` sample and use :ref:`zephyr:mcu_mgr` for interaction from a host.
 This setup supports both UART and Bluetooth® LE connections.
 
 The following samples are supported:
@@ -112,7 +112,7 @@ Supported features and configurations
 
 MCUboot is a customizable bootloader designed to meet specific requirements.
 This page outlines the tested configurations.
-For production builds, we recommend using the same set of configurations.
+For production builds, it is recommended to use the same set of configurations.
 
 The following table is an overview of the currently supported bootloaders:
 

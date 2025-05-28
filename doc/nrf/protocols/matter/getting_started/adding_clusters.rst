@@ -303,7 +303,7 @@ Create a callback for sensor activation and deactivation
 
 Handlers for the ``Sensor Activate`` and ``Sensor Deactivate`` tasks are now ready, but the tasks are not posted to the task queue.
 The sensor is supposed to be turned on and off remotely by changing the ``OnOff`` attribute of the On/off cluster, for example using the Matter controller.
-This means that we need to implement a callback function to post one of these tasks every time the ``OnOff`` attribute changes.
+This means that you need to implement a callback function to post one of these tasks every time the ``OnOff`` attribute changes.
 
 To implement the callback function, complete the following steps:
 

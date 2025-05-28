@@ -1279,19 +1279,46 @@ BT shell support
 To build the MoSh sample with Zephyr BT shell command support, use the :file:`-DDTC_OVERLAY_FILE=bt.overlay` and :file:`-DEXTRA_CONF_FILE=overlay-bt.conf` options.
 When running this configuration, you can perform BT scanning and advertising using the ``bt`` command.
 
-Compile as follows:
+You must program the *board controller* with the :ref:`bluetooth-hci-lpuart-sample` sample first, before programming the main controller with the :ref:`modem_shell_application` sample.
+Program the board controller as follows:
 
-.. code-block:: console
+1. Set the **SW10** switch, marked as *debug/prog*, in the **NRF52** position.
+   On nRF9160 DK board version 0.9.0 and earlier versions, the switch was called **SW5**.
+#. Build the :ref:`bluetooth-hci-lpuart-sample` sample for the ``nrf9160dk/nrf52840`` board target and program the board controller with it.
 
-   west build -p -b nrf9160dk/nrf9160/ns -- -DDTC_OVERLAY_FILE="bt.overlay" -DEXTRA_CONF_FILE="overlay-bt.conf"
+   .. note::
+      To build the sample successfully, you must specify the board version along with the board target.
+      The board version is printed on the label of your DK, just below the PCA number.
+      For example, for board version 1.1.0, build the sample as follows:
 
-Additionally, you need to program the nRF52840 side of the nRF9160 DK as instructed in :ref:`lte_sensor_gateway`.
+      .. parsed-literal::
+         :class: highlight
 
-Compile the :ref:`bluetooth-hci-lpuart-sample` sample as follows:
+         west build --board nrf9160dk@1.1.0/nrf52840
 
-.. code-block:: console
+#. Verify that the programming was successful.
+   Use a terminal emulator, like the `Serial Terminal app`_, to connect to the second serial port and check the output.
+   See :ref:`test_and_optimize` for the required settings and steps.
 
-   west build -p -b nrf9160dk/nrf52840
+After programming the board controller, you must program the main controller with the :ref:`modem_shell_application` sample.
+Program the main controller as follows:
+
+1. Set the **SW10** switch, marked as *debug/prog*, in the **NRF91** position.
+   On nRF9160 DK board version 0.9.0 and earlier versions, the switch was called **SW5**.
+#. Build the sample for the ``nrf9160dk/nrf9160/ns`` board target and program the main controller with it.
+
+   .. note::
+      To build the sample successfully, you must specify the board version along with the board target.
+      For example, for board version 1.1.0, build the sample as follows:
+
+      .. parsed-literal::
+         :class: highlight
+
+         west build -p -b nrf9160dk@1.1.0/nrf9160/ns -- -DDTC_OVERLAY_FILE="bt.overlay" -DEXTRA_CONF_FILE="overlay-bt.conf"
+
+#. Verify that the programming was successful.
+   Use a terminal emulator, like the `Serial Terminal app`_, to connect to the first serial port and check the output.
+   See :ref:`test_and_optimize` for the required settings and steps.
 
 The following example demonstrates how to use MoSh with two development kits, where one acts as a broadcaster and the other one as an observer.
 

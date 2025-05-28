@@ -39,3 +39,8 @@ west-commands:
       - name: ncs-provision
         class: NcsProvision
         help: Provision utility
+  - file: scripts/west_commands/ncs_ironside_se_update.py
+    commands:
+      - name: ncs-ironside-se-update
+        class: NcsIRONsideSEUpdate
+        help: IRONside SE update utility

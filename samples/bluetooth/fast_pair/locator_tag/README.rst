@@ -15,7 +15,7 @@ Google Fast Pair standard also supports the Find My Device Network (FMDN) extens
 For detailed information, see the official `Fast Pair Find My Device Network extension`_ documentation.
 
 This sample follows the `Fast Pair Device Feature Requirements for Locator Tags`_ documentation and uses the Fast Pair configuration for the locator tag use case.
-The software maturity level for the locator tag use case is outlined in the :ref:`software_maturity_fast_pair_use_case` table.
+The software maturity level for the locator tag use case is outlined in the :ref:`Google Fast Pair use case support <software_maturity_fast_pair_use_case>` table.
 
 Requirements
 ************
@@ -25,7 +25,7 @@ The sample supports the following development kits:
 .. table-from-sample-yaml::
 
 .. note::
-   In case of the :ref:`zephyr:nrf54h20dk_nrf54h20` board target, the application still has high power consumption as the Bluetooth LE controller running on the radio core requires disabling MRAM latency (:kconfig:option:`CONFIG_MRAM_LATENCY_AUTO_REQ`).
+   In case of the :zephyr:board:`nrf54h20dk` board target, the application still has high power consumption as the Bluetooth LE controller running on the radio core requires disabling MRAM latency (:kconfig:option:`CONFIG_MRAM_LATENCY_AUTO_REQ`).
    Enabling MRAM latency makes the Bluetooth LE controller unstable.
 
 Overview
@@ -640,18 +640,17 @@ Assuming that your current working directory points to this sample directory, yo
 .. parsed-literal::
    :class: highlight
 
-   west ncs-provision upload -s <soc> -k sysbuild/configuration/<board_target>/boot_signature_key_file_<algorithm>.pem --keyname UROT_PUBKEY
+   west ncs-provision upload -k sysbuild/configuration/<board_target>/boot_signature_key_file_<algorithm>.pem --keyname UROT_PUBKEY
 
-* The ``<soc>`` placeholder is the SoC name used in your board target (for example, ``nrf54l15``).
 * The ``<board_target>`` placeholder is your board target name (for example, ``nrf54l15dk/nrf54l15/cpuapp``).
 * The ``<algorithm>`` placeholder is the algorithm used to generate the key pair for the application image signature generation and verification (for example, ``ed25519``).
 
-The examplary command for the ``nrf54l15dk/nrf54l15/cpuapp`` board target and the demonstration key file looks is as follows:
+The examplary command for the ``nrf54l15dk/nrf54l15/cpuapp`` board target and the demonstration key file is as follows:
 
 .. parsed-literal::
    :class: highlight
 
-   west ncs-provision upload -s nrf54l15 -k sysbuild/configuration/nrf54l15dk_nrf54l15_cpuapp/boot_signature_key_file_ed25519.pem --keyname UROT_PUBKEY
+   west ncs-provision upload -k sysbuild/configuration/nrf54l15dk_nrf54l15_cpuapp/boot_signature_key_file_ed25519.pem --keyname UROT_PUBKEY
 
 See :ref:`ug_nrf54l_developing_provision_kmu` for further details regarding the KMU provisioning process.
 
@@ -1106,6 +1105,8 @@ Testing steps for the firmware update notification feature require the `nRF Conn
    * `Google Play Services`_ - ``v25.12.33``
    * `nRF Connect Device Manager`_ - ``v2.5.0``
 
+   Also, ensure that Android notifications are enabled for the `nRF Connect Device Manager`_ application.
+
 .. note::
    You can execute these testing steps in combination with the :ref:`fast_pair_locator_tag_testing_clock_sync` testing steps, as both test variants require you to wait for more than 24 hours.
 
@@ -1122,8 +1123,16 @@ To test this feature, complete the following steps:
       #. Power on the development kit.
       #. |connect_terminal_specific|
       #. Power on your test Android device and unlock it after the smartphone screen is turned on.
-      #. Wait for the Android device to connect to the development kit, read the local firmware version, and disconnect.
+      #. Wait for the device to automatically connect to the development kit and read the local firmware version in the background.
+      #. In the terminal, verify that a message confirming that the firmware version is being read appears::
+
+            DIS Firmware Revision characteristic is being read
+
       #. Observe that you get the Android notification about the new firmware update on your test Android device.
+
+         .. note::
+            Notification delivery on Android may be delayed due to system conditions or background processing.
+            It is recommended to wait up to five minutes before concluding that this test step has failed.
 
          .. figure:: /images/bt_fast_pair_locator_tag_android_fw_update_notification.png
             :scale: 80 %
@@ -1147,7 +1156,8 @@ To test this feature, complete the following steps:
       #. Power on the development kit.
       #. |connect_terminal_specific|
       #. Power on your test Android device and unlock it after the smartphone screen is turned on.
-      #. Wait for the Android device to connect to the development kit, read the local firmware version, and disconnect.
+      #. Wait for the device to automatically connect to the development kit and read the local firmware version in the background.
+      #. In the terminal, verify that a message confirming that the firmware version is being read appears.
       #. Observe that you no longer get the Android notification about the new firmware update on your test Android device.
 
    .. group-tab:: nRF54 DKs
@@ -1159,8 +1169,16 @@ To test this feature, complete the following steps:
       #. Power on the development kit.
       #. |connect_terminal_specific|
       #. Power on your test Android device and unlock it after the smartphone screen is turned on.
-      #. Wait for the Android device to connect to the development kit, read the local firmware version, and disconnect.
+      #. Wait for the device to automatically connect to the development kit and read the local firmware version in the background.
+      #. In the terminal, verify that a message confirming that the firmware version is being read appears::
+
+            DIS Firmware Revision characteristic is being read
+
       #. Observe that you get the Android notification about the new firmware update on your test Android device.
+
+         .. note::
+            Notification delivery on Android may be delayed due to system conditions or background processing.
+            It is recommended to wait up to five minutes before concluding that this test step has failed.
 
          .. figure:: /images/bt_fast_pair_locator_tag_android_fw_update_notification.png
             :scale: 80 %
@@ -1184,7 +1202,8 @@ To test this feature, complete the following steps:
       #. Power on the development kit.
       #. |connect_terminal_specific|
       #. Power on your test Android device and unlock it after the smartphone screen is turned on.
-      #. Wait for the Android device to connect to the development kit, read the local firmware version, and disconnect.
+      #. Wait for the device to automatically connect to the development kit and read the local firmware version in the background.
+      #. In the terminal, verify that a message confirming that the firmware version is being read appears.
       #. Observe that you no longer get the Android notification about the new firmware update on your test Android device.
 
 Disabling the locator tag

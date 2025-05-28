@@ -19,8 +19,8 @@ Supported SoCs
 
 Currently, the following SoCs from Nordic Semiconductor are supported for use with the snippet:
 
-* :ref:`zephyr:nrf5340dk_nrf5340`
-* :ref:`zephyr:nrf54h20dk_nrf54h20`
+* :zephyr:board:`nrf5340dk`
+* :zephyr:board:`nrf54h20dk`
 
 .. note::
    On the nRF54H20 SoC, the snippet modifies the memory map to make room for settings storage for the radio core.

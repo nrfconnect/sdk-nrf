@@ -5,6 +5,7 @@
  */
 
 #include <ot_rpc_ids.h>
+#include <ot_rpc_lock.h>
 
 #include <nrf_rpc_cbor.h>
 #include <string.h>
@@ -90,9 +91,9 @@ static bool serialize_mesh_local_prefix(zcbor_state_t *state, const otMeshLocalP
                                                                                                    \
 		nrf_rpc_cbor_decoding_done(group, ctx);                                            \
                                                                                                    \
-		openthread_api_mutex_lock(openthread_get_default_context());                       \
+		ot_rpc_mutex_lock();                                                               \
 		data = func_to_call(ptr_call);                                                     \
-		openthread_api_mutex_unlock(openthread_get_default_context());                     \
+		ot_rpc_mutex_unlock();                                                             \
                                                                                                    \
 		length = 2 + ret_size(data);                                                       \
                                                                                                    \
@@ -125,15 +126,15 @@ NRF_RPC_CBOR_CMD_STRING_GETTER(ot_get_local_prefix, otThreadGetMeshLocalPrefix,
 	static void func_name(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,     \
 			      void *handler_data)                                                  \
 	{                                                                                          \
-		size_t length = 1;                                                                \
+		size_t length = 1;                                                                 \
 		type data;                                                                         \
 		struct nrf_rpc_cbor_ctx rsp_ctx;                                                   \
                                                                                                    \
 		nrf_rpc_cbor_decoding_done(group, ctx);                                            \
                                                                                                    \
-		openthread_api_mutex_lock(openthread_get_default_context());                       \
-		data = func_to_call(openthread_get_default_instance());                   \
-		openthread_api_mutex_unlock(openthread_get_default_context());                     \
+		ot_rpc_mutex_lock();                                                               \
+		data = func_to_call(openthread_get_default_instance());                            \
+		ot_rpc_mutex_unlock();                                                             \
                                                                                                    \
 		length += sizeof(data);                                                            \
                                                                                                    \

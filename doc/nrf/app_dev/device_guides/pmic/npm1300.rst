@@ -45,7 +45,7 @@ The following boards in the `Zephyr`_ open source project and in the |NCS| are c
      - | `Product Specification <nRF9160 Product Specification_>`_
        | :ref:`Getting started <ug_nrf9160_gs>`
        | `User Guide <nRF9160 DK Hardware_>`_
-   * - :ref:`zephyr:nrf54h20dk_nrf54h20`
+   * - :zephyr:board:`nrf54h20dk`
      - nPM1300 EK
      - PCA10175
      - | ``nrf54h20dk/nrf54h20/cpuapp``
@@ -53,26 +53,26 @@ The following boards in the `Zephyr`_ open source project and in the |NCS| are c
        | ``nrf54h20dk/nrf54h20/cpuppr``
      - | `Objective Product Specification <nRF54H20 Objective Product Specification 0.3.1_>`_
        | :ref:`Getting started <ug_nrf54h20_gs>`
-   * - :ref:`zephyr:nrf54l15dk_nrf54l15`
+   * - :zephyr:board:`nrf54l15dk`
      - nPM1300 EK
      - PCA10156
      - | ``nrf54l15dk/nrf54l15/cpuapp``
      - --
-   * - :ref:`zephyr:nrf5340dk_nrf5340`
+   * - :zephyr:board:`nrf5340dk`
      - nPM1300 EK
      - PCA10095
      - ``nrf5340dk/nrf5340/cpuapp``
      - | `Product Specification <nRF5340 Product Specification_>`_
        | `Quick Start app`_
        | `User Guide <nRF5340 DK User Guide_>`_
-   * - :ref:`zephyr:nrf52840dk_nrf52840`
+   * - :zephyr:board:`nrf52840dk`
      - nPM1300 EK
      - PCA10056
      - ``nrf52840dk/nrf52840``
      - | `Product Specification <nRF52840 Product Specification_>`_
        | `Quick Start app`_
        | `User Guide <nRF52840 DK User Guide_>`_
-   * - :ref:`zephyr:nrf52dk_nrf52832`
+   * - :zephyr:board:`nrf52dk`
      - nPM1300 EK
      - PCA10040
      - ``nrf52dk/nrf52832``

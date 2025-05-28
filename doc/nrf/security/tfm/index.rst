@@ -26,8 +26,7 @@ The TF-M implementation in the |NCS| is demonstrated in the following samples:
 * All :ref:`cryptography samples <crypto_samples>` in this SDK
 * A series of :zephyr:code-sample-category:`tfm_integration` samples available in Zephyr (these include :ref:`ug_tfm_supported_services_tfm_services` from the |NCS| when they are built from the |NCS| context)
 
-Starting from the |NCS| v2.0.0, TF-M is enabled by default for applications and samples that support hardware-enforced separation of the SPE and the NSPE.
-In addition, the TF-M implementation is used in all samples and applications in this SDK that support the ``*/ns`` :ref:`variant <app_boards_names>` of the boards, due to :ref:`Cortex-M Security Extensions (CMSE) <app_boards_spe_nspe>` support.
+|samples_tfm_info|
 
 The pages in this section describe the architecture and configuration of TF-M in the |NCS|.
 For more information about TF-M, see the `Trusted Firmware-M documentation <TF-M documentation_>`_, which is oriented towards TF-M implementation developers.
