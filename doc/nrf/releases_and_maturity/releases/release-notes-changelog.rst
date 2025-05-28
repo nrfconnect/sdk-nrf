@@ -495,6 +495,19 @@ Modem libraries
 
   * Added support for parsing DECT NR+ modem firmware names.
 
+  * Updated the following macros and functions to return ``-ENODATA`` when the target subparameter to parse is empty:
+
+    * :c:macro:`at_parser_num_get` macro
+    * Functions:
+
+      * :c:func:`at_parser_int16_get`
+      * :c:func:`at_parser_uint16_get`
+      * :c:func:`at_parser_int32_get`
+      * :c:func:`at_parser_uint32_get`
+      * :c:func:`at_parser_int64_get`
+      * :c:func:`at_parser_uint64_get`
+      * :c:func:`at_parser_string_get`
+
 * :ref:`lte_lc_readme` library:
 
   * Added the :kconfig:option:`CONFIG_LTE_LC_DNS_FALLBACK_MODULE` and :kconfig:option:`CONFIG_LTE_LC_DNS_FALLBACK_ADDRESS` Kconfig options to enable setting a fallback DNS address.
