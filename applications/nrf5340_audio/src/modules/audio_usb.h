@@ -14,8 +14,9 @@
 #error USB only supports 48kHz
 #endif /* (CONFIG_AUDIO_SOURCE_USB && !CONFIG_AUDIO_SAMPLE_RATE_48000_HZ) */
 
-#define USB_BLOCK_SIZE_STEREO                                                                      \
-	(((CONFIG_AUDIO_SAMPLE_RATE_HZ * CONFIG_AUDIO_BIT_DEPTH_OCTETS) / 1000) * 2)
+#define USB_BLOCK_SIZE_MULTI_CHAN                                                                  \
+	(((CONFIG_AUDIO_SAMPLE_RATE_HZ * CONFIG_AUDIO_BIT_DEPTH_OCTETS) / 1000) *                  \
+	 MAX(CONFIG_AUDIO_INPUT_CHANNELS_MAX, CONFIG_AUDIO_OUTPUT_CHANNELS_MAX))
 
 /**
  * @brief Set pointers to the queues to be used by the USB module and start sending/receiving data.
