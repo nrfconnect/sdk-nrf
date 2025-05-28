@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import logging
+import pytest
 
 from pathlib import Path
 from twister_harness import DeviceAdapter
@@ -17,6 +18,7 @@ from common import (
 logger = logging.getLogger(__name__)
 
 
+@pytest.mark.usefixtures("no_reset")
 def test_kmu_correct_keys_uploaded(dut: DeviceAdapter):
     """
     Upload valid keys to DUT using west ncs-provission command
@@ -46,6 +48,7 @@ def test_kmu_correct_keys_uploaded(dut: DeviceAdapter):
     ])
 
 
+@pytest.mark.usefixtures("no_reset")
 def test_kmu_wrong_keys_uploaded(dut: DeviceAdapter):
     """
     Upload two wrong keys to DUT using west ncs-provission command
