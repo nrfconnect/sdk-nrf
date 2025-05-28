@@ -6,7 +6,7 @@
  */
 
 #define LOG_MODULE_NAME net_openthread_alarm
-#define LOG_LEVEL CONFIG_OPENTHREAD_PLATFORM_LOG_LEVEL
+#define LOG_LEVEL	CONFIG_OPENTHREAD_PLATFORM_LOG_LEVEL
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(LOG_MODULE_NAME);
@@ -34,6 +34,7 @@ static void ot_timer_ms_fired(struct k_timer *timer)
 	ARG_UNUSED(timer);
 
 	timer_ms_fired = true;
+
 	otSysEventSignalPending();
 }
 
@@ -42,6 +43,7 @@ static void ot_timer_us_fired(struct k_timer *timer)
 	ARG_UNUSED(timer);
 
 	timer_us_fired = true;
+
 	otSysEventSignalPending();
 }
 
@@ -50,11 +52,9 @@ K_TIMER_DEFINE(ot_us_timer, ot_timer_us_fired, NULL);
 
 void platformAlarmInit(void)
 {
-#if defined(CONFIG_NET_PKT_TXTIME)
 	time_offset_us =
 		(int32_t)((int64_t)otPlatAlarmMicroGetNow() - (uint32_t)otPlatRadioGetNow(NULL));
 	time_offset_ms = time_offset_us / 1000;
-#endif
 }
 
 void platformAlarmProcess(otInstance *aInstance)
