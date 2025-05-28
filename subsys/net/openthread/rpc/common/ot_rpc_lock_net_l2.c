@@ -6,14 +6,14 @@
 
 #include "ot_rpc_lock.h"
 
-#include <zephyr/net/openthread.h>
+#include <openthread.h>
 
 void ot_rpc_mutex_lock(void)
 {
-	openthread_api_mutex_lock(openthread_get_default_context());
+	openthread_mutex_lock();
 }
 
 void ot_rpc_mutex_unlock(void)
 {
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	openthread_mutex_unlock();
 }
