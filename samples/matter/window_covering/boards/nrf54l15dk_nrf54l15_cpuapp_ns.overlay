@@ -14,10 +14,6 @@
 		watchdog0 = &wdt31;
 	};
 
-	chosen {
-		nordic,pm-ext-flash = &mx25r64;
-	};
-
 	pwmleds {
 		compatible = "pwm-leds";
 		pwm_led1: pwm_led_1 {
@@ -27,25 +23,6 @@
 			pwms = <&pwm20 2 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
 		};
 	};
-};
-
-// restore full RRAM and SRAM space - by default some parts are dedicated to FLRP
-&cpuapp_rram {
-	reg = <0x0 DT_SIZE_K(1524)>;
-};
-
-&cpuapp_sram {
-	reg = <0x20000000 DT_SIZE_K(256)>;
-	ranges = <0x0 0x20000000  0x40000>;
-};
-
-// TODO: re-enable HWFC once it's fixed
-&uart20 {
-	/delete-property/ hw-flow-control;
-};
-
-&mx25r64 {
-	status = "okay";
 };
 
 &pwm20 {
@@ -68,12 +45,6 @@
 		};
 	};
 };
-
-&wdt31 {
-	status = "okay";
-};
-
-// Change IRQ ids to handle button interrupts.
 
 // The default values for nRF54L15 are 219 and 269,
 // but with TF-M they are reserved for the secure domain

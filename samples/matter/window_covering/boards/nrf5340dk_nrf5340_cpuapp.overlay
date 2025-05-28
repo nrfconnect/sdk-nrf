@@ -4,13 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/dt-bindings/ipc_service/static_vrings.h>
-
 / {
-	chosen {
-		nordic,pm-ext-flash = &mx25r64;
-	};
-
 	/*
 	* Configure LED2 and LED3 to show the state of the
 	* window cover,by using the LED's brightness level.
@@ -29,25 +23,6 @@
 			pwms = <&pwm0 2 PWM_MSEC(20) PWM_POLARITY_INVERTED>;
 		};
 	};
-};
-
-/* Set IPC thread priority to the highest value to not collide with other threads. */
-&ipc0 {
-	zephyr,priority = <0 PRIO_COOP>;
-};
-
-/* Disable unused peripherals to reduce power consumption */
-&adc {
-	status = "disabled";
-};
-&i2c1 {
-	status = "disabled";
-};
-&spi2 {
-	status = "disabled";
-};
-&usbd {
-	status = "disabled";
 };
 
 &pwm0 {

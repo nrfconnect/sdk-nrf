@@ -1,0 +1,10 @@
+name: matter-network-core
+
+boards:
+  nrf5340dk/nrf5340/cpuapp:
+    append:
+      EXTRA_CONF_FILE: boards/nrf5340dk_nrf5340_cpunet.conf
+  /nrf7002dk*/:
+    append:
+      EXTRA_CONF_FILE: boards/nrf7002dk_nrf5340_cpunet.conf
+  

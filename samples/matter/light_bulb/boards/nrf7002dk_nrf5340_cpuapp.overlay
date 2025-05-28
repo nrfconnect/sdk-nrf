@@ -7,10 +7,6 @@
 #include <zephyr/dt-bindings/ipc_service/static_vrings.h>
 
 / {
-	chosen {
-		nordic,pm-ext-flash = &mx25r64;
-	};
-
 	/*
 	* By default, PWM module is only configured for led0 (LED1 on the board).
 	* The light bulb app, however, uses LED2 to show the state of the lighting,
@@ -18,7 +14,6 @@
 	*/
 	aliases {
 		pwm-led1 = &pwm_led1;
-		watchdog0 = &wdt0;
 	};
 
 	pwmleds {
@@ -29,10 +24,6 @@
 	};
 };
 
-/* Set IPC thread priority to the highest value to not collide with other threads. */
-&ipc0 {
-	zephyr,priority = <0 PRIO_COOP>;
-};
 
 &pwm0 {
 	pinctrl-0 = <&pwm0_default_alt>;

@@ -1,0 +1,13 @@
+name: matter-internal-dfu
+append:
+  SB_EXTRA_CONF_FILE: overlay-sb-matter-internal-dfu.conf
+
+boards:
+  /nrf54l15dk.*/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf54l15dk_nrf54l15_cpuapp.overlay
+      EXTRA_CONF_FILE: boards/nrf54l15dk_nrf54l15_cpuapp.conf
+  /nrf54lm20*/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf54lm20pdk_nrf54lm20a_cpuapp.overlay
+      EXTRA_CONF_FILE: boards/nrf54lm20pdk_nrf54lm20a_cpuapp.conf

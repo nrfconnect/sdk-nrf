@@ -81,7 +81,7 @@ tests:
     build_only: true
     extra_args:
       - FILE_SUFFIX=internal
-      - template_EXTRA_CONF_FILE=prj_release.conf
+      - template_SNIPPET=matter-internal-dfu
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
