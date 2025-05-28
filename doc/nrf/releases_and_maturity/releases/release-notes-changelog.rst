@@ -117,7 +117,8 @@ Developing with custom boards
 Security
 ========
 
-|no_changes_yet_note|
+* Added the new section about :ref:`ug_crypto_index`.
+  The new section includes pages about :ref:`ug_crypto_architecture` (new page) and :ref:`crypto_drivers` (moved from :ref:`nrf_security` library).
 
 Protocols
 =========
@@ -492,9 +493,14 @@ Gazell libraries
 Security libraries
 ------------------
 
-* :ref:`nrf_security_readme` library:
+* :ref:`nrf_security` library:
 
-  * Renamed the ``CONFIG_PSA_USE_CRACEN_ASYMMETRIC_DRIVER`` Kconfig option to :kconfig:option:`CONFIG_PSA_USE_CRACEN_ASYMMETRIC_ENCRYPTION_DRIVER`, which is more descriptive and more consistent with the options of the other drivers.
+  * Updated:
+
+    * The name of the Kconfig option ``CONFIG_PSA_USE_CRACEN_ASYMMETRIC_DRIVER`` to :kconfig:option:`CONFIG_PSA_USE_CRACEN_ASYMMETRIC_ENCRYPTION_DRIVER`, which is more descriptive and more consistent with the options of the other drivers.
+    * The placement of the page about nRF Security drivers.
+      The page was moved to :ref:`ug_crypto_index` and renamed to :ref:`crypto_drivers`.
+
 
 Modem libraries
 ---------------

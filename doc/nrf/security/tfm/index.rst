@@ -4,10 +4,6 @@
 Trusted Firmware-M in the |NCS|
 ###############################
 
-.. contents::
-   :local:
-   :depth: 2
-
 Nordic Semiconductor recommends following `Platform Security Architecture (PSA)`_ for product development to ensure appropriate security implementation in IoT devices.
 
 Trusted Firmware-M (TF-M) is the reference implementation of PSA, which follows `PSA Certified IoT Security Framework`_ for securing connected devices.
