@@ -126,7 +126,7 @@ It is recommended to test the ITS with the intended assets to ensure that the as
 Crypto service
 ==============
 
-The crypto service is one of :ref:`ug_tfm_architecture_rot_services_platform`.
+The :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>` is one of :ref:`ug_tfm_architecture_rot_services_platform`.
 It implements the PSA Crypto APIs (`PSA Certified Crypto API`_) and provides cryptographic services to other TF-M partitions and to the non-secure application.
 
 To enable the crypto service, set the :kconfig:option:`CONFIG_TFM_PARTITION_CRYPTO` Kconfig option.

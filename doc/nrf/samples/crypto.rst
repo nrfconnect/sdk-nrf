@@ -1,9 +1,10 @@
 .. _crypto_samples:
 
-Cryptography samples
-####################
+Cryptographic samples
+#####################
 
-This section lists the available |NCS| samples and tests for the :ref:`nrf_security` and the :ref:`nrfxlib:crypto`, two of the :ref:`security` features of the |NCS|.
+This section lists the available |NCS| samples and tests for the :ref:`cryptographic features in the nRF Connect SDK <ug_crypto_index>`.
+The samples use :ref:`nrf_security` and the :ref:`nrfxlib:crypto`.
 
 .. include:: ../samples.rst
     :start-after: samples_general_info_start

@@ -1,19 +1,35 @@
+.. _crypto_drivers:
 .. _nrf_security_drivers:
 
-nRF Security drivers
-####################
+Cryptographic drivers
+#####################
 
 .. contents::
    :local:
    :depth: 2
 
-.. ncs-include:: ../../../../security/psa_certified_api_overview.rst
-   :start-after: psa_crypto_lib_table_start
-   :end-before: psa_crypto_lib_table_end
+.. psa_crypto_driver_table_start
 
-In addition, the nRF Security subsystem supports the :ref:`legacy crypto toolbox APIs <legacy_crypto_support>`.
-It also integrated and configures the PSA Oberon core through `sdk-oberon-psa-crypto`_, which provides the :ref:`nrf_security_drivers_oberon`.
+The PSA Crypto in the |NCS| uses different libraries depending on hardware capabilities and user configuration:
 
++---------------------------------------------------------------------+----------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                           Driver library                            |               Supported hardware platforms               |                                                                                                  Description                                                                                                  |
++=====================================================================+==========================================================+===============================================================================================================================================================================================================+
+| :ref:`nrf_cc3xx_platform and nrf_cc3xx_mbedcrypto <nrfxlib:crypto>` | nRF52840, nRF5340, nRF91 Series devices                  | Provide support for the `CryptoCell 310 <nRF9160 CRYPTOCELL - Arm TrustZone CryptoCell 310_>`_ and `CryptoCell 312 <nRF5340 CRYPTOCELL - Arm TrustZone CryptoCell 312_>`_ hardware peripherals                |
++---------------------------------------------------------------------+----------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :ref:`nrf_oberon <nrfxlib:nrf_oberon_readme>`                       | nRF devices with Arm Cortex®-M0, -M4, or -M33 processors | Optimized software library for cryptographic algorithms created by Oberon Microsystems                                                                                                                        |
++---------------------------------------------------------------------+----------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| :ref:`CRACEN <ug_nrf54l_crypto_kmu_cracen_peripherals>`             | nRF54L Series                                            | Security subsystem providing hardware acceleration for cryptographic operations. For more information about it, see :ref:`ug_nrf54l_crypto_kmu_cracen_peripherals` on the :ref:`ug_nrf54l_cryptography` page. |
++---------------------------------------------------------------------+----------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+.. psa_crypto_driver_table_end
+
+To enable any of these drivers, use the :ref:`nrf_security` library.
+
+You can also :ref:`enable multiple drivers at the same time <nrf_security_drivers_config_multiple>`.
+In such case, cc3xx is prioritized, given that the CryptoCell supports the cryptographic operation.
+
+.. _crypto_drivers_cc3xx:
 .. _nrf_security_drivers_cc3xx:
 
 Arm CryptoCell cc3xx drivers
@@ -34,7 +50,7 @@ Arm CryptoCell cc3xx drivers, namely ``nrf_cc3xx_platform`` and ``nrf_cc3xx_mbed
 Both these drivers should not be used directly.
 Use them only through nRF Security.
 
-For configuration details, see the following pages:
+For configuration details, see also the following pages:
 
 * :ref:`nrf_security_driver_config` (both drivers)
 * :ref:`nrf_security_legacy_backend_config` (:ref:`nrf_cc3xx_mbedcrypto_readme` used as legacy backend)
@@ -43,6 +59,7 @@ For configuration details, see the following pages:
       The :ref:`nrfxlib:crypto` in nrfxlib also include the :ref:`nrf_cc310_bl_readme`.
       This library is not used by the nRF Security subsystem.
 
+.. _crypto_drivers_oberon:
 .. _nrf_security_drivers_oberon:
 
 nrf_oberon driver
@@ -73,11 +90,12 @@ The nrf_oberon driver provides support for the following encryption algorithms:
 
 The nrf_oberon driver also provides Mbed TLS legacy crypto integration for selected features.
 
-For configuration details, see the following pages:
+For configuration details, see also the following pages:
 
 * :ref:`nrf_security_driver_config`
 * :ref:`nrf_security_legacy_backend_config` (nrf_oberon used as legacy backend)
 
+.. _crypto_drivers_cracen:
 .. _nrf_security_drivers_cracen:
 
 CRACEN driver
