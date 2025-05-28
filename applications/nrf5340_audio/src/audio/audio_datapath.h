@@ -65,9 +65,9 @@ void audio_datapath_pres_delay_us_get(uint32_t *delay_us);
  *		and processed before being outputted over I2S. The audio is synchronized
  *		using sdu_ref_us.
  *
- * @param	audio_frame	Pointer to the audio buffer.
+ * @param	audio_frame_in	Pointer to the coded audio input buffer.
  */
-void audio_datapath_stream_out(struct net_buf *audio_frame);
+void audio_datapath_stream_out(struct net_buf *audio_frame_in);
 
 /**
  * @brief	Start the audio datapath module.

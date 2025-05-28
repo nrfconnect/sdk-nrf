@@ -13,6 +13,7 @@
 #include <audio_defines.h>
 
 #include "macros_common.h"
+#include "device_location.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(audio_usb, CONFIG_MODULE_AUDIO_USB_LOG_LEVEL);
@@ -20,12 +21,24 @@ LOG_MODULE_REGISTER(audio_usb, CONFIG_MODULE_AUDIO_USB_LOG_LEVEL);
 static struct k_msgq *audio_q_tx;
 static struct k_msgq *audio_q_rx;
 
-NET_BUF_POOL_FIXED_DEFINE(pool_in, CONFIG_FIFO_FRAME_SPLIT_NUM, USB_BLOCK_SIZE_STEREO,
+NET_BUF_POOL_FIXED_DEFINE(pool_in, CONFIG_FIFO_FRAME_SPLIT_NUM, USB_BLOCK_SIZE_MULTI_CHAN,
 			  sizeof(struct audio_metadata), NULL);
 
 static uint32_t rx_num_overruns;
 static bool rx_first_data;
 static bool tx_first_data;
+
+/* The meta data for the USB and that required for the following audio system. */
+struct audio_metadata usb_in_meta = {.data_coding = PCM,
+				     .data_len_us = 1000,
+				     .sample_rate_hz = CONFIG_AUDIO_SAMPLE_RATE_HZ,
+				     .bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS,
+				     .carried_bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS,
+				     .bytes_per_location = USB_BLOCK_SIZE_MULTI_CHAN / 2,
+				     .interleaved = true,
+				     .locations = BT_AUDIO_LOCATION_FRONT_LEFT |
+						  BT_AUDIO_LOCATION_FRONT_RIGHT,
+				     .bad_data = 0};
 
 #if (CONFIG_STREAM_BIDIRECTIONAL)
 static uint32_t tx_num_underruns;
@@ -89,8 +102,8 @@ static void data_received(const struct device *dev, struct net_buf *buffer, size
 	}
 
 	/* Receive data from USB */
-	if (size != USB_BLOCK_SIZE_STEREO) {
-		LOG_WRN("Wrong length: %d", size);
+	if (size != USB_BLOCK_SIZE_MULTI_CHAN) {
+		LOG_WRN("Incorrect buffer size: %d (%u)", size, USB_BLOCK_SIZE_MULTI_CHAN);
 		net_buf_unref(buffer);
 		return;
 	}
@@ -126,16 +139,9 @@ static void data_received(const struct device *dev, struct net_buf *buffer, size
 	/* Send USB buffer back to USB stack */
 	net_buf_unref(buffer);
 
-	/* Add meta data */
+	/* Store USB related metadata */
 	struct audio_metadata *meta = net_buf_user_data(audio_block);
-
-	meta->data_coding = PCM;
-	meta->data_len_us = 1000;
-	meta->sample_rate_hz = CONFIG_AUDIO_SAMPLE_RATE_HZ;
-	meta->bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS;
-	meta->carried_bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS;
-	meta->locations = BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT;
-	meta->bad_data = false;
+	*meta = usb_in_meta;
 
 	/* Put the block into RX queue */
 	ret = k_msgq_put(audio_q_rx, (void *)&audio_block, K_NO_WAIT);

@@ -125,7 +125,7 @@ ZTEST(suite_pscm_int, test_pscm_interleave_api_parameters)
 
 	ret = pscm_interleave(input, input_size, channel, 12, &output, output_size,
 			      output_channels);
-	zassert_equal(ret, -EINVAL, "Failed interleave pcm_bit_depth not devisable by 8: ret %d",
+	zassert_equal(ret, -EINVAL, "Failed interleave pcm_bit_depth not divisible by 8: ret %d",
 		      ret);
 
 	ret = pscm_interleave(input, input_size, channel, 40, &output, output_size,
@@ -159,41 +159,41 @@ ZTEST(suite_pscm_deint, test_pscm_deinterleave_api_parameters)
 
 	ret = pscm_deinterleave(NULL, input_size, input_channels, channel, pcm_bit_depth, &output,
 				output_size);
-	zassert_equal(ret, -EINVAL, "Failed deinterleave for input NULL: ret %d", ret);
+	zassert_equal(ret, -EINVAL, "Failed de-interleave for input NULL: ret %d", ret);
 
 	ret = pscm_deinterleave(input, 0, input_channels, channel, pcm_bit_depth, &output,
 				output_size);
-	zassert_equal(ret, -EINVAL, "Failed deinterleave for input size 0: ret %d", ret);
+	zassert_equal(ret, -EINVAL, "Failed de-interleave for input size 0: ret %d", ret);
 
 	ret = pscm_deinterleave(input, input_size, 0, channel, pcm_bit_depth, &output, output_size);
-	zassert_equal(ret, -EINVAL, "Failed deinterleave input channels == 0: ret %d", ret);
+	zassert_equal(ret, -EINVAL, "Failed de-interleave input channels == 0: ret %d", ret);
 
 	ret = pscm_deinterleave(input, input_size, input_channels, channel, 0, &output,
 				output_size);
-	zassert_equal(ret, -EINVAL, "Failed deinterleave pcm_bit_depth == 0: ret %d", ret);
+	zassert_equal(ret, -EINVAL, "Failed de-interleave pcm_bit_depth == 0: ret %d", ret);
 
 	ret = pscm_deinterleave(input, input_size, input_channels, channel, 12, &output,
 				output_size);
-	zassert_equal(ret, -EINVAL, "Failed deinterleave pcm_bit_depth not devisable by 8: ret %d",
+	zassert_equal(ret, -EINVAL, "Failed de-interleave pcm_bit_depth not divisible by 8: ret %d",
 		      ret);
 
 	ret = pscm_deinterleave(input, input_size, input_channels, channel, 40, &output,
 				output_size);
-	zassert_equal(ret, -EINVAL, "Failed deinterleave pcm_bit_depth greater than %d: ret %d",
+	zassert_equal(ret, -EINVAL, "Failed de-interleave pcm_bit_depth greater than %d: ret %d",
 		      PSCM_MAX_CARRIER_BIT_DEPTH, ret);
 
 	ret = pscm_deinterleave(input, input_size, input_channels, channel, pcm_bit_depth, NULL,
 				output_size);
-	zassert_equal(ret, -EINVAL, "Failed deinterleave for output NULL: ret %d", ret);
+	zassert_equal(ret, -EINVAL, "Failed de-interleave for output NULL: ret %d", ret);
 
 	ret = pscm_deinterleave(input, input_size, input_channels, channel, pcm_bit_depth, &output,
 				test_output_size);
-	zassert_equal(ret, -EINVAL, "Failed deinterleave for output size 0: ret %d", ret);
+	zassert_equal(ret, -EINVAL, "Failed de-interleave for output size 0: ret %d", ret);
 
 	test_output_size = output_size < (input_size / (input_channels + 1));
 	ret = pscm_deinterleave(input, input_size, input_channels, channel, pcm_bit_depth, &output,
 				test_output_size);
-	zassert_equal(ret, -EINVAL, "Failed deinterleave for output size too small: ret %d", ret);
+	zassert_equal(ret, -EINVAL, "Failed de-interleave for output size too small: ret %d", ret);
 }
 
 int interleave_test(void const *const input, size_t input_size, uint8_t pcm_bit_depth,
@@ -227,7 +227,7 @@ int deinterleave_test(void const *const input, size_t input_size, uint8_t pcm_bi
 
 	ret = pscm_deinterleave(input, input_size, input_channels, channel, pcm_bit_depth, &output,
 				output_size);
-	zassert_equal(ret, 0, "Failed deinterleave: ret %d", ret);
+	zassert_equal(ret, 0, "Failed de-interleave: ret %d", ret);
 	zassert_mem_equal(&output[0], &test_result[0], test_result_size,
 			  "Failed to interleave, output != test_result");
 
@@ -242,42 +242,42 @@ ZTEST(suite_pscm_deint, test_pscm_deinterleave)
 	ret = deinterleave_test(&combine_8_ch2[0], sizeof(combine_8_ch2), TEST_SAMPLE_BITS_8,
 				TEST_AUDIO_CH_L, num_chans, &unpadded_left[0],
 				sizeof(unpadded_left));
-	zassert_equal(ret, 0, "Failed deinterleave 2 channel 8-bit carrier left: ret %d", ret);
+	zassert_equal(ret, 0, "Failed de-interleave 2 channel 8-bit carrier left: ret %d", ret);
 
 	ret = deinterleave_test(&combine_8_ch2[0], sizeof(combine_8_ch2), TEST_SAMPLE_BITS_8,
 				TEST_AUDIO_CH_R, num_chans, &unpadded_right[0],
 				sizeof(unpadded_right));
-	zassert_equal(ret, 0, "Failed deinterleave 2 channel 8-bit carrier right: ret %d", ret);
+	zassert_equal(ret, 0, "Failed de-interleave 2 channel 8-bit carrier right: ret %d", ret);
 
 	ret = deinterleave_test(&combine_16[0], sizeof(combine_16), TEST_SAMPLE_BITS_16,
 				TEST_AUDIO_CH_L, num_chans, &unpadded_left[0],
 				sizeof(unpadded_left));
-	zassert_equal(ret, 0, "Failed deinterleave 2 channel 16-bit carrier left: ret %d", ret);
+	zassert_equal(ret, 0, "Failed de-interleave 2 channel 16-bit carrier left: ret %d", ret);
 
 	ret = deinterleave_test(&combine_16[0], sizeof(combine_16), TEST_SAMPLE_BITS_16,
 				TEST_AUDIO_CH_R, num_chans, &unpadded_right[0],
 				sizeof(unpadded_right));
-	zassert_equal(ret, 0, "Failed deinterleave 2 channel 16-bit carrier right: ret %d", ret);
+	zassert_equal(ret, 0, "Failed de-interleave 2 channel 16-bit carrier right: ret %d", ret);
 
 	ret = deinterleave_test(&combine_24[0], sizeof(combine_24), TEST_SAMPLE_BITS_24,
 				TEST_AUDIO_CH_L, num_chans, &unpadded_left[0],
 				sizeof(unpadded_left));
-	zassert_equal(ret, 0, "Failed deinterleave 2 channel 24-bit carrier left: ret %d", ret);
+	zassert_equal(ret, 0, "Failed de-interleave 2 channel 24-bit carrier left: ret %d", ret);
 
 	ret = deinterleave_test(&combine_24[0], sizeof(combine_24), TEST_SAMPLE_BITS_24,
 				TEST_AUDIO_CH_R, num_chans, &unpadded_right[0],
 				sizeof(unpadded_right));
-	zassert_equal(ret, 0, "Failed deinterleave 2 channel 24-bit carrier right: ret %d", ret);
+	zassert_equal(ret, 0, "Failed de-interleave 2 channel 24-bit carrier right: ret %d", ret);
 
 	ret = deinterleave_test(&combine_32[0], sizeof(combine_32), TEST_SAMPLE_BITS_32,
 				TEST_AUDIO_CH_L, num_chans, &unpadded_left[0],
 				sizeof(unpadded_left));
-	zassert_equal(ret, 0, "Failed deinterleave 2 channel 32-bit carrier left: ret %d", ret);
+	zassert_equal(ret, 0, "Failed de-interleave 2 channel 32-bit carrier left: ret %d", ret);
 
 	ret = deinterleave_test(&combine_32[0], sizeof(combine_32), TEST_SAMPLE_BITS_32,
 				TEST_AUDIO_CH_R, num_chans, &unpadded_right[0],
 				sizeof(unpadded_right));
-	zassert_equal(ret, 0, "Failed deinterleave 2 channel 32-bit carrier right: ret %d", ret);
+	zassert_equal(ret, 0, "Failed de-interleave 2 channel 32-bit carrier right: ret %d", ret);
 }
 
 ZTEST(suite_pscm_int, test_pscm_interleave_zero_pad)
@@ -293,27 +293,27 @@ ZTEST(suite_pscm_int, test_pscm_interleave_zero_pad)
 	ret = interleave_test(&unpadded_right[0], sizeof(unpadded_right), TEST_SAMPLE_BITS_8,
 			      TEST_AUDIO_CH_R, num_chans, &right_zero_padded_8[0],
 			      sizeof(right_zero_padded_8), true);
-	zassert_equal(ret, 0, "Failed deinterleave 2 channel 8-bit carrier right: ret %d", ret);
+	zassert_equal(ret, 0, "Failed de-interleave 2 channel 8-bit carrier right: ret %d", ret);
 
 	ret = interleave_test(&unpadded_left[0], sizeof(unpadded_left), TEST_SAMPLE_BITS_16,
 			      TEST_AUDIO_CH_L, num_chans, &left_zero_padded_16[0],
 			      sizeof(left_zero_padded_16), true);
-	zassert_equal(ret, 0, "Failed deinterleave 2 channel 16-bit carrier left: ret %d", ret);
+	zassert_equal(ret, 0, "Failed de-interleave 2 channel 16-bit carrier left: ret %d", ret);
 
 	ret = interleave_test(&unpadded_left[0], sizeof(unpadded_left), TEST_SAMPLE_BITS_16,
 			      TEST_AUDIO_CH_R, num_chans, &right_zero_padded_16[0],
 			      sizeof(right_zero_padded_16), true);
-	zassert_equal(ret, 0, "Failed deinterleave 2 channel 16-bit carrier right: ret %d", ret);
+	zassert_equal(ret, 0, "Failed de-interleave 2 channel 16-bit carrier right: ret %d", ret);
 
 	ret = interleave_test(&unpadded_left[0], sizeof(unpadded_left), TEST_SAMPLE_BITS_24,
 			      TEST_AUDIO_CH_L, num_chans, &left_zero_padded_24[0],
 			      sizeof(left_zero_padded_24), true);
-	zassert_equal(ret, 0, "Failed deinterleave 2 channel 24-bit carrier left: ret %d", ret);
+	zassert_equal(ret, 0, "Failed de-interleave 2 channel 24-bit carrier left: ret %d", ret);
 
 	ret = interleave_test(&unpadded_left[0], sizeof(unpadded_left), TEST_SAMPLE_BITS_24,
 			      TEST_AUDIO_CH_R, num_chans, &right_zero_padded_24[0],
 			      sizeof(right_zero_padded_24), true);
-	zassert_equal(ret, 0, "Failed deinterleave 2 channel 24-bit carrier right: ret %d", ret);
+	zassert_equal(ret, 0, "Failed de-interleave 2 channel 24-bit carrier right: ret %d", ret);
 
 	ret = interleave_test(&unpadded_left[0], sizeof(unpadded_left), TEST_SAMPLE_BITS_32,
 			      TEST_AUDIO_CH_L, num_chans, &left_zero_padded_32[0],
@@ -367,27 +367,27 @@ ZTEST(suite_pscm_deint, test_pscm_deinterleave_multi)
 	ret = deinterleave_test(&multi_split[0], sizeof(multi_split), TEST_SAMPLE_BITS_8,
 				TEST_AUDIO_CH_L, TEST_CHANNELS_5, &unpadded_left[0],
 				sizeof(unpadded_left));
-	zassert_equal(ret, 0, "Failed deinterleave 8-bit carrier left: ret %d", ret);
+	zassert_equal(ret, 0, "Failed de-interleave 8-bit carrier left: ret %d", ret);
 
 	ret = deinterleave_test(&multi_split[0], sizeof(multi_split), TEST_SAMPLE_BITS_8,
 				TEST_AUDIO_CH_R, TEST_CHANNELS_5, &unpadded_right[0],
 				sizeof(unpadded_right));
-	zassert_equal(ret, 0, "Failed deinterleave 8-bit carrier right: ret %d", ret);
+	zassert_equal(ret, 0, "Failed de-interleave 8-bit carrier right: ret %d", ret);
 
 	ret = deinterleave_test(&multi_split[0], sizeof(multi_split), TEST_SAMPLE_BITS_8,
 				TEST_AUDIO_CH_C, TEST_CHANNELS_5, &unpadded_centre[0],
 				sizeof(unpadded_centre));
-	zassert_equal(ret, 0, "Failed deinterleave 8-bit carrier centre: ret %d", ret);
+	zassert_equal(ret, 0, "Failed de-interleave 8-bit carrier centre: ret %d", ret);
 
 	ret = deinterleave_test(&multi_split[0], sizeof(multi_split), TEST_SAMPLE_BITS_8,
 				TEST_AUDIO_CH_SL, TEST_CHANNELS_5, &unpadded_surround_left[0],
 				sizeof(unpadded_surround_left));
-	zassert_equal(ret, 0, "Failed deinterleave 8-bit carrier surround left: ret %d", ret);
+	zassert_equal(ret, 0, "Failed de-interleave 8-bit carrier surround left: ret %d", ret);
 
 	ret = deinterleave_test(&multi_split[0], sizeof(multi_split), TEST_SAMPLE_BITS_8,
 				TEST_AUDIO_CH_SR, TEST_CHANNELS_5, &unpadded_surround_right[0],
 				sizeof(unpadded_surround_right));
-	zassert_equal(ret, 0, "Failed deinterleave 8-bit carrier surround right: ret %d", ret);
+	zassert_equal(ret, 0, "Failed de-interleave 8-bit carrier surround right: ret %d", ret);
 }
 
 ZTEST(suite_pscm, test_pscm_zero_pad_16)
