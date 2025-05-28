@@ -370,7 +370,13 @@ static int at_parser_num_get_impl(struct at_parser *parser, size_t index, void *
 		return err;
 	}
 
-	if (token.type != AT_TOKEN_TYPE_INT) {
+	switch (token.type) {
+	/* Acceptable types. */
+	case AT_TOKEN_TYPE_INT:
+		break;
+	case AT_TOKEN_TYPE_EMPTY:
+		return -ENODATA;
+	default:
 		return -EOPNOTSUPP;
 	}
 
@@ -493,6 +499,8 @@ static int at_parser_string_common_get_impl(struct at_parser *parser, size_t ind
 	case AT_TOKEN_TYPE_STRING:
 	case AT_TOKEN_TYPE_ARRAY:
 		break;
+	case AT_TOKEN_TYPE_EMPTY:
+		return -ENODATA;
 	default:
 		return -EOPNOTSUPP;
 	}

@@ -67,6 +67,7 @@ struct at_parser {
  * @retval -EINVAL     One or more of the supplied parameters are invalid.
  * @retval -EPERM      @p parser has not been initialized.
  * @retval -EOPNOTSUPP Operation not supported for the type of value at the given index.
+ * @retval -ENODATA    The value at the given index is empty.
  * @retval -ERANGE     Parsed integer value is out of range for the expected type.
  * @retval -EBADMSG    The AT command string is malformed.
  * @retval -EAGAIN     Parsing of the current AT command line is terminated and a subsequent line is
@@ -157,6 +158,7 @@ int at_parser_cmd_count_get(struct at_parser *parser, size_t *count);
  * @retval -EINVAL     One or more of the supplied parameters are invalid.
  * @retval -EPERM      @p parser has not been initialized.
  * @retval -EOPNOTSUPP Operation not supported for the type of value at the given index.
+ * @retval -ENODATA    The value at the given index is empty.
  * @retval -ERANGE     Parsed integer value is out of range for the expected type.
  * @retval -EBADMSG    The AT command string is malformed.
  * @retval -EAGAIN     Parsing of the current AT command line is terminated and a subsequent line is
@@ -180,6 +182,7 @@ int at_parser_int16_get(struct at_parser *parser, size_t index, int16_t *value);
  * @retval -EINVAL     One or more of the supplied parameters are invalid.
  * @retval -EPERM      @p parser has not been initialized.
  * @retval -EOPNOTSUPP Operation not supported for the type of value at the given index.
+ * @retval -ENODATA    The value at the given index is empty.
  * @retval -ERANGE     Parsed integer value is out of range for the expected type.
  * @retval -EBADMSG    The AT command string is malformed.
  * @retval -EAGAIN     Parsing of the current AT command line is terminated and a subsequent line is
@@ -203,6 +206,7 @@ int at_parser_uint16_get(struct at_parser *parser, size_t index, uint16_t *value
  * @retval -EINVAL     One or more of the supplied parameters are invalid.
  * @retval -EPERM      @p parser has not been initialized.
  * @retval -EOPNOTSUPP Operation not supported for the type of value at the given index.
+ * @retval -ENODATA    The value at the given index is empty.
  * @retval -ERANGE     Parsed integer value is out of range for the expected type.
  * @retval -EBADMSG    The AT command string is malformed.
  * @retval -EAGAIN     Parsing of the current AT command line is terminated and a subsequent line is
@@ -226,6 +230,7 @@ int at_parser_int32_get(struct at_parser *parser, size_t index, int32_t *value);
  * @retval -EINVAL     One or more of the supplied parameters are invalid.
  * @retval -EPERM      @p parser has not been initialized.
  * @retval -EOPNOTSUPP Operation not supported for the type of value at the given index.
+ * @retval -ENODATA    The value at the given index is empty.
  * @retval -ERANGE     Parsed integer value is out of range for the expected type.
  * @retval -EBADMSG    The AT command string is malformed.
  * @retval -EAGAIN     Parsing of the current AT command line is terminated and a subsequent line is
@@ -249,6 +254,7 @@ int at_parser_uint32_get(struct at_parser *parser, size_t index, uint32_t *value
  * @retval -EINVAL     One or more of the supplied parameters are invalid.
  * @retval -EPERM      @p parser has not been initialized.
  * @retval -EOPNOTSUPP Operation not supported for the type of value at the given index.
+ * @retval -ENODATA    The value at the given index is empty.
  * @retval -ERANGE     Parsed integer value is out of range for the expected type.
  * @retval -EBADMSG    The AT command string is malformed.
  * @retval -EAGAIN     Parsing of the current AT command line is terminated and a subsequent line is
@@ -272,6 +278,7 @@ int at_parser_int64_get(struct at_parser *parser, size_t index, int64_t *value);
  * @retval -EINVAL     One or more of the supplied parameters are invalid.
  * @retval -EPERM      @p parser has not been initialized.
  * @retval -EOPNOTSUPP Operation not supported for the type of value at the given index.
+ * @retval -ENODATA    The value at the given index is empty.
  * @retval -ERANGE     Parsed integer value is out of range for the expected type.
  * @retval -EBADMSG    The AT command string is malformed.
  * @retval -EAGAIN     Parsing of the current AT command line is terminated and a subsequent line is
@@ -301,6 +308,7 @@ int at_parser_uint64_get(struct at_parser *parser, size_t index, uint64_t *value
  * @retval -EINVAL     One or more of the supplied parameters are invalid.
  * @retval -EPERM      @p parser has not been initialized.
  * @retval -EOPNOTSUPP Operation not supported for the type of value at the given index.
+ * @retval -ENODATA    The value at the given index is empty.
  * @retval -ENOMEM     @p str is smaller than the null-terminated string to be copied.
  * @retval -EBADMSG    The AT command string is malformed.
  * @retval -EAGAIN     Parsing of the current AT command line is terminated and a subsequent line is
