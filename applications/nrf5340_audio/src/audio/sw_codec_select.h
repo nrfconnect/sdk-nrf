@@ -27,46 +27,56 @@
 #if (CONFIG_SW_CODEC_LC3)
 #define LC3_MAX_FRAME_SIZE_MS	10
 #define LC3_ENC_MONO_FRAME_SIZE (CONFIG_LC3_BITRATE_MAX * LC3_MAX_FRAME_SIZE_MS / (8 * 1000))
-
 #define LC3_PCM_NUM_BYTES_MONO                                                                     \
 	(CONFIG_AUDIO_SAMPLE_RATE_HZ * CONFIG_AUDIO_BIT_DEPTH_OCTETS * LC3_MAX_FRAME_SIZE_MS / 1000)
 #define LC3_ENC_TIME_US 3000
 #define LC3_DEC_TIME_US 1500
 #else
-
 #define LC3_ENC_MONO_FRAME_SIZE 0
-
 #define LC3_PCM_NUM_BYTES_MONO	0
-
 #define LC3_ENC_TIME_US		0
-
 #define LC3_DEC_TIME_US		0
 #endif /* CONFIG_SW_CODEC_LC3 */
 
-#define ENC_MAX_FRAME_SIZE   MAX(LC3_ENC_MONO_FRAME_SIZE, 0)
-
-#define ENC_TIME_US	     MAX(LC3_ENC_TIME_US, 0)
-
-#define DEC_TIME_US	     MAX(LC3_DEC_TIME_US, 0)
-
-#define PCM_NUM_BYTES_MONO   MAX(LC3_PCM_NUM_BYTES_MONO, 0)
-
-#define PCM_NUM_BYTES_STEREO (PCM_NUM_BYTES_MONO * 2)
+/* Max will be used when multiple codecs are supported */
+#define ENC_MAX_FRAME_SIZE	      MAX(LC3_ENC_MONO_FRAME_SIZE, 0)
+#define ENC_MULTI_CHAN_MAX_FRAME_SIZE (LC3_ENC_MONO_FRAME_SIZE * CONFIG_AUDIO_ENCODE_CHANNELS_MAX)
+#define ENC_TIME_US		      MAX(LC3_ENC_TIME_US, 0)
+#define DEC_TIME_US		      MAX(LC3_DEC_TIME_US, 0)
+#define PCM_NUM_BYTES_MONO	      MAX(LC3_PCM_NUM_BYTES_MONO, 0)
+#define PCM_NUM_BYTES_MULTI_CHAN                                                                   \
+	(PCM_NUM_BYTES_MONO * MAX(CONFIG_AUDIO_DECODE_CHANNELS_MAX, CONFIG_AUDIO_OUTPUT_CHANNELS))
 
 /**
  * @brief Software codec selection enumeration.
  */
 enum sw_codec_select {
-	SW_CODEC_NONE,		/**< No codec selected */
-	SW_CODEC_LC3,		/**< Low Complexity Communication Codec */
+	SW_CODEC_NONE, /**< No codec selected */
+	SW_CODEC_LC3,  /**< Low Complexity Communication Codec */
 };
 
 /**
  * @brief Software codec channel mode enumeration.
  */
 enum sw_codec_channel_mode {
-	SW_CODEC_MONO = 1,	/**< Mono channel mode (single channel) */
-	SW_CODEC_STEREO,	/**< Stereo channel mode (dual channels) */
+	SW_CODEC_MONO = 1,
+	SW_CODEC_MULTICHANNEL,
+};
+
+/**
+ * @brief  Private encoder context.
+ */
+struct lc3_encoder_context {
+	/* Array of encoder channel handles. */
+	struct lc3_encoder_handle *lc3_enc_channel[CONFIG_AUDIO_ENCODE_CHANNELS_MAX];
+};
+
+/**
+ * @brief  Private decoder context.
+ */
+struct lc3_decoder_context {
+	/* Array of decoder channel handles. */
+	struct lc3_decoder_handle *lc3_dec_channel[CONFIG_AUDIO_DECODE_CHANNELS_MAX];
 };
 
 /**
@@ -77,8 +87,9 @@ struct sw_codec_encoder {
 	int bitrate;
 	enum sw_codec_channel_mode channel_mode;
 	uint8_t num_ch;
-	enum audio_channel audio_ch;
+	enum bt_audio_location audio_loc;
 	uint32_t sample_rate_hz;
+	struct lc3_encoder_context lc3_ctx;
 };
 
 /**
@@ -88,8 +99,9 @@ struct sw_codec_decoder {
 	bool enabled;
 	enum sw_codec_channel_mode channel_mode;
 	uint8_t num_ch;
-	enum audio_channel audio_ch;
+	enum bt_audio_location audio_loc;
 	uint32_t sample_rate_hz;
+	struct lc3_decoder_context lc3_ctx;
 };
 
 /**
@@ -113,25 +125,29 @@ bool sw_codec_is_initialized(void);
 /**
  * @brief	Encode PCM data and output encoded data.
  *
- * @note	Takes in stereo PCM stream, will encode either one or two
+ * @note	Takes in a PCM stream, will encode either one or multiple
  *		channels, based on channel_mode set during init.
  *
- * @param[in]	audio_frame	Pointer to the audio buffer.
+ * @param[in]	audio_frame_in	Pointer to the audio PCM buffer.
+ * @param[out]	audio_frame_out	Pointer to the audio encoded buffer.
  *
  * @return	0 if success, error codes depends on sw_codec selected.
  */
-int sw_codec_encode(struct net_buf *audio_frame);
+int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_out);
 
 /**
  * @brief	Decode encoded data and output PCM data.
  *
- * @param[in]	audio_frame	Pointer to the audio buffer.
- * @param[out]	pcm_data	Pointer to the buffer to store the decoded PCM data.
- * @param[out]	pcm_size	Size of decoded data.
+ * @note	Takes in a coded bitstream, will decode either one or multiple
+ *		channels, based on channel_mode set during init.
+ *
+ * @param[in]	audio_frame_in	Pointer to the audio input buffer.
+ * @param[out]	audio_frame_out	Pointer to the audio output buffer.
  *
  * @return	0 if success, error codes depends on sw_codec selected.
  */
-int sw_codec_decode(struct net_buf const *const audio_frame, void **pcm_data, size_t *pcm_size);
+int sw_codec_decode(struct net_buf const *const audio_frame_in,
+		    struct net_buf *const audio_frame_out);
 
 /**
  * @brief	Uninitialize the software codec and free the allocated space.
