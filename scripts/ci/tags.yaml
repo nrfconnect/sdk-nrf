@@ -224,8 +224,11 @@ ci_samples_crypto: &ci_crypto
     - nrf/samples/crypto/
     - nrf/subsys/nrf_security/
     - nrf/subsys/partition_manager/
+    - nrf/subsys/secure_storage/
+    - nrf/subsys/trusted_storage/
     - nrf/sysbuild/
     - nrf/tests/crypto/
+    - nrf/tests/zephyr/subsys/secure_storage/
     - zephyr/cmake/
     - zephyr/drivers/entropy/
     - zephyr/drivers/serial/
@@ -1359,6 +1362,7 @@ ci_applications_protocols_serialization:
     - nrf/subsys/net/openthread/
     - nrf/subsys/nrf_rpc/
     - nrf/subsys/nrf_security/
+    - nrf/subsys/secure_storage/
     - nrf/subsys/trusted_storage/
     - nrfxlib/crypto/
     - nrfxlib/nrf_802154/
