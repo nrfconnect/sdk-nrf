@@ -275,7 +275,8 @@ static int coap_client_cmds_valid_path_cb(struct coap_client *client, int sock,
 					  int cmock_num_calls)
 {
 	char path[] = "p/cmd?after=&rxMaxSize=" STRINGIFY(CONFIG_NRF_PROVISIONING_RX_BUF_SZ)
-		"&txMaxSize=" STRINGIFY(CONFIG_NRF_PROVISIONING_TX_BUF_SZ);
+		"&txMaxSize=" STRINGIFY(CONFIG_NRF_PROVISIONING_TX_BUF_SZ)
+		"&limit=" STRINGIFY(CONFIG_NRF_PROVISIONING_CBOR_RECORDS);
 
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
 		req->cb(COAP_RESPONSE_CODE_CREATED, 0, NULL, 0, true, req->user_data);
