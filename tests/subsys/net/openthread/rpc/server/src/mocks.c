@@ -11,15 +11,15 @@
 
 #include <ot_rpc_lock.h>
 
-#include <zephyr/net/openthread.h>
+#include <openthread.h>
 #include <zephyr/ztest.h>
 
-static struct openthread_context ot_context;
 static bool locked;
+static int dummy;
 
 struct otInstance *openthread_get_default_instance(void)
 {
-	return ot_context.instance;
+	return (struct otInstance *)&dummy;
 }
 
 void ot_rpc_mutex_lock(void)

@@ -51,34 +51,34 @@ static void ot_device_dettached(void *ptr)
 
 static void ot_commissioner_state_changed(otCommissionerState aState, void *aContext)
 {
+	struct otInstance *instance = openthread_get_default_instance();
+
 	LOG_INF("OT commissioner state changed");
 	if (aState == OT_COMMISSIONER_STATE_ACTIVE) {
 		LOG_INF("ot commissioner joiner add * FEDCBA9876543210 2000");
-		otCommissionerAddJoiner(openthread_get_default_instance(), NULL,
-		"FEDCBA9876543210", 2000);
+		otCommissionerAddJoiner(instance, NULL, "FEDCBA9876543210", 2000);
 		LOG_INF("\n\nRun thread application on client\n\n");
 	}
 }
 
-static void ot_thread_state_changed(otChangedFlags flags, struct openthread_context *ot_context,
-				    void *user_data)
+static void ot_thread_state_changed(otChangedFlags flags, void *user_data)
 {
+	struct otInstance *instance = openthread_get_default_instance();
+
 	LOG_INF("OT device state changed");
 	if (flags & OT_CHANGED_THREAD_ROLE) {
-		otDeviceRole ot_role = otThreadGetDeviceRole(ot_context->instance);
+		otDeviceRole ot_role = otThreadGetDeviceRole(instance);
 
 		if (ot_role != OT_DEVICE_ROLE_DETACHED && ot_role != OT_DEVICE_ROLE_DISABLED) {
 			/* ot commissioner start */
 			LOG_INF("ot commissioner start");
-			otCommissionerStart(ot_context->instance, &ot_commissioner_state_changed,
-			NULL, NULL);
+			otCommissionerStart(instance, &ot_commissioner_state_changed, NULL, NULL);
 		}
 	}
 }
 
-static struct openthread_state_changed_cb ot_state_chaged_cb = {
-	.state_changed_cb = ot_thread_state_changed
-};
+static struct openthread_state_changed_callback ot_state_chaged_cb = {
+	.otCallback = ot_thread_state_changed};
 
 /* call back Thread device joiner */
 static void ot_joiner_start_handler(otError error, void *context)
@@ -100,31 +100,31 @@ int ot_throughput_client_init(void)
 {
 	otError err = 0;
 	uint32_t ot_role_non_child = 0;
+	struct otInstance *instance = openthread_get_default_instance();
 
 	ot_start_joiner("FEDCBA9876543210");
 	err = k_sem_take(&connected_sem, WAIT_TIME_FOR_OT_CON);
-	struct openthread_context *context = openthread_get_default_context();
 
 	LOG_INF("Starting openthread.");
-	openthread_api_mutex_lock(context);
+	openthread_mutex_lock();
 	/*  ot thread start */
-	err = otThreadSetEnabled(openthread_get_default_instance(), true);
+	err = otThreadSetEnabled(instance, true);
 	if (err != OT_ERROR_NONE) {
 		LOG_ERR("Starting openthread: %d (%s)", err, otThreadErrorToString(err));
 	}
 
-	otDeviceRole current_role =
-		otThreadGetDeviceRole(openthread_get_default_instance());
-	openthread_api_mutex_unlock(context);
+	otDeviceRole current_role = otThreadGetDeviceRole(instance);
+
+	openthread_mutex_unlock();
 
 	LOG_INF("Current role: %s. Waiting to get child role",
 		otThreadDeviceRoleToString(current_role));
 
 	while (current_role != OT_DEVICE_ROLE_CHILD) {
 		k_sleep(K_MSEC(CHECK_OT_ROLE_WAIT_TIME));
-		openthread_api_mutex_lock(context);
-		current_role = otThreadGetDeviceRole(openthread_get_default_instance());
-		openthread_api_mutex_unlock(context);
+		openthread_mutex_lock();
+		current_role = otThreadGetDeviceRole(instance);
+		openthread_mutex_unlock();
 		/* Avoid infinite waiting if the device role is not child */
 		if (current_role == OT_DEVICE_ROLE_ROUTER) {
 			ot_role_non_child = 1;
@@ -160,9 +160,8 @@ void ot_start_joiner(const char *pskd)
 	LOG_INF("Starting joiner");
 
 	otInstance *instance = openthread_get_default_instance();
-	struct openthread_context *context = openthread_get_default_context();
 
-	openthread_api_mutex_lock(context);
+	openthread_mutex_lock();
 
 	/** Step1: Set null network key i.e,
 	 * ot networkkey 00000000000000000000000000000000
@@ -179,7 +178,7 @@ void ot_start_joiner(const char *pskd)
 				"Zephyr", "Zephyr",
 				KERNEL_VERSION_STRING, NULL,
 				&ot_joiner_start_handler, NULL);
-	openthread_api_mutex_unlock(context);
+	openthread_mutex_unlock();
 	/* LOG_INF("Thread start joiner Done."); */
 }
 
@@ -196,8 +195,7 @@ int ot_throughput_test_init(bool is_ot_client, bool is_ot_zperf_udp)
 	}
 	if (!is_ot_client) { /* for server */
 		ot_initialization();
-		openthread_state_changed_cb_register(openthread_get_default_context(),
-		&ot_state_chaged_cb);
+		openthread_state_changed_callback_register(&ot_state_chaged_cb);
 
 		LOG_INF("Starting zperf server");
 		ot_start_zperf_test_recv(is_ot_zperf_udp);
@@ -281,14 +279,12 @@ void ot_setNetworkConfiguration(otInstance *aInstance)
 
 int ot_initialization(void)
 {
-	struct openthread_context *context = openthread_get_default_context();
-
 	otInstance *instance = openthread_get_default_instance();
 
 	/* LOG_INF("Updating thread parameters"); */
 	ot_setNetworkConfiguration(instance);
 	/* LOG_INF("Enabling thread"); */
-	otError err = openthread_start(context); /* 'ifconfig up && thread start' */
+	otError err = openthread_run(); /* 'ifconfig up && thread start' */
 
 	if (err != OT_ERROR_NONE) {
 		LOG_ERR("Starting openthread: %d (%s)", err, otThreadErrorToString(err));
@@ -325,10 +321,10 @@ void ot_get_peer_address(uint64_t timeout_ms)
 	memset(&config, 0, sizeof(config));
 	config.mReplyCallback = ot_handle_ping_reply;
 
-	openthread_api_mutex_lock(openthread_get_default_context());
+	openthread_mutex_lock();
 	otIp6AddressFromString(dest, &config.mDestination);
 	otPingSenderPing(openthread_get_default_instance(), &config);
-	openthread_api_mutex_unlock(openthread_get_default_context());
+	openthread_mutex_unlock();
 
 	start_time = k_uptime_get();
 	while (!peer_address_info.address_found && k_uptime_get() < start_time + timeout_ms) {

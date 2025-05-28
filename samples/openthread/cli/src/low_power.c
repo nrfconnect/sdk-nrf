@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <openthread.h>
 #include <openthread/thread.h>
-#include <zephyr/net/openthread.h>
 #include <zephyr/device.h>
 #include <zephyr/pm/device.h>
 #if defined(CONFIG_RAM_POWER_DOWN_LIBRARY)
@@ -14,11 +14,12 @@
 
 #include "low_power.h"
 
-static void on_thread_state_changed(otChangedFlags flags, struct openthread_context *ot_context,
-				    void *user_data)
+static void on_thread_state_changed(otChangedFlags flags, void *user_data)
 {
+	struct otInstance *instance = openthread_get_default_instance();
+
 	if (flags & OT_CHANGED_THREAD_ROLE) {
-		if (otThreadGetDeviceRole(ot_context->instance) == OT_DEVICE_ROLE_CHILD) {
+		if (otThreadGetDeviceRole(instance) == OT_DEVICE_ROLE_CHILD) {
 			const struct device *cons = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
 
 			if (!device_is_ready(cons)) {
@@ -33,11 +34,10 @@ static void on_thread_state_changed(otChangedFlags flags, struct openthread_cont
 	}
 }
 
-static struct openthread_state_changed_cb ot_state_chaged_cb = {
-	.state_changed_cb = on_thread_state_changed
-};
+static struct openthread_state_changed_callback ot_state_chaged_cb = {
+	.otCallback = on_thread_state_changed};
 
 void low_power_enable(void)
 {
-	openthread_state_changed_cb_register(openthread_get_default_context(), &ot_state_chaged_cb);
+	openthread_state_changed_callback_register(&ot_state_chaged_cb);
 }

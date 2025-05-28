@@ -110,11 +110,10 @@ static void on_button_changed(uint32_t button_state, uint32_t has_changed)
 	}
 }
 
-static void on_thread_state_changed(otChangedFlags flags, struct openthread_context *ot_context,
-				    void *user_data)
+static void on_thread_state_changed(otChangedFlags flags, void *user_data)
 {
 	if (flags & OT_CHANGED_THREAD_ROLE) {
-		switch (otThreadGetDeviceRole(ot_context->instance)) {
+		switch (otThreadGetDeviceRole(openthread_get_default_instance())) {
 		case OT_DEVICE_ROLE_CHILD:
 		case OT_DEVICE_ROLE_ROUTER:
 		case OT_DEVICE_ROLE_LEADER:
@@ -130,8 +129,9 @@ static void on_thread_state_changed(otChangedFlags flags, struct openthread_cont
 		}
 	}
 }
-static struct openthread_state_changed_cb ot_state_chaged_cb = { .state_changed_cb =
-									 on_thread_state_changed };
+
+static struct openthread_state_changed_callback ot_state_chaged_cb = {
+	.otCallback = on_thread_state_changed};
 
 int main(void)
 {
@@ -166,8 +166,8 @@ int main(void)
 		goto end;
 	}
 
-	openthread_state_changed_cb_register(openthread_get_default_context(), &ot_state_chaged_cb);
-	openthread_start(openthread_get_default_context());
+	openthread_state_changed_callback_register(&ot_state_chaged_cb);
+	openthread_run();
 
 end:
 	return 0;
