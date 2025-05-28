@@ -1592,7 +1592,7 @@ static void errata_172_handle(bool enable)
 
 static void errata_117_handle(bool enable)
 {
-	if (!nrf52_errata_117()) {
+	if (!nrf53_errata_117()) {
 		return;
 	}
 
