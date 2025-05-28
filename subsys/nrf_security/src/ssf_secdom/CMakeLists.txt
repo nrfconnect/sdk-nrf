@@ -17,6 +17,7 @@ if(CONFIG_NRF_IRONSIDE_CALL)
 
   zephyr_library_include_directories(
     ${NRF_DIR}/include/tfm
+    ${ZEPHYR_TRUSTED_FIRMWARE_M_MODULE_DIR}/interface/include
     .
     )
 
