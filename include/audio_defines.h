@@ -94,7 +94,7 @@ struct audio_metadata {
  *
  * @return The number of channels.
  */
-static inline uint8_t metadata_num_ch_get(struct audio_metadata const *const meta)
+static inline uint8_t audio_metadata_num_ch_get(struct audio_metadata const *const meta)
 {
 	if (meta == NULL) {
 		return 0;
@@ -104,7 +104,7 @@ static inline uint8_t metadata_num_ch_get(struct audio_metadata const *const met
 	uint8_t count = 0;
 
 	if (mask == 0) {
-		return 1;
+		return 0;
 	}
 	while (mask) {
 		count += mask & 1;
