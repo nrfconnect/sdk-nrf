@@ -14,7 +14,7 @@
 #include <assert.h>
 #include <inttypes.h>
 
-#include "zephyr/net/openthread.h"
+#include <openthread.h>
 
 #include <openthread/instance.h>
 #include <version.h>
