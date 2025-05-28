@@ -41,13 +41,15 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 #define BLK_PERIOD_US 1000
 
 /* Total sample FIFO period in microseconds */
-#define FIFO_SMPL_PERIOD_US (CONFIG_AUDIO_MAX_PRES_DLY_US * 2)
+#define FIFO_CHANNELS_MAX   MAX(CONFIG_AUDIO_INPUT_CHANNELS_MAX, CONFIG_AUDIO_OUTPUT_CHANNELS_MAX)
+#define FIFO_SMPL_PERIOD_US (CONFIG_AUDIO_MAX_PRES_DLY_US * FIFO_CHANNELS_MAX)
 #define FIFO_NUM_BLKS	    NUM_BLKS(FIFO_SMPL_PERIOD_US)
-#define MAX_FIFO_SIZE	    (FIFO_NUM_BLKS * BLK_SIZE_SAMPLES(CONFIG_AUDIO_SAMPLE_RATE_HZ) * 2)
+#define MAX_FIFO_SIZE                                                                              \
+	(FIFO_NUM_BLKS * BLK_SIZE_SAMPLES(CONFIG_AUDIO_SAMPLE_RATE_HZ) * FIFO_CHANNELS_MAX)
 
 /* Number of audio blocks given a duration */
 #define NUM_BLKS(d) ((d) / BLK_PERIOD_US)
-/* Single audio block size in number of samples (stereo) */
+/* Single audio block size in number of samples */
 /* clang-format off */
 #define BLK_SIZE_SAMPLES(r) (((r)*BLK_PERIOD_US) / 1000000)
 /* clang-format on */
@@ -56,12 +58,16 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 /* Decrement sample FIFO index by one block */
 #define PREV_IDX(i) (((i) > 0) ? ((i) - 1) : (FIFO_NUM_BLKS - 1))
 
-#define NUM_BLKS_IN_FRAME      NUM_BLKS(CONFIG_AUDIO_FRAME_DURATION_US)
-#define BLK_MONO_NUM_SAMPS     BLK_SIZE_SAMPLES(CONFIG_AUDIO_SAMPLE_RATE_HZ)
-#define BLK_STEREO_NUM_SAMPS   (BLK_MONO_NUM_SAMPS * 2)
+#define NUM_BLKS_IN_FRAME	   NUM_BLKS(CONFIG_AUDIO_FRAME_DURATION_US)
+#define BLK_MONO_NUM_SAMPS	   BLK_SIZE_SAMPLES(CONFIG_AUDIO_SAMPLE_RATE_HZ)
+#define BLK_MULTI_CHAN_NUM_SAMPS   (BLK_MONO_NUM_SAMPS * CONFIG_AUDIO_OUTPUT_CHANNELS_MAX)
 /* Number of octets in a single audio block */
-#define BLK_MONO_SIZE_OCTETS   (BLK_MONO_NUM_SAMPS * CONFIG_AUDIO_BIT_DEPTH_OCTETS)
-#define BLK_STEREO_SIZE_OCTETS (BLK_MONO_SIZE_OCTETS * 2)
+#define BLK_MONO_SIZE_OCTETS	   (BLK_MONO_NUM_SAMPS * CONFIG_AUDIO_BIT_DEPTH_OCTETS)
+#define BLK_MULTI_CHAN_SIZE_OCTETS (BLK_MONO_SIZE_OCTETS * CONFIG_AUDIO_OUTPUT_CHANNELS_MAX)
+
+/* Number of decoder buffers. */
+#define FIFO_NUM_BUFS 2
+
 /* How many function calls before moving on with drift compensation */
 #define DRIFT_COMP_WAITING_CNT (DRIFT_MEAS_PERIOD_US / BLK_PERIOD_US)
 /* How much data to be collected before moving on with presentation compensation */
@@ -89,7 +95,9 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 /* How often to print under-run warning */
 #define UNDERRUN_LOG_INTERVAL_BLKS 5000
 
-NET_BUF_POOL_FIXED_DEFINE(pool_i2s_rx, FIFO_NUM_BLKS, BLK_STEREO_SIZE_OCTETS,
+NET_BUF_POOL_FIXED_DEFINE(pool_i2s_rx, FIFO_NUM_BLKS, BLK_MULTI_CHAN_SIZE_OCTETS,
+			  sizeof(struct audio_metadata), NULL);
+NET_BUF_POOL_FIXED_DEFINE(audio_pcm_pool, FIFO_NUM_BUFS, PCM_NUM_BYTES_MULTI_CHAN,
 			  sizeof(struct audio_metadata), NULL);
 
 enum drift_comp_state {
@@ -477,8 +485,9 @@ static void audio_datapath_presentation_compensation(uint32_t recv_frame_ts_us, 
 		/* Increase presentation delay */
 		for (int i = 0; i < pres_adj_blks; i++) {
 			/* Mute audio block */
-			memset(&ctrl_blk.out.fifo[ctrl_blk.out.prod_blk_idx * BLK_STEREO_NUM_SAMPS],
-			       0, BLK_STEREO_SIZE_OCTETS);
+			memset(&ctrl_blk.out
+					.fifo[ctrl_blk.out.prod_blk_idx * BLK_MULTI_CHAN_NUM_SAMPS],
+			       0, BLK_MULTI_CHAN_SIZE_OCTETS);
 
 			/* Record producer block start reference */
 			ctrl_blk.out.prod_blk_ts[ctrl_blk.out.prod_blk_idx] =
@@ -557,7 +566,7 @@ static void tone_mix(uint8_t *tx_buf)
 				  test_tone_size, &finite_pos);
 	ERR_CHK(ret);
 
-	ret = pcm_mix(tx_buf, BLK_STEREO_SIZE_OCTETS, tone_buf_continuous, BLK_MONO_SIZE_OCTETS,
+	ret = pcm_mix(tx_buf, BLK_MULTI_CHAN_SIZE_OCTETS, tone_buf_continuous, BLK_MONO_SIZE_OCTETS,
 		      B_MONO_INTO_A_STEREO_L);
 	ERR_CHK(ret);
 }
@@ -566,8 +575,8 @@ static void tone_mix(uint8_t *tx_buf)
  * Used interchangeably by I2S.
  */
 static struct {
-	uint8_t __aligned(WB_UP(1)) buf_0[BLK_STEREO_SIZE_OCTETS];
-	uint8_t __aligned(WB_UP(1)) buf_1[BLK_STEREO_SIZE_OCTETS];
+	uint8_t __aligned(WB_UP(1)) buf_0[BLK_MULTI_CHAN_SIZE_OCTETS];
+	uint8_t __aligned(WB_UP(1)) buf_1[BLK_MULTI_CHAN_SIZE_OCTETS];
 	bool buf_0_in_use;
 	bool buf_1_in_use;
 } alt;
@@ -659,7 +668,7 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts_us, uint32_t
 				}
 
 				tx_buf = (uint8_t *)&ctrl_blk.out
-						 .fifo[next_out_blk_idx * BLK_STEREO_NUM_SAMPS];
+						 .fifo[next_out_blk_idx * BLK_MULTI_CHAN_NUM_SAMPS];
 
 			} else {
 				if (stream_state_get() == STATE_STREAMING) {
@@ -680,7 +689,7 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts_us, uint32_t
 				ret = alt_buffer_get((void **)&tx_buf);
 				ERR_CHK(ret);
 
-				memset(tx_buf, 0, BLK_STEREO_SIZE_OCTETS);
+				memset(tx_buf, 0, BLK_MULTI_CHAN_SIZE_OCTETS);
 			}
 
 			if (tone_active) {
@@ -730,7 +739,7 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts_us, uint32_t
 		}
 
 		/* Store RX buffer in net_buf */
-		net_buf_add_mem(rx_audio_block, rx_buf_released, BLK_STEREO_SIZE_OCTETS);
+		net_buf_add_mem(rx_audio_block, rx_buf_released, BLK_MULTI_CHAN_SIZE_OCTETS);
 
 		struct audio_metadata *meta = net_buf_user_data(rx_audio_block);
 
@@ -763,18 +772,18 @@ static void audio_datapath_i2s_start(void)
 	uint8_t *tx_buf_1 = NULL;
 
 	/* Buffers used for I2S RX. Used interchangeably by I2S. */
-	static uint32_t rx_buf_0[BLK_STEREO_SIZE_OCTETS];
-	static uint32_t rx_buf_1[BLK_STEREO_SIZE_OCTETS];
+	static uint32_t rx_buf_0[BLK_MULTI_CHAN_SIZE_OCTETS];
+	static uint32_t rx_buf_1[BLK_MULTI_CHAN_SIZE_OCTETS];
 
 	/* TX */
 	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) || (CONFIG_AUDIO_DEV == HEADSET)) {
 		ctrl_blk.out.cons_blk_idx = PREV_IDX(ctrl_blk.out.cons_blk_idx);
-		tx_buf_0 = (uint8_t *)&ctrl_blk.out
-				     .fifo[ctrl_blk.out.cons_blk_idx * BLK_STEREO_NUM_SAMPS];
+		tx_buf_one = (uint8_t *)&ctrl_blk.out
+				     .fifo[ctrl_blk.out.cons_blk_idx * BLK_MULTI_CHAN_NUM_SAMPS];
 
 		ctrl_blk.out.cons_blk_idx = PREV_IDX(ctrl_blk.out.cons_blk_idx);
-		tx_buf_1 = (uint8_t *)&ctrl_blk.out
-				     .fifo[ctrl_blk.out.cons_blk_idx * BLK_STEREO_NUM_SAMPS];
+		tx_buf_two = (uint8_t *)&ctrl_blk.out
+				     .fifo[ctrl_blk.out.cons_blk_idx * BLK_MULTI_CHAN_NUM_SAMPS];
 	}
 
 	/* Start I2S */
@@ -896,29 +905,29 @@ void audio_datapath_pres_delay_us_get(uint32_t *delay_us)
 	*delay_us = ctrl_blk.pres_comp.pres_delay_us;
 }
 
-void audio_datapath_stream_out(struct net_buf *audio_frame)
+void audio_datapath_stream_out(struct net_buf *audio_frame_in)
 {
 	if (!ctrl_blk.stream_started) {
 		LOG_WRN("Stream not started");
 		return;
 	}
 
-	if (audio_frame == NULL) {
-		LOG_ERR("Buffer pointer is NULL");
+	if (audio_frame_in == NULL) {
+		LOG_ERR("Audio frame is NULL");
 	}
 
 	/*** Check incoming data ***/
-	struct audio_metadata *meta = net_buf_user_data(audio_frame);
+	struct audio_metadata *meta_in = net_buf_user_data(audio_frame_in);
 
-	if (meta->ref_ts_us == ctrl_blk.prev_pres_sdu_ref_us && meta->ref_ts_us != 0) {
-		LOG_WRN("Duplicate sdu_ref_us (%d) - Dropping audio frame", meta->ref_ts_us);
+	if (meta_in->ref_ts_us == ctrl_blk.prev_pres_sdu_ref_us && meta_in->ref_ts_us != 0) {
+		LOG_WRN("Duplicate sdu_ref_us (%d) - Dropping audio frame", meta_in->ref_ts_us);
 		return;
 	}
 
 	bool sdu_ref_not_consecutive = false;
 
 	if (ctrl_blk.prev_pres_sdu_ref_us) {
-		uint32_t sdu_ref_delta_us = meta->ref_ts_us - ctrl_blk.prev_pres_sdu_ref_us;
+		uint32_t sdu_ref_delta_us = meta_in->ref_ts_us - ctrl_blk.prev_pres_sdu_ref_us;
 
 		/* Check if the delta is from two consecutive frames */
 		if (sdu_ref_delta_us <
@@ -932,8 +941,8 @@ void audio_datapath_stream_out(struct net_buf *audio_frame)
 					sdu_ref_delta_us);
 
 				/* Estimate sdu_ref_us */
-				meta->ref_ts_us = ctrl_blk.prev_pres_sdu_ref_us +
-						  CONFIG_AUDIO_FRAME_DURATION_US;
+				meta_in->ref_ts_us = ctrl_blk.prev_pres_sdu_ref_us +
+						     CONFIG_AUDIO_FRAME_DURATION_US;
 			}
 		} else {
 			LOG_INF("sdu_ref_us not from consecutive frames (diff: %d us)",
@@ -942,34 +951,54 @@ void audio_datapath_stream_out(struct net_buf *audio_frame)
 		}
 	}
 
-	ctrl_blk.prev_pres_sdu_ref_us = meta->ref_ts_us;
+	ctrl_blk.prev_pres_sdu_ref_us = meta_in->ref_ts_us;
 
 	/*** Presentation compensation ***/
 	if (ctrl_blk.pres_comp.enabled) {
-		audio_datapath_presentation_compensation(meta->data_rx_ts_us, meta->ref_ts_us,
+		audio_datapath_presentation_compensation(meta_in->data_rx_ts_us, meta_in->ref_ts_us,
 							 sdu_ref_not_consecutive);
 	}
 
 	/*** Decode ***/
 
 	int ret;
-	size_t pcm_size;
+	struct net_buf *audio_frame_out = net_buf_alloc(&audio_pcm_pool, K_NO_WAIT);
 
-	ret = sw_codec_decode(audio_frame, &ctrl_blk.decoded_data, &pcm_size);
+	if (audio_frame_out == NULL) {
+		LOG_WRN("Out of PCM buffers");
+		return;
+	}
+
+	struct audio_metadata *meta_out = net_buf_user_data(audio_frame_out);
+
+	net_buf_user_data_copy(audio_frame_out, audio_frame_in);
+	meta_out = net_buf_user_data(audio_frame_out);
+	meta_out->data_coding = PCM;
+	meta_out->bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS;
+	meta_out->carried_bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_OCTETS;
+	meta_out->bytes_per_location = FRAME_SIZE_BYTES;
+
+	ret = sw_codec_decode(audio_frame_in, audio_frame_out);
 	if (ret) {
+		net_buf_unref(audio_frame_out);
 		LOG_WRN("SW codec decode error: %d", ret);
+		return;
 	}
 
 	if (IS_ENABLED(CONFIG_SD_CARD_PLAYBACK)) {
 		if (sd_card_playback_is_active()) {
-			sd_card_playback_mix_with_stream(ctrl_blk.decoded_data, pcm_size);
+			sd_card_playback_mix_with_stream((void *const)audio_frame_out->data,
+							 audio_frame_out->len);
 		}
 	}
 
-	if (pcm_size != (BLK_STEREO_SIZE_OCTETS * NUM_BLKS_IN_FRAME)) {
-		LOG_WRN("Decoded audio has wrong size: %d. Expected: %d", pcm_size,
-			(BLK_STEREO_SIZE_OCTETS * NUM_BLKS_IN_FRAME));
+	if (audio_frame_out->len !=
+	    (sw_codec_metadata_num_ch_get(meta_out) * BLK_MONO_SIZE_OCTETS * NUM_BLKS_IN_FRAME)) {
+		LOG_WRN("Decoded audio has wrong size: %d. Expected: %d", audio_frame_out->len,
+			(sw_codec_metadata_num_ch_get(meta_out) * BLK_MONO_SIZE_OCTETS *
+			 NUM_BLKS_IN_FRAME));
 		/* Discard frame */
+		net_buf_unref(audio_frame_out);
 		return;
 	}
 
@@ -980,6 +1009,7 @@ void audio_datapath_stream_out(struct net_buf *audio_frame)
 		LOG_WRN("Output audio stream overrun - Discarding audio frame");
 
 		/* Discard frame to allow consumer to catch up */
+		net_buf_unref(audio_frame_out);
 		return;
 	}
 
@@ -987,22 +1017,26 @@ void audio_datapath_stream_out(struct net_buf *audio_frame)
 
 	for (uint32_t i = 0; i < NUM_BLKS_IN_FRAME; i++) {
 		if (IS_ENABLED(CONFIG_AUDIO_BIT_DEPTH_16)) {
-			memcpy(&ctrl_blk.out.fifo[out_blk_idx * BLK_STEREO_NUM_SAMPS],
-			       &((int16_t *)ctrl_blk.decoded_data)[i * BLK_STEREO_NUM_SAMPS],
-			       BLK_STEREO_SIZE_OCTETS);
+			memcpy(&ctrl_blk.out.fifo[out_blk_idx * BLK_MULTI_CHAN_NUM_SAMPS],
+			       (int16_t *)audio_frame_out->data, BLK_MULTI_CHAN_SIZE_OCTETS);
 		} else if (IS_ENABLED(CONFIG_AUDIO_BIT_DEPTH_32)) {
-			memcpy(&ctrl_blk.out.fifo[out_blk_idx * BLK_STEREO_NUM_SAMPS],
-			       &((int32_t *)ctrl_blk.decoded_data)[i * BLK_STEREO_NUM_SAMPS],
-			       BLK_STEREO_SIZE_OCTETS);
+			memcpy(&ctrl_blk.out.fifo[out_blk_idx * BLK_MULTI_CHAN_NUM_SAMPS],
+			       (int32_t *)audio_frame_out->data, BLK_MULTI_CHAN_SIZE_OCTETS);
 		}
 
+		/* Remove consumed data fron net buffer */
+		net_buf_pull(audio_frame_out, BLK_MULTI_CHAN_SIZE_OCTETS);
+
 		/* Record producer block start reference */
-		ctrl_blk.out.prod_blk_ts[out_blk_idx] = meta->data_rx_ts_us + (i * BLK_PERIOD_US);
+		ctrl_blk.out.prod_blk_ts[out_blk_idx] =
+			meta_in->data_rx_ts_us + (i * BLK_PERIOD_US);
 
 		out_blk_idx = NEXT_IDX(out_blk_idx);
 	}
 
 	ctrl_blk.out.prod_blk_idx = out_blk_idx;
+
+	net_buf_unref(audio_frame_out);
 }
 
 int audio_datapath_start(struct k_msgq *audio_q_rx)
@@ -1055,9 +1089,9 @@ int audio_datapath_init(void)
 	ctrl_blk.pres_comp.enabled = true;
 
 	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) && (CONFIG_AUDIO_DEV == GATEWAY)) {
-		/* Disable presentation compensation feature for microphone return on gateway,
-		 * since there's only one stream output from gateway for now, so no need to
-		 * qhave presentation compensation.
+		/* Disable presentation compensation feature for microphone return on
+		 * gateway, since there's only one stream output from gateway for now, so no
+		 * need to qhave presentation compensation.
 		 */
 		ctrl_blk.pres_comp.enabled = false;
 	} else {
@@ -1077,9 +1111,8 @@ static int cmd_i2s_tone_play(const struct shell *shell, size_t argc, const char 
 	float amplitude;
 
 	if (argc != 4) {
-		shell_error(
-			shell,
-			"3 arguments (freq [Hz], dur [ms], and amplitude [0-1.0] must be provided");
+		shell_error(shell, "3 arguments (freq [Hz], dur [ms], and amplitude "
+				   "[0-1.0] must be provided");
 		return -EINVAL;
 	}
 
