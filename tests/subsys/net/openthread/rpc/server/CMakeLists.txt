@@ -25,6 +25,7 @@ target_sources(app PRIVATE
 # Fill the gaps due to not setting NET_L2_OPENTHREAD.
 zephyr_include_directories(
   ${ZEPHYR_OPENTHREAD_MODULE_DIR}/include
+  ${ZEPHYR_BASE}/modules/openthread/include
 )
 
 zephyr_compile_definitions(

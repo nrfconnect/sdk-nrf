@@ -144,19 +144,19 @@ static void set_net_state(enum net_state state)
 	send_net_state_event(state);
 }
 
-static void on_thread_state_changed(otChangedFlags flags, struct openthread_context *ot_context,
-				    void *user_data)
+static void on_thread_state_changed(otChangedFlags flags, void *user_data)
 {
 	static bool has_role;
+	struct otInstance *instance = openthread_get_default_instance();
 
-	bool has_neighbors = check_neighbors(ot_context->instance);
-	bool route_available = check_routes(ot_context->instance);
+	bool has_neighbors = check_neighbors(instance);
+	bool route_available = check_routes(instance);
 
 	LOG_INF("state: 0x%.8x has_neighbours:%s route_available:%s", flags,
 		(has_neighbors)?("yes"):("no"), (route_available)?("yes"):("no"));
 
 	if (flags & OT_CHANGED_THREAD_ROLE) {
-		switch (otThreadGetDeviceRole(ot_context->instance)) {
+		switch (otThreadGetDeviceRole(instance)) {
 		case OT_DEVICE_ROLE_LEADER:
 			LOG_INF("Leader role set");
 			has_role = true;
@@ -187,14 +187,13 @@ static void on_thread_state_changed(otChangedFlags flags, struct openthread_cont
 		set_net_state(NET_STATE_DISCONNECTED);
 	}
 }
-static struct openthread_state_changed_cb ot_state_chaged_cb = {
-	.state_changed_cb = on_thread_state_changed
-};
+static struct openthread_state_changed_callback ot_state_chaged_cb = {
+	.otCallback = on_thread_state_changed};
 
 static void connect_ot(void)
 {
-	openthread_state_changed_cb_register(openthread_get_default_context(), &ot_state_chaged_cb);
-	openthread_start(openthread_get_default_context());
+	openthread_state_changed_callback_register(&ot_state_chaged_cb);
+	openthread_run();
 
 	LOG_INF("OT connection requested");
 }
@@ -222,16 +221,15 @@ static bool handle_state_event(const struct module_state_event *event)
 
 static bool handle_reset_event(void)
 {
-	struct openthread_context *ot_context = openthread_get_default_context();
 	otError err;
 
 	/* This event has to apear before initialization */
 	__ASSERT_NO_MSG(!initialized);
 
 	LOG_WRN("Storage reset requested");
-	openthread_api_mutex_lock(ot_context);
-	err = otInstanceErasePersistentInfo(ot_context->instance);
-	openthread_api_mutex_unlock(ot_context);
+	openthread_mutex_lock();
+	err = otInstanceErasePersistentInfo(openthread_get_default_instance());
+	openthread_mutex_unlock();
 	/* It can fail only if called with OpenThread stack enabled.
 	 * This event should not appear after the OpenThread is started.
 	 * If it does - there is some huge coding error.

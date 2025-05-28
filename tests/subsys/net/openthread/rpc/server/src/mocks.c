@@ -11,21 +11,19 @@
 
 #include <ot_rpc_lock.h>
 
-#include <zephyr/net/openthread.h>
+#include <openthread.h>
 
-static struct openthread_context ot_context;
+static int dummy;
 
 struct otInstance *openthread_get_default_instance(void)
 {
-	return ot_context.instance;
+	return (struct otInstance *)&dummy;
 }
 
 void ot_rpc_mutex_lock(void)
 {
-	(void)k_mutex_lock(&ot_context.api_lock, K_FOREVER);
 }
 
 void ot_rpc_mutex_unlock(void)
 {
-	(void)k_mutex_unlock(&ot_context.api_lock);
 }
