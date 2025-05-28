@@ -161,6 +161,8 @@ int st25r39_irq_clear(void)
 {
 	uint8_t val[IRQ_REG_CNT] = {0};
 
+	k_sem_take(sem, K_NO_WAIT);
+
 	return st25r3911b_multiple_reg_read(ST25R3911B_REG_MAIN_INT,
 					    val, ARRAY_SIZE(val));
 }
