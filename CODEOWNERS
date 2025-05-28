@@ -946,6 +946,7 @@
 /tests/subsys/pcd/                        @nrfconnect/ncs-pluto
 /tests/subsys/sdfw_services/              @nrfconnect/ncs-aurora
 /tests/subsys/suit/                       @nrfconnect/ncs-charon
+/tests/subsys/usb/negotiated_speed/       @nrfconnect/ncs-low-level-test
 /tests/tfm/                               @nrfconnect/ncs-aegir @magnev
 /tests/unity/                             @nordic-krch
 /tests/zephyr/boards/nrf/                 @nrfconnect/ncs-low-level-test
@@ -969,7 +970,7 @@
 /tests/zephyr/drivers/uart/               @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/watchdog/           @nrfconnect/ncs-low-level-test
 /tests/zephyr/kernel/timer/timer_behavior/ @nrfconnect/ncs-low-level-test
-/tests/subsys/usb/negotiated_speed/       @nrfconnect/ncs-low-level-test
+/tests/zephyr/subsys/secure_storage/      @nrfconnect/ncs-aegir
 /tests/zephyr/subsys/settings/performance/ @nrfconnect/ncs-pluto @rghaddab
 
 /tests/benchmarks/multicore/idle/*.rst    @nrfconnect/ncs-si-bluebagel-doc
