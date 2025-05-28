@@ -8,8 +8,8 @@
 #include <coap_server_client_interface.h>
 #include <net/coap_utils.h>
 #include <zephyr/logging/log.h>
-#include <zephyr/net/openthread.h>
 #include <zephyr/net/socket.h>
+#include <openthread.h>
 #include <openthread/thread.h>
 
 #include "coap_client_utils.h"
@@ -195,15 +195,13 @@ static void toggle_minimal_sleepy_end_device(struct k_work *item)
 {
 	otError error;
 	otLinkModeConfig mode;
-	struct openthread_context *context = openthread_get_default_context();
+	struct otInstance *instance = openthread_get_default_instance();
 
-	__ASSERT_NO_MSG(context != NULL);
-
-	openthread_api_mutex_lock(context);
-	mode = otThreadGetLinkMode(context->instance);
+	openthread_mutex_lock();
+	mode = otThreadGetLinkMode(instance);
 	mode.mRxOnWhenIdle = !mode.mRxOnWhenIdle;
-	error = otThreadSetLinkMode(context->instance, mode);
-	openthread_api_mutex_unlock(context);
+	error = otThreadSetLinkMode(instance, mode);
+	openthread_mutex_unlock();
 
 	if (error != OT_ERROR_NONE) {
 		LOG_ERR("Failed to set MLE link mode configuration");
@@ -219,11 +217,12 @@ static void update_device_state(void)
 	on_mtd_mode_toggle(mode.mRxOnWhenIdle);
 }
 
-static void on_thread_state_changed(otChangedFlags flags, struct openthread_context *ot_context,
-				    void *user_data)
+static void on_thread_state_changed(otChangedFlags flags, void *user_data)
 {
+	struct otInstance *instance = openthread_get_default_instance();
+
 	if (flags & OT_CHANGED_THREAD_ROLE) {
-		switch (otThreadGetDeviceRole(ot_context->instance)) {
+		switch (otThreadGetDeviceRole(instance)) {
 		case OT_DEVICE_ROLE_CHILD:
 		case OT_DEVICE_ROLE_ROUTER:
 		case OT_DEVICE_ROLE_LEADER:
@@ -240,9 +239,8 @@ static void on_thread_state_changed(otChangedFlags flags, struct openthread_cont
 		}
 	}
 }
-static struct openthread_state_changed_cb ot_state_chaged_cb = {
-	.state_changed_cb = on_thread_state_changed
-};
+static struct openthread_state_changed_callback ot_state_chaged_cb = {
+	.otCallback = on_thread_state_changed};
 
 static void submit_work_if_connected(struct k_work *work)
 {
@@ -274,8 +272,8 @@ void coap_client_utils_init(ot_connection_cb_t on_connect,
 	k_work_init(&multicast_light_work, toggle_mesh_lights);
 	k_work_init(&provisioning_work, send_provisioning_request);
 
-	openthread_state_changed_cb_register(openthread_get_default_context(), &ot_state_chaged_cb);
-	openthread_start(openthread_get_default_context());
+	openthread_state_changed_callback_register(&ot_state_chaged_cb);
+	openthread_run();
 
 	if (IS_ENABLED(CONFIG_OPENTHREAD_MTD_SED)) {
 		k_work_init(&toggle_MTD_SED_work,
