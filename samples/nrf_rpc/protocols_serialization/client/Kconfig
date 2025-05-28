@@ -30,6 +30,12 @@ config NVS
 
 endif # SETTINGS
 
+config BT_TEST
+	bool "BLE test service for RPC Client"
+	depends on BT
+	help
+	 Enable BLE test service for RPC Client.
+
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"
 endmenu
