@@ -19,6 +19,7 @@ from common import (
 logger = logging.getLogger(__name__)
 
 
+@pytest.mark.usefixtures("no_reset")
 @pytest.mark.parametrize(
     'test_option', ['one_key', 'three_keys_second_used', 'three_keys_last_used']
 )
@@ -62,6 +63,7 @@ def test_kmu_use_key_from_config(dut: DeviceAdapter, test_option):
     logger.info("Passed: Booted successfully after provisioning the same key that was used during building")
 
 
+@pytest.mark.usefixtures("no_reset")
 def test_kmu_use_wrong_key(dut: DeviceAdapter):
     """
     Upload keys using west ncs-provision command,

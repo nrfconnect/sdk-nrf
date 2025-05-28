@@ -15,6 +15,7 @@ from common import provision_keys_for_kmu, reset_board, APP_KEYS_FOR_KMU
 logger = logging.getLogger(__name__)
 
 
+@pytest.mark.usefixtures("no_reset")
 def test_kmu_policy_revokable(dut: DeviceAdapter):
     """
     Upload keys using 'revokable' policy,
@@ -50,6 +51,7 @@ def test_kmu_policy_revokable(dut: DeviceAdapter):
     logger.info("Passed: not booted with revoked keys")
 
 
+@pytest.mark.usefixtures("no_reset")
 def test_kmu_policy_lock(dut: DeviceAdapter):
     """
     Upload keys using 'lock' policy,
