@@ -11,7 +11,15 @@ if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_NONE AND DEFINED SB_CONFI
   string(REPLACE "/" ";" split_board_qualifiers "${BOARD_QUALIFIERS}")
   list(GET split_board_qualifiers 1 target_soc)
   list(GET split_board_qualifiers 2 target_cpucluster)
-  set(board_target_netcore "${BOARD}/${target_soc}/${SB_CONFIG_NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER}")
+  list(LENGTH split_board_qualifiers split_board_qualifiers_length)
+  if(split_board_qualifiers_length GREATER 3)
+    list(GET split_board_qualifiers 3 target_variant_name)
+    # This board variant must be used for the network core board as well.
+    if((target_soc STREQUAL "nrf54h20") AND (target_variant_name STREQUAL "iron"))
+      set(variant_suffix "/${target_variant_name}")
+    endif()
+  endif()
+  set(board_target_netcore "${BOARD}/${target_soc}/${SB_CONFIG_NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER}${variant_suffix}")
   set(target_soc)
   set(target_cpucluster)
 
