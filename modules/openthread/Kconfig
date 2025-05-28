@@ -337,6 +337,7 @@ config OPENTHREAD_INTERFACE_EARLY_UP
 config OPENTHREAD_PLATFORM_PKT_TXTIME
 	bool
 	default y if NET_PKT_TXTIME
+	default y if !NET_L2_OPENTHREAD
 	help
 	  Enable packet TX time support. This is needed for when the application
 	  wants to set the exact time when the packet should be sent.
@@ -344,6 +345,7 @@ config OPENTHREAD_PLATFORM_PKT_TXTIME
 config OPENTHREAD_PLATFORM_CARRIER_FUNCTIONS
 	bool
 	default y if OPENTHREAD_DIAG && IEEE802154_CARRIER_FUNCTIONS
+	default y if OPENTHREAD_DIAG && NRF5_CARRIER_FUNCTIONS
 	help
 	  Enable support for functions such as modulated carrier and continuous carrier.
 
