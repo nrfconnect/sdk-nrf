@@ -36,6 +36,12 @@ config BT_TEST
 	help
 	 Enable BLE test service for RPC Client.
 
+if BT_TEST
+config BT_TEST_DATA_SIZE
+	int "size of the data field in Bytes"
+	default 10
+endif #BT_TEST
+
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"
 endmenu

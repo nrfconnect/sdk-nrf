@@ -1,6 +1,7 @@
 /*
  * BLE test service with shell advertising control
  */
+#include "zephyr/sys/util.h"
 #include <zephyr/types.h>
 #include <stddef.h>
 #include <errno.h>
@@ -14,6 +15,7 @@
 #include <zephyr/shell/shell.h>
 #include <zephyr/sys/__assert.h>
 #include <zephyr/logging/log.h>
+#include <cstdint>
 
 LOG_MODULE_REGISTER(bt_test, CONFIG_NRF_PS_CLIENT_LOG_LEVEL);
 
@@ -52,14 +54,14 @@ static struct bt_conn_cb conn_cb = {
 };
 
 typedef struct {
-	uint32_t value;
+	uint8_t data[CONFIG_BT_TEST_DATA_SIZE];
 	bool notify_enabled;
 	bool indicate_enabled;
 	struct bt_conn *conn;
 } test_svc_ctx_t;
 
 static test_svc_ctx_t test_ctx = {
-	.value = 0x1234ABCD,
+	.data = {},
 	.notify_enabled = false,
 	.indicate_enabled = false,
 	.conn = NULL,
@@ -70,29 +72,48 @@ BT_GATT_SERVICE_DEFINE(custom_svc, BT_GATT_PRIMARY_SERVICE(&custom_service_uuid)
 					      BT_GATT_CHRC_READ | BT_GATT_CHRC_WRITE |
 						      BT_GATT_CHRC_NOTIFY | BT_GATT_CHRC_INDICATE,
 					      BT_GATT_PERM_READ | BT_GATT_PERM_WRITE,
-					      read_custom_char, write_custom_char, &test_ctx.value),
+					      read_custom_char, write_custom_char, &test_ctx),
 		       BT_GATT_CCC(ccc_cfg_changed, BT_GATT_PERM_READ | BT_GATT_PERM_WRITE), );
 
 static ssize_t read_custom_char(struct bt_conn *conn, const struct bt_gatt_attr *attr, void *buf,
 				uint16_t len, uint16_t offset)
 {
-	const uint32_t *value = &test_ctx.value;
-	uint32_t le_val = sys_cpu_to_le32(*value);
-	LOG_INF("BT Test Read: 0x%08X", le_val);
-	return bt_gatt_attr_read(conn, attr, buf, len, offset, &le_val, sizeof(le_val));
+
+	if (offset >= CONFIG_BT_TEST_DATA_SIZE) {
+		LOG_ERR("BT Test Invalid offset");
+		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+	}
+	if (len > CONFIG_BT_TEST_DATA_SIZE - offset) {
+		LOG_ERR("BT Test Invalid length");
+		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+	}
+
+	test_svc_ctx_t *ctx = (test_svc_ctx_t *)attr->user_data;
+	LOG_HEXDUMP_INF(ctx->data, CONFIG_BT_TEST_DATA_SIZE, "BT Test State of data");
+	LOG_HEXDUMP_INF(ctx->data + offset, len, "BT Test Read:");
+
+	return bt_gatt_attr_read(conn, attr, buf, len, offset, ctx->data, CONFIG_BT_TEST_DATA_SIZE);
 }
 
 static ssize_t write_custom_char(struct bt_conn *conn, const struct bt_gatt_attr *attr,
 				 const void *buf, uint16_t len, uint16_t offset, uint8_t flags)
 {
-	uint32_t *value = &test_ctx.value;
-	if (offset != 0 || len != sizeof(uint32_t)) {
-		LOG_ERR("BT Test Invalid offset or length");
+
+	if (offset >= CONFIG_BT_TEST_DATA_SIZE) {
+		LOG_ERR("BT Test Invalid offset");
 		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
 	}
-	*value = sys_get_le32(buf);
-	LOG_INF("BT Test Write: 0x%08X", *value);
-	update_subscribed(conn, NULL);
+	if (len > CONFIG_BT_TEST_DATA_SIZE - offset) {
+		LOG_ERR("BT Test Invalid length");
+		return BT_GATT_ERR(BT_ATT_ERR_INVALID_OFFSET);
+	}
+	test_svc_ctx_t *ctx = (test_svc_ctx_t *)attr->user_data;
+	memcpy(ctx->data + offset, buf, len);
+	LOG_INF("BT Test write data at offset %d", offset);
+	LOG_HEXDUMP_INF(buf, len, "BT Test write data");
+	LOG_HEXDUMP_INF(ctx->data, CONFIG_BT_TEST_DATA_SIZE,
+			"BT Test Final state of data after write");
+	update_subscribed(conn, ctx->data);
 	return len;
 }
 
@@ -116,27 +137,28 @@ static void indicate_cb(struct bt_conn *conn, struct bt_gatt_indicate_params *pa
 
 static void update_subscribed(struct bt_conn *conn, void *param)
 {
+	uint8_t *data = (uint8_t *)param;
 	int err;
 	if (test_ctx.conn && test_ctx.notify_enabled) {
-		err = bt_gatt_notify(test_ctx.conn, &custom_svc.attrs[1], &test_ctx.value,
-				     sizeof(test_ctx.value));
+		err = bt_gatt_notify(test_ctx.conn, &custom_svc.attrs[1], data,
+				     CONFIG_BT_TEST_DATA_SIZE);
 		if (err) {
 			LOG_ERR("BT Test Notify error: %d", err);
 		} else {
-			LOG_INF("BT Test Notified: 0x%08X", test_ctx.value);
+			LOG_HEXDUMP_INF(data, CONFIG_BT_TEST_DATA_SIZE, "BT Test Notified:");
 		}
 	}
 	if (test_ctx.conn && test_ctx.indicate_enabled) {
 		ind_params.attr = &custom_svc.attrs[1];
 		ind_params.func = indicate_cb;
-		ind_params.data = &test_ctx.value;
-		ind_params.len = sizeof(test_ctx.value);
+		ind_params.data = data;
+		ind_params.len = CONFIG_BT_TEST_DATA_SIZE;
 		ind_params.destroy = NULL;
 		err = bt_gatt_indicate(test_ctx.conn, &ind_params);
 		if (err) {
 			LOG_ERR("BT Test Indicate error: %d", err);
 		} else {
-			LOG_INF("BT Test Indication sent: 0x%08X", test_ctx.value);
+			LOG_HEXDUMP_INF(data, CONFIG_BT_TEST_DATA_SIZE, "BT Test Indication sent:");
 		}
 	}
 }
@@ -203,7 +225,8 @@ static int cmd_read(const struct shell *sh, size_t argc, char *argv[])
 	ARG_UNUSED(argc);
 	ARG_UNUSED(argv);
 
-	LOG_INF("BT Test Read Characteristic value: 0x%08X", test_ctx.value);
+	LOG_HEXDUMP_INF(test_ctx.data, CONFIG_BT_TEST_DATA_SIZE,
+			"BT Test Read Characteristic value:");
 	return 0;
 }
 
@@ -213,16 +236,26 @@ static int cmd_write(const struct shell *sh, size_t argc, char *argv[])
 		LOG_ERR("BT Test Usage: write <hex_value>");
 		return -EINVAL;
 	}
-	uint32_t value;
-	if (sscanf(argv[1], "%x", &value) != 1) {
-		LOG_ERR("BT Test Invalid hex value: %s", argv[1]);
+	const size_t len = strlen(argv[1]);
+	if (len > CONFIG_BT_TEST_DATA_SIZE * 2) {
+		LOG_ERR("BT Test Value is too long, the limit is %d Bytes",
+			CONFIG_BT_TEST_DATA_SIZE);
+		return -EINVAL;
+	}
+	uint8_t tmp_buf[CONFIG_BT_TEST_DATA_SIZE] = {0};
+
+	size_t result = hex2bin(argv[1], strlen(argv[1]), tmp_buf, CONFIG_BT_TEST_DATA_SIZE);
+
+	if (result == 0) {
+		LOG_ERR("BT Test Failed to parse hex value: %s", argv[1]);
 		return -EINVAL;
 	}
 
-	test_ctx.value = value;
+	memcpy(test_ctx.data, tmp_buf, CONFIG_BT_TEST_DATA_SIZE);
 
-	LOG_INF("BT Test Wrote characteristic value: 0x%08X", value);
-	update_subscribed(test_ctx.conn, NULL);
+	LOG_HEXDUMP_INF(test_ctx.data, CONFIG_BT_TEST_DATA_SIZE,
+			"BT Test Wrote characteristic value:");
+	update_subscribed(test_ctx.conn, &test_ctx.data);
 
 	return 0;
 }
