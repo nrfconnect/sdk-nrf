@@ -150,6 +150,7 @@ For a list of all supported features in the |NCS|, see the :ref:`thread_ug_featu
 
 .. _ug_thread_configuring_eui64:
 
+//TODO:
 IEEE 802.15.4 EUI-64 configuration options
 ==========================================
 
