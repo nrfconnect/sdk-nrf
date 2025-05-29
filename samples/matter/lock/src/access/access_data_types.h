@@ -9,6 +9,9 @@
 #include <app/clusters/door-lock-server/door-lock-server.h>
 #include <lib/core/ClusterEnums.h>
 
+#include <zephyr/sys/util_macro.h>
+#include <zephyr/toolchain.h>
+
 namespace DoorLockData
 {
 
