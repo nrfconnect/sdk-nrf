@@ -274,6 +274,14 @@ target_link_libraries(zephyr PRIVATE ${ot_libs})
 
 endif()
 
+# Create a library for the OpenThread Zephyr utils
+zephyr_library_named(openthread_utils)
+zephyr_library_sources(
+  openthread.c
+)
+zephyr_library_sources_ifdef(CONFIG_OPENTHREAD_SHELL shell.c)
+zephyr_include_directories(include)
+
 add_subdirectory(platform)
 
 endif()
