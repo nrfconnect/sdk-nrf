@@ -222,8 +222,6 @@ static void mpsl_timer0_isr_wrapper(const void *args)
 	ARG_UNUSED(args);
 
 	MPSL_IRQ_TIMER0_Handler();
-
-	ISR_DIRECT_PM();
 }
 
 static void mpsl_rtc0_isr_wrapper(const void *args)
@@ -236,8 +234,6 @@ static void mpsl_rtc0_isr_wrapper(const void *args)
 	}
 
 	MPSL_IRQ_RTC0_Handler();
-
-	ISR_DIRECT_PM();
 }
 
 static void mpsl_radio_isr_wrapper(const void *args)
@@ -245,8 +241,6 @@ static void mpsl_radio_isr_wrapper(const void *args)
 	ARG_UNUSED(args);
 
 	MPSL_IRQ_RADIO_Handler();
-
-	ISR_DIRECT_PM();
 }
 
 static void mpsl_lib_irq_disable(void)
@@ -277,12 +271,7 @@ ISR_DIRECT_DECLARE(mpsl_timer0_isr_wrapper)
 {
 	MPSL_IRQ_TIMER0_Handler();
 
-	ISR_DIRECT_PM();
-
-	/* We may need to reschedule in case a radio timeslot callback
-	 * accesses zephyr primitives.
-	 */
-	return 1;
+	return 0;
 }
 
 ISR_DIRECT_DECLARE(mpsl_rtc0_isr_wrapper)
@@ -293,11 +282,6 @@ ISR_DIRECT_DECLARE(mpsl_rtc0_isr_wrapper)
 	}
 	MPSL_IRQ_RTC0_Handler();
 
-	ISR_DIRECT_PM();
-
-	/* No need for rescheduling, because the interrupt handler
-	 * does not access zephyr primitives.
-	 */
 	return 0;
 }
 
@@ -305,12 +289,7 @@ ISR_DIRECT_DECLARE(mpsl_radio_isr_wrapper)
 {
 	MPSL_IRQ_RADIO_Handler();
 
-	ISR_DIRECT_PM();
-
-	/* We may need to reschedule in case a radio timeslot callback
-	 * accesses zephyr primitives.
-	 */
-	return 1;
+	return 0;
 }
 #endif /* IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS) */
 
@@ -492,18 +471,12 @@ static int mpsl_lib_init_sys(void)
 	/* Ensure IRQs are disabled before attaching. */
 	mpsl_lib_irq_disable();
 
-	/* We may need to reschedule in case a radio timeslot callback
-	 * accesses Zephyr primitives.
-	 * The RTC0 interrupt handler does not access zephyr primitives,
-	 * however, as this decision needs to be made during build-time,
-	 * rescheduling is performed to account for user-provided handlers.
-	 */
 	ARM_IRQ_DIRECT_DYNAMIC_CONNECT(MPSL_TIMER_IRQn, MPSL_HIGH_IRQ_PRIORITY, IRQ_CONNECT_FLAGS,
-				       reschedule);
+				       no_reschedule);
 	ARM_IRQ_DIRECT_DYNAMIC_CONNECT(MPSL_RTC_IRQn, MPSL_HIGH_IRQ_PRIORITY, IRQ_CONNECT_FLAGS,
-				       reschedule);
+				       no_reschedule);
 	ARM_IRQ_DIRECT_DYNAMIC_CONNECT(MPSL_RADIO_IRQn, MPSL_HIGH_IRQ_PRIORITY, IRQ_CONNECT_FLAGS,
-				       reschedule);
+				       no_reschedule);
 
 	mpsl_lib_irq_connect();
 #else /* !IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS) */
