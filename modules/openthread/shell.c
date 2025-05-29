@@ -6,7 +6,6 @@
 
 #include <zephyr/kernel.h>
 #include <stdio.h>
-#include <zephyr/net/openthread.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/shell/shell.h>
 #include <zephyr/shell/shell_uart.h>
@@ -15,6 +14,8 @@
 #include <openthread/instance.h>
 
 #include "platform-zephyr.h"
+
+#include <openthread.h>
 
 #define OT_SHELL_BUFFER_SIZE CONFIG_SHELL_CMD_BUFF_SIZE
 
