@@ -11,6 +11,8 @@
 extern "C" {
 #endif
 
+extern bool mdmev_enabled;
+
 /* Enable modem domain events. */
 int mdmev_enable(void);
 
