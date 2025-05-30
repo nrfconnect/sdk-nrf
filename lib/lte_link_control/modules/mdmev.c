@@ -37,6 +37,8 @@ LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
 AT_MONITOR(ltelc_atmon_mdmev, "%MDMEV", at_handler_mdmev);
 
+bool mdmev_enabled;
+
 #if defined(CONFIG_UNITY)
 int mdmev_parse(const char *at_response, enum lte_lc_modem_evt *modem_evt)
 #else
@@ -107,10 +109,14 @@ int mdmev_enable(void)
 		}
 	}
 
+	mdmev_enabled = true;
+
 	return 0;
 }
 
 int mdmev_disable(void)
 {
+	mdmev_enabled = false;
+
 	return nrf_modem_at_printf(AT_MDMEV_DISABLE) ? -EFAULT : 0;
 }

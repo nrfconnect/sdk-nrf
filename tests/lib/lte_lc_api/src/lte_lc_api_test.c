@@ -1811,13 +1811,18 @@ void test_lte_lc_func_mode_set_all_modes(void)
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", EXIT_SUCCESS);
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=2", EXIT_SUCCESS);
+	ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_RX_ONLY);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", EXIT_SUCCESS);
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=21", EXIT_SUCCESS);
 	ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_LTE);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 
 	enum lte_lc_func_mode modes[] = {
 		LTE_LC_FUNC_MODE_POWER_OFF,
-		LTE_LC_FUNC_MODE_RX_ONLY,
 		LTE_LC_FUNC_MODE_OFFLINE,
 		LTE_LC_FUNC_MODE_DEACTIVATE_LTE,
 		LTE_LC_FUNC_MODE_DEACTIVATE_GNSS,
