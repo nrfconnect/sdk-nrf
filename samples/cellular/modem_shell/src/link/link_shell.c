@@ -144,17 +144,18 @@ static const char link_funmode_usage_str[] =
 	"Usage: link funmode [option] | --read\n"
 	"Options:\n"
 	"  -r, --read,              Read modem functional mode\n"
-	"  -0, --pwroff,            Set modem power off\n"
-	"  -1, --normal,            Set modem normal mode\n"
-	"      --normal_no_rel14,   Set modem normal mode without setting Release 14 features\n"
-	"  -4, --flightmode,        Set modem offline.\n"
-	"      --lteoff,            Deactivates LTE without shutting down GNSS services.\n"
-	"      --lteon,             Activates LTE without changing GNSS.\n"
-	"      --gnssoff,           Deactivates GNSS without shutting down LTE services.\n"
-	"      --gnsson,            Activates GNSS without changing LTE.\n"
-	"      --uiccoff,           Deactivates UICC.\n"
-	"      --uiccon,            Activates UICC.\n"
-	"      --flightmode_uiccon, Sets the device to flight mode without shutting down UICC.\n"
+	"  -0, --pwroff,            Set modem to minimum functionality mode\n"
+	"  -1, --normal,            Set modem to normal mode\n"
+	"      --normal_no_rel14,   Set modem to normal mode without enabling Release 14 features\n"
+	"  -2, --rxonly,            Set modem to RX only mode\n"
+	"  -4, --flightmode,        Set modem to flight mode\n"
+	"      --lteoff,            Deactivate LTE\n"
+	"      --lteon,             Activate LTE\n"
+	"      --gnssoff,           Deactivate GNSS\n"
+	"      --gnsson,            Activate GNSS\n"
+	"      --uiccoff,           Deactivate UICC\n"
+	"      --uiccon,            Activate UICC\n"
+	"      --flightmode_uiccon, Set modem to flight mode without shutting down UICC\n"
 	"  -h, --help,              Shows this help information";
 
 static const char link_normal_mode_at_usage_str[] =
@@ -428,6 +429,7 @@ static struct option long_options[] = {
 	{ "write", no_argument, 0, LINK_SHELL_OPT_WRITE },
 	{ "pwroff", no_argument, 0, '0' },
 	{ "normal", no_argument, 0, '1' },
+	{ "rxonly", no_argument, 0, '2' },
 	{ "flightmode", no_argument, 0, '4' },
 	{ "lteoff", no_argument, 0, LINK_SHELL_OPT_FUNMODE_LTEOFF },
 	{ "lteon", no_argument, 0, LINK_SHELL_OPT_FUNMODE_LTEON },
@@ -490,7 +492,7 @@ static struct option long_options[] = {
 	{ 0, 0, 0, 0 }
 };
 
-static const char short_options[] = "ha:I:f:i:p:t:A:P:T:U:su014rmngMNed";
+static const char short_options[] = "ha:I:f:i:p:t:A:P:T:U:su0124rmngMNed";
 
 bool link_shell_msleep_notifications_subscribed;
 
@@ -1324,6 +1326,9 @@ static int link_shell_funmode(const struct shell *shell, size_t argc, char **arg
 			break;
 		case '1':
 			funmode_option = LTE_LC_FUNC_MODE_NORMAL;
+			break;
+		case '2':
+			funmode_option = LTE_LC_FUNC_MODE_RX_ONLY;
 			break;
 		case '4':
 			funmode_option = LTE_LC_FUNC_MODE_OFFLINE;
