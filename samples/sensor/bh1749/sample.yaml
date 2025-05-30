@@ -1,5 +1,6 @@
 sample:
   name: BH1749 Sensor Sample
+
 tests:
   sample.sensor.bh1749:
     sysbuild: true
