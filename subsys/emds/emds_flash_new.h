@@ -86,15 +86,6 @@ struct emds_snapshot_metadata {
  */
 int emds_flash_init(struct emds_desc *desc);
 
-/**
- * @brief Get write block size for emergency data storage.
- *
- * @param desc Pointer to emergency data storage descriptor
- *
- * @retval Write block size in bytes.
- */
-size_t emds_get_write_block_size(const struct emds_desc *desc);
-
 #ifdef __cplusplus
 }
 #endif

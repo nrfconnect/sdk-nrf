@@ -32,7 +32,7 @@ static void emds_print_init_info(void)
 	LOG_DBG("Partition 0: size %zu, offset 0x%lx", part->part_size, part->part_off);
 	part = &descr.part[1];
 	LOG_DBG("Partition 1: size %zu, offset 0x%lx", part->part_size, part->part_off);
-	LOG_DBG("Write block size: %zu", emds_get_write_block_size(&descr));
+	LOG_DBG("Write block size: %zu", descr.fp->write_block_size);
 }
 
 static int emds_descr_init(void)
@@ -104,28 +104,25 @@ int emds_entry_add(struct emds_dynamic_entry *entry)
 
 static int emds_entries_size(uint32_t *size)
 {
-	size_t block_size = emds_get_write_block_size(&descr);
+	size_t alignment = descr.fp->write_block_size;
 	int entries = 0;
 
 	*size = 0;
 
 	STRUCT_SECTION_FOREACH(emds_entry, ch) {
-		*size += DIV_ROUND_UP(ch->len + sizeof(struct emds_data_entry), block_size) *
-			 block_size;
-		*size += DIV_ROUND_UP(sizeof(struct emds_snapshot_metadata), block_size) *
-			 block_size;
+		*size += ch->len + sizeof(struct emds_data_entry);
 		entries++;
 	}
 
 	struct emds_dynamic_entry *ch;
 
 	SYS_SLIST_FOR_EACH_CONTAINER(&emds_dynamic_entries, ch, node) {
-		*size += DIV_ROUND_UP(ch->entry.len + sizeof(struct emds_data_entry), block_size) *
-			 block_size;
-		*size += DIV_ROUND_UP(sizeof(struct emds_snapshot_metadata), block_size) *
-			 block_size;
+		*size += ch->entry.len + sizeof(struct emds_data_entry);
 		entries++;
 	}
+
+	*size = DIV_ROUND_UP(*size, alignment) * alignment;
+	*size += DIV_ROUND_UP(sizeof(struct emds_snapshot_metadata), alignment) * alignment;
 
 	return entries;
 }

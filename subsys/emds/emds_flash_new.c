@@ -65,13 +65,3 @@ int emds_flash_init(struct emds_desc *desc)
 
 	return format_partitions_ee(desc);
 }
-
-size_t emds_get_write_block_size(const struct emds_desc *desc)
-{
-	if (desc->fp == NULL) {
-		LOG_ERR("Flash parameters not initialized");
-		return 0;
-	}
-
-	return !!desc->fp->caps.no_explicit_erase ? 1 : desc->fp->write_block_size;
-}
