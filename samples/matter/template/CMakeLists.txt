@@ -27,11 +27,25 @@ target_include_directories(app PRIVATE
 )
 
 target_sources(app PRIVATE
-    src/app_task.cpp
     src/main.cpp
 )
+
+if("thread-platform" IN_LIST SNIPPET)
+  target_sources(app PRIVATE
+    snippets/thread_platform/app_task.cpp
+    snippets/thread_platform/zcl_callbacks.cpp
+  )
+  target_include_directories(app PRIVATE
+    snippets/thread_platform
+  )
+else()
+  target_sources(app PRIVATE
+    src/app_task.cpp
+  )
+endif()
 
 ncs_configure_data_model(
     ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/${CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH}/template.zap
 )
+
 # NORDIC SDK APP END
