@@ -58,7 +58,7 @@ function(zephyr_mcuboot_tasks)
   # Fetch devicetree details for flash and slot information
   dt_chosen(flash_node PROPERTY "zephyr,flash")
   dt_nodelabel(slot0_flash NODELABEL "slot0_partition" REQUIRED)
-  dt_prop(slot_size PATH "${slot0_flash}" PROPERTY "reg" INDEX 1 REQUIRED)
+  dt_reg_size(slot_size PATH "${slot0_flash}" REQUIRED)
   dt_prop(write_block_size PATH "${flash_node}" PROPERTY "write-block-size")
 
   if(NOT write_block_size)
@@ -66,28 +66,38 @@ function(zephyr_mcuboot_tasks)
     message(WARNING "slot0_partition write block size devicetree parameter is missing, assuming write block size is 4")
   endif()
 
-  set(imgtool_directxip_hex_command)
-
-  if(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT OR CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP)
-    # XIP image, need to use the fixed address for this slot
-    if(CONFIG_NCS_IS_VARIANT_IMAGE)
-      set(imgtool_rom_command --rom-fixed @PM_MCUBOOT_SECONDARY_ADDRESS@)
-    else()
-      set(imgtool_rom_command --rom-fixed @PM_MCUBOOT_PRIMARY_ADDRESS@)
+  if(CONFIG_PARTITION_MANAGER_ENABLED)
+    if(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT OR CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP)
+      # XIP image, need to use the fixed address for this slot
+      if(CONFIG_NCS_IS_VARIANT_IMAGE)
+        set(imgtool_rom_command --rom-fixed @PM_MCUBOOT_SECONDARY_ADDRESS@)
+      else()
+        set(imgtool_rom_command --rom-fixed @PM_MCUBOOT_PRIMARY_ADDRESS@)
+      endif()
     endif()
 
-    if(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT)
-      set(imgtool_directxip_hex_command --confirm)
+    # Split fields, imgtool_sign_sysbuild is stored in cache which will have fields updated by
+    # sysbuild, imgtool_sign must not be stored in cache because it would then prevent those fields
+    # from being updated without a pristine build
+    # TODO: NCSDK-28461 sysbuild PM fields cannot be updated without a pristine build, will become
+    # invalid if a static PM file is updated without pristine build
+    set(imgtool_sign_sysbuild --slot-size @PM_MCUBOOT_PRIMARY_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_rom_command} CACHE STRING "imgtool sign sysbuild replacement")
+    set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} ${imgtool_sign_sysbuild})
+  else()
+    set(imgtool_rom_command)
+    if(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT OR CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP)
+      dt_chosen(code_partition PROPERTY "zephyr,code-partition")
+      dt_reg_addr(code_partition_offset PATH "${code_partition}" REQUIRED)
+      set(imgtool_rom_command --rom-fixed ${code_partition_offset})
     endif()
+    set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} --slot-size ${slot_size} --header-size ${CONFIG_ROM_START_OFFSET} ${imgtool_rom_command})
   endif()
 
-  # Split fields, imgtool_sign_sysbuild is stored in cache which will have fields updated by
-  # sysbuild, imgtool_sign must not be stored in cache because it would then prevent those fields
-  # from being updated without a pristine build
-  # TODO: NCSDK-28461 sysbuild PM fields cannot be updated without a pristine build, will become
-  # invalid if a static PM file is updated without pristine build
-  set(imgtool_sign_sysbuild --slot-size @PM_MCUBOOT_PRIMARY_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_rom_command} CACHE STRING "imgtool sign sysbuild replacement")
-  set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} ${imgtool_sign_sysbuild})
+  set(imgtool_directxip_hex_command)
+
+  if(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT)
+    set(imgtool_directxip_hex_command --confirm)
+  endif()
 
   # Arguments to imgtool.
   if(NOT CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS STREQUAL "")
@@ -197,9 +207,11 @@ function(zephyr_mcuboot_tasks)
     set(unconfirmed_args ${input}.hex ${output}.hex)
     list(APPEND byproducts ${output}.hex)
 
-    # Do not run zephyr_runner_file here as PM will provide the merged hex file from
-    # sysbuild's scope unless this is a variant image
-    if(CONFIG_NCS_IS_VARIANT_IMAGE)
+    # If using partition manager do not run zephyr_runner_file here as PM will
+    # provide the merged hex file from sysbuild's scope unless this is a variant image
+    # Otherwise run zephyr_runner_file for both images to ensure the signed hex file
+    # is used for flashing
+    if((NOT CONFIG_PARTITION_MANAGER_ENABLED) OR CONFIG_NCS_IS_VARIANT_IMAGE)
       zephyr_runner_file(hex ${output}.hex)
     endif()
 
