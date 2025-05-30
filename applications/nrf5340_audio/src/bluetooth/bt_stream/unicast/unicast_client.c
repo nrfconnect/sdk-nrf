@@ -503,6 +503,7 @@ static void set_color_if_supported(char *str, uint16_t bitfield, uint16_t mask)
 		strcat(str, COLOR_GREEN);
 	} else {
 		strcat(str, COLOR_RED);
+		strcat(str, "!");
 	}
 }
 
@@ -544,7 +545,7 @@ static bool caps_print_cb(struct bt_data *data, void *user_data)
 
 	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_DURATION) {
 		uint16_t dur_bit = sys_get_le16(data->data);
-		char supported_dur[30] = "";
+		char supported_dur[80] = "";
 
 		set_color_if_supported(supported_dur, dur_bit, BT_AUDIO_CODEC_CAP_DURATION_7_5);
 		strcat(supported_dur, "7.5, ");
@@ -556,7 +557,7 @@ static bool caps_print_cb(struct bt_data *data, void *user_data)
 
 	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_CHAN_COUNT) {
 		uint16_t chan_bit = sys_get_le16(data->data);
-		char supported_chan[120] = "";
+		char supported_chan[140] = "";
 
 		set_color_if_supported(supported_chan, chan_bit, BT_AUDIO_CODEC_CAP_CHAN_COUNT_1);
 		strcat(supported_chan, "1, ");
