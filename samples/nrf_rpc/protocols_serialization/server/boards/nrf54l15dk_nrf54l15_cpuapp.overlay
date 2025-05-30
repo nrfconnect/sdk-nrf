@@ -10,6 +10,7 @@
 
 	aliases {
 		rpc-alive-led = &led0;
+		fatal-error-trigger = &button0;
 
 		/* delete all buttons except button0 to free GPIO pins assigned to uart21 below */
 		/delete-property/ sw1;

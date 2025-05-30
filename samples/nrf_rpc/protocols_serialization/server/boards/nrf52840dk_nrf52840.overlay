@@ -10,6 +10,7 @@
 
 	aliases {
 		rpc-alive-led = &led0;
+		fatal-error-trigger = &button0;
 	};
 };
 
