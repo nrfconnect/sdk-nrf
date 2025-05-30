@@ -155,6 +155,7 @@ static void req_pin_idle(struct lpuart_data *data)
 		     NRF_GPIO_PIN_NOPULL,
 		     NRF_GPIO_PIN_S0S1,
 		     NRF_GPIO_PIN_NOSENSE);
+	nrf_gpio_pin_clear(data->req_pin);
 }
 
 static void pend_req_pin_idle(struct lpuart_data *data)
