@@ -750,10 +750,70 @@ static otError transmit_frame(otInstance *aInstance)
 	return OT_ERROR_NONE;
 }
 
+static otError handle_ack(void)
+{
+	uint8_t ack_len;
+	uint8_t frame_type;
+	otError err = OT_ERROR_NONE;
+
+	if (nrf5_data.ack.desc.time == NRF_802154_NO_TIMESTAMP) {
+		/* Ack timestamp is invalid and cannot be used by the upper layer.
+		 * Report the transmission as failed as if the Ack was not received at all.
+		 */
+		LOG_WRN("Invalid ACK timestamp.");
+		err = OT_ERROR_NO_ACK;
+		goto free_nrf_ack;
+	}
+
+	ack_len = nrf5_data.ack.desc.psdu[0];
+	if (ack_len > ACK_PKT_LENGTH) {
+		LOG_ERR("Invalid ACK length %u", ack_len);
+		err = OT_ERROR_NO_ACK;
+		goto free_nrf_ack;
+	}
+
+	frame_type = nrf5_data.ack.desc.psdu[1] & FRAME_TYPE_MASK;
+	if (frame_type != FRAME_TYPE_ACK) {
+		LOG_ERR("Invalid frame type %u", frame_type);
+		err = OT_ERROR_NO_ACK;
+		goto free_nrf_ack;
+	}
+
+	if (nrf5_data.ack.frame.mLength != 0) {
+		LOG_ERR("Overwriting unhandled ACK frame.");
+	}
+
+	/* Upper layers expect the frame to start at the MAC header, skip the
+	 * PHY header (1 byte).
+	 */
+	memcpy(nrf5_data.ack.psdu, nrf5_data.ack.desc.psdu + 1, ack_len);
+
+	nrf5_data.ack.frame.mPsdu = nrf5_data.ack.psdu;
+	nrf5_data.ack.frame.mLength = ack_len;
+	nrf5_data.ack.frame.mInfo.mRxInfo.mLqi = nrf5_data.ack.desc.lqi;
+	nrf5_data.ack.frame.mInfo.mRxInfo.mRssi = nrf5_data.ack.desc.rssi;
+	nrf5_data.ack.frame.mInfo.mRxInfo.mTimestamp = nrf5_data.ack.desc.time;
+
+free_nrf_ack:
+	nrf_802154_buffer_free_raw(nrf5_data.ack.desc.psdu);
+	nrf5_data.ack.desc.psdu = NULL;
+
+	return err;
+}
+
 static void handle_tx_done(otInstance *aInstance)
 {
 	if (nrf5_data.state == OT_RADIO_STATE_TRANSMIT) {
 		nrf5_data.state = OT_RADIO_STATE_RECEIVE;
+
+		if (nrf5_data.ack.desc.psdu == NULL) {
+			/* No ACK was requested. */
+			nrf5_data.tx.result = OT_ERROR_NONE;
+		} else {
+
+			/* Handle ACK packet. */
+			nrf5_data.tx.result = handle_ack();
+		}
 
 		if (IS_ENABLED(CONFIG_OPENTHREAD_DIAG) && otPlatDiagModeGet()) {
 			otPlatDiagRadioTransmitDone(aInstance, &nrf5_data.tx.frame,
@@ -1639,57 +1699,6 @@ void nrf_802154_tx_ack_started(const uint8_t *data)
 	nrf5_data.rx.last_frame_ack_seb = data[SECURITY_ENABLED_OFFSET] & SECURITY_ENABLED_BIT;
 }
 
-static otError handle_ack(void)
-{
-	uint8_t ack_len;
-	uint8_t frame_type;
-	otError err = OT_ERROR_NONE;
-
-	if (nrf5_data.ack.desc.time == NRF_802154_NO_TIMESTAMP) {
-		/* Ack timestamp is invalid and cannot be used by the upper layer.
-		 * Report the transmission as failed as if the Ack was not received at all.
-		 */
-		LOG_WRN("Invalid ACK timestamp.");
-		err = OT_ERROR_NO_ACK;
-		goto free_nrf_ack;
-	}
-
-	ack_len = nrf5_data.ack.desc.psdu[0];
-	if (ack_len > ACK_PKT_LENGTH) {
-		LOG_ERR("Invalid ACK length %u", ack_len);
-		err = OT_ERROR_NO_ACK;
-		goto free_nrf_ack;
-	}
-
-	frame_type = nrf5_data.ack.desc.psdu[1] & FRAME_TYPE_MASK;
-	if (frame_type != FRAME_TYPE_ACK) {
-		LOG_ERR("Invalid frame type %u", frame_type);
-		err = OT_ERROR_NO_ACK;
-		goto free_nrf_ack;
-	}
-
-	if (nrf5_data.ack.frame.mLength != 0) {
-		LOG_ERR("Overwriting unhandled ACK frame.");
-	}
-
-	/* Upper layers expect the frame to start at the MAC header, skip the
-	 * PHY header (1 byte).
-	 */
-	memcpy(nrf5_data.ack.psdu, nrf5_data.ack.desc.psdu + 1, ack_len);
-
-	nrf5_data.ack.frame.mPsdu = nrf5_data.ack.psdu;
-	nrf5_data.ack.frame.mLength = ack_len;
-	nrf5_data.ack.frame.mInfo.mRxInfo.mLqi = nrf5_data.ack.desc.lqi;
-	nrf5_data.ack.frame.mInfo.mRxInfo.mRssi = nrf5_data.ack.desc.rssi;
-	nrf5_data.ack.frame.mInfo.mRxInfo.mTimestamp = nrf5_data.ack.desc.time;
-
-free_nrf_ack:
-	nrf_802154_buffer_free_raw(nrf5_data.ack.desc.psdu);
-	nrf5_data.ack.desc.psdu = NULL;
-
-	return err;
-}
-
 static void update_tx_frame_info(otRadioFrame *frame,
 				 const nrf_802154_transmit_done_metadata_t *metadata)
 {
@@ -1715,15 +1724,6 @@ void nrf_802154_transmitted_raw(uint8_t *frame, const nrf_802154_transmit_done_m
 			nrf5_data.ack.desc.time = nrf_802154_timestamp_end_to_phr_convert(
 				metadata->data.transmitted.time, nrf5_data.ack.desc.psdu[0]);
 		}
-	}
-
-	if (nrf5_data.ack.desc.psdu == NULL) {
-		/* No ACK was requested. */
-		nrf5_data.tx.result = OT_ERROR_NONE;
-	} else {
-
-		/* Handle ACK packet. */
-		nrf5_data.tx.result = handle_ack();
 	}
 
 	update_tx_frame_info(&nrf5_data.tx.frame, metadata);
