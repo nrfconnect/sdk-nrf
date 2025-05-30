@@ -96,11 +96,21 @@ extern atomic_t completed_threads;
 #define CLOCK_THREAD_STACKSIZE	(512)
 #define CLOCK_THREAD_PRIORITY	(4)
 
-
 /* Busy load thread: */
 #define LOAD_THREAD_STACKSIZE	(1024)
 #define LOAD_THREAD_PRIORITY	(CONFIG_NUM_PREEMPT_PRIORITIES - 1)
 #define LOAD_THREAD_DURATION	(ACCEL_THREAD_SLEEP * (ACCEL_THREAD_COUNT_MAX + 2))
 
+/* USB thread */
+#define USB_THREAD_COUNT_MAX	(40)
+#define USB_THREAD_STACKSIZE	(1024)
+#define USB_THREAD_PRIORITY	    (5)
+#define USB_THREAD_SLEEP		(200)
+
+/* BT thread */
+#define BT_THREAD_COUNT_MAX	(40)
+#define BT_THREAD_STACKSIZE	(1024)
+#define BT_THREAD_PRIORITY	(5)
+#define BT_THREAD_SLEEP		(200)
 
 #endif
