@@ -151,13 +151,25 @@ OpenThread RPC currently supports the serialization of the following OpenThread 
 * :c:func:`otSrpClientDisableAutoStartMode`
 * :c:func:`otSrpClientEnableAutoHostAddress`
 * :c:func:`otSrpClientEnableAutoStartMode`
+* :c:func:`otSrpClientGetHostInfo`
+* :c:func:`otSrpClientGetKeyLeaseInterval`
+* :c:func:`otSrpClientGetLeaseInterval`
+* :c:func:`otSrpClientGetServerAddress`
+* :c:func:`otSrpClientGetServices`
+* :c:func:`otSrpClientGetTtl`
+* :c:func:`otSrpClientIsAutoStartModeEnabled`
+* :c:func:`otSrpClientIsRunning`
+* :c:func:`otSrpClientItemStateToString`
 * :c:func:`otSrpClientRemoveHostAndServices`
 * :c:func:`otSrpClientRemoveService`
 * :c:func:`otSrpClientSetCallback`
+* :c:func:`otSrpClientSetHostAddresses`
 * :c:func:`otSrpClientSetHostName`
 * :c:func:`otSrpClientSetKeyLeaseInterval`
 * :c:func:`otSrpClientSetLeaseInterval`
 * :c:func:`otSrpClientSetTtl`
+* :c:func:`otSrpClientStart`
+* :c:func:`otSrpClientStop`
 * :c:func:`otThreadDiscover`
 * :c:func:`otThreadErrorToString`
 * :c:func:`otThreadGetDeviceRole`
@@ -170,20 +182,21 @@ OpenThread RPC currently supports the serialization of the following OpenThread 
 * :c:func:`otThreadGetNetworkName`
 * :c:func:`otThreadGetNextDiagnosticTlv`
 * :c:func:`otThreadGetPartitionId`
-* :c:func:`otThreadGetVendorName`
 * :c:func:`otThreadGetVendorModel`
+* :c:func:`otThreadGetVendorName`
 * :c:func:`otThreadGetVendorSwVersion`
 * :c:func:`otThreadGetVersion`
 * :c:func:`otThreadSendDiagnosticGet`
 * :c:func:`otThreadSendDiagnosticReset`
 * :c:func:`otThreadSetEnabled`
 * :c:func:`otThreadSetLinkMode`
-* :c:func:`otThreadSetVendorName`
 * :c:func:`otThreadSetVendorModel`
+* :c:func:`otThreadSetVendorName`
 * :c:func:`otThreadSetVendorSwVersion`
 * :c:func:`otUdpBind`
 * :c:func:`otUdpClose`
 * :c:func:`otUdpConnect`
+* :c:func:`otUdpIsOpen`
 * :c:func:`otUdpNewMessage`
 * :c:func:`otUdpOpen`
 * :c:func:`otUdpSend`
@@ -203,5 +216,12 @@ The libraries have the following dependencies:
 API documentation
 *****************
 
-This library does not define a new OpenThread API.
+This library is an implementation of the existing OpenThread C API.
 Please refer to `OpenThread Reference`_ for the OpenThread C API documentation.
+
+In addition, the library also implements some API additions.
+
+| Header file: :file:`include/net/ot_rpc.h`
+| Source files: :file:`subsys/net/openthread/rpc`
+
+.. doxygengroup:: ot_rpc
