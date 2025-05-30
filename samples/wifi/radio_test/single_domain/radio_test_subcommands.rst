@@ -8,3 +8,5 @@ Radio test subcommands
    :depth: 2
 
 .. include:: /includes/wifi_radio_test_subcommands.txt
+
+.. include:: /includes/wifi_radio_test_stats.txt
