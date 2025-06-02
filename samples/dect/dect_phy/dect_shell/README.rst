@@ -371,6 +371,38 @@ Example 2: Unidirectional testing
      RF tool results at transmitter id 39:
      - RX/TX Duty Cycle percentage: ...
 
+Example 2.1: Unidirectional testing with LBT - RX single shot mode
+------------------------------------------------------------------
+
+* RX device option 1: RX single shot mode - start or stop RX earlier or later:
+
+   .. code-block:: console
+
+     dect sett -t 39
+     dect rf_tool -m rx --rx_find_sync --frame_repeat_count 30 --rx_frame_start_offset 0 --rx_subslot_count 5 --rx_idle_subslot_count 2  -c 1677
+
+* TX device: Trigger to start operation with LBT and TX frame start offset to have room for a LBT before the actual TX (``--tx_frame_start_offset 2``) within a frame:
+
+  .. code-block:: console
+
+     dect rf_tool -m tx --frame_repeat_count 30 --tx_frame_start_offset 2 --tx_subslot_count 2 --tx_idle_subslot_count 3 --tx_lbt_period 2 -c 1677 -t 39
+
+Example 2.2: Unidirectional testing with LBT - Continuous RX mode
+-----------------------------------------------------------------
+
+* RX device in ``rx_cont`` mode with the information of TX side to have interval reporting:
+
+   .. code-block:: console
+
+     dect sett -t 39
+     dect rf_tool -m rx_cont --rf_mode_peer tx --tx_frame_start_offset 2 --tx_idle_subslot_count 8 --frame_repeat_count 15 --rx_find_sync -c 1677
+
+* TX device: Trigger to start operation with LBT and TX frame start offset to have room for a LBT before the actual TX (``--tx_frame_start_offset 2``) within a frame:
+
+  .. code-block:: console
+
+     dect rf_tool -m tx --frame_repeat_count 15 --tx_frame_start_offset 2 --tx_idle_subslot_count 8 --tx_lbt_period 2 -c 1677 -t 39
+
 Example 3: Duty cycle (RX+TX) testing
 -------------------------------------
 

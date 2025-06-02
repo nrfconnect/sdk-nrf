@@ -413,6 +413,8 @@ enum {
 	DECT_SHELL_CERT_TEST_MODE_CONTINUOUS,
 	DECT_SHELL_CERT_RF_MODE_PEER,
 	DECT_SHELL_CERT_TX_MCS,
+	DECT_SHELL_CERT_TX_LBT_PERIOD,
+	DECT_SHELL_CERT_TX_LBT_RSSI_BUSY_THRESHOLD,
 	DECT_SHELL_CERT_RX_FRAME_START_OFFSET_SUBSLOTS,
 	DECT_SHELL_CERT_RX_SUBSLOT_COUNT,
 	DECT_SHELL_CERT_RX_POST_IDLE_SUBSLOT_COUNT,
@@ -455,6 +457,11 @@ static const char dect_phy_rf_tool_cmd_usage_str[] =
 	"                                     \"dect status\" -command output.\n"
 	"                                     Default: from common tx settings.\n"
 	"      --tx_mcs <int>,                Set TX MCS. Default: from common tx settings.\n"
+	"      --tx_lbt_period <cnt>,         Listen Before Talk (LBT) period (symbol count).\n"
+	"                                     Zero value disables LBT (default).\n"
+	"                                     Valid range for symbol count: 2-110.\n"
+	"      --tx_lbt_busy_th <dbm>,        LBT busy RSSI threshold (dBm). Valid only when LBT\n"
+	"                                     is enabled. Default from RSSI busy threshold setting.\n"
 	"Frame structure:\n"
 	"rx_frame_start_offset + rx_subslot_count + rx_idle_subslot_count +\n"
 	"tx_frame_start_offset + tx_subslot_count + tx_idle_subslot_count\n"
@@ -512,6 +519,8 @@ static struct option long_options_cert[] = {
 	{"rx_find_sync", no_argument, 0, 's'},
 	{"tx_pwr", required_argument, 0, 'p'},
 	{"tx_mcs", required_argument, 0, DECT_SHELL_CERT_TX_MCS},
+	{"tx_lbt_period", required_argument, 0, DECT_SHELL_CERT_TX_LBT_PERIOD },
+	{"tx_lbt_busy_th", required_argument, 0, DECT_SHELL_CERT_TX_LBT_RSSI_BUSY_THRESHOLD },
 	{"frame_repeat_count", required_argument, 0, DECT_SHELL_CERT_FRAME_REPEAT_COUNT},
 	{"frame_repeat_count_intervals", required_argument, 0,
 	 DECT_SHELL_CERT_FRAME_REPEAT_COUNT_INTERVALS},
@@ -534,6 +543,7 @@ static int dect_phy_rf_tool_cmd(const struct shell *shell, size_t argc, char **a
 	int opt;
 	bool tx_starttime_set = false;
 	bool peer_mode_set = false;
+	int tmp_value;
 
 	if (argc == 0) {
 		goto show_usage;
@@ -556,6 +566,9 @@ static int dect_phy_rf_tool_cmd(const struct shell *shell, size_t argc, char **a
 	params.channel = 1665;
 	params.tx_power_dbm = current_settings->tx.power_dbm;
 	params.tx_mcs = current_settings->tx.mcs;
+	params.tx_lbt_period_symbols = 0;
+	params.tx_lbt_rssi_busy_threshold_dbm = current_settings->rssi_scan.busy_threshold;
+
 	params.expected_rx_rssi_level = current_settings->rx.expected_rssi_level;
 	params.find_rx_sync = false;
 	params.continuous = false;
@@ -629,6 +642,31 @@ static int dect_phy_rf_tool_cmd(const struct shell *shell, size_t argc, char **a
 		}
 		case DECT_SHELL_CERT_TX_MCS: {
 			params.tx_mcs = atoi(optarg);
+			break;
+		}
+		case DECT_SHELL_CERT_TX_LBT_PERIOD: {
+			tmp_value = atoi(optarg);
+			if (tmp_value < DECT_PHY_LBT_PERIOD_MIN_SYM ||
+				tmp_value > DECT_PHY_LBT_PERIOD_MAX_SYM) {
+				desh_error("Invalid LBT period %d (range: [%d,%d])",
+					   tmp_value,
+					   DECT_PHY_LBT_PERIOD_MIN_SYM,
+					   DECT_PHY_LBT_PERIOD_MAX_SYM);
+				goto show_usage;
+			}
+			params.tx_lbt_period_symbols = tmp_value;
+			break;
+		}
+		case DECT_SHELL_CERT_TX_LBT_RSSI_BUSY_THRESHOLD: {
+			tmp_value = atoi(optarg);
+			if (tmp_value >= 0 ||
+			    tmp_value < INT8_MIN) {
+				desh_error("Invalid LBT RSSI busy threshold %d (range: [%d,-1])",
+					   tmp_value,
+					   INT8_MIN);
+				goto show_usage;
+			}
+			params.tx_lbt_rssi_busy_threshold_dbm = tmp_value;
 			break;
 		}
 		case DECT_SHELL_CERT_FRAME_REPEAT_COUNT: {
