@@ -26,5 +26,6 @@ See the subpages for detailed documentation on the application and its modules:
    fwupd
    integration
    modules
+   utils
    configuration_options
    api
