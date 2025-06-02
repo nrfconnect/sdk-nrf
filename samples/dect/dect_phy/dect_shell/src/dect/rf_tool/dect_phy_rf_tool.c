@@ -33,12 +33,13 @@ struct dect_phy_rf_tool_tx_metrics {
 	uint32_t tx_total_pkt_count;
 	uint32_t tx_op_to_mdm_failure_count;
 	uint32_t tx_op_in_mdm_failure_count;
+	uint32_t tx_op_in_mdm_lbt_failure_count;
 	uint32_t tx_total_mdm_operations;
 	int64_t tx_last_tx_scheduled_frame_time_mdm_ticks;
 };
 struct dect_phy_rf_tool_rx_metrics {
 	uint64_t last_pcc_stf_time;
-	uint64_t last_synch_mdm_time;
+	uint64_t last_synch_pcc_stf_time;
 
 	bool rx_wait_for_synch;
 
@@ -82,7 +83,7 @@ struct dect_phy_rf_tool_scheduler_tx_data {
 static struct dect_phy_rf_tool_tool_data {
 
 	uint32_t frame_repeat_count_interval_current_count;
-	uint32_t frame_count_for_synch;
+	uint32_t frame_count_for_synch_rx_restart;
 	uint16_t frame_len_subslots;
 	uint64_t frame_len_mdmticks;
 
@@ -305,20 +306,41 @@ void dect_phy_rf_tool_print_results(void)
 			   rf_tool_data.tx_metrics.tx_total_data_amount);
 		desh_print("  - TX: successfully completed modem operations: %d",
 			   rf_tool_data.tx_metrics.tx_total_mdm_operations);
-		desh_print("  - TX: failed operation count sent to modem:    %d",
-			   rf_tool_data.tx_metrics.tx_op_to_mdm_failure_count);
-		desh_print("  - TX: operation count failed in modem:         %d",
-			   rf_tool_data.tx_metrics.tx_op_in_mdm_failure_count);
+		if (rf_tool_data.tx_metrics.tx_op_to_mdm_failure_count) {
+			desh_error("  - TX: failed operation count sent to modem:    %d",
+				rf_tool_data.tx_metrics.tx_op_to_mdm_failure_count);
+		} else {
+			desh_print("  - TX: failed operation count sent to modem:    %d",
+				rf_tool_data.tx_metrics.tx_op_to_mdm_failure_count);
+		}
+		if (rf_tool_data.tx_metrics.tx_op_in_mdm_failure_count) {
+			desh_error("  - TX: operation count failed in modem:         %d",
+				rf_tool_data.tx_metrics.tx_op_in_mdm_failure_count);
+		} else {
+			desh_print("  - TX: operation count failed in modem:         %d",
+				rf_tool_data.tx_metrics.tx_op_in_mdm_failure_count);
+		}
+		if (rf_tool_data.tx_metrics.tx_op_in_mdm_lbt_failure_count) {
+			desh_error("  - TX: operation count failed due to LBT BUSY:  %d",
+				rf_tool_data.tx_metrics.tx_op_in_mdm_lbt_failure_count);
+		} else {
+			desh_print("  - TX: operation count failed due to LBT BUSY:  %d",
+				rf_tool_data.tx_metrics.tx_op_in_mdm_lbt_failure_count);
+		}
 	}
 
 	if (dect_phy_rf_tool_rx_mode(cmd_params->mode)) {
 
 		uint32_t pkts_total =
-			cmd_params->frame_repeat_count - rf_tool_data.frame_count_for_synch;
+			cmd_params->frame_repeat_count -
+				rf_tool_data.frame_count_for_synch_rx_restart;
 		int32_t pkts_missing = cmd_params->frame_repeat_count -
 				       rf_tool_data.rx_metrics.rx_total_pkt_count -
-				       rf_tool_data.frame_count_for_synch;
+				       rf_tool_data.frame_count_for_synch_rx_restart;
 
+		if (cmd_params->frame_repeat_count == rf_tool_data.rx_metrics.rx_total_pkt_count) {
+			pkts_missing = 0;
+		}
 		if (cmd_params->mode == DECT_PHY_RF_TOOL_MODE_RX_CONTINUOUS &&
 		    cmd_params->peer_mode == DECT_PHY_RF_TOOL_MODE_NONE) {
 			pkts_missing = 0;
@@ -328,14 +350,25 @@ void dect_phy_rf_tool_print_results(void)
 			   rf_tool_data.rx_metrics.rx_total_pkt_count);
 		desh_print("  - RX: data amount:                             %d",
 			   rf_tool_data.rx_metrics.rx_total_data_amount);
-		desh_print("  - RX: frame count used for synch:              %d",
-			   rf_tool_data.frame_count_for_synch);
+		desh_print("  - RX: frame count missed in synch RX restart:  %d",
+			   rf_tool_data.frame_count_for_synch_rx_restart);
 		desh_print("  - RX: successfully completed modem operations: %d",
 			   rf_tool_data.rx_metrics.rx_total_mdm_ok_operations);
-		desh_print("  - RX: failed operation count sent to modem:    %d",
-			   rf_tool_data.rx_metrics.rx_op_to_mdm_failure_count);
-		desh_print("  - RX: operation count failed in modem:         %d",
-			   rf_tool_data.rx_metrics.rx_op_in_mdm_failure_count);
+		if (rf_tool_data.rx_metrics.rx_op_to_mdm_failure_count) {
+			desh_error("  - RX: failed operation count sent to modem:    %d",
+				rf_tool_data.rx_metrics.rx_op_to_mdm_failure_count);
+		} else {
+			desh_print("  - RX: failed operation count sent to modem:    %d",
+				rf_tool_data.rx_metrics.rx_op_to_mdm_failure_count);
+		}
+		if (rf_tool_data.rx_metrics.rx_op_in_mdm_failure_count) {
+			desh_error("  - RX: operation count failed in modem:         %d",
+				rf_tool_data.rx_metrics.rx_op_in_mdm_failure_count);
+
+		} else {
+			desh_print("  - RX: operation count failed in modem:         %d",
+				rf_tool_data.rx_metrics.rx_op_in_mdm_failure_count);
+		}
 
 		if (pkts_missing > 0) {
 			double packet_error_rate = (double)pkts_missing / pkts_total * 100;
@@ -442,6 +475,11 @@ static void dect_phy_rf_tool_thread_fn(void)
 						rf_tool_data.tx_metrics
 							.tx_op_in_mdm_failure_count++;
 					}
+					if (params->status ==
+						NRF_MODEM_DECT_PHY_ERR_LBT_CHANNEL_BUSY) {
+						rf_tool_data.tx_metrics
+							.tx_op_in_mdm_lbt_failure_count++;
+					}
 				} else if (params->handle == DECT_PHY_RF_TOOL_RX_CONT_HANDLE ||
 					   params->handle ==
 						   DECT_PHY_RF_TOOL_SYNCH_WAIT_RX_HANDLE ||
@@ -529,7 +567,7 @@ static void dect_phy_rf_tool_thread_fn(void)
 			if (cmd_params->find_rx_sync) {
 				if (rf_tool_data.rx_metrics.rx_total_pkt_count == 0) {
 					/* 1st pkt, we got synch, now schedule operations ASAP  */
-					rf_tool_data.rx_metrics.last_synch_mdm_time =
+					rf_tool_data.rx_metrics.last_synch_pcc_stf_time =
 						params->stf_start_time;
 
 					if (rf_tool_data.rx_metrics.rx_wait_for_synch) {
@@ -545,23 +583,36 @@ static void dect_phy_rf_tool_thread_fn(void)
 				} else if (rf_tool_data.rx_metrics.rx_total_pkt_count == 1) {
 					/* 1st pkt was for rx sync and now we need to calculate how
 					 * many frames there were between this one and the 1st
-					 * packet.
+					 * packet. I.e. used for move from single shot RX (used
+					 * for synch) to actual RX used in this interval.
 					 */
-					rf_tool_data.frame_count_for_synch =
+					int frame_count_for_synch_rx_restart =
 						((params->stf_start_time -
-						  rf_tool_data.rx_metrics.last_synch_mdm_time) /
-						 rf_tool_data.frame_len_mdmticks) -
-						1;
+						  rf_tool_data.rx_metrics.last_synch_pcc_stf_time) /
+						 rf_tool_data.frame_len_mdmticks) - 1;
+
+					if (frame_count_for_synch_rx_restart < 0) {
+						frame_count_for_synch_rx_restart = 0;
+					}
+					rf_tool_data.frame_count_for_synch_rx_restart =
+						frame_count_for_synch_rx_restart;
 				}
 			} else {
 				if (cmd_params->mode == DECT_PHY_RF_TOOL_MODE_RX_TX &&
 				    rf_tool_data.rx_metrics.rx_total_pkt_count == 0) {
 					/* Synch is from our 1st RX frame time sent to modem */
-					rf_tool_data.frame_count_for_synch =
-						(params->stf_start_time -
+					int frame_count_for_synch_rx_restart =
+						((params->stf_start_time -
 						 rf_tool_data.rx_metrics
 							 .first_rx_mdm_op_frame_time) /
-						rf_tool_data.frame_len_mdmticks;
+						rf_tool_data.frame_len_mdmticks);
+
+					if (frame_count_for_synch_rx_restart < 0) {
+						frame_count_for_synch_rx_restart = 0;
+					} else {
+					}
+					rf_tool_data.frame_count_for_synch_rx_restart =
+						frame_count_for_synch_rx_restart;
 				}
 			}
 			break;
@@ -869,11 +920,11 @@ static int dect_phy_rf_tool_rx_op_schedule(uint64_t frame_time, uint32_t interva
 	list_item_conf->interval_mdm_ticks = interval_mdm_ticks;
 	list_item_conf->channel = cmd_params->channel;
 	list_item_conf->frame_time = frame_time;
+	list_item_conf->length_slots = 0;
 	list_item_conf->start_slot = 0;
-	list_item_conf->start_subslot = cmd_params->rx_frame_start_offset;
 
 	list_item_conf->subslot_used = true;
-	list_item_conf->length_slots = 0;
+	list_item_conf->start_subslot = cmd_params->rx_frame_start_offset;
 	list_item_conf->length_subslots = cmd_params->rx_subslot_count;
 	list_item_conf->rx.duration = 0;
 
@@ -921,7 +972,7 @@ static int dect_phy_rf_tool_rx_op_schedule(uint64_t frame_time, uint32_t interva
 	return ret;
 }
 
-static int dect_phy_rf_tool_tx_op_schedule(uint64_t start_time, uint32_t interval_mdm_ticks)
+static int dect_phy_rf_tool_tx_op_schedule(uint64_t frame_time, uint32_t interval_mdm_ticks)
 {
 	struct dect_phy_api_scheduler_list_item_config *list_item_conf;
 	struct dect_phy_api_scheduler_list_item *list_item =
@@ -947,15 +998,17 @@ static int dect_phy_rf_tool_tx_op_schedule(uint64_t start_time, uint32_t interva
 	list_item_conf->interval_mdm_ticks = interval_mdm_ticks;
 
 	list_item_conf->channel = cmd_params->channel;
-	list_item_conf->frame_time = start_time;
-	list_item_conf->subslot_used = true;
+	list_item_conf->frame_time = frame_time;
 	list_item_conf->start_slot = 0;
-	list_item_conf->start_subslot = cmd_params->tx_frame_start_offset;
-
 	list_item_conf->length_slots = 0;
+
+	list_item_conf->subslot_used = true;
+	list_item_conf->start_subslot = cmd_params->tx_frame_start_offset;
 	list_item_conf->length_subslots = cmd_params->tx_subslot_count;
 
-	list_item_conf->tx.phy_lbt_period = 0;
+	list_item_conf->tx.phy_lbt_period = cmd_params->tx_lbt_period_symbols *
+		NRF_MODEM_DECT_SYMBOL_DURATION;
+	list_item_conf->tx.phy_lbt_rssi_threshold_max = cmd_params->tx_lbt_rssi_busy_threshold_dbm;
 
 	list_item->priority = DECT_PRIORITY1_TX;
 
@@ -1075,7 +1128,7 @@ static int dect_phy_rf_tool_start(struct dect_phy_rf_tool_params *params, bool r
 	if (!restart) {
 		memset(&rf_tool_data, 0, sizeof(struct dect_phy_rf_tool_tool_data));
 	}
-	rf_tool_data.frame_count_for_synch = 0;
+	rf_tool_data.frame_count_for_synch_rx_restart = 0;
 	memset(&rf_tool_data.tx_metrics, 0, sizeof(rf_tool_data.tx_metrics));
 	memset(&rf_tool_data.rx_metrics, 0, sizeof(rf_tool_data.rx_metrics));
 	rf_tool_data.rx_metrics.rx_rssi_high_level = -127;
@@ -1304,7 +1357,7 @@ static void dect_phy_rf_tool_start_print(void)
 			desh_print("  Peer mode:                   %s",
 				   dect_phy_rf_tool_test_mode_string_get(params->peer_mode));
 			desh_print("  Frame Repeat Count:          %d", params->frame_repeat_count);
-			desh_print("  Frame length (in subslots):  %" PRIu64 "",
+			desh_print("  Frame length (in subslots):  %d",
 				   rf_tool_data.frame_len_subslots);
 			desh_print("  Frame length (in mdm ticks): %" PRIu64 "",
 				   rf_tool_data.frame_len_mdmticks);
@@ -1317,7 +1370,7 @@ static void dect_phy_rf_tool_start_print(void)
 	} else {
 		desh_print("  Destination Transmitter ID:  %d", params->destination_transmitter_id);
 		desh_print("  Frame Repeat Count:          %d", params->frame_repeat_count);
-		desh_print("  Frame length (in subslots):  %" PRIu64 "",
+		desh_print("  Frame length (in subslots):  %d",
 			   rf_tool_data.frame_len_subslots);
 		desh_print("  Frame length (in mdm ticks): %" PRIu64 "",
 			   rf_tool_data.frame_len_mdmticks);
@@ -1335,6 +1388,20 @@ static void dect_phy_rf_tool_start_print(void)
 		}
 		if (params->mode == DECT_PHY_RF_TOOL_MODE_TX ||
 		    params->mode == DECT_PHY_RF_TOOL_MODE_RX_TX) {
+			if (params->tx_lbt_period_symbols > 0) {
+				desh_print("  TX LBT Period (in symbols):  %d",
+					   params->tx_lbt_period_symbols);
+				desh_print("  TX LBT Period (in ticks):    %d",
+					   params->tx_lbt_period_symbols *
+					   NRF_MODEM_DECT_SYMBOL_DURATION);
+				desh_print("  TX LBT Period (in subslots): %.04f",
+					   (double)(params->tx_lbt_period_symbols *
+						NRF_MODEM_DECT_SYMBOL_DURATION) /
+						DECT_RADIO_SUBSLOT_DURATION_IN_MODEM_TICKS);
+
+			} else {
+				desh_print("  TX LBT Period:                Disabled");
+			}
 			desh_print("  TX Power (dBm):              %d", params->tx_power_dbm);
 			desh_print("  TX data length (in bytes):   %d",
 				   rf_tool_data.scheduler_tx_data.tx_data_len);
