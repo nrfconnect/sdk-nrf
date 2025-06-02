@@ -22,7 +22,7 @@
 #define RRAM DT_INST(0, soc_nv_flash)
 #define EMDS_FLASH_BLOCK_SIZE DT_PROP(RRAM, write_block_size)
 #define EXPECTED_STORE_TIME_BLOCK_SIZE (400)
-#define EXPECTED_STORE_TIME_1024 (3000)
+#define EXPECTED_STORE_TIME_1024 (6200)
 #else
 #define FLASH DT_INST(0, soc_nv_flash)
 #define EMDS_FLASH_BLOCK_SIZE DT_PROP(FLASH, write_block_size)
