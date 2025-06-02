@@ -14,6 +14,7 @@
 #include <sicrypto/sicrypto.h>
 #include <sicrypto/rsaes_pkcs1v15.h>
 #include <silexpk/blinding.h>
+#include <cracen_psa_rsa_encryption.h>
 
 static bool is_alg_supported(psa_algorithm_t alg)
 {
@@ -32,9 +33,6 @@ static bool is_alg_supported(psa_algorithm_t alg)
 	return false;
 }
 
-/* Use a define to fix a line wrap formatting compliance issue */
-#define WORKMEM_SIZE (PSA_BITS_TO_BYTES(PSA_MAX_RSA_KEY_BITS) + PSA_HASH_MAX_SIZE + 4)
-
 static psa_status_t
 cracen_asymmetric_crypt_internal(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
 				 size_t key_buffer_size, psa_algorithm_t alg, const uint8_t *input,
@@ -43,10 +41,9 @@ cracen_asymmetric_crypt_internal(const psa_key_attributes_t *attributes, const u
 				 enum cipher_operation dir)
 {
 #if PSA_MAX_RSA_KEY_BITS > 0
-	psa_status_t status = PSA_SUCCESS;
-	struct sitask t;
+	psa_status_t status;
 	const struct sxhashalg *hashalg;
-	struct si_rsa_key pubkey;
+	struct cracen_rsa_key pubkey;
 	struct sx_buf modulus;
 	struct sx_buf exponent;
 
@@ -54,20 +51,16 @@ cracen_asymmetric_crypt_internal(const psa_key_attributes_t *attributes, const u
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	int si_status = cracen_signature_get_rsa_key(
+	int sx_status = cracen_signature_get_rsa_key(
 		&pubkey, dir == CRACEN_ENCRYPT,
 		psa_get_key_type(attributes) == PSA_KEY_TYPE_RSA_KEY_PAIR, key_buffer,
 		key_buffer_size, &modulus, &exponent);
 
-	if (si_status != SX_OK) {
-		return silex_statuscodes_to_psa(si_status);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	struct si_ase_text text = {(char *)input, input_length};
-
-	char workmem[WORKMEM_SIZE] = {};
-
-	si_task_init(&t, workmem, sizeof(workmem));
+	struct cracen_crypt_text text = {(char *)input, input_length};
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_RSA_OAEP)) {
 		if (PSA_ALG_IS_RSA_OAEP(alg)) {
@@ -79,9 +72,11 @@ cracen_asymmetric_crypt_internal(const psa_key_attributes_t *attributes, const u
 			struct sx_buf label = {salt_length, (char *)salt};
 
 			if (dir == CRACEN_ENCRYPT) {
-				si_ase_create_rsa_oaep_encrypt(&t, hashalg, &pubkey, &text, &label);
+				sx_status = cracen_rsa_oaep_encrypt(hashalg, &pubkey, &text, &label,
+								    output, output_length);
 			} else {
-				si_ase_create_rsa_oaep_decrypt(&t, hashalg, &pubkey, &text, &label);
+				sx_status = cracen_rsa_oaep_decrypt(hashalg, &pubkey, &text, &label,
+								    output, output_length);
 			}
 		}
 	}
@@ -89,33 +84,22 @@ cracen_asymmetric_crypt_internal(const psa_key_attributes_t *attributes, const u
 	if (IS_ENABLED(PSA_NEED_CRACEN_RSA_PKCS1V15_CRYPT)) {
 		if (alg == PSA_ALG_RSA_PKCS1V15_CRYPT) {
 			if (dir == CRACEN_ENCRYPT) {
-				si_ase_create_rsa_pkcs1v15_encrypt(&t, &pubkey, &text);
+				sx_status = cracen_rsa_pkcs1v15_encrypt(&pubkey, &text, output,
+									output_length);
 			} else {
-				si_ase_create_rsa_pkcs1v15_decrypt(&t, &pubkey, &text);
+				sx_status = cracen_rsa_pkcs1v15_decrypt(&pubkey, &text, output,
+									output_length);
 			}
 		}
 	}
 
-	si_task_run(&t);
-
-	si_status = si_task_wait(&t);
-
-	if (si_status != SX_OK) {
-		status = silex_statuscodes_to_psa(si_status);
-		goto exit;
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
 	}
-
 	if (text.sz > output_size) {
-		status = PSA_ERROR_BUFFER_TOO_SMALL;
-		goto exit;
+		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
-
-	memcpy(output, text.addr, text.sz);
-	*output_length = text.sz;
-
-exit:
-	safe_memzero(workmem, sizeof(workmem));
-	return status;
+	return PSA_SUCCESS;
 #else
 	return PSA_ERROR_NOT_SUPPORTED;
 #endif /* PSA_MAX_RSA_KEY_BITS > 0 */
