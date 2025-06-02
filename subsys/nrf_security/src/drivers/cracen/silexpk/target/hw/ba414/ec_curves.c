@@ -9,6 +9,7 @@
 #include "../../target/hw/ba414/regs_commands.h"
 #include <silexpk/core.h>
 #include <string.h>
+#include <zephyr/sys/util.h>
 
 #define SX_MAX(p, q) ((p >= q) ? p : q)
 
@@ -484,11 +485,15 @@ int sx_pk_count_curve_params(const struct sx_pk_ecurve *curve)
 	if (curve->params == NULL) {
 		return 0;
 	}
-	if (curve->params == params_x448) {
-		return 2;
+	if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_448)) {
+		if (curve->params == params_x448) {
+			return 2;
+		}
 	}
-	if (curve->params == (char *)params_ed448) {
-		return 5;
+	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_MONTGOMERY_448)) {
+		if (curve->params == (char *)params_ed448) {
+			return 5;
+		}
 	}
 	return 6;
 }
