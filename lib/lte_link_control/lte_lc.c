@@ -26,8 +26,6 @@
 #include "modules/ncellmeas.h"
 #include "modules/periodicsearchconf.h"
 #include "modules/psm.h"
-#include "modules/redmob.h"
-#include "modules/xfactoryreset.h"
 #include "modules/xmodemsleep.h"
 #include "modules/xsystemmode.h"
 #include "modules/xt3412.h"
@@ -214,21 +212,6 @@ int lte_lc_periodic_search_request(void)
 int lte_lc_periodic_search_get(struct lte_lc_periodic_search_cfg *const cfg)
 {
 	return periodicsearchconf_get(cfg);
-}
-
-int lte_lc_reduced_mobility_get(enum lte_lc_reduced_mobility_mode *mode)
-{
-	return redmob_get(mode);
-}
-
-int lte_lc_reduced_mobility_set(enum lte_lc_reduced_mobility_mode mode)
-{
-	return redmob_set(mode);
-}
-
-int lte_lc_factory_reset(enum lte_lc_factory_reset_type type)
-{
-	return xfactoryreset_reset(type);
 }
 
 static int lte_lc_sys_init(void)

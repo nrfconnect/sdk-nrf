@@ -669,25 +669,6 @@ enum lte_lc_ce_level {
 	LTE_LC_CE_LEVEL_UNKNOWN	= UINT8_MAX,
 };
 
-/** Reduced mobility mode.
- *
- *  @deprecated since v2.8.0.
- */
-enum lte_lc_reduced_mobility_mode {
-	/** Functionality according to the 3GPP relaxed monitoring feature. */
-	LTE_LC_REDUCED_MOBILITY_DEFAULT = 0,
-
-	/** Enable Nordic-proprietary reduced mobility feature. */
-	LTE_LC_REDUCED_MOBILITY_NORDIC = 1,
-
-	/**
-	 * Full measurements for best possible mobility.
-	 *
-	 * Disable the 3GPP relaxed monitoring and Nordic-proprietary reduced mobility features.
-	 */
-	LTE_LC_REDUCED_MOBILITY_DISABLED = 2,
-};
-
 /** Modem domain events. */
 enum lte_lc_modem_evt {
 	/**
@@ -760,19 +741,6 @@ enum lte_lc_modem_evt {
 	 * @note This event is only supported by modem firmware versions >= 2.0.0.
 	 */
 	LTE_LC_MODEM_EVT_CE_LEVEL_3,
-};
-
-/**
- * Type of factory reset to perform.
- *
- * @deprecated since v2.8.0.
- */
-enum lte_lc_factory_reset_type {
-	/** Reset all modem data to factory settings. */
-	LTE_LC_FACTORY_RESET_ALL = 0,
-
-	/** Reset user-configurable data to factory settings. */
-	LTE_LC_FACTORY_RESET_USER = 1,
 };
 
 /** RAI configuration. */
@@ -1203,22 +1171,6 @@ struct lte_lc_cfun_cb {
 	void (*callback)(enum lte_lc_func_mode, void *ctx);
 	void *context;
 };
-
-/**
- * Define a callback for functional mode changes through lte_lc_func_mode_set().
- *
- * @param name Callback name.
- * @param _callback Callback function.
- * @param _context User-defined context.
- *
- * @deprecated since v2.8.0, use @ref NRF_MODEM_LIB_ON_CFUN instead.
- */
-#define LTE_LC_ON_CFUN(name, _callback, _context)                                                  \
-	static void _callback(enum lte_lc_func_mode, void *ctx);                                   \
-	STRUCT_SECTION_ITERABLE(lte_lc_cfun_cb, lte_lc_cfun_cb_##name) = {                         \
-		.callback = _callback,                                                             \
-		.context = _context,                                                               \
-	};
 
 /** LTE event. */
 struct lte_lc_evt {
@@ -1826,51 +1778,6 @@ int lte_lc_periodic_search_clear(void);
  * @retval -EFAULT if an AT command could not be sent to the modem.
  */
 int lte_lc_periodic_search_request(void);
-
-/**
- * Read the current reduced mobility mode.
- *
- * @note This feature is only supported by modem firmware versions >= 1.3.2.
- *
- * @param[out] mode Reduced mobility mode.
- *
- * @retval 0 if a mode was found and written to the provided pointer.
- * @retval -EINVAL if input parameter was @c NULL.
- * @retval -EFAULT if an AT command failed.
- *
- * @deprecated since v2.8.0.
- */
-int lte_lc_reduced_mobility_get(enum lte_lc_reduced_mobility_mode *mode);
-
-/**
- * Set reduced mobility mode.
- *
- * @note This feature is only supported by modem firmware versions >= 1.3.2.
- *
- * @param[in] mode Reduced mobility mode.
- *
- * @retval 0 if the new reduced mobility mode was accepted by the modem.
- * @retval -EFAULT if an AT command failed.
- *
- * @deprecated since v2.8.0.
- */
-int lte_lc_reduced_mobility_set(enum lte_lc_reduced_mobility_mode mode);
-
-/**
- * Reset modem to factory settings.
- *
- * This operation is allowed only when the modem is not activated.
- *
- * @note This feature is only supported by modem firmware versions >= 1.3.0.
- *
- * @param[in] type Factory reset type.
- *
- * @retval 0 if factory reset was performed successfully.
- * @retval -EFAULT if an AT command failed.
- *
- * @deprecated since v2.8.0.
- */
-int lte_lc_factory_reset(enum lte_lc_factory_reset_type type);
 
 /** @} */
 
