@@ -207,6 +207,7 @@
 /doc/nrf/libraries/others/flash_map_pm.rst @nrfconnect/ncs-pluto-doc
 /doc/nrf/libraries/others/hw_id.rst       @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/others/index.rst       @nrfconnect/ncs-doc-leads
+/doc/nrf/libraries/others/log_rpc.rst     @nrfconnect/ncs-terahertz-doc
 /doc/nrf/libraries/others/network_core_monitor.rst @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/libraries/others/nrf_compression.rst @nrfconnect/ncs-vestavind-doc
 /doc/nrf/libraries/others/nrf_profiler.rst @nrfconnect/ncs-si-bluebagel-doc
