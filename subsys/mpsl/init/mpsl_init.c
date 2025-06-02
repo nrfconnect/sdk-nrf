@@ -21,6 +21,7 @@
 #endif
 #if IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF54LX)
 #include <nrfx_power.h>
+#include <zephyr/drivers/clock_control/nrf_clock_control.h>
 #endif
 #if defined(CONFIG_SOC_SERIES_NRF54HX)
 #include <hal/nrf_dppi.h>
@@ -446,7 +447,9 @@ static int32_t mpsl_lib_init_internal(void)
 	}
 
 #if !defined(CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL)
-	mpsl_clock_hfclk_latency_set(CONFIG_MPSL_HFCLK_LATENCY);
+	uint32_t clock_latency_us = z_nrf_clock_bt_ctlr_hf_get_startup_time_us();
+
+	mpsl_clock_hfclk_latency_set(clock_latency_us);
 #endif /* !CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL */
 	if (IS_ENABLED(CONFIG_SOC_NRF_FORCE_CONSTLAT) &&
 		!IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF54LX)) {
