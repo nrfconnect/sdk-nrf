@@ -23,9 +23,9 @@ LOG_MODULE_REGISTER(rest_client, CONFIG_REST_CLIENT_LOG_LEVEL);
 
 #define HTTP_PROTOCOL "HTTP/1.1"
 
-static void rest_client_http_response_cb(struct http_response *rsp,
-					  enum http_final_call final_data,
-					  void *user_data)
+static int rest_client_http_response_cb(struct http_response *rsp,
+					enum http_final_call final_data,
+					void *user_data)
 {
 	struct rest_client_resp_context *resp_ctx = NULL;
 
@@ -50,7 +50,7 @@ static void rest_client_http_response_cb(struct http_response *rsp,
 	} else if (final_data == HTTP_DATA_FINAL) {
 		if (!resp_ctx) {
 			LOG_WRN("REST response context not provided");
-			return;
+			return 0;
 		}
 		resp_ctx->http_status_code = rsp->http_status_code;
 		resp_ctx->response_len = rsp->processed;
@@ -62,6 +62,8 @@ static void rest_client_http_response_cb(struct http_response *rsp,
 			rsp->http_status_code,
 			rsp->http_status);
 	}
+
+	return 0;
 }
 
 static int rest_client_sckt_tls_setup(int fd, const char *const tls_hostname,
