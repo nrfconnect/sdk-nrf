@@ -17,6 +17,7 @@
 #include <string.h>
 #include <silexpk/core.h>
 #include <silexpk/iomem.h>
+#include <silexpk/ec_curves.h>
 #include <sxsymcrypt/hash.h>
 #include <sxsymcrypt/hashdefs.h>
 #include <silexpk/ik.h>
@@ -48,7 +49,7 @@ static void digest2op(const uint8_t *digest, size_t sz, uint8_t *dst, size_t ops
 	sx_wrpkmem(dst, digest, opsz);
 }
 
-static void ecdsa_read_sig(struct cracen_ecdsa_signature *sig, const uint8_t *r, const uint8_t *s,
+static void ecdsa_read_sig(struct cracen_signature *sig, const uint8_t *r, const uint8_t *s,
 			   size_t opsz)
 {
 	sx_rdpkmem(sig->r, r, opsz);
@@ -106,7 +107,7 @@ int cracen_ikg_sign_digest(int identity_key_index, const struct sxhashalg *hasha
 	size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
 	const uint8_t *curve_n;
 	uint8_t workmem[digestsz];
-	struct cracen_ecdsa_signature internal_signature = {0};
+	struct cracen_signature internal_signature = {0};
 
 	memcpy(workmem, digest, digest_length);
 	curve_n = sx_pk_curve_order(curve);
