@@ -14,6 +14,10 @@
 #include "link_shell_print.h"
 #include "mosh_print.h"
 
+#define REDUCED_MOBILITY_DEFAULT	0
+#define REDUCED_MOBILITY_NORDIC		1
+#define REDUCED_MOBILITY_DISABLED	2
+
 const char *link_shell_print_sleep_time_to_string(uint64_t sleep_time, char *out_str_buff)
 {
 	if (sleep_time == -1) {
@@ -139,9 +143,9 @@ const char *link_shell_funmode_to_string(int funmode, char *out_str_buff)
 const char *link_shell_redmob_mode_to_string(int funmode, char *out_str_buff)
 {
 	struct mapping_tbl_item const mapping_table[] = {
-		{ LTE_LC_REDUCED_MOBILITY_DEFAULT, "default" },
-		{ LTE_LC_REDUCED_MOBILITY_NORDIC, "nordic" },
-		{ LTE_LC_REDUCED_MOBILITY_DISABLED, "disabled" },
+		{ REDUCED_MOBILITY_DEFAULT, "default" },
+		{ REDUCED_MOBILITY_NORDIC, "nordic" },
+		{ REDUCED_MOBILITY_DISABLED, "disabled" },
 		{ -1, NULL }
 	};
 
