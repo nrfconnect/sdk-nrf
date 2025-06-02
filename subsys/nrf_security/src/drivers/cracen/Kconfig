@@ -63,6 +63,14 @@ config CRACEN_IKG_SEED_KMU_SLOT
 	  This defines the KMU slot (along with the two following it) to which
 	  the IKG seed is provisioned and that is pushed when loading the IKG seed.
 
+config CRACEN_USE_INTERRUPTS
+	bool "Use cracen with interrupts"
+	default y
+	help
+	  Run CRACEN using supported interrupts.
+	  If this is turned off CRACEN uses active polling instead,
+	  which may have an impact on performance.
+
 rsource 'psa_driver.Kconfig'
 
 endif # PSA_CRYPTO_DRIVER_CRACEN
