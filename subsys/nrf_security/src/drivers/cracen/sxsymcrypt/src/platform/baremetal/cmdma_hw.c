@@ -26,6 +26,16 @@
 
 NRF_SECURITY_MUTEX_DEFINE(cracen_mutex_symmetric);
 
+static void sx_hw_enable_interrupts(void)
+{
+	/* Enable CryptoMaster interrupts. */
+	sx_wrreg(REG_INT_EN, 0);
+	sx_wrreg(REG_INT_STATCLR, ~0);
+	sx_wrreg(REG_INT_EN, CMDMA_INTMASK_EN);
+	/* Enable interrupts in the wrapper. */
+	nrf_cracen_int_enable(NRF_CRACEN, CRACEN_ENABLE_CRYPTOMASTER_Msk);
+}
+
 void sx_hw_reserve(struct sx_dmactl *dma)
 {
 	cracen_acquire();
@@ -34,14 +44,9 @@ void sx_hw_reserve(struct sx_dmactl *dma)
 	if (dma) {
 		dma->hw_acquired = true;
 	}
-
-	/* Enable CryptoMaster interrupts. */
-	sx_wrreg(REG_INT_EN, 0);
-	sx_wrreg(REG_INT_STATCLR, ~0);
-	sx_wrreg(REG_INT_EN, CMDMA_INTMASK_EN);
-
-	/* Enable interrupts in the wrapper. */
-	nrf_cracen_int_enable(NRF_CRACEN, CRACEN_ENABLE_CRYPTOMASTER_Msk);
+	if (IS_ENABLED(CONFIG_CRACEN_USE_INTERRUPTS)) {
+		sx_hw_enable_interrupts();
+	}
 }
 
 void sx_cmdma_release_hw(struct sx_dmactl *dma)

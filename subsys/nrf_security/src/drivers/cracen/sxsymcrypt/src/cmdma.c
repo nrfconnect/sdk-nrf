@@ -70,7 +70,19 @@ void sx_cmdma_start(struct sx_dmactl *dma, size_t privsz, struct sxdesc *indescs
 	sx_wrreg(REG_START, REG_START_ALL);
 }
 
-int sx_cmdma_check(void)
+bool cmdma_is_busy(void)
+{
+	return (bool)(sx_rdreg(REG_STATUS) & REG_STATUS_BUSY_MASK);
+}
+
+static int sx_cmdma_check_with_polling(void)
+{
+	while (cmdma_is_busy()) {
+	}
+	return SX_OK;
+}
+
+static int sx_cmdma_check_with_interrupts(void)
 {
 	uint32_t r = 0xFF;
 	uint32_t busy;
@@ -79,7 +91,6 @@ int sx_cmdma_check(void)
 	if (!r) {
 		r = sx_rdreg(REG_INT_STATRAW);
 	}
-
 	busy = sx_rdreg(REG_STATUS) & REG_STATUS_BUSY_MASK;
 
 	if (r & (DMA_BUS_FETCHER_ERROR_MASK | DMA_BUS_PUSHER_ERROR_MASK)) {
@@ -93,6 +104,15 @@ int sx_cmdma_check(void)
 	sx_wrreg(REG_INT_STATCLR, ~0);
 
 	return SX_OK;
+}
+
+int sx_cmdma_check(void)
+{
+	if (IS_ENABLED(CRACEN_USE_INTERRUPTS)) {
+		return sx_cmdma_check_with_interrupts();
+	} else {
+		return sx_cmdma_check_with_polling();
+	}
 }
 
 void sx_cmdma_reset(void)
