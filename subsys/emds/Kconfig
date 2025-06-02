@@ -75,6 +75,18 @@ config EMDS_FLASH_TIME_BASE_OVERHEAD_US
 	   datasheet.
 	   For RRAM-based persistent memory driver, use ERASEPROTECT and disregard the SOC_FLASH_NRF_PARTIAL_ERASE_MS parameter.
 
+if SOC_FLASH_NRF_RRAM
+
+config EMDS_RRAM_WRITE_BUFFER_SIZE
+	int "Internal write-buffer size"
+	default 1
+	range 1 32
+	help
+	  Number of 128-bit words.
+	  Maximum buffer size can be configured to the value of 32 (128-bit words).
+
+endif # SOC_FLASH_NRF_RRAM
+
 module = EMDS
 module-str = emergency data storage
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

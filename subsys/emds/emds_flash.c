@@ -20,7 +20,9 @@
 #define RRAM_START            DT_REG_ADDR(RRAM)
 #define RRAM_SIZE             DT_REG_SIZE(RRAM)
 #define EMDS_FLASH_BLOCK_SIZE DT_PROP(RRAM, write_block_size)
-#define WRITE_BUFFER_SIZE     NRF_RRAMC_CONFIG_WRITE_BUFF_SIZE_MAX
+#define WRITE_BUFFER_SIZE     CONFIG_EMDS_RRAM_WRITE_BUFFER_SIZE /* in 128-bits words */
+#define WRITE_LINE_SIZE       16 /* In bytes, one line is 128 bits. */
+#define WRITE_BUFFER_SIZE_IN_BYTES (WRITE_BUFFER_SIZE * WRITE_LINE_SIZE)
 #else
 #include <nrfx_nvmc.h>
 #define FLASH                 DT_INST(0, soc_nv_flash)
@@ -145,7 +147,7 @@ static void commit_changes(size_t len)
 		return;
 	}
 
-	if ((len % WRITE_BUFFER_SIZE) == 0) {
+	if ((len % WRITE_BUFFER_SIZE_IN_BYTES) == 0) {
 		/* Our last operation was buffer size-aligned, so we're done. */
 		return;
 	}
