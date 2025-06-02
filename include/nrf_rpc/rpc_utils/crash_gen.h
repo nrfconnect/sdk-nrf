@@ -9,8 +9,14 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
- * @defgroup nrf_rpc_crash_gen nRF RPC crash generator.
+ * @addtogroup nrf_rpc_utils nRF RPC utility commands
+ * @{
+ * @defgroup nrf_rpc_crash_gen nRF RPC crash generator
  * @{
  * @brief nRF RPC crash generator functions.
  *
@@ -36,9 +42,13 @@ void nrf_rpc_crash_hard_fault(uint32_t delay_ms);
  */
 void nrf_rpc_crash_gen_stack_overflow(uint32_t delay_ms);
 
-
 /**
  * @}
+ * @}
  */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* NRF_RPC_CRASH_GEN_H_ */

@@ -4,82 +4,49 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menuconfig NRF_RPC_DEV_INFO
-	bool "nRF RPC device information functionalities"
-	depends on NRF_RPC
-	depends on NRF_RPC_CBOR
+menuconfig NRF_RPC_UTILS
+	bool "nRF RPC utility commands [EXPERIMENTAL]"
+	select NRF_RPC_CBOR
+	select EXPERIMENTAL
 	help
-	  nRF RPC device information functionalities
+	  Enables the "umbrella" library, which implements miscellaneous RPC
+	  commands that are too distinct from other commands to be grouped into
+	  more specific command libraries.
 
-if NRF_RPC_DEV_INFO
+if NRF_RPC_UTILS
 
-choice NRF_RPC_DEV_INFO_ROLE_CHOICE
-	prompt "nRF RPC device information role selection"
-	default NRF_RPC_DEV_INFO_CLIENT
-	help
-	  nRF RPC device information role selection
+choice NRF_RPC_UTILS_ROLE_CHOICE
+	prompt "nRF RPC utilities role selection"
+	default NRF_RPC_UTILS_CLIENT
 
-config NRF_RPC_DEV_INFO_SERVER
-	bool "nRF RPC device information server role"
-	help
-	  Enable nRF RPC device information server role.
+config NRF_RPC_UTILS_CLIENT
+	bool "Client"
 
-config NRF_RPC_DEV_INFO_CLIENT
-	bool "nRF RPC device information client role"
-	help
-	  Enable nRF RPC device information client role.
+config NRF_RPC_UTILS_SERVER
+	bool "Server"
 
 endchoice
 
-endif # NRF_RPC_DEV_INFO
-
-menuconfig NRF_RPC_CRASH_GEN
-	bool "nRF RPC crash generator"
-	depends on NRF_RPC
-	depends on NRF_RPC_CBOR
+config NRF_RPC_UTILS_DEV_INFO
+	bool "Device information"
 	help
-	  nRF RPC crash generating functionalities
+	  Enables nRF RPC commands for retrieving the remote device traits,
+	  such as the firmware version.
 
-if NRF_RPC_CRASH_GEN
-
-choice NRF_RPC_CRASH_GEN_ROLE_CHOICE
-	prompt "nRF RPC crash generator role selection"
-	default NRF_RPC_CRASH_GEN_CLIENT
-	help
-	  nRF RPC crash generator role selection
-
-config NRF_RPC_CRASH_GEN_SERVER
-	bool "nRF RPC crash generator server role"
-	help
-	  Enable nRF RPC crash generator server role.
-
-config NRF_RPC_CRASH_GEN_CLIENT
-	bool "nRF RPC crash generator client role"
-	help
-	  Enable nRF RPC crash generator client role.
-
-endchoice
-
-endif # NRF_RPC_CRASH_GEN
-
-if NRF_RPC_DEV_INFO || NRF_RPC_CRASH_GEN
-
-config RPC_UTILS_INITIALIZE_NRF_RPC
-	bool "Automatically initialize nRF RPC library"
-	help
-	  Initialize nRF RPC library during the system startup. Disabling this
-	  option allow user to initialize it in a different way.
-
-config NRF_RPC_REMOTE_SHELL
+config NRF_RPC_UTILS_REMOTE_SHELL
 	bool "Remote shell"
-	depends on NRF_RPC_DEV_INFO_SERVER
-	select SHELL
-	select SHELL_BACKEND_DUMMY
-	default y
+	select SHELL if NRF_RPC_UTILS_SERVER
+	select SHELL_BACKEND_DUMMY if NRF_RPC_UTILS_SERVER
 	help
-	  Enable access to remote shell via NRF_RPC.
+	  Enables nRF RPC command for executing a shell command on the remote
+	  device and getting its output.
+
+config NRF_RPC_UTILS_CRASH_GEN
+	bool "Crash generator"
+	help
+	  Enables commands for generating a crash on the remote device.
 
 config SHELL_BACKEND_DUMMY_BUF_SIZE
-	default 1024 if NRF_RPC_REMOTE_SHELL
+	default 1024 if NRF_RPC_UTILS_REMOTE_SHELL && NRF_RPC_UTILS_SERVER
 
-endif
+endif # NRF_RPC_UTILS

@@ -1,5 +1,5 @@
 tests:
-  nrf_rpc.dev_info.server:
+  nrf_rpc.rpc_utils.server:
     sysbuild: true
     platform_allow: native_sim
     tags:

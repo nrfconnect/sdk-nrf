@@ -5,11 +5,5 @@
 #
 
 add_subdirectory(common)
-
-if(DEFINED CONFIG_NRF_RPC_DEV_INFO_CLIENT OR DEFINED NRF_RPC_CRASH_GEN_CLIENT)
-  add_subdirectory(client)
-endif()
-
-if(DEFINED CONFIG_NRF_RPC_DEV_INFO_SERVER OR DEFINED NRF_RPC_CRASH_GEN_SERVER)
-  add_subdirectory(server)
-endif()
+add_subdirectory_ifdef(CONFIG_NRF_RPC_UTILS_CLIENT client)
+add_subdirectory_ifdef(CONFIG_NRF_RPC_UTILS_SERVER server)

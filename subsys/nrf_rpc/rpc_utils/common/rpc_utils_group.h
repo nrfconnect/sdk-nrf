@@ -4,8 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef DEV_INFO_RPC_IDS_H_
-#define DEV_INFO_RPC_IDS_H_
+#ifndef RPC_UTILS_GROUP_H_
+#define RPC_UTILS_GROUP_H_
+
+#include <nrf_rpc.h>
+
+NRF_RPC_GROUP_DECLARE(rpc_utils_group);
 
 /** @brief Command IDs accepted by RPC utils server.
  */
@@ -17,4 +21,4 @@ enum rpc_utils_cmd_server {
 	RPC_UTIL_CRASH_GEN_STACK_OVERFLOW = 4,
 };
 
-#endif /* DEV_INFO_RPC_IDS_H_ */
+#endif /* RPC_UTILS_GROUP_H_ */
