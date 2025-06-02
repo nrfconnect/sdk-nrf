@@ -717,4 +717,4 @@ cJSON
 Documentation
 =============
 
-|no_changes_yet_note|
+* Added the :ref:`log_rpc` library documentation page.
