@@ -7,5 +7,5 @@
 zephyr_library()
 
 zephyr_library_sources(
-  rpc_utils.c
+  rpc_utils_group.c
 )

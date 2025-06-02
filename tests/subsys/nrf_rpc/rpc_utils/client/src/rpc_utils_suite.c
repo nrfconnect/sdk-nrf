@@ -9,8 +9,9 @@
 #include <mock_nrf_rpc_transport.h>
 #include <test_rpc_env.h>
 
-#include <rpc_utils_ids.h>
-#include <nrf_rpc/nrf_rpc_dev_info.h>
+#include <rpc_utils_group.h>
+#include <nrf_rpc/rpc_utils/dev_info.h>
+#include <nrf_rpc/rpc_utils/remote_shell.h>
 
 #include <zephyr/kernel.h>
 #include <zephyr/ztest.h>
@@ -27,7 +28,7 @@ static void tc_setup(void *f)
 	mock_nrf_rpc_tr_expect_reset();
 }
 
-ZTEST(dev_info_rpc_client, test_get_version)
+ZTEST(rpc_utils_client, test_get_version)
 {
 	const char *commit = NCS_COMMIT_STRING;
 	const char *version = 0;
@@ -40,7 +41,7 @@ ZTEST(dev_info_rpc_client, test_get_version)
 	zexpect_str_equal(commit, version);
 }
 
-ZTEST(dev_info_rpc_client, test_invoke_shell_cmd)
+ZTEST(rpc_utils_client, test_invoke_shell_cmd)
 {
 
 	const size_t argc = 2;
@@ -62,4 +63,4 @@ ZTEST(dev_info_rpc_client, test_invoke_shell_cmd)
 	}
 }
 
-ZTEST_SUITE(dev_info_rpc_client, NULL, NULL, tc_setup, NULL, NULL);
+ZTEST_SUITE(rpc_utils_client, NULL, NULL, tc_setup, NULL, NULL);
