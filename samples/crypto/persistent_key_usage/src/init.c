@@ -4,11 +4,13 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "settings/settings_file.h"
 #include <zephyr/device.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/settings/settings.h>
 
-LOG_MODULE_REGISTER(persistent_key_usage_trusted_storage, LOG_LEVEL_DBG);
+LOG_MODULE_DECLARE(persistent_key_usage, LOG_LEVEL_DBG);
+
+#ifdef CONFIG_TRUSTED_STORAGE_STORAGE_BACKEND_SETTINGS
 
 static int setup_settings_backend(void)
 {
@@ -24,7 +26,11 @@ static int setup_settings_backend(void)
 
 SYS_INIT(setup_settings_backend, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 
-#ifdef CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK
+#endif /* CONFIG_TRUSTED_STORAGE_STORAGE_BACKEND_SETTINGS */
+
+#if	defined(CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK) || \
+	defined(CONFIG_SECURE_STORAGE_ITS_TRANSFORM_AEAD_KEY_PROVIDER_HUK_LIBRARY)
+
 #include <hw_unique_key.h>
 
 #ifndef HUK_HAS_KMU
@@ -42,12 +48,12 @@ int write_huk(void)
 			return 0;
 		}
 		LOG_INF("Success!\n\n");
-#if !defined(HUK_HAS_KMU)
+#ifndef HUK_HAS_KMU
 		/* Reboot to allow the bootloader to load the key into CryptoCell. */
 		sys_reboot(0);
-#endif /* !defined(HUK_HAS_KMU) */
+#endif
 	}
 
 	return 0;
 }
-#endif /* CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_DERIVE_FROM_HUK */
+#endif

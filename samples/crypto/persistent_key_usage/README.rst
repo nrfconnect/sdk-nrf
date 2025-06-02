@@ -1,7 +1,7 @@
 .. _crypto_persistent_key:
 
-Crypto: Persistent key storage
-##############################
+Crypto: Persistent key usage
+############################
 
 .. contents::
    :local:
@@ -9,7 +9,11 @@ Crypto: Persistent key storage
 
 The persistent key sample shows how to generate a persistent key using the Platform Security Architecture (PSA) APIs.
 Persistent keys are stored in the Internal Trusted Storage (ITS) of the device and retain their value between resets.
-The ITS backend is either provided by TF-M, or the :ref:`trusted_storage_readme` library when building applications without TF-M.
+The implementation of the PSA ITS API is provided in one of the following ways, depending on your configuration:
+
+* Through TF-M using Internal Trusted Storage and Protected Storage services.
+* When building without TF-M: using either Zephyr's :ref:`secure_storage` subsystem or the :ref:`trusted_storage_readme` library.
+
 A persistent key becomes unusable when the ``psa_destroy_key`` function is called.
 
 Requirements
@@ -72,6 +76,7 @@ Dependencies
 
    * :file:`psa/crypto.h`
 
-* Builds without TF-M use the :ref:`trusted_storage_readme` library
+* Builds without TF-M use the :ref:`secure_storage` subsystem as the PSA Secure Storage API
+  provider.
 
    * The :ref:`lib_hw_unique_key` is used to encrypt the key before storing it.

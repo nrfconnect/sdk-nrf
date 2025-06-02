@@ -11,9 +11,6 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(persistent_key)
 
 target_sources(app PRIVATE
-        src/main.c
-        )
-
-target_sources_ifdef(CONFIG_TRUSTED_STORAGE app PRIVATE
-        src/trusted_storage_init.c
-        )
+  src/main.c
+  src/init.c
+)
