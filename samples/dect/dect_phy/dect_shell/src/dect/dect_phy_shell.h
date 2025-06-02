@@ -72,6 +72,10 @@ struct dect_phy_rf_tool_params {
 	enum dect_phy_rf_tool_mode peer_mode;
 	int8_t tx_power_dbm;
 	uint8_t tx_mcs;
+
+	uint8_t tx_lbt_period_symbols;
+	int8_t tx_lbt_rssi_busy_threshold_dbm;
+
 	int8_t expected_rx_rssi_level; /* Receiver gain setting */
 	bool find_rx_sync;	       /* Continuous RX until sync found and then
 					* RX part of the frame is started from received RX STF time
