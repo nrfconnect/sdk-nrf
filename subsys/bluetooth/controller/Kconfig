@@ -553,6 +553,13 @@ config BT_CTLR_CHANNEL_SOUNDING
 	help
 	  Enable Channel Sounding support.
 
+config BT_CTLR_CHANNEL_SOUNDING_TEST
+	bool "Channel Sounding test command support"
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	default y
+	help
+	  Enable Channel Sounding test command support.
+
 config BT_CTLR_SDC_CS_COUNT
 	int "Number of concurrent connections supporting CS procedures"
 	default 1
