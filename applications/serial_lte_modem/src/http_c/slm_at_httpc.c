@@ -74,9 +74,9 @@ static K_THREAD_STACK_DEFINE(httpc_thread_stack, HTTPC_THREAD_STACK_SIZE);
 
 static K_SEM_DEFINE(http_req_sem, 0, 1);
 
-static void response_cb(struct http_response *rsp,
-			enum http_final_call final_data,
-			void *user_data)
+static int response_cb(struct http_response *rsp,
+		       enum http_final_call final_data,
+		       void *user_data)
 {
 	ARG_UNUSED(user_data);
 
@@ -114,6 +114,8 @@ static void response_cb(struct http_response *rsp,
 		httpc.state = HTTPC_COMPLETE;
 	}
 	LOG_DBG("Response data received (%zd bytes)", rsp->data_len);
+
+	return 0;
 }
 
 static int headers_cb(int sock, struct http_request *req, void *user_data)
