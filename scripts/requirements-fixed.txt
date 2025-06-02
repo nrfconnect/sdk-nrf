@@ -20,6 +20,7 @@ bitarray==3.0.0 ; python_version >= "3.12" and python_version < "4.0"
 boolean-py==4.0 ; python_version >= "3.12" and python_version < "4.0" and platform_machine == "x86_64"
 canopen==2.3.0 ; python_version >= "3.12" and python_version < "4.0"
 capstone==4.0.2 ; python_version >= "3.12" and python_version < "4.0"
+
 cbor2==5.4.6 ; python_version >= "3.12" and python_version < "4.0"
 cbor==1.0.0 ; python_version >= "3.12" and python_version < "4.0"
 certifi==2024.7.4 ; python_version >= "3.12" and python_version < "4.0"
