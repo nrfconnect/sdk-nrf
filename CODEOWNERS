@@ -138,6 +138,7 @@
 /doc/nrf/libraries/dfu/                   @nrfconnect/ncs-pluto-doc
 /doc/nrf/libraries/dfu/suit_dfu.rst       @nrfconnect/ncs-charon-doc
 /doc/nrf/libraries/gazell/                @nrfconnect/ncs-si-muffin-doc
+/doc/nrf/libraries/logging/               @nrfconnect/ncs-terahertz-doc
 /doc/nrf/libraries/modem/nrf_modem_lib/   @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/modem/at_cmd_custom.rst @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/modem/at_cmd_parser.rst @nrfconnect/ncs-modem-doc
