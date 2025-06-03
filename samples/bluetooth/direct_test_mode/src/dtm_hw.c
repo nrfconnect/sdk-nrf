@@ -112,8 +112,13 @@ const int8_t nrf_power_value[] = {
 /* Run a macro 'fn' on each available DFE GPIO index, from 0 to
  * MAX_DFE_GPIO-1, with the given parenthesized separator.
  */
-#define FOR_EACH_DFE_GPIO(fn, sep) \
-	FOR_EACH(fn, sep, 0, 1, 2, 3, 4, 5, 6, 7)
+#if DTM_HW_MAX_DFE_GPIO == 8
+#define FOR_EACH_DFE_GPIO(fn, sep) FOR_EACH(fn, sep, 0, 1, 2, 3, 4, 5, 6, 7)
+#elif DTM_HW_MAX_DFE_GPIO == 7
+#define FOR_EACH_DFE_GPIO(fn, sep) FOR_EACH(fn, sep, 0, 1, 2, 3, 4, 5, 6)
+#else
+#error "Unsupported DFE GPIO count"
+#endif
 
 /* The number of dfegpio[n]-gpios properties which are set. */
 #define DFE_GPIO_NUM (FOR_EACH_DFE_GPIO(HAS_DFE_GPIO, (+)))

@@ -17,7 +17,11 @@ extern "C" {
 #endif
 
 /* Number of PSEL_DFEGPIO[n] registers in the radio peripheral. */
+#if defined(RADIO_PSEL_DFEGPIO_MaxCount)
+#define DTM_HW_MAX_DFE_GPIO RADIO_PSEL_DFEGPIO_MaxCount
+#else
 #define DTM_HW_MAX_DFE_GPIO 8
+#endif
 
 /* Indicates that GPIO pin is not connected to the radio */
 #define DTM_HW_DFE_PSEL_NOT_SET 0xFF
