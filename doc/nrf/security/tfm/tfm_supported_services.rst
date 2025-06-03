@@ -188,7 +188,7 @@ These are the main differences:
 * Logging:
 
   * The |NCS| provides enhanced :ref:`logging capabilities <ug_tfm_logging>` with options to configure UART instances.
-  * The |NCS| allows TF-M and the application to share the same UART for logging.
+    For nRF5340 and nRF91 Series devices, the |NCS| allows TF-M and the application to share the same UART for logging.
 
 * Security features:
 
