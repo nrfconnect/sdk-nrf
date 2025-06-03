@@ -44,7 +44,24 @@ config NRF_RPC_UTILS_REMOTE_SHELL
 config NRF_RPC_UTILS_CRASH_GEN
 	bool "Crash generator"
 	help
-	  Enables commands for generating a crash on the remote device.
+	  Enables nRF RPC commands for generating a crash on the remote device.
+
+config NRF_RPC_UTILS_SYSTEM_HEALTH
+	bool "System health"
+	help
+	  Enables nRF RPC commands for getting the system health information.
+
+if NRF_RPC_UTILS_SYSTEM_HEALTH && NRF_RPC_UTILS_SERVER
+
+config NRF_RPC_UTILS_WATCHDOG_PERIOD
+	int "Watchdog period (s)"
+	default 10
+	depends on NRF_RPC_UTILS_SYSTEM_HEALTH && NRF_RPC_UTILS_SERVER
+	help
+	  Configures how frequently the nRF RPC utils server kicks watched
+	  threads, and how quickly it concludes a thread is hung.
+
+endif # NRF_RPC_UTILS_SYSTEM_HEALTH && NRF_RPC_UTILS_SERVER
 
 config SHELL_BACKEND_DUMMY_BUF_SIZE
 	default 1024 if NRF_RPC_UTILS_REMOTE_SHELL && NRF_RPC_UTILS_SERVER

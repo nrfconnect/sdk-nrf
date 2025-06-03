@@ -8,6 +8,7 @@
 #include <nrf_rpc/rpc_utils/crash_gen.h>
 #include <nrf_rpc/rpc_utils/dev_info.h>
 #include <nrf_rpc/rpc_utils/remote_shell.h>
+#include <nrf_rpc/rpc_utils/system_health.h>
 
 #if defined(CONFIG_NRF_RPC_UTILS_DEV_INFO)
 static int remote_version_cmd(const struct shell *sh, size_t argc, char *argv[])
@@ -104,6 +105,19 @@ static int cmd_stack_overflow(const struct shell *sh, size_t argc, char *argv[])
 }
 #endif /* CONFIG_NRF_RPC_UTILS_CRASH_GEN */
 
+#if defined(CONFIG_NRF_RPC_UTILS_SYSTEM_HEALTH)
+static int cmd_system_health(const struct shell *sh, size_t argc, char *argv[])
+{
+	struct nrf_rpc_system_health health;
+
+	nrf_rpc_system_health_get(&health);
+
+	shell_print(sh, "Hung threads: %u", health.hung_threads);
+
+	return 0;
+}
+#endif /* CONFIG_NRF_RPC_UTILS_SYSTEM_HEALTH */
+
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	util_cmds,
 #if defined(CONFIG_NRF_RPC_UTILS_DEV_INFO)
@@ -116,6 +130,9 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(assert, NULL, "Invoke assert", cmd_assert, 1, 1),
 	SHELL_CMD_ARG(hard_fault, NULL, "Invoke hard fault", cmd_hard_fault, 1, 1),
 	SHELL_CMD_ARG(stack_overflow, NULL, "Invoke stack overflow", cmd_stack_overflow, 1, 1),
+#endif
+#if defined(CONFIG_NRF_RPC_UTILS_SYSTEM_HEALTH)
+	SHELL_CMD_ARG(system_health, NULL, "Get system health", cmd_system_health, 0, 0),
 #endif
 	SHELL_SUBCMD_SET_END);
 
