@@ -41,7 +41,7 @@ See the following documentation pages for more information:
 * The :ref:`dm_adding_code` documentation for details on the best user workflows to add your own code to the |NCS|.
 
 .. note::
-   The configuration of board files is based on the nRF54H20 common SoC files located in :file:`sdk-zephyr/dts/common/nordic/`.
+   The configuration of board files is based on the nRF54H20 common SoC files located in :file:`sdk-zephyr/dts/vendor/nordic/`.
    Each new |NCS| revision might change these files, breaking the compatibility with your custom board files created for previous revisions.
    Ensure the compatibility of your custom board files when migrating to a new |NCS| release.
 
