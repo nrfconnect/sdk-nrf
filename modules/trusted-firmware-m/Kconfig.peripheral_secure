@@ -439,8 +439,8 @@ config NRF_VMC_SECURE
 	default y
 	depends on $(dt_has_compat,$(DT_COMPAT_NORDIC_NRF_VMC))
 	help
-	  When using security by separation, the non-secure part of the application should
-	  not be able to turn off the RAM block of Trusted Firmware-M.
+	  When using TF-M, the non-secure part of the application should
+	  not be able to turn off the RAM block of TF-M.
 	  Therefore, the VMC peripheral needs to be configured as secure.
 
 endmenu # Peripheral Secure mapping
