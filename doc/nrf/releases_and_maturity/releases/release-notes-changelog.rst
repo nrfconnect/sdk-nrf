@@ -337,6 +337,11 @@ Cellular samples
 
   * Updated the sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
 
+* :ref:`nrf_cloud_rest_device_message` sample:
+
+  * Updated the sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
+  * Removed Provisioning service and JITP.
+
 Cryptography samples
 --------------------
 
