@@ -1544,7 +1544,9 @@ ci_tests_zephyr_drivers_i2s:
     - nrf/tests/zephyr/drivers/i2s/
     - zephyr/drivers/i2s/
     - zephyr/dts/bindings/i2s/
+    - zephyr/include/zephyr/drivers/i2s.h
     - zephyr/tests/drivers/i2s/
+    - nrf/tests/drivers/i2s/
 
 ci_tests_zephyr_drivers_retained_mem:
   files:
