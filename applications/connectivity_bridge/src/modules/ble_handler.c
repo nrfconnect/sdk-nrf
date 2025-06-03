@@ -7,8 +7,6 @@
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
 #include <zephyr/sys/ring_buffer.h>
-#include <zephyr/drivers/gpio.h>
-#include <zephyr/devicetree.h>
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/uuid.h>
@@ -54,11 +52,6 @@ static struct bt_gatt_exchange_params exchange_params;
 static uint32_t nus_max_send_len;
 static atomic_t ready;
 static atomic_t active;
-
-#define ZEPHYR_USER_NODE DT_PATH(zephyr_user)
-
-#define SHORT_RANGE_RF_FE_EXISTS (DT_NODE_EXISTS(ZEPHYR_USER_NODE) \
-		&& DT_NODE_HAS_PROP(ZEPHYR_USER_NODE, short_range_rf_fe_enable_gpios))
 
 static char bt_device_name[CONFIG_BT_DEVICE_NAME_MAX + 1] = CONFIG_BT_DEVICE_NAME;
 
@@ -308,38 +301,6 @@ static void bt_ready(int err)
 	}
 }
 
-static inline void short_range_rf_front_end_enable(void)
-{
-#if SHORT_RANGE_RF_FE_EXISTS
-#define RF_FE_ENABLE_FLAGS DT_GPIO_FLAGS(ZEPHYR_USER_NODE, short_range_rf_fe_enable_gpios)
-	const struct gpio_dt_spec short_range_rf_fe =
-			GPIO_DT_SPEC_GET(ZEPHYR_USER_NODE, short_range_rf_fe_enable_gpios);
-
-	int err = gpio_pin_configure_dt(&short_range_rf_fe, GPIO_OUTPUT | RF_FE_ENABLE_FLAGS);
-
-	if (err) {
-		LOG_ERR("Failed to enable short range RF front end");
-		__ASSERT_NO_MSG(false);
-	}
-#endif
-}
-
-static inline void short_range_rf_front_end_disable(void)
-{
-#if SHORT_RANGE_RF_FE_EXISTS
-	const struct gpio_dt_spec short_range_rf_fe =
-			GPIO_DT_SPEC_GET(ZEPHYR_USER_NODE, short_range_rf_fe_enable_gpios);
-
-	int err = gpio_pin_configure_dt(&short_range_rf_fe, GPIO_DISCONNECTED);
-
-	if (err) {
-		LOG_ERR("Failed to disable short range RF front end");
-		__ASSERT_NO_MSG(false);
-	}
-
-#endif
-}
-
 static bool app_event_handler(const struct app_event_header *aeh)
 {
 	if (is_uart_data_event(aeh)) {
@@ -393,13 +354,11 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		switch (event->cmd) {
 		case BLE_CTRL_ENABLE:
 			if (!atomic_set(&active, true)) {
-				short_range_rf_front_end_enable();
 				adv_start(false);
 			}
 			break;
 		case BLE_CTRL_DISABLE:
 			if (atomic_set(&active, false)) {
-				short_range_rf_front_end_disable();
 				adv_stop();
 			}
 			break;
