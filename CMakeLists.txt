@@ -35,3 +35,9 @@ add_subdirectory(subsys)
 add_subdirectory(modules)
 add_subdirectory(drivers)
 add_subdirectory(tests)
+
+# TEMPHACK: Add a source file generated in the sysbuild POST_CMAKE module hook
+if(CONFIG_NRF_HALTIUM_GENERATE_UICR)
+  file(TOUCH ${PROJECT_BINARY_DIR}/periphconf_migrated.c)
+  zephyr_sources(${PROJECT_BINARY_DIR}/periphconf_migrated.c)
+endif()

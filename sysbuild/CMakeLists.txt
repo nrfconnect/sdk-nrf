@@ -732,10 +732,8 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
   endif()
 
   include_packaging()
-  if(NOT SB_CONFIG_SOC_NRF54H20_IRON)
-    include_suit_provisioning()
-    include_suit()
-  endif()
+  include_suit_provisioning()
+  include_suit()
 
   if(SB_CONFIG_SECURE_BOOT OR SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
     include_provision_hex()
@@ -851,6 +849,63 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
       ExternalProject_Get_Property(${main_app} BINARY_DIR)
       set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${BINARY_DIR}/zephyr/.config)
     endif()
+  endif()
+
+  # TEMPHACK: UICR generator for IronSide SE for downstream
+  set(ironside_uicr_images "")
+  set(ironside_uicr_main_image)
+  foreach(image ${POST_CMAKE_IMAGES})
+    sysbuild_get(image_board_target IMAGE ${image} VAR CONFIG_BOARD_TARGET KCONFIG)
+    if(image_board_target MATCHES "/nrf54h20/(cpuapp|cpurad)")
+      list(APPEND ironside_uicr_images ${image})
+      if(NOT DEFINED ironside_uicr_main_image)
+        sysbuild_get(image_generates_uicr IMAGE ${image} VAR CONFIG_NRF_HALTIUM_GENERATE_UICR KCONFIG)
+        if(image_generates_uicr)
+          set(ironside_uicr_main_image ${image})
+        endif()
+      endif()
+    endif()
+  endforeach()
+  if(DEFINED ironside_uicr_main_image)
+    find_program(NRF_REGTOOL nrf-regtool)
+    if(NOT NRF_REGTOOL)
+      message(FATAL_ERROR "nrf-regtool is not installed")
+    endif()
+    set(nrf_regtool_cmd
+      COMMAND
+      ${CMAKE_COMMAND} -E env PYTHONPATH=${ZEPHYR_BASE}/scripts/dts/python-devicetree/src
+      ${NRF_REGTOOL}
+    )
+    ExternalProject_Get_Property(${ironside_uicr_main_image} BINARY_DIR)
+    set(nrf_regtool_migrate_cmd
+      ${nrf_regtool_cmd}
+      uicr-migrate
+      --edt-pickle-file ${BINARY_DIR}/zephyr/edt.pickle
+      --output-periphconf-file ${BINARY_DIR}/zephyr/periphconf_migrated.c
+      --spu-ownerid-configure
+    )
+    foreach(image ${ironside_uicr_images})
+      ExternalProject_Get_Property(${image} BINARY_DIR)
+      sysbuild_get(image_soc IMAGE ${image} VAR CONFIG_SOC KCONFIG)
+      set(image_uicr_hex ${PROJECT_BINARY_DIR}/uicr_${image}.hex)
+      message(STATUS "Running nrf-regtool uicr-compile for ${image}")
+      execute_process(
+        ${nrf_regtool_cmd}
+        uicr-compile
+        --edt-pickle-file ${BINARY_DIR}/zephyr/edt.pickle
+        --product-name ${image_soc}
+        --output-file ${image_uicr_hex}
+        WORKING_DIRECTORY ${APPLICATION_SOURCE_DIR}
+        COMMAND_ERROR_IS_FATAL ANY
+      )
+      list(APPEND nrf_regtool_migrate_cmd --uicr-hex-file ${image_uicr_hex})
+    endforeach()
+    message(STATUS "Running nrf-regtool uicr-migrate for ${ironside_uicr_main_image}")
+    execute_process(
+      ${nrf_regtool_migrate_cmd}
+      WORKING_DIRECTORY ${APPLICATION_SOURCE_DIR}
+      COMMAND_ERROR_IS_FATAL ANY
+    )
   endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 

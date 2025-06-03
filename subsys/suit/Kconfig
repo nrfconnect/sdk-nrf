@@ -6,7 +6,6 @@
 
 menuconfig SUIT
 	bool "Enable SUIT modules"
-	depends on !SOC_NRF54H20_IRON
 
 if SUIT
 
