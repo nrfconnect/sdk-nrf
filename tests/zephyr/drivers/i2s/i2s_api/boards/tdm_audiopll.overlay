@@ -5,7 +5,7 @@
  */
 
 &tdm130 {
-	clock-source = "ACLK";
+	sck-clock-source = "ACLK";
 };
 
 &audiopll {
