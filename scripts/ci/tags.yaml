@@ -1617,3 +1617,25 @@ ci_tests_zephyr_drivers_pwm:
   files:
     - nrf/tests/zephyr/drivers/pwm/
     - zephyr/tests/drivers/pwm/
+
+power:
+  files:
+    - zephyr/include/zephyr/pm/
+    - zephyr/samples/subsys/pm/
+    - zephyr/subsys/pm/
+    - zephyr/tests/subsys/pm/
+    - zephyr/drivers/power_domain/
+    - zephyr/dts/bindings/power/
+    - zephyr/include/zephyr/dt-bindings/power/
+    - zephyr/samples/boards/nordic/system_off
+
+adc:
+  files:
+    - zephyr/drivers/adc/
+    - zephyr/dts/bindings/adc/
+    - zephyr/include/zephyr/drivers/adc.h
+    - zephyr/include/zephyr/drivers/adc/
+    - zephyr/include/zephyr/dt-bindings/adc/
+    - zephyr/samples/drivers/adc/
+    - zephyr/tests/drivers/adc/
+    - zephyr/tests/drivers/build_all/adc/
