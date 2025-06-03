@@ -9,6 +9,7 @@ zephyr_library()
 zephyr_library_sources_ifdef(CONFIG_NRF_RPC_UTILS_CRASH_GEN crash_gen.c)
 zephyr_library_sources_ifdef(CONFIG_NRF_RPC_UTILS_DEV_INFO dev_info.c)
 zephyr_library_sources_ifdef(CONFIG_NRF_RPC_UTILS_REMOTE_SHELL remote_shell.c)
+zephyr_library_sources_ifdef(CONFIG_NRF_RPC_UTILS_SYSTEM_HEALTH system_health.c)
 
 zephyr_library_include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../common
