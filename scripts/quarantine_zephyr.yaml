@@ -388,6 +388,14 @@
   comment: "Same reason as in https://nordicsemi.atlassian.net/browse/NCSDK-22771"
 
 - scenarios:
+    - net.coap.server.common
+    - net.coap.server.secure
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "Not compatible with nRF Security"
+
+- scenarios:
     - kernel.common.picolibc
     - kernel.common.misra
     - kernel.common.tls
