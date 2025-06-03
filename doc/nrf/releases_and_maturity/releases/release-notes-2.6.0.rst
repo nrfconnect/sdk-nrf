@@ -94,7 +94,7 @@ Added the following features as experimental:
     * Communication using either MQTT or CoAP over Wi-Fi.
     * Better out-of-box experience by using the new nRF Cloud Security Services :ref:`auto-onboarding feature <nrf_cloud_multi_service_provisioning_service>`.
       This makes it easier to connect a new device to nRF Cloud, including installation of security credentials.
-  * The :ref:`nrf_cloud_rest_device_message` sample also includes experimental support for the new nRF Cloud Security Services :ref:`auto-onboarding <remote_prov_auto_onboard>` feature.
+  * The :ref:`nrf_cloud_rest_device_message` sample also includes experimental support for the new nRF Cloud Security Services auto-onboarding feature.
 
 * Other:
 

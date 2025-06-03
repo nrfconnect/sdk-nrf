@@ -15,6 +15,7 @@
 #include <net/nrf_cloud_log.h>
 #include <net/nrf_cloud_alert.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/logging/log_ctrl.h>
 #include <date_time.h>
 #include <zephyr/random/random.h>
 
@@ -24,40 +25,35 @@
 #define MODULE main
 #include <caf/events/module_state_event.h>
 
-#include "leds_def.h"
+#include <zephyr/net/conn_mgr_connectivity.h>
 
-#if defined(CONFIG_NRF_PROVISIONING)
-#include <zephyr/logging/log_ctrl.h>
-#include <zephyr/sys/reboot.h>
-#include <modem/lte_lc.h>
-#include <modem/nrf_modem_lib.h>
-#include <net/nrf_provisioning.h>
-#include "nrf_provisioning_at.h"
-/* Button number to check for provisioning commands */
-#define BTN_NUM_PROV		2
-#endif /* CONFIG_NRF_PROVISIONING */
+#include "leds_def.h"
 
 LOG_MODULE_REGISTER(nrf_cloud_rest_device_message,
 		    CONFIG_NRF_CLOUD_REST_DEVICE_MESSAGE_SAMPLE_LOG_LEVEL);
 
-/* Button number to perform JITP or send BUTTON event device message */
-#define BTN_NUM			1
-#define LTE_LED_NUM		CONFIG_REST_DEVICE_MESSAGE_LTE_LED_NUM
-#define SEND_LED_NUM		CONFIG_REST_DEVICE_MESSAGE_SEND_LED_NUM
-#define JITP_REQ_WAIT_SEC	10
+/* Button number to send BUTTON event device message */
+#define BTN_NUM		1
+#define LTE_LED_NUM	 CONFIG_REST_DEVICE_MESSAGE_LTE_LED_NUM
+#define SEND_LED_NUM	 CONFIG_REST_DEVICE_MESSAGE_SEND_LED_NUM
 
 /* This does not match a predefined schema, but it is not a problem. */
 #define SAMPLE_SIGNON_FMT "nRF Cloud REST Device Message Sample, version: %s"
 #define SAMPLE_MSG_FMT	"{\"sample_message\":"\
-			"\"Hello World, from the REST Device Message Sample! "\
-			"Message ID: %lld\"}"
+				"\"Hello World, from the REST Device Message Sample! "\
+				"Message ID: %lld\"}"
 #define SAMPLE_MSG_BUF_SIZE (sizeof(SAMPLE_MSG_FMT) + 19)
 
-/* Semaphore to indicate a button has been pressed */
-static K_SEM_DEFINE(button_press_sem, 0, 1);
+/* Network states */
+#define NETWORK_UP		  BIT(0)
+#define EVENT_MASK		  (NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
 
-/* Semaphore to indicate that a network connection has been established */
-static K_SEM_DEFINE(lte_connected, 0, 1);
+/* Semaphore to indicate a button has been pressed */
+static K_EVENT_DEFINE(button_press_event);
+#define BUTTON_PRESSED BIT(0)
+
+/* Connection event */
+static K_EVENT_DEFINE(connection_events);
 
 /* nRF Cloud device ID */
 static char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
@@ -67,129 +63,16 @@ static char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
 static char rx_buf[REST_RX_BUF_SZ];
 
 /* nRF Cloud REST context */
-static struct nrf_cloud_rest_context rest_ctx = {
-	.connect_socket = -1,
-	.keep_alive = false,
-	.rx_buf = rx_buf,
-	.rx_buf_len = sizeof(rx_buf),
-	.fragment_size = 0
-};
-
-/* Flag to indicate if the user requested JITP to be performed */
-static bool jitp_requested;
+static struct nrf_cloud_rest_context rest_ctx = {.connect_socket = -1,
+						 .keep_alive = false,
+						 .rx_buf = rx_buf,
+						 .rx_buf_len = sizeof(rx_buf),
+						 .fragment_size = 0};
 
 /* Register a listener for application events, specifically a button event */
 static bool app_event_handler(const struct app_event_header *aeh);
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, button_event);
-
-static void await_credentials(void);
-
-#if defined(CONFIG_NRF_PROVISIONING)
-static int modem_mode_cb(enum lte_lc_func_mode new_mode, void *user_data);
-static void device_mode_cb(enum nrf_provisioning_event event, void *user_data);
-static struct nrf_provisioning_dm_change dmode = { .cb = device_mode_cb };
-static struct nrf_provisioning_mm_change mmode = { .cb = modem_mode_cb };
-
-static int modem_mode_cb(enum lte_lc_func_mode new_mode, void *user_data)
-{
-	enum lte_lc_func_mode fmode;
-	char time_buf[64];
-	int ret;
-
-	ARG_UNUSED(user_data);
-
-	if (lte_lc_func_mode_get(&fmode)) {
-		LOG_ERR("Failed to read modem functional mode");
-		ret = -EFAULT;
-		return ret;
-	}
-
-	if (fmode == new_mode) {
-		ret = fmode;
-	} else if (new_mode == LTE_LC_FUNC_MODE_NORMAL) {
-		/* Use the blocking call, because in next step
-		 * the service will create a socket and call connect()
-		 */
-		ret = lte_lc_connect();
-
-		if (ret) {
-			LOG_ERR("lte_lc_connect() failed %d", ret);
-		}
-		LOG_INF("Modem connection restored");
-
-		LOG_INF("Waiting for modem to acquire network time...");
-
-		do {
-			k_sleep(K_SECONDS(3));
-			ret = nrf_provisioning_at_time_get(time_buf, sizeof(time_buf));
-		} while (ret != 0);
-
-		LOG_INF("Network time obtained");
-		ret = fmode;
-	} else {
-		ret = lte_lc_func_mode_set(new_mode);
-		if (ret == 0) {
-			LOG_DBG("Modem set to requested state %d", new_mode);
-			ret = fmode;
-		}
-	}
-
-	return ret;
-}
-
-static void reboot_device(void)
-{
-	/* Disconnect from network gracefully */
-	int ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
-
-	if (ret != 0) {
-		LOG_ERR("Unable to set modem offline, error %d", ret);
-	}
-
-	while (log_process()) {
-		;
-	}
-
-	sys_reboot(SYS_REBOOT_WARM);
-}
-
-static void device_mode_cb(enum nrf_provisioning_event event, void *user_data)
-{
-	ARG_UNUSED(user_data);
-
-	switch (event) {
-	case NRF_PROVISIONING_EVENT_START:
-		LOG_INF("Provisioning started");
-		break;
-	case NRF_PROVISIONING_EVENT_STOP:
-		LOG_INF("Provisioning stopped");
-		break;
-	case NRF_PROVISIONING_EVENT_DONE:
-		LOG_INF("Provisioning done, rebooting...");
-		reboot_device();
-		break;
-	default:
-		LOG_ERR("Unknown event");
-		break;
-	}
-}
-#endif /* CONFIG_NRF_PROVISIONING */
-
-void init_provisioning(void)
-{
-#if defined(CONFIG_NRF_PROVISIONING)
-	LOG_INF("Initializing the nRF Provisioning library...");
-
-	int ret = nrf_provisioning_init(&mmode, &dmode);
-
-	if (ret) {
-		LOG_ERR("Failed to initialize provisioning client, error: %d", ret);
-	}
-
-	await_credentials();
-#endif
-}
 
 static int send_led_event(enum led_id led_idx, const int state)
 {
@@ -210,18 +93,17 @@ static int send_led_event(enum led_id led_idx, const int state)
 static int set_led(const int led, const int state)
 {
 	int err = send_led_event(led, state);
-
 	if (err) {
 		LOG_ERR("Failed to set LED %d, error: %d", led, err);
 		return err;
 	}
+
 	return 0;
 }
 
 static int set_leds_off(void)
 {
 	int err = set_led(LTE_LED_NUM, 0);
-
 	if (err) {
 		return err;
 	}
@@ -236,8 +118,7 @@ static int set_leds_off(void)
 
 static bool cred_check(struct nrf_cloud_credentials_status *const cs)
 {
-#if defined(CONFIG_NRF_CLOUD_CHECK_CREDENTIALS)
-	int ret;
+	int ret = 0;
 
 	ret = nrf_cloud_credentials_check(cs);
 	if (ret) {
@@ -261,33 +142,19 @@ static bool cred_check(struct nrf_cloud_credentials_status *const cs)
 	}
 
 	return (cs->ca && cs->ca_aws && cs->prv_key);
-#else
-	LOG_DBG("nRF Cloud credentials check not enabled");
-	return true;
-#endif /* defined(CONFIG_NRF_CLOUD_CHECK_CREDENTIALS) */
 }
 
 static void await_credentials(void)
 {
 	struct nrf_cloud_credentials_status cs;
 
-	if (!cred_check(&cs)) {
-
-#if defined(CONFIG_NRF_PROVISIONING)
-		LOG_INF("Waiting for credentials to be remotely provisioned...");
-		/* Device will reboot when credential provisioning is complete */
+	while (!cred_check(&cs)) {
+		LOG_INF("Waiting for credentials to be installed...");
+		LOG_INF("Press the reset button once the credentials are installed");
 		k_sleep(K_FOREVER);
-#else
-		LOG_ERR("Cannot continue without required credentials");
-		LOG_INF("Install credentials on the device and then "
-			"provision the device or register its public key with nRF Cloud.");
-		LOG_INF("Reboot device when complete");
-		(void)lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
-		k_sleep(K_FOREVER);
-#endif
 	}
 
-	LOG_INF("nRF Cloud credentials detected");
+	LOG_INF("nRF Cloud credentials detected!");
 }
 
 static bool app_event_handler(const struct app_event_header *aeh)
@@ -302,15 +169,10 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 	const uint16_t btn_num = event->key_id + 1;
 
-	LOG_INF("Button %d pressed", btn_num);
 	if (btn_num == BTN_NUM) {
-		k_sem_give(&button_press_sem);
+		LOG_DBG("Button %d pressed", btn_num);
+		k_event_post(&button_press_event, BUTTON_PRESSED);
 	}
-#if defined(CONFIG_NRF_PROVISIONING)
-	else if (btn_num == BTN_NUM_PROV) {
-		nrf_provisioning_trigger_manually();
-	}
-#endif
 	return true;
 }
 
@@ -344,7 +206,7 @@ static void send_message_on_button(void)
 	static unsigned int count;
 
 	/* Wait for a button press */
-	(void)k_sem_take(&button_press_sem, K_FOREVER);
+	k_event_wait(&button_press_event, BUTTON_PRESSED, true, K_FOREVER);
 
 	/* Send off a JSON message about the button press */
 	/* This matches the nRF Cloud-defined schema for a "BUTTON" device message */
@@ -355,207 +217,9 @@ static void send_message_on_button(void)
 				      "Button pressed %u times", ++count);
 }
 
-static int do_jitp(void)
-{
-	int ret = 0;
-
-	LOG_INF("Performing JITP...");
-
-	/* Turn the SEND LED, indicating in-progress JITP */
-	set_led(SEND_LED_NUM, 1);
-
-	ret = nrf_cloud_rest_jitp(CONFIG_NRF_CLOUD_SEC_TAG);
-
-	if (ret == 0) {
-		LOG_INF("Waiting 30s for cloud provisioning to complete...");
-		k_sleep(K_SECONDS(30));
-		k_sem_reset(&button_press_sem);
-		LOG_INF("Associate device with nRF Cloud account and press button %d when complete",
-			BTN_NUM);
-		(void)k_sem_take(&button_press_sem, K_FOREVER);
-	} else if (ret == 1) {
-		LOG_INF("Device already provisioned");
-		ret = 0;
-	} else {
-		LOG_ERR("JITP device provisioning failed: %d", ret);
-	}
-
-	/* Turn LED back off */
-	set_led(SEND_LED_NUM, 0);
-
-	return ret;
-}
-
-static void modem_time_wait(void)
-{
-	int err;
-	char time_buf[64];
-
-	LOG_INF("Waiting for modem to acquire network time...");
-
-	do {
-		k_sleep(K_SECONDS(3));
-
-		err = nrf_modem_at_cmd(time_buf, sizeof(time_buf), "AT%%CCLK?");
-		if (err) {
-			LOG_DBG("AT Clock Command Error %d... Retrying in 3 seconds.", err);
-		}
-	} while (err != 0);
-
-	LOG_INF("Network time obtained");
-}
-
-static void lte_handler(const struct lte_lc_evt *const evt)
-{
-	switch (evt->type) {
-	case LTE_LC_EVT_NW_REG_STATUS:
-		LOG_DBG("LTE_LC_EVT_NW_REG_STATUS: %d", evt->nw_reg_status);
-		if ((evt->nw_reg_status != LTE_LC_NW_REG_REGISTERED_HOME) &&
-		     (evt->nw_reg_status != LTE_LC_NW_REG_REGISTERED_ROAMING)) {
-			break;
-		}
-
-		LOG_DBG("Network registration status: %s",
-			evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?
-			"Connected - home network" : "Connected - roaming");
-		k_sem_give(&lte_connected);
-		break;
-	case LTE_LC_EVT_CELL_UPDATE:
-		LOG_DBG("LTE cell changed: Cell ID: %d, Tracking area: %d",
-			evt->cell.id, evt->cell.tac);
-		break;
-	default:
-		break;
-	}
-}
-
-static int connect_to_lte(void)
-{
-	int err;
-
-	LOG_INF("Waiting for network...");
-
-	k_sem_reset(&lte_connected);
-
-	err = lte_lc_connect_async(lte_handler);
-	if (err) {
-		LOG_ERR("Failed to init modem, error: %d", err);
-		return err;
-	}
-
-	k_sem_take(&lte_connected, K_FOREVER);
-	(void)set_led(LTE_LED_NUM, 1);
-	LOG_INF("Connected to LTE");
-	return 0;
-}
-
-
-static int setup_connection(void)
-{
-	int err;
-
-	/* Get the device ID */
-	err = nrf_cloud_client_id_get(device_id, sizeof(device_id));
-	if (err) {
-		LOG_ERR("Failed to get device ID, error: %d", err);
-		return err;
-	}
-
-	/* Connect to LTE */
-	err = connect_to_lte();
-	if (err) {
-		LOG_ERR("Failed to connect to cellular network: %d", err);
-		return err;
-	}
-
-	/* Wait until we know what time it is (necessary for JSON Web Token generation) */
-	modem_time_wait();
-
-	nrf_cloud_log_init();
-#if defined(CONFIG_NRF_CLOUD_LOG_BACKEND)
-	nrf_cloud_log_rest_context_set(&rest_ctx, device_id);
-#endif
-	nrf_cloud_log_enable(nrf_cloud_log_control_get() != LOG_LEVEL_NONE);
-
-	/* Perform JITP if enabled and requested */
-	if (IS_ENABLED(CONFIG_REST_DEVICE_MESSAGE_DO_JITP) && jitp_requested) {
-		err = do_jitp();
-		if (err) {
-			LOG_ERR("Failed to perform JITP, %d", err);
-			return err;
-		}
-	}
-
-	return 0;
-}
-
-static void offer_jitp(void)
-{
-	int ret;
-
-	jitp_requested = false;
-
-	k_sem_reset(&button_press_sem);
-
-	LOG_INF("---> Press button %d to request just-in-time provisioning", BTN_NUM);
-	LOG_INF("     Waiting %d seconds...", JITP_REQ_WAIT_SEC);
-
-	ret = k_sem_take(&button_press_sem, K_SECONDS(JITP_REQ_WAIT_SEC));
-	if (ret == 0) {
-		jitp_requested = true;
-		LOG_INF("JITP will be performed after network connection is obtained");
-	} else {
-		if (ret != -EAGAIN) {
-			LOG_ERR("k_sem_take error: %d", ret);
-		}
-
-		LOG_INF("JITP will be skipped");
-	}
-}
-
-static int init(void)
-{
-	int err;
-
-	/* Application event manager is used for button press and LED
-	 * events from the common application framework (CAF) library
-	 */
-	err = app_event_manager_init();
-	if (err) {
-		LOG_ERR("Application Event Manager could not be initialized, error: %d", err);
-		return err;
-	}
-
-	/* Init modem */
-	err = nrf_modem_lib_init();
-	if (err) {
-		LOG_ERR("Failed to initialize modem library: 0x%X", err);
-		return -EFAULT;
-	}
-
-	/* If provisioning library is disabled, ensure device has credentials installed
-	 * before proceeding
-	 */
-	if (!IS_ENABLED(CONFIG_NRF_PROVISIONING)) {
-		await_credentials();
-	}
-
-	/* Inform the app event manager that this module is ready to receive events */
-	module_set_state(MODULE_STATE_READY);
-
-	/* Set the LEDs off after all modules are ready */
-	err = set_leds_off();
-	if (err) {
-		LOG_ERR("Failed to set LEDs off");
-		return err;
-	}
-
-	return 0;
-}
-
 static void print_reset_reason(void)
 {
-	uint32_t reset_reason;
+	int reset_reason = 0;
 
 	reset_reason = nrfx_reset_reason_get();
 	LOG_INF("Reset reason: 0x%x", reset_reason);
@@ -563,70 +227,38 @@ static void print_reset_reason(void)
 
 static void report_startup(void)
 {
-	int err;
+	int err = 0;
+	int reset_reason = 0;
 
 	/* Set the keep alive flag to true;
 	 * connection will remain open to allow for multiple REST calls
 	 */
 	rest_ctx.keep_alive = true;
 
-	if (IS_ENABLED(CONFIG_SEND_ONLINE_ALERT)) {
-		uint32_t reset_reason;
+	reset_reason = nrfx_reset_reason_get();
+	nrfx_reset_reason_clear(reset_reason);
+	LOG_INF("Reset reason: 0x%x", reset_reason);
 
-		reset_reason = nrfx_reset_reason_get();
-		nrfx_reset_reason_clear(reset_reason);
-
-		err = nrf_cloud_rest_alert_send(&rest_ctx, device_id,
-						ALERT_TYPE_DEVICE_NOW_ONLINE,
-						reset_reason, NULL);
-		if (err) {
-			LOG_ERR("Error sending alert to cloud: %d", err);
-		}
+	err = nrf_cloud_rest_alert_send(&rest_ctx, device_id,
+								ALERT_TYPE_DEVICE_NOW_ONLINE,
+								reset_reason, NULL);
+	if (err) {
+		LOG_ERR("Error sending alert to cloud: %d", err);
 	}
 
-	err = nrf_cloud_rest_log_send(&rest_ctx, device_id, LOG_LEVEL_INF,
-				      SAMPLE_SIGNON_FMT,
-				      CONFIG_REST_DEVICE_MESSAGE_SAMPLE_VERSION);
-
+	err = nrf_cloud_rest_log_send(&rest_ctx, device_id,
+							LOG_LEVEL_INF,
+							SAMPLE_SIGNON_FMT,
+							CONFIG_REST_DEVICE_MESSAGE_SAMPLE_VERSION);
 	if (err) {
 		LOG_ERR("Error sending direct log to cloud: %d", err);
 	}
 }
 
-static int setup(void)
-{
-	int err;
-
-	print_reset_reason();
-
-	/* Initialize libraries and hardware */
-	err = init();
-	if (err) {
-		LOG_ERR("Initialization failed.");
-		return err;
-	}
-
-	/* Ask user if JITP via REST is desired */
-	if (IS_ENABLED(CONFIG_REST_DEVICE_MESSAGE_DO_JITP)) {
-		offer_jitp();
-	}
-
-	/* Initiate Connection */
-	err = setup_connection();
-	if (err) {
-		LOG_ERR("Connection set-up failed.");
-		return err;
-	}
-
-	init_provisioning();
-
-	return 0;
-}
-
 int send_hello_world_msg(void)
 {
-	int err;
-	int64_t time_now;
+	int err = 0;
+	int64_t time_now = 0;
 	char buf[SAMPLE_MSG_BUF_SIZE];
 
 	/* Get the current timestamp */
@@ -653,12 +285,125 @@ int send_hello_world_msg(void)
 	return err;
 }
 
+static void modem_time_wait(void)
+{
+	int err = 0;
+	char time_buf[64];
+
+	LOG_INF("Waiting for modem to acquire network time...");
+
+	do {
+		k_sleep(K_SECONDS(3));
+
+		err = nrf_modem_at_cmd(time_buf, sizeof(time_buf), "AT%%CCLK?");
+		if (err) {
+			LOG_DBG("AT Clock Command Error %d... Retrying in 3 seconds.", err);
+		}
+	} while (err != 0);
+
+	LOG_INF("Network time obtained");
+}
+
+static int setup(void)
+{
+	int err = 0;
+
+	print_reset_reason();
+
+	/* Application event manager is used for button press and LED
+	 * events from the common application framework (CAF) library
+	 */
+	err = app_event_manager_init();
+	if (err) {
+		LOG_ERR("Application Event Manager could not be initialized, error: %d", err);
+		return err;
+	}
+
+	/* Inform the app event manager that this module is ready to receive events */
+	module_set_state(MODULE_STATE_READY);
+
+	/* Set the LEDs off after all modules are ready */
+	err = set_leds_off();
+	if (err) {
+		LOG_ERR("Failed to set LEDs off");
+		return err;
+	}
+
+	/* Init modem */
+	err = nrf_modem_lib_init();
+	if (err) {
+		LOG_ERR("Failed to initialize modem library: 0x%X", err);
+		return -EFAULT;
+	}
+
+	/* Ensure device has credentials installed before proceeding */
+	await_credentials();
+
+	/* Get the device ID */
+	err = nrf_cloud_client_id_get(device_id, sizeof(device_id));
+	if (err) {
+		LOG_ERR("Failed to get device ID, error: %d", err);
+		return err;
+	}
+
+	/* Initiate Connection */
+	LOG_INF("Enabling connectivity...");
+	conn_mgr_all_if_connect(true);
+	k_event_wait(&connection_events, NETWORK_UP, false, K_FOREVER);
+
+	/* Wait until we know what time it is (necessary for JSON Web Token generation) */
+	modem_time_wait();
+
+    /* Initialize the nRF Cloud logging subsystem */
+	nrf_cloud_log_init();
+
+#if defined(CONFIG_NRF_CLOUD_LOG_BACKEND)
+	nrf_cloud_log_rest_context_set(&rest_ctx, device_id);
+#endif
+	nrf_cloud_log_enable(nrf_cloud_log_control_get() != LOG_LEVEL_NONE);
+
+	return 0;
+}
+
+/* Callback to track network connectivity */
+static struct net_mgmt_event_callback l4_callback;
+static void l4_event_handler(struct net_mgmt_event_callback *cb, uint32_t event,
+			     struct net_if *iface)
+{
+	if ((event & EVENT_MASK) != event) {
+		return;
+	}
+
+	if (event == NET_EVENT_L4_CONNECTED) {
+		/* Mark network as up. */
+		(void)set_led(LTE_LED_NUM, 1);
+		LOG_INF("Connected to LTE");
+		k_event_post(&connection_events, NETWORK_UP);
+	}
+
+	if (event == NET_EVENT_L4_DISCONNECTED) {
+		/* Mark network as down. */
+		(void)set_led(LTE_LED_NUM, 0);
+		LOG_INF("Network connectivity lost!");
+	}
+}
+
+/* Start tracking network availability */
+static int prepare_network_tracking(void)
+{
+	net_mgmt_init_event_callback(&l4_callback, l4_event_handler, EVENT_MASK);
+	net_mgmt_add_event_callback(&l4_callback);
+
+	return 0;
+}
+
+SYS_INIT(prepare_network_tracking, APPLICATION, 0);
+
 int main(void)
 {
-	int err;
+	int err = 0;
 
-	LOG_INF(SAMPLE_SIGNON_FMT,
-		CONFIG_REST_DEVICE_MESSAGE_SAMPLE_VERSION);
+	LOG_INF(SAMPLE_SIGNON_FMT, CONFIG_REST_DEVICE_MESSAGE_SAMPLE_VERSION);
 
 	err = setup();
 	if (err) {
@@ -666,10 +411,12 @@ int main(void)
 		return 0;
 	}
 
-	/* Send alert (if enabled) and log message to the cloud. */
+	/* Send alert and log message to the cloud. */
 	report_startup();
 
-	/* Set the keep alive flag to false; connection will be closed after the next REST call */
+	/* Set the keep alive flag to false;
+	 * connection will be closed after the next REST call
+	 */
 	rest_ctx.keep_alive = false;
 
 	err = send_hello_world_msg();
@@ -677,10 +424,8 @@ int main(void)
 	/* -EBADMSG can indicate that nRF Cloud rejected the device's JWT in the REST call */
 	if (err == -EBADMSG) {
 		LOG_ERR("Ensure device is provisioned or "
-			"has its public key registered with nRF Cloud");
+				"has its public key registered with nRF Cloud");
 	}
-
-	k_sem_reset(&button_press_sem);
 
 	while (1) {
 		send_message_on_button();
