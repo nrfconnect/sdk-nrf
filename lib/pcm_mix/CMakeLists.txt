@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
+# Testing change
 
 zephyr_library()
 zephyr_library_sources(
