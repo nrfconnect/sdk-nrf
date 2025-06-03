@@ -33,6 +33,10 @@
 		swctrl1-gpios = <&gpio0 6 GPIO_ACTIVE_HIGH>;
 	};
 
+	zephyr,user {
+		rffe-ble-wifi-enable-gpios = <&gpio0 18 (GPIO_OPEN_DRAIN | GPIO_ACTIVE_LOW)>;
+	};
+
 	/* These aliases are provided for compatibility with samples */
 	aliases {
 		watchdog0 = &wdt0;

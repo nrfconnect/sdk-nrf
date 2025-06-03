@@ -10,6 +10,10 @@ if(CONFIG_WIFI_NRF70)
   endif()
 endif()
 
+if(CONFIG_BOARD_THINGY91X_NRF5340_CPUNET AND CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL)
+  zephyr_library_sources(nrf53_rffe_support.c)
+endif()
+
 # If the BMM350 driver is not used, use a minimal initialization instead to save power.
 # Once a driver is available in the Zephyr tree, this can be removed.
 if (CONFIG_SENSOR AND CONFIG_REGULATOR AND CONFIG_I2C AND NOT CONFIG_BMM350)
