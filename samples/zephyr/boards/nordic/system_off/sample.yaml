@@ -2,7 +2,6 @@ sample:
   name: Low Power State Sample for nRF5x
 common:
   tags:
-    - power
     - ci_samples_zephyr_boards_nordic_system_off
   timeout: 20
 tests:

@@ -3,7 +3,6 @@ sample:
 tests:
   nrf.extended.sample.drivers.adc.adc_sequence:
     tags:
-      - adc
       - ci_samples_zephyr_drivers_adc
     # depends_on: adc
     integration_platforms:

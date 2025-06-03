@@ -1,6 +1,5 @@
 common:
   tags:
-    - adc
     - drivers
     - userspace
     - ci_tests_zephyr_drivers_adc

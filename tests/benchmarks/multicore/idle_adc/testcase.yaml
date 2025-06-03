@@ -7,7 +7,6 @@ tests:
     tags:
       - ci_build
       - ci_tests_benchmarks_multicore
-      - adc
       - ppk_power_measure
     filter: not CONFIG_COVERAGE
     harness: pytest
