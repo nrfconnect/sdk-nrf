@@ -42,918 +42,918 @@
 
 bluetooth:
   files:
-    - drivers/bluetooth/
-    - dts/bindings/bluetooth/
-    - include/zephyr/drivers/bluetooth.h
-    - include/zephyr/drivers/bluetooth/
-    - lib/crc/
-    - lib/net_buf/
-    - samples/bluetooth/
-    - subsys/bluetooth/
-    - subsys/fs/
-    - subsys/net/l2/bluetooth/
-    - subsys/random/
-    - subsys/settings/
-    - subsys/shell/
-    - subsys/storage/
-    - subsys/usb/
-    - tests/bluetooth/
-    - tests/bsim/bluetooth/
+    - zephyr/drivers/bluetooth/
+    - zephyr/dts/bindings/bluetooth/
+    - zephyr/include/zephyr/drivers/bluetooth.h
+    - zephyr/include/zephyr/drivers/bluetooth/
+    - zephyr/lib/crc/
+    - zephyr/lib/net_buf/
+    - zephyr/samples/bluetooth/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/fs/
+    - zephyr/subsys/net/l2/bluetooth/
+    - zephyr/subsys/random/
+    - zephyr/subsys/settings/
+    - zephyr/subsys/shell/
+    - zephyr/subsys/storage/
+    - zephyr/subsys/usb/
+    - zephyr/tests/bluetooth/
+    - zephyr/tests/bsim/bluetooth/
 
 net: &tag_net
   files:
-    - drivers/ethernet/
-    - drivers/ieee802154/
-    - drivers/net/
-    - drivers/ptp_clock/
-    - drivers/wifi/
-    - include/zephyr/net/
-    - samples/net/
-    - subsys/net/
-    - tests/net/
+    - zephyr/drivers/ethernet/
+    - zephyr/drivers/ieee802154/
+    - zephyr/drivers/net/
+    - zephyr/drivers/ptp_clock/
+    - zephyr/drivers/wifi/
+    - zephyr/include/zephyr/net/
+    - zephyr/samples/net/
+    - zephyr/subsys/net/
+    - zephyr/tests/net/
 
 wifi: *tag_net
 
 test_framework:
   files:
-    - samples/subsys/testsuite/
-    - subsys/testsuite/
-    - tests/subsys/testsuite/
-    - tests/ztest/
+    - zephyr/samples/subsys/testsuite/
+    - zephyr/subsys/testsuite/
+    - zephyr/tests/subsys/testsuite/
+    - zephyr/tests/ztest/
 
 mcumgr:
   files:
-    - include/zephyr/mgmt/mcumgr/
-    - samples/subsys/mgmt/mcumgr/
-    - subsys/mgmt/mcumgr/
-    - tests/subsys/mgmt/mcumgr/
+    - zephyr/include/zephyr/mgmt/mcumgr/
+    - zephyr/samples/subsys/mgmt/mcumgr/
+    - zephyr/subsys/mgmt/mcumgr/
+    - zephyr/tests/subsys/mgmt/mcumgr/
 
 kernel:
   files:
-    - arch/
-    - drivers/cache/
-    - include/zephyr/fatal.h
-    - include/zephyr/kernel*.h
-    - include/zephyr/kernel/
-    - include/zephyr/spinlock.h
-    - include/zephyr/sys_clock.h
-    - kernel/
-    - samples/kernel/
-    - tests/arch/
-    - tests/kernel/
-    - tests/lib/p4workq/
+    - zephyr/arch/
+    - zephyr/drivers/cache/
+    - zephyr/include/zephyr/fatal.h
+    - zephyr/include/zephyr/kernel*.h
+    - zephyr/include/zephyr/kernel/
+    - zephyr/include/zephyr/spinlock.h
+    - zephyr/include/zephyr/sys_clock.h
+    - zephyr/kernel/
+    - zephyr/samples/kernel/
+    - zephyr/tests/arch/
+    - zephyr/tests/kernel/
+    - zephyr/tests/lib/p4workq/
 
 posix:
   files:
-    - boards/native/
-    - lib/posix/
-    - samples/posix/
-    - tests/posix/
+    - zephyr/boards/native/
+    - zephyr/lib/posix/
+    - zephyr/samples/posix/
+    - zephyr/tests/posix/
 
 acpi:
   files:
-    - dts/bindings/acpi/
-    - include/zephyr/acpi/
-    - include/zephyr/dt-bindings/acpi/
-    - lib/acpi/
-    - tests/lib/acpi/
+    - zephyr/dts/bindings/acpi/
+    - zephyr/include/zephyr/acpi/
+    - zephyr/include/zephyr/dt-bindings/acpi/
+    - zephyr/lib/acpi/
+    - zephyr/tests/lib/acpi/
 
 arm: &tag_arm
   files:
-    - arch/arm/
-    - include/zephyr/arch/arm/
-    - tests/arch/arm/
-    - boards/qemu/cortex_m0/
-    - soc/arm/nordic/
-    - dts/arm/nordic/
-    - dts/bindings/arm/nordic*.yaml
+    - zephyr/arch/arm/
+    - zephyr/include/zephyr/arch/arm/
+    - zephyr/tests/arch/arm/
+    - zephyr/boards/qemu/cortex_m0/
+    - zephyr/soc/arm/nordic/
+    - zephyr/dts/arm/nordic/
+    - zephyr/dts/bindings/arm/nordic*.yaml
 
 vector_relay: *tag_arm
 
 benchmark:
   files:
-    - tests/benchmarks/
-    - kernel/
-    - subsys/pm/
-    - subsys/timing/
-    - subsys/tracing/
+    - zephyr/tests/benchmarks/
+    - zephyr/kernel/
+    - zephyr/subsys/pm/
+    - zephyr/subsys/timing/
+    - zephyr/subsys/tracing/
 
 bindesc:
   files:
-    - include/zephyr/bindesc.h
-    - samples/subsys/bindesc/
-    - scripts/west_commands/bindesc.py
-    - subsys/bindesc/
-    - tests/subsys/bindesc/
+    - zephyr/include/zephyr/bindesc.h
+    - zephyr/samples/subsys/bindesc/
+    - zephyr/scripts/west_commands/bindesc.py
+    - zephyr/subsys/bindesc/
+    - zephyr/tests/subsys/bindesc/
 
 cpp:
   files:
-    - lib/cpp/
-    - samples/cpp/
-    - tests/lib/cpp/
+    - zephyr/lib/cpp/
+    - zephyr/samples/cpp/
+    - zephyr/tests/lib/cpp/
 
 clib:
   files:
-    - lib/libc/
-    - tests/lib/c_lib/
-    - tests/lib/newlib/
+    - zephyr/lib/libc/
+    - zephyr/tests/lib/c_lib/
+    - zephyr/tests/lib/newlib/
 
 dap:
   files:
-    - drivers/dp/
-    - include/zephyr/drivers/swdp.h
-    - samples/subsys/dap/
-    - subsys/dap/
+    - zephyr/drivers/dp/
+    - zephyr/include/zephyr/drivers/swdp.h
+    - zephyr/samples/subsys/dap/
+    - zephyr/subsys/dap/
 
 zdsp:
   files:
-    - include/zephyr/dsp/
-    - subsys/dsp/
-    - tests/subsys/dsp/
+    - zephyr/include/zephyr/dsp/
+    - zephyr/subsys/dsp/
+    - zephyr/tests/subsys/dsp/
 
 cmsis-dsp:
   files:
-    - modules/lib/cmsis-dsp/
-    - tests/benchmarks/cmsis_dsp/
-    - tests/lib/cmsis_dsp/
+    - zephyr/modules/lib/cmsis-dsp/
+    - zephyr/tests/benchmarks/cmsis_dsp/
+    - zephyr/tests/lib/cmsis_dsp/
 
 cmsis_nn:
   files:
-    - modules/lib/cmsis-nn/
-    - tests/lib/cmsis_nn/
+    - zephyr/modules/lib/cmsis-nn/
+    - zephyr/tests/lib/cmsis_nn/
 
 debug:
   files:
-    - include/zephyr/debug/
-    - subsys/debug/
-    - tests/subsys/debug/
-    - scripts/coredump/
-    - samples/subsys/debug/
+    - zephyr/include/zephyr/debug/
+    - zephyr/subsys/debug/
+    - zephyr/tests/subsys/debug/
+    - zephyr/scripts/coredump/
+    - zephyr/samples/subsys/debug/
 
 perf:
   files:
-    - samples/subsys/profiling/perf/
-    - scripts/profiling/stackcollapse.py
-    - subsys/profiling/perf/
+    - zephyr/samples/subsys/profiling/perf/
+    - zephyr/scripts/profiling/stackcollapse.py
+    - zephyr/subsys/profiling/perf/
 
 device:
   files:
-    - include/zephyr/device.h
-    - include/zephyr/init.h
-    - kernel/device.c
-    - tests/kernel/device/
-    - tests/misc/check_init_priorities/
+    - zephyr/include/zephyr/device.h
+    - zephyr/include/zephyr/init.h
+    - zephyr/kernel/device.c
+    - zephyr/tests/kernel/device/
+    - zephyr/tests/misc/check_init_priorities/
 
 dfu_mcuboot: &tag_dfu
   files:
-    - include/zephyr/dfu/
-    - subsys/dfu/
-    - tests/subsys/dfu/
+    - zephyr/include/zephyr/dfu/
+    - zephyr/subsys/dfu/
+    - zephyr/tests/subsys/dfu/
 
 dfu_image_util: *tag_dfu
 
 devicetree:
   files:
-    - dts/binding-template.yaml
-    - dts/bindings/base/
-    - dts/common/
-    - include/zephyr/devicetree.h
-    - include/zephyr/devicetree/
-    - include/zephyr/dt-bindings/dt-util.h
-    - scripts/dts/
-    - scripts/kconfig/kconfigfunctions.py
-    - tests/lib/devicetree/
+    - zephyr/dts/binding-template.yaml
+    - zephyr/dts/bindings/base/
+    - zephyr/dts/common/
+    - zephyr/include/zephyr/devicetree.h
+    - zephyr/include/zephyr/devicetree/
+    - zephyr/include/zephyr/dt-bindings/dt-util.h
+    - zephyr/scripts/dts/
+    - zephyr/scripts/kconfig/kconfigfunctions.py
+    - zephyr/tests/lib/devicetree/
 
 disk:
   files:
-    - drivers/disk/
-    - dts/bindings/disk/
-    - include/zephyr/drivers/disk.h
-    - include/zephyr/storage/disk_access.h
-    - subsys/disk/
-    - tests/drivers/build_all/disk/
-    - tests/drivers/disk/
+    - zephyr/drivers/disk/
+    - zephyr/dts/bindings/disk/
+    - zephyr/include/zephyr/drivers/disk.h
+    - zephyr/include/zephyr/storage/disk_access.h
+    - zephyr/subsys/disk/
+    - zephyr/tests/drivers/build_all/disk/
+    - zephyr/tests/drivers/disk/
 
 sdhc:
   files:
-    - drivers/sdhc/
-    - dts/bindings/sd/
-    - dts/bindings/sdhc/
-    - include/zephyr/drivers/sdhc.h
-    - include/zephyr/sd/
-    - subsys/sd/
-    - tests/drivers/sdhc/
-    - tests/subsys/sd/
+    - zephyr/drivers/sdhc/
+    - zephyr/dts/bindings/sd/
+    - zephyr/dts/bindings/sdhc/
+    - zephyr/include/zephyr/drivers/sdhc.h
+    - zephyr/include/zephyr/sd/
+    - zephyr/subsys/sd/
+    - zephyr/tests/drivers/sdhc/
+    - zephyr/tests/subsys/sd/
 
 display:
   files:
-    - drivers/display/
-    - dts/bindings/display/
-    - include/zephyr/display/
-    - include/zephyr/drivers/display.h
-    - include/zephyr/drivers/display.h
-    - include/zephyr/dt-bindings/display/
-    - samples/subsys/display/
-    - subsys/fb/
-    - tests/drivers/*/display/
-    - tests/subsys/display/
+    - zephyr/drivers/display/
+    - zephyr/dts/bindings/display/
+    - zephyr/include/zephyr/display/
+    - zephyr/include/zephyr/drivers/display.h
+    - zephyr/include/zephyr/drivers/display.h
+    - zephyr/include/zephyr/dt-bindings/display/
+    - zephyr/samples/subsys/display/
+    - zephyr/subsys/fb/
+    - zephyr/tests/drivers/*/display/
+    - zephyr/tests/subsys/display/
 
 adc:
   files:
-    - drivers/adc/
-    - dts/bindings/adc/
-    - include/zephyr/drivers/adc.h
-    - include/zephyr/drivers/adc/
-    - include/zephyr/dt-bindings/adc/
-    - samples/drivers/adc/
-    - tests/drivers/adc/
-    - tests/drivers/build_all/adc/
+    - zephyr/drivers/adc/
+    - zephyr/dts/bindings/adc/
+    - zephyr/include/zephyr/drivers/adc.h
+    - zephyr/include/zephyr/drivers/adc/
+    - zephyr/include/zephyr/dt-bindings/adc/
+    - zephyr/samples/drivers/adc/
+    - zephyr/tests/drivers/adc/
+    - zephyr/tests/drivers/build_all/adc/
 
 dmic:
   files:
-    - drivers/audio/
-    - include/zephyr/audio/
-    - tests/drivers/audio/
+    - zephyr/drivers/audio/
+    - zephyr/include/zephyr/audio/
+    - zephyr/tests/drivers/audio/
 
 bbram:
   files:
-    - tests/drivers/bbram/
-    - tests/drivers/build_all/bbram/
-    - drivers/bbram/
-    - include/zephyr/drivers/bbram.h
+    - zephyr/tests/drivers/bbram/
+    - zephyr/tests/drivers/build_all/bbram/
+    - zephyr/drivers/bbram/
+    - zephyr/include/zephyr/drivers/bbram.h
 
 can:
   files:
-    - drivers/can/
-    - drivers/net/canbus.c
-    - dts/bindings/can/
-    - dts/bindings/phy/can-transceiver*
-    - include/zephyr/canbus/
-    - include/zephyr/devicetree/can.h
-    - include/zephyr/drivers/can.h
-    - include/zephyr/drivers/can/
-    - include/zephyr/net/canbus.h
-    - include/zephyr/net/socketcan*.h
-    - samples/drivers/can/
-    - samples/modules/canopennode/
-    - samples/net/sockets/can/
-    - samples/subsys/canbus/
-    - scripts/west_commands/runners/canopen_program.py
-    - subsys/canbus/
-    - subsys/net/l2/canbus/
-    - tests/drivers/build_all/can/
-    - tests/drivers/can/
-    - tests/net/socket/can/
-    - tests/subsys/canbus/
+    - zephyr/drivers/can/
+    - zephyr/drivers/net/canbus.c
+    - zephyr/dts/bindings/can/
+    - zephyr/dts/bindings/phy/can-transceiver*
+    - zephyr/include/zephyr/canbus/
+    - zephyr/include/zephyr/devicetree/can.h
+    - zephyr/include/zephyr/drivers/can.h
+    - zephyr/include/zephyr/drivers/can/
+    - zephyr/include/zephyr/net/canbus.h
+    - zephyr/include/zephyr/net/socketcan*.h
+    - zephyr/samples/drivers/can/
+    - zephyr/samples/modules/canopennode/
+    - zephyr/samples/net/sockets/can/
+    - zephyr/samples/subsys/canbus/
+    - zephyr/scripts/west_commands/runners/canopen_program.py
+    - zephyr/subsys/canbus/
+    - zephyr/subsys/net/l2/canbus/
+    - zephyr/tests/drivers/build_all/can/
+    - zephyr/tests/drivers/can/
+    - zephyr/tests/net/socket/can/
+    - zephyr/tests/subsys/canbus/
 
 charger:
   files:
-    - drivers/charger/
-    - dts/bindings/charger/
-    - include/zephyr/drivers/charger.h
-    - tests/drivers/charger/
-    - tests/drivers/build_all/charger/
-    - samples/drivers/charger/
+    - zephyr/drivers/charger/
+    - zephyr/dts/bindings/charger/
+    - zephyr/include/zephyr/drivers/charger.h
+    - zephyr/tests/drivers/charger/
+    - zephyr/tests/drivers/build_all/charger/
+    - zephyr/samples/drivers/charger/
 
 clock_control:
   files:
-    - drivers/clock_control/
-    - dts/bindings/clock/
-    - include/zephyr/dt-bindings/clock/
-    - include/zephyr/drivers/clock_control.h
-    - include/zephyr/dt-bindings/clock/
-    - tests/drivers/clock_control/
-    - include/zephyr/drivers/clock_control/
+    - zephyr/drivers/clock_control/
+    - zephyr/dts/bindings/clock/
+    - zephyr/include/zephyr/dt-bindings/clock/
+    - zephyr/include/zephyr/drivers/clock_control.h
+    - zephyr/include/zephyr/dt-bindings/clock/
+    - zephyr/tests/drivers/clock_control/
+    - zephyr/include/zephyr/drivers/clock_control/
 
 comparator:
   files:
-    - drivers/comparator/
-    - dts/bindings/comparator/
-    - include/zephyr/drivers/comparator.h
-    - include/zephyr/drivers/comparator/
-    - tests/drivers/build_all/comparator/
-    - tests/drivers/comparator/
+    - zephyr/drivers/comparator/
+    - zephyr/dts/bindings/comparator/
+    - zephyr/include/zephyr/drivers/comparator.h
+    - zephyr/include/zephyr/drivers/comparator/
+    - zephyr/tests/drivers/build_all/comparator/
+    - zephyr/tests/drivers/comparator/
 
 console:
   files:
-    - drivers/console/
-    - include/zephyr/console/
-    - include/zephyr/drivers/console/
-    - samples/subsys/console/
-    - subsys/console/
-    - tests/drivers/console/
+    - zephyr/drivers/console/
+    - zephyr/include/zephyr/console/
+    - zephyr/include/zephyr/drivers/console/
+    - zephyr/samples/subsys/console/
+    - zephyr/subsys/console/
+    - zephyr/tests/drivers/console/
 
 coredump:
   files:
-    - drivers/coredump/
-    - dts/bindings/coredump/
-    - include/zephyr/drivers/coredump.h
-    - tests/drivers/coredump/
+    - zephyr/drivers/coredump/
+    - zephyr/dts/bindings/coredump/
+    - zephyr/include/zephyr/drivers/coredump.h
+    - zephyr/tests/drivers/coredump/
 
 counter:
   files:
-    - drivers/counter/
-    - include/zephyr/drivers/counter.h
-    - tests/drivers/counter/
-    - samples/drivers/counter/
-    - tests/drivers/build_all/counter/
+    - zephyr/drivers/counter/
+    - zephyr/include/zephyr/drivers/counter.h
+    - zephyr/tests/drivers/counter/
+    - zephyr/samples/drivers/counter/
+    - zephyr/tests/drivers/build_all/counter/
 
 crypto:
   files:
-    - drivers/crypto/
-    - dts/bindings/crypto/
-    - include/zephyr/crypto/
-    - samples/drivers/crypto/
-    - tests/crypto/
-    - tests/drivers/build_all/crypto/
+    - zephyr/drivers/crypto/
+    - zephyr/dts/bindings/crypto/
+    - zephyr/include/zephyr/crypto/
+    - zephyr/samples/drivers/crypto/
+    - zephyr/tests/crypto/
+    - zephyr/tests/drivers/build_all/crypto/
 
 dac:
   files:
-    - drivers/dac/
-    - include/zephyr/drivers/dac.h
-    - dts/bindings/dac/
-    - include/zephyr/dt-bindings/dac/
-    - tests/drivers/dac/
-    - samples/drivers/dac/
-    - tests/drivers/build_all/dac/
+    - zephyr/drivers/dac/
+    - zephyr/include/zephyr/drivers/dac.h
+    - zephyr/dts/bindings/dac/
+    - zephyr/include/zephyr/dt-bindings/dac/
+    - zephyr/tests/drivers/dac/
+    - zephyr/samples/drivers/dac/
+    - zephyr/tests/drivers/build_all/dac/
 
 dma:
   files:
-    - drivers/dma/
-    - tests/drivers/dma/
-    - include/zephyr/drivers/dma/
-    - dts/bindings/dma/
-    - include/zephyr/dt-bindings/dma/
-    - include/zephyr/drivers/dma.h
-    - include/zephyr/dt-bindings/dma/
+    - zephyr/drivers/dma/
+    - zephyr/tests/drivers/dma/
+    - zephyr/include/zephyr/drivers/dma/
+    - zephyr/dts/bindings/dma/
+    - zephyr/include/zephyr/dt-bindings/dma/
+    - zephyr/include/zephyr/drivers/dma.h
+    - zephyr/include/zephyr/dt-bindings/dma/
 
 eeprom:
   files:
-    - drivers/eeprom/
-    - include/zephyr/drivers/eeprom/eeprom_fake.h
-    - dts/bindings/mtd/*eeprom*
-    - include/zephyr/drivers/eeprom.h
-    - samples/drivers/eeprom/
-    - tests/drivers/eeprom/
-    - tests/drivers/*/eeprom/
+    - zephyr/drivers/eeprom/
+    - zephyr/include/zephyr/drivers/eeprom/eeprom_fake.h
+    - zephyr/dts/bindings/mtd/*eeprom*
+    - zephyr/include/zephyr/drivers/eeprom.h
+    - zephyr/samples/drivers/eeprom/
+    - zephyr/tests/drivers/eeprom/
+    - zephyr/tests/drivers/*/eeprom/
 
 entropy:
   files:
-    - drivers/entropy/
-    - include/zephyr/drivers/entropy.h
-    - tests/drivers/entropy/
+    - zephyr/drivers/entropy/
+    - zephyr/include/zephyr/drivers/entropy.h
+    - zephyr/tests/drivers/entropy/
 
 espi:
   files:
-    - drivers/espi/
-    - include/zephyr/drivers/espi.h
-    - include/zephyr/dt-bindings/espi/
-    - samples/drivers/espi/
-    - dts/bindings/espi/
-    - include/zephyr/drivers/espi_saf.h
-    - tests/drivers/espi/
+    - zephyr/drivers/espi/
+    - zephyr/include/zephyr/drivers/espi.h
+    - zephyr/include/zephyr/dt-bindings/espi/
+    - zephyr/samples/drivers/espi/
+    - zephyr/dts/bindings/espi/
+    - zephyr/include/zephyr/drivers/espi_saf.h
+    - zephyr/tests/drivers/espi/
 
 ethernet:
   files:
-    - drivers/ethernet/
-    - include/zephyr/dt-bindings/ethernet/
-    - tests/drivers/build_all/ethernet/
-    - dts/bindings/ethernet/
-    - tests/drivers/ethernet/
-    - include/zephyr/drivers/ethernet/
-    - include/zephyr/net/phy.h
-    - include/zephyr/net/ethernet.h
+    - zephyr/drivers/ethernet/
+    - zephyr/include/zephyr/dt-bindings/ethernet/
+    - zephyr/tests/drivers/build_all/ethernet/
+    - zephyr/dts/bindings/ethernet/
+    - zephyr/tests/drivers/ethernet/
+    - zephyr/include/zephyr/drivers/ethernet/
+    - zephyr/include/zephyr/net/phy.h
+    - zephyr/include/zephyr/net/ethernet.h
 
 flash:
   files:
-    - drivers/flash/
-    - dts/bindings/flash_controller/
-    - include/zephyr/dt-bindings/flash_controller/
-    - include/zephyr/drivers/flash.h
-    - samples/drivers/flash_shell/
-    - samples/drivers/soc_flash_nrf/
-    - tests/drivers/flash/
-    - include/zephyr/drivers/flash/
-    - tests/drivers/flash_simulator/
-    - tests/drivers/build_all/flash/
+    - zephyr/drivers/flash/
+    - zephyr/dts/bindings/flash_controller/
+    - zephyr/include/zephyr/dt-bindings/flash_controller/
+    - zephyr/include/zephyr/drivers/flash.h
+    - zephyr/samples/drivers/flash_shell/
+    - zephyr/samples/drivers/soc_flash_nrf/
+    - zephyr/tests/drivers/flash/
+    - zephyr/include/zephyr/drivers/flash/
+    - zephyr/tests/drivers/flash_simulator/
+    - zephyr/tests/drivers/build_all/flash/
 
 fuel_gauge:
   files:
-    - drivers/fuel_gauge/
-    - dts/bindings/fuel-gauge/
-    - include/zephyr/drivers/fuel_gauge.h
-    - tests/drivers/fuel_gauge/
+    - zephyr/drivers/fuel_gauge/
+    - zephyr/dts/bindings/fuel-gauge/
+    - zephyr/include/zephyr/drivers/fuel_gauge.h
+    - zephyr/tests/drivers/fuel_gauge/
 
 gpio:
   files:
-    - drivers/gpio/
-    - dts/bindings/gpio/
-    - include/zephyr/drivers/gpio/
-    - include/zephyr/drivers/gpio.h
-    - include/zephyr/dt-bindings/gpio/
-    - tests/drivers/gpio/
-    - tests/drivers/build_all/gpio/
+    - zephyr/drivers/gpio/
+    - zephyr/dts/bindings/gpio/
+    - zephyr/include/zephyr/drivers/gpio/
+    - zephyr/include/zephyr/drivers/gpio.h
+    - zephyr/include/zephyr/dt-bindings/gpio/
+    - zephyr/tests/drivers/gpio/
+    - zephyr/tests/drivers/build_all/gpio/
 
 gnss:
   files:
-    - drivers/gnss/
-    - include/zephyr/drivers/gnss.h
-    - include/zephyr/drivers/gnss/
-    - dts/bindings/gnss/
-    - include/zephyr/dt-bindings/gnss/
-    - tests/drivers/build_all/gnss/
-    - tests/drivers/gnss/
+    - zephyr/drivers/gnss/
+    - zephyr/include/zephyr/drivers/gnss.h
+    - zephyr/include/zephyr/drivers/gnss/
+    - zephyr/dts/bindings/gnss/
+    - zephyr/include/zephyr/dt-bindings/gnss/
+    - zephyr/tests/drivers/build_all/gnss/
+    - zephyr/tests/drivers/gnss/
 
 hwinfo:
   files:
-    - drivers/hwinfo/
-    - dts/bindings/hwinfo/
-    - include/zephyr/drivers/hwinfo.h
-    - tests/drivers/hwinfo/
+    - zephyr/drivers/hwinfo/
+    - zephyr/dts/bindings/hwinfo/
+    - zephyr/include/zephyr/drivers/hwinfo.h
+    - zephyr/tests/drivers/hwinfo/
 
 i2c:
   files:
-    - drivers/i2c/
-    - include/zephyr/drivers/i2c/
-    - dts/bindings/i2c/
-    - include/zephyr/drivers/i2c.h
-    - tests/drivers/i2c/
-    - include/zephyr/dt-bindings/i2c/
-    - tests/boards/*/i2c/
-    - tests/drivers/*/i2c/
-    - samples/drivers/i2c/
+    - zephyr/drivers/i2c/
+    - zephyr/include/zephyr/drivers/i2c/
+    - zephyr/dts/bindings/i2c/
+    - zephyr/include/zephyr/drivers/i2c.h
+    - zephyr/tests/drivers/i2c/
+    - zephyr/include/zephyr/dt-bindings/i2c/
+    - zephyr/tests/boards/*/i2c/
+    - zephyr/tests/drivers/*/i2c/
+    - zephyr/samples/drivers/i2c/
 
 i2s:
   files:
-    - drivers/i2s/
-    - dts/bindings/i2s/
-    - include/zephyr/drivers/i2s.h
-    - tests/drivers/i2s/
-    - samples/drivers/i2s/
+    - zephyr/drivers/i2s/
+    - zephyr/dts/bindings/i2s/
+    - zephyr/include/zephyr/drivers/i2s.h
+    - zephyr/tests/drivers/i2s/
+    - zephyr/samples/drivers/i2s/
 
 i3c:
   files:
-    - drivers/i3c/
-    - dts/bindings/i3c/
-    - include/zephyr/drivers/i3c.h
-    - include/zephyr/drivers/i3c/
-    - tests/drivers/build_all/i3c/
+    - zephyr/drivers/i3c/
+    - zephyr/dts/bindings/i3c/
+    - zephyr/include/zephyr/drivers/i3c.h
+    - zephyr/include/zephyr/drivers/i3c/
+    - zephyr/tests/drivers/build_all/i3c/
 
 mbox:
   files:
-    - include/zephyr/drivers/mbox.h
-    - drivers/mbox/
-    - samples/drivers/mbox/
-    - dts/bindings/mbox/
-    - doc/hardware/peripherals/mbox.rst
+    - zephyr/include/zephyr/drivers/mbox.h
+    - zephyr/drivers/mbox/
+    - zephyr/samples/drivers/mbox/
+    - zephyr/dts/bindings/mbox/
+    - zephyr/doc/hardware/peripherals/mbox.rst
 
 memc:
   files:
-    - drivers/memc/
-    - samples/drivers/memc/
-    - tests/drivers/memc/
-    - include/zephyr/dt-bindings/memory-controller/
-    - dts/bindings/memory-controllers/
+    - zephyr/drivers/memc/
+    - zephyr/samples/drivers/memc/
+    - zephyr/tests/drivers/memc/
+    - zephyr/include/zephyr/dt-bindings/memory-controller/
+    - zephyr/dts/bindings/memory-controllers/
 
 mipi_dsi:
   files:
-    - drivers/mipi_dsi/
-    - include/zephyr/drivers/mipi_dsi.h
-    - include/zephyr/drivers/mipi_dsi/
-    - tests/drivers/mipi_dsi/
-    - include/zephyr/dt-bindings/mipi_dsi/
-    - dts/bindings/mipi-dsi/
+    - zephyr/drivers/mipi_dsi/
+    - zephyr/include/zephyr/drivers/mipi_dsi.h
+    - zephyr/include/zephyr/drivers/mipi_dsi/
+    - zephyr/tests/drivers/mipi_dsi/
+    - zephyr/include/zephyr/dt-bindings/mipi_dsi/
+    - zephyr/dts/bindings/mipi-dsi/
 
 mspi:
   files:
-    - drivers/mspi/
-    - drivers/memc/*mspi*
-    - drivers/flash/*mspi*
-    - include/zephyr/drivers/mspi.h
-    - include/zephyr/drivers/mspi/
-    - samples/drivers/mspi/
-    - tests/drivers/mspi/
-    - dts/bindings/mspi/
-    - dts/bindings/mtd/mspi*
+    - zephyr/drivers/mspi/
+    - zephyr/drivers/memc/*mspi*
+    - zephyr/drivers/flash/*mspi*
+    - zephyr/include/zephyr/drivers/mspi.h
+    - zephyr/include/zephyr/drivers/mspi/
+    - zephyr/samples/drivers/mspi/
+    - zephyr/tests/drivers/mspi/
+    - zephyr/dts/bindings/mspi/
+    - zephyr/dts/bindings/mtd/mspi*
 
 interrupt:
   files:
-    - drivers/interrupt_controller/
-    - dts/bindings/interrupt-controller/
-    - include/zephyr/drivers/interrupt_controller/
-    - include/zephyr/dt-bindings/interrupt-controller/
-    - include/zephyr/irq*
-    - include/zephyr/sw_isr_table.h
-    - include/zephyr/shared_irq.h
-    - tests/drivers/interrupt_controller/
-    - tests/drivers/build_all/interrupt_controller/
+    - zephyr/drivers/interrupt_controller/
+    - zephyr/dts/bindings/interrupt-controller/
+    - zephyr/include/zephyr/drivers/interrupt_controller/
+    - zephyr/include/zephyr/dt-bindings/interrupt-controller/
+    - zephyr/include/zephyr/irq*
+    - zephyr/include/zephyr/sw_isr_table.h
+    - zephyr/include/zephyr/shared_irq.h
+    - zephyr/tests/drivers/interrupt_controller/
+    - zephyr/tests/drivers/build_all/interrupt_controller/
 
 ipc:
   files:
-    - drivers/ipm/
-    - samples/drivers/ipm/
-    - dts/bindings/ipm/
-    - tests/drivers/ipm/
-    - include/zephyr/drivers/ipm.h
+    - zephyr/drivers/ipm/
+    - zephyr/samples/drivers/ipm/
+    - zephyr/dts/bindings/ipm/
+    - zephyr/tests/drivers/ipm/
+    - zephyr/include/zephyr/drivers/ipm.h
 
 kscan:
   files:
-    - drivers/kscan/
-    - include/zephyr/drivers/kscan.h
-    - samples/drivers/kscan/
-    - tests/drivers/kscan/
-    - dts/bindings/kscan/
+    - zephyr/drivers/kscan/
+    - zephyr/include/zephyr/drivers/kscan.h
+    - zephyr/samples/drivers/kscan/
+    - zephyr/tests/drivers/kscan/
+    - zephyr/dts/bindings/kscan/
 
 led: &tag_led
   files:
-    - drivers/led/
-    - include/zephyr/drivers/led/
-    - include/zephyr/drivers/led.h
-    - samples/drivers/led/
-    - tests/drivers/led/
-    - tests/drivers/build_all/led/
-    - dts/bindings/led/
-    - include/zephyr/dt-bindings/led/
+    - zephyr/drivers/led/
+    - zephyr/include/zephyr/drivers/led/
+    - zephyr/include/zephyr/drivers/led.h
+    - zephyr/samples/drivers/led/
+    - zephyr/tests/drivers/led/
+    - zephyr/tests/drivers/build_all/led/
+    - zephyr/dts/bindings/led/
+    - zephyr/include/zephyr/dt-bindings/led/
 
 LED: *tag_led
 
 regulator:
   files:
-    - drivers/regulator/
-    - include/zephyr/drivers/regulator/
-    - include/zephyr/drivers/regulator.h
-    - include/zephyr/dt-bindings/regulator/
-    - tests/drivers/regulator/
-    - tests/drivers/build_all/regulator/
-    - dts/bindings/regulator/
+    - zephyr/drivers/regulator/
+    - zephyr/include/zephyr/drivers/regulator/
+    - zephyr/include/zephyr/drivers/regulator.h
+    - zephyr/include/zephyr/dt-bindings/regulator/
+    - zephyr/tests/drivers/regulator/
+    - zephyr/tests/drivers/build_all/regulator/
+    - zephyr/dts/bindings/regulator/
 
 retained_mem:
   files:
-    - drivers/retained_mem/
-    - dts/bindings/retained_mem/
-    - include/zephyr/drivers/retained_mem.h
-    - tests/drivers/retained_mem/
-    - dts/bindings/retained_mem/
+    - zephyr/drivers/retained_mem/
+    - zephyr/dts/bindings/retained_mem/
+    - zephyr/include/zephyr/drivers/retained_mem.h
+    - zephyr/tests/drivers/retained_mem/
+    - zephyr/dts/bindings/retained_mem/
 
 rtc:
   files:
-    - drivers/rtc/
-    - include/zephyr/drivers/rtc/
-    - tests/drivers/rtc/
-    - include/zephyr/drivers/rtc.h
-    - tests/drivers/build_all/rtc/
-    - dts/bindings/rtc/
+    - zephyr/drivers/rtc/
+    - zephyr/include/zephyr/drivers/rtc/
+    - zephyr/tests/drivers/rtc/
+    - zephyr/include/zephyr/drivers/rtc.h
+    - zephyr/tests/drivers/build_all/rtc/
+    - zephyr/dts/bindings/rtc/
 
 pinctrl:
   files:
-    - include/zephyr/drivers/pinctrl/
-    - include/zephyr/drivers/pinctrl.h
-    - drivers/pinctrl/
-    - tests/drivers/pinctrl/
-    - dts/bindings/pinctrl/
-    - include/zephyr/dt-bindings/pinctrl/
+    - zephyr/include/zephyr/drivers/pinctrl/
+    - zephyr/include/zephyr/drivers/pinctrl.h
+    - zephyr/drivers/pinctrl/
+    - zephyr/tests/drivers/pinctrl/
+    - zephyr/dts/bindings/pinctrl/
+    - zephyr/include/zephyr/dt-bindings/pinctrl/
 
 pwm:
   files:
-    - drivers/pwm/
-    - dts/bindings/pwm/
-    - include/zephyr/dt-bindings/pwm/
-    - tests/drivers/pwm/
-    - include/zephyr/*/pwms.h
-    - tests/drivers/build_all/pwm/
-    - include/zephyr/drivers/pwm.h
-    - include/zephyr/drivers/pwm/
+    - zephyr/drivers/pwm/
+    - zephyr/dts/bindings/pwm/
+    - zephyr/include/zephyr/dt-bindings/pwm/
+    - zephyr/tests/drivers/pwm/
+    - zephyr/include/zephyr/*/pwms.h
+    - zephyr/tests/drivers/build_all/pwm/
+    - zephyr/include/zephyr/drivers/pwm.h
+    - zephyr/include/zephyr/drivers/pwm/
 
 uart:
   files:
-    - drivers/serial/
-    - include/zephyr/drivers/uart.h
-    - include/zephyr/drivers/uart/
-    - dts/bindings/serial/
-    - samples/drivers/uart/
-    - tests/drivers/uart/
-    - tests/drivers/build_all/uart/
-    - include/zephyr/drivers/serial/
-    - include/zephyr/drivers/uart_pipe.h
+    - zephyr/drivers/serial/
+    - zephyr/include/zephyr/drivers/uart.h
+    - zephyr/include/zephyr/drivers/uart/
+    - zephyr/dts/bindings/serial/
+    - zephyr/samples/drivers/uart/
+    - zephyr/tests/drivers/uart/
+    - zephyr/tests/drivers/build_all/uart/
+    - zephyr/include/zephyr/drivers/serial/
+    - zephyr/include/zephyr/drivers/uart_pipe.h
 
 sensor: &tag_sensor
   files:
-    - drivers/sensor/
-    - include/zephyr/drivers/sensor.h
-    - include/zephyr/drivers/sensor_data_types.h
-    - samples/sensor/
-    - tests/drivers/sensor/
-    - dts/bindings/sensor/
-    - include/zephyr/drivers/sensor/
-    - include/zephyr/dt-bindings/sensor/
-    - tests/drivers/build_all/sensor/
+    - zephyr/drivers/sensor/
+    - zephyr/include/zephyr/drivers/sensor.h
+    - zephyr/include/zephyr/drivers/sensor_data_types.h
+    - zephyr/samples/sensor/
+    - zephyr/tests/drivers/sensor/
+    - zephyr/dts/bindings/sensor/
+    - zephyr/include/zephyr/drivers/sensor/
+    - zephyr/include/zephyr/dt-bindings/sensor/
+    - zephyr/tests/drivers/build_all/sensor/
 
 sensors: *tag_sensor
 
 smbus:
   files:
-    - drivers/smbus/
-    - dts/bindings/smbus/
-    - include/zephyr/drivers/smbus.h
-    - samples/drivers/smbus/
-    - tests/drivers/smbus/
+    - zephyr/drivers/smbus/
+    - zephyr/dts/bindings/smbus/
+    - zephyr/include/zephyr/drivers/smbus.h
+    - zephyr/samples/drivers/smbus/
+    - zephyr/tests/drivers/smbus/
 
 spi:
   files:
-    - drivers/spi/
-    - include/zephyr/drivers/spi.h
-    - tests/drivers/spi/
-    - dts/bindings/spi/
-    - include/zephyr/dt-bindings/spi/
+    - zephyr/drivers/spi/
+    - zephyr/include/zephyr/drivers/spi.h
+    - zephyr/tests/drivers/spi/
+    - zephyr/dts/bindings/spi/
+    - zephyr/include/zephyr/dt-bindings/spi/
 
 stepper:
   files:
-    - drivers/stepper/
-    - include/zephyr/drivers/stepper.h
-    - dts/bindings/stepper/
-    - tests/drivers/build_all/stepper/
+    - zephyr/drivers/stepper/
+    - zephyr/include/zephyr/drivers/stepper.h
+    - zephyr/dts/bindings/stepper/
+    - zephyr/tests/drivers/build_all/stepper/
 
 w1:
   files:
-    - drivers/w1/
-    - dts/bindings/w1/
-    - include/zephyr/drivers/w1.h
-    - include/zephyr/drivers/sensor/w1_sensor.h
-    - tests/drivers/w1/
-    - tests/drivers/build_all/w1/
-    - samples/drivers/w1/
+    - zephyr/drivers/w1/
+    - zephyr/dts/bindings/w1/
+    - zephyr/include/zephyr/drivers/w1.h
+    - zephyr/include/zephyr/drivers/sensor/w1_sensor.h
+    - zephyr/tests/drivers/w1/
+    - zephyr/tests/drivers/build_all/w1/
+    - zephyr/samples/drivers/w1/
 
 watchdog:
   files:
-    - drivers/watchdog/
-    - dts/bindings/watchdog/
-    - include/zephyr/drivers/watchdog.h
-    - samples/drivers/watchdog/
-    - tests/drivers/watchdog/
-    - tests/drivers/build_all/watchdog/
+    - zephyr/drivers/watchdog/
+    - zephyr/dts/bindings/watchdog/
+    - zephyr/include/zephyr/drivers/watchdog.h
+    - zephyr/samples/drivers/watchdog/
+    - zephyr/tests/drivers/watchdog/
+    - zephyr/tests/drivers/build_all/watchdog/
 
 cbprintf:
   files:
-    - include/zephyr/sys/cbprintf*
-    - tests/unit/cbprintf/
-    - tests/lib/cbprintf_*/
-    - lib/os/cbprintf*
-    - lib/os/Kconfig.cbprintf
+    - zephyr/include/zephyr/sys/cbprintf*
+    - zephyr/tests/unit/cbprintf/
+    - zephyr/tests/lib/cbprintf_*/
+    - zephyr/lib/os/cbprintf*
+    - zephyr/lib/os/Kconfig.cbprintf
 
 input:
   files:
-    - drivers/input/
-    - dts/bindings/input/
-    - include/zephyr/dt-bindings/input/
-    - include/zephyr/input/
-    - samples/subsys/input/
-    - subsys/input/
-    - tests/drivers/build_all/input/
-    - tests/subsys/input/
-    - tests/drivers/input/
+    - zephyr/drivers/input/
+    - zephyr/dts/bindings/input/
+    - zephyr/include/zephyr/dt-bindings/input/
+    - zephyr/include/zephyr/input/
+    - zephyr/samples/subsys/input/
+    - zephyr/subsys/input/
+    - zephyr/tests/drivers/build_all/input/
+    - zephyr/tests/subsys/input/
+    - zephyr/tests/drivers/input/
 
 jwt:
   files:
-    - subsys/jwt/
-    - include/zephyr/data/
-    - lib/utils/json.c
-    - tests/subsys/jwt/
-    - tests/lib/json/
+    - zephyr/subsys/jwt/
+    - zephyr/include/zephyr/data/
+    - zephyr/lib/utils/json.c
+    - zephyr/tests/subsys/jwt/
+    - zephyr/tests/lib/json/
 
 heap: &tag_heap
   files:
-    - tests/lib/shared_multi_heap/
-    - lib/heap/
-    - tests/lib/heap/
-    - tests/lib/heap_align/
-    - tests/lib/multi_heap/
-    - include/zephyr/multi_heap/
+    - zephyr/tests/lib/shared_multi_heap/
+    - zephyr/lib/heap/
+    - zephyr/tests/lib/heap/
+    - zephyr/tests/lib/heap_align/
+    - zephyr/tests/lib/multi_heap/
+    - zephyr/include/zephyr/multi_heap/
 
 multi_heap: *tag_heap
 
 logging:
   files:
-    - include/zephyr/logging/
-    - include/zephyr/sys/mpsc_pbuf.h
-    - include/zephyr/sys/mpsc_packet.h
-    - lib/os/mpsc_pbuf.c
-    - tests/lib/mpsc_pbuf/
-    - samples/subsys/logging/
-    - subsys/logging/
-    - tests/subsys/logging/
-    - scripts/logging/
-    - tests/lib/spsc_pbuf/
+    - zephyr/include/zephyr/logging/
+    - zephyr/include/zephyr/sys/mpsc_pbuf.h
+    - zephyr/include/zephyr/sys/mpsc_packet.h
+    - zephyr/lib/os/mpsc_pbuf.c
+    - zephyr/tests/lib/mpsc_pbuf/
+    - zephyr/samples/subsys/logging/
+    - zephyr/subsys/logging/
+    - zephyr/tests/subsys/logging/
+    - zephyr/scripts/logging/
+    - zephyr/tests/lib/spsc_pbuf/
 
 settings:
   files:
-    - include/zephyr/settings/
-    - subsys/settings/
-    - tests/subsys/settings/
-    - samples/subsys/settings/
+    - zephyr/include/zephyr/settings/
+    - zephyr/subsys/settings/
+    - zephyr/tests/subsys/settings/
+    - zephyr/samples/subsys/settings/
 
 shell:
   files:
-    - include/zephyr/shell/
-    - samples/subsys/shell/
-    - subsys/shell/
-    - tests/subsys/shell/
+    - zephyr/include/zephyr/shell/
+    - zephyr/samples/subsys/shell/
+    - zephyr/subsys/shell/
+    - zephyr/tests/subsys/shell/
 
 rtio:
   files:
-    - samples/subsys/rtio/
-    - include/zephyr/rtio/
-    - tests/subsys/rtio/
-    - subsys/rtio/
+    - zephyr/samples/subsys/rtio/
+    - zephyr/include/zephyr/rtio/
+    - zephyr/tests/subsys/rtio/
+    - zephyr/subsys/rtio/
 
 tracing:
   files:
-    - subsys/tracing/
-    - scripts/tracing/
-    - include/zephyr/tracing/
-    - subsys/timing/
-    - samples/subsys/tracing/
-    - tests/subsys/tracing/
+    - zephyr/subsys/tracing/
+    - zephyr/scripts/tracing/
+    - zephyr/include/zephyr/tracing/
+    - zephyr/subsys/timing/
+    - zephyr/samples/subsys/tracing/
+    - zephyr/tests/subsys/tracing/
 
 usb:
   files:
-    - drivers/usb/
-    - dts/bindings/usb/
-    - include/zephyr/dt-bindings/usb/
-    - include/zephyr/*/usb/
-    - include/zephyr/usb/
-    - samples/subsys/usb/
-    - subsys/usb/
-    - tests/subsys/usb/
-    - tests/drivers/build_all/usb/
-    - tests/drivers/usb/
-    - tests/drivers/udc/
+    - zephyr/drivers/usb/
+    - zephyr/dts/bindings/usb/
+    - zephyr/include/zephyr/dt-bindings/usb/
+    - zephyr/include/zephyr/*/usb/
+    - zephyr/include/zephyr/usb/
+    - zephyr/samples/subsys/usb/
+    - zephyr/subsys/usb/
+    - zephyr/tests/subsys/usb/
+    - zephyr/tests/drivers/build_all/usb/
+    - zephyr/tests/drivers/usb/
+    - zephyr/tests/drivers/udc/
 
 usbc:
   files:
-    - drivers/usb_c/
-    - dts/bindings/usb-c/
-    - include/zephyr/dt-bindings/usb-c/
-    - include/zephyr/*/usb_c/
-    - include/zephyr/usb_c/
-    - samples/subsys/usb_c/
-    - subsys/usb/usb_c/
-    - scripts/generate_usb_vif/
+    - zephyr/drivers/usb_c/
+    - zephyr/dts/bindings/usb-c/
+    - zephyr/include/zephyr/dt-bindings/usb-c/
+    - zephyr/include/zephyr/*/usb_c/
+    - zephyr/include/zephyr/usb_c/
+    - zephyr/samples/subsys/usb_c/
+    - zephyr/subsys/usb/usb_c/
+    - zephyr/scripts/generate_usb_vif/
 
 zbus:
   files:
-    - samples/subsys/zbus/
-    - include/zephyr/zbus/
-    - tests/subsys/zbus/
-    - subsys/zbus/
+    - zephyr/samples/subsys/zbus/
+    - zephyr/include/zephyr/zbus/
+    - zephyr/tests/subsys/zbus/
+    - zephyr/subsys/zbus/
 
 llext:
   files:
-    - cmake/llext-edk.cmake
-    - samples/subsys/llext/
-    - include/zephyr/llext/
-    - tests/misc/llext-edk/
-    - tests/subsys/llext/
-    - subsys/llext/
+    - zephyr/cmake/llext-edk.cmake
+    - zephyr/samples/subsys/llext/
+    - zephyr/include/zephyr/llext/
+    - zephyr/tests/misc/llext-edk/
+    - zephyr/tests/subsys/llext/
+    - zephyr/subsys/llext/
 
 lz4:
   files:
-    - modules/lz4/
-    - samples/modules/compression/lz4/
+    - zephyr/modules/lz4/
+    - zephyr/samples/modules/compression/lz4/
 
 chre:
   files:
-    - samples/modules/chre/
-    - modules/Kconfig.chre
+    - zephyr/samples/modules/chre/
+    - zephyr/modules/Kconfig.chre
 
 userspace:
   files:
-    - include/zephyr/internal/syscall_handler.h
-    - doc/kernel/usermode/kernelobjects.rst
-    - include/zephyr/app_memory/
-    - include/zephyr/linker/app_smem*.ld
-    - tests/kernel/mem_protect/
-    - samples/userspace/
-    - include/zephyr/syscall.h
-    - kernel/userspace*
-    - scripts/build/gen_app_partitions.py
-    - scripts/build/gen_kobject_list.py
-    - scripts/build/gen_syscalls.py
-    - scripts/build/process_gperf.py
-    - scripts/build/gen_relocate_app.py
-    - include/zephyr/sys/kobject.h
-    - include/zephyr/sys/mem_manage.h
-    - include/zephyr/kernel/mm.h
-    - include/zephyr/kernel/internal/mm.h
-    - include/zephyr/kernel/mm/demand_paging.h
+    - zephyr/include/zephyr/internal/syscall_handler.h
+    - zephyr/doc/kernel/usermode/kernelobjects.rst
+    - zephyr/include/zephyr/app_memory/
+    - zephyr/include/zephyr/linker/app_smem*.ld
+    - zephyr/tests/kernel/mem_protect/
+    - zephyr/samples/userspace/
+    - zephyr/include/zephyr/syscall.h
+    - zephyr/kernel/userspace*
+    - zephyr/scripts/build/gen_app_partitions.py
+    - zephyr/scripts/build/gen_kobject_list.py
+    - zephyr/scripts/build/gen_syscalls.py
+    - zephyr/scripts/build/process_gperf.py
+    - zephyr/scripts/build/gen_relocate_app.py
+    - zephyr/include/zephyr/sys/kobject.h
+    - zephyr/include/zephyr/sys/mem_manage.h
+    - zephyr/include/zephyr/kernel/mm.h
+    - zephyr/include/zephyr/kernel/internal/mm.h
+    - zephyr/include/zephyr/kernel/mm/demand_paging.h
 
 smf:
   files:
-    - include/zephyr/smf.h
-    - lib/smf/
-    - tests/lib/smf/
-    - samples/subsys/smf/
+    - zephyr/include/zephyr/smf.h
+    - zephyr/lib/smf/
+    - zephyr/tests/lib/smf/
+    - zephyr/samples/subsys/smf/
 
 osdp:
   files:
-    - subsys/mgmt/osdp/
-    - include/zephyr/mgmt/osdp.h
-    - samples/subsys/mgmt/osdp/
+    - zephyr/subsys/mgmt/osdp/
+    - zephyr/include/zephyr/mgmt/osdp.h
+    - zephyr/samples/subsys/mgmt/osdp/
 
 cmsis_rtos:
   files:
-    - subsys/portability/
-    - include/zephyr/portability/cmsis*
-    - samples/subsys/portability/cmsis_rtos_v*/
-    - tests/subsys/portability/cmsis_rtos_v*/
+    - zephyr/subsys/portability/
+    - zephyr/include/zephyr/portability/cmsis*
+    - zephyr/samples/subsys/portability/cmsis_rtos_v*/
+    - zephyr/tests/subsys/portability/cmsis_rtos_v*/
 
 linker: &tag_linker
   files:
-    - include/zephyr/linker/
-    - tests/misc/iterable_sections/
-    - tests/application_development/code_relocation/
-    - samples/application_development/code_relocation_nocopy/
+    - zephyr/include/zephyr/linker/
+    - zephyr/tests/misc/iterable_sections/
+    - zephyr/tests/application_development/code_relocation/
+    - zephyr/samples/application_development/code_relocation_nocopy/
 
 iterable_sections: *tag_linker
 
 nanopb:
   files:
-    - modules/nanopb/
-    - samples/modules/nanopb/
-    - tests/modules/nanopb/
+    - zephyr/modules/nanopb/
+    - zephyr/samples/modules/nanopb/
+    - zephyr/tests/modules/nanopb/
 
 kconfig:
   files:
-    - scripts/kconfig/
-    - Kconfig.zephyr
-    - tests/kconfig/configdefault/
-    - tests/misc/kconfigoptions/
+    - zephyr/scripts/kconfig/
+    - zephyr/Kconfig.zephyr
+    - zephyr/tests/kconfig/configdefault/
+    - zephyr/tests/misc/kconfigoptions/
 
 mbedtls:
   files:
-    - modules/mbedtls/
-    - tests/crypto/mbedtls/
-    - tests/benchmarks/mbedtls/
+    - zephyr/modules/mbedtls/
+    - zephyr/tests/crypto/mbedtls/
+    - zephyr/tests/benchmarks/mbedtls/
 
 uoscore:
   files:
-    - modules/uoscore-uedhoc/
-    - tests/modules/uoscore/
+    - zephyr/modules/uoscore-uedhoc/
+    - zephyr/tests/modules/uoscore/
 
 trusted-firmware-m:
   files:
-    - modules/trusted-firmware-m/
-    - samples/tfm_integration/
+    - zephyr/modules/trusted-firmware-m/
+    - zephyr/samples/tfm_integration/
 
 thrift:
   files:
-    - modules/thrift/
-    - samples/modules/thrift/
-    - tests/modules/thrift/
+    - zephyr/modules/thrift/
+    - zephyr/samples/modules/thrift/
+    - zephyr/tests/modules/thrift/
 
 tensorflow:
   files:
-    - modules/tflite-micro/
-    - samples/modules/tflite-micro/
+    - zephyr/modules/tflite-micro/
+    - zephyr/samples/modules/tflite-micro/
 
 gui:
   files:
-    - modules/lvgl/
-    - tests/lib/gui/lvgl/
-    - include/zephyr/dt-bindings/lvgl/
+    - zephyr/modules/lvgl/
+    - zephyr/tests/lib/gui/lvgl/
+    - zephyr/include/zephyr/dt-bindings/lvgl/
 
 cmake:
   files:
-    - cmake/
-    - CMakeLists.txt
-    - scripts/zephyr_module.py
-    - share/
-    - doc/build/
-    - doc/develop/modules.rst
-    - scripts/build/
-    - tests/cmake/
-    - misc/empty_file.c
-    - misc/generated/
-    - snippets/
-    - modules/Kconfig.sysbuild
-    - scripts/list_boards.py
-    - scripts/list_hardware.py
-    - scripts/schemas/*-schema.yml
+    - zephyr/cmake/
+    - zephyr/CMakeLists.txt
+    - zephyr/scripts/zephyr_module.py
+    - zephyr/share/
+    - zephyr/doc/build/
+    - zephyr/doc/develop/modules.rst
+    - zephyr/scripts/build/
+    - zephyr/tests/cmake/
+    - zephyr/misc/empty_file.c
+    - zephyr/misc/generated/
+    - zephyr/snippets/
+    - zephyr/modules/Kconfig.sysbuild
+    - zephyr/scripts/list_boards.py
+    - zephyr/scripts/list_hardware.py
+    - zephyr/scripts/schemas/*-schema.yml
 
 flash_map: &tag_storage
   files:
-    - subsys/storage/
-    - include/zephyr/storage/
-    - tests/subsys/storage/
+    - zephyr/subsys/storage/
+    - zephyr/include/zephyr/storage/
+    - zephyr/tests/subsys/storage/
 
 stream_flash: *tag_storage
 
 modem_chat: &tag_modem
   files:
-    - subsys/modem/
-    - include/zephyr/modem/
-    - tests/subsys/modem/
-    - samples/net/cellular_modem/
-    - include/zephyr/drivers/cellular.h
+    - zephyr/subsys/modem/
+    - zephyr/include/zephyr/modem/
+    - zephyr/tests/subsys/modem/
+    - zephyr/samples/net/cellular_modem/
+    - zephyr/include/zephyr/drivers/cellular.h
 
 modem_cmux: *tag_modem
 
@@ -965,231 +965,231 @@ modem_ppp: *tag_modem
 
 littlefs:
   files:
-    - subsys/fs/Kconfig.littlefs
-    - subsys/fs/littlefs_fs.c
-    - tests/subsys/fs/littlefs/
+    - zephyr/subsys/fs/Kconfig.littlefs
+    - zephyr/subsys/fs/littlefs_fs.c
+    - zephyr/tests/subsys/fs/littlefs/
 
 filesystem:
   files:
-    - include/zephyr/fs/
-    - samples/subsys/fs/
-    - subsys/fs/
-    - tests/subsys/fs/
-    - dts/bindings/fs/
+    - zephyr/include/zephyr/fs/
+    - zephyr/samples/subsys/fs/
+    - zephyr/subsys/fs/
+    - zephyr/tests/subsys/fs/
+    - zephyr/dts/bindings/fs/
 
 mm:
   files:
-    - subsys/mem_mgmt/
-    - lib/mem_blocks/
-    - tests/subsys/mem_mgmt/
-    - include/zephyr/mem_mgmt/mem_attr_heap.h
-    - tests/lib/mem_alloc/
-    - tests/lib/mem_blocks/
-    - doc/services/mem_mgmt/
-    - include/zephyr/mem_mgmt/mem_attr.h
-    - include/zephyr/dt-bindings/memory-attr/
-    - tests/lib/mem_blocks_stats/
-    - tests/drivers/mm/
+    - zephyr/subsys/mem_mgmt/
+    - zephyr/lib/mem_blocks/
+    - zephyr/tests/subsys/mem_mgmt/
+    - zephyr/include/zephyr/mem_mgmt/mem_attr_heap.h
+    - zephyr/tests/lib/mem_alloc/
+    - zephyr/tests/lib/mem_blocks/
+    - zephyr/doc/services/mem_mgmt/
+    - zephyr/include/zephyr/mem_mgmt/mem_attr.h
+    - zephyr/include/zephyr/dt-bindings/memory-attr/
+    - zephyr/tests/lib/mem_blocks_stats/
+    - zephyr/tests/drivers/mm/
 
 led_strip:
   files:
-    - drivers/led_strip/
-    - dts/bindings/led_strip/
-    - include/zephyr/drivers/led_strip.h
-    - tests/drivers/build_all/led_strip/
-    - include/zephyr/drivers/led_strip/
+    - zephyr/drivers/led_strip/
+    - zephyr/dts/bindings/led_strip/
+    - zephyr/include/zephyr/drivers/led_strip.h
+    - zephyr/tests/drivers/build_all/led_strip/
+    - zephyr/include/zephyr/drivers/led_strip/
 
 shield:
   files:
-    - boards/shields/
-    - samples/shields/
+    - zephyr/boards/shields/
+    - zephyr/samples/shields/
 
 synchronization:
   files:
-    - samples/synchronization/
-    - kernel/
+    - zephyr/samples/synchronization/
+    - zephyr/kernel/
 
 task_wdt:
   files:
-    - include/zephyr/task_wdt/
-    - samples/subsys/task_wdt/
-    - subsys/task_wdt/
+    - zephyr/include/zephyr/task_wdt/
+    - zephyr/samples/subsys/task_wdt/
+    - zephyr/subsys/task_wdt/
 
 pm: &tag_pm
   files:
-    - include/zephyr/pm/
-    - samples/subsys/pm/
-    - subsys/pm/
-    - tests/subsys/pm/
-    - drivers/power_domain/
-    - dts/bindings/power/
-    - include/zephyr/dt-bindings/power/
-    - samples/boards/nordic/system_off
+    - zephyr/include/zephyr/pm/
+    - zephyr/samples/subsys/pm/
+    - zephyr/subsys/pm/
+    - zephyr/tests/subsys/pm/
+    - zephyr/drivers/power_domain/
+    - zephyr/dts/bindings/power/
+    - zephyr/include/zephyr/dt-bindings/power/
+    - zephyr/samples/boards/nordic/system_off
 
 power: *tag_pm
 
 sensing:
   files:
-    - dts/bindings/sensor/zephyr,sensing.yaml
-    - dts/bindings/sensor/zephyr,sensing*.yaml
-    - include/zephyr/sensing/
-    - subsys/sensing/
-    - samples/subsys/sensing/
-    - tests/subsys/sensing/
+    - zephyr/dts/bindings/sensor/zephyr,sensing.yaml
+    - zephyr/dts/bindings/sensor/zephyr,sensing*.yaml
+    - zephyr/include/zephyr/sensing/
+    - zephyr/subsys/sensing/
+    - zephyr/samples/subsys/sensing/
+    - zephyr/tests/subsys/sensing/
 
 ps2:
   files:
-    - drivers/ps2/
-    - include/zephyr/drivers/ps2.h
-    - samples/drivers/ps2/
-    - dts/bindings/ps2/
+    - zephyr/drivers/ps2/
+    - zephyr/include/zephyr/drivers/ps2.h
+    - zephyr/samples/drivers/ps2/
+    - zephyr/dts/bindings/ps2/
 
 peci:
   files:
-    - drivers/peci/
-    - include/zephyr/drivers/peci.h
-    - samples/drivers/peci/
-    - dts/bindings/peci/
+    - zephyr/drivers/peci/
+    - zephyr/include/zephyr/drivers/peci.h
+    - zephyr/samples/drivers/peci/
+    - zephyr/dts/bindings/peci/
 
 openthread:
   files:
-    - subsys/net/l2/openthread/
-    - samples/net/openthread/
-    - tests/subsys/openthread/
+    - zephyr/subsys/net/l2/openthread/
+    - zephyr/samples/net/openthread/
+    - zephyr/tests/subsys/openthread/
 
 timer:
   files:
-    - drivers/timer/
-    - include/zephyr/drivers/timer/
-    - dts/bindings/timer/
-    - include/zephyr/dt-bindings/timer/
-    - tests/kernel/timer/
+    - zephyr/drivers/timer/
+    - zephyr/include/zephyr/drivers/timer/
+    - zephyr/dts/bindings/timer/
+    - zephyr/include/zephyr/dt-bindings/timer/
+    - zephyr/tests/kernel/timer/
 
 external:
   files:
-    - samples/application_development/external_lib/
+    - zephyr/samples/application_development/external_lib/
 
 nvs:
   files:
-    - drivers/flash/
-    - samples/subsys/nvs/
-    - subsys/fs/nvs/
-    - subsys/mem_mgmt/
-    - subsys/storage/flash_map/
-    - tests/subsys/fs/nvs/
+    - zephyr/drivers/flash/
+    - zephyr/samples/subsys/nvs/
+    - zephyr/subsys/fs/nvs/
+    - zephyr/subsys/mem_mgmt/
+    - zephyr/subsys/storage/flash_map/
+    - zephyr/tests/subsys/fs/nvs/
 
 openamp:
   files:
-    - lib/open-amp/
-    - samples/subsys/ipc/openamp/
-    - samples/subsys/ipc/openamp_rsc_table/
-    - samples/subsys/ipc/rpmsg_service/
+    - zephyr/lib/open-amp/
+    - zephyr/samples/subsys/ipc/openamp/
+    - zephyr/samples/subsys/ipc/openamp_rsc_table/
+    - zephyr/samples/subsys/ipc/rpmsg_service/
 
 devmem_load:
   files:
-    - samples/subsys/shell/devmem_load/
-    - subsys/shell/
+    - zephyr/samples/subsys/shell/devmem_load/
+    - zephyr/subsys/shell/
 
 mpu:
   files:
-    - samples/arch/mpu/mpu_test/
-    - arch/arm/core/mpu/
+    - zephyr/samples/arch/mpu/mpu_test/
+    - zephyr/arch/arm/core/mpu/
 
 fram:
   files:
-    - samples/drivers/spi_fujitsu_fram/
-    - drivers/spi/
-    - include/zephyr/drivers/spi.h
+    - zephyr/samples/drivers/spi_fujitsu_fram/
+    - zephyr/drivers/spi/
+    - zephyr/include/zephyr/drivers/spi.h
 
 stm: &tag_stm
   files:
-    - samples/boards/nordic/coresight_stm/
-    - subsys/debug/
-    - subsys/logging/
-    - subsys/logging/frontends/
-    - tests/boards/nrf/coresight_stm/
-    - tests/subsys/logging/log_frontend_stmesp_demux/
+    - zephyr/samples/boards/nordic/coresight_stm/
+    - zephyr/subsys/debug/
+    - zephyr/subsys/logging/
+    - zephyr/subsys/logging/frontends/
+    - zephyr/tests/boards/nrf/coresight_stm/
+    - zephyr/tests/subsys/logging/log_frontend_stmesp_demux/
 
 coresight_stm: *tag_stm
 
 gen_inc_file:
   files:
-    - tests/application_development/gen_inc_file/
+    - zephyr/tests/application_development/gen_inc_file/
 
 mcuboot:
   files:
-    - modules/Kconfig.mcuboot
-    - tests/boot/
+    - zephyr/modules/Kconfig.mcuboot
+    - zephyr/tests/boot/
 
 version:
   files:
-    - tests/cmake/app_version/
-    - include/zephyr/kernel_version.h
+    - zephyr/tests/cmake/app_version/
+    - zephyr/include/zephyr/kernel_version.h
 
 ec_host_cmd:
   files:
-    - subsys/mgmt/ec_host_cmd/
-    - include/zephyr/mgmt/ec_host_cmd/
-    - tests/subsys/mgmt/ec_host_cmd/
+    - zephyr/subsys/mgmt/ec_host_cmd/
+    - zephyr/include/zephyr/mgmt/ec_host_cmd/
+    - zephyr/tests/subsys/mgmt/ec_host_cmd/
 
 stp_decoder:
   files:
-    - tests/subsys/debug/mipi_stp_decoder/
-    - subsys/debug/
+    - zephyr/tests/subsys/debug/mipi_stp_decoder/
+    - zephyr/subsys/debug/
 
 lorawan:
   files:
-    - drivers/lora/
-    - include/zephyr/drivers/lora.h
-    - samples/drivers/lora/
-    - include/zephyr/lorawan/
-    - subsys/lorawan/
-    - samples/subsys/lorawan/
-    - include/zephyr/dt-bindings/lora/
-    - dts/bindings/lora/
+    - zephyr/drivers/lora/
+    - zephyr/include/zephyr/drivers/lora.h
+    - zephyr/samples/drivers/lora/
+    - zephyr/include/zephyr/lorawan/
+    - zephyr/subsys/lorawan/
+    - zephyr/samples/subsys/lorawan/
+    - zephyr/include/zephyr/dt-bindings/lora/
+    - zephyr/dts/bindings/lora/
 
 modbus:
   files:
-    - samples/subsys/modbus/
-    - include/zephyr/modbus/
-    - tests/subsys/modbus/
-    - subsys/modbus/
+    - zephyr/samples/subsys/modbus/
+    - zephyr/include/zephyr/modbus/
+    - zephyr/tests/subsys/modbus/
+    - zephyr/subsys/modbus/
 
 lockfree:
   files:
-    - tests/lib/lockfree/
-    - include/zephyr/sys/mpsc_lockfree.h
-    - include/zephyr/sys/spsc_lockfree.h
+    - zephyr/tests/lib/lockfree/
+    - zephyr/include/zephyr/sys/mpsc_lockfree.h
+    - zephyr/include/zephyr/sys/spsc_lockfree.h
 
 net_buf:
   files:
-    - include/zephyr/net/buf.h
-    - include/zephyr/net_buf.h
-    - lib/net_buf/
-    - tests/lib/net_buf/
+    - zephyr/include/zephyr/net/buf.h
+    - zephyr/include/zephyr/net_buf.h
+    - zephyr/lib/net_buf/
+    - zephyr/tests/lib/net_buf/
 
 introduction:
   files:
-    - samples/cpp/hello_world/
-    - samples/userspace/hello_world_user/
-    - samples/hello_world/
-    - samples/arch/smp/pi/
+    - zephyr/samples/cpp/hello_world/
+    - zephyr/samples/userspace/hello_world_user/
+    - zephyr/samples/hello_world/
+    - zephyr/samples/arch/smp/pi/
 
 snippets:
   files:
-    - tests/cmake/snippets/
+    - zephyr/tests/cmake/snippets/
 
 zms:
   files:
-    - subsys/fs/zms/
-    - include/zephyr/fs/zms.h
-    - samples/subsys/fs/zms/
-    - tests/subsys/fs/zms/
+    - zephyr/subsys/fs/zms/
+    - zephyr/include/zephyr/fs/zms.h
+    - zephyr/samples/subsys/fs/zms/
+    - zephyr/tests/subsys/fs/zms/
 
 arch:
   files:
-    - arch/Kconfig
-    - include/zephyr/arch/
-    - arch/common/
-    - include/zephyr/arch/common/
-    - tests/arch/common/
+    - zephyr/arch/Kconfig
+    - zephyr/include/zephyr/arch/
+    - zephyr/arch/common/
+    - zephyr/include/zephyr/arch/common/
+    - zephyr/tests/arch/common/
