@@ -9,6 +9,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/__assert.h>
+#include <zephyr/drivers/clock_control/nrf_clock_control.h>
 #include <mpsl.h>
 #include <mpsl_timeslot.h>
 #include <mpsl/mpsl_assert.h>
@@ -21,7 +22,6 @@
 #endif
 #if IS_ENABLED(CONFIG_SOC_COMPATIBLE_NRF54LX)
 #include <nrfx_power.h>
-#include <zephyr/drivers/clock_control/nrf_clock_control.h>
 #endif
 #if defined(CONFIG_SOC_SERIES_NRF54HX)
 #include <hal/nrf_dppi.h>
