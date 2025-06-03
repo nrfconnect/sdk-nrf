@@ -69,3 +69,10 @@
   platforms:
     - qemu_cortex_m3/ti_lm3s6965
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-33747"
+
+- scenarios:
+    - nrf.extended.drivers.i2s.i2s_api.gpio_loopback.54h.audiopll
+    - nrf.extended.drivers.i2s.i2s_speed.gpio_loopback.54h.audiopll
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-7789"
