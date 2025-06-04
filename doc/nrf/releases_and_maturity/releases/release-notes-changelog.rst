@@ -321,6 +321,12 @@ Amazon Sidewalk samples
 Bluetooth samples
 -----------------
 
+* Added experimental ``llvm`` toolchain support for the nRF54L Series board targets to the following samples:
+
+  * :ref:`peripheral_lbs`
+  * :ref:`central_uart`
+  * :ref:`power_profiling`
+
 * :ref:`bluetooth_isochronous_time_synchronization` sample:
 
   * Fixed an issue where the sample would assert with the :kconfig:option:`CONFIG_ASSERT` Kconfig option enabled.
