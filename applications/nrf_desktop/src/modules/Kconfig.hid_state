@@ -11,6 +11,7 @@ config DESKTOP_HID_STATE_ENABLE
 	depends on DESKTOP_ROLE_HID_PERIPHERAL
 	select DESKTOP_HID_KEYMAP
 	select DESKTOP_HID_EVENTQ
+	select DESKTOP_KEYS_STATE
 	help
 	  The module generates HID reports based on user input.
 
