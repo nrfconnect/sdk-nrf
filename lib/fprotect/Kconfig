@@ -51,6 +51,8 @@ menuconfig FPROTECT
 	depends on SOC_FAMILY_NORDIC_NRF
 	depends on !(SOC_SERIES_NRF54LX && IS_SECURE_BOOTLOADER)
 	select NRFX_RRAMC if SOC_SERIES_NRF54LX
+	default y if MCUBOOT && (!SOC_SERIES_NRF54LX || (SOC_SERIES_NRF54LX && MCUBOOT_MCUBOOT_IMAGE_NUMBER = -1))
+	imply FPROTECT_ALLOW_COMBINED_REGIONS if MCUBOOT && SOC_SERIES_NRF54LX && MCUBOOT_MCUBOOT_IMAGE_NUMBER = -1
 	help
 	  Enable the software library FPROTECT that may or may not be used
 	  by other systems to protect flash from writes and possibly also
