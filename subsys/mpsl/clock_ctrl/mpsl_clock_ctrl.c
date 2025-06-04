@@ -512,9 +512,7 @@ int32_t mpsl_clock_ctrl_init(void)
 	}
 #endif /* CONFIG_MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST */
 
-#if IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF)
 	m_nrf_hfclk_ctrl_data.startup_time_us = z_nrf_clock_bt_ctlr_hf_get_startup_time_us();
-#endif
 
 	return mpsl_clock_ctrl_source_register(&m_nrf_lfclk_ctrl_data, &m_nrf_hfclk_ctrl_data);
 }
