@@ -101,9 +101,9 @@ void RegisterTestCommands()
 
 	static const shell_command_t sTestCommand = { &TestCommandHandler, "test", "Test - specific commands" };
 
-	sShellTestSubCommands.RegisterCommands(sTestSubCommands, ArraySize(sTestSubCommands));
+	sShellTestSubCommands.RegisterCommands(sTestSubCommands, MATTER_ARRAY_SIZE(sTestSubCommands));
 	sShellResumptionStorageSubCommands.RegisterCommands(sResumptionStorageSubCommands,
-							    ArraySize(sResumptionStorageSubCommands));
+							    MATTER_ARRAY_SIZE(sResumptionStorageSubCommands));
 
 	Engine::Root().RegisterCommands(&sTestCommand, 1);
 }
