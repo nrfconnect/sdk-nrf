@@ -59,11 +59,11 @@ def expected_metadata(size):
                 'crpl': 64,
                 'features': 5,
                 'elements': [
-                    {'location': 1, 'sig_models': [0, 2], 'vendor_models': []}
+                    {'location': 1, 'sig_models': [0, 2], 'vendor_models': [0x56781234]}
                 ]
             },
-            'composition_hash': 92775163,
-            'encoded_metadata': f'0102030004000000{encoded_size}01fba287050100'
+            'composition_hash': 1829016033,
+            'encoded_metadata': f'0102030004000000{encoded_size}01e191046d0100'
         },
         {
             'sign_version': {'major': 1, 'minor': 2, 'revision': 3, 'build_number': 4},
@@ -76,12 +76,12 @@ def expected_metadata(size):
                 'crpl': 64,
                 'features': 5,
                 'elements': [
-                    {'location': 1, 'sig_models': [0, 2], 'vendor_models': []},
+                    {'location': 1, 'sig_models': [0, 2], 'vendor_models': [0x56781234]},
                     {'location': 2, 'sig_models': [4097, 4099], 'vendor_models': []}
                 ]
             },
-            'composition_hash': 334602563,
-            'encoded_metadata': f'0102030004000000{encoded_size}0143a1f1130200'
+            'composition_hash': 214185805,
+            'encoded_metadata': f'0102030004000000{encoded_size}014d37c40c0200'
         }
     ]
 
