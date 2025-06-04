@@ -47,7 +47,7 @@ static psa_key_handle_t key_handle;
 static psa_key_id_t key_id;
 /* ====================================================================== */
 
-LOG_MODULE_DECLARE(app, LOG_LEVEL_DBG);
+LOG_MODULE_DECLARE(ikg, LOG_LEVEL_DBG);
 
 int get_identity_key(void)
 {
@@ -99,7 +99,7 @@ int sign_message(void)
 {
 	uint32_t output_len;
 	psa_status_t status;
-
+	while(true) {
 	status = psa_sign_message(identity_key_id,
 		PSA_ALG_ECDSA(PSA_ALG_SHA_256),
 		m_plain_text,
@@ -107,6 +107,8 @@ int sign_message(void)
 		m_signature,
 		sizeof(m_signature),
 		&output_len);
+	printk("test3\n");
+	}
 
 	if (status != PSA_SUCCESS) {
 		return status;
@@ -118,14 +120,12 @@ int sign_message(void)
 int verify_message(void)
 {
 	psa_status_t status;
-
 	status = psa_verify_message(key_id,
 		PSA_ALG_ECDSA(PSA_ALG_SHA_256),
 		m_plain_text,
 		sizeof(m_plain_text),
 		m_signature,
 		NRF_CRYPTO_TEST_IKG_SIGNATURE_SIZE);
-
 	if (status != PSA_SUCCESS) {
 		return status;
 	}

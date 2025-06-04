@@ -47,7 +47,7 @@ static uint8_t iv[IV_LEN];
 static psa_key_id_t key_id;
 /* ====================================================================== */
 
-LOG_MODULE_DECLARE(app, LOG_LEVEL_DBG);
+LOG_MODULE_DECLARE(ikg, LOG_LEVEL_DBG);
 
 psa_status_t derive_key(psa_key_attributes_t *attributes, uint8_t *key_label,
 			uint32_t label_size, psa_key_id_t *key_id_out)

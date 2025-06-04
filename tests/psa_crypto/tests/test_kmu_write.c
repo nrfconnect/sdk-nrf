@@ -20,7 +20,7 @@
 #include <tfm_ns_interface.h>
 #endif
 
-LOG_MODULE_DECLARE(app, LOG_LEVEL_DBG);
+LOG_MODULE_DECLARE(ikg, LOG_LEVEL_DBG);
 /* ======================================================================
  *		Global variables/defines for the kmu write test
  */

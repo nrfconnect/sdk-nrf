@@ -15,6 +15,7 @@
 #include <cracen_psa.h>
 #include "ecc.h"
 #include "common.h"
+#include <stddef.h>
 
 #define MAX_ECC_ATTEMPTS 10
 
@@ -67,6 +68,7 @@ int ecc_genpubkey(const uint8_t *priv_key, uint8_t *pub_key, const struct sx_pk_
 		sx_rdpkmem(pub_key + opsz, outputs[1], opsz);
 	}
 	sx_pk_release_req(pkreq.req);
+	printk("ecdh yo\n");
 	return status;
 }
 

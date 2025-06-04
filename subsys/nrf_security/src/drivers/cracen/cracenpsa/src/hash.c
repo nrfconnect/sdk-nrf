@@ -58,6 +58,7 @@ psa_status_t cracen_hash_compute(psa_algorithm_t alg, const uint8_t *input, size
 	}
 
 	sx_status = sx_hash_wait(&c);
+	printk("HASH");
 
 	return silex_statuscodes_to_psa(sx_status);
 }

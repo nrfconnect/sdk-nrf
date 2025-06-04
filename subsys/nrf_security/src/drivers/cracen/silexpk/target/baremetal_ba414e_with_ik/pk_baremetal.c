@@ -48,6 +48,10 @@ then update this error
 
 #define IK_ENTROPY_ERROR     0xc6
 
+#define RNG_OFFSET = 0x1000
+#define RNG_WARMUP = (RNG_OFFSET) + 0x34
+#define RNG_SAMPLING_PERIOD = (RNG_OFFSET) + 0x44
+
 struct sx_pk_cnx {
 	struct sx_pk_req instance;
 	struct sx_pk_capabilities caps;
@@ -96,8 +100,16 @@ int read_status(sx_pk_req *req)
 	return convert_ba414_status(status);
 }
 
+int lazy_debug_function(sx_pk_req *req)
+{
+
+	return -1;
+}
+
 int sx_pk_wait(sx_pk_req *req)
 {
+
+	int status;
 	do {
 #ifndef CONFIG_CRACEN_HW_VERSION_LITE
 		/* In CRACEN Lite the PKE-IKG interrupt is only active when in PK mode.
@@ -112,7 +124,7 @@ int sx_pk_wait(sx_pk_req *req)
 		 * Error code is returned here so the entire operation can be rerun
 		 */
 		if (sx_pk_rdreg(&req->regs, IK_REG_STATUS) == IK_ENTROPY_ERROR) {
-			return SX_ERR_RETRY;
+			status = lazy_debug_function(req);
 		}
 #endif
 

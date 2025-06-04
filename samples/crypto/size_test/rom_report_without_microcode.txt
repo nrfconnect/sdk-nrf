@@ -1,0 +1,880 @@
+Path                                                                                             Size       %  Address    Section
+==========================================================================================================================================
+Root                                                                                            51190 100.00%  -
+├── (hidden)                                                                                     3216   6.28%  -
+├── (no paths)                                                                                   4943   9.66%  -
+│   ├── CSWTCH.22                                                                                  12   0.02%  0x0000b578 rodata
+│   ├── CSWTCH.32                                                                                   3   0.01%  0x0000c2f6 rodata
+│   ├── CSWTCH.44                                                                                  12   0.02%  0x0000b524 rodata
+│   ├── CSWTCH.474                                                                                 18   0.04%  0x0000c2dd rodata
+│   ├── CSWTCH.489                                                                                 20   0.04%  0x0000b5e0 rodata
+│   ├── CSWTCH.871                                                                                 12   0.02%  0x0000b5d4 rodata
+│   ├── SystemCoreClock                                                                             4   0.01%  0x2000006c datas
+│   ├── __aeabi_ldiv0                                                                               2   0.00%  0x000004b1 text
+│   ├── __aeabi_memcpy                                                                             26   0.05%  0x0000a985 text
+│   ├── __device_dts_ord_103                                                                       32   0.06%  0x0000aabc device_area
+│   ├── __device_dts_ord_11                                                                        32   0.06%  0x0000aa7c device_area
+│   ├── __device_dts_ord_13                                                                        32   0.06%  0x0000aa5c device_area
+│   ├── __device_dts_ord_24                                                                        32   0.06%  0x0000aa9c device_area
+│   ├── __device_dts_ord_58                                                                        32   0.06%  0x0000aa3c device_area
+│   ├── __file_str_put                                                                             16   0.03%  0x0000a9af text
+│   ├── __l_vfprintf                                                                             1204   2.35%  0x00007f69 text
+│   ├── __libc_fini_array                                                                          44   0.09%  0x0000841d text
+│   ├── __udivmoddi4                                                                              668   1.30%  0x000004c5 text
+│   ├── __ultoa_invert                                                                            172   0.34%  0x0000a8d9 text
+│   ├── _sw_isr_table                                                                            2168   4.24%  0x0000aadc sw_isr_table
+│   ├── cracen_initialized.0                                                                        4   0.01%  0x200001b0 datas
+│   ├── delay_machine_code.0                                                                        6   0.01%  0x0000b430 rodata
+│   ├── delay_machine_code.0                                                                        6   0.01%  0x0000b440 rodata
+│   ├── exit                                                                                       28   0.05%  0x00007eb5 text
+│   ├── levels.0                                                                                   24   0.05%  0x0000b5f4 rodata
+│   ├── memcmp                                                                                     32   0.06%  0x0000a8a1 text
+│   ├── memset                                                                                     16   0.03%  0x0000a99f text
+│   ├── mpu_config                                                                                  8   0.02%  0x0000b4d4 rodata
+│   ├── platform_free_uninit                                                                        2   0.00%  0x0000990d text
+│   ├── port_offset.1                                                                              16   0.03%  0x0000c1f2 rodata
+│   ├── postfix.0                                                                                  28   0.05%  0x0000bc0d rodata
+│   ├── prefix.1                                                                                   12   0.02%  0x0000bc29 rodata
+│   ├── puts                                                                                       64   0.13%  0x00007ed1 text
+│   ├── snprintf                                                                                   88   0.17%  0x00007f11 text
+│   ├── stdout                                                                                      4   0.01%  0x0000b4fc rodata
+│   ├── strlen                                                                                     16   0.03%  0x000004b5 text
+│   ├── strnlen                                                                                    24   0.05%  0x0000a8c1 text
+│   ├── sx_curve_nistp256                                                                          12   0.02%  0x0000b7a4 rodata
+│   └── transitions.0                                                                              12   0.02%  0x0000b500 rodata
+├── OUTPUT_DIR                                                                                   1102   2.15%  -
+│   └── zephyr                                                                                   1102   2.15%  -
+│       ├── include                                                                                16   0.03%  -
+│       │   └── generated                                                                          16   0.03%  -
+│       │       └── zephyr                                                                         16   0.03%  -
+│       │           └── syscalls                                                                   16   0.03%  -
+│       │               └── log_msg.h                                                              16   0.03%  -
+│       │                   ├── z_log_msg_simple_create_0.constprop.0                               8   0.02%  0x0000844b text
+│       │                   └── z_log_msg_simple_create_0.constprop.0                               8   0.02%  0x0000904b text
+│       ├── isr_tables.c                                                                         1084   2.12%  -
+│       │   └── _irq_vector_table                                                                1084   2.12%  0x00000040 rom_start
+│       └── misc                                                                                    2   0.00%  -
+│           └── generated                                                                           2   0.00%  -
+│               └── configs.c                                                                       2   0.00%  -
+│                   └── _ConfigAbsSyms                                                              2   0.00%  0x00008d73 text
+├── WORKSPACE                                                                                   20212  39.48%  -
+│   ├── modules                                                                                  9737  19.02%  -
+│   │   ├── crypto                                                                               4574   8.94%  -
+│   │   │   ├── mbedtls                                                                           836   1.63%  -
+│   │   │   │   └── library                                                                       836   1.63%  -
+│   │   │   │       └── memory_buffer_alloc.c                                                     836   1.63%  -
+│   │   │   │           ├── buffer_alloc_calloc_mutexed                                           296   0.58%  0x00005b55 text
+│   │   │   │           ├── buffer_alloc_free_mutexed                                             296   0.58%  0x00005c7d text
+│   │   │   │           ├── mbedtls_memory_buffer_alloc_init                                      120   0.23%  0x00005da5 text
+│   │   │   │           ├── verify_chain                                                           60   0.12%  0x00005b19 text
+│   │   │   │           └── verify_header                                                          64   0.13%  0x00005ad9 text
+│   │   │   └── oberon-psa-crypto                                                                3738   7.30%  -
+│   │   │       ├── include                                                                        26   0.05%  -
+│   │   │       │   └── psa                                                                        26   0.05%  -
+│   │   │       │       └── crypto_struct.h                                                        26   0.05%  -
+│   │   │       │           └── psa_extend_key_usage_flags                                         26   0.05%  0x00009ecb text
+│   │   │       └── library                                                                      3712   7.25%  -
+│   │   │           ├── platform.c                                                                 56   0.11%  -
+│   │   │           │   ├── mbedtls_calloc                                                         12   0.02%  0x00005e1d text
+│   │   │           │   ├── mbedtls_calloc_func                                                     4   0.01%  0x200001a8 datas
+│   │   │           │   ├── mbedtls_free                                                           12   0.02%  0x00005e29 text
+│   │   │           │   ├── mbedtls_free_func                                                       4   0.01%  0x200001a4 datas
+│   │   │           │   ├── mbedtls_platform_set_calloc_free                                       20   0.04%  0x00005e35 text
+│   │   │           │   └── platform_calloc_uninit                                                  4   0.01%  0x00009909 text
+│   │   │           ├── platform_util.c                                                            48   0.09%  -
+│   │   │           │   ├── mbedtls_platform_zeroize                                               24   0.05%  0x00005e49 text
+│   │   │           │   ├── mbedtls_zeroize_and_free                                               20   0.04%  0x0000990f text
+│   │   │           │   └── memset_func                                                             4   0.01%  0x200001ac datas
+│   │   │           ├── psa_crypto.c                                                             2668   5.21%  -
+│   │   │           │   ├── mbedtls_psa_crypto_free                                               144   0.28%  0x000063cd text
+│   │   │           │   ├── psa_allocate_buffer_to_slot                                            38   0.07%  0x00009a3b text
+│   │   │           │   ├── psa_crypto_init                                                       260   0.51%  0x0000645d text
+│   │   │           │   ├── psa_destroy_key                                                       160   0.31%  0x00006309 text
+│   │   │           │   ├── psa_export_public_key                                                  86   0.17%  0x00009ab1 text
+│   │   │           │   ├── psa_fail_key_creation.constprop.0                                      48   0.09%  0x000062d9 text
+│   │   │           │   ├── psa_finish_key_creation.constprop.0                                    84   0.16%  0x000061c1 text
+│   │   │           │   ├── psa_generate_key                                                      240   0.47%  0x00009b9f text
+│   │   │           │   ├── psa_generate_key_internal                                              34   0.07%  0x00009b7d text
+│   │   │           │   ├── psa_generate_random                                                    36   0.07%  0x000063a9 text
+│   │   │           │   ├── psa_get_and_lock_key_slot_with_policy                                 220   0.43%  0x000060e5 text
+│   │   │           │   ├── psa_get_and_lock_transparent_key_slot_with_policy                      34   0.07%  0x000099db text
+│   │   │           │   ├── psa_get_initialized                                                    76   0.15%  0x00005e61 text
+│   │   │           │   ├── psa_key_algorithm_permits                                             504   0.98%  0x00005eed text
+│   │   │           │   ├── psa_mac_key_can_do                                                     64   0.13%  0x00005ead text
+│   │   │           │   ├── psa_raw_key_agreement                                                 118   0.23%  0x00009b07 text
+│   │   │           │   ├── psa_remove_key_data_from_memory                                        22   0.04%  0x00009a61 text
+│   │   │           │   ├── psa_start_key_creation.constprop.0                                    196   0.38%  0x00006215 text
+│   │   │           │   ├── psa_validate_ecc_key_attr                                             184   0.36%  0x00009923 text
+│   │   │           │   ├── psa_validate_unstructured_key_bit_size                                 62   0.12%  0x000099fd text
+│   │   │           │   └── psa_wipe_key_slot                                                      58   0.11%  0x00009a77 text
+│   │   │           ├── psa_crypto_client.c                                                         8   0.02%  -
+│   │   │           │   └── psa_reset_key_attributes                                                8   0.02%  0x00009c8f text
+│   │   │           ├── psa_crypto_slot_management.c                                              906   1.77%  -
+│   │   │           │   ├── psa_get_and_lock_key_slot                                             396   0.77%  0x000066c5 text
+│   │   │           │   ├── psa_get_and_lock_key_slot_in_memory                                   108   0.21%  0x00006591 text
+│   │   │           │   ├── psa_get_key_slots_initialized                                          48   0.09%  0x00006561 text
+│   │   │           │   ├── psa_initialize_key_slots                                               16   0.03%  0x000065fd text
+│   │   │           │   ├── psa_is_valid_key_id                                                    34   0.07%  0x00009cb1 text
+│   │   │           │   ├── psa_reserve_free_key_slot                                             132   0.26%  0x00006641 text
+│   │   │           │   ├── psa_unregister_read                                                    42   0.08%  0x00009cd3 text
+│   │   │           │   ├── psa_unregister_read_under_mutex                                        60   0.12%  0x00006851 text
+│   │   │           │   ├── psa_validate_key_location                                               4   0.01%  0x00009cfd text
+│   │   │           │   ├── psa_validate_key_persistence                                           14   0.03%  0x00009d01 text
+│   │   │           │   └── psa_wipe_all_key_slots                                                 52   0.10%  0x0000660d text
+│   │   │           └── psa_crypto_slot_management.h                                               26   0.05%  -
+│   │   │               └── psa_register_read                                                      26   0.05%  0x00009c97 text
+│   │   └── hal                                                                                  5163  10.09%  -
+│   │       └── nordic                                                                           5163  10.09%  -
+│   │           └── nrfx                                                                         5163  10.09%  -
+│   │               ├── drivers                                                                  4369   8.53%  -
+│   │               │   └── src                                                                  4369   8.53%  -
+│   │               │       ├── nrfx_clock.c                                                      652   1.27%  -
+│   │               │       │   ├── clock_stop                                                    216   0.42%  0x00003945 text
+│   │               │       │   ├── nrfx_clock_enable                                              44   0.09%  0x00003a3d text
+│   │               │       │   ├── nrfx_clock_init                                                32   0.06%  0x00003a1d text
+│   │               │       │   ├── nrfx_clock_start                                              224   0.44%  0x00003a69 text
+│   │               │       │   ├── nrfx_clock_stop                                                 4   0.01%  0x00009419 text
+│   │               │       │   └── nrfx_power_clock_irq_handler                                  132   0.26%  0x00003b49 text
+│   │               │       ├── nrfx_gpiote.c                                                    2567   5.01%  -
+│   │               │       │   ├── call_handler                                                   62   0.12%  0x000094cd text
+│   │               │       │   ├── get_pin_idx                                                    20   0.04%  0x00003bed text
+│   │               │       │   ├── irq_handler                                                   424   0.83%  0x00003d31 text
+│   │               │       │   ├── latch_pending_read_and_check                                   88   0.17%  0x00003c71 text
+│   │               │       │   ├── m_cb                                                          216   0.42%  0x20000070 datas
+│   │               │       │   ├── nrfx_gpiote_20_irq_handler                                     16   0.03%  0x00004469 text
+│   │               │       │   ├── nrfx_gpiote_30_irq_handler                                     16   0.03%  0x00004479 text
+│   │               │       │   ├── nrfx_gpiote_channel_alloc                                      24   0.05%  0x00004399 text
+│   │               │       │   ├── nrfx_gpiote_channel_free                                       24   0.05%  0x00004381 text
+│   │               │       │   ├── nrfx_gpiote_channel_get                                        60   0.12%  0x000042ad text
+│   │               │       │   ├── nrfx_gpiote_global_callback_set                                28   0.05%  0x00004291 text
+│   │               │       │   ├── nrfx_gpiote_init                                              124   0.24%  0x000042e9 text
+│   │               │       │   ├── nrfx_gpiote_init_check                                         28   0.05%  0x00004365 text
+│   │               │       │   ├── nrfx_gpiote_input_configure                                   492   0.96%  0x00003f7d text
+│   │               │       │   ├── nrfx_gpiote_output_configure                                  296   0.58%  0x00004169 text
+│   │               │       │   ├── nrfx_gpiote_pin_uninit                                          4   0.01%  0x000095a3 text
+│   │               │       │   ├── nrfx_gpiote_trigger_disable                                     4   0.01%  0x000095a7 text
+│   │               │       │   ├── nrfx_gpiote_trigger_enable                                    184   0.36%  0x000043b1 text
+│   │               │       │   ├── pin_in_use_by_te.isra.0                                        36   0.07%  0x00003d0d text
+│   │               │       │   ├── pin_is_output.isra.0                                           36   0.07%  0x00003ce9 text
+│   │               │       │   ├── pin_te_get.isra.0                                              32   0.06%  0x00003cc9 text
+│   │               │       │   ├── pin_trigger_disable                                            74   0.14%  0x00009559 text
+│   │               │       │   ├── pin_uninit                                                    164   0.32%  0x00003ed9 text
+│   │               │       │   ├── ports                                                           3   0.01%  0x0000c202 rodata
+│   │               │       │   └── release_handler                                               112   0.22%  0x00003c01 text
+│   │               │       ├── nrfx_grtc.c                                                      1144   2.23%  -
+│   │               │       │   ├── cc_channel_prepare                                             92   0.18%  0x00004489 text
+│   │               │       │   ├── m_cb                                                           84   0.16%  0x20000148 datas
+│   │               │       │   ├── nrfx_grtc_init                                                284   0.55%  0x000045a5 text
+│   │               │       │   ├── nrfx_grtc_irq_handler                                         160   0.31%  0x0000480d text
+│   │               │       │   ├── nrfx_grtc_syscounter_cc_absolute_set                          132   0.26%  0x00004789 text
+│   │               │       │   ├── nrfx_grtc_syscounter_get                                      100   0.20%  0x00004541 text
+│   │               │       │   ├── nrfx_grtc_syscounter_start                                    200   0.39%  0x000046c1 text
+│   │               │       │   ├── sleep_configure                                                36   0.07%  0x000044e5 text
+│   │               │       │   └── syscounter_check                                               56   0.11%  0x00004509 text
+│   │               │       └── nrfx_rramc.c                                                        6   0.01%  -
+│   │               │           └── nrfx_rramc_write_enable_set                                     6   0.01%  0x000095ab text
+│   │               ├── hal                                                                       240   0.47%  -
+│   │               │   └── nrf_gpio.h                                                            240   0.47%  -
+│   │               │       ├── nrf_gpio_cfg_sense_set                                             30   0.06%  0x000094af text
+│   │               │       ├── nrf_gpio_pin_port_decode                                           32   0.06%  0x000033bd text
+│   │               │       ├── nrf_gpio_pin_port_decode                                           32   0.06%  0x00003bcd text
+│   │               │       └── nrf_gpio_reconfigure                                              146   0.29%  0x0000941d text
+│   │               ├── haly                                                                      102   0.20%  -
+│   │               │   ├── nrfy_gpiote.h                                                          78   0.15%  -
+│   │               │   │   └── __nrfy_internal_gpiote_events_process                              78   0.15%  0x0000950b text
+│   │               │   └── nrfy_rramc.h                                                           24   0.05%  -
+│   │               │       └── __nrfy_internal_rramc_config_set.constprop.0.isra.0                24   0.05%  0x000048ad text
+│   │               ├── helpers                                                                   120   0.23%  -
+│   │               │   └── nrfx_flag32_allocator.c                                               120   0.23%  -
+│   │               │       ├── nrfx_flag32_alloc                                                  64   0.13%  0x000038cd text
+│   │               │       └── nrfx_flag32_free                                                   56   0.11%  0x0000390d text
+│   │               └── mdk                                                                       332   0.65%  -
+│   │                   ├── nrf54l_erratas.h                                                       32   0.06%  -
+│   │                   │   └── nrf54l_errata_31                                                   32   0.06%  0x00003781 text
+│   │                   ├── system_nrf54l.c                                                       248   0.48%  -
+│   │                   │   └── SystemInit                                                        248   0.48%  0x000037d5 text
+│   │                   └── system_nrf54l_approtect.h                                              52   0.10%  -
+│   │                       └── nrf54l_handle_secureapprotect_signal                               52   0.10%  0x000037a1 text
+│   ├── nrf                                                                                     10447  20.41%  -
+│   │   ├── lib                                                                                    28   0.05%  -
+│   │   │   └── boot_banner                                                                        28   0.05%  -
+│   │   │       └── banner.c                                                                       28   0.05%  -
+│   │   │           └── boot_banner                                                                28   0.05%  0x00001ecd text
+│   │   ├── samples                                                                               684   1.34%  -
+│   │   │   └── crypto                                                                            684   1.34%  -
+│   │   │       └── size_test                                                                     684   1.34%  -
+│   │   │           └── src                                                                       684   1.34%  -
+│   │   │               └── main.c                                                                684   1.34%  -
+│   │   │                   ├── calculate_ecdh_secret                                              80   0.16%  0x000008c9 text
+│   │   │                   ├── compare_secrets                                                    64   0.13%  0x00000919 text
+│   │   │                   ├── compare_secrets.part.0                                             24   0.05%  0x000007c9 text
+│   │   │                   ├── create_ecdh_keypair                                               108   0.21%  0x00000821 text
+│   │   │                   ├── crypto_finish                                                      64   0.13%  0x000007e1 text
+│   │   │                   ├── crypto_init                                                        16   0.03%  0x00008453 text
+│   │   │                   ├── export_ecdh_public_key                                             60   0.12%  0x0000088d text
+│   │   │                   ├── log_const_ecdh                                                      8   0.02%  0x0000b3c0 log_const_area
+│   │   │                   └── main                                                              260   0.51%  0x00000959 text
+│   │   └── subsys                                                                               9735  19.02%  -
+│   │       └── nrf_security                                                                     9735  19.02%  -
+│   │           └── src                                                                          9735  19.02%  -
+│   │               ├── drivers                                                                  9139  17.85%  -
+│   │               │   └── cracen                                                               9139  17.85%  -
+│   │               │       ├── cracenpsa                                                        5704  11.14%  -
+│   │               │       │   └── src                                                          5704  11.14%  -
+│   │               │       │       ├── common.c                                                  690   1.35%  -
+│   │               │       │       │   ├── cracen_be_cmp                                          62   0.12%  0x00009e11 text
+│   │               │       │       │   ├── cracen_ecc_check_public_key                           128   0.25%  0x00006b5d text
+│   │               │       │       │   ├── cracen_ecc_curve_is_weierstrass                        28   0.05%  0x00006b41 text
+│   │               │       │       │   ├── cracen_ecc_get_ecurve_from_psa                        148   0.29%  0x00006aad text
+│   │               │       │       │   ├── cracen_get_opaque_size                                136   0.27%  0x00006bdd text
+│   │               │       │       │   └── silex_statuscodes_to_psa                              188   0.37%  0x00009d55 text
+│   │               │       │       ├── cracen.c                                                  268   0.52%  -
+│   │               │       │       │   ├── cracen_acquire                                         64   0.13%  0x000069c1 text
+│   │               │       │       │   ├── cracen_init                                            64   0.13%  0x00006a6d text
+│   │               │       │       │   ├── cracen_mutex                                            4   0.01%  0x200001b4 datas
+│   │               │       │       │   ├── cracen_release                                        108   0.21%  0x00006a01 text
+│   │               │       │       │   ├── k_cracen_mutex                                         20   0.04%  0x20000234 k_mutex_area
+│   │               │       │       │   └── log_const_cracen                                        8   0.02%  0x0000b3b8 log_const_area
+│   │               │       │       ├── ctr_drbg.c                                                626   1.22%  -
+│   │               │       │       │   ├── cracen_free_random                                      4   0.01%  0x00009f1f text
+│   │               │       │       │   ├── cracen_get_random                                     272   0.53%  0x00006d71 text
+│   │               │       │       │   ├── cracen_init_random                                    112   0.22%  0x00006d01 text
+│   │               │       │       │   ├── cracen_prng_context_mutex                               4   0.01%  0x200001b8 datas
+│   │               │       │       │   ├── ctr_drbg_update                                       156   0.30%  0x00006c65 text
+│   │               │       │       │   ├── k_cracen_prng_context_mutex                            20   0.04%  0x20000270 k_mutex_area
+│   │               │       │       │   └── trng_get_seed.constprop.0                              58   0.11%  0x00009ee5 text
+│   │               │       │       ├── ec_helpers.c                                               22   0.04%  -
+│   │               │       │       │   └── decode_scalar_25519                                    22   0.04%  0x0000a6b7 text
+│   │               │       │       ├── ecc.c                                                     156   0.30%  -
+│   │               │       │       │   ├── ecc_genprivkey                                         24   0.05%  0x0000a6cd text
+│   │               │       │       │   └── ecc_genpubkey                                         132   0.26%  0x00007dd5 text
+│   │               │       │       ├── key_derivation.c                                          424   0.83%  -
+│   │               │       │       │   └── cracen_key_agreement                                  424   0.83%  0x000076a9 text
+│   │               │       │       ├── key_management.c                                         1684   3.29%  -
+│   │               │       │       │   ├── check_ecc_key_attributes                              160   0.31%  0x00006fb5 text
+│   │               │       │       │   ├── cracen_destroy_key                                      4   0.01%  0x0000a077 text
+│   │               │       │       │   ├── cracen_export_public_key                              220   0.43%  0x00007055 text
+│   │               │       │       │   ├── cracen_generate_key                                    64   0.13%  0x000072bd text
+│   │               │       │       │   ├── cracen_get_builtin_key                                 36   0.07%  0x000072fd text
+│   │               │       │       │   ├── cracen_import_key                                     396   0.77%  0x00007131 text
+│   │               │       │       │   ├── generate_ecc_private_key                              216   0.42%  0x00009f37 text
+│   │               │       │       │   ├── generate_key_for_kmu                                  104   0.20%  0x0000a00f text
+│   │               │       │       │   ├── mbedtls_psa_platform_get_builtin_key                  104   0.20%  0x00000761 text
+│   │               │       │       │   └── valid_keys                                            380   0.74%  0x0000b60c rodata
+│   │               │       │       ├── kmu.c                                                    1222   2.39%  -
+│   │               │       │       │   ├── clean_up_unfinished_provisioning                       70   0.14%  0x0000a11f text
+│   │               │       │       │   ├── cracen_kmu_destroy_key                                 84   0.16%  0x0000736d text
+│   │               │       │       │   ├── cracen_kmu_get_builtin_key                            300   0.59%  0x0000757d text
+│   │               │       │       │   ├── cracen_kmu_get_key_slot                                68   0.13%  0x00007539 text
+│   │               │       │       │   ├── cracen_kmu_prepare_key                                 56   0.11%  0x0000a165 text
+│   │               │       │       │   ├── cracen_kmu_provision                                  376   0.73%  0x000073c1 text
+│   │               │       │       │   ├── get_kmu_slot_count                                     62   0.12%  0x0000a07b text
+│   │               │       │       │   ├── metadata_usage_flags_mapping                           28   0.05%  0x0000b788 rodata
+│   │               │       │       │   ├── push_kmu_key_to_ram                                    76   0.15%  0x00007321 text
+│   │               │       │       │   ├── read_primary_slot_metadata                             54   0.11%  0x0000a0b9 text
+│   │               │       │       │   └── set_provisioning_in_progress                           48   0.09%  0x0000a0ef text
+│   │               │       │       ├── lib_kmu.c                                                 328   0.64%  -
+│   │               │       │       │   ├── lib_kmu_clear_all_events                               36   0.07%  0x00006e81 text
+│   │               │       │       │   ├── lib_kmu_is_slot_empty                                  20   0.04%  0x00009f23 text
+│   │               │       │       │   ├── lib_kmu_provision_slot                                 60   0.12%  0x00006ef9 text
+│   │               │       │       │   ├── lib_kmu_push_slot                                      28   0.05%  0x00006f35 text
+│   │               │       │       │   ├── lib_kmu_read_metadata                                  48   0.09%  0x00006f85 text
+│   │               │       │       │   ├── lib_kmu_revoke_slot                                    52   0.10%  0x00006f51 text
+│   │               │       │       │   └── trigger_task_and_wait_for_event_or_error               84   0.16%  0x00006ea5 text
+│   │               │       │       ├── mem_helpers.c                                             124   0.24%  -
+│   │               │       │       │   ├── constant_memcmp_is_zero                                42   0.08%  0x00009e4f text
+│   │               │       │       │   ├── memcpy_check_non_zero                                  36   0.07%  0x00009e79 text
+│   │               │       │       │   ├── safe_memset                                            22   0.04%  0x00009e9d text
+│   │               │       │       │   └── safe_memzero                                           24   0.05%  0x00009eb3 text
+│   │               │       │       └── rndinrange.c                                              160   0.31%  -
+│   │               │       │           └── cracen_get_rnd_in_range                               160   0.31%  0x0000a6e5 text
+│   │               │       ├── sicrypto                                                           46   0.09%  -
+│   │               │       │   └── src                                                            46   0.09%  -
+│   │               │       │       └── util.c                                                     46   0.09%  -
+│   │               │       │           ├── si_be_add                                              20   0.04%  0x0000a689 text
+│   │               │       │           └── si_xorbytes                                            26   0.05%  0x0000a69d text
+│   │               │       ├── silexpk                                                          2181   4.26%  -
+│   │               │       │   ├── interface                                                     154   0.30%  -
+│   │               │       │   │   └── sxbuf                                                     154   0.30%  -
+│   │               │       │   │       └── sxbufops.c                                            154   0.30%  -
+│   │               │       │   │           ├── sx_pk_affpt2mem                                    30   0.06%  0x0000a2bd text
+│   │               │       │   │           ├── sx_pk_ecop2mem                                      4   0.01%  0x0000a26b text
+│   │               │       │   │           ├── sx_pk_ecop2mem_be                                  42   0.08%  0x0000a241 text
+│   │               │       │   │           ├── sx_pk_mem2affpt                                    32   0.06%  0x0000a29d text
+│   │               │       │   │           └── sx_pk_mem2op_be                                    46   0.09%  0x0000a26f text
+│   │               │       │   ├── src                                                            88   0.17%  -
+│   │               │       │   │   └── iomem.c                                                    88   0.17%  -
+│   │               │       │   │       ├── sx_clrpkmem                                            60   0.12%  0x0000a2db text
+│   │               │       │   │       └── sx_wrpkmem                                             28   0.05%  0x0000a317 text
+│   │               │       │   └── target                                                       1939   3.79%  -
+│   │               │       │       ├── baremetal_ba414e_with_ik                                  418   0.82%  -
+│   │               │       │       │   └── pk_baremetal.c                                        418   0.82%  -
+│   │               │       │       │       ├── ba414ep_is_busy                                    10   0.02%  0x0000a333 text
+│   │               │       │       │       ├── cracen_mutex_asymmetric                             4   0.01%  0x200001c8 datas
+│   │               │       │       │       ├── ik_is_busy                                         20   0.04%  0x0000a33d text
+│   │               │       │       │       ├── is_busy                                            30   0.06%  0x0000a351 text
+│   │               │       │       │       ├── k_cracen_mutex_asymmetric                          20   0.04%  0x20000248 k_mutex_area
+│   │               │       │       │       ├── read_status                                        32   0.06%  0x0000a389 text
+│   │               │       │       │       ├── sx_clear_interrupt                                 26   0.05%  0x0000a36f text
+│   │               │       │       │       ├── sx_get_current_req                                  8   0.02%  0x00007cd9 text
+│   │               │       │       │       ├── sx_pk_acquire_req                                  76   0.15%  0x00007c8d text
+│   │               │       │       │       ├── sx_pk_fetch_capabilities                           36   0.07%  0x00007c2d text
+│   │               │       │       │       ├── sx_pk_get_blinder                                   4   0.01%  0x0000a3d9 text
+│   │               │       │       │       ├── sx_pk_init                                         60   0.12%  0x00007c51 text
+│   │               │       │       │       ├── sx_pk_rdreg                                         6   0.01%  0x0000a3d3 text
+│   │               │       │       │       ├── sx_pk_release_req                                  44   0.09%  0x00007ce1 text
+│   │               │       │       │       ├── sx_pk_wait                                         36   0.07%  0x0000a3a9 text
+│   │               │       │       │       └── sx_pk_wrreg                                         6   0.01%  0x0000a3cd text
+│   │               │       │       └── hw                                                       1521   2.97%  -
+│   │               │       │           ├── ba414                                                1429   2.79%  -
+│   │               │       │           │   ├── ba414_status.c                                    228   0.45%  -
+│   │               │       │           │   │   ├── convert_ba414_capabilities                     76   0.15%  0x0000a63d text
+│   │               │       │           │   │   └── convert_ba414_status                          152   0.30%  0x00007d0d text
+│   │               │       │           │   ├── cmddefs_ecc.c                                      48   0.09%  -
+│   │               │       │           │   │   ├── CMD_ECC_PTMUL                                  20   0.04%  0x0000b7cc rodata
+│   │               │       │           │   │   ├── CMD_ECC_PTONCURVE                              20   0.04%  0x0000b7b4 rodata
+│   │               │       │           │   │   ├── SX_PK_CMD_ECC_PTMUL                             4   0.01%  0x0000b7c8 rodata
+│   │               │       │           │   │   └── SX_PK_CMD_ECC_PTONCURVE                         4   0.01%  0x0000b7b0 rodata
+│   │               │       │           │   ├── ec_curves.c                                       637   1.24%  -
+│   │               │       │           │   │   ├── params_ed448                                  285   0.56%  0x0000c369 rodata
+│   │               │       │           │   │   ├── params_nistp256                               192   0.38%  0x0000c486 rodata
+│   │               │       │           │   │   ├── params_x448                                   112   0.22%  0x0000c2f9 rodata
+│   │               │       │           │   │   └── sx_pk_count_curve_params                       48   0.09%  0x00007da5 text
+│   │               │       │           │   └── pkhardware_ba414e.c                               516   1.01%  -
+│   │               │       │           │       ├── sx_pk_blind                                   108   0.21%  0x0000a439 text
+│   │               │       │           │       ├── sx_pk_get_opsize                                4   0.01%  0x0000a4bb text
+│   │               │       │           │       ├── sx_pk_get_output_ops                           56   0.11%  0x0000a533 text
+│   │               │       │           │       ├── sx_pk_list_ecc_inslots                        210   0.41%  0x0000a56b text
+│   │               │       │           │       ├── sx_pk_select_ops                               22   0.04%  0x0000a4a5 text
+│   │               │       │           │       ├── sx_pk_write_curve                              80   0.16%  0x0000a4bf text
+│   │               │       │           │       └── sx_pk_write_curve_gen                          36   0.07%  0x0000a50f text
+│   │               │       │           └── ik                                                     92   0.18%  -
+│   │               │       │               └── ikhardware.c                                       92   0.18%  -
+│   │               │       │                   ├── sx_ik_read_status                              44   0.09%  0x0000a3e7 text
+│   │               │       │                   ├── sx_pk_is_ik_cmd                                10   0.02%  0x0000a3dd text
+│   │               │       │                   └── sx_pk_run                                      38   0.07%  0x0000a413 text
+│   │               │       └── sxsymcrypt                                                       1208   2.36%  -
+│   │               │           └── src                                                          1208   2.36%  -
+│   │               │               ├── blkcipher.c                                               164   0.32%  -
+│   │               │               │   └── sx_blkcipher_ecb_simple                               164   0.32%  0x00007851 text
+│   │               │               ├── cmdma.c                                                   144   0.28%  -
+│   │               │               │   ├── sx_cmdma_check                                         78   0.15%  0x0000a1df text
+│   │               │               │   └── sx_cmdma_reset                                         66   0.13%  0x0000a19d text
+│   │               │               ├── platform                                                  416   0.81%  -
+│   │               │               │   └── baremetal                                             416   0.81%  -
+│   │               │               │       ├── cmdma_hw.c                                        156   0.30%  -
+│   │               │               │       │   ├── cracen_mutex_symmetric                          4   0.01%  0x200001bc datas
+│   │               │               │       │   ├── k_cracen_mutex_symmetric                       20   0.04%  0x2000025c k_mutex_area
+│   │               │               │       │   ├── sx_cmdma_release_hw                            48   0.09%  0x00007b19 text
+│   │               │               │       │   └── sx_hw_reserve                                  84   0.16%  0x00007ac5 text
+│   │               │               │       └── interrupts.c                                      260   0.51%  -
+│   │               │               │           ├── cracen_interrupts_init                         40   0.08%  0x00007bb1 text
+│   │               │               │           ├── cracen_irq_event_for_cryptomaster               4   0.01%  0x200001c4 datas
+│   │               │               │           ├── cracen_irq_event_for_pke                        4   0.01%  0x200001c0 datas
+│   │               │               │           ├── cracen_isr_handler                            104   0.20%  0x00007b49 text
+│   │               │               │           ├── cracen_wait_for_cm_interrupt                   48   0.09%  0x00007bd9 text
+│   │               │               │           ├── cracen_wait_for_pke_interrupt                  36   0.07%  0x00007c09 text
+│   │               │               │           ├── k_cracen_irq_event_for_cryptomaster            12   0.02%  0x200002d0 k_event_area
+│   │               │               │           └── k_cracen_irq_event_for_pke                     12   0.02%  0x200002dc k_event_area
+│   │               │               └── trng.c                                                    484   0.95%  -
+│   │               │                   ├── sx_trng_close                                          20   0.04%  0x0000a22d text
+│   │               │                   ├── sx_trng_flush                                          48   0.09%  0x000078f5 text
+│   │               │                   ├── sx_trng_get                                           212   0.41%  0x000079f1 text
+│   │               │                   ├── sx_trng_open                                          164   0.32%  0x0000794d text
+│   │               │                   └── sx_trng_restart                                        40   0.08%  0x00007925 text
+│   │               ├── psa_crypto_driver_wrappers.c                                              378   0.74%  -
+│   │               │   ├── psa_driver_wrapper_destroy_builtin_key                                 24   0.05%  0x000069a9 text
+│   │               │   ├── psa_driver_wrapper_export_public_key                                  100   0.20%  0x0000690d text
+│   │               │   ├── psa_driver_wrapper_free                                                 2   0.00%  0x00009d13 text
+│   │               │   ├── psa_driver_wrapper_free_random                                          6   0.01%  0x00009d4f text
+│   │               │   ├── psa_driver_wrapper_generate_key                                        80   0.16%  0x000068bd text
+│   │               │   ├── psa_driver_wrapper_get_builtin_key                                     56   0.11%  0x00006971 text
+│   │               │   ├── psa_driver_wrapper_get_key_buffer_size                                 48   0.09%  0x0000688d text
+│   │               │   ├── psa_driver_wrapper_get_random                                           6   0.01%  0x00009d49 text
+│   │               │   ├── psa_driver_wrapper_init                                                 4   0.01%  0x00009d0f text
+│   │               │   ├── psa_driver_wrapper_init_random                                          6   0.01%  0x00009d43 text
+│   │               │   └── psa_driver_wrapper_key_agreement                                       46   0.09%  0x00009d15 text
+│   │               ├── threading                                                                  92   0.18%  -
+│   │               │   └── threading_alt.c                                                        92   0.18%  -
+│   │               │       ├── mbedtls_mutex_init                                                  4   0.01%  0x200001d4 datas
+│   │               │       ├── mbedtls_mutex_init_fn                                               4   0.01%  0x0000a795 text
+│   │               │       ├── mbedtls_mutex_lock                                                  4   0.01%  0x200001d0 datas
+│   │               │       ├── mbedtls_mutex_lock_fn                                              12   0.02%  0x0000a789 text
+│   │               │       ├── mbedtls_mutex_unlock                                                4   0.01%  0x200001cc datas
+│   │               │       ├── mbedtls_mutex_unlock_fn                                             4   0.01%  0x0000a785 text
+│   │               │       ├── mbedtls_threading_key_slot_mutex                                   20   0.04%  0x20000284 k_mutex_area
+│   │               │       ├── mbedtls_threading_psa_globaldata_mutex                             20   0.04%  0x20000298 k_mutex_area
+│   │               │       └── mbedtls_threading_psa_rngdata_mutex                                20   0.04%  0x200002ac k_mutex_area
+│   │               ├── utils                                                                      54   0.11%  -
+│   │               │   ├── nrf_security_events.c                                                  38   0.07%  -
+│   │               │   │   ├── nrf_security_event_clear                                            4   0.01%  0x0000a7c7 text
+│   │               │   │   ├── nrf_security_event_init                                             4   0.01%  0x0000a7a9 text
+│   │               │   │   ├── nrf_security_event_set                                              4   0.01%  0x0000a7cb text
+│   │               │   │   └── nrf_security_event_wait                                            26   0.05%  0x0000a7ad text
+│   │               │   └── nrf_security_mutexes.c                                                 16   0.03%  -
+│   │               │       ├── nrf_security_mutex_lock                                            12   0.02%  0x0000a799 text
+│   │               │       └── nrf_security_mutex_unlock                                           4   0.01%  0x0000a7a5 text
+│   │               └── zephyr                                                                     72   0.14%  -
+│   │                   ├── mbedtls_heap.c                                                         34   0.07%  -
+│   │                   │   ├── __init_mbedtls_heap_init                                            8   0.02%  0x0000aa2c initlevel
+│   │                   │   ├── _heap_init                                                         16   0.03%  0x00003771 text
+│   │                   │   └── mbedtls_heap_init                                                  10   0.02%  0x000093eb text
+│   │                   └── psa_crypto_init.c                                                      38   0.07%  -
+│   │                       ├── __init__psa_crypto_init                                             8   0.02%  0x0000aa34 initlevel
+│   │                       └── _psa_crypto_init                                                   30   0.06%  0x000093f5 text
+│   └── toolchains                                                                                 28   0.05%  -
+│       └── e9dba88316                                                                             28   0.05%  -
+│           └── opt                                                                                28   0.05%  -
+│               └── zephyr-sdk                                                                     28   0.05%  -
+│                   └── arm-zephyr-eabi                                                            28   0.05%  -
+│                       └── picolibc                                                               28   0.05%  -
+│                           └── include                                                            28   0.05%  -
+│                               └── stdlib.h                                                       28   0.05%  -
+│                                   └── abort                                                      28   0.05%  0x00002c15 text
+└── ZEPHYR_BASE                                                                                 21717  42.42%  -
+    ├── arch                                                                                     3216   6.28%  -
+    │   └── arm                                                                                  3216   6.28%  -
+    │       └── core                                                                             3216   6.28%  -
+    │           ├── cortex_m                                                                     1792   3.50%  -
+    │           │   ├── cmse                                                                       18   0.04%  -
+    │           │   │   └── arm_core_cmse.c                                                        18   0.04%  -
+    │           │   │       └── arm_cmse_mpu_region_get                                            18   0.04%  0x000090a9 text
+    │           │   ├── cpu_idle.c                                                                 68   0.13%  -
+    │           │   │   ├── arch_cpu_atomic_idle                                                   30   0.06%  0x0000908b text
+    │           │   │   ├── arch_cpu_idle                                                          26   0.05%  0x00009071 text
+    │           │   │   └── z_arm_cpu_idle_init                                                    12   0.02%  0x00002739 text
+    │           │   ├── exc_exit.c                                                                 32   0.06%  -
+    │           │   │   └── z_arm_exc_exit                                                         32   0.06%  0x00001fe9 text
+    │           │   ├── fault.c                                                                  1100   2.15%  -
+    │           │   │   ├── bus_fault.constprop.0                                                 208   0.41%  0x00002195 text
+    │           │   │   ├── mem_manage_fault.constprop.0                                          208   0.41%  0x00002009 text
+    │           │   │   ├── usage_fault.constprop.0                                               188   0.37%  0x000020d9 text
+    │           │   │   ├── z_arm_fault                                                           464   0.91%  0x00002265 text
+    │           │   │   └── z_arm_fault_init                                                       32   0.06%  0x00002435 text
+    │           │   ├── irq_init.c                                                                 32   0.06%  -
+    │           │   │   └── z_arm_interrupt_init                                                   32   0.06%  0x00002745 text
+    │           │   ├── irq_manage.c                                                              148   0.29%  -
+    │           │   │   ├── arm_irq_disable                                                        40   0.08%  0x0000260d text
+    │           │   │   ├── arm_irq_enable                                                         28   0.05%  0x000025f1 text
+    │           │   │   ├── arm_irq_is_enabled                                                     28   0.05%  0x00002635 text
+    │           │   │   ├── arm_irq_priority_set                                                   44   0.09%  0x00002651 text
+    │           │   │   └── z_irq_spurious                                                          8   0.02%  0x00009053 text
+    │           │   ├── isr_wrapper.c                                                              36   0.07%  -
+    │           │   │   └── _isr_wrapper                                                           36   0.07%  0x00002765 text
+    │           │   ├── prep_c.c                                                                   68   0.13%  -
+    │           │   │   ├── relocate_vector_table                                                  28   0.05%  0x0000267d text
+    │           │   │   └── z_prep_c                                                               40   0.08%  0x00002699 text
+    │           │   ├── scb.c                                                                     112   0.22%  -
+    │           │   │   ├── z_arm_clear_arm_mpu_config                                             36   0.07%  0x000024c9 text
+    │           │   │   └── z_arm_init_arch_hw_at_boot                                             76   0.15%  0x000024ed text
+    │           │   ├── thread.c                                                                  134   0.26%  -
+    │           │   │   ├── arch_irq_unlock_outlined                                               14   0.03%  0x00009063 text
+    │           │   │   ├── arch_new_thread                                                        56   0.11%  0x000026c1 text
+    │           │   │   ├── arch_switch_to_main_thread                                             56   0.11%  0x000026f9 text
+    │           │   │   └── configure_builtin_stack_guard                                           8   0.02%  0x0000905b text
+    │           │   └── thread_abort.c                                                             44   0.09%  -
+    │           │       └── z_impl_k_thread_abort                                                  44   0.09%  0x00002539 text
+    │           ├── fatal.c                                                                       192   0.38%  -
+    │           │   ├── z_arm_fatal_error                                                         184   0.36%  0x00001ee9 text
+    │           │   └── z_do_kernel_oops                                                            8   0.02%  0x00009035 text
+    │           ├── mpu                                                                          1154   2.25%  -
+    │           │   ├── arm_core_mpu.c                                                             76   0.15%  -
+    │           │   │   ├── log_const_mpu                                                           8   0.02%  0x0000b3e0 log_const_area
+    │           │   │   ├── static_regions                                                         12   0.02%  0x0000b4c8 rodata
+    │           │   │   └── z_arm_configure_static_mpu_regions                                     56   0.11%  0x00002789 text
+    │           │   ├── arm_mpu.c                                                                 638   1.25%  -
+    │           │   │   ├── arm_core_mpu_configure_static_mpu_regions                              20   0.04%  0x000029bd text
+    │           │   │   ├── arm_core_mpu_disable                                                   20   0.04%  0x000029a9 text
+    │           │   │   ├── arm_core_mpu_enable                                                    24   0.05%  0x00002991 text
+    │           │   │   ├── arm_core_mpu_mark_areas_for_dynamic_regions                           184   0.36%  0x000029d1 text
+    │           │   │   ├── mpu_configure_region                                                   50   0.10%  0x000090bb text
+    │           │   │   ├── region_allocate_and_init                                               56   0.11%  0x000027f5 text
+    │           │   │   └── z_arm_mpu_init                                                        284   0.55%  0x00002a89 text
+    │           │   ├── arm_mpu_regions.c                                                          32   0.06%  -
+    │           │   │   └── mpu_regions                                                            32   0.06%  0x0000b4dc rodata
+    │           │   └── arm_mpu_v8_internal.h                                                     408   0.80%  -
+    │           │       ├── mpu_configure_regions_and_partition.constprop.0                       356   0.70%  0x0000282d text
+    │           │       └── region_init                                                            52   0.10%  0x000027c1 text
+    │           ├── nmi.c                                                                          14   0.03%  -
+    │           │   └── z_arm_nmi                                                                  14   0.03%  0x0000903d text
+    │           └── tls.c                                                                          64   0.13%  -
+    │               └── arch_tls_stack_setup                                                       64   0.13%  0x00001fa9 text
+    ├── drivers                                                                                  3677   7.18%  -
+    │   ├── cache                                                                                  24   0.05%  -
+    │   │   └── cache_nrf.c                                                                        24   0.05%  -
+    │   │       ├── cache_instr_enable                                                             16   0.03%  0x00002d41 text
+    │   │       └── log_const_cache_nrfx                                                            8   0.02%  0x0000b3a0 log_const_area
+    │   ├── clock_control                                                                        1086   2.12%  -
+    │   │   └── clock_control_nrf.c                                                              1086   2.12%  -
+    │   │       ├── __devstate_dts_ord_58                                                           2   0.00%  0x200001d8 device_states
+    │   │       ├── __init___device_dts_ord_58                                                      8   0.02%  0x0000a9dc initlevel
+    │   │       ├── api_blocking_start                                                             52   0.10%  0x00002e55 text
+    │   │       ├── api_start                                                                      14   0.03%  0x000091cb text
+    │   │       ├── api_stop                                                                        6   0.01%  0x0000916b text
+    │   │       ├── async_start                                                                    90   0.18%  0x00009171 text
+    │   │       ├── blocking_start_callback                                                         6   0.01%  0x000091f7 text
+    │   │       ├── clk_init                                                                       92   0.18%  0x00002df9 text
+    │   │       ├── clkstarted_handle.constprop.0                                                  76   0.15%  0x00002e89 text
+    │   │       ├── clock_control_api                                                              28   0.05%  0x0000b378 clock_control_driver_api_area
+    │   │       ├── clock_event_handler                                                            20   0.04%  0x000091fd text
+    │   │       ├── config                                                                         24   0.05%  0x0000b50c rodata
+    │   │       ├── generic_hfclk_start                                                           120   0.23%  0x00002ed5 text
+    │   │       ├── generic_hfclk_stop                                                             52   0.10%  0x00002dc5 text
+    │   │       ├── get_status                                                                     18   0.04%  0x00009109 text
+    │   │       ├── lfclk_start                                                                     6   0.01%  0x000091eb text
+    │   │       ├── lfclk_stop                                                                      6   0.01%  0x000091f1 text
+    │   │       ├── log_const_clock_control                                                         8   0.02%  0x0000b3b0 log_const_area
+    │   │       ├── onoff_start                                                                    68   0.13%  0x00002d81 text
+    │   │       ├── onoff_started_callback                                                         18   0.04%  0x000091d9 text
+    │   │       ├── onoff_stop                                                                     48   0.09%  0x00002d51 text
+    │   │       ├── stop                                                                           80   0.16%  0x0000911b text
+    │   │       └── z_nrf_clock_control_lf_on                                                     244   0.48%  0x00002f4d text
+    │   ├── console                                                                                88   0.17%  -
+    │   │   └── uart_console.c                                                                     88   0.17%  -
+    │   │       ├── __init_uart_console_init                                                        8   0.02%  0x0000aa0c initlevel
+    │   │       ├── console_out                                                                    40   0.08%  0x00003069 text
+    │   │       └── uart_console_init                                                              40   0.08%  0x00003041 text
+    │   ├── gpio                                                                                 1104   2.16%  -
+    │   │   └── gpio_nrfx.c                                                                      1104   2.16%  -
+    │   │       ├── __devstate_dts_ord_11                                                           2   0.00%  0x200001dc device_states
+    │   │       ├── __devstate_dts_ord_13                                                           2   0.00%  0x200001da device_states
+    │   │       ├── __devstate_dts_ord_24                                                           2   0.00%  0x200001de device_states
+    │   │       ├── __init___device_dts_ord_11                                                      8   0.02%  0x0000a9ec initlevel
+    │   │       ├── __init___device_dts_ord_13                                                      8   0.02%  0x0000a9f4 initlevel
+    │   │       ├── __init___device_dts_ord_24                                                      8   0.02%  0x0000a9fc initlevel
+    │   │       ├── gpio_nrfx_drv_api_funcs                                                        36   0.07%  0x0000b354 gpio_driver_api_area
+    │   │       ├── gpio_nrfx_init                                                                 84   0.16%  0x00003091 text
+    │   │       ├── gpio_nrfx_manage_callback                                                      82   0.16%  0x00009259 text
+    │   │       ├── gpio_nrfx_p0_cfg                                                               24   0.05%  0x0000b560 rodata
+    │   │       ├── gpio_nrfx_p1_cfg                                                               24   0.05%  0x0000b548 rodata
+    │   │       ├── gpio_nrfx_p2_cfg                                                               24   0.05%  0x0000b530 rodata
+    │   │       ├── gpio_nrfx_pin_configure                                                       388   0.76%  0x000030e5 text
+    │   │       ├── gpio_nrfx_pin_interrupt_configure                                             252   0.49%  0x000032c1 text
+    │   │       ├── gpio_nrfx_port_clear_bits_raw                                                  10   0.02%  0x0000923b text
+    │   │       ├── gpio_nrfx_port_get_raw                                                         12   0.02%  0x00009211 text
+    │   │       ├── gpio_nrfx_port_set_bits_raw                                                    10   0.02%  0x00009231 text
+    │   │       ├── gpio_nrfx_port_set_masked_raw                                                  20   0.04%  0x0000921d text
+    │   │       ├── gpio_nrfx_port_toggle_bits                                                     20   0.04%  0x00009245 text
+    │   │       └── nrfx_gpio_handler                                                              88   0.17%  0x00003269 text
+    │   ├── pinctrl                                                                               427   0.83%  -
+    │   │   ├── common.c                                                                           38   0.07%  -
+    │   │   │   └── pinctrl_lookup_state                                                           38   0.07%  0x000092ab text
+    │   │   └── pinctrl_nrf.c                                                                     389   0.76%  -
+    │   │       ├── drive_modes                                                                     9   0.02%  0x0000c1ce rodata
+    │   │       └── pinctrl_configure_pins                                                        380   0.74%  0x000033dd text
+    │   ├── serial                                                                                536   1.05%  -
+    │   │   └── uart_nrfx_uarte.c                                                                 536   1.05%  -
+    │   │       ├── __devstate_dts_ord_103                                                          2   0.00%  0x200001e0 device_states
+    │   │       ├── __init___device_dts_ord_103                                                     8   0.02%  0x0000aa04 initlevel
+    │   │       ├── __pinctrl_dev_config__device_dts_ord_103                                       12   0.02%  0x0000b5b0 rodata
+    │   │       ├── __pinctrl_state_pins_0__device_dts_ord_103                                     16   0.03%  0x0000b5c4 rodata
+    │   │       ├── __pinctrl_states__device_dts_ord_103                                            8   0.02%  0x0000b5bc rodata
+    │   │       ├── log_const_uart_nrfx_uarte                                                       8   0.02%  0x0000b3f8 log_const_area
+    │   │       ├── uart_nrfx_uarte_driver_api                                                     12   0.02%  0x0000b394 uart_driver_api_area
+    │   │       ├── uarte_20_init                                                                 184   0.36%  0x0000930f text
+    │   │       ├── uarte_20z_config                                                               44   0.09%  0x0000b584 rodata
+    │   │       ├── uarte_nrfx_err_check                                                           14   0.03%  0x000092db text
+    │   │       ├── uarte_nrfx_isr_int                                                             10   0.02%  0x000092d1 text
+    │   │       ├── uarte_nrfx_poll_in                                                             38   0.07%  0x000092e9 text
+    │   │       └── uarte_nrfx_poll_out                                                           180   0.35%  0x00003559 text
+    │   └── timer                                                                                 412   0.80%  -
+    │       └── nrf_grtc_timer.c                                                                  412   0.80%  -
+    │           ├── __init_sys_clock_driver_init                                                    8   0.02%  0x0000aa14 initlevel
+    │           ├── sys_clock_cycle_get_32                                                         36   0.07%  0x000093c7 text
+    │           ├── sys_clock_driver_init                                                         108   0.21%  0x00003669 text
+    │           ├── sys_clock_elapsed                                                              44   0.09%  0x000036d5 text
+    │           ├── sys_clock_set_timeout                                                         112   0.22%  0x00003701 text
+    │           ├── sys_clock_timeout_handler                                                      92   0.18%  0x0000360d text
+    │           └── system_clock_channel_data                                                      12   0.02%  0x20000060 datas
+    ├── include                                                                                   170   0.33%  -
+    │   └── zephyr                                                                                170   0.33%  -
+    │       ├── logging                                                                            92   0.18%  -
+    │       │   ├── log_internal.h                                                                  6   0.01%  -
+    │       │   │   └── z_log_notify_drop                                                           6   0.01%  0x00008dcb text
+    │       │   ├── log_msg.h                                                                      32   0.06%  -
+    │       │   │   └── log_msg_generic_get_wlen                                                   32   0.06%  0x00008d75 text
+    │       │   └── log_output.h                                                                   54   0.11%  -
+    │       │       ├── log_output_flush                                                           26   0.05%  0x00008ef5 text
+    │       │       └── log_output_write                                                           28   0.05%  0x00008ed9 text
+    │       └── sys                                                                                78   0.15%  -
+    │           ├── atomic_builtin.h                                                               18   0.04%  -
+    │           │   └── atomic_inc                                                                 18   0.04%  0x00008d9d text
+    │           ├── cbprintf.h                                                                     44   0.09%  -
+    │           │   └── z_cbprintf_cpy                                                             44   0.09%  0x00008de7 text
+    │           └── dlist.h                                                                        16   0.03%  -
+    │               └── sys_dlist_remove                                                           16   0.03%  0x00009679 text
+    ├── kernel                                                                                   5816  11.36%  -
+    │   ├── busy_wait.c                                                                             8   0.02%  -
+    │   │   └── z_impl_k_busy_wait                                                                  8   0.02%  0x000095b1 text
+    │   ├── device.c                                                                               24   0.05%  -
+    │   │   ├── z_device_state_init                                                                 2   0.00%  0x000095b9 text
+    │   │   └── z_impl_device_is_ready                                                             22   0.04%  0x000095bb text
+    │   ├── events.c                                                                              302   0.59%  -
+    │   │   ├── event_walk_op                                                                      48   0.09%  0x0000a851 text
+    │   │   ├── k_event_post_internal                                                              92   0.18%  0x00007e59 text
+    │   │   ├── k_event_wait_internal                                                             130   0.25%  0x0000a7cf text
+    │   │   ├── z_impl_k_event_clear                                                                8   0.02%  0x0000a893 text
+    │   │   ├── z_impl_k_event_init                                                                10   0.02%  0x0000a881 text
+    │   │   ├── z_impl_k_event_set                                                                  8   0.02%  0x0000a88b text
+    │   │   └── z_impl_k_event_wait                                                                 6   0.01%  0x0000a89b text
+    │   ├── fatal.c                                                                               280   0.55%  -
+    │   │   ├── arch_system_halt                                                                   16   0.03%  0x000095d1 text
+    │   │   ├── k_sys_fatal_error_handler                                                          32   0.06%  0x000048c5 text
+    │   │   └── z_fatal_error                                                                     232   0.45%  0x000048e5 text
+    │   ├── idle.c                                                                                 22   0.04%  -
+    │   │   └── idle                                                                               22   0.04%  0x00009617 text
+    │   ├── include                                                                                74   0.14%  -
+    │   │   ├── kernel_offsets.h                                                                    2   0.00%  -
+    │   │   │   └── _OffsetAbsSyms                                                                  2   0.00%  0x00008449 text
+    │   │   ├── ksched.h                                                                           20   0.04%  -
+    │   │   │   └── unpend_thread_no_timeout                                                       20   0.04%  0x00009689 text
+    │   │   └── kswap.h                                                                            52   0.10%  -
+    │   │       └── z_swap_irqlock                                                                 52   0.10%  0x00004f4d text
+    │   ├── init.c                                                                                642   1.25%  -
+    │   │   ├── bg_thread_main                                                                    192   0.38%  0x000049fd text
+    │   │   ├── do_device_init                                                                     46   0.09%  0x000095e1 text
+    │   │   ├── log_const_os                                                                        8   0.02%  0x0000b3e8 log_const_area
+    │   │   ├── z_bss_zero                                                                         24   0.05%  0x00004abd text
+    │   │   ├── z_cstart                                                                          212   0.41%  0x00004b3d text
+    │   │   ├── z_early_memcpy                                                                      4   0.01%  0x00009613 text
+    │   │   ├── z_early_memset                                                                      4   0.01%  0x0000960f text
+    │   │   ├── z_init_cpu                                                                        104   0.20%  0x00004ad5 text
+    │   │   └── z_sys_init_run_level                                                               48   0.09%  0x000049cd text
+    │   ├── kheap.c                                                                                60   0.12%  -
+    │   │   ├── __init_statics_init_pre                                                             8   0.02%  0x0000a9e4 initlevel
+    │   │   ├── k_heap_init                                                                        16   0.03%  0x000098f9 text
+    │   │   └── statics_init                                                                       36   0.07%  0x00005ab5 text
+    │   ├── mempool.c                                                                              32   0.06%  -
+    │   │   ├── _system_heap                                                                       20   0.04%  0x20000220 k_heap_area
+    │   │   └── k_thread_system_pool_assign                                                        12   0.02%  0x00005aa9 text
+    │   ├── mutex.c                                                                               430   0.84%  -
+    │   │   ├── adjust_owner_prio.isra.0                                                           16   0.03%  0x0000962d text
+    │   │   ├── z_impl_k_mutex_init                                                                14   0.03%  0x0000963d text
+    │   │   ├── z_impl_k_mutex_lock                                                               240   0.47%  0x00004c11 text
+    │   │   └── z_impl_k_mutex_unlock                                                             160   0.31%  0x00004d01 text
+    │   ├── sched.c                                                                              1958   3.82%  -
+    │   │   ├── add_thread_timeout                                                                 28   0.05%  0x00005059 text
+    │   │   ├── add_to_waitq_locked                                                                80   0.16%  0x0000969d text
+    │   │   ├── k_sched_lock                                                                       40   0.08%  0x00005279 text
+    │   │   ├── k_sched_unlock                                                                    104   0.20%  0x000052a1 text
+    │   │   ├── move_thread_to_end_of_prio_q                                                      144   0.28%  0x00005075 text
+    │   │   ├── ready_thread                                                                      132   0.26%  0x00004f81 text
+    │   │   ├── unready_thread                                                                     84   0.16%  0x00005005 text
+    │   │   ├── z_impl_k_sched_current_thread_query                                                12   0.02%  0x00005461 text
+    │   │   ├── z_impl_k_sleep                                                                     52   0.10%  0x000097a7 text
+    │   │   ├── z_impl_k_wakeup                                                                    72   0.14%  0x00005419 text
+    │   │   ├── z_impl_k_yield                                                                    136   0.27%  0x00005319 text
+    │   │   ├── z_pend_curr                                                                        68   0.13%  0x00005105 text
+    │   │   ├── z_ready_thread                                                                     30   0.06%  0x000096ed text
+    │   │   ├── z_reschedule                                                                       36   0.07%  0x0000522d text
+    │   │   ├── z_reschedule_irqlock                                                               40   0.08%  0x00005251 text
+    │   │   ├── z_sched_init                                                                       16   0.03%  0x00005309 text
+    │   │   ├── z_sched_waitq_walk                                                                 68   0.13%  0x000097db text
+    │   │   ├── z_sched_wake_thread                                                                70   0.14%  0x0000972d text
+    │   │   ├── z_thread_abort                                                                    312   0.61%  0x0000546d text
+    │   │   ├── z_thread_prio_set                                                                 228   0.45%  0x00005149 text
+    │   │   ├── z_thread_timeout                                                                    8   0.02%  0x00009773 text
+    │   │   ├── z_tick_sleep                                                                      120   0.23%  0x000053a1 text
+    │   │   ├── z_unpend1_no_timeout                                                               44   0.09%  0x0000977b text
+    │   │   └── z_unpend_thread_no_timeout                                                         34   0.07%  0x0000970b text
+    │   ├── sem.c                                                                                 204   0.40%  -
+    │   │   ├── z_impl_k_sem_give                                                                 104   0.20%  0x00004da1 text
+    │   │   ├── z_impl_k_sem_init                                                                  24   0.05%  0x0000964b text
+    │   │   └── z_impl_k_sem_take                                                                  76   0.15%  0x00004e09 text
+    │   ├── thread.c                                                                              270   0.53%  -
+    │   │   ├── k_is_in_isr                                                                        12   0.02%  0x00009663 text
+    │   │   ├── k_thread_name_get                                                                   4   0.01%  0x00009675 text
+    │   │   ├── z_dummy_thread_init                                                                32   0.06%  0x00004f2d text
+    │   │   ├── z_impl_k_thread_create                                                             88   0.17%  0x00004ed5 text
+    │   │   ├── z_impl_k_thread_name_set                                                            6   0.01%  0x0000966f text
+    │   │   └── z_setup_new_thread                                                                128   0.25%  0x00004e55 text
+    │   ├── timeout.c                                                                             766   1.50%  -
+    │   │   ├── elapsed                                                                            20   0.04%  0x000056f9 text
+    │   │   ├── first                                                                              16   0.03%  0x000056e9 text
+    │   │   ├── next_timeout                                                                       46   0.09%  0x0000981f text
+    │   │   ├── remove_timeout                                                                     56   0.11%  0x0000570d text
+    │   │   ├── sys_clock_announce                                                                188   0.37%  0x00005869 text
+    │   │   ├── sys_clock_tick_get                                                                 48   0.09%  0x00005925 text
+    │   │   ├── sys_clock_tick_get_32                                                               8   0.02%  0x0000989d text
+    │   │   ├── timeout_list                                                                        8   0.02%  0x2000019c datas
+    │   │   ├── z_abort_timeout                                                                    80   0.16%  0x0000984d text
+    │   │   ├── z_add_timeout                                                                     292   0.57%  0x00005745 text
+    │   │   └── z_impl_k_uptime_ticks                                                               4   0.01%  0x000098a5 text
+    │   ├── timer.c                                                                               420   0.82%  -
+    │   │   ├── k_timer_init                                                                       24   0.05%  0x000098a9 text
+    │   │   ├── z_impl_k_timer_start                                                              116   0.23%  0x00005a35 text
+    │   │   ├── z_impl_k_timer_stop                                                                56   0.11%  0x000098c1 text
+    │   │   └── z_timer_expiration_handler                                                        224   0.44%  0x00005955 text
+    │   ├── timeslicing.c                                                                         268   0.52%  -
+    │   │   ├── slice_timeout                                                                      32   0.06%  0x000055a5 text
+    │   │   ├── thread_is_sliceable                                                                60   0.12%  0x000055c5 text
+    │   │   ├── z_reset_time_slice                                                                 80   0.16%  0x00005601 text
+    │   │   └── z_time_slice                                                                       96   0.19%  0x00005651 text
+    │   └── xip.c                                                                                  56   0.11%  -
+    │       └── z_data_copy                                                                        56   0.11%  0x000056b1 text
+    ├── lib                                                                                      5042   9.85%  -
+    │   ├── heap                                                                                  452   0.88%  -
+    │   │   ├── heap.c                                                                            312   0.61%  -
+    │   │   │   ├── free_list_add                                                                 132   0.26%  0x000084ef text
+    │   │   │   ├── sys_heap_init                                                                 176   0.34%  0x00008573 text
+    │   │   │   └── z_tls_current                                                                   4   0.01%  0x00000000 rom_start
+    │   │   └── heap.h                                                                            140   0.27%  -
+    │   │       ├── bucket_idx.isra.0                                                              28   0.05%  0x000084d3 text
+    │   │       ├── chunk_field                                                                    22   0.04%  0x00008463 text
+    │   │       ├── chunk_set                                                                      22   0.04%  0x00008479 text
+    │   │       ├── chunk_size                                                                     12   0.02%  0x0000848f text
+    │   │       ├── set_chunk_size                                                                  8   0.02%  0x000084cb text
+    │   │       └── set_chunk_used                                                                 48   0.09%  0x0000849b text
+    │   ├── libc                                                                                  200   0.39%  -
+    │   │   ├── common                                                                             44   0.09%  -
+    │   │   │   └── source                                                                         44   0.09%  -
+    │   │   │       └── stdlib                                                                     44   0.09%  -
+    │   │   │           └── malloc.c                                                               44   0.09%  -
+    │   │   │               ├── __init_malloc_prepare                                               8   0.02%  0x0000aa24 initlevel
+    │   │   │               └── malloc_prepare                                                     36   0.07%  0x00002c31 text
+    │   │   └── picolibc                                                                          156   0.30%  -
+    │   │       ├── assert.c                                                                        6   0.01%  -
+    │   │       │   └── __assert_no_args                                                            6   0.01%  0x000090ed text
+    │   │       ├── cbprintf.c                                                                     68   0.13%  -
+    │   │       │   ├── cbputc                                                                     12   0.02%  0x000090f3 text
+    │   │       │   └── cbvprintf                                                                  56   0.11%  0x00002ba5 text
+    │   │       ├── exit.c                                                                         16   0.03%  -
+    │   │       │   └── _exit                                                                      16   0.03%  0x00002bdd text
+    │   │       └── stdio.c                                                                        66   0.13%  -
+    │   │           ├── __stdout                                                                   16   0.03%  0x20000050 datas
+    │   │           ├── __stdout_hook_install                                                      24   0.05%  0x00002bfd text
+    │   │           ├── picolibc_put                                                               10   0.02%  0x000090ff text
+    │   │           └── z_impl_zephyr_fputc                                                        16   0.03%  0x00002bed text
+    │   ├── os                                                                                   3420   6.68%  -
+    │   │   ├── cbprintf_packaged.c                                                              2082   4.07%  -
+    │   │   │   ├── cbpprintf_external                                                             98   0.19%  0x00008623 text
+    │   │   │   ├── cbprintf_package_convert                                                      972   1.90%  0x00000e01 text
+    │   │   │   ├── cbvprintf_package                                                             930   1.82%  0x00000a5d text
+    │   │   │   ├── is_ptr                                                                         74   0.14%  0x00008685 text
+    │   │   │   └── log_const_cbprintf_package                                                      8   0.02%  0x0000b3a8 log_const_area
+    │   │   ├── mpsc_pbuf.c                                                                      1240   2.42%  -
+    │   │   │   ├── add_skip_item                                                                  62   0.12%  0x00008769 text
+    │   │   │   ├── drop_item_locked                                                              256   0.50%  0x000087a7 text
+    │   │   │   ├── free_space                                                                     38   0.07%  0x000086ed text
+    │   │   │   ├── get_usage                                                                      34   0.07%  0x00008713 text
+    │   │   │   ├── idx_inc                                                                        28   0.05%  0x00008735 text
+    │   │   │   ├── max_utilization_update                                                         26   0.05%  0x000088dd text
+    │   │   │   ├── mpsc_pbuf_alloc                                                               254   0.50%  0x00008939 text
+    │   │   │   ├── mpsc_pbuf_claim                                                               168   0.33%  0x00008a75 text
+    │   │   │   ├── mpsc_pbuf_commit                                                               62   0.12%  0x00008a37 text
+    │   │   │   ├── mpsc_pbuf_free                                                                118   0.23%  0x00008b1d text
+    │   │   │   ├── mpsc_pbuf_init                                                                 66   0.13%  0x000088f7 text
+    │   │   │   ├── mpsc_pbuf_is_pending                                                           50   0.10%  0x00008b93 text
+    │   │   │   ├── post_drop_action                                                               54   0.11%  0x000088a7 text
+    │   │   │   └── rd_idx_inc                                                                     24   0.05%  0x00008751 text
+    │   │   ├── printk.c                                                                           46   0.09%  -
+    │   │   │   ├── __printk_hook_install                                                          12   0.02%  0x000011cd text
+    │   │   │   ├── _char_out                                                                       4   0.01%  0x20000040 datas
+    │   │   │   ├── arch_printk_char_out                                                            4   0.01%  0x000086cf text
+    │   │   │   └── printk                                                                         26   0.05%  0x000086d3 text
+    │   │   └── thread_entry.c                                                                     52   0.10%  -
+    │   │       └── z_thread_entry                                                                 52   0.10%  0x000011d9 text
+    │   └── utils                                                                                 970   1.89%  -
+    │       ├── notify.c                                                                           60   0.12%  -
+    │       │   ├── sys_notify_finalize                                                            26   0.05%  0x00008d59 text
+    │       │   └── sys_notify_validate                                                            34   0.07%  0x00008d37 text
+    │       └── onoff.c                                                                           910   1.78%  -
+    │           ├── notify_one                                                                     44   0.09%  0x00008c1d text
+    │           ├── onoff_manager_init                                                             38   0.07%  0x00008c63 text
+    │           ├── onoff_request                                                                 174   0.34%  0x00008c89 text
+    │           ├── process_event                                                                 540   1.05%  0x0000120d text
+    │           ├── process_recheck                                                                56   0.11%  0x00008bc5 text
+    │           ├── transition_complete                                                            26   0.05%  0x00008c49 text
+    │           └── validate_args                                                                  32   0.06%  0x00008bfd text
+    ├── modules                                                                                     6   0.01%  -
+    │   └── hal_nordic                                                                              6   0.01%  -
+    │       └── nrfx                                                                                6   0.01%  -
+    │           └── nrfx_glue.c                                                                     6   0.01%  -
+    │               ├── nrfx_busy_wait                                                              4   0.01%  0x00009415 text
+    │               └── nrfx_isr                                                                    2   0.00%  0x00009413 text
+    ├── soc                                                                                       252   0.49%  -
+    │   └── nordic                                                                                252   0.49%  -
+    │       └── nrf54l                                                                            252   0.49%  -
+    │           └── soc.c                                                                         252   0.49%  -
+    │               ├── __init_nordicsemi_nrf54l_init                                               8   0.02%  0x0000a9d4 initlevel
+    │               ├── arch_busy_wait                                                             36   0.07%  0x00002d1d text
+    │               ├── log_const_soc                                                               8   0.02%  0x0000b3f0 log_const_area
+    │               └── nordicsemi_nrf54l_init                                                    200   0.39%  0x00002c55 text
+    └── subsys                                                                                   3538   6.91%  -
+        ├── logging                                                                              3526   6.89%  -
+        │   ├── backends                                                                          234   0.46%  -
+        │   │   └── log_backend_uart.c                                                            234   0.46%  -
+        │   │       ├── backend_cb_log_backend_uart                                                 8   0.02%  0x20000048 datas
+        │   │       ├── char_out                                                                   36   0.07%  0x00001e9d text
+        │   │       ├── dropped                                                                    10   0.02%  0x0000900d text
+        │   │       ├── format_set                                                                 12   0.02%  0x00008fc3 text
+        │   │       ├── lbu_cb_ctx                                                                  8   0.02%  0x0000b494 rodata
+        │   │       ├── lbu_output                                                                 16   0.03%  0x0000b49c rodata
+        │   │       ├── log_backend_uart                                                           16   0.03%  0x0000b400 log_backend_area
+        │   │       ├── log_backend_uart_api                                                       28   0.05%  0x0000b4ac rodata
+        │   │       ├── log_backend_uart_init                                                      12   0.02%  0x00008fcf text
+        │   │       ├── log_const_log_uart                                                          8   0.02%  0x0000b3d8 log_const_area
+        │   │       ├── panic                                                                      50   0.10%  0x00008fdb text
+        │   │       └── process                                                                    30   0.06%  0x00009017 text
+        │   ├── log_core.c                                                                       1452   2.84%  -
+        │   │   ├── __init_enable_logger                                                            8   0.02%  0x0000aa1c initlevel
+        │   │   ├── activate_foreach_backend                                                      100   0.20%  0x00001429 text
+        │   │   ├── default_get_timestamp                                                           4   0.01%  0x00008d99 text
+        │   │   ├── dropped_notify                                                                 48   0.09%  0x00001625 text
+        │   │   ├── dummy_timestamp                                                                 4   0.01%  0x00008d95 text
+        │   │   ├── enable_logger                                                                  92   0.18%  0x0000148d text
+        │   │   ├── format_table                                                                   16   0.03%  0x0000b45c rodata
+        │   │   ├── log_buffer                                                                     56   0.11%  0x200001e4 log_mpsc_pbuf_area
+        │   │   ├── log_const_log                                                                   8   0.02%  0x0000b3c8 log_const_area
+        │   │   ├── log_core_init                                                                  84   0.16%  0x00001675 text
+        │   │   ├── log_format_func_t_get                                                          12   0.02%  0x00001589 text
+        │   │   ├── log_msg_ptr                                                                     4   0.01%  0x2000021c log_msg_ptr_area
+        │   │   ├── log_process_thread_func                                                       164   0.32%  0x000017e9 text
+        │   │   ├── log_process_thread_sem                                                         16   0.03%  0x200002c0 k_sem_area
+        │   │   ├── log_process_thread_timer_expiry_fn                                             12   0.02%  0x000014e9 text
+        │   │   ├── log_set_timestamp_func                                                         32   0.06%  0x00001595 text
+        │   │   ├── mpsc_config                                                                    20   0.04%  0x0000b448 rodata
+        │   │   ├── timestamp_func                                                                  4   0.01%  0x20000044 datas
+        │   │   ├── z_impl_log_panic                                                               68   0.13%  0x000017a5 text
+        │   │   ├── z_impl_log_process                                                            164   0.32%  0x00001701 text
+        │   │   ├── z_log_dropped                                                                  60   0.12%  0x000015d1 text
+        │   │   ├── z_log_dropped_read_and_clear                                                   24   0.05%  0x0000160d text
+        │   │   ├── z_log_get_tag                                                                   4   0.01%  0x00008dd1 text
+        │   │   ├── z_log_init                                                                    148   0.29%  0x000014f5 text
+        │   │   ├── z_log_msg_alloc                                                                16   0.03%  0x000016c9 text
+        │   │   ├── z_log_msg_commit                                                               36   0.07%  0x00001905 text
+        │   │   ├── z_log_msg_free                                                                 16   0.03%  0x000016e5 text
+        │   │   ├── z_log_msg_init                                                                 32   0.06%  0x00001655 text
+        │   │   ├── z_log_msg_local_claim                                                          12   0.02%  0x000016d9 text
+        │   │   ├── z_log_msg_pending                                                              12   0.02%  0x000016f5 text
+        │   │   ├── z_log_msg_post_finalize                                                       120   0.23%  0x0000188d text
+        │   │   ├── z_log_notify_backend_enabled                                                   28   0.05%  0x000015b5 text
+        │   │   └── z_log_vprintk                                                                  28   0.05%  0x00008daf text
+        │   ├── log_mgmt.c                                                                         54   0.11%  -
+        │   │   ├── log_backend_enable                                                             18   0.04%  0x00008dd5 text
+        │   │   ├── log_const_log_mgmt                                                              8   0.02%  0x0000b3d0 log_const_area
+        │   │   └── log_source_name_get                                                            28   0.05%  0x00001929 text
+        │   ├── log_msg.c                                                                         646   1.26%  -
+        │   │   ├── log_msg_get_source_id                                                          24   0.05%  0x00001aed text
+        │   │   ├── z_impl_z_log_msg_simple_create_0                                               18   0.04%  0x00008eb3 text
+        │   │   ├── z_impl_z_log_msg_simple_create_1                                               20   0.04%  0x00008ec5 text
+        │   │   ├── z_impl_z_log_msg_static_create                                                264   0.52%  0x00001945 text
+        │   │   ├── z_log_msg_finalize                                                             50   0.10%  0x00008e13 text
+        │   │   ├── z_log_msg_runtime_vcreate                                                     160   0.31%  0x00001a4d text
+        │   │   └── z_log_msg_simple_create                                                       110   0.21%  0x00008e45 text
+        │   └── log_output.c                                                                     1140   2.23%  -
+        │       ├── colors                                                                         20   0.04%  0x0000b46c rodata
+        │       ├── cr_out_func                                                                    28   0.05%  0x00008f3d text
+        │       ├── log_output_dropped_process                                                     88   0.17%  0x00001e19 text
+        │       ├── log_output_msg_process                                                        106   0.21%  0x00008f59 text
+        │       ├── log_output_process                                                            724   1.41%  0x00001b45 text
+        │       ├── log_output_timestamp_freq_set                                                  44   0.09%  0x00001e71 text
+        │       ├── newline_print                                                                  28   0.05%  0x00001b29 text
+        │       ├── out_func                                                                       46   0.09%  0x00008f0f text
+        │       ├── print_formatted                                                                36   0.07%  0x00001b05 text
+        │       └── severity                                                                       20   0.04%  0x0000b480 rodata
+        └── mem_mgmt                                                                               12   0.02%  -
+            └── mem_attr.c                                                                         12   0.02%  -
+                └── mem_attr_get_regions                                                           12   0.02%  0x00001ec1 text
+==========================================================================================================================================
+                                                                                                51190

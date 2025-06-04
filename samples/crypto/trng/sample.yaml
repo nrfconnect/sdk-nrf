@@ -1,0 +1,104 @@
+sample:
+  description: |
+    This app provides an example of signing/verifying using ECDSA signatures
+  name: ECDSA example
+tests:
+  sample.ecdsa.cc3xx:
+    sysbuild: true
+    tags:
+      - introduction
+      - psa
+      - cc3xx
+      - sysbuild
+      - ci_samples_crypto
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf9160dk/nrf9160/ns
+      - nrf9160dk/nrf9160
+      - nrf52840dk/nrf52840
+      - nrf9161dk/nrf9161
+      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151
+      - nrf9151dk/nrf9151/ns
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - ".*Example finished successfully!.*"
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp/ns
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf9160dk/nrf9160/ns
+      - nrf9160dk/nrf9160
+      - nrf52840dk/nrf52840
+      - nrf9161dk/nrf9161
+      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151
+      - nrf9151dk/nrf9151/ns
+  sample.ecdsa.oberon:
+    sysbuild: true
+    tags:
+      - introduction
+      - psa
+      - oberon
+      - sysbuild
+      - ci_samples_crypto
+    platform_allow: >
+      nrf5340dk/nrf5340/cpunet
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - .*Example finished successfully!.*
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpunet
+  sample.ecdsa.cracen:
+    sysbuild: true
+    tags:
+      - introduction
+      - psa
+      - cracen
+      - sysbuild
+      - ci_samples_crypto
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - ".*Example finished successfully!.*"
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp/ns
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+  sample.ecdsa.cracen.crypto_service:
+    sysbuild: true
+    tags:
+      - introduction
+      - psa
+      - cracen
+      - sysbuild
+      - crypto
+      - ci_samples_crypto
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - ".*Example finished successfully!.*"
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp

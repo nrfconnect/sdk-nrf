@@ -12,6 +12,7 @@
 #include "common.h"
 #include <cracen/mem_helpers.h>
 #include "cracen_psa_primitives.h"
+#include <stddef.h>
 
 #define AES_BLOCK_SIZE (16)
 
@@ -51,6 +52,7 @@ psa_status_t cracen_cmac_setup(cracen_mac_operation_t *operation,
 	/* As only AES is supported it is always the same block size*/
 	operation->bytes_left_for_next_block = AES_BLOCK_SIZE;
 	operation->is_first_block = true;
+	printk("cmac setup\n");
 
 	return PSA_SUCCESS;
 }
@@ -144,6 +146,7 @@ psa_status_t cracen_cmac_update(cracen_mac_operation_t *operation, const uint8_t
 		memcpy(operation->input_buffer, input + block_bytes, remaining_bytes);
 		operation->bytes_left_for_next_block -= remaining_bytes;
 	}
+	printk("cmac update\n");
 
 	return PSA_SUCCESS;
 }
