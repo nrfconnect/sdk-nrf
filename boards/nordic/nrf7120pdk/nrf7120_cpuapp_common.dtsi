@@ -8,6 +8,7 @@
 
 #include "arm/nordic/nrf7120_enga_cpuapp.dtsi"
 #include "nrf7120pdk_nrf7120-common.dtsi"
+#include <zephyr/dt-bindings/clock/nrf-auxpll.h>
 
 / {
 	chosen {
@@ -131,5 +132,10 @@
 };
 
 &wifi {
+	status = "okay";
+};
+
+&audio_auxpll {
+	nordic,frequency = <NRF_AUXPLL_FREQ_DIV_AUDIO_48K>;
 	status = "okay";
 };
