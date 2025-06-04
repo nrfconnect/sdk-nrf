@@ -12,31 +12,38 @@
 #include <zephyr/bluetooth/mesh.h>
 #include <bluetooth/mesh/models.h>
 
+#define TEST_VND_COMPANY_ID 0x1234
+#define TEST_VND_MOD_ID   0x5678
 
 static struct bt_mesh_health_srv health_srv;
 
 BT_MESH_HEALTH_PUB_DEFINE(health_pub, 0);
 
-static struct bt_mesh_model models[] = {
+static const struct bt_mesh_model models[] = {
 	BT_MESH_MODEL_CFG_SRV,
 	BT_MESH_MODEL_HEALTH_SRV(&health_srv, &health_pub),
 };
 
-static struct bt_mesh_elem elements[] = {
-	BT_MESH_ELEM(1, models, BT_MESH_MODEL_NONE),
+static const struct bt_mesh_model vnd_models[] = {
+	BT_MESH_MODEL_VND_CB(TEST_VND_COMPANY_ID, TEST_VND_MOD_ID, BT_MESH_MODEL_NO_OPS, NULL, NULL,
+			     NULL),
+};
+
+static const struct bt_mesh_elem elements[] = {
+	BT_MESH_ELEM(1, models, vnd_models),
 };
 
 #ifndef CONFIG_COMP_DATA_LAYOUT_SINGLE
 static struct bt_mesh_onoff_cli onoff_cli;
 static struct bt_mesh_lvl_cli lvl_cli;
 
-static struct bt_mesh_model extra_models[] = {
+static const struct bt_mesh_model extra_models[] = {
 	BT_MESH_MODEL_ONOFF_CLI(&onoff_cli),
 	BT_MESH_MODEL_LVL_CLI(&lvl_cli),
 };
 
-static struct bt_mesh_elem elements_alt[] = {
-	BT_MESH_ELEM(1, models, BT_MESH_MODEL_NONE),
+static const struct bt_mesh_elem elements_alt[] = {
+	BT_MESH_ELEM(1, models, vnd_models),
 	BT_MESH_ELEM(2, extra_models, BT_MESH_MODEL_NONE),
 };
 #endif

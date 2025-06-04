@@ -358,7 +358,7 @@ def read_comp_data(elf_path, addr, kconfigs):
                         if not vnd:
                             elem_item.sig_model_add(id1)
                         else:
-                            elem_item.vnd_model_add(id1, id2)
+                            elem_item.vnd_model_add(id2, id1)
 
                 if sig_count > 0:
                     models_unpack(sig_ptr, elem_item, False)
