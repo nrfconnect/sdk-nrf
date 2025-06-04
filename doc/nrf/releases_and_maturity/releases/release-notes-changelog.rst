@@ -321,6 +321,16 @@ Amazon Sidewalk samples
 Bluetooth samples
 -----------------
 
+* Updated the child image applications for the following samples from the :ref:`bluetooth_hci_ipc` sample to the :ref:`ipc_radio` application for multicore builds:
+
+  * :ref:`bluetooth_connection_time_synchronization`
+  * :ref:`bluetooth_iso_combined_bis_and_cis`
+  * :ref:`bluetooth_isochronous_time_synchronization`
+  * :ref:`bluetooth_scanning_while_connecting`
+
+  The :ref:`ipc_radio` application is commonly used for multicore builds in other |NCS| samples and projects.
+  Hence, this is to align with the common practice.
+
 * :ref:`bluetooth_isochronous_time_synchronization` sample:
 
   * Fixed an issue where the sample would assert with the :kconfig:option:`CONFIG_ASSERT` Kconfig option enabled.
