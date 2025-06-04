@@ -16,9 +16,9 @@
 #include <zephyr/types.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/byteorder.h>
-#include <stdlib.h>
 
 #include "hid_eventq.h"
+#include "keys_state.h"
 
 #include <caf/events/led_event.h>
 #include <caf/events/button_event.h>
@@ -60,25 +60,7 @@ enum state {
 				  IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE) +		\
 				  IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD))
 
-#define ITEM_COUNT MAX(MAX(MOUSE_REPORT_BUTTON_COUNT_MAX,	\
-			   KEYBOARD_REPORT_KEY_COUNT_MAX),	\
-		       MAX(SYSTEM_CTRL_REPORT_KEY_COUNT_MAX,	\
-			   CONSUMER_CTRL_REPORT_KEY_COUNT_MAX))
-
 #define AXIS_COUNT (IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT) * MOUSE_REPORT_AXIS_COUNT)
-
-/**@brief HID state item. */
-struct item {
-	uint16_t usage_id; /**< HID usage ID. */
-	int16_t value; /**< HID value. */
-};
-
-/**@brief Structure keeping state for a single target HID report. */
-struct items {
-	uint8_t item_count_max; /**< Maximal numer of items in this set. */
-	uint8_t item_count; /**< Current number of items in this set. */
-	struct item item[ITEM_COUNT]; /**< Items set. Browse from the end. */
-};
 
 /**@brief Axis data. */
 struct axis_data {
@@ -87,8 +69,8 @@ struct axis_data {
 };
 
 struct report_data {
-	struct items items;
 	struct hid_eventq eventq;
+	struct keys_state keys_state;
 	struct axis_data axes;
 	struct report_state *linked_rs;
 };
@@ -135,41 +117,6 @@ static bool report_send(struct report_state *rs,
 			bool check_state,
 			bool send_always);
 
-
-/**@brief Compare two usage values. */
-static int usage_id_compare(const void *a, const void *b)
-{
-	const struct item *p_a = a;
-	const struct item *p_b = b;
-
-	return (p_a->usage_id - p_b->usage_id);
-}
-
-static void sort_by_usage_id(struct item items[], size_t array_size)
-{
-	for (size_t k = 0; k < array_size; k++) {
-		size_t id = k;
-
-		for (size_t l = k + 1; l < array_size; l++) {
-			if (items[l].usage_id < items[id].usage_id) {
-				id = l;
-			}
-		}
-		if (id != k) {
-			struct item tmp = items[k];
-
-			items[k] = items[id];
-			items[id] = tmp;
-		}
-	}
-}
-
-static void clear_items(struct items *items)
-{
-	memset(items->item, 0, sizeof(items->item));
-	items->item_count = 0;
-}
-
 static void clear_axes(struct axis_data *axes)
 {
 	memset(axes->axis, 0, sizeof(axes->axis));
@@ -180,7 +127,7 @@ static void clear_report_data(struct report_data *rd)
 	LOG_INF("Clear report data (%p)", (void *)rd);
 
 	clear_axes(&rd->axes);
-	clear_items(&rd->items);
+	keys_state_clear(&rd->keys_state);
 	hid_eventq_reset(&rd->eventq);
 }
 
@@ -244,77 +191,6 @@ static struct subscriber *get_linked_subscriber(uint8_t report_id)
 	return rs ? rs->subscriber : NULL;
 }
 
-static bool key_value_set(struct items *items, uint16_t usage_id, int16_t value)
-{
-	const uint8_t prev_item_count = items->item_count;
-
-	bool update_needed = false;
-	struct item *p_item;
-
-	__ASSERT_NO_MSG(usage_id != 0);
-	__ASSERT_NO_MSG(items->item_count_max > 0);
-
-	/* Report equal to zero brings no change. This should never happen. */
-	__ASSERT_NO_MSG(value != 0);
-
-	struct item i = {
-		.usage_id = usage_id,
-	};
-
-	p_item = bsearch(&i,
-			 items->item,
-			 ARRAY_SIZE(items->item),
-			 sizeof(items->item[0]),
-			 usage_id_compare);
-
-	if (p_item) {
-		/* Item is present in the array - update its value. */
-		p_item->value += value;
-		if (p_item->value == 0) {
-			__ASSERT_NO_MSG(items->item_count != 0);
-			items->item_count -= 1;
-			p_item->usage_id = 0;
-		}
-
-		update_needed = true;
-	} else if (value < 0) {
-		/* For items with absolute value, the value is used as
-		 * a reference counter and must not fall below zero. This
-		 * could happen if a key up event is lost and the state
-		 * receives an unpaired key down event.
-		 */
-	} else if (prev_item_count >= items->item_count_max) {
-		/* Configuration should allow the HID module to hold data
-		 * about the maximum number of simultaneously pressed keys.
-		 * Generate a warning if an item cannot be recorded.
-		 */
-		LOG_WRN("No place on the list to store HID item!");
-	} else {
-		/* After sort operation, free slots (zeros) are stored
-		 * at the beginning of the array.
-		 */
-		size_t const idx = ARRAY_SIZE(items->item) - prev_item_count - 1;
-
-		__ASSERT_NO_MSG(items->item[idx].usage_id == 0);
-
-		/* Record this value change. */
-		items->item[idx].usage_id = usage_id;
-		items->item[idx].value = value;
-		items->item_count += 1;
-
-		update_needed = true;
-	}
-
-	if (prev_item_count != items->item_count) {
-		/* Sort elements on the list. Use simple algorithm
-		 * with small footprint.
-		 */
-		sort_by_usage_id(items->item, ARRAY_SIZE(items->item));
-	}
-
-	return update_needed;
-}
-
 static void send_report_keyboard(struct report_state *rs, struct report_data *rd)
 {
 	__ASSERT_NO_MSG((IS_ENABLED(CONFIG_DESKTOP_HID_REPORT_KEYBOARD_SUPPORT) &&
@@ -333,55 +209,66 @@ static void send_report_keyboard(struct report_state *rs, struct report_data *rd
 	 * and one reserved byte.
 	 */
 	BUILD_ASSERT(REPORT_SIZE_KEYBOARD_KEYS == KEYBOARD_REPORT_KEY_COUNT_MAX + 2,
-			 "Incorrect keyboard report size");
+		     "Incorrect keyboard report size");
 
 	/* Encode report. */
-
 	struct hid_report_event *event = new_hid_report_event(sizeof(rs->report_id)
-							+ REPORT_SIZE_KEYBOARD_KEYS);
+							      + REPORT_SIZE_KEYBOARD_KEYS);
 	event->source = &state;
 	event->subscriber = rs->subscriber->id;
 
 	event->dyndata.data[0] = rs->report_id;
 	event->dyndata.data[2] = 0; /* Reserved byte */
 
+	uint16_t keys[KEYBOARD_REPORT_KEY_COUNT_MAX];
+	size_t key_cnt = keys_state_keys_get(&rd->keys_state, keys, ARRAY_SIZE(keys));
 	uint8_t modifier_bm = 0;
-	uint8_t *keys = &event->dyndata.data[3];
+	uint8_t *key_data_ptr = &event->dyndata.data[3];
+	size_t reported_keys_cnt = 0;
 
-	const size_t max = ARRAY_SIZE(rd->items.item);
-	size_t cnt = 0;
-	for (size_t i = 0; (i < max) && (cnt < KEYBOARD_REPORT_KEY_COUNT_MAX); i++) {
-		struct item item = rd->items.item[max - i - 1];
+	for (int i = key_cnt - 1; i >= 0; i--) {
+		uint16_t usage_id = keys[i];
 
-		if (item.usage_id) {
-			__ASSERT_NO_MSG(item.value > 0);
-			if (item.usage_id <= KEYBOARD_REPORT_LAST_KEY) {
-				__ASSERT_NO_MSG(item.usage_id <= UINT8_MAX);
-				keys[cnt] = item.usage_id;
-				cnt++;
-			} else if ((item.usage_id >= KEYBOARD_REPORT_FIRST_MODIFIER) &&
-				   (item.usage_id <= KEYBOARD_REPORT_LAST_MODIFIER)) {
-				/* Make sure any key bitmask will fit into modifiers. */
-				BUILD_ASSERT(KEYBOARD_REPORT_LAST_MODIFIER - KEYBOARD_REPORT_FIRST_MODIFIER < 8);
-				modifier_bm |= BIT(item.usage_id - KEYBOARD_REPORT_FIRST_MODIFIER);
-			} else {
-				LOG_WRN("Undefined usage 0x%x", item.usage_id);
-			}
+		if (usage_id <= KEYBOARD_REPORT_LAST_KEY) {
+			BUILD_ASSERT(KEYBOARD_REPORT_LAST_KEY <= UINT8_MAX);
+			key_data_ptr[reported_keys_cnt] = (uint8_t)usage_id;
+			reported_keys_cnt++;
+		} else if ((usage_id >= KEYBOARD_REPORT_FIRST_MODIFIER) &&
+			   (usage_id <= KEYBOARD_REPORT_LAST_MODIFIER)) {
+			/* Make sure key bitmask will fit into modifiers. */
+			BUILD_ASSERT(KEYBOARD_REPORT_LAST_MODIFIER - KEYBOARD_REPORT_FIRST_MODIFIER
+				     < 8);
+			modifier_bm |= BIT(usage_id - KEYBOARD_REPORT_FIRST_MODIFIER);
 		} else {
-			break;
+			LOG_ERR("Unhandled usage ID 0x%" PRIx16, usage_id);
 		}
 	}
 
 	/* Fill the rest of report with zeros. */
-	for (; cnt < KEYBOARD_REPORT_KEY_COUNT_MAX; cnt++) {
-		keys[cnt] = 0;
-	}
+	memset(&key_data_ptr[reported_keys_cnt], 0x00,
+	       KEYBOARD_REPORT_KEY_COUNT_MAX - reported_keys_cnt);
 
 	event->dyndata.data[1] = modifier_bm;
 
 	APP_EVENT_SUBMIT(event);
 
 	rs->update_needed = false;
+}
+
+static uint8_t get_mouse_button_bitmask(const struct keys_state *ks)
+{
+	uint16_t keys[MOUSE_REPORT_BUTTON_COUNT_MAX];
+	size_t key_cnt = keys_state_keys_get(ks, keys, ARRAY_SIZE(keys));
+	uint8_t button_bm = 0;
+
+	for (size_t i = 0; i < key_cnt; i++) {
+		uint16_t usage_id = keys[i];
+
+		__ASSERT_NO_MSG((usage_id >= 1) && (usage_id <= 8));
+		button_bm |= BIT(usage_id - 1);
+	}
+
+	return button_bm;
 }
 
 static void send_report_mouse(struct report_state *rs, struct report_data *rd)
@@ -413,27 +300,11 @@ static void send_report_mouse(struct report_state *rs, struct report_data *rd)
 		rd->axes.axis[MOUSE_REPORT_AXIS_WHEEL] -= wheel * 2;
 	}
 
-	/* Traverse pressed keys and build mouse buttons bitmask */
-	uint8_t button_bm = 0;
-	for (size_t i = 0; i < ARRAY_SIZE(rd->items.item); i++) {
-		struct item item = rd->items.item[i];
-
-		if (item.usage_id) {
-			__ASSERT_NO_MSG(item.usage_id <= 8);
-			__ASSERT_NO_MSG(item.value > 0);
-
-			uint8_t mask = 1 << (item.usage_id - 1);
-
-			button_bm |= mask;
-		}
-	}
-
-
 	/* Encode report. */
 	BUILD_ASSERT(REPORT_SIZE_MOUSE == 5, "Invalid report size");
 
 	struct hid_report_event *event = new_hid_report_event(sizeof(rs->report_id)
-							+ REPORT_SIZE_MOUSE);
+							      + REPORT_SIZE_MOUSE);
 
 	event->source = &state;
 	event->subscriber = rs->subscriber->id;
@@ -444,9 +315,8 @@ static void send_report_mouse(struct report_state *rs, struct report_data *rd)
 	sys_put_le16(dx, x_buff);
 	sys_put_le16(dy, y_buff);
 
-
 	event->dyndata.data[0] = rs->report_id;
-	event->dyndata.data[1] = button_bm;
+	event->dyndata.data[1] = get_mouse_button_bitmask(&rd->keys_state);
 	event->dyndata.data[2] = wheel;
 	event->dyndata.data[3] = x_buff[0];
 	event->dyndata.data[4] = (y_buff[0] << 4) | (x_buff[1] & 0x0f);
@@ -479,6 +349,7 @@ static void send_report_boot_mouse(struct report_state *rs, struct report_data *
 	int8_t dx = MAX(MIN(rd->axes.axis[MOUSE_REPORT_AXIS_X], INT8_MAX), INT8_MIN);
 	int8_t dy = MAX(MIN(-rd->axes.axis[MOUSE_REPORT_AXIS_Y], INT8_MAX), INT8_MIN);
 	int16_t wheel = rd->axes.axis[MOUSE_REPORT_AXIS_WHEEL];
+	uint8_t button_bm = get_mouse_button_bitmask(&rd->keys_state);
 
 	if (dx) {
 		rd->axes.axis[MOUSE_REPORT_AXIS_X] -= dx;
@@ -489,21 +360,6 @@ static void send_report_boot_mouse(struct report_state *rs, struct report_data *
 	if (wheel) {
 		rd->axes.axis[MOUSE_REPORT_AXIS_WHEEL] = 0;
 	}
-	/* Traverse pressed keys and build mouse buttons bitmask */
-	uint8_t button_bm = 0;
-	for (size_t i = 0; i < ARRAY_SIZE(rd->items.item); i++) {
-		struct item item = rd->items.item[i];
-
-		if (item.usage_id) {
-			__ASSERT_NO_MSG(item.usage_id <= 8);
-			__ASSERT_NO_MSG(item.value > 0);
-
-			uint8_t mask = 1 << (item.usage_id - 1);
-
-			button_bm |= mask;
-		}
-	}
-
 
 	size_t report_size = sizeof(rs->report_id) + sizeof(dx) + sizeof(dy) +
 			     sizeof(button_bm);
@@ -544,24 +400,43 @@ static void send_report_ctrl(struct report_state *rs, struct report_data *rd)
 		return;
 	}
 
+	BUILD_ASSERT(SYSTEM_CTRL_REPORT_KEY_COUNT_MAX == CONSUMER_CTRL_REPORT_KEY_COUNT_MAX);
+	uint16_t keys[SYSTEM_CTRL_REPORT_KEY_COUNT_MAX];
+	size_t key_cnt = keys_state_keys_get(&rd->keys_state, keys, ARRAY_SIZE(keys));
 	struct hid_report_event *event = new_hid_report_event(report_size);
 
 	event->source = &state;
 	event->subscriber = rs->subscriber->id;
 
-	/* Only one item can fit in the consumer control report. */
-	__ASSERT_NO_MSG(report_size == sizeof(rs->report_id) +
-				       sizeof(rd->items.item[0].usage_id));
+	/* Only one item can fit in the consumer/system control report. */
+	BUILD_ASSERT(ARRAY_SIZE(keys) == 1);
+	uint16_t usage_id = (key_cnt > 0) ? (keys[0]) : (0x0000);
+
+	__ASSERT_NO_MSG(report_size == sizeof(rs->report_id) + sizeof(usage_id));
 	event->dyndata.data[0] = rs->report_id;
-
-	const size_t idx = ARRAY_SIZE(rd->items.item) - 1;
-
-	sys_put_le16(rd->items.item[idx].usage_id,
-		     &event->dyndata.data[sizeof(rs->report_id)]);
+	sys_put_le16(usage_id, &event->dyndata.data[sizeof(rs->report_id)]);
 
 	APP_EVENT_SUBMIT(event);
 
 	rs->update_needed = false;
+}
+
+static bool key_update(struct keys_state *ks, uint16_t usage_id, bool pressed)
+{
+	bool update_needed = false;
+	int err = keys_state_key_update(ks, usage_id, pressed, &update_needed);
+
+	if (err == -ENOENT) {
+		/* Press of the released key was not recorded by the utility. Ignore. */
+	} else if (err == -ENOBUFS) {
+		/* Number of pressed keys exceeds the limit. Ignore. */
+		LOG_WRN("Number of pressed keys exceeds the limit. Keypress dropped");
+	} else if (err) {
+		/* Other error codes should not happen. */
+		__ASSERT_NO_MSG(false);
+	}
+
+	return !err && update_needed;
 }
 
 static bool update_report(struct report_data *rd)
@@ -585,8 +460,7 @@ static bool update_report(struct report_data *rd)
 			break;
 		}
 
-		/* Keydown increases ref counter, keyup decreases it. */
-		update_needed = key_value_set(&rd->items, usage_id, pressed ? (1) : (-1));
+		update_needed = key_update(&rd->keys_state, usage_id, pressed);
 		rd->linked_rs->update_needed = rd->linked_rs->update_needed || update_needed;
 
 		/* If no item was changed, try next event. */
@@ -1058,8 +932,7 @@ static void update_key(const struct hid_keymap *map, bool pressed)
 			clear_report_data(rd);
 		}
 	} else {
-		/* Keydown increases ref counter, keyup decreases it. */
-		if (key_value_set(&rd->items, map->usage_id, pressed ? (1) : (-1))) {
+		if (key_update(&rd->keys_state, map->usage_id, pressed)) {
 			report_send(NULL, rd, false, true);
 		}
 	}
@@ -1090,7 +963,8 @@ static void init(void)
 		report_data_index[REPORT_ID_MOUSE] = data_id;
 		report_state_index[REPORT_ID_MOUSE] = state_id;
 
-		state.report_data[data_id].items.item_count_max = MOUSE_REPORT_BUTTON_COUNT_MAX;
+		keys_state_init(&state.report_data[data_id].keys_state,
+				MOUSE_REPORT_BUTTON_COUNT_MAX);
 		state.report_data[data_id].axes.axis_count = MOUSE_REPORT_AXIS_COUNT;
 
 		data_id++;
@@ -1100,7 +974,8 @@ static void init(void)
 		report_data_index[REPORT_ID_KEYBOARD_KEYS] = data_id;
 		report_state_index[REPORT_ID_KEYBOARD_KEYS] = state_id;
 
-		state.report_data[data_id].items.item_count_max = KEYBOARD_REPORT_KEY_COUNT_MAX;
+		keys_state_init(&state.report_data[data_id].keys_state,
+				KEYBOARD_REPORT_KEY_COUNT_MAX);
 
 		data_id++;
 		state_id++;
@@ -1109,7 +984,8 @@ static void init(void)
 		report_data_index[REPORT_ID_SYSTEM_CTRL] = data_id;
 		report_state_index[REPORT_ID_SYSTEM_CTRL] = state_id;
 
-		state.report_data[data_id].items.item_count_max = SYSTEM_CTRL_REPORT_KEY_COUNT_MAX;
+		keys_state_init(&state.report_data[data_id].keys_state,
+				SYSTEM_CTRL_REPORT_KEY_COUNT_MAX);
 
 		data_id++;
 		state_id++;
@@ -1118,7 +994,8 @@ static void init(void)
 		report_data_index[REPORT_ID_CONSUMER_CTRL] = data_id;
 		report_state_index[REPORT_ID_CONSUMER_CTRL] = state_id;
 
-		state.report_data[data_id].items.item_count_max = CONSUMER_CTRL_REPORT_KEY_COUNT_MAX;
+		keys_state_init(&state.report_data[data_id].keys_state,
+				CONSUMER_CTRL_REPORT_KEY_COUNT_MAX);
 
 		data_id++;
 		state_id++;
