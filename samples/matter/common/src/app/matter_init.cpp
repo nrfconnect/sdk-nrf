@@ -53,6 +53,7 @@
 #include <app/InteractionModelEngine.h>
 #include <app/clusters/network-commissioning/network-commissioning.h>
 #include <credentials/examples/DeviceAttestationCredsExample.h>
+#include <data-model-providers/codegen/Instance.h>
 #include <platform/nrfconnect/ExternalFlashManager.h>
 #include <setup_payload/OnboardingCodesUtil.h>
 
@@ -312,6 +313,9 @@ void DoInitChipServer(intptr_t /* unused */)
 	VerifyInitResultOrReturn(sInitResult, "Cannot register CHIP event handler");
 
 	SetDeviceInfoProvider(sLocalInitData.mDeviceInfoProvider);
+
+	sLocalInitData.mServerInitParams->dataModelProvider =
+		app::CodegenDataModelProviderInstance(sLocalInitData.mServerInitParams->persistentStorageDelegate);
 
 	sInitResult = Server::GetInstance().Init(*sLocalInitData.mServerInitParams);
 	VerifyInitResultOrReturn(sInitResult, "Server::Init() failed");
