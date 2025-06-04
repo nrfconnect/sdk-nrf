@@ -39,6 +39,10 @@ config ZBUS_RUNTIME_OBSERVERS
 config ZBUS_MSG_SUBSCRIBER
 	default y
 
+choice ZBUS_RUNTIME_OBSERVERS_NODE_ALLOC
+	default ZBUS_RUNTIME_OBSERVERS_NODE_ALLOC_NONE
+endchoice
+
 config SENSOR
 	default y
 

@@ -475,8 +475,8 @@ static int zbus_subscribers_create(void)
 		return ret;
 	}
 
-	ret = zbus_chan_add_obs(&sdu_ref_chan, &sdu_ref_msg_listen, &zbus_obs_node_sdu,
-				ZBUS_ADD_OBS_TIMEOUT_MS);
+	ret = zbus_chan_add_obs_with_node(&sdu_ref_chan, &sdu_ref_msg_listen, &zbus_obs_node_sdu,
+					  ZBUS_ADD_OBS_TIMEOUT_MS);
 	if (ret) {
 		LOG_ERR("Failed to add timestamp listener");
 		return ret;
@@ -498,29 +498,29 @@ static int zbus_link_producers_observers(void)
 		return -ENOTSUP;
 	}
 
-	ret = zbus_chan_add_obs(&button_chan, &button_evt_sub, &zbus_obs_node_button,
-				ZBUS_ADD_OBS_TIMEOUT_MS);
+	ret = zbus_chan_add_obs_with_node(&button_chan, &button_evt_sub, &zbus_obs_node_button,
+					  ZBUS_ADD_OBS_TIMEOUT_MS);
 	if (ret) {
 		LOG_ERR("Failed to add button sub");
 		return ret;
 	}
 
-	ret = zbus_chan_add_obs(&le_audio_chan, &le_audio_evt_sub, &zbus_obs_node_audio,
-				ZBUS_ADD_OBS_TIMEOUT_MS);
+	ret = zbus_chan_add_obs_with_node(&le_audio_chan, &le_audio_evt_sub, &zbus_obs_node_audio,
+					  ZBUS_ADD_OBS_TIMEOUT_MS);
 	if (ret) {
 		LOG_ERR("Failed to add le_audio sub");
 		return ret;
 	}
 
-	ret = zbus_chan_add_obs(&bt_mgmt_chan, &bt_mgmt_evt_listen, &zbus_obs_node_mgmt,
-				ZBUS_ADD_OBS_TIMEOUT_MS);
+	ret = zbus_chan_add_obs_with_node(&bt_mgmt_chan, &bt_mgmt_evt_listen, &zbus_obs_node_mgmt,
+					  ZBUS_ADD_OBS_TIMEOUT_MS);
 	if (ret) {
 		LOG_ERR("Failed to add bt_mgmt listener");
 		return ret;
 	}
 
-	ret = zbus_chan_add_obs(&cont_media_chan, &content_control_evt_sub, &zbus_obs_node_media,
-				ZBUS_ADD_OBS_TIMEOUT_MS);
+	ret = zbus_chan_add_obs_with_node(&cont_media_chan, &content_control_evt_sub,
+					  &zbus_obs_node_media, ZBUS_ADD_OBS_TIMEOUT_MS);
 
 	return 0;
 }
