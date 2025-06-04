@@ -46,7 +46,7 @@ static constexpr EmberAfDeviceType kBridgedHumidityDeviceTypes[] = {
 	  MatterBridgedDevice::kDefaultDynamicEndpointVersion }
 };
 
-static constexpr uint8_t kHumidityDataVersionSize = ArraySize(bridgedHumidityClusters);
+static constexpr uint8_t kHumidityDataVersionSize = MATTER_ARRAY_SIZE(bridgedHumidityClusters);
 
 HumiditySensorDevice::HumiditySensorDevice(const char *uniqueID, const char *nodeLabel)
 	: MatterBridgedDevice(uniqueID, nodeLabel)
