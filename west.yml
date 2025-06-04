@@ -35,6 +35,8 @@ manifest:
       url-base: https://github.com/boschsensortec
     - name: eembc
       url-base: https://github.com/eembc
+    - name: nusim
+      url-base: https://github.com/redteamobile
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -49,6 +51,7 @@ manifest:
     - -libmodem
     - -bsec
     - -doc-internal
+    - -nusim
     - +optional
 
   # "projects" is a list of git repositories which make up the NCS
@@ -57,7 +60,6 @@ manifest:
   # For 'userdata' fields in the projects area, please refer to:
   # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/dm_code_base.html
   projects:
-
     # The Zephyr RTOS fork in the NCS, along with the subset of its
     # modules which NCS imports directly.
     #
@@ -280,6 +282,13 @@ manifest:
       revision: d5fad6bd094899101a4e5fd53af7298160ced6ab
       groups:
         - benchmark
+    - name: nusim
+      remote: nusim
+      repo-path: ncs-nusim-app.git
+      path: modules/lib/nusim
+      revision: 3a2715947499adfb8348c003b2de3b3ceb438307
+      groups:
+        - nusim
 
   # West-related configuration for the nrf repository.
   self:
