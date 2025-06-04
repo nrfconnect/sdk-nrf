@@ -16,7 +16,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-The sample also requires an `nPM1300 EK <nPM1300 EK product page_>`_ or an nPM1304 EK that you need to connect to the development kit as described in `Wiring`_.
+The sample also requires an `nPM1300 EK <nPM1300 EK product page_>`_ or an `nPM1304 EK <nPM1304 EK product page_>`_ that you need to connect to the development kit as described in `Wiring`_.
 
 Overview
 ********
