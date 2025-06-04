@@ -76,6 +76,29 @@ config MPSL_LOW_PRIO_IRQN
 	  This option sets the low priority interrupt that MPSL will use.
 	  Check the interrupt number in the MDK
 
+config MPSL_HFCLK_LATENCY
+	int "HFCLK ramp-up latency in microsecond, assumed by MPSL to wait for the clock availability"
+	default 1650 if SOC_SERIES_NRF54LX
+	default 1400
+	help
+	  This option configures the amount of time MPSL will assume it takes
+	  for the HFCLK to be available after it's requested.
+	  Lowering this value will improve power consumption.
+	  Making this value too small can degrade BLE performance.
+
+	  To obtain an appropriate value for MPSL_HFCLK_LATENCY,
+	  measure the startup time.
+	  Set MPSL_HFCLK_LATENCY as twice this number to account for
+	  temperature and supply variations.
+	  On nRF52 and nRF53 Series devices, the startup time corresponds
+	  to the time between TASKS_HFCLKSTART and EVENTS_HFCLKSTARTED.
+	  On nRF54L Series devices, this corresponds to the time between
+	  TASKS_XOSTART and EVENTS_XOTUNED.
+
+	  Note that HFXO will need more time than usual on the first power-up
+	  to set up the appropriate drive level for the crystal used.
+	  The first power-up should not be used to set MPSL_HFCLK_LATENCY.
+
 config MPSL_CALIBRATION_PERIOD
 	int "Calibration callback period in milliseconds"
 	depends on CLOCK_CONTROL_MPSL && (SOC_SERIES_NRF54LX || CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION)

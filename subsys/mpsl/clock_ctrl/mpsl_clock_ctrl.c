@@ -498,7 +498,7 @@ static mpsl_clock_hfclk_ctrl_source_t m_nrf_hfclk_ctrl_data = {
 	.hfclk_request = m_hfclk_request,
 	.hfclk_release = m_hfclk_release,
 	.hfclk_is_running = m_hfclk_is_running,
-	.startup_time_us = 1650,
+	.startup_time_us = CONFIG_MPSL_HFCLK_LATENCY
 };
 
 int32_t mpsl_clock_ctrl_init(void)
