@@ -351,6 +351,8 @@
 .. _`nPM1300 EK get started`: https://www.nordicsemi.com/Products/Development-hardware/nPM1300-EK/Get-started?lang=en#infotabs
 
 .. _`nPM1304 product website`: https://www.nordicsemi.com/products/npm1304
+.. _`nPM1304 EK product page`: https://www.nordicsemi.com/Products/Development-hardware/nPM1304-EK
+.. _`nPM1304 EK get started`: https://www.nordicsemi.com/Products/Development-hardware/nPM1304-EK/Get-started?lang=en#infotabs
 
 .. _`nPM2100 product website`: https://www.nordicsemi.com/Products/nPM2100
 .. _`nRF Desktop reference design page`: https://www.nordicsemi.com/Products/Reference-designs/nRF-Desktop
@@ -894,7 +896,14 @@
 .. _`nPM1300 EK User Guide`: https://docs.nordicsemi.com/bundle/ug_npm1300_ek/page/UG/nPM1300_EK/intro.html
 .. _`Evaluate nPM1300 using nPM PowerUP`: https://docs.nordicsemi.com/bundle/ug_npm1300_ek/page/UG/nPM1300_EK/npm_powerup.html
 .. _`Use the nPM1300 EK with an nRF5340 DK`: https://docs.nordicsemi.com/bundle/ug_npm1300_ek/page/UG/nPM1300_EK/using_nrf5340_DK.html
-.. _`Using the nPM1300 Fuel Gauge`: https://docs.nordicsemi.com/bundle/nan_045/page/APP/nan_045/intro.html
+.. _`Using the nPM1300 and nPM1304 Fuel Gauge`: https://docs.nordicsemi.com/bundle/nan_045/page/APP/nan_045/intro.html
+
+.. _`nPM1304`: https://docs.nordicsemi.com/category/npm1304-category
+.. _`nPM1304 Data sheet`: https://docs.nordicsemi.com/bundle/ps_npm1304/page/keyfeatures_html5.html
+
+.. _`nPM1304 EK User Guide`: https://docs.nordicsemi.com/bundle/ug_npm1304_ek/page/UG/nPM1304_EK/intro.html
+.. _`Evaluate nPM1304 using nPM PowerUP`: https://docs.nordicsemi.com/bundle/ug_npm1304_ek/page/UG/nPM1304_EK/use_ek_power_up.html
+.. _`Use the nPM1304 EK with an nRF54L15 DK`: https://docs.nordicsemi.com/bundle/ug_npm1304_ek/page/UG/nPM1304_EK/using_nrf54L15_dk.html
 
 .. _`nRF21540 EK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf21540_ek/page/UG/nrf21540_DK/intro.html
 

@@ -9,7 +9,7 @@ nPM1300 and nPM1304: Fuel gauge
 
 The Fuel gauge sample demonstrates how to calculate the state of charge of a development kit battery using `nPM1300 <nPM1300 product website_>`_ or  `nPM1304 <nPM1304 product website_>`_ and the :ref:`nrfxlib:nrf_fuel_gauge`.
 
-For more information about fuel gauging with the nPM1300 or nPM1304, see `Using the nPM1300 Fuel Gauge`_.
+For more information about fuel gauging with the nPM1300 or nPM1304, see `Using the nPM1300 and nPM1304 Fuel Gauge`_.
 
 Requirements
 ************
@@ -18,7 +18,7 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-The sample also requires an `nPM1300 EK <nPM1300 EK product page_>`_ or nPM1304 EK that you need to connect to the development kit as described in `Wiring`_.
+The sample also requires an `nPM1300 EK <nPM1300 EK product page_>`_ or an `nPM1304 EK <nPM1304 EK product page_>`_ that you need to connect to the development kit as described in `Wiring`_.
 
 Overview
 ********
