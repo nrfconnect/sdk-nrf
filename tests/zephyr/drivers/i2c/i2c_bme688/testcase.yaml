@@ -60,6 +60,7 @@ tests:
       - vpr_launcher_SHIELD=pca63566_fwd
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
       - nrf54h20dk/nrf54h20/cpuppr
 
   nrf.extended.drivers.i2c.bme688_nrf54h_fast_speed:
@@ -73,6 +74,7 @@ tests:
       - CONFIG_TEST_I2C_SPEED=2
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
       - nrf54h20dk/nrf54h20/cpuppr
 
   nrf.extended.drivers.i2c.bme688_nrf54h_fast_plus_speed:
@@ -86,6 +88,7 @@ tests:
       - CONFIG_TEST_I2C_SPEED=3
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
       - nrf54h20dk/nrf54h20/cpuppr
 
   nrf.extended.drivers.i2c.bme688_nrf54h_coverage:
@@ -96,6 +99,7 @@ tests:
       - SHIELD=pca63566;coverage_support
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
 
   nrf.extended.drivers.i2c.bme688_nrf54h_coverage_fast_speed:
     filter: CONFIG_COVERAGE
@@ -106,6 +110,7 @@ tests:
       - CONFIG_TEST_I2C_SPEED=2
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
 
   nrf.extended.drivers.i2c.bme688_nrf54h_coverage_fast_plus_speed:
     filter: CONFIG_COVERAGE
@@ -116,3 +121,4 @@ tests:
       - CONFIG_TEST_I2C_SPEED=3
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron

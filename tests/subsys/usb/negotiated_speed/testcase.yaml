@@ -10,8 +10,10 @@ tests:
     depends_on: usbd
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
     extra_configs:

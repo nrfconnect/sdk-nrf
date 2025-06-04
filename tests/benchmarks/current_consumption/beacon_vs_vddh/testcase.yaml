@@ -8,8 +8,10 @@ tests:
   benchmarks.current_consumption.beacon_vs_vddh:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - SB_CONFIG_NETCORE_IPC_RADIO=y
       - SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y

@@ -1,0 +1,38 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Split DFU partition into a smaller one and DFU caches. */
+/delete-node/ &dfu_partition;
+
+&mram1x {
+	erase-block-size = < 0x400 >;
+	/* Hardcoded inside the soc_flash_nrf_mram.c (MRAM_WORD_SIZE) */
+	write-block-size = < 0x10 >;
+
+	cpuapp_rw_partitions: cpuapp-rw-partitions {
+		compatible = "nordic,owned-partitions", "fixed-partitions";
+		status = "okay";
+		nordic,access = <NRF_OWNER_ID_APPLICATION NRF_PERM_RW>;
+		#address-cells = < 0x1 >;
+		#size-cells = < 0x1 >;
+
+		dfu_partition: partition@19d000 {
+			reg = < 0x19d000 DT_SIZE_K(1) >;
+		};
+
+		dfu_cache_partition_1: partition@19d400 {
+			reg = <0x19d400 DT_SIZE_K(1)>;
+		};
+
+		dfu_cache_partition_3: partition@19d800 {
+			reg = <0x19d800 DT_SIZE_K(1)>;
+		};
+
+		__mpc_override_align: partition@19dc00 {
+			reg = <0x19dc00 DT_SIZE_K(1)>;
+		};
+	};
+};

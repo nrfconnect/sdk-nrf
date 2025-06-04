@@ -25,6 +25,7 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf21540dk/nrf52840
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - qemu_cortex_m3
       - nrf52dk/nrf52832
@@ -34,6 +35,7 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf21540dk/nrf52840
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     tags:
       - sysbuild
       - ci_samples_app_event_manager
@@ -49,6 +51,7 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf21540dk/nrf52840
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - qemu_cortex_m3
       - nrf52dk/nrf52832
@@ -58,6 +61,7 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf21540dk/nrf52840
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_configs:
       - CONFIG_SHELL=y
     platform_exclude: native_sim

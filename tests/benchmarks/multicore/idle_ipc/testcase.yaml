@@ -12,8 +12,10 @@ tests:
     harness: pytest
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     harness_config:
       fixture: ppk_power_measure
       pytest_root:
@@ -29,8 +31,10 @@ tests:
     harness: pytest
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - remote_TEST_START_DELAY_MS=1000
     harness_config:
@@ -46,8 +50,10 @@ tests:
     filter: CONFIG_COVERAGE
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp/iron
     extra_args:
       - CONF_FILE=coverage.conf
       - SHIELD=coverage_support

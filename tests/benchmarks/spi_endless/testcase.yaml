@@ -12,6 +12,7 @@ common:
     - nrf52840dk/nrf52840
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54h20dk/nrf54h20/cpuapp/iron
   integration_platforms:
     - nrf54l15dk/nrf54l15/cpuapp
 

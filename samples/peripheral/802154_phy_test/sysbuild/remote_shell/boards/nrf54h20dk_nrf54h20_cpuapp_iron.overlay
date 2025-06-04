@@ -1,0 +1,44 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/delete-node/ &button0;
+/delete-node/ &button1;
+/delete-node/ &button2;
+/delete-node/ &button3;
+/delete-node/ &led0;
+/delete-node/ &led1;
+/delete-node/ &led2;
+/delete-node/ &led3;
+
+/ {
+	chosen {
+		zephyr,shell-ipc = &ipc0;
+		ncs,remote-shell-uart = &uart136;
+	};
+
+	aliases {
+		/delete-property/ led0;
+		/delete-property/ led1;
+		/delete-property/ led2;
+		/delete-property/ led3;
+		/delete-property/ sw0;
+		/delete-property/ sw1;
+		/delete-property/ sw2;
+		/delete-property/ sw3;
+	};
+};
+
+&pwm130 {
+	status = "disabled";
+};
+
+&gpio9 {
+	status = "disabled";
+};
+
+&gpio0 {
+	status = "disabled";
+};
