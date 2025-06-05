@@ -217,6 +217,9 @@ nRF5340 Audio
   * The application to use an audio struct that contains meta data about the audio stream.
   * The optional buildprog tool to use `nRF Util`_ instead of nrfjprog that has been deprecated.
 
+* Removed:
+  * The uart_terminal tool. This was custom for audio and we want to converge on standardized tools. Similar functionality is provided via the nRF Serial Terminal in VS Code.
+
 nRF Desktop
 -----------
 
