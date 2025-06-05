@@ -17,6 +17,10 @@
 #include "dfu/smp/dfu_over_smp.h"
 #endif
 
+#ifdef CONFIG_NCS_SAMPLE_MATTER_CERTIFICATION
+#include "certification/certification_hooks.h"
+#endif
+
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
 using namespace ::chip::DeviceLayer;
@@ -57,6 +61,15 @@ bool Board::Init(button_handler_t buttonHandler, LedStateHandler ledStateHandler
 		};
 		dk_button_handler_add(&handler);
 	}
+
+#ifdef CONFIG_NCS_SAMPLE_MATTER_CERTIFICATION
+	{
+		static struct button_handler handler = {
+			.cb = Nrf::Matter::Certification::ButtonHandler,
+		};
+		dk_button_handler_add(&handler);
+	}
+#endif
 
 	/* Initialize function timer */
 	k_timer_init(&mFunctionTimer, &FunctionTimerTimeoutCallback, nullptr);

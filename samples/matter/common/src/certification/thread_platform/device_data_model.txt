@@ -1,0 +1,463 @@
+Matter Device Model:
+==================
+╔══════════════════════════════════════╗
+║      MATTER DEVICE CONFIGURATION      ║
+╚══════════════════════════════════════╝
+
+▣ Endpoint 0 (Profile: 259)
+
+├── Device Types
+│   └── MA-otarequestor [Code: 18] (Rev: 1)
+│   └── MA-rootdevice [Code: 22] (Rev: 3)
+
+└── Clusters
+    ● Descriptor [Code: 29] (Side: server)
+      ├── FeatureMap: None
+      └── ClusterRevision: None
+    Attributes:
+      - DeviceTypeList (Code: 0, Type: array)
+      - ServerList (Code: 1, Type: array)
+      - ClientList (Code: 2, Type: array)
+      - PartsList (Code: 3, Type: array)
+      - GeneratedCommandList (Code: 65528, Type: array)
+      - AcceptedCommandList (Code: 65529, Type: array)
+      - EventList (Code: 65530, Type: array)
+      - AttributeList (Code: 65531, Type: array)
+      - FeatureMap (Code: 65532, Type: bitmap32)
+      - ClusterRevision (Code: 65533, Type: int16u)
+    ● Access Control [Code: 31] (Side: server)
+      ├── FeatureMap: 1
+      └── ClusterRevision: None
+    Attributes:
+      - ACL (Code: 0, Type: array)
+      - Extension (Code: 1, Type: array)
+      - SubjectsPerAccessControlEntry (Code: 2, Type: int16u)
+      - TargetsPerAccessControlEntry (Code: 3, Type: int16u)
+      - AccessControlEntriesPerFabric (Code: 4, Type: int16u)
+      - GeneratedCommandList (Code: 65528, Type: array)
+      - AcceptedCommandList (Code: 65529, Type: array)
+      - EventList (Code: 65530, Type: array)
+      - AttributeList (Code: 65531, Type: array)
+      - FeatureMap (Code: 65532, Type: bitmap32)
+      - ClusterRevision (Code: 65533, Type: int16u)
+    ● Basic Information [Code: 40] (Side: server)
+      ├── FeatureMap: 0
+      └── ClusterRevision: 4
+    Attributes:
+      - DataModelRevision (Code: 0, Type: int16u)
+      - VendorName (Code: 1, Type: char_string)
+      - VendorID (Code: 2, Type: vendor_id)
+      - ProductName (Code: 3, Type: char_string)
+      - ProductID (Code: 4, Type: int16u)
+      - NodeLabel (Code: 5, Type: char_string)
+      - Location (Code: 6, Type: char_string)
+      - HardwareVersion (Code: 7, Type: int16u)
+      - HardwareVersionString (Code: 8, Type: char_string)
+      - SoftwareVersion (Code: 9, Type: int32u)
+      - SoftwareVersionString (Code: 10, Type: char_string)
+      - ManufacturingDate (Code: 11, Type: char_string)
+      - SerialNumber (Code: 15, Type: char_string)
+      - UniqueID (Code: 18, Type: char_string)
+      - CapabilityMinima (Code: 19, Type: CapabilityMinimaStruct)
+      - SpecificationVersion (Code: 21, Type: int32u)
+      - MaxPathsPerInvoke (Code: 22, Type: int16u)
+      - GeneratedCommandList (Code: 65528, Type: array)
+      - AcceptedCommandList (Code: 65529, Type: array)
+      - EventList (Code: 65530, Type: array)
+      - AttributeList (Code: 65531, Type: array)
+      - FeatureMap (Code: 65532, Type: bitmap32)
+      - ClusterRevision (Code: 65533, Type: int16u)
+    Events:
+      - StartUp
+      - ShutDown
+      - Leave
+    ● OTA Software Update Provider [Code: 41] (Side: client)
+      ├── FeatureMap: N/A
+      └── ClusterRevision: N/A
+    Commands:
+      - QueryImage (Code: 0, Out)
+      - QueryImageResponse (Code: 1, In)
+      - ApplyUpdateRequest (Code: 2, Out)
+      - ApplyUpdateResponse (Code: 3, In)
+      - NotifyUpdateApplied (Code: 4, Out)
+    ● OTA Software Update Requestor [Code: 42] (Side: server)
+      ├── FeatureMap: 0
+      └── ClusterRevision: 1
+    Attributes:
+      - DefaultOTAProviders (Code: 0, Type: array)
+      - UpdatePossible (Code: 1, Type: boolean)
+      - UpdateState (Code: 2, Type: UpdateStateEnum)
+      - UpdateStateProgress (Code: 3, Type: int8u)
+      - GeneratedCommandList (Code: 65528, Type: array)
+      - AcceptedCommandList (Code: 65529, Type: array)
+      - EventList (Code: 65530, Type: array)
+      - AttributeList (Code: 65531, Type: array)
+      - FeatureMap (Code: 65532, Type: bitmap32)
+      - ClusterRevision (Code: 65533, Type: int16u)
+    Commands:
+      - AnnounceOTAProvider (Code: 0, In)
+    Events:
+      - StateTransition
+      - VersionApplied
+      - DownloadError
+    ● Localization Configuration [Code: 43] (Side: server)
+      ├── FeatureMap: 0
+      └── ClusterRevision: 1
+    Attributes:
+      - ActiveLocale (Code: 0, Type: char_string)
+      - SupportedLocales (Code: 1, Type: array)
+      - GeneratedCommandList (Code: 65528, Type: array)
+      - AcceptedCommandList (Code: 65529, Type: array)
+      - EventList (Code: 65530, Type: array)
+      - AttributeList (Code: 65531, Type: array)
+      - FeatureMap (Code: 65532, Type: bitmap32)
+      - ClusterRevision (Code: 65533, Type: int16u)
+    ● General Commissioning [Code: 48] (Side: server)
+      ├── FeatureMap: 0
+      └── ClusterRevision: 2
+    Attributes:
+      - Breadcrumb (Code: 0, Type: int64u)
+      - BasicCommissioningInfo (Code: 1, Type: BasicCommissioningInfo)
+      - RegulatoryConfig (Code: 2, Type: RegulatoryLocationTypeEnum)
+      - LocationCapability (Code: 3, Type: RegulatoryLocationTypeEnum)
+      - SupportsConcurrentConnection (Code: 4, Type: boolean)
+      - GeneratedCommandList (Code: 65528, Type: array)
+      - AcceptedCommandList (Code: 65529, Type: array)
+      - EventList (Code: 65530, Type: array)
+      - AttributeList (Code: 65531, Type: array)
+      - FeatureMap (Code: 65532, Type: bitmap32)
+      - ClusterRevision (Code: 65533, Type: int16u)
+    Commands:
+      - ArmFailSafe (Code: 0, In)
+      - ArmFailSafeResponse (Code: 1, Out)
+      - SetRegulatoryConfig (Code: 2, In)
+      - SetRegulatoryConfigResponse (Code: 3, Out)
+      - CommissioningComplete (Code: 4, In)
+      - CommissioningCompleteResponse (Code: 5, Out)
+    ● Network Commissioning [Code: 49] (Side: server)
+      ├── FeatureMap: 2
+      └── ClusterRevision: 2
+    Attributes:
+      - MaxNetworks (Code: 0, Type: int8u)
+      - Networks (Code: 1, Type: array)
+      - ScanMaxTimeSeconds (Code: 2, Type: int8u)
+      - ConnectMaxTimeSeconds (Code: 3, Type: int8u)
+      - InterfaceEnabled (Code: 4, Type: boolean)
+      - LastNetworkingStatus (Code: 5, Type: NetworkCommissioningStatusEnum)
+      - LastNetworkID (Code: 6, Type: octet_string)
+      - LastConnectErrorValue (Code: 7, Type: int32s)
+      - SupportedThreadFeatures (Code: 9, Type: ThreadCapabilitiesBitmap)
+      - ThreadVersion (Code: 10, Type: int16u)
+      - GeneratedCommandList (Code: 65528, Type: array)
+      - AcceptedCommandList (Code: 65529, Type: array)
+      - EventList (Code: 65530, Type: array)
+      - AttributeList (Code: 65531, Type: array)
+      - FeatureMap (Code: 65532, Type: bitmap32)
+      - ClusterRevision (Code: 65533, Type: int16u)
+    Commands:
+      - ScanNetworks (Code: 0, In)
+      - ScanNetworksResponse (Code: 1, Out)
+      - AddOrUpdateThreadNetwork (Code: 3, In)
+      - RemoveNetwork (Code: 4, In)
+      - NetworkConfigResponse (Code: 5, Out)
+      - ConnectNetwork (Code: 6, In)
+      - ConnectNetworkResponse (Code: 7, Out)
+      - ReorderNetwork (Code: 8, In)
+    ● Diagnostic Logs [Code: 50] (Side: server)
+      ├── FeatureMap: 0
+      └── ClusterRevision: 1
+    Attributes:
+      - GeneratedCommandList (Code: 65528, Type: array)
+      - AcceptedCommandList (Code: 65529, Type: array)
+      - EventList (Code: 65530, Type: array)
+      - AttributeList (Code: 65531, Type: array)
+      - FeatureMap (Code: 65532, Type: bitmap32)
+      - ClusterRevision (Code: 65533, Type: int16u)
+    Commands:
+      - RetrieveLogsRequest (Code: 0, In)
+      - RetrieveLogsResponse (Code: 1, Out)
+    ● General Diagnostics [Code: 51] (Side: server)
+      ├── FeatureMap: None
+      └── ClusterRevision: None
+    Attributes:
+      - NetworkInterfaces (Code: 0, Type: array)
+      - RebootCount (Code: 1, Type: int16u)
+      - UpTime (Code: 2, Type: int64u)
+      - TotalOperationalHours (Code: 3, Type: int32u)
+      - BootReason (Code: 4, Type: BootReasonEnum)
+      - TestEventTriggersEnabled (Code: 8, Type: boolean)
+      - GeneratedCommandList (Code: 65528, Type: array)
+      - AcceptedCommandList (Code: 65529, Type: array)
+      - EventList (Code: 65530, Type: array)
+      - AttributeList (Code: 65531, Type: array)
+      - FeatureMap (Code: 65532, Type: bitmap32)
+      - ClusterRevision (Code: 65533, Type: int16u)
+    Commands:
+      - TestEventTrigger (Code: 0, In)
+      - TimeSnapshot (Code: 1, In)
+      - TimeSnapshotResponse (Code: 2, Out)
+    ● Software Diagnostics [Code: 52] (Side: server)
+      ├── FeatureMap: None
+      └── ClusterRevision: 1
+    Attributes:
+      - CurrentHeapFree (Code: 1, Type: int64u)
+      - CurrentHeapUsed (Code: 2, Type: int64u)
+      - GeneratedCommandList (Code: 65528, Type: array)
+      - AcceptedCommandList (Code: 65529, Type: array)
+      - AttributeList (Code: 65531, Type: array)
+      - FeatureMap (Code: 65532, Type: bitmap32)
+      - ClusterRevision (Code: 65533, Type: int16u)
+    ● Thread Network Diagnostics [Code: 53] (Side: server)
+      ├── FeatureMap: 0x000F
+      └── ClusterRevision: 3
+    Attributes:
+      - Channel (Code: 0, Type: int16u)
+      - RoutingRole (Code: 1, Type: RoutingRoleEnum)
+      - NetworkName (Code: 2, Type: char_string)
+      - PanId (Code: 3, Type: int16u)
+      - ExtendedPanId (Code: 4, Type: int64u)
+      - MeshLocalPrefix (Code: 5, Type: octet_string)
+      - OverrunCount (Code: 6, Type: int64u)
+      - NeighborTable (Code: 7, Type: array)
+      - RouteTable (Code: 8, Type: array)
+      - PartitionId (Code: 9, Type: int32u)
+      - Weighting (Code: 10, Type: int16u)
+      - DataVersion (Code: 11, Type: int16u)
+      - StableDataVersion (Code: 12, Type: int16u)
+      - LeaderRouterId (Code: 13, Type: int8u)
+      - DetachedRoleCount (Code: 14, Type: int16u)
+      - ChildRoleCount (Code: 15, Type: int16u)
+      - RouterRoleCount (Code: 16, Type: int16u)
+      - LeaderRoleCount (Code: 17, Type: int16u)
+      - AttachAttemptCount (Code: 18, Type: int16u)
+      - PartitionIdChangeCount (Code: 19, Type: int16u)
+      - BetterPartitionAttachAttemptCount (Code: 20, Type: int16u)
+      - ParentChangeCount (Code: 21, Type: int16u)
+      - TxTotalCount (Code: 22, Type: int32u)
+      - TxUnicastCount (Code: 23, Type: int32u)
+      - TxBroadcastCount (Code: 24, Type: int32u)
+      - TxAckRequestedCount (Code: 25, Type: int32u)
+      - TxAckedCount (Code: 26, Type: int32u)
+      - TxNoAckRequestedCount (Code: 27, Type: int32u)
+      - TxDataCount (Code: 28, Type: int32u)
+      - TxDataPollCount (Code: 29, Type: int32u)
+      - TxBeaconCount (Code: 30, Type: int32u)
+      - TxBeaconRequestCount (Code: 31, Type: int32u)
+      - TxOtherCount (Code: 32, Type: int32u)
+      - TxRetryCount (Code: 33, Type: int32u)
+      - TxDirectMaxRetryExpiryCount (Code: 34, Type: int32u)
+      - TxIndirectMaxRetryExpiryCount (Code: 35, Type: int32u)
+      - TxErrCcaCount (Code: 36, Type: int32u)
+      - TxErrAbortCount (Code: 37, Type: int32u)
+      - TxErrBusyChannelCount (Code: 38, Type: int32u)
+      - RxTotalCount (Code: 39, Type: int32u)
+      - RxUnicastCount (Code: 40, Type: int32u)
+      - RxBroadcastCount (Code: 41, Type: int32u)
+      - RxDataCount (Code: 42, Type: int32u)
+      - RxDataPollCount (Code: 43, Type: int32u)
+      - RxBeaconCount (Code: 44, Type: int32u)
+      - RxBeaconRequestCount (Code: 45, Type: int32u)
+      - RxOtherCount (Code: 46, Type: int32u)
+      - RxAddressFilteredCount (Code: 47, Type: int32u)
+      - RxDestAddrFilteredCount (Code: 48, Type: int32u)
+      - RxDuplicatedCount (Code: 49, Type: int32u)
+      - RxErrNoFrameCount (Code: 50, Type: int32u)
+      - RxErrUnknownNeighborCount (Code: 51, Type: int32u)
+      - RxErrInvalidSrcAddrCount (Code: 52, Type: int32u)
+      - RxErrSecCount (Code: 53, Type: int32u)
+      - RxErrFcsCount (Code: 54, Type: int32u)
+      - RxErrOtherCount (Code: 55, Type: int32u)
+      - ActiveTimestamp (Code: 56, Type: int64u)
+      - PendingTimestamp (Code: 57, Type: int64u)
+      - Delay (Code: 58, Type: int32u)
+      - SecurityPolicy (Code: 59, Type: SecurityPolicy)
+      - ChannelPage0Mask (Code: 60, Type: octet_string)
+      - OperationalDatasetComponents (Code: 61, Type: OperationalDatasetComponents)
+      - ActiveNetworkFaultsList (Code: 62, Type: array)
+      - GeneratedCommandList (Code: 65528, Type: array)
+      - AcceptedCommandList (Code: 65529, Type: array)
+      - AttributeList (Code: 65531, Type: array)
+      - FeatureMap (Code: 65532, Type: bitmap32)
+      - ClusterRevision (Code: 65533, Type: int16u)
+    Commands:
+      - ResetCounts (Code: 0, In)
+    ● Time Synchronization [Code: 56] (Side: server)
+      ├── FeatureMap: 9
+      └── ClusterRevision: 2
+    Attributes:
+      - UTCTime (Code: 0, Type: epoch_us)
+      - Granularity (Code: 1, Type: GranularityEnum)
+      - TrustedTimeSource (Code: 3, Type: TrustedTimeSourceStruct)
+      - TimeZone (Code: 5, Type: array)
+      - DSTOffset (Code: 6, Type: array)
+      - LocalTime (Code: 7, Type: epoch_us)
+      - TimeZoneDatabase (Code: 8, Type: TimeZoneDatabaseEnum)
+      - TimeZoneListMaxSize (Code: 10, Type: int8u)
+      - DSTOffsetListMaxSize (Code: 11, Type: int8u)
+      - GeneratedCommandList (Code: 65528, Type: array)
+      - AcceptedCommandList (Code: 65529, Type: array)
+      - EventList (Code: 65530, Type: array)
+      - AttributeList (Code: 65531, Type: array)
+      - FeatureMap (Code: 65532, Type: bitmap32)
+      - ClusterRevision (Code: 65533, Type: int16u)
+    Commands:
+      - SetUTCTime (Code: 0, In)
+      - SetTrustedTimeSource (Code: 1, In)
+      - SetTimeZone (Code: 2, In)
+      - SetTimeZoneResponse (Code: 3, Out)
+      - SetDSTOffset (Code: 4, In)
+    ● Administrator Commissioning [Code: 60] (Side: server)
+      ├── FeatureMap: 1
+      └── ClusterRevision: 1
+    Attributes:
+      - WindowStatus (Code: 0, Type: CommissioningWindowStatusEnum)
+      - AdminFabricIndex (Code: 1, Type: fabric_idx)
+      - AdminVendorId (Code: 2, Type: vendor_id)
+      - GeneratedCommandList (Code: 65528, Type: array)
+      - AcceptedCommandList (Code: 65529, Type: array)
+      - EventList (Code: 65530, Type: array)
+      - AttributeList (Code: 65531, Type: array)
+      - FeatureMap (Code: 65532, Type: bitmap32)
+      - ClusterRevision (Code: 65533, Type: int16u)
+    Commands:
+      - OpenCommissioningWindow (Code: 0, In)
+      - OpenBasicCommissioningWindow (Code: 1, In)
+      - RevokeCommissioning (Code: 2, In)
+    ● Operational Credentials [Code: 62] (Side: server)
+      ├── FeatureMap: 0
+      └── ClusterRevision: 1
+    Attributes:
+      - NOCs (Code: 0, Type: array)
+      - Fabrics (Code: 1, Type: array)
+      - SupportedFabrics (Code: 2, Type: int8u)
+      - CommissionedFabrics (Code: 3, Type: int8u)
+      - TrustedRootCertificates (Code: 4, Type: array)
+      - CurrentFabricIndex (Code: 5, Type: int8u)
+      - GeneratedCommandList (Code: 65528, Type: array)
+      - AcceptedCommandList (Code: 65529, Type: array)
+      - EventList (Code: 65530, Type: array)
+      - AttributeList (Code: 65531, Type: array)
+      - FeatureMap (Code: 65532, Type: bitmap32)
+      - ClusterRevision (Code: 65533, Type: int16u)
+    Commands:
+      - AttestationRequest (Code: 0, In)
+      - AttestationResponse (Code: 1, Out)
+      - CertificateChainRequest (Code: 2, In)
+      - CertificateChainResponse (Code: 3, Out)
+      - CSRRequest (Code: 4, In)
+      - CSRResponse (Code: 5, Out)
+      - AddNOC (Code: 6, In)
+      - UpdateNOC (Code: 7, In)
+      - NOCResponse (Code: 8, Out)
+      - UpdateFabricLabel (Code: 9, In)
+      - RemoveFabric (Code: 10, In)
+      - AddTrustedRootCertificate (Code: 11, In)
+    ● Group Key Management [Code: 63] (Side: server)
+      ├── FeatureMap: None
+      └── ClusterRevision: None
+    Attributes:
+      - GroupKeyMap (Code: 0, Type: array)
+      - GroupTable (Code: 1, Type: array)
+      - MaxGroupsPerFabric (Code: 2, Type: int16u)
+      - MaxGroupKeysPerFabric (Code: 3, Type: int16u)
+      - GeneratedCommandList (Code: 65528, Type: array)
+      - AcceptedCommandList (Code: 65529, Type: array)
+      - EventList (Code: 65530, Type: array)
+      - AttributeList (Code: 65531, Type: array)
+      - FeatureMap (Code: 65532, Type: bitmap32)
+      - ClusterRevision (Code: 65533, Type: int16u)
+    Commands:
+      - KeySetWrite (Code: 0, In)
+      - KeySetRead (Code: 1, In)
+      - KeySetReadResponse (Code: 2, Out)
+      - KeySetRemove (Code: 3, In)
+      - KeySetReadAllIndices (Code: 4, In)
+      - KeySetReadAllIndicesResponse (Code: 5, Out)
+    ● ICD Management [Code: 70] (Side: server)
+      ├── FeatureMap: 7
+      └── ClusterRevision: 3
+    Attributes:
+      - IdleModeDuration (Code: 0, Type: int32u)
+      - ActiveModeDuration (Code: 1, Type: int32u)
+      - ActiveModeThreshold (Code: 2, Type: int16u)
+      - RegisteredClients (Code: 3, Type: array)
+      - ICDCounter (Code: 4, Type: int32u)
+      - ClientsSupportedPerFabric (Code: 5, Type: int16u)
+      - UserActiveModeTriggerHint (Code: 6, Type: UserActiveModeTriggerBitmap)
+      - UserActiveModeTriggerInstruction (Code: 7, Type: char_string)
+      - OperatingMode (Code: 8, Type: OperatingModeEnum)
+      - MaximumCheckInBackOff (Code: 9, Type: int32u)
+      - GeneratedCommandList (Code: 65528, Type: array)
+      - AcceptedCommandList (Code: 65529, Type: array)
+      - EventList (Code: 65530, Type: array)
+      - AttributeList (Code: 65531, Type: array)
+      - FeatureMap (Code: 65532, Type: bitmap32)
+      - ClusterRevision (Code: 65533, Type: int16u)
+    Commands:
+      - RegisterClient (Code: 0, In)
+      - RegisterClientResponse (Code: 1, Out)
+      - UnregisterClient (Code: 2, In)
+      - StayActiveRequest (Code: 3, In)
+      - StayActiveResponse (Code: 4, Out)
+
+▣ Endpoint 1 (Profile: 259)
+
+├── Device Types
+│   └── MA-dimmablelight [Code: 257] (Rev: 3)
+
+└── Clusters
+    ● Groups [Code: 4] (Side: server)
+      ├── FeatureMap: 0
+      └── ClusterRevision: 4
+    Attributes:
+      - NameSupport (Code: 0, Type: NameSupportBitmap)
+      - GeneratedCommandList (Code: 65528, Type: array)
+      - AcceptedCommandList (Code: 65529, Type: array)
+      - AttributeList (Code: 65531, Type: array)
+      - FeatureMap (Code: 65532, Type: bitmap32)
+      - ClusterRevision (Code: 65533, Type: int16u)
+    Commands:
+      - AddGroup (Code: 0, In)
+      - AddGroupResponse (Code: 0, Out)
+      - ViewGroup (Code: 1, In)
+      - ViewGroupResponse (Code: 1, Out)
+      - GetGroupMembership (Code: 2, In)
+      - GetGroupMembershipResponse (Code: 2, Out)
+      - RemoveGroup (Code: 3, In)
+      - RemoveGroupResponse (Code: 3, Out)
+      - RemoveAllGroups (Code: 4, In)
+      - AddGroupIfIdentifying (Code: 5, In)
+    ● On/Off [Code: 6] (Side: server)
+      ├── FeatureMap: 1
+      └── ClusterRevision: 6
+    Attributes:
+      - OnOff (Code: 0, Type: boolean)
+      - GlobalSceneControl (Code: 16384, Type: boolean)
+      - OnTime (Code: 16385, Type: int16u)
+      - OffWaitTime (Code: 16386, Type: int16u)
+      - StartUpOnOff (Code: 16387, Type: StartUpOnOffEnum)
+      - GeneratedCommandList (Code: 65528, Type: array)
+      - AcceptedCommandList (Code: 65529, Type: array)
+      - AttributeList (Code: 65531, Type: array)
+      - FeatureMap (Code: 65532, Type: bitmap32)
+      - ClusterRevision (Code: 65533, Type: int16u)
+    Commands:
+      - Off (Code: 0, In)
+      - On (Code: 1, In)
+      - Toggle (Code: 2, In)
+      - OffWithEffect (Code: 64, In)
+      - OnWithRecallGlobalScene (Code: 65, In)
+      - OnWithTimedOff (Code: 66, In)
+    ● Descriptor [Code: 29] (Side: server)
+      ├── FeatureMap: None
+      └── ClusterRevision: None
+    Attributes:
+      - DeviceTypeList (Code: 0, Type: array)
+      - ServerList (Code: 1, Type: array)
+      - ClientList (Code: 2, Type: array)
+      - PartsList (Code: 3, Type: array)
+      - GeneratedCommandList (Code: 65528, Type: array)
+      - AcceptedCommandList (Code: 65529, Type: array)
+      - AttributeList (Code: 65531, Type: array)
+      - FeatureMap (Code: 65532, Type: bitmap32)
+      - ClusterRevision (Code: 65533, Type: int16u)
