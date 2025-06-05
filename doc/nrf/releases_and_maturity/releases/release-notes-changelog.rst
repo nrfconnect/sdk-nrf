@@ -391,6 +391,7 @@ Keys samples
 Matter samples
 --------------
 
+* Added the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_NAME` Kconfig option to configure the ZAP file name used by the sample.
 * Changed Bluetooth Low Energy variant of the Soft Device Controller (SDC) to use the Peripheral-only role in all Matter samples.
 
 Networking samples

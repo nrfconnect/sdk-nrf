@@ -105,7 +105,19 @@ config NCS_SAMPLE_MATTER_ZAP_FILES_PATH
 	string "Path in sample, under which ZAP files are located"
 	default "src/default_zap"
 	help
-	  Path in sample, under which ZAP files are located
+	  Path in sample, under which ZAP files are located.
+
+config NCS_SAMPLE_MATTER_ZAP_FILE_NAME
+	string "Name of the zap file used by the sample"
+	default "sample"
+	help
+	  Name of the zap file used by the sample.
+
+config NCS_SAMPLE_MATTER_CERTIFICATION
+	bool "Enable patches required for Matter platform certification"
+	help
+	  It enables including software patches required for the Matter platform certification
+	  purposes. Currently it works only with the Matter template sample.
 
 rsource "persistent_storage/Kconfig"
 rsource "watchdog/Kconfig"
