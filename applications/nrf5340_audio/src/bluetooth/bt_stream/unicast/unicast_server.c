@@ -53,7 +53,7 @@ static const uint8_t cap_adv_data[] = {
 #if defined(CONFIG_BT_AUDIO_RX)
 #define AVAILABLE_SINK_CONTEXT (BT_AUDIO_CONTEXT_TYPE_ANY)
 #else
-#define AVAILABLE_SINK_CONTEXT BT_AUDIO_CONTEXT_TYPE_PROHIBITED
+#define AVAILABLE_SINK_CONTEXT BT_AUDIO_CONTEXT_TYPE_NONE
 #endif /* CONFIG_BT_AUDIO_RX */
 
 static struct bt_cap_stream *cap_tx_streams[CONFIG_BT_ASCS_MAX_ASE_SRC_COUNT];
@@ -61,7 +61,7 @@ static struct bt_cap_stream *cap_tx_streams[CONFIG_BT_ASCS_MAX_ASE_SRC_COUNT];
 #if defined(CONFIG_BT_AUDIO_TX)
 #define AVAILABLE_SOURCE_CONTEXT (BT_AUDIO_CONTEXT_TYPE_ANY)
 #else
-#define AVAILABLE_SOURCE_CONTEXT BT_AUDIO_CONTEXT_TYPE_PROHIBITED
+#define AVAILABLE_SOURCE_CONTEXT BT_AUDIO_CONTEXT_TYPE_NONE
 #endif /* CONFIG_BT_AUDIO_TX */
 
 static struct bt_bap_unicast_server_register_param unicast_server_params = {
