@@ -41,33 +41,16 @@
 	.active_high   = true,				\
 
 #if defined(CONFIG_HAS_HW_NRF_DPPIC)
-/** @brief Allocates free EGU instance.
- *
- * @param[out]  egu_instance_no  Number of allocated EGU instance.
- *
- * @return  0 in case of success, appropriate error code otherwise.
- */
-static inline int mpsl_fem_utils_egu_instance_alloc(uint8_t *egu_instance_no)
-{
-	/* Always return EGU0. */
-	*egu_instance_no = 0;
-
-	return 0;
-}
-
 /** @brief Allocates free EGU channels and stores them in @p egu_channels.
  *
  * @param[out]  egu_channels     Array of allocated EGU channels.
  * @param[in]   size             Number of channels to allocate.
- * @param[in]   egu_instance_no  Number of EGU instance to allocate channels from.
  *
  * @return  0 in case of success, appropriate error code otherwise.
  */
 static inline int mpsl_fem_utils_egu_channel_alloc(
-	uint8_t *egu_channels, size_t size, uint8_t egu_instance_no)
+	uint8_t *egu_channels, size_t size)
 {
-	(void)egu_instance_no;
-
 	/* The 802.15.4 radio driver is the only user of EGU peripheral on nRF5340 network core
 	 * and it uses channels: 0, 1, 2, 3, 4, 15. Therefore starting from channel 5, a consecutive
 	 * block of at most 10 channels can be allocated.

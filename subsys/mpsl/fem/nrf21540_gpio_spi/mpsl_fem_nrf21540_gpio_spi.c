@@ -228,15 +228,8 @@ static int fem_nrf21540_gpio_spi_configure(void)
 	}
 
 	IF_ENABLED(CONFIG_HAS_HW_NRF_DPPIC,
-		   (err = mpsl_fem_utils_egu_instance_alloc(&cfg.egu_instance_no);));
-	if (err) {
-		return err;
-	}
-
-	IF_ENABLED(CONFIG_HAS_HW_NRF_DPPIC,
 		   (err = mpsl_fem_utils_egu_channel_alloc(cfg.egu_channels,
-							   ARRAY_SIZE(cfg.egu_channels),
-							   cfg.egu_instance_no);))
+							   ARRAY_SIZE(cfg.egu_channels));))
 	if (err) {
 		return err;
 	}
