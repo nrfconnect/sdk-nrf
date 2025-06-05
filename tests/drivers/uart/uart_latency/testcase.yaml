@@ -1,0 +1,32 @@
+common:
+  sysbuild: true
+  depends_on: gpio
+  harness: ztest
+  harness_config:
+    fixture: gpio_loopback
+  tags:
+    - drivers
+    - uart
+    - ci_tests_drivers_uart
+  platform_allow:
+    - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf52840dk/nrf52840
+  integration_platforms:
+    - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf5340dk/nrf5340/cpuapp
+    - nrf52840dk/nrf52840
+
+tests:
+  tests.drivers.uart_latency.async:
+    extra_configs:
+      - CONFIG_UART_ASYNC_API=y
+  tests.drivers.uart_latency.int_driven:
+    extra_configs:
+      - CONFIG_UART_INTERRUPT_DRIVEN=y
+  tests.drivers.uart_latency.poll:
+    extra_configs:
+      - CONFIG_UART_ASYNC_API=n
+      - CONFIG_UART_INTERRUPT_DRIVEN=n
