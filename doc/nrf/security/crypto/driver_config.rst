@@ -1,8 +1,8 @@
 .. _psa_crypto_support:
 .. _nrf_security_driver_config:
 
-Configuring PSA Crypto APIs
-###########################
+Configuring PSA Crypto API
+##########################
 
 .. contents::
    :local:

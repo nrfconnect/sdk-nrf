@@ -108,6 +108,7 @@
 
 .. _`nrfx`: https://github.com/NordicSemiconductor/nrfx/
 .. _`nrfx API documentation`: https://docs.nordicsemi.com/bundle/nrfx-apis-latest/page/index.html
+.. _`nrfx NVMC driver`: https://docs.nordicsemi.com/bundle/nrfx-apis-latest/page/group_nrfx_nvmc.html
 .. _`Changelog for nrfx 2.2.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-220---2020-04-28
 .. _`Changelog for nrfx 2.3.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-230---2020-08-19
 .. _`Changelog for nrfx 2.4.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-240---2020-11-13
@@ -247,8 +248,10 @@
 
 .. _`PSA Certified Crypto API`: https://arm-software.github.io/psa-api/crypto/
 .. _`psa_generate_random()`: https://arm-software.github.io/psa-api/crypto/1.1/api/ops/rng.html
-.. _`Key Identifiers`: https://arm-software.github.io/psa-api/crypto/1.1/api/keys/ids.html#key-identifiers
-.. _`Keystore Interface`: https://arm-software.github.io/psa-api/crypto/1.1/overview/goals.html#a-keystore-interface
+.. _`Key management reference`: https://arm-software.github.io/psa-api/crypto/1.1/api/keys/index.html
+.. _`Key identifiers`: https://arm-software.github.io/psa-api/crypto/1.1/api/keys/ids.html#key-identifiers
+.. _`Key management functions`: https://arm-software.github.io/psa-api/crypto/1.1/api/keys/management.html
+.. _`Keystore interface`: https://arm-software.github.io/psa-api/crypto/1.1/overview/goals.html#a-keystore-interface
 .. _`PSA Cryptography API 1.0.1`: https://armmbed.github.io/mbed-crypto/1.0.1/html/index.html
 .. _`PSA Certified Crypto API 1.0.0`: https://arm-software.github.io/psa-api/crypto/1.0/IHI0086-PSA_Cryptography_API-1.0.0.pdf
 .. _`PSA Certified Crypto API 1.2.1`: https://arm-software.github.io/psa-api/crypto/1.2/
@@ -649,6 +652,7 @@
 .. _`Kconfig search results`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CONFIG_PM_PARTITION_SIZE
 .. _`CONFIG_PSA_WANT_*`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CONFIG_PSA_WANT_*
 .. _`CONFIG_PSA_USE_*`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CONFIG_PSA_USE_*
+.. _`CONFIG_FPROTECT_*`: https://docs.nordicsemi.com/bundle/ncs-latest/page/kconfig/index.html#!CONFIG_FPROTECT_*
 
 .. _`Threads`: https://docs.nordicsemi.com/bundle/ncs-latest/page/zephyr/kernel/services/threads/index.html
 
@@ -712,6 +716,8 @@
 .. _`nRF9160 flash access control`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/spu.html#ariaid-title4
 .. _`nRF9160 SiP pin configuration`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/sip_pin_configuration/sip_pin_configuration.html
 .. _`nRF9160 CRYPTOCELL - Arm TrustZone CryptoCell 310`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/cryptocell.html
+.. _`nRF9160 Key management unit`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/kmu.html
+.. _`nRF9160 OTP`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/kmu.html#kmu_otp
 
 .. _`nRF9160 DK Hardware`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/intro.html
 .. _`nRF9160 DK board control section in the nRF9160 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9160_dk/page/UG/nrf91_DK/hw_description/nrf9160_board_controller.html
@@ -733,6 +739,7 @@
 .. _`nRF9151 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf9151/page/nRF9151_html5_keyfeatures.html
 .. _`nRF9151 DECT NR+ specification`: https://docs.nordicsemi.com/bundle/ps_nrf9151/page/dect.html
 .. _`nRF9151 GPS receiver specification`: https://docs.nordicsemi.com/bundle/ps_nrf9151/page/gps.html
+.. _`nRF9151 Key management unit`: https://docs.nordicsemi.com/bundle/ps_nrf9151/page/kmu.html
 
 .. _`nRF9151 DK Hardware`: https://docs.nordicsemi.com/bundle/ug_nrf9151_dk/page/UG/nrf91_DK/intro.html
 .. _`nRF9151 DK board control section in the nRF9151 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9151_dk/page/UG/nrf91_DK/hw_description/nrf9161_board_controller.html
@@ -769,17 +776,23 @@
 .. _`nRF91x1 UICC deactivation %UICCPOWERSAVE`: https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/access_uicc/uiccpowersave.html
 .. _`nRF91x1 Feature configuration %FEACONF`: https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/nw_service/feaconf_set.html
 
+.. _`nRF54L Series menu`: https://docs.nordicsemi.com/category/nrf-54L-series
 .. _`nRF54L15 Datasheet`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/keyfeatures_html5.html
 .. _`nRF54L15 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf54l15_dk/page/UG/nRF54L15_DK/intro/intro.html
 .. _`nRF54L15 Debugger signals`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/tampc.html#ariaid-title6
 .. _`nRF54L15 Security`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/chapters/security.html
 .. _`nRF54L15 feature access control`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/spu.html#ariaid-title8
 .. _`nRF54L15 DK Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54l15/page/COMP/nrf54l15/nrf54l15_comp_matrix.html
+.. _`nRF54L15 Key management unit`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/kmu.html
+.. _`nRF54L15 RRAMC`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/rramc.html
+.. _`nRF54L15 REGION.CONFIG`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/rramc.html#ariaid-title35
 
 .. _`nRF53 Series`: https://docs.nordicsemi.com/category/nrf-53-series
 
 .. _`nRF5340 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/keyfeatures_html5.html
 .. _`nRF5340 CRYPTOCELL - Arm TrustZone CryptoCell 312`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/cryptocell.html
+.. _`nRF5340 Key management unit`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/kmu.html
+.. _`nRF5340 OTP`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/kmu.html#kmu_otp
 
 .. _`nRF5340 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf5340_dk/page/UG/dk/intro.html
 .. _`Execute in place page in the nRF5340 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/qspi.html#d1789e363
@@ -797,6 +810,7 @@
 .. _`nRF52840 Dongle User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf52840_dongle/page/UG/nrf52840_Dongle/intro.html
 .. _`nRF52840 DK Debug output`: https://docs.nordicsemi.com/bundle/ug_nrf52840_dk/page/UG/dk/hw_debug_out.html
 .. _`nRF52840 DK Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf52840/page/COMP/nrf52840/nrf52840_comp_matrix.html
+.. _`nRF52840 DK Access Control Lists`: https://docs.nordicsemi.com/bundle/ps_nrf52840/page/acl.html
 
 .. _`nRF52833 Product Specification`: https://docs.nordicsemi.com/bundle?labelkey=nrf52833&labelkey=product-specification
 .. _`nRF52833 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf52833_dk/page/UG/dk/intro.html

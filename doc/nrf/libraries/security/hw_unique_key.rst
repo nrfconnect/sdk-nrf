@@ -19,18 +19,37 @@ By using HUKs, you can let your application use multiple keys without having to 
 .. caution::
    Use hardware unique keys only for key derivation, never directly for symmetric cryptographic operations.
 
-The library supports 3 different types of HUKs, depending on the device:
+The |NCS| supports the following types of HUKs through this library:
 
-* Device root key (KDR).
-  It is used for deriving general-purpose keys.
-  In devices with the Arm CryptoCell CC310, it must be written to a specific KDR register during the boot process, using the :c:func:`hw_unique_key_load_kdr` function.
-  The nRF Secure Immutable Bootloader does this automatically if you enable :kconfig:option:`CONFIG_HW_UNIQUE_KEY` in the bootloader image.
-* Master key encryption key (MKEK).
-  It is used for deriving Key Encryption Keys (KEKs), which are used to encrypt other keys when these are stored.
-  It is provided to CryptoCell when it is used.
-* Master key for encrypting external storage (MEXT).
-  It is used to derive keys for encrypting data in external non-secure storage.
-  It is provided to CryptoCell when it is used.
+.. list-table:: Hardware Unique Key (HUK) types
+   :widths: auto
+   :header-rows: 1
+
+   * - HUK type
+     - Purpose
+     - Storage location
+     - Additional notes
+   * - Master Key Encryption Key (MKEK)
+     - Deriving Key Encryption Keys (KEKs) for encrypting :ref:`Internal Trusted Storage (ITS) <ug_psa_certified_api_overview_secstorage>` entries
+     - | - :ref:`key_storage_kmu`
+       | - Provided to CryptoCell when it is used
+     - Recommended for nRF91 Series devices and nRF5340
+   * - Master Key for External Storage (MEXT)
+     - Deriving keys for encrypting data in external non-secure storage (flash) or :ref:`Protected Storage <ug_psa_certified_api_overview_secstorage>`
+     - | - :ref:`key_storage_kmu`
+       | - Provided to CryptoCell when it is used
+     - Recommended for nRF91 Series devices and nRF5340
+   * - CRACEN Isolated Key Generator (IKG)
+     - Deriving special hardware keys for CRACEN operations
+     - :ref:`key_storage_kmu`
+     - | - Regenerated on each CRACEN power cycle from the IKG seed
+       | - Supported on nRF54L Series devices; see :ref:`ug_nrf54l_crypto_cracen_ikg`
+   * - Device Root Key (KDR)
+     - Deriving general-purpose keys
+     - Non-volatile memory locked by `ACL <nRF52840 DK Access Control Lists_>`_
+     - | - Should be written to CryptoCell by the bootloader using the :c:func:`hw_unique_key_load_kdr` function.
+       |   The nRF Secure Immutable Bootloader does this automatically if you enable :kconfig:option:`CONFIG_HW_UNIQUE_KEY` in the bootloader image.
+       | - Supported on and recommended for nRF52840
 
 See the following table for an overview of the key types supported by each device:
 
@@ -38,24 +57,29 @@ See the following table for an overview of the key types supported by each devic
     :header-rows: 1
 
     * - Device
-      - CryptoCell version
+      - Driver version
       - Key Management Unit
       - Supported HUK types
     * - nRF91 Series
-      - CC310
+      - CryptoCell CC310
       - Yes
       - KDR, MKEK, MEXT
+    * - nRF54L Series
+      - CRACEN
+      - Yes
+      - KDR, MKEK, MEXT, IKG
     * - nRF5340
-      - CC312
+      - CryptoCell CC312
       - Yes
       - MKEK, MEXT
     * - nRF52840
-      - CC310
+      - CryptoCell CC310
       - No
       - KDR only
 
-In devices with a Key Management Unit (KMU), like nRF91 Series or nRF5340, the keys reside in reserved slots in the KMU itself.
-The KMU can make the keys non-readable and non-writable from the application, while still accessible by the Arm CryptoCell.
+In devices with a Key Management Unit (KMU), the keys are either derived or reside in reserved slots in the KMU itself.
+The KMU can make the keys non-readable and non-writable from the application, while still accessible by the Arm CryptoCell or CRACEN.
+On the nRF54L Series devices, the keys are derived from the HUKs by the CRACEN driver using the IKG seed.
 
 In devices without a KMU, like nRF52840, the bootloader writes the key to the Arm CryptoCell and locks the flash memory page where the key is stored.
 In this case, only one key is supported.

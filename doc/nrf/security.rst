@@ -70,3 +70,4 @@ Some of them are documented in detail in other parts of this documentation, whil
    security/tfm/index
    security/ap_protect
    security/trusted_storage
+   security/key_storage

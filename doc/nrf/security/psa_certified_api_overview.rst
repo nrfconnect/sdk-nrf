@@ -91,8 +91,8 @@ Among the advantages of the PSA Crypto API are the following:
   This way, the codebase for cryptography can easily be reused across multiple projects.
 
 The PSA Crypto API is designed to be safe, lowering developers' possibility of introducing vulnerabilities into their end devices.
-For example, the functions in the PSA Crypto API use opaque `Key Identifiers`_ to handle keys, so developers do not have to handle keys manually.
-See `Keystore Interface`_ for an overview.
+For example, following the `Keystore interface`_ design goal, the functions in the PSA Crypto API use opaque `Key identifiers`_ to handle keys, so developers do not have to handle keys manually.
+See `Key management reference`_ in the PSA Crypto API documentation for a detailed overview.
 
 .. _ug_psa_certified_api_overview_crypto_ncs:
 

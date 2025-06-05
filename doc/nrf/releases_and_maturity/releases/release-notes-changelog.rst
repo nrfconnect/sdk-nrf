@@ -991,6 +991,8 @@ Documentation
   * The :ref:`asset_tracker_template_redirect` page, which provides the information about the `Asset Tracker Template Add-on <Asset Tracker Template_>`_.
   * The :ref:`log_rpc` library documentation page.
   * The :ref:`mcuboot_serial_recovery` documentation page, based on the official Zephyr documentation, which discusses the implementation and usage of the serial recovery.
+  * The :ref:`data_storage` page, which covers storage alternatives for general data, including NVMC, NVS, file systems, Settings, and PSA Protected Storage, with feature comparisons and configuration examples.
+  * The :ref:`key_storage` page, which covers storage alternatives for cryptographic keys, including PSA Crypto API, Hardware Unique Keys (HUK), modem certificate storage, and other security-focused storage mechanisms.
 
 * Moved the Wi-Fi credentials library page to the upstream :ref:`Zephyr repository <zephyr:lib_wifi_credentials>`.
 * Removed the Getting started with nRF7002 DK and Getting started with other DKs pages from the :ref:`gsg_guides` section.
