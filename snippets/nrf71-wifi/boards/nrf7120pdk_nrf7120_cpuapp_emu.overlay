@@ -1,0 +1,34 @@
+/ {
+    chosen {
+        zephyr,shell-uart = &uart00;
+    };
+};
+
+
+&cpuapp {
+    clock-frequency = <DT_FREQ_M(256)>;
+};
+
+&uart20 {
+    status = "disabled";
+};
+
+&grtc {
+    status = "okay";
+};
+
+&systick {
+    status = "disabled";
+};
+
+&clock {
+    status = "disabled";
+};
+
+&uicr {
+    status = "disabled";
+};
+
+&psa_rng {
+    status = "okay";
+};

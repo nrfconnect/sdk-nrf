@@ -1,0 +1,15 @@
+# Copyright (c) 2025 Nordic Semiconductor
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+name: nrf71-wifi
+append:
+  EXTRA_CONF_FILE: overlay-nrf71-tlm.conf
+boards:
+  nrf7120pdk/nrf7120/cpuapp:
+    append:
+      EXTRA_CONF_FILE: boards/nrf7120pdk_nrf7120_cpuapp.conf
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf7120pdk_nrf7120_cpuapp.overlay
+  nrf7120pdk/nrf7120/cpuapp/emu:
+    append:
+      EXTRA_CONF_FILE: boards/nrf7120pdk_nrf7120_cpuapp_emu.conf
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf7120pdk_nrf7120_cpuapp_emu.overlay
