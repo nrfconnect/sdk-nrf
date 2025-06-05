@@ -324,3 +324,11 @@ int hci_vs_sdc_conn_anchor_point_update_event_report_enable(
 				 params,
 				 sizeof(*params));
 }
+
+int hci_vs_sdc_enable_periodic_adv_event_counter_reports(
+	const sdc_hci_cmd_vs_enable_periodic_adv_event_counter_reports_t *params)
+{
+	return hci_vs_cmd_no_rsp(SDC_HCI_OPCODE_CMD_VS_ENABLE_PERIODIC_ADV_EVENT_COUNTER_REPORTS,
+				 params,
+				 sizeof(*params));
+}
