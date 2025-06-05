@@ -72,7 +72,7 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 		return;
 	}
 
-	if (channel_index == 0 && (CONFIG_AUDIO_DEV == GATEWAY)) {
+	if (channel_index != 0 && (CONFIG_AUDIO_DEV == GATEWAY)) {
 		/* Only the first device will be used as mic input on gateway */
 		return;
 	}

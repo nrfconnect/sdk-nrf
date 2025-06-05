@@ -35,6 +35,7 @@ static void data_write(const struct device *dev)
 	int ret;
 
 	if (audio_q_tx == NULL) {
+		LOG_WRN("USB TX queue not initialized, dropping data.");
 		return;
 	}
 

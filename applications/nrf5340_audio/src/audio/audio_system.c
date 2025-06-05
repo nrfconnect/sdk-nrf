@@ -341,6 +341,11 @@ int audio_system_decode(struct net_buf *audio_frame)
 	for (int i = 0; i < CONFIG_FIFO_FRAME_SPLIT_NUM; i++) {
 		struct net_buf *audio_block = net_buf_alloc(&audio_q_tx_pool, K_NO_WAIT);
 
+		if (audio_block == NULL) {
+			LOG_ERR("Out of TX buffers");
+			return -ENOMEM;
+		}
+
 		net_buf_add_mem(audio_block, (char *)pcm_raw_data + (i * (BLOCK_SIZE_BYTES)),
 				BLOCK_SIZE_BYTES);
 
