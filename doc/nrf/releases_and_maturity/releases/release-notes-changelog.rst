@@ -228,6 +228,11 @@ nRF5340 Audio
     This change was done to transition to standard Zephyr APIs, as well as to have a structured way to pass N-channel audio between modules.
   * The optional buildprog tool to use `nRF Util`_ instead of nrfjprog that has been deprecated.
 
+* Removed:
+
+  * The uart_terminal tool to use standardized tools.
+    Similar functionality is provided through the `nRF Terminal <nRF Terminal documentation_>`_ in the |nRFVSC|.
+
 nRF Desktop
 -----------
 
