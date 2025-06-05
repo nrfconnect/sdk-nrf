@@ -24,6 +24,7 @@ For detailed integration instructions of specific technologies and components, c
    app_dev/programming
    app_dev/companion_components
    app_dev/bootloaders_dfu/index
+   app_dev/data_storage
    app_dev/device_guides/nrf91/index
    app_dev/device_guides/nrf70/index
    app_dev/device_guides/nrf54l/index
