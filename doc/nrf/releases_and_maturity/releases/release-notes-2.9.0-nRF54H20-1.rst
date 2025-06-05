@@ -478,7 +478,7 @@ Documentation
   * The :ref:`ug_nrf54h20_gs` page.
   * The :ref:`ug_nrf54h20_custom_pcb` page.
   * The :ref:`abi_compatibility` page.
-  * The :ref:`memory_storage` page to document its use on the nRF54H20 SoC.
+  * The :ref:`zms_memory_storage` page to document its use on the nRF54H20 SoC.
   * The structure and contents of the :ref:`gpio_pin_config` page with more detailed information.
 
 * Fixed an issue on the :ref:`install_ncs` page where an incorrect directory path was provided for Linux and macOS at the end of the :ref:`cloning_the_repositories_win` section.
