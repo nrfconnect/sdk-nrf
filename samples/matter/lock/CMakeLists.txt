@@ -56,7 +56,7 @@ endif()
 target_compile_options(matter-data-model PRIVATE -Wno-error=maybe-uninitialized)
 
 ncs_configure_data_model(
-    ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/${CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH}/lock.zap
+    ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/${CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH}/${CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_NAME}.zap
 )
 
 # NORDIC SDK APP END
