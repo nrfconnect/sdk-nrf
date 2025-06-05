@@ -712,4 +712,7 @@ cJSON
 Documentation
 =============
 
-|no_changes_yet_note|
+* Added:
+
+  * The :ref:`data_storage` page, which covers storage alternatives for general data, including NVMC, NVS, file systems, Settings, and PSA Protected Storage, with feature comparisons and configuration examples.
+  * The :ref:`key_storage` page, which covers storage alternatives for cryptographic keys, including PSA Crypto API, Hardware Unique Keys (HUK), modem certificate storage, and other security-focused storage mechanisms.
