@@ -393,6 +393,18 @@ int hci_vs_sdc_set_event_start_task(const sdc_hci_cmd_vs_set_event_start_task_t 
 int hci_vs_sdc_conn_anchor_point_update_event_report_enable(
 	const sdc_hci_cmd_vs_conn_anchor_point_update_event_report_enable_t *params);
 
+/** @brief Enable Periodic Adv Event Counter Reports.
+ *
+ * For the complete API description,
+ * see sdc_hci_cmd_vs_enable_periodic_adv_event_counter_reports().
+ *
+ * @param[in] params Input parameters
+ *
+ * @return 0 on success or negative error value on failure.
+ */
+int hci_vs_sdc_enable_periodic_adv_event_counter_reports(
+	const sdc_hci_cmd_vs_enable_periodic_adv_event_counter_reports_t *params);
+
 #ifdef __cplusplus
 }
 #endif
