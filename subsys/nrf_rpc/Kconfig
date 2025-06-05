@@ -128,6 +128,13 @@ config NRF_RPC_THREAD_PRIORITY
 	help
 	  Thread priority of each thread in local thread pool.
 
+config NRF_RPC_RESPONSE_TIMEOUT
+	int "Response timeout [ms]"
+	default -1
+	help
+	  Maximum time to wait for a response from the peer, in milliseconds.
+	  Set to -1 to wait indefinitely.
+
 config NRF_RPC_SERIALIZE_API
 	bool "API for serialization"
 	default y

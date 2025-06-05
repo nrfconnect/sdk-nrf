@@ -30,8 +30,12 @@ struct nrf_rpc_os_event {
 	struct k_sem sem;
 };
 
+struct nrf_rpc_os_mutex {
+	struct k_mutex mutex;
+};
+
 struct nrf_rpc_os_msg {
-	struct k_sem sem;
+	struct k_condvar event;
 	const uint8_t *data;
 	size_t len;
 };
@@ -65,16 +69,31 @@ static inline int nrf_rpc_os_event_wait(struct nrf_rpc_os_event *event, int time
 	return 0;
 }
 
+static inline int nrf_rpc_os_mutex_init(struct nrf_rpc_os_mutex *mutex)
+{
+	return k_mutex_init(&mutex->mutex);
+}
+
+static inline void nrf_rpc_os_mutex_lock(struct nrf_rpc_os_mutex *mutex)
+{
+	(void)k_mutex_lock(&mutex->mutex, K_FOREVER);
+}
+
+static inline void nrf_rpc_os_mutex_unlock(struct nrf_rpc_os_mutex *mutex)
+{
+	(void)k_mutex_unlock(&mutex->mutex);
+}
+
 static inline int nrf_rpc_os_msg_init(struct nrf_rpc_os_msg *msg)
 {
-	return k_sem_init(&msg->sem, 0, 1);
+	return k_condvar_init(&msg->event);
 }
 
 void nrf_rpc_os_msg_set(struct nrf_rpc_os_msg *msg, const uint8_t *data,
 			size_t len);
 
-void nrf_rpc_os_msg_get(struct nrf_rpc_os_msg *msg, const uint8_t **data,
-			size_t *len);
+void nrf_rpc_os_msg_get(struct nrf_rpc_os_msg *msg, struct nrf_rpc_os_mutex *mutex,
+			const uint8_t **data, size_t *len);
 
 static inline void *nrf_rpc_os_tls_get(void)
 {
