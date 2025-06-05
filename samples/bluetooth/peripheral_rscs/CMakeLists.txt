@@ -11,5 +11,6 @@ project(NONE)
 # NORDIC SDK APP START
 target_sources(app PRIVATE
   src/main.c
+  src/my_periphconf.c
 )
 # NORDIC SDK APP END
