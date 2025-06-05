@@ -421,18 +421,18 @@ static int hci_driver_send(const struct device *dev, struct net_buf *buf)
 		return -EINVAL;
 	}
 
-	type = bt_buf_get_type(buf);
+	type = net_buf_pull_u8(buf);
 	switch (type) {
 #if defined(CONFIG_BT_CONN)
-	case BT_BUF_ACL_OUT:
+	case BT_HCI_H4_ACL:
 		err = acl_handle(buf);
 		break;
 #endif          /* CONFIG_BT_CONN */
-	case BT_BUF_CMD:
+	case BT_HCI_H4_CMD:
 		err = cmd_handle(buf);
 		break;
 #if defined(CONFIG_BT_CTLR_ISO_TX_BUFFERS)
-	case BT_BUF_ISO_OUT:
+	case BT_HCI_H4_ISO:
 		err = iso_handle(buf);
 		break;
 #endif

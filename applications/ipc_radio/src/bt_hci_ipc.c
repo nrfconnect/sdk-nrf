@@ -170,31 +170,11 @@ static struct net_buf *recv_iso(const uint8_t *data, size_t len)
 
 static void send(struct net_buf *buf, bool is_fatal_err)
 {
-	uint8_t type;
 	uint8_t retries = 0;
 	int ret;
 
-	LOG_DBG("buf %p type %u len %u", buf, bt_buf_get_type(buf), buf->len);
+	LOG_DBG("buf %p type %u len %u", buf, buf->data[0], buf->len);
 	LOG_HEXDUMP_DBG(buf->data, buf->len, "Controller buffer:");
-
-	switch (bt_buf_get_type(buf)) {
-	case BT_BUF_ACL_IN:
-		type = HCI_H4_ACL;
-		break;
-	case BT_BUF_EVT:
-		type = HCI_H4_EVT;
-		break;
-	case BT_BUF_ISO_IN:
-		type = HCI_H4_ISO;
-		break;
-	default:
-		LOG_ERR("Unknown type %u", bt_buf_get_type(buf));
-		net_buf_unref(buf);
-		return;
-	}
-	net_buf_push_u8(buf, type);
-
-	LOG_HEXDUMP_DBG(buf->data, buf->len, "Final HCI buffer:");
 
 	do {
 		ret = ipc_service_send(&hci_ept, buf->data, buf->len);
