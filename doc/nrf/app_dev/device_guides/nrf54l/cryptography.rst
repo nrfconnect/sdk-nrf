@@ -112,6 +112,8 @@ The following table gives an overview of the KMU slots and their usage:
      - Reserved
      - --
 
+.. _ug_nrf54l_crypto_cracen_ikg:
+
 CRACEN Isolated Key Generator
 =============================
 

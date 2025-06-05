@@ -828,4 +828,8 @@ cJSON
 Documentation
 =============
 
-* Added the :ref:`log_rpc` library documentation page.
+* Added:
+
+  * The :ref:`log_rpc` library documentation page.
+  * The :ref:`data_storage` page, which covers storage alternatives for general data, including NVMC, NVS, file systems, Settings, and PSA Protected Storage, with feature comparisons and configuration examples.
+  * The :ref:`key_storage` page, which covers storage alternatives for cryptographic keys, including PSA Crypto API, Hardware Unique Keys (HUK), modem certificate storage, and other security-focused storage mechanisms.

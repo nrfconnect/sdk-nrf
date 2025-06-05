@@ -87,7 +87,7 @@ nRF54L Series
 .. toggle::
 
    * Use the :ref:`ZMS (Zephyr Memory Storage) <zephyr:zms_api>` storage system for all devices with RRAM memory technology.
-     See the :ref:`memory_storage` page for more details on how to enable ZMS for an nRF54L Series.
+     See the :ref:`zms_memory_storage` page for more details on how to enable ZMS for an nRF54L Series.
 
 .. _migration_2.8_nrf54h:
 
