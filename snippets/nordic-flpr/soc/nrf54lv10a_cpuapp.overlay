@@ -29,7 +29,7 @@
 	ranges = <0x0 0x20000000 DT_SIZE_K(127)>;
 };
 
-&uart30 {
+&uart20 {
 	status = "reserved";
 };
 
