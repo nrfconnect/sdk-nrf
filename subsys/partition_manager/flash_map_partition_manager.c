@@ -44,13 +44,15 @@
 	COND_CODE_1(FLASH_MAP_PM_DEV_HAS_ALL(x),	\
 		(FLASH_AREA_FOO(x)), ())
 
-#define FLASH_AREA_FOO(i) \
+#define FLASH_AREA_FOOO(i) \
 	{						\
 		.fa_id       = FLASH_MAP_ID(i),		\
 		.fa_off      = FLASH_MAP_OFFSET(i),	\
 		.fa_dev	     = FLASH_MAP_DEV(i),	\
 		.fa_size     = FLASH_MAP_SIZE(i)	\
-	},
+	}
+
+#define FLASH_AREA_FOO(i) FLASH_AREA_FOOO(i),
 
 #define MAKE_SINGLE(x) UTIL_CAT(PM_, UTIL_CAT(PM_##x##_LABEL))
 #define FLASH_MAP_PM_SINGLE(x, _) FLASH_MAP_PM_ENTRY(UTIL_CAT(PM_, UTIL_CAT(PM_##x##_LABEL)))
@@ -62,6 +64,14 @@ static const struct flash_area pm_flash_map[] = {
 
 const int flash_map_entries = ARRAY_SIZE(pm_flash_map);
 const struct flash_area *flash_map = pm_flash_map;
+
+#define DEFINE_PARTITION(part)								\
+	COND_CODE_1(FLASH_MAP_PM_DEV_HAS_ALL(part), (DEFINE_PARTITION_0(part)), ())
+#define DEFINE_PARTITION_0(part)							\
+	const struct flash_area UTIL_CAT(global_pm_partition_, part) = FLASH_AREA_FOOO(part)
+
+#define MAKE_LABEL(x, _) UTIL_CAT(PM_, UTIL_CAT(PM_##x##_LABEL))
+FOR_EACH(DEFINE_PARTITION, (;), LISTIFY(PM_NUM, MAKE_LABEL, (,)));
 
 #else
 
