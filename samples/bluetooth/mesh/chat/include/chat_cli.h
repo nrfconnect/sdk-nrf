@@ -75,7 +75,7 @@ struct bt_mesh_chat_cli;
  *
  * @param[in] _chat Pointer to a @ref bt_mesh_chat_cli instance.
  */
-#define BT_MESH_MODEL_CHAT_CLI(_chat)                                          \
+#define BT_MESH_MODEL_CHAT_CLI (_chat)                                          \
 		BT_MESH_MODEL_VND_CB(BT_MESH_CHAT_CLI_VENDOR_COMPANY_ID,       \
 			BT_MESH_CHAT_CLI_VENDOR_MODEL_ID,                      \
 			_bt_mesh_chat_cli_op, &(_chat)->pub,                   \
