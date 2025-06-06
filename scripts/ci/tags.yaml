@@ -758,6 +758,43 @@ ci_applications_hpf:
     - zephyr/soc/nordic/common/vpr/
     - zephyr/subsys/ipc/ipc_service/
 
+ci_applications_connectivity_bridge:
+  files:
+    - bootloader/mcuboot/
+    - modules/fs/
+    - modules/hal/nordic/nrfx/
+    - nrf/applications/connectivity_bridge/
+    - nrf/applications/ipc_radio/
+    - nrf/boards/nordic/thingy91/
+    - nrf/drivers/entropy/
+    - nrf/drivers/hw_cc3xx/
+    - nrf/drivers/mpsl/
+    - nrf/lib/dk_buttons_and_leds/
+    - nrf/lib/hw_id/
+    - nrf/modules/mcuboot/
+    - nrf/samples/bootloader/
+    - nrf/samples/nrf5340/netboot/
+    - nrf/subsys/app_event_manager/
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/fw_info/
+    - nrf/subsys/mpsl/
+    - nrf/subsys/nrf_security/
+    - nrf/subsys/pcd/
+    - nrfxlib/crypto/
+    - zephyr/drivers/bluetooth/
+    - zephyr/drivers/dp/
+    - zephyr/drivers/serial/
+    - zephyr/drivers/usb/
+    - zephyr/soc/nordic/nrf53/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/dap/
+    - zephyr/subsys/disk/
+    - zephyr/subsys/fs/
+    - zephyr/subsys/ipc/
+    - zephyr/subsys/settings/
+    - zephyr/subsys/storage/
+    - zephyr/subsys/usb/
+
 ci_tests_subsys_caf:
   files:
     - nrf/subsys/app_event_manager/
