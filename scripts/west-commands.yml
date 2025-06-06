@@ -44,3 +44,8 @@ west-commands:
       - name: ncs-ironside-se-update
         class: NcsIronSideSEUpdate
         help: IronSide SE update utility
+  - file: scripts/west_commands/ppr_prl.py
+    commands:
+      - name: ppr-prl
+        class: PPR_PRL
+        help: PPR power request logger utility

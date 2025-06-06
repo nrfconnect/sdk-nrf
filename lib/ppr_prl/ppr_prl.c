@@ -17,7 +17,7 @@ typedef struct {
 } log_conf_t;
 
 /* log_conf inside the ppr ram, just writing straight to that */
-static log_conf_t *log_conf = (log_conf_t*)((uint32_t)(0x2fc00ff8));
+static log_conf_t *log_conf = (log_conf_t*)((uint32_t)(0x2fc007f8));
 
 void ppr_prl_configure(uint32_t max_samples, uint32_t vtim_cnttop) {
     log_conf->vtim_cnttop = vtim_cnttop;
