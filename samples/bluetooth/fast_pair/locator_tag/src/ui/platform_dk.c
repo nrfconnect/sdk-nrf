@@ -173,7 +173,7 @@ static void btn_handle(uint32_t button_state, uint32_t has_changed)
 	}
 
 	if (has_changed & button_state & APP_FP_ADV_MODE_BTN) {
-		app_ui_request_broadcast(APP_UI_REQUEST_FP_ADV_MODE_CHANGE);
+		app_ui_request_broadcast(APP_UI_REQUEST_FP_ADV_PAIRING_MODE_CHANGE);
 	}
 
 	if (has_changed & button_state & APP_RING_AND_MOTION_BTN) {
