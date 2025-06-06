@@ -432,12 +432,6 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       endif()
     endif()
 
-    if(SB_CONFIG_MCUBOOT_FPROTECT_ALLOW_COMBINED_REGIONS)
-      set_config_bool(mcuboot CONFIG_FPROTECT_ALLOW_COMBINED_REGIONS y)
-    else()
-      set_config_bool(mcuboot CONFIG_FPROTECT_ALLOW_COMBINED_REGIONS n)
-    endif()
-
     # Apply image compression support options
     if(SB_CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT)
       set_config_bool(mcuboot CONFIG_NRF_COMPRESS y)
