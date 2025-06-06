@@ -1561,6 +1561,7 @@
 
 .. _`Platform Security Architecture (PSA)`: https://www.psacertified.org/what-is-psa-certified/
 .. _`PSA Certified IoT Security Framework`: https://www.psacertified.org/what-is-psa-certified/using-psa-certified/
+.. _`Embedded and IoT Security Specifications and Implementations`: https://www.psacertified.org/development-resources/building-in-security/specifications-implementations/
 .. _`What is a Root of Trust?`: https://www.psacertified.org/blog/what-is-a-root-of-trust/
 .. _`Device Attestation and Entity Attestation Tokens Explained`: https://www.psacertified.org/blog/what-is-an-entity-attestation-token/
 .. _`PSA Certified development resources`: https://www.psacertified.org/development-resources/

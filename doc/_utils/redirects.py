@@ -292,6 +292,8 @@ NRF = [
     ("app_dev/optimizing/power", "test_and_optimize/optimizing/power"),
     ("security_chapter", "security"), # Security (landing)
     ("security/security", "security"), # Security (subpage -- removed in v2.8.0)
+    ("libraries/nrf_security/doc/drivers", "security/crypto/drivers"), # Cryptographic drivers ("nRF Security drivers" before v3.1.0)
+    ("libraries/security/nrf_security/doc/drivers", "security/crypto/drivers"),
     ("ug_tfm", "security/tfm/index"), # Running applications with Trusted Firmware-M (split into multiple files in v3.0.0)
     ("app_dev/tfm/index", "security/tfm/index"),
     ("security/tfm", "security/tfm/index"),
@@ -547,7 +549,6 @@ NRF = [
     ("libraries/others/fw_info", "libraries/security/bootloader/fw_info"), # Firmware information
     ("libraries/nrf_security/index", "libraries/security/nrf_security/index"), # nRF Security (landing page in Security libraries)
     ("libraries/nrf_security/doc/configuration", "libraries/security/nrf_security/doc/configuration"), # Configuration
-    ("libraries/nrf_security/doc/drivers", "libraries/security/nrf_security/doc/drivers"), # nRF Security drivers
     ("libraries/nrf_security/doc/driver_config", "libraries/security/nrf_security/doc/driver_config"), # Feature configurations and driver support
     ("libraries/nrf_security/doc/mbed_tls_header", "libraries/security/nrf_security/doc/mbed_tls_header"), # User-provided Mbed TLS configuration header
     ("libraries/nrf_security/doc/backend_config", "libraries/security/nrf_security/doc/backend_config"), # Legacy configurations and supported features

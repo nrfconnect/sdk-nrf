@@ -24,7 +24,6 @@ This library conforms to the specific revision of Mbed TLS that is supplied thro
    :maxdepth: 2
    :caption: Subpages:
 
-   doc/drivers
    doc/configuration
    doc/driver_config
    doc/backend_config

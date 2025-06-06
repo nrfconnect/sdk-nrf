@@ -79,7 +79,7 @@ Platform RoT Services
 Defined by the section 7 in the `ARM Platform Security Model 1.1`_, the Platform RoT Services are a set of mandatory RoT Services:
 
 * Crypto: An RoT Service that provides an API to cryptographic operations, such as securely generating, storing, or accessing keys.
-  For more information, see :ref:`ug_psa_certified_api_overview_crypto`, the `PSA Certified Crypto API`_ and the :ref:`crypto_samples`.
+  For more information, see :ref:`ug_crypto_architecture_implementation_standards_tfm`, :ref:`ug_psa_certified_api_overview_crypto`, the `PSA Certified Crypto API`_ and the :ref:`crypto_samples`.
 * Attestation: "The Initial Attestation Service (IAS) provides a signed Initial Attestation Token (IAT).
   The IAT includes the state of the Platform Root-of-Trust, including whether a debug state has been entered, and any claims made by AEP."
   For a detailed explanation of attestation, see `Device Attestation and Entity Attestation Tokens Explained`_ blog post on the PSA Certified website.
@@ -117,7 +117,13 @@ PSA Certified API
 *****************
 
 The Non-Secure image cannot access the Secure image directly.
-Instead, the Non-Secure image can call on the `PSA Certified APIs`_ to get access to the Application RoT Services as well as a subset of the Platform RoT Services.
+Instead, the Non-Secure image can call on the `PSA Certified APIs`_ using the :ref:`ug_crypto_architecture_implementation_standards_tfm` to get access to the Application RoT Services as well as a subset of the Platform RoT Services.
+
+.. figure:: ../images/tfm_psa_crypto_api_nspe_spe.svg
+   :alt: TF-M Crypto Service implementation in the NSPE and SPE
+   :align: center
+
+   TF-M Crypto Service implementation in the NSPE and SPE
 
 The PSA Certified APIs are exposed to the Non-Secure side using the Non-Secure Callable Interface, a security mechanism that enables controlled communication between NSPE and SPE.
 Using this mechanism, the application running in the NSPE can securely communicate with RoT Services in the SPE.

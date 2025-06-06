@@ -91,7 +91,7 @@ Among the advantages of the PSA Crypto API are the following:
   This way, the codebase for cryptography can easily be reused across multiple projects.
 
 The PSA Crypto API is designed to be safe, lowering developers' possibility of introducing vulnerabilities into their end devices.
-For example, the functions in the PSA Crypto API use `Key Identifiers`_ to handle keys, so developers do not have to handle keys manually.
+For example, the functions in the PSA Crypto API use opaque `Key Identifiers`_ to handle keys, so developers do not have to handle keys manually.
 See `Keystore Interface`_ for an overview.
 
 PSA Crypto API in the |NCS|
@@ -107,35 +107,12 @@ Supported operations include the following:
 * Authenticated encryption
 * Signature generation and verification
 
-.. psa_crypto_lib_table_start
-
-The PSA Crypto in the |NCS| uses different libraries depending on hardware capabilities and user configuration:
-
-+---------------------------------------------------------------------+----------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|                           Driver library                            |               Supported hardware platforms               |                                                                                                  Description                                                                                                  |
-+=====================================================================+==========================================================+===============================================================================================================================================================================================================+
-| :ref:`nrf_cc3xx_platform and nrf_cc3xx_mbedcrypto <nrfxlib:crypto>` | nRF52840, nRF5340, nRF91 Series devices                  | Provide support for the `CryptoCell 310 <nRF9160 CRYPTOCELL - Arm TrustZone CryptoCell 310_>`_ and `CryptoCell 312 <nRF5340 CRYPTOCELL - Arm TrustZone CryptoCell 312_>`_ hardware peripherals                |
-+---------------------------------------------------------------------+----------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| :ref:`nrf_oberon <nrfxlib:nrf_oberon_readme>`                       | nRF devices with Arm Cortex®-M0, -M4, or -M33 processors | Optimized software library for cryptographic algorithms created by Oberon Microsystems                                                                                                                        |
-+---------------------------------------------------------------------+----------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| :ref:`CRACEN <ug_nrf54l_crypto_kmu_cracen_peripherals>`             | nRF54L Series                                            | Security subsystem providing hardware acceleration for cryptographic operations. For more information about it, see :ref:`ug_nrf54l_crypto_kmu_cracen_peripherals` on the :ref:`ug_nrf54l_cryptography` page. |
-+---------------------------------------------------------------------+----------------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-
-.. psa_crypto_lib_table_end
+.. ncs-include:: crypto/drivers.rst
+   :start-after: psa_crypto_driver_table_start
+   :end-before: psa_crypto_driver_table_end
 
 See :ref:`nrf_security_drivers` for a list of supported functionalities.
-For specific cryptographic operations, the PSA Crypto API uses the library :ref:`configured <nrf_security_drivers>` for them.
-If multiple libraries have been enabled, nrf_cc3xx is prioritized, given that the CryptoCell supports the cryptographic operation.
-
-The following figure illustrates the library selection:
-
-.. figure:: images/psa_certified_api_lib_selection.svg
-   :alt: PSA Crypto API library selection
-   :align: center
-
-   PSA Crypto API library selection
-
-Keys from the PSA Crypto API are typically stored in the Internal Trusted Storage (ITS, one of :ref:`ug_tfm_architecture_rot_services_platform`) or the Key Management Unit (KMU, a hardware peripheral that belongs to :ref:`ug_tfm_architecture_rots`).
+For specific cryptographic operations, the PSA Crypto API uses :ref:`the library configured <nrf_security_drivers>` for the given operation.
 
 See :ref:`crypto_samples` for usage examples.
 
