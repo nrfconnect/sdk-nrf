@@ -155,25 +155,13 @@ static int ba431_setup_conditioning_key(struct sx_trng *ctx)
 
 int sx_trng_get(struct sx_trng *ctx, char *dst, size_t size)
 {
-	int status = SX_OK;
-	volatile uint32_t *statusreg = (uint32_t *)(0x50011030);
-	volatile uint32_t *autocorrtestfailed = (uint32_t *)(0x50011070);
-	volatile uint32_t *corrtestfailed = (uint32_t *)(0x50011074);
-	uint32_t v1;
-	uint32_t v2;
-	uint32_t v3;
-	v1 = *autocorrtestfailed;
-	v2 = *corrtestfailed;
-	v3 = *statusreg;
+	int status;
 	if (!ctx->initialized) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 
 	status = ba431_check_state();
 	if (status) {
-		printk("status: %d\n", v3);
-		printk("autocorrtestfailed: %d\n", v1);
-		printk("corrtestfailed: %d\n", v2);
 		return status;
 	}
 
@@ -181,7 +169,6 @@ int sx_trng_get(struct sx_trng *ctx, char *dst, size_t size)
 	if (!ctx->conditioning_key_set) {
 		status = ba431_setup_conditioning_key(ctx);
 		if (status != SX_OK) {
-			printk("conditioning");
 
 			return status;
 		}
