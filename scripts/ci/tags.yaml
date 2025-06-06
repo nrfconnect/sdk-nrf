@@ -1282,7 +1282,7 @@ ci_tests_benchmarks_multicore:
     - modules/hal/nordic/nrfx/
     - nrf/tests/benchmarks/multicore/
     - zephyr/boards/nordic/
-    - zephyr/dts/common/nordic/
+    - zephyr/dts/vendor/nordic/
     - zephyr/soc/nordic/
 
 ci_tests_benchmarks_i2c_endless:
@@ -1334,7 +1334,7 @@ ci_tests_benchmarks_current_consumption:
     - zephyr/drivers/clock_control/
     - zephyr/drivers/gpio/
     - zephyr/drivers/serial/
-    - zephyr/dts/common/nordic/
+    - zephyr/dts/vendor/nordic/
     - zephyr/drivers/adc/
     - zephyr/drivers/gpio/
     - zephyr/drivers/flash/
@@ -1400,7 +1400,7 @@ ci_tests_drivers_uart:
     - zephyr/boards/nordic/nrf54*
     - zephyr/drivers/gpio/
     - zephyr/drivers/serial/
-    - zephyr/dts/common/nordic/
+    - zephyr/dts/vendor/nordic/
     - zephyr/soc/nordic/
 
 ci_tests_drivers_sensor:

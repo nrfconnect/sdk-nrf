@@ -10,9 +10,9 @@
 
 #include <zephyr/fff.h>
 #include <zephyr/kernel.h>
-#include <zephyr/net/openthread.h>
 #include <zephyr/ztest.h>
 
+#include <openthread.h>
 #include <openthread/instance.h>
 
 /* Fake functions */

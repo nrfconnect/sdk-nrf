@@ -979,7 +979,8 @@ INPUT                  = @DOCSET_SOURCE_BASE@/doc/_doxygen/mainpage.md \
                          @DOCSET_SOURCE_BASE@/lib/libc/minimal/include/ \
                          @DOCSET_SOURCE_BASE@/subsys/testsuite/include/ \
                          @DOCSET_SOURCE_BASE@/subsys/testsuite/ztest/include/ \
-                         @DOCSET_SOURCE_BASE@/subsys/secure_storage/include/
+                         @DOCSET_SOURCE_BASE@/subsys/secure_storage/include/ \
+                         @DOCSET_SOURCE_BASE@/modules/openthread/include/openthread.h \
 
 # This tag can be used to specify the character encoding of the source files
 # that Doxygen parses. Internally Doxygen uses the UTF-8 encoding. Doxygen uses

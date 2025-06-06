@@ -11,7 +11,7 @@
 
 #include <hal/nrf_spu.h>
 
-static int nrf53_cpunet_init(void)
+static int bt_rpc_nrf53_cpunet_init(void)
 {
 #if !defined(CONFIG_TRUSTED_EXECUTION_NONSECURE)
 	/* Retain nRF5340 Network MCU in Secure domain (bus
@@ -34,4 +34,4 @@ static int nrf53_cpunet_init(void)
 	return 0;
 }
 
-SYS_INIT(nrf53_cpunet_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
+SYS_INIT(bt_rpc_nrf53_cpunet_init, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEVICE);
