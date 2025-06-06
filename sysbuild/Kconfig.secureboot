@@ -361,6 +361,13 @@ config SECURE_BOOT_DEBUG_NO_VERIFY_HASHES
 	help
 	  [DEBUG] Don't check public key hashes for applicability. Only Use this in (negative) tests!
 
+config SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE
+	bool "Generate default keyfile for provisioning during build"
+	depends on SOC_SERIES_NRF54LX
+	depends on SECURE_BOOT_APPCORE
+	help
+	  If enabled, the build system will generate keyfile.json file in the build directory.
+
 endif
 
 endmenu
