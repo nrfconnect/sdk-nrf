@@ -695,6 +695,7 @@ void hci_internal_le_supported_features(
 	features->params.extended_reject_indication = 1;
 	features->params.slave_initiated_features_exchange = 1;
 	features->params.le_ping = 1;
+	features->params.le_Power_class_1 = 1;
 
 #ifdef CONFIG_BT_CTLR_DATA_LENGTH
 	features->params.le_data_packet_length_extension = 1;
