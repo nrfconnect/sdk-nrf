@@ -13,3 +13,4 @@ tests:
       - ci_build
       - sysbuild
       - mspi
+      - ci_applications_hpf

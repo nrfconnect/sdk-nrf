@@ -13,6 +13,7 @@ tests:
       - ci_build
       - sysbuild
       - gpio
+      - ci_applications_hpf
     required_snippets:
       - hpf-gpio-mbox
 
@@ -24,6 +25,7 @@ tests:
       - ci_build
       - sysbuild
       - gpio
+      - ci_applications_hpf
     required_snippets:
       - hpf-gpio-icmsg
 
@@ -35,5 +37,6 @@ tests:
       - ci_build
       - sysbuild
       - gpio
+      - ci_applications_hpf
     required_snippets:
       - hpf-gpio-icbmsg
