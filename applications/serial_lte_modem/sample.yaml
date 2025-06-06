@@ -21,6 +21,7 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_applications_serial_lte_modem
   applications.serial_lte_modem.extmcu:
     sysbuild: true
     build_only: true
@@ -38,6 +39,7 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_applications_serial_lte_modem
   applications.serial_lte_modem.ppp_without_cmux:
     sysbuild: true
     build_only: true
@@ -56,6 +58,7 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_applications_serial_lte_modem
   applications.serial_lte_modem.ppp_without_cmux_power_indicate_pin:
     sysbuild: true
     build_only: true
@@ -77,6 +80,7 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_applications_serial_lte_modem
   applications.serial_lte_modem.ppp_cmux_linux:
     sysbuild: true
     build_only: true
@@ -94,6 +98,7 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_applications_serial_lte_modem
   applications.serial_lte_modem.ppp_cmux_linux_power_indicate_pin:
     sysbuild: true
     build_only: true
@@ -114,6 +119,7 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_applications_serial_lte_modem
   applications.serial_lte_modem.ppp_cmux_zephyr_with_extmcu:
     sysbuild: true
     build_only: true
@@ -132,6 +138,7 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_applications_serial_lte_modem
   applications.serial_lte_modem.ppp_cmux_zephyr_with_nrf52840_on_nrf9160dk:
     sysbuild: true
     build_only: true
@@ -145,6 +152,7 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_applications_serial_lte_modem
   applications.serial_lte_modem.memfault:
     sysbuild: true
     build_only: true
@@ -164,6 +172,7 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_applications_serial_lte_modem
   applications.serial_lte_modem.native_tls:
     sysbuild: true
     build_only: true
@@ -179,6 +188,7 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_applications_serial_lte_modem
   applications.serial_lte_modem.lwm2m_carrier:
     sysbuild: true
     build_only: true
@@ -194,6 +204,7 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_applications_serial_lte_modem
   applications.serial_lte_modem.lwm2m_carrier.softbank:
     sysbuild: true
     build_only: true
@@ -208,6 +219,7 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_applications_serial_lte_modem
   applications.serial_lte_modem.lwm2m_carrier.lgu:
     sysbuild: true
     build_only: true
@@ -219,6 +231,7 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_applications_serial_lte_modem
   applications.serial_lte_modem.lwm2m_carrier.thingy91:
     sysbuild: true
     build_only: true
@@ -232,6 +245,7 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_applications_serial_lte_modem
   applications.serial_lte_modem.tracing:
     sysbuild: true
     build_only: true
@@ -250,5 +264,6 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_applications_serial_lte_modem
     extra_args:
       - serial_lte_modem_SNIPPET=nrf91-modem-trace-uart
