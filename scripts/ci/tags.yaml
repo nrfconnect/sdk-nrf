@@ -720,6 +720,29 @@ ci_applications_nrf_desktop:
     - zephyr/subsys/storage/
     - zephyr/subsys/usb/
 
+ci_applications_nrf5340_audio:
+  files:
+    - modules/lib/cmsis-dsp/
+    - nrf/applications/ipc_radio/
+    - nrf/applications/nrf5340_audio/
+    - nrf/lib/pcm_mix/
+    - nrf/lib/pcm_stream_channel_modifier/
+    - nrf/lib/sample_rate_converter/
+    - nrf/lib/tone/
+    - nrf/samples/nrf5340/netboot/
+    - nrf/subsys/bluetooth/
+    - nrf/subsys/nrf_security/
+    - nrfxlib/lc3/
+    - zephyr/boards/nordic/nrf5340_audio_dk
+    - zephyr/boards/nordic/nrf5340dk
+    - zephyr/drivers/bluetooth/
+    - zephyr/drivers/disk/
+    - zephyr/drivers/sdhc/
+    - zephyr/soc/nordic/nrf53/
+    - zephyr/soc/nordic/nrf53/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/sd/
+
 ci_tests_subsys_caf:
   files:
     - nrf/subsys/app_event_manager/
