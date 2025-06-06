@@ -110,7 +110,7 @@ bt_mesh_model_transition_time(const struct bt_mesh_model_transition *trans)
  * @param[in] _type Expected type of the user data.
  * @param[in] _user_data User data pointer.
  */
-#define BT_MESH_MODEL_USER_DATA(_type, _user_data)                             \
+#define BT_MESH_MODEL_USER_DATA (_type, _user_data)                             \
 	(((_user_data) == (_type *)0) ? NULL : (_user_data))
 
 #ifdef __cplusplus
