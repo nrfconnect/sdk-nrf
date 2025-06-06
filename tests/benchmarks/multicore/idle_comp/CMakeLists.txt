@@ -16,3 +16,6 @@ endif()
 project(idle_comp)
 
 target_sources(app PRIVATE src/main.c)
+if(CONFIG_SOC_NRF54H20_IRON)
+  target_sources(app PRIVATE periphconf_migrated_src/periphconf_migrated_from_uicr.c)
+endif()

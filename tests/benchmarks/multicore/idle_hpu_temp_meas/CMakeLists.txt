@@ -17,3 +17,6 @@ endif()
 project(idle_hpu_temp_meas)
 
 target_sources(app PRIVATE ../../power_consumption/common/remote_sleep_forever/src/main.c)
+if(CONFIG_SOC_NRF54H20_IRON)
+  target_sources(app PRIVATE periphconf_migrated_src/periphconf_migrated_from_uicr.c)
+endif()

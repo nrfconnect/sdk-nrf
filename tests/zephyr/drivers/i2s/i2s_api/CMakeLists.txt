@@ -7,3 +7,6 @@ project(i2s_api)
 
 FILE(GLOB app_sources ${ZEPHYR_BASE}/tests/drivers/i2s/i2s_api/src/*.c)
 target_sources(app PRIVATE ${app_sources})
+if(CONFIG_SOC_NRF54H20_IRON)
+  target_sources(app PRIVATE periphconf_migrated_src/periphconf_migrated_from_uicr.c)
+endif()

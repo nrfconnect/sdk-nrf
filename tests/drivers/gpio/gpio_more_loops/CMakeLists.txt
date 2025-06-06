@@ -11,3 +11,6 @@ project(gpio_more_loops)
 
 FILE(GLOB app_sources src/main.c)
 target_sources(app PRIVATE ${app_sources})
+if(CONFIG_SOC_NRF54H20_IRON)
+  target_sources(app PRIVATE periphconf_migrated_src/periphconf_migrated_from_uicr.c)
+endif()
