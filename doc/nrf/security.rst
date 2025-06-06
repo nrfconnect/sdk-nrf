@@ -68,3 +68,4 @@ Some of them are documented in detail in other parts of this documentation, whil
    security/ap_protect
    security/tfm/index
    security/trusted_storage
+   security/key_storage
