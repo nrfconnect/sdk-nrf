@@ -978,11 +978,14 @@ static int configure_supported_features(void)
 		}
 	}
 
-	if (IS_ENABLED(CONFIG_BT_CTLR_CHANNEL_SOUNDING)) {
+	if (IS_ENABLED(CONFIG_BT_CTLR_CHANNEL_SOUNDING_TEST)) {
 		err = sdc_support_channel_sounding_test();
 		if (err) {
 			return -ENOTSUP;
 		}
+	}
+
+	if (IS_ENABLED(CONFIG_BT_CTLR_CHANNEL_SOUNDING)) {
 #if defined(CONFIG_BT_CTLR_SDC_CS_MULTIPLE_ANTENNA_SUPPORT)
 		err = sdc_support_channel_sounding(cs_antenna_switch_func);
 		cs_antenna_switch_init();
