@@ -11,7 +11,7 @@
 #include <sxsymcrypt/keyref.h>
 #include "common.h"
 #include <cracen/mem_helpers.h>
-#include "cracen_psa_primitives.h"
+#include "cracen_mac_cmac.h"
 
 #define AES_BLOCK_SIZE (16)
 
@@ -76,14 +76,15 @@ psa_status_t cracen_cmac_update(cracen_mac_operation_t *operation, const uint8_t
 	/* The state can only be resumed if is not the first time data are
 	 * processed.
 	 */
-	if (!operation->is_first_block) {
+	if (cracen_cmac_supports_multi_part() && !operation->is_first_block) {
 		sx_status = sx_mac_resume_state(&operation->cmac.ctx);
 		if (sx_status) {
 			return silex_statuscodes_to_psa(sx_status);
 		}
 	}
 
-	if (operation->bytes_left_for_next_block != AES_BLOCK_SIZE &&
+	if (cracen_cmac_supports_multi_part() &&
+	    operation->bytes_left_for_next_block != AES_BLOCK_SIZE &&
 	    operation->bytes_left_for_next_block != 0) {
 		memcpy(operation->input_buffer +
 			       (AES_BLOCK_SIZE - operation->bytes_left_for_next_block),
@@ -101,7 +102,7 @@ psa_status_t cracen_cmac_update(cracen_mac_operation_t *operation, const uint8_t
 	block_bytes = ROUND_DOWN(input_length - 1, AES_BLOCK_SIZE);
 	remaining_bytes = input_length - block_bytes;
 
-	if (operation->bytes_left_for_next_block == 0) {
+	if (cracen_cmac_supports_multi_part() && operation->bytes_left_for_next_block == 0) {
 		sx_status =
 			sx_mac_feed(&operation->cmac.ctx, operation->input_buffer, AES_BLOCK_SIZE);
 		if (sx_status) {
@@ -122,7 +123,7 @@ psa_status_t cracen_cmac_update(cracen_mac_operation_t *operation, const uint8_t
 		operation->is_first_block = false;
 	}
 
-	if (!operation->is_first_block) {
+	if (cracen_cmac_supports_multi_part() && !operation->is_first_block) {
 		/* save state and wait until processed */
 		sx_status = sx_mac_save_state(&operation->cmac.ctx);
 		if (sx_status) {
@@ -156,7 +157,7 @@ psa_status_t cracen_cmac_finish(cracen_mac_operation_t *operation)
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	if (!operation->is_first_block) {
+	if (cracen_cmac_supports_multi_part() && !operation->is_first_block) {
 		sx_status = sx_mac_resume_state(&operation->cmac.ctx);
 		if (sx_status) {
 			return silex_statuscodes_to_psa(sx_status);

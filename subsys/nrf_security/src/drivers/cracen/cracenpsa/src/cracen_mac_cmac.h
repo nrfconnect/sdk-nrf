@@ -8,6 +8,12 @@
 #include "common.h"
 #include "cracen_psa_primitives.h"
 
+/** @return Whether multi-part CMAC operations are supported. */
+static inline bool cracen_cmac_supports_multi_part(void)
+{
+	return !IS_ENABLED(CONFIG_SOC_NRF54LM20A);
+}
+
 /**
  * @brief Set up a CMAC operation.
  *

@@ -14,9 +14,9 @@
 #include "cracen_mac_cmac.h"
 #include "cracen_mac_hmac.h"
 
-psa_status_t cracen_mac_setup(cracen_mac_operation_t *operation,
-			      const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
-			      size_t key_buffer_size, psa_algorithm_t alg)
+static psa_status_t setup(cracen_mac_operation_t *operation,
+			  const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
+			  size_t key_buffer_size, psa_algorithm_t alg)
 {
 	/* Assuming that psa_core checks that key has PSA_KEY_USAGE_SIGN_MESSAGE
 	 * set
@@ -49,12 +49,32 @@ psa_status_t cracen_mac_setup(cracen_mac_operation_t *operation,
 	return PSA_ERROR_NOT_SUPPORTED;
 }
 
+static bool is_multi_part_supported(psa_algorithm_t alg)
+{
+	if (cracen_cmac_supports_multi_part()) {
+		/* Multi-part CMAC is the only thing that may not be supported. */
+		return true;
+	}
+
+#ifdef PSA_NEED_CRACEN_HMAC
+	if (PSA_ALG_IS_HMAC(alg)) {
+		/* Multi-part HMAC is always supported. */
+		return true;
+	}
+#endif
+
+	return false;
+}
+
 psa_status_t cracen_mac_sign_setup(cracen_mac_operation_t *operation,
 				   const psa_key_attributes_t *attributes,
 				   const uint8_t *key_buffer, size_t key_buffer_size,
 				   psa_algorithm_t alg)
 {
-	return cracen_mac_setup(operation, attributes, key_buffer, key_buffer_size, alg);
+	if (!is_multi_part_supported(alg)) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+	return setup(operation, attributes, key_buffer, key_buffer_size, alg);
 }
 
 psa_status_t cracen_mac_verify_setup(cracen_mac_operation_t *operation,
@@ -62,16 +82,15 @@ psa_status_t cracen_mac_verify_setup(cracen_mac_operation_t *operation,
 				     const uint8_t *key_buffer, size_t key_buffer_size,
 				     psa_algorithm_t alg)
 {
-	return cracen_mac_setup(operation, attributes, key_buffer, key_buffer_size, alg);
+	if (!is_multi_part_supported(alg)) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+	return setup(operation, attributes, key_buffer, key_buffer_size, alg);
 }
 
-psa_status_t cracen_mac_update(cracen_mac_operation_t *operation, const uint8_t *input,
-			       size_t input_length)
+static psa_status_t update(cracen_mac_operation_t *operation,
+			   const uint8_t *input, size_t input_length)
 {
-	if (operation->alg == 0) {
-		return PSA_ERROR_BAD_STATE;
-	}
-
 	/* Valid PSA call, just nothing to do. */
 	if (input_length == 0) {
 		return PSA_SUCCESS;
@@ -91,8 +110,22 @@ psa_status_t cracen_mac_update(cracen_mac_operation_t *operation, const uint8_t 
 	return PSA_ERROR_NOT_SUPPORTED;
 }
 
-psa_status_t cracen_mac_sign_finish(cracen_mac_operation_t *operation, uint8_t *mac,
-				    size_t mac_size, size_t *mac_length)
+psa_status_t cracen_mac_update(cracen_mac_operation_t *operation, const uint8_t *input,
+			       size_t input_length)
+{
+	if (!is_multi_part_supported(operation->alg)) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	if (operation->alg == 0) {
+		return PSA_ERROR_BAD_STATE;
+	}
+
+	return update(operation, input, input_length);
+}
+
+static psa_status_t sign_finish(cracen_mac_operation_t *operation,
+				uint8_t *mac, size_t mac_size, size_t *mac_length)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 
@@ -130,9 +163,16 @@ psa_status_t cracen_mac_sign_finish(cracen_mac_operation_t *operation, uint8_t *
 	memcpy(mac, operation->input_buffer, operation->mac_size);
 	*mac_length = operation->mac_size;
 
-	safe_memzero((void *)operation, sizeof(cracen_mac_operation_t));
+	return cracen_mac_abort(operation);
+}
 
-	return PSA_SUCCESS;
+psa_status_t cracen_mac_sign_finish(cracen_mac_operation_t *operation, uint8_t *mac,
+				    size_t mac_size, size_t *mac_length)
+{
+	if (!is_multi_part_supported(operation->alg)) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+	return sign_finish(operation, mac, mac_size, mac_length);
 }
 
 psa_status_t cracen_mac_verify_finish(cracen_mac_operation_t *operation, const uint8_t *mac,
@@ -181,6 +221,13 @@ psa_status_t cracen_mac_verify_finish(cracen_mac_operation_t *operation, const u
 	return PSA_SUCCESS;
 }
 
+psa_status_t cracen_mac_abort(cracen_mac_operation_t *operation)
+{
+	safe_memzero((void *)operation, sizeof(cracen_mac_operation_t));
+
+	return PSA_SUCCESS;
+}
+
 psa_status_t cracen_mac_compute(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
 				size_t key_buffer_size, psa_algorithm_t alg, const uint8_t *input,
 				size_t input_length, uint8_t *mac, size_t mac_size,
@@ -189,30 +236,24 @@ psa_status_t cracen_mac_compute(const psa_key_attributes_t *attributes, const ui
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	cracen_mac_operation_t operation = {0};
 
-	status = cracen_mac_setup(&operation, attributes, key_buffer, key_buffer_size, alg);
+	status = setup(&operation, attributes, key_buffer, key_buffer_size, alg);
 	if (status != PSA_SUCCESS) {
-		cracen_mac_abort(&operation);
-		return status;
+		goto error_exit;
 	}
 
-	status = cracen_mac_update(&operation, input, input_length);
+	status = update(&operation, input, input_length);
 	if (status != PSA_SUCCESS) {
-		cracen_mac_abort(&operation);
-		return status;
+		goto error_exit;
 	}
 
-	status = cracen_mac_sign_finish(&operation, mac, mac_size, mac_length);
+	status = sign_finish(&operation, mac, mac_size, mac_length);
 	if (status != PSA_SUCCESS) {
-		cracen_mac_abort(&operation);
-		return status;
+		goto error_exit;
 	}
 
 	return PSA_SUCCESS;
-}
 
-psa_status_t cracen_mac_abort(cracen_mac_operation_t *operation)
-{
-	safe_memzero((void *)operation, sizeof(cracen_mac_operation_t));
-
-	return PSA_SUCCESS;
+error_exit:
+	cracen_mac_abort(&operation);
+	return status;
 }
