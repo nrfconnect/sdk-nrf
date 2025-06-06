@@ -14,6 +14,7 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_applications_nrf5340_audio
     extra_args:
       - FILE_SUFFIX=release
       - CONFIG_AUDIO_DEV=1
@@ -30,6 +31,7 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_applications_nrf5340_audio
     extra_args:
       - FILE_SUFFIX=release
       - CONFIG_AUDIO_DEV=2
@@ -46,6 +48,7 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_applications_nrf5340_audio
     extra_args:
       - FILE_SUFFIX=release
       - CONFIG_AUDIO_DEV=1
@@ -63,6 +66,7 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_applications_nrf5340_audio
     extra_args:
       - FILE_SUFFIX=release
       - CONFIG_AUDIO_DEV=2
@@ -78,6 +82,7 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_applications_nrf5340_audio
     extra_args:
       - FILE_SUFFIX=release
       - CONFIG_AUDIO_DEV=1
@@ -93,6 +98,7 @@ tests:
     tags:
       - ci_build
       - sysbuild
+      - ci_applications_nrf5340_audio
     extra_args:
       - FILE_SUFFIX=fota
       - ipc_radio_FILE_SUFFIX=release
