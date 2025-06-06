@@ -15,8 +15,8 @@ The nRF70 Series devices are designed for Internet of Things (IoT) applications 
 
 For additional information, see the following documentation:
 
+* The `Quick Start app`_ to start development with the nRF7002 DK.
 * `nRF70 Series`_ for the technical documentation on the nRF70 Series devices.
-* :ref:`nrf7002dk_nrf5340`.
 * :ref:`ug_nrf70_developing` documentation for topics related to developing Wi-Fi applications on nRF52, nRF53, and nRF91 Series, using the nRF70 companion IC devices.
 * :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
 
