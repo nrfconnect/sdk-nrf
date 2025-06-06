@@ -500,13 +500,16 @@ static void fmdn_adv_connected(struct bt_le_ext_adv *adv,
 			       struct bt_le_ext_adv_connected_info *info)
 {
 	int err;
+	char addr[BT_ADDR_LE_STR_LEN];
 
 	__ASSERT_NO_MSG(bt_fast_pair_is_ready());
 
-	LOG_DBG("FMDN State: peer connected");
+	bt_addr_le_to_str(bt_conn_get_dst(info->conn), addr, sizeof(addr));
+	LOG_DBG("FMDN State: connected to %s", addr);
 
 	fmdn_conns[bt_conn_index(info->conn)] = true;
 	fmdn_conn_cnt++;
+	__ASSERT_NO_MSG(fmdn_conn_cnt <= FMDN_MAX_CONN);
 
 	if (!bt_fast_pair_fmdn_is_provisioned()) {
 		return;
@@ -729,10 +732,7 @@ static void fmdn_disconnected_work_handle(struct k_work *work)
 static void fmdn_disconnected(struct bt_conn *conn, uint8_t reason)
 {
 	bool max_conn = false;
-
-	if (!bt_fast_pair_is_ready()) {
-		return;
-	}
+	char addr[BT_ADDR_LE_STR_LEN];
 
 	if (!fmdn_conns[bt_conn_index(conn)]) {
 		return;
@@ -742,8 +742,16 @@ static void fmdn_disconnected(struct bt_conn *conn, uint8_t reason)
 		max_conn = true;
 	}
 
+	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
+	LOG_DBG("FMDN State: disconnected from %s (reason %" PRIu8 ")", addr, reason);
+
+	__ASSERT_NO_MSG(fmdn_conn_cnt > 0);
 	fmdn_conns[bt_conn_index(conn)] = false;
 	fmdn_conn_cnt--;
+
+	if (!bt_fast_pair_is_ready()) {
+		return;
+	}
 
 	if (!bt_fast_pair_fmdn_is_provisioned()) {
 		/* FMDN is unprovisioned. */
@@ -986,9 +994,6 @@ static void fmdn_conn_uninit_iterator(struct bt_conn *conn, void *user_data)
 static void fmdn_conn_state_reset(void)
 {
 	bt_conn_foreach(BT_CONN_TYPE_LE, fmdn_conn_uninit_iterator, NULL);
-
-	memset(fmdn_conns, 0, sizeof(fmdn_conns));
-	fmdn_conn_cnt = 0;
 }
 
 static int fmdn_storage_unprovision(void)
@@ -1081,6 +1086,11 @@ static int fmdn_reprovision(void)
 static int fmdn_new_provision(void)
 {
 	int err;
+
+	if (fmdn_conn_cnt > 0) {
+		/* Show a warning if there are any connections while provisioning. */
+		LOG_WRN("FMDN State: detected obsolete connections from previous provisioning");
+	}
 
 	/* Provision operation */
 	fp_fmdn_callbacks_provisioning_state_changed_notify(true);
