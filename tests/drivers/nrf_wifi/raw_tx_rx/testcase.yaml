@@ -4,6 +4,8 @@ tests:
   sample.nrf7120.raw_tx_rx_packet:
     sysbuild: true
     build_only: true
+    extra_args:
+      - CONFIG_EMULATOR_SYSTEMC=n
     integration_platforms:
       - nrf7120pdk/nrf7120/cpuapp
     platform_allow: nrf7120pdk/nrf7120/cpuapp
@@ -11,9 +13,6 @@ tests:
       - nrf71-wifi
   sample.nrf7120.raw_tx_rx_packet.tlm:
     sysbuild: true
-    extra_args:
-      EXTRA_CONF_FILE=overlay-nrf71-tlm.conf
-      EXTRA_DTC_OVERLAY_FILE=ipc.overlay
     build_only: true
     integration_platforms:
       - nrf7120pdk/nrf7120/cpuapp
@@ -22,9 +21,9 @@ tests:
       - nrf71-wifi
   sample.nrf7120.raw_tx_rx_packet.emu:
     sysbuild: true
-    extra_args:
-      EXTRA_DTC_OVERLAY_FILE="ipc.overlay;"
     build_only: true
+    extra_args:
+      - CONFIG_EMULATOR_SYSTEMC=n
     integration_platforms:
       - nrf7120pdk/nrf7120/cpuapp/emu
     platform_allow: nrf7120pdk/nrf7120/cpuapp/emu
