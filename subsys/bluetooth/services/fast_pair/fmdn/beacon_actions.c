@@ -16,7 +16,6 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(fp_fmdn_beacon_actions, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 
-#include "fp_activation.h"
 #include "fp_fmdn_auth.h"
 #include "fp_fmdn_callbacks.h"
 #include "fp_fmdn_clock.h"
@@ -1361,10 +1360,6 @@ static void beacon_actions_disconnected(struct bt_conn *conn, uint8_t reason)
 {
 	uint8_t conn_index;
 
-	if (!bt_fast_pair_is_ready()) {
-		return;
-	}
-
 	conn_index = bt_conn_index(conn);
 
 	memset(&conn_contexts[conn_index], 0, sizeof(conn_contexts[conn_index]));
@@ -1376,23 +1371,3 @@ static void beacon_actions_disconnected(struct bt_conn *conn, uint8_t reason)
 BT_CONN_CB_DEFINE(beacon_actions_conn_callbacks) = {
 	.disconnected = beacon_actions_disconnected,
 };
-
-static int fp_fmdn_beacon_actions_init(void)
-{
-	/* intentionally left empty */
-
-	return 0;
-}
-
-static int fp_fmdn_beacon_actions_uninit(void)
-{
-	memset(conn_contexts, 0, sizeof(conn_contexts));
-	memset(&ring_context, 0, sizeof(ring_context));
-
-	return 0;
-}
-
-FP_ACTIVATION_MODULE_REGISTER(fp_fmdn_beacon_actions,
-			      FP_ACTIVATION_INIT_PRIORITY_DEFAULT,
-			      fp_fmdn_beacon_actions_init,
-			      fp_fmdn_beacon_actions_uninit);
