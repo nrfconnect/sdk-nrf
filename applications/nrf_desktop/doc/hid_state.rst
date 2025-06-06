@@ -119,10 +119,13 @@ Report expiration
 =================
 
 With the :ref:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION <config_desktop_app_options>` Kconfig option, you can set the amount of time after which a key will be considered expired.
-The higher the value, the longer the period after which the nRF Desktop application will recall pressed keys when the connection is established.
+The higher the value, the longer the period from which the nRF Desktop application will recall pressed keys when the connection with HID host is established.
 
 Queue event size
 ================
+
+The module selects the :ref:`CONFIG_DESKTOP_HID_EVENTQ <config_desktop_app_options>` Kconfig option to enable the :ref:`nrf_desktop_hid_eventq`.
+The utility is used to temporarily queue key state changes (presses and releases) before the connection with the HID host is established.
 
 With the :ref:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE <config_desktop_app_options>` Kconfig option, you can set the number of elements on the queue where the keys are stored before the connection is established.
 When a key state changes (it is pressed or released) before the connection is established, an element containing this key's usage is pushed onto the queue.
@@ -146,7 +149,6 @@ For the routing mechanism to work, the module performs the following operations:
 * `Forming HID reports`_
 
 Apart from the routing mechanism, the module is also responsible for `Handling HID keyboard LED state`_.
-
 
 Linking input data with the right HID report
 ============================================
@@ -187,7 +189,7 @@ This structure is part of the application configuration files for the specific b
 Once the mapping is obtained, the application checks if the report to which the usage belongs is connected:
 
 * If the report is connected, the value is stored at the right position in the ``items`` member of :c:struct:`report_data` associated with the report.
-* If the report is not connected, the value is stored in the ``eventq`` event queue member of the same structure.
+* If the report is not connected, the value is stored in the :ref:`nrf_desktop_hid_eventq` instance in the same structure.
 
 The difference between these operations is that storing value onto the queue (second case) preserves the order of input events.
 See the following section for more information about storing data before the connection.
@@ -200,9 +202,9 @@ The storing approach before the connection depends on the data type:
 * The relative value data is not stored outside of the connection period.
 * The absolute value data is stored before the connection.
 
-The reason for this operation is to allow to track key presses that happen right after the device is woken up, but before it is able to connect to the host.
+The reason for this operation is to allow to track key presses that happen right after the device is woken up, but before it is able to connect to the HID host.
 
-When the device is disconnected and the input event with the absolute value data is received, the data is stored onto the event queue (``eventq``), a member of :c:struct:`report_data` structure.
+When the device is disconnected and the input event with the absolute value data is received, the data is stored onto the :ref:`nrf_desktop_hid_eventq` instance, a member of :c:struct:`report_data` structure.
 This queue preserves an order at which input data events are received.
 
 Storing limitations
@@ -237,7 +239,7 @@ The |hid_state| tracks the state of modules that forward the HID data to a HID h
 The |hid_state| refers collectively to all transports as *subscribers*.
 When the connection to the host is indicated by this event, the |hid_state| will create a subscriber associated with the transport.
 Each subscriber reports its priority as part of the :c:struct:`hid_report_subscriber_event`.
-The subscriber priority must be unique, that mean two or more subscriber cannot share the same priority value.
+The subscriber priority must be unique, that mean two or more subscribers cannot share the same priority value.
 
 By default, the subscriber that is associated with USB has priority over any Bluetooth LE peer subscriber.
 As a result, when the host connected through the USB subscribes for a HID report, the HID report will be routed to the USB.
