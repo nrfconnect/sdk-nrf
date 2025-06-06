@@ -243,6 +243,8 @@ nRF Desktop
     * Use generic callbacks to handle HID feature and output reports.
 
     This approach simplifies the process of adding support for new HID reports.
+  * The :ref:`nrf_desktop_hid_state` to use the :ref:`nrf_desktop_hid_eventq` to temporarily queue HID events related to keypresses before connection to the HID host is established.
+    The feature was implemented directly in HID state module before.
 
   * The default value of the :kconfig:option:`CONFIG_APP_EVENT_MANAGER_MAX_EVENT_CNT` Kconfig option to ``64``.
     This ensures that more complex configurations fit in the limit.
