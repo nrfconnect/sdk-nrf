@@ -82,7 +82,7 @@ The following code initializes the model callbacks structure:
    :end-before: include_endpoint_chat_cli_rst_7
 
 At this point, everything is ready for defining an entry for the node composition data.
-For the convenience, the initialization of the :c:macro:`BT_MESH_MODEL_VND_CB` macro is wrapped into a `BT_MESH_MODEL_CHAT_CLI` macro, which only requires a pointer to the instance of the model context defined above:
+For the convenience, the initialization of the :c:macro:`BT_MESH_MODEL_VND_CB` macro is wrapped into a :c:macro:`BT_MESH_MODEL_CHAT_CLI` macro, which only requires a pointer to the instance of the model context defined above:
 
 .. literalinclude:: ../../../../../../samples/bluetooth/mesh/chat/include/chat_cli.h
    :language: c
@@ -90,7 +90,7 @@ For the convenience, the initialization of the :c:macro:`BT_MESH_MODEL_VND_CB` m
    :end-before: include_endpoint_chat_cli_rst_2
 
 The user data, which stores a pointer to the model context, is initialized through the :c:macro:`BT_MESH_MODEL_USER_DATA` macro.
-This is done to ensure that the correct data type is passed to `BT_MESH_MODEL_CHAT_CLI`.
+This is done to ensure that the correct data type is passed to :c:macro:`BT_MESH_MODEL_CHAT_CLI`.
 The following code snippet shows how the defined macro is used when defining the node composition data:
 
 .. literalinclude:: ../../../../../../samples/bluetooth/mesh/chat/src/model_handler.c
