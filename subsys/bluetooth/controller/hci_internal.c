@@ -1713,6 +1713,11 @@ static uint8_t vs_cmd_put(uint8_t const *const cmd, uint8_t *const raw_event_out
 		return sdc_hci_cmd_vs_conn_anchor_point_update_event_report_enable(
 		(sdc_hci_cmd_vs_conn_anchor_point_update_event_report_enable_t const *)cmd_params);
 #endif
+#if defined(CONFIG_BT_PER_ADV)
+	case SDC_HCI_OPCODE_CMD_VS_ENABLE_PERIODIC_ADV_EVENT_COUNTER_REPORTS:
+		return sdc_hci_cmd_vs_enable_periodic_adv_event_counter_reports(
+		(sdc_hci_cmd_vs_enable_periodic_adv_event_counter_reports_t const *)cmd_params);
+#endif
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;
 	}
