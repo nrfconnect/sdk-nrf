@@ -16,4 +16,5 @@ More information about each utility and its configuration details is available o
 
    doc/config_channel.rst
    doc/dfu_lock.rst
+   doc/hid_eventq.rst
    doc/hid_reportq.rst

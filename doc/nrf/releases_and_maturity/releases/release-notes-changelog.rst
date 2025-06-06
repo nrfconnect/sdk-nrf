@@ -227,6 +227,9 @@ nRF5340 Audio
 nRF Desktop
 -----------
 
+* Added the :ref:`nrf_desktop_hid_eventq`.
+  The utility can be used by an application module to temporarily queue HID events related to keypresses (button press or release) to handle them later.
+
 * Updated:
 
   * Application configurations for dongles on memory-limited SoCs (nRF52820) to reuse the system workqueue for GATT Discovery Manager (:kconfig:option:`CONFIG_BT_GATT_DM_WORKQ_SYS`).
