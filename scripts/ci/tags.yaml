@@ -743,6 +743,21 @@ ci_applications_nrf5340_audio:
     - zephyr/subsys/bluetooth/
     - zephyr/subsys/sd/
 
+ci_applications_hpf:
+  files:
+    - modules/hal/nordic/nrfx/
+    - nrf/applications/hpf/
+    - nrf/drivers/gpio/
+    - nrf/drivers/mspi/
+    - nrf/snippets/hpf/
+    - zephyr/arch/riscv/core/
+    - zephyr/drivers/gpio/
+    - zephyr/drivers/mbox/
+    - zephyr/drivers/pinctrl/
+    - zephyr/soc/common/riscv-privileged/
+    - zephyr/soc/nordic/common/vpr/
+    - zephyr/subsys/ipc/ipc_service/
+
 ci_tests_subsys_caf:
   files:
     - nrf/subsys/app_event_manager/
