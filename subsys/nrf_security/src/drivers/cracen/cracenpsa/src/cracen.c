@@ -61,14 +61,6 @@ void cracen_acquire(void)
 							     CRACEN_ENABLE_PKEIKG_Msk);
 		irq_enable(CRACEN_IRQn);
 		LOG_DBG_MSG("Powered on CRACEN.");
-		volatile uint32_t *warmup = (uint32_t *)(0x50011034);
-		volatile uint32_t *sampling = (uint32_t *)(0x50011044);
-		v1 = *warmup;
-		v2 = *sampling;
-
-		*warmup = 128;
-		*sampling = 482;
-
 /* 		printk("warmup = 0x%x\r\n", v1);
 		printk("sampling = 0x%x\r\n", v2); */
 

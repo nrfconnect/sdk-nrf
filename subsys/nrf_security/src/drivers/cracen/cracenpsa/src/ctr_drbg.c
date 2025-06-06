@@ -184,75 +184,37 @@ static psa_status_t cracen_reseed(void)
 	return PSA_SUCCESS;
 }
 
+#define TRNG_MAX_CHUNK_SIZE 64
+
 psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, size_t output_size)
 {
-	(void)context;
+    (void)context;
 
-	psa_status_t status = PSA_SUCCESS;
-	size_t len_left = output_size;
-	size_t number_of_blocks = DIV_ROUND_UP(output_size, SX_BLKCIPHER_AES_BLK_SZ);
+    psa_status_t status = PSA_SUCCESS;
 
-	if (output_size > 0 && output == NULL) {
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
+    if (output_size > 0 && output == NULL) {
+        return PSA_ERROR_INVALID_ARGUMENT;
+    }
 
-	if (output_size > PSA_BITS_TO_BYTES(MAX_BITS_PER_REQUEST)) {
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
+    if (output_size > PSA_BITS_TO_BYTES(MAX_BITS_PER_REQUEST)) {
+        return PSA_ERROR_INVALID_ARGUMENT;
+    }
 
-	nrf_security_mutex_lock(cracen_prng_context_mutex);
+    nrf_security_mutex_lock(cracen_prng_context_mutex);
 
-	if (prng.reseed_counter == 0) {
-		/* Zephyr mutexes allow the same thread to lock a
-		 * mutex multiple times. So we can call cracen_init_random
-		 * here even though we hold the mutex.
-		 */
-		status = cracen_init_random(context);
-		if (status != PSA_SUCCESS) {
-			nrf_security_mutex_unlock(cracen_prng_context_mutex);
-			return status;
-		}
-	}
+    size_t offset = 0;
 
-	if (prng.reseed_counter + number_of_blocks >= RESEED_INTERVAL) {
-		status = cracen_reseed();
-		if (status != PSA_SUCCESS) {
-			nrf_security_mutex_unlock(cracen_prng_context_mutex);
-			return status;
-		}
-	}
+    while (offset < output_size) {
+        size_t chunk_size = (output_size - offset > TRNG_MAX_CHUNK_SIZE) ? TRNG_MAX_CHUNK_SIZE : (output_size - offset);
+        status = trng_get_seed(output + offset, chunk_size);
+        if (status != PSA_SUCCESS) {
+            break;
+        }
+        offset += chunk_size;
+    }
 
-	psa_key_attributes_t attr = PSA_KEY_ATTRIBUTES_INIT;
-
-	psa_set_key_type(&attr, PSA_KEY_TYPE_AES);
-	psa_set_key_bits(&attr, PSA_BYTES_TO_BITS(sizeof(prng.key)));
-	psa_set_key_usage_flags(&attr, PSA_KEY_USAGE_ENCRYPT);
-
-	while (len_left > 0) {
-		size_t cur_len = MIN(len_left, SX_BLKCIPHER_AES_BLK_SZ);
-		char temp[SX_BLKCIPHER_AES_BLK_SZ] __aligned(CONFIG_DCACHE_LINE_SIZE);
-
-		si_be_add(prng.V, SX_BLKCIPHER_AES_BLK_SZ, 1);
-		status = sx_blkcipher_ecb_simple(prng.key, sizeof(prng.key), prng.V, sizeof(prng.V),
-						 temp, sizeof(temp));
-
-		if (status != PSA_SUCCESS) {
-			nrf_security_mutex_unlock(cracen_prng_context_mutex);
-			return status;
-		}
-
-		for (int i = 0; i < cur_len; i++) {
-			output[i] = temp[i];
-		}
-
-		len_left -= cur_len;
-		output += cur_len;
-		prng.reseed_counter++;
-	}
-
-	status = ctr_drbg_update(NULL);
-	nrf_security_mutex_unlock(cracen_prng_context_mutex);
-	return status;
+    nrf_security_mutex_unlock(cracen_prng_context_mutex);
+    return status;
 }
 
 psa_status_t cracen_free_random(cracen_prng_context_t *context)

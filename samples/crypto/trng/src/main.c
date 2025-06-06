@@ -37,7 +37,7 @@
 #define APP_SUCCESS_MESSAGE "Example finished successfully!"
 #define APP_ERROR_MESSAGE "Example exited with error!"
 
-char dst[300];
+char dst[1024];
 
 #define PRINT_HEX(p_label, p_text, len)\
 	({\
@@ -105,56 +105,16 @@ int main3(void)
 int main(void)
 {
 	int status;
-	int num_trng_bytes = 16;
 
 	int sx_err = SX_ERR_RESET_NEEDED;
 	struct sx_trng trng;
 	int i = 0;
 	status = crypto_init();
 	LOG_INF("starting trng test");
-	int reset_procc = 0;
-	int err_procc = 0;
-	volatile uint32_t *autocorrtestfailed = (uint32_t *)(0x50011070);
-	volatile uint32_t *corrtestfailed = (uint32_t *)(0x50011074);
-	uint32_t v1;
-	uint32_t v2;
+
 	while (true) {
-		int number_before_reset = 0;
-		sx_err = sx_trng_open(&trng, NULL);
-		if (sx_err != SX_OK) {
-			return sx_err;
-		}
-		volatile uint32_t *testbit = (uint32_t *)(0x50011000);
-		*testbit |= (1UL << 22);
-
-
-		while (true) {
-		i++;
-		number_before_reset++;
-		if (i % 100000 == 0) {
-			LOG_INF("err_procc = %d", err_procc);
-			LOG_INF("run number %d", i);
-		}
-		/* fallthrough */
-		/* Generate random numbers */
-		sx_err = sx_trng_get(&trng, dst, num_trng_bytes);
-		if (sx_err != SX_ERR_HW_PROCESSING && sx_err != SX_OK) {
-			err_procc++;
-		}
-		if (sx_err == SX_ERR_RESET_NEEDED) {
-			reset_procc++;
-			v1 = *autocorrtestfailed;
-			v2 = *corrtestfailed;
-			LOG_INF("autocorrtestfailed: %d", v1);
-			LOG_INF("corrtestfailed: %d", v2);
-
-			LOG_INF("Reset needed, number of loops before reset: %d", number_before_reset);
-			LOG_INF("Other errors, probably waiting for hardware %d", err_procc);
-			break;
-		}
-		}
-		(void)sx_trng_close(&trng);
-		LOG_INF("close sx_err: %d", sx_err);
+		status = psa_generate_random(dst, 128);
+		printk("status is %d\n", status);
 	}
 
 	return APP_SUCCESS;
