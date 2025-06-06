@@ -180,7 +180,7 @@ config MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE
 	depends on SOC_SERIES_NRF54LX
 	depends on MCUBOOT_SIGNATURE_USING_KMU
 	help
-	  This uses the west ncs-provision command to generate keys to KMU.
+	  If enabled, the build system will generate keyfile.json file in the build directory.
 
 endif
 

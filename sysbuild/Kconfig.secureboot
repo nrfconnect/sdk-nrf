@@ -366,7 +366,7 @@ config SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE
 	depends on SOC_SERIES_NRF54LX
 	depends on SECURE_BOOT_APPCORE
 	help
-	  This uses the west ncs-provision command to generate keys to KMU.
+	  If enabled, the build system will generate keyfile.json file in the build directory.
 
 endif
 
