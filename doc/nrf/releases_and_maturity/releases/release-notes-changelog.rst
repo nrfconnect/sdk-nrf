@@ -226,12 +226,18 @@ nRF5340 Audio
 nRF Desktop
 -----------
 
+* Added the :ref:`nrf_desktop_hid_eventq`.
+  The utility can be used by an application module to temporarily queue HID events related to keypresses (button press or release) to handle them later.
+
 * Updated:
 
   * Application configurations for dongles on memory-limited SoCs (nRF52820) to reuse the system workqueue for GATT Discovery Manager (:kconfig:option:`CONFIG_BT_GATT_DM_WORKQ_SYS`).
     This helps to reduce RAM usage.
   * Link Time Optimization (:kconfig:option:`CONFIG_LTO`) to be enabled in MCUboot configurations of the nRF52840 DK (``mcuboot_smp``, ``mcuboot_qspi``).
     LTO no longer causes boot failures and it reduces the memory footprint.
+  * The :ref:`nrf_desktop_hid_state` to use the :ref:`nrf_desktop_hid_eventq` to temporarily queue HID events related to keypresses before connection to the HID host is established.
+    The module clears the report data to ensure sanity if queue overflows and there are no stale events that can be dropped.
+    Previously the module tried to drop only the first keypress from the queue to make space for new keypress event.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------

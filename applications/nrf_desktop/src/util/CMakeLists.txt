@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+target_sources_ifdef(CONFIG_DESKTOP_HID_EVENTQ
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hid_eventq.c)
+
 target_sources_ifdef(CONFIG_DESKTOP_HID_REPORTQ
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hid_reportq.c)
 

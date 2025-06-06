@@ -119,14 +119,16 @@ Report expiration
 =================
 
 With the :ref:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION <config_desktop_app_options>` Kconfig option, you can set the amount of time after which a key will be considered expired.
-The higher the value, the longer the period after which the nRF Desktop application will recall pressed keys when the connection is established.
+The higher the value, the longer the period from which the nRF Desktop application will recall pressed keys when the connection with HID host is established.
 
 Queue event size
 ================
 
-With the :ref:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE <config_desktop_app_options>` Kconfig option, you can set the number of elements on the queue where the keys are stored before the connection is established.
-When a key state changes (it is pressed or released) before the connection is established, an element containing this key's usage is pushed onto the queue.
-If there is no space in the queue, the oldest element is released.
+The module selects the :ref:`CONFIG_DESKTOP_HID_EVENTQ <config_desktop_app_options>` Kconfig option to enable the :ref:`nrf_desktop_hid_eventq`.
+The utility is used to temporarily queue key state changes (presses and releases) before the connection with HID host is established.
+
+With the :ref:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE <config_desktop_app_options>` Kconfig option, you can set the maximum number of elements on the queue.
+If adding a new keypress event overflows the queue, the module clears whole HID report data to ensure sanity.
 
 Implementation details
 **********************
@@ -146,7 +148,6 @@ For the routing mechanism to work, the module performs the following operations:
 * `Forming HID reports`_
 
 Apart from the routing mechanism, the module is also responsible for `Handling HID keyboard LED state`_.
-
 
 Linking input data with the right HID report
 ============================================
@@ -187,7 +188,7 @@ This structure is part of the application configuration files for the specific b
 Once the mapping is obtained, the application checks if the report to which the usage belongs is connected:
 
 * If the report is connected, the value is stored at the right position in the ``items`` member of :c:struct:`report_data` associated with the report.
-* If the report is not connected, the value is stored in the ``eventq`` event queue member of the same structure.
+* If the report is not connected, the value is stored in the :ref:`nrf_desktop_hid_eventq` instance in the same structure.
 
 The difference between these operations is that storing value onto the queue (second case) preserves the order of input events.
 See the following section for more information about storing data before the connection.
@@ -200,20 +201,20 @@ The storing approach before the connection depends on the data type:
 * The relative value data is not stored outside of the connection period.
 * The absolute value data is stored before the connection.
 
-The reason for this operation is to allow to track key presses that happen right after the device is woken up, but before it is able to connect to the host.
+The reason for this operation is to allow to track key presses that happen right after the device is woken up, but before it is able to connect to the HID host.
 
-When the device is disconnected and the input event with the absolute value data is received, the data is stored onto the event queue (``eventq``), a member of :c:struct:`report_data` structure.
+When the device is disconnected and the input event with the absolute value data is received, the data is stored onto the :ref:`nrf_desktop_hid_eventq` instance, a member of :c:struct:`report_data` structure.
 This queue preserves an order at which input data events are received.
 
 Storing limitations
 -------------------
 
-The number of events that can be inserted into the queue is limited using the :ref:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE <config_desktop_app_options>` Kconfig option.
+The number of events that can be inserted into the :ref:`nrf_desktop_hid_eventq` instance is limited using the :ref:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE <config_desktop_app_options>` Kconfig option.
+When there is no space for a new input event, the |hid_state| tries to free space by discarding stale events from the queue.
+Events stored in the queue are discarded after the period defined by :ref:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION <config_desktop_app_options>` option.
+If there is no space to store the input event in the queue and no stale event can be discarded, the entire report data is cleared to ensure the sanity.
 
 Discarding events
-    When there is no space for a new input event, the |hid_state| tries to free space by discarding the oldest event in the queue.
-    Events stored in the queue are automatically discarded after the period defined by :ref:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION <config_desktop_app_options>` option.
-
     When discarding an event from the queue, the module checks if the key associated with the event is pressed.
     This is to avoid missing key releases for earlier key presses when the keys from the queue are replayed to the host.
     If a key release is missed, the host could stay with a key that is permanently pressed.
@@ -225,8 +226,6 @@ Discarding events
 
         * The associated key is not pressed anymore.
         * Every key that was pressed after the associated key had been pressed is also released.
-
-If there is no space to store the input event in the queue and no old event can be discarded, the entire content of the queue is dropped to ensure the sanity.
 
 Once connection is established, the elements of the queue are replayed one after the other to the host, in a sequence of consecutive HID reports.
 
