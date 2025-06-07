@@ -79,7 +79,6 @@ manifest:
         #
         # Please keep this list sorted alphabetically.
         name-allowlist:
-          - percepio
           - canopennode
           - chre
           - cmsis
@@ -105,10 +104,11 @@ manifest:
           - nrf_hw_models
           - nrf_wifi
           - open-amp
+          - percepio
           - picolibc
           - segger
-          - tinycrypt
           - tf-m-tests
+          - tinycrypt
           - uoscore-uedhoc
           - zcbor
           - zscilib
