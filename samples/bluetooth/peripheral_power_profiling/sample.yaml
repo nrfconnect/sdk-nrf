@@ -148,3 +148,17 @@ tests:
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_54L_ble_power_profiling"
     timeout: 150
+
+  sample.bluetooth.peripheral_power_profiling.llvm:
+    toolchain_allow: llvm
+    sysbuild: true
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild
