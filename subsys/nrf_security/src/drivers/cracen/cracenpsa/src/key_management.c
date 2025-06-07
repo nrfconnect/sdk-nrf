@@ -12,6 +12,7 @@
 #include <cracen_psa_ecdsa.h>
 #include <cracen_psa_montgomery.h>
 #include <cracen_psa_ikg.h>
+#include <cracen_psa_rsa_keygen.h>
 #include "platform_keys/platform_keys.h"
 #include <nrf_security_mutexes.h>
 #include <sicrypto/drbghash.h>
@@ -321,7 +322,7 @@ static psa_status_t import_rsa_key(const psa_key_attributes_t *attributes, const
 	psa_key_type_t key_type = psa_get_key_type(attributes);
 	bool is_public_key = key_type == PSA_KEY_TYPE_RSA_PUBLIC_KEY;
 
-	struct si_rsa_key rsakey;
+	struct cracen_rsa_key rsakey;
 	struct sx_buf n = {0};
 	struct sx_buf e = {0};
 
@@ -690,7 +691,7 @@ static psa_status_t export_rsa_public_key_from_keypair(const psa_key_attributes_
 	 */
 
 	size_t key_bits_attr = psa_get_key_bits(attributes);
-	struct si_rsa_key rsa_key;
+	struct cracen_rsa_key rsa_key;
 	struct sx_buf n = {0};
 	struct sx_buf e = {0};
 
@@ -946,13 +947,12 @@ static psa_status_t generate_rsa_private_key(const psa_key_attributes_t *attribu
 	size_t bits = psa_get_key_bits(attributes);
 	size_t key_size_bytes = PSA_BITS_TO_BYTES(bits);
 	size_t key_size_half = key_size_bytes / 2;
+	int sx_status;
 
 	/* RSA public exponent used in PSA is 65537. We provide this as a 3 byte
 	 * big endian array.
 	 */
 	uint8_t pub_exponent[] = {0x01, 0x00, 0x01};
-
-	struct sitask t;
 
 	psa_status_t status = check_rsa_key_attributes(attributes, bits);
 
@@ -1000,25 +1000,17 @@ static psa_status_t generate_rsa_private_key(const psa_key_attributes_t *attribu
 	}
 
 	/* Generate RSA CRT key. */
-	struct si_rsa_key privkey = SI_KEY_INIT_RSACRT(&p, &q, &dp, &dq, &qinv);
+	struct cracen_rsa_key privkey = CRACEN_KEY_INIT_RSACRT(&p, &q, &dp, &dq, &qinv);
 
-	/* The workmem size requirement is twice the key size. */
-	uint8_t workmem[PSA_BITS_TO_BYTES(PSA_MAX_RSA_KEY_BITS) * 2] = {};
-
-	si_task_init(&t, workmem, sizeof(workmem));
-	si_rsa_create_genprivkey(&t, pub_exponent, sizeof(pub_exponent), key_size_bytes, &privkey);
-	si_task_run(&t);
-
-	status = silex_statuscodes_to_psa(si_task_wait(&t));
-	safe_memzero(workmem, sizeof(workmem));
-
-	if (status != PSA_SUCCESS) {
+	sx_status = cracen_rsa_generate_privkey(pub_exponent, sizeof(pub_exponent), key_size_bytes,
+						&privkey);
+	if (sx_status != SX_OK) {
+		status = silex_statuscodes_to_psa(sx_status);
 		goto error_exit;
 	}
 
 	/* Generate n and d */
 	status = silex_statuscodes_to_psa(sx_rsa_keygen(&p, &q, &e, &n, NULL, &d));
-
 	if (status != PSA_SUCCESS) {
 		goto error_exit;
 	}
