@@ -265,3 +265,9 @@ Wi-Fi radio test subcommands
      - N/A
      - Action
      - Get battery voltage.
+   * - sr_ant_switch_ctrl
+     - | 0: Use SR antenna
+       | 1: Use shared Wi-Fi antenna
+     - 0
+     - Configuration
+     - Allows configuration of the Short Range (SR) side switch to connect to either SR antenna or Wi-Fi antenna.
