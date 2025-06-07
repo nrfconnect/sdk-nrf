@@ -767,7 +767,7 @@ void rsp_send_error(void)
 	slm_at_send_str(ERROR_STR);
 }
 
-void rsp_send(const char *fmt, ...)
+static void rsp_send_internal(bool indicate, const char *fmt, va_list arg_ptr)
 {
 	static K_MUTEX_DEFINE(mutex_rsp_buf);
 	static char rsp_buf[SLM_AT_MAX_RSP_LEN];
@@ -775,16 +775,30 @@ void rsp_send(const char *fmt, ...)
 
 	k_mutex_lock(&mutex_rsp_buf, K_FOREVER);
 
+	rsp_len = vsnprintf(rsp_buf, sizeof(rsp_buf), fmt, arg_ptr);
+	rsp_len = MIN(rsp_len, sizeof(rsp_buf) - 1);
+
+	slm_at_send_indicate(rsp_buf, rsp_len, true, indicate);
+
+	k_mutex_unlock(&mutex_rsp_buf);
+}
+
+void rsp_send(const char *fmt, ...)
+{
 	va_list arg_ptr;
 
 	va_start(arg_ptr, fmt);
-	rsp_len = vsnprintf(rsp_buf, sizeof(rsp_buf), fmt, arg_ptr);
-	rsp_len = MIN(rsp_len, sizeof(rsp_buf) - 1);
+	rsp_send_internal(false, fmt, arg_ptr);
 	va_end(arg_ptr);
+}
 
-	slm_at_send(rsp_buf, rsp_len);
+void rsp_send_indicate(const char *fmt, ...)
+{
+	va_list arg_ptr;
 
-	k_mutex_unlock(&mutex_rsp_buf);
+	va_start(arg_ptr, fmt);
+	rsp_send_internal(true, fmt, arg_ptr);
+	va_end(arg_ptr);
 }
 
 void data_send(const uint8_t *data, size_t len)
