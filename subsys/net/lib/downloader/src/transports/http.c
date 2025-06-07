@@ -19,6 +19,9 @@
 
 LOG_MODULE_DECLARE(downloader, CONFIG_DOWNLOADER_LOG_LEVEL);
 
+/* Minimum size for DFU Target library to detect the image type. */
+#define MIN_SIZE_IDENTIFY_BUF 32
+
 /* In the nRF91 Series modem, the TLS secure socket buffer is limited to around 2 kB.
  * If the header and data is too large, the downloader will reduce the range requests until
  * the requirements are satisfied. The application can also set the range_override in
@@ -220,7 +223,7 @@ static int http_header_parse(struct downloader *dl, size_t buf_len)
 
 	http = (struct transport_params_http *)dl->transport_internal;
 
-	LOG_DBG("(partial) http header response:\n%s", dl->cfg.buf);
+	LOG_DBG("(partial) http header response:\n%.*s", buf_len, dl->cfg.buf);
 
 	p = strnstr(dl->cfg.buf, "\r\n\r\n", buf_len);
 	if (p) {
@@ -399,9 +402,11 @@ static int http_header_parse(struct downloader *dl, size_t buf_len)
 	return parse_len;
 }
 
-/* Returns:
- * Length of data payload left to process on success
- * Negative errno on error.
+/** Separate HTTP headers and data.
+ * Update the buf_offset pointer to end of content.
+ *
+ * @return Length of data payload left to process on success,
+ *         negative errno on error.
  */
 static int http_parse(struct downloader *dl, size_t len)
 {
@@ -411,6 +416,10 @@ static int http_parse(struct downloader *dl, size_t len)
 	http = (struct transport_params_http *)dl->transport_internal;
 
 	if (!http->header.has_end) {
+		if (len <= 0) {
+			return -ECONNRESET;
+		}
+
 		/* Parse what we can from the header */
 		parsed_len = http_header_parse(dl, len);
 		if (parsed_len < 0) {
@@ -437,22 +446,9 @@ static int http_parse(struct downloader *dl, size_t len)
 			/* Wait for rest of header */
 			return 0;
 		}
-	}
-
-	if (dl->progress + len == dl->file_size) {
-		/* A full file has been received */
-		http->new_data_req = true;
-		return len;
-	}
-
-	if (http->ranged) {
-		http->ranged_progress += len;
-		if (http->ranged_progress < dl->host_cfg.range_override) {
-			/* Ranged query: read until a full fragment is received */
-		} else {
-			/* Ranged query: request next fragment */
-			http->new_data_req = true;
-		}
+	} else {
+		/* Forward the offset pointer, so we could cumulate data */
+		dl->buf_offset = len;
 	}
 
 	return len;
@@ -593,7 +589,7 @@ static int dl_http_close(struct downloader *dl)
 
 static int dl_http_download(struct downloader *dl)
 {
-	int ret, len;
+	int ret, recv_len, data_len, expected_len;
 	struct transport_params_http *http;
 
 	http = (struct transport_params_http *)dl->transport_internal;
@@ -616,11 +612,11 @@ static int dl_http_download(struct downloader *dl)
 	LOG_DBG("Receiving up to %d bytes at %p...", (dl->cfg.buf_size - dl->buf_offset),
 		(void *)(dl->cfg.buf + dl->buf_offset));
 
-	len = dl_socket_recv(http->sock.fd, dl->cfg.buf + dl->buf_offset,
+	recv_len = dl_socket_recv(http->sock.fd, dl->cfg.buf + dl->buf_offset,
 			     dl->cfg.buf_size - dl->buf_offset);
 
-	if (len < 0) {
-		if (len == -EMSGSIZE && dl->host_cfg.range_override) {
+	if (recv_len < 0) {
+		if (recv_len == -EMSGSIZE && dl->host_cfg.range_override) {
 			/* We do not have enough space for the http header and requested data,
 			 * reattempt with shorter range request.
 			 */
@@ -637,29 +633,49 @@ static int dl_http_download(struct downloader *dl)
 			return -ECONNRESET;
 		}
 
-		return len;
+		return recv_len;
 	}
 
-	if (len == 0) {
-		return -ECONNRESET;
+	data_len = http_parse(dl, recv_len + dl->buf_offset);
+	if (data_len < 0) {
+		return data_len;
 	}
 
-	ret = http_parse(dl, len + dl->buf_offset);
-	if (ret <= 0) {
-		return ret;
+	expected_len = MIN(MIN_SIZE_IDENTIFY_BUF, dl->file_size - dl->progress);
+
+	if (data_len < expected_len) {
+		/* Wait for more data after the HTTP headers,
+		 * so we don't end up forwarding too small chunks to FOTA library.
+		 */
+		return recv_len > 0 ? 0 : -ECONNRESET; /* Fail if closed while expecting more */
 	}
 
-	if (http->header.has_end) {
-		/* Accumulate progress */
-		dl->progress += ret;
-		dl_transport_evt_data(dl, dl->cfg.buf, ret);
-		if (dl->progress == dl->file_size) {
-			dl->complete = true;
+	/* Accumulate progress */
+	dl->progress += data_len;
+	if (data_len) {
+		dl_transport_evt_data(dl, dl->cfg.buf, data_len);
+	}
+	if (http->ranged) {
+		http->ranged_progress += data_len;
+		if (http->ranged_progress < dl->host_cfg.range_override) {
+			/* Ranged query: read until a full fragment is received */
+		} else {
+			/* Ranged query: request next fragment */
+			http->new_data_req = true;
 		}
-		dl->buf_offset = 0;
 	}
+	if (dl->progress == dl->file_size) {
+		/* A full file has been received */
+		dl->complete = true;
+		http->new_data_req = true;
+	}
+	dl->buf_offset = 0;
 
-	return 0;
+	if (dl->complete) {
+		return 0;
+	}
+	/* Continue reading, unless connection is closed */
+	return recv_len > 0 ? 0 : -ECONNRESET;
 }
 
 static const struct dl_transport dl_transport_http = {
