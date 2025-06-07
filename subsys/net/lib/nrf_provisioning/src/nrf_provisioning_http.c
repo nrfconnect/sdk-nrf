@@ -53,8 +53,9 @@ LOG_MODULE_REGISTER(nrf_provisioning_http, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 #define CMDS_MAX_RX_SZ "rxMaxSize=%s"
 #define CMDS_MAX_TX_SZ "txMaxSize=%s"
 #define CMDS_MVER "mver=%s"
+#define CMDS_LIMIT "limit=%s"
 #define API_CMDS_TEMPLATE (API_GET_CMDS "?" \
-	CMDS_AFTER "&" CMDS_MAX_RX_SZ "&" CMDS_MAX_TX_SZ "&" CMDS_MVER "&" CMDS_CVER)
+	CMDS_AFTER "&" CMDS_MAX_RX_SZ "&" CMDS_MAX_TX_SZ "&" CMDS_MVER "&" CMDS_CVER "&" CMDS_LIMIT)
 
 #define API_POST_RSLT API_VER API_PRV "/response"
 
@@ -257,10 +258,11 @@ static int gen_provisioning_url(struct rest_client_req_context *const req)
 {
 	char *url;
 	size_t buff_sz;
-	char *rx_buf_sz = STRINGIFY(CONFIG_NRF_PROVISIONING_RX_BUF_SZ);
-	char *tx_buf_sz = STRINGIFY(CONFIG_NRF_PROVISIONING_TX_BUF_SZ);
+	const char *rx_buf_sz = STRINGIFY(CONFIG_NRF_PROVISIONING_RX_BUF_SZ);
+	const char *tx_buf_sz = STRINGIFY(CONFIG_NRF_PROVISIONING_TX_BUF_SZ);
+	const char *limit = STRINGIFY(CONFIG_NRF_PROVISIONING_CBOR_RECORDS);
+	const char *cver = STRINGIFY(1);
 	char mver[128];
-	char *cver = STRINGIFY(1);
 	int ret;
 	char *mvernmb, *save_mvernmb;
 	int cnt;
@@ -286,7 +288,7 @@ static int gen_provisioning_url(struct rest_client_req_context *const req)
 
 	buff_sz = sizeof(API_CMDS_TEMPLATE) +
 		strlen(after) + strlen(rx_buf_sz) + strlen(tx_buf_sz) +
-		strlen(mvernmb) + strlen(cver);
+		strlen(mvernmb) + strlen(cver) + strlen(limit);
 	url = k_malloc(buff_sz);
 	if (!url) {
 		ret = -ENOMEM;
@@ -296,7 +298,7 @@ static int gen_provisioning_url(struct rest_client_req_context *const req)
 	req->url = url;
 
 	ret = snprintk(url, buff_sz,
-		API_CMDS_TEMPLATE, after, rx_buf_sz, tx_buf_sz, mvernmb, cver);
+		API_CMDS_TEMPLATE, after, rx_buf_sz, tx_buf_sz, mvernmb, cver, limit);
 
 	if ((ret < 0) || (ret >= buff_sz)) {
 		LOG_ERR("Could not format URL");
