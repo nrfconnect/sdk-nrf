@@ -361,4 +361,8 @@ psa_status_t cracen_spake2p_get_shared_key(cracen_spake2p_operation_t *operation
 
 psa_status_t cracen_spake2p_abort(cracen_spake2p_operation_t *operation);
 
+psa_status_t cracen_derive_key(const psa_key_attributes_t *attributes, const uint8_t *input,
+			       size_t input_length, uint8_t *key, size_t key_size,
+			       size_t *key_length);
+
 #endif /* CRACEN_PSA_H */
