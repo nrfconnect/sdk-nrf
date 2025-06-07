@@ -328,6 +328,7 @@ void bt_gatt_dm_data_print(const struct bt_gatt_dm *dm);
 #else
 static inline void bt_gatt_dm_data_print(const struct bt_gatt_dm *dm)
 {
+	ARG_UNUSED(dm);
 }
 #endif
 
