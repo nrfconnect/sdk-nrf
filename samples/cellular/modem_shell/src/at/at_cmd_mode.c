@@ -23,6 +23,7 @@
 extern struct k_work_q mosh_common_work_q;
 
 bool at_cmd_mode_dont_print;
+bool at_cmd_mode_echo_on = true;
 
 static enum line_termination term_mode = CONFIG_MOSH_AT_CMD_MODE_TERMINATION;
 
@@ -56,7 +57,7 @@ K_MUTEX_DEFINE(at_buf_mutex);
 
 static void at_cmd_mode_event_handler(const char *response)
 {
-	if (writing) {
+	if (writing && at_cmd_mode_echo_on) {
 		/* 1st we need to clear current writings */
 		printk("\r");
 		for (int i = 0; i < at_cmd_len; i++) {
@@ -190,8 +191,11 @@ static void at_cmd_mode_cmd_rx_handler(uint8_t character)
 		inside_quotes = !inside_quotes;
 	}
 
-	/* Echo */
-	printk("%c", character);
+	if (at_cmd_mode_echo_on) {
+		/* Echo */
+		printk("%c", character);
+	}
+
 	return;
 send:
 
@@ -235,8 +239,10 @@ send:
 		}
 	}
 
-	/* Echo a line feed */
-	printk("\n");
+	if (at_cmd_mode_echo_on) {
+		/* Echo a line feed */
+		printk("\n");
+	}
 
 	writing = false;
 
@@ -306,6 +312,7 @@ int at_cmd_mode_start(const struct shell *sh)
 
 	printk("MoSh AT command mode started, press ctrl-x ctrl-q to escape\n");
 	printk("MoSh specific AT commands:\n");
+	printk("  Echo off/on: ATE0 and ATE1\n");
 #if defined(CONFIG_MOSH_PING)
 	printk("  ICMP Ping: ");
 	printk("AT+NPING=<addr>[,<payload_length>,<timeout_msecs>,<count>"
