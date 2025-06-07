@@ -35,13 +35,13 @@ With west
 
  .. code-block:: console
 
-    west build -p -b nrf7002dk/nrf5340/cpuapp samples/wifi/shell -- -Dnrf_wifi_shell_SNIPPET="wpa-supplicant-debug"
+    west build -p -b nrf7002dk/nrf5340/cpuapp samples/wifi/shell -- -Dshell_SNIPPET="wpa-supplicant-debug"
 
 With CMake
 
  .. code-block:: console
 
-    cmake -GNinja -Bbuild -DBOARD=nrf7002dk/nrf5340/cpuapp -Dnrf_wifi_shell_SNIPPET="wpa-supplicant-debug" samples/wifi/shell
+    cmake -GNinja -Bbuild -DBOARD=nrf7002dk/nrf5340/cpuapp -Dshell_SNIPPET="wpa-supplicant-debug" samples/wifi/shell
     ninja -C build
 
 .. note::
@@ -64,13 +64,13 @@ With west
 
  .. code-block:: console
 
-    west build -p -b nrf7002dk/nrf5340/cpuapp samples/wifi/shell -- -Dnrf_wifi_shell_SNIPPET="nrf70-driver-debug"
+    west build -p -b nrf7002dk/nrf5340/cpuapp samples/wifi/shell -- -Dshell_SNIPPET="nrf70-driver-debug"
 
 With CMake
 
  .. code-block:: console
 
-    cmake -GNinja -Bbuild -DBOARD=nrf7002dk/nrf5340/cpuapp -Dnrf_wifi_shell_SNIPPET="nrf70-driver-debug" samples/wifi/shell
+    cmake -GNinja -Bbuild -DBOARD=nrf7002dk/nrf5340/cpuapp -Dshell_SNIPPET="nrf70-driver-debug" samples/wifi/shell
     ninja -C build
 
 BUS interface level debug
@@ -80,13 +80,13 @@ With west
 
  .. code-block:: console
 
-    west build -p -b nrf7002dk/nrf5340/cpuapp samples/wifi/shell -- -Dnrf_wifi_shell_SNIPPET="nrf70-driver-verbose-debug"
+    west build -p -b nrf7002dk/nrf5340/cpuapp samples/wifi/shell -- -Dshell_SNIPPET="nrf70-driver-verbose-debug"
 
 With CMake
 
  .. code-block:: console
 
-    cmake -GNinja -Bbuild -DBOARD=nrf7002dk/nrf5340/cpuapp -Dnrf_wifi_shell_SNIPPET="nrf70-driver-verbose-debug" samples/wifi/shell
+    cmake -GNinja -Bbuild -DBOARD=nrf7002dk/nrf5340/cpuapp -Dshell_SNIPPET="nrf70-driver-verbose-debug" samples/wifi/shell
     ninja -C build
 
 Statistics

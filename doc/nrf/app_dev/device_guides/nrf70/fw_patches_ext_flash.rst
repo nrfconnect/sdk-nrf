@@ -120,14 +120,14 @@ With west
 
 .. code-block:: console
 
-    west build -p -b nrf5340dk/nrf5340/cpuapp samples/wifi/shell -- -Dnrf_wifi_shell_SHIELD=nrf7002ek -Dnrf_wifi_shell_SNIPPET="nrf70-fw-patch-ext-flash"
+    west build -p -b nrf5340dk/nrf5340/cpuapp samples/wifi/shell -- -Dshell_SHIELD=nrf7002ek -Dshell_SNIPPET="nrf70-fw-patch-ext-flash"
 
 With CMake
 ^^^^^^^^^^
 
 .. code-block:: console
 
-    cmake -GNinja -Bbuild -DBOARD=nrf5340dk/nrf5340/cpuapp -Dnrf_wifi_shell_SHIELD=nrf7002ek -Dnrf_wifi_shell_SNIPPET="nrf70-fw-patch-ext-flash"
+    cmake -GNinja -Bbuild -DBOARD=nrf5340dk/nrf5340/cpuapp -Dshell_SHIELD=nrf7002ek -Dshell_SNIPPET="nrf70-fw-patch-ext-flash"
     ninja -C build
 
 For example, to build the :ref:`wifi_shell_sample` sample for the nRF5340 DK with partition manager enabled, run the following commands:
@@ -137,14 +137,14 @@ With west
 
 .. code-block:: console
 
-    west build -p -b nrf5340dk/nrf5340/cpuapp samples/wifi/shell -- -Dnrf_wifi_shell_SHIELD=nrf7002ek --snippet=nrf70-fw-patch-ext-flash
+    west build -p -b nrf5340dk/nrf5340/cpuapp samples/wifi/shell -- -Dshell_SHIELD=nrf7002ek -Dshell_SNIPPET=nrf70-fw-patch-ext-flash
 
 With CMake
 ^^^^^^^^^^
 
 .. code-block:: console
 
-    cmake -GNinja -Bbuild -DBOARD=nrf5340dk/nrf5340/cpuapp -Dnrf_wifi_shell_SHIELD=nrf7002ek --snippet=nrf70-fw-patch-ext-flash
+    cmake -GNinja -Bbuild -DBOARD=nrf5340dk/nrf5340/cpuapp -Dshell_SHIELD=nrf7002ek -Dshell_SNIPPET=nrf70-fw-patch-ext-flash
     samples/wifi/shell
     ninja -C build
 
