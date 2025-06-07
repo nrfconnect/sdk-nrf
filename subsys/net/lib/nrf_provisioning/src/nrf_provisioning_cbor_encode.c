@@ -1,9 +1,9 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2025 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
- * Generated using zcbor version 0.8.1
+ * Generated using zcbor version 0.9.1
  * https://github.com/NordicSemiconductor/zcbor
  * Generated with a --default-max-qty of 1234567890
  */
@@ -20,6 +20,17 @@
 #error "The type file was generated with a different default_max_qty than this file"
 #endif
 
+#define log_result(state, result, func)                                                            \
+	do {                                                                                       \
+		if (!result) {                                                                     \
+			zcbor_trace_file(state);                                                   \
+			zcbor_log("%s error: %s\r\n", func,                                        \
+				  zcbor_error_str(zcbor_peek_error(state)));                       \
+		} else {                                                                           \
+			zcbor_log("%s success\r\n", func);                                         \
+		}                                                                                  \
+	} while (0)
+
 static bool encode_error_response(zcbor_state_t *state, const struct error_response *input);
 static bool encode_at_response(zcbor_state_t *state, const struct at_response *input);
 static bool encode_response(zcbor_state_t *state, const struct response *input);
@@ -29,42 +40,30 @@ static bool encode_error_response(zcbor_state_t *state, const struct error_respo
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = (((((zcbor_uint32_put(state, (99)))) &&
-			     ((zcbor_uint32_encode(state, (&(*input).error_response_cme_error)))) &&
-			     ((zcbor_tstr_encode(state, (&(*input).error_response_message)))))));
+	bool res = (((((zcbor_uint32_put(state, (99)))) &&
+		      ((zcbor_uint32_encode(state, (&(*input).error_response_cme_error)))) &&
+		      ((zcbor_tstr_encode(state, (&(*input).error_response_message)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_at_response(zcbor_state_t *state, const struct at_response *input)
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = (((((zcbor_uint32_put(state, (100)))) &&
-			     ((zcbor_tstr_encode(state, (&(*input).at_response_message)))))));
+	bool res = (((((zcbor_uint32_put(state, (100)))) &&
+		      ((zcbor_tstr_encode(state, (&(*input).at_response_message)))))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_response(zcbor_state_t *state, const struct response *input)
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = ((
+	bool res = ((
 		(zcbor_list_start_encode(state, 4) &&
 		 ((((zcbor_tstr_encode(state, (&(*input).response_correlation_m)))) &&
 		   ((((*input).response_union_choice == response_union_error_response_m_c)
@@ -83,36 +82,24 @@ static bool encode_response(zcbor_state_t *state, const struct response *input)
 		  (zcbor_list_map_end_force_encode(state), false)) &&
 		 zcbor_list_end_encode(state, 4))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 static bool encode_responses(zcbor_state_t *state, const struct responses *input)
 {
 	zcbor_log("%s\r\n", __func__);
 
-	bool tmp_result = (((zcbor_list_start_encode(state, DEFAULT_MAX_QTY) &&
-			     ((zcbor_multi_encode_minmax(
-				      1, DEFAULT_MAX_QTY, &(*input).responses_response_m_count,
-				      (zcbor_encoder_t *)encode_response, state,
-				      (&(*input).responses_response_m), sizeof(struct response))) ||
-			      (zcbor_list_map_end_force_encode(state), false)) &&
-			     zcbor_list_end_encode(state, DEFAULT_MAX_QTY))));
+	bool res = (((zcbor_list_start_encode(state, DEFAULT_MAX_QTY) &&
+		      ((zcbor_multi_encode_minmax(
+			       1, DEFAULT_MAX_QTY, &(*input).responses_response_m_count,
+			       (zcbor_encoder_t *)encode_response, state,
+			       (*&(*input).responses_response_m), sizeof(struct response))) ||
+		       (zcbor_list_map_end_force_encode(state), false)) &&
+		      zcbor_list_end_encode(state, DEFAULT_MAX_QTY))));
 
-	if (!tmp_result) {
-		zcbor_trace_file(state);
-		zcbor_log("%s error: %s\r\n", __func__, zcbor_error_str(zcbor_peek_error(state)));
-	} else {
-		zcbor_log("%s success\r\n", __func__);
-	}
-
-	return tmp_result;
+	log_result(state, res, __func__);
+	return res;
 }
 
 int cbor_encode_responses(uint8_t *payload, size_t payload_len, const struct responses *input,
