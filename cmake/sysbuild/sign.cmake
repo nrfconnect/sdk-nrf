@@ -303,17 +303,20 @@ function(b0_sign_image slot cpunet_target)
     signature_public_key_file_target
     )
 
-  # Set hex file and target for the ${slot) (s0/s1) container partition.
-  # This includes the hex file (and its corresponding target) to the build.
-  set_property(
-    GLOBAL PROPERTY
-    ${target_name}_PM_HEX_FILE
-    ${signed_hex}
+  if(NOT SB_CONFIG_BOOTLOADER_MCUBOOT OR cpunet_target)
+    # Set hex file and target for the ${slot) (s0/s1) container partition.
+    # This includes the hex file (and its corresponding target) to the build.
+    # Only do this if this is the network core target or MCUboot is not enabled
+    set_property(
+      GLOBAL PROPERTY
+      ${target_name}_PM_HEX_FILE
+      ${signed_hex}
     )
 
-  set_property(
-    GLOBAL PROPERTY
-    ${target_name}_PM_TARGET
-    ${slot}_signed_kernel_hex_target
+    set_property(
+      GLOBAL PROPERTY
+      ${target_name}_PM_TARGET
+      ${slot}_signed_kernel_hex_target
     )
+  endif()
 endfunction()
