@@ -3,6 +3,9 @@
 # This block of RAM is used for communicating Network Core firmware update
 # metadata
 pcd_sram:
-  placement: {after: [start]}
-  size: CONFIG_NRF_SPU_RAM_REGION_SIZE
+  placement: {before: end}
+  size: CONFIG_NRF_TRUSTZONE_RAM_REGION_SIZE
   region: sram_primary
+#ifdef CONFIG_BUILD_WITH_TFM
+  align: {start: CONFIG_NRF_TRUSTZONE_RAM_REGION_SIZE}
+#endif
