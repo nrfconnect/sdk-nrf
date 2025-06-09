@@ -995,11 +995,18 @@ Syntax
 
 ::
 
-   #XSEND[=<data>]
+   #XSEND[=<data>][,<flags>]
 
 * The ``<data>`` parameter is a string that contains the data to be sent.
   The maximum size of the data is 1024 bytes.
   When the parameter is not specified, SLM enters ``slm_data_mode``.
+
+* The ``<flags>`` value sets the sending behavior. It can be set to the following value:
+
+  * ``512`` Blocking send operation until the request is acknowledged.
+    The request will not return until the send operation is completed by lower layers,
+    or until the timeout, given by the AT_SO_SNDTIMEO socket option, is reached.
+    Valid timeout values are 1 to 600 seconds.
 
 Response syntax
 ~~~~~~~~~~~~~~~
@@ -1103,7 +1110,7 @@ Syntax
 
 ::
 
-   #XSENDTO=<url>,<port>[,<data>]
+   #XSENDTO=<url>,<port>[,<data>][,<flags>]
 
 * The ``<url>`` parameter is a string.
   It indicates the hostname or the IP address of the remote peer.
@@ -1114,6 +1121,12 @@ Syntax
 * The ``<data>`` parameter is a string that contains the data to be sent.
   Its maximum size is 1024 bytes.
   When the parameter is not specified, SLM enters ``slm_data_mode``.
+* The ``<flags>`` value sets the sending behavior. It can be set to the following value:
+
+  * ``512`` Blocking send operation until the request is acknowledged.
+    The request will not return until the send operation is completed by lower layers,
+    or until the timeout, given by the AT_SO_SNDTIMEO socket option, is reached.
+    Valid timeout values are 1 to 600 seconds.
 
 Response syntax
 ~~~~~~~~~~~~~~~
