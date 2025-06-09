@@ -140,7 +140,7 @@ static void sync_notif_handler(const struct hid_notification_event *event)
 	broadcast_subscription_change(report_id, enabled);
 }
 
-static void async_notif_handler(uint8_t report_id, enum bt_hids_notify_evt evt)
+static void notification_change_handler_async(uint8_t report_id, enum bt_hids_notify_evt evt)
 {
 	struct hid_notification_event *event = new_hid_notification_event();
 
@@ -169,7 +169,7 @@ static void boot_mouse_report_sent_cb(struct bt_conn *conn, void *user_data)
 static void boot_mouse_notif_handler(enum bt_hids_notify_evt evt)
 {
 	__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_MOUSE));
-	async_notif_handler(REPORT_ID_BOOT_MOUSE, evt);
+	notification_change_handler_async(REPORT_ID_BOOT_MOUSE, evt);
 }
 
 static void boot_keyboard_report_sent_cb(struct bt_conn *conn, void *user_data)
@@ -180,7 +180,7 @@ static void boot_keyboard_report_sent_cb(struct bt_conn *conn, void *user_data)
 static void boot_keyboard_notif_handler(enum bt_hids_notify_evt evt)
 {
 	__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DESKTOP_HID_BOOT_INTERFACE_KEYBOARD));
-	async_notif_handler(REPORT_ID_BOOT_KEYBOARD, evt);
+	notification_change_handler_async(REPORT_ID_BOOT_KEYBOARD, evt);
 }
 
 static void report_sent_cb(struct bt_conn *conn, void *user_data)
@@ -190,25 +190,6 @@ static void report_sent_cb(struct bt_conn *conn, void *user_data)
 	__ASSERT_NO_MSG(report_id < REPORT_ID_COUNT);
 
 	hid_report_sent(conn, report_id, false);
-}
-static void mouse_notif_handler(enum bt_hids_notify_evt evt)
-{
-	async_notif_handler(REPORT_ID_MOUSE, evt);
-}
-
-static void keyboard_keys_notif_handler(enum bt_hids_notify_evt evt)
-{
-	async_notif_handler(REPORT_ID_KEYBOARD_KEYS, evt);
-}
-
-static void system_ctrl_notif_handler(enum bt_hids_notify_evt evt)
-{
-	async_notif_handler(REPORT_ID_SYSTEM_CTRL, evt);
-}
-
-static void consumer_ctrl_notif_handler(enum bt_hids_notify_evt evt)
-{
-	async_notif_handler(REPORT_ID_CONSUMER_CTRL, evt);
 }
 
 static void broadcast_kbd_leds_report(struct bt_hids_rep *rep, struct bt_conn *conn, bool write)
@@ -286,10 +267,10 @@ static int module_init(void)
 			     (sizeof(mask) == DIV_ROUND_UP(REPORT_SIZE_MOUSE, 8)));
 		BUILD_ASSERT(REPORT_ID_MOUSE < ARRAY_SIZE(report_index));
 
-		input_report[ir_pos].id       = REPORT_ID_MOUSE;
-		input_report[ir_pos].size     = REPORT_SIZE_MOUSE;
-		input_report[ir_pos].handler  = mouse_notif_handler;
-		input_report[ir_pos].rep_mask = (sizeof(mask) == 0)?(NULL):(mask);
+		input_report[ir_pos].id          = REPORT_ID_MOUSE;
+		input_report[ir_pos].size        = REPORT_SIZE_MOUSE;
+		input_report[ir_pos].handler_ext = notification_change_handler_async;
+		input_report[ir_pos].rep_mask    = (sizeof(mask) == 0)?(NULL):(mask);
 
 		report_index[input_report[ir_pos].id] = ir_pos;
 		ir_pos++;
@@ -301,10 +282,10 @@ static int module_init(void)
 			     (sizeof(mask) == DIV_ROUND_UP(REPORT_SIZE_KEYBOARD_KEYS, 8)));
 		BUILD_ASSERT(REPORT_ID_KEYBOARD_KEYS < ARRAY_SIZE(report_index));
 
-		input_report[ir_pos].id       = REPORT_ID_KEYBOARD_KEYS;
-		input_report[ir_pos].size     = REPORT_SIZE_KEYBOARD_KEYS;
-		input_report[ir_pos].handler  = keyboard_keys_notif_handler;
-		input_report[ir_pos].rep_mask = (sizeof(mask) == 0)?(NULL):(mask);
+		input_report[ir_pos].id          = REPORT_ID_KEYBOARD_KEYS;
+		input_report[ir_pos].size        = REPORT_SIZE_KEYBOARD_KEYS;
+		input_report[ir_pos].handler_ext = notification_change_handler_async;
+		input_report[ir_pos].rep_mask    = (sizeof(mask) == 0)?(NULL):(mask);
 
 		report_index[input_report[ir_pos].id] = ir_pos;
 		ir_pos++;
@@ -316,10 +297,10 @@ static int module_init(void)
 			     (sizeof(mask) == DIV_ROUND_UP(REPORT_SIZE_SYSTEM_CTRL, 8)));
 		BUILD_ASSERT(REPORT_ID_SYSTEM_CTRL < ARRAY_SIZE(report_index));
 
-		input_report[ir_pos].id       = REPORT_ID_SYSTEM_CTRL;
-		input_report[ir_pos].size     = REPORT_SIZE_SYSTEM_CTRL;
-		input_report[ir_pos].handler  = system_ctrl_notif_handler;
-		input_report[ir_pos].rep_mask = (sizeof(mask) == 0)?(NULL):(mask);
+		input_report[ir_pos].id          = REPORT_ID_SYSTEM_CTRL;
+		input_report[ir_pos].size        = REPORT_SIZE_SYSTEM_CTRL;
+		input_report[ir_pos].handler_ext = notification_change_handler_async;
+		input_report[ir_pos].rep_mask    = (sizeof(mask) == 0)?(NULL):(mask);
 
 		report_index[input_report[ir_pos].id] = ir_pos;
 		ir_pos++;
@@ -331,10 +312,10 @@ static int module_init(void)
 			     (sizeof(mask) == DIV_ROUND_UP(REPORT_SIZE_CONSUMER_CTRL, 8)));
 		BUILD_ASSERT(REPORT_ID_CONSUMER_CTRL < ARRAY_SIZE(report_index));
 
-		input_report[ir_pos].id       = REPORT_ID_CONSUMER_CTRL;
-		input_report[ir_pos].size     = REPORT_SIZE_CONSUMER_CTRL;
-		input_report[ir_pos].handler  = consumer_ctrl_notif_handler;
-		input_report[ir_pos].rep_mask = (sizeof(mask) == 0)?(NULL):(mask);
+		input_report[ir_pos].id          = REPORT_ID_CONSUMER_CTRL;
+		input_report[ir_pos].size        = REPORT_SIZE_CONSUMER_CTRL;
+		input_report[ir_pos].handler_ext = notification_change_handler_async;
+		input_report[ir_pos].rep_mask    = (sizeof(mask) == 0)?(NULL):(mask);
 
 		report_index[input_report[ir_pos].id] = ir_pos;
 		ir_pos++;
