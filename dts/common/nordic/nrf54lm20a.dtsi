@@ -43,7 +43,7 @@
 			reg = <1>;
 			device_type = "cpu";
 			riscv,isa = "rv32emc";
-			nordic,bus-width = <64>;
+			nordic,bus-width = <32>;
 		};
 	};
 
