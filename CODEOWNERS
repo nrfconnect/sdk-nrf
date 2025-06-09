@@ -978,6 +978,7 @@
 /tests/benchmarks/multicore/idle_pwm_led/*.rst @nrfconnect/ncs-si-bluebagel-doc
 /tests/bluetooth/bsim/nrf_auraconfig/*.rst @nrfconnect/ncs-audio-doc
 
+/tests/samples/bluetooth/io_adapter/      @rafpelc @jema-nordic
 # CI specific west
 /test-manifests/99-default-test-nrf.yml   @nrfconnect/ncs-ci
 
