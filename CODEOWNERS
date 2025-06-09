@@ -867,7 +867,7 @@
 /tests/drivers/mspi/trap_handler/         @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /tests/drivers/nrf_wifi/                  @sachinthegreen @krish2718
 /tests/drivers/nrfx_integration_test/     @nrfconnect/ncs-co-drivers
-/tests/drivers/pwm/gpio_loopback/         @nrfconnect/ncs-low-level-test
+/tests/drivers/pwm/                       @nrfconnect/ncs-low-level-test
 /tests/drivers/uart/                      @nrfconnect/ncs-low-level-test
 /tests/drivers/sensor/multicore_temp/     @nrfconnect/ncs-low-level-test
 /tests/drivers/timer/grtc_timer_lfrc/     @nrfconnect/ncs-low-level-test
