@@ -53,3 +53,13 @@ psa_status_t cracen_cmac_update(cracen_mac_operation_t *operation, const uint8_t
  * @return PSA_SUCCESS on success or a valid PSA status code.
  */
 psa_status_t cracen_cmac_finish(cracen_mac_operation_t *operation);
+
+/**
+ * @brief Compute a CMAC in a single pass, without context switching.
+ *
+ * @note This function assumes the setup function is called first.
+ *
+ * @return PSA_SUCCESS on success or a valid PSA status code.
+ */
+psa_status_t cracen_cmac_compute(cracen_mac_operation_t *operation, const uint8_t *input,
+				 size_t input_length, uint8_t *mac);
