@@ -31,8 +31,12 @@ tests:
   applications.nrf_desktop.zdebug.uart:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
     harness: console
   applications.nrf_desktop.zdebug:
     build_only: true
@@ -217,6 +221,8 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
     integration_platforms:
       - nrf52dmouse/nrf52832
       - nrf52kbd/nrf52832
@@ -232,6 +238,8 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
     extra_args: FILE_SUFFIX=release
   applications.nrf_desktop.zrelease_fast_pair.keyboard:
     build_only: true

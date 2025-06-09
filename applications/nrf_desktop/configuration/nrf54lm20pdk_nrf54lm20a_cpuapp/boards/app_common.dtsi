@@ -1,0 +1,58 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Application does not use cpuflpr core. Assign whole RRAM to cpuapp. */
+&cpuapp_rram {
+	reg = < 0x0 DT_SIZE_K(2036) >;
+};
+
+/ {
+	/* Disable pwmleds and redefine them to align configuration with CAF LEDs requirements.
+	 * The configuration needs to match the used board revision.
+	 */
+	/delete-node/ pwmleds;
+
+	pwmleds0 {
+		compatible = "pwm-leds";
+		status = "okay";
+
+		pwm_led0: led_pwm_0 {
+			status = "okay";
+			pwms = <&pwm20 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+			label = "LED System State";
+		};
+	};
+
+	pwmleds1 {
+		compatible = "pwm-leds";
+		status = "okay";
+
+		pwm_led1: led_pwm_1 {
+			status = "okay";
+			pwms = <&pwm21 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
+			label = "LED Conn State";
+		};
+	};
+};
+
+/* The following DTS configuration requires definition of pin control nodes
+ * for the PWM DTS node in a dedicated revision-specific DTS file. Otherwise,
+ * the project build fails.
+ */
+
+&pwm20 {
+	status = "okay";
+	pinctrl-0 = <&pwm20_default_alt>;
+	pinctrl-1 = <&pwm20_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pwm21 {
+	status = "okay";
+	pinctrl-0 = <&pwm21_default_alt>;
+	pinctrl-1 = <&pwm21_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+};
