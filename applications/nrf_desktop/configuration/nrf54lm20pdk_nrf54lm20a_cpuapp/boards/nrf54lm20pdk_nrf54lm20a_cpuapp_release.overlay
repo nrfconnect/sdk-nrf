@@ -1,0 +1,22 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "app_common.dtsi"
+
+/ {
+	hid_dev_0: hid_dev_0 {
+		compatible = "zephyr,hid-device";
+		interface-name = "HID0";
+		protocol-code = "mouse";
+		in-polling-period-us = <125>;
+		in-report-size = <64>;
+	};
+};
+
+/* For nRF54L, watchdog status is disabled by default. Needs to be enabled in DTS overlay. */
+&wdt31 {
+	status = "okay";
+};
