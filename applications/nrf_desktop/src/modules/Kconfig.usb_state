@@ -59,7 +59,7 @@ config DESKTOP_USB_PM_REQ_NO_PM_LATENCY
 
 config DESKTOP_USB_HID_REPORT_SENT_ON_SOF
 	bool "Submit HID report sent event on USB Start of Frame (SOF) [EXPERIMENTAL]"
-	default y if SOC_SERIES_NRF54HX
+	default y if UDC_DRIVER_HAS_HIGH_SPEED_SUPPORT
 	select EXPERIMENTAL
 	help
 	  Delay submitting hid_report_sent_event until subsequent USB Start of
@@ -68,9 +68,9 @@ config DESKTOP_USB_HID_REPORT_SENT_ON_SOF
 	  report pipeline with two sequential reports is required to ensure that
 	  the USB peripheral can provide a HID report on every USB poll.
 
-	  The feature is enabled by default for nRF54H Series SoC, because the
-	  negative impact of USB polling jitter is more visible in case of USB
-	  High-Speed.
+	  If you use an UDC driver with High-Speed support, the feature is enabled
+	  by default, because the negative impact of USB polling jitter is more
+	  visible in case of USB High-Speed.
 
 choice DESKTOP_USB_STACK
 	prompt "USB stack"
@@ -182,10 +182,10 @@ config USBD_HID_IN_BUF_COUNT
 
 config DESKTOP_USB_STACK_NEXT_DISABLE_ON_VBUS_REMOVAL
 	bool
-	default y if SOC_SERIES_NRF54HX
+	default y if UDC_DWC2
 	help
 	  Disable the USB stack on VBUS removal and enable it on VBUS ready to
-	  workaround UDC driver limitations of the nRF54HX SoC.
+	  workaround limitations of the UDC DWC2 driver.
 
 	  After the USB cable is removed, the USB driver is powered down and
 	  doesn't call appropriate callbacks to the USB stack. It may lead to
@@ -200,12 +200,12 @@ config DESKTOP_USB_STACK_NEXT_DISABLE_ON_VBUS_REMOVAL
 
 config UDC_DWC2_USBHS_VBUS_READY_TIMEOUT
 	int
-	depends on SOC_SERIES_NRF54HX
+	depends on UDC_DWC2
 	default 100
 	help
-	  For the nRF54HX SoC the timeout must be set to a non-zero value to
-	  prevent the usbd_enable() function from blocking the application
-	  forever when the USB cable is not connected.
+	  If you use the UDC DWC2 driver, the timeout must be set to a non-zero
+	  value to prevent the usbd_enable() function from blocking the
+	  application forever when the USB cable is not connected.
 
 choice USBD_LOG_LEVEL_CHOICE
 	default USBD_LOG_LEVEL_WRN
