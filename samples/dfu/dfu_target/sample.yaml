@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+sample:
+  description: DFU target sample application
+  name: dfu_target sample
+common:
+  platform_allow: nrf52840dk/nrf52840
+  build_only: true
+  sysbuild: true
+tests:
+  sample.dfu.dfu_target:
+    tags:
+      - dfu_target
+    integration_platforms:
+      - nrf52840dk/nrf52840
