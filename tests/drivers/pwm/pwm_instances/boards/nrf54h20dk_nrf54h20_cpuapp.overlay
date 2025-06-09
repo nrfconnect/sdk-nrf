@@ -1,0 +1,116 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&pinctrl {
+	pwm120_default_test: pwm120_default_test {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 7, 0)>;
+		};
+	};
+
+	pwm120_sleep_test: pwm120_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 7, 0)>;
+			low-power-enable;
+		};
+	};
+
+	pwm130_default_test: pwm130_default_test {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 9, 2)>;
+		};
+	};
+
+	pwm130_sleep_test: pwm130_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 9, 2)>;
+			low-power-enable;
+		};
+	};
+
+	pwm131_default_test: pwm131_default_test {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 2)>;
+		};
+	};
+
+	pwm131_sleep_test: pwm131_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 2)>;
+			low-power-enable;
+		};
+	};
+
+	pwm132_default_test: pwm132_default_test {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 2, 8)>;
+		};
+	};
+
+	pwm132_sleep_test: pwm132_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 2, 8)>;
+			low-power-enable;
+		};
+	};
+
+	pwm133_default_test: pwm133_default_test {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 0, 2)>;
+		};
+	};
+
+	pwm133_sleep_test: pwm133_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 0, 2)>;
+			low-power-enable;
+		};
+	};
+};
+
+&pwm120 {
+	status = "okay";
+	pinctrl-0 = <&pwm120_default_test>;
+	pinctrl-1 = <&pwm120_sleep_test>;
+	pinctrl-names = "default", "sleep";
+	memory-regions = <&dma_fast_region>;
+};
+
+&dma_fast_region {
+	status = "okay";
+};
+
+&pwm130 {
+	status = "okay";
+	pinctrl-0 = <&pwm130_default_test>;
+	pinctrl-1 = <&pwm130_sleep_test>;
+	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuapp_dma_region>;
+};
+
+&pwm131 {
+	status = "okay";
+	pinctrl-0 = <&pwm131_default_test>;
+	pinctrl-1 = <&pwm131_sleep_test>;
+	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuapp_dma_region>;
+};
+
+&pwm132 {
+	status = "okay";
+	pinctrl-0 = <&pwm132_default_test>;
+	pinctrl-1 = <&pwm132_sleep_test>;
+	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuapp_dma_region>;
+};
+
+&pwm133 {
+	status = "okay";
+	pinctrl-0 = <&pwm133_default_test>;
+	pinctrl-1 = <&pwm133_sleep_test>;
+	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuapp_dma_region>;
+};
