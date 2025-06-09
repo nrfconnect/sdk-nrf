@@ -483,7 +483,10 @@ Bluetooth libraries and services
 Common Application Framework
 ----------------------------
 
-|no_changes_yet_note|
+* :ref:`caf_ble_state`:
+
+  * Removed the tracking of the active Bluetooth connections.
+    CAF no longer assumes that the Bluetooth Peripheral device (:kconfig:option:`CONFIG_BT_PERIPHERAL`) supports only one simultaneous connection (:kconfig:option:`CONFIG_BT_MAX_CONN`).
 
 Debug libraries
 ---------------
