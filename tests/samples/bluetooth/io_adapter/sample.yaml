@@ -1,0 +1,14 @@
+sample:
+  description: Application for controlling gpios in Bluetooth Samples tests
+  name: IO Adapter
+tests:
+  sample.bluetooth.io_adapter:
+    sysbuild: true
+    integration_platforms:
+      - nrf52840dk/nrf52840
+    platform_allow:
+      - nrf52840dk/nrf52840
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild
