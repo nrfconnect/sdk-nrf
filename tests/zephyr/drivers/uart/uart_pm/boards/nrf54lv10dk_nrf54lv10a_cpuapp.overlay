@@ -15,12 +15,6 @@
 	};
 };
 
-/ {
-	chosen {
-		zephyr,console = &uart20;
-	};
-};
-
 dut: &uart21 {
 	status = "okay";
 	current-speed = <115200>;
