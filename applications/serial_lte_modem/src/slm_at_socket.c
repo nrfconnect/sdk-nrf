@@ -68,6 +68,7 @@ static struct slm_socket {
 	int fd_peer;       /* Socket descriptor for peer. */
 	int ranking;       /* Ranking of socket */
 	uint16_t cid;      /* PDP Context ID, 0: primary; 1~10: secondary */
+	int send_flags;    /* Send flags */
 	struct slm_async_poll async_poll; /* Async poll info */
 } socks[SLM_MAX_SOCKET_COUNT];
 
@@ -748,10 +749,12 @@ static int do_accept(int timeout)
 	return 0;
 }
 
-static int do_send(const uint8_t *data, int len)
+static int do_send(const uint8_t *data, int len, int flags)
 {
 	int ret = 0;
 	int sockfd = sock->fd;
+
+	LOG_DBG("send flags=%d", flags);
 
 	/* For TCP/TLS Server, send to incoming socket */
 	if (sock->type == SOCK_STREAM && sock->role == AT_SOCKET_ROLE_SERVER) {
@@ -766,7 +769,7 @@ static int do_send(const uint8_t *data, int len)
 	uint32_t sent = 0;
 
 	while (sent < len) {
-		ret = zsock_send(sockfd, data + sent, len - sent, 0);
+		ret = zsock_send(sockfd, data + sent, len - sent, flags);
 		if (ret < 0) {
 			LOG_ERR("Sent %u out of %u bytes. (%d)", sent, len, -errno);
 			ret = -errno;
@@ -829,20 +832,20 @@ static int do_recv(int timeout, int flags)
 	return ret;
 }
 
-static int do_sendto(const char *url, uint16_t port, const uint8_t *data, int len)
+static int do_sendto(const char *url, uint16_t port, const uint8_t *data, int len, int flags)
 {
 	int ret = 0;
 	uint32_t sent = 0;
 	struct sockaddr sa = {.sa_family = AF_UNSPEC};
 
-	LOG_DBG("sendto %s:%d", url, port);
+	LOG_DBG("sendto %s:%d, flags=%d", url, port, flags);
 	ret = util_resolve_host(sock->cid, url, port, sock->family, &sa);
 	if (ret) {
 		return -EAGAIN;
 	}
 
 	do {
-		ret = zsock_sendto(sock->fd, data + sent, len - sent, 0, &sa,
+		ret = zsock_sendto(sock->fd, data + sent, len - sent, flags, &sa,
 				   sa.sa_family == AF_INET ? sizeof(struct sockaddr_in)
 							   : sizeof(struct sockaddr_in6));
 		if (ret <= 0) {
@@ -973,9 +976,9 @@ static int socket_datamode_callback(uint8_t op, const uint8_t *data, int len, ui
 			return -EOVERFLOW;
 		} else {
 			if (strlen(udp_url) > 0) {
-				ret = do_sendto(udp_url, udp_port, data, len);
+				ret = do_sendto(udp_url, udp_port, data, len, sock->send_flags);
 			} else {
-				ret = do_send(data, len);
+				ret = do_send(data, len, sock->send_flags);
 			}
 			LOG_INF("datamode send: %d", ret);
 		}
@@ -1454,23 +1457,39 @@ static int handle_at_send(enum at_parser_cmd_type cmd_type, struct at_parser *pa
 	int err = -EINVAL;
 	char data[SLM_MAX_PAYLOAD_SIZE + 1] = {0};
 	int size;
+	bool datamode = false;
+
+	sock->send_flags = 0;
 
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
 		if (param_count > 1) {
 			size = sizeof(data);
 			err = util_string_get(parser, 1, data, &size);
-			if (err) {
+			if (err == -ENODATA) {
+				/* -ENODATA means data is empty so we go into datamode */
+				datamode = true;
+			} else if (err != 0) {
 				return err;
 			}
-			err = do_send(data, size);
+			if (param_count > 2) {
+				err = at_parser_num_get(parser, 2, &sock->send_flags);
+				if (err) {
+					return err;
+				}
+			}
+		} else {
+			datamode = true;
+		}
+		if (datamode) {
+			err = enter_datamode(socket_datamode_callback);
+		} else {
+			err = do_send(data, size, sock->send_flags);
 			if (err == size) {
 				err = 0;
 			} else {
 				err = err < 0 ? err : -EAGAIN;
 			}
-		} else {
-			err = enter_datamode(socket_datamode_callback);
 		}
 		break;
 
@@ -1517,7 +1536,11 @@ static int handle_at_sendto(enum at_parser_cmd_type cmd_type, struct at_parser *
 {
 
 	int err = -EINVAL;
+	char data[SLM_MAX_PAYLOAD_SIZE + 1] = {0};
 	int size;
+	bool datamode = false;
+
+	sock->send_flags = 0;
 
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
@@ -1531,22 +1554,33 @@ static int handle_at_sendto(enum at_parser_cmd_type cmd_type, struct at_parser *
 			return err;
 		}
 		if (param_count > 3) {
-			char data[SLM_MAX_PAYLOAD_SIZE + 1] = {0};
-
 			size = sizeof(data);
 			err = util_string_get(parser, 3, data, &size);
-			if (err) {
+			if (err == -ENODATA) {
+				/* -ENODATA means data is empty so we go into datamode */
+				datamode = true;
+			} else if (err != 0) {
 				return err;
 			}
-			err = do_sendto(udp_url, udp_port, data, size);
+			if (param_count > 4) {
+				err = at_parser_num_get(parser, 4, &sock->send_flags);
+				if (err) {
+					return err;
+				}
+			}
+		} else {
+			datamode = true;
+		}
+		if (datamode) {
+			err = enter_datamode(socket_datamode_callback);
+		} else {
+			err = do_sendto(udp_url, udp_port, data, size, sock->send_flags);
 			if (err == size) {
 				err = 0;
 			} else {
 				err = err < 0 ? err : -EAGAIN;
 			}
 			memset(udp_url, 0, sizeof(udp_url));
-		} else {
-			err = enter_datamode(socket_datamode_callback);
 		}
 		break;
 

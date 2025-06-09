@@ -275,7 +275,11 @@ nRF Machine Learning (Edge Impulse)
 Serial LTE modem
 ----------------
 
-* Added the ``AT#XAPOLL`` command to asynchronously poll sockets for data.
+* Added:
+
+  * The ``AT#XAPOLL`` command to asynchronously poll sockets for data.
+  * The send flags for ``#XSEND``, ``#XSENDTO``, ``#XTCPSEND`` and ``#XUDPSEND`` commands.
+  * The send flag value ``512`` for waiting for acknowledgment of the sent data.
 
 * Updated:
 

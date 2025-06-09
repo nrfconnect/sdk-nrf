@@ -57,6 +57,7 @@ static struct udp_proxy {
 	int dtls_cid;		/* DTLS connection identifier. */
 	enum slm_udp_role role;	/* Client or Server proxy */
 	int efd;		/* Event file descriptor for signaling threads. */
+	int send_flags;         /* Send flags */
 	struct sockaddr_storage remote; /* remote host */
 } proxy;
 
@@ -324,10 +325,19 @@ static int do_udp_send(const uint8_t *data, int datalen)
 	while (offset < datalen) {
 		if (proxy.role == UDP_ROLE_SERVER) {
 			/* send to remembered remote */
-			ret = zsock_sendto(proxy.sock, data + offset, datalen - offset, 0,
-					(struct sockaddr *)&proxy.remote, sizeof(proxy.remote));
+			ret = zsock_sendto(
+				proxy.sock,
+				data + offset,
+				datalen - offset,
+				proxy.send_flags,
+				(struct sockaddr *)&proxy.remote,
+				sizeof(proxy.remote));
 		} else {
-			ret = zsock_send(proxy.sock, data + offset, datalen - offset, 0);
+			ret = zsock_send(
+				proxy.sock,
+				data + offset,
+				datalen - offset,
+				proxy.send_flags);
 		}
 		if (ret < 0) {
 			LOG_ERR("zsock_send()/zsock_sendto() failed: %d, sent: %d", -errno, offset);
@@ -354,10 +364,19 @@ static int do_udp_send_datamode(const uint8_t *data, int datalen)
 	while (offset < datalen) {
 		if (proxy.role == UDP_ROLE_SERVER) {
 			/* send to remembered remote */
-			ret = zsock_sendto(proxy.sock, data + offset, datalen - offset, 0,
-					(struct sockaddr *)&proxy.remote, sizeof(proxy.remote));
+			ret = zsock_sendto(
+				proxy.sock,
+				data + offset,
+				datalen - offset,
+				proxy.send_flags,
+				(struct sockaddr *)&proxy.remote,
+				sizeof(proxy.remote));
 		} else {
-			ret = zsock_send(proxy.sock, data + offset, datalen - offset, 0);
+			ret = zsock_send(
+				proxy.sock,
+				data + offset,
+				datalen - offset,
+				proxy.send_flags);
 		}
 		if (ret < 0) {
 			LOG_ERR("zsock_send()/zsock_sendto() failed: %d, sent: %d", -errno, offset);
@@ -680,6 +699,7 @@ static int handle_at_udp_send(enum at_parser_cmd_type cmd_type, struct at_parser
 	int err = -EINVAL;
 	char data[SLM_MAX_PAYLOAD_SIZE + 1] = {0};
 	int size;
+	bool datamode = false;
 
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
@@ -690,12 +710,25 @@ static int handle_at_udp_send(enum at_parser_cmd_type cmd_type, struct at_parser
 		if (param_count > 1) {
 			size = sizeof(data);
 			err = util_string_get(parser, 1, data, &size);
-			if (err) {
+			if (err == -ENODATA) {
+				/* -ENODATA means data is empty so we go into datamode */
+				datamode = true;
+			} else if (err != 0) {
 				return err;
 			}
-			err = do_udp_send(data, size);
+			if (param_count > 2) {
+				err = at_parser_num_get(parser, 2, &proxy.send_flags);
+				if (err) {
+					return err;
+				}
+			}
 		} else {
+			datamode = true;
+		}
+		if (datamode) {
 			err = enter_datamode(udp_datamode_callback);
+		} else {
+			err = do_udp_send(data, size);
 		}
 		break;
 
