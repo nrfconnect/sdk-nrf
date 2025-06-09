@@ -1,0 +1,34 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DESKTOP_HID_KEYMAP
+	bool "Enable HID keymap utility"
+	depends on DESKTOP_ROLE_HID_PERIPHERAL
+	help
+	  The HID keymap utility can be used to map application-specific key ID
+	  to a HID usage ID. The mapping is statically defined in configuration.
+
+if DESKTOP_HID_KEYMAP
+
+config DESKTOP_HID_KEYMAP_DEF_PATH
+	string "Path to file defining HID keymap"
+	default "hid_keymap_def.h"
+	help
+	  Location of configuration file that holds information about mapping
+	  from application-specific key ID to HID usage ID.
+
+config DESKTOP_HID_KEYMAP_CACHE
+	bool "Cache the last returned mapping"
+	default y
+	help
+	  Caching speeds up mapping in case mapping for the same key ID is
+	  requested multiple times in a row.
+
+module = DESKTOP_HID_KEYMAP
+module-str = HID keymap
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # DESKTOP_HID_KEYMAP

@@ -9,18 +9,12 @@ menu "HID State"
 config DESKTOP_HID_STATE_ENABLE
 	bool "Enable HID state"
 	depends on DESKTOP_ROLE_HID_PERIPHERAL
+	select DESKTOP_HID_KEYMAP
 	select DESKTOP_HID_EVENTQ
 	help
 	  The module generates HID reports based on user input.
 
 if DESKTOP_HID_STATE_ENABLE
-
-config DESKTOP_HID_STATE_HID_KEYMAP_DEF_PATH
-	string "File defining HID keymap"
-	default "hid_keymap_def.h"
-	help
-	  Location of configuration file that holds information about mapping
-	  between buttons and generated reports.
 
 config DESKTOP_HID_STATE_HID_KEYBOARD_LEDS_DEF_PATH
 	string "File defining HID keyboard LEDs"

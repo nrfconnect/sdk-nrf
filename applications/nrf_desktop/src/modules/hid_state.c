@@ -28,7 +28,6 @@
 
 #include CONFIG_DESKTOP_HID_STATE_HID_KEYBOARD_LEDS_DEF_PATH
 #include "hid_keymap.h"
-#include CONFIG_DESKTOP_HID_STATE_HID_KEYMAP_DEF_PATH
 #include "hid_report_desc.h"
 
 #define MODULE hid_state
@@ -136,31 +135,6 @@ static bool report_send(struct report_state *rs,
 			bool check_state,
 			bool send_always);
 
-
-/**@brief Compare Key ID in HID Keymap entries. */
-static int hid_keymap_compare(const void *a, const void *b)
-{
-	const struct hid_keymap *p_a = a;
-	const struct hid_keymap *p_b = b;
-
-	return (p_a->key_id - p_b->key_id);
-}
-
-/**@brief Translate Key ID to HID Usage ID and target report. */
-static struct hid_keymap *hid_keymap_get(uint16_t key_id)
-{
-	struct hid_keymap key = {
-		.key_id = key_id
-	};
-
-	struct hid_keymap *map = bsearch(&key,
-					 hid_keymap,
-					 ARRAY_SIZE(hid_keymap),
-					 sizeof(key),
-					 hid_keymap_compare);
-
-	return map;
-}
 
 /**@brief Compare two usage values. */
 static int usage_id_compare(const void *a, const void *b)
@@ -1093,19 +1067,7 @@ static void update_key(const struct hid_keymap *map, bool pressed)
 
 static void init(void)
 {
-	if (IS_ENABLED(CONFIG_ASSERT)) {
-		/* Validate the order of key IDs on the key map array. */
-		for (size_t i = 1; i < ARRAY_SIZE(hid_keymap); i++) {
-			__ASSERT(hid_keymap[i - 1].key_id < hid_keymap[i].key_id,
-				 "The hid_keymap array must be sorted by key_id!");
-		}
-		/* Validate if report IDs are correct. */
-		for (size_t i = 0; i < ARRAY_SIZE(hid_keymap); i++) {
-			__ASSERT((hid_keymap[i].report_id != REPORT_ID_RESERVED) &&
-				 (hid_keymap[i].report_id < REPORT_ID_COUNT),
-				 "Invalid report ID used in hid_keymap!");
-		}
-	}
+	hid_keymap_init();
 
 	for (size_t i = 0; i < ARRAY_SIZE(state.report_data); i++) {
 		struct report_data *rd = &state.report_data[i];
@@ -1212,10 +1174,10 @@ static bool handle_wheel_event(const struct wheel_event *event)
 static bool handle_button_event(const struct button_event *event)
 {
 	/* Get usage ID and target report from HID Keymap */
-	struct hid_keymap *map = hid_keymap_get(event->key_id);
+	const struct hid_keymap *map = hid_keymap_get(event->key_id);
 
-	if (!map || !map->usage_id) {
-		LOG_DBG("No mapping, button ignored");
+	if (!map) {
+		LOG_DBG("No mapping for key ID: 0x%" PRIx16 ", ignored", event->key_id);
 	} else {
 		update_key(map, event->pressed);
 	}

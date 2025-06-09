@@ -9,6 +9,7 @@ menu "Utilities"
 rsource "Kconfig.adv_prov"
 rsource "Kconfig.dfu_lock"
 rsource "Kconfig.hid_eventq"
+rsource "Kconfig.hid_keymap"
 rsource "Kconfig.hid_reportq"
 rsource "Kconfig.hwid"
 
