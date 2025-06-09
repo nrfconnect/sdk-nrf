@@ -31,9 +31,6 @@ struct bond_find_data {
 	uint8_t bond_cnt;
 };
 
-static struct bt_conn *active_conn[CONFIG_BT_MAX_CONN];
-
-
 static void bond_check_cb(const struct bt_bond_info *info, void *user_data)
 {
 	struct bond_find_data *data = user_data;
@@ -114,18 +111,6 @@ static void connected(struct bt_conn *conn, uint8_t error)
 		LOG_INF("Connected to %s", addr_str);
 	}
 
-	size_t i;
-
-	for (i = 0; i < ARRAY_SIZE(active_conn); i++) {
-		if (!active_conn[i]) {
-			break;
-		}
-	}
-	if (i >= ARRAY_SIZE(active_conn)) {
-		k_panic();
-	}
-	active_conn[i] = conn;
-
 	struct ble_peer_event *event = new_ble_peer_event();
 
 	event->id = conn;
@@ -192,21 +177,6 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 		LOG_INF("Disconnected from %s (reason %u)", addr_str, reason);
 	}
 
-	size_t i;
-
-	for (i = 0; i < ARRAY_SIZE(active_conn); i++) {
-		if (active_conn[i] == conn) {
-			break;
-		}
-	}
-
-	if (i == ARRAY_SIZE(active_conn)) {
-		__ASSERT_NO_MSG(false);
-		return;
-	}
-
-	active_conn[i] = NULL;
-
 	struct ble_peer_event *event = new_ble_peer_event();
 
 	event->id = conn;
@@ -226,10 +196,6 @@ static void exchange_func(struct bt_conn *conn, uint8_t err,
 static void security_changed(struct bt_conn *conn, bt_security_t level,
 			     enum bt_security_err bt_err)
 {
-	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
-		__ASSERT_NO_MSG(active_conn[0] == conn);
-	}
-
 	int err;
 
 	if (IS_ENABLED(CONFIG_LOG)) {
@@ -329,9 +295,6 @@ static void bt_ready(int err)
 
 static int ble_state_init(void)
 {
-	BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
-		     (ARRAY_SIZE(active_conn) == 1));
-
 	static struct bt_conn_cb conn_callbacks = {
 		.connected = connected,
 		.disconnected = disconnected,
