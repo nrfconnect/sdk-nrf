@@ -237,6 +237,7 @@ nRF Desktop
 
     * Use the :c:func:`bt_hids_inp_rep_send_userdata` function to send HID input reports while in report mode.
     * Use an extended callback with the notification event to handle subscriptions for HID input reports in report mode (:c:struct:`bt_hids_inp_rep`).
+    * Use generic callbacks to handle HID feature and output reports.
 
     This approach simplifies the process of adding support for new HID reports.
 
