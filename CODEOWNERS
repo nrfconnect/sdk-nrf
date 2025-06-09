@@ -254,6 +254,7 @@
 /doc/nrf/samples/crypto.rst               @nrfconnect/ncs-aegir-doc
 /doc/nrf/samples/debug.rst                @nrfconnect/ncs-cia-doc
 /doc/nrf/samples/dect.rst                 @nrfconnect/ncs-modem-doc
+/doc/nrf/samples/dfu.rst                  @nrfconnect/ncs-charon-doc
 /doc/nrf/samples/edge.rst                 @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/samples/esb.rst                  @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/samples/fast_pair.rst            @nrfconnect/ncs-si-bluebagel-doc
@@ -519,6 +520,7 @@
 /samples/debug/ppi_trace/                 @nordic-krch
 /samples/dect/dect_phy/dect_shell/        @nrfconnect/ncs-modem-tre
 /samples/dect/dect_phy/hello_dect/        @nrfconnect/ncs-modem
+/samples/dfu/dfu_target/                  @nrfconnect/ncs-charon
 /samples/edge_impulse/                    @nrfconnect/ncs-si-muffin
 /samples/esb/                             @nrfconnect/ncs-si-muffin
 /samples/event_manager_proxy/             @nrfconnect/ncs-si-muffin

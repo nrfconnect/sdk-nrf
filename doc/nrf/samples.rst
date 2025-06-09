@@ -50,6 +50,7 @@ General information about samples in the |NCS|
    samples/crypto
    samples/debug
    samples/dect
+   samples/dfu
    samples/edge
    samples/esb
    samples/gazell
