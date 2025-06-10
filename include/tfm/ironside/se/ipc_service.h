@@ -8,8 +8,8 @@
 #define __SDFW_PSA_IPC_SERVICE_H__
 
 /*
- * This header contains symbols that are used by both the IRONside SE client
- * and the IRONside SE service.
+ * This header contains symbols that are used by both the IronSide SE client
+ * and the IronSide SE service.
  */
 enum {
 	IRONSIDE_SE_IPC_INDEX_HANDLE,
@@ -22,10 +22,10 @@ enum {
 	IRONSIDE_SE_IPC_DATA_LEN
 };
 
-/* IRONside call identifiers with implicit versions.
+/* IronSide call identifiers with implicit versions.
  *
  * With the initial "version 0", the service ABI is allowed to break until the
- * first public release of IRONside SE.
+ * first public release of IronSide SE.
  */
 #define IRONSIDE_CALL_ID_PSA_CRYPTO_V0 0
 
