@@ -247,3 +247,17 @@ int nrf_modem_lib_shutdown(void)
 
 	return 0;
 }
+
+int nrf_modem_lib_ps_set(bool enabled)
+{
+	extern int nrf9x_socket_enable(bool);
+
+	return nrf9x_socket_enable(enabled);
+}
+
+int nrf_modem_lib_ps_get(void)
+{
+	extern int nrf9x_socket_enabled(void);
+
+	return nrf9x_socket_enabled();
+}

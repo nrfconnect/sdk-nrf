@@ -57,6 +57,8 @@ static K_MUTEX_DEFINE(ctx_lock);
 
 static const struct socket_op_vtable nrf9x_socket_fd_op_vtable;
 
+/* Socket disabled in general. */
+static bool socket_disabled;
 /* Offloading disabled in general. */
 static bool offload_disabled;
 /* TLS offloading disabled only. */
@@ -1078,6 +1080,11 @@ static int nrf9x_socket_create(int family, int type, int proto)
 	int fd, sd;
 	struct nrf_sock_ctx *ctx;
 
+	if (socket_disabled) {
+		/* this error will not be returned by POSIX socket() */
+		return -EOPNOTSUPP;
+	}
+
 	if (type & SOCK_NATIVE) {
 		return native_socket(family, type, proto, &offload_disabled);
 	} else if (type & SOCK_NATIVE_TLS) {
@@ -1107,6 +1114,41 @@ static int nrf9x_socket_create(int family, int type, int proto)
 		      (const struct fd_op_vtable *)&nrf9x_socket_fd_op_vtable);
 
 	return fd;
+}
+
+int nrf9x_socket_enable(bool enable_socket)
+{
+	if (enable_socket) {
+		if (socket_disabled) {
+			socket_disabled = false;
+			return 0;
+		} else {
+			return 0;  /* allow re-enable */
+		}
+	} else {
+		if (socket_disabled) {
+			return -EOPNOTSUPP;  /* disallow re-disable */
+		}
+	}
+
+	/* tear down all connected socket */
+	k_mutex_lock(&ctx_lock, K_FOREVER);
+	for (int i = 0; i < ARRAY_SIZE(offload_ctx); i++) {
+		if (offload_ctx[i].nrf_fd != -1) {
+			(void)nrf_close(offload_ctx[i].nrf_fd);
+			offload_ctx[i].nrf_fd = -1;
+			offload_ctx[i].lock = NULL;
+		}
+	}
+	k_mutex_unlock(&ctx_lock);
+
+	socket_disabled = true;
+	return 0;
+}
+
+int nrf9x_socket_enabled(void)
+{
+	return !socket_disabled;
 }
 
 #define NRF9X_SOCKET_PRIORITY 40

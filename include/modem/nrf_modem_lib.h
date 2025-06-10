@@ -89,6 +89,9 @@ int nrf_modem_lib_bootloader_init(void);
  */
 int nrf_modem_lib_shutdown(void);
 
+int nrf_modem_lib_ps_set(bool enable_socket);
+int nrf_modem_lib_ps_get(void);
+
 /**
  * @brief Modem library dfu callback struct.
  */

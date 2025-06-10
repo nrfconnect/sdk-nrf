@@ -560,6 +560,7 @@ client_events:
 	tcpsvr_terminate_connection(ret);
 	zsock_close(proxy.sock);
 	proxy.sock = INVALID_SOCKET;
+	proxy.efd = INVALID_SOCKET;
 
 	if (in_datamode()) {
 		exit_datamode_handler(ret);
@@ -648,6 +649,7 @@ static void tcpcli_thread_func(void *p1, void *p2, void *p3)
 
 	zsock_close(proxy.sock);
 	proxy.sock = INVALID_SOCKET;
+	proxy.efd = INVALID_SOCKET;
 
 	if (in_datamode()) {
 		exit_datamode_handler(ret);
