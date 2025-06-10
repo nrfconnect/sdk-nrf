@@ -218,6 +218,9 @@ nRF5340 Audio
 * Added:
 
   * Experimental support for Audio on the nRF5340 DK, with LED state indications and button controls.
+  * Support for stereo in broadcast_sink.
+    The :ref:`broadcast sink <nrf53_audio_broadcast_sink_app>` can now receive audio from two BISes and play it on the left and right channels of the audio output, given that the correct configurations are enabled.
+    See :file:`overlay-broadcast_sink.conf` for more information.
 
 * Updated:
 

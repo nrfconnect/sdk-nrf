@@ -46,7 +46,7 @@ struct audio_metadata test_metadata = {.data_coding = LC3,
 				       .bits_per_sample = 16,
 				       .carried_bits_per_sample = 16,
 				       .locations = 0x00000003,
-				       .reference_ts_us = 0,
+				       .ref_ts_us = 0,
 				       .data_rx_ts_us = 0,
 				       .bad_data = false};
 
