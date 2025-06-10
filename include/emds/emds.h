@@ -144,17 +144,22 @@ int emds_store(void);
  * previously stored data.
  *
  * @retval 0 Success
- * @retval -ERRNO errno code if error
+ * @retval -ECANCELED errno code if it was called before @ref emds_init
+ * @retval -ENOENT errno code if no valid snapshot was found in any partition
+ * @retval -EIO errno code if error during reading data
  */
 int emds_load(void);
 
 /**
- * @brief Clear flash area from the emergency data storage.
+ * @brief Clear flash areas allocated for the emergency data storage.
  *
- * This function clears the flash area for all previously stored data.
+ * This function erases all the flash areas allocated for the emergency data.
+ * Calling of this API is optional for emergency data storage working algorithms,
+ * since EMDS erases the flash areas before storing data if needed.
  *
  * @retval 0 Success
- * @retval -ERRNO errno code if error
+ * @retval -ECANCELED errno code if it was called before @ref emds_init
+ * @retval -EIO errno code if error occurs during erasure.
  */
 int emds_clear(void);
 
@@ -169,7 +174,8 @@ int emds_clear(void);
  * store.
  *
  * @retval 0 Success
- * @retval -ERRNO errno code if error
+ * @retval -ECANCELED errno code if it was called before @ref emds_init and @ref emds_load
+ * @retval -ENOENT errno code if no valid snapshot was found in any partition
  */
 int emds_prepare(void);
 
@@ -180,9 +186,13 @@ int emds_prepare(void);
  * registered in the entries. This value is dependent on the chip used, and
  * should be checked against the chip datasheet.
  *
- * @return Time needed to store all data (in microseconds).
+ * @param store_time_us Pointer to a variable where the estimated time (in microseconds)
+ *                      will be stored.
+ *
+ * @return 0 on success.
+ * @retval -ECANCELED if the function was called before @ref emds_init.
  */
-uint32_t emds_store_time_get(void);
+int emds_store_time_get(uint32_t *store_time_us);
 
 /**
  * @brief Calculate the size needed to store the registered data.
@@ -190,9 +200,12 @@ uint32_t emds_store_time_get(void);
  * Calculates the size it takes to store all dynamic and static data registered
  * in the entries.
  *
- * @return Byte size that is needed to store all data.
+ * @param store_size Pointer to a variable where the size will be stored.
+ *
+ * @return 0 on success.
+ * @retval -ECANCELED if the function was called before @ref emds_init.
  */
-uint32_t emds_store_size_get(void);
+int emds_store_size_get(size_t *store_size);
 
 /**
  * @brief Check if the store operation can be run.
