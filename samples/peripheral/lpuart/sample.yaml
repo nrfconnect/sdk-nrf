@@ -22,9 +22,9 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l09pdk/nrf54l09/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
+      - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
       - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
@@ -39,6 +39,8 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     platform_exclude: native_sim
     tags: ppk_power_measure
     harness: pytest
@@ -58,9 +60,9 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l09pdk/nrf54l09/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
+      - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
       - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
@@ -101,6 +103,8 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf52dk/nrf52832
       - nrf52833dk/nrf52833
@@ -111,9 +115,9 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l09pdk/nrf54l09/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
+      - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
       - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
@@ -144,6 +148,8 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf52dk/nrf52832
       - nrf52833dk/nrf52833
@@ -154,9 +160,9 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l09pdk/nrf54l09/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
+      - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
       - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
