@@ -25,10 +25,11 @@ In this figure:
 
 * Application calls the PSA Crypto implementation through the PSA Crypto API.
 * The PSA Crypto API implementation is an abstraction layer that manages cryptographic operations, key handling, and driver coordination.
-  The implementations can be different, but they should all conform to the PSA Crypto specification.
-* Crypto driver is a specialized component that implements specific cryptographic algorithms or provides access to hardware accelerators.
+  The implementations can be different, but they should all conform to the PSA Crypto API standard.
+* Cryptographic driver is a specialized component that implements specific cryptographic algorithms or provides access to hardware accelerators.
 * Storage integration provides persistent and secure storage capabilities through standardized PSA Secure Storage APIs.
   It implements storage interfaces that allow the PSA Crypto implementation to securely store and retrieve keys, ensuring proper protection of sensitive material throughout its lifecycle.
+* Hardware platform is the physical device with security features, such as cryptographic hardware engines or secure storage.
 
 .. _ug_crypto_architecture_interaction_flow:
 
@@ -80,6 +81,12 @@ The Oberon PSA Crypto is a library that serves as the central component managing
 The Oberon PSA Crypto acts as the implementation provider, directly exposing the PSA Crypto API to applications.
 Each driver can implement support for different subsets of cryptographic algorithms, providing software support for algorithms that hardware cannot support.
 
+This implementation standard is suitable for applications that prioritize simplicity and do not require the additional security isolation provided by TF-M.
+It offers direct access to cryptographic functionality with minimal overhead, making it ideal for resource-constrained applications.
+
+Driver selection in the Oberon PSA Crypto implementation
+--------------------------------------------------------
+
 The following figure shows the driver library selection through the driver wrapper, one of the internal modules of Oberon PSA Crypto:
 
 .. figure:: ../images/psa_certified_api_lib_selection.svg
@@ -88,8 +95,7 @@ The following figure shows the driver library selection through the driver wrapp
 
    Oberon PSA Crypto driver library selection
 
-This implementation standard is suitable for applications that prioritize simplicity and do not require the additional security isolation provided by TF-M.
-It offers direct access to cryptographic functionality with minimal overhead, making it ideal for resource-constrained applications.
+For more information about the driver selection, see :ref:`crypto_drivers`.
 
 Storage integration for the Oberon PSA Crypto implementation
 ------------------------------------------------------------
@@ -114,8 +120,13 @@ The TF-M Crypto Service implementation provides PSA Crypto API access through Tr
 
    TF-M Crypto Service implementation
 
+In this architecture, TF-M implements the secure cryptographic service using the existing Oberon PSA Core and its associated drivers within the secure environment.
+Additionally, TF-M integrates key storage using its internal mechanisms, offering secure key management through :ref:`Internal Trusted Storage <ug_tfm_services_its>` and :ref:`Protected Storage <tfm_partition_ps>`.
+
 This implementation leverages TF-M's Secure Processing Environment (SPE) to isolate cryptographic operations from the Non-Secure Processing Environment (NSPE).
 TF-M is built on top of TrustZone technology and isolates the PSA Crypto API as non-secure callable calls into a secure processing environment.
+Cryptographic keys are stored and isolated in the SPE, ensuring they are not accessible by the application running in the NSPE.
+The cryptographic drivers (nrf_cc3xx, nrf_oberon, and CRACEN) are available within the secure environment, providing consistent cryptographic capabilities.
 
 .. figure:: ../images/tfm_psa_crypto_api_nspe_spe.svg
    :alt: TF-M Crypto Service implementation in the NSPE and SPE
@@ -123,13 +134,14 @@ TF-M is built on top of TrustZone technology and isolates the PSA Crypto API as 
 
    TF-M Crypto Service implementation in the NSPE and SPE
 
-In this architecture, TF-M implements the secure cryptographic service using the existing Oberon PSA Core and its associated drivers within the secure environment.
-Cryptographic keys are stored and isolated in the SPE, ensuring they are not accessible by the application running in the NSPE.
-The same cryptographic drivers (nrf_cc3xx, nrf_oberon, and CRACEN) are available within the secure environment, providing consistent cryptographic capabilities.
-Additionally, TF-M integrates key storage using its internal mechanisms, offering secure key management through :ref:`Internal Trusted Storage <ug_tfm_services_its>` and :ref:`Protected Storage <tfm_partition_ps>`.
-
-This implementation standard is mandatory for applications requiring PSA Certified security levels and provides the highest level of security through hardware-enforced isolation.
+This implementation standard is mandatory for applications requiring higher `PSA Certified security levels <PSA Certified IoT Security Framework_>`_ and provides the highest level of security through hardware-enforced isolation.
 It ensures that cryptographic operations and key material remain protected even if the non-secure application is compromised.
+
+Driver selection in the TF-M Crypto Service implementation
+----------------------------------------------------------
+
+The TF-M Crypto Service implementation uses the same driver selection mechanism as the Oberon PSA Crypto implementation.
+For more information about the driver selection, see :ref:`crypto_drivers`.
 
 Storage integration for the TF-M Crypto Service implementation
 --------------------------------------------------------------
