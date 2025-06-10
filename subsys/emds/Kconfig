@@ -16,6 +16,13 @@ menuconfig EMDS
 
 if EMDS
 
+config NEW_EMDS
+	bool "Enable new EMDS implementation"
+	help
+	  Enable the new implementation of Emergency Data Storage.
+	  This is temporary option for debug purpose.
+	  It will be removed in the future.
+
 config EMDS_SECTOR_COUNT
 	int "Sector count of the emergency data storage area"
 	default 1
