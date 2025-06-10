@@ -127,6 +127,13 @@ config AUDIO_SOURCE_I2S
 	bool "Use I2S as audio source"
 endchoice
 
+config AUDIO_HEADSET_STEREO
+	bool "Use stereo audio for headse [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	help
+	  Use stereo audio for the headset.
+	  If this is not selected, mono audio is used.
+
 choice AUDIO_HEADSET_CHANNEL
 	prompt "Headset audio channel assignment"
 	default AUDIO_HEADSET_CHANNEL_RUNTIME

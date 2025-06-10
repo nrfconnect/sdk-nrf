@@ -59,11 +59,22 @@ struct stream_index {
 };
 
 /**
+ * @brief	Get the number of active streams.
+ *
+ * @note	This function returns the number of streams that are currently active.
+ *		An active stream is one that has been set up and is ready to receive data.
+ *		This function is used by broadcast_sink, unicast_server and unicast_client.
+ *
+ * @return	Number of active BIS, or negative error code on failure.
+ */
+int le_audio_concurrent_sync_num_get(void);
+
+/**
  * @brief Function to populate the audio metadata.
  *
- * @param[in] meta	Pointer to the audio metadata.
- * @param[in] stream	Pointer to the stream.
- * @param[in] info	Pointer to the ISO information.
+ * @param[in] meta		Pointer to the audio metadata.
+ * @param[in] stream		Pointer to the stream.
+ * @param[in] info		Pointer to the ISO information.
  * @param[in] audio_frame	Pointer to the buffer.
  *
  * @return 0 if successful, error otherwise.
@@ -80,7 +91,7 @@ int le_audio_metadata_populate(struct audio_metadata *meta, const struct bt_bap_
  *
  * @return	0 for success, error otherwise.
  */
-int le_audio_ep_state_get(struct bt_bap_ep *ep, uint8_t *state);
+int le_audio_ep_state_get(struct bt_bap_ep const *const ep, uint8_t *state);
 
 /**
  * @brief	Check if an endpoint is in the given state.
@@ -93,7 +104,7 @@ int le_audio_ep_state_get(struct bt_bap_ep *ep, uint8_t *state);
  * @retval	true	The endpoint is in the given state.
  * @retval	false	Otherwise.
  */
-bool le_audio_ep_state_check(struct bt_bap_ep *ep, enum bt_bap_ep_state state);
+bool le_audio_ep_state_check(struct bt_bap_ep const *const ep, enum bt_bap_ep_state state);
 
 /**
  * @brief	Check if an endpoint has had the QoS configured.

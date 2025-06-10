@@ -12,7 +12,8 @@ In this mode, receiving broadcast audio happens using Broadcast Isochronous Stre
 
 The following limitations apply to this application:
 
-* One BIG, one of the two BIS streams (selectable).
+* One BIG, one of the two BIS streams or a mixed stereo comprising of the two (selectable).
+  See :file:`overlay-broadcast_sink.conf` for more information.
 * Audio output: I2S/Analog headset output.
 * Configuration: 16 bit, several bit rates ranging from 32 kbps to 124 kbps.
 
@@ -43,7 +44,6 @@ This application uses specific mapping for the following user interface elements
   * **PLAY/PAUSE** - Starts or pauses listening to the stream.
   * **VOL-** - Turns the playback volume down.
   * **VOL+** - Turns the playback volume up.
-  * **BTN 4** - Changes audio stream (different BIS), if more than one is available.
   * **BTN 5** - Changes the gateway, if more than one is available.
 
 * **LED1**:

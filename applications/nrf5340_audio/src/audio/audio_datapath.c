@@ -38,8 +38,6 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
  *   - frame: encoded audio packet exchanged with connectivity
  */
 
-#define SDU_REF_DELTA_MAX_ERR_US (int)(CONFIG_AUDIO_FRAME_DURATION_US * 0.001)
-
 #define BLK_PERIOD_US 1000
 
 /* Total sample FIFO period in microseconds */
@@ -56,7 +54,7 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 /* Increment sample FIFO index by one block */
 #define NEXT_IDX(i) (((i) < (FIFO_NUM_BLKS - 1)) ? ((i) + 1) : 0)
 /* Decrement sample FIFO index by one block */
-#define PREV_IDX(i) (((i) > 0) ? ((i)-1) : (FIFO_NUM_BLKS - 1))
+#define PREV_IDX(i) (((i) > 0) ? ((i) - 1) : (FIFO_NUM_BLKS - 1))
 
 #define NUM_BLKS_IN_FRAME      NUM_BLKS(CONFIG_AUDIO_FRAME_DURATION_US)
 #define BLK_MONO_NUM_SAMPS     BLK_SIZE_SAMPLES(CONFIG_AUDIO_SAMPLE_RATE_HZ)
@@ -912,30 +910,30 @@ void audio_datapath_stream_out(struct net_buf *audio_frame)
 	/*** Check incoming data ***/
 	struct audio_metadata *meta = net_buf_user_data(audio_frame);
 
-	if (meta->reference_ts_us == ctrl_blk.prev_pres_sdu_ref_us && meta->reference_ts_us != 0) {
-		LOG_WRN("Duplicate sdu_ref_us (%d) - Dropping audio frame", meta->reference_ts_us);
+	if (meta->ref_ts_us == ctrl_blk.prev_pres_sdu_ref_us && meta->ref_ts_us != 0) {
+		LOG_WRN("Duplicate sdu_ref_us (%d) - Dropping audio frame", meta->ref_ts_us);
 		return;
 	}
 
 	bool sdu_ref_not_consecutive = false;
 
 	if (ctrl_blk.prev_pres_sdu_ref_us) {
-		uint32_t sdu_ref_delta_us = meta->reference_ts_us - ctrl_blk.prev_pres_sdu_ref_us;
+		uint32_t sdu_ref_delta_us = meta->ref_ts_us - ctrl_blk.prev_pres_sdu_ref_us;
 
 		/* Check if the delta is from two consecutive frames */
 		if (sdu_ref_delta_us <
 		    (CONFIG_AUDIO_FRAME_DURATION_US + (CONFIG_AUDIO_FRAME_DURATION_US / 2))) {
 			/* Check for invalid delta */
 			if ((sdu_ref_delta_us >
-			     (CONFIG_AUDIO_FRAME_DURATION_US + SDU_REF_DELTA_MAX_ERR_US)) ||
+			     (CONFIG_AUDIO_FRAME_DURATION_US + SDU_REF_CH_DELTA_MAX_US)) ||
 			    (sdu_ref_delta_us <
-			     (CONFIG_AUDIO_FRAME_DURATION_US - SDU_REF_DELTA_MAX_ERR_US))) {
+			     (CONFIG_AUDIO_FRAME_DURATION_US - SDU_REF_CH_DELTA_MAX_US))) {
 				LOG_DBG("Invalid sdu_ref_us delta (%d) - Estimating sdu_ref_us",
 					sdu_ref_delta_us);
 
 				/* Estimate sdu_ref_us */
-				meta->reference_ts_us = ctrl_blk.prev_pres_sdu_ref_us +
-							CONFIG_AUDIO_FRAME_DURATION_US;
+				meta->ref_ts_us = ctrl_blk.prev_pres_sdu_ref_us +
+						  CONFIG_AUDIO_FRAME_DURATION_US;
 			}
 		} else {
 			LOG_INF("sdu_ref_us not from consecutive frames (diff: %d us)",
@@ -944,11 +942,11 @@ void audio_datapath_stream_out(struct net_buf *audio_frame)
 		}
 	}
 
-	ctrl_blk.prev_pres_sdu_ref_us = meta->reference_ts_us;
+	ctrl_blk.prev_pres_sdu_ref_us = meta->ref_ts_us;
 
 	/*** Presentation compensation ***/
 	if (ctrl_blk.pres_comp.enabled) {
-		audio_datapath_presentation_compensation(meta->data_rx_ts_us, meta->reference_ts_us,
+		audio_datapath_presentation_compensation(meta->data_rx_ts_us, meta->ref_ts_us,
 							 sdu_ref_not_consecutive);
 	}
 
