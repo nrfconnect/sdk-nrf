@@ -1,3 +1,15 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		tst-timer = &timer20;
+	};
+};
+
 &pinctrl {
 	uart21_default: uart21_default {
 		group1 {
@@ -19,6 +31,10 @@
 	};
 };
 
+&timer20 {
+	status = "okay";
+};
+
 dut: &uart21 {
 	status = "okay";
 	current-speed = <115200>;
@@ -26,12 +42,4 @@ dut: &uart21 {
 	pinctrl-1 = <&uart21_sleep>;
 	pinctrl-names = "default", "sleep";
 	hw-flow-control;
-};
-
-counter_dev: &timer00 {
-	status = "okay";
-};
-
-&grtc {
-	interrupts = <228 2>;
 };
