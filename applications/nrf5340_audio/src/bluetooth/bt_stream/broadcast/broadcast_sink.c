@@ -587,6 +587,18 @@ static bool is_any_active_streams(void)
 	return false;
 }
 
+static bool is_any_active_streams(void)
+{
+	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
+		if (audio_streams[i].ep != NULL &&
+		    audio_streams[i].ep->status.state == BT_BAP_EP_STATE_STREAMING) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 static struct bt_bap_broadcast_sink_cb broadcast_sink_cbs = {
 	.base_recv = base_recv_cb,
 	.syncable = syncable_cb,
@@ -774,7 +786,7 @@ int broadcast_sink_enable(le_audio_receive_cb recv_cb)
 	} else if (channel == AUDIO_CH_R) {
 		ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, BT_AUDIO_LOCATION_FRONT_RIGHT);
 		csip_param.rank = CSIP_HR_RANK;
-	} else if (channel == AUDIO_CH_NUM) { /* TODO: Temporary, awaiting OCT-3381 */
+	} else if (channel == AUDIO_CH_BOTH) {
 		ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK,
 					   BT_AUDIO_LOCATION_FRONT_LEFT |
 						   BT_AUDIO_LOCATION_FRONT_RIGHT);

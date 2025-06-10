@@ -20,6 +20,7 @@
 enum audio_channel {
 	AUDIO_CH_L,
 	AUDIO_CH_R,
+	AUDIO_CH_BOTH,
 	AUDIO_CH_NUM,
 };
 
