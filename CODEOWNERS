@@ -868,6 +868,7 @@
 /tests/drivers/nrf_wifi/                  @sachinthegreen @krish2718
 /tests/drivers/nrfx_integration_test/     @nrfconnect/ncs-co-drivers
 /tests/drivers/pwm/                       @nrfconnect/ncs-low-level-test
+/tests/drivers/qdec/                      @nrfconnect/ncs-low-level-test
 /tests/drivers/uart/                      @nrfconnect/ncs-low-level-test
 /tests/drivers/i2c/                       @nrfconnect/ncs-low-level-test
 /tests/drivers/sensor/multicore_temp/     @nrfconnect/ncs-low-level-test
