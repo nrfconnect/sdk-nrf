@@ -95,10 +95,8 @@ endfunction()
 # APPLICATION <name>: Name of the application which is used as the source for
 #                     the variant build.
 # VARIANT <name>:     Name of the variant build.
-# SPLIT_KCONFIG:      Flag indicating that the variant image should
-#                     not reuse the same .config files.
 function(ExternalNcsVariantProject_Add)
-  cmake_parse_arguments(VBUILD "SPLIT_KCONFIG" "APPLICATION;VARIANT" "" ${ARGN})
+  cmake_parse_arguments(VBUILD "" "APPLICATION;VARIANT" "" ${ARGN})
 
   ExternalProject_Get_Property(${VBUILD_APPLICATION} SOURCE_DIR BINARY_DIR)
   set(${VBUILD_APPLICATION}_BINARY_DIR ${BINARY_DIR})
@@ -122,14 +120,8 @@ function(ExternalNcsVariantProject_Add)
   set_property(TARGET ${VBUILD_VARIANT} PROPERTY NCS_VARIANT_APPLICATION ${VBUILD_APPLICATION})
   set_property(TARGET ${VBUILD_VARIANT} APPEND PROPERTY _EP_CMAKE_ARGS
     -DCONFIG_NCS_IS_VARIANT_IMAGE=y
+    -DPRELOAD_BINARY_DIR=${${VBUILD_APPLICATION}_BINARY_DIR}
   )
-
-  if(NOT VBUILD_SPLIT_KCONFIG)
-    set_property(TARGET ${VBUILD_VARIANT} APPEND PROPERTY _EP_CMAKE_ARGS
-      -DPRELOAD_BINARY_DIR=${${VBUILD_APPLICATION}_BINARY_DIR}
-      -DCONFIG_NCS_VARIANT_MERGE_KCONFIG=y
-    )
-  endif()
 
   # Configure variant image after application so that the configuration is present
   sysbuild_add_dependencies(CONFIGURE ${VBUILD_VARIANT} ${VBUILD_APPLICATION})
