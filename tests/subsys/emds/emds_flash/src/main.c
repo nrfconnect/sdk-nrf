@@ -1,15 +1,17 @@
 /*
- * Copyright (c) 2022 Nordic Semiconductor ASA
+ * Copyright (c) 2025 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <stdlib.h>
+
 #include <zephyr/ztest.h>
-#include <errno.h>
-#include <zephyr/kernel.h>
-#include <zephyr/storage/flash_map.h>
-#include <zephyr/drivers/flash.h>
+#include <zephyr/sys/util.h>
 #include <zephyr/sys/crc.h>
+#include <zephyr/sys/printk.h>
+#include <zephyr/drivers/flash.h>
+#include <zephyr/random/random.h>
 #include <dk_buttons_and_leds.h>
 #include <emds_flash.h>
 
@@ -21,661 +23,564 @@
 #if defined CONFIG_SOC_FLASH_NRF_RRAM
 #define RRAM DT_INST(0, soc_nv_flash)
 #define EMDS_FLASH_BLOCK_SIZE DT_PROP(RRAM, write_block_size)
-#define EXPECTED_STORE_TIME_BLOCK_SIZE (400)
+/* 32bits word in buffered stream is written typically 22us */
+/* 16 bytes should take ideally 88us (really takes 62 - 128us) */
+#define EXPECTED_STORE_TIME_BLOCK_SIZE (150)
+/* 1024 bytes should take ideally 5632us (really takes 5664 - 5824us) */
 #define EXPECTED_STORE_TIME_1024 (6200)
 #else
 #define FLASH DT_INST(0, soc_nv_flash)
 #define EMDS_FLASH_BLOCK_SIZE DT_PROP(FLASH, write_block_size)
-#define EXPECTED_STORE_TIME_BLOCK_SIZE (200)
-#define EXPECTED_STORE_TIME_1024 (13000)
+/* 32bits word is written maximum 41us (from datasheet) */
+#define EXPECTED_STORE_TIME_BLOCK_SIZE (41)
+/* 1024 bytes should take ideally 10496us (really takes about 11000us) */
+#define EXPECTED_STORE_TIME_1024 (11500)
 #endif
 
-#define ADDR_OFFS_MASK 0x0000FFFF
+#define EMDS_SNAPSHOT_METADATA_MARKER 0x4D444553
+#define PARTITIONS_NUM_MAX 2
 
-static struct {
-	const struct device *fd;
-	uint32_t offset;
-	uint32_t size;
-	uint32_t ate_idx_start;
-	uint32_t data_wra_offset;
-} m_test_fd;
-
-/* Allocation Table Entry */
-struct test_ate {
-	uint16_t id;       /* data id */
-	uint16_t offset;   /* data offset within sector */
-	uint16_t len;      /* data len within sector */
-	uint8_t crc8_data; /* crc8 check of the entry */
-	uint8_t crc8;      /* crc8 check of the entry */
-} __packed;
-
-static struct emds_fs ctx;
-static uint16_t m_sec_size;
-static uint16_t m_sec_cnt;
-static const struct flash_area *m_fa;
+static struct emds_partition partition[PARTITIONS_NUM_MAX];
 
 /** Local functions ***********************************************************/
-
-static int flash_block_cmp(uint32_t addr, const void *data, size_t len)
+static void *emds_flash_setup(void)
 {
-	const uint8_t *data8 = (const uint8_t *)data;
-	int rc;
-	size_t bytes_to_cmp, block_size;
-	uint8_t buf[32];
+	const uint8_t id[] = {FIXED_PARTITION_ID(emds_partition_0),
+			      FIXED_PARTITION_ID(emds_partition_1)};
 
-	block_size = sizeof(buf) & ~(4 - 1U);
-
-	while (len) {
-		bytes_to_cmp = MIN(block_size, len);
-		rc = flash_read(m_test_fd.fd, addr, buf, bytes_to_cmp);
-		if (rc) {
-			return rc;
-		}
-		rc = memcmp(data8, buf, bytes_to_cmp);
-		if (rc) {
-			return -ENOTSUP;
-		}
-
-		len -= bytes_to_cmp;
-		addr += bytes_to_cmp;
-		data8 += bytes_to_cmp;
+	for (int i = 0; i < ARRAY_SIZE(id); i++) {
+		zassert_ok(flash_area_open(id[i], &partition[i].fa), "Failed to open flash area %d",
+			   id[i]);
+		zassert_ok(emds_flash_init(&partition[i]), "Failed to initialize flash area %d",
+			   id[i]);
 	}
-
-	return 0;
-}
-
-static int flash_cmp_const(uint32_t addr, uint8_t value, size_t len)
-{
-	int rc;
-	size_t bytes_to_cmp, block_size;
-	uint8_t cmp[32];
-
-	block_size = sizeof(cmp) & ~(4 - 1U);
-
-	memset(cmp, value, block_size);
-	while (len) {
-		bytes_to_cmp = MIN(block_size, len);
-		rc = flash_block_cmp(addr, cmp, bytes_to_cmp);
-
-		if (rc) {
-			return rc;
-		}
-		len -= bytes_to_cmp;
-		addr += bytes_to_cmp;
-	}
-	return 0;
-}
-
-static inline size_t align_size(size_t len)
-{
-	return (len + (EMDS_FLASH_BLOCK_SIZE - 1U)) & ~(EMDS_FLASH_BLOCK_SIZE - 1U);
-}
-
-static int data_write(const void *data, size_t len)
-{
-	const uint8_t *data8 = (const uint8_t *)data;
-	int rc = 0;
-	off_t offset;
-	size_t blen;
-	size_t temp_len = len;
-	uint8_t buf[32];
-
-	if (!temp_len) {
-		/* Nothing to write, avoid changing the flash protection */
-		return 0;
-	}
-
-	offset = m_test_fd.offset;
-	offset += m_test_fd.data_wra_offset & ADDR_OFFS_MASK;
-
-	blen = temp_len & ~(4 - 1U);
-
-	/* Writes multiples of 4 bytes to flash */
-	if (blen > 0) {
-		rc = flash_write(m_test_fd.fd, offset, data8, blen);
-		if (rc) {
-			/* flash write error */
-			goto end;
-		}
-		temp_len -= blen;
-		offset += blen;
-		data8 += blen;
-	}
-
-	/* Writes remaining (len < 4) bytes to flash */
-	/* Should NEVER be used for ATE!? */
-	if (temp_len) {
-		memcpy(buf, data8, temp_len);
-		memset(buf + temp_len, 0, 4 - temp_len);
-
-		rc = flash_write(m_test_fd.fd, offset, buf, 4);
-	}
-
-end:
-	m_test_fd.data_wra_offset += align_size(len);
-	return rc;
-
-}
-
-static void *fs_init(void)
-{
-	int rc;
-	uint32_t sector_cnt = 1;
-	struct flash_sector hw_flash_sector;
-	size_t emds_flash_size = 0;
-	uint16_t cnt = 0;
-
-	rc = flash_area_open(FIXED_PARTITION_ID(emds_storage), &m_fa);
-	__ASSERT(rc == 0, "Failed opening flash area (err:%d)", rc);
-
-	rc = flash_area_get_sectors(FIXED_PARTITION_ID(emds_storage), &sector_cnt,
-				    &hw_flash_sector);
-
-	__ASSERT(rc == 0, "Failed when getting sector information (err:%d", rc);
-	__ASSERT(hw_flash_sector.fs_size <= UINT16_MAX, "fs_size (%u) exceeds UINT16_MAX",
-		 hw_flash_sector.fs_size);
-
-	emds_flash_size += hw_flash_sector.fs_size;
-	if (emds_flash_size <= m_fa->fa_size) {
-		cnt++;
-	}
-
-	m_sec_size = hw_flash_sector.fs_size;
-	m_sec_cnt = cnt;
-	ctx.offset = m_fa->fa_off;
-	ctx.sector_cnt = m_sec_cnt;
-	ctx.sector_size = m_sec_size;
-
-	m_test_fd.fd = m_fa->fa_dev;
-	m_test_fd.offset = m_fa->fa_off;
-	m_test_fd.size = hw_flash_sector.fs_size;
-	m_test_fd.ate_idx_start =
-		m_fa->fa_off + hw_flash_sector.fs_size - align_size(sizeof(struct test_ate));
-	m_test_fd.data_wra_offset = 0;
 
 	return NULL;
 }
 
-static int flash_clear(void)
+static void emds_flash_partitions_erase(void *fixture)
 {
-	m_test_fd.data_wra_offset = 0;
-	return flash_erase(m_test_fd.fd, m_test_fd.offset, m_test_fd.size);
+	(void)fixture;
+
+	for (int i = 0; i < PARTITIONS_NUM_MAX; i++) {
+		zassert_ok(emds_flash_erase_partition(&partition[i]),
+			   "Failed to erase partition %d", i);
+	}
 }
 
-static int entry_write(uint32_t ate_wra, uint16_t id, const void *data, size_t len)
+static struct emds_snapshot_metadata *
+snapshot_make(const struct emds_partition *partition,
+	      struct emds_snapshot_metadata *previous_snapshot, off_t metadata_off,
+	      bool is_md_crc_correct, bool is_d_crc_correct, uint32_t fresh_cnt)
 {
-	struct test_ate entry = {
-		.id = id,
-		.offset = m_test_fd.data_wra_offset,
-		.len = (uint16_t)len,
-		.crc8_data = crc8_ccitt(0xff, data, len),
-		.crc8 = crc8_ccitt(0xff, &entry, offsetof(struct test_ate, crc8)),
-	};
+	static struct emds_snapshot_metadata metadata;
+	uint8_t data[128 + sizeof(struct emds_data_entry)] = {0};
+	uint8_t data_len = sys_rand32_get() % 128 + sizeof(struct emds_data_entry) + 1;
 
-	data_write(data, len);
-	return flash_write(m_test_fd.fd, ate_wra, &entry, sizeof(struct test_ate));
-}
-
-static int ate_invalidate_write(uint32_t ate_wra)
-{
-	uint8_t invalid[8];
-
-	memset(invalid, 0, sizeof(invalid));
-
-	return flash_write(m_test_fd.fd, ate_wra, invalid, sizeof(invalid));
-}
-
-static int ate_corrupt_write(uint32_t ate_wra)
-{
-	uint8_t corrupt[8];
-
-	memset(corrupt, 69, sizeof(corrupt));
-
-	return flash_write(m_test_fd.fd, ate_wra, corrupt, sizeof(corrupt));
-}
-
-static int corrupt_write_all(void)
-{
-	uint8_t corrupt[32];
-
-	memset(corrupt, 69, sizeof(corrupt));
-
-	for (uint32_t i = m_test_fd.offset; i < m_test_fd.offset + m_test_fd.size; i += 32) {
-		flash_write(m_test_fd.fd, i, corrupt, sizeof(corrupt));
+	for (int i = 0; i < data_len; i++) {
+		data[i] = sys_rand32_get() % 256;
 	}
 
-	return 0;
-}
+	if (previous_snapshot) {
+		metadata.data_instance_off = previous_snapshot->data_instance_off +
+					     ROUND_UP(previous_snapshot->data_instance_len,
+						      partition->fp->write_block_size);
+	} else {
+		memset(&metadata, 0, sizeof(metadata));
+		metadata.marker = EMDS_SNAPSHOT_METADATA_MARKER;
+	}
+	metadata.data_instance_len = data_len;
+	metadata.fresh_cnt = fresh_cnt;
 
-static void device_reset(void)
-{
-	memset(&ctx, 0, sizeof(ctx));
-	ctx.sector_cnt = m_sec_cnt;
-	ctx.sector_size = m_sec_size;
-	ctx.offset = m_fa->fa_off;
-	ctx.flash_dev = m_fa->fa_dev;
-}
+	if (REGIONS_OVERLAP(metadata_off, sizeof(struct emds_snapshot_metadata),
+			    metadata.data_instance_off,
+			    ROUND_UP(data_len, partition->fp->write_block_size)) ||
+	    metadata_off <= metadata.data_instance_off) {
+		return NULL;
+	}
 
+	metadata.metadata_crc =
+		crc32_k_4_2_update(0, (const unsigned char *)&metadata,
+				   offsetof(struct emds_snapshot_metadata, metadata_crc));
+	if (!is_md_crc_correct) {
+		metadata.metadata_crc++;
+	}
+
+	metadata.snapshot_crc = crc32_k_4_2_update(0, data, data_len);
+	if (!is_d_crc_correct) {
+		metadata.snapshot_crc++;
+	}
+
+	zassert_ok(flash_area_write(partition->fa, metadata_off, &metadata, sizeof(metadata)),
+		   "Failed to write metadata to flash area");
+
+	data_len = ROUND_UP(data_len, sizeof(uint32_t));
+	zassert_ok(flash_area_write(partition->fa, metadata.data_instance_off, data, data_len),
+		   "Failed to write data to flash area");
+
+	return &metadata;
+}
 /** End Local functions *******************************************************/
 
-ZTEST(emds_flash_tests, test_initialize)
+/* Test checks scanning the empty partition */
+ZTEST(emds_flash, test_scanning_empty_partition)
 {
-	/* Check that device inits on first attempt, and rejects init on consecutive attempts */
-	flash_clear();
-	device_reset();
+	struct emds_snapshot_candidate candidate;
 
-	zassert_false(emds_flash_init(&ctx), "Error when initializing");
-	zassert_true(emds_flash_init(&ctx), "Should not init more than once");
+	candidate.metadata.fresh_cnt = 0;
+	zassert_ok(emds_flash_scan_partition(&partition[0], &candidate),
+		   "Failed to scan partition 0");
+	zassert_equal(candidate.metadata.fresh_cnt, 0,
+		      "Fresh count has been changed for empty partition");
 }
 
-ZTEST(emds_flash_tests, test_rd_wr_simple)
+/* Test checks that the partition scanning behaves equally for both partitions */
+ZTEST(emds_flash, test_scanning_partitions_equality)
 {
-	/* Init the device, performs prepare and does a write and read.
-	 * Verifies that entry is valid
-	 */
-	uint8_t data_in[8] = { 1, 2, 3, 4, 5, 6, 7, 8 };
-	uint8_t data_out[8] = { 0 };
+	struct emds_snapshot_candidate candidate;
+	struct emds_snapshot_metadata *metadata = NULL;
+	off_t metadata_off = partition[0].fa->fa_size;
+	uint32_t fresh_cnt = 0;
 
-	flash_clear();
-	device_reset();
-
-	zassert_false(emds_flash_init(&ctx), "Error when initializing");
-	zassert_false(emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size), "Prepare failed");
-	zassert_false(emds_flash_write(&ctx, 1, data_in, sizeof(data_in)) < 0, "Error when write");
-	zassert_false(emds_flash_read(&ctx, 1, data_out, sizeof(data_out)) < 0, "Error when read");
-	zassert_false(memcmp(data_out, data_in, sizeof(data_out)), "Retrived wrong value");
-}
-
-ZTEST(emds_flash_tests, test_flash_recovery)
-{
-	char data_in1[9] = "Deadbeef";
-	char data_in2[8] = "Beafded";
-	char data_in3[13] = "Deadbeefface";
-	char data_out[32] = {0};
-	uint32_t idx;
-
-	flash_clear();
-	device_reset();
-
-	/* Entries:
-	 *    #1: Empty
-	 *    #2: Empty
-	 *    #3: Empty
-	 *    #4: Empty
-	 *    #5: Empty
-	 *    #6: Empty
-	 *    ...
-	 * Expect: Normal behavior
-	 */
-	zassert_false(emds_flash_init(&ctx), "Error when initializing");
-	zassert_false(ctx.force_erase, "Expected false");
-	zassert_equal(m_test_fd.ate_idx_start, ctx.ate_wra, "%X not equal to %X",
-		      m_test_fd.ate_idx_start, ctx.ate_wra);
-	device_reset();
-
-	/* Entries:
-	 *     #1: Valid
-	 *     #2: Empty
-	 *     #3: Empty
-	 *     #4: Empty
-	 *     #5: Empty
-	 *     #6: Empty
-	 *     ...
-	 * Expect: Normal behavior
-	 */
-	idx = m_test_fd.ate_idx_start;
-	entry_write(idx, 1, data_in1, sizeof(data_in1));
-	idx -= align_size(sizeof(struct test_ate));
-	zassert_false(emds_flash_init(&ctx), "Error when initializing");
-	zassert_true(emds_flash_read(&ctx, 1, data_out, sizeof(data_in1)) > 0, "Could not read");
-	(void)emds_flash_read(&ctx, 1, data_out, sizeof(data_in1));
-	zassert_false(ctx.force_erase, "Expected false");
-	zassert_equal(idx, ctx.ate_wra, "Addr not equal");
-	zassert_false(memcmp(data_in1, data_out, sizeof(data_in1)), "Not same data");
-	device_reset();
-
-	/* Entries:
-	 *     #1: Inval
-	 *     #2: Valid
-	 *     #3: Empty
-	 *     #4: Empty
-	 *     #5: Empty
-	 *     #6: Empty
-	 *     ...
-	 * Expect: Normal behavior
-	 */
-	idx = m_test_fd.ate_idx_start;
-	ate_invalidate_write(idx);
-	idx -= align_size(sizeof(struct test_ate));
-	entry_write(idx, 2, data_in2, sizeof(data_in2));
-	idx -= align_size(sizeof(struct test_ate));
-	zassert_false(emds_flash_init(&ctx), "Error when initializing");
-	zassert_false(ctx.force_erase, "Expected false");
-	zassert_equal(idx, ctx.ate_wra, "Addr not equal");
-	zassert_true(emds_flash_read(&ctx, 2, data_out, sizeof(data_in2)) > 0, "Could not read");
-	zassert_false(memcmp(data_in2, data_out, sizeof(data_in2)), "Not same data");
-	device_reset();
-
-	/* Entries:
-	 *     #1: Inval
-	 *     #2: Valid
-	 *     #3: Inval
-	 *     #4: Valid
-	 *     #5: Empty
-	 *     #6: Empty
-	 *     ...
-	 * Expect:  Unexpected behavior
-	 */
-	ate_invalidate_write(idx);
-	idx -= align_size(sizeof(struct test_ate));
-	entry_write(idx, 3, data_in3, sizeof(data_in3));
-	idx -= align_size(sizeof(struct test_ate));
-	zassert_false(emds_flash_init(&ctx), "Error when initializing");
-	zassert_true(ctx.force_erase, "Expected true");
-	zassert_equal(idx, ctx.ate_wra, "Addr not equal");
-	zassert_true(emds_flash_read(&ctx, 2, data_out, sizeof(data_in2)) > 0, "Could not read");
-	zassert_false(memcmp(data_in2, data_out, sizeof(data_in2)), "Not same data");
-	zassert_true(emds_flash_read(&ctx, 3, data_out, sizeof(data_in3)) > 0, "Could not read");
-	zassert_false(memcmp(data_in3, data_out, sizeof(data_in3)), "Not same data");
-	device_reset();
-
-	/* Entries:
-	 *     #1: Inval
-	 *     #2: Inval
-	 *     #3: Inval
-	 *     #4: Valid
-	 *     #5: Corrupt
-	 *     #6: Empty
-	 *     ...
-	 * Expect:  Unexpected behavior.
-	 *     - Erase flag raised.
-	 *     - Should be able to recover valid entry
-	 */
-	idx = m_test_fd.ate_idx_start;
-	for (size_t i = 0; i < 3; i++) {
-		ate_invalidate_write(idx);
-		idx -= align_size(sizeof(struct test_ate));
+	candidate.metadata.fresh_cnt = 0;
+	for (int i = 0; i < CONFIG_EMDS_MAX_CANDIDATES; i++) {
+		metadata_off -= sizeof(struct emds_snapshot_metadata);
+		fresh_cnt++;
+		metadata =
+			snapshot_make(&partition[0], metadata, metadata_off, true, true, fresh_cnt);
+		zassert_not_null(metadata, "Failed to create snapshot on partition 0");
 	}
 
-	idx -= align_size(sizeof(struct test_ate));
-	ate_corrupt_write(idx);
-	idx -= align_size(sizeof(struct test_ate));
-	zassert_false(emds_flash_init(&ctx), "Error when initializing");
-	zassert_true(ctx.force_erase, "Expected true");
-	zassert_equal(idx, ctx.ate_wra, "Addr not equal");
-	zassert_true(emds_flash_read(&ctx, 3, data_out, sizeof(data_in3)) > 0, "Could not read");
-	zassert_false(memcmp(data_in3, data_out, sizeof(data_in3)), "Not same data");
-}
-
-ZTEST(emds_flash_tests, test_flash_recovery_corner_case)
-{
-	flash_clear();
-	device_reset();
-
-	/* Fill flash with garbage. Expect 0 space left and erase on prepare */
-	corrupt_write_all();
-	zassert_false(emds_flash_init(&ctx), "Error when initializing");
-	zassert_true(ctx.force_erase, "Force erase should be true");
-	zassert_equal(0, emds_flash_free_space_get(&ctx), "Expected no free space");
-	device_reset();
-}
-
-
-ZTEST(emds_flash_tests, test_invalidate_on_prepare)
-{
-	char data_in[9] = "Deadbeef";
-	char data_out[9] = {0};
-
-	flash_clear();
-	device_reset();
-
-	uint32_t idx = m_test_fd.ate_idx_start;
-
-	for (size_t i = 0; i < 5; i++) {
-		entry_write(idx, i, data_in, sizeof(data_in));
-		idx -= align_size(sizeof(struct test_ate));
+	metadata = NULL;
+	metadata_off = partition[1].fa->fa_size;
+	for (int i = 0; i < CONFIG_EMDS_MAX_CANDIDATES; i++) {
+		metadata_off -= sizeof(struct emds_snapshot_metadata);
+		fresh_cnt++;
+		metadata =
+			snapshot_make(&partition[1], metadata, metadata_off, true, true, fresh_cnt);
+		zassert_not_null(metadata, "Failed to create snapshot on partition 1");
 	}
 
-	zassert_false(emds_flash_init(&ctx), "Error when initializing");
-	zassert_false(ctx.force_erase, "Force erase should be false");
-	zassert_equal(idx, ctx.ate_wra, "Addr not equal");
+	zassert_ok(emds_flash_scan_partition(&partition[0], &candidate),
+		   "Failed to scan partition 0");
+	zassert_equal(candidate.metadata_off,
+		      partition[0].fa->fa_size -
+			      CONFIG_EMDS_MAX_CANDIDATES * sizeof(struct emds_snapshot_metadata),
+		      "Metadata offset mismatch for partition 0");
+	zassert_equal(candidate.metadata.fresh_cnt, CONFIG_EMDS_MAX_CANDIDATES,
+		      "Fresh count mismatch for partition 0");
 
-	for (size_t i = 0; i < 5; i++) {
-		zassert_true(emds_flash_read(&ctx, i, data_out, sizeof(data_in)) > 0,
-			     "Could not read");
-		zassert_false(memcmp(data_in, data_out, sizeof(data_in)), "Not same data");
-		memset(data_out, 0, sizeof(data_out));
+	zassert_ok(emds_flash_scan_partition(&partition[1], &candidate),
+		   "Failed to scan partition 1");
+	zassert_equal(candidate.metadata_off,
+		      partition[1].fa->fa_size -
+			      CONFIG_EMDS_MAX_CANDIDATES * sizeof(struct emds_snapshot_metadata),
+		      "Metadata offset mismatch for partition 1");
+	zassert_equal(candidate.metadata.fresh_cnt, CONFIG_EMDS_MAX_CANDIDATES * 2,
+		      "Fresh count mismatch for partition 1");
+}
+
+/* Test checks that emds scans partitions on full deepness. */
+ZTEST(emds_flash, test_scanning_partitions_deepness)
+{
+	struct emds_snapshot_candidate candidate;
+	int partition_index = sys_rand32_get() % PARTITIONS_NUM_MAX;
+	struct emds_snapshot_metadata *metadata = NULL;
+	off_t metadata_off = partition[partition_index].fa->fa_size;
+	uint32_t fresh_cnt = 0;
+
+	candidate.metadata.fresh_cnt = 0;
+	do {
+		metadata_off -= sizeof(struct emds_snapshot_metadata);
+		fresh_cnt++;
+		metadata = snapshot_make(&partition[partition_index], metadata, metadata_off, true,
+					 true, fresh_cnt);
+	} while (metadata != NULL);
+	fresh_cnt--;
+
+	zassert_ok(emds_flash_scan_partition(&partition[partition_index], &candidate),
+		   "Failed to scan partition %d", partition_index);
+	zassert_equal(candidate.metadata.fresh_cnt, fresh_cnt, "Fresh count mismatch");
+}
+
+/* Test checks that emds always finds the freshest snapshot. */
+ZTEST(emds_flash, test_scanning_partitions_freshness)
+{
+	struct emds_snapshot_candidate candidate;
+	int partition_index = sys_rand32_get() % PARTITIONS_NUM_MAX;
+	struct emds_snapshot_metadata *metadata = NULL;
+	off_t metadata_off = partition[partition_index].fa->fa_size;
+	uint32_t fresh_cnt = 0;
+	uint32_t fresh_cnt_max = 0;
+
+	candidate.metadata.fresh_cnt = 0;
+	do {
+		metadata_off -= sizeof(struct emds_snapshot_metadata);
+		fresh_cnt = sys_rand32_get() % 100 + 1;
+		metadata = snapshot_make(&partition[partition_index], metadata, metadata_off, true,
+					 true, fresh_cnt);
+		if (fresh_cnt > fresh_cnt_max && metadata != NULL) {
+			fresh_cnt_max = fresh_cnt;
+		}
+	} while (metadata != NULL);
+
+	zassert_ok(emds_flash_scan_partition(&partition[partition_index], &candidate),
+		   "Failed to scan partition %d", partition_index);
+	zassert_equal(candidate.metadata.fresh_cnt, fresh_cnt_max, "Fresh count mismatch");
+}
+
+/* Test checks that emds ignores snapshot with wrong crc (both data and metadata). */
+ZTEST(emds_flash, test_scanning_partitions_wrong_crc)
+{
+	struct emds_snapshot_candidate candidate;
+	int partition_index = sys_rand32_get() % PARTITIONS_NUM_MAX;
+	struct emds_snapshot_metadata *metadata = NULL;
+	off_t metadata_off = partition[partition_index].fa->fa_size;
+	uint32_t fresh_cnt = 1;
+
+	candidate.metadata.fresh_cnt = 0;
+	metadata_off -= sizeof(struct emds_snapshot_metadata);
+	metadata = snapshot_make(&partition[partition_index], metadata, metadata_off, true, true,
+				 fresh_cnt);
+	zassert_not_null(metadata, "Failed to create snapshot on partition %d", partition_index);
+
+	for (int i = 0; i < 2; i++) {
+		metadata_off -= sizeof(struct emds_snapshot_metadata);
+		fresh_cnt++;
+		metadata = snapshot_make(&partition[partition_index], metadata, metadata_off, false,
+					 true, fresh_cnt);
+		zassert_not_null(metadata, "Failed to create snapshot on partition %d",
+				 partition_index);
 	}
 
-	zassert_false(emds_flash_prepare(&ctx, 0), "Error when preparing");
-
-	device_reset();
-	zassert_false(emds_flash_init(&ctx), "Error when initializing");
-
-	/* Expect the free storage integrity to fail due to no valid ATE and invalid presence.
-	 * This occurs only if the user does not store any new entry after emds_flash_prepare
-	 */
-	zassert_true(ctx.force_erase, "Expected true");
-	for (size_t i = 0; i < 5; i++) {
-		zassert_false(emds_flash_read(&ctx, i, data_out, sizeof(data_in)) > 0,
-			      "Should not be able to read");
-	}
-	zassert_false(emds_flash_prepare(&ctx, 0), "Error when preparing");
-
-	/* Reset again without writing */
-	device_reset();
-
-	/* If the device yet again runs emds_flash_prepare without writing the flash should
-	 * be in a clean state
-	 */
-	zassert_false(ctx.force_erase, "Force erase should be false");
-}
-
-ZTEST(emds_flash_tests, test_clear_on_strange_flash)
-{
-	flash_clear();
-	device_reset();
-
-	/* Entries:
-	 *     #1: Corrupt
-	 *     #2: Empty
-	 *     #3: Empty
-	 *     ...
-	 * Expect: Unexpected behavior
-	 */
-	ate_corrupt_write(m_test_fd.ate_idx_start);
-	zassert_false(emds_flash_init(&ctx), "Error when initializing");
-	zassert_true(ctx.force_erase, "Force erase should be true");
-	zassert_false(emds_flash_prepare(&ctx, 0), "Error when preparing");
-	zassert_false(flash_cmp_const(m_test_fd.offset, 0xff, m_test_fd.size), "Flash not cleared");
-}
-
-ZTEST(emds_flash_tests, test_permission)
-{
-	char data_in[8] = "Deadbeef";
-	char data_out[8] = {0};
-
-	flash_clear();
-	device_reset();
-
-	zassert_true(emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size) == -EACCES,
-		     "Prepare did not fail");
-	zassert_true(emds_flash_read(&ctx, 1, data_out, sizeof(data_in)) == -EACCES,
-		     "Should not be able to read");
-	zassert_true(emds_flash_write(&ctx, 1, data_in, sizeof(data_in)) == -EACCES,
-		     "Should not be able to read");
-
-	zassert_false(emds_flash_init(&ctx), "Error when initializing");
-
-	zassert_true(emds_flash_write(&ctx, 1, data_in, sizeof(data_in)) == -EACCES,
-		     "Should not be able to read");
-
-	zassert_false(emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size), "Prepare failed");
-
-	zassert_true(emds_flash_write(&ctx, 1, data_in, sizeof(data_in)) == sizeof(data_in),
-				      "Should be able to write");
-	zassert_true(emds_flash_read(&ctx, 1, data_out, sizeof(data_in)) == sizeof(data_in),
-				     "Should be able to read");
-	zassert_false(memcmp(data_out, data_in, sizeof(data_out)), "Retrived wrong value");
-
-}
-
-ZTEST(emds_flash_tests, test_overflow)
-{
-	char data_in[8] = "Deadbee";
-	char data_out[8] = {0};
-
-	flash_clear();
-	device_reset();
-
-	zassert_false(emds_flash_init(&ctx), "Error when initializing");
-	zassert_false(emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size), "Prepare failed");
-
-	uint16_t test_cnt = 0;
-
-	while (emds_flash_free_space_get(&ctx)) {
-		emds_flash_write(&ctx, test_cnt, data_in, sizeof(data_in));
-		data_in[0]++;
-		test_cnt++;
+	for (int i = 0; i < 2; i++) {
+		metadata_off -= sizeof(struct emds_snapshot_metadata);
+		fresh_cnt++;
+		metadata = snapshot_make(&partition[partition_index], metadata, metadata_off, true,
+					 false, fresh_cnt);
+		zassert_not_null(metadata, "Failed to create snapshot on partition %d",
+				 partition_index);
 	}
 
-	/* Try to write to full flash */
-	zassert_true(emds_flash_write(&ctx, 1, data_in, sizeof(data_in)) < 0,
-				      "Should not be able to write");
+	zassert_ok(emds_flash_scan_partition(&partition[partition_index], &candidate),
+		   "Failed to scan partition %d", partition_index);
+	zassert_equal(candidate.metadata.fresh_cnt, 1, "Fresh count mismatch");
+}
 
-	device_reset();
-	zassert_false(emds_flash_init(&ctx), "Error when initializing");
+/* Test checks that emds scanning has limitation according to KConfig options. */
+ZTEST(emds_flash, test_scanning_limitations)
+{
+	struct emds_snapshot_candidate candidate;
+	int partition_index = sys_rand32_get() % PARTITIONS_NUM_MAX;
+	struct emds_snapshot_metadata *metadata = NULL;
+	off_t metadata_off = partition[partition_index].fa->fa_size;
+	uint32_t fresh_cnt = 1;
 
-	data_in[0] = 'D';
-	for (size_t i = 0; i < test_cnt; i++) {
-		(void)emds_flash_read(&ctx, i, data_out, sizeof(data_out));
-		zassert_false(memcmp(data_out, data_in, sizeof(data_out)), "Retrived wrong value");
-		memset(data_out, 0, sizeof(data_out));
-		data_in[0]++;
+	candidate.metadata.fresh_cnt = 0;
+
+	metadata_off -= sizeof(struct emds_snapshot_metadata);
+	metadata = snapshot_make(&partition[partition_index], metadata, metadata_off, true, true,
+				 fresh_cnt);
+	zassert_not_null(metadata, "Failed to create snapshot on partition %d", partition_index);
+
+	for (int i = 0; i < CONFIG_EMDS_MAX_CANDIDATES; i++) {
+		metadata_off -= sizeof(struct emds_snapshot_metadata);
+		fresh_cnt++;
+		metadata = snapshot_make(&partition[partition_index], metadata, metadata_off, true,
+					 false, fresh_cnt);
+		zassert_not_null(metadata, "Failed to create snapshot on partition %d",
+				 partition_index);
 	}
 
+	for (int i = 0; i <= CONFIG_EMDS_SCANNING_FAILURES; i++) {
+		metadata_off -= sizeof(struct emds_snapshot_metadata);
+		fresh_cnt++;
+		metadata = snapshot_make(&partition[partition_index], metadata, metadata_off, false,
+					 true, fresh_cnt);
+		zassert_not_null(metadata, "Failed to create snapshot on partition %d",
+				 partition_index);
+	}
 
-	zassert_false(emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size), "Prepare failed");
+	fresh_cnt++;
+	metadata_off -= sizeof(struct emds_snapshot_metadata);
+	metadata = snapshot_make(&partition[partition_index], metadata, metadata_off, true, true,
+				 fresh_cnt);
+	zassert_not_null(metadata, "Failed to create snapshot on partition %d", partition_index);
 
-	data_in[0] = 'D';
-	emds_flash_write(&ctx, 0, data_in, sizeof(data_in));
-
-	device_reset();
-	zassert_false(emds_flash_init(&ctx), "Error when initializing");
-
-	emds_flash_read(&ctx, 0, data_out, sizeof(data_out));
-	zassert_false(memcmp(data_out, data_in, sizeof(data_out)), "Retrived wrong value");
-
-	zassert_equal(emds_flash_free_space_get(&ctx),
-		      m_test_fd.size - (align_size(sizeof(data_out)) +
-					align_size(sizeof(struct test_ate)) * 2),
-		      "");
+	zassert_ok(emds_flash_scan_partition(&partition[partition_index], &candidate),
+		   "Failed to scan partition %d", partition_index);
+	zassert_equal(candidate.metadata.fresh_cnt, 0, "Fresh count mismatch");
 }
 
-
-ZTEST(emds_flash_tests, test_prepare_overflow)
+/* Test checks allocation snapshot on the empty partition */
+ZTEST(emds_flash, test_allocation_empty_partition)
 {
-	flash_clear();
-	device_reset();
+	int partition_index = sys_rand32_get() % PARTITIONS_NUM_MAX;
+	struct emds_snapshot_candidate allocated_snapshot = {
+		.partition_index = partition_index,
+		.metadata.fresh_cnt = 1
+	};
 
-	zassert_false(emds_flash_init(&ctx), "Error when initializing");
-	zassert_true(emds_flash_prepare(&ctx, m_test_fd.size), "Prepare should return error");
-	zassert_false(emds_flash_prepare(&ctx, m_test_fd.size - 16), "Prepare failed");
-	zassert_false(emds_flash_prepare(&ctx, m_test_fd.size - 24), "Prepare failed");
+	zassert_ok(emds_flash_allocate_snapshot(&partition[partition_index], NULL,
+						&allocated_snapshot, 100),
+		   "Failed to allocate snapshot on partition %d", partition_index);
+
+	zassert_equal(allocated_snapshot.partition_index, partition_index,
+		      "Partition index is not equal to the requested one");
+	zassert_equal(allocated_snapshot.metadata_off,
+		      partition[partition_index].fa->fa_size -
+			      sizeof(struct emds_snapshot_metadata),
+		      "Metadata offset is not equal to the end of the partition");
+	zassert_equal(allocated_snapshot.metadata.data_instance_off, 0,
+		      "Data instance offset is not equal to 0 for the empty partition");
+	zassert_equal(allocated_snapshot.metadata.data_instance_len, 100,
+		      "Data instance length is not equal to requested for the empty partition");
+	zassert_equal(allocated_snapshot.metadata.fresh_cnt, 1,
+		      "Fresh count is not equal to 1 for the empty partition");
+	zassert_equal(allocated_snapshot.metadata.metadata_crc,
+		      crc32_k_4_2_update(0, (const unsigned char *)&allocated_snapshot.metadata,
+					 offsetof(struct emds_snapshot_metadata, metadata_crc)),
+		      "Metadata CRC is not equal to calculated for the empty partition");
 }
 
-ZTEST(emds_flash_tests, test_full_corrupt_recovery)
+/* Test checks allocation snapshot on the same partition after the freshest one. */
+ZTEST(emds_flash, test_allocation_after_freshest_same_partition)
 {
-	flash_clear();
-	device_reset();
+	struct emds_snapshot_candidate freshest_snapshot;
+	int partition_index = sys_rand32_get() % PARTITIONS_NUM_MAX;
+	struct emds_snapshot_candidate allocated_snapshot = {
+		.partition_index = partition_index,
+		.metadata.fresh_cnt = 2
+	};
+	struct emds_snapshot_metadata *metadata = NULL;
+	off_t metadata_off =
+		partition[partition_index].fa->fa_size - sizeof(struct emds_snapshot_metadata);
+	uint32_t fresh_cnt = 1;
 
-	/* Fill flash with garbage. Expect 0 space left and erase on prepare */
-	corrupt_write_all();
-	zassert_false(emds_flash_init(&ctx), "Error when initializing");
-	zassert_true(ctx.force_erase, "Force erase should be true");
-	zassert_equal(0, emds_flash_free_space_get(&ctx), "Expected no free space");
+	metadata = snapshot_make(&partition[partition_index], metadata, metadata_off, true, true,
+				 fresh_cnt);
+	zassert_not_null(metadata, "Failed to create snapshot on partition %d", partition_index);
+	freshest_snapshot.metadata_off = metadata_off;
+	freshest_snapshot.metadata = *metadata;
 
-	zassert_false(emds_flash_prepare(&ctx, 0), "Prepare failed");
-	zassert_equal(m_test_fd.size - align_size(sizeof(struct test_ate)),
-		      emds_flash_free_space_get(&ctx), "Expected no free space");
+	zassert_ok(emds_flash_allocate_snapshot(&partition[partition_index], &freshest_snapshot,
+						&allocated_snapshot, 100),
+		   "Failed to allocate snapshot on partition %d", partition_index);
 
-	zassert_false(flash_cmp_const(m_test_fd.offset, 0xff, m_test_fd.size), "Flash not cleared");
-	device_reset();
+	zassert_equal(allocated_snapshot.partition_index, partition_index,
+		      "Partition index is not equal to the requested one");
+	zassert_equal(allocated_snapshot.metadata_off,
+		      partition[partition_index].fa->fa_size -
+			      2 * sizeof(struct emds_snapshot_metadata),
+		      "Metadata offset is not equal to expected");
+	zassert_equal(allocated_snapshot.metadata.data_instance_off,
+		      ROUND_UP(metadata->data_instance_len,
+			       partition[partition_index].fp->write_block_size),
+		      "Data instance offset is not equal to expected");
+	zassert_equal(allocated_snapshot.metadata.data_instance_len, 100,
+		      "Data instance length is not equal to requested");
+	zassert_equal(allocated_snapshot.metadata.fresh_cnt, 2, "Fresh count is not equal to 2");
+	zassert_equal(allocated_snapshot.metadata.metadata_crc,
+		      crc32_k_4_2_update(0, (const unsigned char *)&allocated_snapshot.metadata,
+					 offsetof(struct emds_snapshot_metadata, metadata_crc)),
+		      "Metadata CRC is not equal to calculated for the empty partition");
 }
 
-ZTEST(emds_flash_tests, test_corrupted_data)
+/* Test checks allocation snapshot with data size larger than partition size.
+ */
+ZTEST(emds_flash, test_allocation_data_larger_than_partition)
 {
-	char corrupt[4] = {0};
-	char data_in[8] = "Deadbee";
-	char data_out[8] = {0};
+	int partition_index = sys_rand32_get() % PARTITIONS_NUM_MAX;
+	size_t data_size = partition[partition_index].fa->fa_size + 100;
+	struct emds_snapshot_candidate allocated_snapshot;
 
-	flash_clear();
-	device_reset();
-
-	zassert_false(emds_flash_init(&ctx), "Error when initializing");
-	zassert_false(emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size), "Prepare failed");
-
-	zassert_true(emds_flash_write(&ctx, 1, data_in, sizeof(data_in)) == sizeof(data_in),
-				      "Should be able to write");
-
-	zassert_true(emds_flash_read(&ctx, 1, data_out, sizeof(data_in)) == sizeof(data_in),
-				     "Should be able to read");
-
-	/* Corrupt data entry */
-	flash_write(m_test_fd.fd, m_test_fd.data_wra_offset + m_test_fd.offset, corrupt,
-		    sizeof(corrupt));
-
-	/* Reset */
-	device_reset();
-	zassert_false(emds_flash_init(&ctx), "Error when initializing");
-
-	zassert_true(emds_flash_read(&ctx, 1, data_out, sizeof(data_in)) < 0,
-				     "Should not be able to read");
+	zassert_equal(emds_flash_allocate_snapshot(&partition[partition_index], NULL,
+						   &allocated_snapshot, data_size),
+		      -EINVAL,
+		      "Expected -EINVAL when trying to allocate snapshot with data size larger "
+		      "than partition size");
 }
 
-ZTEST(emds_flash_tests, test_write_speed)
+/* Test checks allocation snapshot on partition if partition with the freshest snapshot is full.
+ */
+ZTEST(emds_flash, test_allocation_next_partition_if_freshest_full)
 {
-	char data_in[EMDS_FLASH_BLOCK_SIZE];
-	uint8_t data_in_big[1024];
+	struct emds_snapshot_candidate freshest_snapshot;
+	int partition_index = sys_rand32_get() % PARTITIONS_NUM_MAX;
+	struct emds_snapshot_candidate allocated_snapshot;
+	struct emds_snapshot_metadata *metadata = NULL;
+	struct emds_snapshot_metadata metadata_prev;
+	off_t metadata_off = partition[partition_index].fa->fa_size;
+	off_t metadata_off_prev;
+	uint32_t fresh_cnt = 0;
+	int rc;
+
+	do {
+		metadata_off_prev = metadata_off;
+		metadata_off -= sizeof(struct emds_snapshot_metadata);
+		fresh_cnt++;
+		metadata_prev = metadata ? *metadata : (struct emds_snapshot_metadata){0};
+		metadata = snapshot_make(&partition[partition_index], metadata, metadata_off, true,
+					 true, fresh_cnt);
+	} while (metadata != NULL);
+	freshest_snapshot.metadata_off = metadata_off_prev;
+	freshest_snapshot.metadata = metadata_prev;
+
+	rc = emds_flash_allocate_snapshot(&partition[partition_index], &freshest_snapshot,
+					  &allocated_snapshot, 200);
+	zassert_equal(rc, -ENOMEM,
+		      "Expected -ENOMEM when trying to allocate snapshot on full partition %d rc: %d",
+		      partition_index, rc);
+}
+
+/* Test checks allocation snapshot if partition has garbage in metadata place. */
+ZTEST(emds_flash, test_allocation_if_metadata_garbaged)
+{
+	int partition_index = sys_rand32_get() % PARTITIONS_NUM_MAX;
+	struct emds_snapshot_candidate allocated_snapshot = {
+		.partition_index = partition_index,
+		.metadata.fresh_cnt = 1
+	};
+	const struct flash_area *fa = partition[partition_index].fa;
+	const struct flash_parameters *fp = partition[partition_index].fp;
+	uint8_t garbage[sizeof(struct emds_snapshot_metadata)];
+	int rc;
+
+	for (int i = 0; i < sizeof(garbage); i++) {
+		garbage[i] = sys_rand32_get() % 256;
+	}
+
+	zassert_ok(flash_area_write(fa, fa->fa_size - sizeof(garbage), &garbage, sizeof(garbage)),
+		   "Failed to write garbage into metadata flash area");
+
+	rc = emds_flash_allocate_snapshot(&partition[partition_index], NULL, &allocated_snapshot,
+					  100);
+	if (flash_params_get_erase_cap(fp) & FLASH_ERASE_C_EXPLICIT) {
+		zassert_equal(rc, -EADDRINUSE,
+			      "Expected -EADDRINUSE when trying to allocate snapshot on partition "
+			      "with garbage in metadata if memory has explicit erase");
+		return;
+	}
+
+	zassert_ok(rc, "Expected 0 when trying to allocate snapshot on partition with "
+		       "garbage in metadata if memory does not have explicit erase");
+
+	zassert_equal(allocated_snapshot.partition_index, partition_index,
+		      "Partition index is not equal to the requested one");
+	zassert_equal(allocated_snapshot.metadata_off,
+		      fa->fa_size - sizeof(struct emds_snapshot_metadata),
+		      "Metadata offset is not equal to the end of the partition");
+	zassert_equal(allocated_snapshot.metadata.data_instance_off, 0,
+		      "Data instance offset is not equal to 0");
+	zassert_equal(allocated_snapshot.metadata.data_instance_len, 100,
+		      "Data instance length is not equal to requested one");
+	zassert_equal(allocated_snapshot.metadata.fresh_cnt, 1, "Fresh count is not equal to 1");
+	zassert_equal(allocated_snapshot.metadata.metadata_crc,
+		      crc32_k_4_2_update(0, (const unsigned char *)&allocated_snapshot.metadata,
+					 offsetof(struct emds_snapshot_metadata, metadata_crc)),
+		      "Metadata CRC is not equal to calculated one");
+}
+
+/* Test checks allocation snapshot if partition has garbage in data place. */
+ZTEST(emds_flash, test_allocation_if_data_garbaged)
+{
+	int partition_index = sys_rand32_get() % PARTITIONS_NUM_MAX;
+	struct emds_snapshot_candidate allocated_snapshot = {
+		.partition_index = partition_index,
+		.metadata.fresh_cnt = 1
+	};
+	const struct flash_area *fa = partition[partition_index].fa;
+	const struct flash_parameters *fp = partition[partition_index].fp;
+	uint8_t garbage[sizeof(struct emds_data_entry)];
+	int rc;
+
+	for (int i = 0; i < sizeof(garbage); i++) {
+		garbage[i] = sys_rand32_get() % 256;
+	}
+
+	zassert_ok(flash_area_write(fa, 0, &garbage, sizeof(garbage)),
+		   "Failed to write garbage into metadata flash area");
+
+	rc = emds_flash_allocate_snapshot(&partition[partition_index], NULL, &allocated_snapshot,
+					  100);
+	if (flash_params_get_erase_cap(fp) & FLASH_ERASE_C_EXPLICIT) {
+		zassert_equal(rc, -EADDRINUSE,
+			      "Expected -EADDRINUSE when trying to allocate snapshot on partition "
+			      "with garbage in data area if memory has explicit erase");
+		return;
+	}
+
+	zassert_ok(rc, "Expected 0 when trying to allocate snapshot on partition with "
+		       "garbage in data area if memory does not have explicit erase");
+
+	zassert_equal(allocated_snapshot.partition_index, partition_index,
+		      "Partition index is not equal to the requested one");
+	zassert_equal(allocated_snapshot.metadata_off,
+		      fa->fa_size - sizeof(struct emds_snapshot_metadata),
+		      "Metadata offset is not equal to the end of the partition");
+	zassert_equal(allocated_snapshot.metadata.data_instance_off, 0,
+		      "Data instance offset is not equal to 0");
+	zassert_equal(allocated_snapshot.metadata.data_instance_len, 100,
+		      "Data instance length is not equal to requested one");
+	zassert_equal(allocated_snapshot.metadata.fresh_cnt, 1, "Fresh count is not equal to 1");
+	zassert_equal(allocated_snapshot.metadata.metadata_crc,
+		      crc32_k_4_2_update(0, (const unsigned char *)&allocated_snapshot.metadata,
+					 offsetof(struct emds_snapshot_metadata, metadata_crc)),
+		      "Metadata CRC is not equal to calculated one");
+}
+
+/* Test measures write timings. */
+ZTEST(emds_flash, test_write_speed)
+{
+	int partition_index = sys_rand32_get() % PARTITIONS_NUM_MAX;
+	const struct flash_area *fa = partition[partition_index].fa;
+	static uint8_t data_in[EMDS_FLASH_BLOCK_SIZE];
+	static uint8_t data_in_big[1024];
+	static uint8_t read_back[1024] = {0};
 	int64_t tic;
 	int64_t toc;
 	uint64_t store_time_us;
+	off_t data_off = 0;
 
 	memset(data_in, 69, sizeof(data_in));
 	memset(data_in_big, 69, sizeof(data_in_big));
 
 	(void)dk_leds_init();
 	(void)dk_set_led(0, false);
-	(void)flash_clear();
-	device_reset();
 
 #if defined(CONFIG_BT)
 	/* This is done to turn off mpsl scheduler to speed up storage time. */
 	(void)sdc_disable();
 	mpsl_uninit();
 #endif
-	(void)emds_flash_init(&ctx);
-	(void)emds_flash_prepare(&ctx, sizeof(data_in) + ctx.ate_size);
 
-	tic = k_uptime_ticks();
 	dk_set_led(0, true);
-	emds_flash_write(&ctx, 1, data_in, sizeof(data_in));
-	dk_set_led(0, false);
+	tic = k_uptime_ticks();
+	emds_flash_write_data(&partition[partition_index], data_off, data_in, sizeof(data_in));
 	toc = k_uptime_ticks();
+	dk_set_led(0, false);
 	store_time_us = k_ticks_to_us_ceil64(toc - tic);
 	printk("Storing %d bytes took: %lldus\n", sizeof(data_in), store_time_us);
 	zassert_true(store_time_us < EXPECTED_STORE_TIME_BLOCK_SIZE,
 		     "Storing %d bytes took to long time", sizeof(data_in));
 
+	zassert_ok(flash_area_read(fa, data_off, read_back, sizeof(data_in)));
+	zassert_mem_equal(read_back, data_in, sizeof(data_in));
+	(void)memset(read_back, 0, sizeof(data_in));
+
 	dk_set_led(0, true);
 	tic = k_uptime_ticks();
-	emds_flash_write(&ctx, 2, data_in_big, sizeof(data_in_big));
-	dk_set_led(0, false);
+	emds_flash_write_data(&partition[partition_index], data_off + sizeof(data_in), data_in_big,
+			      sizeof(data_in_big));
 	toc = k_uptime_ticks();
+	dk_set_led(0, false);
 	store_time_us = k_ticks_to_us_ceil64(toc - tic);
 	printk("Storing %d bytes took: %lldus\n", sizeof(data_in_big), store_time_us);
 	zassert_true(store_time_us < EXPECTED_STORE_TIME_1024,
-		     "Storing %d bytes took to long time", sizeof(data_in_big));
+		     "Storing %d bytes took too long time", sizeof(data_in_big));
+
+	zassert_ok(flash_area_read(fa, data_off + sizeof(data_in), read_back, sizeof(data_in_big)));
+	zassert_mem_equal(read_back, data_in_big, sizeof(data_in_big));
 }
 
-ZTEST_SUITE(emds_flash_tests, NULL, fs_init, NULL, NULL, NULL);
+ZTEST_SUITE(emds_flash, NULL, emds_flash_setup, NULL, emds_flash_partitions_erase, NULL);
