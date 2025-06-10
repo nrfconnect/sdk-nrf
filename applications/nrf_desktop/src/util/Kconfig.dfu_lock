@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DESKTOP_DFU_LOCK
+	bool "DFU lock module"
+	default y if (DESKTOP_CONFIG_CHANNEL_DFU_ENABLE && DESKTOP_DFU_MCUMGR_ENABLE)
+	help
+	  Enable nRF Desktop DFU lock module for synchronizing multiple DFU
+	  methods.
+
+	  The module is automatically enabled when the Config Channel DFU and
+	  the MCUmgr DFU are both enabled.
+
+if DESKTOP_DFU_LOCK
+
+module = DESKTOP_DFU_LOCK
+module-str = DFU Lock
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # DESKTOP_DFU_LOCK

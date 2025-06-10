@@ -1,0 +1,42 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DESKTOP_HID_REPORTQ
+	bool "Enable HID report queue utility"
+	depends on DESKTOP_ROLE_HID_DONGLE
+	help
+	  The HID report queue utility can be used to enqueue HID reports from
+	  connected HID peripherals. The queue simplifies integrating new
+	  modules that receive HID reports from peripherals.
+
+	  On the HID peripheral, the HID state module is used as a source of HID
+	  input reports. The HID state module does not use the HID report queue
+	  utility.
+
+if DESKTOP_HID_REPORTQ
+
+config DESKTOP_HID_REPORTQ_MAX_ENQUEUED_REPORTS
+	int "Maximum number of enqueued HID reports"
+	range 1 255
+	default 2
+	help
+	  Maximum number of enqueued HID report events is limited to control
+	  memory usage. The limit is defined separately for every HID input
+	  report ID.
+
+config DESKTOP_HID_REPORTQ_QUEUE_COUNT
+	int "Number of supported HID report queues"
+	range 1 1024
+	default DESKTOP_HID_DONGLE_BOND_COUNT
+	default 1
+	help
+	  Maximum number of HID report queues that can be used simultaneously.
+
+module = DESKTOP_HID_REPORTQ
+module-str = HID report queue
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # DESKTOP_HID_REPORTQ
