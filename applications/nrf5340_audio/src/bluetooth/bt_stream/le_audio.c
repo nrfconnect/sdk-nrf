@@ -19,8 +19,8 @@ int le_audio_metadata_populate(struct audio_metadata *meta, const struct bt_bap_
 	int ret;
 
 	/* Populate the audio frame structure */
-	meta->bad_data = false;
-	meta->reference_ts_us = info->ts;
+	meta->ref_ts_us = info->ts;
+	meta->bad_data = 0;
 	le_audio_freq_hz_get(stream->codec_cfg, &meta->sample_rate_hz);
 	le_audio_duration_us_get(stream->codec_cfg, &meta->data_len_us);
 
@@ -28,6 +28,20 @@ int le_audio_metadata_populate(struct audio_metadata *meta, const struct bt_bap_
 	if (ret < 0) {
 		LOG_ERR("Failed to get channel allocation: %d", ret);
 		return ret;
+	}
+
+	uint32_t octets_per_frame = 0;
+
+	ret = le_audio_octets_per_frame_get(stream->codec_cfg, &octets_per_frame);
+	if (ret < 0) {
+		LOG_ERR("Failed to get octets per frame: %d", ret);
+		return ret;
+	}
+
+	meta->bytes_per_location = octets_per_frame / metadata_num_ch_get(meta);
+	if (meta->bytes_per_location == 0) {
+		LOG_ERR("Failed to get bytes per location");
+		return -EINVAL;
 	}
 
 	if (stream->codec_cfg->id == BT_HCI_CODING_FORMAT_LC3) {
@@ -39,13 +53,13 @@ int le_audio_metadata_populate(struct audio_metadata *meta, const struct bt_bap_
 
 	if (!(info->flags & BT_ISO_FLAGS_VALID) ||
 	    audio_frame->len != bt_audio_codec_cfg_get_octets_per_frame(stream->codec_cfg)) {
-		meta->bad_data = true;
+		meta->bad_data = meta->locations;
 	}
 
 	return 0;
 }
 
-int le_audio_ep_state_get(struct bt_bap_ep *ep, uint8_t *state)
+int le_audio_ep_state_get(struct bt_bap_ep const *const ep, uint8_t *state)
 {
 	int ret;
 	struct bt_bap_ep_info ep_info;
@@ -67,7 +81,7 @@ int le_audio_ep_state_get(struct bt_bap_ep *ep, uint8_t *state)
 }
 
 /*TODO: Create helper function in host to perform this action. */
-bool le_audio_ep_state_check(struct bt_bap_ep *ep, enum bt_bap_ep_state state)
+bool le_audio_ep_state_check(struct bt_bap_ep const *const ep, enum bt_bap_ep_state state)
 {
 	int ret;
 	uint8_t ep_state;

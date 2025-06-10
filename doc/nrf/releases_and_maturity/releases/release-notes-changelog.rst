@@ -228,6 +228,10 @@ nRF5340 Audio
 * Added:
 
   * Experimental support for Audio on the nRF5340 DK, with LED state indications and button controls.
+  * Support for stereo in :ref:`broadcast sink app<nrf53_audio_broadcast_sink_app>`.
+    The broadcast sink can now receive audio from two BISes and play it on the left and right channels of the audio output, if the correct configuration options are enabled.
+    The I2S output will be stereo, but :zephyr:board:`nrf5340_audio_dk` will still only have one audio output channel, since it has a mono codec (CS47L63).
+    See :file:`overlay-broadcast_sink.conf` for more information.
 
 * Updated:
 
@@ -243,6 +247,8 @@ nRF5340 Audio
 
   * The uart_terminal tool to use standardized tools.
     Similar functionality is provided through the `nRF Terminal <nRF Terminal documentation_>`_ in the |nRFVSC|.
+  * The functionality to jump between BIS0 and BIS1 in the :ref:`broadcast sink <nrf53_audio_broadcast_sink_app>` application.
+    Button 4 is no longer needed for this purpose due to added support for stereo audio.
 
 nRF Desktop
 -----------

@@ -15,6 +15,12 @@
 #include "sw_codec_select.h"
 #include "audio_defines.h"
 
+/* The maximum delta (in microseconds) between received SDUs that are to be presented or played back
+ * at the same time. For example, used to correlate left and right channels, while allowing some
+ * jitter on the timestamp.
+ */
+#define SDU_REF_CH_DELTA_MAX_US (int)(CONFIG_AUDIO_FRAME_DURATION_US * 0.001)
+
 /**
  * @brief	Mixes a tone into the I2S TX stream.
  *

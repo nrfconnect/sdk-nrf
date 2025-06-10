@@ -51,6 +51,9 @@ struct audio_metadata {
 	/* Number of valid bits for a sample (bit depth). Typically 16 or 24. */
 	uint8_t bits_per_sample;
 
+	/* Number of bytes per active location in the bitstream */
+	uint32_t bytes_per_location;
+
 	/* Number of bits used to carry a sample of size bits_per_sample.
 	 * For example, say we have a 24 bit sample stored in a 32 bit
 	 * word (int32_t), then:
@@ -69,16 +72,16 @@ struct audio_metadata {
 	uint32_t locations;
 
 	/* Reference time stamp (e.g. ISO timestamp reference from BLE controller). */
-	uint32_t reference_ts_us;
+	uint32_t ref_ts_us;
 
 	/* The timestamp for when the data was received. */
 	uint32_t data_rx_ts_us;
 
-	/* A Boolean flag to indicate this data has errors
-	 * (true = bad, false = good).
-	 * Note: Timestamps are still valid even though this flag is set.
+	/* A bit field to indicate if any channel has errors (1 = bad, 0 = good).
+	 *
+	 * Note: Timestamps are still valid when this is set.
 	 */
-	bool bad_data;
+	uint32_t bad_data;
 };
 
 /**
