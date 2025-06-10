@@ -56,5 +56,5 @@ echo "Connect and wait for PPP link..."
 test -c $AT_CMUX
 chat $CHATOPT -t$TIMEOUT "" "AT+CFUN=1" "OK" "\c" "#XPPP: 1,0" >$AT_CMUX <$AT_CMUX
 
-pppd $PPP_CMUX noauth novj nodeflate nobsdcomp debug noipdefault passive +ipv6 \
-		noremoteip local linkname nrf91 defaultroute defaultroute-metric -1 persist
+pppd $PPP_CMUX noauth novj nodeflate nobsdcomp debug noipdefault passive +ipv6 noremoteip \
+	local linkname nrf91 defaultroute defaultroute-metric -1 persist lcp-echo-interval 0
