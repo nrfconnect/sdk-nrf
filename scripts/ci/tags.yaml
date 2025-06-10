@@ -1403,6 +1403,16 @@ ci_tests_drivers_uart:
     - zephyr/dts/common/nordic/
     - zephyr/soc/nordic/
 
+ci_tests_drivers_sensor_qdec:
+  files:
+    - nrf/samples/zephyr/sensor/qdec/
+    - nrf/tests/drivers/qdec/
+    - nrf/tests/zephyr/boards/nrf/qdec
+    - zephyr/drivers/sensor/nordic/qdec_nrfx/
+    - zephyr/dts/bindings/sensor/nordic,nrf-qdec.yaml
+    - zephyr/samples/sensor/qdec
+    - zephyr/tests/boards/nrf/qdec
+
 ci_tests_drivers_sensor:
   files:
     - modules/hal/nordic/nrfs/
