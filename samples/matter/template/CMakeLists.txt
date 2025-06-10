@@ -31,7 +31,5 @@ target_sources(app PRIVATE
     src/main.cpp
 )
 
-ncs_configure_data_model(
-    ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/${CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH}/${CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_NAME}.zap
-)
+ncs_configure_data_model()
 # NORDIC SDK APP END

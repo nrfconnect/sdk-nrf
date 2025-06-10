@@ -105,13 +105,12 @@ config NCS_SAMPLE_MATTER_ZAP_FILES_PATH
 	string "Path in sample, under which ZAP files are located"
 	default "src/default_zap"
 	help
-	  Path in sample, under which ZAP files are located.
+	  Relative path to the sample directory, under which ZAP files are located.
 
 config NCS_SAMPLE_MATTER_ZAP_FILE_NAME
 	string "Name of the zap file used by the sample"
-	default "sample"
 	help
-	  Name of the zap file used by the sample.
+	  Name of the zap file used by the sample. It shall contain the file name and .zap extension.
 
 config NCS_SAMPLE_MATTER_CERTIFICATION
 	bool "Enable patches required for Matter platform certification"
