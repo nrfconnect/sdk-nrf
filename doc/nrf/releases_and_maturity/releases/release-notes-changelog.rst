@@ -603,7 +603,10 @@ Modem libraries
     * The :kconfig:option:`CONFIG_MODEM_SLM_UART_TX_BUF_SIZE` Kconfig option for configuring TX buffer size.
     * The :kconfig:option:`CONFIG_MODEM_SLM_AT_CMD_RESP_MAX_SIZE` Kconfig option for buffering AT command responses.
 
-  * Updated the UART implementation between the host device, using the :ref:`lib_modem_slm` library, and the device running the :ref:`Serial LTE Modem <slm_description>` application.
+  * Updated:
+
+      * The software maturity of the library to supported instead of experimental.
+      * The UART implementation between the host device, using the :ref:`lib_modem_slm` library, and the device running the :ref:`Serial LTE Modem <slm_description>` application.
 
   * Removed:
 
