@@ -27,6 +27,14 @@ config BT_AUDIO_PACKING_INTERLEAVED
 	help
 	  ISO channels can either be interleaved or sequentially packed; sequential is the default one.
 
+config BT_AUDIO_CONCURRENT_RX_STREAMS_MAX
+	int "Max number of concurrent streams"
+	range 1 32
+	default 1
+	help
+	  The maximum number of concurrent streams supported in the RX direction.
+	  This is the maximum number of streams that can be active at the same time.
+
 config BT_AUDIO_PREF_SAMPLE_RATE_VALUE
 	hex
 	default 0x03 if BT_AUDIO_PREF_SAMPLE_RATE_16KHZ
