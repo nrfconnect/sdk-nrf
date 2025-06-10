@@ -20,9 +20,12 @@ include(${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/cmake/source_common.cmake
 # Include Data Model utils
 include(${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/cmake/data_model.cmake)
 
+include(${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/cmake/zap_helpers.cmake)
+ncs_get_zap_parent_dir(ZAP_PARENT_DIR)
+
 target_include_directories(app PRIVATE
     src
-    ${CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH}
+    ${ZAP_PARENT_DIR}
 )
 
 SET(access_srcs src/access/access_data_types.cpp
@@ -55,8 +58,6 @@ endif()
 # variable may be uninitialized, but actually, it is wrongly interpreted by the Zephyr toolchain.
 target_compile_options(matter-data-model PRIVATE -Wno-error=maybe-uninitialized)
 
-ncs_configure_data_model(
-    ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/${CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH}/${CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_NAME}.zap
-)
+ncs_configure_data_model()
 
 # NORDIC SDK APP END

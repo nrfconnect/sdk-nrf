@@ -21,10 +21,13 @@ include(${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/cmake/source_common.cmake
 # Include Data Model utils
 include(${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/cmake/data_model.cmake)
 
+include(${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/cmake/zap_helpers.cmake)
+ncs_get_zap_parent_dir(ZAP_PARENT_DIR)
+
 target_include_directories(app PRIVATE
     src
     src/bridged_device_types
-    ${CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH}
+    ${ZAP_PARENT_DIR}
     ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/
     ${ZEPHYR_NRF_MODULE_DIR}/samples/matter/common/src/bridge/util
 )
@@ -129,7 +132,5 @@ endif() # CONFIG_BRIDGE_HUMIDITY_SENSOR_BRIDGED_DEVICE
 
 endif() # CONFIG_BRIDGED_DEVICE_BT
 
-ncs_configure_data_model(
-    ZAP_FILE ${CMAKE_CURRENT_SOURCE_DIR}/${CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH}/${CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_NAME}.zap
-)
+ncs_configure_data_model()
 # NORDIC SDK APP END

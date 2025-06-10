@@ -101,17 +101,11 @@ config NCS_SAMPLE_MATTER_PERSISTENT_STORAGE
 	help
 	  Matter persistent storage support with the configurable backend.
 
-config NCS_SAMPLE_MATTER_ZAP_FILES_PATH
-	string "Path in sample, under which ZAP files are located"
-	default "src/default_zap"
+config NCS_SAMPLE_MATTER_ZAP_FILE_PATH
+	string "Path in sample, under which ZAP file is located"
 	help
-	  Path in sample, under which ZAP files are located.
-
-config NCS_SAMPLE_MATTER_ZAP_FILE_NAME
-	string "Name of the zap file used by the sample"
-	default "sample"
-	help
-	  Name of the zap file used by the sample.
+	  Absolute path to location under which ZAP file is located.
+	  It shall contain the file name and .zap extension.
 
 config NCS_SAMPLE_MATTER_CERTIFICATION
 	bool "Enable patches required for Matter platform certification"
