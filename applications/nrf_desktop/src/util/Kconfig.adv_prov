@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config DESKTOP_ADV_PROV_UUID16_ALL
+	bool "UUID16 advertising provider"
+	depends on BT_ADV_PROV
+	depends on (DESKTOP_HIDS_ENABLE || DESKTOP_BAS_ENABLE)
+	help
+	  Adds all UUID16 to the advertising payload if used Bluetooth local
+	  identity has no bond.

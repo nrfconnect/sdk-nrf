@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config DESKTOP_HWID
+	bool "Hardware ID module"
+	select HWINFO
+	help
+	  Enable nRF Desktop hardware ID utility. The hardware ID is obtained
+	  from Zephyr hwinfo driver.
