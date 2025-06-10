@@ -743,7 +743,7 @@ AT_MONITOR(at_notify, ANY, notification_handler);
 
 static void notification_handler(const char *notification)
 {
-	if (get_slm_mode() == SLM_AT_COMMAND_MODE) {
+	if (get_slm_mode() == SLM_AT_COMMAND_MODE && at_backend.send != NULL) {
 
 #if defined(CONFIG_SLM_PPP)
 		if (!slm_fwd_cgev_notifs
@@ -754,6 +754,8 @@ static void notification_handler(const char *notification)
 #endif
 		slm_at_send_indicate(CRLF_STR, strlen(CRLF_STR), true, true);
 		slm_at_send_str(notification);
+	} else {
+		LOG_DBG("Drop notification: %s", notification);
 	}
 }
 
