@@ -120,7 +120,11 @@ Security
 
 * Added the new section about :ref:`ug_crypto_index`.
   The new section includes pages about :ref:`ug_crypto_architecture` (new page) and :ref:`crypto_drivers` (moved from :ref:`nrf_security` library).
-* Updated the :ref:`ug_tfm_logging` page with more details about how to configure logging on the same UART instance as the application for nRF5340 and nRF91 Series devices.
+
+* Updated:
+
+  * The :ref:`ug_tfm_logging` page with more details about how to configure logging on the same UART instance as the application for nRF5340 and nRF91 Series devices.
+  * The :ref:`crypto_drivers` page with more details about the driver selection process.
 
 Protocols
 =========

@@ -64,7 +64,6 @@ The nrf_oberon driver may then be disabled by using the Kconfig option :kconfig:
    On nRF54L Series devices, CRACEN is the only source of entropy.
    Therefore, it is not possible to disable the :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_CRACEN` Kconfig option when the Zephyr entropy driver is enabled.
 
-
 .. _nrf_security_drivers_config_multiple:
 
 Configuring multiple drivers
@@ -103,7 +102,7 @@ When multiple enabled drivers support the same cryptographic feature, the config
 Configuring cryptographic features
 **********************************
 
-You can enable a cryptographic feature or algorithm using `CONFIG_PSA_WANT_ALG_*`_ Kconfig options, which are specific for PSA Crypto API configurations.
+You can enable a cryptographic feature or algorithm using `CONFIG_PSA_WANT_*`_ Kconfig options, which are specific for PSA Crypto API configurations.
 For example, to enable the AES algorithm, set the :kconfig:option:`CONFIG_PSA_WANT_ALG_AES` Kconfig option.
 
 For a list of supported cryptographic features and algorithms and the Kconfig options to enable them, see :ref:`ug_crypto_supported_features`.
