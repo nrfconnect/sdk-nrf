@@ -603,11 +603,19 @@ static void tcpcli_thread_func(void *p1, void *p2, void *p3)
 		LOG_DBG("sock events 0x%08x", fds[SOCK].revents);
 		LOG_DBG("efd events 0x%08x", fds[EVENT_FD].revents);
 		if ((fds[SOCK].revents & ZSOCK_POLLIN) != 0) {
-			ret = zsock_recv(fds[SOCK].fd, (void *)slm_data_buf, sizeof(slm_data_buf),
-				   ZSOCK_MSG_DONTWAIT);
-			if (ret < 0 && errno != EAGAIN) {
-				LOG_WRN("zsock_recv() error: %d", -errno);
-			} else if (ret > 0) {
+			while (true) {
+				ret = zsock_recv(fds[SOCK].fd, (void *)slm_data_buf,
+					sizeof(slm_data_buf), ZSOCK_MSG_DONTWAIT);
+				/* No more data to receive */
+				if ((ret == 0) || (ret < 0 && errno == EAGAIN)) {
+					break;
+				}
+				/* Receive error */
+				if (ret < 0) {
+					LOG_WRN("recv() error: %d", -errno);
+					break;
+				}
+				/* Data received */
 				if (!in_datamode()) {
 					rsp_send("\r\n#XTCPDATA: %d\r\n", ret);
 				}
