@@ -570,7 +570,18 @@ Modem libraries
 Multiprotocol Service Layer libraries
 -------------------------------------
 
-|no_changes_yet_note|
+  * Updated the implementation of the following interrupt service routine wrappers:
+
+    * :c:func:`mpsl_timer0_isr_wrapper`
+    * :c:func:`mpsl_rtc0_isr_wrapper`
+    * :c:func:`mpsl_radio_isr_wrapper`
+
+   Now, they do not trigger the kernel scheduler or use any kernel APIs.
+
+    .. note::
+
+       Invoking kernel APIs or triggering the kernel scheduler from Zero Latency Interrupts is considered undefined behavior.
+       Users of MPSL timeslots should not assume that thread rescheduling will occur automatically at the end of a timeslot.
 
 Libraries for networking
 ------------------------
