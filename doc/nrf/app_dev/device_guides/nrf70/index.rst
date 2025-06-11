@@ -1,5 +1,6 @@
 .. _ug_nrf70:
 .. _ug_nrf70_developing:
+.. _nrf7002dk_nrf5340:
 
 Developing with nRF70 Series
 ############################
@@ -23,7 +24,7 @@ Zephyr and the |NCS| provide support for developing networking applications with
      - PCA10143
      - ``nrf7002dk/nrf5340/cpuapp``
      - | `Product Specification <Product specification for nRF70 Series devices_>`_
-       | :ref:`Getting started <nrf7002dk_nrf5340>`
+       | `Quick Start app`_
        | `User Guide <nRF7002 DK Hardware_>`_
    * - nRF7001 emulation on nRF7002 DK
      - Not applicable

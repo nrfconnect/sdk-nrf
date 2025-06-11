@@ -8,7 +8,7 @@ Code and RAM memory footprint requirements differ depending on the selected plat
 Footprint values are provided in kilobytes (KB).
 
 
-The following table lists memory requirements for the :ref:`SoftAP based provision <softap_wifi_provision_sample>` sample running on the :ref:`nRF7002 DK <programming_board_names>` (:ref:`nrf7002dk/nrf5340/cpuapp <nrf7002dk_nrf5340>`).
+The following table lists memory requirements for the :ref:`SoftAP based provision <softap_wifi_provision_sample>` sample running on the  :zephyr:board:`nrf7002dk` (``nrf7002dk/nrf5340/cpuapp``).
 
 +-------------------------------------------------------------+-------------+-------------------------------------------+-------------------------------+----------------------+---------------------------------+--------------------+----------------------+
 | Sample                                                      |   Total ROM |   Wi-Fi driver ROM                        |            nRF70 FW patch ROM |   WPA supplicant ROM |   Total RAM (incl. static heap) |   Wi-Fi driver RAM |   WPA supplicant RAM |
