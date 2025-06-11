@@ -18,7 +18,7 @@ The following categories are used in the tables to classify the software maturit
 Supported
    The feature or component is implemented and maintained, and is suitable for product development.
 
-Not supported
+Not supported (--)
    The feature or component is neither implemented nor maintained, and it does not work.
 
 Experimental
@@ -2587,148 +2587,158 @@ Trusted Firmware-M support
 PSA Crypto support
 ==================
 
+For more information about the PSA Crypto implementations in the |NCS|, see :ref:`ug_crypto_index`.
+
+.. crypto_support_table_start
+
 .. toggle::
 
    .. tabs::
 
       .. tab:: nRF52 Series
 
-        .. list-table:: Cryptographic support
+        .. list-table:: Cryptographic support (nRF52 Series)
            :header-rows: 1
            :widths: auto
 
-           * - Feature
+           * - Implementation
+             - Driver
              - nRF52810
              - nRF52811
              - nRF52820
              - nRF52832
              - nRF52833
              - nRF52840
-           * - **Oberon PSA core - nrf_cc3xx driver**
+           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
+             - :ref:`nrf_cc3xx <crypto_drivers>`
              - --
              - --
              - --
              - --
              - --
              - Supported
-           * - **Oberon PSA core - cracen driver**
+           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
+             - :ref:`CRACEN <crypto_drivers>`
              - --
              - --
              - --
              - --
              - --
              - --
-           * - **Oberon PSA core - nrf_oberon driver**
-             - --
-             - --
-             - --
-             - Supported
-             - Supported
-             - Supported
-           * - **TF-M crypto service**
+           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
+             - :ref:`nrf_oberon <crypto_drivers>`
              - --
              - --
              - --
              - Supported
              - Supported
              - Supported
-           * - **SSF crypto service**
+           * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
+             - :ref:`Oberon PSA Crypto drivers <crypto_drivers>`
              - --
              - --
              - --
              - --
              - --
              - --
+
       .. tab:: nRF53 Series
 
-        .. list-table:: Cryptographic support
+        .. list-table:: Cryptographic support (nRF53 Series)
            :header-rows: 1
            :widths: auto
 
-           * - Feature
+           * - Implementation
+             - Driver
              - nRF5340
-           * - **Oberon PSA core - nrf_cc3xx driver**
+           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
+             - :ref:`nrf_cc3xx <crypto_drivers>`
              - Supported
-           * - **Oberon PSA core - cracen driver**
+           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
+             - :ref:`CRACEN <crypto_drivers>`
              - --
-           * - **Oberon PSA core - nrf_oberon driver**
+           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
+             - :ref:`nrf_oberon <crypto_drivers>`
              - Supported
-           * - **TF-M crypto service**
+           * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
+             - :ref:`Oberon PSA Crypto drivers <crypto_drivers>`
              - Supported
-           * - **SSF crypto service**
-             - --
+
       .. tab:: nRF54 Series
 
-        .. list-table:: Cryptographic support
+        .. list-table:: Cryptographic support (nRF54 Series)
            :header-rows: 1
            :widths: auto
 
-           * - Feature
+           * - Implementation
+             - Driver
              - nRF54H20
              - nRF54L05
              - nRF54L10
              - nRF54L15
-           * - **Oberon PSA core - nrf_cc3xx driver**
+           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
+             - :ref:`nrf_cc3xx <crypto_drivers>`
              - --
              - --
              - --
              - --
-           * - **Oberon PSA core - cracen driver**
-             - --
-             - Supported
-             - Supported
-             - Supported
-           * - **Oberon PSA core - nrf_oberon driver**
+           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
+             - :ref:`CRACEN <crypto_drivers>`
              - --
              - Supported
              - Supported
              - Supported
-           * - **TF-M crypto service**
+           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
+             - :ref:`nrf_oberon <crypto_drivers>`
              - --
+             - Supported
+             - Supported
+             - Supported
+           * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
+             - :ref:`Oberon PSA Crypto drivers <crypto_drivers>`
              - --
              - --
              - Experimental
-           * - **SSF crypto service**
              - Experimental
-             - --
-             - --
-             - --
+
       .. tab:: nRF91 Series
 
-        .. list-table:: Cryptographic support
+        .. list-table:: Cryptographic support (nRF91 Series)
            :header-rows: 1
            :widths: auto
 
-           * - Feature
+           * - Implementation
+             - Driver
              - nRF9131
              - nRF9151
              - nRF9160
              - nRF9161
-           * - **Oberon PSA core - nrf_cc3xx driver**
+           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
+             - :ref:`nrf_cc3xx <crypto_drivers>`
              - Experimental
              - Supported
              - Supported
              - Supported
-           * - **Oberon PSA core - cracen driver**
+           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
+             - :ref:`CRACEN <crypto_drivers>`
              - --
              - --
              - --
              - --
-           * - **Oberon PSA core - nrf_oberon driver**
+           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
+             - :ref:`nrf_oberon <crypto_drivers>`
              - Supported
              - Supported
              - Supported
              - Supported
-           * - **TF-M crypto service**
+           * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
+             - :ref:`Oberon PSA Crypto drivers <crypto_drivers>`
              - Experimental
              - Supported
              - Supported
              - Supported
-           * - **SSF crypto service**
-             - --
-             - --
-             - --
-             - --
+
+.. crypto_support_table_end
 
 .. _software_maturity_security_features_nsib:
 
