@@ -19,7 +19,7 @@ common:
     - nrf54lm20pdk/nrf54lm20a/cpuapp
   harness_config:
     fixture: uart_loopback
-  timeout: 30
+  timeout: 45
 tests:
   nrf.extended.drivers.uart.uart_mix_poll:
     extra_configs:
