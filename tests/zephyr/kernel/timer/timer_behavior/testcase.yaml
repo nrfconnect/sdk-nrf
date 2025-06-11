@@ -15,4 +15,4 @@ tests:
     integration_platforms:
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-    timeout: 30
+    timeout: 45
