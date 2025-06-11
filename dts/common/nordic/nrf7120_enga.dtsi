@@ -573,6 +573,7 @@
 				interrupts = <210 NRF_DEFAULT_IRQ_PRIORITY>;
 				#pwm-cells = <3>;
 				status = "disabled";
+				idleout-supported;
 			};
 
 			pwm21: pwm@d3000 {
@@ -581,6 +582,7 @@
 				interrupts = <211 NRF_DEFAULT_IRQ_PRIORITY>;
 				#pwm-cells = <3>;
 				status = "disabled";
+				idleout-supported;
 			};
 
 			pwm22: pwm@d4000 {
@@ -589,6 +591,7 @@
 				interrupts = <212 NRF_DEFAULT_IRQ_PRIORITY>;
 				#pwm-cells = <3>;
 				status = "disabled";
+				idleout-supported;
 			};
 
 			adc: adc@d5000 {
