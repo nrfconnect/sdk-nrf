@@ -15,6 +15,8 @@ common:
       - "!!! Alarm !!!"
       - "Now: [2|3]"
   depends_on: counter
+  timeout: 30
+
 tests:
   nrf.extended.sample.drivers.counter.alarm:
     platform_allow:
@@ -22,10 +24,11 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
       - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
+      - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
