@@ -10,6 +10,8 @@ Getting started with the nRF54H20 DK
 This document gets you started with your nRF54H20 Development Kit (DK) using the |NCS| for the first time.
 It tells you how to install the :zephyr:code-sample:`sysbuild_hello_world` sample and perform a quick test of your DK.
 
+## different sample?
+
 If you are migrating from an earlier version of the |NCS|, see :ref:`migration_guides`.
 
 .. _ug_nrf54h20_gs_requirements:
@@ -69,9 +71,10 @@ Installing nRF Util and its commands
 Using the nRF54H20 DK with the |NCS| version |release| requires the following:
 
 * nRF Util v7.13.0 or higher
-* nRF Util ``device`` command v2.8.8
+* nRF Util ``device`` command v|54H_nrfutil_device_ver|
 * nRF Util ``trace`` command v3.3.0
-* nRF Util ``suit`` command v0.9.0
+
+## update versions
 
 If you have not already installed nRF Util as part of :ref:`nRF Connect SDK prerequisites <installing_vsc>`, complete the following steps to install it:
 
@@ -94,11 +97,23 @@ If you have not already installed nRF Util as part of :ref:`nRF Connect SDK prer
       For more information, consult the `Upgrading nRF Util core module`_ documentation.
 
 #. Install the required versions of nRF Util commands, as listed above, using the command from `Installing specific versions of nRF Util commands`_.
-   For example, the following command installs the nRF Util ``device`` command version 2.7.16:
+   For example, the following command installs the nRF Util ``device`` co##
+
+      nrfutil install device=<version_number> --force
+
+   .. note::
+      Substitute ``<version_number>`` with |54H_nrfutil_device_ver|.
+
+#. Verify the installation of the nRF Util commands by running the following command:
 
    .. code-block::
 
-      nrfutil install device=2.7.16 --force
+      nrfutil <command> --version
+
+   .. note::
+      Substitute ``<command>`` with  either ``device``, ``trace``, or ``suit``.
+
+   The output should show the version of that command.
 
 .. _ug_nrf54h20_install_toolchain:
 
@@ -161,6 +176,8 @@ Programming the nRF54H20 SoC binaries
 After programming the BICR, program the nRF54H20 SoC with the :ref:`nRF54H20 SoC binaries <abi_compatibility>`.
 This bundle contains the precompiled firmware for the :ref:`Secure Domain <ug_nrf54h20_secure_domain>` and :ref:`System Controller <ug_nrf54h20_sys_ctrl>`.
 To program the nRF54H20 SoC binaries to the nRF54H20 DK, do the following:
+
+##update links to soc binaries
 
 1. Download the `nRF54H20 SoC binaries v0.9.6`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
 
