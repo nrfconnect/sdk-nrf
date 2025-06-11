@@ -24,3 +24,4 @@ For more information about PSA Crypto within the broader context of the PSA Cert
 
    crypto_architecture
    drivers
+   crypto_supported_features

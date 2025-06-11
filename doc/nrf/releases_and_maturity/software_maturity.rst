@@ -2589,9 +2589,10 @@ PSA Crypto support
 
 For more information about the PSA Crypto implementations in the |NCS|, see :ref:`ug_crypto_index`.
 
-.. crypto_support_table_start
 
 .. toggle::
+
+   .. crypto_support_table_start
 
    .. tabs::
 
