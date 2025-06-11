@@ -7,6 +7,8 @@ common:
     - nrf54h20dk/nrf54h20/cpuapp
   integration_platforms:
     - nrf54h20dk/nrf54h20/cpuapp
+  extra_args:
+    - CONFIG_SOC_NRF54H20_CPURAD_ENABLE=y
 
 tests:
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.no_sleep:
