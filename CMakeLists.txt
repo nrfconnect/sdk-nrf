@@ -35,3 +35,10 @@ add_subdirectory(subsys)
 add_subdirectory(modules)
 add_subdirectory(drivers)
 add_subdirectory(tests)
+
+# TEMPHACK: Add a source file generated in the sysbuild POST_CMAKE module hook
+zephyr_get(SYSBUILD_MAIN_APP)
+if(SYSBUILD_MAIN_APP AND CONFIG_NRF_PERIPHCONF_SECTION)
+  file(TOUCH ${PROJECT_BINARY_DIR}/periphconf_migrated.c)
+  zephyr_sources(${PROJECT_BINARY_DIR}/periphconf_migrated.c)
+endif()
