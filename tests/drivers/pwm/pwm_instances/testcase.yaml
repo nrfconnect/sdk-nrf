@@ -3,8 +3,6 @@ common:
     - drivers
     - ci_tests_drivers_pwm
   harness: ztest
-  harness_config:
-    fixture: gpio_loopback
   timeout: 20
 
 tests:
