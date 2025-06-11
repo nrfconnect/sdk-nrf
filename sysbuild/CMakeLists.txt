@@ -846,6 +846,44 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
       set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${BINARY_DIR}/zephyr/.config)
     endif()
   endif()
+
+  # TEMPHACK: UICR generator for IronSide SE for downstream
+  sysbuild_get(ironside_periphconf IMAGE ${DEFAULT_IMAGE} VAR CONFIG_NRF_PERIPHCONF_SECTION KCONFIG)
+  if(ironside_periphconf)
+    find_program(NRF_REGTOOL nrf-regtool)
+    if(NOT NRF_REGTOOL)
+      message(FATAL_ERROR "nrf-regtool is not installed")
+    endif()
+    ExternalProject_Get_Property(${DEFAULT_IMAGE} BINARY_DIR)
+    set(nrf_regtool_migrate_cmd
+      COMMAND
+      ${CMAKE_COMMAND} -E env PYTHONPATH=${ZEPHYR_BASE}/scripts/dts/python-devicetree/src
+      ${NRF_REGTOOL} uicr-migrate
+      --edt-pickle-file ${BINARY_DIR}/zephyr/edt.pickle
+      --output-periphconf-file ${BINARY_DIR}/zephyr/periphconf_migrated.c
+    )
+    foreach(image ${IMAGES})
+      ExternalProject_Get_Property(${image} BINARY_DIR)
+      sysbuild_get(image_soc IMAGE ${image} VAR CONFIG_SOC KCONFIG)
+      set(image_uicr_hex ${PROJECT_BINARY_DIR}/uicr_${image}.hex)
+      execute_process(
+        COMMAND
+        ${CMAKE_COMMAND} -E env PYTHONPATH=${ZEPHYR_BASE}/scripts/dts/python-devicetree/src
+        ${NRF_REGTOOL} uicr-compile
+        --edt-pickle-file ${BINARY_DIR}/zephyr/edt.pickle
+        --product-name ${image_soc}
+        --output-file ${image_uicr_hex}
+        WORKING_DIRECTORY ${APPLICATION_SOURCE_DIR}
+        COMMAND_ERROR_IS_FATAL ANY
+      )
+      list(APPEND nrf_regtool_migrate_cmd --uicr-hex-file ${image_uicr_hex})
+    endforeach()
+    execute_process(
+      ${nrf_regtool_migrate_cmd}
+      WORKING_DIRECTORY ${APPLICATION_SOURCE_DIR}
+      COMMAND_ERROR_IS_FATAL ANY
+    )
+  endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 
 # Enable use of partition manager with sysbuild.
