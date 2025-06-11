@@ -624,6 +624,7 @@
   - "tests/drivers/sensor/**/*"
   - "tests/drivers/spi/**/*"
   - "tests/drivers/uart/**/*"
+  - "tests/drivers/i2c/**/*"
   - "tests/subsys/event_manager_proxy/**/*"
   - "tests/zephyr/boards/nrf/**/*"
   - "tests/zephyr/drivers/adc/**/*"
