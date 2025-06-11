@@ -38,6 +38,15 @@ nRF5340 Audio applications
      This change requires you to update your application code to use the new APIs for audio data handling.
      See :ref:`ncs_release_notes_changelog` for more information.
 
+nRF Desktop
+-----------
+
+.. toggle::
+
+   * The :ref:`nrf_desktop_hid_state` has been updated to use the :ref:`nrf_desktop_hid_keymap` to map an application-specific key ID to a HID report ID and HID usage ID pair.
+     The ``CONFIG_DESKTOP_HID_STATE_HID_KEYMAP_DEF_PATH`` Kconfig option has been removed and needs to be replaced with the :ref:`CONFIG_DESKTOP_HID_KEYMAP_DEF_PATH <config_desktop_app_options>` Kconfig option.
+     The format of the configuration file remains the same.
+
 Libraries
 =========
 
