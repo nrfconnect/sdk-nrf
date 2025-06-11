@@ -227,6 +227,7 @@ nRF5340 Audio
     The :ref:`net_buf_interface` will also contain the metadata about the audio stream in the ``user_data`` section of the API.
     This change was done to transition to standard Zephyr APIs, as well as to have a structured way to pass N-channel audio between modules.
   * The optional buildprog tool to use `nRF Util`_ instead of nrfjprog that has been deprecated.
+  * Buffer count (CONFIG_BT_ISO_TX_BUF_COUNT and CONFIG_BT_BUF_ACL_TX_COUNT) to be in-line with SoftDevice Controller (SDC) defaults. This can be changed and optimized for specific use-cases.
 
 * Removed:
 
@@ -339,6 +340,11 @@ Bluetooth Fast Pair samples
   * Added possibility to build and run the sample without the motion detector support (with the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR` Kconfig option disabled).
   * Updated the :ref:`fast_pair_locator_tag_testing_fw_update_notifications` section to improve the test procedure.
     The application provides now an additional log message to indicate that the firmware version is being read.
+
+Bluetooth nRF_Auraconfig sample
+-------------------------------
+
+ * Buffer count (CONFIG_BT_ISO_TX_BUF_COUNT) to be in-line with SoftDevice Controller (SDC) defaults. This can be changed and optimized for specific use-cases.
 
 Cellular samples
 ----------------
