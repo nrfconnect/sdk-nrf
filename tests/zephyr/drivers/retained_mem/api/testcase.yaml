@@ -3,6 +3,7 @@ tests:
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
+      - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
       - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
@@ -14,3 +15,4 @@ tests:
       - drivers
       - retained_mem
       - ci_tests_zephyr_drivers_retained_mem
+    timeout: 30
