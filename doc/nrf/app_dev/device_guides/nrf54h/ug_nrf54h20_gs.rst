@@ -63,43 +63,6 @@ Install prerequisites
    :start-after: .. prerequisites-include-start
    :end-before: .. prerequisites-include-end
 
-Installing nRF Util and its commands
-------------------------------------
-
-Using the nRF54H20 DK with the |NCS| version |release| requires the following:
-
-* nRF Util v7.13.0 or higher
-* nRF Util ``device`` command v2.8.8
-* nRF Util ``trace`` command v3.3.0
-* nRF Util ``suit`` command v0.9.0
-
-If you have not already installed nRF Util as part of :ref:`nRF Connect SDK prerequisites <installing_vsc>`, complete the following steps to install it:
-
-1. Complete the steps listed on the `Installing nRF Util`_ page to install nRF Util.
-   Follow the default installation procedure from the web repository.
-#. Verify the version of the nRF Util installation on your machine:
-
-   a. Run the following command:
-
-      .. code-block::
-
-         nrfutil --version
-
-   b. If your version is below v7.13.0, run the following command to update the core module:
-
-      .. code-block::
-
-         nrfutil self-upgrade
-
-      For more information, consult the `Upgrading nRF Util core module`_ documentation.
-
-#. Install the required versions of nRF Util commands, as listed above, using the command from `Installing specific versions of nRF Util commands`_.
-   For example, the following command installs the nRF Util ``device`` command version 2.7.16:
-
-   .. code-block::
-
-      nrfutil install device=2.7.16 --force
-
 .. _ug_nrf54h20_install_toolchain:
 
 Installing the |NCS| toolchain
@@ -108,6 +71,49 @@ Installing the |NCS| toolchain
 .. include:: ../../../installation/install_ncs.rst
    :start-after: .. installncstoolchain-include-start
    :end-before: .. installncstoolchain-include-end
+
+Installing nRF Util and its commands
+====================================
+
+When you install the |NCS| toolchain as listed above, you get the :ncs-tool-version:`NRFUTIL_VERSION_WIN10` version of nRF Util core module (``nrfutil``).
+Using the nRF54H20 DK with the |NCS| version |release| requires the following:
+
+* The latest version of nRF Util core module (``nrfutil``), which might or might not be the same as the version installed with the |NCS| toolchain
+* nRF Util ``device`` command v|54H_nrfutil_device_ver|
+* nRF Util ``trace`` command v4.0.1
+
+To update your nRF Util installation, complete the following steps:
+
+1. Make sure you have removed the lock on the nRF Util installation to be able to install other nRF Util commands.
+   See `Locking nRF Util home directory`_ in the tool documentation for more information.
+#. Run the following command to update the core module to the latest version:
+
+   .. code-block::
+
+      nrfutil self-upgrade
+
+   For more information, consult the `Upgrading nRF Util core module`_ documentation.
+
+#. Install the required versions of nRF Util commands, as listed above, using the command from `Installing specific versions of nRF Util commands`_.
+   For example, the following command installs the nRF Util ``device`` command:
+
+   .. code-block::
+
+      nrfutil install device=<version_number> --force
+
+   .. note::
+      Substitute ``<version_number>`` with |54H_nrfutil_device_ver|.
+
+#. To verify the installation of the nRF Util commands, run the following command:
+
+   .. code-block::
+
+      nrfutil <command> --version
+
+   .. note::
+      Substitute ``<command>`` with  either ``device``, or ``trace``.
+
+   The output will show the installed version of that command.
 
 Getting the |NCS| code
 ======================
@@ -162,7 +168,7 @@ After programming the BICR, program the nRF54H20 SoC with the :ref:`nRF54H20 SoC
 This bundle contains the precompiled firmware for the :ref:`Secure Domain <ug_nrf54h20_secure_domain>` and :ref:`System Controller <ug_nrf54h20_sys_ctrl>`.
 To program the nRF54H20 SoC binaries to the nRF54H20 DK, do the following:
 
-1. Download the `nRF54H20 SoC binaries v0.9.6`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
+1. Download the `nRF54H20 SoC binaries v22.2.0+14`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
 
    .. note::
       On MacOS, ensure that the ZIP file is not unpacked automatically upon download.
@@ -257,5 +263,6 @@ See the following links for where to go next:
 * The :ref:`introductory documentation <getting_started>` for more information on the |NCS| and the development environment.
 * :ref:`configuration_and_build` documentation to learn more about the |NCS| development environment.
 * :ref:`ug_nrf54h` documentation for more advanced topics related to the nRF54H20.
+* :ref:`security` documentation for information on security features available in the |NCS|.
 
 If you want to go through an online training course to familiarize yourself with Bluetooth® Low Energy and the development of Bluetooth LE applications, enroll in the `Bluetooth LE Fundamentals course`_ in the `Nordic Developer Academy`_.
