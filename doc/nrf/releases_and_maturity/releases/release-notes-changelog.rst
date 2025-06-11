@@ -246,6 +246,8 @@ nRF5340 Audio
     This change was done to transition to standard Zephyr APIs, as well as to have a structured way to pass N-channel audio between modules.
   * The optional buildprog tool to use `nRF Util`_ instead of nrfjprog that has been deprecated.
   * The documentation pages with information about the :ref:`SD card playback module <nrf53_audio_app_overview_architecture_sd_card_playback>` and :ref:`how to enable it <nrf53_audio_app_configuration_sd_card_playback>`.
+  * The buffer count (:kconfig:option:`CONFIG_BT_ISO_TX_BUF_COUNT` and :kconfig:option:`CONFIG_BT_BUF_ACL_TX_COUNT`) to be in-line with SoftDevice Controller (SDC) defaults.
+    This can be changed and optimized for specific use cases.
 
 * Removed:
 
@@ -354,6 +356,11 @@ Bluetooth samples
 
   * Added a workaround to an issue with unexpected disconnections that resulted from improper handling of the Bluetooth Link Layer procedures by the connected Bluetooth Central device.
     This resolves the :ref:`known issue <known_issues>` NCSDK-33632.
+
+* :ref:`nrf_auraconfig` sample:
+
+  * Updated the buffer count (:kconfig:option:`CONFIG_BT_ISO_TX_BUF_COUNT`) to be in-line with SoftDevice Controller (SDC) defaults.
+    This can be changed and optimized for specific use cases.
 
 |no_changes_yet_note|
 
