@@ -48,37 +48,10 @@ See the `Tracking state of transports`_ section for more details about HID subsc
 HID keymap
 ==========
 
-You must define mapping between button IDs and usage IDs in generated HID reports.
-For that purpose you must create a configuration file with ``hid_keymap`` array.
-Every element of the array contains mapping from a single hardware key ID to HID report ID and usage ID.
-
-For example, the file contents should look like the following:
-
-.. code-block:: c
-
-	#include <caf/key_id.h>
-
-	#include "hid_keymap.h"
-	#inclue "fn_key_id.h"
-
-	static const struct hid_keymap hid_keymap[] = {
-		{ KEY_ID(0x00, 0x01), 0x0014, REPORT_ID_KEYBOARD_KEYS }, /* Q */
-		{ KEY_ID(0x00, 0x02), 0x001A, REPORT_ID_KEYBOARD_KEYS }, /* W */
-		{ KEY_ID(0x00, 0x03), 0x0008, REPORT_ID_KEYBOARD_KEYS }, /* E */
-		{ KEY_ID(0x00, 0x04), 0x0015, REPORT_ID_KEYBOARD_KEYS }, /* R */
-		{ KEY_ID(0x00, 0x05), 0x0018, REPORT_ID_KEYBOARD_KEYS }, /* U */
-
-		...
-
-		{ FN_KEY_ID(0x06, 0x02), 0x0082, REPORT_ID_SYSTEM_CTRL },   /* sleep */
-		{ FN_KEY_ID(0x06, 0x03), 0x0196, REPORT_ID_CONSUMER_CTRL }, /* internet */
-	};
-
-You must define the mentioned array in this configuration file, and specify its location with the :ref:`CONFIG_DESKTOP_HID_STATE_HID_KEYMAP_DEF_PATH <config_desktop_app_options>` Kconfig option.
-
-.. note::
-   The configuration file should be included only by the configured module.
-   Do not include the configuration file in other source files.
+The HID state module uses the :ref:`nrf_desktop_hid_keymap` to map an application-specific key ID to a HID report ID and HID usage ID pair.
+The module selects the :ref:`CONFIG_DESKTOP_HID_KEYMAP <config_desktop_app_options>` Kconfig option to enable the utility.
+Make sure to configure the HID keymap utility.
+See the utility's documentation for details.
 
 HID keyboard LEDs
 =================
@@ -185,9 +158,8 @@ The ``button_event`` is the source of this type of data.
 
 To indicate a change to this input data, overwrite the value that is already stored.
 
-Since keys on the board can be associated to a usage ID, and thus be part of different HID reports, the first step is to identify which report the key belongs to and what usage it represents.
-This is done by obtaining the key mapping from the :c:struct:`hid_keymap` structure.
-This structure is part of the application configuration files for the specific board and is defined in :file:`hid_keymap_def.h`.
+Since keys on the board can be associated to a HID usage ID, and thus be part of different HID reports, the first step is to identify which report the key belongs to and what usage it represents.
+This is done by obtaining the key mapping from the :ref:`nrf_desktop_hid_keymap`.
 
 Once the mapping is obtained, the application checks if the report to which the usage belongs is connected:
 
