@@ -1,0 +1,12 @@
+sample:
+  description: Minimal sample used to boot radiocore
+  name: Empty firmware for application core (nRF54H20)
+tests:
+  sample.nrf54h20.empty_app_core.build:
+    build_only: true
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    tags:
+      - ci_build

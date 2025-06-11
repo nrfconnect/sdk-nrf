@@ -1,6 +1,8 @@
 common:
   sysbuild: true
   depends_on: spi
+  extra_args:
+    - CONFIG_SOC_NRF54H20_CPURAD_ENABLE=y
 
 tests:
   benchmarks.multicore.idle_exmif.nrf54h20dk_cpuapp_cpurad:
