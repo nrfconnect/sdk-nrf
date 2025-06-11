@@ -8,6 +8,8 @@
 
 .. |jlink_ver| replace:: v8.42
 
+.. |54H_nrfutil_device_ver| replace:: 2.12.6
+
 .. ### Config shortcuts
 
 .. |how_to_configure| replace:: See :ref:`configure_application` for information on how to set the required configuration options temporarily or permanently.
@@ -258,8 +260,6 @@
 
 .. |filter_samples_by_board| replace:: If you want to list samples available for one or more specific boards, `use the nRF Connect for Visual Studio Code extension to filter them <Browse samples_>`_.
 
-.. |54H_engb_2_8| replace:: The nRF54H20 DK Engineering A and B (up to version 0.8.2) are no longer supported starting with |NCS| v2.9.0.
-
 .. |devicetree_bindings| replace:: The devicetree bindings provide the structure for the content of the devicetree nodes.
    The :ref:`compatible <zephyr:dt-bindings-compatible>` property defines the compatibility of a devicetree node with a devicetree binding.
    For more information, read the :ref:`documentation about devicetree bindings in Zephyr <zephyr:dt-binding-compat>`.
@@ -271,5 +271,6 @@
 .. |original_mbedtls_def_note| replace:: Whenever this documentation mentions 'original' Mbed TLS, it refers to the open-source `Arm Mbed TLS project`_, not the customized version available in Zephyr.
    There is an option to utilize a 'built-in' driver, which corresponds to the software-implemented cryptography from the 'original' Mbed TLS deliverables.
    This is provided to ensure that the cryptographic toolbox supports all requested features.
+
 
 .. |matter_cluster_editor_preview| replace:: The Matter Cluster Editor app is currently in the preview stage.
