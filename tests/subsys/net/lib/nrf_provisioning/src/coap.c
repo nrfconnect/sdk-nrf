@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <ncs_version.h>
 
 #include "cmock_date_time.h"
 #include "cmock_lte_lc.h"
@@ -30,13 +31,11 @@
 #include "net/nrf_provisioning.h"
 
 #define JWT_DUMMY "dummy_json_web_token"
-#define VER_NMB	  "99.99.99"
+#define MFW "mfw_nrf9161_99.99.99-DUMMY"
 #define RESP_CODE 10
 
 char tok_jwt_plain[] = JWT_DUMMY;
-
-char MFW_VER[] = "mfw_nrf9161_99.99.99-DUMMY";
-char MFW_VER_NMB[] = VER_NMB;
+char MFW_VER[] = MFW;
 char DUMMY_ADDR[] = "dummy_address";
 
 static const char *auth_path = "p/auth-jwt";
@@ -172,7 +171,7 @@ static int coap_client_auth_cb(struct coap_client *client, int sock, const struc
 			       struct coap_client_request *req,
 			       struct coap_transmission_parameters *params, int cmock_num_calls)
 {
-	char path[] = "p/auth-jwt?mver=" VER_NMB "&cver=1";
+	char path[] = "p/auth-jwt?mver=" MFW "&cver=" NCS_VERSION_STRING;
 
 	if (strncmp(req->path, auth_path, strlen(auth_path)) == 0) {
 		TEST_ASSERT_EQUAL_STRING(path, req->path);
@@ -419,13 +418,12 @@ void test_coap_auth_valid(void)
 
 	struct coap_client_option block2_option = {};
 
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
-		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain,
-		strlen(tok_jwt_plain) + 1);
+		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain, sizeof(tok_jwt_plain));
 
 	__cmock_coap_client_req_AddCallback(coap_client_auth_cb);
 	__cmock_coap_client_req_ExpectAnyArgsAndReturn(0);
@@ -444,13 +442,12 @@ void test_coap_auth_failed(void)
 		.connect_socket = -1,
 	};
 
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
-		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain,
-		strlen(tok_jwt_plain) + 1);
+		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain, sizeof(tok_jwt_plain));
 
 	__cmock_coap_client_req_AddCallback(coap_client_auth_failed_cb);
 	__cmock_coap_client_req_ExpectAnyArgsAndReturn(0);
@@ -469,13 +466,12 @@ void test_coap_auth_server_error(void)
 		.connect_socket = -1,
 	};
 
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
-		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain,
-		strlen(tok_jwt_plain) + 1);
+		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain, sizeof(tok_jwt_plain));
 
 	__cmock_coap_client_req_AddCallback(coap_client_auth_server_error_cb);
 	__cmock_coap_client_req_ExpectAnyArgsAndReturn(0);
@@ -494,13 +490,12 @@ void test_coap_auth_unsupported_code(void)
 		.connect_socket = -1,
 	};
 
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
-		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain,
-		strlen(tok_jwt_plain) + 1);
+		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain, sizeof(tok_jwt_plain));
 
 	__cmock_coap_client_req_AddCallback(coap_client_auth_unsupported_code_cb);
 	__cmock_coap_client_req_ExpectAnyArgsAndReturn(0);
@@ -522,13 +517,12 @@ void test_coap_no_more_commands(void)
 
 	struct coap_client_option block2_option = {};
 
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
-		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain,
-		strlen(tok_jwt_plain) + 1);
+		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain, sizeof(tok_jwt_plain));
 
 	__cmock_coap_client_req_AddCallback(coap_client_no_commands_cb);
 	__cmock_coap_client_req_ExpectAnyArgsAndReturn(0);
@@ -551,13 +545,12 @@ void test_coap_cmds_valid_path(void)
 
 	struct coap_client_option block2_option = {};
 
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
-		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain,
-		strlen(tok_jwt_plain) + 1);
+		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain, sizeof(tok_jwt_plain));
 
 	__cmock_coap_client_req_AddCallback(coap_client_cmds_valid_path_cb);
 	__cmock_coap_client_req_ExpectAnyArgsAndReturn(0);
@@ -581,13 +574,12 @@ void test_coap_cmds_bad_request(void)
 
 	struct coap_client_option block2_option = {};
 
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
-		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain,
-		strlen(tok_jwt_plain) + 1);
+		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain, sizeof(tok_jwt_plain));
 
 	__cmock_coap_client_req_AddCallback(coap_client_cmds_bad_request_cb);
 	__cmock_coap_client_req_ExpectAnyArgsAndReturn(0);
@@ -611,13 +603,12 @@ void test_coap_cmds_server_error(void)
 
 	struct coap_client_option block2_option = {};
 
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
-		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain,
-		strlen(tok_jwt_plain) + 1);
+		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain, sizeof(tok_jwt_plain));
 
 	__cmock_coap_client_req_AddCallback(coap_client_cmds_server_error_cb);
 	__cmock_coap_client_req_ExpectAnyArgsAndReturn(0);
@@ -641,13 +632,12 @@ void test_coap_cmds_unsupported_code(void)
 
 	struct coap_client_option block2_option = {};
 
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
-		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain,
-		strlen(tok_jwt_plain) + 1);
+		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain, sizeof(tok_jwt_plain));
 
 	__cmock_coap_client_req_AddCallback(coap_client_cmds_unsupported_code_cb);
 	__cmock_coap_client_req_ExpectAnyArgsAndReturn(0);
@@ -786,15 +776,14 @@ void test_provisioning_task_valid(void)
 	__cmock_modem_key_mgmt_write_StopIgnore();
 	__cmock_modem_key_mgmt_exists_StopIgnore();
 
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
-		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain,
-		strlen(tok_jwt_plain) + 1);
+		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain, sizeof(tok_jwt_plain));
 
 	__cmock_coap_client_option_initial_block2_CMockIgnoreAndReturn(0, block2_option);
 
@@ -868,15 +857,14 @@ void test_provisioning_commands(void)
 	__cmock_nrf_provisioning_at_cmd_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_at_cmd_ReturnArrayThruPtr_resp(at_resp, sizeof(at_resp));
 
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
-		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain,
-		strlen(tok_jwt_plain) + 1);
+		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain, sizeof(tok_jwt_plain));
 
 	__cmock_coap_client_option_initial_block2_CMockIgnoreAndReturn(0, block2_option);
 
@@ -886,8 +874,8 @@ void test_provisioning_commands(void)
 	__cmock_coap_client_req_ExpectAnyArgsAndReturn(0);
 	__cmock_coap_client_req_ExpectAnyArgsAndReturn(0);
 
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 	__cmock_coap_client_req_ExpectAnyArgsAndReturn(0);
 	__cmock_coap_client_req_ExpectAnyArgsAndReturn(0);
 
@@ -923,15 +911,14 @@ void test_coap_rps_bad_request(void)
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
 	nrf_provisioning_coap_init(&mm);
 
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
-		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain,
-		strlen(tok_jwt_plain) + 1);
+		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain, sizeof(tok_jwt_plain));
 
 	__cmock_coap_client_option_initial_block2_CMockIgnoreAndReturn(0, block2_option);
 
@@ -965,15 +952,14 @@ void test_coap_rsp_server_error(void)
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
 	nrf_provisioning_coap_init(&mm);
 
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
-		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain,
-		strlen(tok_jwt_plain) + 1);
+		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain, sizeof(tok_jwt_plain));
 
 	__cmock_coap_client_option_initial_block2_CMockIgnoreAndReturn(0, block2_option);
 
@@ -1007,15 +993,14 @@ void test_coap_rsp_unsupported_code(void)
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
 	nrf_provisioning_coap_init(&mm);
 
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
-		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain,
-		strlen(tok_jwt_plain) + 1);
+		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain, sizeof(tok_jwt_plain));
 
 	__cmock_coap_client_option_initial_block2_CMockIgnoreAndReturn(0, block2_option);
 
