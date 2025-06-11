@@ -55,7 +55,7 @@
 			clock-frequency = <32768>;
 		};
 
-		hfxo: hfxo64m {
+		hfxo64m: hfxo64m {
 			compatible = "fixed-clock";
 			#clock-cells = <0>;
 			clock-frequency = <DT_FREQ_M(64)>;
