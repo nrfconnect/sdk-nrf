@@ -449,8 +449,6 @@ nRF54H20 DK
    .. note::
       This application does not work in the default configuration for the nRF54H20 DK without additional parameters like shields or snippets.
 
-      |54H_engb_2_8|
-
   To build the application for the nRF54H20 DK with the sensor sampling done by the Application core (single-core application), run the following command:
 
   .. code-block:: console
