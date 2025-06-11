@@ -1,16 +1,13 @@
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v3.0.99
-###########################
+Changelog for |NCS| v3.1.0-preview2
+###################################
 
 .. contents::
    :local:
    :depth: 2
 
-The most relevant changes that are present on the main branch of the |NCS|, as compared to the latest official release, are tracked in this file.
-
-.. note::
-   This file is a work in progress and might not cover all relevant changes.
+This changelog reflects the most relevant changes from the latest official release.
 
 .. HOWTO
 
@@ -162,9 +159,9 @@ Matter
 
 * Updated:
 
-   * The ``west zap-generate`` command to remove previously generated ZAP files before generating new files.
-     To skip removing the files, use the ``--keep-previous`` argument.
-   * The :ref:`ug_matter_creating_custom_cluster` user guide by adding information about implementing custom commands.
+  * The ``west zap-generate`` command to remove previously generated ZAP files before generating new files.
+    To skip removing the files, use the ``--keep-previous`` argument.
+  * The :ref:`ug_matter_creating_custom_cluster` user guide by adding information about implementing custom commands.
 
 Matter fork
 +++++++++++
@@ -229,7 +226,7 @@ nRF Desktop
 
 * Updated:
 
-  * Application configurations for dongles on memory-limited SoCs (nRF52820) to reuse the system workqueue for GATT Discovery Manager (:kconfig:option:`CONFIG_BT_GATT_DM_WORKQ_SYS`).
+  * The application configurations for dongles on memory-limited SoCs (such as nRF52820) to reuse the system workqueue for GATT Discovery Manager (:kconfig:option:`CONFIG_BT_GATT_DM_WORKQ_SYS`).
     This helps to reduce RAM usage.
   * Link Time Optimization (:kconfig:option:`CONFIG_LTO`) to be enabled in MCUboot configurations of the nRF52840 DK (``mcuboot_smp``, ``mcuboot_qspi``).
     LTO no longer causes boot failures and it reduces the memory footprint.
@@ -295,16 +292,14 @@ Bluetooth Fast Pair samples
 * :ref:`fast_pair_locator_tag` sample:
 
   * Added possibility to build and run the sample without the motion detector support (with the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR` Kconfig option disabled).
-
   * Updated the :ref:`fast_pair_locator_tag_testing_fw_update_notifications` section to improve the test procedure.
     The application provides now an additional log message to indicate that the firmware version is being read.
 
 Cellular samples
 ----------------
 
-* :ref:`lte_sensor_gateway` sample:
-
-  * The sample is no longer maintained and is now deprecated.
+* Deprecated the :ref:`lte_sensor_gateway` sample.
+  It is no longer maintained.
 
 * :ref:`nrf_cloud_multi_service` sample:
 
@@ -467,10 +462,8 @@ Bluetooth libraries and services
 
 * :ref:`bt_fast_pair_readme` library:
 
-  * Updated:
-
-    * The :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_MOTION_DETECTOR` Kconfig option dependency.
-      The dependency has been updated from the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` Kconfig option to :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR`.
+  * Updated the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_MOTION_DETECTOR` Kconfig option dependency.
+    The dependency has been updated from the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` Kconfig option to :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR`.
 
 Common Application Framework
 ----------------------------
@@ -543,18 +536,18 @@ Modem libraries
 
   * Added:
 
-      * The :kconfig:option:`CONFIG_MODEM_SLM_UART_RX_BUF_COUNT` Kconfig option for configuring RX buffer count.
-      * The :kconfig:option:`CONFIG_MODEM_SLM_UART_RX_BUF_SIZE` Kconfig option for configuring RX buffer size.
-      * The :kconfig:option:`CONFIG_MODEM_SLM_UART_TX_BUF_SIZE` Kconfig option for configuring TX buffer size.
-      * The :kconfig:option:`CONFIG_MODEM_SLM_AT_CMD_RESP_MAX_SIZE` Kconfig option for buffering AT command responses.
+    * The :kconfig:option:`CONFIG_MODEM_SLM_UART_RX_BUF_COUNT` Kconfig option for configuring RX buffer count.
+    * The :kconfig:option:`CONFIG_MODEM_SLM_UART_RX_BUF_SIZE` Kconfig option for configuring RX buffer size.
+    * The :kconfig:option:`CONFIG_MODEM_SLM_UART_TX_BUF_SIZE` Kconfig option for configuring TX buffer size.
+    * The :kconfig:option:`CONFIG_MODEM_SLM_AT_CMD_RESP_MAX_SIZE` Kconfig option for buffering AT command responses.
 
   * Updated the UART implementation between the host device, using the :ref:`lib_modem_slm` library, and the device running the :ref:`Serial LTE Modem <slm_description>` application.
 
   * Removed:
 
-      * The ``CONFIG_MODEM_SLM_DMA_MAXLEN`` Kconfig option.
-        Use :kconfig:option:`CONFIG_MODEM_SLM_UART_RX_BUF_SIZE` instead.
-      * The ``modem_slm_reset_uart`` function as there is no longer need to reset the UART.
+    * The ``CONFIG_MODEM_SLM_DMA_MAXLEN`` Kconfig option.
+      Use :kconfig:option:`CONFIG_MODEM_SLM_UART_RX_BUF_SIZE` instead.
+    * The ``modem_slm_reset_uart()`` function, as there is no longer a need to reset the UART.
 
 Multiprotocol Service Layer libraries
 -------------------------------------
@@ -568,8 +561,8 @@ Libraries for networking
 
   * Updated:
 
-      * To return negative :file:`errno.h` errors instead of positive ZCBOR errors.
-      * The CoAP download authentication to no longer depend on the :ref:`CoAP Client library <zephyr:coap_client_interface>`.
+    * To return negative :file:`errno.h` errors instead of positive ZCBOR errors.
+    * The CoAP download authentication to no longer depend on the :ref:`CoAP Client library <zephyr:coap_client_interface>`.
 
 * :ref:`lib_nrf_provisioning` library:
 

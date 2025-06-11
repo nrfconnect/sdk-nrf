@@ -1,3 +1,5 @@
+:orphan:
+
 .. _migration_cs3_to_2_6_99_cs2:
 
 Migration notes for |NCS| v2.6.99_cs2 for v2.4.99-cs3 users
