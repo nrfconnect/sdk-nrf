@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <version.h>
+#include <ncs_version.h>
 #if defined(CONFIG_POSIX_API)
 #include <zephyr/posix/unistd.h>
 #include <zephyr/posix/sys/socket.h>
@@ -261,34 +262,23 @@ static int gen_provisioning_url(struct rest_client_req_context *const req)
 	const char *rx_buf_sz = STRINGIFY(CONFIG_NRF_PROVISIONING_RX_BUF_SZ);
 	const char *tx_buf_sz = STRINGIFY(CONFIG_NRF_PROVISIONING_TX_BUF_SZ);
 	const char *limit = STRINGIFY(CONFIG_NRF_PROVISIONING_CBOR_RECORDS);
-	const char *cver = STRINGIFY(1);
-	char mver[128];
+	const char *cver = NCS_VERSION_STRING;
+	char mver[MODEM_INFO_FWVER_SIZE];
 	int ret;
-	char *mvernmb, *save_mvernmb;
-	int cnt;
 	char after[NRF_PROVISIONING_CORRELATION_ID_SIZE];
 
 	memcpy(after, nrf_provisioning_codec_get_latest_cmd_id(),
 		NRF_PROVISIONING_CORRELATION_ID_SIZE);
 
-	ret = modem_info_string_get(MODEM_INFO_FW_VERSION, mver, sizeof(mver));
-
-	if (ret <= 0) {
+	ret = modem_info_get_fw_version(mver, sizeof(mver));
+	if (ret < 0) {
 		LOG_ERR("Failed to get modem FW version");
-		return ret ? ret : -ENODATA;
-	}
-
-	mvernmb = strtok_r(mver, "_-", &save_mvernmb);
-	cnt = 1;
-
-	/* mfw_nrf9160_1.3.2-FOTA-TEST - for example */
-	while (cnt++ < 3) {
-		mvernmb = strtok_r(NULL, "_-", &save_mvernmb);
+		return ret;
 	}
 
 	buff_sz = sizeof(API_CMDS_TEMPLATE) +
 		strlen(after) + strlen(rx_buf_sz) + strlen(tx_buf_sz) +
-		strlen(mvernmb) + strlen(cver) + strlen(limit);
+		strlen(mver) + strlen(cver) + strlen(limit);
 	url = k_malloc(buff_sz);
 	if (!url) {
 		ret = -ENOMEM;
@@ -298,8 +288,7 @@ static int gen_provisioning_url(struct rest_client_req_context *const req)
 	req->url = url;
 
 	ret = snprintk(url, buff_sz,
-		API_CMDS_TEMPLATE, after, rx_buf_sz, tx_buf_sz, mvernmb, cver, limit);
-
+		API_CMDS_TEMPLATE, after, rx_buf_sz, tx_buf_sz, mver, cver, limit);
 	if ((ret < 0) || (ret >= buff_sz)) {
 		LOG_ERR("Could not format URL");
 		return -ETXTBSY;

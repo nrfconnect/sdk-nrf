@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-
+#include <ncs_version.h>
 
 #include "cmock_date_time.h"
 #include "cmock_lte_lc.h"
@@ -48,9 +48,7 @@ char tok_jwt_plain[] = AUTH_HDR_BEARER_JWT_DUMMY;
 char http_auth_hdr[] = AUTH_HDR_BEARER AUTH_HDR_BEARER_JWT_DUMMY CRLF;
 char http_auth_hdr_invalid1[] = AUTH_HDR_BEARER_JWT_DUMMY CRLF;
 char http_auth_hdr_invalid2[] = "att." AUTH_HDR_BEARER_JWT_DUMMY CRLF;
-
 char MFW_VER[] = "mfw_nrf9161_99.99.99-DUMMY";
-char MFW_VER_NMB[] = "99.99.99";
 
 static void dummy_nrf_provisioning_device_mode_cb(enum nrf_provisioning_event event,
 						  void *user_data)
@@ -395,10 +393,10 @@ static int rest_client_request_url_valid(struct rest_client_req_context *req_ctx
 	for (int idx = 0; idx < QUERY_ITEMS_MAX && query_items[idx]; idx++) {
 		if (strncmp(query_items[idx], "mver=", strlen("mver=")) == 0) {
 			info.mversion = &(query_items[idx][strlen("mver=")]);
-			TEST_ASSERT_EQUAL_STRING(MFW_VER_NMB, info.mversion);
+			TEST_ASSERT_EQUAL_STRING(MFW_VER, info.mversion);
 		} else if (strncmp(query_items[idx], "cver=", strlen("cver=")) == 0) {
 			info.cversion = &(query_items[idx][strlen("cver=")]);
-			TEST_ASSERT_GREATER_OR_EQUAL_INT(1, atoi(info.cversion));
+			TEST_ASSERT_EQUAL_STRING(NCS_VERSION_STRING, info.cversion);
 		} else if (strncmp(query_items[idx], "txMaxSize=", strlen("txMaxSize=")) == 0) {
 			info.txMaxSize = &(query_items[idx][strlen("txMaxSize=")]);
 			TEST_ASSERT_EQUAL_INT(
@@ -434,8 +432,8 @@ void test_http_commands_auth_hdr_valid(void)
 	};
 
 	__cmock_rest_client_request_defaults_set_Ignore();
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
@@ -461,8 +459,8 @@ void test_http_commands_auth_hdr_invalid(void)
 	};
 
 	__cmock_rest_client_request_defaults_set_Ignore();
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
@@ -490,8 +488,8 @@ void test_http_commands_url_valid(void)
 	};
 
 	__cmock_rest_client_request_defaults_set_Ignore();
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
@@ -518,8 +516,8 @@ void test_http_commands_no_content_valid(void)
 	};
 
 	__cmock_rest_client_request_defaults_set_Ignore();
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 
@@ -545,8 +543,8 @@ void test_http_commands_internal_server_error_invalid(void)
 	};
 
 	__cmock_rest_client_request_defaults_set_Ignore();
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 
@@ -574,8 +572,8 @@ void test_http_commands_unknown_error_invalid(void)
 	__cmock_rest_client_request_defaults_set_Ignore();
 
 	/* 1st */
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 
@@ -587,8 +585,8 @@ void test_http_commands_unknown_error_invalid(void)
 	TEST_ASSERT_EQUAL_INT(-ENOTSUP, ret);
 
 	/* 2nd */
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 
@@ -627,8 +625,8 @@ void test_http_responses_valid(void)
 	/* Command request */
 	__cmock_rest_client_request_defaults_set_Ignore();
 
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 
@@ -1177,8 +1175,8 @@ void test_provisioning_task_valid(void)
 	__cmock_modem_key_mgmt_exists_StopIgnore();
 
 	__cmock_rest_client_request_defaults_set_Ignore();
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
@@ -1247,10 +1245,10 @@ void test_provisioning_task_server_busy_invalid(void)
 	__cmock_settings_load_subtree_ExpectAnyArgsAndReturn(0);
 
 	__cmock_rest_client_request_defaults_set_Ignore();
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(MFW_VER));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(MFW_VER, strlen(MFW_VER) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(

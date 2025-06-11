@@ -11,6 +11,7 @@
 /* Define _POSIX_C_SOURCE before including <string.h> in order to use `strtok_r`. */
 #define _POSIX_C_SOURCE 200809L
 #include <string.h>
+#include <ncs_version.h>
 
 #include <modem/modem_info.h>
 #include <modem/nrf_modem_lib.h>
@@ -36,13 +37,11 @@ LOG_MODULE_REGISTER(nrf_provisioning_coap, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 #define COAP_HOST CONFIG_NRF_PROVISIONING_COAP_HOSTNAME
 #define PEER_PORT CONFIG_NRF_PROVISIONING_COAP_PORT
 
-#define MODEM_INFO_FWVER_SIZE 41
-#define CLIENT_VERSION "1"
+#define CLIENT_VERSION NCS_VERSION_STRING
 
 #define AUTH_MVER "mver=%s"
 #define AUTH_CVER "cver=%s"
 #define AUTH_PATH_JWT "p/auth-jwt"
-
 #define AUTH_API_TEMPLATE (AUTH_PATH_JWT "?" AUTH_MVER "&" AUTH_CVER)
 
 #define CMDS_PATH "p/cmd"
@@ -400,9 +399,7 @@ fail:
 static int generate_auth_path(char *buffer, size_t len)
 {
 	int ret;
-	char mver[CONFIG_MODEM_INFO_BUFFER_SIZE];
-	char *mvernmb, *save_mvernmb;
-	int cnt;
+	char mver[MODEM_INFO_FWVER_SIZE];
 
 	if (!buffer) {
 		LOG_ERR("Cannot generate auth path, no output pointer given");
@@ -410,28 +407,18 @@ static int generate_auth_path(char *buffer, size_t len)
 		return -EINVAL;
 	}
 
-	ret = modem_info_string_get(MODEM_INFO_FW_VERSION, mver, sizeof(mver));
-
-	if (ret <= 0) {
+	ret = modem_info_get_fw_version(mver, sizeof(mver));
+	if (ret < 0) {
 		LOG_ERR("Failed to get modem FW version");
-		return ret ? ret : -ENODATA;
+		return ret;
 	}
 
-	mvernmb = strtok_r(mver, "_-", &save_mvernmb);
-	cnt = 1;
-
-	/* mfw_nrf9160_1.3.2-FOTA-TEST - for example */
-	while (cnt++ < 3) {
-		mvernmb = strtok_r(NULL, "_-", &save_mvernmb);
-	}
-
-	if (len < (sizeof(AUTH_API_TEMPLATE) + strlen(mvernmb) + strlen(CLIENT_VERSION))) {
+	if (len < (sizeof(AUTH_API_TEMPLATE) + strlen(mver) + strlen(CLIENT_VERSION))) {
 		LOG_ERR("Cannot generate auth path, buffer too small");
 		return -ENOMEM;
 	}
 
-	ret = snprintk(buffer, len, AUTH_API_TEMPLATE, mvernmb, CLIENT_VERSION);
-
+	ret = snprintk(buffer, len, AUTH_API_TEMPLATE, mver, CLIENT_VERSION);
 	if ((ret < 0) || (ret >= len)) {
 		LOG_ERR("Could not format URL");
 		return -ETXTBSY;
