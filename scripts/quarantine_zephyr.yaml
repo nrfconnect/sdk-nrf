@@ -619,3 +619,10 @@
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
   comment: "Not compatible"
+
+- scenarios:
+    - drivers.spi.nrf_pm_runtime
+    - drivers.spi.loopback
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34011"
