@@ -26,6 +26,7 @@ See the `MCUboot output build files`_ page for a list of all these files.
 
 .. note::
    When you use MCUboot in the direct-xip mode, enable the ``SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT`` sysbuild Kconfig option to let the build system generate an additional set of files for the second application slot.
-   These files are identical to the ones listed on the `MCUboot output build files`_ page, but they are placed in the :file:`mcuboot_secondary_app` folder.
+   These files are identical to the ones listed on the `MCUboot output build files`_ page, but they are placed in the :file:`mcuboot_secondary_app` folder for the main application, while the files for the remaining applications are located in the respective :file:`<application>_secondary_app` folder.
    For example, :file:`mcuboot_secondary_app/zephyr/zephyr.signed.bin` is created and placed in the second slot on the target device when the :file:`zephyr.signed.bin` file is placed in the first slot.
+   Similarly, the :file:`ipc_radio_secondary_app/zephyr/zephyr.signed.bin` file is created and placed in the second slot on the target device when the :file:`ipc_radio/zephyr/zephyr.signed.bin` file is placed in the first slot.
    For more information about the direct-xip mode, see the *Equal slots (direct-xip)* section in the :doc:`Bootloader documentation <design>`.
