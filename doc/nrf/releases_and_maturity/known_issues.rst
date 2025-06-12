@@ -2846,6 +2846,20 @@ NCSDK-33053: The Bluetooth Peripheral HIDS Keyboard with unmet dependency for th
        status = "okay";
      };
 
+.. rst-class:: v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0
+
+NCSDK-33632: The Bluetooth Peripheral HIDS samples sometimes disconnect due to Bluetooth LL collisions
+  The :ref:`peripheral_hids_keyboard` and the :ref:`peripheral_hids_mouse` samples use the default configuration of the Zephyr Bluetooth subsystem, which enables automatic initiation of Bluetooth Link Layer procedures (for example, the PHY Update procedure and the associated :kconfig:option:`CONFIG_BT_AUTO_PHY_UPDATE` Kconfig option).
+  This can cause Link Layer procedure collisions during a connection with the Bluetooth Central device that does not properly handle these procedures.
+  In this case, the peripheral devices can experience disconnections.
+
+  **Workaround:** Apply the following configuration changes in your project configuration file (for example, :file:`prj.conf`):
+
+  .. code-block::
+
+     CONFIG_BT_GATT_AUTO_SEC_REQ=n
+     CONFIG_BT_AUTO_PHY_UPDATE=n
+
 .. rst-class:: v1-2-1 v1-2-0
 
 Peripheral HIDS mouse sample advertising issues
