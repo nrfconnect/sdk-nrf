@@ -61,3 +61,9 @@
     - unit.*
     - native_sim.*
   comment: "SUIT is planned to be removed from NCS soon"
+
+- scenarios:
+    - nrf.extended.drivers.mspi.api.hpf
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-7878"

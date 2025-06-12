@@ -320,6 +320,14 @@
     - nrf54l15dk/nrf54l15/cpuflpr
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-33580"
 
+- scenarios:
+    - drivers.flash.common.disable_spi_nor
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54l15dk/nrf54l10/cpuapp
+    - nrf54l15dk/nrf54l05/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-7879"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
