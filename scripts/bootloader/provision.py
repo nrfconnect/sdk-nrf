@@ -82,15 +82,11 @@ def generate_mcuboot_only_provision_hex_file(provision_address, output, max_size
 
     num_bytes_in_lcs = lcs_state_sz
     num_bytes_in_implementation_id = IMPLEMENTATION_ID_SIZE
-    num_bytes_in_s0_address = 4
-    num_bytes_in_s1_address = 4
     num_bytes_in_num_public_keys = 4
 
     num_bytes_in_bl_storage_data_struct = \
         num_bytes_in_lcs + \
         num_bytes_in_implementation_id + \
-        num_bytes_in_s0_address + \
-        num_bytes_in_s1_address + \
         num_bytes_in_num_public_keys
 
     provision_data = bytes(num_bytes_in_bl_storage_data_struct * [0])
@@ -102,12 +98,11 @@ def generate_mcuboot_only_provision_hex_file(provision_address, output, max_size
     generate_provision_intel_hex_file(provision_data, provision_address, output, max_size)
 
 
-def generate_provision_hex_file(s0_address, s1_address, hashes, provision_address, output, max_size,
+def generate_provision_hex_file(hashes, provision_address, output, max_size,
                                 num_counter_slots_version, mcuboot_counters_slots, otp_write_width,
                                 variable_data):
 
-    provision_data = struct.pack('<III', s0_address, s1_address,
-                                 len(hashes))
+    provision_data = struct.pack('<I', len(hashes))
 
     idx = 0
     for mhash in hashes:
@@ -131,8 +126,6 @@ def parse_args():
         description='Generate provisioning hex file.',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         allow_abbrev=False)
-    parser.add_argument('--s0-addr', type=lambda x: int(x, 0), required=False, help='Address of image slot s0')
-    parser.add_argument('--s1-addr', type=lambda x: int(x, 0), required=False, help='Address of image slot s1')
     parser.add_argument('--provision-addr', type=lambda x: int(x, 0),
                         required=True, help='Address at which to place the provisioned data')
     parser.add_argument('--public-key-files', required=False,
@@ -241,9 +234,6 @@ def main():
     lcs_size = get_lcs_size(args.otp_write_width)
     num_bytes_provisioned_elsewhere = lcs_size + IMPLEMENTATION_ID_SIZE
 
-    if not args.mcuboot_only and args.s0_addr is None:
-        raise RuntimeError("Either --mcuboot-only or --s0-addr must be specified")
-
     variable_data = get_variable_data(
         psa_certification_reference=args.psa_certificate_reference
     )
@@ -260,9 +250,6 @@ def main():
         )
         return
 
-    s0_address = args.s0_addr
-    s1_address = args.s1_addr if args.s1_addr is not None else s0_address
-
     # The LCS and implementation ID is stored in the OTP before the
     # rest of the provisioning data so add it to the given base
     # address
@@ -278,8 +265,6 @@ def main():
         )
 
     generate_provision_hex_file(
-        s0_address=s0_address,
-        s1_address=s1_address,
         hashes=hashes,
         provision_address=provision_address,
         output=args.output,
