@@ -164,8 +164,9 @@ int sx_mac_status(struct sxmac *c);
  *
  * @param[in,out] c MAC operation context
  *
+ * @return sxsymcrypt status code.
  */
-void sx_mac_free(struct sxmac *c);
+int sx_mac_free(struct sxmac *c);
 
 /** Find an available MAC engine for the operation.
  *

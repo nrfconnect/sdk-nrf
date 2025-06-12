@@ -13,6 +13,7 @@ extern "C" {
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
+#include <cracen/statuscodes.h>
 
 #ifndef SX_EXTRA_IN_DESCS
 #define SX_EXTRA_IN_DESCS 0
@@ -167,6 +168,20 @@ struct sxchannel {
 struct sxcmmask {
 	struct sxchannel channel;
 };
+
+/**
+ * @brief Function to handle CRACEN nested errors in the sxsymcrypt
+ *
+ * @param[in] nested_err	Nested error occurred while handling an error.
+ * @param[in] err		Original error code.
+ *
+ * @return Return the nested error if it is not SX_OK, otherwise return
+ *         the original error code.
+ */
+inline int sx_handle_nested_error(int nested_err, int err)
+{
+	return nested_err ? nested_err != SX_OK : err;
+}
 
 #ifdef __cplusplus
 }
