@@ -95,12 +95,15 @@ static int lenAlenC_aesgcm_ba411(size_t aadsz, size_t datasz, uint8_t *out)
 	return 1;
 }
 
-void sx_aead_free(struct sxaead *c)
+int sx_aead_free(struct sxaead *c)
 {
+	int sx_err = SX_OK;
+
 	if (c->key->clean_key) {
-		c->key->clean_key(c->key->user_data);
+		sx_err = c->key->clean_key(c->key->user_data);
 	}
 	sx_cmdma_release_hw(&c->dma);
+	return sx_err;
 }
 
 int sx_aead_hw_reserve(struct sxaead *c)
@@ -130,7 +133,7 @@ int sx_aead_hw_reserve(struct sxaead *c)
 
 exit:
 	if (err != SX_OK) {
-		sx_aead_free(c);
+		return sx_handle_nested_error(sx_aead_free(c), err);
 	}
 
 	return err;
@@ -294,12 +297,10 @@ int sx_aead_feed_aad(struct sxaead *c, const char *aad, size_t aadsz)
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 	if (aadsz >= DMA_MAX_SZ) {
-		sx_aead_free(c);
-		return SX_ERR_TOO_BIG;
+		return sx_handle_nested_error(sx_aead_free(c), SX_ERR_TOO_BIG);
 	}
 	if (c->dataintotalsz) {
-		sx_aead_free(c);
-		return SX_ERR_FEED_AFTER_DATA;
+		return sx_handle_nested_error(sx_aead_free(c), SX_ERR_FEED_AFTER_DATA);
 	}
 
 	c->totalaadsz += aadsz;
@@ -324,8 +325,7 @@ int sx_aead_crypt(struct sxaead *c, const char *datain, size_t datainsz, char *d
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 	if (datainsz >= DMA_MAX_SZ) {
-		sx_aead_free(c);
-		return SX_ERR_TOO_BIG;
+		return sx_handle_nested_error(sx_aead_free(c), SX_ERR_TOO_BIG);
 	}
 
 	sx_aead_discard_aad(c);
@@ -354,13 +354,12 @@ int sx_aead_produce_tag(struct sxaead *c, char *tagout)
 	if (c->cfg->mode == BA411_MODEID_CCM) {
 		if ((c->dma.dmamem.cfg & c->cfg->ctxload) && (c->datainsz == 0) &&
 		    (c->discardaadsz == 0)) {
-			sx_aead_free(c);
-			return SX_ERR_INPUT_BUFFER_TOO_SMALL;
+			return sx_handle_nested_error(sx_aead_free(c),
+						      SX_ERR_INPUT_BUFFER_TOO_SMALL);
 		}
 	}
 	if ((c->dataintotalsz + c->totalaadsz) < c->cfg->inputminsz) {
-		sx_aead_free(c);
-		return SX_ERR_INCOMPATIBLE_HW;
+		return sx_handle_nested_error(sx_aead_free(c), SX_ERR_INCOMPATIBLE_HW);
 	}
 
 	if (c->cfg->lenAlenC(c->totalaadsz, c->dataintotalsz, &c->extramem[0])) {
@@ -385,13 +384,12 @@ int sx_aead_verify_tag(struct sxaead *c, const char *tagin)
 	if (c->cfg->mode == BA411_MODEID_CCM) {
 		if ((c->dma.dmamem.cfg & c->cfg->ctxload) && (c->datainsz == 0) &&
 		    (c->discardaadsz == 0)) {
-			sx_aead_free(c);
-			return SX_ERR_INPUT_BUFFER_TOO_SMALL;
+			return sx_handle_nested_error(sx_aead_free(c),
+						      SX_ERR_INPUT_BUFFER_TOO_SMALL);
 		}
 	}
 	if ((c->dataintotalsz + c->totalaadsz) < c->cfg->inputminsz) {
-		sx_aead_free(c);
-		return SX_ERR_INCOMPATIBLE_HW;
+		return sx_handle_nested_error(sx_aead_free(c), SX_ERR_INCOMPATIBLE_HW);
 	}
 
 	if (c->cfg->lenAlenC(c->totalaadsz, c->dataintotalsz, &c->extramem[0])) {
@@ -449,8 +447,7 @@ int sx_aead_save_state(struct sxaead *c)
 	}
 
 	if (c->cfg->statesz == 0) {
-		sx_aead_free(c);
-		return SX_ERR_CONTEXT_SAVING_NOT_SUPPORTED;
+		return sx_handle_nested_error(sx_aead_free(c), SX_ERR_CONTEXT_SAVING_NOT_SUPPORTED);
 	}
 
 	sx_aead_discard_aad(c);
@@ -477,8 +474,7 @@ int sx_aead_status(struct sxaead *c)
 		return r;
 	}
 	if (r) {
-		sx_aead_free(c);
-		return r;
+		return sx_handle_nested_error(sx_aead_free(c), r);
 	}
 
 #if CONFIG_DCACHE
@@ -491,9 +487,7 @@ int sx_aead_status(struct sxaead *c)
 			    : SX_OK;
 	}
 
-	sx_aead_free(c);
-
-	return r;
+	return sx_handle_nested_error(sx_aead_free(c), r);
 }
 
 int sx_aead_wait(struct sxaead *c)

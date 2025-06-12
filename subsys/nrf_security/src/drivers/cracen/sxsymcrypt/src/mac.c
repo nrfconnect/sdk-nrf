@@ -16,12 +16,14 @@
 #include "cmaes.h"
 #include <cracen/prng_pool.h>
 
-void sx_mac_free(struct sxmac *c)
+int sx_mac_free(struct sxmac *c)
 {
+	int sx_err = SX_OK;
 	if (c->key->clean_key) {
-		c->key->clean_key(c->key->user_data);
+		sx_err = c->key->clean_key(c->key->user_data);
 	}
 	sx_cmdma_release_hw(&c->dma);
+	return sx_err;
 }
 
 int sx_mac_hw_reserve(struct sxmac *c)
@@ -48,8 +50,7 @@ int sx_mac_hw_reserve(struct sxmac *c)
 
 exit:
 	if (err != SX_OK) {
-		sx_mac_free(c);
-		return err;
+		return sx_handle_nested_error(sx_mac_free(c), err);
 	}
 
 	return SX_OK;
@@ -61,12 +62,10 @@ int sx_mac_feed(struct sxmac *c, const char *datain, size_t sz)
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 	if (sz >= DMA_MAX_SZ) {
-		sx_mac_free(c);
-		return SX_ERR_TOO_BIG;
+		return sx_handle_nested_error(sx_mac_free(c), SX_ERR_TOO_BIG);
 	}
 	if (c->cntindescs >= (ARRAY_SIZE(c->descs))) {
-		sx_mac_free(c);
-		return SX_ERR_FEED_COUNT_EXCEEDED;
+		return sx_handle_nested_error(sx_mac_free(c), SX_ERR_FEED_COUNT_EXCEEDED);
 	}
 
 	if (sz != 0) {
@@ -81,8 +80,7 @@ int sx_mac_feed(struct sxmac *c, const char *datain, size_t sz)
 static int sx_mac_run(struct sxmac *c)
 {
 	if ((c->feedsz == 0) && (c->dma.dmamem.cfg & c->cfg->loadstate)) {
-		sx_mac_free(c);
-		return SX_ERR_INPUT_BUFFER_TOO_SMALL;
+		return sx_handle_nested_error(sx_mac_free(c), SX_ERR_INPUT_BUFFER_TOO_SMALL);
 	}
 	sx_cmdma_start(&c->dma, sizeof(c->descs), c->descs);
 
@@ -151,12 +149,10 @@ int sx_mac_save_state(struct sxmac *c)
 	sz = c->feedsz;
 
 	if (sz < c->cfg->blocksz) {
-		sx_mac_free(c);
-		return SX_ERR_INPUT_BUFFER_TOO_SMALL;
+		return sx_handle_nested_error(sx_mac_free(c), SX_ERR_INPUT_BUFFER_TOO_SMALL);
 	}
 	if (sz % c->cfg->granularity) {
-		sx_mac_free(c);
-		return SX_ERR_WRONG_SIZE_GRANULARITY;
+		return sx_handle_nested_error(sx_mac_free(c), SX_ERR_WRONG_SIZE_GRANULARITY);
 	}
 
 	c->dma.dmamem.cfg |= c->cfg->savestate;
@@ -182,9 +178,7 @@ int sx_mac_status(struct sxmac *c)
 	sys_cache_data_invd_range((void *)&c->extramem, sizeof(c->extramem));
 #endif
 
-	sx_mac_free(c);
-
-	return r;
+	return sx_handle_nested_error(sx_mac_free(c), r);
 }
 
 int sx_mac_wait(struct sxmac *c)
