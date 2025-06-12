@@ -680,7 +680,7 @@ int nrf_cloud_rest_agnss_data_get(struct nrf_cloud_rest_context *const rest_ctx,
 
 	int ret;
 	int type_count = 0;
-	size_t total_bytes = 0;
+	int total_bytes = 0;
 	size_t rcvd_bytes = 0;
 	size_t remain = 0;
 	size_t pos = 0;
