@@ -7,10 +7,9 @@
 rsource "services/Kconfig"
 
 config SSF_CLIENT
-	bool
 	def_bool $(dt_nodelabel_enabled_with_compat,cpusec_cpuapp_ipc,$(DT_COMPAT_ZEPHYR_IPC_ICMSG)) \
 	      || $(dt_nodelabel_enabled_with_compat,cpusec_cpurad_ipc,$(DT_COMPAT_ZEPHYR_IPC_ICMSG))
-	depends on !SOC_NRF54H20_IRON
+	depends on SOC_SERIES_NRF92X
 
 config SDFW_SERVICES_ENABLED
 	bool
@@ -26,14 +25,14 @@ menu "SDFW Service Framework"
 
 config SSF_CLIENT_DOMAIN_ID
 	int
-	default 2 if SOC_NRF54H20_CPUAPP || SOC_NRF9280_CPUAPP
-	default 3 if SOC_NRF54H20_CPURAD || SOC_NRF9280_CPURAD
+	default 2 if SOC_NRF9280_CPUAPP
+	default 3 if SOC_NRF9280_CPURAD
 	default 0
 
 config SSF_CLIENT_NRF_RPC_GROUP_NAME
 	string
-	default "app" if SOC_NRF54H20_CPUAPP || SOC_NRF9280_CPUAPP
-	default "rad" if SOC_NRF54H20_CPURAD || SOC_NRF9280_CPURAD
+	default "app" if SOC_NRF9280_CPUAPP
+	default "rad" if SOC_NRF9280_CPURAD
 	default ""
 
 config SSF_CLIENT_SYS_INIT
