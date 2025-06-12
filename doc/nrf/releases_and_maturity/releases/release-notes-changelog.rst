@@ -290,6 +290,11 @@ Bluetooth samples
   * Fixed an issue where the sample would assert with the :kconfig:option:`CONFIG_ASSERT` Kconfig option enabled.
     This was due to calling the :c:func:`bt_iso_chan_send` function from a timer ISR handler and sending SDUs to the controller with invalid timestamps.
 
+* :ref:`peripheral_hids_keyboard` and :ref:`peripheral_hids_mouse` samples:
+
+  * Added a workaround to an issue with unexpected disconnections that resulted from improper handling of the Bluetooth Link Layer procedures by the connected Bluetooth Central device.
+    This resolves the :ref:`known issue <known_issues>` NCSDK-33632.
+
 |no_changes_yet_note|
 
 Bluetooth Mesh samples
