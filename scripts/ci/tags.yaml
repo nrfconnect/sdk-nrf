@@ -1366,6 +1366,14 @@ ci_tests_drivers_sqspi:
     - nrf/tests/zephyr/drivers/flash/common/
     - nrfxlib/softperipheral/sQSPI
 
+ci_tests_drivers_spi:
+  files:
+    - nrf/tests/drivers/spi/
+    - zephyr/drivers/spi/Kconfig.nrfx
+    - zephyr/modules/hal_nordic/nrfx/Kconfig
+    - zephyr/modules/hal_nordic/nrfx/nrfx_kconfig.h
+    - zephyr/soc/nordic/common/Kconfig.peripherals
+
 ci_tests_drivers_gpio:
   files:
     - nrf/tests/drivers/gpio/
