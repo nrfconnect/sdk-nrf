@@ -807,7 +807,13 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 
 psa_status_t cracen_cipher_abort(cracen_cipher_operation_t *operation)
 {
-	sx_blkcipher_free(&operation->cipher);
+	int sx_status;
+
+	sx_status = sx_blkcipher_free(&operation->cipher);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
+	}
+
 	safe_memzero(operation, sizeof(cracen_cipher_operation_t));
 	return PSA_SUCCESS;
 }
