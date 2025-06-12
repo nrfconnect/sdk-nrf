@@ -46,9 +46,16 @@ int init_usb(void)
 }
 #endif
 
+#define RDW(addr)           (*(volatile unsigned int *)(addr))
+#define WRW(addr, data)     (*(volatile unsigned int *)(addr) = (data))
 
 int main(void)
 {
+
+	// Switch off protection to RF regs
+	WRW((uintptr_t)0x48030000, 0x00000000);
+	// Use Cabled connection for EMU-EMU
+ 	WRW((uintptr_t)0x4802000C, 0x2);
 #if NRFX_CLOCK_ENABLED && (defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
 	/* For now hardcode to 128MHz */
 	nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK,
