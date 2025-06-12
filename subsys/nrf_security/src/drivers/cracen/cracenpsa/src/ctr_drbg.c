@@ -20,6 +20,7 @@
 #include <sxsymcrypt/keyref.h>
 #include <zephyr/kernel.h>
 #include <nrf_security_mutexes.h>
+#include <string.h>
 
 #ifdef CONFIG_CRACEN_HW_VERSION_LITE
 #define MAX_BITS_PER_REQUEST (1 << 16) /* Cracen Lite only supports 2^16 ctr size */
