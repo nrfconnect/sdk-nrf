@@ -14,13 +14,31 @@ common:
       - "jedec-id ="
 tests:
   sample.drivers.spi.jesd216.sqspi:
-    filter: CONFIG_MSPI_SQSPI and dt_compat_enabled("jedec,mspi-nor")
+    filter: CONFIG_MSPI_NRF_SQSPI and dt_compat_enabled("jedec,mspi-nor")
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
       - DTC_OVERLAY_FILE="boards/nrf54l15dk_nrf54l15_cpuapp_sqspi.overlay"
+  sample.drivers.spi.jesd216.sqspi_16M:
+    filter: CONFIG_MSPI_NRF_SQSPI and dt_compat_enabled("jedec,mspi-nor")
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - DTC_OVERLAY_FILE="boards/nrf54l15dk_nrf54l15_cpuapp_sqspi.overlay"
+      - EXTRA_DTC_OVERLAY_FILE="boards/sqspi_16MHz.overlay"
+  sample.drivers.spi.jesd216.sqspi_32M:
+    filter: CONFIG_MSPI_NRF_SQSPI and dt_compat_enabled("jedec,mspi-nor")
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - DTC_OVERLAY_FILE="boards/nrf54l15dk_nrf54l15_cpuapp_sqspi.overlay"
+      - EXTRA_DTC_OVERLAY_FILE="boards/sqspi_32MHz.overlay"
   nrf.extended.sample.drivers.spi.jesd216:
     filter: dt_compat_enabled("jedec,spi-nor") or dt_compat_enabled("jedec,mspi-nor")
     platform_allow:
