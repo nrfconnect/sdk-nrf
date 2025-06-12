@@ -115,21 +115,24 @@ You must define all of the mentioned data in this configuration file, and specif
    The configuration file should be included only by the configured module.
    Do not include the configuration file in other source files.
 
-Report expiration
-=================
-
-With the :ref:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION <config_desktop_app_options>` Kconfig option, you can set the amount of time after which a key will be considered expired.
-The higher the value, the longer the period from which the nRF Desktop application will recall pressed keys when the connection with HID host is established.
-
-Queue event size
-================
+Queuing keypresses
+==================
 
 The module selects the :ref:`CONFIG_DESKTOP_HID_EVENTQ <config_desktop_app_options>` Kconfig option to enable the :ref:`nrf_desktop_hid_eventq`.
 The utility is used to temporarily queue key state changes (presses and releases) before the connection with the HID host is established.
+When a key state changes (it is pressed or released) before the connection is established, an element containing this key's usage ID is pushed onto the queue.
+
+Queue size
+----------
 
 With the :ref:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE <config_desktop_app_options>` Kconfig option, you can set the number of elements on the queue where the keys are stored before the connection is established.
-When a key state changes (it is pressed or released) before the connection is established, an element containing this key's usage is pushed onto the queue.
-If there is no space in the queue, the oldest element is released.
+If there is no space in the queue to enqueue a new key state change, the oldest element is released.
+
+Report expiration
+-----------------
+
+With the :ref:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION <config_desktop_app_options>` Kconfig option, you can set the amount of time after which a queued key will be considered expired.
+The higher the value, the longer the period from which the nRF Desktop application will recall pressed keys when the connection with HID host is established.
 
 Implementation details
 **********************
