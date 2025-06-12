@@ -58,7 +58,7 @@ const void *hid_reportq_get_sub_id(struct hid_reportq *q);
 /**
  * @brief Add a HID report to the queue.
  *
- * The function returns an error if HID report subscription is disabled for the added HID report.
+ * The function returns an error if HID report subscription is not enabled for the added HID report.
  *
  * If number of enqueued reports with a given report ID exceeds limit defined by the configuration
  * (@kconfig{CONFIG_DESKTOP_HID_REPORTQ_MAX_ENQUEUED_REPORTS}), the oldest enqueued HID report with
@@ -99,8 +99,10 @@ bool hid_reportq_is_subscribed(struct hid_reportq *q, uint8_t rep_id);
  *
  * @param[in] q		Pointer to the queue instance.
  * @param[in] rep_id	HID report ID.
+ *
+ * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
-void hid_reportq_subscribe(struct hid_reportq *q, uint8_t rep_id);
+int hid_reportq_subscribe(struct hid_reportq *q, uint8_t rep_id);
 
 /**
  * @brief Unsubscribe from HID report with given ID.
@@ -110,8 +112,10 @@ void hid_reportq_subscribe(struct hid_reportq *q, uint8_t rep_id);
  *
  * @param[in] q		Pointer to the queue instance.
  * @param[in] rep_id	HID report ID.
+ *
+ * @return 0 if the operation was successful. Otherwise, a (negative) error code is returned.
  */
-void hid_reportq_unsubscribe(struct hid_reportq *q, uint8_t rep_id);
+int hid_reportq_unsubscribe(struct hid_reportq *q, uint8_t rep_id);
 
 #ifdef __cplusplus
 }

@@ -258,6 +258,9 @@ nRF Desktop
     This change simplifies the HID state module implementation and allows code reuse.
   * The default value of the :kconfig:option:`CONFIG_APP_EVENT_MANAGER_MAX_EVENT_CNT` Kconfig option to ``64``.
     This ensures that more complex configurations fit in the limit.
+  * The :ref:`nrf_desktop_hid_reportq` to accept HID report IDs that do not belong to HID input reports supported by the application (are not part of the ``input_reports`` array defined in :file:`configuration/common/hid_report_desc.h` file).
+    Before the change, providing an unsupported HID report ID caused an assertion failure.
+    Function signatures of the :c:func:`hid_reportq_subscribe` and :c:func:`hid_reportq_unsubscribe` functions were slightly changed (both functions return an error in case the provided HID report ID is unsupported).
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
