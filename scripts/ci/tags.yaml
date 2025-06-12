@@ -1292,6 +1292,15 @@ ci_tests_benchmarks_i2c_endless:
     - nrf/tests/benchmarks/i2c_endless/
     - zephyr/drivers/i2c/
 
+ci_tests_benchmarks_i2s_freq:
+  files:
+    - nrf/tests/benchmarks/i2s_freq
+    - zephyr/drivers/i2s/
+    - zephyr/dts/bindings/i2s/
+    - zephyr/include/zephyr/drivers/i2s.h
+    - zephyr/tests/drivers/i2s/
+    - nrf/tests/drivers/i2s/
+
 ci_tests_benchmarks_peripheral_load:
   files:
     - modules/hal/nordic/nrfx/

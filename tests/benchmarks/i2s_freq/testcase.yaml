@@ -1,0 +1,43 @@
+common:
+  depends_on:
+    - i2s
+    - gpio
+  tags:
+    - drivers
+    - i2s
+    - ci_tests_benchmarks_i2s_freq
+  harness: ztest
+  harness_config:
+    fixture: gpio_loopback
+  platform_allow: nrf5340dk/nrf5340/cpuapp
+
+tests:
+  benchmarks.i2s_freq:
+    extra_args:
+      - CONFIG_I2S_TEST_FRAME_CLOCK_TOLERANCE_PPM=45000
+  benchmarks.i2s_freq.aclk.callback:
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="boards/nrf5340dk_nrf5340_cpuapp_aclk.overlay"
+      - CONFIG_I2S_TEST_FRAME_CLOCK_TOLERANCE_PPM=30000
+      - CONFIG_I2S_TEST_SKIP_SAMPLERATE_48000=y
+      - CONFIG_I2S_TEST_SKIP_SAMPLERATE_88200=y
+      - CONFIG_I2S_TEST_SKIP_SAMPLERATE_96000=y
+  benchmarks.i2s_freq.aclk.polling:
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="boards/nrf5340dk_nrf5340_cpuapp_aclk.overlay"
+      - CONFIG_I2S_TEST_FRAME_CLOCK_MEASUREMENT_GPIO_POLLING=y
+      - CONFIG_I2S_TEST_FRAME_CLOCK_TOLERANCE_PPM=11000
+      - CONFIG_I2S_TEST_SKIP_SAMPLERATE_48000=y
+      - CONFIG_I2S_TEST_SKIP_SAMPLERATE_96000=y
+  benchmarks.i2s_freq.aclk.polling.48000:
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="boards/nrf5340dk_nrf5340_cpuapp_aclk.overlay"
+      - CONFIG_I2S_TEST_FRAME_CLOCK_MEASUREMENT_GPIO_POLLING=y
+      - CONFIG_I2S_TEST_FRAME_CLOCK_TOLERANCE_PPM=50000
+      - CONFIG_I2S_TEST_SKIP_SAMPLERATE_44100=y
+      - CONFIG_I2S_TEST_SKIP_SAMPLERATE_8000=y
+      - CONFIG_I2S_TEST_SKIP_SAMPLERATE_16000=y
+      - CONFIG_I2S_TEST_SKIP_SAMPLERATE_32000=y
+      - CONFIG_I2S_TEST_SKIP_SAMPLERATE_44100=y
+      - CONFIG_I2S_TEST_SKIP_SAMPLERATE_88200=y
+      - CONFIG_I2S_TEST_SKIP_SAMPLERATE_96000=y
