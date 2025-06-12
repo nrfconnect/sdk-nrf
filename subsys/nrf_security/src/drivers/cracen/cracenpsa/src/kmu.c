@@ -12,6 +12,7 @@
 #include <nrf_security_mutexes.h>
 #include <psa/crypto.h>
 #include <stdint.h>
+#include <string.h>
 #include <sxsymcrypt/internal.h>
 #include <hw_unique_key.h>
 #include <cracen_psa.h>
@@ -210,6 +211,56 @@ static psa_status_t cracen_kmu_decrypt(kmu_metadata *metadata, size_t number_of_
 
 #endif /* PSA_NEED_CRACEN_KMU_ENCRYPTED_KEYS */
 
+#ifdef CONFIG_CRACEN_PROVISION_PROT_RAM_INV_DATA
+psa_status_t cracen_provision_prot_ram_inv_data(void)
+{
+	uint8_t rng_buffer[2 * CRACEN_KMU_SLOT_KEY_SIZE];
+	bool needs_provisioning;
+	psa_key_attributes_t key_attributes = PSA_KEY_ATTRIBUTES_INIT;
+	psa_status_t status;
+	int kmu_slot;
+
+	needs_provisioning = lib_kmu_is_slot_empty(PROTECTED_RAM_INVALIDATION_DATA_SLOT1) ||
+			     lib_kmu_is_slot_empty(PROTECTED_RAM_INVALIDATION_DATA_SLOT2);
+
+	if (!needs_provisioning) {
+		return PSA_SUCCESS;
+	}
+
+	status = cracen_get_random(NULL, rng_buffer, sizeof(rng_buffer));
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	/* Just use attributes which are suitable for a normal protected RAM
+	 * key so that the existed KMU provision API can be used.
+	 */
+	psa_set_key_usage_flags(&key_attributes, PSA_KEY_USAGE_ENCRYPT);
+	psa_set_key_algorithm(&key_attributes, PSA_ALG_CTR);
+	psa_set_key_type(&key_attributes, PSA_KEY_TYPE_AES);
+	psa_set_key_bits(&key_attributes, 256);
+	psa_set_key_lifetime(&key_attributes,
+			     PSA_KEY_LIFETIME_FROM_PERSISTENCE_AND_LOCATION(
+				     PSA_KEY_PERSISTENCE_DEFAULT, PSA_KEY_LOCATION_CRACEN_KMU));
+
+	/* The rng material here is 256 bits so it will occupy 2 KMU slots during
+	 * the provisioning call.
+	 */
+	psa_set_key_id(&key_attributes,
+		       mbedtls_svc_key_id_make(0, PSA_KEY_HANDLE_FROM_CRACEN_KMU_SLOT(
+							  CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED,
+							  PROTECTED_RAM_INVALIDATION_DATA_SLOT1)));
+
+	kmu_slot = CRACEN_PSA_GET_KMU_SLOT(
+		MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(&key_attributes)));
+
+	status = cracen_kmu_provision(&key_attributes, kmu_slot, rng_buffer, sizeof(rng_buffer));
+	safe_memzero(rng_buffer, sizeof(rng_buffer));
+	return status;
+}
+#endif /* CONFIG_CRACEN_PROVISION_PROT_RAM_INV_DATA */
+
+
 /* Used internally in sxsymcrypt so we use sx return codes here. */
 int cracen_kmu_prepare_key(const uint8_t *user_data)
 {
@@ -255,7 +306,30 @@ int cracen_kmu_prepare_key(const uint8_t *user_data)
 
 int cracen_kmu_clean_key(const uint8_t *user_data)
 {
-	(void)user_data;
+	const kmu_opaque_key_buffer *key = (const kmu_opaque_key_buffer *)user_data;
+	bool any_slot_empty;
+
+	switch (key->key_usage_scheme) {
+	case CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED:
+		any_slot_empty = lib_kmu_is_slot_empty(PROTECTED_RAM_INVALIDATION_DATA_SLOT1) ||
+				 lib_kmu_is_slot_empty(PROTECTED_RAM_INVALIDATION_DATA_SLOT2);
+		if (any_slot_empty) {
+			return SX_ERR_UNKNOWN_ERROR;
+		}
+
+		if (lib_kmu_push_slot(PROTECTED_RAM_INVALIDATION_DATA_SLOT1) != LIB_KMU_SUCCESS) {
+			return SX_ERR_UNKNOWN_ERROR;
+		}
+
+		if (lib_kmu_push_slot(PROTECTED_RAM_INVALIDATION_DATA_SLOT2) != LIB_KMU_SUCCESS) {
+			return SX_ERR_UNKNOWN_ERROR;
+		}
+
+		break;
+	default:
+		break;
+	}
+
 	safe_memzero(kmu_push_area, sizeof(kmu_push_area));
 
 	return SX_OK;
@@ -632,6 +706,7 @@ static psa_status_t convert_to_psa_attributes(kmu_metadata *metadata,
 static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_attr,
 						kmu_metadata *metadata)
 {
+	int kmu_slot;
 	memset(metadata, 0, sizeof(*metadata));
 	metadata->metadata_version = 0;
 
@@ -790,7 +865,14 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 		break;
 #endif
 	default:
-		return PSA_ERROR_NOT_SUPPORTED;
+		/* Ignore the algorithm for the protected ram invalidation kmu slot because
+		 * it will never be used for crypto operations.
+		 */
+		kmu_slot = CRACEN_PSA_GET_KMU_SLOT(
+			MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(key_attr)));
+		if (kmu_slot != PROTECTED_RAM_INVALIDATION_DATA_SLOT1) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
 	}
 
 	psa_key_usage_t resulting_usage = 0;
@@ -1068,6 +1150,12 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 
 	if (status != PSA_SUCCESS) {
 		return status;
+	}
+
+	if (slot_number == PROTECTED_RAM_INVALIDATION_DATA_SLOT1 ||
+	    slot_number == PROTECTED_RAM_INVALIDATION_DATA_SLOT2) {
+		/* The protected ram invalidation slots are not used for crypto operations. */
+		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
 	status = clean_up_unfinished_provisioning();
