@@ -141,6 +141,9 @@ struct rest_client_resp_context {
 
 	/** True if used_socket_id was kept alive and was not closed after the REST request. */
 	int used_socket_is_alive;
+
+	/** A pointer to the request context associated with the response. */
+	struct rest_client_req_context *req_ctx;
 };
 
 /**

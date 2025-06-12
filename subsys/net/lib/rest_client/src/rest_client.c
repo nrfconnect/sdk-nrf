@@ -28,9 +28,36 @@ static int rest_client_http_response_cb(struct http_response *rsp,
 					void *user_data)
 {
 	struct rest_client_resp_context *resp_ctx = NULL;
+	size_t buf_remaining_len;
+	size_t resp_buff_len;
+	uint8_t *resp_buff;
+	size_t copy_len;
 
 	if (user_data) {
 		resp_ctx = (struct rest_client_resp_context *)user_data;
+	}
+
+	if (resp_ctx == NULL) {
+		LOG_WRN("REST response context not provided");
+		return 0;
+	}
+
+	/* Ensure receive buffer stays NULL terminated */
+	resp_buff_len = resp_ctx->req_ctx->resp_buff_len - 1;
+	resp_buff = resp_ctx->req_ctx->resp_buff;
+	buf_remaining_len = resp_ctx->total_response_len < resp_buff_len ?
+			    resp_buff_len - resp_ctx->total_response_len : 0;
+	copy_len = MIN(rsp->data_len, buf_remaining_len);
+
+	if (copy_len < rsp->data_len) {
+		LOG_DBG("Receive buffer too small, dropping %zd bytes",
+			rsp->data_len - copy_len);
+	}
+
+	/* Copy data to the REST buffer. */
+	if (copy_len > 0) {
+		memcpy(resp_buff + resp_ctx->total_response_len,
+		       rsp->recv_buf, copy_len);
 	}
 
 	/* If the entire HTTP response is not received in a single "recv" call
@@ -38,20 +65,17 @@ static int rest_client_http_response_cb(struct http_response *rsp,
 	 * rsp->body_start. Only set rest_ctx->response once, the first time,
 	 * which will be the start of the body.
 	 */
-	if (resp_ctx) {
-		if (!resp_ctx->response && rsp->body_found && rsp->body_frag_start) {
-			resp_ctx->response = rsp->body_frag_start;
-		}
-		resp_ctx->total_response_len += rsp->data_len;
+	if (!resp_ctx->response && rsp->body_found && rsp->body_frag_start) {
+		size_t cur_body_offset = rsp->body_frag_start - rsp->recv_buf;
+
+		resp_ctx->response = resp_buff + resp_ctx->total_response_len +
+				     cur_body_offset;
 	}
+	resp_ctx->total_response_len += rsp->data_len;
 
 	if (final_data == HTTP_DATA_MORE) {
 		LOG_DBG("Partial data received(%zd bytes)", rsp->data_len);
 	} else if (final_data == HTTP_DATA_FINAL) {
-		if (!resp_ctx) {
-			LOG_WRN("REST response context not provided");
-			return 0;
-		}
 		resp_ctx->http_status_code = rsp->http_status_code;
 		resp_ctx->response_len = rsp->processed;
 		strcpy(resp_ctx->http_status_code_str, rsp->http_status);
@@ -302,6 +326,7 @@ static int rest_client_do_api_call(struct http_request *http_req,
 				   struct rest_client_req_context *const req_ctx,
 				   struct rest_client_resp_context *const resp_ctx)
 {
+	uint8_t http_recv_buf[128];
 	int err = 0;
 
 	if (req_ctx->connect_socket < 0) {
@@ -316,15 +341,13 @@ static int rest_client_do_api_call(struct http_request *http_req,
 		}
 	}
 
-	/* Assign the user provided receive buffer into the http request */
-	http_req->recv_buf = req_ctx->resp_buff;
-	http_req->recv_buf_len = req_ctx->resp_buff_len;
+	/* Assign the receive buffer into the http request */
+	http_req->recv_buf = http_recv_buf;
+	http_req->recv_buf_len = sizeof(http_recv_buf);
 
-	memset(http_req->recv_buf, 0, http_req->recv_buf_len);
+	memset(req_ctx->resp_buff, 0, req_ctx->resp_buff_len);
 
-	/* Ensure receive buffer stays NULL terminated */
-	--http_req->recv_buf_len;
-
+	resp_ctx->req_ctx = req_ctx;
 	resp_ctx->response = NULL;
 	resp_ctx->response_len = 0;
 	resp_ctx->total_response_len = 0;
