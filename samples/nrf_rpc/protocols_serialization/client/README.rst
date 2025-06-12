@@ -7,22 +7,22 @@ nRF RPC: Protocols serialization client
    :local:
    :depth: 2
 
-The Protocols serialization client sample demonstrates how to send remote procedure calls (RPC) to a protocols serialization server device, such as one running the :ref:`Protocols serialization server <nrf_rpc_protocols_serialization_server>` sample.
-The RPCs are used to control Bluetooth® LE, :ref:`NFC <ug_nfc>` and :ref:`OpenThread <ug_thread_intro>` stacks running on the server device.
+The Protocols serialization client sample demonstrates how to make remote procedure calls (RPC) to a server device running the :ref:`Protocols serialization server <nrf_rpc_protocols_serialization_server>` sample.
+The RPCs are used to control :ref:`OpenThread <ug_thread_intro>`, Bluetooth® LE, and :ref:`NFC <ug_nfc>` stacks running on the server device.
 The client and server devices use the :ref:`nrfxlib:nrf_rpc` and the :ref:`nrf_rpc_uart` to communicate with each other.
 
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
 To test the sample, you also need another device running the :ref:`Protocols serialization server <nrf_rpc_protocols_serialization_server>` sample.
 
-For testing the Bluetooth LE API serialization, you need to have the `nRF Connect for Mobile`_ app installed on your smartphone or tablet.
+For testing the Bluetooth LE API serialization, you need the `nRF Connect for Mobile`_ app installed on your smartphone or tablet.
 
-For testing the NFC API serialization, you also need a smartphone or tablet that can read NFC tags.
+For testing the NFC API serialization, you need a smartphone or tablet that can read NFC tags.
 
 Overview
 ********
@@ -43,13 +43,13 @@ Snippets
 
 The following snippets are available:
 
-* ``ble`` - Enables the client part of the :ref:`Bluetooth LE RPC <ble_rpc>` and shell interface to serialized API.
-  Also enables the :ref:`Bluetooth LE Nordic UART Service <nus_service_readme>`.
-* ``coex`` - Enables shell commands for the :ref:`MPSL software coexistence <nrfxlib:mpsl_cx>` implementation on the server device.
-* ``debug`` - Enables debugging the sample by enabling :c:func:`__ASSERT()` statements globally and verbose logging.
-* ``log_rpc`` - Enables logging over RPC.
-* ``openthread`` - Enables the client part of the :ref:`OpenThread RPC <ot_rpc>`.
-* ``nfc`` - Enables the client part of the :ref:`NFC RPC <nfc_rpc>`.
+* ``ble`` - Enables the client part of the :ref:`Bluetooth LE RPC <ble_rpc>` and ``bt`` shell commands.
+  It also enables the :ref:`nus_service_readme` and :ref:`throughput_readme`.
+* ``coex`` - Enables ``coex`` shell commands for controlling the :ref:`MPSL software coexistence <nrfxlib:mpsl_cx>` implementation on the server device.
+* ``debug`` - Enables debugging features, such as :c:func:`__ASSERT()` statements and verbose logging.
+* ``log_rpc`` - Enables the log forwarder part of the :ref:`Logging RPC <log_rpc>` and ``log_rpc`` shell commands.
+* ``openthread`` - Enables the client part of the :ref:`OpenThread RPC <ot_rpc>` and ``ot`` shell commands.
+* ``nfc`` - Enables the client part of the :ref:`NFC RPC <nfc_rpc>` and ``nfc`` shell commands.
 
 Building and running
 ********************
@@ -57,8 +57,6 @@ Building and running
 .. |sample path| replace:: :file:`samples/nrf_rpc/protocols_serialization/client`
 
 .. include:: /includes/build_and_run.txt
-
-You can modify the list of enabled features, which by default includes Bluetooth LE support and debug logs.
 
 Testing
 =======
