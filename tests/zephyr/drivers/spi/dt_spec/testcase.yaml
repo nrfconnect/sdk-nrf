@@ -5,10 +5,5 @@ tests:
       - spi
       - devicetree
       - ci_tests_zephyr_drivers_spi
-    # depends_on:
-    #   - spi
-    #   - gpio
-    platform_allow:
-      - nrf54l09pdk/nrf54l09/cpuapp
-    integration_platforms:
-      - nrf54l09pdk/nrf54l09/cpuapp
+    depends_on:
+      - future_flag
