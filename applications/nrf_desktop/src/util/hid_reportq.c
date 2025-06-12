@@ -15,7 +15,8 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(hid_reportq, CONFIG_DESKTOP_HID_REPORTQ_LOG_LEVEL);
 
-#define MAX_ENQUEUED_REPORTS CONFIG_DESKTOP_HID_REPORTQ_MAX_ENQUEUED_REPORTS
+#define MAX_ENQUEUED_REPORTS	CONFIG_DESKTOP_HID_REPORTQ_MAX_ENQUEUED_REPORTS
+#define REPORT_IDX_UNSUPPORTED	UINT8_MAX
 
 struct enqueued_report {
 	sys_snode_t node;
@@ -180,19 +181,16 @@ const void *hid_reportq_get_sub_id(struct hid_reportq *q)
 
 static uint8_t get_input_report_idx(uint8_t rep_id)
 {
-	for (size_t i = 0; i < ARRAY_SIZE(input_reports); i++) {
-		__ASSERT_NO_MSG(i <= UINT8_MAX);
+	BUILD_ASSERT(ARRAY_SIZE(input_reports) <= REPORT_IDX_UNSUPPORTED);
 
+	for (size_t i = 0; i < ARRAY_SIZE(input_reports); i++) {
 		if (input_reports[i] == rep_id) {
 			return i;
 		}
 	}
 
-	/* Should not happen. */
-	__ASSERT_NO_MSG(false);
-
-	BUILD_ASSERT(ARRAY_SIZE(input_reports) <= UINT8_MAX);
-	return ARRAY_SIZE(input_reports);
+	/* Not supported. */
+	return REPORT_IDX_UNSUPPORTED;
 }
 
 int hid_reportq_report_add(struct hid_reportq *q, const void *src_id, uint8_t rep_id,
@@ -203,7 +201,12 @@ int hid_reportq_report_add(struct hid_reportq *q, const void *src_id, uint8_t re
 
 	uint8_t rep_idx = get_input_report_idx(rep_id);
 
-	if (!hid_reportq_is_subscribed(q, rep_id)) {
+	if (rep_idx == REPORT_IDX_UNSUPPORTED) {
+		return -ENOTSUP;
+	}
+
+	/* Test bit status directly to avoid iterating over input_reports array again. */
+	if ((q->enabled_report_idx_bm & BIT(rep_idx)) == 0) {
 		return -EACCES;
 	}
 
@@ -269,27 +272,44 @@ bool hid_reportq_is_subscribed(struct hid_reportq *q, uint8_t rep_id)
 
 	uint8_t rep_idx = get_input_report_idx(rep_id);
 
+	if (rep_idx == REPORT_IDX_UNSUPPORTED) {
+		/* HID report not supported - not subscribed. */
+		return false;
+	}
+
 	return ((q->enabled_report_idx_bm & BIT(rep_idx)) != 0);
 }
 
-void hid_reportq_subscribe(struct hid_reportq *q, uint8_t rep_id)
+int hid_reportq_subscribe(struct hid_reportq *q, uint8_t rep_id)
 {
 	/* Make sure that queue was allocated. */
 	__ASSERT_NO_MSG(q->sub_id);
 
 	uint8_t rep_idx = get_input_report_idx(rep_id);
+
+	if (rep_idx == REPORT_IDX_UNSUPPORTED) {
+		return -ENOTSUP;
+	}
 
 	WRITE_BIT(q->enabled_report_idx_bm, rep_idx, 1);
 	__ASSERT_NO_MSG(q->report_lists[rep_idx].node_count == 0);
+
+	return 0;
 }
 
-void hid_reportq_unsubscribe(struct hid_reportq *q, uint8_t rep_id)
+int hid_reportq_unsubscribe(struct hid_reportq *q, uint8_t rep_id)
 {
 	/* Make sure that queue was allocated. */
 	__ASSERT_NO_MSG(q->sub_id);
 
 	uint8_t rep_idx = get_input_report_idx(rep_id);
 
+	if (rep_idx == REPORT_IDX_UNSUPPORTED) {
+		return -ENOTSUP;
+	}
+
 	WRITE_BIT(q->enabled_report_idx_bm, rep_idx, 0);
 	drop_enqueued_events(&q->report_lists[rep_idx]);
+
+	return 0;
 }
