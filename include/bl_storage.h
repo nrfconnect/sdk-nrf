@@ -143,8 +143,6 @@ struct bl_storage_data {
 	/* NB: When placed in OTP, reads must be 4 bytes and 4 byte aligned */
 	struct life_cycle_state_data lcs;
 	uint8_t implementation_id[32];
-	uint32_t s0_address;
-	uint32_t s1_address;
 	uint32_t num_public_keys; /* Number of entries in 'key_data' list. */
 	struct {
 		uint32_t valid;

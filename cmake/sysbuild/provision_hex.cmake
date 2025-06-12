@@ -64,13 +64,9 @@ function(provision application prefix_name)
     # Adjustment to be able to load into sysbuild
     if(CONFIG_SOC_NRF5340_CPUNET OR "${domain}" STREQUAL "CPUNET")
       set(partition_manager_target partition_manager_CPUNET)
-      set(s0_arg --s0-addr $<TARGET_PROPERTY:${partition_manager_target},PM_APP_ADDRESS>)
-      set(s1_arg)
       set(cpunet_target y)
     else()
       set(partition_manager_target partition_manager)
-      set(s0_arg --s0-addr $<TARGET_PROPERTY:${partition_manager_target},PM_S0_ADDRESS>)
-      set(s1_arg --s1-addr $<TARGET_PROPERTY:${partition_manager_target},PM_S1_ADDRESS>)
       set(cpunet_target n)
     endif()
 
@@ -99,8 +95,6 @@ function(provision application prefix_name)
       COMMAND
       ${PYTHON_EXECUTABLE}
       ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/provision.py
-      ${s0_arg}
-      ${s1_arg}
       --provision-addr $<TARGET_PROPERTY:${partition_manager_target},PM_PROVISION_ADDRESS>
       ${public_keys_file_arg}
       --output ${PROVISION_HEX}
