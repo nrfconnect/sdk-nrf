@@ -47,7 +47,7 @@ static void enable_uart_rx(uart_test_data *test_data)
 	zassert_equal(err, 0, "Unexpected error when enabling UART RX: %d");
 }
 
-static void test_uart_latency(size_t buffer_size)
+static void test_uart_latency(size_t buffer_size, uint32_t baudrate)
 {
 	int err;
 	uint32_t tst_timer_value;
@@ -64,10 +64,12 @@ static void test_uart_latency(size_t buffer_size)
 	zassert_true(buffer_size <= MAX_BUFFER_SIZE,
 		     "Given buffer size is to big, allowed max %u bytes\n", MAX_BUFFER_SIZE);
 
-	TC_PRINT("UART TX latency in ASYNC mode test with buffer size: %u bytes\n", buffer_size);
+	TC_PRINT("UART TX latency in ASYNC mode test with buffer size: %u bytes and baudrate: %u\n",
+		 buffer_size, baudrate);
 	set_test_pattern(&test_data);
 	err = uart_config_get(uart_dev, &test_uart_config);
 	zassert_equal(err, 0, "Failed to get uart config");
+	test_uart_config.baudrate = baudrate;
 	err = uart_configure(uart_dev, &test_uart_config);
 	zassert_equal(err, 0, "UART configuration failed");
 	err = uart_callback_set(uart_dev, async_uart_callback, NULL);
@@ -100,7 +102,7 @@ static void test_uart_latency(size_t buffer_size)
 		 theoretical_transmission_time_us);
 	TC_PRINT("Measured transmission time (for %u bytes) [us]: %llu\n", buffer_size,
 		 timer_value_us);
-	TC_PRINT("Measured - claculated time delta (for %d bytes) [us]: %llu\n", buffer_size,
+	TC_PRINT("Measured - claculated time delta (for %d bytes) [us]: %lld\n", buffer_size,
 		 timer_value_us - theoretical_transmission_time_us);
 	TC_PRINT("Maximal allowed transmission time [us]: %u\n",
 		 maximal_allowed_transmission_time_us);
@@ -109,12 +111,28 @@ static void test_uart_latency(size_t buffer_size)
 		     "Measured call latency is over the specified limit");
 }
 
-ZTEST(uart_latency, test_uart_latency_in_async_mode)
+ZTEST(uart_latency, test_uart_latency_in_async_mode_baud_9k6)
 {
-	test_uart_latency(1);
-	test_uart_latency(128);
-	test_uart_latency(1024);
-	test_uart_latency(3000);
+	test_uart_latency(10, UART_BAUD_9k6);
+	test_uart_latency(128, UART_BAUD_9k6);
+	test_uart_latency(1024, UART_BAUD_9k6);
+	test_uart_latency(3000, UART_BAUD_9k6);
+}
+
+ZTEST(uart_latency, test_uart_latency_in_async_mode_baud_115k2)
+{
+	test_uart_latency(10, UART_BAUD_115k2);
+	test_uart_latency(128, UART_BAUD_115k2);
+	test_uart_latency(1024, UART_BAUD_115k2);
+	test_uart_latency(3000, UART_BAUD_115k2);
+}
+
+ZTEST(uart_latency, test_uart_latency_in_async_mode_baud_921k6)
+{
+	test_uart_latency(10, UART_BAUD_921k6);
+	test_uart_latency(128, UART_BAUD_921k6);
+	test_uart_latency(1024, UART_BAUD_921k6);
+	test_uart_latency(3000, UART_BAUD_921k6);
 }
 
 void *test_setup(void)

@@ -16,7 +16,8 @@ extern uint8_t rx_test_buffer[MAX_BUFFER_SIZE];
 static uint32_t tx_byte_offset;
 static uint32_t rx_byte_offset;
 
-K_SEM_DEFINE(uart_transmission_done_sem, 0, 1);
+K_SEM_DEFINE(uart_tx_done_sem, 0, 1);
+K_SEM_DEFINE(uart_rx_done_sem, 0, 1);
 
 void uart_tx_interrupt_service(const struct device *dev, uint8_t *test_pattern, size_t buffer_size,
 			       uint32_t *tx_byte_offset)
@@ -29,8 +30,8 @@ void uart_tx_interrupt_service(const struct device *dev, uint8_t *test_pattern, 
 		*tx_byte_offset += bytes_sent;
 	} else {
 		*tx_byte_offset = 0;
+		k_sem_give(&uart_tx_done_sem);
 		uart_irq_tx_disable(dev);
-		k_sem_give(&uart_transmission_done_sem);
 	}
 }
 
@@ -44,6 +45,11 @@ void uart_rx_interrupt_service(const struct device *dev, uint8_t *receive_buffer
 			uart_fifo_read(dev, receive_buffer_pointer + *rx_byte_offset, buffer_size);
 		*rx_byte_offset += rx_data_length;
 	} while (rx_data_length);
+	if (*rx_byte_offset >= buffer_size) {
+		*rx_byte_offset = 0;
+		k_sem_give(&uart_rx_done_sem);
+		uart_irq_rx_disable(uart_dev);
+	}
 }
 
 void uart_isr_handler(const struct device *dev, void *user_data)
@@ -63,7 +69,7 @@ void uart_isr_handler(const struct device *dev, void *user_data)
 	}
 }
 
-static void test_uart_latency(size_t buffer_size)
+static void test_uart_latency(size_t buffer_size, uint32_t baudrate)
 {
 	int err;
 	uint32_t tst_timer_value;
@@ -82,10 +88,12 @@ static void test_uart_latency(size_t buffer_size)
 	rx_byte_offset = 0;
 
 	zassert_true(buffer_size <= MAX_BUFFER_SIZE,
-		     "Given buffer size is to big, allowed max %u bytes\n", MAX_BUFFER_SIZE);
+		     "Given buffer size is to big, allowed max %u bytes and baudrate: %u\n",
+		     MAX_BUFFER_SIZE);
 
-	TC_PRINT("UART TX latency in INTERRUPT mode test with buffer size: %u bytes\n",
-		 buffer_size);
+	TC_PRINT("UART TX latency in INTERRUPT mode test with buffer size: %u bytes and baudrate: "
+		 "%u\n",
+		 buffer_size, baudrate);
 
 	set_test_pattern(&test_data);
 	configure_test_timer(tst_timer_dev, TEST_TIMER_COUNT_TIME_LIMIT_MS);
@@ -93,6 +101,7 @@ static void test_uart_latency(size_t buffer_size)
 
 	err = uart_config_get(uart_dev, &test_uart_config);
 	zassert_equal(err, 0, "Failed to get uart config");
+	test_uart_config.baudrate = baudrate;
 	err = uart_configure(uart_dev, &test_uart_config);
 	zassert_equal(err, 0, "UART configuration failed");
 	err = uart_irq_callback_set(uart_dev, uart_isr_handler);
@@ -110,23 +119,24 @@ static void test_uart_latency(size_t buffer_size)
 
 	dk_set_led_on(DK_LED1);
 	counter_start(tst_timer_dev);
-	zassert_equal(k_sem_take(&uart_transmission_done_sem, K_MSEC(TX_TIMEOUT_MS)), 0);
+	while (k_sem_take(&uart_tx_done_sem, K_NO_WAIT) != 0) {
+	};
 	counter_get_value(tst_timer_dev, &tst_timer_value);
 	counter_stop(tst_timer_dev);
 	dk_set_led_off(DK_LED1);
 	timer_value_us = counter_ticks_to_us(tst_timer_dev, tst_timer_value);
 
-	uart_irq_tx_disable(uart_dev);
-	uart_irq_rx_disable(uart_dev);
-	uart_irq_err_disable(uart_dev);
+	while (k_sem_take(&uart_rx_done_sem, K_NO_WAIT) != 0) {
+	};
 
+	uart_irq_err_disable(uart_dev);
 	check_transmitted_data(&test_data);
 
 	TC_PRINT("Calculated transmission time (for %u bytes) [us]: %u\n", buffer_size,
 		 theoretical_transmission_time_us);
 	TC_PRINT("Measured transmission time (for %u bytes) [us]: %llu\n", buffer_size,
 		 timer_value_us);
-	TC_PRINT("Measured - claculated time delta (for %u bytes) [us]: %llu\n", buffer_size,
+	TC_PRINT("Measured - claculated time delta (for %u bytes) [us]: %lld\n", buffer_size,
 		 timer_value_us - theoretical_transmission_time_us);
 	TC_PRINT("Maximal allowed transmission time [us]: %u\n",
 		 maximal_allowed_transmission_time_us);
@@ -135,12 +145,20 @@ static void test_uart_latency(size_t buffer_size)
 		     "Measured call latency is over the specified limit");
 }
 
-ZTEST(uart_latency, test_uart_latency_in_interrupt_mode)
+ZTEST(uart_latency, test_uart_latency_in_interrupt_mode_baud_9k6)
 {
-	test_uart_latency(1);
-	test_uart_latency(128);
-	test_uart_latency(1024);
-	test_uart_latency(3000);
+	test_uart_latency(10, UART_BAUD_9k6);
+	test_uart_latency(128, UART_BAUD_9k6);
+	test_uart_latency(1024, UART_BAUD_9k6);
+	test_uart_latency(3000, UART_BAUD_9k6);
+}
+
+ZTEST(uart_latency, test_uart_latency_in_interrupt_mode_baud_115k2)
+{
+	test_uart_latency(10, UART_BAUD_115k2);
+	test_uart_latency(128, UART_BAUD_115k2);
+	test_uart_latency(1024, UART_BAUD_115k2);
+	test_uart_latency(3000, UART_BAUD_115k2);
 }
 
 void *test_setup(void)
