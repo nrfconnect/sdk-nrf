@@ -53,7 +53,7 @@ static int rtc_config(void)
 		return -ENODEV;
 	}
 
-#ifndef BT_CTLR_SDC_BSIM_BUILD
+#ifndef CONFIG_SOC_SERIES_BSIM_NRFXX
 	IRQ_CONNECT(NRFX_IRQ_NUMBER_GET(NRF_RTC_INST_GET(0)), IRQ_PRIO_LOWEST,
 		    NRFX_RTC_INST_HANDLER_GET(0), NULL, 0);
 #else

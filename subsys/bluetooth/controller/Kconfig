@@ -44,6 +44,7 @@ config BT_LL_SOFTDEVICE
 	select BT_LL_SOFTDEVICE_HEADERS_INCLUDE
 	select MRAM_LATENCY if (SOC_NRF54H20_CPURAD && !MPSL_PM_USE_MRAM_LATENCY_SERVICE)
 	select MRAM_LATENCY_AUTO_REQ if (SOC_NRF54H20_CPURAD && !MPSL_PM_USE_MRAM_LATENCY_SERVICE)
+	select EXPERIMENTAL if SOC_SERIES_BSIM_NRFXX
 	depends on (SOC_SERIES_BSIM_NRFXX || SOC_SERIES_NRF52X || SOC_COMPATIBLE_NRF5340_CPUNET ||\
 			    SOC_NRF54H20_CPURAD || SOC_SERIES_NRF54LX || SOC_SERIES_NRF71X)
 	depends on DT_HAS_NORDIC_BT_HCI_SDC_ENABLED
@@ -63,14 +64,6 @@ config BT_LL_SOFTDEVICE_BUILD_TYPE_LIB
 	bool "Use library"
 
 endchoice
-
-config BT_CTLR_SDC_BSIM_BUILD
-	bool
-	default y if SOC_SERIES_BSIM_NRFXX
-	select EXPERIMENTAL
-	help
-	  Convenience config to indicate the SDC is being built for a babblesim
-	  target. Internal use only.
 
 # BT_HCI_TX_STACK_SIZE is declared in Zephyr and also here for a second time,
 # for set the valid default size of the HCI Tx stack.
