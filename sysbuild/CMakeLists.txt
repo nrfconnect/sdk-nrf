@@ -882,6 +882,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
       uicr-migrate
       --edt-pickle-file ${BINARY_DIR}/zephyr/edt.pickle
       --output-periphconf-file ${BINARY_DIR}/zephyr/periphconf_migrated.c
+      --spu-ownerid-configure
     )
     foreach(image ${ironside_uicr_images})
       ExternalProject_Get_Property(${image} BINARY_DIR)
