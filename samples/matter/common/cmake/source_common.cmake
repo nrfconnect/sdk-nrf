@@ -82,3 +82,10 @@ endif()
 if(CONFIG_NCS_SAMPLE_MATTER_TEST_SHELL)
     target_sources(app PRIVATE ${MATTER_COMMONS_SRC_DIR}/test/test_shell.cpp)
 endif()
+
+# ==============================================================================
+# Collect Matter configuration
+# ==============================================================================
+include(${CMAKE_CURRENT_LIST_DIR}/collect_config.cmake)
+
+collect_matter_defines()
