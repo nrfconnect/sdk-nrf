@@ -255,7 +255,9 @@ static void set_peripheral_protocol_mode(struct hids_peripheral *per, enum bt_hi
 {
 	int err = bt_hogp_pm_write(&per->hogp, pm);
 
-	if (err) {
+	if (err == -EOPNOTSUPP) {
+		LOG_WRN("Protocol Mode update not supported by peripheral: %p", (void *)per);
+	} else if (err) {
 		LOG_ERR("Cannot update Protocol Mode (err: %d)", err);
 	}
 }
