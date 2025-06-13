@@ -384,6 +384,7 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_cellular
+      - bluetooth
   sample.cellular.modem_shell.rtt:
     sysbuild: true
     build_only: true
