@@ -1,0 +1,27 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&wdt131 {
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
+};
+
+&wdt132 {
+	status = "reserved";
+	interrupt-parent = <&cpuflpr_clic>;
+};
+
+/* Configure uart120 so it can be accesed by cpuflpr. */
+
+&dma_fast_region {
+	status = "okay";
+};
+
+&uart120 {
+	status = "reserved";
+	memory-regions = <&dma_fast_region>;
+	interrupt-parent = <&cpuflpr_clic>;
+};

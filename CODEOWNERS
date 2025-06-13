@@ -853,13 +853,14 @@
 /tests/bluetooth/tester/                  @carlescufi @nrfconnect/ncs-paladin
 /tests/crypto/                            @magnev
 /tests/drivers/audio/                     @nrfconnect/ncs-low-level-test
-/tests/drivers/gpio/                      @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
-/tests/drivers/i2s/                       @nrfconnect/ncs-low-level-test
 /tests/drivers/flash/flash_ipuc/          @nrfconnect/ncs-charon
 /tests/drivers/flash/flash_rpc/           @nrfconnect/ncs-pluto
 /tests/drivers/flash_patch/               @nrfconnect/ncs-pluto
 /tests/drivers/fprotect/                  @nrfconnect/ncs-pluto
+/tests/drivers/gpio/                      @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /tests/drivers/grtc/                      @nrfconnect/ncs-low-level-test
+/tests/drivers/i2c/                       @nrfconnect/ncs-low-level-test
+/tests/drivers/i2s/                       @nrfconnect/ncs-low-level-test
 /tests/drivers/lpuart/                    @nordic-krch @nrfconnect/ncs-low-level-test
 /tests/drivers/mspi/app_fault_timer/      @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /tests/drivers/mspi/error_cases/          @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
@@ -869,10 +870,10 @@
 /tests/drivers/nrfx_integration_test/     @nrfconnect/ncs-co-drivers
 /tests/drivers/pwm/                       @nrfconnect/ncs-low-level-test
 /tests/drivers/qdec/                      @nrfconnect/ncs-low-level-test
-/tests/drivers/uart/                      @nrfconnect/ncs-low-level-test
-/tests/drivers/i2c/                       @nrfconnect/ncs-low-level-test
 /tests/drivers/sensor/multicore_temp/     @nrfconnect/ncs-low-level-test
 /tests/drivers/timer/grtc_timer_lfrc/     @nrfconnect/ncs-low-level-test
+/tests/drivers/uart/                      @nrfconnect/ncs-low-level-test
+/tests/drivers/watchdog/                  @nrfconnect/ncs-low-level-test
 /tests/lib/at_cmd_parser/                 @nrfconnect/ncs-modem
 /tests/lib/at_cmd_custom/                 @nrfconnect/ncs-modem
 /tests/lib/at_parser/                     @nrfconnect/ncs-modem
