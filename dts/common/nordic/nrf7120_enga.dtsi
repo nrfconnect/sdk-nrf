@@ -125,20 +125,6 @@
 		};
 #endif
 
-		cpuapp_mram: mram@0 {
-			compatible = "nordic,mram";
-			reg = <0 DT_SIZE_K(3972)>;
-			erase-block-size = <4096>;
-			write-block-size = <4>;
-		};
-
-		cpuflpr_mram: mram@3e1000 {
-			compatible = "nordic,mram";
-			reg = <0x3e1000 DT_SIZE_K(116)>;
-			erase-block-size = <4096>;
-			write-block-size = <4>;
-		};
-
 		cpuapp_sram: memory@20000000 {
 			compatible = "mmio-sram";
 			reg = <0x20000000 DT_SIZE_K(512)>;
@@ -824,6 +810,28 @@
 				reg = <0x10e000 0x1000>;
 				interrupts = <270 NRF_DEFAULT_IRQ_PRIORITY>;
 				status = "disabled";
+			};
+
+			mram_controller: mram-controller@0x5004e000 {
+				compatible = "nordic,mram-controller";
+				reg = <0x5004e000 0x1000>;
+				#address-cells = <1>;
+				#size-cells = <1>;
+				interrupts = <78 NRF_DEFAULT_IRQ_PRIORITY>;
+
+				cpuapp_mram: mram@0 {
+					compatible = "nordic,mram";
+					reg = <0 DT_SIZE_K(3972)>;
+					erase-block-size = <4096>;
+					write-block-size = <4>;
+				};
+
+				cpuflpr_mram: mram@3e1000 {
+					compatible = "nordic,mram";
+					reg = <0x3e1000 DT_SIZE_K(116)>;
+					erase-block-size = <4096>;
+					write-block-size = <4>;
+				};
 			};
 
 			cpuapp_ppb: cpuapp-ppb-bus {
