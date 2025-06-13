@@ -656,10 +656,7 @@ int nrf_provisioning_req(void)
 			}
 		}
 
-		if (ret == -EINVAL) {
-			__ASSERT(false, "Invalid exchange, abort");
-			LOG_ERR("Invalid exchange");
-		} else if (ret == -ECONNREFUSED) {
+		if (ret == -ECONNREFUSED) {
 			LOG_ERR("Connection refused");
 			LOG_WRN("Please check the CA certificate stored in sectag "
 				STRINGIFY(CONFIG_NRF_PROVISIONING_ROOT_CA_SEC_TAG)"");

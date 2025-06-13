@@ -297,6 +297,32 @@ static int gen_provisioning_url(struct rest_client_req_context *const req)
 	return 0;
 }
 
+static int status_code_to_error(int status_code)
+{
+	switch (status_code) {
+	case NRF_PROVISIONING_HTTP_STATUS_OK:
+		return 0;
+	case NRF_PROVISIONING_HTTP_STATUS_BAD_REQ:
+		LOG_ERR("Bad request");
+		return -EINVAL;
+	case NRF_PROVISIONING_HTTP_STATUS_UNAUTH:
+		LOG_ERR("Device didn't send auth credentials");
+		return -EACCES;
+	case NRF_PROVISIONING_HTTP_STATUS_FORBIDDEN:
+		LOG_ERR("Device provided wrong auth credentials");
+		return -EACCES;
+	case NRF_PROVISIONING_HTTP_STATUS_UNS_MEDIA_TYPE:
+		LOG_ERR("Unsupported content format");
+		return -ENOMSG;
+	case NRF_PROVISIONING_HTTP_STATUS_INTERNAL_SERVER_ERR:
+		LOG_ERR("Internal server error");
+		return -EBUSY;
+	default:
+		LOG_ERR("Unsupported HTTP response code: %d", status_code);
+		return -ENOTSUP;
+	}
+}
+
 /**
  * @brief Reports responses to server.
  *
@@ -349,28 +375,7 @@ static int nrf_provisioning_responses_req(struct nrf_provisioning_http_context *
 		goto clean_up;
 	}
 
-	if (resp->http_status_code == NRF_PROVISIONING_HTTP_STATUS_OK) {
-		ret = 0;
-	} else if (resp->http_status_code == NRF_PROVISIONING_HTTP_STATUS_BAD_REQ) {
-		LOG_ERR("Bad request");
-		ret = -EINVAL;
-	} else if (resp->http_status_code == NRF_PROVISIONING_HTTP_STATUS_UNAUTH) {
-		LOG_ERR("Device didn't send auth credentials");
-		ret = -EACCES;
-	} else if (resp->http_status_code == NRF_PROVISIONING_HTTP_STATUS_FORBIDDEN) {
-		LOG_ERR("Device provided wrong auth credentials");
-		ret = -EACCES;
-	} else if (resp->http_status_code == NRF_PROVISIONING_HTTP_STATUS_UNS_MEDIA_TYPE) {
-		LOG_ERR("Wrong content format");
-		ret = -ENOMSG;
-	} else if (resp->http_status_code == NRF_PROVISIONING_HTTP_STATUS_INTERNAL_SERVER_ERR) {
-		LOG_WRN("Server busy");
-		ret = -EBUSY;
-	} else {
-		__ASSERT(false, "Unsupported HTTP response code");
-		LOG_ERR("Unsupported HTTP response code");
-		ret = -ENOSYS;
-	}
+	ret = status_code_to_error(resp->http_status_code);
 
 clean_up:
 	if (req->url) {
@@ -448,15 +453,6 @@ int nrf_provisioning_http_req(struct nrf_provisioning_http_context *const rest_c
 		if (resp.http_status_code == NRF_PROVISIONING_HTTP_STATUS_NO_CONTENT) {
 			LOG_INF("No more commands to process on server side");
 			ret = 0;
-		} else if (resp.http_status_code == NRF_PROVISIONING_HTTP_STATUS_BAD_REQ) {
-			LOG_ERR("Bad request");
-			ret = -EINVAL;
-		} else if (resp.http_status_code == NRF_PROVISIONING_HTTP_STATUS_UNAUTH) {
-			LOG_ERR("Device didn't send auth credentials");
-			ret = -EACCES;
-		} else if (resp.http_status_code == NRF_PROVISIONING_HTTP_STATUS_FORBIDDEN) {
-			LOG_ERR("Device provided wrong auth credentials");
-			ret = -EACCES;
 		} else if (resp.http_status_code == NRF_PROVISIONING_HTTP_STATUS_OK) {
 
 			/* Codec state tracking spawns over
@@ -502,17 +498,11 @@ int nrf_provisioning_http_req(struct nrf_provisioning_http_context *const rest_c
 			}
 			nrf_provisioning_codec_teardown();
 			continue;
-		} else if (
-			resp.http_status_code == NRF_PROVISIONING_HTTP_STATUS_INTERNAL_SERVER_ERR) {
-			LOG_WRN("Internal server error");
-			ret = -EBUSY;
 		} else if (!resp.http_status_code) {
 			LOG_WRN("Null response - socket closed");
 			ret = -ESHUTDOWN;
 		} else {
-			LOG_ERR("Unknown HTTP response code: %d", resp.http_status_code);
-			__ASSERT(false, "Unknown HTTP response code: %d", resp.http_status_code);
-			ret = -ENOTSUP;
+			ret = status_code_to_error(resp.http_status_code);
 		}
 		break;
 	}
