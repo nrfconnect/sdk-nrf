@@ -4,6 +4,10 @@ common:
     - flash
     - ci_tests_zephyr_drivers_flash_negative_tests
 tests:
+  drivers.flash.negative_tests:
+    platform_allow:
+      - nrf7120pdk/nrf7120/cpuapp
+      - nrf7120pdk/nrf7120/cpuapp/emu
   nrf.extended.drivers.flash.negative_tests:
     platform_allow:
       - nrf54lm20pdk/nrf54lm20a/cpuapp
