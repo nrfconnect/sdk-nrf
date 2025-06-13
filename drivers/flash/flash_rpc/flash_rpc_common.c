@@ -31,4 +31,4 @@ static int serialization_init(void)
 	return 0;
 }
 
-SYS_INIT(serialization_init, POST_KERNEL, CONFIG_FLASH_RPC_SYS_INIT_PRIORITY);
+SYS_INIT(serialization_init, APPLICATION, CONFIG_FLASH_RPC_SYS_INIT_PRIORITY);

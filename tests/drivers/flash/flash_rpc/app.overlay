@@ -5,8 +5,8 @@
 			reg = <0x00000000 DT_SIZE_K(256)>;
 			#address-cells = <1>;
 			#size-cells = <1>;
-			erase-value = <0xff>;
 			status = "okay";
+			zephyr,deferred-init;
 			flash_rpc: flash_rpc@0 {
 				status = "okay";
 				compatible = "soc-nv-flash";
