@@ -654,7 +654,7 @@ Scripts
 =======
 
 * Added the :file:`ncs_ironside_se_update.py` script in the :file:`scripts/west_commands` folder.
-  The script adds the west command ``west ncs-ironside-se-update`` for installing an IRONside SE update.
+  The script adds the west command ``west ncs-ironside-se-update`` for installing an IronSide SE update.
 
 * :ref:`nrf_desktop_config_channel_script` Python script:
 

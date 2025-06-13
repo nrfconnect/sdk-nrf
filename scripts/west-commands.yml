@@ -42,5 +42,5 @@ west-commands:
   - file: scripts/west_commands/ncs_ironside_se_update.py
     commands:
       - name: ncs-ironside-se-update
-        class: NcsIRONsideSEUpdate
-        help: IRONside SE update utility
+        class: NcsIronSideSEUpdate
+        help: IronSide SE update utility

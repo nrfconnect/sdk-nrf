@@ -34,12 +34,12 @@ UPDATE_STATUS_MSG = {
 }
 
 
-class NcsIRONsideSEUpdate(WestCommand):
+class NcsIronSideSEUpdate(WestCommand):
     def __init__(self):
         super().__init__(
             name="ncs-ironside-se-update",
-            help="NCS IRONside SE update",
-            description="Update IRONside SE.",
+            help="NCS IronSide SE update",
+            description="Update IronSide SE.",
         )
 
     def do_add_parser(self, parser_adder):
@@ -49,13 +49,13 @@ class NcsIRONsideSEUpdate(WestCommand):
 
         parser.add_argument(
             "--zip",
-            help="Path to IRONside SE release ZIP",
+            help="Path to IronSide SE release ZIP",
             type=argparse.FileType(mode="r"),
         )
 
         parser.add_argument(
             "--recovery",
-            help="Update IRONside SE recovery instead of IRONside SE itself",
+            help="Update IronSide SE recovery instead of IronSide SE itself",
             action="store_true",
         )
 
