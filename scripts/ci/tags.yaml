@@ -434,7 +434,6 @@ ci_samples_cellular:
     - nrf/modules/cjson/
     - nrf/samples/cellular/
     - nrf/subsys/app_event_manager/
-    - nrf/subsys/bluetooth/
     - nrf/subsys/bootloader/
     - nrf/subsys/caf/
     - nrf/subsys/debug/
