@@ -49,7 +49,12 @@ static int hid_keymap_compare(const void *a, const void *b)
 /** Translate Key ID to HID report ID and HID usage ID pair. */
 const struct hid_keymap *hid_keymap_get(uint16_t key_id)
 {
-	static const struct hid_keymap *map_cache;
+	static const struct hid_keymap *map_cache =
+		((ARRAY_SIZE(hid_keymap) > 0) ? &hid_keymap[0] : NULL);
+
+	if (ARRAY_SIZE(hid_keymap) == 0) {
+		return NULL;
+	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYMAP_CACHE)) {
 		/* Return cached mapping if possible. */
@@ -68,7 +73,7 @@ const struct hid_keymap *hid_keymap_get(uint16_t key_id)
 					       sizeof(key),
 					       hid_keymap_compare);
 
-	if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYMAP_CACHE)) {
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_KEYMAP_CACHE) && map) {
 		/* Update cached mapping. */
 		map_cache = map;
 	}
