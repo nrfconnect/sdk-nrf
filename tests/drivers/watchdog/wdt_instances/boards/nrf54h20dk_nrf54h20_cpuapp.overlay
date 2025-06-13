@@ -1,0 +1,19 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&wdt010 {
+	status = "okay";
+};
+
+&wdt011 {
+	status = "okay";
+};
+
+/* wdt130 is dedicated for cpusys. */
+
+/* wdt131 is dedicated for cpuppr. */
+
+/* wdt132 is dedicated for cpuflpr. */
