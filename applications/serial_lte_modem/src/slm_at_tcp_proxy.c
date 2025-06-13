@@ -59,6 +59,7 @@ static struct tcp_proxy {
 	int peer_verify;	/* Peer verification level for TLS connection. */
 	bool hostname_verify;	/* Verify hostname against the certificate. */
 	int efd;		/* Event file descriptor for signaling threads. */
+	int send_flags;         /* Send flags */
 } proxy;
 
 /** forward declaration of thread function **/
@@ -312,7 +313,7 @@ static int do_tcp_send(const uint8_t *data, int datalen)
 	}
 
 	while (offset < datalen) {
-		ret = zsock_send(sock, data + offset, datalen - offset, 0);
+		ret = zsock_send(sock, data + offset, datalen - offset, proxy.send_flags);
 		if (ret < 0) {
 			LOG_ERR("zsock_send() failed: %d, sent: %d", -errno, offset);
 			ret = -errno;
@@ -341,7 +342,7 @@ static int do_tcp_send_datamode(const uint8_t *data, int datalen)
 	}
 
 	while (offset < datalen) {
-		ret = zsock_send(sock, data + offset, datalen - offset, 0);
+		ret = zsock_send(sock, data + offset, datalen - offset, proxy.send_flags);
 		if (ret < 0) {
 			LOG_ERR("zsock_send() failed: %d, sent: %d", -errno, offset);
 			break;
@@ -817,18 +818,32 @@ static int handle_at_tcp_send(enum at_parser_cmd_type cmd_type, struct at_parser
 	int err = -EINVAL;
 	char data[SLM_MAX_PAYLOAD_SIZE + 1] = {0};
 	int size;
+	bool datamode = false;
 
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
 		if (param_count > 1) {
 			size = sizeof(data);
 			err = util_string_get(parser, 1, data, &size);
-			if (err) {
+			if (err == -ENODATA) {
+				/* -ENODATA means data is empty so we go into datamode */
+				datamode = true;
+			} else if (err != 0) {
 				return err;
 			}
-			err = do_tcp_send(data, size);
+			if (param_count > 2) {
+				err = at_parser_num_get(parser, 2, &proxy.send_flags);
+				if (err) {
+					return err;
+				}
+			}
 		} else {
+			datamode = true;
+		}
+		if (datamode) {
 			err = enter_datamode(tcp_datamode_callback);
+		} else {
+			err = do_tcp_send(data, size);
 		}
 		break;
 
