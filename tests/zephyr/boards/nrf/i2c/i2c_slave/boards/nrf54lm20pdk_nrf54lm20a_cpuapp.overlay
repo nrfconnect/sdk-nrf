@@ -1,7 +1,7 @@
 /*
  * Two loopbacks are required:
  * P1.15 - P1.16
- * P1.18 - P1.24
+ * P1.18 - P1.19
  */
 
 
@@ -29,11 +29,8 @@
 
 	i2c22_default_alt: i2c22_default_alt {
 		group1 {
-/* Temporary workaround as it is currently not possible
- * to configure pins for TWIS with pinctrl.
- */
 			psels = <NRF_PSEL(TWIM_SDA, 1, 16)>,
-				<NRF_PSEL(TWIM_SCL, 1, 24)>;
+				<NRF_PSEL(TWIM_SCL, 1, 19)>;
 			bias-pull-up;
 		};
 	};
@@ -41,7 +38,7 @@
 	i2c22_sleep_alt: i2c22_sleep_alt {
 		group1 {
 			psels = <NRF_PSEL(TWIM_SDA, 1, 16)>,
-				<NRF_PSEL(TWIM_SCL, 1, 24)>;
+				<NRF_PSEL(TWIM_SCL, 1, 19)>;
 			low-power-enable;
 		};
 	};
