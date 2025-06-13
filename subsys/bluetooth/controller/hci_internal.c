@@ -777,6 +777,10 @@ void hci_internal_le_supported_features(
 	features->params.channel_sounding = 1;
 	features->params.channel_sounding_tone_quality_indication = 1;
 #endif /* CONFIG_BT_CTLR_CHANNEL_SOUNDING */
+
+#if defined(CONFIG_BT_CTLR_SDC_LE_POWER_CLASS_1)
+	features->params.le_Power_class_1 = 1;
+#endif /* CONFIG_BT_CTLR_SDC_LE_POWER_CLASS_1 */
 }
 
 static void le_read_supported_states(uint8_t *buf)
