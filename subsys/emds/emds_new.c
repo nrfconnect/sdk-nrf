@@ -6,9 +6,9 @@
 
 #include <emds/emds.h>
 
-#include <zephyr/storage/flash_map.h>
-#include <zephyr/drivers/flash.h>
 #include "emds_flash_new.h"
+
+#include <zephyr/drivers/flash.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(emds, CONFIG_EMDS_LOG_LEVEL);
@@ -18,6 +18,7 @@ LOG_MODULE_REGISTER(emds, CONFIG_EMDS_LOG_LEVEL);
 
 static bool emds_ready;
 static bool emds_initialized;
+static struct emds_snapshot_metadata freshest_snapshot;
 
 static sys_slist_t emds_dynamic_entries;
 static struct emds_partition partition[PARTITIONS_NUM_MAX];
@@ -28,7 +29,7 @@ static void emds_print_init_info(void)
 	LOG_DBG("EMDS initialized with the following partitions:");
 	for (int i = 0; i < PARTITIONS_NUM_MAX; i++) {
 		LOG_DBG("Flash device: %s", partition[i].fa->fa_dev->name);
-		LOG_DBG("Partition %d: ID=%d, Offset=0x%08lx, Size=0x%08zx", i,
+		LOG_DBG("Partition %d: ID=%d, Offset=0x%04lx, Size=0x%04zx", i,
 			partition[i].fa->fa_id, partition[i].fa->fa_off, partition[i].fa->fa_size);
 		LOG_DBG("Flash parameters: Write block size=%zu, Erase value=%zu",
 			partition[i].fp->write_block_size, partition[i].fp->erase_value);
@@ -169,13 +170,93 @@ uint32_t emds_store_time_get(void)
 	return 0;
 }
 
+static uint8_t *emds_entry_memory_get(struct emds_data_entry *entry)
+{
+	STRUCT_SECTION_FOREACH(emds_entry, ch) {
+		if (ch->id == entry->id) {
+			entry->length = MIN(ch->len, entry->length);
+			return ch->data;
+		}
+	}
+
+	struct emds_dynamic_entry *ch;
+
+	SYS_SLIST_FOR_EACH_CONTAINER(&emds_dynamic_entries, ch, node) {
+		if (ch->entry.id == entry->id) {
+			entry->length = MIN(ch->entry.len, entry->length);
+			return ch->entry.data;
+		}
+	}
+
+	LOG_WRN("Entry with ID %u not found", entry->id);
+	return NULL;
+}
+
+static int emds_read_data(const struct flash_area *fa, struct emds_snapshot_metadata *metadata)
+{
+	struct emds_data_entry entry;
+	uint32_t data_addr = metadata->data_instance_addr;
+	int32_t data_len = metadata->data_instance_len;
+	uint8_t *data_buf;
+	int rc;
+
+	while (data_len > 0) {
+		rc = flash_area_read(fa, data_addr, &entry, sizeof(entry));
+		if (rc) {
+			LOG_ERR("Failed to read data entry: %d", rc);
+			return -EIO;
+		}
+
+		data_addr += sizeof(entry);
+		data_len -= sizeof(entry);
+
+		data_buf = emds_entry_memory_get(&entry);
+
+		if (data_buf) {
+			rc = flash_area_read(fa, data_addr, data_buf, entry.length);
+			if (rc) {
+				LOG_ERR("Failed to read data for entry ID %u: %d", entry.id, rc);
+				return -EIO;
+			}
+		}
+
+		data_addr += entry.length;
+		data_len -= entry.length;
+	}
+
+	return 0;
+}
+
 int emds_load(void)
 {
+	struct emds_snapshot_metadata metadata = {0};
+	int freshest_partition_idx = -1;
+
 	if (!emds_initialized) {
 		return -ECANCELED;
 	}
 
-	return 0;
+	for (int i = 0; i < PARTITIONS_NUM_MAX; i++) {
+		if (emds_flash_scan_partition(&partition[i], &metadata)) {
+			LOG_ERR("Failed to scan partition %d:", i);
+			continue;
+		}
+
+		if (freshest_snapshot.fresh_cnt < metadata.fresh_cnt) {
+			freshest_snapshot = metadata;
+			freshest_partition_idx = i;
+		}
+	}
+
+	if (freshest_partition_idx < 0) {
+		LOG_WRN("No valid snapshot found in any partition");
+		return -ENOENT;
+	}
+
+	LOG_DBG("Found freshest snapshot in partition %d with fresh_cnt %u",
+		freshest_partition_idx, freshest_snapshot.fresh_cnt);
+
+	return emds_read_data(partition[freshest_partition_idx].fa, &freshest_snapshot);
 }
 
 int emds_prepare(void)
