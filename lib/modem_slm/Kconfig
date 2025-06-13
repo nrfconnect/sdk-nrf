@@ -5,12 +5,11 @@
 #
 
 menuconfig MODEM_SLM
+	bool "Modem SLM Library for host MCU"
 	depends on SERIAL
 	depends on UART_ASYNC_API
 	depends on RING_BUFFER
-	select EXPERIMENTAL
 	select UART_USE_RUNTIME_CONFIGURE
-	bool "Modem SLM Library for MCU [EXPERIMENTAL]"
 
 if MODEM_SLM
 
