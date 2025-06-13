@@ -696,7 +696,6 @@ void hci_internal_le_supported_features(
 	features->params.extended_reject_indication = 1;
 	features->params.slave_initiated_features_exchange = 1;
 	features->params.le_ping = 1;
-	features->params.le_Power_class_1 = 1;
 
 #ifdef CONFIG_BT_CTLR_DATA_LENGTH
 	features->params.le_data_packet_length_extension = 1;
@@ -775,6 +774,10 @@ void hci_internal_le_supported_features(
 #if defined(CONFIG_BT_CTLR_SDC_PAWR_SYNC)
 	features->params.periodic_advertising_with_responses_scanner = 1;
 #endif
+
+#if defined(CONFIG_BT_CTLR_SDC_LE_POWER_CLASS_1)
+	features->params.le_Power_class_1 = 1;
+#endif /* CONFIG_BT_CTLR_SDC_LE_POWER_CLASS_1 */
 }
 
 static void le_read_supported_states(uint8_t *buf)
