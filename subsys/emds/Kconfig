@@ -23,6 +23,26 @@ config NEW_EMDS
 	  This is temporary option for debug purpose.
 	  It will be removed in the future.
 
+config EMDS_SCANNING_FAILURES
+	int "Maximum number of scanning failures"
+	default 2
+	help
+	  Maximum number of allowed metadata scanning failures on partition
+	  before giving up. The option should be tradeoff between
+	  performance and reliability. If the value is too low, the system
+	  may not take into account all the candidates, and may not select
+	  the best one for recovery. If the value is too high, the system
+	  may take too long to scan the partition, and may not be able to
+	  recover in time. The value should be set to the number of
+	  expected failures during the scanning process.
+
+config EMDS_MAX_CANDIDATES
+	int "Maximum number of snapshot candidates"
+	default 3
+	help
+	  Maximum number of snapshot candidates to keep track within
+	  the partition to select the best one for recovery.
+
 config EMDS_SECTOR_COUNT
 	int "Sector count of the emergency data storage area"
 	default 1

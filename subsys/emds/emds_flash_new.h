@@ -61,7 +61,7 @@ struct emds_data_entry {
 struct emds_snapshot_metadata {
 	uint32_t marker;
 	uint32_t fresh_cnt;
-	uint32_t data_instance_addr;
+	off_t data_instance_addr;
 	uint32_t data_instance_len;
 	uint32_t metadata_crc;
 	uint32_t snapshot_crc;
@@ -78,6 +78,22 @@ struct emds_snapshot_metadata {
  * @retval -EINVAL if unable to obtain flash parameters or wrong partition format.
  */
 int emds_flash_init(struct emds_partition *partition);
+
+/**
+ * @brief Scan the emergency data storage partition for valid snapshots.
+ *
+ * This function scans the specified partition for valid snapshots and populates
+ * the provided metadata structure with the found snapshot metadata with the biggest
+ * fresh_cnt value and valid metadata and snapshot crc values.
+ *
+ * @param partition Pointer to the emergency data storage partition structure.
+ * @param metadata Pointer to the metadata structure to be filled with found snapshot data.
+ *
+ * @retval 0 on success.
+ * @retval -EINVAL if the partition is not initialized or if an error occurs during reading.
+ */
+int emds_flash_scan_partition(const struct emds_partition *partition,
+				  struct emds_snapshot_metadata *metadata);
 
 /**
  * @brief Erase the specified emergency data storage partition.
