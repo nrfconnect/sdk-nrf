@@ -231,3 +231,18 @@ static const struct flash_driver_api flash_driver_rpc_api = {
 
 DEVICE_DT_INST_DEFINE(0, flash_rpc_init, NULL, NULL, NULL, POST_KERNEL,
 		      CONFIG_FLASH_RPC_DRIVER_INIT_PRIORITY, &flash_driver_rpc_api);
+
+static int controller_init(void)
+{
+	int err;
+
+	err = device_init(DEVICE_DT_GET(DT_NODELABEL(rpc_flash_controller)));
+	if (err != 0) {
+		LOG_ERR("Flash RPC controller initialization failed, err %d", err);
+		return err;
+	}
+
+	return 0;
+}
+
+SYS_INIT(controller_init, APPLICATION, CONFIG_FLASH_RPC_DRIVER_INIT_PRIORITY);
