@@ -1372,6 +1372,15 @@ ci_tests_drivers_gpio:
     - zephyr/drivers/gpio/
     - zephyr/soc/nordic/
 
+ci_tests_drivers_watchdog:
+  files:
+    - nrf/tests/drivers/watchdog/
+    - zephyr/drivers/watchdog/Kconfig.nrfx
+    - zephyr/drivers/watchdog/wdt_nrfx.c
+    - zephyr/modules/hal_nordic/nrfx/Kconfig
+    - zephyr/modules/hal_nordic/nrfx/nrfx_kconfig.h
+    - zephyr/soc/nordic/common/Kconfig.peripherals
+
 ci_tests_drivers_audio:
   files:
     - nrf/tests/drivers/audio/pdm_loopback/
