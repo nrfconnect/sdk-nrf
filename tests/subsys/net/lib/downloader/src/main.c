@@ -842,7 +842,11 @@ static ssize_t z_impl_zsock_recvfrom_https_partial_content(
 	case 2:
 		memcpy(buf, HTTPS_HDR_OK_PARTIAL_CONTENT_2, strlen(HTTPS_HDR_OK_PARTIAL_CONTENT_2));
 		memset((char *)buf + strlen(HTTPS_HDR_OK_PARTIAL_CONTENT_2), 23, 32);
-		return strlen(HTTPS_HDR_OK_PARTIAL_CONTENT_2) + 32;
+		return strlen(HTTPS_HDR_OK_PARTIAL_CONTENT_2) + 16;
+	case 3:
+	case 4:
+		memset(buf, ' ', 8);
+		return 8;
 	}
 
 	return 0;
@@ -868,7 +872,11 @@ static ssize_t z_impl_zsock_recvfrom_https_partial_content_partial_2nd_header(
 		memcpy(buf, HTTPS_HDR_OK_PARTIAL_CONTENT_HDR_2_2,
 		       strlen(HTTPS_HDR_OK_PARTIAL_CONTENT_HDR_2_2));
 		memset((char *)buf + strlen(HTTPS_HDR_OK_PARTIAL_CONTENT_HDR_2_2), 23, 32);
-		return strlen(HTTPS_HDR_OK_PARTIAL_CONTENT_HDR_2_2) + 32;
+		return strlen(HTTPS_HDR_OK_PARTIAL_CONTENT_HDR_2_2) + 16;
+	case 4:
+	case 5:
+		memset(buf, ' ', 8);
+		return 8;
 	}
 
 	return 0;
@@ -878,8 +886,13 @@ static ssize_t z_impl_zsock_recvfrom_http_header_and_payload(
 	int sock, void *buf, size_t max_len, int flags, struct sockaddr *src_addr,
 	socklen_t *addrlen)
 {
-	memcpy(buf, HTTP_HDR_OK_WITH_PAYLOAD, strlen(HTTP_HDR_OK_WITH_PAYLOAD));
-	return strlen(HTTP_HDR_OK_WITH_PAYLOAD);
+	switch (z_impl_zsock_recvfrom_fake.call_count) {
+	case 1:
+		memcpy(buf, HTTP_HDR_OK_WITH_PAYLOAD, strlen(HTTP_HDR_OK_WITH_PAYLOAD));
+		return strlen(HTTP_HDR_OK_WITH_PAYLOAD);
+	}
+
+	return 0;
 }
 
 static ssize_t z_impl_zsock_recvfrom_http_header_and_frag_data_w_err(
