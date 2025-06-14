@@ -197,10 +197,13 @@ config SLM_CMUX_UART_BUFFER_SIZE
 config SLM_CMUX_NOTIFICATION_TX_BUFFER_SIZE
 	int "TX buffer size for unsolicited notifications in CMUX"
 	depends on SLM_CMUX
-	default 256
+	default 4096
 	help
 	  Unsolicited notifications need to be buffered with CMUX.
 	  Notifications longer than this size will get truncated.
+	  This can be reduced if your use cases do not require lengthy notifications.
+	  Note: %NCELLMEAS notifications can be nearly 4kB in size,
+	  which explains the default value.
 
 if SLM_CMUX && SLM_PPP
 
