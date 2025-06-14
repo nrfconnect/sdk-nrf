@@ -7,26 +7,29 @@ nRF RPC: Protocols serialization server
    :local:
    :depth: 2
 
-The Protocols serialization server sample runs full Bluetooth® LE, OpenThread or NFC stacks, and it exposes selected functions from these stacks over UART.
+The Protocols serialization server sample demonstrates how to receive remote procedure calls (RPCs) from a client device, such as one running the :ref:`Protocols serialization client <nrf_rpc_protocols_serialization_client>` sample.
+The RPCs are used to control :ref:`OpenThread <ug_thread_intro>`, Bluetooth® LE, and :ref:`NFC <ug_nfc>` stacks running on the server device.
+The client and server devices use the :ref:`nrfxlib:nrf_rpc` and the :ref:`nrf_rpc_uart` to communicate with each other.
 
 Requirements
 ************
 
-The sample supports the following development kits for testing the network status:
+The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
 To test the sample, you also need another device running the :ref:`Protocols serialization client <nrf_rpc_protocols_serialization_client>` sample.
 
-For testing the Bluetooth LE API serialization, you need to have the `nRF Connect for Mobile`_ app installed on your smartphone or tablet.
+For testing the Bluetooth LE API serialization, you need the `nRF Connect for Mobile`_ app installed on your smartphone or tablet.
 
-For testing the NFC API serialization, you also need a smartphone or tablet that can read NFC tags.
+For testing the NFC API serialization, you need a smartphone or tablet that can read NFC tags.
 
 Overview
 ********
 
-The Protocols serialization server sample implements the server part of the serialization of OpenThread, Bluetooth LE API and NFC calls between two devices that communicate with each other using the UART interface.
-The sample uses the :ref:`nrfxlib:nrf_rpc` and CBOR encoding to serialize function calls.
+The Protocols serialization server sample runs full OpenThread, Bluetooth® LE, and NFC stacks, depending on the selected configuration.
+The sample exposes selected functions from these stacks over UART, using the :ref:`nrfxlib:nrf_rpc`.
+The remote procedure call arguments and return values are encoded using CBOR.
 
 Configuration
 *************
@@ -41,10 +44,9 @@ Snippets
 The following snippets are available:
 
 * ``ble`` - Enables the server part of the :ref:`Bluetooth LE RPC <ble_rpc>`.
-  Also enables the :ref:`Bluetooth LE Nordic UART Service <nus_service_readme>`.
-* ``coex`` - Enables the :ref:`MPSL software coexistence <nrfxlib:mpsl_cx>` implementation on the server device.
-* ``debug`` - Enables debugging the sample by enabling :c:func:`__ASSERT()` statements globally and verbose logging.
-* ``log_rpc`` - Enables logging over RPC.
+* ``coex`` - Enables the :ref:`MPSL software coexistence <nrfxlib:mpsl_cx>` implementation.
+* ``debug`` - Enables debugging features, such as :c:func:`__ASSERT()` statements and verbose logging.
+* ``log_rpc`` - Enables the log backend part of the :ref:`Logging RPC <log_rpc>`.
 * ``openthread`` - Enables the server part of the :ref:`OpenThread RPC <ot_rpc>`.
 * ``nfc`` - Enables the server part of the :ref:`NFC RPC <nfc_rpc>`.
 
@@ -58,7 +60,7 @@ User interface
       Button 1:
 
          * When the ``log_rpc`` snippet is enabled: triggers a fatal error.
-           This is used for testing the crash log feature.
+           This is used for testing the core dump feature.
          * Otherwise: not available.
 
    .. group-tab:: nRF54L15 DK
@@ -66,7 +68,7 @@ User interface
       Button 0:
 
          * When the ``log_rpc`` snippet is enabled: triggers a fatal error.
-           This is used for testing the crash log feature.
+           This is used for testing the core dump feature.
          * Otherwise: not available.
 
 Building and running
@@ -75,8 +77,6 @@ Building and running
 .. |sample path| replace:: :file:`samples/nrf_rpc/protocols_serialization/server`
 
 .. include:: /includes/build_and_run.txt
-
-You can modify the list of enabled features, which by default includes Bluetooth LE support and debug logs.
 
 .. _protocols_serialization_server_sample_testing:
 
@@ -94,14 +94,14 @@ After building the Protocols serialization server sample and programming it to y
 Connecting the client and server samples
 ========================================
 
-The client and server devices are connected using two UART peripherals.
-In the protocols serialization samples, one peripheral is used for shell and logging purposes, similarly to other applications and samples, while the other peripheral is used for sending OpenThread, Bluetooth LE and NFC remote procedure calls (RPCs).
+The client and server samples use two UART peripherals.
+One peripheral is used for shell and logging purposes, similarly to other applications and samples, while the other peripheral is used for sending and receiving remote procedure calls (RPCs).
 
 .. tabs::
 
     .. group-tab:: nRF52840 DK
 
-        By default, the nRF52840 DK uses the ``uart0`` peripheral for shell and logging purposes, and the ``uart1`` peripheral for sending OpenThread and Bluetooth remote procedure calls (RPCs).
+        By default, the nRF52840 DK uses the ``uart0`` peripheral for shell and logging purposes, and the ``uart1`` peripheral for sending and receiving remote procedure calls (RPCs).
 
         The ``uart1`` peripheral is configured to use the following pins:
 
@@ -135,7 +135,7 @@ In the protocols serialization samples, one peripheral is used for shell and log
 
     .. group-tab:: nRF54L15 DK
 
-        By default, the nRF54L15 DK uses the ``uart20`` peripheral for shell and logging purposes, and the ``uart21`` peripheral for sending OpenThread and Bluetooth remote procedure calls (RPCs).
+        By default, the nRF54L15 DK uses the ``uart20`` peripheral for shell and logging purposes, and the ``uart21`` peripheral for sending and receiving remote procedure calls (RPCs).
 
         The ``uart21`` peripheral is configured to use the following pins:
 
@@ -145,11 +145,11 @@ In the protocols serialization samples, one peripheral is used for shell and log
            * - Server
              - Client
              - Function on server
-           * - **P1.8**
-             - **P1.9**
-             - TX
            * - **P1.9**
              - **P1.8**
+             - RX
+           * - **P1.8**
+             - **P1.9**
              - TX
            * - **P1.11**
              - **P1.12**
@@ -197,7 +197,7 @@ Complete the following steps to test Bluetooth LE API serialization:
 
 #. Connect to the client device from the nRF Connect app.
 
-   The device is advertising as **Nordic_UART_Service**.
+   The device is advertising as **Nordic_PS**.
 
 #. Observe a message similar to the following on the client's terminal emulator:
 
@@ -285,7 +285,7 @@ Complete the following steps to test OpenThread API serialization:
 
    .. code-block:: console
 
-      uart:~$ net iface  show
+      uart:~$ net iface show
 
       Interface net0 (0x200012c8) (<unknown type>) [1]
       =========================================
@@ -295,7 +295,6 @@ Complete the following steps to test OpenThread API serialization:
       IPv6 unicast addresses (max 5):
             fe80::6c26:956a:813:1e33 autoconf preferred infinite
             fdde:ad00:beef:0:e503:abfd:1c8d:2664 autoconf preferred infinite meshlocal
-            fdde:ad00:beef::ff:fe00:fc00 autoconf preferred infinite meshlocal
 
 
    This happens because the client registers a notification callback for OpenThread state changes at the server device and it continuously refreshes the client's IPv6 address list when that changes on the server side.
@@ -370,7 +369,7 @@ Testing NFC API serialization
 Dependencies
 ************
 
-This sample uses the following `sdk-nrfxlib`_ library:
+This sample uses the following `sdk-nrfxlib`_ libraries:
 
 * :ref:`nrfxlib:nrf_rpc`
 * :ref:`nrfxlib:nfc_api_type2`
