@@ -196,6 +196,31 @@ static int handle_at_shutdown(enum at_parser_cmd_type cmd_type, struct at_parser
 	return 0;
 }
 
+SLM_AT_CMD_CUSTOM(xnetif, "AT#XPS", handle_at_ps);
+static int handle_at_ps(enum at_parser_cmd_type cmd_type, struct at_parser *parser, uint32_t)
+{
+	int ret = -EINVAL;
+
+	if (cmd_type == AT_PARSER_CMD_TYPE_SET) {
+		int enable_ps;
+
+		ret = at_parser_num_get(parser, 1, &enable_ps);
+		if (ret) {
+			return ret;
+		}
+		if (enable_ps != 0 && enable_ps != 1) {
+			return -EINVAL;
+		}
+
+		return nrf_modem_lib_ps_set(enable_ps);
+	} else if (cmd_type == AT_PARSER_CMD_TYPE_READ) {
+		rsp_send("\r\n#XPS: %d\r\n", nrf_modem_lib_ps_get());
+		ret = 0;
+	}
+
+	return ret;
+}
+
 FUNC_NORETURN void slm_reset(void)
 {
 	slm_at_host_uninit();
