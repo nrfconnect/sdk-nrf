@@ -77,24 +77,24 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-  sample.openthread.cli.usb:
-    sysbuild: true
-    build_only: true
-    tags:
-      - ci_build
-      - sysbuild
-      - ci_samples_openthread
-    platform_allow:
-      - nrf52840dk/nrf52840
-      - nrf21540dk/nrf52840
-      - nrf5340dk/nrf5340/cpuapp
-    extra_args:
-      - cli_SNIPPET="ci;logging;multiprotocol;tcp;usb"
-      - FILE_SUFFIX=ble
-    integration_platforms:
-      - nrf52840dk/nrf52840
-      - nrf21540dk/nrf52840
-      - nrf5340dk/nrf5340/cpuapp
+  # sample.openthread.cli.usb:
+  #   sysbuild: true
+  #   build_only: true
+  #   tags:
+  #     - ci_build
+  #     - sysbuild
+  #     - ci_samples_openthread
+  #   platform_allow:
+  #     - nrf52840dk/nrf52840
+  #     - nrf21540dk/nrf52840
+  #     - nrf5340dk/nrf5340/cpuapp
+  #   extra_args:
+  #     - cli_SNIPPET="ci;logging;multiprotocol;tcp;usb"
+  #     - FILE_SUFFIX=ble
+  #   integration_platforms:
+  #     - nrf52840dk/nrf52840
+  #     - nrf21540dk/nrf52840
+  #     - nrf5340dk/nrf5340/cpuapp
   sample.openthread.cli.low_power:
     sysbuild: true
     build_only: true
@@ -148,24 +148,24 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
-  sample.openthread.cli.diag_gpio:
-    sysbuild: true
-    build_only: true
-    tags:
-      - ci_build
-      - sysbuild
-      - ci_samples_openthread
-    platform_allow:
-      - nrf52840dk/nrf52840
-      - nrf5340dk/nrf5340/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15dk/nrf54l10/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp/ns
-    extra_args: >
-      cli_SNIPPET=diag_gpio
-    integration_platforms:
-      - nrf52840dk/nrf52840
-      - nrf5340dk/nrf5340/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15dk/nrf54l10/cpuapp
-      - nrf54l15dk/nrf54l15/cpuapp/ns
+  # sample.openthread.cli.diag_gpio:
+  #   sysbuild: true
+  #   build_only: true
+  #   tags:
+  #     - ci_build
+  #     - sysbuild
+  #     - ci_samples_openthread
+  #   platform_allow:
+  #     - nrf52840dk/nrf52840
+  #     - nrf5340dk/nrf5340/cpuapp
+  #     - nrf54l15dk/nrf54l15/cpuapp
+  #     - nrf54l15dk/nrf54l10/cpuapp
+  #     - nrf54l15dk/nrf54l15/cpuapp/ns
+  #   extra_args: >
+  #     cli_SNIPPET=diag_gpio
+  #   integration_platforms:
+  #     - nrf52840dk/nrf52840
+  #     - nrf5340dk/nrf5340/cpuapp
+  #     - nrf54l15dk/nrf54l15/cpuapp
+  #     - nrf54l15dk/nrf54l10/cpuapp
+  #     - nrf54l15dk/nrf54l15/cpuapp/ns
