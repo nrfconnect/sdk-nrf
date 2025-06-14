@@ -1365,7 +1365,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(sub_transmit_pattern,
 		  "Set the transmission pattern to 11110000.",
 		  cmd_pattern_11110000),
 	SHELL_CMD(pattern_11001100, NULL,
-		  "Set the transmission pattern to 10101010.",
+		  "Set the transmission pattern to 11001100.",
 		  cmd_pattern_11001100),
 	SHELL_SUBCMD_SET_END
 );
