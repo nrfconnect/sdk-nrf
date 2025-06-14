@@ -63,7 +63,10 @@ static uint32_t fem_nrf21540_spi_configure(mpsl_fem_nrf21540_gpio_spi_interface_
 			},
 			.enable        = true,
 			.active_high   = true,
-			.gpiote_ch_id  = cs_gpiote_channel
+			.gpiote_ch_id  = cs_gpiote_channel,
+#if defined(NRF54L_SERIES)
+			.p_gpiote = cs_gpiote.p_reg,
+#endif
 #else
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
 #endif
@@ -172,7 +175,10 @@ static int fem_nrf21540_gpio_spi_configure(void)
 			},
 			.enable        = true,
 			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(tx_en_gpios),
-			.gpiote_ch_id  = txen_gpiote_channel
+			.gpiote_ch_id  = txen_gpiote_channel,
+#if defined(NRF54L_SERIES)
+			.p_gpiote = txen_gpiote.p_reg,
+#endif
 #else
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
 #endif
@@ -186,7 +192,10 @@ static int fem_nrf21540_gpio_spi_configure(void)
 			},
 			.enable        = true,
 			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(rx_en_gpios),
-			.gpiote_ch_id  = rxen_gpiote_channel
+			.gpiote_ch_id  = rxen_gpiote_channel,
+#if defined(NRF54L_SERIES)
+			.p_gpiote = rxen_gpiote.p_reg,
+#endif
 #else
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
 #endif
@@ -200,7 +209,10 @@ static int fem_nrf21540_gpio_spi_configure(void)
 			},
 			.enable        = true,
 			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(pdn_gpios),
-			.gpiote_ch_id  = pdn_gpiote_channel
+			.gpiote_ch_id  = pdn_gpiote_channel,
+#if defined(NRF54L_SERIES)
+			.p_gpiote = pdn_gpiote.p_reg,
+#endif
 #else
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
 #endif

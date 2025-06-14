@@ -21,6 +21,10 @@
 #include <helpers/nrfx_gppi.h>
 #endif
 
+#if defined(_MPSL_FEM_CONFIG_API_NEXT)
+#include <mpsl_fem_hwres.h>
+#endif
+
 int mpsl_fem_utils_ppi_channel_alloc(uint8_t *ppi_channels, size_t size)
 {
 	nrfx_err_t err = NRFX_ERROR_NOT_SUPPORTED;
@@ -59,6 +63,7 @@ void mpsl_fem_extended_pin_to_mpsl_fem_pin(uint32_t pin_num, mpsl_fem_pin_t *p_f
 	p_fem_pin->port_pin = pin_num;
 }
 
+#if !defined(_MPSL_FEM_CONFIG_API_NEXT)
 int mpsl_fem_utils_gpiote_pin_init(mpsl_fem_gpiote_pin_config_t *gpiote_pin)
 {
 #if defined(NRF54L_SERIES)
@@ -105,3 +110,91 @@ int mpsl_fem_utils_gpiote_pin_init(mpsl_fem_gpiote_pin_config_t *gpiote_pin)
 #endif
 	return 0;
 }
+#endif /* !defined(_MPSL_FEM_CONFIG_API_NEXT) */
+
+#if defined(_MPSL_FEM_CONFIG_API_NEXT)
+
+#if defined(DPPI_PRESENT)
+
+static const nrfx_dppi_t *nrfx_dppi_find_by_ptr(NRF_DPPIC_Type *p_dppic)
+{
+	static const nrfx_dppi_t dppis[] = {
+#if defined(NRF53_SERIES)
+		NRFX_DPPI_INSTANCE(0),
+#elif defined(NRF54L_SERIES)
+		NRFX_DPPI_INSTANCE(10),
+		NRFX_DPPI_INSTANCE(20),
+		NRFX_DPPI_INSTANCE(30),
+#else
+#error Unsupported SoC series
+#endif
+	};
+
+	for (size_t i = 0U; i < NRFX_ARRAY_SIZE(dppis); ++i) {
+		const nrfx_dppi_t *ith = &dppis[i];
+
+		if (ith->p_reg == p_dppic) {
+			return ith;
+		}
+	}
+
+	return NULL;
+}
+
+bool mpsl_fem_hwres_dppi_channel_alloc(NRF_DPPIC_Type *p_dppic, uint8_t *p_dppi_ch)
+{
+	const nrfx_dppi_t *dppi = nrfx_dppi_find_by_ptr(p_dppic);
+
+	if (dppi == NULL) {
+		return false;
+	}
+
+	return (nrfx_dppi_channel_alloc(dppi, p_dppi_ch) == NRFX_SUCCESS);
+}
+
+#endif /* DPPI_PRESENT */
+
+#if defined(PPIB_PRESENT)
+
+#if defined(NRF54L_SERIES)
+static const nrfx_ppib_interconnect_t *nrfx_ppib_interconnect_find_by_ptr(NRF_PPIB_Type *p_ppib)
+{
+	static const nrfx_ppib_interconnect_t interconnects[] = {
+		NRFX_PPIB_INTERCONNECT_INSTANCE(11, 21),
+		NRFX_PPIB_INTERCONNECT_INSTANCE(22, 30),
+	};
+
+	for (size_t i = 0U; i < NRFX_ARRAY_SIZE(interconnects); ++i) {
+		const nrfx_ppib_interconnect_t *ith = &interconnects[i];
+
+		if ((ith->left.p_reg == p_ppib) || (ith->right.p_reg == p_ppib)) {
+			return ith;
+		}
+	}
+
+	return NULL;
+}
+#endif
+
+bool mpsl_fem_hwres_ppib_channel_alloc(NRF_PPIB_Type *p_ppib, uint8_t *p_ppib_ch)
+{
+#if defined(NRF54L_SERIES)
+	const nrfx_ppib_interconnect_t *ppib_interconnect =
+		nrfx_ppib_interconnect_find_by_ptr(p_ppib);
+
+	if (ppib_interconnect == NULL) {
+		return false;
+	}
+
+	return (nrfx_ppib_channel_alloc(ppib_interconnect, p_ppib_ch) == NRFX_SUCCESS);
+#else
+#error Unsupported SoC series
+	(void)p_ppib;
+	(void)p_ppib_ch;
+	return false;
+#endif
+}
+
+#endif /* PPIB_PRESENT */
+
+#endif /* defined(_MPSL_FEM_CONFIG_API_NEXT) */
