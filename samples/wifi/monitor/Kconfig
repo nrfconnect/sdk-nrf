@@ -22,6 +22,49 @@ config MONITOR_MODE_CHANNEL
 	  Specify the channel for receiving Wi-Fi packets in Monitor mode.
 	  The valid channel range depends on the regulatory domain.
 
+choice
+	prompt "Wi-Fi frame filter mode"
+	default MONITOR_MODE_WIFI_PACKET_FILTER_ALL
+
+config MONITOR_MODE_WIFI_PACKET_FILTER_ALL
+	bool "Filter all frames"
+	help
+	  Enable filtering of all Wi-Fi frames.
+
+config MONITOR_MODE_WIFI_PACKET_FILTER_CUSTOM
+	bool "Filter specific type of frames"
+	help
+	  Enable filtering of specific type of frames.
+
+endchoice
+
+if MONITOR_MODE_WIFI_PACKET_FILTER_CUSTOM
+
+config MONITOR_MODE_WIFI_PACKET_FILTER_MGMT
+	bool "Filter management frames"
+	help
+	  Accept only IEEE 802.11 management frames.
+
+config MONITOR_MODE_WIFI_PACKET_FILTER_CTRL
+	bool "Filter control frames"
+	help
+	  Accept only IEEE 802.11 control frames.
+
+config MONITOR_MODE_WIFI_PACKET_FILTER_DATA
+	bool "Filter data frames"
+	help
+	  Accept only IEEE 802.11 data frames.
+endif
+
+config MONITOR_MODE_WIFI_PACKET_FILTER_CAPTURE_LEN
+	int "Wi-Fi packet capture length"
+	range 14 1552
+	default 64
+	help
+	  This option sets the number of bytes to capture from each Wi-Fi packet.
+	  Allowed values range from a minimum of 14 bytes (standard ethernet header length)
+	  to a maximum of 1552 bytes.
+
 config RX_THREAD_STACK_SIZE
 	int "Thread Stack Size"
 	default 4096
