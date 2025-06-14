@@ -85,14 +85,15 @@ void process_psa_tls(void)
 	struct sockaddr_in client_addr;
 	socklen_t client_addr_len = sizeof(client_addr);
 
-	while (true) {
-		sock = setup_tls_server_socket();
-		if (sock < 0) {
-			LOG_INF("Retrying to create a socket");
-			k_sleep(K_MSEC(1000));
-			continue;
-		}
+retry:
+	sock = setup_tls_server_socket();
+	if (sock < 0) {
+		LOG_INF("Retrying to create a socket");
+		k_sleep(K_MSEC(1000));
+		goto retry;
+	}
 
+	while (true) {
 		LOG_INF("Waiting for TLS connection on port %d ...",
 			SERVER_PORT);
 		client = accept(sock, (struct sockaddr *)&client_addr,
@@ -102,8 +103,9 @@ void process_psa_tls(void)
 			LOG_ERR("TLS accept error (%d)", -errno);
 			(void)close(sock);
 			k_sleep(K_MSEC(1000));
-			continue;
+			goto retry;
 		}
+
 		LOG_INF("Accepted TLS connection");
 
 		while (true) {
@@ -135,9 +137,5 @@ void process_psa_tls(void)
 
 		LOG_INF("Closing TLS connection");
 		(void)close(client);
-		(void)close(sock);
-
-		/* Give some time to properly close sockets before creating new ones */
-		k_sleep(K_MSEC(200));
 	}
 }

@@ -320,6 +320,14 @@
     - nrf54l15dk/nrf54l15/cpuflpr
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-33580"
 
+- scenarios:
+    - drivers.flash.common.disable_spi_nor
+  platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54l15dk/nrf54l10/cpuapp
+    - nrf54l15dk/nrf54l05/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-7879"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
@@ -386,6 +394,14 @@
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Same reason as in https://nordicsemi.atlassian.net/browse/NCSDK-22771"
+
+- scenarios:
+    - net.coap.server.common
+    - net.coap.server.secure
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "Not compatible with nRF Security"
 
 - scenarios:
     - kernel.common.picolibc
@@ -611,3 +627,10 @@
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
   comment: "Not compatible"
+
+- scenarios:
+    - drivers.spi.nrf_pm_runtime
+    - drivers.spi.loopback
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34011"

@@ -179,4 +179,4 @@
 
 /* Include default memory partition configuration file. */
 /* This is not the layout that's actually used! It's overridden by Partition Manager. */
-#include <common/nordic/nrf91xx_partition.dtsi>
+#include <vendor/nordic/nrf91xx_partition.dtsi>

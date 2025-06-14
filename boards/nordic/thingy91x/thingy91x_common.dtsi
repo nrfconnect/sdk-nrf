@@ -60,7 +60,7 @@
 			reg_3v3: BUCK2 {
 				regulator-min-microvolt = <3300000>;
 				regulator-max-microvolt = <3300000>;
-				enable-gpios = <&gpios_pmic 2 GPIO_ACTIVE_HIGH>;
+				enable-gpio-config = <2 GPIO_ACTIVE_HIGH>;
 			};
 			/* LDO1 is used as a load switch pulling the nPM6001 enable line to VSYS */
 			ldsw_nPM6001_en: LDO1 {
