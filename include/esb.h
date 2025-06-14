@@ -46,7 +46,8 @@ extern "C" {
 		.tx_mode = ESB_TXMODE_AUTO,				       \
 		.payload_length = 32,					       \
 		.selective_auto_ack = false,                                   \
-		.use_fast_ramp_up = false                                      \
+		.use_fast_ramp_up = false,                                     \
+		.packet_delay = 30,					       \
 	}
 
 /** @brief Default legacy radio parameters.
@@ -66,7 +67,8 @@ extern "C" {
 		.tx_mode = ESB_TXMODE_AUTO,				       \
 		.payload_length = 32,					       \
 		.selective_auto_ack = false,                                   \
-		.use_fast_ramp_up = false                                      \
+		.use_fast_ramp_up = false,                                     \
+		.packet_delay = 30,					       \
 	}
 
 /** @brief Macro to create an initializer for a TX data packet.
@@ -323,11 +325,6 @@ struct esb_config {
 
 	uint16_t retransmit_delay; /**< The delay between each retransmission of
 				  *  unacknowledged packets.
-				  *  If the CONFIG_ESB_NEVER_DISABLE_TX Kconfig option is enabled,
-				  *  this is the delay between two consecutive transmissions.
-				  *  Depending on the reception processing time, a minimal
-				  *  value might be required (for example, a typical value
-				  *  for 32-bit payload is 20 µs).
 				  */
 	uint16_t retransmit_count; /**< The number of retransmission attempts
 				  *  before transmission fail.
@@ -353,6 +350,11 @@ struct esb_config {
 				 *  between nRF52 and/or nRF53 Series devices, this delay can
 				 *  be reduced to 40 µs.
 				 */
+	uint16_t packet_delay;	/**< The delay between packets.
+				  *  This is the time between the end of one packet and the
+				  *  start transmission of the next packet in microseconds.
+				  *  This is only used for unacknowledged packets.
+				  */
 };
 
 /** @brief Initialize the Enhanced ShockBurst module.
@@ -571,11 +573,6 @@ int esb_set_tx_power(int8_t tx_output_power);
 int esb_set_retransmit_delay(uint16_t delay);
 
 /** @brief Set the number of retransmission attempts.
- *  @details If the CONFIG_ESB_NEVER_DISABLE_TX Kconfig option is enabled,
- *           this is the delay between two consecutive transmissions.
- *           Depending on the reception processing time, a minimal
- *           value might be required (for example, a typical value
- *           for 32-bit payload is 20 µs).
  *  @param[in] count	Number of retransmissions.
  *
  * @retval 0 If successful.

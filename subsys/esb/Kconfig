@@ -139,7 +139,7 @@ config ESB_DYNAMIC_INTERRUPTS
 	  interrupts. This allows reconfiguring ESB_SYS_TIMER_IRQn, ESB_EVT_IRQ,
 	  and RADIO_IRQn handlers during runtime when ESB is uninitialized.
 
-config ESB_NEVER_DISABLE_TX
+config ESB_KEEP_TX_IDLE
 	select EXPERIMENTAL
 	bool "Never disable radio transmission stage"
 	help
@@ -151,7 +151,7 @@ config ESB_NEVER_DISABLE_TX
 
 config ESB_FAST_SWITCHING
 	select EXPERIMENTAL
-	depends on !ESB_NEVER_DISABLE_TX && (SOC_NRF54H20_CPURAD)
+	depends on SOC_NRF54H20_CPURAD
 	bool "Fast radio TX/RX and RX/TX switching [EXPERIMENTAL]"
 	help
 	  This option enables fast switching between transmit (TX) and receive (RX) modes
