@@ -53,6 +53,11 @@ CONFIG_NCS_SAMPLE_MATTER_TEST_SHELL
 CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH
   ``string`` - Set the path under which ZAP files are located.
 
+.. _CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_NAME:
+
+CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_NAME
+  ``string`` - Set name of the ZAP file used by the sample.
+
 Diagnostics logs
 ================
 
