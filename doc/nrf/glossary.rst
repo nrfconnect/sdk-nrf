@@ -189,7 +189,12 @@ Glossary
       In the |NCS|, this term is used in the context of `ARM TrustZone`_ and :ref:`app_boards_spe_nspe` (:term:`Non-Secure Processing Environment (NSPE)` and :term:`Secure Processing Environment (SPE)`).
 
    CRACEN
-      A hardware cryptographic engine within nRF54H devices.
+      A hardware crypto accelerator within nRF54L Series devices, and the name of the :term:`cryptographic driver <Cryptographic driver>` in the |NCS|.
+      For more information, see :ref:`ug_nrf54l_crypto_kmu_cracen_peripherals` on the :ref:`ug_nrf54l_cryptography` page.
+
+   Cryptographic driver
+      A specialized component that implements specific cryptographic algorithms or provides access to hardware accelerators.
+      See :ref:`crypto_drivers` for more information.
 
    Data Terminal Ready (DTR)
       A control signal in RS-232 serial communications transmitted from data terminal equipment, such as a computer, to data communication equipment.

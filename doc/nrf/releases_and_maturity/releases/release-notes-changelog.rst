@@ -119,6 +119,7 @@ Security
 
 * Added the new section about :ref:`ug_crypto_index`.
   The new section includes pages about :ref:`ug_crypto_architecture` (new page) and :ref:`crypto_drivers` (moved from :ref:`nrf_security` library).
+* Updated the information on the :ref:`crypto_drivers` page with more details about the driver selection process.
 
 Protocols
 =========
