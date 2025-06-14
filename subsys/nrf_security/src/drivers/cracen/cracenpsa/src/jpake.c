@@ -9,6 +9,7 @@
 #include "common.h"
 #include <cracen/mem_helpers.h>
 #include "cracen_psa_primitives.h"
+#include <cracen/statuscodes.h>
 #include "psa/crypto_driver_contexts_key_derivation.h"
 #include "psa/crypto_sizes.h"
 #include "psa/crypto_types.h"
@@ -250,17 +251,17 @@ static psa_status_t cracen_get_zkp_hash(psa_algorithm_t hash_alg,
 		goto exit;
 	}
 	status = cracen_update_hash_with_prefix(&hash_op, G, CRACEN_P256_POINT_SIZE,
-						SI_ECC_PUBKEY_UNCOMPRESSED);
+						CRACEN_ECC_PUBKEY_UNCOMPRESSED);
 	if (status != PSA_SUCCESS) {
 		goto exit;
 	}
 	status = cracen_update_hash_with_prefix(&hash_op, V, CRACEN_P256_POINT_SIZE,
-						SI_ECC_PUBKEY_UNCOMPRESSED);
+						CRACEN_ECC_PUBKEY_UNCOMPRESSED);
 	if (status != PSA_SUCCESS) {
 		goto exit;
 	}
 	status = cracen_update_hash_with_prefix(&hash_op, X, CRACEN_P256_POINT_SIZE,
-						SI_ECC_PUBKEY_UNCOMPRESSED);
+						CRACEN_ECC_PUBKEY_UNCOMPRESSED);
 	if (status != PSA_SUCCESS) {
 		goto exit;
 	}
@@ -372,7 +373,7 @@ static psa_status_t cracen_write_key_share(cracen_jpake_operation_t *operation, 
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	output[0] = SI_ECC_PUBKEY_UNCOMPRESSED;
+	output[0] = CRACEN_ECC_PUBKEY_UNCOMPRESSED;
 	memcpy(output + 1, operation->X[idx], sizeof(operation->X[idx]));
 	*output_length = sizeof(operation->X[idx]) + 1;
 
@@ -385,7 +386,7 @@ static psa_status_t cracen_write_zk_public(cracen_jpake_operation_t *operation, 
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
-	output[0] = SI_ECC_PUBKEY_UNCOMPRESSED;
+	output[0] = CRACEN_ECC_PUBKEY_UNCOMPRESSED;
 	memcpy(&output[1], operation->V, sizeof(operation->V));
 	*output_length = sizeof(operation->V) + 1;
 
@@ -427,7 +428,7 @@ static psa_status_t cracen_read_key_share(cracen_jpake_operation_t *operation, c
 	int idx = operation->rd_idx;
 
 	if (input_length != sizeof(operation->P[idx]) + 1 ||
-	    input[0] != SI_ECC_PUBKEY_UNCOMPRESSED) {
+	    input[0] != CRACEN_ECC_PUBKEY_UNCOMPRESSED) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
@@ -439,7 +440,8 @@ static psa_status_t cracen_read_key_share(cracen_jpake_operation_t *operation, c
 static psa_status_t cracen_read_zk_public(cracen_jpake_operation_t *operation, const uint8_t *input,
 					  size_t input_length)
 {
-	if (input_length != sizeof(operation->V) + 1 || input[0] != SI_ECC_PUBKEY_UNCOMPRESSED) {
+	if (input_length != sizeof(operation->V) + 1 ||
+	    input[0] != CRACEN_ECC_PUBKEY_UNCOMPRESSED) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
@@ -554,7 +556,7 @@ psa_status_t cracen_jpake_get_shared_key(cracen_jpake_operation_t *operation,
 	if (output_size <= CRACEN_P256_POINT_SIZE) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
-	output[0] = SI_ECC_PUBKEY_UNCOMPRESSED;
+	output[0] = CRACEN_ECC_PUBKEY_UNCOMPRESSED;
 
 	/* get PMSK */
 	MAKE_SX_POINT(x4, operation->P[1], CRACEN_P256_POINT_SIZE);
