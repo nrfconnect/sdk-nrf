@@ -25,3 +25,6 @@
 &bt_hci_controller {
 	status = "disabled";
 };
+
+/* Get a node label for wi-fi spi to use in shield files */
+wifi_spi: &spi22 {};
