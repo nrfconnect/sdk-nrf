@@ -33,18 +33,6 @@ int broadcast_sink_uuid_populate(struct net_buf_simple *uuid_buf);
 int broadcast_sink_adv_populate(struct bt_data *adv_buf, uint8_t adv_buf_vacant);
 
 /**
- * @brief	Change the active audio stream if the broadcast isochronous group (BIG) contains
- *              more than one broadcast isochronous stream (BIS).
- *
- * @note	Only streams within the same broadcast source are relevant, meaning
- *		that the broadcast source is not changed.
- *		The active stream will iterate every time this function is called.
- *
- * @return	0 for success, error otherwise.
- */
-int broadcast_sink_change_active_audio_stream(void);
-
-/**
  * @brief	Get configuration for the audio stream.
  *
  * @param[out]	bitrate		Pointer to the bitrate used; can be NULL.

@@ -59,6 +59,17 @@ struct stream_index {
 };
 
 /**
+ * @brief	Get the number of active streams.
+ *
+ * @note	This function returns the number of streams that are currently active.
+ *			An active stream is one that has been set up and is ready to receive data.
+ *			This function is used by broadcast_sink, unicast_server and unicast_client.
+ *
+ * @return	Number of active BIS, or negative error code on failure.
+ */
+int concurrent_sync_num_get(void);
+
+/**
  * @brief Function to populate the audio metadata.
  *
  * @param[in] meta	Pointer to the audio metadata.
