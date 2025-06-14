@@ -11,3 +11,4 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_cellular
+      - bluetooth
