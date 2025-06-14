@@ -148,7 +148,7 @@ static int cmd_log_rpc_history_threshold(const struct shell *sh, size_t argc, ch
 static int cmd_log_rpc_crash(const struct shell *sh, size_t argc, char *argv[])
 {
 	int rc;
-	char buffer[CONFIG_RPC_CRASH_LOG_READ_BUFFER_SIZE];
+	char buffer[CONFIG_NRF_PS_CLIENT_CRASH_DUMP_READ_BUFFER_SIZE];
 	char line[COREDUMP_LOG_LINE_LEN * 2 + 1];
 	size_t offset = 0;
 
