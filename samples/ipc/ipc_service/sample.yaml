@@ -108,3 +108,23 @@ tests:
       - FILE_SUFFIX=cpuppr
       - ipc_service_SNIPPET=nordic-ppr
     timeout: 20
+  sample.ipc.ipc_service.nrf54l15dk_cpuapp_cpuflpr_icmsg:
+    extra_args:
+      - ipc_service_SNIPPET=nordic-flpr
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    timeout: 20
+  sample.ipc.ipc_service.nrf54l15dk_cpuapp_cpuflpr_icbmsg:
+    extra_args:
+      - ipc_service_SNIPPET=nordic-flpr
+      - ipc_service_CONFIG_IPC_SERVICE_BACKEND_ICBMSG_NUM_EP=1
+      - ipc_service_DTC_OVERLAY_FILE="boards/nrf54l15dk_nrf54l15_cpuapp_icbmsg.overlay"
+      - remote_CONFIG_IPC_SERVICE_BACKEND_ICBMSG_NUM_EP=1
+      - remote_DTC_OVERLAY_FILE="boards/nrf54l15dk_nrf54l15_cpuflpr_icbmsg.overlay"
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    timeout: 20
