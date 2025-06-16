@@ -79,6 +79,7 @@ config BT_POWER_PROFILING_LED_DISABLED
 
 config BT_POWER_PROFILING_NFC_DISABLED
 	bool "Disable NFC"
+	default y if !HAS_HW_NRF_NFCT
 	help
 	  Disables the NFC to reduce power consumption.
 
