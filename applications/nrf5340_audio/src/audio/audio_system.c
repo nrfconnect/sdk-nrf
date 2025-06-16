@@ -36,7 +36,9 @@ K_MSGQ_DEFINE(audio_q_rx, sizeof(struct net_buf *), FIFO_RX_BLOCK_COUNT, sizeof(
 
 NET_BUF_POOL_FIXED_DEFINE(audio_q_rx_pool, FIFO_RX_BLOCK_COUNT, FRAME_SIZE_BYTES,
 			  sizeof(struct audio_metadata), NULL);
-NET_BUF_POOL_FIXED_DEFINE(audio_q_tx_pool, FIFO_TX_BLOCK_COUNT, USB_BLOCK_SIZE_STEREO,
+NET_BUF_POOL_FIXED_DEFINE(audio_q_int_pool, 2, ENC_MULTI_CHAN_MAX_FRAME_SIZE,
+			  sizeof(struct audio_metadata), NULL);
+NET_BUF_POOL_FIXED_DEFINE(audio_q_tx_pool, 2, USB_BLOCK_SIZE_MULTI_CHAN,
 			  sizeof(struct audio_metadata), NULL);
 
 static K_SEM_DEFINE(sem_encoder_start, 0, 1);
@@ -123,10 +125,11 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 	while (1) {
 		/* Don't start encoding until the stream needing it has started */
 		ret = k_poll(&encoder_evt, 1, K_FOREVER);
-		struct net_buf *audio_frame = net_buf_alloc(&audio_q_rx_pool, K_NO_WAIT);
+		struct net_buf *audio_frame_in = net_buf_alloc(&audio_q_rx_pool, K_NO_WAIT);
 
-		if (audio_frame == NULL) {
+		if (audio_frame_in == NULL) {
 			LOG_ERR("Out of RX buffers");
+			net_buf_unref(audio_frame_in);
 			continue;
 		}
 
@@ -143,15 +146,15 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 		ERR_CHK_MSG(ret, "Failed to get audio block from RX queue");
 
 		/* Copy metadata from the first block */
-		ret = net_buf_user_data_copy(audio_frame, audio_block);
+		ret = net_buf_user_data_copy(audio_frame_in, audio_block);
 		ERR_CHK_MSG(ret, "Failed to copy user data");
 
 		/* Extract the data from the block */
-		net_buf_add_mem(audio_frame, audio_block->data, audio_block->len);
+		net_buf_add_mem(audio_frame_in, audio_block->data, audio_block->len);
 
 		/* Free the block */
 		net_buf_unref(audio_block);
-		struct audio_metadata *meta = net_buf_user_data(audio_frame);
+		struct audio_metadata *meta = net_buf_user_data(audio_frame_in);
 
 		/* Loop until we have a full frame */
 		while (meta->data_len_us < CONFIG_AUDIO_FRAME_DURATION_US) {
@@ -161,12 +164,22 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 			struct audio_metadata *block_meta = net_buf_user_data(audio_block);
 
 			/* Extract the data from the block */
-			net_buf_add_mem(audio_frame, audio_block->data, audio_block->len);
+			net_buf_add_mem(audio_frame_in, audio_block->data, audio_block->len);
 			meta->data_len_us += block_meta->data_len_us;
 
 			/* Free the block */
 			net_buf_unref(audio_block);
 		}
+
+		struct net_buf *audio_frame_out = net_buf_alloc(&audio_q_int_pool, K_NO_WAIT);
+
+		if (audio_frame_out == NULL) {
+			LOG_WRN("Out of encoder buffers");
+			net_buf_unref(audio_frame_in);
+			continue;
+		}
+
+		net_buf_add(audio_frame_out, ENC_MULTI_CHAN_MAX_FRAME_SIZE);
 
 		if (sw_codec_cfg.encoder.enabled) {
 			if (test_tone_size) {
@@ -184,7 +197,9 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 				ERR_CHK(ret);
 			}
 
-			ret = sw_codec_encode(audio_frame);
+			net_buf_user_data_copy(audio_frame_out, audio_frame_in);
+
+			ret = sw_codec_encode(audio_frame_in, audio_frame_out);
 			ERR_CHK_MSG(ret, "Encode failed");
 		}
 
@@ -199,8 +214,9 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 		}
 
 		if (sw_codec_cfg.encoder.enabled) {
-			streamctrl_send(audio_frame);
-			net_buf_unref(audio_frame);
+			streamctrl_send(audio_frame_out);
+			net_buf_unref(audio_frame_in);
+			net_buf_unref(audio_frame_out);
 		}
 		STACK_USAGE_PRINT("encoder_thread", &encoder_thread_data);
 	}
@@ -302,7 +318,7 @@ int audio_system_config_set(uint32_t encoder_sample_rate_hz, uint32_t encoder_bi
 }
 
 /* This function is only used on gateway using USB as audio source and bidirectional stream */
-int audio_system_decode(struct net_buf *audio_frame)
+int audio_system_decode(struct net_buf *audio_frame_in)
 {
 	int ret;
 	static int debug_trans_count;
@@ -318,11 +334,34 @@ int audio_system_decode(struct net_buf *audio_frame)
 		return -EPERM;
 	}
 
-	ret = sw_codec_decode(audio_frame, &pcm_raw_data, &pcm_block_size);
+	if (audio_frame_in == NULL) {
+		LOG_ERR("Buffer pointer is NULL");
+	}
+
+	struct net_buf *audio_frame_pcm = net_buf_alloc(&audio_q_tx_pool, K_NO_WAIT);
+
+	if (audio_frame_pcm == NULL) {
+		LOG_WRN("Out of PCM buffers");
+		return -ENOSPC;
+	}
+
+	struct audio_metadata *meta_pcm = net_buf_user_data(audio_frame_pcm);
+
+	net_buf_add(audio_frame_pcm, USB_BLOCK_SIZE_MULTI_CHAN);
+	net_buf_user_data_copy(audio_frame_pcm, audio_frame_in);
+	meta_pcm->data_coding = PCM;
+	meta_pcm->bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS;
+	meta_pcm->carried_bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_OCTETS;
+	meta_pcm->bad_data = false;
+
+	ret = sw_codec_decode(audio_frame_in, audio_frame_pcm);
 	if (ret) {
 		LOG_ERR("Failed to decode");
 		return ret;
 	}
+
+	pcm_raw_data = audio_frame_pcm->data;
+	pcm_block_size = audio_frame_pcm->len;
 
 	/* If not enough space for a full frame, remove oldest samples to make room */
 	while (k_msgq_num_free_get(&audio_q_tx) < CONFIG_FIFO_FRAME_SPLIT_NUM) {
@@ -353,6 +392,7 @@ int audio_system_decode(struct net_buf *audio_frame)
 		if (ret) {
 			LOG_ERR("Failed to put block onto queue");
 			net_buf_unref(audio_block);
+			net_buf_unref(audio_frame_pcm);
 			return ret;
 		}
 	}
@@ -365,6 +405,8 @@ int audio_system_decode(struct net_buf *audio_frame)
 	} else {
 		debug_trans_count++;
 	}
+
+	net_buf_unref(audio_frame_pcm);
 
 	return 0;
 }

@@ -202,3 +202,70 @@ int pscm_two_channel_split(void const *const input, size_t input_size, uint8_t p
 	*output_size = input_size / 2;
 	return 0;
 }
+
+int pscm_interleave(void const *const input, size_t input_size, uint8_t channel,
+		    uint8_t pcm_bit_depth, void *output, size_t output_size,
+		    uint8_t output_channels)
+{
+	uint8_t bytes_per_sample = pcm_bit_depth / 8;
+	size_t step;
+	uint8_t *pointer_input;
+	uint8_t *pointer_output;
+
+	if (input == NULL || input_size == 0 || channel > output_channels || pcm_bit_depth == 0 ||
+	    output == NULL || output_size == 0 || output_channels == 0) {
+		return -EINVAL;
+	}
+
+	if (output_size < (input_size * output_channels)) {
+		LOG_DBG("Output buffer too small to interleave input into");
+		return -EINVAL;
+	}
+
+	step = bytes_per_sample * (output_channels - 1);
+	pointer_input = (uint8_t *)input;
+	pointer_output = (uint8_t *)output + (step * channel);
+
+	for (size_t i = 0; i < input_size; i += bytes_per_sample) {
+		for (size_t j = 0; j < bytes_per_sample; j++) {
+			*pointer_output++ = *pointer_input++;
+		}
+
+		pointer_output += step;
+	}
+
+	return 0;
+}
+
+int pscm_uninterleave(void const *const input, size_t input_size, uint8_t input_channels,
+		      uint8_t channel, uint8_t pcm_bit_depth, void *output, size_t output_size)
+{
+	uint8_t bytes_per_sample = pcm_bit_depth / 8;
+	size_t step;
+	uint8_t *pointer_input;
+	uint8_t *pointer_output;
+
+	if (input == NULL || input_size == 0 || channel > input_channels || pcm_bit_depth == 0 ||
+	    output == NULL || output_size == 0 || input_channels == 0) {
+		return -EINVAL;
+	}
+
+	if (output_size < (input_size / input_channels)) {
+		LOG_DBG("Output buffer too small to uninterleave input into");
+		return -EINVAL;
+	}
+
+	step = bytes_per_sample * (input_channels - 1);
+	pointer_input = (uint8_t *)input + (step * channel);
+	pointer_output = (uint8_t *)output;
+
+	for (size_t i = 0; i < input_size; i += (step + bytes_per_sample)) {
+		for (size_t j = 0; j < bytes_per_sample; j++) {
+			*pointer_output++ = *pointer_input++;
+		}
+
+		pointer_input += step;
+	}
+
+	return 0;
+}
