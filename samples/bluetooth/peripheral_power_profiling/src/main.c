@@ -18,8 +18,9 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/hci.h>
 
+#if !IS_ENABLED(CONFIG_BT_POWER_PROFILING_NFC_DISABLED)
 #include <nfc_t2t_lib.h>
-
+#endif /* !IS_ENABLED(CONFIG_BT_POWER_PROFILING_NFC_DISABLED) */
 #include <nfc/ndef/msg.h>
 #include <nfc/ndef/record.h>
 #include <nfc/ndef/ch.h>
@@ -58,21 +59,24 @@
 
 #define NFC_BUFFER_SIZE 1024
 
+
 static struct bt_le_oob oob_local;
 static uint8_t tk_local[NFC_NDEF_LE_OOB_REC_TK_LEN];
+#if !IS_ENABLED(CONFIG_BT_POWER_PROFILING_NFC_DISABLED)
 static uint8_t nfc_buffer[NFC_BUFFER_SIZE];
+static void adv_work_handler(struct k_work *work);
+static K_WORK_DEFINE(adv_work, adv_work_handler);
+#endif /* !IS_ENABLED(CONFIG_BT_POWER_PROFILING_NFC_DISABLED) */
 
 static struct bt_le_ext_adv *adv_set;
 
 static void system_off_work_handler(struct k_work *work);
 static void key_generation_work_handler(struct k_work *work);
-static void adv_work_handler(struct k_work *work);
 static void notify_work_handler(struct k_work *work);
 static void notify_timeout_handler(struct k_work *work);
 
 static K_WORK_DELAYABLE_DEFINE(system_off_work, system_off_work_handler);
 static K_WORK_DEFINE(key_generate_work, key_generation_work_handler);
-static K_WORK_DEFINE(adv_work, adv_work_handler);
 static K_WORK_DELAYABLE_DEFINE(notify_work, notify_work_handler);
 static K_WORK_DELAYABLE_DEFINE(notify_timeout, notify_timeout_handler);
 
@@ -149,6 +153,7 @@ static int set_led_off(uint8_t led_idx)
 	}
 }
 
+#if !IS_ENABLED(CONFIG_BT_POWER_PROFILING_NFC_DISABLED)
 static void nfc_callback(void *context, nfc_t2t_event_t event, const uint8_t *data,
 			 size_t data_length)
 {
@@ -184,6 +189,7 @@ static void nfc_callback(void *context, nfc_t2t_event_t event, const uint8_t *da
 		break;
 	}
 }
+#endif /* !IS_ENABLED(CONFIG_BT_POWER_PROFILING_NFC_DISABLED) */
 
 static void connected(struct bt_conn *conn, uint8_t conn_err)
 {
@@ -486,6 +492,7 @@ static void key_generation_work_handler(struct k_work *work)
 	pairing_key_generate();
 }
 
+#if !IS_ENABLED(CONFIG_BT_POWER_PROFILING_NFC_DISABLED)
 static void adv_work_handler(struct k_work *work)
 {
 	int err;
@@ -518,6 +525,7 @@ static void adv_work_handler(struct k_work *work)
 		printk("Connectable advertising started\n");
 	}
 }
+#endif /* !IS_ENABLED(CONFIG_BT_POWER_PROFILING_NFC_DISABLED) */
 
 static void notify_work_handler(struct k_work *work)
 {
@@ -559,6 +567,7 @@ static void notify_timeout_handler(struct k_work *work)
 	}
 }
 
+#if !IS_ENABLED(CONFIG_BT_POWER_PROFILING_NFC_DISABLED)
 static int nfc_oob_data_setup(size_t *size)
 {
 	static const uint8_t ndef_record_count = 2;
@@ -599,9 +608,11 @@ static int nfc_oob_data_setup(size_t *size)
 
 	return nfc_ndef_msg_encode(&NFC_NDEF_MSG(ndef_msg), nfc_buffer, size);
 }
+#endif /* !IS_ENABLED(CONFIG_BT_POWER_PROFILING_NFC_DISABLED) */
 
 static int nfc_init(void)
 {
+#if !IS_ENABLED(CONFIG_BT_POWER_PROFILING_NFC_DISABLED)
 	int err;
 	size_t nfc_buffer_size = sizeof(nfc_buffer);
 
@@ -629,6 +640,9 @@ static int nfc_init(void)
 	}
 
 	return err;
+#else
+	return 0;
+#endif /* !IS_ENABLED(CONFIG_BT_POWER_PROFILING_NFC_DISABLED) */
 }
 
 static void reset_reason_print(void)
@@ -637,10 +651,12 @@ static void reset_reason_print(void)
 
 	reason = nrfx_reset_reason_get();
 
-	if (reason & NRFX_RESET_REASON_NFC_MASK) {
-		printk("Wake up by NFC field detected\n");
-	} else if (reason & NRFX_RESET_REASON_OFF_MASK) {
+	if (reason & NRFX_RESET_REASON_OFF_MASK) {
 		printk("Wake up by the advertising start buttons\n");
+#if !IS_ENABLED(CONFIG_BT_POWER_PROFILING_NFC_DISABLED)
+	} else if (reason & NRFX_RESET_REASON_NFC_MASK) {
+		printk("Wake up by NFC field detected\n");
+#endif /* !IS_ENABLED(CONFIG_BT_POWER_PROFILING_NFC_DISABLED) */
 #if defined(NRF_RESETINFO)
 	} else if (reason & NRFX_RESET_REASON_LOCAL_SREQ_MASK) {
 		printk("Application soft reset detected\n");
@@ -774,7 +790,7 @@ int main(void)
 		return 0;
 	}
 
-	if (!IS_ENABLED(BT_POWER_PROFILING_NFC_DISABLED)) {
+	if (!IS_ENABLED(CONFIG_BT_POWER_PROFILING_NFC_DISABLED)) {
 		err = nfc_init();
 		if (err) {
 			printk("Failed to initialize NFC (err %d)\n", err);
