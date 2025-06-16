@@ -174,7 +174,9 @@ Matter fork
 nRF IEEE 802.15.4 radio driver
 ------------------------------
 
-|no_changes_yet_note|
+* Updated:
+
+  * The Kconfig option :kconfig:option:`CONFIG_NRF_802154_CCA_ED_THRESHOLD` has been replaced by :kconfig:option:`CONFIG_NRF_802154_CCA_ED_THRESHOLD_DBM` to ensure consistent behavior on different SoC families and to reduce the likelihood of misconfiguration.
 
 Thread
 ------
