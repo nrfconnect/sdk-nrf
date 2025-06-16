@@ -80,6 +80,11 @@ struct mqtt_helper_cfg {
 		mqtt_helper_on_pingresp_t on_pingresp;
 		mqtt_helper_on_error_t on_error;
 	} cb;
+
+#if defined(CONFIG_MQTT_LIB_TLS)
+	const sec_tag_t *sec_tag_list;
+	size_t sec_tag_count;
+#endif
 };
 
 struct mqtt_helper_conn_params {
