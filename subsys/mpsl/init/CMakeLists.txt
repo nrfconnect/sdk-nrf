@@ -7,3 +7,4 @@
 zephyr_library()
 
 zephyr_library_sources(mpsl_init.c)
+zephyr_library_sources(mpsl_hwres.c)
