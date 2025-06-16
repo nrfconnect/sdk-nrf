@@ -495,21 +495,29 @@ static int client_connect(struct mqtt_helper_conn_params *conn_params)
 #if defined(CONFIG_MQTT_LIB_TLS)
 	struct mqtt_sec_config *tls_cfg = &(mqtt_client.transport).tls.config;
 
-	sec_tag_t sec_tag_list[] = {
+	sec_tag_t kconfig_sec_tag_list[] = {
 		CONFIG_MQTT_HELPER_SEC_TAG,
 #if CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG > -1
 		CONFIG_MQTT_HELPER_SECONDARY_SEC_TAG,
 #endif
 	};
 
-	tls_cfg->peer_verify	        = TLS_PEER_VERIFY_REQUIRED;
-	tls_cfg->cipher_count	        = 0;
-	tls_cfg->cipher_list	        = NULL; /* Use default */
-	tls_cfg->sec_tag_count	        = ARRAY_SIZE(sec_tag_list);
-	tls_cfg->sec_tag_list	        = sec_tag_list;
-	tls_cfg->session_cache	        = TLS_SESSION_CACHE_DISABLED;
-	tls_cfg->hostname	        = conn_params->hostname.ptr;
-	tls_cfg->set_native_tls		= IS_ENABLED(CONFIG_MQTT_HELPER_NATIVE_TLS);
+	if (current_cfg.sec_tag_list != NULL && current_cfg.sec_tag_count > 0) {
+		LOG_DBG("Using run-time provided security tag value");
+		tls_cfg->sec_tag_count = current_cfg.sec_tag_count;
+		tls_cfg->sec_tag_list = current_cfg.sec_tag_list;
+	} else {
+		LOG_DBG("Using build-time provided security tag value from Kconfig");
+		tls_cfg->sec_tag_count = ARRAY_SIZE(kconfig_sec_tag_list);
+		tls_cfg->sec_tag_list = kconfig_sec_tag_list;
+	}
+
+	tls_cfg->peer_verify = TLS_PEER_VERIFY_REQUIRED;
+	tls_cfg->cipher_count = 0;
+	tls_cfg->cipher_list = NULL; /* Use default */
+	tls_cfg->session_cache = TLS_SESSION_CACHE_DISABLED;
+	tls_cfg->hostname = conn_params->hostname.ptr;
+	tls_cfg->set_native_tls = IS_ENABLED(CONFIG_MQTT_HELPER_NATIVE_TLS);
 
 #if defined(CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES)
 	err = certificates_provision();
