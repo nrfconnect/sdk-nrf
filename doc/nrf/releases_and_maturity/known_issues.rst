@@ -4669,6 +4669,17 @@ KRKNWK-6255: RSSI parameter adjustment is not applied
 
   **Workaround:** To apply RSSI parameter adjustments, cherry-pick the commits in `hal_nordic PR #88 <https://github.com/zephyrproject-rtos/hal_nordic/pull/88>`_, `sdk-nrfxlib PR #381 <https://github.com/nrfconnect/sdk-nrfxlib/pull/381>`_, and `sdk-zephyr PR #430 <https://github.com/nrfconnect/sdk-zephyr/pull/430>`_.
 
+.. rst-class:: v3-0-2 v3-0-1 v3-0-0 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0
+
+KRKNWK-19974: CCA ED threshold is not optimal
+  The default configuration value of :kconfig:option:`CONFIG_NRF_802154_CCA_ED_THRESHOLD` was not optimal and should be adjusted to correspond to -75 dBm.
+
+  **Affected platforms:** nRF5340, nRF52840, nRF52833, nRF52820, nRF54L15
+
+  **Workaround:** Depending on the SoC, the value should be set to the following:
+    * nRF5340 and nRF52833 - Set :kconfig:option:`CONFIG_NRF_802154_CCA_ED_THRESHOLD` to ``18``
+    * Other devices -  Set :kconfig:option:`CONFIG_NRF_802154_CCA_ED_THRESHOLD` to ``17``
+
 SoftDevice Controller
 =====================
 
