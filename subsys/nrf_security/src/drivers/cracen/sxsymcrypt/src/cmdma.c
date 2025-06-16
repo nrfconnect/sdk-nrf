@@ -108,7 +108,7 @@ static int sx_cmdma_check_with_interrupts(void)
 
 int sx_cmdma_check(void)
 {
-	if (IS_ENABLED(CRACEN_USE_INTERRUPTS)) {
+	if (IS_ENABLED(CONFIG_CRACEN_USE_INTERRUPTS)) {
 		return sx_cmdma_check_with_interrupts();
 	} else {
 		return sx_cmdma_check_with_polling();
