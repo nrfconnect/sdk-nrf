@@ -13,7 +13,7 @@ if MODEM_BATTERY
 
 config MODEM_BATTERY_LOW_LEVEL
 	int "Modem battery low level voltage threshold (mV)"
-	range 3100 3500
+	range 3100 5000
 	default 3300
 
 choice MODEM_BATTERY_POFWARN

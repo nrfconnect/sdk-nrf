@@ -593,6 +593,10 @@ Modem libraries
         Use :kconfig:option:`CONFIG_MODEM_SLM_UART_RX_BUF_SIZE` instead.
       * The ``modem_slm_reset_uart`` function as there is no longer need to reset the UART.
 
+* :ref:`modem_battery_readme` library:
+
+  * Updated the range of the :kconfig:option:`CONFIG_MODEM_BATTERY_LOW_LEVEL` Kconfig option to align with `Battery voltage low level %XVBATLOWLVL`_.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 
