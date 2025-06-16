@@ -1,16 +1,13 @@
-.. _ncs_release_notes_changelog:
+.. _ncs_release_notes_310_preview2:
 
-Changelog for |NCS| v3.0.99
-###########################
+Changelog for |NCS| v3.1.0-preview2
+###################################
 
 .. contents::
    :local:
    :depth: 2
 
-The most relevant changes that are present on the main branch of the |NCS|, as compared to the latest official release, are tracked in this file.
-
-.. note::
-   This file is a work in progress and might not cover all relevant changes.
+This changelog reflects the most relevant changes from the latest official release.
 
 .. HOWTO
 
@@ -227,15 +224,6 @@ nRF5340 Audio
 nRF Desktop
 -----------
 
-* Added:
-
-  * The :ref:`nrf_desktop_hid_eventq`.
-    The utility can be used by an application module to temporarily queue HID events related to keypresses (button press or release) to handle them later.
-  * The :ref:`nrf_desktop_hid_keymap`.
-    The utility can be used by an application module to map an application-specific key ID to a HID report ID and HID usage ID pair according to statically defined user configuration.
-    The :file:`hid_keymap.h` file was moved from the :file:`configuration/common` directory to the :file:`src/util` directory.
-    The file is now the header of the :ref:`nrf_desktop_hid_keymap` and contains APIs exposed by the utility.
-
 * Updated:
 
   * The application configurations for dongles on memory-limited SoCs (such as nRF52820) to reuse the system workqueue for GATT Discovery Manager (:kconfig:option:`CONFIG_BT_GATT_DM_WORKQ_SYS`).
@@ -249,19 +237,6 @@ nRF Desktop
     * Use generic callbacks to handle HID feature and output reports.
 
     This approach simplifies the process of adding support for new HID reports.
-  * The :ref:`nrf_desktop_hid_state` to:
-
-    * Use the :ref:`nrf_desktop_hid_eventq` to temporarily queue HID events related to keypresses before a connection to the HID host is established.
-    * Use the :ref:`nrf_desktop_hid_keymap` to map an application-specific key ID from :c:struct:`button_event` to a HID report ID and HID usage ID pair.
-
-    The features were implemented directly in the HID state module before.
-    This change simplifies the HID state module implementation and allows code reuse.
-  * The HID input and output report maps (``input_reports`` and ``output_reports`` arrays defined in the :file:`configuration/common/hid_report_desc.h` file) to contain only IDs of enabled HID reports.
-  * The default value of the :kconfig:option:`CONFIG_APP_EVENT_MANAGER_MAX_EVENT_CNT` Kconfig option to ``64``.
-    This ensures that more complex configurations fit in the limit.
-  * The :ref:`nrf_desktop_hid_reportq` to accept HID report IDs that do not belong to HID input reports supported by the application (are not part of the ``input_reports`` array defined in :file:`configuration/common/hid_report_desc.h` file).
-    Before the change, providing an unsupported HID report ID caused an assertion failure.
-    Function signatures of the :c:func:`hid_reportq_subscribe` and :c:func:`hid_reportq_unsubscribe` functions were slightly changed (both functions return an error in case the provided HID report ID is unsupported).
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
@@ -270,8 +245,6 @@ nRF Machine Learning (Edge Impulse)
 
 Serial LTE modem
 ----------------
-
-* Added the ``AT#XAPOLL`` command to asynchronously poll sockets for data.
 
 * Updated:
 
@@ -306,11 +279,6 @@ Bluetooth samples
   * Fixed an issue where the sample would assert with the :kconfig:option:`CONFIG_ASSERT` Kconfig option enabled.
     This was due to calling the :c:func:`bt_iso_chan_send` function from a timer ISR handler and sending SDUs to the controller with invalid timestamps.
 
-* :ref:`peripheral_hids_keyboard` and :ref:`peripheral_hids_mouse` samples:
-
-  * Added a workaround to an issue with unexpected disconnections that resulted from improper handling of the Bluetooth Link Layer procedures by the connected Bluetooth Central device.
-    This resolves the :ref:`known issue <known_issues>` NCSDK-33632.
-
 |no_changes_yet_note|
 
 Bluetooth Mesh samples
@@ -340,11 +308,6 @@ Cellular samples
 * :ref:`nrf_provisioning_sample` sample:
 
   * Updated the sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
-
-* :ref:`nrf_cloud_rest_device_message` sample:
-
-  * Updated the sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
-  * Removed Provisioning service and JITP.
 
 Cryptography samples
 --------------------
@@ -505,10 +468,7 @@ Bluetooth libraries and services
 Common Application Framework
 ----------------------------
 
-* :ref:`caf_ble_state`:
-
-  * Removed the tracking of the active Bluetooth connections.
-    CAF no longer assumes that the Bluetooth Peripheral device (:kconfig:option:`CONFIG_BT_PERIPHERAL`) supports only one simultaneous connection (:kconfig:option:`CONFIG_BT_MAX_CONN`).
+|no_changes_yet_note|
 
 Debug libraries
 ---------------
@@ -592,18 +552,7 @@ Modem libraries
 Multiprotocol Service Layer libraries
 -------------------------------------
 
-  * Updated the implementation of the following interrupt service routine wrappers:
-
-    * :c:func:`mpsl_timer0_isr_wrapper`
-    * :c:func:`mpsl_rtc0_isr_wrapper`
-    * :c:func:`mpsl_radio_isr_wrapper`
-
-   Now, they do not trigger the kernel scheduler or use any kernel APIs.
-
-    .. note::
-
-       Invoking kernel APIs or triggering the kernel scheduler from Zero Latency Interrupts is considered undefined behavior.
-       Users of MPSL timeslots should not assume that thread rescheduling will occur automatically at the end of a timeslot.
+|no_changes_yet_note|
 
 Libraries for networking
 ------------------------
@@ -761,4 +710,4 @@ cJSON
 Documentation
 =============
 
-* Added the :ref:`log_rpc` library documentation page.
+|no_changes_yet_note|
