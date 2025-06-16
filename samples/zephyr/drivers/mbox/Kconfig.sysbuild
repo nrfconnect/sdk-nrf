@@ -8,5 +8,5 @@ source "share/sysbuild/Kconfig"
 
 config REMOTE_BOARD
 	string "Remote board"
-	default "nrf54l09pdk/nrf54l09/cpuflpr" if $(BOARD) = "nrf54l09pdk"
-	default "nrf54l20pdk/nrf54l20/cpuflpr" if $(BOARD) = "nrf54l20pdk"
+	default "nrf54lm20pdk/nrf54lm20a/cpuflpr" if $(BOARD) = "nrf54lm20pdk"
+	default "nrf54lv10dk/nrf54lv10a/cpuflpr" if $(BOARD) = "nrf54lv10dk"
