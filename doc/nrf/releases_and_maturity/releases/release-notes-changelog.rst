@@ -612,6 +612,8 @@ Multiprotocol Service Layer libraries
        Invoking kernel APIs or triggering the kernel scheduler from Zero Latency Interrupts is considered undefined behavior.
        Users of MPSL timeslots should not assume that thread rescheduling will occur automatically at the end of a timeslot.
 
+  * Added an implementation of the API required by the MPSL (defined by :file:`mpsl_hwres.h`) for the nRF53 and nRF54L Series devices.
+
 Libraries for networking
 ------------------------
 
