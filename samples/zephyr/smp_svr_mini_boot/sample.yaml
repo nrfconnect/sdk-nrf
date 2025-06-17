@@ -4,6 +4,8 @@ sample:
 common:
   sysbuild: true
   build_only: true
+  tags:
+    - ci_samples_zephyr_smp_svr_mini_boot
 tests:
   sample.smp_svr_mini_boot:
     platform_allow:
