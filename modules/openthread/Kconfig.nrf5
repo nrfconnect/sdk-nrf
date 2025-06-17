@@ -1,0 +1,70 @@
+# Copyright (c) 2025 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+if !NET_L2_OPENTHREAD
+
+config NRF5_SELECTIVE_TXCHANNEL
+	bool "Support for selective TX channel setting"
+	help
+	  Enable support for selectively setting TX channel for every timed transmission request.
+
+config NRF5_CARRIER_FUNCTIONS
+	bool "Support for carrier functions"
+	default y if OPENTHREAD_DIAG
+	help
+	  Enable support for functions such as modulated carrier and continuous carrier.
+
+config NRF5_VENDOR_OUI_ENABLE
+	bool "Support setting Vendor Organizationally Unique Identifier"
+	help
+	  This option enables setting custom vendor
+	  OUI using NRF5_VENDOR_OUI . After enabling,
+	  user is obliged to set NRF5_VENDOR_OUI value,
+	  as this option has no default value.
+
+if NRF5_VENDOR_OUI_ENABLE
+
+config NRF5_VENDOR_OUI
+	int "Vendor Organizationally Unique Identifier"
+	help
+	  Custom vendor OUI, which makes 24 most-significant
+	  bits of MAC address
+
+endif # NRF5_VENDOR_OUI_ENABLE
+
+config NRF5_UICR_EUI64_ENABLE
+	bool "Support usage of EUI64 value stored in UICR registers"
+	depends on !NRF5_VENDOR_OUI_ENABLE
+	depends on SOC_SERIES_NRF52X || SOC_SERIES_NRF53X || SOC_SERIES_NRF54LX
+	help
+	  This option enables setting custom vendor EUI64 value
+	  stored in User information configuration registers (UICR).
+	  Notice that this disables the default setting of EUI64
+	  value from Factory information configuration registers
+	  (FICR).
+
+if NRF5_UICR_EUI64_ENABLE
+
+config NRF5_UICR_EUI64_REG
+	int "UICR base register for the EUI64 value"
+	range 0 30 if SOC_SERIES_NRF52X
+	range 0 190 if SOC_SERIES_NRF53X
+	range 0 318 if SOC_SERIES_NRF54LX
+	default 0
+	help
+	  Base of the two consecutive registers from the UICR customer
+	  section in which custom EUI64 is stored.
+
+endif # NRF5_UICR_EUI64_ENABLE
+
+config NRF5_LOG_RX_FAILURES
+	bool "Frame reception failures logging"
+	help
+	  There are few cases where the frame reception failure can happen because of
+	  internal cause. These cases are reported forward by general code error.
+
+	  This options enables logging the reason of frame reception failure.
+	  It can be helpful for the network traffic analyze but it generates also
+	  a lot of log records in a stress environment.
+
+endif # !NET_L2_OPENTHREAD
