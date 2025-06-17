@@ -22,7 +22,7 @@ fih_int boot_nv_security_counter_init(void)
 fih_int boot_nv_security_counter_get(uint32_t image_id, fih_int *security_cnt)
 {
 	int err;
-	uint16_t cur_sec_cnt;
+	counter_t cur_sec_cnt;
 
 	if (security_cnt == NULL) {
 		FIH_RET(FIH_FAILURE);
