@@ -59,6 +59,7 @@ void mpsl_fem_extended_pin_to_mpsl_fem_pin(uint32_t pin_num, mpsl_fem_pin_t *p_f
 	p_fem_pin->port_pin = pin_num;
 }
 
+#if !defined(_MPSL_FEM_CONFIG_API_NEXT)
 int mpsl_fem_utils_gpiote_pin_init(mpsl_fem_gpiote_pin_config_t *gpiote_pin)
 {
 #if defined(NRF54L_SERIES)
@@ -105,3 +106,4 @@ int mpsl_fem_utils_gpiote_pin_init(mpsl_fem_gpiote_pin_config_t *gpiote_pin)
 #endif
 	return 0;
 }
+#endif /* !defined(_MPSL_FEM_CONFIG_API_NEXT) */
