@@ -16,6 +16,10 @@ zephyr_library_sources(
 if(NOT CONFIG_HDLC_RCP_IF)
   # Radio platform implementation dedicated for L2 Platform adaptation layer
   zephyr_library_sources_ifdef(CONFIG_NET_L2_OPENTHREAD ${ZEPHYR_BASE}/modules/openthread/platform/radio.c)
+
+  # Radio platform implementation dedicated for nrf-sdk
+  zephyr_library_sources_ifndef(CONFIG_NET_L2_OPENTHREAD radio_nrf5.c)
+
   zephyr_library_sources(${ZEPHYR_BASE}/modules/openthread/platform/spi.c)
 endif()
 
