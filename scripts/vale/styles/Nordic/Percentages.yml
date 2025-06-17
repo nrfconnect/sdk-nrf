@@ -1,0 +1,7 @@
+extends: existence
+message: "Use a numeral plus the units."
+link: https://github.com/NordicPlayground/test-style-guide/blob/main/docs/numbers.md
+nonword: true
+level: error
+tokens:
+  - '\b[a-zA-z]+\spercent\b'

@@ -324,7 +324,7 @@ However, you need to send the updated firmware to the CSA Interoperability Lab.
 
    Matter's FastTrack Recertification program overview
 
-The scope of changes permitted under this program is broad — covering not only bug fixes and interoperability improvements, but also updates to newer specification versions.
+The scope of changes permitted under this program is broad, covering not only bug fixes and interoperability improvements, but also updates to newer specification versions.
 For more details, read a dedicated document in the `Matter Resource Kit`_.
 
 Rapid Recertification program
