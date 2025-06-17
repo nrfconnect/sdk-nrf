@@ -4,7 +4,7 @@ if BOOTLOADER_MCUBOOT
 
 menuconfig MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION
 	bool "Downgrade prevention using hardware security counters"
-	depends on SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91X
+	depends on SOC_NRF5340_CPUAPP || SOC_SERIES_NRF91X || SOC_SERIES_NRF54LX
 	help
 	  This option can be enabled by the application and will ensure
 	  that the MCUBOOT_HW_DOWNGRADE_PREVENTION Kconfig option is
