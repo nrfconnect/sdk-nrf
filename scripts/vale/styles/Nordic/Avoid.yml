@@ -1,0 +1,12 @@
+extends: existence
+message: "Don't use '%s'. See the A-Z word list for details."
+# See the A-Z word list
+link: https://github.com/NordicPlayground/test-style-guide
+ignorecase: true
+level: error
+tokens:
+  - abortion
+  - and so on
+  - app(?:lication)?s? (?:developer|program)
+  - (?i)app(?:lication)?\sfile(?!-)
+  - contiguous selection

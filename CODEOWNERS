@@ -722,6 +722,7 @@
 /scripts/hpf/                             @nrfconnect/ncs-ll-ursus
 /scripts/generate_psa_key_attributes.py   @nrfconnect/ncs-aurora
 /scripts/tests/                           @nrfconnect/ncs-pluto @fundakol
+/scripts/vale/                            @francescoser
 
 /scripts/docker/*.rst                     @nrfconnect/ncs-doc-leads
 /scripts/hid_configurator/*.rst           @nrfconnect/ncs-si-bluebagel-doc

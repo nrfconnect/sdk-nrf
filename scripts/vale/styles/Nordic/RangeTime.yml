@@ -1,0 +1,13 @@
+extends: existence
+message: "Use 'to' instead of a dash in '%s'."
+link: https://github.com/NordicPlayground/test-style-guide/blob/main/docs/numbers.md
+nonword: true
+level: error
+action:
+  name: edit
+  params:
+    - regex
+    - "[-–]"
+    - "to"
+tokens:
+  - '\b(?:AM|PM)\s?[-–]\s?.+(?:AM|PM)\b'

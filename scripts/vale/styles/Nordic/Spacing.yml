@@ -1,0 +1,10 @@
+extends: existence
+message: "'%s' should have one space."
+link: https://github.com/NordicPlayground/test-style-guide/blob/main/docs/punctuation/periods.md
+level: error
+nonword: true
+tokens:
+  - '[a-z][.?!] {2,}[A-Z]'
+  - '[a-z][.?!][A-Z]'
+exceptions:
+  - '[uuid][.?!][NAMESPACE_DNS]'
