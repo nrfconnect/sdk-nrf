@@ -1,0 +1,9 @@
+extends: substitution
+message: "Use '%s' instead of '%s'."
+link: to_be_added
+level: error
+ignorecase: true
+action:
+  name: replace
+swap:
+  may: might

@@ -1,0 +1,9 @@
+extends: existence
+message: "Don't add '%s' to a singular noun. Use plural instead."
+ignorecase: true
+level: error
+## missingdoc
+link: https://learn.microsoft.com/en-us/style-guide/a-z-word-list-term-collections/s/s-es
+raw:
+  - '\b\w+\(s\)\b'
+  - '\b\w+\(es\)\b'

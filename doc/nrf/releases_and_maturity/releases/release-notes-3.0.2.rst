@@ -89,7 +89,7 @@ Wi-Fi
 * Fixed:
 
   * IOVDD leakage current through appropriate pull up and pull down on QSPI and SPIM GPIO pins.
-  * Reassociations occurring at RSSI values of -67 dBm or lower.
+  * Reassociations occurring at RSSI values of –67 dBm or lower.
   * XIP Anomaly 159, an intermittent QSPI issue triggered at a CPU clock speed of 128 MHz.
   * A crash occurring in the :ref:`SoftAP provisioning sample <softap_wifi_provision_sample>`.
 

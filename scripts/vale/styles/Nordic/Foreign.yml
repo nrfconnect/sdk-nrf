@@ -1,0 +1,14 @@
+extends: substitution
+message: "Use '%s' instead of '%s'."
+# To match “E.g.” and “e.g.”
+ignorecase: true
+level: error
+nonword: true
+action:
+  name: replace
+swap:
+  '\b(?:eg|e\.g\.)[\s,]': for example
+  # To match only "i.e.", not "ie"
+  '\bi\.e\.(?=[\s,])': that is
+  '\b(?:viz\.)[\s,]': namely
+  '\b(?:ergo)[\s,]': therefore

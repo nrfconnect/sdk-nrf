@@ -1,0 +1,15 @@
+extends: existence
+message: "Capitalize '%s'."
+link: https://github.com/NordicPlayground/test-style-guide/blob/main/docs/punctuation/colons.md
+nonword: true
+level: error
+scope: heading
+tokens:
+  - ':\s(?!(?:nRF|fwupd|sdk-[a-z0-9_-]+))[a-z]'
+
+# Skips when the text after the colon is “nRF” or any “sdk-...” repository name
+
+## nRF and sdk- are embedded in the regex to avoid false positives.
+## These should be included in a separate exception rule list.
+## Original regex:   - ':\s[a-z]'
+## Previous reger:   - ':\s(?!nRF)[a-z]'
