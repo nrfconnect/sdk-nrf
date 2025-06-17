@@ -11,4 +11,8 @@ menu "OpenThread stack nrf features"
 rsource "Kconfig.features.nrf"
 endmenu
 
+menu "NRF5 radio configuration"
+rsource "Kconfig.nrf5"
+endmenu
+
 endif # OPENTHREAD

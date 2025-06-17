@@ -37,6 +37,37 @@ config MBEDTLS_SSL_CLI_ALLOW_WEAK_CERTIFICATE_VERIFICATION_WITHOUT_HOSTNAME
 
 endif
 
+config OPENTHREAD_PLATFORM_PKT_TXTIME
+	default y if NET_PKT_TXTIME
+	default y if !NET_L2_OPENTHREAD
+
+if !NET_L2_OPENTHREAD
+
+if HAS_HW_NRF_RADIO_IEEE802154
+
+config NRF_802154_RADIO_DRIVER
+	default y
+
+endif
+
+if !HAS_HW_NRF_RADIO_IEEE802154
+
+config NRF_802154_SER_HOST
+	default y
+
+endif
+
+endif # !NET_L2_OPENTHREAD
+
+# In nrf-sdk, the init priority should be set to 90 to ensure that the OpenThread stack is
+# initialized after MPSL.
+config OPENTHREAD_SYS_INIT_PRIORITY
+	default 90
+
+config OPENTHREAD_PLATFORM_CARRIER_FUNCTIONS
+	default y if OPENTHREAD_DIAG && IEEE802154_CARRIER_FUNCTIONS
+	default y if OPENTHREAD_DIAG && NRF5_CARRIER_FUNCTIONS
+
 # CSL nRF configuration
 config OPENTHREAD_DYNAMIC_STORE_FRAME_AHEAD_COUNTER
 	default y
