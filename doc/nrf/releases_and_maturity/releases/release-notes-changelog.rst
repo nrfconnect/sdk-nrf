@@ -681,6 +681,15 @@ Libraries for networking
 
 * :ref:`lib_nrf_provisioning` library:
 
+  * Added
+
+    * The :kconfig:option:`CONFIG_NRF_PROVISIONING_INITIAL_BACKOFF` Kconfig option to configure the initial backoff time for provisioning retries.
+    * The :kconfig:option:`CONFIG_NRF_PROVISIONING_STACK_SIZE` Kconfig option to configure the stack size of the provisioning thread.
+
+  * Updated:
+
+    * Limited key-value pairs in a single provisioning command to 10. This is done to reduce the RAM usage of the library.
+
   * Fixed an issue where the results from the :c:func:`zsock_getaddrinfo` function were not freed when the CoAP protocol was used for connection establishment.
 
 * :ref:`lib_downloader` library:
