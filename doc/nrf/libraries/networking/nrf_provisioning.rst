@@ -23,28 +23,30 @@ Configuration
 
 To enable the library, set the :kconfig:option:`CONFIG_NRF_CLOUD` and :kconfig:option:`CONFIG_NRF_PROVISIONING` Kconfig options.
 
-* :kconfig:option:`CONFIG_NRF_PROVISIONING_AUTO_INIT` - Initializes the client in the system initialization phase
-* :kconfig:option:`CONFIG_NRF_PROVISIONING_ROOT_CA_SEC_TAG` - Root CA security tag for the Provisioning Service
-* :kconfig:option:`CONFIG_NRF_PROVISIONING_INTERVAL_S` - Maximum provisioning interval, in seconds
-* :kconfig:option:`CONFIG_NRF_PROVISIONING_WITH_CERT` - Provisions the root CA certificate to the security tag if the tag is empty
-* :kconfig:option:`CONFIG_NRF_PROVISIONING_RX_BUF_SZ` - Response buffer size
-* :kconfig:option:`CONFIG_NRF_PROVISIONING_TX_BUF_SZ` - Request buffer size
-* :kconfig:option:`CONFIG_NRF_PROVISIONING_SHELL` - Enables shell module, which allows you to control the client over UART
-* :kconfig:option:`CONFIG_NRF_PROVISIONING_SETTINGS_STORAGE_PATH` - Sets the path for provisioning settings storage
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_AUTO_INIT` - Initializes the client in the system initialization phase.
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_ROOT_CA_SEC_TAG` - Root CA security tag for the Provisioning Service.
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_INTERVAL_S` - Maximum provisioning interval, in seconds.
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_WITH_CERT` - Provisions the root CA certificate to the security tag if the tag is empty.
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_RX_BUF_SZ` - Response buffer size.
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_TX_BUF_SZ` - Request buffer size.
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_SHELL` - Enables shell module, which allows you to control the client over UART.
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_SETTINGS_STORAGE_PATH` - Sets the path for provisioning settings storage.
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_INITIAL_BACKOFF` - Sets the initial backoff time for provisioning retries.
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_STACK_SIZE` - Sets the stack size for the provisioning thread.
 
 Configuration options for HTTP
 ==============================
 
-* :kconfig:option:`CONFIG_NRF_PROVISIONING_HTTP_HOSTNAME` - HTTP API hostname for the Provisioning Service, default ``provisioning-http.nrfcloud.com``
-* :kconfig:option:`CONFIG_NRF_PROVISIONING_HTTP_PORT` - Port number for the Provisioning Service
-* :kconfig:option:`CONFIG_NRF_PROVISIONING_HTTP_TIMEOUT_MS` - Timeout in milliseconds for HTTP connection of the Provisioning Service
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_HTTP_HOSTNAME` - HTTP API hostname for the Provisioning Service, default ``provisioning-http.nrfcloud.com``.
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_HTTP_PORT` - Port number for the Provisioning Service.
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_HTTP_TIMEOUT_MS` - Timeout in milliseconds for HTTP connection of the Provisioning Service.
 
 Configuration options for CoAP
 ==============================
 
-* :kconfig:option:`CONFIG_NRF_PROVISIONING_COAP_HOSTNAME` - CoAP API hostname for the Provisioning Service, default ``coap.nrfcloud.com``
-* :kconfig:option:`CONFIG_NRF_PROVISIONING_COAP_PORT` - Port number for the Provisioning Service
-* :kconfig:option:`CONFIG_NRF_PROVISIONING_COAP_DTLS_SESSION_CACHE` - Chooses DTLS session cache
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_COAP_HOSTNAME` - CoAP API hostname for the Provisioning Service, default ``coap.nrfcloud.com``.
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_COAP_PORT` - Port number for the Provisioning Service.
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_COAP_DTLS_SESSION_CACHE` - Chooses DTLS session cache.
 
 .. _lib_nrf_provisioning_start:
 
@@ -85,7 +87,7 @@ To use the default implementation, ``NULL`` can be passed as an argument to the 
 Copy and modify the default callback function as necessary.
 
 The library starts provisioning when it initializes, then according to the configured interval.
-The interval is read from the storage settings and can be updated with a provisioning command like any other key-value pair.
+The interval is read from the storage settings and can be updated with :c:func:`nrf_provisioning_set_interval` or with a provisioning command like any other key-value pair.
 
 During provisioning, the library first tries to establish the transport for communicating with the service.
 This procedure involves a (D)TLS handshake where the client establishes the correct server.
@@ -96,6 +98,9 @@ The (D)TLS handshake happens twice:
 
 * Before requesting commands.
 * After the execution of the commands, to report the results.
+
+The library enables the ``SO_KEEPOPEN`` socket option to maintain the socket during network connection loss.
+This ensures session information is preserved and eliminates the need for a full DTLS handshake upon reconnection.
 
 If you are using AT commands, the library shuts down the modem for writing data to the modem's non-volatile memory.
 Once the memory writes are complete, the connection is re-established to report the results back to the server.
