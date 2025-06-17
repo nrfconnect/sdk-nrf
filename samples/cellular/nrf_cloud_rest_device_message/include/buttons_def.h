@@ -21,5 +21,4 @@ static const struct gpio_pin col[] = {};
 
 static const struct gpio_pin row[] = {
 	{ .port = 0, .pin = DT_GPIO_PIN(DT_NODELABEL(button0), gpios) },
-	{ .port = 0, .pin = DT_GPIO_PIN(DT_NODELABEL(button1), gpios) },
 };

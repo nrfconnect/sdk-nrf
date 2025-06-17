@@ -350,8 +350,17 @@ Cellular samples
 
 * :ref:`nrf_cloud_rest_device_message` sample:
 
+  * Added support for the Thingy:91 X.
   * Updated the sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
   * Removed Provisioning service and JITP.
+
+* :ref:`nrf_cloud_rest_cell_location` sample:
+
+  * Added support for the Thingy:91 X.
+
+* :ref:`nrf_cloud_rest_fota` sample:
+
+  * Added support for the Thingy:91 X.
 
 Cryptography samples
 --------------------
