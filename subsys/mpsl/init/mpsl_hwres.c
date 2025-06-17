@@ -14,7 +14,7 @@
 
 #if defined(DPPI_PRESENT)
 
-bool mpsl_fem_hwres_dppi_channel_alloc(NRF_DPPIC_Type *p_dppic, uint8_t *p_dppi_ch)
+bool mpsl_hwres_dppi_channel_alloc(NRF_DPPIC_Type *p_dppic, uint8_t *p_dppi_ch)
 {
 	nrfx_dppi_t dppi = {0};
 	nrfx_err_t err = nrfx_dppi_periph_get((uintptr_t)p_dppic, &dppi);
