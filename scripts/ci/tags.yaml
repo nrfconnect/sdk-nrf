@@ -1831,3 +1831,14 @@ adc:
     - zephyr/samples/drivers/adc/
     - zephyr/tests/drivers/adc/
     - zephyr/tests/drivers/build_all/adc/
+
+ci_samples_zephyr_smp_svr_mini_boot:
+  files:
+    - bootloader/mcuboot/
+    - modules/crypto/
+    - nrf/samples/zephyr/smp_svr_mini_boot/
+    - nrf/subsys/nrf_security/
+    - zephyr/samples/subsys/mgmt/mcumgr/smp_svr/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/dfu/
+    - zephyr/subsys/mgmt/
