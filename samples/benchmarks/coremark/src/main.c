@@ -184,6 +184,7 @@ int main(void)
 	 * We need preemptive priority during init.
 	 * Later we prefer cooperative priority to ensure no interference with the benchmark.
 	 */
+	SystemCoreClockUpdate();
 	main_thread_priority_cooperative_set();
 
 	LOG_INF("CoreMark sample for %s", CONFIG_BOARD_TARGET);
