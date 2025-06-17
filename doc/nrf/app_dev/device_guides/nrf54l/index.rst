@@ -87,3 +87,4 @@ Refer to the compatibility matrices for the nRF54L Series devices to check the c
    fota_update
    kmu_basics
    kmu_provision
+   ug_nrf54l_ecies_x25519
