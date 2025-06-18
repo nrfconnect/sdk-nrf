@@ -134,7 +134,7 @@ static void ot_rpc_cmd_get_factory_assigned_eui64(const struct nrf_rpc_group *gr
 static void ot_rpc_cmd_set_factory_assigned_eui64(const struct nrf_rpc_group *group,
 						  struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
-	otError error = OT_ERROR_NOT_CAPABLE;
+	otError error = OT_ERROR_NONE;
 	otExtAddress ext_addr;
 
 	nrf_rpc_decode_buffer(ctx, ext_addr.m8, OT_EXT_ADDRESS_SIZE);
@@ -154,13 +154,15 @@ static void ot_rpc_cmd_set_factory_assigned_eui64(const struct nrf_rpc_group *gr
 	} else {
 		error = OT_ERROR_FAILED;
 	}
+#else
+	error = OT_ERROR_NOT_CAPABLE;
 #endif
 #endif
 
 	/*
-	 * The IEEE EUI64 is only copied from UICR to the network interface once, during
-	 * the network interface initialization, so the network interface must also be
-	 * updated after writing the new identifier to UICR.
+	 * Update the network interface regardless of whether EUI64 comes from UICR of not.
+	 * Even if it does, it is only read from UICR once, during the network interface
+	 * initialization, and we want the EUI64 change to have an immediate effect.
 	 */
 	if (IS_ENABLED(CONFIG_NET_L2_OPENTHREAD) && error == OT_ERROR_NONE) {
 		struct net_if *iface = net_if_get_first_by_type(&NET_L2_GET_NAME(OPENTHREAD));
