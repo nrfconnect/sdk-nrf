@@ -13,14 +13,43 @@
  * @{
  */
 
-void slm_enter_idle(void);
-void slm_enter_sleep(void);
-void slm_enter_shutdown(void);
+/**
+ * @brief Enter idle.
+ */
+void slm_ctrl_pin_enter_idle(void);
 
-/** @brief Temporarily sets the indicate pin high. */
-int slm_indicate(void);
+/**
+ * @brief Enter sleep.
+ */
+void slm_ctrl_pin_enter_sleep(void);
 
+/**
+ * @brief Enter sleep without uninitializing AT host.
+ */
+void slm_ctrl_pin_enter_sleep_no_uninit(void);
+
+/**
+ * @brief nRF91 Series SiP enters System OFF mode.
+ */
+void slm_ctrl_pin_enter_shutdown(void);
+
+/**
+ * @brief Temporarily sets the indicate pin high.
+ *
+ * @retval 0 on success, nonzero otherwise.
+ */
+int slm_ctrl_pin_indicate(void);
+
+/**
+ * @brief Initialize SLM control pin module.
+ *
+ * @retval 0 on success, nonzero otherwise.
+ */
 int slm_ctrl_pin_init(void);
+
+/**
+ * @brief Initialize SLM control pins, that is, power and indicate pins.
+ */
 void slm_ctrl_pin_init_gpios(void);
 
 /** @} */

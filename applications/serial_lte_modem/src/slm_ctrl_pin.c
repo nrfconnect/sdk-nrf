@@ -78,28 +78,6 @@ static int configure_gpio(gpio_pin_t pin, gpio_flags_t flags)
 }
 #endif
 
-static int init_gpios(void)
-{
-	if (!device_is_ready(gpio_dev)) {
-		LOG_ERR("GPIO controller not ready");
-		return -ENODEV;
-	}
-
-#if POWER_PIN_IS_ENABLED
-	if (configure_gpio(CONFIG_SLM_POWER_PIN, GPIO_INPUT | GPIO_PULL_UP | GPIO_ACTIVE_LOW)) {
-		return -1;
-	}
-#endif
-
-#if INDICATE_PIN_IS_ENABLED
-	if (configure_gpio(CONFIG_SLM_INDICATE_PIN, GPIO_OUTPUT_INACTIVE | GPIO_ACTIVE_LOW)) {
-		return -1;
-	}
-#endif
-
-	return 0;
-}
-
 #if POWER_PIN_IS_ENABLED
 
 static int configure_power_pin_interrupt(gpio_callback_handler_t handler, gpio_flags_t flags)
@@ -135,15 +113,15 @@ static int configure_power_pin_interrupt(gpio_callback_handler_t handler, gpio_f
 	return 0;
 }
 
-static void slm_enter_sleep_work_fn(struct k_work *)
+static void slm_ctrl_pin_enter_sleep_work_fn(struct k_work *)
 {
-	slm_enter_sleep();
+	slm_ctrl_pin_enter_sleep();
 }
 
 static void power_pin_callback_poweroff(const struct device *dev,
 					struct gpio_callback *gpio_callback, uint32_t)
 {
-	static K_WORK_DEFINE(work, slm_enter_sleep_work_fn);
+	static K_WORK_DEFINE(work, slm_ctrl_pin_enter_sleep_work_fn);
 
 	LOG_INF("Power off triggered.");
 	gpio_remove_callback(dev, gpio_callback);
@@ -224,19 +202,7 @@ static void power_pin_callback_wakeup(const struct device *dev,
 	k_work_submit(&work);
 }
 
-static void enter_sleep_no_uninit(void)
-{
-	LOG_INF("Entering sleep.");
-	LOG_PANIC();
-	nrf_gpio_cfg_sense_set(CONFIG_SLM_POWER_PIN, NRF_GPIO_PIN_SENSE_LOW);
-
-	k_sleep(K_MSEC(100));
-
-	nrf_regulators_system_off(NRF_REGULATORS_NS);
-	assert(false);
-}
-
-int slm_indicate(void)
+int slm_ctrl_pin_indicate(void)
 {
 	int err = 0;
 
@@ -255,7 +221,7 @@ int slm_indicate(void)
 	return err;
 }
 
-void slm_enter_idle(void)
+void slm_ctrl_pin_enter_idle(void)
 {
 	LOG_INF("Entering idle.");
 	int err;
@@ -273,7 +239,7 @@ void slm_enter_idle(void)
 	}
 }
 
-void slm_enter_sleep(void)
+void slm_ctrl_pin_enter_sleep(void)
 {
 	slm_at_host_uninit();
 
@@ -283,12 +249,24 @@ void slm_enter_sleep(void)
 	if (!slm_is_modem_functional_mode(LTE_LC_FUNC_MODE_OFFLINE)) {
 		slm_power_off_modem();
 	}
-	enter_sleep_no_uninit();
+	slm_ctrl_pin_enter_sleep_no_uninit();
+}
+
+void slm_ctrl_pin_enter_sleep_no_uninit(void)
+{
+	LOG_INF("Entering sleep.");
+	LOG_PANIC();
+	nrf_gpio_cfg_sense_set(CONFIG_SLM_POWER_PIN, NRF_GPIO_PIN_SENSE_LOW);
+
+	k_sleep(K_MSEC(100));
+
+	nrf_regulators_system_off(NRF_REGULATORS_NS);
+	assert(false);
 }
 
 #endif /* POWER_PIN_IS_ENABLED */
 
-void slm_enter_shutdown(void)
+void slm_ctrl_pin_enter_shutdown(void)
 {
 	LOG_INF("Entering shutdown.");
 
@@ -309,9 +287,18 @@ void slm_enter_shutdown(void)
 
 void slm_ctrl_pin_init_gpios(void)
 {
-	if (init_gpios() != 0) {
-		LOG_WRN("Failed to init GPIO pins.");
+	if (!device_is_ready(gpio_dev)) {
+		LOG_ERR("GPIO controller not ready");
+		return;
 	}
+
+#if POWER_PIN_IS_ENABLED
+	(void)configure_gpio(CONFIG_SLM_POWER_PIN, GPIO_INPUT | GPIO_PULL_UP | GPIO_ACTIVE_LOW);
+#endif
+
+#if INDICATE_PIN_IS_ENABLED
+	(void)configure_gpio(CONFIG_SLM_INDICATE_PIN, GPIO_OUTPUT_INACTIVE | GPIO_ACTIVE_LOW);
+#endif
 }
 
 int slm_ctrl_pin_init(void)
@@ -332,9 +319,6 @@ int slm_ctrl_pin_init(void)
 	 */
 	err = configure_power_pin_interrupt(power_pin_callback_enable_poweroff,
 					    GPIO_INT_EDGE_FALLING);
-	if (err) {
-		return err;
-	}
 #endif
 	return err;
 }
