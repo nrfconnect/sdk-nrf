@@ -181,26 +181,3 @@ psa_status_t cracen_cmac_finish(cracen_mac_operation_t *operation)
 	sx_status = sx_mac_wait(&operation->cmac.ctx);
 	return silex_statuscodes_to_psa(sx_status);
 }
-
-psa_status_t cracen_cmac_compute(cracen_mac_operation_t *operation, const uint8_t *input,
-				 size_t input_length, uint8_t *mac)
-{
-	int sx_status;
-
-	sx_status = sx_mac_feed(&operation->cmac.ctx, input, input_length);
-	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
-	}
-
-	sx_status = sx_mac_generate(&operation->cmac.ctx, mac);
-	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
-	}
-
-	sx_status = sx_mac_wait(&operation->cmac.ctx);
-	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
-	}
-
-	return PSA_SUCCESS;
-}
