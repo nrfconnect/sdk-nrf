@@ -4,14 +4,17 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @brief Header file with SD card playback API.
+ */
+
 #ifndef _SD_CARD_PLAYBACK_H_
 #define _SD_CARD_PLAYBACK_H_
 
 /**
- * @file
- * @defgroup sd_card_playback SD card playback.
+ * @brief SD Card Playback
+ * @defgroup nrf5340_audio_sd_card_playback SD Card Playback
  * @{
- * @brief The SD card playback module for nRF5340 Audio.
  */
 
 #include <zephyr/kernel.h>

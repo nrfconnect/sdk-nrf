@@ -4,12 +4,22 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @brief Header file with audio software codec selection API.
+ */
+
 #ifndef _SW_CODEC_SELECT_H_
 #define _SW_CODEC_SELECT_H_
 
 #include <zephyr/kernel.h>
 #include <zephyr/net_buf.h>
 #include "device_location.h"
+
+/**
+ * @brief Audio Software Codec Selection
+ * @defgroup nrf5340_audio_sw_codec_select Audio Software Codec Selection
+ * @{
+ */
 
 #if (CONFIG_SW_CODEC_LC3)
 #define LC3_MAX_FRAME_SIZE_MS	10
@@ -122,5 +132,9 @@ int sw_codec_uninit(struct sw_codec_config sw_codec_cfg);
  * @return	0 if success, error codes depends on sw_codec selected.
  */
 int sw_codec_init(struct sw_codec_config sw_codec_cfg);
+
+/**
+ * @}
+ */
 
 #endif /* _SW_CODEC_SELECT_H_ */

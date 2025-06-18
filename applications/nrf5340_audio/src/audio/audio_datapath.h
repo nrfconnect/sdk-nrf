@@ -4,6 +4,10 @@
  *  SPDX-License-Identifier: LicenseRef-PCFT
  */
 
+/** @file
+ * @brief Header file with audio datapath API.
+ */
+
 #ifndef _AUDIO_DATAPATH_H_
 #define _AUDIO_DATAPATH_H_
 
@@ -20,6 +24,12 @@
  * jitter on the timestamp.
  */
 #define SDU_REF_CH_DELTA_MAX_US (int)(CONFIG_AUDIO_FRAME_DURATION_US * 0.001)
+
+/**
+ * @brief Audio Datapath
+ * @defgroup nrf5340_audio_datapath Audio Datapath
+ * @{
+ */
 
 /**
  * @brief	Mixes a tone into the I2S TX stream.
@@ -88,5 +98,9 @@ int audio_datapath_stop(void);
  * @return	0 if successful, error otherwise.
  */
 int audio_datapath_init(void);
+
+/**
+ * @}
+ */
 
 #endif /* _AUDIO_DATAPATH_H_ */

@@ -4,12 +4,22 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @brief Header file with Bluetooth LE Audio stream API.
+ */
+
 #ifndef _LE_AUDIO_H_
 #define _LE_AUDIO_H_
 
 #include <zephyr/bluetooth/audio/bap.h>
 #include <zephyr/net_buf.h>
 #include <audio_defines.h>
+
+/**
+ * @brief Bluetooth LE Audio Stream
+ * @defgroup nrf5340_audio_bt_stream Bluetooth LE Audio Stream
+ * @{
+ */
 
 #define LE_AUDIO_ZBUS_EVENT_WAIT_TIME	  K_MSEC(5)
 #define LE_AUDIO_SDU_SIZE_OCTETS(bitrate) (bitrate / (1000000 / CONFIG_AUDIO_FRAME_DURATION_US) / 8)
@@ -208,5 +218,9 @@ bool le_audio_freq_check(const struct bt_audio_codec_cfg *codec);
  * @param[in]	dir	Direction to print the codec configuration for.
  */
 void le_audio_print_codec(const struct bt_audio_codec_cfg *codec, enum bt_audio_dir dir);
+
+/**
+ * @}
+ */
 
 #endif /* _LE_AUDIO_H_ */

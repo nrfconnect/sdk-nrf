@@ -4,12 +4,22 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @brief Header file with Audio Bluetooth management API.
+ */
+
 #ifndef _BT_MGMT_H_
 #define _BT_MGMT_H_
 
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/audio/audio.h>
+
+/**
+ * @brief Audio Bluetooth Management
+ * @defgroup nrf5340_audio_bt_mgmt Audio Bluetooth Management
+ * @{
+ */
 
 #define LE_AUDIO_EXTENDED_ADV                                                                      \
 	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV, CONFIG_BLE_ACL_EXT_ADV_INT_MIN,                     \
@@ -209,5 +219,9 @@ int bt_mgmt_conn_disconnect(struct bt_conn *conn, uint8_t reason);
  * @return	0 if success, error otherwise.
  */
 int bt_mgmt_init(void);
+
+/**
+ * @}
+ */
 
 #endif /* _BT_MGMT_H_ */

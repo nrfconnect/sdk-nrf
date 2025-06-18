@@ -4,6 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @brief Header file with LC3 file API.
+ */
+
 #ifndef LC3_FILE_H__
 #define LC3_FILE_H__
 
@@ -12,6 +16,12 @@
 
 #include <zephyr/fs/fs.h>
 #include <zephyr/sys/util.h>
+
+/**
+ * @brief LC3 File
+ * @defgroup nrf5340_audio_lc3_file LC3 File
+ * @{
+ */
 
 struct lc3_file_header {
 	uint16_t file_id;	 /* Constant value, 0xCC1C */
@@ -86,5 +96,9 @@ int lc3_file_close(struct lc3_file_ctx *file);
  * @retval 0		Success.
  */
 int lc3_file_init(void);
+
+/**
+ * @}
+ */
 
 #endif /* LC3_FILE_H__ */
