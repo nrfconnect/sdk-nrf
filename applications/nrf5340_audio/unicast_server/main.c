@@ -29,6 +29,9 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
 
+BUILD_ASSERT(CONFIG_BT_AUDIO_CONCURRENT_RX_STREAMS_MAX <= CONFIG_AUDIO_DECODE_CHANNELS_MAX);
+BUILD_ASSERT(CONFIG_BT_AUDIO_CONCURRENT_TX_STREAMS_MAX <= CONFIG_AUDIO_ENCODE_CHANNELS_MAX);
+
 ZBUS_SUBSCRIBER_DEFINE(button_evt_sub, CONFIG_BUTTON_MSG_SUB_QUEUE_SIZE);
 
 ZBUS_MSG_SUBSCRIBER_DEFINE(le_audio_evt_sub);
@@ -526,7 +529,6 @@ int main(void)
 {
 	int ret;
 	enum bt_audio_location location;
-	enum audio_channel channel;
 	static struct bt_data ext_adv_buf[CONFIG_EXT_ADV_BUF_MAX];
 
 	LOG_DBG("Main started");
@@ -554,13 +556,7 @@ int main(void)
 	ret = le_audio_rx_init();
 	ERR_CHK_MSG(ret, "Failed to initialize rx path");
 
-	channel_assignment_get(&channel);
-
-	if (channel == AUDIO_CH_L) {
-		location = BT_AUDIO_LOCATION_FRONT_LEFT;
-	} else {
-		location = BT_AUDIO_LOCATION_FRONT_RIGHT;
-	}
+	device_location_get(&location);
 
 	ret = unicast_server_enable(le_audio_rx_data_handler, location);
 	ERR_CHK_MSG(ret, "Failed to enable LE Audio");

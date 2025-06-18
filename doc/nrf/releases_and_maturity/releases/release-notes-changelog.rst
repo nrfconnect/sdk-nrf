@@ -232,10 +232,12 @@ nRF5340 Audio
 * Added:
 
   * Experimental support for Audio on the nRF5340 DK, with LED state indications and button controls.
-  * Support for stereo in :ref:`broadcast sink app<nrf53_audio_broadcast_sink_app>`.
+  * Experimental Support for stereo in :ref:`broadcast sink app<nrf53_audio_broadcast_sink_app>`.
     The broadcast sink can now receive audio from two BISes and play it on the left and right channels of the audio output, if the correct configuration options are enabled.
     The I2S output will be stereo, but :zephyr:board:`nrf5340_audio_dk` will still only have one audio output channel, since it has a mono codec (CS47L63).
     See :file:`overlay-broadcast_sink.conf` for more information.
+  * The audio devices are now set up with a location bitfield according to the BT Audio specification, instead of a channel.
+    Since a device can have multiple locations set, the location name has been removed from the device name during DFU.
 
 * Updated:
 

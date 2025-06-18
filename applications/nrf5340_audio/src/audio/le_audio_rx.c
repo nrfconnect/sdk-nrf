@@ -53,7 +53,7 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 {
 	int ret;
 	static struct net_buf *audio_frame;
-	static struct rx_stats rx_stats[AUDIO_CH_NUM];
+	static struct rx_stats rx_stats[CONFIG_BT_AUDIO_CONCURRENT_RX_STREAMS_MAX];
 	static uint32_t num_overruns;
 	static uint32_t num_thrown;
 
