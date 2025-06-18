@@ -2,7 +2,7 @@
  * Each loopback is between analog input and GPIO.
  * first-gpios (P1.00) -> AIN1 (P1.01)
  * second-gpios (P1.10, AIN5) -> (P1.11, AIN6)
- * AIN4 (P1.07) tied to low (UART1_CTS)
+ * AIN7 (P1.12) -> VDD
  */
 
 / {
