@@ -11,6 +11,8 @@ The modem information library can be used by an LTE application to obtain specif
 It issues AT commands to retrieve the following data:
 
 * Signal strength indication (RSRP)
+* :term:`Signal-to-Noise Ratio (SNR)`
+* Reference Signal Received Quality (RSRQ)
 * Current and supported LTE bands
 * Tracking area code, mobile country code, and mobile network code
 * Current mode and operator

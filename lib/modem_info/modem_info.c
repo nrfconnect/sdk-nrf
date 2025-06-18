@@ -132,6 +132,7 @@ LOG_MODULE_REGISTER(modem_info);
 #define APN_PARAM_COUNT		7
 
 #define CELL_RSRP_INVALID	255
+#define CELL_RSRQ_INVALID	255
 
 /* FW UUID is 36 characters: XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX */
 #define FW_UUID_SIZE 37
@@ -882,7 +883,7 @@ int modem_info_get_rsrp(int *val)
 				 "+CESQ: %*d,%*d,%*d,%*d,%*d,%d", val);
 
 	if (ret != 1) {
-		LOG_ERR("at_scanf_int failed");
+		LOG_ERR("Could not get signal strength, error: %d", ret);
 		return map_nrf_modem_at_scanf_error(ret);
 	}
 
@@ -892,6 +893,32 @@ int modem_info_get_rsrp(int *val)
 	}
 
 	*val = RSRP_IDX_TO_DBM(*val);
+	return 0;
+}
+
+int modem_info_get_rsrq(float *val)
+{
+	int ret;
+	int rsrq_idx;
+
+	if (val == NULL) {
+		return -EINVAL;
+	}
+
+	ret = nrf_modem_at_scanf("AT+CESQ",
+				 "+CESQ: %*d,%*d,%*d,%*d,%d,%*d", &rsrq_idx);
+
+	if (ret != 1) {
+		LOG_ERR("Could not get signal quality, error: %d", ret);
+		return map_nrf_modem_at_scanf_error(ret);
+	}
+
+	if (rsrq_idx == CELL_RSRQ_INVALID) {
+		LOG_WRN("No valid RSRQ");
+		return -ENOENT;
+	}
+
+	*val = RSRQ_IDX_TO_DB(rsrq_idx);
 	return 0;
 }
 
@@ -987,7 +1014,7 @@ int modem_info_get_snr(int *val)
 		return -ENOENT;
 	}
 
-	*val -= SNR_OFFSET_VAL;
+	*val = SNR_IDX_TO_DB(*val);
 
 	return 0;
 }
