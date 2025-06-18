@@ -4,11 +4,21 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @brief Header file with SD card API.
+ */
+
 #ifndef _SD_CARD_H_
 #define _SD_CARD_H_
 
 #include <stddef.h>
 #include <zephyr/fs/fs.h>
+
+/**
+ * @brief SD Card
+ * @defgroup nrf5340_audio_sd_card SD Card
+ * @{
+ */
 
 /**
  * @brief Finds all files on SD card that match the given pattern.
@@ -152,5 +162,9 @@ int sd_card_close(struct fs_file_t *f_seg_read_entry);
  * @retval	Otherwise, error from underlying drivers.
  */
 int sd_card_init(void);
+
+/**
+ * @}
+ */
 
 #endif /* _SD_CARD_H_ */
