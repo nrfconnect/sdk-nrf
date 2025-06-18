@@ -21,7 +21,7 @@ from colorama import Fore, Style
 from prettytable import PrettyTable
 from nrf5340_audio_dk_devices import (
     BuildType,
-    Channel,
+    Location,
     DeviceConf,
     BuildConf,
     AudioDevice,
@@ -345,7 +345,8 @@ def __main():
     device_list = [
         DeviceConf(
             nrf5340_audio_dk_snr=dev["nrf5340_audio_dk_snr"],
-            channel=Channel[dev["channel"]],
+            #location=Location[dev["location"]],
+            location=[Location[name] for name in dev["location"]],
             snr_connected=(dev["nrf5340_audio_dk_snr"]
                            in boards_snr_connected),
             recover_on_fail=options.recover_on_fail,

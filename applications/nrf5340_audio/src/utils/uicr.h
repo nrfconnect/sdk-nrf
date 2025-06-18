@@ -15,7 +15,7 @@
 /**
  * @brief Get raw channel value from UICR
  */
-uint8_t uicr_channel_get(void);
+uint32_t uicr_channel_get(void);
 
 /**
  * @brief Write raw channel value to UICR
@@ -26,7 +26,7 @@ uint8_t uicr_channel_get(void);
  * @return -EROFS if different channel is already written
  * @return -EIO if channel failed to be written
  */
-int uicr_channel_set(uint8_t channel);
+int uicr_channel_set(uint32_t channel);
 
 /**
  * @brief Get Segger serial number value from UICR

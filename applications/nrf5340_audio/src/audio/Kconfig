@@ -134,21 +134,21 @@ config AUDIO_HEADSET_STEREO
 	  Use stereo audio for the headset.
 	  If this is not selected, mono audio will be used.
 
-choice AUDIO_HEADSET_CHANNEL
+choice AUDIO_HEADSET_LOCATION
 	prompt "Headset audio channel assignment"
-	default AUDIO_HEADSET_CHANNEL_RUNTIME
+	default AUDIO_HEADSET_LOCATION_RUNTIME
 	help
 	  Set whether audio channel assignment for the headset
 	  should happen at runtime or compile-time.
 
-config AUDIO_HEADSET_CHANNEL_RUNTIME
+config AUDIO_HEADSET_LOCATION_RUNTIME
 	bool "Select at runtime"
 	help
 	  Make channel selection at runtime. Selected value is stored in persistent memory.
 	  Left channel: Hold volume-down button on headset while resetting headset.
 	  Right channel: Hold volume-up button on headset while resetting headset.
 
-config AUDIO_HEADSET_CHANNEL_COMPILE_TIME
+config AUDIO_HEADSET_LOCATION_COMPILE_TIME
 	bool "Set at compile-time"
 	help
 	  Set channel selection at compile-time.
@@ -170,9 +170,9 @@ config AUDIO_MUTE
 	  Use button 5 to mute audio instead of
 	  doing a user defined action.
 
-if AUDIO_HEADSET_CHANNEL_COMPILE_TIME
+if AUDIO_HEADSET_LOCATION_COMPILE_TIME
 
-config AUDIO_HEADSET_CHANNEL
+config AUDIO_HEADSET_LOCATION
 	int "Audio channel used by headset"
 	range 0 1
 	default 0
@@ -181,7 +181,7 @@ config AUDIO_HEADSET_CHANNEL
 	  Left = 0.
 	  Right = 1.
 
-endif # AUDIO_HEADSET_CHANNEL_COMPILE_TIME
+endif # AUDIO_HEADSET_LOCATION_COMPILE_TIME
 
 #----------------------------------------------------------------------------#
 menu "SW Codec"

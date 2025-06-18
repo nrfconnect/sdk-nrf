@@ -33,14 +33,16 @@ static int leds_set(void)
 	}
 
 #if (CONFIG_AUDIO_DEV == HEADSET)
-	enum audio_channel channel;
+	enum bt_audio_location location;
 
-	channel_assignment_get(&channel);
+	channel_assignment_get(&location);
 
-	if (channel == AUDIO_CH_L) {
+	if (location == BT_AUDIO_LOCATION_FRONT_LEFT) {
 		ret = led_on(LED_AUDIO_DEVICE_TYPE, LED_COLOR_BLUE);
-	} else {
+	} else if (location == BT_AUDIO_LOCATION_FRONT_RIGHT) {
 		ret = led_on(LED_AUDIO_DEVICE_TYPE, LED_COLOR_MAGENTA);
+	} else {
+		ret = led_on(LED_AUDIO_DEVICE_TYPE, LED_COLOR_WHITE);
 	}
 #elif (CONFIG_AUDIO_DEV == GATEWAY)
 	ret = led_on(LED_AUDIO_DEVICE_TYPE, LED_COLOR_GREEN);
@@ -55,7 +57,7 @@ static int leds_set(void)
 
 static int channel_assign_check(void)
 {
-#if (CONFIG_AUDIO_DEV == HEADSET) && CONFIG_AUDIO_HEADSET_CHANNEL_RUNTIME
+#if (CONFIG_AUDIO_DEV == HEADSET) && CONFIG_AUDIO_HEADSET_LOCATION_RUNTIME
 	int ret;
 	bool pressed;
 
@@ -65,7 +67,7 @@ static int channel_assign_check(void)
 	}
 
 	if (pressed) {
-		channel_assignment_set(AUDIO_CH_L);
+		channel_assignment_set(0);
 		return 0;
 	}
 
@@ -75,7 +77,7 @@ static int channel_assign_check(void)
 	}
 
 	if (pressed) {
-		channel_assignment_set(AUDIO_CH_R);
+		channel_assignment_set(1);
 		return 0;
 	}
 #endif

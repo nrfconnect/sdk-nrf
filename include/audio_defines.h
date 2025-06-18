@@ -24,8 +24,6 @@ enum audio_channel {
 	AUDIO_CH_NUM,
 };
 
-#define AUDIO_MIC 0
-
 /**
  * @brief Audio data coding.
  */
@@ -83,6 +81,7 @@ struct audio_metadata {
 	 */
 	uint32_t bad_data;
 };
+
 
 /**
  * @brief Get the number of channels in the meta data.
