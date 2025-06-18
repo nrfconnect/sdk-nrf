@@ -7,6 +7,8 @@
 #ifndef MPSL_FEM_UTILS_H__
 #define MPSL_FEM_UTILS_H__
 
+#include <zephyr/kernel.h>
+#include <zephyr/devicetree.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <errno.h>
