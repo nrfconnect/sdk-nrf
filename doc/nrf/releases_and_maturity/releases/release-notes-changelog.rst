@@ -910,6 +910,10 @@ cJSON
 Documentation
 =============
 
-* Added the :ref:`log_rpc` library documentation page.
+* Added:
+
+  * The :ref:`log_rpc` library documentation page.
+  * The :ref:`mcuboot_serial_recovery` documentation page, based on the official Zephyr documentation, which discusses the implementation and usage of the serial recovery.
+
 * Removed the Getting started with nRF7002 DK and Getting started with other DKs pages from the :ref:`gsg_guides` section.
   These pages were no longer relevant as the `Quick Start app`_ now also supports the nRF7002 DK.
