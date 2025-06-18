@@ -288,3 +288,48 @@ The received audio data in the I2S-based firmware devices follows the following 
 #. The audio decoder decodes the data and sends the uncompressed audio data (PCM) back to the :file:`audio_datapath.c` module.
 #. The :file:`audio_datapath.c` module continuously feeds the uncompressed audio data to the hardware codec.
 #. The hardware codec receives the uncompressed audio data over the inter-IC sound (I2S) interface and performs the digital-to-analog (DAC) conversion to an analog audio signal.
+
+.. _nrf53_audio_app_overview_architecture_sd_card_playback:
+
+SD card playback module overview
+================================
+
+The SD Card Playback module (:file:`sd_card_playback.c`) provides functionality to play audio files directly from an SD card.
+This module works alongside the existing audio system and can mix SD card audio with Bluetooth audio streams.
+
+The module is compatible with all nRF5340 Audio applications.
+
+The SD Card Playback module consists of the following components:
+
+* File system interface - Uses the SD card module (:file:`sd_card.c`) to read files from the FAT32/exFAT file system
+* Audio format support - Handles both WAV and LC3 file formats with proper header parsing
+* Ring buffer management - Uses a ring buffer to store audio data for smooth playback
+* Thread management - Runs in a dedicated thread to handle file reading and audio processing
+* Audio mixing - Integrates with the PCM mixing system to combine SD card audio with other audio sources
+
+For information about how to enable SD card playback, see :ref:`nrf53_audio_app_configuration_sd_card_playback`.
+
+SD card playback audio processing flow
+--------------------------------------
+
+The SD card playback module uses the following processing flow:
+
+1. User selects an audio file using shell commands.
+#. Module reads and validates the file header (WAV or LC3 format).
+#. Audio data is read from the SD card in chunks.
+#. For LC3 files, the data is decoded using the LC3 decoder.
+#. Audio data is stored in a ring buffer for continuous playback.
+#. The module provides a mixing function that can be called by the audio system.
+#. Thread manages the playback state and timing.
+
+Integration with audio system
+-----------------------------
+
+The SD Card Playback module integrates with the existing audio system through the PCM mixing interface.
+The module provides the ``sd_card_playback_mix_with_stream()`` function that can be called by the audio datapath to mix SD card audio with other audio sources.
+
+This integration allows for scenarios such as:
+
+* Playing background music from SD card while receiving Bluetooth audio.
+* Mixing multiple audio sources.
+* Providing local audio content when Bluetooth connections are not available.
