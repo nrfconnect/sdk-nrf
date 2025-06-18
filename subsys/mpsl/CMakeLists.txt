@@ -14,6 +14,10 @@ endif()
 
 add_subdirectory(cx)
 
+if(CONFIG_MPSL OR CONFIG_MPSL_FEM_ONLY)
+  add_subdirectory(hwres)
+endif()
+
 if(CONFIG_MPSL_USE_ZEPHYR_PM)
   add_subdirectory(pm)
 endif()
