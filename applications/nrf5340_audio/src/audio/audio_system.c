@@ -100,8 +100,11 @@ static void audio_headset_configure(void)
 	sw_codec_cfg.encoder.num_ch = 1;
 	sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
 #endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
+	enum bt_audio_location location;
 
-	channel_assignment_get(&sw_codec_cfg.decoder.audio_ch);
+	channel_assignment_get(&location);
+
+	sw_codec_cfg.decoder.audio_ch = 1;
 
 	if (IS_ENABLED(CONFIG_AUDIO_HEADSET_STEREO)) {
 		sw_codec_cfg.decoder.num_ch = 2;

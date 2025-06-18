@@ -15,25 +15,28 @@
 /* Memory address to store the channel intended used for this board */
 #define MEM_ADDR_UICR_CH (MEM_ADDR_UICR_SNR + sizeof(uint32_t))
 
-uint8_t uicr_channel_get(void)
+uint32_t uicr_channel_get(void)
 {
-	return *(uint8_t *)MEM_ADDR_UICR_CH;
+	return *(uint32_t *)MEM_ADDR_UICR_CH;
 }
 
-int uicr_channel_set(uint8_t channel)
+int uicr_channel_set(uint32_t channel)
 {
-	if (channel == *(uint8_t *)MEM_ADDR_UICR_CH) {
+	if (channel == *(uint32_t *)MEM_ADDR_UICR_CH) {
 		return 0;
 	} else if (*(uint32_t *)MEM_ADDR_UICR_CH != 0xFFFFFFFF) {
 		return -EROFS;
 	}
 
-	nrfx_nvmc_byte_write(MEM_ADDR_UICR_CH, channel);
+	nrfx_nvmc_word_write(MEM_ADDR_UICR_CH, channel);
 
-	if (channel == *(uint8_t *)MEM_ADDR_UICR_CH) {
+	if (channel == *(uint32_t *)MEM_ADDR_UICR_CH) {
 		return 0;
 	} else {
 		return -EIO;
+	}
+
+	while (!nrfx_nvmc_write_done_check()) {
 	}
 }
 

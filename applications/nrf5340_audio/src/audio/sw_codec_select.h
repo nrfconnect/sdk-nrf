@@ -9,6 +9,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/net_buf.h>
+#include <zephyr/bluetooth/audio/audio.h>
 #include "channel_assignment.h"
 
 #if (CONFIG_SW_CODEC_LC3)
