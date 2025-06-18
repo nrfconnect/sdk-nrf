@@ -4,11 +4,21 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @brief Header file with audio button handler API.
+ */
+
 #ifndef _BUTTON_HANDLER_H_
 #define _BUTTON_HANDLER_H_
 
 #include <stdint.h>
 #include <zephyr/drivers/gpio.h>
+
+/**
+ * @brief Audio Button Handler
+ * @defgroup nrf5340_audio_button Audio Button Handler
+ * @{
+ */
 
 /** @brief Initialize button handler, with buttons defined in button_assignments.h.
  *
@@ -27,5 +37,9 @@ int button_handler_init(void);
  * @return 0 if success, an error code otherwise.
  */
 int button_pressed(gpio_pin_t button_pin, bool *button_pressed);
+
+/**
+ * @}
+ */
 
 #endif /* _BUTTON_HANDLER_H_ */

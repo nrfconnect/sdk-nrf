@@ -4,11 +4,21 @@
  *  SPDX-License-Identifier: LicenseRef-PCFT
  */
 
+/** @file
+ * @brief Header file with audio I2S API.
+ */
+
 #ifndef _AUDIO_I2S_H_
 #define _AUDIO_I2S_H_
 
 #include <zephyr/kernel.h>
 #include <stdint.h>
+
+/**
+ * @brief Audio I2S
+ * @defgroup nrf5340_audio_i2s Audio I2S
+ * @{
+ */
 
 /**
  * Calculation:
@@ -86,5 +96,9 @@ void audio_i2s_blk_comp_cb_register(i2s_blk_comp_callback_t blk_comp_callback);
  * @brief Initialize I2S module
  */
 void audio_i2s_init(void);
+
+/**
+ * @}
+ */
 
 #endif /* _AUDIO_I2S_H_ */

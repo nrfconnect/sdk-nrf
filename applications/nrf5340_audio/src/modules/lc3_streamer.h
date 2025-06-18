@@ -4,6 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @brief Header file with LC3 streamer API.
+ */
+
 #ifndef LC3_STREAMER_H
 #define LC3_STREAMER_H
 
@@ -11,6 +15,12 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <sys/types.h>
+
+/**
+ * @brief LC3 Streamer
+ * @defgroup nrf5340_audio_lc3_streamer LC3 Streamer
+ * @{
+ */
 
 struct lc3_stream_cfg {
 	uint32_t sample_rate_hz;
@@ -134,5 +144,9 @@ int lc3_streamer_close_all_streams(void);
  * @retval 0		Success, other negative values are errors from lc3_file module.
  */
 int lc3_streamer_init(void);
+
+/**
+ * @}
+ */
 
 #endif /* LC3_STREAMER_H */

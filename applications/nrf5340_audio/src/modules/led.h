@@ -4,10 +4,20 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @brief Header file with audio LED control API.
+ */
+
 #ifndef _LED_H_
 #define _LED_H_
 
 #include <stdint.h>
+
+/**
+ * @brief Audio LED Control
+ * @defgroup nrf5340_audio_led Audio LED Control
+ * @{
+ */
 
 #define RED   0
 #define GREEN 1
@@ -92,5 +102,9 @@ int led_off(uint8_t led_unit);
  *		-ENODEV if a LED is missing color identifier.
  */
 int led_init(void);
+
+/**
+ * @}
+ */
 
 #endif /* _LED_H_ */
