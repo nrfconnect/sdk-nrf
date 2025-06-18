@@ -4,6 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @defgroup audio_app_sync_timer Audio Sync Timer
+ * @{
+ * @brief Audio synchronization timer API for Audio applications.
+ *
+ * This module provides precise timing functionality for audio synchronization across
+ * multiple devices.
+ */
+
 #ifndef _AUDIO_SYNC_TIMER_H_
 #define _AUDIO_SYNC_TIMER_H_
 
@@ -33,5 +42,9 @@ uint32_t audio_sync_timer_capture(void);
  * @retval The last captured timestamp of the audio sync timer.
  */
 uint32_t audio_sync_timer_frame_start_capture_get(void);
+
+/**
+ * @}
+ */
 
 #endif /* _AUDIO_SYNC_TIMER_H_ */

@@ -4,6 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @defgroup audio_app_bt_mgmt Audio Bluetooth Management
+ * @{
+ * @brief Bluetooth management API for Audio applications.
+ *
+ * This module provides comprehensive Bluetooth management functionality including device
+ * initialization, connection handling, scanning, advertising, and security management.
+ */
+
 #ifndef _BT_MGMT_H_
 #define _BT_MGMT_H_
 
@@ -31,9 +40,6 @@
 	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONN, BT_GAP_ADV_FAST_INT_MIN_1, BT_GAP_ADV_FAST_INT_MAX_1,  \
 			NULL)
 
-/* Broadcast name can be max 32 bytes long, so this will be the limit for both.
- * Add one for '\0' at the end.
- */
 #define BLE_SEARCH_NAME_MAX_LEN 33
 
 #if (CONFIG_SCAN_MODE_ACTIVE)
@@ -46,9 +52,12 @@
 #error "Select either CONFIG_SCAN_MODE_ACTIVE or CONFIG_SCAN_MODE_PASSIVE"
 #endif
 
+/**
+ * @brief Bluetooth management scan type enumeration.
+ */
 enum bt_mgmt_scan_type {
-	BT_MGMT_SCAN_TYPE_CONN = 1,
-	BT_MGMT_SCAN_TYPE_BROADCAST = 2,
+	BT_MGMT_SCAN_TYPE_CONN = 1,		/**< Scan for connection (unicast) devices */
+	BT_MGMT_SCAN_TYPE_BROADCAST = 2,	/**< Scan for broadcast devices */
 };
 
 #define BRDCAST_ID_NOT_USED (BT_AUDIO_BROADCAST_ID_MAX + 1)
@@ -209,5 +218,9 @@ int bt_mgmt_conn_disconnect(struct bt_conn *conn, uint8_t reason);
  * @return	0 if success, error otherwise.
  */
 int bt_mgmt_init(void);
+
+/**
+ * @}
+ */
 
 #endif /* _BT_MGMT_H_ */
