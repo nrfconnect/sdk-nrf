@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <zephyr/kernel.h>
+
 #include "../../hw.h"
 #include <stddef.h>
 #include <stdint.h>
@@ -14,7 +16,6 @@
 
 #include <nrf_security_mutexes.h>
 
-#include <zephyr/kernel.h>
 /* Enable interrupts showing that an operation finished or aborted.
  * For that, we're interested in :
  *     - Fetcher DMA error (bit: 2)

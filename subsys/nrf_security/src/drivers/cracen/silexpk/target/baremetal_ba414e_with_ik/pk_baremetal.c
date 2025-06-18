@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <stdint.h>
-
 #include <zephyr/kernel.h>
+
+#include <stdint.h>
 
 #include "../hw/ba414/ba414_status.h"
 #include "../hw/ba414/pkhardware_ba414e.h"
