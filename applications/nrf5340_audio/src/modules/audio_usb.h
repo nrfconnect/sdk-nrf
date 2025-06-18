@@ -4,10 +4,20 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @brief Header file with audio USB API.
+ */
+
 #ifndef _AUDIO_USB_H_
 #define _AUDIO_USB_H_
 
 #include <zephyr/kernel.h>
+
+/**
+ * @brief Audio USB
+ * @defgroup nrf5340_audio_usb Audio USB
+ * @{
+ */
 
 #if (CONFIG_AUDIO_SOURCE_USB && !CONFIG_AUDIO_SAMPLE_RATE_48000_HZ)
 /* Only 48kHz is supported when using USB */
@@ -48,5 +58,9 @@ int audio_usb_disable(void);
  * @return 0 if successful, error otherwise.
  */
 int audio_usb_init(void);
+
+/**
+ * @}
+ */
 
 #endif /* _AUDIO_USB_H_ */
