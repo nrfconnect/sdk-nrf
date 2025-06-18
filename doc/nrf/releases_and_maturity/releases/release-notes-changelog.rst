@@ -237,6 +237,7 @@ nRF5340 Audio
     The :ref:`net_buf_interface` will also contain the metadata about the audio stream in the ``user_data`` section of the API.
     This change was done to transition to standard Zephyr APIs, as well as to have a structured way to pass N-channel audio between modules.
   * The optional buildprog tool to use `nRF Util`_ instead of nrfjprog that has been deprecated.
+  * The documentation pages with information about the :ref:`SD card playback module <nrf53_audio_app_overview_architecture_sd_card_playback>` and :ref:`how to enable it <nrf53_audio_app_configuration_sd_card_playback>`.
 
 * Removed:
 
