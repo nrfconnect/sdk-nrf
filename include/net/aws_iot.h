@@ -272,6 +272,11 @@ struct aws_iot_config {
 	 *  If not set (NULL), CONFIG_AWS_IOT_BROKER_HOST_NAME will be used.
 	 */
 	char *host_name;
+
+	/** Name of the interface that the AWS library should be bound to.
+	 *  Leave as NULL if not specified.
+	 */
+	const char *if_name;
 };
 
 /** @brief Initialize the library.
