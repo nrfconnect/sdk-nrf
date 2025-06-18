@@ -4,12 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <zephyr/kernel.h>
+
 #include <cracen/membarriers.h>
 
 #include <stdint.h>
 #include <assert.h>
-
-#include <zephyr/sys/util.h>
 
 #include <silexpk/core.h>
 #include "regs_addr.h"
