@@ -68,10 +68,7 @@ void otMessageFree(otMessage *aMessage)
 
 	nrf_rpc_encode_uint(&ctx, key);
 	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_MESSAGE_FREE, &ctx);
-
-	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
-		ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_MESSAGE_FREE);
-	}
+	nrf_rpc_cbor_decoding_done(&ot_group, &ctx);
 }
 
 uint16_t otMessageGetLength(const otMessage *aMessage)

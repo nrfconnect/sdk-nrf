@@ -9,11 +9,14 @@
 #include <ot_rpc_common.h>
 #include <nrf_rpc/nrf_rpc_serialize.h>
 
+#include <zephyr/sys/byteorder.h>
 #include <zephyr/sys/util_macro.h>
 
 #include <nrf_rpc_cbor.h>
 
 #include <openthread/ip6.h>
+
+#include <stdio.h>
 
 #define OT_RPC_MAX_NUM_UNICAST_ADDRESSES   8
 #define OT_RPC_MAX_NUM_MULTICAST_ADDRESSES 8
@@ -188,4 +191,13 @@ otError otIp6UnsubscribeMulticastAddress(otInstance *aInstance, const otIp6Addre
 				ot_rpc_decode_error, &error);
 
 	return error;
+}
+
+void otIp6AddressToString(const otIp6Address *aAddress, char *aBuffer, uint16_t aSize)
+{
+	snprintf(aBuffer, aSize, "%x:%x:%x:%x:%x:%x:%x:%x", sys_be16_to_cpu(aAddress->mFields.m16[0]),
+		 sys_be16_to_cpu(aAddress->mFields.m16[1]), sys_be16_to_cpu(aAddress->mFields.m16[2]),
+		 sys_be16_to_cpu(aAddress->mFields.m16[3]), sys_be16_to_cpu(aAddress->mFields.m16[4]),
+		 sys_be16_to_cpu(aAddress->mFields.m16[5]), sys_be16_to_cpu(aAddress->mFields.m16[6]),
+		 sys_be16_to_cpu(aAddress->mFields.m16[7]));
 }

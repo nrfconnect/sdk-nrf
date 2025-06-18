@@ -206,4 +206,13 @@ ZTEST(ot_rpc_ip6, test_otIp6GetMulticastAddresses)
 	zassert_is_null(maddr);
 }
 
+ZTEST(ot_rpc_ip6, test_otIp6AddressToString)
+{
+	char buf[OT_IP6_ADDRESS_STRING_SIZE];
+	otIp6Address addr = {.mFields.m8 = {MADDR_FF02_1}};
+
+	otIp6AddressToString(&addr, buf, sizeof(buf));
+	zassert_equal(strcmp(buf, "ff02:0:0:0:0:0:0:1"), 0);
+}
+
 ZTEST_SUITE(ot_rpc_ip6, NULL, NULL, tc_setup, NULL, NULL);
