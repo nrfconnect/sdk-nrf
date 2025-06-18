@@ -4,10 +4,20 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @brief Header file with Bluetooth audio rendering and capture API.
+ */
+
 #ifndef _BT_REND_H_
 #define _BT_REND_H_
 
 #include <zephyr/bluetooth/conn.h>
+
+/**
+ * @brief Bluetooth Audio Rendering and Capture
+ * @defgroup nrf5340_audio_bt_rendering_and_capture Bluetooth Audio Rendering and Capture
+ * @{
+ */
 
 /**
  * @brief	Adjust volume up by one step.
@@ -77,5 +87,9 @@ int bt_r_and_c_uuid_populate(struct net_buf_simple *uuid_buf);
  * @return	0 if success, error otherwise.
  */
 int bt_r_and_c_init(void);
+
+/**
+ * @}
+ */
 
 #endif /* _BT_REND_H_ */

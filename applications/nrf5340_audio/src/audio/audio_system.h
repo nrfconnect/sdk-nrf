@@ -4,6 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @brief Header file with audio system API.
+ */
+
 #ifndef _AUDIO_SYSTEM_H_
 #define _AUDIO_SYSTEM_H_
 
@@ -15,6 +19,12 @@
 #include "audio_defines.h"
 
 #define VALUE_NOT_SET 0
+
+/**
+ * @brief Audio System
+ * @defgroup nrf5340_audio_system Audio System
+ * @{
+ */
 
 /**
  * @brief	Start the execution of the encoder thread.
@@ -108,5 +118,9 @@ int audio_system_decoder_num_ch_get(void);
  * @return	0 on success, error otherwise.
  */
 int audio_system_init(void);
+
+/**
+ * @}
+ */
 
 #endif /* _AUDIO_SYSTEM_H_ */
