@@ -29,25 +29,8 @@ static int fem_simple_gpio_configure(void)
 {
 	int err;
 
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ctx_gpios)
-	uint8_t ctx_gpiote_channel = MPSL_FEM_GPIOTE_INVALID_CHANNEL;
-	const nrfx_gpiote_t ctx_gpiote = NRFX_GPIOTE_INSTANCE(
-		NRF_DT_GPIOTE_INST(DT_NODELABEL(nrf_radio_fem), ctx_gpios));
-
-	if (nrfx_gpiote_channel_alloc(&ctx_gpiote, &ctx_gpiote_channel) != NRFX_SUCCESS) {
-		return -ENOMEM;
-	}
-#endif
-
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), crx_gpios)
-	uint8_t crx_gpiote_channel = MPSL_FEM_GPIOTE_INVALID_CHANNEL;
-	const nrfx_gpiote_t crx_gpiote = NRFX_GPIOTE_INSTANCE(
-		NRF_DT_GPIOTE_INST(DT_NODELABEL(nrf_radio_fem), crx_gpios));
-
-	if (nrfx_gpiote_channel_alloc(&crx_gpiote, &crx_gpiote_channel) != NRFX_SUCCESS) {
-		return -ENOMEM;
-	}
-#endif
+	MPSL_FEM_GPIOTE_PIN_GPIOTE_ALLOC_SNIPPET(ctx_gpios, ctx_gpiote, ctx_gpiote_channel)
+	MPSL_FEM_GPIOTE_PIN_GPIOTE_ALLOC_SNIPPET(crx_gpios, crx_gpiote, crx_gpiote_channel)
 
 	mpsl_fem_simple_gpio_interface_config_t cfg = {
 		.fem_config = {

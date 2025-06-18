@@ -98,35 +98,9 @@ static int fem_nrf21540_gpio_spi_configure(void)
 {
 	int err;
 
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), tx_en_gpios)
-	uint8_t txen_gpiote_channel;
-	const nrfx_gpiote_t txen_gpiote = NRFX_GPIOTE_INSTANCE(
-		NRF_DT_GPIOTE_INST(DT_NODELABEL(nrf_radio_fem), tx_en_gpios));
-
-	if (nrfx_gpiote_channel_alloc(&txen_gpiote, &txen_gpiote_channel) != NRFX_SUCCESS) {
-		return -ENOMEM;
-	}
-#endif
-
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), rx_en_gpios)
-	uint8_t rxen_gpiote_channel;
-	const nrfx_gpiote_t rxen_gpiote = NRFX_GPIOTE_INSTANCE(
-		NRF_DT_GPIOTE_INST(DT_NODELABEL(nrf_radio_fem), rx_en_gpios));
-
-	if (nrfx_gpiote_channel_alloc(&rxen_gpiote, &rxen_gpiote_channel) != NRFX_SUCCESS) {
-		return -ENOMEM;
-	}
-#endif
-
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), pdn_gpios)
-	uint8_t pdn_gpiote_channel;
-	const nrfx_gpiote_t pdn_gpiote = NRFX_GPIOTE_INSTANCE(
-		NRF_DT_GPIOTE_INST(DT_NODELABEL(nrf_radio_fem), pdn_gpios));
-
-	if (nrfx_gpiote_channel_alloc(&pdn_gpiote, &pdn_gpiote_channel) != NRFX_SUCCESS) {
-		return -ENOMEM;
-	}
-#endif
+	MPSL_FEM_GPIOTE_PIN_GPIOTE_ALLOC_SNIPPET(tx_en_gpios, txen_gpiote, txen_gpiote_channel)
+	MPSL_FEM_GPIOTE_PIN_GPIOTE_ALLOC_SNIPPET(rx_en_gpios, rxen_gpiote, rxen_gpiote_channel)
+	MPSL_FEM_GPIOTE_PIN_GPIOTE_ALLOC_SNIPPET(pdn_gpios, pdn_gpiote, pdn_gpiote_channel)
 
 	mpsl_fem_nrf21540_gpio_spi_interface_config_t cfg = {
 		.fem_config = {

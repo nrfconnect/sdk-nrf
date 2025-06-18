@@ -74,6 +74,18 @@
 		}),								\
 		(MPSL_FEM_GPIOTE_PIN_CONFIG_INIT_DISABLED))
 
+#define MPSL_FEM_GPIOTE_PIN_GPIOTE_ALLOC_SNIPPET(_pin, _nrfx_gpiote, _gpiote_channel)	\
+	COND_CODE_1(DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), _pin), (		\
+		uint8_t _gpiote_channel;						\
+		const nrfx_gpiote_t _nrfx_gpiote = NRFX_GPIOTE_INSTANCE(		\
+			NRF_DT_GPIOTE_INST(DT_NODELABEL(nrf_radio_fem), _pin));		\
+											\
+		if (nrfx_gpiote_channel_alloc(&_nrfx_gpiote, &_gpiote_channel)		\
+			!= NRFX_SUCCESS) {						\
+			return -ENOMEM;							\
+		}									\
+	), ())
+
 #if defined(CONFIG_HAS_HW_NRF_DPPIC)
 /** @brief Allocates free EGU instance.
  *

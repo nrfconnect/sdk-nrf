@@ -82,34 +82,27 @@ static void fem_nrf2240_twi_configure(mpsl_fem_nrf2240_interface_config_t *cfg)
 #endif /* DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), twi_if) */
 
 /* Required for testing only. */
-static uint8_t cs_gpiote_channel;
-static uint8_t md_gpiote_channel;
+static uint8_t m_cs_gpiote_channel;
+static uint8_t m_md_gpiote_channel;
 
 uint8_t nrf2240_cs_gpiote_channel_get(void)
 {
-	return cs_gpiote_channel;
+	return m_cs_gpiote_channel;
 }
 
 uint8_t nrf2240_md_gpiote_channel_get(void)
 {
-	return md_gpiote_channel;
+	return m_md_gpiote_channel;
 }
 
 static int fem_nrf2240_configure(void)
 {
 	int err;
 
-	const nrfx_gpiote_t cs_gpiote = NRFX_GPIOTE_INSTANCE(
-		NRF_DT_GPIOTE_INST(DT_NODELABEL(nrf_radio_fem), cs_gpios));
-	if (nrfx_gpiote_channel_alloc(&cs_gpiote, &cs_gpiote_channel) != NRFX_SUCCESS) {
-		return -ENOMEM;
-	}
-
-	const nrfx_gpiote_t md_gpiote = NRFX_GPIOTE_INSTANCE(
-		NRF_DT_GPIOTE_INST(DT_NODELABEL(nrf_radio_fem), md_gpios));
-	if (nrfx_gpiote_channel_alloc(&md_gpiote, &md_gpiote_channel) != NRFX_SUCCESS) {
-		return -ENOMEM;
-	}
+	MPSL_FEM_GPIOTE_PIN_GPIOTE_ALLOC_SNIPPET(cs_gpios, cs_gpiote, cs_gpiote_channel)
+	m_cs_gpiote_channel = cs_gpiote_channel;
+	MPSL_FEM_GPIOTE_PIN_GPIOTE_ALLOC_SNIPPET(md_gpios, md_gpiote, md_gpiote_channel)
+	m_md_gpiote_channel = md_gpiote_channel;
 
 	mpsl_fem_nrf2240_interface_config_t cfg = {
 		.fem_config = {
