@@ -11,6 +11,7 @@
 
 # Root folder
 /.*					  @nrfconnect/ncs-code-owners
+/.sonarcloud.properties                   @nrfconnect/ncs-ci
 /CMakeLists.txt                           @nrfconnect/ncs-co-build-system
 /CODEOWNERS                               @nrfconnect/ncs-code-owners
 /Jenkinsfile                              @nrfconnect/ncs-ci
