@@ -82,71 +82,16 @@ static int fem_nrf21540_gpio_configure(void)
 			.lna_gain_db     =
 				CONFIG_MPSL_FEM_NRF21540_RX_GAIN_DB
 		},
-		.pa_pin_config = {
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), tx_en_gpios)
-			.gpio_pin      = {
-				.p_port   = MPSL_FEM_GPIO_PORT_REG(tx_en_gpios),
-				.port_no  = MPSL_FEM_GPIO_PORT_NO(tx_en_gpios),
-				.port_pin = MPSL_FEM_GPIO_PIN_NO(tx_en_gpios),
-			},
-			.enable        = true,
-			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(tx_en_gpios),
-			.gpiote_ch_id  = txen_gpiote_channel,
-#if defined(NRF54L_SERIES)
-			.p_gpiote = txen_gpiote.p_reg,
-#endif
-#else
-			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
-#endif
-		},
-		.lna_pin_config = {
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), rx_en_gpios)
-			.gpio_pin      = {
-				.p_port   = MPSL_FEM_GPIO_PORT_REG(rx_en_gpios),
-				.port_no  = MPSL_FEM_GPIO_PORT_NO(rx_en_gpios),
-				.port_pin = MPSL_FEM_GPIO_PIN_NO(rx_en_gpios),
-			},
-			.enable        = true,
-			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(rx_en_gpios),
-			.gpiote_ch_id  = rxen_gpiote_channel,
-#if defined(NRF54L_SERIES)
-			.p_gpiote = rxen_gpiote.p_reg,
-#endif
-#else
-			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
-#endif
-		},
-		.pdn_pin_config = {
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), pdn_gpios)
-			.gpio_pin      = {
-				.p_port   = MPSL_FEM_GPIO_PORT_REG(pdn_gpios),
-				.port_no  = MPSL_FEM_GPIO_PORT_NO(pdn_gpios),
-				.port_pin = MPSL_FEM_GPIO_PIN_NO(pdn_gpios),
-			},
-			.enable        = true,
-			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(pdn_gpios),
-			.gpiote_ch_id  = pdn_gpiote_channel,
-#if defined(NRF54L_SERIES)
-			.p_gpiote = pdn_gpiote.p_reg,
-#endif
-#else
-			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
-#endif
-		},
-		.mode_pin_config = {
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), mode_gpios) && \
-	IS_ENABLED(CONFIG_MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL)
-			.gpio_pin      = {
-				.p_port   = MPSL_FEM_GPIO_PORT_REG(mode_gpios),
-				.port_no  = MPSL_FEM_GPIO_PORT_NO(mode_gpios),
-				.port_pin = MPSL_FEM_GPIO_PIN_NO(mode_gpios),
-			},
-			.enable        = true,
-			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(mode_gpios),
-#else
-			MPSL_FEM_DISABLED_GPIO_CONFIG_INIT
-#endif
-		}
+		.pa_pin_config = MPSL_FEM_GPIOTE_PIN_CONFIG_INIT(tx_en_gpios, txen_gpiote,
+			txen_gpiote_channel),
+		.lna_pin_config = MPSL_FEM_GPIOTE_PIN_CONFIG_INIT(rx_en_gpios, rxen_gpiote,
+			rxen_gpiote_channel),
+		.pdn_pin_config = MPSL_FEM_GPIOTE_PIN_CONFIG_INIT(pdn_gpios, pdn_gpiote,
+			pdn_gpiote_channel),
+		.mode_pin_config =
+			COND_CODE_1(IS_ENABLED(CONFIG_MPSL_FEM_NRF21540_RUNTIME_PA_GAIN_CONTROL),
+				(MPSL_FEM_GPIO_PIN_CONFIG_INIT(mode_gpios)),
+				(MPSL_FEM_GPIO_PIN_CONFIG_INIT_DISABLED)),
 	};
 
 	IF_ENABLED(CONFIG_HAS_HW_NRF_PPI,

@@ -25,20 +25,54 @@
 #define MPSL_FEM_GPIO_INVALID_PIN        0xFFU
 #define MPSL_FEM_GPIOTE_INVALID_CHANNEL  0xFFU
 
-#define MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT	\
-	.gpio_pin      = {				\
-		.port_pin = MPSL_FEM_GPIO_INVALID_PIN,	\
-	},						\
-	.enable        = false,				\
-	.active_high   = true,				\
-	.gpiote_ch_id  = MPSL_FEM_GPIOTE_INVALID_CHANNEL
+#define MPSL_FEM_GPIOTE_PIN_CONFIG_INIT_DISABLED			\
+	{								\
+		.gpio_pin = {						\
+			.port_pin = MPSL_FEM_GPIO_INVALID_PIN,		\
+		},							\
+		.enable = false,					\
+		.active_high = true,					\
+		.gpiote_ch_id = MPSL_FEM_GPIOTE_INVALID_CHANNEL,	\
+	}
 
-#define MPSL_FEM_DISABLED_GPIO_CONFIG_INIT		\
-	.gpio_pin      = {				\
-		.port_pin = MPSL_FEM_GPIO_INVALID_PIN,	\
-	},						\
-	.enable        = false,				\
-	.active_high   = true,				\
+#define MPSL_FEM_GPIO_PIN_CONFIG_INIT_DISABLED			\
+	{							\
+		.gpio_pin = {					\
+			.port_pin = MPSL_FEM_GPIO_INVALID_PIN,	\
+		},						\
+		.enable = false,				\
+		.active_high = true,				\
+	}
+
+#define MPSL_FEM_GPIO_PIN_CONFIG_INIT(_pin)					\
+	COND_CODE_1(DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), _pin),	\
+		({								\
+			.gpio_pin = {						\
+				.p_port   = MPSL_FEM_GPIO_PORT_REG(_pin),	\
+				.port_no  = MPSL_FEM_GPIO_PORT_NO(_pin),	\
+				.port_pin = MPSL_FEM_GPIO_PIN_NO(_pin),		\
+			},							\
+			.enable = true,						\
+			.active_high = MPSL_FEM_GPIO_POLARITY_GET(_pin),	\
+		}),								\
+		(MPSL_FEM_GPIO_PIN_CONFIG_INIT_DISABLED))
+
+#define MPSL_FEM_GPIOTE_PIN_CONFIG_INIT(_pin, _nrfx_gpiote, _gpiote_channel)	\
+	COND_CODE_1(DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), _pin),	\
+		({								\
+			.gpio_pin = {						\
+				.p_port = MPSL_FEM_GPIO_PORT_REG(_pin),		\
+				.port_no = MPSL_FEM_GPIO_PORT_NO(_pin),		\
+				.port_pin = MPSL_FEM_GPIO_PIN_NO(_pin),		\
+			},							\
+			.enable = true,						\
+			.active_high = MPSL_FEM_GPIO_POLARITY_GET(_pin),	\
+			.gpiote_ch_id = (_gpiote_channel),			\
+			IF_ENABLED(CONFIG_SOC_SERIES_NRF54LX, (			\
+				.p_gpiote = (_nrfx_gpiote).p_reg,		\
+				))						\
+		}),								\
+		(MPSL_FEM_GPIOTE_PIN_CONFIG_INIT_DISABLED))
 
 #if defined(CONFIG_HAS_HW_NRF_DPPIC)
 /** @brief Allocates free EGU instance.
