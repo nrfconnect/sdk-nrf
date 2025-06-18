@@ -1,0 +1,126 @@
+---
+
+# Notes:
+# Sample project C code is not presently written to produce a release artifact.
+# As such, release build options are disabled.
+# This sample, therefore, only demonstrates running a collection of unit tests.
+
+:project:
+  :use_exceptions: TRUE
+  :use_test_preprocessor: TRUE
+  :use_auxiliary_dependencies: TRUE
+  :build_root: build
+  :test_file_prefix: test_
+  :which_ceedling: gem
+  :ceedling_version: 0.30.0
+  :default_tasks:
+    - test:all
+
+:environment:
+  - ot_path: "#{ENV['OT_PATH']}"
+
+:extension:
+  :executable: .out
+
+:paths:
+  :test:
+    - +:test/unit_tests/**
+    - -:test/support
+  :source:
+    - models/power_map
+  :include:
+    - "#{ENV['OT_PATH']}/include"
+    - "#{ENV['OT_PATH']}/src/core"
+  :support:
+    - test/support
+  :libraries: []
+
+:defines:
+  # in order to add common defines:
+  #  1) remove the trailing [] from the :common: section
+  #  2) add entries to the :common: section (e.g. :test: has TEST defined)
+  :test:
+    - TEST
+    - UNIT_TEST
+  :test_preprocess:
+    - TEST
+    - UNIT_TEST
+
+:flags:
+  :test:
+    :compile:
+      :*:
+        - -g
+        - -Wall
+        - -O0
+        - -m32
+    :link:
+      :*:
+        - -g
+        - -m32
+  :gcov:
+    :compile:
+      :*:
+        - -Wall
+        - -m32
+    :link:
+      :*:
+        - -m32
+
+:cmock:
+  :mock_prefix: mock_
+  :when_no_prototypes: :warn
+  :enforce_strict_ordering: TRUE
+  :plugins:
+    - :ignore
+    - :callback
+    - :ignore_arg
+    - :return_thru_ptr
+    - :expect_any_args
+    - :array
+  :treat_as:
+    uint8:    HEX8
+    uint16:   HEX16
+    uint32:   UINT32
+    int8:     INT8
+    bool:     UINT8
+  :when_ptr: :smart
+
+
+# Add -gcov to the plugins list to make sure of the gcov plugin
+# You will need to have gcov and gcovr both installed to make it work.
+# For more information on these options, see docs in plugins/gcov
+:gcov:
+  :reports:
+    - HtmlDetailed
+  :gcovr:
+    :html_medium_threshold: 75
+    :html_high_threshold: 90
+
+#:tools:
+# Ceedling defaults to using gcc for compiling, linking, etc.
+# As [:tools] is blank, gcc will be used (so long as it's in your system path)
+# See documentation to configure a given toolchain for use
+
+# LIBRARIES
+# These libraries are automatically injected into the build process. Those specified as
+# common will be used in all types of builds. Otherwise, libraries can be injected in just
+# tests or releases. These options are MERGED with the options in supplemental yaml files.
+:libraries:
+  :placement: :end
+  :flag: "-l${1}"
+  :path_flag: "-L ${1}"
+  :system: []    # for example, you might list 'm' to grab the math library
+  :test: []
+  :release: []
+
+:plugins:
+  :load_paths:
+    - "#{Ceedling.load_path}"
+  :enabled:
+    - stdout_pretty_tests_report
+    - module_generator
+    - gcov
+    - junit_tests_report
+    - compile_commands_json
+...

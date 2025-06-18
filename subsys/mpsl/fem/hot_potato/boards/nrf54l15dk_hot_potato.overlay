@@ -1,0 +1,99 @@
+/* Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+&cpuapp_rram {
+        partitions {
+                compatible = "fixed-partitions";
+                #address-cells = <0x1>;
+                #size-cells = <0x1>;
+                boot_partition: partition@0 {
+                        label = "mcuboot";
+                        reg = <0x0 0x10000>;
+                };
+                slot0_partition: partition@10000 {
+                        label = "image-0";
+                        reg = <0x10000 0x51000>;
+                };
+                slot1_partition: partition@b2000 {
+                        label = "image-1";
+                        reg = <0xb2000 0x51000>;
+                };
+                power_limit_ids_partition: partition@15c000 {
+                        label = "power_limit_ids";
+                        reg = <0x0015c000 0x0001000>;
+                };
+                power_map_table_partition: partition@15d000 {
+                        label = "power_table";
+                        reg = <0x0015d000 0x0001000>;
+                };
+                storage_partition: partition@15e000 {
+                        label = "storage";
+                        reg = <0x15e000 0x7000>;
+                };
+        };
+};
+
+&pinctrl {
+        grtc_default: grtc_default {
+                group1 {
+                        psels = <NRF_PSEL(GRTC_CLKOUT_32K, 0, 4)>;
+                };
+        };
+
+        grtc_sleep: grtc_sleep {
+                group1 {
+                        psels = <NRF_PSEL(GRTC_CLKOUT_32K, 0, 4)>;
+                        low-power-enable;
+                };
+        };
+};
+
+/ {
+        nrf_radio_fem: hot_potato_node {
+                compatible = "hot_potato";
+                ctx-gpios = <&gpio1 14 GPIO_ACTIVE_HIGH>;
+                crx-gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;
+                att0-gpios = <&gpio0 2 GPIO_ACTIVE_HIGH>;
+                att1-gpios = <&gpio0 3 GPIO_ACTIVE_HIGH>;
+                att2-gpios = <&gpio2 6 GPIO_ACTIVE_HIGH>;
+                att3-gpios = <&gpio2 8 GPIO_ACTIVE_HIGH>;
+                ctx-settle-time-us = <23>;
+                crx-settle-time-us = <5>;
+                rx-gain-db = <10>;
+        };
+};
+
+&dppic10 {
+        status = "okay";
+};
+&ppib11 {
+        status = "okay";
+};
+&ppib21 {
+        status = "okay";
+};
+&dppic20 {
+        status = "okay";
+};
+&ppib22 {
+        status = "okay";
+};
+&ppib30 {
+        status = "okay";
+};
+&dppic30 {
+        status = "okay";
+};
+
+&grtc {
+        pinctrl-0 = <&grtc_default>;
+        pinctrl-1 = <&grtc_sleep>;
+        pinctrl-names = "default", "sleep";
+        clkout-32k;
+};

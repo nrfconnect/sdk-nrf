@@ -1,0 +1,66 @@
+/* Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+&flash0 {
+      partitions {
+            compatible = "fixed-partitions";
+            #address-cells = <1>;
+            #size-cells = <1>;
+
+            boot_partition: partition@0 {
+                  label = "mcuboot";
+                  reg = <0x00000000 0x0000C000>;
+            };
+            slot0_partition: partition@c000 {
+                  label = "image-0";
+                  reg = <0x0000C000 0x00076000>;
+            };
+            slot1_partition: partition@82000 {
+                  label = "image-1";
+                  reg = <0x00082000 0x00074000>;
+            };
+            power_limit_ids_partition: partition@f6000 {
+                  label = "power_limit_ids";
+                  reg = <0x000f6000 0x0001000>;
+            };
+            power_map_table_partition: partition@f7000 {
+                  label = "power_table";
+                  reg = <0x000f7000 0x0001000>;
+            };
+
+            /*
+             * The flash starting at 0x000f8000 and ending at
+             * 0x000fffff is reserved for use by the application.
+             */
+
+            /*
+             * Storage partition will be used by FCB/LittleFS/NVS
+             * if enabled.
+             */
+            storage_partition: partition@f8000 {
+                  label = "storage";
+                  reg = <0x000f8000 0x00008000>;
+            };
+      };
+};
+
+/ {
+      nrf_radio_fem: hot_potato_node {
+            compatible = "hot_potato";
+            ctx-gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
+            crx-gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
+            att0-gpios = <&gpio0 25 GPIO_ACTIVE_HIGH>;
+            att1-gpios = <&gpio0 11 GPIO_ACTIVE_HIGH>;
+            att2-gpios = <&gpio0 24 GPIO_ACTIVE_HIGH>;
+            att3-gpios = <&gpio0 12 GPIO_ACTIVE_HIGH>;
+            ctx-settle-time-us = <23>;
+            crx-settle-time-us = <5>;
+            rx-gain-db = <10>;
+      };
+};

@@ -1,0 +1,15 @@
+#include <zephyr/autoconf.h>
+
+power_map_table_partition:
+  placement:
+    before: [settings_storage, end]
+    align: {start: CONFIG_POWER_MAP_PARTITION_ALIGN}
+  inside: [nonsecure_storage]
+  size: CONFIG_POWER_MAP_PARTITION_SIZE
+
+power_limit_ids_partition:
+  placement:
+    before: [power_map_table_partition, end]
+    align: {start: CONFIG_POWER_LIMIT_IDS_PARTITION_ALIGN}
+  inside: [nonsecure_storage]
+  size: CONFIG_POWER_LIMIT_IDS_PARTITION_SIZE

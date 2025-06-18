@@ -1,0 +1,7 @@
+zephyr_library_sources(fem_psemi.c)
+zephyr_library_sources(fem_psemi_common.c)
+
+zephyr_library_sources_ifdef(CONFIG_SOC_SERIES_NRF52X mpsl_fem_psemi_nrf52.c)
+zephyr_library_sources_ifdef(CONFIG_SOC_SERIES_NRF54LX mpsl_fem_psemi_nrf54l.c)
+zephyr_library_sources_ifdef(CONFIG_POWER_MAP_MODEL power_model.c)
+add_subdirectory_ifdef(CONFIG_POWER_MAP_MODEL models/power_map)

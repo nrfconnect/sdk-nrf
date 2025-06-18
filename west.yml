@@ -35,10 +35,6 @@ manifest:
       url-base: https://github.com/boschsensortec
     - name: eembc
       url-base: https://github.com/eembc
-    - name: mrt
-      url-base: https://projecttools.nordicsemi.no/bitbucket/scm/MRT
-    - name: lmaciejonczyk
-      url-base: https://github.com/lmaciejonczyk
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -279,11 +275,6 @@ manifest:
       revision: d5fad6bd094899101a4e5fd53af7298160ced6ab
       groups:
         - benchmark
-    - name: hot_potato
-      remote: mrt
-      repo-path: hot_potato.git
-      path: nrf/subsys/mpsl/fem/hot_potato
-      revision: develop
 
   # West-related configuration for the nrf repository.
   self:
