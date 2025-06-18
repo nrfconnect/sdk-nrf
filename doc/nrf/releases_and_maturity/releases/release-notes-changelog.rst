@@ -203,7 +203,8 @@ Matter bridge
 nRF5340 Audio
 -------------
 
-|no_changes_yet_note|
+* Added the API documentation in the header files listed on the :ref:`audio_api` page.
+* Updated the :ref:`Audio application API documentation <audio_api>` page.
 
 nRF Desktop
 -----------

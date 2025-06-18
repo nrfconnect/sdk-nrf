@@ -4,33 +4,51 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @defgroup audio_app_led Audio LED Control
+ * @{
+ * @brief LED control API for Audio applications.
+ *
+ * This module provides LED control functionality for user interface and status indication.
+ */
+
 #ifndef _LED_H_
 #define _LED_H_
 
 #include <stdint.h>
 
 #define RED   0
+
 #define GREEN 1
+
 #define BLUE  2
 
 #define GRN GREEN
+
 #define BLU BLUE
 
+/**
+ * @brief LED color enumeration for RGB LED control.
+ *
+ * This enumeration defines the available colors for RGB LED control,
+ * including individual colors and combinations for visual status indication.
+ */
 enum led_color {
-	LED_COLOR_OFF,	   /* 000 */
-	LED_COLOR_RED,	   /* 001 */
-	LED_COLOR_GREEN,   /* 010 */
-	LED_COLOR_YELLOW,  /* 011 */
-	LED_COLOR_BLUE,	   /* 100 */
-	LED_COLOR_MAGENTA, /* 101 */
-	LED_COLOR_CYAN,	   /* 110 */
-	LED_COLOR_WHITE,   /* 111 */
+	LED_COLOR_OFF,
+	LED_COLOR_RED,
+	LED_COLOR_GREEN,
+	LED_COLOR_YELLOW,
+	LED_COLOR_BLUE,
+	LED_COLOR_MAGENTA,
+	LED_COLOR_CYAN,
+	LED_COLOR_WHITE,
 	LED_COLOR_NUM,
 };
 
 #define LED_ON LED_COLOR_WHITE
 
 #define LED_BLINK true
+
 #define LED_SOLID false
 
 /**
@@ -92,5 +110,9 @@ int led_off(uint8_t led_unit);
  *		-ENODEV if a LED is missing color identifier.
  */
 int led_init(void);
+
+/**
+ * @}
+ */
 
 #endif /* _LED_H_ */

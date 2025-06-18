@@ -4,6 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @defgroup audio_app_system Audio System
+ * @{
+ * @brief Core audio system API for Audio applications.
+ *
+ * This module provides the central audio processing functionality for the Audio
+ * applications, managing both hardware (DAC/ADC) and software codecs (such as LC3).
+ */
+
 #ifndef _AUDIO_SYSTEM_H_
 #define _AUDIO_SYSTEM_H_
 
@@ -103,10 +112,14 @@ int audio_system_fifo_rx_block_drop(void);
 int audio_system_decoder_num_ch_get(void);
 
 /**
- * @brief	Initialize the audio_system.
+ * @brief	Initialize the audio system.
  *
  * @return	0 on success, error otherwise.
  */
 int audio_system_init(void);
+
+/**
+ * @}
+ */
 
 #endif /* _AUDIO_SYSTEM_H_ */
