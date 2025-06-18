@@ -26,6 +26,8 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
 
+BUILD_ASSERT(CONFIG_BT_AUDIO_CONCURRENT_RX_STREAMS_MAX <= CONFIG_AUDIO_DECODE_CHANNELS_MAX);
+
 struct ble_iso_data {
 	uint8_t data[CONFIG_BT_ISO_RX_MTU];
 	size_t data_size;

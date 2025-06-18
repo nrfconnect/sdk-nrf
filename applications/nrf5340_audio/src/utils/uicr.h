@@ -13,20 +13,20 @@
 #define UICR_APP_BASE_ADDR (NRF_UICR_S_BASE + 0xF0)
 
 /**
- * @brief Get raw channel value from UICR
+ * @brief Get raw location value from UICR as bitfield
  */
-uint8_t uicr_channel_get(void);
+uint32_t uicr_location_get(void);
 
 /**
- * @brief Write raw channel value to UICR
+ * @brief Write raw location bitfield value to UICR
  *
- * @param channel Channel value
+ * @param location Location bitfield in accordance with LE Audio specification.
  *
  * @return 0 if successful
- * @return -EROFS if different channel is already written
- * @return -EIO if channel failed to be written
+ * @return -EROFS if different location is already written
+ * @return -EIO if location failed to be written
  */
-int uicr_channel_set(uint8_t channel);
+int uicr_location_set(uint32_t location);
 
 /**
  * @brief Get Segger serial number value from UICR

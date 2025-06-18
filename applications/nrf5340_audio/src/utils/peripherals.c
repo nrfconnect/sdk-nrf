@@ -13,7 +13,7 @@
 #include "button_assignments.h"
 #include "sd_card.h"
 #include "nrf5340_audio_dk_version.h"
-#include "channel_assignment.h"
+#include "device_location.h"
 
 #include "sd_card_playback.h"
 
@@ -33,14 +33,16 @@ static int leds_set(void)
 	}
 
 #if (CONFIG_AUDIO_DEV == HEADSET)
-	enum audio_channel channel;
+	enum bt_audio_location location;
 
-	channel_assignment_get(&channel);
+	device_location_get(&location);
 
-	if (channel == AUDIO_CH_L) {
+	if (location == BT_AUDIO_LOCATION_FRONT_LEFT) {
 		ret = led_on(LED_AUDIO_DEVICE_TYPE, LED_COLOR_BLUE);
-	} else {
+	} else if (location == BT_AUDIO_LOCATION_FRONT_RIGHT) {
 		ret = led_on(LED_AUDIO_DEVICE_TYPE, LED_COLOR_MAGENTA);
+	} else {
+		ret = led_on(LED_AUDIO_DEVICE_TYPE, LED_COLOR_WHITE);
 	}
 #elif (CONFIG_AUDIO_DEV == GATEWAY)
 	ret = led_on(LED_AUDIO_DEVICE_TYPE, LED_COLOR_GREEN);
@@ -55,27 +57,33 @@ static int leds_set(void)
 
 static int channel_assign_check(void)
 {
-#if (CONFIG_AUDIO_DEV == HEADSET) && CONFIG_AUDIO_HEADSET_CHANNEL_RUNTIME
+#if (CONFIG_AUDIO_DEV == HEADSET) && CONFIG_DEVICE_LOCATION_SET_RUNTIME
 	int ret;
-	bool pressed;
+	bool pressed_vol_down;
+	bool pressed_vol_up;
 
-	ret = button_pressed(BUTTON_VOLUME_DOWN, &pressed);
+	ret = button_pressed(BUTTON_VOLUME_DOWN, &pressed_vol_down);
 	if (ret) {
 		return ret;
 	}
 
-	if (pressed) {
-		channel_assignment_set(AUDIO_CH_L);
+	ret = button_pressed(BUTTON_VOLUME_UP, &pressed_vol_up);
+	if (ret) {
+		return ret;
+	}
+
+	if (pressed_vol_down && pressed_vol_up) {
+		device_location_set(BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT);
 		return 0;
 	}
 
-	ret = button_pressed(BUTTON_VOLUME_UP, &pressed);
-	if (ret) {
-		return ret;
+	if (pressed_vol_down) {
+		device_location_set(BT_AUDIO_LOCATION_FRONT_LEFT);
+		return 0;
 	}
 
-	if (pressed) {
-		channel_assignment_set(AUDIO_CH_R);
+	if (pressed_vol_up) {
+		device_location_set(BT_AUDIO_LOCATION_FRONT_RIGHT);
 		return 0;
 	}
 #endif
