@@ -640,6 +640,13 @@ Modem libraries
       Use :kconfig:option:`CONFIG_MODEM_SLM_UART_RX_BUF_SIZE` instead.
     * The ``modem_slm_reset_uart()`` function, as there is no longer a need to reset the UART.
 
+* :ref:`modem_info_readme` library:
+
+  * Added:
+
+    * The :c:func:`modem_info_get_rsrq` function for requesting the RSRQ.
+    * The :c:macro:`SNR_IDX_TO_DB` macro for converting the SNR index to dB.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 
