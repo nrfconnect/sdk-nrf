@@ -5,20 +5,11 @@
  */
 
 #include <mpsl_fem_utils.h>
-#include <stdbool.h>
-#include <string.h>
-#include <zephyr/devicetree.h>
-#include <zephyr/sys/__assert.h>
 #include <hal/nrf_gpio.h>
 #if IS_ENABLED(CONFIG_HAS_HW_NRF_PPI)
 #include <nrfx_ppi.h>
 #elif IS_ENABLED(CONFIG_HAS_HW_NRF_DPPIC)
 #include <nrfx_dppi.h>
-#endif
-#if defined(NRF54L_SERIES)
-#include <hal/nrf_gpiote.h>
-#include <nrfx_ppib.h>
-#include <helpers/nrfx_gppi.h>
 #endif
 
 int mpsl_fem_utils_ppi_channel_alloc(uint8_t *ppi_channels, size_t size)
