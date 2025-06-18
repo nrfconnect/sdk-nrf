@@ -260,7 +260,7 @@ int main(void)
 
 	if (!(rr & NRF_POWER_RESETREAS_OFF_MASK)) { /* DETECT signal from GPIO */
 
-		enter_sleep_no_uninit();
+		slm_ctrl_pin_enter_sleep_no_uninit();
 	}
 #endif /* CONFIG_SLM_START_SLEEP */
 

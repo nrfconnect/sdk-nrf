@@ -726,7 +726,7 @@ static void ppp_data_passing_thread(void*, void*, void*)
 				pm_device_state_get(ppp_uart_dev, &state);
 				if (state != PM_DEVICE_STATE_ACTIVE) {
 					LOG_DBG("PPP data received but UART not active");
-					slm_indicate();
+					slm_ctrl_pin_indicate();
 				}
 			}
 			const ssize_t len =
