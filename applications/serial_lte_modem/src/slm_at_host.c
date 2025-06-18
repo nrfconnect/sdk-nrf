@@ -510,7 +510,7 @@ static int slm_at_send_indicate(const uint8_t *data, size_t len,
 
 		pm_device_state_get(slm_uart_dev, &state);
 		if (state != PM_DEVICE_STATE_ACTIVE) {
-			slm_indicate();
+			slm_ctrl_pin_indicate();
 		}
 	}
 

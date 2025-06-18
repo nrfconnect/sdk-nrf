@@ -133,12 +133,12 @@ static void go_sleep_wk(struct k_work *)
 {
 	if (sleep_control.mode == SLEEP_MODE_IDLE) {
 		if (slm_at_host_power_off() == 0) {
-			slm_enter_idle();
+			slm_ctrl_pin_enter_idle();
 		} else {
 			LOG_ERR("failed to power off UART");
 		}
 	} else if (sleep_control.mode == SLEEP_MODE_DEEP) {
-		slm_enter_sleep();
+		slm_ctrl_pin_enter_sleep();
 	}
 }
 
@@ -183,7 +183,7 @@ static void slm_shutdown(void)
 	slm_at_host_uninit();
 	slm_power_off_modem();
 	LOG_PANIC();
-	slm_enter_shutdown();
+	slm_ctrl_pin_enter_shutdown();
 }
 
 SLM_AT_CMD_CUSTOM(xshutdown, "AT#XSHUTDOWN", handle_at_shutdown);
