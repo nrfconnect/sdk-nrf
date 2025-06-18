@@ -126,12 +126,6 @@ int cracen_init(void)
 		return 0;
 	}
 
-#if defined(NRF54LM20A_ENGA_XXAA) || defined(NRF54LV10A_ENGA_XXAA)
-	/* Can be removed once NCSDK-33222 is addressed */
-	while (NRF_KMU->STATUS == KMU_STATUS_STATUS_Busy) {
-		/* Do nothing */
-	}
-#endif /* NRF54LM20A_ENGA_XXAA || NRF54LV10A_ENGA_XXAA */
 	cracen_acquire();
 	if (IS_ENABLED(CONFIG_CRACEN_USE_INTERRUPTS)) {
 		cracen_interrupts_init();
