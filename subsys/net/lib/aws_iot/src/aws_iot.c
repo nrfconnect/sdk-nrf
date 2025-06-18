@@ -656,6 +656,7 @@ int aws_iot_connect(const struct aws_iot_config *const config)
 		.hostname.size = (config && config->host_name) ? strlen(config->host_name) : 0,
 		.device_id.ptr = (config && config->client_id) ? config->client_id : NULL,
 		.device_id.size = (config && config->client_id) ? strlen(config->client_id) : 0,
+		.if_name = (config && config->if_name) ? config->if_name : NULL,
 	};
 
 	/* Set the hostname to CONFIG_AWS_IOT_BROKER_HOST_NAME if it was not provided
