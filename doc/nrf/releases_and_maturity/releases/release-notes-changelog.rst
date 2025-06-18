@@ -135,6 +135,9 @@ Amazon Sidewalk
 Bluetooth® LE
 -------------
 
+* Added the :kconfig:option:`CONFIG_BT_CTLR_CHANNEL_SOUNDING_TEST` Kconfig option.
+  This option reduces the NVM usage of Channel Sounding when disabled by removing the ``LE CS Test`` and ``LE CS Test End`` HCI commands.
+
 |no_changes_yet_note|
 
 Bluetooth Mesh
