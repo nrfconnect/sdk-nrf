@@ -173,29 +173,6 @@ static int fem_nrf21540_gpio_configure(void)
 		return err;
 	}
 
-#if !defined(_MPSL_FEM_CONFIG_API_NEXT)
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), tx_en_gpios)
-	err = mpsl_fem_utils_gpiote_pin_init(&cfg.pa_pin_config);
-	if (err) {
-		return err;
-	}
-#endif
-
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), rx_en_gpios)
-	err = mpsl_fem_utils_gpiote_pin_init(&cfg.lna_pin_config);
-	if (err) {
-		return err;
-	}
-#endif
-
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), pdn_gpios)
-	err = mpsl_fem_utils_gpiote_pin_init(&cfg.pdn_pin_config);
-	if (err) {
-		return err;
-	}
-#endif
-#endif /* !defined(_MPSL_FEM_CONFIG_API_NEXT) */
-
 	BUILD_ASSERT(
 	  (CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB == CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB_POUTA) ||
 	  (CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB == CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB_POUTB));
