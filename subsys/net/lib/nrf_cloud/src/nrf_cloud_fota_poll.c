@@ -365,10 +365,13 @@ int nrf_cloud_fota_poll_init(struct nrf_cloud_fota_poll_ctx *ctx)
 #endif
 
 	if (IS_ENABLED(CONFIG_NRF_CLOUD_FOTA_SMP)) {
+		LOG_INF("Initializing SMP FOTA client...");
 		err = nrf_cloud_fota_smp_client_init(ctx->smp_reset_cb);
 		if (err) {
+			LOG_ERR("Failed to initialize SMP FOTA client, error: %d", err);
 			return err;
 		}
+		LOG_INF("SMP FOTA client initialized");
 	}
 
 	err = fota_download_init(fota_dl_handler);

@@ -388,6 +388,9 @@ Cellular samples
 * :ref:`nrf_cloud_rest_fota` sample:
 
   * Added support for the Thingy:91 X.
+  * Updated the sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
+  * Fixed SMP FOTA for the nRF9160 DK.
+  * Removed JITP.
 
 Cryptography samples
 --------------------
