@@ -4,25 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/delete-node/ &cpuapp_slot0_partition;
-/delete-node/ &cpurad_slot0_partition;
-
-/* Allocate extra MRAM as 256K is not enough NVM for multiantenna CS.
- * The extra memory is taken from cpuapp below.
- */
-&cpurad_rx_partitions {
-	cpurad_slot0_partition: partition@54000 {
-		reg = <0x00054000 DT_SIZE_K(316)>;
-	};
-};
-
-/* Reduce cpuapp by 60K (default 320 - 60) */
-&cpuapp_rx_partitions {
-	cpuapp_slot0_partition: partition@a3000 {
-		reg = <0xa3000 DT_SIZE_K(260)>;
-	};
-};
-
 / {
 	cs_antenna_switch: cs-antenna-config {
 		status = "okay";
