@@ -34,6 +34,8 @@ Cryptographic feature support
 The following sections list the supported cryptographic features and algorithms for each of the drivers: :ref:`nrf_cc3xx <crypto_drivers_cc3xx>`, :ref:`CRACEN <crypto_drivers_cracen>`, and :ref:`nrf_oberon <crypto_drivers_oberon>`.
 The listed Kconfig options enable the features and algorithms for the drivers that support them.
 
+The Kconfig options follow the ``CONFIG_PSA_WANT_`` + ``CONFIG_PSA_USE_`` configuration scheme, which is described in detail on the :ref:`crypto_drivers` page.
+
 Key types and key management
 ============================
 
@@ -306,12 +308,12 @@ The following table shows the Kconfig options for requesting Oberon PSA Crypto t
    * - TLS 1.2 PRF
      - :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_PRF`
      - Not supported
-     - Not supported
+     - Supported
      - Supported
    * - TLS 1.2 PSK to MS
      - :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_PSK_TO_MS`
      - Not supported
-     - Not supported
+     - Supported
      - Supported
    * - TLS 1.2 EC J-PAKE to PMS
      - :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS`
@@ -651,7 +653,7 @@ The following table shows the Kconfig options for requesting Oberon PSA Crypto t
    * - Curve448 (X448)
      - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
      - Not supported
-     - Supported
+     - Not supported
      - Not supported
    * - Edwards25519 (Ed25519)
      - :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
@@ -799,10 +801,8 @@ The following table shows the Kconfig options for configuring Oberon PSA Crypto 
 RNG algorithms
 ==============
 
-Enable RNG using the :kconfig:option:`CONFIG_PSA_WANT_GENERATE_RANDOM` Kconfig option.
-
 RNG uses PRNG seeded by entropy (also known as TRNG).
-The following table shows the Kconfig options for requesting Oberon PSA Crypto to use specific PRNG algorithms, as well as their support for each driver:
+The following table shows the Kconfig options for enabling RNG and requesting Oberon PSA Crypto to use specific PRNG algorithms, as well as their support for each driver:
 
 .. list-table:: PRNG algorithm configuration options and support per driver
    :header-rows: 1
@@ -813,6 +813,11 @@ The following table shows the Kconfig options for requesting Oberon PSA Crypto t
      - :ref:`nrf_cc3xx <crypto_drivers_cc3xx>`
      - :ref:`CRACEN <crypto_drivers_cracen>`
      - :ref:`nrf_oberon <crypto_drivers_oberon>`
+   * - RNG support
+     - :kconfig:option:`CONFIG_PSA_WANT_GENERATE_RANDOM`
+     - Supported
+     - Supported
+     - Supported
    * - CTR-DRBG
      - :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR_DRBG`
      - Supported
@@ -1047,13 +1052,11 @@ The following table shows the Kconfig options for configuring Oberon PSA Crypto 
 Key size configurations
 =======================
 
-All AES and RSA key size configurations are introduced by the :ref:`nrf_security` library and are not described by the PSA Crypto specification.
+The following sections list the supported AES and RSA key size Kconfig options.
+The Kconfig options follow the ``CONFIG_PSA_WANT_`` configuration scheme, which is described in detail on the :ref:`crypto_drivers` page.
 
 AES key size configuration
 --------------------------
-
-.. note::
-   All AES key size configurations are introduced by the :ref:`nrf_security` library and are not described by the PSA Crypto specification.
 
 The following table shows the Kconfig options for requesting Oberon PSA Crypto to use specific AES key sizes, as well as their support for each driver:
 
@@ -1084,9 +1087,6 @@ The following table shows the Kconfig options for requesting Oberon PSA Crypto t
 
 RSA key size configuration
 --------------------------
-
-.. note::
-   All RSA key size configurations are introduced by the :ref:`nrf_security` library and are not described by the PSA Crypto specification.
 
 The following table shows the Kconfig options for requesting Oberon PSA Crypto to use specific RSA key sizes, as well as their support for each driver:
 
