@@ -112,9 +112,13 @@ static void bt_ready(int err)
 
 #ifdef CONFIG_EMDS
 	err = emds_load();
-	if (err) {
+	if (err && err != -ENOENT) {
 		printk("Restore of emds data failed (err %d)\n", err);
 		return;
+	} else if (err == -ENOENT) {
+		printk("No valid emds data found, starting fresh\n");
+	} else {
+		printk("Restored emds data successfully\n");
 	}
 
 	err = emds_prepare();
