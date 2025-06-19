@@ -7,7 +7,9 @@ Cellular: nRF Cloud REST FOTA
    :local:
    :depth: 2
 
-The REST FOTA sample demonstrates how to use the `nRF Cloud REST API`_ to perform Firmware Over-the-Air (FOTA) updates on your device.
+The REST FOTA sample demonstrates how to use the `nRF Cloud REST API`_ to perform Firmware Over-the-Air (FOTA) updates over REST on your device.
+This covers modem, application, and full modem FOTA updates (FMFU).
+Also, with the nRF9160 DK, it supports SMP FOTA updates.
 
 Requirements
 ************
@@ -18,12 +20,18 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
-The sample requires an `nRF Cloud`_ account and modem firmware v1.3.x or later for an nRF9160 DK, or modem firmware v2.x.x for the nRF91x1 DKs.
+The sample requires an `nRF Cloud`_ account.
+
+Your device must be onboarded to nRF Cloud.
+If it is not, follow the instructions in `Device on-boarding <nrf_cloud_rest_fota_onboarding_>`_.
+
+.. note::
+   This sample requires modem firmware v1.3.x or later for an nRF9160 SiP and v2.0.0 or later for nRF91x1 SiPs.
+
+.. include:: /includes/external_flash_nrf91.txt
 
 .. note::
    Full modem FOTA requires development kit version 0.14.0 or higher if you are using an nRF9160 DK.
-
-.. include:: /includes/external_flash_nrf91.txt
 
 Overview
 ********
@@ -40,14 +48,21 @@ Without a valid date and time, the modem cannot generate JWTs with an expiration
 User interface
 **************
 
-If you want to perform an update check immediately, press the button configured by the Kconfig option :ref:`CONFIG_REST_FOTA_BUTTON_EVT_NUM <CONFIG_REST_FOTA_BUTTON_EVT_NUM>`.
+Once the device is onboarded and connected, if you want to perform an update check immediately, press **Button 1**.
 This will bypass the wait time specified by the :ref:`CONFIG_REST_FOTA_JOB_CHECK_RATE_MIN <CONFIG_REST_FOTA_JOB_CHECK_RATE_MIN>` option.
+**Button 1** is configured by the :ref:`CONFIG_REST_FOTA_BUTTON_EVT_NUM <CONFIG_REST_FOTA_BUTTON_EVT_NUM>` option.
 
-If you have the option :ref:`CONFIG_REST_FOTA_DO_JITP <CONFIG_REST_FOTA_DO_JITP>` enabled and you press the button configured by the :ref:`CONFIG_REST_FOTA_BUTTON_EVT_NUM <CONFIG_REST_FOTA_BUTTON_EVT_NUM>` option when prompted at startup, it will request just-in-time provisioning (JITP) through REST with nRF Cloud.
-This is useful when initially provisioning and associating a device on nRF Cloud.
+The configured LTE LED (**LED 1** by default, :ref:`CONFIG_REST_FOTA_LTE_LED_NUM <CONFIG_REST_FOTA_LTE_LED_NUM>`) is lit once an LTE connection is established.
+
+.. _nrf_cloud_rest_fota_onboarding:
+
+Onboarding your device to nRF Cloud
+***********************************
+
+You must onboard your device to nRF Cloud for this sample to function.
 You only need to do this once for each device.
 
-If you have enabled the :ref:`CONFIG_REST_FOTA_ENABLE_LED <CONFIG_REST_FOTA_ENABLE_LED>` option, an LED configured by the :ref:`CONFIG_REST_FOTA_LED_NUM <CONFIG_REST_FOTA_LED_NUM>` option indicates the state of the connection to the LTE network.
+To onboard your device, install `nRF Cloud Utils`_ and follow the instructions in the README.
 
 Configuration
 *************
@@ -61,34 +76,19 @@ Check and configure the following configuration options for the sample:
 .. _CONFIG_REST_FOTA_JOB_CHECK_RATE_MIN:
 
 CONFIG_REST_FOTA_JOB_CHECK_RATE_MIN - Update check rate
-   This configuration option defines how often the sample checks for FOTA updates.
+   Defines how often the sample checks for FOTA updates.
    You can modify this value at runtime by adding or updating the ``"fotaInterval"`` item in the desired config section of the device's shadow.
    Use the `nRF Cloud`_ portal or the REST API to perform the config update.
 
-.. _CONFIG_REST_FOTA_DL_TIMEOUT_MIN:
+.. _CONFIG_REST_FOTA_LTE_LED_NUM:
 
-CONFIG_REST_FOTA_DL_TIMEOUT_MIN - Download timeout value
-   This configuration option defines how long to wait for a download to complete.
-
-.. _CONFIG_REST_FOTA_ENABLE_LED:
-
-CONFIG_REST_FOTA_ENABLE_LED - Enable LED
-   This configuration option defines if the LED will be used to indicate connection to the LTE network.
-
-.. _CONFIG_REST_FOTA_LED_NUM:
-
-CONFIG_REST_FOTA_LED_NUM - Enable LED
-   This configuration option defines if the LED is to be used.
+CONFIG_REST_FOTA_LTE_LED_NUM - LTE LED number
+   Defines the LED used to indicate connection to the LTE network.
 
 .. _CONFIG_REST_FOTA_BUTTON_EVT_NUM:
 
 CONFIG_REST_FOTA_BUTTON_EVT_NUM - Button number
-   This configuration option defines the button to use for device interactions.
-
-.. _CONFIG_REST_FOTA_DO_JITP:
-
-CONFIG_REST_FOTA_DO_JITP - Enable prompt to perform JITP using REST
-   This configuration option defines if the application will prompt the user for just-in-time provisioning on startup.
+   Defines the button to use for manual FOTA update check.
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
@@ -101,7 +101,7 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-The configuration file for this sample is located in :file:`samples/cellular/nrf_cloud_rest_fota`.
+The configuration files for this sample are located in :file:`samples/cellular/nrf_cloud_rest_fota`.
 See :ref:`configure_application` for information on how to configure the parameters.
 
 To create a FOTA test version of this sample, add the following parameter to your build command:
@@ -120,11 +120,13 @@ To enable SMP FOTA (nRF9160 DK only), add the following parameters to your build
 * ``-DEXTRA_CONF_FILE=overlay_smp_fota.conf``
 * ``-DEXTRA_DTC_OVERLAY_FILE=nrf9160dk_mcumgr_client_uart2.overlay``
 
+Once the nRF9160 has been flashed, change the switch **SW10** to the nRF52 position to be able to flash the nRF52840 on the DK.
 The nRF52840 device on your DK must be running an SMP compatible firmware, such as the :ref:`smp_svr` sample.
+Otherwise, the REST FOTA sample will not be able to connect to the nRF52840 and will keep trying to connect.
 Build the :ref:`smp_svr` sample for the ``nrf9160dk/nrf52840`` board with the following parameters:
 
-* ``-DEXTRA_CONF_FILE=overlay_smp_fota.conf``
-* ``-DEXTRA_DTC_OVERLAY_FILE=nrf9160dk_mcumgr_client_uart2.overlay``
+* ``-DEXTRA_CONF_FILE=overlay-serial.conf``
+* ``-DEXTRA_DTC_OVERLAY_FILE=nrf9160dk_nrf52840_mcumgr_svr.overlay``
 
 To change :ref:`smp_svr` sample's application version, set the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option.
 

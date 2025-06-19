@@ -79,3 +79,6 @@ zephyr_library_sources_ifdef(
 	CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES
 	src/nrf_cloud_credentials.c)
 zephyr_include_directories(./include coap/include)
+if(CONFIG_MCUBOOT_IMG_MANAGER)
+  zephyr_library_link_libraries(MCUBOOT_BOOTUTIL)
+endif()
