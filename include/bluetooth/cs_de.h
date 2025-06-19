@@ -18,16 +18,19 @@
 
 /**
  * @brief Container of IQ values for local and remote measured tones
+ *
+ * The values are indexed by channel from 2 (2404 MHz) to 76 (2479 Mhz).
+ * Channels 23 to 25 are reserved for advertising and do not have IQ values.
  */
 typedef struct {
 	/** In-phase measurements of tones on this device */
-	float i_local[80];
+	float i_local[75];
 	/** Quadrature-phase measurement of tones on this device */
-	float q_local[80];
+	float q_local[75];
 	/** In-phase measurements of tones from remote device */
-	float i_remote[80];
+	float i_remote[75];
 	/** Quadrature-phase measurements of tones from remote device */
-	float q_remote[80];
+	float q_remote[75];
 } cs_de_iq_tones_t;
 
 typedef enum {
