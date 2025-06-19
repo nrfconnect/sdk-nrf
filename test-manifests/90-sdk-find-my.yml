@@ -1,0 +1,17 @@
+manifest:
+
+  version: "0.13"
+  remotes:
+    - name: ncs
+      url-base: https://github.com/nrfconnect
+
+  defaults:
+    remote: ncs
+
+  projects:
+    - name: find-my
+      repo-path: sdk-find-my-internal
+      path: find-my
+      revision: 58ffc984b57f301458590c07aa61bc0b025c12e0
+      groups:
+        - find-my
