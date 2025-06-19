@@ -54,7 +54,7 @@ static int serialization_init(void)
 	return 0;
 }
 
-SYS_INIT(serialization_init, POST_KERNEL, CONFIG_APPLICATION_INIT_PRIORITY);
+SYS_INIT(serialization_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 #endif /* CONFIG_BT_RPC_INITIALIZE_NRF_RPC */
 
 enum {
