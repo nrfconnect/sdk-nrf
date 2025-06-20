@@ -1,0 +1,8 @@
+extends: existence
+message: 'Punctuation should be inside the quotes.'
+link: https://github.com/NordicPlayground/test-style-guide/blob/main/docs/punctuation/quotation-marks.md
+level: error
+nonword: true
+tokens:
+  - '(?<!: )["“][^"”“]+["”][.,]'
+# exception after colons

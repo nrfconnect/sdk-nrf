@@ -1,0 +1,72 @@
+name: Documentation style checker
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**/*.md'
+      - '**/*.rst'
+      - '.vale.ini'
+      - '.github/vale/**'
+      - '.github/workflows/vale-lint.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - '**/*.md'
+      - '**/*.rst'
+      - '.vale.ini'
+      - '.github/vale/**'
+      - '.github/workflows/vale-lint.yml'
+  workflow_dispatch:
+
+jobs:
+  vale:
+    name: Vale doc linter
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies and Vale
+        run: |
+          echo "Installing pip and docutils..."
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+          pip install --upgrade docutils
+
+          echo "Installing Vale..."
+          curl -L -o vale.tar.gz https://github.com/errata-ai/vale/releases/download/v2.30.0/vale_2.30.0_Linux_64-bit.tar.gz
+          mkdir -p bin
+          tar -xvzf vale.tar.gz -C bin
+          sudo mv bin/vale /usr/local/bin/vale
+          vale -v
+
+      - name: Run Vale
+        id: lint
+        run: |
+          echo "Running Vale linting..."
+          # Save output to a file without displaying it yet
+          vale --output line . | tee vale_output.txt
+
+          # Check if there were any issues
+          if [ -s vale_output.txt ]; then
+            echo "Vale found documentation issues!"
+            cat vale_output.txt
+            echo "has_issues=true" >> $GITHUB_OUTPUT
+            echo "Warning: Documentation linting failed. Please fix the issues reported by Vale."
+            exit 1
+          else
+            echo "has_issues=false" >> $GITHUB_OUTPUT
+            echo "No issues found by Vale."
+          fi
+
+# The following lines should be used instead of lines 26+ and we should use the official Vale
+# GitHub Action hook from https://github.com/errata-ai/vale-action?tab=readme-ov-file.
+# However, Nordic Semiconductor GitHub policy does not allow us to use third party actions that
+# are not part of GitHub's default action library. The following lines are commented out and kept
+# for reference and potential future use.
+#
+# - uses: errata-ai/vale-action@v2.1.1
+### with:
+##### files: ../docs/guides/
+##### reporter: github-check
+##### filter_mode: added

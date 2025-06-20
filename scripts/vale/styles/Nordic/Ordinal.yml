@@ -1,0 +1,13 @@
+extends: existence
+message: "Don't add -ly to an ordinal number."
+link: https://github.com/NordicPlayground/test-style-guide/blob/main/docs/numbers.md
+level: error
+action:
+  name: edit
+  params:
+    - trim
+    - ly
+tokens:
+  - firstly
+  - secondly
+  - thirdly

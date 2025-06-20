@@ -1,0 +1,13 @@
+extends: existence
+message: "Remove the spaces around '%s'."
+link: https://github.com/NordicPlayground/test-style-guide/blob/main/docs/punctuation/dashes-and-hyphens.md
+ignorecase: true
+nonword: true
+level: error
+action:
+  name: edit
+  params:
+    - trim
+    - " "
+tokens:
+  - '(?<!\d)\s[—–]\s(?!\d)'
