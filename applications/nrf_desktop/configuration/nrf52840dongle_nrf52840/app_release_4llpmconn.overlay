@@ -10,42 +10,42 @@
 	/* Configure DTS nodes used for USB next HID support. */
 	hid_dev_0: hid_dev_0 {
 		compatible = "zephyr,hid-device";
-		interface-name = "HID0";
+		label = "HID0";
 		protocol-code = "none";
 		in-polling-period-us = <1000>;
 		in-report-size = <64>;
 	};
 	hid_dev_1: hid_dev_1 {
 		compatible = "zephyr,hid-device";
-		interface-name = "HID1";
+		label = "HID1";
 		protocol-code = "none";
 		in-polling-period-us = <1000>;
 		in-report-size = <64>;
 	};
 	hid_dev_2: hid_dev_2 {
 		compatible = "zephyr,hid-device";
-		interface-name = "HID2";
+		label = "HID2";
 		protocol-code = "none";
 		in-polling-period-us = <1000>;
 		in-report-size = <64>;
 	};
 	hid_dev_3: hid_dev_3 {
 		compatible = "zephyr,hid-device";
-		interface-name = "HID3";
+		label = "HID3";
 		protocol-code = "none";
 		in-polling-period-us = <1000>;
 		in-report-size = <64>;
 	};
 	hid_dev_4: hid_dev_4 {
 		compatible = "zephyr,hid-device";
-		interface-name = "HID4";
+		label = "HID4";
 		protocol-code = "none";
 		in-polling-period-us = <1000>;
 		in-report-size = <64>;
 	};
 	hid_dev_5: hid_dev_5 {
 		compatible = "zephyr,hid-device";
-		interface-name = "HID5";
+		label = "HID5";
 		protocol-code = "none";
 		in-polling-period-us = <1000>;
 		in-report-size = <64>;
