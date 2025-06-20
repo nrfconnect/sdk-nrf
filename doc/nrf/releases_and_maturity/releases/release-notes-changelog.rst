@@ -119,7 +119,7 @@ Security
 ========
 
 * Added the new section about :ref:`ug_crypto_index`.
-  The new section includes pages about :ref:`ug_crypto_architecture` (new page) and :ref:`crypto_drivers` (moved from :ref:`nrf_security` library).
+  The new section includes pages about :ref:`ug_crypto_architecture` (new page), :ref:`crypto_drivers` and :ref:`psa_crypto_support` (both moved from the :ref:`nrf_security` library documentation).
 
 * Updated:
 
