@@ -13,6 +13,7 @@
 #include <zephyr/shell/shell.h>
 #include <zephyr/shell/shell_uart.h>
 
+#include <modem/nrf_modem_lib.h>
 #include <modem/modem_info.h>
 #include <modem/lte_lc.h>
 #include <modem/pdn.h>
@@ -91,6 +92,24 @@ static struct ncellmeas_data ncellmeas_param_data = {
 	.periodic_interval_given = false,
 };
 
+NRF_MODEM_LIB_ON_CFUN(link_cfun_hook, link_on_modem_cfun, NULL);
+
+static void link_on_modem_cfun(int mode, void *ctx)
+{
+	ARG_UNUSED(ctx);
+
+	switch (mode) {
+	case LTE_LC_FUNC_MODE_NORMAL:
+	case LTE_LC_FUNC_MODE_RX_ONLY:
+	case LTE_LC_FUNC_MODE_ACTIVATE_LTE:
+		(void)lte_lc_modem_events_enable();
+		break;
+
+	default:
+		break;
+	}
+}
+
 static void link_ncellmeas_worker(struct k_work *work_item)
 {
 	struct k_work_delayable *delayable_work = k_work_delayable_from_work(work_item);
@@ -104,8 +123,6 @@ static void link_ncellmeas_worker(struct k_work *work_item)
 				     data->periodic_interval_given);
 	}
 }
-
-/******************************************************************************/
 
 static void link_api_activate_mosh_contexts(
 	struct pdn_activation_status_info pdn_act_status_arr[], int size)
@@ -188,8 +205,6 @@ static void link_registered_work(struct k_work *unused)
 	link_api_modem_info_get_for_shell(true);
 }
 
-/******************************************************************************/
-
 static void link_cell_change_work(struct k_work *work_item)
 {
 	struct cell_change_data *data = CONTAINER_OF(work_item, struct cell_change_data, work);
@@ -210,15 +225,11 @@ static void link_cell_change_work(struct k_work *work_item)
 		xmonitor_resp.snr, (xmonitor_resp.snr - LINK_SNR_OFFSET_VALUE));
 }
 
-/******************************************************************************/
-
 static void link_rsrp_signal_handler(char rsrp_value)
 {
 	modem_rsrp = RSRP_IDX_TO_DBM(rsrp_value);
 	k_work_submit_to_queue(&mosh_common_work_q, &modem_info_signal_work);
 }
-
-/******************************************************************************/
 
 #define MOSH_RSRP_UPDATE_INTERVAL_IN_SECS 5
 static void link_rsrp_signal_update(struct k_work *unused)
@@ -238,8 +249,6 @@ static void link_rsrp_signal_update(struct k_work *unused)
 	timestamp_prev = k_uptime_get_32();
 }
 
-/******************************************************************************/
-
 void link_init(void)
 {
 	k_work_init(&cell_change_work_data.work, link_cell_change_work);
@@ -254,7 +263,6 @@ void link_init(void)
 	link_shell_pdn_init();
 
 	lte_lc_register_handler(link_ind_handler);
-	(void)lte_lc_modem_events_enable();
 
 	if (link_sett_is_dnsaddr_enabled()) {
 		(void)link_setdnsaddr(link_sett_dnsaddr_ip_get());
@@ -466,8 +474,6 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 		break;
 	}
 }
-
-/******************************************************************************/
 
 static int link_default_pdp_context_set(void)
 {
@@ -696,6 +702,7 @@ int link_func_mode_set(enum lte_lc_func_mode fun, bool rel14_used)
 
 		ret = lte_lc_normal();
 		break;
+	case LTE_LC_FUNC_MODE_RX_ONLY:
 	case LTE_LC_FUNC_MODE_DEACTIVATE_LTE:
 	case LTE_LC_FUNC_MODE_ACTIVATE_LTE:
 	case LTE_LC_FUNC_MODE_DEACTIVATE_GNSS:

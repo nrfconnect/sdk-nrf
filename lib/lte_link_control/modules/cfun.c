@@ -89,7 +89,6 @@ int cfun_mode_set(enum lte_lc_func_mode mode)
 			LOG_ERR("Failed to enable notifications, error: %d", err);
 			return -EFAULT;
 		}
-
 		break;
 	case LTE_LC_FUNC_MODE_NORMAL:
 		LTE_LC_TRACE(LTE_LC_TRACE_FUNC_MODE_NORMAL);
@@ -99,13 +98,18 @@ int cfun_mode_set(enum lte_lc_func_mode mode)
 			LOG_ERR("Failed to enable notifications, error: %d", err);
 			return -EFAULT;
 		}
-
 		break;
 	case LTE_LC_FUNC_MODE_POWER_OFF:
 		LTE_LC_TRACE(LTE_LC_TRACE_FUNC_MODE_POWER_OFF);
 		break;
 	case LTE_LC_FUNC_MODE_RX_ONLY:
 		LTE_LC_TRACE(LTE_LC_TRACE_FUNC_MODE_RX_ONLY);
+
+		err = enable_notifications();
+		if (err) {
+			LOG_ERR("Failed to enable notifications, error: %d", err);
+			return -EFAULT;
+		}
 		break;
 	case LTE_LC_FUNC_MODE_OFFLINE:
 		LTE_LC_TRACE(LTE_LC_TRACE_FUNC_MODE_OFFLINE);
