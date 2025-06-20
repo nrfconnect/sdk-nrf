@@ -1,0 +1,326 @@
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+function(merge_images output_artifact images)
+  find_program(MERGEHEX mergehex.py HINTS ${ZEPHYR_BASE}/scripts/build/ NAMES mergehex NAMES_PER_DIR)
+  if(NOT DEFINED MERGEHEX)
+    message(FATAL_ERROR "Can't merge images: can't find mergehex.py")
+    return()
+  endif()
+
+  foreach(image ${images})
+    # Buld a dependency list for the final (merged) artifact.
+    sysbuild_get(BINARY_DIR IMAGE ${image} VAR APPLICATION_BINARY_DIR CACHE)
+    sysbuild_get(BINARY_HEX_FILE IMAGE ${image} VAR RUNNERS_HEX_FILE_TO_MERGE CACHE)
+    list(APPEND binaries_to_merge "${BINARY_DIR}/zephyr/${BINARY_HEX_FILE}")
+  endforeach()
+
+  get_filename_component(merge_target ${output_artifact} NAME_WE)
+  add_custom_target(
+    merged_${merge_target}
+    ${PYTHON_EXECUTABLE} ${MERGEHEX}
+      -o ${output_artifact} ${binaries_to_merge}
+    DEPENDS
+    ${binaries_to_merge}
+    BYPRODUCTS
+    ${output_artifact}
+    COMMENT "Merge intermediate images"
+  )
+endfunction()
+
+function(disable_programming images)
+  foreach(image ${images})
+    set_target_properties(${image} PROPERTIES BUILD_ONLY true)
+  endforeach()
+endfunction()
+
+function(mcuboot_sign_merged merged_hex main_image)
+  find_program(IMGTOOL imgtool.py HINTS ${ZEPHYR_MCUBOOT_MODULE_DIR}/scripts/ NAMES imgtool NAMES_PER_DIR)
+  find_program(HEX2BIN hex2bin.py NAMES hex2bin)
+  set(keyfile "${SB_CONFIG_BOOT_SIGNATURE_KEY_FILE}")
+  set(keyfile_enc "${SB_CONFIG_BOOT_ENCRYPTION_KEY_FILE}")
+  set(imgtool_cmd)
+  string(CONFIGURE "${keyfile}" keyfile)
+  string(CONFIGURE "${keyfile_enc}" keyfile_enc)
+
+  if(NOT "${SB_CONFIG_SIGNATURE_TYPE}" STREQUAL "NONE")
+    # Check for misconfiguration.
+    if("${keyfile}" STREQUAL "")
+      # No signature key file, no signed binaries. No error, though:
+      # this is the documented behavior.
+      message(WARNING "Neither SB_CONFIG_SIGNATURE_TYPE or "
+                      "SB_CONFIG_BOOT_SIGNATURE_KEY_FILE are set, the generated build will not be "
+                      "bootable by MCUboot unless it is signed manually/externally.")
+      return()
+    endif()
+
+    foreach(file keyfile keyfile_enc)
+      if("${${file}}" STREQUAL "")
+        continue()
+      endif()
+
+      # Find the key files in the order of preference for a simple search
+      # modeled by the if checks across the various locations
+      #
+      #  1. absolute
+      #  2. application config
+      #  3. west topdir (optional when the workspace is not west managed)
+      #
+      if(NOT IS_ABSOLUTE "${${file}}")
+        if(EXISTS "${SB_APPLICATION_CONFIG_DIR}/${${file}}")
+          set(${file} "${SB_APPLICATION_CONFIG_DIR}/${${file}}")
+        else()
+          # Relative paths are relative to 'west topdir'.
+          #
+          # This is the only file that has a relative check to topdir likely
+          # from the historical callouts to "west" itself before using
+          # imgtool. So, this is maintained here for backward compatibility
+          #
+          if(NOT WEST OR NOT WEST_TOPDIR)
+            message(FATAL_ERROR "Can't sign images for MCUboot: west workspace undefined. "
+                                "To fix, ensure `west topdir` is a valid workspace directory.")
+          endif()
+          set(${file} "${WEST_TOPDIR}/${${file}}")
+        endif()
+      endif()
+
+      if(NOT EXISTS "${${file}}")
+        message(FATAL_ERROR "Can't sign images for MCUboot: can't find file ${${file}} "
+                            "(Note: Relative paths are searched through "
+                            "SB_APPLICATION_CONFIG_DIR=\"${SB_APPLICATION_CONFIG_DIR}\" "
+                            "and WEST_TOPDIR=\"${WEST_TOPDIR}\")")
+      endif()
+    endforeach()
+  endif()
+
+  # No imgtool, no signed binaries.
+  if(NOT DEFINED IMGTOOL)
+    message(FATAL_ERROR "Can't sign images for MCUboot: can't find imgtool. To fix, install imgtool with pip3, or add the mcuboot repository to the west manifest and ensure it has a scripts/imgtool.py file.")
+    return()
+  endif()
+
+  # No hex2bin, no signed bin files.
+  if(SB_CONFIG_BUILD_OUTPUT_BIN AND NOT DEFINED HEX2BIN)
+    message(FATAL_ERROR "Can't convert HEX files for MCUboot: can't find hex2bin. To fix, install hex2bin with pip3.")
+    return()
+  endif()
+
+  # This script uses only HEX files as input.
+  if(NOT (SB_CONFIG_BUILD_OUTPUT_HEX))
+      message(FATAL_ERROR "Can't sign merged images for MCUboot: The "
+                          "SB_CONFIG_BUILD_OUTPUT_HEX is not enabled,"
+                          "so there's nothing to sign.")
+      return()
+  endif()
+
+  # Fetch etra arguments to imgtool from the main image Kconfig.
+  set(CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS)
+  sysbuild_get(CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS IMAGE ${main_image} VAR CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS KCONFIG)
+  if(NOT CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS STREQUAL "")
+    separate_arguments(imgtool_args UNIX_COMMAND ${CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS})
+  else()
+    set(imgtool_args)
+  endif()
+
+  # Fetch version and flags from the main image Kconfig.
+  set(CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION)
+  set(CONFIG_MCUBOOT_IMGTOOL_OVERWRITE_ONLY)
+  set(CONFIG_MCUBOOT_GENERATE_CONFIRMED_IMAGE)
+  set(CONFIG_MCUBOOT_APPLICATION_FIRMWARE_UPDATER)
+  sysbuild_get(CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION IMAGE ${main_image} VAR CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION KCONFIG)
+  sysbuild_get(CONFIG_MCUBOOT_IMGTOOL_OVERWRITE_ONLY IMAGE ${main_image} VAR CONFIG_MCUBOOT_IMGTOOL_OVERWRITE_ONLY KCONFIG)
+  sysbuild_get(CONFIG_MCUBOOT_GENERATE_CONFIRMED_IMAGE IMAGE ${main_image} VAR CONFIG_MCUBOOT_GENERATE_CONFIRMED_IMAGE KCONFIG)
+  sysbuild_get(CONFIG_MCUBOOT_APPLICATION_FIRMWARE_UPDATER IMAGE ${main_image} VAR CONFIG_MCUBOOT_APPLICATION_FIRMWARE_UPDATER KCONFIG)
+
+  string(REGEX MATCH ".*_secondary_app$" is_secondary_app ${main_image})
+
+  # Fetch devicetree details for flash and slot information.
+  dt_chosen(flash_node TARGET mcuboot PROPERTY "zephyr,flash")
+  dt_prop(write_block_size TARGET mcuboot PATH "${flash_node}" PROPERTY "write-block-size")
+  dt_nodelabel(slot0_path TARGET mcuboot NODELABEL "slot0_partition" REQUIRED)
+  dt_reg_addr(slot0_addr TARGET mcuboot PATH ${slot0_path})
+  dt_reg_size(slot0_size TARGET mcuboot PATH ${slot0_path})
+  dt_nodelabel(slot1_path TARGET mcuboot NODELABEL "slot1_partition" REQUIRED)
+  dt_reg_addr(slot1_addr TARGET mcuboot PATH ${slot1_path})
+  dt_reg_size(slot1_size TARGET mcuboot PATH ${slot1_path})
+  if(NOT write_block_size)
+    set(write_block_size 4)
+    message(WARNING "slot0_partition write block size devicetree parameter is missing, assuming write block size is 4")
+  endif()
+
+  # Fetch devicetree details for executable RAM region.
+  dt_chosen(ram_load_dev TARGET mcuboot PROPERTY "mcuboot,ram-load-dev")
+  if(DEFINED ram_load_dev)
+    dt_reg_addr(ram_load_address TARGET mcuboot PATH ${ram_load_dev})
+  else()
+    dt_chosen(chosen_ram TARGET mcuboot PROPERTY "zephyr,sram")
+    dt_reg_addr(ram_load_address TARGET mcuboot PATH ${chosen_ram})
+  endif()
+
+  # Fetch devicetree details for the active code partition.
+  dt_chosen(code_flash TARGET ${main_image} PROPERTY "zephyr,code-partition")
+  dt_reg_addr(code_addr TARGET ${main_image} PATH ${code_flash})
+  set(start_offset)
+  sysbuild_get(start_offset IMAGE ${main_image} VAR CONFIG_ROM_START_OFFSET KCONFIG)
+
+  # Append key file path.
+  if(NOT "${keyfile}" STREQUAL "")
+    set(imgtool_args --key "${keyfile}" ${imgtool_args})
+  endif()
+
+  # Construct imgtool command, based on the selected MCUboot mode.
+  set(imgtool_rom_command)
+  if(SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT OR SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP)
+    if(is_secondary_app)
+      MATH(EXPR slot_offset "${code_addr} + ${start_offset} - ${slot1_addr}")
+      set(slot_size ${slot1_size})
+    else()
+      MATH(EXPR slot_offset "${code_addr} + ${start_offset} - ${slot0_addr}")
+      set(slot_size ${slot0_size})
+    endif()
+    set(imgtool_rom_command --rom-fixed ${code_addr})
+  elseif(SB_CONFIG_MCUBOOT_MODE_SINGLE_APP)
+      MATH(EXPR slot_offset "${code_addr} + ${start_offset} - ${slot0_addr}")
+      set(slot_size ${slot0_size})
+  elseif(SB_CONFIG_MCUBOOT_MODE_SINGLE_APP_RAM_LOAD)
+      MATH(EXPR slot_offset "${code_addr} + ${start_offset} - ${ram_load_address}")
+      set(slot_size ${slot0_size})
+      # RAM load requires setting the location of where to load the image to
+      set(imgtool_args --load-addr ${ram_load_address} ${imgtool_args})
+      set(write_block_size 1)
+  elseif(SB_CONFIG_MCUBOOT_MODE_RAM_LOAD)
+      MATH(EXPR slot_offset "${code_addr} + ${start_offset} - ${ram_load_address}")
+      set(slot_size ${slot1_size})
+      # RAM load requires setting the location of where to load the image to
+      set(imgtool_args --load-addr ${ram_load_address} ${imgtool_args})
+      set(write_block_size 1)
+      set(imgtool_args_alt_slot ${imgtool_args} --align 1 --hex-addr ${slot1_addr})
+      set(imgtool_args ${imgtool_args} --hex-addr ${slot0_addr})
+  elseif(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
+      if (CONFIG_MCUBOOT_APPLICATION_FIRMWARE_UPDATER)
+        MATH(EXPR slot_offset "${code_addr} + ${start_offset} - ${slot1_addr}")
+        set(slot_size ${slot1_size})
+      else()
+        MATH(EXPR slot_offset "${code_addr} + ${start_offset} - ${slot0_addr}")
+        set(slot_size ${slot0_size})
+      endif()
+  else()
+      # This case handles modes that use slot1 as staging area:
+      # - All MCUBOOT_MODE_SWAP_* modes
+      # - MCUBOOT_MODE_OVERWRITE_ONLY
+      MATH(EXPR slot_offset "${code_addr} + ${start_offset} - ${slot0_addr}")
+      set(slot_size ${slot1_size})
+  endif()
+
+  # Basic 'imgtool sign' command with known image information.
+  set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign
+      --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --header-size ${slot_offset}
+      --slot-size ${slot_size} ${imgtool_rom_command})
+
+  if(CONFIG_MCUBOOT_IMGTOOL_OVERWRITE_ONLY)
+    # Use overwrite-only instead of swap upgrades.
+    set(imgtool_args --overwrite-only --align 1 ${imgtool_args})
+  else()
+    set(imgtool_args --align ${write_block_size} ${imgtool_args})
+  endif()
+
+  # Extensionless prefix of any output file.
+  sysbuild_get(BINARY_DIR IMAGE ${main_image} VAR APPLICATION_BINARY_DIR CACHE)
+  sysbuild_get(BINARY_BIN_FILE IMAGE ${main_image} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
+  if(is_secondary_app)
+    set(output "${BINARY_DIR}/zephyr/${BINARY_BIN_FILE}_secondary_app")
+  else()
+    set(output "${BINARY_DIR}/zephyr/${BINARY_BIN_FILE}")
+  endif()
+
+  # List of additional build byproducts.
+  set(byproducts ${output}.merged.hex)
+
+  # Set up .hex outputs.
+  if(SB_CONFIG_BUILD_OUTPUT_HEX)
+    list(APPEND byproducts ${output}.signed.hex)
+    set(final_artifact_hex ${output}.signed.hex)
+    set(BYPRODUCT_KERNEL_SIGNED_HEX_NAME "${output}.signed.hex"
+        CACHE FILEPATH "Signed kernel hex file" FORCE
+    )
+
+    if(NOT "${keyfile_enc}" STREQUAL "")
+      # When encryption is enabled, set the encrypted bit when signing the image but do not
+      # encrypt the data, this means that when the image is moved out of the primary into the
+      # secondary, it will be encrypted rather than being in unencrypted
+      list(APPEND imgtool_cmd COMMAND
+        ${imgtool_sign} ${imgtool_args} --encrypt "${keyfile_enc}" --clear ${merged_hex} ${output}.signed.hex)
+    else()
+      list(APPEND imgtool_cmd COMMAND
+        ${imgtool_sign} ${imgtool_args} ${merged_hex} ${output}.signed.hex)
+    endif()
+
+    if(CONFIG_MCUBOOT_GENERATE_CONFIRMED_IMAGE)
+      list(APPEND byproducts ${output}.signed.confirmed.hex)
+      set(final_artifact_hex ${output}.signed.confirmed.hex)
+      set(BYPRODUCT_KERNEL_SIGNED_CONFIRMED_HEX_NAME "${output}.signed.confirmed.hex"
+          CACHE FILEPATH "Signed and confirmed kernel hex file" FORCE
+      )
+      list(APPEND imgtool_cmd COMMAND
+        ${imgtool_sign} ${imgtool_args} --pad --confirm ${merged_hex}
+        ${output}.signed.confirmed.hex)
+    endif()
+
+    if(NOT "${keyfile_enc}" STREQUAL "")
+      list(APPEND byproducts ${output}.signed.encrypted.hex)
+      set(BYPRODUCT_KERNEL_SIGNED_ENCRYPTED_HEX_NAME "${output}.signed.encrypted.hex"
+          CACHE FILEPATH "Signed and encrypted kernel hex file" FORCE
+      )
+      list(APPEND imgtool_cmd COMMAND
+        ${imgtool_sign} ${imgtool_args} --encrypt "${keyfile_enc}" ${merged_hex}
+        ${output}.signed.encrypted.hex)
+    endif()
+
+    if(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD)
+      list(APPEND byproducts ${output}.slot1.signed.hex)
+      list(APPEND imgtool_cmd COMMAND
+                   ${imgtool_sign} ${imgtool_args_alt_slot} ${merged_hex}.hex
+                   ${output}.slot1.signed.hex)
+
+      if(CONFIG_MCUBOOT_GENERATE_CONFIRMED_IMAGE)
+        list(APPEND byproducts ${output}.slot1.signed.confirmed.hex)
+        list(APPEND imgtool_cmd COMMAND
+                     ${imgtool_sign} ${imgtool_args_alt_slot} --pad --confirm ${merged_hex}.hex
+                     ${output}.slot1.signed.confirmed.hex)
+      endif()
+
+      if(NOT "${keyfile_enc}" STREQUAL "")
+        list(APPEND byproducts ${output}.slot1.signed.encrypted.hex)
+        list(APPEND imgtool_cmd COMMAND
+                     ${imgtool_sign} ${imgtool_args_alt_slot} --encrypt "${keyfile_enc}"
+                     ${merged_hex}.hex ${output}.slot1.signed.encrypted.hex)
+      endif()
+    endif()
+
+  list(APPEND imgtool_cmd COMMAND
+      ${CMAKE_COMMAND} -E copy ${final_artifact_hex} ${output}.merged.hex)
+  endif()
+
+  # Set up .bin outputs.
+  if(SB_CONFIG_BUILD_OUTPUT_BIN)
+    foreach(hex_file ${byproducts})
+      string(REGEX REPLACE "\\.[^.]*$" "" file_path ${hex_file})
+      list(APPEND imgtool_cmd COMMAND
+        ${PYTHON_EXECUTABLE} ${HEX2BIN} ${hex_file} ${file_path}.bin
+      )
+    endforeach()
+  endif()
+
+  add_custom_target(
+    signed_${main_image}
+    ALL
+    ${imgtool_cmd}
+    DEPENDS
+    ${merged_hex}
+    BYPRODUCTS
+    ${byproducts}
+    COMMAND_EXPAND_LISTS
+    COMMENT "Create MCUboot artifacts"
+  )
+endfunction()

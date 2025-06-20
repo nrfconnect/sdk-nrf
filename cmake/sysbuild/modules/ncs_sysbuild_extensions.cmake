@@ -6,6 +6,85 @@
 include_guard(GLOBAL)
 
 # Usage:
+#   UpdateableImage_Add(APPLICATION <name>
+#                       GROUP <name>
+#   )
+#
+# This function includes an image inside a list that will be used to trigger
+# bootloader-dependent build and packaging logic.
+#
+# APPLICATION <name>: Name of the application.
+# GROUP <name>:       Application group (i.e. VARIANT)
+function(UpdateableImage_Add)
+  cmake_parse_arguments(VIMAGE "" "APPLICATION;GROUP" "" ${ARGN})
+
+  if(VIMAGE_GROUP)
+    set(group ${VIMAGE_GROUP})
+  else()
+    set(group "DEFAULT")
+  endif()
+
+  # Update list of avilable groups
+  get_property(
+    groups GLOBAL PROPERTY sysbuild_updateable_groups
+  )
+  list(APPEND groups ${group})
+  list(REMOVE_DUPLICATES groups)
+  set_property(
+    GLOBAL PROPERTY sysbuild_updateable_groups ${groups}
+  )
+
+  # Append the image name
+  set_property(
+    GLOBAL
+    APPEND PROPERTY sysbuild_updateable_${group} ${VIMAGE_APPLICATION}
+  )
+endfunction()
+
+# Usage:
+#   UpdateableImage_Get(<outvar> [ALL|GROUP <group>])
+#
+# This function returns a list of images, assigned to the specified group.
+#
+# <outvar>:       Name of variable to set.
+# ALL:            Get images from all groups.
+# GROUP <group>:  Image update group.
+#                 Use "DEFAULT" to get the default group (including DEFAULT_IMAGE).
+function(UpdateableImage_Get outvar)
+  set(all_images)
+  set(group)
+
+  cmake_parse_arguments(VGRP "ALL" "GROUP" "" ${ARGN})
+  if(VGRP_GROUP)
+    list(APPEND group ${VGRP_GROUP})
+  endif()
+
+  if(VGRP_ALL)
+    get_property(
+      group GLOBAL PROPERTY sysbuild_updateable_groups
+    )
+    list(APPEND group "DEFAULT")
+    list(REMOVE_DUPLICATES group)
+  endif()
+
+  foreach(image_group ${group})
+    get_property(
+      images GLOBAL PROPERTY sysbuild_updateable_${image_group}
+    )
+    if(images)
+      list(APPEND all_images "${images}")
+    endif()
+
+    # Include the DEFAULT_IMAGE if the DEFAULT group is used.
+    if(${image_group} STREQUAL "DEFAULT")
+      list(APPEND all_images ${DEFAULT_IMAGE})
+    endif()
+  endforeach()
+
+  set(${outvar} "${all_images}" PARENT_SCOPE)
+endfunction()
+
+# Usage:
 #   ExternalNcsVariantProject_Add(APPLICATION <name>
 #                                 VARIANT <name>
 #   )
