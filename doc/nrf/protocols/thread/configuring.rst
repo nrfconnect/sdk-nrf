@@ -88,7 +88,7 @@ In addition to the required configuration, you can configure other features such
 
 Depending on your configuration needs, you can also set the following options:
 
-* :kconfig:option:`CONFIG_NET_SOCKETS` - This option enables API similar to BSD Sockets on top of the native Zephyr networking API.
+* :kconfig:option:`CONFIG_NET_SOCKETS` - This option enables an API similar to BSD Sockets on top of the native Zephyr networking API.
   This configuration is needed for managing networking protocols.
   This configuration is available only if Zephyr networking layer is enabled.
 * :kconfig:option:`CONFIG_OPENTHREAD_SHELL` - This option enables OpenThread CLI (see `OpenThread CLI Reference`_).

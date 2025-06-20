@@ -160,7 +160,7 @@ For example:
 See the :file:`samples/matter/common/src/app/matter_init.cpp` file for a usage example.
 
 Due to limited slots available in the KMU, the maximum number of Matter fabric is limited.
-The following table shows the all crypto materials used in Matter, the number of slots needed for each key and a Kconfig option that can be used to adjust the number of each key type:
+The following table shows all the crypto materials used in Matter, the number of slots needed for each key and a Kconfig option that can be used to adjust the number of each key type:
 
 .. list-table:: KMU slots used by Matter crypto materials
    :widths: auto
@@ -346,7 +346,7 @@ This operation requires two additional KMU slots to store the nonce and the auth
 If the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_DAC_PRIV_KEY_KMU_ENCRYPTED` Kconfig option is set to ``n``, then the DAC private key is stored in the KMU without encryption and utilizes two KMU slots.
 
 By default, the DAC private key occupies the last slots dedicated for application purposes.
-For the non-encrypted version, it occupies last two slots (178 and 179), and for the encrypted version, it occupies the last four slots (176-179).
+For the non-encrypted version, it occupies the last two slots (178 and 179), and for the encrypted version, it occupies the last four slots (176-179).
 You can change the default slots by setting the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_DAC_PRIV_KEY_KMU_SLOT` Kconfig option to the first slot number of the desired slots, making sure that all slots fit within the possible range.
 This means you can set it to slot numbers 0-176 for encrypted, or 0-178 for non-encrypted.
 To read more about KMU slots, see the :ref:`ug_nrf54l_crypto_kmu_slots` section of the :ref:`ug_nrf54l_cryptography` page, which details the KMU peripheral.
