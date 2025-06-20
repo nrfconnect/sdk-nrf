@@ -152,6 +152,6 @@ If you set the ``SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE`` Kconfig option to a PE
 If not, the build will use the default key named :file:`GENERATED_NON_SECURE_SIGN_KEY_PRIVATE.pem`, which is located in the build directory.
 Similarly, MCUboot uses the key file designated by the :Kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` option.
 
-At the end of the described process the :file:`keyfile.json` file is generated in the build directory.
+At the end of the described process, the :file:`keyfile.json` file is generated in the build directory.
 This file allows key provisioning to occur simultaneously with the flashing process.
 Alternatively, you can bypass the mentioned Kconfig options and manually place a custom :file:`keyfile.json` in the build directory.

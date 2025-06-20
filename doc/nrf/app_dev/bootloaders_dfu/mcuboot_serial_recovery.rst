@@ -27,7 +27,7 @@ Uploading image
 By default, uploading an image is targeted to the primary slot.
 You can load an image to other slots only if you have enabled the ``CONFIG_MCUBOOT_SERIAL_DIRECT_IMAGE_UPLOAD`` Kconfig option.
 To use progressive slot erasing during image upload, enable the ``CONFIG_BOOT_ERASE_PROGRESSIVELY`` Kconfig option.
-As a result, a device can receive images smoothly and can erase required part of a flash automatically.
+As a result, a device can receive images smoothly and can erase the required part of a flash automatically.
 
 Implementing serial recovery
 ****************************

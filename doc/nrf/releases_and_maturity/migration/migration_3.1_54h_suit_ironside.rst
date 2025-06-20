@@ -134,8 +134,8 @@ the script does the following:
   #. It extracts the address/value pairs from the ``PERIPHCONF`` section of the Zephyr ELF image.
   #. It generates two Intel HEX files:
 
-    * :file:`uicr.hex` - the new UICR entries
-    * :file:`periphconf.hex` - the MRAM-resident ``PERIPHCONF`` blob
+    * :file:`uicr.hex` - The new UICR entries
+    * :file:`periphconf.hex` - The MRAM-resident ``PERIPHCONF`` blob
 
 Both HEX files must be programmed alongside your firmware image.
 ``west flash`` handles this automatically.
