@@ -4,39 +4,26 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/delete-node/ &cpuapp_boot_partition;
 /delete-node/ &cpuapp_slot0_partition;
+/delete-node/ &cpurad_slot0_partition;
 /delete-node/ &cpuppr_code_partition;
 /delete-node/ &cpuflpr_code_partition;
+/delete-node/ &cpuapp_slot1_partition;
+/delete-node/ &cpurad_slot1_partition;
 
-&cpuapp_rx_partitions {
-	cpuapp_slot0_partition: partition@a6000 {
-		reg = <0xa6000 DT_SIZE_K(1140)>;
-	};
+&mram1x {
+	partitions {
+		slot0_partition: cpuapp_slot0_partition: partition@30000 {
+			reg = <0x30000 DT_SIZE_K(1140)>;
+		};
 
-	cpuppr_code_partition: partition@1c3000 {
-		reg = <0x1c3000 DT_SIZE_K(64)>;
-	};
+		cpuppr_code_partition: partition@121000 {
+			reg = <0x121000 DT_SIZE_K(64)>;
+		};
 
-	cpuflpr_code_partition: partition@1d3000 {
-		reg = <0x1d3000 DT_SIZE_K(48)>;
-	};
-};
-
-/delete-node/ &dfu_partition;
-/delete-node/ &storage_partition;
-
-&cpuapp_rw_partitions {
-	storage_partition: partition@1df000 {
-		reg = < 0x1df000 DT_SIZE_K(24) >;
-	};
-};
-
-/delete-node/ &cpurad_ram0x_region;
-&cpuapp_ram0x_region {
-	status = "okay";
-	reg = <0x2f010000 DT_SIZE_K(436)>;
-	ranges = <0x0 0x2f010000 0x6e000>;
-	cpuapp_data: memory@1000 {
-		reg = <0x1000 DT_SIZE_K(432)>;
+		cpuflpr_code_partition: partition@131000 {
+			reg = <0x131000 DT_SIZE_K(48)>;
+		};
 	};
 };
