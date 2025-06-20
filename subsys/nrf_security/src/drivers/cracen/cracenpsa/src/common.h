@@ -31,6 +31,20 @@
 #define CRACEN_X25519_KEY_SIZE_BYTES (32)
 #define CRACEN_X448_KEY_SIZE_BYTES   (56)
 
+/* Size of the workmem of the MGF1XOR subtask. */
+#define MGF1XOR_WORKMEM_SZ(digestsz) ((digestsz) + 4)
+
+/* Return a pointer to the part of workmem that is specific to RSA. */
+static inline uint8_t *cracen_get_rsa_workmem_pointer(uint8_t *workmem, size_t digestsz)
+{
+	return workmem + MGF1XOR_WORKMEM_SZ(digestsz);
+}
+
+static inline size_t cracen_get_rsa_workmem_size(size_t workmemsz, size_t digestsz)
+{
+	return workmemsz - MGF1XOR_WORKMEM_SZ(digestsz);
+}
+
 typedef struct {
 	uint8_t slot_number;
 	uint8_t owner_id;
@@ -117,7 +131,7 @@ psa_status_t cracen_ecc_check_public_key(const struct sx_pk_ecurve *curve,
  *
  * \return sxsymcrypt status code.
  */
-int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bool is_key_pair,
+int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey, bool is_key_pair,
 				 const unsigned char *key, size_t keylen, struct sx_buf *modulus,
 				 struct sx_buf *exponent);
 
@@ -133,8 +147,7 @@ int cracen_signature_get_rsa_key(struct si_rsa_key *rsa, bool extract_pubkey, bo
  * \retval SX_OK on success.
  * \retval SX_ERR_INVALID_PARAM if the ASN.1 integer cannot be extracted.
  */
-int cracen_signature_asn1_get_operand(unsigned char **p, const unsigned char *end,
-				      struct sx_buf *op);
+int cracen_signature_asn1_get_operand(uint8_t **p, const uint8_t *end, struct sx_buf *op);
 
 /**
  * @brief Use psa_generate_random up to generate a random number in the range [1, upperlimit).
@@ -301,3 +314,38 @@ int cracen_get_rnd_in_range(const uint8_t *n, size_t nsz, uint8_t *out);
  */
 psa_status_t cracen_ecc_reduce_p256(const uint8_t *input, size_t input_size, uint8_t *output,
 				    size_t output_size);
+
+/** Modular exponentiation (base^key mod n).
+ *
+ * This function is used by both the sign and the verify functions. Note: if the
+ * base is greater than the modulus, SilexPK will return the SX_ERR_OUT_OF_RANGE
+ * status code.
+ */
+int cracen_rsa_modexp(struct sx_pk_acq_req *pkreq, struct sx_pk_slot *inputs,
+		      struct cracen_rsa_key *rsa_key, uint8_t *base, size_t basez, int *sizes);
+
+
+/** Initialize an RSA key consisting of modulus and exponent. */
+#define CRACEN_KEY_INIT_RSA(mod, expon)                                                            \
+	(struct cracen_rsa_key)                                                                    \
+	{                                                                                          \
+		.cmd = SX_PK_CMD_MOD_EXP,
+		.slotmask = (1 | (1 << 2)),
+		.dataidx = 1, {mod, expon},
+	}
+
+/** Initialize an RSA CRT key consisting of 2 primes and derived values.
+ *
+ * The 2 primes (p and q) must comply with the rules laid out in
+ * the latest version of FIPS 186. This includes that the 2 primes must
+ * have the highest bit set in their most significant byte. The full
+ * key size in bits must be a multiple of 8.
+ */
+#define CRACEN_KEY_INIT_RSACRT(p, q, dp, dq, qinv)                                                 \
+	(struct cracen_rsa_key)                                                                    \
+	{                                                                                          \
+		.cmd = SX_PK_CMD_MOD_EXP_CRT,
+		.slotmask = (0x3 | (0x7 << 3)),
+		.dataidx = 2,
+		{p, q, dp, dq, qinv},
+	}

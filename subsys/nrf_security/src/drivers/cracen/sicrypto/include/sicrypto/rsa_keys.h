@@ -29,7 +29,7 @@ struct si_rsa_key {
 };
 
 /** Initialize an RSA key consisting of modulus and exponent. */
-#define SI_KEY_INIT_RSA(mod, expon)                                                                \
+#define SI_KEY_INIT_RSACRT(mod, expon)                                                             \
 	(struct si_rsa_key)                                                                        \
 	{                                                                                          \
 		.cmd = SX_PK_CMD_MOD_EXP, .slotmask = (1 | (1 << 2)), .dataidx = 1, {mod, expon},  \

@@ -37,20 +37,6 @@
 #include "final.h"
 #include "util.h"
 
-/* Size of the workmem of the MGF1XOR subtask. */
-#define MGF1XOR_WORKMEM_SZ(digestsz) ((digestsz) + 4)
-
-/* Return a pointer to the part of workmem that is specific to RSA OAEP. */
-static inline char *get_workmem_pointer(struct sitask *t, size_t digestsz)
-{
-	return t->workmem + MGF1XOR_WORKMEM_SZ(digestsz);
-}
-
-static inline size_t get_workmem_size(struct sitask *t, size_t digestsz)
-{
-	return t->workmemsz - MGF1XOR_WORKMEM_SZ(digestsz);
-}
-
 /* Modular exponentiation: base^key mod n */
 static int rsaes_oaep_start_modexp(struct sitask *t, const char *base, size_t basesz)
 {
