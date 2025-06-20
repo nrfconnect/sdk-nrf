@@ -55,6 +55,8 @@
     - suit.integration.*
     - suit-processor.integration.*
     - suit.unit.*
+    - dfu.dfu_target.suit.*
+    - drivers.flash.flash_ipuc
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
     - nrf52840dk/nrf52840
@@ -67,3 +69,34 @@
   platforms:
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-7878"
+
+- scenarios:
+    - sample.find_my.*
+    - test.find_my.*
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+  comment: "Needs alignment to work with IronSide SE"
+
+- scenarios:
+    - application.jwt.*
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+  comment: "Needs OTP service to be implemented in IronSide SE"
+
+- scenarios:
+    - sample.bluetooth.fast_pair.*
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+  comment: "Needs alignment to work with IronSide SE"
+
+- scenarios:
+    - applications.nrf_desktop.*
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+  comment: "Needs alignment to work with MCUBoot"
+
+- scenarios:
+    - drivers.counter.basic_api
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34187"
