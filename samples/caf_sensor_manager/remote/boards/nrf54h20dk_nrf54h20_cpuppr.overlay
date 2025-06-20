@@ -18,16 +18,16 @@
 		sample_size = <3>;
 		memory-region = <&ram3x_agg_area0>;
 	};
-};
 
-/* Place aggregator buffers in PPR memory region. */
-&cpuppr_ram3x_region {
-	cpuppr_code_data: memory@0 {
-		reg = <0x0 0xf200>;
-	};
+	reserved-memory {
+		/* Place aggregator buffers in PPR memory region. */
+		cpuppr_code_data: memory@2fc00000 {
+			reg = <0x2fc00000 0xf200>;
+		};
 
-	ram3x_agg_area0: memory@f200 {
-		reg = <0xf200 0x600>;
+		ram3x_agg_area0: memory@2fc0f200 {
+			reg = <0x2fc0f200 0x600>;
+		};
 	};
 };
 

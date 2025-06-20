@@ -69,10 +69,6 @@ See the following configuration example for the nRF54L15 SoC:
 
 	/ {
 		reserved-memory {
-			#address-cells = <1>;
-			#size-cells = <1>;
-			ranges;
-
 			softperiph_ram: memory@2003c000 {
 				reg = <0x2003c000 0x4000>;
 				ranges = <0 0x2003c000 0x4000>;
@@ -145,31 +141,35 @@ The following example configuration for the nRF54H20 SoC sets up the necessary p
 	/delete-node/ &cpuflpr_cpuapp_ipc_shm;
 	/delete-node/ &cpuapp_cpuflpr_ipc;
 
-	&ram21_region {
-		status = "okay";
-
-		softperiph_ram: memory@0 {
-			reg = <0 0x4000>;
-			ranges;
+	/ {
+		reserved-memory {
 			#address-cells = <1>;
 			#size-cells = <1>;
+			ranges;
 
-			sqspi: sqspi@3e00 {
-				compatible = "nordic,nrf-sqspi";
+			softperiph_ram: memory@2f890000 {
+				reg = <0x2f890000 0x4000>;
+				ranges;
 				#address-cells = <1>;
-				#size-cells = <0>;
-				reg = <0x3e00 0x200>;
-				zephyr,pm-device-runtime-auto;
-				memory-regions = <&sqspi_buffers>;
-			};
-		};
+				#size-cells = <1>;
 
-		sqspi_buffers: memory@4000 {
-			compatible = "zephyr,memory-region";
-			reg = <0x4000 0x4000>;
-			#memory-region-cells = <0>;
-			zephyr,memory-region = "SQSPI_BUFFERS";
-			zephyr,memory-attr = <DT_MEM_CACHEABLE>;
+				dut: sqspi: sqspi@3e00 {
+					compatible = "nordic,nrf-sqspi";
+					#address-cells = <1>;
+					#size-cells = <0>;
+					reg = <0x3e00 0x200>;
+					zephyr,pm-device-runtime-auto;
+					memory-regions = <&sqspi_buffers>;
+				};
+			};
+
+			sqspi_buffers: memory@2f894000 {
+				compatible = "zephyr,memory-region";
+				reg = <0x2f894000 0x4000>;
+				#memory-region-cells = <0>;
+				zephyr,memory-region = "SQSPI_BUFFERS";
+				zephyr,memory-attr = <DT_MEM_CACHEABLE>;
+			};
 		};
 	};
 
