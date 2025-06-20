@@ -88,6 +88,11 @@ struct mqtt_helper_conn_params {
 	struct mqtt_helper_buf device_id;
 	struct mqtt_helper_buf user_name;
 	struct mqtt_helper_buf password;
+
+	/** Name of the interface that the MQTT helper should be bound to.
+	 *  Leave as NULL if not specified.
+	 */
+	const char *if_name;
 };
 
 /** @brief Initialize the MQTT helper.

@@ -483,6 +483,7 @@ static int client_connect(struct mqtt_helper_conn_params *conn_params)
 	mqtt_client.will_message = &last_will_message;
 #endif
 
+	mqtt_client.transport.if_name = conn_params->if_name;
 #if defined(CONFIG_MQTT_LIB_TLS)
 	mqtt_client.transport.type      = MQTT_TRANSPORT_SECURE;
 #else
