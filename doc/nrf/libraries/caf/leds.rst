@@ -347,7 +347,7 @@ If the flag is not set, the sequence stops and the given LED effect ends.
 Power management events
 =======================
 
-If the :kconfig:option:`CONFIG_CAF_LEDS_PM_EVENTS` Kconfig option is enabled, the module can react to following power management events:
+If the :kconfig:option:`CONFIG_CAF_LEDS_PM_EVENTS` Kconfig option is enabled, the module can react to the following power management events:
 
 * ``power_down_event``
 * ``wake_up_event``

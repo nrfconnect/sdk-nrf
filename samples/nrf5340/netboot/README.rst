@@ -127,7 +127,7 @@ After programming the sample to your development kit, complete the following ste
       For testing purposes, use nRF Util to program the update image directly into the update slot.
 
 #. Reset the kit.
-#. Observe that the output includes the following lines indicating that the MCUBoot in the application core has read the update image and performed a firmware update of the network core:
+#. Observe that the output includes the following lines indicating that the MCUboot in the application core has read the update image and performed a firmware update of the network core:
 
    .. code-block:: console
 

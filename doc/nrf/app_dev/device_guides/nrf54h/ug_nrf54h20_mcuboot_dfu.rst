@@ -93,7 +93,7 @@ MCUboot supports various methods for updating firmware images.
 On the nRF54H platform, you can use :ref:`swap and direct-xip modes<ug_bootloader_main_config>`.
 
 For more information, see the :file:`samples/zephyr/subsys/mgmt/mcumgr/smp_svr` sample.
-This sample demonstrates how to configure DFU feature in both MCUBoot and user application in your project.
+This sample demonstrates how to configure DFU feature in both MCUboot and user application in your project.
 It uses Simple Management Protocol for DFU and querying device information from the application.
 
 The following build flavours are available:
@@ -152,7 +152,7 @@ Additional Information
 **********************
 
 You can test BLE-based FOTA samples with the `nRF Connect Device Manager`_.
-For DFU over a serial connection, use the :ref:`dfu_tools_mcumgr_cli` tool.
+For DFU over a serial connection, use the :ref:`dfu_tools_mcumgr_cli`.
 
 .. note::
    On the nRF54H20 SoC, Direct XIP mode uses a merged image slot that combines both application and radio core images.
