@@ -49,3 +49,17 @@ int emds_flash_init(struct emds_partition *partition)
 
 	return 0;
 }
+
+int emds_flash_erase_partition(const struct emds_partition *partition)
+{
+	const struct flash_area *fa = partition->fa;
+	int rc;
+
+	rc = flash_area_erase(fa, 0, fa->fa_size);
+	if (rc) {
+		LOG_ERR("Failed to erase flash area: %d", rc);
+		return rc;
+	}
+
+	return 0;
+}

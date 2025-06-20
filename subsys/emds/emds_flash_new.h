@@ -79,6 +79,17 @@ struct emds_snapshot_metadata {
  */
 int emds_flash_init(struct emds_partition *partition);
 
+/**
+ * @brief Erase the specified emergency data storage partition.
+ *
+ * This function erases the entire partition, preparing it for new data storage.
+ *
+ * @param partition Pointer to the emergency data storage partition structure.
+ *
+ * @retval 0 on success, negative errno code on fail.
+ */
+int emds_flash_erase_partition(const struct emds_partition *partition);
+
 #ifdef __cplusplus
 }
 #endif

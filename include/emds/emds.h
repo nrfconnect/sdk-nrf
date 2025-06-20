@@ -154,7 +154,8 @@ int emds_load(void);
  * This function clears the flash area for all previously stored data.
  *
  * @retval 0 Success
- * @retval -ERRNO errno code if error
+ * @retval -ECANCELED errno code if it was called before @ref emds_init
+ * @retval -EIO errno code if error occurs during erasure.
  */
 int emds_clear(void);
 
