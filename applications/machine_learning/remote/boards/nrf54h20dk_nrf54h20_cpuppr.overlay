@@ -14,18 +14,16 @@
 		memory-region = <&ram3x_agg_area0>;
 		status = "okay";
 	};
-};
 
-/*
- * Place aggregator buffers in PPR memory region.
- */
-&cpuppr_ram3x_region {
-	cpuppr_code_data: memory@0 {
-		reg = <0x0 0xf200>;
-	};
 
-	ram3x_agg_area0: memory@f200{
-		reg = <0xf200 0x600>;
+	reserved-memory {
+		cpuppr_code_data: memory@2fc00000 {
+			reg = <0x2fc00000 0xf200>;
+		};
+
+		ram3x_agg_area0: memory@2fc0f200 {
+			reg = <0x2fc0f200 0x600>;
+		};
 	};
 };
 
@@ -39,8 +37,8 @@
 			reg = <0x30000 0x82000>;
 		};
 
-		cpurad_slot0_partition: partition@82000 {
-			reg = <0xa2000 0x32000>;
+		cpurad_slot0_partition: partition@b2000 {
+			reg = <0xb2000 0x32000>;
 		};
 	};
 };
