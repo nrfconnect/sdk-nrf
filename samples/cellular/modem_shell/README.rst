@@ -947,7 +947,7 @@ Power measurements
 ==================
 
 You can perform power measurements using the `Power Profiler Kit II (PPK2)`_.
-See the documentation for instructions on how to setup the DK for power measurements.
+See the documentation for instructions on how to set up the DK for power measurements.
 The documentation shows, for example, how to connect the wires for both source meter and ampere meter modes.
 The same instructions are valid also when using a different meter.
 
