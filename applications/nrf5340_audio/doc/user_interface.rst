@@ -79,8 +79,6 @@ The application uses the following buttons on the supported development kit:
      |               +-----------------------------------------------------------------------------------------------------------+                                             |
      |               | Pressed on the gateway during playback multiple times: Changes the test tone frequency.                   |                                             |
      |               | The available values are 1000 Hz, 2000 Hz, and 4000 Hz.                                                   |                                             |
-     |               +-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
-     |               | Pressed on a BIS headset during playback: Change stream (different BIS), if more than one is available.   | :ref:`nrf53_audio_broadcast_sink_app`       |
      +---------------+-----------------------------------------------------------------------------------------------------------+---------------------------------------------+
      | **BTN 5**     | Long-pressed during startup: Clears the previously stored bonding information.                            | * :ref:`nrf53_audio_unicast_server_app`     |
      |               |                                                                                                           | * :ref:`nrf53_audio_unicast_client_app`     |

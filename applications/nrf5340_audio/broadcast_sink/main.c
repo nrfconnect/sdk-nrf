@@ -129,11 +129,7 @@ static void button_msg_sub_thread(void)
 			break;
 
 		case BUTTON_4:
-			ret = broadcast_sink_change_active_audio_stream();
-			if (ret) {
-				LOG_WRN("Failed to change active audio stream: %d", ret);
-			}
-
+			/* Unused button */
 			break;
 
 		case BUTTON_5:

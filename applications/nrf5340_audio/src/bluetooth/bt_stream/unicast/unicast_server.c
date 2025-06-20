@@ -455,6 +455,11 @@ static struct bt_bap_stream_ops stream_ops = {
 	.released = stream_released_cb,
 };
 
+int le_audio_concurrent_sync_num_get(void)
+{
+	return 1; /* Only one stream supported at the moment */
+}
+
 int unicast_server_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint32_t *bitrate,
 			      uint32_t *sampling_rate_hz, uint32_t *pres_delay_us)
 {

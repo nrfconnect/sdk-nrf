@@ -127,6 +127,13 @@ config AUDIO_SOURCE_I2S
 	bool "Use I2S as audio source"
 endchoice
 
+config AUDIO_HEADSET_STEREO
+	bool "Use stereo audio for headse [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	help
+	  Use stereo audio for the headset.
+	  If this is not selected, mono audio is used.
+
 choice AUDIO_HEADSET_CHANNEL
 	prompt "Headset audio channel assignment"
 	default AUDIO_HEADSET_CHANNEL_RUNTIME
@@ -347,13 +354,13 @@ menu "Stack sizes"
 
 config ENCODER_STACK_SIZE
 	int "Stack size for encoder thread"
-	default 11000 if AUDIO_BIT_DEPTH_16
-	default 21400 if AUDIO_BIT_DEPTH_32
+	default 15000 if AUDIO_BIT_DEPTH_16
+	default 28400 if AUDIO_BIT_DEPTH_32
 
 config AUDIO_DATAPATH_STACK_SIZE
 	int "Stack size for audio datapath thread"
-	default 7600 if AUDIO_BIT_DEPTH_16
-	default 14700 if AUDIO_BIT_DEPTH_32
+	default 11600 if AUDIO_BIT_DEPTH_16
+	default 22700 if AUDIO_BIT_DEPTH_32
 
 config BUTTON_MSG_SUB_STACK_SIZE
 	int "Stack size for button subscriber"
