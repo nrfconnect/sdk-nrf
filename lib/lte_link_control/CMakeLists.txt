@@ -13,5 +13,3 @@ zephyr_library_sources_ifdef(CONFIG_LTE_SHELL lte_lc_shell.c)
 
 add_subdirectory(common)
 add_subdirectory(modules)
-
-zephyr_linker_sources(RODATA lte_lc.ld)

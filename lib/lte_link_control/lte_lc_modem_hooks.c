@@ -138,19 +138,3 @@ static void on_modem_init(int err, void *ctx)
 	dns_fallback_set();
 #endif
 }
-
-#if defined(CONFIG_UNITY)
-void lte_lc_on_modem_cfun(int mode, void *ctx)
-#else
-NRF_MODEM_LIB_ON_CFUN(lte_lc_cfun_hook, lte_lc_on_modem_cfun, NULL);
-
-static void lte_lc_on_modem_cfun(int mode, void *ctx)
-#endif
-{
-	ARG_UNUSED(ctx);
-
-	STRUCT_SECTION_FOREACH(lte_lc_cfun_cb, e) {
-		LOG_DBG("CFUN monitor callback: %p", e->callback);
-		e->callback(mode, e->context);
-	}
-}
