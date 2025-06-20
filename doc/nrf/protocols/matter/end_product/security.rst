@@ -160,7 +160,7 @@ For example:
 See the :file:`samples/matter/common/src/app/matter_init.cpp` file for a usage example.
 
 Due to limited slots available in the KMU, the maximum number of Matter fabric is limited.
-The following table shows the all crypto materials used in Matter, the number of slots needed for each key and a Kconfig option that can be used to adjust the number of each key type:
+The following table shows all the crypto materials used in Matter, the number of slots needed for each key and a Kconfig option that can be used to adjust the number of each key type:
 
 .. list-table:: KMU slots used by Matter crypto materials
    :widths: auto
