@@ -144,7 +144,9 @@ int emds_store(void);
  * previously stored data.
  *
  * @retval 0 Success
- * @retval -ERRNO errno code if error
+ * @retval -ECANCELED errno code if it was called before @ref emds_init
+ * @retval -ENOENT errno code if no valid snapshot was found in any partition
+ * @retval -EIO errno code if error during reading data
  */
 int emds_load(void);
 
