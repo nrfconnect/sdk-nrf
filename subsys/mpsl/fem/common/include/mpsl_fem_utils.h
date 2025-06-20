@@ -7,6 +7,8 @@
 #ifndef MPSL_FEM_UTILS_H__
 #define MPSL_FEM_UTILS_H__
 
+#include <zephyr/kernel.h>
+#include <zephyr/devicetree.h>
 #include <stdint.h>
 #include <stddef.h>
 #include <errno.h>
@@ -101,15 +103,5 @@ int mpsl_fem_utils_ppi_channel_alloc(uint8_t *ppi_channels, size_t size);
  * @param[inout]  p_fem_pin  Pointer to be filled with pin represented as an mpsl_fem_pin_t struct.
  */
 void mpsl_fem_extended_pin_to_mpsl_fem_pin(uint32_t pin_num, mpsl_fem_pin_t *p_fem_pin);
-
-#if !defined(_MPSL_FEM_CONFIG_API_NEXT)
-/** @brief Initializes the gpiote pin according to the configuration.
- *
- * @param[inout] gpiote_pin Configuration of gpiote pin.
- *
- * @return 0 in case of success, appropriate error code otherwise.
- */
-int mpsl_fem_utils_gpiote_pin_init(mpsl_fem_gpiote_pin_config_t *gpiote_pin);
-#endif /* !defined(_MPSL_FEM_CONFIG_API_NEXT) */
 
 #endif /* MPSL_FEM_UTILS_H__ */
