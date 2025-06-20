@@ -85,3 +85,87 @@ You can use one of the following options, depending on how you decide to build t
 To set the TX power output, use the ``CONFIG_BT_CTLR_TX_PWR_ANTENNA`` and ``CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB`` Kconfig options in :file:`applications/nrf5340_audio/sysbuild/ipc_radio/prj.conf`.
 
 See :ref:`ug_radio_fem` for more information about FEM in the |NCS|.
+
+.. _nrf53_audio_app_configuration_sd_card_playback:
+
+Enabling SD card playback
+*************************
+
+The SD Card Playback module allows you to play audio files directly from an SD card inserted into the nRF5340 Audio development kit.
+This feature supports both WAV and LC3 audio file formats and is compatible with all nRF5340 Audio applications.
+
+File format support requirements
+================================
+
+The SD card playback module supports both WAV and LC3 audio file formats.
+The audio files must meet the following requirements:
+
+* WAV files must be 48 kHz, 16-bit, mono PCM format.
+* LC3 files must be in the LC3 file format with proper headers.
+
+SD card requirements
+====================
+
+Make sure the SD card meets the following requirements:
+
+* Formatted with FAT32 or exFAT file system.
+* Audio files are placed in the root directory or subdirectories.
+
+Configuring SD card playback
+============================
+
+To enable SD card playback functionality, you need to set the following Kconfig options to ``y``:
+
+* ``CONFIG_NRF5340_AUDIO_SD_CARD_MODULE`` - to enable the SD card module; this option is enabled by default on nRF5340 Audio DK
+* ``CONFIG_SD_CARD_PLAYBACK`` - to enable the playback functionality
+
+Optionally, you can also set the following Kconfig options:
+
+.. list-table:: Optional SD card playback Kconfig options
+   :header-rows: 1
+
+   * - Kconfig option
+     - Description
+     - Default value
+   * - ``CONFIG_SD_CARD_PLAYBACK_STACK_SIZE``
+     - Stack size for the SD card playback thread
+     - 4096
+   * - ``CONFIG_SD_CARD_PLAYBACK_RING_BUF_SIZE``
+     - Size of the ring buffer for audio data
+     - 960
+   * - ``CONFIG_SD_CARD_PLAYBACK_THREAD_PRIO``
+     - Priority for the SD card playback thread
+     - 7
+
+Shell commands for SD card playback
+===================================
+
+When SD card playback is enabled, the following shell commands are available:
+
+* ``sd_card_playback play_wav <filename>.wav`` - Play a WAV file from the SD card
+* ``sd_card_playback play_lc3 <filename>.lc3`` - Play an LC3 file from the SD card
+* ``sd_card_playback list_files`` - List files in the current directory
+* ``sd_card_playback cd <directory>`` - Change to a different directory
+* ``sd_card_playback cd /`` - Return to the root directory
+
+To issue these commands, you can use the RTT or UART serial connection.
+
+Example usage
+=============
+
+To play audio from the SD card, complete the following steps:
+
+1. Configure the SD card playback module in your application as described in `Configuring SD card playback`_.
+#. :ref:`Build and run the application <nrf53_audio_app_building>`.
+#. Insert a properly formatted SD card with audio files into the development kit.
+#. Connect to the device using the RTT or UART serial connection.
+   For example, you can use the `Serial Terminal app`_ to connect to the device.
+#. In the terminal:
+
+   a. Issue the ``sd_card_playback list_files`` command to list the files on the SD card.
+   b. Issue the ``sd_card_playback play_wav <filename>.wav`` command to play a WAV file.
+   c. Issue the ``sd_card_playback play_lc3 <filename>.lc3`` command to play an LC3 file.
+
+   The audio from the SD card will be mixed with any existing audio stream and played through the device's audio output.
+#. To stop the playback, issue the ``sd_card_playback stop`` command.
+#. To exit the shell, issue the ``exit`` command.
