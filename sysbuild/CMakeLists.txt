@@ -737,6 +737,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     include_provision_hex()
   endif()
 
+  if(SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE OR SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE)
+    include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/generate_default_keyfile.cmake)
+  endif()
+
   if(SB_CONFIG_MATTER_OTA)
     include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/zephyr/ota-image_sysbuild.cmake)
     if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD OR SB_CONFIG_SUIT_MULTI_IMAGE_PACKAGE_BUILD)
