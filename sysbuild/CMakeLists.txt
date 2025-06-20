@@ -333,11 +333,12 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
           set_config_bool(mcuboot CONFIG_NORDIC_QSPI_NOR_XIP y)
         endif()
       else()
-        set(${DEFAULT_IMAGE}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
+        UpdateableImage_Get(images ALL)
+        foreach(image ${images})
+          set(${image}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
+        endforeach()
 
-        if(SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT)
-          set(mcuboot_secondary_app_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
-        elseif(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
+        if(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
           set(firmware_loader_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_firmware_loader.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
 
           set_target_properties(firmware_loader PROPERTIES
