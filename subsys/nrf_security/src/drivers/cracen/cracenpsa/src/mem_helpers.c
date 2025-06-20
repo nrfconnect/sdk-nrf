@@ -32,6 +32,18 @@ bool constant_memcmp_is_zero(const void *s1, size_t n)
 	return (x == 0);
 }
 
+int constant_memdiff_array_value(const uint8_t *a, uint8_t val, size_t sz)
+{
+	size_t i;
+	int r = 0;
+
+	for (i = 0; i < sz; i++) {
+		r |= a[i] ^ val;
+	}
+
+	return r;
+}
+
 bool memcpy_check_non_zero(void *dest, size_t dest_size, const void *src, size_t src_size)
 {
 	uint8_t *byte_ptr_dest = dest;
