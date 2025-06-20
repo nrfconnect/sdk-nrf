@@ -16,18 +16,22 @@ endif()
 set_shared(IMAGE ${IMAGE_NAME} PROPERTY ZEPHYR_BINARY_DIR ${ZEPHYR_BINARY_DIR})
 
 function(preprocess_pm_yml in_file out_file)
-  execute_process(
-    COMMAND ${CMAKE_C_COMPILER}
-    -x assembler-with-cpp
-    -nostdinc
-    -I${ZEPHYR_BINARY_DIR}/include/generated
-    ${NOSYSDEF_CFLAG}
-    -P
-    -E ${in_file}
-    -o ${out_file}
+
+  if(DEFINED CMAKE_DTS_PREPROCESSOR)
+    set(dts_preprocessor ${CMAKE_DTS_PREPROCESSOR})
+  else()
+    set(dts_preprocessor ${CMAKE_C_COMPILER})
+  endif()
+
+
+  zephyr_dt_preprocess(CPP ${dts_preprocessor}
+    INCLUDE_DIRECTORIES ${ZEPHYR_BINARY_DIR}/include/generated
+    EXTRA_CPPFLAGS -P ${NOSYSDEF_CFLAG}
+    SOURCE_FILES ${in_file}
+    OUT_FILE ${out_file}
     WORKING_DIRECTORY ${ZEPHYR_BINARY_DIR}
-    RESULT_VARIABLE ret
     )
+
   if(NOT "${ret}" STREQUAL "0")
     message(FATAL_ERROR "command failed with return code: ${ret}")
   endif()
