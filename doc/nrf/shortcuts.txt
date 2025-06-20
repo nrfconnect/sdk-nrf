@@ -95,7 +95,8 @@
 
 .. |legacy_crypto_deprecation_note| replace:: Legacy crypto toolbox APIs are marked as deprecated in the |NCS| version 2.8.0, and will be removed in a future version.
    Do not use the legacy crypto toolbox APIs prefixed with ``mbedtls_`` and the related configurations in any new designs.
-   Instead, use the equivalent functionality from PSA Crypto APIs.
+   Instead, use the :ref:`equivalent functionality from PSA Crypto APIs <ug_crypto_supported_features>`.
+   For information about configuring PSA Crypto API support, see :ref:`psa_crypto_support`.
 
 .. ### Thread usage shortcuts
 

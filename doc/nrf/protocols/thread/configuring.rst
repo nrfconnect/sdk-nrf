@@ -211,14 +211,26 @@ At the end of the configuration process, you can check the EUI-64 value using Op
 
 .. _ug_thread_configuring_crypto:
 
-Cryptography options
-====================
+Cryptographic support
+=====================
 
-By default, the OpenThread stack uses the :ref:`nrf_security` (nrf_security) for cryptographic operations.
-The module provides hardware-accelerated cryptographic functionality on selected Nordic Semiconductor SoCs as well as alternate software-based implementations of the Mbed TLS APIs
-To use `Mbed TLS`_, modify  the :kconfig:option:`OPENTHREAD_MBEDTLS_CHOICE` Kconfig option.
+By default, the OpenThread stack uses the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` for cryptographic operations.
+The support is implemented through the nRF Security library, which provides hardware-accelerated cryptographic functionality on selected Nordic Semiconductor SoCs.
+For more information, see the :ref:`psa_crypto_support` page.
 
-For more information about the configuration and usage of the :ref:`nrf_security`, see the :ref:`nrf_security_config` page.
+.. _ug_thread_configuring_mbedtls:
+
+Mbed TLS support
+================
+
+By default, the OpenThread stack uses the Mbed TLS library for X.509 certificate manipulation and the SSL protocols.
+The cryptographic support is handled through PSA Crypto API, as mentioned in `Cryptographic support`_.
+
+The `Mbed TLS`_ protocol features can be handled using the :kconfig:option:`OPENTHREAD_MBEDTLS_CHOICE` Kconfig option.
+
+.. note::
+   The :kconfig:option:`OPENTHREAD_MBEDTLS_CHOICE` Kconfig option has not been tested and is not recommended for use with the |NCS|.
+
 For more information about the open source Mbed TLS implementation in the |NCS|, see the `sdk-mbedtls`_ repository.
 
 .. _ug_thread_configure_commission:

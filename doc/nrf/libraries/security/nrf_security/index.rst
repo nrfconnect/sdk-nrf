@@ -25,6 +25,5 @@ This library conforms to the specific revision of Mbed TLS that is supplied thro
    :caption: Subpages:
 
    doc/configuration
-   doc/driver_config
    doc/backend_config
    doc/mbed_tls_header

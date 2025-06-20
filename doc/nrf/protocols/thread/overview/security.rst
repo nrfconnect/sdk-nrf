@@ -8,42 +8,23 @@ OpenThread security
    :depth: 2
 
 This section describes the security features of the |NCS| OpenThread implementation.
-By default, the OpenThread stack uses the :ref:`nrf_security` and `Platform Security Architecture (PSA)`_ for cryptographic operations.
+By default, the OpenThread stack uses the :ref:`PSA Certified Security Framework <ug_psa_certified_api_overview>` for cryptographic operations.
 
 Nordic OpenThread samples leverage :ref:`security` features supported in the |NCS| that can be divided into four major categories:
 
-* Secure processing environment
 * Cryptography
+* Secure processing environment
 * Secure storage
 * Platform Security Support
 
 For details, see the following sections.
 
-Secure processing environment
-*****************************
-
-Depending on the board, Thread samples can use a secure processing environment.
-
-nRF54L with Trusted Firmware-M (TF-M)
-=====================================
-
-On the nRF54L15 SoC, Thread samples support :ref:`security by separation <ug_tfm_security_by_separation>` with Trusted Firmware-M (TF-M).
-All cryptographic operations within the Thread stack are performed by utilizing the `Platform Security Architecture (PSA)`_ API and executed in the secure TF-M environment.
-The secure materials like Thread network key are stored in the TF-M secure storage using the :ref:`tfm_encrypted_its` module.
-
-To build a Thread sample with the TF-M support, :ref:`build <building>` for the :ref:`board target <app_boards_names>` with the ``/ns`` variant.
-
-For example, to build the Thread CLI sample for the nRF54L15 DK with the TF-M support, run the following command:
-
-.. code-block:: console
-
-   west build -p -b nrf54l15dk/nrf54l15/cpuapp/ns samples/openthread/cli
-
 Cryptography
 ************
 
-The Thread stack uses the PSA Cryptography API for cryptographic operations integrated in the :ref:`nrf_security` library.
-This library offers various configuration possibilities and backends that can be employed to implement :ref:`cryptographic operations <security_index>`.
+The Thread stack uses the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` for cryptographic operations integrated in the nRF Security library.
+Both :ref:`ug_crypto_architecture_implementation_standards` are supported, but using TF-M Crypto Service is only possible with Trusted Firmware-M (TF-M).
+See :ref:`psa_crypto_support` and :ref:`ug_crypto_supported_features` for more information.
 
 The Thread stack requires the following cryptographic operations:
 
@@ -55,6 +36,25 @@ The Thread stack requires the following cryptographic operations:
 * HKDF-SHA-256
 * PBKDF2-AES-CMAC-PRF-128
 * TLS-ECJPAKE (TSL 1.2)
+
+Secure processing environment
+*****************************
+
+Depending on the board target, Thread samples can use the :ref:`secure processing environment <ug_tfm_security_by_separation>` with Trusted Firmware-M (TF-M).
+
+nRF54L with Trusted Firmware-M (TF-M)
+=====================================
+
+On the nRF54L SoC, all cryptographic operations within the Thread stack are performed by utilizing the `Platform Security Architecture (PSA)`_ API and executed in the secure TF-M environment using the :ref:`TF-M Crypto Service implementation <ug_crypto_architecture_implementation_standards_tfm>`.
+The secure materials like Thread network key are stored in the TF-M secure storage using the :ref:`tfm_encrypted_its` module.
+
+To build a Thread sample with the TF-M support, :ref:`build <building>` for the :ref:`board target <app_boards_names>` with the ``/ns`` variant.
+
+For example, to build the Thread CLI sample for the nRF54L15 DK with the TF-M support, run the following command:
+
+.. code-block:: console
+
+   west build -p -b nrf54l15dk/nrf54l15/cpuapp/ns samples/openthread/cli
 
 Secure storage
 **************
@@ -210,4 +210,4 @@ This is a reference configuration that you can modify in the production firmware
        The CRACEN backend is used by default for any supported cryptographic operations.
        For all other operations not supported by CRACEN, the Oberon backend is used.
        To use the Oberon backend for specific cryptographic operations supported by both drivers, disable those operations in the CRACEN driver, as it takes priority when both are enabled.
-       See the :ref:`nrf_security_drivers` documentation for more information.
+       See the :ref:`crypto_drivers` documentation for more information.

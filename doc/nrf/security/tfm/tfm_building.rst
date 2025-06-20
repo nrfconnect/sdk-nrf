@@ -7,7 +7,7 @@ Building and configuring TF-M
    :local:
    :depth: 2
 
-TF-M is one of the images that are built as part of a multi-image application.
+TF-M is one of the images that are built as part of a :ref:`multi-image application <ug_tfm_building_secure_services>`.
 
 To add TF-M to your build, enable the :kconfig:option:`CONFIG_BUILD_WITH_TFM` configuration option by adding it to your :file:`prj.conf` file.
 
@@ -29,13 +29,30 @@ The following platforms are currently supported:
 * nRF5340
 * nRF91 Series
 
+.. _ug_tfm_building_secure_services:
+
 Enabling secure services
 ************************
 
-When using the :ref:`nrf_security`, if :kconfig:option:`CONFIG_BUILD_WITH_TFM` is enabled together with :kconfig:option:`CONFIG_NORDIC_SECURITY_BACKEND`, the TF-M secure image will enable the use of the hardware acceleration of Arm CryptoCell.
-In such case, the Kconfig configurations in the Nordic Security Backend control the features enabled through TF-M.
+To enable the secure services in TF-M, you must use the :ref:`TF-M Crypto Service PSA Crypto API implementation <ug_crypto_architecture_implementation_standards_tfm>`.
+
+Complete the following steps to enable the secure services in TF-M:
+
+1. Enable :kconfig:option:`CONFIG_NRF_SECURITY` to use the PSA Crypto APIs through :ref:`nRF Security <nrf_security>`.
+#. Enable the :kconfig:option:`CONFIG_BUILD_WITH_TFM` configuration option by adding it to your :file:`prj.conf` file.
+#. :ref:`Configure PSA Crypto API <psa_crypto_support>` Kconfig options.
+#. Build the application with :ref:`tfm_minimal_build` or :ref:`tfm_configurable_build`.
+
+After building the application, the TF-M secure image enables the use of the hardware acceleration, while the Kconfig configurations in the nRF Security subsystem control the features enabled in TF-M.
 
 See :ref:`tfm_partition_crypto` for more information about the TF-M Crypto partition.
+
+.. note::
+   Depending on the implementation you are using, the |NCS| build system uses different versions of the PSA Crypto API.
+
+   .. ncs-include:: ../psa_certified_api_overview.rst
+      :start-after: psa_crypto_support_tfm_build_start
+      :end-before: psa_crypto_support_tfm_build_end
 
 .. _tfm_minimal_build:
 

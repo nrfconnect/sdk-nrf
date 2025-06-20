@@ -41,7 +41,7 @@ See :ref:`thread_device_types` for more information on device types, and :ref:`t
 nRF54L15 DK RAM and flash memory requirements
 *********************************************
 
-The following tables present memory requirements for samples running on the :zephyr:board:`nrf54l15dk` with the cryptography support provided by the :ref:`nrf_security_drivers_cracen`.
+The following tables present memory requirements for samples running on the :zephyr:board:`nrf54l15dk` with the cryptography support provided by the :ref:`crypto_drivers_cracen`.
 
 .. include:: memory_tables/nrf54l15.txt
 
@@ -50,7 +50,7 @@ The following tables present memory requirements for samples running on the :zep
 nRF5340 DK RAM and flash memory requirements
 *********************************************
 
-The following tables present memory requirements for samples running on the :zephyr:board:`nrf5340dk` with the cryptography support provided by the :ref:`nrf_security_drivers_oberon`.
+The following tables present memory requirements for samples running on the :zephyr:board:`nrf5340dk` with the cryptography support provided by the :ref:`crypto_drivers_cracen`.
 
 .. include:: memory_tables/nrf5340.txt
 
@@ -59,6 +59,6 @@ The following tables present memory requirements for samples running on the :zep
 nRF52840 DK RAM and flash memory requirements
 *********************************************
 
-The following tables present memory requirements for samples running on the :zephyr:board:`nrf52840dk` with the cryptography support provided by the :ref:`nrf_security_drivers_oberon`.
+The following tables present memory requirements for samples running on the :zephyr:board:`nrf52840dk` with the cryptography support provided by the :ref:`crypto_drivers_cracen`.
 
 .. include:: memory_tables/nrf52840.txt

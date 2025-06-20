@@ -1,8 +1,8 @@
 .. _psa_crypto_support:
 .. _nrf_security_driver_config:
 
-Configuring nRF Security with PSA Crypto APIs
-#############################################
+Configuring PSA Crypto APIs
+###########################
 
 .. contents::
    :local:
@@ -11,23 +11,25 @@ Configuring nRF Security with PSA Crypto APIs
 .. psa_crypto_support_def_start
 
 The PSA Crypto in the |NCS| provides secure crypto operations through standardized :ref:`Platform Security Architecture <ug_psa_certified_api_overview>`.
-It implements the cryptographic features either in software, or using hardware accelerators.
-
-The PSA Crypto API is enabled by default when you enable nRF Security with the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option.
+Using :ref:`one of the two available implementations of the PSA Crypto API <ug_crypto_architecture_implementation_standards>`, the SDK implements the cryptographic features in software or using hardware accelerators, or both.
 
 .. psa_crypto_support_def_end
 
-.. psa_crypto_support_tfm_build_start
+.. note::
+   If you work with the Mbed TLS legacy crypto toolbox, see :ref:`legacy_crypto_support`.
 
-When you :ref:`build with TF-M<ug_tfm>`, `PSA Certified Crypto API`_ v1.0 is implemented.
-Otherwise, when you build without TF-M, v1.2 of the API is used.
+.. _psa_crypto_support_enable:
 
-.. psa_crypto_support_tfm_build_end
+Enabling PSA Crypto API
+***********************
 
-This page covers the configurations available when using the :ref:`nrf_security_drivers` compatible with the PSA Crypto API.
-If you work with the legacy crypto toolbox, see :ref:`legacy_crypto_support`.
+To use the PSA Crypto API in your application, enable the following Kconfig options depending on your chosen implementation:
 
-.. _nrf_security_drivers_config_single:
+* For the :ref:`Oberon PSA Crypto implementation <ug_crypto_architecture_implementation_standards_oberon>`, enable the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option.
+* For the :ref:`TF-M Crypto Service implementation <ug_crypto_architecture_implementation_standards_tfm>`, enable the :kconfig:option:`CONFIG_NRF_SECURITY` Kconfig option together with the :kconfig:option:`CONFIG_BUILD_WITH_TFM` Kconfig option.
+  For more information, see :ref:`ug_tfm_building_secure_services`.
+
+.. _psa_crypto_support_single_driver:
 
 Configuring single drivers
 **************************
@@ -64,7 +66,7 @@ The nrf_oberon driver may then be disabled by using the Kconfig option :kconfig:
    On nRF54L Series devices, CRACEN is the only source of entropy.
    Therefore, it is not possible to disable the :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_CRACEN` Kconfig option when the Zephyr entropy driver is enabled.
 
-.. _nrf_security_drivers_config_multiple:
+.. _psa_crypto_support_multiple_drivers:
 
 Configuring multiple drivers
 ****************************
@@ -106,3 +108,12 @@ You can enable a cryptographic feature or algorithm using `CONFIG_PSA_WANT_*`_ K
 For example, to enable the AES algorithm, set the :kconfig:option:`CONFIG_PSA_WANT_ALG_AES` Kconfig option.
 
 For a list of supported cryptographic features and algorithms and the Kconfig options to enable them, see :ref:`ug_crypto_supported_features`.
+
+Building PSA Crypto API
+***********************
+
+Depending on the implementation you are using, the |NCS| build system uses different versions of the PSA Crypto API.
+
+.. ncs-include:: ../psa_certified_api_overview.rst
+   :start-after: psa_crypto_support_tfm_build_start
+   :end-before: psa_crypto_support_tfm_build_end

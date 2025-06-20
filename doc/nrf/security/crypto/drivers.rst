@@ -40,8 +40,8 @@ The following figure shows the Oberon PSA Crypto implementation with the cryptog
 
 .. psa_crypto_driver_table_start
 
-The PSA Crypto implementations in the |NCS| use different driver libraries depending on hardware capabilities and user configuration.
-They are organized into hardware and software drivers, with hardware drivers taking precedence over software drivers, which provide fallback options.
+The cryptographic drivers are organized into hardware and software drivers.
+Hardware drivers take precedence over software drivers, which provide fallback options in case the hardware drivers are not available for a wanted cryptographic operation for a given hardware platform.
 
 .. list-table:: PSA Crypto drivers in the |NCS|
    :widths: auto
@@ -173,7 +173,7 @@ The following table provides an overview of the available directives and their c
 
 .. note::
 
-   For the complete overview of the available configuration options, see the :ref:`psa_crypto_support` page.
+   For the complete overview of the available configuration options, see the :ref:`ug_crypto_supported_features` page.
 
 The nRF Security subsystem checks the directives (set through the Kconfig options) to make the optimal driver selection.
 The subsystem combines the ``PSA_WANT_*`` and ``PSA_USE_*`` settings in Kconfig to make the appropriate driver selection for the cryptographic operation:
@@ -216,7 +216,7 @@ At the same time, it ensures all cryptographic operations are supported across d
 Driver chaining in the |NCS|
 ----------------------------
 
-Driver chaining is handled in the |NCS| in runtime when you :ref:`enable multiple drivers at the same time <nrf_security_drivers_config_multiple>` and then enable specific :ref:`nrf_oberon driver features in combination with driver features for hardware acceleration <nrf_security_drivers_config_features>`.
+Driver chaining is handled in the |NCS| in runtime when you :ref:`enable multiple drivers at the same time <psa_crypto_support_multiple_drivers>` and then enable specific :ref:`nrf_oberon driver features in combination with driver features for hardware acceleration <nrf_security_drivers_config_features>`.
 
 Common driver chains supported in the nrf_oberon driver include the following cases:
 
@@ -292,7 +292,7 @@ nrf_cc3xx driver configuration
 
 For configuration details, see the following pages:
 
-* :ref:`nrf_security_driver_config` (both drivers)
+* :ref:`psa_crypto_support` (both drivers)
 * :ref:`nrf_security_legacy_backend_config` (:ref:`nrf_cc3xx_mbedcrypto_readme` used as legacy backend)
 
 .. note::
@@ -324,7 +324,7 @@ For more information about both the driver and the hardware peripheral, see :ref
 CRACEN driver configuration
 ---------------------------
 
-For configuration details, see :ref:`nrf_security_driver_config`.
+For configuration details, see :ref:`psa_crypto_support`.
 
 .. _crypto_drivers_oberon:
 .. _nrf_security_drivers_oberon:
@@ -381,7 +381,7 @@ nrf_oberon driver configuration
 
 For configuration details, see the following pages:
 
-* :ref:`nrf_security_driver_config`
+* :ref:`psa_crypto_support`
 * :ref:`nrf_security_legacy_backend_config` (nrf_oberon used as legacy backend)
 
 API documentation
