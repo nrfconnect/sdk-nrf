@@ -388,8 +388,10 @@ static inline bool sx_aead_aesccm_nonce_size_is_valid(size_t noncesz)
  * @brief Free resources related to blkcipher operation.
  *
  * @param[out] c block cipher operation context
+ *
+ * @return sxsymcrypt status code.
  */
-void sx_blkcipher_free(struct sxblkcipher *c);
+int sx_blkcipher_free(struct sxblkcipher *c);
 #ifdef __cplusplus
 }
 #endif
