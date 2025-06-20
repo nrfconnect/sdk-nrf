@@ -73,13 +73,18 @@ static enum tfm_plat_err_t verify_debug_disabled(void)
 	return TFM_PLAT_ERR_SUCCESS;
 }
 
-int tfm_plat_provisioning_is_required(void)
+enum tfm_plat_err_t tfm_plat_provisioning_is_required(bool *provisioning_required)
 {
 	enum tfm_security_lifecycle_t lcs;
 
 	lcs = tfm_attest_hal_get_security_lifecycle();
 
-	return lcs == TFM_SLC_PSA_ROT_PROVISIONING;
+	if (provisioning_required == NULL) {
+		return TFM_PLAT_ERR_INVALID_INPUT;
+	}
+
+	*provisioning_required = (lcs == TFM_SLC_PSA_ROT_PROVISIONING);
+	return TFM_PLAT_ERR_SUCCESS;
 }
 
 enum tfm_plat_err_t tfm_plat_provisioning_perform(void)

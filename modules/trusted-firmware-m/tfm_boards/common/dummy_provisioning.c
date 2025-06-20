@@ -6,9 +6,14 @@
 
 #include "tfm_plat_provisioning.h"
 
-int tfm_plat_provisioning_is_required(void)
+enum tfm_plat_err_t tfm_plat_provisioning_is_required(bool *provisioning_required)
 {
-	return 0;
+	if (provisioning_required == NULL) {
+		return TFM_PLAT_ERR_INVALID_INPUT;
+	}
+
+	*provisioning_required = false;
+	return TFM_PLAT_ERR_SUCCESS;
 }
 
 enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
