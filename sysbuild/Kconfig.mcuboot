@@ -148,11 +148,6 @@ choice BOOT_SIGNATURE_TYPE
 
 endchoice
 
-config MCUBOOT_FPROTECT_ALLOW_COMBINED_REGIONS
-	bool
-	default y
-	depends on SOC_SERIES_NRF54LX && !SECURE_BOOT_APPCORE
-
 config BOOT_SIGNATURE_TYPE_PURE
 	bool "Verify signature directly over image"
 	depends on SOC_SERIES_NRF54LX

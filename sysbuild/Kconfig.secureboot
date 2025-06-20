@@ -339,14 +339,10 @@ config SECURE_BOOT_PUBLIC_KEY_FILES
 	  empty string then only the public key hash corresponding to the private signing key used
 	  to sign the image is included in provision.hex.
 
-config SUPPORT_SECURE_BOOT_BOOTCONF_LOCK_WRITES
-	bool
-	depends on !MCUBOOT_FPROTECT_ALLOW_COMBINED_REGIONS
-	default y if SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP
-
 config SECURE_BOOT_BOOTCONF_LOCK_WRITES
 	bool "Protect bootloader's NVM from writes"
-	depends on SUPPORT_SECURE_BOOT_BOOTCONF_LOCK_WRITES
+	depends on SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP
+	default y
 	help
 	  Sets RRAMC's BOOTCONF region protection to disable writes.
 
