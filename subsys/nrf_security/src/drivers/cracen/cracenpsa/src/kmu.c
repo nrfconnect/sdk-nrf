@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <nrfx.h>
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
 #include <cracen/lib_kmu.h>
 #include <nrf_security_mutexes.h>
-#include <nrfx.h>
 #include <psa/crypto.h>
 #include <stdint.h>
 #include <sxsymcrypt/internal.h>

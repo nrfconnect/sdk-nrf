@@ -9,10 +9,10 @@
 #include "platform_keys/platform_keys.h"
 #endif
 
+#include <hal/nrf_cracen.h>
 #include <cracen/lib_kmu.h>
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
-#include <hal/nrf_cracen.h>
 #include <nrfx.h>
 #include <sicrypto/rsa_keys.h>
 #include <sicrypto/sicrypto.h>
