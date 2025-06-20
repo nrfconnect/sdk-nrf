@@ -13,41 +13,42 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(channel_assignment, CONFIG_CHAN_ASSIGNMENT_LOG_LEVEL);
 
-static uint8_t channel_value;
+static uint32_t location_value;
 
-void channel_assignment_get(enum audio_channel *channel)
+void channel_assignment_get(enum bt_audio_location *location)
 {
-	*channel = (enum audio_channel)channel_value;
+	*location = (enum bt_audio_location)location_value;
 }
 
-#if CONFIG_AUDIO_HEADSET_CHANNEL_RUNTIME
-void channel_assignment_set(enum audio_channel channel)
+#if CONFIG_AUDIO_HEADSET_LOCATION_RUNTIME
+void channel_assignment_set(enum bt_audio_location location)
 {
 	int ret;
 
-	channel_value = channel;
+	location_value = location;
 
 	/* Try to write the channel value to UICR */
-	ret = uicr_channel_set(channel);
+	ret = uicr_channel_set(location);
 	if (ret) {
-		LOG_DBG("Unable to write channel value to UICR");
+		LOG_ERR("Unable to write channel value to UICR");
 	}
 }
-#endif /* CONFIG_AUDIO_HEADSET_CHANNEL_RUNTIME */
+#endif /* CONFIG_AUDIO_HEADSET_LOCATION_RUNTIME */
 
 static int channel_assignment_init(void)
 {
-#if CONFIG_AUDIO_HEADSET_CHANNEL_RUNTIME
-	channel_value = uicr_channel_get();
+#if CONFIG_AUDIO_HEADSET_LOCATION_RUNTIME
+	location_value = uicr_channel_get();
 
-	if (channel_value >= AUDIO_CH_NUM) {
+	if (location_value >= BT_AUDIO_LOCATION_RIGHT_SURROUND) {
 		/* Invalid value in UICR if UICR is not written */
-		channel_value = AUDIO_CHANNEL_DEFAULT;
+		location_value = AUDIO_CHANNEL_DEFAULT;
 	}
 #else
-	channel_value = CONFIG_AUDIO_HEADSET_CHANNEL;
-#endif /* CONFIG_AUDIO_HEADSET_CHANNEL_RUNTIME */
+	location_value = CONFIG_AUDIO_HEADSET_LOCATION;
+#endif /* CONFIG_AUDIO_HEADSET_LOCATION_RUNTIME */
 
+	LOG_WRN("Location value is 0x%x", location_value);
 	return 0;
 }
 

@@ -6,6 +6,7 @@
 
 #include "le_audio_rx.h"
 
+#include <stdlib.h>
 #include <zephyr/kernel.h>
 #include <nrfx_clock.h>
 
@@ -15,6 +16,7 @@
 #include "audio_system.h"
 #include "audio_sync_timer.h"
 #include "audio_defines.h"
+#include "le_audio.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(le_audio_rx, CONFIG_LE_AUDIO_RX_LOG_LEVEL);
@@ -30,7 +32,8 @@ static k_tid_t audio_datapath_thread_id;
 K_THREAD_STACK_DEFINE(audio_datapath_thread_stack, CONFIG_AUDIO_DATAPATH_STACK_SIZE);
 
 K_MSGQ_DEFINE(ble_q_rx, sizeof(struct net_buf *), CONFIG_BUF_BLE_RX_PACKET_NUM, sizeof(void *));
-NET_BUF_POOL_FIXED_DEFINE(ble_rx_pool, CONFIG_BUF_BLE_RX_PACKET_NUM, CONFIG_BT_ISO_RX_MTU,
+NET_BUF_POOL_FIXED_DEFINE(ble_rx_pool, CONFIG_BUF_BLE_RX_PACKET_NUM,
+			  (CONFIG_BT_ISO_RX_MTU * CONFIG_BT_AUDIO_CONCURRENT_RX_STREAMS_MAX),
 			  sizeof(struct audio_metadata), NULL);
 
 /* Callback for handling ISO RX */
@@ -38,17 +41,14 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 			      uint8_t channel_index)
 {
 	int ret;
-	struct net_buf *audio_frame;
-	static struct rx_stats rx_stats[AUDIO_CH_NUM];
+	static struct net_buf *audio_frame;
+	static struct rx_stats rx_stats[CONFIG_BT_AUDIO_CONCURRENT_RX_STREAMS_MAX];
 	static uint32_t num_overruns;
 	static uint32_t num_thrown;
 
 	if (!initialized) {
 		ERR_CHK_MSG(-EPERM, "Data received but le_audio_rx is not initialized");
 	}
-
-	/* Capture timestamp of when audio frame is received */
-	meta->data_rx_ts_us = audio_sync_timer_capture();
 
 	rx_stats[channel_index].recv_cnt++;
 
@@ -95,6 +95,46 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 		}
 	}
 
+	/* Check if we already have a frame with the same timestamp */
+	if (audio_frame != NULL) {
+		struct audio_metadata *existing_meta = net_buf_user_data(audio_frame);
+		uint32_t ref_ts_diff = abs((meta->ref_ts_us - existing_meta->ref_ts_us));
+
+		if (ref_ts_diff < SDU_REF_DELTA_MAX_ERR_US) {
+			/* We already have a frame with this timestamp, so we will add these
+			 * together if the locations are different
+			 */
+			if (existing_meta->locations != meta->locations) {
+				/* Add location to the joint audio frame */
+				existing_meta->locations |= meta->locations;
+				if (audio_frame_rx->len && !meta->bad_data) {
+					net_buf_add_mem(audio_frame, audio_frame_rx->data,
+							audio_frame_rx->len);
+				} else {
+					/* Increment len to account for bad_data */
+					net_buf_add(audio_frame, meta->bytes_per_location *
+									 metadata_num_ch_get(meta));
+				}
+
+				existing_meta->bad_data |= meta->bad_data;
+				goto check_send;
+			} else {
+				LOG_ERR("Received audio frame with same timestamp and same "
+					"locations, discarding new data");
+			}
+		} else {
+			/* We have a new frame with a different timestamp, so we will send the
+			 * old frame and create a new one
+			 */
+			ret = k_msgq_put(&ble_q_rx, (void *)&audio_frame, K_NO_WAIT);
+			ERR_CHK_MSG(ret, "Failed to put audio frame into queue");
+			audio_frame = NULL;
+		}
+	}
+
+	/* Capture timestamp of when audio frame is received */
+	meta->data_rx_ts_us = audio_sync_timer_capture();
+
 	audio_frame = net_buf_alloc(&ble_rx_pool, K_NO_WAIT);
 	if (audio_frame == NULL) {
 		LOG_WRN("Out of RX buffers");
@@ -102,13 +142,25 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 	}
 
 	if (audio_frame_rx->len && !meta->bad_data) {
+		/* Store the audio data in the net_buf */
 		net_buf_add_mem(audio_frame, audio_frame_rx->data, audio_frame_rx->len);
+	} else {
+		/* Increment len to account for bad_data */
+		net_buf_add(audio_frame, meta->bytes_per_location * metadata_num_ch_get(meta));
 	}
 
+	/* Store metadata from the first frame */
 	memcpy(net_buf_user_data(audio_frame), meta, sizeof(struct audio_metadata));
 
-	ret = k_msgq_put(&ble_q_rx, (void *)&audio_frame, K_NO_WAIT);
-	ERR_CHK_MSG(ret, "Failed to put audio frame into queue");
+check_send:
+	if (concurrent_sync_num_get() == metadata_num_ch_get(net_buf_user_data(audio_frame))) {
+		/* We have received all frames we are waiting for, pass data on to
+		 * the next module
+		 */
+		ret = k_msgq_put(&ble_q_rx, (void *)&audio_frame, K_NO_WAIT);
+		ERR_CHK_MSG(ret, "Failed to put audio frame into queue");
+		audio_frame = NULL;
+	}
 }
 
 /**

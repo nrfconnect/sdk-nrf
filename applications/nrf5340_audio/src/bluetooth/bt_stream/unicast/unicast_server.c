@@ -455,6 +455,11 @@ static struct bt_bap_stream_ops stream_ops = {
 	.released = stream_released_cb,
 };
 
+int concurrent_sync_num_get(void)
+{
+	return 1; /* Not yet supported */
+}
+
 int unicast_server_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint32_t *bitrate,
 			      uint32_t *sampling_rate_hz, uint32_t *pres_delay_us)
 {
@@ -626,7 +631,7 @@ int unicast_server_send(struct net_buf const *const audio_frame)
 		tx[num_active_streams].idx.lvl3 = i;
 
 		/* Set channel location */
-		tx[num_active_streams].audio_channel = AUDIO_MIC;
+		tx[num_active_streams].audio_channel = 0;
 
 		num_active_streams++;
 	}

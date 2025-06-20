@@ -15,6 +15,8 @@
 #include "sw_codec_select.h"
 #include "audio_defines.h"
 
+#define SDU_REF_DELTA_MAX_ERR_US (int)(CONFIG_AUDIO_FRAME_DURATION_US * 0.001)
+
 /**
  * @brief	Mixes a tone into the I2S TX stream.
  *
