@@ -22,9 +22,9 @@
  *
  * @return PSA_SUCCESS on success or a valid PSA status code.
  */
-psa_status_t cracen_cmac_setup(cracen_mac_operation_t *operation,
-			       const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
-			       size_t key_buffer_size);
+psa_status_t cracen_lm20_cmac_setup(cracen_mac_operation_t *op,
+				      const psa_key_attributes_t *attributes,
+				      const uint8_t *key_buffer, size_t key_buffer_size);
 
 /**
  * @brief Update a CMAC operation with input data.
@@ -38,8 +38,7 @@ psa_status_t cracen_cmac_setup(cracen_mac_operation_t *operation,
  *
  * @return PSA_SUCCESS on success or a valid PSA status code.
  */
-psa_status_t cracen_cmac_update(cracen_mac_operation_t *operation, const uint8_t *input,
-				size_t input_length);
+psa_status_t cracen_lm20_cmac_update(cracen_mac_operation_t *op, const uint8_t *data, size_t data_len);
 
 /**
  * @brief Finalize a CMAC operation.
@@ -52,4 +51,14 @@ psa_status_t cracen_cmac_update(cracen_mac_operation_t *operation, const uint8_t
  *
  * @return PSA_SUCCESS on success or a valid PSA status code.
  */
-psa_status_t cracen_cmac_finish(cracen_mac_operation_t *operation);
+psa_status_t cracen_lm20_cmac_finish(cracen_mac_operation_t *op);
+
+/**
+ * @brief Compute a CMAC in a single pass, without context switching.
+ *
+ * @note This function assumes the setup function is called first.
+ *
+ * @return PSA_SUCCESS on success or a valid PSA status code.
+ */
+psa_status_t cracen_lm20_cmac_compute(cracen_mac_operation_t *op, const uint8_t *input,
+				 size_t input_length, uint8_t *mac);
