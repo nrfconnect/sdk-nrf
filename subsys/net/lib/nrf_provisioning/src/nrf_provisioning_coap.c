@@ -440,6 +440,36 @@ static int generate_auth_path(char *buffer, size_t len)
 	return 0;
 }
 
+static int response_code_to_error(int code)
+{
+	switch (code) {
+	case COAP_RESPONSE_CODE_UNAUTHORIZED:
+		LOG_ERR("Device didn't send auth credentials");
+		return -EACCES;
+	case COAP_RESPONSE_CODE_FORBIDDEN:
+		LOG_ERR("Device provided wrong auth credentials");
+		return -EACCES;
+	case COAP_RESPONSE_CODE_BAD_REQUEST:
+		LOG_ERR("Bad request");
+		return -EINVAL;
+	case COAP_RESPONSE_CODE_NOT_ACCEPTABLE:
+		LOG_ERR("Not acceptable");
+		return -EINVAL;
+	case COAP_RESPONSE_CODE_NOT_FOUND:
+		LOG_ERR("Resource not found");
+		return -ENOENT;
+	case COAP_RESPONSE_CODE_INTERNAL_ERROR:
+		LOG_ERR("Internal server error");
+		return -EBUSY;
+	case COAP_RESPONSE_CODE_SERVICE_UNAVAILABLE:
+		LOG_ERR("Service unavailable");
+		return -EBUSY;
+	default:
+		LOG_ERR("Unknown response code %d", code);
+		return -ENOTSUP;
+	}
+}
+
 static int authenticate(struct coap_client *client, const char *auth_token,
 			struct nrf_provisioning_coap_context *const coap_ctx)
 {
@@ -464,18 +494,10 @@ static int authenticate(struct coap_client *client, const char *auth_token,
 
 	LOG_DBG("Response code %d", coap_ctx->code);
 	if (coap_ctx->code != COAP_RESPONSE_CODE_CREATED) {
-		if (coap_ctx->code == COAP_RESPONSE_CODE_INTERNAL_ERROR ||
-		    coap_ctx->code == COAP_RESPONSE_CODE_SERVICE_UNAVAILABLE) {
-			return -EBUSY;
-		} else if (coap_ctx->code == COAP_RESPONSE_CODE_UNAUTHORIZED ||
-			   coap_ctx->code == COAP_RESPONSE_CODE_FORBIDDEN) {
-			LOG_ERR("Unauthorized, code %d", coap_ctx->code);
-			return -EACCES;
-		} else if (coap_ctx->code < 0) {
+		if (coap_ctx->code < 0) {
 			return coap_ctx->code;
 		}
-		LOG_ERR("Unknown result code %d", coap_ctx->code);
-		return -ENOTSUP;
+		return response_code_to_error(coap_ctx->code);
 	}
 
 	return 0;
@@ -531,17 +553,10 @@ static int send_response(struct coap_client *client,
 
 	LOG_DBG("Response code %d", coap_ctx->code);
 	if (coap_ctx->code != COAP_RESPONSE_CODE_CHANGED) {
-		if (coap_ctx->code == COAP_RESPONSE_CODE_INTERNAL_ERROR ||
-		    coap_ctx->code == COAP_RESPONSE_CODE_SERVICE_UNAVAILABLE) {
-			return -EBUSY;
-		} else if (coap_ctx->code == COAP_RESPONSE_CODE_BAD_REQUEST) {
-			LOG_ERR("Bad request");
-			return -EINVAL;
-		} else if (coap_ctx->code < 0) {
+		if (coap_ctx->code < 0) {
 			return coap_ctx->code;
 		}
-		LOG_ERR("Unknown result code %d", coap_ctx->code);
-		return -ENOTSUP;
+		return response_code_to_error(coap_ctx->code);
 	}
 
 	return 0;
@@ -667,24 +682,8 @@ int nrf_provisioning_coap_req(struct nrf_provisioning_coap_context *const coap_c
 			}
 			nrf_provisioning_codec_teardown();
 			continue;
-		} else if (coap_ctx->code == COAP_RESPONSE_CODE_UNAUTHORIZED) {
-			LOG_ERR("Unauthorized");
-			ret = -EACCES;
-		} else if (coap_ctx->code == COAP_RESPONSE_CODE_INTERNAL_ERROR) {
-			LOG_ERR("Internal error");
-			ret = -EBUSY;
-		} else if (coap_ctx->code == COAP_RESPONSE_CODE_NOT_ACCEPTABLE) {
-			LOG_ERR("Not acceptable");
-			ret = -EINVAL;
-		} else if (coap_ctx->code == COAP_RESPONSE_CODE_FORBIDDEN) {
-			LOG_ERR("Forbidden");
-			ret = -EACCES;
-		} else if (coap_ctx->code == COAP_RESPONSE_CODE_BAD_REQUEST) {
-			LOG_ERR("Bad request");
-			ret = -EINVAL;
 		} else {
-			LOG_ERR("Unknown response code %d", coap_ctx->code);
-			ret = -ENOTSUP;
+			ret = response_code_to_error(coap_ctx->code);
 		}
 		break;
 	}
