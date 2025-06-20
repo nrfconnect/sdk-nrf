@@ -9,6 +9,7 @@
 #include "slm_at_socket.h"
 #include "slm_uart_handler.h"
 #include "slm_util.h"
+#include "slm_ctrl_pin.h"
 #if defined(CONFIG_SLM_PPP)
 #include "slm_ppp.h"
 #endif
@@ -509,7 +510,7 @@ static int slm_at_send_indicate(const uint8_t *data, size_t len,
 
 		pm_device_state_get(slm_uart_dev, &state);
 		if (state != PM_DEVICE_STATE_ACTIVE) {
-			slm_indicate();
+			slm_ctrl_pin_indicate();
 		}
 	}
 
