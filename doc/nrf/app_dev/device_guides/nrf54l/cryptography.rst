@@ -369,7 +369,7 @@ Enabling support for the Encrypted key usage scheme looks as shown in the follow
    CONFIG_PSA_WANT_ALG_SP800_108_COUNTER_CMAC=y
    CONFIG_PSA_WANT_ALG_GCM=y
 
-The configuration is enabling the key type (AES) and the key size (256 bits) supported by the Encrypted usage scheme as explained in the :ref:`ug_nrf54l_crypto_kmu_supported_key_types` section, and in addition enabling the following :ref:`cryptographic features <nrf_security_driver_config>` supported by the CRACEN driver:
+The configuration is enabling the key type (AES) and the key size (256 bits) supported by the Encrypted usage scheme as explained in the :ref:`ug_nrf54l_crypto_kmu_supported_key_types` section, and in addition enabling the following :ref:`cryptographic features <ug_crypto_supported_features>` supported by the CRACEN driver:
 
 * Cipher mode: AES ECB (Electronic CodeBook) mode, no padding
 * Message Authentication Code (MAC) cipher: cipher-based MAC (CMAC) cipher

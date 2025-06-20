@@ -64,6 +64,13 @@ Both are based on the `sdk-oberon-psa-crypto`_ library, which offers a lightweig
 
    PSA Crypto API implementations in the |NCS|
 
+.. note::
+   Depending on the implementation you are using, the |NCS| build system uses different versions of the PSA Crypto API.
+
+   .. ncs-include:: ../psa_certified_api_overview.rst
+      :start-after: psa_crypto_support_tfm_build_start
+      :end-before: psa_crypto_support_tfm_build_end
+
 .. _ug_crypto_architecture_implementation_standards_oberon:
 
 Oberon PSA Crypto implementation
