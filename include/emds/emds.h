@@ -149,12 +149,16 @@ int emds_store(void);
 int emds_load(void);
 
 /**
- * @brief Clear flash area from the emergency data storage.
+ * @brief Clear flash areas allocated for the emergency data storage.
  *
- * This function clears the flash area for all previously stored data.
+ * This function erases all the flash areas allocated for the emergency data.
+ * Calling of this API is optional for emergency data storage working algorithms,
+ * since emds takes care of erasing the flash areas before storing data if
+ * it is required.
  *
  * @retval 0 Success
- * @retval -ERRNO errno code if error
+ * @retval -ECANCELED errno code if it was called before @ref emds_init
+ * @retval -EIO errno code if error occurs during erasure.
  */
 int emds_clear(void);
 
