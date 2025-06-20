@@ -16,6 +16,9 @@ target_sources_ifdef(CONFIG_DESKTOP_HID_KEYMAP
 target_sources_ifdef(CONFIG_DESKTOP_HWID
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hwid.c)
 
+target_sources_ifdef(CONFIG_DESKTOP_KEYS_STATE
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/keys_state.c)
+
 target_sources_ifdef(CONFIG_DESKTOP_ADV_PROV_UUID16_ALL
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/bt_le_adv_prov_uuid16.c)
 
