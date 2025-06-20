@@ -10,7 +10,7 @@
 	/* Configure DTS nodes used for USB next HID support. */
 	hid_dev_0: hid_dev_0 {
 		compatible = "zephyr,hid-device";
-		interface-name = "HID0";
+		label = "HID0";
 		protocol-code = "keyboard";
 		in-polling-period-us = <1000>;
 		in-report-size = <64>;
