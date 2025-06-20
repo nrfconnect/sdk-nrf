@@ -200,9 +200,18 @@ int emds_store(void)
 
 int emds_clear(void)
 {
+	bool failed = false;
+
 	if (!emds_initialized) {
 		return -ECANCELED;
 	}
 
-	return 0;
+	for (int i = 0; i < PARTITIONS_NUM_MAX; i++) {
+		if (emds_flash_erase_partition(&partition[i])) {
+			LOG_ERR("Failed to erase partition %d:", i);
+			failed = true;
+		}
+	}
+
+	return failed ? -EIO : 0;
 }
