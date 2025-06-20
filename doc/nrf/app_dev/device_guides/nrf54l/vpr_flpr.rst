@@ -33,7 +33,7 @@ However, the application core build must incorporate an overlay that enables the
 Bootstrapping the FLPR core
 ===========================
 
-The |NCS| provides a FLPR snippet that adds an overlay required for bootstrapping the FLPR core.
+The |NCS| provides an FLPR snippet that adds an overlay required for bootstrapping the FLPR core.
 Snippet's primary function is to enable the code that transfers the FLPR code to the designated region (if necessary) and to initiate the FLPR core.
 
 When building for the ``nrf54l15dk/nrf54l15/cpuflpr`` target, a minimal sample is automatically loaded onto the application core.

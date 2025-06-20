@@ -176,7 +176,7 @@ These APIs will internally use this library to store persistent keys.
 Dependencies
 ************
 
-This library has dependencies to following libraries:
+This library has dependencies to the following libraries:
 
 * :ref:`lib_hw_unique_key`
 * :ref:`Zephyr's settings subsystem <zephyr:settings_api>`

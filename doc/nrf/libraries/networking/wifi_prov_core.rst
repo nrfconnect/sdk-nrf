@@ -76,7 +76,7 @@ The protocol defines four message types:
    FORGET_CONFIG       Erase the configuration and disconnect
    =================== ================================================ =============================
 
-* ``Response``: The message is for the target to provide the feedback on the result of an action to the configurator.
+* ``Response`` - The message is for the target to provide the feedback on the result of an action to the configurator.
 
   The following table details the fields of the ``Response`` message.
 
@@ -88,14 +88,14 @@ The protocol defines four message types:
    device_status       message                 Optional                 The status of the Wi-Fi on the target.
    =================== ======================= ======================== =======================================================================================
 
-  The ``status`` field can take one of following values:
+  The ``status`` field can take one of the following values:
 
-  * ``SUCCESS``: The operation is dispatched successfully.
-  * ``INVALID_ARGUMENT``: The argument is invalid.
-  * ``INVALID_PROTO``: The message cannot be encoded or decoded.
-  * ``INTERNAL_ERROR``: The operation cannot be dispatched properly.
+  * ``SUCCESS`` - The operation is dispatched successfully.
+  * ``INVALID_ARGUMENT`` - The argument is invalid.
+  * ``INVALID_PROTO`` - The message cannot be encoded or decoded.
+  * ``INTERNAL_ERROR`` - The operation cannot be dispatched properly.
 
-* ``Result``: The message is for the target to provide feedback on the Wi-Fi status to the configurator asynchronously.
+* ``Result``- The message is for the target to provide feedback on the Wi-Fi status to the configurator asynchronously.
 
   The following table details the fields of the ``Result`` message.
 

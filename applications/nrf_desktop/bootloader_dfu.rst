@@ -330,7 +330,7 @@ The serial recovery DFU is a feature of MCUboot and you need to enable it in the
 For the configuration details, see the :ref:`nrf_desktop_configuring_mcuboot_bootloader` section.
 
 To start the serial recovery DFU, the device should boot into recovery mode, in which the bootloader is waiting for a new image upload to start.
-In the serial recovery DFU mode, the new image is transferred through an USB CDC ACM class instance.
+In the serial recovery DFU mode, the new image is transferred through a USB CDC ACM class instance.
 The bootloader overwrites the existing application located on the primary slot with the new application image.
 If the transfer is interrupted, the device cannot boot the incomplete application, and the image upload must be performed again.
 

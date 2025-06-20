@@ -1362,7 +1362,7 @@ The SMP UUID is placed in the advertising data when Fast Pair advertising is in 
 Device Firmware Update (DFU)
 ============================
 
-This sample uses following components for the DFU functionality:
+This sample uses the following components for the DFU functionality:
 
 * :ref:`MCUboot bootloader <mcuboot:mcuboot_ncs>` (for supported board targets)
 * :ref:`zephyr:app-version-details`

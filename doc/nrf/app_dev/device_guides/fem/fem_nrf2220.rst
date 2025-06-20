@@ -4,7 +4,7 @@ Enabling support for nRF2220
 ############################
 
 The nRF2220 device is a range extender that you can use with nRF52, nRF53 and nRF54L Series devices.
-The nRF2220 features an GPIO and I2C interface.
+The nRF2220 features a GPIO and I2C interface.
 You can use it to fully control your front-end module.
 To use nRF2220, complete the following steps:
 
@@ -45,7 +45,7 @@ To use nRF2220, complete the following steps:
    The nRF2220 features also a built-in low-attenuation bypass circuit.
    Either the bypass or power amplifier will be used when transmitting RF signals depending on requests made by a protocol driver.
    The control of the output power of the SoC and decision to use either the bypass or the power amplifier occurs automatically.
-#. Add a following I2C bus device node on the devicetree file:
+#. Add the following I2C bus device node on the devicetree file:
 
    .. code-block:: devicetree
 
