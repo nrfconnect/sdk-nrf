@@ -32,6 +32,20 @@ int constant_memcmp(const void *s1, const void *s2, size_t n);
 bool constant_memcmp_is_zero(const void *s1, size_t n);
 
 /*!
+ * \brief Compare array to a constant value in constant time.
+ *
+ * This function checks whether all elements of the array a are equal to the given value val,
+ * using constant time.
+ *
+ * \param[in] a   Pointer to the array.
+ * \param[in] val The value to compare against.
+ * \param[in] sz  Number of elements in the array.
+ *
+ * \return 0 if all elements in a are equal to val, non-zero otherwise.
+ */
+int constant_memdiff_array_value(const uint8_t *a, uint8_t val, size_t sz);
+
+/*!
  * \brief A memory set that is not optimized out by the compiler.
  *
  * \param[in] dest		Pointer to the memory to set.
