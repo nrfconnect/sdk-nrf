@@ -9,23 +9,36 @@ Security
 
 Nordic Matter samples leverage :ref:`security` features supported in the |NCS| that can be divided into four major categories:
 
-* Secure processing environment
 * Cryptography
+* Secure processing environment
 * Trusted storage
 * Securing production devices
 
 In the following sections you will learn more details about each listed category.
 
+Cryptography
+************
+
+Depending on the networking backend, the |NCS| Matter samples currently use the following APIs to implement cryptographic operations:
+
+* :ref:`PSA Cryptography API <psa_crypto_support>` for Thread networking.
+  Both :ref:`ug_crypto_architecture_implementation_standards` are supported, but using TF-M Crypto Service is only possible with Trusted Firmware-M (TF-M).
+* :ref:`Legacy Mbed TLS crypto API <legacy_crypto_support>` for Wi-Fi® networking.
+  Support for PSA Cryptography API for the Wi-Fi backend is planned for a future release.
+
+Both APIs are integrated through the nRF Security library.
+For an overview of the PSA Crypto API, see the :ref:`ug_crypto_architecture` page.
+For an overview of the cryptography layer configuration supported for each |NCS| Matter-enabled platform, see the :ref:`matter_platforms_security_support` section.
+
 Secure processing environment
 *****************************
 
-Depending on the board, Matter samples can use a secure processing environment.
+Depending on the board target, Matter samples can use the :ref:`secure processing environment <ug_tfm_security_by_separation>` with Trusted Firmware-M (TF-M).
 
 nRF54L with Trusted Firmware-M (TF-M)
 =====================================
 
-On the nRF54L SoC, Matter samples support :ref:`security by separation <ug_tfm_security_by_separation>` with Trusted Firmware-M (TF-M).
-All cryptographic operations within the Matter stack are performed by utilizing the `Platform Security Architecture (PSA)`_ API and executed in the secure TF-M environment.
+On the nRF54L SoC, all cryptographic operations within the Matter stack are performed by utilizing the `Platform Security Architecture (PSA)`_ API and executed in the secure TF-M environment using the :ref:`TF-M Crypto Service implementation <ug_crypto_architecture_implementation_standards_tfm>`.
 The secure materials like Matter Session keys and other keys, except for the DAC private key, are stored in the TF-M secure storage using the :ref:`tfm_encrypted_its` module.
 Matter samples use the full TF-M library, so you cannot use the :ref:`tfm_minimal_build` version of TF-M.
 
@@ -39,19 +52,6 @@ The recommended values are provided in the :ref:`ug_matter_hw_requirements_layou
 
 By default, the DAC private key is stored in the KMU storage while using TF-M.
 See the :ref:`matter_platforms_security_dac_priv_key_kmu` section for more information.
-
-Cryptography
-************
-
-Depending on the networking backend, the |NCS| Matter samples currently use the following APIs to implement cryptographic operations:
-
-* PSA Cryptography API for Thread networking.
-* Mbed TLS for Wi-Fi® networking.
-  Support for PSA Cryptography API for the Wi-Fi backend is planned for a future release.
-
-Both APIs are integrated in the :ref:`nrf_security` library.
-This library offers various configuration possibilities and backends that can be employed to implement :ref:`cryptographic operations <security_index>`.
-You can find an overview of the cryptography layer configuration supported for each |NCS| Matter-enabled platform in the :ref:`matter_platforms_security_support` section.
 
 Trusted storage
 ***************

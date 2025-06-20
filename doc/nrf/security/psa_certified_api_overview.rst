@@ -61,7 +61,7 @@ The following table provides an overview of the PSA Certified APIs support statu
      - Latest version supported
    * - `PSA Certified Crypto API`_
      - Supported
-     - | `PSA Certified Crypto API 1.2.1`_ for :ref:`nRF54L cryptography <ug_nrf54l_cryptography>` and :ref:`nrf_security` builds without TF-M
+     - | `PSA Certified Crypto API 1.2.1`_ for :ref:`nRF54L cryptography <ug_nrf54l_cryptography>` and PSA Crypto API builds without TF-M
        | `PSA Certified Crypto API 1.0.0`_ for builds with TF-M
    * - `PSA Certified Attestation API`_
      - Supported
@@ -85,7 +85,7 @@ For definitions of the PSA Crypto API functions, see `crypto.h`_.
 Among the advantages of the PSA Crypto API are the following:
 
 * The PSA Crypto API is a single API for all cryptographic drivers, which means that you can use the same functions for the nRF52840, nRF5340, nRF54L15, and nRF9160 devices, as well as future ones.
-  The API will work for applications with and without Trusted Firmware-M.
+  The API will work for applications with and without Trusted Firmware-M (TF-M).
 
 * The PSA Crypto API will automatically select cryptographic libraries based on project configurations.
   This way, the codebase for cryptography can easily be reused across multiple projects.
@@ -94,10 +94,12 @@ The PSA Crypto API is designed to be safe, lowering developers' possibility of i
 For example, the functions in the PSA Crypto API use opaque `Key Identifiers`_ to handle keys, so developers do not have to handle keys manually.
 See `Keystore Interface`_ for an overview.
 
+.. _ug_psa_certified_api_overview_crypto_ncs:
+
 PSA Crypto API in the |NCS|
 ===========================
 
-The Crypto API is used to request cryptographic operations in the |NCS|.
+The PSA Crypto API is used to request cryptographic operations in the |NCS|.
 It is mandatory for use in the |NCS|.
 
 Supported operations include the following:
@@ -107,14 +109,36 @@ Supported operations include the following:
 * Authenticated encryption
 * Signature generation and verification
 
+The PSA Crypto API has two implementations in the |NCS|:
+
+* :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>` - which provides a direct PSA Crypto API interface for applications that do not require TF-M.
+* :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`- which provides PSA Crypto API access through TF-M for applications that require enhanced security.
+
+Depending on the implementation you are using, the |NCS| build system uses different versions of the PSA Crypto API.
+
+.. psa_crypto_support_tfm_build_start
+
+.. list-table:: PSA Crypto API versions by implementation
+   :header-rows: 1
+   :widths: auto
+
+   * - Implementation
+     - `PSA Crypto API version <PSA Certified Crypto API_>`_
+   * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
+     - `v1.2.1 <PSA Certified Crypto API 1.2.1_>`_
+   * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
+     - `v1.0.0 <PSA Certified Crypto API 1.0.0_>`_
+
+.. psa_crypto_support_tfm_build_end
+
+Both implementations in the |NCS| can use different driver libraries, depending on hardware capabilities and user configuration.
+
 .. ncs-include:: crypto/drivers.rst
    :start-after: psa_crypto_driver_table_start
    :end-before: psa_crypto_driver_table_end
 
-See :ref:`nrf_security_drivers` for a list of supported functionalities.
-For specific cryptographic operations, the PSA Crypto API uses :ref:`the library configured <nrf_security_drivers>` for the given operation.
-
-See :ref:`crypto_samples` for usage examples.
+For specific cryptographic operations, the PSA Crypto API uses :ref:`the driver configured <psa_crypto_support>` for the given operation.
+See :ref:`ug_crypto_supported_features` for a list of supported functionalities for each driver and :ref:`crypto_samples` for usage examples.
 
 .. _ug_psa_certified_api_overview_attestation:
 
