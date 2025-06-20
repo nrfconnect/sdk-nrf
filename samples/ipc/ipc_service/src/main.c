@@ -105,6 +105,11 @@ int main(void)
 
 	ipc0_instance = DEVICE_DT_GET(DT_NODELABEL(ipc0));
 
+#if defined(CONFIG_IPC_SERVICE_BACKEND_ICBMSG)
+	/* Wait a bit for the remote core to boot. */
+	k_msleep(100);
+#endif
+
 	ret = ipc_service_open_instance(ipc0_instance);
 	if ((ret < 0) && (ret != -EALREADY)) {
 		LOG_INF("ipc_service_open_instance() failure (%d)", ret);
