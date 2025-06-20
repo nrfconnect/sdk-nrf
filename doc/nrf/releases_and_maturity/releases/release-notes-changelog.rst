@@ -225,6 +225,7 @@ nRF5340 Audio
 * Added:
 
   * Experimental support for Audio on the nRF5340 DK, with LED state indications and button controls.
+  * The :ref:`nRF5340 Audio application API documentation <nrf5340_audio_api>` page.
 
 * Updated:
 
