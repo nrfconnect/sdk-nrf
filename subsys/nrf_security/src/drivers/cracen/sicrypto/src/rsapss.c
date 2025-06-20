@@ -61,22 +61,6 @@
 
 #define ZERO_PADDING_BYTES 8
 
-/* Size of the workmem of the MGF1XOR subtask. */
-#define MGF1XOR_WORKMEM_SZ(digestsz) ((digestsz) + 4)
-
-static int rsapss_sign_finish(struct sitask *t, struct siwq *wq);
-
-/* Return a pointer to the part of workmem that is specific to RSA PSS. */
-static inline char *get_workmem_pointer(struct sitask *t, size_t digestsz)
-{
-	return t->workmem + MGF1XOR_WORKMEM_SZ(digestsz);
-}
-
-static inline size_t get_workmem_size(struct sitask *t, size_t digestsz)
-{
-	return t->workmemsz - MGF1XOR_WORKMEM_SZ(digestsz);
-}
-
 /* return 0 if and only if all elements in array 'a' are equal to 'val' */
 static int diff_array_val(const char *a, char val, size_t sz)
 {
@@ -520,7 +504,6 @@ static void rsapss_sign_get_salt(struct sitask *t)
 	char *salt = wmem + SI_RSA_KEY_OPSZ(par->key) - par->emsz + masksz - par->saltsz;
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 
-	/* ask the PRNG task (part of the environment) to generate the salt */
 	status = cracen_get_random(NULL, salt, par->saltsz);
 	if (status != PSA_SUCCESS) {
 		si_task_mark_final(t, SX_ERR_UNKNOWN_ERROR);

@@ -46,6 +46,9 @@ endif()
 if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_ENCRYPTION_DRIVER)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/asymmetric.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/rsaes_pkcs1v15.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/rsaes_oaep.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/rsamgf1xor.c
   )
 endif()
 
@@ -57,6 +60,14 @@ if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER)
     ${CMAKE_CURRENT_LIST_DIR}/src/ed25519.c
     ${CMAKE_CURRENT_LIST_DIR}/src/hmac.c
     ${CMAKE_CURRENT_LIST_DIR}/src/rndinrange.c
+  )
+endif()
+
+if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_RSA)
+  list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/rsapss.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/rsassa_pkcs1v15.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/rsamgf1xor.c
   )
 endif()
 
@@ -97,6 +108,13 @@ if(CONFIG_PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER OR CONFIG_PSA_NEED_CRACEN_KMU_DR
     ${CMAKE_CURRENT_LIST_DIR}/src/ecdsa.c
     ${CMAKE_CURRENT_LIST_DIR}/src/ecc.c
     ${CMAKE_CURRENT_LIST_DIR}/src/rndinrange.c
+  )
+endif()
+
+if(CONFIG_PSA_NEED_CRACEN_KEY_TYPE_RSA_KEY_PAIR_GENERATE)
+  list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/rsa_keygen.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/coprime_check.c
   )
 endif()
 

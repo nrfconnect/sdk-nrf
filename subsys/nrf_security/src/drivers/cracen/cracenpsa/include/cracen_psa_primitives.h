@@ -384,10 +384,10 @@ struct cracen_pake_operation {
 };
 typedef struct cracen_pake_operation cracen_pake_operation_t;
 
-struct cracen_ecdsa_signature {
-	size_t sz; /** Total signature size, in bytes. */
-	uint8_t *r;   /** Signature element "r". */
-	uint8_t *s;   /** Signature element "s". */
+struct cracen_signature {
+	size_t sz;  /** Total signature size, in bytes. */
+	uint8_t *r; /** Signature element "r". */
+	uint8_t *s; /** Signature element "s". */
 };
 
 struct cracen_ecc_priv_key {
@@ -405,4 +405,54 @@ struct cracen_ecc_keypair {
 	struct cracen_ecc_priv_key priv_key;
 	struct cracen_ecc_pub_key pub_key;
 };
+
+struct cracen_rsa_key {
+	const struct sx_pk_cmd_def *cmd;
+	unsigned int slotmask;
+	unsigned int dataidx;
+	const struct sx_buf *elements[5];
+};
+
+/** Plaintext or ciphertext.
+ *
+ * This structure is used to represent plaintexts and ciphertexts. It is currently used with the
+<<<<<<< Updated upstream
+ * tasks that implement the RSAES-OAEP and RSAES-PKCS1-v1_5 encryption
+ * schemes.
+=======
+ * functions that implement the RSAES-OAEP and RSAES-PKCS1-v1_5 encryption schemes.
+>>>>>>> Stashed changes
+ */
+struct cracen_crypt_text {
+	uint8_t *addr;
+	size_t sz;
+};
+
+struct cracen_coprimecheck {
+	const uint8_t *a;
+	size_t asz;
+	const uint8_t *b;
+	size_t bsz;
+};
+
+struct cracen_rsacheckpq {
+	const uint8_t *pubexp;
+	size_t pubexpsz;
+	uint8_t *p;
+	uint8_t *q;
+	uint8_t candidatesz;
+	size_t mrrounds;
+};
+
+struct cracen_rsagenpq {
+	const uint8_t *pubexp;
+	size_t pubexpsz;
+	uint8_t *p;
+	uint8_t *q;
+	uint8_t *rndout;
+	uint8_t *qptr;
+	size_t candidatesz;
+	size_t attempts;
+};
+
 #endif /* CRACEN_PSA_PRIMITIVES_H */
