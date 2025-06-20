@@ -40,6 +40,16 @@
 			label = "Green LED 3";
 		};
 	};
+
+	reserved-memory {
+		cpuppr_code_data: memory@2fc00000 {
+			reg = <0x2fc00000 0xf200>;
+		};
+
+		ram3x_agg_area0: memory@2fc0f200 {
+			reg = <0x2fc0f200 0x600>;
+		};
+	};
 };
 
 &cpuppr_vevif {
@@ -50,27 +60,17 @@ ipc1: &cpuapp_cpuppr_ipc {
 	status = "okay";
 };
 
-&cpuppr_ram3x_region {
-	cpuppr_code_data: memory@0 {
-		reg = <0x0 0xf200>;
-	};
-
-	ram3x_agg_area0: memory@f200{
-		reg = <0xf200 0x600>;
-	};
-};
-
 /delete-node/ &cpuapp_slot0_partition;
 /delete-node/ &cpurad_slot0_partition;
 
 &mram1x {
 	partitions {
-		cpuapp_slot0_partition: slot0_partition: partition@30000 {
+		slot0_partition: cpuapp_slot0_partition: partition@30000 {
 			reg = <0x30000 0x82000>;
 		};
 
-		cpurad_slot0_partition: partition@82000 {
-		reg = < 0x82000 0x62000 >;
+		cpurad_slot0_partition: partition@b2000 {
+			reg = <0xb2000 0x32000>;
 		};
 	};
 };

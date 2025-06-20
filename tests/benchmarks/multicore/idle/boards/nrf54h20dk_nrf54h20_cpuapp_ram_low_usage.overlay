@@ -4,24 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-&cpurad_ram0x_region {
-	reg = <0x2f010000 0x1000>;
-	ranges = <0x0 0x2f010000 0x1000>;
-};
-
-&cpuapp_ram0x_region {
-	reg = <0x2f011000 0x21000>;
-	ranges = <0x0 0x2f011000 0x21000>;
-};
-
 &cpuapp_data {
-    reg = <0x1000 0x20000>;
+	reg = <0x2f000000 0x20000>;
 };
 
 &can120 {
-    status = "disabled";
+	status = "disabled";
 };
 
 &usbhs {
-    status = "disabled";
+	status = "disabled";
 };

@@ -40,10 +40,6 @@
 	status = "okay";
 };
 
-&cpuppr_ram3x_region {
-	status = "okay";
-};
-
 /* DTS nodes required for the STM standalone logging, imported from the nordic-log-stm snippet. */
 &tbm {
 	status = "okay";

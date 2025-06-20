@@ -13,21 +13,6 @@
 	};
 };
 
-&cpusec_cpurad_ipc {
-	status = "okay";
-};
-
-&cpurad_ram0x_region {
-	status = "okay";
-};
-
-&cpusec_bellboard {
-	status = "okay";
-};
-
-&cpurad_bellboard {
-	status = "okay";
-};
 
 &uart136 {
 	status = "okay";

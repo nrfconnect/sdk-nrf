@@ -4,22 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-&cpusec_cpuapp_ipc {
-	status = "okay";
-};
-
-&cpuapp_ram0x_region {
-	status = "okay";
-};
-
-&cpusec_bellboard {
-	status = "okay";
-};
-
-&cpuapp_bellboard {
-	status = "okay";
-};
-
 / {
 	eth-rtt {
 		compatible = "segger,eth-rtt";
