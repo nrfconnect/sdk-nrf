@@ -24,13 +24,6 @@ add_library(cracen_psa_driver STATIC
   ${cracen_driver_sources}
 )
 
-# The CRACEN sources have not been written to comply with this gcc
-# warning
-target_compile_options(cracen_psa_driver
-  PRIVATE
-    -Wno-pointer-sign
-    -Wno-unused-function
-)
 
 target_link_libraries(cracen_psa_driver
   PRIVATE
