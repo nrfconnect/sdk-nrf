@@ -28,7 +28,7 @@ manifest:
     - name: dragoon
       url-base: https://projecttools.nordicsemi.no/bitbucket/scm/drgn
     - name: memfault
-      url-base: https://github.com/memfault
+      url-base: https://github.com/noahp
     - name: babblesim
       url-base: https://github.com/BabbleSim
     - name: bosch
@@ -252,7 +252,7 @@ manifest:
       remote: throwtheswitch
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 1.18.0
+      revision: 1.26.0+kconfig-ext-module-remove
       remote: memfault
     - name: bsim
       repo-path: bsim_west
