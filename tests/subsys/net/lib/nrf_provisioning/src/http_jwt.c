@@ -88,8 +88,8 @@ void test_http_commands_auth_hdr_valid(void)
 	};
 
 	__cmock_rest_client_request_defaults_set_Ignore();
-	__cmock_modem_info_string_get_ExpectAnyArgsAndReturn(sizeof(mfw_version));
-	__cmock_modem_info_string_get_ReturnArrayThruPtr_buf(mfw_version, strlen(mfw_version) + 1);
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(mfw_version, sizeof(mfw_version));
 
 	__cmock_modem_jwt_generate_Stub(modem_jwt_generate_fake);
 
