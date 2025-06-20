@@ -48,10 +48,10 @@ CONFIG_NCS_SAMPLE_MATTER_SETTINGS_SHELL
 CONFIG_NCS_SAMPLE_MATTER_TEST_SHELL
   ``bool`` - Enable support for test-specific shell commands in Matter applications.
 
-.. _CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH:
+.. _CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH:
 
-CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH
-  ``string`` - Set the path under which ZAP files are located.
+CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH
+  ``string`` - Set the absolute path under which ZAP file is located.
 
 Diagnostics logs
 ================

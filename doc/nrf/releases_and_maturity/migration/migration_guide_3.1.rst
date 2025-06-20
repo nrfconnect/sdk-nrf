@@ -29,6 +29,18 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
+Matter
+------
+
+.. toggle::
+
+   * For the Matter samples and applications:
+
+      * The :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option has been introduced.
+        Previously, the path to the ZAP file was deduced based on hardcoded locations.
+        Now, the location is configured using :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option.
+        This change requires you to update your application ``prj.conf`` file by setting :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` to point the location of you ZAP file.
+
 nRF5340 Audio applications
 --------------------------
 
