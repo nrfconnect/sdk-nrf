@@ -3,10 +3,16 @@ sample:
   name: smp_svr_mini_boot
 common:
   sysbuild: true
-  build_only: true
   tags:
     - ci_samples_zephyr_smp_svr_mini_boot
+  harness: console
+  harness_config:
+    type: one_line
+    regex:
+      - "smp_sample: build time:"
 tests:
   sample.smp_svr_mini_boot:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE=y
