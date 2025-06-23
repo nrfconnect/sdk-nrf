@@ -23,7 +23,6 @@ LOG_MODULE_REGISTER(nrf_cloud_rest_cell_location_sample,
 		    CONFIG_NRF_CLOUD_REST_CELL_LOCATION_SAMPLE_LOG_LEVEL);
 
 #define BTN_NUM			1 /* See include/buttons_def.h */
-#define JITP_REQ_WAIT_SEC	10
 #define UI_REQ_WAIT_SEC		10
 #define NET_CONN_WAIT_MIN	15
 
@@ -113,11 +112,6 @@ static enum lte_lc_rrc_mode cur_rrc_mode = LTE_LC_RRC_MODE_IDLE;
 
 /* Flag to indicate that a neighbor cell measurement should be taken once RRC mode is idle */
 static bool rrc_idle_wait;
-
-#if defined(CONFIG_REST_CELL_LOCATION_DO_JITP)
-/* Flag to indicate if the user requested JITP to be performed */
-static bool jitp_requested;
-#endif
 
 /* Register a listener for application events, specifically a button event */
 static bool app_event_handler(const struct app_event_header *aeh);
@@ -311,53 +305,6 @@ static void modem_time_wait(void)
 	LOG_INF("Network time obtained");
 }
 
-#if defined(CONFIG_REST_CELL_LOCATION_DO_JITP)
-static void request_jitp(void)
-{
-	int err;
-
-	k_sem_reset(&button_press_sem);
-
-	LOG_INF("---> Press button %d to request just-in-time provisioning (JITP)",
-		BTN_NUM);
-	LOG_INF("     This only needs to be done once per device");
-	LOG_INF("     Waiting %d seconds...", JITP_REQ_WAIT_SEC);
-
-	err = k_sem_take(&button_press_sem, K_SECONDS(JITP_REQ_WAIT_SEC));
-	if (err == 0) {
-		jitp_requested = true;
-		LOG_INF("JITP will be performed after network connection is obtained");
-	} else {
-		if (err != -EAGAIN) {
-			LOG_ERR("k_sem_take error: %d", err);
-		}
-
-		LOG_INF("JITP will be skipped");
-	}
-}
-
-static void do_jitp(void)
-{
-	int err = 0;
-
-	LOG_INF("Performing JITP...");
-	err = nrf_cloud_rest_jitp(CONFIG_NRF_CLOUD_SEC_TAG);
-
-	if (err == 0) {
-		LOG_INF("Waiting 30s for cloud provisioning to complete...");
-		k_sleep(K_SECONDS(30));
-		k_sem_reset(&button_press_sem);
-		LOG_INF("Associate device with nRF Cloud account and press button %d when complete",
-			BTN_NUM);
-		(void)k_sem_take(&button_press_sem, K_FOREVER);
-	} else if (err == 1) {
-		LOG_INF("Device already provisioned");
-	} else {
-		LOG_ERR("Device provisioning failed");
-	}
-}
-#endif
-
 static void send_device_status(void)
 {
 	int err;
@@ -449,11 +396,6 @@ int init(void)
 
 	/* Inform the app event manager that this module is ready to receive events */
 	module_set_state(MODULE_STATE_READY);
-
-#if defined(CONFIG_REST_CELL_LOCATION_DO_JITP)
-	/* Present option for JITP via REST */
-	request_jitp();
-#endif
 
 	return 0;
 }
@@ -577,22 +519,45 @@ static void connect_to_network(void)
 	modem_time_wait();
 }
 
-static void check_credentials(void)
+static bool cred_check(struct nrf_cloud_credentials_status *const cs)
 {
-#if defined(CONFIG_NRF_CLOUD_CHECK_CREDENTIALS)
-	int err = nrf_cloud_credentials_configured_check();
+	int ret = 0;
 
-	if ((err == -ENOTSUP) || (err == -ENOPROTOOPT)) {
-		LOG_ERR("Required nRF Cloud credentials were not found");
-		LOG_INF("Install credentials and then reboot the device");
-		k_sleep(K_FOREVER);
-	} else if (err) {
-		LOG_ERR("nrf_cloud_credentials_configured_check() failed, error: %d", err);
-		LOG_WRN("Continuing without verifying that credentials are installed");
+	ret = nrf_cloud_credentials_check(cs);
+	if (ret) {
+		LOG_ERR("nRF Cloud credentials check failed, error: %d", ret);
+		return false;
 	}
-#else
-	LOG_DBG("nRF Cloud credentials check not enabled");
-#endif /* defined(CONFIG_NRF_CLOUD_CHECK_CREDENTIALS) */
+
+	/* Since this is a REST sample, we only need two credentials:
+	 *  - a CA for the TLS connections
+	 *  - a private key to sign the JWT
+	 */
+
+	if (!cs->ca || !cs->ca_aws || !cs->prv_key) {
+		LOG_WRN("Missing required nRF Cloud credential(s) in sec tag %u:", cs->sec_tag);
+	}
+	if (!cs->ca || !cs->ca_aws) {
+		LOG_WRN("\t-CA Cert");
+	}
+	if (!cs->prv_key) {
+		LOG_WRN("\t-Private Key");
+	}
+
+	return (cs->ca && cs->ca_aws && cs->prv_key);
+}
+
+static void await_credentials(void)
+{
+	struct nrf_cloud_credentials_status cs;
+
+	while (!cred_check(&cs)) {
+		LOG_INF("Waiting for credentials to be installed...");
+		LOG_INF("Press the reset button once the credentials are installed");
+		k_sleep(K_FOREVER);
+	}
+
+	LOG_INF("nRF Cloud credentials detected!");
 }
 
 int main(void)
@@ -609,16 +574,9 @@ int main(void)
 	}
 
 	/* Before connecting, ensure nRF Cloud credentials are installed */
-	check_credentials();
+	await_credentials();
 
 	connect_to_network();
-
-#if defined(CONFIG_REST_CELL_LOCATION_DO_JITP)
-	if (jitp_requested) {
-		/* Perform JITP via REST */
-		do_jitp();
-	}
-#endif
 
 	/* Send the device status which contains HW/FW version info and
 	 * details about the network connection.
