@@ -1458,7 +1458,8 @@ int lte_lc_psm_req(bool enable);
 int lte_lc_psm_get(int *tau, int *active_time);
 
 /**
- * Request modem to enable or disable proprietary Power Saving Mode (PSM).
+ * Request modem to enable or disable
+ * [proprietary Power Saving Mode](https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/nw_service/feaconf_set.html).
  *
  * The purpose of the proprietary PSM feature is to perform a PSM-like sleep when network does not
  * allow normal PSM usage. During proprietary PSM, modem will fall to sleep in the same way than it

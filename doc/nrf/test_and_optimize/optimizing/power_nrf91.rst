@@ -17,6 +17,8 @@ See the `Online Power Profiler user guide`_ for a basic overview of the tool and
 
 The following sections describe how you can use Online Power Profiler and other power profiling tools to optimize the power consumption in your nRF9160 DK.
 
+See the :ref:`cellular_psm` guide for more information on different power saving techniques.
+
 Cellular applications
 *********************
 
