@@ -764,6 +764,7 @@
 .. _`nRF91x1 Power saving mode setting`: https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/nw_service/cpsms.html
 .. _`nRF91x1 modem trace activation %XMODEMTRACE`: https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/mob_termination_ctrl_status/xmodemtrace.html
 .. _`nRF91x1 UICC deactivation %UICCPOWERSAVE`: https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/access_uicc/uiccpowersave.html
+.. _`nRF91x1 Feature configuration %FEACONF`: https://docs.nordicsemi.com/bundle/ref_at_commands_nrf91x1/page/REF/at_commands/nw_service/feaconf_set.html
 
 .. _`nRF54L15 Datasheet`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/keyfeatures_html5.html
 .. _`nRF54L15 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf54l15_dk/page/UG/nRF54L15_DK/intro/intro.html
