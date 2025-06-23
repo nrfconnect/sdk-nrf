@@ -5,86 +5,82 @@
  */
 
 #include <stdio.h>
-
 #include <zephyr/kernel.h>
+#include <zephyr/sys/reboot.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_ctrl.h>
-#include <zephyr/sys/reboot.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
-
 #include <modem/lte_lc.h>
 #include <net/nrf_provisioning.h>
-#include "nrf_provisioning_at.h"
+
+#if defined(CONFIG_NRF_CLOUD_COAP)
+#include <net/nrf_cloud_coap.h>
+#endif /* CONFIG_NRF_CLOUD_COAP */
 
 LOG_MODULE_REGISTER(nrf_provisioning_sample, CONFIG_NRF_PROVISIONING_SAMPLE_LOG_LEVEL);
 
-#define NETWORK_UP			BIT(0)
-#define NETWORK_DOWN			BIT(1)
-#define PROVISIONING_IDLE		BIT(2)
-#define NETWORK_IPV4_CONNECTED		BIT(3)
-#define NETWORK_IPV6_CONNECTED		BIT(4)
-#define NORMAL_REBOOT_S		    10
-#define PROVISIONING_IDLE_DELAY_S	3
-#define EVENT_MASK                                                                                 \
-	(NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED | NET_EVENT_L4_IPV6_CONNECTED |        \
+/* Macros used to subscribe to specific Zephyr NET management events. */
+#define CONN_LAYER_EVENT_MASK (NET_EVENT_CONN_IF_FATAL_ERROR)
+#define L4_EVENT_MASK										\
+	(NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED | NET_EVENT_L4_IPV6_CONNECTED |	\
 	 NET_EVENT_L4_IPV4_CONNECTED)
 
-static K_EVENT_DEFINE(prov_events);
+/* Macro called upon a fatal error, reboots the device. */
+#define FATAL_ERROR()					\
+	LOG_ERR("Fatal error! Rebooting the device.");	\
+	LOG_PANIC();					\
+	IF_ENABLED(CONFIG_REBOOT, (sys_reboot(0)))
 
-static bool provisioning_started;
+/* Zephyr NET management event callback structures. */
+static struct net_mgmt_event_callback l4_cb;
 
-static int modem_mode_cb(enum lte_lc_func_mode new_mode, void *user_data)
+/* Function used to connect to nRF Cloud CoAP after provisioning. */
+#if defined(CONFIG_NRF_CLOUD_COAP)
+static void coap_connect(void)
 {
-	enum lte_lc_func_mode fmode;
+	int ret;
 
-	ARG_UNUSED(user_data);
-
-	/* The nrf_provisioning library requires us to return the previous functional mode. */
-	if (lte_lc_func_mode_get(&fmode)) {
-		LOG_ERR("Failed to read modem functional mode");
-		return -EFAULT;
+	ret = nrf_cloud_coap_init();
+	if (ret) {
+		LOG_ERR("nrf_cloud_coap_init, error: %d", ret);
+		FATAL_ERROR();
+		return;
 	}
 
-	if (new_mode == fmode) {
-		LOG_DBG("Functional mode unchanged: %d", fmode);
-		return fmode;
+	LOG_INF("Connecting to nRF Cloud CoAP...");
+
+	ret = nrf_cloud_coap_connect(NULL);
+	if (ret == 0) {
+		LOG_INF("nRF Cloud CoAP connection successful");
+	} else if (ret == -EACCES || ret == -ENOEXEC) {
+		LOG_ERR("nRF Cloud CoAP connection failed, unauthorized");
+	} else {
+		LOG_WRN("nRF Cloud CoAP connection refused");
 	}
+}
+#endif /* CONFIG_NRF_CLOUD_COAP */
 
-	if (new_mode == LTE_LC_FUNC_MODE_NORMAL || new_mode == LTE_LC_FUNC_MODE_ACTIVATE_LTE) {
-		LOG_INF("Provisioning library requests normal mode");
+static void nrf_provisioning_callback(const struct nrf_provisioning_callback_data *event)
+{
+	int ret;
 
-		/* Reactivate LTE */
-		conn_mgr_all_if_connect(true);
+	switch (event->type) {
+	case NRF_PROVISIONING_EVENT_START:
+		LOG_INF("Provisioning started");
+		break;
+	case NRF_PROVISIONING_EVENT_STOP:
+		LOG_INF("Provisioning stopped");
+		break;
+	case NRF_PROVISIONING_EVENT_NEED_LTE_DEACTIVATED:
+		LOG_INF("nRF Provisioning requires device to deactivate network");
 
-		/* Wait for network readiness to be re-established before returning. */
-		LOG_DBG("Waiting for network up");
-		k_event_wait(&prov_events, NETWORK_IPV4_CONNECTED, false, K_FOREVER);
-		/* Wait extra 2 seconds for IPv6 negotiation */
-		k_event_wait(&prov_events, NETWORK_IPV6_CONNECTED, false, K_SECONDS(2));
+		ret = conn_mgr_all_if_disconnect(true);
+		if (ret) {
+			LOG_ERR("conn_mgr_all_if_disconnect, error: %d", ret);
 
-		LOG_DBG("Network is up.");
-	}
-
-	if (new_mode == LTE_LC_FUNC_MODE_OFFLINE || new_mode == LTE_LC_FUNC_MODE_DEACTIVATE_LTE) {
-		LOG_INF("Provisioning library requests offline mode");
-
-		/* The provisioning library wants to install or generate credentials.
-		 * Deactivate LTE to allow this.
-		 */
-		conn_mgr_all_if_disconnect(true);
-
-		/* Note:
-		 * You could shut down both LTE by using
-		 * lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
-		 * But conn_mgr will interpret this as an unintended connectivity loss.
-		 * Using conn_mgr_all_if_disconnect lets conn_mgr know the LTE loss is intentional.
-		 */
-
-		/* Wait for network disconnection before returning. */
-		LOG_DBG("Waiting for network down.");
-		k_event_wait(&prov_events, NETWORK_DOWN, false, K_FOREVER);
-
-		LOG_DBG("Network is down.");
+			FATAL_ERROR();
+			return;
+		}
 
 		/* conn_mgr disables only LTE connectivity. GNSS may remain active.
 		 * Ensure GNSS is also disabled before storing credentials to the modem.
@@ -93,138 +89,136 @@ static int modem_mode_cb(enum lte_lc_func_mode new_mode, void *user_data)
 
 		if (lte_lc_func_mode_get(&current_mode)) {
 			LOG_ERR("Failed to read modem functional mode");
-			return -EFAULT;
+
+			FATAL_ERROR();
+			return;
 		}
+
 		if (current_mode == LTE_LC_FUNC_MODE_ACTIVATE_GNSS) {
 			LOG_WRN("GNSS is still active. Deactivating GNSS.");
+
 			if (lte_lc_func_mode_set(LTE_LC_FUNC_MODE_DEACTIVATE_GNSS)) {
 				LOG_ERR("Failed to deactivate GNSS");
-				return -EFAULT;
+
+				FATAL_ERROR();
+				return;
 			}
 		}
-	}
 
-	return fmode;
-}
-
-static void reboot_device(void)
-{
-	/* Disconnect from network gracefully */
-	conn_mgr_all_if_disconnect(true);
-
-	/* We must do this before we reboot, otherwise we might trip LTE boot loop
-	 * prevention, and the modem will be temporarily disable itself.
-	 */
-	(void)lte_lc_power_off();
-
-	LOG_PANIC();
-	k_sleep(K_SECONDS(NORMAL_REBOOT_S));
-	sys_reboot(SYS_REBOOT_COLD);
-}
-
-/* Delayable work item for marking provisioning as idle. */
-static void mark_provisioning_idle_work_fn(struct k_work *work)
-{
-	ARG_UNUSED(work);
-
-	LOG_INF("Provisioning is idle.");
-	k_event_post(&prov_events, PROVISIONING_IDLE);
-}
-
-static K_WORK_DELAYABLE_DEFINE(provisioning_idle_work, mark_provisioning_idle_work_fn);
-
-static void device_mode_cb(enum nrf_provisioning_event event, void *user_data)
-{
-	ARG_UNUSED(user_data);
-
-	switch (event) {
-	case NRF_PROVISIONING_EVENT_START:
-		LOG_INF("Provisioning started");
 		break;
-	case NRF_PROVISIONING_EVENT_STOP:
-		/* Mark provisioning as idle after a small delay.
-		 * This delay is to prevent false starts if the provisioning library performs an
-		 * immediate retry.
-		 */
-		k_work_reschedule(&provisioning_idle_work, K_SECONDS(PROVISIONING_IDLE_DELAY_S));
+	case NRF_PROVISIONING_EVENT_NEED_LTE_ACTIVATED:
+		LOG_INF("nRF Provisioning requires device to activate network");
+
+		ret = conn_mgr_all_if_connect(true);
+		if (ret) {
+			LOG_ERR("conn_mgr_all_if_connect, error: %d", ret);
+			FATAL_ERROR();
+			return;
+		}
+
+		break;
+	case NRF_PROVISIONING_EVENT_FAILED_TOO_MANY_COMMANDS:
+		LOG_ERR("Provisioning failed, too many commands for the device to handle");
+		LOG_ERR("Increase CONFIG_NRF_PROVISIONING_CBOR_RECORDS to allow more commands");
+		LOG_ERR("It also might be needed to increase the system heap size");
+		break;
+	case NRF_PROVISIONING_EVENT_NO_COMMANDS:
+		LOG_INF("Provisioning done, no commands received from the server");
+		break;
+	case NRF_PROVISIONING_EVENT_FAILED:
+		LOG_ERR("Provisioning failed, try again...");
+		break;
+	case NRF_PROVISIONING_EVENT_FAILED_DEVICE_NOT_CLAIMED:
+		LOG_WRN("Provisioning failed, device not claimed");
+		LOG_WRN("Claim the device using the device's attestation token on nrfcloud.com");
+
+		if (IS_ENABLED(CONFIG_NRF_PROVISIONING_PROVIDE_ATTESTATION_TOKEN)) {
+			LOG_WRN("Attestation token:\r\n\n%.*s.%.*s\r\n",
+				event->token->attest_sz,
+				event->token->attest,
+				event->token->cose_sz,
+				event->token->cose);
+		}
+
+		break;
+	case NRF_PROVISIONING_EVENT_FAILED_WRONG_ROOT_CA:
+		LOG_ERR("Provisioning failed, wrong root CA certificate for nRF Cloud provisioned");
+		break;
+	case NRF_PROVISIONING_EVENT_FAILED_NO_VALID_DATETIME:
+		LOG_ERR("Provisioning failed, no valid datetime reference");
+		break;
+	case NRF_PROVISIONING_EVENT_FATAL_ERROR:
+		LOG_ERR("Provisioning error, irrecoverable");
+		FATAL_ERROR();
+		break;
+	case NRF_PROVISIONING_EVENT_SCHEDULED_PROVISIONING:
+		LOG_INF("Provisioning scheduled, next attempt in %lld seconds",
+			event->next_attempt_time_seconds);
 		break;
 	case NRF_PROVISIONING_EVENT_DONE:
-		LOG_INF("Provisioning done, rebooting...");
-		reboot_device();
+		LOG_INF("Provisioning done");
+		LOG_INF("The device can now connect to the provisioned cloud service");
+#if defined(CONFIG_NRF_CLOUD_COAP)
+		coap_connect();
+#endif /* CONFIG_NRF_CLOUD_COAP */
 		break;
 	default:
-		LOG_ERR("Unknown event");
+		LOG_WRN("Unknown event type: %d", event->type);
 		break;
 	}
 }
 
-static struct nrf_provisioning_mm_change mmode = { .cb = modem_mode_cb, .user_data = NULL };
-static struct nrf_provisioning_dm_change dmode = { .cb = device_mode_cb, .user_data = NULL };
-
-/* Callback to track network connectivity */
-static struct net_mgmt_event_callback l4_callback;
 static void l4_event_handler(struct net_mgmt_event_callback *cb,
 			     uint64_t event, struct net_if *iface)
 {
-	if ((event & EVENT_MASK) != event) {
+	switch (event) {
+	case NET_EVENT_L4_CONNECTED:
+		LOG_INF("Network connectivity established");
+		break;
+	case NET_EVENT_L4_DISCONNECTED:
+		LOG_INF("Network connectivity lost");
+		break;
+	case NET_EVENT_L4_IPV6_CONNECTED:
+		LOG_INF("IPv6 connectivity established");
+		break;
+	case NET_EVENT_L4_IPV4_CONNECTED:
+		LOG_INF("IPv4 connectivity established");
+		break;
+	default:
+		/* Don't care */
 		return;
 	}
-
-	if (event == NET_EVENT_L4_IPV4_CONNECTED) {
-		/* Mark network as up. */
-		LOG_INF("IPv4 connectivity gained!");
-		k_event_clear(&prov_events, NETWORK_DOWN);
-		k_event_post(&prov_events, NETWORK_IPV4_CONNECTED);
-	} else if (event == NET_EVENT_L4_IPV6_CONNECTED) {
-		/* Mark network as up. */
-		LOG_INF("IPv6 connectivity gained!");
-		k_event_clear(&prov_events, NETWORK_DOWN);
-		k_event_post(&prov_events, NETWORK_IPV6_CONNECTED);
-	} else if (event == NET_EVENT_L4_CONNECTED) {
-		/* Mark network as up. */
-		LOG_INF("Network connectivity gained!");
-		k_event_clear(&prov_events, NETWORK_DOWN);
-		k_event_post(&prov_events, NETWORK_UP);
-
-		/* Start the provisioning library after network readiness is first established. */
-		if (!provisioning_started) {
-			LOG_INF("Initializing the nRF Provisioning library...");
-
-			int ret = nrf_provisioning_init(&mmode, &dmode);
-
-			if (ret) {
-				LOG_ERR("Failed to initialize provisioning client, error: %d", ret);
-			}
-			provisioning_started = true;
-		}
-	}
-
-	if (event == NET_EVENT_L4_DISCONNECTED) {
-		/* Mark network as down. */
-		LOG_INF("Network connectivity lost!");
-		k_event_clear(&prov_events,
-			      NETWORK_UP | NETWORK_IPV4_CONNECTED | NETWORK_IPV6_CONNECTED);
-		k_event_post(&prov_events, NETWORK_DOWN);
-	}
 }
-
-/* Set up any requirements for provisioning on boot */
-static int prepare_provisioning(void)
-{
-	/* Start tracking network availability */
-	net_mgmt_init_event_callback(&l4_callback, l4_event_handler, EVENT_MASK);
-	net_mgmt_add_event_callback(&l4_callback);
-	return 0;
-}
-
-SYS_INIT(prepare_provisioning, APPLICATION, 0);
 
 int main(void)
 {
+	int ret;
+
 	LOG_INF("nRF Device Provisioning Sample");
 
-	LOG_INF("Enabling connectivity...");
-	conn_mgr_all_if_connect(true);
+	/* Setup handler for Zephyr NET Connection Manager events. */
+	net_mgmt_init_event_callback(&l4_cb, l4_event_handler, L4_EVENT_MASK);
+	net_mgmt_add_event_callback(&l4_cb);
+
+	LOG_INF("Bringing network interface up and connecting to the network");
+
+	ret = nrf_provisioning_init(nrf_provisioning_callback);
+	if (ret) {
+		LOG_ERR("Failed to initialize provisioning client");
+		return ret;
+	}
+
+	ret = conn_mgr_all_if_up(true);
+	if (ret) {
+		LOG_ERR("conn_mgr_all_if_up, error: %d", ret);
+		return ret;
+	}
+
+	ret = conn_mgr_all_if_connect(true);
+	if (ret) {
+		LOG_ERR("conn_mgr_all_if_connect, error: %d", ret);
+		return ret;
+	}
 
 	return 0;
 }

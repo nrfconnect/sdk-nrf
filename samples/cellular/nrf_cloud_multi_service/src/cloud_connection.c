@@ -149,7 +149,13 @@ static void cloud_ready(void)
 	if (IS_ENABLED(CONFIG_NRF_PROVISIONING)) {
 		LOG_INF("Reducing provisioning check interval to %d minutes",
 			CONFIG_POST_PROVISIONING_INTERVAL_M);
-		nrf_provisioning_set_interval(CONFIG_POST_PROVISIONING_INTERVAL_M * SEC_PER_MIN);
+
+		int err = nrf_provisioning_set_interval(
+			CONFIG_POST_PROVISIONING_INTERVAL_M * SEC_PER_MIN);
+
+		if (err) {
+			LOG_ERR("Failed to set provisioning interval, err %d", err);
+		}
 	}
 }
 

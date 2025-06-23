@@ -31,6 +31,8 @@ cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nr
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/rest_client.h)
 cmock_handle(include/nrf_modem_at.h)
 
+list(APPEND app_sources src/net_mgmt_mock.c)
+
 if(CONFIG_SETTINGS_CUSTOM)
   test_runner_generate(src/http_jwt.c)
   list(APPEND app_sources src/http_jwt.c)
@@ -39,6 +41,7 @@ if(CONFIG_SETTINGS_CUSTOM)
 elseif(CONFIG_NRF_PROVISIONING_COAP)
   test_runner_generate(src/coap.c)
   list(APPEND app_sources src/coap.c)
+  list(APPEND app_sources src/net_mgmt_mock.c)
   list (APPEND options
     -DCONFIG_COAP_CLIENT_MESSAGE_HEADER_SIZE=48
     -DCONFIG_COAP_CLIENT_MESSAGE_SIZE=512
@@ -49,12 +52,19 @@ elseif(CONFIG_NRF_PROVISIONING_COAP)
   )
   cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/coap_client.h)
   cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_jwt.h)
+  cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_internal.h)
 
-elseif(CONFIG_NRF_PROVISIONING_HTTP)
-  test_runner_generate(src/main.c)
-  list(APPEND app_sources src/main.c)
-  cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_jwt.h)
+elseif(CONFIG_NRF_PROVISIONING_HTTP AND NOT CONFIG_NRF_PROVISIONING_SCHEDULED)
+        test_runner_generate(src/main.c)
+        list(APPEND app_sources src/main.c)
+        cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_jwt.h)
+        cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_internal.h)
 
+elseif(CONFIG_NRF_PROVISIONING_HTTP AND CONFIG_NRF_PROVISIONING_SCHEDULED)
+        test_runner_generate(src/scheduled.c)
+        list(APPEND app_sources src/scheduled.c)
+        cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_jwt.h)
+        cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_internal.h FUNC_EXCLUDE ".*(nrf_provisioning_schedule)")
 endif()
 
 target_sources(app PRIVATE ${app_sources})
