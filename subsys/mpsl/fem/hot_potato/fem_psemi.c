@@ -197,6 +197,7 @@ static int fem_psemi_configure(void)
 		return err;
 	}
 
+#if !defined(_MPSL_FEM_CONFIG_API_NEXT)
 	err = mpsl_fem_utils_gpiote_pin_init(&cfg.pa_pin_config);
 	if (err) {
 		return err;
@@ -206,6 +207,7 @@ static int fem_psemi_configure(void)
 	if (err) {
 		return err;
 	}
+#endif
 
 	return fem_psemi_interface_config_set(&cfg);
 }
