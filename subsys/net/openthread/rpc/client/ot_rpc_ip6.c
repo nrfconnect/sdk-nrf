@@ -195,9 +195,13 @@ otError otIp6UnsubscribeMulticastAddress(otInstance *aInstance, const otIp6Addre
 
 void otIp6AddressToString(const otIp6Address *aAddress, char *aBuffer, uint16_t aSize)
 {
-	snprintf(aBuffer, aSize, "%x:%x:%x:%x:%x:%x:%x:%x", sys_be16_to_cpu(aAddress->mFields.m16[0]),
-		 sys_be16_to_cpu(aAddress->mFields.m16[1]), sys_be16_to_cpu(aAddress->mFields.m16[2]),
-		 sys_be16_to_cpu(aAddress->mFields.m16[3]), sys_be16_to_cpu(aAddress->mFields.m16[4]),
-		 sys_be16_to_cpu(aAddress->mFields.m16[5]), sys_be16_to_cpu(aAddress->mFields.m16[6]),
+	snprintf(aBuffer, aSize, "%x:%x:%x:%x:%x:%x:%x:%x",
+		 sys_be16_to_cpu(aAddress->mFields.m16[0]),
+		 sys_be16_to_cpu(aAddress->mFields.m16[1]),
+		 sys_be16_to_cpu(aAddress->mFields.m16[2]),
+		 sys_be16_to_cpu(aAddress->mFields.m16[3]),
+		 sys_be16_to_cpu(aAddress->mFields.m16[4]),
+		 sys_be16_to_cpu(aAddress->mFields.m16[5]),
+		 sys_be16_to_cpu(aAddress->mFields.m16[6]),
 		 sys_be16_to_cpu(aAddress->mFields.m16[7]));
 }

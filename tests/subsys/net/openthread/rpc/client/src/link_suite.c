@@ -156,4 +156,67 @@ ZTEST(ot_rpc_link, test_otLinkGetPanId)
 	zassert_equal(panid, UINT16_MAX);
 }
 
+/* Test serialization of otLinkGetCounters() */
+ZTEST(ot_rpc_link, test_otLinkGetCounters)
+{
+	const otMacCounters *counters;
+
+#define COUNTER(i) (UINT32_MAX - i)
+#define CBOR_COUNTER(i) CBOR_UINT32(COUNTER(i))
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_LINK_GET_COUNTERS),
+				   RPC_RSP(CBOR_COUNTER(0), CBOR_COUNTER(1), CBOR_COUNTER(2),
+					   CBOR_COUNTER(3), CBOR_COUNTER(4), CBOR_COUNTER(5),
+					   CBOR_COUNTER(6), CBOR_COUNTER(7), CBOR_COUNTER(8),
+					   CBOR_COUNTER(9), CBOR_COUNTER(10), CBOR_COUNTER(11),
+					   CBOR_COUNTER(12), CBOR_COUNTER(13), CBOR_COUNTER(14),
+					   CBOR_COUNTER(15), CBOR_COUNTER(16), CBOR_COUNTER(17),
+					   CBOR_COUNTER(18), CBOR_COUNTER(19), CBOR_COUNTER(20),
+					   CBOR_COUNTER(21), CBOR_COUNTER(22), CBOR_COUNTER(23),
+					   CBOR_COUNTER(24), CBOR_COUNTER(25), CBOR_COUNTER(26),
+					   CBOR_COUNTER(27), CBOR_COUNTER(28), CBOR_COUNTER(29),
+					   CBOR_COUNTER(30), CBOR_COUNTER(31), CBOR_COUNTER(32),
+					   CBOR_COUNTER(33)));
+	counters = otLinkGetCounters(NULL);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(counters->mTxTotal, COUNTER(0));
+	zassert_equal(counters->mTxUnicast, COUNTER(1));
+	zassert_equal(counters->mTxBroadcast, COUNTER(2));
+	zassert_equal(counters->mTxAckRequested, COUNTER(3));
+	zassert_equal(counters->mTxAcked, COUNTER(4));
+	zassert_equal(counters->mTxNoAckRequested, COUNTER(5));
+	zassert_equal(counters->mTxData, COUNTER(6));
+	zassert_equal(counters->mTxDataPoll, COUNTER(7));
+	zassert_equal(counters->mTxBeacon, COUNTER(8));
+	zassert_equal(counters->mTxBeaconRequest, COUNTER(9));
+	zassert_equal(counters->mTxOther, COUNTER(10));
+	zassert_equal(counters->mTxRetry, COUNTER(11));
+	zassert_equal(counters->mTxDirectMaxRetryExpiry, COUNTER(12));
+	zassert_equal(counters->mTxIndirectMaxRetryExpiry, COUNTER(13));
+	zassert_equal(counters->mTxErrCca, COUNTER(14));
+	zassert_equal(counters->mTxErrAbort, COUNTER(15));
+	zassert_equal(counters->mTxErrBusyChannel, COUNTER(16));
+	zassert_equal(counters->mRxTotal, COUNTER(17));
+	zassert_equal(counters->mRxUnicast, COUNTER(18));
+	zassert_equal(counters->mRxBroadcast, COUNTER(19));
+	zassert_equal(counters->mRxData, COUNTER(20));
+	zassert_equal(counters->mRxDataPoll, COUNTER(21));
+	zassert_equal(counters->mRxBeacon, COUNTER(22));
+	zassert_equal(counters->mRxBeaconRequest, COUNTER(23));
+	zassert_equal(counters->mRxOther, COUNTER(24));
+	zassert_equal(counters->mRxAddressFiltered, COUNTER(25));
+	zassert_equal(counters->mRxDestAddrFiltered, COUNTER(26));
+	zassert_equal(counters->mRxDuplicated, COUNTER(27));
+	zassert_equal(counters->mRxErrNoFrame, COUNTER(28));
+	zassert_equal(counters->mRxErrUnknownNeighbor, COUNTER(29));
+	zassert_equal(counters->mRxErrInvalidSrcAddr, COUNTER(30));
+	zassert_equal(counters->mRxErrSec, COUNTER(31));
+	zassert_equal(counters->mRxErrFcs, COUNTER(32));
+	zassert_equal(counters->mRxErrOther, COUNTER(33));
+
+#undef COUNTER
+#undef CBOR_COUNTER
+}
+
 ZTEST_SUITE(ot_rpc_link, NULL, NULL, tc_setup, NULL, NULL);

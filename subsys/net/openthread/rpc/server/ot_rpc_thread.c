@@ -218,3 +218,60 @@ static void ot_rpc_cmd_get_version(const struct nrf_rpc_group *group, struct nrf
 
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_get_version, OT_RPC_CMD_THREAD_GET_VERSION,
 			 ot_rpc_cmd_get_version, NULL);
+
+static void ot_rpc_cmd_thread_get_rloc16(const struct nrf_rpc_group *group,
+					 struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	uint16_t rloc16;
+	struct nrf_rpc_cbor_ctx rsp_ctx;
+
+	nrf_rpc_cbor_decoding_done(group, ctx);
+
+	ot_rpc_mutex_lock();
+	rloc16 = otThreadGetRloc16(openthread_get_default_instance());
+	ot_rpc_mutex_unlock();
+
+	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, sizeof(rloc16) + 1);
+	nrf_rpc_encode_uint(&rsp_ctx, rloc16);
+	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_thread_get_rloc16, OT_RPC_CMD_THREAD_GET_RLOC16,
+			 ot_rpc_cmd_thread_get_rloc16, NULL);
+
+static void ot_rpc_cmd_thread_get_mle_counters(const struct nrf_rpc_group *group,
+					       struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	struct nrf_rpc_cbor_ctx rsp_ctx;
+	const otMleCounters *counters;
+
+	nrf_rpc_cbor_decoding_done(group, ctx);
+
+	ot_rpc_mutex_lock();
+	counters = otThreadGetMleCounters(openthread_get_default_instance());
+	ot_rpc_mutex_unlock();
+
+	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 9 * (1 + sizeof(uint16_t)) + 6 * (1 + sizeof(uint64_t)));
+
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mDisabledRole);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mDetachedRole);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mChildRole);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mRouterRole);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mLeaderRole);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mAttachAttempts);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mPartitionIdChanges);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mBetterPartitionAttachAttempts);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mParentChanges);
+	nrf_rpc_encode_uint64(&rsp_ctx, counters->mDisabledTime);
+	nrf_rpc_encode_uint64(&rsp_ctx, counters->mDetachedTime);
+	nrf_rpc_encode_uint64(&rsp_ctx, counters->mChildTime);
+	nrf_rpc_encode_uint64(&rsp_ctx, counters->mRouterTime);
+	nrf_rpc_encode_uint64(&rsp_ctx, counters->mLeaderTime);
+	nrf_rpc_encode_uint64(&rsp_ctx, counters->mTrackedTime);
+
+	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_thread_get_mle_counters,
+			 OT_RPC_CMD_THREAD_GET_MLE_COUNTERS, ot_rpc_cmd_thread_get_mle_counters,
+			 NULL);

@@ -82,11 +82,6 @@ uint8_t otLinkGetChannel(otInstance *aInstance)
 	return ret;
 }
 
-const otMacCounters *otLinkGetCounters(otInstance *aInstance)
-{
-	return 0;
-}
-
 const otExtAddress *otLinkGetExtendedAddress(otInstance *aInstance)
 {
 	int ret_size = get_string(OT_RPC_CMD_LINK_GET_EXTENDED_ADDRESS, mac.m8, sizeof(mac.m8));
@@ -156,11 +151,6 @@ const otMeshLocalPrefix *otThreadGetMeshLocalPrefix(otInstance *aInstance)
 	get_string(OT_RPC_CMD_THREAD_GET_MESH_LOCAL_PREFIX, mesh_prefix.m8, sizeof(mesh_prefix));
 
 	return &mesh_prefix;
-}
-
-const otMleCounters *otThreadGetMleCounters(otInstance *aInstance)
-{
-	return 0;
 }
 
 const char *otThreadGetNetworkName(otInstance *aInstance)
