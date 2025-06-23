@@ -570,6 +570,7 @@ Modem libraries
 
   * Added:
 
+    * Support for environment evaluation.
     * Support for NTN NB-IoT system mode.
     * eDRX support for NTN NB-IoT.
 
