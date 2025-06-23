@@ -362,6 +362,20 @@ enum lte_lc_evt_type {
 	 */
 	LTE_LC_EVT_RAI_UPDATE			= 12,
 #endif /* CONFIG_LTE_LC_RAI_MODULE */
+
+#if defined(CONFIG_LTE_LC_ENV_EVAL_MODULE)
+	/**
+	 * Environment evaluation result.
+	 *
+	 * The associated payload is the @c lte_lc_evt.env_eval_result member of type
+	 * @ref lte_lc_env_eval_result in the event.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf91x1 >= v2.0.3
+	 *       - mfw_nrf9151-ntn
+	 */
+	LTE_LC_EVT_ENV_EVAL_RESULT		= 13,
+#endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
 };
 
 /** RRC connection state. */
@@ -1052,6 +1066,49 @@ struct lte_lc_ncellmeas_params {
 	uint8_t gci_count;
 };
 
+/** Environment evaluation type. */
+enum lte_lc_env_eval_type {
+	/**
+	 * PLMN search is stopped after light search if any of the PLMNs to evaluate were found.
+	 * Search is continued over all frequency bands if light search did not find any results.
+	 */
+	LTE_LC_ENV_EVAL_TYPE_DYNAMIC = 0,
+
+	/** PLMN search is stopped after light search even if no PLMNs to evaluate were found. */
+	LTE_LC_ENV_EVAL_TYPE_LIGHT = 1,
+
+	/** PLMN search covers all channels in all supported frequency bands. */
+	LTE_LC_ENV_EVAL_TYPE_FULL = 2
+};
+
+/** PLMN to evaluate. */
+struct lte_lc_env_eval_plmn {
+	/** Mobile Country Code (MCC). */
+	int mcc;
+
+	/** Mobile Network Code (MNC). */
+	int mnc;
+};
+
+/** Environment evaluation parameters. */
+struct lte_lc_env_eval_params {
+	/**
+	 * Environment evaluation type.
+	 */
+	enum lte_lc_env_eval_type eval_type;
+
+	/**
+	 * Number of PLMNs to evaluate.
+	 *
+	 * Must be less than or equal to @c CONFIG_LTE_LC_ENV_EVAL_MAX_PLMN_COUNT.
+	 */
+	uint8_t plmn_count;
+
+	/**
+	 * Pointer to an array of PLMNs to evaluate.
+	 */
+	struct lte_lc_env_eval_plmn *plmn_list;
+};
 
 /** Search pattern type. */
 enum lte_lc_periodic_search_pattern_type {
@@ -1214,6 +1271,38 @@ struct lte_lc_periodic_search_cfg {
 	struct lte_lc_periodic_search_pattern patterns[4];
 };
 
+#if defined(CONFIG_LTE_LC_ENV_EVAL_MODULE)
+/**
+ * @brief Environment evaluation results.
+ *
+ * This structure is used as the payload for event @ref LTE_LC_EVT_ENV_EVAL_RESULT.
+ */
+struct lte_lc_env_eval_result {
+	/**
+	 * Status for the environment evaluation.
+	 *
+	 * 0 indicates successful completion of the evaluation.
+	 * 5 indicates that evaluation failed, aborted due to higher priority operation.
+	 * 7 indicates that evaluation failed, unspecified.
+	 */
+	uint8_t status;
+
+	/**
+	 * Number of PLMN results available in the results array.
+	 *
+	 * Range: 0 to CONFIG_LTE_LC_ENV_EVAL_MAX_PLMN_COUNT
+	 */
+	uint8_t result_count;
+
+	/**
+	 * Pointer to an array of environment evaluation results for different PLMNs.
+	 *
+	 * Each entry contains the evaluation result for a specific PLMN.
+	 */
+	struct lte_lc_conn_eval_params *results;
+};
+#endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
+
 /** Callback for modem functional mode changes. */
 struct lte_lc_cfun_cb {
 	void (*callback)(enum lte_lc_func_mode, void *ctx);
@@ -1275,6 +1364,11 @@ struct lte_lc_evt {
 		/** Payload for event @ref LTE_LC_EVT_RAI_UPDATE. */
 		struct lte_lc_rai_cfg rai_cfg;
 #endif /* CONFIG_LTE_LC_RAI_MODULE */
+
+#if defined(CONFIG_LTE_LC_ENV_EVAL_MODULE)
+		/** Payload for event @ref LTE_LC_EVT_ENV_EVAL_RESULT. */
+		struct lte_lc_env_eval_result env_eval_result;
+#endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
 	};
 };
 
@@ -1753,6 +1847,48 @@ int lte_lc_neighbor_cell_measurement_cancel(void);
  * @retval -EBADMSG if parsing of the AT command response failed.
  */
 int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params);
+
+/**
+ * Start environment evaluation.
+ *
+ * Perform evaluation for PLMN selection. Evaluates available PLMNs and provides information
+ * of their estimated signalling conditions. Based on the evaluation results, the application
+ * can then select the best PLMN to use. This is useful especially in cases where the device
+ * has multiple SIMs or SIM profiles to select from.
+ *
+ * PLMNs (MCC/MNC pairs) to be evaluated are listed in the @ref lte_lc_env_eval_params
+ * structure. For each PLMN, evaluation results for the best found cell are returned. The results
+ * are returned with the @ref LTE_LC_EVT_ENV_EVAL_RESULT event.
+ *
+ * Environment evaluation can only be performed in receive only functional mode. The device does
+ * not transmit anything during the evaluation.
+ *
+ * @note This is only supported by the following modem firmware:
+ *       - mfw_nrf91x1 >= v2.0.3
+ *       - mfw_nrf9151-ntn
+ *
+ * @note Requires `CONFIG_LTE_LC_ENV_EVAL_MODULE` to be enabled.
+ *
+ * @param[in] params Environment evaluation parameters.
+ *
+ * @retval 0 if environment evaluation was successfully initiated.
+ * @retval -EFAULT if AT command failed or feature is not supported by the modem firmware.
+ * @retval -EINVAL if parameters are invalid.
+ * @retval -EOPNOTSUPP if environment evaluation is not available in the current functional mode.
+ */
+int lte_lc_env_eval(struct lte_lc_env_eval_params *params);
+
+/**
+ * Cancel an ongoing environment evaluation.
+ *
+ * If environment evaluation was in progress, an @ref LTE_LC_EVT_ENV_EVAL_RESULT event is received.
+ *
+ * @note Requires `CONFIG_LTE_LC_ENV_EVAL_MODULE` to be enabled.
+ *
+ * @retval 0 if environment evaluation was cancelled.
+ * @retval -EFAULT if AT command failed.
+ */
+int lte_lc_env_eval_cancel(void);
 
 /**
  * Enable modem domain events.

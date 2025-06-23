@@ -20,7 +20,7 @@ config LTE_LC_CONN_EVAL_MODULE
 	bool "Connection Parameters Evaluation module"
 
 config LTE_LC_EDRX_MODULE
-	bool "Extended Discountinuous Reception (eDRX) module"
+	bool "Extended Discontinuous Reception (eDRX) module"
 
 config LTE_LC_NEIGHBOR_CELL_MEAS_MODULE
 	bool "Neighboring Cell Measurements module"
@@ -40,8 +40,11 @@ config LTE_LC_MODEM_SLEEP_MODULE
 config LTE_LC_TAU_PRE_WARNING_MODULE
 	bool "Tracking Area Update (TAU) module"
 
+config LTE_LC_ENV_EVAL_MODULE
+	bool "Environment Evaluation module"
+
 menuconfig LTE_LC_DNS_FALLBACK_MODULE
-	bool "Fallback DNS module"
+	bool "DNS Fallback module"
 	default y
 	help
 	  The device might or might not receive a DNS server address by the network during a PDN connection.
@@ -441,6 +444,12 @@ config LTE_LC_MODEM_SLEEP_NOTIFICATIONS_THRESHOLD_MS
 	  that triggers a notification.
 
 endif # LTE_LC_MODEM_SLEEP_MODULE
+
+config LTE_LC_ENV_EVAL_MAX_PLMN_COUNT
+	int "Maximum number of PLMNs to evaluate"
+	default 3
+	help
+	  Maximum number of PLMNs that can be evaluated with lte_lc_env_eval().
 
 config LTE_LC_TRACE
 	bool "LTE link control tracing"
