@@ -10,13 +10,6 @@ config REST_CELL_LOCATION_SAMPLE_VERSION
 	string "The sample's version string"
 	default "1.0.0"
 
-config REST_CELL_LOCATION_DO_JITP
-	bool "Ask to perform just-in-time provisioning (JITP) via REST on startup"
-	help
-	  If a device has JITP certificates and has not yet been provisioned to
-	  nRF Cloud, enable this option and press the configured button when
-	  prompted after the sample starts.
-
 config REST_CELL_GCI_COUNT
 	int "Maximum number of cells to be searched"
 	range 2 15

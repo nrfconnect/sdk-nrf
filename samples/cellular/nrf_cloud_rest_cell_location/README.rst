@@ -19,11 +19,8 @@ The sample supports the following development kits:
 .. include:: /includes/tfm.txt
 
 The sample requires an `nRF Cloud`_ account.
-It requires one of the following:
-
-* A device provisioned and associated with an `nRF Cloud`_ account.
-  The sample supports JITP provisioning through REST.
-* A private key installed on the device and its associated public key registered with an `nRF Cloud`_ account.
+Your device must be onboarded to nRF Cloud.
+If it is not, follow the instructions in `Device on-boarding <nrf_cloud_rest_location_onboarding_>`_.
 
 .. note::
    This sample requires modem firmware v1.3.x or later for an nRF9160 DK, or modem firmware v2.x.x for the nRF91x1 DKs.
@@ -32,7 +29,7 @@ Overview
 ********
 
 After the sample initializes and connects to the network, it enters single-cell mode and sends a single-cell location request to nRF Cloud using network data obtained from the :ref:`modem_info_readme` library.
-To enable multi-cell mode, press **button 1**.
+To enable multi-cell mode, press **Button 1**.
 In multi-cell mode, the sample requests for neighbor cell measurement using the :ref:`lte_lc_readme` library.
 If neighbor cell data is measured, the sample sends a multi-cell location request to nRF Cloud.
 Otherwise, the request is single-cell.
@@ -49,13 +46,18 @@ Without a valid date and time, the modem cannot generate JWTs with an expiration
 User interface
 **************
 
-If you have the option :ref:`CONFIG_REST_CELL_LOCATION_DO_JITP <CONFIG_REST_CELL_LOCATION_DO_JITP>` enabled and you press **button 1** when prompted at startup, it requests for just-in-time provisioning (JITP) with nRF Cloud through REST.
-This is useful when initially provisioning and associating a device on nRF Cloud.
-You only need to do this once for each device.
-
-After the sample completes any requested JITP or shadow updates, pressing the **button 1** toggles between single-cell and multi-cell mode.
+Pressing **Button 1** toggles between single-cell and multi-cell mode.
 
 Set the :ref:`CONFIG_REST_CELL_CHANGE_CONFIG <CONFIG_REST_CELL_CHANGE_CONFIG>` Kconfig config value to try all combinations of the :c:struct:`nrf_cloud_location_config` structure values ``hi_conf`` and ``fallback``.
+
+.. _nrf_cloud_rest_location_onboarding:
+
+Onboarding your device to nRF Cloud
+***********************************
+
+You must onboard your device to nRF Cloud for this sample to function.
+You only need to do this once for each device.
+To onboard your device, install `nRF Cloud Utils`_ and follow the instructions in the README.
 
 Configuration
 *************
@@ -66,11 +68,6 @@ Configuration options
 =====================
 
 Check and configure the following Kconfig options for the sample:
-
-.. _CONFIG_REST_CELL_LOCATION_DO_JITP:
-
-CONFIG_REST_CELL_LOCATION_DO_JITP - Enable prompt to perform JITP using REST
-   This configuration option defines whether the application prompts the user for just-in-time provisioning on startup.
 
 .. _CONFIG_REST_CELL_CHANGE_CONFIG:
 

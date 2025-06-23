@@ -383,6 +383,7 @@ Cellular samples
 * :ref:`nrf_cloud_rest_cell_location` sample:
 
   * Added support for the Thingy:91 X.
+  * Removed JITP.
 
 * :ref:`nrf_cloud_rest_fota` sample:
 
