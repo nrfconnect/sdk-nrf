@@ -89,34 +89,4 @@ To use nRF21540 in GPIO mode, complete the following steps:
    * ``tx-en-settle-time-us`` to the value ``27``.
    * ``rx-en-settle-time-us`` to the value ``12``.
 
-   Enable appropriate instances of the ``DPPIC`` and ``PPIB`` peripherals in the devicetree file:
-
-   .. code-block:: devicetree
-
-      &dppic10 {
-            status = "okay";
-      };
-
-      &ppib11 {
-            status = "okay";
-      };
-
-      &ppib21 {
-            status = "okay";
-      };
-
-      &dppic20 {
-            status = "okay";
-      };
-
-      &ppib22 {
-            status = "okay";
-      };
-
-      &ppib30 {
-            status = "okay";
-      };
-
-      &dppic30 {
-            status = "okay";
-      };
+   Ensure the instances ``dppic10``, ``dppic20``, ``dppic30``, ``ppib11``, ``ppib21``, ``ppib22``, ``ppib30`` are enabled (have ``status = "okay";``) in the devicetree.
