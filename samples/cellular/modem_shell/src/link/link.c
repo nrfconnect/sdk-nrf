@@ -105,8 +105,6 @@ static void link_ncellmeas_worker(struct k_work *work_item)
 	}
 }
 
-/******************************************************************************/
-
 static void link_api_activate_mosh_contexts(
 	struct pdn_activation_status_info pdn_act_status_arr[], int size)
 {
@@ -188,8 +186,6 @@ static void link_registered_work(struct k_work *unused)
 	link_api_modem_info_get_for_shell(true);
 }
 
-/******************************************************************************/
-
 static void link_cell_change_work(struct k_work *work_item)
 {
 	struct cell_change_data *data = CONTAINER_OF(work_item, struct cell_change_data, work);
@@ -210,15 +206,11 @@ static void link_cell_change_work(struct k_work *work_item)
 		xmonitor_resp.snr, (xmonitor_resp.snr - LINK_SNR_OFFSET_VALUE));
 }
 
-/******************************************************************************/
-
 static void link_rsrp_signal_handler(char rsrp_value)
 {
 	modem_rsrp = RSRP_IDX_TO_DBM(rsrp_value);
 	k_work_submit_to_queue(&mosh_common_work_q, &modem_info_signal_work);
 }
-
-/******************************************************************************/
 
 #define MOSH_RSRP_UPDATE_INTERVAL_IN_SECS 5
 static void link_rsrp_signal_update(struct k_work *unused)
@@ -237,8 +229,6 @@ static void link_rsrp_signal_update(struct k_work *unused)
 	}
 	timestamp_prev = k_uptime_get_32();
 }
-
-/******************************************************************************/
 
 void link_init(void)
 {
@@ -467,8 +457,6 @@ void link_ind_handler(const struct lte_lc_evt *const evt)
 	}
 }
 
-/******************************************************************************/
-
 static int link_default_pdp_context_set(void)
 {
 	int ret;
@@ -696,6 +684,7 @@ int link_func_mode_set(enum lte_lc_func_mode fun, bool rel14_used)
 
 		ret = lte_lc_normal();
 		break;
+	case LTE_LC_FUNC_MODE_RX_ONLY:
 	case LTE_LC_FUNC_MODE_DEACTIVATE_LTE:
 	case LTE_LC_FUNC_MODE_ACTIVATE_LTE:
 	case LTE_LC_FUNC_MODE_DEACTIVATE_GNSS:

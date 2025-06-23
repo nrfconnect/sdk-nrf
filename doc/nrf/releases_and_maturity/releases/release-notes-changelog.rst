@@ -348,7 +348,10 @@ Cellular samples
 
 * :ref:`modem_shell_application` sample:
 
-  * Added ``ATE0`` and ``ATE1`` in AT command mode to handle echo off/on.
+  * Added:
+
+    * ``ATE0`` and ``ATE1`` commands in AT command mode to handle echo off/on.
+    * Support for RX only mode to the ``link funmode`` command.
 
 * :ref:`nrf_cloud_multi_service` sample:
 

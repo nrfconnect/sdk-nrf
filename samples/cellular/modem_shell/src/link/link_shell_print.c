@@ -120,6 +120,7 @@ const char *link_shell_funmode_to_string(int funmode, char *out_str_buff)
 	struct mapping_tbl_item const mapping_table[] = {
 		{ LTE_LC_FUNC_MODE_POWER_OFF, "power off" },
 		{ LTE_LC_FUNC_MODE_NORMAL, "normal" },
+		{ LTE_LC_FUNC_MODE_RX_ONLY, "RX only"},
 		{ LTE_LC_FUNC_MODE_OFFLINE, "flightmode" },
 		{ LTE_LC_FUNC_MODE_DEACTIVATE_LTE, "LTE off" },
 		{ LTE_LC_FUNC_MODE_ACTIVATE_LTE, "LTE on" },
