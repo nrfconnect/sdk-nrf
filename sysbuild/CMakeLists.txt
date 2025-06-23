@@ -344,9 +344,9 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         endforeach()
 
         if(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
-          set(firmware_loader_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_firmware_loader.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
+          set(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing_firmware_loader.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
 
-          set_target_properties(firmware_loader PROPERTIES
+          set_target_properties(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} PROPERTIES
             IMAGE_CONF_SCRIPT ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/image_configurations/firmware_loader_image_default.cmake
           )
         endif()
