@@ -388,6 +388,7 @@ Cellular samples
 
     * ``ATE0`` and ``ATE1`` commands in AT command mode to handle echo off/on.
     * Support for RX only mode to the ``link funmode`` command.
+    * Support for ``AT%CMNG`` multi-line commands.
 
 * :ref:`nrf_cloud_multi_service` sample:
 

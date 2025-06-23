@@ -21,6 +21,8 @@
 extern char mosh_at_resp_buf[MOSH_AT_CMD_RESPONSE_MAX_LEN];
 extern struct k_mutex mosh_at_resp_buf_mutex;
 
+#define CREDENTIALS_CMD "AT%CMNG=0"
+
 AT_MONITOR(mosh_at_handler, ANY, at_cmd_handler, PAUSED);
 
 #if defined(CONFIG_MOSH_AT_CMD_MODE)
@@ -97,6 +99,19 @@ static int cmd_at(const struct shell *shell, size_t argc, char **argv)
 		shell_help(shell);
 	} else {
 		k_mutex_lock(&mosh_at_resp_buf_mutex, K_FOREVER);
+
+		/* For the AT%CMNG command, convert '\\n' to '\r\n'
+		 * to allow writing of multi-line certificates.
+		 */
+		if (strncmp(argv[1], CREDENTIALS_CMD, strlen(CREDENTIALS_CMD)) == 0) {
+			char *c = argv[1];
+
+			while ((c = strstr(c, "\\n")) != NULL) {
+				c[0] = '\r';
+				c[1] = '\n';
+			}
+		}
+
 		err = nrf_modem_at_cmd(mosh_at_resp_buf, sizeof(mosh_at_resp_buf), "%s", argv[1]);
 		if (err == 0) {
 			mosh_print("%s", mosh_at_resp_buf);
