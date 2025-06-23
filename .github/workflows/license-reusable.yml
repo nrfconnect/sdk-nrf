@@ -74,7 +74,7 @@ jobs:
 
     - name: Install license check script dependencies
       run: |
-        pip3 install -U -r ncs/nrf/scripts/ci/requirements.txt
+        pip3 install -r ncs/nrf/scripts/ci/requirements.txt --require-hashes
 
     - name: Run license checks
       id: license_checks

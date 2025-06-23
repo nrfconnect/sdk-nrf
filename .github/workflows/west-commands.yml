@@ -25,7 +25,7 @@ jobs:
           pip3 install -U setuptools
           pip3 install -U wheel
           pip3 install -U mypy types-colorama types-editdistance types-PyYAML
-          grep -E "west==" scripts/requirements-fixed.txt | cut -f1 -d"#" | cut -d ' ' -f '1'| xargs pip3 install -U
+          pip3 install -U -r scripts/requirements-fixed.txt --require-hashes
           pip3 show -f west
       - name: Run mypy
         working-directory: ncs/nrf/scripts/west_commands
@@ -49,8 +49,8 @@ jobs:
         shell: bash
         run: |
           python3 -m pip install -U pip
-          pip3 install -r nrf/scripts/requirements-west-ncs-sbom.txt
-          pip3 install -r nrf/scripts/requirements-extra.txt
+          pip3 install -r nrf/scripts/requirements-west-ncs-sbom.txt --require-hashes
+          pip3 install -r nrf/scripts/requirements-extra.txt --require-hashes
       - name: Smoke test ncs-loot & ncs-compare
         shell: bash
         run: |

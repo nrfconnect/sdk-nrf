@@ -56,7 +56,7 @@ jobs:
       - name: Install Python dependencies
         working-directory: ncs
         run: |
-          pip install -r nrf/doc/requirements.txt
+          pip install -r nrf/doc/requirements.txt ---require-hashes
 
       - name: West zephyr-export
         working-directory: ncs
