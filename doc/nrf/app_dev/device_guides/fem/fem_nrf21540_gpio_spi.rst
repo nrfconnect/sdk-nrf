@@ -3,7 +3,7 @@
 Enabling GPIO+SPI mode support for nRF21540
 ###########################################
 
-The `nRF21540`_ device is a range extender that you can use with nRF52 and nRF53 Series devices.
+The `nRF21540`_ device is a range extender that you can use with nRF52, nRF53 and nRF54L Series devices.
 The nRF21540 features an SPI interface.
 You can use it to fully control your front-end module or you can use a combination of SPI and GPIO interface.
 The SPI interface enables you, for example, to :ref:`set the output power <ug_radio_fem_sw_support_mpsl_fem_output>` of the nRF21540.
@@ -40,13 +40,14 @@ To use nRF21540 in GPIO+SPI mode, complete the following steps:
 
    These properties correspond to ``TX_EN``, ``RX_EN``, and ``PDN`` pins of nRF21540 that are supported by software FEM.
 
-   The``phandle-array`` type is commonly used for describing GPIO signals in Zephyr's devicetree.
+   The ``phandle-array`` type is commonly used for describing GPIO signals in Zephyr's devicetree.
    The first element ``&gpio0`` refers to the GPIO port ("port 0" has been selected in the example shown).
    The second element is the pin number on that port.
    The last element must be ``GPIO_ACTIVE_HIGH`` for nRF21540, but for a different FEM module you can use ``GPIO_ACTIVE_LOW``.
 
    Set the state of the remaining control pins according to the `nRF21540 Product Specification`_.
-#. Add a following SPI bus device node on the devicetree file:
+
+#. Add the following SPI bus device node on the devicetree file:
 
    .. code-block:: devicetree
 
@@ -86,6 +87,10 @@ To use nRF21540 in GPIO+SPI mode, complete the following steps:
 
    In this example, the nRF21540 is controlled by the ``spi3`` bus.
    Replace the SPI bus according to your hardware design, and create alternative entries for SPI3 with different ``pinctrl-N`` and ``pinctrl-names`` properties.
+
+   On nRF54L Series devices, use SPI bus instance belonging to the PERI Power Domain (on the nRF54L15 SoC one of the ``spi20``, ``spi21``, ``spi22`` instances).
+   Select the pins for the SPI interface that belong to the same power domain as the SPI bus instance.
+
 #. On nRF53 Series devices, add the devicetree nodes described above to the network core.
    Use the ``spi0`` instance of the network core.
    For the application core, add a GPIO forwarder node to its devicetree file to pass control over given pins from application core to the network core:
@@ -119,6 +124,15 @@ To use nRF21540 in GPIO+SPI mode, complete the following steps:
       &uart0 {
          status = "disabled";
       };
+
+#. On nRF54L Series devices, make sure the GPIO pins of the SoC selected to control ``tx-en-gpios``, ``rx-en-gpios``, ``pdn-gpios`` and ``cs-gpios`` belong to the PERI Power Domain.
+   For example, on the nRF54L15 device, use pins belonging to GPIO P1.
+   To ensure proper timing, set the following devicetree properties of the ``nrf_radio_fem`` node:
+
+   * ``tx-en-settle-time-us`` to the value ``27``.
+   * ``rx-en-settle-time-us`` to the value ``12``.
+
+   Ensure the instances ``dppic10``, ``dppic20``, ``dppic30``, ``ppib11``, ``ppib21``, ``ppib22``, ``ppib30`` are enabled (have ``status = "okay";``) in the devicetree.
 
 .. note::
    The nRF21540 GPIO-only mode of operation is selected by default in Kconfig when an nRF21540 node is provided in devicetree, as mentioned in the :ref:`ug_radio_fem_sw_support` section.
