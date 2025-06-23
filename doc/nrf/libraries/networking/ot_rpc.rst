@@ -114,11 +114,13 @@ OpenThread RPC currently supports the serialization of the following OpenThread 
 * :c:func:`otInstanceIsInitialized`
 * :c:func:`otIp6GetMulticastAddresses`
 * :c:func:`otIp6GetUnicastAddresses`
+* :c:func:`otIp6AddressToString`
 * :c:func:`otIp6IsEnabled`
 * :c:func:`otIp6SetEnabled`
 * :c:func:`otIp6SubscribeMulticastAddress`
 * :c:func:`otIp6UnsubscribeMulticastAddress`
 * :c:func:`otLinkGetChannel`
+* :c:func:`otLinkGetCounters`
 * :c:func:`otLinkGetExtendedAddress`
 * :c:func:`otLinkGetFactoryAssignedIeeeEui64`
 * :c:func:`otLinkGetPanId`
@@ -182,6 +184,7 @@ OpenThread RPC currently supports the serialization of the following OpenThread 
 * :c:func:`otThreadGetNetworkName`
 * :c:func:`otThreadGetNextDiagnosticTlv`
 * :c:func:`otThreadGetPartitionId`
+* :c:func:`otThreadGetRloc16`
 * :c:func:`otThreadGetVendorModel`
 * :c:func:`otThreadGetVendorName`
 * :c:func:`otThreadGetVendorSwVersion`

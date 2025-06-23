@@ -285,12 +285,7 @@ static otError ot_cli_command_ipmaddr(const struct shell *sh, size_t argc, char 
 		char addr_string[NET_IPV6_ADDR_LEN];
 
 		for (addr = otIp6GetMulticastAddresses(NULL); addr != NULL; addr = addr->mNext) {
-			memcpy(in6_addr.s6_addr, addr->mAddress.mFields.m8, OT_IP6_ADDRESS_SIZE);
-
-			if (!net_addr_ntop(AF_INET6, &in6_addr, addr_string, sizeof(addr_string))) {
-				return OT_ERROR_FAILED;
-			}
-
+			otIp6AddressToString(&addr->mAddress, addr_string, sizeof(addr_string));
 			shell_print(sh, "%s", addr_string);
 		}
 
@@ -1901,20 +1896,31 @@ static int cmd_eui64(const struct shell *sh, size_t argc, char *argv[])
 	return ot_cli_command_exec(ot_cli_command_eui64, sh, argc, argv);
 }
 
+static otError cmd_rloc16_impl(const struct shell *sh, size_t argc, char *argv[])
+{
+	shell_print(sh, "%u", otThreadGetRloc16(NULL));
+
+	return OT_ERROR_NONE;
+}
+
+static int cmd_rloc16(const struct shell *sh, size_t argc, char *argv[])
+{
+	return ot_cli_command_exec(cmd_rloc16_impl, sh, argc, argv);
+}
+
 static void handle_udp_receive(void *context, otMessage *msg, const otMessageInfo *msg_info)
 {
 	uint16_t offset;
 	uint16_t length;
-	char addr_string[NET_IPV6_ADDR_LEN];
+	char addr_string[OT_IP6_ADDRESS_STRING_SIZE];
 	otThreadLinkInfo link_info;
 	const struct shell *sh = context;
 
 	offset = otMessageGetOffset(msg);
 	length = otMessageGetLength(msg);
+	otIp6AddressToString(&msg_info->mPeerAddr, addr_string, sizeof(addr_string));
 
-	shell_print(sh, "%d bytes from %s %d", length - offset,
-		    net_addr_ntop(AF_INET6, &msg_info->mPeerAddr, addr_string, sizeof(addr_string)),
-		    msg_info->mPeerPort);
+	shell_print(sh, "%d bytes from %s %d", length - offset, addr_string, msg_info->mPeerPort);
 
 	while (offset < length) {
 		uint8_t buf[64];
@@ -2079,6 +2085,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(discover, NULL, "Thread discovery scan", cmd_discover, 1, 4),
 	SHELL_CMD_ARG(radio, NULL, "Radio configuration", cmd_radio, 1, 1),
 	SHELL_CMD_ARG(eui64, NULL, "EUI64 configuration", cmd_eui64, 1, 1),
+	SHELL_CMD_ARG(rloc16, NULL, "Get RLOC16", cmd_rloc16, 1, 0),
 	SHELL_CMD_ARG(udp, &udp_cmds, "UDP subcommands", NULL, 1, 0),
 	SHELL_CMD_ARG(test_message, NULL, "Test message API", cmd_test_message, 1, 0),
 	SHELL_CMD_ARG(test_net_data, NULL, "Test netdata API", cmd_test_net_data, 1, 0),

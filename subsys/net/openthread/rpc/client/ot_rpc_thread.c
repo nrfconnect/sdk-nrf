@@ -238,3 +238,55 @@ const char *otThreadErrorToString(otError error)
 
 	return error < OT_NUM_ERRORS ? error_str[error] : "UnknownErrorType";
 }
+
+uint16_t otThreadGetRloc16(otInstance *aInstance)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	uint16_t rloc16;
+
+	ARG_UNUSED(aInstance);
+
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
+	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_THREAD_GET_RLOC16, &ctx);
+
+	rloc16 = nrf_rpc_decode_uint(&ctx);
+
+	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
+		ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_THREAD_GET_RLOC16);
+	}
+
+	return rloc16;
+}
+
+const otMleCounters *otThreadGetMleCounters(otInstance *aInstance)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	static otMleCounters counters;
+
+	ARG_UNUSED(aInstance);
+
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
+	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_THREAD_GET_MLE_COUNTERS, &ctx);
+
+	counters.mDisabledRole = nrf_rpc_decode_uint(&ctx);
+	counters.mDetachedRole = nrf_rpc_decode_uint(&ctx);
+	counters.mChildRole = nrf_rpc_decode_uint(&ctx);
+	counters.mRouterRole = nrf_rpc_decode_uint(&ctx);
+	counters.mLeaderRole = nrf_rpc_decode_uint(&ctx);
+	counters.mAttachAttempts = nrf_rpc_decode_uint(&ctx);
+	counters.mPartitionIdChanges = nrf_rpc_decode_uint(&ctx);
+	counters.mBetterPartitionAttachAttempts = nrf_rpc_decode_uint(&ctx);
+	counters.mParentChanges = nrf_rpc_decode_uint(&ctx);
+	counters.mDisabledTime = nrf_rpc_decode_uint64(&ctx);
+	counters.mDetachedTime = nrf_rpc_decode_uint64(&ctx);
+	counters.mChildTime = nrf_rpc_decode_uint64(&ctx);
+	counters.mRouterTime = nrf_rpc_decode_uint64(&ctx);
+	counters.mLeaderTime = nrf_rpc_decode_uint64(&ctx);
+	counters.mTrackedTime = nrf_rpc_decode_uint64(&ctx);
+
+	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
+		ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_THREAD_GET_MLE_COUNTERS);
+	}
+
+	return &counters;
+}

@@ -340,4 +340,59 @@ ZTEST(ot_rpc_thread, test_otThreadGetPartitionId)
 	zassert_equal(id, UINT32_MAX);
 }
 
+/* Test serialization of otThreadGetRloc16() */
+ZTEST(ot_rpc_thread, test_otThreadGetRloc16)
+{
+	uint16_t rloc16;
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_THREAD_GET_RLOC16),
+				   RPC_RSP(CBOR_UINT16(UINT16_MAX)));
+	rloc16 = otThreadGetRloc16(NULL);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(rloc16, UINT16_MAX);
+}
+
+/* Test serialization of otThreadGetMleCounters() */
+ZTEST(ot_rpc_thread, test_otThreadGetMleCounters)
+{
+	const otMleCounters *counters;
+
+#define COUNTER_16(i)	   (UINT16_MAX - i)
+#define COUNTER_64(i)	   (UINT64_MAX - i)
+#define CBOR_COUNTER_16(i) CBOR_UINT16(COUNTER_16(i))
+#define CBOR_COUNTER_64(i) CBOR_UINT64(COUNTER_64(i))
+
+	mock_nrf_rpc_tr_expect_add(
+		RPC_CMD(OT_RPC_CMD_THREAD_GET_MLE_COUNTERS),
+		RPC_RSP(CBOR_COUNTER_16(0), CBOR_COUNTER_16(1), CBOR_COUNTER_16(2),
+			CBOR_COUNTER_16(3), CBOR_COUNTER_16(4), CBOR_COUNTER_16(5),
+			CBOR_COUNTER_16(6), CBOR_COUNTER_16(7), CBOR_COUNTER_16(8),
+			CBOR_COUNTER_64(0), CBOR_COUNTER_64(1), CBOR_COUNTER_64(2),
+			CBOR_COUNTER_64(3), CBOR_COUNTER_64(4), CBOR_COUNTER_64(5)));
+	counters = otThreadGetMleCounters(NULL);
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(counters->mDisabledRole, COUNTER_16(0));
+	zassert_equal(counters->mDetachedRole, COUNTER_16(1));
+	zassert_equal(counters->mChildRole, COUNTER_16(2));
+	zassert_equal(counters->mRouterRole, COUNTER_16(3));
+	zassert_equal(counters->mLeaderRole, COUNTER_16(4));
+	zassert_equal(counters->mAttachAttempts, COUNTER_16(5));
+	zassert_equal(counters->mPartitionIdChanges, COUNTER_16(6));
+	zassert_equal(counters->mBetterPartitionAttachAttempts, COUNTER_16(7));
+	zassert_equal(counters->mParentChanges, COUNTER_16(8));
+	zassert_equal(counters->mDisabledTime, COUNTER_64(0));
+	zassert_equal(counters->mDetachedTime, COUNTER_64(1));
+	zassert_equal(counters->mChildTime, COUNTER_64(2));
+	zassert_equal(counters->mRouterTime, COUNTER_64(3));
+	zassert_equal(counters->mLeaderTime, COUNTER_64(4));
+	zassert_equal(counters->mTrackedTime, COUNTER_64(5));
+
+#undef COUNTER_16
+#undef COUNTER_64
+#undef CBOR_COUNTER_16
+#undef CBOR_COUNTER_64
+}
+
 ZTEST_SUITE(ot_rpc_thread, NULL, NULL, tc_setup, NULL, NULL);

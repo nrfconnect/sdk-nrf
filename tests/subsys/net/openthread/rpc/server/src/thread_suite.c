@@ -30,6 +30,8 @@ FAKE_VALUE_FUNC(uint32_t, otThreadGetPartitionId, otInstance *);
 FAKE_VALUE_FUNC(const char *, otThreadGetNetworkName, otInstance *);
 FAKE_VALUE_FUNC(const otExtendedPanId *, otThreadGetExtendedPanId, otInstance *);
 FAKE_VALUE_FUNC(const otMeshLocalPrefix *, otThreadGetMeshLocalPrefix, otInstance *);
+FAKE_VALUE_FUNC(uint16_t, otThreadGetRloc16, otInstance *);
+FAKE_VALUE_FUNC(const otMleCounters *, otThreadGetMleCounters, otInstance *);
 
 #define FOREACH_FAKE(f)                                                                            \
 	f(otThreadDiscover);                                                                       \
@@ -42,6 +44,8 @@ FAKE_VALUE_FUNC(const otMeshLocalPrefix *, otThreadGetMeshLocalPrefix, otInstanc
 	f(otThreadGetLeaderWeight);                                                                \
 	f(otThreadGetPartitionId);                                                                 \
 	f(otThreadGetNetworkName);                                                                 \
+	f(otThreadGetRloc16);                                                                      \
+	f(otThreadGetMleCounters);                                                                 \
 	f(nrf_rpc_cbkproxy_out_get);
 
 extern uint64_t ot_thread_discover_cb_encoder(uint32_t callback_slot, uint32_t _rsv0,
@@ -401,6 +405,70 @@ ZTEST(ot_rpc_thread, test_otThreadGetPartitionId)
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otThreadGetPartitionId_fake.call_count, 1);
+}
+
+/*
+ * Test reception of otThreadGetRloc16() command.
+ * Test serialization of the result: UINT16_MAX.
+ */
+ZTEST(ot_rpc_thread, test_otThreadGetRloc16)
+{
+	otThreadGetRloc16_fake.return_val = UINT16_MAX;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(CBOR_UINT16(UINT16_MAX)), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_THREAD_GET_RLOC16));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otThreadGetRloc16_fake.call_count, 1);
+}
+
+/*
+ * Test reception of otThreadGetMleCounters() command.
+ * Test serialization of the result.
+ */
+ZTEST(ot_rpc_thread, test_otThreadGetMleCounters)
+{
+	otMleCounters counters;
+
+#define COUNTER_16(i)	   (UINT16_MAX - i)
+#define COUNTER_64(i)	   (UINT64_MAX - i)
+#define CBOR_COUNTER_16(i) CBOR_UINT16(COUNTER_16(i))
+#define CBOR_COUNTER_64(i) CBOR_UINT64(COUNTER_64(i))
+
+	counters.mDisabledRole = COUNTER_16(0);
+	counters.mDetachedRole = COUNTER_16(1);
+	counters.mChildRole = COUNTER_16(2);
+	counters.mRouterRole = COUNTER_16(3);
+	counters.mLeaderRole = COUNTER_16(4);
+	counters.mAttachAttempts = COUNTER_16(5);
+	counters.mPartitionIdChanges = COUNTER_16(6);
+	counters.mBetterPartitionAttachAttempts = COUNTER_16(7);
+	counters.mParentChanges = COUNTER_16(8);
+	counters.mDisabledTime = COUNTER_64(0);
+	counters.mDetachedTime = COUNTER_64(1);
+	counters.mChildTime = COUNTER_64(2);
+	counters.mRouterTime = COUNTER_64(3);
+	counters.mLeaderTime = COUNTER_64(4);
+	counters.mTrackedTime = COUNTER_64(5);
+
+	otThreadGetMleCounters_fake.return_val = &counters;
+
+	mock_nrf_rpc_tr_expect_add(
+		RPC_RSP(CBOR_COUNTER_16(0), CBOR_COUNTER_16(1), CBOR_COUNTER_16(2),
+			CBOR_COUNTER_16(3), CBOR_COUNTER_16(4), CBOR_COUNTER_16(5),
+			CBOR_COUNTER_16(6), CBOR_COUNTER_16(7), CBOR_COUNTER_16(8),
+			CBOR_COUNTER_64(0), CBOR_COUNTER_64(1), CBOR_COUNTER_64(2),
+			CBOR_COUNTER_64(3), CBOR_COUNTER_64(4), CBOR_COUNTER_64(5)),
+		NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_THREAD_GET_MLE_COUNTERS));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otThreadGetMleCounters_fake.call_count, 1);
+
+#undef COUNTER_16
+#undef COUNTER_64
+#undef CBOR_COUNTER_16
+#undef CBOR_COUNTER_64
 }
 
 ZTEST_SUITE(ot_rpc_thread, NULL, NULL, tc_setup, NULL, NULL);

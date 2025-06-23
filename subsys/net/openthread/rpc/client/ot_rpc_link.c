@@ -104,6 +104,57 @@ void otLinkGetFactoryAssignedIeeeEui64(otInstance *aInstance, otExtAddress *aEui
 				ot_rpc_decode_eui64, aEui64->m8);
 }
 
+const otMacCounters *otLinkGetCounters(otInstance *aInstance)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	static otMacCounters counters;
+
+	ARG_UNUSED(aInstance);
+
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
+	nrf_rpc_cbor_cmd_rsp_no_err(&ot_group, OT_RPC_CMD_LINK_GET_COUNTERS, &ctx);
+	counters.mTxTotal = nrf_rpc_decode_uint(&ctx);
+	counters.mTxUnicast = nrf_rpc_decode_uint(&ctx);
+	counters.mTxBroadcast = nrf_rpc_decode_uint(&ctx);
+	counters.mTxAckRequested = nrf_rpc_decode_uint(&ctx);
+	counters.mTxAcked = nrf_rpc_decode_uint(&ctx);
+	counters.mTxNoAckRequested = nrf_rpc_decode_uint(&ctx);
+	counters.mTxData = nrf_rpc_decode_uint(&ctx);
+	counters.mTxDataPoll = nrf_rpc_decode_uint(&ctx);
+	counters.mTxBeacon = nrf_rpc_decode_uint(&ctx);
+	counters.mTxBeaconRequest = nrf_rpc_decode_uint(&ctx);
+	counters.mTxOther = nrf_rpc_decode_uint(&ctx);
+	counters.mTxRetry = nrf_rpc_decode_uint(&ctx);
+	counters.mTxDirectMaxRetryExpiry = nrf_rpc_decode_uint(&ctx);
+	counters.mTxIndirectMaxRetryExpiry = nrf_rpc_decode_uint(&ctx);
+	counters.mTxErrCca = nrf_rpc_decode_uint(&ctx);
+	counters.mTxErrAbort = nrf_rpc_decode_uint(&ctx);
+	counters.mTxErrBusyChannel = nrf_rpc_decode_uint(&ctx);
+	counters.mRxTotal = nrf_rpc_decode_uint(&ctx);
+	counters.mRxUnicast = nrf_rpc_decode_uint(&ctx);
+	counters.mRxBroadcast = nrf_rpc_decode_uint(&ctx);
+	counters.mRxData = nrf_rpc_decode_uint(&ctx);
+	counters.mRxDataPoll = nrf_rpc_decode_uint(&ctx);
+	counters.mRxBeacon = nrf_rpc_decode_uint(&ctx);
+	counters.mRxBeaconRequest = nrf_rpc_decode_uint(&ctx);
+	counters.mRxOther = nrf_rpc_decode_uint(&ctx);
+	counters.mRxAddressFiltered = nrf_rpc_decode_uint(&ctx);
+	counters.mRxDestAddrFiltered = nrf_rpc_decode_uint(&ctx);
+	counters.mRxDuplicated = nrf_rpc_decode_uint(&ctx);
+	counters.mRxErrNoFrame = nrf_rpc_decode_uint(&ctx);
+	counters.mRxErrUnknownNeighbor = nrf_rpc_decode_uint(&ctx);
+	counters.mRxErrInvalidSrcAddr = nrf_rpc_decode_uint(&ctx);
+	counters.mRxErrSec = nrf_rpc_decode_uint(&ctx);
+	counters.mRxErrFcs = nrf_rpc_decode_uint(&ctx);
+	counters.mRxErrOther = nrf_rpc_decode_uint(&ctx);
+
+	if (!nrf_rpc_decoding_done_and_check(&ot_group, &ctx)) {
+		ot_rpc_report_rsp_decoding_error(OT_RPC_CMD_LINK_GET_COUNTERS);
+	}
+
+	return &counters;
+}
+
 otError ot_rpc_set_factory_assigned_ieee_eui64(const otExtAddress *eui64)
 {
 	struct nrf_rpc_cbor_ctx ctx;

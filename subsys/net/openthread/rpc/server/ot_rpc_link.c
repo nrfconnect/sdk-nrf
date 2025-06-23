@@ -131,6 +131,58 @@ static void ot_rpc_cmd_get_factory_assigned_eui64(const struct nrf_rpc_group *gr
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }
 
+static void ot_rpc_cmd_get_counters(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
+				    void *handler_data)
+{
+	struct nrf_rpc_cbor_ctx rsp_ctx;
+	const otMacCounters *counters;
+
+	nrf_rpc_cbor_decoding_done(group, ctx);
+
+	ot_rpc_mutex_lock();
+	counters = otLinkGetCounters(openthread_get_default_instance());
+
+	NRF_RPC_CBOR_ALLOC(group, rsp_ctx,
+			   sizeof(*counters) / sizeof(uint32_t) * (1 + sizeof(uint32_t)));
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mTxTotal);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mTxUnicast);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mTxBroadcast);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mTxAckRequested);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mTxAcked);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mTxNoAckRequested);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mTxData);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mTxDataPoll);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mTxBeacon);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mTxBeaconRequest);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mTxOther);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mTxRetry);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mTxDirectMaxRetryExpiry);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mTxIndirectMaxRetryExpiry);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mTxErrCca);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mTxErrAbort);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mTxErrBusyChannel);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mRxTotal);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mRxUnicast);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mRxBroadcast);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mRxData);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mRxDataPoll);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mRxBeacon);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mRxBeaconRequest);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mRxOther);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mRxAddressFiltered);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mRxDestAddrFiltered);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mRxDuplicated);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mRxErrNoFrame);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mRxErrUnknownNeighbor);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mRxErrInvalidSrcAddr);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mRxErrSec);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mRxErrFcs);
+	nrf_rpc_encode_uint(&rsp_ctx, counters->mRxErrOther);
+
+	ot_rpc_mutex_unlock();
+	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
+}
+
 static void ot_rpc_cmd_set_factory_assigned_eui64(const struct nrf_rpc_group *group,
 						  struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
@@ -202,6 +254,9 @@ NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_set_link_enabled, OT_RPC_CMD_LINK_
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_get_factory_assigned_eui64,
 			 OT_RPC_CMD_LINK_GET_FACTORY_ASSIGNED_EUI64,
 			 ot_rpc_cmd_get_factory_assigned_eui64, NULL);
+
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_get_counters, OT_RPC_CMD_LINK_GET_COUNTERS,
+			 ot_rpc_cmd_get_counters, NULL);
 
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_set_factory_assigned_eui64,
 			 OT_RPC_CMD_LINK_SET_FACTORY_ASSIGNED_EUI64,
