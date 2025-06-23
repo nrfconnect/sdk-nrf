@@ -551,6 +551,22 @@ Libraries for networking
   * :ref:`lib_fota_download`
   * :ref:`lib_ftp_client`
 
+* :ref:`lib_nrf_provisioning` library:
+
+  * Added a blocking call to wait for a functional-mode change, relocating the logic from the app into the library.
+
+  * Updated:
+
+    * By making internal scheduling optional.
+      Applications can now trigger provisioning manually using the :kconfig:option:`CONFIG_NRF_PROVISIONING_SCHEDULED` Kconfig option.
+    * By moving root CA provisioning to modem initialization callback to avoid blocking and ensure proper state.
+    * By expanding the event handler to report more provisioning events, including failures.
+    * By making the event handler callback mandatory to notify the application of failures and prevent silent errors.
+    * By unifying the device‐mode and modem‐mode callbacks into a single handler for cleaner integration.
+    * The documentation and sample code accordingly.
+
+  * Fixed multiple bugs and enhanced error handling.
+
 Libraries for NFC
 -----------------
 

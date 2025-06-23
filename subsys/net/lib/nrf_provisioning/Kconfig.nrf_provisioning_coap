@@ -22,6 +22,12 @@ config NRF_PROVISIONING_COAP_DTLS_SESSION_CACHE
 	bool "DTLS session cache usage"
 	default y
 
+config NRF_PROVISIONING_COAP_TIMEOUT_SECONDS
+	int "CoAP request timeout in seconds"
+	default 30
+	help
+	  Timeout waiting for CoAP requests
+
 rsource "Kconfig.nrf_provisioning_codec"
 
 endif
