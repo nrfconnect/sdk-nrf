@@ -23,7 +23,7 @@ Zephyr and the |NCS| provides support for developing applications with the follo
      - nRF52, nRF53, nRF54L
    * - nRF21540
      - nRF21540 GPIO+SPI
-     - nRF52, nRF53
+     - nRF52, nRF53, nRF54L
    * - SKY66112-11
      - Simple GPIO
      - nRF52, nRF53
