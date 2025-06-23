@@ -444,6 +444,9 @@ This configuration disables eDRX, because it will request 10 seconds RAT and 12 
 Proprietary PSM enables power saving when network does not allow PSM.
 The modem enters the PSM state after the configured RAT period when the connection is released.
 
+Proprietary PSM can be configured using the ``AT%FEACONF`` command.
+See `nRF91x1 Feature configuration %FEACONF`_ for more information.
+
 .. note::
 
    Proprietary PSM is only supported with modem firmware v2.x.
@@ -452,7 +455,6 @@ The modem enters the PSM state after the configured RAT period when the connecti
    .. code-block:: console
 
       <err> lte_lc: Failed to configure proprietary PSM, err -14
-
 
 Configuration for external FOTA
 -------------------------------
