@@ -20,7 +20,7 @@ config TFM_FLASH_MERGED_BINARY
 
 config PM_PARTITION_SIZE_TFM_SRAM
 	hex
-	default 0xa000
+	default 0x4000
 
 endif # BUILD_WITH_TFM
 
