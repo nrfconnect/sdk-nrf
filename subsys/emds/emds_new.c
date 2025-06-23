@@ -18,7 +18,7 @@ LOG_MODULE_REGISTER(emds, CONFIG_EMDS_LOG_LEVEL);
 
 static bool emds_ready;
 static bool emds_initialized;
-static struct emds_snapshot_metadata freshest_snapshot;
+static struct emds_snapshot_candidate freshest_snapshot;
 
 static sys_slist_t emds_dynamic_entries;
 static struct emds_partition partition[PARTITIONS_NUM_MAX];
@@ -229,7 +229,7 @@ static int emds_read_data(const struct flash_area *fa, struct emds_snapshot_meta
 
 int emds_load(void)
 {
-	struct emds_snapshot_metadata metadata = {0};
+	struct emds_snapshot_candidate candidate = {0};
 	int freshest_partition_idx = -1;
 
 	if (!emds_initialized) {
@@ -237,13 +237,13 @@ int emds_load(void)
 	}
 
 	for (int i = 0; i < PARTITIONS_NUM_MAX; i++) {
-		if (emds_flash_scan_partition(&partition[i], &metadata)) {
+		if (emds_flash_scan_partition(&partition[i], &candidate)) {
 			LOG_ERR("Failed to scan partition %d:", i);
 			continue;
 		}
 
-		if (freshest_snapshot.fresh_cnt < metadata.fresh_cnt) {
-			freshest_snapshot = metadata;
+		if (freshest_snapshot.metadata.fresh_cnt < candidate.metadata.fresh_cnt) {
+			freshest_snapshot = candidate;
 			freshest_partition_idx = i;
 		}
 	}
@@ -254,9 +254,9 @@ int emds_load(void)
 	}
 
 	LOG_DBG("Found freshest snapshot in partition %d with fresh_cnt %u",
-		freshest_partition_idx, freshest_snapshot.fresh_cnt);
+		freshest_partition_idx, freshest_snapshot.metadata.fresh_cnt);
 
-	return emds_read_data(partition[freshest_partition_idx].fa, &freshest_snapshot);
+	return emds_read_data(partition[freshest_partition_idx].fa, &freshest_snapshot.metadata);
 }
 
 int emds_prepare(void)

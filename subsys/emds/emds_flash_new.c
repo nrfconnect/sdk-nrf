@@ -8,7 +8,6 @@
 
 #include <zephyr/drivers/flash.h>
 #include <zephyr/sys/crc.h>
-#include <zephyr/sys/slist.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(emds_flash, CONFIG_EMDS_LOG_LEVEL);
@@ -16,11 +15,6 @@ LOG_MODULE_REGISTER(emds_flash, CONFIG_EMDS_LOG_LEVEL);
 /* "EMDS" in ASCII */
 #define EMDS_SNAPSHOT_METADATA_MARKER 0x4D444553
 #define CHUNK_SIZE(FP) ((FP)->write_block_size > 16 ? (FP)->write_block_size : 16)
-
-struct emds_snapshot_candidate {
-	sys_snode_t node;
-	struct emds_snapshot_metadata metadata;
-};
 
 static void cand_list_init(sys_slist_t *cand_list, struct emds_snapshot_candidate *cand_buf)
 {
@@ -30,7 +24,7 @@ static void cand_list_init(sys_slist_t *cand_list, struct emds_snapshot_candidat
 	}
 }
 
-static void cand_put(sys_slist_t *cand_list, struct emds_snapshot_metadata *cand)
+static void cand_put(sys_slist_t *cand_list, off_t cand_addr, struct emds_snapshot_metadata *cand)
 {
 	sys_snode_t *cand_node = sys_slist_peek_tail(cand_list);
 	sys_snode_t *head = sys_slist_peek_head(cand_list);
@@ -44,11 +38,12 @@ static void cand_put(sys_slist_t *cand_list, struct emds_snapshot_metadata *cand
 		return; /* Ignore candidates that are not fresher than the placeholder */
 	}
 
-	LOG_DBG("Found snapshot metadata at offset 0x%04lx with fresh_cnt %u",
-		cand->data_instance_addr, cand->fresh_cnt);
+	LOG_DBG("Found snapshot at offset 0x%04lx with fresh_cnt %u. Metadata address: 0x%04lx",
+		cand->data_instance_addr, cand->fresh_cnt, cand_addr);
 
 	sys_slist_find_and_remove(cand_list, cand_node);
 	placeholder->metadata = *cand;
+	placeholder->metadata_addr = cand_addr;
 
 	do {
 		curr_ctx = CONTAINER_OF(curr, struct emds_snapshot_candidate, node);
@@ -144,7 +139,7 @@ int emds_flash_init(struct emds_partition *partition)
 }
 
 int emds_flash_scan_partition(const struct emds_partition *partition,
-			      struct emds_snapshot_metadata *metadata)
+			      struct emds_snapshot_candidate *candidate)
 {
 	struct emds_snapshot_metadata cache = {0};
 	struct emds_snapshot_candidate cand_buf[CONFIG_EMDS_MAX_CANDIDATES] = {0};
@@ -181,7 +176,7 @@ int emds_flash_scan_partition(const struct emds_partition *partition,
 			continue;
 		}
 
-		cand_put(&cand_list, &cache);
+		cand_put(&cand_list, fa->fa_off + read_addr, &cache);
 	} while (metadata_iterator(&read_addr, failures));
 
 	while ((cand_node = sys_slist_get(&cand_list))) {
@@ -193,11 +188,11 @@ int emds_flash_scan_partition(const struct emds_partition *partition,
 		}
 
 		if (cand_snapshot_crc_check(partition, &cand->metadata)) {
-			*metadata = cand->metadata;
+			*candidate = *cand;
 			LOG_DBG("Found valid snapshot at address 0x%04lx with length %u with "
 				"fresh_cnt %u",
-				fa->fa_off + metadata->data_instance_addr,
-				metadata->data_instance_len, metadata->fresh_cnt);
+				fa->fa_off + cand->metadata.data_instance_addr,
+				cand->metadata.data_instance_len, cand->metadata.fresh_cnt);
 			break;
 		}
 	}
