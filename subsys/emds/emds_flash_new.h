@@ -8,6 +8,7 @@
 #define EMDS_FLASH_H__
 
 #include <zephyr/storage/flash_map.h>
+#include <zephyr/sys/slist.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -53,7 +54,7 @@ struct emds_data_entry {
  *
  * @param marker Constant value to follow the end of the table.
  * @param fresh_cnt Increment counter for every data instance.
- * @param data_instance_addr The start address of the data instance area.
+ * @param data_instance_off The start offset of the data instance area.
  * @param data_instance_len The data instance area length.
  * @param metadata_crc The metadata structure CRC.
  * @param snapshot_crc The snapshot area CRC.
@@ -61,12 +62,29 @@ struct emds_data_entry {
 struct emds_snapshot_metadata {
 	uint32_t marker;
 	uint32_t fresh_cnt;
-	off_t data_instance_addr;
+	off_t data_instance_off;
 	uint32_t data_instance_len;
 	uint32_t metadata_crc;
 	uint32_t snapshot_crc;
 	uint32_t reserved[2];
 } __packed;
+
+/**
+ * @brief Emergency data storage snapshot candidate structure
+ *
+ * This structure is used to hold a candidate snapshot during the scanning
+ * of the emergency data storage partition. It contains the metadata address
+ * and the metadata itself.
+ *
+ * @param node Node for the system list.
+ * @param metadata_addr Address of the metadata in the flash area.
+ * @param metadata The snapshot metadata.
+ */
+struct emds_snapshot_candidate {
+	sys_snode_t node;
+	off_t metadata_addr;
+	struct emds_snapshot_metadata metadata;
+};
 
 /**
  * @brief Initialize the emergency data storage flash partition.
@@ -83,17 +101,17 @@ int emds_flash_init(struct emds_partition *partition);
  * @brief Scan the emergency data storage partition for valid snapshots.
  *
  * This function scans the specified partition for valid snapshots and populates
- * the provided metadata structure with the found snapshot metadata with the biggest
+ * the candidate structure with the found snapshot metadata with the biggest
  * fresh_cnt value and valid metadata and snapshot crc values.
  *
  * @param partition Pointer to the emergency data storage partition structure.
- * @param metadata Pointer to the metadata structure to be filled with found snapshot data.
+ * @param candidate Pointer to the emergency data storage snapshot candidate structure
  *
  * @retval 0 on success.
  * @retval -EINVAL if the partition is not initialized or if an error occurs during reading.
  */
 int emds_flash_scan_partition(const struct emds_partition *partition,
-				  struct emds_snapshot_metadata *metadata);
+			      struct emds_snapshot_candidate *candidate);
 
 /**
  * @brief Erase the specified emergency data storage partition.
