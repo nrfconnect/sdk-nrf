@@ -583,6 +583,7 @@
     - nrf54l15dk/nrf54l05/cpuapp
     - nrf54l15dk/nrf54l10/cpuapp
     - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54lm20pdk/nrf54lm20a/cpuapp
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
@@ -595,6 +596,7 @@
     - nrf54l15dk/nrf54l05/cpuapp
     - nrf54l15dk/nrf54l10/cpuapp
     - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54lm20pdk/nrf54lm20a/cpuapp
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
@@ -607,6 +609,7 @@
     - nrf54l15dk/nrf54l05/cpuapp
     - nrf54l15dk/nrf54l10/cpuapp
     - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54lm20pdk/nrf54lm20a/cpuapp
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
 
