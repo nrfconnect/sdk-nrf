@@ -169,3 +169,50 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
+  sample.openthread.cli.l2:
+    sysbuild: true
+    build_only: true
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_openthread
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+    extra_args:
+      - cli_SNIPPET="ci;l2;ci_l2"
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+  sample.openthread.cli.multiprotocol.l2:
+    sysbuild: true
+    build_only: true
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_openthread
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+    extra_args:
+      - cli_SNIPPET="ci;logging;multiprotocol;tcp;l2;ci_l2;logging_l2"
+      - FILE_SUFFIX=ble
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp/ns
