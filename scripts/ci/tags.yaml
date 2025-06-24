@@ -1383,6 +1383,17 @@ ci_tests_drivers_gpio:
     - zephyr/drivers/gpio/
     - zephyr/soc/nordic/
 
+ci_tests_drivers_i2c:
+  files:
+    - nrf/tests/drivers/i2c/
+    - zephyr/drivers/i2c/Kconfig.nrfx
+    - zephyr/drivers/i2c/i2c_nrfx_twim.c
+    - zephyr/drivers/i2c/i2c_nrfx_twim_rtio.c
+    - zephyr/drivers/i2c/i2c_nrfx_twis.c
+    - zephyr/modules/hal_nordic/nrfx/Kconfig
+    - zephyr/modules/hal_nordic/nrfx/nrfx_kconfig.h
+    - zephyr/soc/nordic/common/Kconfig.peripherals
+
 ci_tests_drivers_watchdog:
   files:
     - nrf/tests/drivers/watchdog/
