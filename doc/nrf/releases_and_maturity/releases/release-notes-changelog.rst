@@ -265,6 +265,8 @@ nRF Desktop
     The utility can be used by an application module to map an application-specific key ID to a HID report ID and HID usage ID pair according to statically defined user configuration.
     The :file:`hid_keymap.h` file was moved from the :file:`configuration/common` directory to the :file:`src/util` directory.
     The file is now the header of the :ref:`nrf_desktop_hid_keymap` and contains APIs exposed by the utility.
+  * The :ref:`nrf_desktop_keys_state`.
+    The utility can be used by an application module to track the state of active keys.
 
 * Updated:
 
