@@ -30,7 +30,7 @@ Headset devices include earbuds, headphones, speakers, hearing aids, or similar.
 They act as a unicast server or a broadcast sink.
 With reference to the gateway, the headset is often the smallest and most portable device, and is commonly the Bluetooth Peripheral (if applicable).
 
-You can :ref:`select gateway or headset build <nrf53_audio_app_configuration_select_build>` when :ref:`nrf53_audio_app_configuration`.
+You can :ref:`select gateway or headset build <nrf53_audio_app_configuration_select_build>` when :ref:`nrf53_audio_app_building`.
 
 .. _nrf53_audio_app_overview_modes:
 
