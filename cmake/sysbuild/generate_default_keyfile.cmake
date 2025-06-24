@@ -41,14 +41,15 @@ endif()
 
 # Second command (conditional): Update keyfile for UROT_PUBKEY
 if(SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE)
+  string(CONFIGURE "${SB_CONFIG_BOOT_SIGNATURE_KEY_FILE}" mcuboot_signature_key_file)
   list(APPEND kmu_json_commands
     COMMAND ${Python3_EXECUTABLE} -m west ncs-provision upload
       --keyname UROT_PUBKEY
-      --key ${SB_CONFIG_BOOT_SIGNATURE_KEY_FILE}
+      --key ${mcuboot_signature_key_file}
       --build-dir ${CMAKE_BINARY_DIR}
       --dry-run
   )
-  list(APPEND kmu_json_dependencies ${SB_CONFIG_BOOT_SIGNATURE_KEY_FILE})
+  list(APPEND kmu_json_dependencies ${mcuboot_signature_key_file})
 endif()
 
 # --- Add custom command to generate/update keyfile.json ---
