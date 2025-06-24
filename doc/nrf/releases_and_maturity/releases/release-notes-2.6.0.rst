@@ -1290,7 +1290,7 @@ Libraries for networking
 
 * :ref:`lib_nrf_provisioning` library:
 
-  * Added the :kconfig:option:`CONFIG_NRF_PROVISIONING_PRINT_ATTESTATION_TOKEN` option to enable printing the attestation token when the device is not yet claimed.
+  * Added the :kconfig:option:`CONFIG_NRF_PROVISIONING_PROVIDE_ATTESTATION_TOKEN` option to enable printing the attestation token when the device is not yet claimed.
   * Updated:
 
     * Renamed nRF Device provisioning library to :ref:`lib_nrf_provisioning` library.

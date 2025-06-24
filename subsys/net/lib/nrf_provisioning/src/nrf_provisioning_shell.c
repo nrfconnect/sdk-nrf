@@ -20,7 +20,6 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME);
 
 #define NRF_PROVISIONING_HELP_CMD "nRF Provisioning commands"
 #define NRF_PROVISIONING_HELP_NOW "Do provisioning now"
-#define NRF_PROVISIONING_HELP_INIT "Start the client"
 #define NRF_PROVISIONING_HELP_TOKEN "Get the attestation token"
 #define NRF_PROVISIONING_HELP_UUID "Get device UUID"
 #define NRF_PROVISIONING_HELP_INTERVAL "Set provisioning interval"
@@ -31,17 +30,16 @@ static int cmd_now(const struct shell *sh, size_t argc, char **argv)
 	ARG_UNUSED(argc);
 	ARG_UNUSED(argv);
 
-	nrf_provisioning_trigger_manually();
-	return 0;
-}
+	int err = nrf_provisioning_trigger_manually();
 
-static int cmd_init(const struct shell *sh, size_t argc, char **argv)
-{
-	ARG_UNUSED(sh);
-	ARG_UNUSED(argc);
-	ARG_UNUSED(argv);
+	if (err == -EFAULT) {
+		shell_error(sh, "Provisioning library is not initialized");
+		return err;
+	} else if (err < 0) {
+		shell_error(sh, "Provisioning failed, err %d", err);
+		return err;
+	}
 
-	nrf_provisioning_init(NULL, NULL);
 	return 0;
 }
 
@@ -92,7 +90,6 @@ static int cmd_interval(const struct shell *sh, size_t argc, char **argv)
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	sub_nrf_provisioning,
-	SHELL_CMD(init, NULL, NRF_PROVISIONING_HELP_INIT, cmd_init),
 	SHELL_CMD(now, NULL, NRF_PROVISIONING_HELP_NOW, cmd_now),
 	SHELL_CMD(token, NULL, NRF_PROVISIONING_HELP_TOKEN, cmd_token),
 	SHELL_CMD(uuid, NULL, NRF_PROVISIONING_HELP_UUID, cmd_uuid),
