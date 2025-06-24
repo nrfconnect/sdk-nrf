@@ -14,7 +14,10 @@ If you want to list applications available for one or more specific boards, `use
 
 Applications are also available through the `nRF Connect SDK Add-ons`_, a curated collection of supplementary |NCS| components designed to extend the functionality of the |NCS| and provide specific application use cases.
 
-`Asset Tracker Template <Asset Tracker Template_>`_, a reference template recommended for nRF91 Series asset tracking applications, is an example of an add-on.
+.. toctree::
+   :maxdepth: 1
+
+   Asset Tracker Template Add-on <https://docs.nordicsemi.com/bundle/asset-tracker-template-latest/page/index.html>
 
 The following lists the |NCS| applications:
 
