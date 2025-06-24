@@ -77,7 +77,7 @@ static struct slm_socket *sock = &socks[0]; /* Current socket in use */
 
 enum EFD_COMMAND {
 	EFD_POLL = 0x1,
-	EFD_CLOSE = 0x2
+	EFD_CLOSE = 0x8000
 };
 
 struct async_poll_ctx {
@@ -1834,7 +1834,7 @@ static void apoll_thread(void*, void*, void*)
 			}
 
 			if (afds[i].fd == poll_ctx.efd) {
-				if (get_efd_event(&afds[i]) == EFD_CLOSE) {
+				if (get_efd_event(&afds[i]) & EFD_CLOSE) {
 					/* Exit thread. */
 					poll_ctx.poll_running = false;
 				}
