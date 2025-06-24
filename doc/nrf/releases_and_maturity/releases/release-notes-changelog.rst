@@ -285,6 +285,7 @@ nRF Desktop
 
     * Use the :ref:`nrf_desktop_hid_eventq` to temporarily queue HID events related to keypresses before a connection to the HID host is established.
     * Use the :ref:`nrf_desktop_hid_keymap` to map an application-specific key ID from :c:struct:`button_event` to a HID report ID and HID usage ID pair.
+    * Use the :ref:`nrf_desktop_keys_state` to track the state of active keys.
 
     The features were implemented directly in the HID state module before.
     This change simplifies the HID state module implementation and allows code reuse.

@@ -107,6 +107,12 @@ Report expiration
 With the :ref:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION <config_desktop_app_options>` Kconfig option, you can set the amount of time after which a queued key will be considered expired.
 The higher the value, the longer the period from which the nRF Desktop application will recall pressed keys when the connection with HID host is established.
 
+Handling keys state
+===================
+
+The module selects the :ref:`CONFIG_DESKTOP_KEYS_STATE <config_desktop_app_options>` Kconfig option to enable the :ref:`nrf_desktop_keys_state`.
+The utility is used to track the state of active keys after the connection with the HID host is established.
+
 Implementation details
 **********************
 
@@ -163,7 +169,7 @@ This is done by obtaining the key mapping from the :ref:`nrf_desktop_hid_keymap`
 
 Once the mapping is obtained, the application checks if the report to which the usage belongs is connected:
 
-* If the report is connected, the value is stored at the right position in the ``items`` member of :c:struct:`report_data` associated with the report.
+* If the report is connected, the :ref:`nrf_desktop_keys_state` instance is used to track the state of active keys associated with a given HID report.
 * If the report is not connected, the value is stored in the :ref:`nrf_desktop_hid_eventq` instance in the same structure.
 
 The difference between these operations is that storing value onto the queue (second case) preserves the order of input events.
