@@ -5,13 +5,13 @@
  */
 
 &cpuapp_data {
-    reg = <0x2f000000 0x20000>;
+	reg = <0x2f000000 0x20000>;
 };
 
 &can120 {
-    status = "disabled";
+	status = "disabled";
 };
 
 &usbhs {
-    status = "disabled";
+	status = "disabled";
 };

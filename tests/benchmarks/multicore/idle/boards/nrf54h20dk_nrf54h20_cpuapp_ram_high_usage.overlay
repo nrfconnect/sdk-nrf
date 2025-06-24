@@ -10,13 +10,13 @@
  * PERIPHCONF. So this likely needs further updates.
  */
 &cpuapp_data {
-    reg = <0x2f000000 0x90000>;
+	reg = <0x2f000000 0x90000>;
 };
 
 &can120 {
-    status = "disabled";
+	status = "disabled";
 };
 
 &usbhs {
-    status = "disabled";
+	status = "disabled";
 };
