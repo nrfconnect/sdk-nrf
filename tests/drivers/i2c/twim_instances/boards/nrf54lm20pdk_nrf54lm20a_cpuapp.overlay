@@ -1,0 +1,128 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&pinctrl {
+	i2c21_default_test: i2c21_default_test {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 3, 0)>,
+				<NRF_PSEL(TWIM_SCL, 3, 1)>;
+		};
+	};
+
+	i2c21_sleep_test: i2c21_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 3, 0)>,
+				<NRF_PSEL(TWIM_SCL, 3, 1)>;
+			low-power-enable;
+		};
+	};
+
+	i2c22_default_test: i2c22_default_test {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 3, 2)>,
+				<NRF_PSEL(TWIM_SCL, 3, 3)>;
+			bias-pull-up;
+		};
+	};
+
+	i2c22_sleep_test: i2c22_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 3, 2)>,
+				<NRF_PSEL(TWIM_SCL, 3, 3)>;
+			low-power-enable;
+		};
+	};
+
+	i2c23_default_test: i2c23_default_test {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 3, 4)>,
+				<NRF_PSEL(TWIM_SCL, 3, 5)>;
+			bias-pull-up;
+		};
+	};
+
+	i2c23_sleep_test: i2c23_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 3, 4)>,
+				<NRF_PSEL(TWIM_SCL, 3, 5)>;
+			low-power-enable;
+		};
+	};
+
+	i2c24_default_test: i2c24_default_test {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 3, 6)>,
+				<NRF_PSEL(TWIM_SCL, 3, 7)>;
+			bias-pull-up;
+		};
+	};
+
+	i2c24_sleep_test: i2c24_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 3, 6)>,
+				<NRF_PSEL(TWIM_SCL, 3, 7)>;
+			low-power-enable;
+		};
+	};
+
+	i2c30_default_test: i2c30_default_test {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 0, 0)>,
+				<NRF_PSEL(TWIM_SCL, 0, 5)>;
+			bias-pull-up;
+		};
+	};
+
+	i2c30_sleep_test: i2c30_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 0, 0)>,
+				<NRF_PSEL(TWIM_SCL, 0, 5)>;
+			low-power-enable;
+		};
+	};
+};
+
+/* i2c20 inaccessible due to console on uart20 */
+
+&i2c21 {
+	compatible = "nordic,nrf-twim";
+	status = "okay";
+	pinctrl-0 = <&i2c21_default_test>;
+	pinctrl-1 = <&i2c21_sleep_test>;
+	pinctrl-names = "default", "sleep";
+};
+
+&i2c22 {
+	compatible = "nordic,nrf-twim";
+	status = "okay";
+	pinctrl-0 = <&i2c22_default_test>;
+	pinctrl-1 = <&i2c22_sleep_test>;
+	pinctrl-names = "default", "sleep";
+};
+
+&i2c23 {
+	compatible = "nordic,nrf-twim";
+	status = "okay";
+	pinctrl-0 = <&i2c23_default_test>;
+	pinctrl-1 = <&i2c23_sleep_test>;
+	pinctrl-names = "default", "sleep";
+};
+
+&i2c24 {
+	compatible = "nordic,nrf-twim";
+	status = "okay";
+	pinctrl-0 = <&i2c24_default_test>;
+	pinctrl-1 = <&i2c24_sleep_test>;
+	pinctrl-names = "default", "sleep";
+};
+
+&i2c30 {
+	compatible = "nordic,nrf-twim";
+	status = "okay";
+	pinctrl-0 = <&i2c30_default_test>;
+	pinctrl-1 = <&i2c30_sleep_test>;
+	pinctrl-names = "default", "sleep";
+};
