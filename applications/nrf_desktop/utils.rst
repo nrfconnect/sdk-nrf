@@ -19,3 +19,4 @@ More information about each utility and its configuration details is available o
    doc/hid_eventq.rst
    doc/hid_keymap.rst
    doc/hid_reportq.rst
+   doc/keys_state.rst

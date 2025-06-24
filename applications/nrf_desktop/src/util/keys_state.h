@@ -79,8 +79,8 @@ void keys_state_clear(struct keys_state *ks);
 /**
  * @brief Get keys state
  *
- * The function fills the provided array with key IDs of all the active keys. The utility keeps key
- * IDs sorted in ascending order to ensure consistent results.
+ * The function fills the provided array with key IDs of all active keys. The utility keeps key IDs
+ * sorted in ascending order to ensure consistent results.
  *
  * The function asserts if size of the provided array is too small to handle the maximum number of
  * active keys.
