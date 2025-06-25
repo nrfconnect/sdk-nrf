@@ -53,13 +53,15 @@ This section describes how you can update the firmware of the nRF5340 SoC on the
 
          .. code-block:: console
 
-            nrfutil device program --firmware dfu_application.zip --serial-number <Thingy:91 X Serial number> --traits mcuboot --x-family nrf53
+            nrfutil device program --firmware dfu_application.zip --serial-number <Thingy:91 X Serial number>
+
+      For more information about this nRF Util command, see `Programming modem firmware using MCUboot serial recovery`_ in the tool documentation.
 
    .. group-tab:: Through external debug probe
 
       To update the nRF5340 firmware using an external debug probe, complete the following steps:
 
-      1. Install the ``nrfutil device`` command package by completing the steps in the `Installing and upgrading nRF Util commands`_ documentation.
+      2. Install the ``nrfutil device`` command package by completing the steps in the `Installing and upgrading nRF Util commands`_ documentation.
       #. Connect the Thingy:91 X to your computer with a USB-C cable.
       #. Connect the 10-pin :term:`Serial Wire Debug (SWD)` programming cable from the external debug probe to the programming connector (**P8**) on the Thingy:91 X.
       #. Connect the external debug probe to your computer.
@@ -116,7 +118,9 @@ When updating the firmware through USB and MCUboot method, you must not connect 
 
          .. code-block:: console
 
-            nrfutil device program --firmware dfu_application.zip --serial-number <Thingy:91 X Serial number> --traits mcuboot --x-family nrf91 --core Application
+            nrfutil device program --firmware dfu_application.zip --serial-number <Thingy:91 X Serial number>
+
+      For more information about this nRF Util command, see `Programming application firmware using MCUboot serial recovery`_ in the tool documentation.
 
    .. group-tab:: Through external debug probe
 

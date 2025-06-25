@@ -53,8 +53,9 @@
 .. _`Zephyr issue #69546`: https://github.com/zephyrproject-rtos/zephyr/issues/69546
 .. _`TF-M sample incompatibility issue`: https://github.com/zephyrproject-rtos/zephyr/issues/34658
 
-.. _`Asset Tracker Template`: https://docs.nordicsemi.com/bundle/asset-tracker-template-latest/page/index.html
 .. _`Asset-Tracker-Template`: https://github.com/nrfconnect/Asset-Tracker-Template
+
+.. _`hello-nrfcloud v2.0.1`: https://github.com/hello-nrfcloud/firmware/releases/tag/v2.0.1
 
 .. _`generate_psa_key_attributes.py`: https://github.com/nrfconnect/sdk-nrf/blob/main/scripts/generate_psa_key_attributes.py
 .. _`print_toolchain_checksum.sh`: https://github.com/nrfconnect/sdk-nrf/blob/main/scripts/print_toolchain_checksum.sh
@@ -458,6 +459,8 @@
 
 .. _`Zigbee R22`: https://docs.nordicsemi.com/bundle/addon-zigbee-r22-latest/page/index.html
 .. _`Zigbee R23`: https://docs.nordicsemi.com/bundle/addon-zigbee-r23-latest/page/index.html
+
+.. _`Asset Tracker Template`: https://docs.nordicsemi.com/bundle/asset-tracker-template-latest/page/index.html
 
 .. _`known issues page on the main branch`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html
 .. _`known issues for nRF Connect SDK v3.0.2`: https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/releases_and_maturity/known_issues.html?v=v3-0-2
@@ -929,6 +932,7 @@
 .. _`nRF Sniffer for Bluetooth LE`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-ble-sniffer/guides/overview.html
 .. _`Device command overview`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming.html
 .. _`Programming application firmware using MCUboot serial recovery`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_firmware_thingy91.html
+.. _`Programming modem firmware using MCUboot serial recovery`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_firmware_thingy91.html
 .. _`Programming application firmware on the nRF54L15 SoC`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_nrf54L15.html
 .. _`Upgrading modem firmware using J-Link`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_modem_9160.html
 .. _`Provisioning keys for hardware KMU`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/provisioning_keys.html
