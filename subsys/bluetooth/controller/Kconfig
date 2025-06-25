@@ -553,6 +553,33 @@ config BT_CTLR_CHANNEL_SOUNDING_TEST
 	help
 	  Enable Channel Sounding test command support.
 
+choice BT_CTLR_SDC_CS_ROLE
+	prompt "Channel Sounding role support"
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	default BT_CTLR_SDC_CS_ROLE_BOTH
+	help
+	  Select Channel Sounding role support.
+
+config BT_CTLR_SDC_CS_ROLE_BOTH
+	bool "Channel Sounding initiator role and reflector role support"
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	help
+	  Enable Channel Sounding initiator role and reflector role support.
+
+config BT_CTLR_SDC_CS_ROLE_INITIATOR_ONLY
+	bool "Channel Sounding initiator role support only"
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	help
+	  Enable Channel Sounding initiator role support only.
+
+config BT_CTLR_SDC_CS_ROLE_REFLECTOR_ONLY
+	bool "Channel Sounding reflector role support only"
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	help
+	  Enable Channel Sounding reflector role support only.
+
+endchoice
+
 config BT_CTLR_SDC_CS_COUNT
 	int "Number of concurrent connections supporting CS procedures"
 	default 1
