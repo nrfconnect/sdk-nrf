@@ -303,3 +303,11 @@ tests:
     extra_args: FILE_SUFFIX=release
     extra_configs:
       - CONFIG_DESKTOP_USB_STACK_NEXT=y
+  applications.nrf_desktop.zdebug.llvm.uart:
+    toolchain_allow: llvm
+    integration_platforms:
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+    extra_args: FILE_SUFFIX=llvm
+    harness: console
