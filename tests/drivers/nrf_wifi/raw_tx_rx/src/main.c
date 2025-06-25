@@ -18,8 +18,11 @@ LOG_MODULE_REGISTER(net_test, NET_LOG_LEVEL);
 #include <fmac_api.h>
 #include <fmac_api_common.h>
 #include "net_private.h"
-
+#if 1 //ndef CONFIG_RAW_TX_BURST
 #include <zephyr/ztest.h>
+#endif
+#include <zephyr/shell/shell.h>
+#include <zephyr/shell/shell_uart.h>
 
 #define BEACON_PAYLOAD_LENGTH	     256
 #define QOS_PAYLOAD_LENGTH	     32
@@ -58,7 +61,7 @@ struct sockaddr_ll dst;
 static void rx_thread_oneshot(void);
 static void tx_thread_transmit(void); 
 
-static unsigned int total_tx_bytes;
+static unsigned int total_tx_bytes, total_tx_bytes_tmp;
 static unsigned int first_pkt_timestamp;
 static unsigned int last_pkt_timestamp;
 
@@ -82,50 +85,70 @@ struct beacon {
 } __packed;
 
 typedef struct {
-    /* Standard 802.11 frame header fields */
-    uint16_t frame_control;  /* Frame control field (including subtype: QoS data) */
-    uint16_t duration;
-    uint8_t  address1[6];  /* Receiver address */
-    uint8_t  address2[6];  /* Transmitter address */
-    uint8_t  address3[6];  /* BSSID */
-    uint16_t sequence_control; /* Sequence control field */
-
-    /* QoS specific fields */
-    uint16_t QoS;
-    /* Data payload */
-    uint8_t  data[QOS_PAYLOAD_LENGTH];
-    uint32_t frame_check_sequence;
+	/* Standard 802.11 frame header fields */
+	uint16_t frame_control;  /* Frame control field (including subtype: QoS data) */
+	uint16_t duration;
+	uint8_t  address1[6];  /* Receiver address */
+	uint8_t  address2[6];  /* Transmitter address */
+	uint8_t  address3[6];  /* BSSID */
+	uint16_t sequence_control; /* Sequence control field */
+	uint16_t QoS; /* QoS Control field */
 } wifi_qos_packet;
 
-static struct beacon test_beacon_frame  = {
-	.frame_control = htons(0X8000),
-	.duration = 0X0000,
-	.da = {0XFF, 0XFF, 0XFF, 0XFF, 0XFF, 0XFF},
-	/* Transmitter Address: A0:69:60:E3:52:15 */
-	.sa = {0XA0, 0X69, 0X60, 0XE3, 0X52, 0X15},
-	.bssid = {0XA0, 0X69, 0X60, 0XE3, 0X52, 0X15},
-	.seq_ctrl = 0X0001,
-	/* SSID: NRF_RAW_TX_PACKET_APP */
-	.payload = {
-		0X0C, 0XA2, 0X28, 0X00, 0X00, 0X00, 0X00, 0X00, 0X64, 0X00, 0X11, 0X04, 0X00, 0X15,
-		0X4E, 0X52, 0X46, 0X5F, 0X52, 0X41, 0X57, 0X5F, 0X54, 0X58, 0X5F, 0X50, 0X41, 0X43,
-		0X4B, 0X45, 0X54, 0X5F, 0X41, 0X50, 0X50, 0X01, 0X08, 0X82, 0X84, 0X8B, 0X96, 0X0C,
-		0X12, 0X18, 0X24, 0X03, 0X01, 0X06, 0X05, 0X04, 0X00, 0X02, 0X00, 0X00, 0X2A, 0X01,
-		0X04, 0X32, 0X04, 0X30, 0X48, 0X60, 0X6C, 0X30, 0X14, 0X01, 0X00, 0X00, 0X0F, 0XAC,
-		0X04, 0X01, 0X00, 0X00, 0X0F, 0XAC, 0X04, 0X01, 0X00, 0X00, 0X0F, 0XAC, 0X02, 0X0C,
-		0X00, 0X3B, 0X02, 0X51, 0X00, 0X2D, 0X1A, 0X0C, 0X00, 0X17, 0XFF, 0XFF, 0X00, 0X00,
-		0X00, 0X00, 0X00, 0X00, 0X00, 0X2C, 0X01, 0X01, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00,
-		0X00, 0X00, 0X00, 0X3D, 0X16, 0X06, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00,
-		0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X00, 0X7F, 0X08, 0X04, 0X00,
-		0X00, 0X02, 0X00, 0X00, 0X00, 0X40, 0XFF, 0X1A, 0X23, 0X01, 0X78, 0X10, 0X1A, 0X00,
-		0X00, 0X00, 0X20, 0X0E, 0X09, 0X00, 0X09, 0X80, 0X04, 0X01, 0XC4, 0X00, 0XFA, 0XFF,
-		0XFA, 0XFF, 0X61, 0X1C, 0XC7, 0X71, 0XFF, 0X07, 0X24, 0XF0, 0X3F, 0X00, 0X81, 0XFC,
-		0XFF, 0XDD, 0X18, 0X00, 0X50, 0XF2, 0X02, 0X01, 0X01, 0X01, 0X00, 0X03, 0XA4, 0X00,
-		0X00, 0X27, 0XA4, 0X00, 0X00, 0X42, 0X43, 0X5E, 0X00, 0X62, 0X32, 0X2F, 0X00}};
+/* Statically define a wifi_qos_packet header using values from the beacon */
+static const wifi_qos_packet test_qos_header = {
+	.frame_control = htons(0x8800), // QoS Data frame type/subtype
+	.duration = 0x0000,
+	.address1 = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}, // DA from beacon
+	.address2 = {0xA0, 0x69, 0x60, 0xE3, 0x52, 0x15}, // SA from beacon
+	.address3 = {0xA0, 0x69, 0x60, 0xE3, 0x52, 0x15}, // BSSID from beacon
+	.sequence_control = 0x0001,
+	.QoS = 0x0000
+};
+
+static int wait_for_tx_complete(int timeout_ms)
+{
+    int ret = -ETIMEDOUT; // Default to timeout
+    int elapsed_ms = 0;
+    int sleep_interval_ms = 2; // Your original sleep interval
+
+    // Record the start time
+    unsigned int start_time = k_uptime_get_32();
+
+    while (!tx_complete) {
+        if (elapsed_ms >= timeout_ms) {
+			LOG_INF("Timeout occurred while waiting for TX completion: %d ms", timeout_ms);
+            // Timeout occurred
+            break;
+        }
+
+        // Sleep for a short interval
+        k_msleep(sleep_interval_ms);
+
+        // Update elapsed time (ensure it doesn't exceed timeout_ms if sleep_interval_ms is large)
+        elapsed_ms = k_uptime_get_32() - start_time;
+        if (elapsed_ms > timeout_ms) {
+            elapsed_ms = timeout_ms; // Cap elapsed_ms at timeout_ms
+        }
+    }
+
+    if (tx_complete) {
+        ret = 0; // Success
+    }
+
+    return ret;
+}
 
 
 void configurePlayoutCapture(uint32_t pktLen, uint32_t holdOff, uint32_t flushBytes)
 {
+#if 0
+		// Switch off protection to RF regs
+	WRW((uintptr_t)0x48030000, 0x00000000);
+	// Use Cabled connection for EMU-EMU
+ 	WRW((uintptr_t)0x4802000C, 0x2);
+	return;
+#endif
 #if (CONFIG_BOARD_NRF7120PDK_NRF7120_CPUAPP && CONFIG_EMULATOR_SYSTEMC) || (CONFIG_BOARD_NRF7120PDK_NRF7120_CPUAPP_EMU)
 	unsigned int value;
 	LOG_INF("%s: Setting Playout capture settings",__func__);
@@ -161,7 +184,7 @@ void configurePlayoutCapture(uint32_t pktLen, uint32_t holdOff, uint32_t flushBy
 	WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x4, 0x7F);
 	value = RDW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x4);
 	LOG_INF("%s: WRW setting to value 0x04 is 0x%x",__func__, value);
-	WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x8, 0);
+	WRW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x8, 1);
 	value = RDW((uintptr_t)NRF_WIFICORE_RPURFBUS + 0x8);
 	LOG_INF("%s: WRW setting to value 0x08 is 0x%x",__func__, value);
 #endif
@@ -270,13 +293,14 @@ static int setup_rawrecv_socket(struct sockaddr_ll *dst)
                 LOG_ERR("Failed to bind packet socket : %d", errno);
                 return -errno;
         }
-
+#if 0
 	ret = setsockopt(rx_raw_socket_fd, SOL_SOCKET, SO_RCVTIMEO, &timeo_optval,
 				sizeof(timeo_optval));
 	if (ret < 0) {
 		LOG_ERR("Failed to set socket options : %s", strerror(errno));
 		return -errno;
 	}
+#endif
 	return 0;
 }
 
@@ -311,16 +335,18 @@ static int setup_raw_pkt_socket(struct sockaddr_ll *sa)
 	return 0;
 }
 
-static void fill_raw_tx_pkt_hdr(struct raw_tx_pkt_header *raw_tx_pkt)
+static void fill_raw_tx_pkt_hdr(struct raw_tx_pkt_header *raw_tx_pkt, 
+				unsigned char payload_size,
+				unsigned char rate_value,
+				unsigned char rate_flags,
+				unsigned char queue_num)
 {
 	/* Raw Tx Packet header */
 	raw_tx_pkt->magic_num = NRF_WIFI_MAGIC_NUM_RAWTX;
-	raw_tx_pkt->data_rate = CONFIG_RAW_TX_PKT_SAMPLE_RATE_VALUE;
-	raw_tx_pkt->packet_length = sizeof(test_beacon_frame);
-	raw_tx_pkt->tx_mode = CONFIG_RAW_TX_PKT_SAMPLE_RATE_FLAGS;
-	raw_tx_pkt->queue = CONFIG_RAW_TX_PKT_SAMPLE_QUEUE_NUM;
-	/* The byte is reserved and used by the driver */
-	raw_tx_pkt->raw_tx_flag = 0;
+	raw_tx_pkt->data_rate = rate_value;
+	raw_tx_pkt->packet_length = sizeof(test_qos_header) + payload_size;
+	raw_tx_pkt->tx_mode = rate_flags;
+	raw_tx_pkt->queue = queue_num;
 }
 
 int wifi_send_raw_tx_pkt(int sockfd, char *test_frame, size_t buf_length, struct sockaddr_ll *sa)
@@ -328,7 +354,7 @@ int wifi_send_raw_tx_pkt(int sockfd, char *test_frame, size_t buf_length, struct
 	int ret = sendto(sockfd, test_frame, buf_length, 0, (struct sockaddr *)sa, sizeof(*sa));
 	if (ret < 0) {
 		LOG_ERR("Unable to send beacon frame: %s", strerror(errno));
-		return -1;
+		return ret;
 	}
 
 	total_tx_bytes += ret;
@@ -337,42 +363,49 @@ int wifi_send_raw_tx_pkt(int sockfd, char *test_frame, size_t buf_length, struct
 	} else {
 		last_pkt_timestamp = k_uptime_get_32();
 	}
+
+	return ret;
 }
 
 static int wifi_send_single_raw_tx_packet(int sockfd, char *test_frame, size_t buf_length,
 					  struct sockaddr_ll *sa)
 {
-	memcpy(test_frame + sizeof(struct raw_tx_pkt_header), &test_beacon_frame,
-	       sizeof(test_beacon_frame));
-
 	int ret = wifi_send_raw_tx_pkt(sockfd, test_frame, buf_length, sa);
 	if (ret < 0) {
 		LOG_ERR("Unable to send beacon frame: %s", strerror(errno));
-		return -1;
+		return ret;
 	}
 
 	LOG_DBG("Wi-Fi RaW TX Packet sent via socket returning success");
-	return 0;
+	return ret;
 }
 
 static char *g_test_frame = NULL;
 static unsigned int g_buf_length;
 
-static int wifi_send_raw_tx_packets_init(void)
+static int wifi_send_raw_tx_packets_init(unsigned int payload_size, 
+					 unsigned char rate_value,
+					 unsigned char rate_flags,
+					 unsigned char queue_num)
 {
 	struct raw_tx_pkt_header packet;
 
-	fill_raw_tx_pkt_hdr(&packet);
+	fill_raw_tx_pkt_hdr(&packet, payload_size, rate_value, rate_flags, queue_num);
 
-	g_test_frame = malloc(sizeof(struct raw_tx_pkt_header) + sizeof(test_beacon_frame));
+	g_test_frame = malloc(sizeof(struct raw_tx_pkt_header) + sizeof(test_qos_header) +
+			      payload_size);
 	if (!g_test_frame) {
 		LOG_ERR("Malloc failed for send buffer %d", errno);
 		return -1;
 	}
 
-	g_buf_length = sizeof(struct raw_tx_pkt_header) + sizeof(test_beacon_frame);
+	g_buf_length = sizeof(struct raw_tx_pkt_header) + sizeof(test_qos_header) +
+		       payload_size;
 	memcpy(g_test_frame, &packet, sizeof(struct raw_tx_pkt_header));
-
+	memcpy(g_test_frame + sizeof(struct raw_tx_pkt_header), &test_qos_header,
+	       sizeof(test_qos_header));
+	memset(g_test_frame + sizeof(struct raw_tx_pkt_header) + sizeof(test_qos_header), 0xAB,
+	       payload_size);
 	return 0;
 }
 
@@ -384,6 +417,9 @@ static int wifi_send_raw_tx_packets_tx(void)
 	ret = wifi_send_single_raw_tx_packet(raw_socket_fd, g_test_frame, g_buf_length, &sa);
 	if (ret < 0) {
 		LOG_ERR("Failed to send raw tx packets");
+	} else {
+		tx_sent++;
+		LOG_DBG("Wi-Fi RAW TX Packet sent successfully");
 	}
 
 	return ret;
@@ -404,16 +440,26 @@ static int wifi_send_raw_tx_packets(void)
 	unsigned int buf_length;
 	int ret;
 
-	fill_raw_tx_pkt_hdr(&packet);
+	fill_raw_tx_pkt_hdr(&packet, 
+			     CONFIG_RAW_TX_PKT_SAMPLE_PAYLOAD_SIZE,
+			     CONFIG_RAW_TX_PKT_SAMPLE_RATE_VALUE,
+			     CONFIG_RAW_TX_PKT_SAMPLE_RATE_FLAGS,
+			     CONFIG_RAW_TX_PKT_SAMPLE_QUEUE_NUM);
 
-	test_frame = malloc(sizeof(struct raw_tx_pkt_header) + sizeof(test_beacon_frame));
+	test_frame = malloc(sizeof(struct raw_tx_pkt_header) + sizeof(test_qos_header) +
+			    CONFIG_RAW_TX_PKT_SAMPLE_PAYLOAD_SIZE);
 	if (!test_frame) {
 		LOG_ERR("Malloc failed for send buffer %d", errno);
 		return -1;
 	}
 
-	buf_length = sizeof(struct raw_tx_pkt_header) + sizeof(test_beacon_frame);
+	buf_length = sizeof(struct raw_tx_pkt_header) + sizeof(test_qos_header) +
+		     CONFIG_RAW_TX_PKT_SAMPLE_PAYLOAD_SIZE;
 	memcpy(test_frame, &packet, sizeof(struct raw_tx_pkt_header));
+	memcpy(test_frame + sizeof(struct raw_tx_pkt_header), &test_qos_header,
+	       sizeof(test_qos_header));
+	memset(test_frame + sizeof(struct raw_tx_pkt_header) + sizeof(test_qos_header), 0xAB,
+	       CONFIG_RAW_TX_PKT_SAMPLE_PAYLOAD_SIZE);
 
 	LOG_INF("Wi-Fi sending RAW TX Packet");
 	ret = wifi_send_single_raw_tx_packet(raw_socket_fd, test_frame, buf_length, &sa);
@@ -480,21 +526,31 @@ static void tx_thread_transmit() {
 	LOG_INF("TX burst count is set is %d", CONFIG_RAW_TX_TRANSMIT_COUNT);
 	while (count--)
 	{
-		zassert_false(wifi_send_raw_tx_packets(), "Failed to send raw tx packet");
+		wifi_send_raw_tx_packets();
 		k_sleep(K_MSEC(1));
 	}
 }
 
 static void initialize(void) {
+	static bool initialized = false;
+
+
+	if (!initialized) {
+		initialized = true;
+	} else {
+		return;
+	}
+	configurePlayoutCapture(0, 0, 0);
 	/* wait for supplicant Init */
-	k_sleep(K_MSEC(3));
+	k_sleep(K_MSEC(10));
 	/* MONITOR mode */
-	int mode = BIT(1);
-	wifi_set_mode(mode);
+	//int mode = BIT(1);
+	//wifi_set_mode(mode);
 	wifi_set_tx_injection_mode();
 	wifi_set_channel();
 	setup_raw_pkt_socket(&sa);
 	k_sleep(K_MSEC(10));
+
 }
 
 static void cleanup(void) {
@@ -509,18 +565,26 @@ static int wifi_send_recv_tx_packets_serial(unsigned int num_pkts)
 	unsigned int buf_length;
 
 	LOG_INF("serial Transmit and receive function");
-	fill_raw_tx_pkt_hdr(&packet);
+	fill_raw_tx_pkt_hdr(&packet, 
+			     CONFIG_RAW_TX_PKT_SAMPLE_PAYLOAD_SIZE,
+			     CONFIG_RAW_TX_PKT_SAMPLE_RATE_VALUE,
+			     CONFIG_RAW_TX_PKT_SAMPLE_RATE_FLAGS,
+			     CONFIG_RAW_TX_PKT_SAMPLE_QUEUE_NUM);
 
-	test_frame = malloc(sizeof(struct raw_tx_pkt_header) + sizeof(test_beacon_frame));
+	test_frame = malloc(sizeof(struct raw_tx_pkt_header) + sizeof(test_qos_header) +
+			    CONFIG_RAW_TX_PKT_SAMPLE_PAYLOAD_SIZE);
 	if (!test_frame) {
 		LOG_ERR("Malloc failed for send buffer %d", errno);
 		return -1;
 	}
 
-	buf_length = sizeof(struct raw_tx_pkt_header) + sizeof(test_beacon_frame);
+	buf_length = sizeof(struct raw_tx_pkt_header) + sizeof(test_qos_header) +
+		     CONFIG_RAW_TX_PKT_SAMPLE_PAYLOAD_SIZE;
 	memcpy(test_frame, &packet, sizeof(struct raw_tx_pkt_header));
-	memcpy(test_frame + sizeof(struct raw_tx_pkt_header), &test_beacon_frame,
-	       sizeof(test_beacon_frame));
+	memcpy(test_frame + sizeof(struct raw_tx_pkt_header), &test_qos_header,
+	       sizeof(test_qos_header));
+	memset(test_frame + sizeof(struct raw_tx_pkt_header) + sizeof(test_qos_header), 0xAB,
+	       CONFIG_RAW_TX_PKT_SAMPLE_PAYLOAD_SIZE);
 
 	for (int i = 0; i < num_pkts; i++) {
 		k_sleep(K_MSEC(3));
@@ -544,8 +608,8 @@ ZTEST(nrf_wifi, test_raw_tx_rx)
 {
 	int count = CONFIG_RAW_TX_RX_TRANSMIT_COUNT;
 
-	configurePlayoutCapture(0xCA60, 0x7f, 0x100);
-	k_sleep(K_MSEC(5));
+	//configurePlayoutCapture(0xCA60, 0x7f, 0x100);
+	//k_sleep(K_MSEC(5));
 
 	setup_rawrecv_socket(&dst);
 #ifdef CONFIG_RX_LOOPBACK_THREAD
@@ -571,76 +635,115 @@ ZTEST(nrf_wifi, test_raw_tx_rx)
 #endif
 }
 #endif
-
 #ifdef CONFIG_RAW_TX_BURST
-ZTEST(nrf_wifi, test_raw_tx)
+#include <getopt.h>
+
+static int cmd_raw_tx(const struct shell *shell, size_t argc, char **argv)
 {
-	configurePlayoutCapture(0, 0, 0);
-	/**
-	 * Provide some time for TLM settings to take effect
-	 **/
-	k_sleep(K_MSEC(2));
+	unsigned int count = CONFIG_RAW_TX_TRANSMIT_COUNT;
+	unsigned int payload_size = CONFIG_RAW_TX_PKT_SAMPLE_PAYLOAD_SIZE;
+	unsigned int rate_value = CONFIG_RAW_TX_PKT_SAMPLE_RATE_VALUE;
+	unsigned int rate_flags = CONFIG_RAW_TX_PKT_SAMPLE_RATE_FLAGS;
+	unsigned int queue_num = CONFIG_RAW_TX_PKT_SAMPLE_QUEUE_NUM;
+	unsigned int pumping_rate = CONFIG_RAW_TX_PKT_SAMPLE_PUMPING_RATE;
+	unsigned int delay_us = 0;
 
-#ifdef CONFIG_TX_THREAD_TRANSMIT
-	/* code under development. Do not attempt Thread transmit */
-	unsigned int prev_time;
-	unsigned int curr_time;
-	unsigned int tx_received_bytes_last_interval = 0;
-	unsigned int throughput_count = 0;
+	static struct option long_options[] = {
+		{"count",        required_argument, 0, 'c'},
+		{"payload-size", required_argument, 0, 's'},
+		{"rate-value",   required_argument, 0, 'r'},
+		{"rate-flags",   required_argument, 0, 'f'},
+		{"queue-num",    required_argument, 0, 'q'},
+		{"pumping-rate", required_argument, 0, 'p'},
+		{"help",        no_argument,       0, 'h'},
+		{0, 0, 0, 0}
+	};
 
-	LOG_INF("starting transmit thread");
-	k_thread_start(transmit_thread_id);
-	/* provide a wait duration for the current main thread for the other thread to start */
-	k_busy_wait(1000);
-	/* get kernel ticks in milliseconds */
-	prev_time = k_uptime_get();
+	int opt, option_index = 0;
+	/* Reset getopt's static state in case of repeated calls */
+	optind = 1;
 
-	while(throughput_count < CONFIG_RAW_TX_THROUGHPUT_COUNT) {
-		curr_time = k_uptime_get();
-		if ((curr_time - prev_time) >= CONFIG_RAW_TX_THROUGHPUT_INTERVAL) {
-			prev_time = curr_time;
-			/* get the tx bytes from the driver and assign to local variable */
-			nrf_wifi_fmac_get_throughput_bytes(ctx->rpu_ctx, &total_tx_bytes);
-			tx_received_bytes_last_interval = total_tx_bytes - tx_received_bytes_last_interval;
-			LOG_INF("transmit throughput in Kb for iteration %d  = %f", throughput_count,
-					((((double)tx_received_bytes_last_interval) * 8)/ONE_KB));
-			throughput_count++;
+	while ((opt = getopt_long(argc, argv, "c:s:r:f:q:p:h", long_options, &option_index)) != -1) {
+		switch (opt) {
+		case 'c':
+			count = atoi(optarg);
+			break;
+		case 's':
+			payload_size = atoi(optarg);
+			break;
+		case 'r':
+			rate_value = atoi(optarg);
+			break;
+		case 'f':
+			rate_flags = atoi(optarg);
+			break;
+		case 'q':
+			queue_num = atoi(optarg);
+			break;
+		case 'p':
+			pumping_rate = atoi(optarg);
+			break;
+		case 'h':
+		default:
+			shell_error(shell, "Usage: raw_tx [--count N | -c N] [--payload-size N | -s N] [--rate-value N | -r N] [--rate-flags N | -f N] [--queue-num N | -q N] [--pumping-rate N | -p N]");
+			return -1;
 		}
 	}
-	k_thread_join(transmit_thread_id, K_SECONDS(1));
-#else
-	int count = CONFIG_RAW_TX_TRANSMIT_COUNT;
+
 	first_pkt_timestamp = 0;
 	last_pkt_timestamp = 0;
-	/* Send burst packets without querying for throughput */
-	LOG_INF("TX burst count is set to  %d", CONFIG_RAW_TX_TRANSMIT_COUNT);
-	wifi_send_raw_tx_packets_init();
+	tx_sent_complete = false;
+	tx_sent = 0;
+	tx_complete = false;
+
+	initialize();
+
+	total_tx_bytes = 0;
+	wifi_send_raw_tx_packets_init(payload_size, rate_value, rate_flags, queue_num);
+
+	unsigned int payload_bits = (sizeof(test_qos_header) + payload_size) * 8;
+	if (pumping_rate > 0) {
+		unsigned int pumping_rate_bps = pumping_rate * 1000000U;
+		delay_us = (payload_bits * 1000000U) / pumping_rate_bps;
+	}
+
+	shell_print(shell, "Test settings: count: %d, size: %d, rate: %d, flags: %d, queue: %d, delay_us: %u, PPS: %u, pumping_rate: %u Mbps",
+		count,
+		sizeof(test_qos_header) + payload_size,
+		rate_value,
+		rate_flags,
+		queue_num,
+		delay_us,
+		delay_us > 0 ? (1000000U / delay_us) : 0,
+		pumping_rate);
+
 	while (count--)
 	{
-		zassert_false(wifi_send_raw_tx_packets_tx(), "Failed to send raw tx packet");
+		wifi_send_raw_tx_packets_tx();
+		if (delay_us > 0) {
+			k_usleep(delay_us);
+		}
 	}
 
-	LOG_INF("Total tx bytes sent is %d, duration is %d ms",
-		total_tx_bytes, (last_pkt_timestamp - first_pkt_timestamp));
-	uint32_t kbps = (total_tx_bytes * 8ULL * 1000) / (ONE_KB * (last_pkt_timestamp - first_pkt_timestamp));
-	uint32_t kbps_dec = ((total_tx_bytes * 8ULL * 1000 * 10) / (ONE_KB * (last_pkt_timestamp - first_pkt_timestamp))) % 10;
-	LOG_INF("Average transmit throughput in Kbps = %d.%d, Rate = %d, RateFlag = %d, PayloadLen = %d",
-			kbps, kbps_dec, CONFIG_RAW_TX_PKT_SAMPLE_RATE_VALUE,
-			CONFIG_RAW_TX_PKT_SAMPLE_RATE_FLAGS, sizeof(test_beacon_frame));
+	tx_sent_complete = true;
+	shell_print(shell, "Waiting for TX completion: sent: %d", tx_sent);
+	wait_for_tx_complete(500);
 
-
+	nrf_wifi_fmac_get_throughput_bytes(ctx->rpu_ctx, &total_tx_bytes_tmp);
 	wifi_send_raw_tx_packets_deinit();
 
-#endif
-	if (total_tx_bytes == 0) {
-		LOG_ERR("TX count is zero");
-		zassert_true(0, "TX count is zero");
-	} else {
-		LOG_INF("TX count is %d", total_tx_bytes);
-	}
+	shell_print(shell, "TX count is %d", total_tx_bytes);
 
+	return 0;
 }
-#endif
+
+SHELL_CMD_ARG_REGISTER(raw_tx, NULL,
+	"Send raw TX packets. Usage: raw_tx [--count N | -c N] [--payload-size N | -s N] [--rate-value N | -r N] [--rate-flags N | -f N] [--queue-num N | -q N] [--pumping-rate N | -p N]",
+	cmd_raw_tx,
+	0, 12);
+
+#endif /* CONFIG_RAW_TX_BURST */
+
 
 #ifdef CONFIG_RAW_RX_BURST
 ZTEST(nrf_wifi, test_raw_rx_single_transmit)
@@ -700,5 +803,6 @@ ZTEST(nrf_wifi, test_raw_rx_single_transmit)
 	close(rx_raw_socket_fd);
 }
 #endif
-
-ZTEST_SUITE(nrf_wifi, NULL, (void *)initialize, NULL, NULL, (void *)cleanup);
+#if 1 //ndef CONFIG_RAW_TX_BURST
+ZTEST_SUITE(nrf_wifi, NULL, NULL, NULL, NULL, NULL);
+#endif

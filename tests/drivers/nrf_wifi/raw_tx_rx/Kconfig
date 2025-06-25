@@ -10,6 +10,7 @@ source "Kconfig.zephyr"
 config NRF_WIFI_RAW_TX_PKT_SAMPLE_CHANNEL
 	int "Channel for non-connected Station mode"
 	range 1 233
+	default 1
 	help
 	  Specify the Wi-Fi channel for transmitting raw TX packets in non-connected Station mode.
 	  The valid channel range is 1 to 233.
@@ -129,3 +130,21 @@ config RX_LOOPBACK_THREAD
 	help
 	  This configuration allows thread based Loopback test.
 
+config RAW_TX_PKT_SAMPLE_PAYLOAD_SIZE
+	int "Payload size for raw TX packet sample"
+	default 1000
+	range 1 1500
+	help
+	  Specify the payload size for the raw TX packet sample.
+	  The valid range is from 1 to 1500 bytes.
+	  Note: The maximum payload size is limited by the Wi-Fi driver and hardware capabilities.
+
+# add pumping rate configuration
+config RAW_TX_PKT_SAMPLE_PUMPING_RATE
+	int "Pumping rate for raw TX packet sample (in Mbps)"
+	default 1
+	range 1 300
+	help
+	  Specify the pumping rate for the raw TX packet sample in Mbps.
+	  The valid range is from 1 Mbps to 10,000 Mbps (10 Gbps).
+	  Note: This configuration is used to control the rate at which packets are pumped in the test.

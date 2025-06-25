@@ -5,7 +5,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - CONFIG_EMULATOR_SYSTEMC=n
+      - -DCONFIG_EMULATOR_SYSTEMC=n
     integration_platforms:
       - nrf7120pdk/nrf7120/cpuapp
     platform_allow: nrf7120pdk/nrf7120/cpuapp
@@ -23,7 +23,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - CONFIG_EMULATOR_SYSTEMC=n
+      - -DCONFIG_EMULATOR_SYSTEMC=n
     integration_platforms:
       - nrf7120pdk/nrf7120/cpuapp/emu
     platform_allow: nrf7120pdk/nrf7120/cpuapp/emu

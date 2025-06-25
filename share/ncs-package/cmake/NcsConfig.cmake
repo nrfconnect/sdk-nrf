@@ -41,7 +41,7 @@ if(NOT NO_BOILERPLATE)
 
   if(NOT "${NCS_TOOLCHAIN_MINIMUM_REQUIRED}" STREQUAL "NONE")
     find_package(NcsToolchain ${NCS_TOOLCHAIN_MINIMUM_REQUIRED} ${EXACT} QUIET)
-    if(${NcsToolchain_FOUND})
+    if(0)
       message("-- Using NCS Toolchain ${NcsToolchain_VERSION} for building. (${NcsToolchain_DIR})")
 
       set(CUSTOM_COMMAND_PATH ${NCS_TOOLCHAIN_BIN_PATH} $ENV{PATH})
