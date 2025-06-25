@@ -70,6 +70,14 @@ config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
 
 endif # BOARD_NRF54L15DK
 
+# Mcuboot padding size is modified to 0x1000 in pm_static file.
+if SOC_NRF54L10
+
+config PM_MCUBOOT_PAD
+	default 0x1000
+
+endif # SOC_NRF54L10
+
 endif # BOOTLOADER_MCUBOOT
 
 #### Enable generating factory data
