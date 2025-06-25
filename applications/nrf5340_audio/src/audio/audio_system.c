@@ -121,7 +121,6 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 {
 	int ret;
 	uint32_t audio_q_num_used;
-	char pcm_raw_data[FRAME_SIZE_BYTES];
 	static uint32_t test_tone_finite_pos;
 	int debug_trans_count = 0;
 
@@ -176,7 +175,7 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 		if (sw_codec_cfg.encoder.enabled) {
 			if (test_tone_size) {
 				/* Test tone takes over audio stream */
-				uint32_t num_bytes;
+				uint32_t num_bytes = 0;
 				char tmp[FRAME_SIZE_BYTES / 2];
 
 				ret = contin_array_create(tmp, FRAME_SIZE_BYTES / 2, test_tone_buf,
@@ -184,9 +183,13 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 				ERR_CHK(ret);
 
 				ret = pscm_copy_pad(tmp, FRAME_SIZE_BYTES / 2,
-						    CONFIG_AUDIO_BIT_DEPTH_BITS, pcm_raw_data,
+						    CONFIG_AUDIO_BIT_DEPTH_BITS, audio_frame->data,
 						    &num_bytes);
 				ERR_CHK(ret);
+
+				if (audio_frame->len != num_bytes) {
+					LOG_ERR("Tone wrong size: %u", num_bytes);
+				}
 			}
 
 			ret = sw_codec_encode(audio_frame);
