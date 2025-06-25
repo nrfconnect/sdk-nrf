@@ -371,7 +371,10 @@ Cellular samples
 
 * :ref:`modem_shell_application` sample:
 
-  * Added support for NTN NB-IoT to the ``link sysmode`` and ``link edrx`` commands.
+  * Added:
+
+    * Support for environment evaluation using the ``link enveval`` command.
+    * Support for NTN NB-IoT to the ``link sysmode`` and ``link edrx`` commands.
 
 Cryptography samples
 --------------------
