@@ -22,6 +22,7 @@
 #include "link_shell_pdn.h"
 #include "link_settings.h"
 #include "net_utils.h"
+#include "str_utils.h"
 
 #define LINK_SHELL_EDRX_VALUE_STR_LENGTH 4
 #define LINK_SHELL_EDRX_PTW_STR_LENGTH 4
@@ -31,6 +32,7 @@ enum link_shell_command {
 	LINK_CMD_STATUS = 0,
 	LINK_CMD_SETTINGS,
 	LINK_CMD_CONEVAL,
+	LINK_CMD_ENVEVAL,
 	LINK_CMD_DEFCONT,
 	LINK_CMD_DEFCONTAUTH,
 	LINK_CMD_RSRP,
@@ -377,6 +379,28 @@ static const char link_modem_usage_str[] =
 	"\n"
 	"Several options can be given and they are run in the given order.";
 
+#if defined(CONFIG_LTE_LC_ENV_EVAL_MODULE)
+static const char link_enveval_usage_str[] =
+	"Usage: link enveval --eval_type <type> --plmns <plmn1>[,<plmn2>,...] | --cancel\n"
+	"Options:\n"
+	"  --eval_type, [str]  Evaluation type:\n"
+	"                      'dynamic', 'light' or 'full'\n"
+	"  --plmns, [str]      Mobile Country Code and Mobile Network Code pairs\n"
+	"  --cancel,           Cancel ongoing environment evaluation\n"
+	"  -h, --help,         Shows this help information\n"
+	"\n"
+	"Evaluation types explained:\n"
+	"                      Dynamic: PLMN search is stopped after light search if any of the\n"
+	"                      PLMNs to evaluate were found. Search is continued over all\n"
+	"                      frequency bands if light search did not find any results.\n"
+	"\n"
+	"                      Light: PLMN search is stopped after light search even if no PLMNs\n"
+	"                      to evaluate were found.\n"
+	"\n"
+	"                      Full: PLMN search covers all channels in all supported frequency\n"
+	"                      bands.\n";
+#endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
+
 /* The following do not have short options */
 enum {
 	LINK_SHELL_OPT_MEM_SLOT_1 = 1001,
@@ -424,6 +448,8 @@ enum {
 	LINK_SHELL_OPT_MODEM_INIT,
 	LINK_SHELL_OPT_MODEM_SHUTDOWN,
 	LINK_SHELL_OPT_MODEM_SHUTDOWN_CFUN0,
+	LINK_SHELL_OPT_ENVEVAL_EVAL_TYPE,
+	LINK_SHELL_OPT_ENVEVAL_PLMNS,
 };
 
 /* Specifying the expected options (both long and short) */
@@ -502,6 +528,8 @@ static struct option long_options[] = {
 	{ "init", no_argument, 0, LINK_SHELL_OPT_MODEM_INIT },
 	{ "shutdown", no_argument, 0, LINK_SHELL_OPT_MODEM_SHUTDOWN },
 	{ "shutdown_cfun0", no_argument, 0, LINK_SHELL_OPT_MODEM_SHUTDOWN_CFUN0 },
+	{ "eval_type", required_argument, 0, LINK_SHELL_OPT_ENVEVAL_EVAL_TYPE },
+	{ "plmns", required_argument, 0, LINK_SHELL_OPT_ENVEVAL_PLMNS },
 	{ 0, 0, 0, 0 }
 };
 
@@ -521,6 +549,11 @@ static void link_shell_print_usage(enum link_shell_command command)
 	case LINK_CMD_DEFCONTAUTH:
 		mosh_print_no_format(link_defcontauth_usage_str);
 		break;
+#if defined(CONFIG_LTE_LC_ENV_EVAL_MODULE)
+	case LINK_CMD_ENVEVAL:
+		mosh_print_no_format(link_enveval_usage_str);
+		break;
+#endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
 	case LINK_CMD_CONNECT:
 		mosh_print_no_format(link_connect_usage_str);
 		break;
@@ -648,6 +681,25 @@ static enum lte_lc_neighbor_search_type
 
 	return search_type;
 }
+
+#if defined(CONFIG_LTE_LC_ENV_EVAL_MODULE)
+#define MOSH_ENVEVAL_EVAL_TYPE_NONE 0xFF
+
+static enum lte_lc_env_eval_type link_shell_string_to_env_eval_type(const char *eval_type_str)
+{
+	enum lte_lc_env_eval_type eval_type = MOSH_ENVEVAL_EVAL_TYPE_NONE;
+
+	if (strcmp(eval_type_str, "dynamic") == 0) {
+		eval_type = LTE_LC_ENV_EVAL_TYPE_DYNAMIC;
+	} else if (strcmp(eval_type_str, "light") == 0) {
+		eval_type = LTE_LC_ENV_EVAL_TYPE_LIGHT;
+	} else if (strcmp(eval_type_str, "full") == 0) {
+		eval_type = LTE_LC_ENV_EVAL_TYPE_FULL;
+	}
+
+	return eval_type;
+}
+#endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
 
 int link_shell_get_and_print_current_system_modes(
 	enum lte_lc_system_mode *sys_mode_current,
@@ -826,6 +878,170 @@ static int link_shell_coneval(const struct shell *shell, size_t argc, char **arg
 
 	return 0;
 }
+
+#if defined(CONFIG_LTE_LC_ENV_EVAL_MODULE)
+static int link_shell_string_to_env_eval_plmn_list(
+	char *plmn_str,
+	struct lte_lc_env_eval_plmn *plmn_list,
+	uint8_t *plmn_count)
+{
+	int ret = 0;
+	size_t plmn_str_len;
+	char *plmn_ptr;
+	uint8_t count = 0;
+
+	__ASSERT_NO_MSG(plmn_str != NULL);
+	__ASSERT_NO_MSG(plmn_list != NULL);
+	__ASSERT_NO_MSG(plmn_count != NULL);
+
+	*plmn_count = 0;
+
+	plmn_str_len = strlen(plmn_str);
+	plmn_ptr = plmn_str;
+
+	/* Replace commas with nul-terminators. */
+	for (int i = 0; i < plmn_str_len; i++) {
+		if (plmn_ptr[i] == ',') {
+			plmn_ptr[i] = '\0';
+		}
+	}
+
+	while (plmn_ptr < (plmn_str + plmn_str_len)) {
+		if (count >= CONFIG_LTE_LC_ENV_EVAL_MAX_PLMN_COUNT) {
+			mosh_error("Number of PLMNs exceeds CONFIG_LTE_LC_ENV_EVAL_MAX_PLMN_COUNT"
+				   " (%d)",
+				   CONFIG_LTE_LC_ENV_EVAL_MAX_PLMN_COUNT);
+			return -EINVAL;
+		}
+
+		if (strlen(plmn_ptr) < 5) {
+			mosh_error("Invalid PLMN: %s", plmn_ptr);
+			return -EBADMSG;
+		}
+
+		/* Read MNC and store as integer. The MNC starts as the fourth character
+		 * in the string, following three characters long MCC.
+		 */
+		ret = mosh_string_to_int(&plmn_ptr[3], 10, &plmn_list[count].mnc);
+		if (ret) {
+			return -EBADMSG;
+		}
+
+		/* Nul-terminate MCC, read and store it. */
+		plmn_ptr[3] = '\0';
+		ret = mosh_string_to_int(&plmn_ptr[0], 10, &plmn_list[count].mcc);
+		if (ret) {
+			return -EBADMSG;
+		}
+
+		if (plmn_list[count].mcc == 0 || plmn_list[count].mnc == 0) {
+			mosh_error("Invalid PLMN: MCC: %03d, MNC: %02d",
+				   plmn_list[count].mcc, plmn_list[count].mnc);
+			return -EBADMSG;
+		}
+
+		count++;
+
+		/* Skip parsed PLMN, which is at least 5 digits. */
+		plmn_ptr += 5;
+
+		if (*plmn_ptr != '\0') {
+			/* Skip 6th digit.*/
+			plmn_ptr++;
+		}
+		/* Skip nul-terminator. */
+		plmn_ptr++;
+	}
+
+	*plmn_count = count;
+
+	return ret;
+}
+
+static int link_shell_enveval(const struct shell *shell, size_t argc, char **argv)
+{
+	int ret;
+	struct lte_lc_env_eval_plmn plmn_list[CONFIG_LTE_LC_ENV_EVAL_MAX_PLMN_COUNT] = {0};
+	struct lte_lc_env_eval_params params = {
+		.eval_type = MOSH_ENVEVAL_EVAL_TYPE_NONE,
+		.plmn_list = plmn_list
+	};
+	bool cancel = false;
+
+	if (argc < 2) {
+		goto show_usage;
+	}
+
+	optreset = 1;
+	optind = 1;
+	int opt;
+
+	while ((opt = getopt_long(argc, argv, short_options, long_options, NULL)) != -1) {
+		switch (opt) {
+		case LINK_SHELL_OPT_ENVEVAL_EVAL_TYPE:
+			params.eval_type = link_shell_string_to_env_eval_type(optarg);
+			if (params.eval_type == MOSH_ENVEVAL_EVAL_TYPE_NONE) {
+				mosh_error("Unknown evaluation type. See usage:");
+				goto show_usage;
+			}
+			break;
+		case LINK_SHELL_OPT_ENVEVAL_PLMNS:
+			ret = link_shell_string_to_env_eval_plmn_list(
+				optarg, params.plmn_list, &params.plmn_count);
+			if (ret) {
+				mosh_error("Invalid PLMN list. See usage:");
+				goto show_usage;
+			}
+			break;
+		case LINK_SHELL_OPT_STOP:
+			cancel = true;
+			break;
+
+		case 'h':
+			goto show_usage;
+		case '?':
+		default:
+			mosh_error("Unknown option (%s). See usage:", argv[optind - 1]);
+			goto show_usage;
+		}
+	}
+
+	if (cancel) {
+		mosh_print("Cancelling environment evaluation...");
+		ret = lte_lc_env_eval_cancel();
+		if (ret) {
+			mosh_error("lte_lc_env_eval_cancel() returned %d", ret);
+			return -ENOEXEC;
+		}
+		return 0;
+	}
+
+	/* Validate that both eval_type and plmns were provided */
+	if (params.eval_type == MOSH_ENVEVAL_EVAL_TYPE_NONE) {
+		mosh_error("Evaluation type must be specified. See usage:");
+		goto show_usage;
+	}
+
+	if (params.plmn_count == 0) {
+		mosh_error("At least one PLMN must be specified. See usage:");
+		goto show_usage;
+	}
+
+	mosh_print("Starting environment evaluation for %zu PLMN(s)...", params.plmn_count);
+
+	ret = lte_lc_env_eval(&params);
+	if (ret) {
+		mosh_error("lte_lc_env_eval() returned %d", ret);
+		return -ENOEXEC;
+	}
+
+	return 0;
+
+show_usage:
+	link_shell_print_usage(LINK_CMD_ENVEVAL);
+	return -EINVAL;
+}
+#endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
 
 static int link_shell_defcont(const struct shell *shell, size_t argc, char **argv)
 {
@@ -2756,6 +2972,12 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		edrx, NULL,
 		"Enable/disable eDRX with default or with custom parameters.",
 		link_shell_edrx, 0, 10),
+#if defined(CONFIG_LTE_LC_ENV_EVAL_MODULE)
+	SHELL_CMD_ARG(
+		enveval, NULL,
+		"Perform environment evaluation for specified PLMNs.",
+		link_shell_enveval, 0, 20),
+#endif /* CONFIG_LTE_LC_ENV_EVAL_MODULE */
 	SHELL_CMD_ARG(
 		funmode, NULL,
 		"Set/read functional modes of the modem.",
