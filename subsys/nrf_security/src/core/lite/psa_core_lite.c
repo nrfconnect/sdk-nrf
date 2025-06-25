@@ -142,6 +142,49 @@ psa_status_t psa_verify_message(
 
 #if defined(PSA_WANT_ALG_SHA_256) || defined(PSA_WANT_ALG_SHA_512)
 
+psa_status_t psa_hash_setup(psa_hash_operation_t *operation, psa_algorithm_t alg)
+{
+	if (operation == NULL) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	if (!UTIL_CONCAT_OR(VERIFY_ALG_SHA_256(alg),
+			    VERIFY_ALG_SHA_512(alg))) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	return psa_driver_wrapper_hash_setup(operation, alg);
+}
+
+psa_status_t psa_hash_update(
+	psa_hash_operation_t *operation, const uint8_t *input, size_t input_length)
+{
+	if (operation == NULL || input == NULL) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	return psa_driver_wrapper_hash_update(operation, input, input_length);
+}
+
+psa_status_t psa_hash_finish(
+	psa_hash_operation_t *operation, uint8_t *hash, size_t hash_size, size_t *hash_length)
+{
+	if (operation == NULL || hash == NULL || hash_length == NULL) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	return psa_driver_wrapper_hash_finish(operation, hash, hash_size, hash_length);
+}
+
+psa_status_t psa_hash_abort(psa_hash_operation_t *operation)
+{
+	if (operation == NULL) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	return psa_driver_wrapper_hash_abort(operation);
+}
+
 psa_status_t psa_hash_compute(
 	psa_algorithm_t alg, const uint8_t *input, size_t input_length,
 	uint8_t *hash, size_t hash_size, size_t *hash_length)
