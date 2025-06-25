@@ -57,3 +57,11 @@ tests:
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - CONFIG_DEBUG_OPTIMIZATIONS=y
     tags: ci_tests_subsys_bootloader
+  boot_chains.secure_boot_and_hw_crypto_backends:
+    extra_args:
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+      - SB_CONFIG_SECURE_BOOT_APPCORE_SIGNATURE_TYPE_HARDWARE=y
+      - SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_HARDWARE=y
+    platform_exclude:
+      - nrf5340dk/nrf5340/cpuapp
+    tags: ci_tests_subsys_bootloader
