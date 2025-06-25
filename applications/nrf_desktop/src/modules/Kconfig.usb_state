@@ -57,6 +57,18 @@ config DESKTOP_USB_PM_REQ_NO_PM_LATENCY
 	  latency and ensures high performance. While USB is active, application
 	  power down is blocked anyway.
 
+config DESKTOP_USB_PM_RESTRICT_REMOVE_DELAY_MS
+	int "Delay in milliseconds before removing power manager level restriction"
+	range 0 10000
+	default 3000 if DESKTOP_BLE_ADV_CTRL_SUSPEND_ON_USB
+	default 0
+	depends on DESKTOP_USB_PM_ENABLE
+	help
+	  Delay in milliseconds before removing power manager level restriction.
+	  This is used to allow the USB to be disconnected without immediate system off.
+	  It allows user to take actions, like e.g. restart advertising, after disconnecting
+	  the USB cable without going through reboot.
+
 config DESKTOP_USB_HID_REPORT_SENT_ON_SOF
 	bool "Submit HID report sent event on USB Start of Frame (SOF) [EXPERIMENTAL]"
 	default y if UDC_DRIVER_HAS_HIGH_SPEED_SUPPORT
