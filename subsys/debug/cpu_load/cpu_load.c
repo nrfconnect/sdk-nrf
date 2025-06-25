@@ -7,7 +7,9 @@
 #include <zephyr/shell/shell.h>
 #include <helpers/nrfx_gppi.h>
 #include <nrfx_timer.h>
+#ifdef RTC_PRESENT
 #include <hal/nrf_rtc.h>
+#endif
 #include <hal/nrf_power.h>
 #include <debug/ppi_trace.h>
 #include <zephyr/logging/log.h>
@@ -130,19 +132,19 @@ int cpu_load_init(void)
 	config.frequency = NRFX_MHZ_TO_HZ(1);
 	config.bit_width = NRF_TIMER_BIT_WIDTH_32;
 
-	if (IS_ENABLED(CONFIG_NRF_CPU_LOAD_ALIGNED_CLOCKS)) {
-		/* It's assumed that RTC1 is driving system clock. */
-		config.mode = NRF_TIMER_MODE_COUNTER;
-		err = ppi_alloc(&ch_tick,
-		       nrf_rtc_event_address_get(NRF_RTC1, NRF_RTC_EVENT_TICK));
-		if (err != NRFX_SUCCESS) {
-			return -ENODEV;
-		}
-		nrfx_gppi_channel_endpoints_setup(ch_tick,
-		     nrf_rtc_event_address_get(NRF_RTC1, NRF_RTC_EVENT_TICK),
-		     nrfx_timer_task_address_get(&timer, NRF_TIMER_TASK_COUNT));
-		nrf_rtc_event_enable(NRF_RTC1, NRF_RTC_INT_TICK_MASK);
+#ifdef CONFIG_NRF_CPU_LOAD_ALIGNED_CLOCKS
+	/* It's assumed that RTC1 is driving system clock. */
+	config.mode = NRF_TIMER_MODE_COUNTER;
+	err = ppi_alloc(&ch_tick,
+	       nrf_rtc_event_address_get(NRF_RTC1, NRF_RTC_EVENT_TICK));
+	if (err != NRFX_SUCCESS) {
+		return -ENODEV;
 	}
+	nrfx_gppi_channel_endpoints_setup(ch_tick,
+	     nrf_rtc_event_address_get(NRF_RTC1, NRF_RTC_EVENT_TICK),
+	     nrfx_timer_task_address_get(&timer, NRF_TIMER_TASK_COUNT));
+	nrf_rtc_event_enable(NRF_RTC1, NRF_RTC_INT_TICK_MASK);
+#endif
 
 	err = ppi_alloc(&ch_sleep,
 		       nrf_power_event_address_get(NRF_POWER,
