@@ -627,31 +627,21 @@ The MCUboot-based targets that enable the ``SB_CONFIG_MCUBOOT_SIGNATURE_USING_KM
    The board targets based on the nRF54L SoC Series are currently the only targets that support the KMU-based key storage.
    See the :ref:`fast_pair_locator_tag_dfu` section of this sample documentation for the details regarding the supported signature algorithms, public key storage location and the signature key file.
 
-Using KMU requires the provisioning operation of the public key to be performed manually.
-Before performing the provisioning operation, you need to ensure that your board target is fully erased:
+To use KMU, the public key must first be provisioned.
+This provisioning step can be performed automatically by the west runner, provided that a :file:`keyfile.json` file is present in the build directory.
+In this sample, the :file:`keyfile.json` file is automatically generated using the ``SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE`` Kconfig option.
+This option uses the input key specified by the ``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`` Kconfig option to generate the required file during the build process.
+
+To trigger KMU provisioning during flashing, use the ``west flash`` command with either the ``--erase`` or ``--recover`` flag.
+This ensures that both the firmware and the MCUboot public key are correctly programmed onto the target device using KMU-based key storage.
+Use the following command to perform the operation:
 
 .. parsed-literal::
    :class: highlight
 
-   nrfutil device erase --all
+   west flash --recover
 
-Assuming that your current working directory points to this sample directory, you can perform the provisioning operation as follows:
-
-.. parsed-literal::
-   :class: highlight
-
-   west ncs-provision upload -k sysbuild/configuration/<board_target>/boot_signature_key_file_<algorithm>.pem --keyname UROT_PUBKEY
-
-* The ``<board_target>`` placeholder is your board target name (for example, ``nrf54l15dk/nrf54l15/cpuapp``).
-* The ``<algorithm>`` placeholder is the algorithm used to generate the key pair for the application image signature generation and verification (for example, ``ed25519``).
-
-The examplary command for the ``nrf54l15dk/nrf54l15/cpuapp`` board target and the demonstration key file is as follows:
-
-.. parsed-literal::
-   :class: highlight
-
-   west ncs-provision upload -k sysbuild/configuration/nrf54l15dk_nrf54l15_cpuapp/boot_signature_key_file_ed25519.pem --keyname UROT_PUBKEY
-
+Alternatively, you can perform the provisioning operation manually with the ``west ncs-provision upload`` command and then flash the device with the ``west flash`` command.
 See :ref:`ug_nrf54l_developing_provision_kmu` for further details regarding the KMU provisioning process.
 
 .. _fast_pair_locator_tag_motion_detector_test_build:
