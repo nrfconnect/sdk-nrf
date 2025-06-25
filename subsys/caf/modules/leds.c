@@ -39,19 +39,10 @@ struct led {
   #error "LED driver must be specified in configuration"
 #endif
 
-#define _LED_COLOR_ID(_unused) 0,
-
-#define _LED_COLOR_COUNT(id)					\
-	static const uint8_t led_colors_##id[] = {		\
-		DT_INST_FOREACH_CHILD(id, _LED_COLOR_ID)	\
-	};
-
-DT_INST_FOREACH_STATUS_OKAY(_LED_COLOR_COUNT)
-
-#define _LED_INSTANCE_DEF(id)						\
-	{								\
-		.dev = DEVICE_DT_GET(DT_DRV_INST(id)),			\
-		.color_count = ARRAY_SIZE(led_colors_##id),		\
+#define _LED_INSTANCE_DEF(id)				\
+	{						\
+		.dev = DEVICE_DT_GET(DT_DRV_INST(id)),	\
+		.color_count = DT_INST_CHILD_NUM(id),	\
 	},
 
 
