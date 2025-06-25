@@ -89,8 +89,8 @@ static void timer_compare_interrupt_handler(int32_t id, uint64_t expire_time, vo
 	compare_count_value = z_nrf_grtc_timer_read();
 	compare_isr_call_counter++;
 	if (test_limit->is_reference_timer_enabled) {
-		counter_stop(tst_timer_dev);
 		counter_get_value(tst_timer_dev, &tst_timer_value);
+		counter_stop(tst_timer_dev);
 		reference_timer_value_us = counter_ticks_to_us(tst_timer_dev, tst_timer_value);
 		TC_PRINT("Reference timer value [us]: %llu\n", reference_timer_value_us);
 		TC_PRINT("Time delta (Specified (GRTC) - referecne timer) [us]: %lld\n",
