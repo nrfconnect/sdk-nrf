@@ -4,15 +4,15 @@
 
 .. nrf52dk_nrf52832
 
-| :ref:`nRF52 DK <ug_nrf52>` | PCA10040 | :zephyr:board:`nrf52dk` | ``nrf52dk/nrf52832`` |
+| :ref:`nRF52 DK <ug_nrf52>` | PCA10040 | :zephyr:board:`nrf52dk <nrf52dk>` | ``nrf52dk/nrf52832`` |
 
 .. nrf52840dk_nrf52840
 
-| :ref:`nRF52840 DK <ug_nrf52>` | PCA10056 | :zephyr:board:`nrf52840dk` | ``nrf52840dk/nrf52840`` |
+| :ref:`nRF52840 DK <ug_nrf52>` | PCA10056 | :zephyr:board:`nrf52840dk <nrf52840dk>` | ``nrf52840dk/nrf52840`` |
 
 .. nrf52840dongle_nrf52840
 
-| :ref:`nRF52840 Dongle <ug_nrf52>` | PCA10059 | :zephyr:board:`nrf52840dongle` | ``nrf52840dongle/nrf52840`` |
+| :ref:`nRF52840 Dongle <ug_nrf52>` | PCA10059 | :zephyr:board:`nrf52840dongle <nrf52840dongle>` | ``nrf52840dongle/nrf52840`` |
 
 .. nrf9160dk_nrf9160
 
@@ -25,8 +25,8 @@
 .. nrf9160dk_nrf9160_and_ns
 
 | :ref:`nRF9160 DK <ug_nrf9160>` | PCA10090 | :ref:`nrf9160dk <zephyr:nrf9160dk_nrf9160>` | ``nrf9160dk/nrf9160``    |
-|                                |          |                                      |                          |
-|                                |          |                                      | ``nrf9160dk/nrf9160/ns`` |
+|                                |          |                                             |                          |
+|                                |          |                                             | ``nrf9160dk/nrf9160/ns`` |
 
 .. nrf9160dk_nrf52840
 
@@ -34,43 +34,43 @@
 
 .. nrf9161dk_nrf9161
 
-| :ref:`nRF9161 DK <ug_nrf9161>` | PCA10153 | :zephyr:board:`nrf9161dk` | ``nrf9161dk/nrf9161``  |
+| :ref:`nRF9161 DK <ug_nrf9161>` | PCA10153 | :zephyr:board:`nrf9161dk <nrf9161dk>` | ``nrf9161dk/nrf9161``  |
 
 .. nrf9161dk_nrf9161_ns
 
-| :ref:`nRF9161 DK <ug_nrf9161>` | PCA10153 | :zephyr:board:`nrf9161dk` | ``nrf9161dk/nrf9161/ns`` |
+| :ref:`nRF9161 DK <ug_nrf9161>` | PCA10153 | :zephyr:board:`nrf9161dk <nrf9161dk>` | ``nrf9161dk/nrf9161/ns`` |
 
 .. nrf9131ek_nrf9131
 
-| :ref:`nRF9131 EK <ug_nrf91>` | PCA10165 | :zephyr:board:`nrf9131ek` | ``nrf9131ek/nrf9131``  |
+| :ref:`nRF9131 EK <ug_nrf91>` | PCA10165 | :zephyr:board:`nrf9131ek <nrf9131ek>` | ``nrf9131ek/nrf9131``  |
 
 .. nrf9131ek_nrf9131_ns
 
-| :ref:`nRF9131 EK <ug_nrf91>` | PCA10165 | :zephyr:board:`nrf9131ek` | ``nrf9131ek/nrf9131/ns`` |
+| :ref:`nRF9131 EK <ug_nrf91>` | PCA10165 | :zephyr:board:`nrf9131ek <nrf9131ek>` | ``nrf9131ek/nrf9131/ns`` |
 
 .. nrf9151dk_nrf9151
 
-| :ref:`nRF9151 DK <ug_nrf91>` | PCA10171 | :zephyr:board:`nrf9151dk` | ``nrf9151dk/nrf9151`` |
+| :ref:`nRF9151 DK <ug_nrf91>` | PCA10171 | :zephyr:board:`nrf9151dk <nrf9151dk>` | ``nrf9151dk/nrf9151`` |
 
 .. nrf9151dk_nrf9151_ns
 
-| :ref:`nRF9151 DK <ug_nrf91>` | PCA10171 | :zephyr:board:`nrf9151dk` | ``nrf9151dk/nrf9151/ns`` |
+| :ref:`nRF9151 DK <ug_nrf91>` | PCA10171 | :zephyr:board:`nrf9151dk <nrf9151dk>` | ``nrf9151dk/nrf9151/ns`` |
 
 .. nrf5340dk_nrf5340_cpuapp
 
-| :ref:`nRF5340 DK <ug_nrf5340>` | PCA10095 | :zephyr:board:`nrf5340dk` | ``nrf5340dk/nrf5340/cpuapp`` |
+| :ref:`nRF5340 DK <ug_nrf5340>` | PCA10095 | :zephyr:board:`nrf5340dk <nrf5340dk>` | ``nrf5340dk/nrf5340/cpuapp`` |
 
 .. nrf5340dk_nrf5340_cpuapp_ns
 
-| :ref:`nRF5340 DK <ug_nrf5340>` | PCA10095 | :zephyr:board:`nrf5340dk` | ``nrf5340dk/nrf5340/cpuapp/ns`` |
+| :ref:`nRF5340 DK <ug_nrf5340>` | PCA10095 | :zephyr:board:`nrf5340dk <nrf5340dk>` | ``nrf5340dk/nrf5340/cpuapp/ns`` |
 
 .. nrf5340dk_nrf5340_cpunet
 
-| :ref:`nRF5340 DK <ug_nrf5340>` | PCA10095 | :zephyr:board:`nrf5340dk` | ``nrf5340dk/nrf5340/cpunet`` |
+| :ref:`nRF5340 DK <ug_nrf5340>` | PCA10095 | :zephyr:board:`nrf5340dk <nrf5340dk>` | ``nrf5340dk/nrf5340/cpunet`` |
 
 .. nrf52833dk_nrf52833
 
-| :ref:`nRF52833 DK <ug_nrf52>` | PCA10100 | :zephyr:board:`nrf52833dk` | ``nrf52833dk/nrf52833`` |
+| :ref:`nRF52833 DK <ug_nrf52>` | PCA10100 | :zephyr:board:`nrf52833dk <nrf52833dk>` | ``nrf52833dk/nrf52833`` |
 
 .. nrf52833dongle_nrf52833
 
@@ -78,7 +78,7 @@
 
 .. nrf52833dk_nrf52820
 
-| :ref:`nRF52833 DK (emulating nRF52820) <ug_nrf52>` | PCA10100 | :zephyr:board:`nrf52833dk` | ``nrf52833dk/nrf52820`` |
+| :ref:`nRF52833 DK (emulating nRF52820) <ug_nrf52>` | PCA10100 | :zephyr:board:`nrf52833dk <nrf52833dk>` | ``nrf52833dk/nrf52820`` |
 
 .. nrf52820dongle_nrf52820
 
@@ -86,23 +86,23 @@
 
 .. thingy91_nrf9160
 
-| :ref:`Thingy:91 <ug_thingy91>` | PCA20035 | thingy91 | ``thingy91/nrf9160`` |
+| :ref:`Thingy:91 <ug_thingy91>` | PCA20035 | :ref:`thingy91 <ug_thingy91>` | ``thingy91/nrf9160`` |
 
 .. thingy91_nrf9160_ns
 
-| :ref:`Thingy:91 <ug_thingy91>` | PCA20035 | thingy91 | ``thingy91/nrf9160/ns`` |
+| :ref:`Thingy:91 <ug_thingy91>` | PCA20035 | :ref:`thingy91 <ug_thingy91>` | ``thingy91/nrf9160/ns`` |
 
 .. thingy91x_nrf9151
 
-| :ref:`Thingy:91 X <ug_thingy91x>` | PCA20065 | thingy91x | ``thingy91x/nrf9151`` |
+| :ref:`Thingy:91 X <ug_thingy91x>` | PCA20065 | :ref:`thingy91x <ug_thingy91x>` | ``thingy91x/nrf9151`` |
 
 .. thingy91x_nrf9151_ns
 
-| :ref:`Thingy:91 X <ug_thingy91x>` | PCA20065 | thingy91x | ``thingy91x/nrf9151/ns`` |
+| :ref:`Thingy:91 X <ug_thingy91x>` | PCA20065 | :ref:`thingy91x <ug_thingy91x>` | ``thingy91x/nrf9151/ns`` |
 
 .. thingy91x_nrf5340_cpuapp
 
-| :ref:`Thingy:91 X <ug_thingy91x>` | PCA20065 | thingy91x | ``thingy91x/nrf5340/cpuapp`` |
+| :ref:`Thingy:91 X <ug_thingy91x>` | PCA20065 | :ref:`thingy91x <ug_thingy91x>` | ``thingy91x/nrf5340/cpuapp`` |
 
 .. nrf52dk_nrf52810
 
@@ -130,27 +130,27 @@
 
 .. thingy91_nrf52840
 
-| :ref:`Thingy:91 <ug_thingy91>` | PCA20035 | thingy91 | ``thingy91/nrf52840`` |
+| :ref:`Thingy:91 <ug_thingy91>` | PCA20035 | :ref:`thingy91 <ug_thingy91>` | ``thingy91/nrf52840`` |
 
 .. nrf5340dk_nrf5340_cpuapp_and_cpuapp_ns
 
-| :ref:`nRF5340 DK <ug_nrf5340>` | PCA10095 | :zephyr:board:`nrf5340dk` | ``nrf5340dk/nrf5340/cpuapp``    |
-|                                |          |                           |                                 |
-|                                |          |                           | ``nrf5340dk/nrf5340/cpuapp/ns`` |
+| :ref:`nRF5340 DK <ug_nrf5340>` | PCA10095 | :zephyr:board:`nrf5340dk <nrf5340dk>` | ``nrf5340dk/nrf5340/cpuapp``    |
+|                                |          |                                       |                                 |
+|                                |          |                                       | ``nrf5340dk/nrf5340/cpuapp/ns`` |
 
 .. nrf5340dk_nrf5340_cpuapp_and_cpunet
 
-| :ref:`nRF5340 DK <ug_nrf5340>` | PCA10095 | :zephyr:board:`nrf5340dk` | ``nrf5340dk/nrf5340/cpuapp`` |
-|                                |          |                           |                              |
-|                                |          |                           | ``nrf5340dk/nrf5340/cpunet`` |
+| :ref:`nRF5340 DK <ug_nrf5340>` | PCA10095 | :zephyr:board:`nrf5340dk <nrf5340dk>` | ``nrf5340dk/nrf5340/cpuapp`` |
+|                                |          |                                       |                              |
+|                                |          |                                       | ``nrf5340dk/nrf5340/cpunet`` |
 
 .. nrf5340_audio_dk_nrf5340
 
-| `nRF5340 Audio DK <nRF5340 Audio DK Hardware_>`_    | PCA10121 revision 1.0.0 or above | :zephyr:board:`nrf5340_audio_dk`  | ``nrf5340_audio_dk/nrf5340/cpuapp`` |
+| `nRF5340 Audio DK <nRF5340 Audio DK Hardware_>`_    | PCA10121 revision 1.0.0 or above | :zephyr:board:`nrf5340_audio_dk <nrf5340_audio_dk>`  | ``nrf5340_audio_dk/nrf5340/cpuapp`` |
 
 .. nrf21540dk_nrf52840
 
-| :ref:`nRF21540 DK <ug_radio_fem>` | PCA10112 | :zephyr:board:`nrf21540dk` | ``nrf21540dk/nrf52840`` |
+| :ref:`nRF21540 DK <ug_radio_fem>` | PCA10112 | :zephyr:board:`nrf21540dk <nrf21540dk>` | ``nrf21540dk/nrf52840`` |
 
 .. thingy52_nrf52832
 
@@ -158,21 +158,21 @@
 
 .. thingy53_nrf5340_cpuapp
 
-| :ref:`Thingy:53 <ug_thingy53>` | PCA20053 | :zephyr:board:`thingy53` | ``thingy53/nrf5340/cpuapp`` |
+| :ref:`Thingy:53 <ug_thingy53>` | PCA20053 | :zephyr:board:`thingy53 <thingy53>` | ``thingy53/nrf5340/cpuapp`` |
 
 .. thingy53_nrf5340_cpuapp_ns
 
-| :ref:`Thingy:53 <ug_thingy53>` | PCA20053 | :zephyr:board:`thingy53` | ``thingy53/nrf5340/cpuapp/ns`` |
+| :ref:`Thingy:53 <ug_thingy53>` | PCA20053 | :zephyr:board:`thingy53 <thingy53>` | ``thingy53/nrf5340/cpuapp/ns`` |
 
 .. thingy53_nrf5340_cpuapp_and_cpuapp_ns
 
-| :ref:`Thingy:53 <ug_thingy53>` | PCA20053 | :zephyr:board:`thingy53` | ``thingy53/nrf5340/cpuapp``    |
-|                                |          |                          |                                |
-|                                |          |                          | ``thingy53/nrf5340/cpuapp/ns`` |
+| :ref:`Thingy:53 <ug_thingy53>` | PCA20053 | :zephyr:board:`thingy53 <thingy53>` | ``thingy53/nrf5340/cpuapp``    |
+|                                |          |                                     |                                |
+|                                |          |                                     | ``thingy53/nrf5340/cpuapp/ns`` |
 
 .. thingy53_nrf5340_cpunet
 
-| :ref:`Thingy:53 <ug_thingy53>` | PCA20053 | :zephyr:board:`thingy53` | ``thingy53/nrf5340/cpunet`` |
+| :ref:`Thingy:53 <ug_thingy53>` | PCA20053 | :zephyr:board:`thingy53 <thingy53>` | ``thingy53/nrf5340/cpunet`` |
 
 .. nrf7002dk_nrf5340_cpuapp
 
@@ -200,15 +200,15 @@
 
 .. nrf54h20dk_nrf54h20_cpuapp
 
-| :ref:`nRF54H20 DK <ug_nrf54h20_gs>` | PCA10175 | :zephyr:board:`nrf54h20dk` | ``nrf54h20dk/nrf54h20/cpuapp`` |
+| :ref:`nRF54H20 DK <ug_nrf54h20_gs>` | PCA10175 | :zephyr:board:`nrf54h20dk <nrf54h20dk>` | ``nrf54h20dk/nrf54h20/cpuapp`` |
 
 .. nrf54h20dk_nrf54h20_cpurad
 
-| :ref:`nRF54H20 DK <ug_nrf54h20_gs>` | PCA10175 | :zephyr:board:`nrf54h20dk` | ``nrf54h20dk/nrf54h20/cpurad`` |
+| :ref:`nRF54H20 DK <ug_nrf54h20_gs>` | PCA10175 | :zephyr:board:`nrf54h20dk <nrf54h20dk>` | ``nrf54h20dk/nrf54h20/cpurad`` |
 
 .. nrf54h20dk_nrf54h20_cpuppr
 
-| :ref:`nRF54H20 DK <ug_nrf54h20_gs>` | PCA10175 | :zephyr:board:`nrf54h20dk` | ``nrf54h20dk/nrf54h20/cpuppr`` |
+| :ref:`nRF54H20 DK <ug_nrf54h20_gs>` | PCA10175 | :zephyr:board:`nrf54h20dk <nrf54h20dk>` | ``nrf54h20dk/nrf54h20/cpuppr`` |
 
 .. native_posix
 
@@ -220,39 +220,39 @@
 
 .. nrf54l15dk_nrf54l05_cpuapp
 
-| :ref:`nRF54L15 DK (emulating nRF54L05) <ug_nrf54l>`  | PCA10156 | :zephyr:board:`nrf54l15dk` | ``nrf54l15dk/nrf54l05/cpuapp`` |
+| :ref:`nRF54L15 DK (emulating nRF54L05) <ug_nrf54l>`  | PCA10156 | :zephyr:board:`nrf54l15dk <nrf54l15dk>` | ``nrf54l15dk/nrf54l05/cpuapp`` |
 
 .. nrf54l15dk_nrf54l10_cpuapp
 
-| :ref:`nRF54L15 DK (emulating nRF54L10) <ug_nrf54l>` | PCA10156 | :zephyr:board:`nrf54l15dk` | ``nrf54l15dk/nrf54l10/cpuapp`` |
+| :ref:`nRF54L15 DK (emulating nRF54L10) <ug_nrf54l>` | PCA10156 | :zephyr:board:`nrf54l15dk <nrf54l15dk>` | ``nrf54l15dk/nrf54l10/cpuapp`` |
 
 .. nrf54l15dk_nrf54l15_cpuapp
 
-| :ref:`nRF54L15 DK <ug_nrf54l>` | PCA10156 | :zephyr:board:`nrf54l15dk` | ``nrf54l15dk/nrf54l15/cpuapp`` |
+| :ref:`nRF54L15 DK <ug_nrf54l>` | PCA10156 | :zephyr:board:`nrf54l15dk <nrf54l15dk>` | ``nrf54l15dk/nrf54l15/cpuapp`` |
 
 .. nrf54l15dk_nrf54l10_cpuapp_ns
 
-| :ref:`nRF54L15 DK (emulating nRF54L10) <ug_nrf54l>` | PCA10156 | :zephyr:board:`nrf54l15dk` | ``nrf54l15dk/nrf54l10/cpuapp/ns`` |
+| :ref:`nRF54L15 DK (emulating nRF54L10) <ug_nrf54l>` | PCA10156 | :zephyr:board:`nrf54l15dk <nrf54l15dk>` | ``nrf54l15dk/nrf54l10/cpuapp/ns`` |
 
 .. nrf54l15dk_nrf54l10_cpuapp_and_cpuapp_ns
 
-| :ref:`nRF54L15 DK (emulating nRF54L10) <ug_nrf54l>` | PCA10156 | :zephyr:board:`nrf54l15dk` | ``nrf54l15dk/nrf54l10/cpuapp``    |
-|                                                     |          |                            |                                   |
-|                                                     |          |                            | ``nrf54l15dk/nrf54l10/cpuapp/ns`` |
+| :ref:`nRF54L15 DK (emulating nRF54L10) <ug_nrf54l>` | PCA10156 | :zephyr:board:`nrf54l15dk <nrf54l15dk>` | ``nrf54l15dk/nrf54l10/cpuapp``    |
+|                                                     |          |                                         |                                   |
+|                                                     |          |                                         | ``nrf54l15dk/nrf54l10/cpuapp/ns`` |
 
 .. nrf54l15dk_nrf54l15_cpuapp_ns
 
-| :ref:`nRF54L15 DK <ug_nrf54l>` | PCA10156 | :zephyr:board:`nrf54l15dk` | ``nrf54l15dk/nrf54l15/cpuapp/ns`` |
+| :ref:`nRF54L15 DK <ug_nrf54l>` | PCA10156 | :zephyr:board:`nrf54l15dk <nrf54l15dk>` | ``nrf54l15dk/nrf54l15/cpuapp/ns`` |
 
 .. nrf54l15dk_nrf54l15_cpuapp_and_cpuapp_ns
 
-| :ref:`nRF54L15 DK <ug_nrf54l>` | PCA10156 | :zephyr:board:`nrf54l15dk` | ``nrf54l15dk/nrf54l15/cpuapp``    |
-|                                |          |                            |                                   |
-|                                |          |                            | ``nrf54l15dk/nrf54l15/cpuapp/ns`` |
+| :ref:`nRF54L15 DK <ug_nrf54l>` | PCA10156 | :zephyr:board:`nrf54l15dk <nrf54l15dk>` | ``nrf54l15dk/nrf54l15/cpuapp``    |
+|                                |          |                                         |                                   |
+|                                |          |                                         | ``nrf54l15dk/nrf54l15/cpuapp/ns`` |
 
 .. nrf54l15dk_nrf54l15_cpuflpr
 
-| :ref:`nRF54L15 DK <ug_nrf54l>` | PCA10156 | :zephyr:board:`nrf54l15dk` | ``nrf54l15dk/nrf54l15/cpuflpr`` |
+| :ref:`nRF54L15 DK <ug_nrf54l>` | PCA10156 | :zephyr:board:`nrf54l15dk <nrf54l15dk>` | ``nrf54l15dk/nrf54l15/cpuflpr`` |
 
 .. nrf54lv10dk_nrf54lv10a_cpuapp
 
