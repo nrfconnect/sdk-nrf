@@ -6,6 +6,7 @@
 
 #include <zephyr/ztest.h>
 #include <hal/nrf_rramc.h>
+#include <nrfx_rramc.h>
 
 #define RRAMC_REGION_FOR_BOOTCONF 3
 static uint32_t expected_fatal;
@@ -31,10 +32,8 @@ void *get_config(void)
 			RRAMC_REGION_FOR_BOOTCONF,
 			&config);
 	zassert_equal(0, config.permissions &
-			(NRF_RRAMC_REGION_PERM_READ_MASK |
-			 NRF_RRAMC_REGION_PERM_WRITE_MASK |
-			 NRF_RRAMC_REGION_PERM_EXECUTE_MASK),
-			"Read Write and eXecute permissions aren't cleared");
+			(NRF_RRAMC_REGION_PERM_WRITE_MASK),
+			"Write permission isn't cleared");
 	zassert_true(config.size_kb > 0, "Protected region has zero size.");
 	return NULL;
 }
@@ -42,18 +41,30 @@ void *get_config(void)
 ZTEST(b0_self_lock_test, test_reading_b0_image)
 {
 	uint32_t protected_end_address = 1024 * config.size_kb;
-	int val;
+	volatile uint32_t *unprotected_word = (volatile uint32_t *)protected_end_address;
+	volatile uint32_t *protected_word =
+		(volatile uint32_t *)protected_end_address - sizeof(uint32_t);
+	uint32_t test_value = ~(*unprotected_word);
 
-	printk("Legal read\n");
-	val = *((volatile int*)protected_end_address);
+	printk("Legal write\n");
+	nrfx_rramc_write_enable_set(true, 0);
+	/* Next line corrupts application header.
+	 * It is ok since we need to run test once per flashing.
+	 * Moreover after reboot slot will be invalidated and
+	 * application will boot from second one.
+	 */
+	nrf_rramc_word_write((uint32_t)unprotected_word, test_value);
+	zassert_equal(test_value, *unprotected_word,
+			"Legal write value doesn't match.");
 	config.permissions = NRF_RRAMC_REGION_PERM_READ_MASK |
 			     NRF_RRAMC_REGION_PERM_WRITE_MASK |
 			     NRF_RRAMC_REGION_PERM_EXECUTE_MASK;
 	/* Try unlocking. This should take no effect at this point */
 	nrf_rramc_region_config_set(NRF_RRAMC, RRAMC_REGION_FOR_BOOTCONF, &config);
-	printk("Illegal read\n");
+	printk("Illegal write\n");
 	expected_fatal++;
-	val = *((volatile int*)protected_end_address-1);
+	__DSB();
+	nrf_rramc_word_write((uint32_t)protected_word, test_value);
 }
 
 ZTEST_SUITE(b0_self_lock_test, NULL, get_config, NULL, check_fatal, NULL);

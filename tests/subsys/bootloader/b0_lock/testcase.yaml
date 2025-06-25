@@ -2,11 +2,10 @@ tests:
   b0.self_lock:
     sysbuild: true
     extra_args:
-      - b0_CONFIG_SB_DISABLE_SELF_RWX=y
+      - SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE=y
     platform_allow: nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-    build_only: true
     tags:
       - b0
       - ci_tests_subsys_bootloader
