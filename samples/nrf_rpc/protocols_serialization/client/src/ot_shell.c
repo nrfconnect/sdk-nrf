@@ -2048,7 +2048,9 @@ static otError cmd_udp_send_impl(const struct shell *sh, size_t argc, char *argv
 	}
 
 	error = otUdpSend(NULL, &udp_socket, msg, &msg_info);
-	otMessageFree(msg);
+	if (error != OT_ERROR_NONE) {
+		otMessageFree(msg);
+	}
 
 	return error;
 }
