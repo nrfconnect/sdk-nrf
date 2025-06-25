@@ -571,7 +571,35 @@ static void test_hash_compute(psa_algorithm_t alg, const uint8_t *input, size_t 
 		      hash_length, hash_size);
 
 	if (constant_memcmp(calculated_hash, hash, hash_size) != 0) {
-		zassert_false(true, "AES CTR encrypted ciphertext mismathed");
+		zassert_false(true, "Hash calculate mismatched results");
+	}
+}
+
+static void test_hash_incremental(psa_algorithm_t alg, const uint8_t *input, size_t input_length,
+				  uint8_t *hash, size_t hash_size)
+{
+	psa_status_t err;
+	size_t hash_length;
+	uint8_t calculated_hash[SHA512_HASH_SIZE];
+	psa_hash_operation_t operation = PSA_HASH_OPERATION_INIT;
+
+	err = psa_hash_setup(&operation, alg);
+	zassert_equal(err, PSA_SUCCESS, "Failed to setup hash Alg: %d, Err: %d", alg, err);
+
+	err = psa_hash_update(&operation, input, input_length);
+	zassert_equal(err, PSA_SUCCESS, "Failed to update hash Alg: %d, Err: %d", alg, err);
+
+	err = psa_hash_finish(&operation, calculated_hash, hash_size, &hash_length);
+	zassert_equal(err, PSA_SUCCESS, "Failed to finish hash Alg: %d, Err: %d", alg, err);
+
+	err = psa_hash_abort(&operation);
+	zassert_equal(err, PSA_SUCCESS, "Failed to abort hash Alg: %d, Err: %d", alg, err);
+
+	zassert_equal(hash_size, hash_length, "Hash size mismatch. Got %d, expected %d",
+		      hash_length, hash_size);
+
+	if (constant_memcmp(calculated_hash, hash, hash_size) != 0) {
+		zassert_false(true, "Hash incremental mismathed results");
 	}
 }
 
@@ -682,6 +710,10 @@ static void test_hash(void)
 		test_hash_compute(alg, ecdsa_secp256r1_msg, ARRAY_SIZE(ecdsa_secp256r1_msg),
 				  ecdsa_secp256r1_hash, SHA256_HASH_SIZE);
 
+
+		test_hash_incremental(alg, ecdsa_secp256r1_msg, ARRAY_SIZE(ecdsa_secp256r1_msg),
+				  ecdsa_secp256r1_hash, SHA256_HASH_SIZE);
+
 		ran_hash = true;
 	}
 
@@ -689,6 +721,9 @@ static void test_hash(void)
 		psa_algorithm_t alg = PSA_ALG_SHA_512;
 
 		test_hash_compute(alg, ed25519ph_msg, ARRAY_SIZE(ed25519ph_msg),
+				  ed25519ph_hash, SHA512_HASH_SIZE);
+
+		test_hash_incremental(alg, ed25519ph_msg, ARRAY_SIZE(ed25519ph_msg),
 				  ed25519ph_hash, SHA512_HASH_SIZE);
 
 		ran_hash = true;
