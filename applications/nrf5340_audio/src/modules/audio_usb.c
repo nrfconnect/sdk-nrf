@@ -20,7 +20,7 @@ LOG_MODULE_REGISTER(audio_usb, CONFIG_MODULE_AUDIO_USB_LOG_LEVEL);
 static struct k_msgq *audio_q_tx;
 static struct k_msgq *audio_q_rx;
 
-NET_BUF_POOL_FIXED_DEFINE(pool_in, CONFIG_FIFO_FRAME_SPLIT_NUM, USB_BLOCK_SIZE_STEREO,
+NET_BUF_POOL_FIXED_DEFINE(pool_in, CONFIG_FIFO_FRAME_SPLIT_NUM, USB_BLOCK_SIZE_MULTI_CHAN,
 			  sizeof(struct audio_metadata), NULL);
 
 static uint32_t rx_num_overruns;
@@ -89,7 +89,7 @@ static void data_received(const struct device *dev, struct net_buf *buffer, size
 	}
 
 	/* Receive data from USB */
-	if (size != USB_BLOCK_SIZE_STEREO) {
+	if (size != USB_BLOCK_SIZE_MULTI_CHAN) {
 		LOG_WRN("Wrong length: %d", size);
 		net_buf_unref(buffer);
 		return;

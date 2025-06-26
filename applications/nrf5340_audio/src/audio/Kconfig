@@ -110,6 +110,32 @@ config AUDIO_BIT_DEPTH_OCTETS
 	help
 	  Bit depth of one sample in storage given in octets.
 
+config AUDIO_DECODE_CHANNELS_MAX
+	int
+	default 1
+	help
+	  Maximum number of audio channels to decode.
+
+config AUDIO_ENCODE_CHANNELS_MAX
+	int
+	default 2
+	help
+	  Maximum number of audio channels to encode.
+
+config AUDIO_INPUT_CHANNELS_MAX
+	int
+	default 2 if AUDIO_SOURCE_I2S
+	default 2
+	help
+	  Maximum number of audio channels that can be input.
+
+config AUDIO_OUTPUT_CHANNELS_MAX
+	int
+	default 2 if AUDIO_SOURCE_I2S
+	default 2
+	help
+	  Maximum number of audio channels that can be output.
+
 choice AUDIO_SOURCE_GATEWAY
 	prompt "Audio source for gateway"
 	default AUDIO_SOURCE_I2S if WALKIE_TALKIE_DEMO
