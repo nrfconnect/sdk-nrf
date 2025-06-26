@@ -568,7 +568,7 @@ static void ppp_work_fn(struct k_work *work)
 }
 
 static void ppp_net_mgmt_event_handler(struct net_mgmt_event_callback *cb,
-				       uint32_t mgmt_event, struct net_if *iface)
+				       uint64_t mgmt_event, struct net_if *iface)
 {
 	switch (mgmt_event) {
 	case NET_EVENT_PPP_PHASE_RUNNING:
