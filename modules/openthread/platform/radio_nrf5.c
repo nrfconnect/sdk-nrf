@@ -740,8 +740,10 @@ static otError transmit_frame(otInstance *aInstance)
 		nrf5_set_channel(nrf5_data.tx.frame.mChannel);
 #endif
 		if (!nrf5_tx_at(&nrf5_data.tx.frame, nrf5_data.tx.psdu)) {
-			LOG_ERR("TX at failed");
-			return OT_ERROR_INVALID_STATE;
+			LOG_WRN("TX AT failed");
+			nrf5_data.tx.result = OT_ERROR_ABORT;
+			set_pending_event(PENDING_EVENT_TX_DONE);
+			return OT_ERROR_NONE;
 		}
 	} else if (nrf5_data.tx.frame.mInfo.mTxInfo.mCsmaCaEnabled) {
 		nrf5_set_channel(nrf5_data.tx.frame.mChannel);
@@ -822,13 +824,15 @@ static void handle_tx_done(otInstance *aInstance)
 	if (nrf5_data.state == OT_RADIO_STATE_TRANSMIT) {
 		nrf5_data.state = OT_RADIO_STATE_RECEIVE;
 
-		if (nrf5_data.ack.desc.psdu == NULL) {
-			/* No ACK was requested. */
-			nrf5_data.tx.result = OT_ERROR_NONE;
-		} else {
+		if (nrf5_data.tx.result == OT_ERROR_NONE) {
+			if (nrf5_data.ack.desc.psdu == NULL) {
+				/* No ACK was requested. */
+				nrf5_data.tx.result = OT_ERROR_NONE;
+			} else {
 
-			/* Handle ACK packet. */
-			nrf5_data.tx.result = handle_ack();
+				/* Handle ACK packet. */
+				nrf5_data.tx.result = handle_ack();
+			}
 		}
 
 		if (IS_ENABLED(CONFIG_OPENTHREAD_DIAG) && otPlatDiagModeGet()) {
@@ -1729,6 +1733,7 @@ void nrf_802154_transmitted_raw(uint8_t *frame, const nrf_802154_transmit_done_m
 {
 	ARG_UNUSED(frame);
 
+	nrf5_data.tx.result = OT_ERROR_NONE;
 	nrf5_data.ack.desc.psdu = metadata->data.transmitted.p_ack;
 
 	if (nrf5_data.ack.desc.psdu) {
@@ -1774,8 +1779,7 @@ void nrf_802154_transmit_failed(uint8_t *frame, nrf_802154_tx_error_t error,
 
 	nrf5_data.tx.result = nrf5_tx_error_to_ot_error(error);
 
-	LOG_DBG("nrf_802154_transmit_failed: %u, tx result: %u", error, nrf5_data.tx.result);
-
+	LOG_WRN("nrf_802154_transmit_failed: %u, tx result: %u", error, nrf5_data.tx.result);
 	update_tx_frame_info(&nrf5_data.tx.frame, metadata);
 
 	set_pending_event(PENDING_EVENT_TX_DONE);
