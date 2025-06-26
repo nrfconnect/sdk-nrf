@@ -89,6 +89,13 @@ config SLM_POWER_PIN
 	  Interface GPIO pin used to put the SiP into deep sleep and wake up from it or exit idle.
 	  The pin is configured with a pull up and must be pulled down shortly to perform one power off or wake up operation.
 
+config SLM_POWER_PIN_DEBOUNCE_MS
+	int "Power pin debounce time in ms"
+	default 50
+	help
+	  When SLM_POWER_PIN is wired to a button, debounce time prevents the button from triggering multiple times when pressed.
+	  Set to 0 to disable the debounce when the pin is wired to a host GPIO.
+
 config SLM_INDICATE_PIN
 	int "Indicate pin"
 	default -1
