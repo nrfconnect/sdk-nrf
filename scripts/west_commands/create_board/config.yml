@@ -70,7 +70,7 @@ products:
               - name: cpuapp
                 arch: arm
                 ram: 188
-                flash: 324
+                flash: 1428
   - series: nrf91
     socs:
       - name: nrf9131
