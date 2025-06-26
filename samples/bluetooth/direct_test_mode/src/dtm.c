@@ -1047,20 +1047,21 @@ static nrf_radio_txpower_t dbm_to_nrf_radio_txpower(int8_t tx_power)
 }
 
 #if CONFIG_DTM_POWER_CONTROL_AUTOMATIC
-static int8_t dtm_radio_min_power_get(uint16_t frequency)
+static int8_t dtm_radio_min_power_get(nrf_radio_mode_t radio_mode, uint16_t frequency)
 {
-	return fem_tx_output_power_min_get(frequency);
+	return fem_tx_output_power_min_get(radio_mode, frequency);
 }
 
-static int8_t dtm_radio_max_power_get(uint16_t frequency)
+static int8_t dtm_radio_max_power_get(nrf_radio_mode_t radio_mode, uint16_t frequency)
 {
-	return fem_tx_output_power_max_get(frequency);
+	return fem_tx_output_power_max_get(radio_mode, frequency);
 }
 
-static int8_t dtm_radio_nearest_power_get(int8_t tx_power, uint16_t frequency)
+static int8_t dtm_radio_nearest_power_get(int8_t tx_power, nrf_radio_mode_t radio_mode,
+					  uint16_t frequency)
 {
-	int8_t tx_power_floor = fem_tx_output_power_check(tx_power, frequency, false);
-	int8_t tx_power_ceiling = fem_tx_output_power_check(tx_power, frequency, true);
+	int8_t tx_power_floor = fem_tx_output_power_check(tx_power, radio_mode, frequency, false);
+	int8_t tx_power_ceiling = fem_tx_output_power_check(tx_power, radio_mode, frequency, true);
 	int8_t output_power;
 
 	output_power = (abs(tx_power_floor - tx_power) > abs(tx_power_ceiling - tx_power)) ?
@@ -1070,26 +1071,30 @@ static int8_t dtm_radio_nearest_power_get(int8_t tx_power, uint16_t frequency)
 }
 
 #else
-static int8_t dtm_radio_min_power_get(uint16_t frequency)
+static int8_t dtm_radio_min_power_get(nrf_radio_mode_t radio_mode, uint16_t frequency)
 {
+	ARG_UNUSED(radio_mode);
 	ARG_UNUSED(frequency);
 
 	return dtm_hw_radio_min_power_get();
 }
 
-static int8_t dtm_radio_max_power_get(uint16_t frequency)
+static int8_t dtm_radio_max_power_get(nrf_radio_mode_t radio_mode, uint16_t frequency)
 {
+	ARG_UNUSED(radio_mode);
 	ARG_UNUSED(frequency);
 
 	return dtm_hw_radio_max_power_get();
 }
 
-static int8_t dtm_radio_nearest_power_get(int8_t tx_power, uint16_t frequency)
+static int8_t dtm_radio_nearest_power_get(int8_t tx_power, nrf_radio_mode_t radio_mode,
+					  uint16_t frequency)
 {
 	int8_t output_power = INT8_MAX;
 	const size_t size = dtm_hw_radio_power_array_size_get();
 	const int8_t *power = dtm_hw_radio_power_array_get();
 
+	ARG_UNUSED(radio_mode);
 	ARG_UNUSED(frequency);
 
 	for (size_t i = 1; i < size; i++) {
@@ -1122,7 +1127,7 @@ static uint16_t radio_frequency_get(uint8_t channel)
 	return (channel << 1) + base_frequency;
 }
 
-static void radio_tx_power_set(uint8_t channel, int8_t tx_power)
+static void radio_tx_power_set(uint8_t channel, int8_t tx_power, nrf_radio_mode_t radio_mode)
 {
 	int8_t radio_power = tx_power;
 
@@ -1137,11 +1142,12 @@ static void radio_tx_power_set(uint8_t channel, int8_t tx_power)
 		 * Tx output power level for channel 0. That is why output Tx power needs to be
 		 * aligned for final transmission channel.
 		 */
-		tx_power = dtm_radio_nearest_power_get(tx_power, frequency);
-		(void)fem_tx_output_power_prepare(tx_power, &radio_power, frequency);
+		tx_power = dtm_radio_nearest_power_get(tx_power, radio_mode, frequency);
+		(void)fem_tx_output_power_prepare(tx_power, &radio_power, radio_mode, frequency);
 	}
 #else
 	ARG_UNUSED(channel);
+	ARG_UNUSED(radio_mode);
 #endif /* CONFIG_FEM */
 
 #ifdef NRF53_SERIES
@@ -1195,7 +1201,7 @@ static int radio_init(void)
 	/* Turn off radio before configuring it */
 	radio_reset();
 
-	radio_tx_power_set(dtm_inst.phys_ch, dtm_inst.txpower);
+	radio_tx_power_set(dtm_inst.phys_ch, dtm_inst.txpower, dtm_inst.radio_mode);
 	nrf_radio_mode_set(NRF_RADIO, dtm_inst.radio_mode);
 	nrf_radio_fast_ramp_up_enable_set(NRF_RADIO, IS_ENABLED(CONFIG_DTM_FAST_RAMP_UP));
 
@@ -1821,7 +1827,7 @@ static void radio_prepare(bool rx)
 
 		radio_start(rx, false);
 	} else { /* tx */
-		radio_tx_power_set(dtm_inst.phys_ch, dtm_inst.txpower);
+		radio_tx_power_set(dtm_inst.phys_ch, dtm_inst.txpower, dtm_inst.radio_mode);
 
 #if NRF52_ERRATA_172_PRESENT
 		/* Stop the timer used by anomaly 172 */
@@ -2306,8 +2312,8 @@ struct dtm_tx_power dtm_setup_set_transmit_power(enum dtm_tx_power_request power
 						 uint8_t channel)
 {
 	uint16_t frequency = radio_frequency_get(channel);
-	const int8_t tx_power_min = dtm_radio_min_power_get(frequency);
-	const int8_t tx_power_max = dtm_radio_max_power_get(frequency);
+	const int8_t tx_power_min = dtm_radio_min_power_get(dtm_inst.radio_mode, frequency);
+	const int8_t tx_power_max = dtm_radio_max_power_get(dtm_inst.radio_mode, frequency);
 	struct dtm_tx_power tmp = {
 		.power = 0,
 		.min = false,
@@ -2329,7 +2335,8 @@ struct dtm_tx_power dtm_setup_set_transmit_power(enum dtm_tx_power_request power
 		} else if (val >= tx_power_max) {
 			dtm_inst.txpower = tx_power_max;
 		} else {
-			dtm_inst.txpower = dtm_radio_nearest_power_get(val, frequency);
+			dtm_inst.txpower = dtm_radio_nearest_power_get(val, dtm_inst.radio_mode,
+								       frequency);
 		}
 
 		break;
