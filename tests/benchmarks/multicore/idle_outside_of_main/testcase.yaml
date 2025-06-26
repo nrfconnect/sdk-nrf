@@ -4,6 +4,9 @@ common:
     - ci_build
     - ci_tests_benchmarks_multicore
     - ppk_power_measure
+  extra_args:
+    - CONFIG_SOC_NRF54H20_CPURAD_ENABLE=y
+
 tests:
   benchmarks.multicore.idle_outside_of_main.nrf54h20dk_cpuapp_cpurad.s2ram:
     harness: pytest

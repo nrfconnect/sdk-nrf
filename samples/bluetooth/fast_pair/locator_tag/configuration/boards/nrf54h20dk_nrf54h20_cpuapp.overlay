@@ -4,31 +4,12 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/* Decrease the storage partition size by 0x1000 bytes and move it 0x1000 bytes forward
- * in the address space to create a place for the Fast Pair partition. Define the Fast
- * Pair partition in the provided memory gap.
- */
+/* Define the Fast Pair partition. */
 &mram1x {
-	/delete-node/ cpuapp-rw-partitions;
-
-	cpuapp_rw_partitions: cpuapp-rw-partitions {
-		compatible = "nordic,owned-partitions", "fixed-partitions";
-		status = "okay";
-		nordic,access = <NRF_OWNER_ID_APPLICATION NRF_PERM_RWS>;
-		#address-cells = <1>;
-		#size-cells = <1>;
-
-		dfu_partition: partition@100000 {
-			reg = <0x100000 DT_SIZE_K(908)>;
-		};
-
+	partitions {
 		/* Align the partition size to 4096 B to avoid gaps. */
-		bt_fast_pair_partition: partition@1e3000 {
-			reg = <0x1e3000 DT_SIZE_K(4)>;
-		};
-
-		storage_partition: partition@1e4000 {
-			reg = <0x1e4000 DT_SIZE_K(20)>;
+		bt_fast_pair_partition: partition@1b0000 {
+			reg = <0x1b0000 DT_SIZE_K(4)>;
 		};
 	};
 };

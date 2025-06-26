@@ -4,26 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/* Delete current app definition to redefine belowe */
-/delete-node/ &cpuapp_slot0_partition;
-
-/* Extend by 160 KB, taken from rad */
-&cpuapp_rx_partitions {
-	cpuapp_slot0_partition: partition@6C000 {
-		reg = <0x6C000 DT_SIZE_K(480)>;
-	};
-};
-
-/* Shrink by 160 KB */
-&cpurad_slot0_partition {
-	reg = <0x54000 DT_SIZE_K(96)>;
-};
-
 &uart136 {
 	hw-flow-control;
-};
-
-/* To disable SDFW_SERVICES to save RAM */
-&cpusec_cpuapp_ipc {
-	status = "disabled";
 };

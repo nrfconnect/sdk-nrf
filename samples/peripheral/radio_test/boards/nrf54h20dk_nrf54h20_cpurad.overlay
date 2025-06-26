@@ -22,7 +22,6 @@
 /* Take Application's DMA region, which is larger and unused. */
 cpurad_dma_region_alt: &cpuapp_dma_region {
 	status = "okay";
-	nordic,access = <NRF_OWNER_ID_RADIOCORE NRF_PERM_RW>;
 };
 
 &uart136 {

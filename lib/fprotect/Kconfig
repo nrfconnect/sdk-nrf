@@ -50,6 +50,7 @@ menuconfig FPROTECT
 	bool "Enable FPROTECT"
 	depends on SOC_FAMILY_NORDIC_NRF
 	depends on !(SOC_SERIES_NRF54LX && IS_SECURE_BOOTLOADER)
+	depends on !SOC_SERIES_NRF54HX
 	default y if MCUBOOT && (!SOC_SERIES_NRF54LX || (SOC_SERIES_NRF54LX && MCUBOOT_MCUBOOT_IMAGE_NUMBER = -1))
 	#enabled for nRF54L SoC's when MCUboot is the only one bootloader
 	select NRFX_RRAMC if SOC_SERIES_NRF54LX

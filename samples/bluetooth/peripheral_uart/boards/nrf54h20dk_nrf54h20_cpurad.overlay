@@ -92,51 +92,19 @@
 	owned-channels = <4 5 6 7>;
 };
 
-/* Change to memory map to make room for read write partition for settings
- * module and increase the radio core program memory size.
+/* Add a read write partition for the settings module.
  *
  * @note In case of running firmware on the application core, the same memory map
  * change must be applied to the application core DTS.
  */
-/delete-node/ &dfu_partition;
-/delete-node/ &storage_partition;
-/delete-node/ &cpuapp_slot0_partition;
-
-&cpuapp_rw_partitions {
-	dfu_partition: partition@100000 {
-		reg = < 0x100000 DT_SIZE_K(884) >;
-	};
-
-	storage_partition: partition@1dd000 {
-		reg = < 0x1dd000 DT_SIZE_K(24) >;
-	};
-};
-
-&cpurad_rx_partitions {
-	cpurad_slot0_partition: partition@54000 {
-		reg = <0x54000 DT_SIZE_K(320)>;
-	};
-};
-
-&cpuapp_rx_partitions {
-	cpuapp_slot0_partition: partition@a4000 {
-		reg = <0xa4000 DT_SIZE_K(256)>;
-	};
-};
-
 &mram1x {
-	cpurad_rw_partitions: cpurad-rw-partitions {
-		compatible = "nordic,owned-partitions", "fixed-partitions";
-		nordic,access = <NRF_OWNER_ID_RADIOCORE NRF_PERM_RWS>;
-		#address-cells = <1>;
-		#size-cells = <1>;
-
+	partitions {
+		/* Note: the location here has been kept the same as before the introduction of
+		 * IronSide on nrf54h20, which has brought with it an updated memory map.
+		 * It will likely need to be updated as the MRAM memory map is not yet final.
+		 */
 		cpurad_storage_partition: partition@1e3000 {
 			reg = <0x1e3000 DT_SIZE_K(24)>;
 		};
 	};
-};
-
-&cpurad_rw_partitions {
-	status = "okay";
 };
