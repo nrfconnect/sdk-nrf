@@ -483,6 +483,10 @@ Peripheral samples
 
   * Added experimental ``llvm`` toolchain support for the ``nrf54l15dk/nrf54l15/cpuapp`` board target.
 
+* :ref:`802154_phy_test` sample:
+
+  * Added print of sent packets and received Acks after ``ltx`` command.
+
 PMIC samples
 ------------
 
