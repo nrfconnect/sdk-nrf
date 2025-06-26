@@ -82,7 +82,7 @@ static int setup_connection_event_trigger(struct bt_conn *conn, bool enable)
 		cmd_params.task_address =
 			nrf_egu_task_address_get(NRF_EGU, NRF_EGU_TASK_TRIGGER0);
 
-		IRQ_DIRECT_CONNECT(DT_IRQN(EGU_NODE), 5, egu_handler, 0);
+		IRQ_CONNECT(DT_IRQN(EGU_NODE), 5, egu_handler, 0, 0);
 		nrf_egu_int_enable(NRF_EGU, NRF_EGU_INT_TRIGGERED0);
 		NVIC_EnableIRQ(DT_IRQN(EGU_NODE));
 	} else {
