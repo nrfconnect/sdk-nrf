@@ -5,16 +5,6 @@
 
 / {
 	/*
-	* In some default configurations within the nRF Connect SDK,
-	* e.g. on nRF52840, the chosen zephyr,entropy node is &cryptocell.
-	* This devicetree overlay ensures that default is overridden wherever it
-	* is set, as this application uses the RNG node for entropy exclusively.
-	*/
-	chosen {
-		zephyr,entropy = &rng;
-	};
-
-	/*
 	* Configure LED2 and LED3 to show the state of the
 	* window cover,by using the LED's brightness level.
 	*/
