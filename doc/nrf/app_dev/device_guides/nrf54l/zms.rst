@@ -1,4 +1,4 @@
-﻿.. _memory_storage:
+﻿.. _zms_memory_storage:
 
 Enabling Zephyr Memory Storage
 ##############################
