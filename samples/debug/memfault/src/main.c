@@ -119,7 +119,7 @@ static void on_connect(void)
 	memfault_zephyr_port_post_data();
 }
 
-static void l4_event_handler(struct net_mgmt_event_callback *cb, uint32_t event,
+static void l4_event_handler(struct net_mgmt_event_callback *cb, uint64_t event,
 			     struct net_if *iface)
 {
 	switch (event) {
@@ -131,12 +131,12 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb, uint32_t event,
 		LOG_INF("Network connectivity lost");
 		break;
 	default:
-		LOG_DBG("Unknown event: 0x%08X", event);
+		LOG_DBG("Unknown event: 0x%08llX", event);
 		return;
 	}
 }
 
-static void connectivity_event_handler(struct net_mgmt_event_callback *cb, uint32_t event,
+static void connectivity_event_handler(struct net_mgmt_event_callback *cb, uint64_t event,
 				       struct net_if *iface)
 {
 	if (event == NET_EVENT_CONN_IF_FATAL_ERROR) {

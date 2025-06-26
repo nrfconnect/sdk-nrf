@@ -278,7 +278,7 @@ static void dhcp_server_start(void)
 	LOG_DBG("DHCPv4 server started");
 }
 
-static void net_mgmt_wifi_event_handler(struct net_mgmt_event_callback *cb, uint32_t mgmt_event,
+static void net_mgmt_wifi_event_handler(struct net_mgmt_event_callback *cb, uint64_t mgmt_event,
 					struct net_if *iface)
 {
 	switch (mgmt_event) {

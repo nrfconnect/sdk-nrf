@@ -312,7 +312,7 @@ static bool connect_cloud(void)
  */
 static struct net_mgmt_event_callback l4_callback;
 static void l4_event_handler(struct net_mgmt_event_callback *cb,
-			     uint32_t event, struct net_if *iface)
+			     uint64_t event, struct net_if *iface)
 {
 	if (event == NET_EVENT_L4_CONNECTED) {
 		LOG_INF("Network connectivity gained!");
