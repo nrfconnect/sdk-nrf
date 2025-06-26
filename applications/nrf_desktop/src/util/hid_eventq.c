@@ -21,7 +21,7 @@ struct hid_eventq_data {
 struct hid_eventq_event {
 	sys_snode_t node;
 	struct hid_eventq_data data;
-	uint32_t timestamp;
+	int64_t timestamp;
 };
 
 
@@ -73,7 +73,7 @@ static void drop_oldest_hid_events(struct hid_eventq *q)
 		/* Try to remove events but only if key release was generated for each removed key
 		 * press.
 		 */
-		uint32_t node_timestamp = CONTAINER_OF(i, struct hid_eventq_event, node)->timestamp;
+		int64_t node_timestamp = CONTAINER_OF(i, struct hid_eventq_event, node)->timestamp;
 
 		/* Use incremented event timestamp to drop the event. */
 		hid_eventq_cleanup(q, node_timestamp + 1);
@@ -107,11 +107,11 @@ int hid_eventq_keypress_enqueue(struct hid_eventq *q, uint16_t id, bool pressed,
 		return -ENOMEM;
 	}
 
-	evt->timestamp = k_uptime_get_32();
+	evt->timestamp = k_uptime_get();
 	evt->data.key_id = id;
 	evt->data.pressed = pressed;
 
-	LOG_DBG("q:%p, ts:%u, id:%" PRIu16 ", %s",
+	LOG_DBG("q:%p, ts:%" PRId64 ", id:%" PRIu16 ", %s",
 		(void *)q, evt->timestamp, id, pressed ? "press" : "release");
 
 	/* Add a new event to the queue. */
@@ -138,7 +138,7 @@ int hid_eventq_keypress_dequeue(struct hid_eventq *q, uint16_t *id, bool *presse
 	*id = evt->data.key_id;
 	*pressed = evt->data.pressed;
 
-	LOG_DBG("q:%p, ts:%u, id:%" PRIu16 ", %s",
+	LOG_DBG("q:%p, ts:%" PRId64 ", id:%" PRIu16 ", %s",
 		(void *)q, evt->timestamp, *id, *pressed ? "press" : "release");
 
 	k_free(evt);
@@ -185,7 +185,7 @@ void hid_eventq_reset(struct hid_eventq *q)
 	__ASSERT_NO_MSG(sys_slist_is_empty(&q->root));
 }
 
-static sys_snode_t *get_first_valid_node(struct hid_eventq *q, uint32_t min_timestamp)
+static sys_snode_t *get_first_valid_node(struct hid_eventq *q, int64_t min_timestamp)
 {
 	sys_snode_t *i;
 
@@ -234,11 +234,11 @@ static sys_snode_t *get_keypress_release_node(struct hid_eventq *q, struct hid_e
 	return NULL;
 }
 
-void hid_eventq_cleanup(struct hid_eventq *q, uint32_t min_timestamp)
+void hid_eventq_cleanup(struct hid_eventq *q, int64_t min_timestamp)
 {
 	__ASSERT_NO_MSG(hid_eventq_is_initialized(q));
 
-	LOG_DBG("q:%p, min_timestamp:%" PRIu32, (void *)q, min_timestamp);
+	LOG_DBG("q:%p, min_timestamp:%" PRId64, (void *)q, min_timestamp);
 
 	sys_snode_t *first_valid = get_first_valid_node(q, min_timestamp);
 
