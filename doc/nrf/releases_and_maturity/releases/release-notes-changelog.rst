@@ -261,6 +261,7 @@ nRF Desktop
 
   * The :ref:`nrf_desktop_hid_eventq`.
     The utility can be used by an application module to temporarily queue HID events related to keypresses (button press or release) to handle them later.
+    The utility uses 64-bit timestamps to prevent overflow issues.
   * The :ref:`nrf_desktop_hid_keymap`.
     The utility can be used by an application module to map an application-specific key ID to a HID report ID and HID usage ID pair according to statically defined user configuration.
     The :file:`hid_keymap.h` file was moved from the :file:`configuration/common` directory to the :file:`src/util` directory.

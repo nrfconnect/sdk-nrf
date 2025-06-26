@@ -119,7 +119,7 @@ void hid_eventq_reset(struct hid_eventq *q);
  * @param[in] q			HID event queue object.
  * @param[in] min_timestamp	Minimal valid timestamp.
  */
-void hid_eventq_cleanup(struct hid_eventq *q, uint32_t min_timestamp);
+void hid_eventq_cleanup(struct hid_eventq *q, int64_t min_timestamp);
 
 #ifdef __cplusplus
 }

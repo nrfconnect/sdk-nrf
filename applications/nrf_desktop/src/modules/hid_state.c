@@ -891,10 +891,10 @@ static void connect(const void *subscriber_id, uint8_t report_id)
 
 		if (!hid_eventq_is_empty(&rd->eventq)) {
 			/* Remove all stale events from the queue. */
-			uint32_t uptime = k_uptime_get_32();
+			int64_t uptime = k_uptime_get();
 
 			if (uptime > CONFIG_DESKTOP_HID_REPORT_EXPIRATION) {
-				uint32_t min_ts = uptime - CONFIG_DESKTOP_HID_REPORT_EXPIRATION;
+				int64_t min_ts = uptime - CONFIG_DESKTOP_HID_REPORT_EXPIRATION;
 
 				hid_eventq_cleanup(&rd->eventq, min_ts);
 			}
@@ -1037,10 +1037,10 @@ static void update_key(const struct hid_keymap *map, bool pressed)
 			__ASSERT_NO_MSG(hid_eventq_is_full(&rd->eventq));
 
 			/* Queue is full. If not yet connected, try to drop old events and retry. */
-			uint32_t uptime = k_uptime_get_32();
+			int64_t uptime = k_uptime_get();
 
 			if (uptime > CONFIG_DESKTOP_HID_REPORT_EXPIRATION) {
-				uint32_t min_ts = uptime - CONFIG_DESKTOP_HID_REPORT_EXPIRATION;
+				int64_t min_ts = uptime - CONFIG_DESKTOP_HID_REPORT_EXPIRATION;
 
 				hid_eventq_cleanup(&rd->eventq, min_ts);
 			}
