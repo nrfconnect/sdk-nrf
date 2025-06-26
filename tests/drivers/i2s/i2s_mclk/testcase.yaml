@@ -10,7 +10,7 @@ common:
   harness: ztest
 
 tests:
-  drivers.i2s.i2s_mclk.gpio_loopback:
+  drivers.i2s.i2s_mclk.gpio_loopback.2ch:
     harness_config:
       fixture: gpio_loopback
     platform_allow:
@@ -21,7 +21,7 @@ tests:
       - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
       - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
 
-  drivers.i2s.i2s_mclk.gpio_loopback.54h:
+  drivers.i2s.i2s_mclk.gpio_loopback.2ch.54h:
     harness_config:
       fixture: i2s_loopback
     platform_allow:
@@ -29,7 +29,49 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
 
-  drivers.i2s.i2s_mclk.gpio_loopback.54h.aclk_sck:
+  drivers.i2s.i2s_mclk.gpio_loopback.4ch.54h:
+    harness_config:
+      fixture: i2s_loopback
+    extra_args:
+      - CONFIG_I2S_TEST_NUMBER_OF_CHANNELS=4
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+
+  drivers.i2s.i2s_mclk.gpio_loopback.4ch.54lm:
+    harness_config:
+      fixture: gpio_loopback
+    extra_args:
+      - CONFIG_I2S_TEST_NUMBER_OF_CHANNELS=4
+    platform_allow:
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
+
+  drivers.i2s.i2s_mclk.gpio_loopback.8ch.54h:
+    harness_config:
+      fixture: i2s_loopback
+    extra_args:
+      - CONFIG_I2S_TEST_NUMBER_OF_CHANNELS=8
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+
+  drivers.i2s.i2s_mclk.gpio_loopback.8ch.54lm:
+    harness_config:
+      fixture: gpio_loopback
+    extra_args:
+      - CONFIG_I2S_TEST_NUMBER_OF_CHANNELS=8
+    platform_allow:
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
+      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
+
+  drivers.i2s.i2s_mclk.gpio_loopback.2ch.54h.aclk_sck:
     harness_config:
       fixture: i2s_loopback
     extra_args:
@@ -39,7 +81,7 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
 
-  drivers.i2s.i2s_mclk.gpio_loopback.54h.aclk_mck:
+  drivers.i2s.i2s_mclk.gpio_loopback.2ch.54h.aclk_mck:
     harness_config:
       fixture: i2s_loopback
     extra_args:
@@ -49,7 +91,7 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
 
-  drivers.i2s.i2s_mclk.gpio_loopback.54h.aclk_mck_sck:
+  drivers.i2s.i2s_mclk.gpio_loopback.2ch.54h.aclk_mck_sck:
     harness_config:
       fixture: i2s_loopback
     extra_args:

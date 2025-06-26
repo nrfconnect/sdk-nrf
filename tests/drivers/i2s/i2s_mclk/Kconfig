@@ -24,6 +24,13 @@ config I2S_TEST_ALLOWED_DATA_OFFSET
 	  Maximum allowed offset between sent and received samples. Non-zero
 	  value of this option may be needed when GPIO loopback is used.
 
+config I2S_TEST_NUMBER_OF_CHANNELS
+	int "Number of audio channels"
+	default 2
+	help
+	  Select number of audio channels. This value affects number of edges
+	  observed on TDM_FSYNC_M signal.
+
 config I2S_TEST_SKIP_I2S_DIR_RX
 	bool "Skip testing when I2S direction is I2S_DIR_RX"
 	help

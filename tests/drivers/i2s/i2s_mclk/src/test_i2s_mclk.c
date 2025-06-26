@@ -13,20 +13,19 @@
 #define I2S_DEV_NODE DT_ALIAS(i2s_node0)
 
 #define WORD_SIZE 16U
-#define NUMBER_OF_CHANNELS 2
+#define NUMBER_OF_CHANNELS CONFIG_I2S_TEST_NUMBER_OF_CHANNELS
 #define FRAME_CLK_FREQ 1000
 
 #define NUM_BLOCKS 2
 #define TIMEOUT 1000
 
-#define SAMPLES_COUNT 4
+#define WORDS_COUNT 16
 /* Each word has one bit set */
-static const int16_t data_l[SAMPLES_COUNT] = {16, 32, 64, 128};
+static const int16_t data[WORDS_COUNT] = {
+	1, 9, 2, 10, 4, 12, 8, 16, 16, 24, 32, 40, 64, 72, 128, 136
+};
 
-/* Each wor has two bits set */
-static const int16_t data_r[SAMPLES_COUNT] = {24, 40, 72, 136};
-
-#define BLOCK_SIZE (2 * sizeof(data_l))
+#define BLOCK_SIZE (sizeof(data))
 
 #ifdef CONFIG_NOCACHE_MEMORY
 	#define MEM_SLAB_CACHE_ATTR __nocache
@@ -51,7 +50,7 @@ STRUCT_SECTION_ITERABLE(k_mem_slab, tx_0_mem_slab) =
 	Z_MEM_SLAB_INITIALIZER(tx_0_mem_slab, _k_mem_slab_buf_tx_0_mem_slab,
 				WB_UP(BLOCK_SIZE), NUM_BLOCKS);
 
-static uint16_t count_mclk, count_lrck;
+static volatile uint16_t count_mclk, count_lrck;
 static struct gpio_callback mclk_cb_data, lrck_cb_data;
 static const struct gpio_dt_spec gpio_mclk_spec =
 	GPIO_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user), gpios, 0);
@@ -60,7 +59,27 @@ static const struct gpio_dt_spec gpio_lrck_spec =
 
 static const struct device *dev_i2s;
 
-/* ISR that couns rising edges on the MCLK signal. */
+/* The falling edge of the frame sync signal (LRCK)
+ * indicates the start of the PCM word.
+ * An arbitrary number of data words can be sent in one frame.
+ */
+static uint32_t expected_lrck = WORDS_COUNT / NUMBER_OF_CHANNELS;
+
+/* There are MCLK_FREQ / FRAME_CLK_FREQ edges in one PCM sample.
+ * There will be WORDS_COUNT / NUMBER_OF_CHANNELS PCM samples in total.
+ */
+#if defined(CONFIG_I2S_NRFX)
+#define MCLK_FREQ (32000)
+/* Due to lower performance some edges may be missed. */
+static uint32_t expected_mclk =
+	(MCLK_FREQ / FRAME_CLK_FREQ) * (WORDS_COUNT / NUMBER_OF_CHANNELS) * 0.94;
+#else
+#define MCLK_FREQ (64000)
+static uint32_t expected_mclk =
+	(MCLK_FREQ / FRAME_CLK_FREQ) * (WORDS_COUNT / NUMBER_OF_CHANNELS);
+#endif
+
+/* ISR that couns falling edges on the MCLK signal. */
 static void gpio_mclk_isr(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
 {
 	if (pins & BIT(gpio_mclk_spec.pin)) {
@@ -68,7 +87,7 @@ static void gpio_mclk_isr(const struct device *dev, struct gpio_callback *cb, ui
 	}
 }
 
-/* ISR that couns rising edges on the LRCK signal. */
+/* ISR that couns falling edges on the LRCK signal. */
 static void gpio_lrck_isr(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
 {
 	if (pins & BIT(gpio_lrck_spec.pin)) {
@@ -79,15 +98,14 @@ static void gpio_lrck_isr(const struct device *dev, struct gpio_callback *cb, ui
 /* Fill in TX buffer with test samples. */
 static void fill_buf(int16_t *tx_block)
 {
-	for (int i = 0; i < SAMPLES_COUNT; i++) {
-		tx_block[2 * i] = data_l[i];
-		tx_block[2 * i + 1] = data_r[i];
+	for (int i = 0; i < WORDS_COUNT; i++) {
+		tx_block[i] = data[i];
 	}
 }
 
 static int verify_buf(int16_t *rx_block)
 {
-	int sample_no = SAMPLES_COUNT;
+	int last_word = WORDS_COUNT;
 
 /* Find offset. */
 #if (CONFIG_I2S_TEST_ALLOWED_DATA_OFFSET > 0)
@@ -100,25 +118,20 @@ static int verify_buf(int16_t *rx_block)
 				TC_PRINT("Allowed data offset exceeded\n");
 				return -TC_FAIL;
 			}
-		} while (rx_block[2 * offset] != data_l[0]);
+		} while (rx_block[NUMBER_OF_CHANNELS * offset] != data[0]);
 
 		TC_PRINT("Using data offset: %d\n", offset);
 	}
 
-	rx_block += 2 * offset;
-	sample_no -= offset;
+	rx_block += NUMBER_OF_CHANNELS * offset;
+	last_word -= NUMBER_OF_CHANNELS * offset;
 #endif
 
 	/* Compare received data with sent values. */
-	for (int i = 0; i < sample_no; i++) {
-		if (rx_block[2 * i] != data_l[i]) {
-			TC_PRINT("Error: data_l mismatch at position %d, expected %d, actual %d\n",
-				 i, data_l[i], rx_block[2 * i]);
-			return -TC_FAIL;
-		}
-		if (rx_block[2 * i + 1] != data_r[i]) {
-			TC_PRINT("Error: data_r mismatch at position %d, expected %d, actual %d\n",
-				 i, data_r[i], rx_block[2 * i + 1]);
+	for (int i = 0; i < last_word; i++) {
+		if (rx_block[i] != data[i]) {
+			TC_PRINT("Error: data mismatch at position %d, expected %d, actual %d\n",
+				 i, data[i], rx_block[i]);
 			return -TC_FAIL;
 		}
 	}
@@ -133,7 +146,11 @@ static int configure_stream(const struct device *dev_i2s, enum i2s_dir dir)
 
 	i2s_cfg.word_size = WORD_SIZE;
 	i2s_cfg.channels = NUMBER_OF_CHANNELS;
+#if defined(CONFIG_I2S_NRFX)
 	i2s_cfg.format = I2S_FMT_DATA_FORMAT_I2S;
+#else
+	i2s_cfg.format = I2S_FMT_DATA_FORMAT_PCM_SHORT;
+#endif
 	i2s_cfg.frame_clk_freq = FRAME_CLK_FREQ;
 	i2s_cfg.block_size = BLOCK_SIZE;
 	i2s_cfg.timeout = TIMEOUT;
@@ -223,23 +240,15 @@ ZTEST(drivers_i2s_mclk, test_i2s_mclk_I2S_DIR_BOTH)
 	zassert_equal(ret, 0);
 	k_mem_slab_free(&rx_0_mem_slab, rx_block[0]);
 
-	/* Verify number of rising edges on LRCK
-	 * "Left channel data are sent first indicated by LRCK = 0,
-	 * followed by right channel data indicated by WS = 1"
-	 */
-	zassert_true(count_lrck >= SAMPLES_COUNT,
-		"LRCK has %u rising edges, while at least %u is expected.",
-		count_lrck, SAMPLES_COUNT);
+	/* Verify number of falling edges on LRCK. */
+	zassert_true(count_lrck >= expected_lrck,
+		"LRCK has %u falling edges, while at least %u is expected.",
+		count_lrck, expected_lrck);
 
-	/* Verify number of rising edges on MCLK
-	 * "The MSB is always sent one clock period after the LRCK changes."
-	 * "Due to high clock speed some edges may be missed."
-	 */
-	uint32_t expected = NUMBER_OF_CHANNELS * SAMPLES_COUNT * WORD_SIZE / 2;
-
-	zassert_true(count_mclk >= expected,
-		"MCLK has %u rising edges, while at least %u is expected.",
-		count_mclk, expected);
+	/* Verify number of falling edges on MCLK. */
+	zassert_true(count_mclk >= expected_mclk,
+		"MCLK has %u falling edges, while at least %u is expected.",
+		count_mclk, expected_mclk);
 }
 
 /** @brief Check MCLK signal in short I2S transfer using I2S_DIR_RX.
@@ -269,11 +278,11 @@ ZTEST(drivers_i2s_mclk, test_i2s_mclk_I2S_DIR_RX)
 
 	k_msleep(2);
 
-	/* Verify number of rising edges on MCLK */
+	/* Verify number of falling edges on MCLK */
 	uint32_t expected = FRAME_CLK_FREQ * NUMBER_OF_CHANNELS * WORD_SIZE * (TIMEOUT / 1000);
 
 	zassert_true(count_mclk >= expected,
-		"MCLK has %u rising edges, while at least %u is expected.",
+		"MCLK has %u falling edges, while at least %u is expected.",
 		count_mclk, expected);
 
 	/* Cleanup from Error state. */
@@ -314,22 +323,18 @@ ZTEST(drivers_i2s_mclk, test_i2s_mclk_I2S_DIR_TX)
 	zassert_equal(ret, 0, "TX STOP trigger failed");
 
 	/* Wait until I2S finishes TX. */
-	k_msleep(6);
+	k_msleep(1000);
 
-	/* Verify number of rising edges on LRCK
-	 * "Left channel data are sent first indicated by LRCK = 0,
-	 * followed by right channel data indicated by WS = 1"
-	 */
-	zassert_true(count_lrck >= SAMPLES_COUNT,
-		"LRCK has %u rising edges, while at least %u is expected.",
-		count_lrck, SAMPLES_COUNT);
+	/* Verify number of falling edges on LRCK. */
+	zassert_true(count_lrck >= expected_lrck,
+		"LRCK has %u falling edges, while at least %u is expected.",
+		count_lrck, expected_lrck);
 
-	/* Verify number of rising edges on MCLK */
-	uint32_t expected = NUMBER_OF_CHANNELS * SAMPLES_COUNT * WORD_SIZE / 2;
+	/* Verify number of falling edges on MCLK. */
 
-	zassert_true(count_mclk >= expected,
-		"MCLK has %u rising edges, while at least %u is expected.",
-		count_mclk, expected);
+	zassert_true(count_mclk >= expected_mclk,
+		"MCLK has %u falling edges, while at least %u is expected.",
+		count_mclk, expected_mclk);
 }
 
 static void *suite_setup(void)
@@ -351,7 +356,7 @@ static void *suite_setup(void)
 	zassert_equal(ret, true, "gpio_lrck_spec not ready (ret %d)", ret);
 	ret = gpio_pin_configure_dt(&gpio_lrck_spec, GPIO_INPUT);
 	zassert_equal(ret, 0, "failed to configure input pin gpio_lrck_spec (err %d)", ret);
-	ret = gpio_pin_interrupt_configure_dt(&gpio_lrck_spec, GPIO_INT_EDGE_RISING);
+	ret = gpio_pin_interrupt_configure_dt(&gpio_lrck_spec, GPIO_INT_EDGE_FALLING);
 	zassert_equal(ret, 0, "failed to configure gpio_lrck_spec interrupt (err %d)", ret);
 	gpio_init_callback(&lrck_cb_data, gpio_lrck_isr, BIT(gpio_lrck_spec.pin));
 	gpio_add_callback(gpio_lrck_spec.port, &lrck_cb_data);
@@ -360,6 +365,13 @@ static void *suite_setup(void)
 	dev_i2s = DEVICE_DT_GET_OR_NULL(I2S_DEV_NODE);
 	zassert_not_null(dev_i2s, "I2S device not found");
 	zassert(device_is_ready(dev_i2s), "I2S device not ready");
+
+	TC_PRINT("WORD_SIZE: %u\n", WORD_SIZE);
+	TC_PRINT("NUMBER_OF_CHANNELS: %u\n", NUMBER_OF_CHANNELS);
+	TC_PRINT("I2S_TEST_ALLOWED_DATA_OFFSET: %u\n", CONFIG_I2S_TEST_ALLOWED_DATA_OFFSET);
+	TC_PRINT("LRCK: at least %d falling edges are expected\n", expected_lrck);
+	TC_PRINT("MCLK: at least %d falling edges are expected\n", expected_mclk);
+	TC_PRINT("===================================================================\n");
 
 	return 0;
 }
@@ -376,8 +388,8 @@ static void after(void *not_used)
 {
 	ARG_UNUSED(not_used);
 
-	TC_PRINT("MCLK: rising edges count = %d\n", count_mclk);
-	TC_PRINT("LRCK: rising edges count = %d\n", count_lrck);
+	TC_PRINT("MCLK: falling edges count = %d\n", count_mclk);
+	TC_PRINT("LRCK: falling edges count = %d\n", count_lrck);
 }
 
 ZTEST_SUITE(drivers_i2s_mclk, NULL, suite_setup, before, after, NULL);

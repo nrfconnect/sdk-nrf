@@ -33,5 +33,5 @@
 	status = "okay";
 	pinctrl-0 = <&tdm_default_alt>;
 	pinctrl-names = "default";
-	mck-frequency = <32000>;
+	mck-frequency = <64000>;
 };
