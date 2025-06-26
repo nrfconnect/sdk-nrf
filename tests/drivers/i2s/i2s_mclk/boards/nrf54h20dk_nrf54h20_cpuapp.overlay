@@ -46,5 +46,5 @@
 	pinctrl-0 = <&tdm130_default_alt>;
 	pinctrl-names = "default";
 	memory-regions = <&cpuapp_dma_region>;
-	mck-frequency = <32000>;
+	mck-frequency = <64000>;
 };
