@@ -1,16 +1,13 @@
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v3.0.99
-###########################
+Changelog for |NCS| v3.1.0-preview3
+###################################
 
 .. contents::
    :local:
    :depth: 2
 
-The most relevant changes that are present on the main branch of the |NCS|, as compared to the latest official release, are tracked in this file.
-
-.. note::
-   This file is a work in progress and might not cover all relevant changes.
+This changelog reflects the most relevant changes from the latest official release.
 
 .. HOWTO
 
@@ -360,6 +357,12 @@ Bluetooth Fast Pair samples
 Cellular samples
 ----------------
 
+* Added support for the Thingy:91 X to the following samples:
+
+  * :ref:`nrf_cloud_rest_device_message`
+  * :ref:`nrf_cloud_rest_cell_location`
+  * :ref:`nrf_cloud_rest_fota`
+
 * Deprecated the :ref:`lte_sensor_gateway` sample.
   It is no longer maintained.
 
@@ -377,18 +380,15 @@ Cellular samples
 
 * :ref:`nrf_cloud_rest_device_message` sample:
 
-  * Added support for the Thingy:91 X.
   * Updated the sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
   * Removed Provisioning service and JITP.
 
 * :ref:`nrf_cloud_rest_cell_location` sample:
 
-  * Added support for the Thingy:91 X.
   * Removed JITP.
 
 * :ref:`nrf_cloud_rest_fota` sample:
 
-  * Added support for the Thingy:91 X.
   * Updated the sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
   * Fixed SMP FOTA for the nRF9160 DK.
   * Removed JITP.
@@ -654,20 +654,20 @@ Modem libraries
 Multiprotocol Service Layer libraries
 -------------------------------------
 
-  * Updated the implementation of the following interrupt service routine wrappers:
+* Added an implementation of the API required by the MPSL (defined by :file:`mpsl_hwres.h`) for the nRF53 and nRF54L Series devices.
 
-    * :c:func:`mpsl_timer0_isr_wrapper`
-    * :c:func:`mpsl_rtc0_isr_wrapper`
-    * :c:func:`mpsl_radio_isr_wrapper`
+* Updated the implementation of the following interrupt service routine wrappers:
 
-   Now, they do not trigger the kernel scheduler or use any kernel APIs.
+  * :c:func:`mpsl_timer0_isr_wrapper`
+  * :c:func:`mpsl_rtc0_isr_wrapper`
+  * :c:func:`mpsl_radio_isr_wrapper`
 
-    .. note::
+  Now, they do not trigger the kernel scheduler or use any kernel APIs.
 
-       Invoking kernel APIs or triggering the kernel scheduler from Zero Latency Interrupts is considered undefined behavior.
-       Users of MPSL timeslots should not assume that thread rescheduling will occur automatically at the end of a timeslot.
+  .. note::
 
-  * Added an implementation of the API required by the MPSL (defined by :file:`mpsl_hwres.h`) for the nRF53 and nRF54L Series devices.
+     Invoking kernel APIs or triggering the kernel scheduler from Zero Latency Interrupts is considered undefined behavior.
+     Users of MPSL timeslots should not assume that thread rescheduling will occur automatically at the end of a timeslot.
 
 Libraries for networking
 ------------------------
