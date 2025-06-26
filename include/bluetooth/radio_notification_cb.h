@@ -72,6 +72,10 @@ struct bt_radio_notification_conn_cb {
  * See Bluetooth Core Specification, Vol 6, Part B, Section 4.2.4
  * for more details on clock drift.
  *
+ * It's unsafe to call this function while there are ongoing connections.
+ *
+ * This function must be called again after using bt_disable().
+ *
  * @param[in] cb                  The callback structure to be used.
  *                                The memory pointed to needs to be kept alive by the user.
  * @param[in] prepare_distance_us The distance in time from the start of the
@@ -79,7 +83,6 @@ struct bt_radio_notification_conn_cb {
  *   See also @ref BT_RADIO_NOTIFICATION_CONN_CB_PREPARE_DISTANCE_US_RECOMMENDED.
  *
  *  @retval 0          The callback structure has been successfully registered.
- *  @retval -EALREADY  A callback has already been registered.
  *  @retval -ENOMEM    There are not enough PPI channels available to use this feature.
  */
 int bt_radio_notification_conn_cb_register(const struct bt_radio_notification_conn_cb *cb,
