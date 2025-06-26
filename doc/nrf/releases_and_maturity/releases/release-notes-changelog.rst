@@ -368,7 +368,7 @@ Bluetooth Fast Pair samples
   * Updated:
 
     * The :ref:`fast_pair_locator_tag_testing_fw_update_notifications` section to improve the test procedure.
-      The application provides now an additional log message to indicate that the firmware version is being read.
+      The application now provides an additional log message to indicate that the firmware version is being read.
     * The configurations for nRF54L-based board targets that store the MCUboot verification key in the KMU peripheral to automatically generate the :file:`keyfile.json` file in the build directory (the ``SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE`` Kconfig option) based on the input file provided by the ``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`` Kconfig option.
       This KMU provisioning step can now be performed automatically by the west runner, provided that a :file:`keyfile.json` file is present in the build directory.
       The provisioning is only performed if the ``west flash`` command is executed with the ``--erase``  or ``--recover`` flag.
