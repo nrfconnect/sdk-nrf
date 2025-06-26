@@ -251,6 +251,13 @@ __STATIC_INLINE__ void mpsl_fem_gpiote_pin_output_active_write(const mpsl_fem_gp
 	nrf_gpiote_task_trigger(p_obj->p_gpiote, p_obj->tasks_active[active]);
 }
 
+__STATIC_INLINE__ uint32_t mpsl_fem_gpiote_pin_action_task_address_get(
+    const mpsl_fem_gpiote_pin_t * p_obj,
+    bool active)
+{
+    return nrf_gpiote_task_address_get(p_obj->p_gpiote, p_obj->tasks_active[active]);
+}
+
 __STATIC_INLINE__ void
 mpsl_fem_gpiote_pin_config_output_active_write(const mpsl_fem_gpiote_pin_config_t *p_config,
 					       bool active)

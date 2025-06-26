@@ -27,7 +27,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
- 
+
 #ifndef FEM_PSEMI_CONFIG_H__
 #define FEM_PSEMI_CONFIG_H__
 
@@ -35,6 +35,11 @@
 #include <stdbool.h>
 #include <mpsl_fem_config_common.h>
 #include <nrf.h>
+
+#if defined(NRF54L_SERIES)
+// #include "../../../../../dragoon/mpsl/libs/fem/include_private/mpsl_fem_task.h"
+#include "mpsl_fem_task.h"
+#endif
 
 /** Number of ATT pins used by FEM. */
 #define FEM_ATT_PINS_NUMBER 4
@@ -77,13 +82,15 @@ typedef struct {
 	/** Array of PPI channels which need to be provided to Front End Module to operate. */
 	uint8_t ppi_channels[2];
 #elif defined(NRF54L_SERIES)
-    /** Array of DPPI channels which need to be provided to Front End Module to operate. */
-    uint8_t                      dppi_channels[3];
-    /** Number of EGU instance for which @c egu_channels apply. */
-    uint8_t                      egu_instance_no;
-    /** Array of EGU channels (belonging to EGU instance number @c egu_instance_no) which
-     *  need to be provided to Front End Module to operate. */
-    uint8_t                      egu_channels[3];
+	/** Array of DPPI channels which need to be provided to Front End Module to operate. */
+	uint8_t dppi_channels[3];
+	/** Number of EGU instance for which @c egu_channels apply. */
+	uint8_t egu_instance_no;
+	/** Array of EGU channels (belonging to EGU instance number @c egu_instance_no) which
+	 *  need to be provided to Front End Module to operate. */
+	uint8_t egu_channels[3];
+	mpsl_fem_task_t pa_task[2];
+	mpsl_fem_task_t lna_task[2];
 #else
 #error "Unsupported platform"
 #endif
