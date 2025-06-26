@@ -60,10 +60,9 @@ static struct {
 	struct k_work rx_work;
 
 	/* Outgoing data for AT DLCI. */
-	struct k_sem tx_sem;
-	struct ring_buf notif_rb;
-	uint8_t notif_buffer[CONFIG_SLM_CMUX_NOTIFICATION_TX_BUFFER_SIZE];
-	struct k_mutex notif_rb_mutex;
+	struct ring_buf tx_rb;
+	uint8_t tx_buffer[CONFIG_SLM_CMUX_TX_BUFFER_SIZE];
+	struct k_mutex tx_rb_mutex;
 	struct k_work tx_work;
 
 } cmux;
@@ -111,17 +110,10 @@ static void dlci_pipe_event_handler(struct modem_pipe *pipe,
 		 */
 	case MODEM_PIPE_EVENT_OPENED:
 		LOG_INF("DLCI %u%s opened.", dlci->address, is_at ? " (AT)" : "");
-		if (is_at) {
-			k_sem_give(&cmux.tx_sem);
-			break;
-		}
 		break;
 
 	case MODEM_PIPE_EVENT_CLOSED:
 		LOG_INF("DLCI %u%s closed.", dlci->address, is_at ? " (AT)" : "");
-		if (is_at) {
-			k_sem_reset(&cmux.tx_sem);
-		}
 		break;
 
 	case MODEM_PIPE_EVENT_RECEIVE_READY:
@@ -132,8 +124,9 @@ static void dlci_pipe_event_handler(struct modem_pipe *pipe,
 
 	case MODEM_PIPE_EVENT_TRANSMIT_IDLE:
 		if (is_at &&
-		    cmux.dlcis[cmux.at_channel].instance.state == MODEM_CMUX_DLCI_STATE_OPEN) {
-			k_sem_give(&cmux.tx_sem);
+		    cmux.dlcis[cmux.at_channel].instance.state == MODEM_CMUX_DLCI_STATE_OPEN &&
+		    !ring_buf_is_empty(&cmux.tx_rb)) {
+			k_work_submit_to_queue(&slm_work_q, &cmux.tx_work);
 		}
 		break;
 	}
@@ -164,38 +157,27 @@ static void init_dlci(size_t dlci_idx, uint16_t recv_buf_size,
 	modem_pipe_attach(dlci->pipe, dlci_pipe_event_handler, dlci);
 }
 
-static int cmux_write(struct modem_pipe *pipe, const uint8_t *data, size_t len)
+static size_t cmux_write(struct modem_pipe *pipe, const uint8_t *data, size_t len)
 {
-	int ret;
 	size_t sent_len = 0;
+	int ret = 0;
 
-	if (cmux.dlcis[cmux.at_channel].instance.state != MODEM_CMUX_DLCI_STATE_OPEN) {
-		LOG_INF("DLCI %u (AT) not open. Dropping %u bytes.",
-			INDEX_TO_DLCI(cmux.at_channel), len);
-		return 0;
-	}
-
-	do {
-		ret = k_sem_take(&cmux.tx_sem, K_SECONDS(1));
-		if (ret) {
-			LOG_WRN("TX idle timeout. (%d)", ret);
+	while (sent_len < len) {
+		/* Push data to CMUX TX buffer.  */
+		ret = modem_pipe_transmit(pipe, data, len - sent_len);
+		if (ret <= 0) {
 			break;
 		}
-
-		ret = modem_pipe_transmit(pipe, data, len - sent_len);
-		if (ret > 0) {
-			sent_len += ret;
-			data += ret;
-		}
-	} while (ret >= 0 && sent_len < len);
-
-	if (ret < 0) {
-		LOG_ERR("DLCI %u (AT). Sent %u out of %u bytes. (%d)",
-			INDEX_TO_DLCI(cmux.at_channel), sent_len, len, ret);
-		return ret;
+		sent_len += ret;
+		data += ret;
 	}
 
-	return 0;
+	if (ret < 0) {
+		LOG_DBG("DLCI %u (AT). Sent %u out of %u bytes. (%d)",
+			INDEX_TO_DLCI(cmux.at_channel), sent_len, len, ret);
+	}
+
+	return sent_len;
 }
 
 static void tx_work_fn(struct k_work *work)
@@ -203,35 +185,93 @@ static void tx_work_fn(struct k_work *work)
 	uint8_t *data;
 	size_t len;
 
-	LOG_DBG("tx_work_fn()");
-	do {
-		/* Ignore errors when sending notification data. */
-		len = ring_buf_get_claim(&cmux.notif_rb, &data,
-					 ring_buf_capacity_get(&cmux.notif_rb));
-		(void)cmux_write(cmux.dlcis[cmux.at_channel].pipe, data, len);
-		ring_buf_get_finish(&cmux.notif_rb, len);
+	k_mutex_lock(&cmux.tx_rb_mutex, K_FOREVER);
 
-	} while (!ring_buf_is_empty(&cmux.notif_rb));
+	do {
+		len = ring_buf_get_claim(&cmux.tx_rb, &data, ring_buf_capacity_get(&cmux.tx_rb));
+		len = cmux_write(cmux.dlcis[cmux.at_channel].pipe, data, len);
+		ring_buf_get_finish(&cmux.tx_rb, len);
+
+	} while (!ring_buf_is_empty(&cmux.tx_rb) && len != 0);
+
+	k_mutex_unlock(&cmux.tx_rb_mutex);
+
+	if (!ring_buf_is_empty(&cmux.tx_rb)) {
+		LOG_DBG("Remaining bytes in TX buffer: %u.", ring_buf_size_get(&cmux.tx_rb));
+	}
+}
+
+static int cmux_write_at_channel_nonblock(const uint8_t *data, size_t len)
+{
+	int ret = 0;
+
+	k_mutex_lock(&cmux.tx_rb_mutex, K_FOREVER);
+
+	if (ring_buf_space_get(&cmux.tx_rb) >= len) {
+		ring_buf_put(&cmux.tx_rb, data, len);
+	} else {
+		LOG_WRN("TX buf overflow, dropping %u bytes.", len);
+		ret = -ENOBUFS;
+	}
+
+	k_mutex_unlock(&cmux.tx_rb_mutex);
+
+	return ret;
+}
+
+static int cmux_write_at_channel_block(const uint8_t *data, size_t len)
+{
+	size_t sent = 0;
+	size_t ret;
+	uint8_t *buf;
+
+	k_mutex_lock(&cmux.tx_rb_mutex, K_FOREVER);
+
+	while (sent < len) {
+		ret = ring_buf_put(&cmux.tx_rb, data + sent, len - sent);
+		sent += ret;
+		if (!ret) {
+			/* Buffer full, send partial data. */
+			ret = ring_buf_get_claim(&cmux.tx_rb, &buf,
+						 ring_buf_capacity_get(&cmux.tx_rb));
+			ret = cmux_write(cmux.dlcis[cmux.at_channel].pipe, buf, ret);
+			ring_buf_get_finish(&cmux.tx_rb, ret);
+
+			if (ret == 0) {
+				/* Cannot send and buffers are full.
+				 * Data will be dropped.
+				 */
+				break;
+			}
+		}
+	}
+
+	k_mutex_unlock(&cmux.tx_rb_mutex);
+
+	if (sent < len) {
+		LOG_WRN("TX buf overflow, dropping %u bytes.", len - sent);
+		return -ENOBUFS;
+	}
+
+	return 0;
 }
 
 static int cmux_write_at_channel(const uint8_t *data, size_t len)
 {
-	int ret;
+	size_t ret;
 
-	/* Send only from SLM work queue. */
+	/* CMUX work queue needs to be able to run.
+	 * So, we will send only from SLM work queue.
+	 */
 	if (k_current_get() != &slm_work_q.thread) {
-		k_mutex_lock(&cmux.notif_rb_mutex, K_FOREVER);
-		ret = ring_buf_put(&cmux.notif_rb, data, len);
-		k_mutex_unlock(&cmux.notif_rb_mutex);
-		if (ret != len) {
-			LOG_WRN("CMUX notification buffer overflow. Dropping %u bytes.", len - ret);
-		}
-		k_work_submit_to_queue(&slm_work_q, &cmux.tx_work);
-
-		return 0;
+		ret = cmux_write_at_channel_nonblock(data, len);
+	} else {
+		ret = cmux_write_at_channel_block(data, len);
 	}
 
-	return cmux_write(cmux.dlcis[cmux.at_channel].pipe, data, len);
+	k_work_submit_to_queue(&slm_work_q, &cmux.tx_work);
+
+	return ret;
 }
 
 static void close_pipe(struct modem_pipe **pipe)
@@ -290,9 +330,8 @@ void slm_cmux_init(void)
 	cmux.dlci_channel_rx = ATOMIC_INIT(0);
 	k_work_init(&cmux.rx_work, rx_work_fn);
 
-	k_sem_init(&cmux.tx_sem, 0, 1);
-	ring_buf_init(&cmux.notif_rb, sizeof(cmux.notif_buffer), cmux.notif_buffer);
-	k_mutex_init(&cmux.notif_rb_mutex);
+	ring_buf_init(&cmux.tx_rb, sizeof(cmux.tx_buffer), cmux.tx_buffer);
+	k_mutex_init(&cmux.tx_rb_mutex);
 	k_work_init(&cmux.tx_work, tx_work_fn);
 }
 
