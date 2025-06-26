@@ -1,9 +1,0 @@
-/ {
-	aliases {
-		adc = &adc;
-	};
-};
-
-&adc {
-	status = "okay";
-};
