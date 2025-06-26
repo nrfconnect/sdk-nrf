@@ -416,7 +416,7 @@ static void sample_reboot(enum nrf_cloud_fota_reboot_status status)
 
 /* Callback to track network connectivity */
 static struct net_mgmt_event_callback l4_callback;
-static void l4_event_handler(struct net_mgmt_event_callback *cb, uint32_t event,
+static void l4_event_handler(struct net_mgmt_event_callback *cb, uint64_t event,
 			     struct net_if *iface)
 {
 	if ((event & EVENT_MASK) != event) {
