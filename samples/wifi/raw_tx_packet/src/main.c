@@ -317,7 +317,7 @@ static void wifi_send_raw_tx_packets(void)
 
 /* Net iface events handler */
 static void net_events_handler(struct net_mgmt_event_callback *cb,
-			       uint32_t mgmt_event, struct net_if *iface)
+			       uint64_t mgmt_event, struct net_if *iface)
 {
 	switch (mgmt_event) {
 	case NET_EVENT_IF_UP:
