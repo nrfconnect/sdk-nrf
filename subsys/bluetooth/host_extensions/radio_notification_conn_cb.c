@@ -106,10 +106,6 @@ static bool on_vs_evt(struct net_buf_simple *buf)
 int bt_radio_notification_conn_cb_register(const struct bt_radio_notification_conn_cb *cb,
 					   uint32_t prepare_distance_us)
 {
-	if (registered_cb) {
-		return -EALREADY;
-	}
-
 	int err;
 
 	err = bt_hci_register_vnd_evt_cb(on_vs_evt);
