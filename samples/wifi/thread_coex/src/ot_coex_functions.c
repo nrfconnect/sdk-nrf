@@ -85,7 +85,7 @@ void wifi_init(void)
 	wifi_mgmt_callback_functions();
 }
 
-void net_mgmt_event_handler(struct net_mgmt_event_callback *cb, uint32_t mgmt_event,
+void net_mgmt_event_handler(struct net_mgmt_event_callback *cb, uint64_t mgmt_event,
 		struct net_if *iface)
 {
 	switch (mgmt_event) {
@@ -98,7 +98,7 @@ void net_mgmt_event_handler(struct net_mgmt_event_callback *cb, uint32_t mgmt_ev
 }
 
 void wifi_mgmt_event_handler(struct net_mgmt_event_callback *cb,
-		uint32_t mgmt_event, struct net_if *iface)
+		uint64_t mgmt_event, struct net_if *iface)
 {
 	const struct device *dev = iface->if_dev->dev;
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
