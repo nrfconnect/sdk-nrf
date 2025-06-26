@@ -4677,6 +4677,7 @@ KRKNWK-19974: CCA ED threshold is not optimal
   **Affected platforms:** nRF5340, nRF52840, nRF52833, nRF52820, nRF54L15
 
   **Workaround:** Depending on the SoC, the value should be set to the following:
+
     * nRF5340 and nRF52833 - Set :kconfig:option:`CONFIG_NRF_802154_CCA_ED_THRESHOLD` to ``18``
     * Other devices -  Set :kconfig:option:`CONFIG_NRF_802154_CCA_ED_THRESHOLD` to ``17``
 
