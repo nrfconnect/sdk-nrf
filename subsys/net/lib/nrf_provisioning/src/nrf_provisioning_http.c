@@ -430,7 +430,6 @@ int nrf_provisioning_http_req(struct nrf_provisioning_http_context *const rest_c
 					(char *const)auth_hdr,
 					PRV_CONTENT_TYPE_HDR,
 					USER_AGENT_HDR,
-					PRV_CONNECTION_HDR,
 					NULL };
 
 		req.header_fields = (const char **)headers;
