@@ -128,30 +128,39 @@ config AUDIO_SOURCE_I2S
 endchoice
 
 config AUDIO_HEADSET_STEREO
-	bool "Use stereo audio for headse [EXPERIMENTAL]"
+	bool "Use stereo audio for headset [EXPERIMENTAL]"
 	select EXPERIMENTAL
 	help
 	  Use stereo audio for the headset.
 	  If this is not selected, mono audio is used.
 
-choice AUDIO_HEADSET_LOCATION
-	prompt "Headset audio channel assignment"
-	default AUDIO_HEADSET_LOCATION_RUNTIME
+choice AUDIO_DEVICE_LOCATION_WHEN_TO_SET
+	prompt "Audio device location assignment"
+	default LOCATION_SET_RUNTIME
 	help
-	  Set whether audio channel assignment for the headset
+	  Set whether audio location assignment
 	  should happen at runtime or compile-time.
 
-config AUDIO_HEADSET_LOCATION_RUNTIME
+config LOCATION_SET_RUNTIME
 	bool "Select at runtime"
 	help
-	  Make channel selection at runtime. Selected value is stored in persistent memory.
-	  Left channel: Hold volume-down button on headset while resetting headset.
-	  Right channel: Hold volume-up button on headset while resetting headset.
+	  Make location selection at runtime. Selected value is stored in persistent memory.
+	  FRONT_LEFT: Hold volume-down button while resetting headset.
+	  FRONT_RIGHT: Hold volume-up button while resetting headset.
 
-config AUDIO_HEADSET_LOCATION_COMPILE_TIME
+config LOCATION_SET_COMPILE_TIME
 	bool "Set at compile-time"
 	help
 	  Set channel selection at compile-time.
+
+config LOCATION_AT_COMPILE_TIME
+	int "Device location bitfield. Used if LOCATION_SET_COMPILE_TIME is selected"
+	depends on LOCATION_SET_COMPILE_TIME
+	range 0 27
+	default 1
+	help
+	  Sets FRONT_LEFT location as default.
+
 endchoice
 
 config AUDIO_TEST_TONE
@@ -170,9 +179,9 @@ config AUDIO_MUTE
 	  Use button 5 to mute audio instead of
 	  doing a user defined action.
 
-if AUDIO_HEADSET_LOCATION_COMPILE_TIME
+if AUDIO_DEVICE_LOCATION_WHEN_TO_SET_COMPILE_TIME
 
-config AUDIO_HEADSET_LOCATION
+config AUDIO_DEVICE_LOCATION_WHEN_TO_SET
 	int "Audio channel used by headset"
 	range 0 1
 	default 0
@@ -181,7 +190,7 @@ config AUDIO_HEADSET_LOCATION
 	  Left = 0.
 	  Right = 1.
 
-endif # AUDIO_HEADSET_LOCATION_COMPILE_TIME
+endif # AUDIO_DEVICE_LOCATION_WHEN_TO_SET_COMPILE_TIME
 
 #----------------------------------------------------------------------------#
 menu "SW Codec"

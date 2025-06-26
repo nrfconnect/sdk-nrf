@@ -72,7 +72,7 @@ static void audio_gateway_configure(void)
 	}
 
 #if (CONFIG_STREAM_BIDIRECTIONAL)
-	sw_codec_cfg.decoder.audio_ch = AUDIO_CHANNEL_DEFAULT;
+	sw_codec_cfg.decoder.audio_ch = DEVICE_LOCATION_DEFAULT;
 	sw_codec_cfg.decoder.num_ch = 1;
 	sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
 #endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
@@ -96,13 +96,13 @@ static void audio_headset_configure(void)
 	}
 
 #if (CONFIG_STREAM_BIDIRECTIONAL)
-	sw_codec_cfg.decoder.audio_ch = AUDIO_CHANNEL_DEFAULT;
+	sw_codec_cfg.decoder.audio_ch = DEVICE_LOCATION_DEFAULT;
 	sw_codec_cfg.encoder.num_ch = 1;
 	sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
 #endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
 	enum bt_audio_location location;
 
-	channel_assignment_get(&location);
+	location_get(&location);
 
 	sw_codec_cfg.decoder.audio_ch = 1;
 

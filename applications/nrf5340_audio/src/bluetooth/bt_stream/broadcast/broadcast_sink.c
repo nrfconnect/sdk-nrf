@@ -20,7 +20,7 @@
 #include "bt_mgmt.h"
 #include "macros_common.h"
 #include "zbus_common.h"
-#include "channel_assignment.h"
+#include "location.h"
 #include "audio_defines.h"
 
 #include <zephyr/logging/log.h>
@@ -397,7 +397,7 @@ static bool bis_per_subgroup_parse(const struct bt_bap_base_subgroup_bis *bis, v
 		 */
 		enum audio_channel audio_channel_temp;
 
-		channel_assignment_get(&audio_channel_temp);
+		location_get(&audio_channel_temp);
 		if (audio_channel_temp > AUDIO_CH_NUM) {
 			LOG_ERR("Invalid channel assignment");
 			return true;
@@ -499,7 +499,7 @@ static void base_recv_cb(struct bt_bap_broadcast_sink *sink, const struct bt_bap
 		/* Set the initial active stream based on the defined channel of the device */
 		enum audio_channel audio_channel_temp;
 
-		channel_assignment_get(&audio_channel_temp);
+		location_get(&audio_channel_temp);
 		if (audio_channel_temp > AUDIO_CH_NUM) {
 			LOG_ERR("Invalid channel assignment");
 			return;
@@ -772,7 +772,7 @@ int broadcast_sink_enable(le_audio_receive_cb recv_cb)
 
 	receive_cb = recv_cb;
 
-	channel_assignment_get(&channel);
+	location_get(&channel);
 
 	ret = bt_pacs_register(&pacs_param);
 	if (ret) {

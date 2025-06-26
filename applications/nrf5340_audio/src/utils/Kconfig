@@ -48,7 +48,7 @@ module = NRF5340_AUDIO_DK_VERSION
 module-str = nrf5340-audio-dk-version
 source "subsys/logging/Kconfig.template.log_config"
 
-module = CHAN_ASSIGNMENT
+module = LOCATION
 module-str = chan-assignment
 source "subsys/logging/Kconfig.template.log_config"
 

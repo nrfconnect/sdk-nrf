@@ -12,15 +12,15 @@
 
 /* Memory address to store segger number of the board */
 #define MEM_ADDR_UICR_SNR UICR_APP_BASE_ADDR
-/* Memory address to store the channel intended used for this board */
+/* Memory address to store the location intended used for this board */
 #define MEM_ADDR_UICR_CH (MEM_ADDR_UICR_SNR + sizeof(uint32_t))
 
-uint32_t uicr_channel_get(void)
+uint32_t uicr_location_get(void)
 {
 	return *(uint32_t *)MEM_ADDR_UICR_CH;
 }
 
-int uicr_channel_set(uint32_t channel)
+int uicr_location_set(uint32_t channel)
 {
 	if (channel == *(uint32_t *)MEM_ADDR_UICR_CH) {
 		return 0;

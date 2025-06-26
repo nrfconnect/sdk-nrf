@@ -9,7 +9,7 @@
 #include <zephyr/kernel.h>
 #include <stdio.h>
 #include <zephyr/logging/log_ctrl.h>
-#include "channel_assignment.h"
+#include "location.h"
 #include "ncs_version.h"
 
 #include "macros_common.h"
@@ -37,7 +37,7 @@ int fw_info_app_print(void)
 #if (CONFIG_AUDIO_DEV == HEADSET)
 	enum bt_audio_location location;
 
-	channel_assignment_get(&location);
+	location_get(&location);
 
 	LOG_WRN("HEADSET location value is 0x%x", location);
 

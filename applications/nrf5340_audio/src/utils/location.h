@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef _CHANNEL_ASSIGNMENT_H_
-#define _CHANNEL_ASSIGNMENT_H_
+#ifndef _LOCATION_H_
+#define _LOCATION_H_
 
 /** @file
  *  @brief Audio channel assignment
@@ -17,9 +17,9 @@
 #include <zephyr/bluetooth/audio/audio.h>
 #include <audio_defines.h>
 
-#ifndef AUDIO_CHANNEL_DEFAULT
-#define AUDIO_CHANNEL_DEFAULT BT_AUDIO_LOCATION_FRONT_LEFT
-#endif /* AUDIO_CHANNEL_DEFAULT */
+#ifndef DEVICE_LOCATION_DEFAULT
+#define DEVICE_LOCATION_DEFAULT BT_AUDIO_LOCATION_FRONT_LEFT
+#endif /* DEVICE_LOCATION_DEFAULT */
 
 static const char HS_LOC_L_TAG[] = "HL";
 static const char HS_LOC_R_TAG[] = "HR";
@@ -32,15 +32,15 @@ static const char GW_TAG[] = "GW";
  *
  * @param[out] channel Channel value
  */
-void channel_assignment_get(enum bt_audio_location *location);
+void location_get(enum bt_audio_location *location);
 
-#if CONFIG_AUDIO_HEADSET_LOCATION_RUNTIME
+#if CONFIG_LOCATION_SET_RUNTIME
 /**
  * @brief Assign audio channel.
  *
  * @param[out] channel Channel value
  */
-void channel_assignment_set(enum bt_audio_location location);
-#endif /* AUDIO_HEADSET_LOCATION_RUNTIME */
+void location_set(enum bt_audio_location location);
+#endif /* LOCATION_SET_RUNTIME */
 
-#endif /* _CHANNEL_ASSIGNMENT_H_ */
+#endif /* _LOCATION_H_ */

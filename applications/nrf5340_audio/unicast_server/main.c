@@ -553,7 +553,7 @@ int main(void)
 	ret = le_audio_rx_init();
 	ERR_CHK_MSG(ret, "Failed to initialize rx path");
 
-	channel_assignment_get(&location);
+	location_get(&location);
 
 	ret = unicast_server_enable(le_audio_rx_data_handler, location);
 	ERR_CHK_MSG(ret, "Failed to enable LE Audio");
