@@ -400,7 +400,7 @@ static void radio_power_set(nrf_radio_mode_t mode, uint8_t channel, int8_t power
 
 	if (IS_ENABLED(CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC)) {
 		frequency = channel_to_frequency(mode, channel);
-		output_power = fem_tx_output_power_prepare(power, &radio_power, frequency);
+		output_power = fem_tx_output_power_prepare(power, &radio_power, mode, frequency);
 	}
 #else
 	ARG_UNUSED(mode);
