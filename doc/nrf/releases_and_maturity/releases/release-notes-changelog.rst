@@ -456,6 +456,7 @@ Matter samples
   * The Bluetooth Low Energy variant of the Soft Device Controller (SDC) to use the Peripheral-only role in all Matter samples.
   * API of the ``ncs_configure_data_model`` cmake method that does not use ``ZAP_FILE`` argument anymore, but creates path to ZAP file based on :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option.
   * Renamed the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH` Kconfig option to :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` and changed it purpose to configure the absolute path under which ZAP file is located.
+  * Added support for the NFC onboarding for ``nrf54l15dk/nrf54l15/cpuapp/ns`` board target.
 
 Networking samples
 ------------------
