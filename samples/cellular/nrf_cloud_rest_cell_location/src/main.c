@@ -12,12 +12,14 @@
 #include <modem/modem_info.h>
 #include <zephyr/sys/reboot.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/logging/log_ctrl.h>
 #include <app_event_manager.h>
 #include <caf/events/button_event.h>
 #define MODULE main
 #include <caf/events/module_state_event.h>
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_rest.h>
+#include <zephyr/net/conn_mgr_connectivity.h>
 
 LOG_MODULE_REGISTER(nrf_cloud_rest_cell_location_sample,
 		    CONFIG_NRF_CLOUD_REST_CELL_LOCATION_SAMPLE_LOG_LEVEL);
@@ -42,17 +44,24 @@ LOG_MODULE_REGISTER(nrf_cloud_rest_cell_location_sample,
 #define MFWV_MIN_EXT_SRCH_GCI	3
 #define MFWV_REV_EXT_SRCH_GCI	4
 
-/* Semaphore to indicate a button has been pressed */
-static K_SEM_DEFINE(button_press_sem, 0, 1);
+/* Network states */
+#define NETWORK_UP		  BIT(0)
+#define CONN_LAYER_EVENT_MASK		  (NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
 
-/* Semaphore to indicate that a network connection has been established */
-static K_SEM_DEFINE(lte_connected_sem, 0, 1);
+/* Macro called upon a fatal error, reboots the device. */
+#define FATAL_ERROR()					\
+	LOG_ERR("Fatal error! Rebooting the device.");	\
+	LOG_PANIC();					\
+	IF_ENABLED(CONFIG_REBOOT, (sys_reboot(0)))
 
 /* Semaphore to indicate that cell info has been received */
 static K_SEM_DEFINE(cell_info_ready_sem, 0, 1);
 
 /* Mutex for cell info struct */
 static K_MUTEX_DEFINE(cell_info_mutex);
+
+/* Connection event */
+static K_EVENT_DEFINE(connection_events);
 
 /* nRF Cloud device ID */
 static char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
@@ -285,8 +294,6 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 	process_cell_pos_type_change();
 
-	k_sem_give(&button_press_sem);
-
 	return true;
 }
 
@@ -347,59 +354,6 @@ static void send_device_status(void)
 	rest_ctx.keep_alive = false;
 }
 
-int init(void)
-{
-	int err;
-
-	/* Application event manager is used for button press events from the
-	 * common application framework (CAF) library
-	 */
-	err = app_event_manager_init();
-	if (err) {
-		LOG_ERR("Application Event Manager could not be initialized");
-		return err;
-	}
-
-	err = nrf_modem_lib_init();
-	if (err) {
-		LOG_ERR("Modem library initialization failed, error: %d", err);
-		return err;
-	}
-
-	/* Modem info library is used to obtain the modem FW version
-	 * and network info for single-cell requests
-	 */
-	err = modem_info_init();
-	if (err) {
-		LOG_ERR("Modem info initialization failed, error: %d", err);
-		return err;
-	}
-
-	err = modem_info_params_init(&mdm_param);
-	if (err) {
-		LOG_ERR("Modem info params initialization failed, error: %d", err);
-		return err;
-	}
-
-	/* Print the nRF Cloud device ID. This device ID should match the ID used
-	 * to provision the device on nRF Cloud or to register a public JWT signing key.
-	 */
-	err = nrf_cloud_client_id_get(device_id, sizeof(device_id));
-	if (err) {
-		LOG_ERR("Failed to get device ID, error: %d", err);
-		return err;
-	}
-	LOG_INF("Device ID: %s", device_id);
-
-	/* Check modem FW version */
-	check_modem_fw_version();
-
-	/* Inform the app event manager that this module is ready to receive events */
-	module_set_state(MODULE_STATE_READY);
-
-	return 0;
-}
-
 static void lte_handler(const struct lte_lc_evt *const evt)
 {
 	switch (evt->type) {
@@ -416,8 +370,6 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 		LOG_DBG("Network registration status: %s",
 			evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?
 			"Connected - home network" : "Connected - roaming");
-
-		k_sem_give(&lte_connected_sem);
 		break;
 	case LTE_LC_EVT_CELL_UPDATE:
 		if (!ready || (evt->cell.id == LTE_LC_CELL_EUTRAN_ID_INVALID)) {
@@ -486,39 +438,6 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 	}
 }
 
-static void connect_to_network(void)
-{
-	int err;
-
-	LOG_INF("Waiting for network...");
-
-	k_sem_reset(&lte_connected_sem);
-
-	err = lte_lc_connect_async(lte_handler);
-	if (err) {
-		LOG_ERR("Failed to init LTE module, unable to continue, error: %d", err);
-		k_sleep(K_FOREVER);
-	}
-
-	err = k_sem_take(&lte_connected_sem, K_MINUTES(NET_CONN_WAIT_MIN));
-	if (err == 0) {
-		LOG_INF("Connected to network");
-	} else if (err == -EAGAIN) {
-		LOG_ERR("Failed to connect to network, rebooting in 30s...");
-		(void)lte_lc_power_off();
-		k_sleep(K_SECONDS(30));
-		sys_reboot(SYS_REBOOT_COLD);
-	} else {
-		LOG_ERR("k_sem_take error %d, unable to continue", err);
-		k_sleep(K_FOREVER);
-	}
-
-	/* Modem must have valid time/date in order to generate JWTs with
-	 * an expiration time
-	 */
-	modem_time_wait();
-}
-
 static bool cred_check(struct nrf_cloud_credentials_status *const cs)
 {
 	int ret = 0;
@@ -560,6 +479,121 @@ static void await_credentials(void)
 	LOG_INF("nRF Cloud credentials detected!");
 }
 
+int init(void)
+{
+	int err = 0;
+
+	/* Application event manager is used for button press events from the
+	 * common application framework (CAF) library
+	 */
+	err = app_event_manager_init();
+	if (err) {
+		LOG_ERR("Application Event Manager could not be initialized");
+		return err;
+	}
+
+	err = nrf_modem_lib_init();
+	if (err) {
+		LOG_ERR("Modem library initialization failed, error: %d", err);
+		return err;
+	}
+
+	/* Modem info library is used to obtain the modem FW version
+	 * and network info for single-cell requests
+	 */
+	err = modem_info_init();
+	if (err) {
+		LOG_ERR("Modem info initialization failed, error: %d", err);
+		return err;
+	}
+
+	err = modem_info_params_init(&mdm_param);
+	if (err) {
+		LOG_ERR("Modem info params initialization failed, error: %d", err);
+		return err;
+	}
+
+	/* Print the nRF Cloud device ID. This device ID should match the ID used
+	 * to provision the device on nRF Cloud or to register a public JWT signing key.
+	 */
+	err = nrf_cloud_client_id_get(device_id, sizeof(device_id));
+	if (err) {
+		LOG_ERR("Failed to get device ID, error: %d", err);
+		return err;
+	}
+	LOG_INF("Device ID: %s", device_id);
+
+	/* Check modem FW version */
+	check_modem_fw_version();
+
+	/* Inform the app event manager that this module is ready to receive events */
+	module_set_state(MODULE_STATE_READY);
+
+	/* Before connecting, ensure nRF Cloud credentials are installed */
+	await_credentials();
+
+	/* Initiate Connection */
+	LOG_INF("Enabling connectivity...");
+	lte_lc_register_handler(lte_handler);
+	conn_mgr_all_if_connect(true);
+	k_event_wait(&connection_events, NETWORK_UP, false, K_FOREVER);
+
+	/* Modem must have valid time/date in order to generate JWTs with
+	 * an expiration time
+	 */
+	modem_time_wait();
+
+	return err;
+}
+
+/* Callback to track network connectivity */
+static struct net_mgmt_event_callback l4_callback;
+static void l4_event_handler(struct net_mgmt_event_callback *cb, uint32_t event,
+			     struct net_if *iface)
+{
+	if ((event & CONN_LAYER_EVENT_MASK) != event) {
+		return;
+	}
+
+	if (event == NET_EVENT_L4_CONNECTED) {
+		/* Mark network as up. */
+		LOG_INF("Connected to network");
+		k_event_post(&connection_events, NETWORK_UP);
+	}
+
+	if (event == NET_EVENT_L4_DISCONNECTED) {
+		/* Mark network as down. */
+		LOG_INF("Network connectivity lost!");
+	}
+}
+
+/* Callback to track connectivity layer events */
+static struct net_mgmt_event_callback conn_cb;
+static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
+					   uint32_t event,
+					   struct net_if *iface)
+{
+	if (event == NET_EVENT_CONN_IF_FATAL_ERROR) {
+		LOG_ERR("NET_EVENT_CONN_IF_FATAL_ERROR");
+		FATAL_ERROR();
+		return;
+	}
+}
+
+/* Start tracking network availability */
+static int prepare_network_tracking(void)
+{
+	net_mgmt_init_event_callback(&l4_callback, l4_event_handler, CONN_LAYER_EVENT_MASK);
+	net_mgmt_add_event_callback(&l4_callback);
+
+	net_mgmt_init_event_callback(&conn_cb, connectivity_event_handler, CONN_LAYER_EVENT_MASK);
+	net_mgmt_add_event_callback(&conn_cb);
+
+	return 0;
+}
+
+SYS_INIT(prepare_network_tracking, APPLICATION, 0);
+
 int main(void)
 {
 	int err;
@@ -572,11 +606,6 @@ int main(void)
 		LOG_ERR("Initialization failed");
 		return 0;
 	}
-
-	/* Before connecting, ensure nRF Cloud credentials are installed */
-	await_credentials();
-
-	connect_to_network();
 
 	/* Send the device status which contains HW/FW version info and
 	 * details about the network connection.
