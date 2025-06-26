@@ -398,6 +398,7 @@ Cellular samples
 
   * Added support for the Thingy:91 X.
   * Removed JITP.
+  * Updated the sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
 
 * :ref:`nrf_cloud_rest_fota` sample:
 
