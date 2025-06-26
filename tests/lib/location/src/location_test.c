@@ -54,7 +54,7 @@ void __cmock_net_mgmt_NET_REQUEST_WIFI_SCAN_ExpectAndReturn(int retval)
 }
 
 int net_mgmt_NET_REQUEST_WIFI_SCAN(
-	uint32_t mgmt_request,
+	uint64_t mgmt_request,
 	struct net_if *iface,
 	void *data,
 	size_t len)
@@ -164,7 +164,7 @@ extern void method_gnss_event_handler(int event);
  */
 extern void scan_wifi_net_mgmt_event_handler(
 	struct net_mgmt_event_callback *cb,
-	uint32_t mgmt_event,
+	uint64_t mgmt_event,
 	struct net_if *iface);
 
 static void helper_location_data_clear(void)

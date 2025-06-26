@@ -78,7 +78,7 @@ static void lwm2m_wifi_scan_done_handle(struct net_mgmt_event_callback *cb)
 
 static struct net_mgmt_event_callback lwm2m_wifi_net_mgmt_cb;
 
-void lwm2m_wifi_net_mgmt_event_handler(struct net_mgmt_event_callback *cb, uint32_t mgmt_event,
+void lwm2m_wifi_net_mgmt_event_handler(struct net_mgmt_event_callback *cb, uint64_t mgmt_event,
 					struct net_if *iface)
 {
 	ARG_UNUSED(iface);
