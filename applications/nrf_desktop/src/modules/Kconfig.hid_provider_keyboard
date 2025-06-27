@@ -1,0 +1,60 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config DESKTOP_HID_REPORT_PROVIDER_KEYBOARD
+	bool
+	default y if !DESKTOP_HID_REPORT_PROVIDER_KEYBOARD_ALT
+	depends on DESKTOP_HID_REPORT_KEYBOARD_SUPPORT
+	select DESKTOP_HID_KEYMAP
+	select DESKTOP_HID_EVENTQ
+	select DESKTOP_KEYS_STATE
+	help
+	  This option automatically enables the default HID keyboard report
+	  provider for HID peripheral that supports HID keyboard report.
+
+config DESKTOP_HID_REPORT_PROVIDER_KEYBOARD_ALT
+	bool "Use custom HID keyboard report provider"
+	depends on DESKTOP_HID_REPORT_KEYBOARD_SUPPORT
+	help
+	  Enable this option if you want to support HID keyboard report and use
+	  a custom HID keyboard report provider. Make sure to introduce the
+	  custom HID keyboard report provider if you enable this option.
+
+if DESKTOP_HID_REPORT_PROVIDER_KEYBOARD
+
+config DESKTOP_HID_REPORT_PROVIDER_KEYBOARD_KEYPRESS_EXPIRATION
+	int "HID keypress expiration [ms]"
+	default DESKTOP_HID_REPORT_EXPIRATION
+	default 500
+	help
+	  If a keypress is recorded before HID subscriber connects, it is stored
+	  in HID event queue and processed after the subscriber connects. This
+	  Kconfig option specifies time after which a queued keypress will be
+	  considered expired. The higher the value, the longer the period from
+	  which the module will recall pressed keys when the connection with HID
+	  host is established.
+
+	  The first default is deprecated and used for backwards compatibility.
+
+config DESKTOP_HID_REPORT_PROVIDER_KEYBOARD_EVENT_QUEUE_SIZE
+	int "HID keypress queue size"
+	default DESKTOP_HID_EVENT_QUEUE_SIZE
+	default 12
+	range 2 255
+	help
+	  The option limits the number of keypresses (button press or release)
+	  on the HID event queue where the keypresses are stored before the
+	  connection with HID host is established. If there is no space in the
+	  queue to enqueue a new key state change, the oldest element is
+	  released.
+
+	  The first default is deprecated and used for backwards compatibility.
+
+module = DESKTOP_HID_REPORT_PROVIDER_KEYBOARD
+module-str = HID provider keyboard
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # DESKTOP_HID_REPORT_PROVIDER_KEYBOARD
