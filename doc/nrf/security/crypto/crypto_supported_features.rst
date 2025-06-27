@@ -325,6 +325,11 @@ The following table shows the Kconfig options for requesting Oberon PSA Crypto t
      - Not supported
      - Supported
      - Not supported
+   * - SP 800-108 HMAC counter mode
+     - :kconfig:option:`CONFIG_PSA_WANT_ALG_SP800_108_COUNTER_HMAC`
+     - Not supported
+     - Supported
+     - Supported
 
 Key derivation function driver
 ------------------------------
@@ -340,10 +345,10 @@ The following table shows the Kconfig options for configuring Oberon PSA Crypto 
      - Supported KDF algorithms
    * - :ref:`CRACEN <crypto_drivers_cracen>`
      - :kconfig:option:`CONFIG_PSA_USE_CRACEN_KEY_DERIVATION_DRIVER`
-     - HKDF, HKDF-Extract, HKDF-Expand, PBKDF2-HMAC, PBKDF2-AES-CMAC-PRF-128, TLS 1.2 EC J-PAKE to PMS, SP 800-108r1 CMAC w/counter
+     - HKDF, HKDF-Extract, HKDF-Expand, PBKDF2-HMAC, PBKDF2-AES-CMAC-PRF-128, TLS 1.2 EC J-PAKE to PMS, SP 800-108r1 CMAC w/counter, SP 800-108 HMAC counter mode
    * - :ref:`nrf_oberon <crypto_drivers_oberon>`
      - Configuration automatically generated based on the enabled KDF algorithms. Acts as fallback for the other drivers.
-     - HKDF, HKDF-Extract, HKDF-Expand, PBKDF2-HMAC, PBKDF2-AES-CMAC-PRF-128, TLS 1.2 PRF, TLS 1.2 PSK to MS, TLS 1.2 EC J-PAKE to PMS
+     - HKDF, HKDF-Extract, HKDF-Expand, PBKDF2-HMAC, PBKDF2-AES-CMAC-PRF-128, TLS 1.2 PRF, TLS 1.2 PSK to MS, TLS 1.2 EC J-PAKE to PMS, SP 800-108 HMAC counter mode
 
 MAC algorithms
 ==============
@@ -1024,8 +1029,8 @@ The following table shows the Kconfig options for requesting Oberon PSA Crypto t
      - Not supported
      - Supported
      - Supported
-   * - SRP-6 password hashing
-     - :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_6`
+   * - SRP password hashing
+     - :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_PASSWORD_HASH`
      - Not supported
      - Supported
      - Supported
@@ -1044,10 +1049,156 @@ The following table shows the Kconfig options for configuring Oberon PSA Crypto 
      - Supported PAKE algorithms
    * - :ref:`CRACEN <crypto_drivers_cracen>`
      - :kconfig:option:`CONFIG_PSA_USE_CRACEN_PAKE_DRIVER`
-     - EC J-PAKE, SPAKE2+ with HMAC, SPAKE2+ with CMAC, SPAKE2+ for Matter, SRP-6, SRP-6 password hashing
+     - EC J-PAKE, SPAKE2+ with HMAC, SPAKE2+ with CMAC, SPAKE2+ for Matter, SRP-6, SRP password hashing
    * - :ref:`nrf_oberon <crypto_drivers_oberon>`
      - Configuration automatically generated based on the enabled PAKE algorithms. Acts as fallback for the other drivers.
-     - EC J-PAKE, SPAKE2+ with HMAC, SPAKE2+ with CMAC, SPAKE2+ for Matter, SRP-6, SRP-6 password hashing
+     - EC J-PAKE, SPAKE2+ with HMAC, SPAKE2+ with CMAC, SPAKE2+ for Matter, SRP-6, SRP password hashing
+
+Key pair operations
+===================
+
+The following sections list the supported key pair operation Kconfig options for different key types.
+The Kconfig options follow the ``CONFIG_PSA_WANT_`` configuration scheme, which is described in detail on the :ref:`crypto_drivers` page.
+
+RSA key pair operations
+-----------------------
+
+The following table shows the Kconfig options for requesting Oberon PSA Crypto to use specific RSA key pair operations, as well as their support for each driver:
+
+.. list-table:: RSA key pair operation configuration options and support per driver
+   :header-rows: 1
+   :widths: auto
+
+   * - RSA key pair operation
+     - Configuration option
+     - :ref:`nrf_cc3xx <crypto_drivers_cc3xx>`
+     - :ref:`CRACEN <crypto_drivers_cracen>`
+     - :ref:`nrf_oberon <crypto_drivers_oberon>`
+   * - Import
+     - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_IMPORT`
+     - Supported
+     - Supported
+     - Supported
+   * - Export
+     - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_EXPORT`
+     - Supported
+     - Supported
+     - Supported
+   * - Generate
+     - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_GENERATE`
+     - Supported
+     - Supported
+     - Not supported
+   * - Derive
+     - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
+     - Supported
+     - Supported
+     - Supported
+
+SRP key pair operations
+-----------------------
+
+The following table shows the Kconfig options for requesting Oberon PSA Crypto to use specific SRP key pair operations, as well as their support for each driver:
+
+.. list-table:: SRP key pair operation configuration options and support per driver
+   :header-rows: 1
+   :widths: auto
+
+   * - SRP key pair operation
+     - Configuration option
+     - :ref:`nrf_cc3xx <crypto_drivers_cc3xx>`
+     - :ref:`CRACEN <crypto_drivers_cracen>`
+     - :ref:`nrf_oberon <crypto_drivers_oberon>`
+   * - Import
+     - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_IMPORT`
+     - Not supported
+     - Supported
+     - Supported
+   * - Export
+     - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_EXPORT`
+     - Not supported
+     - Supported
+     - Supported
+   * - Generate
+     - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_GENERATE`
+     - Not supported
+     - Supported
+     - Not supported
+   * - Derive
+     - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_DERIVE`
+     - Not supported
+     - Supported
+     - Supported
+
+SPAKE2P key pair operations
+---------------------------
+
+The following table shows the Kconfig options for requesting Oberon PSA Crypto to use specific SPAKE2P key pair operations, as well as their support for each driver:
+
+.. list-table:: SPAKE2P key pair operation configuration options and support per driver
+   :header-rows: 1
+   :widths: auto
+
+   * - SPAKE2P key pair operation
+     - Configuration option
+     - :ref:`nrf_cc3xx <crypto_drivers_cc3xx>`
+     - :ref:`CRACEN <crypto_drivers_cracen>`
+     - :ref:`nrf_oberon <crypto_drivers_oberon>`
+   * - Import
+     - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_IMPORT`
+     - Not supported
+     - Supported
+     - Supported
+   * - Export
+     - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_EXPORT`
+     - Not supported
+     - Supported
+     - Supported
+   * - Generate
+     - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_GENERATE`
+     - Not supported
+     - Supported
+     - Supported
+   * - Derive
+     - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE`
+     - Not supported
+     - Supported
+     - Supported
+
+ECC key pair operations
+-----------------------
+
+The following table shows the Kconfig options for requesting Oberon PSA Crypto to use specific ECC key pair operations, as well as their support for each driver:
+
+.. list-table:: ECC key pair operation configuration options and support per driver
+   :header-rows: 1
+   :widths: auto
+
+   * - ECC key pair operation
+     - Configuration option
+     - :ref:`nrf_cc3xx <crypto_drivers_cc3xx>`
+     - :ref:`CRACEN <crypto_drivers_cracen>`
+     - :ref:`nrf_oberon <crypto_drivers_oberon>`
+   * - Generate
+     - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE`
+     - Supported
+     - Supported
+     - Supported
+   * - Import
+     - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT`
+     - Supported
+     - Supported
+     - Supported
+   * - Export
+     - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT`
+     - Supported
+     - Supported
+     - Supported
+   * - Derive
+     - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE`
+     - Supported
+     - Supported
+     - Supported
 
 Key size configurations
 =======================
