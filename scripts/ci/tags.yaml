@@ -1675,6 +1675,11 @@ ci_samples_zephyr_sysbuild_hello_world:
     - nrf/samples/zephyr/sysbuild/hello_world/
     - zephyr/samples/sysbuild/hello_world/
 
+ci_samples_zephyr_subsys_ipc_ipc_service_icmsg:
+  files:
+    - nrf/samples/zephyr/subsys/ipc/ipc_service/icmsg/
+    - zephyr/samples/subsys/ipc/ipc_service/icmsg/
+
 ci_samples_zephyr_drivers_audio_dmic:
   files:
     - nrf/samples/zephyr/drivers/audio/dmic/
