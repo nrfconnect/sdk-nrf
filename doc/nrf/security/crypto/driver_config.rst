@@ -50,11 +50,6 @@ To use the :ref:`nrf_cc3xx_mbedcrypto_readme` PSA driver, the Arm CryptoCell CC3
 The Arm CryptoCell hardware compatible with nrf_cc3xx is initialized in the :file:`hw_cc3xx.c` file, located under :file:`nrf/drivers/hw_cc3xx/`, and is controlled with the :kconfig:option:`CONFIG_HW_CC3XX` Kconfig option.
 The Kconfig option has a default value of ``y`` when nrf_cc3xx is available in the SoC.
 
-Enabling the nrf_oberon driver
-==============================
-
-To enable the :ref:`nrf_security_drivers_oberon`, set the :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_OBERON` Kconfig option.
-
 Enabling the CRACEN driver
 ==========================
 
@@ -65,6 +60,19 @@ The nrf_oberon driver may then be disabled by using the Kconfig option :kconfig:
 .. note::
    On nRF54L Series devices, CRACEN is the only source of entropy.
    Therefore, it is not possible to disable the :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_CRACEN` Kconfig option when the Zephyr entropy driver is enabled.
+
+Enabling the nrf_oberon driver
+==============================
+
+To enable the :ref:`nrf_security_drivers_oberon`, set the :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_OBERON` Kconfig option to ``y``.
+Enabling the nrf_oberon driver automatically enables the :ref:`software fallback mechanism to nrf_oberon <crypto_drivers_software_fallback>`.
+
+.. _psa_crypto_support_disable_software_fallback:
+
+Disabling the software fallback
+===============================
+
+To disable the :ref:`software fallback mechanism to nrf_oberon <crypto_drivers_software_fallback>`, set the :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_OBERON` Kconfig option to ``n``.
 
 .. _psa_crypto_support_multiple_drivers:
 
