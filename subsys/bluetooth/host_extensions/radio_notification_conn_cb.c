@@ -7,6 +7,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/hci.h>
+#include <zephyr/drivers/timer/nrf_grtc_timer.h>
 #include <bluetooth/radio_notification_cb.h>
 #include <bluetooth/hci_vs_sdc.h>
 
@@ -94,6 +95,8 @@ static bool on_vs_evt(struct net_buf_simple *buf)
 
 #if defined(CONFIG_SOC_COMPATIBLE_NRF52X) || defined(CONFIG_SOC_COMPATIBLE_NRF5340_CPUNET)
 	timer_trigger_us -= sys_clock_start_to_bt_clk_start_us;
+#else
+	timer_trigger_us -= z_nrf_grtc_timer_startup_value_get();
 #endif /* CONFIG_SOC_COMPATIBLE_NRF52X || CONFIG_SOC_COMPATIBLE_NRF5340_CPUNET */
 
 	/* Start/Restart a timer triggering every conn_interval_us from the last anchor point. */
