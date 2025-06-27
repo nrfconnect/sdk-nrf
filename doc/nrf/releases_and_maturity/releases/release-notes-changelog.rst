@@ -203,7 +203,7 @@ Thread
 Wi-Fi®
 ------
 
-|no_changes_yet_note|
+* Added support for EAP-PEAP and EAP-TTLS authentication methods to enterprise security in the Wi-Fi management API.
 
 Applications
 ============
@@ -932,5 +932,6 @@ Documentation
   * The :ref:`log_rpc` library documentation page.
   * The :ref:`mcuboot_serial_recovery` documentation page, based on the official Zephyr documentation, which discusses the implementation and usage of the serial recovery.
 
+* Moved the Wi-Fi credentials library page to the upstream :ref:`Zephyr repository <zephyr:lib_wifi_credentials>`.
 * Removed the Getting started with nRF7002 DK and Getting started with other DKs pages from the :ref:`gsg_guides` section.
   These pages were no longer relevant as the `Quick Start app`_ now also supports the nRF7002 DK.
