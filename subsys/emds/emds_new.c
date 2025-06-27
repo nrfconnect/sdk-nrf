@@ -14,11 +14,11 @@
 LOG_MODULE_REGISTER(emds, CONFIG_EMDS_LOG_LEVEL);
 
 #define PARTITIONS_NUM_MAX 2
-#define REGIONS_OVERLAP(a, len_a, b, len_b) (((a) < ((b) + (len_b))) && ((b) < ((a) + (len_a))))
 
 static bool emds_ready;
 static bool emds_initialized;
-static struct emds_snapshot_metadata freshest_snapshot;
+static struct emds_snapshot_candidate freshest_snapshot;
+static struct emds_snapshot_candidate allocated_snapshot;
 
 static sys_slist_t emds_dynamic_entries;
 static struct emds_partition partition[PARTITIONS_NUM_MAX];
@@ -33,8 +33,9 @@ static void emds_print_init_info(void)
 			partition[i].fa->fa_id, partition[i].fa->fa_off, partition[i].fa->fa_size);
 		LOG_DBG("Flash parameters: Write block size=%zu, Erase value=%zu",
 			partition[i].fp->write_block_size, partition[i].fp->erase_value);
-		LOG_DBG("No explicit erase: %s",
-			partition[i].fp->caps.no_explicit_erase ? "true" : "false");
+		LOG_DBG("%s", flash_params_get_erase_cap(partition->fp) & FLASH_ERASE_C_EXPLICIT
+				      ? "Explicit erase available"
+				      : "Explicit erase not available");
 	}
 }
 
@@ -123,7 +124,7 @@ int emds_entry_add(struct emds_dynamic_entry *entry)
 	return 0;
 }
 
-static int emds_entries_size(uint32_t *size, size_t alignment)
+static int emds_entries_size(size_t *size, size_t alignment)
 {
 	int entries = 0;
 
@@ -141,15 +142,15 @@ static int emds_entries_size(uint32_t *size, size_t alignment)
 		entries++;
 	}
 
-	*size = DIV_ROUND_UP(*size, alignment) * alignment;
-	*size += DIV_ROUND_UP(sizeof(struct emds_snapshot_metadata), alignment) * alignment;
+	*size = ROUND_UP(*size, alignment);
+	*size += ROUND_UP(sizeof(struct emds_snapshot_metadata), alignment);
 
 	return entries;
 }
 
-uint32_t emds_store_size_get(void)
+size_t emds_store_size_get(void)
 {
-	uint32_t store_size;
+	size_t store_size;
 
 	if (!emds_initialized) {
 		return -ECANCELED;
@@ -229,7 +230,7 @@ static int emds_read_data(const struct flash_area *fa, struct emds_snapshot_meta
 
 int emds_load(void)
 {
-	struct emds_snapshot_metadata metadata = {0};
+	struct emds_snapshot_candidate candidate = {0};
 	int freshest_partition_idx = -1;
 
 	if (!emds_initialized) {
@@ -237,13 +238,13 @@ int emds_load(void)
 	}
 
 	for (int i = 0; i < PARTITIONS_NUM_MAX; i++) {
-		if (emds_flash_scan_partition(&partition[i], &metadata)) {
+		if (emds_flash_scan_partition(&partition[i], &candidate)) {
 			LOG_ERR("Failed to scan partition %d:", i);
 			continue;
 		}
 
-		if (freshest_snapshot.fresh_cnt < metadata.fresh_cnt) {
-			freshest_snapshot = metadata;
+		if (freshest_snapshot.metadata.fresh_cnt < candidate.metadata.fresh_cnt) {
+			freshest_snapshot = candidate;
 			freshest_partition_idx = i;
 		}
 	}
@@ -254,16 +255,74 @@ int emds_load(void)
 	}
 
 	LOG_DBG("Found freshest snapshot in partition %d with fresh_cnt %u",
-		freshest_partition_idx, freshest_snapshot.fresh_cnt);
+		freshest_partition_idx, freshest_snapshot.metadata.fresh_cnt);
 
-	return emds_read_data(partition[freshest_partition_idx].fa, &freshest_snapshot);
+	return emds_read_data(partition[freshest_partition_idx].fa, &freshest_snapshot.metadata);
 }
 
 int emds_prepare(void)
 {
-	emds_ready = true;
+	bool erase_enabled = false;
+	int idx;
+	int freshest_partition_idx = -1;
+	int rc;
 
-	return 0;
+	if (!emds_initialized) {
+		return -ECANCELED;
+	}
+
+	if (emds_ready) {
+		LOG_DBG("Already prepared");
+		return -EALREADY;
+	}
+
+	/** First try to allocate snapshot in the same partition where freshest snapshot exists */
+	if (freshest_snapshot.metadata.fresh_cnt > 0) {
+		for (idx = 0; idx < PARTITIONS_NUM_MAX; idx++) {
+			if (IN_RANGE(freshest_snapshot.metadata_addr, partition[idx].fa->fa_off,
+				     partition[idx].fa->fa_off + partition[idx].fa->fa_size)) {
+				freshest_partition_idx = idx;
+				break;
+			}
+		}
+
+		rc = emds_flash_allocate_snapshot(&partition[idx], &freshest_snapshot,
+						  &allocated_snapshot);
+		if (rc == 0) {
+			emds_ready = true;
+			return 0;
+		}
+	}
+
+	idx = -1;
+	do {
+		idx++;
+
+		if (idx != freshest_partition_idx) {
+			if (erase_enabled) {
+				LOG_DBG("Erase partition %d", idx);
+				rc = emds_flash_erase_partition(&partition[idx]);
+				if (rc) {
+					LOG_ERR("Failed to erase partition %d: %d", idx, rc);
+					break;
+				}
+			}
+
+			rc = emds_flash_allocate_snapshot(&partition[idx], NULL,
+							  &allocated_snapshot);
+			if (rc == 0) {
+				emds_ready = true;
+			}
+		}
+
+		if (!emds_ready && (idx == PARTITIONS_NUM_MAX - 1) && !erase_enabled &&
+		    (flash_params_get_erase_cap(partition[idx].fp) & FLASH_ERASE_C_EXPLICIT)) {
+			erase_enabled = true;
+			idx = -1;
+		}
+	} while (!emds_ready && idx < PARTITIONS_NUM_MAX - 1);
+
+	return emds_ready ? 0 : -ENOENT;
 }
 
 int emds_store(void)

@@ -8,10 +8,25 @@
 #define EMDS_FLASH_H__
 
 #include <zephyr/storage/flash_map.h>
+#include <zephyr/sys/slist.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/**
+ * @brief Check if two regions overlap
+ *
+ * This macro checks if two memory regions overlap.
+ *
+ * @param a Start address of the first region.
+ * @param len_a Length of the first region.
+ * @param b Start address of the second region.
+ * @param len_b Length of the second region.
+ *
+ * @return true if regions overlap, false otherwise.
+ */
+#define REGIONS_OVERLAP(a, len_a, b, len_b) (((a) < ((b) + (len_b))) && ((b) < ((a) + (len_a))))
 
 /**
  * @brief Emergency data storage partition descriptor
@@ -69,6 +84,23 @@ struct emds_snapshot_metadata {
 } __packed;
 
 /**
+ * @brief Emergency data storage snapshot candidate structure
+ *
+ * This structure is used to hold a candidate snapshot during the scanning
+ * of the emergency data storage partition. It contains the metadata address
+ * and the metadata itself.
+ *
+ * @param node Node for the system list.
+ * @param metadata_addr Address of the metadata in the flash area.
+ * @param metadata The snapshot metadata.
+ */
+struct emds_snapshot_candidate {
+	sys_snode_t node;
+	off_t metadata_addr;
+	struct emds_snapshot_metadata metadata;
+};
+
+/**
  * @brief Initialize the emergency data storage flash partition.
  *
  * @param partition Pointer to the emergency data storage partition structure.
@@ -83,17 +115,36 @@ int emds_flash_init(struct emds_partition *partition);
  * @brief Scan the emergency data storage partition for valid snapshots.
  *
  * This function scans the specified partition for valid snapshots and populates
- * the provided metadata structure with the found snapshot metadata with the biggest
+ * the candidate structure with the found snapshot metadata with the biggest
  * fresh_cnt value and valid metadata and snapshot crc values.
  *
  * @param partition Pointer to the emergency data storage partition structure.
- * @param metadata Pointer to the metadata structure to be filled with found snapshot data.
+ * @param candidate Pointer to the emergency data storage snapshot candidate structure
  *
  * @retval 0 on success.
  * @retval -EINVAL if the partition is not initialized or if an error occurs during reading.
  */
 int emds_flash_scan_partition(const struct emds_partition *partition,
-				  struct emds_snapshot_metadata *metadata);
+			      struct emds_snapshot_candidate *candidate);
+
+/** * @brief Allocate a new snapshot in the emergency data storage partition.
+ *
+ * This function allocates a new snapshot in the specified partition based on the
+ * freshest snapshot found in the partition.
+ *
+ * @param partition Pointer to the emergency data storage partition structure.
+ * @param freshest_snapshot Pointer to the freshest snapshot candidate structure.
+ * @param allocated_snapshot Pointer to the emergency data storage snapshot candidate structure
+ * that will be filled with the allocated snapshot metadata.
+ *
+ * @retval 0 on success.
+ * @retval -EINVAL if the data size is invalid.
+ * @retval -EADDRINUSE if the metadata or data area is not empty.
+ * @retval -ENOMEM if the metadata area overlaps with the data area.
+ */
+int emds_flash_allocate_snapshot(const struct emds_partition *partition,
+				 const struct emds_snapshot_candidate *freshest_snapshot,
+				 struct emds_snapshot_candidate *allocated_snapshot);
 
 /**
  * @brief Erase the specified emergency data storage partition.
