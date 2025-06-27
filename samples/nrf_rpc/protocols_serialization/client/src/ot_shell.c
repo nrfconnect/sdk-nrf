@@ -1898,7 +1898,7 @@ static int cmd_eui64(const struct shell *sh, size_t argc, char *argv[])
 
 static otError cmd_rloc16_impl(const struct shell *sh, size_t argc, char *argv[])
 {
-	shell_print(sh, "%u", otThreadGetRloc16(NULL));
+	shell_print(sh, "%04x", otThreadGetRloc16(NULL));
 
 	return OT_ERROR_NONE;
 }
