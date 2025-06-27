@@ -55,6 +55,9 @@ The script requires the following parameters:
 
 * ``com`` - the COM port of the development kit used by the script
 
+  .. note::
+     |serial_port_number_list|
+
 Additionally, following parameters are option:
 
 * ``snr`` - the SEGGER board ID
