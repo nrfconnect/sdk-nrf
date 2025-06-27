@@ -186,6 +186,8 @@
   - "tests/subsys/kmu/**/*"
   - "tests/subsys/nrf_compress/**/*"
   - "tests/modules/mcuboot/**/*"
+  - "tests/drivers/fprotect/negative/**/*"
+
 
 "CI-all-test":
   - "subsys/partition_manager/**/*"
