@@ -203,7 +203,9 @@ Thread
 Wi-Fi®
 ------
 
-|no_changes_yet_note|
+* Added:
+
+  * Enterprise security now supports EAP-PEAP and EAP-TTLS authentication methods in Wi-Fi management.
 
 Applications
 ============
