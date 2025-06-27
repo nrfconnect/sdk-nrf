@@ -237,24 +237,6 @@ config BT_FAST_PAIR_FMDN_CLOCK_NVM_UPDATE_RETRY_TIME
 	  determine the next storage attempt in case of a storage operation
 	  failure.
 
-config BT_FAST_PAIR_FMDN_CLOCK_UPTIME_PERSISTENCE
-	bool
-	default y if NRF_GRTC_TIMER && SOC_SERIES_NRF54LX
-	help
-	  Apply the workaround for the kernel uptime persistence after a system reset.
-	  The FMDN clock module assumes that the kernel uptime starts from zero after
-	  the system reboot.
-
-	  Activate the workaround only for devices from the nRF54L series that use the
-	  GRTC timer as the system clock source (the default configuration). For this
-	  configuration, the kernel uptime persists after a system reset if the reset
-	  reason is of a specific type, such as a software reset (for example, triggered
-	  by the sys_reboot API).
-
-	  The kernel uptime does not persist for devices from the nRF54H series even
-	  though they use the GRTC timer as the system clock source. The workaround
-	  is not applied for this device series.
-
 endif # BT_FAST_PAIR_FMDN_CLOCK
 
 config BT_FAST_PAIR_FMDN_DULT
