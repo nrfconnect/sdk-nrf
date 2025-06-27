@@ -7,27 +7,29 @@ Getting logging output with nRF5340 DK
    :local:
    :depth: 2
 
-When connected to a computer, the nRF5340 DK emulates virtual COM ports.
-The number of COM ports depends on the DK version you are using.
+When connected to a computer, the nRF5340 DK emulates virtual serial ports.
+The number of serial ports depends on the DK version you are using.
 
-nRF5340 DK v2.0.0 COM ports
-***************************
+|serial_port_number_list|
 
-When connected to a computer, the nRF5340 DK v2.0.0 emulates two virtual COM ports.
+nRF5340 DK v2.0.0 serial ports
+******************************
+
+When connected to a computer, the nRF5340 DK v2.0.0 emulates two virtual serial ports.
 In the default configuration, they are set up as follows:
 
-* The first COM port outputs the log from the network core (if available).
-* The second COM port outputs the log from the application core.
+* The first serial port outputs the log from the network core (if available).
+* The second serial port outputs the log from the application core.
 
-nRF5340 DK v1.0.0 COM ports
-***************************
+nRF5340 DK v1.0.0 serial ports
+******************************
 
 When connected to a computer, the nRF5340 DK v1.0.0 emulates three virtual COM ports.
 In the default configuration, they are set up as follows:
 
-* The first COM port outputs the log from the network core (if available).
-* The second (middle) COM port is routed to the **P24** connector of the nRF5340 DK.
-* The third (last) COM port outputs the log from the application core.
+* The first serial port outputs the log from the network core (if available).
+* The second (middle) serial port is routed to the **P24** connector of the nRF5340 DK.
+* The third (last) serial port outputs the log from the application core.
 
 To use the middle COM port in the nRF5340 DK v1.0.0, complete the following steps:
 

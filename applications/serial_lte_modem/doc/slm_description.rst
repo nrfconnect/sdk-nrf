@@ -612,7 +612,7 @@ Use the following UART devices:
 * nRF52 or nRF53 Series DK - UART0
 * nRF91 Series DK - UART2
 
-Use the following UART configuration:
+Use the following UART configuration, which is different from the :ref:`default serial port connection settings <test_and_optimize>`:
 
 * Hardware flow control: enabled
 * Baud rate: 115200

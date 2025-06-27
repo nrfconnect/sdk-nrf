@@ -10,7 +10,11 @@ TF-M logging
 
 TF-M employs two UART interfaces for logging: one for the :ref:`Secure Processing Environment<app_boards_spe_nspe>` (including MCUboot and TF-M), and one for the :ref:`Non-Secure Processing Environment<app_boards_spe_nspe>` (including user application).
 
-By default, the logs from Nordic Semiconductor's Development Kits (DKs) arrive on different COM ports on the host PC.
+By default, the logs from Nordic Semiconductor's Development Kits (DKs) arrive on different serial ports on the host PC.
+
+.. note::
+   |serial_port_number_list|
+
 The UART instances can vary by device family:
 
 * nRF5340 and nRF91 Series: The application typically uses the UART instance ``0`` (``uart0``), and TF-M uses the UART instance ``1`` (``uart1``) by default.

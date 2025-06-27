@@ -32,7 +32,7 @@ Configuration
 To build the SLM application, use the :file:`overlay-ppp-cmux-linux.conf` configuration overlay.
 
 You can adjust the serial port baud rate using the devicetree overlay file.
-By default, the baud rate is set to 115200.
+The :ref:`baud rate is set to 115200 <test_and_optimize>` by default.
 If you change the baud rate, set the same rate in the :file:`scripts/slm_start_ppp.sh` and :file:`scripts/slm_stop_ppp.sh` scripts.
 
 .. note::
