@@ -63,6 +63,7 @@ extern int16_t m_table_active_id;
 
 static uint8_t *find_active_limit_id_addr(void)
 {
+#if FIXED_PARTITION_EXISTS(power_limit_ids_partition)
 	uint8_t *addr = (uint8_t *)POWER_LIMIT_IDS_START_ADDRESS;
 
 	while (addr < (const uint8_t *)POWER_LIMIT_IDS_STOP_ADDRESS && *addr != 0xFF) {
@@ -77,6 +78,9 @@ static uint8_t *find_active_limit_id_addr(void)
 	}
 
 	return addr;
+#else
+	return NULL;
+#endif
 }
 
 otError vendor_radio_power_map_limit_erase_flash(void)
@@ -159,6 +163,7 @@ otError vendor_radio_power_limit_id_read(uint8_t *p_id)
 
 void vendor_radio_power_limit_id_write(uint8_t id)
 {
+#if FIXED_PARTITION_EXISTS(power_limit_ids_partition)
 	const struct flash_area *fa;
 	uint32_t offset;
 	uint8_t *current_ptr = find_active_limit_id_addr();
@@ -184,10 +189,12 @@ void vendor_radio_power_limit_id_write(uint8_t id)
 	}
 
 	flash_area_close(fa);
+#endif
 }
 
 void vendor_radio_power_limit_id_erase(void)
 {
+#if FIXED_PARTITION_EXISTS(power_limit_ids_partition)
 	const struct flash_area *fa;
 
 	if (flash_area_open(POWER_LIMIT_IDS_AREA, &fa) != 0) {
@@ -200,6 +207,7 @@ void vendor_radio_power_limit_id_erase(void)
 	}
 
 	flash_area_close(fa);
+#endif
 	m_table_active_id = DEFAULT_ACTIVE_ID;
 }
 
