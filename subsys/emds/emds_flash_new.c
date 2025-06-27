@@ -113,7 +113,7 @@ int emds_flash_init(struct emds_partition *partition)
 		return -EINVAL;
 	}
 
-	if (!partition->fp->caps.no_explicit_erase) {
+	if (flash_params_get_erase_cap(partition->fp) & FLASH_ERASE_C_EXPLICIT) {
 		struct flash_pages_info info;
 		int rc;
 
@@ -199,6 +199,90 @@ int emds_flash_scan_partition(const struct emds_partition *partition,
 			break;
 		}
 	}
+
+	return 0;
+}
+
+int emds_flash_allocate_snapshot(const struct emds_partition *partition,
+				 const struct emds_snapshot_candidate *freshest_snapshot,
+				 struct emds_snapshot_candidate *allocated_snapshot,
+				 size_t data_size)
+{
+	const struct flash_area *fa = partition->fa;
+	const struct flash_parameters *fp = partition->fp;
+	off_t metadata_off =
+		freshest_snapshot ? freshest_snapshot->metadata_addr - fa->fa_off : fa->fa_size;
+	off_t data_off = freshest_snapshot
+				 ? ROUND_UP(freshest_snapshot->metadata.data_instance_off +
+						    freshest_snapshot->metadata.data_instance_len,
+					    fp->write_block_size)
+				 : 0;
+	int rc;
+
+	metadata_off -= sizeof(struct emds_snapshot_metadata);
+	data_size -= ROUND_UP(sizeof(struct emds_snapshot_metadata), fp->write_block_size);
+
+	if (data_size > fa->fa_size) {
+		LOG_ERR("Invalid data size: %zu", data_size);
+		return -EINVAL;
+	}
+
+	if (REGIONS_OVERLAP(metadata_off, sizeof(struct emds_snapshot_metadata), data_off,
+			    data_size)) {
+		LOG_ERR("Metadata area overlaps with data area");
+		return -ENOMEM;
+	}
+
+	if (flash_params_get_erase_cap(partition->fp) & FLASH_ERASE_C_EXPLICIT) {
+		uint8_t cmp[sizeof(struct emds_snapshot_metadata)];
+		uint8_t cache[sizeof(struct emds_snapshot_metadata)];
+
+		memset(cmp, fp->erase_value, sizeof(cmp));
+
+		rc = flash_area_read(fa, metadata_off, cache,
+				     sizeof(struct emds_snapshot_metadata));
+		if (rc) {
+			LOG_ERR("Failed to read snapshot metadata memory: %d", rc);
+			return rc;
+		}
+
+		if (memcmp(cmp, cache, sizeof(struct emds_snapshot_metadata))) {
+			LOG_WRN("Metadata area at address: 0x%04lx is not empty",
+				fa->fa_off + metadata_off);
+			return -EADDRINUSE;
+		}
+
+		/* Check area of the first entry only. If it is empty then everything behind this is
+		 * empty. If area is busy then emds does not know border where it is empty. Need to
+		 * erase partition.
+		 */
+		rc = flash_area_read(fa, data_off, cache, sizeof(struct emds_data_entry));
+		if (rc) {
+			LOG_ERR("Failed to read the first entry memory: %d", rc);
+			return rc;
+		}
+
+		if (memcmp(cmp, cache, sizeof(struct emds_data_entry))) {
+			LOG_WRN("Data area at address: 0x%04lx is not empty",
+				fa->fa_off + data_off);
+			return -EADDRINUSE;
+		}
+	}
+
+	allocated_snapshot->metadata_addr = fa->fa_off + metadata_off;
+	allocated_snapshot->metadata.marker = EMDS_SNAPSHOT_METADATA_MARKER;
+	allocated_snapshot->metadata.fresh_cnt =
+		freshest_snapshot ? freshest_snapshot->metadata.fresh_cnt + 1 : 1;
+	allocated_snapshot->metadata.data_instance_off = data_off;
+	allocated_snapshot->metadata.data_instance_len = data_size;
+	allocated_snapshot->metadata.metadata_crc =
+		crc32_k_4_2_update(0, (const unsigned char *)&allocated_snapshot->metadata,
+				   offsetof(struct emds_snapshot_metadata, metadata_crc));
+
+	LOG_DBG("Allocating snapshot at address 0x%04lx with length %u and fresh_cnt %u",
+		fa->fa_off + data_off, data_size, allocated_snapshot->metadata.fresh_cnt);
+	LOG_DBG("Metadata address: 0x%04lx, crc: 0x%08x", fa->fa_off + metadata_off,
+		allocated_snapshot->metadata.metadata_crc);
 
 	return 0;
 }

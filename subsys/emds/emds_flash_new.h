@@ -15,6 +15,20 @@ extern "C" {
 #endif
 
 /**
+ * @brief Check if two regions overlap
+ *
+ * This macro checks if two memory regions overlap.
+ *
+ * @param a Start address of the first region.
+ * @param len_a Length of the first region.
+ * @param b Start address of the second region.
+ * @param len_b Length of the second region.
+ *
+ * @return true if regions overlap, false otherwise.
+ */
+#define REGIONS_OVERLAP(a, len_a, b, len_b) (((a) < ((b) + (len_b))) && ((b) < ((a) + (len_a))))
+
+/**
  * @brief Emergency data storage partition descriptor
  *
  * This structure describes a partition in the emergency data storage.
@@ -112,6 +126,27 @@ int emds_flash_init(struct emds_partition *partition);
  */
 int emds_flash_scan_partition(const struct emds_partition *partition,
 			      struct emds_snapshot_candidate *candidate);
+
+/** * @brief Allocate a new snapshot in the emergency data storage partition.
+ *
+ * This function allocates a new snapshot in the specified partition based on the
+ * freshest snapshot found in the partition.
+ *
+ * @param partition Pointer to the emergency data storage partition structure.
+ * @param freshest_snapshot Pointer to the freshest snapshot candidate structure.
+ * @param allocated_snapshot Pointer to the emergency data storage snapshot candidate structure
+ * that will be filled with the allocated snapshot metadata.
+ * @param data_size The size of the data to be allocated  including the size of the metadata.
+ *
+ * @retval 0 on success.
+ * @retval -EINVAL if the data size is invalid.
+ * @retval -EADDRINUSE if the metadata or data area is not empty.
+ * @retval -ENOMEM if the metadata area overlaps with the data area.
+ */
+int emds_flash_allocate_snapshot(const struct emds_partition *partition,
+				 const struct emds_snapshot_candidate *freshest_snapshot,
+				 struct emds_snapshot_candidate *allocated_snapshot,
+				 size_t data_size);
 
 /**
  * @brief Erase the specified emergency data storage partition.

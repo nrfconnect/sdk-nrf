@@ -175,9 +175,7 @@ int emds_clear(void);
  * store.
  *
  * @retval 0 Success
- * @retval -ECANCELED errno code if it was called before @ref emds_init
- * @retval -EALREADY errno code if it was called one more time after @ref emds_prepare has
- * completed.
+ * @retval -ECANCELED errno code if it was called before @ref emds_init and @ref emds_load
  * @retval -ENOENT errno code if no valid snapshot was found in any partition
  */
 int emds_prepare(void);
