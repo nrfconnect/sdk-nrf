@@ -263,6 +263,7 @@ ci_samples_openthread:
     - nrfxlib/openthread/
     - zephyr/include/zephyr/net/
     - zephyr/modules/mbedtls/
+    - zephyr/modules/openthread/
     - zephyr/soc/nordic/
     - zephyr/subsys/net/
     - zephyr/subsys/settings/
