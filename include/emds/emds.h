@@ -175,7 +175,10 @@ int emds_clear(void);
  * store.
  *
  * @retval 0 Success
- * @retval -ERRNO errno code if error
+ * @retval -ECANCELED errno code if it was called before @ref emds_init
+ * @retval -EALREADY errno code if it was called one more time after @ref emds_prepare has
+ * completed.
+ * @retval -ENOENT errno code if no valid snapshot was found in any partition
  */
 int emds_prepare(void);
 
@@ -196,9 +199,12 @@ uint32_t emds_store_time_get(void);
  * Calculates the size it takes to store all dynamic and static data registered
  * in the entries.
  *
- * @return Byte size that is needed to store all data.
+ * @param store_size Pointer to a variable where the size will be stored.
+ *
+ * @return 0 on success.
+ * @retval -ECANCELED if the function was called before @ref emds_init.
  */
-uint32_t emds_store_size_get(void);
+int emds_store_size_get(size_t *store_size);
 
 /**
  * @brief Check if the store operation can be run.

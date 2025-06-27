@@ -123,7 +123,7 @@ int emds_entry_add(struct emds_dynamic_entry *entry)
 	return 0;
 }
 
-static int emds_entries_size(uint32_t *size, size_t alignment)
+static int emds_entries_size(size_t *size, size_t alignment)
 {
 	int entries = 0;
 
@@ -141,23 +141,21 @@ static int emds_entries_size(uint32_t *size, size_t alignment)
 		entries++;
 	}
 
-	*size = DIV_ROUND_UP(*size, alignment) * alignment;
-	*size += DIV_ROUND_UP(sizeof(struct emds_snapshot_metadata), alignment) * alignment;
+	*size = ROUND_UP(*size, alignment);
+	*size += ROUND_UP(sizeof(struct emds_snapshot_metadata), alignment);
 
 	return entries;
 }
 
-uint32_t emds_store_size_get(void)
+int emds_store_size_get(size_t *store_size)
 {
-	uint32_t store_size;
-
 	if (!emds_initialized) {
 		return -ECANCELED;
 	}
 
-	(void)emds_entries_size(&store_size, partition[0].fp->write_block_size);
+	(void)emds_entries_size(store_size, partition[0].fp->write_block_size);
 
-	return store_size;
+	return 0;
 }
 
 bool emds_is_ready(void)
