@@ -19,10 +19,16 @@
 .. |test_application| replace:: After programming the application to your development kit, complete the following steps to test it:
 
 .. |connect_generic| replace:: Connect the device to the computer using a USB cable.
-   The device is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+   The device is assigned a serial port.
+   Serial ports are referred to as COM ports on Windows, /dev/ttyACM devices on Linux, and /dev/tty devices on macOS.
+   To list Nordic Semiconductor devices connected to your computer together with their serial ports, open a terminal and run the ``nrfutil device list`` command.
+   Alternatively, check your operating system's device manager or its equivalent.
 
 .. |connect_kit| replace:: Connect the kit to the computer using a USB cable.
-   The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+   The kit is assigned a serial port.
+   Serial ports are referred to as COM ports on Windows, /dev/ttyACM devices on Linux, and /dev/tty devices on macOS.
+   To list Nordic Semiconductor devices connected to your computer together with their serial ports, open a terminal and run the ``nrfutil device list`` command.
+   Alternatively, check your operating system's device manager or its equivalent.
 
 .. |connect_terminal_generic| replace:: Connect to the device with a terminal emulator (for example, the `Serial Terminal app`_).
    See :ref:`test_and_optimize` for the required settings and steps.
@@ -44,6 +50,10 @@
 
 .. |connect_terminal_both_ANSI| replace:: Connect to both kits with a terminal emulator that supports VT100/ANSI escape characters (for example, the `Serial Terminal app`_).
    See :ref:`test_and_optimize` for the required settings and steps.
+
+.. |serial_port_number_list| replace:: Serial ports are referred to as COM ports on Windows, /dev/ttyACM devices on Linux, and /dev/tty devices on macOS.
+   To list Nordic Semiconductor devices connected to your computer together with their serial ports, open a terminal and run the ``nrfutil device list`` command.
+   Alternatively, check your operating system's device manager or its equivalent.
 
 .. |ANSI| replace:: that supports VT100/ANSI escape characters
 

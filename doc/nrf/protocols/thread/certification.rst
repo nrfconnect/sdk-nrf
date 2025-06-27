@@ -148,6 +148,9 @@ Thread Test Harness does not correctly identify the nRF52840 DK (PCA10056) out-o
 Due to a collision of USB PID:VID with another vendor, Nordic devices are not automatically added to the device list.
 This is valid only for Nordic Semiconductor development kits with a J-Link virtual COM port.
 
+.. note::
+   |serial_port_number_list|
+
 To add an nRF52840 DK, drag the nRF52840 DK and drop it on the test bed configuration page.
 After that, the device is configured and the :ref:`proper baud rate (115200) <test_and_optimize>` and COM port are set.
 

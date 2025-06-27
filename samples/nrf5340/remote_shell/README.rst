@@ -41,7 +41,8 @@ To test the sample, complete the following steps:
 1. Program the sample to the application core.
 #. Program the :ref:`radio_test` sample to the network core.
 #. Plug the DK into a USB host device.
-   The DK is visible as a COM port (Windows) or ttyACM device (Linux) after you connect the development kit over USB.
+   The kit is assigned a serial port.
+   |serial_port_number_list|
 #. |connect_terminal|
 
 Dependencies

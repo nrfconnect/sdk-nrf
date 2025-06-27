@@ -67,20 +67,20 @@ After programming the sample to your development kit, test it by performing the 
 
 1. Connect the USB cable and power on or reset your nRF91 Series DK.
 #. Open a terminal emulator, observe that the sample starts, and then close the terminal emulator.
-#. Call the provided :file:`update_modem.py` script specifying the COM port, the firmware ZIP file, and the UART baud rate shown in the following examples.
+#. Call the provided :file:`update_modem.py` script specifying the serial port, the firmware ZIP file, and the UART baud rate shown in the following examples.
 
    .. tabs::
 
       .. group-tab:: nRF91x1 DK
 
-         * If you used the default baud rate:
+         * For the :ref:`default baud rate (115200) <test_and_optimize>`, use the following command:
 
          .. parsed-literal::
             :class: highlight
 
             python update_modem.py mfw_nrf91x1_2.0.0.zip /dev/ttyACM0 *115200*
 
-         * If you used the ``-DDTC_OVERLAY_FILE=uart.overlay`` flag:
+         * For the baud rate valid for the ``-DDTC_OVERLAY_FILE=uart.overlay`` flag, use the following command:
 
          .. parsed-literal::
             :class: highlight
@@ -90,14 +90,14 @@ After programming the sample to your development kit, test it by performing the 
 
       .. group-tab:: nRF9160 DK
 
-         * If you used the default baud rate:
+         * For the :ref:`default baud rate (115200) <test_and_optimize>`, use the following command:
 
          .. parsed-literal::
             :class: highlight
 
             python update_modem.py mfw_nrf9160_1.3.5.zip /dev/ttyACM0 *115200*
 
-         * If you used the ``-DDTC_OVERLAY_FILE=uart.overlay`` flag:
+         * For the baud rate valid for the ``-DDTC_OVERLAY_FILE=uart.overlay`` flag, use the following command:
 
          .. parsed-literal::
             :class: highlight

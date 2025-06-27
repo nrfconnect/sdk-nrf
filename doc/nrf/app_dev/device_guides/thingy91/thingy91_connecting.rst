@@ -35,7 +35,7 @@ Thingy:91 uses the following UART baud rate configuration:
    * - UART Interface
      - Baud Rate
    * - UART_0
-     - 115200
+     - 115200 (:ref:`default <test_and_optimize>`)
    * - UART_1
      - 1000000
 
