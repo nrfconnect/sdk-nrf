@@ -130,6 +130,10 @@ Key invalidation occurs after reboot, and the confirmed application invalidates 
 A valid signature verification must precede any key invalidation.
 The last remaining key cannot be invalidated.
 
+.. note::
+   Once application running on test confirms itself, it shall reboot the device which allows MCUboot to invalidate the keys.
+   Until the reboot, the application shall refrain from collecting subsequent firmware updates or any erase or write operations on the image collection partition.
+
 Images encryption
 *****************
 

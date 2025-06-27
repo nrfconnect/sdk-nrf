@@ -125,6 +125,8 @@ To perform a FOTA update, complete the following steps:
          For samples using random HCI identities, the Test and Confirm mode should not be used.
 
    #. Wait for the DFU to finish and then verify that the new application works properly by observing the new device name visible in the Device Manager app.
+   #. It is recommended to reset the device once again (after confirmation if the tool advance mode was used) to ensure that the new application is running correctly.
+      This step also allows to revoke old signature keys if it was desired.
 
 .. fota_upgrades_over_ble_nrfcdm_common_dfu_steps_end
 
