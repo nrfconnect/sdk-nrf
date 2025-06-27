@@ -177,6 +177,7 @@ enum ot_rpc_cmd_server {
 
 	/* OpenThread over RPC API additions */
 	OT_RPC_CMD_LINK_SET_FACTORY_ASSIGNED_EUI64,
+	OT_RPC_CMD_VENDOR_RADIO_POWER_LIMIT_ID_SET,
 };
 
 #endif /* OT_RPC_IDS_H_ */

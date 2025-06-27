@@ -2309,6 +2309,30 @@ static int cmd_version(const struct shell *sh, size_t argc, char *argv[])
 	return ot_cli_command_send(sh, argc, argv);
 }
 
+static otError cmd_powerlimitid_impl(const struct shell *sh, size_t argc, char *argv[])
+{
+	int err = 0;
+	uint8_t id;
+
+	id = shell_strtoul(argv[1], 0, &err);
+
+	if (err) {
+		return OT_ERROR_INVALID_ARGS;
+	}
+
+	return ot_rpc_vendor_radio_power_limit_id_set(id);
+}
+
+static int cmd_powerlimitid(const struct shell *sh, size_t argc, char *argv[])
+{
+	return ot_cli_command_exec(cmd_powerlimitid_impl, sh, argc, argv);
+}
+
+SHELL_STATIC_SUBCMD_SET_CREATE(vendor_cmds,
+			       SHELL_CMD_ARG(powerlimitid, NULL, "Power limit table ID",
+					     cmd_powerlimitid, 2, 0),
+			       SHELL_SUBCMD_SET_END);
+
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	ot_cmds, SHELL_CMD_ARG(channel, NULL, "Channel configuration", cmd_channel, 1, 255),
 	SHELL_CMD_ARG(cli, NULL, "Send command as text", cmd_ot, 1, 255),
@@ -2330,6 +2354,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(thread, NULL, "Role management", cmd_thread, 2, 0),
 	SHELL_CMD_ARG(udp, &udp_cmds, "UDP subcommands", NULL, 1, 0),
 	SHELL_CMD_ARG(version, NULL, "Get version", cmd_version, 1, 1),
+	SHELL_CMD_ARG(factoryreset, NULL, "Factory reset", cmd_factoryreset, 1, 0),
+	SHELL_CMD_ARG(vendor, &vendor_cmds, "Vendor subcommands", NULL, 1, 0),
 	SHELL_CMD_ARG(test_message, NULL, "Test message API", cmd_test_message, 1, 0),
 	SHELL_CMD_ARG(test_net_data, NULL, "Test netdata API", cmd_test_net_data, 1, 0),
 	SHELL_CMD_ARG(test_net_data_mesh_prefix, NULL, "Test netdata msh prefix API",

@@ -28,6 +28,12 @@ zephyr_library_sources_ifdef(CONFIG_OPENTHREAD_MESH_DIAG ot_rpc_meshdiag.c)
 
 zephyr_library_sources_ifdef(CONFIG_OPENTHREAD_RPC_NET_IF ot_rpc_if.c)
 
+zephyr_library_sources_ifdef(CONFIG_MPSL_FEM_HOT_POTATO ot_rpc_vendor.c)
+
 zephyr_library_include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/../common
+)
+
+zephyr_library_include_directories_ifdef(CONFIG_MPSL_FEM_HOT_POTATO
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/mpsl/fem/hot_potato/models/power_map
 )
