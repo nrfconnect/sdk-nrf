@@ -178,7 +178,7 @@ static void ppp_ctrl_restart_worker(struct k_work *work_item)
 static struct net_mgmt_event_callback ppp_ctrl_net_if_mgmt_event_ppp_cb;
 
 static void ppp_ctrl_net_if_mgmt_event_handler(struct net_mgmt_event_callback *cb,
-					    uint32_t mgmt_event,
+					    uint64_t mgmt_event,
 					    struct net_if *iface)
 {
 	if (net_if_l2(iface) != &NET_L2_GET_NAME(PPP)) {
@@ -200,7 +200,7 @@ static void ppp_ctrl_net_if_mgmt_event_handler(struct net_mgmt_event_callback *c
 static struct net_mgmt_event_callback ppp_ctrl_net_mgmt_event_ppp_cb;
 
 static void ppp_ctrl_net_mgmt_event_handler(struct net_mgmt_event_callback *cb,
-					    uint32_t mgmt_event,
+					    uint64_t mgmt_event,
 					    struct net_if *iface)
 {
 	switch (mgmt_event) {
@@ -231,7 +231,7 @@ static void ppp_ctrl_net_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 static struct net_mgmt_event_callback ipv4_level_net_mgmt_event_cb;
 static void
 ppp_ctrl_net_mgmt_event_ipv4_levelhandler(struct net_mgmt_event_callback *cb,
-					uint32_t mgmt_event,
+					uint64_t mgmt_event,
 					struct net_if *iface)
 {
 	if (iface != ppp_iface_global) {
@@ -248,7 +248,7 @@ ppp_ctrl_net_mgmt_event_ipv4_levelhandler(struct net_mgmt_event_callback *cb,
 static struct net_mgmt_event_callback ipv6_level_net_mgmt_event_cb;
 static void
 ppp_ctrl_net_mgmt_event_ipv6_levelhandler(struct net_mgmt_event_callback *cb,
-					uint32_t mgmt_event,
+					uint64_t mgmt_event,
 					struct net_if *iface)
 {
 	if (iface != ppp_iface_global) {
