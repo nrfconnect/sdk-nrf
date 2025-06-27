@@ -1639,6 +1639,11 @@ ci_samples_zephyr_subsys_settings:
     - nrf/samples/zephyr/subsys/settings/
     - zephyr/samples/subsys/settings/
 
+ci_samples_zephyr_subsys_ipc_ipc_service_icmsg:
+  files:
+    - nrf/samples/zephyr/subsys/ipc/ipc_service/icmsg/
+    - zephyr/samples/subsys/ipc/ipc_service/icmsg/
+
 ci_samples_zephyr_drivers_audio_dmic:
   files:
     - nrf/samples/zephyr/drivers/audio/dmic/
