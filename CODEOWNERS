@@ -180,7 +180,6 @@
 /doc/nrf/libraries/networking/ot_rpc.rst  @nrfconnect/ncs-terahertz-doc @nrfconnect/ncs-protocols-serialization
 /doc/nrf/libraries/networking/rest_client.rst @nrfconnect/ncs-iot-positioning-doc
 /doc/nrf/libraries/networking/softap_wifi_provision.rst @nrfconnect/ncs-cia-doc
-/doc/nrf/libraries/networking/wifi_credentials.rst @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/networking/wifi_mgmt_ext.rst @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/networking/wifi_ready.rst @nrfconnect/ncs-wifi-doc
 /doc/nrf/libraries/nfc/                   @nrfconnect/ncs-si-muffin-doc
