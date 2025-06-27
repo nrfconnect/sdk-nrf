@@ -886,7 +886,7 @@ static bool click_event_handler(const struct click_event *event)
 	}
 
 	if (likely(state != STATE_DISABLED)) {
-		if ((k_uptime_get_32() < ON_START_CLICK_UPTIME_MAX) &&
+		if ((k_uptime_get() < ON_START_CLICK_UPTIME_MAX) &&
 		    (event->click == CLICK_LONG)) {
 			handle_click(ON_START_CLICK(event->click));
 		} else {
