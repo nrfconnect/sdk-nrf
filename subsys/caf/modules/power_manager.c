@@ -346,7 +346,8 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			cast_module_state_event(aeh);
 
 		if ((event->state == MODULE_STATE_OFF) ||
-		    (event->state == MODULE_STATE_STANDBY)) {
+		    (event->state == MODULE_STATE_STANDBY) ||
+		    (event->state == MODULE_STATE_SUSPENDED)) {
 
 			if ((power_state == POWER_STATE_SUSPENDING) ||
 			    (power_state == POWER_STATE_ERROR) ||
