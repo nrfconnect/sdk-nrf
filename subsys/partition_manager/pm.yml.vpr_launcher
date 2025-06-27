@@ -7,4 +7,4 @@ vpr_launcher:
 vpr_launcher_sram:
   region: sram_primary
   placement: {before: app}
-  size: 0x28000
+  size: CONFIG_PM_RAM_SIZE_VPR_LAUNCHER
