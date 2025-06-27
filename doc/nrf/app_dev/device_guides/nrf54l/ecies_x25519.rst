@@ -7,7 +7,6 @@ MCUboot AES image encryption with ECIES-X25519 key exchange
    :local:
    :depth: 2
 
-
 MCUboot on the nRF54L15 SoC can support encrypted images using AES.
 Images are encrypted using AES, and ECIES-X25519 is used for key delivery (exchange) within the image.
 When image encryption is enabled, you can choose to upload signed or encrypted images to be swapped during boot.
