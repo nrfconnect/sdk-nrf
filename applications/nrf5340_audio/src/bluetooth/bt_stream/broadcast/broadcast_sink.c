@@ -354,14 +354,6 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 		return;
 	}
 
-	static uint32_t rxed;
-	rxed++;
-
-	if (rxed % 100 == 0 || rxed % 100 == 1 || rxed % 100 == 2 || rxed % 100 == 3) {
-		LOG_WRN("ch index %d Encoded rx   L0 %d L1 %d",  stream_index_get(stream),audio_frame->data[0], audio_frame->data[1]);
-	}
-
-
 	receive_cb(audio_frame, &meta, stream_index_get(stream));
 }
 
@@ -396,7 +388,7 @@ static bool bis_per_subgroup_parse(const struct bt_bap_base_subgroup_bis *bis, v
 
 	get_codec_info(&codec_cfg, &audio_codec_info[bis->index - 1]);
 
-	LOG_WRN("BIS Channel allocation: 0x%x for BIS index %d",
+	LOG_DBG("Channel allocation: 0x%x for BIS index %d",
 		audio_codec_info[bis->index - 1].chan_allocation, bis->index);
 
 	enum bt_audio_location device_location_temp;

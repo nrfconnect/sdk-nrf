@@ -14,7 +14,7 @@
 
 #include "string.h"
 #include "macros_common.h"
-#include "location.h"
+#include "device_location.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bt_mgmt_dfu, CONFIG_BT_MGMT_DFU_LOG_LEVEL);
@@ -92,7 +92,7 @@ static void dfu_set_bt_name(void)
 #else
 	enum audio_channel channel;
 
-	device_location_get(&channel);
+	device_location_get(&channel); /* TODO: Discuss */
 
 	if (channel == AUDIO_CH_L) {
 		ret = strlcat(name, CH_L_TAG, CONFIG_BT_DEVICE_NAME_MAX);

@@ -954,7 +954,6 @@ void audio_datapath_stream_out(struct net_buf *audio_frame)
 
 	int ret;
 	size_t pcm_size;
-	// L and R are the same here as well
 
 	ret = sw_codec_decode(audio_frame, &ctrl_blk.decoded_data, &pcm_size);
 	if (ret) {

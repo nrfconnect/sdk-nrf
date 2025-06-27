@@ -43,7 +43,6 @@ static void audio_frame_add(struct net_buf *audio_frame, struct net_buf *audio_f
 		net_buf_add_mem(audio_frame, audio_frame_rx->data, audio_frame_rx->len);
 	} else {
 		/* Increment len to account for bad_data */
-		LOG_WRN("bad data");
 		net_buf_add(audio_frame, meta->bytes_per_location * metadata_num_ch_get(meta));
 	}
 }
@@ -70,7 +69,7 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 
 	if ((rx_stats[channel_index].recv_cnt % 100) == 0 && rx_stats[channel_index].recv_cnt) {
 		/* NOTE: The string below is used by the Nordic CI system */
-		LOG_WRN("ISO RX SDUs: Ch: %d Total: %d Bad: %d", channel_index,
+		LOG_DBG("ISO RX SDUs: Ch: %d Total: %d Bad: %d", channel_index,
 			rx_stats[channel_index].recv_cnt, rx_stats[channel_index].bad_frame_cnt);
 	}
 
@@ -159,20 +158,11 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 
 	/* Check if we have received all frames, send if we have */
 check_send:
-	if ((rx_stats[channel_index].recv_cnt % 100) == 0 || (rx_stats[channel_index].recv_cnt % 100) == 1){
-			//LOG_WRN("ch index %d Encoded rx   L0 %d L1 %d", channel_index, audio_frame_rx->data[0], audio_frame_rx->data[1]);
-			//LOG_WRN("Encoded data L0 %d L1 %d  R0 %d R1 %d", audio_frame->data[0], audio_frame->data[1], audio_frame->data[(audio_frame->len / 2)], audio_frame->data[(audio_frame->len / 2)+1]);
-	}
-
 	if (le_audio_concurrent_sync_num_get() ==
 	    metadata_num_ch_get(net_buf_user_data(audio_frame))) {
 		/* We have received all frames we are waiting for, pass data on to
 		 * the next module
 		 */
-
-
-		
-		
 		ret = k_msgq_put(&ble_q_rx, (void *)&audio_frame, K_NO_WAIT);
 		ERR_CHK_MSG(ret, "Failed to put audio frame into queue");
 		audio_frame = NULL; // This looks odd as the frame still needs to live for the queue reader to get it out.
@@ -196,7 +186,6 @@ static void audio_datapath_thread(void *dummy1, void *dummy2, void *dummy3)
 			ERR_CHK(ret);
 		} else {
 			struct audio_metadata *meta = net_buf_user_data(audio_frame);
-			// Location is correct but data on L and R is identical here.
 			
 			audio_datapath_stream_out(audio_frame);
 		}

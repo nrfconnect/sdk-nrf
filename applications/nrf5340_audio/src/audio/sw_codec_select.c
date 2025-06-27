@@ -88,7 +88,7 @@ int sw_codec_encode(struct net_buf *audio_frame)
 {
 	int ret;
 
-	/* Temp storage for split stereo PCM signal */
+	/* Temp storage for PCM */
 	char pcm_data_mono_system_sample_rate[2][PCM_NUM_BYTES_MONO] = {0};
 	/* Make sure we have enough space for two frames (stereo) */
 	uint8_t m_encoded_data[ENC_MAX_FRAME_SIZE * 2];
@@ -262,8 +262,6 @@ int sw_codec_decode(struct net_buf const *const audio_frame, void **decoded_data
 				memset(decoded_data_mono[1], 0, PCM_NUM_BYTES_MONO);
 				decoded_data_size = PCM_NUM_BYTES_MONO;
 			} else {
-				// THe encoded data is the same on L and R
-				
 				/* Decode left channel */
 				ret = sw_codec_lc3_dec_run(
 					audio_frame->data, (audio_frame->len / 2),
@@ -283,9 +281,6 @@ int sw_codec_decode(struct net_buf const *const audio_frame, void **decoded_data
 				if (ret) {
 					return ret;
 				}
-
-				// Decoded data is the same
-				
 
 				for (int i = 0; i < m_config.decoder.channel_mode; ++i) {
 					ret = sw_codec_sample_rate_convert(

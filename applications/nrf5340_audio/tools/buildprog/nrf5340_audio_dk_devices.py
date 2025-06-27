@@ -8,7 +8,7 @@
 Settings for building and flashing nRF5340 Audio DK for different targets.
 """
 from dataclasses import InitVar, dataclass, field
-from enum import auto, Enum
+from enum import Enum
 from pathlib import Path
 from typing import List
 
@@ -99,7 +99,7 @@ class DeviceConf:
 
     # Constructor variables
     nrf5340_audio_dk_snr: int
-    location: list  # Now a list of Location
+    location: list  # Now a list of Locations
     snr_connected: bool
     nrf5340_audio_dk_dev: AudioDevice
     recover_on_fail: bool

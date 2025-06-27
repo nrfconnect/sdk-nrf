@@ -59,25 +59,31 @@ static int channel_assign_check(void)
 {
 #if (CONFIG_AUDIO_DEV == HEADSET) && CONFIG_DEVICE_LOCATION_SET_RUNTIME
 	int ret;
-	bool pressed;
+	bool pressed_vol_down;
+	bool pressed_vol_up;
 
-	ret = button_pressed(BUTTON_VOLUME_DOWN, &pressed);
+	ret = button_pressed(BUTTON_VOLUME_DOWN, &pressed_vol_down);
 	if (ret) {
 		return ret;
 	}
 
-	if (pressed) {
-		device_location_set(0);
+	ret = button_pressed(BUTTON_VOLUME_UP, &pressed_vol_up);
+	if (ret) {
+		return ret;
+	}
+
+	if (pressed_vol_up && pressed_vol_down) {
+		device_location_set(BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT);
 		return 0;
 	}
 
-	ret = button_pressed(BUTTON_VOLUME_UP, &pressed);
-	if (ret) {
-		return ret;
+	if (pressed_vol_up) {
+		device_location_set(BT_AUDIO_LOCATION_FRONT_LEFT);
+		return 0;
 	}
 
-	if (pressed) {
-		device_location_set(1);
+	if (pressed_vol_down) {
+		device_location_set(BT_AUDIO_LOCATION_FRONT_RIGHT);
 		return 0;
 	}
 #endif
