@@ -1,16 +1,13 @@
-.. _ncs_release_notes_changelog:
+.. _ncs_release_notes_310_preview3:
 
-Changelog for |NCS| v3.0.99
-###########################
+Changelog for |NCS| v3.1.0-preview3
+###################################
 
 .. contents::
    :local:
    :depth: 2
 
-The most relevant changes that are present on the main branch of the |NCS|, as compared to the latest official release, are tracked in this file.
-
-.. note::
-   This file is a work in progress and might not cover all relevant changes.
+This changelog reflects the most relevant changes from the latest official release.
 
 .. HOWTO
 
@@ -122,7 +119,7 @@ Security
 ========
 
 * Added the new section about :ref:`ug_crypto_index`.
-  The new section includes pages about :ref:`ug_crypto_architecture` (new page), :ref:`crypto_drivers` and :ref:`psa_crypto_support` (both moved from the :ref:`nrf_security` library documentation).
+  The new section includes pages about :ref:`ug_crypto_architecture` (new page) and :ref:`crypto_drivers` (moved from :ref:`nrf_security` library).
 
 * Updated:
 
@@ -186,10 +183,6 @@ Matter fork
 nRF IEEE 802.15.4 radio driver
 ------------------------------
 
-* Added:
-
-  * The Kconfig options to configure default CSMA-CA algorithm parameters (:kconfig:option:`CONFIG_NRF_802154_CSMA_CA_MIN_BE_DEFAULT`, :kconfig:option:`CONFIG_NRF_802154_CSMA_CA_MAX_BE_DEFAULT`, :kconfig:option:`CONFIG_NRF_802154_CSMA_CA_MAX_CSMA_BACKOFFS_DEFAULT`).
-
 * Updated:
 
   * The Kconfig option :kconfig:option:`CONFIG_NRF_802154_CCA_ED_THRESHOLD` has been replaced by :kconfig:option:`CONFIG_NRF_802154_CCA_ED_THRESHOLD_DBM` to ensure consistent behavior on different SoC families and to reduce the likelihood of misconfiguration.
@@ -232,10 +225,6 @@ nRF5340 Audio
 * Added:
 
   * Experimental support for Audio on the nRF5340 DK, with LED state indications and button controls.
-  * Support for stereo in :ref:`broadcast sink app<nrf53_audio_broadcast_sink_app>`.
-    The broadcast sink can now receive audio from two BISes and play it on the left and right channels of the audio output, if the correct configuration options are enabled.
-    The I2S output will be stereo, but :zephyr:board:`nrf5340_audio_dk` will still only have one audio output channel, since it has a mono codec (CS47L63).
-    See :file:`overlay-broadcast_sink.conf` for more information.
 
 * Updated:
 
@@ -246,15 +235,11 @@ nRF5340 Audio
     This change was done to transition to standard Zephyr APIs, as well as to have a structured way to pass N-channel audio between modules.
   * The optional buildprog tool to use `nRF Util`_ instead of nrfjprog that has been deprecated.
   * The documentation pages with information about the :ref:`SD card playback module <nrf53_audio_app_overview_architecture_sd_card_playback>` and :ref:`how to enable it <nrf53_audio_app_configuration_sd_card_playback>`.
-  * The buffer count (:kconfig:option:`CONFIG_BT_ISO_TX_BUF_COUNT` and :kconfig:option:`CONFIG_BT_BUF_ACL_TX_COUNT`) to be in-line with SoftDevice Controller (SDC) defaults.
-    This can be changed and optimized for specific use cases.
 
 * Removed:
 
   * The uart_terminal tool to use standardized tools.
     Similar functionality is provided through the `nRF Terminal <nRF Terminal documentation_>`_ in the |nRFVSC|.
-  * The functionality to jump between BIS0 and BIS1 in the :ref:`broadcast sink <nrf53_audio_broadcast_sink_app>` application.
-    Button 4 is no longer needed for this purpose due to added support for stereo audio.
 
 nRF Desktop
 -----------
@@ -263,13 +248,10 @@ nRF Desktop
 
   * The :ref:`nrf_desktop_hid_eventq`.
     The utility can be used by an application module to temporarily queue HID events related to keypresses (button press or release) to handle them later.
-    The utility uses 64-bit timestamps to prevent overflow issues.
   * The :ref:`nrf_desktop_hid_keymap`.
     The utility can be used by an application module to map an application-specific key ID to a HID report ID and HID usage ID pair according to statically defined user configuration.
     The :file:`hid_keymap.h` file was moved from the :file:`configuration/common` directory to the :file:`src/util` directory.
     The file is now the header of the :ref:`nrf_desktop_hid_keymap` and contains APIs exposed by the utility.
-  * The :ref:`nrf_desktop_keys_state`.
-    The utility can be used by an application module to track the state of active keys.
 
 * Updated:
 
@@ -288,7 +270,6 @@ nRF Desktop
 
     * Use the :ref:`nrf_desktop_hid_eventq` to temporarily queue HID events related to keypresses before a connection to the HID host is established.
     * Use the :ref:`nrf_desktop_hid_keymap` to map an application-specific key ID from :c:struct:`button_event` to a HID report ID and HID usage ID pair.
-    * Use the :ref:`nrf_desktop_keys_state` to track the state of active keys.
 
     The features were implemented directly in the HID state module before.
     This change simplifies the HID state module implementation and allows code reuse.
@@ -357,11 +338,6 @@ Bluetooth samples
   * Added a workaround to an issue with unexpected disconnections that resulted from improper handling of the Bluetooth Link Layer procedures by the connected Bluetooth Central device.
     This resolves the :ref:`known issue <known_issues>` NCSDK-33632.
 
-* :ref:`nrf_auraconfig` sample:
-
-  * Updated the buffer count (:kconfig:option:`CONFIG_BT_ISO_TX_BUF_COUNT`) to be in-line with SoftDevice Controller (SDC) defaults.
-    This can be changed and optimized for specific use cases.
-
 |no_changes_yet_note|
 
 Bluetooth Mesh samples
@@ -375,14 +351,8 @@ Bluetooth Fast Pair samples
 * :ref:`fast_pair_locator_tag` sample:
 
   * Added possibility to build and run the sample without the motion detector support (with the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR` Kconfig option disabled).
-
-  * Updated:
-
-    * The :ref:`fast_pair_locator_tag_testing_fw_update_notifications` section to improve the test procedure.
-      The application now provides an additional log message to indicate that the firmware version is being read.
-    * The configurations for nRF54L-based board targets that store the MCUboot verification key in the KMU peripheral to automatically generate the :file:`keyfile.json` file in the build directory (the ``SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE`` Kconfig option) based on the input file provided by the ``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`` Kconfig option.
-      This KMU provisioning step can now be performed automatically by the west runner, provided that a :file:`keyfile.json` file is present in the build directory.
-      The provisioning is only performed if the ``west flash`` command is executed with the ``--erase``  or ``--recover`` flag.
+  * Updated the :ref:`fast_pair_locator_tag_testing_fw_update_notifications` section to improve the test procedure.
+    The application provides now an additional log message to indicate that the firmware version is being read.
 
 Cellular samples
 ----------------
@@ -398,11 +368,7 @@ Cellular samples
 
 * :ref:`modem_shell_application` sample:
 
-  * Added:
-
-    * ``ATE0`` and ``ATE1`` commands in AT command mode to handle echo off/on.
-    * Support for RX only mode to the ``link funmode`` command.
-    * Support for ``AT%CMNG`` multi-line commands.
+  * Added ``ATE0`` and ``ATE1`` in AT command mode to handle echo off/on.
 
 * :ref:`nrf_cloud_multi_service` sample:
 
@@ -420,7 +386,6 @@ Cellular samples
 * :ref:`nrf_cloud_rest_cell_location` sample:
 
   * Removed JITP.
-  * Updated the sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
 
 * :ref:`nrf_cloud_rest_fota` sample:
 
@@ -466,15 +431,7 @@ Keys samples
 Matter samples
 --------------
 
-* Added:
-
-  * Support for the NFC onboarding for the ``nrf54l15dk/nrf54l15/cpuapp/ns`` board target.
-
-* Updated:
-
-  * The Bluetooth Low Energy variant of the Soft Device Controller (SDC) to use the Peripheral-only role in all Matter samples.
-  * API of the ``ncs_configure_data_model`` cmake method that does not use ``ZAP_FILE`` argument anymore, but creates path to ZAP file based on :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option.
-  * Renamed the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH` Kconfig option to :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` and changed it purpose to configure the absolute path under which ZAP file is located.
+* Changed Bluetooth Low Energy variant of the Soft Device Controller (SDC) to use the Peripheral-only role in all Matter samples.
 
 Networking samples
 ------------------
@@ -508,10 +465,6 @@ Peripheral samples
 * :ref:`radio_test` sample:
 
   * Added experimental ``llvm`` toolchain support for the ``nrf54l15dk/nrf54l15/cpuapp`` board target.
-
-* :ref:`802154_phy_test` sample:
-
-  * Added print of sent packets and received Acks after ``ltx`` command.
 
 PMIC samples
 ------------
@@ -671,8 +624,6 @@ Modem libraries
     Even within the same network, the PDN connection establishment method (PCO vs ePCO) might change when the device operates in NB-IoT or LTE Cat-M1, resulting in missing DNS addresses when one method is used, but not the other.
     Having a fallback DNS address ensures that the device always has a DNS to fallback to.
 
-  * Updated modem events subscription to persist between functional mode changes.
-
 * :ref:`lib_modem_slm` library:
 
   * Added:
@@ -767,11 +718,6 @@ Other libraries
 * :ref:`dult_readme` library:
 
   * Updated the write handler of the accessory non-owner service (ANOS) GATT characteristic to no longer assert on write operations if the DULT was not enabled at least once.
-
-* :ref:`supl_client` library:
-
-  * Updated the SUPL client OS integration library to remove the dependency on the newlib C library.
-    To use SUPL with picolibc, v0.8.0 or later of the nRF91 Series SUPL client library is required.
 
 Shell libraries
 ---------------
@@ -899,5 +845,3 @@ Documentation
 =============
 
 * Added the :ref:`log_rpc` library documentation page.
-* Removed the Getting started with nRF7002 DK and Getting started with other DKs pages from the :ref:`gsg_guides` section.
-  These pages were no longer relevant as the `Quick Start app`_ now also supports the nRF7002 DK.
