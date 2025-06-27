@@ -15,6 +15,7 @@ menu "HID report providers"
 	depends on DESKTOP_HID_REPORT_PROVIDER_EVENT
 
 rsource "Kconfig.hid_provider_mouse"
+rsource "Kconfig.hid_provider_keyboard"
 
 endmenu
 
