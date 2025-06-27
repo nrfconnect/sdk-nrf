@@ -63,7 +63,8 @@ Testing
 1. :ref:`Commission one or more EnOcean devices <bt_enocean_commissioning>`.
    The LEDs will blink when each of the devices has been successfully commissioned.
 #. Connect the kit to the computer with a USB cable.
-   The kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+   The kit is assigned a serial port.
+   |serial_port_number_list|
 #. |connect_terminal_specific|
 #. Depending on the EnOcean devices you commissioned:
 

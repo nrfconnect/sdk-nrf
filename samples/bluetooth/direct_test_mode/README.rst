@@ -441,7 +441,8 @@ Testing with another development kit
 ------------------------------------
 
 1. Connect both development kits to the computer using a USB cable.
-   The computer assigns to the development kit a COM port on Windows or a ttyACM device on Linux, which is visible in the Device Manager.
+   The computer assigns to the development kit a serial port.
+   |serial_port_number_list|
 #. Connect to both kits with a terminal emulator.
    See `Direct Test Mode terminal connection`_ for the required settings.
 #. Start ``TRANSMITTER_TEST`` by sending the ``0x80 0x96`` DTM command to one of the connected development kits.

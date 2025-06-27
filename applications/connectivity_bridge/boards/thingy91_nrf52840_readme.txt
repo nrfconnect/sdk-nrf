@@ -7,14 +7,15 @@ https://nordicsemi.com/thingy91
 
 This USB interface has the following functions:
 * Disk drive containing this file and others
-* COM ports for nRF91 debug, trace, and firmware update
+* Serial ports for nRF91 debug, trace, and firmware update
 * CMSIS-DAP 2.1 compliant debug probe interface for accessing the nRF91 SiP
 
 COM Ports
 =========
 
-This USB interface exposes two COM ports mapped to the physical UART interfaces between the nRF91 Series and nRF52840 devices.
-When opening these ports manually (without using the nRF Connect Serial Terminal), be aware that the USB COM port baud rate selection is applied to the UART.
+This USB interface exposes two serial ports mapped to the physical UART interfaces between the nRF91 Series and nRF52840 devices.
+Serial ports are referred to as COM ports on Windows, ttyACM devices on Linux, and /dev/tty devices on macOS.
+When opening these ports manually (without using the nRF Connect Serial Terminal), be aware that the USB serial port baud rate selection is applied to the UART.
 
 Bluetooth® LE Central UART Service
 ==================================

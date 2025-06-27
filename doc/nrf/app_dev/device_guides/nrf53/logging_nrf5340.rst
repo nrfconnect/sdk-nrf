@@ -10,6 +10,8 @@ Getting logging output with nRF5340 DK
 When connected to a computer, the nRF5340 DK emulates virtual COM ports.
 The number of COM ports depends on the DK version you are using.
 
+|serial_port_number_list|
+
 nRF5340 DK v2.0.0 COM ports
 ***************************
 
