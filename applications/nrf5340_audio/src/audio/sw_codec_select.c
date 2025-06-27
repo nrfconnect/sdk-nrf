@@ -150,7 +150,7 @@ int sw_codec_encode(struct net_buf *audio_frame)
 			break;
 		}
 		case SW_CODEC_STEREO: {
-			ret = sw_codec_lc3_enc_run(pcm_data_mono_ptrs[1],
+			ret = sw_codec_lc3_enc_run(pcm_data_mono_ptrs[0],
 						   pcm_block_size_mono, LC3_USE_BITRATE_FROM_INIT,
 						   0, sizeof(m_encoded_data),
 						   m_encoded_data, &encoded_bytes_written);
