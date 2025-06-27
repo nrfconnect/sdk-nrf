@@ -123,6 +123,18 @@ config PM_PARTITION_SIZE_VPR_LAUNCHER
 	  Must match the size of the cpuapp_rram/cpuapp_mram partition which is deleted.
 	  This to place the flpr app's code at the address found in the devicetree.
 
+config PM_RAM_SIZE_VPR_LAUNCHER
+	hex
+	depends on SOC_NRF54L15_CPUFLPR || SOC_NRF54L09_ENGA_CPUFLPR || SOC_NRF54LV10A_ENGA_CPUFLPR || SOC_NRF54L20_ENGA_CPUFLPR || SOC_NRF54LM20A_ENGA_CPUFLPR || SOC_NRF7120_ENGA_CPUFLPR
+	default 0x28000 if SOC_NRF54L15_CPUFLPR || SOC_NRF7120_ENGA_CPUFLPR
+	default 0x23c00 if SOC_NRF54L09_ENGA_CPUFLPR
+	default 0x1fc00 if SOC_NRF54LV10A_ENGA_CPUFLPR
+	default 0x6fc00 if SOC_NRF54L20_ENGA_CPUFLPR
+	default 0x67c00 if SOC_NRF54LM20A_ENGA_CPUFLPR
+	help
+	  Size of RAM available for the vpr_launcher application (usually run on cpuapp).
+	  Must match the size of the cpuapp_sram node.
+
 if WIFI_NRF70 && NRF_WIFI_PATCHES_EXT_FLASH_STORE
 
 partition=NRF70_WIFI_FW
