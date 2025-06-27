@@ -92,7 +92,7 @@ static void dfu_set_bt_name(void)
 #else
 	enum audio_channel channel;
 
-	location_get(&channel);
+	device_location_get(&channel);
 
 	if (channel == AUDIO_CH_L) {
 		ret = strlcat(name, CH_L_TAG, CONFIG_BT_DEVICE_NAME_MAX);

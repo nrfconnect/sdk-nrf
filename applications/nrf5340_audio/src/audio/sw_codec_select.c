@@ -21,8 +21,8 @@ LOG_MODULE_REGISTER(sw_codec_select, CONFIG_SW_CODEC_SELECT_LOG_LEVEL);
 
 static struct sw_codec_config m_config;
 
-static struct sample_rate_converter_ctx encoder_converters[2];
-static struct sample_rate_converter_ctx decoder_converters[2];
+static struct sample_rate_converter_ctx encoder_converters[CONFIG_AUDIO_ENCODE_CHANNELS_MAX];
+static struct sample_rate_converter_ctx decoder_converters[CONFIG_AUDIO_DECODE_CHANNELS_MAX];
 
 /**
  * @brief	Converts the sample rate of the uncompressed audio stream if needed.
@@ -256,11 +256,14 @@ int sw_codec_decode(struct net_buf const *const audio_frame, void **decoded_data
 			break;
 		}
 		case SW_CODEC_STEREO: {
+
 			if (meta->bad_data && IS_ENABLED(CONFIG_SW_CODEC_OVERRIDE_PLC)) {
 				memset(decoded_data_mono[0], 0, PCM_NUM_BYTES_MONO);
 				memset(decoded_data_mono[1], 0, PCM_NUM_BYTES_MONO);
 				decoded_data_size = PCM_NUM_BYTES_MONO;
 			} else {
+				// THe encoded data is the same on L and R
+				
 				/* Decode left channel */
 				ret = sw_codec_lc3_dec_run(
 					audio_frame->data, (audio_frame->len / 2),
@@ -280,6 +283,9 @@ int sw_codec_decode(struct net_buf const *const audio_frame, void **decoded_data
 				if (ret) {
 					return ret;
 				}
+
+				// Decoded data is the same
+				
 
 				for (int i = 0; i < m_config.decoder.channel_mode; ++i) {
 					ret = sw_codec_sample_rate_convert(

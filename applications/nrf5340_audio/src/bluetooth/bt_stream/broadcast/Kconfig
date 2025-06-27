@@ -97,7 +97,7 @@ endchoice
 
 config BT_AUDIO_BROADCAST_NAME
 	string "Broadcast name"
-	default "NRF5340_BROADCASTER"
+	default "AURACASTER"
 	# TODO: Add back 'depends on TRANSPORT_BIS' once applications are ready
 	help
 	  Name of the broadcast; not the same as BT_DEVICE_NAME.

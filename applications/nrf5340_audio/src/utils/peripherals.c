@@ -13,7 +13,7 @@
 #include "button_assignments.h"
 #include "sd_card.h"
 #include "nrf5340_audio_dk_version.h"
-#include "location.h"
+#include "device_location.h"
 
 #include "sd_card_playback.h"
 
@@ -35,7 +35,7 @@ static int leds_set(void)
 #if (CONFIG_AUDIO_DEV == HEADSET)
 	enum bt_audio_location location;
 
-	location_get(&location);
+	device_location_get(&location);
 
 	if (location == BT_AUDIO_LOCATION_FRONT_LEFT) {
 		ret = led_on(LED_AUDIO_DEVICE_TYPE, LED_COLOR_BLUE);
@@ -57,7 +57,7 @@ static int leds_set(void)
 
 static int channel_assign_check(void)
 {
-#if (CONFIG_AUDIO_DEV == HEADSET) && CONFIG_LOCATION_SET_RUNTIME
+#if (CONFIG_AUDIO_DEV == HEADSET) && CONFIG_DEVICE_LOCATION_SET_RUNTIME
 	int ret;
 	bool pressed;
 
@@ -67,7 +67,7 @@ static int channel_assign_check(void)
 	}
 
 	if (pressed) {
-		location_set(0);
+		device_location_set(0);
 		return 0;
 	}
 
@@ -77,7 +77,7 @@ static int channel_assign_check(void)
 	}
 
 	if (pressed) {
-		location_set(1);
+		device_location_set(1);
 		return 0;
 	}
 #endif

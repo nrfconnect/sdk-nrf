@@ -10,7 +10,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/net_buf.h>
 #include <zephyr/bluetooth/audio/audio.h>
-#include "location.h"
+#include "device_location.h"
 
 #if (CONFIG_SW_CODEC_LC3)
 #define LC3_MAX_FRAME_SIZE_MS	10

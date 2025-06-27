@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef _LOCATION_H_
-#define _LOCATION_H_
+#ifndef _DEVICE_LOCATION_H_
+#define _DEVICE_LOCATION_H_
 
 /** @file
  *  @brief Audio channel assignment
@@ -32,15 +32,15 @@ static const char GW_TAG[] = "GW";
  *
  * @param[out] channel Channel value
  */
-void location_get(enum bt_audio_location *location);
+void device_location_get(enum bt_audio_location *location);
 
-#if CONFIG_LOCATION_SET_RUNTIME
+#if CONFIG_DEVICE_LOCATION_SET_RUNTIME
 /**
  * @brief Assign audio channel.
  *
  * @param[out] channel Channel value
  */
-void location_set(enum bt_audio_location location);
+void device_location_set(enum bt_audio_location location);
 #endif /* LOCATION_SET_RUNTIME */
 
-#endif /* _LOCATION_H_ */
+#endif /* _DEVICE_LOCATION_H_ */

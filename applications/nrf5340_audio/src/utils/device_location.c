@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "location.h"
+#include "device_location.h"
 
 #include <errno.h>
 
@@ -15,13 +15,13 @@ LOG_MODULE_REGISTER(location, CONFIG_LOCATION_LOG_LEVEL);
 
 static uint32_t static_location;
 
-void location_get(enum bt_audio_location *location)
+void device_location_get(enum bt_audio_location *location)
 {
 	*location = (enum bt_audio_location)static_location;
 }
 
-#if CONFIG_LOCATION_SET_RUNTIME
-void location_set(enum bt_audio_location location)
+#if CONFIG_DEVICE_LOCATION_SET_RUNTIME
+void device_location_set(enum bt_audio_location location)
 {
 	int ret;
 
@@ -33,11 +33,11 @@ void location_set(enum bt_audio_location location)
 		LOG_ERR("Unable to write channel value to UICR");
 	}
 }
-#endif /* CONFIG_LOCATION_SET_RUNTIME */
+#endif /* CONFIG_DEVICE_LOCATION_SET_RUNTIME */
 
-static int location_init(void)
+static int device_location_init(void)
 {
-#if CONFIG_LOCATION_SET_RUNTIME
+#if CONFIG_DEVICE_LOCATION_SET_RUNTIME
 	static_location = uicr_location_get();
 
 	if (static_location >= BT_AUDIO_LOCATION_RIGHT_SURROUND) {
@@ -45,11 +45,11 @@ static int location_init(void)
 		static_location = DEVICE_LOCATION_DEFAULT;
 	}
 #else
-	static_location = CONFIG_LOCATION_AT_COMPILE_TIME;
-#endif /* CONFIG_LOCATION_SET_RUNTIME */
+	static_location = CONFIG_DEVICE_LOCATION_AT_COMPILE_TIME;
+#endif /* CONFIG_DEVICE_LOCATION_SET_RUNTIME */
 
 	LOG_WRN("Location bitfield is 0x%x", static_location);
 	return 0;
 }
 
-SYS_INIT(location_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+SYS_INIT(device_location_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);

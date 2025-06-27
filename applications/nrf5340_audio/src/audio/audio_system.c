@@ -100,19 +100,15 @@ static void audio_headset_configure(void)
 	sw_codec_cfg.encoder.num_ch = 1;
 	sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
 #endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
-	enum bt_audio_location location;
+	enum bt_audio_location device_location;
 
-	location_get(&location);
+	device_location_get(&device_location);
 
-	sw_codec_cfg.decoder.audio_ch = 1;
+	sw_codec_cfg.decoder.audio_ch = POPCOUNT(device_location);
+	sw_codec_cfg.decoder.num_ch = POPCOUNT(device_location);
+	sw_codec_cfg.decoder.channel_mode = POPCOUNT(device_location); //TODO: Must be changed
 
-	if (IS_ENABLED(CONFIG_AUDIO_HEADSET_STEREO)) {
-		sw_codec_cfg.decoder.num_ch = 2;
-		sw_codec_cfg.decoder.channel_mode = SW_CODEC_STEREO;
-	} else {
-		sw_codec_cfg.decoder.num_ch = 1;
-		sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
-	}
+	LOG_WRN("decoder.num_ch: %d channel_mode %d", sw_codec_cfg.decoder.num_ch, sw_codec_cfg.decoder.channel_mode);
 
 	if (IS_ENABLED(CONFIG_SD_CARD_PLAYBACK)) {
 		/* Need an extra decoder channel to decode data from SD card */

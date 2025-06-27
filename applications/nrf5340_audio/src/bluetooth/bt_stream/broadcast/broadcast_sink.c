@@ -20,7 +20,7 @@
 #include "bt_mgmt.h"
 #include "macros_common.h"
 #include "zbus_common.h"
-#include "location.h"
+#include "device_location.h"
 #include "audio_defines.h"
 
 #include <zephyr/logging/log.h>
@@ -354,6 +354,14 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 		return;
 	}
 
+	static uint32_t rxed;
+	rxed++;
+
+	if (rxed % 100 == 0 || rxed % 100 == 1 || rxed % 100 == 2 || rxed % 100 == 3) {
+		LOG_WRN("ch index %d Encoded rx   L0 %d L1 %d",  stream_index_get(stream),audio_frame->data[0], audio_frame->data[1]);
+	}
+
+
 	receive_cb(audio_frame, &meta, stream_index_get(stream));
 }
 
@@ -388,34 +396,25 @@ static bool bis_per_subgroup_parse(const struct bt_bap_base_subgroup_bis *bis, v
 
 	get_codec_info(&codec_cfg, &audio_codec_info[bis->index - 1]);
 
-	LOG_DBG("Channel allocation: 0x%x for BIS index %d",
+	LOG_WRN("BIS Channel allocation: 0x%x for BIS index %d",
 		audio_codec_info[bis->index - 1].chan_allocation, bis->index);
 
-	if (CONFIG_BT_AUDIO_CONCURRENT_RX_STREAMS_MAX == 1) {
-		/* If only one concurrent stream is supported we try to get the one matching the
-		 * channel assignment in UICR
-		 */
-		enum audio_channel audio_channel_temp;
+	enum bt_audio_location device_location_temp;
+	device_location_get(&device_location_temp);
 
-		location_get(&audio_channel_temp);
-		if (audio_channel_temp > AUDIO_CH_NUM) {
-			LOG_ERR("Invalid channel assignment");
-			return true;
-		}
-
-		if (audio_codec_info[bis->index - 1].chan_allocation != (audio_channel_temp + 1)) {
-			LOG_WRN("BIS index %d does not match channel assignment %d", bis->index,
-				audio_channel_temp);
-			return true;
-		}
+	if (!(audio_codec_info[bis->index - 1].chan_allocation & device_location_temp)) {
+		LOG_WRN("BIS index %d channel allocation 0x%x does not match this device' location 0x%x", bis->index, audio_codec_info[bis->index - 1].chan_allocation,
+			device_location_temp);
+		return true;
 	}
 
 	if (POPCOUNT(bis_index_bitfield) >= CONFIG_BT_AUDIO_CONCURRENT_RX_STREAMS_MAX) {
-		LOG_DBG("Maximum number of BISes reached, ignoring BIS index %d", bis->index);
+		LOG_WRN("Maximum number of BISes reached, ignoring BIS index %d", bis->index);
 		return true;
 	}
 
 	bis_index_bitfield |= BIT(bis->index - 1);
+	LOG_WRN("BIS index %d added to bitfield 0x%08x", bis->index, bis_index_bitfield);
 
 	return true;
 }
@@ -496,11 +495,11 @@ static void base_recv_cb(struct bt_bap_broadcast_sink *sink, const struct bt_bap
 	}
 
 	if (suitable_stream_found) {
-		/* Set the initial active stream based on the defined channel of the device */
-		enum audio_channel audio_channel_temp;
+		/* Set the initial active stream based on the defined location of the device */
+		enum bt_audio_location device_location_temp;
 
-		location_get(&audio_channel_temp);
-		if (audio_channel_temp > AUDIO_CH_NUM) {
+		device_location_get(&device_location_temp);
+		if (device_location_temp > AUDIO_CH_NUM) {
 			LOG_ERR("Invalid channel assignment");
 			return;
 		}
@@ -573,18 +572,6 @@ static void syncable_cb(struct bt_bap_broadcast_sink *sink, const struct bt_iso_
 	prev_broadcast_id = sink->broadcast_id;
 
 	init_routine_completed = true;
-}
-
-static bool is_any_active_streams(void)
-{
-	for (int i = 0; i < ARRAY_SIZE(audio_streams); i++) {
-		if (audio_streams[i].ep != NULL &&
-		    audio_streams[i].ep->status.state == BT_BAP_EP_STATE_STREAMING) {
-			return true;
-		}
-	}
-
-	return false;
 }
 
 static bool is_any_active_streams(void)
@@ -754,7 +741,7 @@ int broadcast_sink_enable(le_audio_receive_cb recv_cb)
 {
 	int ret;
 	static bool initialized;
-	enum audio_channel channel;
+	enum bt_audio_location device_location;
 	const struct bt_pacs_register_param pacs_param = {
 		.snk_pac = true,
 		.snk_loc = true,
@@ -772,7 +759,7 @@ int broadcast_sink_enable(le_audio_receive_cb recv_cb)
 
 	receive_cb = recv_cb;
 
-	location_get(&channel);
+	device_location_get(&device_location);
 
 	ret = bt_pacs_register(&pacs_param);
 	if (ret) {
@@ -780,26 +767,20 @@ int broadcast_sink_enable(le_audio_receive_cb recv_cb)
 		return ret;
 	}
 
-	if (channel == AUDIO_CH_L) {
-		ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, BT_AUDIO_LOCATION_FRONT_LEFT);
-		csip_param.rank = CSIP_HL_RANK;
-	} else if (channel == AUDIO_CH_R) {
-		ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, BT_AUDIO_LOCATION_FRONT_RIGHT);
-		csip_param.rank = CSIP_HR_RANK;
-	} else if (channel == AUDIO_CH_BOTH) {
-		ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK,
-					   BT_AUDIO_LOCATION_FRONT_LEFT |
-						   BT_AUDIO_LOCATION_FRONT_RIGHT);
-		csip_param.rank = CSIP_HL_RANK;
-	} else {
-		LOG_ERR("Invalid channel assignment");
-		return -EINVAL;
-	}
-
+	ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, device_location);
 	if (ret) {
 		LOG_ERR("Location set failed");
 		return ret;
 	}
+
+	/* Set RANK. Use 1 for left, 2 for right, 1 otherwise, as other locations are not considered a coordinated set */
+	if (device_location == BT_AUDIO_LOCATION_FRONT_LEFT) {
+		csip_param.rank = CSIP_HL_RANK;
+	} else if (device_location == BT_AUDIO_LOCATION_FRONT_RIGHT) {
+		csip_param.rank = CSIP_HR_RANK;
+	} else {
+		csip_param.rank = CSIP_HL_RANK;
+	} 
 
 	ret = bt_pacs_set_supported_contexts(BT_AUDIO_DIR_SINK, AVAILABLE_SINK_CONTEXT);
 	if (ret) {
