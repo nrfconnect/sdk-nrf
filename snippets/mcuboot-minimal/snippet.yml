@@ -1,0 +1,8 @@
+name: mcuboot-minimal
+append:
+  EXTRA_CONF_FILE: mcuboot-minimal.conf
+
+boards:
+  nrf54l15dk/nrf54l15/cpuapp:
+    append:
+      EXTRA_CONF_FILE: boards/nrf54l15dk_nrf54l15_cpuapp.conf
