@@ -310,6 +310,7 @@ Serial LTE modem
   * The ``AT#XAPOLL`` command to asynchronously poll sockets for data.
   * The send flags for ``#XSEND``, ``#XSENDTO``, ``#XTCPSEND`` and ``#XUDPSEND`` commands.
   * The send flag value ``512`` for waiting for acknowledgment of the sent data.
+  * The :kconfig:option:`CONFIG_SLM_POWER_PIN_DEBOUNCE_MS` Kconfig option to configure debounce time for the power pin.
 
 * Updated:
 
