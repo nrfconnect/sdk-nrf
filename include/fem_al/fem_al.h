@@ -163,12 +163,14 @@ uint32_t fem_radio_rx_ramp_up_delay_get(bool fast, nrf_radio_mode_t mode);
  *
  * @param[in] power TX power requested for transmission on air.
  * @param[out] radio_tx_power Tx power value to be set on the radio peripheral.
+ * @param[in] radio_mode The mode of the RADIO.
  * @param[in] freq_mhz Frequency in MHz. The output power is valid only for this frequency.
  *
  * @return The power in dBm that is achieved as device output power. It can be different from
  *         the value requested by @p power.
  */
-int8_t fem_tx_output_power_prepare(int8_t power, int8_t *radio_tx_power, uint16_t freq_mhz);
+int8_t fem_tx_output_power_prepare(int8_t power, int8_t *radio_tx_power,
+				   nrf_radio_mode_t radio_mode, uint16_t freq_mhz);
 
 /**@brief Check a real Tx output power, for the SoC with the front-end module for given parameters.
  *
@@ -177,6 +179,7 @@ int8_t fem_tx_output_power_prepare(int8_t power, int8_t *radio_tx_power, uint16_
  * requested output power.
  *
  * @param[in] power Tx power level to check.
+ * @param[in] radio_mode The mode of the RADIO.
  * @param[in] freq_mhz Frequency in MHz. The output power check is valid only for this frequency.
  * @param[in] tx_power_ceiling Flag to get the ceiling or floor of the requested transmit power
  *                             level.
@@ -185,30 +188,33 @@ int8_t fem_tx_output_power_prepare(int8_t power, int8_t *radio_tx_power, uint16_
  *         be different than @p power and depending on @p tx_power_ceiling it can be greater or
  *         lower than the requested one.
  */
-int8_t fem_tx_output_power_check(int8_t power, uint16_t freq_mhz, bool tx_power_ceiling);
+int8_t fem_tx_output_power_check(int8_t power, nrf_radio_mode_t radio_mode, uint16_t freq_mhz,
+				 bool tx_power_ceiling);
 
 /**@brief Get the minimum Tx output power for the SoC with the front-end module.
  *
+ * @param[in] radio_mode The mode of the RADIO.
  * @param[in] freq_mhz Frequency in MHz. The minimum output power is valid only for this frequency.
  *
  * @return The minimum output power in dBm.
  */
-static inline int8_t fem_tx_output_power_min_get(uint16_t freq_mhz)
+static inline int8_t fem_tx_output_power_min_get(nrf_radio_mode_t radio_mode, uint16_t freq_mhz)
 {
 	/* Using INT8_MIN returns the minimum supported Tx output power value. */
-	return fem_tx_output_power_check(INT8_MIN, freq_mhz, false);
+	return fem_tx_output_power_check(INT8_MIN, radio_mode, freq_mhz, false);
 }
 
 /**@brief Get the maximum Tx output power for the SoC with the front-end module.
  *
+ * @param[in] radio_mode The mode of the RADIO.
  * @param[in] freq_mhz Frequency in MHz. The maximum output power is valid only for this frequency.
  *
  * @return The maximum output power in dBm.
  */
-static inline int8_t fem_tx_output_power_max_get(uint16_t freq_mhz)
+static inline int8_t fem_tx_output_power_max_get(nrf_radio_mode_t radio_mode, uint16_t freq_mhz)
 {
 	/* Using INT8_MAX returns the maximum supported Tx output power value. */
-	return fem_tx_output_power_check(INT8_MAX, freq_mhz, true);
+	return fem_tx_output_power_check(INT8_MAX, radio_mode, freq_mhz, true);
 }
 
 /**@brief Get the front-end module default Tx output power.
