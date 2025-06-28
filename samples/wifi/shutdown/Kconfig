@@ -7,9 +7,39 @@
 source "Kconfig.zephyr"
 
 config WIFI_MAC_ADDRESS
-	string "WiFi MAC address"
+	string "Wi-Fi MAC address"
 	default "F6:CE:36:00:00:01"
 	help
-		WiFi MAC address to be used by the sample. If not set, the sample will
-		use the default MAC address (locally administrative). This is only used
-		when the nRF7002 OTP is not programmed with a MAC address.
+	  Wi-Fi MAC address to be used by the sample. If not set, the sample will
+	  use the default MAC address (locally administrative). This is only used
+	  when the nRF7002 OTP is not programmed with a MAC address.
+
+choice SHUTDOWN_OPERATION_MODE
+	prompt "Sample operation mode"
+	default OPERATION_MODE_CONTINUOUS
+	help
+	  Select the operation mode for the sample.
+
+config OPERATION_MODE_CONTINUOUS
+	bool "Continuous mode"
+	help
+	  In this mode, the sample will continue to run alternating between
+	  Wi-Fi shutdown and startup.
+
+config OPERATION_MODE_ONE_SHOT
+	bool "One-shot mode"
+	help
+	  In this mode, the sample will shutdown Wi-Fi only once and then exit.
+
+config OPERATION_MODE_BUTTONS
+	bool "Enable button interaction"
+	help
+	  Enable button interaction in the sample. If enabled, the sample will
+	  enable use of buttons to toggle the Wi-Fi shutdown or startup.
+endchoice
+
+config SHUTDOWN_TIMEOUT_S
+	int "Wi-Fi shutdown timeout"
+	default 5
+	help
+	  Timeout in seconds after the Wi-Fi shutdown operation.
