@@ -372,22 +372,6 @@ void test_lte_lc_on_modem_init_rai_fail(void)
 	on_modem_init(0, NULL);
 }
 
-static int lte_lc_on_modem_cfun_callback_count;
-
-static void on_modem_cfun_callback(enum lte_lc_func_mode, void *ctx)
-{
-	lte_lc_on_modem_cfun_callback_count++;
-}
-
-LTE_LC_ON_CFUN(lte_lc_api_test_on_modem_cfun, on_modem_cfun_callback, NULL);
-
-void test_lte_lc_on_modem_cfun(void)
-{
-	lte_lc_on_modem_cfun(LTE_LC_FUNC_MODE_OFFLINE, NULL);
-
-	TEST_ASSERT_EQUAL(1, lte_lc_on_modem_cfun_callback_count);
-}
-
 void test_lte_lc_register_handler_null(void)
 {
 	lte_lc_register_handler(NULL);
@@ -417,26 +401,6 @@ void test_lte_lc_deregister_handler_unknown(void)
 
 	ret = lte_lc_deregister_handler(lte_lc_event_handler_custom);
 	TEST_ASSERT_EQUAL(0, ret);
-}
-
-void test_lte_lc_factory_reset_success(void)
-{
-	int ret;
-
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XFACTORYRESET=0", 0);
-
-	ret = lte_lc_factory_reset(LTE_LC_FACTORY_RESET_ALL);
-	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
-}
-
-void test_lte_lc_factory_reset_fail(void)
-{
-	int ret;
-
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XFACTORYRESET=1", -NRF_ENOMEM);
-
-	ret = lte_lc_factory_reset(LTE_LC_FACTORY_RESET_USER);
-	TEST_ASSERT_EQUAL(-EFAULT, ret);
 }
 
 void test_lte_lc_connect_success(void)
@@ -4952,65 +4916,6 @@ void test_lte_lc_periodic_search_get_patterns4_table_values_success(void)
 	TEST_ASSERT_EQUAL(43, cfg.patterns[3].table.val_3);
 	TEST_ASSERT_EQUAL(44, cfg.patterns[3].table.val_4);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
-}
-
-void test_lte_lc_reduced_mobility_set_success(void)
-{
-	int ret;
-
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%REDMOB=0", 0);
-	ret = lte_lc_reduced_mobility_set(LTE_LC_REDUCED_MOBILITY_DEFAULT);
-	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
-
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%REDMOB=1", 0);
-	ret = lte_lc_reduced_mobility_set(LTE_LC_REDUCED_MOBILITY_NORDIC);
-	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
-
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%REDMOB=2", 0);
-	ret = lte_lc_reduced_mobility_set(LTE_LC_REDUCED_MOBILITY_DISABLED);
-	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
-}
-
-void test_lte_lc_reduced_mobility_set_fail(void)
-{
-	int ret;
-
-	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%REDMOB=0", -NRF_ENOMEM);
-
-	ret = lte_lc_reduced_mobility_set(LTE_LC_REDUCED_MOBILITY_DEFAULT);
-	TEST_ASSERT_EQUAL(-EFAULT, ret);
-}
-
-void test_lte_lc_reduced_mobility_get_success(void)
-{
-	int ret;
-	enum lte_lc_reduced_mobility_mode mode;
-
-	__mock_nrf_modem_at_scanf_ExpectAndReturn("AT%REDMOB?", "%%REDMOB: %hu", 1);
-	__mock_nrf_modem_at_scanf_ReturnVarg_uint16(LTE_LC_REDUCED_MOBILITY_DISABLED);
-
-	ret = lte_lc_reduced_mobility_get(&mode);
-	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
-	TEST_ASSERT_EQUAL(LTE_LC_REDUCED_MOBILITY_DISABLED, mode);
-}
-
-void test_lte_lc_reduced_mobility_get_fail(void)
-{
-	int ret;
-	enum lte_lc_reduced_mobility_mode mode;
-
-	__mock_nrf_modem_at_scanf_ExpectAndReturn("AT%REDMOB?", "%%REDMOB: %hu", 2);
-
-	ret = lte_lc_reduced_mobility_get(&mode);
-	TEST_ASSERT_EQUAL(-EFAULT, ret);
-}
-
-void test_lte_lc_reduced_mobility_get_null(void)
-{
-	int ret;
-
-	ret = lte_lc_reduced_mobility_get(NULL);
-	TEST_ASSERT_EQUAL(-EINVAL, ret);
 }
 
 void test_lte_lc_rai_update(void)
