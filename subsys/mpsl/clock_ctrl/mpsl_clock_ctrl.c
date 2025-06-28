@@ -8,6 +8,7 @@
 #include <zephyr/drivers/clock_control.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
 #include <zephyr/logging/log.h>
+#include <mpsl/mpsl_clock_ctrl_cb.h>
 
 #if defined(CONFIG_CLOCK_CONTROL_NRF)
 #include <nrfx_clock.h>
@@ -57,6 +58,10 @@ static struct clock_onoff_state m_nvm_clock_state = {
 	.m_clock_request_release = m_nvm_clock_release
 };
 #endif /* CONFIG_MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST */
+
+#if defined(CONFIG_MPSL_CLOCK_CTRL_CALLBACK)
+static atomic_ptr_t m_clock_ctrl_cb; /* External callback used to notify of events */
+#endif
 
 /** @brief A clock request callback.
  *
@@ -190,6 +195,14 @@ static void m_hfclk_request(void)
 	}
 
 	z_nrf_clock_bt_ctlr_hf_request();
+
+#if defined(CONFIG_MPSL_CLOCK_CTRL_CALLBACK)
+	mpsl_clock_ctrl_cb_t cb = (mpsl_clock_ctrl_cb_t)atomic_ptr_get(&m_clock_ctrl_cb);
+
+	if (cb) {
+		cb(MPSL_CLOCK_CTRL_EVENT_HFCLK_REQUESTED);
+	}
+#endif
 }
 
 static void m_hfclk_release(void)
@@ -208,6 +221,14 @@ static void m_hfclk_release(void)
 	}
 
 	z_nrf_clock_bt_ctlr_hf_release();
+
+#if defined(CONFIG_MPSL_CLOCK_CTRL_CALLBACK)
+	mpsl_clock_ctrl_cb_t cb = (mpsl_clock_ctrl_cb_t)atomic_ptr_get(&m_clock_ctrl_cb);
+
+	if (cb) {
+		cb(MPSL_CLOCK_CTRL_EVENT_HFCLK_RELEASED);
+	}
+#endif
 }
 
 static bool m_hfclk_is_running(void)
@@ -395,6 +416,14 @@ static void m_hfclk_request(void)
 	}
 
 	nrf_clock_control_hfxo_request();
+
+#if defined(CONFIG_MPSL_CLOCK_CTRL_CALLBACK)
+	mpsl_clock_ctrl_cb_t cb = (mpsl_clock_ctrl_cb_t)atomic_ptr_get(&m_clock_ctrl_cb);
+
+	if (cb) {
+		cb(MPSL_CLOCK_CTRL_EVENT_HFCLK_REQUESTED);
+	}
+#endif
 }
 
 static void m_hfclk_release(void)
@@ -409,6 +438,14 @@ static void m_hfclk_release(void)
 	}
 
 	nrf_clock_control_hfxo_release();
+
+#if defined(CONFIG_MPSL_CLOCK_CTRL_CALLBACK)
+	mpsl_clock_ctrl_cb_t cb = (mpsl_clock_ctrl_cb_t)atomic_ptr_get(&m_clock_ctrl_cb);
+
+	if (cb) {
+		cb(MPSL_CLOCK_CTRL_EVENT_HFCLK_RELEASED);
+	}
+#endif
 }
 
 static bool m_hfclk_is_running(void)
@@ -532,3 +569,21 @@ int32_t mpsl_clock_ctrl_uninit(void)
 
 	return mpsl_clock_ctrl_source_unregister();
 }
+
+#if defined(CONFIG_MPSL_CLOCK_CTRL_CALLBACK)
+int mpsl_clock_ctrl_cb_register(mpsl_clock_ctrl_cb_t cb)
+{
+	if (cb == NULL) {
+		atomic_ptr_clear(&m_clock_ctrl_cb);
+		return 0;
+	}
+
+	/* Set the callback only if it is not already set */
+	if (!atomic_ptr_cas(&m_clock_ctrl_cb, NULL, (atomic_ptr_t)cb)) {
+		LOG_ERR("Event callback already registered");
+		return -EBUSY;
+	}
+
+	return 0;
+}
+#endif

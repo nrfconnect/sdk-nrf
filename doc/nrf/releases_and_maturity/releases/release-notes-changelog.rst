@@ -42,6 +42,7 @@ Board support
 
   * Bias-pull-up for Thingy:91 X nRF9151 UART RX pins.
   * Alternative partition tables for Thingy:91 X.
+  * Runtime Bluetooth LE/Wi-Fi switch power management for Thingy:91 X.
 
 Build and configuration system
 ==============================
