@@ -178,6 +178,14 @@ struct cracen_aead_operation {
 };
 typedef struct cracen_aead_operation cracen_aead_operation_t;
 
+struct cracen_cmac_context_s {
+	uint8_t mac_state[SX_BLKCIPHER_AES_BLK_SZ];	   /*  The current MAC state */
+	uint8_t partial_block[SX_BLKCIPHER_AES_BLK_SZ];
+	size_t partial_len;
+	size_t processed_len;	   /*  Total length of data processed so far (in bytes) */
+};
+typedef struct cracen_cmac_context_s cracen_cmac_context_t;
+
 struct cracen_mac_operation_s {
 	psa_algorithm_t alg;
 	size_t mac_size;
@@ -206,6 +214,9 @@ struct cracen_mac_operation_s {
 			struct sxmac ctx;
 			struct sxkeyref keyref;
 			uint8_t key_buffer[CRACEN_MAX_AES_KEY_SIZE];
+#if defined(CONFIG_CRACEN_USE_MULTIPART_WORKAROUNDS)
+			cracen_cmac_context_t sw_ctx;
+#endif /* CONFIG_CRACEN_USE_MULTIPART_WORKAROUNDS */
 		} cmac;
 #endif /* PSA_NEED_CRACEN_CMAC */
 		uint8_t _unused;
