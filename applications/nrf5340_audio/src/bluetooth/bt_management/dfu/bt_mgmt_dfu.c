@@ -73,6 +73,11 @@ static struct bt_conn_cb dfu_conn_callbacks = {
 	.recycled = dfu_recycled_cb,
 };
 
+/*
+ * If desired, the different names can be set in DFU mode.
+ * E.g. based on the device location
+ *
+ */
 static void dfu_set_bt_name(void)
 {
 	int ret;
@@ -84,29 +89,6 @@ static void dfu_set_bt_name(void)
 		LOG_ERR("Failed to set full BT name, will truncate");
 	}
 
-#if (CONFIG_AUDIO_DEV == GATEWAY)
-	ret = strlcat(name, GW_TAG, CONFIG_BT_DEVICE_NAME_MAX);
-	if (ret >= CONFIG_BT_DEVICE_NAME_MAX) {
-		LOG_ERR("Failed to set full BT name, will truncate");
-	}
-#else
-	enum audio_channel channel;
-
-	device_location_get(&channel); /* TODO: Discuss */
-
-	if (channel == AUDIO_CH_L) {
-		ret = strlcat(name, CH_L_TAG, CONFIG_BT_DEVICE_NAME_MAX);
-		if (ret >= CONFIG_BT_DEVICE_NAME_MAX) {
-			LOG_ERR("Failed to set full BT name, will truncate");
-		}
-	} else {
-		ret = strlcat(name, CH_R_TAG, CONFIG_BT_DEVICE_NAME_MAX);
-		if (ret >= CONFIG_BT_DEVICE_NAME_MAX) {
-			LOG_ERR("Failed to set full BT name, will truncate");
-		}
-	}
-
-#endif
 	ret = strlcat(name, "_DFU", CONFIG_BT_DEVICE_NAME_MAX);
 	if (ret >= CONFIG_BT_DEVICE_NAME_MAX) {
 		LOG_ERR("Failed to set full BT name, will truncate");

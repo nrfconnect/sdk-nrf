@@ -83,7 +83,6 @@ struct audio_metadata {
 	uint32_t bad_data;
 };
 
-
 /**
  * @brief Get the number of channels in the meta data.
  *

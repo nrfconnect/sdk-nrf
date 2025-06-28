@@ -7,11 +7,10 @@
 #include "device_location.h"
 
 #include <errno.h>
-
 #include "uicr.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(location, CONFIG_LOCATION_LOG_LEVEL);
+LOG_MODULE_REGISTER(location, CONFIG_DEVICE_LOCATION_LOG_LEVEL);
 
 static uint32_t static_location;
 
@@ -30,7 +29,7 @@ void device_location_set(enum bt_audio_location location)
 	/* Try to write the channel value to UICR */
 	ret = uicr_location_set(location);
 	if (ret) {
-		LOG_ERR("Unable to write channel value to UICR");
+		LOG_ERR("Unable to write channel value to UICR: %d", ret);
 	}
 }
 #endif /* CONFIG_DEVICE_LOCATION_SET_RUNTIME */

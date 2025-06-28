@@ -165,7 +165,7 @@ check_send:
 		 */
 		ret = k_msgq_put(&ble_q_rx, (void *)&audio_frame, K_NO_WAIT);
 		ERR_CHK_MSG(ret, "Failed to put audio frame into queue");
-		audio_frame = NULL; // This looks odd as the frame still needs to live for the queue reader to get it out.
+		audio_frame = NULL;
 	}
 }
 
@@ -185,8 +185,6 @@ static void audio_datapath_thread(void *dummy1, void *dummy2, void *dummy3)
 			ret = audio_system_decode(audio_frame);
 			ERR_CHK(ret);
 		} else {
-			struct audio_metadata *meta = net_buf_user_data(audio_frame);
-			
 			audio_datapath_stream_out(audio_frame);
 		}
 

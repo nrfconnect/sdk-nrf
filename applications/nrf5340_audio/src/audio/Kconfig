@@ -127,7 +127,7 @@ config AUDIO_INPUT_CHANNELS_MAX
 	default 2 if AUDIO_SOURCE_I2S
 	default 2
 	help
-	  Maximum number of audio channels that can be input.
+	  Maximum number of audio channels that can be physically input.
 	  This is dependent on the HW itself.
 
 config AUDIO_OUTPUT_CHANNELS_MAX
@@ -135,8 +135,10 @@ config AUDIO_OUTPUT_CHANNELS_MAX
 	default 2 if AUDIO_SOURCE_I2S
 	default 2
 	help
-	  Maximum number of audio channels that can be output.
+	  Maximum number of audio channels that can be physically output.
 	  This is dependent on the HW itself.
+	  Eg. for the nRF5340 Audio DK, the I2S supports 2 channels.
+	  However, the HW Codec DAC (CS47L63) only supports 1 channel out.
 
 choice AUDIO_SOURCE_GATEWAY
 	prompt "Audio source for gateway"

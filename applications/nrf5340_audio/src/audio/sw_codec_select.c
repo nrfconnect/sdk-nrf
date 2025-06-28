@@ -91,9 +91,9 @@ int sw_codec_encode(struct net_buf *audio_frame)
 	/* Temp storage for PCM */
 	char pcm_data_mono_system_sample_rate[2][PCM_NUM_BYTES_MONO] = {0};
 	/* Make sure we have enough space for two frames (stereo) */
-	uint8_t m_encoded_data[ENC_MAX_FRAME_SIZE * 2];
+	uint8_t m_encoded_data[ENC_MAX_FRAME_SIZE * CONFIG_AUDIO_ENCODE_CHANNELS_MAX];
 
-	char pcm_data_mono_converted_buf[2][PCM_NUM_BYTES_MONO] = {0};
+	char pcm_data_mono_converted_buf[CONFIG_AUDIO_ENCODE_CHANNELS_MAX][PCM_NUM_BYTES_MONO] = {0};
 
 	size_t pcm_block_size_mono_system_sample_rate;
 	size_t pcm_block_size_mono;
@@ -202,8 +202,8 @@ int sw_codec_decode(struct net_buf const *const audio_frame, void **decoded_data
 
 	static char pcm_data_stereo[PCM_NUM_BYTES_STEREO];
 
-	char decoded_data_mono[2][PCM_NUM_BYTES_MONO] = {0};
-	char decoded_data_mono_system_sample_rate[2][PCM_NUM_BYTES_MONO] = {0};
+	char decoded_data_mono[CONFIG_AUDIO_DECODE_CHANNELS_MAX][PCM_NUM_BYTES_MONO] = {0};
+	char decoded_data_mono_system_sample_rate[CONFIG_AUDIO_DECODE_CHANNELS_MAX][PCM_NUM_BYTES_MONO] = {0};
 
 	size_t pcm_size_stereo = 0;
 	size_t pcm_size_mono = 0;
