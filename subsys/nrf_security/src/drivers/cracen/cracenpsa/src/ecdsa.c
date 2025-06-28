@@ -4,19 +4,19 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
- * Workmem layout for the ECDSA sign task:
+ * Workmem layout for the ECDSA sign function:
  *      1. Hash digest of the message to be signed (size: digestsz).
- *      2. Output of the rndinrange subtask (size: curve_op_size, which is the
+ *      2. Output of the rndinrange subfunction (size: curve_op_size, which is the
  *         max size in bytes of parameters and operands for the selected curve).
  *
- * Workmem layout for the ECDSA Deterministic sign task:
- *      1. HMAC task requirements (size: digestsz + blocksz)
+ * Workmem layout for the ECDSA Deterministic sign function:
+ *      1. HMAC function requirements (size: digestsz + blocksz)
  *      2. Hash digest of the message to be signed (size: digestsz).
  *      4. K (HMAC key) (size: digestsz)
  *      5. V (size: digestsz)
  *      6. T (size: curve_op_size)
  *
- * Workmem layout for the ECDSA verify task:
+ * Workmem layout for the ECDSA verify function:
  *      1. Hash digest of the message whose signature is being verified
  *         (size: digestsz).
  */
@@ -26,6 +26,8 @@
 #include <silexpk/core.h>
 #include <silexpk/iomem.h>
 #include <silexpk/cmddefs/ecc.h>
+#include "silexpk/core.h"
+#include "silexpk/ec_curves.h"
 #include <cracen/statuscodes.h>
 #include <sxsymcrypt/hash.h>
 #include <cracen_psa_ecdsa.h>
@@ -146,7 +148,7 @@ static void ecdsa_write_pk(const uint8_t *pubkey, uint8_t *x, uint8_t *y, size_t
 	sx_wrpkmem(y, pubkey + opsz, opsz);
 }
 
-static void ecdsa_write_sig(const struct cracen_ecdsa_signature *sig, uint8_t *r, uint8_t *s,
+static void ecdsa_write_sig(const struct cracen_signature *sig, uint8_t *r, uint8_t *s,
 			    size_t opsz)
 {
 	sx_wrpkmem(r, sig->r, opsz);
@@ -158,7 +160,7 @@ static void ecdsa_write_sk(const struct cracen_ecc_priv_key *sk, uint8_t *d, siz
 	sx_wrpkmem(d, sk->d, opsz);
 }
 
-static void ecdsa_read_sig(struct cracen_ecdsa_signature *sig, const uint8_t *r, const uint8_t *s,
+static void ecdsa_read_sig(struct cracen_signature *sig, const uint8_t *r, const uint8_t *s,
 			   size_t opsz)
 {
 	sx_rdpkmem(sig->r, r, opsz);
@@ -219,7 +221,7 @@ int cracen_ecdsa_sign_digest(const struct cracen_ecc_priv_key *privkey,
 	struct sx_pk_inops_ecdsa_generate inputs;
 	const uint8_t *curve_n;
 	const size_t workmem_requirement = digestsz + opsz;
-	struct cracen_ecdsa_signature internal_signature = {0};
+	struct cracen_signature internal_signature = {0};
 	uint8_t workmem[workmem_requirement];
 
 	memcpy(workmem, digest, digest_length);
@@ -424,7 +426,7 @@ int cracen_ecdsa_sign_digest_deterministic(const struct cracen_ecc_priv_key *pri
 
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ecdsa_generate inputs;
-	struct cracen_ecdsa_signature internal_signature = {0};
+	struct cracen_signature internal_signature = {0};
 	struct ecdsa_hmac_operation hmac_op;
 
 	hmac_op.attempts = MAX_ECDSA_ATTEMPTS;
@@ -518,7 +520,7 @@ int cracen_ecdsa_verify_digest(const uint8_t *pubkey, const uint8_t *digest, con
 
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ecdsa_verify inputs;
-	struct cracen_ecdsa_signature internal_signature = {0};
+	struct cracen_signature internal_signature = {0};
 
 	internal_signature.r = (uint8_t *)signature;
 	internal_signature.s = (uint8_t *)signature + opsz;

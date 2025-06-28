@@ -7,19 +7,17 @@
 #include "common.h"
 #include <cracen/ec_helpers.h>
 #include <cracen/mem_helpers.h>
-#include "cracen_psa.h"
+#include <cracen/statuscodes.h>
+#include <cracen_psa.h>
 #include <cracen_psa_eddsa.h>
 #include <cracen_psa_ecdsa.h>
 #include <cracen_psa_montgomery.h>
 #include <cracen_psa_ikg.h>
+#include <cracen_psa_rsa_keygen.h>
 #include "platform_keys/platform_keys.h"
 #include <nrf_security_mutexes.h>
-#include <sicrypto/drbghash.h>
 #include "ecc.h"
-#include <sicrypto/rsa_keygen.h>
-#include <sicrypto/util.h>
 #include <silexpk/sxops/rsa.h>
-#include <sicrypto/ik.h>
 #include <silexpk/ik.h>
 #include <stddef.h>
 #include <string.h>
@@ -251,7 +249,7 @@ static psa_status_t check_wstr_pub_key_data(psa_algorithm_t key_alg, psa_ecc_fam
 	size_t expected_pub_key_size =
 		cracen_ecc_wstr_expected_pub_key_bytes(PSA_BITS_TO_BYTES(key_bits));
 
-	if (data[0] != SI_ECC_PUBKEY_UNCOMPRESSED) {
+	if (data[0] != CRACEN_ECC_PUBKEY_UNCOMPRESSED) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
@@ -321,7 +319,7 @@ static psa_status_t import_rsa_key(const psa_key_attributes_t *attributes, const
 	psa_key_type_t key_type = psa_get_key_type(attributes);
 	bool is_public_key = key_type == PSA_KEY_TYPE_RSA_PUBLIC_KEY;
 
-	struct si_rsa_key rsakey;
+	struct cracen_rsa_key rsakey;
 	struct sx_buf n = {0};
 	struct sx_buf e = {0};
 
@@ -521,7 +519,7 @@ static psa_status_t export_spake2p_public_key_from_keypair(const psa_key_attribu
 		if (priv_key_length != 2 * CRACEN_P256_KEY_SIZE) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
-		pub_key[CRACEN_P256_KEY_SIZE] = SI_ECC_PUBKEY_UNCOMPRESSED;
+		pub_key[CRACEN_P256_KEY_SIZE] = CRACEN_ECC_PUBKEY_UNCOMPRESSED;
 		status = silex_statuscodes_to_psa(
 			ecc_genpubkey(w1, &pub_key[CRACEN_P256_KEY_SIZE + 1], sx_curve));
 		if (status != PSA_SUCCESS) {
@@ -673,7 +671,7 @@ static psa_status_t handle_identity_key(const uint8_t *key_buffer, size_t key_bu
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_R1_256)) {
-		data[0] = SI_ECC_PUBKEY_UNCOMPRESSED;
+		data[0] = CRACEN_ECC_PUBKEY_UNCOMPRESSED;
 		return silex_statuscodes_to_psa(cracen_ikg_create_pub_key(key_buffer[0], data + 1));
 	}
 	return PSA_ERROR_NOT_SUPPORTED;
@@ -691,7 +689,7 @@ static psa_status_t handle_curve_family(psa_ecc_family_t psa_curve, size_t key_b
 		if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1) ||
 		    IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_K1) ||
 		    IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1)) {
-			data[0] = SI_ECC_PUBKEY_UNCOMPRESSED;
+			data[0] = CRACEN_ECC_PUBKEY_UNCOMPRESSED;
 			return silex_statuscodes_to_psa(
 				ecc_genpubkey(key_buffer, data + 1, sx_curve));
 		} else {
@@ -786,7 +784,7 @@ static psa_status_t export_rsa_public_key_from_keypair(const psa_key_attributes_
 	 */
 
 	size_t key_bits_attr = psa_get_key_bits(attributes);
-	struct si_rsa_key rsa_key;
+	struct cracen_rsa_key rsa_key;
 	struct sx_buf n = {0};
 	struct sx_buf e = {0};
 
@@ -1053,13 +1051,12 @@ static psa_status_t generate_rsa_private_key(const psa_key_attributes_t *attribu
 	size_t bits = psa_get_key_bits(attributes);
 	size_t key_size_bytes = PSA_BITS_TO_BYTES(bits);
 	size_t key_size_half = key_size_bytes / 2;
+	int sx_status;
 
 	/* RSA public exponent used in PSA is 65537. We provide this as a 3 byte
 	 * big endian array.
 	 */
 	uint8_t pub_exponent[] = {0x01, 0x00, 0x01};
-
-	struct sitask t;
 
 	psa_status_t status = check_rsa_key_attributes(attributes, bits);
 
@@ -1107,25 +1104,17 @@ static psa_status_t generate_rsa_private_key(const psa_key_attributes_t *attribu
 	}
 
 	/* Generate RSA CRT key. */
-	struct si_rsa_key privkey = SI_KEY_INIT_RSACRT(&p, &q, &dp, &dq, &qinv);
+	struct cracen_rsa_key privkey = CRACEN_KEY_INIT_RSACRT(&p, &q, &dp, &dq, &qinv);
 
-	/* The workmem size requirement is twice the key size. */
-	uint8_t workmem[PSA_BITS_TO_BYTES(PSA_MAX_RSA_KEY_BITS) * 2] = {};
-
-	si_task_init(&t, workmem, sizeof(workmem));
-	si_rsa_create_genprivkey(&t, pub_exponent, sizeof(pub_exponent), key_size_bytes, &privkey);
-	si_task_run(&t);
-
-	status = silex_statuscodes_to_psa(si_task_wait(&t));
-	safe_memzero(workmem, sizeof(workmem));
-
-	if (status != PSA_SUCCESS) {
+	sx_status = cracen_rsa_generate_privkey(pub_exponent, sizeof(pub_exponent), key_size_bytes,
+						&privkey);
+	if (sx_status != SX_OK) {
+		status = silex_statuscodes_to_psa(sx_status);
 		goto error_exit;
 	}
 
 	/* Generate n and d */
 	status = silex_statuscodes_to_psa(sx_rsa_keygen(&p, &q, &e, &n, NULL, &d));
-
 	if (status != PSA_SUCCESS) {
 		goto error_exit;
 	}

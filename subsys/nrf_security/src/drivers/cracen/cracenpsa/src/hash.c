@@ -8,7 +8,6 @@
 
 #include <psa/crypto.h>
 #include <psa/crypto_values.h>
-#include <sicrypto/hash.h>
 #include <string.h>
 #include <sxsymcrypt/hash.h>
 #include <sxsymcrypt/internal.h>
