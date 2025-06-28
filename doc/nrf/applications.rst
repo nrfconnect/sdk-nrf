@@ -23,6 +23,7 @@ The following lists the |NCS| applications:
    :glob:
    :caption: Subpages:
 
+   ../../applications/asset_tracker/README
    ../../applications/connectivity_bridge/README
    ../../applications/ipc_radio/README
    ../../applications/matter_bridge/README
