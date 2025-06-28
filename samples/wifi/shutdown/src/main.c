@@ -131,6 +131,7 @@ static bool is_mac_addr_set(struct net_if *iface)
 	return net_eth_is_addr_valid(&wifi_addr);
 }
 
+#ifdef CONFIG_OPERATION_MODE_BUTTONS
 static void button_handler_cb(uint32_t button_state, uint32_t has_changed)
 {
 	if ((has_changed & DK_BTN1_MSK) && (button_state & DK_BTN1_MSK)) {
@@ -150,6 +151,8 @@ static void buttons_init(void)
 		return;
 	}
 }
+
+#endif /* CONFIG_OPERATION_MODE_BUTTONS */
 
 int shutdown_wifi(struct net_if *iface)
 {
@@ -237,8 +240,7 @@ int main(void)
 			return ret;
 		}
 
-		net_mgmt(NET_REQUEST_ETHERNET_SET_MAC_ADDRESS, iface,
-			 &params, sizeof(params));
+		net_mgmt(NET_REQUEST_ETHERNET_SET_MAC_ADDRESS, iface, &params, sizeof(params));
 
 		ret = net_if_up(iface);
 		if (ret) {
@@ -251,15 +253,28 @@ int main(void)
 							net_if_get_link_addr(iface)->len));
 	}
 
+#ifdef CONFIG_OPERATION_MODE_BUTTONS
 	buttons_init();
+#endif /* CONFIG_OPERATION_MODE_BUTTONS */
 
 #ifdef CONFIG_NRF_WIFI_IF_AUTO_START
 	exit_shutdown_mode();
-
 	enter_shutdown_mode();
 #endif
 
+#if defined(CONFIG_OPERATION_MODE_BUTTONS) || defined(CONFIG_OPERATION_MODE_ONE_SHOT)
+	exit_shutdown_mode();
+	enter_shutdown_mode();
 	k_sleep(K_FOREVER);
-
+#else
+	/* Will continuously alternate between shutdown and startup modes
+	 * with a defined timeout after shutdown.
+	 */
+	while (1) {
+		exit_shutdown_mode();
+		enter_shutdown_mode();
+		k_sleep(K_SECONDS(CONFIG_SHUTDOWN_TIMEOUT_S));
+	}
+#endif /* CONFIG_OPERATION_MODE_BUTTONS */
 	return 0;
 }
