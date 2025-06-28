@@ -1,0 +1,26 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Replace default ipc0 instance */
+/delete-node/ &ipc0;
+
+/* Enabled nodes required by IPC
+ * Mbox for PPR target, one for each side and one IPC instance
+ */
+
+&cpuppr_vevif {
+	status = "okay";
+};
+
+ipc0: &cpuapp_cpuppr_ipc {
+	status = "okay";
+};
+
+/ {
+	chosen {
+		/delete-property/ zephyr,bt-hci;
+	};
+};
