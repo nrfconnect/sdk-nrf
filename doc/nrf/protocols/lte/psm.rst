@@ -134,6 +134,7 @@ The length of the proprietary PSM sleep depends on the MO data or MO SMS cycles 
 Typically, the T3412 timer is shorter when PSM is not used.
 
 It can be configured using the ``AT%FEACONF`` command.
+See `nRF91x1 Feature configuration %FEACONF`_ for more information.
 
 Reduced mobility
 ================
