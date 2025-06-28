@@ -6,7 +6,6 @@
 
  / {
 	chosen {
-		zephyr,entropy = &rng;
 		zephyr,ot-uart = &cdc_acm_uart_rcp;
 		zephyr,bt-c2h-uart = &cdc_acm_uart_hci;
 	};
