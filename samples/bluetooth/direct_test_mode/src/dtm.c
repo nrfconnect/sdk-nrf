@@ -36,7 +36,11 @@
 
 #include <helpers/nrfx_gppi.h>
 #include <nrfx_timer.h>
+
 #include <nrf_erratas.h>
+#if NRF54L_ERRATA_20_PRESENT
+#include <hal/nrf_power.h>
+#endif /* NRF54L_ERRATA_20_PRESENT */
 
 #define NRF54H20_ERRATA_216_PRESENT \
 	DT_NODE_HAS_STATUS(DT_NODELABEL(cpurad_cpusys_errata216_mboxes), okay)
@@ -758,10 +762,11 @@ static int clock_init(void)
 		}
 	} while (err);
 
-#if defined(NRF54L15_XXAA)
-	/* MLTPAN-20 */
-	nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_PLLSTART);
-#endif /* defined(NRF54L15_XXAA) */
+#if NRF54L_ERRATA_20_PRESENT
+	if (nrf54l_errata_20()) {
+		nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
+	}
+#endif /* NRF54L_ERRATA_20_PRESENT */
 
 	return err;
 }
@@ -791,10 +796,11 @@ int clock_init(void)
 		}
 	} while (err == -EAGAIN);
 
-#if defined(NRF54L15_XXAA)
-	/* MLTPAN-20 */
-	nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_PLLSTART);
-#endif /* defined(NRF54L15_XXAA) */
+#if NRF54L_ERRATA_20_PRESENT
+	if (nrf54l_errata_20()) {
+		nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
+	}
+#endif /* NRF54L_ERRATA_20_PRESENT */
 
 	return 0;
 }
