@@ -126,7 +126,8 @@ After programming the sample to your development kit, complete the following ste
 
 1. Connect the development kit to the computer using a USB cable.
    Use the development kit's nRF USB port (**J3**).
-   The kits are assigned a COM port (in Windows) or a ttyACM device (in Linux), visible in the Device Manager or in the :file:`/dev` directory.
+   The kits are assigned serial ports.
+   |serial_port_number_list|
 #. |connect_terminal|
 #. Switch to a radio channel with an ongoing radio traffic:
 

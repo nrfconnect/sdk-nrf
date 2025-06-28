@@ -10,7 +10,7 @@ This USB interface has the following functions:
 COM Ports
 =========
 This USB interface exposes two COM ports mapped to the physical UART interfaces between the nRF91 Series and nRF5340 devices.
-When opening these ports manually (without using the nRF Connect Serial Terminal), be aware that the USB COM port baud rate selection is applied to the UART.
+When opening these ports manually (without using the Serial Terminal app), be aware that the USB COM port baud rate selection is applied to the UART.
 
 Bluetooth® LE Central UART Service
 ==================================
