@@ -15,7 +15,7 @@ jobs:
       - name: Install extra python dependencies
         run: |
           pip3 install --upgrade pip setuptools west
-          pip3 install -r ncs/nrf/scripts/requirements-extra.txt
+          pip3 install -r ncs/nrf/scripts/requirements-extra.txt --require-hashes
 
       - name: Set upsteam
         working-directory: ncs
