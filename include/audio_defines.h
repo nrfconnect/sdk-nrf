@@ -20,10 +20,9 @@
 enum audio_channel {
 	AUDIO_CH_L,
 	AUDIO_CH_R,
+	AUDIO_CH_BOTH,
 	AUDIO_CH_NUM,
 };
-
-#define AUDIO_MIC 0
 
 /**
  * @brief Audio data coding.

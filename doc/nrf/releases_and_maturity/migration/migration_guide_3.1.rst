@@ -49,6 +49,12 @@ nRF5340 Audio applications
    * The :ref:`nrf53_audio_app` has been updated to use the :ref:`net_buf_interface` API to handle audio data.
      This change requires you to update your application code to use the new APIs for audio data handling.
      See :ref:`ncs_release_notes_changelog` for more information.
+   * The audio devices are now identified by a location bitfield instead of a channel.
+     This requires the location bitfield to be set according to the user's preference.
+     If using the buildprog.py script, this will handle the correct write to UICR.
+     The user only needs to update the locations in the devices.json file.
+   * As a device can have multiple audio locations,
+     the location name is no longer included in the advertised device name during DFU.
 
 nRF Desktop
 -----------

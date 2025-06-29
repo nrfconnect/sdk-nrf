@@ -526,7 +526,6 @@ int main(void)
 {
 	int ret;
 	enum bt_audio_location location;
-	enum audio_channel channel;
 	static struct bt_data ext_adv_buf[CONFIG_EXT_ADV_BUF_MAX];
 
 	LOG_DBG("Main started");
@@ -554,13 +553,7 @@ int main(void)
 	ret = le_audio_rx_init();
 	ERR_CHK_MSG(ret, "Failed to initialize rx path");
 
-	channel_assignment_get(&channel);
-
-	if (channel == AUDIO_CH_L) {
-		location = BT_AUDIO_LOCATION_FRONT_LEFT;
-	} else {
-		location = BT_AUDIO_LOCATION_FRONT_RIGHT;
-	}
+	device_location_get(&location);
 
 	ret = unicast_server_enable(le_audio_rx_data_handler, location);
 	ERR_CHK_MSG(ret, "Failed to enable LE Audio");

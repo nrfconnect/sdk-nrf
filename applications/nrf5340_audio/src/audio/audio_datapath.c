@@ -759,8 +759,8 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts_us, uint32_t
 static void audio_datapath_i2s_start(void)
 {
 	/* Double buffer I2S */
-	uint8_t *tx_buf_one = NULL;
-	uint8_t *tx_buf_two = NULL;
+	uint8_t *tx_buf_0 = NULL;
+	uint8_t *tx_buf_1 = NULL;
 
 	/* Buffers used for I2S RX. Used interchangeably by I2S. */
 	static uint32_t rx_buf_0[BLK_STEREO_SIZE_OCTETS];
@@ -769,17 +769,17 @@ static void audio_datapath_i2s_start(void)
 	/* TX */
 	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) || (CONFIG_AUDIO_DEV == HEADSET)) {
 		ctrl_blk.out.cons_blk_idx = PREV_IDX(ctrl_blk.out.cons_blk_idx);
-		tx_buf_one = (uint8_t *)&ctrl_blk.out
+		tx_buf_0 = (uint8_t *)&ctrl_blk.out
 				     .fifo[ctrl_blk.out.cons_blk_idx * BLK_STEREO_NUM_SAMPS];
 
 		ctrl_blk.out.cons_blk_idx = PREV_IDX(ctrl_blk.out.cons_blk_idx);
-		tx_buf_two = (uint8_t *)&ctrl_blk.out
+		tx_buf_1 = (uint8_t *)&ctrl_blk.out
 				     .fifo[ctrl_blk.out.cons_blk_idx * BLK_STEREO_NUM_SAMPS];
 	}
 
 	/* Start I2S */
-	audio_i2s_start(tx_buf_one, rx_buf_0);
-	audio_i2s_set_next_buf(tx_buf_two, rx_buf_1);
+	audio_i2s_start(tx_buf_0, rx_buf_0);
+	audio_i2s_set_next_buf(tx_buf_1, rx_buf_1);
 }
 
 static void audio_datapath_i2s_stop(void)

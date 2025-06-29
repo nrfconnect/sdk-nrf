@@ -21,7 +21,7 @@ from colorama import Fore, Style
 from prettytable import PrettyTable
 from nrf5340_audio_dk_devices import (
     BuildType,
-    Channel,
+    Location,
     DeviceConf,
     BuildConf,
     AudioDevice,
@@ -74,8 +74,12 @@ def __print_dev_conf(device_list):
         "only reboot",
         "core app programmed",
         "core net programmed",
+        "location",
     ]
+
     for device in device_list:
+        loc_names = str([loc.name for loc in device.location])
+        loc_names = loc_names.replace("[", "").replace("]", "").replace("'", "")
         row = []
         row.append(device.nrf5340_audio_dk_snr)
         color = Fore.GREEN if device.snr_connected else Fore.YELLOW
@@ -84,6 +88,7 @@ def __print_dev_conf(device_list):
         row.append(__print_add_color(device.only_reboot))
         row.append(__print_add_color(device.core_app_programmed))
         row.append(__print_add_color(device.core_net_programmed))
+        row.append(loc_names)
 
         table.add_row(row)
     print(table)
@@ -342,20 +347,31 @@ def __main():
     # being pushed
     with AUDIO_KIT_SERIAL_NUMBERS_JSON.open() as f:
         dev_arr = json.load(f)
-    device_list = [
-        DeviceConf(
+    device_list = []
+    for dev in dev_arr:
+        if "channel" in dev:
+            print("Using deprecated location format. Convert to using Location enum")
+            if dev["channel"] == "left":
+                location = [Location.FRONT_LEFT]
+            elif dev["channel"] == "right":
+                location = [Location.FRONT_RIGHT]
+            else:
+                print("Invalid location, setting to MONO_AUDIO")
+                location = [Location.MONO_AUDIO]
+        else:
+            location = [Location[name] for name in dev["location"]]
+
+        device = DeviceConf(
+            location=location,
             nrf5340_audio_dk_snr=dev["nrf5340_audio_dk_snr"],
-            channel=Channel[dev["channel"]],
-            snr_connected=(dev["nrf5340_audio_dk_snr"]
-                           in boards_snr_connected),
+            snr_connected=(dev["nrf5340_audio_dk_snr"] in boards_snr_connected),
             recover_on_fail=options.recover_on_fail,
             nrf5340_audio_dk_dev=AudioDevice[dev["nrf5340_audio_dk_dev"]],
             cores=cores,
             devices=devices,
             _only_reboot=options.only_reboot,
         )
-        for dev in dev_arr
-    ]
+        device_list.append(device)
 
     __print_dev_conf(device_list)
 
