@@ -38,9 +38,6 @@ config BT_BUF_ACL_RX_SIZE
 config BT_BUF_EVT_RX_COUNT
 	default 14
 
-config BT_BUF_ACL_TX_COUNT
-	default 12
-
 config SETTINGS
 	default y
 
