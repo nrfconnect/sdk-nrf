@@ -26,10 +26,10 @@ void device_location_set(enum bt_audio_location location)
 
 	static_location = location;
 
-	/* Try to write the channel value to UICR */
+	/* Try to write the location to UICR */
 	ret = uicr_location_set(location);
 	if (ret) {
-		LOG_ERR("Unable to write channel value to UICR: %d", ret);
+		LOG_ERR("Unable to write location to UICR: %d", ret);
 	}
 }
 #endif /* CONFIG_DEVICE_LOCATION_SET_RUNTIME */

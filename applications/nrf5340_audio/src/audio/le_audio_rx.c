@@ -115,7 +115,6 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 			/* We already have a frame with this timestamp, so we will add these
 			 * together if the locations are different
 			 */
-
 			if (existing_meta->locations != meta->locations) {
 				/* Add location and bad_frame status to the joint audio frame */
 				existing_meta->locations |= meta->locations;

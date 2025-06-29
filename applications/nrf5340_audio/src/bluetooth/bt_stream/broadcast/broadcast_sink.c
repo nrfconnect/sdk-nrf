@@ -390,12 +390,13 @@ static bool bis_per_subgroup_parse(const struct bt_bap_base_subgroup_bis *bis, v
 
 	LOG_DBG("Channel allocation: 0x%x for BIS index %d",
 		audio_codec_info[bis->index - 1].chan_allocation, bis->index);
-
 	enum bt_audio_location device_location_temp;
+
 	device_location_get(&device_location_temp);
 
 	if (!(audio_codec_info[bis->index - 1].chan_allocation & device_location_temp)) {
-		LOG_WRN("BIS index %d channel allocation 0x%x does not match this device' location 0x%x", bis->index, audio_codec_info[bis->index - 1].chan_allocation,
+		LOG_WRN("BIS idx %d channel alloc. 0x%x does not match this device' location 0x%x",
+			bis->index, audio_codec_info[bis->index - 1].chan_allocation,
 			device_location_temp);
 		return true;
 	}
@@ -406,7 +407,7 @@ static bool bis_per_subgroup_parse(const struct bt_bap_base_subgroup_bis *bis, v
 	}
 
 	bis_index_bitfield |= BIT(bis->index - 1);
-	LOG_WRN("BIS index %d added to bitfield 0x%08x", bis->index, bis_index_bitfield);
+	LOG_DBG("BIS index %d added to bitfield 0x%08x", bis->index, bis_index_bitfield);
 
 	return true;
 }
@@ -765,14 +766,17 @@ int broadcast_sink_enable(le_audio_receive_cb recv_cb)
 		return ret;
 	}
 
-	/* Set RANK. Use 1 for left, 2 for right, 1 otherwise, as other locations are not considered a coordinated set */
+	/*
+	 * Set RANK. Use 1 for left, 2 for right, 1 otherwise,
+	 * as other locations are not considered a coordinated set
+	 */
 	if (device_location == BT_AUDIO_LOCATION_FRONT_LEFT) {
 		csip_param.rank = CSIP_HL_RANK;
 	} else if (device_location == BT_AUDIO_LOCATION_FRONT_RIGHT) {
 		csip_param.rank = CSIP_HR_RANK;
 	} else {
 		csip_param.rank = CSIP_HL_RANK;
-	} 
+	}
 
 	ret = bt_pacs_set_supported_contexts(BT_AUDIO_DIR_SINK, AVAILABLE_SINK_CONTEXT);
 	if (ret) {

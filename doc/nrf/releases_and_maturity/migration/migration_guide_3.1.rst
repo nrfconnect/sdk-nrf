@@ -53,7 +53,7 @@ nRF5340 Audio applications
      This requires the location bitfield to be set according to the user's preference.
      If using the buildprog.py script, this will handle the correct write to UICR.
      The user only needs to update the locations in the devices.json file.
-   * As the device can have multiple audio locations,
+   * As a device can have multiple audio locations,
      the location name is no longer included in the advertised device name during DFU.
 
 nRF Desktop

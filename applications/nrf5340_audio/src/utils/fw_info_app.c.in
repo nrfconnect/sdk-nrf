@@ -39,8 +39,6 @@ int fw_info_app_print(void)
 
 	device_location_get(&location);
 
-	LOG_WRN("HEADSET location value is 0x%x", location);
-
 	if (location == BT_AUDIO_LOCATION_MONO_AUDIO){
 		LOG_ERR("HEADSET location %s is not supported", bt_audio_location_bit_to_str(location));
 		return -EINVAL;

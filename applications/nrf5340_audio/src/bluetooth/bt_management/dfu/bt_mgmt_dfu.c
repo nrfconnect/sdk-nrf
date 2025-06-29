@@ -75,8 +75,7 @@ static struct bt_conn_cb dfu_conn_callbacks = {
 
 /*
  * If desired, the different names can be set in DFU mode.
- * E.g. based on the device location
- *
+ * E.g. based on the device location.
  */
 static void dfu_set_bt_name(void)
 {
