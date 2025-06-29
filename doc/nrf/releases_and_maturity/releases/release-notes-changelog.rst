@@ -569,6 +569,10 @@ Wi-Fi samples
 
   * Updated :ref:`wifi_radio_test` and :ref:`wifi_radio_test_sd` samples to clarify platform support for single-domain and multi-domain radio tests.
 
+* :ref:`wifi_shutdown_sample`:
+
+  * Updated the sample to include both One-shot and Continuous modes of operations.
+
 Other samples
 -------------
 
