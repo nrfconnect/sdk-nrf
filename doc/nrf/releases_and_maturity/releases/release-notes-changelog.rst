@@ -774,6 +774,7 @@ Libraries for networking
 
     * A bug in the shell implementation causing endless download retries on errors.
     * A bug in the shell to allow multiple downloads.
+    * An issue with error handling where network-down errors were not properly forwarded to the application during reconnection failures.
 
 Libraries for NFC
 -----------------
