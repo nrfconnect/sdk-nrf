@@ -48,7 +48,7 @@ tests:
       - nrf52833dk/nrf52833
       - nrf52833dongle/nrf52833
       - nrf52840dk/nrf52840
-      - nrf52840dongle/nrf52840
+      - nrf52840dongle/nrf52840/bare
       - nrf52840gmouse/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
@@ -60,7 +60,7 @@ tests:
       - nrf52833dk/nrf52833
       - nrf52833dongle/nrf52833
       - nrf52840dk/nrf52840
-      - nrf52840dongle/nrf52840
+      - nrf52840dongle/nrf52840/bare
       - nrf52840gmouse/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
@@ -119,28 +119,28 @@ tests:
       - nrf52833dk/nrf52833
       - nrf52833dongle/nrf52833
       - nrf52840dk/nrf52840
-      - nrf52840dongle/nrf52840
+      - nrf52840dongle/nrf52840/bare
       - nrf52840gmouse/nrf52840
     integration_platforms:
       - nrf52kbd/nrf52832
       - nrf52833dk/nrf52833
       - nrf52833dongle/nrf52833
       - nrf52840dk/nrf52840
-      - nrf52840dongle/nrf52840
+      - nrf52840dongle/nrf52840/bare
       - nrf52840gmouse/nrf52840
     extra_configs:
       - CONFIG_DESKTOP_SHELL=y
   applications.nrf_desktop.zdebug_3bleconn:
     build_only: true
-    platform_allow: nrf52840dongle/nrf52840
+    platform_allow: nrf52840dongle/nrf52840/bare
     integration_platforms:
-      - nrf52840dongle/nrf52840
+      - nrf52840dongle/nrf52840/bare
     extra_args: FILE_SUFFIX=3bleconn
   applications.nrf_desktop.zdebug_4llpmconn:
     build_only: true
-    platform_allow: nrf52840dongle/nrf52840
+    platform_allow: nrf52840dongle/nrf52840/bare
     integration_platforms:
-      - nrf52840dongle/nrf52840
+      - nrf52840dongle/nrf52840/bare
     extra_args: FILE_SUFFIX=4llpmconn
   applications.nrf_desktop.zdebug_dongle:
     build_only: true
@@ -214,7 +214,7 @@ tests:
       - nrf52833dk/nrf52833
       - nrf52833dongle/nrf52833
       - nrf52840dk/nrf52840
-      - nrf52840dongle/nrf52840
+      - nrf52840dongle/nrf52840/bare
       - nrf52840gmouse/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
@@ -231,7 +231,7 @@ tests:
       - nrf52833dk/nrf52833
       - nrf52833dongle/nrf52833
       - nrf52840dk/nrf52840
-      - nrf52840dongle/nrf52840
+      - nrf52840dongle/nrf52840/bare
       - nrf52840gmouse/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
@@ -260,20 +260,20 @@ tests:
       - FILE_SUFFIX=release_fast_pair
   applications.nrf_desktop.zrelease_4llpmconn:
     build_only: true
-    platform_allow: nrf52840dongle/nrf52840
+    platform_allow: nrf52840dongle/nrf52840/bare
     integration_platforms:
-      - nrf52840dongle/nrf52840
+      - nrf52840dongle/nrf52840/bare
     extra_args: FILE_SUFFIX=release_4llpmconn
   applications.nrf_desktop.zdebug.usb_next:
     build_only: true
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf52840gmouse/nrf52840
-      - nrf52840dongle/nrf52840
+      - nrf52840dongle/nrf52840/bare
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf52840gmouse/nrf52840
-      - nrf52840dongle/nrf52840
+      - nrf52840dongle/nrf52840/bare
     extra_configs:
       - CONFIG_DESKTOP_USB_STACK_NEXT=y
   applications.nrf_desktop.zdebug_dongle.usb_next:
@@ -296,10 +296,10 @@ tests:
     build_only: true
     platform_allow:
       - nrf52840dk/nrf52840
-      - nrf52840dongle/nrf52840
+      - nrf52840dongle/nrf52840/bare
     integration_platforms:
       - nrf52840dk/nrf52840
-      - nrf52840dongle/nrf52840
+      - nrf52840dongle/nrf52840/bare
     extra_args: FILE_SUFFIX=release
     extra_configs:
       - CONFIG_DESKTOP_USB_STACK_NEXT=y
