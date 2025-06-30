@@ -303,6 +303,10 @@ nRF Desktop
   * The :ref:`nrf_desktop_hid_reportq` to accept HID report IDs that do not belong to HID input reports supported by the application (are not part of the ``input_reports`` array defined in :file:`configuration/common/hid_report_desc.h` file).
     Before the change, providing an unsupported HID report ID caused an assertion failure.
     Function signatures of the :c:func:`hid_reportq_subscribe` and :c:func:`hid_reportq_unsubscribe` functions were slightly changed (both functions return an error in case the provided HID report ID is unsupported).
+  * The number of ATT buffers (:kconfig:option:`CONFIG_BT_ATT_TX_COUNT`) in application configuration for nRF Desktop peripherals.
+    Extra ATT buffers are no longer needed for keyboards as :ref:`nrf_desktop_hids` limits the maximum number of simultaneously processed HID input reports (:ref:`CONFIG_DESKTOP_HIDS_SUBSCRIBER_REPORT_MAX <config_desktop_app_options>`) to ``2`` by default.
+  * The nRF Desktop application aligns the defaults of :kconfig:option:`CONFIG_BT_ATT_TX_COUNT` and :kconfig:option:`CONFIG_BT_CONN_TX_MAX` Kconfig options to application needs.
+    The options are no longer explicitly set in application configurations.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------

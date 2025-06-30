@@ -124,6 +124,14 @@ config BT_CONN_PARAM_UPDATE_TIMEOUT
 	  nRF Desktop peripherals update connection parameters earlier to lower
 	  HID data latency.
 
+config BT_ATT_TX_COUNT
+	default 4
+	help
+	  This number of ATT buffers allows the nRF Desktop peripheral to
+	  simultaneously send two GATT notifications with HID reports (required
+	  for HID input report pipeline support), BAS notification, and an ATT
+	  response.
+
 config BT_ATT_SENT_CB_AFTER_TX
 	default y
 	help
@@ -131,6 +139,12 @@ config BT_ATT_SENT_CB_AFTER_TX
 	  transmission is done by BLE controller. This is needed to ensure low
 	  latency of provided HID data. The ATT sent callback is used by the
 	  application to trigger sending subsequent HID report.
+
+config BT_CONN_TX_MAX
+	default BT_ATT_TX_COUNT
+	help
+	  For an nRF Desktop peripheral, the maximum number of pending TX
+	  buffers with a callback is aligned to the number of ATT buffers.
 
 config BT_GATT_CHRC_POOL_SIZE
 	default 7 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
@@ -270,6 +284,13 @@ config BT_MAX_PAIRED
 	help
 	  Change the default value for the maximum number of paired devices
 	  to be compatible with the dongle bond count.
+
+config BT_ATT_TX_COUNT
+	default 6
+	help
+	  This number of ATT buffers allows nRF Desktop dongles to connect with
+	  a subsequent peripheral before finishing subscribing for HID reports
+	  from the previously connected peripheral.
 
 endif # DESKTOP_BT_CENTRAL
 
