@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <dt-bindings/regulator/npm1300.h>
+#include <dt-bindings/regulator/npm13xx.h>
 #include <dt-bindings/regulator/npm6001.h>
 
 &i2c2 {
@@ -64,14 +64,14 @@
 			};
 			/* LDO1 is used as a load switch pulling the nPM6001 enable line to VSYS */
 			ldsw_nPM6001_en: LDO1 {
-				regulator-initial-mode = <NPM1300_LDSW_MODE_LDSW>;
-				regulator-allowed-modes = <NPM1300_LDSW_MODE_LDSW>;
+				regulator-initial-mode = <NPM13XX_LDSW_MODE_LDSW>;
+				regulator-allowed-modes = <NPM13XX_LDSW_MODE_LDSW>;
 				regulator-boot-off;
 			};
 			/* LDO2 is used as a load switch for sensor power supply */
 			ldsw_sensors: LDO2 {
-				regulator-initial-mode = <NPM1300_LDSW_MODE_LDSW>;
-				regulator-allowed-modes = <NPM1300_LDSW_MODE_LDSW>;
+				regulator-initial-mode = <NPM13XX_LDSW_MODE_LDSW>;
+				regulator-allowed-modes = <NPM13XX_LDSW_MODE_LDSW>;
 				regulator-boot-on;
 			};
 		};

@@ -8,7 +8,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/sensor.h>
-#include <zephyr/drivers/sensor/npm1300_charger.h>
+#include <zephyr/drivers/sensor/npm13xx_charger.h>
 #include <zephyr/sys/printk.h>
 #include <zephyr/sys/util.h>
 
@@ -46,7 +46,7 @@ static int read_sensors(const struct device *charger, float *voltage, float *cur
 	sensor_channel_get(charger, SENSOR_CHAN_GAUGE_AVG_CURRENT, &value);
 	*current = (float)value.val1 + ((float)value.val2 / 1000000);
 
-	sensor_channel_get(charger, SENSOR_CHAN_NPM1300_CHARGER_STATUS, &value);
+	sensor_channel_get(charger, SENSOR_CHAN_NPM13XX_CHARGER_STATUS, &value);
 	*chg_status = value.val1;
 
 	return 0;

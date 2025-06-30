@@ -8,7 +8,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/gpio.h>
-#include <zephyr/drivers/mfd/npm1300.h>
+#include <zephyr/drivers/mfd/npm13xx.h>
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/sys/printk.h>
 
@@ -22,12 +22,12 @@ static volatile bool vbus_connected;
 
 static void event_callback(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
 {
-	if (pins & BIT(NPM1300_EVENT_VBUS_DETECTED)) {
+	if (pins & BIT(NPM13XX_EVENT_VBUS_DETECTED)) {
 		printk("Vbus connected\n");
 		vbus_connected = true;
 	}
 
-	if (pins & BIT(NPM1300_EVENT_VBUS_REMOVED)) {
+	if (pins & BIT(NPM13XX_EVENT_VBUS_REMOVED)) {
 		printk("Vbus removed\n");
 		vbus_connected = false;
 	}
@@ -55,10 +55,10 @@ int main(void)
 	static struct gpio_callback event_cb;
 
 	gpio_init_callback(&event_cb, event_callback,
-				   BIT(NPM1300_EVENT_VBUS_DETECTED) |
-				   BIT(NPM1300_EVENT_VBUS_REMOVED));
+				   BIT(NPM13XX_EVENT_VBUS_DETECTED) |
+				   BIT(NPM13XX_EVENT_VBUS_REMOVED));
 
-	err = mfd_npm1300_add_callback(pmic, &event_cb);
+	err = mfd_npm13xx_add_callback(pmic, &event_cb);
 	if (err) {
 		printk("Failed to add pmic callback.\n");
 		return 0;

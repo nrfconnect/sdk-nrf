@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- #include <dt-bindings/regulator/npm1300.h>
+ #include <dt-bindings/regulator/npm13xx.h>
 
 &i2c130_default {
 	group1 {

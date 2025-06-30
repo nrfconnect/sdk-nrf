@@ -9,7 +9,7 @@
 #include <zephyr/device.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/led.h>
-#include <zephyr/drivers/mfd/npm1300.h>
+#include <zephyr/drivers/mfd/npm13xx.h>
 #include <zephyr/drivers/regulator.h>
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/sys/printk.h>
@@ -32,11 +32,11 @@ static void event_callback(const struct device *dev, struct gpio_callback *cb, u
 {
 	static int press_t;
 
-	if (pins & BIT(NPM1300_EVENT_SHIPHOLD_PRESS)) {
+	if (pins & BIT(NPM13XX_EVENT_SHIPHOLD_PRESS)) {
 		press_t = k_uptime_get();
 	}
 
-	if (pins & BIT(NPM1300_EVENT_SHIPHOLD_RELEASE)) {
+	if (pins & BIT(NPM13XX_EVENT_SHIPHOLD_RELEASE)) {
 		press_t = k_uptime_get() - press_t;
 
 		if (press_t < PRESS_SHORT_MS) {
@@ -61,12 +61,12 @@ static void event_callback(const struct device *dev, struct gpio_callback *cb, u
 		}
 	}
 
-	if (pins & BIT(NPM1300_EVENT_VBUS_DETECTED)) {
+	if (pins & BIT(NPM13XX_EVENT_VBUS_DETECTED)) {
 		printk("Vbus connected\n");
 		vbus_connected = true;
 	}
 
-	if (pins & BIT(NPM1300_EVENT_VBUS_REMOVED)) {
+	if (pins & BIT(NPM13XX_EVENT_VBUS_REMOVED)) {
 		printk("Vbus removed\n");
 		vbus_connected = false;
 	}
@@ -97,11 +97,11 @@ bool configure_events(void)
 	static struct gpio_callback event_cb;
 
 	gpio_init_callback(&event_cb, event_callback,
-			   BIT(NPM1300_EVENT_SHIPHOLD_PRESS) | BIT(NPM1300_EVENT_SHIPHOLD_RELEASE) |
-				   BIT(NPM1300_EVENT_VBUS_DETECTED) |
-				   BIT(NPM1300_EVENT_VBUS_REMOVED));
+			   BIT(NPM13XX_EVENT_SHIPHOLD_PRESS) | BIT(NPM13XX_EVENT_SHIPHOLD_RELEASE) |
+				   BIT(NPM13XX_EVENT_VBUS_DETECTED) |
+				   BIT(NPM13XX_EVENT_VBUS_REMOVED));
 
-	mfd_npm1300_add_callback(pmic, &event_cb);
+	mfd_npm13xx_add_callback(pmic, &event_cb);
 
 	/* Initialise vbus detection status */
 	struct sensor_value val;

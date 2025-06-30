@@ -12,7 +12,7 @@ if !IS_BOOTLOADER_IMG
 config REGULATOR
 	default y
 
-# nPM6001 must be initialized after it is powered from nPM1300 (REGULATOR_NPM1300_INIT_PRIORITY)
+# nPM6001 must be initialized after it is powered from nPM1300 (REGULATOR_NPM13XX_INIT_PRIORITY)
 config MFD_NPM6001_INIT_PRIORITY
 	default 87
 config REGULATOR_NPM6001_INIT_PRIORITY
@@ -20,7 +20,7 @@ config REGULATOR_NPM6001_INIT_PRIORITY
 config WIFI_INIT_PRIORITY
 	default 89
 
-# GPIO hogs must be initialized after nPM1300 (GPIO_NPM1300_INIT_PRIORITY)
+# GPIO hogs must be initialized after nPM1300 (GPIO_NPM13XX_INIT_PRIORITY)
 config GPIO_HOGS_INIT_PRIORITY
 	default 86
 

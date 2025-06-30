@@ -1049,7 +1049,7 @@ ci_samples_pmic:
     - zephyr/drivers/i2c/
     - zephyr/drivers/mfd/
     - zephyr/drivers/regulator/
-    - zephyr/drivers/sensor/nordic/npm1300_charger/
+    - zephyr/drivers/sensor/nordic/npm13xx_charger/
 
 ci_samples_ipc:
   files:

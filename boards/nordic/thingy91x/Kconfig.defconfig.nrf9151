@@ -101,7 +101,7 @@ config I2C
 config GPIO_HOGS
 	default n
 
-config GPIO_NPM1300
+config GPIO_NPM13XX
 	default n
 
 endif # IS_BOOTLOADER_IMG
