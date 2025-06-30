@@ -66,12 +66,12 @@ jobs:
               bootloader/mcuboot/scripts/requirements.txt \
               zephyr/scripts/requirements.txt \
               nrf/scripts/requirements-west-ncs-sbom.txt \
-              nrf/scripts/requirements-ci.txt \
+              nrf/scripts/requirements-actions.in \
               nrf/scripts/requirements-extra.txt \
               nrf/scripts/requirements.txt \
               --output-file nrf/scripts/requirements-fixed.txt \
               --min-python-version 3.12 \
-              --index-url https://files.nordicsemi.com/artifactory/api/pypi/nordic-pypi/simple
+              --generate-hashes
 
             deactivate
             rmvirtualenv pip-fixed-venv
