@@ -19,6 +19,9 @@ on:
       - '.github/workflows/vale-lint.yml'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   vale:
     name: Vale doc linter

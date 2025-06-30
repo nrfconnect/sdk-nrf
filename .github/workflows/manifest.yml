@@ -33,7 +33,7 @@ jobs:
       - name: Manifest
         uses: zephyrproject-rtos/action-manifest@ea38f222cddfbbb9debb5f0239f4139ae2677ebb # v1.8.0
         with:
-          github-token: ${{ secrets.NCS_GITHUB_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           manifest-path: 'west.yml'
           checkout-path: 'ncs/nrf'
           use-tree-checkout: 'true'
