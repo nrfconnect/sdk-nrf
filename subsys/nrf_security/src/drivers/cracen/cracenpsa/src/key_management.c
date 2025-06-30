@@ -1206,7 +1206,8 @@ psa_status_t generate_key_for_kmu(const psa_key_attributes_t *attributes, uint8_
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
-	} else if (key_type == PSA_KEY_TYPE_AES || key_type == PSA_KEY_TYPE_HMAC) {
+	} else if (key_type == PSA_KEY_TYPE_AES || key_type == PSA_KEY_TYPE_HMAC ||
+		   key_type == PSA_KEY_TYPE_CHACHA20) {
 		status = psa_generate_random(key, PSA_BITS_TO_BYTES(psa_get_key_bits(attributes)));
 		if (status != PSA_SUCCESS) {
 			return status;
