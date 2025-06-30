@@ -2,7 +2,6 @@
 
 / {
 	aliases {
-		led = &button3;
 		counter = &timer20;
 	};
 };
