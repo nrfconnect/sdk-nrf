@@ -357,7 +357,7 @@ Depending on the development kit you use, you need to select the respective conf
 
       .. table-from-rows:: /includes/sample_board_rows.txt
          :header: heading
-         :rows: nrf52840dongle_nrf52840, nrf52833dongle_nrf52833, nrf52820dongle_nrf52820
+         :rows: nrf52840dongle_nrf52840_bare, nrf52833dongle_nrf52833, nrf52820dongle_nrf52820
 
    .. tab:: DK
 
@@ -437,15 +437,15 @@ The application supports the following build types:
      - Debug version of the application with the support for the B0 bootloader enabled for `Works With ChromeBook (WWCB)`_.
    * - Triple Bluetooth LE connection
      - ``3bleconn``
-     - ``nrf52840dongle/nrf52840``
+     - ``nrf52840dongle/nrf52840/bare``
      - Debug version of the application with the support for up to three simultaneous Bluetooth LE connections.
    * - Quadruple LLPM connection
      - ``4llpmconn``
-     - ``nrf52840dongle/nrf52840``
+     - ``nrf52840dongle/nrf52840/bare``
      - Debug version of the application with the support for up to four simultaneous Bluetooth LE connections, in Low Latency Packet Mode.
    * - Release quadruple LLPM connection
      - ``release_4llpmconn``
-     - ``nrf52840dongle/nrf52840``
+     - ``nrf52840dongle/nrf52840/bare``
      - Release version of the application with the support for up to four simultaneous Bluetooth LE connections, in Low Latency Packet Mode.
 
 .. note::

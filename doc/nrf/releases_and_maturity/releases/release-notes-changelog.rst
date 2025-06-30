@@ -307,6 +307,7 @@ nRF Desktop
     Extra ATT buffers are no longer needed for keyboards as :ref:`nrf_desktop_hids` limits the maximum number of simultaneously processed HID input reports (:ref:`CONFIG_DESKTOP_HIDS_SUBSCRIBER_REPORT_MAX <config_desktop_app_options>`) to ``2`` by default.
   * The nRF Desktop application aligns the defaults of :kconfig:option:`CONFIG_BT_ATT_TX_COUNT` and :kconfig:option:`CONFIG_BT_CONN_TX_MAX` Kconfig options to application needs.
     The options are no longer explicitly set in application configurations.
+  * The nRF52840 dongle board target to the ``bare`` varaint to indicate that the application does not use and overwrite the onboard USB bootloader.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
