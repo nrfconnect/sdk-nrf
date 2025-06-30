@@ -597,6 +597,11 @@ Bluetooth libraries and services
   * Updated the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_MOTION_DETECTOR` Kconfig option dependency.
     The dependency has been updated from the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` Kconfig option to :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR`.
 
+  * Removed a workaround for the issue where the FMDN clock value might not be correctly set after the system reboot for nRF54L Series devices.
+    The kernel uptime value that is returned by the :c:func:`k_uptime_get` function is now correctly set to ``0`` during the system bootup process for each reset type.
+    As a result, the workaround for the FMDN clock value is no longer needed.
+    For details, see the ``NCSDK-32268`` known issue in the :ref:`known_issues` page.
+
 Common Application Framework
 ----------------------------
 
