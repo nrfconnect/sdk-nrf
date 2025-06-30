@@ -36,8 +36,10 @@ tests:
     harness: pytest
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     extra_args:
       - DTC_OVERLAY_FILE='boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay'
       - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
@@ -60,8 +62,10 @@ tests:
     harness: pytest
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     extra_args:
       - DTC_OVERLAY_FILE='boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay'
       - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
@@ -84,8 +88,10 @@ tests:
     harness: pytest
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     extra_args:
       - DTC_OVERLAY_FILE='boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay'
       - CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y
@@ -108,8 +114,10 @@ tests:
     harness: pytest
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     extra_args:
       - DTC_OVERLAY_FILE='boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay'
       - CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y
@@ -132,8 +140,10 @@ tests:
     harness: pytest
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     extra_args:
       - DTC_OVERLAY_FILE='boards/nrf54l15dk_nrf54l15_cpuapp_auto_non_conn_advert.overlay'
       - CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y
