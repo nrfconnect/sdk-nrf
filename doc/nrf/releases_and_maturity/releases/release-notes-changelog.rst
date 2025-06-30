@@ -362,7 +362,10 @@ Bluetooth samples
   * Updated the buffer count (:kconfig:option:`CONFIG_BT_ISO_TX_BUF_COUNT`) to be in-line with SoftDevice Controller (SDC) defaults.
     This can be changed and optimized for specific use cases.
 
-|no_changes_yet_note|
+* :ref:`direct_test_mode` sample:
+
+  * Fixed a bug in the workaround for errata 216 on nRF54H20 devices.
+    The device asserted when a packet was received during reception tests and too few packets where transmitted during transmission tests.
 
 Bluetooth Mesh samples
 ----------------------

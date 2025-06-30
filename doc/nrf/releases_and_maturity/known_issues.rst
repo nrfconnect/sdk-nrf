@@ -2696,6 +2696,15 @@ Bluetooth samples
 
 .. rst-class:: v3-0-2 v3-0-1 v3-0-0
 
+NCSDK-33915: The :ref:`direct_test_mode` asserts on nRF54H20 devices
+  The sample asserts during reception tests and sends too few packets during transmission tests.
+
+  **Affected platforms:** nRF54H20
+
+  **Workaround:** Move the ``errata216_on_wait()`` static function call from the ``radio_start()`` function to the test command handlers in :file:`dtm.c`, which enable radio: ``dtm_vendor_specific_pkt()``, ``dtm_test_receive()``, and ``dtm_test_transmit()``.
+
+.. rst-class:: v3-0-2 v3-0-1 v3-0-0
+
 NCSDK-33040: Output power tests running with the Anritsu tester fail
   This happens with the :ref:`direct_test_mode` sample.
 
