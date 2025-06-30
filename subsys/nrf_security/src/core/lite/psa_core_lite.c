@@ -7,9 +7,15 @@
 #include "psa_core_lite.h"
 #include <psa/crypto.h>
 #include <psa_crypto_driver_wrappers.h>
+
+#ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
 #include <cracen_psa_kmu.h>
+#endif
+
+#ifdef CONFIG_PSA_CRYPTO_DRIVER_CRACEN
 #include <cracen/mem_helpers.h>
 #include <cracen_psa_eddsa.h>
+#endif
 
 #if defined(CONFIG_PSA_CORE_LITE_NSIB_ED25519_OPTIMIZATIONS)
 #include "cracen_psa.h"
@@ -26,6 +32,7 @@ psa_status_t silex_statuscodes_to_psa(int ret);
 #error No valid curve for signature validation
 #endif
 
+#ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
 psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 	psa_key_attributes_t *attributes, uint8_t *key_buffer,
 	size_t key_buffer_size, size_t *key_buffer_length);
@@ -45,6 +52,7 @@ static psa_status_t get_key_buffer(
 
 	return cracen_kmu_get_builtin_key(slot_number, attributes, key, key_size, key_length);
 }
+#endif
 
 /* Signature validation algorithms */
 
