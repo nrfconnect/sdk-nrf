@@ -469,7 +469,9 @@ static K_SEM_DEFINE(errata216_sem, 0, 1);
 /**
  * @brief Send errata HMPAN-216 on request signal to SysCtrl
  *
- * Also ensure RADIO is not started within 40 us after the signal is triggered,
+ * According to HMPAN-216, this procedure should be executed every time
+ * before RADIO is started (for TX and RX).
+ * Ensure RADIO is not started within 40 us after the signal is triggered,
  * so execution is blocked until then by a semaphore.
  *
  * @return 0 if successful, otherwise a negative error code
@@ -501,6 +503,10 @@ static int errata216_on_wait(void)
 
 /**
  * @brief Send errata HMPAN-216 off request signal to SysCtrl
+ *
+ * According to HMPAN-216, this procedure should be executed
+ * after RADIO goes to DISABLED state and will not be started again
+ * in less than 100 us.
  *
  * @return 0 if successful, otherwise a negative error code
  */
@@ -1729,11 +1735,6 @@ static void dtm_test_done(void)
 
 static void radio_start(bool rx, bool force_egu)
 {
-	/* Send the nRF54H20 errata 216 on signal */
-	if (errata216_on_wait()) {
-		printk("Failed to send errata HMPAN-216 on signal\n");
-	}
-
 	if (IS_ENABLED(CONFIG_FEM) || force_egu) {
 		nrf_egu_event_clear(DTM_EGU, DTM_EGU_EVENT);
 		nrf_egu_task_trigger(DTM_EGU, DTM_EGU_TASK);
@@ -1877,6 +1878,11 @@ static int dtm_vendor_specific_pkt(uint32_t vendor_cmd, uint32_t vendor_option)
 	 */
 	case CARRIER_TEST:
 	case CARRIER_TEST_STUDIO:
+		/* Send the nRF54H20 errata 216 on signal */
+		if (errata216_on_wait()) {
+			printk("Failed to send errata HMPAN-216 on signal\n");
+		}
+
 		/* Not a packet type, but used to indicate that a continuous
 		 * carrier signal should be transmitted by the radio.
 		 */
@@ -2358,6 +2364,11 @@ int dtm_test_receive(uint8_t channel)
 	 */
 	memset(&dtm_inst.pdu, 0, sizeof(dtm_inst.pdu));
 
+	/* Send the nRF54H20 errata 216 on signal */
+	if (errata216_on_wait()) {
+		printk("Failed to send errata HMPAN-216 on signal\n");
+	}
+
 	/* Reinitialize "everything"; RF interrupts OFF */
 	radio_prepare(RX_MODE);
 
@@ -2503,6 +2514,11 @@ int dtm_test_transmit(uint8_t channel, uint8_t length, enum dtm_packet pkt)
 							DTM_PKT_CP_BIT;
 		dtm_inst.current_pdu->content[DTM_HEADER_CTEINFO_OFFSET] =
 							dtm_inst.cte_info.info;
+	}
+
+	/* Send the nRF54H20 errata 216 on signal */
+	if (errata216_on_wait()) {
+		printk("Failed to send errata HMPAN-216 on signal\n");
 	}
 
 	/* Initialize CRC value, set channel */
