@@ -22,6 +22,9 @@
 psa_status_t silex_statuscodes_to_psa(int ret);
 #endif
 
+#if defined(PSA_WANT_ALG_ECDSA) || defined(PSA_WANT_ALG_DETERMINISTIC_ECDSA) || \
+	defined(PSA_WANT_ALG_PURE_EDDSA)
+
 #if (defined(PSA_WANT_ALG_ECDSA) || defined(PSA_WANT_ALG_DETERMINISTIC_ECDSA)) && \
 	defined(PSA_WANT_ECC_SECP_R1_256)
 	const size_t pub_key_max_size = 65;
@@ -30,6 +33,8 @@ psa_status_t silex_statuscodes_to_psa(int ret);
 	const size_t pub_key_max_size = 32;
 #else
 #error No valid curve for signature validation
+#endif
+
 #endif
 
 #ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
