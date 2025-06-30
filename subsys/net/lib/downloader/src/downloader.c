@@ -305,7 +305,7 @@ reconnect:
 				}
 
 				LOG_ERR("Failed to reconnect, err %d", rc2);
-				if (rc == -ECONNRESET) {
+				if ((rc == -ECONNRESET) || (rc == -ENETDOWN)) {
 					/* We haven't sent the error before in this case,
 					 * so we do it now.
 					 */
