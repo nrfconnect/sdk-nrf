@@ -87,12 +87,13 @@ nRF52832 Desktop Keyboard (``nrf52kbd``)
       * The board supports ``release`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration (``release_fast_pair`` file suffix).
         The configuration uses the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and supports firmware updates using the :ref:`nrf_desktop_dfu` and the :ref:`nrf_desktop_dfu_mcumgr`.
 
-nRF52840 USB Dongle (``nrf52840dongle/nrf52840``) and nRF52833 USB Dongle (``nrf52833dongle``)
+nRF52840 USB Dongle (``nrf52840dongle/nrf52840/bare``) and nRF52833 USB Dongle (``nrf52833dongle``)
       * Since the nRF52840 Dongle is generic and defined in Zephyr, project-specific changes are applied in the DTS overlay file.
       * The application is configured to act as a dongle that forwards data from both mouse and keyboard.
       * Bluetooth uses Nordic Semiconductor's SoftDevice link layer and is configured to act as a central.
         Input data comes from Bluetooth and is retransmitted to USB.
-      * The configuration with the B0 bootloader is set as default for the ``nrf52840dongle/nrf52840`` board and with the MCUboot bootloader is set as default for the ``nrf52833dongle`` board.
+      * For the ``nrf52840dongle/nrf52840/bare`` board, the configuration using the B0 bootloader is set as the default.
+        For the ``nrf52833dongle`` board, the configuration using the MCUboot bootloader is set as the default.
 
 nRF52820 USB Dongle (``nrf52820dongle``)
       * The application is configured to act as a dongle that forwards data from both mouse and keyboard.

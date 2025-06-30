@@ -208,7 +208,9 @@ nRF5340 Audio
 nRF Desktop
 -----------
 
-|no_changes_yet_note|
+* Updated:
+
+  * The ``bare`` variant of the nRF52840 Dongle board target to indicate that the application does not use the onboard USB bootloader and will overwrite it.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------

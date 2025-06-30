@@ -35,7 +35,7 @@ The option selects :kconfig:option:`CONFIG_BT_HCI_VS_EVT_USER`, because the modu
 You can use the :ref:`CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE <config_desktop_app_options>` Kconfig option to enable real-time QoS information printouts through the USB CDC ACM port.
 The :ref:`CONFIG_DESKTOP_USB_STACK_LEGACY <config_desktop_app_options>` Kconfig option must be enabled.
 Also, the selected USB CDC ACM instance must be enabled, and specified in the devicetree using the ``ncs,ble-qos-uart`` DT chosen.
-For an example of configuration that specifies the ``ncs,ble-qos-uart`` DT chosen, see the :file:`configuration/nrf52840dongle_nrf52840/app.overlay` file.
+For an example of a configuration that specifies the ``ncs,ble-qos-uart`` DT chosen, see the :file:`configuration/nrf52840dongle_nrf52840_bare/app.overlay` file.
 This option automatically selects other Kconfig options needed to handle statistics printouts over the USB CDC ACM port:
 
 * :kconfig:option:`CONFIG_USB_COMPOSITE_DEVICE`
