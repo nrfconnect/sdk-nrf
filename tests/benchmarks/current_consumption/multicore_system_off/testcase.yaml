@@ -7,10 +7,11 @@ tests:
   benchmarks.current_consumption.multicore_system_off:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20pdk/nrf54lm20a/cpuapp
     extra_args:
-      - SB_CONF_FILE=sysbuild/nrf54l15dk_nrf54l15_cpuflpr.conf
       - SB_CONFIG_PARTITION_MANAGER=n
     harness: pytest
     harness_config:
