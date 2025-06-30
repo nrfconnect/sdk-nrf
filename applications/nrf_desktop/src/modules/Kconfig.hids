@@ -40,6 +40,21 @@ config DESKTOP_HIDS_SUBSCRIBER_PRIORITY
 	  priority in subscription to HID reports. By default, the HID service uses the lowest
 	  possible priority.
 
+config DESKTOP_HIDS_SUBSCRIBER_REPORT_MAX
+	int "Maximum number of processed HID input reports"
+	default 2
+	range 2 255
+	help
+	  The Kconfig option limits the number of HID input reports that can be
+	  simultaneously processed by the module. This limits the number of GATT
+	  notifications with HID reports in the Bluetooth stack. If increasing
+	  the value of this Kconfig option, make sure to also align the number
+	  of ATT buffers in configuration (BT_ATT_TX_COUNT).
+
+	  The minimum value of two is required to use a pipeline of HID input
+	  reports. This ensures that a HID report can be sent on every Bluetooth
+	  LE connection event.
+
 choice BT_HIDS_DEFAULT_PERM
 	default BT_HIDS_DEFAULT_PERM_RW_ENCRYPT
 	help

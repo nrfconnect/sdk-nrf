@@ -37,7 +37,15 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_HIDS_LOG_LEVEL);
  * Bluetooth LE connection event.
  */
 #define HIDS_SUBSCRIBER_PIPELINE_SIZE 0x02
-#define HIDS_SUBSCRIBER_REPORT_MAX    UINT8_MAX
+#define HIDS_SUBSCRIBER_REPORT_MAX    CONFIG_DESKTOP_HIDS_SUBSCRIBER_REPORT_MAX
+
+BUILD_ASSERT(HIDS_SUBSCRIBER_REPORT_MAX >= HIDS_SUBSCRIBER_PIPELINE_SIZE,
+	     "Ensure that HID input report pipeline can be created");
+/* Make sure that there is at least one extra ATT buffer for ATT response.
+ * More ATT buffers might be needed for other application modules (e.g. bas).
+ */
+BUILD_ASSERT(CONFIG_BT_ATT_TX_COUNT > HIDS_SUBSCRIBER_REPORT_MAX,
+	     "Too small number of ATT buffers");
 
 BT_HIDS_DEF(hids_obj,
 	IF_ENABLED(CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT,

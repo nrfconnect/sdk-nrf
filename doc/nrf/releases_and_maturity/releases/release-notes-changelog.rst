@@ -272,6 +272,9 @@ nRF Desktop
     The file is now the header of the :ref:`nrf_desktop_hid_keymap` and contains APIs exposed by the utility.
   * The :ref:`nrf_desktop_keys_state`.
     The utility can be used by an application module to track the state of active keys.
+  * The :ref:`CONFIG_DESKTOP_HIDS_SUBSCRIBER_REPORT_MAX <config_desktop_app_options>` Kconfig option to :ref:`nrf_desktop_hids`.
+    The option allows you to limit the number of HID input reports that can be simultaneously processed by the module.
+    This limits the number of GATT notifications with HID reports in the Bluetooth stack.
 
 * Updated:
 
