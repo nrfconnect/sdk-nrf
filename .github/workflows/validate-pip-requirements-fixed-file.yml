@@ -34,6 +34,12 @@ jobs:
         with:
           python-version: '${{ steps.pyv.outputs.python_version }}'
 
+      - name: Cache pip
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip
+
       - name: Setup environment
         working-directory: ncs
         run: |
@@ -44,36 +50,5 @@ jobs:
         with:
           diff_file: "ncs/nrf/scripts/requirements-fixed.txt"
           script_call: |
-            cd ncs
-            OUT_FILE="nrf/scripts/requirements-fixed.txt"
-            echo "Writing frozen requirements to: $OUT_FILE"
-            echo "Log python version: $(python --version)"
-
-            TOPDIR=$(west topdir)
-            cd $TOPDIR
-
-            source ~/.local/bin/virtualenvwrapper.sh
-            [[ $? != 0 ]] && echo "error sourcing virtualenvwrapper" && exit 1
-
-            rmvirtualenv pip-fixed-venv > /dev/null 2>&1
-            # We need to force the result of the following command.
-            # For no aparent reason it returns 1 with the same output as local.
-            mkvirtualenv pip-fixed-venv  > /dev/null 2>&1 || true
-            workon pip-fixed-venv  > /dev/null 2>&1
-
-            pip3 install \
-              --index-url https://files.nordicsemi.com/artifactory/api/pypi/nordic-pypi/simple \
-              pip-compile-cross-platform==1.4.2+nordic.3 --upgrade > /dev/null 2>&1
-            pip-compile-cross-platform \
-              bootloader/mcuboot/scripts/requirements.txt \
-              zephyr/scripts/requirements.txt \
-              nrf/scripts/requirements-west-ncs-sbom.txt \
-              nrf/scripts/requirements-actions.in \
-              nrf/scripts/requirements-extra.txt \
-              nrf/scripts/requirements.txt \
-              --output-file nrf/scripts/requirements-fixed.txt \
-              --min-python-version 3.12 \
-              --generate-hashes
-
-            deactivate
-            rmvirtualenv pip-fixed-venv
+            ls ncs
+            bash ncs/nrf/scripts/validate-pip-req.sh

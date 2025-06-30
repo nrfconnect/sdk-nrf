@@ -707,6 +707,8 @@
 /scripts/nrf_profiler/                    @nrfconnect/ncs-si-bluebagel
 /scripts/tools-versions-*.txt             @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
 /scripts/requirements-*.txt               @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
+/scripts/requirements-*.in                @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
+/scripts/validate-pip-req.sh              @nrfconnect/ncs-ci
 /scripts/west_commands/utils/             @gmarull
 /scripts/west_commands/create_board/      @gmarull
 /scripts/west_commands/sbom/              @nrfconnect/ncs-co-scripts
