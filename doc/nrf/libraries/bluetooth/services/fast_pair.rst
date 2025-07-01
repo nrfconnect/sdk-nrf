@@ -27,6 +27,8 @@ The Fast Pair service also contains additional GATT characteristics under the fo
 * The Beacon Actions GATT characteristic when the Find My Device Network (FMDN) extension is enabled (:kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN`).
   The characteristic is described in the `Fast Pair Find My Device Network extension`_ documentation.
 
+  .. include:: /includes/fast_pair_fmdn_rename.txt
+
 Configuration
 *************
 

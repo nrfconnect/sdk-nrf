@@ -74,6 +74,8 @@ The FMDN extension leverages the Find My Device network, which is a crowdsourced
 The entire process is end-to-end encrypted and anonymous, so no one else (including Google) can view device's location or information.
 The Find My Device network also includes features protecting the user against unwanted tracking.
 
+.. include:: /includes/fast_pair_fmdn_rename.txt
+
 You can add your accessory to the Find My Device network through provisioning that happens during the Bluetooth LE connection.
 Once provisioned, the accessory starts to advertise FMDN frames that contain its unique identifier.
 This advertising payload is used by nearby Android devices to report the accessory location to its owner.
