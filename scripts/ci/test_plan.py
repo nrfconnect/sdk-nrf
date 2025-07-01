@@ -302,8 +302,9 @@ class Filters:
             scope_found = False
             while not scope_found and d:
                 head, tail = os.path.split(d)
-                if os.path.exists(os.path.join(d, "testcase.yaml")) or \
-                    os.path.exists(os.path.join(d, "sample.yaml")):
+                if (os.path.exists(os.path.join(d, "testcase.yaml")) or \
+                    os.path.exists(os.path.join(d, "sample.yaml"))) and \
+                    not os.path.exists(os.path.join(d, "find_test.ignore")):
                     if self.is_in_testsuite_root(d):
                         tests.add(d)
                         # Modified file is treated as resolved, since a matching scope was found
