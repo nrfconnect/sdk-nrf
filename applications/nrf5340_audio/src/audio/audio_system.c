@@ -102,7 +102,7 @@ static void audio_headset_configure(void)
 	}
 
 #if (CONFIG_STREAM_BIDIRECTIONAL)
-	sw_codec_cfg.encoder.audio_ch = 0;
+	sw_codec_cfg.encoder.audio_ch = AUDIO_CHANNEL_DEFAULT;
 	sw_codec_cfg.encoder.num_ch = 1;
 	sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
 #endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
@@ -378,8 +378,6 @@ int audio_system_decode(struct net_buf *audio_frame_in)
 	net_buf_add(audio_frame_out, USB_BLOCK_SIZE_MULTI_CHAN);
 	net_buf_user_data_copy(audio_frame_out, audio_frame_in);
 	meta_out->data_coding = PCM;
-	meta_out->bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS;
-	meta_out->carried_bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_OCTETS;
 	meta_out->bytes_per_location = FRAME_SIZE_BYTES;
 
 	ret = sw_codec_decode(audio_frame_in, audio_frame_out);
