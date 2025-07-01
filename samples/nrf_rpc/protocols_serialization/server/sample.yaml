@@ -59,3 +59,5 @@ tests:
     integration_platforms:
       - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
+    extra_configs:
+      - CONFIG_NRF_RPC_UTILS_CRASH_GEN=y

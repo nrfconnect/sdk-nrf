@@ -33,7 +33,7 @@ void nrf_rpc_crash_gen_assert(uint32_t delay_ms);
  *
  * @param[in] delay_ms Hard fault timeout in milliseconds.
  */
-void nrf_rpc_crash_hard_fault(uint32_t delay_ms);
+void nrf_rpc_crash_gen_hard_fault(uint32_t delay_ms);
 
 
 /** @brief Generate stack overflow on RPC server.
