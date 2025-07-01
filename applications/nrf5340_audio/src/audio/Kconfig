@@ -119,7 +119,7 @@ config AUDIO_DECODE_CHANNELS_MAX
 
 config AUDIO_ENCODE_CHANNELS_MAX
 	int "Maximum number of audio channels to encode"
-	default 1
+	default 2
 	help
 	  Maximum number of audio channels that can be encoded.
 	  This number may have a large impact on memory and CPU usage.
