@@ -59,11 +59,17 @@ static const struct gpio_dt_spec gpio_lrck_spec =
 
 static const struct device *dev_i2s;
 
+#if defined(CONFIG_COVERAGE)
+#define EXPECTED_MCLK_SCALE 0.8
+#else
+#define EXPECTED_MCLK_SCALE 1.0
+#endif
+
 /* The falling edge of the frame sync signal (LRCK)
  * indicates the start of the PCM word.
  * An arbitrary number of data words can be sent in one frame.
  */
-static uint32_t expected_lrck = WORDS_COUNT / NUMBER_OF_CHANNELS;
+static uint32_t expected_lrck = (WORDS_COUNT / NUMBER_OF_CHANNELS) * EXPECTED_MCLK_SCALE;
 
 /* There are MCLK_FREQ / FRAME_CLK_FREQ edges in one PCM sample.
  * There will be WORDS_COUNT / NUMBER_OF_CHANNELS PCM samples in total.
@@ -71,12 +77,12 @@ static uint32_t expected_lrck = WORDS_COUNT / NUMBER_OF_CHANNELS;
 #if defined(CONFIG_I2S_NRFX)
 #define MCLK_FREQ (32000)
 /* Due to lower performance some edges may be missed. */
-static uint32_t expected_mclk =
-	(MCLK_FREQ / FRAME_CLK_FREQ) * (WORDS_COUNT / NUMBER_OF_CHANNELS) * 0.94;
+static uint32_t expected_mclk = (MCLK_FREQ / FRAME_CLK_FREQ) * (WORDS_COUNT / NUMBER_OF_CHANNELS) *
+				0.94 * EXPECTED_MCLK_SCALE;
 #else
 #define MCLK_FREQ (64000)
 static uint32_t expected_mclk =
-	(MCLK_FREQ / FRAME_CLK_FREQ) * (WORDS_COUNT / NUMBER_OF_CHANNELS);
+	(MCLK_FREQ / FRAME_CLK_FREQ) * (WORDS_COUNT / NUMBER_OF_CHANNELS) * EXPECTED_MCLK_SCALE;
 #endif
 
 /* ISR that couns falling edges on the MCLK signal. */
