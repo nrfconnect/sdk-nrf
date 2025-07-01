@@ -14,6 +14,8 @@ Google Fast Pair Service (GFPS) is a standard for pairing Bluetooth® and Blueto
 Google Fast Pair standard also supports the Find My Device Network (FMDN) extension that is the main focus of this sample demonstration.
 For detailed information, see the official `Fast Pair Find My Device Network extension`_ documentation.
 
+.. include:: /includes/fast_pair_fmdn_rename.txt
+
 This sample follows the `Fast Pair Device Feature Requirements for Locator Tags`_ documentation and uses the Fast Pair configuration for the locator tag use case.
 The software maturity level for the locator tag use case is outlined in the :ref:`Google Fast Pair use case support <software_maturity_fast_pair_use_case>` table.
 

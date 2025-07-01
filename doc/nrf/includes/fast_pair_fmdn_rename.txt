@@ -1,0 +1,4 @@
+.. note::
+   The `Fast Pair Find My Device Network extension`_ has been renamed to the Find Hub Network (FHN) extension, and the `Find My Device app`_ is now called the Find Hub app.
+   However, this documentation page still uses the previous terminology.
+   The naming will be updated in the future releases.
