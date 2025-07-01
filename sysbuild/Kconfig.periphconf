@@ -1,0 +1,11 @@
+# Copyright (c) 2025 Nordic Semiconductor
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config NRF_PERIPHCONF_MIGRATE
+	bool "Generate periphconf_migrated.c"
+	default y
+	depends on SOC_SERIES_NRF54HX
+	help
+	  Enable autogenerating UICR.PERIPHCONF tables for multi-image builds,
+	  to migrate an existing project for running with IronSide SE.
+	  You can disable this if you have your own UICR.PERIPHCONF file.

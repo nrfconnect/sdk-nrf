@@ -4,24 +4,19 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-&cpurad_ram0x_region {
-	reg = <0x2f010000 0x1000>;
-	ranges = <0x0 0x2f010000 0x1000>;
-};
-
-&cpuapp_ram0x_region {
-	reg = <0x2f011000 0x91000>;
-	ranges = <0x0 0x2f011000 0x91000>;
-};
-
+/* Note: updated as part of move to IronSide where the default size of this has increased.
+ * At the time of writing the size used here is actually lower than the default.
+ * Global RAM retention is now also not based on memory regions in UICR, but must be configured in
+ * PERIPHCONF. So this likely needs further updates.
+ */
 &cpuapp_data {
-    reg = <0x1000 0x90000>;
+	reg = <0x2f000000 0x90000>;
 };
 
 &can120 {
-    status = "disabled";
+	status = "disabled";
 };
 
 &usbhs {
-    status = "disabled";
+	status = "disabled";
 };

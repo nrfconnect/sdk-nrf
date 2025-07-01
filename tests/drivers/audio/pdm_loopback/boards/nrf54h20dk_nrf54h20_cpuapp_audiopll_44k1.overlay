@@ -49,13 +49,13 @@ pdm_dev: &pdm0 {
 };
 
 &dppic130 {
-	owned-channels = <0>;
-	source-channels = <0>;
+	owned-channels = <1>;
+	source-channels = <1>;
 	status = "okay";
 };
 
 &dppic133 {
-	owned-channels = <0>;
-	sink-channels = <0>;
+	owned-channels = <1>;
+	sink-channels = <1>;
 	status = "okay";
 };

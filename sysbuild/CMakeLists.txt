@@ -752,10 +752,8 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
   endif()
 
   include_packaging()
-  if(NOT SB_CONFIG_SOC_NRF54H20_IRON)
-    include_suit_provisioning()
-    include_suit()
-  endif()
+  include_suit_provisioning()
+  include_suit()
 
   if(SB_CONFIG_SECURE_BOOT OR SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
     include_provision_hex()
@@ -879,6 +877,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
       ExternalProject_Get_Property(${main_app} BINARY_DIR)
       set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS ${BINARY_DIR}/zephyr/.config)
     endif()
+  endif()
+
+  if(SB_CONFIG_NRF_PERIPHCONF_MIGRATE)
+    include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/periphconf_migrate.cmake)
   endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 
