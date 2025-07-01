@@ -7,7 +7,7 @@
 cmake_minimum_required(VERSION 3.20.0)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
-project(mass)
+project(cdc_acm)
 
 include(${ZEPHYR_BASE}/samples/subsys/usb/common/common.cmake)
 FILE(GLOB app_sources ${ZEPHYR_BASE}/samples/subsys/usb/cdc_acm/src/*.c)
