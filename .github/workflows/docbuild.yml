@@ -133,9 +133,13 @@ jobs:
             cp doc/_zoomin/$docset.apis.tags.yml "$OUTDIR/tags.yml"
             sed -i 's/__VERSION__/'"$VERSION"'/g' "$OUTDIR/tags.yml"
 
-            # Patch links from Sphinx to Doxygen APIs
+            # Patch links from Sphinx to other docset Doxygen APIs
             find doc/_build/html/$docset -type f -name "*.html" -exec \
               sed -ri "/href=\"([^\"]+)\/([a-z]+)\/doxygen\/html\/([^\"]+)\"/{s//href=\"..\/..\/\1\/\2-apis-$VERSION\/page\/\3\"/g; :a s/__/_/g;ta; }" {} \;
+
+            # Patch links from Sphinx to same docset Doxygen APIs
+            find doc/_build/html/$docset -type f -name "*.html" -exec \
+              sed -ri "/href=\"([^\"]+)\/doxygen\/html\/([^\"]+)\"/{s//href=\"\1\/..\/..\/..\/$docset-apis-$VERSION\/page\/\2\"/g; :a s/__/_/g;ta; }" {} \;
 
             pushd "$OUTDIR"
             ARCHIVE="$docset-apis-$VERSION.zip"
