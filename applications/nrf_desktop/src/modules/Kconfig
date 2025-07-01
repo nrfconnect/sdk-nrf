@@ -17,6 +17,7 @@ menu "HID report providers"
 rsource "Kconfig.hid_provider_consumer_ctrl"
 rsource "Kconfig.hid_provider_mouse"
 rsource "Kconfig.hid_provider_keyboard"
+rsource "Kconfig.hid_provider_system_ctrl"
 
 endmenu
 
