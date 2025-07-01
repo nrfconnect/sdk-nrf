@@ -9,15 +9,10 @@ common:
 tests:
   nrf.extended.sample.drivers.mbox.nrf54l:
     platform_allow:
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
     integration_platforms:
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_args: mbox_SNIPPET=nordic-flpr
     sysbuild: true
@@ -31,15 +26,10 @@ tests:
 
   nrf.extended.sample.drivers.mbox.nrf54l_no_multithreading:
     platform_allow:
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
     integration_platforms:
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_args:
       - mbox_SNIPPET=nordic-flpr
@@ -56,15 +46,10 @@ tests:
 
   nrf.extended.sample.drivers.mbox.nrf54l_remote_no_multithreading:
     platform_allow:
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
     integration_platforms:
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_args:
       - mbox_SNIPPET=nordic-flpr
