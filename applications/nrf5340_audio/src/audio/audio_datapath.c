@@ -41,7 +41,7 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 #define BLK_PERIOD_US 1000
 
 /* Total sample FIFO period in microseconds */
-#define FIFO_CHANNELS_MAX   MAX(CONFIG_AUDIO_INPUT_CHANNELS_MAX, CONFIG_AUDIO_OUTPUT_CHANNELS_MAX)
+#define FIFO_CHANNELS_MAX   MAX(CONFIG_AUDIO_INPUT_CHANNELS, CONFIG_AUDIO_OUTPUT_CHANNELS)
 #define FIFO_SMPL_PERIOD_US (CONFIG_AUDIO_MAX_PRES_DLY_US * FIFO_CHANNELS_MAX)
 #define FIFO_NUM_BLKS	    NUM_BLKS(FIFO_SMPL_PERIOD_US)
 #define MAX_FIFO_SIZE                                                                              \
@@ -60,10 +60,10 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 
 #define NUM_BLKS_IN_FRAME	   NUM_BLKS(CONFIG_AUDIO_FRAME_DURATION_US)
 #define BLK_MONO_NUM_SAMPS	   BLK_SIZE_SAMPLES(CONFIG_AUDIO_SAMPLE_RATE_HZ)
-#define BLK_MULTI_CHAN_NUM_SAMPS   (BLK_MONO_NUM_SAMPS * CONFIG_AUDIO_OUTPUT_CHANNELS_MAX)
+#define BLK_MULTI_CHAN_NUM_SAMPS   (BLK_MONO_NUM_SAMPS * CONFIG_AUDIO_OUTPUT_CHANNELS)
 /* Number of octets in a single audio block */
 #define BLK_MONO_SIZE_OCTETS	   (BLK_MONO_NUM_SAMPS * CONFIG_AUDIO_BIT_DEPTH_OCTETS)
-#define BLK_MULTI_CHAN_SIZE_OCTETS (BLK_MONO_SIZE_OCTETS * CONFIG_AUDIO_OUTPUT_CHANNELS_MAX)
+#define BLK_MULTI_CHAN_SIZE_OCTETS (BLK_MONO_SIZE_OCTETS * CONFIG_AUDIO_OUTPUT_CHANNELS)
 
 /* Number of decoder buffers. */
 #define FIFO_NUM_BUFS 2
@@ -974,8 +974,6 @@ void audio_datapath_stream_out(struct net_buf *audio_frame_in)
 	net_buf_user_data_copy(audio_frame_out, audio_frame_in);
 	meta_out = net_buf_user_data(audio_frame_out);
 	meta_out->data_coding = PCM;
-	meta_out->bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS;
-	meta_out->carried_bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_OCTETS;
 	meta_out->bytes_per_location = FRAME_SIZE_BYTES;
 
 	ret = sw_codec_decode(audio_frame_in, audio_frame_out);

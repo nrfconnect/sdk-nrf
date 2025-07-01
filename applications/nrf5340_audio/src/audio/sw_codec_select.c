@@ -141,9 +141,9 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 			session_in_size = 0;
 		}
 
-		if (audio_frame_out->size < meta_out->bytes_per_location * chans_out) {
+		if (audio_frame_out->size < ctx->config.coded_frame_bytes * chans_out) {
 			LOG_ERR("Output buffer too small: %d (>=%d)", audio_frame_out->size,
-				(meta_out->bytes_per_location * chans_out));
+				(ctx->config.coded_frame_bytes * chans_out));
 			return -EINVAL;
 		}
 
@@ -155,7 +155,7 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 		 * will indicate which channel(s) they are. Prior to playout (I2S or TDM)
 		 * all other channels can be zeroed.
 		 */
-		for (uint8_t i = 0; i < chans_in; i++) {
+		for (uint8_t i = 0; i < chans_out; i++) {
 			if (ctx->config.interleaved && chans_in > 1) {
 				ret = pscm_uninterleave(audio_frame_in->data, audio_frame_in->size,
 							chans_in, i, ctx->config.bits_per_sample,
@@ -199,7 +199,7 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 			LOG_DBG("Completed LC3 encode of ch: %d", i);
 		}
 
-		meta_in->bytes_per_location = encoded_bytes_written;
+		meta_out->bytes_per_location = encoded_bytes_written;
 		net_buf_add(audio_frame_out, coded_out_size);
 #endif /* (CONFIG_SW_CODEC_LC3) */
 		break;
@@ -255,9 +255,9 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 			ctx->plc_count = 0;
 		}
 
-		meta_out->locations = ctx->config.locations;
 		meta_out->bits_per_sample = ctx->config.bits_per_sample;
 		meta_out->carried_bits_per_sample = ctx->config.carried_bits_per_sample;
+		meta_out->locations = ctx->config.locations;
 
 		chans_in = sw_codec_metadata_num_ch_get(meta_in);
 		chans_out = sw_codec_metadata_num_ch_get(meta_out);
@@ -266,13 +266,13 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 			memset(audio_frame_out->data, 0, audio_frame_out->size);
 		}
 
-		if (audio_frame_in->len <= meta_in->bytes_per_location * chans_in) {
+		if (meta_in->bytes_per_location <= ctx->config.coded_frame_bytes) {
 			session_in_size = meta_in->bytes_per_location;
 		} else {
 			session_in_size = 0;
 		}
 
-		if (audio_frame_out->size < meta_in->bytes_per_location * chans_out) {
+		if (audio_frame_out->size < ctx->config.sample_frame_bytes * chans_out) {
 			LOG_ERR("Output buffer too small: %d (<=%d)", audio_frame_out->size,
 				(ctx->config.sample_frame_bytes * chans_out));
 			return -EINVAL;
@@ -329,8 +329,9 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 
 		ctx->plc_count = plc_counter;
 
-		net_buf_add(audio_frame_out, resamp_pcm_size * chans_out);
+		meta_out->bytes_per_location = resamp_pcm_size;
 
+		net_buf_add(audio_frame_out, resamp_pcm_size * chans_out);
 #endif /* (CONFIG_SW_CODEC_LC3) */
 		break;
 	}
@@ -429,8 +430,8 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 
 			struct lc3_configuration *config = &sw_codec_cfg.encoder.lc3_ctx.config;
 
-			ret = sw_codec_lc3_decoded_size_get(
-				sw_codec_cfg.encoder.sample_rate_hz, sw_codec_cfg.encoder.bitrate,
+			ret = sw_codec_lc3_dec_size_get(
+				sw_codec_cfg.encoder.sample_rate_hz, CONFIG_AUDIO_BIT_DEPTH_BITS,
 				CONFIG_AUDIO_FRAME_DURATION_US, &config->sample_frame_bytes);
 			if (ret) {
 				return ret;
@@ -440,6 +441,7 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 			config->carried_bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_OCTETS * 8;
 			config->interleaved = true;
 			config->bitrate_bps = sw_codec_cfg.encoder.bitrate;
+			config->coded_frame_bytes = ENC_MAX_FRAME_SIZE;
 			config->locations =
 				BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT;
 		}
@@ -463,7 +465,7 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 
 			struct lc3_configuration *config = &sw_codec_cfg.decoder.lc3_ctx.config;
 
-			ret = sw_codec_lc3_encoded_size_get(
+			ret = sw_codec_lc3_enc_size_get(
 				sw_codec_cfg.decoder.sample_rate_hz, CONFIG_AUDIO_BIT_RATE_MAX,
 				CONFIG_AUDIO_FRAME_DURATION_US, &config->coded_frame_bytes);
 			if (ret) {
@@ -474,8 +476,10 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 			config->carried_bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_OCTETS * 8;
 			config->interleaved = true;
 			config->bitrate_bps = CONFIG_AUDIO_BIT_RATE_MAX;
+			config->sample_frame_bytes = PCM_NUM_BYTES_MONO;
 			config->locations =
 				BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT;
+			;
 		}
 		break;
 #else
