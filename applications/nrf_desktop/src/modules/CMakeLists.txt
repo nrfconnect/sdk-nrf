@@ -52,6 +52,9 @@ target_sources_ifdef(CONFIG_DESKTOP_HID_REPORT_PROVIDER_MOUSE
 target_sources_ifdef(CONFIG_DESKTOP_HID_REPORT_PROVIDER_KEYBOARD
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hid_provider_keyboard.c)
 
+target_sources_ifdef(CONFIG_DESKTOP_HID_REPORT_PROVIDER_SYSTEM_CTRL
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hid_provider_system_ctrl.c)
+
 target_sources_ifdef(CONFIG_DESKTOP_HID_STATE_PM_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hid_state_pm.c)
 
