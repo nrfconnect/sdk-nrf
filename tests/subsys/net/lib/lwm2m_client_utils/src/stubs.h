@@ -91,7 +91,7 @@ DECLARE_FAKE_VALUE_FUNC(int, lwm2m_set_default_sockopt, struct lwm2m_ctx *);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_rai_req, enum lwm2m_rai_mode);
 DECLARE_FAKE_VALUE_FUNC(struct net_if*, net_if_lookup_by_dev, const struct device *);
 DECLARE_FAKE_VOID_FUNC(net_mgmt_add_event_callback, struct net_mgmt_event_callback *);
-DECLARE_FAKE_VALUE_FUNC(int, net_mgmt_NET_REQUEST_WIFI_SCAN, uint32_t, struct net_if *,
+DECLARE_FAKE_VALUE_FUNC(int, net_mgmt_NET_REQUEST_WIFI_SCAN, uint64_t, struct net_if *,
 			void *, size_t);
 DECLARE_FAKE_VALUE_FUNC(int, lte_lc_conn_eval_params_get, struct lte_lc_conn_eval_params *);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_pause);

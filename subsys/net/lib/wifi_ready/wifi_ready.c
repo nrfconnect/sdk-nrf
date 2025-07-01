@@ -62,11 +62,11 @@ static void handle_wpa_supp_event(struct net_if *iface, bool ready)
 }
 
 static void wpa_supp_event_handler(struct net_mgmt_event_callback *cb,
-	uint32_t mgmt_event, struct net_if *iface)
+	uint64_t mgmt_event, struct net_if *iface)
 {
 	ARG_UNUSED(cb);
 
-	LOG_DBG("Event received: %d", mgmt_event);
+	LOG_DBG("Event received: %llu", mgmt_event);
 	switch (mgmt_event) {
 	case NET_EVENT_SUPPLICANT_READY:
 		handle_wpa_supp_event(iface, true);
@@ -75,7 +75,7 @@ static void wpa_supp_event_handler(struct net_mgmt_event_callback *cb,
 		handle_wpa_supp_event(iface, false);
 		break;
 	default:
-		LOG_DBG("Unhandled event (%d)", mgmt_event);
+		LOG_DBG("Unhandled event (%llu)", mgmt_event);
 		break;
 	}
 }
