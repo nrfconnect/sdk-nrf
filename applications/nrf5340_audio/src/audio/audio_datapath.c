@@ -768,12 +768,12 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts_us, uint32_t
 static void audio_datapath_i2s_start(void)
 {
 	/* Double buffer I2S */
-	uint8_t *tx_buf_0 = NULL;
-	uint8_t *tx_buf_1 = NULL;
+	uint8_t *tx_buf_one = NULL;
+	uint8_t *tx_buf_two = NULL;
 
 	/* Buffers used for I2S RX. Used interchangeably by I2S. */
-	static uint32_t rx_buf_0[BLK_MULTI_CHAN_SIZE_OCTETS];
-	static uint32_t rx_buf_1[BLK_MULTI_CHAN_SIZE_OCTETS];
+	static uint32_t rx_buf_one[BLK_MULTI_CHAN_SIZE_OCTETS];
+	static uint32_t rx_buf_two[BLK_MULTI_CHAN_SIZE_OCTETS];
 
 	/* TX */
 	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) || (CONFIG_AUDIO_DEV == HEADSET)) {
@@ -787,8 +787,8 @@ static void audio_datapath_i2s_start(void)
 	}
 
 	/* Start I2S */
-	audio_i2s_start(tx_buf_0, rx_buf_0);
-	audio_i2s_set_next_buf(tx_buf_1, rx_buf_1);
+	audio_i2s_start(tx_buf_one, rx_buf_one);
+	audio_i2s_set_next_buf(tx_buf_two, rx_buf_two);
 }
 
 static void audio_datapath_i2s_stop(void)
@@ -991,10 +991,9 @@ void audio_datapath_stream_out(struct net_buf *audio_frame_in)
 	}
 
 	if (audio_frame_out->len !=
-	    (sw_codec_metadata_num_ch_get(meta_out) * BLK_MONO_SIZE_OCTETS * NUM_BLKS_IN_FRAME)) {
+	    (CONFIG_AUDIO_OUTPUT_CHANNELS * BLK_MONO_SIZE_OCTETS * NUM_BLKS_IN_FRAME)) {
 		LOG_WRN("Decoded audio has wrong size: %d. Expected: %d", audio_frame_out->len,
-			(sw_codec_metadata_num_ch_get(meta_out) * BLK_MONO_SIZE_OCTETS *
-			 NUM_BLKS_IN_FRAME));
+			CONFIG_AUDIO_OUTPUT_CHANNELS * BLK_MONO_SIZE_OCTETS * NUM_BLKS_IN_FRAME);
 		/* Discard frame */
 		net_buf_unref(audio_frame_out);
 		return;

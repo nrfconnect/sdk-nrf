@@ -12,8 +12,6 @@
 #include "device_location.h"
 
 #if (CONFIG_SW_CODEC_LC3)
-#include "LC3API.h"
-
 #define LC3_MAX_FRAME_SIZE_MS	10
 #define LC3_ENC_MONO_FRAME_SIZE (CONFIG_LC3_BITRATE_MAX * LC3_MAX_FRAME_SIZE_MS / (8 * 1000))
 
@@ -99,9 +97,6 @@ struct lc3_decoder_context {
 
 	/* The decoder configuration. */
 	struct lc3_configuration config;
-
-	/* Number of successive frames to which PLC has been applied. */
-	uint16_t plc_count;
 };
 
 struct sw_codec_encoder {
