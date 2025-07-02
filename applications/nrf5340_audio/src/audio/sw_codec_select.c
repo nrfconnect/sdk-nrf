@@ -28,8 +28,6 @@ static struct sw_codec_config m_config;
 
 static struct sample_rate_converter_ctx encoder_converters[CONFIG_AUDIO_ENCODE_CHANNELS_MAX];
 static struct sample_rate_converter_ctx decoder_converters[CONFIG_AUDIO_DECODE_CHANNELS_MAX];
-static struct sample_rate_converter_ctx encoder_converters[CONFIG_AUDIO_ENCODE_CHANNELS_MAX];
-static struct sample_rate_converter_ctx decoder_converters[CONFIG_AUDIO_DECODE_CHANNELS_MAX];
 
 /**
  * @brief	Converts the sample rate of the uncompressed audio stream if needed.
@@ -121,7 +119,7 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 		char *resamp_pcm;
 		size_t resamp_pcm_size;
 		size_t data_in_size = 0;
-		uint16_t encoded_bytes_written, coded_out_size;
+		uint16_t encoded_bytes_written, out_remaining;
 
 		LOG_DBG("LC3 encoder module");
 
@@ -138,6 +136,8 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 		if (audio_frame_in->len >= ctx->config.sample_frame_bytes * chans_in) {
 			session_in_size = audio_frame_in->len;
 		} else {
+			LOG_WRN("Input buffer too small: %d (>=%d)", audio_frame_in->len,
+				(ctx->config.sample_frame_bytes * chans_in));
 			session_in_size = 0;
 		}
 
@@ -148,7 +148,7 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 		}
 
 		coded_out = (uint8_t *)audio_frame_out->data;
-		coded_out_size = 0;
+		out_remaining = audio_frame_out->size;
 
 		/* Should be able to encode only the channel(s) of interest here.
 		 * These will be put in the first channel or channels and the location
@@ -158,7 +158,8 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 		for (uint8_t i = 0; i < chans_out; i++) {
 			if (ctx->config.interleaved && chans_in > 1) {
 				ret = pscm_uninterleave(audio_frame_in->data, audio_frame_in->size,
-							chans_in, i, ctx->config.bits_per_sample,
+							chans_in, i,
+							ctx->config.carried_bits_per_sample,
 							temp_pcm, sizeof(temp_pcm));
 				if (ret) {
 					LOG_DBG("Failed to uninterleave input");
@@ -166,12 +167,14 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 				}
 
 				data_in = temp_pcm;
-				data_in_size = audio_frame_in->len;
+				data_in_size = sizeof(temp_pcm);
 
 				LOG_DBG("Completed encoder PCM input uninterleaving for ch: %d", i);
 			} else {
-				data_in = (uint8_t *)audio_frame_in->data;
-				data_in_size = audio_frame_in->len;
+				data_in = (uint8_t *)audio_frame_in->data +
+					  (meta_in->bytes_per_location * i);
+				data_in_size =
+					audio_frame_in->len - (meta_in->bytes_per_location * i);
 			}
 
 			ret = sw_codec_sample_rate_convert(
@@ -194,13 +197,13 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 			}
 
 			coded_out += encoded_bytes_written;
-			coded_out_size += encoded_bytes_written;
+			out_remaining -= encoded_bytes_written;
 
 			LOG_DBG("Completed LC3 encode of ch: %d", i);
 		}
 
 		meta_out->bytes_per_location = encoded_bytes_written;
-		net_buf_add(audio_frame_out, coded_out_size);
+		net_buf_add(audio_frame_out, audio_frame_out->size - out_remaining);
 #endif /* (CONFIG_SW_CODEC_LC3) */
 		break;
 	}
@@ -228,8 +231,6 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 	case SW_CODEC_LC3: {
 #if (CONFIG_SW_CODEC_LC3)
 		struct lc3_decoder_context *ctx = &m_config.decoder.lc3_ctx;
-		LC3BFI_t frame_status;
-		uint16_t plc_counter = 0;
 		size_t session_in_size;
 		uint16_t bytesWritten;
 		uint8_t *data_in;
@@ -238,6 +239,7 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 		uint8_t chans_in, chans_out;
 		uint8_t *resamp_pcm;
 		size_t resamp_pcm_size = 0;
+		uint32_t bad_data_mask;
 
 		LOG_DBG("LC3 decoder module");
 
@@ -248,13 +250,6 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 			return -EINVAL;
 		}
 
-		if (meta_in->bad_data) {
-			frame_status = BadFrame;
-		} else {
-			frame_status = GoodFrame;
-			ctx->plc_count = 0;
-		}
-
 		meta_out->bits_per_sample = ctx->config.bits_per_sample;
 		meta_out->carried_bits_per_sample = ctx->config.carried_bits_per_sample;
 		meta_out->locations = ctx->config.locations;
@@ -262,9 +257,14 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 		chans_in = sw_codec_metadata_num_ch_get(meta_in);
 		chans_out = sw_codec_metadata_num_ch_get(meta_out);
 
-		if (chans_in < chans_out) {
+		if (chans_out <= CONFIG_AUDIO_OUTPUT_CHANNELS) {
 			memset(audio_frame_out->data, 0, audio_frame_out->size);
+		} else {
+			LOG_WRN("Output channels (%d) exceeds maximum (%d)", chans_out,
+				CONFIG_AUDIO_OUTPUT_CHANNELS);
 		}
+
+		chans_out = CONFIG_AUDIO_OUTPUT_CHANNELS;
 
 		if (meta_in->bytes_per_location <= ctx->config.coded_frame_bytes) {
 			session_in_size = meta_in->bytes_per_location;
@@ -278,7 +278,7 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 			return -EINVAL;
 		}
 
-		if (ctx->config.interleaved) {
+		if (ctx->config.interleaved && chans_out > 1) {
 			data_out = temp_pcm;
 		} else {
 			data_out = (uint8_t *)audio_frame_out->data;
@@ -291,9 +291,11 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 		 */
 		for (uint8_t i = 0; i < chans_in; i++) {
 			data_in = (uint8_t *)audio_frame_in->data + (session_in_size * i);
+			bad_data_mask = BIT(i);
 
 			ret = sw_codec_lc3_dec_run(data_in, session_in_size, audio_frame_out->size,
-						   i, data_out, &bytesWritten, meta_in->bad_data);
+						   i, data_out, &bytesWritten,
+						   (meta_in->bad_data & bad_data_mask));
 			if (ret) {
 				LOG_ERR("Decode for channel %d failed: %d", i, ret);
 				return ret;
@@ -308,7 +310,7 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 				return ret;
 			}
 
-			if (ctx->config.interleaved) {
+			if (ctx->config.interleaved && chans_out > 1) {
 				ret = pscm_interleave(resamp_pcm, resamp_pcm_size, i,
 						      meta_out->carried_bits_per_sample,
 						      audio_frame_out->data, audio_frame_out->size,
@@ -326,8 +328,6 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 
 			LOG_DBG("Completed LC3 decode of ch: %d", i);
 		}
-
-		ctx->plc_count = plc_counter;
 
 		meta_out->bytes_per_location = resamp_pcm_size;
 
@@ -442,8 +442,7 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 			config->interleaved = true;
 			config->bitrate_bps = sw_codec_cfg.encoder.bitrate;
 			config->coded_frame_bytes = ENC_MAX_FRAME_SIZE;
-			config->locations =
-				BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT;
+			config->locations = sw_codec_cfg.decoder.audio_ch;
 		}
 
 		if (sw_codec_cfg.decoder.enabled) {
@@ -466,7 +465,7 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 			struct lc3_configuration *config = &sw_codec_cfg.decoder.lc3_ctx.config;
 
 			ret = sw_codec_lc3_enc_size_get(
-				sw_codec_cfg.decoder.sample_rate_hz, CONFIG_AUDIO_BIT_RATE_MAX,
+				sw_codec_cfg.decoder.sample_rate_hz, CONFIG_LC3_BITRATE,
 				CONFIG_AUDIO_FRAME_DURATION_US, &config->coded_frame_bytes);
 			if (ret) {
 				return ret;
@@ -475,11 +474,9 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 			config->bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS;
 			config->carried_bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_OCTETS * 8;
 			config->interleaved = true;
-			config->bitrate_bps = CONFIG_AUDIO_BIT_RATE_MAX;
+			config->bitrate_bps = CONFIG_LC3_BITRATE;
 			config->sample_frame_bytes = PCM_NUM_BYTES_MONO;
-			config->locations =
-				BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT;
-			;
+			config->locations = sw_codec_cfg.decoder.audio_ch;
 		}
 		break;
 #else
