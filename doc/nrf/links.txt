@@ -36,6 +36,8 @@
 .. _`RST source file of Documentation guidelines`: https://raw.githubusercontent.com/nrfconnect/sdk-nrf/main/doc/nrf/dev_model_and_contributions/documentation/styleguide.rst
 .. _`sdk-sidewalk`: https://github.com/nrfconnect/sdk-sidewalk
 .. _`Amazon Sidewalk Sample IoT App`: https://github.com/aws-samples/aws-iot-core-for-amazon-sidewalk-sample-app
+.. _`Zigbee R23 add-on repository`: https://github.com/nrfconnect/ncs-zigbee
+.. _`Zigbee R22 add-on repository`: https://github.com/nrfconnect/ncs-zigbee-r22
 .. _`sdk-zephyr`: https://github.com/nrfconnect/sdk-zephyr
 .. _`official Zephyr repository`:
 .. _`Zephyr repository`: https://github.com/zephyrproject-rtos/zephyr
