@@ -1,43 +1,47 @@
-name: src-mirror
+# name: src-mirror
 
-on:
-  workflow_dispatch:
-    inputs:
-      git-ref:
-        description: 'Branch, tag or SHA to checkout'
-        required: true
-        default: 'main'
-  push:
-    tags:
-      - '*'
-  pull_request:
-    types:
-      - opened
-      - synchronize
-    paths:
-      - .github/workflows/src-mirror.yml
+# on:
+#   workflow_dispatch:
+#     inputs:
+#       git-ref:
+#         description: 'Branch, tag or SHA to checkout'
+#         required: true
+#         default: 'main'
+#   push:
+#     tags:
+#       - '*'
+#   pull_request:
+#     types:
+#       - opened
+#       - synchronize
+#     paths:
+#       - .github/workflows/src-mirror.yml
 
-permissions:
-  contents: read
+# permissions:
+#   contents: read
 
-concurrency:
-  group: src-mirror-${{ github.ref }}
-  cancel-in-progress: true
+# concurrency:
+#   group: src-mirror-${{ github.ref }}
+#   cancel-in-progress: true
 
-jobs:
+# jobs:
 
-  # Tar entire project west workspace, prune, and upload to artifact service.
-  standard:
-    runs-on: ubuntu-24.04-16cores
-    steps:
-      - name: Upload src.tar.gz
-        uses: nrfconnect/action-src-mirror@main
-        with:
-          path: 'nrf'
-          west-update-args: ''
-          artifactory-path: >-
-            ${{ (github.ref_type != 'tag') &&
-              format('ncs-src-mirror/internal/{0}/{1}/src.tar.gz', github.event.repository.name, github.ref_name) ||
-              format('ncs-src-mirror/external/{1}/src.tar.gz', github.event.repository.name, github.ref_name) }}
-          artifactory-user: ${{ secrets.COM_NORDICSEMI_FILES_USERNAME }}
-          artifactory-pass: ${{ secrets.COM_NORDICSEMI_FILES_PASSWORD }}
+#   # Tar entire project west workspace, prune, and upload to artifact service.
+#   standard:
+#     runs-on: ubuntu-24.04-16cores
+#     steps:
+#       - name: Upload src.tar.gz
+#         uses: nrfconnect/action-src-mirror@main
+#         with:
+#           path: 'nrf'
+#           west-update-args: ''
+#           artifactory-path: >-
+#             ${{ (github.ref_type != 'tag') &&
+#               format('ncs-src-mirror/internal/{0}/{1}/src.tar.gz', github.event.repository.name, github.ref_name) ||
+#               format('ncs-src-mirror/external/{1}/src.tar.gz', github.event.repository.name, github.ref_name) }}
+#           artifactory-user: ${{ secrets.COM_NORDICSEMI_FILES_USERNAME }}
+#           artifactory-pass: ${{ secrets.COM_NORDICSEMI_FILES_PASSWORD }}
+
+#+++++++++++++++++++++++++++++++++++++++++++++++
+#DISEABLED TO REDUCE COST OF TEST
+#+++++++++++++++++++++++++++++++++++++++++++++++
