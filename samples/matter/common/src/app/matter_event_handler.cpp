@@ -13,8 +13,8 @@
 
 #include <platform/ConnectivityManager.h>
 
-#ifdef CONFIG_CHIP_NFC_COMMISSIONING
-#include <platform/NFCManager.h>
+#ifdef CONFIG_CHIP_NFC_ONBOARDING_PAYLOAD
+#include <platform/NFCOnboardingPayloadManager.h>
 #include <setup_payload/OnboardingCodesUtil.h>
 #endif
 
@@ -42,16 +42,16 @@ void DefaultEventHandler(const ChipDeviceEvent *event, intptr_t /* unused */)
 {
 	switch (event->Type) {
 	case DeviceEventType::kCHIPoBLEAdvertisingChange:
-#ifdef CONFIG_CHIP_NFC_COMMISSIONING
+#ifdef CONFIG_CHIP_NFC_ONBOARDING_PAYLOAD
 		if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Started) {
-			if (NFCMgr().IsTagEmulationStarted()) {
+			if (NFCOnboardingPayloadMgr().IsTagEmulationStarted()) {
 				LOG_INF("NFC Tag emulation is already started");
 			} else {
 				ShareQRCodeOverNFC(
 					chip::RendezvousInformationFlags(chip::RendezvousInformationFlag::kBLE));
 			}
 		} else if (event->CHIPoBLEAdvertisingChange.Result == kActivity_Stopped) {
-			NFCMgr().StopTagEmulation();
+			NFCOnboardingPayloadMgr().StopTagEmulation();
 		}
 #endif
 		break;
