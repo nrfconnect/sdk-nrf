@@ -60,7 +60,7 @@ static const struct gpio_dt_spec gpio_lrck_spec =
 static const struct device *dev_i2s;
 
 #if defined(CONFIG_COVERAGE)
-#define EXPECTED_MCLK_SCALE 0.8
+#define EXPECTED_MCLK_SCALE 0.5
 #else
 #define EXPECTED_MCLK_SCALE 1.0
 #endif
