@@ -209,7 +209,7 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
         ${imgtool_sign} ${imgtool_args} ${merged_hex} ${output}.signed.hex)
     endif()
 
-    if(CONFIG_MCUBOOT_GENERATE_CONFIRMED_IMAGE)
+    if(CONFIG_MCUBOOT_GENERATE_CONFIRMED_IMAGE OR SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT)
       list(APPEND byproducts ${output}.signed.confirmed.hex)
       set(final_artifact_hex ${output}.signed.confirmed.hex)
       set(BYPRODUCT_KERNEL_SIGNED_CONFIRMED_HEX_NAME "${output}.signed.confirmed.hex"

@@ -18,8 +18,7 @@ config SUPPORT_NETCORE
 config NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER
 	string
 	default "cpunet" if SOC_NRF5340_CPUAPP
-	default "cpurad" if SOC_NRF54H20_CPUAPP && !SOC_NRF54H20_IRON
-	default "cpurad/iron" if SOC_NRF54H20_IRON
+	default "cpurad" if SOC_NRF54H20_CPUAPP
 
 config NETCORE_REMOTE_DOMAIN
 	string
