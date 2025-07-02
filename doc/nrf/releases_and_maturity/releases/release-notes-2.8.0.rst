@@ -530,11 +530,11 @@ nRF5340 Audio
 
   * The functions ``bt_hci_err_to_str()`` and ``bt_security_err_to_str()`` that are used to allow printing error codes as strings.
     Each function returns string representations of the error codes when the corresponding Kconfig option, :kconfig:option:`CONFIG_BT_HCI_ERR_TO_STR` or :kconfig:option:`CONFIG_BT_SECURITY_ERR_TO_STR`, is enabled.
-  * CSIS to the BIS sink if the scan delegator feature, ``CONFIG_BT_AUDIO_SCAN_DELEGATOR``, is enabled.
+  * CSIS to the BIS sink if the scan delegator feature, :ref:`CONFIG_BT_AUDIO_SCAN_DELEGATOR <CONFIG_BT_AUDIO_SCAN_DELEGATOR>`, is enabled.
     Once a phone is connected to a BIS sink, the phone will find and connect to the second headset.
     Also, the phone can control the BIS headset in a group and deliver the PAST to both headsets at the same time.
   * Create CIG after reading the PACS from the first connected unicast server.
-  * A minimal scan delegator to the unicast server if the feature, ``CONFIG_BT_AUDIO_SCAN_DELEGATOR``, is enabled.
+  * A minimal scan delegator to the unicast server if the feature, :ref:`CONFIG_BT_AUDIO_SCAN_DELEGATOR <CONFIG_BT_AUDIO_SCAN_DELEGATOR>`, is enabled.
   * Available or support context type to PACS in broadcast sink and unicast client if the feature, :kconfig:option:`CONFIG_BT_PAC_SRC_NOTIFIABLE` is enabled.
   * The :ref:`nrf_auraconfig` sample.
 
@@ -619,7 +619,7 @@ Serial LTE modem
 * Added:
 
   * DTLS support for the ``#XUDPSVR`` and ``#XSSOCKET`` (UDP server sockets) AT commands when the :file:`overlay-native_tls.conf` configuration file is used.
-  * The :kconfig:option:`CONFIG_SLM_PPP_FALLBACK_MTU` Kconfig option that is used to control the MTU used by PPP when the cellular link MTU is not returned by the modem in response to the ``AT+CGCONTRDP=0`` AT command.
+  * The :ref:`CONFIG_SLM_PPP_FALLBACK_MTU <CONFIG_SLM_PPP_FALLBACK_MTU>` Kconfig option that is used to control the MTU used by PPP when the cellular link MTU is not returned by the modem in response to the ``AT+CGCONTRDP=0`` AT command.
   * Handler for new nRF Cloud event type :c:enumerator:`NRF_CLOUD_EVT_RX_DATA_DISCON`.
   * Support for socket option ``AT_SO_IPV6_DELAYED_ADDR_REFRESH``.
 
@@ -777,12 +777,12 @@ Cellular samples
 
   * Added:
 
-    * The :kconfig:option:`CONFIG_TEST_COUNTER_MULTIPLIER` Kconfig option to multiply the number of test counter messages sent, for testing purposes.
+    * The :ref:`CONFIG_TEST_COUNTER_MULTIPLIER <CONFIG_TEST_COUNTER_MULTIPLIER>` Kconfig option to multiply the number of test counter messages sent, for testing purposes.
     * A handler for new nRF Cloud event type :c:enumerator:`NRF_CLOUD_EVT_RX_DATA_DISCON` to stop sensors and location services.
     * Board support files to enable Wi-Fi scanning for the Thingy:91 X.
-    * The :kconfig:option:`CONFIG_SEND_ONLINE_ALERT` Kconfig option to enable calling the :c:func:`nrf_cloud_alert` function on startup.
+    * The :ref:`CONFIG_SEND_ONLINE_ALERT <CONFIG_SEND_ONLINE_ALERT>` Kconfig option to enable calling the :c:func:`nrf_cloud_alert` function on startup.
     * Logging of the `reset reason code <nRF9160 RESETREAS_>`_.
-    * The :kconfig:option:`CONFIG_POST_PROVISIONING_INTERVAL_M` Kconfig option to reduce the provisioning connection interval once the device successfully connects.
+    * The :ref:`CONFIG_POST_PROVISIONING_INTERVAL_M <CONFIG_POST_PROVISIONING_INTERVAL_M>` Kconfig option to reduce the provisioning connection interval once the device successfully connects.
 
   * Updated:
 
@@ -802,7 +802,7 @@ Cellular samples
   * Added:
 
     * Support for dictionary logs using REST.
-    * The :kconfig:option:`CONFIG_SEND_ONLINE_ALERT` Kconfig option to enable calling the :c:func:`nrf_cloud_alert` function on startup.
+    * The :ref:`CONFIG_SEND_ONLINE_ALERT <CONFIG_SEND_ONLINE_ALERT>` Kconfig option to enable calling the :c:func:`nrf_cloud_alert` function on startup.
     * Logging of the `reset reason code <nRF9160 RESETREAS_>`_.
 
   * Updated:
