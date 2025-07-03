@@ -209,7 +209,38 @@ Matter bridge
 nRF5340 Audio
 -------------
 
-|no_changes_yet_note|
+* Added:
+
+  * Experimental support for Audio on the nRF5340 DK, with LED state indications and button controls.
+  * Experimental Support for stereo in :ref:`broadcast sink app<nrf53_audio_broadcast_sink_app>`.
+    The broadcast sink can now receive audio from two BISes and play it on the left and right channels of the audio output, if the correct configuration options are enabled.
+    The I2S output will be stereo, but :zephyr:board:`nrf5340_audio_dk` will still only have one audio output channel, since it has a mono codec (CS47L63).
+    See :file:`overlay-broadcast_sink.conf` for more information.
+  * The audio devices are now set up with a location bitfield according to the BT Audio specification, instead of a channel.
+    Since a device can have multiple locations set, the location name has been removed from the device name during DFU.
+  * Experimental Support for stereo in :ref:`unicast server app<nrf53_audio_unicast_server_app>`.
+    The unicast server can now receive audio from two CISes and play it on the left and right channels of the audio output, if the correct configuration options are enabled.
+    The I2S output will be stereo, but :zephyr:board:`nrf5340_audio_dk` will still only have one audio output channel, since it has a mono codec (CS47L63).
+    See :file:`overlay-unicast_server.conf` for more information.
+
+* Updated:
+
+  * The application to use the ``NFC.TAGHEADER0`` value from FICR as the broadcast ID instead of using a random ID.
+  * The application to change from Newlib to Picolib to align with |NCS| and Zephyr.
+  * The application to use the :ref:`net_buf_interface` API to pass audio data between threads.
+    The :ref:`net_buf_interface` will also contain the metadata about the audio stream in the ``user_data`` section of the API.
+    This change was done to transition to standard Zephyr APIs, as well as to have a structured way to pass N-channel audio between modules.
+  * The optional buildprog tool to use `nRF Util`_ instead of nrfjprog that has been deprecated.
+  * The documentation pages with information about the :ref:`SD card playback module <nrf53_audio_app_overview_architecture_sd_card_playback>` and :ref:`how to enable it <nrf53_audio_app_configuration_sd_card_playback>`.
+  * The buffer count (:kconfig:option:`CONFIG_BT_ISO_TX_BUF_COUNT` and :kconfig:option:`CONFIG_BT_BUF_ACL_TX_COUNT`) to be in-line with SoftDevice Controller (SDC) defaults.
+    This can be changed and optimized for specific use cases.
+
+* Removed:
+
+  * The uart_terminal tool to use standardized tools.
+    Similar functionality is provided through the `nRF Terminal <nRF Terminal documentation_>`_ in the |nRFVSC|.
+  * The functionality to jump between BIS0 and BIS1 in the :ref:`broadcast sink <nrf53_audio_broadcast_sink_app>` application.
+    Button 4 is no longer needed for this purpose due to added support for stereo audio.
 
 nRF Desktop
 -----------

@@ -92,13 +92,13 @@ int sw_codec_encode(struct net_buf *audio_frame)
 	int ret;
 
 	/* Temp storage for PCM */
-	char pcm_data_mono_system_sample_rate
-		[CONFIG_AUDIO_ENCODE_CHANNELS_MAX][PCM_NUM_BYTES_MONO] = {0};
+	char pcm_data_mono_system_sample_rate[CONFIG_AUDIO_ENCODE_CHANNELS_MAX]
+					     [PCM_NUM_BYTES_MONO] = {0};
 	/* Make sure we have enough space for two frames (stereo) */
 	uint8_t m_encoded_data[ENC_MAX_FRAME_SIZE * CONFIG_AUDIO_ENCODE_CHANNELS_MAX];
 
-	char pcm_data_mono_converted_buf[CONFIG_AUDIO_ENCODE_CHANNELS_MAX]
-		[PCM_NUM_BYTES_MONO] = {0};
+	char pcm_data_mono_converted_buf[CONFIG_AUDIO_ENCODE_CHANNELS_MAX][PCM_NUM_BYTES_MONO] = {
+		0};
 
 	size_t pcm_block_size_mono_system_sample_rate;
 	size_t pcm_block_size_mono;
@@ -119,11 +119,10 @@ int sw_codec_encode(struct net_buf *audio_frame)
 		/* Since LC3 is a single channel codec, we must split the
 		 * stereo PCM stream
 		 */
-		ret = pscm_two_channel_split(audio_frame->data, audio_frame->len,
-					     CONFIG_AUDIO_BIT_DEPTH_BITS,
-					     pcm_data_mono_system_sample_rate[0],
-					     pcm_data_mono_system_sample_rate[1],
-					     &pcm_block_size_mono_system_sample_rate);
+		ret = pscm_two_channel_split(
+			audio_frame->data, audio_frame->len, CONFIG_AUDIO_BIT_DEPTH_BITS,
+			pcm_data_mono_system_sample_rate[0], pcm_data_mono_system_sample_rate[1],
+			&pcm_block_size_mono_system_sample_rate);
 		if (ret) {
 			return ret;
 		}
@@ -144,9 +143,9 @@ int sw_codec_encode(struct net_buf *audio_frame)
 
 		switch (m_config.encoder.channel_mode) {
 		case SW_CODEC_MONO: {
-			ret = sw_codec_lc3_enc_run(pcm_data_mono_ptrs[0],
-						   pcm_block_size_mono, LC3_USE_BITRATE_FROM_INIT,
-						   0, sizeof(m_encoded_data), m_encoded_data,
+			ret = sw_codec_lc3_enc_run(pcm_data_mono_ptrs[0], pcm_block_size_mono,
+						   LC3_USE_BITRATE_FROM_INIT, 0,
+						   sizeof(m_encoded_data), m_encoded_data,
 						   &encoded_bytes_written);
 			if (ret) {
 				return ret;
@@ -155,19 +154,19 @@ int sw_codec_encode(struct net_buf *audio_frame)
 			break;
 		}
 		case SW_CODEC_STEREO: {
-			ret = sw_codec_lc3_enc_run(pcm_data_mono_ptrs[0],
-						   pcm_block_size_mono, LC3_USE_BITRATE_FROM_INIT,
-						   0, sizeof(m_encoded_data),
-						   m_encoded_data, &encoded_bytes_written);
+			ret = sw_codec_lc3_enc_run(pcm_data_mono_ptrs[0], pcm_block_size_mono,
+						   LC3_USE_BITRATE_FROM_INIT, 0,
+						   sizeof(m_encoded_data), m_encoded_data,
+						   &encoded_bytes_written);
 			if (ret) {
 				return ret;
 			}
 
-			ret = sw_codec_lc3_enc_run(
-				pcm_data_mono_ptrs[1], pcm_block_size_mono,
-				LC3_USE_BITRATE_FROM_INIT, 1,
-				sizeof(m_encoded_data) - encoded_bytes_written,
-				m_encoded_data + encoded_bytes_written, &encoded_bytes_written);
+			ret = sw_codec_lc3_enc_run(pcm_data_mono_ptrs[1], pcm_block_size_mono,
+						   LC3_USE_BITRATE_FROM_INIT, 1,
+						   sizeof(m_encoded_data) - encoded_bytes_written,
+						   m_encoded_data + encoded_bytes_written,
+						   &encoded_bytes_written);
 			if (ret) {
 				return ret;
 			}
@@ -207,10 +206,9 @@ int sw_codec_decode(struct net_buf const *const audio_frame, void **decoded_data
 
 	static char pcm_data_stereo[PCM_NUM_BYTES_STEREO];
 
-	char decoded_data_mono
-		[CONFIG_AUDIO_DECODE_CHANNELS_MAX][PCM_NUM_BYTES_MONO] = {0};
-	char decoded_data_mono_system_sample_rate
-		[CONFIG_AUDIO_DECODE_CHANNELS_MAX][PCM_NUM_BYTES_MONO] = {0};
+	char decoded_data_mono[CONFIG_AUDIO_DECODE_CHANNELS_MAX][PCM_NUM_BYTES_MONO] = {0};
+	char decoded_data_mono_system_sample_rate[CONFIG_AUDIO_DECODE_CHANNELS_MAX]
+						 [PCM_NUM_BYTES_MONO] = {0};
 
 	size_t pcm_size_stereo = 0;
 	size_t pcm_size_mono = 0;
@@ -223,6 +221,18 @@ int sw_codec_decode(struct net_buf const *const audio_frame, void **decoded_data
 #if (CONFIG_SW_CODEC_LC3)
 		char *pcm_in_data_ptrs[m_config.decoder.channel_mode];
 
+		/* Check metadata to see if this is truly stereo or not */
+		if (meta->locations ==
+		    (BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT)) {
+			m_config.decoder.channel_mode = SW_CODEC_STEREO;
+		} else if (meta->locations == BT_AUDIO_LOCATION_FRONT_LEFT ||
+			   meta->locations == BT_AUDIO_LOCATION_FRONT_RIGHT) {
+			m_config.decoder.channel_mode = SW_CODEC_MONO;
+		} else {
+			LOG_ERR("Unsupported location for LC3 decoder: %d", meta->locations);
+			return -ENODEV;
+		}
+
 		switch (m_config.decoder.channel_mode) {
 		case SW_CODEC_MONO: {
 			if (meta->bad_data && SW_CODEC_OVERRIDE_PLC) {
@@ -231,18 +241,16 @@ int sw_codec_decode(struct net_buf const *const audio_frame, void **decoded_data
 			} else {
 				ret = sw_codec_lc3_dec_run(
 					audio_frame->data, audio_frame->len, LC3_PCM_NUM_BYTES_MONO,
-					0, decoded_data_mono[0],
-					(uint16_t *)&decoded_data_size, meta->bad_data);
+					0, decoded_data_mono[0], (uint16_t *)&decoded_data_size,
+					meta->bad_data);
 				if (ret) {
 					return ret;
 				}
 
 				ret = sw_codec_sample_rate_convert(
-					&decoder_converters[0],
-					m_config.decoder.sample_rate_hz,
+					&decoder_converters[0], m_config.decoder.sample_rate_hz,
 					CONFIG_AUDIO_SAMPLE_RATE_HZ, decoded_data_mono[0],
-					decoded_data_size,
-					decoded_data_mono_system_sample_rate[0],
+					decoded_data_size, decoded_data_mono_system_sample_rate[0],
 					&pcm_in_data_ptrs[0], &pcm_size_mono);
 				if (ret) {
 					LOG_ERR("Sample rate conversion failed for mono: %d", ret);
@@ -287,8 +295,7 @@ int sw_codec_decode(struct net_buf const *const audio_frame, void **decoded_data
 				/* Decode left channel */
 				ret = sw_codec_lc3_dec_run(
 					audio_frame->data, (audio_frame->len / 2),
-					LC3_PCM_NUM_BYTES_MONO, 0,
-					decoded_data_mono[0],
+					LC3_PCM_NUM_BYTES_MONO, 0, decoded_data_mono[0],
 					(uint16_t *)&decoded_data_size, meta->bad_data);
 				if (ret) {
 					return ret;
@@ -298,8 +305,8 @@ int sw_codec_decode(struct net_buf const *const audio_frame, void **decoded_data
 				ret = sw_codec_lc3_dec_run(
 					(audio_frame->data + (audio_frame->len / 2)),
 					(audio_frame->len / 2), LC3_PCM_NUM_BYTES_MONO, 1,
-					decoded_data_mono[1],
-					(uint16_t *)&decoded_data_size, meta->bad_data);
+					decoded_data_mono[1], (uint16_t *)&decoded_data_size,
+					meta->bad_data);
 				if (ret) {
 					return ret;
 				}
@@ -321,8 +328,7 @@ int sw_codec_decode(struct net_buf const *const audio_frame, void **decoded_data
 				}
 			}
 
-			ret = pscm_combine(pcm_in_data_ptrs[0],
-					   pcm_in_data_ptrs[1], pcm_size_mono,
+			ret = pscm_combine(pcm_in_data_ptrs[0], pcm_in_data_ptrs[1], pcm_size_mono,
 					   CONFIG_AUDIO_BIT_DEPTH_BITS, pcm_data_stereo,
 					   &pcm_size_stereo);
 			if (ret) {
