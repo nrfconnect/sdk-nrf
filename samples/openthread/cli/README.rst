@@ -37,6 +37,24 @@ Thread 1.2 version is selected as default.
 If used alone, the sample allows you to test the network status.
 It is recommended to use at least two development kits running the same sample for testing the communication.
 
+Application architecture options
+================================
+
+.. ot_cli_sample_architecture_options_start
+
+The sample supports two application architecture options depending on if you are using the Zephyr networking layer.
+
+* Direct IEEE 802.15.4 radio integration with OpenThread Stack (default)
+* Integration with Zephyr networking layer
+
+To learn more about the differences between the two architectures, see the :ref:`openthread_stack_architecture` page.
+To learn how to switch between the two architectures, see the :ref:`ug_thread_configuring_basic` user guide.
+
+Additionally, you can use the ``l2`` snippet to switch between the two architectures.
+See the :ref:`ot_cli_sample_activating_variants` section for details.
+
+.. ot_cli_sample_architecture_options_end
+
 .. _ot_cli_sample_thread_certification:
 
 Certification tests with CLI sample
@@ -124,6 +142,8 @@ The following snippets are available:
   For using TCAT, refer to the :ref:`thread_tcat` page.
 * ``tcp`` - Enables experimental TCP support in this sample.
 * ``low_power`` - Enables low power consumption mode in this sample.
+* ``l2`` - Enables the Zephyr networking layer.
+* ``logging_l2`` - Enables logging from the Zephyr networking layer.
 
 FEM support
 ===========

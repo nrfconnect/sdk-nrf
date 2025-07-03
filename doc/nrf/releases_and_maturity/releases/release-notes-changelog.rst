@@ -197,8 +197,9 @@ nRF IEEE 802.15.4 radio driver
 Thread
 ------
 
-|no_changes_yet_note|
-
+* Added the new architecture option to use the OpenThread stack directly to communicate with the IEEE 802.15.4 radio driver.
+  See the :ref:`openthread_stack_architecture` user guide for more information.
+  The new architecture option reduces the memory footprint of the OpenThread stack by around 4% and the RAM usage by around 12% in the :ref:`ot_cli_sample` sample.
 
 Wi-Fi®
 ------
@@ -560,7 +561,11 @@ Trusted Firmware-M (TF-M) samples
 Thread samples
 --------------
 
-|no_changes_yet_note|
+* Added the new :ref:`architecture option <openthread_stack_architecture>` to use the OpenThread stack directly to communicate with the IEEE 802.15.4 radio driver in the following samples:
+
+  * :ref:`ot_coprocessor_sample`
+  * :ref:`coap_server_sample`
+  * :ref:`ot_cli_sample`
 
 Wi-Fi samples
 -------------

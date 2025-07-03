@@ -41,6 +41,48 @@ Matter
         Now, the location is configured using :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option.
         This change requires you to update your application ``prj.conf`` file by setting :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` to point the location of you ZAP file.
 
+Thread
+------
+
+.. toggle::
+
+   * The OpenThread samples have been updated to directly use the OpenThread stack with the IEEE 802.15.4 radio driver.
+     In this case, the Zephyr networking layer is disabled and its features are not available.
+
+     The new architecture option has been enabled by default in the following samples:
+
+     * :ref:`ot_coprocessor_sample`
+     * :ref:`coap_server_sample`
+     * :ref:`ot_cli_sample`
+
+     If you want to use the architecture option that uses the Zephyr networking layer, you need to manually enable the following Kconfig options in your application :file:`prj.conf` file:
+
+     * :kconfig:option:`CONFIG_NETWORKING`
+     * :kconfig:option:`CONFIG_NET_L2_OPENTHREAD`
+
+     Or use Snippet ``l2``.
+
+     For example, to enable the Zephyr networking layer in the :ref:`ot_cli_sample` for the nRF54L15 DK, build the sample with the following command:
+
+     .. code-block:: none
+
+        west build -p -b nrf54l15dk/nrf54l15/cpuapp -- -Dcli_SNIPPET=l2
+
+     Additionally, to enable logging from the Zephyr networking layer, you need to enable the following Kconfig options in your application :file:`prj.conf` file:
+
+     * :kconfig:option:`CONFIG_OPENTHREAD_L2_DEBUG`
+     * :kconfig:option:`CONFIG_OPENTHREAD_L2_LOG_LEVEL_DBG`
+     * :kconfig:option:`CONFIG_OPENTHREAD_L2_DEBUG_DUMP_15_4`
+     * :kconfig:option:`CONFIG_OPENTHREAD_L2_DEBUG_DUMP_IPV6`
+
+     Or use snippet ``logging_l2``.
+
+     For example, to enable logging from the Zephyr networking layer in the :ref:`ot_cli_sample` for the nRF54L15 DK, build the sample with the following command:
+
+     .. code-block:: none
+
+        west build -p -b nrf54l15dk/nrf54l15/cpuapp -- -Dcli_SNIPPET="l2;logging_l2"
+
 nRF5340 Audio applications
 --------------------------
 
