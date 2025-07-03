@@ -21,7 +21,7 @@
  * with hardware acceleration or alternative implementations. The supported drivers include:
  *   - Arm CryptoCell cc3xx (hardware acceleration for nRF52840, nRF91 Series, and nRF5340)
  *   - nrf_oberon (optimized cryptographic algorithms)
- *   - CRACEN (hardware acceleration for nRF54L Series)
+ *   - CRACEN (hardware acceleration for nRF54L and nRF71 Series)
  *
  * For detailed documentation on these drivers, see the nRF Connect SDK documentation:
  * https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/libraries/security/nrf_security/index.html
