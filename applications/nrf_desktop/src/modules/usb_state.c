@@ -534,7 +534,8 @@ static void broadcast_subscriber_change(struct usb_hid_device *usb_hid)
 	APP_EVENT_SUBMIT(event);
 }
 
-static void broadcast_subscription_change(struct usb_hid_device *usb_hid)
+static void broadcast_subscription_change_internal(struct usb_hid_device *usb_hid,
+						   bool enabled_filter)
 {
 	bool new_rep_enabled = (usb_hid->enabled) && (usb_hid->hid_protocol == HID_PROTOCOL_REPORT);
 	bool new_boot_enabled = (usb_hid->enabled) && (usb_hid->hid_protocol == HID_PROTOCOL_BOOT);
@@ -542,6 +543,10 @@ static void broadcast_subscription_change(struct usb_hid_device *usb_hid)
 	for (size_t i = 0; i < ARRAY_SIZE(input_reports); i++) {
 		uint8_t rep_id = input_reports[i];
 		bool new_enabled = is_hid_boot_report(rep_id) ? new_boot_enabled : new_rep_enabled;
+
+		if (new_enabled != enabled_filter) {
+			continue;
+		}
 
 		if ((new_enabled != usb_hid->report_enabled[rep_id]) &&
 		    (usb_hid->report_bm & BIT(rep_id))) {
@@ -557,6 +562,15 @@ static void broadcast_subscription_change(struct usb_hid_device *usb_hid)
 			usb_hid->report_enabled[rep_id] = new_enabled;
 		}
 	}
+}
+
+static void broadcast_subscription_change(struct usb_hid_device *usb_hid)
+{
+	/* First disable old subscriptions, then enable new subscriptions. This is done to ensure
+	 * that HID boot and HID report mode subscriptions would never be enabled at the same time.
+	 */
+	broadcast_subscription_change_internal(usb_hid, false);
+	broadcast_subscription_change_internal(usb_hid, true);
 
 	LOG_INF("USB HID %p %sabled", (void *)usb_hid, (usb_hid->enabled) ? ("en"):("dis"));
 	if (usb_hid->enabled) {
