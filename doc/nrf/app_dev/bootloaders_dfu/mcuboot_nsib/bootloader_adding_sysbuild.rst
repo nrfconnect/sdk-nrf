@@ -359,6 +359,8 @@ This variant image will use the same application configuration as the base image
 You only have to modify the version set in the :kconfig:option:`CONFIG_FW_INFO_FIRMWARE_VERSION` Kconfig option.
 To make ``s1_image`` bootable with |NSIB|, the value of :kconfig:option:`CONFIG_FW_INFO_FIRMWARE_VERSION` for the default image (or MCUboot if using MCUboot as a second-stage bootloader) must be bigger than the one for original image.
 
+.. _ug_bootloader_using_firmware_loader_mode:
+
 Using MCUboot in firmware loader mode
 **************************************
 
@@ -430,21 +432,14 @@ The following is an example static Partition Manager file for the nRF53 devices:
       size: 0x2000
       region: sram_primary
 
-The project must also have a ``sysbuild.cmake`` file which includes the firmware loader application in the build, this **must** be named ``firmware_loader``:
-
-.. code-block:: cmake
-
-      ExternalZephyrProject_Add(
-        APPLICATION firmware_loader
-        SOURCE_DIR <path_to_firmware_loader_application>
-      )
-
-There must also be a ``sysbuild.conf`` file which selects the required sysbuild options for enabling MCUboot and selecting the firmware loader mode:
+The project must also configure MCUboot to operate in firmware loader mode and specify a firmware loader image in the :file:`sysbuild.conf` file.
+For example to select ``smp_svr``, set the following options:
 
 .. code-block:: cfg
 
     SB_CONFIG_BOOTLOADER_MCUBOOT=y
     SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER=y
+    SB_CONFIG_FIRMWARE_LOADER_IMAGE_SMP_SVR=y
 
 At least one mode must be set in MCUboot for entering the firmware loader application, supported entrance methods include:
 
@@ -460,3 +455,4 @@ For this example, the use of a GPIO when booting will be used. Create a ``sysbui
     CONFIG_BOOT_FIRMWARE_LOADER_ENTRANCE_GPIO=y
 
 The project can now be built and flashed and will boot the firmware loader application when the button is held upon device reboot, or the main application will be booted when the device is reset and the button is not held down.
+See :ref:`sysbuild_images_adding_custom_firmware_loader_images` for details on how to add custom firmware loader images using sysbuild.

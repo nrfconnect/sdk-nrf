@@ -51,6 +51,15 @@ These options determine whether the secure boot image is included on the network
 |               ``SB_CONFIG_NETCORE_NONE``                | No network core image.                                                                                    |
 +---------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
 
+The following sysbuild Kconfig options are available when MCUboot is configured in :ref:`firmware loader mode <ug_bootloader_using_firmware_loader_mode>`:
+These options specify the image for the firmware loader:
+
++---------------------------------------------+-----------------------------------------------+
+| Sysbuild Kconfig option                     | Description                                   |
++=============================================+===============================================+
+| ``SB_CONFIG_FIRMWARE_LOADER_IMAGE_SMP_SVR`` | Include ``smp_svr`` as firmware loader image. |
++---------------------------------------------+-----------------------------------------------+
+
 .. _sysbuild_images_adding_custom_images:
 
 Adding custom images
@@ -63,35 +72,35 @@ Custom images can be added directly to a project (or board) or to a Zephyr modul
 Adding to a single project
 --------------------------
 
-To add an image to a single project, you need a ``sysbuild.cmake`` file in the root folder of your project to incorporate the image into the project.
-If the image selection is optional, a ``Kconfig.sysbuild`` file in the root folder of your project is also required to include Kconfig options for the sysbuild configuration.
-If the image selection is mandatory, the ``Kconfig.sysbuild`` file can be omitted.
+To add an image to a single project, you need a :file:`sysbuild.cmake` file in the root folder of your project to incorporate the image into the project.
+If the image selection is optional, a :file:`Kconfig.sysbuild` file in the root folder of your project is also required to include Kconfig options for the sysbuild configuration.
+If the image selection is mandatory, the :file:`Kconfig.sysbuild` file can be omitted.
 
 
-Kconfig.sysbuild:
+* :file:`kconfig.sysbuild` file:
 
-.. code-block:: kconfig
+    .. code-block:: kconfig
 
-    config MY_APP_IMAGE_ABC
-        bool "Include ABC image"
-        depends on SOC_SERIES_NRF53X
-        default y if BOARD_NRF5340DK_NRF5340_CPUAPP
-        help
-          Will include the ABC image in the build, which will...
+        config MY_APP_IMAGE_ABC
+            bool "Include ABC image"
+            depends on SOC_SERIES_NRF53X
+            default y if BOARD_NRF5340DK_NRF5340_CPUAPP
+            help
+              Will include the ABC image in the build, which will...
 
-    source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+        source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
 
-sysbuild.cmake:
+* :file:`sysbuild.cmake` file
 
-.. code-block:: cmake
+    .. code-block:: cmake
 
-    if(SB_CONFIG_MY_APP_IMAGE_ABC)
-      ExternalZephyrProject_Add(
-        APPLICATION ABC
-        SOURCE_DIR "<path_to_application>"
-        BUILD_ONLY true   # This will build the application and not flash it, this **must** be used when building additional images to a core (not the primary image) when using Partition Manager, as the main application for each core will flash a merged hex file instead
-      )
-    endif()
+        if(SB_CONFIG_MY_APP_IMAGE_ABC)
+          ExternalZephyrProject_Add(
+            APPLICATION ABC
+            SOURCE_DIR "<path_to_application>"
+            BUILD_ONLY true   # This will build the application and not flash it, this **must** be used when building additional images to a core (not the primary image) when using Partition Manager, as the main application for each core will flash a merged hex file instead
+          )
+        endif()
 
 This method can be used to add a new image to the existing board target.
 
@@ -103,60 +112,119 @@ Adding custom network core images
 To add an image for a different board target (like for the network core of the nRF5340 SoC), you must use a different syntax.
 This can be handled using the following approach:
 
-Kconfig.sysbuild:
+* :file:`kconfig.sysbuild` file:
 
-.. code-block:: kconfig
+    .. code-block:: kconfig
 
-    menu "Network core configuration"
-        depends on SUPPORT_NETCORE
+        menu "Network core configuration"
+            depends on SUPPORT_NETCORE
 
-    config SUPPORT_NETCORE_ABC
-        bool
-        default y
+        config SUPPORT_NETCORE_ABC
+            bool
+            default y
 
-    choice NETCORE
-        prompt "Netcore image"
-        depends on SUPPORT_NETCORE && !EXTERNAL_CONFIGURED_NETCORE
+        choice NETCORE
+            prompt "Netcore image"
+            depends on SUPPORT_NETCORE && !EXTERNAL_CONFIGURED_NETCORE
 
-    config NETCORE_ABC
-        bool "ABC"
-        help
-          Use ABC image as the network core image.
+        config NETCORE_ABC
+            bool "ABC"
+            help
+              Use ABC image as the network core image.
 
-    endchoice
+        endchoice
 
-    if !NETCORE_NONE
+        if !NETCORE_NONE
 
-    config NETCORE_IMAGE_NAME
-        default "abc" if NETCORE_ABC
+        config NETCORE_IMAGE_NAME
+            default "abc" if NETCORE_ABC
 
-    config NETCORE_IMAGE_PATH
-        default "${ZEPHYR_MY_MODULE_MODULE_DIR}/<image_path>" if NETCORE_ABC
+        config NETCORE_IMAGE_PATH
+            default "${ZEPHYR_MY_MODULE_MODULE_DIR}/<image_path>" if NETCORE_ABC
 
-    endif # !NETCORE_NONE
+        endif # !NETCORE_NONE
 
-    endmenu
+        endmenu
 
-    source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+        source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
 
-sysbuild.cmake:
+* :file:`sysbuild.cmake` file - This file is optional and should be used only if specific custom configurations are required for the application.
 
-This file is optional and is only needed if custom configuration needs to be set on the application
+    .. code-block:: cmake
 
-.. code-block:: cmake
+        if(SB_CONFIG_NETCORE_ABC)
+          # Project can optionally be configured here if needed
 
-    if(SB_CONFIG_MY_APP_IMAGE_ABC)
-      # Project can optionally be configured here if needed
+          # This will add a Kconfig fragment file, named `my_extra.conf` from the application directory
+          add_overlay_config(${SB_CONFIG_NETCORE_IMAGE_NAME} ${SB_CONFIG_NETCORE_IMAGE_PATH}/my_extra.conf)
+          # This will add a devicetree overlay file, named `my_extra.dts` from the application directory
+          add_overlay_dts(${SB_CONFIG_NETCORE_IMAGE_NAME} ${SB_CONFIG_NETCORE_IMAGE_PATH}/my_extra.dts)
+          # This will set a bool Kconfig option in the image (note: sysbuild forces this setting, it cannot be overwritten by changing the application configuration)
+          set_config_bool(${SB_CONFIG_NETCORE_IMAGE_NAME} CONFIG_MY_CUSTOM_CONFIG y)
+          # This will set a string (or numeric) Kconfig option in the image (note: sysbuild forces this setting, it cannot be overwritten by changing the application configuration)
+          set_property(TARGET ${SB_CONFIG_NETCORE_IMAGE_NAME} APPEND_STRING PROPERTY CONFIG "CONFIG_CUSTOM_STRING=my_custom_value\n")
+        endif()
 
-      # This will add a Kconfig fragment file, named `my_extra.conf` from the application directory
-      add_overlay_config(${SB_CONFIG_NETCORE_IMAGE_NAME} ${SB_CONFIG_NETCORE_IMAGE_PATH}/my_extra.conf)
-      # This will add a devicetree overlay file, named `my_extra.dts` from the application directory
-      add_overlay_dts(${SB_CONFIG_NETCORE_IMAGE_NAME} ${SB_CONFIG_NETCORE_IMAGE_PATH}/my_extra.dts)
-      # This will set a bool Kconfig option in the image (note: sysbuild forces this setting, it cannot be overwritten by changing the application configuration)
-      set_config_bool(${SB_CONFIG_NETCORE_IMAGE_NAME} CONFIG_MY_CUSTOM_CONFIG y)
-      # This will set a string (or numeric) Kconfig option in the image (note: sysbuild forces this setting, it cannot be overwritten by changing the application configuration)
-      set_property(TARGET ${SB_CONFIG_NETCORE_IMAGE_NAME} APPEND_STRING PROPERTY CONFIG "CONFIG_CUSTOM_STRING=my_custom_value\n")
-    endif()
+.. _sysbuild_images_adding_custom_firmware_loader_images:
+
+Adding custom firmware loader images
+====================================
+
+You can add custom firmware loader images similarly to how nRF5340 network core images are incorporated.
+This can be handled using the following approach:
+
+* :file:`kconfig.sysbuild` file:
+
+    .. code-block:: kconfig
+
+        menu "Firmware loader configuration"
+            depends on MCUBOOT_MODE_FIRMWARE_UPDATER
+
+        config SUPPORT_FIRMWARE_LOADER_ABC
+            bool
+            default y
+
+        choice FIRMWARE_LOADER
+            prompt "Firmware loader image"
+            depends on MCUBOOT_MODE_FIRMWARE_UPDATER
+
+        config FIRMWARE_LOADER_IMAGE_ABC
+            bool "ABC"
+            help
+              Use ABC image as the firmware loader image.
+
+        endchoice
+
+        if !FIRMWARE_LOADER_IMAGE_NONE
+
+        config FIRMWARE_LOADER_IMAGE_NAME
+            default "abc" if FIRMWARE_LOADER_IMAGE_ABC
+
+        config FIRMWARE_LOADER_IMAGE_PATH
+            default "${ZEPHYR_MY_MODULE_MODULE_DIR}/<image_path>" if FIRMWARE_LOADER_IMAGE_ABC
+
+        endif # !FIRMWARE_LOADER_IMAGE_NONE
+
+        endmenu
+
+        source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+
+* :file:`sysbuild.cmake` file - This file is optional and should be used only if specific custom configurations are required for the application.
+
+    .. code-block:: cmake
+
+        if(SB_CONFIG_FIRMWARE_LOADER_IMAGE_ABC)
+          # Project can optionally be configured here if needed
+
+          # This will add a Kconfig fragment file, named `my_extra.conf` from the application directory
+          add_overlay_config(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} ${SB_CONFIG_FIRMWARE_LOADER_IMAGE_PATH}/my_extra.conf)
+          # This will add a devicetree overlay file, named `my_extra.dts` from the application directory
+          add_overlay_dts(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} ${SB_CONFIG_FIRMWARE_LOADER_IMAGE_PATH}/my_extra.dts)
+          # This will set a bool Kconfig option in the image (note: sysbuild forces this setting, it cannot be overwritten by changing the application configuration)
+          set_config_bool(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} CONFIG_MY_CUSTOM_CONFIG y)
+          # This will set a string (or numeric) Kconfig option in the image (note: sysbuild forces this setting, it cannot be overwritten by changing the application configuration)
+          set_property(TARGET ${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} APPEND_STRING PROPERTY CONFIG "CONFIG_CUSTOM_STRING=my_custom_value\n")
+        endif()
 
 .. _sysbuild_images_adding_to_a_single_board:
 
