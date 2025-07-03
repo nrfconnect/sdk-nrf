@@ -37,6 +37,7 @@ enum csip_set_rank {
 
 static le_audio_receive_cb receive_cb;
 static struct bt_csip_set_member_svc_inst *csip;
+static uint8_t concurrent_sync_num;
 
 /* Advertising data for peer connection */
 static uint8_t csip_rsi_adv_data[BT_CSIP_RSI_SIZE];
@@ -407,6 +408,7 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 	}
 
 	LOG_INF("Stream %p started", stream);
+	concurrent_sync_num++;
 
 	if (dir == BT_AUDIO_DIR_SOURCE && IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
 		struct stream_index idx = {
@@ -431,6 +433,7 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 	}
 
 	LOG_DBG("Stream %p stopped. Reason: %d", stream, reason);
+	concurrent_sync_num--;
 
 	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn, dir);
 }
@@ -457,7 +460,7 @@ static struct bt_bap_stream_ops stream_ops = {
 
 int le_audio_concurrent_sync_num_get(void)
 {
-	return 1; /* Only one stream supported at the moment */
+	return concurrent_sync_num; /* Only one stream supported at the moment */
 }
 
 int unicast_server_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint32_t *bitrate,
@@ -712,6 +715,9 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 			csip_param.rank = CSIP_HL_RANK;
 		} else if (location == BT_AUDIO_LOCATION_FRONT_RIGHT) {
 			csip_param.rank = CSIP_HR_RANK;
+		} else if (location ==
+			   (BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT)) {
+			csip_param.rank = CSIP_HL_RANK;
 		} else {
 			LOG_ERR("Channel not supported");
 			return -ECANCELED;
