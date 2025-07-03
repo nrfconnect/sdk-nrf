@@ -96,7 +96,51 @@
   comment: "Needs alignment to work with MCUBoot"
 
 - scenarios:
-    - drivers.counter.basic_api
+    - sample.npm1300_fuel_gauge_compile
+    - sample.npm1300_one_button_compile
   platforms:
+    - nrf52840dk/nrf52840
+    - nrf52dk/nrf52832
+    - nrf5340dk/nrf5340/cpuapp
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34187"
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf9160dk@0.14.0/nrf9160
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34322"
+
+- scenarios:
+    - applications.connectivity_bridge
+    - sample.nrf7002.shell.full_stack_thingy91x
+  platforms:
+    - thingy91x/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34322"
+
+- scenarios:
+    - applications.serial_lte_modem
+    - applications.serial_lte_modem.tracing
+    - sample.cellular.at_client
+    - sample.cellular.at_client.tracing
+    - sample.cellular.location
+    - sample.cellular.modem_shell.thingy91
+    - sample.cellular.modem_shell.thingy91x_wifi
+    - sample.cellular.modem_shell_modem_uart_trace
+    - sample.cellular.nrf_cloud_multi_service.coap
+    - sample.cellular.nrf_cloud_multi_service.mqtt
+    - sample.cellular.nrf_cloud_multi_service.mqtt.provisioning.trace
+    - sample.cellular.nrf_cloud_rest_cell_pos
+    - sample.cellular.nrf_cloud_rest_device_message
+    - sample.cellular.nrf_cloud_rest_fota
+    - sample.cellular.nrf_provisioning
+    - sample.cellular.udp
+    - sample.debug.memfault
+    - sample.debug.memfault.etb
+    - sample.debug.memfault.modem_trace_to_memfault
+    - sample.dect.dect_shell
+    - sample.net.aws_iot
+    - sample.net.mqtt
+    - sample.net.mqtt.nrf91.tls
+    - sample.nrf7002.shell.scan_only_thingy91x
+    - sample.thingy91x_nrf7000.scan
+    - sample.thingy91x_nrf7002.radio_test
+  platforms:
+    - thingy91x/nrf9151/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34322"
