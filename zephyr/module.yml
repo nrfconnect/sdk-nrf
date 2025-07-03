@@ -4,6 +4,7 @@ build:
   kconfig-ext: true
   sysbuild-cmake: sysbuild
   sysbuild-kconfig: sysbuild/Kconfig.sysbuild
+  sysbuild-kconfig-ext: true
   settings:
     soc_root: .
     board_root: .
