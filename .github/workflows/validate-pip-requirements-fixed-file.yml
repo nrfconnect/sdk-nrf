@@ -46,7 +46,7 @@ jobs:
           pip3 install --user -U setuptools wheel pip virtualenv virtualenvwrapper
 
       - name: Execute script diff action
-        uses: nrfconnect/action-script-diff@v0.3
+        uses: nrfconnect/action-script-diff@lessVerbose
         with:
           diff_file: "ncs/nrf/scripts/requirements-fixed.txt"
           script_call: |
