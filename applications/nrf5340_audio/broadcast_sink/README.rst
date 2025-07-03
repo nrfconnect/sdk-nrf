@@ -15,7 +15,7 @@ The following limitations apply to this application:
 * One BIG, one of the two BIS streams or a mixed stereo comprising of the two (selectable).
   See :file:`overlay-broadcast_sink.conf` for more information.
 * Audio output: I2S/Analog headset output.
-* Configuration: 16 bit, several bit rates ranging from 32 kbps to 124 kbps.
+* Configuration: 16-bit, several bit rates ranging from 32 kbps to 124 kbps.
 
 .. _nrf53_audio_broadcast_sink_app_requirements:
 

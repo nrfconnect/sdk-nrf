@@ -12,7 +12,8 @@ Each nRF5340 Audio application corresponds to one specific LE Audio role: unicas
 Likewise, each nRF5340 Audio application is configured for one specific LE Audio mode: the *connected isochronous stream* (CIS, unicast) mode or in the *broadcast isochronous stream* (BIS) mode.
 See :ref:`nrf53_audio_app_overview_modes` for more information.
 
-The applications use the same code base, but use different :file:`main.c` files and include different modules and libraries depending on the configuration.
+The audio applications use the same code base, but use different :file:`main.c` files and include different modules and libraries depending on the Audio LE roles and modes.
+See :ref:`nrf53_audio_app_overview_files` for more information.
 
 You might need to configure and program two applications for testing the interoperability, depending on your use case.
 See the testing steps for each of the application for more information.
@@ -49,7 +50,7 @@ Connected Isochronous Stream (CIS)
   The gateway can send the audio data using both the left and the right ISO channels at the same time, allowing for stereophonic sound reproduction with synchronized playback.
 
   This is the mode available for the unicast applications (:ref:`unicast client<nrf53_audio_unicast_client_app>` and :ref:`unicast server<nrf53_audio_unicast_server_app>`).
-  In this mode, you can use the nRF5340 Audio development kit in the role of the gateway, the left headset, or the right headset.
+  In this mode, you can use the nRF5340 Audio development kit in the role of the gateway, the left headset, the right headset, or a left+right headset with :ref:`stereo support <>`.
 
   In the current version of the nRF5340 Audio unicast client, the application offers both unidirectional and bidirectional communication.
   In the bidirectional communication, the headset device will send audio from the on-board PDM microphone.
@@ -63,7 +64,7 @@ Broadcast Isochronous Stream (BIS)
   BIS is a unidirectional communication protocol that allows for broadcasting one or more audio streams from a source device to an unlimited number of receivers that are not connected to the source.
 
   This is the mode available for the broadcast applications (:ref:`broadcast source<nrf53_audio_broadcast_source_app>` for gateway and :ref:`broadcast sink<nrf53_audio_broadcast_sink_app>` for headset).
-  In this mode, you can use the nRF5340 Audio development kit in the role of the gateway or as one of the headsets.
+  In this mode, you can use the nRF5340 Audio development kit in the role of the gateway or as one of the headsets (left, right, or left+right with stereo support).
   Use multiple nRF5340 Audio development kits to test BIS having multiple receiving headsets.
 
   .. note::

@@ -37,6 +37,7 @@ enum csip_set_rank {
 
 static le_audio_receive_cb receive_cb;
 static struct bt_csip_set_member_svc_inst *csip;
+static uint8_t concurrent_sink_streams_num;
 
 /* Advertising data for peer connection */
 static uint8_t csip_rsi_adv_data[BT_CSIP_RSI_SIZE];
@@ -64,8 +65,7 @@ static struct bt_cap_stream *cap_tx_streams[CONFIG_BT_ASCS_MAX_ASE_SRC_COUNT];
 #define AVAILABLE_SOURCE_CONTEXT BT_AUDIO_CONTEXT_TYPE_NONE
 #endif /* CONFIG_BT_AUDIO_TX */
 
-static struct bt_bap_unicast_server_register_param unicast_server_params = {
-	CONFIG_BT_ASCS_MAX_ASE_SNK_COUNT, CONFIG_BT_ASCS_MAX_ASE_SRC_COUNT};
+static struct bt_bap_unicast_server_register_param unicast_server_params = {0, 0};
 
 static uint8_t unicast_server_adv_data[] = {
 	BT_UUID_16_ENCODE(BT_UUID_ASCS_VAL),
@@ -138,7 +138,7 @@ static enum bt_audio_dir caps_dirs[] = {
 #endif /* (CONFIG_BT_AUDIO_TX) */
 };
 
-static const struct bt_bap_qos_cfg_pref qos_pref = BT_BAP_QOS_CFG_PREF(
+static struct bt_bap_qos_cfg_pref qos_pref = BT_BAP_QOS_CFG_PREF(
 	true, BT_GAP_LE_PHY_2M, CONFIG_BT_AUDIO_RETRANSMITS, BLE_ISO_LATENCY_MS,
 	CONFIG_AUDIO_MIN_PRES_DLY_US, CONFIG_AUDIO_MAX_PRES_DLY_US,
 	CONFIG_BT_AUDIO_PREFERRED_MIN_PRES_DLY_US, CONFIG_BT_AUDIO_PREFERRED_MAX_PRES_DLY_US);
@@ -408,6 +408,10 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 
 	LOG_INF("Stream %p started", stream);
 
+	if (dir == BT_AUDIO_DIR_SINK) {
+		concurrent_sink_streams_num++;
+	}
+
 	if (dir == BT_AUDIO_DIR_SOURCE && IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
 		struct stream_index idx = {
 			.lvl1 = 0,
@@ -432,6 +436,10 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 
 	LOG_DBG("Stream %p stopped. Reason: %d", stream, reason);
 
+	if (dir == BT_AUDIO_DIR_SINK) {
+		concurrent_sink_streams_num--;
+	}
+
 	le_audio_event_publish(LE_AUDIO_EVT_NOT_STREAMING, stream->conn, dir);
 }
 
@@ -455,9 +463,57 @@ static struct bt_bap_stream_ops stream_ops = {
 	.released = stream_released_cb,
 };
 
-int le_audio_concurrent_sync_num_get(void)
+int unicast_server_pd_min_set(uint32_t dly_min_in_us)
 {
-	return 1; /* Only one stream supported at the moment */
+	if (dly_min_in_us > qos_pref.pd_max) {
+		LOG_WRN("Min pres delay (%u) cannot be higher than max (%u), keeping old min (%u)",
+			dly_min_in_us, qos_pref.pd_max, qos_pref.pd_min);
+		return -EINVAL;
+	}
+
+	if (dly_min_in_us < CONFIG_AUDIO_MIN_PRES_DLY_US) {
+		LOG_WRN("Min pres delay (%u) too low, setting to %u", dly_min_in_us,
+			CONFIG_AUDIO_MIN_PRES_DLY_US);
+		return -EINVAL;
+	}
+
+	qos_pref.pd_min = dly_min_in_us;
+	qos_pref.pref_pd_min = dly_min_in_us;
+
+	return 0;
+}
+
+int le_audio_concurrent_sync_num_get(uint8_t *num_streams, enum bt_audio_location *locations)
+{
+	int ret;
+
+	if (num_streams == NULL || locations == NULL) {
+		LOG_ERR("Invalid input parameters");
+		return -EINVAL;
+	}
+
+	*num_streams = concurrent_sink_streams_num;
+	*locations = 0;
+
+	for (int i = 0; i < ARRAY_SIZE(cap_audio_streams); i++) {
+		if (!cap_audio_streams[i].bap_stream.conn ||
+		    !cap_audio_streams[i].bap_stream.codec_cfg) {
+			continue;
+		}
+
+		enum bt_audio_location chan_allocation;
+
+		ret = bt_audio_codec_cfg_get_chan_allocation(
+			cap_audio_streams[i].bap_stream.codec_cfg, &chan_allocation, false);
+		if (ret) {
+			LOG_WRN("Failed to get channel allocation");
+			return ret;
+		}
+
+		*locations |= chan_allocation;
+	}
+
+	return 0;
 }
 
 int unicast_server_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint32_t *bitrate,
@@ -677,8 +733,35 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 
 	receive_cb = recv_cb;
 
-	bt_bap_unicast_server_register(&unicast_server_params);
-	bt_bap_unicast_server_register_cb(&unicast_server_cb);
+	/* For this application, we create one sink endpoint for each location */
+	unicast_server_params.snk_cnt = POPCOUNT(location);
+	if (unicast_server_params.snk_cnt == 0) {
+		LOG_ERR("No sink endpoint requested");
+		return -EINVAL;
+	}
+
+	if (unicast_server_params.snk_cnt > CONFIG_BT_ASCS_MAX_ASE_SNK_COUNT) {
+		LOG_WRN("Too many sink endpoints requested (%d), max %d, will just use first "
+			"location",
+			unicast_server_params.snk_cnt, CONFIG_BT_ASCS_MAX_ASE_SNK_COUNT);
+		unicast_server_params.snk_cnt = CONFIG_BT_ASCS_MAX_ASE_SNK_COUNT;
+		/* Use lowest valid set location */
+		location = location & ~(location - 1);
+	}
+
+	unicast_server_params.src_cnt = CONFIG_BT_ASCS_MAX_ASE_SRC_COUNT;
+
+	ret = bt_bap_unicast_server_register(&unicast_server_params);
+	if (ret) {
+		LOG_ERR("Could not register unicast server (err %d)", ret);
+		return ret;
+	}
+
+	ret = bt_bap_unicast_server_register_cb(&unicast_server_cb);
+	if (ret) {
+		LOG_ERR("Could not register unicast server callbacks (err %d)", ret);
+		return ret;
+	}
 
 	if (IS_ENABLED(CONFIG_BT_CSIP_SET_MEMBER_TEST_SAMPLE_DATA)) {
 		LOG_WRN("CSIP test sample data is used, must be changed "
@@ -707,16 +790,19 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 		}
 	}
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_RX)) {
-		if (location == BT_AUDIO_LOCATION_FRONT_LEFT) {
-			csip_param.rank = CSIP_HL_RANK;
-		} else if (location == BT_AUDIO_LOCATION_FRONT_RIGHT) {
-			csip_param.rank = CSIP_HR_RANK;
-		} else {
-			LOG_ERR("Channel not supported");
-			return -ECANCELED;
-		}
+	if (location == BT_AUDIO_LOCATION_FRONT_LEFT) {
+		csip_param.rank = CSIP_HL_RANK;
+	} else if (location == BT_AUDIO_LOCATION_FRONT_RIGHT) {
+		csip_param.rank = CSIP_HR_RANK;
+	} else if (location == (BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT)) {
+		csip_param.rank = CSIP_HL_RANK;
+		csip_param.set_size = 1;
+	} else {
+		LOG_ERR("Location not supported");
+		return -ECANCELED;
+	}
 
+	if (IS_ENABLED(CONFIG_BT_AUDIO_RX)) {
 		ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, location);
 		if (ret) {
 			LOG_ERR("Location set failed. Err: %d", ret);

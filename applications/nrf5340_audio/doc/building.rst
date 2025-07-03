@@ -68,9 +68,9 @@ When preparing the JSON file, update the following fields:
   You can check this ten-digit number on the sticker on the nRF5340 Audio development kit.
   Alternatively, connect the development kit to your PC and run ``nrfutil device list`` in a command window to print the SEGGER serial number of all connected kits.
 * ``nrf5340_audio_dk_dev`` - This field assigns the specific nRF5340 Audio development kit to be ``headset`` or ``gateway``.
-* ``channel`` - This field is valid only for headsets.
-  It sets the channels on which the headset is meant to work.
-  When no channel is set, the headset is programmed as a left channel one.
+* ``location`` - This field is valid only for headsets.
+  It sets the location on which the headset is meant to work, especially when using the :ref:`default CIS transport mode configuration <nrf53_audio_transport_mode_configuration>`.
+  For more information, see :ref:`nrf53_audio_app_configuration_headset_location`.
 
 .. _nrf53_audio_app_building_script_running:
 
@@ -226,14 +226,14 @@ Application configuration files
 ===============================
 
 The application uses a :file:`prj.conf` configuration file located in the sample root directory for the default configuration.
-It also provides additional files for different custom configurations.
+It also uses application-specific overlay files and can use additional files for different custom configurations.
 When you build the sample, you can select one of these configurations using the :makevar:`FILE_SUFFIX` variable.
 
-See :ref:`app_build_file_suffixes` and :ref:`cmake_options` for more information.
+See :ref:`nrf53_audio_app_configuration_files`, :ref:`app_build_file_suffixes`, and :ref:`cmake_options` for more information.
 
-The application supports the following custom configurations:
+The application supports the following configuration files:
 
-.. list-table:: Application custom configurations
+.. list-table:: Application configurations
    :widths: auto
    :header-rows: 1
 
@@ -252,8 +252,24 @@ The application supports the following custom configurations:
    * - FOTA DFU
      - :file:`prj_fota.conf`
      - ``fota``
-     - | Builds the debug version of the application with the features needed to perform DFU over Bluetooth LE, and includes bootloaders so that the applications on both the application core and network core can be updated.
+     - | Builds the debug version of the application (:file:`prj.conf`) with the features needed to perform DFU over Bluetooth LE, and includes bootloaders so that the applications on both the application core and network core can be updated.
        | See :ref:`nrf53_audio_app_fota` for more information.
+   * - Application-specific overlay file
+     - :file:`unicast_server/overlay-unicast_server.conf`
+     - ``unicast_server``
+     - Configuration file for the unicast server application.
+   * - Application-specific overlay file
+     - :file:`unicast_client/overlay-unicast_client.conf`
+     - ``unicast_client``
+     - Configuration file for the unicast client application.
+   * - Application-specific overlay file
+     - :file:`broadcast_sink/overlay-broadcast_sink.conf`
+     - ``broadcast_sink``
+     - Configuration file for the broadcast sink application.
+   * - Application-specific overlay file
+     - :file:`broadcast_source/overlay-broadcast_source.conf`
+     - ``broadcast_source``
+     - Configuration file for the broadcast source application.
 
 .. _nrf53_audio_app_configuration_select_build:
 
@@ -302,25 +318,35 @@ The following command example builds the application for :ref:`nrf53_audio_app_f
 The command uses ``-DFILE_SUFFIX=fota`` to pick :file:`prj_fota.conf` instead of the default :file:`prj.conf`.
 It also uses the ``--pristine`` to clean the existing directory before starting the build process.
 
+.. _nrf53_audio_app_building_standard_programming:
+
 Programming the application
 ===========================
 
 After building the files for the development kit you want to program, follow the :ref:`standard procedure for programming applications <building>` in the |NCS|.
 
-When using the default CIS configuration, if you want to use two headset devices, you must also populate the UICR with the desired channel for each headset.
-Use the following commands, depending on which headset you want to populate:
+When using the :ref:`default CIS transport mode configuration <nrf53_audio_transport_mode_configuration>`, if you want to use two headset devices or the stereo configuration, you must :ref:`configure the headset location <nrf53_audio_app_configuration_headset_location>`.
+Use the combined bitfield values, depending on which headset you want to configure:
 
-* Left headset (``--value 0``):
+* Two headsets, left and right:
 
-   .. code-block:: console
+  * Left headset (``--value 1``):
 
-      nrfutil device x-write --address 0x00FF80F4 --value 0
+    .. code-block:: console
 
-* Right headset (``--value 1``):
+       nrfutil device x-write --address 0x00FF80F4 --value 1
 
-   .. code-block:: console
+  * Right headset (``--value 2``):
 
-      nrfutil device x-write --address 0x00FF80F4 --value 1
+    .. code-block:: console
+
+       nrfutil device x-write --address 0x00FF80F4 --value 2
+
+* One stereo headset (``--value 3``):
+
+  .. code-block:: console
+
+     nrfutil device x-write --address 0x00FF80F4 --value 3
 
 Select the correct board when prompted with the popup.
 Alternatively, you can add the ``--serial-number`` parameter followed by the SEGGER serial number of the correct board at the end of the ``nrfutil device`` command.

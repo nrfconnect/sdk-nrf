@@ -15,8 +15,8 @@ Play and pause are emulated by enabling and disabling stream, respectively.
 The following limitations apply to this application:
 
 * One BIG with two BIS streams.
-* Audio input: USB or I2S (Line in or using Pulse Density Modulation).
-* Configuration: 16 bit, several bit rates ranging from 32 kbps to 124 kbps.
+* Audio input: USB or I2S (Line-in or using Pulse Density Modulation).
+* Configuration: 16-bit, several bit rates ranging from 32 kbps to 124 kbps.
 
 .. _nrf53_audio_broadcast_source_app_requirements:
 
