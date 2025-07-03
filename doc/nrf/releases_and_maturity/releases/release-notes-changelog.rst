@@ -928,6 +928,7 @@ Documentation
 
 * Added:
 
+  * The :ref:`asset_tracker_template_redirect` page, which provides the information about the `Asset Tracker Template Add-on <Asset Tracker Template_>`_.
   * The :ref:`log_rpc` library documentation page.
   * The :ref:`mcuboot_serial_recovery` documentation page, based on the official Zephyr documentation, which discusses the implementation and usage of the serial recovery.
 

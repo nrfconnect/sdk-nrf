@@ -54,6 +54,7 @@
 .. _`TF-M sample incompatibility issue`: https://github.com/zephyrproject-rtos/zephyr/issues/34658
 
 .. _`Asset Tracker Template`: https://docs.nordicsemi.com/bundle/asset-tracker-template-latest/page/index.html
+.. _`Asset-Tracker-Template`: https://github.com/nrfconnect/Asset-Tracker-Template
 
 .. _`generate_psa_key_attributes.py`: https://github.com/nrfconnect/sdk-nrf/blob/main/scripts/generate_psa_key_attributes.py
 .. _`print_toolchain_checksum.sh`: https://github.com/nrfconnect/sdk-nrf/blob/main/scripts/print_toolchain_checksum.sh
