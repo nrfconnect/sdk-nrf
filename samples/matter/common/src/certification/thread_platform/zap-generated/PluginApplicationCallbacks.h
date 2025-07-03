@@ -38,7 +38,7 @@ void MatterOperationalCredentialsPluginServerInitCallback();
 void MatterGroupKeyManagementPluginServerInitCallback();
 void MatterIcdManagementPluginServerInitCallback();
 
-#define MATTER_PLUGINS_INIT                                                                                        \
+#define MATTER_PLUGINS_INIT                                                                                            \
 	MatterGroupsPluginServerInitCallback();                                                                        \
 	MatterOnOffPluginServerInitCallback();                                                                         \
 	MatterDescriptorPluginServerInitCallback();                                                                    \
