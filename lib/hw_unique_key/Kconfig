@@ -18,7 +18,7 @@ config HW_UNIQUE_KEY_LOAD
 	depends on HAS_HW_NRF_CC310
 	depends on NRF_CC3XX_PLATFORM
 	select FPROTECT
-	imply NRFX_NVMC if !SOC_SERIES_NRF54LX
+	imply NRFX_NVMC if !CRACEN_HW_PRESENT
 	help
 	  Use this on devices with no KMU. Enable this in the immutable
 	  bootloader to load the HUK from the allocated flash area
@@ -46,7 +46,7 @@ config HW_UNIQUE_KEY
 	select PSA_WANT_ALG_GCM if CRACEN_HW_PRESENT
 	select PSA_NEED_CRACEN_KMU_DRIVER if CRACEN_HW_PRESENT
 	select FPROTECT if HAS_HW_NRF_ACL
-	imply NRFX_NVMC if !SOC_SERIES_NRF54LX
+	imply NRFX_NVMC if !CRACEN_HW_PRESENT
 	default y if BUILD_WITH_TFM
 	help
 	  This option will load the Hardware Unique Key (HUK) in the KDR

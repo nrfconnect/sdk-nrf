@@ -23,7 +23,7 @@
 #include <security/cracen.h>
 #include <nrf_security_mutexes.h>
 
-#if CONFIG_CRACEN_HW_VERSION_LITE && !CONFIG_SOC_NRF54LM20A && !CONFIG_SOC_NRF54LV10A
+#if defined(CONFIG_CRACEN_HW_VERSION_LITE) && !defined(CONFIG_CRACEN_NEED_IKG_INTERRUPT_WORKAROUND)
 #error Check to see if the current board needs the IKG-PKE interrupt workaround or not, \
 then update this error
 #endif
