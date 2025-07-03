@@ -83,13 +83,16 @@ struct stream_index {
 /**
  * @brief	Get the number of active streams.
  *
- * @note	This function returns the number of streams that are currently active.
+ * @note	This function returns the number of streams and locations that are currently active.
  *		An active stream is one that has been set up and is ready to receive data.
  *		This function is used by broadcast_sink, unicast_server and unicast_client.
  *
- * @return	Number of active BIS, or negative error code on failure.
+ * @param[out]	num_streams	Pointer to the number of active streams.
+ * @param[out]	locations	Pointer to the bitmask of active locations.
+ *
+ * @return	0 for success, error otherwise.
  */
-int le_audio_concurrent_sync_num_get(void);
+int le_audio_concurrent_sync_num_get(uint8_t *num_streams, enum bt_audio_location *locations);
 
 /**
  * @brief Function to populate the audio metadata.

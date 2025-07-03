@@ -81,11 +81,10 @@ config BT_AUDIO_PRES_DELAY_SRCH_SOURCE
 	  then it will revert to the closest supported value.
 endchoice
 
-config BT_AUDIO_EP_PRINT
-	bool "Print discovered endpoint capabilities"
-	default n
+config BT_AUDIO_PAC_REC_PRINT
+	bool "Print discovered Published Audio Capabilities"
 	help
-	  Print the supported capabilities of an endpoint when it is discovered.
+	  Print the supported capabilities of a unicast server when it is discovered.
 
 
 config CODEC_CAP_COUNT_MAX
@@ -155,6 +154,10 @@ source "subsys/logging/Kconfig.template.log_config"
 
 module = UNICAST_CLIENT
 module-str = unicast_client
+source "subsys/logging/Kconfig.template.log_config"
+
+module = SERVER_STORE
+module-str = server_store
 source "subsys/logging/Kconfig.template.log_config"
 
 endmenu # Log levels

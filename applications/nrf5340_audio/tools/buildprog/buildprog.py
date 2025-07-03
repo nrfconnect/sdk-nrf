@@ -372,8 +372,13 @@ def __main():
                 print("No location specified for headset, setting to MONO_AUDIO")
                 location = [Location.MONO_AUDIO]
         else:
-            if dev["location"] != ['NA'] or dev["location"] == []:
-                print("Location field is only valid for headset devices, setting to NA")
+            if "channel" in dev:
+                print("Using deprecated location format. Convert to using Location enum")
+            elif "location" in dev:
+                if dev["location"] != ['NA'] or dev["location"] == []:
+                    print("Location field is only valid for headset devices, setting to NA")
+            else:
+                raise KeyError(f"Invalid location name {e} for gateway in JSON file")
             location = []
 
         device = DeviceConf(

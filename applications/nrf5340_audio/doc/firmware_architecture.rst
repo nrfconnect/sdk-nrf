@@ -12,10 +12,11 @@ Each nRF5340 Audio application corresponds to one specific LE Audio role: unicas
 Likewise, each nRF5340 Audio application is configured for one specific LE Audio mode: the *connected isochronous stream* (CIS, unicast) mode or in the *broadcast isochronous stream* (BIS) mode.
 See :ref:`nrf53_audio_app_overview_modes` for more information.
 
-The applications use the same code base, but use different :file:`main.c` files and include different modules and libraries depending on the configuration.
+The audio applications use the same code base, but use different :file:`main.c` files and include different modules and libraries depending on the Audio LE roles and modes.
+See :ref:`nrf53_audio_app_overview_files` for more information.
 
 You might need to configure and program two applications for testing the interoperability, depending on your use case.
-See the testing steps for each of the application for more information.
+See the testing steps for each application for more information.
 
 .. _nrf53_audio_app_overview_gateway_headsets:
 
@@ -49,7 +50,7 @@ Connected Isochronous Stream (CIS)
   The gateway can send the audio data using both the left and the right ISO channels at the same time, allowing for stereophonic sound reproduction with synchronized playback.
 
   This is the mode available for the unicast applications (:ref:`unicast client<nrf53_audio_unicast_client_app>` and :ref:`unicast server<nrf53_audio_unicast_server_app>`).
-  In this mode, you can use the nRF5340 Audio development kit in the role of the gateway, the left headset, or the right headset.
+  In this mode, you can use the nRF5340 Audio development kit in the role of the gateway, the left headset, the right headset, or a left+right headset with :ref:`stereo support <nrf53_audio_app_configuration_headset_location>`.
 
   In the current version of the nRF5340 Audio unicast client, the application offers both unidirectional and bidirectional communication.
   In the bidirectional communication, the headset device will send audio from the on-board PDM microphone.
@@ -62,8 +63,8 @@ Connected Isochronous Stream (CIS)
 Broadcast Isochronous Stream (BIS)
   BIS is a unidirectional communication protocol that allows for broadcasting one or more audio streams from a source device to an unlimited number of receivers that are not connected to the source.
 
-  This is the mode available for the broadcast applications (:ref:`broadcast source<nrf53_audio_broadcast_source_app>` for gateway and :ref:`broadcast sink<nrf53_audio_broadcast_sink_app>` for headset).
-  In this mode, you can use the nRF5340 Audio development kit in the role of the gateway or as one of the headsets.
+  This is the mode available for the broadcast applications (:ref:`broadcast source<nrf53_audio_broadcast_source_app>` for gateway and :ref:`broadcast sink<nrf53_audio_broadcast_sink_app>` for headset.)
+  In this mode, you can use the nRF5340 Audio development kit in the role of the gateway or as one of the headsets (left, right, or left+right with :ref:`stereo support <nrf53_audio_app_configuration_headset_location>`.)
   Use multiple nRF5340 Audio development kits to test BIS having multiple receiving headsets.
 
   .. note::
@@ -130,7 +131,8 @@ The following figure illustrates the software layout for the nRF5340 Audio appli
 
    nRF5340 Audio application file-level breakdown
 
-Communication between modules is primarily done through Zephyr's :ref:`zephyr:zbus` to make sure that there are as few dependencies as possible. Each of the buses used by the applications has their message structures described in :file:`zbus_common.h`.
+Communication between modules is primarily done through Zephyr's :ref:`zephyr:zbus` to make sure that there are as few dependencies as possible.
+Each of the buses used by the applications has its message structures described in :file:`zbus_common.h`.
 
 .. _nrf53_audio_app_overview_architecture_usb:
 
@@ -231,8 +233,8 @@ See the following figure for an overview of the synchronization module.
 
 Both synchronization methods use the SDU reference timestamps (:c:type:`sdu_ref`) as the reference variable.
 If the device is a gateway that is :ref:`using I2S as audio source <nrf53_audio_app_overview_architecture_i2s>` and the stream is unidirectional (gateway to headsets), :c:type:`sdu_ref` is continuously being extracted from the LE Audio Controller Subsystem for nRF53 on the gateway.
-The extraction happens inside the :file:`unicast_client.c` and :file:`broadcast_source.c` files' send function.
-The :c:type:`sdu_ref` values are then sent to the gateway's synchronization module, and used to do drift compensation.
+The extraction happens inside the :file:`unicast_client.c` and :file:`broadcast_source.c` files' send functions.
+The :c:type:`sdu_ref` values are then sent to the gateway's synchronization module, and used for drift compensation.
 
 .. note::
    Inside the synchronization module (:file:`audio_datapath.c`), all time-related variables end with ``_us`` (for microseconds).
@@ -282,9 +284,8 @@ The received audio data in the I2S-based firmware devices follows the following 
    Each package sent from the gateway gets a unique SDU reference timestamp.
    These timestamps are generated on the headset Bluetooth LE controller (in the network core).
    This enables the creation of True Wireless Stereo (TWS) earbuds where the audio is synchronized in the CIS mode.
-   It does also keep the speed of the inter-IC sound (I2S) interface synchronized with the sending and receiving speed of Bluetooth packets.
+   It also keeps the speed of the inter-IC sound (I2S) interface synchronized with the sending and receiving speed of Bluetooth packets.
 #. The :file:`audio_datapath.c` module sends the compressed audio data to the LC3 audio decoder for decoding.
-
 #. The audio decoder decodes the data and sends the uncompressed audio data (PCM) back to the :file:`audio_datapath.c` module.
 #. The :file:`audio_datapath.c` module continuously feeds the uncompressed audio data to the hardware codec.
 #. The hardware codec receives the uncompressed audio data over the inter-IC sound (I2S) interface and performs the digital-to-analog (DAC) conversion to an analog audio signal.

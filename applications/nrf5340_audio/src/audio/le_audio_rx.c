@@ -36,16 +36,65 @@ NET_BUF_POOL_FIXED_DEFINE(ble_rx_pool, CONFIG_BUF_BLE_RX_PACKET_NUM,
 			  (CONFIG_BT_ISO_RX_MTU * CONFIG_BT_AUDIO_CONCURRENT_RX_STREAMS_MAX),
 			  sizeof(struct audio_metadata), NULL);
 
-static void audio_frame_add(struct net_buf *audio_frame, struct net_buf *audio_frame_rx,
-			    struct audio_metadata *meta)
+static int location_to_net_buf_index(enum bt_audio_location total_loc,
+				     enum bt_audio_location srch_loc, uint8_t *index)
 {
-	if (audio_frame_rx->len && !meta->bad_data) {
-		net_buf_add_mem(audio_frame, audio_frame_rx->data, audio_frame_rx->len);
-	} else {
-		/* Increment len to account for bad_data */
-		net_buf_add(audio_frame,
-			    meta->bytes_per_location * audio_metadata_num_ch_get(meta));
+	uint8_t idx = 0;
+
+	while (total_loc) {
+		if (srch_loc & 0x01) {
+			*index = idx;
+			return 0;
+		}
+
+		/* Count the number of active locations */
+		if (total_loc & 0x01) {
+			idx++;
+		}
+
+		total_loc >>= 1;
+		srch_loc >>= 1;
 	}
+
+	return -EINVAL;
+}
+
+static int audio_frame_add(struct net_buf *audio_frame, struct net_buf const *const audio_frame_rx,
+			   struct audio_metadata *meta, enum bt_audio_location stream_locations)
+{
+	int ret;
+	uint32_t offset = 0;
+
+	if (audio_frame == NULL || audio_frame_rx == NULL || meta == NULL) {
+		LOG_ERR("Invalid input parameters");
+		return -EINVAL;
+	}
+
+	if (meta->locations != stream_locations) {
+		/* Get net_buf_index for given location */
+		uint8_t net_buf_index = 0;
+
+		ret = location_to_net_buf_index(stream_locations, meta->locations, &net_buf_index);
+		if (ret) {
+			LOG_ERR("Invalid location index, ret: %d", ret);
+			return ret;
+		}
+
+		/* Calculate offset in net_buf */
+		offset = net_buf_index * meta->bytes_per_location;
+
+		if (offset > audio_frame->size - audio_frame_rx->len) {
+			LOG_ERR("Calculated offset too large: %d", offset);
+			return -EINVAL;
+		}
+	}
+
+	if (audio_frame_rx->len && !meta->bad_data) {
+		/* Copy audio data to the correct offset */
+		memcpy(&audio_frame->data[offset], audio_frame_rx->data, audio_frame_rx->len);
+	}
+
+	return 0;
 }
 
 /* Callback for handling ISO RX */
@@ -107,6 +156,15 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 		}
 	}
 
+	uint8_t num_active_streams = 0;
+	enum bt_audio_location stream_locations = 0;
+
+	ret = le_audio_concurrent_sync_num_get(&num_active_streams, &stream_locations);
+	if (ret) {
+		LOG_ERR("Failed to get number of active streams: %d", ret);
+		return;
+	}
+
 	/* Check if we already have received a frame with the same timestamp */
 	if (audio_frame != NULL) {
 		struct audio_metadata *existing_meta = net_buf_user_data(audio_frame);
@@ -121,7 +179,14 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 				existing_meta->locations |= meta->locations;
 				existing_meta->bad_data |= meta->bad_data;
 
-				audio_frame_add(audio_frame, audio_frame_rx, meta);
+				ret = audio_frame_add(audio_frame, audio_frame_rx, meta,
+						      stream_locations);
+				if (ret) {
+					LOG_ERR("Failed to add audio frame data");
+					net_buf_unref(audio_frame);
+					audio_frame = NULL;
+					return;
+				}
 
 				/* Check if we need to send the frame */
 				goto check_send;
@@ -132,9 +197,12 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 			}
 		} else {
 			/* We have a new frame with a different timestamp, so we will send the
-			 * old frame and create a new one
+			 * old frame and create a new one. This will usually happen if we miss a
+			 * frame or we suddenly go from one to two or more streams.
 			 */
-			LOG_WRN("Received audio frame with different timestamp, sending old frame");
+			LOG_WRN("Received audio frame with different timestamp, sending old frame, "
+				"old ts: %u, new ts: %u",
+				existing_meta->ref_ts_us, meta->ref_ts_us);
 
 			ret = k_msgq_put(&ble_q_rx, (void *)&audio_frame, K_NO_WAIT);
 			ERR_CHK_MSG(ret, "Failed to put audio frame into queue");
@@ -151,16 +219,23 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 		return;
 	}
 
-	audio_frame_add(audio_frame, audio_frame_rx, meta);
-
 	/* Store metadata from the first frame */
 	memcpy(net_buf_user_data(audio_frame), meta, sizeof(struct audio_metadata));
 
+	/* Set aside memory in net_buf for all locations */
+	net_buf_add(audio_frame, meta->bytes_per_location * num_active_streams);
+
+	ret = audio_frame_add(audio_frame, audio_frame_rx, meta, stream_locations);
+	if (ret) {
+		LOG_ERR("Failed to add audio frame data");
+		net_buf_unref(audio_frame);
+		audio_frame = NULL;
+		return;
+	}
+
 	/* Check if we have received all frames, send if we have */
 check_send:
-	struct audio_metadata *existing_meta = net_buf_user_data(audio_frame);
-
-	if (le_audio_concurrent_sync_num_get() == audio_metadata_num_ch_get(existing_meta)) {
+	if (num_active_streams == audio_metadata_num_ch_get(net_buf_user_data(audio_frame))) {
 		/* We have received all frames we are waiting for, pass data on to
 		 * the next module
 		 */

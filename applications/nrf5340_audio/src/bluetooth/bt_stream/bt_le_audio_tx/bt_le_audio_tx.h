@@ -4,6 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup audio_app_bt_stream
+ * @{
+ * @defgroup le_audio_tx Functions for LE Audio TX functionality.
+ * @{
+ * @brief Helper functions to manage LE Audio TX functionality.
+ */
+
 #ifndef _LE_AUDIO_TX_H_
 #define _LE_AUDIO_TX_H_
 
@@ -58,5 +66,11 @@ int bt_le_audio_tx_stream_sent(struct stream_index stream_idx);
  * @brief	Initializes the TX path for ISO transmission.
  */
 void bt_le_audio_tx_init(void);
+
+/**
+ * @}
+ * @}
+ */
+
 
 #endif /* _LE_AUDIO_TX_H_ */
