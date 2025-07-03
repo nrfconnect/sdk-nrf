@@ -131,7 +131,7 @@ config BT_AUDIO_BITRATE_UNICAST_SRC
 
 config BT_SET_IDENTITY_RESOLVING_KEY_DEFAULT
 	string
-	default "NRF5340_TWS_DEMO"
+	default "NRF5340_KRS_DEMO"
 	help
 	  Default string to configure the Set Identify Resolving Key (SIRK), must
 	  be changed before production uniquely for each coordinated set.
@@ -155,6 +155,10 @@ source "subsys/logging/Kconfig.template.log_config"
 
 module = UNICAST_CLIENT
 module-str = unicast_client
+source "subsys/logging/Kconfig.template.log_config"
+
+module = SERVER_STORE
+module-str = server_store
 source "subsys/logging/Kconfig.template.log_config"
 
 endmenu # Log levels

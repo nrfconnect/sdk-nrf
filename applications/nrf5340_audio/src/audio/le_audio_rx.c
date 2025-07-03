@@ -133,7 +133,9 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 			/* We have a new frame with a different timestamp, so we will send the
 			 * old frame and create a new one
 			 */
-			LOG_WRN("Received audio frame with different timestamp, sending old frame");
+			LOG_DBG("Received audio frame with different timestamp, sending old frame, "
+				"old ts: %u, new ts: %u",
+				existing_meta->ref_ts_us, meta->ref_ts_us);
 
 			ret = k_msgq_put(&ble_q_rx, (void *)&audio_frame, K_NO_WAIT);
 			ERR_CHK_MSG(ret, "Failed to put audio frame into queue");

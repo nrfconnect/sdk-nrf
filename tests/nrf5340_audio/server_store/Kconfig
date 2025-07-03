@@ -1,0 +1,44 @@
+source "Kconfig.zephyr"
+
+config AUDIO_SAMPLE_RATE_48000_HZ
+	bool "48 kHz"
+	help
+	  Sample rate of 48kHz is valid for both I2S/line-in and USB.
+
+config AUDIO_SAMPLE_RATE_24000_HZ
+	bool "24 kHz"
+	help
+	  Sample rate of 24kHz is valid for both I2S/line-in and USB.
+
+config AUDIO_SAMPLE_RATE_16000_HZ
+	bool "16 kHz"
+	help
+	  Sample rate of 16kHz is valid for both I2S/line-in and USB.
+
+config CODEC_CAP_COUNT_MAX
+	int "Max storage of codec capabilities"
+	default 5
+
+config UNICAST_CLIENT_LOG_LEVEL
+	int "Log level for unicast client"
+	default 4
+
+config SERVER_STORE_LOG_LEVEL
+	int "Log level for server store"
+	default 4
+
+config BLE_LOG_LEVEL
+	int "Log level for BLE"
+	default 4
+
+config LC3_BITRATE_MIN
+	int "Minimum LC3 bitrate"
+	default 32000
+
+config LC3_BITRATE_MAX
+	int "Maximum LC3 bitrate"
+	default 124000
+
+config AUDIO_FRAME_DURATION_US
+	int "Audio frame duration in microseconds"
+	default 10000

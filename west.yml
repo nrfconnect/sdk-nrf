@@ -22,7 +22,7 @@ manifest:
       url-base: https://github.com/nrfconnect
     # Third-party repository sources:
     - name: zephyrproject
-      url-base: https://github.com/zephyrproject-rtos
+      url-base: https://github.com/alexsven/sdk-zephyr
     - name: throwtheswitch
       url-base: https://github.com/ThrowTheSwitch
     - name: dragoon
