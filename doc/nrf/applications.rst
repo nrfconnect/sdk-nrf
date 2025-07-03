@@ -16,16 +16,10 @@ Applications are also available through the `nRF Connect SDK Add-ons`_, a curate
 
 .. toctree::
    :maxdepth: 1
-
-   Asset Tracker Template Add-on <https://docs.nordicsemi.com/bundle/asset-tracker-template-latest/page/index.html>
-
-The following lists the |NCS| applications:
-
-.. toctree::
-   :maxdepth: 1
    :glob:
    :caption: Subpages:
 
+   ../../applications/asset_tracker_template/README
    ../../applications/connectivity_bridge/README
    ../../applications/ipc_radio/README
    ../../applications/matter_bridge/README
