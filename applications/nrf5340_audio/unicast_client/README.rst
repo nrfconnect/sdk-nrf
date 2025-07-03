@@ -15,9 +15,9 @@ Transmitting unidirectional or transceiving bidirectional audio happens using CI
 The following limitations apply to this application:
 
 * One CIG with two CIS.
-* Audio input: USB or I2S (Line in or using Pulse Density Modulation).
+* Audio input: USB or I2S (Line-in or using Pulse Density Modulation).
 * Audio output: USB or I2S/Analog headset output.
-* Configuration: 16 bit, several bit rates ranging from 32 kbps to 124 kbps.
+* Configuration: 16-bit, several bit rates ranging from 32 kbps to 124 kbps.
 
 .. _nrf53_audio_unicast_client_app_requirements:
 

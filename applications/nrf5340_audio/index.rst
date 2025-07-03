@@ -15,7 +15,7 @@ The following table summarizes the differences between the available nRF5340 Aud
 
    * - :ref:`Application name (LE Audio role) <nrf53_audio_app_overview>`
      - :ref:`Application mode <nrf53_audio_app_overview_modes>`
-     - Minimum amount of nRF5340 Audio DKs recommended for testing
+     - Minimum amount of audio devices recommended for testing
      - :ref:`FEM support <nrf53_audio_app_adding_FEM_support>`
    * - :ref:`Broadcast sink<nrf53_audio_broadcast_sink_app>`
      - BIS (headset)
@@ -27,11 +27,11 @@ The following table summarizes the differences between the available nRF5340 Aud
      - ✔
    * - :ref:`Unicast client<nrf53_audio_unicast_client_app>`
      - CIS (gateway)
-     - 3
+     - 2 (three for CIS with TWS)
      - ✔
    * - :ref:`Unicast server<nrf53_audio_unicast_server_app>`
      - CIS (headset)
-     - 3
+     - 2 (three for CIS with TWS)
      - ✔
 
 See the subpages for detailed documentation of each of the nRF5340 applications and their internal modules:

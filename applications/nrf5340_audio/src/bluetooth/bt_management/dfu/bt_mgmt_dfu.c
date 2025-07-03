@@ -91,9 +91,12 @@ static void dfu_set_bt_name(void)
 
 void bt_mgmt_dfu_start(void)
 {
+	int ret;
 	LOG_INF("Entering SMP server mode");
 
-	bt_conn_cb_register(&dfu_conn_callbacks);
+	ret = bt_conn_cb_register(&dfu_conn_callbacks);
+	ERR_CHK(ret);
+
 	dfu_set_bt_name();
 
 	while (1) {

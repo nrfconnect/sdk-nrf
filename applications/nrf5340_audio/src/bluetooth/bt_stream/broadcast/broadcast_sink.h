@@ -4,6 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup audio_app_bt_stream
+ * @{
+ * @defgroup broadcast_sink Functions for broadcast sink functionality.
+ * @{
+ * @brief Helper functions to manage broadcast sink functionality.
+ */
+
 #ifndef _BROADCAST_SINK_H_
 #define _BROADCAST_SINK_H_
 
@@ -94,5 +102,10 @@ int broadcast_sink_disable(void);
  * @return	0 for success, error otherwise.
  */
 int broadcast_sink_enable(le_audio_receive_cb recv_cb);
+
+/**
+ * @}
+ * @}
+ */
 
 #endif /* _BROADCAST_SINK_H_ */

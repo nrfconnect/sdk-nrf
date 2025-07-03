@@ -4,6 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @addtogroup audio_app_bt_stream
+ * @{
+ * @defgroup broadcast_source Functions for broadcast source functionality.
+ * @{
+ * @brief Helper functions to manage broadcast source functionality.
+ */
+
 #ifndef _BROADCAST_SOURCE_H_
 #define _BROADCAST_SOURCE_H_
 
@@ -262,5 +270,10 @@ void broadcast_source_default_create(struct broadcast_source_big *broadcast_para
  */
 int broadcast_source_enable(struct broadcast_source_big const *const broadcast_param,
 			    uint8_t big_index);
+
+/**
+ * @}
+ * @}
+ */
 
 #endif /* _BROADCAST_SOURCE_H_ */

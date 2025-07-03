@@ -61,17 +61,17 @@ choice AUDIO_SYSTEM_SAMPLE_RATE
 config AUDIO_SAMPLE_RATE_16000_HZ
 	bool "16 kHz"
 	help
-	  Sample rate of 16kHz is currently only valid for I2S/line-in.
+	  Sample rate of 16 kHz is currently only valid for I2S/line-in.
 
 config AUDIO_SAMPLE_RATE_24000_HZ
 	bool "24 kHz"
 	help
-	  Sample rate of 24kHz is currently only valid for I2S/line-in.
+	  Sample rate of 24 kHz is currently only valid for I2S/line-in.
 
 config AUDIO_SAMPLE_RATE_48000_HZ
 	bool "48 kHz"
 	help
-	  Sample rate of 48kHz is valid for both I2S/line-in and USB.
+	  Sample rate of 48 kHz is valid for both I2S/line-in and USB.
 endchoice
 
 config AUDIO_SAMPLE_RATE_HZ

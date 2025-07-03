@@ -101,7 +101,7 @@ static void audio_gateway_configure(void)
 	}
 
 	if (IS_ENABLED(CONFIG_MONO_TO_ALL_RECEIVERS)) {
-		sw_codec_cfg.encoder.num_ch = 1;
+		sw_codec_cfg.encoder.num_ch = 2;
 		sw_codec_cfg.encoder.audio_loc = BT_AUDIO_LOCATION_MONO_AUDIO;
 		sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
 	} else {

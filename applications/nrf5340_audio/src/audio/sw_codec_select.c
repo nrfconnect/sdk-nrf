@@ -117,7 +117,8 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 		uint8_t *enc_out = audio_frame_out->data;
 		size_t enc_in_size = 0;
 		uint16_t bytes_written;
-		uint32_t loc_in, loc_out;
+		uint32_t loc_in = 0;
+		uint32_t loc_out = 0;
 
 		LOG_DBG("LC3 encoder module");
 
@@ -142,15 +143,26 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 			return -EINVAL;
 		}
 
-		if (meta_out->locations == BT_AUDIO_LOCATION_MONO_AUDIO &&
-		    meta_in->locations == BT_AUDIO_LOCATION_MONO_AUDIO) {
+		if (meta_in->locations == BT_AUDIO_LOCATION_MONO_AUDIO) {
 			loc_in = 1;
-			loc_out = 1;
-		} else if (meta_out->locations & meta_in->locations) {
-			loc_in = meta_in->locations;
-			loc_out = meta_out->locations;
 		} else {
+			loc_in = meta_in->locations;
+		}
+
+		if (meta_out->locations == BT_AUDIO_LOCATION_MONO_AUDIO) {
+			/* Set output to be the lowest set location in meta_in->locations */
+			loc_out = 1;
+			while (loc_out && !(meta_in->locations & loc_out)) {
+				loc_out <<= 1;
+			}
+		} else {
+			loc_out = meta_out->locations;
+		}
+
+		if (loc_out == 0 || loc_in == 0) {
 			LOG_ERR("No common output location with input");
+			LOG_ERR("Input locations:  0x%08x", meta_in->locations);
+			LOG_ERR("Output locations: 0x%08x", meta_out->locations);
 			return -EINVAL;
 		}
 
@@ -194,6 +206,16 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 			loc_out >>= 1;
 		}
 
+		if (IS_ENABLED(CONFIG_MONO_TO_ALL_RECEIVERS) && (m_config.encoder.num_ch > 1)) {
+			/* Duplicate the mono encoded data to all output locations */
+			size_t single_chan_size = bytes_written;
+
+			for (uint8_t ch = 1; ch < m_config.encoder.num_ch; ch++) {
+				memcpy(audio_frame_out->data + (ch * single_chan_size),
+				       audio_frame_out->data, single_chan_size);
+			}
+		}
+
 		meta_out->bytes_per_location = bytes_written;
 		meta_out->locations &= meta_in->locations;
 		net_buf_add(audio_frame_out,
@@ -214,6 +236,10 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 int sw_codec_decode(struct net_buf const *const audio_frame_in,
 		    struct net_buf *const audio_frame_out)
 {
+	if (audio_frame_in == NULL || audio_frame_out == NULL) {
+		return -EINVAL;
+	}
+
 	if (!m_config.decoder.enabled) {
 		LOG_ERR("Decoder has not been initialized");
 		return -ENXIO;
@@ -471,7 +497,8 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 			ret = sample_rate_converter_open(&encoder_converters[i]);
 			if (ret) {
 				LOG_ERR("Failed to initialize the sample rate converter for "
-					"encoding channel %d: %d", i, ret);
+					"encoding channel %d: %d",
+					i, ret);
 				return ret;
 			}
 		}
@@ -482,7 +509,8 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 			ret = sample_rate_converter_open(&decoder_converters[i]);
 			if (ret) {
 				LOG_ERR("Failed to initialize the sample rate converter for "
-					"decoding channel %d: %d", i, ret);
+					"decoding channel %d: %d",
+					i, ret);
 				return ret;
 			}
 		}

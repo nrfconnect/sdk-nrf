@@ -237,6 +237,10 @@ nRF5340 Audio
 
 * Added:
 
+  * A way to store servers in RAM on the unicast client (gateway) side.
+    The storage does a compare on server address to match multiple servers in a unicast group.
+    This means that if another device appears with the same address, it will be treated as the same server.
+  * Experimental support for stereo in :ref:`unicast server application<nrf53_audio_unicast_server_app_configuration_stereo>`.
   * The :ref:`Audio application API documentation <audio_api>` page.
   * The :ref:`config_audio_app_options` page.
   * The API documentation in the header files listed on the :ref:`audio_api` page.
@@ -244,10 +248,14 @@ nRF5340 Audio
 
 * Updated:
 
-  * The power measurements to be disabled by default in ``debug`` builds.
-    To enable power measurements, set the :kconfig:option:`CONFIG_NRF5340_AUDIO_POWER_MEASUREMENT` Kconfig option to ``y`` in the :file:`applications/nrf5340_audio/prj.conf` file.
+  * The unicast client (gateway) application has been rewritten to support N channels.
+  * The unicast client (gateway) application now checks if a server has a resolvable address.
+    If this has not been resolved, the discovery process will start in the identity resolved callback.
+  * The power measurements to be disabled by default in the default debug versions of the applications.
+    To enable power measurements, see :ref:`nrf53_audio_app_configuration_power_measurements`.
   * The audio application targeting the :zephyr:board:`nrf5340dk` to use pins **P1.5** to **P1.9** for the I2S interface instead of **P0.13** to **P0.17**.
     This change was made to avoid conflicts with the onboard peripherals on the nRF5340 DK.
+  * The documentation pages with information about the :ref:`SD card playback module <nrf53_audio_app_overview_architecture_sd_card_playback>` and :ref:`how to enable it <nrf53_audio_app_configuration_sd_card_playback>`.
   * The API documentation in the header files listed on the :ref:`audio_api` page.
 
 nRF Desktop
