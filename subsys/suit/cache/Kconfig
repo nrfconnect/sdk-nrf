@@ -5,7 +5,7 @@
 #
 
 menuconfig SUIT_CACHE
-	bool "Enable SUIT cache support library"
+	bool "SUIT cache support library"
 	depends on ZCBOR
 	imply SUIT_STREAM_SINK_RAM
 	imply SUIT_STREAM
@@ -34,7 +34,7 @@ config SUIT_MAX_URI_LENGTH
 	  the cache.
 
 config SUIT_CACHE_RW
-	bool "Enable write mode for SUIT cache"
+	bool "Write mode for SUIT cache"
 	depends on FLASH
 	depends on SUIT_UTILS
 	depends on !SUIT_PLATFORM_VARIANT_SDFW
@@ -48,7 +48,7 @@ config SUIT_CACHE_RW_READ_BUF_SIZE
 	  Reducing this size will allow to use smaller stack size.
 
 config SUIT_CACHE_SDFW_IPUC
-	bool "Enable IPUC-based partition, capable of performing SDFW updates"
+	bool "IPUC-based partition, capable of performing SDFW updates"
 	depends on SUIT_CACHE_RW
 	depends on FLASH_IPUC
 	depends on !$(dt_nodelabel_enabled,dfu_cache_partition_1)
@@ -65,7 +65,7 @@ config SUIT_CACHE_SDFW_IPUC_ID
 	default 1
 
 config SUIT_CACHE_APP_IPUC
-	bool "Enable IPUC-based partition, without address restrictions"
+	bool "IPUC-based partition, without address restrictions"
 	depends on SUIT_CACHE_RW
 	depends on FLASH_IPUC
 

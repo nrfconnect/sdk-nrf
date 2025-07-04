@@ -5,7 +5,7 @@
 #
 
 config SUIT_IPUC
-	bool "Enable in-place updateable components"
+	bool "In-place updateable components"
 	depends on SUIT_METADATA
 	help
 	  SUIT manifest may instruct the platform that component is inactive, by overriding
