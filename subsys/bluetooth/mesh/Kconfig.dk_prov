@@ -16,17 +16,17 @@ menuconfig BT_MESH_DK_PROV
 if BT_MESH_DK_PROV
 
 config BT_MESH_DK_PROV_OOB_BLINK
-	bool "Enable blink output OOB method"
+	bool "Blink output OOB method"
 	depends on DK_LIBRARY
 	default y
 
 config BT_MESH_DK_PROV_OOB_BUTTON
-	bool "Enable button input OOB method"
+	bool "Button input OOB method"
 	depends on DK_LIBRARY
 	default y
 
 config BT_MESH_DK_PROV_OOB_LOG
-	bool "Enable log based OOB methods"
+	bool "Log based OOB methods"
 	depends on LOG_PRINTK
 	default y
 

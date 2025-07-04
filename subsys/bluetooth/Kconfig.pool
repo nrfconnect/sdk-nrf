@@ -41,8 +41,7 @@ config BT_GATT_CHRC_POOL_SIZE
 
 config BT_GATT_POOL_STATS
 	bool
-	prompt "Enable functions for printing module statistics"
-	default n
+	prompt "Functions for printing module statistics"
 	help
 	  Enable functions for printing module statistics
 
