@@ -12,9 +12,15 @@
 #include <zephyr/bluetooth/audio/audio.h>
 #include <audio_defines.h>
 
+/**
+ * @brief Unicast discovery direction enumeration.
+ */
 enum unicast_discover_dir {
+	/** Discover sink direction only */
 	UNICAST_SERVER_SINK = BT_AUDIO_DIR_SINK,
+	/** Discover source direction only */
 	UNICAST_SERVER_SOURCE = BT_AUDIO_DIR_SOURCE,
+	/** Discover both sink and source directions */
 	UNICAST_SERVER_BIDIR = (BT_AUDIO_DIR_SINK | BT_AUDIO_DIR_SOURCE)
 };
 

@@ -5,7 +5,21 @@
  */
 
 /** @file
- * @brief Header file with audio datapath API.
+ * @defgroup nrf5340_audio_datapath Audio Datapath
+ * @{
+ * @brief Audio datapath and synchronization API for nRF5340 Audio applications.
+ *
+ * This module implements the audio synchronization functionality required for
+ * True Wireless Stereo (TWS) operation. It provides drift compensation to synchronize
+ * audio playback speed across multiple headsets, and presentation compensation to ensure
+ * simultaneous audio playback. The datapath handles audio data flow between Bluetooth
+ * streams and I2S hardware interface, managing FIFO buffers and implementing just-in-time
+ * audio delivery. It supports both unicast (CIS) and broadcast (BIS) modes with automatic
+ * synchronization state management and LED status indication.
+ *
+ * The datapath integrates with @ref nrf5340_audio_sync_timer for precise timing,
+ * @ref nrf5340_audio_i2s for hardware interface, and @ref nrf5340_audio_system
+ * for audio processing coordination.
  */
 
 #ifndef _AUDIO_DATAPATH_H_
@@ -19,17 +33,8 @@
 #include "sw_codec_select.h"
 #include "audio_defines.h"
 
-/* The maximum delta (in microseconds) between received SDUs that are to be presented or played back
- * at the same time. For example, used to correlate left and right channels, while allowing some
- * jitter on the timestamp.
- */
+/** Maximum delta time between SDUs for synchronized playback. */
 #define SDU_REF_CH_DELTA_MAX_US (int)(CONFIG_AUDIO_FRAME_DURATION_US * 0.001)
-
-/**
- * @brief Audio Datapath
- * @defgroup nrf5340_audio_datapath Audio Datapath
- * @{
- */
 
 /**
  * @brief	Mixes a tone into the I2S TX stream.
@@ -43,7 +48,7 @@
 int audio_datapath_tone_play(uint16_t freq, uint16_t dur_ms, float amplitude);
 
 /**
- * @brief	Stops tone playback.
+ * @brief	Stop tone playback.
  */
 void audio_datapath_tone_stop(void);
 
@@ -71,6 +76,9 @@ void audio_datapath_pres_delay_us_get(uint32_t *delay_us);
  *		using sdu_ref_us.
  *
  * @param	audio_frame	Pointer to the audio buffer.
+ *
+ * @see @ref audio_system_decode for audio decoding
+ * @see @ref audio_i2s_set_next_buf for I2S buffer management
  */
 void audio_datapath_stream_out(struct net_buf *audio_frame);
 

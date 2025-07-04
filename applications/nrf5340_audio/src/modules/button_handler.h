@@ -5,7 +5,20 @@
  */
 
 /** @file
- * @brief Header file with audio button handler API.
+ * @defgroup nrf5340_audio_button Audio Button Handler
+ * @{
+ * @brief Button handler API for nRF5340 Audio applications.
+ *
+ * This module provides button input handling and debouncing functionality for user
+ * interface control. It supports multiple button configurations and provides
+ * thread-safe button state detection with debouncing to prevent false triggers.
+ * The module handles button press events for volume control, play/pause operations,
+ * channel selection, and device configuration. It integrates with the
+ * nRF5340 Audio state management through Zephyr's ZBUS messaging system to provide responsive
+ * user interface control across all nRF5340 Audio application modes and device roles.
+ * It coordinates with @ref nrf5340_audio_bt_rendering_and_capture for volume control
+ * operations and integrates with @ref nrf5340_audio_led for visual feedback during
+ * button interactions.
  */
 
 #ifndef _BUTTON_HANDLER_H_
@@ -13,12 +26,6 @@
 
 #include <stdint.h>
 #include <zephyr/drivers/gpio.h>
-
-/**
- * @brief Audio Button Handler
- * @defgroup nrf5340_audio_button Audio Button Handler
- * @{
- */
 
 /** @brief Initialize button handler, with buttons defined in button_assignments.h.
  *
