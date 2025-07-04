@@ -15,5 +15,6 @@ tests:
   sample.dfu.dfu_target:
     tags:
       - dfu_target
+      - ci_samples_dfu
     integration_platforms:
       - nrf52840dk/nrf52840
