@@ -5,7 +5,12 @@
  */
 
 /** @file
- * @brief Header file with audio USB API.
+ * @defgroup nrf5340_audio_usb Audio USB
+ * @{
+ * @brief Audio USB interface API for nRF5340 Audio applications.
+ *
+ * This module provides USB audio functionality for gateway devices, enabling audio
+ * input/output through USB connections.
  */
 
 #ifndef _AUDIO_USB_H_
@@ -13,17 +18,12 @@
 
 #include <zephyr/kernel.h>
 
-/**
- * @brief Audio USB
- * @defgroup nrf5340_audio_usb Audio USB
- * @{
- */
-
 #if (CONFIG_AUDIO_SOURCE_USB && !CONFIG_AUDIO_SAMPLE_RATE_48000_HZ)
 /* Only 48kHz is supported when using USB */
 #error USB only supports 48kHz
 #endif /* (CONFIG_AUDIO_SOURCE_USB && !CONFIG_AUDIO_SAMPLE_RATE_48000_HZ) */
 
+/** Calculate USB block size for multichannel audio in bytes. */
 #define USB_BLOCK_SIZE_STEREO                                                                      \
 	(((CONFIG_AUDIO_SAMPLE_RATE_HZ * CONFIG_AUDIO_BIT_DEPTH_OCTETS) / 1000) * 2)
 
