@@ -3,7 +3,7 @@ sample:
   description: Sample application showing peripheral role of Direction Finding in
     connected mode
 tests:
-  sample.bluetooth.direction_finding_peripheral.aoa.sdc.nrf52_nrf53:
+  sample.bluetooth.direction_finding_peripheral.aoa.sdc.nrf52_nrf53_54lx:
     sysbuild: true
     build_only: true
     platform_allow:
