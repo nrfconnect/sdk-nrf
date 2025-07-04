@@ -94,7 +94,7 @@ config SYSTEM_WORKQUEUE_STACK_SIZE
 	default 2048 if BT_LL_SOFTDEVICE
 
 config BT_CTLR_SDC_LLPM
-	bool "Enable Low Latency Packet Mode support"
+	bool "Low Latency Packet Mode support"
 	select BT_CONN_PARAM_ANY if !BT_HCI_RAW
 	depends on (SOC_SERIES_NRF52X || SOC_SERIES_NRF54LX || SOC_SERIES_NRF54HX || \
 		    SOC_SERIES_BSIM_NRF52X || SOC_SERIES_BSIM_NRF54LX)
@@ -103,7 +103,7 @@ config BT_CTLR_SDC_LLPM
 	  which lets the application use connection intervals down to 1 ms.
 
 config BT_CTLR_SDC_QOS_CHANNEL_SURVEY
-	bool "Enable channel survey"
+	bool "Channel survey"
 	select EXPERIMENTAL
 	help
 	  Channel survey feature support
@@ -149,7 +149,7 @@ config BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT
 	  the number of bytes configured with BT_CTLR_MIN_VAL_OF_MAX_ACL_TX_PAYLOAD_DEFAULT.
 
 config BT_CTLR_SDC_CONN_EVENT_EXTEND_DEFAULT
-	bool "Enable connection event extension by default"
+	bool "Connection event extension by default"
 	default y if !NRF_802154_RADIO_DRIVER
 	help
 	  When Extended Connection Events are disabled, the maximum connection event length is
@@ -274,7 +274,7 @@ config BT_CTLR_SDC_RX_PRIO
 # CONFIG_BT_CTLR_DF is declared in Zephyr and also here for a second time,
 # to avoid BT_CTLR_DF_SUPPORT dependency.
 config BT_CTLR_DF
-	bool "Enable CTE Transmitter support"
+	bool "CTE Transmitter support"
 	help
 	  Enable support for the Bluetooth v5.1 Connectionless CTE Transmitter
 	  and the Connection CTE transmitter features in the controller.
@@ -634,7 +634,7 @@ config BT_CTLR_SDC_CS_MULTIPLE_ANTENNA_SUPPORT
 	  Internal helper config. Not intended for use.
 
 config BT_CTLR_SDC_CS_STEP_MODE3
-	bool "Enable optional step mode-3 support"
+	bool "Optional step mode-3 support"
 	depends on BT_CTLR_CHANNEL_SOUNDING
 	help
 	  Enable optional step mode-3 support. Channel sounding will not automatically start using step mode-3 if this

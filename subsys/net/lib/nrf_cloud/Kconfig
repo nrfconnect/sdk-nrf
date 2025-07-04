@@ -77,7 +77,7 @@ config NRF_CLOUD_CERTIFICATES_FILE
 endif # NRF_CLOUD_PROVISION_CERTIFICATES
 
 config NRF_CLOUD_CHECK_CREDENTIALS
-	bool "Enable the ability to check if nRF Cloud credentials are present"
+	bool "Check if nRF Cloud credentials are present"
 
 choice NRF_CLOUD_CREDENTIALS_MGMT
 	prompt "Select how credentials are managed"

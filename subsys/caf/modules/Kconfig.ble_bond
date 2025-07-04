@@ -5,7 +5,7 @@
 #
 
 menuconfig CAF_BLE_BOND
-	bool "Enable CAF implementation of Bluetooth LE bond"
+	bool "CAF implementation of Bluetooth LE bond"
 	depends on BT_BONDABLE
 	depends on BT_SETTINGS
 	depends on CAF_SETTINGS_LOADER

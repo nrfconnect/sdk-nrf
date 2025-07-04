@@ -36,12 +36,12 @@ config APP_EVENT_MANAGER_SHOW_EVENT_HANDLERS
 	  This option controls if event handlers are printed to console.
 
 config APP_EVENT_MANAGER_TRACE_EVENT_DATA
-	bool "Enables tracing information"
+	bool "Tracing information"
 	help
 	  This option allows to gather information about events for tracing purposes.
 
 config APP_EVENT_MANAGER_SHELL
-	bool "Enable shell integration"
+	bool "Shell integration"
 	depends on SHELL
 	default y
 	help
@@ -84,28 +84,28 @@ config APP_EVENT_MANAGER_PROVIDE_EVENT_SIZE
 	  and should be enabled only if such an information is required.
 
 config APP_EVENT_MANAGER_POSTINIT_HOOK
-	bool "Enable postinit hook"
+	bool "Post init hook"
 	help
 	  Enable postinit hooks support.
 	  This option is here for optimisation purposes.
 	  When postinit hook is not in use the related code may be removed.
 
 config APP_EVENT_MANAGER_SUBMIT_HOOKS
-	bool "Enable event submit hooks"
+	bool "Event submit hooks"
 	help
 	  Enable event submit hooks support.
 	  This option is here for optimisation purposes.
 	  When submit hook is not in use the related code may be removed.
 
 config APP_EVENT_MANAGER_PREPROCESS_HOOKS
-	bool "Enable event preprocess hooks"
+	bool "Event preprocess hooks"
 	help
 	  Enable event preprocess hooks support.
 	  This option is here for optimisation purposes.
 	  When preprocess hook is not in use the related code may be removed.
 
 config APP_EVENT_MANAGER_POSTPROCESS_HOOKS
-	bool "Enable event postprocess hooks"
+	bool "Event postprocess hooks"
 	help
 	  Enable event postprocess hooks support.
 	  This option is here for optimisation purposes.

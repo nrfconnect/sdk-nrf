@@ -300,7 +300,7 @@ config MBEDTLS_LEGACY_CRYPTO_C_SILENCE_DEPRECATION
 
 config MBEDTLS_LEGACY_CRYPTO_C
 	bool
-	prompt "Enable (legacy) mbed TLS crypto APIs"
+	prompt "(Legacy) mbed TLS crypto APIs"
 	select DEPRECATED if !MBEDTLS_LEGACY_CRYPTO_C_SILENCE_DEPRECATION
 	help
 	  Enable support for legacy mbed TLS APIs.
@@ -414,7 +414,7 @@ menu "CBC cipher padding modes"
 
 config MBEDTLS_CIPHER_PADDING_PKCS7
 	bool
-	prompt "Enable MBEDTLS_CIPHER_PADDING_PKCS7"
+	prompt "MBEDTLS_CIPHER_PADDING_PKCS7"
 	default y if !OPENTHREAD
 	select PSA_WANT_ALG_CBC_PKCS7 if PSA_CRYPTO_CLIENT
 	select PSA_WANT_KEY_TYPE_AES if PSA_CRYPTO_CLIENT
@@ -424,7 +424,7 @@ config MBEDTLS_CIPHER_PADDING_PKCS7
 
 config MBEDTLS_CIPHER_PADDING_ONE_AND_ZEROS
 	bool
-	prompt "Enable MBEDTLS_CIPHER_PADDING_ONE_AND_ZEROS"
+	prompt "MBEDTLS_CIPHER_PADDING_ONE_AND_ZEROS"
 	default y
 	help
 	  Enable support for one and zeros padding for CBC cipher functions in mbedTLS.
@@ -432,7 +432,7 @@ config MBEDTLS_CIPHER_PADDING_ONE_AND_ZEROS
 
 config MBEDTLS_CIPHER_PADDING_ZEROS_AND_LEN
 	bool
-	prompt "Enable MBEDTLS_CIPHER_PADDING_ZEROS_AND_LEN"
+	prompt "MBEDTLS_CIPHER_PADDING_ZEROS_AND_LEN"
 	default y
 	help
 	  Enable support for zeros and length padding for CBC cipher functions in mbedTLS.
@@ -440,7 +440,7 @@ config MBEDTLS_CIPHER_PADDING_ZEROS_AND_LEN
 
 config MBEDTLS_CIPHER_PADDING_ZEROS
 	bool
-	prompt "Enable MBEDTLS_CIPHER_PADDING_ZEROS"
+	prompt "MBEDTLS_CIPHER_PADDING_ZEROS"
 	default y
 	help
 	  Enable support for zeros padding for CBC cipher functions in mbedTLS.
@@ -460,7 +460,7 @@ endmenu # CBC cipher padding modes
 
 config MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH
 	bool
-	prompt "Enable MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH"
+	prompt "MBEDTLS_AES_ONLY_128_BIT_KEY_LENGTH"
 	help
 	   Enable AES operations to support only 128-bit keys to reduce ROM usage.
 
@@ -591,7 +591,7 @@ config MBEDTLS_ECDSA_C
 	  MBEDTLS_ECDSA_C setting in mbed TLS config file.
 
 config MBEDTLS_ECDSA_DETERMINISTIC
-	bool "Enable deterministic ECDSA (RFC 6979)"
+	bool "Deterministic ECDSA (RFC 6979)"
 	select MBEDTLS_HMAC_DRBG_C if !PSA_CRYPTO_CLIENT
 	depends on MBEDTLS_ECDSA_C
 	default y if !MBEDTLS_USE_PSA_CRYPTO
@@ -612,7 +612,7 @@ config MBEDTLS_ECJPAKE_C
 menu "ECC curves"
 
 config MBEDTLS_ECP_DP_SECP192R1_ENABLED
-	bool "Enable NIST curve secp192r1"
+	bool "NIST curve secp192r1"
 	depends on !OBERON_BACKEND
 	default n
 	select PSA_WANT_ECC_SECP_R1_192 if PSA_CRYPTO_CLIENT
@@ -620,21 +620,21 @@ config MBEDTLS_ECP_DP_SECP192R1_ENABLED
 	  MBEDTLS_ECP_DP_SECP192R1_ENABLED setting in mbed TLS config file.
 
 config MBEDTLS_ECP_DP_SECP224R1_ENABLED
-	bool "Enable NIST curve secp224r1"
+	bool "NIST curve secp224r1"
 	select PSA_WANT_ECC_SECP_R1_224 if PSA_CRYPTO_CLIENT
 	default n
 	help
 	  MBEDTLS_ECP_DP_SECP224R1_ENABLED setting in mbed TLS config file.
 
 config MBEDTLS_ECP_DP_SECP256R1_ENABLED
-	bool "Enable NIST curve secp256r1"
+	bool "NIST curve secp256r1"
 	default y
 	select PSA_WANT_ECC_SECP_R1_256 if PSA_CRYPTO_CLIENT
 	help
 	  MBEDTLS_ECP_DP_SECP256R1_ENABLED setting in mbed TLS config file.
 
 config MBEDTLS_ECP_DP_SECP384R1_ENABLED
-	bool "Enable NIST curve secp384r1"
+	bool "NIST curve secp384r1"
 	depends on !OBERON_BACKEND
 	default n
 	select PSA_WANT_ECC_SECP_R1_384 if PSA_CRYPTO_CLIENT
@@ -642,7 +642,7 @@ config MBEDTLS_ECP_DP_SECP384R1_ENABLED
 	  MBEDTLS_ECP_DP_SECP384R1_ENABLED setting in mbed TLS config file.
 
 config MBEDTLS_ECP_DP_SECP521R1_ENABLED
-	bool "Enable NIST curve secp521r1"
+	bool "NIST curve secp521r1"
 	depends on !OBERON_BACKEND
 	default n
 	select PSA_WANT_ECC_SECP_R1_521 if PSA_CRYPTO_CLIENT
@@ -650,7 +650,7 @@ config MBEDTLS_ECP_DP_SECP521R1_ENABLED
 	  MBEDTLS_ECP_DP_SECP521R1_ENABLED setting in mbed TLS config file.
 
 config MBEDTLS_ECP_DP_SECP192K1_ENABLED
-	bool "Enable Koblitz curve secp192k1"
+	bool "Koblitz curve secp192k1"
 	depends on !OBERON_BACKEND
 	default n
 	select PSA_WANT_ECC_SECP_R1_192 if PSA_CRYPTO_CLIENT
@@ -658,7 +658,7 @@ config MBEDTLS_ECP_DP_SECP192K1_ENABLED
 	  MBEDTLS_ECP_DP_SECP192K1_ENABLED setting in mbed TLS config file.
 
 config MBEDTLS_ECP_DP_SECP224K1_ENABLED
-	bool "Enable Koblitz curve secp224k1"
+	bool "Koblitz curve secp224k1"
 	depends on !OBERON_BACKEND
 	default n
 	select PSA_WANT_ECC_SECP_K1_224 if PSA_CRYPTO_CLIENT
@@ -666,7 +666,7 @@ config MBEDTLS_ECP_DP_SECP224K1_ENABLED
 	  MBEDTLS_ECP_DP_SECP224K1_ENABLED setting in mbed TLS config file.
 
 config MBEDTLS_ECP_DP_SECP256K1_ENABLED
-	bool "Enable Koblitz curve secp256k1"
+	bool "Koblitz curve secp256k1"
 	depends on !OBERON_BACKEND
 	default n
 	select PSA_WANT_ECC_SECP_K1_256 if PSA_CRYPTO_CLIENT
@@ -674,7 +674,7 @@ config MBEDTLS_ECP_DP_SECP256K1_ENABLED
 	  MBEDTLS_ECP_DP_SECP256K1_ENABLED setting in mbed TLS config file.
 
 config MBEDTLS_ECP_DP_BP256R1_ENABLED
-	bool "Enable Brainpool curve bp256r1"
+	bool "Brainpool curve bp256r1"
 	depends on !OBERON_BACKEND
 	depends on !CC3XX_BACKEND
 	default n
@@ -683,7 +683,7 @@ config MBEDTLS_ECP_DP_BP256R1_ENABLED
 	  MBEDTLS_ECP_DP_BP256R1_ENABLED setting in mbed TLS config file.
 
 config MBEDTLS_ECP_DP_BP384R1_ENABLED
-	bool "Enable Brainpool curve bp384r1"
+	bool "Brainpool curve bp384r1"
 	depends on !OBERON_BACKEND
 	depends on !CC3XX_BACKEND
 	default n
@@ -692,7 +692,7 @@ config MBEDTLS_ECP_DP_BP384R1_ENABLED
 	  MBEDTLS_ECP_DP_BP384R1_ENABLED setting in mbed TLS config file.
 
 config MBEDTLS_ECP_DP_BP512R1_ENABLED
-	bool "Enable Brainpool curve bp512r1"
+	bool "Brainpool curve bp512r1"
 	depends on !OBERON_BACKEND
 	depends on !CC3XX_BACKEND
 	default n
@@ -701,7 +701,7 @@ config MBEDTLS_ECP_DP_BP512R1_ENABLED
 	  MBEDTLS_ECP_DP_BP512R1_ENABLED setting in mbed TLS config file.
 
 config MBEDTLS_ECP_DP_CURVE25519_ENABLED
-	bool "Enable Curve25519"
+	bool "Curve25519"
 	depends on !OBERON_BACKEND
 	default n
 	select PSA_WANT_ECC_MONTGOMERY_255 if PSA_CRYPTO_CLIENT
@@ -710,7 +710,7 @@ config MBEDTLS_ECP_DP_CURVE25519_ENABLED
 	  MBEDTLS_ECP_DP_CURVE25519_ENABLED setting in mbed TLS config file.
 
 config MBEDTLS_ECP_DP_CURVE448_ENABLED
-	bool "Enable Curve448"
+	bool "Curve448"
 	depends on !OBERON_BACKEND
 	depends on !CC3XX_BACKEND
 	default n
@@ -852,34 +852,34 @@ endif #MBEDTLS_LEGACY_CRYPTO_C
 
 config MBEDTLS_CIPHER_C
 	bool
-	prompt "Enable Cipher support"
+	prompt "Cipher support"
 	default y if MBEDTLS_LEGACY_CRYPTO_C
 
 config MBEDTLS_MD_C
 	bool
-	prompt "Enable MD support"
+	prompt "MD support"
 	default y if MBEDTLS_LEGACY_CRYPTO_C || MBEDTLS_TLS_LIBRARY
 
 config MBEDTLS_PK_C
 	bool
-	prompt "Enable PK support"
+	prompt "PK support"
 	default y if MBEDTLS_TLS_LIBRARY
 
 config MBEDTLS_PKCS5_C
 	bool
-	prompt "Enable PKCS5 support"
+	prompt "PKCS5 support"
 	default y
 	depends on MBEDTLS_MD_C
 	depends on MBEDTLS_CIPHER_PADDING_PKCS7
 
 config MBEDTLS_PK_WRITE_C
 	bool
-	prompt "Enable PK write support"
+	prompt "PK write support"
 	depends on MBEDTLS_PK_C
 
 config MBEDTLS_PK_PARSE_C
 	bool
-	prompt "Enable PK parse support"
+	prompt "PK parse support"
 	default y if MBEDTLS_TLS_LIBRARY
 	depends on MBEDTLS_PK_C
 
