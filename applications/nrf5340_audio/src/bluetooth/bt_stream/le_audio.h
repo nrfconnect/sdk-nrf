@@ -4,6 +4,19 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @defgroup nrf5340_audio_bt_stream Bluetooth LE Audio Stream
+ * @{
+ * @brief LE Audio stream API for nRF5340 Audio applications.
+ *
+ * This module provides the core LE Audio streaming functionality for both unicast (CIS)
+ * and broadcast (BIS) modes. It handles audio stream setup, configuration, and data
+ * transfer operations. The module includes utilities for codec configuration parsing,
+ * endpoint state management, and audio metadata handling. It provides interfaces for
+ * stream direction detection, bitrate validation, and frequency checking to ensure
+ * proper audio stream operation across different LE Audio configurations.
+ */
+
 #ifndef _LE_AUDIO_H_
 #define _LE_AUDIO_H_
 
@@ -52,10 +65,16 @@
 typedef void (*le_audio_receive_cb)(struct net_buf *audio_frame, struct audio_metadata *meta,
 				    uint8_t channel_index);
 
+/**
+ * @brief Stream index structure for identifying audio streams.
+ *
+ * This structure provides a hierarchical index for identifying audio streams
+ * in both unicast (CIS) and broadcast (BIS) modes.
+ */
 struct stream_index {
-	uint8_t lvl1; /* BIG / CIG */
-	uint8_t lvl2; /* Subgroups (only applicable to Broadcast) */
-	uint8_t lvl3; /* BIS / CIS */
+	uint8_t lvl1;	/**< Level 1: BIG (Broadcast Isochronous Group) or CIG (Connected Isochronous Group) */
+	uint8_t lvl2;	/**< Level 2: Subgroups (only applicable to Broadcast) */
+	uint8_t lvl3;	/**< Level 3: BIS (Broadcast Isochronous Stream) or CIS (Connected Isochronous Stream) */
 };
 
 /**
@@ -78,6 +97,9 @@ int le_audio_concurrent_sync_num_get(void);
  * @param[in] audio_frame	Pointer to the buffer.
  *
  * @return 0 if successful, error otherwise.
+ *
+ * @see @ref audio_datapath_stream_out for audio frame processing
+ * @see @ref le_audio_rx_data_handler for receive data handling
  */
 int le_audio_metadata_populate(struct audio_metadata *meta, const struct bt_bap_stream *stream,
 			       const struct bt_iso_recv_info *info,
@@ -124,6 +146,9 @@ bool le_audio_ep_qos_configured(struct bt_bap_ep const *const ep);
  * @param[out]	freq_hz		Pointer to the sampling frequency in Hz.
  *
  * @return	0 for success, error otherwise.
+ *
+ * @see @ref le_audio_duration_us_get for frame duration extraction
+ * @see @ref le_audio_bitrate_get for bitrate calculation
  */
 int le_audio_freq_hz_get(const struct bt_audio_codec_cfg *codec, int *freq_hz);
 
@@ -208,5 +233,9 @@ bool le_audio_freq_check(const struct bt_audio_codec_cfg *codec);
  * @param[in]	dir	Direction to print the codec configuration for.
  */
 void le_audio_print_codec(const struct bt_audio_codec_cfg *codec, enum bt_audio_dir dir);
+
+/**
+ * @}
+ */
 
 #endif /* _LE_AUDIO_H_ */

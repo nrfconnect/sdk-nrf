@@ -4,6 +4,20 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @defgroup nrf5340_audio_button Audio Button Handler
+ * @{
+ * @brief Button handler API for nRF5340 Audio applications.
+ *
+ * This module provides button input handling and debouncing functionality for user
+ * interface control. It supports multiple button configurations and provides
+ * thread-safe button state detection with debouncing to prevent false triggers.
+ * The module handles button press events for volume control, play/pause operations,
+ * channel selection, and device configuration. It integrates with the application
+ * state management through Zephyr's ZBUS messaging system to provide responsive
+ * user interface control across all nRF5340 Audio application modes and device roles.
+ */
+
 #ifndef _BUTTON_HANDLER_H_
 #define _BUTTON_HANDLER_H_
 
@@ -27,5 +41,9 @@ int button_handler_init(void);
  * @return 0 if success, an error code otherwise.
  */
 int button_pressed(gpio_pin_t button_pin, bool *button_pressed);
+
+/**
+ * @}
+ */
 
 #endif /* _BUTTON_HANDLER_H_ */

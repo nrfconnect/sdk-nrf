@@ -4,6 +4,19 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @defgroup nrf5340_audio_sw_codec_select Audio Software Codec Selection
+ * @{
+ * @brief Software codec selection and configuration API for nRF5340 Audio applications.
+ *
+ * This module provides the software codec interface for audio encoding and decoding operations.
+ * It supports the LC3 (Low Complexity Communication Codec) as specified in the
+ * Bluetooth LE Audio standard. The module handles codec initialization and codec configuration.
+ * It provides encoding/decoding functions with support for different sample rates,
+ * bitrates, and channel modes (mono/stereo). It integrates with the audio system to
+ * process audio data for both unicast (CIS) and broadcast (BIS) streaming modes.
+ */
+
 #ifndef _SW_CODEC_SELECT_H_
 #define _SW_CODEC_SELECT_H_
 
@@ -33,31 +46,43 @@
 #define PCM_NUM_BYTES_MONO   MAX(LC3_PCM_NUM_BYTES_MONO, 0)
 #define PCM_NUM_BYTES_STEREO (PCM_NUM_BYTES_MONO * 2)
 
+/**
+ * @brief Software codec selection enumeration.
+ */
 enum sw_codec_select {
-	SW_CODEC_NONE,
-	SW_CODEC_LC3, /* Low Complexity Communication Codec */
+	SW_CODEC_NONE,		/**< No codec selected */
+	SW_CODEC_LC3,		/**< Low Complexity Communication Codec */
 };
 
+/**
+ * @brief Software codec channel mode enumeration.
+ */
 enum sw_codec_channel_mode {
-	SW_CODEC_MONO = 1,
-	SW_CODEC_STEREO,
+	SW_CODEC_MONO = 1,	/**< Mono channel mode (single channel) */
+	SW_CODEC_STEREO,	/**< Stereo channel mode (dual channels) */
 };
 
+/**
+ * @brief Software codec encoder configuration structure.
+ */
 struct sw_codec_encoder {
-	bool enabled;
-	int bitrate;
-	enum sw_codec_channel_mode channel_mode;
-	uint8_t num_ch;
-	enum audio_channel audio_ch;
-	uint32_t sample_rate_hz;
+	bool enabled;				/**< Whether the encoder is enabled */
+	int bitrate;				/**< Encoder bitrate in bits per second */
+	enum sw_codec_channel_mode channel_mode;	/**< Mono or stereo encoding mode */
+	uint8_t num_ch;				/**< Number of encoder channels */
+	enum audio_channel audio_ch;		/**< Audio channel assignment */
+	uint32_t sample_rate_hz;		/**< Sample rate in Hz */
 };
 
+/**
+ * @brief Software codec decoder configuration structure.
+ */
 struct sw_codec_decoder {
-	bool enabled;
-	enum sw_codec_channel_mode channel_mode; /* Mono or stereo. */
-	uint8_t num_ch;				 /* Number of decoder channels. */
-	enum audio_channel audio_ch;		 /* Used to choose which channel to use. */
-	uint32_t sample_rate_hz;
+	bool enabled;				/**< Whether the decoder is enabled */
+	enum sw_codec_channel_mode channel_mode;	/**< Mono or stereo decoding mode */
+	uint8_t num_ch;				/**< Number of decoder channels */
+	enum audio_channel audio_ch;		/**< Audio channel assignment */
+	uint32_t sample_rate_hz;		/**< Sample rate in Hz */
 };
 
 /**
@@ -87,6 +112,9 @@ bool sw_codec_is_initialized(void);
  * @param[in]	audio_frame	Pointer to the audio buffer.
  *
  * @return	0 if success, error codes depends on sw_codec selected.
+ *
+ * @see @ref audio_system_encode_test_tone_set for test tone generation
+ * @see @ref sw_codec_decode for decoding operations
  */
 int sw_codec_encode(struct net_buf *audio_frame);
 
@@ -122,5 +150,9 @@ int sw_codec_uninit(struct sw_codec_config sw_codec_cfg);
  * @return	0 if success, error codes depends on sw_codec selected.
  */
 int sw_codec_init(struct sw_codec_config sw_codec_cfg);
+
+/**
+ * @}
+ */
 
 #endif /* _SW_CODEC_SELECT_H_ */

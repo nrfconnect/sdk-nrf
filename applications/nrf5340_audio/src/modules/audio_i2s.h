@@ -4,6 +4,20 @@
  *  SPDX-License-Identifier: LicenseRef-PCFT
  */
 
+/** @file
+ * @defgroup nrf5340_audio_i2s Audio I2S
+ * @{
+ * @brief Audio I2S interface API for nRF5340 Audio applications.
+ *
+ * This module provides the I2S (Inter-IC Sound) interface for audio data transfer
+ * between the application and external audio hardware. It manages I2S buffer handling
+ * and audio block completion callbacks, and provides thread-safe audio data streaming.
+ * The module supports both transmission and reception of audio data, enabling
+ * bidirectional audio communication for unicast (CIS) mode. It integrates with the
+ * audio datapath for synchronized audio delivery and supports configurable buffer
+ * management for optimal audio performance.
+ */
+
 #ifndef _AUDIO_I2S_H_
 #define _AUDIO_I2S_H_
 
@@ -86,5 +100,9 @@ void audio_i2s_blk_comp_cb_register(i2s_blk_comp_callback_t blk_comp_callback);
  * @brief Initialize I2S module
  */
 void audio_i2s_init(void);
+
+/**
+ * @}
+ */
 
 #endif /* _AUDIO_I2S_H_ */
