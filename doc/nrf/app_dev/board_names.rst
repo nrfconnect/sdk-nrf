@@ -46,8 +46,9 @@ While the board name is always present, other elements, such as the board revisi
   Check the Product Specification of the given SoC for more information about the available CPU clusters.
 
 * :ref:`Variant <zephyr:glossary>` - You can use this board qualifier to build for a particular type or configuration of a build for a combination of SoC and CPU cluster.
-  In the |NCS|, variants are used for indicating the usage of Cortex-M Security Extensions (CMSE) (security by separation):
+  In the |NCS|, variants are used for changing the default memory map as well as indicating the usage of Cortex-M Security Extensions (CMSE) (security by separation):
 
+  * Entry ``nrf52840dongle/nrf52840/bare`` - When you choose this target, the firmware will not account for the onboard USB bootloader (see :ref:`zephyr_board_nrf52840dongle_flashing-option-3` for more details).
   * Entries without ``*/ns`` (for example, ``cpuapp``) - When you choose this target, you build the application core firmware as a single execution environment that does not use CMSE (:ref:`Trusted Firmware-M (TF-M) <ug_tfm>`).
   * Entries with ``*/ns`` (for example, ``cpuapp/ns``) - Recommended for more security.
     When you choose this target, you build the application with CMSE using security by separation.
@@ -125,6 +126,8 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 |                   |            | :ref:`nrf52840dk <zephyr:nrf52840dk_nrf52811>`      | ``nrf52840dk/nrf52811``                                               |
 +-------------------+------------+-----------------------------------------------------+-----------------------------------------------------------------------+
 | nRF52840 Dongle   | PCA10059   | :zephyr:board:`nrf52840dongle <nrf52840dongle>`     | ``nrf52840dongle/nrf52840``                                           |
+|                   |            |                                                     |                                                                       |
+|                   |            |                                                     | ``nrf52840dongle/nrf52840/bare`` (without onboard USB bootloader)     |
 +-------------------+------------+-----------------------------------------------------+-----------------------------------------------------------------------+
 | nRF52833 DK       | PCA10100   | :zephyr:board:`nrf52833dk <nrf52833dk>`             | ``nrf52833dk/nrf52833``                                               |
 |                   |            |                                                     |                                                                       |
