@@ -1881,3 +1881,10 @@ ci_samples_dfu:
     - nrf/samples/dfu/
     - zephyr/drivers/flash/
     - zephyr/subsys/dfu/
+
+ci_samples_nrf54h20:
+  files:
+    - modules/hal/nordic/nrfs/
+    - nrf/samples/nrf54h20/
+    - zephyr/modules/hal_nordic/
+    - zephyr/soc/nordic/nrf54h/
