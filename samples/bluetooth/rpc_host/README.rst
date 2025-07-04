@@ -85,7 +85,8 @@ Testing
 After programming the sample build to your development kit, complete the following steps to test it:
 
 1. Connect the dual core development kit to the computer using a USB cable.
-   The development kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+   The development kit is assigned a serial port.
+   |serial_port_number_list|
 #. |connect_terminal|
 #. Reset the development kit.
 #. Observe that the terminal connected to the network core displays ``Starting nRF RPC Bluetooth host``.

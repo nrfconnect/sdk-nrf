@@ -226,7 +226,8 @@ After programming the sample to your development kit, complete the following ste
    .. group-tab:: nRF21, nRF52 and nRF53 DKs
 
       1. Connect the device to the computer to access UART 0.
-         If you use a development kit, UART 0 is forwarded as a COM port (Windows) or ttyACM device (Linux) after you connect the development kit over USB.
+         If you use a development kit, UART 0 is forwarded as a serial port.
+         |serial_port_number_list|
          If you use Thingy:53, you must attach the debug board and connect an external USB to UART converter to it.
       #. |connect_terminal|
       #. Reset the kit.
@@ -240,7 +241,8 @@ After programming the sample to your development kit, complete the following ste
           |nrf54_buttons_leds_numbering|
 
       1. Connect the device to the computer to access UART 0.
-         If you use a development kit, UART 0 is forwarded as a COM port (Windows) or ttyACM device (Linux) after you connect the development kit over USB.
+         If you use a development kit, UART 0 is forwarded as a serial port.
+         |serial_port_number_list|
          If you use Thingy:53, you must attach the debug board and connect an external USB to UART converter.
       #. |connect_terminal|
       #. Reset the kit.
@@ -267,7 +269,8 @@ To perform the test, complete the following steps:
          .. group-tab:: Android
 
             1. Connect the device to the computer to access UART 0.
-               If you use a development kit, UART 0 is forwarded as a COM port (Windows) or ttyACM device (Linux) after you connect the development kit over USB.
+               If you use a development kit, UART 0 is forwarded as a serial port.
+               |serial_port_number_list|
                If you use Thingy:53, you must attach the debug board and connect an external USB to UART converter.
             #. |connect_terminal|
             #. Optionally, you can display debug messages.
@@ -300,7 +303,8 @@ To perform the test, complete the following steps:
          .. group-tab:: iOS
 
             1. Connect the device to the computer to access UART 0.
-               If you use a development kit, UART 0 is forwarded as a COM port (Windows) or ttyACM device (Linux) after you connect the development kit over USB.
+               If you use a development kit, UART 0 is forwarded as a serial port.
+               |serial_port_number_list|
                If you use Thingy:53, you must attach the debug board and connect an external USB to UART converter.
             #. |connect_terminal|
             #. Optionally, you can display debug messages.
@@ -342,7 +346,8 @@ To perform the test, complete the following steps:
          .. group-tab:: Android
 
             1. Connect the device to the computer to access UART 0.
-               If you use a development kit, UART 0 is forwarded as a COM port (Windows) or ttyACM device (Linux) after you connect the development kit over USB.
+               If you use a development kit, UART 0 is forwarded as a serial port.
+               |serial_port_number_list|
                If you use Thingy:53, you must attach the debug board and connect an external USB to UART converter.
             #. |connect_terminal|
             #. Optionally, you can display debug messages.
@@ -375,7 +380,8 @@ To perform the test, complete the following steps:
          .. group-tab:: iOS
 
             1. Connect the device to the computer to access UART 0.
-               If you use a development kit, UART 0 is forwarded as a COM port (Windows) or ttyACM device (Linux) after you connect the development kit over USB.
+               If you use a development kit, UART 0 is forwarded as a serial port.
+               |serial_port_number_list|
                If you use Thingy:53, you must attach the debug board and connect an external USB to UART converter.
             #. |connect_terminal|
             #. Optionally, you can display debug messages.

@@ -140,7 +140,8 @@ Interacting with the sample
 ---------------------------
 
 1. Connect the development kit to the computer using a USB cable.
-   The development kit is assigned a COM port (Windows), ttyACM device (Linux) or tty.usbmodem (MacOS).
+   The development kit is assigned a serial port.
+   |serial_port_number_list|
 #. |connect_terminal_specific_ANSI|
 #. Enable local echo in the terminal to see the text you are typing.
 

@@ -241,7 +241,8 @@ Testing with another development kit
 Complete the following steps:
 
 1. Connect both development kits to the computer using a USB cable.
-   The kits are assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+   The kits are assigned serial ports.
+   |serial_port_number_list|
 #. |connect_terminal_both_ANSI|
 #. Run the following commands on one of the kits:
 

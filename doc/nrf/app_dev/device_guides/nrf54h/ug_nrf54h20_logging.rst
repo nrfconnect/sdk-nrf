@@ -161,7 +161,7 @@ To read the dictionary-based STM log output, do the following:
      When using several domains, use a comma (`,`) to separate each domain in the list.
    * ``<app_name>`` is the application name.
    * ``<port>`` is the serial port used for output.
-     Use ``nrfutil device list`` to identify the serial ports exposed by the development kit.
+     |serial_port_number_list|
    * The output can be either the console (``--stdout ascii``) or a file (the :file:`out.txt` file if ``--output-ascii out.txt``).
 
 #. Capture and decode the logs.

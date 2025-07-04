@@ -71,8 +71,9 @@ For details on building samples for a dual core device, see :ref:`ug_nrf5340_bui
 
 After programming the sample applications to your development kit, complete the following steps to test this sample:
 
-1. Connect the dual core development kit to the computer using a USB cable.
-   The development kit is assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+1. Connect the dual-core development kit to the computer using a USB cable.
+   The development kit is assigned a serial port.
+   |serial_port_number_list|
 #. |connect_terminal|
 #. Reset the development kit.
 #. Observe that the entropy data is displayed periodically in the terminal.
