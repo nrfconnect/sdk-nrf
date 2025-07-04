@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config DESKTOP_HID_REPORT_PROVIDER_MOUSE
+	bool
+	default y if !DESKTOP_HID_REPORT_PROVIDER_MOUSE_ALT
+	depends on DESKTOP_HID_REPORT_MOUSE_SUPPORT
+	select DESKTOP_HID_KEYMAP
+	help
+	  This option automatically enables the default HID mouse report
+	  provider for HID peripheral that supports HID mouse report.
+
+config DESKTOP_HID_REPORT_PROVIDER_MOUSE_ALT
+	bool "Use custom HID mouse report provider"
+	depends on DESKTOP_HID_REPORT_MOUSE_SUPPORT
+	help
+	  Enable this option if you want to support HID mouse report and use a
+	  custom HID mouse report provider. Make sure to introduce the custom
+	  HID mouse report provider if you enable this option.
+
+if DESKTOP_HID_REPORT_PROVIDER_MOUSE
+
+module = DESKTOP_HID_REPORT_PROVIDER_MOUSE
+module-str = HID provider mouse
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # DESKTOP_HID_REPORT_PROVIDER_MOUSE

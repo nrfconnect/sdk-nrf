@@ -76,7 +76,7 @@ Sending the first HID report to the connected Bluetooth peer is delayed by this 
 .. note::
    The nRF Desktop centrals perform the GATT service discovery and reenable the HID notifications on every reconnection.
    A HID report that is received before the subscription is reenabled will be dropped before it reaches the application.
-   The :ref:`CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY <config_desktop_app_options>` option is set to 500 ms for nRF Desktop keyboards (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_KEYBOARD <config_desktop_app_options>`) to make sure that the input is not lost on reconnection with the nRF Desktop dongle.
+   The :ref:`CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY <config_desktop_app_options>` option is set to 1000 ms for nRF Desktop keyboards (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_KEYBOARD <config_desktop_app_options>`) to make sure that the input is not lost on reconnection with the nRF Desktop dongle.
 
 Implementation details
 **********************

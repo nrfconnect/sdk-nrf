@@ -6,6 +6,11 @@
 
 menu "Application events"
 
+config DESKTOP_HID_REPORT_PROVIDER_EVENT
+	bool "HID report provider events"
+	help
+	  Enable HID report provider events in nRF Desktop application.
+
 rsource "Kconfig.log"
 
 endmenu
