@@ -5,19 +5,23 @@
  */
 
 /** @file
- * @brief Header file with Bluetooth audio rendering and capture API.
+ * @defgroup nrf5340_audio_bt_rendering_and_capture Bluetooth Audio Rendering and Capture
+ * @{
+ * @brief Bluetooth audio rendering and capture API for nRF5340 Audio applications.
+ *
+ * This module provides volume control and audio rendering functionality for LE Audio
+ * streams. It handles volume adjustment, muting, and audio capture operations through
+ * the Volume Control Profile (VCP) and Audio Input Control Service (AICS). The module
+ * supports both client and server roles for volume control, enabling bidirectional
+ * volume management between gateway and headset devices. It integrates with the
+ * Bluetooth management system to provide seamless audio control across unicast (CIS)
+ * and broadcast (BIS) connections.
  */
 
 #ifndef _BT_REND_H_
 #define _BT_REND_H_
 
 #include <zephyr/bluetooth/conn.h>
-
-/**
- * @brief Bluetooth Audio Rendering and Capture
- * @defgroup nrf5340_audio_bt_rendering_and_capture Bluetooth Audio Rendering and Capture
- * @{
- */
 
 /**
  * @brief	Adjust volume up by one step.

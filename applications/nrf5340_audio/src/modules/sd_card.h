@@ -5,7 +5,16 @@
  */
 
 /** @file
- * @brief Header file with SD card API.
+ * @defgroup nrf5340_audio_sd_card SD Card
+ * @{
+ * @brief SD card interface API for nRF5340 Audio applications.
+ *
+ * This module provides SD card file system operations and management functionality.
+ * It handles SD card initialization and file system mounting, and provides file I/O
+ * operations for audio file storage and retrieval. The module supports file listing and
+ * pattern matching, and provides both sequential and segmented file reading capabilities.
+ * It integrates with the FAT file system and provides error handling for SD card
+ * operations, enabling reliable audio file storage and playback functionality.
  */
 
 #ifndef _SD_CARD_H_
@@ -13,12 +22,6 @@
 
 #include <stddef.h>
 #include <zephyr/fs/fs.h>
-
-/**
- * @brief SD Card
- * @defgroup nrf5340_audio_sd_card SD Card
- * @{
- */
 
 /**
  * @brief Finds all files on SD card that match the given pattern.

@@ -5,7 +5,21 @@
  */
 
 /** @file
- * @brief Header file with LC3 streamer API.
+ * @defgroup nrf5340_audio_lc3_streamer LC3 Streamer
+ * @{
+ * @brief LC3 streamer API for nRF5340 Audio applications.
+ *
+ * This module provides LC3 audio file streaming functionality for playback from SD card
+ * storage. It manages multiple concurrent audio streams with configurable looping and
+ * supports both WAV and LC3 file formats. The module handles file reading and frame
+ * buffering, and provides thread-safe stream management through a work queue system.
+ * It integrates with the audio system for seamless playback and supports mixing with
+ * live audio streams. The streamer provides file compatibility checking and automatic
+ * resource management for optimal memory usage in embedded applications.
+ *
+ * The streamer integrates with @ref nrf5340_audio_lc3_file for file operations,
+ * @ref nrf5340_audio_sd_card for storage access, and @ref nrf5340_audio_system
+ * for audio playback integration.
  */
 
 #ifndef LC3_STREAMER_H
@@ -17,15 +31,15 @@
 #include <sys/types.h>
 
 /**
- * @brief LC3 Streamer
- * @defgroup nrf5340_audio_lc3_streamer LC3 Streamer
- * @{
+ * @brief LC3 stream configuration structure.
+ *
+ * This structure defines the configuration parameters for LC3 audio streams,
+ * including sample rate, bit rate, and frame duration.
  */
-
 struct lc3_stream_cfg {
-	uint32_t sample_rate_hz;
-	uint32_t bit_rate_bps;
-	uint32_t frame_duration_us;
+	uint32_t sample_rate_hz;	/**< Sample rate in Hz */
+	uint32_t bit_rate_bps;		/**< Bit rate in bits per second */
+	uint32_t frame_duration_us;	/**< Frame duration in microseconds */
 };
 
 /**
@@ -77,6 +91,9 @@ bool lc3_streamer_file_compatible_check(const char *const filename,
  * @retval -EINVAL	Invalid filename or streamer_idx.
  * @retval -EAGAIN	No stream slot is available.
  * @retval -EFAULT	Module has not been initialized.
+ *
+ * @see @ref lc3_file_open for file opening operations
+ * @see @ref lc3_streamer_next_frame_get for frame retrieval
  */
 int lc3_streamer_stream_register(const char *const filename, uint8_t *const streamer_idx,
 				 const bool loop);

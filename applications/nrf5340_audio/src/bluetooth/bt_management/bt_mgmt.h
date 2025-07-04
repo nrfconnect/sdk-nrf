@@ -5,7 +5,17 @@
  */
 
 /** @file
- * @brief Header file with Audio Bluetooth management API.
+ * @defgroup nrf5340_audio_bt_mgmt Audio Bluetooth Management
+ * @{
+ * @brief Bluetooth management API for nRF5340 Audio applications.
+ *
+ * This module provides comprehensive Bluetooth management functionality including device
+ * initialization, connection handling, scanning, advertising, and security management.
+ * It supports both unicast (CIS) and broadcast (BIS) modes with automatic device
+ * discovery, bonding, and connection state management. The module handles extended
+ * advertising, periodic advertising, and provides interfaces for DFU (Device Firmware
+ * Update) operations. It coordinates with the application layer through Zephyr's zbus
+ * messaging system for event-driven Bluetooth operations.
  */
 
 #ifndef _BT_MGMT_H_
@@ -14,12 +24,6 @@
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/audio/audio.h>
-
-/**
- * @brief Audio Bluetooth Management
- * @defgroup nrf5340_audio_bt_mgmt Audio Bluetooth Management
- * @{
- */
 
 #define LE_AUDIO_EXTENDED_ADV                                                                      \
 	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV, CONFIG_BLE_ACL_EXT_ADV_INT_MIN,                     \
@@ -56,9 +60,12 @@
 #error "Select either CONFIG_SCAN_MODE_ACTIVE or CONFIG_SCAN_MODE_PASSIVE"
 #endif
 
+/**
+ * @brief Bluetooth management scan type enumeration.
+ */
 enum bt_mgmt_scan_type {
-	BT_MGMT_SCAN_TYPE_CONN = 1,
-	BT_MGMT_SCAN_TYPE_BROADCAST = 2,
+	BT_MGMT_SCAN_TYPE_CONN = 1,		/**< Scan for connection (unicast) devices */
+	BT_MGMT_SCAN_TYPE_BROADCAST = 2,	/**< Scan for broadcast devices */
 };
 
 #define BRDCAST_ID_NOT_USED (BT_AUDIO_BROADCAST_ID_MAX + 1)
@@ -116,6 +123,9 @@ int bt_mgmt_adv_buffer_put(struct bt_data *const adv_buf, uint32_t *index, size_
  *		be used.
  *
  * @return	0 if success, error otherwise.
+ *
+ * @see @ref bt_mgmt_adv_start for advertising operations
+ * @see @ref bt_mgmt_scan_sirk_set for SIRK configuration
  */
 int bt_mgmt_scan_start(uint16_t scan_intvl, uint16_t scan_win, enum bt_mgmt_scan_type type,
 		       char const *const name, uint32_t brdcast_id);
