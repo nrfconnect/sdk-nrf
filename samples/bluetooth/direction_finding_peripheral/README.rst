@@ -41,6 +41,10 @@ Configuration
    :end-before: bt_dir_finding_tx_aoa_mode_end
 
 .. include:: /samples/bluetooth/direction_finding_connectionless_tx/README.rst
+   :start-after: bt_dir_finding_tx_aod_mode_start
+   :end-before: bt_dir_finding_tx_aod_mode_end
+
+.. include:: /samples/bluetooth/direction_finding_connectionless_tx/README.rst
    :start-after: bt_dir_finding_tx_ant_aod_start
    :end-before: bt_dir_finding_tx_ant_aod_end
 
