@@ -104,6 +104,20 @@ The FMDN Accessory specification integrates the Detecting Unwanted Location Trac
 Relevant FMDN sections of this guide describe the DULT integration with the FMDN extension.
 For more details on the DULT integration guidelines, see the `Fast Pair Unwanted Tracking Prevention Guidelines`_ documentation.
 
+Integration guides for helper modules
+*************************************
+
+This integration guide includes additional pages that discuss the Fast Pair helper modules.
+While these helper modules can provide additional functionality in your application, they are not strictly required for the Fast Pair integration.
+Each helper module is described on a dedicated page.
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Integration guides for helper modules:
+   :glob:
+
+   bt_fast_pair/*
+
 .. _ug_integrating_fast_pair:
 
 Integration steps
@@ -423,6 +437,11 @@ Setting up Bluetooth LE advertising
 
 The Fast Pair Provider must include Fast Pair service advertising data in the advertising payload.
 The Fast Pair Seeker must also know the Provider's transmit power to determine proximity.
+
+.. note::
+   The :ref:`bt_fast_pair_adv_manager_readme` helper module can be used to simplify the Fast Pair advertising management that is described in this integration step.
+   This module is also compatible with the requirements of the FMDN extension and its FMDN advertising set that are also covered by this integration step.
+   See :ref:`ug_bt_fast_pair_adv_manager` for more details on how to integrate it in your application.
 
 Advertising data and parameters
 ===============================
@@ -1138,11 +1157,22 @@ You must implement the guidelines at application level as they cannot be automat
 Implement these guidelines in your application if your product is targeting the locator tag use case.
 To see how to implement `Fast Pair Locator Tag Specific Guidelines`_ , see the :ref:`fast_pair_locator_tag` sample.
 
+.. note::
+   You can configure the :ref:`bt_fast_pair_adv_manager_readme` helper module to automatically handle locator tag guidelines related to the Fast Pair advertising.
+   Read through this section to learn more about this module.
+
 You must declare support for the locator tag use case when registering your device in the Google Nearby Device console.
 To enable the support, populate the **Fast Pair** protocol configuration panel in the following order:
 
 #. Select the :guilabel:`Locator Tag` option from the **Device Type** list.
 #. Set the **Find My Device** feature to **true**.
+
+It is recommended to use the :ref:`bt_fast_pair_adv_manager_readme` helper module for Fast Pair advertising management in the locator tag use case.
+This module follows the requirements of the FMDN extension and is compatible with the FMDN advertising set.
+It also provides additional layer for the locator tag use case.
+You can configure it using the :kconfig:option:`CONFIG_BT_FAST_PAIR_ADV_MANAGER_USE_CASE_LOCATOR_TAG` Kconfig option, that implements Fast Pair advertising requirements specified in the `Fast Pair Locator Tag Specific Guidelines`_ section of the FMDN Accessory specification.
+The :ref:`fast_pair_locator_tag` sample demonstrates how you can integrate the :ref:`bt_fast_pair_adv_manager_readme` in your application.
+See also :ref:`ug_bt_fast_pair_adv_manager` page that provides a comprehensive guide on how to integrate it in your application.
 
 .. note::
    It is recommended to use the special mode of the ``Fast Pair Procedure`` for the locator tag use case (see :ref:`ug_bt_fast_pair_gatt_service_no_ble_pairing` for more details).
@@ -1181,6 +1211,7 @@ Library support
 The following |NCS| libraries support the Fast Pair integration:
 
 * :ref:`bt_fast_pair_readme` library implements the Fast Pair GATT Service and provides the APIs required for :ref:`ug_bt_fast_pair` with the |NCS|.
+* :ref:`bt_fast_pair_adv_manager_readme` library implements the helper module that simplifies the Fast Pair advertising management.
 * :ref:`bt_le_adv_prov_readme` library - Google Fast Pair advertising data provider (:kconfig:option:`CONFIG_BT_ADV_PROV_FAST_PAIR`) can be used to integrate Fast Pair advertising payload to this library.
   The Bluetooth LE advertising provider subsystem can be used to manage advertising and scan response data.
 
