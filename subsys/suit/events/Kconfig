@@ -5,7 +5,7 @@
 #
 
 config SUIT_EVENTS
-	bool "Enable SUIT events module"
+	bool "SUIT events module"
 	select EVENTS
 
 if SUIT_EVENTS
