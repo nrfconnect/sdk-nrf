@@ -17,11 +17,13 @@ if MBEDTLS_X509_LIBRARY
 config MBEDTLS_X509_USE_C
 	bool "X.509 core for using certificates."
 	default y
+	select MBEDTLS_PK_PARSE_C
 	help
 	  Enable X.509 core for using certificates.
 
 config MBEDTLS_X509_CREATE_C
 	bool "X.509 - creating certificates core"
+	select MBEDTLS_PK_PARSE_C
 	help
 	  Enable X.509 core for creating certificates.
 
@@ -57,6 +59,7 @@ config MBEDTLS_X509_CRT_PARSE_C
 
 config MBEDTLS_X509_CSR_WRITE_C
 	bool "X.509 - CSR writing"
+	select MBEDTLS_PK_WRITE_C
 	help
 	  Enable creating X.509 Certificate Signing Requests (CSR).
 
