@@ -88,8 +88,14 @@ class NcsIronSideSEUpdate(WestCommand):
         def nrfutil_device(cmd: str) -> str:
             cmd = f"nrfutil device {cmd} --serial-number {args.serial}"
             self.dbg(cmd)
+
             result = subprocess.run(cmd, shell=True, text=True, capture_output=True)
+
             self.dbg(result.stdout)
+
+            if result.returncode != 0:
+                self.die(f"{cmd} returned '{result.returncode}' and '{result.stderr.strip()}'")
+
             return result.stdout
 
         def nrfutil_read(address: int, num_bytes: int) -> bytes:
@@ -112,12 +118,15 @@ class NcsIronSideSEUpdate(WestCommand):
             return self._decode_status(nrfutil_read(UPDATE_STATUS_ADDR, 4))
 
         def program(hex_file: PosixPath) -> None:
+            if not hex_file.exists():
+                self.die(f"Firmware file does not exist: {hex_file}")
+
             nrfutil_device(
                 f"program --options chip_erase_mode=ERASE_NONE --firmware {hex_file}"
             )
 
         if not args.allow_erase:
-            raise RuntimeError(
+            self.die(
                 "Unable to perform update without erasing the device, set '--allow-erase'"
             )
         with TemporaryDirectory() as tmpdir:
@@ -130,8 +139,13 @@ class NcsIronSideSEUpdate(WestCommand):
                     update_hex = "ironside_se_update.hex"
 
                 update_to_install = Path(tmpdir, "update", update_hex)
+
+                # Check if required files exist in the extracted ZIP
+                if not update_app.exists():
+                    self.die(f"Update application file not found in ZIP: {update_app}")
+
                 if not update_to_install.exists():
-                    raise RuntimeError("Unable to locate update hex within zip file")
+                    self.die(f"Update firmware file not found in ZIP: {update_to_install}")
 
                 self.inf(
                     f"Version before update: {get_version()}, status: {get_status()}"
