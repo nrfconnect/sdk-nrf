@@ -307,6 +307,9 @@ nRF Desktop
     Extra ATT buffers are no longer needed for keyboards as :ref:`nrf_desktop_hids` limits the maximum number of simultaneously processed HID input reports (:ref:`CONFIG_DESKTOP_HIDS_SUBSCRIBER_REPORT_MAX <config_desktop_app_options>`) to ``2`` by default.
   * The nRF Desktop application aligns the defaults of :kconfig:option:`CONFIG_BT_ATT_TX_COUNT` and :kconfig:option:`CONFIG_BT_CONN_TX_MAX` Kconfig options to application needs.
     The options are no longer explicitly set in application configurations.
+  * Improved HID subscription handling in the HID transports (:ref:`nrf_desktop_hids` and :ref:`nrf_desktop_usb_state`).
+    Both HID transports unsubscribe from HID input reports related to previously used HID protocol mode before subscribing for HID input reports related to new HID protocol mode.
+    This is done to ensure that subscriptions for both HID boot and HID report protocol mode are not enabled at the same time.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
