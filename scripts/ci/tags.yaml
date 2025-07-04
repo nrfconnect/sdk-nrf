@@ -1874,3 +1874,10 @@ ci_samples_zephyr_smp_svr_mini_boot:
     - zephyr/subsys/bluetooth/
     - zephyr/subsys/dfu/
     - zephyr/subsys/mgmt/
+
+ci_samples_dfu:
+  files:
+    - bootloader/mcuboot/
+    - nrf/samples/dfu/
+    - zephyr/drivers/flash/
+    - zephyr/subsys/dfu/
