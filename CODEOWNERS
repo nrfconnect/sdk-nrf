@@ -113,6 +113,7 @@
 /doc/nrf/drivers/uart_nrf_sw_lpuart.rst   @nrfconnect/ncs-doc-leads
 /doc/nrf/external_comp/avsystem.rst       @nrfconnect/ncs-iot-oulu-tampere-doc
 /doc/nrf/external_comp/bt_fast_pair.rst   @nrfconnect/ncs-si-bluebagel-doc
+/doc/nrf/external_comp/bt_fast_pair/      @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/external_comp/coremark.rst       @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/external_comp/dult.rst           @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/external_comp/edge_impulse.rst   @nrfconnect/ncs-si-muffin-doc
@@ -128,6 +129,7 @@
 /doc/nrf/libraries/bluetooth/mesh/        @nrfconnect/ncs-paladin-doc
 /doc/nrf/libraries/bluetooth/adv_prov.rst @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/libraries/bluetooth/mesh.rst     @nrfconnect/ncs-paladin-doc
+/doc/nrf/libraries/bluetooth/services/fast_pair/ @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/libraries/bluetooth/services/fast_pair.rst @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/libraries/bluetooth/services/wifi_prov.rst @nrfconnect/ncs-wifi-doc
 /doc/nrf/libraries/caf/                   @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-bluebagel-doc

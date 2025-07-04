@@ -676,6 +676,10 @@ Bluetooth libraries and services
 
 * :ref:`bt_fast_pair_readme` library:
 
+  * Added the new :ref:`bt_fast_pair_adv_manager_readme` helper module that can be used to manage the Fast Pair advertising set.
+    The module implements a trigger-based system for controlling Fast Pair advertising state that allows client modules to request advertising with their preferred configuration.
+    It also defines the use case layer that provides implementation of specific advertising requirements for supported use cases.
+
   * Updated the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_MOTION_DETECTOR` Kconfig option dependency.
     The dependency has been updated from the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` Kconfig option to :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR`.
 
@@ -901,7 +905,10 @@ This section provides detailed lists of changes by :ref:`integration <integratio
 Google Fast Pair integration
 ----------------------------
 
-|no_changes_yet_note|
+* Added the :ref:`ug_bt_fast_pair_adv_manager` page that describes how to integrate the :ref:`bt_fast_pair_adv_manager_readme` module in your application.
+
+* Updated the :ref:`ug_bt_fast_pair` page to mention the availability of the guide for :ref:`ug_bt_fast_pair_adv_manager` that covers the associated helper module.
+  Mentioned applicability of the :ref:`bt_fast_pair_adv_manager_readme` module in the :ref:`ug_bt_fast_pair_advertising` and the :ref:`ug_bt_fast_pair_use_case_locator_tag` sections.
 
 Edge Impulse integration
 ------------------------
@@ -999,6 +1006,9 @@ Documentation
   * The :ref:`mcuboot_serial_recovery` documentation page, based on the official Zephyr documentation, which discusses the implementation and usage of the serial recovery.
   * The :ref:`data_storage` page, which covers storage alternatives for general data, including NVMC, NVS, file systems, Settings, and PSA Protected Storage, with feature comparisons and configuration examples.
   * The :ref:`key_storage` page, which covers storage alternatives for cryptographic keys, including PSA Crypto API, Hardware Unique Keys (HUK), modem certificate storage, and other security-focused storage mechanisms.
+  * The :ref:`bt_fast_pair_adv_manager_readme` page that describes the new helper module for the :ref:`bt_fast_pair_readme` library.
+
+* Updated the :ref:`bt_fast_pair_readme` page to mention the availability of the :ref:`bt_fast_pair_adv_manager_readme` helper module.
 
 * Moved the Wi-Fi credentials library page to the upstream :ref:`Zephyr repository <zephyr:lib_wifi_credentials>`.
 * Removed the Getting started with nRF7002 DK and Getting started with other DKs pages from the :ref:`gsg_guides` section.
