@@ -100,9 +100,3 @@
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34187"
-
-- scenarios:
-    - sample.peripheral.radio_test
-  platforms:
-    - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
-  comment: "https://github.com/nrfconnect/sdk-nrf/pull/23124"
