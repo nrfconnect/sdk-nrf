@@ -94,7 +94,7 @@ endif # BT_MESH_RELAY
 endif
 
 config BT_MESH_NLC_PERF_CONF
-	bool "Enable NLC performance configurations"
+	bool "NLC performance configurations"
 	select BT_MESH_COMP_PAGE_2
 	select BT_MESH_COMP_PAGE_1
 	help
@@ -116,7 +116,7 @@ config BT_MESH_NLC_PERF_DEFAULT
 	  conjunction with other NLC profiles, use CONFIG_BT_MESH_NLC_PERF_LIGHTNESS_CTRL instead.
 
 config BT_MESH_NLC_PERF_LIGHTNESS_CTRL
-	bool "Enable strict performance configurations required for the Basic Lightness Controller"
+	bool "Strict performance configurations required for the Basic Lightness Controller"
 	help
 	  Enables required performance configurations for the
 	  NLC Basic Lightness Controller. The NLC Basic Lightness Controller
