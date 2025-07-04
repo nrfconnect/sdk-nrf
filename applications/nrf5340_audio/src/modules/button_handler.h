@@ -5,7 +5,12 @@
  */
 
 /** @file
- * @brief Header file with audio button handler API.
+ * @defgroup nrf5340_audio_button Audio Button Handler
+ * @{
+ * @brief Button handler API for nRF5340 Audio applications.
+ *
+ * This module provides button input handling and debouncing functionality for user
+ * interface control.
  */
 
 #ifndef _BUTTON_HANDLER_H_
@@ -13,12 +18,6 @@
 
 #include <stdint.h>
 #include <zephyr/drivers/gpio.h>
-
-/**
- * @brief Audio Button Handler
- * @defgroup nrf5340_audio_button Audio Button Handler
- * @{
- */
 
 /** @brief Initialize button handler, with buttons defined in button_assignments.h.
  *

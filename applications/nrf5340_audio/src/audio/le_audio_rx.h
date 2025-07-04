@@ -5,7 +5,12 @@
  */
 
 /** @file
- * @brief Header file with LE Audio RX API.
+ * @defgroup nrf5340_audio_le_audio_rx LE Audio RX
+ * @{
+ * @brief LE Audio receive (RX) API for nRF5340 Audio applications.
+ *
+ * This module handles the reception and processing of incoming LE Audio streams from
+ * Bluetooth connections.
  */
 
 #ifndef _LE_AUDIO_RX_H_
@@ -14,12 +19,6 @@
 #include <zephyr/bluetooth/audio/audio.h>
 #include <zephyr/net_buf.h>
 #include <audio_defines.h>
-
-/**
- * @brief LE Audio RX
- * @defgroup nrf5340_audio_le_audio_rx LE Audio RX
- * @{
- */
 
 /**
  * @brief	Data handler when ISO data has been received.

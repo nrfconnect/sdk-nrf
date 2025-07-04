@@ -5,7 +5,12 @@
  */
 
 /** @file
- * @brief Header file with audio I2S API.
+ * @defgroup nrf5340_audio_i2s Audio I2S
+ * @{
+ * @brief Audio I2S interface API for nRF5340 Audio applications.
+ *
+ * This module provides the I2S (Inter-IC Sound) interface for audio data transfer
+ * between the application and external audio hardware.
  */
 
 #ifndef _AUDIO_I2S_H_
@@ -14,26 +19,45 @@
 #include <zephyr/kernel.h>
 #include <stdint.h>
 
-/**
- * @brief Audio I2S
- * @defgroup nrf5340_audio_i2s Audio I2S
- * @{
- */
-
-/**
- * Calculation:
- * FREQ_VALUE = 2^16 * ((12 * f_out / 32M) - 4)
- * f_out == 12.288
- * 39845.888 = 2^16 * ((12 * 12.288 / 32M) - 4)
- * 39846 = 0x9BA6
+/** @brief HFCLKAUDIO frequency value for 12.288-MHz output.
+ *
+ * This macro defines the frequency value for the High Frequency Clock Audio (HFCLKAUDIO)
+ * to generate a 12.288-MHz output frequency. The value is calculated using the formula:
+ * FREQ_VALUE = 2^16 * ((12 * f_out / 32M) - 4) where f_out is the desired output frequency.
  */
 #define HFCLKAUDIO_12_288_MHZ 0x9BA6
+
+/** HFCLKAUDIO frequency value for 12.165-MHz output.
+ *
+ * This macro defines the frequency value for the High Frequency Clock Audio (HFCLKAUDIO)
+ * to generate a 12.165-MHz output frequency. The value is calculated using the formula:
+ * FREQ_VALUE = 2^16 * ((12 * f_out / 32M) - 4) where f_out is the desired output frequency.
+ */
 #define HFCLKAUDIO_12_165_MHZ 0x8FD8
+
+/** HFCLKAUDIO frequency value for 12.411-MHz output.
+ *
+ * This macro defines the frequency value for the High Frequency Clock Audio (HFCLKAUDIO)
+ * to generate a 12.411-MHz output frequency. The value is calculated using the formula:
+ * FREQ_VALUE = 2^16 * ((12 * f_out / 32M) - 4) where f_out is the desired output frequency.
+ */
 #define HFCLKAUDIO_12_411_MHZ 0xA774
 
-/*
- * Calculate the number of bytes of one frame, as per now, this frame can either
- * be 10 or 7.5 ms. Since we can't have floats in a define we use 15/2 instead
+/**
+ * @brief Calculate frame size in bytes based on audio configuration.
+ *
+ * This macro calculates the number of bytes in one audio frame based on the
+ * configured I2S sample rate, number of channels, and bit depth. The frame
+ * duration can be either 10 ms (standard) or 7.5 ms (LC3 codec specific).
+ *
+ * For 7.5ms frames with LC3 codec:
+ * - Uses 15/2 multiplier to represent 7.5 ms (since floats aren't allowed in defines)
+ * - Formula: (sample_rate_hz / 1000 * 15 / 2) * channels * bytes_per_sample
+ *
+ * For 10ms frames (default):
+ * - Uses 10-ms multiplier
+ * - Formula: (sample_rate_hz / 1000 * 10) * channels * bytes_per_sample
+ *
  */
 #if ((CONFIG_AUDIO_FRAME_DURATION_US == 7500) && CONFIG_SW_CODEC_LC3)
 
@@ -45,11 +69,18 @@
 	((CONFIG_I2S_LRCK_FREQ_HZ / 1000 * 10) * CONFIG_I2S_CH_NUM * CONFIG_AUDIO_BIT_DEPTH_OCTETS)
 #endif /* ((CONFIG_AUDIO_FRAME_DURATION_US == 7500) && CONFIG_SW_CODEC_LC3) */
 
+/** Calculate block size in bytes for I2S FIFO frame splitting. */
 #define BLOCK_SIZE_BYTES (FRAME_SIZE_BYTES / CONFIG_FIFO_FRAME_SPLIT_NUM)
 
-/*
- * Calculate the number of samples in a block, divided by the number of samples
- * that will fit within a 32-bit word
+/**
+ * @brief Calculate number of samples per I2S block.
+ *
+ * This macro calculates the number of audio samples in each I2S block,
+ * accounting for the bit depth and 32-bit word alignment. The calculation
+ * determines how many samples fit within a 32-bit word based on the
+ * configured audio bit depth.
+ *
+ * Formula: block_size_bytes / bytes_per_sample / (32 / bits_per_sample)
  */
 #define I2S_SAMPLES_NUM                                                                            \
 	(BLOCK_SIZE_BYTES / (CONFIG_AUDIO_BIT_DEPTH_OCTETS) / (32 / CONFIG_AUDIO_BIT_DEPTH_BITS))

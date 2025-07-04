@@ -5,7 +5,12 @@
  */
 
 /** @file
- * @brief Header file with audio sync timer API.
+ * @defgroup nrf5340_audio_sync_timer Audio Sync Timer
+ * @{
+ * @brief Audio synchronization timer API for nRF5340 Audio applications.
+ *
+ * This module provides precise timing functionality for audio synchronization across
+ * multiple devices.
  */
 
 #ifndef _AUDIO_SYNC_TIMER_H_
@@ -13,12 +18,6 @@
 
 #include <zephyr/kernel.h>
 #include <stdint.h>
-
-/**
- * @brief Audio Sync Timer
- * @defgroup nrf5340_audio_sync_timer Audio Sync Timer
- * @{
- */
 
 /**
  * @brief Capture a timestamp on the sync timer.

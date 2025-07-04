@@ -5,7 +5,12 @@
  */
 
 /** @file
- * @brief Header file with audio system API.
+ * @defgroup nrf5340_audio_system Audio System
+ * @{
+ * @brief Core audio system API for nRF5340 Audio applications.
+ *
+ * This module provides the central audio processing functionality for the nRF5340 Audio
+ * applications, managing both hardware and software codecs.
  */
 
 #ifndef _AUDIO_SYSTEM_H_
@@ -19,12 +24,6 @@
 #include "audio_defines.h"
 
 #define VALUE_NOT_SET 0
-
-/**
- * @brief Audio System
- * @defgroup nrf5340_audio_system Audio System
- * @{
- */
 
 /**
  * @brief	Start the execution of the encoder thread.
@@ -82,6 +81,8 @@ int audio_system_config_set(uint32_t encoder_sample_rate_hz, uint32_t encoder_bi
  * @param[in]	audio_frame	Pointer to the audio data.
  *
  * @return	0 on success, error otherwise.
+ *
+ * @see @ref audio_datapath_stream_out for audio output processing
  */
 int audio_system_decode(struct net_buf *audio_frame);
 
@@ -113,7 +114,7 @@ int audio_system_fifo_rx_block_drop(void);
 int audio_system_decoder_num_ch_get(void);
 
 /**
- * @brief	Initialize the audio_system.
+ * @brief	Initialize the audio system.
  *
  * @return	0 on success, error otherwise.
  */
