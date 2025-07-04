@@ -309,6 +309,9 @@ nRF Desktop
     The options are no longer explicitly set in application configurations.
   * Increased the default first HID report delay (:ref:`CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY <config_desktop_app_options>`) for keyboard (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_KEYBOARD <config_desktop_app_options>`) in :ref:`nrf_desktop_hids` from ``500 ms`` to ``1000 ms``.
     This change ensures that queued keypresses are not lost when reconnecting with the nRF Desktop dongle.
+  * Improved HID subscription handling in the HID transports (:ref:`nrf_desktop_hids` and :ref:`nrf_desktop_usb_state`).
+    Both HID transports now unsubscribe from HID input reports related to the previously used HID protocol mode before subscribing to HID input reports related to the new HID protocol mode.
+    This change ensures that subscriptions to both HID boot and HID report protocol mode are not enabled at the same time.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
