@@ -350,6 +350,21 @@ Amazon Sidewalk samples
 Bluetooth samples
 -----------------
 
+* Added support for the ``nrf54lm20pdk/nrf54lm20a/cpuapp`` board target to the following samples:
+
+  * :ref:`_bluetooth_channel_sounding_ras_initiator`
+  * :ref:`_bluetooth_channel_sounding_ras_reflector`
+  * :ref:`_bluetooth_conn_time_sync`
+  * :ref:`_bluetooth_event_trigger`
+  * :ref:`_bluetooth_iso_combined_bis_and_cis`
+  * :ref:`_bluetooth_iso_time_sync`
+  * :ref:`_bluetooth_llpm`
+  * :ref:`_bluetooth_peripheral_with_multiple_identities`
+  * :ref:`_bluetooth_radio_coex_1wire`
+  * :ref:`_bluetooth_radio_notification_cb`
+  * :ref:`_bluetooth_scanning_while_connecting`
+  * :ref:`_bluetooth_subrating`
+
 * Added experimental ``llvm`` toolchain support for the nRF54L Series board targets to the following samples:
 
   * :ref:`peripheral_lbs`
@@ -487,6 +502,11 @@ Matter samples
   * The Bluetooth Low Energy variant of the Soft Device Controller (SDC) to use the Peripheral-only role in all Matter samples.
   * API of the ``ncs_configure_data_model`` cmake method that does not use ``ZAP_FILE`` argument anymore, but creates path to ZAP file based on :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option.
   * Renamed the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH` Kconfig option to :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` and changed it purpose to configure the absolute path under which ZAP file is located.
+
+MPSL samples
+-----------------
+
+* Added support for the ``nrf54lm20pdk/nrf54lm20a/cpuapp`` board target to the  :ref:`_timeslot_sample` sample.
 
 Networking samples
 ------------------
