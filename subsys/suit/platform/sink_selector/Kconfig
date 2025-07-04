@@ -5,5 +5,5 @@
 #
 
 config SUIT_SINK_SELECTOR
-	bool "Enable SUIT sink_selector module"
+	bool "SUIT sink_selector module"
 	depends on SUIT_STREAM

@@ -5,7 +5,7 @@
 #
 
 menuconfig SUIT_VALIDATOR
-	bool "Enable SUIT validator module"
+	bool "SUIT validator module"
 	depends on SUIT_METADATA
 
 if SUIT_VALIDATOR
