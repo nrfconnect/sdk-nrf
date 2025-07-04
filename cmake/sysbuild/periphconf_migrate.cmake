@@ -39,7 +39,7 @@ if(DEFINED ironside_uicr_main_image)
     ${nrf_regtool_cmd}
     uicr-migrate
     --edt-pickle-file ${BINARY_DIR}/zephyr/edt.pickle
-    --output-periphconf-file ${BINARY_DIR}/zephyr/periphconf_migrated.c
+    --output-periphconf-file ${APPLICATION_BINARY_DIR}/periphconf_migrated.c
   )
   foreach(image ${ironside_uicr_images})
     ExternalProject_Get_Property(${image} BINARY_DIR)
