@@ -18,7 +18,7 @@ if DESKTOP_HIDS_ENABLE
 
 config DESKTOP_HIDS_FIRST_REPORT_DELAY
 	int "First HID report delay [ms]"
-	default 500 if DESKTOP_PERIPHERAL_TYPE_KEYBOARD
+	default 1000 if DESKTOP_PERIPHERAL_TYPE_KEYBOARD
 	default 0
 	range 0 2000
 	help
@@ -28,7 +28,7 @@ config DESKTOP_HIDS_FIRST_REPORT_DELAY
 	  centrals reenable the subscriptions on every reconnection. HID report
 	  is dropped if received before the subscription was reenabled.
 
-	  By default, nRF Desktop keyboard uses a delay of 500 ms to prevent
+	  By default, nRF Desktop keyboard uses a delay of 1000 ms to prevent
 	  dropping HID reports right after reconnection.
 
 config DESKTOP_HIDS_SUBSCRIBER_PRIORITY

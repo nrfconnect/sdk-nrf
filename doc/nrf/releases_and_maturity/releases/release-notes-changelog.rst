@@ -307,6 +307,8 @@ nRF Desktop
     Extra ATT buffers are no longer needed for keyboards as :ref:`nrf_desktop_hids` limits the maximum number of simultaneously processed HID input reports (:ref:`CONFIG_DESKTOP_HIDS_SUBSCRIBER_REPORT_MAX <config_desktop_app_options>`) to ``2`` by default.
   * The nRF Desktop application aligns the defaults of :kconfig:option:`CONFIG_BT_ATT_TX_COUNT` and :kconfig:option:`CONFIG_BT_CONN_TX_MAX` Kconfig options to application needs.
     The options are no longer explicitly set in application configurations.
+  * Increased the default first HID report delay (:ref:`CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY <config_desktop_app_options>`) for keyboard (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_KEYBOARD <config_desktop_app_options>`) in :ref:`nrf_desktop_hids` from ``500 ms`` to ``1000 ms``.
+    This change ensures that queued keypresses are not lost when reconnecting with the nRF Desktop dongle.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
