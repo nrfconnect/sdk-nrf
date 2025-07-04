@@ -5,7 +5,7 @@
 #
 
 config SUIT_UTILS
-	bool "Enable SUIT utilities"
+	bool "SUIT utilities"
 	depends on ZCBOR
 	depends on ZCBOR_CANONICAL
 

@@ -5,4 +5,4 @@
 #
 
 config SUIT_ENVELOPE_INFO
-	bool "Enable SUIT envelope info module"
+	bool "SUIT envelope info module"

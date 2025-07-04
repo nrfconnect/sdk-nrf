@@ -17,7 +17,7 @@ config CAF_SETTINGS_LOADER_DEF_PATH
 	  Location of configuration file for settings loader module.
 
 config CAF_SETTINGS_LOADER_USE_THREAD
-	bool "Enable loading of setting by separate thead"
+	bool "Loading of settings by separate thead"
 	help
 	  The option enables loading of settings by separate
 	  thread in background instead of use of system
