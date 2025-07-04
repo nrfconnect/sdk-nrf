@@ -15,7 +15,10 @@ K_WORK_DELAYABLE_DEFINE(crash_work, crash_work_handler);
 
 static void do_stack_overflow(void)
 {
-	volatile uint8_t arr[(256 * 1024)] __attribute__((unused));
+	volatile uint8_t arr[CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE];
+
+	/* Write to 'arr' to prevent the compiler from optimizing it away. */
+	arr[0] = 1;
 }
 
 static void do_assert(void)
@@ -28,7 +31,9 @@ static void do_assert(void)
 
 static void do_hardfault(void)
 {
-	volatile uint32_t value __attribute__((unused)) = 1 / 0;
+	volatile uint32_t value;
+
+	value = 1 / 0;
 }
 
 #pragma GCC diagnostic pop
