@@ -60,7 +60,7 @@ config BT_GATT_DM_MAX_ATTRS
 	  Maximum number of attributes that can be present in the discovered service.
 
 config BT_GATT_DM_DATA_PRINT
-	bool "Enable functions for printing discovery related data"
+	bool "Functions for printing discovery related data"
 	help
 	  Enable functions for printing discovery related data
 
