@@ -3,10 +3,8 @@ sample:
   description: Sample application showing peripheral role of Direction Finding in
     connected mode
 tests:
-  sample.bluetooth.direction_finding_peripheral.aoa.sdc.nrf52_nrf53:
+  sample.bluetooth.direction_finding_peripheral.aoa.sdc.nrf52_nrf53_54lx:
     sysbuild: true
-    extra_args:
-      - OVERLAY_CONFIG="overlay-aoa.conf"
     build_only: true
     platform_allow:
       - nrf52833dk/nrf52833
@@ -23,7 +21,6 @@ tests:
     sysbuild: false
     build_only: true
     extra_args:
-      - OVERLAY_CONFIG="overlay-aoa.conf;overlay-bt_ll_sw_split.conf"
       - SNIPPET="bt-ll-sw-split"
     platform_allow:
       - nrf52833dk/nrf52833
@@ -36,7 +33,6 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - OVERLAY_CONFIG="overlay-aoa.conf"
       - ipc_radio_OVERLAY_CONFIG="../../overlay-bt_ll_sw_split.conf"
       - ipc_radio_SNIPPET="bt-ll-sw-split"
     platform_allow:
@@ -50,7 +46,7 @@ tests:
     sysbuild: false
     build_only: true
     extra_args:
-      - OVERLAY_CONFIG="overlay-bt_ll_sw_split.conf"
+      - OVERLAY_CONFIG="overlay-aod.conf;overlay-bt_ll_sw_split.conf"
       - SNIPPET="bt-ll-sw-split"
     platform_allow:
       - nrf52833dk/nrf52833
@@ -63,7 +59,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - ipc_radio_OVERLAY_CONFIG="../../overlay-bt_ll_sw_split.conf"
+      - ipc_radio_OVERLAY_CONFIG="../../overlay-aod.conf;../../overlay-bt_ll_sw_split.conf"
       - ipc_radio_SNIPPET="bt-ll-sw-split"
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp

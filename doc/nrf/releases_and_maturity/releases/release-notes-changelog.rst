@@ -376,6 +376,15 @@ Bluetooth samples
   * Fixed a bug in the workaround for errata 216 on nRF54H20 devices.
     The device asserted when a packet was received during reception tests and too few packets where transmitted during transmission tests.
 
+* :ref:`_bluetooth_direction_finding_peripheral` sample:
+
+  * Added support for: ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l05/cpuapp``, ``nrf54lm20pdk/nrf54lm20a/cpuapp``, ``nrf54lv10dk/nrf54lv10a/cpuapp`` board targets.
+  * Direction Finding TX AoD (atnenna switching) is disabled by default in the sample.
+
+* :ref:`_direction_finding_connectionless_tx` sample:
+
+  * Added support for: ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l05/cpuapp``, ``nrf54lm20pdk/nrf54lm20a/cpuapp``, ``nrf54lv10dk/nrf54lv10a/cpuapp`` board targets.
+
 Bluetooth Mesh samples
 ----------------------
 
