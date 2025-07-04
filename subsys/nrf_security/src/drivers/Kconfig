@@ -27,7 +27,7 @@ config PSA_CRYPTO_DRIVER_CC3XX
 	  all supported key sizes are included in the build.
 
 config PSA_CRYPTO_DRIVER_CRACEN
-	bool "Enable the Cracen PSA driver"
+	bool "Cracen PSA driver"
 	depends on MBEDTLS_PSA_CRYPTO_C
 	depends on CRACEN_HW_PRESENT
 	# CRACEN uses the k_event_ API
@@ -43,13 +43,13 @@ config PSA_WANT_PLATFORM_KEYS
 
 menu "Choose DRBG algorithm"
 config PSA_WANT_ALG_CTR_DRBG
-	prompt "Enable CTR_DRBG"
+	prompt "CTR_DRBG"
 	bool
 	default y if !PSA_WANT_ALG_HMAC_DRBG
 	depends on PSA_WANT_GENERATE_RANDOM
 
 config PSA_WANT_ALG_HMAC_DRBG
-	prompt "Enable HMAC_DRBG"
+	prompt "HMAC_DRBG"
 	bool
 	depends on PSA_WANT_GENERATE_RANDOM
 
@@ -68,7 +68,7 @@ menu "CryptoCell PSA Driver Configuration"
 if PSA_CRYPTO_DRIVER_CC3XX
 
 config PSA_USE_CC3XX_CIPHER_DRIVER
-	prompt "Enable CryptoCell driver support for the PSA cipher APIs"
+	prompt "CryptoCell driver support for the PSA cipher APIs"
 	bool
 	default y
 	help
@@ -77,7 +77,7 @@ config PSA_USE_CC3XX_CIPHER_DRIVER
 	  CBC no padding, ECB no padding and Chacha20.
 
 config PSA_USE_CC3XX_AEAD_DRIVER
-	prompt "Enable CryptoCell driver support for the PSA AEAD APIs"
+	prompt "CryptoCell driver support for the PSA AEAD APIs"
 	bool
 	default y
 	help
@@ -86,7 +86,7 @@ config PSA_USE_CC3XX_AEAD_DRIVER
 	  and Chacha20Poly1305.
 
 config PSA_USE_CC3XX_HASH_DRIVER
-	prompt "Enable CryptoCell driver support for the PSA hash APIs"
+	prompt "CryptoCell driver support for the PSA hash APIs"
 	bool
 	default y
 	help
@@ -94,7 +94,7 @@ config PSA_USE_CC3XX_HASH_DRIVER
 	  will provide support for SHA1, SHA224 and SHA256.
 
 config PSA_USE_CC3XX_MAC_DRIVER
-	prompt "Enable CryptoCell driver support for the PSA mac APIs"
+	prompt "CryptoCell driver support for the PSA mac APIs"
 	bool
 	default y
 	help
@@ -102,7 +102,7 @@ config PSA_USE_CC3XX_MAC_DRIVER
 	  will provide support for HMAC and CMAC.
 
 config PSA_USE_CC3XX_KEY_AGREEMENT_DRIVER
-	prompt "Enable CryptoCell driver support for the PSA key agreement APIs"
+	prompt "CryptoCell driver support for the PSA key agreement APIs"
 	bool
 	default y
 	help
@@ -110,7 +110,7 @@ config PSA_USE_CC3XX_KEY_AGREEMENT_DRIVER
 	  will provide support for key agreement with ECDH.
 
 config PSA_USE_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER
-	prompt "Enable CryptoCell driver support for the PSA asymmetric signature APIs"
+	prompt "CryptoCell driver support for the PSA asymmetric signature APIs"
 	bool
 	default y
 	help
@@ -119,7 +119,7 @@ config PSA_USE_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER
 	  and randomized modes and RSA in PKCS1V15 and PSS modes.
 
 config PSA_USE_CC3XX_ASYMMETRIC_ENCRYPTION_DRIVER
-	prompt "Enable CryptoCell driver support for the PSA asymmetric encryption APIs"
+	prompt "CryptoCell driver support for the PSA asymmetric encryption APIs"
 	bool
 	default y
 	help
@@ -128,7 +128,7 @@ config PSA_USE_CC3XX_ASYMMETRIC_ENCRYPTION_DRIVER
 	  in PKCS1V15 and OAEP modes.
 
 config PSA_USE_CC3XX_KEY_MANAGEMENT_DRIVER
-	prompt "Enable CryptoCell driver support for the PSA key management APIs"
+	prompt "CryptoCell driver support for the PSA key management APIs"
 	bool
 	default y
 	depends on PSA_USE_CC3XX_ASYMMETRIC_ENCRYPTION_DRIVER || \

@@ -5,7 +5,7 @@
 #
 
 menuconfig NRF_CPU_LOAD
-	bool "Enable CPU load measurement"
+	bool "CPU load measurement"
 	select NRFX_GPPI
 	depends on !SOC_SERIES_NRF51X # Lack of required HW events
 	depends on !SOC_SERIES_NRF54HX # Lack of required HW events
@@ -22,7 +22,7 @@ module-str = CPU load measurement
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 config NRF_CPU_LOAD_CMDS
-	bool "Enable shell commands"
+	bool "Shell commands"
 	depends on SHELL
 	default y
 
@@ -41,7 +41,7 @@ config NRF_CPU_LOAD_LOG_INTERVAL
 endif # LOG
 
 config NRF_CPU_LOAD_ALIGNED_CLOCKS
-	bool "Enable aligned clock sources"
+	bool "Aligned clock sources"
 	depends on !SOC_SERIES_NRF54LX
 	help
 	  After enabling this option, the sleep period measurement

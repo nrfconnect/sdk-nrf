@@ -5,7 +5,7 @@
 #
 
 menuconfig BT_CGMS
-	bool "Enable GATT continuous glucose service"
+	bool "GATT continuous glucose service"
 	select EXPERIMENTAL
 	select BT_NRF_SERVICES
 
