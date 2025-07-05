@@ -61,7 +61,7 @@ The aggregator is defined as a separate node in the devicetree and consists of t
 Implementation details
 **********************
 
-|sensor_data_aggregator| subscribes to following sensor manager events:
+|sensor_data_aggregator| subscribes to the following sensor manager events:
 
 * :c:struct:`sensor_state_event`
 * :c:struct:`sensor_event`
