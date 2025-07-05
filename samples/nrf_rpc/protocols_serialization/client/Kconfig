@@ -6,7 +6,7 @@
 
 menu "Protocols serialization client"
 
-config RPC_CRASH_LOG_READ_BUFFER_SIZE
+config NRF_PS_CLIENT_CRASH_DUMP_READ_BUFFER_SIZE
 	int "Crash log read buffer size"
 	depends on LOG_FORWARDER_RPC
 	default 256
@@ -17,6 +17,20 @@ config RPC_CRASH_LOG_READ_BUFFER_SIZE
 module = NRF_PS_CLIENT
 module-str = nrf_ps_client
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+config NRF_PS_CLIENT_BT_TEST
+	bool "BLE test service for RPC Client"
+	depends on BT
+	help
+	 Enable BLE test service for RPC Client.
+
+if NRF_PS_CLIENT_BT_TEST
+
+config NRF_PS_CLIENT_BT_TEST_CHAR_MAX_DATA_SIZE
+	int "Maximum size of BLE test characteristic data in bytes"
+	default 4
+
+endif # NRF_PS_CLIENT_BT_TEST
 
 endmenu # "Protocols serialization client"
 
