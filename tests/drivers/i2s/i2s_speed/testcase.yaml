@@ -1,0 +1,36 @@
+tests:
+  drivers.i2s.speed:
+    depends_on: i2s
+    tags:
+      - drivers
+      - i2s
+    filter: not CONFIG_I2S_TEST_USE_GPIO_LOOPBACK
+  drivers.i2s.speed.gpio_loopback:
+    depends_on:
+      - i2s
+      - gpio
+    tags:
+      - drivers
+      - i2s
+    filter: CONFIG_I2S_TEST_USE_GPIO_LOOPBACK
+    harness: ztest
+    harness_config:
+      fixture: gpio_loopback
+  drivers.i2s.speed.gpio_loopback.aclk:
+    depends_on:
+      - i2s
+      - gpio
+    tags:
+      - drivers
+      - i2s
+    filter: CONFIG_I2S_TEST_USE_GPIO_LOOPBACK
+    harness: ztest
+    harness_config:
+      fixture: gpio_loopback
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="boards/nrf5340dk_nrf5340_cpuapp_aclk.overlay"
+      - CONFIG_I2S_TEST_FRAME_CLOCK_MEASUREMENT=y
+      - CONFIG_I2S_TEST_FRAME_CLOCK_MEASUREMENT_GPIO_POLLING=n
+      - CONFIG_I2S_TEST_FRAME_CLOCK_TOLERANCE_PPM=50000
+      - CONFIG_I2S_TEST_SKIP_SAMPLERATE_96000=y
+    platform_allow: nrf5340dk/nrf5340/cpuapp
