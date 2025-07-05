@@ -10,6 +10,8 @@ on:
       - 'scripts/requirements*.txt'
       - '.github/workflows/validate-pip-requirements-fixed-file.yml'
 
+permissions:
+  contents: read
 
 jobs:
   check-requirements:
@@ -32,13 +34,19 @@ jobs:
         with:
           python-version: '${{ steps.pyv.outputs.python_version }}'
 
+      - name: Cache pip
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip
+
       - name: Setup environment
         working-directory: ncs
         run: |
           pip3 install --user -U setuptools wheel pip virtualenv virtualenvwrapper
 
       - name: Execute script diff action
-        uses: nrfconnect/action-script-diff@v0.3
+        uses: nrfconnect/action-script-diff@lessVerbose
         with:
           diff_file: "ncs/nrf/scripts/requirements-fixed.txt"
           script_call: |
@@ -66,12 +74,12 @@ jobs:
               bootloader/mcuboot/scripts/requirements.txt \
               zephyr/scripts/requirements.txt \
               nrf/scripts/requirements-west-ncs-sbom.txt \
-              nrf/scripts/requirements-ci.txt \
+              nrf/scripts/requirements-actions.in \
               nrf/scripts/requirements-extra.txt \
               nrf/scripts/requirements.txt \
               --output-file nrf/scripts/requirements-fixed.txt \
               --min-python-version 3.12 \
-              --index-url https://files.nordicsemi.com/artifactory/api/pypi/nordic-pypi/simple
+              --generate-hashes
 
             deactivate
             rmvirtualenv pip-fixed-venv
