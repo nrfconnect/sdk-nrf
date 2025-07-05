@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <algorithm>
+
 #include "pwm_device.h"
 
 #include <lib/support/CodeUtils.h>
@@ -104,7 +106,7 @@ void PWMDevice::ApplyLevel()
 {
 	const uint8_t maxEffectiveLevel = mMaxLevel - mMinLevel;
 	const uint8_t effectiveLevel =
-		mState == kState_On ? chip::min<uint8_t>(mLevel - mMinLevel, maxEffectiveLevel) : 0;
+		mState == kState_On ? std::min<uint8_t>(mLevel - mMinLevel, maxEffectiveLevel) : 0;
 
 	pwm_set_pulse_dt(mPwmDevice, static_cast<uint32_t>(static_cast<const uint64_t>(mPwmDevice->period) *
 							   effectiveLevel / maxEffectiveLevel));

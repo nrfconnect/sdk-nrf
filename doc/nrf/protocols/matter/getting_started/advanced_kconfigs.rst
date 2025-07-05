@@ -39,7 +39,7 @@ Commissioning with NFC
 
 You can configure the Matter protocol to use NFC tag for commissioning, instead of the default QR code.
 
-To enable NFC for commissioning and share the onboarding payload in an NFC tag, set the :kconfig:option:`CONFIG_CHIP_NFC_COMMISSIONING` Kconfig option.
+To enable NFC for sharing the onboarding payload in an NFC tag, set the :kconfig:option:`CONFIG_CHIP_NFC_ONBOARDING_PAYLOAD` Kconfig option.
 
 .. _ug_matter_configuring_optional_persistent_subscriptions:
 

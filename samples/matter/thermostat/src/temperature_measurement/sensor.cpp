@@ -58,7 +58,7 @@ void TemperatureSensor::InternalMeasurement()
 
 	mCycleCounter++;
 	if (mCycleCounter >= kSimulatedReadingFrequency) {
-		if (mMockTempIndex >= ArraySize(sMockTemp) - 1) {
+		if (mMockTempIndex >= MATTER_ARRAY_SIZE(sMockTemp) - 1) {
 			mMockTempIndex = 0;
 		} else {
 			mMockTempIndex++;
