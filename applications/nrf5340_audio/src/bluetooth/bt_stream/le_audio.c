@@ -9,6 +9,8 @@
 #include <zephyr/bluetooth/audio/bap.h>
 #include <zephyr/bluetooth/audio/audio.h>
 
+#include "sw_codec_select.h"
+
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(le_audio, CONFIG_BLE_LOG_LEVEL);
 
@@ -38,7 +40,7 @@ int le_audio_metadata_populate(struct audio_metadata *meta, const struct bt_bap_
 		return ret;
 	}
 
-	meta->bytes_per_location = octets_per_frame / metadata_num_ch_get(meta);
+	meta->bytes_per_location = octets_per_frame / sw_codec_metadata_num_ch_get(meta);
 	if (meta->bytes_per_location == 0) {
 		LOG_ERR("Failed to get bytes per location");
 		return -EINVAL;

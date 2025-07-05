@@ -19,6 +19,11 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(sw_codec_select, CONFIG_SW_CODEC_SELECT_LOG_LEVEL);
 
+#define BLK_PERIOD_US 10000
+
+/* Number of audio blocks given a duration */
+#define NUM_BLKS(d) ((d) / BLK_PERIOD_US)
+
 static struct sw_codec_config m_config;
 
 static struct sample_rate_converter_ctx encoder_converters[CONFIG_AUDIO_ENCODE_CHANNELS_MAX];
@@ -57,6 +62,7 @@ static int sw_codec_sample_rate_convert(struct sample_rate_converter_ctx *ctx,
 	int ret;
 
 	if (input_sample_rate == output_sample_rate) {
+		LOG_DBG("Sample rates are the same.");
 		*data_ptr = input_data;
 		*output_size = input_data_size;
 	} else if (IS_ENABLED(CONFIG_SAMPLE_RATE_CONVERTER)) {
@@ -84,103 +90,120 @@ bool sw_codec_is_initialized(void)
 	return m_config.initialized;
 }
 
-int sw_codec_encode(struct net_buf *audio_frame)
+int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_out)
 {
-	int ret;
-
-	/* Temp storage for PCM */
-	char pcm_data_mono_system_sample_rate
-		[CONFIG_AUDIO_ENCODE_CHANNELS_MAX][PCM_NUM_BYTES_MONO] = {0};
-	/* Make sure we have enough space for two frames (stereo) */
-	uint8_t m_encoded_data[ENC_MAX_FRAME_SIZE * CONFIG_AUDIO_ENCODE_CHANNELS_MAX];
-
-	char pcm_data_mono_converted_buf[CONFIG_AUDIO_ENCODE_CHANNELS_MAX]
-		[PCM_NUM_BYTES_MONO] = {0};
-
-	size_t pcm_block_size_mono_system_sample_rate;
-	size_t pcm_block_size_mono;
-
-	struct audio_metadata *meta = net_buf_user_data(audio_frame);
-
 	if (!m_config.encoder.enabled) {
 		LOG_ERR("Encoder has not been initialized");
 		return -ENXIO;
 	}
 
+	if (audio_frame_in == NULL || audio_frame_out == NULL) {
+		LOG_ERR("LC3 encoder input parameter error");
+		return -EINVAL;
+	}
+
+	int ret;
+	struct audio_metadata *meta_in = net_buf_user_data(audio_frame_in);
+	struct audio_metadata *meta_out = net_buf_user_data(audio_frame_out);
+
 	switch (m_config.sw_codec) {
 	case SW_CODEC_LC3: {
 #if (CONFIG_SW_CODEC_LC3)
-		uint16_t encoded_bytes_written;
-		char *pcm_data_mono_ptrs[m_config.encoder.channel_mode];
+		struct lc3_encoder_context *ctx = &m_config.encoder.lc3_ctx;
+		size_t session_in_size;
+		uint8_t *data_in = (uint8_t *)audio_frame_in->data;
+		uint8_t *coded_out;
+		uint8_t temp_pcm[PCM_NUM_BYTES_MONO];
+		uint8_t resamp_pcm_temp[PCM_NUM_BYTES_MONO];
+		uint8_t chans_in, chans_out;
+		char *resamp_pcm;
+		size_t resamp_pcm_size;
+		size_t data_in_size = 0;
+		uint16_t encoded_bytes_written, out_remaining;
 
-		/* Since LC3 is a single channel codec, we must split the
-		 * stereo PCM stream
+		LOG_DBG("LC3 encoder module");
+
+		if (meta_in->data_coding != PCM || meta_out->data_coding != LC3) {
+			LOG_ERR("LC3 encoder module has incorrect input or output data type: in = "
+				"%d  out = %d",
+				meta_in->data_coding, meta_out->data_coding);
+			return -EINVAL;
+		}
+
+		chans_in = sw_codec_metadata_num_ch_get(meta_in);
+		chans_out = sw_codec_metadata_num_ch_get(meta_out);
+
+		if (audio_frame_in->len >= ctx->config.sample_frame_bytes * chans_in) {
+			session_in_size = audio_frame_in->len;
+		} else {
+			LOG_WRN("Input buffer too small: %d (>=%d)", audio_frame_in->len,
+				(ctx->config.sample_frame_bytes * chans_in));
+			session_in_size = 0;
+		}
+
+		if (audio_frame_out->size < ctx->config.coded_frame_bytes * chans_out) {
+			LOG_ERR("Output buffer too small: %d (>=%d)", audio_frame_out->size,
+				(ctx->config.coded_frame_bytes * chans_out));
+			return -EINVAL;
+		}
+
+		coded_out = (uint8_t *)audio_frame_out->data;
+		out_remaining = audio_frame_out->size;
+
+		/* Should be able to encode only the channel(s) of interest here.
+		 * These will be put in the first channel or channels and the location
+		 * will indicate which channel(s) they are. Prior to playout (I2S or TDM)
+		 * all other channels can be zeroed.
 		 */
-		ret = pscm_two_channel_split(audio_frame->data, audio_frame->len,
-					     CONFIG_AUDIO_BIT_DEPTH_BITS,
-					     pcm_data_mono_system_sample_rate[0],
-					     pcm_data_mono_system_sample_rate[1],
-					     &pcm_block_size_mono_system_sample_rate);
-		if (ret) {
-			return ret;
-		}
+		for (uint8_t i = 0; i < chans_out; i++) {
+			if (ctx->config.interleaved && chans_in > 1) {
+				ret = pscm_uninterleave(audio_frame_in->data, audio_frame_in->size,
+							chans_in, i,
+							ctx->config.carried_bits_per_sample,
+							temp_pcm, sizeof(temp_pcm));
+				if (ret) {
+					LOG_DBG("Failed to uninterleave input");
+					return ret;
+				}
 
-		for (int i = 0; i < m_config.encoder.channel_mode; ++i) {
+				data_in = temp_pcm;
+				data_in_size = sizeof(temp_pcm);
+
+				LOG_DBG("Completed encoder PCM input uninterleaving for ch: %d", i);
+			} else {
+				data_in = (uint8_t *)audio_frame_in->data +
+					  (meta_in->bytes_per_location * i);
+				data_in_size =
+					audio_frame_in->len - (meta_in->bytes_per_location * i);
+			}
+
 			ret = sw_codec_sample_rate_convert(
-				&encoder_converters[i], CONFIG_AUDIO_SAMPLE_RATE_HZ,
-				m_config.encoder.sample_rate_hz,
-				pcm_data_mono_system_sample_rate[i],
-				pcm_block_size_mono_system_sample_rate,
-				pcm_data_mono_converted_buf[i], &pcm_data_mono_ptrs[i],
-				&pcm_block_size_mono);
+				&encoder_converters[i], meta_in->sample_rate_hz,
+				meta_out->sample_rate_hz, data_in, data_in_size, resamp_pcm_temp,
+				&resamp_pcm, &resamp_pcm_size);
 			if (ret) {
-				LOG_ERR("Sample rate conversion failed for channel %d: %d", i, ret);
-				return ret;
-			}
-		}
-
-		switch (m_config.encoder.channel_mode) {
-		case SW_CODEC_MONO: {
-			ret = sw_codec_lc3_enc_run(pcm_data_mono_ptrs[0],
-						   pcm_block_size_mono, LC3_USE_BITRATE_FROM_INIT,
-						   0, sizeof(m_encoded_data), m_encoded_data,
-						   &encoded_bytes_written);
-			if (ret) {
-				return ret;
-			}
-			meta->locations = BT_AUDIO_LOCATION_FRONT_LEFT;
-			break;
-		}
-		case SW_CODEC_STEREO: {
-			ret = sw_codec_lc3_enc_run(pcm_data_mono_ptrs[0],
-						   pcm_block_size_mono, LC3_USE_BITRATE_FROM_INIT,
-						   0, sizeof(m_encoded_data),
-						   m_encoded_data, &encoded_bytes_written);
-			if (ret) {
+				LOG_ERR("Sample rate conversion failed for channel "
+					"%d: %d",
+					i, ret);
 				return ret;
 			}
 
-			ret = sw_codec_lc3_enc_run(
-				pcm_data_mono_ptrs[1], pcm_block_size_mono,
-				LC3_USE_BITRATE_FROM_INIT, 1,
-				sizeof(m_encoded_data) - encoded_bytes_written,
-				m_encoded_data + encoded_bytes_written, &encoded_bytes_written);
+			ret = sw_codec_lc3_enc_run(resamp_pcm, resamp_pcm_size,
+						   ctx->config.bitrate_bps, i, session_in_size,
+						   coded_out, &encoded_bytes_written);
 			if (ret) {
+				LOG_DBG("Error in ENCODER, ret: %d", ret);
 				return ret;
 			}
-			encoded_bytes_written += encoded_bytes_written;
-			break;
-		}
-		default:
-			LOG_ERR("Unsupported channel mode for encoder: %d",
-				m_config.encoder.channel_mode);
-			return -ENODEV;
+
+			coded_out += encoded_bytes_written;
+			out_remaining -= encoded_bytes_written;
+
+			LOG_DBG("Completed LC3 encode of ch: %d", i);
 		}
 
-		meta->data_coding = LC3;
-
-		net_buf_remove_mem(audio_frame, audio_frame->len);
-		net_buf_add_mem(audio_frame, m_encoded_data, encoded_bytes_written);
+		meta_out->bytes_per_location = encoded_bytes_written;
+		net_buf_add(audio_frame_out, audio_frame_out->size - out_remaining);
 #endif /* (CONFIG_SW_CODEC_LC3) */
 		break;
 	}
@@ -192,8 +215,8 @@ int sw_codec_encode(struct net_buf *audio_frame)
 	return 0;
 }
 
-int sw_codec_decode(struct net_buf const *const audio_frame, void **decoded_data,
-		    size_t *decoded_size)
+int sw_codec_decode(struct net_buf const *const audio_frame_in,
+		    struct net_buf *const audio_frame_out)
 {
 	if (!m_config.decoder.enabled) {
 		LOG_ERR("Decoder has not been initialized");
@@ -201,125 +224,114 @@ int sw_codec_decode(struct net_buf const *const audio_frame, void **decoded_data
 	}
 
 	int ret;
-
-	static char pcm_data_stereo[PCM_NUM_BYTES_STEREO];
-
-	char decoded_data_mono
-		[CONFIG_AUDIO_DECODE_CHANNELS_MAX][PCM_NUM_BYTES_MONO] = {0};
-	char decoded_data_mono_system_sample_rate
-		[CONFIG_AUDIO_DECODE_CHANNELS_MAX][PCM_NUM_BYTES_MONO] = {0};
-
-	size_t pcm_size_stereo = 0;
-	size_t pcm_size_mono = 0;
-	size_t decoded_data_size = 0;
-
-	struct audio_metadata *meta = net_buf_user_data(audio_frame);
+	struct audio_metadata *meta_in = net_buf_user_data(audio_frame_in);
+	struct audio_metadata *meta_out = net_buf_user_data(audio_frame_out);
 
 	switch (m_config.sw_codec) {
 	case SW_CODEC_LC3: {
 #if (CONFIG_SW_CODEC_LC3)
-		char *pcm_in_data_ptrs[m_config.decoder.channel_mode];
+		struct lc3_decoder_context *ctx = &m_config.decoder.lc3_ctx;
+		size_t session_in_size;
+		uint16_t bytesWritten;
+		uint8_t *data_in;
+		uint8_t *data_out;
+		uint8_t temp_pcm[PCM_NUM_BYTES_MONO];
+		uint8_t chans_in, chans_out;
+		uint8_t *resamp_pcm;
+		size_t resamp_pcm_size = 0;
+		uint32_t bad_data_mask;
 
-		switch (m_config.decoder.channel_mode) {
-		case SW_CODEC_MONO: {
-			if (meta->bad_data && IS_ENABLED(CONFIG_SW_CODEC_OVERRIDE_PLC)) {
-				memset(decoded_data_mono[0], 0, PCM_NUM_BYTES_MONO);
-				decoded_data_size = PCM_NUM_BYTES_MONO;
-			} else {
-				ret = sw_codec_lc3_dec_run(
-					audio_frame->data, audio_frame->len, LC3_PCM_NUM_BYTES_MONO,
-					0, decoded_data_mono[0],
-					(uint16_t *)&decoded_data_size, meta->bad_data);
-				if (ret) {
-					return ret;
-				}
+		LOG_DBG("LC3 decoder module");
 
-				ret = sw_codec_sample_rate_convert(
-					&decoder_converters[0],
-					m_config.decoder.sample_rate_hz,
-					CONFIG_AUDIO_SAMPLE_RATE_HZ, decoded_data_mono[0],
-					decoded_data_size,
-					decoded_data_mono_system_sample_rate[0],
-					&pcm_in_data_ptrs[0], &pcm_size_mono);
-				if (ret) {
-					LOG_ERR("Sample rate conversion failed for mono: %d", ret);
-					return ret;
-				}
-			}
+		if (meta_in->data_coding != LC3 || meta_out->data_coding != PCM) {
+			LOG_DBG("LC3 decoder module has incorrect input or output data type: in = "
+				"%d  out = %d",
+				meta_in->data_coding, meta_out->data_coding);
+			return -EINVAL;
+		}
 
-			/* For now, i2s is only stereo, so in order to send
-			 * just one channel, we need to insert 0 for the
-			 * other channel
-			 */
-			ret = pscm_zero_pad(pcm_in_data_ptrs[0], pcm_size_mono,
-					    m_config.decoder.audio_ch, CONFIG_AUDIO_BIT_DEPTH_BITS,
-					    pcm_data_stereo, &pcm_size_stereo);
+		meta_out->bits_per_sample = ctx->config.bits_per_sample;
+		meta_out->carried_bits_per_sample = ctx->config.carried_bits_per_sample;
+		meta_out->locations = ctx->config.locations;
+
+		chans_in = sw_codec_metadata_num_ch_get(meta_in);
+		chans_out = sw_codec_metadata_num_ch_get(meta_out);
+
+		if (chans_out <= CONFIG_AUDIO_OUTPUT_CHANNELS) {
+			memset(audio_frame_out->data, 0, audio_frame_out->size);
+		} else {
+			LOG_WRN("Output channels (%d) exceeds maximum (%d)", chans_out,
+				CONFIG_AUDIO_OUTPUT_CHANNELS);
+		}
+
+		chans_out = CONFIG_AUDIO_OUTPUT_CHANNELS;
+
+		if (meta_in->bytes_per_location <= ctx->config.coded_frame_bytes) {
+			session_in_size = meta_in->bytes_per_location;
+		} else {
+			session_in_size = 0;
+		}
+
+		if (audio_frame_out->size < ctx->config.sample_frame_bytes * chans_out) {
+			LOG_ERR("Output buffer too small: %d (<=%d)", audio_frame_out->size,
+				(ctx->config.sample_frame_bytes * chans_out));
+			return -EINVAL;
+		}
+
+		if (ctx->config.interleaved && chans_out > 1) {
+			data_out = temp_pcm;
+		} else {
+			data_out = (uint8_t *)audio_frame_out->data;
+		}
+
+		/* Should be able to decode only the channel(s) of interest here.
+		 * These will be put in the first channel or channels and the location
+		 * will indicate which channel(s) they are. Prior to playout (I2S or TDM)
+		 * all other channels can be zeroed.
+		 */
+		for (uint8_t i = 0; i < chans_in; i++) {
+			data_in = (uint8_t *)audio_frame_in->data + (session_in_size * i);
+			bad_data_mask = BIT(i);
+
+			ret = sw_codec_lc3_dec_run(data_in, session_in_size, audio_frame_out->size,
+						   i, data_out, &bytesWritten,
+						   (meta_in->bad_data & bad_data_mask));
 			if (ret) {
+				LOG_ERR("Decode for channel %d failed: %d", i, ret);
 				return ret;
 			}
-			break;
-		}
-		case SW_CODEC_STEREO: {
 
-			if (meta->bad_data && IS_ENABLED(CONFIG_SW_CODEC_OVERRIDE_PLC)) {
-				memset(decoded_data_mono[0], 0, PCM_NUM_BYTES_MONO);
-				memset(decoded_data_mono[1], 0, PCM_NUM_BYTES_MONO);
-				decoded_data_size = PCM_NUM_BYTES_MONO;
-			} else {
-				/* Decode left channel */
-				ret = sw_codec_lc3_dec_run(
-					audio_frame->data, (audio_frame->len / 2),
-					LC3_PCM_NUM_BYTES_MONO, 0,
-					decoded_data_mono[0],
-					(uint16_t *)&decoded_data_size, meta->bad_data);
-				if (ret) {
-					return ret;
-				}
-
-				/* Decode right channel */
-				ret = sw_codec_lc3_dec_run(
-					(audio_frame->data + (audio_frame->len / 2)),
-					(audio_frame->len / 2), LC3_PCM_NUM_BYTES_MONO, 1,
-					decoded_data_mono[1],
-					(uint16_t *)&decoded_data_size, meta->bad_data);
-				if (ret) {
-					return ret;
-				}
-
-				for (int i = 0; i < m_config.decoder.channel_mode; ++i) {
-					ret = sw_codec_sample_rate_convert(
-						&decoder_converters[i],
-						m_config.decoder.sample_rate_hz,
-						CONFIG_AUDIO_SAMPLE_RATE_HZ, decoded_data_mono[i],
-						decoded_data_size,
-						decoded_data_mono_system_sample_rate[i],
-						&pcm_in_data_ptrs[i], &pcm_size_mono);
-					if (ret) {
-						LOG_ERR("Sample rate conversion failed for channel "
-							"%d : %d",
-							i, ret);
-						return ret;
-					}
-				}
-			}
-
-			ret = pscm_combine(pcm_in_data_ptrs[0],
-					   pcm_in_data_ptrs[1], pcm_size_mono,
-					   CONFIG_AUDIO_BIT_DEPTH_BITS, pcm_data_stereo,
-					   &pcm_size_stereo);
+			ret = sw_codec_sample_rate_convert(
+				&decoder_converters[i], meta_in->sample_rate_hz,
+				meta_out->sample_rate_hz, data_out, bytesWritten, &temp_pcm[0],
+				(char **)&resamp_pcm, &resamp_pcm_size);
 			if (ret) {
+				LOG_ERR("Sample rate conversion failed for mono: %d", ret);
 				return ret;
 			}
-			break;
-		}
-		default:
-			LOG_ERR("Unsupported channel mode for decoder: %d",
-				m_config.decoder.channel_mode);
-			return -ENODEV;
+
+			if (ctx->config.interleaved && chans_out > 1) {
+				ret = pscm_interleave(resamp_pcm, resamp_pcm_size, i,
+						      meta_out->carried_bits_per_sample,
+						      audio_frame_out->data, audio_frame_out->size,
+						      chans_out);
+
+				if (ret) {
+					LOG_ERR("Failed to interleave output: %d", ret);
+					return ret;
+				}
+
+				LOG_DBG("Completed decoders PCM interleaving for ch: %d", i);
+			} else {
+				data_out += resamp_pcm_size;
+			}
+
+			LOG_DBG("Completed LC3 decode of ch: %d", i);
 		}
 
-		*decoded_size = pcm_size_stereo;
-		*decoded_data = pcm_data_stereo;
+		meta_out->bytes_per_location = resamp_pcm_size;
+
+		net_buf_add(audio_frame_out, resamp_pcm_size * chans_out);
 #endif /* (CONFIG_SW_CODEC_LC3) */
 		break;
 	}
@@ -327,6 +339,8 @@ int sw_codec_decode(struct net_buf const *const audio_frame, void **decoded_data
 		LOG_ERR("Unsupported codec: %d", m_config.sw_codec);
 		return -ENODEV;
 	}
+
+	LOG_DBG("Completed LC3 decoding");
 	return 0;
 }
 
@@ -410,10 +424,25 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 				sw_codec_cfg.encoder.sample_rate_hz, CONFIG_AUDIO_BIT_DEPTH_BITS,
 				CONFIG_AUDIO_FRAME_DURATION_US, sw_codec_cfg.encoder.bitrate,
 				sw_codec_cfg.encoder.num_ch, &pcm_bytes_req_enc);
-
 			if (ret) {
 				return ret;
 			}
+
+			struct lc3_configuration *config = &sw_codec_cfg.encoder.lc3_ctx.config;
+
+			ret = sw_codec_lc3_dec_size_get(
+				sw_codec_cfg.encoder.sample_rate_hz, CONFIG_AUDIO_BIT_DEPTH_BITS,
+				CONFIG_AUDIO_FRAME_DURATION_US, &config->sample_frame_bytes);
+			if (ret) {
+				return ret;
+			}
+
+			config->bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS;
+			config->carried_bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_OCTETS * 8;
+			config->interleaved = true;
+			config->bitrate_bps = sw_codec_cfg.encoder.bitrate;
+			config->coded_frame_bytes = ENC_MAX_FRAME_SIZE;
+			config->locations = sw_codec_cfg.decoder.audio_ch;
 		}
 
 		if (sw_codec_cfg.decoder.enabled) {
@@ -429,10 +458,25 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 			ret = sw_codec_lc3_dec_init(
 				sw_codec_cfg.decoder.sample_rate_hz, CONFIG_AUDIO_BIT_DEPTH_BITS,
 				CONFIG_AUDIO_FRAME_DURATION_US, sw_codec_cfg.decoder.num_ch);
-
 			if (ret) {
 				return ret;
 			}
+
+			struct lc3_configuration *config = &sw_codec_cfg.decoder.lc3_ctx.config;
+
+			ret = sw_codec_lc3_enc_size_get(
+				sw_codec_cfg.decoder.sample_rate_hz, CONFIG_LC3_BITRATE,
+				CONFIG_AUDIO_FRAME_DURATION_US, &config->coded_frame_bytes);
+			if (ret) {
+				return ret;
+			}
+
+			config->bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS;
+			config->carried_bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_OCTETS * 8;
+			config->interleaved = true;
+			config->bitrate_bps = CONFIG_LC3_BITRATE;
+			config->sample_frame_bytes = PCM_NUM_BYTES_MONO;
+			config->locations = sw_codec_cfg.decoder.audio_ch;
 		}
 		break;
 #else
