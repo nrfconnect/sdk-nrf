@@ -392,7 +392,7 @@ Serial LTE modem
 * Added:
 
   * DTLS support for the ``#XUDPSVR`` and ``#XSSOCKET`` (UDP server sockets) AT commands when the :file:`overlay-native_tls.conf` configuration file is used.
-  * The :kconfig:option:`CONFIG_SLM_PPP_FALLBACK_MTU` Kconfig option that is used to control the MTU used by PPP when the cellular link MTU is not returned by the modem in response to the ``AT+CGCONTRDP=0`` AT command.
+  * The :ref:`CONFIG_SLM_PPP_FALLBACK_MTU <CONFIG_SLM_PPP_FALLBACK_MTU>` Kconfig option that is used to control the MTU used by PPP when the cellular link MTU is not returned by the modem in response to the ``AT+CGCONTRDP=0`` AT command.
   * Handler for new nRF Cloud event type ``NRF_CLOUD_EVT_RX_DATA_DISCON``.
   * Support for socket option ``AT_SO_IPV6_DELAYED_ADDR_REFRESH``.
 
@@ -539,12 +539,12 @@ Cellular samples
 
   * Added:
 
-    * The :kconfig:option:`CONFIG_TEST_COUNTER_MULTIPLIER` Kconfig option to multiply the number of test counter messages sent, for testing purposes.
+    * The :ref:`CONFIG_TEST_COUNTER_MULTIPLIER <CONFIG_TEST_COUNTER_MULTIPLIER>` Kconfig option to multiply the number of test counter messages sent, for testing purposes.
     * A handler for new nRF Cloud event type ``NRF_CLOUD_EVT_RX_DATA_DISCON`` to stop sensors and location services.
     * Board support files to enable Wi-Fi scanning for the Thingy:91 X.
-    * The :kconfig:option:`CONFIG_SEND_ONLINE_ALERT` Kconfig option to enable calling the :c:func:`nrf_cloud_alert` function on startup.
+    * The :ref:`CONFIG_SEND_ONLINE_ALERT <CONFIG_SEND_ONLINE_ALERT>` Kconfig option to enable calling the :c:func:`nrf_cloud_alert` function on startup.
     * Logging of the `reset reason code <nRF9160 RESETREAS_>`_.
-    * The :kconfig:option:`CONFIG_POST_PROVISIONING_INTERVAL_M` Kconfig option to reduce the provisioning connection interval once the device successfully connects.
+    * The :ref:`CONFIG_POST_PROVISIONING_INTERVAL_M <CONFIG_POST_PROVISIONING_INTERVAL_M>` Kconfig option to reduce the provisioning connection interval once the device successfully connects.
 
   * Updated:
 
@@ -564,7 +564,7 @@ Cellular samples
   * Added:
 
     * Support for dictionary logs using REST.
-    * The :kconfig:option:`CONFIG_SEND_ONLINE_ALERT` Kconfig option to enable calling the :c:func:`nrf_cloud_alert` function on startup.
+    * The :ref:`CONFIG_SEND_ONLINE_ALERT <CONFIG_SEND_ONLINE_ALERT>` Kconfig option to enable calling the :c:func:`nrf_cloud_alert` function on startup.
     * Logging of the `reset reason code <nRF9160 RESETREAS_>`_.
 
   * Updated:

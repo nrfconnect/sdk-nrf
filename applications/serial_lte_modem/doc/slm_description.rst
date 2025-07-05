@@ -264,6 +264,15 @@ CONFIG_SLM_UART_TX_BUF_SIZE - Send buffer size for UART.
    This option defines the size of the buffer for sending (TX) UART traffic.
    The default value is 256.
 
+.. _CONFIG_SLM_PPP_FALLBACK_MTU:
+
+CONFIG_SLM_PPP_FALLBACK_MTU - Control the MTU used by PPP.
+   This option controls the MTU used by PPP.
+   PPP tries to retrieve the cellular link MTU from the modem (using ``AT+CGCONTRDP=0``).
+   If MTU is not returned by the modem, this value will be used as a fallback.
+   The MTU will be used for sending and receiving data on both the PPP and cellular links.
+   The default value is 1280.
+
 .. _slm_additional_config:
 
 Additional configuration

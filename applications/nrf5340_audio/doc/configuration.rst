@@ -41,6 +41,13 @@ CONFIG_BT_AUDIO_USE_BROADCAST_NAME_ALT
 CONFIG_BT_AUDIO_BROADCAST_NAME_ALT
    Provides an alternative name for the second gateway in BIS mode.
 
+.. _CONFIG_BT_AUDIO_SCAN_DELEGATOR:
+
+CONFIG_BT_AUDIO_SCAN_DELEGATOR
+   Enables scan delegator.
+   When the scan delegator feature is enabled, the broadcast sink will not search for a predefined broadcast source.
+   Instead, it will wait for a broadcast assistant to connect and control it.
+
 .. _CONFIG_AUDIO_SOURCE_I2S:
 
 CONFIG_AUDIO_SOURCE_I2S
