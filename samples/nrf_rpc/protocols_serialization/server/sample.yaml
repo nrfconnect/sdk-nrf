@@ -2,62 +2,32 @@ sample:
   name: Protocols serialization server sample
   description: Demonstrates serialization of Bluetooth LE and OpenThread API using
     nRF RPC
+
+common:
+  sysbuild: true
+  build_only: true
+  platform_allow:
+    - nrf52840dk/nrf52840
+    - nrf54l15dk/nrf54l15/cpuapp
+  integration_platforms:
+    - nrf52840dk/nrf52840
+    - nrf54l15dk/nrf54l15/cpuapp
+  tags:
+    - ci_build
+    - ci_samples_nrf_rpc
+
 tests:
   sample.nrf_rpc.protocols_serialization.server.rpc_ble:
-    sysbuild: true
-    build_only: true
-    platform_allow:
-      - nrf52840dk/nrf52840
-      - nrf54l15dk/nrf54l15/cpuapp
-    tags:
-      - ci_build
-      - ci_samples_nrf_rpc
     extra_args: >
       SNIPPET="ble"
-    integration_platforms:
-      - nrf52840dk/nrf52840
-      - nrf54l15dk/nrf54l15/cpuapp
   sample.nrf_rpc.protocols_serialization.server.rpc_ot:
-    sysbuild: true
-    build_only: true
-    platform_allow:
-      - nrf52840dk/nrf52840
-      - nrf54l15dk/nrf54l15/cpuapp
-    tags:
-      - ci_build
-      - ci_samples_nrf_rpc
     extra_args: >
       SNIPPET="openthread"
-    integration_platforms:
-      - nrf52840dk/nrf52840
-      - nrf54l15dk/nrf54l15/cpuapp
   sample.nrf_rpc.protocols_serialization.server.rpc:
-    sysbuild: true
-    build_only: true
-    platform_allow:
-      - nrf52840dk/nrf52840
-      - nrf54l15dk/nrf54l15/cpuapp
-    tags:
-      - ci_build
-      - ci_samples_nrf_rpc
     extra_args: >
       SNIPPET="ble;openthread;debug;coex;log_rpc"
-    integration_platforms:
-      - nrf52840dk/nrf52840
-      - nrf54l15dk/nrf54l15/cpuapp
   sample.nrf_rpc.protocols_serialization.server.rpc_ci:
-    sysbuild: true
-    build_only: true
-    platform_allow:
-      - nrf52840dk/nrf52840
-      - nrf54l15dk/nrf54l15/cpuapp
-    tags:
-      - ci_build
-      - ci_samples_nrf_rpc
     extra_args: >
       SNIPPET="ble;openthread;debug;coex;log_rpc;ci-shell"
-    integration_platforms:
-      - nrf52840dk/nrf52840
-      - nrf54l15dk/nrf54l15/cpuapp
     extra_configs:
       - CONFIG_NRF_RPC_UTILS_CRASH_GEN=y
