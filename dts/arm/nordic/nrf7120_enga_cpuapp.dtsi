@@ -25,6 +25,11 @@ nvic: &cpuapp_nvic {};
 		ranges;
 	};
 
+	rng: rng {
+		status = "okay";
+		compatible = "nordic,nrf-cracen-ctrdrbg";
+	};
+
 	psa_rng: psa-rng {
 		compatible = "zephyr,psa-crypto-rng";
 		status = "okay";
