@@ -43,7 +43,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_BRIDGE_MSC_LOG_LEVEL);
  *
  * Format: (_key, _presentation_name, _size, _default, _callback, _enabled)
  */
-#define CONFIG_LIST \
+#define CFG_OPT_LIST \
 	X(ble_enable, BLE_ENABLED, 1, "0", ble_enable_opt_cb, (IS_ENABLED(CONFIG_BRIDGE_BLE_ENABLE) && !IS_ENABLED(CONFIG_BRIDGE_BLE_ALWAYS_ON))) \
 	X(ble_name, BLE_NAME, CONFIG_BT_DEVICE_NAME_MAX, CONFIG_BT_DEVICE_NAME, ble_name_opt_cb, IS_ENABLED(CONFIG_BT_DEVICE_NAME_DYNAMIC))
 
@@ -59,20 +59,20 @@ struct cfg_option {
 /* Define config value strings */
 #define X(_key, _name, _size, _default, _cb, _enabled)\
 		static char _key##_var[_size + 1] = _default;
-	CONFIG_LIST
+	CFG_OPT_LIST
 #undef X
 
 /* Forward declare callback functions */
 #define X(_key, _name, _size, _default, _cb, _enabled)\
 		static bool _cb(char *);
-	CONFIG_LIST
+	CFG_OPT_LIST
 #undef X
 
 /* Determine length of display name strings */
 union cfg_opt_display_name_len {
 #define X(_key, _name, _size, _default, _cb, _enabled)\
 		uint8_t _key[sizeof(STRINGIFY(_name)) + 1];
-	CONFIG_LIST
+	CFG_OPT_LIST
 #undef X
 };
 
@@ -80,7 +80,7 @@ union cfg_opt_display_name_len {
 union cfg_opt_value_len {
 #define X(_key, _name, _size, _default, _cb, _enabled)\
 		uint8_t _key[_size + 1];
-	CONFIG_LIST
+	CFG_OPT_LIST
 #undef X
 };
 
@@ -88,7 +88,7 @@ union cfg_opt_value_len {
 union cfg_opt_key_len {
 #define X(_key, _name, _size, _default, _cb, _enabled)\
 		uint8_t _key[sizeof(STRINGIFY(_key)) + 1];
-	CONFIG_LIST
+	CFG_OPT_LIST
 #undef X
 };
 
@@ -105,7 +105,7 @@ static struct cfg_option configs[] = {
 		.settings_value_max_len = _size,\
 		.enabled = _enabled,\
 		.value_change_cb = _cb},
-	CONFIG_LIST
+	CFG_OPT_LIST
 #undef X
 };
 
