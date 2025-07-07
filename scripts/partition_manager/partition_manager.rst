@@ -569,7 +569,7 @@ For external regions, ``DEFAULT_DRIVER_KCONFIG`` within :file:`partition_manager
 Out-of-tree drivers can select this value to attest that they provide support for the external flash.
 This is a hidden option and can be selected only by an external driver or a Kconfig option.
 
-This option is automatically set when :kconfig:option:`CONFIG_NRF_QSPI_NOR` or :kconfig:option:`CONFIG_SPI_NOR` is enabled.
+This option is automatically set when :kconfig:option:`CONFIG_NORDIC_QSPI_NOR` or :kconfig:option:`CONFIG_SPI_NOR` is enabled.
 If the application provides the driver in an unusual way, this option can be overridden by setting :kconfig:option:`CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK` in the application configuration.
 
 As partition manager does not know if partitions are used at runtime, consider the following:
