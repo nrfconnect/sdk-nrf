@@ -2411,7 +2411,6 @@ PREDEFINED             = __DOXYGEN__ \
                          "CONFIG_PM_DEVICE=y" \
                          "CONFIG_BT_SMP=y" \
                          "CONFIG_USERSPACE=y" \
-                         "CONFIG_BT_BREDR=y" \
                          "NET_MGMT_DEFINE_REQUEST_HANDLER(x)=" \
                          "DEVICE_DEFINE()=" \
                          "DEVICE_AND_API_INIT()=" \
