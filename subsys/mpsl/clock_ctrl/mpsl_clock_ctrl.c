@@ -71,7 +71,7 @@ static void m_clock_request_cb(struct onoff_manager *mgr, struct onoff_client *c
 	k_sem_give(&clock_state->sem);
 }
 
-/** @brief Wait for clock requect to be completed to be ready.
+/** @brief Wait for clock request to be completed to be ready.
  *
  * The function can time out if there is no response from clock control driver until provided
  * time out value.
@@ -308,6 +308,22 @@ static const struct nrf_clock_spec m_lfclk_specs = {
 	.precision = NRF_CLOCK_CONTROL_PRECISION_DEFAULT,
 };
 
+#define HFCLK_LABEL DT_NODELABEL(hfxo)
+
+#if DT_NODE_HAS_STATUS(HFCLK_LABEL, okay) && DT_NODE_HAS_COMPAT(HFCLK_LABEL, nordic_nrf54h_hfxo)
+
+static const struct nrf_clock_spec m_hfclk_specs = {
+	.frequency = DT_PROP(HFCLK_LABEL, clock_frequency),
+	.accuracy = DT_PROP(HFCLK_LABEL, accuracy_ppm),
+	/* In case of HFCLK the driver assumes the request is always for high precision. */
+	.precision = NRF_CLOCK_CONTROL_PRECISION_HIGH,
+};
+#else
+#error "A HFXO DTS instance not found"
+#endif /* DT_NODE_HAS_STATUS(HFCLK_LABEL, okay) &&
+	* DT_NODE_HAS_COMPAT(HFCLK_LABEL, nordic_nrf54h_hfxo) \
+	*/
+
 static void m_lfclk_calibration_start(void)
 {
 	/* This function is not supported when CONFIG_CLOCK_CONTROL_NRF2 is set.
@@ -369,7 +385,6 @@ static int32_t m_lfclk_release(void)
 		return 0;
 	}
 #endif /* CONFIG_MPSL_EXT_CLK_CTRL_LFCLK_REQ_TIMEOUT_ALLOW */
-
 
 	err = nrf_clock_control_cancel_or_release(lfclk_dev, &m_lfclk_specs, &m_lfclk_state.cli);
 	if (err < 0) {
@@ -498,7 +513,6 @@ static mpsl_clock_hfclk_ctrl_source_t m_nrf_hfclk_ctrl_data = {
 	.hfclk_request = m_hfclk_request,
 	.hfclk_release = m_hfclk_release,
 	.hfclk_is_running = m_hfclk_is_running,
-	.startup_time_us = CONFIG_MPSL_HFCLK_LATENCY
 };
 
 int32_t mpsl_clock_ctrl_init(void)
@@ -511,6 +525,39 @@ int32_t mpsl_clock_ctrl_init(void)
 		return err;
 	}
 #endif /* CONFIG_MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST */
+
+#if defined(CONFIG_CLOCK_CONTROL_NRF)
+#if DT_NODE_EXISTS(DT_NODELABEL(hfxo))
+	m_nrf_hfclk_ctrl_data.startup_time_us = z_nrf_clock_bt_ctlr_hf_get_startup_time_us();
+#else
+	m_nrf_hfclk_ctrl_data.startup_time_us = CONFIG_MPSL_HFCLK_LATENCY;
+#endif /* DT_NODE_EXISTS(DT_NODELABEL(hfxo)) */
+#elif defined(CONFIG_CLOCK_CONTROL_NRF2)
+#if DT_NODE_HAS_STATUS(HFCLK_LABEL, okay) && DT_NODE_HAS_COMPAT(HFCLK_LABEL, nordic_nrf54h_hfxo)
+	uint32_t startup_time_us;
+
+	err = nrf_clock_control_get_startup_time(DEVICE_DT_GET(HFCLK_LABEL), &m_hfclk_specs,
+						 &startup_time_us);
+	if (err < 0) {
+		LOG_ERR("Failed to get HFCLK startup time: %d", err);
+		return err;
+	}
+
+	if (startup_time_us > UINT16_MAX) {
+		LOG_ERR("HFCLK startup time is too large: %d [us]", startup_time_us);
+		return -NRF_EFAULT;
+	}
+
+	m_nrf_hfclk_ctrl_data.startup_time_us = startup_time_us;
+#else
+#error "Unsupported HFCLK statup time get operation"
+#endif /* DT_NODE_HAS_STATUS(HFCLK_LABEL, okay) && \
+	* DT_NODE_HAS_COMPAT(HFCLK_LABEL, nordic_nrf54h_hfxo) \
+	*/
+#else
+#error "Unsupported HFCLK statup time get operation"
+#endif /* CONFIG_CLOCK_CONTROL_NRF */
+
 	return mpsl_clock_ctrl_source_register(&m_nrf_lfclk_ctrl_data, &m_nrf_hfclk_ctrl_data);
 }
 
