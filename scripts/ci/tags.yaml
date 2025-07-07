@@ -545,6 +545,7 @@ ci_samples_esb:
     - nrf/subsys/esb/
     - nrf/subsys/mpsl/
     - nrfxlib/crypto/
+    - nrfxlib/mpsl/
     - zephyr/soc/nordic/
 
 ci_samples_edge_impulse:
