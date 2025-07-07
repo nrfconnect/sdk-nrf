@@ -44,8 +44,6 @@ The |NCS| provides the following Kconfig options that let you enable CSL and spe
 * :kconfig:option:`CONFIG_OPENTHREAD_CSL_RECEIVER` - Enables SSED child mode.
 * :kconfig:option:`CONFIG_OPENTHREAD_CSL_AUTO_SYNC` - Enables the CSL autosynchronization feature.
 * :kconfig:option:`CONFIG_OPENTHREAD_CSL_TIMEOUT` - Sets the default CSL timeout in seconds.
-* :kconfig:option:`CONFIG_OPENTHREAD_CSL_CHANNEL` - Sets the default CSL channel.
-  This option corresponds to the ``csl channel`` CLI parameter.
 
 The following Kconfig options affect the size of the receive window, and thus also affect the device's power consumption:
 
