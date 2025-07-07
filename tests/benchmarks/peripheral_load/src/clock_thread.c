@@ -105,6 +105,7 @@ static void test_request_release_clock_spec(const struct device *clk_dev,
 	int res = 0;
 	struct onoff_client cli;
 	uint32_t rate;
+	bool rate_supported = true;
 
 	LOG_INF("Clock under test: %s", clk_dev->name);
 	sys_notify_init_spinwait(&cli.notify);
@@ -129,12 +130,13 @@ static void test_request_release_clock_spec(const struct device *clk_dev,
 	LOG_INF("Clock control get rate response code: %d", ret);
 	if (ret == -ENOSYS) {
 		LOG_INF("Clock control get rate not supported");
+		rate_supported = false;
 	} else if (ret != 0) {
 		LOG_ERR("Clock control get rate failed");
 		atomic_inc(&completed_threads);
 		return;
 	}
-	if (rate != clk_spec->frequency) {
+	if (rate_supported && rate != clk_spec->frequency) {
 		LOG_ERR("Invalid rate: %d", rate);
 		atomic_inc(&completed_threads);
 		return;
