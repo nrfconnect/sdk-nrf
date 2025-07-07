@@ -17,7 +17,7 @@ common:
       - "Data read matches data written. Good!!"
 tests:
   sample.drivers.spi.flash.sqspi:
-    filter: CONFIG_MSPI_SQSPI and dt_compat_enabled("jedec,mspi-nor")
+    filter: CONFIG_MSPI_NRF_SQSPI and dt_compat_enabled("jedec,mspi-nor")
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
