@@ -9,7 +9,11 @@ build:
     dts_root: .
     module_ext_root: .
     snippet_root: .
-
+samples:
+  - applications
+  - samples
+tests:
+  - tests
 runners:
   # Additional runners, Zephyr will import these when discovering
   # subclasses of the `ZephyrBinaryRunner` class.
