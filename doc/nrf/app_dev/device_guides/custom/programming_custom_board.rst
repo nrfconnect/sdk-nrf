@@ -76,4 +76,4 @@ The following steps describe how to connect your custom board to a debug probe.
 Programming custom boards
 *************************
 
-After you connected the custom board, you can program your application to the board using either the :ref:`standard programming instructions <programming>` or the `Programmer app <nRF Connect Programmer>`_ from `nRF Connect for Desktop`_.
+After you connected the custom board, you can program your application to the board using either the :ref:`standard programming instructions <programming>` or the `Programmer app`_ from `nRF Connect for Desktop`_.
