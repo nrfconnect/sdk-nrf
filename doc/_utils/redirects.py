@@ -553,7 +553,8 @@ NRF = [
     ("libraries/nrf_security/doc/configuration", "libraries/security/nrf_security/doc/configuration"), # Configuration
     ("libraries/nrf_security/doc/driver_config", "security/crypto/driver_config"), # Feature configurations and driver support (moved to security/crypto for v3.1.0)
     ("libraries/security/nrf_security/doc/driver_config", "security/crypto/driver_config"),
-    ("libraries/nrf_security/doc/mbed_tls_header", "libraries/security/nrf_security/doc/mbed_tls_header"), # User-provided Mbed TLS configuration header
+    ("libraries/nrf_security/doc/mbed_tls_header", "libraries/security/nrf_security/index"), # User-provided Mbed TLS configuration header (removed in v3.1.0)
+    ("libraries/security/nrf_security/doc/mbed_tls_header", "libraries/security/nrf_security/index"), # User-provided Mbed TLS configuration header (removed in v3.1.0)
     ("libraries/nrf_security/doc/backend_config", "libraries/security/nrf_security/doc/backend_config"), # Legacy configurations and supported features
     ("libraries/tfm/index", "libraries/security/tfm/index"), # TF-M libraries (landing)
     ("libraries/tfm/tfm_ioctl_api", "libraries/security/tfm/tfm_ioctl_api"), # TF-M input/output control (IOCTL)
