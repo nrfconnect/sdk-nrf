@@ -65,10 +65,6 @@ extern char drbg_ctx;
 #include <zephyr/drivers/entropy.h>
 #endif
 
-#if defined CONFIG_TV_ASSERT_USER_OVERRIDE
-#include <tv_assert_user_override.h>
-#endif
-
 /**@brief Test vector expected result.
  *  Used to verify invalid behavior test cases.
  */
