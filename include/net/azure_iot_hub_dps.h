@@ -52,7 +52,7 @@ struct azure_iot_hub_dps_config {
 
 	/** Registration ID to use in the provisioning request.
 	 *  If the pointer is NULL or the length is zero, the compile-time option
-	 *  ``CONFIG_AZURE_IOT_HUB_REG_ID`` is used.
+	 *  ``CONFIG_AZURE_IOT_HUB_DPS_REG_ID`` is used.
 	 */
 	struct azure_iot_hub_buf reg_id;
 };
