@@ -17,6 +17,12 @@
 		zephyr,sram = &cpuapp_sram;
 		zephyr,console = &uart00;
 		zephyr,shell-uart = &uart00;
+		zephyr,entropy = &prng;
+	};
+
+	prng: prng {
+		compatible = "nordic,entropy-prng";
+		status = "okay";
 	};
 };
 

@@ -4,6 +4,8 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
+rsource "Kconfig.nrf_prng"
+
 config ENTROPY_CC3XX
 	bool "Arm CC3XX RNG driver for Nordic devices"
 	depends on HAS_HW_NRF_CC3XX && !BUILD_WITH_TFM

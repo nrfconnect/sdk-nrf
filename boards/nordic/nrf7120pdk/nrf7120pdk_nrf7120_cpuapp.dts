@@ -14,5 +14,11 @@
 
 	chosen {
 		zephyr,sram = &cpuapp_sram;
+		zephyr,entropy = &prng;
+	};
+
+	prng: prng {
+		compatible = "nordic,entropy-prng";
+		status = "okay";
 	};
 };
