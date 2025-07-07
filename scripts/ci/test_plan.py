@@ -312,7 +312,7 @@ class Filters:
                         scope_found = True
                     else:
                         d = os.path.dirname(d)
-                elif tail == "common":
+                elif tail == "common" and self.is_in_testsuite_root(head):
                     # Look for yamls in directories collocated with common
 
                     yamls_found = [yaml for yaml in glob.iglob(head + '/**/testcase.yaml', recursive=True)]
