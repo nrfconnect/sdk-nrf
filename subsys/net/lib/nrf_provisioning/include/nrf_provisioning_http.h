@@ -61,7 +61,7 @@ struct nrf_provisioning_http_context {
 	 * Minimum timeout value specified by NRF_PROVISIONING_TIMEOUT_MINIMUM.
 	 * For no timeout, set to NRF_PROVISIONING_TIMEOUT_NONE.
 	 * @note This parameter is currently not used; set
-	 * CONFIG_REST_CLIENT_SCKT_RECV_TIMEOUT instead.
+	 * CONFIG_NRF_PROVISIONING_HTTP_TIMEOUT_MS instead.
 	 */
 	int32_t timeout_ms;
 	/** Authentication string: Bearer Token
