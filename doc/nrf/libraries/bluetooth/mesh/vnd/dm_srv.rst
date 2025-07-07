@@ -74,7 +74,7 @@ The Distance Measurement Server has following runtime configuration options:
 * Default reflector start delay.
 
 If the :kconfig:option:`CONFIG_BT_SETTINGS` option is enabled, the Distance Measurement Server stores its configuration states persistently using a configurable storage delay.
-See option :kconfig:option:`CONFIG_BT_MESH_MODEL_SRV_STORE_TIMEOUT`.
+See option :kconfig:option:`CONFIG_BT_MESH_STORE_TIMEOUT`.
 
 API documentation
 =================
