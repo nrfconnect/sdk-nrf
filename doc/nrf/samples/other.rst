@@ -22,3 +22,4 @@ This section lists single |NCS| samples for various uses that are not part of ot
    ../../../samples/benchmarks/*/README
    ../../../samples/nrf_compress/*/README
    ../../../tests/benchmarks/multicore/*/README
+   ../../../samples/zephyr/smp_svr_mini_boot/README

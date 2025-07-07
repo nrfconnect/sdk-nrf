@@ -594,7 +594,7 @@ Wi-Fi samples
 Other samples
 -------------
 
-|no_changes_yet_note|
+* Added the :ref:`mcuboot_minimal_configuration` sample that demonstrates the minimal and recommended settings for MCUboot on the nRF54L15 DK.
 
 Drivers
 =======
