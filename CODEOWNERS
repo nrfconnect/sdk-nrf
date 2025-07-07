@@ -54,13 +54,13 @@
 /boards/nordic/nrf54l*/                   @nrfconnect/ncs-co-boards @kl-cruz
 /boards/nordic/nrf52*                     @nrfconnect/ncs-co-boards @nrfconnect/ncs-si-bluebagel
 /boards/nordic/thingy91*/                 @nrfconnect/ncs-co-boards @nrfconnect/ncs-cia
-/boards/shields/coverage_support/         @nrfconnect/ncs-low-level-test
-/boards/shields/nrf2220ek/                @nrfconnect/ncs-radio-sw
-/boards/shields/nrf2240ek/                @nrfconnect/ncs-radio-sw
-/boards/shields/nrf21540ek/               @nrfconnect/ncs-radio-sw
 
-# This shield entry must be below other shield entries (excluding doc), do not move
 **/shields/                               @nrfconnect/ncs-co-build-system
+
+/boards/shields/coverage_support/         @nrfconnect/ncs-co-build-system @nrfconnect/ncs-low-level-test
+/boards/shields/nrf2220ek/                @nrfconnect/ncs-co-build-system @nrfconnect/ncs-radio-sw
+/boards/shields/nrf2240ek/                @nrfconnect/ncs-co-build-system @nrfconnect/ncs-radio-sw
+/boards/shields/nrf21540ek/               @nrfconnect/ncs-co-build-system @nrfconnect/ncs-radio-sw
 
 /boards/shields/pca63566/doc/*.rst        @nrfconnect/ncs-doc-leads
 
