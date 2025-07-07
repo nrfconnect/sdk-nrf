@@ -152,6 +152,14 @@ ZTEST(ot_rpc_instance, test_otInstanceErasePersistentInfo_error)
 	zassert_equal(error, OT_ERROR_INVALID_STATE);
 }
 
+/* Test serialization of otInstanceFactoryReset() */
+ZTEST(ot_rpc_instance, test_otInstanceFactoryReset)
+{
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_INSTANCE_FACTORY_RESET), RPC_RSP());
+	otInstanceFactoryReset(NULL);
+	mock_nrf_rpc_tr_expect_done();
+}
+
 /* Test serialization of otGetVersionString() */
 ZTEST(ot_rpc_instance, test_otGetVersionString)
 {
