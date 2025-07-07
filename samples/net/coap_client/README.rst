@@ -30,8 +30,8 @@ Overview
 
 The CoAP Client sample performs the following actions:
 
-#. Connect to the configured public CoAP test server (specified by the Kconfig option :ref:`CONFIG_COAP_SERVER_HOSTNAME <CONFIG_COAP_SERVER_HOSTNAME>`).
-#. Send periodic GET request for a test resource (specified by the Kconfig option :ref:`CONFIG_COAP_RESOURCE <CONFIG_COAP_RESOURCE>`) that is available on the server.
+#. Connect to the configured public CoAP test server (specified by the Kconfig option :ref:`CONFIG_COAP_SAMPLE_SERVER_HOSTNAME <CONFIG_COAP_SAMPLE_SERVER_HOSTNAME>`).
+#. Send periodic GET request for a test resource (specified by the Kconfig option :ref:`CONFIG_COAP_SAMPLE_RESOURCE <CONFIG_COAP_SAMPLE_RESOURCE>`) that is available on the server.
 #. Display the received data about the resource on a terminal emulator.
 
 The public CoAP server used in this sample is Californium CoAP server (``coap://californium.eclipseprojects.io:5683``).
@@ -40,7 +40,7 @@ This server runs Eclipse Californium, which is an open source implementation of 
 This sample uses the resource **obs** (Californium observable resource) in the communication between the CoAP client and the public CoAP server.
 The communication follows the standard request/response pattern and is based on the change in the state of the value of the resource.
 The sample queries one resource at a time.
-To configure other resources, use the Kconfig option :ref:`CONFIG_COAP_RESOURCE <CONFIG_COAP_RESOURCE>`.
+To configure other resources, use the Kconfig option :ref:`CONFIG_COAP_SAMPLE_RESOURCE <CONFIG_COAP_SAMPLE_RESOURCE>`.
 
 Configuration
 *************
@@ -52,19 +52,19 @@ Configuration options
 
 Check and configure the following Kconfig options in the :file:`coap_client/prj.conf` file:
 
-.. _CONFIG_COAP_RESOURCE:
+.. _CONFIG_COAP_SAMPLE_RESOURCE:
 
-CONFIG_COAP_RESOURCE - CoAP resource configuration
+CONFIG_COAP_SAMPLE_RESOURCE - CoAP resource configuration
    This option sets the CoAP resource. Default is Californium observable resource.
 
-.. _CONFIG_COAP_SERVER_HOSTNAME:
+.. _CONFIG_COAP_SAMPLE_SERVER_HOSTNAME:
 
-CONFIG_COAP_SERVER_HOSTNAME - CoAP server hostname
+CONFIG_COAP_SAMPLE_SERVER_HOSTNAME - CoAP server hostname
    This option sets the CoAP server hostname. Default is ``californium.eclipseprojects.io``.
 
-.. _CONFIG_COAP_SERVER_PORT:
+.. _CONFIG_COAP_SAMPLE_SERVER_PORT:
 
-CONFIG_COAP_SERVER_PORT - CoAP server port
+CONFIG_COAP_SAMPLE_SERVER_PORT - CoAP server port
    This option sets the port for the CoAP server. Default is ``5683``.
 
 .. include:: /includes/wifi_credentials_shell.txt
