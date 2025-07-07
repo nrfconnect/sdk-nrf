@@ -271,7 +271,7 @@ static bool check_and_handle_is_host_using_legacy_and_extended_commands(uint8_t 
 	case SDC_HCI_OPCODE_CMD_LE_SET_ADV_DATA:
 	case SDC_HCI_OPCODE_CMD_LE_SET_SCAN_RESPONSE_DATA:
 	case SDC_HCI_OPCODE_CMD_LE_SET_ADV_ENABLE:
-#endif /* CONFIG_BT_BROADASTER */
+#endif /* CONFIG_BT_BROADCASTER */
 #if defined(CONFIG_BT_OBSERVER)
 	case SDC_HCI_OPCODE_CMD_LE_SET_SCAN_PARAMS:
 	case SDC_HCI_OPCODE_CMD_LE_SET_SCAN_ENABLE:
