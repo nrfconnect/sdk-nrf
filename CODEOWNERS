@@ -693,6 +693,7 @@
 /samples/zephyr/smp_svr_mini_boot/        @nrfconnect/ncs-pluto
 /samples/zephyr/subsys/settings/          @nrfconnect/ncs-low-level-test
 /samples/zephyr/subsys/usb/               @nrfconnect/ncs-low-level-test
+/samples/zephyr/subsys/mgmt/mcumgr/smp_svr/ @nrfconnect/ncs-charon
 
 /samples/**/*.svg                         @nrfconnect/ncs-doc-leads
 /samples/**/*.png                         @nrfconnect/ncs-doc-leads
