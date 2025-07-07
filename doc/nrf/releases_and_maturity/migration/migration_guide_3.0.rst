@@ -351,7 +351,7 @@ Asset Tracker v2
    * The Asset Tracker v2 application has been removed.
      For development of asset tracking applications, refer to the `Asset Tracker Template <Asset Tracker Template_>`_.
 
-     The factory-programmed Asset Tracker v2 firmware is still available to program the nRF91xx DKs using the `Programmer app <nRF Connect Programmer>`_, the `Quick Start app`_, and the `Cellular Monitor app`_.
+     The factory-programmed Asset Tracker v2 firmware is still available to program the nRF91xx DKs using the `Programmer app`_, the `Quick Start app`_, and the `Cellular Monitor app`_.
 
 nRF Desktop
 -----------

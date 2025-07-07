@@ -49,7 +49,7 @@ Modem firmware
 
 The :file:`CONTENTS.txt` file in the extracted folder contains the location and names of the different firmware images.
 
-Complete the steps in the following sections to program applications using the `Programmer app <nRF Connect Programmer>`_ from `nRF Connect for Desktop`_.
+Complete the steps in the following sections to program applications using the `Programmer app`_ from `nRF Connect for Desktop`_.
 The nRF Connect for Desktop requires `SEGGER J-Link`_ |jlink_ver|.
 
 * On Windows, the driver comes bundled with nRF Connect for Desktop.

@@ -31,16 +31,16 @@ You must use the build target ``thingy91/nrf9160/ns`` when building the applicat
 
 The following table shows the different types of build files that are generated and the different scenarios in which they are used:
 
-+--------------------------+----------------------------------------+-----------------------------------------------------------------------------------+
-| File                     | File format                            | Programming scenario                                                              |
-+==========================+========================================+===================================================================================+
-|:file:`merged.hex`        | Full image, HEX format                 | Using an external debug probe and the `Programmer app <nRF Connect Programmer>`_. |
-+--------------------------+----------------------------------------+-----------------------------------------------------------------------------------+
-|:file:`zephyr.signed.hex` | MCUboot compatible image, HEX format   | Using the built-in bootloader and the `Programmer app <nRF Connect Programmer>`_. |
-+--------------------------+----------------------------------------+-----------------------------------------------------------------------------------+
-|:file:`app_update.bin`    | MCUboot compatible image, binary format|* Using the built-in bootloader and mcumgr command line tool.                      |
-|                          |                                        |* For FOTA updates.                                                                |
-+--------------------------+----------------------------------------+-----------------------------------------------------------------------------------+
++---------------------------+-----------------------------------------+---------------------------------------------------------------+
+|           File            |               File format               |                     Programming scenario                      |
++===========================+=========================================+===============================================================+
+| :file:`merged.hex`        | Full image, HEX format                  | Using an external debug probe and the `Programmer app`_.      |
++---------------------------+-----------------------------------------+---------------------------------------------------------------+
+| :file:`zephyr.signed.hex` | MCUboot compatible image, HEX format    | Using the built-in bootloader and the `Programmer app`_.      |
++---------------------------+-----------------------------------------+---------------------------------------------------------------+
+| :file:`app_update.bin`    | MCUboot compatible image, binary format | * Using the built-in bootloader and mcumgr command line tool. |
+|                           |                                         | * For FOTA updates.                                           |
++---------------------------+-----------------------------------------+---------------------------------------------------------------+
 
 For an overview of different types of build files in the |NCS|, see :ref:`app_build_output_files`.
 
