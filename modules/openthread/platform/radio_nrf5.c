@@ -297,6 +297,7 @@ static int nrf5_set_channel(uint16_t channel)
 	}
 
 	nrf_802154_channel_set(channel);
+	nrf5_data.channel = channel;
 
 	LOG_DBG("set channel %u", channel);
 
@@ -787,9 +788,9 @@ static otError transmit_frame(otInstance *aInstance)
 
 	if ((nrf5_data.capabilities & OT_RADIO_CAPS_TRANSMIT_TIMING) &&
 	    (nrf5_data.tx.frame.mInfo.mTxInfo.mTxDelay != 0)) {
-#if !defined(CONFIG_NRF5_SELECTIVE_TXCHANNEL)
+
 		nrf5_set_channel(nrf5_data.tx.frame.mChannel);
-#endif
+
 		if (!nrf5_tx_at(&nrf5_data.tx.frame, nrf5_data.tx.psdu)) {
 			LOG_WRN("TX AT failed");
 			nrf5_data.tx.result = OT_ERROR_ABORT;
@@ -1894,8 +1895,9 @@ static otError nrf5_tx_error_to_ot_error(nrf_802154_tx_error_t error)
 	case NRF_802154_TX_ERROR_TIMESLOT_ENDED:
 	case NRF_802154_TX_ERROR_TIMESLOT_DENIED:
 		return OT_ERROR_CHANNEL_ACCESS_FAILURE;
-	case NRF_802154_TX_ERROR_INVALID_ACK:
 	case NRF_802154_TX_ERROR_NO_MEM:
+		return OT_ERROR_NO_BUFS;
+	case NRF_802154_TX_ERROR_INVALID_ACK:
 	case NRF_802154_TX_ERROR_NO_ACK:
 		return OT_ERROR_NO_ACK;
 	case NRF_802154_TX_ERROR_ABORTED:
