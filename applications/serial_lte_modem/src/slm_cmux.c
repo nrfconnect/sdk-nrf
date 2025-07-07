@@ -10,7 +10,7 @@
 #endif
 #include "slm_util.h"
 #include <zephyr/logging/log.h>
-#include <zephyr/modem/backend/uart.h>
+#include <zephyr/modem/backend/uart_slm.h>
 #include <zephyr/modem/cmux.h>
 #include <zephyr/modem/pipe.h>
 #include <assert.h>
@@ -35,7 +35,7 @@ static struct {
 	/* UART backend */
 	struct modem_pipe *uart_pipe;
 	bool uart_pipe_open;
-	struct modem_backend_uart uart_backend;
+	struct modem_backend_uart_slm uart_backend;
 	uint8_t uart_backend_receive_buf[CONFIG_SLM_CMUX_UART_BUFFER_SIZE]
 		__aligned(sizeof(void *));
 	uint8_t uart_backend_transmit_buf[CONFIG_SLM_CMUX_UART_BUFFER_SIZE];
@@ -348,7 +348,7 @@ static int cmux_start(void)
 	}
 
 	{
-		const struct modem_backend_uart_config uart_backend_config = {
+		const struct modem_backend_uart_slm_config uart_backend_config = {
 			.uart = DEVICE_DT_GET(DT_CHOSEN(ncs_slm_uart)),
 			.receive_buf = cmux.uart_backend_receive_buf,
 			.receive_buf_size = sizeof(cmux.uart_backend_receive_buf),
@@ -356,7 +356,8 @@ static int cmux_start(void)
 			.transmit_buf_size = sizeof(cmux.uart_backend_transmit_buf),
 		};
 
-		cmux.uart_pipe = modem_backend_uart_init(&cmux.uart_backend, &uart_backend_config);
+		cmux.uart_pipe =
+			modem_backend_uart_slm_init(&cmux.uart_backend, &uart_backend_config);
 		if (!cmux.uart_pipe) {
 			return -ENODEV;
 		}
