@@ -858,7 +858,7 @@ static nrf_radio_txpower_t dbm_to_nrf_radio_txpower(int8_t tx_power)
 }
 #endif /* defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX) */
 
-#if defined(_MPSL_FEM_TX_POWER_SPLIT_HAS_PHY)
+#if !(defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX))
 static mpsl_phy_t convert_bitrate_to_mpsl_phy(enum esb_bitrate bitrate)
 {
 	switch (bitrate) {
@@ -877,7 +877,7 @@ static mpsl_phy_t convert_bitrate_to_mpsl_phy(enum esb_bitrate bitrate)
 	default: return MPSL_PHY_NRF_1Mbit;
 	}
 }
-#endif
+#endif /* !(defined(CONFIG_SOC_SERIES_NRF54HX) || defined(CONFIG_SOC_SERIES_NRF54LX)) */
 
 static void update_radio_tx_power(void)
 {
@@ -886,9 +886,7 @@ static void update_radio_tx_power(void)
 	mpsl_tx_power_split_t tx_power;
 
 	(void)mpsl_fem_tx_power_split(esb_cfg.tx_output_power, &tx_power,
-#if defined(_MPSL_FEM_TX_POWER_SPLIT_HAS_PHY)
 				      convert_bitrate_to_mpsl_phy(esb_cfg.bitrate),
-#endif
 				      (RADIO_BASE_FREQUENCY + esb_addr.rf_channel), false);
 
 	err = mpsl_fem_pa_power_control_set(tx_power.fem_pa_power_control);
