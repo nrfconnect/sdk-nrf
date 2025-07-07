@@ -62,7 +62,7 @@ Configuration
 
 To enable this library, set the :kconfig:option:`CONFIG_NET_CORE_MONITOR` Kconfig option to ``y`` on both network and application cores.
 
-The :kconfig:option:`CONFIG_NCM_APP_FEEDING_INTERVAL_MSEC` Kconfig option specifies how often the counter is updated by the network core.
+The :kconfig:option:`CONFIG_NCM_FEEDING_INTERVAL_MSEC` Kconfig option specifies how often the counter is updated by the network core.
 The default value is 500 milliseconds.
 
 The :kconfig:option:`CONFIG_NCM_RESET_INIT_PRIORITY` Kconfig option sets priority for the initialization function.
