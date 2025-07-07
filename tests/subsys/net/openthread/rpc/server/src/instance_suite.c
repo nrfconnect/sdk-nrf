@@ -22,6 +22,7 @@ FAKE_VALUE_FUNC(uint32_t, otInstanceGetId, otInstance *);
 FAKE_VALUE_FUNC(bool, otInstanceIsInitialized, otInstance *);
 FAKE_VOID_FUNC(otInstanceFinalize, otInstance *);
 FAKE_VALUE_FUNC(otError, otInstanceErasePersistentInfo, otInstance *);
+FAKE_VOID_FUNC(otInstanceFactoryReset, otInstance *);
 FAKE_VALUE_FUNC(const char *, otGetVersionString);
 FAKE_VALUE_FUNC(otError, otSetStateChangedCallback, otInstance *, otStateChangedCallback, void *);
 FAKE_VOID_FUNC(otRemoveStateChangeCallback, otInstance *, otStateChangedCallback, void *);
@@ -203,6 +204,21 @@ ZTEST(ot_rpc_instance, test_otInstanceErasePersistentInfo_error)
 
 	zassert_equal(otInstanceErasePersistentInfo_fake.call_count, 1);
 	zassert_equal(otInstanceErasePersistentInfo_fake.arg0_val, (otInstance *)instance);
+}
+
+/*
+ * Test reception of otInstanceFactoryReset() command.
+ */
+ZTEST(ot_rpc_instance, test_otInstanceFactoryReset)
+{
+	uintptr_t instance = (uintptr_t)openthread_get_default_instance();
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_INSTANCE_FACTORY_RESET));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otInstanceFactoryReset_fake.call_count, 1);
+	zassert_equal(otInstanceFactoryReset_fake.arg0_val, (otInstance *)instance);
 }
 
 /*

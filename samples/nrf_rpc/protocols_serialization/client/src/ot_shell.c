@@ -1908,6 +1908,18 @@ static int cmd_rloc16(const struct shell *sh, size_t argc, char *argv[])
 	return ot_cli_command_exec(cmd_rloc16_impl, sh, argc, argv);
 }
 
+static otError cmd_factoryreset_impl(const struct shell *sh, size_t argc, char *argv[])
+{
+	otInstanceFactoryReset(NULL);
+
+	return OT_ERROR_NONE;
+}
+
+static int cmd_factoryreset(const struct shell *sh, size_t argc, char *argv[])
+{
+	return ot_cli_command_exec(cmd_factoryreset_impl, sh, argc, argv);
+}
+
 static void handle_udp_receive(void *context, otMessage *msg, const otMessageInfo *msg_info)
 {
 	uint16_t offset;
@@ -2089,6 +2101,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(eui64, NULL, "EUI64 configuration", cmd_eui64, 1, 1),
 	SHELL_CMD_ARG(rloc16, NULL, "Get RLOC16", cmd_rloc16, 1, 0),
 	SHELL_CMD_ARG(udp, &udp_cmds, "UDP subcommands", NULL, 1, 0),
+	SHELL_CMD_ARG(factoryreset, NULL, "Factory reset", cmd_factoryreset, 1, 0),
 	SHELL_CMD_ARG(test_message, NULL, "Test message API", cmd_test_message, 1, 0),
 	SHELL_CMD_ARG(test_net_data, NULL, "Test netdata API", cmd_test_net_data, 1, 0),
 	SHELL_CMD_ARG(test_net_data_mesh_prefix, NULL, "Test netdata msh prefix API",

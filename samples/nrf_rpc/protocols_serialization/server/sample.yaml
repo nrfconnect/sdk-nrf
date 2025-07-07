@@ -61,3 +61,4 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_configs:
       - CONFIG_NRF_RPC_UTILS_CRASH_GEN=y
+      - CONFIG_OPENTHREAD_RPC_ERASE_SETTINGS=y

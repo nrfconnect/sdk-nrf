@@ -12,8 +12,14 @@
 #include <nrf_rpc_cbor.h>
 
 #include <openthread/instance.h>
+#include <openthread/platform/misc.h>
+#include <openthread/thread.h>
 
+#include <zephyr/fs/nvs.h>
+#include <zephyr/fs/zms.h>
 #include <zephyr/net/openthread.h>
+#include <zephyr/settings/settings.h>
+#include <zephyr/sys/__assert.h>
 
 /* TODO: move to common */
 typedef struct ot_rpc_callback {
@@ -197,6 +203,52 @@ static void ot_rpc_cmd_instance_erase_persistent_info(const struct nrf_rpc_group
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_instance_erase_persistent_info,
 			 OT_RPC_CMD_INSTANCE_ERASE_PERSISTENT_INFO,
 			 ot_rpc_cmd_instance_erase_persistent_info, NULL);
+
+static void ot_rpc_cmd_instance_factory_reset(const struct nrf_rpc_group *group,
+					      struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	struct otInstance *inst;
+
+	nrf_rpc_cbor_decoding_done(group, ctx);
+
+	/*
+	 * The factory reset procedure involves rebooting the device, so send the response before it
+	 * begins, until there is still a chance.
+	 */
+	nrf_rpc_rsp_send_void(group);
+
+	inst = openthread_get_default_instance();
+
+	if (IS_ENABLED(CONFIG_OPENTHREAD_RPC_ERASE_SETTINGS)) {
+		int rc;
+		void *storage;
+
+		/*
+		 * Lock the system scheduler to assure that no setting is written after the storage
+		 * has been cleared and before the device is reset.
+		 */
+		k_sched_lock();
+		rc = settings_storage_get(&storage);
+		__ASSERT_NO_MSG(rc == 0);
+
+		if (IS_ENABLED(CONFIG_SETTINGS_NVS)) {
+			nvs_clear(storage);
+		} else {
+			zms_clear(storage);
+		}
+
+		otPlatReset(inst);
+		k_sched_unlock();
+	} else {
+		ot_rpc_mutex_lock();
+		otInstanceFactoryReset(inst);
+		ot_rpc_mutex_unlock();
+	}
+}
+
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_instance_factory_reset,
+			 OT_RPC_CMD_INSTANCE_FACTORY_RESET, ot_rpc_cmd_instance_factory_reset,
+			 NULL);
 
 static void ot_state_changed_callback(otChangedFlags aFlags, void *aContext)
 {
