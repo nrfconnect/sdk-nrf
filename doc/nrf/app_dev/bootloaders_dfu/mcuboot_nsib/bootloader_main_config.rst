@@ -146,13 +146,13 @@ However, you can customize it to meet specific requirements.
     - **MCUboot Kconfig option**
     - **Comments**
   * - SHA-256
-    - ``CONFIG_BOOT_HASH_ALG_SHA256``
+    - ``CONFIG_BOOT_IMG_HASH_ALG_SHA256``
     - The default hash. Compatible with all pre-hash signature types.
   * - SHA-384
-    - ``CONFIG_BOOT_HASH_ALG_SHA384``
+    - ``CONFIG_BOOT_IMG_HASH_ALG_SHA384``
     - Currently not utilized by |NCS|.
   * - SHA-512
-    - ``CONFIG_BOOT_HASH_ALG_SHA512``
+    - ``CONFIG_BOOT_IMG_HASH_ALG_SHA512``
     - Restricted to use with Ed25519 signatures.
 
 MCUboot recovery protocol

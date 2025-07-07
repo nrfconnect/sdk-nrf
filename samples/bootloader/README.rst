@@ -119,7 +119,7 @@ Pre-signed variants
 
 When two slots are present, two images must be built.
 One that is executable from slot 0, and the other one from slot 1.
-Building the image for slot 1 is done by enabling the :kconfig:option:`CONFIG_BUILD_S1_VARIANT` option.
+Building the image for slot 1 is done by enabling the :kconfig:option:`SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE` option.
 
 When the image for the next stage in the boot chain is upgraded, the new image is written to the slot with the oldest image version.
 See :ref:`bootloader_monotonic_counter` for more information about versioning.
@@ -171,7 +171,7 @@ Building and running
    While it is technically possible to build the NSIB by itself and merge it into other application images, this process is not supported.
    To reduce the development time and potential issues with this route, let the existing |NCS| infrastructure for sysbuild handle the integration.
 
-   The NSIB is automatically added as an image when the ``SB_CONFIG_SECURE_BOOT_APPCORE`` sysbuild Kconfig option is set.
+   The NSIB is automatically added as an image when the :kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE` sysbuild Kconfig option is set.
 
 For building and running the NSIB with an application, see :ref:`ug_bootloader_adding_sysbuild_immutable`.
 
