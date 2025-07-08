@@ -61,14 +61,3 @@ tests:
     tags:
       - sysbuild
       - ci_samples_matter
-  sample.matter.smoke_co_alarm.debug.reference:
-    sysbuild: true
-    build_only: true
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-    extra_args:
-      - smoke_co_alarm_SNIPPET="diagnostic-logs"
-    platform_allow: nrf54l15dk/nrf54l15/cpuapp
-    tags:
-      - sysbuild
-      - ci_samples_matter

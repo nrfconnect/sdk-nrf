@@ -58,6 +58,9 @@ void emberAfClusterInitCallback(EndpointId endpoint, ClusterId clusterId)
 	case app::Clusters::IcdManagement::Id:
 		emberAfIcdManagementClusterInitCallback(endpoint);
 		break;
+	case app::Clusters::Identify::Id:
+		emberAfIdentifyClusterInitCallback(endpoint);
+		break;
 	case app::Clusters::LocalizationConfiguration::Id:
 		emberAfLocalizationConfigurationClusterInitCallback(endpoint);
 		break;
@@ -81,6 +84,9 @@ void emberAfClusterInitCallback(EndpointId endpoint, ClusterId clusterId)
 		break;
 	case app::Clusters::ThreadNetworkDiagnostics::Id:
 		emberAfThreadNetworkDiagnosticsClusterInitCallback(endpoint);
+		break;
+	case app::Clusters::TimeFormatLocalization::Id:
+		emberAfTimeFormatLocalizationClusterInitCallback(endpoint);
 		break;
 	case app::Clusters::TimeSynchronization::Id:
 		emberAfTimeSynchronizationClusterInitCallback(endpoint);
@@ -141,6 +147,11 @@ void __attribute__((weak)) emberAfIcdManagementClusterInitCallback(EndpointId en
 	// To prevent warning
 	(void)endpoint;
 }
+void __attribute__((weak)) emberAfIdentifyClusterInitCallback(EndpointId endpoint)
+{
+	// To prevent warning
+	(void)endpoint;
+}
 void __attribute__((weak)) emberAfLocalizationConfigurationClusterInitCallback(EndpointId endpoint)
 {
 	// To prevent warning
@@ -177,6 +188,11 @@ void __attribute__((weak)) emberAfSoftwareDiagnosticsClusterInitCallback(Endpoin
 	(void)endpoint;
 }
 void __attribute__((weak)) emberAfThreadNetworkDiagnosticsClusterInitCallback(EndpointId endpoint)
+{
+	// To prevent warning
+	(void)endpoint;
+}
+void __attribute__((weak)) emberAfTimeFormatLocalizationClusterInitCallback(EndpointId endpoint)
 {
 	// To prevent warning
 	(void)endpoint;
