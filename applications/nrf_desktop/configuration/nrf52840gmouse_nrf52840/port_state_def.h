@@ -20,7 +20,7 @@ const struct {} port_state_def_include_once;
 
 static const struct pin_state port0_on[] = {
 
-#if !defined(CONFIG_DESKTOP_BATTERY_DISCRETE)
+#if defined(CONFIG_DESKTOP_BATTERY_MEAS_NONE)
 	{6,  0}, /* battery monitor enable */
 #endif
 
