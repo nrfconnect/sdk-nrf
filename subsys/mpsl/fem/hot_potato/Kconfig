@@ -50,6 +50,14 @@ config ANTSEL_PATH_MODE
         default 1 if ANTSEL_DEDICATED_PATH_MODE
         default 2 if ANTSEL_DEFAULT_PATH_MODE
 
+config MPSL_FEM_HOT_POTATO_BYPASS_BLE
+        bool "FEM bypass for Bluetooth LE"
+        default y
+        depends on SOC_SERIES_NRF54LX
+        help
+          Put FEM in the bypass mode for the duration of Bluetooth LE TX or RX
+          time slots while in the auto mode.
+
 if OPENTHREAD
 
 config OPENTHREAD_CLI_MAX_LINE_LENGTH

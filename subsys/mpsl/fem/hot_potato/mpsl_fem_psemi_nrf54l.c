@@ -392,10 +392,18 @@ static int32_t fem_psemi_pa_configuration_set(const mpsl_fem_event_t *const p_ac
 {
 	fem_psemi_interface_config_t *p_obj = &m_fem_interface_config;
 	int32_t ret_val = 0;
+	bool bypass;
 
 	if (fem_psemi_state_get() != FEM_PSEMI_STATE_AUTO) {
 		return -NRF_EPERM;
 	}
+
+	/*
+	 * When the bypass for BLE is enabled, and the radio has been configured to use a BLE PHY,
+	 * put FEM in the bypass mode by asserting both PA & LNA pins.
+	 */
+	bypass = IS_ENABLED(CONFIG_MPSL_FEM_HOT_POTATO_BYPASS_BLE) &&
+		 nrf_radio_mode_get(NRF_RADIO) != NRF_RADIO_MODE_IEEE802154_250KBIT;
 
 	if (p_activate_event != NULL) {
 		switch (p_activate_event->type) {
@@ -403,10 +411,17 @@ static int32_t fem_psemi_pa_configuration_set(const mpsl_fem_event_t *const p_ac
 			activation_on_timer_set(p_activate_event, &p_obj->pa_task[1], M_DPPI0,
 						m_fem_interface_config.fem_config.pa_time_gap_us,
 						0);
+
+			if (bypass) {
+				activation_on_timer_set(
+					p_activate_event, &p_obj->lna_task[1], M_DPPI0,
+					m_fem_interface_config.fem_config.pa_time_gap_us, 0);
+			}
 			break;
 
 		case MPSL_FEM_EVENT_TYPE_GENERIC:
 			ret_val = pa_activation_on_generic_set(p_activate_event, p_obj);
+			assert(!bypass);
 			break;
 
 		default:
@@ -426,6 +441,11 @@ static int32_t fem_psemi_pa_configuration_set(const mpsl_fem_event_t *const p_ac
 		case MPSL_FEM_EVENT_TYPE_GENERIC:
 			ret_val = deactivation_on_generic_set(p_deactivate_event,
 							      &p_obj->pa_task[0], p_obj);
+
+			if (bypass && ret_val == 0) {
+				ret_val = deactivation_on_generic_set(p_deactivate_event,
+								      &p_obj->lna_task[0], p_obj);
+			}
 			break;
 
 		default:
@@ -448,10 +468,18 @@ static int32_t fem_psemi_lna_configuration_set(const mpsl_fem_event_t *const p_a
 {
 	fem_psemi_interface_config_t *p_obj = &m_fem_interface_config;
 	int32_t ret_val = 0;
+	bool bypass;
 
 	if (fem_psemi_state_get() != FEM_PSEMI_STATE_AUTO) {
 		return -NRF_EPERM;
 	}
+
+	/*
+	 * When the bypass for BLE is enabled, and the radio has been configured to use a BLE PHY,
+	 * put FEM in the bypass mode by asserting both PA & LNA pins.
+	 */
+	bypass = IS_ENABLED(CONFIG_MPSL_FEM_HOT_POTATO_BYPASS_BLE) &&
+		 nrf_radio_mode_get(NRF_RADIO) != NRF_RADIO_MODE_IEEE802154_250KBIT;
 
 	if (p_activate_event != NULL) {
 		switch (p_activate_event->type) {
@@ -459,6 +487,12 @@ static int32_t fem_psemi_lna_configuration_set(const mpsl_fem_event_t *const p_a
 			activation_on_timer_set(p_activate_event, &p_obj->lna_task[1], M_DPPI0,
 						m_fem_interface_config.fem_config.lna_time_gap_us,
 						0);
+
+			if (bypass) {
+				activation_on_timer_set(
+					p_activate_event, &p_obj->pa_task[1], M_DPPI0,
+					m_fem_interface_config.fem_config.lna_time_gap_us, 0);
+			}
 			break;
 
 		case MPSL_FEM_EVENT_TYPE_GENERIC:
@@ -481,6 +515,11 @@ static int32_t fem_psemi_lna_configuration_set(const mpsl_fem_event_t *const p_a
 		case MPSL_FEM_EVENT_TYPE_GENERIC:
 			ret_val = deactivation_on_generic_set(p_deactivate_event,
 							      &p_obj->lna_task[0], p_obj);
+
+			if (bypass && ret_val == 0) {
+				ret_val = deactivation_on_generic_set(p_deactivate_event,
+								      &p_obj->pa_task[0], p_obj);
+			}
 			break;
 
 		case MPSL_FEM_EVENT_TYPE_TIMER:
@@ -506,10 +545,18 @@ static int32_t fem_psemi_lna_configuration_set(const mpsl_fem_event_t *const p_a
 static int32_t fem_psemi_pa_configuration_clear(void)
 {
 	fem_psemi_interface_config_t *p_obj = &m_fem_interface_config;
+	bool bypass;
 
 	if (fem_psemi_state_get() != FEM_PSEMI_STATE_AUTO) {
 		return -NRF_EPERM;
 	}
+
+	/*
+	 * When the bypass for BLE is enabled, and the radio has been configured to use a BLE PHY,
+	 * put FEM in the bypass mode by asserting both PA & LNA pins.
+	 */
+	bypass = IS_ENABLED(CONFIG_MPSL_FEM_HOT_POTATO_BYPASS_BLE) &&
+		 nrf_radio_mode_get(NRF_RADIO) != NRF_RADIO_MODE_IEEE802154_250KBIT;
 
 	fem_psemi_pa_gain_default(p_obj);
 
@@ -518,10 +565,16 @@ static int32_t fem_psemi_pa_configuration_clear(void)
 		case MPSL_FEM_EVENT_TYPE_TIMER:
 			activation_on_timer_clear(mp_pa_activate_event, &p_obj->pa_task[1], M_DPPI0,
 						  0);
+
+			if (bypass) {
+				activation_on_timer_clear(mp_pa_activate_event, &p_obj->lna_task[1],
+							  M_DPPI0, 0);
+			}
 			break;
 
 		case MPSL_FEM_EVENT_TYPE_GENERIC:
 			pa_activation_on_generic_clear(p_obj);
+			assert(!bypass);
 			break;
 
 		default:
@@ -536,6 +589,10 @@ static int32_t fem_psemi_pa_configuration_clear(void)
 		switch (mp_pa_deactivate_event->type) {
 		case MPSL_FEM_EVENT_TYPE_GENERIC:
 			deactivation_on_generic_clear(&p_obj->pa_task[0], p_obj);
+
+			if (bypass) {
+				deactivation_on_generic_clear(&p_obj->lna_task[0], p_obj);
+			}
 			break;
 		default:
 			assert(false);
@@ -550,16 +607,29 @@ static int32_t fem_psemi_pa_configuration_clear(void)
 static int32_t fem_psemi_lna_configuration_clear(void)
 {
 	fem_psemi_interface_config_t *p_obj = &m_fem_interface_config;
+	bool bypass;
 
 	if (!(m_fem_interface_config.lna_pin_config.enable)) {
 		return -NRF_EPERM;
 	}
 
+	/*
+	 * When the bypass for BLE is enabled, and the radio has been configured to use a BLE PHY,
+	 * put FEM in the bypass mode by asserting both PA & LNA pins.
+	 */
+	bypass = IS_ENABLED(CONFIG_MPSL_FEM_HOT_POTATO_BYPASS_BLE) &&
+		 nrf_radio_mode_get(NRF_RADIO) != NRF_RADIO_MODE_IEEE802154_250KBIT;
+
 	if (mp_lna_activate_event != NULL) {
 		switch (mp_lna_activate_event->type) {
 		case MPSL_FEM_EVENT_TYPE_TIMER:
-			activation_on_timer_clear(mp_lna_activate_event, &p_obj->pa_task[1],
+			activation_on_timer_clear(mp_lna_activate_event, &p_obj->lna_task[1],
 						  M_DPPI0, 0);
+
+			if (bypass) {
+				activation_on_timer_clear(mp_lna_activate_event, &p_obj->pa_task[1],
+							  M_DPPI0, 0);
+			}
 			break;
 
 		case MPSL_FEM_EVENT_TYPE_GENERIC:
@@ -579,6 +649,10 @@ static int32_t fem_psemi_lna_configuration_clear(void)
 		switch (mp_lna_deactivate_event->type) {
 		case MPSL_FEM_EVENT_TYPE_GENERIC:
 			deactivation_on_generic_clear(&p_obj->lna_task[0], p_obj);
+
+			if (bypass) {
+				deactivation_on_generic_clear(&p_obj->pa_task[0], p_obj);
+			}
 			break;
 		default:
 			assert(false);

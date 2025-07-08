@@ -31,6 +31,7 @@
 #include <hal/nrf_gpio.h>
 #include <nrf_errno.h>
 #include <mpsl_fem_power_model.h>
+#include <mpsl_tx_power.h>
 #include <protocol/mpsl_fem_protocol_api.h>
 
 #include "fem_psemi_common.h"
@@ -57,11 +58,11 @@ int8_t fem_psemi_tx_power_split(const mpsl_tx_power_t power,
 	mpsl_fem_power_model_output_t output;
 
 #if defined(CONFIG_POWER_MAP_MODEL)
-	power_model_output_fetch(power, freq_mhz, &output, tx_power_ceiling);
+	power_model_output_fetch(power, phy, freq_mhz, &output, tx_power_ceiling);
 #else
-	output.soc_pwr = power;
-	output.fem_pa_power_control = 0;
-	output.achieved_pwr = power;
+	output.soc_pwr = mpsl_tx_power_radio_supported_power_adjust(power, tx_power_ceiling);
+	output.fem_pa_power_control = FEM_GAIN_BYPASS;
+	output.achieved_pwr = output.soc_pwr;
 #endif
 
 	p_tx_power_split->radio_tx_power = output.soc_pwr;

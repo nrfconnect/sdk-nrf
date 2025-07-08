@@ -33,6 +33,7 @@
 
 #include <stdint.h>
 #include "mpsl_fem_power_model.h"
+#include "mpsl_tx_power.h"
 
 /** @brief Initializes the power model.
  *
@@ -46,11 +47,12 @@ void power_model_init(void);
  *  This function fetches the power model output for the given requested power and frequency.
  *
  *  @param[in]  requested_power   Requested power in dBm.
+ *  @param[in]  phy               PHY to calculate TX power split for.
  *  @param[in]  freq_mhz          Frequency in MHz.
  *  @param[out] p_output          Pointer to the output structure.
  *  @param[in]  tx_power_ceiling  Flag indicating if the TX power ceiling should be applied.
  */
-void power_model_output_fetch(int8_t requested_power, uint16_t freq_mhz,
+void power_model_output_fetch(int8_t requested_power, mpsl_phy_t phy, uint16_t freq_mhz,
 			      mpsl_fem_power_model_output_t *p_output, bool tx_power_ceiling);
 
 #endif /* POWER_MODEL_H_ */

@@ -35,6 +35,7 @@
 
 #include <assert.h>
 #include <mpsl_fem_power_model.h>
+#include <zephyr/sys/util_macro.h>
 
 #include "models/power_map/vendor_radio_power_map.h"
 #include "models/power_map/vendor_radio_power_limit.h"
@@ -96,43 +97,49 @@ static int8_t power_limit_apply(uint8_t channel, int8_t unlimited_power)
 	return limited_power;
 }
 
-void power_model_output_fetch(int8_t requested_power, uint16_t freq_mhz,
+void power_model_output_fetch(int8_t requested_power, mpsl_phy_t phy, uint16_t freq_mhz,
 			      mpsl_fem_power_model_output_t *p_output, bool tx_power_ceiling)
 {
-	(void)tx_power_ceiling;
+	uint8_t attenuation;
+	uint8_t channel;
+	int8_t limited_power;
+
+	assert(p_output != NULL);
 
 	if (vendor_diag_fem_enabled()) {
 		p_output->soc_pwr = vendor_diag_radio_tx_power_get();
 		p_output->fem_pa_power_control = vendor_diag_fem_gain_get();
 		p_output->achieved_pwr = p_output->soc_pwr + p_output->fem_pa_power_control;
-	} else {
-		uint8_t attenuation;
-		uint8_t channel;
-		int8_t limited_power;
-
-		switch (fem_psemi_state_get()) {
-		case FEM_PSEMI_STATE_PA_ACTIVE:
-		case FEM_PSEMI_STATE_AUTO:
-			channel = freg_mhz_to_channel(freq_mhz);
-			limited_power = power_limit_apply(channel, requested_power);
-
-			assert(p_output != NULL);
-
-			if (vendor_radio_power_map_internal_tx_power_get(
-				    channel, limited_power, &p_output->soc_pwr, &attenuation,
-				    &p_output->achieved_pwr) != OT_ERROR_NONE) {
-				assert(false);
-			}
-			p_output->fem_pa_power_control =
-				vendor_radio_power_map_att_to_gain(attenuation);
-			break;
-
-		default:
-			p_output->soc_pwr = requested_power;
-			p_output->fem_pa_power_control = 0;
-			p_output->achieved_pwr = requested_power;
-		}
+		return;
 	}
+
+	switch (fem_psemi_state_get()) {
+	case FEM_PSEMI_STATE_AUTO:
+		if (IS_ENABLED(CONFIG_MPSL_FEM_HOT_POTATO_BYPASS_BLE) &&
+		    phy != MPSL_PHY_Ieee802154_250Kbit) {
+			break;
+		}
+		/* fallthrough */
+	case FEM_PSEMI_STATE_PA_ACTIVE:
+		channel = freg_mhz_to_channel(freq_mhz);
+		limited_power = power_limit_apply(channel, requested_power);
+
+		if (vendor_radio_power_map_internal_tx_power_get(
+			    channel, limited_power, &p_output->soc_pwr, &attenuation,
+			    &p_output->achieved_pwr) != OT_ERROR_NONE) {
+			assert(false);
+		}
+
+		p_output->fem_pa_power_control = vendor_radio_power_map_att_to_gain(attenuation);
+		return;
+	default:
+		break;
+	}
+
+	p_output->soc_pwr =
+		mpsl_tx_power_radio_supported_power_adjust(requested_power, tx_power_ceiling);
+	p_output->fem_pa_power_control = FEM_GAIN_BYPASS;
+	p_output->achieved_pwr = p_output->soc_pwr;
 }
 
 void power_model_init(void)

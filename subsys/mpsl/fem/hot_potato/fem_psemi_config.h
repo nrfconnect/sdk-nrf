@@ -50,6 +50,9 @@
 /** Minimal value of FEM gain. */
 #define FEM_MIN_GAIN 5
 
+/** FEM gain that indicates FEM bypass. */
+#define FEM_GAIN_BYPASS 0
+
 /** @brief Configuration parameters for the Front End Module Simple GPIO variant.
  *
  *  A Simple GPIO Front End Module may be used with all Front End Modules
