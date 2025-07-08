@@ -51,8 +51,8 @@ void fem_psemi_caps_get(mpsl_fem_caps_t *p_caps)
 }
 
 int8_t fem_psemi_tx_power_split(const mpsl_tx_power_t power,
-				mpsl_tx_power_split_t *const p_tx_power_split, uint16_t freq_mhz,
-				bool tx_power_ceiling)
+				mpsl_tx_power_split_t *const p_tx_power_split, mpsl_phy_t phy,
+				uint16_t freq_mhz, bool tx_power_ceiling)
 {
 	mpsl_fem_power_model_output_t output;
 
