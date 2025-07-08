@@ -3,11 +3,11 @@ mcuboot:
   region: flash_primary
   size: 0x8000
 app:
-  address: 0x8000
+  address: 0x8800
   region: flash_primary
   size: 0x60000
 mcuboot_pad:
-  address: 0x68000
+  address: 0x8000
   region: flash_primary
   size: 0x800
 mcuboot_primary:
@@ -19,7 +19,7 @@ mcuboot_primary:
   size: 0x60800
   span: *id001
 mcuboot_primary_app:
-  address: 0x8000
+  address: 0x8800
   orig_span: &id002
   - app
   region: flash_primary
