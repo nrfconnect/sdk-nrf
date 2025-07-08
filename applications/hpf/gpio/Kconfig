@@ -15,5 +15,12 @@ config HPF_GPIO_BACKEND_ICBMSG
 
 endchoice
 
-rsource "../Kconfig"
+config HPF_DEVELOPER_MODE
+	bool "HPF developer mode"
+	help
+	  High Performance Framework developer mode.
+	  If enabled, changes in HRT files will be included in build.
+	  Otherwise, if there is a change in HRT that produces a different ASM file than
+	  the provided one, build error is reported.
+
 source "Kconfig.zephyr"
