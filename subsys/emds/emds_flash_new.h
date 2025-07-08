@@ -91,12 +91,14 @@ struct emds_snapshot_metadata {
  * and the metadata itself.
  *
  * @param node Node for the system list.
- * @param metadata_addr Address of the metadata in the flash area.
+ * @param partition_index Belonged partition index.
+ * @param metadata_off Offset of the metadata within the partition.
  * @param metadata The snapshot metadata.
  */
 struct emds_snapshot_candidate {
 	sys_snode_t node;
-	off_t metadata_addr;
+	int partition_index;
+	off_t metadata_off;
 	struct emds_snapshot_metadata metadata;
 };
 
@@ -147,6 +149,16 @@ int emds_flash_allocate_snapshot(const struct emds_partition *partition,
 				 const struct emds_snapshot_candidate *freshest_snapshot,
 				 struct emds_snapshot_candidate *allocated_snapshot,
 				 size_t data_size);
+
+/** * @brief Write data to the emergency data storage partition.
+ *
+ * @param partition Pointer to the emergency data storage partition structure.
+ * @param data_off Offset in the partition where the data chunk should be written.
+ * @param data_chunk Pointer to data chunk.
+ * @param data_size Size of the data chunk.
+ */
+void emds_flash_write_data(const struct emds_partition *partition, off_t data_off, void *data_chunk,
+			   size_t data_size);
 
 /**
  * @brief Erase the specified emergency data storage partition.
