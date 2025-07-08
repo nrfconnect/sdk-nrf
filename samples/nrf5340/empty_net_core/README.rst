@@ -9,7 +9,7 @@ nRF5340: Empty firmware for network core
 
 The sample demonstrates how to generate an empty network core firmware.
 The sample is used only by the applications that do not use the network core.
-In the mentioned case, the empty network core sample is automatically added to build by the :kconfig:option:`CONFIG_NCS_SAMPLE_EMPTY_NET_CORE_CHILD_IMAGE` option which depends on the :kconfig:option:`CONFIG_SOC_NRF53_CPUNET_ENABLE` option.
+In the mentioned case, the empty network core sample is automatically added to build by the :kconfig:option:`SB_CONFIG_NETCORE_EMPTY` sysbuild Kconfig option.
 
 Requirements
 ************
