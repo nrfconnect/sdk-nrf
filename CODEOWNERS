@@ -372,7 +372,6 @@
 /include/power/                           @nrfconnect/ncs-co-drivers
 /include/sdfw/                            @nrfconnect/ncs-aurora
 /include/sdfw/sdfw_services/extmem_remote.h @nrfconnect/ncs-charon
-/include/sdfw/sdfw_services/suit_service.h @nrfconnect/ncs-charon
 /include/shell/                           @nordic-krch
 /include/util/                            @nrfconnect/ncs-aegir @nordic-krch
 /include/tfm/                             @nrfconnect/ncs-aegir
@@ -952,7 +951,6 @@
 /tests/subsys/partition_manager/region/   @nordicjm @tejlmand
 /tests/subsys/partition_manager/static_pm_file/ @nordicjm @tejlmand
 /tests/subsys/pcd/                        @nrfconnect/ncs-pluto
-/tests/subsys/sdfw_services/              @nrfconnect/ncs-aurora
 /tests/subsys/suit/                       @nrfconnect/ncs-charon
 /tests/subsys/usb/negotiated_speed/       @nrfconnect/ncs-low-level-test
 /tests/tfm/                               @nrfconnect/ncs-aegir @magnev
