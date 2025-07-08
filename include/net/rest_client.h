@@ -98,7 +98,7 @@ struct rest_client_req_context {
 	 *  for socket connection creation and data transfer meaning REST request can take
 	 *  longer than this given timeout. To disable, set the timeout duration to SYS_FOREVER_MS.
 	 *  A value of zero will result in an immediate timeout.
-	 *  Default: @kconfig{CONFIG_REST_CLIENT_REST_REQUEST_TIMEOUT}.
+	 *  Default: @kconfig{CONFIG_REST_CLIENT_REQUEST_TIMEOUT}.
 	 */
 	int32_t timeout_ms;
 
