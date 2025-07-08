@@ -181,7 +181,16 @@ Matter
 Matter fork
 +++++++++++
 
-|no_changes_yet_note|
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, the ``v1.4.2.0`` tag.
+
+The following list summarizes the most important changes inherited from the upstream Matter:
+
+* Updated:
+
+  * Fixed incorrect memory releases and unhandled exceptions.
+  * Improved robustness in group session management.
+  * Optimized the device commissioning process.
+
 
 nRF IEEE 802.15.4 radio driver
 ------------------------------
