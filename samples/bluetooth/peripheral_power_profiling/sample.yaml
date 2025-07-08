@@ -14,6 +14,7 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     platform_allow:
@@ -25,6 +26,7 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     tags:
@@ -36,14 +38,17 @@ tests:
     harness: pytest
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_args:
       - platform:nrf54l15dk/nrf54l15/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lm20dk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
       - platform:nrf54lm20pdk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
       - platform:nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
       - platform:nrf54lv10dk/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_auto_conn_advert.overlay"
@@ -68,14 +73,17 @@ tests:
     harness: pytest
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_args:
       - platform:nrf54l15dk/nrf54l15/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lm20dk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
       - platform:nrf54lm20pdk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
       - platform:nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
       - platform:nrf54lv10dk/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_auto_conn_advert.overlay"
@@ -100,14 +108,17 @@ tests:
     harness: pytest
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_args:
       - platform:nrf54l15dk/nrf54l15/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lm20dk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
       - platform:nrf54lm20pdk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
       - platform:nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
       - platform:nrf54lv10dk/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_auto_conn_advert.overlay"
@@ -132,14 +143,17 @@ tests:
     harness: pytest
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_args:
       - platform:nrf54l15dk/nrf54l15/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lm20dk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
       - platform:nrf54lm20pdk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
       - platform:nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
       - platform:nrf54lv10dk/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_auto_conn_advert.overlay"
@@ -164,14 +178,17 @@ tests:
     harness: pytest
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     extra_args:
       - platform:nrf54l15dk/nrf54l15/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lm20dk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_non_conn_advert.overlay"
       - platform:nrf54lm20pdk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_non_conn_advert.overlay"
       - platform:nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_non_conn_advert.overlay"
       - platform:nrf54lv10dk/nrf54lv10a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lv10dk_nrf54lv10a_cpuapp_non_conn_advert.overlay"
@@ -196,10 +213,12 @@ tests:
     sysbuild: true
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     tags:
