@@ -9,11 +9,67 @@
 #include "emds_flash_new.h"
 
 #include <zephyr/drivers/flash.h>
+#include <zephyr/sys/crc.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(emds, CONFIG_EMDS_LOG_LEVEL);
 
+#if NRF52_ERRATA_242_PRESENT
+#include <hal/nrf_power.h>
+/* Disable POFWARN by writing POFCON before a write or erase operation.
+ * Do not attempt to write or erase if EVENTS_POFWARN is already asserted.
+ */
+static bool pofcon_enabled;
+
+static int suspend_pofwarn(void)
+{
+	if (!nrf52_errata_242()) {
+		return 0;
+	}
+
+	bool enabled;
+	nrf_power_pof_thr_t pof_thr;
+
+	pof_thr = nrf_power_pofcon_get(NRF_POWER, &enabled);
+
+	if (enabled) {
+		nrf_power_pofcon_set(NRF_POWER, false, pof_thr);
+
+		/* This check need to be reworked once POFWARN event will be
+		 * served by zephyr.
+		 */
+		if (nrf_power_event_check(NRF_POWER, NRF_POWER_EVENT_POFWARN)) {
+			nrf_power_pofcon_set(NRF_POWER, true, pof_thr);
+			return -ECANCELED;
+		}
+
+		pofcon_enabled = enabled;
+	}
+
+	return 0;
+}
+
+static void restore_pofwarn(void)
+{
+	nrf_power_pof_thr_t pof_thr;
+
+	if (pofcon_enabled) {
+		pof_thr = nrf_power_pofcon_get(NRF_POWER, NULL);
+
+		nrf_power_pofcon_set(NRF_POWER, true, pof_thr);
+		pofcon_enabled = false;
+	}
+}
+
+#define SUSPEND_POFWARN() suspend_pofwarn()
+#define RESUME_POFWARN()  restore_pofwarn()
+#else
+#define SUSPEND_POFWARN() 0
+#define RESUME_POFWARN()
+#endif /* NRF52_ERRATA_242_PRESENT */
+
 #define PARTITIONS_NUM_MAX 2
+#define CHUNK_SIZE         16
 
 enum emds_state {
 	EMDS_STATE_NOT_INITIALIZED,
@@ -128,7 +184,7 @@ int emds_entry_add(struct emds_dynamic_entry *entry)
 	return 0;
 }
 
-static int emds_entries_size(size_t *size, size_t alignment)
+static int emds_entries_size(size_t *size)
 {
 	int entries = 0;
 
@@ -146,19 +202,16 @@ static int emds_entries_size(size_t *size, size_t alignment)
 		entries++;
 	}
 
-	*size = ROUND_UP(*size, alignment);
-	*size += ROUND_UP(sizeof(struct emds_snapshot_metadata), alignment);
-
 	return entries;
 }
 
 int emds_store_size_get(size_t *store_size)
 {
-	if (emds_state != EMDS_STATE_INITIALIZED) {
+	if (emds_state == EMDS_STATE_NOT_INITIALIZED) {
 		return -ECANCELED;
 	}
 
-	(void)emds_entries_size(store_size, partition[0].fp->write_block_size);
+	(void)emds_entries_size(store_size);
 
 	return 0;
 }
@@ -233,13 +286,12 @@ static int emds_read_data(const struct flash_area *fa, struct emds_snapshot_meta
 int emds_load(void)
 {
 	struct emds_snapshot_candidate candidate = {0};
-	int freshest_partition_idx = -1;
-	int rc;
 
 	if (emds_state != EMDS_STATE_INITIALIZED) {
 		return -ECANCELED;
 	}
 
+	freshest_snapshot.partition_index = -1;
 	for (int i = 0; i < PARTITIONS_NUM_MAX; i++) {
 		if (emds_flash_scan_partition(&partition[i], &candidate)) {
 			LOG_ERR("Failed to scan partition: %d", i);
@@ -248,31 +300,29 @@ int emds_load(void)
 
 		if (freshest_snapshot.metadata.fresh_cnt < candidate.metadata.fresh_cnt) {
 			freshest_snapshot = candidate;
-			freshest_partition_idx = i;
+			freshest_snapshot.partition_index = i;
 		}
 	}
 
-	if (freshest_partition_idx < 0) {
+	emds_state = EMDS_STATE_SYNCHRONIZED;
+
+	if (freshest_snapshot.partition_index < 0) {
 		LOG_WRN("No valid snapshot found in any partition");
 		return -ENOENT;
 	}
 
 	LOG_DBG("Found freshest snapshot in partition %d with fresh_cnt %u",
-		freshest_partition_idx, freshest_snapshot.metadata.fresh_cnt);
+		freshest_snapshot.partition_index, freshest_snapshot.metadata.fresh_cnt);
 
-	rc = emds_read_data(partition[freshest_partition_idx].fa, &freshest_snapshot.metadata);
-	if (rc == 0) {
-		emds_state = EMDS_STATE_SYNCHRONIZED;
-	}
-
-	return rc;
+	return emds_read_data(partition[freshest_snapshot.partition_index].fa,
+			      &freshest_snapshot.metadata);
 }
 
 int emds_prepare(void)
 {
 	size_t data_size;
 	bool erase_enabled = false;
-	int idx;
+	int idx = 0;
 	int freshest_partition_idx = -1;
 	int rc = 0;
 
@@ -283,29 +333,23 @@ int emds_prepare(void)
 	/* Returned status is not checked since initialization state is checked above */
 	(void)emds_store_size_get(&data_size);
 
-	/** First try to allocate snapshot in the same partition where freshest snapshot exists */
-	if (freshest_snapshot.metadata.fresh_cnt > 0) {
-		for (idx = 0; idx < PARTITIONS_NUM_MAX; idx++) {
-			if (IN_RANGE(freshest_snapshot.metadata_addr, partition[idx].fa->fa_off,
-				     partition[idx].fa->fa_off + partition[idx].fa->fa_size)) {
-				freshest_partition_idx = idx;
-				break;
-			}
-		}
+	allocated_snapshot.metadata.fresh_cnt = freshest_snapshot.metadata.fresh_cnt + 1;
 
-		rc = emds_flash_allocate_snapshot(&partition[idx], &freshest_snapshot,
-						  &allocated_snapshot, data_size);
+	/* First try to allocate snapshot in the same partition where freshest snapshot exists */
+	if (freshest_snapshot.metadata.fresh_cnt > 0) {
+		freshest_partition_idx = freshest_snapshot.partition_index;
+		rc = emds_flash_allocate_snapshot(&partition[freshest_partition_idx],
+						  &freshest_snapshot, &allocated_snapshot,
+						  data_size);
 		if (rc == 0) {
+			allocated_snapshot.partition_index = freshest_partition_idx;
 			emds_state = EMDS_STATE_READY;
 			return 0;
 		}
+		rc = 0;
 	}
 
-	rc = 0;
-	idx = -1;
 	do {
-		idx++;
-
 		if (idx != freshest_partition_idx) {
 			if (erase_enabled) {
 				LOG_DBG("Erase partition %d", idx);
@@ -319,31 +363,145 @@ int emds_prepare(void)
 			rc = emds_flash_allocate_snapshot(&partition[idx], NULL,
 							  &allocated_snapshot, data_size);
 			if (rc == 0) {
+				allocated_snapshot.partition_index = idx;
 				emds_state = EMDS_STATE_READY;
 				return 0;
 			}
 		}
 
-		if ((idx == PARTITIONS_NUM_MAX - 1) && !erase_enabled && rc == -EADDRINUSE) {
+		idx++;
+
+		if ((idx == PARTITIONS_NUM_MAX) && !erase_enabled && rc == -EADDRINUSE) {
 			erase_enabled = true;
-			idx = -1;
+			idx = 0;
 		}
-	} while (idx < PARTITIONS_NUM_MAX - 1);
+	} while (idx < PARTITIONS_NUM_MAX);
 
 	return -ENOENT;
 }
 
+static void data_stream_pack(uint8_t *in, uint8_t *out, size_t *wp, size_t *rp, size_t len)
+{
+	size_t size = MIN(CHUNK_SIZE - *wp, len - *rp);
+
+	memcpy(out + *wp, in + *rp, size);
+	*rp += size;
+	*wp += size;
+}
+
+static void data_to_stream(const struct emds_partition *partition, off_t *data_off, uint8_t *in,
+			   uint8_t *out, size_t *wp, size_t len)
+{
+	size_t rp = 0;
+
+	while (rp != len) {
+		data_stream_pack(in, out, wp, &rp, len);
+		if (*wp == CHUNK_SIZE) {
+			allocated_snapshot.metadata.snapshot_crc = crc32_k_4_2_update(
+				allocated_snapshot.metadata.snapshot_crc, out, *wp);
+			emds_flash_write_data(partition, *data_off, out, *wp);
+			*data_off += *wp;
+			*wp = 0;
+		}
+	}
+}
+
+static void entry_to_stream(const struct emds_partition *partition, off_t *data_off, uint8_t *out,
+			    size_t *wp, struct emds_entry *entry)
+{
+	struct emds_data_entry data_entry = {
+		.id = entry->id,
+		.length = entry->len,
+	};
+
+	LOG_DBG("Storing entry ID %u, length %u", entry->id, entry->len);
+	data_to_stream(partition, data_off, (uint8_t *)&data_entry, out, wp, sizeof(data_entry));
+	data_to_stream(partition, data_off, entry->data, out, wp, entry->len);
+}
+
+static void stream_fflush(const struct emds_partition *partition, off_t *data_off, uint8_t *out,
+			  size_t *wp)
+{
+	if (*wp > 0) {
+		allocated_snapshot.metadata.snapshot_crc =
+			crc32_k_4_2_update(allocated_snapshot.metadata.snapshot_crc, out, *wp);
+		emds_flash_write_data(partition, *data_off, out, *wp);
+		*data_off += *wp;
+		*wp = 0;
+	}
+}
+
 int emds_store(void)
 {
+	uint32_t store_key;
+	uint8_t data_chunk[CHUNK_SIZE];
+	size_t wp = 0;
+	off_t data_off = allocated_snapshot.metadata.data_instance_off;
+	int idx = allocated_snapshot.partition_index;
+	int rc = 0;
+
 	if (emds_state != EMDS_STATE_READY) {
 		return -ECANCELED;
 	}
 
-	if (app_store_cb) {
+	/* Lock all interrupts */
+	store_key = irq_lock();
+
+	if (SUSPEND_POFWARN()) {
+		rc = -ECANCELED;
+		goto unlock_and_exit;
+	}
+
+	if (flash_params_get_erase_cap(partition[idx].fp) & FLASH_ERASE_C_EXPLICIT) {
+		LOG_DBG("Writing metadata on offset: 0x%4lx, address : 0x%4lx",
+			 allocated_snapshot.metadata_off,
+			 allocated_snapshot.metadata_off + partition[idx].fa->fa_off);
+		emds_flash_write_data(&partition[idx], allocated_snapshot.metadata_off,
+				      &allocated_snapshot.metadata,
+				      offsetof(struct emds_snapshot_metadata, snapshot_crc));
+	}
+
+	STRUCT_SECTION_FOREACH(emds_entry, ch) {
+		entry_to_stream(&partition[idx], &data_off, data_chunk, &wp, ch);
+	}
+
+	struct emds_dynamic_entry *ch;
+
+	SYS_SLIST_FOR_EACH_CONTAINER(&emds_dynamic_entries, ch, node) {
+		entry_to_stream(&partition[idx], &data_off, data_chunk, &wp, &ch->entry);
+	}
+
+	stream_fflush(&partition[idx], &data_off, data_chunk, &wp);
+
+	if (flash_params_get_erase_cap(partition[idx].fp) & FLASH_ERASE_C_EXPLICIT) {
+		LOG_DBG("Writing snapshot crc on offset: 0x%4lx, crc : 0x%4x",
+			 allocated_snapshot.metadata_off +
+					      offsetof(struct emds_snapshot_metadata, snapshot_crc),
+			 allocated_snapshot.metadata.snapshot_crc);
+		emds_flash_write_data(&partition[idx],
+				      allocated_snapshot.metadata_off +
+					      offsetof(struct emds_snapshot_metadata, snapshot_crc),
+				      &allocated_snapshot.metadata.snapshot_crc, sizeof(uint32_t));
+	} else {
+		LOG_DBG("Writing metadata on offset: 0x%4lx, address : 0x%4lx, crc : 0x%4x",
+			 allocated_snapshot.metadata_off,
+			 allocated_snapshot.metadata_off + partition[idx].fa->fa_off,
+			 allocated_snapshot.metadata.snapshot_crc);
+		emds_flash_write_data(&partition[idx], allocated_snapshot.metadata_off,
+				      &allocated_snapshot.metadata,
+				      offsetof(struct emds_snapshot_metadata, reserved));
+	}
+
+unlock_and_exit:
+	RESUME_POFWARN();
+	/* Unlock all interrupts */
+	irq_unlock(store_key);
+
+	if (app_store_cb && rc == 0) {
 		app_store_cb();
 	}
 
-	return 0;
+	return rc;
 }
 
 int emds_clear(void)

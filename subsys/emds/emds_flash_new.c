@@ -12,9 +12,16 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(emds_flash, CONFIG_EMDS_LOG_LEVEL);
 
+#if defined CONFIG_SOC_FLASH_NRF_RRAM
+#include <hal/nrf_rramc.h>
+#include <zephyr/sys/barrier.h>
+#else
+#include <nrfx_nvmc.h>
+#endif
+
+#define SOC_NV_FLASH_NODE             DT_INST(0, soc_nv_flash)
 /* "EMDS" in ASCII */
 #define EMDS_SNAPSHOT_METADATA_MARKER 0x4D444553
-#define CHUNK_SIZE(FP) ((FP)->write_block_size > 16 ? (FP)->write_block_size : 16)
 
 static void cand_list_init(sys_slist_t *cand_list, struct emds_snapshot_candidate *cand_buf)
 {
@@ -24,7 +31,7 @@ static void cand_list_init(sys_slist_t *cand_list, struct emds_snapshot_candidat
 	}
 }
 
-static void cand_put(sys_slist_t *cand_list, off_t cand_addr, struct emds_snapshot_metadata *cand)
+static void cand_put(sys_slist_t *cand_list, off_t cand_off, struct emds_snapshot_metadata *cand)
 {
 	sys_snode_t *cand_node = sys_slist_peek_tail(cand_list);
 	sys_snode_t *head = sys_slist_peek_head(cand_list);
@@ -38,12 +45,12 @@ static void cand_put(sys_slist_t *cand_list, off_t cand_addr, struct emds_snapsh
 		return; /* Ignore candidates that are not fresher than the placeholder */
 	}
 
-	LOG_DBG("Found snapshot at offset 0x%04lx with fresh_cnt %u. Metadata address: 0x%04lx",
-		cand->data_instance_off, cand->fresh_cnt, cand_addr);
+	LOG_DBG("Found snapshot at offset 0x%04lx with fresh_cnt %u. Metadata offset: 0x%04lx",
+		cand->data_instance_off, cand->fresh_cnt, cand_off);
 
 	sys_slist_find_and_remove(cand_list, cand_node);
 	placeholder->metadata = *cand;
-	placeholder->metadata_addr = cand_addr;
+	placeholder->metadata_off = cand_off;
 
 	do {
 		curr_ctx = CONTAINER_OF(curr, struct emds_snapshot_candidate, node);
@@ -176,7 +183,7 @@ int emds_flash_scan_partition(const struct emds_partition *partition,
 			continue;
 		}
 
-		cand_put(&cand_list, fa->fa_off + read_off, &cache);
+		cand_put(&cand_list, read_off, &cache);
 	} while (metadata_iterator(&read_off, failures));
 
 	/* At this point we have the sorted linked list of candidates.
@@ -198,6 +205,9 @@ int emds_flash_scan_partition(const struct emds_partition *partition,
 				cand->metadata.data_instance_len, cand->metadata.fresh_cnt);
 			break;
 		}
+
+		LOG_DBG("Snapshot CRC mismatch at address 0x%04lx",
+			fa->fa_off + cand->metadata.data_instance_off);
 	}
 
 	return 0;
@@ -210,26 +220,27 @@ int emds_flash_allocate_snapshot(const struct emds_partition *partition,
 {
 	const struct flash_area *fa = partition->fa;
 	const struct flash_parameters *fp = partition->fp;
-	off_t metadata_off =
-		freshest_snapshot ? freshest_snapshot->metadata_addr - fa->fa_off : fa->fa_size;
+	off_t metadata_off = freshest_snapshot ? freshest_snapshot->metadata_off : fa->fa_size;
 	off_t data_off = freshest_snapshot
 				 ? ROUND_UP(freshest_snapshot->metadata.data_instance_off +
 						    freshest_snapshot->metadata.data_instance_len,
 					    fp->write_block_size)
 				 : 0;
+	size_t aligned_data_size = ROUND_UP(data_size, fp->write_block_size);
 	int rc;
 
 	metadata_off -= sizeof(struct emds_snapshot_metadata);
-	data_size -= ROUND_UP(sizeof(struct emds_snapshot_metadata), fp->write_block_size);
 
-	if (data_size > fa->fa_size) {
+	if (aligned_data_size +
+		    ROUND_UP(sizeof(struct emds_snapshot_metadata), fp->write_block_size) >
+	    fa->fa_size) {
 		LOG_ERR("Invalid data size: %zu", data_size);
 		return -EINVAL;
 	}
 
 	if (REGIONS_OVERLAP(metadata_off, sizeof(struct emds_snapshot_metadata), data_off,
-			    data_size)) {
-		LOG_ERR("Metadata area overlaps with data area");
+			    aligned_data_size)) {
+		LOG_WRN("Metadata area overlaps with data area");
 		return -ENOMEM;
 	}
 
@@ -269,15 +280,14 @@ int emds_flash_allocate_snapshot(const struct emds_partition *partition,
 		}
 	}
 
-	allocated_snapshot->metadata_addr = fa->fa_off + metadata_off;
+	allocated_snapshot->metadata_off = metadata_off;
 	allocated_snapshot->metadata.marker = EMDS_SNAPSHOT_METADATA_MARKER;
-	allocated_snapshot->metadata.fresh_cnt =
-		freshest_snapshot ? freshest_snapshot->metadata.fresh_cnt + 1 : 1;
 	allocated_snapshot->metadata.data_instance_off = data_off;
 	allocated_snapshot->metadata.data_instance_len = data_size;
 	allocated_snapshot->metadata.metadata_crc =
 		crc32_k_4_2_update(0, (const unsigned char *)&allocated_snapshot->metadata,
 				   offsetof(struct emds_snapshot_metadata, metadata_crc));
+	allocated_snapshot->metadata.snapshot_crc = 0;
 
 	LOG_DBG("Allocating snapshot at address 0x%04lx with length %u and fresh_cnt %u",
 		fa->fa_off + data_off, data_size, allocated_snapshot->metadata.fresh_cnt);
@@ -285,6 +295,73 @@ int emds_flash_allocate_snapshot(const struct emds_partition *partition,
 		allocated_snapshot->metadata.metadata_crc);
 
 	return 0;
+}
+
+static void nvmc_wait_ready(void)
+{
+#if defined CONFIG_SOC_FLASH_NRF_RRAM
+	while (!nrf_rramc_ready_check(NRF_RRAMC)) {
+	}
+#else
+	while (!nrfx_nvmc_write_done_check()) {
+	}
+#endif
+}
+
+#if defined CONFIG_SOC_FLASH_NRF_RRAM
+static void commit_changes(const struct emds_partition *partition, size_t len)
+{
+	if (nrf_rramc_empty_buffer_check(NRF_RRAMC)) {
+		/* The internal write-buffer has been committed to RRAM and is now empty. */
+		return;
+	}
+
+	if ((len % partition->fp->write_block_size) == 0) {
+		/* Our last operation was buffer size-aligned, so we're done. */
+		return;
+	}
+
+	nrf_rramc_task_trigger(NRF_RRAMC, NRF_RRAMC_TASK_COMMIT_WRITEBUF);
+
+	barrier_dmem_fence_full();
+}
+#endif
+
+void emds_flash_write_data(const struct emds_partition *partition, off_t data_off, void *data_chunk,
+			   size_t data_size)
+{
+	uint32_t flash_addr = data_off + partition->fa->fa_off;
+
+	flash_addr += DT_REG_ADDR(SOC_NV_FLASH_NODE);
+
+	nvmc_wait_ready();
+
+#if defined CONFIG_SOC_FLASH_NRF_RRAM
+	nrf_rramc_config_t config = {.mode_write = true,
+				     .write_buff_size = partition->fp->write_block_size};
+
+	nrf_rramc_config_set(NRF_RRAMC, &config);
+	memcpy((void *)flash_addr, data_chunk, data_size);
+
+	barrier_dmem_fence_full(); /* Barrier following our last write. */
+	commit_changes(partition, data_size);
+
+	config.mode_write = false;
+	nrf_rramc_config_set(NRF_RRAMC, &config);
+#else
+	uint32_t data_addr = (uint32_t)data_chunk;
+
+	data_size = ROUND_UP(data_size, sizeof(uint32_t));
+
+	while (data_size >= sizeof(uint32_t)) {
+		nrfx_nvmc_word_write(flash_addr, UNALIGNED_GET((uint32_t *)data_addr));
+
+		flash_addr += sizeof(uint32_t);
+		data_addr += sizeof(uint32_t);
+		data_size -= sizeof(uint32_t);
+	}
+#endif
+	nvmc_wait_ready();
 }
 
 int emds_flash_erase_partition(const struct emds_partition *partition)
