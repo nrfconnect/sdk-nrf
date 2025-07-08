@@ -13,7 +13,9 @@ following pattern:
 
 For tool-versions-{os} files:
     {TOOL_NAME}_VERSION_{OS}
+    {TOOL_NAME}_{SUBCOMMAND}_VERSION_{OS}
 where OS is one of WIN10, LINUX or DARWIN
+where SUBCOMMAND is one of nRF Util subcommands, like DEVICE, SDK-MANAGER, etc.
 
 For pip requirement files:
     {TOOL_NAME}_VERSION
@@ -22,6 +24,7 @@ Examples of use:
 - :ncs-tool-version:`CMAKE_VERSION_LINUX`
 - :ncs-tool-version:`SPHINX_VERSION`
 - :ncs-tool-version:`SPHINX_NCS_THEME_VERSION`
+- :ncs-tool-version:`NRFUTIL_DEVICE_VERSION_LINUX`
 
 """
 
@@ -91,6 +94,13 @@ def tool_version_replace(app: Sphinx) -> Callable:
                 tool_upper = tool.replace("-", "_").upper()
                 entry = f"{tool_upper}_VERSION_{os}"
                 versions[entry] = yaml_object[tool]["version"]
+
+                # Handle subcommands if they exist
+                if "subcommands" in yaml_object[tool]:
+                    for subcommand, subcommand_version in yaml_object[tool]["subcommands"].items():
+                        subcommand_upper = subcommand.upper()
+                        subcommand_entry = f"{tool_upper}_{subcommand_upper}_VERSION_{os}"
+                        versions[subcommand_entry] = subcommand_version
 
         elif path.suffix == ".txt":
             for line in path.read_text().strip().split("\n"):
