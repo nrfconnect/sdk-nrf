@@ -130,31 +130,25 @@ tests:
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     timeout: 20
-  sample.ipc.ipc_service.nrf54lm20pdk_cpuapp_cpuflpr_icmsg:
+  sample.ipc.ipc_service.nrf54lm20dk_cpuapp_cpuflpr_icmsg:
     extra_args:
       - ipc_service_SNIPPET=nordic-flpr
     platform_allow:
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     timeout: 20
-  sample.ipc.ipc_service.nrf54lm20pdk_cpuapp_cpuflpr_icbmsg:
+  sample.ipc.ipc_service.nrf54lm20dk_cpuapp_cpuflpr_icbmsg:
     extra_args:
       - ipc_service_SNIPPET=nordic-flpr
       - ipc_service_CONFIG_IPC_SERVICE_BACKEND_ICBMSG_NUM_EP=1
-      - ipc_service_DTC_OVERLAY_FILE="boards/nrf54lm20pdk_nrf54lm20a_cpuapp_icbmsg.overlay"
+      - ipc_service_DTC_OVERLAY_FILE="boards/nrf54lm20dk_nrf54lm20a_cpuapp_icbmsg.overlay"
       - remote_CONFIG_IPC_SERVICE_BACKEND_ICBMSG_NUM_EP=1
-      - remote_DTC_OVERLAY_FILE="boards/nrf54lm20pdk_nrf54lm20a_cpuflpr_icbmsg.overlay"
+      - remote_DTC_OVERLAY_FILE="boards/nrf54lm20dk_nrf54lm20a_cpuflpr_icbmsg.overlay"
     platform_allow:
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     timeout: 20
   sample.ipc.ipc_service.nrf54lv10dk_cpuapp_cpuflpr_icmsg:
     extra_args:
