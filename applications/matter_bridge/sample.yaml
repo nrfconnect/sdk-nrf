@@ -106,7 +106,6 @@ tests:
       - CONFIG_CHIP_MEMORY_PROFILING=y
       - CONFIG_BRIDGED_DEVICE_BT=y
       - CONFIG_BRIDGE_MIGRATE_VERSION_1=n
-      - CONFIG_WIFI_NM_WPA_SUPPLICANT_WPA3=n
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow:
