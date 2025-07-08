@@ -38,6 +38,17 @@ config DESKTOP_FN_KEYS_MAX_ACTIVE
 	help
 	  Maximum number of function keys pressed at the same time.
 
+config DESKTOP_FN_KEYS_BUTTON_EVENT_SUBSCRIBE_FIRST
+	bool "Subscribe for button_event as the first subscriber"
+	default y
+	help
+	  Subscribe for button_event as the first subscriber to handle the event
+	  before early subscribers. If the option is disabled, the module uses
+	  early subscription.
+
+	  Make sure to keep the option enabled if other early button_event
+	  subscribers use function keys.
+
 module = DESKTOP_FN_KEYS
 module-str = Fn keys
 source "subsys/logging/Kconfig.template.log_config"

@@ -22,8 +22,8 @@ Module events
 Configuration
 *************
 
-The module uses ``button_event`` sent by :ref:`caf_buttons`.
-Make sure mentioned hardware interface is defined.
+The module uses :c:struct:`button_event` sent by :ref:`caf_buttons`.
+Make sure mentioned CAF module is enabled.
 
 The module is enabled with :ref:`CONFIG_DESKTOP_FN_KEYS_ENABLE <config_desktop_app_options>` option.
 
@@ -37,6 +37,9 @@ You must configure the following options:
 
 In the file :file:`fn_keys_def.h`, define all the dual-purpose keys.
 The ``fn_keys`` array must be sorted by key ID (the module uses binary search).
+
+By default, the module subscribes for :c:struct:`button_event` as the first subscriber (:c:macro:`APP_EVENT_SUBSCRIBE_FIRST`).
+You can disable the :ref:`CONFIG_DESKTOP_FN_KEYS_BUTTON_EVENT_SUBSCRIBE_FIRST <config_desktop_app_options>` Kconfig option to use early subscription (:c:macro:`APP_EVENT_SUBSCRIBE_EARLY`).
 
 Implementation details
 **********************

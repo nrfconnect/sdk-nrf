@@ -312,6 +312,8 @@ nRF Desktop
   * Improved HID subscription handling in the HID transports (:ref:`nrf_desktop_hids` and :ref:`nrf_desktop_usb_state`).
     Both HID transports now unsubscribe from HID input reports related to the previously used HID protocol mode before subscribing to HID input reports related to the new HID protocol mode.
     This change ensures that subscriptions to both HID boot and HID report protocol mode are not enabled at the same time.
+  * The :ref:`nrf_desktop_fn_keys` to subscribe for :c:struct:`button_event` as the first subscriber (:c:macro:`APP_EVENT_SUBSCRIBE_FIRST`) by default.
+    You can disable the :ref:`CONFIG_DESKTOP_FN_KEYS_BUTTON_EVENT_SUBSCRIBE_FIRST <config_desktop_app_options>` Kconfig option to use early subscription (:c:macro:`APP_EVENT_SUBSCRIBE_EARLY`).
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
