@@ -383,12 +383,12 @@ Bluetooth samples
 
 * :ref:`direction_finding_peripheral` sample:
 
-  * Added support for the ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l10/cpuapp``, ``nrf54l15dk/nrf54l05/cpuapp``, ``nrf54lm20pdk/nrf54lm20a/cpuapp``,  and ``nrf54lv10dk/nrf54lv10a/cpuapp`` board targets.
+  * Added support for the ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l10/cpuapp``, and ``nrf54l15dk/nrf54l05/cpuapp`` board targets.
   * Direction Finding TX AoD (atnenna switching) is disabled by default in the sample.
 
 * :ref:`direction_finding_connectionless_tx` sample:
 
-  Added support for the ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l10/cpuapp``, ``nrf54l15dk/nrf54l05/cpuapp``, ``nrf54lm20pdk/nrf54lm20a/cpuapp``,  and ``nrf54lv10dk/nrf54lv10a/cpuapp`` board targets.
+  Added support for the ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l10/cpuapp``, and ``nrf54l15dk/nrf54l05/cpuapp`` board targets.
 
 Bluetooth Mesh samples
 ----------------------
