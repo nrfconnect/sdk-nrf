@@ -60,4 +60,4 @@ The battery state can have one of the following values:
 
 * :c:enumerator:`BATTERY_STATE_IDLE` - Battery is not being charged (CSO pin set to logical high).
 * :c:enumerator:`BATTERY_STATE_CHARGING` - Battery is being charged (CSO pin set to logical low).
-* :c:enumerator:`BATTERY_STATE_ERROR` - Battery charger reported an error (a signal with the :ref:`CONFIG_DESKTOP_BATTERY_CHARGER_CSO_FREQ <config_desktop_app_options>` frequency and a 50% duty cycle on the CSO pin).
+* :c:enumerator:`BATTERY_STATE_ERROR` - Battery charger reported an error (a signal with frequency equal to the ``cso-switching-freq`` devicetree node's property and a 50% duty cycle on the CSO pin).
