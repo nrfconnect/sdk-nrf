@@ -80,9 +80,9 @@ extern "C" {
  *
  * Example:
  *
- *     IF_ENABLED_ALL((CONFIG_FLAG_A, CONFIG_FLAG_B), uint32_t foo;)
+ *     IF_ENABLED_ALL((CONFIG_FOO, CONFIG_BAR), uint32_t foo;)
  *
- * If @p CONFIG_FLAG_A and @p CONFIG_FLAG_B are defined to 1, this expands to:
+ * If @p CONFIG_FOO and @p CONFIG_BAR are defined to 1, this expands to:
  *
  *     uint32_t foo;
  *
@@ -102,9 +102,9 @@ extern "C" {
  *
  * Example:
  *
- *     IF_ENABLED_ANY((CONFIG_FLAG_A, CONFIG_FLAG_B), uint32_t foo;)
+ *     IF_ENABLED_ANY((CONFIG_FOO, CONFIG_BAR), uint32_t foo;)
  *
- * If @p CONFIG_FLAG_A or @p CONFIG_FLAG_B defined to 1, this expands to:
+ * If @p CONFIG_FOO or @p CONFIG_BAR defined to 1, this expands to:
  *
  *     uint32_t foo;
  *
