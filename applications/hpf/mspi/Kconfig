@@ -18,5 +18,12 @@ config HPF_MSPI_FAULT_TIMER
 	  Timer is used to detect application faults. If the timer expires,
 	  the application is considered to be in a fault state.
 
-rsource "../Kconfig"
+config HPF_DEVELOPER_MODE
+	bool "HPF developer mode"
+	help
+	  High Performance Framework developer mode.
+	  If enabled, changes in HRT files will be included in build.
+	  Otherwise, if there is a change in HRT that produces a different ASM file than
+	  the provided one, build error is reported.
+
 source "Kconfig.zephyr"
