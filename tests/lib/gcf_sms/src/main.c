@@ -172,9 +172,6 @@ ZTEST(gcf_sms, test_gcf_sms_cmss)
 {
 	int err;
 
-	/* This test require a SIM supporting SMS and mfw 1.3.2(?) or newer. */
-	Z_TEST_SKIP_IFNDEF(CONFIG_SIM_HAS_SMS_SUPPORT);
-
 	err = nrf_modem_at_cmd(response, sizeof(response), CMD_CMSS_E_1);
 	zassert_mem_equal(response, RES_CMSS_E, strlen(RES_CMSS_E), NULL);
 }

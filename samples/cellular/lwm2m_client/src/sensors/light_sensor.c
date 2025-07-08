@@ -65,7 +65,7 @@ static int _sensor_read(struct sensor_value measurements[])
 
 	return 0;
 }
-#endif /* if defined(CONFIG_LIGHT_SENSOR_USE_EXTERNAL) */
+#endif /* !defined(LIGHT_SENSOR_SIMULATED) */
 
 int light_sensor_read(uint32_t *light_value)
 {

@@ -155,7 +155,7 @@ Following are some of the server Kconfig options that you can configure.
 See the :ref:`enabled carriers <general_options_enabled_carriers>` under :ref:`general_options_lwm2m` for when the option is relevant.
 
 For :kconfig:option:`CONFIG_LWM2M_CARRIER_GENERIC`, no valid factory configuration has been set.
-At a minimum, a URI must be set, unless the :kconfig:option:`CONFIG_LWM2M_SERVER_BINDING_CHOICE` Kconfig option value is non-IP.
+At a minimum, a URI must be set, unless the :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_BINDING_NONIP` Kconfig option value is set.
 
 .. note::
    Changing one or more server options will trigger a factory reset (resulting in a new bootstrap sequence).
@@ -189,15 +189,15 @@ At a minimum, a URI must be set, unless the :kconfig:option:`CONFIG_LWM2M_SERVER
     This can be different for each supported carrier.
     For generic operation (:kconfig:option:`CONFIG_LWM2M_CARRIER_GENERIC`), the default is 1 hour.
 
-* :kconfig:option:`CONFIG_LWM2M_SERVER_BINDING_CHOICE`:
+* :kconfig:option:`LWM2M_CARRIER_SERVER_BINDING_UDP`, :kconfig:option:`LWM2M_CARRIER_SERVER_BINDING_NONIP`:
 
-  * This configuration can be used to overwrite the factory default by selecting :c:macro:`LWM2M_CARRIER_SERVER_BINDING_UDP` or :c:macro:`LWM2M_CARRIER_SERVER_BINDING_NONIP`).
-  * This configuration is ignored if a bootstrap server is configured (either by our factory configuration, or by :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_BOOTSTRAP_SERVER`).
+  * These configurations can be used to overwrite the factory default binding.
+    If these configurations are left empty (``=n``) the factory configuration is used.
+  * The factory default can be different for each supported carrier.
+    For generic operation (:kconfig:option:`CONFIG_LWM2M_CARRIER_GENERIC`), UDP (IP) binding is set as the default.
+  * These configurations are ignored if a bootstrap server is configured (either by the factory configuration, or by :kconfig:option:`CONFIG_LWM2M_CARRIER_IS_BOOTSTRAP_SERVER`).
   * If UDP binding is configured, a URI must also be set (:kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_URI`).
   * The APN (either network default, or the one set with :kconfig:option:`CONFIG_LWM2M_CARRIER_CUSTOM_APN`) must be UDP (IP) or non-IP respectively.
-  * If this configuration is left empty (``0``) the factory configuration is used.
-    This can be different for each supported carrier.
-    For generic operation (:kconfig:option:`CONFIG_LWM2M_CARRIER_GENERIC`), the default is :c:macro:`LWM2M_CARRIER_SERVER_BINDING_UDP`.
 
 .. _device_options_lwm2m:
 

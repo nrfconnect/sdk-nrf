@@ -292,7 +292,7 @@ void test_lte_lc_on_modem_init_success(void)
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=3", EXIT_SUCCESS);
 	/* CONFIG_LTE_RAI_REQ=n */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%RAI=0", EXIT_SUCCESS);
-	/* CONFIG_LTE_LC_DNS_FALLBACK */
+	/* CONFIG_LTE_LC_DNS_FALLBACK_MODULE */
 	__cmock_nrf_inet_pton_ExpectAndReturn(NRF_AF_INET, IGNORE, IGNORE, 0 /* error */);
 	__cmock_nrf_inet_pton_IgnoreArg_src();
 	__cmock_nrf_inet_pton_IgnoreArg_dst();
@@ -360,7 +360,7 @@ void test_lte_lc_on_modem_init_rai_fail(void)
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=3", EXIT_SUCCESS);
 	/* CONFIG_LTE_RAI_REQ=n */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%RAI=0", -NRF_EFAULT);
-	/* CONFIG_LTE_LC_DNS_FALLBACK */
+	/* CONFIG_LTE_LC_DNS_FALLBACK_MODULE */
 	/* Let's check that IPv4 works */
 	__cmock_nrf_inet_pton_ExpectAndReturn(NRF_AF_INET, IGNORE, IGNORE, 1 /* success */);
 	__cmock_nrf_inet_pton_IgnoreArg_src();
