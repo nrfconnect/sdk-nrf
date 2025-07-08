@@ -41,7 +41,9 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
     extra_args:
-      - DTC_OVERLAY_FILE='boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay'
+      - platform:nrf54l15dk/nrf54l15/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lm20pdk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
       - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
       - CONFIG_BT_CTLR_TX_PWR_0=y
       - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=31
@@ -67,7 +69,9 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
     extra_args:
-      - DTC_OVERLAY_FILE='boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay'
+      - platform:nrf54l15dk/nrf54l15/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lm20pdk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
       - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
       - CONFIG_BT_CTLR_TX_PWR_PLUS_8=y
       - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=31
@@ -93,7 +97,9 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
     extra_args:
-      - DTC_OVERLAY_FILE='boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay'
+      - platform:nrf54l15dk/nrf54l15/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lm20pdk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
       - CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y
       - CONFIG_BT_CTLR_TX_PWR_0=y
       - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=31
@@ -119,7 +125,9 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
     extra_args:
-      - DTC_OVERLAY_FILE='boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay'
+      - platform:nrf54l15dk/nrf54l15/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lm20pdk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_auto_conn_advert.overlay"
       - CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y
       - CONFIG_BT_CTLR_TX_PWR_PLUS_8=y
       - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=31
@@ -145,7 +153,9 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20pdk/nrf54lm20a/cpuapp
     extra_args:
-      - DTC_OVERLAY_FILE='boards/nrf54l15dk_nrf54l15_cpuapp_auto_non_conn_advert.overlay'
+      - platform:nrf54l15dk/nrf54l15/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54l15dk_nrf54l15_cpuapp_auto_conn_advert.overlay"
+      - platform:nrf54lm20pdk/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_non_conn_advert.overlay"
+      - platform:nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp:"EXTRA_DTC_OVERLAY_FILE=boards/nrf54lm20dk_nrf54lm20a_cpuapp_non_conn_advert.overlay"
       - CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y
       - CONFIG_BT_CTLR_TX_PWR_0=y
       - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=31

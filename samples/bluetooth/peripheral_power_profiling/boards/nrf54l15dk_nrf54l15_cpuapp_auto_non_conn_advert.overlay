@@ -5,10 +5,6 @@
  */
 
 / {
-	aliases {
-		/delete-property/ sw2;
-		/delete-property/ sw3;
-	};
 	/*
 	 * Redefine button1 to use RXD0 - P0.01
 	 * Thus, when sending character from host, there will be gpio interrupt,
@@ -22,11 +18,4 @@
 			zephyr,code = <INPUT_KEY_0>;
 		};
 	};
-};
-
-/delete-node/ &button2;
-/delete-node/ &button3;
-
-&uart20 {
-	zephyr,pm-device-runtime-auto;
 };
