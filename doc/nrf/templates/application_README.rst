@@ -128,7 +128,7 @@ Additional configuration*
 
 .. note::
    * Add this section to describe and link to any library configuration options that might be important to run this application.
-     You can link to options with ``:kconfig:option:`CONFIG_XXX```.
+     You can link to options with ``:kconfig:option:`CONFIG_FOO```.
    * You need not list all possible configuration options, but only the ones that are relevant.
 
 Check and configure the following library options that are used by the application:
