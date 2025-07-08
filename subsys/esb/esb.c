@@ -452,6 +452,7 @@ static void esb_fem_for_tx_set(bool ack)
 	}
 
 	if (mpsl_fem_pa_configuration_set(&tx_event, &disable_event) == 0) {
+		mpsl_fem_enable();
 		esb_ppi_for_fem_set();
 	} else {
 		/* We want to start counting ACK timeout and potential packet retransmission from
@@ -481,6 +482,7 @@ static void esb_fem_for_tx_set(bool ack)
 static void esb_fem_for_rx_set(void)
 {
 	if (mpsl_fem_lna_configuration_set(&rx_event, &disable_event) == 0) {
+		mpsl_fem_enable();
 		esb_ppi_for_fem_set();
 		nrf_timer_shorts_set(esb_timer.p_reg,
 			(NRF_TIMER_SHORT_COMPARE2_CLEAR_MASK | NRF_TIMER_SHORT_COMPARE2_STOP_MASK));
