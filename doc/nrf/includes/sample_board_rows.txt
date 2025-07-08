@@ -261,3 +261,7 @@
 .. nrf54lm20pdk_nrf54lm20a_cpuapp
 
 | nRF54LM20 PDK |   | nrf54lm20pdk | ``nrf54lm20pdk/nrf54lm20a/cpuapp`` |
+
+.. nrf54lm20dk_nrf54lm20a_cpuapp
+
+| nRF54LM20 DK |   | nrf54lm20dk | ``nrf54lm20dk/nrf54lm20a/cpuapp`` |
