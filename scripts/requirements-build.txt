@@ -14,3 +14,4 @@ nrf-regtool==9.2.0
 windows-curses; sys_platform == 'win32'
 unidiff
 pycryptodome==3.21.0
+matter_idl
