@@ -164,6 +164,7 @@
 #include <hal/nrf_egu.h>
 #include <hal/nrf_timer.h>
 #include <hal/nrf_radio.h>
+#include <hal/nrf_regulators.h>
 
 #include "../../../../../dragoon/mpsl/libs/fem/src/mpsl_fem_abstract_interface.h"
 
@@ -195,6 +196,8 @@ static const mpsl_fem_event_t *mp_pa_deactivate_event = NULL;
 /** LNA is deactivated by NRF_802154_DPPI_RADIO_DISABLED dppi set by mpsl_fem_abort_set. */
 static const mpsl_fem_event_t *mp_lna_activate_event = NULL;
 static const mpsl_fem_event_t *mp_lna_deactivate_event = NULL;
+
+static bool m_switched_to_ldo;
 
 static void fem_psemi_enable(void);
 static int32_t fem_psemi_disable(void);
@@ -393,6 +396,7 @@ static int32_t fem_psemi_pa_configuration_set(const mpsl_fem_event_t *const p_ac
 	fem_psemi_interface_config_t *p_obj = &m_fem_interface_config;
 	int32_t ret_val = 0;
 	bool bypass;
+	bool switch_to_ldo;
 
 	if (fem_psemi_state_get() != FEM_PSEMI_STATE_AUTO) {
 		return -NRF_EPERM;
@@ -404,6 +408,9 @@ static int32_t fem_psemi_pa_configuration_set(const mpsl_fem_event_t *const p_ac
 	 */
 	bypass = IS_ENABLED(CONFIG_MPSL_FEM_HOT_POTATO_BYPASS_BLE) &&
 		 nrf_radio_mode_get(NRF_RADIO) != NRF_RADIO_MODE_IEEE802154_250KBIT;
+
+	switch_to_ldo = IS_ENABLED(CONFIG_MPSL_FEM_HOT_POTATO_PA_LDO) && !bypass &&
+			nrf_regulators_vreg_enable_check(NRF_REGULATORS, NRF_REGULATORS_VREG_MAIN);
 
 	if (p_activate_event != NULL) {
 		switch (p_activate_event->type) {
@@ -458,6 +465,11 @@ static int32_t fem_psemi_pa_configuration_set(const mpsl_fem_event_t *const p_ac
 		}
 
 		mp_pa_deactivate_event = p_deactivate_event;
+	}
+
+	if (switch_to_ldo) {
+		nrf_regulators_vreg_enable_set(NRF_REGULATORS, NRF_REGULATORS_VREG_MAIN, false);
+		m_switched_to_ldo = true;
 	}
 
 	return 0;
@@ -549,6 +561,11 @@ static int32_t fem_psemi_pa_configuration_clear(void)
 
 	if (fem_psemi_state_get() != FEM_PSEMI_STATE_AUTO) {
 		return -NRF_EPERM;
+	}
+
+	if (IS_ENABLED(CONFIG_MPSL_FEM_HOT_POTATO_PA_LDO) && m_switched_to_ldo) {
+		nrf_regulators_vreg_enable_set(NRF_REGULATORS, NRF_REGULATORS_VREG_MAIN, true);
+		m_switched_to_ldo = false;
 	}
 
 	/*
