@@ -227,5 +227,5 @@ static bool app_event_handler(const struct app_event_header *aeh)
 }
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APP_EVENT_SUBSCRIBE(MODULE, button_event);
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, button_event);
 APP_EVENT_SUBSCRIBE(MODULE, passkey_req_event);
