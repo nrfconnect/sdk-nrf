@@ -134,7 +134,7 @@ If a private key has been compromised or lost, you can invalidate its public key
 These keys are kept internally by the bootloader, so the list of available public keys cannot change once it is deployed.
 For nRF54L SoCs, the KMU is used to store the public keys and to handle the revocation policy.
 For description, see the :kconfig:option:`CONFIG_SB_CRYPTO_KMU_KEYS_REVOCATION` Kconfig option.
-For other devices, see :kconfig:option:`CONFIG_SB_PUBLIC_KEY_FILES` for details on how this mechanism is implemented.
+For other devices, see :kconfig:option:`SB_CONFIG_SECURE_BOOT_PUBLIC_KEY_FILES` for details on how this mechanism is implemented.
 
 You can add this feature to your own project and check its functionality as follows:
 
