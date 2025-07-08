@@ -90,11 +90,10 @@ tests:
       - sysbuild
       - ci_samples_matter
   # Sample to execute load tests
-  sample.matter.light_bulb.memory_profiling.persistent_subscriptions:
+  sample.matter.light_bulb.memory_profiling:
     sysbuild: true
     build_only: true
     extra_args:
-      - CONFIG_CHIP_PERSISTENT_SUBSCRIPTIONS=y
       - CONFIG_CHIP_MEMORY_PROFILING=y
       - CONFIG_SHELL_MINIMAL=y
     platform_allow:
