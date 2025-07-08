@@ -314,6 +314,8 @@ nRF Desktop
     This change ensures that subscriptions to both HID boot and HID report protocol mode are not enabled at the same time.
   * The :ref:`nrf_desktop_fn_keys` to subscribe for :c:struct:`button_event` as the first subscriber (:c:macro:`APP_EVENT_SUBSCRIBE_FIRST`) by default.
     You can disable the :ref:`CONFIG_DESKTOP_FN_KEYS_BUTTON_EVENT_SUBSCRIBE_FIRST <config_desktop_app_options>` Kconfig option to use early subscription (:c:macro:`APP_EVENT_SUBSCRIBE_EARLY`).
+  * The :ref:`nrf_desktop_passkey` and :ref:`nrf_desktop_buttons_sim` to subscribe for :c:struct:`button_event` as an early subscriber (:c:macro:`APP_EVENT_SUBSCRIBE_EARLY`).
+    This allows the modules to process the event before other application modules.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
