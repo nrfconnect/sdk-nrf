@@ -19,8 +19,8 @@ set(NRF_DIR              ${NRF_DIR}                              CACHE STRING "N
 
 # This file is populated with the Mbed TLS config file names
 set(MBEDTLS_CONFIG_FILE                 ${CONFIG_MBEDTLS_CFG_FILE}                      CACHE STRING "Mbed TLS Config file")
-set(MBEDTLS_PSA_CRYPTO_CONFIG_FILE      ${CONFIG_MBEDTLS_PSA_CRYPTO_CONFIG_FILE}        CACHE STRING "PSA crypto config file (PSA_WANT)")
-set(MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE ${CONFIG_MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE}   CACHE STRING "PSA crypto config file (PSA_NEED)")
+set(MBEDTLS_PSA_CRYPTO_CONFIG_FILE      ${CONFIG_MBEDTLS_PSA_CRYPTO_CONFIG_FILE}        CACHE STRING "PSA Crypto config file (PSA_WANT)")
+set(MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE ${CONFIG_MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE}   CACHE STRING "PSA Crypto config file (PSA_NEED)")
 
 # This file is populated with the generated include-folders for PSA interface (for main app, ns-services) as
 # well as the include-folder for library build of the crypto toolbo with or without TF-M
