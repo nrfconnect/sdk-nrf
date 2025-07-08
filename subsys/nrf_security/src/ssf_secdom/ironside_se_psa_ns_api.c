@@ -54,7 +54,7 @@ static psa_status_t psa_call_buffered_and_flushed(psa_handle_t handle, int32_t t
 
 	ironside_call_release(buf);
 
-	return status;
+	return PSA_ERROR_COMMUNICATION_FAILURE;
 }
 
 /*
