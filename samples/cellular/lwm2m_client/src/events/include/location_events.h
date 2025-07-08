@@ -41,6 +41,6 @@ struct pgps_data_request_event {
 };
 
 APP_EVENT_TYPE_DECLARE(pgps_data_request_event);
-#endif /* CONFIG_LWM2M_CLIEN_UTILS_LOCATION_ASSIST_PGPS */
+#endif /* CONFIG_LWM2M_CLIENT_UTILS_LOCATION_ASSIST_PGPS */
 
 #endif /* LOCATION_EVENTS_H__ */

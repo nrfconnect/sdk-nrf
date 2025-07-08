@@ -36,7 +36,7 @@ static const char rest_shell_cmd_usage_str[] =
 	"                       optional (1) or required (2). Default value is 2.\n"
 	"  -u, --url,           URL beyond host/domain (default: \"/index.html\")\n"
 	"  -t, --timeout,       Request timeout in seconds. Zero means timeout is disabled.\n"
-	"                       (default: CONFIG_REST_CLIENT_REST_REQUEST_TIMEOUT)\n"
+	"                       (default: CONFIG_REST_CLIENT_REQUEST_TIMEOUT)\n"
 	"  -H, --header,        Header including CRLF, for example:\n"
 	"                       -H \"Content-Type: application/json\\x0D\\x0A\"\n"
 	"  -b, --body,          Payload body, example: -b '{\"foo\":bar}'\n"

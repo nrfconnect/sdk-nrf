@@ -448,7 +448,7 @@ The ``<cmd>`` command is a string, and can be used as follows:
   * ``all`` - Any network allowed.
   * ``0`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_GENERIC`.
   * ``1`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_VERIZON`.
-  * ``2`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_ATT`.
+  * ``2`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_BELL_CA`.
   * ``3`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_LG_UPLUS`.
   * ``4`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_T_MOBILE`.
   * ``5`` - :kconfig:option:`CONFIG_LWM2M_CARRIER_SOFTBANK`.
@@ -551,7 +551,6 @@ The ``<cmd>`` command is a string, and can be used as follows:
   * ``"N"`` - :kconfig:option:`LWM2M_CARRIER_SERVER_BINDING_N`.
 
   Additionally, an empty ``<binding>`` resets the configuration to default setting (factory configuration).
-  For details, see the :kconfig:option:`CONFIG_LWM2M_SERVER_BINDING_CHOICE` Kconfig option.
 
 * ``AT#XCARRIERCFG="is_bootstrap"[,<0|1>]``
 

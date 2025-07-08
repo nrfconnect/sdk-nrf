@@ -216,7 +216,7 @@ static int sensor_module_init(void)
 		k_work_schedule(&light_work, K_NO_WAIT);
 	}
 
-	if (IS_ENABLED(CONFIG_SENSOR_MODULE_COLOUR)) {
+	if (IS_ENABLED(CONFIG_SENSOR_MODULE_COLOR)) {
 		k_work_init_delayable(&colour_work, colour_work_cb);
 		k_work_schedule(&colour_work, K_NO_WAIT);
 	}
