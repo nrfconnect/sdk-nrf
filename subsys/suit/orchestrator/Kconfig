@@ -5,7 +5,7 @@
 #
 
 menuconfig SUIT_ORCHESTRATOR
-	bool "Enable SUIT orchestrator module"
+	bool "SUIT orchestrator module"
 	depends on SUIT_CRYPTO
 	depends on SUIT_PROCESSOR
 	depends on SUIT_STORAGE

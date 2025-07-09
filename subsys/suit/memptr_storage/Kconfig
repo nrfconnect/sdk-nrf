@@ -5,7 +5,7 @@
 #
 
 menuconfig SUIT_MEMPTR_STORAGE
-	bool "Enable module for holding pointer to the memory"
+	bool "Module for holding pointer to the memory"
 
 if SUIT_MEMPTR_STORAGE
 

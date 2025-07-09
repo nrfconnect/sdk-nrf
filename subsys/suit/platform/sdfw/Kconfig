@@ -5,13 +5,13 @@
 #
 
 config SUIT_DEVCONFIG
-	bool "Enable manifest authorization and installation"
+	bool "Manifest authorization and installation"
 	depends on SUIT_STORAGE
 	depends on SUIT_MCI
 	depends on SUIT_METADATA
 
 config SUIT_DIGEST_CACHE
-	bool "Enable digest caching"
+	bool "Digest caching"
 	depends on SUIT_DIGEST
 
 if SUIT_DIGEST_CACHE
@@ -23,7 +23,7 @@ config SUIT_DIGEST_CACHE_SIZE
 endif
 
 config SUIT_AUTHENTICATE
-	bool "Enable message/data authentication"
+	bool "Message/data authentication"
 	depends on SUIT_CRYPTO
 	depends on SUIT_PLAT_CHECK_COMPONENT_COMPATIBILITY
 	select PSA_WANT_ALG_SHA_256 if SOC_FAMILY_NORDIC_NRF

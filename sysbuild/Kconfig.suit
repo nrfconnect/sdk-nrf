@@ -318,6 +318,6 @@ config SUIT_BUILD_AB_UPDATE
 	  Build two applications for the A and B update.
 
 config SUIT_SOC_FLASH_NRF_RADIO_SYNC_RPC
-	bool "Enable flash driver synchronization with radio protocols through RPC"
+	bool "Flash driver synchronization with radio protocols through RPC"
 
 endmenu

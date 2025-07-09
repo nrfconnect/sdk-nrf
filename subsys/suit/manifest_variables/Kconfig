@@ -5,7 +5,7 @@
 #
 
 config SUIT_MANIFEST_VARIABLES
-	bool "Enable SUIT manifest-accessible variables support"
+	bool "SUIT manifest-accessible variables support"
 
 if SUIT_MANIFEST_VARIABLES
 

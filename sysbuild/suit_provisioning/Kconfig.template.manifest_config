@@ -15,11 +15,11 @@ config SUIT_MPI_$(manifest)_CLASS_NAME
 	default "$(manifest-class)"
 
 config SUIT_MPI_$(manifest)_DOWNGRADE_PREVENTION
-	bool "Enable downgrade prevention policy"
+	bool "Downgrade prevention policy"
 	default $(manifest-downgrade-prevention-enabled)
 
 config SUIT_MPI_$(manifest)_INDEPENDENT_UPDATE
-	bool "Enable independent updateability policy"
+	bool "Independent updateability policy"
 	default $(manifest-independent-updates)
 
 choice "SUIT_MPI_$(manifest)_SIGNATURE_CHECK"
@@ -32,12 +32,12 @@ config SUIT_MPI_$(manifest)_SIGNATURE_CHECK_DISABLED
 	  Do not require or verify manifest digest signature check
 
 config SUIT_MPI_$(manifest)_SIGNATURE_CHECK_ENABLED_ON_UPDATE
-	bool "Enabled on update"
+	bool "Check on update"
 	help
 	  Require and verify manifest digest signature check on update
 
 config SUIT_MPI_$(manifest)_SIGNATURE_CHECK_ENABLED_ON_UPDATE_AND_BOOT
-	bool "Enabled on update and boot"
+	bool "Check on update and boot"
 	help
 	  Require and verify manifest digest signature check on update and boot
 
