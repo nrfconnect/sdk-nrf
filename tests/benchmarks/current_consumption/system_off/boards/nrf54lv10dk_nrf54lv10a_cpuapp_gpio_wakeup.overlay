@@ -1,0 +1,43 @@
+/ {
+	/*
+	 * Redefine sw0/button0 to use RXD0 - P0.01
+	 * Thus, when sending character from host, there will be gpio interrupt,
+	 * the same as originally triggered by sw0 button.
+	 */
+	 buttons {
+		compatible = "gpio-keys";
+		button0: button_0 {
+			gpios = <&gpio0 1 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Input 0";
+			zephyr,code = <INPUT_KEY_0>;
+		};
+	};
+};
+
+&pinctrl {
+	/*
+	 * Redefine: RXD0 -> P0.04 (any other valid pin)
+	 */
+	/omit-if-no-ref/ uart30_default: uart30_default {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 0, 0)>,
+				<NRF_PSEL(UART_RTS, 0, 2)>;
+		};
+
+		group2 {
+			psels = <NRF_PSEL(UART_RX, 0, 4)>,
+				<NRF_PSEL(UART_CTS, 0, 3)>;
+			bias-pull-up;
+		};
+	};
+
+	/omit-if-no-ref/ uart30_sleep: uart30_sleep {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 0, 0)>,
+				<NRF_PSEL(UART_RX, 0, 4)>,
+				<NRF_PSEL(UART_RTS, 0, 2)>,
+				<NRF_PSEL(UART_CTS, 0, 3)>;
+			low-power-enable;
+		};
+	};
+};
