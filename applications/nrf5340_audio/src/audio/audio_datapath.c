@@ -63,7 +63,7 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 #define BLK_MULTI_CHAN_NUM_SAMPS   (BLK_MONO_NUM_SAMPS * CONFIG_AUDIO_OUTPUT_CHANNELS)
 /* Number of octets in a single audio block */
 #define BLK_MONO_SIZE_OCTETS	   (BLK_MONO_NUM_SAMPS * CONFIG_AUDIO_BIT_DEPTH_OCTETS)
-#define BLK_MULTI_CHAN_SIZE_OCTETS (BLK_MONO_SIZE_OCTETS * CONFIG_AUDIO_OUTPUT_CHANNELS)
+#define BLK_MULTI_CHAN_SIZE_OCTETS (BLK_MULTI_CHAN_NUM_SAMPS * CONFIG_AUDIO_BIT_DEPTH_OCTETS)
 
 /* Number of decoder buffers. */
 #define FIFO_NUM_BUFS 2
@@ -971,10 +971,11 @@ void audio_datapath_stream_out(struct net_buf *audio_frame_in)
 
 	struct audio_metadata *meta_out = net_buf_user_data(audio_frame_out);
 
-	net_buf_user_data_copy(audio_frame_out, audio_frame_in);
 	meta_out = net_buf_user_data(audio_frame_out);
 	meta_out->data_coding = PCM;
-	meta_out->bytes_per_location = FRAME_SIZE_BYTES;
+	meta_out->sample_rate_hz = CONFIG_AUDIO_SAMPLE_RATE_HZ;
+	meta_out->bytes_per_location = PCM_NUM_BYTES_MONO;
+	meta_out->locations = BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT;
 
 	ret = sw_codec_decode(audio_frame_in, audio_frame_out);
 	if (ret) {
@@ -990,10 +991,9 @@ void audio_datapath_stream_out(struct net_buf *audio_frame_in)
 		}
 	}
 
-	if (audio_frame_out->len !=
-	    (CONFIG_AUDIO_OUTPUT_CHANNELS * BLK_MONO_SIZE_OCTETS * NUM_BLKS_IN_FRAME)) {
+	if (audio_frame_out->len != PCM_NUM_BYTES_MONO * CONFIG_AUDIO_OUTPUT_CHANNELS) {
 		LOG_WRN("Decoded audio has wrong size: %d. Expected: %d", audio_frame_out->len,
-			CONFIG_AUDIO_OUTPUT_CHANNELS * BLK_MONO_SIZE_OCTETS * NUM_BLKS_IN_FRAME);
+			PCM_NUM_BYTES_MONO * CONFIG_AUDIO_OUTPUT_CHANNELS);
 		/* Discard frame */
 		net_buf_unref(audio_frame_out);
 		return;
@@ -1088,7 +1088,7 @@ int audio_datapath_init(void)
 	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) && (CONFIG_AUDIO_DEV == GATEWAY)) {
 		/* Disable presentation compensation feature for microphone return on
 		 * gateway, since there's only one stream output from gateway for now, so no
-		 * need to qhave presentation compensation.
+		 * need to have presentation compensation.
 		 */
 		ctrl_blk.pres_comp.enabled = false;
 	} else {

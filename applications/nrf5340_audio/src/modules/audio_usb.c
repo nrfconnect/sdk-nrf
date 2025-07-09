@@ -13,6 +13,7 @@
 #include <audio_defines.h>
 
 #include "macros_common.h"
+#include "device_location.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(audio_usb, CONFIG_MODULE_AUDIO_USB_LOG_LEVEL);
@@ -90,7 +91,7 @@ static void data_received(const struct device *dev, struct net_buf *buffer, size
 
 	/* Receive data from USB */
 	if (size != USB_BLOCK_SIZE_MULTI_CHAN) {
-		LOG_WRN("Wrong length: %d", size);
+		LOG_WRN("Incorrect buffer size: %d", size);
 		net_buf_unref(buffer);
 		return;
 	}
@@ -134,7 +135,7 @@ static void data_received(const struct device *dev, struct net_buf *buffer, size
 	meta->sample_rate_hz = CONFIG_AUDIO_SAMPLE_RATE_HZ;
 	meta->bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS;
 	meta->carried_bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS;
-	meta->locations = BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT;
+	device_location_get(&meta->locations);
 	meta->bad_data = false;
 
 	/* Put the block into RX queue */

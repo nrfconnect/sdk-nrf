@@ -27,7 +27,8 @@ LOG_MODULE_REGISTER(audio_system, CONFIG_AUDIO_SYSTEM_LOG_LEVEL);
 #define FIFO_RX_BLOCK_COUNT (CONFIG_FIFO_FRAME_SPLIT_NUM * CONFIG_FIFO_RX_FRAME_COUNT)
 
 #define FIFO_TX_POOL_BLK_COUNT	FIFO_TX_BLOCK_COUNT
-#define FIFO_INT_POOL_BLK_COUNT 2
+#define FIFO_ENC_POOL_BLK_COUNT 2
+#define FIFO_DEC_POOL_BLK_COUNT 1
 #define FIFO_RX_POOL_BLK_COUNT	FIFO_RX_BLOCK_COUNT
 
 #define DEBUG_INTERVAL_NUM     1000
@@ -40,7 +41,9 @@ K_MSGQ_DEFINE(audio_q_rx, sizeof(struct net_buf *), FIFO_RX_BLOCK_COUNT, sizeof(
 
 NET_BUF_POOL_FIXED_DEFINE(audio_q_rx_pool, FIFO_RX_POOL_BLK_COUNT, FRAME_SIZE_BYTES,
 			  sizeof(struct audio_metadata), NULL);
-NET_BUF_POOL_FIXED_DEFINE(audio_q_int_pool, FIFO_INT_POOL_BLK_COUNT, ENC_MULTI_CHAN_MAX_FRAME_SIZE,
+NET_BUF_POOL_FIXED_DEFINE(audio_q_enc_pool, FIFO_ENC_POOL_BLK_COUNT, ENC_MULTI_CHAN_MAX_FRAME_SIZE,
+			  sizeof(struct audio_metadata), NULL);
+NET_BUF_POOL_FIXED_DEFINE(audio_q_dec_pool, FIFO_DEC_POOL_BLK_COUNT, PCM_NUM_BYTES_MULTI_CHAN,
 			  sizeof(struct audio_metadata), NULL);
 NET_BUF_POOL_FIXED_DEFINE(audio_q_tx_pool, FIFO_TX_POOL_BLK_COUNT, USB_BLOCK_SIZE_MULTI_CHAN,
 			  sizeof(struct audio_metadata), NULL);
@@ -77,25 +80,24 @@ static void audio_gateway_configure(void)
 		ERR_CHK_MSG(-EINVAL, "No codec selected");
 	}
 
-#if (CONFIG_STREAM_BIDIRECTIONAL)
-	sw_codec_cfg.decoder.audio_ch = DEVICE_LOCATION_DEFAULT;
-	sw_codec_cfg.decoder.num_ch = 1;
-	sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
-#endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
+	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
+		sw_codec_cfg.decoder.audio_loc = BT_AUDIO_LOCATION_MONO_AUDIO;
+		sw_codec_cfg.decoder.num_ch = 1;
+		sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
+	}
 
 	if (IS_ENABLED(CONFIG_MONO_TO_ALL_RECEIVERS)) {
 		sw_codec_cfg.encoder.num_ch = 1;
-	} else {
-		sw_codec_cfg.encoder.num_ch = 2;
 	}
 
 	if (sw_codec_cfg.encoder.num_ch == 1) {
 		sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
-		sw_codec_cfg.encoder.audio_ch = BT_AUDIO_LOCATION_MONO_AUDIO;
+		sw_codec_cfg.encoder.audio_loc = BT_AUDIO_LOCATION_MONO_AUDIO;
 	} else {
+		device_location_get(&sw_codec_cfg.encoder.audio_loc);
+		sw_codec_cfg.encoder.num_ch =
+			device_location_to_chan_num(sw_codec_cfg.encoder.audio_loc);
 		sw_codec_cfg.encoder.channel_mode = SW_CODEC_MULTICHANNEL;
-		sw_codec_cfg.encoder.audio_ch =
-			BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT;
 	}
 }
 
@@ -107,17 +109,17 @@ static void audio_headset_configure(void)
 		ERR_CHK_MSG(-EINVAL, "No codec selected");
 	}
 
-#if (CONFIG_STREAM_BIDIRECTIONAL)
-	sw_codec_cfg.encoder.audio_ch = DEVICE_LOCATION_DEFAULT;
-	sw_codec_cfg.encoder.num_ch = 1;
-	sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
-#endif /* (CONFIG_STREAM_BIDIRECTIONAL) */
+	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
+		sw_codec_cfg.encoder.audio_loc = BT_AUDIO_LOCATION_MONO_AUDIO;
+		sw_codec_cfg.encoder.num_ch = 1;
+		sw_codec_cfg.encoder.channel_mode = SW_CODEC_MONO;
+	}
 
 	enum bt_audio_location device_location;
 
 	device_location_get(&device_location);
 
-	sw_codec_cfg.decoder.num_ch = POPCOUNT(device_location);
+	sw_codec_cfg.decoder.num_ch = device_location_to_chan_num(device_location);
 	switch ((uint32_t)device_location) {
 	case BT_AUDIO_LOCATION_FRONT_LEFT:
 		sw_codec_cfg.decoder.channel_mode = SW_CODEC_MONO;
@@ -134,7 +136,7 @@ static void audio_headset_configure(void)
 		break;
 	};
 
-	sw_codec_cfg.decoder.audio_ch = device_location;
+	sw_codec_cfg.decoder.audio_loc = device_location;
 
 	if (IS_ENABLED(CONFIG_SD_CARD_PLAYBACK)) {
 		/* Need an extra decoder channel to decode data from SD card */
@@ -147,6 +149,8 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 	int ret;
 	uint32_t audio_q_num_used;
 	static uint32_t test_tone_finite_pos;
+	struct net_buf *audio_frame_out = NULL;
+	struct audio_metadata *meta_in;
 	int debug_trans_count = 0;
 
 	while (1) {
@@ -156,7 +160,6 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 
 		if (audio_frame_in == NULL) {
 			LOG_ERR("Out of RX buffers");
-			net_buf_unref(audio_frame_in);
 			continue;
 		}
 
@@ -181,10 +184,12 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 
 		/* Free the block */
 		net_buf_unref(audio_block);
-		struct audio_metadata *meta = net_buf_user_data(audio_frame_in);
+
+		meta_in = net_buf_user_data(audio_frame_in);
+		meta_in->bytes_per_location = FRAME_SIZE_MONO_BYTES;
 
 		/* Loop until we have a full frame */
-		while (meta->data_len_us < CONFIG_AUDIO_FRAME_DURATION_US) {
+		while (meta_in->data_len_us < CONFIG_AUDIO_FRAME_DURATION_US) {
 			ret = k_msgq_get(&audio_q_rx, (void *)&audio_block, K_FOREVER);
 			ERR_CHK_MSG(ret, "Failed to get audio block from RX queue");
 
@@ -192,26 +197,29 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 
 			/* Extract the data from the block */
 			net_buf_add_mem(audio_frame_in, audio_block->data, audio_block->len);
-			meta->data_len_us += block_meta->data_len_us;
+			meta_in->data_len_us += block_meta->data_len_us;
 
 			/* Free the block */
 			net_buf_unref(audio_block);
 		}
 
-		struct net_buf *audio_frame_out = net_buf_alloc(&audio_q_int_pool, K_NO_WAIT);
-
-		if (audio_frame_out == NULL) {
-			LOG_WRN("Out of encoder buffers");
-			net_buf_unref(audio_frame_in);
-			continue;
-		}
-
-		struct audio_metadata *meta_out = net_buf_user_data(audio_frame_out);
-
-		net_buf_user_data_copy(audio_frame_out, audio_frame_in);
-		meta_out->data_coding = LC3;
-
 		if (sw_codec_cfg.encoder.enabled) {
+			audio_frame_out = net_buf_alloc(&audio_q_enc_pool, K_NO_WAIT);
+
+			if (audio_frame_out == NULL) {
+				LOG_WRN("Out of encoder buffers");
+				net_buf_unref(audio_frame_in);
+				continue;
+			}
+
+			struct audio_metadata *meta_out = net_buf_user_data(audio_frame_out);
+
+			net_buf_user_data_copy(audio_frame_out, audio_frame_in);
+			meta_out->data_coding = LC3;
+			meta_out->sample_rate_hz = sw_codec_cfg.encoder.sample_rate_hz;
+			meta_out->bytes_per_location = ENC_MAX_FRAME_SIZE;
+			meta_out->locations = sw_codec_cfg.encoder.audio_loc;
+
 			if (test_tone_size) {
 				/* Test tone takes over audio stream */
 				uint32_t num_bytes = 0;
@@ -372,7 +380,7 @@ int audio_system_decode(struct net_buf *audio_frame_in)
 		return -EINVAL;
 	}
 
-	struct net_buf *audio_frame_out = net_buf_alloc(&audio_q_tx_pool, K_NO_WAIT);
+	struct net_buf *audio_frame_out = net_buf_alloc(&audio_q_dec_pool, K_NO_WAIT);
 
 	if (audio_frame_out == NULL) {
 		LOG_WRN("Out of PCM buffers");
@@ -381,10 +389,11 @@ int audio_system_decode(struct net_buf *audio_frame_in)
 
 	struct audio_metadata *meta_out = net_buf_user_data(audio_frame_out);
 
-	net_buf_add(audio_frame_out, USB_BLOCK_SIZE_MULTI_CHAN);
 	net_buf_user_data_copy(audio_frame_out, audio_frame_in);
 	meta_out->data_coding = PCM;
-	meta_out->bytes_per_location = FRAME_SIZE_BYTES;
+	meta_out->sample_rate_hz = CONFIG_AUDIO_SAMPLE_RATE_HZ;
+	meta_out->locations = sw_codec_cfg.decoder.audio_loc;
+	meta_out->bytes_per_location = PCM_NUM_BYTES_MONO;
 
 	ret = sw_codec_decode(audio_frame_in, audio_frame_out);
 	if (ret) {
@@ -428,6 +437,7 @@ int audio_system_decode(struct net_buf *audio_frame_in)
 			return ret;
 		}
 	}
+
 	if (debug_trans_count == DEBUG_INTERVAL_NUM) {
 		uint32_t audio_q_num_used = k_msgq_num_used_get(&audio_q_tx);
 

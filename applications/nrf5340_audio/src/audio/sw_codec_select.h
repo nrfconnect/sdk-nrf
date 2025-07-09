@@ -32,7 +32,8 @@
 #define ENC_TIME_US		      MAX(LC3_ENC_TIME_US, 0)
 #define DEC_TIME_US		      MAX(LC3_DEC_TIME_US, 0)
 #define PCM_NUM_BYTES_MONO	      MAX(LC3_PCM_NUM_BYTES_MONO, 0)
-#define PCM_NUM_BYTES_MULTI_CHAN      (PCM_NUM_BYTES_MONO * CONFIG_AUDIO_OUTPUT_CHANNELS)
+#define PCM_NUM_BYTES_MULTI_CHAN                                                                   \
+	(PCM_NUM_BYTES_MONO * MAX(CONFIG_AUDIO_DECODE_CHANNELS_MAX, CONFIG_AUDIO_OUTPUT_CHANNELS))
 
 enum sw_codec_select {
 	SW_CODEC_NONE,
@@ -48,12 +49,6 @@ enum sw_codec_channel_mode {
  * @brief The decoder configuration structure.
  */
 struct lc3_configuration {
-	/* Minimum coded bytes required for this decoder instance. */
-	size_t coded_frame_bytes;
-
-	/* Audio sample bytes per frame. */
-	size_t sample_frame_bytes;
-
 	/* Number of valid bits for a sample (bit depth).
 	 * Typically 16 or 24.
 	 */
@@ -69,9 +64,6 @@ struct lc3_configuration {
 
 	/* A flag indicating if the decoded buffer is sample interleaved or not. */
 	bool interleaved;
-
-	/* Channel locations for this decoder instance. */
-	uint32_t locations;
 
 	/* Stream bitrate in bps. */
 	uint32_t bitrate_bps;
@@ -104,7 +96,7 @@ struct sw_codec_encoder {
 	int bitrate;
 	enum sw_codec_channel_mode channel_mode;
 	uint8_t num_ch;
-	enum audio_channel audio_ch;
+	enum bt_audio_location audio_loc;
 	uint32_t sample_rate_hz;
 	struct lc3_encoder_context lc3_ctx;
 };
@@ -113,7 +105,7 @@ struct sw_codec_decoder {
 	bool enabled;
 	enum sw_codec_channel_mode channel_mode; /* Mono or multi-channel. */
 	uint8_t num_ch;				 /* Number of decoder channels. */
-	enum audio_channel audio_ch;		 /* Used to choose which channel to use. */
+	enum bt_audio_location audio_loc;	 /* Used to choose which location channel to use. */
 	uint32_t sample_rate_hz;
 	struct lc3_decoder_context lc3_ctx;
 };
