@@ -38,3 +38,6 @@ s1_image:
 settings_storage:
   address: 0xfe000
   size: 0x2000
+nrf5_mbr:
+  address: 0x0
+  size: 0x0
