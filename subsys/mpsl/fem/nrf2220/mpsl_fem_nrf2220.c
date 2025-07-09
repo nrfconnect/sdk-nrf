@@ -245,7 +245,7 @@ static int32_t fem_temperature_changed_update_now(void)
 
 	return fem_temperature_update_result;
 }
-#endif /* CONFIG_MPSL_FEM_NRF2220_TEMPERATURE_COMPENSATION_MPSL_SCHEDULER */
+#endif /* CONFIG_MPSL_FEM_NRF2220_TEMPERATURE_COMPENSATION_WITH_MPSL_SCHEDULER */
 
 #if defined(CONFIG_MPSL_FEM_NRF2220_TEMPERATURE_SOURCE_SOC)
 
