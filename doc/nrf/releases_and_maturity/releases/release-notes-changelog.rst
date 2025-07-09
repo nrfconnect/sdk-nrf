@@ -110,6 +110,11 @@ Developing with custom boards
 
 |no_changes_yet_note|
 
+Developing with coprocessors
+============================
+
+* Added the :ref:`ug_hpf_softperipherals_comparison` documentation page, describing potential use cases and differences between the two solutions.
+
 Security
 ========
 
