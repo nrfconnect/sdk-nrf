@@ -39,8 +39,19 @@ Snippet's primary function is to enable the code that transfers the FLPR code to
 When building for the ``nrf54l15dk/nrf54l15/cpuflpr`` target, a minimal sample is automatically loaded onto the application core.
 See more information on :ref:`building_nrf54l_app_flpr_core`.
 
-Using MCUboot with FLPR
-***********************
+Peripherals emulation on FLPR
+*****************************
+
+.. note::
+
+   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 device.
+
+The FLPR core can emulate software peripherals using :ref:`nrfxlib:soft_peripherals` or the :ref:`HPF<hpf_index>`.
+This setup is useful in scenarios where you need additional peripheral functionality or want to optimize power consumption and performance.
+For detailed comparisons of implementation scenarios and use cases between the Soft Peripherals and the HPF, refer to the :ref:`ug_hpf_softperipherals_comparison` documentation page.
+
+MCUboot FLPR configuration
+**************************
 
 To ensure that MCUboot functions correctly with a FLPR-integrated application, several manual configurations are necessary.
 For details, see :ref:`nRF54l_signing_app_with_flpr_payload`.
