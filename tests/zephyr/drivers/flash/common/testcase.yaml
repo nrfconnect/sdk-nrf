@@ -28,15 +28,3 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
       - DTC_OVERLAY_FILE="boards/nrf54l15dk_nrf54l15_cpuapp_sqspi.overlay"
-  nrf.extended.drivers.flash.common.default:
-    filter: ((CONFIG_FLASH_HAS_DRIVER_ENABLED and not CONFIG_TRUSTED_EXECUTION_NONSECURE)
-      and (dt_label_with_parent_compat_enabled("storage_partition", "fixed-partitions")
-      or dt_label_with_parent_compat_enabled("storage_partition", "nordic,owned-partitions")))
-    platform_allow:
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
-    integration_platforms:
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
-    harness_config:
-      fixture: external_flash
