@@ -26,6 +26,9 @@ using namespace ::chip::DeviceLayer;
 
 constexpr EndpointId kLightEndpointId = 1;
 
+Identify sIdentify = { kLightEndpointId, Nrf::Matter::Certification::IdentifyStartHandler, Nrf::Matter::Certification::IdentifyStopHandler,
+		       Clusters::Identify::IdentifyTypeEnum::kVisibleIndicator, Nrf::Matter::Certification::TriggerIdentifyEffectHandler };
+
 namespace Nrf::Matter
 {
 namespace Certification
@@ -60,6 +63,21 @@ namespace Certification
 				}
 			});
 		}
+	}
+
+	void IdentifyStartHandler(Identify *) {
+		/* Dummy handler, as certification sample does not require visual identification. */
+		LOG_INF("Identify started event received");
+	}
+
+	void IdentifyStopHandler(Identify *) {
+		/* Dummy handler, as certification sample does not require visual identification. */
+		LOG_INF("Identify stopped event received");
+	}
+
+	void TriggerIdentifyEffectHandler(Identify *){
+		/* Dummy handler, as certification sample does not require visual identification. */
+		LOG_INF("Trigger identify effect event received");
 	}
 
 } /* namespace Certification */
