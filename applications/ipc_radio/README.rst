@@ -69,7 +69,7 @@ You can set the supported radio configurations using the following Kconfig optio
 * :kconfig:option:`CONFIG_IPC_RADIO_802154` - For the IEEE 802.15.4 serialization.
 
 
-You can select the Bluetooth Low Energy serialization using the :kconfig:option:`CONFIG_IPC_RADIO_BT_SER` Kconfig option:
+You can select the Bluetooth Low Energy serialization using the ``CONFIG_IPC_RADIO_BT_SER`` Kconfig choice:
 
 * :kconfig:option:`CONFIG_IPC_RADIO_BT_HCI_IPC` - For the Bluetooth HCI serialization.
 * :kconfig:option:`CONFIG_IPC_RADIO_BT_RPC` - For the Bluetooth host API serialization.
