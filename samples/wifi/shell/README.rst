@@ -269,7 +269,7 @@ Supported CLI commands
        | wifi -i1 -c5
 
 ``wifi cred`` is an extension to the Wi-Fi command line.
-It adds the following subcommands to interact with the :ref:`lib_wifi_credentials` library:
+It adds the following subcommands to interact with the :ref:`Wi-Fi credentials <zephyr:lib_wifi_credentials>` library:
 
 .. list-table:: Wi-Fi credentials shell subcommands
    :header-rows: 1

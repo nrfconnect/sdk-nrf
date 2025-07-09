@@ -13,7 +13,7 @@ Overview
 ********
 
 The automatic connection feature is implemented by adding a ``NET_REQUEST_WIFI_CONNECT_STORED`` command to Zephyr's Wi-Fi L2 Layer.
-Credentials are pulled from the :ref:`lib_wifi_credentials` library.
+Credentials are pulled from the :ref:`Wi-Fi credentials <zephyr:lib_wifi_credentials>` library.
 
 Configuration
 *************

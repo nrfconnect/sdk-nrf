@@ -238,7 +238,7 @@ Configuration management
 ************************
 
 The configuration management component manages Wi-Fi configurations.
-It uses the :ref:`lib_wifi_credentials` library to handle the configurations in flash.
+It uses the :ref:`Wi-Fi credentials <zephyr:lib_wifi_credentials>` library to handle the configurations in flash.
 The component has one slot in RAM to save the configurations.
 
 You can save the configuration in flash or RAM during provisioning.
