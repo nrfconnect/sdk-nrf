@@ -55,7 +55,8 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
      - `Product Specification <nRF52805 Product Specification_>`_
    * - :zephyr:board:`nrf52840dongle`
      - PCA10059
-     - ``nrf52840dongle/nrf52840``
+     - | ``nrf52840dongle/nrf52840``
+       | ``nrf52840dongle/nrf52840/bare``
      - | `Product Specification <nRF52840 Product Specification_>`_
        | `User Guide <nRF52840 Dongle User Guide_>`_
    * - :zephyr:board:`nrf21540dk`
