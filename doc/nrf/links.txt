@@ -871,6 +871,7 @@
 .. _`nRF21540 EK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf21540_ek/page/UG/nrf21540_DK/intro.html
 
 .. _`AP-Protect for nRF9151`: https://docs.nordicsemi.com/bundle/ps_nrf9151/page/dif.html#ariaid-title3
+.. _`CTRL-AP page for nRF9151`: https://docs.nordicsemi.com/bundle/ps_nrf9151/page/chapters/dif/ctrl-ap.html
 .. _`AP-Protect for nRF9161`: https://docs.nordicsemi.com/bundle/ps_nrf9161/page/dif.html#ariaid-title3
 .. _`Debugger access protection for nRF9160`: https://docs.nordicsemi.com/bundle/ps_nrf9160/page/dif.html#ariaid-title2
 .. _`AP-Protect for nRF54L15`: https://docs.nordicsemi.com/bundle/ps_nrf54L15/page/ctrl-ap.html

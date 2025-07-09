@@ -193,6 +193,12 @@ Based on the available implementation types, you can configure the access port p
      - In this state, AP-Protect is disabled.
      - Hardware and software
 
+Configuring AP-Protect in the |NCS|
+***********************************
+
+The following sections describe how to configure AP-Protect in the |NCS| when Secure AP-Protect is not required.
+For information about how to configure Secure AP-Protect in the |NCS|, see :ref:`app_secure_approtect`.
+
 .. _app_approtect_ncs_lock:
 
 Enabling software AP-Protect with :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK`
@@ -293,8 +299,8 @@ This set of commands enables the hardware AP-Protect (and Secure AP-Protect) and
 
 .. _app_secure_approtect:
 
-Configuring Secure AP-Protect
-=============================
+Configuring Secure AP-Protect in the |NCS|
+******************************************
 
 With :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` comes :ref:`security by separation <app_boards_spe_nspe>`, enabling a Secure Processing Environment (SPE) that is isolated from the Non-Secure Processing Environment (NSPE).
 TF-M is available for the nRF53, nRF54L and nRF91 Series devices.
@@ -325,7 +331,7 @@ The following Kconfig options are available for enabling Secure AP-Protect on th
 In addition, you can enable hardware Secure AP-Protect by setting the ``UICR.SECUREAPPROTECT`` register as instructed in :ref:`app_secure_approtect_uicr_approtect`.
 
 Enabling software Secure AP-Protect with :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK`
--------------------------------------------------------------------------------------------
+===========================================================================================
 
 This option is valid for the nRF53 and the nRF54L Series devices.
 
@@ -345,7 +351,7 @@ For hardware protection, the ``UICR.SECUREAPPROTECT`` register should be written
     You can set this option manually or use sysbuild's ``SB_CONFIG_SECURE_APPROTECT_LOCK`` Kconfig option to enable it for all images.
 
 Enabling software Secure AP-Protect with :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING`
-----------------------------------------------------------------------------------------------------
+====================================================================================================
 
 This option is valid for the nRF53 and the nRF54L Series devices, and nRF91x1 devices.
 
@@ -363,7 +369,7 @@ See the SoC or SiP hardware documentation for more information.
     You can set this option manually for each image or use sysbuild's ``SB_CONFIG_SECURE_APPROTECT_USER_HANDLING`` Kconfig option to set it for all images at once.
 
 Disabling software Secure AP-Protect with :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USE_UICR`
-------------------------------------------------------------------------------------------------
+================================================================================================
 
 This option is valid for the nRF53 Series and nRF91x1 devices.
 
@@ -373,7 +379,7 @@ This is the default setting in the |NCS|.
 You can start debugging the SPE without additional steps needed.
 
 Disabling software Secure AP-Protect with :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_DISABLE`
------------------------------------------------------------------------------------------------
+===============================================================================================
 
 This option is valid for the nRF54L Series devices.
 
@@ -385,7 +391,7 @@ You can start debugging the SPE without additional steps needed.
 .. _app_secure_approtect_uicr_approtect:
 
 Enabling hardware Secure AP-Protect by locking the ``UICR.SECUREAPPROTECT`` register
-------------------------------------------------------------------------------------
+====================================================================================
 
 To enable only the hardware Secure AP-Protect mechanism, run the following command:
 
@@ -402,3 +408,69 @@ This command enables hardware Secure AP-Protect and resets the device.
 .. note::
     With devices that use software AP-Protect, nRF Util cannot enable hardware Secure AP-Protect if the software Secure AP-Protect is already enabled.
     If you encounter errors with nRF Util, make sure that software AP-Protect and software Secure AP-Protect are disabled.
+
+.. _erase_protection:
+
+Configuring erase protection
+****************************
+
+Erase-all protection prevents unauthorized removal of device data.
+It helps protect sensitive data from unauthorized access and tampering.
+It also ensures regulatory compliance for data protection.
+
+The erase protection feature is complementary to AP-Protect.
+While AP-Protect blocks debugger access to CPU registers and memory-mapped addresses, erase protection prevents the debugger from performing an erase-all operation.
+
+More specifically, erase protection prevents the CTRL-AP ERASEALL operation from being executed, while still allowing write and erase operations from the debugger.
+This is possible as long as the ``UICR.APPROTECT`` register is not set.
+The register ``ERASEPROTECT.STATUS`` holds the status for erase protection.
+
+For more information about the erase protection feature, see the "Erase all" section on the control access port documentation page in the product specification (datasheet).
+For example, see the `CTRL-AP page for nRF9151`_.
+
+.. _erase_protection_enable:
+
+Enabling erase protection
+=========================
+
+Nordic Semiconductor devices implement erase protection using dedicated hardware features and secure configurations.
+``UICR.ERASEPROTECT`` is typically configured to block unauthorized erase operations.
+Some devices offer additional access control measures and protection registers to enforce security against unwanted erase commands.
+
+.. _erase_protection_enable_nrfutil:
+
+Enabling erase protection with nRF Util
+---------------------------------------
+
+To enable erase protection with nRF Util, use the following command:
+
+.. code-block:: console
+
+   nrfutil device eraseprotect-enable
+
+This command enables erase protection and resets the device.
+
+.. note::
+    With devices that use software AP-Protect, nRF Util cannot enable erase protection if the software AP-Protect is already enabled.
+    If you encounter errors with nRF Util, make sure that software AP-Protect is disabled.
+
+.. _erase_protection_disable:
+
+Disabling erase protection
+==========================
+
+If erase protection has been enabled, both the debugger and on-chip firmware must write the same non-zero 32-bit key into their respective ``ERASEPROTECT.DISABLE`` registers to disable the erase protection.
+When both registers have been written with the same key, the device is automatically erased.
+The access ports are re-enabled on the next reset.
+
+For more information about disabling the erase protection feature, see the "Disabling erase protection" section on the control access port documentation page in the product specification (datasheet).
+For example, see the `CTRL-AP page for nRF9151`_.
+
+.. _erase_protection_disable_nrfutil:
+
+Disabling erase protection with nRF Util
+----------------------------------------
+
+On devices from nRF53 and nRF91 Series, you can disable erase protection using the ``nrfutil device recover`` command and the ``--eraseprotect-key`` argument.
+The argument requires the same 32-bit key value that was used to enable erase protection.
+For more information, see the dedicated section on the `Recovering the device`_ page in nRF Util documentation.
