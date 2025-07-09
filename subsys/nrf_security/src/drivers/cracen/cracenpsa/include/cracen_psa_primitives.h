@@ -434,7 +434,7 @@ struct cracen_rsacheckpq {
 	size_t pubexpsz;
 	uint8_t *p;
 	uint8_t *q;
-	uint8_t candidatesz;
+	size_t candidatesz;
 	size_t mrrounds;
 };
 
