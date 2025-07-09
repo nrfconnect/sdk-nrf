@@ -104,7 +104,7 @@ static void bt_hci_cmd_send_sync_rpc_handler(const struct nrf_rpc_group *group,
 	} else {
 		NRF_RPC_SCRATCHPAD_DECLARE(&scratchpad, ctx);
 		len = nrf_rpc_decode_uint(ctx);
-		buf = bt_hci_cmd_create(opcode, len);
+		buf = bt_hci_cmd_alloc(K_FOREVER);
 		if (!buf) {
 			ret = -ENOBUFS;
 		} else {

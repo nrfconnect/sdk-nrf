@@ -28,7 +28,7 @@ static int hci_vs_cmd_no_rsp(uint16_t opcode, const void *params, size_t params_
 {
 	struct net_buf *buf;
 
-	buf = bt_hci_cmd_create(opcode, params_size);
+	buf = bt_hci_cmd_alloc(K_FOREVER);
 	if (!buf) {
 		return -ENOMEM;
 	}
@@ -45,7 +45,7 @@ static int hci_vs_cmd_with_rsp(
 	struct net_buf *buf;
 	struct net_buf *rsp_buf;
 
-	buf = bt_hci_cmd_create(opcode, params_size);
+	buf = bt_hci_cmd_alloc(K_FOREVER);
 	if (!buf) {
 		return -ENOMEM;
 	}
