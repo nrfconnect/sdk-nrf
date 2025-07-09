@@ -817,28 +817,6 @@
 				status = "disabled";
 			};
 
-			mram_controller: mram-controller@0x5004e000 {
-				compatible = "nordic,mram-controller";
-				reg = <0x5004e000 0x1000>;
-				#address-cells = <1>;
-				#size-cells = <1>;
-				interrupts = <78 NRF_DEFAULT_IRQ_PRIORITY>;
-
-				cpuapp_mram: mram@0 {
-					compatible = "nordic,mram";
-					reg = <0 DT_SIZE_K(3972)>;
-					erase-block-size = <4096>;
-					write-block-size = <4>;
-				};
-
-				cpuflpr_mram: mram@3e1000 {
-					compatible = "nordic,mram";
-					reg = <0x3e1000 DT_SIZE_K(116)>;
-					erase-block-size = <4096>;
-					write-block-size = <4>;
-				};
-			};
-
 			cpuapp_ppb: cpuapp-ppb-bus {
 				#address-cells = <1>;
 				#size-cells = <1>;
