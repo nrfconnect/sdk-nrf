@@ -26,7 +26,7 @@ static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *s
 	struct bt_hci_cp_vs_read_tx_power_level *cp;
 	struct bt_hci_rp_vs_read_tx_power_level *rp;
 	struct net_buf *rsp = NULL;
-	struct net_buf *cmd_buf = bt_hci_cmd_create(BT_HCI_OP_VS_READ_TX_POWER_LEVEL, sizeof(*cp));
+	struct net_buf *cmd_buf = bt_hci_cmd_alloc(K_FOREVER);
 
 	if (!cmd_buf) {
 		return -ENOBUFS;
