@@ -30,6 +30,12 @@
 #include "hs2_profile.h"
 #include "common.h"
 
+#ifdef CONFIG_WIFI_CERTIFICATE_LIB
+#include <zephyr/net/wifi_certs.h>
+
+int process_certificates(void);
+#endif
+
 struct interface_info *band_transmitter[16];
 struct interface_info *band_first_wlan[16];
 extern struct sockaddr_in *tool_addr;
@@ -1867,7 +1873,64 @@ static int configure_sta_handler(struct packet_wrapper *req, struct packet_wrapp
 			CHECK_RET();
 			ret = run_qt_command("SET_NETWORK 0 ieee80211w 2");
 			CHECK_RET();
+#ifdef CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
+		} else if (strstr(tlv->value, "WPA-EAP")) {
+			/*
+			 * Process Certificates
+			 */
+
+			process_certificates();
+
+			struct {
+				int tlv_id;
+				const char *cmd_fmt;
+				const char *default_val;
+				bool use_tlv_value;
+			} config_cmds[] = {
+				{ TLV_EAP,
+				  "SET_NETWORK 0 eap %s",
+				  NULL, true },
+				{ TLV_IDENTITY,
+				  "SET_NETWORK 0 identity \"%s\"",
+				  NULL, true },
+				{ TLV_CA_CERT,
+				  "SET_NETWORK 0 ca_cert \"%s\"",
+				  "blob://ca_cert", false },
+				{ TLV_CLIENT_CERT,
+				  "SET_NETWORK 0 client_cert \"%s\"",
+				  "blob://client_cert", false },
+				{ TLV_PRIVATE_KEY,
+				  "SET_NETWORK 0 private_key \"%s\"",
+				  "blob://private_key", false },
+			};
+
+			for (size_t i = 0; i < ARRAY_SIZE(config_cmds); i++) {
+				tlv = find_wrapper_tlv_by_id(req, config_cmds[i].tlv_id);
+				if (tlv) {
+					memset(buffer, 0, sizeof(buffer));
+					if (config_cmds[i].use_tlv_value) {
+						CHECK_SNPRINTF(buffer, sizeof(buffer), ret,
+							       config_cmds[i].cmd_fmt, tlv->value);
+					} else {
+						CHECK_SNPRINTF(buffer, sizeof(buffer), ret,
+							       config_cmds[i].cmd_fmt,
+							       config_cmds[i].default_val);
+					}
+					ret = run_qt_command(buffer);
+					CHECK_RET();
+				}
+			}
+
+			CHECK_SNPRINTF(buffer, sizeof(buffer),
+					ret, "SET_NETWORK 0 private_key_passwd \"whatever\"");
+			ret = run_qt_command(buffer);
+			CHECK_RET();
+			ret = run_qt_command("SET_NETWORK 0 ieee80211w 1");
+			CHECK_RET();
 		}
+#else
+		}
+#endif
 	}
 
 	tlv = find_wrapper_tlv_by_id(req, TLV_PROTO);
