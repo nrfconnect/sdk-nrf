@@ -46,6 +46,12 @@ The primary purpose of this snippet is to enable the transfer of the FLPR code t
 When building for the ``nrf54h20dk/nrf54h20/cpuflpr`` target, a minimal sample is automatically loaded onto the application core.
 For more details, see :ref:`building_nrf54h_app_flpr_core`.
 
+Peripherals emulation on FLPR
+*****************************
+
+The FLPR core can emulate software-defined peripherals using :ref:`nrfxlib:soft_peripherals`.
+This setup is useful in scenarios where you need an additional peripheral functionality but do not have access to hardware peripherals.
+
 Memory allocation
 *****************
 
