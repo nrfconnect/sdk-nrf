@@ -26,6 +26,7 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
   sysbuild_get(CONFIG_BUILD_OUTPUT_HEX IMAGE ${application} VAR CONFIG_BUILD_OUTPUT_HEX KCONFIG)
 
   string(TOUPPER "${application}" application_uppercase)
+  set(imgtool_rom_command --rom-fixed $<TARGET_PROPERTY:partition_manager,${prefix}PM_${application_uppercase}_ADDRESS>)
   set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION} --align 4 --slot-size $<TARGET_PROPERTY:partition_manager,${prefix}PM_${application_uppercase}_SIZE> --pad-header --header-size ${SB_CONFIG_PM_MCUBOOT_PAD})
 
   if(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
@@ -70,7 +71,7 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
       # Hence, if a programmer is given this hex file, it will flash it
       # to the secondary slot, and upon reboot mcuboot will swap in the
       # contents of the hex file.
-      ${imgtool_sign} ${imgtool_extra} ${CMAKE_BINARY_DIR}/signed_by_b0_${application}.bin ${output}.bin
+      ${imgtool_sign} ${imgtool_extra} ${imgtool_rom_command} ${CMAKE_BINARY_DIR}/signed_by_b0_${application}.bin ${output}.bin
 
       DEPENDS
       ${application}_extra_byproducts
@@ -93,7 +94,7 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
       # Hence, if a programmer is given this hex file, it will flash it
       # to the secondary slot, and upon reboot mcuboot will swap in the
       # contents of the hex file.
-      ${imgtool_sign} ${imgtool_extra} ${CMAKE_BINARY_DIR}/signed_by_b0_${application}.hex ${output}.hex
+      ${imgtool_sign} ${imgtool_extra} ${imgtool_rom_command} ${CMAKE_BINARY_DIR}/signed_by_b0_${application}.hex ${output}.hex
 
       DEPENDS
       ${application}_extra_byproducts
