@@ -277,7 +277,7 @@ Wi-Fi
 
   * New sample :ref:`wifi_sr_coex_sample` demonstrating Wi-Fi Bluetooth LE coexistence.
   * :ref:`ug_wifi` document.
-  * :ref:`lib_wifi_credentials` library to store credentials.
+  * Wi-Fi credentials library to store credentials.
   * :ref:`wifi_mgmt_ext` library to provide an ``autoconnect`` command based on Wi-Fi credentials.
 
 * Updated:
@@ -628,8 +628,8 @@ Wi-Fi samples
 
 * Updated:
 
-  * The :ref:`wifi_shell_sample` sample now uses the :ref:`lib_wifi_credentials` and :ref:`wifi_mgmt_ext` libraries.
-  * The :ref:`wifi_provisioning` sample now uses the :ref:`lib_wifi_credentials` and :ref:`wifi_prov_readme` libraries.
+  * The :ref:`wifi_shell_sample` sample now uses the Wi-Fi credentials and :ref:`wifi_mgmt_ext` libraries.
+  * The :ref:`wifi_provisioning` sample now uses the Wi-Fi credentials and :ref:`wifi_prov_readme` libraries.
 
 * Removed nRF7002 revision A support.
 

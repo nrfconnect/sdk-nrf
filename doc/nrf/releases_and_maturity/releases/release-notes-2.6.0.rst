@@ -1325,7 +1325,7 @@ Libraries for networking
 
   * Updated the :c:struct:`nrf_cloud_rest_location_request` structure to accept a pointer to a :c:struct:`nrf_cloud_location_config` structure in place of the single ``disable_response`` flag.
 
-* :ref:`lib_wifi_credentials` library:
+* Wi-Fi credentials library:
 
   * Updated the PSA backend to use the PSA Internal Trusted Storage (ITS) for storing Wi-Fi credentials instead of the Protected Storage.
     This has been changed because the PSA ITS is a better fit for storing assets like credentials.

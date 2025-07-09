@@ -440,7 +440,7 @@ Wi-Fi®
 
 .. toggle::
 
-   * For :ref:`lib_wifi_credentials` library:
+   * For Wi-Fi credentials library:
 
      * Syntax for ``add`` command has been modified to support ``getopt`` model.
        For example, the following command with old syntax:

@@ -1107,7 +1107,7 @@ Libraries for networking
    * The :ref:`lib_softap_wifi_provision` library.
    * The :ref:`lib_wifi_ready` library.
 
-* :ref:`lib_wifi_credentials` library:
+* Wi-Fi credentials library:
 
   * Added:
 

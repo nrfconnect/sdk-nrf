@@ -240,4 +240,4 @@ This sample uses the following |NCS| libraries:
 
 * :ref:`nrf_security`
 * :ref:`lib_wifi_ready`
-* :ref:`lib_wifi_credentials`
+* :ref:`Wi-Fi credentials <zephyr:lib_wifi_credentials>`
