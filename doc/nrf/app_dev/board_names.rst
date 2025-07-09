@@ -46,15 +46,24 @@ While the board name is always present, other elements, such as the board revisi
   Check the Product Specification of the given SoC for more information about the available CPU clusters.
 
 * :ref:`Variant <zephyr:glossary>` - You can use this board qualifier to build for a particular type or configuration of a build for a combination of SoC and CPU cluster.
-  In the |NCS|, variants are used for indicating the usage of Cortex-M Security Extensions (CMSE) (security by separation):
+  In the |NCS|, board variants are used for the following purposes:
 
-  * Entries without ``*/ns`` (for example, ``cpuapp``) - When you choose this target, you build the application core firmware as a single execution environment that does not use CMSE (:ref:`Trusted Firmware-M (TF-M) <ug_tfm>`).
-  * Entries with ``*/ns`` (for example, ``cpuapp/ns``) - Recommended for more security.
-    When you choose this target, you build the application with CMSE using security by separation.
-    The application core firmware is placed in Non-Secure Processing Environment (NSPE) and uses Secure Processing Environment (SPE) for security features.
-    By default, the build system automatically includes :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` in SPE and merges it with NSPE.
+  * Changing the default memory map - This applies to the entry for the nRF52840 Dongle with the ``*/bare`` variant (``nrf52840dongle/nrf52840/bare``).
+    When you select this target, the firmware does not account for the onboard USB bootloader.
+    This corresponds to using :zephyr:board:`flashing option 3 with an external debug probe <nrf52840dongle>`.
 
-  Read more about separation of processing environments on the :ref:`ug_tfm_security_by_separation` page.
+  * Indicating the use of Cortex-M Security Extensions (CMSE), also known as security by separation:
+
+    * Variants without ``*/ns`` (for example, ``cpuapp``) - When you select this target, you build the application core firmware as a single execution environment without CMSE.
+      See :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` for more information.
+
+    * Variants with ``*/ns`` (for example, ``cpuapp/ns``) - Recommended for enhanced security.
+      When you select this target, you build the application with CMSE enabled, using security by separation.
+
+      The application core firmware is placed in Non-Secure Processing Environment (NSPE) and uses Secure Processing Environment (SPE) for security features.
+      By default, the build system automatically includes :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` in SPE and merges it with NSPE.
+
+      Read more about separation of processing environments on the :ref:`ug_tfm_security_by_separation` page.
 
 .. note::
     This board name scheme was introduced in the |NCS| before the v2.7.0 release following changes in Zephyr v3.6.0.
@@ -142,6 +151,8 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 |                   |            | :ref:`nrf52840dk <zephyr:nrf52840dk_nrf52811>`         | ``nrf52840dk/nrf52811``                                                  |
 +-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
 | nRF52840 Dongle   | PCA10059   | :zephyr:board:`nrf52840dongle <nrf52840dongle>`        | ``nrf52840dongle/nrf52840``                                              |
+|                   |            |                                                        |                                                                          |
+|                   |            |                                                        | ``nrf52840dongle/nrf52840/bare``                                         |
 +-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
 | nRF52833 DK       | PCA10100   | :zephyr:board:`nrf52833dk <nrf52833dk>`                | ``nrf52833dk/nrf52833``                                                  |
 |                   |            |                                                        |                                                                          |
