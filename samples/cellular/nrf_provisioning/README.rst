@@ -248,6 +248,7 @@ This sample uses the following |NCS| libraries:
 
 * :ref:`lte_lc_readme`
 * :ref:`lib_nrf_provisioning`
+* :ref:`lib_at_shell`
 
 It uses the following `sdk-nrfxlib`_ library:
 

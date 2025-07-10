@@ -451,7 +451,10 @@ Cellular samples
 
 * :ref:`nrf_provisioning_sample` sample:
 
-  * Updated the sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
+  * Updated:
+
+    * The sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
+    * The sample by enabling the :ref:`lib_at_shell` library to allow the nRF Cloud Utils to interface with the device.
 
 * :ref:`nrf_cloud_rest_device_message` sample:
 
