@@ -319,21 +319,23 @@ static int handle_at_fota(enum at_parser_cmd_type cmd_type, struct at_parser *pa
 			char uri[FILE_URI_MAX];
 			uint16_t pdn_id;
 			int size = FILE_URI_MAX;
-			sec_tag_t sec_tag = INVALID_SEC_TAG;
+			sec_tag_t sec_tag;
 			enum dfu_target_image_type type;
 
 			err = util_string_get(parser, 2, uri, &size);
 			if (err) {
 				return err;
 			}
-			if (param_count > 3) {
-				at_parser_num_get(parser, 3, &sec_tag);
+			err = util_get_num_with_default(parser, 3, param_count, INVALID_SEC_TAG,
+							&sec_tag);
+			if (err) {
+				return err;
 			}
 			if (op == SLM_FOTA_START_APP) {
 				type = DFU_TARGET_IMAGE_TYPE_MCUBOOT;
 			}
 #if defined(CONFIG_SLM_FULL_FOTA)
-			else if (op == SLM_FOTA_START_FULL_FOTA)  {
+			else if (op == SLM_FOTA_START_FULL_FOTA) {
 				fdev.dev = flash_dev;
 				fdev.size = DT_PROP(FLASH_NODE, size) / 8;
 				full_modem_fota_params.buf = fmfu_buf;
@@ -357,12 +359,13 @@ static int handle_at_fota(enum at_parser_cmd_type cmd_type, struct at_parser *pa
 			else {
 				type = DFU_TARGET_IMAGE_TYPE_MODEM_DELTA;
 			}
-			if (param_count > 4) {
-				at_parser_num_get(parser, 4, &pdn_id);
-				err = do_fota_start(op, uri, sec_tag, pdn_id, type);
-			} else {
-				err = do_fota_start(op, uri, sec_tag, 0, type);
+
+			err = util_get_num_with_default(parser, 4, param_count, 0, &pdn_id);
+			if (err) {
+				return err;
 			}
+
+			err = do_fota_start(op, uri, sec_tag, pdn_id, type);
 			break;
 #if FOTA_FUTURE_FEATURE
 		case SLM_FOTA_PAUSE_RESUME:

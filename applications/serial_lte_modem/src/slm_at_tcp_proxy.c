@@ -263,6 +263,7 @@ static int do_tcp_client_connect(const char *url, uint16_t port, uint16_t cid)
 				&cid_int, sizeof(int));
 		if (ret < 0) {
 			LOG_ERR("zsock_setsockopt(SO_BINDTOPDN) error: %d", -errno);
+			ret = -errno;
 			goto exit_cli;
 		}
 	}
@@ -690,12 +691,10 @@ static int handle_at_tcp_server(enum at_parser_cmd_type cmd_type, struct at_pars
 			if (err) {
 				return err;
 			}
-			proxy.sec_tag = INVALID_SEC_TAG;
-			if (param_count > 3) {
-				err = at_parser_num_get(parser, 3, &proxy.sec_tag);
-				if (err) {
-					return err;
-				}
+			err = util_get_num_with_default(parser, 3, param_count, INVALID_SEC_TAG,
+							&proxy.sec_tag);
+			if (err) {
+				return err;
 			}
 			proxy.family = (op == SERVER_START) ? AF_INET : AF_INET6;
 			err = do_tcp_server_start(port);
@@ -752,40 +751,28 @@ static int handle_at_tcp_client(enum at_parser_cmd_type cmd_type, struct at_pars
 			if (at_parser_num_get(parser, 3, &port)) {
 				return -EINVAL;
 			}
-			proxy.sec_tag = INVALID_SEC_TAG;
-			if (param_count > 4) { /* optional param */
-				err = at_parser_num_get(parser, 4, &proxy.sec_tag);
-				if (err != 0 && err != -EOPNOTSUPP) {
-					return -EINVAL;
-				}
+			err = util_get_num_with_default(parser, 4, param_count, INVALID_SEC_TAG,
+							&proxy.sec_tag);
+			if (err) {
+				return err;
 			}
-			proxy.peer_verify = TLS_PEER_VERIFY_REQUIRED;
-			if (param_count > 5) { /* optional param */
-				err = at_parser_num_get(parser, 5, &proxy.peer_verify);
-				if ((err != 0 && err != -EOPNOTSUPP) ||
-				    (proxy.peer_verify != TLS_PEER_VERIFY_NONE &&
-				     proxy.peer_verify != TLS_PEER_VERIFY_OPTIONAL &&
-				     proxy.peer_verify != TLS_PEER_VERIFY_REQUIRED)) {
-					return -EINVAL;
-				}
+			err = util_get_num_with_default(parser, 5, param_count,
+							TLS_PEER_VERIFY_REQUIRED,
+							&proxy.peer_verify);
+			if (err || (proxy.peer_verify != TLS_PEER_VERIFY_NONE &&
+				    proxy.peer_verify != TLS_PEER_VERIFY_OPTIONAL &&
+				    proxy.peer_verify != TLS_PEER_VERIFY_REQUIRED)) {
+				return -EINVAL;
 			}
-			proxy.hostname_verify = true;
-			if (param_count > 6) { /* optional param */
-				uint16_t hostname_verify = 0;
-
-				err = at_parser_num_get(parser, 6, &hostname_verify);
-				if ((err != 0 && err != -EOPNOTSUPP) ||
-				    (hostname_verify != 0 && hostname_verify != 1)) {
-					return -EINVAL;
-				}
-				proxy.hostname_verify = (bool)hostname_verify;
+			err = util_get_bool_with_default(parser, 6, param_count, true,
+							&proxy.hostname_verify);
+			if (err) {
+				return err;
 			}
-			if (param_count > 7) { /* optional param, last */
-				if (at_parser_num_get(parser, 7, &cid)) {
-					return -EINVAL;
-				}
+			err = util_get_num_with_default(parser, 7, param_count, cid, &cid);
+			if (err || cid > 10) {
+				return -EINVAL;
 			}
-
 			proxy.family = (op == CLIENT_CONNECT) ? AF_INET : AF_INET6;
 			err = do_tcp_client_connect(url, port, cid);
 		} else if (op == CLIENT_DISCONNECT) {
@@ -831,14 +818,12 @@ static int handle_at_tcp_send(enum at_parser_cmd_type cmd_type, struct at_parser
 			} else if (err != 0) {
 				return err;
 			}
-			if (param_count > 2) {
-				err = at_parser_num_get(parser, 2, &proxy.send_flags);
-				if (err) {
-					return err;
-				}
-			}
 		} else {
 			datamode = true;
+		}
+		err = util_get_num_with_default(parser, 2, param_count, 0, &proxy.send_flags);
+		if (err) {
+			return err;
 		}
 		if (datamode) {
 			err = enter_datamode(tcp_datamode_callback);

@@ -539,26 +539,23 @@ static int handle_at_icmp_ping(enum at_parser_cmd_type cmd_type, struct at_parse
 		if (err < 0) {
 			return err;
 		}
-		ping_argv.count = 1; /* default 1 */
-		if (param_count > 4) {
-			err = at_parser_num_get(parser, 4, &ping_argv.count);
-			if (err < 0) {
-				return err;
-			};
+
+		/* Default 1 */
+		err = util_get_num_with_default(parser, 4, param_count, 1, &ping_argv.count);
+		if (err) {
+			return err;
 		}
-		ping_argv.interval = 1000; /* default 1s */
-		if (param_count > 5) {
-			err = at_parser_num_get(parser, 5, &ping_argv.interval);
-			if (err < 0) {
-				return err;
-			};
+
+		/* Default 1s */
+		err = util_get_num_with_default(parser, 5, param_count, 1000, &ping_argv.interval);
+		if (err) {
+			return err;
 		}
-		ping_argv.pdn = 0; /* default 0 primary PDN */
-		if (param_count > 6) {
-			err = at_parser_num_get(parser, 6, &ping_argv.pdn);
-			if (err < 0) {
-				return err;
-			};
+
+		/* Default 0 for primary PDN */
+		err = util_get_num_with_default(parser, 6, param_count, 0, &ping_argv.pdn);
+		if (err) {
+			return err;
 		}
 
 		err = ping_test_handler(target);

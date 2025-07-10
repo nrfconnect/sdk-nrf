@@ -490,8 +490,8 @@ static int handle_at_mqtt_config(enum at_parser_cmd_type cmd_type, struct at_par
 				 uint32_t param_count)
 {
 	int err = -EINVAL;
-	uint16_t keep_alive = CONFIG_MQTT_KEEPALIVE;
-	uint16_t clean_session = CONFIG_MQTT_CLEAN_SESSION;
+	uint16_t keep_alive;
+	uint16_t clean_session;
 
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
@@ -501,17 +501,15 @@ static int handle_at_mqtt_config(enum at_parser_cmd_type cmd_type, struct at_par
 		if (err) {
 			return err;
 		}
-		if (param_count > 2) {
-			err = at_parser_num_get(parser, 2, &keep_alive);
-			if (err) {
-				return err;
-			}
+		err = util_get_num_with_default(parser, 2, param_count,
+					 CONFIG_MQTT_KEEPALIVE, &keep_alive);
+		if (err) {
+			return err;
 		}
-		if (param_count > 3) {
-			err = at_parser_num_get(parser, 3, &clean_session);
-			if (err) {
-				return err;
-			}
+		err = util_get_num_with_default(parser, 3, param_count,
+					 CONFIG_MQTT_CLEAN_SESSION, &clean_session);
+		if (err) {
+			return err;
 		}
 		err = do_mqtt_config(keep_alive, (uint8_t)clean_session);
 		break;
@@ -574,12 +572,10 @@ static int handle_at_mqtt_connect(enum at_parser_cmd_type cmd_type, struct at_pa
 			if (err) {
 				return err;
 			}
-			ctx.sec_tag = INVALID_SEC_TAG;
-			if (param_count > 6) {
-				err = at_parser_num_get(parser, 6, &ctx.sec_tag);
-				if (err) {
-					return err;
-				}
+			err = util_get_num_with_default(parser, 6, param_count, INVALID_SEC_TAG,
+							&ctx.sec_tag);
+			if (err) {
+				return err;
 			}
 			ctx.family = (op == MQTTC_CONNECT) ? AF_INET : AF_INET6;
 			err = do_mqtt_connect();
@@ -646,8 +642,8 @@ static int handle_at_mqtt_publish(enum at_parser_cmd_type cmd_type, struct at_pa
 {
 	int err = -EINVAL;
 
-	uint16_t qos = MQTT_QOS_0_AT_MOST_ONCE;
-	uint16_t retain = 0;
+	uint16_t qos;
+	uint16_t retain;
 	size_t topic_sz = MQTT_MAX_TOPIC_LEN;
 	uint8_t pub_msg[SLM_MAX_PAYLOAD_SIZE];
 	size_t msg_sz = sizeof(pub_msg);
@@ -669,19 +665,15 @@ static int handle_at_mqtt_publish(enum at_parser_cmd_type cmd_type, struct at_pa
 				return err;
 			}
 		}
-		if (param_count > 3) {
-			err = at_parser_num_get(parser, 3, &qos);
-			if (err) {
-				return err;
-			}
+		err = util_get_num_with_default(parser, 3, param_count, MQTT_QOS_0_AT_MOST_ONCE,
+						&qos);
+		if (err) {
+			return err;
 		}
-		if (param_count > 4) {
-			err = at_parser_num_get(parser, 4, &retain);
-			if (err) {
-				return err;
-			}
+		err = util_get_num_with_default(parser, 4, param_count, 0, &retain);
+		if (err) {
+			return err;
 		}
-
 		/* common publish parameters*/
 		if (qos <= MQTT_QOS_2_EXACTLY_ONCE) {
 			pub_param.message.topic.qos = (uint8_t)qos;
