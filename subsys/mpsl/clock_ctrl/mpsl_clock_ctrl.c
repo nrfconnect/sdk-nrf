@@ -293,20 +293,15 @@ static int32_t m_lfclk_release(void)
 
 #elif defined(CONFIG_CLOCK_CONTROL_NRF2)
 
-/* Temporary macro because there is no system level configuration of LFCLK source and its accuracy
- * for nRF54H SoC series. What more, there is no API to retrieve the information about accuracy of
- * available LFCLK.
+/* Minimum accuracy of LFCLK that is required by Bluetooth Core Specification Version 6.1, Vol 6,
+ * Part B, Section 4.2.2.
  */
 #define MPSL_LFCLK_ACCURACY_PPM 500
-
-static const struct nrf_clock_spec m_lfclk_specs = {
-	.frequency = 32768,
-	.accuracy = MPSL_LFCLK_ACCURACY_PPM,
-	/* This affects selected LFCLK source. It doesn't switch to higher accuracy but selects more
-	 * precise but current hungry lfclk source.
-	 */
-	.precision = NRF_CLOCK_CONTROL_PRECISION_DEFAULT,
-};
+/* The variable holds actual LFCLK specification that is use in the system.
+ * Enabled LFCLK at least matches the minimum Bluetooth sleep clock accuracy,
+ * but it might be better.
+ */
+static struct nrf_clock_spec m_lfclk_specs;
 
 #define HFCLK_LABEL DT_NODELABEL(hfxo)
 
@@ -515,6 +510,33 @@ static mpsl_clock_hfclk_ctrl_source_t m_nrf_hfclk_ctrl_data = {
 	.hfclk_is_running = m_hfclk_is_running,
 };
 
+#if defined(CONFIG_CLOCK_CONTROL_NRF2)
+static int m_lfclk_accuracy_get(void)
+{
+	int err;
+	static const struct nrf_clock_spec lfclk_specs_req = {
+		/* LFCLK frequency [Hz] */
+		.frequency = 32768,
+		.accuracy = MPSL_LFCLK_ACCURACY_PPM,
+		/* This affects selected LFCLK source. It doesn't switch to higher accuracy
+		 * but selects more precise but current hungry lfclk source.
+		 */
+		.precision = NRF_CLOCK_CONTROL_PRECISION_DEFAULT,
+	};
+
+	err = nrf_clock_control_resolve(DEVICE_DT_GET(DT_NODELABEL(lfclk)), &lfclk_specs_req,
+					&m_lfclk_specs);
+	if (err < 0) {
+		LOG_ERR("Failed to resolve LFCLK spec: %d", err);
+		return err;
+	}
+
+	LOG_DBG("LF Clock accuracy: %d", m_lfclk_specs.accuracy);
+
+	return m_lfclk_specs.accuracy;
+}
+#endif /* CONFIG_CLOCK_CONTROL_NRF2 */
+
 int32_t mpsl_clock_ctrl_init(void)
 {
 #if defined(CONFIG_MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST)
@@ -557,6 +579,10 @@ int32_t mpsl_clock_ctrl_init(void)
 #else
 #error "Unsupported HFCLK statup time get operation"
 #endif /* CONFIG_CLOCK_CONTROL_NRF */
+
+#if defined(CONFIG_CLOCK_CONTROL_NRF2)
+	m_nrf_lfclk_ctrl_data.accuracy_ppm = m_lfclk_accuracy_get();
+#endif /* CONFIG_CLOCK_CONTROL_NRF2 */
 
 	return mpsl_clock_ctrl_source_register(&m_nrf_lfclk_ctrl_data, &m_nrf_hfclk_ctrl_data);
 }
