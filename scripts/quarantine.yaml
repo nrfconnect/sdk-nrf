@@ -30,6 +30,10 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31774"
 
 - scenarios:
+    - sample.matter.manufacturer_specific.debug
+  comment: "https://nordicsemi.atlassian.net/browse/KRKNWK-20521"
+
+- scenarios:
     - sample.bluetooth.direction_finding_central_nrf
     - sample.bluetooth.direction_finding_central_nrf.aod
   platforms:
