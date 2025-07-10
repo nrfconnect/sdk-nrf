@@ -34,11 +34,10 @@
   comment: "https://nordicsemi.atlassian.net/browse/KRKNWK-20521"
 
 - scenarios:
-    - sample.bluetooth.direction_finding_central_nrf
-    - sample.bluetooth.direction_finding_central_nrf.aod
-  platforms:
-    - nrf52833dk/nrf52820
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-32042"
+    - applications.matter_bridge.br_ble.smp_dfu
+    - applications.matter_bridge.br_ble.memory_profiling
+    - applications.matter_bridge.memory_profiling
+  comment: "Variant does not fit in FLASH area - it should be probably removed in the future"
 
 - scenarios:
     - nrf.extended.drivers.uart.uart_elementary_dual_l09
