@@ -6,6 +6,7 @@
 
 #include <zephyr/random/random.h>
 
+#include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
 #include <bluetooth/mesh/vnd/le_pair_resp.h>
 #include "../model_utils.h"
@@ -92,7 +93,15 @@ static int bt_mesh_le_pair_resp_init(const struct bt_mesh_model *model)
 
 static void bt_mesh_le_pair_resp_reset(const struct bt_mesh_model *model)
 {
+	int err;
+
 	bt_mesh_le_pair_resp_passkey_invalidate();
+
+	/* Clear all bonding information when receiving node reset */
+	err = bt_unpair(BT_ID_DEFAULT, NULL);
+	if (err) {
+		LOG_ERR("Unpair err: %d", err);
+	}
 }
 
 const struct bt_mesh_model_cb _bt_mesh_le_pair_resp_cb = {
