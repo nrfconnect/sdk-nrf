@@ -13,15 +13,22 @@
 #include <zephyr/sys/byteorder.h>
 
 #include <bootutil/image.h>
+#include <zephyr/devicetree.h>
 
 LOG_MODULE_REGISTER(mcuboot_update, LOG_LEVEL_DBG);
 
-#define UPDATE_SLOT_NUMBER CONFIG_UPDATE_SLOT_NUMBER
-
-#if CONFIG_UPDATE_SLOT_NUMBER == 0
+#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
+#if CONFIG_UPDATE_IMAGE_NUMBER == 0
 #define UPDATE_SLOT_ID PM_MCUBOOT_SECONDARY_ID
 #else
-#define UPDATE_SLOT_ID PM_MCUBOOT_SECONDARY_ ## CONFIG_UPDATE_SLOT_NUMBER ## _ID
+#define UPDATE_SLOT_ID PM_MCUBOOT_SECONDARY_ ## CONFIG_UPDATE_IMAGE_NUMBER ## _ID
+#endif
+#else
+#if CONFIG_UPDATE_IMAGE_NUMBER == 0
+#define UPDATE_SLOT_ID DT_FIXED_PARTITION_ID(DT_NODELABEL(slot1_partition))
+#else
+#define UPDATE_SLOT_ID DT_FIXED_PARTITION_ID(DT_NODELABEL(slot3_partition))
+#endif
 #endif
 
 int main(void)
@@ -64,10 +71,10 @@ int main(void)
 		return 0;
 	}
 
-	rc = boot_request_upgrade_multi(UPDATE_SLOT_NUMBER, true);
+	rc = boot_request_upgrade_multi(CONFIG_UPDATE_IMAGE_NUMBER, true);
 
 	if (rc) {
-		LOG_ERR("Update of image %d failed: %d", UPDATE_SLOT_NUMBER, rc);
+		LOG_ERR("Update of image %d failed: %d", CONFIG_UPDATE_IMAGE_NUMBER, rc);
 		k_sleep(K_SECONDS(1));
 
 		return 0;
