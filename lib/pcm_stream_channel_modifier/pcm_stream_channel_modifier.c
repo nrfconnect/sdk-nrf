@@ -237,7 +237,7 @@ int pscm_interleave(void const *const input, size_t input_size, uint8_t channel,
 	return 0;
 }
 
-int pscm_uninterleave(void const *const input, size_t input_size, uint8_t input_channels,
+int pscm_deinterleave(void const *const input, size_t input_size, uint8_t input_channels,
 		      uint8_t channel, uint8_t pcm_bit_depth, void *output, size_t output_size)
 {
 	uint8_t bytes_per_sample = pcm_bit_depth / 8;

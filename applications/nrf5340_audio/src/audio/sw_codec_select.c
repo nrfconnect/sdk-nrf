@@ -110,14 +110,14 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 	case SW_CODEC_LC3: {
 #if (CONFIG_SW_CODEC_LC3)
 		struct lc3_encoder_context *ctx = &m_config.encoder.lc3_ctx;
-		uint8_t *data_in = (uint8_t *)audio_frame_in->data;
-		uint8_t *coded_out;
-		uint8_t temp_pcm[PCM_NUM_BYTES_MONO];
-		uint8_t resamp_pcm_temp[PCM_NUM_BYTES_MONO];
+		uint8_t int_buf[PCM_NUM_BYTES_MONO];
+		uint8_t conv_buf[PCM_NUM_BYTES_MONO];
 		uint8_t chans_in, chans_out;
-		char *resamp_pcm;
-		size_t resamp_pcm_size;
-		uint16_t encoded_bytes_written, out_remaining;
+		uint8_t *int_out;
+		uint8_t *enc_in;
+		uint8_t *enc_out;
+		size_t enc_in_size = 0;
+		uint16_t bytes_written, out_remaining;
 
 		LOG_DBG("LC3 encoder module");
 
@@ -143,7 +143,17 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 			return -EINVAL;
 		}
 
-		coded_out = (uint8_t *)audio_frame_out->data;
+		if (chans_out >= chans_in) {
+			LOG_DBG("Decoder output channels (%d) >= input channels (%d), "
+				"using input channels",
+				chans_out, chans_in);
+
+			chans_out = chans_in;
+		} else {
+			memset(audio_frame_out->data, 0, audio_frame_out->size);
+		}
+
+		enc_out = audio_frame_out->data;
 		out_remaining = audio_frame_out->size;
 
 		/* Should be able to encode only the channel(s) of interest here.
@@ -153,45 +163,45 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 		 */
 		for (uint8_t i = 0; i < chans_out; i++) {
 			if (ctx->config.interleaved && chans_in > 1) {
-				ret = pscm_uninterleave(audio_frame_in->data, audio_frame_in->len,
+				ret = pscm_deinterleave(audio_frame_in->data, audio_frame_in->len,
 							chans_in, i,
 							ctx->config.carried_bits_per_sample,
-							temp_pcm, sizeof(temp_pcm));
+							int_buf, sizeof(int_buf));
 				if (ret) {
 					LOG_DBG("Failed to uninterleave input");
 					return ret;
 				}
 
-				data_in = temp_pcm;
+				int_out = int_buf;
 			} else {
-				data_in = (uint8_t *)audio_frame_in->data +
+				int_out = (uint8_t *)audio_frame_in->data +
 					  (meta_in->bytes_per_location * i);
 			}
 
 			ret = sw_codec_sample_rate_convert(
 				&encoder_converters[i], meta_in->sample_rate_hz,
-				meta_out->sample_rate_hz, data_in, meta_in->bytes_per_location,
-				resamp_pcm_temp, &resamp_pcm, &resamp_pcm_size);
+				meta_out->sample_rate_hz, int_out, meta_in->bytes_per_location,
+				conv_buf, (char **)&enc_in, &enc_in_size);
 			if (ret) {
 				LOG_ERR("Sample rate conversion failed for channel %u: %d", i, ret);
 				return ret;
 			}
 
-			ret = sw_codec_lc3_enc_run(
-				resamp_pcm, resamp_pcm_size, ctx->config.bitrate_bps, i,
-				meta_in->bytes_per_location, coded_out, &encoded_bytes_written);
+			ret = sw_codec_lc3_enc_run(enc_in, enc_in_size, ctx->config.bitrate_bps, i,
+						   meta_in->bytes_per_location, enc_out,
+						   &bytes_written);
 			if (ret) {
 				LOG_DBG("Error in ENCODER, ret: %d", ret);
 				return ret;
 			}
 
-			coded_out += encoded_bytes_written;
-			out_remaining -= encoded_bytes_written;
+			enc_out += bytes_written;
+			out_remaining -= bytes_written;
 
 			LOG_DBG("Completed LC3 encode of ch: %d", i);
 		}
 
-		meta_out->bytes_per_location = encoded_bytes_written;
+		meta_out->bytes_per_location = bytes_written;
 
 		net_buf_add(audio_frame_out, audio_frame_out->size - out_remaining);
 #endif /* (CONFIG_SW_CODEC_LC3) */
@@ -221,7 +231,7 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 	case SW_CODEC_LC3: {
 #if (CONFIG_SW_CODEC_LC3)
 		struct lc3_decoder_context *ctx = &m_config.decoder.lc3_ctx;
-		uint16_t bytesWritten;
+		uint16_t bytes_written;
 		uint8_t *data_in;
 		uint8_t *dec_out;
 		uint8_t *conv_buf;
@@ -277,7 +287,6 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 			if (!ctx->config.interleaved || chans_out == 1) {
 				if (meta_in->sample_rate_hz == meta_out->sample_rate_hz) {
 					dec_out = (uint8_t *)audio_frame_out->data;
-					int_in_size = meta_out->bytes_per_location;
 				} else {
 					conv_buf = (uint8_t *)audio_frame_out->data;
 				}
@@ -299,9 +308,9 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 				(uint8_t *)audio_frame_in->data + (meta_in->bytes_per_location * i);
 			bad_data_mask = BIT(i);
 
-			ret = sw_codec_lc3_dec_run(data_in, meta_in->bytes_per_location,
-						   audio_frame_out->size, i, dec_out, &bytesWritten,
-						   (meta_in->bad_data & bad_data_mask));
+			ret = sw_codec_lc3_dec_run(
+				data_in, meta_in->bytes_per_location, audio_frame_out->size, i,
+				dec_out, &bytes_written, (meta_in->bad_data & bad_data_mask));
 			if (ret) {
 				LOG_ERR("Decode for channel %d failed: %d", i, ret);
 				return ret;
@@ -309,7 +318,7 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 
 			ret = sw_codec_sample_rate_convert(
 				&decoder_converters[i], meta_in->sample_rate_hz,
-				meta_out->sample_rate_hz, dec_out, bytesWritten, conv_buf,
+				meta_out->sample_rate_hz, dec_out, bytes_written, conv_buf,
 				(char **)&int_in, &int_in_size);
 			if (ret) {
 				LOG_ERR("Sample rate conversion failed for mono: %d", ret);
@@ -326,7 +335,11 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 					return ret;
 				}
 			} else {
-				dec_out += int_in_size;
+				if (meta_in->sample_rate_hz == meta_out->sample_rate_hz) {
+					dec_out += int_in_size;
+				} else {
+					conv_buf += int_in_size;
+				}
 			}
 
 			LOG_DBG("Completed LC3 decode of ch: %d", i);
@@ -476,7 +489,7 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 		return false;
 	}
 
-	if (sw_codec_cfg.encoder.enabled && IS_ENABLED(SAMPLE_RATE_CONVERTER)) {
+	if (sw_codec_cfg.encoder.enabled && IS_ENABLED(CONFIG_SAMPLE_RATE_CONVERTER)) {
 		for (int i = 0; i < sw_codec_cfg.encoder.channel_mode; i++) {
 			ret = sample_rate_converter_open(&encoder_converters[i]);
 			if (ret) {
@@ -489,7 +502,7 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 		}
 	}
 
-	if (sw_codec_cfg.decoder.enabled && IS_ENABLED(SAMPLE_RATE_CONVERTER)) {
+	if (sw_codec_cfg.decoder.enabled && IS_ENABLED(CONFIG_SAMPLE_RATE_CONVERTER)) {
 		for (int i = 0; i < sw_codec_cfg.decoder.channel_mode; i++) {
 			ret = sample_rate_converter_open(&decoder_converters[i]);
 			if (ret) {
