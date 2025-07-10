@@ -379,6 +379,7 @@ struct cracen_pake_operation {
 #ifdef CONFIG_PSA_NEED_CRACEN_SPAKE2P
 		cracen_spake2p_operation_t cracen_spake2p_ctx;
 #endif /* CONFIG_PSA_NEED_CRACEN_SPAKE2P */
+		uint8_t _unused;
 	};
 };
 typedef struct cracen_pake_operation cracen_pake_operation_t;
