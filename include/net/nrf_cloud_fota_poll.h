@@ -134,6 +134,7 @@ int nrf_cloud_fota_poll_process_pending(struct nrf_cloud_fota_poll_ctx *ctx);
  * @retval -EFAULT          A FOTA job was not successful.
  * @retval -ENOENT          A FOTA job has finished and its status has been reported to the cloud.
  * @retval -EAGAIN          No FOTA job exists.
+ * @retval -ETIMEDOUT       The FOTA job check timed out. Retry later.
  */
 int nrf_cloud_fota_poll_process(struct nrf_cloud_fota_poll_ctx *ctx);
 
