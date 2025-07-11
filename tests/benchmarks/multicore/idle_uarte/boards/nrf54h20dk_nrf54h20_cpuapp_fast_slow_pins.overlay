@@ -72,3 +72,11 @@ dut: &uart120 {
 	current-speed = <4000000>;
 	/delete-property/ hw-flow-control;
 };
+
+&gpio6 {
+	status = "disabled";
+};
+
+&exmif {
+	status = "disabled";
+};

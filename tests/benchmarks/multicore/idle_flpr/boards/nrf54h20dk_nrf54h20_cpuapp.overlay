@@ -25,3 +25,11 @@
 	status = "okay";
 	owned-channels = <0>;
 };
+
+&gpio6 {
+	zephyr,pm-device-runtime-auto;
+};
+
+&exmif {
+	zephyr,pm-device-runtime-auto;
+};

@@ -11,4 +11,12 @@
 	};
 };
 
+&gpio6 {
+	status = "disabled";
+};
+
+&exmif {
+	status = "disabled";
+};
+
 /delete-node/ &led1;
