@@ -901,4 +901,4 @@ Documentation
   * The :ref:`dm-revisions` section of the :ref:`dm_code_base` page with information about the preview release tag, which replaces the development tag.
 
 * Removed the standalone page for getting started with Nordic Thingy:53.
-  The contents of this page have been moved to the :ref:`thingy53_precompiled` page and to the `Programmer app <prog_thingy_53>`_ documentation.
+  The contents of this page have been moved to the :ref:`thingy53_precompiled` page and to the `Programming Nordic Thingy:53 <Programming Nordic Thingy53_>`_ section in the Programmer app documentation.
