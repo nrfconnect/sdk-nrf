@@ -6,7 +6,7 @@
 .. |release_tt| replace:: ``v3.0.0``
 .. |release_number_tt| replace:: ``3.0.0``
 
-.. |jlink_ver| replace:: v8.18
+.. |jlink_ver| replace:: v8.42
 
 .. ### Config shortcuts
 
