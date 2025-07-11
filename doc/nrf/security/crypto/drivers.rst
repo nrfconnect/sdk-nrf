@@ -179,7 +179,7 @@ The following table provides a brief overview of the available directives and th
 When you select Kconfig options for the wanted features and drivers, nRF Security checks the Oberon directives to make the optimal driver selection.
 To combine the settings in Kconfig that represent application requirements (``PSA_WANT_*``) and driver preferences from the user (``PSA_USE_*``), nRF Security uses ``PSA_NEED_*`` macros.
 These macros are automatically selected.
-They control which drivers are compiled into the build and thus available for use at runtime for software fallback and `Driver chaining`_.
+They control which drivers are compiled into the build and thus available for use at runtime for `Software fallback`_ and `Driver chaining`_.
 
 The following figure shows an overview of this process:
 
@@ -376,6 +376,9 @@ nrf_oberon driver
 The :ref:`nrf_oberon_readme` is a software driver provided through `sdk-oberon-psa-crypto`_, a lightweight PSA Crypto API implementation optimized for resource-constrained microcontrollers.
 The driver is distributed as a closed-source binary that provides select cryptographic algorithms optimized for use in nRF devices.
 This provides faster execution than the original Mbed TLS implementation.
+
+The nrf_oberon driver can act as a `Software fallback`_ for the other drivers.
+This feature can be turned on by :ref:`enabling nrf_oberon <psa_crypto_support_enable_nrf_oberon>` or by :ref:`enabling cryptographic operations <ug_crypto_supported_features_operations>` that are not supported by the hardware drivers.
 
 .. note::
    |original_mbedtls_def_note|
