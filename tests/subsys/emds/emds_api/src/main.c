@@ -18,23 +18,6 @@
 #include <mpsl.h>
 #endif
 
-#if defined CONFIG_SOC_FLASH_NRF_RRAM
-#define RRAM DT_INST(0, soc_nv_flash)
-#define EMDS_FLASH_BLOCK_SIZE DT_PROP(RRAM, write_block_size)
-#else
-#define FLASH DT_INST(0, soc_nv_flash)
-#define EMDS_FLASH_BLOCK_SIZE DT_PROP(FLASH, write_block_size)
-#endif
-
-/* Allocation Table Entry */
-struct test_ate {
-	uint16_t id;       /* data id */
-	uint16_t offset;   /* data offset within sector */
-	uint16_t len;      /* data len within sector */
-	uint8_t crc8_data; /* crc8 check of the entry */
-	uint8_t crc8;      /* crc8 check of the entry */
-} __packed;
-
 enum test_states {
 	EMDS_TS_EMPTY_FLASH,
 	EMDS_TS_STORE_DATA,
@@ -45,6 +28,7 @@ enum test_states {
 
 static int iteration;
 
+/* test scenario */
 static enum test_states state[] = {
 	EMDS_TS_EMPTY_FLASH,
 	EMDS_TS_STORE_DATA,
@@ -56,10 +40,10 @@ static enum test_states state[] = {
 	EMDS_TS_CLEAR_FLASH,
 };
 
-static const uint8_t expect_d_data[3][10] = {
-	{ 1,  2,  3,  4,  5,  6,  7,  8,  9, 10},
-	{11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
-	{21, 22, 23, 24, 25, 26, 27, 28, 29, 30},
+static const uint8_t expect_d_data[3][3][10] = {
+	{{[0 ... 9] = 0x01}, {[0 ... 9] = 0x02}, {[0 ... 9] = 0x03}},
+	{{[0 ... 9] = 0x11}, {[0 ... 9] = 0x12}, {[0 ... 9] = 0x13}},
+	{{[0 ... 9] = 0x21}, {[0 ... 9] = 0x22}, {[0 ... 9] = 0x23}}
 };
 
 static uint8_t d_data[3][10];
@@ -69,7 +53,11 @@ static struct emds_dynamic_entry d_entries[3] = {
 	{{0x1003, &d_data[2][0], 10}},
 };
 
-static const uint8_t expect_s_data[1024] = { 0xCC };
+static const uint8_t expect_s_data[3][1024] = {
+	{[0 ... 1023] = 0xAA},
+	{[0 ... 1023] = 0xBB},
+	{[0 ... 1023] = 0xCC},
+};
 static uint8_t s_data[1024];
 
 EMDS_STATIC_ENTRY_DEFINE(s_entry, 0x100, s_data, sizeof(s_data));
@@ -99,11 +87,6 @@ static void app_store_cb(void)
 #endif
 }
 
-static inline size_t align_size(size_t len)
-{
-	return (len + (EMDS_FLASH_BLOCK_SIZE - 1U)) & ~(EMDS_FLASH_BLOCK_SIZE - 1U);
-}
-
 /** Mocks ******************************************/
 
 
@@ -129,23 +112,20 @@ static void init(void)
 static void add_d_entries(void)
 {
 	int err;
-	int ate_size = align_size(sizeof(struct test_ate));
-	uint32_t store_expected =
-		DIV_ROUND_UP(sizeof(s_data), EMDS_FLASH_BLOCK_SIZE) * EMDS_FLASH_BLOCK_SIZE +
-		ate_size;
+	uint32_t store_expected = sizeof(s_data) + sizeof(struct emds_data_entry);
+	uint32_t store_used;
 
 	for (int i = 0; i < ARRAY_SIZE(d_entries); i++) {
 		err = emds_entry_add(&d_entries[i]);
-		store_expected += DIV_ROUND_UP(d_entries[i].entry.len, EMDS_FLASH_BLOCK_SIZE) *
-				  EMDS_FLASH_BLOCK_SIZE;
-		store_expected += ate_size;
+		store_expected += d_entries[i].entry.len + sizeof(struct emds_data_entry);
 		zassert_equal(err, 0, "Add entry failed");
 
 		err = emds_entry_add(&d_entries[i]);
 		zassert_equal(err, -EINVAL, "Entry duplicated");
 	}
 
-	uint32_t store_used = emds_store_size_get();
+	err = emds_store_size_get(&store_used);
+	zassert_equal(err, 0, "Getting store size failed");
 
 	zassert_equal(store_used, store_expected, "Wrong storage size: expected: %i, got: %i",
 		      store_expected, store_used);
@@ -159,7 +139,7 @@ static void load_empty_flash(void)
 	memcpy(d_data, test_d_data, sizeof(d_data));
 	memcpy(s_data, test_s_data, sizeof(s_data));
 
-	zassert_equal(emds_load(), 0, "Load failed");
+	zassert_equal(emds_load(), -ENOENT, "Load failed");
 
 	zassert_mem_equal(d_data, test_d_data, sizeof(d_data),
 			  "Data has changed");
@@ -167,16 +147,16 @@ static void load_empty_flash(void)
 			  "Data has changed");
 }
 
-static void load_flash(void)
+static void load_flash(int idx)
 {
 	memset(d_data, 0, sizeof(d_data));
 	memset(s_data, 0, sizeof(s_data));
 
 	zassert_equal(emds_load(), 0, "Load failed");
 
-	zassert_mem_equal(d_data, expect_d_data, sizeof(expect_d_data),
+	zassert_mem_equal(d_data, &expect_d_data[idx][0][0], sizeof(d_data),
 			  "Data has changed");
-	zassert_mem_equal(s_data, expect_s_data, sizeof(expect_s_data),
+	zassert_mem_equal(s_data, &expect_s_data[idx][0], sizeof(s_data),
 			  "Data has changed");
 }
 
@@ -191,12 +171,12 @@ static void prepare(void)
 	zassert_true(emds_is_ready(), "EMDS should be ready");
 }
 
-static void store(void)
+static void store(int idx)
 {
 	zassert_true(emds_is_ready(), "Store should be ready to execute");
 
-	memcpy(d_data, expect_d_data, sizeof(expect_d_data));
-	memcpy(s_data, expect_s_data, sizeof(expect_s_data));
+	memcpy(d_data, &expect_d_data[idx][0][0], sizeof(d_data));
+	memcpy(s_data, &expect_s_data[idx][0], sizeof(s_data));
 
 #if defined(CONFIG_BT) && !defined(CONFIG_BT_LL_SW_SPLIT)
 	/* Disable bluetooth and mpsl scheduler if bluetooth is enabled. */
@@ -307,45 +287,42 @@ ZTEST(empty_flash, test_empty_flash)
 {
 	load_empty_flash();
 	prepare();
-	store();
-	load_flash();
+	store(0);
+	load_flash(0);
 }
 
 ZTEST(store_data, test_store_data)
 {
-	load_flash();
+	load_flash(0);
 	prepare();
-	store();
-	load_flash();
+	store(1);
+	load_flash(1);
 }
 
 ZTEST(clear_flash, test_clear_flash)
 {
-	load_flash();
-	prepare();
-	store();
+	load_flash(0);
 	clear();
 	load_empty_flash();
 }
 
 ZTEST(no_store, test_no_store)
 {
-	load_flash();
+	clear();
+	load_empty_flash();
 	prepare();
 	load_empty_flash();
 }
 
 ZTEST(several_store, test_several_store)
 {
-	load_flash();
+	load_flash(1);
 	prepare();
-	load_empty_flash();
-	store();
-	load_flash();
+	store(2);
+	load_flash(2);
 	prepare();
-	load_empty_flash();
-	store();
-	load_flash();
+	store(0);
+	load_flash(0);
 }
 
 ZTEST_SUITE(_setup, pragma_always, NULL, NULL, NULL, NULL);
