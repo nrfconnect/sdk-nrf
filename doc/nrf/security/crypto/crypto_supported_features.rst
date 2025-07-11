@@ -34,7 +34,7 @@ Cryptographic feature support
 The following sections list the supported cryptographic features and algorithms for each of the drivers: :ref:`nrf_cc3xx <crypto_drivers_cc3xx>`, :ref:`CRACEN <crypto_drivers_cracen>`, and :ref:`nrf_oberon <crypto_drivers_oberon>`.
 The listed Kconfig options enable the features and algorithms for the drivers that support them.
 
-The Kconfig options follow the ``CONFIG_PSA_WANT_`` + ``CONFIG_PSA_USE_`` configuration scheme, which is described in detail on the :ref:`crypto_drivers` page.
+The Kconfig options follow the ``CONFIG_PSA_WANT_*`` + ``CONFIG_PSA_USE_*`` configuration scheme, which is described in detail on the :ref:`crypto_drivers` page.
 
 Key types and key management
 ============================
@@ -1059,7 +1059,7 @@ Key pair operations
 ===================
 
 The following sections list the supported key pair operation Kconfig options for different key types.
-The Kconfig options follow the ``CONFIG_PSA_WANT_`` configuration scheme, which is described in detail on the :ref:`crypto_drivers` page.
+The Kconfig options follow the ``CONFIG_PSA_WANT_*`` configuration scheme, which is described in detail on the :ref:`crypto_drivers` page.
 
 RSA key pair operations
 -----------------------
@@ -1207,7 +1207,7 @@ Key size configurations
 =======================
 
 The following sections list the supported AES and RSA key size Kconfig options.
-The Kconfig options follow the ``CONFIG_PSA_WANT_`` configuration scheme, which is described in detail on the :ref:`crypto_drivers` page.
+The Kconfig options follow the ``CONFIG_PSA_WANT_*`` configuration scheme, which is described in detail on the :ref:`crypto_drivers` page.
 
 AES key size configuration
 --------------------------

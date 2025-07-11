@@ -114,9 +114,7 @@ When multiple enabled drivers support the same cryptographic feature, the config
 Configuring cryptographic features
 **********************************
 
-You can enable a cryptographic feature or algorithm using `CONFIG_PSA_WANT_*`_ Kconfig options, which are specific for PSA Crypto API configurations.
-For example, to enable the AES algorithm, set the :kconfig:option:`CONFIG_PSA_WANT_ALG_AES` Kconfig option.
-
+You can enable a cryptographic feature or algorithm using `CONFIG_PSA_WANT_*`_ and `CONFIG_PSA_USE_*`_ Kconfig options, which are specific to the :ref:`feature selection mechanism <crypto_drivers_feature_selection>` of the PSA Crypto API.
 For a list of supported cryptographic features and algorithms and the Kconfig options to enable them, see :ref:`ug_crypto_supported_features`.
 
 Building PSA Crypto API
