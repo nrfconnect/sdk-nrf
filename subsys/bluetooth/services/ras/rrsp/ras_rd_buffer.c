@@ -194,8 +194,9 @@ static void subevent_data_available(struct bt_conn *conn,
 				    struct bt_conn_le_cs_subevent_result *result)
 {
 	LOG_DBG("Procedure %u", result->header.procedure_counter);
-	struct ras_rd_buffer *buf =
-		rd_buffer_get(conn, result->header.procedure_counter, false, true);
+	uint16_t ranging_counter =
+		bt_ras_rreq_get_ranging_counter(result->header.procedure_counter);
+	struct ras_rd_buffer *buf = rd_buffer_get(conn, ranging_counter, false, true);
 
 	uint8_t conn_index = bt_conn_index(conn);
 
@@ -223,7 +224,7 @@ static void subevent_data_available(struct bt_conn *conn,
 
 	if (!buf) {
 		/* First subevent - allocate a buffer */
-		buf = rd_buffer_alloc(conn, result->header.procedure_counter);
+		buf = rd_buffer_alloc(conn, ranging_counter);
 
 		if (!buf) {
 			LOG_INF("Failed to allocate buffer for procedure %u",
@@ -233,7 +234,7 @@ static void subevent_data_available(struct bt_conn *conn,
 			return;
 		}
 
-		buf->procedure.ranging_header.ranging_counter = result->header.procedure_counter;
+		buf->procedure.ranging_header.ranging_counter = ranging_counter;
 		buf->procedure.ranging_header.config_id = result->header.config_id;
 		buf->procedure.ranging_header.selected_tx_power = tx_power_cache[conn_index];
 		buf->procedure.ranging_header.antenna_paths_mask =
@@ -292,7 +293,7 @@ static void subevent_data_available(struct bt_conn *conn,
 	    hdr->ranging_done_status == BT_CONN_LE_CS_PROCEDURE_ABORTED) {
 		buf->ready = true;
 		buf->busy = false;
-		notify_new_rd_stored(conn, result->header.procedure_counter);
+		notify_new_rd_stored(conn, ranging_counter);
 	}
 }
 
