@@ -1018,6 +1018,7 @@ Documentation
   * The :ref:`data_storage` page, which covers storage alternatives for general data, including NVMC, NVS, file systems, Settings, and PSA Protected Storage, with feature comparisons and configuration examples.
   * The :ref:`key_storage` page, which covers storage alternatives for cryptographic keys, including PSA Crypto API, Hardware Unique Keys (HUK), modem certificate storage, and other security-focused storage mechanisms.
   * The :ref:`bt_fast_pair_adv_manager_readme` page that describes the new helper module for the :ref:`bt_fast_pair_readme` library.
+  * The :ref:`ug_nrf54h20_pm_optimization` page that describes the power management optimizations for the nRF54H20 SoC.
 
 * Updated the :ref:`bt_fast_pair_readme` page to mention the availability of the :ref:`bt_fast_pair_adv_manager_readme` helper module.
 
@@ -1028,3 +1029,4 @@ Documentation
   * The Getting started with nRF7002 DK and Getting started with other DKs pages from the :ref:`gsg_guides` section.
     These pages were no longer relevant as the `Quick Start app`_ now also supports the nRF7002 DK.
   * The documentation related to SUIT.
+  * The :ref:`ug_nrf54h20_architecture_pm` page to add a mapping of application states to software power states on the nRF54H20 SoC.
