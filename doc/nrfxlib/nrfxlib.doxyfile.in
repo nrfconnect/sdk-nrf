@@ -2403,7 +2403,6 @@ INCLUDE_FILE_PATTERNS  =
 
 PREDEFINED             = __DOXYGEN__ \
                          "MBEDTLS_CONFIG_FILE=\"@OUTPUT_DIRECTORY@/mbedtls_doxygen_config.h\"" \
-                         "CONFIG_MBEDTLS_VANILLA_BACKEND=y" \
                          "CONFIG_CC3XX_BACKEND=y" \
                          "CONFIG_SYS_CLOCK_EXISTS=y" \
                          "CONFIG_THREAD_MONITOR=y" \
