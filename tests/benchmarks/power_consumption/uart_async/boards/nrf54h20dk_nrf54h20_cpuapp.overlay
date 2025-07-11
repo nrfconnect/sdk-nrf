@@ -10,3 +10,11 @@
 &uart136 {
 	zephyr,pm-device-runtime-auto;
 };
+
+&gpio6 {
+	status = "disabled";
+};
+
+&exmif {
+	status = "disabled";
+};

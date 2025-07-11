@@ -28,3 +28,11 @@
 	refsel = "VDD_4_8";
 	status = "okay";
 };
+
+&gpio6 {
+	status = "disabled";
+};
+
+&exmif {
+	status = "disabled";
+};

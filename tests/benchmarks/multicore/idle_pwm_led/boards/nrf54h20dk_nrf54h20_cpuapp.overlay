@@ -14,3 +14,11 @@
 };
 
 /delete-node/ &led1;
+
+&gpio6 {
+	status = "disabled";
+};
+
+&exmif {
+	status = "disabled";
+};

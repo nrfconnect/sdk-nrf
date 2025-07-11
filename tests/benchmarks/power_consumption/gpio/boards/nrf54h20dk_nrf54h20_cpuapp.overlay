@@ -31,3 +31,11 @@
 	status = "okay";
 	owned-channels = <0>;
 };
+
+&gpio6 {
+	status = "disabled";
+};
+
+&exmif {
+	status = "disabled";
+};
