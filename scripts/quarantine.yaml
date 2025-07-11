@@ -47,12 +47,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-7265"
 
 - scenarios:
-    - nrf.extended.drivers.sensor.qdec.pm_runtime
-  platforms:
-    - nrf54l20pdk/nrf54l20/cpuflpr
-  comment: "https://nordicsemi.atlassian.net/browse/NRFX-7267"
-
-- scenarios:
     - sample.suit.*
     - suit-platform.integration.*
     - suit.integration.*
