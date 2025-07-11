@@ -61,6 +61,8 @@ The nrf_oberon driver may then be disabled by using the Kconfig option :kconfig:
    On nRF54L Series devices, CRACEN is the only source of entropy.
    Therefore, it is not possible to disable the :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_CRACEN` Kconfig option when the Zephyr entropy driver is enabled.
 
+.. _psa_crypto_support_enable_nrf_oberon:
+
 Enabling the nrf_oberon driver
 ==============================
 

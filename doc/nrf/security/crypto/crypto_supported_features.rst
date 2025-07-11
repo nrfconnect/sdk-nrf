@@ -135,7 +135,7 @@ The following table shows the Kconfig options for configuring Oberon PSA Crypto 
      - :kconfig:option:`CONFIG_PSA_USE_CRACEN_KEY_MANAGEMENT_DRIVER`
      - AES, Chacha20, ECC Key Pair, ECC Public Key, RSA Key Pair, RSA Public Key
    * - :ref:`nrf_oberon <crypto_drivers_oberon>`
-     - Configuration automatically generated based on the enabled key types. Acts as fallback for the other drivers.
+     - Configuration automatically generated based on the enabled key types. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
      - AES, Chacha20, ECC Key Pair, ECC Public Key, RSA Key Pair, RSA Public Key
 
 Cipher modes
@@ -210,7 +210,7 @@ The following table shows the Kconfig options for configuring Oberon PSA Crypto 
      - :kconfig:option:`CONFIG_PSA_USE_CRACEN_CIPHER_DRIVER`
      - ECB no padding, CBC no padding, CBC PKCS#7 padding, CTR, Stream cipher
    * - :ref:`nrf_oberon <crypto_drivers_oberon>`
-     - Configuration automatically generated based on the enabled cipher modes. Acts as fallback for the other drivers.
+     - Configuration automatically generated based on the enabled cipher modes. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
      - ECB no padding, CBC no padding, CBC PKCS#7 padding, CTR, CCM* no tag, Stream cipher
 
 .. note::
@@ -263,7 +263,7 @@ The following table shows the Kconfig options for configuring Oberon PSA Crypto 
      - :kconfig:option:`CONFIG_PSA_USE_CRACEN_KEY_AGREEMENT_DRIVER`
      - ECDH
    * - :ref:`nrf_oberon <crypto_drivers_oberon>`
-     - Configuration automatically generated based on the enabled key agreement algorithms. Acts as fallback for the other drivers.
+     - Configuration automatically generated based on the enabled key agreement algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
      - ECDH (limited to curve types secp224r1, secp256r1, secp384r1, and Curve25519)
 
 KDF algorithms
@@ -347,7 +347,7 @@ The following table shows the Kconfig options for configuring Oberon PSA Crypto 
      - :kconfig:option:`CONFIG_PSA_USE_CRACEN_KEY_DERIVATION_DRIVER`
      - HKDF, HKDF-Extract, HKDF-Expand, PBKDF2-HMAC, PBKDF2-AES-CMAC-PRF-128, TLS 1.2 EC J-PAKE to PMS, SP 800-108r1 CMAC w/counter, SP 800-108 HMAC counter mode
    * - :ref:`nrf_oberon <crypto_drivers_oberon>`
-     - Configuration automatically generated based on the enabled KDF algorithms. Acts as fallback for the other drivers.
+     - Configuration automatically generated based on the enabled KDF algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
      - HKDF, HKDF-Extract, HKDF-Expand, PBKDF2-HMAC, PBKDF2-AES-CMAC-PRF-128, TLS 1.2 PRF, TLS 1.2 PSK to MS, TLS 1.2 EC J-PAKE to PMS, SP 800-108 HMAC counter mode
 
 MAC algorithms
@@ -402,7 +402,7 @@ The following table shows the Kconfig options for configuring Oberon PSA Crypto 
      - :kconfig:option:`CONFIG_PSA_USE_CRACEN_MAC_DRIVER`
      - CMAC, HMAC
    * - :ref:`nrf_oberon <crypto_drivers_oberon>`
-     - Configuration automatically generated based on the enabled MAC algorithms. Acts as fallback for the other drivers.
+     - Configuration automatically generated based on the enabled MAC algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
      - CMAC, HMAC
 
 AEAD algorithms
@@ -458,7 +458,7 @@ The following table shows the Kconfig options for configuring Oberon PSA Crypto 
      - :kconfig:option:`CONFIG_PSA_USE_CRACEN_AEAD_DRIVER`
      - CCM, GCM, ChaCha20-Poly1305
    * - :ref:`nrf_oberon <crypto_drivers_oberon>`
-     - Configuration automatically generated based on the enabled AEAD algorithms. Acts as fallback for the other drivers.
+     - Configuration automatically generated based on the enabled AEAD algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
      - CCM, GCM, ChaCha20-Poly1305
 
 Asymmetric signature algorithms
@@ -549,7 +549,7 @@ The following table shows the Kconfig options for configuring Oberon PSA Crypto 
      - :kconfig:option:`CONFIG_PSA_USE_CRACEN_ASYMMETRIC_SIGNATURE_DRIVER`
      - ECDSA, ECDSA without hashing, ECDSA (deterministic), PureEdDSA, HashEdDSA Edwards25519, RSA PKCS#1 v1.5 sign, RSA PSS
    * - :ref:`nrf_oberon <crypto_drivers_oberon>`
-     - Configuration automatically generated based on the enabled asymmetric signature algorithms. Acts as fallback for the other drivers.
+     - Configuration automatically generated based on the enabled asymmetric signature algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
      - ECDSA (limited to ECC curve types secp224r1, secp256r1, and secp384r1), ECDSA without hashing, ECDSA (deterministic), PureEdDSA (limited to ECC curve type Ed25519), RSA PKCS#1 v1.5 sign, RSA raw PKCS#1 v1.5 sign, RSA PSS, RSA PSS any salt (does not support RSA key pair generation)
 
 Asymmetric encryption algorithms
@@ -599,7 +599,7 @@ The following table shows the Kconfig options for configuring Oberon PSA Crypto 
      - :kconfig:option:`CONFIG_PSA_USE_CRACEN_ASYMMETRIC_ENCRYPTION_DRIVER`
      - RSA OAEP, RSA PKCS#1 v1.5 crypt
    * - :ref:`nrf_oberon <crypto_drivers_oberon>`
-     - Configuration automatically generated based on the enabled asymmetric encryption algorithms. Acts as fallback for the other drivers.
+     - Configuration automatically generated based on the enabled asymmetric encryption algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
      - RSA OAEP, RSA PKCS#1 v1.5 crypt (does not support RSA key pair generation)
 
 ECC curve types
@@ -801,7 +801,7 @@ The following table shows the Kconfig options for configuring Oberon PSA Crypto 
      - :kconfig:option:`CONFIG_PSA_USE_CRACEN_KEY_MANAGEMENT_DRIVER`
      - BrainpoolP192r1, BrainpoolP224r1, BrainpoolP256r1, BrainpoolP320r1, BrainpoolP384r1, BrainpoolP512r1, Curve25519 (X25519), Edwards25519 (Ed25519), secp192k1, secp256k1, secp192r1, secp224r1, secp256r1, secp384r1, secp521r1
    * - :ref:`nrf_oberon <crypto_drivers_oberon>`
-     - Configuration automatically generated based on the enabled ECC curve types. Acts as fallback for the other drivers.
+     - Configuration automatically generated based on the enabled ECC curve types. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
      - Curve25519 (X25519), Edwards25519 (Ed25519), Edwards448 (Ed448), secp224r1, secp256r1, secp384r1
 
 RNG algorithms
@@ -859,7 +859,7 @@ The following table shows the Kconfig options for configuring Oberon PSA Crypto 
      - :kconfig:option:`CONFIG_PSA_USE_CRACEN_CTR_DRBG_DRIVER`
      - CTR-DRBG
    * - :ref:`nrf_oberon <crypto_drivers_oberon>`
-     - Configuration automatically generated based on the enabled RNG algorithms. Acts as fallback for the other drivers.
+     - Configuration automatically generated based on the enabled RNG algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
      - CTR-DRBG, HMAC-DRBG (software implementation, entropy provided by nRF RNG peripheral)
 
 Hash algorithms
@@ -985,7 +985,7 @@ The following table shows the Kconfig options for configuring Oberon PSA Crypto 
      - :kconfig:option:`CONFIG_PSA_USE_CRACEN_HASH_DRIVER`
      - SHA-1 (weak), SHA-224, SHA-256, SHA-384, SHA-512, SHA3-224, SHA3-256, SHA3-384, SHA3-512
    * - :ref:`nrf_oberon <crypto_drivers_oberon>`
-     - Configuration automatically generated based on the enabled hash algorithms. Acts as fallback for the other drivers.
+     - Configuration automatically generated based on the enabled hash algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
      - SHA-1 (weak), SHA-224, SHA-256, SHA-384, SHA-512
 
 PAKE algorithms
@@ -1052,7 +1052,7 @@ The following table shows the Kconfig options for configuring Oberon PSA Crypto 
      - :kconfig:option:`CONFIG_PSA_USE_CRACEN_PAKE_DRIVER`
      - EC J-PAKE, SPAKE2+ with HMAC, SPAKE2+ with CMAC, SPAKE2+ for Matter, SRP-6, SRP password hashing
    * - :ref:`nrf_oberon <crypto_drivers_oberon>`
-     - Configuration automatically generated based on the enabled PAKE algorithms. Acts as fallback for the other drivers.
+     - Configuration automatically generated based on the enabled PAKE algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
      - EC J-PAKE, SPAKE2+ with HMAC, SPAKE2+ with CMAC, SPAKE2+ for Matter, SRP-6, SRP password hashing
 
 Key pair operations
