@@ -52,6 +52,7 @@
 
 #ifdef CONFIG_OPENTHREAD
 #include <platform/OpenThread/GenericNetworkCommissioningThreadDriver.h>
+#include <openthread.h>
 #endif
 
 #include <app/InteractionModelEngine.h>
@@ -194,6 +195,18 @@ CHIP_ERROR InitNetworkingStack()
 	return error;
 }
 
+#if CHIP_SYSTEM_CONFIG_USE_OPENTHREAD_ENDPOINT
+void LockOpenThreadTask(void)
+{
+    chip::DeviceLayer::ThreadStackMgr().LockThreadStack();
+}
+
+void UnlockOpenThreadTask(void)
+{
+    chip::DeviceLayer::ThreadStackMgr().UnlockThreadStack();
+}
+#endif /* CHIP_SYSTEM_CONFIG_USE_OPENTHREAD_ENDPOINT */
+
 #elif defined(CONFIG_CHIP_WIFI)
 
 CHIP_ERROR InitNetworkingStack()
@@ -205,7 +218,7 @@ CHIP_ERROR InitNetworkingStack()
 	return CHIP_NO_ERROR;
 }
 #else
-#error "No valid L2 network backend selected");
+#error "No valid networking backend selected");
 #endif /* CONFIG_OPENTHREAD */
 
 #define VerifyInitResultOrReturn(ec, msg)                                                                              \
@@ -238,7 +251,7 @@ void DoInitChipServer(intptr_t /* unused */)
 		VerifyInitResultOrReturn(sInitResult, "Custom pre server initialization failed");
 	}
 
-	/* Initialize L2 networking backend. */
+	/* Initialize networking backend. */
 	sInitResult = InitNetworkingStack();
 	VerifyInitResultOrReturn(sInitResult, "Cannot initialize IPv6 networking stack");
 
@@ -290,6 +303,15 @@ void DoInitChipServer(intptr_t /* unused */)
 	SetDeviceAttestationCredentialsProvider(Examples::GetExampleDACProvider());
 	/* The default CommissionableDataProvider is set internally in the GenericConfigurationManagerImpl::Init(). */
 #endif
+
+#if CHIP_SYSTEM_CONFIG_USE_OPENTHREAD_ENDPOINT
+	// Set up OpenThread configuration when OpenThread is included
+	chip::Inet::EndPointStateOpenThread::OpenThreadEndpointInitParam nativeParams;
+	nativeParams.lockCb = LockOpenThreadTask;
+	nativeParams.unlockCb = UnlockOpenThreadTask;
+	nativeParams.openThreadInstancePtr = chip::DeviceLayer::ThreadStackMgrImpl().OTInstance();
+	sLocalInitData.mServerInitParams->endpointNativeParams = static_cast<void *>(&nativeParams);
+#endif /* CHIP_SYSTEM_CONFIG_USE_OPENTHREAD_ENDPOINT */
 
 #ifdef CONFIG_NCS_SAMPLE_MATTER_SETTINGS_SHELL
 	VerifyOrReturn(Nrf::PersistentStorageShell::Init(),

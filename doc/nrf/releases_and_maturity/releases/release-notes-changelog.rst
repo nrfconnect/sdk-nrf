@@ -170,7 +170,11 @@ Gazell
 Matter
 ------
 
-* Added FastTrack Recertification and Portfolio Certification programs.
+* Added:
+
+  * FastTrack Recertification and Portfolio Certification programs.
+  * Support for configuring the Matter over Thread applications to use OpenThread API directly instead of utilizing Zephyr L2 networking layer.
+    This allows for a significant memory usage reduction in Matter applications - approximately 15 kB of RAM and 40 kB of flash.
 
 * Updated:
 
@@ -510,6 +514,7 @@ Matter samples
 * Added:
 
   * Support for the NFC onboarding for the ``nrf54l15dk/nrf54l15/cpuapp/ns`` board target.
+  * Disabled usage of Zephyr L2 networking layer in favor of using the OpenThread API directly in the Matter over Thread applications.
 
 * Updated:
 
