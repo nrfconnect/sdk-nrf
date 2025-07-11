@@ -436,7 +436,8 @@ The following table shows the Kconfig options for requesting Oberon PSA Crypto t
      - Supported
 
 .. note::
-   Key size configuration for CCM and GCM is supported as described in `AES key size configuration`_.
+   - Key size configuration for CCM and GCM is supported as described in `AES key size configuration`_.
+   - CRACEN only supports a 96-bit IV for AES GCM.
 
 AEAD driver
 -----------
@@ -1200,6 +1201,8 @@ The following table shows the Kconfig options for requesting Oberon PSA Crypto t
      - Supported
      - Supported
 
+.. _ug_crypto_supported_features_key_size:
+
 Key size configurations
 =======================
 
@@ -1235,6 +1238,9 @@ The following table shows the Kconfig options for requesting Oberon PSA Crypto t
      - Not supported (nrf_cc310)
      - Supported
      - Supported
+
+.. note::
+   CRACEN only supports a 96-bit IV for AES GCM.
 
 RSA key size configuration
 --------------------------

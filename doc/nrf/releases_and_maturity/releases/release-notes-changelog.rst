@@ -470,7 +470,9 @@ Cellular samples
 Cryptography samples
 --------------------
 
-|no_changes_yet_note|
+* :ref:`crypto_aes_gcm` sample:
+
+  * Added a note stating that CRACEN only supports a 96-bit IV for AES GCM.
 
 Debug samples
 -------------
