@@ -33,7 +33,11 @@ The following sections provide detailed lists of changes by component.
 IDE, OS, and tool support
 =========================
 
-|no_changes_yet_note|
+* Removed the separate requirement for installation of the `nRF Util's device command <Device command overview_>`_ from the :ref:`install_ncs` page under :ref:`installing_vsc`.
+  The tool and the command are now included in the |NCS| toolchain bundle.
+
+  .. note::
+     If you plan to work with command line, you still need to download nRF Util and install the `sdk-manager` command in order to get the toolchain bundle.
 
 Board support
 =============
