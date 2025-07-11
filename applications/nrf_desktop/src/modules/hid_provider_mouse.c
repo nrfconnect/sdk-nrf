@@ -263,7 +263,7 @@ static void mouse_report_sent(uint8_t report_id, bool error)
 	report_data.pipeline_cnt--;
 
 	if (error) {
-		LOG_ERR("HID report send error");
+		LOG_WRN("Error while sending report");
 		/* HID state will send subsequent HID mouse report to update state. No need to do
 		 * anything.
 		 */

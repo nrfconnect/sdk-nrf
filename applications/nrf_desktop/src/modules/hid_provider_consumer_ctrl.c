@@ -184,7 +184,7 @@ static void consumer_ctrl_report_sent(uint8_t report_id, bool error)
 	__ASSERT_NO_MSG(active_sub);
 
 	if (error) {
-		LOG_ERR("HID report send error");
+		LOG_WRN("Error while sending report");
 		/* HID state will try to send next HID consumer control report to refresh state. */
 		report_data.update_needed = true;
 	}
