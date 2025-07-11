@@ -55,31 +55,6 @@ The following table shows the Kconfig options for requesting Oberon PSA Crypto t
      - Supported
      - Supported
      - Supported
-   * - ARIA
-     - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ARIA`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - DES (weak)
-     - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_DES`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - CAMELLIA
-     - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_CAMELLIA`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - SM4
-     - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SM4`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - ARC4 (weak)
-     - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ARC4`
-     - Not supported
-     - Not supported
-     - Not supported
    * - Chacha20
      - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_CHACHA20`
      - Supported
@@ -105,16 +80,6 @@ The following table shows the Kconfig options for requesting Oberon PSA Crypto t
      - Supported
      - Supported
      - Supported
-   * - DH Key Pair
-     - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_DH_KEY_PAIR`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - DH Public Key
-     - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_DH_PUBLIC_KEY`
-     - Not supported
-     - Not supported
-     - Not supported
 
 Key management
 --------------
@@ -177,11 +142,6 @@ The following table shows the Kconfig options for requesting Oberon PSA Crypto t
      - Not supported
      - Not supported
      - Supported
-   * - XTS
-     - :kconfig:option:`CONFIG_PSA_WANT_ALG_XTS`
-     - Not supported
-     - Not supported
-     - Not supported
    * - Stream cipher
      - :kconfig:option:`CONFIG_PSA_WANT_ALG_STREAM_CIPHER`
      - Supported
@@ -235,11 +195,6 @@ The following table shows the Kconfig options for requesting Oberon PSA Crypto t
      - Supported
      - Supported
      - Supported
-   * - FFDH
-     - :kconfig:option:`CONFIG_PSA_WANT_ALG_FFDH`
-     - Not supported
-     - Not supported
-     - Not supported
 
 .. note::
    The algorithm support when using ECC key types is dependent on one or more Kconfig options enabling curve support according to `ECC curve types`_.
@@ -374,11 +329,6 @@ The following table shows the Kconfig options for requesting Oberon PSA Crypto t
      - Supported
      - Supported
      - Supported
-   * - CBC-MAC
-     - :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_MAC`
-     - Not supported
-     - Not supported
-     - Not supported
 
 .. note::
    Key size configuration for CMAC is supported as described in `AES key size configuration`_.
@@ -500,11 +450,6 @@ The following table shows the Kconfig options for requesting Oberon PSA Crypto t
      - Not supported
      - Supported
      - Not supported
-   * - HashEdDSA Edwards448
-     - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
-     - Not supported
-     - Not supported
-     - Not supported
    * - RSA PKCS#1 v1.5 sign
      - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
      - Supported
@@ -616,11 +561,6 @@ The following table shows the Kconfig options for requesting Oberon PSA Crypto t
      - :ref:`nrf_cc3xx <crypto_drivers_cc3xx>`
      - :ref:`CRACEN <crypto_drivers_cracen>`
      - :ref:`nrf_oberon <crypto_drivers_oberon>`
-   * - BrainpoolP160r1 (weak)
-     - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_160`
-     - Not supported
-     - Not supported
-     - Not supported
    * - BrainpoolP192r1
      - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_192`
      - Not supported
@@ -656,11 +596,6 @@ The following table shows the Kconfig options for requesting Oberon PSA Crypto t
      - Supported
      - Supported
      - Supported
-   * - Curve448 (X448)
-     - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
-     - Not supported
-     - Not supported
-     - Not supported
    * - Edwards25519 (Ed25519)
      - :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
      - Supported
@@ -675,11 +610,6 @@ The following table shows the Kconfig options for requesting Oberon PSA Crypto t
      - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_192`
      - Supported
      - Supported
-     - Not supported
-   * - secp224k1
-     - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_224`
-     - Not supported
-     - Not supported
      - Not supported
    * - secp256k1
      - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`
@@ -710,76 +640,6 @@ The following table shows the Kconfig options for requesting Oberon PSA Crypto t
      - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_521`
      - Not supported
      - Supported
-     - Not supported
-   * - secp160r2 (weak)
-     - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R2_160`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - sect163k1 (weak)
-     - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_K1_163`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - sect233k1
-     - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_K1_233`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - sect239k1
-     - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_K1_239`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - sect283k1
-     - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_K1_283`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - sect409k1
-     - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_K1_409`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - sect571k1
-     - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_K1_571`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - sect163r1 (weak)
-     - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_R1_163`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - sect233r1
-     - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_R1_233`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - sect283r1
-     - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_R1_283`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - sect409r1
-     - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_R1_409`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - sect571r1
-     - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_R1_571`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - sect163r2 (weak)
-     - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECT_R2_163`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - FRP256v1
-     - :kconfig:option:`CONFIG_PSA_WANT_ECC_FRP_V1_256`
-     - Not supported
-     - Not supported
      - Not supported
 
 ECC curve driver
@@ -901,16 +761,6 @@ The following table shows the Kconfig options for requesting Oberon PSA Crypto t
      - Not supported
      - Supported
      - Supported
-   * - SHA-512/224
-     - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_512_224`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - SHA-512/256
-     - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_512_256`
-     - Not supported
-     - Not supported
-     - Not supported
    * - SHA3-224
      - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_224`
      - Not supported
@@ -931,40 +781,9 @@ The following table shows the Kconfig options for requesting Oberon PSA Crypto t
      - Not supported
      - Supported
      - Not supported
-   * - SM3
-     - :kconfig:option:`CONFIG_PSA_WANT_ALG_SM3`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - SHAKE256 512 bits
-     - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - MD2 (weak)
-     - :kconfig:option:`CONFIG_PSA_WANT_ALG_MD2`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - MD4 (weak)
-     - :kconfig:option:`CONFIG_PSA_WANT_ALG_MD4`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - MD5 (weak)
-     - :kconfig:option:`CONFIG_PSA_WANT_ALG_MD5`
-     - Not supported
-     - Not supported
-     - Not supported
-   * - RIPEMD-160
-     - :kconfig:option:`CONFIG_PSA_WANT_ALG_RIPEMD160`
-     - Not supported
-     - Not supported
-     - Not supported
 
 .. note::
    * The SHA-1 hash is weak and deprecated and is only recommended for use in legacy protocols.
-   * The MD5 hash is weak and deprecated and is only recommended for use in legacy protocols.
 
 Hash driver
 -----------

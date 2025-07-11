@@ -128,6 +128,8 @@ Security
 
   * The :ref:`ug_tfm_logging` page with more details about how to configure logging on the same UART instance as the application for nRF5340 and nRF91 Series devices.
   * The :ref:`crypto_drivers` page with more details about the driver selection process.
+  * The :ref:`ug_crypto_supported_features` page with updated values for the supported cryptographic operations and algorithms.
+    Now, the page only lists features and algorithms that are supported by at least one driver.
 
 Protocols
 =========
