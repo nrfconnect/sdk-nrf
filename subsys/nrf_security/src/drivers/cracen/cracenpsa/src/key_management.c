@@ -1420,6 +1420,7 @@ psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uin
 {
 #ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
 	int status;
+	int nested_err;
 	psa_key_location_t location =
 		PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
 
@@ -1454,8 +1455,10 @@ psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uin
 			*data_length = key_out_size;
 		}
 
-		(void)cracen_kmu_clean_key(key_buffer);
+		nested_err = cracen_kmu_clean_key(key_buffer);
+
 		nrf_security_mutex_unlock(cracen_mutex_symmetric);
+		status = sx_handle_nested_error(nested_err, status);
 
 		return silex_statuscodes_to_psa(status);
 	}
@@ -1488,14 +1491,15 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 					 target_key_buffer_length, &key_bits);
 	}
 
-	int status;
+	int sx_status;
+	int nested_err;
 	psa_status_t psa_status;
 	size_t key_size = PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
 
 	nrf_security_mutex_lock(cracen_mutex_symmetric);
-	status = cracen_kmu_prepare_key(source_key);
+	sx_status = cracen_kmu_prepare_key(source_key);
 
-	if (status == SX_OK) {
+	if (sx_status == SX_OK) {
 		size_t key_bits;
 
 		psa_status = cracen_import_key(attributes, kmu_push_area, key_size,
@@ -1503,11 +1507,14 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 					       target_key_buffer_length, &key_bits);
 	}
 
-	(void)cracen_kmu_clean_key(source_key);
+	nested_err = cracen_kmu_clean_key(source_key);
+
 	nrf_security_mutex_unlock(cracen_mutex_symmetric);
 
-	if (status != SX_OK) {
-		return silex_statuscodes_to_psa(status);
+	sx_status = sx_handle_nested_error(nested_err, sx_status);
+
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	return psa_status;

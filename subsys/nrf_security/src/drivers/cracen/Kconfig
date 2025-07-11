@@ -40,6 +40,17 @@ config CRACEN_LIB_KMU
 	help
 	  The CRACEN KMU library.
 
+config CRACEN_PROVISION_PROT_RAM_INV_DATA
+	bool "Provision protected RAM invalidation data"
+	depends on CRACEN_LIB_KMU
+	default y
+	help
+	  Provision the protected RAM invalidation data in the KMU. This will generate random
+	  data and provision the reserved KMU slots with the data that will be used to invalidate
+	  the protected RAM after a key is used.
+	  When disabled the application is expected to provision the reserved KMU slots 248 and 249
+	  manually, otherwise the protected RAM keys will not be usable.
+
 config CRACEN_IKG
 	bool "Enable CRACEN IKG"
 	default y
