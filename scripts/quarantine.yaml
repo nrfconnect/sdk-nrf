@@ -71,7 +71,6 @@
 - scenarios:
     - emds.api
     - emds.flash
-    - bluetooth.mesh.build_models.emds
   platforms:
     - nrf52840dk/nrf52840
     - nrf54l15dk/nrf54l15/cpuapp
