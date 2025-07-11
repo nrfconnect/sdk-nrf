@@ -1,131 +1,300 @@
 /*
- * Copyright (c) 2022 Nordic Semiconductor ASA
+ * Copyright (c) 2025 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <zephyr/drivers/flash.h>
-#include <string.h>
-#include <errno.h>
-#include <inttypes.h>
-#include <zephyr/sys/crc.h>
-#include <zephyr/logging/log.h>
 #include "emds_flash.h"
-#include <nrf_erratas.h>
+
+#include <zephyr/drivers/flash.h>
+#include <zephyr/sys/crc.h>
+
+#include <zephyr/logging/log.h>
+LOG_MODULE_REGISTER(emds_flash, CONFIG_EMDS_LOG_LEVEL);
 
 #if defined CONFIG_SOC_FLASH_NRF_RRAM
 #include <hal/nrf_rramc.h>
 #include <zephyr/sys/barrier.h>
-#define RRAM                  DT_INST(0, soc_nv_flash)
-#define RRAM_START            DT_REG_ADDR(RRAM)
-#define RRAM_SIZE             DT_REG_SIZE(RRAM)
-#define EMDS_FLASH_BLOCK_SIZE DT_PROP(RRAM, write_block_size)
-#define WRITE_BUFFER_SIZE     CONFIG_EMDS_RRAM_WRITE_BUFFER_SIZE /* in 128-bits words */
-#define WRITE_LINE_SIZE       16 /* In bytes, one line is 128 bits. */
-#define WRITE_BUFFER_SIZE_IN_BYTES (WRITE_BUFFER_SIZE * WRITE_LINE_SIZE)
 #else
 #include <nrfx_nvmc.h>
-#define FLASH                 DT_INST(0, soc_nv_flash)
-#define EMDS_FLASH_BLOCK_SIZE DT_PROP(FLASH, write_block_size)
 #endif
 
-LOG_MODULE_REGISTER(emds_flash, CONFIG_EMDS_LOG_LEVEL);
+#define SOC_NV_FLASH_NODE             DT_INST(0, soc_nv_flash)
+/* "EMDS" in ASCII */
+#define EMDS_SNAPSHOT_METADATA_MARKER 0x4D444553
 
-#define ADDR_OFFS_MASK 0x0000FFFF
-
-/* Allocation Table Entry */
-struct emds_ate {
-	uint16_t id; /* data id */
-	uint16_t offset; /* data offset within sector */
-	uint16_t len; /* data len within sector */
-	uint8_t crc8_data; /* crc8 check of the data entry */
-	uint8_t crc8; /* crc8 check of the ate entry */
-} __packed;
-
-enum ate_type {
-	ATE_TYPE_VALID = BIT(0),
-	ATE_TYPE_INVALIDATED = BIT(1),
-	ATE_TYPE_ERASED = BIT(2),
-	ATE_TYPE_UNKNOWN = BIT(3)
-};
-
-BUILD_ASSERT(offsetof(struct emds_ate, crc8) == sizeof(struct emds_ate) - sizeof(uint8_t),
-	     "crc8 must be the last member");
-
-#define SOC_NV_FLASH_NODE DT_INST(0, soc_nv_flash)
-
-#if NRF52_ERRATA_242_PRESENT
-#include <hal/nrf_power.h>
-/* Disable POFWARN by writing POFCON before a write or erase operation.
- * Do not attempt to write or erase if EVENTS_POFWARN is already asserted.
- */
-static bool pofcon_enabled;
-
-static int suspend_pofwarn(void)
+static void cand_list_init(sys_slist_t *cand_list, struct emds_snapshot_candidate *cand_buf)
 {
-	if (!nrf52_errata_242()) {
-		return 0;
+	sys_slist_init(cand_list);
+	for (int i = 0; i < CONFIG_EMDS_MAX_CANDIDATES; i++) {
+		sys_slist_append(cand_list, &cand_buf[i].node);
+	}
+}
+
+static void cand_put(sys_slist_t *cand_list, off_t cand_off, struct emds_snapshot_metadata *cand)
+{
+	sys_snode_t *cand_node = sys_slist_peek_tail(cand_list);
+	sys_snode_t *head = sys_slist_peek_head(cand_list);
+	sys_snode_t *curr = head;
+	sys_snode_t *prev = curr;
+	struct emds_snapshot_candidate *curr_ctx;
+	struct emds_snapshot_candidate *placeholder =
+		CONTAINER_OF(cand_node, struct emds_snapshot_candidate, node);
+
+	if (cand->fresh_cnt < placeholder->metadata.fresh_cnt) {
+		return; /* Ignore candidates that are not fresher than the placeholder */
 	}
 
-	bool enabled;
-	nrf_power_pof_thr_t pof_thr;
+	LOG_DBG("Found snapshot at offset 0x%04lx with fresh_cnt %u. Metadata offset: 0x%04lx",
+		cand->data_instance_off, cand->fresh_cnt, cand_off);
 
-	pof_thr = nrf_power_pofcon_get(NRF_POWER, &enabled);
+	sys_slist_find_and_remove(cand_list, cand_node);
+	placeholder->metadata = *cand;
+	placeholder->metadata_off = cand_off;
 
-	if (enabled) {
-		nrf_power_pofcon_set(NRF_POWER, false, pof_thr);
+	do {
+		curr_ctx = CONTAINER_OF(curr, struct emds_snapshot_candidate, node);
+		if (placeholder->metadata.fresh_cnt > curr_ctx->metadata.fresh_cnt) {
+			if (curr == head) {
+				sys_slist_prepend(cand_list, cand_node);
+			} else {
+				sys_slist_insert(cand_list, prev, cand_node);
+			}
+			return;
+		}
+		prev = curr;
+	} while ((curr = sys_slist_peek_next(curr)));
 
-		/* This check need to be reworked once POFWARN event will be
-		 * served by zephyr.
-		 */
-		if (nrf_power_event_check(NRF_POWER, NRF_POWER_EVENT_POFWARN)) {
-			nrf_power_pofcon_set(NRF_POWER, true, pof_thr);
-			return -ECANCELED;
+	sys_slist_append(cand_list, cand_node);
+}
+
+static bool cand_snapshot_crc_check(const struct emds_partition *partition,
+				    struct emds_snapshot_metadata *metadata)
+{
+	const struct flash_area *fa = partition->fa;
+	uint8_t data_chunk[16];
+	size_t chunk_size;
+	uint32_t crc = 0;
+	size_t data_length = metadata->data_instance_len;
+	off_t data_off = metadata->data_instance_off;
+	int rc;
+
+	while (data_length > 0) {
+		chunk_size = MIN(data_length, sizeof(data_chunk));
+		rc = flash_area_read(fa, data_off, data_chunk, chunk_size);
+		if (rc) {
+			LOG_ERR("Failed to read data chunk: %d", rc);
+			return false;
+		}
+
+		crc = crc32_k_4_2_update(crc, data_chunk, chunk_size);
+		data_off += chunk_size;
+		data_length -= chunk_size;
+	}
+
+	return crc == metadata->snapshot_crc;
+}
+
+static bool metadata_iterator(off_t *read_off, int cur_failures)
+{
+	*read_off -= sizeof(struct emds_snapshot_metadata);
+	if (*read_off <= 0) {
+		return false;
+	}
+
+	return cur_failures <= CONFIG_EMDS_SCANNING_FAILURES;
+}
+
+int emds_flash_init(struct emds_partition *partition)
+{
+	const struct flash_area *fa = partition->fa;
+
+	if (!fa->fa_dev) {
+		LOG_ERR("No valid flash device found");
+		return -ENXIO;
+	}
+
+	partition->fp = flash_get_parameters(fa->fa_dev);
+	if (partition->fp == NULL) {
+		LOG_ERR("Could not obtain flash parameters");
+		return -EINVAL;
+	}
+
+	if (flash_params_get_erase_cap(partition->fp) & FLASH_ERASE_C_EXPLICIT) {
+		struct flash_pages_info info;
+		int rc;
+
+		rc = flash_get_page_info_by_offs(fa->fa_dev, fa->fa_off, &info);
+		if (rc) {
+			LOG_ERR("Unable to get page info");
+			return -EINVAL;
+		}
+
+		if (fa->fa_off != info.start_offset || fa->fa_size % info.size) {
+			LOG_ERR("Flash area offset or size is not aligned to page size");
+			return -EINVAL;
+		}
+	} else {
+		if (fa->fa_off % partition->fp->write_block_size ||
+		    fa->fa_size % partition->fp->write_block_size) {
+			LOG_ERR("Flash area offset or size is not aligned to write block size");
+			return -EINVAL;
 		}
 	}
 
 	return 0;
 }
 
-static void restore_pofwarn(void)
+int emds_flash_scan_partition(const struct emds_partition *partition,
+			      struct emds_snapshot_candidate *candidate)
 {
-	nrf_power_pof_thr_t pof_thr;
+	struct emds_snapshot_metadata cache = {0};
+	struct emds_snapshot_candidate cand_buf[CONFIG_EMDS_MAX_CANDIDATES] = {0};
+	sys_slist_t cand_list;
+	sys_snode_t *cand_node;
+	const struct flash_area *fa = partition->fa;
+	off_t read_off = fa->fa_size - sizeof(cache);
+	int failures = 0;
+	uint32_t crc;
+	int rc;
 
-	if (pofcon_enabled) {
-		pof_thr = nrf_power_pofcon_get(NRF_POWER, NULL);
+	cand_list_init(&cand_list, cand_buf);
 
-		nrf_power_pofcon_set(NRF_POWER, true, pof_thr);
-		pofcon_enabled = false;
+	do {
+		rc = flash_area_read(fa, read_off, &cache, sizeof(cache));
+		if (rc) {
+			LOG_ERR("Failed to read snapshot metadata: %d", rc);
+			return rc;
+		}
+
+		if (cache.marker != EMDS_SNAPSHOT_METADATA_MARKER) {
+			failures++;
+			LOG_DBG("Snapshot metadata marker mismatch at address 0x%04lx",
+				fa->fa_off + read_off);
+			continue;
+		}
+
+		crc = crc32_k_4_2_update(0, (const unsigned char *)&cache,
+					 offsetof(struct emds_snapshot_metadata, metadata_crc));
+		if (crc != cache.metadata_crc) {
+			failures++;
+			LOG_DBG("Snapshot metadata CRC mismatch at address 0x%04lx",
+				fa->fa_off + read_off);
+			continue;
+		}
+
+		cand_put(&cand_list, read_off, &cache);
+	} while (metadata_iterator(&read_off, failures));
+
+	/* At this point we have the sorted linked list of candidates.
+	 * Candidates have been sorted from the freshest at the head to the oldest snapshot.
+	 */
+	while ((cand_node = sys_slist_get(&cand_list))) {
+		struct emds_snapshot_candidate *cand =
+			CONTAINER_OF(cand_node, struct emds_snapshot_candidate, node);
+
+		if (cand->metadata.fresh_cnt == 0) {
+			break;
+		}
+
+		if (cand_snapshot_crc_check(partition, &cand->metadata)) {
+			*candidate = *cand;
+			LOG_DBG("Found valid snapshot at address 0x%04lx with length %u with "
+				"fresh_cnt %u",
+				fa->fa_off + cand->metadata.data_instance_off,
+				cand->metadata.data_instance_len, cand->metadata.fresh_cnt);
+			break;
+		}
+
+		LOG_DBG("Snapshot CRC mismatch at address 0x%04lx",
+			fa->fa_off + cand->metadata.data_instance_off);
 	}
+
+	return 0;
 }
 
-#define SUSPEND_POFWARN() suspend_pofwarn()
-#define RESUME_POFWARN()  restore_pofwarn()
-#else
-#define SUSPEND_POFWARN() 0
-#define RESUME_POFWARN()
-#endif /* NRF52_ERRATA_242_PRESENT */
-
-static inline bool is_aligned_32(uint32_t data)
+int emds_flash_allocate_snapshot(const struct emds_partition *partition,
+				 const struct emds_snapshot_candidate *freshest_snapshot,
+				 struct emds_snapshot_candidate *allocated_snapshot,
+				 size_t data_size)
 {
-	return (data & 0x3) ? false : true;
-}
+	const struct flash_area *fa = partition->fa;
+	const struct flash_parameters *fp = partition->fp;
+	off_t metadata_off = freshest_snapshot ? freshest_snapshot->metadata_off : fa->fa_size;
+	off_t data_off = freshest_snapshot
+				 ? ROUND_UP(freshest_snapshot->metadata.data_instance_off +
+						    freshest_snapshot->metadata.data_instance_len,
+					    fp->write_block_size)
+				 : 0;
+	size_t aligned_data_size = ROUND_UP(data_size, fp->write_block_size);
+	int rc;
 
-static inline bool is_within_bounds(off_t addr, size_t len, off_t boundary_start,
-				    size_t boundary_size)
-{
-	return (addr >= boundary_start &&
-			(addr < (boundary_start + boundary_size)) &&
-			(len <= (boundary_start + boundary_size - addr)));
-}
+	metadata_off -= sizeof(struct emds_snapshot_metadata);
 
-static inline bool is_regular_addr_valid(off_t addr, size_t len)
-{
-#if defined CONFIG_SOC_FLASH_NRF_RRAM
-	return is_within_bounds(addr, len, RRAM_START, RRAM_START + RRAM_SIZE);
-#else
-	return is_within_bounds(addr, len, 0, nrfx_nvmc_flash_size_get());
-#endif
+	if (aligned_data_size +
+		    ROUND_UP(sizeof(struct emds_snapshot_metadata), fp->write_block_size) >
+	    fa->fa_size) {
+		LOG_ERR("Invalid data size: %zu", data_size);
+		return -EINVAL;
+	}
+
+	if (REGIONS_OVERLAP(metadata_off, sizeof(struct emds_snapshot_metadata), data_off,
+			    aligned_data_size)) {
+		LOG_WRN("Metadata area overlaps with data area");
+		return -ENOMEM;
+	}
+
+	if (flash_params_get_erase_cap(partition->fp) & FLASH_ERASE_C_EXPLICIT) {
+		uint8_t cmp[sizeof(struct emds_snapshot_metadata)];
+		uint8_t cache[sizeof(struct emds_snapshot_metadata)];
+
+		memset(cmp, fp->erase_value, sizeof(cmp));
+
+		rc = flash_area_read(fa, metadata_off, cache,
+				     sizeof(struct emds_snapshot_metadata));
+		if (rc) {
+			LOG_ERR("Failed to read snapshot metadata memory: %d", rc);
+			return rc;
+		}
+
+		if (memcmp(cmp, cache, sizeof(struct emds_snapshot_metadata))) {
+			LOG_WRN("Metadata area at address: 0x%04lx is not empty",
+				fa->fa_off + metadata_off);
+			return -EADDRINUSE;
+		}
+
+		/* Check area of the first entry only. If it is empty then everything behind this is
+		 * empty. If area is busy then emds does not know border where it is empty. Need to
+		 * erase partition.
+		 */
+		rc = flash_area_read(fa, data_off, cache, sizeof(struct emds_data_entry));
+		if (rc) {
+			LOG_ERR("Failed to read the first entry memory: %d", rc);
+			return rc;
+		}
+
+		if (memcmp(cmp, cache, sizeof(struct emds_data_entry))) {
+			LOG_WRN("Data area at address: 0x%04lx is not empty",
+				fa->fa_off + data_off);
+			return -EADDRINUSE;
+		}
+	}
+
+	allocated_snapshot->metadata_off = metadata_off;
+	allocated_snapshot->metadata.marker = EMDS_SNAPSHOT_METADATA_MARKER;
+	allocated_snapshot->metadata.data_instance_off = data_off;
+	allocated_snapshot->metadata.data_instance_len = data_size;
+	allocated_snapshot->metadata.metadata_crc =
+		crc32_k_4_2_update(0, (const unsigned char *)&allocated_snapshot->metadata,
+				   offsetof(struct emds_snapshot_metadata, metadata_crc));
+	allocated_snapshot->metadata.snapshot_crc = 0;
+
+	LOG_DBG("Allocating snapshot at address 0x%04lx with length %u and fresh_cnt %u",
+		fa->fa_off + data_off, data_size, allocated_snapshot->metadata.fresh_cnt);
+	LOG_DBG("Metadata address: 0x%04lx, crc: 0x%08x", fa->fa_off + metadata_off,
+		allocated_snapshot->metadata.metadata_crc);
+
+	return 0;
 }
 
 static void nvmc_wait_ready(void)
@@ -140,14 +309,14 @@ static void nvmc_wait_ready(void)
 }
 
 #if defined CONFIG_SOC_FLASH_NRF_RRAM
-static void commit_changes(size_t len)
+static void commit_changes(const struct emds_partition *partition, size_t len)
 {
 	if (nrf_rramc_empty_buffer_check(NRF_RRAMC)) {
 		/* The internal write-buffer has been committed to RRAM and is now empty. */
 		return;
 	}
 
-	if ((len % WRITE_BUFFER_SIZE_IN_BYTES) == 0) {
+	if ((len % partition->fp->write_block_size) == 0) {
 		/* Our last operation was buffer size-aligned, so we're done. */
 		return;
 	}
@@ -158,456 +327,52 @@ static void commit_changes(size_t len)
 }
 #endif
 
-static int flash_direct_write(const struct device *dev, off_t offset, const void *data, size_t len)
+void emds_flash_write_data(const struct emds_partition *partition, off_t data_off, void *data_chunk,
+			   size_t data_size)
 {
-	uint32_t flash_addr = offset;
-
-	ARG_UNUSED(dev);
-
-	if (!is_regular_addr_valid(flash_addr, len)) {
-		return -EINVAL;
-	}
-
-	if (!is_aligned_32(flash_addr)) {
-		return -EINVAL;
-	}
-
-	if (len % sizeof(uint32_t)) {
-		return -EINVAL;
-	}
+	uint32_t flash_addr = data_off + partition->fa->fa_off;
 
 	flash_addr += DT_REG_ADDR(SOC_NV_FLASH_NODE);
 
 	nvmc_wait_ready();
 
-	if (SUSPEND_POFWARN()) {
-		return -ECANCELED;
-	}
-
 #if defined CONFIG_SOC_FLASH_NRF_RRAM
-	nrf_rramc_config_t config = {.mode_write = true, .write_buff_size = WRITE_BUFFER_SIZE};
+	nrf_rramc_config_t config = {.mode_write = true,
+				     .write_buff_size = partition->fp->write_block_size};
 
 	nrf_rramc_config_set(NRF_RRAMC, &config);
-	memcpy((void *)flash_addr, data, len);
+	memcpy((void *)flash_addr, data_chunk, data_size);
 
 	barrier_dmem_fence_full(); /* Barrier following our last write. */
-	commit_changes(len);
+	commit_changes(partition, data_size);
 
 	config.mode_write = false;
 	nrf_rramc_config_set(NRF_RRAMC, &config);
 #else
-	uint32_t data_addr = (uint32_t)data;
+	uint32_t data_addr = (uint32_t)data_chunk;
 
-	while (len >= sizeof(uint32_t)) {
+	data_size = ROUND_UP(data_size, sizeof(uint32_t));
+
+	while (data_size >= sizeof(uint32_t)) {
 		nrfx_nvmc_word_write(flash_addr, UNALIGNED_GET((uint32_t *)data_addr));
 
 		flash_addr += sizeof(uint32_t);
 		data_addr += sizeof(uint32_t);
-		len -= sizeof(uint32_t);
+		data_size -= sizeof(uint32_t);
 	}
 #endif
-
-	RESUME_POFWARN();
-
 	nvmc_wait_ready();
-
-	return 0;
 }
 
-static size_t align_size(struct emds_fs *fs, size_t len)
+int emds_flash_erase_partition(const struct emds_partition *partition)
 {
-	uint8_t write_block_size = fs->flash_params->write_block_size;
-
-	if (write_block_size <= 1U) {
-		return len;
-	}
-	return (len + (write_block_size - 1U)) & ~(write_block_size - 1U);
-}
-
-static int ate_wrt(struct emds_fs *fs, const struct emds_ate *entry)
-{
-	size_t ate_size = align_size(fs, sizeof(struct emds_ate));
-
-	if (ate_size % fs->flash_params->write_block_size) {
-		return -EINVAL;
-	}
-
-	int rc = flash_direct_write(fs->flash_dev, fs->ate_wra, entry, sizeof(struct emds_ate));
-
-	if (rc) {
-		return rc;
-	}
-
-	fs->ate_wra -= ate_size;
-	return 0;
-}
-
-static int data_wrt(struct emds_fs *fs, const void *data, size_t len)
-{
-	const uint8_t *data8 = (const uint8_t *)data;
+	const struct flash_area *fa = partition->fa;
 	int rc;
-	off_t offset;
-	size_t blen;
-	size_t temp_len = len;
-	uint8_t buf[EMDS_FLASH_BLOCK_SIZE];
 
-	if (!temp_len) {
-		/* Nothing to write, avoid changing the flash protection */
-		return 0;
-	}
-
-	offset = fs->offset;
-	offset += fs->data_wra_offset & ADDR_OFFS_MASK;
-
-	blen = temp_len & ~(fs->flash_params->write_block_size - 1U);
-	/* Writes multiples of 4 bytes to flash */
-	if (blen > 0) {
-		rc = flash_direct_write(fs->flash_dev, offset, data8, blen);
-		if (rc) {
-			return rc;
-		}
-
-		temp_len -= blen;
-		offset += blen;
-		data8 += blen;
-	}
-
-	if (temp_len) {
-		(void)memcpy(buf, data8, temp_len);
-		(void)memset(buf + temp_len, fs->flash_params->erase_value,
-			     fs->flash_params->write_block_size - temp_len);
-		rc = flash_direct_write(fs->flash_dev, offset, buf,
-					fs->flash_params->write_block_size);
-		if (rc) {
-			return rc;
-		}
-	}
-
-	fs->data_wra_offset += align_size(fs, len);
-	return 0;
-}
-
-static int check_erased(struct emds_fs *fs, uint32_t addr, size_t len)
-{
-	size_t bytes_to_cmp;
-	uint8_t cmp[EMDS_FLASH_BLOCK_SIZE];
-	uint8_t buf[EMDS_FLASH_BLOCK_SIZE];
-
-	(void)memset(cmp, 0xff, EMDS_FLASH_BLOCK_SIZE);
-	while (len) {
-		bytes_to_cmp = MIN(EMDS_FLASH_BLOCK_SIZE, len);
-		if (flash_read(fs->flash_dev, addr, buf, bytes_to_cmp)) {
-			return -EIO;
-		}
-
-		if (memcmp(cmp, buf, bytes_to_cmp)) {
-			return -EINVAL;
-		}
-
-		len -= bytes_to_cmp;
-		addr += bytes_to_cmp;
-	}
-	return 0;
-}
-
-static int is_ate_valid(const struct emds_ate *entry)
-{
-	return entry->crc8 == crc8_ccitt(0xff, entry, offsetof(struct emds_ate, crc8));
-}
-
-static int entry_wrt(struct emds_fs *fs, uint16_t id, const void *data, size_t len)
-{
-	int rc;
-	struct emds_ate entry;
-
-	entry.id = id;
-	entry.offset = fs->data_wra_offset;
-	entry.len = (uint16_t)len;
-	entry.crc8_data = crc8_ccitt(0xff, data, len);
-	entry.crc8 = crc8_ccitt(0xff, &entry, offsetof(struct emds_ate, crc8));
-	rc = data_wrt(fs, data, len);
-	if (rc) {
-		return rc;
-	}
-
-	rc = ate_wrt(fs, &entry);
+	rc = flash_area_erase(fa, 0, fa->fa_size);
 	if (rc) {
 		return rc;
 	}
 
 	return 0;
-}
-
-static enum ate_type ate_check(struct emds_fs *fs, uint32_t addr, struct emds_ate *entry)
-{
-	uint8_t read_buf[fs->ate_size];
-	int rc = flash_read(fs->flash_dev, addr, read_buf, fs->ate_size);
-
-	if (rc) {
-		return ATE_TYPE_UNKNOWN;
-	}
-
-	memset(entry, 0, sizeof(struct emds_ate));
-	if (!memcmp(entry, read_buf, sizeof(struct emds_ate))) {
-		return ATE_TYPE_INVALIDATED;
-	}
-
-	memset(entry, fs->flash_params->erase_value, sizeof(struct emds_ate));
-	if (!memcmp(entry, read_buf, sizeof(struct emds_ate))) {
-		return ATE_TYPE_ERASED;
-	}
-
-	memcpy(entry, read_buf, sizeof(struct emds_ate));
-	if (is_ate_valid(entry)) {
-		return ATE_TYPE_VALID;
-	}
-
-	return ATE_TYPE_UNKNOWN;
-}
-
-static int ate_last_recover(struct emds_fs *fs)
-{
-	struct emds_ate end_ate;
-	enum ate_type type = 0;
-	uint8_t expect_field = 0xFF;
-
-	fs->ate_wra = fs->offset + fs->sector_cnt * fs->sector_size - fs->ate_size;
-	fs->data_wra_offset = 0;
-	while (type != ATE_TYPE_ERASED) {
-		/* Ate wra has reached the start of the data area */
-		if (fs->ate_wra < fs->offset) {
-			fs->force_erase = true;
-			fs->ate_wra = fs->offset;
-			fs->data_wra_offset = 0;
-			return 0;
-		}
-
-		type = ate_check(fs, fs->ate_wra, &end_ate);
-
-		/* If an unexpected entry type occurs we force erase on next prepare */
-		if (!(type & expect_field)) {
-			fs->force_erase = true;
-		}
-
-		switch (type) {
-		case ATE_TYPE_VALID:
-			fs->data_wra_offset = align_size(fs, end_ate.offset + end_ate.len);
-			fs->ate_wra -= fs->ate_size;
-			expect_field = ATE_TYPE_VALID | ATE_TYPE_ERASED;
-			break;
-
-		case ATE_TYPE_INVALIDATED:
-			expect_field = ATE_TYPE_VALID | ATE_TYPE_INVALIDATED | ATE_TYPE_ERASED;
-			fs->ate_wra -= fs->ate_size;
-			break;
-
-		case ATE_TYPE_UNKNOWN:
-			fs->force_erase = true;
-			fs->ate_wra -= fs->ate_size;
-			break;
-
-		case ATE_TYPE_ERASED:
-		/* fall through*/
-		default:
-			break;
-		}
-	}
-
-	/* Verify that flash area between ate and data pointer is writeable */
-	if (check_erased(fs, fs->offset + fs->data_wra_offset,
-			 fs->ate_wra - (fs->offset + fs->data_wra_offset) + fs->ate_size)) {
-		fs->force_erase = true;
-	}
-
-	return 0;
-}
-
-static int old_entries_invalidate(struct emds_fs *fs)
-{
-	int rc = 0;
-	uint8_t inval_buf[fs->ate_size];
-	uint32_t addr = fs->ate_wra + fs->ate_size;
-
-	memset(inval_buf, 0, sizeof(inval_buf));
-	while (addr <= (fs->offset + fs->sector_cnt * fs->sector_size) - fs->ate_size) {
-		rc = flash_write(fs->flash_dev, addr, inval_buf, sizeof(inval_buf));
-		if (rc) {
-			return rc;
-		}
-
-		addr += fs->ate_size;
-	}
-
-	return 0;
-}
-
-int emds_flash_init(struct emds_fs *fs)
-{
-	if (fs->is_initialized) {
-		return -EACCES;
-	}
-
-	k_mutex_init(&fs->emds_lock);
-	if (!fs->flash_dev) {
-		LOG_ERR("No valid flash device found");
-		return -ENXIO;
-	}
-
-	fs->flash_params = flash_get_parameters(fs->flash_dev);
-	if (fs->flash_params == NULL) {
-		LOG_ERR("Could not obtain flash parameters");
-		return -EINVAL;
-	}
-
-	if (fs->flash_params->write_block_size > EMDS_FLASH_BLOCK_SIZE ||
-	    fs->flash_params->write_block_size == 0) {
-		LOG_ERR("Unsupported write block size: %i", fs->flash_params->write_block_size);
-		return -EINVAL;
-	}
-
-	struct flash_pages_info info;
-	int rc = flash_get_page_info_by_offs(fs->flash_dev, fs->offset, &info);
-
-	if (rc) {
-		LOG_ERR("Unable to get page info");
-		return -EINVAL;
-	}
-
-	if (!fs->sector_size || fs->sector_size % info.size) {
-		LOG_ERR("Invalid sector size");
-		return -EINVAL;
-	}
-
-	if (fs->sector_cnt < 1) {
-		LOG_ERR("Configuration error - sector count");
-		return -EINVAL;
-	}
-
-	k_mutex_lock(&fs->emds_lock, K_FOREVER);
-	fs->ate_size = align_size(fs, sizeof(struct emds_ate));
-
-	rc = ate_last_recover(fs);
-	k_mutex_unlock(&fs->emds_lock);
-	if (rc) {
-		return rc;
-	}
-
-	fs->is_initialized = true;
-	return 0;
-}
-
-int emds_flash_clear(struct emds_fs *fs)
-{
-	int rc = flash_erase(fs->flash_dev, fs->offset, fs->sector_size * fs->sector_cnt);
-
-	if (rc) {
-		return rc;
-	}
-
-	rc = check_erased(fs, fs->offset, fs->sector_size * fs->sector_cnt);
-	if (rc) {
-		return -ENXIO;
-	}
-	ate_last_recover(fs);
-	return rc;
-}
-
-ssize_t emds_flash_write(struct emds_fs *fs, uint16_t id, const void *data, size_t len)
-{
-	if (!fs->is_initialized || !fs->is_prepeared) {
-		LOG_ERR("EMDS flash not initialized or not ready for write");
-		return -EACCES;
-	}
-
-	if (fs->ate_size + align_size(fs, len) > emds_flash_free_space_get(fs)) {
-		return -ENOMEM;
-	}
-
-	if (len == 0) {
-		return 0;
-	}
-
-	int rc = entry_wrt(fs, id, data, len);
-
-	if (rc) {
-		return rc;
-	}
-
-	return len;
-}
-
-ssize_t emds_flash_read(struct emds_fs *fs, uint16_t id, void *data, size_t len)
-{
-	if (!fs->is_initialized) {
-		LOG_ERR("EMDS flash not initialized");
-		return -EACCES;
-	}
-
-	int rc;
-	uint32_t wlk_addr = fs->ate_wra;
-	struct emds_ate wlk_ate;
-
-	while (true) {
-		rc = flash_read(fs->flash_dev, wlk_addr, &wlk_ate, sizeof(struct emds_ate));
-		if (rc) {
-			return rc;
-		}
-
-		if ((wlk_ate.id == id) && (is_ate_valid(&wlk_ate))) {
-			break;
-		}
-
-		wlk_addr += fs->ate_size;
-		if (wlk_addr >= fs->offset + fs->sector_cnt * fs->sector_size) {
-			return -ENXIO;
-		}
-	}
-
-	if (len < wlk_ate.len) {
-		return -ENOMEM;
-	}
-
-	rc = flash_read(fs->flash_dev, fs->offset + wlk_ate.offset, data, wlk_ate.len);
-	if (rc) {
-		return rc;
-	}
-
-	if (wlk_ate.crc8_data != crc8_ccitt(0xff, data, wlk_ate.len)) {
-		return -EFAULT;
-	}
-
-	return wlk_ate.len;
-}
-
-int emds_flash_prepare(struct emds_fs *fs, int byte_size)
-{
-	if (!fs->is_initialized) {
-		LOG_ERR("EMDS flash not initialized");
-		return -EACCES;
-	}
-
-	if (byte_size > (fs->sector_cnt * fs->sector_size) - fs->ate_size) {
-		return -ENOMEM;
-	}
-
-	int rc = old_entries_invalidate(fs);
-
-	if (rc) {
-		return rc;
-	}
-
-	if (fs->force_erase || (byte_size > emds_flash_free_space_get(fs))) {
-		emds_flash_clear(fs);
-		fs->force_erase = false;
-	}
-
-	fs->is_prepeared = true;
-	return 0;
-}
-
-ssize_t emds_flash_free_space_get(struct emds_fs *fs)
-{
-	ssize_t space = fs->ate_wra - (fs->data_wra_offset + fs->offset);
-
-	return (space > fs->ate_size) ? space : 0;
 }
