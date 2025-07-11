@@ -6,10 +6,10 @@ tests:
   benchmarks.power_consumption.timer_waiting_128M_nrf54l:
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="boards/nrf54l_128M.overlay"
     harness: pytest
@@ -20,10 +20,10 @@ tests:
   benchmarks.power_consumption.timer_waiting_32M_nrf54l:
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="boards/nrf54l_32M.overlay"
     harness: pytest
@@ -34,10 +34,10 @@ tests:
   benchmarks.power_consumption.timer_waiting_16M_nrf54l:
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     extra_args:
       - DTC_OVERLAY_FILE="boards/nrf54l_16M.overlay"
     harness: pytest
