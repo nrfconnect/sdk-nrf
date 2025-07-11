@@ -16,10 +16,7 @@ tests:
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
 
   drivers.i2s.i2s_mclk.gpio_loopback.2ch.54h:
     harness_config:
@@ -45,10 +42,7 @@ tests:
     extra_args:
       - CONFIG_I2S_TEST_NUMBER_OF_CHANNELS=4
     platform_allow:
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
 
   drivers.i2s.i2s_mclk.gpio_loopback.8ch.54h:
     harness_config:
@@ -66,10 +60,7 @@ tests:
     extra_args:
       - CONFIG_I2S_TEST_NUMBER_OF_CHANNELS=8
     platform_allow:
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.0.0/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
-      - nrf54lm20pdk@0.2.0.csp/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
 
   drivers.i2s.i2s_mclk.gpio_loopback.2ch.54h.aclk_sck:
     harness_config:
