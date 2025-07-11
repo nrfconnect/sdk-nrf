@@ -60,3 +60,11 @@
 &uart136 {
 	disable-rx;
 };
+
+&gpio6 {
+	status = "disabled";
+};
+
+&exmif {
+	status = "disabled";
+};

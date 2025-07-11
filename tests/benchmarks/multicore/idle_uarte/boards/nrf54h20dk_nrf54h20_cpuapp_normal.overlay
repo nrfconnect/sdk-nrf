@@ -50,3 +50,11 @@ dut: &uart135 {
 	current-speed = <115200>;
 	hw-flow-control;
 };
+
+&gpio6 {
+	status = "disabled";
+};
+
+&exmif {
+	status = "disabled";
+};

@@ -89,3 +89,11 @@
 	current-speed = <115200>;
 	/delete-property/ hw-flow-control;
 };
+
+&gpio6 {
+	status = "disabled";
+};
+
+&exmif {
+	status = "disabled";
+};

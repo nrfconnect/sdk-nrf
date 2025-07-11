@@ -57,3 +57,11 @@
 	pinctrl-names = "default", "sleep";
 	memory-regions = <&cpuapp_dma_region>;
 };
+
+&gpio6 {
+	status = "disabled";
+};
+
+&exmif {
+	status = "disabled";
+};
