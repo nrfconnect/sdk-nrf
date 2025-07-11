@@ -68,7 +68,7 @@ void sx_wrpkmem(void *dst, const void *src, size_t sz)
 	memcpy((char *)d, (char *)s, sz);
 }
 
-#else /* 54L20 requires word-aligned, word-sized memory accesses */
+#else /* 54LM20A requires word-aligned, word-sized memory accesses */
 
 static void write_incomplete_word(uint32_t *dst, const uint8_t *bytes,
 				  size_t first_byte_pos, size_t num_bytes)
