@@ -69,7 +69,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-7878"
 
 - scenarios:
-    - emds.api
     - emds.flash
   platforms:
     - nrf52840dk/nrf52840
