@@ -15,8 +15,8 @@ To achieve optimal low power consumption, ensure that both the radio and applica
 For reference implementations, see the :ref:`multicore_idle_test` samples.
 These samples demonstrate configurations where the radio core remains idle while the application core remains active.
 
-Power states
-************
+Software power states
+*********************
 
 The nRF54H20 ARM Cortex CPUs currently support the following software power states:
 
@@ -24,14 +24,8 @@ The nRF54H20 ARM Cortex CPUs currently support the following software power stat
 * Idle
 * Local suspend to Ram
 
-Overview
-********
-
 Each CPU in the nRF54H20 SoC tries to preserve as much power as possible, independently from other CPUs.
 The power management subsystem, operating independently within each CPU, continuously selects the most optimal power state based on the current conditions of the CPU.
-
-Power states details
-********************
 
 The following sections describes the details of each of the software power states available on the nRF54H20 SoC.
 
@@ -250,3 +244,105 @@ Power management benchmark
 **************************
 
 To benchmark the power consumption in *Idle* state, see :ref:`multicore_idle_test`.
+
+Power management optimization example
+*************************************
+
+This example focuses on a HID device use case (for example, a mouse)
+In this use case the typical workflow is the following:
+
+  1. Sample input data from sensors.
+  2. Construct a HID report.
+  3. Transmit the report over the radio.
+  4. Sleep until the next period (usually, less than 1 ms).
+
+The power consumption targets for this example are the following:
+
+* Sleep currents (5 V supply):
+
+  * Application core (Suspend-to-RAM): < 10 µA
+  * Radio core (Suspend-to-Idle, cache disabled): < 10 µA
+
+* Active currents (estimates at 5 V):
+
+  * Radio core in WFI: ~0.25 mA
+  * App core in WFI: ~0.15 mA
+  * Core wake-up every 1 ms: +0.05 mA
+  * ADC sample every 1 ms: +0.10 mA
+  * SPI transaction every 1 ms: +0.20 mA
+  * IPC message every 1 ms: +0.15 mA
+
+Recommended Kconfig configuration
+=================================
+
+Set these Kconfigs as follows for the application running on the application core:
+
+  * CONFIG_PM=y
+  * CONFIG_PM_S2RAM=y
+  * CONFIG_POWEROFF=y
+  * CONFIG_PM_S2RAM_CUSTOM_MARKING=y
+  * CONFIG_PM_DEVICE=y
+  * CONFIG_PM_DEVICE_RUNTIME=y
+
+Set these Kconfigs as follows for the application running on the radio core:
+
+  * CONFIG_PM=y
+  * CONFIG_POWEROFF=y
+  * CONFIG_PM_DEVICE=y
+  * CONFIG_PM_DEVICE_RUNTIME=y
+
+Consider also the following:
+
+  * Disable all unused peripherals before entering sleep (Zephyr's API does this automatically when supported).
+  * Add `zephyr,pm-device-runtime-auto` in the DTS for all peripherals with runtime PM support.
+    ## DTS to JSON update here
+  * Build and program an empty image on any unused core to release shared resources.
+    ##sample of this empty image?
+
+Deep-sleep policy
+-----------------
+
+Minimum sleep durations:
+
+  * Suspend-to-Idle: ≥ 1 ms
+  * Suspend-to-RAM: ≥ 2 ms
+
+Use policy locks to prevent premature deep-sleep entry:
+
+.. code-block:: c
+
+   /* In active mode: lock deep states */
+   pm_policy_state_lock_get(PM_STATE_SUSPEND_TO_IDLE, PM_ALL_SUBSTATES);
+   pm_policy_state_lock_get(PM_STATE_SUSPEND_TO_RAM, PM_ALL_SUBSTATES);
+
+   /* Before going to sleep: unlock */
+   pm_policy_state_lock_put(PM_STATE_SUSPEND_TO_IDLE, PM_ALL_SUBSTATES);
+   pm_policy_state_lock_put(PM_STATE_SUSPEND_TO_RAM, PM_ALL_SUBSTATES);
+
+Memory and cache optimizations
+------------------------------
+
+  * Relocate code and data to TCM to avoid waking MRAM.
+  * Profile L1/L2 cache usage to minimize MRAM accesses.
+  * Disable MRAM latency manager (`CONFIG_MRAM_LATENCY=n`) to power MRAM off when idle.
+
+Peripheral and clock recommendations
+------------------------------------
+
+  * Use slow-domain (13X) peripherals to avoid waking the fast domain.
+  * If radio is active frequently, keep HFXO enabled (wake-up ≈ 800 µs).
+  * For SPI, consider nRFy or nrfx libraries instead of Zephyr’s blocking driver to save ~30 µA.
+
+Single-core vs. dual-core
+-------------------------
+
+  * A single-core solution (radio core only) can reduce IPC overhead (~0.15 mA at 1 kHz).
+  * Larger TCM on the radio core allows more code to run off-MRAM.
+  * Always load an empty image on the unused core to free global resources.
+
+Additional considerations
+-------------------------
+
+  * Apply HMPAN-216 workaround: enable the 0.8 V rail 40 µs before every radio RX/TX.
+  * Test with the latest SoC bundle to benefit from all fixes and improvements.
+
