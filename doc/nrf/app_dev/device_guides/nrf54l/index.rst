@@ -88,3 +88,4 @@ Refer to the compatibility matrices for the nRF54L Series devices to check the c
    kmu_basics
    kmu_provision
    dfu_config
+   ecies_x25519.rst
