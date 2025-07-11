@@ -174,8 +174,8 @@ To enable power-saving features, use the following options:
 
 * :kconfig:option:`CONFIG_LTE_LC_PSM_MODULE`
 * :kconfig:option:`CONFIG_LTE_LC_EDRX_MODULE`
-* :kconfig:option:`CONFIG_LTE_LC_PSM_REQ`
-* :kconfig:option:`CONFIG_LTE_LC_EDRX_REQ`
+* :kconfig:option:`CONFIG_LTE_PSM_REQ`
+* :kconfig:option:`CONFIG_LTE_EDRX_REQ`
 
 PSM and eDRX can also be requested at run time using the :c:func:`lte_lc_psm_req` and :c:func:`lte_lc_edrx_req` function calls.
 However, calling the functions during modem initialization can lead to conflicts with the value set by the Kconfig options.
