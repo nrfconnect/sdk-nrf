@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+target_sources_ifdef(CONFIG_DESKTOP_BLE_ADV_CTRL_ENABLE
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ble_adv_ctrl.c)
+
 target_sources_ifdef(CONFIG_DESKTOP_BLE_BOND_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ble_bond.c)
 

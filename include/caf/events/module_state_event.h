@@ -202,6 +202,11 @@ enum module_state {
 	 */
 	MODULE_STATE_STANDBY,
 
+	/** Module is suspended in reaction to @ref module_suspend_req_event. The module is resumed
+	 *  by @ref module_resume_req_event.
+	 */
+	MODULE_STATE_SUSPENDED,
+
 	/** Module reported fatal error. */
 	MODULE_STATE_ERROR,
 
