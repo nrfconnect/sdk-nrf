@@ -777,7 +777,7 @@
 /subsys/bluetooth/controller/             @nrfconnect/ncs-dragoon
 /subsys/bluetooth/host_extensions/        @nrfconnect/ncs-dragoon
 /subsys/bluetooth/mesh/                   @nrfconnect/ncs-paladin
-/subsys/bluetooth/rpc/                    @nrfconnect/ncs-si-bluebagel
+/subsys/bluetooth/rpc/                    @nrfconnect/ncs-si-muffin @nrfconnect/ncs-protocols-serialization
 /subsys/bluetooth/services/fast_pair/     @nrfconnect/ncs-si-bluebagel
 /subsys/bluetooth/services/ras/           @nrfconnect/ncs-dragoon
 /subsys/bluetooth/services/wifi_prov/     @wentong-li @bama-nordic
