@@ -84,7 +84,6 @@ set(CONFIG_MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG          True)
 set(CONFIG_MBEDTLS_PSA_CRYPTO_C                     True)
 
 if ("${PROJECT_NAME}" STREQUAL "Bootloader")
-  set(CONFIG_CC3XX_MBEDTLS_RSA_C    True)
   set(CONFIG_MBEDTLS_RSA_C          True)
   set(CONFIG_MBEDTLS_PKCS1_V21      True)
   set(CONFIG_MBEDTLS_PSA_CRYPTO_SPM False)
