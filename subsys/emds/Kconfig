@@ -16,13 +16,6 @@ menuconfig EMDS
 
 if EMDS
 
-config NEW_EMDS
-	bool "Enable new EMDS implementation"
-	help
-	  Enable the new implementation of Emergency Data Storage.
-	  This is temporary option for debug purpose.
-	  It will be removed in the future.
-
 config EMDS_SCANNING_FAILURES
 	int "Maximum number of scanning failures"
 	default 2
@@ -42,26 +35,6 @@ config EMDS_MAX_CANDIDATES
 	help
 	  Maximum number of snapshot candidates to keep track within
 	  the partition to select the best one for recovery.
-
-config EMDS_SECTOR_COUNT
-	int "Sector count of the emergency data storage area"
-	default 1
-	help
-	  Number of sectors used for the emergency data storage area
-
-config EMDS_THREAD_STACK_SIZE
-	int "Stack size for the emergency data storage thread"
-	default 500
-	help
-	  Size of the stack that is initialized by the emergency data storage
-
-config EMDS_THREAD_PRIORITY
-	int "Priority for the emergency data storage thread"
-	default 0
-	help
-	  Cooperative priority for the emergency data storage thread. This will
-	  be used through K_PRIO_COOP(x), that means higher value gives lower
-	  priority.
 
 config EMDS_FLASH_TIME_WRITE_ONE_WORD_US
 	int "Time to write block size into flash/rram"
@@ -101,18 +74,6 @@ config EMDS_FLASH_TIME_BASE_OVERHEAD_US
 	   is dependent on the chip used, and should be checked against the chip
 	   datasheet.
 	   For RRAM-based persistent memory driver, use ERASEPROTECT and disregard the SOC_FLASH_NRF_PARTIAL_ERASE_MS parameter.
-
-if SOC_FLASH_NRF_RRAM
-
-config EMDS_RRAM_WRITE_BUFFER_SIZE
-	int "Internal write-buffer size"
-	default 1
-	range 1 32
-	help
-	  Number of 128-bit words.
-	  Maximum buffer size can be configured to the value of 32 (128-bit words).
-
-endif # SOC_FLASH_NRF_RRAM
 
 module = EMDS
 module-str = emergency data storage
