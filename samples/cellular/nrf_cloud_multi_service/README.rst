@@ -124,7 +124,7 @@ Application thread and main application loop
 The application thread is implemented in the :file:`src/application.c` file, and is responsible for the high-level behavior of this sample.
 
 When it starts, it logs the `reset reason code <nRF9160 RESETREAS_>`_.
-If the :kconfig:option:`CONFIG_SEND_ONLINE_ALERT` Kconfig option is enabled, it sends an alert to nRF Cloud containing the reset reason as the value field.
+If the :ref:`CONFIG_SEND_ONLINE_ALERT <CONFIG_SEND_ONLINE_ALERT>` Kconfig option is enabled, it sends an alert to nRF Cloud containing the reset reason as the value field.
 
 It performs the following major tasks:
 
@@ -634,6 +634,14 @@ CONFIG_TEST_COUNTER - Enable test counter
    Enable the test counter.
    When enabled, the test counter configuration setting in the shadow is ignored.
 
+.. _CONFIG_TEST_COUNTER_MULTIPLIER:
+
+CONFIG_TEST_COUNTER_MULTIPLIER - Set the number of test counter messages sent on each update
+   Sets the number of test counter messages sent on each update.
+   This is a way to increase the number of device messages sent by the sample.
+   It is useful for load testing.
+   The value ranges from ``1`` to ``1000`` and the default value is ``1``.
+
 .. _CONFIG_AT_CMD_REQUESTS:
 
 CONFIG_AT_CMD_REQUESTS - Enable AT command requests
@@ -703,6 +711,19 @@ CONFIG_COAP_FOTA_JOB_CHECK_RATE_MINUTES - FOTA job check interval (minutes)
 
 CONFIG_COAP_FOTA_THREAD_STACK_SIZE - CoAP FOTA Thread Stack Size (bytes)
    Sets the stack size (in bytes) for the FOTA job checking thread of the sample.
+
+.. _CONFIG_SEND_ONLINE_ALERT:
+
+CONFIG_SEND_ONLINE_ALERT - Send a routine ``ALERT_TYPE_DEVICE_NOW_ONLINE`` on startup
+   This option, on enabling, demonstrates the alert feature of nRF Cloud.
+   Reception of this alert indicates that the device has rebooted.
+
+.. _CONFIG_POST_PROVISIONING_INTERVAL_M:
+
+CONFIG_POST_PROVISIONING_INTERVAL_M - Sets a delay (in minutes) between provisioning checks once connected
+   This option uses a slower rate to check for provisioning after you have successfully connected.
+   Until then you can use :kconfig:option:`CONFIG_NRF_PROVISIONING_INTERVAL_S`.
+   The default value is 30 minutes.
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
