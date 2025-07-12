@@ -30,6 +30,10 @@
 #include "hs2_profile.h"
 #include "common.h"
 
+#ifdef CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
+#include <process_cert.h>
+#endif
+
 struct interface_info *band_transmitter[16];
 struct interface_info *band_first_wlan[16];
 extern struct sockaddr_in *tool_addr;
@@ -1867,7 +1871,64 @@ static int configure_sta_handler(struct packet_wrapper *req, struct packet_wrapp
 			CHECK_RET();
 			ret = run_qt_command("SET_NETWORK 0 ieee80211w 2");
 			CHECK_RET();
+#ifdef CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
+		} else if (strstr(tlv->value, "WPA-EAP")) {
+			/*
+			 * Process Certificates
+			 */
+
+			process_certificates();
+
+			tlv = find_wrapper_tlv_by_id(req, TLV_EAP);
+			if (tlv) {
+				memset(buffer, 0, sizeof(buffer));
+				CHECK_SNPRINTF(buffer, sizeof(buffer),
+						ret, "SET_NETWORK 0 eap %s", tlv->value);
+				ret = run_qt_command(buffer);
+				CHECK_RET();
+			}
+			tlv = find_wrapper_tlv_by_id(req, TLV_IDENTITY);
+			if (tlv) {
+				memset(buffer, 0, sizeof(buffer));
+				CHECK_SNPRINTF(buffer, sizeof(buffer),
+						ret, "SET_NETWORK 0 identity \"%s\"", tlv->value);
+				ret = run_qt_command(buffer);
+				CHECK_RET();
+			}
+			tlv = find_wrapper_tlv_by_id(req, TLV_CA_CERT);
+			if (tlv) {
+				memset(buffer, 0, sizeof(buffer));
+				CHECK_SNPRINTF(buffer, sizeof(buffer),
+						ret, "SET_NETWORK 0 ca_cert \"%s\"", "blob://ca_cert");
+				ret = run_qt_command(buffer);
+				CHECK_RET();
+			}
+			tlv = find_wrapper_tlv_by_id(req, TLV_CLIENT_CERT);
+			if (tlv) {
+				memset(buffer, 0, sizeof(buffer));
+				CHECK_SNPRINTF(buffer, sizeof(buffer),
+						ret, "SET_NETWORK 0 client_cert \"%s\"", "blob://client_cert");
+				ret = run_qt_command(buffer);
+				CHECK_RET();
+			}
+			tlv = find_wrapper_tlv_by_id(req, TLV_PRIVATE_KEY);
+			if (tlv) {
+				memset(buffer, 0, sizeof(buffer));
+				CHECK_SNPRINTF(buffer, sizeof(buffer),
+						ret, "SET_NETWORK 0 private_key \"%s\"", "blob://private_key");
+				ret = run_qt_command(buffer);
+				CHECK_RET();
+			}
+			CHECK_SNPRINTF(buffer, sizeof(buffer),
+					ret, "SET_NETWORK 0 private_key_passwd \"whatever\"");
+			ret = run_qt_command(buffer);
+			CHECK_RET();
+			ret = run_qt_command("SET_NETWORK 0 ieee80211w 1");
+			CHECK_RET();
 		}
+#else
+		}
+#endif
 	}
 
 	tlv = find_wrapper_tlv_by_id(req, TLV_PROTO);
