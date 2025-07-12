@@ -284,6 +284,9 @@ nRF Desktop
   * The :ref:`CONFIG_DESKTOP_HIDS_SUBSCRIBER_REPORT_MAX <config_desktop_app_options>` Kconfig option to :ref:`nrf_desktop_hids`.
     The option allows you to limit the number of HID input reports that can be simultaneously processed by the module.
     This limits the number of GATT notifications with HID reports in the Bluetooth stack.
+  * The :kconfig:option:`CONFIG_BT_ID_AUTO_SWAP_MATCHING_BONDS` Kconfig option in implied options for nRF Desktop peripherals.
+    The option allows the application to automatically swap matching bonds when the Bluetooth local identity changes.
+    It enables the possibility for bonding with the same HID host on multiple Bluetooth local identities.
 
 * Updated:
 

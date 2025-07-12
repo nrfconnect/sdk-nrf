@@ -39,6 +39,8 @@ config DESKTOP_BT_PERIPHERAL
 	imply DESKTOP_HIDS_ENABLE
 	imply BT_DIS
 	imply DESKTOP_DEV_DESCR_ENABLE
+	imply BT_PRIVACY
+	imply BT_ID_AUTO_SWAP_MATCHING_BONDS
 	select BT_PERIPHERAL
 	help
 	  HID peripherals are configured to use the GAP Peripheral role as
@@ -58,7 +60,7 @@ config DESKTOP_BT_PERIPHERAL
 if DESKTOP_BT_PERIPHERAL
 
 config BT_ID_UNPAIR_MATCHING_BONDS
-	default y
+	default n
 	help
 	  Delete bond with the same peer on another Bluetooth local identity
 	  when bonding to prevent bonding failures. That improves user
