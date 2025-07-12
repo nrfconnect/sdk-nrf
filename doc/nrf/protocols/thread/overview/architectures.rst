@@ -28,6 +28,35 @@ This can be done per platform, while retaining the ability to default to a stand
 
    OpenThread architecture adapted from `openthread.io <OpenThread system architecture_>`_
 
+|NCS| provides two different architecture options for OpenThread.
+The first one uses Zephyr networking layer to communicate OpenThread stack with the IEEE 802.15.4 radio driver.
+The second one uses the OpenThread stack directly to communicate with the IEEE 802.15.4 radio driver.
+
+To learn more about the differences between the two architectures, see the following table:
+
+.. list-table:: Thread architecture options
+   :widths: auto
+   :header-rows: 1
+
+   * - Integration with Zephyr networking layer
+     - Direct IEEE 802.15.4 radio integration with OpenThread stack
+   * - Uses Zephyr networking layer to communicate OpenThread stack with the IEEE 802.15.4 radio driver.
+     - Uses the OpenThread stack directly to communicate with the IEEE 802.15.4 radio driver.
+   * - Integrates Zephyr networking features, such as Sockets, IPv6, DNS, DHCPv6, zperf, and more.
+     - Uses the Openthread networking features.
+   * - Implements the Zephyr IEEE 802.15.4 radio driver and PHY layer in Zephyr.
+     - Uses the nRF5 radio driver directly.
+   * - Uses the Zephyr BSD Socket API to communicate with the application layer.
+     - Uses the OpenThread BSD API to communicate with the application layer.
+   * - CoAP and MQTT application layer Zephyr implementations available.
+     - CoAP application layer OpenThread implementation available.
+   * - More complex to implement and debug.
+     - More lightweight and easier to implement and debug.
+   * - More memory and flash usage.
+     - Less memory and flash usage.
+
+To learn how to choose the architecture option that best fits your needs, see the :ref:`ug_thread_configuring_basic` user guide.
+
 .. _ug_thread_architectures_designs_soc_designs:
 
 System-on-Chip designs
@@ -60,15 +89,33 @@ It has the following disadvantages:
 * The application and the network share flash and RAM space, which can limit the application functionality.
 * Might require external flash for DFU if the secondary application slot does not fit in the primary memory because of increased application size.
 
-.. figure:: images/thread_platform_design_soc.svg
-   :alt: Thread-only architecture (nRF52, nRF54L)
+Depending on integration with the Zephyr networking layer, there are two different designs:
 
-   Thread-only architecture on nRF52 Series and nRF54L Series devices
+.. tabs::
 
-.. figure:: images/thread_platform_design_nRF53.svg
-   :alt: Thread-only architecture (nRF53)
+   .. group-tab:: Integration with Zephyr networking layer
 
-   Thread-only architecture on nRF53 Series devices
+      .. figure:: images/thread_platform_design_soc.svg
+         :alt: Thread-only architecture (nRF52, nRF54L)
+
+         Thread-only architecture on nRF52 Series and nRF54L Series devices
+
+      .. figure:: images/thread_platform_design_nRF53.svg
+         :alt: Thread-only architecture (nRF53)
+
+         Thread-only architecture on nRF53 Series devices
+
+   .. group-tab:: Direct IEEE 802.15.4 radio integration with OpenThread stack
+
+      .. figure:: images/thread_platform_design_soc_direct.svg
+         :alt: Thread-only architecture (nRF52, nRF54L)
+
+         Thread-only architecture on nRF52 Series and nRF54L Series devices
+
+      .. figure:: images/thread_platform_design_nRF53_direct.svg
+         :alt: Thread-only architecture (nRF53)
+
+         Thread-only architecture on nRF53 Series devices
 
 This platform design is suitable for the following development kits:
 
@@ -94,15 +141,34 @@ It has the following disadvantages:
 
 * Bluetooth LE activity can degrade the connectivity on Thread if not implemented with efficiency in mind.
 
-.. figure:: images/thread_platform_design_multi.svg
-   :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF52, nRF54L)
+Depending on integration with the Zephyr networking layer, there are two different designs:
 
-   Multiprotocol Thread and Bluetooth LE architecture on nRF52 Series and nRF54L Series devices
+.. tabs::
 
-.. figure:: images/thread_platform_design_nRF53_multi.svg
-   :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF53)
+   .. group-tab:: Integration with Zephyr networking layer
 
-   Multiprotocol Thread and Bluetooth LE architecture on nRF53 Series devices
+      .. figure:: images/thread_platform_design_multi.svg
+         :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF52, nRF54L)
+
+         Multiprotocol Thread and Bluetooth LE architecture on nRF52 Series and nRF54L Series devices
+
+      .. figure:: images/thread_platform_design_nRF53_multi.svg
+         :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF53)
+
+         Multiprotocol Thread and Bluetooth LE architecture on nRF53 Series devices
+
+   .. group-tab:: Direct IEEE 802.15.4 radio integration with OpenThread stack
+
+      .. figure:: images/thread_platform_design_multi_direct.svg
+         :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF52, nRF54L)
+
+         Multiprotocol Thread and Bluetooth LE architecture on nRF52 Series and nRF54L Series devices
+
+      .. figure:: images/thread_platform_design_nRF53_multi_direct.svg
+         :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF53)
+
+         Multiprotocol Thread and Bluetooth LE architecture on nRF53 Series devices
+
 
 For more information about the multiprotocol feature, see :ref:`ug_multiprotocol_support`.
 
@@ -149,10 +215,23 @@ It has the following disadvantages:
 
 * This is a more expensive option, because it requires a host processor for the application.
 
-.. figure:: images/thread_platform_design_ncp.svg
-   :alt: Network co-processor architecture
+Depending on integration with the Zephyr networking layer, there are two different designs:
 
-   Network co-processor architecture
+.. tabs::
+
+   .. group-tab:: Integration with Zephyr networking layer
+
+      .. figure:: images/thread_platform_design_ncp.svg
+         :alt: Network co-processor architecture
+
+         Network co-processor architecture
+
+   .. group-tab:: Direct IEEE 802.15.4 radio integration with OpenThread stack
+
+      .. figure:: images/thread_platform_design_ncp_direct.svg
+         :alt: Network co-processor architecture
+
+         Network co-processor architecture
 
 .. note::
     |connection_options_limited|
@@ -178,10 +257,23 @@ It has the following disadvantages:
 * The host processor must be woken up on each received frame, even if a frame must be forwarded to the neighboring device.
 * The RCP solution can be less responsive than the NCP solution, due to the fact that each frame or command must be communicated to the host processor over the serial link.
 
-.. figure:: images/thread_platform_design_rcp.svg
-   :alt: Radio co-processor architecture
+Depending on integration with the Zephyr networking layer, there are two different designs:
 
-   Radio co-processor architecture
+.. tabs::
+
+   .. group-tab:: Integration with Zephyr networking layer
+
+      .. figure:: images/thread_platform_design_rcp.svg
+         :alt: Radio co-processor architecture
+
+         Radio co-processor architecture
+
+   .. group-tab:: Direct IEEE 802.15.4 radio integration with OpenThread stack
+
+      .. figure:: images/thread_platform_design_rcp_direct.svg
+         :alt: Radio co-processor architecture
+
+         Radio co-processor architecture
 
 .. note::
     |connection_options_limited|
