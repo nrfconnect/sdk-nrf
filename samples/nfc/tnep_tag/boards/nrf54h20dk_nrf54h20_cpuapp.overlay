@@ -8,3 +8,7 @@
 	status = "okay";
 	memory-regions = <&cpuapp_dma_region>;
 };
+
+&timer137 {
+	status = "okay";
+};
