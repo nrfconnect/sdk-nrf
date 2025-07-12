@@ -704,10 +704,7 @@ static int configure_supported_features(void)
 			return -ENOTSUP;
 		}
 	} else {
-		err = sdc_support_adv();
-		if (err) {
-			return -ENOTSUP;
-		}
+		sdc_support_adv();
 	}
 #endif
 
