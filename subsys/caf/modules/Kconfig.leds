@@ -27,6 +27,12 @@ config CAF_LEDS_GPIO
 
 endchoice
 
+config CAF_LEDS_FRAMES_PER_SECOND
+	int "Frames per second"
+	default 100
+	help
+	  Number of LED updates per second.
+
 config CAF_LEDS_PM_EVENTS
 	bool "Power management events support"
 	select PM_DEVICE
@@ -38,5 +44,13 @@ config CAF_LEDS_PM_EVENTS
 module = CAF_LEDS
 module-str = caf module leds
 source "subsys/logging/Kconfig.template.log_config"
+
+config CAF_LEDS_LOG_FREQUENT
+	bool "Log verbose debug messages that may be printed out very frequently"
+	default n
+	depends on CAF_LEDS_LOG_LEVEL_DBG
+	help
+	  Log verbose debug messages that may be printed out very frequently (perhaps several per
+	  frame)
 
 endif # CAF_LEDS

@@ -39,6 +39,20 @@ struct led_event {
 	const struct led_effect *led_effect;
 };
 
+/** @brief LED global brightness event.
+ *
+ * The LED global brightness event is submitted to change the global brightness of all LEDs.
+ * This event affects the final brightness of all LEDs by scaling their individual brightness
+ * values. The global brightness value is a integer (0-255) where 0 means all LEDs are off and
+ * 255 means LEDs use their full configured brightness. By default, the global brightness is 255.
+ */
+struct led_global_brightness_event {
+	/** Event header. */
+	struct app_event_header header;
+
+	/** Global brightness value (0-255). */
+	uint8_t brightness;
+};
 
 /** @brief LED ready event.
  *
@@ -72,6 +86,7 @@ extern "C" {
 #endif
 
 APP_EVENT_TYPE_DECLARE(led_event);
+APP_EVENT_TYPE_DECLARE(led_global_brightness_event);
 APP_EVENT_TYPE_DECLARE(led_ready_event);
 
 #ifdef __cplusplus
