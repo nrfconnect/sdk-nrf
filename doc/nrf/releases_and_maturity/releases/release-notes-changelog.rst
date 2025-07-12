@@ -368,6 +368,16 @@ Amazon Sidewalk samples
 Bluetooth samples
 -----------------
 
+* Updated the child image applications for the following samples from the :zephyr:code-sample:`bluetooth_hci_ipc` sample to the :ref:`ipc_radio` application for multicore builds:
+
+  * :ref:`bluetooth_conn_time_synchronization`
+  * :ref:`bluetooth_iso_combined_bis_cis`
+  * :ref:`bluetooth_isochronous_time_synchronization`
+  * :ref:`bt_scanning_while_connecting`
+
+  The :ref:`ipc_radio` application is commonly used for multicore builds in other |NCS| samples and projects.
+  Hence, this is to align with the common practice.
+
 * Added experimental ``llvm`` toolchain support for the nRF54L Series board targets to the following samples:
 
   * :ref:`peripheral_lbs`
