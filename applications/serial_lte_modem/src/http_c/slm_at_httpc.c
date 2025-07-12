@@ -50,7 +50,7 @@ enum httpc_state {
 static struct slm_httpc_ctx {
 	int fd;				/* HTTPC socket */
 	int family;			/* Socket address family */
-	uint32_t sec_tag;		/* security tag to be used */
+	sec_tag_t sec_tag;		/* security tag to be used */
 	int peer_verify;		/* Peer verification level for TLS connection. */
 	bool hostname_verify;		/* Verify hostname against the certificate. */
 	char host[SLM_MAX_URL];		/* HTTP server address */
@@ -443,31 +443,23 @@ static int handle_at_httpc_connect(enum at_parser_cmd_type cmd_type,
 			if (at_parser_num_get(parser, 3, &httpc.port)) {
 				return -EINVAL;
 			}
-
-			httpc.sec_tag = INVALID_SEC_TAG;
-			if (param_count > 4) {
-				if (at_parser_num_get(parser, 4, &httpc.sec_tag)) {
-					return -EINVAL;
-				}
+			err = util_get_num_with_default(parser, 4, param_count, INVALID_SEC_TAG,
+							&httpc.sec_tag);
+			if (err) {
+				return err;
 			}
-			httpc.peer_verify = TLS_PEER_VERIFY_REQUIRED;
-			if (param_count > 5) {
-				if (at_parser_num_get(parser, 5, &httpc.peer_verify) ||
-				    (httpc.peer_verify != TLS_PEER_VERIFY_NONE &&
-				     httpc.peer_verify != TLS_PEER_VERIFY_OPTIONAL &&
-				     httpc.peer_verify != TLS_PEER_VERIFY_REQUIRED)) {
-					return -EINVAL;
-				}
+			err = util_get_num_with_default(parser, 5, param_count,
+							TLS_PEER_VERIFY_REQUIRED,
+							&httpc.peer_verify);
+			if (err || (httpc.peer_verify != TLS_PEER_VERIFY_NONE &&
+				    httpc.peer_verify != TLS_PEER_VERIFY_OPTIONAL &&
+				    httpc.peer_verify != TLS_PEER_VERIFY_REQUIRED)) {
+				return -EINVAL;
 			}
-			httpc.hostname_verify = true;
-			if (param_count > 6) {
-				uint16_t hostname_verify;
-
-				if (at_parser_num_get(parser, 6, &hostname_verify) ||
-				    (hostname_verify != 0 && hostname_verify != 1)) {
-					return -EINVAL;
-				}
-				httpc.hostname_verify = (bool)hostname_verify;
+			err = util_get_bool_with_default(parser, 6, param_count, true,
+							 &httpc.hostname_verify);
+			if (err) {
+				return err;
 			}
 			httpc.family = (op == HTTPC_CONNECT) ? AF_INET : AF_INET6;
 			err = do_http_connect();
@@ -610,7 +602,7 @@ static int handle_at_httpc_request(enum at_parser_cmd_type cmd_type,
 		}
 		httpc.resource = (char *)(slm_data_buf + offset);
 		httpc.headers = NULL;
-		if (param_count >= 4) {
+		if (param_count > 3) {
 			/* Get headers string */
 			offset += size + 1;
 			size = HTTPC_HEADERS_LEN;
@@ -625,8 +617,7 @@ static int handle_at_httpc_request(enum at_parser_cmd_type cmd_type,
 		}
 		httpc.content_type = NULL;
 		httpc.content_length = 0;
-		httpc.chunked_transfer = false;
-		if (param_count >= 5) {
+		if (param_count > 4) {
 			/* Get content type string */
 			offset += size + 1;
 			size = HTTPC_CONTEN_TYPE_LEN;
@@ -639,16 +630,11 @@ static int handle_at_httpc_request(enum at_parser_cmd_type cmd_type,
 			if (err != 0) {
 				return err;
 			}
-			if (param_count >= 7) {
-				uint16_t tmp;
-
-				/* Get chunked transfer flag */
-				err = at_parser_num_get(parser, 6, &tmp);
-				if (err != 0) {
-					return err;
-				}
-				httpc.chunked_transfer = (tmp > 0) ? true : false;
-			}
+		}
+		err = util_get_bool_with_default(parser, 6, param_count, false,
+						 &httpc.chunked_transfer);
+		if (err) {
+			return err;
 		}
 		httpc.total_sent = 0;
 		httpc.state = HTTPC_ONGOING;
