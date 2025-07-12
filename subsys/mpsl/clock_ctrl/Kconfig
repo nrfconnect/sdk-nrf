@@ -48,4 +48,11 @@ config MPSL_EXT_CLK_CTRL_LFCLK_REQ_TIMEOUT_ALLOW
 	  for a clock with better accuracy than the one requested by the MPSL.
 	  It is user responsibility to make sure these requirements are fulfilled.
 
+config MPSL_CLOCK_CTRL_CALLBACK
+	bool "Enable callback notification API"
+	default n
+	help
+	  Enable support for registering a callback to be notified when the HFCLK is requested or
+	  released.
+
 endif # MPSL_USE_EXTERNAL_CLOCK_CONTROL
