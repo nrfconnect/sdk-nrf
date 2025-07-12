@@ -2,6 +2,9 @@ name: Compliance
 
 on: pull_request
 
+permissions:
+  contents: read
+
 jobs:
   compliance_job:
     runs-on: ubuntu-24.04
@@ -29,9 +32,7 @@ jobs:
       run: |
         pip3 install -U pip
         pip3 install -U wheel
-        grep -E "^setuptools" scripts/requirements-fixed.txt | cut -d ' ' -f '1' | xargs pip3 install -U
-        grep -E "^python-magic=|^junitparser|^lxml|^gitlint|^pylint|^pykwalify|^yamllint|^unidiff" scripts/requirements-fixed.txt | cut -d ' ' -f '1' | xargs pip3 install -U
-        grep -E "^west" scripts/requirements-fixed.txt | cut -d ' ' -f '1' | xargs pip3 install -U
+        pip install -r scripts/requirements-fixed.txt
         pip3 show -f west
 
     - name: Run merge commits test
