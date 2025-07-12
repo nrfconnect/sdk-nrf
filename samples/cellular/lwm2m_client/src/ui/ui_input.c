@@ -48,12 +48,15 @@ static void dk_input_device_event_handler(uint32_t device_states, uint32_t has_c
 
 		struct ui_input_event *event = new_ui_input_event();
 
-		event->type = dev_num > 2 ? ON_OFF_SWITCH : PUSH_BUTTON;
-		if (dev_num > 2) {
-			event->device_number = (dev_num % 3) + 1;
+		/* Only nRF9160DK have ON/OFF switches */
+		if (IS_ENABLED(CONFIG_BOARD_NRF9160DK_NRF9160_NS)) {
+			event->type = dev_num > 2 ? ON_OFF_SWITCH : PUSH_BUTTON;
+			event->device_number = (dev_num > 2) ? (dev_num - 2) : dev_num;
 		} else {
+			event->type = PUSH_BUTTON;
 			event->device_number = dev_num;
 		}
+
 		event->state = (device_states & BIT(dev_num - 1));
 
 		APP_EVENT_SUBMIT(event);

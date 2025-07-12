@@ -224,7 +224,8 @@ static int lwm2m_init_light_control(void)
 		snprintk(colour_str, RGBIR_STR_LENGTH, "0x010101");
 	}
 
-	if (IS_ENABLED(CONFIG_BOARD_THINGY91_NRF9160_NS)) {
+	if (IS_ENABLED(CONFIG_BOARD_THINGY91_NRF9160_NS) ||
+	    IS_ENABLED(CONFIG_BOARD_THINGY91X_NRF9151_NS)) {
 		/* Create RGB light control object */
 		lwm2m_create_object_inst(&LWM2M_OBJ(IPSO_OBJECT_LIGHT_CONTROL_ID, 0));
 		lwm2m_register_post_write_callback(
