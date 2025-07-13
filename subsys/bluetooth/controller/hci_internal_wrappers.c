@@ -32,7 +32,7 @@
  * `bt_hci_cmd_create`. Which is used for all BT HCI Commands, and can be called concurrently from
  * many different application contexts, initiating various processes.
  *
- * Currently `bt_hci_cmd_create` is generally `K_FOREVER`, as such this build assert only guarantees
+ * Currently `bt_hci_cmd_alloc` is generally `K_FOREVER`, as such this build assert only guarantees
  * to avoid deadlocks due to missing CMD buffers, if the host is only allocating the next command
  * once the previous is completed.
  */
