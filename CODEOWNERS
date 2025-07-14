@@ -733,6 +733,8 @@
 /scripts/partition_manager/*.rst          @nrfconnect/ncs-aurora-doc
 /scripts/shell/ble_console/**/*.rst       @nrfconnect/ncs-doc-leads
 /scripts/west_commands/sbom/*.rst         @nrfconnect/ncs-co-doc @nrfconnect/ncs-doc-leads
+/scripts/runners/nrf_common_next.py       @nrfconnect/ncs-ci
+/scripts/runners/nrfutil_next.py          @nrfconnect/ncs-ci
 
 # Share
 /share/                                   @nrfconnect/ncs-co-build-system
