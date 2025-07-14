@@ -15,6 +15,8 @@ Software maturity categories
 
 The following categories are used in the tables to classify the software maturity of each feature and component:
 
+.. software_maturity_definitions_start
+
 Supported
    The feature or component is implemented and maintained, and is suitable for product development.
 
@@ -26,6 +28,8 @@ Experimental
    This means that the feature is incomplete in functionality or verification and can be expected to change in future releases.
    The feature is made available in its current state, but the design and interfaces can change between release tags.
    The feature is also labeled as :ref:`experimental in Kconfig files <app_build_additions_experimental>` and a build warning is generated to indicate this status.
+
+.. software_maturity_definitions_end
 
 See the following table for more details:
 
