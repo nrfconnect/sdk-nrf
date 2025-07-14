@@ -73,7 +73,10 @@ static int fem_simple_gpio_configure(void)
 			},
 			.enable        = true,
 			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(ctx_gpios),
-			.gpiote_ch_id  = ctx_gpiote_channel
+			.gpiote_ch_id  = ctx_gpiote_channel,
+#if defined(NRF54L_SERIES)
+			.p_gpiote = ctx_gpiote.p_reg,
+#endif
 #else
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
 #endif
@@ -87,7 +90,10 @@ static int fem_simple_gpio_configure(void)
 			},
 			.enable        = true,
 			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(crx_gpios),
-			.gpiote_ch_id  = crx_gpiote_channel
+			.gpiote_ch_id  = crx_gpiote_channel,
+#if defined(NRF54L_SERIES)
+			.p_gpiote = crx_gpiote.p_reg,
+#endif
 #else
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
 #endif
