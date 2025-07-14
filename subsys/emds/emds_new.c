@@ -253,6 +253,7 @@ static int emds_read_data(const struct flash_area *fa, struct emds_snapshot_meta
 	struct emds_data_entry entry;
 	off_t data_off = metadata->data_instance_off;
 	int32_t data_len = metadata->data_instance_len;
+	int32_t flash_entry_data_len;
 	uint8_t *data_buf;
 	int rc;
 
@@ -265,6 +266,7 @@ static int emds_read_data(const struct flash_area *fa, struct emds_snapshot_meta
 
 		data_off += sizeof(entry);
 		data_len -= sizeof(entry);
+		flash_entry_data_len = entry.length;
 
 		data_buf = emds_entry_memory_get(&entry);
 
@@ -276,8 +278,8 @@ static int emds_read_data(const struct flash_area *fa, struct emds_snapshot_meta
 			}
 		}
 
-		data_off += entry.length;
-		data_len -= entry.length;
+		data_off += flash_entry_data_len;
+		data_len -= flash_entry_data_len;
 	}
 
 	return 0;
