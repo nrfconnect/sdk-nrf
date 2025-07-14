@@ -268,4 +268,4 @@
 };
 
 /* Include partition configuration file */
-#include "thingy91_nrf9160_partition_conf.dts"
+#include "thingy91_nrf9160_partition_conf.dtsi"
