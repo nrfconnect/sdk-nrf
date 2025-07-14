@@ -14,13 +14,16 @@ int main(void)
 {
 	unsigned int cnt = 0;
 
-#if defined CONFIG_FIRST_SLEEP_OFFSET
+#ifdef CONFIG_FIRST_SLEEP_OFFSET
 	k_msleep(1000);
 #endif
 
 	LOG_INF("Multicore idle test on %s", CONFIG_BOARD_TARGET);
 	while (1) {
 		LOG_INF("Multicore idle test iteration %u", cnt++);
+#ifdef CONFIG_FPU
+		LOG_INF("FPU test: 1/%d = %f", cnt, (double)1/cnt);
+#endif
 		k_msleep(2000);
 	}
 
