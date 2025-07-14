@@ -9,3 +9,8 @@ build:
     dts_root: .
     module_ext_root: .
     snippet_root: .
+
+runners:
+  # Additional runners, Zephyr will import these when discovering
+  # subclasses of the `ZephyrBinaryRunner` class.
+  - file: scripts/runners/nrfutil_next.py
