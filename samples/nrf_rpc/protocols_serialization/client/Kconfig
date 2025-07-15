@@ -6,7 +6,7 @@
 
 menu "Protocols serialization client"
 
-config RPC_CRASH_LOG_READ_BUFFER_SIZE
+config NRF_PS_CLIENT_CRASH_DUMP_READ_BUFFER_SIZE
 	int "Crash log read buffer size"
 	depends on LOG_FORWARDER_RPC
 	default 256
