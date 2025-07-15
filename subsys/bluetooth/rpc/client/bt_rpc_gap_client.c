@@ -150,6 +150,10 @@ int bt_disable(void)
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_DISABLE_RPC_CMD, &ctx, nrf_rpc_rsp_decode_i32,
 				&result);
 
+	if (IS_ENABLED(CONFIG_BT_CONN) && (result == 0)) {
+		result = bt_rpc_gatt_uninit();
+	}
+
 	return result;
 }
 
