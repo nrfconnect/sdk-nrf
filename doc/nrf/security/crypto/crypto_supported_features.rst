@@ -46,228 +46,390 @@ The options are grouped by driver, and support for each device is listed.
 
    .. group-tab:: nrf_cc3xx
 
-      .. list-table:: Key type support per device (nrf_cc3xx driver)
-         :header-rows: 1
-         :widths: auto
+      The following tables list the supported key types for the :ref:`nrf_cc3xx driver <crypto_drivers_cc3xx>`.
 
-         * - Key type
-           - Configuration option
-           - nRF52840
-           - nRF5340
-           - nRF9131
-           - nRF9151
-           - nRF9160
-           - nRF9161
-         * - AES
-           - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`
-           - Supported
-           - Supported
-           - Experimental
-           - Supported
-           - Supported
-           - Supported
-         * - Chacha20
-           - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_CHACHA20`
-           - Supported
-           - Supported
-           - Experimental
-           - Supported
-           - Supported
-           - Supported
-         * - ECC Key Pair
-           - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR`
-           - Supported
-           - Supported
-           - Experimental
-           - Supported
-           - Supported
-           - Supported
-         * - ECC Public Key
-           - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY`
-           - Supported
-           - Supported
-           - Experimental
-           - Supported
-           - Supported
-           - Supported
-         * - RSA Key Pair
-           - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR`
-           - Supported
-           - Supported
-           - Experimental
-           - Supported
-           - Supported
-           - Supported
-         * - RSA Public Key
-           - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
-           - Supported
-           - Supported
-           - Experimental
-           - Supported
-           - Supported
-           - Supported
+      .. tabs::
+
+         .. tab:: nRF52 Series
+
+            .. list-table:: Key type support per device (nrf_cc3xx driver) - nRF52 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Key type
+                 - Configuration option
+                 - nRF52840
+               * - AES
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`
+                 - Supported
+               * - Chacha20
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_CHACHA20`
+                 - Supported
+               * - ECC Key Pair
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR`
+                 - Supported
+               * - ECC Public Key
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY`
+                 - Supported
+               * - RSA Key Pair
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR`
+                 - Supported
+               * - RSA Public Key
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
+                 - Supported
+
+         .. tab:: nRF53 Series
+
+            .. list-table:: Key type support per device (nrf_cc3xx driver) - nRF53 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Key type
+                 - Configuration option
+                 - nRF5340
+               * - AES
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`
+                 - Supported
+               * - Chacha20
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_CHACHA20`
+                 - Supported
+               * - ECC Key Pair
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR`
+                 - Supported
+               * - ECC Public Key
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY`
+                 - Supported
+               * - RSA Key Pair
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR`
+                 - Supported
+               * - RSA Public Key
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
+                 - Supported
+
+         .. tab:: nRF91 Series
+
+            .. list-table:: Key type support per device (nrf_cc3xx driver) - nRF91 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Key type
+                 - Configuration option
+                 - nRF9131
+                 - nRF9151
+                 - nRF9160
+                 - nRF9161
+               * - AES
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`
+                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
+               * - Chacha20
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_CHACHA20`
+                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
+               * - ECC Key Pair
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR`
+                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
+               * - ECC Public Key
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY`
+                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
+               * - RSA Key Pair
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR`
+                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
+               * - RSA Public Key
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
+                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
 
    .. group-tab:: CRACEN
 
-      .. list-table:: Key type support per device (CRACEN driver)
-         :header-rows: 1
-         :widths: auto
+      The following table lists the supported key types for the :ref:`CRACEN driver <crypto_drivers_cracen>`.
 
-         * - Key type
-           - Configuration option
-           - nRF54L05
-           - nRF54L10
-           - nRF54L15
-         * - AES
-           - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`
-           - Supported
-           - Supported
-           - Supported
-         * - Chacha20
-           - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_CHACHA20`
-           - Supported
-           - Supported
-           - Supported
-         * - ECC Key Pair
-           - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR`
-           - Supported
-           - Supported
-           - Supported
-         * - ECC Public Key
-           - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY`
-           - Supported
-           - Supported
-           - Supported
-         * - RSA Key Pair
-           - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR`
-           - Supported
-           - Supported
-           - Supported
-         * - RSA Public Key
-           - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
-           - Supported
-           - Supported
-           - Supported
+      .. tabs::
+
+         .. tab:: nRF54L Series
+
+            .. list-table:: Key type support per device (CRACEN driver) - nRF54L Series
+              :header-rows: 1
+              :widths: auto
+
+              * - Key type
+                - Configuration option
+                - nRF54L05
+                - nRF54L10
+                - nRF54L15
+              * - AES
+                - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`
+                - Supported
+                - Supported
+                - Supported
+              * - Chacha20
+                - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_CHACHA20`
+                - Supported
+                - Supported
+                - Supported
+              * - ECC Key Pair
+                - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR`
+                - Supported
+                - Supported
+                - Supported
+              * - ECC Public Key
+                - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY`
+                - Supported
+                - Supported
+                - Supported
+              * - RSA Key Pair
+                - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR`
+                - Supported
+                - Supported
+                - Supported
+              * - RSA Public Key
+                - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
+                - Supported
+                - Supported
+                - Supported
 
    .. group-tab:: nrf_oberon
 
-      .. list-table:: Key type support per device (nrf_oberon driver)
-         :header-rows: 1
-         :widths: auto
+      The following tables list the supported key types for the :ref:`nrf_oberon driver <crypto_drivers_oberon>`.
 
-         * - Key type
-           - Configuration option
-           - nRF52832
-           - nRF52833
-           - nRF52840
-           - nRF5340
-           - nRF54L05
-           - nRF54L10
-           - nRF54L15
-           - nRF9131
-           - nRF9151
-           - nRF9160
-           - nRF9161
-         * - AES
-           - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-         * - Chacha20
-           - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_CHACHA20`
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-         * - ECC Key Pair
-           - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR`
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-         * - ECC Public Key
-           - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY`
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-         * - RSA Key Pair
-           - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR`
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-         * - RSA Public Key
-           - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
+      .. tabs::
+
+         .. tab:: nRF52 Series
+
+            .. list-table:: Key type support per device (nrf_oberon driver) - nRF52 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Key type
+                 - Configuration option
+                 - nRF52832
+                 - nRF52833
+                 - nRF52840
+               * - AES
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`
+                 - Supported
+                 - Supported
+                 - Supported
+               * - Chacha20
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_CHACHA20`
+                 - Supported
+                 - Supported
+                 - Supported
+               * - ECC Key Pair
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR`
+                 - Supported
+                 - Supported
+                 - Supported
+               * - ECC Public Key
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY`
+                 - Supported
+                 - Supported
+                 - Supported
+               * - RSA Key Pair
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR`
+                 - Supported
+                 - Supported
+                 - Supported
+               * - RSA Public Key
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
+                 - Supported
+                 - Supported
+                 - Supported
+
+         .. tab:: nRF53 Series
+
+            .. list-table:: Key type support per device (nrf_oberon driver) - nRF53 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Key type
+                 - Configuration option
+                 - nRF5340
+               * - AES
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`
+                 - Supported
+               * - Chacha20
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_CHACHA20`
+                 - Supported
+               * - ECC Key Pair
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR`
+                 - Supported
+               * - ECC Public Key
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY`
+                 - Supported
+               * - RSA Key Pair
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR`
+                 - Supported
+               * - RSA Public Key
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
+                 - Supported
+
+         .. tab:: nRF54 Series
+
+            .. list-table:: Key type support per device (nrf_oberon driver) - nRF54 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Key type
+                 - Configuration option
+                 - nRF54L05
+                 - nRF54L10
+                 - nRF54L15
+               * - AES
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`
+                 - Supported
+                 - Supported
+                 - Supported
+               * - Chacha20
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_CHACHA20`
+                 - Supported
+                 - Supported
+                 - Supported
+               * - ECC Key Pair
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR`
+                 - Supported
+                 - Supported
+                 - Supported
+               * - ECC Public Key
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY`
+                 - Supported
+                 - Supported
+                 - Supported
+               * - RSA Key Pair
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR`
+                 - Supported
+                 - Supported
+                 - Supported
+               * - RSA Public Key
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
+                 - Supported
+                 - Supported
+                 - Supported
+
+         .. tab:: nRF91 Series
+
+            .. list-table:: Key type support per device (nrf_oberon driver) - nRF91 Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Key type
+                 - Configuration option
+                 - nRF9131
+                 - nRF9151
+                 - nRF9160
+                 - nRF9161
+               * - AES
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+               * - Chacha20
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_CHACHA20`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+               * - ECC Key Pair
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+               * - ECC Public Key
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+               * - RSA Key Pair
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+               * - RSA Public Key
+                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
 
 Key management
 --------------
 
-The following table shows the Kconfig options for configuring Oberon PSA Crypto to use specific drivers for management of the wanted key type.
+The following tables show the Kconfig options for configuring Oberon PSA Crypto to use specific drivers for management of the wanted key type.
 
-.. list-table:: Key management support per driver
-   :header-rows: 1
-   :widths: auto
+.. tabs::
 
-   * - Driver
-     - Kconfig option
-     - Supported key types
-   * - :ref:`nrf_cc3xx <crypto_drivers_cc3xx>`
-     - :kconfig:option:`CONFIG_PSA_USE_CC3XX_KEY_MANAGEMENT_DRIVER`
-     - AES, Chacha20, ECC Key Pair, ECC Public Key, RSA Key Pair, RSA Public Key
-   * - :ref:`CRACEN <crypto_drivers_cracen>`
-     - :kconfig:option:`CONFIG_PSA_USE_CRACEN_KEY_MANAGEMENT_DRIVER`
-     - AES, Chacha20, ECC Key Pair, ECC Public Key, RSA Key Pair, RSA Public Key
-   * - :ref:`nrf_oberon <crypto_drivers_oberon>`
-     - Configuration automatically generated based on the enabled key types. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
-     - AES, Chacha20, ECC Key Pair, ECC Public Key, RSA Key Pair, RSA Public Key
+   .. group-tab:: nrf_cc3xx
+
+      The following table lists the key management support for the :ref:`nrf_cc3xx driver <crypto_drivers_cc3xx>`.
+
+      .. list-table:: Key management support (nrf_cc3xx driver)
+         :header-rows: 1
+         :widths: auto
+
+         * - Kconfig option
+           - Supported key types
+         * - :kconfig:option:`CONFIG_PSA_USE_CC3XX_KEY_MANAGEMENT_DRIVER`
+           - | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`
+             | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_CHACHA20`
+             | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR`
+             | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY`
+             | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR`
+             | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
+
+   .. group-tab:: CRACEN
+
+      The following table lists the key management support for the :ref:`CRACEN driver <crypto_drivers_cracen>`.
+
+      .. list-table:: Key management support (CRACEN driver)
+         :header-rows: 1
+         :widths: auto
+
+         * - Kconfig option
+           - Supported key types
+         * - :kconfig:option:`CONFIG_PSA_USE_CRACEN_KEY_MANAGEMENT_DRIVER`
+           - | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`
+             | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_CHACHA20`
+             | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR`
+             | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY`
+             | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR`
+             | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
+
+   .. group-tab:: nrf_oberon
+
+      The following table lists the key management support for the :ref:`nrf_oberon driver <crypto_drivers_oberon>`.
+
+      .. list-table:: Key management support (nrf_oberon driver)
+         :header-rows: 1
+         :widths: auto
+
+         * - Kconfig option
+           - Supported key types
+         * - Configuration automatically generated based on the enabled key types. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
+           - | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`
+             | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_CHACHA20`
+             | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR`
+             | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY`
+             | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR`
+             | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
 
 Cipher modes
 ============
