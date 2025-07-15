@@ -17,6 +17,9 @@ on:
     paths:
       - .github/workflows/src-mirror.yml
 
+permissions:
+  contents: read
+
 concurrency:
   group: src-mirror-${{ github.ref }}
   cancel-in-progress: true
