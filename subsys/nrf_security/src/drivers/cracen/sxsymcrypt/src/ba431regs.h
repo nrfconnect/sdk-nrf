@@ -29,6 +29,10 @@
 #define BA431_REG_Key3_OFST			(0x1Cu)
 /** TestData: Test data register. */
 #define  BA431_REG_TestData_OFST                (0x20u)
+/** RepeatThreshold: Repetition test cut-off register. */
+#define  BA431_REG_REPEATTHRESHOLD              (0x24u)
+/** PropThreshold: Proportion test cut-off. */
+#define  BA431_REG_PROPTHRESHOLD                (0x28u)
 /** Status: Status register. */
 #define BA431_REG_Status_OFST			(0x30u)
 /** InitWaitVal: Initial wait counter value. */
