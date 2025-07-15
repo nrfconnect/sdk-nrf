@@ -126,13 +126,13 @@ The following table lists the raw packet transmit header elements:
    * - raw_tx_flag
      - Flag indicating raw packet transmission. This is reserved for driver use.
 
-You can refer to the relevant structures at:
+You can refer to the relevant structures in the :file:`modules/lib/nrf_wifi/fw_if/umac_if/inc/system/fmac_structs.h` file:
 
-:file:`nrfxlib/nrf_wifi/fw_if/umac_if/inc/default/fmac_structs.h/raw_tx_pkt_header` - for the raw packet header.
+* ``raw_tx_pkt_header`` - For the raw packet header.
 
-:file:`nrfxlib/nrf_wifi/fw_if/umac_if/inc/default/fmac_structs.h/nrf_wifi_fmac_ac` - for setting the ``queue`` parameter in the raw packet transmit header.
+* ``nrf_wifi_fmac_ac`` - For setting the ``queue`` parameter in the raw packet transmit header.
 
-:file:`nrfxlib/nrf_wifi/fw_if/umac_if/inc/default/fmac_structs.h/nrf_wifi_fmac_rawtx_mode` - for setting the ``tx_mode``  parameter in the raw packet transmit header.
+* ``nrf_wifi_fmac_rawtx_mode`` - For setting the ``tx_mode``  parameter in the raw packet transmit header.
 
 .. _ug_nrf70_developing_raw_packet_transmit_operation:
 
