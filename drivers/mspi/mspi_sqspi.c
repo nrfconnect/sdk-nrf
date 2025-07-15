@@ -21,9 +21,6 @@
 #include <hal/nrf_oscillators.h>
 #include <hal/nrf_spu.h>
 #endif
-#if defined(CONFIG_SOC_NRF54H20_GPD)
-#include <nrf/gpd.h>
-#endif
 #include <dmm.h>
 
 LOG_MODULE_REGISTER(mspi_sqspi, CONFIG_MSPI_LOG_LEVEL);
@@ -432,13 +429,6 @@ static int dev_pm_action_cb(const struct device *dev,
 			return rc;
 		}
 
-#if defined(CONFIG_SOC_NRF54H20_GPD)
-		rc = nrf_gpd_retain_pins_set(dev_config->pcfg, false);
-		if (rc < 0) {
-			LOG_ERR("Cannot clear RETAIN for pins (%d)", rc);
-			return rc;
-		}
-#endif
 		nrf_sqspi_activate(&dev_config->sqspi);
 #if defined(CONFIG_SOC_SERIES_NRF54LX)
 		nrf_memconf_ramblock_ret_enable_set(NRF_MEMCONF,
@@ -452,13 +442,6 @@ static int dev_pm_action_cb(const struct device *dev,
 
 	if (IS_ENABLED(CONFIG_PM_DEVICE) &&
 	    action == PM_DEVICE_ACTION_SUSPEND) {
-#if defined(CONFIG_SOC_NRF54H20_GPD)
-		rc = nrf_gpd_retain_pins_set(dev_config->pcfg, true);
-		if (rc < 0) {
-			LOG_ERR("Cannot set RETAIN for pins (%d)", rc);
-			return rc;
-		}
-#endif
 		rc = pinctrl_apply_state(dev_config->pcfg,
 					 PINCTRL_STATE_SLEEP);
 		if (rc < 0) {
