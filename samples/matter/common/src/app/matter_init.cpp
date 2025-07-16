@@ -437,4 +437,9 @@ FactoryDataProviderBase *GetFactoryDataProvider()
 }
 #endif
 
+PersistentStorageDelegate * GetPersistentStorageDelegate()
+{
+	return sLocalInitData.mServerInitParams->persistentStorageDelegate;
+}
+
 } /* namespace Nrf::Matter */

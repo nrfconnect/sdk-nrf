@@ -290,8 +290,9 @@ void AppTask::InitPWMDDevice()
 CHIP_ERROR AppTask::Init()
 {
 	/* Initialize Matter stack */
-	ReturnErrorOnFailure(Nrf::Matter::PrepareServer(Nrf::Matter::InitData{ .mPostServerInitClbk = [] {
+	ReturnErrorOnFailure(Nrf::Matter::PrepareServer(Nrf::Matter::InitData{ .mPostServerInitClbk = []() {
 		app::SetAttributePersistenceProvider(&gDeferredAttributePersister);
+		gSimpleAttributePersistence.Init(Nrf::Matter::GetPersistentStorageDelegate());
 		return CHIP_NO_ERROR;
 	} }));
 

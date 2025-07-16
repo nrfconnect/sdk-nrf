@@ -12,6 +12,7 @@
 #include <app/clusters/network-commissioning/network-commissioning.h>
 #include <app/server/Server.h>
 #include <lib/core/Optional.h>
+#include <lib/core/CHIPPersistentStorageDelegate.h>
 #include <lib/support/Variant.h>
 #include <platform/PlatformManager.h>
 
@@ -127,5 +128,7 @@ CHIP_ERROR StartServer();
  */
 chip::DeviceLayer::FactoryDataProviderBase *GetFactoryDataProvider();
 #endif
+
+chip::PersistentStorageDelegate * GetPersistentStorageDelegate();
 
 } /* namespace Nrf::Matter */
