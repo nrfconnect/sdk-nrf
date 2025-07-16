@@ -158,9 +158,8 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 
 	/* Check if we have received all frames, send if we have */
 check_send:
-	struct audio_metadata *existing_meta = net_buf_user_data(audio_frame);
-
-	if (le_audio_concurrent_sync_num_get() == audio_metadata_num_ch_get(existing_meta)) {
+	if (le_audio_concurrent_sync_num_get() ==
+	    audio_metadata_num_ch_get(net_buf_user_data(audio_frame))) {
 		/* We have received all frames we are waiting for, pass data on to
 		 * the next module
 		 */
