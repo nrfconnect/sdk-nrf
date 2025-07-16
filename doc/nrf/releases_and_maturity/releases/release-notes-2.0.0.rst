@@ -357,7 +357,7 @@ nRF9160 samples
   * :ref:`modem_callbacks_sample` sample, showcasing initialization and de-initialization callbacks.
   * :ref:`nrf_cloud_multi_service` sample, demonstrating a simple but robust integration of location services, FOTA, sensor sampling, and more.
   * Shell functionality to HTTP Update samples.
-  * :ref:`nrf_cloud_rest_cell_location` sample, demonstrating how to use the :ref:`lib_nrf_cloud_rest` library to perform cellular positioning requests.
+  * :ref:`nrf_cloud_cell_location` sample, demonstrating how to use the :ref:`lib_nrf_cloud_rest` library to perform cellular positioning requests.
   * :ref:`ciphersuites` sample, demonstrating how to use TLS cipher suites.
 
 * Secure Partition Manager (rather than TF-M) is enabled by default for the applications and samples that support Thingy:91.

@@ -6,16 +6,16 @@
 
 menu "nRF Cloud REST Cellular Location Sample"
 
-config REST_CELL_LOCATION_SAMPLE_VERSION
+config CELL_LOCATION_SAMPLE_VERSION
 	string "The sample's version string"
 	default "1.0.0"
 
-config REST_CELL_GCI_COUNT
+config CELL_GCI_COUNT
 	int "Maximum number of cells to be searched"
 	range 2 15
 	default 5
 
-config REST_CELL_CHANGE_CONFIG
+config CELL_CHANGE_CONFIG
 	bool "Change the location request configuration on button press"
 	default y
 	help
@@ -23,18 +23,18 @@ config REST_CELL_CHANGE_CONFIG
 	  try the next combination of the struct nrf_cloud_location_config
 	  hi_conf and fallback flags. The do_reply flag is not modified.
 
-config REST_CELL_DEFAULT_DOREPLY_VAL
+config CELL_DEFAULT_DOREPLY_VAL
 	bool "Default value for the do_reply configuration flag"
 	default y
 
-config REST_CELL_DEFAULT_FALLBACK_VAL
+config CELL_DEFAULT_FALLBACK_VAL
 	bool "Default value for the fallback configuration flag"
 	default y
 
-config REST_CELL_DEFAULT_HICONF_VAL
+config CELL_DEFAULT_HICONF_VAL
 	bool "Default value for the hi_conf configuration flag"
 
-config REST_CELL_SEND_DEVICE_STATUS
+config CELL_SEND_DEVICE_STATUS
 	bool "Send device status to nRF Cloud on initial connection"
 	default y
 
@@ -44,6 +44,6 @@ menu "Zephyr Kernel"
 source "Kconfig.zephyr"
 endmenu
 
-module = NRF_CLOUD_REST_CELL_LOCATION_SAMPLE
+module = NRF_CLOUD_CELL_LOCATION_SAMPLE
 module-str = nRF Cloud REST Cellular Location Sample
 source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

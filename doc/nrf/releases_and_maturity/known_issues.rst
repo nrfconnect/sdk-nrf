@@ -3109,7 +3109,7 @@ IRIS-7398: The :ref:`nrf_cloud_multi_service` sample does not support using the 
 
 .. rst-class:: v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
-IRIS-7381: :ref:`nrf_cloud_rest_cell_location` sample might attempt to take a neighbor cell measurement when a measurement is already in progress
+IRIS-7381: :ref:`nrf_cloud_cell_location` sample might attempt to take a neighbor cell measurement when a measurement is already in progress
   If cell information changes during a neighbor cell measurement, the sample will attempt to start a new measurement, resulting in warning and error log messages.
 
   **Affected platforms:** nRF9160, nRF9161

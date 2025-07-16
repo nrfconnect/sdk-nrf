@@ -707,9 +707,9 @@ Cellular samples
 
   * Removed ESP8266 Wi-Fi DTC and Kconfig overlay files.
 
-* :ref:`nrf_cloud_rest_cell_location` sample:
+* :ref:`nrf_cloud_cell_location` sample:
 
-  * Added the :ref:`CONFIG_REST_CELL_SEND_DEVICE_STATUS <CONFIG_REST_CELL_SEND_DEVICE_STATUS>` Kconfig option to control sending device status on initial connection.
+  * Added the :ref:`CONFIG_CELL_SEND_DEVICE_STATUS <CONFIG_CELL_SEND_DEVICE_STATUS>` Kconfig option to control sending device status on initial connection.
 
   * Removed the button press interface for enabling the device location card on the nRF Cloud website.
     The card is now automatically displayed.

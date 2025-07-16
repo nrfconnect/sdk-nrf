@@ -472,8 +472,8 @@ nRF9160 samples
   * Removed A-GPS and P-GPS processing.
     It is now handled by the :ref:`lib_nrf_cloud` library.
 
-* Renamed the nRF9160: nRF Cloud REST cellular position sample to :ref:`nrf_cloud_rest_cell_location` sample.
-  Sample files are moved from ``samples/nrf9160/nrf_cloud_rest_cell_pos`` to ``samples/nrf9160/nrf_cloud_rest_cell_location``.
+* Renamed the nRF9160: nRF Cloud REST cellular position sample to :ref:`nrf_cloud_cell_location` sample.
+  Sample files are moved from ``samples/nrf9160/nrf_cloud_rest_cell_pos`` to ``samples/nrf9160/nrf_cloud_cell_location``.
 
 Trusted Firmware-M (TF-M) samples
 ---------------------------------

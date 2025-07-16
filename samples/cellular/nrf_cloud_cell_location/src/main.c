@@ -18,11 +18,16 @@
 #define MODULE main
 #include <caf/events/module_state_event.h>
 #include <net/nrf_cloud.h>
-#include <net/nrf_cloud_rest.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
 
-LOG_MODULE_REGISTER(nrf_cloud_rest_cell_location_sample,
-		    CONFIG_NRF_CLOUD_REST_CELL_LOCATION_SAMPLE_LOG_LEVEL);
+#if defined(CONFIG_NRF_CLOUD_REST)
+#include <net/nrf_cloud_rest.h>
+#elif defined(CONFIG_NRF_CLOUD_COAP)
+#include <net/nrf_cloud_coap.h>
+#endif /* CONFIG_NRF_CLOUD_COAP */
+
+LOG_MODULE_REGISTER(nrf_cloud_cell_location_sample,
+		    CONFIG_NRF_CLOUD_CELL_LOCATION_SAMPLE_LOG_LEVEL);
 
 #define BTN_NUM			1 /* See include/buttons_def.h */
 #define UI_REQ_WAIT_SEC		10
@@ -66,6 +71,8 @@ static K_EVENT_DEFINE(connection_events);
 /* nRF Cloud device ID */
 static char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
 
+#if defined(CONFIG_NRF_CLOUD_REST)
+
 /* Buffer used for REST calls */
 static char rx_buf[REST_RX_BUF_SZ];
 
@@ -81,6 +88,8 @@ static struct nrf_cloud_rest_context rest_ctx = {
 	.auth = NULL
 };
 
+#endif /* CONFIG_NRF_CLOUD_REST */
+
 /* Type of data to be sent in the cellular positioning request */
 enum nrf_cloud_location_type active_cell_pos_type = LOCATION_TYPE_SINGLE_CELL;
 
@@ -91,7 +100,7 @@ static enum lte_lc_neighbor_search_type search_type = LTE_LC_NEIGHBOR_SEARCH_TYP
 static struct lte_lc_ncell neighbor_cells[CONFIG_LTE_NEIGHBOR_CELLS_MAX];
 
 /* Buffer to hold GCI cell measurement data for multi-cell requests */
-static struct lte_lc_cell gci_cells[CONFIG_REST_CELL_GCI_COUNT];
+static struct lte_lc_cell gci_cells[CONFIG_CELL_GCI_COUNT];
 
 /* Modem info struct used for modem FW version and cell info used for single-cell requests */
 static struct modem_param_info mdm_param;
@@ -101,9 +110,9 @@ static struct lte_lc_cells_info cell_info;
 
 /* Structure to hold configuration flags. */
 static struct nrf_cloud_location_config config = {
-	.hi_conf = IS_ENABLED(CONFIG_REST_CELL_DEFAULT_HICONF_VAL),
-	.fallback = IS_ENABLED(CONFIG_REST_CELL_DEFAULT_FALLBACK_VAL),
-	.do_reply = IS_ENABLED(CONFIG_REST_CELL_DEFAULT_DOREPLY_VAL)
+	.hi_conf = IS_ENABLED(CONFIG_CELL_DEFAULT_HICONF_VAL),
+	.fallback = IS_ENABLED(CONFIG_CELL_DEFAULT_FALLBACK_VAL),
+	.do_reply = IS_ENABLED(CONFIG_CELL_DEFAULT_DOREPLY_VAL)
 };
 
 /* REST request structure to contain cell info to be sent to nRF Cloud */
@@ -172,7 +181,7 @@ static void check_modem_fw_version(void)
 		      major, minor, rev)) {
 		search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_COMPLETE;
 		LOG_INF("Using LTE LC neighbor search type GCI extended complete for %d cells",
-			CONFIG_REST_CELL_GCI_COUNT);
+			CONFIG_CELL_GCI_COUNT);
 	} else if (ver_check(MFWV_MAJ_EXT_SRCH, MFWV_MIN_EXT_SRCH, MFWV_REV_EXT_SRCH,
 			     major, minor, rev)) {
 		search_type = LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE;
@@ -222,7 +231,7 @@ static void get_cell_info(void)
 	} else {
 		struct lte_lc_ncellmeas_params ncellmeas_params = {
 			.search_type = search_type,
-			.gci_count = CONFIG_REST_CELL_GCI_COUNT
+			.gci_count = CONFIG_CELL_GCI_COUNT
 		};
 
 		/* Set the result buffers */
@@ -241,8 +250,8 @@ static void get_cell_info(void)
 
 static void process_cell_pos_type_change(void)
 {
-	static int config_mode = (IS_ENABLED(CONFIG_REST_CELL_DEFAULT_HICONF_VAL) ?  0x01 : 0x00) |
-				 (IS_ENABLED(CONFIG_REST_CELL_DEFAULT_FALLBACK_VAL) ? 0x02 : 0x00);
+	static int config_mode = (IS_ENABLED(CONFIG_CELL_DEFAULT_HICONF_VAL) ?  0x01 : 0x00) |
+				 (IS_ENABLED(CONFIG_CELL_DEFAULT_FALLBACK_VAL) ? 0x02 : 0x00);
 
 	if (!ready) {
 		return;
@@ -264,7 +273,7 @@ static void process_cell_pos_type_change(void)
 		}
 	} else {
 		active_cell_pos_type = LOCATION_TYPE_SINGLE_CELL;
-		if (IS_ENABLED(CONFIG_REST_CELL_CHANGE_CONFIG)) {
+		if (IS_ENABLED(CONFIG_CELL_CHANGE_CONFIG)) {
 			/* After doing both multi and single cell requests,
 			 * modify the configuration. Eventually all 4 combinations
 			 * of config.hi_conf and config.fallback will be used.
@@ -326,7 +335,7 @@ static void send_device_status(void)
 		/* Use the modem info already obtained */
 		.mpi = &mdm_param,
 		/* Include the application version */
-		.application_version = CONFIG_REST_CELL_LOCATION_SAMPLE_VERSION
+		.application_version = CONFIG_CELL_LOCATION_SAMPLE_VERSION
 	};
 
 	struct nrf_cloud_device_status dev_status = {
@@ -336,22 +345,26 @@ static void send_device_status(void)
 		.conn_inf = NRF_CLOUD_INFO_SET
 	};
 
+
+#if defined(CONFIG_NRF_CLOUD_REST)
 	/* Keep the connection alive so it can be used by the initial cellular
 	 * positioning request.
 	 */
 	rest_ctx.keep_alive = true;
-
 	err = nrf_cloud_rest_shadow_device_status_update(&rest_ctx, device_id, &dev_status);
+	/* Set keep alive to false so the connection is closed after the initial
+	 * positioning request. The subsequent request may not occur immediately.
+	 */
+	rest_ctx.keep_alive = false;
+#elif defined(CONFIG_NRF_CLOUD_COAP)
+	err = nrf_cloud_coap_shadow_device_status_update(&dev_status);
+#endif /* CONFIG_NRF_CLOUD_COAP */
 	if (err) {
 		LOG_ERR("Failed to send device status, error: %d", err);
 	} else {
 		LOG_INF("Device status sent to nRF Cloud");
 	}
 
-	/* Set keep alive to false so the connection is closed after the initial
-	 * positioning request. The subsequent request may not occur immediately.
-	 */
-	rest_ctx.keep_alive = false;
 }
 
 static void lte_handler(const struct lte_lc_evt *const evt)
@@ -599,7 +612,7 @@ int main(void)
 	int err;
 
 	LOG_INF("nRF Cloud REST Cellular Location Sample, version: %s",
-		CONFIG_REST_CELL_LOCATION_SAMPLE_VERSION);
+		CONFIG_CELL_LOCATION_SAMPLE_VERSION);
 
 	err = init();
 	if (err) {
@@ -607,10 +620,24 @@ int main(void)
 		return 0;
 	}
 
+#if defined(CONFIG_NRF_CLOUD_COAP)
+	/* nRF Cloud CoAP requires login */
+	err = nrf_cloud_coap_init();
+	if (err) {
+		LOG_ERR("Failed to initialize CoAP client: %d", err);
+		return err;
+	}
+	err = nrf_cloud_coap_connect(NULL);
+	if (err) {
+		LOG_ERR("Connecting to nRF Cloud failed, error: %d", err);
+		return 0;
+	}
+#endif /* CONFIG_NRF_CLOUD_COAP */
+
 	/* Send the device status which contains HW/FW version info and
 	 * details about the network connection.
 	 */
-	if (IS_ENABLED(CONFIG_REST_CELL_SEND_DEVICE_STATUS)) {
+	if (IS_ENABLED(CONFIG_CELL_SEND_DEVICE_STATUS)) {
 		send_device_status();
 	}
 
@@ -654,8 +681,14 @@ int main(void)
 		LOG_INF("  Reply with result          = %s",
 			config.do_reply ? "true" : "false");
 
+#if defined(CONFIG_NRF_CLOUD_REST)
 		/* Perform REST call */
 		err = nrf_cloud_rest_location_get(&rest_ctx, &cell_pos_req, &cell_pos_result);
+#elif defined(CONFIG_NRF_CLOUD_COAP)
+		/* Perform CoAP request */
+		err = nrf_cloud_coap_location_get(&cell_pos_req, &cell_pos_result);
+#endif /* CONFIG_NRF_CLOUD_COAP */
+
 
 		(void)k_mutex_unlock(&cell_info_mutex);
 

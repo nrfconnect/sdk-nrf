@@ -360,8 +360,8 @@ Cellular samples
 * Added support for the Thingy:91 X to the following samples:
 
   * :ref:`nrf_cloud_rest_device_message`
-  * :ref:`nrf_cloud_rest_cell_location`
-  * :ref:`nrf_cloud_rest_fota`
+  * :ref:`nrf_cloud_cell_location`
+  * :ref:`nrf_cloud_fota_sample`
 
 * Deprecated the :ref:`lte_sensor_gateway` sample.
   It is no longer maintained.
@@ -383,7 +383,7 @@ Cellular samples
   * Updated the sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
   * Removed Provisioning service and JITP.
 
-* :ref:`nrf_cloud_rest_cell_location` sample:
+* :ref:`nrf_cloud_cell_location` sample:
 
   * Removed JITP.
 

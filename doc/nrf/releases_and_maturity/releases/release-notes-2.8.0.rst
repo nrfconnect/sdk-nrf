@@ -812,7 +812,7 @@ Cellular samples
 
   * Removed redundant logging that is now done by the :ref:`lib_nrf_cloud` library.
 
-* :ref:`nrf_cloud_rest_cell_location` sample:
+* :ref:`nrf_cloud_cell_location` sample:
 
   * Removed redundant logging that is now done by the :ref:`lib_nrf_cloud` library.
 

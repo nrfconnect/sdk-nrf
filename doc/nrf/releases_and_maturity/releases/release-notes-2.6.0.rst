@@ -765,7 +765,7 @@ Cellular samples
     * The sample now uses the functions in the :file:`nrf_cloud_fota_poll.c` and :file:`nrf_cloud_fota_common.c` files.
     * The :kconfig:option:`CONFIG_AT_HOST_STACK_SIZE` Kconfig option value has been increased to 2048 bytes since nRF Cloud credentials are sometimes longer than 1024 bytes.
 
-* :ref:`nrf_cloud_rest_cell_location` sample:
+* :ref:`nrf_cloud_cell_location` sample:
 
   * Added:
 

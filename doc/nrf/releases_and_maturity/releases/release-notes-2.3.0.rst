@@ -499,7 +499,7 @@ nRF9160 samples
     * Timeout command-line arguments for the ``location get`` command changed from integers in milliseconds to floating-point values in seconds.
     * Replaced deprecated LwM2M API calls with calls to new functions.
 
-* :ref:`nrf_cloud_rest_cell_location` sample:
+* :ref:`nrf_cloud_cell_location` sample:
 
   * Added the usage of GCI search option if running modem firmware v1.3.4.
   * Updated the sample to wait for RRC idle mode before requesting neighbor cell measurements.

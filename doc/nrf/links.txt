@@ -1456,6 +1456,7 @@
 .. _`nRF Cloud Verifying device authenticity`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/SecurityServices/IdentityService/VerifyAttestationToken.html
 .. _`nRF Cloud Generating attestation tokens`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/SecurityServices/IdentityService/VerifyAttestationToken.html#generating-attestation-tokens
 
+.. _`nRF Cloud CoAP API`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/APIs/CoAP/CoAPOverview.html
 
 .. _`nRF Cloud REST API`:
 .. _`nRF Connect for Cloud REST API`: https://docs.nordicsemi.com/bundle/nrf-cloud/page/APIs/REST/RESTOverview.html

@@ -606,7 +606,7 @@ Cellular samples (renamed from nRF9160 samples)
 
   * Updated the TF-M Mbed TLS overlay to fix an issue when connecting to the server.
 
-* :ref:`nrf_cloud_rest_cell_location` sample:
+* :ref:`nrf_cloud_cell_location` sample:
 
   * Added:
 
