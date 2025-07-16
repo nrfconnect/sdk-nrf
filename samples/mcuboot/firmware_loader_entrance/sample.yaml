@@ -1,0 +1,16 @@
+sample:
+  name: Firmware loader entrance
+  description: Demo application for entering the firmware loader application
+common:
+  sysbuild: true
+  build_only: true
+tests:
+  sample.mcuboot.firmware_loader_entrance:
+    harness: bluetooth
+    tags: bluetooth
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
