@@ -98,8 +98,9 @@ enum esb_protocol {
 
 /** @brief Enhanced ShockBurst modes. */
 enum esb_mode {
-	ESB_MODE_PTX,	/**< Primary transmitter mode. */
-	ESB_MODE_PRX	/**< Primary receiver mode.    */
+	ESB_MODE_PTX,		/**< Primary transmitter mode. */
+	ESB_MODE_PRX,		/**< Primary receiver mode.    */
+	ESB_MODE_MONITOR	/**< Primary monitor mode.     */
 };
 
 /** @brief Enhanced ShockBurst bitrate modes. */
