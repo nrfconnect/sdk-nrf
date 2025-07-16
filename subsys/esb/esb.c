@@ -108,6 +108,10 @@ LOG_MODULE_REGISTER(esb, CONFIG_ESB_LOG_LEVEL);
 							 RADIO_SHORTS_NO_FAST_SWITCHING_NO_RSSISTOP)
 #endif  /* !defined(RADIO_SHORTS_DISABLED_RSSISTOP_Msk) */
 
+#define RADIO_SHORTS_MONITOR \
+		(NRF_RADIO_SHORT_ADDRESS_RSSISTART_MASK | NRF_RADIO_SHORT_END_START_MASK | \
+		NRF_RADIO_SHORT_READY_START_MASK)
+
 /* Flag for changing radio channel. */
 #define RF_CHANNEL_UPDATE_FLAG 0
 
@@ -1688,6 +1692,19 @@ static void on_radio_disabled_rx_ack(void)
 	esb_state = ESB_STATE_PRX;
 }
 
+static void on_radio_monitor(void)
+{
+	struct pipe_info pipe;
+	struct esb_radio_pdu *rx_pdu = (struct esb_radio_pdu *)rx_payload_buffer;
+
+	pipe.pid = rx_pdu->type.dpl_pdu.pid;
+
+	if (rx_fifo_push_rfbuf(nrf_radio_rxmatch_get(NRF_RADIO), pipe.pid)) {
+		interrupt_flags |= INT_RX_DATA_RECEIVED_MSK;
+		set_evt_interrupt();
+	}
+}
+
 static void fast_switchinng_set_channel(uint8_t channel)
 {
 	*(volatile uint32_t *)((uint8_t *)(NRF_RADIO) +  0x70C) &= ~(1 << 31);
@@ -1745,6 +1762,13 @@ static void radio_irq_handler(void)
 		}
 	}
 #endif /* defined(CONFIG_ESB_FAST_CHANNEL_SWITCHING) */
+
+	if (nrf_radio_int_enable_check(NRF_RADIO, NRF_RADIO_INT_END_MASK) &&
+	    nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_END)) {
+		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_END);
+		/* The END event is called when esb is in monitor mode */
+		on_radio_monitor();
+	}
 }
 
 static void esb_evt_irq_handler(void)
@@ -2247,6 +2271,59 @@ int esb_stop_rx(void)
 
 	esb_state = ESB_STATE_IDLE;
 	errata216_off();
+
+	return 0;
+}
+
+int esb_start_monitor(void)
+{
+	if (esb_state != ESB_STATE_IDLE) {
+		return -EBUSY;
+	}
+
+	nrf_radio_int_disable(NRF_RADIO, 0xFFFFFFFF);
+	nrf_radio_shorts_disable(NRF_RADIO, 0xFFFFFFFF);
+	nrf_radio_shorts_set(NRF_RADIO, RADIO_SHORTS_MONITOR);
+	nrf_radio_fast_ramp_up_enable_set(NRF_RADIO, true);
+
+	esb_state = ESB_STATE_PRX;
+
+	nrf_radio_rxaddresses_set(NRF_RADIO, esb_addr.rx_pipes_enabled);
+	nrf_radio_frequency_set(NRF_RADIO, (RADIO_BASE_FREQUENCY + esb_addr.rf_channel));
+	atomic_clear_bit(&esb_addr.rf_channel_flags, RF_CHANNEL_UPDATE_FLAG);
+	nrf_radio_packetptr_set(NRF_RADIO, rx_payload_buffer);
+
+	NVIC_ClearPendingIRQ(ESB_RADIO_IRQ_NUMBER);
+	irq_enable(ESB_RADIO_IRQ_NUMBER);
+	nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_END_MASK);
+
+	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_ADDRESS);
+	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_END);
+
+	nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_RXEN);
+
+	return 0;
+}
+
+int esb_stop_monitor(void)
+{
+	if (esb_state != ESB_STATE_PRX) {
+		return -EINVAL;
+	}
+
+	nrf_radio_int_disable(NRF_RADIO, 0xFFFFFFFF);
+	nrf_radio_shorts_disable(NRF_RADIO, 0xFFFFFFFF);
+	nrf_radio_fast_ramp_up_enable_set(NRF_RADIO, false);
+	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_ADDRESS);
+	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_END);
+
+	nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_DISABLE);
+
+	while (!nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_DISABLED)) {
+		/* wait for register to settle */
+	}
+	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
+	esb_state = ESB_STATE_IDLE;
 
 	return 0;
 }
