@@ -233,6 +233,11 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519 y)
         set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUBOOT_BOOTLOADER_USES_SHA512 y)
 
+        if(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
+          set_config_bool(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519 y)
+          set_config_bool(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} CONFIG_MCUBOOT_BOOTLOADER_USES_SHA512 y)
+        endif()
+
         # We are sure that ED25519 signature on MCUboot does not need these
         set_config_bool(mcuboot CONFIG_PSA_USE_CRACEN_AEAD_DRIVER n)
         set_config_bool(mcuboot CONFIG_PSA_USE_CRACEN_PAKE_DRIVER n)
@@ -257,9 +262,17 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         if(SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE)
           set_config_bool(mcuboot CONFIG_BOOT_SIGNATURE_TYPE_PURE y)
           set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE y)
+
+          if(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
+            set_config_bool(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE y)
+          endif()
         else()
           set_config_bool(mcuboot CONFIG_BOOT_SIGNATURE_TYPE_PURE n)
           set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE n)
+
+          if(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
+            set_config_bool(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE n)
+          endif()
         endif()
 
         # MCUboot uses hash function to identify key internally when KMU is disabled.
@@ -273,6 +286,11 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       else()
         set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519 n)
         set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUBOOT_BOOTLOADER_USES_SHA512 n)
+
+        if(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
+          set_config_bool(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519 n)
+          set_config_bool(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} CONFIG_MCUBOOT_BOOTLOADER_USES_SHA512 n)
+        endif()
       endif()
     endif()
 
