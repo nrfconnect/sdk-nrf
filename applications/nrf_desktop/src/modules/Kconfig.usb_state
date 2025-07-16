@@ -75,6 +75,7 @@ config DESKTOP_USB_PM_RESTRICT_REMOVE_DELAY_MS
 config DESKTOP_USB_HID_REPORT_SENT_ON_SOF
 	bool "Submit HID report sent event on USB Start of Frame (SOF) [EXPERIMENTAL]"
 	default y if UDC_DRIVER_HAS_HIGH_SPEED_SUPPORT
+	select UDC_ENABLE_SOF if UDC_DRIVER
 	select EXPERIMENTAL
 	help
 	  Delay submitting hid_report_sent_event until subsequent USB Start of
@@ -86,6 +87,9 @@ config DESKTOP_USB_HID_REPORT_SENT_ON_SOF
 	  If you use an UDC driver with High-Speed support, the feature is enabled
 	  by default, because the negative impact of USB polling jitter is more
 	  visible in case of USB High-Speed.
+
+	  If you use an UDC driver, SoF interrupts must be explicitly enabled for
+	  this Kconfig option to work correctly.
 
 choice DESKTOP_USB_STACK
 	prompt "USB stack"
