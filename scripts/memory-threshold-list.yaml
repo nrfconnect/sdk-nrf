@@ -182,3 +182,14 @@
   ram_size: 12000
   codeowners:
     - nrfconnect/ncs-ll-ursus
+
+- scenarios:
+    - sample.smp_svr_mini_boot
+  platforms:
+    - all
+  rom_increase: 256
+  ram_increase: 256
+  codeowners:
+    - nrfconnect/ncs-pluto
+    - robertstypa
+    - maciejpietras
