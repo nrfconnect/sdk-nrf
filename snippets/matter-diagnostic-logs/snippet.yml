@@ -21,6 +21,6 @@ boards:
   nrf54l15dk/nrf54l10/cpuapp:
     append:
       EXTRA_DTC_OVERLAY_FILE: boards/nrf54l15dk_nrf54l10_cpuapp.overlay
-  nrf54lm20pdk/nrf54lm20a/cpuapp:
+  nrf54lm20dk/nrf54lm20a/cpuapp:
     append:
-      EXTRA_DTC_OVERLAY_FILE: boards/nrf54lm20pdk_nrf54lm20a_cpuapp.overlay
+      EXTRA_DTC_OVERLAY_FILE: boards/nrf54lm20dk_nrf54lm20a_cpuapp.overlay
