@@ -528,6 +528,7 @@
 /samples/ipc/ipc_service/                 @nrfconnect/ncs-si-muffin
 /samples/keys/                            @nrfconnect/ncs-aegir
 /samples/matter/                          @nrfconnect/ncs-matter
+/samples/mcuboot/                         @nrfconnect/ncs-pluto
 /samples/mpsl/                            @nrfconnect/ncs-dragoon
 /samples/net/                             @nrfconnect/ncs-cia @nrfconnect/ncs-modem
 /samples/nfc/                             @nrfconnect/ncs-si-muffin
