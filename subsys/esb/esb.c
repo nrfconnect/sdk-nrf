@@ -108,6 +108,16 @@ LOG_MODULE_REGISTER(esb, CONFIG_ESB_LOG_LEVEL);
 							 RADIO_SHORTS_NO_FAST_SWITCHING_NO_RSSISTOP)
 #endif  /* !defined(RADIO_SHORTS_DISABLED_RSSISTOP_Msk) */
 
+#if defined(CONFIG_SOC_SERIES_NRF54LX)
+#define RADIO_SHORTS_MONITOR \
+		(NRF_RADIO_SHORT_ADDRESS_RSSISTART_MASK | NRF_RADIO_SHORT_PHYEND_START_MASK | \
+		NRF_RADIO_SHORT_READY_START_MASK)
+#else
+#define RADIO_SHORTS_MONITOR \
+		(NRF_RADIO_SHORT_ADDRESS_RSSISTART_MASK | NRF_RADIO_SHORT_END_START_MASK | \
+		NRF_RADIO_SHORT_READY_START_MASK)
+#endif /* !defined(CONFIG_SOC_SERIES_NRF54LX) */
+
 /* Flag for changing radio channel. */
 #define RF_CHANNEL_UPDATE_FLAG 0
 
@@ -1688,6 +1698,18 @@ static void on_radio_disabled_rx_ack(void)
 	esb_state = ESB_STATE_PRX;
 }
 
+static void on_radio_end_monitor(void)
+{
+	struct pipe_info pipe;
+	struct esb_radio_pdu *rx_pdu = (struct esb_radio_pdu *)rx_payload_buffer;
+
+	pipe.pid = rx_pdu->type.dpl_pdu.pid;
+	if (rx_fifo_push_rfbuf(nrf_radio_rxmatch_get(NRF_RADIO), pipe.pid)) {
+		interrupt_flags |= INT_RX_DATA_RECEIVED_MSK;
+		set_evt_interrupt();
+	}
+}
+
 static void fast_switchinng_set_channel(uint8_t channel)
 {
 	*(volatile uint32_t *)((uint8_t *)(NRF_RADIO) +  0x70C) &= ~(1 << 31);
@@ -1726,13 +1748,18 @@ static void radio_irq_handler(void)
 
 	if (nrf_radio_int_enable_check(NRF_RADIO, ESB_RADIO_INT_END_MASK) &&
 	    nrf_radio_event_check(NRF_RADIO, ESB_RADIO_EVENT_END)) {
-		/* The PHYEND event is called when fast switching is enabled
-		 * instead of the DISABLE event.
-		 * This event is handled in the analogous way to the disable event.
+		/* The PHYEND/END event is called when fast switching is enabled
+		 * instead of the DISABLE event. For PTX and PRX mode this event
+		 * is handled in the analogous way to the disable event
 		 */
-		if (on_radio_disabled) {
-			on_radio_disabled();
+		if (esb_cfg.mode == ESB_MODE_MONITOR) {
+			on_radio_end_monitor();
+		} else {
+			if (on_radio_disabled) {
+				on_radio_disabled();
+			}
 		}
+
 		nrf_radio_event_clear(NRF_RADIO, ESB_RADIO_EVENT_END);
 	}
 
@@ -2075,6 +2102,10 @@ int esb_write_payload(const struct esb_payload *payload)
 		return -EACCES;
 	}
 
+	if (esb_cfg.mode == ESB_MODE_MONITOR) {
+		return -EPERM;
+	}
+
 	if (payload == NULL) {
 		return -EINVAL;
 	}
@@ -2180,6 +2211,10 @@ int esb_read_rx_payload(struct esb_payload *payload)
 
 int esb_start_tx(void)
 {
+	if (esb_cfg.mode == ESB_MODE_MONITOR) {
+		return -EPERM;
+	}
+
 	if (esb_state != ESB_STATE_IDLE) {
 		return -EBUSY;
 	}
@@ -2202,17 +2237,22 @@ int esb_start_rx(void)
 	nrf_radio_int_disable(NRF_RADIO, 0xFFFFFFFF);
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
 
-	on_radio_disabled = on_radio_disabled_rx;
-
-	if (fast_switching) {
-		nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
+	if (esb_cfg.mode == ESB_MODE_MONITOR) {
+		nrf_radio_shorts_set(NRF_RADIO, RADIO_SHORTS_MONITOR);
 		nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
+		on_radio_disabled = NULL;
 	} else {
-		nrf_radio_shorts_set(NRF_RADIO, (radio_shorts_common |
-						 NRF_RADIO_SHORT_DISABLED_TXEN_MASK));
-	}
+		if (fast_switching) {
+			nrf_radio_shorts_set(NRF_RADIO, radio_shorts_common);
+			nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
+		} else {
+			nrf_radio_shorts_set(NRF_RADIO, (radio_shorts_common |
+							 NRF_RADIO_SHORT_DISABLED_TXEN_MASK));
+		}
 
-	nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_DISABLED_MASK);
+		on_radio_disabled = on_radio_disabled_rx;
+		nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_DISABLED_MASK);
+	}
 
 	esb_state = ESB_STATE_PRX;
 
