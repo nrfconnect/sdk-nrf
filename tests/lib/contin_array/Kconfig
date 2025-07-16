@@ -1,6 +1,12 @@
 # Copyright (c) 2022 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
+config BT_BUF_EVT_RX_COUNT
+	default 10
+
+config BT_BUF_ACL_TX_COUNT
+	default 8
+
 module = CONTIN_ARRAY
 module-str = contin-array
 source "subsys/logging/Kconfig.template.log_config"
