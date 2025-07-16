@@ -852,7 +852,7 @@
 	};
 
 	wifi: wifi {
-		compatible = "nordic,wifi71";
+		compatible = "nordic,nrf7120";
 		status = "disabled";
 
 		wifi-max-tx-pwr-2g-dsss = <21>;
