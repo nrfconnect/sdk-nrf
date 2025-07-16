@@ -81,6 +81,7 @@ void emberAfOnOffClusterInitCallback(EndpointId endpoint)
 
 	/* Read storedValue on/off value */
 	status = Attributes::OnOff::Get(endpoint, &storedValue);
+
 	if (status == Protocols::InteractionModel::Status::Success) {
 		/* Set actual state to the cluster state that was last persisted */
 #if defined(CONFIG_PWM)

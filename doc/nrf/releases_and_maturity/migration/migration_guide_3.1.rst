@@ -38,8 +38,37 @@ Matter
 
       * The :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option has been introduced.
         Previously, the path to the ZAP file was deduced based on hardcoded locations.
-        Now, the location is configured using :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option.
-        This change requires you to update your application ``prj.conf`` file by setting :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` to point the location of you ZAP file.
+        Now, the location is configured using the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option.
+        This change requires you to update your application ``prj.conf`` file by setting the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` option to point the location of you ZAP file.
+
+   * For the :ref:`Matter light bulb <matter_light_bulb_sample>` sample:
+
+      * The deferred attribute persistence implementation has changed in the latest Matter version and you must align it as follows:
+
+        * Remove the following lines from the :file:`app_task.cpp` file located in the application's :file:`src` directory:
+
+          .. code-block:: C++
+
+             #include <app/DeferredAttributePersistenceProvider.h>
+
+             DeferredAttributePersistenceProvider gDeferredAttributePersister(Server::GetInstance().GetDefaultAttributePersister(),
+                                                                              Span<DeferredAttribute>(&gCurrentLevelPersister, 1),
+                                                                              System::Clock::Milliseconds32(5000));
+
+        * Add the following lines to the :file:`app_task.cpp` file located in the application's :file:`src` directory:
+
+          .. code-block:: C++
+
+             #include <app/util/persistence/DefaultAttributePersistenceProvider.h>
+             #include <app/util/persistence/DeferredAttributePersistenceProvider.h>
+
+             DefaultAttributePersistenceProvider gSimpleAttributePersistence;
+             DeferredAttributePersistenceProvider gDeferredAttributePersister(gSimpleAttributePersistence,
+                                                                              Span<DeferredAttribute>(&gCurrentLevelPersister, 1),
+                                                                              System::Clock::Milliseconds32(5000));
+
+        * Modify the ``mPostServerInitClbk`` function passed to the ``Nrf::Matter::PrepareServer`` function in the :file:`app_task.cpp` file should be modified to call additionally the ``gSimpleAttributePersistence.Init(Nrf::Matter::GetPersistentStorageDelegate())``.
+
 
 Thread
 ------
