@@ -184,6 +184,9 @@ Matter
   * Matter-over-Thread apps can now use the OpenThread API directly, instead of using intermediate Zephyr L2 layer.
     This change significantly reduces memory usage in Matter applications.
     On the :zephyr:board:`nrf54l15dk`, it saves approximately 15 kB of RAM and 40 kB of flash.
+    To learn more about the new architecture option, see the :ref:`ug_matter_networking_selection` user guide.
+  * The :ref:`ug_matter_networking_selection` section on the :ref:`ug_matter_device_advanced_kconfigs` page.
+    The section describes how to select the networking layer for Matter applications.
 
 * Updated:
 

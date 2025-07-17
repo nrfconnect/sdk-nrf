@@ -36,23 +36,21 @@ Thread requires the following Zephyr modules to properly operate in the |NCS|:
 Enable OpenThread in the |NCS|
 ==============================
 
-You can use the Thread protocol in the |NCS| in two ways: by utilizing the Zephyr networking layer, or by passing Thread frames directly to the nRF 802.15.4 radio driver.
+You can enable the Thread protocol in the |NCS| by using the Zephyr networking layer or by passing Thread frames directly to the nRF 802.15.4 radio driver.
 
 * To use the Thread protocol with Zephyr networking layer, enable the following Kconfig options:
 
   * :kconfig:option:`CONFIG_NETWORKING` - This option enables a generic link layer and the IP networking support.
   * :kconfig:option:`CONFIG_NET_L2_OPENTHREAD` - This option enables the OpenThread stack required for operating the Thread protocol effectively.
 
-* To use the Thread protocol and nRF 802.15.4 radio directly, disable the previous Kconfig options, and enable the following:
-
-  * :kconfig:option:`CONFIG_OPENTHREAD` - This option enables the OpenThread stack, allowing the direct use of the nRF 802.15.4 radio.
+* To use the Thread protocol and nRF 802.15.4 radio directly, disable the previous Kconfig options and enable the :kconfig:option:`CONFIG_OPENTHREAD` option.
+  This enables the OpenThread stack, allowing for direct use of the nRF 802.15.4 radio.
 
 To learn more about available architectures, see the :ref:`openthread_stack_architecture` user guide.
 
-Additionally, you can set the following Kconfig options:
-
-* :kconfig:option:`CONFIG_MPSL` - This option enables the :ref:`nrfxlib:mpsl` (MPSL) implementation, which provides services for both :ref:`single-protocol and multi-protocol implementations <ug_thread_architectures>`.
-  This is automatically set for all samples in the |NCS| that use the :ref:`zephyr:ieee802154_interface` radio driver.
+Additionally, you can set the :kconfig:option:`CONFIG_MPSL` Kconfig option.
+It enables the :ref:`nrfxlib:mpsl` (MPSL) implementation, which provides services for both :ref:`single-protocol and multi-protocol implementations <ug_thread_architectures>`.
+This is automatically set for all |NCS| samples that use the :ref:`zephyr:ieee802154_interface` radio driver.
 
 .. _ug_thread_select_libraries:
 .. _ug_thread_configuring_basic_building:
@@ -183,7 +181,7 @@ You can configure the EUI-64 for a device in the following ways depending on cho
 
         Replace the company ID
           You can enable the :kconfig:option:`CONFIG_IEEE802154_VENDOR_OUI_ENABLE` Kconfig option to replace Nordic Semiconductor's company ID with your own company ID.
-          Specify your company ID in :kconfig:option:`CONFIG_IEEE802154_VENDOR_OUI`.
+          Specify your company ID with the :kconfig:option:`CONFIG_IEEE802154_VENDOR_OUI` option.
 
           The extension identifier is set to the default, namely the DEVICEID from FICR.
 
@@ -220,7 +218,7 @@ You can configure the EUI-64 for a device in the following ways depending on cho
 
              If you used a different value for :kconfig:option:`CONFIG_IEEE802154_NRF5_UICR_EUI64_REG`, you must use different register addresses.
 
-             At the end of the configuration process, you can check the EUI-64 value using OpenThread CLI:
+             At the end of the configuration process, you can check the EUI-64 value using the OpenThread CLI as follows:
 
               .. code-block:: console
 
@@ -236,7 +234,7 @@ You can configure the EUI-64 for a device in the following ways depending on cho
 
         Replace the company ID
           You can enable the :kconfig:option:`CONFIG_IEEE802154_VENDOR_OUI_ENABLE` Kconfig option to replace Nordic Semiconductor's company ID with your own company ID.
-          Specify your company ID in :kconfig:option:`CONFIG_NRF5_VENDOR_OUI`.
+          Specify your company ID with the :kconfig:option:`CONFIG_NRF5_VENDOR_OUI` option.
 
           The extension identifier is set to the default, namely the DEVICEID from FICR.
 

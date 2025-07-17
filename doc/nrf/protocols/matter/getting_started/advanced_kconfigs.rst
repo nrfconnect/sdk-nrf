@@ -359,3 +359,18 @@ For example, for the ``nrf52840dk/nrf52840`` board target and the :ref:`matter_l
 
   You can increase the UART speed using this snippet only for Nordic Development Kits.
   If you want to use the snippet for your custom board, you need to adjust the UART speed manually.
+
+.. _ug_matter_networking_selection:
+
+Networking layer selection
+==========================
+
+The |NCS| supports two networking architectures for the Matter protocol:
+
+* The Zephyr networking layer, which is enabled by default for Matter over Wi-Fi.
+  You can also enable this architecture for Matter over Thread by setting the :kconfig:option:`CONFIG_CHIP_USE_ZEPHYR_NETWORKING` Kconfig option to ``y``.
+* The APIs of the OpenThread stack and the IEEE 802.15.4 radio driver, which are enabled by default for Matter over Thread.
+  This architecture is not supported for Matter over Wi-Fi.
+  To enable it, set the :kconfig:option:`CONFIG_CHIP_USE_OPENTHREAD_ENDPOINT` Kconfig option to ``y``.
+
+To learn more about the available architectures and suitable use cases for the presented options, see the :ref:`openthread_stack_architecture` user guide.
