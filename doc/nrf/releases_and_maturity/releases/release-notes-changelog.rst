@@ -830,7 +830,9 @@ Libraries for networking
     * Limited key-value pairs in a single provisioning command to ``10``.
       This is done to reduce the RAM usage of the library.
 
-  * Fixed an issue where the results from the :c:func:`zsock_getaddrinfo` function were not freed when the CoAP protocol was used for connection establishment.
+  * Fixed:
+    * An issue where the results from the :c:func:`zsock_getaddrinfo` function were not freed when the CoAP protocol was used for connection establishment.
+    * A bug that was causing a deadlock in the L4 handler.
 
 * :ref:`lib_downloader` library:
 

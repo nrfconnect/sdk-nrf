@@ -19,11 +19,23 @@
 LOG_MODULE_REGISTER(nrf_provisioning_sample, CONFIG_NRF_PROVISIONING_SAMPLE_LOG_LEVEL);
 
 #define NETWORK_UP			    BIT(0)
-#define NETWORK_DOWN			BIT(1)
-#define PROVISIONING_IDLE		BIT(2)
+#define PROVISIONING_IDLE		BIT(1)
+#define CONN_TIMEOUT_S			5
 #define NORMAL_REBOOT_S		    10
 #define PROVISIONING_IDLE_DELAY_S	3
-#define EVENT_MASK (NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
+
+/* Macros used to subscribe to specific Zephyr NET management events. */
+#define L4_EVENT_MASK (NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
+#define CONN_LAYER_EVENT_MASK (NET_EVENT_CONN_IF_FATAL_ERROR)
+
+/* Macro called upon a fatal error, reboots the device. */
+#define FATAL_ERROR()					\
+	LOG_ERR("Fatal error! Rebooting the device.");	\
+	LOG_PANIC();					\
+	IF_ENABLED(CONFIG_REBOOT, (sys_reboot(0)))
+
+static struct net_mgmt_event_callback l4_callback;
+static struct net_mgmt_event_callback conn_callback;
 
 static K_EVENT_DEFINE(prov_events);
 
@@ -32,7 +44,7 @@ static bool provisioning_started;
 static int modem_mode_cb(enum lte_lc_func_mode new_mode, void *user_data)
 {
 	enum lte_lc_func_mode fmode;
-
+	uint32_t events = 0;
 	ARG_UNUSED(user_data);
 
 	/* The nrf_provisioning library requires us to return the previous functional mode. */
@@ -49,9 +61,12 @@ static int modem_mode_cb(enum lte_lc_func_mode new_mode, void *user_data)
 
 		/* Wait for network readiness to be re-established before returning. */
 		LOG_DBG("Waiting for network up");
-		k_event_wait(&prov_events, NETWORK_UP, false, K_FOREVER);
-
-		LOG_DBG("Network is up.");
+		events = k_event_wait(&prov_events, NETWORK_UP, false, K_SECONDS(CONN_TIMEOUT_S));
+		if ((events & NETWORK_UP) == 0) {
+			LOG_WRN("Timeout waiting for network up event");
+		} else {
+			LOG_DBG("Network is up.");
+		}
 	}
 
 	if (new_mode == LTE_LC_FUNC_MODE_OFFLINE || new_mode == LTE_LC_FUNC_MODE_DEACTIVATE_LTE) {
@@ -61,17 +76,6 @@ static int modem_mode_cb(enum lte_lc_func_mode new_mode, void *user_data)
 		 * Deactivate LTE to allow this.
 		 */
 		conn_mgr_all_if_disconnect(true);
-
-		/* Note:
-		 * You could shut down both LTE by using
-		 * lte_lc_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
-		 * But conn_mgr will interpret this as an unintended connectivity loss.
-		 * Using conn_mgr_all_if_disconnect lets conn_mgr know the LTE loss is intentional.
-		 */
-
-		/* Wait for network disconnection before returning. */
-		LOG_DBG("Waiting for network down.");
-		k_event_wait(&prov_events, NETWORK_DOWN, false, K_FOREVER);
 
 		LOG_DBG("Network is down.");
 	}
@@ -100,7 +104,7 @@ static void mark_provisioning_idle_work_fn(struct k_work *work)
 	ARG_UNUSED(work);
 
 	LOG_INF("Provisioning is idle.");
-	k_event_post(&prov_events, PROVISIONING_IDLE);
+	k_event_set(&prov_events, PROVISIONING_IDLE);
 }
 
 static K_WORK_DELAYABLE_DEFINE(provisioning_idle_work, mark_provisioning_idle_work_fn);
@@ -152,18 +156,16 @@ static void start_provisioning_work_fn(struct k_work *work)
 static K_WORK_DEFINE(start_provisioning_work, start_provisioning_work_fn);
 
 /* Callback to track network connectivity */
-static struct net_mgmt_event_callback l4_callback;
 static void l4_event_handler(struct net_mgmt_event_callback *cb,
 			     uint32_t event, struct net_if *iface)
 {
-	if ((event & EVENT_MASK) != event) {
+	if ((event & L4_EVENT_MASK) != event) {
 		return;
 	}
 
 	if (event == NET_EVENT_L4_CONNECTED) {
 		/* Mark network as up. */
 		LOG_INF("Network connectivity gained!");
-		k_event_clear(&prov_events, NETWORK_DOWN);
 		k_event_post(&prov_events, NETWORK_UP);
 
 		/* Start the provisioning library after network readiness is first established.
@@ -181,27 +183,47 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 		/* Mark network as down. */
 		LOG_INF("Network connectivity lost!");
 		k_event_clear(&prov_events, NETWORK_UP);
-		k_event_post(&prov_events, NETWORK_DOWN);
 	}
 }
 
-/* Set up any requirements for provisioning on boot */
-static int prepare_provisioning(void)
+static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
+									uint32_t event,
+									struct net_if *iface)
 {
-	/* Start tracking network availability */
-	net_mgmt_init_event_callback(&l4_callback, l4_event_handler, EVENT_MASK);
-	net_mgmt_add_event_callback(&l4_callback);
-	return 0;
+	if (event == NET_EVENT_CONN_IF_FATAL_ERROR) {
+		LOG_ERR("NET_EVENT_CONN_IF_FATAL_ERROR");
+		FATAL_ERROR();
+		return;
+	}
 }
-
-SYS_INIT(prepare_provisioning, APPLICATION, 0);
 
 int main(void)
 {
+	int ret;
 	LOG_INF("nRF Device Provisioning Sample");
 
-	LOG_INF("Enabling connectivity...");
-	conn_mgr_all_if_connect(true);
+	/* Setup handler for Zephyr NET Connection Manager events. */
+	net_mgmt_init_event_callback(&l4_callback, l4_event_handler, L4_EVENT_MASK);
+	net_mgmt_add_event_callback(&l4_callback);
+
+	/* Setup handler for Zephyr NET Connection Manager Connectivity layer. */
+	net_mgmt_init_event_callback(&conn_callback, connectivity_event_handler,
+								CONN_LAYER_EVENT_MASK);
+	net_mgmt_add_event_callback(&conn_callback);
+
+	LOG_INF("Bringing network interface up and connecting to the network");
+
+	ret = conn_mgr_all_if_up(true);
+	if (ret) {
+		LOG_ERR("conn_mgr_all_if_up, error: %d", ret);
+		return ret;
+	}
+
+	ret = conn_mgr_all_if_connect(true);
+	if (ret) {
+		LOG_ERR("conn_mgr_all_if_connect, error: %d", ret);
+		return ret;
+	}
 
 	return 0;
 }
