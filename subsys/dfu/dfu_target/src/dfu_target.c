@@ -34,10 +34,6 @@ DEF_DFU_TARGET(full_modem);
 #include "dfu/dfu_target_smp.h"
 DEF_DFU_TARGET(smp);
 #endif
-#ifdef CONFIG_DFU_TARGET_SUIT
-#include "dfu/dfu_target_suit.h"
-DEF_DFU_TARGET(suit);
-#endif
 #ifdef CONFIG_DFU_TARGET_CUSTOM
 #include "dfu/dfu_target_custom.h"
 DEF_DFU_TARGET(custom);
@@ -117,11 +113,6 @@ int dfu_target_init(int img_type, int img_num, size_t file_size, dfu_target_call
 		new_target = &dfu_target_smp;
 	}
 #endif
-#ifdef CONFIG_DFU_TARGET_SUIT
-	if (img_type == DFU_TARGET_IMAGE_TYPE_SUIT) {
-		new_target = &dfu_target_suit;
-	}
-#endif
 #ifdef CONFIG_DFU_TARGET_CUSTOM
 	if (img_type == DFU_TARGET_IMAGE_TYPE_CUSTOM) {
 		new_target = &dfu_target_custom;
@@ -141,8 +132,7 @@ int dfu_target_init(int img_type, int img_num, size_t file_size, dfu_target_call
 	 * abort and to change the image number.
 	 */
 	if (new_target == current_target && img_type != DFU_TARGET_IMAGE_TYPE_MODEM_DELTA &&
-	    img_type != DFU_TARGET_IMAGE_TYPE_SMP && current_img_num == img_num &&
-	    img_type != DFU_TARGET_IMAGE_TYPE_SUIT) {
+	    img_type != DFU_TARGET_IMAGE_TYPE_SMP && current_img_num == img_num) {
 		return 0;
 	}
 

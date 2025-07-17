@@ -36,8 +36,6 @@ enum dfu_target_image_type {
 	DFU_TARGET_IMAGE_TYPE_FULL_MODEM = 4,
 	/** SMP external MCU */
 	DFU_TARGET_IMAGE_TYPE_SMP = 8,
-	/** SUIT Envelope */
-	DFU_TARGET_IMAGE_TYPE_SUIT = 16,
 	/** Custom update implementation */
 	DFU_TARGET_IMAGE_TYPE_CUSTOM = 128,
 	/** Any application image type */
