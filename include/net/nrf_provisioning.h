@@ -91,6 +91,9 @@ struct nrf_provisioning_dm_change {
  * Feeding a null as a callback address means that the corresponding default callback function is
  * taken into use.
  *
+ * This function return immediately after configuring the callbacks and schedules
+ * longer initialization work to be done in the background.
+ *
  * @param mmode Modem mode change callback. Used when data is written to modem.
  * @param dmode Device mode callback. Used when provisioning state changes.
  * @return <0 on error, 0 on success.
