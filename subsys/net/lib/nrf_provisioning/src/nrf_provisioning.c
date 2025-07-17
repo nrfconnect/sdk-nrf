@@ -50,10 +50,6 @@ static bool reschedule;
 /* nRF Provisioning context */
 static struct nrf_provisioning_http_context rest_ctx = {
 	.connect_socket = REST_CLIENT_SCKT_CONNECT,
-	.keep_alive = false,
-	.rx_buf = NULL,
-	.rx_buf_len = 0,
-	.auth = NULL,
 };
 
 /* nRF Provisioning context */
