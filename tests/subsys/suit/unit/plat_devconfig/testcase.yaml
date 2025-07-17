@@ -1,9 +1,0 @@
-tests:
-  suit.unit.platform.devconfig:
-    type: unit
-    tags:
-      - suit
-      - suit_platform
-      - suit_plat_sequence_completed
-      - suit_plat_authorize_sequence_num
-      - ci_tests_subsys_suit

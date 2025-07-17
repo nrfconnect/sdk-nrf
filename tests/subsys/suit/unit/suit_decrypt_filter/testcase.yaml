@@ -1,7 +1,0 @@
-tests:
-  suit.unit.suit_decrypt_filter:
-    type: unit
-    tags:
-      - suit
-      - suit_decrypt_filter
-      - ci_tests_subsys_suit

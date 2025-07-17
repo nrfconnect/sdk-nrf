@@ -1,8 +1,0 @@
-tests:
-  suit.unit.platform.suit_plat_memptr_size_update:
-    type: unit
-    tags:
-      - suit
-      - suit_platform
-      - suit_plat_memptr_size_update
-      - ci_tests_subsys_suit
