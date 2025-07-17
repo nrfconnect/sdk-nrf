@@ -112,46 +112,6 @@ config DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION
 	select PM_PARTITION_REGION_FMFU_STORAGE_EXTERNAL
 	bool "Use a dedicated FMFU partition on the external flash device"
 
-config DFU_TARGET_SUIT
-	bool "SUIT DFU target support"
-	default y
-	depends on SUIT
-	depends on SUIT_ENVELOPE_INFO
-	imply MPU_ALLOW_FLASH_WRITE
-	select SUIT_UTILS
-	select ZCBOR
-	select ZCBOR_CANONICAL
-	select FLASH
-	select STREAM_FLASH
-	select DFU_TARGET_STREAM
-	help
-	  Enable support for updates using DFU target based on SUIT
-
-if DFU_TARGET_SUIT
-
-config DFU_TARGET_SUIT_CACHE_PROCESSING
-	bool "SUIT cache processing"
-	default y
-	depends on SUIT_CACHE_RW
-	help
-	  Enable SUIT cache processing to process images IDs higher than 0.
-	  This allows to store the image in the cache partitions and
-	  assign them to be processed by SUIT.
-
-config DFU_TARGET_SUIT_INITIALIZE_SUIT
-	bool "Initialize the SUIT DFU library"
-	help
-	  Initialize the SUIT library during the system startup.
-
-config DFU_TARGET_REBOOT_RESET_DELAY_MS
-	int "Set reboot reset delay in milliseconds"
-	default 0
-	help
-	  Set the delay in milliseconds for resetting the device after a reboot
-	  function is called.
-
-endif # DFU_TARGET_SUIT
-
 config DFU_TARGET_CUSTOM
 	bool "Custom application-controlled update support"
 	help
