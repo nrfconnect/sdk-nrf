@@ -75,6 +75,52 @@ static int modem_key_mgmt_exists_false(nrf_sec_tag_t sec_tag,
 	return 0;
 }
 
+K_SEM_DEFINE(stopped_sem, 0, 1);
+K_SEM_DEFINE(done_sem, 0, 1);
+
+static void device_mode_cb(enum nrf_provisioning_event event,
+						  void *user_data)
+{
+	(void)user_data;
+	switch (event) {
+	case NRF_PROVISIONING_EVENT_START:
+		printk("Provisioning started\n");
+		break;
+	case NRF_PROVISIONING_EVENT_STOP:
+		printk("Provisioning stopped\n");
+		k_sem_give(&stopped_sem);
+		break;
+	case NRF_PROVISIONING_EVENT_DONE:
+		printk("Provisioning done\n");
+		k_sem_give(&done_sem);
+		break;
+	}
+}
+static struct nrf_provisioning_dm_change test_dm = {
+	.cb = device_mode_cb,
+	.user_data = NULL
+};
+
+static void wait_for_stopped(void)
+{
+	int ret;
+
+	ret = k_sem_take(&stopped_sem, K_SECONDS(CONFIG_NRF_PROVISIONING_INTERVAL_S * 2));
+	if (ret) {
+		TEST_FAIL_MESSAGE("Provisioning did not stop in time");
+	}
+}
+
+static void wait_for_done(void)
+{
+	int ret;
+
+	ret = k_sem_take(&done_sem, K_SECONDS(CONFIG_NRF_PROVISIONING_INTERVAL_S * 2));
+	if (ret) {
+		TEST_FAIL_MESSAGE("Provisioning did not finish in time");
+	}
+}
+
 /* Malloc and free are to be used in native_sim environment */
 void *__wrap_k_malloc(size_t size)
 {
@@ -139,6 +185,8 @@ struct coap_transmission_parameters coap_get_transmission_parameters(void)
 
 void setUp(void)
 {
+	k_sem_reset(&stopped_sem);
+	k_sem_reset(&done_sem);
 }
 
 void tearDown(void)
@@ -663,8 +711,19 @@ void test_provisioning_manual_uninitialized_invalid(void)
 
 static int lte_lc_func_mode_get_offline_cb(enum lte_lc_func_mode *mode, int cmock_num_calls)
 {
+	if (cmock_num_calls == 0) {
+		*mode = LTE_LC_FUNC_MODE_NORMAL;
+		return 0;
+	}
 	*mode = LTE_LC_FUNC_MODE_OFFLINE;
 	return 0;
+}
+
+K_SEM_DEFINE(lte_connect_sem, 0, 1);
+static int lte_lc_connect_cb(int cmock_num_calls)
+{
+	k_sem_give(&lte_connect_sem);
+	return -EFAULT;
 }
 
 /*
@@ -689,64 +748,37 @@ void test_provisioning_init_change_cbs_valid(void)
 	__cmock_settings_subsys_init_IgnoreAndReturn(0);
 	__cmock_settings_register_IgnoreAndReturn(0);
 	__cmock_settings_load_subtree_IgnoreAndReturn(0);
-	__cmock_lte_lc_func_mode_get_AddCallback(lte_lc_func_mode_get_offline_cb);
-	__cmock_lte_lc_func_mode_get_ExpectAnyArgsAndReturn(0);
-	__cmock_lte_lc_func_mode_get_ExpectAnyArgsAndReturn(0);
-	__cmock_lte_lc_func_mode_set_IgnoreAndReturn(0);
+	__cmock_lte_lc_func_mode_get_Stub(lte_lc_func_mode_get_offline_cb);
+	__cmock_lte_lc_func_mode_set_ExpectAndReturn(LTE_LC_FUNC_MODE_OFFLINE, 0);
+	__cmock_lte_lc_connect_Stub(lte_lc_connect_cb);
 	/* No way to check that the correct handler is passed as an argument */
 	__cmock_lte_lc_register_handler_Ignore();
+	__cmock_date_time_now_IgnoreAndReturn(0);
 
 	/* To make certain init has been called at least once beforehand */
 	int ret = nrf_provisioning_init(NULL, NULL);
 
 	TEST_ASSERT_EQUAL_INT(0, ret);
 
-	__cmock_settings_load_subtree_StopIgnore();
-	__cmock_settings_register_StopIgnore();
-	__cmock_settings_subsys_init_StopIgnore();
-	__cmock_modem_info_init_StopIgnore();
-	__cmock_nrf_modem_lib_init_StopIgnore();
-	__cmock_modem_key_mgmt_exists_StopIgnore();
+	k_sem_take(&lte_connect_sem, K_FOREVER);
 
 	ret = nrf_provisioning_init(&mm, &dm);
 	TEST_ASSERT_EQUAL_INT(0, ret);
-}
 
-static struct trigger_data {
-	/* emulate trigger */
-	struct k_work_delayable work;
-} trigger_data;
-
-static void provisioning_condvar_signal(struct k_work *work)
-{
-	struct k_work_delayable *dwork = k_work_delayable_from_work(work);
-	struct trigger_data *ctx = CONTAINER_OF(dwork, struct trigger_data, work);
-
-	(void)ctx;
-
-	nrf_provisioning_trigger_manually();
-
-	(void)k_work_schedule(dwork, K_MSEC(100));
+	k_sleep(K_SECONDS(1));
 }
 
 /*
  * - Trigger provisioning manually after initialization
  * - Should succeed if the module has been initialized
- * - Call the function and check that the return code indicates success. There's need to emulate
- *   triggering of the service because init is called from test process' context and condition
- *   variable can be only signaled from another one.
+ * - Call the function and check that the return code indicates success.
  */
 void test_provisioning_task_valid(void)
 {
-	struct k_work_sync sync;
-	static struct nrf_provisioning_dm_change dm = {.cb = dummy_nrf_provisioning_device_mode_cb,
-						       .user_data = NULL};
 	static struct nrf_provisioning_mm_change mm = {.cb = dummy_nrf_provisioning_modem_mode_cb,
 						       .user_data = NULL};
 
 	struct coap_client_option block2_option = {};
-
-	k_work_init_delayable(&trigger_data.work, provisioning_condvar_signal);
 
 	__cmock_modem_key_mgmt_exists_AddCallback(modem_key_mgmt_exists_true);
 	__cmock_modem_key_mgmt_exists_IgnoreAndReturn(0);
@@ -754,6 +786,7 @@ void test_provisioning_task_valid(void)
 	__cmock_settings_subsys_init_IgnoreAndReturn(0);
 	__cmock_settings_register_IgnoreAndReturn(0);
 	__cmock_settings_load_subtree_IgnoreAndReturn(0);
+	__cmock_coap_client_init_IgnoreAndReturn(0);
 	__cmock_modem_info_init_IgnoreAndReturn(0);
 	__cmock_nrf_modem_lib_init_IgnoreAndReturn(0);
 	__cmock_lte_lc_register_handler_Ignore();
@@ -761,20 +794,7 @@ void test_provisioning_task_valid(void)
 	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_control_IgnoreAndReturn(0);
-
-	/* To make certain init has been called at least once beforehand */
-	int ret = nrf_provisioning_init(&mm, &dm);
-
-	TEST_ASSERT_EQUAL_INT(0, ret);
-
-	__cmock_lte_lc_register_handler_StopIgnore();
-	__cmock_modem_info_init_StopIgnore();
-	__cmock_nrf_modem_lib_init_StopIgnore();
-	__cmock_settings_load_subtree_StopIgnore();
-	__cmock_settings_register_StopIgnore();
-	__cmock_settings_subsys_init_StopIgnore();
-	__cmock_modem_key_mgmt_write_StopIgnore();
-	__cmock_modem_key_mgmt_exists_StopIgnore();
+	__cmock_date_time_now_IgnoreAndReturn(0);
 
 	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
 	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
@@ -792,33 +812,24 @@ void test_provisioning_task_valid(void)
 	__cmock_coap_client_req_ExpectAnyArgsAndReturn(0);
 	__cmock_coap_client_req_ExpectAnyArgsAndReturn(0);
 	__cmock_coap_client_req_ExpectAnyArgsAndReturn(0);
-
-	/* Condition variable needs to be signaled from another context for the service
-	 * to be able to proceed
-	 */
-	k_work_schedule(&trigger_data.work, K_SECONDS(1));
-
-	__cmock_settings_load_subtree_ExpectAnyArgsAndReturn(0);
 	__cmock_settings_save_one_ExpectAnyArgsAndReturn(0);
 
-	ret = nrf_provisioning_req();
+	int ret = nrf_provisioning_init(&mm, &test_dm);
 
-	TEST_ASSERT_EQUAL_INT(1, ret);
+	TEST_ASSERT_EQUAL_INT(0, ret);
 
-	k_work_cancel_delayable_sync(&trigger_data.work, &sync);
+	ret = nrf_provisioning_trigger_manually();
+	TEST_ASSERT_EQUAL_INT(0, ret);
+
+	wait_for_done();
 }
 
 void test_provisioning_commands(void)
 {
-	struct k_work_sync sync;
-	static struct nrf_provisioning_dm_change dm = {.cb = dummy_nrf_provisioning_device_mode_cb,
-						       .user_data = NULL};
 	static struct nrf_provisioning_mm_change mm = {.cb = dummy_nrf_provisioning_modem_mode_cb,
 						       .user_data = NULL};
 
 	struct coap_client_option block2_option = {};
-
-	k_work_init_delayable(&trigger_data.work, provisioning_condvar_signal);
 
 	__cmock_modem_key_mgmt_exists_AddCallback(modem_key_mgmt_exists_true);
 	__cmock_modem_key_mgmt_exists_IgnoreAndReturn(0);
@@ -833,24 +844,18 @@ void test_provisioning_commands(void)
 	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_control_IgnoreAndReturn(0);
+	__cmock_date_time_now_IgnoreAndReturn(0);
+	__cmock_settings_load_subtree_IgnoreAndReturn(0);
 
 	/* To make certain init has been called at least once beforehand */
-	int ret = nrf_provisioning_init(&mm, &dm);
+	int ret = nrf_provisioning_init(&mm, &test_dm);
 
 	TEST_ASSERT_EQUAL_INT(0, ret);
 
-	__cmock_lte_lc_register_handler_StopIgnore();
-	__cmock_modem_info_init_StopIgnore();
-	__cmock_nrf_modem_lib_init_StopIgnore();
-	__cmock_settings_load_subtree_StopIgnore();
-	__cmock_settings_register_StopIgnore();
-	__cmock_settings_subsys_init_StopIgnore();
-	__cmock_modem_key_mgmt_write_StopIgnore();
-	__cmock_modem_key_mgmt_exists_StopIgnore();
-	__cmock_date_time_now_IgnoreAndReturn(0);
-
 	__cmock_nrf_provisioning_at_cmd_ExpectAnyArgsAndReturn(513);
 	__cmock_nrf_modem_at_err_ExpectAnyArgsAndReturn(513);
+	__cmock_nrf_modem_at_err_ExpectAnyArgsAndReturn(513);
+	__cmock_nrf_modem_at_err_type_IgnoreAndReturn(0);
 
 	char at_resp[] = "";
 
@@ -879,18 +884,11 @@ void test_provisioning_commands(void)
 	__cmock_coap_client_req_ExpectAnyArgsAndReturn(0);
 	__cmock_coap_client_req_ExpectAnyArgsAndReturn(0);
 
-	/* Condition variable needs to be signaled from another context for the service
-	 * to be able to proceed
-	 */
-	k_work_schedule(&trigger_data.work, K_SECONDS(1));
 
-	__cmock_settings_load_subtree_ExpectAnyArgsAndReturn(0);
-
-	ret = nrf_provisioning_req();
-
+	ret = nrf_provisioning_trigger_manually();
 	TEST_ASSERT_EQUAL_INT(0, ret);
 
-	k_work_cancel_delayable_sync(&trigger_data.work, &sync);
+	wait_for_stopped();
 }
 
 /*
