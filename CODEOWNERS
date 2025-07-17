@@ -792,7 +792,6 @@
 /subsys/logging/                          @nrfconnect/ncs-protocols-serialization
 /subsys/mcuboot/                          @nrfconnect/ncs-charon
 /subsys/mgmt/                             @nrfconnect/ncs-pluto
-/subsys/mgmt/suitfu/                      @nrfconnect/ncs-charon
 /subsys/mpsl/                             @nrfconnect/ncs-dragoon
 /subsys/mpsl/cx/                          @nrfconnect/ncs-radio-sw
 /subsys/mpsl/fem/                         @nrfconnect/ncs-radio-sw
