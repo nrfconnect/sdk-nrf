@@ -1,8 +1,0 @@
-tests:
-  suit.unit.platform.suit_plat_components:
-    type: unit
-    tags:
-      - suit
-      - suit_platform
-      - suit_plat_components
-      - ci_tests_subsys_suit

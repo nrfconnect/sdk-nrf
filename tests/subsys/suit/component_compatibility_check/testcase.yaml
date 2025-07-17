@@ -1,9 +1,0 @@
-tests:
-  suit-platform.integration.suit_component_compatibility_check:
-    platform_allow: native_sim
-    tags:
-      - suit_storage
-      - suit
-      - ci_tests_subsys_suit
-    integration_platforms:
-      - native_sim
