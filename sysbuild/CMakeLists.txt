@@ -59,10 +59,6 @@ function(include_suit)
   include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/suit.cmake)
 endfunction()
 
-function(include_suit_provisioning)
-  include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/suit_provisioning.cmake)
-endfunction()
-
 function(include_packaging)
   include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/b0_mcuboot_signing.cmake)
   include(${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/cmake/packaging.cmake)
@@ -752,7 +748,6 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
   endif()
 
   include_packaging()
-  include_suit_provisioning()
   include_suit()
 
   if(SB_CONFIG_SECURE_BOOT OR SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
