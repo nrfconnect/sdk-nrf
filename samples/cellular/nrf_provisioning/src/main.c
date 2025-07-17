@@ -133,24 +133,6 @@ static void device_mode_cb(enum nrf_provisioning_event event, void *user_data)
 static struct nrf_provisioning_mm_change mmode = { .cb = modem_mode_cb, .user_data = NULL };
 static struct nrf_provisioning_dm_change dmode = { .cb = device_mode_cb, .user_data = NULL };
 
-/* Work item to initialize the provisioning library and start checking for provisioning commands.
- * Called automatically the first time network connectivity is established.
- * Needs to be a work item since nrf_provisioning_init may attempt to install certs in a blocking
- * fashion.
- */
-static void start_provisioning_work_fn(struct k_work *work)
-{
-	LOG_INF("Initializing the nRF Provisioning library...");
-
-	int ret = nrf_provisioning_init(&mmode, &dmode);
-
-	if (ret) {
-		LOG_ERR("Failed to initialize provisioning client, error: %d", ret);
-	}
-}
-
-static K_WORK_DEFINE(start_provisioning_work, start_provisioning_work_fn);
-
 /* Callback to track network connectivity */
 static struct net_mgmt_event_callback l4_callback;
 static void l4_event_handler(struct net_mgmt_event_callback *cb,
@@ -166,13 +148,15 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 		k_event_clear(&prov_events, NETWORK_DOWN);
 		k_event_post(&prov_events, NETWORK_UP);
 
-		/* Start the provisioning library after network readiness is first established.
-		 * We offload this to a workqueue item to avoid a deadlock.
-		 * (nrf_provisioning_init might attempt to install certs, and in the process,
-		 * trigger a blocking wait for L4_DOWN, which cannot fire until this handler exits.)
-		 */
+		/* Start the provisioning library after network readiness is first established.	 */
 		if (!provisioning_started) {
-			k_work_submit(&start_provisioning_work);
+			LOG_INF("Initializing the nRF Provisioning library...");
+
+			int ret = nrf_provisioning_init(&mmode, &dmode);
+
+			if (ret) {
+				LOG_ERR("Failed to initialize provisioning client, error: %d", ret);
+			}
 			provisioning_started = true;
 		}
 	}
