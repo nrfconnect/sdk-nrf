@@ -39,7 +39,7 @@ Matter
       * The :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option has been introduced.
         Previously, the path to the ZAP file was deduced based on hardcoded locations.
         Now, the location is configured using the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option.
-        This change requires you to update your application ``prj.conf`` file by setting the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` option to point the location of you ZAP file.
+        This change requires you to update your application :file:`prj.conf` file by setting the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` option to point to the location of you ZAP file.
 
    * For the :ref:`Matter light bulb <matter_light_bulb_sample>` sample:
 
