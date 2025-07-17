@@ -55,14 +55,6 @@ function(include_provision_hex)
   include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/provision_hex.cmake)
 endfunction()
 
-function(include_suit)
-  include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/suit.cmake)
-endfunction()
-
-function(include_suit_provisioning)
-  include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/suit_provisioning.cmake)
-endfunction()
-
 function(include_packaging)
   include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/b0_mcuboot_signing.cmake)
   include(${ZEPHYR_NRF_MODULE_DIR}/subsys/bootloader/cmake/packaging.cmake)
@@ -758,7 +750,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 
   set_property(GLOBAL PROPERTY DOMAIN_APP_APP ${DEFAULT_IMAGE})
 
-  # Include any files that need to merge files with uicr_merged.hex before including suit
+  # Include any files that need to merge files with uicr_merged.hex
   if(SB_CONFIG_BT_FAST_PAIR_PROV_DATA AND NOT SB_CONFIG_PARTITION_MANAGER)
     # The DTS partition for the Fast Pair hex file is available in the post-CMake stage.
     include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/fast_pair/hex.cmake)
@@ -770,8 +762,6 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
   endif()
 
   include_packaging()
-  include_suit_provisioning()
-  include_suit()
 
   if(SB_CONFIG_SECURE_BOOT OR SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
     include_provision_hex()
@@ -783,7 +773,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
 
   if(SB_CONFIG_MATTER_OTA)
     include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/zephyr/ota-image_sysbuild.cmake)
-    if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD OR SB_CONFIG_SUIT_MULTI_IMAGE_PACKAGE_BUILD)
+    if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
       chip_ota_image(chip-ota-image
         INPUT_FILES ${CMAKE_BINARY_DIR}/dfu_multi_image.bin
         OUTPUT_FILE ${CMAKE_BINARY_DIR}/${SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME}
@@ -913,7 +903,6 @@ include(${CMAKE_CURRENT_LIST_DIR}/appcore.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/netcore.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/secureboot.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/mcuboot.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/suit.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/hpf.cmake)
 
 store_ncs_vars()

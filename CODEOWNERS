@@ -64,15 +64,8 @@
 
 /boards/shields/pca63566/doc/*.rst        @nrfconnect/ncs-doc-leads
 
-# SUIT configuration files
-/config/suit/                             @nrfconnect/ncs-charon
-
 # All cmake related files
 /cmake/                                   @nrfconnect/ncs-co-build-system
-/cmake/sysbuild/suit.cmake                @nrfconnect/ncs-charon
-/cmake/sysbuild/suit_utilities.cmake      @nrfconnect/ncs-charon
-/cmake/sysbuild/suit_provisioning.cmake   @nrfconnect/ncs-charon
-/cmake/sysbuild/suit_provisioning_nrf54h20.cmake @nrfconnect/ncs-charon
 
 # All doc related files
 /doc/_zoomin/                             @nrfconnect/ncs-co-doc @nrfconnect/ncs-doc-leads
@@ -291,7 +284,6 @@
 /drivers/bluetooth/                       @nrfconnect/ncs-co-drivers @nrfconnect/ncs-dragoon
 /drivers/entropy/                         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-aegir
 /drivers/flash/                           @nrfconnect/ncs-co-drivers
-/drivers/flash/flash_ipuc/                @nrfconnect/ncs-co-drivers @nrfconnect/ncs-charon
 /drivers/gpio/                            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /drivers/hw_cc3xx/                        @nrfconnect/ncs-co-drivers @nrfconnect/ncs-aegir
 /drivers/mpsl/                            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-dragoon
@@ -343,7 +335,6 @@
 /include/debug/ppi_trace.h                @nrfconnect/ncs-co-drivers @nordic-krch
 /include/dfu/                             @nrfconnect/ncs-code-owners
 /include/drivers/flash/                   @nrfconnect/ncs-co-drivers
-/include/drivers/flash/flash_ipuc.h       @nrfconnect/ncs-co-drivers @nrfconnect/ncs-charon
 /include/drivers/gpio/                    @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /include/drivers/bme68x_iaq.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/drivers/mspi/hpf_mspi.h          @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
@@ -826,16 +817,11 @@
 /subsys/settings/                         @nrfconnect/ncs-pluto @rghaddab
 /subsys/sdfw_services/services/extmem/    @nrfconnect/ncs-charon
 /subsys/shell/                            @nordic-krch
-/subsys/suit/                             @nrfconnect/ncs-charon
 /subsys/trusted_storage/                  @nrfconnect/ncs-aegir
 /subsys/uart_async_adapter/               @nrfconnect/ncs-si-muffin
 
 # Sysbuild
 /sysbuild/                                @nrfconnect/ncs-co-build-system
-/sysbuild/Kconfig.suit                    @nrfconnect/ncs-charon
-/sysbuild/Kconfig.suit_provisioning       @nrfconnect/ncs-charon
-/sysbuild/suit_provisioning/              @nrfconnect/ncs-charon
-/sysbuild/suit.cmake                      @nrfconnect/ncs-charon
 
 # Tests
 /tests/benchmarks/                        @nrfconnect/ncs-low-level-test
@@ -849,7 +835,6 @@
 /tests/bluetooth/tester/                  @carlescufi @nrfconnect/ncs-paladin
 /tests/crypto/                            @magnev
 /tests/drivers/audio/                     @nrfconnect/ncs-low-level-test
-/tests/drivers/flash/flash_ipuc/          @nrfconnect/ncs-charon
 /tests/drivers/flash/flash_rpc/           @nrfconnect/ncs-pluto
 /tests/drivers/flash_patch/               @nrfconnect/ncs-pluto
 /tests/drivers/fprotect/                  @nrfconnect/ncs-pluto
