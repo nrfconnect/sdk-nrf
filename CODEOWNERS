@@ -64,9 +64,6 @@
 
 /boards/shields/pca63566/doc/*.rst        @nrfconnect/ncs-doc-leads
 
-# SUIT configuration files
-/config/suit/                             @nrfconnect/ncs-charon
-
 # All cmake related files
 /cmake/                                   @nrfconnect/ncs-co-build-system
 /cmake/sysbuild/suit.cmake                @nrfconnect/ncs-charon
