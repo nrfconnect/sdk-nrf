@@ -40,13 +40,6 @@
   comment: "Variant does not fit in FLASH area - it should be probably removed in the future"
 
 - scenarios:
-    - sample.matter.lock.debug
-    - sample.matter.lock.smp_dfu
-  platforms:
-    - nrf7002dk/nrf5340/cpuapp/nrf7001
-  comment: "https://nordicsemi.atlassian.net/browse/KRKNWK-20529"
-
-- scenarios:
     - nrf.extended.drivers.uart.uart_elementary_dual_l09
     - nrf.extended.drivers.uart.uart_elementary_dual_setup_mismatch_l09
   platforms:
