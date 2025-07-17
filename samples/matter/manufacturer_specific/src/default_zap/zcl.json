@@ -6,7 +6,6 @@
     "xmlRoot": [
         "../../../../../../modules/lib/matter/src/app/zap-templates/zcl",
         "../../../../../../modules/lib/matter/src/app/zap-templates/zcl/data-model/chip",
-        "../../../../../../modules/lib/matter/src/app/zap-templates/zcl/data-model/silabs",
         "."
     ],
     "_comment": "Ensure access-control-definitions.xml is first in xmlFile array",
@@ -26,13 +25,20 @@
         "boolean-state-cluster.xml",
         "boolean-state-configuration-cluster.xml",
         "actions-cluster.xml",
-        "bridged-device-basic-information.xml",
+        "bridged-device-basic-information-cluster.xml",
+        "camera-av-settings-user-level-management-cluster.xml",
+        "camera-av-stream-management-cluster.xml",
         "chime-cluster.xml",
         "chip-ota.xml",
         "channel-cluster.xml",
+        "closure-control-cluster.xml",
+        "closure-dimension-cluster.xml",
         "clusters-extensions.xml",
         "color-control-cluster.xml",
         "commissioner-control-cluster.xml",
+        "commodity-metering-cluster.xml",
+        "commodity-price-cluster.xml",
+        "commodity-tariff-cluster.xml",
         "concentration-measurement-cluster.xml",
         "content-launch-cluster.xml",
         "content-app-observer-cluster.xml",
@@ -44,10 +50,11 @@
         "dishwasher-alarm-cluster.xml",
         "dishwasher-mode-cluster.xml",
         "microwave-oven-mode-cluster.xml",
+        "meter-identification-cluster.xml",
         "door-lock-cluster.xml",
-        "drlc-cluster.xml",
         "ecosystem-information-cluster.xml",
         "electrical-energy-measurement-cluster.xml",
+        "electrical-grid-conditions-cluster.xml",
         "electrical-power-measurement-cluster.xml",
         "energy-evse-cluster.xml",
         "energy-evse-mode-cluster.xml",
@@ -68,6 +75,8 @@
         "icd-management-cluster.xml",
         "identify-cluster.xml",
         "illuminance-measurement-cluster.xml",
+        "joint-fabric-datastore-cluster.xml",
+        "joint-fabric-administrator-cluster.xml",
         "keypad-input-cluster.xml",
         "laundry-washer-mode-cluster.xml",
         "laundry-dryer-controls-cluster.xml",
@@ -80,6 +89,7 @@
         "messages-cluster.xml",
         "mode-base-cluster.xml",
         "mode-select-cluster.xml",
+        "push-av-stream-transport-cluster.xml",
         "semantic-tag-namespace-enums.xml",
         "network-commissioning-cluster.xml",
         "occupancy-sensing-cluster.xml",
@@ -101,14 +111,14 @@
         "refrigerator-and-temperature-controlled-cabinet-mode-cluster.xml",
         "refrigerator-alarm.xml",
         "relative-humidity-measurement-cluster.xml",
-        "rvc-clean-mode-cluster.xml ",
+        "rvc-clean-mode-cluster.xml",
         "rvc-run-mode-cluster.xml",
-        "replacable-monitoring-cluster.xml",
         "resource-monitoring-cluster.xml",
         "scene.xml",
         "service-area-cluster.xml",
         "smoke-co-alarm-cluster.xml",
         "software-diagnostics-cluster.xml",
+        "soil-measurement-cluster.xml",
         "switch-cluster.xml",
         "target-navigator-cluster.xml",
         "temperature-control-cluster.xml",
@@ -123,6 +133,8 @@
         "time-format-localization-cluster.xml",
         "time-synchronization-cluster.xml",
         "timer-cluster.xml",
+        "tls-certificate-management-cluster.xml",
+        "tls-client-management-cluster.xml",
         "user-label-cluster.xml",
         "unit-localization-cluster.xml",
         "valve-configuration-and-control-cluster.xml",
@@ -131,14 +143,13 @@
         "water-heater-management-cluster.xml",
         "water-heater-mode-cluster.xml",
         "webrtc-provider-cluster.xml",
+        "webrtc-requestor-cluster.xml",
         "wifi-network-diagnostics-cluster.xml",
         "wifi-network-management-cluster.xml",
         "window-covering.xml",
         "matter-devices.xml",
         "sample-mei-cluster.xml",
-        "types/door-lock.xml",
-        "types/occupancy-sensing.xml",
-        "types/thermostat-user-interface-configuration.xml",
+        "zone-management-cluster.xml",
         "NordicDevKitCluster.xml"
     ],
     "manufacturersXml": "../../../../../../modules/lib/matter/src/app/zap-templates/zcl/data-model/manufacturers.xml",
@@ -169,9 +180,11 @@
             "ClusterRevision",
             "SubjectsPerAccessControlEntry",
             "TargetsPerAccessControlEntry",
-            "AccessControlEntriesPerFabric"
+            "AccessControlEntriesPerFabric",
+            "FeatureMap"
         ],
         "Administrator Commissioning": [
+            "ClusterRevision",
             "WindowStatus",
             "AdminFabricIndex",
             "AdminVendorId"
@@ -200,6 +213,39 @@
         ],
         "Bridged Device Basic Information": [
             "ProductAppearance"
+        ],
+        "Chime": [
+            "SelectedChime",
+            "Enabled"
+        ],
+        "Closure Control": [
+            "CountdownTime",
+            "OverallCurrentState",
+            "OverallTargetState",
+            "FeatureMap",
+            "ClusterRevision"
+        ],
+        "Closure Dimension": [
+            "CurrentState",
+            "Target",
+            "UnitRange",
+            "LimitRange",
+            "FeatureMap",
+            "ClusterRevision"
+        ],
+        "Commodity Price": [
+            "TariffUnit",
+            "Currency",
+            "CurrentPrice",
+            "PriceForecast",
+            "FeatureMap"
+        ],
+        "Commodity Tariff": [
+            "TariffInfo",
+            "CurrentDay",
+            "NextDay",
+            "CurrentDayEntry",
+            "NextDayEntry"
         ],
         "Descriptor": [
             "ClusterRevision",
@@ -303,11 +349,42 @@
             "RegisteredClients",
             "ICDCounter",
             "ClientsSupportedPerFabric",
-            "MaximumCheckInBackOff"
+            "MaximumCheckInBackOff",
+            "OperatingMode",
+            "FeatureMap"
+        ],
+        "Joint Fabric Datastore": [
+            "Status"
+        ],
+        "Meter Identification": [
+            "MeterType",
+            "PointOfDelivery",
+            "MeterSerialNumber",
+            "ProtocolVersion",
+            "PowerThreshold",
+            "FeatureMap"
+        ],
+        "Network Commissioning": [
+            "ClusterRevision",
+            "ConnectMaxTimeSeconds",
+            "FeatureMap",
+            "InterfaceEnabled",
+            "LastConnectErrorValue",
+            "LastNetworkID",
+            "LastNetworkingStatus",
+            "MaxNetworks",
+            "Networks",
+            "ScanMaxTimeSeconds",
+            "SupportedThreadFeatures",
+            "SupportedWiFiBands",
+            "ThreadVersion"
         ],
         "Occupancy Sensing": [
             "HoldTimeLimits",
             "HoldTime",
+            "PIROccupiedToUnoccupiedDelay",
+            "UltrasonicOccupiedToUnoccupiedDelay",
+            "PhysicalContactOccupiedToUnoccupiedDelay",
             "FeatureMap"
         ],
         "Operational Credentials": [
@@ -316,6 +393,7 @@
             "CurrentFabricIndex"
         ],
         "Software Diagnostics": [
+            "ClusterRevision",
             "CurrentHeapFree",
             "CurrentHeapHighWatermark",
             "CurrentHeapUsed",
@@ -399,7 +477,9 @@
             "Delay",
             "SecurityPolicy",
             "ChannelPage0Mask",
-            "OperationalDatasetComponents"
+            "OperationalDatasetComponents",
+            "ExtAddress",
+            "Rloc16"
         ],
         "Wi-Fi Network Diagnostics": [
             "BSSID",
@@ -676,6 +756,12 @@
             "CumulativeEnergyReset",
             "FeatureMap"
         ],
+        "Electrical Grid Conditions": [
+            "LocalGenerationAvailable",
+            "CurrentConditions",
+            "ForecastConditions",
+            "FeatureMap"
+        ],
         "Electrical Power Measurement": [
             "PowerMode",
             "NumberOfMeasurementTypes",
@@ -735,6 +821,57 @@
             "CurrentArea",
             "EstimatedEndTime",
             "FeatureMap"
+        ],
+        "Camera AV Stream Management": [
+            "VideoSensorParams",
+            "MinViewport",
+            "MicrophoneCapabilities",
+            "SpeakerCapabilities",
+            "Viewport",
+            "MaxConcurrentEncoders",
+            "MaxEncodedPixelRate",
+            "NightVisionUsesInfrared",
+            "MaxContentBufferSize",
+            "TwoWayTalkSupport",
+            "MaxNetworkBandwidth",
+            "CurrentFrameRate",
+            "HDRModeEnabled",
+            "SoftRecordingPrivacyModeEnabled",
+            "SoftLivestreamPrivacyModeEnabled",
+            "HardPrivacyModeOn",
+            "NightVision",
+            "NightVisionIllum",
+            "SpeakerMuted",
+            "SpeakerVolumeLevel",
+            "SpeakerMaxLevel",
+            "SpeakerMinLevel",
+            "MicrophoneMuted",
+            "MicrophoneVolumeLevel",
+            "MicrophoneMaxLevel",
+            "MicrophoneMinLevel",
+            "MicrophoneAGCEnabled",
+            "ImageRotation",
+            "ImageFlipHorizontal",
+            "ImageFlipVertical",
+            "LocalVideoRecordingEnabled",
+            "LocalSnapshotRecordingEnabled",
+            "StatusLightEnabled",
+            "StatusLightBrightness",
+            "FeatureMap"
+        ],
+        "Camera AV Settings User Level Management": [
+            "MPTZPosition"
+        ],
+        "Soil Measurement": [
+            "SoilMoistureMeasurementLimits",
+            "SoilMoistureMeasuredValue",
+            "ClusterRevision"
+        ],
+        "Unit Localization": [
+            "TemperatureUnit"
+        ],
+        "Zone Management": [
+            "TwoDCartesianMax"
         ]
     },
     "mandatoryDeviceTypes": "0x0016",
