@@ -173,6 +173,12 @@ int emds_entry_add(struct emds_dynamic_entry *entry)
 		return -ECANCELED;
 	}
 
+	STRUCT_SECTION_FOREACH(emds_entry, static_entry) {
+		if (static_entry->id == entry->entry.id) {
+			return -EINVAL;
+		}
+	}
+
 	SYS_SLIST_FOR_EACH_CONTAINER(&emds_dynamic_entries, ch, node) {
 		if (ch->entry.id == entry->entry.id) {
 			return -EINVAL;
