@@ -297,6 +297,14 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       endif()
     endif()
 
+    if(SB_CONFIG_SOC_SERIES_NRF54HX)
+      if(SB_CONFIG_MCUBOOT_SIGNATURE_USING_ITS)
+        set_config_bool(mcuboot CONFIG_NRF_BOOT_SIGNATURE_USING_ITS y)
+      else()
+        set_config_bool(mcuboot CONFIG_NRF_BOOT_SIGNATURE_USING_ITS n)
+      endif()
+    endif()
+
     # A v1 board doesn't define board qualifiers, thus below test will just test the pure board
     # name for a v1 board. A v2 board will match against the board qualifier.
     if("${BOARD}${BOARD_QUALIFIERS}" MATCHES "(_|/)ns$")
