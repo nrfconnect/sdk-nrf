@@ -286,7 +286,6 @@
 /drivers/bluetooth/                       @nrfconnect/ncs-co-drivers @nrfconnect/ncs-dragoon
 /drivers/entropy/                         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-aegir
 /drivers/flash/                           @nrfconnect/ncs-co-drivers
-/drivers/flash/flash_ipuc/                @nrfconnect/ncs-co-drivers @nrfconnect/ncs-charon
 /drivers/gpio/                            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /drivers/hw_cc3xx/                        @nrfconnect/ncs-co-drivers @nrfconnect/ncs-aegir
 /drivers/mpsl/                            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-dragoon
@@ -338,7 +337,6 @@
 /include/debug/ppi_trace.h                @nrfconnect/ncs-co-drivers @nordic-krch
 /include/dfu/                             @nrfconnect/ncs-code-owners
 /include/drivers/flash/                   @nrfconnect/ncs-co-drivers
-/include/drivers/flash/flash_ipuc.h       @nrfconnect/ncs-co-drivers @nrfconnect/ncs-charon
 /include/drivers/gpio/                    @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /include/drivers/bme68x_iaq.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/drivers/mspi/hpf_mspi.h          @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
@@ -838,7 +836,6 @@
 /tests/bluetooth/tester/                  @carlescufi @nrfconnect/ncs-paladin
 /tests/crypto/                            @magnev
 /tests/drivers/audio/                     @nrfconnect/ncs-low-level-test
-/tests/drivers/flash/flash_ipuc/          @nrfconnect/ncs-charon
 /tests/drivers/flash/flash_rpc/           @nrfconnect/ncs-pluto
 /tests/drivers/flash_patch/               @nrfconnect/ncs-pluto
 /tests/drivers/fprotect/                  @nrfconnect/ncs-pluto
