@@ -17,8 +17,8 @@
       <arg name="Action" type="LEDActionEnum" optional="false"/>
     </command>
     <attribute side="server" code="0xFFF10000" define="DEV_KIT_NAME" type="char_string" writable="true" optional="false" default="Nordic Development Kit">DevKitName</attribute>
-    <attribute side="server" code="0xFFF10001" define="USER_LED" type="boolean" length="0" writable="false" reportable="false" isNullable="false" default="false" optional="false" apiMaturity="NaN">UserLED<description/><access op="read" role="view"/></attribute>
-    <attribute side="server" code="0xFFF10002" define="USER_BUTTON" type="boolean" length="0" writable="false" reportable="false" isNullable="false" default="false" optional="false" apiMaturity="NaN">UserButton<description/><access op="read" role="view"/></attribute>
+    <attribute side="server" code="0xFFF10001" define="USER_LED" type="boolean" length="0" writable="false" reportable="false" isNullable="false" default="false" optional="false" apiMaturity="provisional">UserLED<description/><access op="read" role="view"/></attribute>
+    <attribute side="server" code="0xFFF10002" define="USER_BUTTON" type="boolean" length="0" writable="false" reportable="false" isNullable="false" default="false" optional="false" apiMaturity="provisional">UserButton<description/><access op="read" role="view"/></attribute>
     <event side="server" code="0xFFF10000" name="UserButtonChanged" priority="info" optional="false">
       <description>The UserButtonChanged event SHALL be emitted by a Node as soon as the User Button is pressed or released.</description>
     </event>
