@@ -13,7 +13,7 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     tags:
       - bluetooth
@@ -25,7 +25,7 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
   sample.bluetooth.direction_finding_peripheral.aoa.bt_ll_sw_split.nrf52:
     sysbuild: false
