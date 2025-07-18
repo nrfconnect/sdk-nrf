@@ -92,14 +92,12 @@
 /doc/nrf/app_dev/device_guides/nrf91/nrf91_snippet.rst @nrfconnect/ncs-cia-doc
 /doc/nrf/app_dev/device_guides/pmic/      @nrfconnect/ncs-pmic-doc
 /doc/nrf/app_dev/device_guides/nrf54h/    @FrancescoSer
-/doc/nrf/app_dev/device_guides/nrf54h/ug_nrf54h20_suit_*.rst @nrfconnect/ncs-charon-doc
 /doc/nrf/app_dev/device_guides/wifi_coex.rst @nrfconnect/ncs-doc-leads
 /doc/nrf/dev_model_and_contributions/     @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc
 /doc/nrf/drivers/bh1749.rst               @nrfconnect/ncs-cia-doc
 /doc/nrf/drivers/bme68x_iaq.rst           @nrfconnect/ncs-cia-doc
 /doc/nrf/drivers/entropy_cc3xx.rst        @nrfconnect/ncs-aegir-doc
 /doc/nrf/drivers/eth_rtt.rst              @nrfconnect/ncs-si-muffin-doc
-/doc/nrf/drivers/suit_flash_ipuc.rst      @nrfconnect/ncs-charon-doc
 /doc/nrf/drivers/images/flash_ipuc/*      @nrfconnect/ncs-charon-doc
 /doc/nrf/drivers/hw_cc3xx.rst             @nrfconnect/ncs-aegir-doc
 /doc/nrf/drivers/mspi_sqspi.rst           @nrfconnect/ncs-lowlevel-doc
@@ -139,7 +137,6 @@
 /doc/nrf/libraries/debug/memfault_ncs.rst @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/debug/ppi_trace.rst    @nrfconnect/ncs-doc-leads
 /doc/nrf/libraries/dfu/                   @nrfconnect/ncs-pluto-doc
-/doc/nrf/libraries/dfu/suit_dfu.rst       @nrfconnect/ncs-charon-doc
 /doc/nrf/libraries/gazell/                @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/libraries/modem/nrf_modem_lib/   @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/modem/at_cmd_custom.rst @nrfconnect/ncs-modem-doc
@@ -272,7 +269,6 @@
 /doc/nrf/samples/pmic.rst                 @nrfconnect/ncs-pmic-doc
 /doc/nrf/samples/sensor.rst               @nrfconnect/ncs-cia-doc
 /doc/nrf/samples/serialization.rst        @nrfconnect/ncs-terahertz-doc
-/doc/nrf/samples/suit.rst                 @nrfconnect/ncs-charon-doc
 /doc/nrf/samples/tfm.rst                  @nrfconnect/ncs-aegir-doc
 /doc/nrf/samples/thread.rst               @nrfconnect/ncs-terahertz-doc
 /doc/nrf/samples/wifi.rst                 @nrfconnect/ncs-wifi-doc

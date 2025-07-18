@@ -264,7 +264,7 @@ Developing with nRF54L Series
 Developing with nRF54H Series
 =============================
 
-* Added a new documentation page :ref:`ug_nrf54h20_suit_signing` under :ref:`ug_nrf54h20_suit_dfu`.
+* Added a new documentation page ``ug_nrf54h20_suit_signing`` under ``ug_nrf54h20_suit_dfu``.
 * Removed the note on installing SEGGER USB Driver for J-Link on Windows from the :ref:`ug_nrf54h20_gs` page and moved its contents to the `nRF Util prerequisites`_ documentation.
   The Windows-only requirement to install the SEGGER USB Driver for J-Link is now mentioned in the :ref:`installing_vsc` section on the :ref:`installation` page.
 
@@ -915,9 +915,9 @@ SDFW samples
 SUIT samples
 ------------
 
-* Added the :ref:`nrf54h_suit_ab_sample` sample that demonstrates how to perform A/B updates using SUIT manifests.
+* Added the ``nrf54h_suit_ab_sample`` sample that demonstrates how to perform A/B updates using SUIT manifests.
 
-* :ref:`nrf54h_suit_sample` sample:
+* ``nrf54h_suit_sample`` sample:
 
   * Updated:
 
@@ -1026,7 +1026,7 @@ Drivers
 
 This section provides detailed lists of changes by :ref:`driver <drivers>`.
 
-* Added a :ref:`flash_ipuc` that allows to manage SUIT IPUC memory through the Zephyr flash API.
+* Added a ``flash_ipuc`` that allows to manage SUIT IPUC memory through the Zephyr flash API.
 
 Wi-Fi drivers
 -------------
@@ -1130,14 +1130,14 @@ DFU libraries
 
 * Added:
 
-  * Support for :ref:`manifest-controlled variables<subsys_suit_mfst_var>` that allow to control manifest logic based on previous evaluations as well as store integer values inside the SUIT non-volatile memory region.
-  * Support for :ref:`In-place Updateable Components (IPUC)<ug_nrf54h20_suit_ipuc>` that allow to cross memory permission boundaries to update inactive memory regions from the main application.
+  * Support for ``manifest-controlled variables`` that allow to control manifest logic based on previous evaluations as well as store integer values inside the SUIT non-volatile memory region.
+  * Support for ``In-place Updateable Components (IPUC)`` that allow to cross memory permission boundaries to update inactive memory regions from the main application.
 
 * :ref:`lib_fmfu_fdev`:
 
   * Regenerated the zcbor-generated code files using v0.9.0.
 
-* :ref:`subsys_suit`:
+* ``subsys_suit``:
 
    * Added:
 
@@ -1153,7 +1153,7 @@ DFU libraries
 
        * To write into IPUC using SMP image command group.
        * To write into IPUC using SUIT SMP cache raw upload commands.
-       * To write into IPUC using SUIT :ref:`dfu_target<lib_dfu_target_suit_style_update>` library.
+       * To write into IPUC using SUIT ``dfu_target<lib_dfu_target_suit_style_update>`` library.
 
      * Possibilities for the following:
 
