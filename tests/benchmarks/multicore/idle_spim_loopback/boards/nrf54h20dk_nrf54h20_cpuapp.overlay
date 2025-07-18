@@ -64,6 +64,10 @@
 	};
 };
 
+&gpio6 {
+	status = "disabled";
+};
+
 &exmif {
 	status = "disabled";
 };

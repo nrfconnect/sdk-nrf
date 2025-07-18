@@ -27,3 +27,11 @@
 &cpu {
 	cpu-power-states = <&wait &hibernate>;
 };
+
+&gpio6 {
+	zephyr,pm-device-runtime-auto;
+};
+
+&exmif {
+	zephyr,pm-device-runtime-auto;
+};

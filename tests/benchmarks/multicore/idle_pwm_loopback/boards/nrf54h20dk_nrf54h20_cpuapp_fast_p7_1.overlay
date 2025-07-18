@@ -65,3 +65,11 @@
 &pwm130 {
 	status = "disabled";
 };
+
+&gpio6 {
+	status = "disabled";
+};
+
+&exmif {
+	status = "disabled";
+};

@@ -42,7 +42,7 @@
 };
 
 &gpio0 {
-	status = "okay";
+	zephyr,pm-device-runtime-auto;
 };
 
 &gpiote130 {
@@ -56,4 +56,12 @@
 	pinctrl-1 = <&pwm130_sleep>;
 	pinctrl-names = "default", "sleep";
 	memory-regions = <&cpuapp_dma_region>;
+};
+
+&gpio6 {
+	status = "disabled";
+};
+
+&exmif {
+	status = "disabled";
 };

@@ -40,3 +40,11 @@
 &gpio1 {
 	status = "okay";
 };
+
+&gpio6 {
+	status = "disabled";
+};
+
+&exmif {
+	status = "disabled";
+};
