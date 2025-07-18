@@ -22,8 +22,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DMISSING_SYSCALL_NAMES")
 # For src/utils includes
 target_link_libraries(hostap_crypto INTERFACE hostap)
 
-if(DEFINED CONFIG_HOSTAP_CRYPTO_ALT_LEGACY OR
-   DEFINED CONFIG_HOSTAP_CRYPTO_ALT_LEGACY_PSA)
+if(DEFINED CONFIG_HOSTAP_CRYPTO_ALT_LEGACY_PSA)
   zephyr_include_directories(
     ${HOSTAP_BASE}/port/mbedtls
   )
