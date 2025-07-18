@@ -81,7 +81,7 @@ Complete the following steps:
 
    For more detailed information about LED stream functionality, see the `Playing LED stream`_ section.
 
-#. If you want to perform :ref:`ug_nrf54h20_suit_dfu`, you must also install the SUIT generator Python package.
+#. If you want to perform ``ug_nrf54h20_suit_dfu``, you must also install the SUIT generator Python package.
    The package source files are available in the :file:`ncs/modules/lib/suit-generator` directory of the |NCS|.
    Run the following commands in the package source directory to install the SUIT generator package and the required dependencies:
 
@@ -139,7 +139,7 @@ Complete the following steps:
 
    For more detailed information about LED stream functionality, see the `Playing LED stream`_ section.
 
-#. If you want to perform :ref:`ug_nrf54h20_suit_dfu`, you must also install the SUIT generator Python package.
+#. If you want to perform ``ug_nrf54h20_suit_dfu``, you must also install the SUIT generator Python package.
    The package source files are available in the :file:`ncs/modules/lib/suit-generator` directory of the |NCS|.
    Run the following commands in the package source directory to install the SUIT generator package and the required dependencies:
 

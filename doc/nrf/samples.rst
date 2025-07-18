@@ -63,7 +63,6 @@ General information about samples in the |NCS|
    samples/pmic
    samples/serialization
    samples/sensor
-   samples/suit
    samples/thread
    samples/tfm
    samples/wifi

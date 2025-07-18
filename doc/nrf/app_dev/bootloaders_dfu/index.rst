@@ -10,8 +10,10 @@ Bootloaders and DFU
 
 Depending on the device, you need to use different bootloader and DFU solutions:
 
-* For the nRF54H Series, use :ref:`Software Updates for Internet of Things (SUIT) <ug_nrf54h20_suit_dfu>`.
-  The :ref:`SUIT procedure <ug_nrf54h20_suit_intro>` is the only supported bootloader and Device Firmware Update (DFU) procedure for this device.
+* For the nRF54H Series, use ``Software Updates for Internet of Things (SUIT)``.
+  The ``SUIT procedure`` is the only supported bootloader and Device Firmware Update (DFU) procedure for this device.
+  TODO: Remove entries about suit here and in the following table, probably refactoring of whole
+  section is needed...
 * For the remaining Nordic Semiconductor devices, use :ref:`MCUboot and nRF Secure Immutable Bootloader (NSIB) <ug_bootloader_mcuboot_nsib>`.
 
 See the following diagram and table for further comparison.

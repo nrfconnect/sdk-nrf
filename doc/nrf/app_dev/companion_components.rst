@@ -49,16 +49,6 @@ The following table lists the available companion components:
      - :ref:`Bootloader requirements <bootloader_rot>`
      - :file:`samples/bootloader`
      - :ref:`ug_bootloader_adding_sysbuild_immutable_b0`
-   * - :ref:`SUIT flash companion <suit_flash_companion>`
-     - Companion image that allows the Secure Domain Firmware to access the external memory during the :ref:`Software Updates for Internet of Things (SUIT) <ug_nrf54h20_suit_dfu>` firmware upgrade.
-     - :ref:`Sample requirements <suit_flash_companion_reqs>`
-     - :file:`samples/suit/flash_companion`
-     - :ref:`Sample's configuration section <suit_flash_companion_config>`
-   * - :ref:`SUIT flash recovery image <suit_recovery>`
-     - Companion image that allows recovering the device firmware if the original firmware is damaged during the :ref:`Software Updates for Internet of Things (SUIT) <ug_nrf54h20_suit_dfu>` firmware upgrade.
-     - :ref:`Sample requirements <suit_recovery_reqs>`
-     - :file:`samples/suit/recovery`
-     - :ref:`Sample's building and running section <suit_recovery_build_run>`
    * - :ref:`Secure Domain Firmware <ug_nrf54h20_secure_domain>`
      - Secure Domain Firmware exposes security services to the other cores through an IPC interface and is part of Platform Root of Trust (PRoT).
      - :ref:`nRF54H20 DK <ug_nrf54h20_gs>`

@@ -853,7 +853,7 @@ Debug libraries
 DFU libraries
 -------------
 
-* Added the :ref:`subsys_suit` library that provides functionality to a local domain for orchestrating the update based on the SUIT manifest.
+* Added the ``subsys_suit`` library that provides functionality to a local domain for orchestrating the update based on the SUIT manifest.
 
 * :ref:`lib_dfu_target` library:
 
@@ -1331,9 +1331,9 @@ Documentation
 
   * The :ref:`ug_app_dev` section, which includes pages from the :ref:`configuration_and_build` section and from the removed Device configuration guides section.
   * The :ref:`dfu_tools_mcumgr_cli` page after it was removed from the Zephyr repository.
-  * The :ref:`ug_nrf54h20_suit_soc_binaries` page.
-  * The :ref:`ug_nrf54h20_suit_push` page documenting the SUIT push model-based update process.
-  * The :ref:`ug_nrf54h20_suit_recovery` page.
+  * The ``ug_nrf54h20_suit_soc_binaries`` page.
+  * The ``ug_nrf54h20_suit_push`` page documenting the SUIT push model-based update process.
+  * The ``ug_nrf54h20_suit_recovery`` page.
   * The :ref:`nrf_rpc_uart` page.
   * The :ref:`ug_bt_stack_arch` and the :ref:`ug_bt_solution` documentation to the :ref:`Bluetooth protocols <ug_bt>` page.
 
