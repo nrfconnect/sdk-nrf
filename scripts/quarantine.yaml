@@ -30,10 +30,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31774"
 
 - scenarios:
-    - sample.matter.manufacturer_specific.debug
-  comment: "https://nordicsemi.atlassian.net/browse/KRKNWK-20521"
-
-- scenarios:
     - applications.matter_bridge.br_ble.smp_dfu
     - applications.matter_bridge.br_ble.memory_profiling
     - applications.matter_bridge.memory_profiling
