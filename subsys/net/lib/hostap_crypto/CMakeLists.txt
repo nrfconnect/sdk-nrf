@@ -37,7 +37,7 @@ if(DEFINED CONFIG_HOSTAP_CRYPTO_ALT_LEGACY_PSA)
     ${HOSTAP_SRC_BASE}/crypto/aes-internal-enc.c
   )
 
-  zephyr_library_sources_ifdef(CONFIG_HOSTAP_CRYPTO_MBEDTLS_PSA
+  zephyr_library_sources_ifdef(CONFIG_HOSTAP_CRYPTO_ALT_PSA
     ${HOSTAP_BASE}/port/mbedtls/supp_psa_api.c
   )
 
