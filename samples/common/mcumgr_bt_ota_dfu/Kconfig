@@ -19,7 +19,7 @@ config NCS_SAMPLE_MCUMGR_BT_OTA_DFU
 	imply MCUMGR_TRANSPORT_BT_REASSEMBLY
 	imply NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP
 	depends on BT_PERIPHERAL
-	depends on BOOTLOADER_MCUBOOT || SUIT
+	depends on BOOTLOADER_MCUBOOT
 	help
 	  Enable this option to include MCUmgr in the build which will enable
 	  the Bluetooth transport and image management group, which allows
@@ -38,18 +38,6 @@ config NCS_SAMPLE_MCUMGR_BT_OTA_DFU_BACKEND_MCUBOOT
 	depends on BOOTLOADER_MCUBOOT
 	help
 	  This option enables the necessary configuration for the MCUboot-based DFU.
-
-config NCS_SAMPLE_MCUMGR_BT_OTA_DFU_BACKEND_SUIT
-	bool
-	default y
-	select MCUMGR_SMP_LEGACY_RC_BEHAVIOUR
-	select MGMT_SUITFU
-	select MGMT_SUITFU_GRP_SUIT
-	select SSF_SUIT_SERVICE_ENABLED
-	select ZCBOR_CANONICAL
-	depends on SUIT
-	help
-	  This option enables the necessary configuration for the SUIT-based DFU.
 
 choice MCUMGR_TRANSPORT_BT_PERM
 	default MCUMGR_TRANSPORT_BT_PERM_RW
