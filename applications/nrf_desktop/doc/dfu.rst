@@ -31,10 +31,6 @@ You can use this module for the following devices:
   You can use the DFU module with either MCUboot or B0 bootloader.
   For more information on how to enable and configure a bootloader, see the :ref:`nrf_desktop_bootloader` section.
 
-* nRF54H Series - You can use the DFU module for the Software Update for Internet of Things (SUIT) procedure.
-  The DFU module acts as a transport for the SUIT envelope used to update device firmware.
-  For more information on how to enable the SUIT procedure, see the :ref:`nrf_desktop_suit` section.
-
 To enable the DFU module, use the :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_ENABLE <config_desktop_app_options>` Kconfig option.
 It requires the transport option :ref:`CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE <config_desktop_app_options>` to be selected, as it uses :ref:`nrf_desktop_config_channel` for the transmission of the update image.
 
@@ -262,14 +258,3 @@ For example, the memory is not erased right after the Bluetooth connection is es
 .. note::
     The DFU process cannot be started before the entire partition used for storing the update image is erased.
     If the DFU command is rejected, you must wait until the non-volatile memory area used for the update image is erased.
-
-SUIT integration
-================
-
-The module can act as a transport for the SUIT DFU procedure.
-The module receives the SUIT envelope with update image data over the :ref:`nrf_desktop_config_channel` and stores the envelope to a dedicated DFU partition (``dfu_partition`` defined in the DTS).
-
-After a complete transfer, the :ref:`reboot <dfu_reboot>` command triggers a firmware update using the envelope.
-The module calls the :c:func:`suit_trigger_update` function to trigger an update instead of rebooting the device using the :c:func:`sys_reboot` function.
-Triggering an update using the :ref:`reboot <dfu_reboot>` command makes the user experience consistent with nRF52, nRF53, and nRF54L Series devices.
-For these devices, the :ref:`reboot <dfu_reboot>` command after a complete update image transfer triggers an image update performed by the bootloader.

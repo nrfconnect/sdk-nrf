@@ -81,16 +81,6 @@ Complete the following steps:
 
    For more detailed information about LED stream functionality, see the `Playing LED stream`_ section.
 
-#. If you want to perform :ref:`ug_nrf54h20_suit_dfu`, you must also install the SUIT generator Python package.
-   The package source files are available in the :file:`ncs/modules/lib/suit-generator` directory of the |NCS|.
-   Run the following commands in the package source directory to install the SUIT generator package and the required dependencies:
-
-   .. parsed-literal::
-      :class: highlight
-
-      py -3 -m pip install -r requirements.txt
-      py -3 -m pip install .
-
 .. note::
    Currently, the ``imgtool`` from PyPI does not support pure ED25519 signature (used by nRF54L-based devices that enable MCUboot hardware cryptography).
    This may result in rejecting proper DFU images (``DFU image is invalid``).
@@ -138,16 +128,6 @@ Complete the following steps:
       pip3 install --user -r requirements_music_led_stream.txt
 
    For more detailed information about LED stream functionality, see the `Playing LED stream`_ section.
-
-#. If you want to perform :ref:`ug_nrf54h20_suit_dfu`, you must also install the SUIT generator Python package.
-   The package source files are available in the :file:`ncs/modules/lib/suit-generator` directory of the |NCS|.
-   Run the following commands in the package source directory to install the SUIT generator package and the required dependencies:
-
-   .. parsed-literal::
-      :class: highlight
-
-      pip3 install --user -r requirements.txt
-      pip3 install --user .
 
 .. note::
    Currently, the ``imgtool`` from PyPI does not support pure ED25519 signature (used by nRF54L-based devices that enable MCUboot hardware cryptography).
@@ -304,10 +284,7 @@ If the process is to be continued, the script uploads the image data to the devi
 When the upload is completed, the script reboots the device.
 
 Customize the command with path to the DFU update file (``UPDATE_IMAGE_PATH``).
-The used file type depends on the following devices:
-
-* nRF52, nRF53 and nRF54L Series use the :file:`dfu_application.zip` file.
-* nRF54H Series use the :file:`*.suit` file.
+nRF52, nRF53 and nRF54L Series use the :file:`dfu_application.zip` file.
 
 For details about update image generation in the nRF Desktop application, see :ref:`nrf_desktop_bootloader_background_dfu`.
 

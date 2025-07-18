@@ -22,11 +22,10 @@ Some of them are documented in detail in other parts of this documentation, whil
     - See :ref:`app_approtect`.
     - ---
   * - Bootloader and Device Firmware Upgrade (DFU)
-    - The |NCS| supports :ref:`MCUboot and nRF Secure Immutable Bootloader (NSIB) <ug_bootloader_mcuboot_nsib>` for secure boot, and DFU procedures using MCUboot and :ref:`Software Updates for Internet of Things (SUIT) <ug_nrf54h20_suit_dfu>`.
+    - The |NCS| supports :ref:`MCUboot and nRF Secure Immutable Bootloader (NSIB) <ug_bootloader_mcuboot_nsib>` for secure boot, and DFU procedures using MCUboot.
     - See :ref:`app_bootloaders`.
     - | - :ref:`nRF Secure Immutable Bootloader (NSIB) <bootloader>`
       | - :ref:`DFU libraries <lib_dfu>`
-      | - :ref:`Software Updates for Internet of Things (SUIT) <ug_nrf54h20_suit_dfu>`
       | - :doc:`MCUboot <mcuboot:design>`
   * - Cryptographic operations
     - The |NCS| follows the :ref:`PSA Crypto standard <ug_psa_certified_api_overview_crypto>` and provides :ref:`two different implementations <ug_crypto_architecture_implementation_standards>`, Oberon PSA Crypto and TF-M Crypto Service.

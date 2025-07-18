@@ -149,8 +149,6 @@ The following DFU solutions are supported in this sample:
 
 * The :ref:`MCUboot <mcuboot:mcuboot_ncs>` bootloader solution.
   See the :ref:`app_dfu` user guide for more information.
-* The Software Update for Internet of Things (SUIT) solution.
-  See the :ref:`SUIT <ug_nrf54h20_suit_dfu>` user guide for more information.
 
 To enable the DFU functionality use the ``SB_CONFIG_APP_DFU`` sysbuild Kconfig option.
 This option is enabled by default if a supported DFU solution is configured (see the following table to learn about supported configurations).
@@ -1344,6 +1342,5 @@ Device Firmware Update (DFU)
 This sample uses following components for the DFU functionality:
 
 * :ref:`MCUboot bootloader <mcuboot:mcuboot_ncs>` (for supported board targets)
-* :ref:`SUIT <ug_nrf54h20_suit_dfu>` (for supported board targets)
 * :ref:`zephyr:app-version-details`
 * :ref:`zephyr:mcu_mgr`

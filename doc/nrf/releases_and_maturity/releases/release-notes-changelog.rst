@@ -57,7 +57,11 @@ Build and configuration system
 Bootloaders and DFU
 ===================
 
-|no_changes_yet_note|
+* Removed:
+
+  * SUIT support.
+  * suit-generator.
+  * suit-processor.
 
 Developing with nRF91 Series
 ============================
@@ -82,7 +86,7 @@ Developing with nRF54L Series
 Developing with nRF54H Series
 =============================
 
-|no_changes_yet_note|
+* Removed SUIT support.
 
 Developing with nRF53 Series
 ============================
@@ -424,6 +428,8 @@ Bluetooth samples
 
   Added support for the ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l10/cpuapp``, and ``nrf54l15dk/nrf54l05/cpuapp`` board targets.
 
+* Removed SUIT support from ``mcumgr_bt_ota_dfu``.
+
 Bluetooth Mesh samples
 ----------------------
 
@@ -610,7 +616,12 @@ Sensor samples
 SUIT samples
 ------------
 
-|no_changes_yet_note|
+* Removed all SUIT samples:
+
+  * SUIT: Device firmware “A/B” update on the nRF54H20 SoC
+  * SUIT: Flash companion
+  * SUIT: Recovery application
+  * SUIT: Device firmware update on the nRF54H20 SoC
 
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
@@ -659,7 +670,7 @@ Wi-Fi drivers
 Flash drivers
 -------------
 
-|no_changes_yet_note|
+* Removed the SUIT flash IPUC driver.
 
 Libraries
 =========
@@ -1011,5 +1022,9 @@ Documentation
 * Updated the :ref:`bt_fast_pair_readme` page to mention the availability of the :ref:`bt_fast_pair_adv_manager_readme` helper module.
 
 * Moved the Wi-Fi credentials library page to the upstream :ref:`Zephyr repository <zephyr:lib_wifi_credentials>`.
-* Removed the Getting started with nRF7002 DK and Getting started with other DKs pages from the :ref:`gsg_guides` section.
-  These pages were no longer relevant as the `Quick Start app`_ now also supports the nRF7002 DK.
+
+* Removed:
+
+  * The Getting started with nRF7002 DK and Getting started with other DKs pages from the :ref:`gsg_guides` section.
+    These pages were no longer relevant as the `Quick Start app`_ now also supports the nRF7002 DK.
+  * The documentation related to SUIT.
