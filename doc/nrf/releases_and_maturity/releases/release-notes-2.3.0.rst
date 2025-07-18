@@ -535,7 +535,7 @@ nRF9160 samples
 
   * Updated the sample to use a partition in external flash for full modem FOTA updates.
 
-* :ref:`nrf_cloud_rest_device_message` sample:
+* :ref:`nrf_cloud_device_message` sample:
 
   * Added sending an alert to nRF Cloud on boot.
 

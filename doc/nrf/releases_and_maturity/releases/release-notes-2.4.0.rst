@@ -605,7 +605,7 @@ nRF9160 samples
 
     * Updated the sample by enabling external flash in the nRF9160 DK devicetree overlays for v0.14.0 or later versions, as it is now disabled in the Zephyr board definition.
 
-* :ref:`nrf_cloud_rest_device_message` sample:
+* :ref:`nrf_cloud_device_message` sample:
 
   * Added:
 

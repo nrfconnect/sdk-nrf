@@ -797,7 +797,7 @@ Cellular samples
   * Fixed an issue where the accepted shadow was not marked as received because the config section did not yet exist in the shadow.
   * Removed redundant logging that is now done by the :ref:`lib_nrf_cloud` library.
 
-* :ref:`nrf_cloud_rest_device_message` sample:
+* :ref:`nrf_cloud_device_message` sample:
 
   * Added:
 

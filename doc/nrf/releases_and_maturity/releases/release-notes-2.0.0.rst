@@ -353,7 +353,7 @@ nRF9160 samples
 
 * Added:
 
-  * :ref:`nrf_cloud_rest_device_message` sample, demonstrating how to send an arbitrary device message with the nRF Cloud REST API.
+  * :ref:`nrf_cloud_device_message` sample, demonstrating how to send an arbitrary device message with the nRF Cloud REST API.
   * :ref:`modem_callbacks_sample` sample, showcasing initialization and de-initialization callbacks.
   * :ref:`nrf_cloud_multi_service` sample, demonstrating a simple but robust integration of location services, FOTA, sensor sampling, and more.
   * Shell functionality to HTTP Update samples.

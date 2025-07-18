@@ -669,7 +669,7 @@ Cellular samples (renamed from nRF9160 samples)
 
   * Added reporting of device and connection info to the device shadow.
 
-* :ref:`nrf_cloud_rest_device_message` sample:
+* :ref:`nrf_cloud_device_message` sample:
 
   * Added:
 

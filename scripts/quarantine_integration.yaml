@@ -705,7 +705,7 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - sample.cellular.nrf_cloud_rest_device_message
+    - sample.cellular.nrf_cloud_device_message
   platforms:
     - nrf9160dk@0.14.0/nrf9160/ns
   comment: "Configurations excluded to limit resources usage in integration builds"

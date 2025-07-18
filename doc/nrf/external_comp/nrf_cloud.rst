@@ -247,8 +247,8 @@ The following sample demonstrates nRF Cloud-specific functionality using MQTT:
 
 The following samples demonstrate nRF Cloud-specific functionality using REST:
 
-* :ref:`nrf_cloud_rest_fota`
-* :ref:`nrf_cloud_rest_device_message`
+* :ref:`nrf_cloud_fota_sample`
+* :ref:`nrf_cloud_device_message`
 * :ref:`nrf_cloud_cell_location`
 
 Other related samples and applications that use nRF Cloud services:

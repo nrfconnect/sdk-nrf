@@ -332,7 +332,7 @@ mapping_topics:
   - nrf/samples/cellular.html: ["lte"]
   - nrf/samples/cellular/*.html: ["lte"]
   - nrf/samples/cellular/nrf_cloud_multi_service/README.html: ["nrf-cloud"]
-  - nrf/samples/cellular/nrf_cloud_rest_device_message/README.html: ["nrf-cloud"]
+  - nrf/samples/cellular/nrf_cloud_device_message/README.html: ["nrf-cloud"]
   - nrf/samples/cellular/nrf_cloud_cell_location/README.html: ["nrf-cloud"]
   - nrf/samples/cellular/nrf_cloud_fota/README.html: ["nrf-cloud"]
   - nrf/samples/cellular/modem_shell/README.html: ["at-commands"]

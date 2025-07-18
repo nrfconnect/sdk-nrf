@@ -11,7 +11,6 @@
 #include <zephyr/settings/settings.h>
 #include <helpers/nrfx_reset_reason.h>
 #include <net/nrf_cloud.h>
-#include <net/nrf_cloud_rest.h>
 #include <net/nrf_cloud_log.h>
 #include <net/nrf_cloud_alert.h>
 #include <zephyr/logging/log.h>
@@ -29,16 +28,22 @@
 
 #include "leds_def.h"
 
-LOG_MODULE_REGISTER(nrf_cloud_rest_device_message,
-		    CONFIG_NRF_CLOUD_REST_DEVICE_MESSAGE_SAMPLE_LOG_LEVEL);
+#if defined(CONFIG_NRF_CLOUD_REST)
+#include <net/nrf_cloud_rest.h>
+#elif defined(CONFIG_NRF_CLOUD_COAP)
+#include <net/nrf_cloud_coap.h>
+#endif /* CONFIG_NRF_CLOUD_COAP */
+
+LOG_MODULE_REGISTER(nrf_cloud_device_message,
+		    CONFIG_NRF_CLOUD_DEVICE_MESSAGE_SAMPLE_LOG_LEVEL);
 
 /* Button number to send BUTTON event device message */
 #define BTN_NUM		1
-#define LTE_LED_NUM	 CONFIG_REST_DEVICE_MESSAGE_LTE_LED_NUM
-#define SEND_LED_NUM	 CONFIG_REST_DEVICE_MESSAGE_SEND_LED_NUM
+#define LTE_LED_NUM	 CONFIG_DEVICE_MESSAGE_LTE_LED_NUM
+#define SEND_LED_NUM	 CONFIG_DEVICE_MESSAGE_SEND_LED_NUM
 
 /* This does not match a predefined schema, but it is not a problem. */
-#define SAMPLE_SIGNON_FMT "nRF Cloud REST Device Message Sample, version: %s"
+#define SAMPLE_SIGNON_FMT "nRF Cloud Device Message Sample, version: %s"
 #define SAMPLE_MSG_FMT	"{\"sample_message\":"\
 				"\"Hello World, from the REST Device Message Sample! "\
 				"Message ID: %lld\"}"
@@ -58,16 +63,21 @@ static K_EVENT_DEFINE(connection_events);
 /* nRF Cloud device ID */
 static char device_id[NRF_CLOUD_CLIENT_ID_MAX_LEN + 1];
 
+#if defined(CONFIG_NRF_CLOUD_REST)
+
 #define REST_RX_BUF_SZ 2100
 /* Buffer used for REST calls */
 static char rx_buf[REST_RX_BUF_SZ];
 
 /* nRF Cloud REST context */
-static struct nrf_cloud_rest_context rest_ctx = {.connect_socket = -1,
-						 .keep_alive = false,
-						 .rx_buf = rx_buf,
-						 .rx_buf_len = sizeof(rx_buf),
-						 .fragment_size = 0};
+static struct nrf_cloud_rest_context rest_ctx = {
+	.connect_socket = -1,
+	.rx_buf = rx_buf,
+	.rx_buf_len = sizeof(rx_buf),
+};
+
+#endif /* CONFIG_NRF_CLOUD_REST */
+
 
 /* Register a listener for application events, specifically a button event */
 static bool app_event_handler(const struct app_event_header *aeh);
@@ -185,7 +195,11 @@ static int send_message(const char *const msg)
 
 	LOG_INF("Sending message:'%s'", msg);
 	/* Send the message to nRF Cloud */
+#if defined(CONFIG_NRF_CLOUD_REST)
 	ret = nrf_cloud_rest_send_device_message(&rest_ctx, device_id, msg, false, NULL);
+#elif defined(CONFIG_NRF_CLOUD_COAP)
+	ret = nrf_cloud_coap_json_message_send(msg, false, true);
+#endif
 	if (ret) {
 		LOG_ERR("Failed to send device message via REST: %d", ret);
 	} else {
@@ -208,13 +222,24 @@ static void send_message_on_button(void)
 	/* Wait for a button press */
 	k_event_wait(&button_press_event, BUTTON_PRESSED, true, K_FOREVER);
 
+#if defined(CONFIG_NRF_CLOUD_REST)
 	/* Send off a JSON message about the button press */
 	/* This matches the nRF Cloud-defined schema for a "BUTTON" device message */
-	rest_ctx.keep_alive = IS_ENABLED(CONFIG_REST_DEVICE_MESSAGE_KEEP_ALIVE);
+	rest_ctx.keep_alive = IS_ENABLED(CONFIG_DEVICE_MESSAGE_KEEP_ALIVE);
+#endif /* CONFIG_NRF_CLOUD_REST */
+
 	(void)send_message("{\"appId\":\"BUTTON\", \"messageType\":\"DATA\", \"data\":\"1\"}");
+
+#if defined(CONFIG_NRF_CLOUD_REST)
 	rest_ctx.keep_alive = false;
+#endif /* CONFIG_NRF_CLOUD_REST */
+
+#if defined(CONFIG_NRF_CLOUD_REST)
 	(void)nrf_cloud_rest_log_send(&rest_ctx, device_id, LOG_LEVEL_DBG,
 				      "Button pressed %u times", ++count);
+#elif defined(CONFIG_NRF_CLOUD_COAP)
+	(void)nrf_cloud_log_send(LOG_LEVEL_DBG, "Button pressed %u times", ++count);
+#endif /* CONFIG_NRF_CLOUD_COAP */
 }
 
 static void print_reset_reason(void)
@@ -230,26 +255,40 @@ static void report_startup(void)
 	int err = 0;
 	int reset_reason = 0;
 
-	/* Set the keep alive flag to true;
-	 * connection will remain open to allow for multiple REST calls
-	 */
-	rest_ctx.keep_alive = true;
 
 	reset_reason = nrfx_reset_reason_get();
 	nrfx_reset_reason_clear(reset_reason);
 	LOG_INF("Reset reason: 0x%x", reset_reason);
 
+#if defined(CONFIG_NRF_CLOUD_REST)
+	/* Set the keep alive flag to true;
+	 * connection will remain open to allow for multiple REST calls
+	 */
+	rest_ctx.keep_alive = true;
+
 	err = nrf_cloud_rest_alert_send(&rest_ctx, device_id,
-								ALERT_TYPE_DEVICE_NOW_ONLINE,
-								reset_reason, NULL);
+					ALERT_TYPE_DEVICE_NOW_ONLINE,
+					reset_reason, NULL);
+#elif defined(CONFIG_NRF_CLOUD_COAP)
+	err = nrf_cloud_alert_send(ALERT_TYPE_DEVICE_NOW_ONLINE,
+				   reset_reason, NULL);
+#endif /* CONFIG_NRF_CLOUD_COAP */
+
 	if (err) {
 		LOG_ERR("Error sending alert to cloud: %d", err);
 	}
 
+#if defined(CONFIG_NRF_CLOUD_REST)
 	err = nrf_cloud_rest_log_send(&rest_ctx, device_id,
-							LOG_LEVEL_INF,
-							SAMPLE_SIGNON_FMT,
-							CONFIG_REST_DEVICE_MESSAGE_SAMPLE_VERSION);
+				      LOG_LEVEL_INF,
+				      SAMPLE_SIGNON_FMT,
+				      CONFIG_DEVICE_MESSAGE_SAMPLE_VERSION);
+#elif defined(CONFIG_NRF_CLOUD_COAP)
+	(void)nrf_cloud_log_send(LOG_LEVEL_INF,
+				 SAMPLE_SIGNON_FMT,
+				 CONFIG_DEVICE_MESSAGE_SAMPLE_VERSION);
+#endif /* CONFIG_NRF_CLOUD_COAP */
+
 	if (err) {
 		LOG_ERR("Error sending direct log to cloud: %d", err);
 	}
@@ -354,6 +393,20 @@ static int setup(void)
 	/* Wait until we know what time it is (necessary for JSON Web Token generation) */
 	modem_time_wait();
 
+#if defined(CONFIG_NRF_CLOUD_COAP)
+	/* nRF Cloud CoAP requires login */
+	err = nrf_cloud_coap_init();
+	if (err) {
+		LOG_ERR("Failed to initialize CoAP client: %d", err);
+		return err;
+	}
+	err = nrf_cloud_coap_connect(NULL);
+	if (err) {
+		LOG_ERR("Connecting to nRF Cloud failed, error: %d", err);
+		return 0;
+	}
+#endif /* CONFIG_NRF_CLOUD_COAP */
+
     /* Initialize the nRF Cloud logging subsystem */
 	nrf_cloud_log_init();
 
@@ -403,7 +456,7 @@ int main(void)
 {
 	int err = 0;
 
-	LOG_INF(SAMPLE_SIGNON_FMT, CONFIG_REST_DEVICE_MESSAGE_SAMPLE_VERSION);
+	LOG_INF(SAMPLE_SIGNON_FMT, CONFIG_DEVICE_MESSAGE_SAMPLE_VERSION);
 
 	err = setup();
 	if (err) {
@@ -414,10 +467,12 @@ int main(void)
 	/* Send alert and log message to the cloud. */
 	report_startup();
 
+#if defined(CONFIG_NRF_CLOUD_REST)
 	/* Set the keep alive flag to false;
 	 * connection will be closed after the next REST call
 	 */
 	rest_ctx.keep_alive = false;
+#endif /* CONFIG_NRF_CLOUD_REST */
 
 	err = send_hello_world_msg();
 
