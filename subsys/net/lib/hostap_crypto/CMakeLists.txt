@@ -55,14 +55,6 @@ if(DEFINED CONFIG_HOSTAP_CRYPTO_ALT_LEGACY_PSA)
   zephyr_library_sources_ifndef(CONFIG_HOSTAP_CRYPTO_ENTERPRISE
     ${HOSTAP_SRC_BASE}/crypto/tls_none.c
   )
-
-
-  zephyr_library_sources_ifdef(CONFIG_HOSTAP_CRYPTO_TEST
-    ${HOSTAP_SRC_BASE}/crypto/crypto_module_tests.c
-    ${HOSTAP_SRC_BASE}/crypto/fips_prf_internal.c
-    ${HOSTAP_SRC_BASE}/crypto/sha1-internal.c
-    ${HOSTAP_SRC_BASE}/crypto/sha1-tlsprf.c
-  )
 endif()
 
 if(DEFINED CONFIG_HOSTAP_CRYPTO_ALT_PSA)
