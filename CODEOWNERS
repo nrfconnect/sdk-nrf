@@ -825,7 +825,6 @@
 /subsys/secure_storage/                   @nrfconnect/ncs-aegir
 /subsys/settings/                         @nrfconnect/ncs-pluto @rghaddab
 /subsys/sdfw_services/services/extmem/    @nrfconnect/ncs-charon
-/subsys/sdfw_services/services/suit_service/ @nrfconnect/ncs-charon
 /subsys/shell/                            @nordic-krch
 /subsys/suit/                             @nrfconnect/ncs-charon
 /subsys/trusted_storage/                  @nrfconnect/ncs-aegir
