@@ -106,7 +106,7 @@ int read_status(sx_pk_req *req)
 int sx_pk_wait(sx_pk_req *req)
 {
 	do {
-		if (!IS_ENABLED(CONFIG_CRACEN_HW_VERSION_LITE) &&
+		if (!IS_ENABLED(CONFIG_CRACEN_USE_IKG_INTERRUPT_WORKAROUND) &&
 		    IS_ENABLED(CONFIG_CRACEN_USE_INTERRUPTS)) {
 			/* In CRACEN Lite the PKE-IKG interrupt is only active when in PK mode.
 			 * This is to work around a hardware issue where the interrupt is never
@@ -118,7 +118,7 @@ int sx_pk_wait(sx_pk_req *req)
 					cracen_wait_for_pke_interrupt();
 				}
 			}
-		} else if (IS_ENABLED(CONFIG_CRACEN_HW_VERSION_LITE)) {
+		} else if (IS_ENABLED(CONFIG_CRACEN_USE_IKG_INTERRUPT_WORKAROUND)) {
 			/* In CRACEN Lite the IKG sometimes fails due to an entropy error.
 			 * Error code is returned here so the entire operation can be rerun
 			 */
@@ -228,7 +228,7 @@ struct sx_pk_acq_req sx_pk_acquire_req(const struct sx_pk_cmd_def *cmd)
 	req.req->cnx = &silex_pk_engine;
 
 	cracen_acquire();
-	if (!IS_ENABLED(CONFIG_CRACEN_HW_VERSION_LITE) &&
+	if (!IS_ENABLED(CONFIG_CRACEN_USE_IKG_INTERRUPT_WORKAROUND) &&
 	    IS_ENABLED(CONFIG_CRACEN_USE_INTERRUPTS)) {
 		/* In CRACEN Lite the PKE-IKG interrupt is only active when in PK mode.
 		 * This is to work around a hardware issue where the interrupt is never cleared.
@@ -239,7 +239,7 @@ struct sx_pk_acq_req sx_pk_acquire_req(const struct sx_pk_cmd_def *cmd)
 
 	/* Wait until initialized. */
 	while (ba414ep_is_busy(req.req) || ik_is_busy(req.req)) {
-		if (!IS_ENABLED(CONFIG_CRACEN_HW_VERSION_LITE) &&
+		if (!IS_ENABLED(CONFIG_CRACEN_USE_IKG_INTERRUPT_WORKAROUND) &&
 		    IS_ENABLED(CONFIG_CRACEN_USE_INTERRUPTS)) {
 
 			cracen_wait_for_pke_interrupt();
