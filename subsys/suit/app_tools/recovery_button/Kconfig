@@ -7,7 +7,7 @@
 DT_CHOSEN_NCS_RECOVERY_BUTTON := ncs,recovery-button
 
 config SUIT_RECOVERY_BUTTON
-	bool "Enable SUIT enter recovery button checking on startup"
+	bool "SUIT enter recovery button checking on startup"
 	depends on $(dt_chosen_enabled,$(DT_CHOSEN_NCS_RECOVERY_BUTTON))
 	default y
 	select SSF_SUIT_SERVICE_ENABLED

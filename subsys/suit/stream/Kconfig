@@ -5,7 +5,7 @@
 #
 
 menuconfig SUIT_STREAM
-	bool "Enable SUIT stream module"
+	bool "SUIT stream module"
 
 if SUIT_STREAM
 
@@ -16,31 +16,31 @@ config SUIT_STREAM_SINK_COMPONENT_MEM_SUPPORTED
 	  for MEM component is implemented.
 
 config SUIT_STREAM_SINK_CACHE
-	bool "Enable SUIT cache sink"
+	bool "SUIT cache sink"
 	depends on SUIT_CACHE_RW
 	depends on SUIT_STREAM_SINK_FLASH
 
 config SUIT_STREAM_SINK_MEMPTR
-	bool "Enable memory pointer storage sink"
+	bool "Memory pointer storage sink"
 	depends on SUIT_MEMPTR_STORAGE
 
 config SUIT_STREAM_SINK_FLASH
-	bool "Enable NVM storage sink"
+	bool "NVM storage sink"
 	depends on FLASH
 	depends on SUIT_UTILS
 	depends on SUIT_MEMPTR_STORAGE
 	select SUIT_STREAM_SINK_COMPONENT_MEM_SUPPORTED
 
 config SUIT_STREAM_SINK_RAM
-	bool "Enable RAM buffer sink"
+	bool "RAM buffer sink"
 	select SUIT_STREAM_SINK_COMPONENT_MEM_SUPPORTED
 
 config SUIT_STREAM_SINK_EXTMEM
-	bool "Enable external memory sink"
+	bool "External memory sink"
 	select SUIT_STREAM_SINK_COMPONENT_MEM_SUPPORTED
 
 menuconfig SUIT_STREAM_SINK_SDFW
-	bool "Enable SDFW sink"
+	bool "SDFW sink"
 	depends on SUIT_UTILS
 	depends on SOC_SERIES_NRF54HX || SOC_SERIES_NRF92X
 	select PSA_WANT_ALG_SHA_512
@@ -78,7 +78,7 @@ config SUIT_SDFW_UPDATE_MAX_SIZE
 endif # SUIT_STREAM_SINK_SDFW
 
 menuconfig SUIT_STREAM_SINK_SDFW_RECOVERY
-	bool "Enable SDFW Recovery sink"
+	bool "SDFW Recovery sink"
 	depends on SUIT_UTILS
 	depends on SOC_SERIES_NRF54HX || SOC_SERIES_NRF92X
 	select PSA_WANT_ALG_SHA_512
@@ -116,7 +116,7 @@ config SUIT_SDFW_RECOVERY_UPDATE_MAX_SIZE
 endif # SUIT_STREAM_SINK_SDFW_RECOVERY
 
 config SUIT_STREAM_SINK_DIGEST
-	bool "Enable digest sink"
+	bool "Digest sink"
 	select PSA_WANT_ALG_SHA_256 if SOC_FAMILY_NORDIC_NRF
 	imply PSA_WANT_ALG_SHA_512 if SOC_FAMILY_NORDIC_NRF
 
@@ -129,11 +129,11 @@ config SUIT_STREAM_SINK_DIGEST_CONTEXT_COUNT
 endif # SUIT_STREAM_SINK_DIGEST
 
 config SUIT_STREAM_SOURCE_CACHE
-	bool "Enable SUIT cache source"
+	bool "SUIT cache source"
 	depends on SUIT_CACHE
 
 config SUIT_STREAM_SOURCE_MEMPTR
-	bool "Enable memory pointer storage source"
+	bool "Memory pointer storage source"
 
 config SUIT_STREAM_FETCH_SOURCE_MGR
 	bool "Fetch source manager"
@@ -144,14 +144,14 @@ config SUIT_STREAM_FETCH_MAX_SOURCES
 	depends on SUIT_STREAM_FETCH_SOURCE_MGR
 
 config SUIT_STREAM_SOURCE_EXTMEM
-	bool "Enable external memory storage source"
+	bool "External memory storage source"
 
 config SUIT_STREAM_SOURCE_FLASH
-	bool "Enable flash memory storage source"
+	bool "Flash memory storage source"
 	depends on FLASH
 
 menuconfig SUIT_STREAM_SOURCE_IPC
-	bool "Enable feeding images from external sources to SDFW"
+	bool "Feeding images from external sources to SDFW"
 
 if SUIT_STREAM_SOURCE_IPC
 
@@ -192,7 +192,7 @@ config SUIT_STREAM_IPC_STREAMER_CHUNK_TIMEOUT
 endif # SUIT_STREAM_SOURCE_IPC
 
 config SUIT_STREAM_FILTER_DECRYPT
-	bool "Enable support for image decryption"
+	bool "Support for image decryption"
 	depends on SUIT_CRYPTO
 	select PSA_WANT_KEY_TYPE_AES
 	select PSA_WANT_ALG_GCM
@@ -204,7 +204,7 @@ config SUIT_AES_KW_MANUAL
 	select EXPERIMENTAL
 
 config SUIT_STREAM_FILTER_DECOMPRESS
-	bool "Enable support for image decompression"
+	bool "Support for image decompression"
 	depends on NRF_COMPRESS_EXTERNAL_DICTIONARY
 
 endif # SUIT_STREAM

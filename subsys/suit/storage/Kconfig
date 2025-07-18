@@ -5,7 +5,7 @@
 #
 
 menuconfig SUIT_STORAGE
-	bool "Enable SUIT storage module"
+	bool "SUIT storage module"
 	depends on ZCBOR
 	depends on ZCBOR_CANONICAL
 	depends on SUIT_METADATA
