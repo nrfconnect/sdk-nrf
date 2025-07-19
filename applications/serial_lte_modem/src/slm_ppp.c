@@ -252,9 +252,10 @@ static void ppp_start_failure(void)
 	net_if_down(ppp_iface);
 }
 
-static unsigned int ppp_retrieve_mtu(void)
+static void ppp_retrieve_pdn_info(struct ppp_context *const ctx)
 {
-	struct pdn_dynamic_info populated_info = { 0 };
+	struct pdn_dynamic_info populated_info = {0};
+	unsigned int mtu = CONFIG_SLM_PPP_FALLBACK_MTU;
 
 	if (!pdn_dynamic_info_get(ppp_pdn_cid, &populated_info)) {
 		if (populated_info.ipv6_mtu) {
@@ -263,23 +264,44 @@ static unsigned int ppp_retrieve_mtu(void)
 			 * Because, it must be at least 1280 for IPv6,
 			 * while MTU of IPv4 may be less.
 			 */
-			return MIN(populated_info.ipv6_mtu, sizeof(ppp_data_buf));
-		}
-		if (populated_info.ipv4_mtu) {
+			mtu = MIN(populated_info.ipv6_mtu, sizeof(ppp_data_buf));
+		} else if (populated_info.ipv4_mtu) {
 			/* Set the PPP MTU to that of the LTE link. */
-			return MIN(populated_info.ipv4_mtu, sizeof(ppp_data_buf));
+			mtu = MIN(populated_info.ipv4_mtu, sizeof(ppp_data_buf));
 		}
+
+		/* Try to populate DNS addresses from PDN */
+		if (populated_info.dns_addr4_primary.s_addr != INADDR_ANY) {
+			/* Populate both My address and peer options
+			 * as these are wrong way in Zephyr (it offers my_option DNS)
+			 */
+			ctx->ipcp.peer_options.dns1_address = populated_info.dns_addr4_primary;
+			ctx->ipcp.peer_options.dns2_address = populated_info.dns_addr4_secondary;
+			ctx->ipcp.my_options.dns1_address = populated_info.dns_addr4_primary;
+			ctx->ipcp.my_options.dns2_address = populated_info.dns_addr4_secondary;
+#if defined(CONFIG_LTE_LC_DNS_FALLBACK_ADDRESS)
+		} else {
+			/* Use fallback DNS addresses from LTE_LC module */
+			(void)nrf_inet_pton(NRF_AF_INET, CONFIG_LTE_LC_DNS_FALLBACK_ADDRESS,
+					    &ctx->ipcp.peer_options.dns1_address);
+			ctx->ipcp.my_options.dns1_address = ctx->ipcp.peer_options.dns1_address;
+		}
+#elif defined(CONFIG_DNS_SERVER1)
+		} else {
+			/* Use fallback DNS addresses from Zephyr */
+			(void)nrf_inet_pton(NRF_AF_INET, CONFIG_DNS_SERVER1,
+					    &ctx->ipcp.peer_options.dns1_address);
+			ctx->ipcp.my_options.dns1_address = ctx->ipcp.peer_options.dns1_address;
+		}
+#else
+		} else {
+			LOG_WRN("No DNS addresses available on PDN and no fallback configured.");
+		}
+#endif
+	} else {
+		LOG_DBG("Could not retrieve MTU, using fallback value.");
+		BUILD_ASSERT(sizeof(ppp_data_buf) >= CONFIG_SLM_PPP_FALLBACK_MTU);
 	}
-
-	LOG_DBG("Could not retrieve MTU, using fallback value.");
-	BUILD_ASSERT(sizeof(ppp_data_buf) >= CONFIG_SLM_PPP_FALLBACK_MTU);
-	return CONFIG_SLM_PPP_FALLBACK_MTU;
-}
-
-static void ppp_set_mtu(void)
-{
-	const unsigned int mtu = ppp_retrieve_mtu();
-
 	net_if_set_mtu(ppp_iface, mtu);
 	LOG_DBG("MTU set to %u.", mtu);
 }
@@ -300,7 +322,7 @@ static int ppp_start(void)
 		goto error;
 	}
 
-	ppp_set_mtu();
+	ppp_retrieve_pdn_info(ctx);
 
 	ret = net_if_up(ppp_iface);
 	if (ret) {
