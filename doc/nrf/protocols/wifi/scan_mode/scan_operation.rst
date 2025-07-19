@@ -126,7 +126,7 @@ The following controls can fine-tune the time taken and power consumed by a scan
      - Configuration parameters
    * - Band filtering
      - | Build time:
-       | :kconfig:option:`CONFIG_WIFI_MGMT_SCAN_BANDS`
+       | :kconfig:option:`CONFIG_WIFI_SCAN_BANDS_LIST`
        | Run time:
        | :c:member:`wifi_scan_params.bands`
    * - Forced passive scan
@@ -140,7 +140,7 @@ The following controls can fine-tune the time taken and power consumed by a scan
        | :c:member:`wifi_scan_params.dwell_time_passive`
    * - Channel control
      - | Build time:
-       | :kconfig:option:`CONFIG_WIFI_MGMT_SCAN_CHAN`
+       | :kconfig:option:`CONFIG_WIFI_SCAN_CHAN_LIST`
        | Run time:
        | :c:member:`wifi_scan_params.chan`
    * - Skip locally administered MAC addresses

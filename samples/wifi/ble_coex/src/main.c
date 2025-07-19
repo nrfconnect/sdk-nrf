@@ -338,7 +338,7 @@ int main(void)
 #endif /* CONFIG_NRF70_SR_COEX */
 
 #if !defined(CONFIG_COEX_SEP_ANTENNAS) && \
-	!(defined(CONFIG_BOARD_NRF7002DK_NRF7001_NRF5340_CPUAPP) || \
+	!(defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP_NRF7001) || \
 	   defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP))
 	BUILD_ASSERT("Shared antenna support is not available with nRF7002 shields");
 #endif
