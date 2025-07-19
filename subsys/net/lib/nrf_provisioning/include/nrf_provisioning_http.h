@@ -65,9 +65,8 @@ struct nrf_provisioning_http_context {
 	 */
 	int32_t timeout_ms;
 	/** Authentication string: Bearer Token
-	 * If no JWT is provided, and CONFIG_NRF_PROVISIONING_AUTOGEN_JWT
 	 * is enabled, then one will be generated automatically with
-	 * CONFIG_NRF_PROVISIONING_AUTOGEN_JWT_VALID_TIME_S as its lifetime in
+	 * CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S as its lifetime in
 	 * seconds.
 	 * If Attestation Token based authentication is enabled leaving this empty is mandatory,
 	 * unless a static token is used for testing purposes.
