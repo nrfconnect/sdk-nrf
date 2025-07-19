@@ -426,6 +426,19 @@ int esb_start_tx(void);
  */
 int esb_start_rx(void);
 
+/** @brief Start monitor mode.
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int esb_start_monitor(void);
+
+/** @brief Stop monitor mode.
+ *
+ * @retval 0 If successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int esb_stop_monitor(void);
 /** @brief Stop data reception.
  *
  * @retval 0 If successful.
