@@ -74,7 +74,10 @@ Developing with nRF54L Series
 
 * Increased the default value of the :kconfig:option:`CONFIG_MPSL_HFCLK_LATENCY` Kconfig option to support slower crystals.
   See the Kconfig description for a detailed description on how to select the correct value for a given application.
-* Added the :ref:`ug_nrf54l_dfu_config` documentation page, describing how to configure Device Firmware Update (DFU) and secure boot settings using MCUboot and NSIB.
+* Added:
+
+  * The :ref:`ug_nrf54l_dfu_config` documentation page, describing how to configure Device Firmware Update (DFU) and secure boot settings using MCUboot and NSIB.
+  * The :ref:`ug_nrf54l_ecies_x25519` page on enabling the AES encryption with ECIES-X25519, which is used for secure encryption key exchange.
 
 Developing with nRF54H Series
 =============================
