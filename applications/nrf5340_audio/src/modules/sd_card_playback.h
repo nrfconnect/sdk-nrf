@@ -4,15 +4,22 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @defgroup nrf5340_audio_sd_card_playback SD Card Playback
+ * @{
+ * @brief SD card playback API for nRF5340 Audio applications.
+ *
+ * This module provides audio file playback functionality from SD card storage,
+ * supporting both WAV and LC3 audio formats. It handles file reading and audio
+ * decoding, and provides mixing capabilities with live audio streams. The module
+ * implements a ring buffer system for efficient audio data management and supports
+ * background playback through dedicated threads. It integrates with @ref nrf5340_audio_system
+ * for synchronized audio delivery and provides file format detection and validation
+ * for robust audio file handling in embedded applications.
+ */
+
 #ifndef _SD_CARD_PLAYBACK_H_
 #define _SD_CARD_PLAYBACK_H_
-
-/**
- * @file
- * @defgroup sd_card_playback SD card playback.
- * @{
- * @brief The SD card playback module for nRF5340 Audio.
- */
 
 #include <zephyr/kernel.h>
 
