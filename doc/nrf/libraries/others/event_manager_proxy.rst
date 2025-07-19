@@ -29,7 +29,7 @@ You can also set the following Kconfig options when working with Event Manager P
 * :kconfig:option:`CONFIG_EVENT_MANAGER_PROXY_CH_COUNT` - This Kconfig sets the number of IPC instances that would be used.
   This option is related to the number of cores between which the events are exchanged.
   For example, having two cores means that there is one exchange taking place, and so you need one IPC instance.
-* :kconfig:option:`CONFIG_EVENT_MANAGER_PROXY_BOND_TIMEOUT_MS` - This Kconfig sets the timeout value of the bonding.
+* :kconfig:option:`CONFIG_EVENT_MANAGER_PROXY_BIND_TIMEOUT_MS` - This Kconfig sets the timeout value while waiting for the endpoint to bind.
 
 Implementing the proxy
 ======================
