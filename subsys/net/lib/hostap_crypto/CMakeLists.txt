@@ -22,8 +22,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DMISSING_SYSCALL_NAMES")
 # For src/utils includes
 target_link_libraries(hostap_crypto INTERFACE hostap)
 
-if(DEFINED CONFIG_HOSTAP_CRYPTO_ALT_LEGACY OR
-   DEFINED CONFIG_HOSTAP_CRYPTO_ALT_LEGACY_PSA)
+if(DEFINED CONFIG_HOSTAP_CRYPTO_ALT_LEGACY_PSA)
   zephyr_include_directories(
     ${HOSTAP_BASE}/port/mbedtls
   )
@@ -38,7 +37,7 @@ if(DEFINED CONFIG_HOSTAP_CRYPTO_ALT_LEGACY OR
     ${HOSTAP_SRC_BASE}/crypto/aes-internal-enc.c
   )
 
-  zephyr_library_sources_ifdef(CONFIG_HOSTAP_CRYPTO_MBEDTLS_PSA
+  zephyr_library_sources_ifdef(CONFIG_HOSTAP_CRYPTO_ALT_PSA
     ${HOSTAP_BASE}/port/mbedtls/supp_psa_api.c
   )
 
@@ -55,14 +54,6 @@ if(DEFINED CONFIG_HOSTAP_CRYPTO_ALT_LEGACY OR
 
   zephyr_library_sources_ifndef(CONFIG_HOSTAP_CRYPTO_ENTERPRISE
     ${HOSTAP_SRC_BASE}/crypto/tls_none.c
-  )
-
-
-  zephyr_library_sources_ifdef(CONFIG_HOSTAP_CRYPTO_TEST
-    ${HOSTAP_SRC_BASE}/crypto/crypto_module_tests.c
-    ${HOSTAP_SRC_BASE}/crypto/fips_prf_internal.c
-    ${HOSTAP_SRC_BASE}/crypto/sha1-internal.c
-    ${HOSTAP_SRC_BASE}/crypto/sha1-tlsprf.c
   )
 endif()
 
