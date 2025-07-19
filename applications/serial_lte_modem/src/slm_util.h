@@ -189,8 +189,72 @@ int util_resolve_host(int cid, const char *host, uint16_t port, int family, stru
  * @retval 0 If the operation was successful.
  *           Otherwise, a (negative) error code is returned.
  */
-
 int util_get_peer_addr(struct sockaddr *peer, char addr[static INET6_ADDRSTRLEN], uint16_t *port);
+
+/**
+ * @brief Get a number from the AT parser with a default value.
+ *
+ * This macro is used to get a number from the AT parser, and it will
+ * call the appropriate function based on the type of the value pointer.
+ *
+ * @param[in] parser AT parser.
+ * @param[in] param_index Index of the parameter to get.
+ * @param[in] param_count Total number of parameters in the AT command.
+ * @param[in] default_value Default value to return if the parameter is not present.
+ * @param[out] value Pointer to store the retrieved value.
+ *
+ * @retval 0 If the operation was successful.
+ *          Otherwise, a (negative) error code is returned.
+ */
+#define util_get_num_with_default(parser, param_index, param_count, default_value, value)          \
+	_Generic((value),                                                                          \
+		uint16_t * : util_get_uint16_with_default,                                         \
+		int32_t * : util_get_int32_with_default)(parser, param_index, param_count,         \
+							default_value, value)
+
+/**
+ * @brief Get a 16-bit unsigned number from the AT parser with a default value.
+ * @param[in] parser AT parser.
+ * @param[in] param_index Index of the parameter to get.
+ * @param[in] param_count Total number of parameters in the AT command.
+ * @param[in] default_value Default value to return if the parameter is not present.
+ * @param[out] value Pointer to store the retrieved value.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int util_get_uint16_with_default(struct at_parser *parser, uint32_t param_index,
+				 uint32_t param_count, uint16_t default_value, uint16_t *value);
+
+/**
+ * @brief Get a 32-bit signed number from the AT parser with a default value.
+ *
+ * @param[in] parser AT parser.
+ * @param[in] param_index Index of the parameter to get.
+ * @param[in] param_count Total number of parameters in the AT command.
+ * @param[in] default_value Default value to return if the parameter is not present.
+ * @param[out] value Pointer to store the retrieved value.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int util_get_int32_with_default(struct at_parser *parser, uint32_t param_index,
+				uint32_t param_count, int32_t default_value, int32_t *value);
+
+/**
+ * @brief Get a boolean value from the AT parser with a default value.
+ * @param[in] parser AT parser.
+ * @param[in] param_index Index of the parameter to get.
+ * @param[in] param_count Total number of parameters in the AT command.
+ * @param[in] default_value Default value to return if the parameter is not present.
+ * @param[out] value Pointer to store the retrieved boolean value.
+ *
+ * @retval 0 If the operation was successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int util_get_bool_with_default(struct at_parser *parser, uint32_t param_index, uint32_t param_count,
+			       bool default_value, bool *value);
+
 /** @} */
 
 #endif /* SLM_UTIL_ */
