@@ -32,21 +32,18 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y python3-pip
           pip install --upgrade docutils
-
           echo "Installing Vale..."
           curl -L -o vale.tar.gz https://github.com/errata-ai/vale/releases/download/v2.30.0/vale_2.30.0_Linux_64-bit.tar.gz
           mkdir -p bin
           tar -xvzf vale.tar.gz -C bin
           sudo mv bin/vale /usr/local/bin/vale
           vale -v
-
       - name: Run Vale
         id: lint
         run: |
           echo "Running Vale linting..."
           # Save output to a file without displaying it yet
           vale --output line . | tee vale_output.txt
-
           # Check if there were any issues
           if [ -s vale_output.txt ]; then
             echo "Vale found documentation issues!"
@@ -58,7 +55,6 @@ jobs:
             echo "has_issues=false" >> $GITHUB_OUTPUT
             echo "No issues found by Vale."
           fi
-
 # The following lines should be used instead of lines 26+ and we should use the official Vale
 # GitHub Action hook from https://github.com/errata-ai/vale-action?tab=readme-ov-file.
 # However, Nordic Semiconductor GitHub policy does not allow us to use third party actions that
