@@ -129,6 +129,13 @@ rsource "Kconfig.psa"
 # Include Legacy mbed TLS configurations
 rsource "Kconfig.legacy"
 
+
+# This Kconfig symbol is referenced in nrf_security CMake code but is
+# configured out-of-tree. Define it here to satisfy the linter and ensure
+# it is always defined.
+config SSF_SERVER_PSA_CRYPTO_SERVICE_ENABLED
+	bool
+
 endif # NRF_SECURITY
 
 menu "Zephyr legacy configurations"
