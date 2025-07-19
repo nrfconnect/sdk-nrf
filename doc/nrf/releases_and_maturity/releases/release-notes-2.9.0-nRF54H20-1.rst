@@ -23,7 +23,7 @@ Added the following features as supported:
 * nRF54H20 Series:
 
   * Triggering firmware recovery by pressing a hardware button or calling the respective API.
-    For more information, see :ref:`ug_nrf54h20_suit_recovery`.
+    For more information, see ``ug_nrf54h20_suit_recovery``.
   * Global Domain Frequency Scaling (GDFS), optimizing USB suspend power consumption.
   * The support for a new ZMS backend for Settings.
   * Drivers adapted for the following peripherals:
@@ -363,8 +363,8 @@ Matter samples
 SUIT samples
 ------------
 
-* Updated the :ref:`suit_recovery` by adding support for triggering firmware recovery by pressing a hardware button or calling a dedicated API.
-  For more information, see :ref:`ug_nrf54h20_suit_recovery`.
+* Updated the ``suit_recovery`` by adding support for triggering firmware recovery by pressing a hardware button or calling a dedicated API.
+  For more information, see ``ug_nrf54h20_suit_recovery``.
 
 Other samples
 -------------

@@ -88,5 +88,5 @@ int dfu_target_custom_reset(void);
 }
 #endif
 
-#endif /* DFU_TARGET_SUIT_H__ */
+#endif /* DFU_TARGET_CUSTOM_H__*/
 /**@} */

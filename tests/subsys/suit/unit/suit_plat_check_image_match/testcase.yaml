@@ -1,8 +1,0 @@
-tests:
-  suit.unit.platform.suit_plat_check_image_match:
-    type: unit
-    tags:
-      - suit
-      - suit_platform
-      - suit_plat_check_image_match
-      - ci_tests_subsys_suit

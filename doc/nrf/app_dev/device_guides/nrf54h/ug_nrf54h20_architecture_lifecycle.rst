@@ -60,5 +60,4 @@ For more information, see the following pages:
 
 * :ref:`ug_nrf54h20_gs`
 * :ref:`ug_nrf54h20_custom_pcb`
-* :ref:`ug_nrf54h20_suit_dfu`
 * :ref:`ug_nrf54h20_keys`

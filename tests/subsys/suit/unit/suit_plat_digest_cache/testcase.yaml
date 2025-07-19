@@ -1,8 +1,0 @@
-tests:
-  suit.unit.platform.suit_plat_digest_cache:
-    type: unit
-    tags:
-      - suit
-      - suit_platform
-      - suit_plat_digest_cache
-      - ci_tests_subsys_suit
