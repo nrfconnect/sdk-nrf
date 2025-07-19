@@ -87,14 +87,6 @@
 			ranges = <0x0 0x200ff000 0xf00>;
 		};
 
-		nrf_kmu_reserved_push_area: memory@200fff00{
-			#address-cells = <1>;
-			#size-cells = <1>;
-			reg = <0x200fff00 0x0100>;
-			compatible = "zephyr,memory-region", "mmio-sram";
-			zephyr,memory-region = "NRF_KMU_RESERVED_PUSH";
-		};
-
 		nrf_mpc_region: memory@50041000 {
 			#address-cells = <1>;
 			#size-cells = <1>;
