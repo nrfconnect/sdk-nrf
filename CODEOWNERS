@@ -987,6 +987,7 @@
 /tests/bluetooth/bsim/nrf_auraconfig/*.rst @nrfconnect/ncs-audio-doc
 
 /tests/samples/bluetooth/io_adapter/      @rafpelc @jema-nordic
+/tests/samples/bluetooth/samples_test_app/ @rafpelc
 # CI specific west
 /test-manifests/99-default-test-nrf.yml   @nrfconnect/ncs-ci
 
