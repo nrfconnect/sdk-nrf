@@ -87,15 +87,15 @@ struct life_cycle_state_data {
  *  necessary so the counter can be used in the OTP section of the UICR
  *  (available on e.g. nRF91 and nRF53).
  */
-struct monotonic_counter {
+//struct monotonic_counter {
 	/* Counter description. What the counter is used for. See
 	 * BL_MONOTONIC_COUNTERS_DESC_x.
 	 */
-	uint16_t description;
+//	uint16_t description;
 	/* Number of entries in 'counter_slots' list. */
-	uint16_t num_counter_slots;
-	counter_t counter_slots[];
-};
+//	uint16_t num_counter_slots;
+//	counter_t counter_slots[];
+//};
 
 /** Common part for all collections. */
 struct collection {
@@ -108,10 +108,11 @@ struct collection {
  *  length, and each entry can have different length from the others, so the
  *  entries beyond the first cannot be accessed through array indices.
  */
-struct counter_collection {
-	struct collection collection;  /* Type must be BL_COLLECTION_TYPE_MONOTONIC_COUNTERS */
-	struct monotonic_counter counters[];
-};
+//struct counter_collection {
+//	struct collection collection;  /* Type must be BL_COLLECTION_TYPE_MONOTONIC_COUNTERS */
+//	struct monotonic_counter counters[];
+//	counter_t counter_slots[];
+//};
 
 /* Variable data types. */
 enum variable_data_type {

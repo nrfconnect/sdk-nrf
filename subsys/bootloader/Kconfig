@@ -7,8 +7,9 @@
 menu "Bootloader"
 
 config SECURE_BOOT
-	bool "Use Secure Bootloader"
-	depends on !IS_SECURE_BOOTLOADER
+	bool "Use Secure Bootloader" if !IS_SECURE_BOOTLOADER
+#	depends on !IS_SECURE_BOOTLOADER
+	default y if IS_SECURE_BOOTLOADER
 	select FW_INFO
 	select SW_VECTOR_RELAY if SOC_SERIES_NRF51X
 	help

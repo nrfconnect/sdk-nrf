@@ -91,7 +91,7 @@ def generate_mcuboot_only_provision_hex_file(provision_address, output, max_size
 
     provision_data = bytes(num_bytes_in_bl_storage_data_struct * [0])
 
-    provision_data = add_hw_counters(provision_data, 0, mcuboot_counters_slots, otp_write_width)
+#    provision_data = add_hw_counters(provision_data, 0, mcuboot_counters_slots, otp_write_width)
 
     provision_data += variable_data
 
