@@ -96,6 +96,7 @@ tests:
     extra_args:
       - CONFIG_CHIP_MEMORY_PROFILING=y
       - CONFIG_SHELL_MINIMAL=y
+      - CONFIG_CHIP_FACTORY_RESET_TIME_MEASUREMENT=y
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
