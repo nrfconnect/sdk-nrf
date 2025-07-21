@@ -60,6 +60,7 @@ config NET_SOCKETS_OFFLOAD_TLS
 #  - For running tests.
 #  - For CC3XX RNG
 #  - For Cracen RNG
+#  - For bt_enable() when using the SoftDevice Controller
 config MAIN_STACK_SIZE
 	default 4096 if PSA_NEED_CRACEN_CTR_DRBG_DRIVER && !BUILD_WITH_TFM && TRUSTED_STORAGE
 	default 3584 if PSA_NEED_CRACEN_CTR_DRBG_DRIVER && !BUILD_WITH_TFM
@@ -67,6 +68,7 @@ config MAIN_STACK_SIZE
 	default 2048 if PSA_NEED_OBERON_CTR_DRBG_DRIVER && !BUILD_WITH_TFM
 	default 2048 if ZTEST
 	default 2048 if ENTROPY_CC3XX && !BUILD_WITH_TFM
+	default 1128 if BT_LL_SOFTDEVICE
 
 config ZTEST_STACK_SIZE
 	default 2048 if ZTEST
