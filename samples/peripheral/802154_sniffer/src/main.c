@@ -21,6 +21,16 @@ static const struct device *const gpio_dev = DEVICE_DT_GET(DT_NODELABEL(gpio0));
 
 #define HEX_STRING_LENGTH (2 * MAX_PACKET_SIZE + 1)
 
+/* The Xiao BLE board does not have 4 LEDs like Nordic devkits */
+#if defined(CONFIG_BOARD_XIAO_BLE)
+#define BOARD_LED_NETRECV DK_LED3 /* Blue LED */
+#define BOARD_LED_HEARTBEAT DK_LED2 /* Green LED */
+#define DFU_MAGIC_UF2_RESET 0x57 /* Reset to USB Bootloader */
+#else
+#define BOARD_LED_NETRECV DK_LED4
+#define BOARD_LED_HEARTBEAT DK_LED1
+#endif
+
 static const struct device *radio_dev =
 	DEVICE_DT_GET(DT_CHOSEN(zephyr_ieee802154));
 static struct ieee802154_radio_api *radio_api;
@@ -39,7 +49,7 @@ static void heartbeat(struct k_work *work)
 	ARG_UNUSED(work);
 
 	heartbeat_led_state = !heartbeat_led_state;
-	dk_set_led(DK_LED1, heartbeat_led_state);
+	dk_set_led(BOARD_LED_HEARTBEAT, heartbeat_led_state);
 	k_work_reschedule(&heartbeat_work, heartbeat_interval);
 }
 
@@ -71,7 +81,7 @@ int net_recv_data(struct net_if *iface, struct net_pkt *pkt)
 		pkt_time->second * USEC_PER_SEC + pkt_time->nanosecond / NSEC_PER_USEC;
 
 	packet_led_state = !packet_led_state;
-	dk_set_led(DK_LED4, packet_led_state);
+	dk_set_led(BOARD_LED_NETRECV, packet_led_state);
 	bin2hex(psdu, length, hex_string, HEX_STRING_LENGTH);
 
 	shell_print(uart_shell,
@@ -133,7 +143,6 @@ static int cmd_sleep(const struct shell *shell, size_t argc, char **argv)
 }
 SHELL_CMD_ARG_REGISTER(sleep, NULL, "Disable the radio", cmd_sleep, 1, 0);
 
-#if defined(CONFIG_BOARD_NRF52840DONGLE)
 static int cmd_bootloader(const struct shell *shell, size_t argc, char **argv)
 {
 	/*
@@ -145,6 +154,7 @@ static int cmd_bootloader(const struct shell *shell, size_t argc, char **argv)
 	ARG_UNUSED(argc);
 	ARG_UNUSED(argv);
 
+#if defined(CONFIG_BOARD_NRF52840DONGLE)
 	if (!device_is_ready(gpio_dev)) {
 		shell_print(shell, "GPIO device not ready");
 		return 0;
@@ -155,11 +165,16 @@ static int cmd_bootloader(const struct shell *shell, size_t argc, char **argv)
 	if (err) {
 		shell_print(shell, "Failed to configure GPIO pin. Error code: %d", err);
 	}
+#elif defined(CONFIG_XIAO_BLE_ADAFRUIT_BOOTLOADER)
+	NRF_POWER->GPREGRET = DFU_MAGIC_UF2_RESET;
+	NVIC_SystemReset();
+#else
+	shell_print(shell, "Reset not supported on this board");
+#endif /* CONFIG_BOARD_NRF52840DONGLE */
 
 	return 0;
 }
 SHELL_CMD_ARG_REGISTER(bootloader, NULL, "Reboot into bootloader", cmd_bootloader, 1, 0);
-#endif /* CONFIG_BOARD_NRF52840DONGLE */
 
 int main(void)
 {

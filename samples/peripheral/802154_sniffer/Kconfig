@@ -1,0 +1,8 @@
+source "Kconfig.zephyr"
+
+config XIAO_BLE_ADAFRUIT_BOOTLOADER
+	bool "Build UF2 image for use with Adafruit bootloader"
+	default y
+	depends on BOARD_XIAO_BLE
+	help
+	  If enabled a UF2 image will be generated for flashing with the default bootloader shipped with the Xiao BLE board. If disabled a regular firmware image will be generated that must be flashed via an extrernal debugger.

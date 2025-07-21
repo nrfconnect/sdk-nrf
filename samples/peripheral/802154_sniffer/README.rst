@@ -25,11 +25,13 @@ The application presents the user with a command-line interface.
 
 See the :ref:`802154_sniffer_commands` for the list of the available commands.
 
-LED 1:
+Heartbeat LED:
+   LED 1 by default, LED2 (green) on ``xiao_ble/nrf52840``
    When the capture is stopped the LED blinks with a period of 2 seconds with 50% duty cycle.
    When the capture is ongoing the LED blinks with a period of 0.5 seconds with 50% duty cycle.
 
-LED 4:
+Network Activity LED:
+   LED 4 by default, LED3 (blue) on ``xiao_ble/nrf52840``
    When the sniffer captures a packet the LED is toggled on and off.
 
 .. _802154_sniffer_commands:
@@ -100,10 +102,10 @@ The ``bootloader`` command reboots the device in bootloader mode.
 
       bootloader
 
-The device reboots into bootloader mode, and the red LED starts pulsing.
+The device reboots into bootloader mode.
 
 .. note::
-   The ``bootloader`` command is available only for the ``nrf52840dongle/nrf52840`` board.
+   The ``bootloader`` command is available only for the ``nrf52840dongle/nrf52840`` and ``xiao_ble/nrf52840`` boards.
 
 Configuration
 *************
@@ -116,6 +118,12 @@ Building and running
 .. |sample path| replace:: :file:`samples/peripheral/802154_sniffer`
 
 .. include:: /includes/build_and_run.txt
+
+Building for the xiao_ble/nrf52840
+=================================
+Seeed Xiao BLE boards ship with an Adafruit nRF52 bootloader and need a compliant UF2 file to update via the USB bootloader. This is built into the board configurations for the xaio_ble board but sysbuild ignores it so ``--no-sysbuild`` must be provided.
+
+If a full firmware image is desired add ``-DEXTRA_CONF_FILE=boards/xiao_ble_nrf52840_nobootloader.conf``. This will work with or without sysbuild.
 
 .. _802154_sniffer_testing:
 
@@ -143,7 +151,7 @@ After programming the sample to your development kit, complete the following ste
 
       receive
 
-   The **LED 1** will start blinking with shorter intervals.
+   The **Heartbeat LED** will start blinking with shorter intervals.
 
 #. If there is radio traffic on the selected channel, the sniffer should print the captured packets:
 
@@ -152,7 +160,7 @@ After programming the sample to your development kit, complete the following ste
 
       received: 49a85d41a5fffff4110f10270000369756e65619d09428a04b301951821db234460aa5ec4ff506631ef8adb22674683700 power: -39 lqi: 220 time: 15822687
 
-   The **LED 4** will toggle its state when a frame is received.
+   The **Network Activity LED** will toggle its state when a frame is received.
 
 #. Disable the capture:
 
@@ -161,7 +169,7 @@ After programming the sample to your development kit, complete the following ste
 
       sleep
 
-   The **LED 1** will start blinking with longer intervals.
+   The **Heartbeat LED** will start blinking with longer intervals.
 
 Dependencies
 ************
