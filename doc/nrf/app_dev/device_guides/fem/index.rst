@@ -26,7 +26,7 @@ Zephyr and the |NCS| provides support for developing applications with the follo
      - nRF52, nRF53, nRF54L
    * - SKY66112-11
      - Simple GPIO
-     - nRF52, nRF53
+     - nRF52, nRF53, nF54L
 
 The following hardware platforms with :term:`Front-End Module (FEM)` are supported by the |NCS|:
 
