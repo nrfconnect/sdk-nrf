@@ -18,8 +18,6 @@ Credentials are pulled from the :ref:`Wi-Fi credentials <zephyr:lib_wifi_credent
 Configuration
 *************
 
-To use this library, enable the :kconfig:option:`CONFIG_WIFI_MGMT_EXT` Kconfig option.
-
 For development purposes, you can set static Wi-Fi credentials configuration using the following Kconfig options:
 
 * :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC` - This option enables static Wi-Fi configuration.
