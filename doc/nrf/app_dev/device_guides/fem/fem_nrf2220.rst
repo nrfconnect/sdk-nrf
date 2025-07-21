@@ -125,34 +125,12 @@ To use nRF2220, complete the following steps:
    It is recommended to use the GPIO pins that belong to the PERI Power Domain of the nRF54L device.
    For example, on the nRF54L15, these are pins belonging to GPIO P1.
    Using pins belonging to Low Power Domain (GPIO P0 on nRF54L15) is supported but requires more DPPI and PPIB channels of the SoC.
-   Enable appropriate instances of the ``DPPIC`` and ``PPIB`` peripherals in the devicetree file:
+   Ensure that the following devicetree instances are enabled (have ``status = "okay"``):
 
-   .. code-block:: devicetree
-
-      &dppic10 {
-            status = "okay";
-      };
-
-      &ppib11 {
-            status = "okay";
-      };
-
-      &ppib21 {
-            status = "okay";
-      };
-
-      &dppic20 {
-            status = "okay";
-      };
-
-      &ppib22 {
-            status = "okay";
-      };
-
-      &ppib30 {
-            status = "okay";
-      };
-
-      &dppic30 {
-            status = "okay";
-      };
+   * ``dppic10``
+   * ``dppic20``
+   * ``dppic30``
+   * ``ppib11``
+   * ``ppib21``
+   * ``ppib22``
+   * ``ppib30``

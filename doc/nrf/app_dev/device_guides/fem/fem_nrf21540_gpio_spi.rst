@@ -132,7 +132,15 @@ To use nRF21540 in GPIO+SPI mode, complete the following steps:
    * ``tx-en-settle-time-us`` to the value ``27``.
    * ``rx-en-settle-time-us`` to the value ``12``.
 
-   Ensure the instances ``dppic10``, ``dppic20``, ``dppic30``, ``ppib11``, ``ppib21``, ``ppib22``, ``ppib30`` are enabled (have ``status = "okay";``) in the devicetree.
+   Ensure that the following devicetree instances are enabled (have ``status = "okay"``):
+
+   * ``dppic10``
+   * ``dppic20``
+   * ``dppic30``
+   * ``ppib11``
+   * ``ppib21``
+   * ``ppib22``
+   * ``ppib30``
 
 .. note::
    The nRF21540 GPIO-only mode of operation is selected by default in Kconfig when an nRF21540 node is provided in devicetree, as mentioned in the :ref:`ug_radio_fem_sw_support` section.
