@@ -3,10 +3,13 @@ sample:
   description: Demo application for entering the firmware loader application
 common:
   sysbuild: true
-  build_only: true
 tests:
   sample.mcuboot.firmware_loader_entrance:
-    harness: bluetooth
+    harness: console
+    harness_config:
+      type: multi_line
+      regex:
+        - "Advertising successfully started"
     tags: bluetooth
     platform_allow:
       - nrf52840dk/nrf52840
