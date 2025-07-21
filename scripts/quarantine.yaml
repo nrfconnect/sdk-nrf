@@ -67,10 +67,3 @@
   platforms:
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-7878"
-
-- scenarios:
-    - emds.flash
-  platforms:
-    - nrf52840dk/nrf52840
-    - nrf54l15dk/nrf54l15/cpuapp
-  comment: "Disabled until https://nordicsemi.atlassian.net/browse/NCSDK-32199 is ready"
