@@ -239,7 +239,7 @@ int emds_flash_allocate_snapshot(const struct emds_partition *partition,
 	}
 
 	if (REGIONS_OVERLAP(metadata_off, sizeof(struct emds_snapshot_metadata), data_off,
-			    aligned_data_size)) {
+			    aligned_data_size) || metadata_off <= data_off) {
 		LOG_WRN("Metadata area overlaps with data area");
 		return -ENOMEM;
 	}
@@ -337,8 +337,8 @@ void emds_flash_write_data(const struct emds_partition *partition, off_t data_of
 	nvmc_wait_ready();
 
 #if defined CONFIG_SOC_FLASH_NRF_RRAM
-	nrf_rramc_config_t config = {.mode_write = true,
-				     .write_buff_size = partition->fp->write_block_size};
+	/* 1 word of 128bits length */
+	nrf_rramc_config_t config = {.mode_write = true, .write_buff_size = 1};
 
 	nrf_rramc_config_set(NRF_RRAMC, &config);
 	memcpy((void *)flash_addr, data_chunk, data_size);
