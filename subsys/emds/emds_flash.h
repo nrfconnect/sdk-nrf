@@ -133,6 +133,9 @@ int emds_flash_scan_partition(const struct emds_partition *partition,
  *
  * This function allocates a new snapshot in the specified partition based on the
  * freshest snapshot found in the partition.
+ * Note that since emds flash functionality operates with partitions by pointer,
+ * it does not have information about the partition index and the freshest counter and
+ * leaves them not initialized.
  *
  * @param partition Pointer to the emergency data storage partition structure.
  * @param freshest_snapshot Pointer to the freshest snapshot candidate structure.
