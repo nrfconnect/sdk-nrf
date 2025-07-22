@@ -47,9 +47,7 @@
 #define VEVIF_IRQN(vevif)   VEVIF_IRQN_1(vevif)
 #define VEVIF_IRQN_1(vevif) VPRCLIC_##vevif##_IRQn
 
-#ifdef CONFIG_SOC_NRF54L15
-#define NRF_GPIOHSPADCTRL ((NRF_GPIOHSPADCTRL_Type *)NRF_P2_S_BASE)
-#else
+#ifndef CONFIG_SOC_NRF54L15
 #error "Unsupported SoC for HPF MSPI"
 #endif
 
