@@ -1,3 +1,5 @@
+--extra-index-url https://files.nordicsemi.com/artifactory/api/pypi/nordic-pypi/simple
+
 cbor2>=5.4.2.post1
 clang-format
 click==8.1.3
