@@ -539,6 +539,14 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         set_config_bool(b0 CONFIG_SB_CRYPTO_NO_ECDSA_SECP256R1 y)
       endif()
     endif()
+
+    # Set number of counter slots
+    set_config_int(b0 CONFIG_SB_NUM_VER_COUNTER_SLOTS ${SB_CONFIG_SECURE_BOOT_APPCORE_COUNTER_SLOTS})
+
+    if(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+      set_config_bool(mcuboot CONFIG_SB_MONOTONIC_COUNTER y)
+      set_config_int(mcuboot CONFIG_SB_NUM_VER_COUNTER_SLOTS ${SB_CONFIG_SECURE_BOOT_APPCORE_COUNTER_SLOTS})
+    endif()
   endif()
 
   if(SB_CONFIG_SECURE_BOOT_BOOTCONF_LOCK_WRITES)

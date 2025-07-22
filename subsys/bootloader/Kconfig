@@ -51,8 +51,6 @@ config SB_NUM_VER_COUNTER_SLOTS
 	  Regarding ranges: The actual maximum depends on the number of
 	  provisioned public keys, since they share the space. The same is true if
 	  other data is stored in the "OTP" region (on for example nRF91 and nRF53).
-	  This configuration should not be used in code. Instead, the header before the
-	  slots should be read at run-time.
 
 endif # SECURE_BOOT
 

@@ -10,9 +10,13 @@
 #include <errno.h>
 #include <nrf.h>
 #include <assert.h>
+#include <zephyr/logging/log.h>
+
 #if !defined(CONFIG_BUILD_WITH_TFM)
 #include <zephyr/kernel.h>
 #endif
+
+LOG_MODULE_REGISTER(bl_storage, CONFIG_SECURE_BOOT_STORAGE_LOG_LEVEL);
 
 #define COUNTER_DESC_VERSION 1 /* Counter description value for firmware version. */
 
@@ -303,7 +307,6 @@ static const uint16_t get_collection_size(uint8_t type)
 /** Get the counter_collection data structure in the provision data. */
 static const uint8_t *get_counter_collection(uint8_t type)
 {
-//	const struct collection *collection = get_first_collection();
 	uint8_t i = 0;
 	const uint8_t *collection = get_first_collection();
 
@@ -312,49 +315,13 @@ static const uint8_t *get_counter_collection(uint8_t type)
 		++i;
 	}
 
+LOG_ERR("get_counter_collection for %d = %p", type, collection);
+
 	return collection;
-
-//	return get_collection_type(collection) == BL_COLLECTION_TYPE_MONOTONIC_COUNTERS
-//		       ? (const uint8_t *)collection
-//		       : NULL;
 }
-
-/** Get one of the (possibly multiple) counters in the provision data.
- *
- *  param[in]  description  Which counter to get. See COUNTER_DESC_*.
- */
-#if 0
-static const struct monotonic_counter *get_counter_struct(uint16_t description)
-{
-//	const struct counter_collection *counters = get_counter_collection();
-	const uint8_t *counters = get_counter_collection(0);
-get_collection_size();
-
-	if (counters == NULL) {
-		return NULL;
-	}
-
-	const struct monotonic_counter *current = counters->counters;
-
-	for (size_t i = 0; i < bl_storage_otp_halfword_read(
-		(uint32_t)&counters->collection.count); i++) {
-		uint16_t num_slots = bl_storage_otp_halfword_read(
-					(uint32_t)&current->num_counter_slots);
-
-		if (bl_storage_otp_halfword_read((uint32_t)&current->description) == description) {
-			return current;
-		}
-
-		current = (const struct monotonic_counter *)
-					&current->counter_slots[num_slots];
-	}
-	return NULL;
-}
-#endif
 
 int num_monotonic_counter_slots(uint16_t counter_desc, uint16_t *counter_slots)
 {
-//	const struct monotonic_counter *counter = get_counter_struct(counter_desc);
         const uint8_t *counters = get_counter_collection((uint8_t)counter_desc);
 	const uint16_t num_slots = get_collection_slots((uint8_t)counter_desc);
 
@@ -362,15 +329,7 @@ int num_monotonic_counter_slots(uint16_t counter_desc, uint16_t *counter_slots)
 		return -EINVAL;
 	}
 
-//	uint16_t num_slots = bl_storage_otp_halfword_read((uint32_t)&counter->num_counter_slots);
-
-#if 0
-	if (num_slots == 0xFFFF) {
-		/* We consider the 0xFFFF as invalid since it is the default value of the OTP */
-		*counter_slots = 0;
-		return -EINVAL;
-	}
-#endif
+LOG_ERR("slots for %d = %d", counter_desc, num_slots);
 
 	*counter_slots = num_slots;
 	return 0;
@@ -388,7 +347,6 @@ int num_monotonic_counter_slots(uint16_t counter_desc, uint16_t *counter_slots)
  */
 int get_counter(uint16_t counter_desc, counter_t *counter_value, const counter_t **free_slot)
 {
-//	const counter_t *slots;
 	counter_t highest_counter = 0;
 	const counter_t *addr = NULL;
 	const uint8_t *counter_obj = get_counter_collection((uint8_t)counter_desc);
@@ -398,18 +356,14 @@ int get_counter(uint16_t counter_desc, counter_t *counter_value, const counter_t
 		return -EINVAL;
 	}
 
-//	slots = 
 	num_counter_slots = get_collection_slots((uint8_t)counter_desc);
-//bl_storage_otp_halfword_read((uint32_t)&counter_obj->num_counter_slots);
+LOG_ERR("slots for %d = %d", counter_desc, num_counter_slots);
 
 	for (uint16_t i = 0; i < num_counter_slots; i++) {
-		counter_t counter;
-
-		addr = (counter_t *)(counter_obj + (i * sizeof(counter_t)));
-		counter = bl_storage_counter_get((uint32_t)addr);
+		counter_t counter = bl_storage_counter_get((uint32_t)addr);
 
 		if (counter == 0) {
-//			addr = &slots[i];
+			addr = (counter_t *)(counter_obj + (i * sizeof(counter_t)));
 			break;
 		}
 
@@ -418,6 +372,7 @@ int get_counter(uint16_t counter_desc, counter_t *counter_value, const counter_t
 		}
 	}
 
+LOG_ERR("free slot: %p, addr: %p", free_slot, addr);
 	if (free_slot != NULL) {
 		*free_slot = addr;
 	}
