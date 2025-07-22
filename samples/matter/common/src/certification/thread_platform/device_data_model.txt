@@ -7,8 +7,8 @@ Matter Device Model:
 ▣ Endpoint 0 (Profile: 259)
 
 ├── Device Types
-│   └── MA-otarequestor [Code: 18] (Rev: 1)
 │   └── MA-rootdevice [Code: 22] (Rev: 3)
+│   └── MA-otarequestor [Code: 18] (Rev: 1)
 
 └── Clusters
     ● Descriptor [Code: 29] (Side: server)
@@ -21,12 +21,11 @@ Matter Device Model:
       - PartsList (Code: 3, Type: array)
       - GeneratedCommandList (Code: 65528, Type: array)
       - AcceptedCommandList (Code: 65529, Type: array)
-      - EventList (Code: 65530, Type: array)
       - AttributeList (Code: 65531, Type: array)
       - FeatureMap (Code: 65532, Type: bitmap32)
       - ClusterRevision (Code: 65533, Type: int16u)
     ● Access Control [Code: 31] (Side: server)
-      ├── FeatureMap: 1
+      ├── FeatureMap: None
       └── ClusterRevision: None
     Attributes:
       - ACL (Code: 0, Type: array)
@@ -36,10 +35,12 @@ Matter Device Model:
       - AccessControlEntriesPerFabric (Code: 4, Type: int16u)
       - GeneratedCommandList (Code: 65528, Type: array)
       - AcceptedCommandList (Code: 65529, Type: array)
-      - EventList (Code: 65530, Type: array)
       - AttributeList (Code: 65531, Type: array)
       - FeatureMap (Code: 65532, Type: bitmap32)
       - ClusterRevision (Code: 65533, Type: int16u)
+    Events:
+      - AccessControlEntryChanged
+      - AccessControlExtensionChanged
     ● Basic Information [Code: 40] (Side: server)
       ├── FeatureMap: 0
       └── ClusterRevision: 4
@@ -61,9 +62,9 @@ Matter Device Model:
       - CapabilityMinima (Code: 19, Type: CapabilityMinimaStruct)
       - SpecificationVersion (Code: 21, Type: int32u)
       - MaxPathsPerInvoke (Code: 22, Type: int16u)
+      - ConfigurationVersion (Code: 24, Type: int32u)
       - GeneratedCommandList (Code: 65528, Type: array)
       - AcceptedCommandList (Code: 65529, Type: array)
-      - EventList (Code: 65530, Type: array)
       - AttributeList (Code: 65531, Type: array)
       - FeatureMap (Code: 65532, Type: bitmap32)
       - ClusterRevision (Code: 65533, Type: int16u)
@@ -90,7 +91,6 @@ Matter Device Model:
       - UpdateStateProgress (Code: 3, Type: int8u)
       - GeneratedCommandList (Code: 65528, Type: array)
       - AcceptedCommandList (Code: 65529, Type: array)
-      - EventList (Code: 65530, Type: array)
       - AttributeList (Code: 65531, Type: array)
       - FeatureMap (Code: 65532, Type: bitmap32)
       - ClusterRevision (Code: 65533, Type: int16u)
@@ -108,7 +108,16 @@ Matter Device Model:
       - SupportedLocales (Code: 1, Type: array)
       - GeneratedCommandList (Code: 65528, Type: array)
       - AcceptedCommandList (Code: 65529, Type: array)
-      - EventList (Code: 65530, Type: array)
+      - AttributeList (Code: 65531, Type: array)
+      - FeatureMap (Code: 65532, Type: bitmap32)
+      - ClusterRevision (Code: 65533, Type: int16u)
+    ● Time Format Localization [Code: 44] (Side: server)
+      ├── FeatureMap: 0
+      └── ClusterRevision: 1
+    Attributes:
+      - HourFormat (Code: 0, Type: HourFormatEnum)
+      - GeneratedCommandList (Code: 65528, Type: array)
+      - AcceptedCommandList (Code: 65529, Type: array)
       - AttributeList (Code: 65531, Type: array)
       - FeatureMap (Code: 65532, Type: bitmap32)
       - ClusterRevision (Code: 65533, Type: int16u)
@@ -123,7 +132,6 @@ Matter Device Model:
       - SupportsConcurrentConnection (Code: 4, Type: boolean)
       - GeneratedCommandList (Code: 65528, Type: array)
       - AcceptedCommandList (Code: 65529, Type: array)
-      - EventList (Code: 65530, Type: array)
       - AttributeList (Code: 65531, Type: array)
       - FeatureMap (Code: 65532, Type: bitmap32)
       - ClusterRevision (Code: 65533, Type: int16u)
@@ -135,8 +143,8 @@ Matter Device Model:
       - CommissioningComplete (Code: 4, In)
       - CommissioningCompleteResponse (Code: 5, Out)
     ● Network Commissioning [Code: 49] (Side: server)
-      ├── FeatureMap: 2
-      └── ClusterRevision: 2
+      ├── FeatureMap: None
+      └── ClusterRevision: None
     Attributes:
       - MaxNetworks (Code: 0, Type: int8u)
       - Networks (Code: 1, Type: array)
@@ -150,7 +158,6 @@ Matter Device Model:
       - ThreadVersion (Code: 10, Type: int16u)
       - GeneratedCommandList (Code: 65528, Type: array)
       - AcceptedCommandList (Code: 65529, Type: array)
-      - EventList (Code: 65530, Type: array)
       - AttributeList (Code: 65531, Type: array)
       - FeatureMap (Code: 65532, Type: bitmap32)
       - ClusterRevision (Code: 65533, Type: int16u)
@@ -169,7 +176,6 @@ Matter Device Model:
     Attributes:
       - GeneratedCommandList (Code: 65528, Type: array)
       - AcceptedCommandList (Code: 65529, Type: array)
-      - EventList (Code: 65530, Type: array)
       - AttributeList (Code: 65531, Type: array)
       - FeatureMap (Code: 65532, Type: bitmap32)
       - ClusterRevision (Code: 65533, Type: int16u)
@@ -188,7 +194,6 @@ Matter Device Model:
       - TestEventTriggersEnabled (Code: 8, Type: boolean)
       - GeneratedCommandList (Code: 65528, Type: array)
       - AcceptedCommandList (Code: 65529, Type: array)
-      - EventList (Code: 65530, Type: array)
       - AttributeList (Code: 65531, Type: array)
       - FeatureMap (Code: 65532, Type: bitmap32)
       - ClusterRevision (Code: 65533, Type: int16u)
@@ -198,7 +203,7 @@ Matter Device Model:
       - TimeSnapshotResponse (Code: 2, Out)
     ● Software Diagnostics [Code: 52] (Side: server)
       ├── FeatureMap: None
-      └── ClusterRevision: 1
+      └── ClusterRevision: None
     Attributes:
       - CurrentHeapFree (Code: 1, Type: int64u)
       - CurrentHeapUsed (Code: 2, Type: int64u)
@@ -296,7 +301,6 @@ Matter Device Model:
       - DSTOffsetListMaxSize (Code: 11, Type: int8u)
       - GeneratedCommandList (Code: 65528, Type: array)
       - AcceptedCommandList (Code: 65529, Type: array)
-      - EventList (Code: 65530, Type: array)
       - AttributeList (Code: 65531, Type: array)
       - FeatureMap (Code: 65532, Type: bitmap32)
       - ClusterRevision (Code: 65533, Type: int16u)
@@ -308,14 +312,13 @@ Matter Device Model:
       - SetDSTOffset (Code: 4, In)
     ● Administrator Commissioning [Code: 60] (Side: server)
       ├── FeatureMap: 1
-      └── ClusterRevision: 1
+      └── ClusterRevision: None
     Attributes:
       - WindowStatus (Code: 0, Type: CommissioningWindowStatusEnum)
       - AdminFabricIndex (Code: 1, Type: fabric_idx)
       - AdminVendorId (Code: 2, Type: vendor_id)
       - GeneratedCommandList (Code: 65528, Type: array)
       - AcceptedCommandList (Code: 65529, Type: array)
-      - EventList (Code: 65530, Type: array)
       - AttributeList (Code: 65531, Type: array)
       - FeatureMap (Code: 65532, Type: bitmap32)
       - ClusterRevision (Code: 65533, Type: int16u)
@@ -335,7 +338,6 @@ Matter Device Model:
       - CurrentFabricIndex (Code: 5, Type: int8u)
       - GeneratedCommandList (Code: 65528, Type: array)
       - AcceptedCommandList (Code: 65529, Type: array)
-      - EventList (Code: 65530, Type: array)
       - AttributeList (Code: 65531, Type: array)
       - FeatureMap (Code: 65532, Type: bitmap32)
       - ClusterRevision (Code: 65533, Type: int16u)
@@ -352,6 +354,9 @@ Matter Device Model:
       - UpdateFabricLabel (Code: 9, In)
       - RemoveFabric (Code: 10, In)
       - AddTrustedRootCertificate (Code: 11, In)
+      - SetVIDVerificationStatement (Code: 12, In)
+      - SignVIDVerificationRequest (Code: 13, In)
+      - SignVIDVerificationResponse (Code: 14, Out)
     ● Group Key Management [Code: 63] (Side: server)
       ├── FeatureMap: None
       └── ClusterRevision: None
@@ -362,7 +367,6 @@ Matter Device Model:
       - MaxGroupKeysPerFabric (Code: 3, Type: int16u)
       - GeneratedCommandList (Code: 65528, Type: array)
       - AcceptedCommandList (Code: 65529, Type: array)
-      - EventList (Code: 65530, Type: array)
       - AttributeList (Code: 65531, Type: array)
       - FeatureMap (Code: 65532, Type: bitmap32)
       - ClusterRevision (Code: 65533, Type: int16u)
@@ -374,7 +378,7 @@ Matter Device Model:
       - KeySetReadAllIndices (Code: 4, In)
       - KeySetReadAllIndicesResponse (Code: 5, Out)
     ● ICD Management [Code: 70] (Side: server)
-      ├── FeatureMap: 7
+      ├── FeatureMap: None
       └── ClusterRevision: 3
     Attributes:
       - IdleModeDuration (Code: 0, Type: int32u)
@@ -389,7 +393,6 @@ Matter Device Model:
       - MaximumCheckInBackOff (Code: 9, Type: int32u)
       - GeneratedCommandList (Code: 65528, Type: array)
       - AcceptedCommandList (Code: 65529, Type: array)
-      - EventList (Code: 65530, Type: array)
       - AttributeList (Code: 65531, Type: array)
       - FeatureMap (Code: 65532, Type: bitmap32)
       - ClusterRevision (Code: 65533, Type: int16u)
@@ -403,11 +406,25 @@ Matter Device Model:
 ▣ Endpoint 1 (Profile: 259)
 
 ├── Device Types
-│   └── MA-dimmablelight [Code: 257] (Rev: 3)
+│   └── MA-onofflight [Code: 256] (Rev: 3)
 
 └── Clusters
-    ● Groups [Code: 4] (Side: server)
+    ● Identify [Code: 3] (Side: server)
       ├── FeatureMap: 0
+      └── ClusterRevision: 5
+    Attributes:
+      - IdentifyTime (Code: 0, Type: int16u)
+      - IdentifyType (Code: 1, Type: IdentifyTypeEnum)
+      - GeneratedCommandList (Code: 65528, Type: array)
+      - AcceptedCommandList (Code: 65529, Type: array)
+      - AttributeList (Code: 65531, Type: array)
+      - FeatureMap (Code: 65532, Type: bitmap32)
+      - ClusterRevision (Code: 65533, Type: int16u)
+    Commands:
+      - Identify (Code: 0, In)
+      - TriggerEffect (Code: 64, In)
+    ● Groups [Code: 4] (Side: server)
+      ├── FeatureMap: 1
       └── ClusterRevision: 4
     Attributes:
       - NameSupport (Code: 0, Type: NameSupportBitmap)
