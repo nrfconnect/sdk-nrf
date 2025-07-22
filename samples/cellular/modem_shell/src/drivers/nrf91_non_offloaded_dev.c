@@ -320,7 +320,8 @@ static void nrf91_non_offload_mdm_socket_worker(struct k_work *unused)
 				};
 
 				dnsctx = dns_resolve_get_default();
-				ret = dns_resolve_reconfigure(dnsctx, NULL, dns_servers);
+				ret = dns_resolve_reconfigure(dnsctx, NULL, dns_servers,
+							      DNS_SOURCE_MANUAL);
 				if (ret < 0) {
 					mosh_error("Could not set DNS servers");
 				}
