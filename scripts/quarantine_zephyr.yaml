@@ -9,20 +9,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-21219"
 
 - scenarios:
-    - mcuboot.recovery.retention
-    - mcuboot.recovery.retention.mem
-  platforms:
-    - nrf52840dk/nrf52840
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24920"
-
-- scenarios:
-    - mgmt.mcumgr.all.options
-    - mgmt.mcumgr.all.options.other
-  platforms:
-    - nrf52840dk/nrf52840
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24921"
-
-- scenarios:
     - sample.bluetooth.central.multilink
     - sample.bluetooth.peripheral_identity
   platforms:
@@ -60,18 +46,6 @@
     - native_sim/native
     - native_sim/native/64
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24924"
-
-- scenarios:
-    - sample.ipc.openamp
-  platforms:
-    - mps2_an521
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24926"
-
-- scenarios:
-    - sample.mcumgr.smp_svr.mcuboot_flags.direct_xip_withrevert
-  platforms:
-    - nrf52840dk/nrf52840
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24927"
 
 - scenarios:
     - sample.mgmt.osdp.control_panel
@@ -116,45 +90,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-3813"
 
 - scenarios:
-    - kernel.timer.timer
-  platforms:
-    - nrf52dk/nrf52832
-  comment: "RAM overflow in NCS specifically - vanilla Zephyr build still fits."
-
-- scenarios:
-    - drivers.flash.common.default
-  platforms:
-    - nrf54l15dk/nrf54l15/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-27852"
-
-- scenarios:
-    - arch.interrupt.gen_isr_table.riscv_no_direct
-  platforms:
-    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
-    - nrf54l15dk/nrf54l15/cpuflpr
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-27981"
-
-- scenarios:
-    - sample.net.sockets.big_http_download
-    - sample.net.sockets.big_http_download.ci
-  platforms:
-    - nrf54l15dk/nrf54l15/cpuapp
-  comment: "to be fixed in https://github.com/zephyrproject-rtos/zephyr/pull/73777"
-
-- scenarios:
-    - sample.net.sockets.http.server
-  platforms:
-    - nrf54h20dk@0.9.0/nrf54h20/cpurad
-  comment: "to be fixed in https://github.com/zephyrproject-rtos/zephyr/pull/73777"
-
-- scenarios:
-    - sample.drivers.spi.flash
-    - sample.drivers.spi.flash_dpd
-  platforms:
-    - nrf54l15dk/nrf54l15/cpuapp
-  comment: "Test not aligned for nrf54l15 but selected due to jedec,spi-nor"
-
-- scenarios:
     - llext.*
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpurad
@@ -164,10 +99,6 @@
     - nrf54l15dk/nrf54l15/cpuflpr
     - qemu_cortex_m3/ti_lm3s6965
   comment: "overflow, to report/fix in the upstream @permac and put ticket # here"
-
-- scenarios:
-    - sample.net.mqtt.nrf70.tls
-  comment: "To report @chaitanya and put ticket # here"
 
 - scenarios:
     - storage.flash_map
@@ -182,28 +113,6 @@
   comment: "Test not aligned for nrf54l15 - missing PM configuration"
 
 - scenarios:
-    - sample.bluetooth.hci_uart.nrf54l15.all
-  platforms:
-    - nrf54l15dk/nrf54l15/cpuapp
-  comment: "Test not aligned for nrf54l15 - missing snippet settings"
-
-- scenarios:
-    - net.sockets.tls12.ec_kex
-    - net.sockets.tls13.ephemeral_kex
-    - net.sockets.tls13.psk_kex.tickets
-    - net.sockets.tls13.ephemeral_kex.tickets
-  platforms:
-    - native_sim/native
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-30873"
-
-- scenarios:
-    - drivers.power_domain.build.pm
-    - drivers.power_domain.build
-  platforms:
-    - native_sim/native
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-30877"
-
-- scenarios:
     - sample.mcumgr.smp_svr.ram_load.*
   platforms:
     - nrf52840dk/nrf52840
@@ -215,21 +124,6 @@
     - nrf9160dk@0.14.0/nrf9160/ns
     - nrf5340dk/nrf5340/cpuapp/ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31574"
-
-- scenarios:
-    - drivers.eeprom.emul.build
-  platforms:
-    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31589"
-
-- scenarios:
-    - llext.writable
-    - llext.writable_relocatable
-    - llext.writable_slid_linking
-    - llext.writable_relocatable_slid_linking
-  platforms:
-    - nrf9160dk@0.14.0/nrf9160
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31590"
 
 - scenarios:
     - drivers.stepper.shell
@@ -288,25 +182,10 @@
   comment: "https://github.com/zephyrproject-rtos/zephyr/issues/89488"
 
 - scenarios:
-    - portability.posix.xsi_realtime
-    - portability.posix.xsi_realtime.minimal
-    - portability.posix.xsi_realtime.newlib
-    - portability.posix.xsi_realtime.picolibc
-  platforms:
-    - qemu_cortex_m3/ti_lm3s6965
-  comment: "https://github.com/zephyrproject-rtos/zephyr/issues/89485"
-
-- scenarios:
     - drivers.gpio.build
   platforms:
     - nrf54l15dk/nrf54l15/cpuflpr
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-33288"
-
-- scenarios:
-    - kernel.scheduler.simple_timeslicing
-  platforms:
-    - nrf52dk/nrf52832
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-33279"
 
 - scenarios:
     - usb.device_next.build_all
@@ -347,13 +226,6 @@
     - nrf9160dk@0.14.0/nrf9160/ns
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-15508"
-
-- scenarios:
-    - net.mqtt.tls
-  platforms:
-    - nrf9160dk@0.14.0/nrf9160/ns
-    - nrf5340dk/nrf5340/cpuapp/ns
-  comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-24922"
 
 - scenarios:
     - net.socket.register.tls
@@ -589,12 +461,6 @@
     - examples.nrfx_spim.blocking
     - examples.nrfx_spim.non_blocking
   comment: "Not fixable during upmerge, fix will be included in next upmerge"
-
-- scenarios:
-    - sample.filesystem.fat_fs.nrf54l15dk
-  platforms:
-    - nrf54l15dk/nrf54l15/cpuapp
-  comment: "partition manager configuration need to be fixed/provided"
 
 - scenarios:
     - drivers.hwinfo.api
