@@ -203,6 +203,18 @@ int log_rpc_get_crash_dump(size_t offset, uint8_t *buffer, size_t buffer_length)
 	return log_chunk_size;
 }
 
+int log_rpc_invalidate_crash_dump(void)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	int32_t rc;
+
+	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, 0);
+	nrf_rpc_cbor_cmd_no_err(&log_rpc_group, LOG_RPC_CMD_INVALIDATE_CRASH_DUMP, &ctx,
+				nrf_rpc_rsp_decode_i32, &rc);
+
+	return rc;
+}
+
 void log_rpc_echo(enum log_rpc_level level, const char *message)
 {
 	struct nrf_rpc_cbor_ctx ctx;
