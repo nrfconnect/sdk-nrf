@@ -13,12 +13,15 @@ static enum rpc_utils_cmd_server crash_command;
 static void crash_work_handler(struct k_work *work);
 K_WORK_DELAYABLE_DEFINE(crash_work, crash_work_handler);
 
+__attribute__((noinline, used))
 static void do_stack_overflow(void)
 {
 	volatile uint8_t arr[CONFIG_SYSTEM_WORKQUEUE_STACK_SIZE];
 
-	/* Write to 'arr' to prevent the compiler from optimizing it away. */
-	arr[0] = 1;
+	/* Write to every element to prevent optimization and trigger stack overflow. */
+	for (size_t i = 0; i < sizeof(arr); ++i) {
+		arr[i] = (uint8_t)i;
+	}
 }
 
 static void do_assert(void)
@@ -32,8 +35,10 @@ static void do_assert(void)
 static void do_hardfault(void)
 {
 	volatile uint32_t value;
+	volatile uint32_t divisor = 0;
+	volatile uint32_t divident = 10;
 
-	value = 1 / 0;
+	value = divident / divisor;  /* Zero division */
 }
 
 #pragma GCC diagnostic pop
