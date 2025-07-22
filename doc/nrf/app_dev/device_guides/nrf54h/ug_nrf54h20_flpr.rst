@@ -7,11 +7,7 @@ Working with the FLPR core
    :local:
    :depth: 2
 
-.. note::
-   The FLPR core support in the |NCS| is currently :ref:`experimental<software_maturity>`.
-
-The nRF54H20 SoC includes a dedicated VPR CPU, based on RISC-V architecture, known as the *fast lightweight peripheral processor* (FLPR).
-The FLPR core can be used to manage specific peripherals through the appropriate Zephyr Device Driver API.
+The nRF54H20 SoC includes a dedicated VPR CPU, based on RISC-V architecture, known as the *Fast Lightweight Peripheral Processor* (FLPR).
 These peripherals have IRQs routed to FLPR:
 
 * USBHS
@@ -56,20 +52,15 @@ Memory allocation
 *****************
 
 Running the FLPR CPU can lead to increased latency when accessing ``RAM_21``.
-To mitigate this, you should use ``RAM_21`` exclusively for FLPR code, FLPR data, and non-time-sensitive information from the application CPU.
-For data that requires strict access times, such as CPU data used in low-latency ISRs, you should use local RAM or, when greater latency is acceptable, ``RAM_0x``.
-The DMA buffers should be placed in memory designed to a given peripheral.
-
-.. _building_nrf54h:
+To mitigate this, use ``RAM_21`` exclusively for FLPR code, FLPR data, and non-time-sensitive information from the application CPU.
+For data that requires strict access times, such as CPU data used in low-latency Interrupt Service Routines (ISRs), use local RAM or, when greater latency is acceptable, ``RAM_0x``.
+Place the DMA buffers in a memory designed to a given peripheral.
 
 Building and programming with the nRF54H20 DK
 *********************************************
 
-.. note::
-   The FLPR core support in the |NCS| is currently :ref:`experimental<software_maturity>`.
-
-Depending on the sample, you may need to program only the application core or both the FLPR and application cores.
-Additionally, the process will vary depending on whether you are working with a single-image or multi-image build.
+Depending on the sample, you might need to program only the application core or both the FLPR and application cores.
+Additionally, the process varies depending on whether you are working with a single-image or multi-image build.
 
 .. note::
    The following instructions do not cover the scenario of multi-image single-core builds.
@@ -100,13 +91,13 @@ The FLPR core supports two variants:
 Standard build
 --------------
 
-This subsection explains how to build an application using :ref:`sysbuild <configuration_system_overview_sysbuild>`.
+This section explains how to build an application using :ref:`sysbuild <configuration_system_overview_sysbuild>`.
 
 .. note::
    Currently, the documentation does not provide specific instructions for building an application image using sysbuild to incorporate the FLPR core as a sub-image.
    The only documented scenario involves building the FLPR as the main image and the application as a sub-image.
 
-Follow these steps to complete the build:
+To complete the build, do the following:
 
 .. tabs::
 
@@ -144,11 +135,6 @@ Depending on the method you select, complete the following steps:
 
    .. group-tab:: nRF Connect for VS Code
 
-      .. note::
-
-         The |nRFVSC| currently offers experimental support for the nrf54h20's FLPR core.
-         Certain features, particularly debugging, may not function as expected.
-
       .. include:: /includes/vsc_build_and_run.txt
 
       3. Build the application image by configuring the following options:
@@ -175,7 +161,7 @@ Depending on the method you select, complete the following steps:
 
             west build -p -b nrf54h20dk/nrf54h20/cpuapp -S nordic-flpr --no-sysbuild
 
-      #. Program the application core image by running the `west flash` command :ref:`without --erase <programming_params_no_erase>`.
+      #. Program the application core image by running the ``west flash`` command :ref:`without --erase <programming_params_no_erase>`.
 
          .. code-block:: console
 
@@ -189,7 +175,7 @@ Depending on the method you select, complete the following steps:
 
          You can customize the command for additional options by adding :ref:`build parameters <optional_build_parameters>`.
 
-      #. Once the FLPR core image is successfully built, program it by running the `west flash` command :ref:`without --erase <programming_params_no_erase>`.
+      #. Once the FLPR core image is successfully built, program it by running the ``west flash`` command :ref:`without --erase <programming_params_no_erase>`.
 
          .. code-block:: console
 
