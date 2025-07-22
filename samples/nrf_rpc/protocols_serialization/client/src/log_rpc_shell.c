@@ -178,6 +178,20 @@ static int cmd_log_rpc_crash(const struct shell *sh, size_t argc, char *argv[])
 	return 0;
 }
 
+static int cmd_log_rpc_crash_invalidate(const struct shell *sh, size_t argc, char *argv[])
+{
+	int rc;
+
+	rc = log_rpc_invalidate_crash_dump();
+
+	if (rc) {
+		shell_error(sh, "Error: %d", rc);
+		return -ENOEXEC;
+	}
+
+	return 0;
+}
+
 static int cmd_log_rpc_echo(const struct shell *sh, size_t argc, char *argv[])
 {
 	int rc = 0;
@@ -216,6 +230,11 @@ static int cmd_log_rpc_time(const struct shell *sh, size_t argc, char *argv[])
 	return 0;
 }
 
+SHELL_STATIC_SUBCMD_SET_CREATE(crash_cmds,
+			       SHELL_CMD_ARG(invalidate, NULL, "Invalidate crash dump",
+					     cmd_log_rpc_crash_invalidate, 1, 0),
+			       SHELL_SUBCMD_SET_END);
+
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	log_rpc_cmds,
 	SHELL_CMD_ARG(stream_level, NULL, "Set log streaming level <0-4>", cmd_log_rpc_stream_level,
@@ -227,7 +246,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      cmd_log_rpc_history_stop_fetch, 2, 0),
 	SHELL_CMD_ARG(history_threshold, NULL, "Get or set history usage threshold [0-100]",
 		      cmd_log_rpc_history_threshold, 1, 1),
-	SHELL_CMD_ARG(crash, NULL, "Retrieve remote device crash log", cmd_log_rpc_crash, 1, 0),
+	SHELL_CMD_ARG(crash, &crash_cmds, "Retrieve crash dump from remote", cmd_log_rpc_crash, 1,
+		      0),
 	SHELL_CMD_ARG(echo, NULL, "Generate log message on remote <0-4> <msg>", cmd_log_rpc_echo, 3,
 		      0),
 	SHELL_CMD_ARG(time, NULL, "Set current time <time_us|now>", cmd_log_rpc_time, 2, 0),

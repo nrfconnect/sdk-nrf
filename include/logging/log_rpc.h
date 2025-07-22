@@ -164,6 +164,18 @@ void log_rpc_stop_fetch_history(bool pause);
 int log_rpc_get_crash_dump(size_t offset, uint8_t *buffer, size_t buffer_length);
 
 /**
+ * @brief Invalidates the crash dump saved on the remote device.
+ *
+ * This function issues an nRF RPC command to mark the crash dump saved on
+ * the remote device as invalid, so that it can no longer be retrieved by
+ * @ref log_rpc_get_crash_dump function.
+ *
+ * @returns 0           Indicates success.
+ * @returns -errno      Indicates failure.
+ */
+int log_rpc_invalidate_crash_dump(void);
+
+/**
  * @brief Generates a log message on the remote device.
  *
  * This function issues an nRF RPC command that requests the remote device to
