@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <zephyr/kernel.h>
 #include <nrfx.h>
 #include <cracen/mem_helpers.h>
 #include <cracen/statuscodes.h>
@@ -12,8 +13,6 @@
 #include <psa/crypto.h>
 #include <stdint.h>
 #include <sxsymcrypt/internal.h>
-#include <zephyr/sys/util.h>
-#include <zephyr/sys/__assert.h>
 #include <hw_unique_key.h>
 #include <cracen_psa.h>
 #include "common.h"
