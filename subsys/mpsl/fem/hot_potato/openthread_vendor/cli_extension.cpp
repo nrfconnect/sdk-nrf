@@ -101,6 +101,21 @@ void vendor_lfclk_output(const bool enable)
 #endif
 }
 
+void vendor_hfclk_output(const bool enable, const uint8_t divisor)
+{
+#if defined(NRF54L_SERIES)
+	const nrf_grtc_clkout_t out = NRF_GRTC_CLKOUT_FAST;
+
+	if (!enable) {
+		nrfy_grtc_clkout_divider_set(NRF_GRTC, GRTC_CLKCFG_CLKFASTDIV_Min);
+		nrfy_grtc_clkout_set(NRF_GRTC, out, false);
+	} else {
+		nrfy_grtc_clkout_divider_set(NRF_GRTC, divisor);
+		nrfy_grtc_clkout_set(NRF_GRTC, out, true);
+	}
+#endif
+}
+
 } // extern "C"
 
 static otError VendorPowerLimitTable(void *aContext, uint8_t aArgsLength, char *aArgs[])
@@ -668,6 +683,26 @@ static otError VendorClkoutLfclk(void *aContext, uint8_t aArgsLength, char *aArg
 	return error;
 }
 
+static otError VendorClkoutHfclk(void *aContext, uint8_t aArgsLength, char *aArgs[])
+{
+	otError error = OT_ERROR_NONE;
+
+	if (aArgsLength == 1) {
+		VerifyOrExit(strcmp(aArgs[0], "stop") == 0, error = OT_ERROR_INVALID_ARGS);
+		vendor_hfclk_output(false, 0);
+	} else if (aArgsLength == 2) {
+		int32_t divisor = atoi(aArgs[1]);
+		VerifyOrExit(strcmp(aArgs[0], "start") == 0, error = OT_ERROR_INVALID_ARGS);
+		VerifyOrExit(divisor >= 1 && divisor <= UINT8_MAX, error = OT_ERROR_INVALID_ARGS);
+		vendor_hfclk_output(true, divisor);
+	} else {
+		error = OT_ERROR_INVALID_ARGS;
+	}
+
+exit:
+	return error;
+}
+
 static otError memory_read(const struct shell *sh, mem_addr_t addr, uint8_t width)
 {
 	otError error = OT_ERROR_NONE;
@@ -723,6 +758,7 @@ extern "C" otError VendorRadioTest(void *aContext, uint8_t aArgsLength, char *aA
 
 static const otCliCommand sExtensionCommands[] = {
 	{"vendor:clkout:lfclk", VendorClkoutLfclk},
+	{"vendor:clkout:hfclk", VendorClkoutHfclk},
 	{"vendor:devmem", VendorDevMem},
 	{"vendor:diag:attenuation", VendorDiagAttenuation},
 	{"vendor:diag:fem:enable", VendorDiagFemEnable},

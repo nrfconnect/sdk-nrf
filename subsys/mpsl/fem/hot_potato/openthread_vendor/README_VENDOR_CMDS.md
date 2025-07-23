@@ -115,6 +115,23 @@ ot vendor:clkout:lfclk stop
 Done
 ```
 
+
+## ot vendor:clkout:hfclk
+
+Enables/disables GRTC fast clock output on the corresponding clock pin.
+The fast clock is divided before it is output on a pin.
+When enabling, a divisor from range 1-255 need to be specified.
+
+```
+ot vendor:clkout:hfclk start 2
+Done
+
+ot vendor:clkout:hfclk stop
+Done
+```
+
+> The output frequency is calculated in the following way: `(fast clock)/(divisor * 2)`.
+
 ## ot vendor:devmem
 
 Read device memory at the specified address.
