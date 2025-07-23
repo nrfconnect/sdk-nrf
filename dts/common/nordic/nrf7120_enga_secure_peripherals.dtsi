@@ -22,7 +22,7 @@ kmu: kmu@49000 {
 };
 
 mram_controller: mram-controller@4e000 {
-	compatible = "nordic,mram-controller";
+	compatible = "nordic,nrf-mramc";
 	reg = <0x4e000 0x1000>;
 	#address-cells = <1>;
 	#size-cells = <1>;
