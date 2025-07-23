@@ -175,36 +175,6 @@ Building and running
 
 For building and running the NSIB with an application, see :ref:`ug_bootloader_adding_sysbuild_immutable`.
 
-Building and running using |VSC|
-================================
-
-.. include:: /includes/build_and_run_bootloader.txt
-
-To add the NSIB as an image to your application, complete the following steps:
-
-1. :ref:`Create a private key in PEM format <ug_fw_update_keys>`.
-#. Enable the |NSIB| through Kconfig as follows:
-
-   a. Select :guilabel:`Kconfig` in the :guilabel:`Actions View` to open the nRF Kconfig tab.
-   #. Expand :guilabel:`Modules` > :guilabel:`nrf` > :guilabel:`Nordic nRF Connect` > :guilabel:`Bootloader` and set :guilabel:`Use Secure Bootloader` to enable :kconfig:option:`CONFIG_SECURE_BOOT`.
-   #. Expand :guilabel:`Use Secure Bootloader`.
-      Under :guilabel:`Private key PEM file` (:kconfig:option:`CONFIG_SB_SIGNING_KEY_FILE`), enter the path to the private key that you created.
-
-      You can also modify other additional configuration options, but that is not recommended.
-      The default settings are suitable for most use cases.
-
-      .. note::
-         If you need more flexibility with signing, or if you do not want the build system to handle your private key, choose :kconfig:option:`CONFIG_SB_SIGNING_CUSTOM`, and also specify :kconfig:option:`CONFIG_SB_SIGNING_COMMAND` and :kconfig:option:`CONFIG_SB_SIGNING_PUBLIC_KEY`.
-         You can use the :guilabel:`Search modules` bar in nRF Kconfig to find these options.
-         These options allow you to define the signing command.
-
-   #. Click :guilabel:`Save`.
-
-#. Select :guilabel:`Build` in the :guilabel:`Actions View` to start the build process.
-   The build process creates two images, one for the NSIB and one for the application, and merges them.
-
-#. Select :guilabel:`Flash` in the :guilabel:`Actions View` to program the resulting image to your device.
-
 Dependencies
 ************
 
