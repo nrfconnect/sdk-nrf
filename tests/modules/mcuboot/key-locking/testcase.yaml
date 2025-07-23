@@ -1,0 +1,18 @@
+tests:
+  mcuboot.key_locking:
+    sysbuild: true
+    tags:
+      - mcuboot
+      - sysbuild
+      - kmu
+      - key_locking
+      - psa
+      - cracen
+      - ci_tests_modules_mcuboot
+    extra_args:
+      # Provision the automatically when running on CI
+      - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE=y
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
