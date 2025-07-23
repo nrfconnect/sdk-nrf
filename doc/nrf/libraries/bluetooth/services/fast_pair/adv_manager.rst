@@ -56,6 +56,7 @@ The :kconfig:option:`CONFIG_BT_FAST_PAIR_ADV_MANAGER` Kconfig option depends on 
 * :kconfig:option:`CONFIG_BT_PERIPHERAL` - Peripheral role support
 * :kconfig:option:`CONFIG_BT_EXT_ADV` - Extended advertising support
 * :kconfig:option:`CONFIG_BT_PRIVACY` - Bluetooth privacy support
+* :kconfig:option:`CONFIG_BT_RPA_TIMEOUT_DYNAMIC` - Support for dynamic configuration of the RPA timeout with the :c:func:`bt_le_set_rpa_timeout` function
 * :kconfig:option:`CONFIG_BT_SMP` - Security Manager Protocol support
 * :kconfig:option:`CONFIG_BT_ADV_PROV` - Advertising data provider support
 * :kconfig:option:`CONFIG_BT_ADV_PROV_FAST_PAIR` - Fast Pair advertising data provider support
