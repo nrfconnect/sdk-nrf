@@ -146,6 +146,14 @@ Extended models
 The Scheduler Server is implemented as a root model.
 When a Scheduler Server model is present on an element, the Scene Server model (see the :ref:`bt_mesh_scene_srv_readme` documentation) shall also be present on the same element.
 
+.. note::
+   In addition, the |NCS| has the following implementation-specific requirements:
+
+   * The Time Server model (see :ref:`bt_mesh_time_srv_readme`) must be instantiated in the application.
+   * The default Transition Time Server model (see :ref:`bt_mesh_dtt_srv_readme`) must be instantiated in the application on the same or lower indexed element as the Scheduler Server model.
+
+   See the :ref:`bt_mesh_scheduler_srv` API documentation for model instantiation details.
+
 Persistent storage
 ******************
 
