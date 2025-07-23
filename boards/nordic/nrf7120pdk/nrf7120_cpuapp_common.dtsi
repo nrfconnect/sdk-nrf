@@ -11,11 +11,11 @@
 
 / {
 	chosen {
-		zephyr,console = &uart20;
-		zephyr,shell-uart = &uart20;
-		zephyr,uart-mcumgr = &uart20;
-		zephyr,bt-mon-uart = &uart20;
-		zephyr,bt-c2h-uart = &uart20;
+		zephyr,console = &uart30;
+		zephyr,shell-uart = &uart30;
+		zephyr,uart-mcumgr = &uart30;
+		zephyr,bt-mon-uart = &uart30;
+		zephyr,bt-c2h-uart = &uart30;
 		zephyr,flash = &cpuapp_mram;
 		zephyr,ieee802154 = &ieee802154;
 		zephyr,wifi = &wlan0;
@@ -120,7 +120,7 @@
 	};
 };
 
-&uart20 {
+&uart30 {
 	status = "okay";
 };
 
