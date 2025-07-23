@@ -943,6 +943,7 @@
 /tests/zephyr/drivers/counter/            @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/flash/common/       @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /tests/zephyr/drivers/flash/negative_tests/ @nrfconnect/ncs-low-level-test
+/tests/zephyr/drivers/flash/negative_tests_nrf7120/ @nrfconnect/ncs-code-owners @rob-robinson-14 @Hi-Im-David @travis3630
 /tests/zephyr/drivers/gpio/               @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/i2c/i2c_bme688/     @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/i2c/i2c_target_api/ @nrfconnect/ncs-low-level-test
