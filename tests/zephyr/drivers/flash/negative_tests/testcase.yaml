@@ -10,3 +10,8 @@ tests:
       - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
     integration_platforms:
       - nrf54lv10dk/nrf54lv10a/cpuapp
+  nrf.extended.drivers.flash.negative_tests.mramc:
+    platform_allow:
+      - nrf7120pdk/nrf7120/cpuapp
+    integration_platforms:
+      - nrf7120pdk/nrf7120/cpuapp
