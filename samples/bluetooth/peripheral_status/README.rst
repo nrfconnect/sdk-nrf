@@ -124,7 +124,7 @@ CONFIG_BT_STATUS_SECURITY_ENABLED - Enable Bluetooth® LE security
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/peripheral_lbs`
+.. |sample path| replace:: :file:`samples/bluetooth/peripheral_status`
 
 .. include:: /includes/build_and_run_ns.txt
 
