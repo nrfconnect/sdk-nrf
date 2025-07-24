@@ -17,6 +17,7 @@
 #endif
 
 LOG_MODULE_REGISTER(bl_storage, CONFIG_SECURE_BOOT_STORAGE_LOG_LEVEL);
+//LOG_MODULE_REGISTER(bl_storage, 4);
 
 #define COUNTER_DESC_VERSION 1 /* Counter description value for firmware version. */
 
@@ -352,6 +353,8 @@ int get_counter(uint16_t counter_desc, counter_t *counter_value, const counter_t
 	const uint8_t *counter_obj = get_counter_collection((uint8_t)counter_desc);
 	uint16_t num_counter_slots;
 
+LOG_ERR("counter_obj: %p, %p", counter_obj, counter_value);
+
 	if (counter_obj == NULL || counter_value == NULL) {
 		return -EINVAL;
 	}
@@ -360,10 +363,13 @@ int get_counter(uint16_t counter_desc, counter_t *counter_value, const counter_t
 LOG_ERR("slots for %d = %d", counter_desc, num_counter_slots);
 
 	for (uint16_t i = 0; i < num_counter_slots; i++) {
-		counter_t counter = bl_storage_counter_get((uint32_t)addr);
+		const counter_t *slot_addr = (counter_t *)(counter_obj + (i * sizeof(counter_t)));
+		counter_t counter = bl_storage_counter_get((uint32_t)slot_addr);
+
+//LOG_ERR("read @ 0x%x = %u", slot_addr, counter);
 
 		if (counter == 0) {
-			addr = (counter_t *)(counter_obj + (i * sizeof(counter_t)));
+			addr = (counter_t *)slot_addr;
 			break;
 		}
 
@@ -377,6 +383,7 @@ LOG_ERR("free slot: %p, addr: %p", free_slot, addr);
 		*free_slot = addr;
 	}
 
+LOG_ERR("highest count: %d", highest_counter);
 	*counter_value = highest_counter;
 	return 0;
 }
