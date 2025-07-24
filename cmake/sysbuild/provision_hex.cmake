@@ -80,8 +80,7 @@ function(provision application prefix_name mcuboot_downgrade_protection)
     endif()
   endif()
 
-#  if(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
-  if(mcuboot_downgrade_protection)
+  if(mcuboot_downgrade_protection AND SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
     set(mcuboot_counters_slots --mcuboot-counters-slots ${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS})
   endif()
 
