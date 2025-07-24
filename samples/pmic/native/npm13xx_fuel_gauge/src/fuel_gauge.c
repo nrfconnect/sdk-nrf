@@ -23,7 +23,11 @@
 static int64_t ref_time;
 
 static const struct battery_model battery_model = {
+#if CONFIG_SHIELD_NPM1300_EK
 #include "battery_model.inc"
+#elif CONFIG_SHIELD_NPM1304_EK
+#include "LP18l917_20mAh_battery_model.inc"
+#endif
 };
 
 static int read_sensors(const struct device *charger, float *voltage, float *current, float *temp,
