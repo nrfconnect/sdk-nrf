@@ -650,7 +650,7 @@ PMIC samples
   * The :ref:`npm2100_one_button` sample that demonstrates how to support wake-up, shutdown, and user interactions through a single button connected to the nPM2100 PMIC.
   * The :ref:`npm2100_fuel_gauge` sample that demonstrates how to calculate the battery state of charge of primary cell batteries using the :ref:`nrfxlib:nrf_fuel_gauge`.
 
-* :ref:`npm1300_fuel_gauge` sample:
+* :ref:`nPM1300: Fuel gauge <npm13xx_fuel_gauge>` sample:
 
   * Updated to accommodate API changes in nRF Fuel Gauge library v1.0.0.
 
