@@ -15,7 +15,7 @@
 #include <dfu/pcd.h>
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
-#ifdef CONFIG_PCD_LOCK_NETCORE_APPROTECT
+#ifdef CONFIG_PCD_LOCK_NETCORE_DEBUG
 #include <nrfx_nvmc.h>
 #endif
 
