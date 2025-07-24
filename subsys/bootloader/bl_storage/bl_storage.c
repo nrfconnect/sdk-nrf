@@ -19,8 +19,6 @@
 LOG_MODULE_REGISTER(bl_storage, CONFIG_SECURE_BOOT_STORAGE_LOG_LEVEL);
 //LOG_MODULE_REGISTER(bl_storage, 4);
 
-#define COUNTER_DESC_VERSION 1 /* Counter description value for firmware version. */
-
 #define ALIGN_TO_WORD(x) ((uint32_t)x & 0x3)
 
 #define STATE_ENTERED 0x0000
@@ -267,7 +265,6 @@ void invalidate_public_key(uint32_t key_idx)
 	}
 }
 
-//static const struct collection *get_first_collection(void)
 static const uint8_t *get_first_collection(void)
 {
 	return (const uint8_t *)&BL_STORAGE->key_data[num_public_keys_read()];
@@ -299,11 +296,6 @@ static const uint16_t get_collection_size(uint16_t type)
 {
 	return get_collection_slots(type) * sizeof(counter_t);
 }
-
-/*static uint16_t get_collection_type(const struct collection *collection)
-{
-	return bl_storage_otp_halfword_read((uint32_t)&collection->type);
-}*/
 
 /** Get the counter_collection data structure in the provision data. */
 static const uint8_t *get_counter_collection(uint16_t type)
@@ -531,57 +523,11 @@ void read_implementation_id_from_otp(uint8_t *buf)
 		   BL_STORAGE_IMPLEMENTATION_ID_SIZE);
 }
 
-static uint32_t get_monotonic_counter_collection_size(const struct counter_collection *collection)
-{
-	/* Add only the constant part of the counter_collection. */
-	uint32_t size = sizeof(struct collection);
-	uint16_t num_counters =
-		bl_storage_otp_halfword_read((uint32_t)&collection->collection.count);
-	const struct monotonic_counter *counter = collection->counters;
-	uint16_t num_slots;
-
-	for (int i = 0; i < num_counters; i++) {
-		/* Add only the constant part of the monotonic_counter. */
-		size += sizeof(struct monotonic_counter);
-
-		num_slots = bl_storage_otp_halfword_read((uint32_t)&counter->num_counter_slots);
-		size += (num_slots * sizeof(counter_t));
-
-		/* Move to the next monotonic counter. */
-		counter = (const struct monotonic_counter *)&counter->counter_slots[num_slots];
-	}
-
-	return size;
-}
-
-static const struct variable_data_collection *get_variable_data_collection(void)
-{
-	/* We expect to find variable data after the monotonic counters. */
-	const struct collection *collection = get_first_collection();
-
-	if (get_collection_type(collection) == BL_COLLECTION_TYPE_MONOTONIC_COUNTERS) {
-		/* Advance to next collection. */
-		collection = (const struct collection *)((uint8_t *)collection +
-							 get_monotonic_counter_collection_size(
-								 (const struct counter_collection *)
-									 collection));
-
-		/* Verify that we found variable collection. */
-		return get_collection_type(collection) == BL_COLLECTION_TYPE_VARIABLE_DATA
-			       ? (const struct variable_data_collection *)collection
-			       : NULL;
-
-	} else if (get_collection_type(collection) == BL_COLLECTION_TYPE_VARIABLE_DATA) {
-		/* Bit of a special scenario where monotonic counters are not present. */
-		return (const struct variable_data_collection *)collection;
-	}
-
-	return NULL;
-}
-
 int read_variable_data(enum variable_data_type data_type, uint8_t *buf, uint32_t *buf_len)
 {
-	const struct variable_data_collection *collection;
+	const struct variable_data_collection *collection =
+				(const struct variable_data_collection *)get_counter_collection(
+						BL_COLLECTION_TYPE_VARIABLE_DATA);
 	const struct variable_data *variable_data;
 	uint16_t count;
 	uint8_t type;
@@ -589,13 +535,6 @@ int read_variable_data(enum variable_data_type data_type, uint8_t *buf, uint32_t
 
 	if (buf == NULL) {
 		return -EINVAL;
-	}
-
-	collection = get_variable_data_collection();
-	if (collection == NULL) {
-		/* Variable data collection does not necessarily exist. Exit gracefully. */
-		*buf_len = 0;
-		return 0;
 	}
 
 	/* Loop through all variable data entries. */

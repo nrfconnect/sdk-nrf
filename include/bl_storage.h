@@ -39,7 +39,7 @@ typedef uint32_t lcs_reserved_t;
 
 #define EHASHFF 113 /* A hash contains too many 0xFs. */
 #define EREADLCS 114 /* LCS field of OTP is in an invalid state */
-#define EINVALIDLCS 115 /* Invalid LCS*/
+#define EINVALIDLCS 115 /* Invalid LCS */
 
 /* We truncate the 32 byte sha256 down to 16 bytes before storing it */
 #define SB_PUBLIC_KEY_HASH_LEN 16
@@ -86,6 +86,11 @@ enum variable_data_type {
 	BL_VARIABLE_DATA_TYPE_PSA_CERTIFICATION_REFERENCE = 0x1
 };
 
+struct variable_data {
+	uint8_t type;
+	uint8_t length;
+	uint8_t data[];
+};
 
 /* The third data structure in the provision page. It has unknown length since
  * 'variable_data' is repeated. The collection starts immediately after the
@@ -94,10 +99,9 @@ enum variable_data_type {
  * the entries in the variable data collection have unknown length, so they
  * cannot be accessed through array indices.
  */
-struct variable_data {
-	uint8_t type;
-	uint8_t length;
-	uint8_t data[];
+struct variable_data_collection {
+	uint16_t count;
+	struct variable_data variable_data[];
 };
 
 /** The first data structure in the bootloader storage. It has unknown length
@@ -119,6 +123,7 @@ struct bl_storage_data {
 	 */
 
 	/* Variable data collection:
+	 * uint16_t count;
 	 * struct {
 	 *	uint8_t type;
 	 *	uint8_t length;
