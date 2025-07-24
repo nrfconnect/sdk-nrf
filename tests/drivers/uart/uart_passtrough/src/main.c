@@ -11,40 +11,43 @@
 const struct device *const console_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
 const struct device *const passtrough_dev = DEVICE_DT_GET(DT_CHOSEN(uart_passthrough));
 
+#define QUEUE_SIZE 16
+
 typedef struct {
-	uint8_t *rx_buffer;
-	uint8_t *tx_buffer;
+	struct k_msgq *tx_queue;
+	struct k_msgq *rx_queue;
 	const struct device *other_dev;
 
 } uart_pass;
 
-/*
- * Note: this simple test uses one byte buffer,
- * CPU must be able to receive and send one character,
- * before another one is received
- * This limits the usable buadrates range
- */
+K_MSGQ_DEFINE(console_queue, sizeof(uint8_t), QUEUE_SIZE, 1);
+K_MSGQ_DEFINE(passtrough_queue, sizeof(uint8_t), QUEUE_SIZE, 1);
 
-static uint8_t console_buf[1];
-static uint8_t passthrough_buf[1];
-
-void uart_tx_interrupt_service(const struct device *dev, uart_pass *test_data)
+static void uart_tx_interrupt_service(const struct device *dev, uart_pass *test_data)
 {
-	uart_fifo_fill(dev, test_data->tx_buffer, 1);
+	uint8_t tx_data;
+	uint32_t items_in_queue = k_msgq_num_used_get(test_data->tx_queue);
+
+	for (int i = 0; i < items_in_queue; i++) {
+		k_msgq_get(test_data->tx_queue, &tx_data, K_NO_WAIT);
+		uart_fifo_fill(dev, &tx_data, 1);
+	}
 	uart_irq_tx_disable(dev);
 }
 
-void uart_rx_interrupt_service(const struct device *dev, uart_pass *test_data)
+static void uart_rx_interrupt_service(const struct device *dev, uart_pass *test_data)
 {
+	uint8_t rx_data[QUEUE_SIZE];
 	int rx_data_length = 0;
 
-	do {
-		rx_data_length = uart_fifo_read(dev, test_data->rx_buffer, 1);
-	} while (rx_data_length);
+	rx_data_length = uart_fifo_read(dev, rx_data, QUEUE_SIZE);
+	for (int i = 0; i < rx_data_length; i++) {
+		k_msgq_put(test_data->rx_queue, &rx_data[i], K_NO_WAIT);
+	}
 	uart_irq_tx_enable(test_data->other_dev);
 }
 
-void uart_isr_handler(const struct device *dev, void *user_data)
+static void uart_isr_handler(const struct device *dev, void *user_data)
 {
 	uart_pass *test_data = (uart_pass *)user_data;
 
@@ -66,8 +69,8 @@ int main(void)
 	uart_pass console_dev_data;
 	uart_pass passtrough_dev_data;
 
-	console_dev_data.rx_buffer = console_buf;
-	console_dev_data.tx_buffer = passthrough_buf;
+	console_dev_data.rx_queue = &console_queue;
+	console_dev_data.tx_queue = &passtrough_queue;
 	console_dev_data.other_dev = passtrough_dev;
 
 	err = uart_irq_callback_set(console_dev, uart_isr_handler);
@@ -76,8 +79,8 @@ int main(void)
 					      (void *)&console_dev_data);
 	printk("uart_irq_callback_user_data_set(console_dev) err=%d\n", err);
 
-	passtrough_dev_data.rx_buffer = passthrough_buf;
-	passtrough_dev_data.tx_buffer = console_buf;
+	passtrough_dev_data.rx_queue = &passtrough_queue;
+	passtrough_dev_data.tx_queue = &console_queue;
 	passtrough_dev_data.other_dev = console_dev;
 
 	err = uart_irq_callback_set(passtrough_dev, uart_isr_handler);
