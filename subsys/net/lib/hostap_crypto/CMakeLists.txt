@@ -79,4 +79,14 @@ if(DEFINED CONFIG_HOSTAP_CRYPTO_ALT_PSA)
     ${HOSTAP_BASE}/port/mbedtls/supp_psa_api.c
     ${HOSTAP_SRC_BASE}/crypto/tls_none.c
   )
+
+  if(CONFIG_HOSTAP_CRYPTO_WPA3_PSA)
+    zephyr_library_sources(
+      wpa3_psa.c
+    )
+    zephyr_library_compile_definitions(
+      CONFIG_SAE
+      CONFIG_ECC
+    )
+  endif()
 endif()
