@@ -90,17 +90,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-3813"
 
 - scenarios:
-    - llext.*
-  platforms:
-    - nrf54h20dk@0.9.0/nrf54h20/cpurad
-    - nrf52dk/nrf52832
-    - nrf5340dk/nrf5340/cpunet
-    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
-    - nrf54l15dk/nrf54l15/cpuflpr
-    - qemu_cortex_m3/ti_lm3s6965
-  comment: "overflow, to report/fix in the upstream @permac and put ticket # here"
-
-- scenarios:
     - storage.flash_map
   platforms:
     - nrf9160dk@0.14.0/nrf9160/ns
@@ -110,7 +99,7 @@
     - sample.filesystem.fat_fs.nrf54l15dk
   platforms:
     - nrf54l15dk/nrf54l15/cpuapp
-  comment: "Test not aligned for nrf54l15 - missing PM configuration"
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34573"
 
 - scenarios:
     - sample.mcumgr.smp_svr.ram_load.*
@@ -146,17 +135,22 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31671"
 
 - scenarios:
-    - init.check_init_priorities
     - shell.device_filter
   platforms:
     - native_sim/native
-  comment: "clash of entropy configurations, will be resolved in upstream (Frank Kvamtro)"
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34576"
+
+- scenarios:
+    - init.check_init_priorities
+  platforms:
+    - native_sim/native
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34577"
 
 - scenarios:
     - mgmt.mcumgr.fs.mgmt.hash.supported.sha256
   platforms:
     - nrf54l15dk/nrf54l15/cpuapp
-  comment: "needs porting, owner not clear"
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34575"
 
 - scenarios:
     - libraries.encoding.jwt.rsa.psa
@@ -166,14 +160,6 @@
     - nrf9160dk@0.14.0/nrf9160/ns
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31783"
-
-- scenarios:
-    - sample.net.openthread.coprocessor
-    - sample.net.openthread.coprocessor.usb
-    - sample.openthread.coprocessor.rcp
-  platforms:
-    - nrf52840dk/nrf52840
-  comment: "Not compatible with NCS. https://nordicsemi.atlassian.net/browse/KRKNWK-20183"
 
 - scenarios:
     - bluetooth.shell.shell_br
@@ -216,6 +202,12 @@
   platforms:
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34100"
+
+- scenarios:
+    - examples.nrfx_spim.non_blocking
+  platforms:
+    - nrf9160dk@0.14.0/nrf9160
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-8152"
 
 # ---------------------------------   Won't fix section -----------------------------------
 
@@ -458,11 +450,6 @@
   comment: "Won't be fixed, 'rodata will not fit in region FLASH' - no ticket"
 
 - scenarios:
-    - examples.nrfx_spim.blocking
-    - examples.nrfx_spim.non_blocking
-  comment: "Not fixable during upmerge, fix will be included in next upmerge"
-
-- scenarios:
     - drivers.hwinfo.api
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuppr
@@ -510,3 +497,22 @@
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuppr
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34011"
+
+- scenarios:
+    - llext.*
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpurad
+    - nrf52dk/nrf52832
+    - nrf5340dk/nrf5340/cpunet
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
+    - nrf54l15dk/nrf54l15/cpuflpr
+    - qemu_cortex_m3/ti_lm3s6965
+  comment: "https://github.com/zephyrproject-rtos/zephyr/issues/74536 - overflow"
+
+- scenarios:
+    - sample.net.openthread.coprocessor
+    - sample.net.openthread.coprocessor.usb
+    - sample.openthread.coprocessor.rcp
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "Not compatible with NCS. https://nordicsemi.atlassian.net/browse/KRKNWK-20183"
