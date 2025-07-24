@@ -97,15 +97,21 @@ config HOSTAP_CRYPTO_ENTERPRISE
 
 endif
 
-# PSA crypto is WPA2 only for now
+# PSA crypto is personal security only for now
 if HOSTAP_CRYPTO_ALT_PSA
+	# Disable standard WPA3 support and use the PSA variant
+	config WIFI_NM_WPA_SUPPLICANT_WPA3
+		default n
+	config WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
+		default n
 
-config WIFI_NM_WPA_SUPPLICANT_WPA3
-	default n
-
-config WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE
-	default n
-
+	config HOSTAP_CRYPTO_WPA3_PSA
+		bool "WPA3 PSA support"
+		select PSA_WANT_ALG_WPA3_SAE_PT
+		select PSA_WANT_ALG_WPA3_SAE
+		select PSA_WANT_KEY_TYPE_WPA3_SAE_PT
+		select PSA_WANT_ALG_HKDF
+		default y
 endif
 
 endif
