@@ -1018,6 +1018,7 @@ Documentation
   * The :ref:`data_storage` page, which covers storage alternatives for general data, including NVMC, NVS, file systems, Settings, and PSA Protected Storage, with feature comparisons and configuration examples.
   * The :ref:`key_storage` page, which covers storage alternatives for cryptographic keys, including PSA Crypto API, Hardware Unique Keys (HUK), modem certificate storage, and other security-focused storage mechanisms.
   * The :ref:`bt_fast_pair_adv_manager_readme` page that describes the new helper module for the :ref:`bt_fast_pair_readme` library.
+  * The :ref:`migration_uicr_nRF54H20` page that describes how to migrate application-configured UICRs from SUIT to IronSide SE on the nRF54H20 SoC.
 
 * Updated the :ref:`bt_fast_pair_readme` page to mention the availability of the :ref:`bt_fast_pair_adv_manager_readme` helper module.
 
