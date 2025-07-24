@@ -688,7 +688,7 @@ PMIC samples
 
 * Added support for the :zephyr:board:`nrf54l15dk` and :zephyr:board:`nrf54h20dk` to the PMIC samples.
 
-* :ref:`npm1300_fuel_gauge` sample:
+* :ref:`nPM1300: Fuel gauge <npm13xx_fuel_gauge>` sample:
 
   * Updated to accommodate API changes in nRF Fuel Gauge library v0.11.1.
 

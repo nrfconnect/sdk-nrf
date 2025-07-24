@@ -496,7 +496,7 @@ Peripheral samples
 PMIC samples
 ------------
 
-* :ref:`npm1300_fuel_gauge` sample:
+* :ref:`nPM1300: Fuel gauge <npm13xx_fuel_gauge>` sample:
 
   * Updated to accommodate API changes in nRF Fuel Gauge library v1.0.0.
 
