@@ -449,6 +449,9 @@ Bluetooth Fast Pair samples
 
   * Updated:
 
+    * The button action for controlling the Fast Pair advertising to limit its applicability.
+      Now, this action allows only to enter and exit the pairing mode when the device is not provisioned.
+      It is disabled immediately once the FMND provisioning is started.
     * The advertising to no longer rotate the Resolvable Private Address (RPA) in the DFU mode.
     * The :ref:`fast_pair_locator_tag_testing_fw_update_notifications` section to improve the test procedure.
       The application now provides an additional log message to indicate that the firmware version is being read.

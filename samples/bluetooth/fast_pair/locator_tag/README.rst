@@ -114,24 +114,38 @@ You need to press a button to set your accessory in the Fast Pair discoverable a
 Fast Pair advertising policy
 ============================
 
-The sample manages Fast Pair advertising, which remains turned on if at least one of the following triggers requests it:
+The sample uses the :ref:`bt_fast_pair_adv_manager_readme` module and its trigger-based system to manage the advertising process.
+The advertising is turned on if at least one trigger is active.
 
-   * UI trigger, which occurs after a button action.
-   * FMDN provisioning trigger, which occurs on the Account Key write operation during the FMDN provisioning operation.
-   * Beacon clock synchronization trigger, which occurs after the system bootup if the device is provisioned.
-   * DFU mode trigger, which occurs upon a DFU mode change.
+The sample code defines and manages the following triggers:
 
-If the Fast Pair advertising is enabled, the sample will automatically select the correct advertising mode:
+* Pairing mode trigger that activates after a button action.
 
-   * Fast Pair discoverable advertising - Selected when there is no Account Key stored on the device.
-   * Fast Pair not discoverable advertising - Selected when an Account Key is stored on the device.
+  .. note::
+     This trigger can also automatically change its state in the following cases:
+
+     * When the application is booted and the device is unprovisioned, the trigger is activated.
+     * When the FMDN provisioning is started, the trigger is deactivated.
+       The button action used to control this trigger state is also disabled at the beginning of the FMDN provisioning and gets enabled again once the device becomes unprovisioned.
+
+* DFU mode trigger that activates upon a DFU mode change.
+
+The locator tag extension that is part of the :ref:`bt_fast_pair_adv_manager_readme` module additionally defines and manages the following triggers:
+
+* FMDN provisioning trigger that activates on the Account Key write operation during the FMDN provisioning operation.
+* Beacon clock synchronization trigger that activates after the system bootup if the device is provisioned.
+
+If the Fast Pair advertising is enabled, the sample selects the correct advertising mode based on the state of the pairing mode trigger:
+
+   * Fast Pair discoverable advertising - Selected when the trigger is active.
+   * Fast Pair not discoverable advertising - Selected when the trigger is inactive.
 
 To fully disable Fast Pair advertising, all trigger requests must be removed.
-However, not all triggers can be manually disabled by the user, as the FMDN provisioning and Beacon clock synchronization triggers are managed by the sample automatically and are required for it to work correctly.
+However, you cannot manually disable all triggers, as the FMDN provisioning and Beacon clock synchronization triggers are managed by the :ref:`bt_fast_pair_adv_manager_readme` module automatically and are required for the sample to work correctly.
 This approach ensures that Fast Pair advertising remains enabled as long as any of the modules needs it, preventing premature disabling.
 
-The sample automatically disables the advertising by removing the trigger requests right before the factory reset operation.
-To start Fast Pair discoverable advertising after the FMDN unprovisioning and factory reset operations, you need to activate the UI trigger.
+The sample automatically disables the advertising by removing the trigger requests after the factory reset operation.
+To start Fast Pair discoverable advertising after the FMDN unprovisioning and factory reset operations, you need to activate the pairing mode trigger.
 
 .. note::
 
@@ -344,8 +358,9 @@ The user interface of the sample depends on the hardware platform you are using.
          * Blinks at a 1 second interval if the recovery mode is active on the device and the identification mode is inactive on the device.
 
       Button 1:
-         Sends a request to turn on Fast Pair advertising or removes such a request.
-         This action controls the UI trigger for Fast Pair advertising.
+         Sends a request to turn on Fast Pair discoverable advertising or removes such a request.
+         This action controls the pairing mode trigger.
+         It is enabled only in the FMDN unprovisioned state and is disabled immediately once the FMND provisioning is started.
          See the :ref:`fast_pair_locator_tag_fp_adv_policy` section for details.
 
       Button 2:
@@ -429,8 +444,9 @@ The user interface of the sample depends on the hardware platform you are using.
          * Blinks at a 1 second interval if the recovery mode is active on the device and the identification mode is inactive on the device.
 
       Button 0:
-         Sends a request to turn on Fast Pair advertising or removes such a request.
-         This action controls the UI trigger for Fast Pair advertising.
+         Sends a request to turn on Fast Pair discoverable advertising or removes such a request.
+         This action controls the pairing mode trigger.
+         It is enabled only in the FMDN unprovisioned state and is disabled immediately once the FMND provisioning is started.
          See the :ref:`fast_pair_locator_tag_fp_adv_policy` section for details.
 
       Button 1:
@@ -508,8 +524,9 @@ The user interface of the sample depends on the hardware platform you are using.
 
          * From 1 to 3 seconds (notified by one short beep):
 
-           Sends a request to turn on Fast Pair advertising or removes such a request.
-           This action controls the UI trigger for Fast Pair advertising.
+           Sends a request to turn on Fast Pair discoverable advertising or removes such a request.
+           This action controls the pairing mode trigger.
+           It is enabled only in the FMDN unprovisioned state and is disabled immediately once the FMND provisioning is started.
            See the :ref:`fast_pair_locator_tag_fp_adv_policy` section for details.
 
          * From 3 to 5 seconds (notified by two short beeps):
