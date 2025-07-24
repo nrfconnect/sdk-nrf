@@ -46,18 +46,18 @@ typedef uint32_t lcs_reserved_t;
 
 /* Supported collection types. */
 enum collection_type {
-	BL_COLLECTION_TYPE_MONOTONIC_COUNTERS = 1,
-	BL_COLLECTION_TYPE_VARIABLE_DATA = 0x9312,
+	/** Counter used by NSIB to check the firmware version. */
+	BL_MONOTONIC_COUNTERS_DESC_NSIB = 0,
+
+	/**
+	 * Counter used by MCUBOOT to check the firmware version. Suffixed with ID0 as we might
+	 * support checking the version of multiple images in the future.
+	 */
+	BL_MONOTONIC_COUNTERS_DESC_MCUBOOT_ID0,
+
+	/** Variable data #variable_data_type. */
+	BL_COLLECTION_TYPE_VARIABLE_DATA,
 };
-
-/* Counter used by NSIB to check the firmware version */
-#define BL_MONOTONIC_COUNTERS_DESC_NSIB 0x1
-
-/* Counter used by MCUBOOT to check the firmware version. Suffixed
- * with ID0 as we might support checking the version of multiple
- * images in the future.
- */
-#define BL_MONOTONIC_COUNTERS_DESC_MCUBOOT_ID0 0x2
 
 /** Storage for the PRoT Security Lifecycle state, that consists of 4 states:
  *  - Device assembly and test
@@ -81,48 +81,11 @@ struct life_cycle_state_data {
 	lcs_data_t decommissioned;
 };
 
-/** This library implements monotonic counters where each time the counter
- *  is increased, a new slot is written.
- *  This way, the counter can be updated without erase. This is, among other things,
- *  necessary so the counter can be used in the OTP section of the UICR
- *  (available on e.g. nRF91 and nRF53).
- */
-//struct monotonic_counter {
-	/* Counter description. What the counter is used for. See
-	 * BL_MONOTONIC_COUNTERS_DESC_x.
-	 */
-//	uint16_t description;
-	/* Number of entries in 'counter_slots' list. */
-//	uint16_t num_counter_slots;
-//	counter_t counter_slots[];
-//};
-
-/** Common part for all collections. */
-struct collection {
-	uint16_t type;
-	uint16_t count;
-};
-
-/** The second data structure in the provision page. It has unknown length since
- *  'counters' is repeated. Note that each entry in counters also has unknown
- *  length, and each entry can have different length from the others, so the
- *  entries beyond the first cannot be accessed through array indices.
- */
-//struct counter_collection {
-//	struct collection collection;  /* Type must be BL_COLLECTION_TYPE_MONOTONIC_COUNTERS */
-//	struct monotonic_counter counters[];
-//	counter_t counter_slots[];
-//};
-
 /* Variable data types. */
 enum variable_data_type {
 	BL_VARIABLE_DATA_TYPE_PSA_CERTIFICATION_REFERENCE = 0x1
 };
-struct variable_data {
-	uint8_t type;
-	uint8_t length;
-	uint8_t data[];
-};
+
 
 /* The third data structure in the provision page. It has unknown length since
  * 'variable_data' is repeated. The collection starts immediately after the
@@ -131,9 +94,10 @@ struct variable_data {
  * the entries in the variable data collection have unknown length, so they
  * cannot be accessed through array indices.
  */
-struct variable_data_collection {
-	struct collection collection; /* Type must be BL_COLLECTION_TYPE_VARIABLE_DATA */
-	struct variable_data variable_data[];
+struct variable_data {
+	uint8_t type;
+	uint8_t length;
+	uint8_t data[];
 };
 
 /** The first data structure in the bootloader storage. It has unknown length
@@ -151,24 +115,15 @@ struct bl_storage_data {
 	} key_data[];
 
 	/* Monotonic counter collection:
-	 * uint16_t type;
-	 * uint16_t count;
-	 * struct {
-	 *	uint16_t description;
-	 *	uint16_t num_counter_slots;
-	 *	counter_t counter_slots[];
-	 * } counters[];
+	 * counter_t counter_slots[counters][slots];
 	 */
 
 	/* Variable data collection:
-	 * uint16_t type;
-	 * uint16_t count;
 	 * struct {
 	 *	uint8_t type;
 	 *	uint8_t length;
 	 *	uint8_t data[];
 	 * } variable_data[];
-	 * uint8_t padding[];  // Padding to align to 4 bytes
 	 */
 };
 

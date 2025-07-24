@@ -273,7 +273,7 @@ static const uint8_t *get_first_collection(void)
 	return (const uint8_t *)&BL_STORAGE->key_data[num_public_keys_read()];
 }
 
-static const uint16_t get_collection_slots(uint8_t type)
+static const uint16_t get_collection_slots(uint16_t type)
 {
 	switch (type) {
 #if defined(CONFIG_SB_NUM_VER_COUNTER_SLOTS) && CONFIG_SB_NUM_VER_COUNTER_SLOTS > 0
@@ -295,7 +295,7 @@ static const uint16_t get_collection_slots(uint8_t type)
 	};
 }
 
-static const uint16_t get_collection_size(uint8_t type)
+static const uint16_t get_collection_size(uint16_t type)
 {
 	return get_collection_slots(type) * sizeof(counter_t);
 }
@@ -306,9 +306,9 @@ static const uint16_t get_collection_size(uint8_t type)
 }*/
 
 /** Get the counter_collection data structure in the provision data. */
-static const uint8_t *get_counter_collection(uint8_t type)
+static const uint8_t *get_counter_collection(uint16_t type)
 {
-	uint8_t i = 0;
+	uint16_t i = 0;
 	const uint8_t *collection = get_first_collection();
 
 	while (i < type) {
@@ -323,8 +323,8 @@ LOG_ERR("get_counter_collection for %d = %p", type, collection);
 
 int num_monotonic_counter_slots(uint16_t counter_desc, uint16_t *counter_slots)
 {
-        const uint8_t *counters = get_counter_collection((uint8_t)counter_desc);
-	const uint16_t num_slots = get_collection_slots((uint8_t)counter_desc);
+        const uint8_t *counters = get_counter_collection(counter_desc);
+	const uint16_t num_slots = get_collection_slots(counter_desc);
 
 	if (counters == NULL || counter_slots == NULL) {
 		return -EINVAL;
@@ -350,7 +350,7 @@ int get_counter(uint16_t counter_desc, counter_t *counter_value, const counter_t
 {
 	counter_t highest_counter = 0;
 	const counter_t *addr = NULL;
-	const uint8_t *counter_obj = get_counter_collection((uint8_t)counter_desc);
+	const uint8_t *counter_obj = get_counter_collection(counter_desc);
 	uint16_t num_counter_slots;
 
 LOG_ERR("counter_obj: %p, %p", counter_obj, counter_value);
@@ -359,7 +359,7 @@ LOG_ERR("counter_obj: %p, %p", counter_obj, counter_value);
 		return -EINVAL;
 	}
 
-	num_counter_slots = get_collection_slots((uint8_t)counter_desc);
+	num_counter_slots = get_collection_slots(counter_desc);
 LOG_ERR("slots for %d = %d", counter_desc, num_counter_slots);
 
 	for (uint16_t i = 0; i < num_counter_slots; i++) {
