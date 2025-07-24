@@ -156,13 +156,20 @@ endchoice
 
 config BOOT_SIGNATURE_TYPE_PURE
 	bool "Verify signature directly over image"
-	depends on SOC_SERIES_NRF54LX || SOC_SERIES_NRF54HX
+	depends on SOC_SERIES_NRF54LX
 	depends on BOOT_SIGNATURE_TYPE_ED25519
 	help
 	  The image signature will be verified over image rather than
 	  hash of an image.
 	  This option is currently only supported with ED25519 and configurations
 	  where both image slots are within internal SoC device storage.
+
+config BOOT_IMG_HASH_ALG_SHA512
+	bool "Use SHA512 for image hash calculation"
+	depends on BOOT_SIGNATURE_TYPE_ED25519
+	default y if SOC_SERIES_NRF54LX || SOC_SERIES_NRF54HX
+	help
+	  The image hash will be calculated using SHA512 algorithm.
 
 config MCUBOOT_SIGNATURE_USING_KMU
 	bool "Use KMU stored keys for signature verification"
