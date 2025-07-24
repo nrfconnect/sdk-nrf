@@ -7,6 +7,10 @@ if(CONFIG_OPENTHREAD_CLI_VENDOR_RADIO_TEST)
     target_sources(cli-extension PRIVATE ${radio_test_dir}/radio_cmd.c ${radio_test_dir}/radio_test.c)
 endif()
 
+if(CONFIG_OPENTHREAD_CLI_VENDOR_CPU_USAGE)
+    target_sources(cli-extension PRIVATE ${CMAKE_CURRENT_LIST_DIR}/cpu_usage.cpp)
+endif()
+
 target_link_libraries(cli-extension PRIVATE ot-config)
 add_dependencies(cli-extension zephyr_interface)
 

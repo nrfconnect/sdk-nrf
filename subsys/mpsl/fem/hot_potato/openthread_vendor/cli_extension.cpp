@@ -793,6 +793,7 @@ exit:
 	return error;
 }
 
+extern otError VendorUsageCpu(void *aContext, uint8_t aArgsLength, char *aArgs[]);
 extern "C" otError VendorRadioTest(void *aContext, uint8_t aArgsLength, char *aArgs[]);
 
 static const otCliCommand sExtensionCommands[] = {
@@ -817,6 +818,9 @@ static const otCliCommand sExtensionCommands[] = {
 	{"vendor:power:mapping:table:test", VendorPowerMappingTableTest},
 	{"vendor:power:mapping:table:version", VendorPowerMappingTableVersion},
 	{"vendor:temp", VendorTemp},
+#ifdef CONFIG_OPENTHREAD_CLI_VENDOR_CPU_USAGE
+	{"vendor:usage:cpu", VendorUsageCpu},
+#endif
 #ifdef CONFIG_OPENTHREAD_CLI_VENDOR_RADIO_TEST
 	{"vendor:radio_test", VendorRadioTest},
 #endif

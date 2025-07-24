@@ -1,18 +1,18 @@
 menuconfig POWER_MAP_MODEL
-	bool "Enable power map support"
-        depends on MPSL_FEM_HOT_POTATO && OPENTHREAD
-        select MPSL_FEM_POWER_MODEL
-        select SOC_FLASH_NRF_EMULATE_ONE_BYTE_WRITE_ACCESS if SOC_FLASH_NRF
-        help
-          Enable power map support.
+	bool "Power map"
+	depends on MPSL_FEM_HOT_POTATO && OPENTHREAD
+	select MPSL_FEM_POWER_MODEL
+	select SOC_FLASH_NRF_EMULATE_ONE_BYTE_WRITE_ACCESS if SOC_FLASH_NRF
+	help
+	  Enable power map support.
 
 if POWER_MAP_MODEL
 
 config POWER_LIMIT_TABLE_ID
-  int "Power limit table ID"
-  default 5
-  help
-    ID of the power limit table.
+	int "Power limit table ID"
+	default 5
+	help
+	  ID of the power limit table.
 
 if PARTITION_MANAGER_ENABLED
 
@@ -29,16 +29,17 @@ config POWER_MAP_PARTITION_ALIGN
 	  Alignment of the power map partition in bytes.
 
 config POWER_LIMIT_IDS_PARTITION_SIZE
-        int "Power limit IDs partition size"
-        default 4096
-        help
-          Size of the power limit IDs partition in bytes.
+	int "Power limit IDs partition size"
+	default 4096
+	help
+	  Size of the power limit IDs partition in bytes.
 
 config POWER_LIMIT_IDS_PARTITION_ALIGN
-        int "Power limit IDs partition alignment"
-        default 4096
-        help
-          Alignment of the power limit IDs partition in bytes.
+	int "Power limit IDs partition alignment"
+	default 4096
+	help
+	  Alignment of the power limit IDs partition in bytes.
 
 endif # PARTITION_MANAGER_ENABLED
 endif # POWER_MAP_MODEL
+

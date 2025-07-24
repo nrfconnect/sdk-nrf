@@ -1,70 +1,70 @@
 if MPSL_FEM_HOT_POTATO
 
 choice ANTSEL_MODE_CHOICE
-        prompt "Antenna selection mode choice"
+	prompt "Antenna selection mode choice"
 
 config ANTSEL_CCA_TX_MODE
-        bool "Antenna selection CCA_TX_ACK mode"
-        help
-          The dedicated antenna is activated for CCA + TX_DATA + RX_ACK and TX_ACK.
+	bool "Antenna selection CCA_TX_ACK mode"
+	help
+	  The dedicated antenna is activated for CCA + TX_DATA + RX_ACK and TX_ACK.
 
 config ANTSEL_TX_MODE
-        bool "Antenna selection TX mode"
-        help
-          The dedicated antenna is activated for TX/TX_ACK.
+	bool "Antenna selection TX mode"
+	help
+	  The dedicated antenna is activated for TX/TX_ACK.
 
 endchoice # ANTSEL_MODE_CHOICE
 
 config ANTSEL_MODE
-        int
-        range 0 1
-        default 0 if ANTSEL_CCA_TX_MODE
-        default 1 if ANTSEL_TX_MODE
+	int
+	range 0 1
+	default 0 if ANTSEL_CCA_TX_MODE
+	default 1 if ANTSEL_TX_MODE
 
 
 choice ANTSEL_RADIO_SIGNAL_PATH_MODE_CHOICE
-        prompt "Radio signal path mode choice"
-        depends on MPSL_FEM_HOT_POTATO
+	prompt "Radio signal path mode choice"
+	depends on MPSL_FEM_HOT_POTATO
 
 config ANTSEL_DEFAULT_PATH_MODE
-        bool "Default path mode"
-        help
-          Antenna Selection module controls the antenna activation based on ANTSEL_MODE_CHOICE.
+	bool "Default path mode"
+	help
+	  Antenna Selection module controls the antenna activation based on ANTSEL_MODE_CHOICE.
 
 config ANTSEL_COMMON_PATH_MODE
-        bool "Common path mode"
-        help
-          The common antenna is active for rx and tx.
+	bool "Common path mode"
+	help
+	  The common antenna is active for rx and tx.
 
 config ANTSEL_DEDICATED_PATH_MODE
-        bool "Dedicated path mode"
-        help
-          The dedicated antenna is active for rx and tx.
+	bool "Dedicated path mode"
+	help
+	  The dedicated antenna is active for rx and tx.
 
 endchoice # ANTSEL_RADIO_SIGNAL_PATH_MODE
 
 config ANTSEL_PATH_MODE
-        int
-        range 0 2
-        default 0 if ANTSEL_COMMON_PATH_MODE
-        default 1 if ANTSEL_DEDICATED_PATH_MODE
-        default 2 if ANTSEL_DEFAULT_PATH_MODE
+	int
+	range 0 2
+	default 0 if ANTSEL_COMMON_PATH_MODE
+	default 1 if ANTSEL_DEDICATED_PATH_MODE
+	default 2 if ANTSEL_DEFAULT_PATH_MODE
 
 config MPSL_FEM_HOT_POTATO_BYPASS_BLE
-        bool "FEM bypass for Bluetooth LE"
-        default y
-        depends on SOC_SERIES_NRF54LX
-        help
-          Put FEM in the bypass mode for the duration of Bluetooth LE TX or RX
-          time slots while in the auto mode.
+	bool "FEM bypass for Bluetooth LE"
+	default y
+	depends on SOC_SERIES_NRF54LX
+	help
+	  Put FEM in the bypass mode for the duration of Bluetooth LE TX or RX
+	  time slots while in the auto mode.
 
 config MPSL_FEM_HOT_POTATO_PA_LDO
-        bool "Use LDO voltage regulator when PA is used"
-        default y
-        depends on SOC_SERIES_NRF54LX
-        help
-          Switch to LDO voltage regulator just before FEM Power Amplifier gets
-          enabled, and switch back to DCDC after FEM gets disabled.
+	bool "Use LDO voltage regulator when PA is used"
+	default y
+	depends on SOC_SERIES_NRF54LX
+	help
+	  Switch to LDO voltage regulator just before FEM Power Amplifier gets
+	  enabled, and switch back to DCDC after FEM gets disabled.
 
 if OPENTHREAD
 
@@ -72,16 +72,22 @@ config OPENTHREAD_CLI_MAX_LINE_LENGTH
 	default 4352
 
 config OPENTHREAD_CLI_VENDOR_EXTENSION
-        string
-        default "../../../../../nrf/subsys/mpsl/fem/hot_potato/openthread_vendor/cli_extension.cmake"
+	string
+	default "../../../../../nrf/subsys/mpsl/fem/hot_potato/openthread_vendor/cli_extension.cmake"
 
 config OPENTHREAD_CLI_VENDOR_RADIO_TEST
-        bool "Includes radio_test commands"
-        default y
-        depends on SOC_SERIES_NRF54LX
-        select NRFX_TIMER10
-        select DYNAMIC_DIRECT_INTERRUPTS
-        select MPSL_DYNAMIC_INTERRUPTS
+	bool "Includes radio_test commands"
+	default y
+	depends on SOC_SERIES_NRF54LX
+	select NRFX_TIMER10
+	select DYNAMIC_DIRECT_INTERRUPTS
+	select MPSL_DYNAMIC_INTERRUPTS
+
+config OPENTHREAD_CLI_VENDOR_CPU_USAGE
+	bool "Includes cpu usage commands"
+	default y
+	depends on SOC_SERIES_NRF54LX
+	select NRFX_TIMER20
 
 endif # OPENTHREAD
 endif # MPSL_FEM_HOT_POTATO

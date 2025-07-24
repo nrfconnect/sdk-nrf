@@ -176,6 +176,9 @@
 extern uint8_t mpsl_fem_utils_available_cc_channel_get(uint8_t mask, uint32_t number);
 extern fem_psemi_interface_config_t m_fem_interface_config;
 
+extern void VendorUsageCpuMeasureBegin(void);
+extern void VendorUsageCpuMeasureEnd(void);
+
 #define M_EGU0 (m_fem_interface_config.egu_channels[0])
 #define M_EGU1 (m_fem_interface_config.egu_channels[1])
 #define M_EGU2 (m_fem_interface_config.egu_channels[2])
@@ -408,6 +411,10 @@ static int32_t fem_psemi_pa_configuration_set(const mpsl_fem_event_t *const p_ac
 		m_switched_to_ldo = true;
 	}
 
+	if (IS_ENABLED(CONFIG_OPENTHREAD_CLI_VENDOR_CPU_USAGE)) {
+		VendorUsageCpuMeasureBegin();
+	}
+
 	if (fem_psemi_state_get() != FEM_PSEMI_STATE_AUTO) {
 		return -NRF_EPERM;
 	}
@@ -560,6 +567,10 @@ static int32_t fem_psemi_pa_configuration_clear(void)
 {
 	fem_psemi_interface_config_t *p_obj = &m_fem_interface_config;
 	bool bypass;
+
+	if (IS_ENABLED(CONFIG_OPENTHREAD_CLI_VENDOR_CPU_USAGE)) {
+		VendorUsageCpuMeasureEnd();
+	}
 
 	if (IS_ENABLED(CONFIG_MPSL_FEM_HOT_POTATO_PA_LDO) && m_switched_to_ldo) {
 		nrf_regulators_vreg_enable_set(NRF_REGULATORS, NRF_REGULATORS_VREG_MAIN, true);
