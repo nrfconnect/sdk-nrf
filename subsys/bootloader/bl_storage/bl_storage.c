@@ -527,9 +527,11 @@ int read_variable_data(enum variable_data_type data_type, uint8_t *buf, uint32_t
 {
 	const struct variable_data_collection *collection =
 				(const struct variable_data_collection *)get_counter_collection(
-						BL_COLLECTION_TYPE_VARIABLE_DATA);
+						BL_VARIABLE_DATA);
+//						BL_COLLECTION_TYPE_VARIABLE_DATA);
 	const struct variable_data *variable_data;
 	uint16_t count;
+	uint16_t magic;
 	uint8_t type;
 	uint8_t length;
 
@@ -538,8 +540,16 @@ int read_variable_data(enum variable_data_type data_type, uint8_t *buf, uint32_t
 	}
 
 	/* Loop through all variable data entries. */
+LOG_ERR("qq");
 	variable_data = collection->variable_data;
-	count = bl_storage_otp_halfword_read((uint32_t)&collection->collection.count);
+	magic = bl_storage_otp_halfword_read((uint32_t)&collection->magic);
+
+if (magic != BL_COLLECTION_TYPE_VARIABLE_DATA) {
+goto finish;
+}
+
+	count = bl_storage_otp_halfword_read((uint32_t)&collection->count);
+LOG_ERR("variable_data = %p, count = %d", variable_data, count);
 	for (int i = 0; i < count; i++) {
 		/* Read the type and length of the variable data. */
 		otp_copy((uint8_t *)&type, (uint8_t *)&variable_data->type, sizeof(type));
@@ -561,6 +571,7 @@ int read_variable_data(enum variable_data_type data_type, uint8_t *buf, uint32_t
 			(const struct variable_data *)((uint8_t *)&variable_data->data + length);
 	}
 
+finish:
 	/* No matching variable data. */
 	*buf_len = 0;
 

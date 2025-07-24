@@ -56,8 +56,10 @@ enum collection_type {
 	BL_MONOTONIC_COUNTERS_DESC_MCUBOOT_ID0,
 
 	/** Variable data #variable_data_type. */
-	BL_COLLECTION_TYPE_VARIABLE_DATA,
+	BL_VARIABLE_DATA,
 };
+
+#define BL_COLLECTION_TYPE_VARIABLE_DATA 0x9312
 
 /** Storage for the PRoT Security Lifecycle state, that consists of 4 states:
  *  - Device assembly and test
@@ -100,6 +102,7 @@ struct variable_data {
  * cannot be accessed through array indices.
  */
 struct variable_data_collection {
+	uint16_t magic;
 	uint16_t count;
 	struct variable_data variable_data[];
 };
