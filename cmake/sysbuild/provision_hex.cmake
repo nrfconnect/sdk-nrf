@@ -27,7 +27,7 @@ function(provision application prefix_name)
   if(CONFIG_SECURE_BOOT)
     if(DEFINED CONFIG_SB_MONOTONIC_COUNTER)
       set(monotonic_counter_arg
-          --num-counter-slots-version ${SB_CONFIG_SECURE_BOOT_APPCORE_COUNTER_SLOTS})
+          --num-counter-slots-version ${CONFIG_SB_NUM_VER_COUNTER_SLOTS})
     endif()
 
     # Skip signing if MCUBoot is to be booted and its not built from source

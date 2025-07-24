@@ -579,6 +579,9 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       endif()
     endif()
 
+    # Set number of counter slots
+    set_config_int(b0n CONFIG_SB_NUM_VER_COUNTER_SLOTS ${SB_CONFIG_SECURE_BOOT_NETCORE_COUNTER_SLOTS})
+
     if(SB_CONFIG_BOOTLOADER_MCUBOOT)
       if(SB_CONFIG_NETCORE_APP_UPDATE)
         set_config_bool(mcuboot CONFIG_PCD_APP y)
