@@ -9,8 +9,3 @@
 		bias-pull-up;
 	};
 };
-
-&npm1300_ek_pmic {
-	host-int-gpios = <&gpio1 12 0>;
-	pmic-int-pin = <3>;
-};
