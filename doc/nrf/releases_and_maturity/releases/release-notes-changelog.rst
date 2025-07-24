@@ -605,7 +605,10 @@ Peripheral samples
 PMIC samples
 ------------
 
-|no_changes_yet_note|
+* renamed the npm1300_fuel_gauge sample to :ref:`npm13xx_fuel_gauge` sample:
+
+  * Added support for the nPM1304 EK.
+  * Changed wiring for all targets, refer to the :ref:`Wiring table <npm13xx_fuel_gauge_wiring>` in the sample for details
 
 Protocol serialization samples
 ------------------------------

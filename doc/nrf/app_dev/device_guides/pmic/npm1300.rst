@@ -122,7 +122,7 @@ Connecting the development kit to nPM1300
 =========================================
 
 If you are using the nRF5340 DK, follow the steps in `Use the nPM1300 EK with an nRF5340 DK`_ in the `nPM1300 EK User Guide`_.
-For other Nordic Semiconductor kits, use the wiring steps in the documentation for :ref:`pmic_samples` as reference (:ref:`wiring for the Fuel gauge sample <npm1300_fuel_gauge_wiring>` and :ref:`wiring for the One button sample <npm1300_one_button_wiring>`, respectively).
+For other Nordic Semiconductor kits, use the wiring steps in the documentation for :ref:`pmic_samples` as reference (:ref:`wiring for the Fuel gauge sample <npm13xx_fuel_gauge_wiring>` and :ref:`wiring for the One button sample <npm1300_one_button_wiring>`, respectively).
 
 If you are using custom hardware, the wiring process is similar to the `one for the nRF5340 DK <Use the nPM1300 EK with an nRF5340 DK_>`_, but board-specific steps will be different.
 
