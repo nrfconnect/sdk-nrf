@@ -9,7 +9,7 @@ import time
 import serial
 
 logger = logging.getLogger("serial_port")
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 
 
 class SerialPort:
@@ -66,11 +66,11 @@ class SerialPort:
             self.serial_port.reset_input_buffer()
             self.serial_port.reset_output_buffer()
 
-    def send(self, message: str, get_response: bool = False) -> str:
+    def send(
+        self, message: str, get_response: bool = False, add_line_termination: bool = False
+    ) -> str:
         """
         Send one message (and optionally receive response)
-        :param get_response: if True returns the received response
-        :return: received response or empty string
         """
         response: str = ""
         if self.serial_port.is_open is False:
@@ -79,8 +79,9 @@ class SerialPort:
         try:
             time.sleep(0.25)
             self.serial_port.write_timeout = self._timeout
-            logger.info(f"[{self.serial_port.port}] Serial --> {message}")
-            self.serial_port.write((message + "\n").encode())
+            logger.debug(f"[{self.serial_port.port}] Serial --> {message}")
+            line_termination: str = "\n" if add_line_termination else ""
+            self.serial_port.write((message + line_termination).encode())
             if get_response:
                 start = time.time()
                 while (self.serial_port.in_waiting == 0) and (time.time() - start < self._timeout):
@@ -89,7 +90,7 @@ class SerialPort:
                 while (self.serial_port.in_waiting > 0) and (time.time() - start < self._timeout):
                     time.sleep(0.1)
                     response += self.serial_port.read_all().decode()
-                logger.info(f"Serial <-- {response}")
+                logger.debug(f"Serial <-- {response}")
             return response
 
         except serial.SerialTimeoutException as exc:
