@@ -72,3 +72,32 @@ config MCUBOOT_USE_ALL_AVAILABLE_RAM
 	  By default MCUBoot uses only the secure RAM partition.
 
 endmenu
+
+config NRF_MCUBOOT_BOOT_REQUEST
+	bool "MCUboot bootloader requests"
+	help
+	  Handle bootloader requests.
+
+if NRF_MCUBOOT_BOOT_REQUEST
+
+choice NRF_MCUBOOT_BOOT_REQUEST_IMPL
+	prompt "Shared memory backend"
+	default NRF_MCUBOOT_BOOT_REQUEST_IMPL_RETENTION if RETENTION
+
+DT_CHOSEN_BOOTLOADER_REQUEST := nrf,bootloader-request
+
+config NRF_MCUBOOT_BOOT_REQUEST_IMPL_RETENTION
+	bool "Retention"
+	depends on RETENTION
+	depends on $(dt_chosen_enabled,$(DT_CHOSEN_BOOTLOADER_REQUEST))
+	help
+	  Use zephyr,bootloader-request chosen node compatible with the
+	  zephyr,retention driver as the memory area to store and read from the
+	  bootloader requests.
+	  The built-in prefix property should be used to indicate the request
+	  structure version to ensure compatibility between the bootloader and
+	  the application.
+
+endchoice
+
+endif # NRF_MCUBOOT_BOOT_REQUEST
