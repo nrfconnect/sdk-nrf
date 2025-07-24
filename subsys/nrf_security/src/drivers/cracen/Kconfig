@@ -41,7 +41,7 @@ config CRACEN_LIB_KMU
 	  The CRACEN KMU library.
 
 config CRACEN_IKG
-	bool "Enable CRACEN IKG"
+	bool "CRACEN IKG"
 	default y
 	help
 	  Enable the Cracen Isolated Key Generator.
