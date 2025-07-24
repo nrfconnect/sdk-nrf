@@ -803,6 +803,11 @@ Multiprotocol Service Layer libraries
 
 * Added an implementation of the API required by the MPSL (defined by :file:`mpsl_hwres.h`) for the nRF53 and nRF54L Series devices.
 
+* Fixed an issue where calling the :c:func:`mpsl_lib_uninit` function would prevent calibration of the RC oscillator when MPSL was subsequently re-initialized using the :c:func:`mpsl_lib_init()` function.
+
+  This could happen, for instance, when using bluetooth with the :kconfig:option:`CONFIG_BT_UNINIT_MPSL_ON_DISABLE` Kconfig option enabled.
+  The low-frequency clock had poor accuracy in this case.
+
 * Updated the implementation of the following interrupt service routine wrappers:
 
   * :c:func:`mpsl_timer0_isr_wrapper`
