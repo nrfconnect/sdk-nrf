@@ -190,6 +190,16 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
   # List of additional build byproducts.
   set(byproducts ${output}.merged.hex)
 
+  sysbuild_get(CONFIG_MCUBOOT_BOOTLOADER_USES_SHA512 IMAGE ${main_image} VAR CONFIG_MCUBOOT_BOOTLOADER_USES_SHA512 KCONFIG)
+  sysbuild_get(CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE IMAGE ${main_image} VAR CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE KCONFIG)
+
+  # Set proper hash calculation algorithm for signing
+  if(CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE)
+    set(imgtool_args --pure ${imgtool_args})
+  elseif(CONFIG_MCUBOOT_BOOTLOADER_USES_SHA512)
+    set(imgtool_args --sha 512 ${imgtool_args})
+  endif()
+
   # Set up .hex outputs.
   if(SB_CONFIG_BUILD_OUTPUT_HEX)
     list(APPEND byproducts ${output}.signed.hex)
