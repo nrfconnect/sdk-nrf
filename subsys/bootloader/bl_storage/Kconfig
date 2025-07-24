@@ -7,3 +7,11 @@
 config SECURE_BOOT_STORAGE
 	bool "Library for accessing the bootloader storage"
 	select NRFX_RRAMC if SOC_SERIES_NRF54LX && !TRUSTED_EXECUTION_NONSECURE
+
+if SECURE_BOOT_STORAGE
+
+module = SECURE_BOOT_STORAGE
+module-str = Secure boot storage
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # SECURE_BOOT_STORAGE

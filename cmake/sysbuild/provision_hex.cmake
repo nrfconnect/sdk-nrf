@@ -27,7 +27,7 @@ function(provision application prefix_name)
   if(CONFIG_SECURE_BOOT)
     if(DEFINED CONFIG_SB_MONOTONIC_COUNTER)
       set(monotonic_counter_arg
-          --num-counter-slots-version ${CONFIG_SB_NUM_VER_COUNTER_SLOTS})
+          --num-counter-slots-version ${SB_CONFIG_SECURE_BOOT_APPCORE_COUNTER_SLOTS})
     endif()
 
     # Skip signing if MCUBoot is to be booted and its not built from source
@@ -64,13 +64,9 @@ function(provision application prefix_name)
     # Adjustment to be able to load into sysbuild
     if(CONFIG_SOC_NRF5340_CPUNET OR "${domain}" STREQUAL "CPUNET")
       set(partition_manager_target partition_manager_CPUNET)
-      set(s0_arg --s0-addr $<TARGET_PROPERTY:${partition_manager_target},PM_APP_ADDRESS>)
-      set(s1_arg)
       set(cpunet_target y)
     else()
       set(partition_manager_target partition_manager)
-      set(s0_arg --s0-addr $<TARGET_PROPERTY:${partition_manager_target},PM_S0_ADDRESS>)
-      set(s1_arg --s1-addr $<TARGET_PROPERTY:${partition_manager_target},PM_S1_ADDRESS>)
       set(cpunet_target n)
     endif()
 
@@ -84,9 +80,9 @@ function(provision application prefix_name)
     endif()
   endif()
 
-  if(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
-    set(mcuboot_counters_slots --mcuboot-counters-slots ${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS})
-  endif()
+#  if(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+#    set(mcuboot_counters_slots --mcuboot-counters-slots ${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS})
+#  endif()
 
   if(SB_CONFIG_TFM_OTP_PSA_CERTIFICATE_REFERENCE AND SB_CONFIG_TFM_PSA_CERTIFICATE_REFERENCE_VALUE)
     set(psa_certificate_reference --psa-certificate-reference ${SB_CONFIG_TFM_PSA_CERTIFICATE_REFERENCE_VALUE})
@@ -99,8 +95,6 @@ function(provision application prefix_name)
       COMMAND
       ${PYTHON_EXECUTABLE}
       ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/provision.py
-      ${s0_arg}
-      ${s1_arg}
       --provision-addr $<TARGET_PROPERTY:${partition_manager_target},PM_PROVISION_ADDRESS>
       ${public_keys_file_arg}
       --output ${PROVISION_HEX}
@@ -119,29 +113,29 @@ function(provision application prefix_name)
       "Creating data to be provisioned to the Bootloader, storing to ${PROVISION_HEX_NAME}"
       USES_TERMINAL
     )
-  elseif(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
-    add_custom_command(
-      OUTPUT
-      ${PROVISION_HEX}
-      COMMAND
-      ${PYTHON_EXECUTABLE}
-      ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/provision.py
-      --mcuboot-only
-      --provision-addr $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>
-      --output ${PROVISION_HEX}
-      --max-size ${CONFIG_PM_PARTITION_SIZE_PROVISION}
-      ${mcuboot_counters_num}
-      ${mcuboot_counters_slots}
-      --otp-write-width ${otp_write_width}
-      ${psa_certificate_reference}
-      DEPENDS
-      ${PROVISION_KEY_DEPENDS}
-      WORKING_DIRECTORY
-      ${PROJECT_BINARY_DIR}
-      COMMENT
-      "Creating data to be provisioned to the Bootloader, storing to ${PROVISION_HEX_NAME}"
-      USES_TERMINAL
-    )
+#  elseif(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+#    add_custom_command(
+#      OUTPUT
+#      ${PROVISION_HEX}
+#      COMMAND
+#      ${PYTHON_EXECUTABLE}
+#      ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/provision.py
+#      --mcuboot-only
+#      --provision-addr $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>
+#      --output ${PROVISION_HEX}
+#      --max-size ${CONFIG_PM_PARTITION_SIZE_PROVISION}
+#      ${mcuboot_counters_num}
+#      ${mcuboot_counters_slots}
+#      --otp-write-width ${otp_write_width}
+#      ${psa_certificate_reference}
+#      DEPENDS
+#      ${PROVISION_KEY_DEPENDS}
+#      WORKING_DIRECTORY
+#      ${PROJECT_BINARY_DIR}
+#      COMMENT
+#      "Creating data to be provisioned to the Bootloader, storing to ${PROVISION_HEX_NAME}"
+#      USES_TERMINAL
+#    )
   endif()
 
   add_custom_target(
@@ -183,8 +177,8 @@ if(NCS_SYSBUILD_PARTITION_MANAGER)
     else()
       provision("${DEFAULT_IMAGE}" "app_")
     endif()
-  elseif(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
-    provision("${DEFAULT_IMAGE}" "app_")
+#  elseif(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+#    provision("${DEFAULT_IMAGE}" "app_")
   endif()
 
   if(SB_CONFIG_SECURE_BOOT_NETCORE)

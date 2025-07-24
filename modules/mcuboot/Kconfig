@@ -1,5 +1,14 @@
 menu "MCUboot"
 
+if MCUBOOT_HW_DOWNGRADE_PREVENTION
+
+config MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS
+	int "Number of available hardware counter slots"
+	default 240
+	range 2 300
+
+endif # MCUBOOT_HW_DOWNGRADE_PREVENTION
+
 if BOOTLOADER_MCUBOOT
 
 menuconfig MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION

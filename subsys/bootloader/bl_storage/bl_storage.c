@@ -10,9 +10,14 @@
 #include <errno.h>
 #include <nrf.h>
 #include <assert.h>
+#include <zephyr/logging/log.h>
+
 #if !defined(CONFIG_BUILD_WITH_TFM)
 #include <zephyr/kernel.h>
 #endif
+
+LOG_MODULE_REGISTER(bl_storage, CONFIG_SECURE_BOOT_STORAGE_LOG_LEVEL);
+//LOG_MODULE_REGISTER(bl_storage, 4);
 
 #define COUNTER_DESC_VERSION 1 /* Counter description value for firmware version. */
 
@@ -102,15 +107,31 @@ static uint16_t bl_storage_otp_halfword_read(uint32_t address)
  * we read it as if it were a UICR address as it is safe (although
  * inefficient) to do so.
  */
+#if defined(CONFIG_IS_SECURE_BOOTLOADER) || defined(CONFIG_SECURE_BOOT)
 uint32_t s0_address_read(void)
 {
-	return bl_storage_word_read((uint32_t)&BL_STORAGE->s0_address);
+#ifdef CONFIG_PARTITION_MANAGER_ENABLED
+#if defined(CONFIG_SOC_NRF5340_CPUNET)
+	return PM_APP_ADDRESS;
+#else
+	return PM_S0_ADDRESS;
+#endif
+#else
+#error "Not currently supported"
+#endif
 }
 
+#if !defined(CONFIG_SOC_NRF5340_CPUNET)
 uint32_t s1_address_read(void)
 {
-	return bl_storage_word_read((uint32_t)&BL_STORAGE->s1_address);
+#ifdef CONFIG_PARTITION_MANAGER_ENABLED
+	return PM_S1_ADDRESS;
+#else
+#error "Not currently supported"
+#endif
 }
+#endif
+#endif
 
 uint32_t num_public_keys_read(void)
 {
@@ -246,70 +267,70 @@ void invalidate_public_key(uint32_t key_idx)
 	}
 }
 
-static const struct collection *get_first_collection(void)
+//static const struct collection *get_first_collection(void)
+static const uint8_t *get_first_collection(void)
 {
-	return (const struct collection *)&BL_STORAGE->key_data[num_public_keys_read()];
+	return (const uint8_t *)&BL_STORAGE->key_data[num_public_keys_read()];
 }
 
-static uint16_t get_collection_type(const struct collection *collection)
+static const uint16_t get_collection_slots(uint8_t type)
+{
+	switch (type) {
+#if defined(CONFIG_SB_NUM_VER_COUNTER_SLOTS) && CONFIG_SB_NUM_VER_COUNTER_SLOTS > 0
+	case BL_MONOTONIC_COUNTERS_DESC_NSIB:
+	{
+		return CONFIG_SB_NUM_VER_COUNTER_SLOTS;
+	}
+#endif
+#if defined(CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS) && CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS > 0
+	case BL_MONOTONIC_COUNTERS_DESC_MCUBOOT_ID0:
+	{
+		return CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS;
+	}
+#endif
+	default:
+	{
+		return 0;
+	}
+	};
+}
+
+static const uint16_t get_collection_size(uint8_t type)
+{
+	return get_collection_slots(type) * sizeof(counter_t);
+}
+
+/*static uint16_t get_collection_type(const struct collection *collection)
 {
 	return bl_storage_otp_halfword_read((uint32_t)&collection->type);
-}
+}*/
 
 /** Get the counter_collection data structure in the provision data. */
-static const struct counter_collection *get_counter_collection(void)
+static const uint8_t *get_counter_collection(uint8_t type)
 {
-	const struct collection *collection = get_first_collection();
+	uint8_t i = 0;
+	const uint8_t *collection = get_first_collection();
 
-	return get_collection_type(collection) == BL_COLLECTION_TYPE_MONOTONIC_COUNTERS
-		       ? (const struct counter_collection *)collection
-		       : NULL;
-}
-
-/** Get one of the (possibly multiple) counters in the provision data.
- *
- *  param[in]  description  Which counter to get. See COUNTER_DESC_*.
- */
-static const struct monotonic_counter *get_counter_struct(uint16_t description)
-{
-	const struct counter_collection *counters = get_counter_collection();
-
-	if (counters == NULL) {
-		return NULL;
+	while (i < type) {
+		collection += get_collection_size(i);
+		++i;
 	}
 
-	const struct monotonic_counter *current = counters->counters;
+LOG_ERR("get_counter_collection for %d = %p", type, collection);
 
-	for (size_t i = 0; i < bl_storage_otp_halfword_read(
-		(uint32_t)&counters->collection.count); i++) {
-		uint16_t num_slots = bl_storage_otp_halfword_read(
-					(uint32_t)&current->num_counter_slots);
-
-		if (bl_storage_otp_halfword_read((uint32_t)&current->description) == description) {
-			return current;
-		}
-
-		current = (const struct monotonic_counter *)
-					&current->counter_slots[num_slots];
-	}
-	return NULL;
+	return collection;
 }
 
 int num_monotonic_counter_slots(uint16_t counter_desc, uint16_t *counter_slots)
 {
-	const struct monotonic_counter *counter = get_counter_struct(counter_desc);
+        const uint8_t *counters = get_counter_collection((uint8_t)counter_desc);
+	const uint16_t num_slots = get_collection_slots((uint8_t)counter_desc);
 
-	if (counter == NULL || counter_slots == NULL) {
+	if (counters == NULL || counter_slots == NULL) {
 		return -EINVAL;
 	}
 
-	uint16_t num_slots = bl_storage_otp_halfword_read((uint32_t)&counter->num_counter_slots);
-
-	if (num_slots == 0xFFFF) {
-		/* We consider the 0xFFFF as invalid since it is the default value of the OTP */
-		*counter_slots = 0;
-		return -EINVAL;
-	}
+LOG_ERR("slots for %d = %d", counter_desc, num_slots);
 
 	*counter_slots = num_slots;
 	return 0;
@@ -327,35 +348,42 @@ int num_monotonic_counter_slots(uint16_t counter_desc, uint16_t *counter_slots)
  */
 int get_counter(uint16_t counter_desc, counter_t *counter_value, const counter_t **free_slot)
 {
-	const counter_t *slots;
 	counter_t highest_counter = 0;
 	const counter_t *addr = NULL;
-	const struct monotonic_counter *counter_obj = get_counter_struct(counter_desc);
+	const uint8_t *counter_obj = get_counter_collection((uint8_t)counter_desc);
 	uint16_t num_counter_slots;
+
+LOG_ERR("counter_obj: %p, %p", counter_obj, counter_value);
 
 	if (counter_obj == NULL || counter_value == NULL) {
 		return -EINVAL;
 	}
 
-	slots = counter_obj->counter_slots;
-	num_counter_slots = bl_storage_otp_halfword_read((uint32_t)&counter_obj->num_counter_slots);
+	num_counter_slots = get_collection_slots((uint8_t)counter_desc);
+LOG_ERR("slots for %d = %d", counter_desc, num_counter_slots);
 
 	for (uint16_t i = 0; i < num_counter_slots; i++) {
-		counter_t counter = bl_storage_counter_get((uint32_t)&slots[i]);
+		const counter_t *slot_addr = (counter_t *)(counter_obj + (i * sizeof(counter_t)));
+		counter_t counter = bl_storage_counter_get((uint32_t)slot_addr);
+
+//LOG_ERR("read @ 0x%x = %u", slot_addr, counter);
 
 		if (counter == 0) {
-			addr = &slots[i];
+			addr = (counter_t *)slot_addr;
 			break;
 		}
+
 		if (highest_counter < counter) {
 			highest_counter = counter;
 		}
 	}
 
+LOG_ERR("free slot: %p, addr: %p", free_slot, addr);
 	if (free_slot != NULL) {
 		*free_slot = addr;
 	}
 
+LOG_ERR("highest count: %d", highest_counter);
 	*counter_value = highest_counter;
 	return 0;
 }

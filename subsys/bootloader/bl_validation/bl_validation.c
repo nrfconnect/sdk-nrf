@@ -53,6 +53,7 @@ int get_monotonic_version(counter_t *version_out)
 	counter_t monotonic_version_and_slot;
 	int err;
 
+LOG_ERR("d1");
 	if (version_out == NULL) {
 		return -EINVAL;
 	}
@@ -63,6 +64,7 @@ int get_monotonic_version(counter_t *version_out)
 		return err;
 	}
 
+LOG_ERR("d4 = %d", monotonic_version_and_slot);
 	*version_out = monotonic_version_and_slot >> 1;
 
 	return err;
