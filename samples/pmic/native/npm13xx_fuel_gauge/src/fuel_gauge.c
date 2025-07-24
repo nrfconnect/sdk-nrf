@@ -14,16 +14,20 @@
 
 #include <nrf_fuel_gauge.h>
 
-/* nPM1300 CHARGER.BCHGCHARGESTATUS register bitmasks */
-#define NPM1300_CHG_STATUS_COMPLETE_MASK BIT(1)
-#define NPM1300_CHG_STATUS_TRICKLE_MASK	 BIT(2)
-#define NPM1300_CHG_STATUS_CC_MASK	 BIT(3)
-#define NPM1300_CHG_STATUS_CV_MASK	 BIT(4)
+/* nPM13xx CHARGER.BCHGCHARGESTATUS register bitmasks */
+#define NPM13XX_CHG_STATUS_COMPLETE_MASK BIT(1)
+#define NPM13XX_CHG_STATUS_TRICKLE_MASK  BIT(2)
+#define NPM13XX_CHG_STATUS_CC_MASK       BIT(3)
+#define NPM13XX_CHG_STATUS_CV_MASK       BIT(4)
 
 static int64_t ref_time;
 
 static const struct battery_model battery_model = {
+#if DT_NODE_EXISTS(DT_NODELABEL(npm1300_ek_pmic))
 #include "battery_model.inc"
+#elif DT_NODE_EXISTS(DT_NODELABEL(npm1304_ek_pmic))
+#include "battery_model_20mAh.inc"
+#endif
 };
 
 static int read_sensors(const struct device *charger, float *voltage, float *current, float *temp,
@@ -56,16 +60,16 @@ static int charge_status_inform(int32_t chg_status)
 {
 	union nrf_fuel_gauge_ext_state_info_data state_info;
 
-	if (chg_status & NPM1300_CHG_STATUS_COMPLETE_MASK) {
+	if (chg_status & NPM13XX_CHG_STATUS_COMPLETE_MASK) {
 		printk("Charge complete\n");
 		state_info.charge_state = NRF_FUEL_GAUGE_CHARGE_STATE_COMPLETE;
-	} else if (chg_status & NPM1300_CHG_STATUS_TRICKLE_MASK) {
+	} else if (chg_status & NPM13XX_CHG_STATUS_TRICKLE_MASK) {
 		printk("Trickle charging\n");
 		state_info.charge_state = NRF_FUEL_GAUGE_CHARGE_STATE_TRICKLE;
-	} else if (chg_status & NPM1300_CHG_STATUS_CC_MASK) {
+	} else if (chg_status & NPM13XX_CHG_STATUS_CC_MASK) {
 		printk("Constant current charging\n");
 		state_info.charge_state = NRF_FUEL_GAUGE_CHARGE_STATE_CC;
-	} else if (chg_status & NPM1300_CHG_STATUS_CV_MASK) {
+	} else if (chg_status & NPM13XX_CHG_STATUS_CV_MASK) {
 		printk("Constant voltage charging\n");
 		state_info.charge_state = NRF_FUEL_GAUGE_CHARGE_STATE_CV;
 	} else {
@@ -158,6 +162,10 @@ int fuel_gauge_update(const struct device *charger, bool vbus_connected)
 		printk("Error: Could not read from charger device\n");
 		return ret;
 	}
+	/* Zephyr sensor API convention for Gauge current is negative=discharging,
+	 * while nrf_fuel_gauge lib expects the opposite negative=charging
+	 */
+	current = -current;
 
 	ret = nrf_fuel_gauge_ext_state_update(
 		vbus_connected ? NRF_FUEL_GAUGE_EXT_STATE_INFO_VBUS_CONNECTED

@@ -769,7 +769,7 @@ Peripheral samples
 PMIC samples
 ------------
 
-* :ref:`npm1300_fuel_gauge` sample:
+* :ref:`nPM1300: Fuel gauge <npm13xx_fuel_gauge>` sample:
 
   * Updated current sign when calling the ``nrf_fuel_gauge`` lib functions.
     In the Zephyr sensor API the convention for the gauge current is ``negative=discharging``, while the :ref:`nrfxlib:nrf_fuel_gauge` lib uses the opposite.
