@@ -171,3 +171,11 @@ config BOOT_SERIAL_IMG_GRP_HASH
 config BOOT_SERIAL_IMG_GPR_SLOT_INFO
 	bool
 	default n
+
+config FIND_NEXT_SLOT_HOOK_BOOT_REQ
+	bool "Enable default hook that uses bootloader requests module"
+	default y if NRF_MCUBOOT_BOOT_REQUEST
+	depends on FIND_NEXT_SLOT_HOOKS
+	help
+	  This will read the image preference from the bootloader requests
+	  module and if found, alter the Direct XIP slot selection.
