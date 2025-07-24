@@ -38,7 +38,9 @@
 #include <openthread/cli.h>
 #include <openthread/error.h>
 
+#include <zephyr/kernel.h>
 #include <zephyr/sys/__assert.h>
+#include <zephyr/sys/util.h>
 
 #define CPU_USAGE_HISTOGRAM_LEN 10
 #define CPU_USAGE_AGG_PERIOD_US (100ULL * 1000ULL)
@@ -59,11 +61,11 @@ static uint8_t dppi_peri_channel_sleep_exit;
 static uint8_t ppib_channel_sleep_exit;
 
 static volatile bool meas_started; /* Measurement started? */
-static uint64_t meas_start_time;   /* Current measurement start time */
-static uint64_t last_agg_time;	   /* Last sample aggregation time */
 static uint32_t max_cpu_usage;
-static uint32_t max_cpu_usage_histogram[CPU_USAGE_HISTOGRAM_LEN];
-static uint64_t total_meas_time;
+static uint32_t cpu_usage_histogram[CPU_USAGE_HISTOGRAM_LEN];
+
+static void VendorUsageCpuMeasure(struct k_timer *timer);
+static K_TIMER_DEFINE(timer_meas, VendorUsageCpuMeasure, NULL);
 
 static void VendorUsageCpuInit()
 {
@@ -139,6 +141,8 @@ static void VendorUsageCpuInit()
 	err = nrfx_dppi_channel_enable(&dppi_peri, dppi_peri_channel_sleep_exit);
 	__ASSERT_NO_MSG(err == NRFX_SUCCESS);
 
+	k_timer_start(&timer_meas, K_NO_WAIT, K_USEC(CPU_USAGE_AGG_PERIOD_US));
+
 	initialized = true;
 }
 
@@ -147,42 +151,39 @@ static void VendorUsageCpuReset()
 	unsigned key = irq_lock();
 
 	meas_started = false;
-	total_meas_time = 0;
-	memset(max_cpu_usage_histogram, 0, sizeof(max_cpu_usage_histogram));
+	max_cpu_usage = 0;
+	memset(cpu_usage_histogram, 0, sizeof(cpu_usage_histogram));
 	irq_unlock(key);
 }
 
-extern "C" void VendorUsageCpuMeasureBegin()
+static void VendorUsageCpuUpdate(uint32_t usage)
 {
 	size_t histogram_index;
 
+	usage = MIN(usage, 100);
+	histogram_index = (size_t)(usage * CPU_USAGE_HISTOGRAM_LEN / 100);
+
+	if (histogram_index == CPU_USAGE_HISTOGRAM_LEN) {
+		histogram_index--;
+	}
+
+	cpu_usage_histogram[histogram_index]++;
+	max_cpu_usage = MAX(usage, max_cpu_usage);
+}
+
+static void VendorUsageCpuMeasureBegin(void)
+{
 	if (!initialized) {
 		return;
 	}
 
-	meas_start_time = nrf_802154_sl_timer_current_time_get();
 	nrf_timer_task_trigger(timer_cpu.p_reg, NRF_TIMER_TASK_CLEAR);
 	meas_started = true;
-
-	if (last_agg_time == 0) {
-		last_agg_time = meas_start_time;
-	} else if (meas_start_time - last_agg_time > CPU_USAGE_AGG_PERIOD_US) {
-		histogram_index = (size_t)(max_cpu_usage * CPU_USAGE_HISTOGRAM_LEN / 100);
-
-		if (histogram_index == CPU_USAGE_HISTOGRAM_LEN) {
-			histogram_index--;
-		}
-
-		max_cpu_usage_histogram[histogram_index]++;
-		last_agg_time = meas_start_time;
-		max_cpu_usage = 0;
-	}
 }
 
-extern "C" void VendorUsageCpuMeasureEnd()
+static void VendorUsageCpuMeasureEnd(void)
 {
 	uint32_t cpu_time;
-	uint32_t meas_time;
 	uint32_t cpu_usage;
 
 	if (!meas_started) {
@@ -190,20 +191,21 @@ extern "C" void VendorUsageCpuMeasureEnd()
 	}
 
 	cpu_time = nrfx_timer_capture(&timer_cpu, NRF_TIMER_CC_CHANNEL0);
-	meas_time = (uint32_t)(nrf_802154_sl_timer_current_time_get() - meas_start_time);
-	cpu_usage = (uint32_t)(cpu_time * 100ULL / meas_time);
-
-	if (cpu_usage > max_cpu_usage) {
-		max_cpu_usage = cpu_usage;
-	}
-
-	total_meas_time += meas_time;
+	cpu_usage = (uint32_t)((cpu_time * 100ULL + CPU_USAGE_AGG_PERIOD_US / 2) /
+			       CPU_USAGE_AGG_PERIOD_US);
+	VendorUsageCpuUpdate(cpu_usage);
 	meas_started = false;
+}
+
+static void VendorUsageCpuMeasure(struct k_timer *timer)
+{
+	VendorUsageCpuMeasureEnd();
+	VendorUsageCpuMeasureBegin();
 }
 
 otError VendorUsageCpu(void *aContext, uint8_t aArgsLength, char *aArgs[])
 {
-	uint64_t total;
+	uint32_t max_usage;
 	uint32_t hist[CPU_USAGE_HISTOGRAM_LEN];
 	unsigned key;
 
@@ -219,16 +221,16 @@ otError VendorUsageCpu(void *aContext, uint8_t aArgsLength, char *aArgs[])
 	}
 
 	key = irq_lock();
-	total = total_meas_time;
-	memcpy(hist, max_cpu_usage_histogram, sizeof(hist));
+	max_usage = max_cpu_usage;
+	memcpy(hist, cpu_usage_histogram, sizeof(hist));
 	irq_unlock(key);
 
-	otCliOutputFormat("TX time: %ums\r\n", (unsigned)(total / 1000));
-
-	if (total == 0) {
-		otCliOutputFormat("CPU usage/100ms (histogram): unknown\r\n");
+	if (max_cpu_usage == 0) {
+		otCliOutputFormat("Max CPU usage: unknown\r\n");
+		otCliOutputFormat("CPU usage/100ms histogram: unknown\r\n");
 	} else {
-		otCliOutputFormat("CPU usage/100ms (histogram): %u %u %u %u %u %u %u %u %u %u\r\n",
+		otCliOutputFormat("Max CPU usage: %u%\r\n", max_usage);
+		otCliOutputFormat("CPU usage/100ms histogram: %u %u %u %u %u %u %u %u %u %u\r\n",
 				  hist[0], hist[1], hist[2], hist[3], hist[4], hist[5], hist[6],
 				  hist[7], hist[8], hist[9]);
 	}

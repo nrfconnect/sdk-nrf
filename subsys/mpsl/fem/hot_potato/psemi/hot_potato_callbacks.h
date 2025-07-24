@@ -40,22 +40,6 @@
 #endif
 
 /**
- * @brief Starts CPU usage measurement for the vendor.
- */
-__WEAK void VendorUsageCpuMeasureBegin(void)
-{
-	return;
-}
-
-/**
- * @brief Ends CPU usage measurement for the vendor.
- */
-__WEAK void VendorUsageCpuMeasureEnd(void)
-{
-	return;
-}
-
-/**
  * @brief Fetches the output parameters from the FEM power model for a given requested power.
  *
  * @param[in]  requested_power    The desired transmit power in dBm.

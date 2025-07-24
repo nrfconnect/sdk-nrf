@@ -420,8 +420,6 @@ static int32_t fem_psemi_pa_configuration_set(const mpsl_fem_event_t *const p_ac
 		m_switched_to_ldo = true;
 	}
 
-	VendorUsageCpuMeasureBegin();
-
 	if (mpsl_fem_psemi_state_get() != FEM_PSEMI_STATE_AUTO) {
 		return -NRF_EPERM;
 	}
@@ -570,8 +568,6 @@ static int32_t fem_psemi_pa_configuration_clear(void)
 	 */
 	bool bypass = m_psemi_config.bypass_ble_enabled &&
 		      nrf_radio_mode_get(NRF_RADIO) != NRF_RADIO_MODE_IEEE802154_250KBIT;
-
-	VendorUsageCpuMeasureEnd();
 
 	if (m_switched_to_ldo) {
 		nrf_regulators_vreg_enable_set(NRF_REGULATORS, NRF_REGULATORS_VREG_MAIN, true);
