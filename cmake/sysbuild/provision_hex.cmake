@@ -10,7 +10,7 @@
 include(${CMAKE_CURRENT_LIST_DIR}/sign.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/debug_keys.cmake)
 
-function(provision application prefix_name)
+function(provision application prefix_name mcuboot_downgrade_protection)
   ExternalProject_Get_Property(${application} BINARY_DIR)
   import_kconfig(CONFIG_ ${BINARY_DIR}/zephyr/.config)
 
@@ -81,8 +81,9 @@ function(provision application prefix_name)
   endif()
 
 #  if(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
-#    set(mcuboot_counters_slots --mcuboot-counters-slots ${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS})
-#  endif()
+  if(mcuboot_downgrade_protection)
+    set(mcuboot_counters_slots --mcuboot-counters-slots ${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS})
+  endif()
 
   if(SB_CONFIG_TFM_OTP_PSA_CERTIFICATE_REFERENCE AND SB_CONFIG_TFM_PSA_CERTIFICATE_REFERENCE_VALUE)
     set(psa_certificate_reference --psa-certificate-reference ${SB_CONFIG_TFM_PSA_CERTIFICATE_REFERENCE_VALUE})
@@ -113,29 +114,30 @@ function(provision application prefix_name)
       "Creating data to be provisioned to the Bootloader, storing to ${PROVISION_HEX_NAME}"
       USES_TERMINAL
     )
+  elseif(mcuboot_downgrade_protection)
 #  elseif(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
-#    add_custom_command(
-#      OUTPUT
-#      ${PROVISION_HEX}
-#      COMMAND
-#      ${PYTHON_EXECUTABLE}
-#      ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/provision.py
-#      --mcuboot-only
-#      --provision-addr $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>
-#      --output ${PROVISION_HEX}
-#      --max-size ${CONFIG_PM_PARTITION_SIZE_PROVISION}
-#      ${mcuboot_counters_num}
-#      ${mcuboot_counters_slots}
-#      --otp-write-width ${otp_write_width}
-#      ${psa_certificate_reference}
-#      DEPENDS
-#      ${PROVISION_KEY_DEPENDS}
-#      WORKING_DIRECTORY
-#      ${PROJECT_BINARY_DIR}
-#      COMMENT
-#      "Creating data to be provisioned to the Bootloader, storing to ${PROVISION_HEX_NAME}"
-#      USES_TERMINAL
-#    )
+    add_custom_command(
+      OUTPUT
+      ${PROVISION_HEX}
+      COMMAND
+      ${PYTHON_EXECUTABLE}
+      ${ZEPHYR_NRF_MODULE_DIR}/scripts/bootloader/provision.py
+      --mcuboot-only
+      --provision-addr $<TARGET_PROPERTY:partition_manager,PM_PROVISION_ADDRESS>
+      --output ${PROVISION_HEX}
+      --max-size ${CONFIG_PM_PARTITION_SIZE_PROVISION}
+      ${mcuboot_counters_num}
+      ${mcuboot_counters_slots}
+      --otp-write-width ${otp_write_width}
+      ${psa_certificate_reference}
+      DEPENDS
+      ${PROVISION_KEY_DEPENDS}
+      WORKING_DIRECTORY
+      ${PROJECT_BINARY_DIR}
+      COMMENT
+      "Creating data to be provisioned to the Bootloader, storing to ${PROVISION_HEX_NAME}"
+      USES_TERMINAL
+    )
   endif()
 
   add_custom_target(
@@ -173,12 +175,12 @@ if(NCS_SYSBUILD_PARTITION_MANAGER)
   # Get the main app of the domain that secure boot should handle.
   if(SB_CONFIG_SECURE_BOOT AND SB_CONFIG_SECURE_BOOT_APPCORE)
     if(SB_CONFIG_BOOTLOADER_MCUBOOT)
-      provision("mcuboot" "app_")
+      provision("mcuboot" "app_" y)
     else()
-      provision("${DEFAULT_IMAGE}" "app_")
+      provision("${DEFAULT_IMAGE}" "app_" n)
     endif()
-#  elseif(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
-#    provision("${DEFAULT_IMAGE}" "app_")
+  elseif(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
+    provision("${DEFAULT_IMAGE}" "app_" y)
   endif()
 
   if(SB_CONFIG_SECURE_BOOT_NETCORE)
@@ -189,6 +191,6 @@ if(NCS_SYSBUILD_PARTITION_MANAGER)
                           " but no image is selected for this domain.")
     endif()
 
-    provision("${main_app}" "net_")
+    provision("${main_app}" "net_" n)
   endif()
 endif()
