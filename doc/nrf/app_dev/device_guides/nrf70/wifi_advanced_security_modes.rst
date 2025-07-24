@@ -220,7 +220,7 @@ This improves the security of the nRF70 device compared to the non-PSA mode.
 
 .. note::
 
-      Currently, the PSA crypto support is only applicable to the WPA2™-personal security profile.
+      Currently, the PSA crypto support is only applicable to the WPA2™ and WPA3™-personal security profiles.
 
 Enable PSA support
 ==================
