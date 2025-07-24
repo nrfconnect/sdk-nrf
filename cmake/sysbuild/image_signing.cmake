@@ -124,12 +124,11 @@ function(zephyr_mcuboot_tasks)
     set(imgtool_hex_extra)
   endif()
 
-  if(CONFIG_SOC_SERIES_NRF54LX AND CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519)
-    if(NOT CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE)
-      set(imgtool_extra --sha 512 ${imgtool_extra})
-    else()
-      set(imgtool_extra --pure ${imgtool_extra})
-    endif()
+  # Set proper hash calculation algorithm for signing
+  if(CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE)
+    set(imgtool_extra --pure ${imgtool_extra})
+  elseif(CONFIG_MCUBOOT_BOOTLOADER_USES_SHA512)
+    set(imgtool_extra --sha 512 ${imgtool_extra})
   endif()
 
   if(CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
