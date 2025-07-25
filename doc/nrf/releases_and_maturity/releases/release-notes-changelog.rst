@@ -578,6 +578,9 @@ Matter samples
     * :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_THRESHOLD` from ``300`` to ``0`` ms for SIT devices.
     * :kconfig:option:`CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL` from ``200`` to ``500`` ms.
 
+  * The memory layout for the ``nrf54l15dk/nrf54l10/cpuapp`` board target, as the previous one was invalid and allowed to access memory area out of bounds.
+    The maximum size of the non-volatile area was changed from 1022 kB to 1012 kB, the application partition size was decreased by 8 kB, and the reserved partition was removed.
+
 * :ref:`matter_light_switch_sample`:
 
   * Updated the testing steps to use the proper commands for groupcast binding.
