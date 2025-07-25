@@ -25,13 +25,14 @@ source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.partitio
 endif
 
 config PM_PARTITION_SIZE_MCUBOOT
-	hex
+	hex "Flash space allocated for the MCUboot partition"
 	default 0x3e00
 	depends on (BOOT_NRF_EXTERNAL_CRYPTO && BOOT_USE_MIN_PARTITION_SIZE)
 
 config PM_PARTITION_SIZE_MCUBOOT
-	hex
+	hex "Flash space allocated for the MCUboot partition"
 	default FPROTECT_BLOCK_SIZE if SOC_SERIES_NRF91X || SOC_NRF5340_CPUAPP
+	default 0x8800 if SOC_SERIES_NRF54LX
 	default 0x7c00
 	depends on BOOT_USE_MIN_PARTITION_SIZE && !BOOT_NRF_EXTERNAL_CRYPTO
 
