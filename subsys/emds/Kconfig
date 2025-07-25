@@ -37,43 +37,31 @@ config EMDS_MAX_CANDIDATES
 	  the partition to select the best one for recovery.
 
 config EMDS_FLASH_TIME_WRITE_ONE_WORD_US
-	int "Time to write block size into flash/rram"
-	default 107 if SOC_SERIES_NRF54LX
+	int
+	default 41 if SOC_NRF52840
 	default 43 if SOC_SERIES_NRF53X
-	default 43 if SOC_NRF52833
-	default 338 if SOC_NRF52832
-	default 41
+	default 28 if SOC_SERIES_NRF54LX
 	help
-	  Max time to write one block into non-volatile storage (in microseconds).
-	  The block size is dependent on non-volatile storage type and is 4
-	  bytes for flash and 16 bytes for RRAM. The value is dependent on the
+	  Max time to write one word into non-volatile storage (in microseconds).
+	  The word size is 4 bytes. The value is dependent on the
 	  chip used, and should be checked against the chip's datasheet.
-	  For RRAM-based flash drivers, data is written in blocks of 16 bytes
-	  over buffered writing. This value is used to calculate the time to
-	  write one 16-byte block.
+	  For RRAM-based flash driver the average time to write a 32-bit word
+	  in a stream of sequentially address ordered writes was taken.
 
-config EMDS_FLASH_TIME_ENTRY_OVERHEAD_US
-	int "Time to schedule write of one entry"
-	default 300
-	help
-	   Max time to prepare the write of each entry (in microseconds).
+	  Note that despite the typical time for streamed writing of a 32-bit word
+	  for RRAM is 22 microseconds the actual time may vary. It is used a bit bigger
+	  value here to compensate dispersion around the typical time.
 
-config EMDS_FLASH_TIME_BASE_OVERHEAD_US
-	int "Time to schedule the store process"
-	default 1000 if SETTINGS && SOC_FLASH_NRF_RRAM
-	default 85000 if SETTINGS && !SOC_FLASH_NRF_PARTIAL_ERASE
-	default 9000 if SETTINGS && SOC_FLASH_NRF_PARTIAL_ERASE
-	default 500
+config EMDS_CHUNK_PREPARATION_TIME_US
+	int
+	default 31 if SOC_NRF52840
+	default 31 if SOC_SERIES_NRF53X
+	default 8 if SOC_SERIES_NRF54LX
 	help
-	   Max time to prepare the store process (in microseconds). If used
-	   together with SETTINGS this value has to be at least as long as the
-	   time to erase one page (ERASEPAGE). If used together with
-	   SOC_FLASH_NRF_PARTIAL_ERASE this value should be
-	   (SOC_FLASH_NRF_PARTIAL_ERASE_MS * 1000 * 3). This is to account for
-	   worst case scenario, before starting storing entries. This value
-	   is dependent on the chip used, and should be checked against the chip
-	   datasheet.
-	   For RRAM-based persistent memory driver, use ERASEPROTECT and disregard the SOC_FLASH_NRF_PARTIAL_ERASE_MS parameter.
+	  Time that is required to prepare a chunk for storing.
+	  It includes creation chunk from entries, crc calculation and
+	  prologue/epilogue time of participated functions.
+	  Time is approximate and depends on entry sizes and number of entries.
 
 module = EMDS
 module-str = emergency data storage

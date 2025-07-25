@@ -227,9 +227,26 @@ bool emds_is_ready(void)
 	return emds_state == EMDS_STATE_READY;
 }
 
-uint32_t emds_store_time_get(void)
+int emds_store_time_get(uint32_t *store_time)
 {
-	return UINT32_MAX;
+	size_t store_size = 0;
+	size_t words;
+	int chunk_handling;
+	int rc;
+
+	rc = emds_store_size_get(&store_size);
+	if (rc) {
+		return rc;
+	}
+
+	words = DIV_ROUND_UP(store_size, 4);
+	words += DIV_ROUND_UP(sizeof(struct emds_snapshot_metadata), 4);
+	chunk_handling = DIV_ROUND_UP(store_size, CHUNK_SIZE);
+
+	*store_time = words * CONFIG_EMDS_FLASH_TIME_WRITE_ONE_WORD_US;
+	*store_time += chunk_handling * CONFIG_EMDS_CHUNK_PREPARATION_TIME_US;
+
+	return 0;
 }
 
 static uint8_t *emds_entry_memory_get(struct emds_data_entry *entry)
