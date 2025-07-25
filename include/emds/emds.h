@@ -187,9 +187,13 @@ int emds_prepare(void);
  * registered in the entries. This value is dependent on the chip used, and
  * should be checked against the chip datasheet.
  *
- * @return Time needed to store all data (in microseconds).
+ * @param store_time Pointer to a variable where the estimated time (in microseconds)
+ *                   will be stored.
+ *
+ * @return 0 on success.
+ * @retval -ECANCELED if the function was called before @ref emds_init.
  */
-uint32_t emds_store_time_get(void);
+int emds_store_time_get(uint32_t *store_time_us);
 
 /**
  * @brief Calculate the size needed to store the registered data.
