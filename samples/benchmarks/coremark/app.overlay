@@ -4,4 +4,4 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "boards/app_aliases_common.overlay"
+#include "boards/app_aliases_common.dtsi"
