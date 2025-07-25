@@ -7,12 +7,12 @@
 menuconfig EMDS
 	bool "Emergency Data Storage [EXPERIMENTAL]"
 	select EXPERIMENTAL
+	select CRC
+	select CRC32_K_4_2_TABLE_256
 	depends on PARTITION_MANAGER_ENABLED
 	depends on FLASH_MAP
-	depends on CRC
-	default n
 	help
-	  Enable Emergency Data Storage
+	  Enable Emergency Data Storage subsystem.
 
 if EMDS
 
