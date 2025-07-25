@@ -3,12 +3,36 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 import logging
+import time
+from typing import Callable
+
+from serial_port import SerialPort
+from twister_harness import DeviceAdapter
 
 logger = logging.getLogger("uart_passtrough")
 logger.setLevel(logging.DEBUG)
 
-from twister_harness import DeviceAdapter
-from serial_port import SerialPort
+DEAD_TIME_S = 100e-6
+
+
+def send_with_dead_time_between_characters(
+    write_handler: Callable, message: str, dead_time_s: float, apply_encoding: bool = False
+):
+    """
+    Send message to serial
+    and insert given dead time after every character
+    Send line termination at the end
+    """
+    for character in message:
+        if apply_encoding:
+            character = character.encode()
+        write_handler(character)
+        time.sleep(dead_time_s)
+    if apply_encoding:
+        line_termination = "\n".encode()
+    else:
+        line_termination = "\n"
+    write_handler(line_termination)
 
 
 def test_uart_passtrough(dut: DeviceAdapter):
@@ -29,9 +53,14 @@ def test_uart_passtrough(dut: DeviceAdapter):
 
     dut.readlines_until(regex="Ready", print_output=True, timeout=2)
     second_serial_port.open()
-    second_serial_port.send("con->pass")
-    dut.readlines_until(regex="con->pass", print_output=True, timeout=2)
-    dut.write("pass<-con".encode())
+    send_with_dead_time_between_characters(
+        second_serial_port.send, "TEST1: console->passtrough", DEAD_TIME_S
+    )
+    dut.readlines_until(regex="TEST1: console->passtrough", print_output=True, timeout=2)
+    send_with_dead_time_between_characters(
+        dut.write, "TEST2: passtrough->console", DEAD_TIME_S, apply_encoding=True
+    )
     second_port_data: str = second_serial_port.send("", get_response=True)
-    assert "pass<-con" in second_port_data
+    logger.debug(second_port_data)
+    assert "TEST2: passtrough->console" in second_port_data
     second_serial_port.close()
