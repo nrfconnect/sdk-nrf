@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2020 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Enhanced ShockBurst: Monitor"
+
+config ESB_MONITOR_APP_LOG_LEVEL
+	int "Log level for the ESB MONITOR sample"
+	default 4
+
+endmenu

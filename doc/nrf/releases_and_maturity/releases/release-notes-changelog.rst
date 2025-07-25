@@ -176,7 +176,7 @@ DECT NR+
 Enhanced ShockBurst (ESB)
 -------------------------
 
-|no_changes_yet_note|
+* Added the monitor mode feature.
 
 Gazell
 ------
@@ -533,7 +533,7 @@ Edge Impulse samples
 Enhanced ShockBurst samples
 ---------------------------
 
-|no_changes_yet_note|
+* Added :ref:`esb_monitor` sample.
 
 Gazell samples
 --------------
