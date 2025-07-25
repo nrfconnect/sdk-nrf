@@ -315,6 +315,17 @@ Execute the following sequence of commands:
    uart:~$ wifi_radio_test tx_pkt_num -1
    uart:~$ wifi_radio_test tx 1
 
+.. note::
+   The value of ``tx_pkt_len`` depends on ``ru_tone``.
+   For each ``ru_tone`` value, the following maximum limits for ``tx_pkt_len`` apply:
+
+   * 26 tone - 350 bytes
+   * 52 tone - 800 bytes
+   * 106 tone - 1800 bytes
+   * 242 tone - 4000 bytes
+
+   Ensure that the packet length does not exceed the specified limits for the selected RU configuration.
+
 At any point in time, you can use the following command to verify the configurations set.
 Use the command before setting ``tx`` or ``rx`` to ``1``:
 
