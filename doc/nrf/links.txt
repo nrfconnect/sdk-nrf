@@ -1870,5 +1870,11 @@
 .. _`BICR binary file`: https://files.nordicsemi.com/artifactory/SDSC/external/bicr_ext_loadcap.hex
 .. _`BICR new binary file`: https://files.nordicsemi.com/artifactory/SDSC/external/bicr/bicr.hex
 
+.. _`DTS format definition`: https://github.com/nrfconnect/sdk-zephyr/blob/v3.7.99-ncs2/dts/bindings/misc/nordic%2Cnrf-bicr.yaml
+.. _`JSON format definition`: https://github.com/nrfconnect/sdk-zephyr/blob/v4.0.99-ncs1/soc/nordic/nrf54h/bicr/bicr-schema.json
+
+.. _`BICR configuration example in DTS format`: https://github.com/nrfconnect/sdk-zephyr/blob/v3.7.99-ncs2/boards/nordic/nrf54h20dk/nrf54h20dk_bicr.dtsi
+.. _`BICR configuration example in JSON format`: https://github.com/nrfconnect/sdk-zephyr/blob/v4.0.99-ncs1/boards/nordic/nrf54h20dk/bicr.json
+
 .. _`Zephyr's nRF clock control API extensions`: https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/drivers/clock_control/nrf_clock_control.h
 .. _`clocks devicetree macro API`: https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/devicetree/clocks.h
