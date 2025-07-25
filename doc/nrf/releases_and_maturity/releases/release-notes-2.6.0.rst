@@ -44,7 +44,7 @@ Added the following features as supported:
 
 * Power Management (nPM1300):
 
-  * New :ref:`npm1300_one_button` sample that demonstrates how to support wake-up, shutdown, and user interactions through a single button connected to the nPM1300.
+  * New :ref:`nPM1300: One button <npm13xx_one_button>` sample that demonstrates how to support wake-up, shutdown, and user interactions through a single button connected to the nPM1300.
   * LDO and load-switches soft start configuration to limit voltage fluctuations, and PFM mode configuration for added user flexibility.
 
 * Amazon Sidewalk:
@@ -926,7 +926,7 @@ Peripheral samples
 PMIC samples
 ------------
 
-* Added :ref:`npm1300_one_button` sample that demonstrates how to support wake-up, shutdown, and user interactions through a single button connected to the nPM1300.
+* Added the :ref:`nPM1300: One button <npm13xx_one_button>` sample that demonstrates how to support wake-up, shutdown, and user interactions through a single button connected to the nPM1300.
 
 * :ref:`nPM1300: Fuel gauge <npm13xx_fuel_gauge>` sample:
 

@@ -3,8 +3,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <stdlib.h>
-
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/gpio.h>
@@ -22,11 +20,19 @@
 static volatile int flash_time_ms = SLOW_FLASH_MS;
 static volatile bool vbus_connected;
 
-static const struct device *pmic = DEVICE_DT_GET(DT_NODELABEL(npm1300_ek_pmic));
-static const struct device *leds = DEVICE_DT_GET(DT_NODELABEL(npm1300_ek_leds));
-static const struct device *regulators = DEVICE_DT_GET(DT_NODELABEL(npm1300_ek_regulators));
-static const struct device *ldsw = DEVICE_DT_GET(DT_NODELABEL(npm1300_ek_ldo1));
-static const struct device *charger = DEVICE_DT_GET(DT_NODELABEL(npm1300_ek_charger));
+#if DT_NODE_EXISTS(DT_NODELABEL(npm1300_ek_pmic))
+#define NPM13XX_DEVICE(dev) DEVICE_DT_GET(DT_NODELABEL(npm1300_ek_ ## dev))
+#elif DT_NODE_EXISTS(DT_NODELABEL(npm1304_ek_pmic))
+#define NPM13XX_DEVICE(dev) DEVICE_DT_GET(DT_NODELABEL(npm1304_ek_ ## dev))
+#else
+#error "neither npm1300 nor npm1304 found in devicetree"
+#endif
+
+static const struct device *pmic = NPM13XX_DEVICE(pmic);
+static const struct device *leds = NPM13XX_DEVICE(leds);
+static const struct device *regulators = NPM13XX_DEVICE(regulators);
+static const struct device *ldsw = NPM13XX_DEVICE(ldo1);
+static const struct device *charger = NPM13XX_DEVICE(charger);
 
 static void event_callback(const struct device *dev, struct gpio_callback *cb, uint32_t pins)
 {
