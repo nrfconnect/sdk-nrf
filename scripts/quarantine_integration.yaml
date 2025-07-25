@@ -340,7 +340,8 @@
 - scenarios:
     - sample.npm1300_fuel_gauge_compile
     - sample.npm1304_fuel_gauge_compile
-    - sample.npm1300_one_button
+    - sample.npm1300_one_button_compile
+    - sample.npm1304_one_button_compile
   platforms:
     - nrf52840dk/nrf52840
     - nrf52dk/nrf52832
