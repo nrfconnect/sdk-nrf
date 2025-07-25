@@ -578,6 +578,14 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-2 v2-9-1 v2-9-0
+
+KRKNWK-20562: The memory layout for the nRF54L10 target is invalid
+  The declared non-volatile memory layout is 10 kB greater than the actual size.
+  In case of using the memory area out of bounds, the device might crash or behave unexpectedly.
+
+  **Workaround:** Change the nRF54L10 memory layout to end at ``0xFD000`` address.
+
 .. rst-class:: v3-0-1 v3-0-0
 
 KRKNWK-20308: The ``MyCluster.xml`` file example in the :ref:`ug_matter_creating_custom_cluster` user guide does not contain the ``ExtendedCommandResponse`` command
