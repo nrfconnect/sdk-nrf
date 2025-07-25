@@ -35,7 +35,8 @@
 /applications/matter_weather_station/     @nrfconnect/ncs-matter
 /applications/nrf5340_audio/              @nrfconnect/ncs-audio
 /applications/nrf_desktop/                @nrfconnect/ncs-si-bluebagel
-/applications/hpf/                        @nrfconnect/ncs-ll-ursus @nrfconnect/ncs-lowlevel-doc
+/applications/hpf/                        @nrfconnect/ncs-ll-ursus
+/applications/hpf/**/*.rst                @nrfconnect/ncs-lowlevel-doc
 /applications/serial_lte_modem/           @nrfconnect/ncs-co-networking @nrfconnect/ncs-lr-slm
 /applications/serial_lte_modem/src/lwm2m_carrier/ @nrfconnect/ncs-carrier
 /applications/connectivity_bridge/*.rst   @nrfconnect/ncs-cia-doc
@@ -45,7 +46,6 @@
 /applications/matter_weather_station/*.rst @nrfconnect/ncs-matter-doc
 /applications/nrf5340_audio/**/*.rst      @nrfconnect/ncs-audio-doc
 /applications/nrf_desktop/**/*.rst        @nrfconnect/ncs-si-bluebagel-doc
-/applications/hpf/**/*.rst                @nrfconnect/ncs-lowlevel-doc
 /applications/serial_lte_modem/**/*.rst   @nrfconnect/ncs-iot-oulu-tampere-doc
 /applications/serial_lte_modem/doc/CARRIER_AT_commands.rst @nrfconnect/ncs-carrier-doc
 
