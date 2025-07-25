@@ -1,0 +1,56 @@
+# This file is used to generate the ZAP files for the samples.
+# Use this file as an argument to the west zap-generate command:
+#
+# west zap-generate -y zap_samples.yml
+#
+
+# Base dir related to ZEPHYR_BASE
+- base_dir: ../nrf
+
+# applications
+- name: matter_bridge
+  zap_file: applications/matter_bridge/src/default_zap/bridge.zap
+- name: matter_bridge_on_off_plug
+  zap_file: applications/matter_bridge/snippets/onoff_plug/bridge.zap
+- name: matter_weather_station
+  zap_file: applications/matter_weather_station/src/default_zap/weather-station.zap
+
+# light bulb
+- name: light_bulb
+  zap_file: samples/matter/light_bulb/src/default_zap/light_bulb.zap
+
+# light switch
+- name: light_switch
+  zap_file: samples/matter/light_switch/src/default_zap/light_switch.zap
+- name: light_switch_lit_icd
+  zap_file: samples/matter/light_switch/snippets/lit_icd/light_switch.zap
+
+# template
+- name: template
+  zap_file: samples/matter/template/src/default_zap/template.zap
+- name: template_certification
+  zap_file: samples/matter/common/src/certification/thread_platform/thread_certification.zap
+
+# lock
+- name: lock
+  zap_file: samples/matter/lock/src/default_zap/lock.zap
+- name: lock
+  zap_file: samples/matter/lock/snippets/schedules/lock.zap
+
+# Smoke CO Alarm
+- name: smoke_co_alarm
+  zap_file: samples/matter/smoke_co_alarm/src/default_zap/smoke_co_alarm.zap
+
+# thermostat
+- name: thermostat
+  zap_file: samples/matter/thermostat/src/default_zap/thermostat.zap
+
+# window covering
+- name: window_covering
+  zap_file: samples/matter/window_covering/src/default_zap/window-app.zap
+
+# manufacturer-specific
+- name: manufacturer_specific
+  zap_file: samples/matter/manufacturer_specific/src/default_zap/manufacturer_specific.zap
+  full: true
+  zcl_file: samples/matter/manufacturer_specific/src/default_zap/zcl.json
