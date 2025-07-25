@@ -141,6 +141,8 @@
 #cmakedefine PSA_WANT_RSA_KEY_SIZE_8192                         @PSA_WANT_RSA_KEY_SIZE_8192@
 #cmakedefine PSA_WANT_ALG_SP800_108_COUNTER_CMAC                @PSA_WANT_ALG_SP800_108_COUNTER_CMAC@
 #cmakedefine PSA_WANT_ALG_SP800_108_COUNTER_HMAC                @PSA_WANT_ALG_SP800_108_COUNTER_HMAC@
+#cmakedefine PSA_WANT_ALG_WPA3_SAE_PT                           @PSA_WANT_ALG_WPA3_SAE_PT@
+#cmakedefine PSA_WANT_ALG_WPA3_SAE                              @PSA_WANT_ALG_WPA3_SAE@
 
 /* The Adjusting is done in this file */
 #define PSA_CRYPTO_ADJUST_KEYPAIR_TYPES_H
