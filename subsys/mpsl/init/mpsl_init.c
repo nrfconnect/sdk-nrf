@@ -529,6 +529,12 @@ int32_t mpsl_lib_init(void)
 
 	mpsl_lib_irq_connect();
 
+#if defined(CONFIG_MPSL_CALIBRATION_PERIOD)
+	atomic_set(&do_calibration, 1);
+	mpsl_work_schedule(&calibration_work,
+			   K_MSEC(CONFIG_MPSL_CALIBRATION_PERIOD));
+#endif /* CONFIG_MPSL_CALIBRATION_PERIOD */
+
 	return 0;
 #else /* !IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS) */
 	return -NRF_EPERM;
