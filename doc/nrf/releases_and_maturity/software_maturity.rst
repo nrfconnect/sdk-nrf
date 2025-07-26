@@ -2642,6 +2642,14 @@ For more information about the PSA Crypto implementations in the |NCS|, see :ref
              - --
              - --
              - --
+           * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
+             - :ref:`CRACEN <crypto_drivers>`
+             - --
+             - --
+             - --
+             - --
+             - --
+             - --
 
       .. tab:: nRF53 Series
 
@@ -2664,6 +2672,9 @@ For more information about the PSA Crypto implementations in the |NCS|, see :ref
            * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
              - :ref:`Oberon PSA Crypto drivers <crypto_drivers>`
              - Supported
+           * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
+             - :ref:`CRACEN <crypto_drivers>`
+             - --
 
       .. tab:: nRF54 Series
 
@@ -2701,6 +2712,12 @@ For more information about the PSA Crypto implementations in the |NCS|, see :ref
              - --
              - Experimental
              - Experimental
+           * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
+             - :ref:`CRACEN <crypto_drivers>`
+             - Supported
+             - --
+             - --
+             - --
 
       .. tab:: nRF91 Series
 
@@ -2738,6 +2755,12 @@ For more information about the PSA Crypto implementations in the |NCS|, see :ref
              - Supported
              - Supported
              - Supported
+           * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
+             - :ref:`CRACEN <crypto_drivers>`
+             - --
+             - --
+             - --
+             - --
 
 .. crypto_support_table_end
 
