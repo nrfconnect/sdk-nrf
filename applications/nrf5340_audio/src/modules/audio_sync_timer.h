@@ -4,6 +4,20 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @defgroup nrf5340_audio_sync_timer Audio Sync Timer
+ * @{
+ * @brief Audio synchronization timer API for nRF5340 Audio applications.
+ *
+ * This module provides precise timing functionality for audio synchronization across
+ * multiple devices. It implements a high-resolution timer system that generates
+ * microsecond-precision timestamps for audio frame synchronization. The timer supports
+ * both RTC (Real-Time Clock) and hardware timer integration to provide accurate
+ * timing references for drift compensation and presentation timing in True Wireless
+ * Stereo (TWS) applications. It enables synchronized audio playback across multiple
+ * headsets in both unicast (CIS) and broadcast (BIS) modes.
+ */
+
 #ifndef _AUDIO_SYNC_TIMER_H_
 #define _AUDIO_SYNC_TIMER_H_
 
@@ -33,5 +47,9 @@ uint32_t audio_sync_timer_capture(void);
  * @retval The last captured timestamp of the audio sync timer.
  */
 uint32_t audio_sync_timer_frame_start_capture_get(void);
+
+/**
+ * @}
+ */
 
 #endif /* _AUDIO_SYNC_TIMER_H_ */

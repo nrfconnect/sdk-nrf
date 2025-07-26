@@ -270,11 +270,12 @@ nRF5340 Audio
     The broadcast sink can now receive audio from two BISes and play it on the left and right channels of the audio output, if the correct configuration options are enabled.
     The I2S output will be stereo, but :zephyr:board:`nrf5340_audio_dk` will still only have one audio output channel, since it has a mono codec (CS47L63).
     See :file:`overlay-broadcast_sink.conf` for more information.
-  * The audio devices are now set up with a location bitfield according to the BT Audio specification, instead of a channel.
-    Since a device can have multiple locations set, the location name has been removed from the device name during DFU.
+  * The :ref:`nRF5340 Audio application API documentation <nrf5340_audio_api>` page.
 
 * Updated:
 
+  * The audio devices are now set up with a location bitfield according to the BT Audio specification, instead of a channel.
+    Since a device can have multiple locations set, the location name has been removed from the device name during DFU.
   * The application to use the ``NFC.TAGHEADER0`` value from FICR as the broadcast ID instead of using a random ID.
   * The application to change from Newlib to Picolib to align with |NCS| and Zephyr.
   * The application to use the :ref:`net_buf_interface` API to pass audio data between threads.
@@ -284,6 +285,7 @@ nRF5340 Audio
   * The documentation pages with information about the :ref:`SD card playback module <nrf53_audio_app_overview_architecture_sd_card_playback>` and :ref:`how to enable it <nrf53_audio_app_configuration_sd_card_playback>`.
   * The buffer count (:kconfig:option:`CONFIG_BT_ISO_TX_BUF_COUNT` and :kconfig:option:`CONFIG_BT_BUF_ACL_TX_COUNT`) to be in-line with SoftDevice Controller (SDC) defaults.
     This can be changed and optimized for specific use cases.
+  * The API documentation in the header files listed on the :ref:`nrf5340_audio_api` page.
 
 * Removed:
 
