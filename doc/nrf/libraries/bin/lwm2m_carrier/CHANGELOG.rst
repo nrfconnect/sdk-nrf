@@ -504,6 +504,8 @@ Changes
 
   * This function allows the LwM2M carrier library to disconnect gracefully and it is mandatory to use when the Subscriber ID is LG U+.
 
+* Changed the name of the kconfig ``LWM2M_CARRIER_IS_SERVER_BOOTSTRAP`` to ``LWM2M_CARRIER_IS_BOOTSTRAP_SERVER``.
+
 liblwm2m_carrier 0.30.2
 ***********************
 
