@@ -445,7 +445,10 @@ static int check_for_job(struct nrf_cloud_fota_poll_ctx *ctx,
 	LOG_INF("Checking for FOTA job...");
 
 	err = fota_job_get(ctx, job_ref);
-	if (err) {
+	if (err == -ETIMEDOUT) {
+		LOG_WRN("FOTA job get timed out, error: %d", err);
+		return err;
+	} else if (err) {
 		LOG_ERR("Failed to fetch FOTA job, error: %d", err);
 		return -ENOENT;
 	}
@@ -696,7 +699,12 @@ int nrf_cloud_fota_poll_process(struct nrf_cloud_fota_poll_ctx *ctx)
 
 	/* Check for a new FOTA job */
 	err = check_for_job(ctx, &job);
-	if (err < 0) {
+	if (err == -ETIMEDOUT) {
+		LOG_WRN("FOTA job check failed timed out, error: %d", err);
+
+		cleanup(&job);
+		return err;
+	} else if (err < 0) {
 		return -ENOTRECOVERABLE;
 	} else if (err > 0) {
 		/* No job. */

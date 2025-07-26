@@ -588,8 +588,10 @@ int nrf_cloud_coap_fota_job_get(struct nrf_cloud_fota_job_info *const job)
 		LOG_DBG("No pending FOTA job");
 	} else if (fota_err > 0) {
 		LOG_RESULT_CODE_ERR("Error getting FOTA job info; result code:", fota_err);
+	} else if (fota_err == -ETIMEDOUT) {
+		LOG_ERR("FOTA job request timed out: %d", fota_err);
 	} else if (fota_err < 0) {
-		LOG_ERR("FOTA response decoding error: %d", fota_err);
+		LOG_ERR("FOTA request failed: %d", fota_err);
 	} else {
 		/* No callback error: success */
 		LOG_DBG("FOTA job received; type:%d, id:%s, host:%s, path:%s, size:%d",
