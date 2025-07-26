@@ -24,6 +24,7 @@
 #include <sdc_soc.h>
 #include <sdc_hci.h>
 #include <sdc_hci_vs.h>
+#include <mpsl.h>
 #include <mpsl/mpsl_work.h>
 #include <mpsl/mpsl_lib.h>
 
