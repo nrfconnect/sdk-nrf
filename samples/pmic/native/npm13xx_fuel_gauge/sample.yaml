@@ -39,3 +39,4 @@ tests:
       - shield
       - sysbuild
       - ci_samples_pmic
+    extra_args: SHIELD=npm1300_ek

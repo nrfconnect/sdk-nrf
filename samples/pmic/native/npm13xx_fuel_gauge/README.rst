@@ -1,15 +1,15 @@
-.. _npm1300_fuel_gauge:
+.. _npm13xx_fuel_gauge:
 
-nPM1300: Fuel gauge
+nPM13xx: Fuel gauge
 ###################
 
 .. contents::
    :local:
    :depth: 2
 
-The Fuel gauge sample demonstrates how to calculate the state of charge of a development kit battery using `nPM1300 <nPM1300 product website_>`_ and the :ref:`nrfxlib:nrf_fuel_gauge`.
+The Fuel gauge sample demonstrates how to calculate the state of charge of a development kit battery using `nPM1300 <nPM1300 product website_>`_ or  `nPM1304 <nPM1304 product website_>`_ and the :ref:`nrfxlib:nrf_fuel_gauge`.
 
-For more information about fuel gauging with the nPM1300, see `Using the nPM1300 Fuel Gauge`_.
+For more information about fuel gauging with the nPM1300 or nPM1304, see `Using the nPM1300 Fuel Gauge`_.
 
 Requirements
 ************
@@ -18,27 +18,27 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-The sample also requires an `nPM1300 EK <nPM1300 EK product page_>`_ that you need to connect to the development kit as described in `Wiring`_.
+The sample also requires an `nPM1300 EK <nPM1300 EK product page_>`_ or nPM1304 EK that you need to connect to the development kit as described in `Wiring`_.
 
 Overview
 ********
 
-This sample allows to calculate the state of charge, time to empty, and time to full information from a battery on the development kit connected to the nPM1300 PMIC.
+This sample allows to calculate the state of charge, time to empty, and time to full information from a battery on the development kit connected to the nPM1300 or nPM1304 PMIC.
 
-.. _npm1300_fuel_gauge_wiring:
+.. _npm13xx_fuel_gauge_wiring:
 
 Wiring
 ******
 
-To connect your DK to the nPM1300 EK, complete the following steps:
+To connect your DK to the nPM1300 or nPM1304 EK, complete the following steps:
 
-#. Connect the TWI interface between the chosen DK and the nPM1300 EK as in the following table:
+#. Connect the TWI interface between the chosen DK and the nPM1300 or nPM1304 EK as in the following table:
 
-   .. list-table:: nPM1300 EK connections.
+   .. list-table:: nPM1300/nPM1304 EK connections.
       :widths: auto
       :header-rows: 1
 
-      * - nPM1300 EK pins
+      * - EK pins
         - nRF52 DK pins
         - nRF52840 DK pins
         - nRF5340 DK pins
@@ -50,7 +50,7 @@ To connect your DK to the nPM1300 EK, complete the following steps:
         - P0.26
         - P1.02
         - P1.11
-        - P0.04
+        - P0.05
         - P0.30
       * - SCL
         - P0.27
@@ -60,12 +60,12 @@ To connect your DK to the nPM1300 EK, complete the following steps:
         - P0.00
         - P0.31
       * - GPIO3
-        - P0.22
-        - P1.12
-        - P1.12
-        - P1.10
-        - P0.05
-        - P0.10
+        - P0.04
+        - P0.04
+        - P0.04
+        - P0.04
+        - P0.04
+        - P0.04
       * - VDDIO
         - VDD
         - VDD
@@ -81,25 +81,31 @@ To connect your DK to the nPM1300 EK, complete the following steps:
         - GND
         - GND
 
-#. Make the following connections on the nPM1300 EK:
+#. Make the following connections on the nPM1300 or nPM1304 EK:
 
    * Remove all existing connections.
-   * Connect a USB power supply to the **J3** connector.
+   * Connect a USB power supply to the **J3** (**J4** on nPM1304) connector.
    * Connect a suitable battery to the **J2** connector.
-   * On the **P2** pin header, connect **VBAT** and **VBATIN** pins with a jumper.
+   * On the **P1** pin header, connect **VBAT** and **VBATIN** pins with a jumper.
    * On the **P17** pin header, connect all LEDs with jumpers.
    * On the **P13** pin header, connect **RSET1** and **VSET1** pins with a jumper.
    * On the **P14** pin header, connect **RSET2** and **VSET2** pins with a jumper.
 
 .. note::
-   When using the :zephyr:board:`nrf54l15dk`, the nPM1300 **GPIO3** interrupt pin assignment uses the DK's **LED 1** pin.
+   When using the :zephyr:board:`nrf54l15dk`, the PMIC **GPIO3** interrupt pin assignment uses the DK's **BUTTON 3** pin.
 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/pmic/native/npm1300_fuel_gauge`
+.. |sample path| replace:: :file:`samples/pmic/native/npm13xx_fuel_gauge`
 
 .. include:: /includes/build_and_run.txt
+
+To choose between nPM1300 EK and nPM1304 EK, use the ``--shield`` option of the ``west build`` command. For example, to build for nRF54L15 DK and nPM1300 EK use the following command:
+
+.. code-block:: bash
+
+   west build -b nrf54l15dk/nrf54l15/cpuapp --shield npm1300_ek
 
 Testing
 *******
