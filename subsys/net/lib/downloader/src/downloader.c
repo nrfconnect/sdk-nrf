@@ -305,14 +305,10 @@ reconnect:
 				}
 
 				LOG_ERR("Failed to reconnect, err %d", rc2);
-				if (rc == -ECONNRESET) {
-					/* We haven't sent the error before in this case,
-					 * so we do it now.
-					 */
-					rc2 = error_evt_send(dl, rc);
-					if (rc2 == 0 && is_state(dl, DOWNLOADER_DOWNLOADING)) {
-						goto reconnect;
-					}
+
+				rc2 = error_evt_send(dl, rc2);
+				if (rc2 == 0 && is_state(dl, DOWNLOADER_DOWNLOADING)) {
+					goto reconnect;
 				}
 
 				transport_close(dl);
