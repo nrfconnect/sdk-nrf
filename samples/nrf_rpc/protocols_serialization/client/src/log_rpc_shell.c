@@ -122,7 +122,7 @@ static int cmd_log_rpc_history_threshold(const struct shell *sh, size_t argc, ch
 	uint32_t threshold;
 	int rc = 0;
 
-	if (argc == 0) {
+	if (argc == 1) {
 		shell_print(sh, "%u", log_rpc_get_history_usage_threshold());
 		return 0;
 	}
