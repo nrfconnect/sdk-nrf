@@ -9,6 +9,37 @@
  * @defgroup bt_mesh_scheduler_srv Scheduler Server model
  * @{
  * @brief API for the Scheduler Server model.
+ *
+ * @details Scheduler Server model instantiates the Scene Server model internally through the
+ * @ref BT_MESH_MODEL_SCHEDULER_SRV macro. The Scheduler Server model requires a Time Server,
+ * and Default Transition Time Server models to be instantiated, if they are not already
+ * instantiated.
+ *
+ * To instantiate this model in your application, add following KConfigs to your project config:
+ *
+ * ```
+ * CONFIG_BT_MESH_DTT_SRV=y
+ * CONFIG_BT_MESH_SCHEDULER_SRV=y
+ * ```
+ *
+ * Then, add the following model instances to your application. The server initialization
+ * macros have optional state handlers, which have been set to NULL here for simplicity. For more
+ * information, see the parameters of the respective macros.
+ *
+ * ```
+ * static struct bt_mesh_dtt_srv dtt_srv = BT_MESH_DTT_SRV_INIT(NULL);
+ * static struct bt_mesh_time_srv time_srv = BT_MESH_TIME_SRV_INIT(NULL);
+ * static struct bt_mesh_scheduler_srv sched_srv = BT_MESH_SCHEDULER_SRV_INIT(NULL, &time_srv);
+ *
+ * static struct bt_mesh_elem elements[] = {
+ *		BT_MESH_ELEM(1, BT_MESH_MODEL_LIST(
+ *			// ...
+ *			BT_MESH_MODEL_DTT_SRV(&dtt_srv),
+ *			BT_MESH_MODEL_TIME_SRV(&time_srv),
+ *			BT_MESH_MODEL_SCHEDULER_SRV(&sched_srv)),
+ *			// ...
+ *			BT_MESH_MODEL_NONE),
+ * ```
  */
 
 #ifndef BT_MESH_SCHEDULER_SRV_H__
