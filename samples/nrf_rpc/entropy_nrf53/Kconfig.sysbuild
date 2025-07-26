@@ -1,0 +1,39 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if SUPPORT_NETCORE
+
+config SUPPORT_NETCORE_REMOTE
+	bool
+	default y
+
+config NRF_DEFAULT_REMOTE
+	bool
+	default y
+
+choice NETCORE
+	default NETCORE_REMOTE if NRF_DEFAULT_REMOTE && NETCORE_REMOTE_BOARD_TARGET_CPUCLUSTER != ""
+	depends on !EXTERNAL_CONFIGURED_NETCORE
+
+config NETCORE_REMOTE
+	bool "remote"
+	depends on SUPPORT_NETCORE_REMOTE
+
+endchoice
+
+if !NETCORE_NONE
+
+config NETCORE_IMAGE_NAME
+	default "remote" if NETCORE_REMOTE
+
+config NETCORE_IMAGE_PATH
+	default "${APP_DIR}/remote" if NETCORE_REMOTE
+
+endif # !NETCORE_NONE
+
+endif # SUPPORT_NETCORE
+
+source "share/sysbuild/Kconfig"
