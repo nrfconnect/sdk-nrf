@@ -149,7 +149,7 @@ The following example configuration for the nRF54H20 SoC sets up the necessary p
 
 			softperiph_ram: memory@2f890000 {
 				reg = <0x2f890000 0x4000>;
-				ranges;
+				ranges = <0x0 0x2f890000 0x4000>;
 				#address-cells = <1>;
 				#size-cells = <1>;
 
