@@ -63,19 +63,24 @@ static int exit_ikg(struct sx_pk_acq_req *pkreq)
 {
 
 	int status;
-
+	int i = 0;
 	sx_pk_release_req(pkreq->req);
-	*pkreq = sx_pk_acquire_req(SX_PK_CMD_IK_EXIT);
-	pkreq->status = sx_pk_list_ik_inslots(pkreq->req, 0, NULL);
-	if (pkreq->status) {
-		return pkreq->status;
+	while (pkreq->status != SX_OK && i <= MAX_ATTEMPTS) {
+		*pkreq = sx_pk_acquire_req(SX_PK_CMD_IK_EXIT);
 	}
-	sx_pk_run(pkreq->req);
-	status = sx_pk_wait(pkreq->req);
-	if (status != SX_OK) {
-		return status;
-	}
-	sx_pk_release_req(pkreq->req);
+		if (pkreq->status) {
+			return pkreq->status;
+		}
+		status = sx_pk_list_ik_inslots(pkreq->req, 0, NULL);
+		if (status) {
+			return pkreq->status;
+		}
+		sx_pk_run(pkreq->req);
+		status = sx_pk_wait(pkreq->req);
+		if (status != SX_OK) {
+			return status;
+		}
+		sx_pk_release_req(pkreq->req);
 	return SX_OK;
 }
 
