@@ -49,7 +49,7 @@ static enum tfm_plat_err_t tfm_plat_get_huk(uint8_t *buf, size_t buf_len, size_t
 
 	return TFM_PLAT_ERR_SUCCESS;
 }
-#endif /* CONFIG_HW_UNQUE_KEY */
+#endif /* CONFIG_HW_UNIQUE_KEY */
 
 #ifdef TFM_PARTITION_INITIAL_ATTESTATION
 static enum tfm_plat_err_t tfm_plat_get_iak(uint8_t *buf, size_t buf_len, size_t *key_len,

@@ -87,7 +87,6 @@ There are several options to get UART output from the secure TF-M:
 * Disable the output for the network core and change the pins used by TF-M.
   The network core usually has a child image.
   To configure logging in an |NCS| image, see :ref:`ug_logging`.
-  To change the pins used by TF-M, set the RXD (:kconfig:option:`CONFIG_TFM_UART1_RXD_PIN`) and TXD (:kconfig:option:`CONFIG_TFM_UART1_TXD_PIN`) Kconfig options in the application image to **P1.00** (32) and **P1.01** (33).
 
 * You can wire the secure and non-secure UART peripherals to the same pins.
   Specifically, physically wire together the pins **P0.25** and **P0.26** to **P0.20** and **P0.22**, respectively.
