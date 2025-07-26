@@ -15,17 +15,18 @@ Software maturity categories
 
 The following categories are used in the tables to classify the software maturity of each feature and component:
 
-Supported
-   The feature or component is implemented and maintained, and is suitable for product development.
+Production
+   The feature or component is implemented and maintained, and is suitable for deployment in products.
+
+Development (Experimental)
+   The feature can be used for development, but it is not recommended for deployment in products.
+   This means that the feature is incomplete in functionality or verification and can be expected to change in future releases.
+   The feature is made available in its current state, but the design and interfaces can change between release tags.
+   The feature is also labeled as :ref:`experimental in Kconfig files <app_build_additions_experimental>` and a build warning is generated to indicate this status.
 
 Not supported (--)
    The feature or component is neither implemented nor maintained, and it does not work.
 
-Experimental
-   The feature can be used for development, but it is not recommended for production.
-   This means that the feature is incomplete in functionality or verification and can be expected to change in future releases.
-   The feature is made available in its current state, but the design and interfaces can change between release tags.
-   The feature is also labeled as :ref:`experimental in Kconfig files <app_build_additions_experimental>` and a build warning is generated to indicate this status.
 
 See the following table for more details:
 
@@ -37,8 +38,8 @@ See the following table for more details:
    :widths: auto
 
    * -
-     - Supported
-     - Experimental
+     - Production
+     - Development (Experimental)
      - Not supported
    * - **Technical support**
      - Customer issues raised for features supported for developing end products on tagged |NCS| releases are handled by technical support on DevZone.
