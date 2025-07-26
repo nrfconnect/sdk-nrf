@@ -386,7 +386,7 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 	}
 
 	err = bt_scan_stop();
-	if ((!err) && (err != -EALREADY)) {
+	if (err) {
 		LOG_ERR("Stop LE scan failed (err %d)", err);
 	}
 }
