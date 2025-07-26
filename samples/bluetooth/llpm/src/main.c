@@ -200,6 +200,13 @@ static void connected(struct bt_conn *conn, uint8_t err)
 		if (err) {
 			printk("Failed to set security: %d\n", err);
 		}
+#else
+		/*Start service discovery*/
+		err = bt_gatt_dm_start(default_conn, BT_UUID_LATENCY, &discovery_cb,
+					&latency_client);
+		if (err) {
+			printk("Discover failed (err %d)\n", err);
+		}
 #endif /* CONFIG_BT_SMP */
 	}
 
