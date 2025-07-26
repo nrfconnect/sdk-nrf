@@ -1,0 +1,10 @@
+sample:
+  name: Bluetooth LE Peripheral Path Loss Monitoring Sample
+  
+common: 
+    sysbuild: true
+    build_only: true
+    integration_platforms: 
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf5340dk/nrf5340/cpuapp
