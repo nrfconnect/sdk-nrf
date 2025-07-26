@@ -7,6 +7,7 @@
 #include <zephyr/kernel.h>
 #include <mpsl_pm.h>
 #include <mpsl_pm_config.h>
+#include <nrf_errno.h>
 #include <zephyr/pm/policy.h>
 #include <zephyr/logging/log.h>
 
