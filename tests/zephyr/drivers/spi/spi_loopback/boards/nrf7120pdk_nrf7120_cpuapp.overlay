@@ -4,29 +4,35 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/*
+ * Test requires following loopback:
+ * P1.4 - P1.5
+ */
+
 &pinctrl {
-	spi00_default: spi00_default {
+	spi20_default: spi20_default {
 		group1 {
 			psels = <NRF_PSEL(SPIM_SCK, 2, 6)>,
-				<NRF_PSEL(SPIM_MISO, 2, 9)>,
-				<NRF_PSEL(SPIM_MOSI, 2, 8)>;
+				<NRF_PSEL(SPIM_MISO, 1, 4)>,
+				<NRF_PSEL(SPIM_MOSI, 1, 5)>;
+			low-power-enable;
 		};
 	};
 
-	spi00_sleep: spi00_sleep {
+	spi20_sleep: spi20_sleep {
 		group1 {
 			psels = <NRF_PSEL(SPIM_SCK, 2, 6)>,
-				<NRF_PSEL(SPIM_MISO, 2, 9)>,
-				<NRF_PSEL(SPIM_MOSI, 2, 8)>;
+				<NRF_PSEL(SPIM_MISO, 1, 4)>,
+				<NRF_PSEL(SPIM_MOSI, 1, 5)>;
 			low-power-enable;
 		};
 	};
 };
 
-&spi00 {
+&spi20 {
 	status = "okay";
-	pinctrl-0 = <&spi00_default>;
-	pinctrl-1 = <&spi00_sleep>;
+	pinctrl-0 = <&spi20_default>;
+	pinctrl-1 = <&spi20_sleep>;
 	pinctrl-names = "default", "sleep";
 	overrun-character = <0x00>;
 	zephyr,pm-device-runtime-auto;
@@ -44,4 +50,10 @@
 
 &gpio2 {
 	status = "okay";
+};
+
+// UART20 disabled to avoid pin-conflicts with SPI20 + uses the same peripheral hardware block .
+
+&uart20 {
+	status = "disabled";
 };
