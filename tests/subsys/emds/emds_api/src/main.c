@@ -192,13 +192,13 @@ static void store(int idx)
 
 	zassert_false(emds_is_ready(), "Store not completed");
 
-	uint64_t store_time_us = k_ticks_to_us_ceil64(store_time_ticks);
+	uint32_t store_time_us = k_ticks_to_us_near32(store_time_ticks);
 
 	uint32_t estimate_store_time_us = 0;
 
 	zassert_equal(emds_store_time_get(&estimate_store_time_us), 0, "Getting store time failed");
 
-	printf("Store time: Actual %lldus, Worst case:  %dus\n",
+	printf("Store time: Actual %dus, Worst case:  %dus\n",
 	       store_time_us, estimate_store_time_us);
 
 	zassert_true((store_time_us < estimate_store_time_us), "Store takes to long time");
