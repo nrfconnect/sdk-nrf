@@ -102,6 +102,18 @@ public:
 	 */
 	CHIP_ERROR RegisterTestEventTriggerHandler(chip::TestEventTriggerHandler *triggerDelegate);
 
+#ifdef CONFIG_CHIP_ENABLE_ICD_SUPPORT
+	/**
+	 * @brief Register all ICD test event triggers
+	 *
+	 * This function registers all the ICD test event triggers defined in ICDManager.cpp
+	 * including active mode requests, counter invalidation, and DSLS mode changes.
+	 *
+	 * @return CHIP_NO_ERROR on success, or appropriate error code on failure.
+	 */
+	CHIP_ERROR RegisterICDTestEventTriggers();
+#endif
+
 	/**
 	 * @brief Set the new Enable Key read out from an external source.
 	 *

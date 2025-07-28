@@ -8,10 +8,38 @@
 
 #include <zephyr/logging/log.h>
 
+/* Server used only for getting the ICDManager instance */
+#ifdef CONFIG_CHIP_ENABLE_ICD_SUPPORT
+#include <app/server/Server.h>
+#endif
+
 LOG_MODULE_DECLARE(app, CONFIG_CHIP_APP_LOG_LEVEL);
 
 using namespace Nrf::Matter;
 using namespace chip;
+
+#ifdef CONFIG_CHIP_ENABLE_ICD_SUPPORT
+CHIP_ERROR TestEventTrigger::RegisterICDTestEventTriggers()
+{
+    /*
+     * Register ICDManager as a test event trigger handler.
+     * This reuses the existing HandleEventTrigger implementation in ICDManager.cpp
+     * which already handles all ICD test event triggers including:
+     * - Active mode management (add/remove active mode requirements)
+     * - Check-in counter operations (invalidate half/all counter values)
+     * - DSLS (Dynamic SIT/LIT Support) mode changes
+     * - Force maximum check-in backoff state
+     */
+    CHIP_ERROR err = RegisterTestEventTriggerHandler(&chip::Server::GetInstance().GetICDManager());
+    if (err != CHIP_NO_ERROR) {
+        LOG_ERR("Failed to register ICDManager as test event trigger handler: %" CHIP_ERROR_FORMAT, err.Format());
+        return err;
+    }
+
+    LOG_INF("Successfully registered ICDManager as test event trigger handler");
+    return CHIP_NO_ERROR;
+}
+#endif
 
 CHIP_ERROR TestEventTrigger::RegisterTestEventTrigger(EventTriggerId id, EventTrigger trigger)
 {
