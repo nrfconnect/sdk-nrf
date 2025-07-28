@@ -2359,13 +2359,17 @@ endpoint 0 {
   }
 
   server cluster SoftwareDiagnostics {
+    callback attribute threadMetrics;
     callback attribute currentHeapFree;
     callback attribute currentHeapUsed;
+    callback attribute currentHeapHighWatermark;
     callback attribute generatedCommandList;
     callback attribute acceptedCommandList;
     callback attribute attributeList;
     callback attribute featureMap;
     callback attribute clusterRevision;
+
+    handle command ResetWatermarks;
   }
 
   server cluster ThreadNetworkDiagnostics {
@@ -2621,3 +2625,5 @@ endpoint 1 {
     callback attribute clusterRevision;
   }
 }
+
+
