@@ -9,11 +9,24 @@ import "common.proto";
 
 option java_multiple_files = true;
 option java_package = "no.nordicsemi.android.wifi.provisioning";
+message EnterpriseCertConfig {
+  optional bytes ca_cert      = 1;
+  optional bytes client_cert  = 2;
+  optional bytes private_key  = 3;
+  optional string private_key_passwd = 4;
+  optional bytes ca_cert2      = 5;
+  optional bytes client_cert2  = 6;
+  optional bytes private_key2  = 7;
+  optional string private_key_passwd2 = 8;
+  optional string identity    = 9;
+  optional string password    = 10;
+}
 
 message WifiConfig {
   optional WifiInfo wifi          = 1;
   optional bytes passphrase       = 2;
   optional bool volatileMemory    = 3;
+  optional EnterpriseCertConfig certs = 4;
 }
 
 message Request {
