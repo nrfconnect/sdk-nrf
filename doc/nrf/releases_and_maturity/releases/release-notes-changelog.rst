@@ -612,6 +612,15 @@ Matter samples
 Networking samples
 ------------------
 
+* Added support for the nRF7002 EK with the ``nrf5340dk/nrf5340/cpuapp/ns`` board target in the following samples:
+
+  * :ref:`download_sample`
+  * :ref:`net_coap_client_sample`
+  * :ref:`https_client`
+  * :ref:`mqtt_sample`
+  * :ref:`udp_sample`
+  * :ref:`http_server`
+
 * :ref:`download_sample` sample:
 
   * Added the :ref:`CONFIG_SAMPLE_PROVISION_CERT <CONFIG_SAMPLE_PROVISION_CERT>` Kconfig option to provision the root CA certificate to the modem.

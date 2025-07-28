@@ -16,6 +16,19 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_net
+  sample.net.downloader.nrf7002ek.wifi:
+    sysbuild: true
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+    build_only: true
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp/ns
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp/ns
+    extra_args:
+      - download_SHIELD="nrf7002ek"
   sample.net.downloader.ci:
     sysbuild: true
     build_only: true
