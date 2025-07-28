@@ -169,7 +169,7 @@ class PPR_PRL(WestCommand):
     def _flash(self, args: argparse.Namespace) -> None:
         if not args.image:
             nrf_path = self.manifest.topdir + "/nrf"
-            image_path = "{}/snippets/haltium_ppr_power_logger/ppr_hex/firmware_nvm_v1.hex".format(nrf_path)
+            image_path = "{}/snippets/haltium_ppr_power_logger/ppr_hex/firmware_nvm_v2.hex".format(nrf_path)
         else:
             image_path = args.image
 
