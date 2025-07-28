@@ -176,7 +176,7 @@ DECT NR+
 Enhanced ShockBurst (ESB)
 -------------------------
 
-|no_changes_yet_note|
+* Improved protocol disable handling in the ``esb_disable`` and ``esb_stop_rx`` functions.
 
 Gazell
 ------
