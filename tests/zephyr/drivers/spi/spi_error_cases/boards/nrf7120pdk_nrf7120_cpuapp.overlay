@@ -70,3 +70,4 @@ dut_spis: &spi21 {
 	/delete-property/rx-delay-supported;
 	/delete-property/rx-delay;
 };
+
