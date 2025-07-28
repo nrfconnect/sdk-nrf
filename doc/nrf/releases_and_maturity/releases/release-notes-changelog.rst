@@ -350,6 +350,12 @@ nRF Desktop
     You can disable the :ref:`CONFIG_DESKTOP_FN_KEYS_BUTTON_EVENT_SUBSCRIBE_FIRST <config_desktop_app_options>` Kconfig option to use early subscription (:c:macro:`APP_EVENT_SUBSCRIBE_EARLY`).
   * The :ref:`nrf_desktop_passkey` and :ref:`nrf_desktop_buttons_sim` to subscribe for :c:struct:`button_event` as an early subscriber (:c:macro:`APP_EVENT_SUBSCRIBE_EARLY`).
     This allows the modules to process the event before other application modules.
+  * The memory layout in every configuration variant of the ``nrf54l15dk/nrf54l10/cpuapp`` board target to fix the out-of-bound partition allocations.
+    Previously, it was assumed that the memory size for this board target was 10 KB larger than the actual one.
+    The NVM size in the nRF54L10 SoC is equal to 1012 KB.
+
+    This change in the nRF54L10 partition map is a breaking change and cannot be performed using DFU.
+    As a result, the DFU procedure will fail if you attempt to upgrade the sample firmware based on one of the |NCS| v3.0 releases.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
