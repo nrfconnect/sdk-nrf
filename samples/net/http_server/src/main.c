@@ -120,7 +120,7 @@ static int tcp6_accepted[MAX_CLIENT_QUEUE];
 static struct http_parser_settings parser_settings;
 
 static void l4_event_handler(struct net_mgmt_event_callback *cb,
-			     uint32_t event,
+			     uint64_t event,
 			     struct net_if *iface)
 {
 	switch (event) {
@@ -139,7 +139,7 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 }
 
 static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
-				       uint32_t event,
+				       uint64_t event,
 				       struct net_if *iface)
 {
 	if (event == NET_EVENT_CONN_IF_FATAL_ERROR) {

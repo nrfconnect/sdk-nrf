@@ -15,7 +15,7 @@
 
 #include <zephyr/net/wifi_mgmt.h>
 
-void lwm2m_wifi_net_mgmt_event_handler(struct net_mgmt_event_callback *cb, uint32_t mgmt_event,
+void lwm2m_wifi_net_mgmt_event_handler(struct net_mgmt_event_callback *cb, uint64_t mgmt_event,
 				       struct net_if *iface);
 
 struct wifi_scan_result scans[] = {
