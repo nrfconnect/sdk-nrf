@@ -265,6 +265,11 @@ CHIP_ERROR Register()
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS */
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST */
 
+#ifdef CONFIG_CHIP_ENABLE_ICD_SUPPORT
+	/* Register ICD test event triggers */
+	ReturnErrorOnFailure(Nrf::Matter::TestEventTrigger::Instance().RegisterICDTestEventTriggers());
+#endif
+
 	/* Register OTA test events handler */
 	static chip::OTATestEventTriggerHandler otaTestEventTrigger;
 	ReturnErrorOnFailure(
