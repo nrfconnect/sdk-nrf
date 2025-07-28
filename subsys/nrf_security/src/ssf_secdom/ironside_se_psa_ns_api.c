@@ -9,7 +9,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/cache.h>
-#include <zephyr/drivers/firmware/nrf_ironside/call.h>
+#include <nrf_ironside/call.h>
 
 #include <psa/client.h>
 #include <psa/error.h>
