@@ -8,6 +8,8 @@
 #include <errno.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/wifi.h>
+#include <zephyr/net/wifi_certs.h>
+#include <zephyr/net/tls_credentials.h>
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/logging/log.h>
 
@@ -32,6 +34,18 @@ static struct wifi_credentials_personal config_in_ram;
 /* This is to hold temporary config  */
 static struct wifi_credentials_personal config_buf;
 static bool save_config_to_ram;
+
+enum wifi_enterprise_cert_sec_tags {
+	WIFI_CERT_CA_SEC_TAG = 0x1020001,
+	WIFI_CERT_CLIENT_KEY_SEC_TAG,
+	WIFI_CERT_SERVER_KEY_SEC_TAG,
+	WIFI_CERT_CLIENT_SEC_TAG,
+	WIFI_CERT_SERVER_SEC_TAG,
+	/* Phase 2 */
+	WIFI_CERT_CA_P2_SEC_TAG,
+	WIFI_CERT_CLIENT_KEY_P2_SEC_TAG,
+	WIFI_CERT_CLIENT_P2_SEC_TAG,
+};
 
 /* Configurator should read info before any other operations.
  * We should define some useful fields to facilicate bootstrapping.
@@ -238,8 +252,48 @@ static void prov_set_config_handler(Request *req, Response *rsp)
 				config.header.type = WIFI_SECURITY_TYPE_PSK_SHA256;
 			} else if (req->config.wifi.auth == AuthMode_WPA3_PSK) {
 				config.header.type = WIFI_SECURITY_TYPE_SAE;
-			} else {
-				config.header.type = WIFI_SECURITY_TYPE_UNKNOWN;
+#if defined(CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE)
+			} else if (req->config.wifi.auth == AuthMode_WPA2_ENTERPRISE) {
+				config.header.type = WIFI_SECURITY_TYPE_EAP_TLS;
+				if (req->config.has_certs == true) {
+					if (req->config.certs.has_ca_cert) {
+						tls_credential_add(WIFI_CERT_CA_SEC_TAG,
+							TLS_CREDENTIAL_CA_CERTIFICATE,
+							req->config.certs.ca_cert.bytes,
+							req->config.certs.ca_cert.size);
+					}
+					if (req->config.certs.has_client_cert) {
+						tls_credential_add(WIFI_CERT_CLIENT_SEC_TAG,
+							TLS_CREDENTIAL_PUBLIC_CERTIFICATE,
+							req->config.certs.client_cert.bytes,
+							req->config.certs.client_cert.size);
+					}
+					if (req->config.certs.has_private_key) {
+						tls_credential_add(WIFI_CERT_CLIENT_KEY_SEC_TAG,
+							TLS_CREDENTIAL_PRIVATE_KEY,
+							req->config.certs.private_key.bytes,
+							req->config.certs.private_key.size);
+					}
+					if (req->config.certs.has_ca_cert) {
+						tls_credential_add(WIFI_CERT_CA_P2_SEC_TAG,
+							TLS_CREDENTIAL_CA_CERTIFICATE,
+							req->config.certs.ca_cert.bytes,
+							req->config.certs.ca_cert.size);
+					}
+					if (req->config.certs.has_client_cert) {
+						tls_credential_add(WIFI_CERT_CLIENT_P2_SEC_TAG,
+							TLS_CREDENTIAL_PUBLIC_CERTIFICATE,
+							req->config.certs.client_cert.bytes,
+							req->config.certs.client_cert.size);
+					}
+					if (req->config.certs.has_private_key) {
+						tls_credential_add(WIFI_CERT_CLIENT_KEY_P2_SEC_TAG,
+							TLS_CREDENTIAL_PRIVATE_KEY,
+							req->config.certs.private_key.bytes,
+							req->config.certs.private_key.size);
+					}
+				}
+#endif /* CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE */
 			}
 		}
 	} else {
@@ -280,7 +334,31 @@ static void prov_set_config_handler(Request *req, Response *rsp)
 	cnx_params.psk_length = 0;
 	cnx_params.sae_password = NULL;
 	cnx_params.sae_password_length = 0;
+#if defined(CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE)
+	if (config.header.type == WIFI_SECURITY_TYPE_EAP_TLS) {
+		/* If EAP TLS is used, we need to set the private key password. */
+		const EnterpriseCertConfig *config_ptr = &req->config.certs;
+		if (config_ptr->has_private_key_passwd) {
+			cnx_params.key_passwd = config_ptr->private_key_passwd;
+			cnx_params.key_passwd_length = sizeof(config_ptr->private_key_passwd);
+		} else {
+			cnx_params.key_passwd = NULL;
+			cnx_params.key_passwd_length = 0;
+		}
+		if (config_ptr->has_private_key_passwd2) {
+			cnx_params.key2_passwd = config_ptr->private_key_passwd2;
+			cnx_params.key2_passwd_length = sizeof(config_ptr->private_key_passwd2);
+		} else {
+			cnx_params.key2_passwd = NULL;
+			cnx_params.key2_passwd_length = 0;
+		}
+		if (wifi_set_enterprise_credentials(iface, 0) != 0) {
+			LOG_ERR("Failed to set enterprise credentials");
+		}
+	} else if (config.header.type != WIFI_SECURITY_TYPE_NONE) {
+#else /* CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE */
 	if (config.header.type != WIFI_SECURITY_TYPE_NONE) {
+#endif /* CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE */
 		cnx_params.psk = config.password;
 		cnx_params.psk_length = config.password_len;
 	}
