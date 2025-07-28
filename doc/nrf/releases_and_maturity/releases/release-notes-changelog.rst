@@ -855,6 +855,7 @@ Libraries for networking
 
   * Added
 
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_COAP_MAX_RETRIES` Kconfig option to configure the maximum number of retries for CoAP requests.
     * The :kconfig:option:`CONFIG_NRF_PROVISIONING_INITIAL_BACKOFF` Kconfig option to configure the initial backoff time for provisioning retries.
     * The :kconfig:option:`CONFIG_NRF_PROVISIONING_STACK_SIZE` Kconfig option to configure the stack size of the provisioning thread.
     * A new query parameter to limit the number of provisioning commands included in a single provisioning request.

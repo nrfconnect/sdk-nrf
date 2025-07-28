@@ -51,6 +51,13 @@ config NRF_CLOUD_COAP_KEEPOPEN
 	  Improve benefit from using DTLS Connection ID by keeping the socket
 	  open when temporary LTE PDN connection loss occurs.
 
+config NRF_CLOUD_COAP_MAX_RETRIES
+	int "Maximum number of CoAP request retries"
+	default 10
+	help
+	  The maximum number of times a CoAP request will be retried before it is considered failed.
+	  A value of 0 means that no retries will be attempted.
+
 if WIFI
 
 config NRF_CLOUD_COAP_SEND_SSIDS
