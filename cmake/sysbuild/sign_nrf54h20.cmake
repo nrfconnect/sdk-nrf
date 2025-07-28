@@ -200,6 +200,12 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image)
     set(imgtool_args --sha 512 ${imgtool_args})
   endif()
 
+  if(NOT "${keyfile_enc}" STREQUAL "")
+    if(SB_CONFIG_BOOT_ENCRYPTION_ALG_AES_256)
+      set(imgtool_args ${imgtool_args} --encrypt-keylen 256)
+    endif()
+  endif()
+
   # Set up .hex outputs.
   if(SB_CONFIG_BUILD_OUTPUT_HEX)
     list(APPEND byproducts ${output}.signed.hex)

@@ -157,6 +157,12 @@ function(zephyr_mcuboot_tasks)
   set(confirmed_args)
   set(encrypted_args)
 
+  if(NOT "${keyfile_enc}" STREQUAL "")
+    if(CONFIG_MCUBOOT_ENCRYPTION_ALG_AES_256)
+      set(imgtool_args ${imgtool_args} --encrypt-keylen 256)
+    endif()
+  endif()
+
   # Split files apart
   split(
     ELF_FILE_IN ${ZEPHYR_BINARY_DIR}/${KERNEL_ELF_NAME}
