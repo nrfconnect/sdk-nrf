@@ -18,6 +18,7 @@ import re
 from serial.tools.list_ports import comports
 
 NRF91_VID = 4966
+THINGY91_VID = 6421
 SEGGER_HEADER_9161 = "10"
 
 class Device:
@@ -110,7 +111,7 @@ class Device:
         logging.info('PSK credentials stored to sec_tag %d', int(tag))
 
     def select_device(self):
-        sids = self.get_devices(NRF91_VID)
+        sids = self.get_devices(NRF91_VID) + self.get_devices(THINGY91_VID)
 
         # No connected devices, abort
         if len(sids) == 0:
@@ -149,7 +150,9 @@ class Device:
     def get_com_ports(cls, sid):
         com_ports = []
         for item in comports():
-            if item.manufacturer == "SEGGER" and item.serial_number.lstrip("0") == sid:
+            manufacturer_match = item.manufacturer in ('SEGGER', 'Nordic Semiconductor')
+            serial_match = item.serial_number.lstrip("0") == sid
+            if manufacturer_match and serial_match:
                 com_ports.append(item.device)
         # Sort com ports on their integer identifiers, which takes care of corner case
         # where we have a cross-over from N digit to N + 1 digit identifiers
