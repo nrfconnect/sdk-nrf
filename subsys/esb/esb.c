@@ -2018,6 +2018,22 @@ int esb_suspend(void)
 
 void esb_disable(void)
 {
+	on_radio_disabled = NULL;
+
+	esb_irq_disable();
+
+	nrf_radio_shorts_disable(NRF_RADIO, 0xFFFFFFFF);
+	nrf_radio_int_disable(NRF_RADIO, 0xFFFFFFFF);
+
+	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
+	nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_DISABLE);
+
+	while (!nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_DISABLED)) {
+		/* wait for register to settle */
+	}
+
+	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
+
 	esb_ppi_disable_all();
 	esb_fem_reset();
 
@@ -2035,8 +2051,6 @@ void esb_disable(void)
 
 	memset(rx_pipe_info, 0, sizeof(rx_pipe_info));
 	memset(pids, 0, sizeof(pids));
-
-	esb_irq_disable();
 }
 
 bool esb_is_idle(void)
@@ -2228,13 +2242,13 @@ int esb_stop_rx(void)
 		return -EINVAL;
 	}
 
+	on_radio_disabled = NULL;
+
 	esb_ppi_for_txrx_clear(true, false);
 	esb_fem_reset();
 
 	nrf_radio_shorts_disable(NRF_RADIO, 0xFFFFFFFF);
 	nrf_radio_int_disable(NRF_RADIO, 0xFFFFFFFF);
-
-	on_radio_disabled = NULL;
 
 	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
 	nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_DISABLE);
