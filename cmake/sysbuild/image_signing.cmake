@@ -132,6 +132,7 @@ function(zephyr_mcuboot_tasks)
     endif()
   endif()
 
+
   if(CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
     set(imgtool_extra --security-counter ${CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE} ${imgtool_extra})
   endif()
@@ -158,6 +159,12 @@ function(zephyr_mcuboot_tasks)
   set(unconfirmed_args)
   set(confirmed_args)
   set(encrypted_args)
+
+  if(NOT "${keyfile_enc}" STREQUAL "")
+    if(CONFIG_MCUBOOT_ENCRYPTION_ALG_AES_256)
+      set(imgtool_args ${imgtool_args} --encrypt-keylen 256)
+    endif()
+  endif()
 
   # Set up .bin outputs.
   if(CONFIG_BUILD_OUTPUT_BIN)
