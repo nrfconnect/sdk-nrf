@@ -1,1 +1,9 @@
 WifiConfig.passphrase max_size:64
+EnterpriseCertConfig.ca_cert max_size:2500
+EnterpriseCertConfig.ca_cert2 max_size:2500
+EnterpriseCertConfig.client_cert max_size:2500
+EnterpriseCertConfig.client_cert2 max_size:2500
+EnterpriseCertConfig.private_key max_size:2500
+EnterpriseCertConfig.private_key2 max_size:2500
+EnterpriseCertConfig.private_key_passwd max_size:32
+EnterpriseCertConfig.private_key_passwd2 max_size:32
