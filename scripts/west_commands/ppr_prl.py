@@ -112,6 +112,7 @@ class NrfutilWrapperReadout:
             "32",
             "--core",
             "Application",
+            "--direct",
         ]
         command += ["--address", self.address]
         command += ["--bytes", "{}".format(self.entries_count * entry_size + header_size)]
