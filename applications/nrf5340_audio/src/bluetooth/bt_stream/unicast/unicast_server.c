@@ -65,8 +65,7 @@ static struct bt_cap_stream *cap_tx_streams[CONFIG_BT_ASCS_MAX_ASE_SRC_COUNT];
 #define AVAILABLE_SOURCE_CONTEXT BT_AUDIO_CONTEXT_TYPE_NONE
 #endif /* CONFIG_BT_AUDIO_TX */
 
-static struct bt_bap_unicast_server_register_param unicast_server_params = {
-	CONFIG_BT_ASCS_MAX_ASE_SNK_COUNT, CONFIG_BT_ASCS_MAX_ASE_SRC_COUNT};
+static struct bt_bap_unicast_server_register_param unicast_server_params = {0, 0};
 
 static uint8_t unicast_server_adv_data[] = {
 	BT_UUID_16_ENCODE(BT_UUID_ASCS_VAL),
@@ -680,8 +679,21 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 
 	receive_cb = recv_cb;
 
-	bt_bap_unicast_server_register(&unicast_server_params);
-	bt_bap_unicast_server_register_cb(&unicast_server_cb);
+	/* For this application, we create one sink endpoint for each location */
+	unicast_server_params.snk_cnt = POPCOUNT(location);
+	unicast_server_params.src_cnt = CONFIG_BT_ASCS_MAX_ASE_SRC_COUNT;
+
+	ret = bt_bap_unicast_server_register(&unicast_server_params);
+	if (ret) {
+		LOG_ERR("Could not register unicast server (err %d)", ret);
+		return ret;
+	}
+
+	ret = bt_bap_unicast_server_register_cb(&unicast_server_cb);
+	if (ret) {
+		LOG_ERR("Could not register unicast server callbacks (err %d)", ret);
+		return ret;
+	}
 
 	if (IS_ENABLED(CONFIG_BT_CSIP_SET_MEMBER_TEST_SAMPLE_DATA)) {
 		LOG_WRN("CSIP test sample data is used, must be changed "
@@ -719,7 +731,7 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 			   (BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT)) {
 			csip_param.rank = CSIP_HL_RANK;
 		} else {
-			LOG_ERR("Channel not supported");
+			LOG_ERR("Location not supported");
 			return -ECANCELED;
 		}
 
