@@ -1304,7 +1304,6 @@ static int configure_memory_usage(void)
 #if defined(CONFIG_BT_CTLR_SDC_CS_COUNT)
 	cfg.cs_cfg.max_antenna_paths_supported = CONFIG_BT_CTLR_SDC_CS_MAX_ANTENNA_PATHS;
 	cfg.cs_cfg.num_antennas_supported = CONFIG_BT_CTLR_SDC_CS_NUM_ANTENNAS;
-	cfg.cs_cfg.step_mode3_supported = IS_ENABLED(CONFIG_BT_CTLR_SDC_CS_STEP_MODE3);
 
 	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
 									SDC_CFG_TYPE_CS_CFG,
