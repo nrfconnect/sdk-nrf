@@ -455,6 +455,12 @@ Bluetooth Fast Pair samples
     * The advertising to no longer rotate the Resolvable Private Address (RPA) in the DFU mode.
     * The :ref:`fast_pair_locator_tag_testing_fw_update_notifications` section to improve the test procedure.
       The application now provides an additional log message to indicate that the firmware version is being read.
+    * The memory layout for the ``nrf54l15dk/nrf54l10/cpuapp`` board target to fix the out-of-bound partition allocations.
+      Previously, it was assumed that the memory size for this board target was 10 KB larger than the actual one.
+      The NVM size in the nRF54L10 SoC is equal to 1012 KB.
+
+      This change in the nRF54L10 partition map is a breaking change and cannot be performed using DFU.
+      As a result, the DFU procedure will fail if you attempt to upgrade the sample firmware based on one of the |NCS| v3.0 releases.
     * The configurations for nRF54L-based board targets that store the MCUboot verification key in the KMU peripheral to automatically generate the :file:`keyfile.json` file in the build directory (the ``SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE`` Kconfig option) based on the input file provided by the ``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`` Kconfig option.
       This KMU provisioning step can now be performed automatically by the west runner, provided that a :file:`keyfile.json` file is present in the build directory.
       The provisioning is only performed if the ``west flash`` command is executed with the ``--erase``  or ``--recover`` flag.
