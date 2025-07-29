@@ -91,9 +91,11 @@ cracen_asymmetric_crypt_internal(const psa_key_attributes_t *attributes, const u
 	}
 
 	if (sx_status != SX_OK) {
+		safe_memzero(output, output_size);
 		return silex_statuscodes_to_psa(sx_status);
 	}
-	if (text.sz > output_size) {
+	if (*output_length > output_size) {
+		safe_memzero(output, output_size);
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 	return PSA_SUCCESS;
