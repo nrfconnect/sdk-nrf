@@ -200,9 +200,13 @@ You can enhance security further by enabling the following sysbuild Kconfig opti
 * ``SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE`` - This option enables using a pure signature of the image, verifying signature directly on image, rather than on its hash.
   However, you cannot use this option if the secondary image slot uses external memory.
 * ``SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU`` - This option enables using Key Management Unit (KMU) to store keys for signature verification instead of compiling key data into the MCUboot bootloader image.
-  Using KMU requires provisioning the public key manually.
+  To use KMU, the public key must first be provisioned.
   See the :ref:`ug_nrf54l_developing_provision_kmu` documentation for details.
 
+  .. note::
+     To use automatic provisioning, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE` sysbuild Kconfig option.
+     This option enables generating a default :file:`keyfile.json` file during the build process based on the input file provided by the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` sysbuild Kconfig option.
+     The automatic provisioning is only performed if the west flash command is executed with the ``--erase`` or ``--recover`` flag.
 
 .. _nrf_desktop_bootloader_background_dfu:
 
