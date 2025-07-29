@@ -377,6 +377,9 @@ nRF Desktop
     The module also restricts the power down level to the :c:enum:`POWER_MANAGER_LEVEL_SUSPENDED`.
     Then, after the :ref:`CONFIG_DESKTOP_USB_PM_RESTRICT_REMOVE_DELAY_MS <config_desktop_app_options>` configurable delay, the module removes the power down level restriction.
     This allows you to take actions, such as restart Bluetooth LE advertising, after disconnecting the USB cable without going through reboot.
+  * The configurations for nRF54L-based board targets that store the MCUboot verification key in the KMU peripheral to automatically generate the :file:`keyfile.json` file in the build directory (the :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE` sysbuild Kconfig option) based on the input file provided by the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` sysbuild Kconfig option.
+    This KMU provisioning step can now be performed automatically by the west runner, provided that a :file:`keyfile.json` file is present in the build directory.
+    The provisioning is only performed if the ``west flash`` command is executed with the ``--erase``  or ``--recover`` flag.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------

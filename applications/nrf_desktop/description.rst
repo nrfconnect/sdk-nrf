@@ -1020,14 +1020,31 @@ nRF54L MCUboot provisioning
 ===========================
 
 nRF54L-based nRF Desktop devices enable hardware cryptography for the MCUboot bootloader.
-The public key that MCUboot uses to validate the application image is securely stored in the hardware Key Management Unit (KMU).
-In this use case, the application image is automatically signed by the |NCS| build system.
-However, the public key is not automatically provisioned to the device when programming the bootloader and the application images using the ``west flash`` command.
+For this purpose, a set of private and public keys is needed.
+The private key is used to sign the application image.
+The public key is generated from the private key and is used by MCUboot to validate the application image.
+The public key is securely stored in the Key Management Unit (KMU) hardware peripheral of the nRF54L device.
 
-To provision the MCUboot keys, use the ``west ncs-provision`` command before programming the bootloader and application images.
-Make sure that the provisioned public key is generated from the private key that was used to sign the application image.
+In this application, the application image is automatically signed with a private key by the |NCS| build system.
 The private keys are stored in the application configuration directory of the board.
 Path to the private key is defined by the ``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`` sysbuild Kconfig option.
+
+To store the public key in the KMU, it must first be provisioned.
+This provisioning step can be performed automatically by the west runner, provided that a :file:`keyfile.json` file is present in the build directory.
+In this application, the :file:`keyfile.json` file is automatically generated using the ``SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE`` Kconfig option.
+This option uses the private key specified by the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` sysbuild Kconfig option to generate the required file during the build process.
+
+To trigger KMU provisioning during flashing, use the ``west flash`` command with either the ``--erase`` or ``--recover`` flag.
+This ensures that both the firmware and the MCUboot public key are correctly programmed onto the target device using the KMU-based key storage.
+Use the following command to perform the operation:
+
+.. parsed-literal::
+   :class: highlight
+
+   west flash --recover
+
+Alternatively, you can perform the provisioning operation manually with the ``west ncs-provision upload`` command and then flash the device with the ``west flash`` command.
+
 You only need to provision one public key to an nRF Desktop device.
 For details, see :ref:`provisioning KMU for nRF54L devices <ug_nrf54l_developing_provision_kmu>`.
 
