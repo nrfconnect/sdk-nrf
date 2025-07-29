@@ -9,6 +9,7 @@ config BT_FAST_PAIR_ADV_MANAGER
 	depends on BT_PERIPHERAL
 	depends on BT_EXT_ADV
 	depends on BT_PRIVACY
+	depends on BT_RPA_TIMEOUT_DYNAMIC
 	depends on BT_SMP
 	depends on BT_ADV_PROV
 	depends on BT_ADV_PROV_FAST_PAIR

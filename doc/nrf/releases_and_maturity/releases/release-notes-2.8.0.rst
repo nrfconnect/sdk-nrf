@@ -322,7 +322,7 @@ Developing with nRF54L Series
   * nRF54l_snippets to emulate these targets on an nRF54L15 DK.
     These are used only for development purposes.
   * The :ref:`ug_nrf54l_cryptography` page that provides more information about the cryptographic peripherals of the nRF54L Series devices, programming model for referencing keys, and configuration.
-  * A page on :ref:`memory_storage` system.
+  * A page on :ref:`zms_memory_storage` system.
   * The :ref:`vpr_flpr_nrf54l` and :ref:`building_nrf54l` pages.
   * The :ref:`ug_nrf54l_developing_ble_fota` page, describing FOTA update process and testing steps.
   * The :ref:`ug_nrf54l_developing_provision_kmu` page, including instructions on generating keys and provisioning them to the board.
@@ -1098,11 +1098,11 @@ Debug libraries
 DFU libraries
 -------------
 
-* Added the :ref:`subsys_suit` library that provides functionality to a local domain for managing the update based on the SUIT manifest.
+* Added the ``subsys_suit`` library that provides functionality to a local domain for managing the update based on the SUIT manifest.
 
 * :ref:`lib_dfu_target` library:
 
-  * Added SUIT cache processing to the DFU Target SUIT library, as described in the :ref:`lib_dfu_target_suit_style_update` section.
+  * Added SUIT cache processing to the DFU Target SUIT library, as described in the ``lib_dfu_target_suit_style_update`` section.
   * Updated the DFU Target SUIT implementation to the newest version of the SUIT.
 
 Modem libraries
@@ -1441,7 +1441,7 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
 * :ref:`nrf_desktop_config_channel_script` script:
 
-  * Added semantic version support for devices that use the :ref:`SUIT DFU <ug_nrf54h20_suit_dfu>`.
+  * Added semantic version support for devices that use the ``SUIT DFU``.
 
 MCUboot
 =======
@@ -1515,10 +1515,10 @@ Documentation
 
   * The :ref:`ug_app_dev` section, which includes pages from the :ref:`configuration_and_build` section and from the removed Device configuration guides section.
   * The :ref:`dfu_tools_mcumgr_cli` page after it was removed from the Zephyr repository.
-  * The :ref:`ug_nrf54h20_suit_soc_binaries` page.
-  * The :ref:`ug_nrf54h20_suit_push` page documenting the SUIT push model-based update process.
-  * The :ref:`ug_nrf54h20_suit_recovery` page.
-  * The :ref:`ug_nrf54h20_suit_device_config` page.
+  * The ``ug_nrf54h20_suit_soc_binaries`` page.
+  * The ``ug_nrf54h20_suit_push`` page documenting the SUIT push model-based update process.
+  * The ``ug_nrf54h20_suit_recovery`` page.
+  * The ``ug_nrf54h20_suit_device_config`` page.
   * The :ref:`ug_nrf54h20_flpr` page.
   * The :ref:`nrf_rpc_uart` page.
   * The :ref:`ug_bt_stack_arch` and the :ref:`ug_bt_solution` documentation to the :ref:`Bluetooth protocols <ug_bt>` page.

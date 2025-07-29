@@ -85,8 +85,8 @@ The following test procedure is recommended:
 
         * Channel: 100
         * Payload length: 1000 bytes
-        * Inter-frame gap: 0 µs
-        * Data rate: 5 Mbps
+        * Inter-frame gap: 200 µs
+        * Data rate: 54 Mbps
 
         Execute the following sequence of commands:
 

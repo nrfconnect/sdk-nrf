@@ -260,4 +260,4 @@ It uses the following libraries and secure firmware component for nRF91 Series b
 It uses the following libraries for nRF7 Series builds:
 
 * :ref:`nrf_security`
-* :ref:`lib_wifi_credentials`
+* :ref:`Wi-Fi credentials <zephyr:lib_wifi_credentials>`

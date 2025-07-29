@@ -1,7 +1,8 @@
 /*
+ * Copyright (c) 2012-2015 Wind River Systems, Inc.
  * Copyright (c) 2025 Nordic Semiconductor ASA
  *
- * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ * SPDX-License-Identifier: Apache-2.0
  */
 
 #include <zephyr/kernel.h>
@@ -49,13 +50,10 @@ static void busy_wait_thread(void *mseconds, void *arg2, void *arg3)
 
 	k_busy_wait(usecs);
 
-	/* FIXME: Broken on Nios II, see #22956 */
-#ifndef CONFIG_NIOS2
 	int key = arch_irq_lock();
 
 	k_busy_wait(usecs);
 	arch_irq_unlock(key);
-#endif
 
 	/*
 	 * Ideally the test should verify that the correct number of ticks

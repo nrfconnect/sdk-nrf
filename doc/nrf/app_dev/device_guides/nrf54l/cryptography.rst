@@ -108,9 +108,14 @@ The following table gives an overview of the KMU slots and their usage:
      - BL_PUBKEY_2
      - | Revokable firmware image key for immutable bootloader, generation 2.
        | ED25519 public key.
-   * - 248-255
+   * - 248-249
+     - Reserved
+     - Random bytes which invalidate the protected RAM content after an operation.
+   * - 250-255
      - Reserved
      - --
+
+.. _ug_nrf54l_crypto_cracen_ikg:
 
 CRACEN Isolated Key Generator
 =============================

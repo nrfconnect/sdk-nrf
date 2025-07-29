@@ -1,0 +1,21 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	/*
+	 * Redefine button1 to use RXD0 - P0.07
+	 * Thus, when sending character from host, there will be gpio interrupt,
+	 * the same as originally triggered by sw0 button.
+	 */
+	buttons {
+		compatible = "gpio-keys";
+		button1: button_1 {
+			gpios = <&gpio0 7 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+			label = "Input 0";
+			zephyr,code = <INPUT_KEY_0>;
+		};
+	};
+};

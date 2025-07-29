@@ -45,6 +45,13 @@ The sample shows how to set up the connection between the co-processor and the h
 
 By default, this sample comes with the :ref:`RCP set of OpenThread functionalities <thread_ug_feature_sets>` enabled (:kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_RCP`).
 
+Application architecture options
+================================
+
+.. include:: ../cli/README.rst
+    :start-after: ot_cli_sample_architecture_options_start
+    :end-before: ot_cli_sample_architecture_options_end
+
 .. _ot_coprocessor_sample_logging:
 
 Logging extension
@@ -114,6 +121,8 @@ The following snippets are available:
      The ``usb`` snippet does not support the ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l10/cpuapp`` and ``nrf54l15dk/nrf54l05/cpuapp`` board targets.
 
 * ``hci`` - Enables support for the Bluetooth HCI interface parallel to :ref:`Thread RCP <thread_architectures_designs_cp_rcp>`.
+* ``l2`` - Enables the Zephyr networking layer.
+* ``logging_l2`` - Enables logging from the Zephyr networking layer.
 
 FEM support
 ===========

@@ -72,7 +72,7 @@ Required tools
 
 The following table shows the tools that are required for working with |NCS| v\ |version|.
 
-The table lists the versions that are used for testing and are installed when using the :ref:`nRF Connect for VS Code extension or nRF Util <install_ncs>`.
+The table lists the versions that are used for testing and are installed with the toolchain bundle when using the :ref:`nRF Connect for VS Code extension or command line <install_ncs>`.
 Other versions might also work, but are not verified.
 
 .. _req_tools_table:
@@ -102,6 +102,10 @@ Other versions might also work, but are not verified.
            - :ncs-tool-version:`PYTHON_VERSION_WIN10`
          * - :ref:`west <ncs_west_intro>`
            - :ncs-tool-version:`WEST_VERSION_WIN10`
+         * - nRF Util
+           - :ncs-tool-version:`NRFUTIL_VERSION_WIN10`
+         * - nRF Util's `device command <Device command overview_>`_
+           - :ncs-tool-version:`NRFUTIL_DEVICE_VERSION_WIN10`
 
    .. group-tab:: Linux
 
@@ -114,7 +118,7 @@ Other versions might also work, but are not verified.
            - :ncs-tool-version:`ZEPHYR_SDK_VERSION_LINUX`
          * - CMake
            - :ncs-tool-version:`CMAKE_VERSION_LINUX`
-         * - dtc
+         * - Devicetree compiler (dtc)
            - :ncs-tool-version:`DTC_VERSION_LINUX`
          * - :ref:`Git <ncs_git_intro>`
            - :ncs-tool-version:`GIT_VERSION_LINUX`
@@ -126,6 +130,10 @@ Other versions might also work, but are not verified.
            - :ncs-tool-version:`PYTHON_VERSION_LINUX`
          * - :ref:`west <ncs_west_intro>`
            - :ncs-tool-version:`WEST_VERSION_LINUX`
+         * - nRF Util
+           - :ncs-tool-version:`NRFUTIL_VERSION_LINUX`
+         * - nRF Util's `device command <Device command overview_>`_
+           - :ncs-tool-version:`NRFUTIL_DEVICE_VERSION_LINUX`
 
       Additionally, you need to install `nrf-udev`_ rules for accessing USB ports on Nordic Semiconductor devices and programming the firmware.
 
@@ -140,7 +148,7 @@ Other versions might also work, but are not verified.
            - :ncs-tool-version:`ZEPHYR_SDK_VERSION_DARWIN`
          * - CMake
            - :ncs-tool-version:`CMAKE_VERSION_DARWIN`
-         * - dtc
+         * - Devicetree compiler (dtc)
            - :ncs-tool-version:`DTC_VERSION_DARWIN`
          * - :ref:`Git <ncs_git_intro>`
            - :ncs-tool-version:`GIT_VERSION_DARWIN`
@@ -152,6 +160,10 @@ Other versions might also work, but are not verified.
            - :ncs-tool-version:`PYTHON_VERSION_DARWIN`
          * - :ref:`west <ncs_west_intro>`
            - :ncs-tool-version:`WEST_VERSION_DARWIN`
+         * - nRF Util
+           - :ncs-tool-version:`NRFUTIL_VERSION_DARWIN`
+         * - nRF Util's `device command <Device command overview_>`_
+           - :ncs-tool-version:`NRFUTIL_DEVICE_VERSION_DARWIN`
 
 Checking tool versions
   .. toggle::
@@ -397,12 +409,15 @@ The `nRF Util development tool`_ is a unified command line utility for Nordic pr
 Its functionality is provided through installable and upgradeable commands that are served on a central package registry on the Internet.
 
 The utility follows its own release cycle and has its own `operating system requirements <nRF Util_>`_.
-Use the latest available release for development.
+The |NCS| toolchain bundle includes the nRF Util version :ncs-tool-version:`NRFUTIL_VERSION_WIN10` and the device command version :ncs-tool-version:`NRFUTIL_DEVICE_VERSION_WIN10`, as listed in :ref:`requirements_toolchain_tools`.
 
-When you :ref:`install the nRF Connect SDK <install_ncs>`, you need to install the following nRF Util commands:
+.. note::
 
-* `device command <Device command overview_>`_ - The latest version is required as the default :ref:`west runner <programming_selecting_runner>`.
-* `sdk-manager command`_ - The latest version is required for working with |NCS| toolchain packages.
-  You only need to install this command if you are working with command line in the |NCS|.
+   When you :ref:`install the nRF Connect SDK <install_ncs>`:
 
-See `Installing and upgrading nRF Util commands`_ for information about how to install these commands.
+   * If you plan to work with command line, you also need to download nRF Util and install the following command in order to get the toolchain bundle:
+
+     * `sdk-manager command`_ - The latest version is required for working with |NCS| toolchain packages.
+       See `Installing and upgrading nRF Util commands`_ for information about how to install this command.
+
+   * If you plan to work with the :ref:`nRF Connect for VS Code extension <requirements_nrfvsc>`, you do not need a separate nRF Util installation to get the toolchain bundle.

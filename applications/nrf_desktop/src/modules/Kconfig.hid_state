@@ -9,9 +9,7 @@ menu "HID State"
 config DESKTOP_HID_STATE_ENABLE
 	bool "Enable HID state"
 	depends on DESKTOP_ROLE_HID_PERIPHERAL
-	select DESKTOP_HID_KEYMAP
-	select DESKTOP_HID_EVENTQ
-	select DESKTOP_KEYS_STATE
+	select DESKTOP_HID_REPORT_PROVIDER_EVENT
 	help
 	  The module generates HID reports based on user input.
 
@@ -43,14 +41,14 @@ config DESKTOP_HID_STATE_PM_ENABLE
 	  This enables small module that blocks power down if HID is active.
 
 config DESKTOP_HID_REPORT_EXPIRATION
-	int "HID report expiration [ms]"
+	int "HID report expiration [ms] [DEPRECATED]"
 	default 500
 	help
 	  Define the time after which a HID report expires
 	  and is not sent again.
 
 config DESKTOP_HID_EVENT_QUEUE_SIZE
-	int "HID event queue size"
+	int "HID event queue size [DEPRECATED]"
 	default 12
 	range 2 255
 	help

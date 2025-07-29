@@ -128,7 +128,7 @@ The descriptor also specifies the temperature sensor's sampling type, which is :
 
 The :ref:`dk_buttons_and_leds_readme` library is used to detect button presses.
 
-The :ref:`Zephyr settings API <zephyr:settings_api>` is used to persistently store the following settings given that :kconfig:option:`CONFIG_BT_SETTING` is enabled:
+The :ref:`Zephyr settings API <zephyr:settings_api>` is used to persistently store the following settings given that :kconfig:option:`CONFIG_BT_SETTINGS` is enabled:
 
 * The temperature range used in the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor
 * The presence motion threshold used in the :c:var:`bt_mesh_sensor_presence_detected` sensor

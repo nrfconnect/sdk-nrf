@@ -80,6 +80,17 @@ otError otInstanceErasePersistentInfo(otInstance *aInstance)
 	return error;
 }
 
+void otInstanceFactoryReset(otInstance *aInstance)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+
+	ARG_UNUSED(aInstance);
+
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 0);
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_INSTANCE_FACTORY_RESET, &ctx,
+				nrf_rpc_rsp_decode_void, NULL);
+}
+
 otError otSetStateChangedCallback(otInstance *aInstance, otStateChangedCallback aCallback,
 				  void *aContext)
 {

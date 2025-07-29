@@ -107,7 +107,6 @@ int bt_enable(bt_ready_cb_t cb)
 	struct nrf_rpc_cbor_ctx ctx;
 	int result = 0;
 	size_t buffer_size_max = 5;
-	static atomic_t init;
 
 	validate_config();
 
@@ -121,20 +120,15 @@ int bt_enable(bt_ready_cb_t cb)
 	}
 
 	NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
-
 	nrf_rpc_encode_callback(&ctx, cb);
-
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_ENABLE_RPC_CMD, &ctx, nrf_rpc_rsp_decode_i32,
 				&result);
 
-	/* In case if the Bluetooth was disabled, we don't need to init again
-	 * dependencies.
-	 */
-	if ((!atomic_cas(&init, 0, 1)) || result) {
+	if (result) {
 		return result;
 	}
 
-	if (IS_ENABLED(CONFIG_SETTINGS)) {
+	if (IS_ENABLED(CONFIG_BT_SETTINGS)) {
 		buffer_size_max = 0;
 		NRF_RPC_CBOR_ALLOC(&bt_rpc_grp, ctx, buffer_size_max);
 
@@ -155,6 +149,10 @@ int bt_disable(void)
 
 	nrf_rpc_cbor_cmd_no_err(&bt_rpc_grp, BT_DISABLE_RPC_CMD, &ctx, nrf_rpc_rsp_decode_i32,
 				&result);
+
+	if (IS_ENABLED(CONFIG_BT_CONN) && (result == 0)) {
+		result = bt_rpc_gatt_uninit();
+	}
 
 	return result;
 }

@@ -30,11 +30,10 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31774"
 
 - scenarios:
-    - sample.bluetooth.direction_finding_central_nrf
-    - sample.bluetooth.direction_finding_central_nrf.aod
-  platforms:
-    - nrf52833dk/nrf52820
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-32042"
+    - applications.matter_bridge.br_ble.smp_dfu
+    - applications.matter_bridge.br_ble.memory_profiling
+    - applications.matter_bridge.memory_profiling
+  comment: "Variant does not fit in FLASH area - it should be probably removed in the future"
 
 - scenarios:
     - nrf.extended.drivers.uart.uart_elementary_dual_l09
@@ -42,12 +41,6 @@
   platforms:
     - nrf54l09pdk/nrf54l09/cpuflpr
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-7265"
-
-- scenarios:
-    - nrf.extended.drivers.sensor.qdec.pm_runtime
-  platforms:
-    - nrf54l20pdk/nrf54l20/cpuflpr
-  comment: "https://nordicsemi.atlassian.net/browse/NRFX-7267"
 
 - scenarios:
     - sample.suit.*
@@ -63,12 +56,6 @@
     - unit.*
     - native_sim.*
   comment: "SUIT is planned to be removed from NCS soon"
-
-- scenarios:
-    - nrf.extended.drivers.mspi.api.hpf
-  platforms:
-    - nrf54l15dk/nrf54l15/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NRFX-7878"
 
 - scenarios:
     - sample.find_my.*

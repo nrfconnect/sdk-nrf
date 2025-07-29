@@ -155,6 +155,22 @@ send:
 
 NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_get_crash_dump_handler, LOG_RPC_CMD_GET_CRASH_DUMP,
 			 log_rpc_get_crash_dump_handler, NULL);
+
+static void log_rpc_invalidate_crash_dump_handler(const struct nrf_rpc_group *group,
+						  struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	int rc;
+
+	nrf_rpc_cbor_decoding_done(group, ctx);
+
+	rc = coredump_cmd(COREDUMP_CMD_INVALIDATE_STORED_DUMP, NULL);
+
+	nrf_rpc_rsp_send_int(group, rc);
+}
+
+NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_invalidate_crash_dump_handler,
+			 LOG_RPC_CMD_INVALIDATE_CRASH_DUMP, log_rpc_invalidate_crash_dump_handler,
+			 NULL);
 #endif /* CONFIG_LOG_BACKEND_RPC_CRASH_LOG */
 
 static void format_message(struct log_msg *msg, uint32_t flags, log_output_func_t output_func,

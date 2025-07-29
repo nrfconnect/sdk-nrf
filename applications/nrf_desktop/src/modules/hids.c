@@ -76,14 +76,20 @@ static bool protocol_boot;
 static struct config_channel_transport cfg_chan_transport;
 static struct k_work_delayable notify_secured;
 
-static void broadcast_subscription_change(uint8_t report_id, bool enabled)
+
+static bool is_hid_boot_report(uint8_t report_id)
 {
-	bool boot = (report_id == REPORT_ID_BOOT_MOUSE) ||
-		    (report_id == REPORT_ID_BOOT_KEYBOARD);
+	return (report_id == REPORT_ID_BOOT_MOUSE) || (report_id == REPORT_ID_BOOT_KEYBOARD);
+}
 
-	enabled = enabled && (protocol_boot == boot);
+static bool is_subscribed(uint8_t report_id)
+{
+	return report_enabled[report_id] && (protocol_boot == is_hid_boot_report(report_id));
+}
 
-	if (enabled == subscribed[report_id]) {
+static void broadcast_subscription_change(uint8_t report_id, bool subscribe)
+{
+	if (subscribe == subscribed[report_id]) {
 		/* No change in subscription. */
 		return;
 	}
@@ -93,19 +99,37 @@ static void broadcast_subscription_change(uint8_t report_id, bool enabled)
 		return;
 	}
 
-	subscribed[report_id] = enabled;
+	subscribed[report_id] = subscribe;
 
 	struct hid_report_subscription_event *event =
 		new_hid_report_subscription_event();
 
 	event->report_id  = report_id;
-	event->enabled    = enabled;
+	event->enabled    = subscribe;
 	event->subscriber = cur_conn;
 
 	LOG_INF("Notifications for report 0x%x are %sabled", report_id,
 		(event->enabled)?("en"):("dis"));
 
 	APP_EVENT_SUBMIT(event);
+}
+
+static void broadcast_all_subscription_changes_internal(bool subscribed_filter)
+{
+	for (size_t r_id = 0; r_id < REPORT_ID_COUNT; r_id++) {
+		if (is_subscribed(r_id) == subscribed_filter) {
+			broadcast_subscription_change(r_id, subscribed_filter);
+		}
+	}
+}
+
+static void broadcast_all_subscription_changes(void)
+{
+	/* First disable old subscriptions, then enable new subscriptions. This is done to ensure
+	 * that HID boot and HID report mode subscriptions would never be enabled at the same time.
+	 */
+	broadcast_all_subscription_changes_internal(false);
+	broadcast_all_subscription_changes_internal(true);
 }
 
 static void pm_evt_handler(enum bt_hids_pm_evt evt, struct bt_conn *conn)
@@ -125,10 +149,7 @@ static void pm_evt_handler(enum bt_hids_pm_evt evt, struct bt_conn *conn)
 		break;
 	}
 
-	for (size_t r_id = 0; r_id < REPORT_ID_COUNT; r_id++) {
-		bool enabled = report_enabled[r_id];
-		broadcast_subscription_change(r_id, enabled);
-	}
+	broadcast_all_subscription_changes();
 }
 
 static void sync_notif_handler(const struct hid_notification_event *event)
@@ -145,7 +166,7 @@ static void sync_notif_handler(const struct hid_notification_event *event)
 
 	report_enabled[report_id] = enabled;
 
-	broadcast_subscription_change(report_id, enabled);
+	broadcast_subscription_change(report_id, is_subscribed(report_id));
 }
 
 static void notification_change_handler_async(uint8_t report_id, enum bt_hids_notify_evt evt)
@@ -504,11 +525,7 @@ static void send_hid_report(const struct hid_report_event *event)
 static void notify_secured_fn(struct k_work *work)
 {
 	secured = true;
-
-	for (size_t r_id = 0; r_id < REPORT_ID_COUNT; r_id++) {
-		bool enabled = report_enabled[r_id];
-		broadcast_subscription_change(r_id, enabled);
-	}
+	broadcast_all_subscription_changes();
 }
 
 static void broadcast_hids_subscriber_state(void *subscriber, bool enabled)

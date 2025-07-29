@@ -13,8 +13,8 @@ This guide explains the available option for updating the nRF70 Series firmware 
     External memory refers to the memory that is outside the System-on-Chip (SoC), for example, an external flash memory chip, or an external nonvolatile memory (NVM) chip.
 
 .. note::
-    Currently, you cannot build an example with the both ``SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE`` and :kconfig:option:`CONFIG_XIP_SPLIT_IMAGE` Kconfig options enabled.
-    To enable XIP support use the ``SB_CONFIG_WIFI_PATCHES_EXT_FLASH_XIP`` Kconfig option instead of the ``SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE`` Kconfig option.
+    Currently, you cannot build an example with the both :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE` and :kconfig:option:`SB_CONFIG_QSPI_XIP_SPLIT_IMAGE` Kconfig options enabled.
+    To enable XIP support use the :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_XIP` Kconfig option instead of the :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE` Kconfig option.
 
 Overview
 ========
@@ -35,7 +35,7 @@ To use this feature, ensure that the following prerequisites are met:
 * The external memory has sufficient capacity to accommodate the firmware patches.
   This includes additional space for potential patch upgrades, such as those required for DFU.
   The combined size of all firmware patches should not exceed 128 kB.
-* MCUboot is enabled, and the ``SB_CONFIG_BOOTLOADER_MCUBOOT`` Kconfig option is set to ``y``.
+* MCUboot is enabled, and the :kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT` Kconfig option is set to ``y``.
 
 Supported platforms
 ===================
@@ -236,7 +236,7 @@ To enable the DFU procedure for the nRF70 Series firmware patch, complete the fo
 
                         -- -Dshell_SNIPPET=nrf70-fw-patch-ext-flash -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DCONFIG_NRF_WIFI_FW_PATCH_DFU=y
 
-If you want to use the :ref:`sysbuild_images` feature, you need to set the ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH`` Kconfig option to ``y``, and must also set the :kconfig:option:`CONFIG_DFU_MULTI_IMAGE_MAX_IMAGE_COUNT` Kconfig option to one of the following values:
+If you want to use the :ref:`sysbuild_images` feature, you need to set the :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH` Kconfig option to ``y``, and must also set the :kconfig:option:`CONFIG_DFU_MULTI_IMAGE_MAX_IMAGE_COUNT` Kconfig option to one of the following values:
 
 * For the nRF5340 DK and nRF7002 DK without the network core: ``2``
 * For the nRF5340 DK and nRF7002 DK with the network core: ``3``

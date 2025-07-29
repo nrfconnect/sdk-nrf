@@ -199,7 +199,6 @@ Building and running
 .. note::
    On the nRF5340 or nRF7002 development kit, the Radio Test sample requires the :ref:`nrf5340_remote_shell` sample on the application core.
    The Remote IPC shell sample is built and programmed automatically by default.
-   If you want to program your custom solution for the application core, unset the :kconfig:option:`CONFIG_NCS_SAMPLE_REMOTE_SHELL_CHILD_IMAGE` Kconfig option.
 
 Remote USB CDC ACM Shell variant
 ================================
@@ -241,7 +240,8 @@ Testing with another development kit
 Complete the following steps:
 
 1. Connect both development kits to the computer using a USB cable.
-   The kits are assigned a COM port (Windows) or ttyACM device (Linux), which is visible in the Device Manager.
+   The kits are assigned serial ports.
+   |serial_port_number_list|
 #. |connect_terminal_both_ANSI|
 #. Run the following commands on one of the kits:
 

@@ -80,14 +80,14 @@ The following figure shows a simplified overview of the driver library selection
 As shown in this simplified figure, the API calls can go in both directions between the driver wrapper and the drivers.
 This represents the following situations:
 
-* Fallback mechanisms - The Oberon PSA Crypto implementation in the |NCS| provides a transparent fallback mechanism that allows applications to use hardware acceleration where available.
-  If a hardware driver does not support a particular operation or key size, the driver wrapper will redirect the call to a software implementation.
-  The fallback mechanism is enabled by default, but you can manually disable it.
-* Feature selection - Based on hardware capabilities and cryptographic features you have configured, the driver wrapper selects the most appropriate driver for each cryptographic operation.
-* Driver chaining - Higher-level drivers (like HMAC) can delegate operations to lower-level drivers (like hash functions).
+* `Feature selection`_ - Based on hardware capabilities and cryptographic features you have configured, the driver wrapper selects the most appropriate driver for each cryptographic operation.
+* `Software fallback`_ - The Oberon PSA Crypto implementation in the |NCS| provides a transparent fallback mechanism that allows applications to use the software nrf_oberon driver when the hardware acceleration is not available.
+* `Driver chaining`_ - Higher-level drivers (like HMAC) can delegate operations to lower-level drivers (like hash functions).
   For example, when an HMAC operation is requested, the HMAC driver might call back to the driver wrapper to use a hardware-accelerated hash function.
 
 These situations are explained in more detail in the following sections.
+
+.. _crypto_drivers_example_flow:
 
 Example of driver selection flow
 ================================
@@ -124,29 +124,31 @@ When an application initiates a cryptographic operation through the PSA Crypto A
 #. The driver wrapper selects the appropriate driver and forwards the request to the driver.
    Using the example of the three features:
 
-   * Feature A - The driver wrapper follows the default configuration process and selects the nrf_cc3xx driver (assuming that the platform supports it).
+   * Feature A - The driver wrapper follows the default configuration process and selects the nrf_cc3xx driver (assuming that the platform supports it.)
      The software nrf_oberon driver could also be chosen, but the nrf_cc3xx driver is given priority because it is hardware-accelerated.
    * Feature B - The driver wrapper selects the software nrf_oberon driver.
      This is because neither the nrf_cc3xx driver nor the CRACEN driver support Feature B.
    * Feature C - The driver wrapper selects the software nrf_oberon driver, following the configuration priority set by the application.
      The CRACEN driver supports this feature, but the user has disabled the hardware driver support for Feature C in the application configuration.
 
-Fallback mechanism and feature selection
-========================================
+.. _crypto_drivers_feature_selection:
 
-The Oberon PSA Crypto implementation provides a mechanism for specifying the cryptographic features and selecting the driver to use for each cryptographic operation.
-This mechanism uses the ``PSA_WANT_*`` and ``PSA_USE_*`` directives for these purposes, respectively.
-These directives are used by the nRF Security library to select the most appropriate driver for each cryptographic operation.
+Feature selection
+=================
+
+The Oberon PSA Crypto implementation provides a mechanism for configuring each cryptographic operation.
+This mechanism uses the ``PSA_WANT_*`` directives for specifying the cryptographic features and ``PSA_USE_*`` directives for selecting the driver for each cryptographic operation.
+The driver wrapper then selects the most appropriate driver for each cryptographic operation.
 
 Feature selection in the |NCS|
 ------------------------------
 
 In Zephyr and the |NCS|, Oberon's ``PSA_WANT_*`` and ``PSA_USE_*`` directives are integrated into the :ref:`Kconfig configuration system <app_build_system>`.
 As a result, Oberon's directives are wrapped by Kconfig options ``CONFIG_PSA_WANT_*`` and ``CONFIG_PSA_USE_*``, respectively.
-Some of these Kconfig options are defined in Zephyr, while others are defined in the |NCS|.
-This is all done in the :ref:`nrf_security` library.
+Some of these Kconfig options are defined in Zephyr, while others are defined in the |NCS| in the :ref:`nrf_security` subsystem.
+You only need to set the Kconfig options, not the directives.
 
-The following table provides an overview of the available directives and their corresponding Kconfig options:
+The following table provides a brief overview of the available directives and their corresponding Kconfig options that you can set:
 
 .. list-table:: Driver configuration directives
    :header-rows: 1
@@ -164,7 +166,7 @@ The following table provides an overview of the available directives and their c
      - | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`
        | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256`
    * - ``PSA_USE_*``
-     - Select the driver to use for the cryptographic operation (when available).
+     - Select the driver you prefer to use for the cryptographic operation (when available).
      - `CONFIG_PSA_USE_*`_
      - | ``PSA_USE_CC310_KEY_MANAGEMENT_DRIVER``
        | ``PSA_USE_CC310_HASH_DRIVER``
@@ -172,32 +174,55 @@ The following table provides an overview of the available directives and their c
        | :kconfig:option:`CONFIG_PSA_USE_CC3XX_HASH_DRIVER`
 
 .. note::
-
    For the complete overview of the available configuration options, see the :ref:`ug_crypto_supported_features` page.
 
-The nRF Security subsystem checks the directives (set through the Kconfig options) to make the optimal driver selection.
-The subsystem combines the ``PSA_WANT_*`` and ``PSA_USE_*`` settings in Kconfig to make the appropriate driver selection for the cryptographic operation:
+When you select Kconfig options for the wanted features and drivers, nRF Security checks the Oberon directives to make the optimal driver selection.
+To combine the settings in Kconfig that represent application requirements (``PSA_WANT_*``) and driver preferences from the user (``PSA_USE_*``), nRF Security uses ``PSA_NEED_*`` macros.
+These macros are automatically selected.
+They control which drivers are compiled into the build and thus available for use at runtime for `Software fallback`_ and `Driver chaining`_.
 
-* If hardware acceleration is enabled and available for the requested features, nRF Security selects that driver for performance and security reasons.
-* If no hardware driver is enabled and available, or if the hardware or the driver does not support the specific cryptographic operation, nRF Security falls back to the software nrf_oberon driver.
+The following figure shows an overview of this process:
 
-For example:
+.. figure:: ../images/psa_want_use_need_flow.svg
+   :alt: Detailed process for feature and driver selection
+   :align: center
 
-* You can configure the application to use CC310 and require the AES-192 key size through the :kconfig:option:`CONFIG_PSA_WANT_AES_KEY_SIZE_192` and :kconfig:option:`CONFIG_PSA_USE_CC3XX_KEY_MANAGEMENT_DRIVER` Kconfig options.
-  nRF Security selects the nrf_cc3xx driver if it supports the CCM-AES-192 acceleration with the AES-192 key size.
-  The CC310 peripheral does not support AES keys larger than 128 bits, so nRF Security selects the nrf_oberon driver instead.
-  (This is the case of the Feature A in the previous example.)
-* You can configure the application to require the SHA-512 hashing functionality through the :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_512` and :kconfig:option:`CONFIG_PSA_USE_CC3XX_HASH_DRIVER` Kconfig options.
-  nRF Security selects the nrf_cc3xx driver if it is available for the hardware platform and if it supports the SHA-512 hashing functionality.
-  The CryptoCell-enabled hardware acceleration does not support the SHA-512 hashing functionality, so nRF Security falls back to the nrf_oberon software implementation.
-  (This is the case of the Feature B in the previous example.)
-* You can configure the application to require the SHA-256 hashing functionality through the :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256` Kconfig option, but set the :kconfig:option:`CONFIG_PSA_USE_CRACEN_HASH_DRIVER` Kconfig option to ``n`` so that the CRACEN driver is not used.
-  nRF Security selects the nrf_oberon software implementation.
-  (This is the case of the Feature C in the previous example.)
+.. _crypto_drivers_software_fallback:
 
-.. note::
-   You can also manually disable the software fallback mechanism.
-   For example, you can do that if you want the cryptographic operations to run in hardware only.
+Software fallback
+=================
+
+The Oberon PSA Crypto implementation in the |NCS| provides a transparent fallback mechanism that allows applications to use the software nrf_oberon driver when the hardware acceleration is not available.
+If a hardware driver does not support a particular operation or key size, the driver wrapper will redirect the call to a software implementation.
+
+The software fallback can happen at runtime and works as follows:
+
+* No software fallback required - If hardware acceleration is enabled and available for the requested features, nRF Security selects the preferred driver for performance and security reasons.
+* Software fallback required - If no hardware driver is enabled and available, or if the hardware or the preferred driver do not support the specific cryptographic operation, nRF Security falls back to the software nrf_oberon driver.
+
+The software fallback mechanism to the nrf_oberon driver is enabled by default in the |NCS|.
+You can :ref:`manually disable the software fallback mechanism <psa_crypto_support_disable_software_fallback>`.
+For example, you can do that if you want the cryptographic operations to run in hardware only.
+
+Examples of feature selection and software fallback
+===================================================
+
+Click the following expand button to see examples of how nRF Security selects the drivers based on the Kconfig options.
+
+.. toggle::
+
+   * You can configure the application to use CC310 and require the AES-192 key size through the :kconfig:option:`CONFIG_PSA_WANT_AES_KEY_SIZE_192` and :kconfig:option:`CONFIG_PSA_USE_CC3XX_KEY_MANAGEMENT_DRIVER` Kconfig options.
+     nRF Security selects the nrf_cc3xx driver if it supports the CCM-AES-192 acceleration with the AES-192 key size.
+     The CC310 peripheral does not support AES keys larger than 128 bits, so nRF Security selects the nrf_oberon driver instead, thus automatically setting the ``PSA_NEED_OBERON_KEY_MANAGEMENT_DRIVER`` macro.
+     (This is the case of the :ref:`Feature A in the example flow <crypto_drivers_example_flow>`.)
+   * You can configure the application to require the SHA-512 hashing functionality through the :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_512` and :kconfig:option:`CONFIG_PSA_USE_CC3XX_HASH_DRIVER` Kconfig options.
+     nRF Security selects the nrf_cc3xx driver if it is available for the hardware platform and if it supports the SHA-512 hashing functionality.
+     The CryptoCell-enabled hardware acceleration does not support the SHA-512 hashing functionality, so nRF Security falls back to the nrf_oberon software implementation, thus automatically setting the ``PSA_NEED_OBERON_HASH_DRIVER`` macro.
+     (This is the case of the :ref:`Feature B in the example flow <crypto_drivers_example_flow>`.)
+   * You can configure the application to require the SHA-256 hashing functionality through the :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256` Kconfig option, but set the :kconfig:option:`CONFIG_PSA_USE_CRACEN_HASH_DRIVER` Kconfig option to ``n`` so that the CRACEN driver is not used.
+     In this case, the conditions for automatically setting the ``PSA_NEED_CRACEN_HASH_DRIVER`` macro are not met.
+     nRF Security selects the nrf_oberon software implementation, thus automatically setting the ``PSA_NEED_OBERON_HASH_DRIVER`` macro.
+     (This is the case of the :ref:`Feature C in the example flow <crypto_drivers_example_flow>`.)
 
 Driver chaining
 ===============
@@ -207,7 +232,7 @@ This mechanism enables optimal use of hardware acceleration by combining softwar
 This allows for complex cryptographic operations that may be only partially supported in hardware.
 
 In driver chaining, a driver that implements more complex algorithms (like HMAC) can delegate less complex algorithms (like SHA-256) to another driver.
-This delegation happens between the drivers through the driver wrapper, transparently to the application, and in runtime.
+This delegation happens between the drivers through the driver wrapper, transparently to the application, and at runtime.
 The delegation process follows the same priority rules as the driver selection, preferring hardware implementations when available.
 
 Driver chaining optimizes the mix of software and hardware implementations to achieve the best performance.
@@ -216,7 +241,7 @@ At the same time, it ensures all cryptographic operations are supported across d
 Driver chaining in the |NCS|
 ----------------------------
 
-Driver chaining is handled in the |NCS| in runtime when you :ref:`enable multiple drivers at the same time <psa_crypto_support_multiple_drivers>` and then enable specific :ref:`nrf_oberon driver features in combination with driver features for hardware acceleration <nrf_security_drivers_config_features>`.
+Driver chaining is handled in the |NCS| at runtime when you :ref:`enable multiple drivers at the same time <psa_crypto_support_multiple_drivers>` and then enable specific :ref:`nrf_oberon driver features in combination with driver features for hardware acceleration <nrf_security_drivers_config_features>`.
 
 Common driver chains supported in the nrf_oberon driver include the following cases:
 
@@ -227,6 +252,9 @@ Common driver chains supported in the nrf_oberon driver include the following ca
 * DRBG → AES, MAC, Entropy
 * Key Derivation → MAC
 * MAC → Hash, AES
+
+The set of drivers available for chaining is determined by the ``PSA_NEED_*`` macros automatically set by nRF Security, as described in :ref:`crypto_drivers_feature_selection`.
+Only drivers whose ``PSA_NEED_*`` macros are enabled by nRF Security at compile time can participate in driver chaining.
 
 For example, by enabling the nrf_cc3xx driver and the nrf_oberon driver, you can chain the MAC driver and the hash driver.
 The drivers handle this requirement as follows:
@@ -348,6 +376,9 @@ nrf_oberon driver
 The :ref:`nrf_oberon_readme` is a software driver provided through `sdk-oberon-psa-crypto`_, a lightweight PSA Crypto API implementation optimized for resource-constrained microcontrollers.
 The driver is distributed as a closed-source binary that provides select cryptographic algorithms optimized for use in nRF devices.
 This provides faster execution than the original Mbed TLS implementation.
+
+The nrf_oberon driver can act as a `Software fallback`_ for the other drivers.
+This feature can be turned on by :ref:`enabling nrf_oberon <psa_crypto_support_enable_nrf_oberon>` or by :ref:`enabling cryptographic operations <ug_crypto_supported_features_operations>` that are not supported by the hardware drivers.
 
 .. note::
    |original_mbedtls_def_note|

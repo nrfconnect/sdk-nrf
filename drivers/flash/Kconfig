@@ -4,24 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config FLASH_IPUC
-	bool "Flash over SUIT IPUC"
-	depends on SUIT
-	depends on SUIT_UTILS
-	depends on SUIT_IPUC
-
-if FLASH_IPUC
-
-config FLASH_IPUC_COUNT
-	int "Number of available flash IPUC drivers"
-	default 4
-
-module = FLASH_IPUC
-module-str = Flash over SUIT IPUC
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
-
-endif # FLASH_IPUC
-
 config FLASH_RPC
 	bool "Flash over RPC [EXPERIMENTAL]"
 	select NRF_RPC

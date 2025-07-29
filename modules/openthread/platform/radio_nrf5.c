@@ -86,6 +86,9 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME, CONFIG_OPENTHREAD_PLATFORM_LOG_LEVEL);
 #define NRF5_BROADCAST_ADDRESS	       0xffff
 #define NRF5_NO_SHORT_ADDRESS_ASSIGNED 0xfffe
 
+/* IE constants */
+#define IE_VENDOR_SIZE_MIN 3 /* Minimum vendor OUI size in bytes */
+
 #if defined(CONFIG_COOP_ENABLED)
 #define OT_WORKER_PRIORITY K_PRIO_COOP(CONFIG_OPENTHREAD_THREAD_PRIORITY)
 #else
@@ -97,6 +100,9 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME, CONFIG_OPENTHREAD_PLATFORM_LOG_LEVEL);
 
 #define PSDU_LENGTH(psdu) ((psdu)[0])
 #define PSDU_DATA(psdu)	  ((psdu) + 1)
+
+#define CSL_IE_SIZE (6) /* Buffer for CSL IE: 2 bytes header + 4 bytes content */
+#define LM_IE_SIZE (32) /* Buffer for LM IE: 2 bytes header + 30 bytes content */
 
 enum nrf5_pending_events {
 	PENDING_EVENT_FRAME_RECEIVED,	  /* Radio has received new frame */
@@ -125,6 +131,7 @@ struct nrf5_header_ie_csl_reduced {
 
 struct nrf5_header_ie_link_metrics {
 	uint8_t vendor_oui[IE_VENDOR_SIZE_MIN];
+	uint8_t subtype; /* Vendor-specific subtype/probing ID */
 	uint8_t lqi_token;
 	uint8_t link_margin_token;
 	uint8_t rssi_token;
@@ -290,6 +297,7 @@ static int nrf5_set_channel(uint16_t channel)
 	}
 
 	nrf_802154_channel_set(channel);
+	nrf5_data.channel = channel;
 
 	LOG_DBG("set channel %u", channel);
 
@@ -348,9 +356,20 @@ static int nrf5_set_tx_power(uint16_t channel)
 }
 
 #if defined(CONFIG_OPENTHREAD_CSL_RECEIVER) || defined(CONFIG_OPENTHREAD_LINK_METRICS_SUBJECT)
+/**
+ * @brief Set ACK data for both short and extended addresses
+ *
+ * This function handles the address conversion and calls the nRF driver
+ * to set ACK data for both address types.
+ *
+ * @param short_addr Short address
+ * @param ext_addr Extended address
+ * @param header_ie_buf Buffer containing the IE data
+ * @param ie_length Length of the IE data in bytes
+ * @return 0 on success, negative error code on failure
+ */
 static int nrf5_ack_data_set(uint16_t short_addr, const otExtAddress *ext_addr,
-			     const struct nrf5_header_ie *header_ie)
-
+			     const uint8_t *header_ie_buf, size_t ie_length)
 {
 	uint8_t ext_addr_le[EXTENDED_ADDRESS_SIZE];
 	uint8_t short_addr_le[SHORT_ADDRESS_SIZE];
@@ -363,17 +382,15 @@ static int nrf5_ack_data_set(uint16_t short_addr, const otExtAddress *ext_addr,
 	sys_memcpy_swap(ext_addr_le, ext_addr->m8, EXTENDED_ADDRESS_SIZE);
 
 	if (short_addr != NRF5_NO_SHORT_ADDRESS_ASSIGNED) {
-		nrf_802154_ack_data_set(short_addr_le, false, header_ie,
-					header_ie->length + IE_HEADER_SIZE, NRF_802154_ACK_DATA_IE);
+		nrf_802154_ack_data_set(short_addr_le, false, header_ie_buf, ie_length,
+					NRF_802154_ACK_DATA_IE);
 	}
-	nrf_802154_ack_data_set(ext_addr_le, true, header_ie, header_ie->length + IE_HEADER_SIZE,
+	nrf_802154_ack_data_set(ext_addr_le, true, header_ie_buf, ie_length,
 				NRF_802154_ACK_DATA_IE);
 
 	return 0;
 }
-#endif
 
-#if defined(CONFIG_OPENTHREAD_CSL_RECEIVER)
 static int nrf5_ack_data_clear(uint16_t short_addr, const otExtAddress *ext_addr)
 {
 	uint8_t ext_addr_le[EXTENDED_ADDRESS_SIZE];
@@ -392,6 +409,42 @@ static int nrf5_ack_data_clear(uint16_t short_addr, const otExtAddress *ext_addr
 	nrf_802154_ack_data_clear(ext_addr_le, true, NRF_802154_ACK_DATA_IE);
 
 	return 0;
+}
+#endif
+
+#if defined(CONFIG_OPENTHREAD_CSL_RECEIVER)
+/**
+ * @brief Create CSL IE using structured format with bit fields
+ *
+ * Creates a CSL Information Element using the defined structs with proper IEEE 802.15.4 format
+ *
+ * @param csl_period CSL period value
+ * @param ie_buffer Buffer to store the IE (must be at least sizeof(struct nrf5_header_ie) bytes)
+ * @return Length of the created IE in bytes
+ */
+static size_t create_csl_ie(uint32_t csl_period, uint8_t *ie_buffer)
+{
+	if (ie_buffer == NULL) {
+		return 0;
+	}
+
+	struct nrf5_header_ie csl_ie;
+	const uint8_t csl_element_id = NRF5_HEADER_IE_ELEMENT_ID_CSL_IE;
+
+	memset(&csl_ie, 0, sizeof(csl_ie));
+
+	csl_ie.length = sizeof(struct nrf5_header_ie_csl_reduced);
+	csl_ie.element_id_low = csl_element_id & 0x01;
+	csl_ie.element_id_high = (csl_element_id >> 1) & 0x7f;
+	csl_ie.type = NRF5_IE_TYPE_HEADER;
+	csl_ie.content.csl_reduced.csl_phase = sys_cpu_to_le16(0);
+	csl_ie.content.csl_reduced.csl_period = sys_cpu_to_le16(csl_period);
+
+	size_t csl_ie_size = sizeof(uint16_t) + sizeof(struct nrf5_header_ie_csl_reduced);
+
+	memcpy(ie_buffer, &csl_ie, csl_ie_size);
+
+	return csl_ie_size;
 }
 #endif
 
@@ -644,7 +697,6 @@ static bool nrf5_tx_csma_ca(otRadioFrame *frame, uint8_t *payload)
 			.use_metadata_value = true,
 			.power = get_transmit_power_for_channel(frame->mChannel),
 		},
-
 	};
 
 	nrf_802154_csma_ca_max_backoffs_set(frame->mInfo.mTxInfo.mMaxCsmaBackoffs);
@@ -736,9 +788,9 @@ static otError transmit_frame(otInstance *aInstance)
 
 	if ((nrf5_data.capabilities & OT_RADIO_CAPS_TRANSMIT_TIMING) &&
 	    (nrf5_data.tx.frame.mInfo.mTxInfo.mTxDelay != 0)) {
-#if !defined(CONFIG_NRF5_SELECTIVE_TXCHANNEL)
+
 		nrf5_set_channel(nrf5_data.tx.frame.mChannel);
-#endif
+
 		if (!nrf5_tx_at(&nrf5_data.tx.frame, nrf5_data.tx.psdu)) {
 			LOG_WRN("TX AT failed");
 			nrf5_data.tx.result = OT_ERROR_ABORT;
@@ -1440,17 +1492,6 @@ otError otPlatRadioEnableCsl(otInstance *aInstance, uint32_t aCslPeriod, otShort
 
 	ARG_UNUSED(aInstance);
 
-	const struct nrf5_header_ie header_ie = {
-		.length = sizeof(struct nrf5_header_ie_csl_reduced),
-		.element_id_high = (NRF5_HEADER_IE_ELEMENT_ID_CSL_IE) >> 1U,
-		.element_id_low = (NRF5_HEADER_IE_ELEMENT_ID_CSL_IE) & 0x01,
-		.type = NRF5_IE_TYPE_HEADER,
-		.content.csl_reduced = {
-			.csl_phase = 0,
-			.csl_period = aCslPeriod,
-		},
-	};
-
 	nrf_802154_csl_writer_period_set(aCslPeriod);
 #if defined(CONFIG_NRF_802154_SER_HOST)
 	nrf5_data.csl.period = aCslPeriod;
@@ -1459,7 +1500,10 @@ otError otPlatRadioEnableCsl(otInstance *aInstance, uint32_t aCslPeriod, otShort
 	if (aCslPeriod == 0) {
 		result = nrf5_ack_data_clear(aShortAddr, aExtAddr);
 	} else {
-		result = nrf5_ack_data_set(aShortAddr, aExtAddr, &header_ie);
+		uint8_t csl_ie_buf[CSL_IE_SIZE];
+		size_t ie_length = create_csl_ie(aCslPeriod, csl_ie_buf);
+
+		result = nrf5_ack_data_set(aShortAddr, aExtAddr, csl_ie_buf, ie_length);
 	}
 
 	return result ? OT_ERROR_FAILED : OT_ERROR_NONE;
@@ -1542,34 +1586,123 @@ otError otPlatRadioSetChannelMaxTransmitPower(otInstance *aInstance, uint8_t aCh
 }
 
 #if defined(CONFIG_OPENTHREAD_LINK_METRICS_SUBJECT)
+
+/**
+ * @brief Set vendor IE header for link metrics using structured format
+ *
+ * This function creates a properly formatted IEEE 802.15.4 vendor-specific header IE
+ * for OpenThread link metrics probing
+ *
+ * +---------------------------------+----------------------+
+ * | Length    | Element ID | Type=0 |      Vendor OUI      |
+ * +-----------+------------+--------+----------------------+
+ * |           Bytes: 0-1            |          2-4         |
+ * +-----------+---------------------+----------------------+
+ * | Bits: 0-6 |    7-14    |   15   | IE_VENDOR_THREAD_OUI |
+ * +-----------+------------+--------+----------------------|
+ *
+ * Thread v1.2.1 Spec., 4.11.3.4.4.6
+ * +---------------------------------+-------------------+------------------+
+ * |                  Vendor Specific Information                           |
+ * +---------------------------------+-------------------+------------------+
+ * |                5                |         6         |   7 (optional)   |
+ * +---------------------------------+-------------------+------------------+
+ * | IE_VENDOR_THREAD_ACK_PROBING_ID | LINK_METRIC_TOKEN | LINK_METRIC_TOKEN|
+ * |---------------------------------|-------------------|------------------|
+ *
+ * @param lqi Include LQI metric
+ * @param link_margin Include link margin metric
+ * @param rssi Include RSSI metric
+ * @param ie_header Buffer to store the IE header
+ */
+static void set_vendor_ie_header_lm(bool lqi, bool link_margin, bool rssi, uint8_t *ie_header)
+{
+	/* OpenThread vendor-specific constants */
+	const uint8_t ie_vendor_id = NRF5_HEADER_IE_ELEMENT_ID_VENDOR_SPECIFIC_IE;
+	const uint8_t ie_vendor_thread_ack_probing_id = 0x00;
+	const uint32_t ie_vendor_thread_oui = 0xeab89b;
+	const uint8_t ie_vendor_thread_rssi_token = 0x01;
+	const uint8_t ie_vendor_thread_margin_token = 0x02;
+	const uint8_t ie_vendor_thread_lqi_token = 0x03;
+
+	struct nrf5_header_ie vendor_ie;
+	uint8_t link_metrics_data_len = (uint8_t)lqi + (uint8_t)link_margin + (uint8_t)rssi;
+	uint8_t token_offset;
+
+	__ASSERT(link_metrics_data_len <= 2, "Thread limits to 2 metrics at most");
+	__ASSERT(ie_header, "Invalid argument");
+
+	if (link_metrics_data_len == 0) {
+		ie_header[0] = 0;
+		return;
+	}
+
+	/* Clear the structure */
+	memset(&vendor_ie, 0, sizeof(vendor_ie));
+
+	vendor_ie.length = 4 + link_metrics_data_len;
+	vendor_ie.element_id_low = ie_vendor_id & 0x01;
+	vendor_ie.element_id_high = (ie_vendor_id >> 1) & 0x7f;
+	vendor_ie.type = NRF5_IE_TYPE_HEADER;
+	vendor_ie.content.link_metrics.vendor_oui[0] = (ie_vendor_thread_oui) & 0xff;
+	vendor_ie.content.link_metrics.vendor_oui[1] = (ie_vendor_thread_oui >> 8) & 0xff;
+	vendor_ie.content.link_metrics.vendor_oui[2] = (ie_vendor_thread_oui >> 16) & 0xff;
+	vendor_ie.content.link_metrics.subtype = ie_vendor_thread_ack_probing_id;
+
+	memcpy(ie_header, &vendor_ie, 2);
+
+	uint8_t *content_ptr = ie_header + 2;
+
+	content_ptr[0] = (ie_vendor_thread_oui) & 0xff;
+	content_ptr[1] = (ie_vendor_thread_oui >> 8) & 0xff;
+	content_ptr[2] = (ie_vendor_thread_oui >> 16) & 0xff;
+	content_ptr[3] = ie_vendor_thread_ack_probing_id;
+
+	token_offset = 4;
+
+	if (lqi) {
+		content_ptr[token_offset++] = ie_vendor_thread_lqi_token;
+	}
+
+	if (link_margin) {
+		content_ptr[token_offset++] = ie_vendor_thread_margin_token;
+	}
+
+	if (rssi) {
+		content_ptr[token_offset++] = ie_vendor_thread_rssi_token;
+	}
+}
+
 otError otPlatRadioConfigureEnhAckProbing(otInstance *aInstance, otLinkMetrics aLinkMetrics,
-					  otShortAddress aShortAddress,
+					  const otShortAddress aShortAddress,
 					  const otExtAddress *aExtAddress)
 {
-	int result;
-
 	ARG_UNUSED(aInstance);
 
-	const struct nrf5_header_ie header_ie = {
-		.length = sizeof(struct nrf5_header_ie_link_metrics),
-		.element_id_high = (NRF5_HEADER_IE_ELEMENT_ID_VENDOR_SPECIFIC_IE) >> 1U,
-		.element_id_low = (NRF5_HEADER_IE_ELEMENT_ID_VENDOR_SPECIFIC_IE) & 0x01,
-		.type = NRF5_IE_TYPE_HEADER,
-		.content.link_metrics = {
-			.vendor_oui[0] = (IE_VENDOR_THREAD_OUI >> 0) & 0xff,
-			.vendor_oui[1] = (IE_VENDOR_THREAD_OUI >> 8) & 0xff,
-			.vendor_oui[2] = (IE_VENDOR_THREAD_OUI >> 16) & 0xff,
-			.lqi_token = aLinkMetrics.mLqi ? IE_VENDOR_THREAD_LQI_TOKEN : 0,
-			.link_margin_token = aLinkMetrics.mLinkMargin
-							    ? IE_VENDOR_THREAD_MARGIN_TOKEN
-							    : 0,
-			.rssi_token = aLinkMetrics.mRssi ? IE_VENDOR_THREAD_RSSI_TOKEN : 0,
-		},
-	};
+	/* Use the proper IEEE 802.15.4 driver configure interface */
+	uint8_t header_ie_buf[LM_IE_SIZE];
 
-	result = nrf5_ack_data_set(aShortAddress, aExtAddress, &header_ie);
+	/* Validate addresses */
+	if (aShortAddress == NRF5_BROADCAST_ADDRESS || aExtAddress == NULL) {
+		return OT_ERROR_INVALID_ARGS;
+	}
 
-	return result ? OT_ERROR_FAILED : OT_ERROR_NONE;
+	/* Create the vendor-specific IE header */
+	set_vendor_ie_header_lm(aLinkMetrics.mLqi, aLinkMetrics.mLinkMargin, aLinkMetrics.mRssi,
+				header_ie_buf);
+
+	/* If no metrics requested, clear the ACK data using the helper function */
+	if (header_ie_buf[0] == 0) {
+		return nrf5_ack_data_clear(aShortAddress, aExtAddress) ? OT_ERROR_FAILED
+								       : OT_ERROR_NONE;
+	}
+
+	/* Calculate IE length: first byte contains length field */
+	uint8_t ie_length = (header_ie_buf[0] & 0x7f) + 2; /* +2 for the header itself */
+
+	return nrf5_ack_data_set(aShortAddress, aExtAddress, header_ie_buf, ie_length)
+		       ? OT_ERROR_FAILED
+		       : OT_ERROR_NONE;
 }
 #endif
 
@@ -1762,8 +1895,9 @@ static otError nrf5_tx_error_to_ot_error(nrf_802154_tx_error_t error)
 	case NRF_802154_TX_ERROR_TIMESLOT_ENDED:
 	case NRF_802154_TX_ERROR_TIMESLOT_DENIED:
 		return OT_ERROR_CHANNEL_ACCESS_FAILURE;
-	case NRF_802154_TX_ERROR_INVALID_ACK:
 	case NRF_802154_TX_ERROR_NO_MEM:
+		return OT_ERROR_NO_BUFS;
+	case NRF_802154_TX_ERROR_INVALID_ACK:
 	case NRF_802154_TX_ERROR_NO_ACK:
 		return OT_ERROR_NO_ACK;
 	case NRF_802154_TX_ERROR_ABORTED:

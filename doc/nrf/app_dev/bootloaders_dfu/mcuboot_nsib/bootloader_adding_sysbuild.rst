@@ -373,64 +373,17 @@ To use this mode, you must create a static partition file for the application th
 Ensure the firmware loader partition is named ``firmware_loader``.
 This partition must be located identically as ``mcuboot_secondary_app`` partition, starting after the image's header offset within ``mcuboot_secondary`` partition.
 
-The following is an example static Partition Manager file for the nRF53 devices:
+The following are example static Partition Manager files:
 
-.. code-block:: yaml
+.. tabs::
 
-    app:
-      address: 0x10200
-      region: flash_primary
-      size: 0xdfe00
-    mcuboot:
-      address: 0x0
-      region: flash_primary
-      size: 0x10000
-    mcuboot_pad:
-      address: 0x10000
-      region: flash_primary
-      size: 0x200
-    mcuboot_primary:
-      address: 0x10000
-      orig_span: &id001
-      - mcuboot_pad
-      - app
-      region: flash_primary
-      size: 0xc0000
-      span: *id001
-    mcuboot_primary_app:
-      address: 0x10200
-      orig_span: &id002
-      - app
-      region: flash_primary
-      size: 0xbfe00
-      span: *id002
-    firmware_loader:
-      address: 0xd0200
-      region: flash_primary
-      size: 0x1fe00
-    mcuboot_secondary:
-      address: 0xd0000
-      orig_span: &id003
-      - mcuboot_pad
-      - firmware_loader
-      region: flash_primary
-      size: 0x20000
-      span: *id003
-    mcuboot_secondary_app:
-      address: 0xd0200
-      orig_span: &id004
-      - firmware_loader
-      region: flash_primary
-      size: 0x1fe00
-      span: *id004
-    settings_storage:
-      address: 0xf0000
-      region: flash_primary
-      size: 0x10000
-    pcd_sram:
-      address: 0x20000000
-      size: 0x2000
-      region: sram_primary
+    .. group-tab:: nRF52840
+        .. literalinclude:: ../../../../../samples/mcuboot/firmware_loader_entrance/pm_static_nrf52840dk_nrf52840.yml
+           :language: yaml
+
+    .. group-tab:: nRF54L15
+        .. literalinclude:: ../../../../../samples/mcuboot/firmware_loader_entrance/pm_static_nrf54l15dk_nrf54l15_cpuapp.yml
+           :language: yaml
 
 The project must also configure MCUboot to operate in firmware loader mode and specify a firmware loader image in the :file:`sysbuild.conf` file.
 For example to select ``smp_svr``, set the following options:

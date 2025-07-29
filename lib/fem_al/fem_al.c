@@ -279,7 +279,6 @@ void fem_txrx_stop(void)
 	mpsl_fem_deactivate_now(MPSL_FEM_ALL);
 }
 
-#if defined(_MPSL_FEM_TX_POWER_SPLIT_HAS_PHY)
 static mpsl_phy_t convert_radio_mode_to_mpsl_phy(nrf_radio_mode_t radio_mode)
 {
 	switch (radio_mode) {
@@ -316,7 +315,6 @@ static mpsl_phy_t convert_radio_mode_to_mpsl_phy(nrf_radio_mode_t radio_mode)
 	default: return MPSL_PHY_BLE_1M;
 	}
 }
-#endif
 
 int8_t fem_tx_output_power_prepare(int8_t power, int8_t *radio_tx_power,
 				   nrf_radio_mode_t radio_mode, uint16_t freq_mhz)
@@ -324,17 +322,9 @@ int8_t fem_tx_output_power_prepare(int8_t power, int8_t *radio_tx_power,
 	int8_t output_power;
 	int32_t err;
 	mpsl_tx_power_split_t power_split = { 0 };
-#if defined(_MPSL_FEM_TX_POWER_SPLIT_HAS_PHY)
 	mpsl_phy_t mpsl_phy = convert_radio_mode_to_mpsl_phy(radio_mode);
-#else
-	(void)radio_mode;
-#endif
 
-	output_power = mpsl_fem_tx_power_split(power, &power_split,
-#if defined(_MPSL_FEM_TX_POWER_SPLIT_HAS_PHY)
-					       mpsl_phy,
-#endif
-					       freq_mhz, false);
+	output_power = mpsl_fem_tx_power_split(power, &power_split, mpsl_phy, freq_mhz, false);
 
 	*radio_tx_power = power_split.radio_tx_power;
 
@@ -351,18 +341,10 @@ int8_t fem_tx_output_power_prepare(int8_t power, int8_t *radio_tx_power,
 int8_t fem_tx_output_power_check(int8_t power, nrf_radio_mode_t radio_mode, uint16_t freq_mhz,
 				 bool tx_power_ceiling)
 {
-#if defined(_MPSL_FEM_TX_POWER_SPLIT_HAS_PHY)
 	mpsl_phy_t mpsl_phy = convert_radio_mode_to_mpsl_phy(radio_mode);
-#else
-	(void)radio_mode;
-#endif
 	mpsl_tx_power_split_t power_split = { 0 };
 
-	return mpsl_fem_tx_power_split(power, &power_split,
-#if defined(_MPSL_FEM_TX_POWER_SPLIT_HAS_PHY)
-				       mpsl_phy,
-#endif
-				       freq_mhz, tx_power_ceiling);
+	return mpsl_fem_tx_power_split(power, &power_split, mpsl_phy, freq_mhz, tx_power_ceiling);
 }
 
 int8_t fem_default_tx_output_power_get(void)

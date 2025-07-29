@@ -42,7 +42,7 @@ static constexpr EmberAfDeviceType kBridgedTemperatureDeviceTypes[] = {
 	  MatterBridgedDevice::kDefaultDynamicEndpointVersion }
 };
 
-static constexpr uint8_t kTemperatureDataVersionSize = ArraySize(bridgedTemperatureClusters);
+static constexpr uint8_t kTemperatureDataVersionSize = MATTER_ARRAY_SIZE(bridgedTemperatureClusters);
 
 TemperatureSensorDevice::TemperatureSensorDevice(const char *uniqueID, const char *nodeLabel)
 	: MatterBridgedDevice(uniqueID, nodeLabel)

@@ -539,7 +539,7 @@ foreach(d APP ${PM_DOMAINS})
     set(soc_nvs_controller_driver_kc CONFIG_SOC_FLASH_NRF_RRAM)
   elseif(${image_name}_CONFIG_SOC_SERIES_NRF71X)
     set(soc_nvs_controller mram_controller)
-    set(soc_nvs_controller_driver_kc CONFIG_SOC_FLASH_NRF_MRAMC)
+    set(soc_nvs_controller_driver_kc CONFIG_SOC_FLASH_NRF_MRAM)
   else()
     set(soc_nvs_controller flash_controller)
     set(soc_nvs_controller_driver_kc CONFIG_SOC_FLASH_NRF)
@@ -607,25 +607,29 @@ if(ext_flash_enabled)
     )
 endif()
 
-# If simultaneous updates of the network core and application core is supported
-# we add a region which is used to emulate flash. In reality this data is being
-# placed in RAM. This is used to bank the network core update in RAM while
-# the application core update is banked in flash. This works since the nRF53
-# application core has 512kB of RAM and the network core only has 256kB of flash
-if(SB_CONFIG_NETCORE_APP_UPDATE)
-  # This region will contain the 'mcuboot_secondary' partition, and the banked
-  # updates for the network core will be stored here.
-  sysbuild_get(ram_flash_addr IMAGE mcuboot VAR RAM_FLASH_ADDR CACHE)
-  sysbuild_get(ram_flash_size IMAGE mcuboot VAR RAM_FLASH_SIZE CACHE)
+if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+  sysbuild_get(ram_flash_enabled IMAGE mcuboot VAR CONFIG_FLASH_SIMULATOR KCONFIG)
 
-  add_region(
-    NAME ram_flash
-    SIZE ${ram_flash_size}
-    BASE ${ram_flash_addr}
-    PLACEMENT start_to_end
-    DEVICE nordic_ram_flash_controller
-    DEFAULT_DRIVER_KCONFIG CONFIG_FLASH_SIMULATOR
-    )
+  # If simultaneous updates of the network core and application core is supported
+  # we add a region which is used to emulate flash. In reality this data is being
+  # placed in RAM. This is used to bank the network core update in RAM while
+  # the application core update is banked in flash. This works since the nRF53
+  # application core has 512kB of RAM and the network core only has 256kB of flash
+  if(SB_CONFIG_NETCORE_APP_UPDATE AND ram_flash_enabled)
+    # This region will contain the 'mcuboot_secondary' partition, and the banked
+    # updates for the network core will be stored here.
+    sysbuild_get(ram_flash_addr IMAGE mcuboot VAR RAM_FLASH_ADDR CACHE)
+    sysbuild_get(ram_flash_size IMAGE mcuboot VAR RAM_FLASH_SIZE CACHE)
+
+    add_region(
+      NAME ram_flash
+      SIZE ${ram_flash_size}
+      BASE ${ram_flash_addr}
+      PLACEMENT start_to_end
+      DEVICE nordic_ram_flash_controller
+      DEFAULT_DRIVER_KCONFIG CONFIG_FLASH_SIMULATOR
+      )
+  endif()
 endif()
 
 # Do per domain, end with main app domain.

@@ -159,11 +159,13 @@
 
 #ifdef USE_NON_SECURE_ADDRESS_MAP
 		global_peripherals: peripheral@40000000 {
+			reg = <0x40000000 0x10000000>;
 			#address-cells = <1>;
 			#size-cells = <1>;
 			ranges = <0x0 0x40000000 0x10000000>;
 #else
 		global_peripherals: peripheral@50000000 {
+			reg = <0x50000000 0x10000000>;
 			#address-cells = <1>;
 			#size-cells = <1>;
 			ranges = <0x0 0x50000000 0x10000000>;
@@ -559,6 +561,7 @@
 				interrupts = <210 NRF_DEFAULT_IRQ_PRIORITY>;
 				#pwm-cells = <3>;
 				status = "disabled";
+				idleout-supported;
 			};
 
 			pwm21: pwm@d3000 {
@@ -567,6 +570,7 @@
 				interrupts = <211 NRF_DEFAULT_IRQ_PRIORITY>;
 				#pwm-cells = <3>;
 				status = "disabled";
+				idleout-supported;
 			};
 
 			pwm22: pwm@d4000 {
@@ -575,6 +579,7 @@
 				interrupts = <212 NRF_DEFAULT_IRQ_PRIORITY>;
 				#pwm-cells = <3>;
 				status = "disabled";
+				idleout-supported;
 			};
 
 			adc: adc@d5000 {
@@ -812,28 +817,6 @@
 				status = "disabled";
 			};
 
-			mram_controller: mram-controller@0x5004e000 {
-				compatible = "nordic,mram-controller";
-				reg = <0x5004e000 0x1000>;
-				#address-cells = <1>;
-				#size-cells = <1>;
-				interrupts = <78 NRF_DEFAULT_IRQ_PRIORITY>;
-
-				cpuapp_mram: mram@0 {
-					compatible = "nordic,mram";
-					reg = <0 DT_SIZE_K(3972)>;
-					erase-block-size = <4096>;
-					write-block-size = <4>;
-				};
-
-				cpuflpr_mram: mram@3e1000 {
-					compatible = "nordic,mram";
-					reg = <0x3e1000 DT_SIZE_K(116)>;
-					erase-block-size = <4096>;
-					write-block-size = <4>;
-				};
-			};
-
 			cpuapp_ppb: cpuapp-ppb-bus {
 				#address-cells = <1>;
 				#size-cells = <1>;
@@ -869,7 +852,7 @@
 	};
 
 	wifi: wifi {
-		compatible = "nordic,wifi71";
+		compatible = "nordic,nrf7120";
 		status = "disabled";
 
 		wifi-max-tx-pwr-2g-dsss = <21>;

@@ -50,9 +50,15 @@
 #include <platform/nrfconnect/KMUKeyAllocator.h>
 #endif
 
+#ifdef CONFIG_OPENTHREAD
+#include <platform/OpenThread/GenericNetworkCommissioningThreadDriver.h>
+#include <openthread.h>
+#endif
+
 #include <app/InteractionModelEngine.h>
 #include <app/clusters/network-commissioning/network-commissioning.h>
 #include <credentials/examples/DeviceAttestationCredsExample.h>
+#include <data-model-providers/codegen/Instance.h>
 #include <platform/nrfconnect/ExternalFlashManager.h>
 #include <setup_payload/OnboardingCodesUtil.h>
 
@@ -70,6 +76,11 @@ CommonCaseDeviceServerInitParams Nrf::Matter::InitData::sServerInitParamsDefault
 Clusters::NetworkCommissioning::Instance Nrf::Matter::InitData::sWiFiCommissioningInstance{
 	0, &(NetworkCommissioning::NrfWiFiDriver::Instance())
 };
+#endif
+
+#ifdef CONFIG_OPENTHREAD
+app::Clusters::NetworkCommissioning::InstanceAndDriver<NetworkCommissioning::GenericThreadDriver>
+	sThreadNetworkDriver(0 /*endpointId*/);
 #endif
 
 #ifdef CONFIG_CHIP_CRYPTO_PSA
@@ -179,8 +190,22 @@ CHIP_ERROR InitNetworkingStack()
 	error = ConfigureThreadRole();
 	VerifyOrReturnLogError(error == CHIP_NO_ERROR, error);
 
+	sThreadNetworkDriver.Init();
+
 	return error;
 }
+
+#if CHIP_SYSTEM_CONFIG_USE_OPENTHREAD_ENDPOINT
+void LockOpenThreadTask(void)
+{
+    chip::DeviceLayer::ThreadStackMgr().LockThreadStack();
+}
+
+void UnlockOpenThreadTask(void)
+{
+    chip::DeviceLayer::ThreadStackMgr().UnlockThreadStack();
+}
+#endif /* CHIP_SYSTEM_CONFIG_USE_OPENTHREAD_ENDPOINT */
 
 #elif defined(CONFIG_CHIP_WIFI)
 
@@ -193,7 +218,7 @@ CHIP_ERROR InitNetworkingStack()
 	return CHIP_NO_ERROR;
 }
 #else
-#error "No valid L2 network backend selected");
+#error "No valid networking backend selected");
 #endif /* CONFIG_OPENTHREAD */
 
 #define VerifyInitResultOrReturn(ec, msg)                                                                              \
@@ -226,7 +251,7 @@ void DoInitChipServer(intptr_t /* unused */)
 		VerifyInitResultOrReturn(sInitResult, "Custom pre server initialization failed");
 	}
 
-	/* Initialize L2 networking backend. */
+	/* Initialize networking backend. */
 	sInitResult = InitNetworkingStack();
 	VerifyInitResultOrReturn(sInitResult, "Cannot initialize IPv6 networking stack");
 
@@ -279,6 +304,15 @@ void DoInitChipServer(intptr_t /* unused */)
 	/* The default CommissionableDataProvider is set internally in the GenericConfigurationManagerImpl::Init(). */
 #endif
 
+#if CHIP_SYSTEM_CONFIG_USE_OPENTHREAD_ENDPOINT
+	// Set up OpenThread configuration when OpenThread is included
+	chip::Inet::EndPointStateOpenThread::OpenThreadEndpointInitParam nativeParams;
+	nativeParams.lockCb = LockOpenThreadTask;
+	nativeParams.unlockCb = UnlockOpenThreadTask;
+	nativeParams.openThreadInstancePtr = chip::DeviceLayer::ThreadStackMgrImpl().OTInstance();
+	sLocalInitData.mServerInitParams->endpointNativeParams = static_cast<void *>(&nativeParams);
+#endif /* CHIP_SYSTEM_CONFIG_USE_OPENTHREAD_ENDPOINT */
+
 #ifdef CONFIG_NCS_SAMPLE_MATTER_SETTINGS_SHELL
 	VerifyOrReturn(Nrf::PersistentStorageShell::Init(),
 		       LOG_ERR("Matter settings shell has been enabled, but it cannot be initialized."));
@@ -312,6 +346,9 @@ void DoInitChipServer(intptr_t /* unused */)
 	VerifyInitResultOrReturn(sInitResult, "Cannot register CHIP event handler");
 
 	SetDeviceInfoProvider(sLocalInitData.mDeviceInfoProvider);
+
+	sLocalInitData.mServerInitParams->dataModelProvider =
+		app::CodegenDataModelProviderInstance(sLocalInitData.mServerInitParams->persistentStorageDelegate);
 
 	sInitResult = Server::GetInstance().Init(*sLocalInitData.mServerInitParams);
 	VerifyInitResultOrReturn(sInitResult, "Server::Init() failed");
@@ -399,5 +436,10 @@ FactoryDataProviderBase *GetFactoryDataProvider()
 	return sLocalInitData.mFactoryDataProvider;
 }
 #endif
+
+PersistentStorageDelegate * GetPersistentStorageDelegate()
+{
+	return sLocalInitData.mServerInitParams->persistentStorageDelegate;
+}
 
 } /* namespace Nrf::Matter */

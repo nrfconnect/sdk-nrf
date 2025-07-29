@@ -19,6 +19,7 @@
 
 #pragma once
 
+void MatterIdentifyPluginServerInitCallback();
 void MatterGroupsPluginServerInitCallback();
 void MatterOnOffPluginServerInitCallback();
 void MatterDescriptorPluginServerInitCallback();
@@ -26,6 +27,7 @@ void MatterAccessControlPluginServerInitCallback();
 void MatterBasicInformationPluginServerInitCallback();
 void MatterOtaSoftwareUpdateRequestorPluginServerInitCallback();
 void MatterLocalizationConfigurationPluginServerInitCallback();
+void MatterTimeFormatLocalizationPluginServerInitCallback();
 void MatterGeneralCommissioningPluginServerInitCallback();
 void MatterNetworkCommissioningPluginServerInitCallback();
 void MatterDiagnosticLogsPluginServerInitCallback();
@@ -38,7 +40,8 @@ void MatterOperationalCredentialsPluginServerInitCallback();
 void MatterGroupKeyManagementPluginServerInitCallback();
 void MatterIcdManagementPluginServerInitCallback();
 
-#define MATTER_PLUGINS_INIT                                                                                        \
+#define MATTER_PLUGINS_INIT                                                                                            \
+	MatterIdentifyPluginServerInitCallback();                                                                      \
 	MatterGroupsPluginServerInitCallback();                                                                        \
 	MatterOnOffPluginServerInitCallback();                                                                         \
 	MatterDescriptorPluginServerInitCallback();                                                                    \
@@ -46,6 +49,7 @@ void MatterIcdManagementPluginServerInitCallback();
 	MatterBasicInformationPluginServerInitCallback();                                                              \
 	MatterOtaSoftwareUpdateRequestorPluginServerInitCallback();                                                    \
 	MatterLocalizationConfigurationPluginServerInitCallback();                                                     \
+	MatterTimeFormatLocalizationPluginServerInitCallback();                                                        \
 	MatterGeneralCommissioningPluginServerInitCallback();                                                          \
 	MatterNetworkCommissioningPluginServerInitCallback();                                                          \
 	MatterDiagnosticLogsPluginServerInitCallback();                                                                \

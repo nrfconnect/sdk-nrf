@@ -4198,6 +4198,15 @@ NCSDK-33173: MCUboot might fail on booting an application when LTO is enabled
 
   **Workaround:** To fix the issue, update the ``sdk-mcuboot`` repository by cherry-picking the upstream commits with the following hash: ``766081bd6dfe26057fdbe3dca5d8eb5f64681beb``
 
+.. rst-class:: v2-9-0 v2-8-0
+
+NCSIDB-1431: Serial recovery responses to image list and slot info commands contain unexpected number of slot information entries
+  The response contains too few slot information entries.
+
+  **Affected platforms:** All
+
+  **Workaround:** Update the ``sdk-mcuboot`` repository by cherry-picking the upstream commits with the following hash: ``cc7b97be4b5cc30a250a51dfeb51087e929d161``.
+
 
 nrfxlib
 *******

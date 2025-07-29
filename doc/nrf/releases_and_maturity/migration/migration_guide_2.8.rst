@@ -87,7 +87,7 @@ nRF54L Series
 .. toggle::
 
    * Use the :ref:`ZMS (Zephyr Memory Storage) <zephyr:zms_api>` storage system for all devices with RRAM memory technology.
-     See the :ref:`memory_storage` page for more details on how to enable ZMS for an nRF54L Series.
+     See the :ref:`zms_memory_storage` page for more details on how to enable ZMS for an nRF54L Series.
 
 .. _migration_2.8_nrf54h:
 
@@ -306,7 +306,7 @@ nRF54H20
 
             APP_ROOT_SEQ_NUM = <N>
 
-    For the list of all variables, set through the :file:`VERSION`, refer to the :ref:`ug_nrf54h20_suit_customize_dfu`.
+    For the list of all variables, set through the :file:`VERSION`, refer to the ``ug_nrf54h20_suit_customize_dfu``.
 
   * When using MCU Manager, the ``Confirm`` command is now needed to trigger a device firmware update.
   * The build command to enable DFU from the external flash is now the following::
@@ -440,7 +440,7 @@ Wi-Fi®
 
 .. toggle::
 
-   * For :ref:`lib_wifi_credentials` library:
+   * For Wi-Fi credentials library:
 
      * Syntax for ``add`` command has been modified to support ``getopt`` model.
        For example, the following command with old syntax:

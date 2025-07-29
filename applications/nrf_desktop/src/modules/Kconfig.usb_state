@@ -57,9 +57,25 @@ config DESKTOP_USB_PM_REQ_NO_PM_LATENCY
 	  latency and ensures high performance. While USB is active, application
 	  power down is blocked anyway.
 
+config DESKTOP_USB_PM_RESTRICT_REMOVE_DELAY_MS
+	int "Delay removing power manager restrictions after USB disconnection [ms]"
+	range 0 60000
+	default 3000
+	depends on DESKTOP_USB_PM_ENABLE
+	help
+	  Delay in milliseconds before removing power manager level restriction
+	  after USB is disconnected. This is used to delay the system off after
+	  USB disconnection. While disconnecting an USB cable, an USB suspended
+	  state might be reported. The USB suspended state triggers force power
+	  down sequence which makes CAF power manager instantly suspend the
+	  application. This option allows user to take actions, like e.g. restart
+	  BLE advertising, after disconnecting the USB cable without going through
+	  reboot.
+
 config DESKTOP_USB_HID_REPORT_SENT_ON_SOF
 	bool "Submit HID report sent event on USB Start of Frame (SOF) [EXPERIMENTAL]"
 	default y if UDC_DRIVER_HAS_HIGH_SPEED_SUPPORT
+	select UDC_ENABLE_SOF if UDC_DRIVER
 	select EXPERIMENTAL
 	help
 	  Delay submitting hid_report_sent_event until subsequent USB Start of
@@ -71,6 +87,9 @@ config DESKTOP_USB_HID_REPORT_SENT_ON_SOF
 	  If you use an UDC driver with High-Speed support, the feature is enabled
 	  by default, because the negative impact of USB polling jitter is more
 	  visible in case of USB High-Speed.
+
+	  If you use an UDC driver, SoF interrupts must be explicitly enabled for
+	  this Kconfig option to work correctly.
 
 choice DESKTOP_USB_STACK
 	prompt "USB stack"

@@ -131,10 +131,10 @@ The thread is used to periodically perform the following operations:
 * Submit the suggested channel map as ``ble_qos_event``.
 * If the device is a Bluetooth central, update the used Bluetooth LE channel map.
 
-If the :ref:`CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE <config_desktop_app_options>` Kconfig option is set, the module prints the following information through the virtual COM port:
+If the :ref:`CONFIG_DESKTOP_BLE_QOS_STATS_PRINTOUT_ENABLE <config_desktop_app_options>` Kconfig option is set, the module prints the following information through the virtual serial port:
 
 * HID report rate
-   The module counts the number of HID input reports received through Bluetooth LE and prints the report rate through the virtual COM port every 100 packets.
+   The module counts the number of HID input reports received through Bluetooth LE and prints the report rate through the virtual serial port every 100 packets.
    The report rate is printed with a timestamp.
 
    Example output:

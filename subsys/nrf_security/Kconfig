@@ -72,20 +72,18 @@ config MBEDTLS_PSA_CRYPTO_CONFIG
 	default y
 
 config MBEDTLS_PSA_CRYPTO_CONFIG_FILE
-	string "PSA want configuration file"
+	string
 	default "nrf-psa-crypto-config.h"
 	help
-	  Name of the config file for PSA crypto (Containins PSA_WANT_XXXX configurations).
-	  This file is generated and will contain PSA configurations if PSA crypto APIs
-	  are enabled in the system.
+	  Name of the base PSA Crypto configuration file. Used for PSA_WANT_* configurations.
+	  This file is auto-generated with the values of the relevant Kconfig options.
 
 config MBEDTLS_PSA_CRYPTO_USER_CONFIG_FILE
-	string "Additional PSA configuration file"
+	string
 	default "nrf-psa-crypto-user-config.h"
 	help
-	  Name of the file containing extra PSA configuration.
-	  This file may be generated andd will contain exte PSA configurations like the
-	  PSA_NEED defines for different crypto accelerators.
+	  Name of the additional PSA Crypto configuration file. Used for PSA_NEED_* configurations.
+	  This file is auto-generated with the values of the relevant Kconfig options.
 
 config MBEDTLS_ENABLE_HEAP
 	bool "Enable global heap for mbed TLS"
@@ -130,6 +128,13 @@ rsource "Kconfig.psa"
 
 # Include Legacy mbed TLS configurations
 rsource "Kconfig.legacy"
+
+
+# This Kconfig symbol is referenced in nrf_security CMake code but is
+# configured out-of-tree. Define it here to satisfy the linter and ensure
+# it is always defined.
+config SSF_SERVER_PSA_CRYPTO_SERVICE_ENABLED
+	bool
 
 endif # NRF_SECURITY
 

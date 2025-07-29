@@ -214,5 +214,9 @@ static bool app_event_handler(const struct app_event_header *aeh)
 }
 
 APP_EVENT_LISTENER(MODULE, app_event_handler);
+#if CONFIG_DESKTOP_FN_KEYS_BUTTON_EVENT_SUBSCRIBE_FIRST
+APP_EVENT_SUBSCRIBE_FIRST(MODULE, button_event);
+#else
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, button_event);
+#endif
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);

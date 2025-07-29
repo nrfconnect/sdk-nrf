@@ -27,6 +27,14 @@ typedef struct {
 	uint8_t slot_id;	     /* KMU slot number. */
 } kmu_opaque_key_buffer;
 
+/* Two KMU slots are reserved for storing the invalidation data for the protected RAM.
+ * These are meant to have random data that can pushed to the protected RAM after
+ * an actual key is being used so that the key material does not reside in the protected
+ * RAM for more than the required time.
+ */
+#define PROTECTED_RAM_INVALIDATION_DATA_SLOT1 248
+#define PROTECTED_RAM_INVALIDATION_DATA_SLOT2 249
+
 extern uint8_t kmu_push_area[64];
 
 /**
@@ -65,3 +73,13 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
  * @brief Destroy a key stored in the KMU.
  */
 psa_status_t cracen_kmu_destroy_key(const psa_key_attributes_t *attributes);
+
+/**
+ * @brief Provision the protected RAM invalidation data.
+ *
+ * This function provisions two KMU slots with random data that can be used to invalidate
+ * the protected RAM after a key is used.
+ *
+ * @return PSA status code.
+ */
+psa_status_t cracen_provision_prot_ram_inv_data(void);

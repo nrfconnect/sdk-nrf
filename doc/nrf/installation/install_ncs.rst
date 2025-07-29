@@ -58,6 +58,14 @@ Depending on your preferred development environment, install the following softw
 
       .. include:: /includes/install_sdk_common_prerequisites.txt
 
+      Additionally, just for the development in command line, you need a separate nRF Util download to install the |NCS| toolchain:
+
+      * `Download the executable <nRF Util Downloads_>`_ for the latest version of nRF Util.
+
+        .. note::
+           After downloading the nRF Util executable, move it to a directory that is in the system :envvar:`PATH`.
+           On macOS and Linux, the downloaded file also needs to be given execute permission by typing `chmod +x nrfutil` or by checking the checkbox in the file properties.
+
 .. prerequisites-include-end
 
 .. _gs_installing_toolchain:

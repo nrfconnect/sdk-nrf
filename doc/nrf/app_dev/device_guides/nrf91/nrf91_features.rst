@@ -117,7 +117,7 @@ There are two ways to update the modem firmware:
 Full update
   You can use either a wired or a wireless connection to do a full update of the modem firmware:
 
-  * When using a wired connection, you can use either the `Programmer app <nRF Connect Programmer>`_, which is part of `nRF Connect for Desktop`_, or `nRF Util's device command <Upgrading modem firmware using J-Link_>`_.
+  * When using a wired connection, you can use either the `Programmer app`_, which is part of `nRF Connect for Desktop`_, or `nRF Util's device command <Upgrading modem firmware using J-Link_>`_.
     Both methods use the :term:`Serial Wire Debug (SWD)` interface to update the firmware.
 
     You can use the Programmer app to perform the update, regardless of the images that are part of the existing firmware of the device.

@@ -46,7 +46,7 @@ int bt_conn_set_remote_tx_power_level(struct bt_conn *conn,
 		return err;
 	}
 
-	buf = bt_hci_cmd_create(BT_HCI_OP_SET_REMOTE_TX_POWER, sizeof(*cp));
+	buf = bt_hci_cmd_alloc(K_FOREVER);
 	if (!buf) {
 		return -ENOBUFS;
 	}
@@ -69,7 +69,7 @@ int bt_conn_set_power_control_request_params(struct bt_conn_set_pcr_params *para
 		return -EINVAL;
 	}
 
-	buf = bt_hci_cmd_create(BT_HCI_OP_SET_POWER_CONTROL_REQUEST_PARAMS, sizeof(*cp));
+	buf = bt_hci_cmd_alloc(K_FOREVER);
 	if (!buf) {
 		return -ENOBUFS;
 	}

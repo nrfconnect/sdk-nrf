@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
- #include "app_aliases_common.overlay"
+ #include "app_aliases_common.dtsi"
 
 /* The following configuration is required to run the CPUFLPR core.
  * It is imported from the nordic-flpr snippet in the sdk-zephyr repository.

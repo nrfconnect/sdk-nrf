@@ -53,7 +53,7 @@ To connect your DK to the nPM1300 EK, complete the following steps:
         - nRF52 DK pins
         - nRF52840 DK pins
         - nRF5340 DK pins
-        - nRF54L15 DK pins
+        - nRF54L15
         - nRF54H20 DK pins
         - nRF9160 DK pins
       * - SDA

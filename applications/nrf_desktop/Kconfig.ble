@@ -124,13 +124,13 @@ config BT_CONN_PARAM_UPDATE_TIMEOUT
 	  nRF Desktop peripherals update connection parameters earlier to lower
 	  HID data latency.
 
-config BT_ATT_TX_COUNT
+config BT_BUF_ACL_TX_COUNT
 	default 4
 	help
-	  This number of ATT buffers allows the nRF Desktop peripheral to
-	  simultaneously send two GATT notifications with HID reports (required
-	  for HID input report pipeline support), BAS notification, and an ATT
-	  response.
+	  This number of outgoing ACL buffers allows the nRF Desktop peripheral
+	  to simultaneously send two GATT notifications with HID reports
+	  (required for HID input report pipeline support), BAS notification,
+	  and an ATT response.
 
 config BT_ATT_SENT_CB_AFTER_TX
 	default y
@@ -139,12 +139,6 @@ config BT_ATT_SENT_CB_AFTER_TX
 	  transmission is done by BLE controller. This is needed to ensure low
 	  latency of provided HID data. The ATT sent callback is used by the
 	  application to trigger sending subsequent HID report.
-
-config BT_CONN_TX_MAX
-	default BT_ATT_TX_COUNT
-	help
-	  For an nRF Desktop peripheral, the maximum number of pending TX
-	  buffers with a callback is aligned to the number of ATT buffers.
 
 config BT_GATT_CHRC_POOL_SIZE
 	default 7 if (DESKTOP_PERIPHERAL_TYPE_MOUSE && \
@@ -285,12 +279,12 @@ config BT_MAX_PAIRED
 	  Change the default value for the maximum number of paired devices
 	  to be compatible with the dongle bond count.
 
-config BT_ATT_TX_COUNT
+config BT_BUF_ACL_TX_COUNT
 	default 6
 	help
-	  This number of ATT buffers allows nRF Desktop dongles to connect with
-	  a subsequent peripheral before finishing subscribing for HID reports
-	  from the previously connected peripheral.
+	  This number of outgoing ACL buffers allows nRF Desktop dongles to
+	  connect with a subsequent peripheral before finishing subscribing for
+	  HID reports from the previously connected peripheral.
 
 endif # DESKTOP_BT_CENTRAL
 
@@ -307,6 +301,16 @@ config BT_CTLR_CONN_PARAM_REQ
 	help
 	  nRF Desktop devices disable support for the Connection Parameter
 	  Request feature as it is not needed.
+
+if BT_LL_SOFTDEVICE
+
+config BT_CTLR_SDC_TX_PACKET_COUNT
+	default BT_BUF_ACL_TX_COUNT
+	help
+	  The number of ACL TX packets must be aligned between the Bluetooth
+	  Controller and Host.
+
+endif # BT_LL_SOFTDEVICE
 
 endif # HAS_BT_CTLR
 
@@ -341,6 +345,18 @@ config BT_SETTINGS_CCC_LAZY_LOADING
 	  nRF Desktop devices disable the lazy loading feature for the CCC
 	  descriptor to speed up reconnections and reduce delay for the
 	  first HID report.
+
+config BT_ATT_TX_COUNT
+	default BT_BUF_ACL_TX_COUNT
+	help
+	  For an nRF Desktop device, the maximum number of ATT buffers
+	  is aligned to the number of outgoing ACL buffers.
+
+config BT_L2CAP_TX_BUF_COUNT
+	default BT_BUF_ACL_TX_COUNT
+	help
+	  For an nRF Desktop device, the maximum number of L2CAP buffers
+	  is aligned to the number of outgoing ACL buffers.
 
 choice BT_HCI_CORE_LOG_LEVEL_CHOICE
 	default BT_HCI_CORE_LOG_LEVEL_WRN

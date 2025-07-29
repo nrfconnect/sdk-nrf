@@ -109,3 +109,11 @@ To enable anti-rollback protection with monotonic counter for MCUboot, set the f
 * ``SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION``
 * ``SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS``
 * ``SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE``
+
+Downgrade protection using |NSIB| with MCUboot
+==============================================
+
+The One Time Programmable (OTP) storage area has limited space and is designed to accommodate only one image.
+This design means that hardware downgrade protection can be used by the |NSIB| or MCUboot, but not both simultaneously.
+When the |NSIB| is enabled, MCUboot cannot utilize hardware downgrade protection.
+However, MCUboot can still use :ref:`software downgrade protection <ug_fw_update_downgrade_protection_sw>` even while hardware downgrade protection is active for the |NSIB|.

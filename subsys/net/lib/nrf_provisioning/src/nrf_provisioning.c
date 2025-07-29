@@ -37,15 +37,9 @@
 
 LOG_MODULE_REGISTER(nrf_provisioning, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 
-K_MUTEX_DEFINE(np_mtx);
-K_CONDVAR_DEFINE(np_cond);
-
 /* An arbitrary max backoff interval if connection to server times out [s] */
 #define SRV_TIMEOUT_BACKOFF_MAX_S 86400
-#define SETTINGS_STORAGE_PREFIX CONFIG_NRF_PROVISIONING_SETTINGS_STORAGE_PATH
-
-static bool nw_connected = true;
-static bool reschedule;
+#define SETTINGS_STORAGE_PREFIX	  CONFIG_NRF_PROVISIONING_SETTINGS_STORAGE_PATH
 
 /* nRF Provisioning context */
 static struct nrf_provisioning_http_context rest_ctx = {
@@ -64,14 +58,27 @@ static struct nrf_provisioning_coap_context coap_ctx = {
 };
 
 static bool initialized;
-
-static time_t nxt_provisioning;
-
+static time_t provisioning_interval;
 static struct nrf_provisioning_mm_change mm;
 static struct nrf_provisioning_dm_change dm;
+static bool nw_connected = true;
+static bool reschedule;
+static unsigned int backoff;
+static struct k_work_q provisioning_work_q;
+static struct k_work_queue_config work_q_config = {
+	.name = "nrf_provisioning_work_q",
+};
 
-NRF_MODEM_LIB_ON_INIT(nrf_provisioning_init_hook, nrf_provisioning_on_modem_init, NULL);
+static void nrf_provisioning_work(struct k_work *work);
+static void schedule_next_work(unsigned int seconds);
+static void init_work_fn(struct k_work *work);
+static void trigger_reschedule(void);
 
+K_WORK_DEFINE(init_work, init_work_fn);
+K_WORK_DELAYABLE_DEFINE(provisioning_work, nrf_provisioning_work);
+K_THREAD_STACK_DEFINE(nrf_provisioning_stack, CONFIG_NRF_PROVISIONING_STACK_SIZE);
+
+NRF_MODEM_LIB_ON_INIT(nrf_provisioning_on_modem_init, nrf_provisioning_on_modem_init, NULL);
 static void nrf_provisioning_on_modem_init(int ret, void *ctx)
 {
 	int err;
@@ -86,6 +93,16 @@ static void nrf_provisioning_on_modem_init(int ret, void *ctx)
 		if (err) {
 			LOG_ERR("Failed to initialize provisioning client");
 		}
+	}
+}
+
+static void schedule_next_work(unsigned int seconds)
+{
+	if (seconds == 0) {
+		k_work_reschedule_for_queue(&provisioning_work_q, &provisioning_work, K_NO_WAIT);
+	} else {
+		k_work_reschedule_for_queue(&provisioning_work_q, &provisioning_work,
+					    K_SECONDS(seconds));
 	}
 }
 
@@ -190,20 +207,24 @@ static int nrf_provisioning_set(const char *key, size_t len_rd,
 		time_str[len] = 0;
 
 		if (len == 0) {
-			nxt_provisioning = 0;
-			LOG_INF("Initial provisioning");
+			provisioning_interval = CONFIG_NRF_PROVISIONING_INTERVAL_S;
+			LOG_DBG("Initial provisioning");
 		} else {
 			errno = 0;
 			time_t interval = (time_t) strtoll(time_str, NULL, 0);
 
 			if (interval < 0 || errno != 0) {
 				LOG_ERR("Invalid interval value: %s", time_str);
+				provisioning_interval = CONFIG_NRF_PROVISIONING_INTERVAL_S;
 				return -EINVAL;
 			}
 
 			LOG_DBG("Stored interval: \"%jd\"", interval);
-			if (nxt_provisioning != interval) {
-				nxt_provisioning = interval;
+			if (provisioning_interval != interval) {
+				provisioning_interval = interval;
+				/* Mark rescheduling, but don't trigger as settings are scanned from
+				 * event handler just before checking.
+				 */
 				reschedule = true;
 			}
 		}
@@ -260,12 +281,6 @@ static int settings_init(void)
 		return err;
 	}
 
-	err = settings_load_subtree(settings.name);
-	if (err) {
-		LOG_ERR("settings_load_subtree failed, error: %d", err);
-		return err;
-	}
-
 	init = true;
 
 	return 0;
@@ -295,6 +310,7 @@ static int nrf_provisioning_modem_mode_cb(enum lte_lc_func_mode new_mode, void *
 
 		if (ret) {
 			LOG_ERR("lte_lc_connect() failed %d", ret);
+			return ret;
 		}
 		LOG_INF("Modem connection restored");
 
@@ -360,6 +376,10 @@ static void nrf_provisioning_lte_handler(const struct lte_lc_evt *const evt)
 				"Connected; home network" :
 				"Connected; roaming");
 		nw_connected = true;
+		if (backoff) {
+			/* If network resumed while waiting, resume immediately */
+			schedule_next_work(0);
+		}
 		break;
 	default:
 		break;
@@ -370,8 +390,6 @@ int nrf_provisioning_init(struct nrf_provisioning_mm_change *mmode,
 				struct nrf_provisioning_dm_change *dmode)
 {
 	int ret;
-
-	k_mutex_lock(&np_mtx, K_FOREVER);
 
 	/* Restore the default if not a callback function */
 	if (!mmode) {
@@ -398,10 +416,27 @@ int nrf_provisioning_init(struct nrf_provisioning_mm_change *mmode,
 	if (ret) {
 		goto exit;
 	}
-
 	if (initialized) {
-		goto exit;
+		return 0;
 	}
+	initialized = true;
+	k_work_queue_init(&provisioning_work_q);
+	k_work_queue_start(&provisioning_work_q,
+		nrf_provisioning_stack, K_THREAD_STACK_SIZEOF(nrf_provisioning_stack),
+		K_LOWEST_APPLICATION_THREAD_PRIO, &work_q_config);
+
+	k_work_submit_to_queue(&provisioning_work_q, &init_work);
+
+exit:
+	if (ret) {
+		LOG_ERR("Provisioning client initialization failed, error: %d", ret);
+	}
+	return 0;
+}
+
+static void init_work_fn(struct k_work *work)
+{
+	int ret;
 
 	/* Provision certificates now when it's possible to put modem offline */
 	ret = cert_provision();
@@ -417,36 +452,23 @@ int nrf_provisioning_init(struct nrf_provisioning_mm_change *mmode,
 		goto exit;
 	}
 
-	initialized = true;
-
 	lte_lc_register_handler(nrf_provisioning_lte_handler);
 
 	/* Let the provisioning thread run */
-	k_condvar_signal(&np_cond);
+	trigger_reschedule();
 exit:
-	k_mutex_unlock(&np_mtx);
-
-	return ret;
+	if (ret) {
+		LOG_ERR("Provisioning client initialization failed, error: %d", ret);
+	}
 }
 
 int nrf_provisioning_trigger_manually(void)
 {
-	int ret = k_mutex_lock(&np_mtx, K_NO_WAIT);
-
-	if (ret < 0) {
-		return ret;
-	}
-
 	if (!initialized) {
-		LOG_ERR("Not initialized");
-		k_mutex_unlock(&np_mtx);
 		return -EFAULT;
 	}
 
-	/* Let the provisioning thread run */
-	k_condvar_signal(&np_cond);
-	k_mutex_unlock(&np_mtx);
-
+	schedule_next_work(0);
 	LOG_INF("Externally initiated provisioning");
 
 	return 0;
@@ -468,7 +490,11 @@ int nrf_provisioning_schedule(void)
 
 	if (first) {
 		first = false;
-		nxt_provisioning = CONFIG_NRF_PROVISIONING_INTERVAL_S;
+		provisioning_interval = (provisioning_interval > 0)
+						? provisioning_interval
+						: CONFIG_NRF_PROVISIONING_INTERVAL_S;
+		LOG_DBG("First provisioning, setting interval to %lld seconds",
+			(int64_t)provisioning_interval);
 		goto out;
 	}
 
@@ -479,8 +505,8 @@ int nrf_provisioning_schedule(void)
 			LOG_ERR("Getting time failed, error: %d", ret);
 		}
 
-		if (nxt_provisioning) {
-			retry_s = nxt_provisioning;
+		if (provisioning_interval) {
+			retry_s = provisioning_interval;
 		} else {
 			/* Backoff... */
 			retry_s = retry_s * 2;
@@ -494,17 +520,18 @@ int nrf_provisioning_schedule(void)
 		goto out;
 	}
 
+	now_s /= 1000; /* date_time_now() is ms */
 	if (now_s > deadline_s || reschedule) {
 
 		/* Provision now */
-		if (!nxt_provisioning && !deadline_s) {
+		if (!provisioning_interval && !deadline_s) {
 			deadline_s = now_s + CONFIG_NRF_PROVISIONING_INTERVAL_S;
 			retry_s = 0;
 			goto out;
 		}
 
 		/* Interval set by the server takes precedence */
-		deadline_s = nxt_provisioning ? now_s + nxt_provisioning :
+		deadline_s = provisioning_interval ? now_s + provisioning_interval :
 			now_s + CONFIG_NRF_PROVISIONING_INTERVAL_S;
 	}
 
@@ -549,21 +576,11 @@ void nrf_provisioning_set_interval(int interval)
 
 	LOG_DBG("Provisioning interval set to %d", interval);
 
-	if (interval != nxt_provisioning) {
+	if (interval != provisioning_interval) {
 		char time_str[sizeof(STRINGIFY(2147483647))] = {0};
 		int ret;
 
-		nxt_provisioning = interval;
-		reschedule = true;
-
-		ret = k_mutex_lock(&np_mtx, K_NO_WAIT);
-		if (ret < 0) {
-			LOG_ERR("Unable to lock mutex, err: %d", ret);
-			return;
-		}
-		/* Let the provisioning thread run */
-		k_condvar_signal(&np_cond);
-		k_mutex_unlock(&np_mtx);
+		provisioning_interval = interval;
 
 		ret = snprintf(time_str, sizeof(time_str), "%d", interval);
 		if (ret < 0) {
@@ -578,89 +595,104 @@ void nrf_provisioning_set_interval(int interval)
 			return;
 		}
 		LOG_DBG("Stored interval: \"%s\"", time_str);
+		trigger_reschedule();
 	}
 }
 
-int nrf_provisioning_req(void)
+static void schedule_backoff(void)
+{
+	if (backoff == 0) {
+		backoff = CONFIG_NRF_PROVISIONING_INITIAL_BACKOFF;
+	}
+
+	LOG_DBG("Scheduling backoff for %d seconds", backoff);
+	schedule_next_work(backoff);
+	backoff = backoff * 2;
+	if (backoff > SRV_TIMEOUT_BACKOFF_MAX_S) {
+		backoff = SRV_TIMEOUT_BACKOFF_MAX_S;
+	}
+}
+
+static void trigger_reschedule(void)
+{
+	LOG_DBG("Triggering reschedule");
+	reschedule = true;
+	schedule_next_work(0);
+}
+
+void nrf_provisioning_work(struct k_work *work)
 {
 	int ret;
-	int backoff;
 
-	k_condvar_wait(&np_cond, &np_mtx, K_FOREVER);
-	k_mutex_unlock(&np_mtx);
+	LOG_DBG("nrf_provisioning_work() called");
 
-	while (true) {
-		backoff = CONFIG_NRF_PROVISIONING_INITIAL_BACKOFF; /* Backoff start interval */
-		settings_load_subtree(settings.name); /* Get the provisioning interval */
+	/* Check if settings have been changed */
+	settings_load_subtree(settings.name);
 
-		/* Reschedule as long as there's no network */
-		do {
-			ret = nrf_provisioning_schedule();
-			if (ret < 0) {
-				LOG_ERR("Provisioning client terminated");
-				__ASSERT(false, "Provisioning client terminated");
-				break; /* Terminates the thread */
-			}
-
-			k_condvar_wait(&np_cond, &np_mtx, K_SECONDS(ret));
-			k_mutex_unlock(&np_mtx);
-		} while (!nw_connected || reschedule);
-
-		dm.cb(NRF_PROVISIONING_EVENT_START, dm.user_data);
-		if (IS_ENABLED(CONFIG_NRF_PROVISIONING_HTTP)) {
-			ret = nrf_provisioning_http_req(&rest_ctx);
-		} else {
-			ret = nrf_provisioning_coap_req(&coap_ctx);
+	if (reschedule) {
+		ret = nrf_provisioning_schedule();
+		if (ret < 0) {
+			LOG_ERR("Provisioning client terminated");
+			__ASSERT(false, "Provisioning client terminated");
+			return;
 		}
-		dm.cb(NRF_PROVISIONING_EVENT_STOP, dm.user_data);
 
-		while (ret == -EBUSY || ret == -ETIMEDOUT) {
-			if (ret == -EBUSY) {
-				LOG_WRN("Busy, retrying in %d seconds", backoff);
+		schedule_next_work(ret);
+		return;
+	}
+
+	/* Backoff as long as there's no network */
+	if (!nw_connected) {
+		schedule_backoff();
+		return;
+	}
+
+	dm.cb(NRF_PROVISIONING_EVENT_START, dm.user_data);
+	if (IS_ENABLED(CONFIG_NRF_PROVISIONING_HTTP)) {
+		ret = nrf_provisioning_http_req(&rest_ctx);
+	} else {
+		ret = nrf_provisioning_coap_req(&coap_ctx);
+	}
+	dm.cb(NRF_PROVISIONING_EVENT_STOP, dm.user_data);
+
+
+	switch (ret) {
+	case -EBUSY:
+		schedule_backoff();
+		LOG_WRN("Busy, retrying in %d seconds", backoff);
+		return;
+	case -ETIMEDOUT:
+		schedule_backoff();
+		LOG_WRN("Timeout, retrying in %d seconds", backoff);
+		return;
+	case -EACCES:
+		backoff = 0;
+		LOG_WRN("Unauthorized access: device is not yet claimed.");
+		if (IS_ENABLED(CONFIG_NRF_PROVISIONING_PRINT_ATTESTATION_TOKEN)) {
+			struct nrf_attestation_token token = {0};
+			int err;
+
+			err = modem_attest_token_get(&token);
+			if (err) {
+				LOG_ERR("Failed to get token, err %d", err);
 			} else {
-				LOG_WRN("Timeout, retrying in %d seconds", backoff);
-			}
-			/* Backoff */
-			k_condvar_wait(&np_cond, &np_mtx, K_SECONDS(backoff));
-			k_mutex_unlock(&np_mtx);
-
-			backoff = backoff * 2;
-			if (backoff > SRV_TIMEOUT_BACKOFF_MAX_S) {
-				backoff = SRV_TIMEOUT_BACKOFF_MAX_S;
-			}
-			dm.cb(NRF_PROVISIONING_EVENT_START, dm.user_data);
-			if (IS_ENABLED(CONFIG_NRF_PROVISIONING_HTTP)) {
-				ret = nrf_provisioning_http_req(&rest_ctx);
-			} else {
-				ret = nrf_provisioning_coap_req(&coap_ctx);
-			}
-			dm.cb(NRF_PROVISIONING_EVENT_STOP, dm.user_data);
-		}
-
-		if (ret == -EACCES) {
-			LOG_WRN("Unauthorized access: device is not yet claimed.");
-			if (IS_ENABLED(CONFIG_NRF_PROVISIONING_PRINT_ATTESTATION_TOKEN)) {
-				struct nrf_attestation_token token = { 0 };
-				int err;
-
-				err = modem_attest_token_get(&token);
-				if (err) {
-					LOG_ERR("Failed to get token, err %d", err);
-				} else {
-					printk("\nAttestation token "
-					       "for claiming device on nRFCloud:\n");
-					printk("%.*s.%.*s\n\n", token.attest_sz, token.attest,
-					       token.cose_sz, token.cose);
-					modem_attest_token_free(&token);
-				}
+				printk("\nAttestation token "
+					   "for claiming device on nRFCloud:\n");
+				printk("%.*s.%.*s\n\n", token.attest_sz, token.attest,
+					   token.cose_sz, token.cose);
+				modem_attest_token_free(&token);
 			}
 		}
-
-		if (ret == -ECONNREFUSED) {
-			LOG_ERR("Connection refused");
-			LOG_WRN("Please check the CA certificate stored in sectag "
-				STRINGIFY(CONFIG_NRF_PROVISIONING_ROOT_CA_SEC_TAG)"");
-		} else if (ret < 0) {
+		return;
+	case -ECONNREFUSED:
+		backoff = 0;
+		LOG_ERR("Connection refused");
+		LOG_WRN("Please check the CA certificate stored in sectag "
+			STRINGIFY(CONFIG_NRF_PROVISIONING_ROOT_CA_SEC_TAG)"");
+		return;
+	default:
+		backoff = 0;
+		if (ret < 0) {
 			LOG_ERR("Provisioning failed, error: %d", ret);
 		} else if (ret > 0) {
 			/* Provisioning finished */
@@ -670,15 +702,8 @@ int nrf_provisioning_req(void)
 			}
 			dm.cb(NRF_PROVISIONING_EVENT_DONE, dm.user_data);
 		}
-
-#if CONFIG_UNITY
-		break;
-#endif
+		trigger_reschedule();
+		return;
 	}
 
-	return ret;
 }
-
-K_THREAD_DEFINE(nrf_provisioning, CONFIG_NRF_PROVISIONING_STACK_SIZE,
-		nrf_provisioning_req, NULL, NULL, NULL,
-		K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);

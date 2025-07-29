@@ -221,10 +221,8 @@ CHIP_ERROR BluetoothDeviceConnected(bool success, void *context)
 		return CHIP_ERROR_INTERNAL;
 	}
 
-	/* Discovery was successful, try to bridge connected BLE device with the Matter counterpart. */
-	chip::Optional<uint8_t> indexes[BridgeManager::kMaxBridgedDevicesPerProvider];
-	chip::Optional<uint16_t> endpointIds[BridgeManager::kMaxBridgedDevicesPerProvider];
-	/* AddMatterDevices takes the ownership of the passed provider object and will
+	/* Discovery was successful, try to bridge connected BLE device with the Matter counterpart.
+	   AddMatterDevices takes the ownership of the passed provider object and will
 	   delete it in case the BridgeManager fails to accept this object. */
 	CHIP_ERROR err = AddMatterDevices(ctx->deviceTypes, ctx->count, ctx->uniqueID, ctx->nodeLabel, ctx->provider);
 	chip::Platform::Delete(ctx);

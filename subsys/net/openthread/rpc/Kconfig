@@ -77,7 +77,7 @@ config OPENTHREAD_RPC_CLIENT_RADIO_TIME_REFRESH_PERIOD
 
 endmenu # "OpenThread over RPC client configuration"
 
-menu "OpenThread over RPC client configuration"
+menu "OpenThread over RPC server configuration"
 	depends on OPENTHREAD_RPC_SERVER
 
 config OPENTHREAD_RPC_MESSAGE_POOL
@@ -87,7 +87,14 @@ config OPENTHREAD_RPC_MESSAGE_POOL
 	  Defines maximum number of messages key indentifiers that can be allocated on server at
 	  the same time.
 
-endmenu
+config OPENTHREAD_RPC_ERASE_SETTINGS
+	bool "Erase settings partition on factory reset"
+	depends on SETTINGS_NVS || SETTINGS_ZMS
+	help
+	  Erase the entire settings partition when otInstanceFactoryReset() is invoked
+	  using a remote procedure call.
+
+endmenu # "OpenThread over RPC server configuration"
 
 config OPENTHREAD_RPC_INITIALIZE_NRF_RPC
 	bool "Automatically initialize nRF RPC library"

@@ -38,6 +38,9 @@ The sample performs the following operations:
 
    a. The AES key is removed from the PSA crypto keystore.
 
+.. note::
+   The CRACEN driver only supports a 96-bit IV for :ref:`AES GCM<ug_crypto_supported_features_key_size>`.
+
 Building and running
 ********************
 

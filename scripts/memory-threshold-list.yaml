@@ -17,6 +17,7 @@
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf54l15dk/nrf54l10/cpuapp
     - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
     - nrf54h20dk/nrf54h20/cpuapp
     - thingy53/nrf5340/cpuapp
     - thingy53/nrf5340/cpuapp/ns
@@ -44,6 +45,7 @@
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf54l15dk/nrf54l10/cpuapp
     - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
     - nrf54h20dk/nrf54h20/cpuapp
   rom_increase: 1024
   ram_increase: 1024
@@ -182,3 +184,14 @@
   ram_size: 12000
   codeowners:
     - nrfconnect/ncs-ll-ursus
+
+- scenarios:
+    - sample.smp_svr_mini_boot
+  platforms:
+    - all
+  rom_increase: 256
+  ram_increase: 256
+  codeowners:
+    - nrfconnect/ncs-pluto
+    - robertstypa
+    - maciejpietras

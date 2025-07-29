@@ -10,10 +10,10 @@ tests:
   benchmarks.power_consumption.qdec_nrf54l:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20pdk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
     harness_config:
       fixture: gpio_loopback
       pytest_root:

@@ -10,6 +10,7 @@ anytree                         # |     |         |        |         |         |
 azure-storage-blob              # |  X  |         |        |         |         |      |        |
 doxmlparser                     # |     |         |        |         |         |      |   X    |
 m2r2                            # |     |         |        |         |         |      |        |
+natsort                         # |     |         |        |         |         |      |   x    |
 PyYAML                          # |  X  |         |        |         |         |      |   X    |
 pykwalify                       # |     |         |        |         |         |      |   X    |
 pytest                          # |     |         |        |         |         |      |   X    |

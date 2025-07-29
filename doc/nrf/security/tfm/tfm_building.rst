@@ -155,7 +155,7 @@ TF-M's Secure Partition Manager (SPM) backend may also be configured, depending 
      - With IPC, each Secure Partition processes signals in any order, and can defer responding to a message while continuing to process other signals.
      - Levels 1, 2 and 3
 
-To control the number of logging messages, set the :kconfig:option:`CONFIG_TFM_LOG_LEVEL` Kconfig option.
+To control the number of logging messages, set the :kconfig:option:`CONFIG_TFM_SPM_LOG_LEVEL` Kconfig option.
 To disable logging, set the :kconfig:option:`CONFIG_TFM_LOG_LEVEL_SILENCE` option.
 
 The size of TF-M partitions is affected by multiple configuration options and hardware-related options.

@@ -94,9 +94,6 @@ Exceptions are the :ref:`ble_llpm` sample, which requires the SoftDevice Control
 By default, all samples are currently configured to use SoftDevice Controller.
 To use the Zephyr Bluetooth LE Controller instead, use the :ref:`bt-ll-sw-split <zephyr:snippet-bt-ll-sw-split>` snippet (see :ref:`app_build_snippets`) and make sure to build from a clean build directory.
 
-.. note::
-   If your Bluetooth application requires the LE Secure Connections pairing and you want to use the Zephyr Bluetooth LE Controller, make sure to enable the :kconfig:option:`CONFIG_BT_TINYCRYPT_ECC` Kconfig option as the ECDH cryptography is not supported by this Bluetooth LE Controller.
-
 Zephyr Host
 ***********
 

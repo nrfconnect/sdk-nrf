@@ -194,13 +194,15 @@ config SLM_CMUX_UART_BUFFER_SIZE
 	  Size of the buffer for data received in CMUX mode.
 	  Same buffer size is used for both RX and TX.
 
-config SLM_CMUX_NOTIFICATION_TX_BUFFER_SIZE
-	int "TX buffer size for unsolicited notifications in CMUX"
+config SLM_CMUX_TX_BUFFER_SIZE
+	int "TX buffer size for CMUX"
 	depends on SLM_CMUX
 	default 4096
 	help
-	  Unsolicited notifications need to be buffered with CMUX.
-	  Notifications longer than this size will get truncated.
+	  Size of the buffer for data sent in CMUX mode. The buffer has to be large enough
+	  to hold the largest unsolicited notification that can be sent by the modem.
+	  Notifications longer than this size will get dropped.
+
 	  This can be reduced if your use cases do not require lengthy notifications.
 	  Note: %NCELLMEAS notifications can be nearly 4kB in size,
 	  which explains the default value.

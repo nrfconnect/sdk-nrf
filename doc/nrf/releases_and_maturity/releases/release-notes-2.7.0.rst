@@ -574,7 +574,7 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 
 * Added:
 
-  * New categories of samples: :ref:`dect_samples` and :ref:`suit_samples`.
+  * New categories of samples: :ref:`dect_samples` and ``suit_samples``.
   * Steps for nRF54 devices across all supported samples to reflect the new button and LED numbering on the nRF54H20 DK and the nRF54L15 PDK.
 
 Bluetooth samples
@@ -897,11 +897,11 @@ SUIT samples
 
 * Added experimental support using the Software Updates for Internet of Things (SUIT):
 
-   * :ref:`nrf54h_suit_sample` sample - For DFUs using SMP over Bluetooth LE and UART.
+   * ``nrf54h_suit_sample`` sample - For DFUs using SMP over Bluetooth LE and UART.
 
-   * :ref:`suit_flash_companion` sample - For enabling access to external flash memory in DFUs.
+   * ``suit_flash_companion`` sample - For enabling access to external flash memory in DFUs.
 
-   * :ref:`suit_recovery` sample - For recovering the device firmware if the original firmware is damaged.
+   * ``suit_recovery`` sample - For recovering the device firmware if the original firmware is damaged.
 
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
@@ -1107,7 +1107,7 @@ Libraries for networking
    * The :ref:`lib_softap_wifi_provision` library.
    * The :ref:`lib_wifi_ready` library.
 
-* :ref:`lib_wifi_credentials` library:
+* Wi-Fi credentials library:
 
   * Added:
 
@@ -1207,7 +1207,7 @@ SUIT DFU
 
 * Added:
 
-  * Experimental support for :ref:`SUIT DFU <ug_nrf54h20_suit_dfu>` for nRF54H20.
+  * Experimental support for ``SUIT DFU <ug_nrf54h20_suit_dfu>`` for nRF54H20.
     SUIT is now the only way to boot local domains of the nRF54H20 SoC.
   * Experimental support for DFU from external flash for nRF54H20.
   * Experimental support for recovery image for application and radio cores for nRF54H20.
@@ -1323,21 +1323,21 @@ Documentation
   * The :ref:`ug_coremark` page.
   * The :ref:`dult_readme` page.
   * The :ref:`ug_dult` guide.
-  * :ref:`Software Updates for Internet of Things (SUIT) documentation <ug_nrf54h20_suit_dfu>` in :ref:`ug_nrf54h`:
+  * ``Software Updates for Internet of Things (SUIT) documentation`` in :ref:`ug_nrf54h`:
 
     The following conceptual guides:
 
-      * :ref:`ug_nrf54h20_suit_intro` - An overview of the SUIT procedure.
-      * :ref:`ug_nrf54h20_suit_manifest_overview` - An overview of the role and importance of the SUIT manifest.
-      * :ref:`ug_nrf54h20_suit_components` - An explanation of SUIT components, found within the manifests.
-      * :ref:`ug_nrf54h20_suit_hierarchical_manifests` - An explanation of the SUIT manifest topology that Nordic Semiconductor has implemented for the nRF54H20 SoC.
-      * :ref:`ug_nrf54h20_suit_compare_other_dfu` - A comparison of SUIT with other bootloader and DFU procedures supported in the |NCS|.
+      * ``ug_nrf54h20_suit_intro`` - An overview of the SUIT procedure.
+      * ``ug_nrf54h20_suit_manifest_overview`` - An overview of the role and importance of the SUIT manifest.
+      * ``ug_nrf54h20_suit_components`` - An explanation of SUIT components, found within the manifests.
+      * ``ug_nrf54h20_suit_hierarchical_manifests`` - An explanation of the SUIT manifest topology that Nordic Semiconductor has implemented for the nRF54H20 SoC.
+      * ``ug_nrf54h20_suit_compare_other_dfu`` - A comparison of SUIT with other bootloader and DFU procedures supported in the |NCS|.
 
     The following user guides:
 
-      * :ref:`ug_nrf54h20_suit_customize_dfu` - Describing how to customize the SUIT DFU procedure (and a quick-start guide version :ref:`ug_nrf54h20_suit_customize_dfu_qsg`).
-      * :ref:`ug_nrf54h20_suit_fetch` - Describing how to reconfigure an application that uses the push model to a fetch model-based upgrade.
-      * :ref:`ug_nrf54h20_suit_external_memory` - Describing how to enable external flash memory when using SUIT.
+      * ``ug_nrf54h20_suit_customize_dfu`` - Describing how to customize the SUIT DFU procedure (and a quick-start guide version ``ug_nrf54h20_suit_customize_dfu_qsg``).
+      * ``ug_nrf54h20_suit_fetch`` - Describing how to reconfigure an application that uses the push model to a fetch model-based upgrade.
+      * ``ug_nrf54h20_suit_external_memory`` - Describing how to enable external flash memory when using SUIT.
 
   * :ref:`ug_wifi_mem_req_raw_mode` under :ref:`ug_wifi_advanced_mode`.
   * The :ref:`bt_mesh_models_common_blocking_api_rule` section to the :ref:`bt_mesh_models_overview` page.

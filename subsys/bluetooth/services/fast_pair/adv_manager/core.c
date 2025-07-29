@@ -732,7 +732,9 @@ int bt_fast_pair_adv_manager_enable(void)
 		return 0;
 	}
 
-	fmdn_provisioned = bt_fast_pair_fmdn_is_provisioned();
+	if (IS_ENABLED(CONFIG_BT_FAST_PAIR_FMDN)) {
+		fmdn_provisioned = bt_fast_pair_fmdn_is_provisioned();
+	}
 
 	if (!fp_adv_set) {
 		err = fp_adv_set_setup();

@@ -27,8 +27,6 @@ jobs:
           git config --global user.email "you@example.com"
           git config --global user.name "Your Name"
           west init -l . || true
-          # We only import the zephyr manifest
-          west update zephyr
 
       - name: Manifest
         uses: zephyrproject-rtos/action-manifest@ea38f222cddfbbb9debb5f0239f4139ae2677ebb # v1.8.0

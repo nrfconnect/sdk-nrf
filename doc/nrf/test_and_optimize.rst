@@ -103,19 +103,10 @@ Use one of the following methods:
             PuTTY configuration for sending commands through UART
 
       #. Click the **Serial** category under the **Connection** category in the category selection tree to see options controlling the local serial line.
-      #. Type the COM port corresponding to your DK in the **Serial line to connect to** field.
+      #. Type the serial port corresponding to your DK in the **Serial line to connect to** field.
 
-         Depending on what devices you have connected to your computer, you might have several choices.
-         To find the correct port:
-
-         a. Right-click on the Windows Start menu, and select **Device Manager**.
-         #. In the **Device Manager** window, scroll down and expand **Ports (COM & LPT)**.
-         #. Find the port named *JLink CDC UART Port* and note down the number in parentheses.
-
-            If you have more than one J-Link UART Port, unplug the one that you want to use, plug it back in, and observe which one appeared last.
-
-            Your DK can show up as two consecutive COM ports.
-            If this is the case, you need to test which COM port is the correct one.
+         .. note::
+            |serial_port_number_list|
 
       #. Configure the settings in the **Configure the serial line** section using the default serial port connection settings listed at the top of this page.
       #. Click :guilabel:`Open`.

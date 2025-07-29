@@ -25,7 +25,21 @@ This sample allows the calculation of state of charge from a battery connected t
 
 Battery models for Alkaline AA (1S and 2S configuration), AAA (1S and 2S configuration), LR44, and Lithium-manganese dioxide coin cell CR2032 batteries are included.
 You can change the active battery model using a shell command, as illustrated in `Testing`_.
-You can also change the battery model at compile time using the :kconfig:option:`CONFIG_BATTERY_MODEL` Kconfig option.
+You can also change the battery model at compile time by selecting the type of battery via Kconfig:
+
++-------------------------------------------------------+-------------------------------------------+
+| :kconfig:option:`CONFIG_BATTERY_MODEL_ALKALINE_AA`    | Alkaline AA battery model                 |
++-------------------------------------------------------+-------------------------------------------+
+| :kconfig:option:`CONFIG_BATTERY_MODEL_ALKALINE_AAA`   | Alkaline AAA battery model                |
++-------------------------------------------------------+-------------------------------------------+
+| :kconfig:option:`CONFIG_BATTERY_MODEL_ALKALINE_2SAA`  | 2x alkaline AA battery (in series) model  |
++-------------------------------------------------------+-------------------------------------------+
+| :kconfig:option:`CONFIG_BATTERY_MODEL_ALKALINE_2SAAA` | 2x alkaline AAA battery (in series) model |
++-------------------------------------------------------+-------------------------------------------+
+| :kconfig:option:`CONFIG_BATTERY_MODEL_ALKALINE_LR44`  | Alkaline LR44 coin cell model             |
++-------------------------------------------------------+-------------------------------------------+
+| :kconfig:option:`CONFIG_BATTERY_MODEL_LITHIUM_CR2032` | Lithium CR2032 coin cell                  |
++-------------------------------------------------------+-------------------------------------------+
 
 .. _npm2100_fuel_gauge_wiring:
 

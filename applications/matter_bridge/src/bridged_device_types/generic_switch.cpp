@@ -51,7 +51,7 @@ static constexpr EmberAfDeviceType kBridgedGenericSwitchDeviceTypes[] = {
 	  MatterBridgedDevice::kDefaultDynamicEndpointVersion }
 };
 
-static constexpr uint8_t kSwitchDataVersionSize = ArraySize(genericSwitchClusters);
+static constexpr uint8_t kSwitchDataVersionSize = MATTER_ARRAY_SIZE(genericSwitchClusters);
 
 GenericSwitchDevice::GenericSwitchDevice(const char *uniqueID, const char *nodeLabel)
 	: MatterBridgedDevice(uniqueID, nodeLabel)

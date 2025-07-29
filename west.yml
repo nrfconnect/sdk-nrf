@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 101cff9874cb0ce004e193ab7d842665cfa9b574
+      revision: 8485ba9508d31411aab1159761612429d250d1ac
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -128,7 +128,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 29bcb744c54f93bc363b47e498afd31bbbdf2f6e
+      revision: e6ab32b862d6b529fcb16d85f91b5355a24e114d
       path: bootloader/mcuboot
     - name: qcbor
       url: https://github.com/laurencelundblade/QCBOR
@@ -137,7 +137,7 @@ manifest:
     - name: mbedtls
       path: modules/crypto/mbedtls
       repo-path: sdk-mbedtls
-      revision: 44ce293d1d9bf4251e337160250d7dd477f52edd
+      revision: c5115abac477249fab42e61368b8f87c3c9265e1
     - name: oberon-psa-crypto
       path: modules/crypto/oberon-psa-crypto
       repo-path: sdk-oberon-psa-crypto
@@ -145,7 +145,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 24914d194258875efe7024b9bd01c6ca03569de8
+      revision: 77d5d5e89e51e965b90136cee1ff6258b958455d
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -157,7 +157,7 @@ manifest:
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter
-      revision: 3ccd6078b9b33af0fa6ddb71e51bb9860f9198a0
+      revision: 4cc25d52353953fddd62cd915f9f7b705e583b7f
       west-commands: scripts/west/west-commands.yml
       submodules:
         - name: nlio
@@ -176,14 +176,14 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: 17e3da8398a07948b5d62af99ecc36684911406f
+      revision: c7857b3efcafb2b4225b18465175179fcfc36a60
       groups:
         - nrf-802154
     - name: dragoon
       # Only for internal Nordic development
       repo-path: dragoon.git
       remote: dragoon
-      revision: fa3e7d6417c50c8caf98425d2a401a812ebf9b4f
+      revision: cc098c3d2659ed5368686d41056e760d2195f0c9
       groups:
         - dragoon
     - name: cjson
@@ -197,7 +197,7 @@ manifest:
           compare-by-default: false
     - name: find-my
       repo-path: sdk-find-my
-      revision: 7849d122f77826c161ae6a8f0f205fef98158fe6
+      revision: cdd7ea0c1fc661ba0ab50a82406b47b92d502d22
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -231,12 +231,6 @@ manifest:
           upstream-url: https://github.com/openthread/openthread
           upstream-sha: c6eaeda5a1c1c5dbb24dce7e027340cb8893a77b
           compare-by-default: false
-    - name: suit-generator
-      revision: 0725f0c362ab8428048a977080045bb5e73e0d9d
-      path: modules/lib/suit-generator
-    - name: suit-processor
-      revision: 94effb7561b3a970195df76165e4b15e4ac0c34e
-      path: modules/lib/suit-processor
     - name: doc-internal
       repo-path: doc-internal
       path: modules/doc-internal

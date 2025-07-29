@@ -36,12 +36,21 @@ Thread requires the following Zephyr modules to properly operate in the |NCS|:
 Enable OpenThread in the |NCS|
 ==============================
 
-To use the Thread protocol in the |NCS|, set the following Kconfig options:
+You can enable the Thread protocol in the |NCS| by using the Zephyr networking layer or by passing Thread frames directly to the nRF 802.15.4 radio driver.
 
-* :kconfig:option:`CONFIG_NETWORKING` - This option enables the generic link layer and the IP networking support.
-* :kconfig:option:`CONFIG_NET_L2_OPENTHREAD` - This option enables the OpenThread stack required for the correct operation of the Thread protocol and allows you to use it.
-* :kconfig:option:`CONFIG_MPSL` - This option enables the :ref:`nrfxlib:mpsl` (MPSL) implementation, which provides services for both :ref:`single-protocol and multi-protocol implementations <ug_thread_architectures>`.
-  This is automatically set for all samples in the |NCS| that use the :ref:`zephyr:ieee802154_interface` radio driver.
+* To use the Thread protocol with Zephyr networking layer, enable the following Kconfig options:
+
+  * :kconfig:option:`CONFIG_NETWORKING` - This option enables a generic link layer and the IP networking support.
+  * :kconfig:option:`CONFIG_NET_L2_OPENTHREAD` - This option enables the OpenThread stack required for operating the Thread protocol effectively.
+
+* To use the Thread protocol and nRF 802.15.4 radio directly, disable the previous Kconfig options and enable the :kconfig:option:`CONFIG_OPENTHREAD` option.
+  This enables the OpenThread stack, allowing for direct use of the nRF 802.15.4 radio.
+
+To learn more about available architectures, see the :ref:`openthread_stack_architecture` user guide.
+
+Additionally, you can set the :kconfig:option:`CONFIG_MPSL` Kconfig option.
+It enables the :ref:`nrfxlib:mpsl` (MPSL) implementation, which provides services for both :ref:`single-protocol and multi-protocol implementations <ug_thread_architectures>`.
+This is automatically set for all |NCS| samples that use the :ref:`zephyr:ieee802154_interface` radio driver.
 
 .. _ug_thread_select_libraries:
 .. _ug_thread_configuring_basic_building:
@@ -81,6 +90,7 @@ Depending on your configuration needs, you can also set the following options:
 
 * :kconfig:option:`CONFIG_NET_SOCKETS` - This option enables API similar to BSD Sockets on top of the native Zephyr networking API.
   This configuration is needed for managing networking protocols.
+  This configuration is available only if Zephyr networking layer is enabled.
 * :kconfig:option:`CONFIG_OPENTHREAD_SHELL` - This option enables OpenThread CLI (see `OpenThread CLI Reference`_).
 * :kconfig:option:`CONFIG_COAP` - This option enables Zephyr's :ref:`zephyr:coap_sock_interface` support.
 * :kconfig:option:`CONFIG_COAP_UTILS` - This option enables the :ref:`CoAP utils library <coap_utils_readme>`.
@@ -94,6 +104,7 @@ See the following files for more options that you might want to change:
 
 * :file:`zephyr/subsys/net/l2/openthread/Kconfig.features` - OpenThread stack features.
 * :file:`zephyr/subsys/net/l2/openthread/Kconfig.thread` - Thread network configuration options.
+* :file:`nrf/modules/openthread/Kconfig.features.nrf` - Thread network configuration dedicated to nRF Connect purposes.
 
 .. note::
    You can find the default configuration for all :ref:`openthread_samples` in the :file:`nrf/subsys/net/openthread/Kconfig.defconfig` file.
@@ -158,56 +169,116 @@ An IEEE EUI-64 address consists of two parts:
 * Company ID - a 24-bit MA-L (MAC Address Block Large), formerly called OUI (Organizationally Unique Identifier)
 * Extension identifier - a 40-bit device unique identifier
 
-You can configure the EUI-64 for a device in the following ways:
+You can configure the EUI-64 for a device in the following ways depending on chosen architecture:
 
-Use the default
-  By default, the company ID is set to Nordic Semiconductor's MA-L (``f4-ce-36``).
-  The extension identifier is set to the DEVICEID from the factory information configuration registers (FICR).
+  .. tabs::
 
-Replace the company ID
-  You can enable :kconfig:option:`CONFIG_IEEE802154_VENDOR_OUI_ENABLE` to replace Nordic Semiconductor's company ID with your own company ID.
-  Specify your company ID in :kconfig:option:`CONFIG_IEEE802154_VENDOR_OUI`.
+     .. tab:: Zephyr networking layer enabled
 
-  The extension identifier is set to the default, namely the DEVICEID from FICR.
+        Use the default
+          By default, the company ID is set to Nordic Semiconductor's MA-L (``f4-ce-36``).
+          The extension identifier is set to the DEVICEID from the factory information configuration registers (FICR).
 
-Replace the full EUI-64
-  You can provide the full EUI-64 value by programming certain user information configuration registers (UICR).
-  For nRF52 Series devices, the CUSTOMER registers block is used.
-  For nRF53 Series devices, the OTP registers block is used.
+        Replace the company ID
+          You can enable the :kconfig:option:`CONFIG_IEEE802154_VENDOR_OUI_ENABLE` Kconfig option to replace Nordic Semiconductor's company ID with your own company ID.
+          Specify your company ID with the :kconfig:option:`CONFIG_IEEE802154_VENDOR_OUI` option.
 
-  To use the EUI-64 value from the UICR, enable :kconfig:option:`CONFIG_IEEE802154_NRF5_UICR_EUI64_ENABLE` and set :kconfig:option:`CONFIG_IEEE802154_NRF5_UICR_EUI64_REG` to the base of the two consecutive registers that contain your EUI-64 value.
+          The extension identifier is set to the default, namely the DEVICEID from FICR.
 
-  The following example shows how to replace the full EUI-64 on an nRF52840 device:
+        Replace the full EUI-64
+          You can provide the full EUI-64 value by programming certain user information configuration registers (UICR).
+          nRF52 Series devices use the CUSTOMER registers block, while nRF53 Series devices use the OTP registers block
 
-  1. Enable :kconfig:option:`CONFIG_IEEE802154_NRF5_UICR_EUI64_ENABLE`.
-  #. Specify the offset for the UICR registers in :kconfig:option:`CONFIG_IEEE802154_NRF5_UICR_EUI64_REG`.
-     This example uses UICR->CUSTOMER[0] and UICR->CUSTOMER[1], which means that you can keep the default value ``0``.
-  #. Build and program your application erasing the whole memory (replace *serial_number* with the serial number of your debugger):
+          To use the EUI-64 value from the UICR, enable the :kconfig:option:`CONFIG_NRF5_UICR_EUI64_ENABLE` Kconfig option and set :kconfig:option:`CONFIG_NRF5_UICR_EUI64_REG` to the base of the two consecutive registers that contain your EUI-64 value.
 
-     .. parsed-literal::
-      :class: highlight
+          The following example shows how to replace the full EUI-64 on the nRF52840 device:
 
-       west build -b nrf52840dk/nrf52840 -p always
-       west flash --snr *serial_number* --erase
+          1. Enable the :kconfig:option:`CONFIG_IEEE802154_NRF5_UICR_EUI64_ENABLE` Kconfig option.
 
-  #. Program the registers UICR->CUSTOMER[0] and UICR->CUSTOMER[1] with your EUI-64 value (replace *serial_number* with the serial number of your debugger):
+          #. Specify the offset for the UICR registers in :kconfig:option:`CONFIG_IEEE802154_NRF5_UICR_EUI64_REG`.
+             This example uses UICR->CUSTOMER[0] and UICR->CUSTOMER[1], which means that you can keep the default value ``0``.
 
-     .. parsed-literal::
-      :class: highlight
+          #. Build and program your application erasing the whole memory.
+             Make sure to replace *serial_number* with the serial number of your debugger:
 
-       nrfutil device x-write --serial-number *serial_number* --address 0x10001080 --value 0x11223344
-       nrfutil device x-write --serial-number *serial_number* --address 0x10001084 --value 0x55667788
-       nrfutil device reset --reset-kind=RESET_PIN
+              .. parsed-literal::
+               :class: highlight
 
-     If you used a different value for :kconfig:option:`CONFIG_IEEE802154_NRF5_UICR_EUI64_REG`, you must use different register addresses.
+                west build -b nrf52840dk/nrf52840 -p always
+                west flash --snr *serial_number* --erase
 
-At the end of the configuration process, you can check the EUI-64 value using OpenThread CLI:
+          #. Program the registers UICR->CUSTOMER[0] and UICR->CUSTOMER[1] with your EUI-64 value (replace *serial_number* with the serial number of your debugger):
 
-.. code-block:: console
+              .. parsed-literal::
+               :class: highlight
 
-   uart:~$ ot eui64
-   8877665544332211
-   Done
+                nrfutil device x-write --serial-number *serial_number* --address 0x10001080 --value 0x11223344
+                nrfutil device x-write --serial-number *serial_number* --address 0x10001084 --value 0x55667788
+                nrfutil device reset --reset-kind=RESET_PIN
+
+             If you used a different value for :kconfig:option:`CONFIG_IEEE802154_NRF5_UICR_EUI64_REG`, you must use different register addresses.
+
+             At the end of the configuration process, you can check the EUI-64 value using the OpenThread CLI as follows:
+
+              .. code-block:: console
+
+               uart:~$ ot eui64
+               8877665544332211
+               Done
+
+     .. tab:: Zephyr networking layer disabled
+
+        Use the default
+          By default, the company ID is set to Nordic Semiconductor's MA-L (``f4-ce-36``).
+          The extension identifier is set to the DEVICEID from the factory information configuration registers (FICR).
+
+        Replace the company ID
+          You can enable the :kconfig:option:`CONFIG_IEEE802154_VENDOR_OUI_ENABLE` Kconfig option to replace Nordic Semiconductor's company ID with your own company ID.
+          Specify your company ID with the :kconfig:option:`CONFIG_NRF5_VENDOR_OUI` option.
+
+          The extension identifier is set to the default, namely the DEVICEID from FICR.
+
+        Replace the full EUI-64
+          You can provide the full EUI-64 value by programming certain user information configuration registers (UICR).
+          nRF52 Series devices use the CUSTOMER registers block, while nRF53 Series devices use the OTP registers block.
+
+          To use the EUI-64 value from the UICR, enable the :kconfig:option:`CONFIG_NRF5_UICR_EUI64_ENABLE` Kconfig option and set :kconfig:option:`CONFIG_NRF5_UICR_EUI64_REG` to the base of the two consecutive registers that contain your EUI-64 value.
+
+          The following example shows how to replace the full EUI-64 on the nRF52840 device:
+
+          1. Enable the :kconfig:option:`CONFIG_NRF5_UICR_EUI64_ENABLE` Kconfig option.
+
+          #. Specify the offset for the UICR registers in :kconfig:option:`CONFIG_NRF5_UICR_EUI64_REG`.
+             This example uses UICR->CUSTOMER[0] and UICR->CUSTOMER[1], which means that you can keep the default value ``0``.
+
+          #. Build and program your application erasing the whole memory.
+             Make sure to replace *serial_number* with the serial number of your debugger:
+
+              .. parsed-literal::
+               :class: highlight
+
+               west build -b nrf52840dk/nrf52840 -p always
+               west flash --snr *serial_number* --erase
+
+          #. Program the registers UICR->CUSTOMER[0] and UICR->CUSTOMER[1] with your EUI-64 value (replace *serial_number* with the serial number of your debugger):
+
+              .. parsed-literal::
+                :class: highlight
+
+                nrfutil device x-write --serial-number *serial_number* --address 0x10001080 --value 0x11223344
+                nrfutil device x-write --serial-number *serial_number* --address 0x10001084 --value 0x55667788
+                nrfutil device reset --reset-kind=RESET_PIN
+
+             If you used a different value for :kconfig:option:`CONFIG_NRF5_UICR_EUI64_REG`, you must use different register addresses.
+
+             At the end of the configuration process, you can check the EUI-64 value using OpenThread CLI:
+
+              .. code-block:: console
+
+                uart:~$ ot eui64
+                8877665544332211
+                Done
+
 
 .. _ug_thread_configuring_crypto:
 
@@ -232,6 +303,7 @@ The `Mbed TLS`_ protocol features can be handled using the :kconfig:option:`OPEN
    The :kconfig:option:`OPENTHREAD_MBEDTLS_CHOICE` Kconfig option has not been tested and is not recommended for use with the |NCS|.
 
 For more information about the open source Mbed TLS implementation in the |NCS|, see the `sdk-mbedtls`_ repository.
+For more information about the OpenThread security in |NCS|, see the :ref:`ug_ot_thread_security` page.
 
 .. _ug_thread_configure_commission:
 

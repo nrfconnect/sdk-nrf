@@ -29,8 +29,6 @@ Check and adjust the following Kconfig options:
 
 * :kconfig:option:`CONFIG_BT_RAS_RREQ_MAX_ACTIVE_CONN` - Sets the number of simultaneously supported RREQ instances.
 
-* :kconfig:option:`CONFIG_HEAP_MEM_POOL_ADD_SIZE_RAS_RREQ_GATT_DM` - Sets the heap size for the GATT discovery manager module.
-
 * :kconfig:option:`CONFIG_BT_RAS_RREQ_LOG_LEVEL` - Sets the logging level of the RREQ library.
 
 Usage

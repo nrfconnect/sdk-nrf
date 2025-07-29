@@ -8,7 +8,7 @@ Device Firmware Upgrade MCUmgr module
    :depth: 2
 
 The Device Firmware Upgrade MCUmgr module is responsible for performing a Device Firmware Upgrade (DFU) over Simple Management Protocol (SMP).
-The module supports both MCUboot bootloader and SUIT for performing DFU.
+The module supports the MCUboot bootloader for performing DFU.
 
 If you enable the Bluetooth LE as transport, you can perform DFU using, for example, the `nRF Connect Device Manager`_ application.
 See the :ref:`nrf_desktop_image_transfer_over_smp` section for more details.
@@ -69,12 +69,10 @@ Make sure that the DFU lock utility is enabled if your nRF Desktop application c
 You cannot use this module with the :ref:`caf_ble_smp`.
 In other words, you cannot simultaneously enable the :ref:`CONFIG_DESKTOP_DFU_MCUMGR_ENABLE <config_desktop_app_options>` option and the :kconfig:option:`CONFIG_CAF_BLE_SMP` Kconfig option.
 
-You have to choose the backend for the DFU process by enabling one of the following options:
+You have to choose the backend for the DFU process by enabling the following option:
 
   * :kconfig:option:`CONFIG_DESKTOP_DFU_BACKEND_MCUBOOT` - This option depends on the MCUboot bootloader support for the DFU process.
     For details, see :ref:`mcuboot` in the Zephyr documentation.
-  * :kconfig:option:`CONFIG_DESKTOP_DFU_BACKEND_SUIT` - This option depends on the SUIT support for the DFU process.
-    For details, see :ref:`ug_nrf54h20_suit_dfu` in the Zephyr documentation.
 
 .. note::
     B0 bootloader is not integrated with MCUmgr.
@@ -99,22 +97,6 @@ By default, the MCUmgr DFU module confirms the image using the :c:func:`boot_wri
 If the :kconfig:option:`CONFIG_DESKTOP_DFU_MCUMGR_MCUBOOT_DIRECT_XIP` option is enabled, the MCUmgr DFU module assumes that the bootloader simply boots the image with a higher version and does not confirm the newly updated image after a successful boot.
 Make sure that :kconfig:option:`CONFIG_DESKTOP_DFU_MCUMGR_MCUBOOT_DIRECT_XIP` Kconfig option is enabled, if devices use the MCUboot bootloader in direct-xip mode without revert.
 The option is enabled by default if :kconfig:option:`CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP` is enabled.
-
-.. _nrf_desktop_dfu_mcumgr_suit:
-
-MCUmgr configuration using SUIT backend
-=======================================
-
-The SUIT backend configuration selects the following options:
-
-* :kconfig:option:`CONFIG_MGMT_SUITFU` - This option enables the SUIT Firmware Update Management that implements MCUmgr image management handlers required for the DFU process.
-* :kconfig:option:`CONFIG_MGMT_SUITFU_GRP_SUIT` - This option is needed to upload information about all manifests present on the device.
-* :kconfig:option:`CONFIG_SSF_SUIT_SERVICE_ENABLED`
-* :kconfig:option:`CONFIG_ZCBOR_CANONICAL`
-* :kconfig:option:`CONFIG_MCUMGR_SMP_LEGACY_RC_BEHAVIOUR`
-
-To use the module with this backend, you must also enable the :kconfig:option:`CONFIG_SUIT` Kconfig option.
-See :ref:`ug_nrf54h20_suit_dfu` for more information.
 
 Implementation details
 **********************

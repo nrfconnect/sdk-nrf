@@ -137,6 +137,7 @@ rsource "Kconfig.factory_reset_event"
 rsource "Kconfig.force_power_down_event"
 rsource "Kconfig.keep_alive_event"
 rsource "Kconfig.module_state_event"
+rsource "Kconfig.module_suspend_event"
 rsource "Kconfig.power_manager_event"
 rsource "Kconfig.sensor_event"
 

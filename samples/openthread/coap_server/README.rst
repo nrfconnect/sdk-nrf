@@ -37,6 +37,13 @@ This sample uses the native `OpenThread CoAP API`_ for communication.
 For new application development, use :ref:`Zephyr's CoAP API<zephyr:coap_sock_interface>`.
 For example usage of the Zephyr CoAP API, see the :ref:`coap_client_sample` sample.
 
+Application architecture options
+================================
+
+.. include:: ../cli/README.rst
+    :start-after: ot_cli_sample_architecture_options_start
+    :end-before: ot_cli_sample_architecture_options_end
+
 User interface
 **************
 
@@ -71,6 +78,8 @@ The following snippets are available:
 * ``debug`` - Enables debugging the Thread sample by enabling :c:func:`__ASSERT()` statements globally.
 * ``logging`` - Enables logging using RTT.
   For additional options, refer to :ref:`RTT logging <ug_logging_backends_rtt>`.
+* ``l2`` - Enables the Zephyr networking layer.
+* ``logging_l2`` - Enables logging from the Zephyr networking layer.
 
 FEM support
 ===========

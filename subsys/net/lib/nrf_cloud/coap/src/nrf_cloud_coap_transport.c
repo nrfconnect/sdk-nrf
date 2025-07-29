@@ -45,7 +45,6 @@ LOG_MODULE_REGISTER(nrf_cloud_coap_transport, CONFIG_NRF_CLOUD_COAP_LOG_LEVEL);
 /** @TODO: figure out whether to make this a Kconfig value or place in a header */
 #define CDDL_VERSION "1"
 #define MAX_COAP_PATH 256
-#define MAX_RETRIES 10
 #define JWT_BUF_SZ 700
 #define VER_STRING_FMT "mver=%s&cver=%s&dver=%s"
 #define VER_STRING_FMT2 "cver=" CDDL_VERSION "&dver=" BUILD_VERSION_STR
@@ -482,7 +481,7 @@ static int client_transfer(enum coap_method method,
 		/* -EAGAIN means the CoAP client is currently waiting for a response
 		 * to a previous request (likely started in a separate thread).
 		 */
-		if (retry++ > MAX_RETRIES) {
+		if (retry++ > CONFIG_NRF_CLOUD_COAP_MAX_RETRIES) {
 			LOG_ERR("Timeout waiting for CoAP client to be available");
 			err = -ETIMEDOUT;
 			goto transfer_end;

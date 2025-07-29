@@ -17,13 +17,6 @@ extern "C" {
 #endif
 
 /**
- * @brief Background provisioning service - assumed to run in its own thread.
- *
- * Revealed only to be able to test the functionality.
- */
-int nrf_provisioning_req(void);
-
-/**
  * @brief Seconds to next provisioning
  *
  * @return int Seconds to next provisioning

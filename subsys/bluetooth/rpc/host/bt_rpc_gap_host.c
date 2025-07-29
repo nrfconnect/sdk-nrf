@@ -2114,7 +2114,7 @@ NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_le_per_adv_sync_cb_register_on_remote,
 			 bt_le_per_adv_sync_cb_register_on_remote_rpc_handler, NULL);
 #endif /* defined(CONFIG_BT_PER_ADV_SYNC) */
 
-#if defined(CONFIG_SETTINGS)
+#if defined(CONFIG_BT_SETTINGS)
 static void bt_rpc_settings_load_rpc_handler(const struct nrf_rpc_group *group,
 					     struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
@@ -2126,4 +2126,4 @@ static void bt_rpc_settings_load_rpc_handler(const struct nrf_rpc_group *group,
 
 NRF_RPC_CBOR_CMD_DECODER(bt_rpc_grp, bt_rpc_settings_load, BT_SETTINGS_LOAD_RPC_CMD,
 			 bt_rpc_settings_load_rpc_handler, NULL);
-#endif /* defined(CONFIG_SETTINGS) */
+#endif /* defined(CONFIG_BT_SETTINGS) */

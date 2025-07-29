@@ -125,9 +125,7 @@ void handle_wifi_connect_result(struct net_mgmt_event_callback *cb)
 	if (status->status) {
 		LOG_ERR("Wi-Fi Connection request failed (%d)", status->status);
 	} else {
-#ifdef CONFIG_DEBUG_PRINT_WIFI_CONN_INFO
 		LOG_INF("Connected");
-#endif
 		wifi_context.connected = true;
 	}
 
@@ -156,9 +154,7 @@ void print_dhcp_ip(struct net_mgmt_event_callback *cb)
 
 	net_addr_ntop(AF_INET, addr, dhcp_info, sizeof(dhcp_info));
 
-#ifdef CONFIG_DEBUG_PRINT_WIFI_DHCP_INFO
 	LOG_INF("IP address: %s", dhcp_info);
-#endif
 	k_sem_give(&wait_for_next);
 }
 
@@ -171,9 +167,7 @@ int cmd_wifi_scan(void)
 		LOG_ERR("Scan request failed");
 		return -ENOEXEC;
 	}
-#ifdef CONFIG_DEBUG_PRINT_WIFI_SCAN_INFO
 	LOG_INF("Scan requested");
-#endif
 	return 0;
 }
 
@@ -254,9 +248,7 @@ void wifi_disconnection(void)
 	int ret = 0;
 
 	/* Wi-Fi disconnection */
-#ifdef CONFIG_DEBUG_PRINT_WIFI_CONN_INFO
 	LOG_INF("Disconnecting Wi-Fi");
-#endif
 	ret = wifi_disconnect();
 	if (ret != 0) {
 		LOG_INF("Wi-Fi Disconnect failed");
@@ -268,19 +260,15 @@ int wifi_wait_for_next_event(const char *event_name, int timeout)
 {
 	int wait_result;
 
-#ifdef CONFIG_DEBUG_PRINT_WIFI_CONN_INFO
 	if (event_name) {
 		LOG_INF("Waiting for %s", event_name);
 	}
-#endif
 	wait_result = k_sem_take(&wait_for_next, K_SECONDS(timeout));
 	if (wait_result) {
 		LOG_ERR("Timeout waiting for %s -> %d", event_name, wait_result);
 		return -1;
 	}
-#ifdef CONFIG_DEBUG_PRINT_WIFI_CONN_INFO
 	LOG_INF("Got %s", event_name);
-#endif
 	k_sem_reset(&wait_for_next);
 
 	return 0;

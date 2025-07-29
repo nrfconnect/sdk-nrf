@@ -991,7 +991,7 @@ If you are certain you understand the inherent security risks, you can use this 
 Setting up Wi-Fi access point credentials
 =========================================
 
-This sample uses the :ref:`lib_wifi_credentials` library to manage Wi-Fi credentials.
+This sample uses the :ref:`Wi-Fi credentials <zephyr:lib_wifi_credentials>` library to manage Wi-Fi credentials.
 Before the sample can connect to a Wi-Fi network, you must add at least one credential set.
 
 Once your device has been flashed with this sample, you can add a credential by connecting to your device's UART interface and then entering the following command:

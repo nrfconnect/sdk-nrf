@@ -78,12 +78,14 @@ static const struct sx_blkcipher_cmdma_cfg ba411xtscfg = {
 	.blocksz = BLKCIPHER_BLOCK_SZ,
 };
 
-void sx_blkcipher_free(struct sxblkcipher *c)
+int sx_blkcipher_free(struct sxblkcipher *c)
 {
+	int sx_err = SX_OK;
 	if (c->key.clean_key) {
-		c->key.clean_key(c->key.user_data);
+		sx_err = c->key.clean_key(c->key.user_data);
 	}
 	sx_cmdma_release_hw(&c->dma);
+	return sx_err;
 }
 
 
@@ -111,7 +113,7 @@ static int sx_blkcipher_hw_reserve(struct sxblkcipher *c)
 
 exit:
 	if (err != SX_OK) {
-		sx_blkcipher_free(c);
+		return sx_handle_nested_error(sx_blkcipher_free(c), err);
 	}
 
 	return SX_OK;
@@ -269,8 +271,7 @@ int sx_blkcipher_crypt(struct sxblkcipher *c, const char *datain, size_t sz, cha
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 	if (sz >= DMA_MAX_SZ) {
-		sx_blkcipher_free(c);
-		return SX_ERR_TOO_BIG;
+		return sx_handle_nested_error(sx_blkcipher_free(c), SX_ERR_TOO_BIG);
 	}
 
 	c->textsz += sz;
@@ -287,12 +288,10 @@ int sx_blkcipher_run(struct sxblkcipher *c)
 	}
 
 	if (c->textsz < c->cfg->inminsz) {
-		sx_blkcipher_free(c);
-		return SX_ERR_INPUT_BUFFER_TOO_SMALL;
+		return sx_handle_nested_error(sx_blkcipher_free(c), SX_ERR_INPUT_BUFFER_TOO_SMALL);
 	}
 	if (c->textsz % c->cfg->granularity) {
-		sx_blkcipher_free(c);
-		return SX_ERR_WRONG_SIZE_GRANULARITY;
+		return sx_handle_nested_error(sx_blkcipher_free(c), SX_ERR_WRONG_SIZE_GRANULARITY);
 	}
 
 	if (c->dma.dmamem.cfg & c->cfg->ctxsave) {
@@ -345,17 +344,15 @@ int sx_blkcipher_save_state(struct sxblkcipher *c)
 	}
 
 	if (c->cfg->statesz == 0) {
-		sx_blkcipher_free(c);
-		return SX_ERR_CONTEXT_SAVING_NOT_SUPPORTED;
+		return sx_handle_nested_error(sx_blkcipher_free(c),
+					      SX_ERR_CONTEXT_SAVING_NOT_SUPPORTED);
 	}
 
 	if (c->textsz < c->cfg->blocksz) {
-		sx_blkcipher_free(c);
-		return SX_ERR_INPUT_BUFFER_TOO_SMALL;
+		return sx_handle_nested_error(sx_blkcipher_free(c), SX_ERR_INPUT_BUFFER_TOO_SMALL);
 	}
 	if (c->textsz & (c->cfg->blocksz - 1)) {
-		sx_blkcipher_free(c);
-		return SX_ERR_WRONG_SIZE_GRANULARITY;
+		return sx_handle_nested_error(sx_blkcipher_free(c), SX_ERR_WRONG_SIZE_GRANULARITY);
 	}
 
 	c->dma.dmamem.cfg |= c->cfg->ctxsave;
@@ -384,9 +381,7 @@ int sx_blkcipher_status(struct sxblkcipher *c)
 	sys_cache_data_invd_range((void *)&c->extramem, sizeof(c->extramem));
 #endif
 
-	sx_blkcipher_free(c);
-
-	return r;
+	return sx_handle_nested_error(sx_blkcipher_free(c), r);
 }
 
 int sx_blkcipher_wait(struct sxblkcipher *c)

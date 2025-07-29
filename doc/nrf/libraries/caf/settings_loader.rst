@@ -48,7 +48,7 @@ After each module that sets a bit in the :c:func:`get_req_modules` function is i
 File system as settings backend
 ===============================
 
-If the settings backend is a file system (set with the :kconfig:option:`CONFIG_SETTINGS_FS` Kconfig option), make sure that the application mounts the file system before the Zephyr settings subsystem is initialized.
+If the settings backend is a file system (set with the :kconfig:option:`CONFIG_SETTINGS_FILE` Kconfig option), make sure that the application mounts the file system before the Zephyr settings subsystem is initialized.
 The CAF settings loader module calls the :c:func:`settings_subsys_init` initialization function during the system boot with the ``APPLICATION`` level and the initialization priority set by the :kconfig:option:`CONFIG_APPLICATION_INIT_PRIORITY` Kconfig option.
 
 Implementation details

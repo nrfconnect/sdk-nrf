@@ -15,7 +15,7 @@
 LOG_MODULE_REGISTER(app);
 
 #define BUF_SIZE 64
-static K_MEM_SLAB_DEFINE(uart_slab, BUF_SIZE, 3, 4);
+K_MEM_SLAB_DEFINE_STATIC(uart_slab, BUF_SIZE, 3, 4);
 
 #define TX_DATA_SIZE 5
 static const uint8_t tx_buf[TX_DATA_SIZE] = {1, 2, 3, 4, 5};

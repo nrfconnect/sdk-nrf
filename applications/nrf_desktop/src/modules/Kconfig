@@ -11,10 +11,21 @@ rsource "Kconfig.caf_ble_adv.default"
 rsource "Kconfig.caf_power_manager.default"
 rsource "Kconfig.caf_settings_loader.default"
 
+menu "HID report providers"
+	depends on DESKTOP_HID_REPORT_PROVIDER_EVENT
+
+rsource "Kconfig.hid_provider_consumer_ctrl"
+rsource "Kconfig.hid_provider_mouse"
+rsource "Kconfig.hid_provider_keyboard"
+rsource "Kconfig.hid_provider_system_ctrl"
+
+endmenu
+
 rsource "Kconfig.hid_state"
 rsource "Kconfig.led_state"
 rsource "Kconfig.led_stream"
 rsource "Kconfig.usb_state"
+rsource "Kconfig.ble_adv_ctrl"
 rsource "Kconfig.ble_bond"
 rsource "Kconfig.ble_conn_params"
 rsource "Kconfig.ble_latency"

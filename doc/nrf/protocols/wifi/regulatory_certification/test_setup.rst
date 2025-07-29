@@ -188,36 +188,33 @@ To program firmware in the nRF7002 DK or EK setup, complete the following steps.
 VCOM settings
 =============
 
-Use a baud rate setting of 115,200 bps.
+Complete the following steps to set the VCOM settings for the nRF7002 DK or EK:
 
-To choose the correct COM port to interact with the network core on the nRF7002 DK or EK, connect your computer to the nRF7002 board with a USB cable and enter the following command in the command prompt window:
+1. Connect your computer to the nRF7002 board with a USB cable.
+#. Use the :ref:`default baud rate (115200) <test_and_optimize>` for testing.
+#. |serial_port_number_list|
+   Typically, VCOM0 is connected to the nRF5340 network core running a Radio test (short-range) and VCOM1 is connected to the nRF5340 application core running a Wi-Fi Radio test.
+#. Verify the mapping of the serial ports based on the available commands for each port.
+   See the following code example and figures:
 
-.. code-block:: console
+   .. code-block:: console
 
-    $ nrfutil device list
+      $ nrfutil device list
+      1050753610
+      product         J-Link
+      board version   PCA10143
+      ports           /dev/ttyACM4, vcom: 0   // This is for Radio Test, note baud rate is 115200bps
+                      /dev/ttyACM5, vcom: 1   // This is for Wi-Fi Radio Test, note baud rate is 115200bps
+      traits          devkit, jlink, seggerUsb, serialPorts, usb
 
-Typically, VCOM0 is connected to the nRF5340 network core running a Radio test (short-range) and VCOM1 is connected to the nRF5340 application core running a Wi-Fi Radio test.
-Verify the mapping of the COM ports based on the available commands for each port, see Short-range Radio test port, Wi-Fi Radio test port, and the following example:
+      Supported devices found: 1
 
-.. code-block:: console
+   .. figure:: images/sr_radio_test_port.png
+      :alt: Short-range Radio test port
 
-    $ nrfutil device list
-    1050753610
-    product         J-Link
-    board version   PCA10143
-    ports           /dev/ttyACM4, vcom: 0   // This is for Radio Test, note baud rate is 115200bps
-                    /dev/ttyACM5, vcom: 1   // This is for Wi-Fi Radio Test, note baud rate is 115200bps
-    traits          devkit, jlink, seggerUsb, serialPorts, usb
+      Short-range Radio test port
 
-   Found 1 supported device(s)
+   .. figure:: images/wifi_radio_test_port.png
+      :alt: Wi-Fi Radio test port
 
-
-.. figure:: images/sr_radio_test_port.png
-   :alt: Short-range Radio test port
-
-   Short-range Radio test port
-
-.. figure:: images/wifi_radio_test_port.png
-   :alt: Wi-Fi Radio test port
-
-   Wi-Fi Radio test port
+      Wi-Fi Radio test port

@@ -150,7 +150,7 @@ Dependencies
 This sample uses the following |NCS| libraries:
 
 * :ref:`wifi_prov_readme`
-* :ref:`lib_wifi_credentials`
+* :ref:`Wi-Fi credentials <zephyr:lib_wifi_credentials>`
 
 This sample also uses a module that can be found in the following location in the |NCS| folder structure:
 

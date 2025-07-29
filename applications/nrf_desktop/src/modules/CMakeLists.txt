@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+target_sources_ifdef(CONFIG_DESKTOP_BLE_ADV_CTRL_ENABLE
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ble_adv_ctrl.c)
+
 target_sources_ifdef(CONFIG_DESKTOP_BLE_BOND_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ble_bond.c)
 
@@ -42,6 +45,18 @@ target_sources_ifdef(CONFIG_DESKTOP_HID_FORWARD_ENABLE
 
 target_sources_ifdef(CONFIG_DESKTOP_HID_STATE_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hid_state.c)
+
+target_sources_ifdef(CONFIG_DESKTOP_HID_REPORT_PROVIDER_CONSUMER_CTRL
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hid_provider_consumer_ctrl.c)
+
+target_sources_ifdef(CONFIG_DESKTOP_HID_REPORT_PROVIDER_MOUSE
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hid_provider_mouse.c)
+
+target_sources_ifdef(CONFIG_DESKTOP_HID_REPORT_PROVIDER_KEYBOARD
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hid_provider_keyboard.c)
+
+target_sources_ifdef(CONFIG_DESKTOP_HID_REPORT_PROVIDER_SYSTEM_CTRL
+		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hid_provider_system_ctrl.c)
 
 target_sources_ifdef(CONFIG_DESKTOP_HID_STATE_PM_ENABLE
 		     app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/hid_state_pm.c)

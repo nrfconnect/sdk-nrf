@@ -1,5 +1,7 @@
 # Copyright (c) 2025 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+zephyr_get(NRFX_DIR SYSBUILD GLOBAL)
+
 if(NOT DEFINED NRFX_DIR)
   set(NRFX_DIR ${ZEPHYR_CURRENT_MODULE_DIR}/nrfx/ CACHE PATH "nrfx Directory")
 endif()

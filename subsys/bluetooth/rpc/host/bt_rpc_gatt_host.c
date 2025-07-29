@@ -740,6 +740,16 @@ static void bt_rpc_gatt_service_unregister_rpc_handler(const struct nrf_rpc_grou
 		result = bt_rpc_gatt_remove_service(svc);
 	}
 
+	if (!result && (bt_rpc_gatt_get_service_by_index(0) == NULL)) {
+		/*
+		 * The last service has been unregistered, so we can reclaim the entire GATT buffer.
+		 * Ideally, each dynamic service would use a separate buffer so that unregistering
+		 * a single service releases all its resources right away, but this requires
+		 * rewriting the GATT attribute memory management.
+		 */
+		net_buf_simple_reset(&gatt_buffer);
+	}
+
 	nrf_rpc_rsp_send_int(group, result);
 	return;
 decoding_error:

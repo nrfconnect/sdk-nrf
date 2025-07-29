@@ -33,7 +33,13 @@ The following sections provide detailed lists of changes by component.
 IDE, OS, and tool support
 =========================
 
-|no_changes_yet_note|
+* Updated the required `SEGGER J-Link`_ version to v8.42.
+* Removed the separate requirement for installation of the `nRF Util's device command <Device command overview_>`_ from the :ref:`install_ncs` page under :ref:`installing_vsc`.
+  The tool and the command are now included in the |NCS| toolchain bundle.
+
+  .. note::
+
+     If you plan to work with command line, you still need to download nRF Util and install the ``sdk-manager`` command in order to get the toolchain bundle.
 
 Board support
 =============
@@ -51,7 +57,11 @@ Build and configuration system
 Bootloaders and DFU
 ===================
 
-|no_changes_yet_note|
+* Removed:
+
+  * SUIT support.
+  * suit-generator.
+  * suit-processor.
 
 Developing with nRF91 Series
 ============================
@@ -68,12 +78,15 @@ Developing with nRF54L Series
 
 * Increased the default value of the :kconfig:option:`CONFIG_MPSL_HFCLK_LATENCY` Kconfig option to support slower crystals.
   See the Kconfig description for a detailed description on how to select the correct value for a given application.
-* Added the :ref:`ug_nrf54l_dfu_config` documentation page, describing how to configure Device Firmware Update (DFU) and secure boot settings using MCUboot and NSIB.
+* Added:
+
+  * The :ref:`ug_nrf54l_dfu_config` documentation page, describing how to configure Device Firmware Update (DFU) and secure boot settings using MCUboot and NSIB.
+  * The :ref:`ug_nrf54l_ecies_x25519` page on enabling the AES encryption with ECIES-X25519, which is used for secure encryption key exchange.
 
 Developing with nRF54H Series
 =============================
 
-|no_changes_yet_note|
+* Removed SUIT support.
 
 Developing with nRF53 Series
 ============================
@@ -112,6 +125,7 @@ Developing with Front-End Modules
 
   * The temperature compensation feature for the nRF2220 Front-End Module.
   * Support for the nRF21540 Front-End Module in GPIO/SPI mode for nRF54L Series devices.
+  * Support for the Simple GPIO Front-End Module for nRF54L Series devices.
 
 Developing with custom boards
 =============================
@@ -128,6 +142,8 @@ Security
 
   * The :ref:`ug_tfm_logging` page with more details about how to configure logging on the same UART instance as the application for nRF5340 and nRF91 Series devices.
   * The :ref:`crypto_drivers` page with more details about the driver selection process.
+  * The :ref:`ug_crypto_supported_features` page with updated values for the supported cryptographic operations and algorithms.
+    Now, the page only lists features and algorithms that are supported by at least one driver.
 
 Protocols
 =========
@@ -170,7 +186,15 @@ Gazell
 Matter
 ------
 
-* Added FastTrack Recertification and Portfolio Certification programs.
+* Added:
+
+  * FastTrack Recertification and Portfolio Certification programs.
+  * Matter-over-Thread apps can now use the OpenThread API directly, instead of using intermediate Zephyr L2 layer.
+    This change significantly reduces memory usage in Matter applications.
+    On the :zephyr:board:`nrf54l15dk`, it saves approximately 15 kB of RAM and 40 kB of flash.
+    To learn more about the new architecture option, see the :ref:`ug_matter_networking_selection` user guide.
+  * The :ref:`ug_matter_networking_selection` section on the :ref:`ug_matter_device_advanced_kconfigs` page.
+    The section describes how to select the networking layer for Matter applications.
 
 * Updated:
 
@@ -181,7 +205,16 @@ Matter
 Matter fork
 +++++++++++
 
-|no_changes_yet_note|
+The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from the upstream Matter repository up to, and including, the ``v1.4.2.0`` tag.
+
+The following list summarizes the most important changes inherited from the upstream Matter:
+
+* Updated:
+
+  * Fixed incorrect memory releases and unhandled exceptions.
+  * Improved robustness in group session management.
+  * Optimized the device commissioning process.
+
 
 nRF IEEE 802.15.4 radio driver
 ------------------------------
@@ -197,13 +230,14 @@ nRF IEEE 802.15.4 radio driver
 Thread
 ------
 
-|no_changes_yet_note|
-
+* Added the new architecture option to use the OpenThread stack directly to communicate with the IEEE 802.15.4 radio driver.
+  See the :ref:`openthread_stack_architecture` user guide for more information.
+  The new architecture option reduces the memory footprint of the OpenThread stack by around 4% and the RAM usage by around 12% in the :ref:`ot_cli_sample` sample.
 
 Wi-Fi®
 ------
 
-|no_changes_yet_note|
+* Added support for EAP-PEAP and EAP-TTLS authentication methods to enterprise security in the Wi-Fi management API.
 
 Applications
 ============
@@ -307,6 +341,15 @@ nRF Desktop
     Extra ATT buffers are no longer needed for keyboards as :ref:`nrf_desktop_hids` limits the maximum number of simultaneously processed HID input reports (:ref:`CONFIG_DESKTOP_HIDS_SUBSCRIBER_REPORT_MAX <config_desktop_app_options>`) to ``2`` by default.
   * The nRF Desktop application aligns the defaults of :kconfig:option:`CONFIG_BT_ATT_TX_COUNT` and :kconfig:option:`CONFIG_BT_CONN_TX_MAX` Kconfig options to application needs.
     The options are no longer explicitly set in application configurations.
+  * Increased the default first HID report delay (:ref:`CONFIG_DESKTOP_HIDS_FIRST_REPORT_DELAY <config_desktop_app_options>`) for keyboard (:ref:`CONFIG_DESKTOP_PERIPHERAL_TYPE_KEYBOARD <config_desktop_app_options>`) in :ref:`nrf_desktop_hids` from ``500 ms`` to ``1000 ms``.
+    This change ensures that queued keypresses are not lost when reconnecting with the nRF Desktop dongle.
+  * Improved HID subscription handling in the HID transports (:ref:`nrf_desktop_hids` and :ref:`nrf_desktop_usb_state`).
+    Both HID transports now unsubscribe from HID input reports related to the previously used HID protocol mode before subscribing to HID input reports related to the new HID protocol mode.
+    This change ensures that subscriptions to both HID boot and HID report protocol mode are not enabled at the same time.
+  * The :ref:`nrf_desktop_fn_keys` to subscribe for :c:struct:`button_event` as the first subscriber (:c:macro:`APP_EVENT_SUBSCRIBE_FIRST`) by default.
+    You can disable the :ref:`CONFIG_DESKTOP_FN_KEYS_BUTTON_EVENT_SUBSCRIBE_FIRST <config_desktop_app_options>` Kconfig option to use early subscription (:c:macro:`APP_EVENT_SUBSCRIBE_EARLY`).
+  * The :ref:`nrf_desktop_passkey` and :ref:`nrf_desktop_buttons_sim` to subscribe for :c:struct:`button_event` as an early subscriber (:c:macro:`APP_EVENT_SUBSCRIBE_EARLY`).
+    This allows the modules to process the event before other application modules.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
@@ -376,6 +419,17 @@ Bluetooth samples
   * Fixed a bug in the workaround for errata 216 on nRF54H20 devices.
     The device asserted when a packet was received during reception tests and too few packets where transmitted during transmission tests.
 
+* :ref:`direction_finding_peripheral` sample:
+
+  * Added support for the ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l10/cpuapp``, and ``nrf54l15dk/nrf54l05/cpuapp`` board targets.
+  * Direction Finding TX AoD (atnenna switching) is disabled by default in the sample.
+
+* :ref:`direction_finding_connectionless_tx` sample:
+
+  Added support for the ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l10/cpuapp``, and ``nrf54l15dk/nrf54l05/cpuapp`` board targets.
+
+* Removed SUIT support from ``mcumgr_bt_ota_dfu``.
+
 Bluetooth Mesh samples
 ----------------------
 
@@ -386,15 +440,26 @@ Bluetooth Fast Pair samples
 
 * :ref:`fast_pair_locator_tag` sample:
 
-  * Added possibility to build and run the sample without the motion detector support (with the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR` Kconfig option disabled).
+  * Added:
+
+    * The integration of the :ref:`bt_fast_pair_adv_manager_readme` helper module (:kconfig:option:`CONFIG_BT_FAST_PAIR_ADV_MANAGER`) that replaces the application module for managing Fast Pair advertising.
+      The sample uses the new module with the locator tag extension (:kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_LOCATOR_TAG`) that automates common advertising scenarios for this use case.
+      As a result, the triggers for the FMDN provisioning and clock synchronization are now handled by the :ref:`bt_fast_pair_adv_manager_readme` module and are no longer part of the application code.
+    * Possibility to build and run the sample without the motion detector support (with the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR` Kconfig option disabled).
 
   * Updated:
 
+    * The button action for controlling the Fast Pair advertising to limit its applicability.
+      Now, this action allows only to enter and exit the pairing mode when the device is not provisioned.
+      It is disabled immediately once the FMND provisioning is started.
+    * The advertising to no longer rotate the Resolvable Private Address (RPA) in the DFU mode.
     * The :ref:`fast_pair_locator_tag_testing_fw_update_notifications` section to improve the test procedure.
       The application now provides an additional log message to indicate that the firmware version is being read.
     * The configurations for nRF54L-based board targets that store the MCUboot verification key in the KMU peripheral to automatically generate the :file:`keyfile.json` file in the build directory (the ``SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE`` Kconfig option) based on the input file provided by the ``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`` Kconfig option.
       This KMU provisioning step can now be performed automatically by the west runner, provided that a :file:`keyfile.json` file is present in the build directory.
       The provisioning is only performed if the ``west flash`` command is executed with the ``--erase``  or ``--recover`` flag.
+    * Link Time Optimization (:kconfig:option:`CONFIG_LTO`) to be enabled in MCUboot configurations of the nRF5340 DK and Thingy:53.
+      LTO no longer causes boot failures and it reduces the memory footprint.
 
 Cellular samples
 ----------------
@@ -422,7 +487,10 @@ Cellular samples
 
 * :ref:`nrf_provisioning_sample` sample:
 
-  * Updated the sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
+  * Updated:
+
+    * The sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
+    * The sample by enabling the :ref:`lib_at_shell` library to allow the nRF Cloud Utils to interface with the device.
 
 * :ref:`nrf_cloud_rest_device_message` sample:
 
@@ -443,7 +511,9 @@ Cellular samples
 Cryptography samples
 --------------------
 
-|no_changes_yet_note|
+* :ref:`crypto_aes_gcm` sample:
+
+  * Added a note stating that CRACEN only supports a 96-bit IV for AES GCM.
 
 Debug samples
 -------------
@@ -481,12 +551,19 @@ Matter samples
 * Added:
 
   * Support for the NFC onboarding for the ``nrf54l15dk/nrf54l15/cpuapp/ns`` board target.
+  * Disabled usage of Zephyr L2 networking layer in favor of using the OpenThread API directly in the Matter over Thread applications.
 
 * Updated:
 
   * The Bluetooth Low Energy variant of the Soft Device Controller (SDC) to use the Peripheral-only role in all Matter samples.
   * API of the ``ncs_configure_data_model`` cmake method that does not use ``ZAP_FILE`` argument anymore, but creates path to ZAP file based on :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option.
-  * Renamed the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH` Kconfig option to :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` and changed it purpose to configure the absolute path under which ZAP file is located.
+  * By renaming the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH` Kconfig option to :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` and changed its purpose to configure the absolute path under which the ZAP file is located.
+  * By enabling Matter persistent subscriptions by default for all Matter samples.
+  * By changing the default values of the following ICD parameters:
+
+    * :kconfig:option:`CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL` from ``1000`` to ``2500`` ms for SIT devices.
+    * :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_THRESHOLD` from ``300`` to ``0`` ms for SIT devices.
+    * :kconfig:option:`CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL` from ``200`` to ``500`` ms.
 
 Networking samples
 ------------------
@@ -548,7 +625,12 @@ Sensor samples
 SUIT samples
 ------------
 
-|no_changes_yet_note|
+* Removed all SUIT samples:
+
+  * SUIT: Device firmware “A/B” update on the nRF54H20 SoC
+  * SUIT: Flash companion
+  * SUIT: Recovery application
+  * SUIT: Device firmware update on the nRF54H20 SoC
 
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
@@ -560,7 +642,11 @@ Trusted Firmware-M (TF-M) samples
 Thread samples
 --------------
 
-|no_changes_yet_note|
+* Added the new :ref:`architecture option <openthread_stack_architecture>` to use the OpenThread stack directly to communicate with the IEEE 802.15.4 radio driver in the following samples:
+
+  * :ref:`ot_coprocessor_sample`
+  * :ref:`coap_server_sample`
+  * :ref:`ot_cli_sample`
 
 Wi-Fi samples
 -------------
@@ -576,7 +662,7 @@ Wi-Fi samples
 Other samples
 -------------
 
-|no_changes_yet_note|
+* Added the :ref:`mcuboot_minimal_configuration` sample that demonstrates the minimal and recommended settings for MCUboot on the nRF54L15 DK.
 
 Drivers
 =======
@@ -593,7 +679,7 @@ Wi-Fi drivers
 Flash drivers
 -------------
 
-|no_changes_yet_note|
+* Removed the SUIT flash IPUC driver.
 
 Libraries
 =========
@@ -609,6 +695,10 @@ Bluetooth libraries and services
 --------------------------------
 
 * :ref:`bt_fast_pair_readme` library:
+
+  * Added the new :ref:`bt_fast_pair_adv_manager_readme` helper module that can be used to manage the Fast Pair advertising set.
+    The module implements a trigger-based system for controlling Fast Pair advertising state that allows client modules to request advertising with their preferred configuration.
+    It also defines the use case layer that provides implementation of specific advertising requirements for supported use cases.
 
   * Updated the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_RING_REQ_TIMEOUT_DULT_MOTION_DETECTOR` Kconfig option dependency.
     The dependency has been updated from the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT` Kconfig option to :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR`.
@@ -733,6 +823,11 @@ Multiprotocol Service Layer libraries
 
 * Added an implementation of the API required by the MPSL (defined by :file:`mpsl_hwres.h`) for the nRF53 and nRF54L Series devices.
 
+* Fixed an issue where calling the :c:func:`mpsl_lib_uninit` function would prevent calibration of the RC oscillator when MPSL was subsequently re-initialized using the :c:func:`mpsl_lib_init()` function.
+
+  This could happen, for instance, when using bluetooth with the :kconfig:option:`CONFIG_BT_UNINIT_MPSL_ON_DISABLE` Kconfig option enabled.
+  The low-frequency clock had poor accuracy in this case.
+
 * Updated the implementation of the following interrupt service routine wrappers:
 
   * :c:func:`mpsl_timer0_isr_wrapper`
@@ -760,6 +855,7 @@ Libraries for networking
 
   * Added
 
+    * The :kconfig:option:`CONFIG_NRF_CLOUD_COAP_MAX_RETRIES` Kconfig option to configure the maximum number of retries for CoAP requests.
     * The :kconfig:option:`CONFIG_NRF_PROVISIONING_INITIAL_BACKOFF` Kconfig option to configure the initial backoff time for provisioning retries.
     * The :kconfig:option:`CONFIG_NRF_PROVISIONING_STACK_SIZE` Kconfig option to configure the stack size of the provisioning thread.
     * A new query parameter to limit the number of provisioning commands included in a single provisioning request.
@@ -835,7 +931,10 @@ This section provides detailed lists of changes by :ref:`integration <integratio
 Google Fast Pair integration
 ----------------------------
 
-|no_changes_yet_note|
+* Added the :ref:`ug_bt_fast_pair_adv_manager` page that describes how to integrate the :ref:`bt_fast_pair_adv_manager_readme` module in your application.
+
+* Updated the :ref:`ug_bt_fast_pair` page to mention the availability of the guide for :ref:`ug_bt_fast_pair_adv_manager` that covers the associated helper module.
+  Mentioned applicability of the :ref:`bt_fast_pair_adv_manager_readme` module in the :ref:`ug_bt_fast_pair_advertising` and the :ref:`ug_bt_fast_pair_use_case_locator_tag` sections.
 
 Edge Impulse integration
 ------------------------
@@ -931,6 +1030,16 @@ Documentation
   * The :ref:`asset_tracker_template_redirect` page, which provides the information about the `Asset Tracker Template Add-on <Asset Tracker Template_>`_.
   * The :ref:`log_rpc` library documentation page.
   * The :ref:`mcuboot_serial_recovery` documentation page, based on the official Zephyr documentation, which discusses the implementation and usage of the serial recovery.
+  * The :ref:`data_storage` page, which covers storage alternatives for general data, including NVMC, NVS, file systems, Settings, and PSA Protected Storage, with feature comparisons and configuration examples.
+  * The :ref:`key_storage` page, which covers storage alternatives for cryptographic keys, including PSA Crypto API, Hardware Unique Keys (HUK), modem certificate storage, and other security-focused storage mechanisms.
+  * The :ref:`bt_fast_pair_adv_manager_readme` page that describes the new helper module for the :ref:`bt_fast_pair_readme` library.
 
-* Removed the Getting started with nRF7002 DK and Getting started with other DKs pages from the :ref:`gsg_guides` section.
-  These pages were no longer relevant as the `Quick Start app`_ now also supports the nRF7002 DK.
+* Updated the :ref:`bt_fast_pair_readme` page to mention the availability of the :ref:`bt_fast_pair_adv_manager_readme` helper module.
+
+* Moved the Wi-Fi credentials library page to the upstream :ref:`Zephyr repository <zephyr:lib_wifi_credentials>`.
+
+* Removed:
+
+  * The Getting started with nRF7002 DK and Getting started with other DKs pages from the :ref:`gsg_guides` section.
+    These pages were no longer relevant as the `Quick Start app`_ now also supports the nRF7002 DK.
+  * The documentation related to SUIT.

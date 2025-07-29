@@ -545,6 +545,7 @@ ci_samples_esb:
     - nrf/subsys/esb/
     - nrf/subsys/mpsl/
     - nrfxlib/crypto/
+    - nrfxlib/mpsl/
     - zephyr/soc/nordic/
 
 ci_samples_edge_impulse:
@@ -1291,6 +1292,15 @@ ci_tests_benchmarks_i2c_endless:
     - nrf/tests/benchmarks/i2c_endless/
     - zephyr/drivers/i2c/
 
+ci_tests_benchmarks_i2s_freq:
+  files:
+    - nrf/tests/benchmarks/i2s_freq
+    - zephyr/drivers/i2s/
+    - zephyr/dts/bindings/i2s/
+    - zephyr/include/zephyr/drivers/i2s.h
+    - zephyr/tests/drivers/i2s/
+    - nrf/tests/drivers/i2s/
+
 ci_tests_benchmarks_peripheral_load:
   files:
     - modules/hal/nordic/nrfx/
@@ -1869,6 +1879,17 @@ ci_samples_zephyr_smp_svr_mini_boot:
     - bootloader/mcuboot/
     - modules/crypto/
     - nrf/samples/zephyr/smp_svr_mini_boot/
+    - nrf/subsys/nrf_security/
+    - zephyr/samples/subsys/mgmt/mcumgr/smp_svr/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/dfu/
+    - zephyr/subsys/mgmt/
+
+ci_samples_zephyr_subsys_mgmt_mcumgr_smp_svr:
+  files:
+    - bootloader/mcuboot/
+    - modules/crypto/
+    - nrf/samples/zephyr/subsys/mgmt/mcumgr/smp_svr/
     - nrf/subsys/nrf_security/
     - zephyr/samples/subsys/mgmt/mcumgr/smp_svr/
     - zephyr/subsys/bluetooth/
