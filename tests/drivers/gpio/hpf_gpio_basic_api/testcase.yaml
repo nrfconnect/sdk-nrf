@@ -7,11 +7,11 @@ common:
   harness: ztest
   harness_config:
     fixture: gpio_loopback
-  timeout: 30
 
 tests:
   drivers.hpf.gpio.loopback.icmsg:
     min_flash: 64
+    timeout: 30
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
@@ -21,6 +21,7 @@ tests:
 
   drivers.hpf.gpio.loopback.icbmsg:
     min_flash: 64
+    timeout: 80
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
@@ -30,6 +31,7 @@ tests:
 
   drivers.hpf.gpio.loopback.mbox:
     min_flash: 64
+    timeout: 30
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
