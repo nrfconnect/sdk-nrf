@@ -1507,7 +1507,6 @@ endpoint 0 {
   device type ma_otarequestor = 18, version 1;
 
   binding cluster OtaSoftwareUpdateProvider;
-  binding cluster NordicDevKit;
 
   server cluster Descriptor {
     callback attribute deviceTypeList;
@@ -1538,6 +1537,7 @@ endpoint 0 {
     emits event StartUp;
     emits event ShutDown;
     emits event Leave;
+    emits event RandomNumberChanged;
     callback attribute dataModelRevision;
     callback attribute vendorName;
     callback attribute vendorID;
@@ -1555,11 +1555,14 @@ endpoint 0 {
     callback attribute capabilityMinima;
     callback attribute specificationVersion;
     callback attribute maxPathsPerInvoke;
+    ram      attribute randomNumber default = 0;
     callback attribute generatedCommandList;
     callback attribute acceptedCommandList;
     callback attribute attributeList;
     ram      attribute featureMap default = 0;
     ram      attribute clusterRevision default = 4;
+
+    handle command GenerateRandom;
   }
 
   server cluster OtaSoftwareUpdateRequestor {
@@ -1706,9 +1709,13 @@ endpoint 0 {
     handle command KeySetReadAllIndices;
     handle command KeySetReadAllIndicesResponse;
   }
+}
+endpoint 1 {
+  device type nordic_dev_kit = 1, version 1;
+
+  binding cluster NordicDevKit;
 
   server cluster NordicDevKit {
-    emits event UserButtonChanged;
     callback attribute generatedCommandList;
     callback attribute acceptedCommandList;
     callback attribute attributeList;
@@ -1720,7 +1727,4 @@ endpoint 0 {
 
     handle command SetLED;
   }
-}
-endpoint 1 {
-
 }
