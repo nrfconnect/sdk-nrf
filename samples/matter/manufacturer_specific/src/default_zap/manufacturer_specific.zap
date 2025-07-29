@@ -403,6 +403,16 @@
           "define": "BASIC_INFORMATION_CLUSTER",
           "side": "server",
           "enabled": 1,
+          "commands": [
+            {
+              "name": "GenerateRandom",
+              "code": 0,
+              "mfgCode": null,
+              "source": "client",
+              "isIncoming": 1,
+              "isEnabled": 1
+            }
+          ],
           "attributes": [
             {
               "name": "DataModelRevision",
@@ -677,6 +687,22 @@
               "reportableChange": 0
             },
             {
+              "name": "RandomNumber",
+              "code": 23,
+              "mfgCode": null,
+              "side": "server",
+              "type": "int16u",
+              "included": 1,
+              "storageOption": "RAM",
+              "singleton": 1,
+              "bounded": 0,
+              "defaultValue": "0",
+              "reportable": 1,
+              "minInterval": 1,
+              "maxInterval": 65534,
+              "reportableChange": 0
+            },
+            {
               "name": "GeneratedCommandList",
               "code": 65528,
               "mfgCode": null,
@@ -775,6 +801,13 @@
             {
               "name": "Leave",
               "code": 2,
+              "mfgCode": null,
+              "side": "server",
+              "included": 1
+            },
+            {
+              "name": "RandomNumberChanged",
+              "code": 4,
               "mfgCode": null,
               "side": "server",
               "included": 1
@@ -2441,7 +2474,38 @@
               "reportableChange": 0
             }
           ]
-        },
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Anonymous Endpoint Type",
+      "deviceTypeRef": {
+        "code": 1,
+        "profileId": 4095,
+        "label": "nordic-dev-kit",
+        "name": "nordic-dev-kit",
+        "deviceTypeOrder": 0
+      },
+      "deviceTypes": [
+        {
+          "code": 1,
+          "profileId": 4095,
+          "label": "nordic-dev-kit",
+          "name": "nordic-dev-kit",
+          "deviceTypeOrder": 0
+        }
+      ],
+      "deviceVersions": [
+        1
+      ],
+      "deviceIdentifiers": [
+        1
+      ],
+      "deviceTypeName": "nordic-dev-kit",
+      "deviceTypeCode": 1,
+      "deviceTypeProfileId": 4095,
+      "clusters": [
         {
           "name": "NordicDevKit",
           "code": 4294048769,
@@ -2606,29 +2670,9 @@
               "maxInterval": 65534,
               "reportableChange": 0
             }
-          ],
-          "events": [
-            {
-              "name": "UserButtonChanged",
-              "code": 4293984256,
-              "mfgCode": null,
-              "side": "server",
-              "included": 1
-            }
           ]
         }
       ]
-    },
-    {
-      "id": 2,
-      "name": "Anonymous Endpoint Type",
-      "deviceTypes": [],
-      "deviceVersions": [],
-      "deviceIdentifiers": [],
-      "deviceTypeName": "",
-      "deviceTypeCode": "",
-      "deviceTypeProfileId": "",
-      "clusters": []
     }
   ],
   "endpoints": [
