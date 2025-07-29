@@ -27,6 +27,24 @@ config SOC_NRF54LM20A_ENGA_CPUFLPR
 	help
 	  NRF54LM20A ENGA CPUFLPR
 
+config SOC_NRF54LS05B
+	bool
+	select SOC_SERIES_NRF54LX
+	help
+	  NRF54LS05B
+
+config SOC_NRF54LS05B_ENGA
+	bool
+	select SOC_NRF54LS05B
+	help
+	  NRF54LS05B ENGA
+
+config SOC_NRF54LS05B_ENGA_CPUAPP
+	bool
+	select SOC_NRF54LS05B_ENGA
+	help
+	  NRF54LS05B ENGA CPUAPP
+
 config SOC_NRF54LV10A
 	bool
 	select SOC_SERIES_NRF54LX
@@ -53,4 +71,5 @@ config SOC_NRF54LV10A_ENGA_CPUFLPR
 
 config SOC
 	default "nrf54lm20a" if SOC_NRF54LM20A
+	default "nrf54ls05b" if SOC_NRF54LS05B
 	default "nrf54lv10a" if SOC_NRF54LV10A
