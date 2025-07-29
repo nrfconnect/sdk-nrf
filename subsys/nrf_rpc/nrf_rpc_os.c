@@ -83,6 +83,7 @@ int nrf_rpc_os_init(nrf_rpc_os_work_t callback)
 			thread_pool_entry,
 			NULL, NULL, NULL,
 			CONFIG_NRF_RPC_THREAD_PRIORITY, 0, K_NO_WAIT);
+		k_thread_name_set(&pool_threads[i], "rpc");
 	}
 
 	return 0;
