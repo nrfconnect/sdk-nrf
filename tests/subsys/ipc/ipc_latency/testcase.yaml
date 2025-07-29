@@ -1,0 +1,25 @@
+common:
+  tags:
+    - subsys
+    - ipc
+    - ci_tests_subsys_nfc
+  harness: ztest
+  sysbuild: true
+
+tests:
+  subsys.ipc.ipc_latency.app_rad.default_backend:
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+  subsys.ipc.ipc_latency.app_rad.icmsg_backend:
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - FILE_SUFFIX=icmsg

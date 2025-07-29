@@ -933,6 +933,7 @@
 /tests/subsys/partition_manager/static_pm_file/ @nordicjm @tejlmand
 /tests/subsys/pcd/                        @nrfconnect/ncs-pluto
 /tests/subsys/usb/negotiated_speed/       @nrfconnect/ncs-low-level-test
+/tests/subsys/ipc/                        @nrfconnect/ncs-low-level-test
 /tests/tfm/                               @nrfconnect/ncs-aegir @magnev
 /tests/unity/                             @nordic-krch
 /tests/zephyr/boards/nrf/                 @nrfconnect/ncs-low-level-test

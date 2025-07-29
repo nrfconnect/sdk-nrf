@@ -1060,6 +1060,10 @@ ci_samples_ipc:
     - zephyr/drivers/mbox/
     - zephyr/subsys/ipc/
 
+ci_tests_subsys_ipc:
+  files:
+    - nrf/tests/subsys/ipc/
+
 ci_samples_benchmarks:
   files:
     - modules/benchmark/
