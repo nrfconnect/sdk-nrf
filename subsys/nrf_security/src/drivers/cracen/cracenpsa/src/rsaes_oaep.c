@@ -37,13 +37,13 @@
 #define NUMBER_OF_SLOTS 6
 
 struct rsa_oaep_workmem {
-	uint8_t workmem[WORKMEM_SIZE];
 	uint8_t *wmem;
 	uint8_t *seed;
 	uint8_t *salt;
 	uint8_t *datablock;
 	uint8_t *datablockstart;
 	uint8_t *datablockend;
+	uint8_t workmem[WORKMEM_SIZE];
 };
 
 static void rsa_oaep_decrypt_init(struct rsa_oaep_workmem *workmem, size_t digestsz,
@@ -163,13 +163,10 @@ int cracen_rsa_oaep_decrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
 	return SX_OK;
 }
 
-static void rsa_oaep_encrypt_init(struct rsa_oaep_workmem *workmem, size_t digestsz,
-				  size_t datablockstart_offset)
+static void rsa_oaep_encrypt_init(struct rsa_oaep_workmem *workmem, size_t digestsz)
 {
-	workmem->datablock =
-		cracen_get_rsa_workmem_pointer(workmem->workmem, digestsz) + digestsz + 1;
 	workmem->wmem = cracen_get_rsa_workmem_pointer(workmem->workmem, digestsz);
-	workmem->datablockstart = workmem->wmem + datablockstart_offset;
+	workmem->datablock = workmem->wmem + digestsz + 1;
 	workmem->seed = workmem->wmem + 1;
 }
 
@@ -181,14 +178,12 @@ int cracen_rsa_oaep_encrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
 	psa_status_t psa_status = PSA_ERROR_CORRUPTION_DETECTED;
 	size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
 	size_t modulussz = CRACEN_RSA_KEY_OPSZ(rsa_key);
-	const size_t datablockstart_offset = digestsz + 1;
 	struct rsa_oaep_workmem workmem;
 
-	rsa_oaep_encrypt_init(&workmem, digestsz, datablockstart_offset);
+	rsa_oaep_encrypt_init(&workmem, digestsz);
 	if (WORKMEM_SIZE < modulussz + digestsz + 4) {
 		return SX_ERR_WORKMEM_BUFFER_TOO_SMALL;
 	}
-	const size_t wmem_size = cracen_get_rsa_workmem_size(sizeof(workmem.workmem), digestsz);
 
 	/* detect invalid combinations of key size and hash function */
 	if (modulussz < 2 * digestsz + 2) {
@@ -212,14 +207,14 @@ int cracen_rsa_oaep_encrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
 	/* start encoding and request generation of the random seed */
 
 	/* pointer used to walk through the data block DB */
-	uint8_t *datab = workmem.datablockstart;
+	uint8_t *datab = workmem.datablock + digestsz;
 	size_t datablocksz = modulussz - digestsz - 1;
-	size_t paddingstrsz = datablocksz - digestsz - text->sz - 1;
-
-	datab += paddingstrsz;
+	size_t paddingstrsz = datablocksz - (digestsz + text->sz + 1);
 
 	/* write the padding string PS, consisting of zero octets */
-	safe_memset(datab, wmem_size - (datablockstart_offset + digestsz), 0, paddingstrsz);
+	safe_memzero(datab, paddingstrsz);
+
+	datab += paddingstrsz;
 
 	/* write the 0x01 octet that follows PS in DB */
 	*datab++ = 1;
@@ -260,8 +255,8 @@ int cracen_rsa_oaep_encrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
 	struct sx_pk_slot inputs[NUMBER_OF_SLOTS];
 
 	/* modular exponentiation m^d mod n (RSASP1 sign primitive) */
-	sx_status = cracen_rsa_modexp(&pkreq, inputs, rsa_key, workmem.wmem,
-				      modulussz, input_sizes);
+	sx_status =
+		cracen_rsa_modexp(&pkreq, inputs, rsa_key, workmem.wmem, modulussz, input_sizes);
 	if (sx_status != SX_OK) {
 		safe_memzero(workmem.workmem, sizeof(workmem.workmem));
 		sx_pk_release_req(pkreq.req);
@@ -276,7 +271,7 @@ int cracen_rsa_oaep_encrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
 	sx_pk_release_req(pkreq.req);
 
 	memcpy(output, workmem.wmem, opsz);
-	*output_length = text->sz;
+	*output_length = opsz;
 	safe_memzero(workmem.workmem, sizeof(workmem.workmem));
 	return SX_OK;
 }
