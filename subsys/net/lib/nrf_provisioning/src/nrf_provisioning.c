@@ -311,20 +311,24 @@ static void nrf_provisioning_lte_handler(const struct lte_lc_evt *const evt)
 	switch (evt->type) {
 	case LTE_LC_EVT_NW_REG_STATUS:
 		LOG_DBG("LTE_LC_EVT_NW_REG_STATUS: %d", evt->nw_reg_status);
+		
+		k_mutex_lock(&np_mtx, K_FOREVER);
+		
 		if ((evt->nw_reg_status != LTE_LC_NW_REG_REGISTERED_HOME) &&
 		    (evt->nw_reg_status != LTE_LC_NW_REG_REGISTERED_ROAMING)) {
 			if (initialized) {
 				nw_connected = false;
 				LOG_INF("Disconnected from network - provisioning paused");
 			}
-			break;
+		} else {
+			LOG_INF("%s - provisioning resumed",
+				evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?
+					"Connected; home network" :
+					"Connected; roaming");
+			nw_connected = true;
 		}
-
-		LOG_INF("%s - provisioning resumed",
-			evt->nw_reg_status == LTE_LC_NW_REG_REGISTERED_HOME ?
-				"Connected; home network" :
-				"Connected; roaming");
-		nw_connected = true;
+		
+		k_mutex_unlock(&np_mtx);
 		break;
 	default:
 		break;
@@ -339,7 +343,8 @@ int nrf_provisioning_init(nrf_provisioning_event_cb_t callback_handler)
 
 	if (!callback_handler) {
 		LOG_ERR("Callback handler is NULL");
-		return -EINVAL;
+		ret = -EINVAL;
+		goto exit;
 	}
 
 	if (initialized) {
@@ -524,14 +529,15 @@ void nrf_provisioning_set_interval(int interval)
 		char time_str[sizeof(STRINGIFY(2147483647))] = {0};
 		int ret;
 
-		nxt_provisioning = interval;
-		reschedule = true;
-
 		ret = k_mutex_lock(&np_mtx, K_NO_WAIT);
 		if (ret < 0) {
 			LOG_ERR("Unable to lock mutex, err: %d", ret);
 			return;
 		}
+		
+		nxt_provisioning = interval;
+		reschedule = true;
+		
 		/* Let the provisioning thread run */
 		k_condvar_signal(&np_cond);
 		k_mutex_unlock(&np_mtx);
@@ -647,6 +653,7 @@ static void scheduled_provisioning(void)
 		event_data.next_attempt_time_seconds = ret;
 		callback_local(&event_data);
 
+		k_mutex_lock(&np_mtx, K_FOREVER);
 		k_condvar_wait(&np_cond, &np_mtx, K_SECONDS(ret));
 		k_mutex_unlock(&np_mtx);
 	} while (!nw_connected || reschedule);
@@ -677,6 +684,7 @@ static void scheduled_provisioning(void)
 		event_data.next_attempt_time_seconds = backoff;
 		callback_local(&event_data);
 
+		k_mutex_lock(&np_mtx, K_FOREVER);
 		k_condvar_wait(&np_cond, &np_mtx, K_SECONDS(backoff));
 		k_mutex_unlock(&np_mtx);
 
@@ -726,6 +734,7 @@ int nrf_provisioning_req(void)
 	int ret;
 	struct nrf_provisioning_callback_data event_data = { 0 };
 
+	k_mutex_lock(&np_mtx, K_FOREVER);
 	k_condvar_wait(&np_cond, &np_mtx, K_FOREVER);
 	k_mutex_unlock(&np_mtx);
 
@@ -754,13 +763,10 @@ int nrf_provisioning_req(void)
 			on_demand_provisioning();
 
 			/* Wait for the next provisioning request */
+			k_mutex_lock(&np_mtx, K_FOREVER);
 			k_condvar_wait(&np_cond, &np_mtx, K_FOREVER);
 			k_mutex_unlock(&np_mtx);
 		}
-
-#if CONFIG_UNITY
-		break;
-#endif
 	}
 
 	return ret;

@@ -24,6 +24,7 @@
 #include "cmock_coap_client.h"
 #include "cmock_settings.h"
 #include "cmock_nrf_provisioning_jwt.h"
+#include "cmock_nrf_provisioning_internal.h"
 
 #include "nrf_provisioning_codec.h"
 #include "nrf_provisioning_coap.h"
@@ -42,19 +43,9 @@ static const char *auth_path = "p/auth-jwt";
 static const char *cmd_path = "p/cmd";
 static const char *resp_path = "p/rsp";
 
-static void dummy_nrf_provisioning_device_mode_cb(enum nrf_provisioning_event event,
-						  void *user_data)
+static void dummy_nrf_provisioning_event_cb(const struct nrf_provisioning_callback_data *event)
 {
-	(void)user_data;
 	(void)event;
-}
-
-static int dummy_nrf_provisioning_modem_mode_cb(enum lte_lc_func_mode new_mode, void *user_data)
-{
-	(void)user_data;
-	(void)new_mode;
-
-	return 0;
 }
 
 static int modem_key_mgmt_exists_true(nrf_sec_tag_t sec_tag,
@@ -78,11 +69,9 @@ static int modem_key_mgmt_exists_false(nrf_sec_tag_t sec_tag,
 K_SEM_DEFINE(stopped_sem, 0, 1);
 K_SEM_DEFINE(done_sem, 0, 1);
 
-static void device_mode_cb(enum nrf_provisioning_event event,
-						  void *user_data)
+static void nrf_provisioning_callback_handler(const struct nrf_provisioning_callback_data *event)
 {
-	(void)user_data;
-	switch (event) {
+	switch (event->type) {
 	case NRF_PROVISIONING_EVENT_START:
 		printk("Provisioning started\n");
 		break;
@@ -94,12 +83,41 @@ static void device_mode_cb(enum nrf_provisioning_event event,
 		printk("Provisioning done\n");
 		k_sem_give(&done_sem);
 		break;
+	case NRF_PROVISIONING_EVENT_FAILED:
+		printk("Provisioning failed\n");
+		break;
+	case NRF_PROVISIONING_EVENT_NO_COMMANDS:
+		printk("No commands from server\n");
+		break;
+	case NRF_PROVISIONING_EVENT_FAILED_TOO_MANY_COMMANDS:
+		printk("Too many commands\n");
+		break;
+	case NRF_PROVISIONING_EVENT_FAILED_DEVICE_NOT_CLAIMED:
+		printk("Device not claimed\n");
+		break;
+	case NRF_PROVISIONING_EVENT_FAILED_WRONG_ROOT_CA:
+		printk("Wrong root CA\n");
+		break;
+	case NRF_PROVISIONING_EVENT_FAILED_NO_VALID_DATETIME:
+		printk("No valid datetime\n");
+		break;
+	case NRF_PROVISIONING_EVENT_NEED_LTE_DEACTIVATED:
+		printk("Need LTE deactivated\n");
+		break;
+	case NRF_PROVISIONING_EVENT_NEED_LTE_ACTIVATED:
+		printk("Need LTE activated\n");
+		break;
+	case NRF_PROVISIONING_EVENT_SCHEDULED_PROVISIONING:
+		printk("Scheduled provisioning\n");
+		break;
+	case NRF_PROVISIONING_EVENT_FATAL_ERROR:
+		printk("Fatal error\n");
+		break;
+	default:
+		printk("Unknown event %d\n", event->type);
+		break;
 	}
 }
-static struct nrf_provisioning_dm_change test_dm = {
-	.cb = device_mode_cb,
-	.user_data = NULL
-};
 
 static void wait_for_stopped(void)
 {
@@ -187,6 +205,9 @@ void setUp(void)
 {
 	k_sem_reset(&stopped_sem);
 	k_sem_reset(&done_sem);
+
+	/* Let the DuT thread start up before any test case is run. */
+	k_sleep(K_MSEC(100));
 }
 
 void tearDown(void)
@@ -579,7 +600,7 @@ void test_coap_no_more_commands(void)
 
 	int ret = nrf_provisioning_coap_req(&coap_ctx);
 
-	TEST_ASSERT_EQUAL_INT(0, ret);
+	TEST_ASSERT_EQUAL_INT(-ENODATA, ret);
 }
 
 /*
@@ -607,7 +628,7 @@ void test_coap_cmds_valid_path(void)
 
 	int ret = nrf_provisioning_coap_req(&coap_ctx);
 
-	TEST_ASSERT_EQUAL_INT(0, ret);
+	TEST_ASSERT_EQUAL_INT(-ENODATA, ret);
 }
 
 /*
@@ -719,55 +740,6 @@ static int lte_lc_func_mode_get_offline_cb(enum lte_lc_func_mode *mode, int cmoc
 	return 0;
 }
 
-K_SEM_DEFINE(lte_connect_sem, 0, 1);
-static int lte_lc_connect_cb(int cmock_num_calls)
-{
-	k_sem_give(&lte_connect_sem);
-	return -EFAULT;
-}
-
-/*
- * - Call init twice to switch the callback functions
- * - Switching the callbacks on the fly should be possible
- * - Call the init function twice but with different arguments each time. It shouldn't matter if
- *   init has been called in any previous tests.
- */
-void test_provisioning_init_change_cbs_valid(void)
-{
-	static struct nrf_provisioning_dm_change dm = {.cb = dummy_nrf_provisioning_device_mode_cb,
-						       .user_data = NULL};
-	static struct nrf_provisioning_mm_change mm = {.cb = dummy_nrf_provisioning_modem_mode_cb,
-						       .user_data = NULL};
-
-	__cmock_nrf_modem_lib_init_IgnoreAndReturn(0);
-	__cmock_modem_info_init_IgnoreAndReturn(0);
-	__cmock_coap_client_init_IgnoreAndReturn(0);
-	__cmock_modem_key_mgmt_exists_AddCallback(modem_key_mgmt_exists_false);
-	__cmock_modem_key_mgmt_exists_ExpectAnyArgsAndReturn(0);
-	__cmock_modem_key_mgmt_write_IgnoreAndReturn(0);
-	__cmock_settings_subsys_init_IgnoreAndReturn(0);
-	__cmock_settings_register_IgnoreAndReturn(0);
-	__cmock_settings_load_subtree_IgnoreAndReturn(0);
-	__cmock_lte_lc_func_mode_get_Stub(lte_lc_func_mode_get_offline_cb);
-	__cmock_lte_lc_func_mode_set_ExpectAndReturn(LTE_LC_FUNC_MODE_OFFLINE, 0);
-	__cmock_lte_lc_connect_Stub(lte_lc_connect_cb);
-	/* No way to check that the correct handler is passed as an argument */
-	__cmock_lte_lc_register_handler_Ignore();
-	__cmock_date_time_now_IgnoreAndReturn(0);
-
-	/* To make certain init has been called at least once beforehand */
-	int ret = nrf_provisioning_init(NULL, NULL);
-
-	TEST_ASSERT_EQUAL_INT(0, ret);
-
-	k_sem_take(&lte_connect_sem, K_FOREVER);
-
-	ret = nrf_provisioning_init(&mm, &dm);
-	TEST_ASSERT_EQUAL_INT(0, ret);
-
-	k_sleep(K_SECONDS(1));
-}
-
 /*
  * - Trigger provisioning manually after initialization
  * - Should succeed if the module has been initialized
@@ -775,9 +747,6 @@ void test_provisioning_init_change_cbs_valid(void)
  */
 void test_provisioning_task_valid(void)
 {
-	static struct nrf_provisioning_mm_change mm = {.cb = dummy_nrf_provisioning_modem_mode_cb,
-						       .user_data = NULL};
-
 	struct coap_client_option block2_option = {};
 
 	__cmock_modem_key_mgmt_exists_AddCallback(modem_key_mgmt_exists_true);
@@ -794,7 +763,9 @@ void test_provisioning_task_valid(void)
 	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_control_IgnoreAndReturn(0);
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 	__cmock_date_time_now_IgnoreAndReturn(0);
+	__cmock_date_time_is_valid_IgnoreAndReturn(1);
 
 	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
 	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
@@ -814,7 +785,7 @@ void test_provisioning_task_valid(void)
 	__cmock_coap_client_req_ExpectAnyArgsAndReturn(0);
 	__cmock_settings_save_one_ExpectAnyArgsAndReturn(0);
 
-	int ret = nrf_provisioning_init(&mm, &test_dm);
+	int ret = nrf_provisioning_init(nrf_provisioning_callback_handler);
 
 	TEST_ASSERT_EQUAL_INT(0, ret);
 
@@ -826,9 +797,6 @@ void test_provisioning_task_valid(void)
 
 void test_provisioning_commands(void)
 {
-	static struct nrf_provisioning_mm_change mm = {.cb = dummy_nrf_provisioning_modem_mode_cb,
-						       .user_data = NULL};
-
 	struct coap_client_option block2_option = {};
 
 	__cmock_modem_key_mgmt_exists_AddCallback(modem_key_mgmt_exists_true);
@@ -844,13 +812,9 @@ void test_provisioning_commands(void)
 	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_control_IgnoreAndReturn(0);
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 	__cmock_date_time_now_IgnoreAndReturn(0);
-	__cmock_settings_load_subtree_IgnoreAndReturn(0);
-
-	/* To make certain init has been called at least once beforehand */
-	int ret = nrf_provisioning_init(&mm, &test_dm);
-
-	TEST_ASSERT_EQUAL_INT(0, ret);
+	__cmock_date_time_is_valid_IgnoreAndReturn(1);
 
 	__cmock_nrf_provisioning_at_cmd_ExpectAnyArgsAndReturn(513);
 	__cmock_nrf_modem_at_err_ExpectAnyArgsAndReturn(513);
@@ -885,7 +849,8 @@ void test_provisioning_commands(void)
 	__cmock_coap_client_req_ExpectAnyArgsAndReturn(0);
 
 
-	ret = nrf_provisioning_trigger_manually();
+	int ret = nrf_provisioning_trigger_manually();
+
 	TEST_ASSERT_EQUAL_INT(0, ret);
 
 	wait_for_stopped();
@@ -899,20 +864,17 @@ void test_coap_rps_bad_request(void)
 	struct nrf_provisioning_coap_context coap_ctx = {
 		.connect_socket = -1,
 	};
-	struct nrf_provisioning_mm_change mm = {.cb = dummy_nrf_provisioning_modem_mode_cb,
-						.user_data = NULL};
 
 	struct coap_client_option block2_option = {};
 
 	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
-	nrf_provisioning_coap_init(&mm);
-
 	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
 	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
 	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
@@ -940,20 +902,18 @@ void test_coap_rsp_server_error(void)
 	struct nrf_provisioning_coap_context coap_ctx = {
 		.connect_socket = -1,
 	};
-	struct nrf_provisioning_mm_change mm = {.cb = dummy_nrf_provisioning_modem_mode_cb,
-						.user_data = NULL};
 
 	struct coap_client_option block2_option = {};
 
 	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
-	nrf_provisioning_coap_init(&mm);
 
 	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
 	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
 	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
@@ -981,20 +941,18 @@ void test_coap_rsp_unsupported_code(void)
 	struct nrf_provisioning_coap_context coap_ctx = {
 		.connect_socket = -1,
 	};
-	struct nrf_provisioning_mm_change mm = {.cb = dummy_nrf_provisioning_modem_mode_cb,
-						.user_data = NULL};
 
 	struct coap_client_option block2_option = {};
 
 	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_ExpectAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_control_ExpectAnyArgsAndReturn(0);
-	nrf_provisioning_coap_init(&mm);
 
 	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
 	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
 	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
 	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
 
 	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
 	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(

@@ -12,6 +12,7 @@
 
 #include <zephyr/settings/settings.h>
 #include <modem/lte_lc.h>
+#include <net/nrf_provisioning.h>
 
 #ifdef __cplusplus
 extern "C" {
