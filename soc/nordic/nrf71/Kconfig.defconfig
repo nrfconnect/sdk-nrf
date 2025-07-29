@@ -15,6 +15,13 @@ config CORTEX_M_SYSTICK
 config CACHE_NRF_CACHE
 	default y if EXTERNAL_CACHE
 
+config CACHE_MANAGEMENT
+	default y
+
+choice CACHE_TYPE
+	default EXTERNAL_CACHE
+endchoice
+
 endif # ARM
 
 if RISCV
