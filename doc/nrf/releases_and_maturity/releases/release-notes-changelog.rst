@@ -354,7 +354,7 @@ nRF Desktop
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
-|no_changes_yet_note|
+* Added power-optimized configuration for the :zephyr:board:`nrf54h20dk` board target.
 
 Serial LTE modem
 ----------------
