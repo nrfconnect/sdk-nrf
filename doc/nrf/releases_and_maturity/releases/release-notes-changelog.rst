@@ -258,7 +258,8 @@ IPC radio firmware
 Matter bridge
 -------------
 
-|no_changes_yet_note|
+* Implemented the missing identify cluster for the endpoint 1.
+  This resolves the :ref:`known issue <known_issues>` KRKNWK-20019.
 
 nRF5340 Audio
 -------------
