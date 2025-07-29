@@ -12,11 +12,14 @@ common:
 tests:
   nrf.extended.drivers.spi.spi_mode0:
     platform_allow:
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
@@ -25,11 +28,14 @@ tests:
 
   nrf.extended.drivers.spi.spi_mode1:
     platform_allow:
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
@@ -38,11 +44,14 @@ tests:
 
   nrf.extended.drivers.spi.spi_mode2:
     platform_allow:
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
@@ -51,11 +60,14 @@ tests:
 
   nrf.extended.drivers.spi.spi_mode3:
     platform_allow:
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
@@ -64,11 +76,14 @@ tests:
 
   nrf.extended.drivers.spi.spi_4MHz:
     platform_allow:
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
@@ -77,11 +92,14 @@ tests:
 
   nrf.extended.drivers.spi.spi_8MHz:
     platform_allow:
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
@@ -90,11 +108,14 @@ tests:
 
   nrf.extended.drivers.spi.pm_runtime:
     platform_allow:
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.0.0/nrf54lv10a/cpuapp
       - nrf54lv10dk@0.2.0/nrf54lv10a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf7120pdk/nrf7120/cpuapp
     extra_configs:
