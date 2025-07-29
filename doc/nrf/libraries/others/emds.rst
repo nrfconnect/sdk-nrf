@@ -14,43 +14,62 @@ Implementation
 **************
 The :kconfig:option:`CONFIG_EMDS` Kconfig option enables the emergency data storage.
 
-The application must initialize the pre-allocated storage area by using the :c:func:`emds_init` function.
-The :kconfig:option:`CONFIG_EMDS_SECTOR_COUNT` option defines how many sectors should be used to store data.
+The EMDS uses the persistent memory in form of storage partitions, which can be either flash or RRAM.
+The static partition manager file :file:`pm.yml.emds` is required for defining the storage partitions.
+You must align the storage partitions to the write block size, which is 4 bytes for flash and 16 bytes for RRAM.
+The EMDS mandates at least two storage partitions to allow restoring of the last known copy of data.
+The application must initialize storage partitions by using the :c:func:`emds_init` function.
 
-The allocated storage space must be larger than the combined data stored by the application.
+The partition storage space for each partition must be larger than the combined data stored by the application.
+To find out how much storage space is needed, call the :c:func:`emds_store_size_get` function.
+Additionally, consider the size of the metadata, which is 32 bytes for each snapshot.
 Allocating a larger storage area will demand more resources, but also increase the life expectancy of the persistent memory.
 The chosen size should reflect the amount of data stored, the available persistent memory and how the application calls the :c:func:`emds_store` function.
-In general, it should not be necessary to allocate a large storage area, since only a limited set of data should be stored to ensure swift completion of writing the data on shutdown.
 
 The memory location that is going to be stored must be added on initialization.
 All memory areas must be provided through entries containing an ID, data pointer, and data length, using the :c:func:`emds_entry_add` function and the :c:macro:`EMDS_STATIC_ENTRY_DEFINE` macro.
 Entries to be stored when the emergency data storage is triggered need their own unique IDs that are not changed after a reboot.
+The entries are stored in the partition in form of snapshots.
+The snapshot is a packed copy of all entries that are registered with the EMDS library for storage in the data area of the partition.
+Each snapshot is described by the metadata that is stored in the metadata area of the partition.
 
-When all entries are added, the :c:func:`emds_load` function restores the entries into the memory areas from the persistent memory.
+After initialization is completed by registering all EMDS entries, the application calls the :c:func:`emds_load` function.
+This starts a partition scanning procedure to find the latest snapshot.
+As a part of loading procedure, the EMDS scans the metadata area of both partitions.
+The :kconfig:option:`CONFIG_EMDS_SCANNING_FAILURES` Kconfig option configures the depth of the scanning procedure.
+The depth is the number of times the scanning procedure can fail in a row before it stops, because most likely, there is no stored metadata left.
+The scanning procedure is performed by reading the metadata area of the partition and checking the integrity of the metadata.
+The procedure gathers the most recent snapshots (set by :kconfig:option:`CONFIG_EMDS_MAX_CANDIDATES`) from the partition metadata area.
+After the procedure is completed, the EMDS checks data integrity on the gathered candidates, starting from the latest one stored on the partition.
+If the data integrity checks pass, the entries are restored into the memory areas from the persistent memory.
+If candidates are not found or the data integrity check does not pass, the function returns an error.
+The :c:func:`emds_load` function returns an error code if it runs on the empty partitions.
 
-After restoring the previous data, the application must run the :c:func:`emds_prepare` function to prepare the storage area for receiving new entries.
-If the remaining empty storage area is smaller than the required data size, the storage area will be automatically erased to increase the available storage area.
+After restoring the previous data, the application must call the :c:func:`emds_prepare` function to prepare the storage area for receiving new entries.
+Initially, the EMDS library tries to allocate the storage area for the new entries in the partition that has the most recent snapshot to use the maximum partition capacity.
+However, if the partition is full, the EMDS tries to allocate the storage area in the other partition.
+If the other partition is full, the EMDS erases the entire partition to get space for a new snapshot, depending on the type of persistent memory.
+Devices with flash memory require an explicit erase, whereas devices with RRAM do not need an explicit erase.
+The EMDS library handles this internally.
+The EMDS never erases the partition that has the most recent snapshot found during the partitions scanning procedure.
 
 The storage is done in deterministic time, so it is possible to know how long it takes to store all registered entries.
 However, this is chip-dependent, so it is important to measure the time.
 Find timing values under the "Electrical specification" section for the non-volatile memory controller in the Product Specification for the relevant SoC or the SiP you are using.
 For example, for the nRF52840 SiP, see the `nRF52840 Product Specification`_ page.
+The data is stored by chunks of 16 bytes.
+The storing time is determined by the chunk preparation time and the flash writing time, and depends on both the number of stored data bytes (both data and metadata) as well as the number of chunks.
 
-The following Kconfig options can be configured:
+The following (non-public) Kconfig options are needed for the time estimation:
 
 * :kconfig:option:`CONFIG_EMDS_FLASH_TIME_WRITE_ONE_WORD_US`
-* :kconfig:option:`CONFIG_EMDS_FLASH_TIME_ENTRY_OVERHEAD_US`
-* :kconfig:option:`CONFIG_EMDS_FLASH_TIME_BASE_OVERHEAD_US`
+* :kconfig:option:`CONFIG_EMDS_CHUNK_PREPARATION_TIME_US`
 
-When configuring these values, consider the time for erase when doing garbage collection in NVS using flash.
-If partial erase is not enabled or supported, the time of a complete sector erase has to be included in the :kconfig:option:`CONFIG_EMDS_FLASH_TIME_BASE_OVERHEAD_US`.
-When partial erase is enabled and supported by the hardware, include the time it takes for the scheduler to trigger, which is depending on the time defined in :kconfig:option:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE_MS`.
-When changing the :kconfig:option:`CONFIG_EMDS_FLASH_TIME_BASE_OVERHEAD_US` option, it is important that the worst time is considered.
-When configuring these values using RRAM, you do not need to consider garbage collection in the same way as for flash, as it can be written to regardless of value.
-However, avoid the ERASEALL functionality, because that can increase the time before the EMDS store functions are called.
+You can tune these options to influence the estimation of the writing time (see :c:func:`emds_store_time_get`), but they do not change the actual time needed for storing the snapshot.
+It is recommended to consider the worst case scenarios when adjusting these options.
 
 The application must call the :c:func:`emds_store` function to store all entries.
-This can only be done once, before the :c:func:`emds_prepare` function must be called again.
+This can only be done once, before the :c:func:`emds_load` and :c:func:`emds_prepare` functions must be called again.
 When invoked, the :c:func:`emds_store` function stores all the registered entries.
 Invocation of this call should be performed when the application detects loss of power, or when a reboot is triggered.
 
@@ -120,17 +139,21 @@ This knowledge makes it possible for you to make good design choices ensuring en
 
 The easiest way of computing an estimate of the time required to store all entries, in a worst case scenario, is to call the :c:func:`emds_store_time_get` function.
 This function returns a worst-case storage time estimate in microseconds (µs) for a given application.
-For this to work, Kconfig options :kconfig:option:`CONFIG_EMDS_FLASH_TIME_BASE_OVERHEAD_US`, :kconfig:option:`CONFIG_EMDS_FLASH_TIME_ENTRY_OVERHEAD_US` and :kconfig:option:`CONFIG_EMDS_FLASH_TIME_WRITE_ONE_WORD_US` need to be set as described in the `Implementation`_ section.
+To make this work, you need to determine and set the Kconfig options :kconfig:option:`CONFIG_EMDS_FLASH_TIME_WRITE_ONE_WORD_US` and :kconfig:option:`CONFIG_EMDS_CHUNK_PREPARATION_TIME_US` as described in the `Implementation`_ section for your platform.
 The :c:func:`emds_store_time_get` function estimates the required worst-case time to store :math:`n` entries using the following formula:
 
 .. math::
 
-   t_\text{store} = t_\text{base} + \sum_{i = 1}^n \left(t_\text{entry} + t_\text{word}\left(\left\lceil\frac{s_\text{ate}}{s_\text{block}}\right\rceil + \left\lceil\frac{s_i}{s_\text{block}}\right\rceil \right)\right)
+   t_\text{store} = t_\text{word}\lceil\frac{s_\text{meta}}{s_\text{word}}\rceil + t_\text{word} \sum_{i = 1}^n (\left\lceil\frac{s_i}{s_\text{word}}\right\rceil) + t_\text{chunk} \sum_{i = 1}^n (\left\lceil\frac{s_i}{s_\text{chunk}}\right\rceil)
 
-where :math:`t_\text{base}` is the value specified by :kconfig:option:`CONFIG_EMDS_FLASH_TIME_BASE_OVERHEAD_US`, :math:`t_\text{entry}` is the value specified by :kconfig:option:`CONFIG_EMDS_FLASH_TIME_ENTRY_OVERHEAD_US` and :math:`t_\text{word}` is the value specified by :kconfig:option:`CONFIG_EMDS_FLASH_TIME_WRITE_ONE_WORD_US`.
-:math:`s_i` is the size of the :math:`i`\ th entry in bytes and :math:`s_\text{block}` is the number of bytes in one word (4 bytes) of flash or the write-buffer size (16 bytes) of RRAM.
-These can be found by looking at datasheets, driver documentation, and the configuration of the application.
-:math:`s_\text{ate}` is the size of the allocation table entry used by the EMDS, which is 8 B.
+where
+
+:math:`t_\text{word}` is the value specified by :kconfig:option:`CONFIG_EMDS_FLASH_TIME_WRITE_ONE_WORD_US`.
+:math:`t_\text{chunk}` is the value specified by :kconfig:option:`CONFIG_EMDS_CHUNK_PREPARATION_TIME_US`.
+:math:`s_i` is the size of the :math:`i`\ th entry in bytes(entry data length + 4 bytes entry header).
+:math:`s_\text{meta}` is the size of the snapshot metadata (32 bytes).
+:math:`s_\text{block}` is the number of bytes in one word (4 bytes).
+:math:`s_\text{chunk}` is the number of bytes in one chunk (16 bytes).
 
 Example of time estimation
 ==========================
@@ -138,22 +161,21 @@ Example of time estimation
 Using the formula from the previous section, you can estimate the time required to store all entries for the :ref:`bluetooth_mesh_light_lc` sample running on the nRF52840.
 The following values can be inserted into the formula:
 
-*  Set :math:`t_\text{base}` = 9000 µs.
-   This is the worst case overhead when a store is triggered in the middle of an erase on nRF52840 with :kconfig:option:`CONFIG_SOC_FLASH_NRF_PARTIAL_ERASE` enabled in the sample by default, and should be adjusted when using other configurations.
-*  Set :math:`t_\text{entry}` = 300 µs and :math:`t_\text{word}` = 41 µs. *Note: These values are valid only for this specific chip and configuration, and should be computed for the specific configuration whenever using EMDS.*
-*  The sample uses two entries, one for the RPL with 255 entries (:math:`s_i` = 2040 B) and one for the lightness state (:math:`s_i` = 3 B).
-*  The flash write block size :math:`s_\text{block}` in this case is 4 B, and the ATE size :math:`s_\text{ate}` is 8 B.
+*  Set :math:`t_\text{chunk}` = 31 µs and :math:`t_\text{word}` = 41 µs.
+   These values are valid only for this specific chip and configuration, and should be computed for the specific configuration whenever using EMDS.
+*  The sample uses two entries, one for the RPL with 255 entries (:math:`s_i` = 2040 + 4 B) and one for the lightness state (:math:`s_i` = 3 + 4 B).
+*  The flash write block size :math:`s_\text{block}` in this case is 4 B.
+*  The chunk size :math:`s_\text{chunk}` is 16 B.
+*  The size of the snapshot metadata :math:`s_\text{meta}` is 32 B.
 
 This gives the following formula to compute estimated storage time:
 
 .. math::
    \begin{aligned}
-   t_\text{store} = 9000\text{ µs} &+ \left( 300\text{ µs} + 41\text{ µs} \times \left( \left\lceil\frac{8\text{ B}}{4\text{ B}}\right\rceil + \left\lceil\frac{2040\text{ B}}{4\text{ B}}\right\rceil \right) \right) \\
-   &+ \left( 300\text{ µs} + 41\text{ µs} \times \left( \left\lceil\frac{8\text{ B}}{4\text{ B}}\right\rceil + \left\lceil\frac{3\text{ B}}{4\text{ B}}\right\rceil \right) \right) \\
-   &= 30715\text{ µs}
+   t_\text{store} = 41{ µs}(\frac{32{ B}}{4{ B}}) + 41{ µs}(\frac{2044{ B} + 7{ B}}{4{ B}}) + 31{ µs}(\frac{2044{ B} + 7{ B}}{16{ B}}) = 25360\text{ µs}
    \end{aligned}
 
-Calling the :c:func:`emds_store_time_get` function in the sample automatically computes the result of the formula and returns 30715.
+Calling the :c:func:`emds_store_time_get` function in the sample automatically computes the result of the formula and returns 25360.
 
 Limitations
 ***********
