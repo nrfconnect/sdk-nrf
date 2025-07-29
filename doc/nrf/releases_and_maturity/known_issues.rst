@@ -578,6 +578,15 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0
+
+KRKNWK-20019: The identify time does not update for the endpoint 1 in the Matter Bridge application
+  The identify cluster is enabled in the :file:`.zap` file, but not in the application.
+
+  **Affected platforms:** nRF7002, nRF5340
+
+  **Workaround:** Remove the identify cluster from the :file:`.zap` file, as this cluster is optional for the aggregator endpoint type.
+
 .. rst-class:: v3-0-1 v3-0-0
 
 KRKNWK-20308: The ``MyCluster.xml`` file example in the :ref:`ug_matter_creating_custom_cluster` user guide does not contain the ``ExtendedCommandResponse`` command
