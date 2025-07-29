@@ -197,6 +197,8 @@ int sw_codec_encode(struct net_buf *audio_frame)
 int sw_codec_decode(struct net_buf const *const audio_frame, void **decoded_data,
 		    size_t *decoded_size)
 {
+	*decoded_size = 0;
+
 	if (!m_config.decoder.enabled) {
 		LOG_ERR("Decoder has not been initialized");
 		return -ENXIO;
@@ -229,7 +231,7 @@ int sw_codec_decode(struct net_buf const *const audio_frame, void **decoded_data
 			   meta->locations == BT_AUDIO_LOCATION_FRONT_RIGHT) {
 			m_config.decoder.channel_mode = SW_CODEC_MONO;
 		} else {
-			LOG_ERR("Unsupported location for LC3 decoder: %d", meta->locations);
+			LOG_ERR("Unsupported location for sw_codec_decode: 0x%x", meta->locations);
 			return -ENODEV;
 		}
 
