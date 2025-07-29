@@ -1885,6 +1885,17 @@ ci_samples_zephyr_smp_svr_mini_boot:
     - zephyr/subsys/dfu/
     - zephyr/subsys/mgmt/
 
+ci_samples_zephyr_subsys_mgmt_mcumgr_smp_svr:
+  files:
+    - bootloader/mcuboot/
+    - modules/crypto/
+    - nrf/samples/zephyr/subsys/mgmt/mcumgr/smp_svr/
+    - nrf/subsys/nrf_security/
+    - zephyr/samples/subsys/mgmt/mcumgr/smp_svr/
+    - zephyr/subsys/bluetooth/
+    - zephyr/subsys/dfu/
+    - zephyr/subsys/mgmt/
+
 ci_samples_dfu:
   files:
     - bootloader/mcuboot/

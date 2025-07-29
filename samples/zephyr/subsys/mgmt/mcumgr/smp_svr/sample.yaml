@@ -4,6 +4,9 @@ sample:
 common:
   sysbuild: true
   build_only: true
+  tags:
+    - ci_samples_zephyr_subsys_mgmt_mcumgr_smp_svr
+
 tests:
   sample.mcumgr.smp_svr.bt.nrf54h20dk:
     sysbuild: true
