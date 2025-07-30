@@ -120,6 +120,9 @@ jobs:
           # Doxygen APIs combined with Sphinx
           declare -a SPHINX_DOXYGEN=("nrf" "nrfxlib" "zephyr")
 
+          # Doxygen APIs standalone
+          declare -a DOXYGEN=("nrfx" "wifi")
+
           mkdir doc/_build/html-doxygen
 
           for docset in "${SPHINX_DOXYGEN[@]}"; do
@@ -133,9 +136,15 @@ jobs:
             cp doc/_zoomin/$docset.apis.tags.yml "$OUTDIR/tags.yml"
             sed -i 's/__VERSION__/'"$VERSION"'/g' "$OUTDIR/tags.yml"
 
-            # Patch links from Sphinx to other docset Doxygen APIs
+            # Patch links from Sphinx to other Doxygen APIs (combined)
             find doc/_build/html/$docset -type f -name "*.html" -exec \
               sed -ri "/href=\"([^\"]+)\/([a-z]+)\/doxygen\/html\/([^\"]+)\"/{s//href=\"..\/..\/\1\/\2-apis-$VERSION\/page\/\3\"/g; :a s/__/_/g;ta; }" {} \;
+
+            for doxset in "${DOXYGEN[@]}"; do
+              # Patch links from Sphinx to other Doxygen APIs (standalone)
+              find doc/_build/html/$docset -type f -name "*.html" -exec \
+                sed -ri "/href=\"([^\"]+)\/$doxset\/html\/([^\"]+)\"/{s//href=\"..\/..\/\1\/$doxset-apis-$VERSION\/page\/\2\"/g; :a s/__/_/g;ta; }" {} \;
+            done
 
             # Patch links from Sphinx to same docset Doxygen APIs
             find doc/_build/html/$docset -type f -name "*.html" -exec \
@@ -147,9 +156,6 @@ jobs:
             mv "$ARCHIVE" "$ROOT"
             popd
           done
-
-          # Doxygen APIs standalone
-          declare -a DOXYGEN=("nrfx" "wifi")
 
           for docset in "${DOXYGEN[@]}"; do
             OUTDIR=doc/_build/html-doxygen/$docset-apis
