@@ -17,7 +17,6 @@ import os
 import sys
 import argparse
 import base64
-from pathlib import Path
 
 # Import generated protobuf modules
 try:
@@ -101,7 +100,7 @@ def generate_wifi_config(ssid, bssid, channel=6, band=1, auth_mode=5,
         # Set auth mode using enum value
         try:
             wifi_info.auth = auth_mode
-        except ValueError as e:
+        except ValueError:
             # Try using the enum directly
             auth_enum_map = {
                 0: AuthMode.OPEN,
@@ -157,14 +156,20 @@ def generate_wifi_config(ssid, bssid, channel=6, band=1, auth_mode=5,
             print("✅ Successfully read all certificate files")
 
             # Create EnterpriseCertConfig
+            # MbedTLS uses null-terminator to distinguis b/w PEM and DER formats
+            def add_null_terminator(data):
+                if data and not data.endswith(b'\0'):
+                    return data + b'\0'
+                return data
+
             cert_config = EnterpriseCertConfig()
-            cert_config.ca_cert = ca_cert_data
-            cert_config.client_cert = client_cert_data
-            cert_config.private_key = private_key_data
+            cert_config.ca_cert = add_null_terminator(ca_cert_data)
+            cert_config.client_cert = add_null_terminator(client_cert_data)
+            cert_config.private_key = add_null_terminator(private_key_data)
             cert_config.private_key_passwd = private_key_passwd or password
-            cert_config.ca_cert2 = ca_cert2_data
-            cert_config.client_cert2 = client_cert2_data
-            cert_config.private_key2 = private_key2_data
+            cert_config.ca_cert2 = add_null_terminator(ca_cert2_data)
+            cert_config.client_cert2 = add_null_terminator(client_cert2_data)
+            cert_config.private_key2 = add_null_terminator(private_key2_data)
             cert_config.private_key_passwd2 = private_key_passwd2 or password
             cert_config.identity = identity
             cert_config.password = password
@@ -222,7 +227,8 @@ Examples:
   # Generate EAP-TLS with custom private key passwords
   %(prog)s "MyWiFi" "AA:BB:CC:DD:EE:FF" -d /path/to/certs -k "keypass" -k2 "keypass2"
         ''',
-        formatter_class=argparse.RawDescriptionHelpFormatter
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        allow_abbrev=False
     )
     parser.add_argument('ssid', help='WiFi SSID')
     parser.add_argument('bssid', help='WiFi BSSID (MAC address)')

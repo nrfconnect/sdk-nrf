@@ -19,6 +19,7 @@
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/net/wifi_credentials.h>
 
+#include <net/wifi_prov_core/wifi_prov_core.h>
 #include <bluetooth/services/wifi_provisioning.h>
 
 #ifdef CONFIG_WIFI_PROV_ADV_DATA_UPDATE
@@ -74,7 +75,7 @@ static void update_wifi_status_in_adv(void)
 	prov_svc_data[ADV_DATA_VERSION_IDX] = PROV_SVC_VER;
 
 	/* If no config, mark it as unprovisioned. */
-	if (!bt_wifi_prov_state_get()) {
+	if (!wifi_prov_state_get()) {
 		prov_svc_data[ADV_DATA_FLAG_IDX] &= ~ADV_DATA_FLAG_PROV_STATUS_BIT;
 	} else {
 		prov_svc_data[ADV_DATA_FLAG_IDX] |= ADV_DATA_FLAG_PROV_STATUS_BIT;
@@ -261,7 +262,7 @@ int main(void)
 
 	printk("Bluetooth initialized.\n");
 
-	rc = bt_wifi_prov_init();
+	rc = wifi_prov_init();
 	if (rc == 0) {
 		printk("Wi-Fi provisioning service starts successfully.\n");
 	} else {

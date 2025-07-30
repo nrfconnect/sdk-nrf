@@ -22,9 +22,8 @@
 #include <zephyr/net_buf.h>
 
 #include <zephyr/net/wifi_credentials.h>
+#include <net/wifi_prov_core/wifi_prov_core.h>
 #include <bluetooth/services/wifi_provisioning.h>
-
-#include "wifi_prov_internal.h"
 
 LOG_MODULE_DECLARE(wifi_prov, CONFIG_BT_WIFI_PROV_LOG_LEVEL);
 
