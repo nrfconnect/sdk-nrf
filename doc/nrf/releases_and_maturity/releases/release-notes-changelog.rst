@@ -578,6 +578,11 @@ Matter samples
     * :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_THRESHOLD` from ``300`` to ``0`` ms for SIT devices.
     * :kconfig:option:`CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL` from ``200`` to ``500`` ms.
 
+* :ref:`matter_light_switch_sample`:
+
+  * Updated the testing steps to use the proper commands for groupcast binding.
+    This resolves the :ref:`known issue <known_issues>` KRKNWK-19277.
+
 Networking samples
 ------------------
 

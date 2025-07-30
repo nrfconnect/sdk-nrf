@@ -339,99 +339,92 @@ After building this and the :ref:`Matter Light Bulb <matter_light_bulb_sample>` 
 
 .. matter_light_switch_sample_prepare_to_testing_start
 
-.. tabs::
+1. |connect_kit|
+#. |connect_terminal_ANSI|
+#. If the devices were not erased during the programming, press and hold **Button 1** (**Button 0** for nRF54 Series device kits) on each device until the factory reset takes place.
+#. On each device, press **Button 1** (**Button 0** for nRF54 Series device kits) to start the Bluetooth LE advertising.
+#. Commission the devices to the Matter network.
+   See `Commissioning the device`_ for more information.
 
-   .. group-tab:: nRF52, nRF53 and nRF70 DKs
+   During the commissioning process, write down the values for the light switch node ID and the light bulb node ID (or IDs, if you are using more than one light bulb).
+   These IDs are used in the next steps (*<light_switch_node_ID>* and *<light_bulb_node_ID>*, respectively).
+#. Use the :doc:`CHIP Tool <matter:chip_tool_guide>` ("Writing ACL to the ``accesscontrol`` cluster" section) to add proper ACL for the light bulb devices, establish a group for groupcast and bind the light switch.
+   Depending on the number of the light bulb devices you are using, use one of the following commands, with *<light_switch_node_ID>* and *<light_bulb_node_ID>* values from the previous step about commissioning.
 
-      1. |connect_kit|
-      #. |connect_terminal_ANSI|
-      #. If the devices were not erased during the programming, press and hold **Button 1** on each device until the factory reset takes place.
-      #. On each device, press **Button 1** to start the Bluetooth LE advertising.
-      #. Commission devices to the Matter network.
-         See `Commissioning the device`_ for more information.
+   If you are using only one light bulb device, follow the instructions in the **unicast** tab to bind the light switch with the light bulb device.
+   If you are using more than one light bulb device, follow the instructions in the **groupcast** tab to connect all devices to the multicast group
 
-         During the commissioning process, write down the values for the light switch node ID and the light bulb node ID (or IDs, if you are using more than one light bulb).
-         These IDs are going to be used in the next steps (*<light_switch_node_ID>* and *<light_bulb_node_ID>*, respectively).
-      #. Use the :doc:`CHIP Tool <matter:chip_tool_guide>` ("Writing ACL to the ``accesscontrol`` cluster" section) to add proper ACL for the light bulb device.
-         Depending on the number of the light bulb devices you are using, use one of the following commands, with *<light_switch_node_ID>* and *<light_bulb_node_ID>* values from the previous step about commissioning:
+   .. tabs::
 
-         * If you are using only one light bulb device, run the following command for the light bulb device:
+      .. group-tab:: unicast
 
-           .. parsed-literal::
-              :class: highlight
+         The unicast binding is used to bind the light switch with only one light bulb device.
+         Run the following commands to bind the light switch with the light bulb device:
 
-              chip-tool accesscontrol write acl '[{"fabricIndex": 1, "privilege": 5, "authMode": 2, "subjects": [112233], "targets": null}, {"fabricIndex": 1, "privilege": 3, "authMode": 2, "subjects": [<light_switch_node_ID>], "targets": [{"cluster": 6, "endpoint": 1, "deviceType": null}, {"cluster": 8, "endpoint": 1, "deviceType": null}]}]' <light_bulb_node_ID> 0
+         1. Write ACL to the ``accesscontrol`` cluster:
 
-         * If you are using more than one light bulb device, connect all devices to the multicast group by running the following command for each device, including the light switch:
+            .. parsed-literal::
+               :class: highlight
 
-           .. parsed-literal::
-              :class: highlight
+               chip-tool accesscontrol write acl '[{"fabricIndex": 1, "privilege": 5, "authMode": 2, "subjects": [112233], "targets": null}, {"fabricIndex": 1, "privilege": 3, "authMode": 2, "subjects": [<light_switch_node_ID>], "targets": [{"cluster": 6, "endpoint": 1, "deviceType": null}, {"cluster": 8, "endpoint": 1, "deviceType": null}]}]' <light_bulb_node_ID> 0
 
-              chip-tool tests TestGroupDemoConfig --nodeId <node_ID>
-
-           Use the *<node_ID>* values from the commissioning step.
-
-      #. Write a binding table to the light switch to inform the device about all endpoints by running this command (only for light switch):
-
-         * For unicast binding to bind the light switch with only one light Bulb:
+         #. Write a binding table to the light switch to inform the device about all endpoints by running this command (only for light switch):
 
             .. parsed-literal::
                :class: highlight
 
                chip-tool binding write binding '[{"fabricIndex": 1, "node": <light bulb node id>, "endpoint": 1, "cluster": 6}, {"fabricIndex": 1, "node": <light bulb node id>, "endpoint": 1, "cluster": 8}]' <light switch node id> 1
 
-         * For groupcast binding to bind the light switch with multiple light bulbs:
+
+      .. group-tab:: groupcast
+
+         The groupcast binding is used to bind the light switch with multiple light bulb devices.
+         The following example shows how to estabilish a new group communication with the following parameters:
+
+            * Group ID: 258
+            * Group Name: Test_Group
+            * Group Key Set ID: 349
+            * Group Key Set Security Policy: 0
+            * Epoch Key 0: a0a1a2a3a4a5a6a7a8a9aaabacad7531
+            * Epoch Start Time 0: 1110000
+            * Epoch Key 1: b0b1b2b3b4b5b6b7b8b9babbbcbd7531
+            * Epoch Start Time 1: 1110001
+            * Epoch Key 2: c0c1c2c3c4c5c6c7c8c9cacbcccd7531
+            * Epoch Start Time 2: 1110002
+
+         To learn more about groups in Matter, see the :ref:`ug_matter_group_communication` user guide.
+
+         Run the following commands to bind the light switch with all light bulb devices:
+
+         1. Set up a new group in the doc:`CHIP Tool <matter:chip_tool_guide>`:
 
             .. parsed-literal::
                :class: highlight
 
-               chip-tool binding write binding '[{"fabricIndex": 1, "group": 257}]' <light_switch_node_ID> 1
+               chip-tool groupsettings add-keysets 349 0 2220000 hex:a0a1a2a3a4a5a6a7a8a9aaabacad7531
+               chip-tool groupsettings bind-keyset 258 349
 
-   .. group-tab:: nRF54 DKs
 
-      1. |connect_kit|
-      #. |connect_terminal_ANSI|
-      #. If the devices were not erased during the programming, press and hold **Button 0** on each device until the factory reset takes place.
-      #. On each device, press **Button 0** to start the Bluetooth LE advertising.
-      #. Commission devices to the Matter network.
-         See `Commissioning the device`_ for more information.
-
-         During the commissioning process, write down the values for the light switch node ID and the light bulb node ID (or IDs, if you are using more than one light bulb).
-         These IDs are going to be used in the next steps (*<light_switch_node_ID>* and *<light_bulb_node_ID>*, respectively).
-      #. Use the :doc:`CHIP Tool <matter:chip_tool_guide>` ("Writing ACL to the ``accesscontrol`` cluster" section) to add proper ACL for the light bulb device.
-         Depending on the number of the light bulb devices you are using, use one of the following commands, with *<light_switch_node_ID>* and *<light_bulb_node_ID>* values from the previous step about commissioning:
-
-         * If you are using only one light bulb device, run the following command for the light bulb device:
-
-           .. parsed-literal::
-              :class: highlight
-
-              chip-tool accesscontrol write acl '[{"fabricIndex": 1, "privilege": 5, "authMode": 2, "subjects": [112233], "targets": null}, {"fabricIndex": 1, "privilege": 3, "authMode": 2, "subjects": [<light_switch_node_ID>], "targets": [{"cluster": 6, "endpoint": 1, "deviceType": null}, {"cluster": 8, "endpoint": 1, "deviceType": null}]}]' <light_bulb_node_ID> 0
-
-         * If you are using more than one light bulb device, connect all devices to the multicast group by running the following command for each device, including the light switch:
-
-           .. parsed-literal::
-              :class: highlight
-
-              chip-tool tests TestGroupDemoConfig --nodeId <node_ID>
-
-           Use the *<node_ID>* values from the commissioning step.
-
-      #. Write a binding table to the light switch to inform the device about all endpoints by running this command (only for light switch):
-
-         * For unicast binding to bind the light switch with only one light Bulb:
+         #. Set up all light bulb devices:
 
             .. parsed-literal::
                :class: highlight
 
-               chip-tool binding write binding '[{"fabricIndex": 1, "node": <light bulb node id>, "endpoint": 1, "cluster": 6}, {"fabricIndex": 1, "node": <light bulb node id>, "endpoint": 1, "cluster": 8}]' <light switch node id> 1
+               chip-tool groupkeymanagement key-set-write {"groupKeySetID": 349, "groupKeySecurityPolicy": 0, "epochKey0": "a0a1a2a3a4a5a6a7a8a9aaabacad7531", "epochStartTime0": 1110000, "epochKey1": "b0b1b2b3b4b5b6b7b8b9babbbcbd7531", "epochStartTime1": 1110001, "epochKey2": "c0c1c2c3c4c5c6c7c8c9cacbcccd7531", "epochStartTime2": 1110002} <light bulb node id> 0
+               chip-tool groupkeymanagement write group-key-map [{"groupId": 258, "groupKeySetID": 349, "fabricIndex": 1}] <light bulb node id> 0
+               chip-tool groups add-group 258 Test_Group <light bulb node id> 1
 
-         * For groupcast binding to bind the light switch with multiple light bulbs:
+               chip-tool accesscontrol write acl '[{"fabricIndex": 1, "privilege": 5, "authMode": 2, "subjects": [112233], "targets": null}, {"fabricIndex": 1, "privilege": 3, "authMode": 3, "subjects": [258], "targets": [{"cluster": null, "endpoint": 1, "deviceType": null}]}]' <light bulb node id> 0
+
+         #. Set up the light switch device:
 
             .. parsed-literal::
                :class: highlight
 
-               chip-tool binding write binding '[{"fabricIndex": 1, "group": 257}]' <light_switch_node_ID> 1
+               chip-tool groupkeymanagement key-set-write {"groupKeySetID": 349, "groupKeySecurityPolicy": 0, "epochKey0": "a0a1a2a3a4a5a6a7a8a9aaabacad7531", "epochStartTime0": 1110000, "epochKey1": "b0b1b2b3b4b5b6b7b8b9babbbcbd7531", "epochStartTime1": 1110001, "epochKey2": "c0c1c2c3c4c5c6c7c8c9cacbcccd7531", "epochStartTime2": 1110002} <light_switch_node_ID> 0
+               chip-tool groupkeymanagement write group-key-map [{"groupId": 258, "groupKeySetID": 349, "fabricIndex": 1}] <light_switch_node_ID> 0
+               chip-tool accesscontrol write acl [{"fabricIndex": 1, "privilege": 5, "authMode": 2, "subjects": [112233], "targets": null}, {"fabricIndex": 1, "privilege": 3, "authMode": 3, "subjects": [258], "targets": null}] <light_switch_node_ID> 0
+               chip-tool binding write binding [{"fabricIndex": 1, "group": 258}] <light_switch_node_ID> 1
 
 .. matter_light_switch_sample_prepare_to_testing_end
 
