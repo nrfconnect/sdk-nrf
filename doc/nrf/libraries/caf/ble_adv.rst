@@ -20,6 +20,8 @@ The following Kconfig options are available for this module:
 * :kconfig:option:`CONFIG_CAF_BLE_ADV`
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_PM_EVENTS`
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_POWER_DOWN_ON_DISCONNECTION_REASON_0X15`
+* :kconfig:option:`CONFIG_CAF_BLE_ADV_MODULE_SUSPEND_EVENTS`
+* :kconfig:option:`CONFIG_CAF_BLE_ADV_SUSPEND_ON_READY`
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_DIRECT_ADV`
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_FAST_ADV`
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_FAST_ADV_TIMEOUT`
@@ -70,6 +72,14 @@ Synchronizing RPA and advertising data updates
 
 With the :kconfig:option:`CONFIG_BT_PRIVACY` Kconfig option enabled, set the :kconfig:option:`CONFIG_CAF_BLE_ADV_ROTATE_RPA` option to synchronize Resolvable Private Address (RPA) rotation with the undirected advertising data update.
 You can control the rotation period with the :kconfig:option:`CONFIG_CAF_BLE_ADV_ROTATE_RPA_TIMEOUT` option and change the randomization factor of the rotation period with the :kconfig:option:`CONFIG_CAF_BLE_ADV_ROTATE_RPA_TIMEOUT_RAND` option.
+
+Suspending the module
+=====================
+
+When the :kconfig:option:`CONFIG_CAF_BLE_ADV_MODULE_SUSPEND_EVENTS` Kconfig option is enabled, you can suspend the module using a module suspend request event (:c:struct:`module_suspend_req_event`) directed to this module.
+When entering the suspended state, the module stops Bluetooth LE advertising and disconnects connected peers.
+You can resume the module using a module resume request event (:c:struct:`module_resume_req_event`) directed to this module.
+When the :kconfig:option:`CONFIG_CAF_BLE_ADV_SUSPEND_ON_READY` Kconfig option is enabled, the module is suspended automatically right after initialization.
 
 Power-down
 ==========

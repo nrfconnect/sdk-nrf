@@ -310,6 +310,13 @@ nRF Desktop
   * The :ref:`CONFIG_DESKTOP_HIDS_SUBSCRIBER_REPORT_MAX <config_desktop_app_options>` Kconfig option to :ref:`nrf_desktop_hids`.
     The option allows you to limit the number of HID input reports that can be simultaneously processed by the module.
     This limits the number of GATT notifications with HID reports in the Bluetooth stack.
+  * The :ref:`nrf_desktop_ble_adv_ctrl` module that is responsible for controlling the :ref:`caf_ble_adv`.
+    The module suspends the |ble_adv| when the active USB device is connected (USB state is set to :c:enum:`USB_STATE_ACTIVE`).
+    The module resumes the |ble_adv| when the USB is disconnected (USB state is set to :c:enum:`USB_STATE_DISCONNECTED`) and the |ble_adv| was earlier suspended.
+    This improves the USB High-Speed performance.
+    To enable the module, set the :ref:`CONFIG_DESKTOP_BLE_ADV_CTRL_ENABLE <config_desktop_app_options>` Kconfig option to ``y``.
+    To enable the module to suspend and resume the |ble_adv| when the USB state changes, set the :ref:`CONFIG_DESKTOP_BLE_ADV_CTRL_SUSPEND_ON_USB <config_desktop_app_options>` Kconfig option to ``y``.
+    These options are enabled for targets that support the USB High-Speed.
 
 * Updated:
 
@@ -357,6 +364,12 @@ nRF Desktop
 
     This change in the nRF54L10 partition map is a breaking change and cannot be performed using DFU.
     As a result, the DFU procedure will fail if you attempt to upgrade the sample firmware based on one of the |NCS| v3.0 releases.
+  * The behavior of the :ref:`nrf_desktop_usb_state_pm` on USB cable disconnection.
+    While disconnecting the USB cable, the :c:enum:`USB_STATE_SUSPENDED` USB state might be reported before the :c:enum:`USB_STATE_DISCONNECTED` USB state.
+    For application to behave consistently regardless of whether the :c:enum:`USB_STATE_SUSPENDED` USB state was reported, the module submits a :c:struct:`force_power_down_event` to force a quick power down.
+    The module also restricts the power down level to the :c:enum:`POWER_MANAGER_LEVEL_SUSPENDED`.
+    Then, after the :ref:`CONFIG_DESKTOP_USB_PM_RESTRICT_REMOVE_DELAY_MS <config_desktop_app_options>` configurable delay, the module removes the power down level restriction.
+    This allows you to take actions, such as restart Bluetooth LE advertising, after disconnecting the USB cable without going through reboot.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
@@ -728,6 +741,13 @@ Common Application Framework
 
   * Removed the tracking of the active Bluetooth connections.
     CAF no longer assumes that the Bluetooth Peripheral device (:kconfig:option:`CONFIG_BT_PERIPHERAL`) supports only one simultaneous connection (:kconfig:option:`CONFIG_BT_MAX_CONN`).
+
+* :ref:`caf_ble_adv`:
+
+  * Updated the module implementation to handle the newly introduced module suspend request event (:c:struct:`module_suspend_req_event`) and module resume request event (:c:struct:`module_resume_req_event`).
+    When entering the suspended state, the module stops Bluetooth LE advertising and disconnects connected peers.
+    To enable support for these events, use the :kconfig:option:`CONFIG_CAF_BLE_ADV_MODULE_SUSPEND_EVENTS` Kconfig option, which is enabled by default.
+    When the :kconfig:option:`CONFIG_CAF_BLE_ADV_SUSPEND_ON_READY` Kconfig option is enabled, the module is suspended automatically right after initialization.
 
 Debug libraries
 ---------------

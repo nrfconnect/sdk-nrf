@@ -15,7 +15,7 @@ menuconfig DESKTOP_BLE_ADV_CTRL_ENABLE
 if DESKTOP_BLE_ADV_CTRL_ENABLE
 
 config DESKTOP_BLE_ADV_CTRL_SUSPEND_ON_USB
-	bool "Suspend Bluetooth LE adverising when USB is connected"
+	bool "Suspend Bluetooth LE advertising when USB is connected"
 	depends on DESKTOP_USB_ENABLE
 	help
 	  Suspend CAF Bluetooth LE advertising module while HID USB is active.
