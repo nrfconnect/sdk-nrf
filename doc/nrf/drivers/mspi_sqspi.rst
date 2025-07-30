@@ -69,6 +69,10 @@ See the following configuration example for the nRF54L15 SoC:
 
 	/ {
 		reserved-memory {
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges;
+
 			softperiph_ram: memory@2003c000 {
 				reg = <0x2003c000 0x4000>;
 				ranges = <0 0x2003c000 0x4000>;
@@ -149,11 +153,11 @@ The following example configuration for the nRF54H20 SoC sets up the necessary p
 
 			softperiph_ram: memory@2f890000 {
 				reg = <0x2f890000 0x4000>;
-				ranges;
+				ranges = <0 0x2f890000 0x4000>;
 				#address-cells = <1>;
 				#size-cells = <1>;
 
-				dut: sqspi: sqspi@3e00 {
+				sqspi: sqspi@3e00 {
 					compatible = "nordic,nrf-sqspi";
 					#address-cells = <1>;
 					#size-cells = <0>;
