@@ -284,7 +284,7 @@ Vendor-specific commands can be divided into different categories as follows:
 * If the **Length** field is set to ``1`` (symbol ``CARRIER_TEST_STUDIO``), the field value is used by the nRFgo Studio to indicate that an unmodulated carrier is turned on at the channel.
   It remains turned on until a ``TEST_END`` or ``RESET`` command is issued.
 * If the **Length** field is set ``2`` (symbol ``SET_TX_POWER``), the **Frequency** field sets the TX power in dBm.
-  The valid TX power values are specified in the product specification ranging from –40 to +4, where ``0`` dBm is the reset value.
+  The valid TX power values are specified in the product specification of the SoC used, where ``0`` dBm is the reset value.
   Only the six least significant bits will fit in the **Length** field.
   The two most significant bits are calculated by the DTM module.
   This is possible because the six least significant bits of all valid TX power values are unique.
