@@ -133,6 +133,8 @@ Amazon Sidewalk
 Bluetooth® LE
 -------------
 
+* Added the :ref:`bluetooth_path_loss_monitoring` sample.
+
 |no_changes_yet_note|
 
 Bluetooth Mesh
@@ -240,6 +242,10 @@ Bluetooth samples
 -----------------
 
 * Updated the network core image applications for the following samples from the :zephyr:code-sample:`bluetooth_hci_ipc` sample to the :ref:`ipc_radio` application for multicore builds:
+
+* Added the :ref:`bluetooth_path_loss_monitoring` sample.
+
+* Added experimental ``llvm`` toolchain support for the nRF54L Series board targets to the following samples:
 
   * :ref:`bluetooth_conn_time_synchronization`
   * :ref:`bluetooth_iso_combined_bis_cis`
