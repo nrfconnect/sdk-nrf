@@ -15,7 +15,7 @@
 #include <zephyr/sys/util.h>
 
 #include <softperipheral_regif.h>
-#include <nrfx_qspi2.h>
+#include <nrf_sqspi.h>
 #if defined(CONFIG_SOC_SERIES_NRF54LX)
 #include <hal/nrf_memconf.h>
 #include <hal/nrf_oscillators.h>
@@ -32,7 +32,7 @@ LOG_MODULE_REGISTER(mspi_sqspi, CONFIG_MSPI_LOG_LEVEL);
 
 struct mspi_sqspi_data {
 	const struct mspi_dev_id *dev_id;
-	nrfx_qspi2_dev_cfg_t qspi2_dev_cfg;
+	nrf_sqspi_dev_cfg_t sqspi_dev_cfg;
 	struct k_sem finished;
 	/* For synchronization of API calls made from different contexts. */
 	struct k_sem ctx_lock;
@@ -42,21 +42,21 @@ struct mspi_sqspi_data {
 };
 
 struct mspi_sqspi_config {
-	nrfx_qspi2_t qspi2;
+	nrf_sqspi_t sqspi;
 	const struct pinctrl_dev_config *pcfg;
 	const struct gpio_dt_spec *ce_gpios;
 	uint8_t ce_gpios_len;
 	void *mem_reg;
 };
 
-static void done_callback(const nrfx_qspi2_t *qspi2, nrfx_qspi2_evt_t *event,
+static void done_callback(const nrf_sqspi_t *sqspi, nrf_sqspi_evt_t *event,
 			  void *context)
 {
-	ARG_UNUSED(qspi2);
+	ARG_UNUSED(sqspi);
 	struct mspi_sqspi_data *dev_data = context;
 
-	if (event->type == NRFX_QSPI2_EVT_XFER_DONE) {
-		if (event->data.xfer_done == NRFX_QSPI2_RESULT_OK) {
+	if (event->type == NRF_SQSPI_EVT_XFER_DONE) {
+		if (event->data.xfer_done == NRF_SQSPI_RESULT_OK) {
 			k_sem_give(&dev_data->finished);
 		}
 	}
@@ -107,34 +107,34 @@ static int _api_dev_config(const struct device *dev,
 		switch (cfg->io_mode) {
 		default:
 		case MSPI_IO_MODE_SINGLE:
-			dev_data->qspi2_dev_cfg.mspi_lines = NRFX_QSPI2_SPI_LINES_SINGLE;
+			dev_data->sqspi_dev_cfg.mspi_lines = NRF_SQSPI_SPI_LINES_SINGLE;
 			break;
 		case MSPI_IO_MODE_DUAL:
-			dev_data->qspi2_dev_cfg.mspi_lines = NRFX_QSPI2_SPI_LINES_DUAL_2_2_2;
+			dev_data->sqspi_dev_cfg.mspi_lines = NRF_SQSPI_SPI_LINES_DUAL_2_2_2;
 			break;
 		case MSPI_IO_MODE_DUAL_1_1_2:
-			dev_data->qspi2_dev_cfg.mspi_lines = NRFX_QSPI2_SPI_LINES_DUAL_1_1_2;
+			dev_data->sqspi_dev_cfg.mspi_lines = NRF_SQSPI_SPI_LINES_DUAL_1_1_2;
 			break;
 		case MSPI_IO_MODE_DUAL_1_2_2:
-			dev_data->qspi2_dev_cfg.mspi_lines = NRFX_QSPI2_SPI_LINES_DUAL_1_2_2;
+			dev_data->sqspi_dev_cfg.mspi_lines = NRF_SQSPI_SPI_LINES_DUAL_1_2_2;
 			break;
 		case MSPI_IO_MODE_QUAD:
-			dev_data->qspi2_dev_cfg.mspi_lines = NRFX_QSPI2_SPI_LINES_QUAD_4_4_4;
+			dev_data->sqspi_dev_cfg.mspi_lines = NRF_SQSPI_SPI_LINES_QUAD_4_4_4;
 			break;
 		case MSPI_IO_MODE_QUAD_1_1_4:
-			dev_data->qspi2_dev_cfg.mspi_lines = NRFX_QSPI2_SPI_LINES_QUAD_1_1_4;
+			dev_data->sqspi_dev_cfg.mspi_lines = NRF_SQSPI_SPI_LINES_QUAD_1_1_4;
 			break;
 		case MSPI_IO_MODE_QUAD_1_4_4:
-			dev_data->qspi2_dev_cfg.mspi_lines = NRFX_QSPI2_SPI_LINES_QUAD_1_4_4;
+			dev_data->sqspi_dev_cfg.mspi_lines = NRF_SQSPI_SPI_LINES_QUAD_1_4_4;
 			break;
 		case MSPI_IO_MODE_OCTAL:
-			dev_data->qspi2_dev_cfg.mspi_lines = NRFX_QSPI2_SPI_LINES_OCTAL_8_8_8;
+			dev_data->sqspi_dev_cfg.mspi_lines = NRF_SQSPI_SPI_LINES_OCTAL_8_8_8;
 			break;
 		case MSPI_IO_MODE_OCTAL_1_1_8:
-			dev_data->qspi2_dev_cfg.mspi_lines = NRFX_QSPI2_SPI_LINES_OCTAL_1_1_8;
+			dev_data->sqspi_dev_cfg.mspi_lines = NRF_SQSPI_SPI_LINES_OCTAL_1_1_8;
 			break;
 		case MSPI_IO_MODE_OCTAL_1_8_8:
-			dev_data->qspi2_dev_cfg.mspi_lines = NRFX_QSPI2_SPI_LINES_OCTAL_1_8_8;
+			dev_data->sqspi_dev_cfg.mspi_lines = NRF_SQSPI_SPI_LINES_OCTAL_1_8_8;
 			break;
 		}
 	}
@@ -143,16 +143,16 @@ static int _api_dev_config(const struct device *dev,
 		switch (cfg->cpp) {
 		default:
 		case MSPI_CPP_MODE_0:
-			dev_data->qspi2_dev_cfg.spi_cpolpha = NRFX_QSPI2_SPI_CPOLPHA_0;
+			dev_data->sqspi_dev_cfg.spi_cpolpha = NRF_SQSPI_SPI_CPOLPHA_0;
 			break;
 		case MSPI_CPP_MODE_1:
-			dev_data->qspi2_dev_cfg.spi_cpolpha = NRFX_QSPI2_SPI_CPOLPHA_1;
+			dev_data->sqspi_dev_cfg.spi_cpolpha = NRF_SQSPI_SPI_CPOLPHA_1;
 			break;
 		case MSPI_CPP_MODE_2:
-			dev_data->qspi2_dev_cfg.spi_cpolpha = NRFX_QSPI2_SPI_CPOLPHA_2;
+			dev_data->sqspi_dev_cfg.spi_cpolpha = NRF_SQSPI_SPI_CPOLPHA_2;
 			break;
 		case MSPI_CPP_MODE_3:
-			dev_data->qspi2_dev_cfg.spi_cpolpha = NRFX_QSPI2_SPI_CPOLPHA_3;
+			dev_data->sqspi_dev_cfg.spi_cpolpha = NRF_SQSPI_SPI_CPOLPHA_3;
 			break;
 		}
 	}
@@ -165,7 +165,7 @@ static int _api_dev_config(const struct device *dev,
 			return -EINVAL;
 		}
 
-		dev_data->qspi2_dev_cfg.sck_freq_khz = cfg->freq / 1000;
+		dev_data->sqspi_dev_cfg.sck_freq_khz = cfg->freq / 1000;
 	}
 
 	if (param_mask & MSPI_DEVICE_CONFIG_DATA_RATE) {
@@ -241,7 +241,7 @@ static int api_get_channel_status(const struct device *dev, uint8_t ch)
 }
 
 static int perform_xfer(const struct device *dev,
-			const nrfx_qspi2_xfer_t *qspi2_xfer,
+			const nrf_sqspi_xfer_t *sqspi_xfer,
 			k_timeout_t timeout)
 {
 	const struct mspi_sqspi_config *dev_config = dev->config;
@@ -257,9 +257,9 @@ static int perform_xfer(const struct device *dev,
 		}
 	}
 
-	err = nrfx_qspi2_xfer(&dev_config->qspi2, qspi2_xfer, 1, 0);
+	err = nrf_sqspi_xfer(&dev_config->sqspi, sqspi_xfer, 1, 0);
 	if (err != NRFX_SUCCESS) {
-		LOG_ERR("nrfx_qspi2_xfer() failed: %08x", err);
+		LOG_ERR("nrf_sqspi_xfer() failed: %08x", err);
 		return -EIO;
 	}
 
@@ -288,9 +288,9 @@ static int process_packet(const struct device *dev,
 			  k_timeout_t timeout)
 {
 	const struct mspi_sqspi_config *dev_config = dev->config;
-	nrfx_qspi2_xfer_t qspi2_xfer = {
+	nrf_sqspi_xfer_t sqspi_xfer = {
 		/* Use TX direction when there is no data to transfer. */
-		.dir = NRFX_QSPI2_XFER_DIR_TX,
+		.dir = NRF_SQSPI_XFER_DIR_TX,
 		.cmd = packet->cmd,
 		.address = packet->address,
 		.data_length = packet->num_bytes,
@@ -301,19 +301,19 @@ static int process_packet(const struct device *dev,
 
 	if (packet->num_bytes) {
 		if (packet->dir == MSPI_TX) {
-			qspi2_xfer.dir = NRFX_QSPI2_XFER_DIR_TX;
-			qspi2_xfer.dummy_length = xfer->tx_dummy;
+			sqspi_xfer.dir = NRF_SQSPI_XFER_DIR_TX;
+			sqspi_xfer.dummy_length = xfer->tx_dummy;
 			rc = dmm_buffer_out_prepare(dev_config->mem_reg,
 						    packet->data_buf,
 						    packet->num_bytes,
-						    &qspi2_xfer.p_data);
+						    &sqspi_xfer.p_data);
 		} else {
-			qspi2_xfer.dir = NRFX_QSPI2_XFER_DIR_RX;
-			qspi2_xfer.dummy_length = xfer->rx_dummy;
+			sqspi_xfer.dir = NRF_SQSPI_XFER_DIR_RX;
+			sqspi_xfer.dummy_length = xfer->rx_dummy;
 			rc = dmm_buffer_in_prepare(dev_config->mem_reg,
 						   packet->data_buf,
 						   packet->num_bytes,
-						   &qspi2_xfer.p_data);
+						   &sqspi_xfer.p_data);
 		}
 		if (rc < 0) {
 			LOG_ERR("Failed to allocate DMM buffer (%d)", rc);
@@ -325,7 +325,7 @@ static int process_packet(const struct device *dev,
 		return 0;
 	}
 
-	rc = perform_xfer(dev, &qspi2_xfer, timeout);
+	rc = perform_xfer(dev, &sqspi_xfer, timeout);
 
 	if (packet->num_bytes) {
 		/* No need to check the error codes here. These calls could only
@@ -335,12 +335,12 @@ static int process_packet(const struct device *dev,
 		 */
 		if (packet->dir == MSPI_TX) {
 			(void)dmm_buffer_out_release(dev_config->mem_reg,
-						     qspi2_xfer.p_data);
+						     sqspi_xfer.p_data);
 		} else {
 			(void)dmm_buffer_in_release(dev_config->mem_reg,
 						    packet->data_buf,
 						    packet->num_bytes,
-						    qspi2_xfer.p_data);
+						    sqspi_xfer.p_data);
 		}
 	}
 
@@ -357,10 +357,10 @@ static int _api_transceive(const struct device *dev,
 	nrfx_err_t err;
 	int rc;
 
-	err = nrfx_qspi2_dev_cfg(&dev_config->qspi2, &dev_data->qspi2_dev_cfg,
-				 done_callback, dev_data);
+	err = nrf_sqspi_dev_cfg(&dev_config->sqspi, &dev_data->sqspi_dev_cfg,
+				done_callback, dev_data);
 	if (err != NRFX_SUCCESS) {
-		LOG_ERR("nrfx_qspi2_dev_cfg() failed: %08x", err);
+		LOG_ERR("nrf_sqspi_dev_cfg() failed: %08x", err);
 		return -EIO;
 	}
 
@@ -439,7 +439,7 @@ static int dev_pm_action_cb(const struct device *dev,
 			return rc;
 		}
 #endif
-		nrfx_qspi2_activate(&dev_config->qspi2);
+		nrf_sqspi_activate(&dev_config->sqspi);
 #if defined(CONFIG_SOC_SERIES_NRF54LX)
 		nrf_memconf_ramblock_ret_enable_set(NRF_MEMCONF,
 			1, MEMCONF_POWER_RET_MEM0_Pos, false);
@@ -475,7 +475,7 @@ static int dev_pm_action_cb(const struct device *dev,
 		nrf_memconf_ramblock_ret_enable_set(NRF_MEMCONF,
 			1, MEMCONF_POWER_RET_MEM0_Pos, true);
 #endif
-		nrfx_qspi2_deactivate(&dev_config->qspi2);
+		nrf_sqspi_deactivate(&dev_config->sqspi);
 
 		k_sem_give(&dev_data->ctx_lock);
 
@@ -490,18 +490,18 @@ static int dev_init(const struct device *dev)
 	struct mspi_sqspi_data *dev_data = dev->data;
 	const struct mspi_sqspi_config *dev_config = dev->config;
 	const struct gpio_dt_spec *ce_gpio;
-	static const nrfx_qspi2_cfg_t qspi2_cfg = {
+	static const nrf_sqspi_cfg_t sqspi_cfg = {
 		.skip_gpio_cfg = true,
 		.skip_pmux_cfg = true,
 	};
-	nrfx_qspi2_data_fmt_t qspi2_data_fmt = {
-		.cmd_bit_order = NRFX_QSPI2_DATA_FMT_BIT_ORDER_MSB_FIRST,
-		.addr_bit_order = NRFX_QSPI2_DATA_FMT_BIT_ORDER_MSB_FIRST,
-		.data_bit_order = NRFX_QSPI2_DATA_FMT_BIT_ORDER_MSB_FIRST,
+	nrf_sqspi_data_fmt_t sqspi_data_fmt = {
+		.cmd_bit_order = NRF_SQSPI_DATA_FMT_BIT_ORDER_MSB_FIRST,
+		.addr_bit_order = NRF_SQSPI_DATA_FMT_BIT_ORDER_MSB_FIRST,
+		.data_bit_order = NRF_SQSPI_DATA_FMT_BIT_ORDER_MSB_FIRST,
 		.data_bit_reorder_unit = 8,
 		.data_container = 32,
 		.data_swap_unit = 8,
-		.data_padding = NRFX_QSPI2_DATA_FMT_PAD_RAW,
+		.data_padding = NRF_SQSPI_DATA_FMT_PAD_RAW,
 	};
 	int rc;
 	nrfx_err_t err;
@@ -510,9 +510,9 @@ static int dev_init(const struct device *dev)
 	k_sem_init(&dev_data->ctx_lock, 1, 1);
 	k_sem_init(&dev_data->cfg_lock, 1, 1);
 
-	dev_data->qspi2_dev_cfg.protocol = NRFX_QSPI2_PROTO_SPI_C;
-	dev_data->qspi2_dev_cfg.sample_sync = NRFX_QSPI2_SAMPLE_SYNC_DELAY;
-	dev_data->qspi2_dev_cfg.sample_delay_cyc = 1;
+	dev_data->sqspi_dev_cfg.protocol = NRF_SQSPI_PROTO_SPI_C;
+	dev_data->sqspi_dev_cfg.sample_sync = NRF_SQSPI_SAMPLE_SYNC_DELAY;
+	dev_data->sqspi_dev_cfg.sample_delay_cyc = 1;
 
 #if defined(CONFIG_SOC_SERIES_NRF54LX)
 	nrf_oscillators_pll_freq_set(NRF_OSCILLATORS,
@@ -525,17 +525,17 @@ static int dev_init(const struct device *dev)
 #endif /* defined(CONFIG_SOC_SERIES_NRF54LX) */
 
 	IRQ_CONNECT(DT_IRQN(VPR_NODE), DT_IRQ(VPR_NODE, priority),
-		    nrfx_isr, nrfx_qspi2_irq_handler, 0);
+		    nrfx_isr, nrf_sqspi_irq_handler, 0);
 
-	err = nrfx_qspi2_init(&dev_config->qspi2, &qspi2_cfg);
+	err = nrf_sqspi_init(&dev_config->sqspi, &sqspi_cfg);
 	if (err != NRFX_SUCCESS) {
-		LOG_ERR("nrfx_qspi2_init() failed: %08x", err);
+		LOG_ERR("nrf_sqspi_init() failed: %08x", err);
 		return -EIO;
 	}
 
-	err = nrfx_qspi2_dev_data_fmt_set(&dev_config->qspi2, &qspi2_data_fmt);
+	err = nrf_sqspi_dev_data_fmt_set(&dev_config->sqspi, &sqspi_data_fmt);
 	if (err != NRFX_SUCCESS) {
-		LOG_ERR("nrfx_qspi2_dev_data_fmt_set() failed: %08x", err);
+		LOG_ERR("nrf_sqspi_dev_data_fmt_set() failed: %08x", err);
 		return -EIO;
 	}
 
@@ -585,7 +585,7 @@ static DEVICE_API(mspi, drv_api) = {
 	PINCTRL_DT_DEFINE(VPR_NODE);					\
 	static struct mspi_sqspi_data dev##inst##_data;			\
 	static const struct mspi_sqspi_config dev##inst##_config = {	\
-		.qspi2 = {						\
+		.sqspi = {						\
 			.p_reg = (void *)DT_INST_REG_ADDR(inst),	\
 			.drv_inst_idx = 0,				\
 		},							\
