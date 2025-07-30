@@ -20,6 +20,7 @@ common:
       - "dfu: Secondary image slot is clean"
 tests:
   applications.nrf_desktop.zdebug.uart.kmu_provision:
+    toolchain_allow: zephyr
     platform_allow:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
@@ -29,6 +30,7 @@ tests:
     timeout: 180
     harness: pytest
   applications.nrf_desktop.zdebug.uart:
+    toolchain_allow: zephyr
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
@@ -41,6 +43,7 @@ tests:
       - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
     harness: console
   applications.nrf_desktop.zdebug:
+    toolchain_allow: zephyr
     build_only: true
     platform_allow:
       - nrf52dmouse/nrf52832
@@ -67,18 +70,21 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
   applications.nrf_desktop.zdebug_wwcb:
+    toolchain_allow: zephyr
     build_only: true
     platform_allow: nrf52840dk/nrf52840
     integration_platforms:
       - nrf52840dk/nrf52840
     extra_args: FILE_SUFFIX=wwcb
   applications.nrf_desktop.zdebug_dongle_small:
+    toolchain_allow: zephyr
     build_only: true
     platform_allow: nrf52833dk/nrf52833
     integration_platforms:
       - nrf52833dk/nrf52833
     extra_args: FILE_SUFFIX=dongle_small
   applications.nrf_desktop.zdebug_fast_pair.gmouse.uart.kmu_provision:
+    toolchain_allow: zephyr
     platform_allow:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
@@ -90,6 +96,7 @@ tests:
     timeout: 180
     harness: pytest
   applications.nrf_desktop.zdebug_fast_pair.gmouse:
+    toolchain_allow: zephyr
     build_only: true
     platform_allow:
       - nrf52840dk/nrf52840
@@ -100,12 +107,14 @@ tests:
     extra_args:
       - FILE_SUFFIX=fast_pair
   applications.nrf_desktop.zdebug_mcuboot_qspi:
+    toolchain_allow: zephyr
     build_only: true
     platform_allow: nrf52840dk/nrf52840
     integration_platforms:
       - nrf52840dk/nrf52840
     extra_args: FILE_SUFFIX=mcuboot_qspi
   applications.nrf_desktop.zdebug_mcuboot_smp:
+    toolchain_allow: zephyr
     build_only: true
     platform_allow:
       - nrf52840dk/nrf52840
@@ -115,6 +124,7 @@ tests:
       - nrf52840gmouse/nrf52840
     extra_args: FILE_SUFFIX=mcuboot_smp
   applications.nrf_desktop.zdebugwithshell:
+    toolchain_allow: zephyr
     build_only: true
     platform_allow:
       - nrf52kbd/nrf52832
@@ -133,24 +143,28 @@ tests:
     extra_configs:
       - CONFIG_DESKTOP_SHELL=y
   applications.nrf_desktop.zdebug_3bleconn:
+    toolchain_allow: zephyr
     build_only: true
     platform_allow: nrf52840dongle/nrf52840
     integration_platforms:
       - nrf52840dongle/nrf52840
     extra_args: FILE_SUFFIX=3bleconn
   applications.nrf_desktop.zdebug_4llpmconn:
+    toolchain_allow: zephyr
     build_only: true
     platform_allow: nrf52840dongle/nrf52840
     integration_platforms:
       - nrf52840dongle/nrf52840
     extra_args: FILE_SUFFIX=4llpmconn
   applications.nrf_desktop.zdebug_dongle:
+    toolchain_allow: zephyr
     build_only: true
     platform_allow: nrf52840dk/nrf52840
     integration_platforms:
       - nrf52840dk/nrf52840
     extra_args: FILE_SUFFIX=dongle
   applications.nrf_desktop.zdebug_dongle.uart:
+    toolchain_allow: zephyr
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
@@ -158,6 +172,7 @@ tests:
     harness: console
     extra_args: FILE_SUFFIX=dongle
   applications.nrf_desktop.zrelease_dongle:
+    toolchain_allow: zephyr
     build_only: true
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
@@ -165,6 +180,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args: FILE_SUFFIX=release_dongle
   applications.nrf_desktop.zdebug_keyboard.uart.kmu_provision:
+    toolchain_allow: zephyr
     platform_allow:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
@@ -175,6 +191,7 @@ tests:
     timeout: 180
     harness: pytest
   applications.nrf_desktop.zdebug_keyboard:
+    toolchain_allow: zephyr
     build_only: true
     platform_allow:
       - nrf52840dk/nrf52840
@@ -182,6 +199,7 @@ tests:
       - nrf52840dk/nrf52840
     extra_args: FILE_SUFFIX=keyboard
   applications.nrf_desktop.zrelease_keyboard:
+    toolchain_allow: zephyr
     build_only: true
     platform_allow:
       - nrf54l15dk/nrf54l05/cpuapp
@@ -189,6 +207,7 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
     extra_args: FILE_SUFFIX=release_keyboard
   applications.nrf_desktop.zdebug_nrf21540ek:
+    toolchain_allow: zephyr
     build_only: true
     platform_allow: nrf52840dk/nrf52840
     integration_platforms:
@@ -197,6 +216,7 @@ tests:
     extra_configs:
       - CONFIG_CAF_BLE_USE_LLPM=n
   applications.nrf_desktop.zdebug_nrf21540ek_multicore:
+    toolchain_allow: zephyr
     build_only: true
     platform_allow: nrf5340dk/nrf5340/cpuapp
     integration_platforms:
@@ -207,6 +227,7 @@ tests:
     extra_configs:
       - CONFIG_CAF_BLE_USE_LLPM=n
   applications.nrf_desktop.zrelease:
+    toolchain_allow: zephyr
     build_only: true
     platform_allow:
       - nrf52dmouse/nrf52832
@@ -246,6 +267,7 @@ tests:
       - nrf54lm20pdk@0.2.0/nrf54lm20a/cpuapp
     extra_args: FILE_SUFFIX=release
   applications.nrf_desktop.zrelease_fast_pair.keyboard:
+    toolchain_allow: zephyr
     build_only: true
     platform_allow: nrf52kbd/nrf52832
     integration_platforms:
@@ -253,6 +275,7 @@ tests:
     extra_args:
       - FILE_SUFFIX=release_fast_pair
   applications.nrf_desktop.zrelease_fast_pair.gmouse:
+    toolchain_allow: zephyr
     build_only: true
     platform_allow:
       - nrf52840gmouse/nrf52840
@@ -263,12 +286,14 @@ tests:
     extra_args:
       - FILE_SUFFIX=release_fast_pair
   applications.nrf_desktop.zrelease_4llpmconn:
+    toolchain_allow: zephyr
     build_only: true
     platform_allow: nrf52840dongle/nrf52840
     integration_platforms:
       - nrf52840dongle/nrf52840
     extra_args: FILE_SUFFIX=release_4llpmconn
   applications.nrf_desktop.zdebug.usb_next:
+    toolchain_allow: zephyr
     build_only: true
     platform_allow:
       - nrf52840dk/nrf52840
@@ -281,6 +306,7 @@ tests:
     extra_configs:
       - CONFIG_DESKTOP_USB_STACK_NEXT=y
   applications.nrf_desktop.zdebug_dongle.usb_next:
+    toolchain_allow: zephyr
     build_only: true
     platform_allow: nrf52840dk/nrf52840
     integration_platforms:
@@ -289,6 +315,7 @@ tests:
     extra_configs:
       - CONFIG_DESKTOP_USB_STACK_NEXT=y
   applications.nrf_desktop.zdebug_keyboard.usb_next:
+    toolchain_allow: zephyr
     build_only: true
     platform_allow: nrf52840dk/nrf52840
     integration_platforms:
@@ -297,6 +324,7 @@ tests:
     extra_configs:
       - CONFIG_DESKTOP_USB_STACK_NEXT=y
   applications.nrf_desktop.zrelease.usb_next:
+    toolchain_allow: zephyr
     build_only: true
     platform_allow:
       - nrf52840dk/nrf52840
