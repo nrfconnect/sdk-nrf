@@ -51,8 +51,8 @@
 #endif
 
 #ifdef CONFIG_OPENTHREAD
-#include <platform/OpenThread/GenericNetworkCommissioningThreadDriver.h>
 #include <openthread.h>
+#include <platform/OpenThread/GenericNetworkCommissioningThreadDriver.h>
 #endif
 
 #include <app/InteractionModelEngine.h>
@@ -94,6 +94,8 @@ chip::DeviceLayer::KMUSessionKeystore Nrf::Matter::InitData::sKMUSessionKeystore
 #ifdef CONFIG_CHIP_FACTORY_DATA
 FactoryDataProvider<InternalFlashFactoryData> Nrf::Matter::InitData::sFactoryDataProviderDefault{};
 #endif
+
+chip::DeviceLayer::DeviceInfoProviderImpl Nrf::Matter::InitData::sDeviceInfoProviderDefault{};
 
 namespace
 {
@@ -198,12 +200,12 @@ CHIP_ERROR InitNetworkingStack()
 #if CHIP_SYSTEM_CONFIG_USE_OPENTHREAD_ENDPOINT
 void LockOpenThreadTask(void)
 {
-    chip::DeviceLayer::ThreadStackMgr().LockThreadStack();
+	chip::DeviceLayer::ThreadStackMgr().LockThreadStack();
 }
 
 void UnlockOpenThreadTask(void)
 {
-    chip::DeviceLayer::ThreadStackMgr().UnlockThreadStack();
+	chip::DeviceLayer::ThreadStackMgr().UnlockThreadStack();
 }
 #endif /* CHIP_SYSTEM_CONFIG_USE_OPENTHREAD_ENDPOINT */
 
@@ -437,7 +439,7 @@ FactoryDataProviderBase *GetFactoryDataProvider()
 }
 #endif
 
-PersistentStorageDelegate * GetPersistentStorageDelegate()
+PersistentStorageDelegate *GetPersistentStorageDelegate()
 {
 	return sLocalInitData.mServerInitParams->persistentStorageDelegate;
 }
