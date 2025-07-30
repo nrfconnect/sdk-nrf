@@ -299,7 +299,7 @@ CHIP_ERROR DiagnosticLogProvider::Init()
 	return err;
 }
 
-void DiagnosticLogProvider::ClearLogs()
+void DiagnosticLogProvider::ClearAllLogs()
 {
 #ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS
 	DiagnosticLogsCrash::Clear();
@@ -314,6 +314,28 @@ void DiagnosticLogProvider::ClearLogs()
 #endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS */
 }
 
+void DiagnosticLogProvider::ClearLogs(IntentEnum intent)
+{
+	switch (intent) {
+	case IntentEnum::kEndUserSupport:
+#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS
+		mEndUserLogs.Clear();
+#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_END_USER_LOGS */
+		break;
+	case IntentEnum::kNetworkDiag:
+#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS
+		mNetworkLogs.Clear();
+#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_NETWORK_LOGS */
+		break;
+	case IntentEnum::kCrashLogs:
+#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS
+		DiagnosticLogsCrash::Clear();
+#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_CRASH_LOGS */
+		break;
+	default:
+		break;
+	}
+}
 CHIP_ERROR DiagnosticLogProvider::PushLog(IntentEnum intent, const void *data, size_t size)
 {
 	CHIP_ERROR err = CHIP_NO_ERROR;
@@ -349,86 +371,3 @@ void emberAfDiagnosticLogsClusterInitCallback(chip::EndpointId endpoint)
 
 	DiagnosticLogsServer::Instance().SetDiagnosticLogsProviderDelegate(endpoint, &logProvider);
 }
-
-#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST
-
-bool DiagnosticLogProvider::StoreTestingLog(IntentEnum intent, char *text, size_t textSize)
-{
-	if (!text) {
-		return false;
-	}
-
-	if (intent != IntentEnum::kEndUserSupport && intent != IntentEnum::kNetworkDiag) {
-		return false;
-	}
-
-	uint8_t *bufferToWrite =
-		(intent == IntentEnum::kEndUserSupport) ? mTestingUserLogsBuffer : mTestingNetworkLogsBuffer;
-	size_t *bufferSize = (intent == IntentEnum::kEndUserSupport) ? &mCurrentUserLogsSize : &mCurrentNetworkLogsSize;
-
-	if (textSize + *bufferSize > kTestingBufferLen) {
-		return false;
-	}
-
-	memcpy(bufferToWrite + *bufferSize, text, textSize);
-	*bufferSize += textSize;
-
-	return true;
-}
-
-void DiagnosticLogProvider::ClearTestingBuffer(IntentEnum intent)
-{
-	if (intent != IntentEnum::kEndUserSupport && intent != IntentEnum::kNetworkDiag) {
-		return;
-	}
-
-	uint8_t *bufferToWrite =
-		(intent == IntentEnum::kEndUserSupport) ? mTestingUserLogsBuffer : mTestingNetworkLogsBuffer;
-	size_t *bufferSize = (intent == IntentEnum::kEndUserSupport) ? &mCurrentUserLogsSize : &mCurrentNetworkLogsSize;
-	size_t *readOffset = (intent == IntentEnum::kEndUserSupport) ? &mReadUserLogsOffset : &mReadNetworkLogsOffset;
-
-	memset(bufferToWrite, 0, kTestingBufferLen);
-	*bufferSize = 0;
-	*readOffset = 0;
-}
-
-CHIP_ERROR DiagnosticLogProvider::GetTestingLogs(IntentEnum intent, chip::MutableByteSpan &outBuffer,
-						 bool &outIsEndOfLog)
-{
-	if (intent != IntentEnum::kEndUserSupport && intent != IntentEnum::kNetworkDiag) {
-		return CHIP_ERROR_INVALID_ARGUMENT;
-	}
-
-	uint8_t *bufferToWrite =
-		(intent == IntentEnum::kEndUserSupport) ? mTestingUserLogsBuffer : mTestingNetworkLogsBuffer;
-	size_t *currentBufferSize =
-		(intent == IntentEnum::kEndUserSupport) ? &mCurrentUserLogsSize : &mCurrentNetworkLogsSize;
-	size_t *readOffset = (intent == IntentEnum::kEndUserSupport) ? &mReadUserLogsOffset : &mReadNetworkLogsOffset;
-
-	size_t sizeToRead = *currentBufferSize > outBuffer.size() ? outBuffer.size() : *currentBufferSize;
-
-	memcpy(outBuffer.data(), bufferToWrite + *readOffset, sizeToRead);
-	*currentBufferSize -= sizeToRead;
-	*readOffset += sizeToRead;
-
-	if (*currentBufferSize == 0) {
-		outIsEndOfLog = true;
-		ClearTestingBuffer(intent);
-	} else {
-		outIsEndOfLog = false;
-	}
-
-	ChipLogDetail(Zcl, "Sending %zu B of logs, left bytes: %zu, is the end of logs: %d", sizeToRead,
-		      *currentBufferSize, outIsEndOfLog);
-
-	outBuffer.reduce_size(sizeToRead);
-
-	return CHIP_NO_ERROR;
-}
-
-size_t DiagnosticLogProvider::GetTestingLogsSize(IntentEnum intent)
-{
-	return (intent == IntentEnum::kEndUserSupport) ? mCurrentUserLogsSize : mCurrentNetworkLogsSize;
-}
-
-#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_TEST */
