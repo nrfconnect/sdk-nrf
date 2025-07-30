@@ -19,6 +19,9 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(sw_codec_select, CONFIG_SW_CODEC_SELECT_LOG_LEVEL);
 
+/* Used for debugging, inserts 0 instead of packet loss concealment */
+#define SW_CODEC_OVERRIDE_PLC false
+
 static struct sw_codec_config m_config;
 
 static struct sample_rate_converter_ctx encoder_converters[CONFIG_AUDIO_ENCODE_CHANNELS_MAX];
@@ -222,7 +225,7 @@ int sw_codec_decode(struct net_buf const *const audio_frame, void **decoded_data
 
 		switch (m_config.decoder.channel_mode) {
 		case SW_CODEC_MONO: {
-			if (meta->bad_data && IS_ENABLED(CONFIG_SW_CODEC_OVERRIDE_PLC)) {
+			if (meta->bad_data && SW_CODEC_OVERRIDE_PLC) {
 				memset(decoded_data_mono[0], 0, PCM_NUM_BYTES_MONO);
 				decoded_data_size = PCM_NUM_BYTES_MONO;
 			} else {
@@ -261,7 +264,7 @@ int sw_codec_decode(struct net_buf const *const audio_frame, void **decoded_data
 		}
 		case SW_CODEC_STEREO: {
 
-			if (meta->bad_data && IS_ENABLED(CONFIG_SW_CODEC_OVERRIDE_PLC)) {
+			if (meta->bad_data && SW_CODEC_OVERRIDE_PLC) {
 				memset(decoded_data_mono[0], 0, PCM_NUM_BYTES_MONO);
 				memset(decoded_data_mono[1], 0, PCM_NUM_BYTES_MONO);
 				decoded_data_size = PCM_NUM_BYTES_MONO;

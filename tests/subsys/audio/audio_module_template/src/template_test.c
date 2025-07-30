@@ -14,7 +14,7 @@
 /* Define a timeout to prevent system locking */
 #define TEST_TX_RX_TIMEOUT_US (K_FOREVER)
 
-#define CONFIG_TEXT   "Template config"
+#define ORIGINAL_TEXT   "Template config"
 #define RECONFIG_TEXT "Template reconfig"
 
 #define TEST_MSG_QUEUE_SIZE	   (4)
@@ -78,7 +78,7 @@ ZTEST(suite_audio_module_template, test_module_template)
 	struct audio_module_parameters mod_parameters;
 
 	struct audio_module_template_configuration configuration = {
-		.sample_rate_hz = 48000, .bit_depth = 24, .module_description = CONFIG_TEXT};
+		.sample_rate_hz = 48000, .bit_depth = 24, .module_description = ORIGINAL_TEXT};
 	struct audio_module_template_configuration reconfiguration = {
 		.sample_rate_hz = 16000, .bit_depth = 8, .module_description = RECONFIG_TEXT};
 	struct audio_module_template_configuration return_configuration;
@@ -114,7 +114,7 @@ ZTEST(suite_audio_module_template, test_module_template)
 		zassert_equal(test_config->sample_rate_hz, configuration.sample_rate_hz,
 			      "Failed to configure module in the open function");
 		zassert_mem_equal(test_config->module_description, configuration.module_description,
-				  sizeof(CONFIG_TEXT),
+				  sizeof(ORIGINAL_TEXT),
 				  "Failed to configure module in the open function");
 	}
 
@@ -146,7 +146,7 @@ ZTEST(suite_audio_module_template, test_module_template)
 	zassert_equal(return_configuration.sample_rate_hz, configuration.sample_rate_hz,
 		      "Failed to get configuration");
 	zassert_mem_equal(return_configuration.module_description, configuration.module_description,
-			  sizeof(CONFIG_TEXT), "Failed to get configuration");
+			  sizeof(ORIGINAL_TEXT), "Failed to get configuration");
 
 	ret = audio_module_connect(&handle, NULL, true);
 	zassert_equal(ret, 0, "Connect function did not return successfully (0): ret %d", ret);
@@ -234,7 +234,7 @@ ZTEST(suite_audio_module_template, test_module_template_stream)
 	struct audio_module_parameters mod_parameters;
 
 	struct audio_module_template_configuration configuration = {
-		.sample_rate_hz = 48000, .bit_depth = 16, .module_description = CONFIG_TEXT};
+		.sample_rate_hz = 48000, .bit_depth = 16, .module_description = ORIGINAL_TEXT};
 
 	struct audio_module_template_context context = {0};
 
