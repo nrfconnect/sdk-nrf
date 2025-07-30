@@ -1,0 +1,31 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&pinctrl {
+	qdec20_default_test: qdec20_default_test {
+		group1 {
+			psels = <NRF_PSEL(QDEC_A, 1, 10)>,
+				<NRF_PSEL(QDEC_B, 1, 11)>;
+		};
+	};
+
+	qdec20_sleep_test: qdec20_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(QDEC_A, 1, 10)>,
+				<NRF_PSEL(QDEC_B, 1, 11)>;
+			low-power-enable;
+		};
+	};
+};
+
+&qdec20 {
+	status = "okay";
+	pinctrl-0 = <&qdec20_default_test>;
+	pinctrl-1 = <&qdec20_sleep_test>;
+	pinctrl-names = "default", "sleep";
+	steps = <127>;
+	led-pre = <500>;
+};
