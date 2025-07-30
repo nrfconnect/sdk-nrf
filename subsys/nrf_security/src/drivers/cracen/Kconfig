@@ -56,8 +56,7 @@ config CRACEN_PROVISION_PROT_RAM_INV_DATA
 	  manually, otherwise the protected RAM keys will not be usable.
 
 config CRACEN_IKG
-	bool "Enable CRACEN IKG"
-	default y
+	bool "CRACEN IKG"
 	help
 	  Enable the Cracen Isolated Key Generator.
 
