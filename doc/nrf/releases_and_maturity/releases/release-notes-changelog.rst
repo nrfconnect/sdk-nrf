@@ -144,6 +144,13 @@ Security
   * The :ref:`crypto_drivers` page with more details about the driver selection process.
   * The :ref:`ug_crypto_supported_features` page with updated values for the supported cryptographic operations and algorithms.
     Now, the page only lists features and algorithms that are supported by at least one driver.
+  * The Oberon PSA Crypto to version 1.5.1 that introduces support for the following new features with the Oberon PSA driver:
+
+    * Experimental support for post-quantum cryptography schemes ML-KEM (FIPS 203), ML-DSA (FIPS 204) and NIST SP 800-208.
+    * Experimental support for XChaCha20-Poly1305 AEAD algorithm.
+    * Experimental support for SHAKE128 with 256-bit output length.
+
+* Removed the ``CONFIG_PSA_WANT_ALG_WPA3_SAE_PT`` Kconfig option and replaced it with :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_H2E`.
 
 Protocols
 =========
