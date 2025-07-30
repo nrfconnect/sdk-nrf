@@ -1,0 +1,145 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig WIFI_PROV_CONFIG
+	bool "WiFi provisioning configuration"
+	default y
+	help
+	  This option enables WiFi provisioning configuration.
+
+config WIFI_PROV_SSID
+	string "WiFi SSID for provisioning"
+	default "SampleWiFi"
+	help
+	  SSID for the WiFi network to be provisioned.
+
+config WIFI_PROV_BSSID
+	string "WiFi BSSID for provisioning"
+	default "00:11:22:33:44:55"
+	help
+	  BSSID (MAC address) for the WiFi network to be provisioned.
+
+config WIFI_PROV_PASSPHRASE
+	string "WiFi passphrase for provisioning"
+	default "samplepassword"
+	help
+	  Passphrase for the WiFi network to be provisioned.
+
+config WIFI_PROV_AUTH_MODE
+	int "WiFi authentication mode"
+	default 4
+	range 0 23
+	help
+	  Authentication mode for the WiFi network.
+	  0: Open, 1: WEP, 2: WPA_PSK, 3: WPA2_PSK, etc.
+
+config WIFI_PROV_CHANNEL
+	int "WiFi channel"
+	default 0
+	range 0 233
+	help
+	  Channel for the WiFi network (2.4GHz band).
+
+config WIFI_PROV_BAND
+	int "WiFi band"
+	default 0
+	range 0 2
+	help
+	  Band for the WiFi network.
+	  1: 2.4GHz, 2: 5GHz
+
+config WIFI_PROV_CERT_DIR
+	string "Certificate directory path"
+	default ""
+	help
+	  Path to directory containing certificates for enterprise WiFi networks.
+	  Leave empty for personal WiFi networks.
+	  Certificates should be in PEM format.
+
+config WIFI_PROV_PRIVATE_KEY_PASSWD
+	string "Primary private key password"
+	default ""
+	help
+	  Password for the primary private key file.
+	  Leave empty to use EAP password.
+
+config WIFI_PROV_PRIVATE_KEY_PASSWD2
+	string "Secondary private key password"
+	default ""
+	help
+	  Password for the secondary private key file.
+	  Leave empty to use EAP password.
+
+config WIFI_PROV_IDENTITY
+	string "EAP identity"
+	default "user@example.com"
+	help
+	  EAP identity for enterprise WiFi networks.
+
+config WIFI_PROV_PASSWORD
+	string "EAP password"
+	default "user_password"
+	help
+	  EAP password for enterprise WiFi networks.
+
+config WIFI_PROV_VOLATILE_MEMORY
+	bool "Use volatile memory"
+	default n
+	help
+	  Store WiFi configuration in volatile memory.
+	  If disabled, configuration is stored persistently.
+
+config WIFI_PROV_SCAN_BAND
+	int "WiFi scan band"
+	default 0
+	range 0 2
+	help
+	  Band for WiFi scanning.
+	  0: Any band, 1: 2.4GHz, 2: 5GHz
+
+config WIFI_PROV_SCAN_PASSIVE
+	bool "Passive scan mode"
+	default n
+	help
+	  Enable passive scanning mode.
+	  If disabled, active scanning is used.
+
+config WIFI_PROV_SCAN_PERIOD_MS
+	int "Scan period in milliseconds"
+	default 0
+	range 0 60000
+	help
+	  Period between WiFi scans in milliseconds.
+	  0 means no periodic scanning.
+
+config WIFI_PROV_SCAN_GROUP_CHANNELS
+	int "Scan group channels"
+	default 0
+	range 0 255
+	help
+	  Group channels for WiFi scanning.
+	  0 means no grouping.
+
+config WIFI_PROV_MAX_DATA_SIZE
+	int "Maximum Protobuf Data Size"
+	default 16384
+	range 1024 16384
+	help
+	  Maximum size for protobuf data in bytes.
+
+config WIFI_PROV_MAX_BASE64_SIZE
+	int "Maximum Base64 Input Size"
+	default 32768
+	range 2048 32768
+	help
+	  Maximum size for base64 input string in bytes.
+
+module = WIFI_PROV_INTERNAL
+module-dep = LOG
+module-str = Log level for sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+source "Kconfig.zephyr"
