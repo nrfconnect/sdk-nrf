@@ -601,7 +601,7 @@ int fota_download_start(const char *host, const char *file, int sec_tag, uint8_t
 			size_t fragment_size)
 {
 	int sec_tag_list[1] = { sec_tag };
-	uint8_t sec_tag_count = sec_tag < 0 ? 0 : 1;
+	uint8_t sec_tag_count = sec_tag == 0xFFFFFFFF ? 0 : 1;
 
 	return fota_download_any(host, file, sec_tag_list, sec_tag_count, pdn_id, fragment_size);
 }
@@ -611,7 +611,7 @@ int fota_download_start_with_image_type(const char *host, const char *file,
 					const enum dfu_target_image_type expected_type)
 {
 	int sec_tag_list[1] = { sec_tag };
-	uint8_t sec_tag_count = sec_tag < 0 ? 0 : 1;
+	uint8_t sec_tag_count = sec_tag == 0xFFFFFFFF ? 0 : 1;
 
 	return fota_download(host, file, sec_tag_list, sec_tag_count, pdn_id, fragment_size,
 			     expected_type);
