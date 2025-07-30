@@ -44,26 +44,6 @@ extern "C" {
 #define BT_UUID_PROV_DATA_OUT \
 	BT_UUID_DECLARE_128(BT_UUID_PROV_DATA_OUT_VAL)
 
-/**
- * @def PROV_SVC_VER
- *
- * Firmware version.
- */
-#define PROV_SVC_VER	0x01
-
-/**
- * @brief Get provisioning state.
- *
- * @return true if device is provisioned, false otherwise.
- */
-bool bt_wifi_prov_state_get(void);
-
-/**
- * @brief Initialize the provisioning module.
- *
- * @return 0 if module initialized successfully, negative error code otherwise.
- */
-int bt_wifi_prov_init(void);
 
 #ifdef __cplusplus
 }
