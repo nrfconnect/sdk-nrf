@@ -62,7 +62,7 @@ bluetooth:
     - nrf/tests/bluetooth/
     - nrf/tests/subsys/bluetooth/
     - nrfxlib/crypto/
-    - nrfxlib/mpsl/fem/include
+    - nrfxlib/mpsl/fem/include/
     - nrfxlib/mpsl/include/
     - nrfxlib/softdevice_controller/include/
     - zephyr/cmake/
@@ -371,11 +371,11 @@ find_my:
     - nrfxlib/crypto/
     - nrfxlib/nfc/
     - zephyr/cmake/
-    - zephyr/drivers/sensor/adi/adxl362
-    - zephyr/drivers/sensor/bosch/bme680
-    - zephyr/drivers/sensor/bosch/bmi270
-    - zephyr/drivers/sensor/bosch/bmm150
-    - zephyr/drivers/sensor/voltage_divider
+    - zephyr/drivers/sensor/adi/adxl362/
+    - zephyr/drivers/sensor/bosch/bme680/
+    - zephyr/drivers/sensor/bosch/bmi270/
+    - zephyr/drivers/sensor/bosch/bmm150/
+    - zephyr/drivers/sensor/voltage_divider/
     - zephyr/share/
     - zephyr/soc/nordic/
     - zephyr/subsys/bluetooth/
@@ -658,11 +658,11 @@ ci_applications_machine_learning:
     - nrf/subsys/pcd/
     - nrf/sysbuild/
     - zephyr/cmake/
-    - zephyr/drivers/sensor/adi/adxl362
-    - zephyr/drivers/sensor/bosch/bme680
-    - zephyr/drivers/sensor/bosch/bmi270
-    - zephyr/drivers/sensor/bosch/bmm150
-    - zephyr/drivers/sensor/voltage_divider
+    - zephyr/drivers/sensor/adi/adxl362/
+    - zephyr/drivers/sensor/bosch/bme680/
+    - zephyr/drivers/sensor/bosch/bmi270/
+    - zephyr/drivers/sensor/bosch/bmm150/
+    - zephyr/drivers/sensor/voltage_divider/
     - zephyr/share/
     - zephyr/subsys/bluetooth/
     - zephyr/subsys/ipc/
@@ -735,8 +735,8 @@ ci_applications_nrf5340_audio:
     - nrf/subsys/bluetooth/
     - nrf/subsys/nrf_security/
     - nrfxlib/lc3/
-    - zephyr/boards/nordic/nrf5340_audio_dk
-    - zephyr/boards/nordic/nrf5340dk
+    - zephyr/boards/nordic/nrf5340_audio_dk/
+    - zephyr/boards/nordic/nrf5340dk/
     - zephyr/drivers/bluetooth/
     - zephyr/drivers/disk/
     - zephyr/drivers/sdhc/
@@ -928,8 +928,8 @@ ci_tests_lib_location:
 
 ci_tests_lib_hw_id:
   files:
-    - nrf/lib/hw_id
-    - nrf/tests/lib/hw_id
+    - nrf/lib/hw_id/
+    - nrf/tests/lib/hw_id/
 
 ci_tests_subsys_debug:
   files:
@@ -976,8 +976,8 @@ ci_tests_subsys_audio_module:
 
 ci_tests_subsys_bluetooth_controller:
   files:
-    - nrf/subsys/bluetooth/controller
-    - nrf/tests/subsys/bluetooth/controller
+    - nrf/subsys/bluetooth/controller/
+    - nrf/tests/subsys/bluetooth/controller/
 
 ci_tests_subsys_mpsl:
   files:
@@ -1004,7 +1004,7 @@ ci_tests_subsys_nfc:
 ci_tests_lib_nrf_modem_lib:
   files:
     - nrf/lib/nrf_modem_lib/
-    - nrf/lib/pdn
+    - nrf/lib/pdn/
     - nrf/tests/lib/nrf_modem_lib/
     - nrf/tests/mocks/nrf_modem_at/
     - zephyr/subsys/net/
@@ -1069,7 +1069,7 @@ ci_samples_benchmarks:
 ci_samples_debug:
   files:
     - bootloader/mcuboot/
-    - modules/hal/nordic/nrfx
+    - modules/hal/nordic/nrfx/
     - modules/lib/hostap/
     - modules/lib/memfault-firmware-sdk/
     - modules/lib/nrf_wifi/
@@ -1078,8 +1078,8 @@ ci_samples_debug:
     - nrf/subsys/bluetooth/
     - nrf/subsys/debug/
     - nrf/subsys/net/
-    - nrf/subsys/net/lib/hostap_crypto
-    - nrf/subsys/net/lib/nrf70_fw_ext
+    - nrf/subsys/net/lib/hostap_crypto/
+    - nrf/subsys/net/lib/nrf70_fw_ext/
     - nrfxlib/nrf_wifi/
     - zephyr/drivers/wifi/
     - zephyr/modules/hostap/
@@ -1295,7 +1295,7 @@ ci_tests_benchmarks_i2c_endless:
 
 ci_tests_benchmarks_i2s_freq:
   files:
-    - nrf/tests/benchmarks/i2s_freq
+    - nrf/tests/benchmarks/i2s_freq/
     - zephyr/drivers/i2s/
     - zephyr/dts/bindings/i2s/
     - zephyr/include/zephyr/drivers/i2s.h
@@ -1306,8 +1306,8 @@ ci_tests_benchmarks_peripheral_load:
   files:
     - modules/hal/nordic/nrfx/
     - nrf/tests/benchmarks/peripheral_load/
-    - zephyr/drivers/sensor/adi/adxl362
-    - zephyr/drivers/sensor/bosch/bme680
+    - zephyr/drivers/sensor/adi/adxl362/
+    - zephyr/drivers/sensor/bosch/bme680/
     - zephyr/drivers/sensor/nordic/temp/
     - zephyr/drivers/adc/
     - zephyr/drivers/can/
@@ -1361,7 +1361,7 @@ ci_tests_benchmarks_early_logging:
     - zephyr/boards/nordic/
     - zephyr/dts/vendor/nordic/
     - zephyr/drivers/serial/
-    - nrf/tests/benchmark/early_logging
+    - nrf/tests/benchmark/early_logging/
 
 ci_tests_drivers_hpf:
   files:
@@ -1383,7 +1383,7 @@ ci_tests_drivers_sqspi:
     - nrf/drivers/mspi/
     - nrf/tests/drivers/mspi/mspi_with_spis/
     - nrf/tests/zephyr/drivers/flash/common/
-    - nrfxlib/softperipheral/sQSPI
+    - nrfxlib/softperipheral/sQSPI/
 
 ci_tests_drivers_spi:
   files:
@@ -1458,11 +1458,11 @@ ci_tests_drivers_sensor_qdec:
   files:
     - nrf/samples/zephyr/sensor/qdec/
     - nrf/tests/drivers/qdec/
-    - nrf/tests/zephyr/boards/nrf/qdec
+    - nrf/tests/zephyr/boards/nrf/qdec/
     - zephyr/drivers/sensor/nordic/qdec_nrfx/
     - zephyr/dts/bindings/sensor/nordic,nrf-qdec.yaml
-    - zephyr/samples/sensor/qdec
-    - zephyr/tests/boards/nrf/qdec
+    - zephyr/samples/sensor/qdec/
+    - zephyr/tests/boards/nrf/qdec/
 
 ci_tests_drivers_sensor:
   files:
@@ -1671,8 +1671,8 @@ ci_tests_zephyr_drivers_audio_dmic_api:
 
 ci_tests_zephyr_drivers_i2c_i2c_bme688:
   files:
-    - nrf/tests/zephyr/drivers/i2c/i2c_bme688
-    - zephyr/tests/drivers/i2c/i2c_bme688
+    - nrf/tests/zephyr/drivers/i2c/i2c_bme688/
+    - zephyr/tests/drivers/i2c/i2c_bme688/
 
 ci_tests_zephyr_drivers_spi:
   files:
@@ -1862,7 +1862,7 @@ power:
     - zephyr/drivers/power_domain/
     - zephyr/dts/bindings/power/
     - zephyr/include/zephyr/dt-bindings/power/
-    - zephyr/samples/boards/nordic/system_off
+    - zephyr/samples/boards/nordic/system_off/
 
 adc:
   files:
