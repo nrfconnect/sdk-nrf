@@ -142,3 +142,18 @@ Once you have an unprovisioned SoC, upload keys to the board by running one of t
       You can call this command multiple times also to provision multiple keys, as long as each key has a different ID that is part of the metadata string.
 
       For more information about this command, see the `Provisioning keys for hardware KMU`_ page in the nRF Util documentation.
+
+Alternative provisioning method
+*********************************
+
+To simplify the development process, keys can be generated and provisioned at the same time as the flashing process
+In the case of NSIB, enabling the ``SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE`` Kconfig option at the sysbuild level introduces an additional programming step that is triggered when you execute the ``west flash --recover`` command.
+If you set the ``SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE`` Kconfig option to a PEM key file, that specific file will be used.
+If not, the build will use the default key named :file:`GENERATED_NON_SECURE_SIGN_KEY_PRIVATE.pem`, which is located in the build directory.
+
+For MCUboot configurations, activating the ``SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE`` Kconfig option at the sysbuild level allows to provision keys simultaneously with the flashing process. Provisioning step is triggered when you execute either ``west flash --recover`` or ``west flash --erase`` command.
+MCUboot uses the key file designated by the ``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`` option.
+
+At the end of the described process the :file:`keyfile.json` file is generated in the build directory.
+This file allows key provisioning to occur simultaneously with the flashing process.
+Alternatively, you can bypass the mentioned Kconfig options and manually place a custom :file:`keyfile.json` in the build directory.
