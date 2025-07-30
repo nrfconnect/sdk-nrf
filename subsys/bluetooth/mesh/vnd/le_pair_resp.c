@@ -97,10 +97,11 @@ static void bt_mesh_le_pair_resp_reset(const struct bt_mesh_model *model)
 
 	bt_mesh_le_pair_resp_passkey_invalidate();
 
-	/* Clear all bonding information when receiving node reset */
-	err = bt_unpair(BT_ID_DEFAULT, NULL);
-	if (err) {
-		LOG_ERR("Unpair err: %d", err);
+	for (uint8_t id = 0; id < CONFIG_BT_ID_MAX; id++) {
+		err = bt_unpair(id, NULL);
+		if (err) {
+			LOG_ERR("Unpair ID %u err: %d", id, err);
+		}
 	}
 }
 
