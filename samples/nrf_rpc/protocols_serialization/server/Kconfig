@@ -59,6 +59,36 @@ config LOG_BACKEND_UART
 
 endif # LOG
 
+if LOG_BACKEND_UART_ASYNC
+
+# Using UART async API by the logging backend significantly reduces CPU load imposed by logging.
+# To make it work, the corresponding UART instance needs to be configured to use the async API
+# as well, which requires disabling the default, interrupt-driven API.
+# Do it for all possible UART instances for the supported nRF52 and nRF54L SoCs.
+
+uart_num = 0
+rsource "Kconfig.zephyr_console_async"
+
+uart_num = 1
+rsource "Kconfig.zephyr_console_async"
+
+uart_num = 00
+rsource "Kconfig.zephyr_console_async"
+
+uart_num = 20
+rsource "Kconfig.zephyr_console_async"
+
+uart_num = 21
+rsource "Kconfig.zephyr_console_async"
+
+uart_num = 22
+rsource "Kconfig.zephyr_console_async"
+
+uart_num = 30
+rsource "Kconfig.zephyr_console_async"
+
+endif # LOG_BACKEND_UART_ASYNC
+
 if SOC_NRF54L15
 
 config BT_LONG_WQ_STACK_SIZE

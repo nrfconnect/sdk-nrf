@@ -1,0 +1,12 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+DT_CHOSEN_ZEPHYR_CONSOLE := zephyr,console
+
+config UART_$(uart_num)_INTERRUPT_DRIVEN
+	default n
+	depends on $(dt_nodelabel_enabled,uart$(uart_num))
+	depends on "$(dt_nodelabel_path,uart$(uart_num))" = "$(dt_chosen_path,$(DT_CHOSEN_ZEPHYR_CONSOLE))"
