@@ -54,7 +54,15 @@ CHIP_ERROR DiagnosticLogsRetention::Init()
 
 CHIP_ERROR DiagnosticLogsRetention::Clear()
 {
-	return System::MapErrorZephyr(retention_clear(mPartition));
+	int ret = retention_clear(mPartition);
+
+	if (ret == 0) {
+		mCurrentSize = 0;
+		mDataBegin = 0;
+		mDataEnd = 0;
+	}
+
+	return System::MapErrorZephyr(ret);
 }
 
 CHIP_ERROR DiagnosticLogsRetention::PushLog(const void *data, size_t size)
@@ -185,6 +193,10 @@ CHIP_ERROR DiagnosticLogsRetentionReader::GetLogs(chip::MutableByteSpan &outBuff
 
 CHIP_ERROR DiagnosticLogsRetentionReader::FinishLogs()
 {
+#ifdef CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_REMOVE_CRASH_AFTER_READ
+	return mDiagnosticLogsRetention.Clear();
+#else
 	/* Do nothing. */
 	return CHIP_NO_ERROR;
+#endif /* CONFIG_NCS_SAMPLE_MATTER_DIAGNOSTIC_LOGS_REMOVE_CRASH_AFTER_READ */
 }

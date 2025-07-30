@@ -236,7 +236,7 @@ void DoInitChipServer(intptr_t /* unused */)
 		/* Remove diagnostic logs on the first boot, as retention RAM is not cleared during erase/factory reset.
 		 */
 		if (count == 1) {
-			Nrf::Matter::DiagnosticLogProvider::GetInstance().ClearLogs();
+			Nrf::Matter::DiagnosticLogProvider::GetInstance().ClearAllLogs();
 		}
 
 		Nrf::Matter::DiagnosticLogProvider::GetInstance().Init();

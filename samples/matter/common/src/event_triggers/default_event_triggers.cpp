@@ -171,15 +171,14 @@ CHIP_ERROR DiagnosticLogsUserDataCallback(TestEventTrigger::TriggerValue bytesNu
 		return CHIP_ERROR_NO_MEMORY;
 	}
 
-	ChipLogProgress(Zcl, "Storing %zu User logs", logSize);
 	if (logSize == 0) {
-		DiagnosticLogProvider::GetInstance().ClearTestingBuffer(
+		ChipLogProgress(Zcl, "Clearing User logs");
+		DiagnosticLogProvider::GetInstance().ClearLogs(
 			chip::app::Clusters::DiagnosticLogs::IntentEnum::kEndUserSupport);
 	} else {
-		VerifyOrReturnError(DiagnosticLogProvider::GetInstance().StoreTestingLog(
-					    chip::app::Clusters::DiagnosticLogs::IntentEnum::kEndUserSupport,
-					    sTempLogBuffer, logSize),
-				    CHIP_ERROR_NO_MEMORY);
+		ChipLogProgress(Zcl, "Storing %zu User logs", logSize);
+		ReturnErrorOnFailure(DiagnosticLogProvider::GetInstance().PushLog(
+			chip::app::Clusters::DiagnosticLogs::IntentEnum::kEndUserSupport, sTempLogBuffer, logSize));
 	}
 
 	return CHIP_NO_ERROR;
@@ -195,16 +194,14 @@ CHIP_ERROR DiagnosticLogsNetworkDataCallback(TestEventTrigger::TriggerValue byte
 		return CHIP_ERROR_NO_MEMORY;
 	}
 
-	ChipLogProgress(Zcl, "Storing %zu Network logs", logSize);
-
 	if (logSize == 0) {
-		DiagnosticLogProvider::GetInstance().ClearTestingBuffer(
+		ChipLogProgress(Zcl, "Clearing Network logs");
+		DiagnosticLogProvider::GetInstance().ClearLogs(
 			chip::app::Clusters::DiagnosticLogs::IntentEnum::kNetworkDiag);
 	} else {
-		VerifyOrReturnError(DiagnosticLogProvider::GetInstance().StoreTestingLog(
-					    chip::app::Clusters::DiagnosticLogs::IntentEnum::kNetworkDiag,
-					    sTempLogBuffer, logSize),
-				    CHIP_ERROR_NO_MEMORY);
+		ChipLogProgress(Zcl, "Storing %zu Network logs", logSize);
+		ReturnErrorOnFailure(DiagnosticLogProvider::GetInstance().PushLog(
+			chip::app::Clusters::DiagnosticLogs::IntentEnum::kNetworkDiag, sTempLogBuffer, logSize));
 	}
 
 	return CHIP_NO_ERROR;
