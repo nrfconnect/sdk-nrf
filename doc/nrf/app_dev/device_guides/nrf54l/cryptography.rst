@@ -78,7 +78,11 @@ The following table gives an overview of the KMU slots and their usage:
    * - 183-185
      - IKG seed
      - 384-bit random seed to generate keys using the CRACEN IKG.
-   * - 186-225
+   * - 186
+     - Provisioning slot
+     - | Reserved slot for internal KMU usage.
+       | This slot is used to validate that provisioning of the KMU slots is completed.
+   * - 187-225
      - Reserved
      - --
    * - 226-227
