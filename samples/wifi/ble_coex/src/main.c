@@ -424,7 +424,7 @@ int main(void)
 	}
 
 	if (test_wlan) {
-		struct zperf_upload_params params;
+		struct zperf_upload_params params = { 0 };
 
 		/* Start Wi-Fi traffic */
 		LOG_INF("Starting Wi-Fi benchmark: Zperf client");
