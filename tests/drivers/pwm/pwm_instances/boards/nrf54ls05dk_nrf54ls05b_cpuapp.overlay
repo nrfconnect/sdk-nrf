@@ -1,0 +1,27 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&pinctrl {
+	pwm20_default_test: pwm20_default_test {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 10)>;
+		};
+	};
+
+	pwm20_sleep_test: pwm20_sleep_test {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 10)>;
+			low-power-enable;
+		};
+	};
+};
+
+&pwm20 {
+	status = "okay";
+	pinctrl-0 = <&pwm20_default_test>;
+	pinctrl-1 = <&pwm20_sleep_test>;
+	pinctrl-names = "default", "sleep";
+};
