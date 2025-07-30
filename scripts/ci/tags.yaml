@@ -68,6 +68,7 @@ bluetooth:
     - zephyr/cmake/
     - zephyr/drivers/bluetooth/
     - zephyr/include/zephyr/bluetooth/
+    - zephyr/modules/hal_nordic/
     - zephyr/samples/bluetooth/hci_ipc/
     - zephyr/share/
     - zephyr/soc/nordic/
