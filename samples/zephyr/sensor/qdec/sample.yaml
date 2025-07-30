@@ -10,7 +10,11 @@ common:
 
 tests:
   nrf.extended.sample.sensor.nrf_qdec_sensor:
-    depends_on: future_target
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk@0.0.0/nrf54ls05b/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
     harness_config:
       fixture: gpio_loopback
       type: multi_line
