@@ -122,7 +122,7 @@
 /doc/nrf/libraries/bluetooth/mesh.rst     @nrfconnect/ncs-paladin-doc
 /doc/nrf/libraries/bluetooth/services/fast_pair/ @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/libraries/bluetooth/services/fast_pair.rst @nrfconnect/ncs-si-bluebagel-doc
-/doc/nrf/libraries/bluetooth/services/wifi_prov.rst @nrfconnect/ncs-wifi-doc
+/doc/nrf/libraries/bluetooth/services/wifi_prov_ble.rst @nrfconnect/ncs-wifi-doc
 /doc/nrf/libraries/caf/                   @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-bluebagel-doc
 /doc/nrf/libraries/debug/cpu_load.rst     @nrfconnect/ncs-doc-leads
 /doc/nrf/libraries/debug/etb_trace.rst    @nrfconnect/ncs-cia-doc
@@ -173,6 +173,7 @@
 /doc/nrf/libraries/networking/rest_client.rst @nrfconnect/ncs-iot-positioning-doc
 /doc/nrf/libraries/networking/softap_wifi_provision.rst @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/networking/wifi_mgmt_ext.rst @nrfconnect/ncs-cia-doc
+/doc/nrf/libraries/networking/wifi_prov_*.rst @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/networking/wifi_ready.rst @nrfconnect/ncs-wifi-doc
 /doc/nrf/libraries/nfc/                   @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/libraries/nrf_rpc/index.rst      @nrfconnect/ncs-si-muffin-doc
@@ -540,6 +541,7 @@
 /samples/tfm/                             @nrfconnect/ncs-aegir
 /samples/wifi/provisioning/ble/           @wentong-li @bama-nordic
 /samples/wifi/provisioning/softap/        @nrfconnect/ncs-cia
+/samples/wifi/provisioning/internal/      @krish2718 @rado17
 /samples/wifi/radio_test/                 @bama-nordic @sachinthegreen
 /samples/wifi/scan/                       @D-Triveni @bama-nordic
 /samples/wifi/shell/                      @nrfconnect/ncs-co-networking @krish2718 @sachinthegreen @rado17

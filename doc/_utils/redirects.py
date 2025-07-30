@@ -540,7 +540,8 @@ NRF = [
     ("libraries/bluetooth_services/services/nus_client", "libraries/bluetooth/services/nus_client"),
     ("libraries/bluetooth_services/services/rscs", "libraries/bluetooth/services/rscs"),
     ("libraries/bluetooth_services/services/throughput", "libraries/bluetooth/services/throughput"),
-    ("libraries/bluetooth_services/services/wifi_prov", "libraries/bluetooth/services/wifi_prov"),
+    ("libraries/bluetooth_services/services/wifi_prov", "libraries/bluetooth/services/wifi_prov_ble"),
+    ("libraries/bluetooth/services/wifi_prov", "libraries/bluetooth/services/wifi_prov_ble"),
     ("libraries/networking/nrf_cloud_agps", "libraries/networking/nrf_cloud_agnss"), # nRF Cloud A-GNSS
     ("libraries/bootloader/index", "libraries/security/bootloader/index"), # Bootloader libraries (landing)
     ("libraries/bootloader/bl_crypto", "libraries/security/bootloader/bl_crypto"), # Bootloader crypto
