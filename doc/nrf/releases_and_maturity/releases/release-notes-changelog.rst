@@ -704,6 +704,8 @@ Thread samples
 Wi-Fi samples
 -------------
 
+* Added the :ref:`wifi_provisioning_internal_sample` sample that demonstrates the core Wi-Fi provisioning functionality independently of the transport layer (Bluetooth LE or Wi-Fi SoftAP).
+
 * :ref:`wifi_radiotest_samples`:
 
   * Updated :ref:`wifi_radio_test` and :ref:`wifi_radio_test_sd` samples to clarify platform support for single-domain and multi-domain radio tests.

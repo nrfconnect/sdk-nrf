@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menuconfig WIFI_PROV_CORE
+config WIFI_PROV_CORE
 	bool "Wi-Fi provisioning core library"
 	select EXPERIMENTAL
 	depends on WIFI_NM_WPA_SUPPLICANT
