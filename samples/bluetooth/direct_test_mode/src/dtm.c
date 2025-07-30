@@ -184,10 +184,6 @@ BUILD_ASSERT(NRFX_TIMER_CONFIG_LABEL(ANOMALY_172_TIMER_INSTANCE) == 1,
 #define PACKET_BA_LEN             3
 /* CTE IQ sample data size. */
 #define DTM_CTE_SAMPLE_DATA_SIZE  0x52
-/* Vendor specific packet type for internal use. */
-#define DTM_PKT_TYPE_VENDORSPECIFIC  0xFE
-/* 1111111 bit pattern packet type for internal use. */
-#define DTM_PKT_TYPE_0xFF            0xFF
 
 /* Maximum number of payload octets that the local Controller supports for
  * transmission of a single Link Layer Data Physical Channel PDU.
@@ -1890,8 +1886,10 @@ static int dtm_vendor_specific_pkt(uint32_t vendor_cmd, uint32_t vendor_option)
 		}
 
 		/* Not a packet type, but used to indicate that a continuous
-		 * carrier signal should be transmitted by the radio.
+		 * carrier signal should be transmitted by the radio on the
+		 * channel indicated by the 'option' field.
 		 */
+		dtm_inst.phys_ch = vendor_option;
 		radio_prepare(TX_MODE);
 		nrf_radio_fast_ramp_up_enable_set(NRF_RADIO, IS_ENABLED(CONFIG_DTM_FAST_RAMP_UP));
 
@@ -2402,8 +2400,14 @@ int dtm_test_transmit(uint8_t channel, uint8_t length, enum dtm_packet pkt)
 
 	dtm_inst.packet_type = pkt;
 	dtm_inst.packet_len = length;
-	dtm_inst.phys_ch = channel;
 	dtm_inst.current_pdu = dtm_inst.pdu;
+
+	/* 'channel' may be used for different purposes if the packet
+	 * is vendor-specific
+	 */
+	if (pkt != DTM_PACKET_VENDOR) {
+		dtm_inst.phys_ch = channel;
+	}
 
 	/* Check for illegal values of m_phys_ch. Skip the check if the
 	 * packet is vendor specific.
@@ -2417,7 +2421,7 @@ int dtm_test_transmit(uint8_t channel, uint8_t length, enum dtm_packet pkt)
 	/* Check for illegal values of packet_len. Skip the check
 	 * if the packet is vendor spesific.
 	 */
-	if (dtm_inst.packet_type != DTM_PKT_TYPE_VENDORSPECIFIC &&
+	if (dtm_inst.packet_type != DTM_PACKET_VENDOR &&
 	    dtm_inst.packet_len > DTM_PAYLOAD_MAX_SIZE) {
 		/* Parameter error */
 		return -EINVAL;
