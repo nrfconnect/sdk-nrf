@@ -2696,6 +2696,36 @@ Bluetooth samples
 
 .. rst-class:: v3-0-2 v3-0-1 v3-0-0
 
+NCSDK-34582: The :ref:`fast_pair_locator_tag` sample uses incorrect partition map for the nRF54L10 SoC
+  The partition map for the ``nrf54l15dk/nrf54l10/cpuapp`` board target is incorrect in the :ref:`fast_pair_locator_tag` sample.
+  In the |NCS| releases affected by this issue, it was assumed that the NVM size of the nRF54L15 SoC was 10 KB larger than the actual one.
+  The NVM size of the nRF54L15 SoC is equal to 1012 KB.
+
+  The workaround fix for the nRF54L10 partition map is a breaking change and cannot be performed using DFU.
+  The DFU procedure will fail if you attempt to upgrade the sample firmware based on one of the |NCS| releases that is affected by this issue.
+
+  **Affected platforms:** nRF54L10
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch of the ``sdk-nrf`` repository (commit hash: ``43d0e2eb129bde7b0f0fc462dd4b239765c69c59``).
+  Additionally, you need to manually update the :file:`boards/nordic/nrf54l15dk/nrf54l15dk_nrf54l10_cpuapp.dts` DTS file in your local copy of the ``sdk-zephyr`` repository to avoid issues with build asserts that are used for RRAM validation.
+  Correct the ``cpuapp_rram`` DTS node in the following way:
+
+  .. code-block::
+
+     &cpuapp_rram {
+       reg = <0x0 DT_SIZE_K(1012)>;
+     };
+
+  Then, correct the ``storage_partition`` node in the following way:
+
+  .. code-block::
+
+     storage_partition: partition@f6000 {
+       reg = <0xf6000 DT_SIZE_K(28)>;
+     };
+
+.. rst-class:: v3-0-2 v3-0-1 v3-0-0
+
 NCSDK-33915: The :ref:`direct_test_mode` asserts on nRF54H20 devices
   The sample asserts during reception tests and sends too few packets during transmission tests.
 
