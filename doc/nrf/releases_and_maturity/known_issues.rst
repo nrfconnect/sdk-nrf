@@ -580,6 +580,13 @@ The issues in this section are related to the :ref:`ug_matter` protocol.
 
 .. rst-class:: v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0
 
+KRKNWK-19277: Invalid testing steps in the Light Switch README file
+  The testing steps for groupcast binding are invalid in the :ref:`matter_light_switch_sample` sample documentation.
+
+  **Workaround:** For groupcast binding, refer to the :ref:`ug_matter_group_communication` user guide instead of the sample documentation.
+
+.. rst-class:: v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0
+
 KRKNWK-20019: The identify time does not update for the endpoint 1 in the Matter Bridge application
   The identify cluster is enabled in the :file:`.zap` file, but not in the application.
 
