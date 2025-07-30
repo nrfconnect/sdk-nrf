@@ -22,6 +22,11 @@
 extern "C" {
 #endif
 
+/**
+ * @brief Module suspend request event
+ *
+ * The event is submitted by a module to request the suspension of another module.
+ */
 struct module_suspend_req_event {
 	/** Event header. */
 	struct app_event_header header;
@@ -35,6 +40,11 @@ struct module_suspend_req_event {
 
 APP_EVENT_TYPE_DECLARE(module_suspend_req_event);
 
+/**
+ * @brief Module resume request event
+ *
+ * The event is submitted by a module to request the resumption of another module.
+ */
 struct module_resume_req_event {
 	/** Event header. */
 	struct app_event_header header;

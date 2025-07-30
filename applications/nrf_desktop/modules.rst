@@ -19,6 +19,7 @@ These are valid for events that have many listeners or sources, and are gathered
    doc/battery_charger.rst
    doc/battery_meas.rst
    doc/ble_adv.rst
+   doc/ble_adv_ctrl.rst
    doc/ble_bond.rst
    doc/ble_conn_params.rst
    doc/ble_discovery.rst

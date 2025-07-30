@@ -54,10 +54,15 @@ The application power level is imposed using the :c:struct:`power_manager_restri
 
 * If the USB state is set to :c:enum:`USB_STATE_POWERED`, the module restricts the power down level to the :c:enum:`POWER_MANAGER_LEVEL_SUSPENDED`.
 * If the USB state is set to :c:enum:`USB_STATE_ACTIVE`, the :c:enum:`POWER_MANAGER_LEVEL_ALIVE` is required.
-* If the USB state is set to :c:enum:`USB_STATE_DISCONNECTED`, any power level is allowed.
 * If the USB state is set to :c:enum:`USB_STATE_SUSPENDED`, the :c:enum:`POWER_MANAGER_LEVEL_SUSPENDED` is imposed.
   The module restricts the power down level to the :c:enum:`POWER_MANAGER_LEVEL_SUSPENDED`.
   The module also submits a :c:struct:`force_power_down_event` to force a quick power down.
+* If the USB state is set to :c:enum:`USB_STATE_DISCONNECTED`, any power level is allowed.
+  While disconnecting the USB cable, the :c:enum:`USB_STATE_SUSPENDED` USB state might be reported before the :c:enum:`USB_STATE_DISCONNECTED` USB state.
+  For the application to behave consistently regardless of whether the :c:enum:`USB_STATE_SUSPENDED` USB state was reported, the module also submits a :c:struct:`force_power_down_event` to force a quick power down.
+  The module initially restricts the power down level to the :c:enum:`POWER_MANAGER_LEVEL_SUSPENDED`.
+  Then, after the :ref:`CONFIG_DESKTOP_USB_PM_RESTRICT_REMOVE_DELAY_MS <config_desktop_app_options>` configurable delay, the module removes the power down level restriction.
+  This allows you to take actions, such as restart Bluetooth LE advertising, after disconnecting the USB cable without going through reboot.
 
 System power management latency
 ===============================
