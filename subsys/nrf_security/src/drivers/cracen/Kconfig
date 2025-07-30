@@ -53,7 +53,7 @@ config CRACEN_PROVISION_PROT_RAM_INV_DATA
 
 config CRACEN_IKG
 	bool "Enable CRACEN IKG"
-	default y
+	default n
 	help
 	  Enable the Cracen Isolated Key Generator.
 
