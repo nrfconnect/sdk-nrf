@@ -2125,6 +2125,36 @@ The issues in this section are related to the :ref:`nrf_desktop` application.
     nRF Desktop is also affected by :ref:`hogp_readme` library's issue :ref:`NCSDK-30288 <ncsdk_30288>`.
     The issue might cause accessing data under the ``NULL`` pointer in case of Bluetooth disconnection while forwarding a configuration channel operation in the :ref:`nrf_desktop_hid_forward`.
 
+.. rst-class:: v3-0-2 v3-0-1 v3-0-0
+
+NCSDK-34584: The :ref:`nrf_desktop` application uses incorrect partition map for the nRF54L10 SoC
+  In the :ref:`nrf_desktop` application, a partition map is incorrectly defined for each build configuration that is supported by the ``nrf54l15dk/nrf54l10/cpuapp`` board target.
+  In the |NCS| releases affected by this issue, it was assumed that the NVM size of the nRF54L10 SoC was 10 KB larger than the actual one.
+  The NVM size of the nRF54L10 SoC is equal to 1012 KB.
+
+  The workaround fix for the nRF54L10 partition map is a breaking change and cannot be performed using DFU.
+  The DFU procedure will fail if you attempt to upgrade the application firmware based on one of the |NCS| releases that is affected by this issue.
+
+  **Affected platforms:** nRF54L10
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch of the ``sdk-nrf`` repository (commit hash: ``2658ceea216a9020450206347ad8a08d44b53e5c``).
+  Additionally, you need to manually update the :file:`boards/nordic/nrf54l15dk/nrf54l15dk_nrf54l10_cpuapp.dts` DTS file in your local copy of the ``sdk-zephyr`` repository to avoid issues with build asserts that are used for RRAM validation.
+  Correct the ``cpuapp_rram`` DTS node in the following way:
+
+  .. code-block::
+
+     &cpuapp_rram {
+       reg = <0x0 DT_SIZE_K(1012)>;
+     };
+
+  Then, correct the ``storage_partition`` node in the following way:
+
+  .. code-block::
+
+     storage_partition: partition@f6000 {
+       reg = <0xf6000 DT_SIZE_K(28)>;
+     };
+
 .. rst-class:: v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0
 
 NCSDK-30504: USB High-Speed slight HID report rate drop
