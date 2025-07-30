@@ -18,3 +18,10 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
       - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE=y
+  sample.smp_svr_mini_boot.nrf54h20dk:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - FILE_SUFFIX="nrf54h20dk"
