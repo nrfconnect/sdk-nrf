@@ -72,6 +72,9 @@ Logging configuration
 Logging is handled with the :kconfig:option:`CONFIG_LOG` option.
 This option enables logging for both the stack and Zephyr's :ref:`zephyr:logging_api` API.
 
+Logging level configuration
+---------------------------
+
 Zephyr allows you to configure log levels of different software modules independently.
 To change the log level configuration for the Matter module, set one of the available options:
 
@@ -82,6 +85,56 @@ To change the log level configuration for the Matter module, set one of the avai
 
 .. note::
     :kconfig:option:`CONFIG_MATTER_LOG_LEVEL_WRN` is not used in Matter.
+
+Detailed message logging
+------------------------
+
+You can enable detailed logging of Matter interaction messages using the :kconfig:option:`CONFIG_CHIP_IM_PRETTY_PRINT` Kconfig option.
+
+When enabled, this option increases the verbosity of the logs by including protocol-level details such as:
+
+* Cluster ID
+* Endpoint ID
+* Attribute ID or Command ID
+* Payload contents for interaction messages (for example Read Request or Invoke Request)
+
+This is particularly useful for debugging and understanding communication flows within the Matter data model.
+
+The following is an example log output showing a ``ConnectNetwork`` command (0x06) from the Network Commissioning cluster (0x31), sent with a ``NetworkID`` of ``0x1111111122222222``.
+
+.. code-block:: text
+
+   [DMG]InvokeRequestMessage =
+   [DMG]{
+   [DMG] suppressResponse = false,
+   [DMG] timedRequest = false,
+   [DMG] InvokeRequests =
+   [DMG] [
+   [DMG]         CommandDataIB =
+   [DMG]         {
+   [DMG]                 CommandPathIB =
+   [DMG]                 {
+   [DMG]                         EndpointId = 0x0,
+   [DMG]                         ClusterId = 0x31,
+   [DMG]                         CommandId = 0x6,
+   [DMG]                 },
+   [DMG]
+   [DMG]                 CommandFields =
+   [DMG]                 {
+   [DMG]                         0x0 = [
+   [DMG]                                         0x11, 0x11, 0x11, 0x11, 0x22, 0x22, 0x22, 0x22,
+   [DMG]                         ] (8 bytes)
+   [DMG]                         0x1 = lu (unsigned),
+   [DMG]                 },
+   [DMG]         },
+   [DMG]
+   [DMG] ],
+   [DMG]
+   [DMG] InteractionModelRevision = 11
+   [DMG]},
+
+.. note::
+    This option requires the debug log level :kconfig:option:`CONFIG_MATTER_LOG_LEVEL_DBG` to be enabled and :kconfig:option:`CONFIG_CHIP_LOG_SIZE_OPTIMIZATION` to be disabled.
 
 .. _ug_matter_configuring_optional_shell:
 
