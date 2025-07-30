@@ -4,9 +4,9 @@
  */
 
 / {
-	sram@2003E340 {
+	sram@2003DF40 {
 		compatible = "zephyr,memory-region", "mmio-sram";
-		reg = <0x2003E340 0x1CC0>;
+		reg = <0x2003DF40 0x20C0>;
 		zephyr,memory-region = "DiagnosticLogMem";
 		status = "okay";
 		retainedmem {
@@ -32,11 +32,11 @@
 					checksum = <2>;
 			};
 
-			/* Reserve 1 kB for the end user logs. */
+			/* Reserve 2 kB for the end user logs. */
 			end_user_logs_retention: retention@18c0 {
 					compatible = "zephyr,retention";
 					status = "okay";
-					reg = <0x18C0 0x400>;
+					reg = <0x18C0 0x800>;
 					prefix = [05 02];
 					checksum = <2>;
 			};
@@ -44,7 +44,7 @@
 	};
 };
 
-/* Reduce SRAM0 usage by 7360 B to account for non-init area */
+/* Reduce SRAM0 usage by 8384 B to account for non-init area */
 &sram0 {
-	reg = <0x20000000 0x3E340>;
+	reg = <0x20000000 0x3DF40>;
 };
