@@ -1,0 +1,23 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config WIFI_PROV_CORE
+	bool "Wi-Fi provisioning core library"
+	select EXPERIMENTAL
+	depends on WIFI_NM_WPA_SUPPLICANT
+	depends on NET_MGMT
+	help
+	  Enable the Wi-Fi provisioning core subsystem that provides
+	  APIs and infrastructure for Wi-Fi provisioning, including
+	  configuration management and event handling.
+
+	  This library is required for Wi-Fi provisioning workflows
+	  and should be enabled when using Wi-Fi provisioning features.
+
+module = WIFI_PROV_CORE
+module-dep = LOG
+module-str = Log level for sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"

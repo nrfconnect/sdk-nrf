@@ -3,25 +3,19 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
-zephyr_library()
 
-set(PROTOC_OPTIONS "-I${CMAKE_CURRENT_SOURCE_DIR}")
-set(nanopb_BUILD_RUNTIME OFF)
-set(CMAKE_MODULE_PATH ${ZEPHYR_NANOPB_MODULE_DIR}/extra)
-find_package(Nanopb REQUIRED)
-set(NANOPB_GENERATE_CPP_STANDALONE FALSE)
-nanopb_generate_cpp(proto_sources proto_headers
-	proto/common.proto
-	proto/version.proto
-	proto/result.proto
-	proto/request.proto
-	proto/response.proto
-)
+# BLE transport layer for WiFi provisioning
+zephyr_library_named(wifi_prov_ble)
 
 # Add include path to generated .pb.h header files
 zephyr_library_include_directories(${CMAKE_CURRENT_BINARY_DIR})
+zephyr_library_include_directories(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/wifi_prov_core)
+zephyr_library_include_directories($<TARGET_PROPERTY:wifi_prov_core,BINARY_DIR>)
 
 zephyr_library_sources(
-	wifi_prov_ble.c
-	wifi_prov_handler.c
-	${proto_sources})
+    wifi_prov_ble.c
+)
+
+zephyr_library_link_libraries(wifi_prov_core)
+# Ensure wifi_prov_ble depends on wifi_prov_core
+add_dependencies(wifi_prov_ble wifi_prov_core)

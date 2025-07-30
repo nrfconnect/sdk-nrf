@@ -19,10 +19,20 @@
 #include <pb_encode.h>
 #include <pb_decode.h>
 
-#include <bluetooth/services/wifi_provisioning.h>
-#include "wifi_prov_internal.h"
+#include <net/wifi_prov_core/wifi_prov_core.h>
 
-LOG_MODULE_REGISTER(wifi_prov, CONFIG_BT_WIFI_PROV_LOG_LEVEL);
+/* Weak transport functions - can be overridden by transport layer */
+__weak int wifi_prov_send_rsp(struct net_buf_simple *rsp)
+{
+	return -ENOTSUP;
+}
+
+__weak int wifi_prov_send_result(struct net_buf_simple *result)
+{
+	return -ENOTSUP;
+}
+
+LOG_MODULE_REGISTER(wifi_prov, CONFIG_WIFI_PROV_CORE_LOG_LEVEL);
 
 #define WIFI_PROV_MGMT_EVENTS (NET_EVENT_WIFI_SCAN_RESULT | \
 				NET_EVENT_WIFI_CONNECT_RESULT)
@@ -252,53 +262,56 @@ static void prov_set_config_handler(Request *req, Response *rsp)
 				config.header.type = WIFI_SECURITY_TYPE_PSK_SHA256;
 			} else if (req->config.wifi.auth == AuthMode_WPA3_PSK) {
 				config.header.type = WIFI_SECURITY_TYPE_SAE;
-#if defined(CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE)
-			} else if (req->config.wifi.auth == AuthMode_WPA2_ENTERPRISE) {
-				config.header.type = WIFI_SECURITY_TYPE_EAP_TLS;
-				if (req->config.has_certs == true) {
-					if (req->config.certs.has_ca_cert) {
-						tls_credential_add(WIFI_CERT_CA_SEC_TAG,
-							TLS_CREDENTIAL_CA_CERTIFICATE,
-							req->config.certs.ca_cert.bytes,
-							req->config.certs.ca_cert.size);
-					}
-					if (req->config.certs.has_client_cert) {
-						tls_credential_add(WIFI_CERT_CLIENT_SEC_TAG,
-							TLS_CREDENTIAL_PUBLIC_CERTIFICATE,
-							req->config.certs.client_cert.bytes,
-							req->config.certs.client_cert.size);
-					}
-					if (req->config.certs.has_private_key) {
-						tls_credential_add(WIFI_CERT_CLIENT_KEY_SEC_TAG,
-							TLS_CREDENTIAL_PRIVATE_KEY,
-							req->config.certs.private_key.bytes,
-							req->config.certs.private_key.size);
-					}
-					if (req->config.certs.has_ca_cert) {
-						tls_credential_add(WIFI_CERT_CA_P2_SEC_TAG,
-							TLS_CREDENTIAL_CA_CERTIFICATE,
-							req->config.certs.ca_cert.bytes,
-							req->config.certs.ca_cert.size);
-					}
-					if (req->config.certs.has_client_cert) {
-						tls_credential_add(WIFI_CERT_CLIENT_P2_SEC_TAG,
-							TLS_CREDENTIAL_PUBLIC_CERTIFICATE,
-							req->config.certs.client_cert.bytes,
-							req->config.certs.client_cert.size);
-					}
-					if (req->config.certs.has_private_key) {
-						tls_credential_add(WIFI_CERT_CLIENT_KEY_P2_SEC_TAG,
-							TLS_CREDENTIAL_PRIVATE_KEY,
-							req->config.certs.private_key.bytes,
-							req->config.certs.private_key.size);
-					}
-				}
-#endif /* CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE */
 			}
 		}
 	} else {
-		/* If no passphrase provided, ignore the auth field and regard it as open */
-		config.header.type = WIFI_SECURITY_TYPE_NONE;
+#if defined(CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE)
+		if (req->config.wifi.auth == AuthMode_WPA2_ENTERPRISE) {
+			config.header.type = WIFI_SECURITY_TYPE_EAP_TLS;
+			if (req->config.has_certs == true) {
+				if (req->config.certs.has_ca_cert) {
+					tls_credential_add(WIFI_CERT_CA_SEC_TAG,
+						TLS_CREDENTIAL_CA_CERTIFICATE,
+						req->config.certs.ca_cert.bytes,
+						req->config.certs.ca_cert.size);
+				}
+				if (req->config.certs.has_client_cert) {
+					tls_credential_add(WIFI_CERT_CLIENT_SEC_TAG,
+						TLS_CREDENTIAL_PUBLIC_CERTIFICATE,
+						req->config.certs.client_cert.bytes,
+						req->config.certs.client_cert.size);
+				}
+				if (req->config.certs.has_private_key) {
+					tls_credential_add(WIFI_CERT_CLIENT_KEY_SEC_TAG,
+						TLS_CREDENTIAL_PRIVATE_KEY,
+						req->config.certs.private_key.bytes,
+						req->config.certs.private_key.size);
+				}
+				if (req->config.certs.has_ca_cert) {
+					tls_credential_add(WIFI_CERT_CA_P2_SEC_TAG,
+						TLS_CREDENTIAL_CA_CERTIFICATE,
+						req->config.certs.ca_cert.bytes,
+						req->config.certs.ca_cert.size);
+				}
+				if (req->config.certs.has_client_cert) {
+					tls_credential_add(WIFI_CERT_CLIENT_P2_SEC_TAG,
+						TLS_CREDENTIAL_PUBLIC_CERTIFICATE,
+						req->config.certs.client_cert.bytes,
+						req->config.certs.client_cert.size);
+				}
+				if (req->config.certs.has_private_key) {
+					tls_credential_add(WIFI_CERT_CLIENT_KEY_P2_SEC_TAG,
+						TLS_CREDENTIAL_PRIVATE_KEY,
+						req->config.certs.private_key.bytes,
+						req->config.certs.private_key.size);
+				}
+			}
+		} else
+#endif /* CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE */
+		{
+			/* If no passphrase provided, ignore the auth field and regard it as open */
+			config.header.type = WIFI_SECURITY_TYPE_NONE;
+		}
 	}
 	/* Band */
 	if (req->config.wifi.has_band == true) {
@@ -338,6 +351,7 @@ static void prov_set_config_handler(Request *req, Response *rsp)
 	if (config.header.type == WIFI_SECURITY_TYPE_EAP_TLS) {
 		/* If EAP TLS is used, we need to set the private key password. */
 		const EnterpriseCertConfig *config_ptr = &req->config.certs;
+
 		if (config_ptr->has_private_key_passwd) {
 			cnx_params.key_passwd = config_ptr->private_key_passwd;
 			cnx_params.key_passwd_length = sizeof(config_ptr->private_key_passwd);
@@ -370,6 +384,7 @@ static void prov_set_config_handler(Request *req, Response *rsp)
 
 	rc = net_mgmt(NET_REQUEST_WIFI_CONNECT, iface,
 		     &cnx_params, sizeof(struct wifi_connect_req_params));
+
 	/* Invalid argument error. */
 	if (rc == -EINVAL) {
 		rsp->has_status = true;
@@ -647,7 +662,7 @@ static void wifi_mgmt_event_handler(struct net_mgmt_event_callback *cb,
 	}
 }
 
-bool bt_wifi_prov_state_get(void)
+bool wifi_prov_state_get(void)
 {
 	struct wifi_credentials_personal config = { 0 };
 
@@ -659,7 +674,7 @@ bool bt_wifi_prov_state_get(void)
 	}
 }
 
-int bt_wifi_prov_init(void)
+int wifi_prov_init(void)
 {
 	net_mgmt_init_event_callback(&wifi_prov_mgmt_cb,
 				     wifi_mgmt_event_handler,
