@@ -221,7 +221,10 @@ tests:
   sample.nrf7002.shell.otbr:
     sysbuild: true
     build_only: true
-    extra_args: EXTRA_CONF_FILE=overlay-openthread.conf
+    extra_args:
+      - EXTRA_CONF_FILE=overlay-openthread.conf
+      - SB_CONFIG_NETCORE_IPC_RADIO=y
+      - SB_CONFIG_NETCORE_IPC_RADIO_IEEE802154=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp

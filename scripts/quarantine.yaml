@@ -6,12 +6,6 @@
     - net.lib.wifi_credentials_backend_psa
   comment: "Fix not known at time of upmerge, temporarily excluded to be fixed after upmerge"
 
-- scenarios:
-    - sample.nrf7002.shell.otbr
-  platforms:
-    - nrf7002dk/nrf5340/cpuapp
-  comment: https://nordicsemi.atlassian.net/browse/NCSDK-31155
-
 - platforms:
     - native_posix
   comment: "native_posix will be removed soon - native_sim platform is the default simulator now"
