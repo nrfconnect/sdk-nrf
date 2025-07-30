@@ -11,22 +11,22 @@ if(CONFIG_MSPI_NRF_SQSPI)
   set(SP_DIR ${ZEPHYR_NRFXLIB_MODULE_DIR}/softperipheral)
   set(SQSPI_DIR ${SP_DIR}/sQSPI)
 
+  dt_comp_path(sqspi_path COMPATIBLE "nordic,nrf-sqspi" IDX 0)
+  dt_reg_addr(sqspi_addr PATH ${sqspi_path})
+  math(EXPR sqspi_sp_firmware_addr "${sqspi_addr} - 0x3c00")
+
   zephyr_library_compile_definitions(
-    NRFX_QSPI2_ENABLED=1
-    NRFX_QSPI2_MAX_NUM_DATA_LINES=4
+    NRF_SQSPI_ENABLED=1
+    NRF_SQSPI_MAX_NUM_DATA_LINES=4
+    NRF_SQSPI_SP_FIRMWARE_ADDR=${sqspi_sp_firmware_addr}
   )
   zephyr_library_include_directories(
     ${SP_DIR}/include
     ${SQSPI_DIR}/include
-  )
-  zephyr_library_include_directories_ifdef(CONFIG_SOC_NRF54L15
-    ${SQSPI_DIR}/include/nrf54l15
-  )
-  zephyr_library_include_directories_ifdef(CONFIG_SOC_NRF54H20
-    ${SQSPI_DIR}/include/nrf54h20
+    ${SQSPI_DIR}/include/${CONFIG_SOC}
   )
   zephyr_library_sources(
-    ${SQSPI_DIR}/src/nrfx_qspi2.c
+    ${SQSPI_DIR}/src/nrf_sqspi.c
     mspi_sqspi.c
   )
 endif()
