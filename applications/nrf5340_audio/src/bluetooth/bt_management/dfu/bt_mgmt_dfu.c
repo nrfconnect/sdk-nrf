@@ -18,10 +18,6 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(bt_mgmt_dfu, CONFIG_BT_MGMT_DFU_LOG_LEVEL);
 
-/* These defined name only used by DFU */
-#define DEVICE_NAME_DFU	    CONFIG_BT_DFU_DEVICE_NAME
-#define DEVICE_NAME_DFU_LEN (sizeof(DEVICE_NAME_DFU) - 1)
-
 static const struct bt_data ad_peer[] = {
 	BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
 	BT_DATA_BYTES(BT_DATA_UUID128_ALL, 0x84, 0xaa, 0x60, 0x74, 0x52, 0x8a, 0x8b, 0x86, 0xd3,
