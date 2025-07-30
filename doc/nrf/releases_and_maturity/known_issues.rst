@@ -2737,8 +2737,8 @@ Bluetooth samples
 
 NCSDK-34582: The :ref:`fast_pair_locator_tag` sample uses incorrect partition map for the nRF54L10 SoC
   The partition map for the ``nrf54l15dk/nrf54l10/cpuapp`` board target is incorrect in the :ref:`fast_pair_locator_tag` sample.
-  In the |NCS| releases affected by this issue, it was assumed that the NVM size of the nRF54L15 SoC was 10 KB larger than the actual one.
-  The NVM size of the nRF54L15 SoC is equal to 1012 KB.
+  In the |NCS| releases affected by this issue, it was assumed that the NVM size of the nRF54L10 SoC was 10 KB larger than the actual one.
+  The NVM size of the nRF54L10 SoC is equal to 1012 KB.
 
   The workaround fix for the nRF54L10 partition map is a breaking change and cannot be performed using DFU.
   The DFU procedure will fail if you attempt to upgrade the sample firmware based on one of the |NCS| releases that is affected by this issue.
