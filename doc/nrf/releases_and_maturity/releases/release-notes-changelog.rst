@@ -165,6 +165,7 @@ Amazon Sidewalk
 Bluetooth® LE
 -------------
 
+* Added the :ref:bluetooth_automated_power_control sample.
 * Added the :kconfig:option:`CONFIG_BT_CTLR_CHANNEL_SOUNDING_TEST` Kconfig option.
   This option reduces the NVM usage of Channel Sounding when disabled by removing the ``LE CS Test`` and ``LE CS Test End`` HCI commands.
 
@@ -422,6 +423,8 @@ Amazon Sidewalk samples
 
 Bluetooth samples
 -----------------
+
+* Added the :ref:`bluetooth_automated_power_control` sample.
 
 * Added experimental ``llvm`` toolchain support for the nRF54L Series board targets to the following samples:
 
