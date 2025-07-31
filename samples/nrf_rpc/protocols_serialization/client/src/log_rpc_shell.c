@@ -145,6 +145,22 @@ static int cmd_log_rpc_history_threshold(const struct shell *sh, size_t argc, ch
 	return 0;
 }
 
+static int cmd_log_rpc_history_usage_current(const struct shell *sh, size_t argc, char *argv[])
+{
+	size_t usage_size;
+	size_t max_size;
+	size_t usage;
+
+	usage_size = log_rpc_get_history_usage_current();
+	max_size = log_rpc_get_history_usage_max();
+	usage = (usage_size * 100 + max_size / 2) / max_size;
+	shell_print(sh,
+		    "History usage size: %zu bytes, max size: %zu bytes, usage: %zu%%",
+		    usage_size, max_size, usage);
+
+	return 0;
+}
+
 static int cmd_log_rpc_crash(const struct shell *sh, size_t argc, char *argv[])
 {
 	int rc;
@@ -246,6 +262,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      cmd_log_rpc_history_stop_fetch, 2, 0),
 	SHELL_CMD_ARG(history_threshold, NULL, "Get or set history usage threshold [0-100]",
 		      cmd_log_rpc_history_threshold, 1, 1),
+	SHELL_CMD_ARG(history_usage, NULL, "Get current history usage",
+		      cmd_log_rpc_history_usage_current, 1, 0),
 	SHELL_CMD_ARG(crash, &crash_cmds, "Retrieve crash dump from remote", cmd_log_rpc_crash, 1,
 		      0),
 	SHELL_CMD_ARG(echo, NULL, "Generate log message on remote <0-4> <msg>", cmd_log_rpc_echo, 3,

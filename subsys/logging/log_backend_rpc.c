@@ -557,6 +557,29 @@ NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_get_history_usage_threshold_hand
 			 LOG_RPC_CMD_GET_HISTORY_USAGE_THRESHOLD,
 			 log_rpc_get_history_usage_threshold_handler, NULL);
 
+static void log_rpc_get_history_usage_current_handler(const struct nrf_rpc_group *group,
+						  struct nrf_rpc_cbor_ctx *ctx,
+						  void *handler_data)
+{
+	nrf_rpc_cbor_decoding_done(group, ctx);
+	nrf_rpc_rsp_send_uint(group, (uint32_t)log_rpc_history_get_usage_size());
+}
+
+NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_get_history_usage_current_handler,
+			 LOG_RPC_CMD_GET_HISTORY_USAGE_SIZE,
+			 log_rpc_get_history_usage_current_handler, NULL);
+
+static void log_rpc_get_history_usage_max_handler(const struct nrf_rpc_group *group,
+						 struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	nrf_rpc_cbor_decoding_done(group, ctx);
+	nrf_rpc_rsp_send_uint(group, (uint32_t)log_rpc_history_get_max_size());
+}
+
+NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_get_history_usage_max_handler,
+			 LOG_RPC_CMD_GET_HISTORY_MAX_SIZE,
+			 log_rpc_get_history_usage_max_handler, NULL);
+
 static void log_rpc_set_history_usage_threshold_handler(const struct nrf_rpc_group *group,
 							struct nrf_rpc_cbor_ctx *ctx,
 							void *handler_data)
