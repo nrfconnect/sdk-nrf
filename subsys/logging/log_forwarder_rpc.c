@@ -256,6 +256,32 @@ uint8_t log_rpc_get_history_usage_threshold(void)
 	return threshold;
 }
 
+size_t log_rpc_get_history_usage_current(void)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	uint32_t usage_size;
+
+	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, 0);
+
+	nrf_rpc_cbor_cmd_no_err(&log_rpc_group, LOG_RPC_CMD_GET_HISTORY_USAGE_SIZE, &ctx,
+				nrf_rpc_rsp_decode_u32, &usage_size);
+
+	return (size_t)usage_size;
+}
+
+size_t log_rpc_get_history_usage_max(void)
+{
+	struct nrf_rpc_cbor_ctx ctx;
+	uint32_t max_size;
+
+	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, 0);
+
+	nrf_rpc_cbor_cmd_no_err(&log_rpc_group, LOG_RPC_CMD_GET_HISTORY_MAX_SIZE, &ctx,
+				nrf_rpc_rsp_decode_u32, &max_size);
+
+	return (size_t)max_size;
+}
+
 void log_rpc_set_history_usage_threshold(log_rpc_history_threshold_reached_handler_t handler,
 					 uint8_t threshold)
 {

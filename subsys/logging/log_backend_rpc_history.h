@@ -19,4 +19,8 @@ void log_rpc_history_free(const union log_msg_generic *msg);
 
 uint8_t log_rpc_history_get_usage(void);
 
+size_t log_rpc_history_get_usage_size(void);
+
+size_t log_rpc_history_get_max_size(void);
+
 #endif /* LOG_RPC_HISTORY_H_ */

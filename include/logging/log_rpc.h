@@ -91,6 +91,24 @@ void log_rpc_set_history_level(enum log_rpc_level level);
 uint8_t log_rpc_get_history_usage_threshold(void);
 
 /**
+ * @brief Gets the current history usage size in bytes.
+ *
+ * This function fetches the current history usage size in bytes.
+ *
+ * @returns The current history usage size in bytes.
+ */
+size_t log_rpc_get_history_usage_current(void);
+
+/**
+ * @brief Gets the maximum history size in bytes.
+ *
+ * This function fetches the maximum history size in bytes.
+ *
+ * @returns The maximum history size in bytes.
+ */
+size_t log_rpc_get_history_usage_max(void);
+
+/**
  * @brief Sets the current history usage threshold.
  *
  * The log history is the feature of nRF RPC logging that allows saving log
