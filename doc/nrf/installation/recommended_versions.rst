@@ -409,7 +409,9 @@ The `nRF Util development tool`_ is a unified command line utility for Nordic pr
 Its functionality is provided through installable and upgradeable commands that are served on a central package registry on the Internet.
 
 The utility follows its own release cycle and has its own `operating system requirements <nRF Util_>`_.
+
 The |NCS| toolchain bundle includes the nRF Util version :ncs-tool-version:`NRFUTIL_VERSION_WIN10` and the device command version :ncs-tool-version:`NRFUTIL_DEVICE_VERSION_WIN10`, as listed in :ref:`requirements_toolchain_tools`.
+When you :ref:`gs_installing_toolchain`, you get both these versions `locked <Locking nRF Util home directory_>`_ to prevent unwanted changes to the toolchain bundle.
 
 .. note::
 
