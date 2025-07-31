@@ -5,7 +5,6 @@
 menuconfig DFU_ZIP
 	bool "Create DFU zip package"
 	depends on BOOTLOADER_MCUBOOT || (SECURE_BOOT_APPCORE && SECURE_BOOT_BUILD_S1_VARIANT_IMAGE)
-	depends on PARTITION_MANAGER
 	default y
 	help
 	  Build DFU zip package that contains a manifest file and selected update images.
@@ -24,8 +23,7 @@ config DFU_ZIP_NET
 	bool "Network core update"
 	depends on SUPPORT_NETCORE
 	depends on !NETCORE_NONE
-	depends on SECURE_BOOT_NETCORE
-	depends on NETCORE_APP_UPDATE
+	depends on (SECURE_BOOT_NETCORE && NETCORE_APP_UPDATE) || SOC_SERIES_NRF54HX
 	default y
 	help
 	  Include network-core update in DFU zip.
