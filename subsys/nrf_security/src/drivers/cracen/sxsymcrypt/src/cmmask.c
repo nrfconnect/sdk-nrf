@@ -13,7 +13,7 @@
 
 int sx_cm_load_mask(uint32_t csprng_value)
 {
-	int r;
+	int status;
 	struct sxchannel channel;
 
 	/* This is a special case where "cfg" is used to transmit the random
@@ -26,11 +26,11 @@ int sx_cm_load_mask(uint32_t csprng_value)
 
 	sx_cmdma_start(&channel.dma, sizeof(channel.descs), channel.descs);
 
-	r = SX_ERR_HW_PROCESSING;
-	while (r == SX_ERR_HW_PROCESSING) {
-		r = sx_cmdma_check();
+	status = SX_ERR_HW_PROCESSING;
+	while (status == SX_ERR_HW_PROCESSING) {
+		status = sx_cmdma_check();
 	}
 
 	safe_memzero(&channel, sizeof(channel));
-	return r;
+	return status;
 }

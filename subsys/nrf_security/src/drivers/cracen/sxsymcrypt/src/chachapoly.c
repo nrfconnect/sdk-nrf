@@ -21,7 +21,7 @@
 #define SX_CHACHAPOLY_KEY_SZ		 32u
 #define SX_CHACHAPOLY_TAG_SIZE		 16u
 #define SX_CHACHAPOLY_CTX_GRANULARITY_SZ 64u
-#define SX_CHACHAPOLY_BLOCK_SZ 64u
+#define SX_CHACHAPOLY_BLOCK_SZ		 64u
 
 /** Size of ChaCha20Poly1305 context saving state, in bytes
  * The ChaCha20Poly1305 context saving state is made of ChaCha20 state(first 16
@@ -102,7 +102,7 @@ static int lenAlenC_chachapoly(size_t aadsz, size_t datasz, uint8_t *out)
 	return 1;
 }
 
-static int sx_aead_create_chacha20poly1305(struct sxaead *c, const struct sxkeyref *key,
+static int sx_aead_create_chacha20poly1305(struct sxaead *aead_ctx, const struct sxkeyref *key,
 					   const char *nonce, const uint32_t dir, size_t tagsz)
 {
 
@@ -111,80 +111,85 @@ static int sx_aead_create_chacha20poly1305(struct sxaead *c, const struct sxkeyr
 	}
 
 	/* has countermeasures and the key need to be set before callling sx_aead_hw_reserve */
-	c->has_countermeasures = false;
-	c->key = key;
-	sx_aead_hw_reserve(c);
+	aead_ctx->has_countermeasures = false;
+	aead_ctx->key = key;
+	sx_aead_hw_reserve(aead_ctx);
 
-	c->cfg = &ba417chachapolycfg;
+	aead_ctx->cfg = &ba417chachapolycfg;
 
-	sx_cmdma_newcmd(&c->dma, c->descs, c->cfg->mode | dir, c->cfg->dmatags->cfg);
-	ADD_CFGDESC(c->dma, key->key, SX_CHACHAPOLY_KEY_SZ, c->cfg->dmatags->key);
+	sx_cmdma_newcmd(&aead_ctx->dma, aead_ctx->descs, aead_ctx->cfg->mode | dir,
+			aead_ctx->cfg->dmatags->cfg);
+	ADD_CFGDESC(aead_ctx->dma, key->key, SX_CHACHAPOLY_KEY_SZ, aead_ctx->cfg->dmatags->key);
 
 	/* In AEAD context, for BA417, the counter that must be provided and
 	 * initialized with 1. counter size is 4 bytes. Starting at position 16
 	 * due to lenAlenC that uses first 16 bytes of extramem
 	 */
-	c->extramem[16] = 0;
-	c->extramem[17] = 0;
-	c->extramem[18] = 0;
-	c->extramem[19] = 1;
+	aead_ctx->extramem[16] = 0;
+	aead_ctx->extramem[17] = 0;
+	aead_ctx->extramem[18] = 0;
+	aead_ctx->extramem[19] = 1;
 
-	ADD_INDESC_PRIV(c->dma, OFFSET_EXTRAMEM(c) + 16, SX_CHACHAPOLY_COUNTER_SIZE,
-			c->cfg->dmatags->iv_or_state);
-	ADD_CFGDESC(c->dma, nonce, SX_CHACHAPOLY_NONCE_SZ, c->cfg->dmatags->nonce);
+	ADD_INDESC_PRIV(aead_ctx->dma, OFFSET_EXTRAMEM(aead_ctx) + 16, SX_CHACHAPOLY_COUNTER_SIZE,
+			aead_ctx->cfg->dmatags->iv_or_state);
+	ADD_CFGDESC(aead_ctx->dma, nonce, SX_CHACHAPOLY_NONCE_SZ, aead_ctx->cfg->dmatags->nonce);
 
-	c->tagsz = tagsz;
-	c->expectedtag = c->cfg->verifier;
-	c->discardaadsz = 0;
-	c->totalaadsz = 0;
-	c->datainsz = 0;
-	c->dataintotalsz = 0;
+	aead_ctx->tagsz = tagsz;
+	aead_ctx->expectedtag = aead_ctx->cfg->verifier;
+	aead_ctx->discardaadsz = 0;
+	aead_ctx->totalaadsz = 0;
+	aead_ctx->datainsz = 0;
+	aead_ctx->dataintotalsz = 0;
 
 	return SX_OK;
 }
 
-static int sx_blkcipher_create_chacha20(struct sxblkcipher *c, struct sxkeyref *key,
+static int sx_blkcipher_create_chacha20(struct sxblkcipher *cipher_ctx, struct sxkeyref *key,
 					const char *counter, const char *nonce, const uint32_t dir)
 {
 	if (key->sz != SX_CHACHAPOLY_KEY_SZ) {
 		return SX_ERR_INVALID_KEY_SZ;
 	}
 
-	memcpy(&c->key, key, sizeof(c->key));
-	sx_hw_reserve(&c->dma);
-	c->cfg = &ba417chacha20cfg;
+	memcpy(&cipher_ctx->key, key, sizeof(cipher_ctx->key));
+	sx_hw_reserve(&cipher_ctx->dma);
+	cipher_ctx->cfg = &ba417chacha20cfg;
 
-	sx_cmdma_newcmd(&c->dma, c->descs, BA417_MODE_CHACHA20 | dir, c->cfg->dmatags->cfg);
+	sx_cmdma_newcmd(&cipher_ctx->dma, cipher_ctx->descs, BA417_MODE_CHACHA20 | dir,
+			cipher_ctx->cfg->dmatags->cfg);
 
-	ADD_CFGDESC(c->dma, key->key, SX_CHACHAPOLY_KEY_SZ, c->cfg->dmatags->key);
-	ADD_CFGDESC(c->dma, counter, SX_CHACHAPOLY_COUNTER_SIZE, c->cfg->dmatags->iv_or_state);
-	ADD_CFGDESC(c->dma, nonce, SX_CHACHAPOLY_NONCE_SZ, DMATAG_BA417 | DMATAG_CONFIG(0x2C));
+	ADD_CFGDESC(cipher_ctx->dma, key->key, SX_CHACHAPOLY_KEY_SZ, cipher_ctx->cfg->dmatags->key);
+	ADD_CFGDESC(cipher_ctx->dma, counter, SX_CHACHAPOLY_COUNTER_SIZE,
+		    cipher_ctx->cfg->dmatags->iv_or_state);
+	ADD_CFGDESC(cipher_ctx->dma, nonce, SX_CHACHAPOLY_NONCE_SZ,
+		    DMATAG_BA417 | DMATAG_CONFIG(0x2C));
 
-	c->textsz = 0;
+	cipher_ctx->textsz = 0;
 
 	return SX_OK;
 }
 
-int sx_aead_create_chacha20poly1305_enc(struct sxaead *c, const struct sxkeyref *key,
+int sx_aead_create_chacha20poly1305_enc(struct sxaead *aead_ctx, const struct sxkeyref *key,
 					const char *nonce, size_t tagsz)
 {
-	return sx_aead_create_chacha20poly1305(c, key, nonce, 0, tagsz);
+	return sx_aead_create_chacha20poly1305(aead_ctx, key, nonce, 0, tagsz);
 }
 
-int sx_aead_create_chacha20poly1305_dec(struct sxaead *c, const struct sxkeyref *key,
+int sx_aead_create_chacha20poly1305_dec(struct sxaead *aead_ctx, const struct sxkeyref *key,
 					const char *nonce, size_t tagsz)
 {
-	return sx_aead_create_chacha20poly1305(c, key, nonce, ba417chachapolycfg.decr, tagsz);
+	return sx_aead_create_chacha20poly1305(aead_ctx, key, nonce, ba417chachapolycfg.decr,
+					       tagsz);
 }
 
-int sx_blkcipher_create_chacha20_enc(struct sxblkcipher *c, struct sxkeyref *key,
+int sx_blkcipher_create_chacha20_enc(struct sxblkcipher *cipher_ctx, struct sxkeyref *key,
 				     const char *counter, const char *nonce)
 {
-	return sx_blkcipher_create_chacha20(c, key, counter, nonce, CM_CFG_ENCRYPT);
+	return sx_blkcipher_create_chacha20(cipher_ctx, key, counter, nonce, CM_CFG_ENCRYPT);
 }
 
-int sx_blkcipher_create_chacha20_dec(struct sxblkcipher *c, struct sxkeyref *key,
+int sx_blkcipher_create_chacha20_dec(struct sxblkcipher *cipher_ctx, struct sxkeyref *key,
 				     const char *counter, const char *nonce)
 {
-	return sx_blkcipher_create_chacha20(c, key, counter, nonce, ba417chacha20cfg.decr);
+	return sx_blkcipher_create_chacha20(cipher_ctx, key, counter, nonce, ba417chacha20cfg.decr);
 }

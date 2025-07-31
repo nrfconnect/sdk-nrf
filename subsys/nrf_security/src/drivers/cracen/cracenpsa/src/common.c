@@ -563,11 +563,11 @@ int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey
 {
 	int ret, version;
 	size_t len;
-	uint8_t *p;
+	uint8_t *parser_ptr;
 	uint8_t *end;
 
-	p = (uint8_t *)key;
-	end = p + keylen;
+	parser_ptr = (uint8_t *)key;
+	end = parser_ptr + keylen;
 
 	if (!extract_pubkey && !is_key_pair) {
 		return SX_ERR_INVALID_KEYREF;
@@ -598,15 +598,15 @@ int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey
 	 *  OpenSSL wraps public keys with an RSA algorithm identifier that we skip
 	 *  if it is present.
 	 */
-	ret = cracen_asn1_get_tag(&p, end, &len, ASN1_CONSTRUCTED | ASN1_SEQUENCE);
+	ret = cracen_asn1_get_tag(&parser_ptr, end, &len, ASN1_CONSTRUCTED | ASN1_SEQUENCE);
 	if (ret) {
 		return SX_ERR_INVALID_KEYREF;
 	}
 
-	end = p + len;
+	end = parser_ptr + len;
 
 	if (is_key_pair) {
-		ret = cracen_asn1_get_int(&p, end, &version);
+		ret = cracen_asn1_get_int(&parser_ptr, end, &version);
 		if (ret) {
 			return SX_ERR_INVALID_KEYREF;
 		}
@@ -615,7 +615,7 @@ int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey
 		}
 	} else {
 		/* Skip algorithm identifier prefix. */
-		uint8_t *id_seq = p;
+		uint8_t *id_seq = parser_ptr;
 
 		ret = cracen_asn1_get_tag(&id_seq, end, &len, ASN1_CONSTRUCTED | ASN1_SEQUENCE);
 		if (ret == 0) {
@@ -634,9 +634,10 @@ int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey
 				return SX_ERR_INVALID_KEYREF;
 			}
 
-			p = id_seq + 1;
+			parser_ptr = id_seq + 1;
 
-			ret = cracen_asn1_get_tag(&p, end, &len, ASN1_CONSTRUCTED | ASN1_SEQUENCE);
+			ret = cracen_asn1_get_tag(&parser_ptr, end, &len,
+						  ASN1_CONSTRUCTED | ASN1_SEQUENCE);
 			if (ret) {
 				return SX_ERR_INVALID_KEYREF;
 			}
@@ -646,7 +647,7 @@ int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey
 	*rsa = CRACEN_KEY_INIT_RSA(modulus, exponent);
 
 	/* Import N */
-	ret = cracen_signature_asn1_get_operand(&p, end, modulus);
+	ret = cracen_signature_asn1_get_operand(&parser_ptr, end, modulus);
 	if (ret) {
 		return ret;
 	}
@@ -656,7 +657,7 @@ int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey
 	}
 
 	/* Import E */
-	ret = cracen_signature_asn1_get_operand(&p, end, exponent);
+	ret = cracen_signature_asn1_get_operand(&parser_ptr, end, exponent);
 	if (ret) {
 		return ret;
 	}
@@ -665,7 +666,7 @@ int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey
 	}
 
 	/* Import D */
-	ret = cracen_signature_asn1_get_operand(&p, end, exponent);
+	ret = cracen_signature_asn1_get_operand(&parser_ptr, end, exponent);
 	if (ret) {
 		return ret;
 	}

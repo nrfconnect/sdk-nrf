@@ -15,8 +15,8 @@ void sx_pk_cnx_configure_blinding(struct sx_pk_cnx *cnx, struct sx_pk_blinder *p
 	if (!prng || !caps->blinding) {
 		return;
 	}
-	struct sx_pk_blinder **p = sx_pk_get_blinder(cnx);
-	*p = prng;
+	struct sx_pk_blinder **blinder_ptr = sx_pk_get_blinder(cnx);
+	*blinder_ptr = prng;
 }
 
 sx_pk_blind_factor sx_pk_default_blind_gen(struct sx_pk_blinder *blinder)

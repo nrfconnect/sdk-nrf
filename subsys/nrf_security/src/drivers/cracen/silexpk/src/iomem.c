@@ -22,27 +22,27 @@
 void sx_clrpkmem(void *dst, size_t sz)
 {
 	typedef int64_t clrblk_t;
-	volatile char *d = (volatile char *)dst;
+	volatile char *dst_ptr = (volatile char *)dst;
 
 	if (sz == 0) {
 		return;
 	}
 
-	while (sz && (!IS_NATURAL_ALIGNED(d, clrblk_t))) {
-		*d = 0;
-		d++;
+	while (sz && (!IS_NATURAL_ALIGNED(dst_ptr, clrblk_t))) {
+		*dst_ptr = 0;
+		dst_ptr++;
 		sz--;
 	}
 
 #if !defined(__aarch64__)
-	memset((char *)d, 0, MASK_TO_NATURAL_SIZE(sz, clrblk_t));
-	d += MASK_TO_NATURAL_SIZE(sz, clrblk_t);
+	memset((char *)dst_ptr, 0, MASK_TO_NATURAL_SIZE(sz, clrblk_t));
+	dst_ptr += MASK_TO_NATURAL_SIZE(sz, clrblk_t);
 	sz -= MASK_TO_NATURAL_SIZE(sz, clrblk_t);
 
 #endif
 	while (sz) {
-		*d = 0;
-		d++;
+		*dst_ptr = 0;
+		dst_ptr++;
 		sz--;
 	}
 }
@@ -56,16 +56,16 @@ typedef struct uchunk tfrblk;
 
 void sx_wrpkmem(void *dst, const void *src, size_t sz)
 {
-	volatile char *d = (volatile char *)dst;
-	volatile const char *s = (volatile const char *)src;
+	volatile char *dst_ptr = (volatile char *)dst;
+	volatile const char *src_ptr = (volatile const char *)src;
 
-	while (sz && (!IS_NATURAL_ALIGNED(d, tfrblk) || !IS_NATURAL_SIZE(sz, tfrblk))) {
-		*d = *s;
-		d++;
-		s++;
+	while (sz && (!IS_NATURAL_ALIGNED(dst_ptr, tfrblk) || !IS_NATURAL_SIZE(sz, tfrblk))) {
+		*dst_ptr = *src_ptr;
+		dst_ptr++;
+		src_ptr++;
 		sz--;
 	}
-	memcpy((char *)d, (char *)s, sz);
+	memcpy((char *)dst_ptr, (char *)src_ptr, sz);
 }
 
 #else /* 54LM20A requires word-aligned, word-sized memory accesses */

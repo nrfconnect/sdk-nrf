@@ -58,69 +58,72 @@ static size_t fips202_pad(unsigned char prefix, unsigned char suffix, size_t cap
 #define SHA3_MODE_SHAKE(x, outlen) ((x) | SHA3_SHAKE_ENABLE | ((outlen) << 8))
 #define SHA3_SW_PAD		   0
 
-static void shake256_digest(struct sxhash *c, char *digest)
+static void shake256_digest(struct sxhash *hash_ctx, char *digest)
 {
-	unsigned char *padding = (unsigned char *)&c->extramem;
+	unsigned char *padding = (unsigned char *)&hash_ctx->extramem;
 	int padsz;
 
 	/* For SHAKE256, the capacity is 64 bytes. */
-	padsz = fips202_pad(SHAKE_MODE_PREFIX, SHAKE_MODE_SUFFIX, 64, c->feedsz, padding);
+	padsz = fips202_pad(SHAKE_MODE_PREFIX, SHAKE_MODE_SUFFIX, 64, hash_ctx->feedsz, padding);
 
 	/* Use ADD_INDESC_PRIV_RAW instead of ADD_INDESC_PRIV.
 	 * BA418 hardware cannot work with ADD_INDESC_PRIV as BA418 does not
 	 * support byte ignore flags.
 	 */
-	ADD_INDESC_PRIV_RAW(c->dma, OFFSET_EXTRAMEM(c), padsz, c->dmatags->data);
+	ADD_INDESC_PRIV_RAW(hash_ctx->dma, OFFSET_EXTRAMEM(hash_ctx), padsz,
+			    hash_ctx->dmatags->data);
 
-	ADD_OUTDESCA(c->dma, digest, c->algo->digestsz, CMDMA_BA413_BUS_MSK);
+	ADD_OUTDESCA(hash_ctx->dma, digest, hash_ctx->algo->digestsz, CMDMA_BA413_BUS_MSK);
 }
 
-static void sha3_digest(struct sxhash *c, char *digest)
+static void sha3_digest(struct sxhash *hash_ctx, char *digest)
 {
-	unsigned char *padding = (unsigned char *)&c->extramem;
+	unsigned char *padding = (unsigned char *)&hash_ctx->extramem;
 	int padsz;
 
-	padsz = fips202_pad(SHA3_MODE_PREFIX, SHA3_MODE_SUFFIX, 2 * c->algo->digestsz, c->feedsz,
-			    padding);
+	padsz = fips202_pad(SHA3_MODE_PREFIX, SHA3_MODE_SUFFIX, 2 * hash_ctx->algo->digestsz,
+			    hash_ctx->feedsz, padding);
 	/* Use ADD_INDESC_PRIV_RAW instead of ADD_INDESC_PRIV.
 	 * BA418 hardware cannot work with ADD_INDESC_PRIV as BA418 does not
 	 * support byte ignore flags.
 	 */
-	ADD_INDESC_PRIV_RAW(c->dma, OFFSET_EXTRAMEM(c), padsz, c->dmatags->data);
+	ADD_INDESC_PRIV_RAW(hash_ctx->dma, OFFSET_EXTRAMEM(hash_ctx), padsz,
+			    hash_ctx->dmatags->data);
 
-	ADD_OUTDESCA(c->dma, digest, c->algo->digestsz, CMDMA_BA413_BUS_MSK);
+	ADD_OUTDESCA(hash_ctx->dma, digest, hash_ctx->algo->digestsz, CMDMA_BA413_BUS_MSK);
 }
 
-static int sx_hash_create_ba418(struct sxhash *c, size_t csz)
+static int sx_hash_create_ba418(struct sxhash *hash_ctx, size_t csz)
 {
-	if ((csz < sizeof(*c)) || (c->algo->maxpadsz > sizeof(c->extramem))) {
+	if ((csz < sizeof(*hash_ctx)) || (hash_ctx->algo->maxpadsz > sizeof(hash_ctx->extramem))) {
 		return SX_ERR_ALLOCATION_TOO_SMALL;
 	}
 
-	sx_hw_reserve(&c->dma);
+	sx_hw_reserve(&hash_ctx->dma);
 
-	c->dmatags = &ba418tags;
-	sx_cmdma_newcmd(&c->dma, c->descs, c->algo->cfgword, c->dmatags->cfg);
-	c->digest = sha3_digest;
-	c->feedsz = 0;
-	c->totalfeedsz = 0;
+	hash_ctx->dmatags = &ba418tags;
+	sx_cmdma_newcmd(&hash_ctx->dma, hash_ctx->descs, hash_ctx->algo->cfgword,
+			hash_ctx->dmatags->cfg);
+	hash_ctx->digest = sha3_digest;
+	hash_ctx->feedsz = 0;
+	hash_ctx->totalfeedsz = 0;
 
-	c->cntindescs = 2; /* reserve 1 extra descriptor for padding */
+	hash_ctx->cntindescs = 2; /* reserve 1 extra descriptor for padding */
 
 	return SX_OK;
 }
 
-static int sx_hash_create_ba418_shake256(struct sxhash *c, size_t csz)
+static int sx_hash_create_ba418_shake256(struct sxhash *hash_ctx, size_t csz)
 {
-	int r = sx_hash_create_ba418(c, csz);
+	int status = sx_hash_create_ba418(hash_ctx, csz);
 
-	if (r != SX_OK) {
-		return r;
+	if (status != SX_OK) {
+		return status;
 	}
 
-	c->digest = shake256_digest;
+	hash_ctx->digest = shake256_digest;
 
-	return r;
+	return status;
 }
 
 const struct sxhashalg sxhashalg_sha3_224 = {
