@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+sample:
+  name: Bluetooth LE peripheral with automated power control
+  
+common: 
+    sysbuild: true
+    build_only: true
+    integration_platforms: 
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
