@@ -1493,7 +1493,7 @@ psa_status_t cracen_copy_key(psa_key_attributes_t *attributes, const uint8_t *so
 
 	int sx_status;
 	int nested_err;
-	psa_status_t psa_status;
+	psa_status_t psa_status = PSA_ERROR_HARDWARE_FAILURE;
 	size_t key_size = PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
 
 	nrf_security_mutex_lock(cracen_mutex_symmetric);
