@@ -692,6 +692,19 @@ Other libraries
 
   * Updated the write handler of the accessory non-owner service (ANOS) GATT characteristic to no longer assert on write operations if the DULT was not enabled at least once.
 
+:ref:`emds_readme` library:
+
+  * Added support of the robust data storage mechanism, as it enables the library to always have a valid snapshot of the stored data.
+
+  * Updated:
+
+    * By redesigning the library to support two partitions for storing data.
+    * By redesigning the data format in which the library stores data.
+    * By changing the function :c:func:`emds_store_size_get` for calculation of the needed size to store the registered data.
+    * By changing the function :c:func:`emds_store_time_get` for estimation of the needed time to write the registered data into persistent memory.
+
+  * Removed experimental status.
+
 Shell libraries
 ---------------
 
