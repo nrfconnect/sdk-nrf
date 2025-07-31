@@ -2456,6 +2456,76 @@ psa_status_t psa_driver_wrapper_key_agreement(const psa_key_attributes_t *attrib
 #if defined(CONFIG_PSA_CORE_OBERON)
 
 /*
+ * Key encapsulation functions.
+ */
+psa_status_t psa_driver_wrapper_key_encapsulate(const psa_key_attributes_t *attributes,
+						const uint8_t *key, size_t key_length,
+						psa_algorithm_t alg,
+						const psa_key_attributes_t *output_attributes,
+						uint8_t *output_key, size_t output_key_size,
+						size_t *output_key_length, uint8_t *ciphertext,
+						size_t ciphertext_size, size_t *ciphertext_length)
+{
+	switch (PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime)) {
+	case PSA_KEY_LOCATION_LOCAL_STORAGE:
+		/* Add cases for transparent drivers here */
+#ifdef PSA_NEED_OBERON_KEY_ENCAPSULATION_DRIVER
+		return oberon_key_encapsulate(attributes, key, key_length, alg, output_attributes,
+					      output_key, output_key_size, output_key_length,
+					      ciphertext, ciphertext_size, ciphertext_length);
+#endif /* PSA_NEED_OBERON_KEY_ENCAPSULATION_DRIVER */
+		return PSA_ERROR_NOT_SUPPORTED;
+
+	default:
+		/* Key is declared with a lifetime not known to us */
+		(void)key;
+		(void)key_length;
+		(void)alg;
+		(void)output_attributes;
+		(void)output_key;
+		(void)output_key_size;
+		(void)output_key_length;
+		(void)ciphertext;
+		(void)ciphertext_size;
+		(void)ciphertext_length;
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+}
+
+psa_status_t psa_driver_wrapper_key_decapsulate(const psa_key_attributes_t *attributes,
+						const uint8_t *key, size_t key_length,
+						psa_algorithm_t alg, const uint8_t *ciphertext,
+						size_t ciphertext_length,
+						const psa_key_attributes_t *output_attributes,
+						uint8_t *output_key, size_t output_key_size,
+						size_t *output_key_length)
+{
+	switch (PSA_KEY_LIFETIME_GET_LOCATION(attributes->lifetime)) {
+	case PSA_KEY_LOCATION_LOCAL_STORAGE:
+		/* Add cases for transparent drivers here */
+#ifdef PSA_NEED_OBERON_KEY_ENCAPSULATION_DRIVER
+		return oberon_key_decapsulate(attributes, key, key_length, alg, ciphertext,
+					      ciphertext_length, output_attributes, output_key,
+					      output_key_size, output_key_length);
+#endif /* PSA_NEED_OBERON_KEY_ENCAPSULATION_DRIVER */
+		return PSA_ERROR_NOT_SUPPORTED;
+
+	default:
+		/* Key is declared with a lifetime not known to us */
+		(void)key;
+		(void)key_length;
+		(void)alg;
+		(void)ciphertext;
+		(void)ciphertext_length;
+		(void)output_attributes;
+		(void)output_key;
+		(void)output_key_size;
+		(void)output_key_length;
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+}
+
+/*
  * PAKE functions.
  *
  * These APIs are not standardized and should be considered experimental.
