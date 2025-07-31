@@ -478,6 +478,8 @@ Bluetooth samples
     * :ref:`ble_subrating`
     * :ref:`ble_throughput`
 
+* Added the :ref:`bluetooth_automated_power_control` sample.
+
 * Updated the network core image applications for the following samples from the :zephyr:code-sample:`bluetooth_hci_ipc` sample to the :ref:`ipc_radio` application for multicore builds:
 
   * :ref:`bluetooth_conn_time_synchronization`

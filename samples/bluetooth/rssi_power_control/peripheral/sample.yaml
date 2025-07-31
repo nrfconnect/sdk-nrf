@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+sample:
+  description: Peripheral device of a Bluetooth Low Energy automated power controller.
+    A feedback system that adjusts the transmit power based on the current RSSI
+    — increasing, decreasing, or maintaining it as needed.
+  name: Bluetooth LE peripheral with automated power control
+tests:
+  sample.bluetooth.peripheral_automated_power_control:
+    sysbuild: true
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+    harness: console
+    harness_config:
+      type: one_line
+      regex:
+        - "Advertising successfully started"
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild
