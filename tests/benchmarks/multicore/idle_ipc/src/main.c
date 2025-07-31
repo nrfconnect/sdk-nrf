@@ -109,11 +109,6 @@ int main(void)
 		__ASSERT_NO_MSG(ret == 0);
 	}
 
-	if (IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME)) {
-		pm_device_runtime_enable(console_dev);
-		pm_device_runtime_enable(ipc0_instance);
-	}
-
 	ret = k_sem_take(&bound_sem, K_MSEC(IPC_BOUND_TIMEOUT_MS));
 	if (ret < 0) {
 		printf("k_sem_take() failure (%d)", ret);

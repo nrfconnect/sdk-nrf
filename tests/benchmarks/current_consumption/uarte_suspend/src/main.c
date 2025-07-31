@@ -124,10 +124,6 @@ int main(void)
 		__ASSERT_NO_MSG(err == 0);
 	}
 
-	if (IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME)) {
-		pm_device_runtime_enable(console_dev);
-	}
-
 	while (1) {
 		printk("Hello\n");
 		enable_uart_rx();

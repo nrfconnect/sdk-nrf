@@ -157,11 +157,6 @@ int main(void)
 	err = uart_callback_set(uart_dev, async_uart_callback, NULL);
 	__ASSERT(err == 0, "Unexpected error when setting callback %d", err);
 
-	if (IS_ENABLED(CONFIG_PM_DEVICE_RUNTIME)) {
-		pm_device_runtime_enable(uart_dev);
-		pm_device_runtime_enable(console_dev);
-	}
-
 	counter = 0;
 	while (1) {
 		switch_flag = 1;
