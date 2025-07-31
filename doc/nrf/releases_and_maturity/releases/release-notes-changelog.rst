@@ -209,6 +209,12 @@ Matter
     To skip removing the files, use the ``--keep-previous`` argument.
   * The :ref:`ug_matter_creating_custom_cluster` user guide by adding information about implementing custom commands.
 
+* Removed:
+
+  * The nRF Connect Matter Manufacturer Cluster Editor tool page.
+    The tool is now available in the `nRF Connect for Desktop`_ app as the Matter Cluster Editor app.
+    For installation instructions and more information about the tool, see the `Matter Cluster Editor app`_ documentation.
+
 Matter fork
 +++++++++++
 
