@@ -128,7 +128,8 @@ static void write(uint32_t offset, const uint8_t *data, size_t size)
 
 #ifdef CONFIG_NRFX_NVMC
 	for (uint32_t i = 0; i < size; i += sizeof(uint32_t)) {
-		nrfx_nvmc_word_write(PARTITION_OFFSET + offset + i, UNALIGNED_GET(&data[i]));
+		nrfx_nvmc_word_write(PARTITION_OFFSET + offset + i,
+				     UNALIGNED_GET((const uint32_t *)&data[i]));
 	}
 	while (!nrfx_nvmc_write_done_check()) {
 	}
