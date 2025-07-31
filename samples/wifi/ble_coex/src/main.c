@@ -284,6 +284,10 @@ static void udp_upload_results_cb(enum zperf_status status,
 		break;
 	case ZPERF_SESSION_FINISHED:
 		LOG_INF("Wi-Fi benchmark: Upload completed!");
+		if (!result) {
+			LOG_ERR("Result is NULL, Zperf session error");
+			break;
+		}
 		if (result->client_time_in_us != 0U) {
 			client_rate_in_kbps = (uint32_t)
 				(((uint64_t)result->nb_packets_sent *
