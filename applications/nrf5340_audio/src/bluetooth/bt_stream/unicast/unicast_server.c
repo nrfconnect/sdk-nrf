@@ -681,6 +681,18 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 
 	/* For this application, we create one sink endpoint for each location */
 	unicast_server_params.snk_cnt = POPCOUNT(location);
+	if (unicast_server_params.snk_cnt == 0) {
+		LOG_ERR("No sink endpoint requested");
+		return -EINVAL;
+	} else if (unicast_server_params.snk_cnt > CONFIG_BT_ASCS_MAX_ASE_SNK_COUNT) {
+		LOG_WRN("Too many sink endpoints requested (%d), max %d, will just use first "
+			"location",
+			unicast_server_params.snk_cnt, CONFIG_BT_ASCS_MAX_ASE_SNK_COUNT);
+		unicast_server_params.snk_cnt = CONFIG_BT_ASCS_MAX_ASE_SNK_COUNT;
+		/* Use lowest valid set location */
+		location = location & ~(location - 1);
+	}
+
 	unicast_server_params.src_cnt = CONFIG_BT_ASCS_MAX_ASE_SRC_COUNT;
 
 	ret = bt_bap_unicast_server_register(&unicast_server_params);
