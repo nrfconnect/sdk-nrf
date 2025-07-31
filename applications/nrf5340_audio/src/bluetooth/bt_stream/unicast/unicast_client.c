@@ -85,14 +85,6 @@ K_MSGQ_DEFINE(cap_start_q, sizeof(struct stream_index), CONFIG_BT_ISO_MAX_CHAN, 
 
 static struct temp_cap_storage temp_cap[CONFIG_BT_ISO_MAX_CHAN];
 
-/* Make sure that we have at least one unicast_server per CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK */
-BUILD_ASSERT(ARRAY_SIZE(unicast_servers[0][LVL2]) >= CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT,
-	     "We need to have at least one unicast_server per ASE SINK");
-
-/* Make sure that we have at least one unicast_server per CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC */
-BUILD_ASSERT(ARRAY_SIZE(unicast_servers[0][LVL2]) >= CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT,
-	     "We need to have at least one unicast_server per ASE SOURCE");
-
 BUILD_ASSERT(CONFIG_BT_ISO_MAX_CIG == 1, "Only one CIG is supported");
 
 static le_audio_receive_cb receive_cb;
@@ -449,8 +441,7 @@ static int device_index_from_stream_get(const struct bt_bap_stream *stream,
 	for (int i = 0; i < CONFIG_BT_ISO_MAX_CIG; i++) {
 		for (int j = 0; j < ARRAY_SIZE(unicast_servers[i][LVL2]); j++) {
 			if (&unicast_servers[i][LVL2][j].cap_sink_stream.bap_stream == stream ||
-			    &unicast_servers[i][LVL2][j].cap_source_stream.bap_stream ==
-				stream) {
+			    &unicast_servers[i][LVL2][j].cap_source_stream.bap_stream == stream) {
 				idx->lvl1 = i;
 				idx->lvl2 = 0;
 				idx->lvl3 = j;
@@ -472,7 +463,7 @@ static int device_index_from_stream_get(const struct bt_bap_stream *stream,
  * @retval	0	Operation successful.
  * @retval	-EINVAL	There is no match.
  */
-static int device_index_vacant_get(struct bt_conn const * const conn, struct stream_index *idx,
+static int device_index_vacant_get(struct bt_conn const *const conn, struct stream_index *idx,
 				   bool multiple)
 {
 	if (conn == NULL) {
@@ -765,7 +756,7 @@ static bool source_parse_cb(struct bt_data *data, void *user_data)
  * @retval	Other	Bitfield of valid codec capabilities.
  */
 static uint32_t valid_codec_capab_check(struct bt_audio_codec_cap cap_array[], uint8_t num_caps,
-				      enum bt_audio_dir dir, uint8_t index)
+					enum bt_audio_dir dir, uint8_t index)
 {
 	uint32_t valid_result = 0;
 
@@ -1090,9 +1081,9 @@ static void discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
 	}
 
 	if (dir == BT_AUDIO_DIR_SINK && !err) {
-		uint32_t valid_sink_caps = valid_codec_capab_check(unicast_server->sink_codec_cap,
-								 temp_cap[temp_cap_index].num_caps,
-								 BT_AUDIO_DIR_SINK, idx.lvl3);
+		uint32_t valid_sink_caps = valid_codec_capab_check(
+			unicast_server->sink_codec_cap, temp_cap[temp_cap_index].num_caps,
+			BT_AUDIO_DIR_SINK, idx.lvl3);
 		if (valid_sink_caps) {
 
 			const uint8_t *codec_frame_len_ptr = NULL;
@@ -1151,7 +1142,7 @@ static void discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
 			unicast_server->sink_ep = unicast_server->spare_sink_eps[0];
 
 			if (POPCOUNT(unicast_server->location) == 1 &&
-			    POPCOUNT(valid_sink_caps) == 1 && unicast_server->num_sink_eps == 1) {
+			    POPCOUNT(valid_sink_caps) == 1 && unicast_server->num_sink_eps >= 1) {
 
 				ret = bt_audio_codec_cfg_set_val(
 					&unicast_server->sink_codec_cfg,
@@ -1165,7 +1156,7 @@ static void discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
 
 			} else if (POPCOUNT(unicast_server->location) == 2 &&
 				   POPCOUNT(valid_sink_caps) >= 1 &&
-				   unicast_server->num_sink_eps == 2) {
+				   unicast_server->num_sink_eps >= 2) {
 
 				uint32_t left = BT_AUDIO_LOCATION_FRONT_LEFT;
 				uint32_t right = BT_AUDIO_LOCATION_FRONT_RIGHT;
@@ -1231,8 +1222,8 @@ static void discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
 		}
 	} else if (dir == BT_AUDIO_DIR_SOURCE && !err) {
 		if (valid_codec_capab_check(unicast_server->source_codec_cap,
-					  temp_cap[temp_cap_index].num_caps, BT_AUDIO_DIR_SOURCE,
-					  idx.lvl3)) {
+					    temp_cap[temp_cap_index].num_caps, BT_AUDIO_DIR_SOURCE,
+					    idx.lvl3)) {
 			ret = bt_audio_codec_cfg_set_val(&lc3_preset_source.codec_cfg,
 							 BT_AUDIO_CODEC_CFG_CHAN_ALLOC,
 							 (uint8_t *)&unicast_server->location,
@@ -1282,7 +1273,7 @@ static void discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
 	}
 
 	/* If we have a valid stereo idx, put it on the queue */
-	if (memcmp(&stereo_idx, &idx, sizeof(struct stream_index))) {
+	if (memcmp(&stereo_idx, &idx, sizeof(struct stream_index)) && stereo_idx.lvl3 != 0) {
 		ret = k_msgq_put(&cap_start_q, &stereo_idx, K_NO_WAIT);
 		if (ret) {
 			LOG_ERR("Failed to put stereo device_index on the queue: %d", ret);
@@ -1852,8 +1843,7 @@ int unicast_client_start(uint8_t cig_index)
 	for (int i = 0; i < ARRAY_SIZE(unicast_servers[cig_index][LVL2]); i++) {
 		uint8_t state;
 
-		ret = le_audio_ep_state_get(unicast_servers[cig_index][LVL2][i].sink_ep,
-			&state);
+		ret = le_audio_ep_state_get(unicast_servers[cig_index][LVL2][i].sink_ep, &state);
 		if (ret) {
 			continue;
 		}
@@ -1875,8 +1865,7 @@ int unicast_client_start(uint8_t cig_index)
 				i, state);
 		}
 
-		ret = le_audio_ep_state_get(unicast_servers[cig_index][LVL2][i].source_ep,
-			&state);
+		ret = le_audio_ep_state_get(unicast_servers[cig_index][LVL2][i].source_ep, &state);
 		if (ret) {
 			continue;
 		}
@@ -1997,7 +1986,7 @@ int unicast_client_send(struct net_buf const *const audio_frame, uint8_t cig_ind
 		/* Both mono and left unicast_servers will receive left channel */
 		tx[num_active_streams].audio_channel =
 			(unicast_servers[cig_index][LVL2][i].location ==
-					BT_AUDIO_LOCATION_FRONT_RIGHT)
+			 BT_AUDIO_LOCATION_FRONT_RIGHT)
 				? AUDIO_CH_R
 				: AUDIO_CH_L;
 

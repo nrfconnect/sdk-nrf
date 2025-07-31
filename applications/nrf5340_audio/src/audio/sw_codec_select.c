@@ -11,6 +11,7 @@
 #include <errno.h>
 #include <pcm_stream_channel_modifier.h>
 #include <sample_rate_converter.h>
+#include "macros_common.h"
 
 #if (CONFIG_SW_CODEC_LC3)
 #include "sw_codec_lc3.h"
@@ -233,6 +234,12 @@ int sw_codec_decode(struct net_buf const *const audio_frame, void **decoded_data
 		} else {
 			LOG_ERR("Unsupported location for sw_codec_decode: 0x%x", meta->locations);
 			return -ENODEV;
+		}
+
+		if (m_config.decoder.channel_mode > CONFIG_AUDIO_DECODE_CHANNELS_MAX) {
+			LOG_WRN("Channel mode %d is not supported by decoder",
+				m_config.decoder.channel_mode);
+			ERR_CHK(-ENODEV);
 		}
 
 		switch (m_config.decoder.channel_mode) {
