@@ -19,8 +19,9 @@
 #include <zephyr/drivers/uart.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
-#include <zephyr/pm/device.h>
+#include <zephyr/pm/device_runtime.h>
 #include <zephyr/sys/ring_buffer.h>
+#include <zephyr/sys/atomic.h>
 LOG_MODULE_REGISTER(slm_at_host, CONFIG_SLM_LOG_LEVEL);
 
 #define SLM_SYNC_STR     "Ready\r\n"
@@ -53,10 +54,32 @@ static uint8_t quit_str_partial_match;
 K_MUTEX_DEFINE(mutex_data); /* Protects the data_rb and quit_str_partial_match. */
 
 static struct k_work raw_send_scheduled_work;
+static bool slm_uart_dev_active;
 
 /* global functions defined in different files */
 int slm_at_init(void);
 void slm_at_uninit(void);
+
+static int set_uart_dev_power_state(bool active)
+{
+	int err;
+
+	if ((active && slm_uart_dev_active) || (!active && !slm_uart_dev_active)) {
+		return 0;
+	}
+
+	if (active) {
+		err = pm_device_runtime_get(slm_uart_dev);
+	} else {
+		err = pm_device_runtime_put(slm_uart_dev);
+	}
+
+	if (err == 0) {
+		slm_uart_dev_active = active;
+	}
+
+	return err;
+}
 
 static enum slm_operation_mode get_slm_mode(void)
 {
@@ -506,10 +529,7 @@ static int slm_at_send_indicate(const uint8_t *data, size_t len,
 	}
 
 	if (indicate) {
-		enum pm_device_state state = PM_DEVICE_STATE_OFF;
-
-		pm_device_state_get(slm_uart_dev, &state);
-		if (state != PM_DEVICE_STATE_ACTIVE) {
+		if (!slm_uart_dev_is_active()) {
 			slm_ctrl_pin_indicate();
 		}
 	}
@@ -1006,10 +1026,7 @@ static int at_host_power_off(bool shutting_down)
 	if (!err || shutting_down) {
 
 		/* Power off UART module */
-		err = pm_device_action_run(slm_uart_dev, PM_DEVICE_ACTION_SUSPEND);
-		if (err == -EALREADY) {
-			err = 0;
-		}
+		err = set_uart_dev_power_state(false);
 		if (err) {
 			LOG_WRN("Failed to suspend UART. (%d)", err);
 			if (!shutting_down) {
@@ -1033,9 +1050,9 @@ int slm_at_host_power_off(void)
 
 int slm_at_host_power_on(void)
 {
-	const int err = pm_device_action_run(slm_uart_dev, PM_DEVICE_ACTION_RESUME);
+	const int err = set_uart_dev_power_state(true);
 
-	if (err && err != -EALREADY) {
+	if (err) {
 		LOG_ERR("Failed to resume UART. (%d)", err);
 		return err;
 	}
@@ -1045,6 +1062,11 @@ int slm_at_host_power_on(void)
 
 	restore_at_backend();
 	return 0;
+}
+
+bool slm_uart_dev_is_active(void)
+{
+	return slm_uart_dev_active;
 }
 
 void slm_at_host_uninit(void)
