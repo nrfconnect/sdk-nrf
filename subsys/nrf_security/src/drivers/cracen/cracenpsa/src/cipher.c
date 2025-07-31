@@ -605,10 +605,10 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 					return silex_statuscodes_to_psa(sx_status);
 				}
 			} else {
-				psa_status_t r = initialize_cipher(operation);
+				psa_status_t result = initialize_cipher(operation);
 
-				if (r != PSA_SUCCESS) {
-					return r;
+				if (result != PSA_SUCCESS) {
+					return result;
 				}
 			}
 
@@ -698,10 +698,10 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 			return silex_statuscodes_to_psa(sx_status);
 		}
 	} else {
-		psa_status_t r = initialize_cipher(operation);
+		psa_status_t result = initialize_cipher(operation);
 
-		if (r != PSA_SUCCESS) {
-			return r;
+		if (result != PSA_SUCCESS) {
+			return result;
 		}
 	}
 

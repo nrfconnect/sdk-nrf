@@ -132,40 +132,40 @@ int sx_pk_wait(sx_pk_req *req)
 	return read_status(req);
 }
 
-void sx_pk_wrreg(struct sx_regs *regs, uint32_t addr, uint32_t v)
+void sx_pk_wrreg(struct sx_regs *regs, uint32_t addr, uint32_t value)
 {
-	volatile uint32_t *p = (uint32_t *)(regs->base + addr);
+	volatile uint32_t *reg_ptr = (uint32_t *)(regs->base + addr);
 
 #ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
-	printk("sx_pk_wrreg(addr=0x%x, p=%p, val=0x%x)\r\n", addr, p, v);
+	printk("sx_pk_wrreg(addr=0x%x, reg_ptr=%p, val=0x%x)\r\n", addr, reg_ptr, value);
 #endif
-	if ((uintptr_t)p % 4) {
-		SX_WARN_UNALIGNED_ADDR(p);
+	if ((uintptr_t)reg_ptr % 4) {
+		SX_WARN_UNALIGNED_ADDR(reg_ptr);
 	}
 
-	*p = v;
+	*reg_ptr = value;
 }
 
 uint32_t sx_pk_rdreg(struct sx_regs *regs, uint32_t addr)
 {
-	volatile uint32_t *p = (uint32_t *)(regs->base + addr);
-	uint32_t v;
+	volatile uint32_t *reg_ptr = (uint32_t *)(regs->base + addr);
+	uint32_t value;
 
 
 #ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
-	printk("sx_pk_rdreg(addr=0x%x, p=%p)\r\n", addr, p);
+	printk("sx_pk_rdreg(addr=0x%x, reg_ptr=%p)\r\n", addr, reg_ptr);
 #endif
-	if ((uintptr_t)p % 4) {
-		SX_WARN_UNALIGNED_ADDR(p);
+	if ((uintptr_t)reg_ptr % 4) {
+		SX_WARN_UNALIGNED_ADDR(reg_ptr);
 	}
 
-	v = *p;
+	value = *reg_ptr;
 
 #ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
-	printk("result = 0x%x\r\n", v);
+	printk("result = 0x%x\r\n", value);
 #endif
 
-	return v;
+	return value;
 }
 
 struct sx_pk_blinder **sx_pk_get_blinder(struct sx_pk_cnx *cnx)
