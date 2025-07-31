@@ -21,10 +21,6 @@ zephyr_library_compile_options(
 	-Wno-format-overflow
 )
 
-zephyr_library_compile_definitions(
-	CONFIG_ZEPHYR
-)
-
 zephyr_library_compile_definitions(CONFIG_CTRL_IFACE_ZEPHYR)
 
 zephyr_include_directories(
