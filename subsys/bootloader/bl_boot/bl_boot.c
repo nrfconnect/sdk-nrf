@@ -19,6 +19,43 @@
 #include <hal/nrf_gpio.h>
 #endif
 
+#if defined(CONFIG_SB_DISABLE_NEXT_W)
+#include <hal/nrf_rramc.h>
+#define RRAMC_REGION_FOR_NEXT_W 4
+#define NRF_RRAM_REGION_SIZE_UNIT 0x400
+#define NRF_RRAM_REGION_ADDRESS_RESOLUTION 0x400
+#define NEXT_W_SIZE_KB (PM_MCUBOOT_SIZE / NRF_RRAM_REGION_SIZE_UNIT)
+
+BUILD_ASSERT((PM_MCUBOOT_ADDRESS % NRF_RRAM_REGION_ADDRESS_RESOLUTION) == 0,
+	"Start of protected region is not aligned");
+
+BUILD_ASSERT((PM_MCUBOOT_SIZE % NRF_RRAM_REGION_SIZE_UNIT) == 0,
+	"Size of protected region is not aligned");
+
+BUILD_ASSERT(NEXT_W_SIZE_KB < 31,
+	"Size of requested protection is too big");
+
+static int disable_next_w()
+{
+	nrf_rramc_region_config_t config = {
+		.address = PM_MCUBOOT_ADDRESS,
+		.permissions =  NRF_RRAMC_REGION_PERM_READ_MASK |
+				NRF_RRAMC_REGION_PERM_EXECUTE_MASK,
+		.writeonce = false,
+		.lock = false,
+		.size_kb = NEXT_W_SIZE_KB,
+	};
+
+	nrf_rramc_region_config_set(NRF_RRAMC, RRAMC_REGION_FOR_NEXT_W, &config);
+	nrf_rramc_region_config_get(NRF_RRAMC, RRAMC_REGION_FOR_NEXT_W, &config);
+	if(config.permissions & (NRF_RRAMC_REGION_PERM_WRITE_MASK))return -ENOSPC;
+	if(config.size_kb != NEXT_W_SIZE_KB) return -ENOSPC;
+
+	return 0;
+}
+
+#endif
+
 #if defined(CONFIG_SB_DISABLE_SELF_RWX)
 /* Disabling R_X has to be done while running from RAM for obvious reasons.
  * Moreover as a last step before jumping to application it must work even after
@@ -162,6 +199,13 @@ void bl_boot(const struct fw_info *fw_info)
 
 	VTOR = fw_info->address;
 	uint32_t *vector_table = (uint32_t *)fw_info->address;
+
+#if defined(CONFIG_SB_DISABLE_NEXT_W)
+	if(disable_next_w()) {
+		printk("Unable to disable writes on next stage.");
+		return;
+	}
+#endif
 
 #if defined(CONFIG_BUILTIN_STACK_GUARD) && \
     defined(CONFIG_CPU_CORTEX_M_HAS_SPLIM)

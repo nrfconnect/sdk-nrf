@@ -112,6 +112,13 @@ config SB_DISABLE_SELF_RWX
 	  Sets RRAMC's BOOTCONF region protection before jumping to application.
 	  It disables reads writes and execution memory area which holds NSIB.
 
+config SB_DISABLE_NEXT_W
+	bool "Disable writes for next stage"
+	depends on (SOC_NRF54L15_CPUAPP || SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP) && !FPROTECT
+	help
+          NSIB disables writes on next stage in bootloading chain.
+	  It uses RRAMC's region 4 and is limited to 31KB.
+
 endif # IS_SECURE_BOOTLOADER
 
 config IS_BOOTLOADER_IMG

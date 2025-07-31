@@ -1,0 +1,11 @@
+tests:
+  b0.disable_next_w_:
+    sysbuild: true
+    extra_args:
+      - b0_CONFIG_SB_DISABLE_NEXT_W=y
+    platform_allow: nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - b0
+      - ci_tests_subsys_bootloader
