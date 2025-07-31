@@ -280,6 +280,8 @@ Bluetooth samples
 
 * Added the :ref:`samples_test_app` application to demonstrate how to use the Bluetooth LE Test GATT Server and test Bluetooth LE functionality in peripheral samples.
 
+* Added the :ref:`bluetooth_automated_power_control` sample.
+
 * Updated the network core image applications for the following samples from the :zephyr:code-sample:`bluetooth_hci_ipc` sample to the :ref:`ipc_radio` application for multicore builds:
 
   * :ref:`bluetooth_conn_time_synchronization`
