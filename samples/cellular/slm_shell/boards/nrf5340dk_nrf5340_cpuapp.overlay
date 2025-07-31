@@ -28,6 +28,17 @@
 	pinctrl-names = "default", "sleep";
 };
 
+/ {
+	slm_gpio_pins: slm_gpio_pins {
+		compatible = "slm-gpio-pins";
+		power-gpios = <&gpio0 23 GPIO_ACTIVE_LOW>;
+		power-gpios-active-time-ms = <100>;
+		power-gpios-debounce-time-ms = <50>;
+		indicate-gpios = <&gpio0 28 GPIO_ACTIVE_LOW>;
+		indicate-gpios-active-time-ms = <100>;
+	};
+};
+
 &pinctrl {
 	uart2_default: uart2_default {
 		group1 {
