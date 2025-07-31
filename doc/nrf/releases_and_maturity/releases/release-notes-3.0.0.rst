@@ -38,7 +38,7 @@ Added the following features as supported:
 * Matter:
 
   * Matter 1.4.1: Matter commissioning using NFC tag can be officially certified now.
-  * :ref:`matter_manufacturer_specific_sample` sample: Dedicated sample, containing documentation and a preview :ref:`PC tool <ug_nrfconnect_manufacturer_cluster_editor_tool>`, facilitating creation and modification of manufacturer specific clusters.
+  * :ref:`matter_manufacturer_specific_sample` sample: Dedicated sample, containing documentation and a preview :ref:`PC app <ug_matter_gs_tools_matter_cluster_editor>`, facilitating creation and modification of manufacturer specific clusters.
 
 * PMIC:
 
@@ -375,10 +375,10 @@ Matter
   * Storing Matter key materials in the :ref:`matter_platforms_security_kmu`.
   * A new section :ref:`ug_matter_device_low_power_calibration_period` in the :ref:`ug_matter_device_low_power_configuration` page.
   * A new section :ref:`ug_matter_gs_tools_opp` in the :ref:`ug_matter_gs_tools` page.
-  * A new overview page for :ref:`ug_nrfconnect_manufacturer_cluster_editor_tool`.
-  * Released the first preview version of the Matter Manufacturer Cluster Editor Tool.
-    The tool allows you to create and edit Matter Manufacturer Cluster files or create an extension to the existing one.
-    The tool is available in release artifacts.
+  * A new overview page for :ref:`ug_matter_gs_tools_matter_cluster_editor`.
+  * Released the first preview version of the Matter Cluster Editor app.
+    The app allows you to create and edit Matter Cluster files or create an extension to the existing one.
+    The app is available in release artifacts.
 
 * Updated:
 
