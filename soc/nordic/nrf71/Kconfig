@@ -9,6 +9,8 @@ config SOC_SERIES_NRF71X
 	select HAS_SEGGER_RTT if ZEPHYR_SEGGER_MODULE
 	select SOC_EARLY_INIT_HOOK
 	select SOC_RESET_HOOK
+# To be moved to zephyr/drivers/clock_control/Kconfig.nrf once nrf7120 is present upstream
+	select NRFX_CLOCK_USE_LFRC_CALIBRATION
 
 config SOC_NRF7120_ENGA_CPUAPP
 	select ARM
