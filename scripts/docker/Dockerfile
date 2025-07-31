@@ -5,7 +5,7 @@ ENV HOME=/opt
 RUN apt-get update && apt-get install -y wget ca-certificates qemu-system-arm git \
     libxcb-render-util0 libxcb-shape0 libxcb-icccm4  libxcb-keysyms1 libxcb-image0 libxkbcommon-x11-0 libsm6 libice6 udev \
     && rm -rf /var/lib/apt/lists/*
-RUN wget https://developer.nordicsemi.com/.pc-tools/nrfutil/x64-linux/nrfutil -q -O /usr/local/bin/nrfutil  \
+RUN wget https://files.nordicsemi.com/artifactory/swtools/external/nrfutil/executables/x86_64-unknown-linux-gnu/nrfutil -q -O /usr/local/bin/nrfutil  \
     && chmod +x /usr/local/bin/nrfutil \
     && nrfutil install toolchain-manager=0.15.0
 RUN nrfutil toolchain-manager install --toolchain-bundle-id $VERSION \
