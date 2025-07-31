@@ -16,7 +16,7 @@
 
 LOG_MODULE_REGISTER(mdm_slm, CONFIG_MODEM_SLM_LOG_LEVEL);
 
-BUILD_ASSERT(CONFIG_MODEM_SLM_POWER_PIN >= 0, "Power pin not configured");
+BUILD_ASSERT(DT_NODE_HAS_PROP(DT_NODELABEL(slm_gpio_pins), power_gpios), "Power pin not configured");
 
 #define UART_RX_MARGIN_MS	10
 #define UART_RX_TIMEOUT_US      2000
@@ -78,6 +78,14 @@ static struct k_work_delayable gpio_power_pin_disable_work;
 static slm_ind_handler_t ind_handler;
 static slm_ind_handler_t ind_handler_backup;
 
+/* TODO: handle if ncs_slm_gpio is set to other than gpio0 */
+static const struct gpio_dt_spec power_pin_member =
+	GPIO_DT_SPEC_GET_OR(DT_NODELABEL(slm_gpio_pins), power_gpios, {0});
+static const struct gpio_dt_spec indicate_pin_member =
+	GPIO_DT_SPEC_GET_OR(DT_NODELABEL(slm_gpio_pins), indicate_gpios, {0});
+static const int power_pin_time_ms =
+	DT_PROP(DT_NODELABEL(slm_gpio_pins), power_gpios_active_time_ms);
+
 #if defined(CONFIG_MODEM_SLM_SHELL)
 static const struct shell *global_shell;
 static const char at_usage_str[] = "Usage: slm <at_command>";
@@ -99,20 +107,19 @@ static int indicate_pin_enable(void)
 	int err = 0;
 
 	if (!indicate_pin_enabled) {
-		err = gpio_pin_configure(gpio_dev, CONFIG_MODEM_SLM_INDICATE_PIN,
-					 GPIO_INPUT | GPIO_PULL_UP | GPIO_ACTIVE_LOW);
+		err = gpio_pin_configure_dt(&indicate_pin_member,
+					    GPIO_INPUT | GPIO_PULL_UP | GPIO_ACTIVE_LOW);
 		if (err) {
 			LOG_ERR("GPIO config error: %d", err);
 			return err;
 		}
 
-		gpio_init_callback(&gpio_cb, gpio_cb_func, BIT(CONFIG_MODEM_SLM_INDICATE_PIN));
+		gpio_init_callback(&gpio_cb, gpio_cb_func, BIT(indicate_pin_member.pin));
 		err = gpio_add_callback(gpio_dev, &gpio_cb);
 		if (err) {
 			LOG_WRN("GPIO add callback error: %d", err);
 		}
-		err = gpio_pin_interrupt_configure(gpio_dev, CONFIG_MODEM_SLM_INDICATE_PIN,
-						   GPIO_INT_LEVEL_LOW);
+		err = gpio_pin_interrupt_configure_dt(&indicate_pin_member, GPIO_INT_LEVEL_LOW);
 		if (err) {
 			LOG_WRN("GPIO interrupt configure error: %d", err);
 		}
@@ -128,9 +135,8 @@ static void indicate_pin_disable(void)
 #if (CONFIG_MODEM_SLM_INDICATE_PIN >= 0)
 	if (indicate_pin_enabled) {
 		gpio_remove_callback(gpio_dev, &gpio_cb);
-		gpio_pin_interrupt_configure(gpio_dev, CONFIG_MODEM_SLM_INDICATE_PIN,
-					     GPIO_INT_DISABLE);
-		gpio_pin_configure(gpio_dev, CONFIG_MODEM_SLM_INDICATE_PIN, GPIO_DISCONNECTED);
+		gpio_pin_interrupt_configure_dt(&indicate_pin_member, GPIO_INT_DISABLE);
+		gpio_pin_configure_dt(&indicate_pin_member, GPIO_DISCONNECTED);
 		indicate_pin_enabled = false;
 		LOG_DBG("Indicate pin disabled");
 	}
@@ -141,7 +147,7 @@ static void gpio_power_pin_disable_work_fn(struct k_work *work)
 {
 	ARG_UNUSED(work);
 
-	if (gpio_pin_set(gpio_dev, CONFIG_MODEM_SLM_POWER_PIN, 0) != 0) {
+	if (gpio_pin_set_dt(&power_pin_member, 0) != 0) {
 		LOG_WRN("GPIO set error");
 	}
 	/* When SLM is woken up, indicate pin must be enabled */
@@ -537,13 +543,13 @@ static struct gpio_callback gpio_cb;
 
 static void gpio_cb_func(const struct device *dev, struct gpio_callback *gpio_cb, uint32_t pins)
 {
-	if ((BIT(CONFIG_MODEM_SLM_INDICATE_PIN) & pins) == 0) {
+	if ((BIT(indicate_pin_member.pin) & pins) == 0) {
 		return;
 	}
 
 	if (k_work_delayable_is_pending(&gpio_power_pin_disable_work)) {
 		(void)k_work_cancel_delayable(&gpio_power_pin_disable_work);
-		(void)gpio_pin_set(gpio_dev, CONFIG_MODEM_SLM_POWER_PIN, 0);
+		(void)gpio_pin_set_dt(&power_pin_member, 0);
 	} else {
 		/* Disable indicate pin so that callbacks doesn't keep on coming. */
 		indicate_pin_disable();
@@ -566,9 +572,10 @@ static int gpio_init(void)
 		LOG_ERR("GPIO controller not ready");
 		return -ENODEV;
 	}
+	LOG_WRN("power_pin_member %d", power_pin_member.pin);
+	LOG_WRN("indicate_pin_member %d", indicate_pin_member.pin);
 
-	err = gpio_pin_configure(gpio_dev, CONFIG_MODEM_SLM_POWER_PIN,
-				 GPIO_OUTPUT_INACTIVE | GPIO_ACTIVE_LOW);
+	err = gpio_pin_configure_dt(&power_pin_member, GPIO_OUTPUT_INACTIVE | GPIO_ACTIVE_LOW);
 	if (err) {
 		LOG_ERR("GPIO config error: %d", err);
 		return err;
@@ -621,7 +628,7 @@ int modem_slm_uninit(void)
 {
 	rx_disable();
 
-	gpio_pin_configure(gpio_dev, CONFIG_MODEM_SLM_POWER_PIN, GPIO_DISCONNECTED);
+	gpio_pin_configure_dt(&power_pin_member, GPIO_DISCONNECTED);
 
 	indicate_pin_disable();
 
@@ -646,7 +653,7 @@ int modem_slm_register_ind(slm_ind_handler_t handler, bool wakeup)
 		 * Due to errata 4, Always configure PIN_CNF[n].INPUT before PIN_CNF[n].SENSE.
 		 * At this moment indicate pin has already been configured as INPUT at init_gpio().
 		 */
-		nrf_gpio_cfg_sense_set(CONFIG_MODEM_SLM_INDICATE_PIN, NRF_GPIO_PIN_SENSE_LOW);
+		nrf_gpio_cfg_sense_set(indicate_pin_member.pin, NRF_GPIO_PIN_SENSE_LOW);
 	}
 
 	return 0;
@@ -663,15 +670,15 @@ int modem_slm_power_pin_toggle(void)
 		return 0;
 	}
 
-	LOG_INF("Enable power pin");
+	LOG_INF("Enable power pin for %d ms", power_pin_time_ms);
 
-	err = gpio_pin_set(gpio_dev, CONFIG_MODEM_SLM_POWER_PIN, 1);
+	err = gpio_pin_set_dt(&power_pin_member, 1);
 	if (err) {
 		LOG_ERR("GPIO set error: %d", err);
 	} else {
 		k_work_reschedule(
 			&gpio_power_pin_disable_work,
-			K_MSEC(CONFIG_MODEM_SLM_POWER_PIN_TIME));
+			K_MSEC(power_pin_time_ms));
 	}
 
 	return 0;
