@@ -915,6 +915,7 @@
 
 .. _`nRF Util`: https://docs.nordicsemi.com/bundle/nrfutil/page/README.html
 .. _`Installing nRF Util`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides/installing.html
+.. _`Locking nRF Util home directory`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides/installing.html#locking-the-home-directory
 .. _`nRF Util prerequisites`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides/installing.html#prerequisites
 .. _`Upgrading nRF Util core module`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides/installing.html#upgrading-nrf-util
 .. _`Installing and upgrading nRF Util commands`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides/installing_commands.html
