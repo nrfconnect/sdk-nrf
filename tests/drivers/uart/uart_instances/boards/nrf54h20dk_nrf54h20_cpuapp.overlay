@@ -150,7 +150,6 @@
 	pinctrl-1 = <&uart120_sleep_test>;
 	pinctrl-names = "default", "sleep";
 	current-speed = <115200>;
-	zephyr,pm-device-runtime-auto;
 };
 
 &dma_fast_region {
@@ -164,7 +163,6 @@
 	pinctrl-1 = <&uart130_sleep_test>;
 	pinctrl-names = "default", "sleep";
 	current-speed = <115200>;
-	zephyr,pm-device-runtime-auto;
 };
 
 &uart131 {
@@ -174,7 +172,6 @@
 	pinctrl-1 = <&uart131_sleep_test>;
 	pinctrl-names = "default", "sleep";
 	current-speed = <115200>;
-	zephyr,pm-device-runtime-auto;
 };
 
 &uart132 {
@@ -184,7 +181,6 @@
 	pinctrl-1 = <&uart132_sleep_test>;
 	pinctrl-names = "default", "sleep";
 	current-speed = <115200>;
-	zephyr,pm-device-runtime-auto;
 };
 
 &uart133 {
@@ -194,7 +190,6 @@
 	pinctrl-1 = <&uart133_sleep_test>;
 	pinctrl-names = "default", "sleep";
 	current-speed = <115200>;
-	zephyr,pm-device-runtime-auto;
 };
 
 &uart134 {
@@ -204,18 +199,15 @@
 	pinctrl-1 = <&uart134_sleep_test>;
 	pinctrl-names = "default", "sleep";
 	current-speed = <115200>;
-	zephyr,pm-device-runtime-auto;
 };
 
 &uart135 {
 	status = "okay";
 	memory-regions = < &cpuapp_dma_region >;
-	zephyr,pm-device-runtime-auto;
 };
 
 &uart136 {
 	status = "okay";
-	zephyr,pm-device-runtime-auto;
 };
 
 &uart137 {
@@ -225,5 +217,4 @@
 	pinctrl-1 = <&uart137_sleep_test>;
 	pinctrl-names = "default", "sleep";
 	current-speed = <115200>;
-	zephyr,pm-device-runtime-auto;
 };

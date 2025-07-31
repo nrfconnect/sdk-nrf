@@ -59,7 +59,6 @@
 	overrun-character = <0x00>;
 	cs-gpios = <&gpio0 11 GPIO_ACTIVE_LOW>;
 	wake-gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
-	zephyr,pm-device-runtime-auto;
 	memory-regions = <&cpurad_dma_region>;
 	spim_dt: spi-device@0 {
 		compatible = "vnd,spi-device";
@@ -69,5 +68,4 @@
 };
 
 &uart135 {
-	zephyr,pm-device-runtime-auto;
 };

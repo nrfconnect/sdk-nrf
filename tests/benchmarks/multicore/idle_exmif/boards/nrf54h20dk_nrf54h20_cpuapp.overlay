@@ -15,5 +15,4 @@
 /delete-node/ &led1;
 
 &exmif {
-	zephyr,pm-device-runtime-auto;
 };

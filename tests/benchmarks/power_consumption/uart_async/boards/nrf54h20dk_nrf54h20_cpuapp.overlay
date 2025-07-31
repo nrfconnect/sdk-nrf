@@ -8,5 +8,4 @@
 /delete-node/ &led1;
 
 &uart136 {
-	zephyr,pm-device-runtime-auto;
 };

@@ -3,7 +3,6 @@
 };
 
 &exmif {
-	zephyr,pm-device-runtime-auto;
 };
 
 / {

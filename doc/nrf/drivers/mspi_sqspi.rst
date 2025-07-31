@@ -85,7 +85,6 @@ See the following configuration example for the nRF54L15 SoC:
 					#size-cells = <0>;
 					reg = <0x3c00 0x200>;
 					status = "okay";
-					zephyr,pm-device-runtime-auto;
 				};
 			};
 		};
@@ -162,7 +161,6 @@ The following example configuration for the nRF54H20 SoC sets up the necessary p
 					#address-cells = <1>;
 					#size-cells = <0>;
 					reg = <0x3e00 0x200>;
-					zephyr,pm-device-runtime-auto;
 					memory-regions = <&sqspi_buffers>;
 				};
 			};
