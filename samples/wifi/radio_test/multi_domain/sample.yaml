@@ -118,7 +118,7 @@ tests:
     extra_args:
       - FILE_SUFFIX=wifi_combo
       - multi_domain_SHIELD="nrf7002eb2"
-      - multi_domain_SNIPPET=nrf70-wifi
+      - SNIPPET=nrf70-wifi
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
