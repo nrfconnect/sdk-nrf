@@ -171,3 +171,28 @@ uint8_t log_rpc_history_get_usage(void)
 	 */
 	return (fcb.f_sector_cnt - num_free_sectors) * 100 / fcb.f_sector_cnt;
 }
+
+size_t log_rpc_history_get_usage_size(void)
+{
+	int num_free_sectors;
+	size_t used_size;
+
+	k_mutex_lock(&fcb_lock, K_FOREVER);
+
+	num_free_sectors = fcb_free_sector_cnt(&fcb);
+
+	k_mutex_unlock(&fcb_lock);
+
+	/*
+	 * Calculate the used size in bytes based on the number of used sectors.
+	 * This provides sector-level granularity for the size calculation.
+	 */
+	used_size = (fcb.f_sector_cnt - num_free_sectors) * fcb_sectors[0].fs_size;
+
+	return used_size;
+}
+
+size_t log_rpc_history_get_max_size(void)
+{
+	return CONFIG_LOG_BACKEND_RPC_HISTORY_SIZE;
+}

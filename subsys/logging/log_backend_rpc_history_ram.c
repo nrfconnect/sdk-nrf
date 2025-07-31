@@ -91,3 +91,18 @@ uint8_t log_rpc_history_get_usage(void)
 
 	return current_size * 100 / total_size;
 }
+
+size_t log_rpc_history_get_usage_size(void)
+{
+	size_t total_size;
+	size_t current_size;
+
+	mpsc_pbuf_get_utilization(&log_history_pbuf, &total_size, &current_size);
+
+	return current_size;
+}
+
+size_t log_rpc_history_get_max_size(void)
+{
+	return CONFIG_LOG_BACKEND_RPC_HISTORY_SIZE;
+}
