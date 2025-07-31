@@ -160,6 +160,12 @@ Matter
 
 |no_changes_yet_note|
 
+* Removed:
+
+  * The nRF Connect Matter Manufacturer Cluster Editor tool page.
+    The tool is now available in the `nRF Connect for Desktop`_ app as the Matter Cluster Editor app.
+    For installation instructions and more information about the tool, see the `Matter Cluster Editor app`_ documentation.
+
 Matter fork
 +++++++++++
 

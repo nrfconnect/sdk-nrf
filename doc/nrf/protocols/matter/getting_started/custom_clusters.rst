@@ -42,23 +42,24 @@ Use the :ref:`matter_template_sample` sample as the base for building a manufact
 Create a new cluster description file in XML format
 ***************************************************
 
-You can create a new cluster description file in two ways - using the nRF Connect Matter Manufacturer Cluster Editor tool or manually by writing an XML file.
-Choose the method that you find most convenient.
+You can create a new cluster description file in the following ways:
 
-The ``Using the nRF Connect Matter Manufacturer Cluster Editor`` tab provides the steps to create a new cluster description file.
-The ``Manually create an XML file`` tab explains each element of the XML file, to help you create the file manually.
-You can also use the example of the XML file provided at the end of this section.
+* Using the `Matter Cluster Editor app`_.
+  The related tab provides the steps to create a new cluster description file.
 
-To learn more about the tool, see the :ref:`ug_nrfconnect_manufacturer_cluster_editor_tool_basic_functionalities` section in the :ref:`ug_nrfconnect_manufacturer_cluster_editor_tool` user guide.
+* Manually by writing an XML file.
+  The related tab explains each element of the XML file to help you create the file manually.
+  You can also use the example of the XML file provided at the end of this section.
 
 .. tabs::
 
-   .. tab:: Using the nRF Connect Matter Manufacturer Cluster Editor
+   .. tab:: Using the Matter Cluster Editor app
 
-      .. include:: /includes/matter_manufacturer_cluster_editor_note.txt
+      .. note::
+         |matter_cluster_editor_preview|
 
-      Before using the tool, you need to download its preview version and unpack it on your machine.
-      First, make sure you have completed the steps listed in the :ref:`ug_nrfconnect_manufacturer_cluster_editor_tool_downloading_installing` user guide.
+      Before using the tool, you need to download and install it.
+      See the `Matter Cluster Editor app`_ documentation for installation instructions.
 
       Once you have the tool installed, you can create a new cluster description file.
       Complete the following steps:

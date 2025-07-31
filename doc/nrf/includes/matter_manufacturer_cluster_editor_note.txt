@@ -1,2 +1,0 @@
-.. note::
-   The nRF Connect Matter Manufacturer Cluster Editor is currently in the preview stage.

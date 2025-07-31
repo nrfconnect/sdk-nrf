@@ -360,6 +360,7 @@ NRF = [
     ("ug_matter_gs_testing_thread_separate_otbr_android", "protocols/matter/getting_started/testing/index"), # Matter over Thread: Configuring Border Router and Android controller on separate devices (removed after 2.2.0)
     ("ug_matter_gs_testing_wifi_mobile", "protocols/matter/getting_started/testing/index"), # Matter over Wi-Fi: Configuring CHIP Tool for Android (removed after 2.2.0)
     ("ug_matter_gs_tools", "protocols/matter/getting_started/tools"), # Matter tools
+    ("protocols/matter/getting_started/manufacturer_cluster_editor_tool", "protocols/matter/getting_started/tools"), # Matter Cluster Editor tool page (removed for v3.1.0)
     ("ug_matter_gs_kconfig", "protocols/matter/getting_started/kconfig"), # Enabling Matter in Kconfig
     ("ug_matter_gs_advanced_kconfigs", "protocols/matter/getting_started/advanced_kconfigs"), # Advanced Matter Kconfig options
     ("ug_matter_gs_adding_clusters", "protocols/matter/getting_started/adding_clusters"), # Adding clusters to Matter application
