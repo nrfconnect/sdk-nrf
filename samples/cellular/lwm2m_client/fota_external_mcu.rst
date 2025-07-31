@@ -66,7 +66,7 @@ The following steps use generic MCUmgr client mode and Coiote without bootstrap.
    .. code-block:: console
 
       west build
-      cp build/zephyr/app_update.bin ../lwm2m_client/app_update52.bin
+      cp build/smp_svr/zephyr/zephyr.signed.bin ../lwm2m_client/app_update52.bin
       cd ..
 
 #. Open a terminal connection for the nRF52840 SoC (VCOM1), in Linux ``/dev/ttyACM1``, and call the ``mcuboot`` command on the shell.
