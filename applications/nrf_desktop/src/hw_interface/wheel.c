@@ -12,7 +12,7 @@
 #include <zephyr/device.h>
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/drivers/gpio.h>
-#include <zephyr/pm/device.h>
+#include <zephyr/pm/device_runtime.h>
 #include <pinctrl_soc.h>
 
 #include <app_event_manager.h>
@@ -262,13 +262,13 @@ static int enable_qdec(enum state next_state)
 
 	int err = 0;
 
-	/* QDEC device driver starts in PM_DEVICE_STATE_ACTIVE state. */
-	if (state != STATE_DISABLED) {
-		err = pm_device_action_run(qdec_dev, PM_DEVICE_ACTION_RESUME);
+	/* QDEC device driver starts in PM_DEVICE_STATE_SUSPENDED state. */
+	if (state == STATE_DISABLED) {
+		err = pm_device_runtime_get(qdec_dev);
 	}
 
 	if (err) {
-		LOG_ERR("Cannot resume QDEC");
+		LOG_ERR("Cannot get QDEC");
 		return err;
 	}
 
@@ -304,9 +304,9 @@ static int disable_qdec(enum state next_state)
 		return err;
 	}
 
-	err = pm_device_action_run(qdec_dev, PM_DEVICE_ACTION_SUSPEND);
+	err = pm_device_runtime_put(qdec_dev);
 	if (err) {
-		LOG_ERR("Cannot suspend QDEC");
+		LOG_ERR("Cannot put QDEC");
 	} else {
 		err = setup_wakeup();
 		if (!err) {
