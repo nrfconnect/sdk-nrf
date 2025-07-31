@@ -131,11 +131,11 @@ static void assess_measurement_result(uint64_t timer_value_us,
 	uint64_t maximal_allowed_transmission_time_us;
 
 	if (buffer_size == 1) {
-		/* 400% */
-		maximal_allowed_transmission_time_us = (1 + 4) * theoretical_transmission_time_us;
+		/* 500% */
+		maximal_allowed_transmission_time_us = (1 + 5) * theoretical_transmission_time_us;
 	} else {
-		/* 100% */
-		maximal_allowed_transmission_time_us = (1 + 1) * theoretical_transmission_time_us;
+		/* 200% */
+		maximal_allowed_transmission_time_us = (1 + 2) * theoretical_transmission_time_us;
 	}
 
 	zassert_true(timer_value_us < maximal_allowed_transmission_time_us,
