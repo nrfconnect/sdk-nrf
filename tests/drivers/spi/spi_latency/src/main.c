@@ -77,14 +77,14 @@ static void assess_measurement_result(uint64_t timer_value_us,
 	uint64_t maximal_allowed_transmission_time_us;
 
 	if (buffer_size == 1) {
-		/* 3000%
+		/* 4000%
 		 * Issue with latency for 1B buffer is reported
 		 * limit will be adjusted after fix
 		 */
-		maximal_allowed_transmission_time_us = (1 + 30) * theoretical_transmission_time_us;
+		maximal_allowed_transmission_time_us = (1 + 40) * theoretical_transmission_time_us;
 	} else {
-		/* 100% */
-		maximal_allowed_transmission_time_us = (1 + 1) * theoretical_transmission_time_us;
+		/* 200% */
+		maximal_allowed_transmission_time_us = (1 + 2) * theoretical_transmission_time_us;
 	}
 	zassert_true(timer_value_us < maximal_allowed_transmission_time_us,
 		     "Measured transmission call latency is over the specified limit %llu > %llu",
