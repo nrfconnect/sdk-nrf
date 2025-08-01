@@ -76,10 +76,6 @@ int main(void)
 	LOG_INF("Core will sleep for %d ms", CONFIG_TEST_SLEEP_DURATION_MS);
 	LOG_INF("Shared memory at %p", (void *) shared_var);
 
-#if defined(CONFIG_PM_DEVICE_RUNTIME)
-	pm_device_runtime_enable(pwm_led.dev);
-#endif
-
 	/* Synchronize Remote core with Host core */
 #if !defined(CONFIG_TEST_ROLE_REMOTE)
 	LOG_DBG("HOST starts");

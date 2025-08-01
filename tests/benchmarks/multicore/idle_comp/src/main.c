@@ -33,7 +33,6 @@ int main(void)
 	rc = gpio_pin_configure_dt(&led, GPIO_OUTPUT_INACTIVE);
 	__ASSERT(rc == 0, "Could not configure led GPIO");
 
-	pm_device_runtime_enable(test_dev);
 	pm_device_runtime_get(test_dev);
 
 	rc = comparator_set_trigger_callback(test_dev, test_callback, NULL);

@@ -40,7 +40,6 @@
 	pinctrl-1 = <&dut_spi_sleep>;
 	pinctrl-names = "default", "sleep";
 	overrun-character = <0x00>;
-	zephyr,pm-device-runtime-auto;
 	cs-gpios = <&gpio0 8 GPIO_ACTIVE_LOW>;
 	dut_spi: test-spi-dev@0 {
 		compatible = "vnd,spi-device";

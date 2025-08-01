@@ -5,5 +5,4 @@
 };
 
 &spi21 {
-	zephyr,pm-device-runtime-auto;
 };

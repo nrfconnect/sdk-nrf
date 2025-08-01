@@ -703,7 +703,6 @@ static void ppp_data_passing_thread(void*, void*, void*)
 {
 	const size_t mtu = net_if_get_mtu(ppp_iface);
 	struct zsock_pollfd fds[PPP_FDS_COUNT];
-	enum pm_device_state state = PM_DEVICE_STATE_OFF;
 
 	for (size_t i = 0; i != ARRAY_SIZE(fds); ++i) {
 		fds[i].fd = ppp_fds[i];
@@ -745,8 +744,7 @@ static void ppp_data_passing_thread(void*, void*, void*)
 
 			/* When DL data is received from the network, check if UART is suspended */
 			if (src == MODEM_FD_IDX) {
-				pm_device_state_get(ppp_uart_dev, &state);
-				if (state != PM_DEVICE_STATE_ACTIVE) {
+				if (!slm_uart_dev_is_active()) {
 					LOG_DBG("PPP data received but UART not active");
 					slm_ctrl_pin_indicate();
 				}

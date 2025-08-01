@@ -141,7 +141,6 @@
 				#address-cells = <1>;
 				#size-cells = <0>;
 				reg = <0x3e00 0x200>;
-				zephyr,pm-device-runtime-auto;
 				memory-regions = <&sqspi_buffers>;
 			};
 		};

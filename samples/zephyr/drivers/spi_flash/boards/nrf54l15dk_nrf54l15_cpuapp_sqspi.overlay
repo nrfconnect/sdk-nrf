@@ -54,7 +54,6 @@
 				#size-cells = <0>;
 				reg = <0x3c00 0x200>;
 				status = "okay";
-				zephyr,pm-device-runtime-auto;
 			};
 		};
 	};

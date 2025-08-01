@@ -87,6 +87,9 @@ int slm_at_host_power_off(void);
 /** @brief Counterpart to @c slm_at_host_power_off(). */
 int slm_at_host_power_on(void);
 
+/** Check if UART is active */
+bool slm_uart_dev_is_active(void);
+
 /**
  * @brief Uninitialize AT host for serial LTE modem
  */

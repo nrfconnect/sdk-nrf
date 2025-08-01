@@ -20,8 +20,6 @@ int main(void)
 	*(volatile uint32_t *)0x4007AC84ul = 0x00000002ul;
 #endif
 
-	pm_device_runtime_enable(console_dev);
-
 	while (1) {
 		printk("33 characters long string !!!!!!\n");
 		k_sleep(K_MSEC(SLEEP_TIME_MS));

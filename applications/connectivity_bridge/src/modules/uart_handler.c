@@ -6,8 +6,9 @@
 
 #include <zephyr/types.h>
 #include <zephyr/sys/ring_buffer.h>
+#include <zephyr/sys/atomic.h>
 #include <zephyr/drivers/uart.h>
-#include <zephyr/pm/device.h>
+#include <zephyr/pm/device_runtime.h>
 
 #define MODULE uart_handler
 #include "module_state_event.h"
@@ -37,6 +38,10 @@ static const struct device *devices[] = {
 #define UART_SET_PM_STATE true
 #else
 #define UART_SET_PM_STATE false
+#endif
+
+#if UART_SET_PM_STATE
+atomic_t device_pm_requested = ATOMIC_INIT(0);
 #endif
 
 struct uart_rx_buf {
@@ -231,14 +236,23 @@ static void set_uart_power_state(uint8_t dev_idx, bool active)
 {
 #if UART_SET_PM_STATE
 	const struct device *dev = devices[dev_idx];
+	const char *action;
 	int err;
-	enum pm_device_action action;
 
-	action = active ? PM_DEVICE_ACTION_RESUME : PM_DEVICE_ACTION_SUSPEND;
+	if (active) {
+		if (!atomic_test_and_set_bit(&device_pm_requested, dev_idx)) {
+			action = "pm_device_runtime_get";
+			err = pm_device_runtime_get(dev);
+		}
+	} else {
+		if (atomic_test_and_clear_bit(&device_pm_requested, dev_idx)) {
+			action = "pm_device_runtime_put";
+			err = pm_device_runtime_put(dev);
+		}
+	}
 
-	err = pm_device_action_run(dev, action);
-	if ((err < 0) && (err != -EALREADY)) {
-		LOG_ERR("pm_device_action_run failed: %d", err);
+	if (err < 0) {
+		LOG_ERR("%s failed: %d", action, err);
 	}
 #endif
 }

@@ -147,10 +147,6 @@ int main(void)
 	}
 	__ASSERT_NO_MSG(ret);
 
-#if defined(CONFIG_PM_DEVICE_RUNTIME)
-	pm_device_runtime_enable(pwm_out.dev);
-#endif
-
 	/* configure gpio and init GPIOTE callback */
 	ret = gpio_pin_configure_dt(&pin_in, GPIO_INPUT);
 	if (ret) {

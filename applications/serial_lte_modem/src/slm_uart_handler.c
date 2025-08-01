@@ -180,10 +180,8 @@ static int tx_start(void)
 	uint8_t *buf;
 	size_t len;
 	int err;
-	enum pm_device_state state = PM_DEVICE_STATE_OFF;
 
-	pm_device_state_get(slm_uart_dev, &state);
-	if (state != PM_DEVICE_STATE_ACTIVE) {
+	if (!slm_uart_dev_is_active()) {
 		return 1;
 	}
 
