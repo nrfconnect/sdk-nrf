@@ -296,6 +296,8 @@ Matter certification process variants
 The standard Matter certification process has several variants that you can use if you have already obtained the certification or you want to certify several products of the same family.
 There are separate processes for certification for different devices and recertification for devices that are already certified.
 
+.. _ug_matter_device_recertification_process:
+
 Matter recertification process variants
 =======================================
 
@@ -338,6 +340,8 @@ The first certification must still be done at an ATL.
    :alt: Matter's Rapid Recertification program overview
 
    Matter's Rapid Recertification program overview
+
+.. _ug_matter_device_portfolio_certification:
 
 Matter portfolio certification process variants
 ===============================================

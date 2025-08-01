@@ -1,3 +1,5 @@
+:orphan:
+
 .. _migration_bicr_nrf54h:
 
 Migrating nRF54H20 SoC BICR from DTS to JSON

@@ -1,7 +1,9 @@
+:orphan:
+
 .. _migration_3.1_54h_suit_ironside:
 
 Migration from SUIT to IronSide SE for the nRF54H20 SoC
-=======================================================
+#######################################################
 
 .. contents::
    :local:
@@ -20,7 +22,7 @@ To follow this guide, you must meet the following prerequisites:
    Devices using SUIT in LCS RoT cannot be transitioned back to LCS EMPTY.
 
 Breaking changes
-================
+****************
 
 The following is a summary of the breaking changes that apply when migrating applications:
 
@@ -34,7 +36,7 @@ The following is a summary of the breaking changes that apply when migrating app
   You must enable and configure MCUboot in your project.
 
 Update prj.conf
----------------
+===============
 
 To update :file:`prj.conf`, complete the following steps:
 
@@ -64,7 +66,7 @@ To update :file:`prj.conf`, complete the following steps:
       };
 
 Update devicetree files
------------------------
+=======================
 
 To update your devicetree files, complete the following steps:
 
@@ -117,7 +119,7 @@ To update your devicetree files, complete the following steps:
 #. Remove the SUIT recovery partitions (``cpuapp_recovery_partition`` and ``cpurad_recovery_partition``).
 
 Update PERIPHCONF
------------------
+=================
 
 The new UICR format no longer holds peripheral configuration initial values.
 You must generate a PERIPHCONF blob at build time.
@@ -144,7 +146,7 @@ You do not need to modify your application code.
 You only need to ensure the DTS partition exists.
 
 Memory protection and isolation
--------------------------------
+===============================
 
 IronSide SE currently grants full memory-access permissions to both application and radio domains by default.
 Delete any UICR settings related to the following:
@@ -154,7 +156,7 @@ Delete any UICR settings related to the following:
 * Partition lock bits
 
 Memory map changes
-------------------
+==================
 
 With IronSide SE, the memory map changed as follows:
 
@@ -171,7 +173,7 @@ With IronSide SE, the memory map changed as follows:
 To enable ``UICR/PERIPHCONF`` generation, ensure a DTS partition labeled ``peripconf_partition`` exists with sufficient size (for example, 8 KBs) to embed the generated address-value blob.
 
 DFU support with MCUboot
-------------------------
+========================
 
 IronSide SE drops SUIT in favor of MCUboot.
 To migrate the DFU solution, complete the following steps:
@@ -190,6 +192,6 @@ To migrate the DFU solution, complete the following steps:
 #. Remove recovery and companion images, as MCUboot no longer supports them.
 
 Other changes
--------------
+=============
 
 The radio core is no longer started automatically.
