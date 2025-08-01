@@ -38,7 +38,8 @@ config OPENTHREAD_RPC_CLIENT
 
 config OPENTHREAD_RPC_SERVER
 	bool "OpenThread over RPC server"
-	depends on NET_L2_OPENTHREAD || ZTEST
+	depends on OPENTHREAD || ZTEST
+	depends on !NET_L2_OPENTHREAD
 	help
 	  Enables OpenThread over RPC server role that runs the full OpenThread
 	  stack and exposes OpenThread functions using nRF RPC library to a client
@@ -49,7 +50,6 @@ endchoice
 config OPENTHREAD_RPC_NET_IF
 	bool "OpenThread over RPC network interface"
 	default y
-	depends on NETWORKING
 	help
 	  Enables OpenThread RPC commands for sending and receiving IPv6 packets
 	  to/from the OpenThread stack. For the RPC client role, it additionally

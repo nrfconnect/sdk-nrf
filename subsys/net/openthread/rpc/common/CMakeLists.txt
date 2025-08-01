@@ -12,4 +12,4 @@ zephyr_library_sources(
 )
 
 zephyr_library_sources_ifdef(CONFIG_OPENTHREAD_RPC_CLIENT ot_rpc_lock_empty.c)
-zephyr_library_sources_ifdef(CONFIG_NET_L2_OPENTHREAD ot_rpc_lock_net_l2.c)
+zephyr_library_sources_ifdef(CONFIG_OPENTHREAD ot_rpc_lock_zephyr.c)
