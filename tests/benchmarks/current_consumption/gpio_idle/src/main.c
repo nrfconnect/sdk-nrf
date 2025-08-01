@@ -39,7 +39,7 @@ int main(void)
 		printk("Could not configure sw GPIO interrupt (%d)\n", ret);
 		return 0;
 	}
-	gpio_init_callback(&gpio_cb, my_gpio_callback, 0xFFFF);
+	gpio_init_callback(&gpio_cb, my_gpio_callback, BIT(sw.pin));
 	gpio_add_callback(sw.port, &gpio_cb);
 
 	while (1) {
