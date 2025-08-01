@@ -561,6 +561,7 @@ NRF = [
     ("libraries/nrf_security/doc/backend_config", "libraries/security/nrf_security/doc/backend_config"), # Legacy configurations and supported features
     ("libraries/tfm/index", "libraries/security/tfm/index"), # TF-M libraries (landing)
     ("libraries/tfm/tfm_ioctl_api", "libraries/security/tfm/tfm_ioctl_api"), # TF-M input/output control (IOCTL)
+    ("libraries/nrf_rpc/nrf_rpc_dev_info", "libraries/nrf_rpc/nrf_rpc_utils"), # Moved nRF RPC device information to nRF RPC utility commands library (v3.1.0)
     ("libraries/others/fatal_error", "libraries/security/fatal_error"), # Fatal error handler
     ("libraries/others/hw_unique_key", "libraries/security/hw_unique_key"), # Hardware unique key
     ("libraries/others/identity_key", "libraries/security/identity_key"), # Identity key

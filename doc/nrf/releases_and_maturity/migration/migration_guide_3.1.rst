@@ -1,7 +1,9 @@
+:orphan:
+
 .. _migration_3.1:
 
-Migration guide for |NCS| v3.1.0 (Working draft)
-################################################
+Migration guide for |NCS| v3.1.0
+################################
 
 .. contents::
    :local:
@@ -24,6 +26,68 @@ Required changes
 
 The following changes are mandatory to make your application work in the same way as in previous releases.
 
+Build system
+============
+
+.. toggle::
+
+   * In sysbuild, the following CMake extensions have been removed:
+
+     * ``sysbuild_dt_nodelabel``
+     * ``sysbuild_dt_alias``
+     * ``sysbuild_dt_node_exists``
+     * ``sysbuild_dt_node_has_status``
+     * ``sysbuild_dt_prop``
+     * ``sysbuild_dt_comp_path``
+     * ``sysbuild_dt_num_regs``
+     * ``sysbuild_dt_reg_addr``
+     * ``sysbuild_dt_reg_size``
+     * ``sysbuild_dt_has_chosen``
+     * ``sysbuild_dt_chosen``
+
+     You must now use pre-existing devicetree extensions, such as ``dt_nodelabel``, without the ``sysbuild_`` prefix.
+     To specify the sysbuild image, use the ``TARGET`` argument in place of ``IMAGE``.
+
+     The following example shows one of the removed functions:
+
+     .. code-block:: none
+
+        sysbuild_dt_chosen(
+          flash_node
+          IMAGE ${DEFAULT_IMAGE}
+          PROPERTY "zephyr,flash"
+        )
+
+     It should now be modified as follows:
+
+     .. code-block:: none
+
+        dt_chosen(
+          flash_node
+          TARGET ${DEFAULT_IMAGE}
+          PROPERTY "zephyr,flash"
+        )
+
+
+nRF54H20
+========
+
+This section describes the changes specific to the nRF54H20 SoC and DK support in the |NCS|.
+
+SUIT to IronSide SE migration
+-----------------------------
+
+.. toggle::
+
+   * To migrate your existing |NCS| v3.0.0 application for the nRF54H20 SoC running SUIT to the |NCS| v3.1.0 using IronSide SE, see the `Migration from SUIT to IronSide SE for the nRF54H20 SoC`_ documentation.
+
+BICR migration from DTS to JSON
+-------------------------------
+
+.. toggle::
+
+   * To migrate the Board Information Configuration Registers (BICR) configuration from DTS to JSON, see the `Migrating nRF54H20 SoC BICR from DTS to JSON`_ documentation.
+
 Samples and applications
 ========================
 
@@ -36,10 +100,10 @@ Matter
 
    * For the Matter samples and applications:
 
-      * The :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option has been introduced.
+      * The :ref:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH <CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH>` Kconfig option has been introduced.
         Previously, the path to the ZAP file was deduced based on hardcoded locations.
-        Now, the location is configured using the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option.
-        This change requires you to update your application :file:`prj.conf` file by setting the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` option to point to the location of you ZAP file.
+        Now, the location is configured using the :ref:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH <CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH>` Kconfig option.
+        This change requires you to update your application :file:`prj.conf` file by setting the :ref:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH <CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH>` option to point to the location of you ZAP file.
 
    * For the :ref:`Matter light bulb <matter_light_bulb_sample>` sample:
 
@@ -124,6 +188,13 @@ nRF5340 Audio applications
      This requires the location bitfield to be set according to your preference.
      If you are using the :file:`buildprog.py` script, it will handle the correct write to UICR.
      You only need to update the locations in the :file:`devices.json` file.
+     The new format is: "location": ["FRONT_LEFT", "FRONT_RIGHT"].
+     The optional buildprog tool now uses `nRF Util`_ instead of nrfjprog, which has been archived.
+
+     .. note::
+        Support for multiple locations is still under development.
+
+
    * As a device can have multiple audio locations, the location name is no longer included in the advertised device name during DFU.
 
 nRF Desktop
@@ -140,74 +211,26 @@ Libraries
 
 This section describes the changes related to libraries.
 
-* :ref:`nrf_security_readme` library:
+.. toggle::
 
-  * The ``CONFIG_PSA_USE_CRACEN_ASYMMETRIC_DRIVER`` Kconfig option has been replaced by :kconfig:option:`CONFIG_PSA_USE_CRACEN_ASYMMETRIC_ENCRYPTION_DRIVER`.
+   * :ref:`nrf_security_readme` library:
 
-* :ref:`supl_client` library:
+      * The ``CONFIG_PSA_USE_CRACEN_ASYMMETRIC_DRIVER`` Kconfig option has been replaced by :kconfig:option:`CONFIG_PSA_USE_CRACEN_ASYMMETRIC_ENCRYPTION_DRIVER`.
 
-  * The SUPL client OS integration library dependency on the newlib C library has been removed.
-    To use SUPL with picolibc, v0.8.0 or later of the nRF91 Series SUPL client library is required.
+   * :ref:`supl_client` library:
 
-.. _migration_3.1_recommended:
+      * The SUPL client OS integration library dependency on the newlib C library has been removed.
+        To use SUPL with picolibc, v0.8.0 or later of the nRF91 Series SUPL client library is required.
 
-Build system
-============
+Drivers
+=======
+
+This section provides detailed lists of changes by drivers.
+
+ADC drivers
+-----------
 
 .. toggle::
 
-   * In sysbuild, the following CMake extensions have been removed:
-
-     * ``sysbuild_dt_nodelabel``
-     * ``sysbuild_dt_alias``
-     * ``sysbuild_dt_node_exists``
-     * ``sysbuild_dt_node_has_status``
-     * ``sysbuild_dt_prop``
-     * ``sysbuild_dt_comp_path``
-     * ``sysbuild_dt_num_regs``
-     * ``sysbuild_dt_reg_addr``
-     * ``sysbuild_dt_reg_size``
-     * ``sysbuild_dt_has_chosen``
-     * ``sysbuild_dt_chosen``
-
-     You must now use pre-existing devicetree extensions, such as ``dt_nodelabel``, without the ``sysbuild_`` prefix.
-     To specify the sysbuild image, use the ``TARGET`` argument in place of ``IMAGE``.
-
-     The following example shows one of the removed functions:
-
-     .. code-block:: none
-
-        sysbuild_dt_chosen(
-          flash_node
-          IMAGE ${DEFAULT_IMAGE}
-          PROPERTY "zephyr,flash"
-        )
-
-     It should now be modified as follows:
-
-     .. code-block:: none
-
-        dt_chosen(
-          flash_node
-          TARGET ${DEFAULT_IMAGE}
-          PROPERTY "zephyr,flash"
-        )
-
-Recommended changes
-*******************
-
-The following changes are recommended for your application to work optimally after the migration.
-
-Samples and applications
-========================
-
-This section describes the changes related to samples and applications.
-
-|no_changes_yet_note|
-
-Libraries
-=========
-
-This section describes the changes related to libraries.
-
-|no_changes_yet_note|
+   * Starting with the |NCS| v3.1.0, the ``NRF_SAADC_GND`` analog input definition has been added.
+     You can use it as ``zephyr,input-negative = <NRF_SAADC_GND>;`` to allow negative values in the buffer when using single-ended settings.

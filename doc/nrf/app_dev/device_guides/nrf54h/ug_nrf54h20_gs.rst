@@ -79,7 +79,7 @@ When you install the |NCS| toolchain as listed above, you get the :ncs-tool-vers
 Using the nRF54H20 DK with the |NCS| version |release| requires the following:
 
 * The latest version of nRF Util core module (``nrfutil``), which might or might not be the same as the version installed with the |NCS| toolchain
-* nRF Util ``device`` command v|54H_nrfutil_device_ver|
+* nRF Util ``device`` command version |54H_nrfutil_device_ver|
 * nRF Util ``trace`` command v4.0.1
 
 To update your nRF Util installation, complete the following steps:

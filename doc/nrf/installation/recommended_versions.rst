@@ -327,7 +327,7 @@ For firmware OS support, see :ref:`the table at the top of the page <supported_O
     - x64
     - ARM64
   * - `Windows 11`_
-    - Tier 3
+    - n/a
     - Tier 3
     - Not supported
   * - `Windows 10`_
