@@ -209,6 +209,14 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       endif()
     endforeach()
 
+    if(SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE)
+      set_config_bool(mcuboot CONFIG_BOOT_SIGNATURE_TYPE_PURE y)
+    endif()
+
+    if(SB_CONFIG_BOOT_IMG_HASH_ALG_SHA512 AND NOT (SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU AND SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE))
+      set_config_bool(mcuboot CONFIG_BOOT_IMG_HASH_ALG_SHA512 y)
+    endif()
+
     # Apply configuration to application
     foreach(image ${updateable_images})
       foreach(mode ${application_mcuboot_modes})
@@ -218,7 +226,31 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
           set_config_bool(${image} ${mode} n)
         endif()
       endforeach()
+
+      if(SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519)
+        set_config_bool(${image} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519 y)
+      endif()
+
+      if(SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE)
+        set_config_bool(${image} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE y)
+      endif()
+
+      if(SB_CONFIG_BOOT_IMG_HASH_ALG_SHA512)
+        set_config_bool(${image} CONFIG_MCUBOOT_BOOTLOADER_USES_SHA512 y)
+      endif()
     endforeach()
+
+    if(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER AND SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519)
+      set_config_bool(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519 y)
+
+      if(SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE)
+        set_config_bool(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE y)
+      endif()
+
+      if(SB_CONFIG_BOOT_IMG_HASH_ALG_SHA512)
+        set_config_bool(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} CONFIG_MCUBOOT_BOOTLOADER_USES_SHA512 y)
+      endif()
+    endif()
 
     # The NRF54LX goes with PSA crypto by default
     if(SB_CONFIG_SOC_SERIES_NRF54LX)
@@ -226,13 +258,6 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         set_config_bool(mcuboot CONFIG_NRF_SECURITY y)
       elseif(SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519)
         set_config_bool(mcuboot CONFIG_NRF_SECURITY y)
-        set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519 y)
-        set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUBOOT_BOOTLOADER_USES_SHA512 y)
-
-        if(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
-          set_config_bool(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519 y)
-          set_config_bool(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} CONFIG_MCUBOOT_BOOTLOADER_USES_SHA512 y)
-        endif()
 
         # We are sure that ED25519 signature on MCUboot does not need these
         set_config_bool(mcuboot CONFIG_PSA_USE_CRACEN_AEAD_DRIVER n)
@@ -245,7 +270,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
           if(SB_CONFIG_NRF_MCUBOOT_HMAC_SHA512)
             set_config_bool(mcuboot CONFIG_BOOT_HMAC_SHA512 y)
-	  else()
+          else()
             set_config_bool(mcuboot CONFIG_BOOT_HMAC_SHA512 n)
           endif()
         else()
@@ -262,37 +287,11 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
           set_config_bool(mcuboot CONFIG_BOOT_SIGNATURE_USING_KMU n)
         endif()
 
-        if(SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE)
-          set_config_bool(mcuboot CONFIG_BOOT_SIGNATURE_TYPE_PURE y)
-          set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE y)
-
-          if(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
-            set_config_bool(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE y)
-          endif()
-        else()
-          set_config_bool(mcuboot CONFIG_BOOT_SIGNATURE_TYPE_PURE n)
-          set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE n)
-
-          if(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
-            set_config_bool(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE n)
-          endif()
-        endif()
-
         # MCUboot uses hash function to identify key internally when KMU is disabled.
         if(SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU AND SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE)
           set_config_bool(mcuboot CONFIG_PSA_USE_CRACEN_HASH_DRIVER n)
-          set_config_bool(mcuboot CONFIG_BOOT_IMG_HASH_ALG_SHA512 n)
         else()
           set_config_bool(mcuboot CONFIG_PSA_USE_CRACEN_HASH_DRIVER y)
-          set_config_bool(mcuboot CONFIG_BOOT_IMG_HASH_ALG_SHA512 y)
-        endif()
-      else()
-        set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519 n)
-        set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUBOOT_BOOTLOADER_USES_SHA512 n)
-
-        if(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER)
-          set_config_bool(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519 n)
-          set_config_bool(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME} CONFIG_MCUBOOT_BOOTLOADER_USES_SHA512 n)
         endif()
       endif()
     endif()
