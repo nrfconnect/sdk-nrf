@@ -33,7 +33,7 @@ The sample requires a smartphone (configurator) with Nordic Semiconductor's nRF 
 Overview
 ********
 
-With this sample, you can provision a Wi-Fi device that lacks input or output capability, using the :ref:`wifi_prov_readme` library.
+With this sample, you can provision a Wi-Fi device that lacks input or output capability, using the :ref:`lib_wifi_prov_ble` library.
 The sample is divided into three parts:
 
 * Task and event handling component: Handles provisioning-related tasks and events.
@@ -149,7 +149,7 @@ Dependencies
 
 This sample uses the following |NCS| libraries:
 
-* :ref:`wifi_prov_readme`
+* :ref:`lib_wifi_prov_ble`
 * :ref:`Wi-Fi credentials <zephyr:lib_wifi_credentials>`
 
 This sample also uses a module that can be found in the following location in the |NCS| folder structure:

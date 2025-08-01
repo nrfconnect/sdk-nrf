@@ -55,6 +55,24 @@ enum AuthMode {
   WPA_WPA2_PSK            = 4;
   WPA2_ENTERPRISE         = 5;
   WPA3_PSK                = 6;
+  // New Zephyr WiFi security types (backward compatible)
+  NONE                    = 7;
+  PSK                     = 8;
+  PSK_SHA256              = 9;
+  SAE                     = 10;
+  WAPI                    = 11;
+  EAP                     = 12;
+  WPA_AUTO_PERSONAL       = 13;
+  DPP                     = 14;
+  EAP_PEAP_MSCHAPV2       = 15;
+  EAP_PEAP_GTC            = 16;
+  EAP_TTLS_MSCHAPV2       = 17;
+  EAP_PEAP_TLS            = 18;
+  FT_PSK                  = 19;
+  FT_SAE                  = 20;
+  FT_EAP                  = 21;
+  FT_EAP_SHA384           = 22;
+  SAE_EXT_KEY             = 23;
 }
 
 message ScanParams {

@@ -1,26 +1,25 @@
-.. _wifi_prov_readme:
+.. _lib_wifi_prov_core:
 
-Wi-Fi Provisioning Service
-##########################
+Wi-Fi Provisioning Core
+#######################
 
 .. contents::
    :local:
    :depth: 2
 
-This library implements a Bluetooth® GATT service for Wi-Fi® provisioning.
-It is an implementation of the server side of the Wi-Fi provisioning protocol defined by Nordic Semiconductor.
-It is to be used with the :ref:`wifi_provisioning` sample.
-The Wi-Fi Provisioning Service forms a complete reference solution, together with the mobile application.
-For details, see the :ref:`wifi_provisioning` sample documentation.
+This library implements the core Wi-Fi® provisioning functionality that is transport-agnostic.
+It provides protocol implementation, message handling, and configuration management for Wi-Fi provisioning.
+The core library is designed to work with various transport layers (For example, Bluetooth® LE, Wi-Fi SoftAP) through a defined transport interface.
 
 Overview
 ********
 
-The service is divided into three parts:
+The core library is responsible for:
 
-* GATT service interface: Defines the GATT service and serves as the transport layer for the provisioning protocol.
-* Task and event handling component: Implements the provisioning protocol.
-* Configuration management component: Manages the provisioning data (in RAM and flash) accessed by multiple threads.
+* Protocol implementation - Implements the Wi-Fi provisioning protocol using Protocol Buffers.
+* Message handling - Processes Request messages and generates Response/Result messages.
+* Configuration management - Manages Wi-Fi configurations in RAM and flash.
+* Transport interface - Provides weak transport functions that can be overridden by transport layers.
 
 .. _wifi_provisioning_protocol:
 
@@ -109,7 +108,7 @@ The protocol defines four message types:
    =================== ======================= ======================== =======================================================================================
 
 These definitions are available as :file:`.proto` files in the library path.
-See all definitions in the :file:`subsys/bluetooth/services/wifi_prov/proto/` folder.
+See all definitions in the :file:`subsys/net/lib/wifi_prov/proto/` folder.
 
 Workflow
 ========
@@ -163,76 +162,15 @@ In the ``Response`` message, the ``request_op_code`` is ``FORGET_CONFIG``, and t
 
 When the connection state changes or an attempt fails, the target will set up a ``Result`` message, and the ``state`` field indicates the current state of the Wi-Fi, and the ``reason`` field indicates the failure reason.
 
-Service declaration
+Transport interface
 *******************
 
-The Wi-Fi Provisioning Service is instantiated as a primary service.
-Set the service UUID value as defined in the following table.
+The core library provides a transport-agnostic interface through weak functions that can be overridden by transport layers:
 
-========================== ========================================
-Service name               UUID
-Wi-Fi Provisioning Service ``14387800-130c-49e7-b877-2881c89cb258``
-========================== ========================================
+* :c:func:`wifi_prov_send_rsp` - Sends Response messages to the transport layer
+* :c:func:`wifi_prov_send_result` - Sends Result messages to the transport layer
 
-Service characteristics
-=======================
-
-The UUID value of characteristics are defined in the following table.
-
-========================== ========================================
-Characteristic name        UUID
-Information                ``14387801-130c-49e7-b877-2881c89cb258``
-Operation Control Point    ``14387802-130c-49e7-b877-2881c89cb258``
-Data Out                   ``14387803-130c-49e7-b877-2881c89cb258``
-========================== ========================================
-
-The characteristic requirements of the Wi-Fi Provisioning Service are shown in the following table.
-
-+-----------------+-------------+-------------+-------------+-------------+
-| Characteristic  | Requirement | Mandatory   | Optional    | Security    |
-| name            |             | properties  | properties  | permissions |
-+=================+=============+=============+=============+=============+
-| Information     | Mandatory   | Read        |             | No security |
-|                 |             |             |             | required    |
-+-----------------+-------------+-------------+-------------+-------------+
-| Operation       | Mandatory   | Indicate,   |             | Encryption  |
-| Control         |             | Write       |             | required    |
-| Point           |             |             |             |             |
-+-----------------+-------------+-------------+-------------+-------------+
-| Operation       | Mandatory   | Read, Write |             | Encryption  |
-| Control         |             |             |             | required    |
-| Point           |             |             |             |             |
-| - Client        |             |             |             |             |
-| Characteristic  |             |             |             |             |
-| Configuration   |             |             |             |             |
-| descriptor      |             |             |             |             |
-+-----------------+-------------+-------------+-------------+-------------+
-| Data Out        | Mandatory   | Notify      |             | Encryption  |
-|                 |             |             |             | required    |
-+-----------------+-------------+-------------+-------------+-------------+
-| Data Out        | Mandatory   | Read, Write |             | Encryption  |
-| - Client        |             |             |             | required    |
-| Characteristic  |             |             |             |             |
-| Configuration   |             |             |             |             |
-| descriptor      |             |             |             |             |
-+-----------------+-------------+-------------+-------------+-------------+
-
-The purpose of each characteristic is as follows:
-
-* ``Information``: For client to get ``Info`` message from server.
-* ``Operation Control Point``: For client to send ``Request`` message to server, and server to send ``Response`` message to client.
-* ``Data Out``: For server to send ``Result`` message to the client.
-
-It takes the functions exposed by the task and event handling part of reading the ``Info`` message and receiving the ``Request`` message as the callbacks of corresponding characteristics.
-It provides functions for the task and event handling part to send ``Response`` and ``Result`` messages.
-
-Task and event handling
-***********************
-
-The service uses `nanopb`_ to instantiate the protocol buffers-based, platform-independent messages in the C language.
-
-It exposes the functions of reading the ``Info`` message and  receiving the ``Request`` message to transport layer.
-It uses the function of sending ``Response`` and ``Result`` messages provided by the transport layer to send these messages.
+Transport layers must implement these functions to handle the actual message transmission (for example, Bluetooth LE indications and notifications, USB transfers, UART transmissions).
 
 Configuration management
 ************************
@@ -243,10 +181,19 @@ The component has one slot in RAM to save the configurations.
 
 You can save the configuration in flash or RAM during provisioning.
 
+Dependencies
+************
+
+The core library depends on:
+
+* nanopb for protobuf message handling.
+* Wi-Fi credentials library for configuration management (:ref:`lib_wifi_credentials`).
+* Wi-Fi management interface for network operations (:ref:`wifi_mgmt`).
+
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/wifi_provisioning.h`
-| Source files: :file:`subsys/bluetooth/services/wifi_prov`
+| Header file: :file:`include/net/wifi_prov_core/wifi_prov_core.h`
+| Source files: :file:`subsys/net/lib/wifi_prov_core`
 
-.. doxygengroup:: bt_wifi_prov
+.. doxygengroup:: wifi_prov_core

@@ -705,6 +705,8 @@ Thread samples
 Wi-Fi samples
 -------------
 
+* Added the :ref:`wifi_provisioning_internal_sample` sample that demonstrates the core Wi-Fi provisioning functionality independently of the transport layer (Bluetooth LE or Wi-Fi SoftAP).
+
 * :ref:`wifi_radiotest_samples`:
 
   * Updated :ref:`wifi_radio_test` and :ref:`wifi_radio_test_sd` samples to clarify platform support for single-domain and multi-domain radio tests.
@@ -761,6 +763,9 @@ Bluetooth libraries and services
     The kernel uptime value that is returned by the :c:func:`k_uptime_get` function is now correctly set to ``0`` during the system bootup process for each reset type.
     As a result, the workaround for the FMDN clock value is no longer needed.
     For details, see the ``NCSDK-32268`` known issue in the :ref:`known_issues` page.
+
+  * Added the :ref:`lib_wifi_prov_core` library.
+    The library is now a standalone library that can be used by applications to implement the Wi-Fi provisioning functionality independently of the Bluetooth stack.
 
 Common Application Framework
 ----------------------------
