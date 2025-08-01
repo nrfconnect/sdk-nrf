@@ -18,12 +18,26 @@ extern "C" {
  * @{
  */
 
+ struct nrf_rpc_crash_info
+{
+	uint32_t uuid;
+	uint16_t reason;
+	uint32_t pc;
+	uint32_t lr;
+	uint32_t sp;
+	uint32_t xpsr;
+	uint32_t assert_line;
+	char assert_filename[255];
+};
+
 /** @brief Get version of remote server the RPC client is connected to.
  *
  *  @retval version of the remote on success.
  *  @retval NULL on failure.
  */
 char *nrf_rpc_get_ncs_commit_sha(void);
+
+int nrf_rpc_get_crash_info(struct nrf_rpc_crash_info *);
 
 /**
  * @}
