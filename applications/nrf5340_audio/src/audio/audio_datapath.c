@@ -87,7 +87,7 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 #define JUST_IN_TIME_BOUND_US	   2500
 
 /* How often to print under-run warning */
-#define UNDERRUN_LOG_INTERVAL_BLKS 5000
+#define LOG_INTERVAL_BLKS 5000
 
 NET_BUF_POOL_FIXED_DEFINE(pool_i2s_rx, FIFO_NUM_BLKS, BLK_STEREO_SIZE_OCTETS,
 			  sizeof(struct audio_metadata), NULL);
@@ -247,7 +247,7 @@ static void drift_comp_state_set(enum drift_comp_state new_state)
  *
  * @param	frame_start_ts_us	I2S frame start timestamp.
  */
-static void audio_datapath_drift_compensation(uint32_t frame_start_ts_us)
+static inline void audio_datapath_drift_compensation(uint32_t frame_start_ts_us)
 {
 	if (CONFIG_AUDIO_DEV == HEADSET) {
 		/** For headsets we do not use the timestamp gotten from hci_tx_sync_get to adjust
@@ -580,7 +580,7 @@ static struct {
  * @retval	0 if success.
  * @retval	-ENOMEM No available buffers.
  */
-static int alt_buffer_get(void **p_buffer)
+static inline int alt_buffer_get(void **p_buffer)
 {
 	if (!alt.buf_0_in_use) {
 		alt.buf_0_in_use = true;
@@ -601,7 +601,7 @@ static int alt_buffer_get(void **p_buffer)
  *
  * @param	p_buffer	Buffer to free.
  */
-static void alt_buffer_free(void const *const p_buffer)
+static inline void alt_buffer_free(void const *const p_buffer)
 {
 	if (p_buffer == alt.buf_0) {
 		alt.buf_0_in_use = false;
@@ -619,6 +619,14 @@ static void alt_buffer_free_both(void)
 	alt.buf_1_in_use = false;
 }
 
+static struct audio_metadata i2s_meta = {.data_coding = PCM,
+					 .data_len_us = 1000,
+					 .sample_rate_hz = CONFIG_AUDIO_SAMPLE_RATE_HZ,
+					 .bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS,
+					 .carried_bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS,
+					 .locations = BT_AUDIO_LOCATION_FRONT_LEFT |
+						      BT_AUDIO_LOCATION_FRONT_RIGHT,
+					 .bad_data = false};
 /*
  * This handler function is called every time I2S needs new buffers for
  * TX and RX data.
@@ -632,8 +640,10 @@ static void alt_buffer_free_both(void)
 static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts_us, uint32_t *rx_buf_released,
 					    uint32_t const *tx_buf_released)
 {
-	int ret;
-	static bool underrun_condition;
+	int ret = 0;
+	static uint32_t num_calls;
+
+	num_calls++;
 
 	alt_buffer_free(tx_buf_released);
 
@@ -645,83 +655,77 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts_us, uint32_t
 	static uint8_t *tx_buf;
 
 	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) || (CONFIG_AUDIO_DEV == HEADSET)) {
-		if (tx_buf_released != NULL) {
-			/* Double buffered index */
-			uint32_t next_out_blk_idx = NEXT_IDX(ctrl_blk.out.cons_blk_idx);
+		static bool underrun_condition;
 
-			if (next_out_blk_idx != ctrl_blk.out.prod_blk_idx) {
-				/* Only increment if not in under-run condition */
-				ctrl_blk.out.cons_blk_idx = next_out_blk_idx;
-				if (underrun_condition) {
-					underrun_condition = false;
-					LOG_WRN("Data received, total under-runs: %d",
+		if (tx_buf_released == NULL) {
+			ERR_CHK_MSG(-ENOMEM, "No TX data available");
+		}
+
+		/* Double buffered index */
+		uint32_t next_out_blk_idx = NEXT_IDX(ctrl_blk.out.cons_blk_idx);
+
+		if (next_out_blk_idx != ctrl_blk.out.prod_blk_idx) {
+			/* Only increment if not in under-run condition */
+			ctrl_blk.out.cons_blk_idx = next_out_blk_idx;
+			if (underrun_condition) {
+				underrun_condition = false;
+				LOG_WRN("Data received, total under-runs: %d",
+					ctrl_blk.out.total_blk_underruns);
+			}
+
+			tx_buf = (uint8_t *)&ctrl_blk.out
+					 .fifo[next_out_blk_idx * BLK_STEREO_NUM_SAMPS];
+
+		} else {
+			if (stream_state_get() == STATE_STREAMING) {
+				underrun_condition = true;
+				ctrl_blk.out.total_blk_underruns++;
+
+				if ((ctrl_blk.out.total_blk_underruns % LOG_INTERVAL_BLKS) == 0) {
+					LOG_WRN("In I2S TX under-run condition, total: %d",
 						ctrl_blk.out.total_blk_underruns);
 				}
-
-				tx_buf = (uint8_t *)&ctrl_blk.out
-						 .fifo[next_out_blk_idx * BLK_STEREO_NUM_SAMPS];
-
-			} else {
-				if (stream_state_get() == STATE_STREAMING) {
-					underrun_condition = true;
-					ctrl_blk.out.total_blk_underruns++;
-
-					if ((ctrl_blk.out.total_blk_underruns %
-					     UNDERRUN_LOG_INTERVAL_BLKS) == 0) {
-						LOG_WRN("In I2S TX under-run condition, total: %d",
-							ctrl_blk.out.total_blk_underruns);
-					}
-				}
-
-				/*
-				 * No data available in out.fifo
-				 * use alternative buffers
-				 */
-				ret = alt_buffer_get((void **)&tx_buf);
-				ERR_CHK(ret);
-
-				memset(tx_buf, 0, BLK_STEREO_SIZE_OCTETS);
 			}
 
-			if (tone_active) {
-				tone_mix(tx_buf);
-			}
+			/*
+			 * No data available in out.fifo
+			 * use alternative buffers
+			 */
+			ret = alt_buffer_get((void **)&tx_buf);
+			ERR_CHK(ret);
+
+			memset(tx_buf, 0, BLK_STEREO_SIZE_OCTETS);
+		}
+
+		if (tone_active) {
+			tone_mix(tx_buf);
 		}
 	}
 
 	/********** I2S RX **********/
-	static int prev_ret;
 	struct net_buf *rx_audio_block = NULL;
+	static uint32_t num_overruns;
+	static uint32_t num_overruns_last_printed;
 
 	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) || (CONFIG_AUDIO_DEV == GATEWAY)) {
 		if (rx_buf_released == NULL) {
-			/* No RX data available */
 			ERR_CHK_MSG(-ENOMEM, "No RX data available");
 		}
 
 		if (k_msgq_num_free_get(ctrl_blk.in.audio_q) == 0 || pool_i2s_rx.avail_count == 0) {
-			ret = -ENOMEM;
-		} else {
-			ret = 0;
-		}
-
-		/* If RX FIFO is filled up */
-		if (ret == -ENOMEM) {
+			/* If RX FIFO is filled up */
+			num_overruns++;
 			struct net_buf *stale_i2s_data;
-
-			if (ret != prev_ret) {
-				LOG_WRN("I2S RX overrun. Single msg");
-				prev_ret = ret;
-			}
-
 			ret = k_msgq_get(ctrl_blk.in.audio_q, (void *)&stale_i2s_data, K_NO_WAIT);
 			ERR_CHK(ret);
-
+			/* Discard data */
 			net_buf_unref(stale_i2s_data);
+		}
 
-		} else if (ret == 0 && prev_ret == -ENOMEM) {
-			LOG_WRN("I2S RX continuing stream");
-			prev_ret = ret;
+		if ((num_calls % LOG_INTERVAL_BLKS == 0) &&
+		    (num_overruns != num_overruns_last_printed)) {
+			LOG_WRN("I2S RX overrun count: %d", num_overruns);
+			num_overruns_last_printed = num_overruns;
 		}
 
 		rx_audio_block = net_buf_alloc(&pool_i2s_rx, K_NO_WAIT);
@@ -732,16 +736,9 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts_us, uint32_t
 		/* Store RX buffer in net_buf */
 		net_buf_add_mem(rx_audio_block, rx_buf_released, BLK_STEREO_SIZE_OCTETS);
 
+		/* Store I2S related metadata */
 		struct audio_metadata *meta = net_buf_user_data(rx_audio_block);
-
-		/* Add meta data */
-		meta->data_coding = PCM;
-		meta->data_len_us = 1000;
-		meta->sample_rate_hz = CONFIG_AUDIO_SAMPLE_RATE_HZ;
-		meta->bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS;
-		meta->carried_bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS;
-		meta->locations = BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT;
-		meta->bad_data = false;
+		*meta = i2s_meta;
 
 		ret = k_msgq_put(ctrl_blk.in.audio_q, (void *)&rx_audio_block, K_NO_WAIT);
 		ERR_CHK_MSG(ret, "Unable to put RX audio block into queue");
@@ -770,11 +767,11 @@ static void audio_datapath_i2s_start(void)
 	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) || (CONFIG_AUDIO_DEV == HEADSET)) {
 		ctrl_blk.out.cons_blk_idx = PREV_IDX(ctrl_blk.out.cons_blk_idx);
 		tx_buf_0 = (uint8_t *)&ctrl_blk.out
-				     .fifo[ctrl_blk.out.cons_blk_idx * BLK_STEREO_NUM_SAMPS];
+				   .fifo[ctrl_blk.out.cons_blk_idx * BLK_STEREO_NUM_SAMPS];
 
 		ctrl_blk.out.cons_blk_idx = PREV_IDX(ctrl_blk.out.cons_blk_idx);
 		tx_buf_1 = (uint8_t *)&ctrl_blk.out
-				     .fifo[ctrl_blk.out.cons_blk_idx * BLK_STEREO_NUM_SAMPS];
+				   .fifo[ctrl_blk.out.cons_blk_idx * BLK_STEREO_NUM_SAMPS];
 	}
 
 	/* Start I2S */
