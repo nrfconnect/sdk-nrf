@@ -7,123 +7,76 @@
 #include <nrf_rpc/nrf_rpc_serialize.h>
 #include <ot_rpc_ids.h>
 #include <ot_rpc_common.h>
+#include <ot_rpc_lock.h>
 
 #include <nrf_rpc_cbor.h>
 
-#include <openthread/cli.h>
+#include <openthread/ip6.h>
+#include <openthread/message.h>
 
-#include <zephyr/net/ethernet.h> /* For ETH_P_ALL */
-#include <zephyr/net/net_l2.h>
-#include <zephyr/net/net_if.h>
-#include <zephyr/net/net_pkt.h>
-#include <zephyr/net/net_core.h>
-#include <zephyr/net/net_context.h>
-#include <zephyr/net/openthread.h>
+#include <openthread.h>
+#include <zephyr/sys/__assert.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(ot_rpc, LOG_LEVEL_DBG);
 
-struct net_context *recv_net_context;
-
-static void ot_rpc_if_recv_cb(struct net_context *context, struct net_pkt *pkt,
-			      union net_ip_header *ip_hdr, union net_proto_header *proto_hdr,
-			      int status, void *user_data)
+static void ot_receive_handler(otMessage *message, void *context)
 {
-	ARG_UNUSED(context);
-	ARG_UNUSED(ip_hdr);
-	ARG_UNUSED(proto_hdr);
-	ARG_UNUSED(status);
-	ARG_UNUSED(user_data);
-
-	if (pkt == NULL) {
-		return;
-	}
-
-	bool encoded_ok = false;
-	const size_t len = net_pkt_get_len(pkt);
-	const size_t cbor_buffer_size = 10 + len;
+	const size_t len = otMessageGetLength(message);
 	struct nrf_rpc_cbor_ctx ctx;
+	uint16_t buf_len;
+	uint16_t read;
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 10 + len);
+
 	if (!zcbor_bstr_start_encode(ctx.zs)) {
 		goto out;
 	}
 
-	for (struct net_buf *buf = pkt->buffer; buf; buf = buf->frags) {
-		memcpy(ctx.zs[0].payload_mut, buf->data, buf->len);
-		ctx.zs->payload_mut += buf->len;
+	buf_len = (ctx.zs[0].payload_end - ctx.zs[0].payload_mut);
+	read = otMessageRead(message, 0, ctx.zs[0].payload_mut, buf_len);
+
+	if (read != len) {
+		nrf_rpc_encoder_invalid(&ctx);
+		goto out;
 	}
+
+	ctx.zs->payload_mut += len;
 
 	if (!zcbor_bstr_end_encode(ctx.zs, NULL)) {
 		goto out;
 	}
 
-	NET_DBG("Passing Ip6 packet to RPC client");
-
-	encoded_ok = true;
-	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_IF_RECEIVE, &ctx, ot_rpc_decode_void, NULL);
+	LOG_DBG("Passing IPv6 packet to RPC client");
 
 out:
-	if (!encoded_ok) {
-		NET_ERR("Failed to encode packet data");
-	}
+	ot_rpc_mutex_unlock();
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_IF_RECEIVE, &ctx, ot_rpc_decode_void, NULL);
+	ot_rpc_mutex_lock();
+}
 
-	net_pkt_unref(pkt);
+static void ot_receive_handler_null(otMessage *message, void *context)
+{
 }
 
 static void ot_rpc_cmd_if_enable(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 				 void *handler_data)
 {
 	bool enable;
-	int ret;
-	struct net_if *iface;
-	struct nrf_rpc_cbor_ctx rsp_ctx;
 
 	enable = nrf_rpc_decode_bool(ctx);
+
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_IF_ENABLE);
 		return;
 	}
 
-	iface = net_if_get_first_by_type(&NET_L2_GET_NAME(OPENTHREAD));
-	if (!iface) {
-		NET_ERR("There is no net interface for OpenThread");
-		goto out;
-	}
-
-	if (recv_net_context != NULL) {
-		net_context_put(recv_net_context);
-		recv_net_context = NULL;
-	}
-
-	if (enable) {
-		struct sockaddr_ll addr;
-
-		ret = net_context_get(AF_PACKET, SOCK_DGRAM, ETH_P_ALL, &recv_net_context);
-		if (ret) {
-			NET_ERR("Failed to allocate recv net context");
-			goto out;
-		}
-
-		addr.sll_family = AF_PACKET;
-		addr.sll_ifindex = net_if_get_by_iface(iface);
-
-		ret = net_context_bind(recv_net_context, (const struct sockaddr *)&addr,
-				       sizeof(addr));
-		if (ret) {
-			NET_ERR("Failed to bind net context");
-			goto out;
-		}
-
-		ret = net_context_recv(recv_net_context, ot_rpc_if_recv_cb, K_NO_WAIT, NULL);
-		if (ret) {
-			NET_ERR("Failed to recv from net context");
-			goto out;
-		}
-	}
-
-out:
-	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 0);
-	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
+	/*
+	 * When the interface is getting disabled, set an empty receive handler
+	 * because openthread_set_receive_cb() asserts that the callback is not null.
+	 */
+	openthread_set_receive_cb(enable ? ot_receive_handler : ot_receive_handler_null, NULL);
+	nrf_rpc_rsp_send_void(group);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_if_enable, OT_RPC_CMD_IF_ENABLE, ot_rpc_cmd_if_enable,
@@ -133,48 +86,57 @@ static void ot_rpc_cmd_if_send(const struct nrf_rpc_group *group, struct nrf_rpc
 			       void *handler_data)
 {
 	const uint8_t *pkt_data;
-	size_t pkt_data_len = 0;
-	struct net_if *iface;
-	struct net_pkt *pkt = NULL;
-	struct nrf_rpc_cbor_ctx rsp_ctx;
+	size_t pkt_data_len;
+	otInstance *instance;
+	otMessageSettings settings;
+	otMessage *message;
+	otError error;
+
+	LOG_DBG("Sending IPv6 packet to OT");
 
 	pkt_data = nrf_rpc_decode_buffer_ptr_and_size(ctx, &pkt_data_len);
 
-	if (pkt_data && pkt_data_len) {
-		iface = net_if_get_first_by_type(&NET_L2_GET_NAME(OPENTHREAD));
-		if (iface) {
-			pkt = net_pkt_alloc_with_buffer(iface, pkt_data_len, AF_UNSPEC, 0,
-							K_NO_WAIT);
-		} else {
-			NET_ERR("There is no net interface for OpenThread");
-		}
-
-		if (pkt) {
-			net_pkt_write(pkt, pkt_data, pkt_data_len);
-		} else {
-			NET_ERR("Failed to reserve net pkt");
-		}
+	if (!pkt_data) {
+		goto out;
 	}
 
+	instance = openthread_get_default_instance();
+	settings.mPriority = OT_MESSAGE_PRIORITY_NORMAL;
+	settings.mLinkSecurityEnabled = true;
+
+	ot_rpc_mutex_lock();
+	message = otIp6NewMessage(instance, &settings);
+
+	if (!message) {
+		LOG_ERR("Failed to allocate message");
+		goto unlock;
+	}
+
+	error = otMessageAppend(message, pkt_data, pkt_data_len);
+
+	if (error != OT_ERROR_NONE) {
+		LOG_ERR("Failed to append message: %u", error);
+		otMessageFree(message);
+		goto unlock;
+	}
+
+	error = otIp6Send(instance, message);
+
+	if (error != OT_ERROR_NONE) {
+		LOG_ERR("Failed to send message: %u", error);
+		goto unlock;
+	}
+
+unlock:
+	ot_rpc_mutex_unlock();
+
+out:
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
-		NET_ERR("Failed to decode packet data");
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_IF_SEND);
-		if (pkt) {
-			net_pkt_unref(pkt);
-		}
 		return;
 	}
 
-	if (pkt) {
-		NET_DBG("Sending Ip6 packet to OpenThread");
-		if (net_send_data(pkt) < 0) {
-			NET_ERR("net_send_data failed");
-			net_pkt_unref(pkt);
-		}
-	}
-
-	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 0);
-	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
+	nrf_rpc_rsp_send_void(group);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_if_send, OT_RPC_CMD_IF_SEND, ot_rpc_cmd_if_send,
