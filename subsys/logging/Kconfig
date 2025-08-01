@@ -107,4 +107,9 @@ config LOG_BACKEND_RPC_ECHO
 
 endif # LOG_BACKEND_RPC
 
+config LOG_BACKED_RPC_CRASH_INFO_FILENAME_SIZE
+	int "Maximum size of assert's filename in crash info structure"
+	default 1 if !ASSERT || ASSERT_NO_FILE_INFO
+	default 255
+
 endmenu # "Logging over nRF RPC"
