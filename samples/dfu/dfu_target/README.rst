@@ -1,7 +1,7 @@
 .. _dfu_target_sample:
 
-DFU Target Sample
-#################
+DFU Target
+##########
 
 .. contents::
    :local:

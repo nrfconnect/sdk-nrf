@@ -44,6 +44,10 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
    * The nRF54L05 and L10 SoCs are not supported for production in the |NCS| versions 2.9.0 or 2.9.1.
      Use v3.0.0 or later instead.
 
+.. note::
+   The RRAM size has decreased from 1024 KB to 1012 KB for the nRF54L10 SoC.
+   You must update the memory maps accordingly.
+
 .. _ug_nrf54L15_revision:
 
 Make sure to check the revision of your nRF54L15 development kit to see if it is supported:

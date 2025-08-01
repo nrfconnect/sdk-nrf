@@ -20,7 +20,7 @@ You can use the VPR coprocessor (Fast Lightweight Peripheral Processor - FLPR) a
    In these usage modes, it is important to clearly differentiate between the Soft Peripheral and HPF solutions.
    Soft Peripherals serve as a direct replacement for hardware peripherals, offering guaranteed performance.
    In contrast, the HPF will allow you to accelerate protocol operations, but performance depends on your implementation.
-   We recommend using the Soft Peripheral solution if it meets your product's requirements.
+   Nordic Semiconductor recommends using the Soft Peripheral solution if it meets your product's requirements.
 
 The following table outlines the main differences between the usage modes.
 For detailed comparison see the :ref:`ug_hpf_softperipherals_comparison` page.
