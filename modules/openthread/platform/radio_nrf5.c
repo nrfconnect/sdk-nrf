@@ -11,6 +11,8 @@
  *
  */
 
+#include "radio_nrf5.h"
+
 #include <openthread/error.h>
 #define LOG_MODULE_NAME otPlat_nrf5_radio
 
@@ -1946,3 +1948,8 @@ void nrf_802154_serialization_error(const nrf_802154_ser_err_data_t *err)
 	k_oops();
 }
 #endif
+
+void openthread_platform_radio_set_eui64(uint8_t eui64[EXTENDED_ADDRESS_SIZE])
+{
+	memcpy(nrf5_data.mac, eui64, EXTENDED_ADDRESS_SIZE);
+}
