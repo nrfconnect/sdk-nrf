@@ -74,6 +74,13 @@ hline() {
     printf '%*s\n' "$(tput cols)" '' | tr ' ' -
 }
 
+has_remote() {
+    project="$1"
+
+    [ "$project" == "zephyr" ] || [ "$project" == "mcuboot" ] ||
+    [ "$project" == "trusted-firmware-m" ] || [ "$project" == "mbedtls" ]
+}
+
 tag() {
     # Synopsis:
     #
@@ -99,6 +106,11 @@ tag() {
     remote_basename=$(west list -f '{url}' "$project" | xargs basename)
     local_path=$(west list -f '{abspath}' "$project")
     message="$remote_basename $tagname"
+
+    if has_remote "$project"; then
+        describe=$(git -C "$local_path" describe --exclude 'ncs-*')
+        message="$message"$'\n'"$project $describe"
+    fi
 
     echo "$project": creating tag "$tagname" for "$sha" in "$local_path"
     git -C "$local_path" tag -s -a -m "$message" "$tagname" "$sha" || exit 1
