@@ -1,31 +1,88 @@
-:orphan:
+.. _ncs_release_notes_3.1.0:
 
-.. _ncs_release_notes_changelog:
-
-Changelog for |NCS| v3.0.99
-###########################
+|NCS| v3.1.0 Release Notes
+##########################
 
 .. contents::
    :local:
    :depth: 2
 
-The most relevant changes that are present on the main branch of the |NCS|, as compared to the latest official release, are tracked in this file.
+|NCS| delivers reference software and supporting libraries for developing low-power wireless applications with Nordic Semiconductor products in the nRF52, nRF53, nRF54, nRF70, and nRF91 Series.
+The SDK includes open source projects (TF-M, MCUboot, OpenThread, Matter, and the Zephyr RTOS), which are continuously integrated and redistributed with the SDK.
 
-.. note::
-   This file is a work in progress and might not cover all relevant changes.
+Release notes might refer to "experimental" support for features, which indicates that the feature is incomplete in functionality or verification, and can be expected to change in future releases.
+To learn more, see :ref:`software_maturity`.
 
-.. HOWTO
+Highlights
+**********
 
-   When adding a new PR, decide whether it needs an entry in the changelog.
-   If it does, update this page.
-   Add the sections you need, as only a handful of sections are kept when the changelog is cleaned.
-   The "Protocols" section serves as a highlight section for all protocol-related changes, including those made to samples, libraries, and other components that implement or support protocol functionality.
+.. todo
+
+Sign up for the `nRF Connect SDK v3.1.0 webinar`_ to learn more about the new features.
+
+Release tag
+***********
+
+The release tag for the |NCS| manifest repository (|ncs_repo|) is **v3.1.0**.
+Check the :file:`west.yml` file for the corresponding tags in the project repositories.
+
+To use this release, check out the tag in the manifest repository and run ``west update``.
+See :ref:`cloning_the_repositories` and :ref:`gs_updating_repos_examples` for more information.
+
+For information on the included repositories and revisions, see `Repositories and revisions for v3.1.0`_.
+
+Integration test results
+************************
+
+The integration test results for this tag can be found in the following external artifactory:
+
+* `Twister test report for nRF Connect SDK v3.1.0`_
+* `Hardware test report for nRF Connect SDK v3.1.0`_
+
+IDE and tool support
+********************
+
+`nRF Connect extension for Visual Studio Code <nRF Connect for Visual Studio Code_>`_ is the recommended IDE for |NCS| v3.1.0.
+See the :ref:`installation` section for more information about supported operating systems and toolchain.
+
+Supported modem firmware
+************************
+
+See the following documentation for an overview of which modem firmware versions have been tested with this version of the |NCS|:
+
+* `Modem firmware compatibility matrix for the nRF9151 DK`_
+* `Modem firmware compatibility matrix for the nRF9161 DK`_
+* `Modem firmware compatibility matrix for the nRF9160 DK`_
+
+Use the latest version of the `Programmer app`_ of `nRF Connect for Desktop`_ to update the modem firmware.
+See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
+
+Modem-related libraries and versions
+====================================
+
+.. list-table:: Modem-related libraries and versions
+   :widths: 15 10
+   :header-rows: 1
+
+   * - Library name
+     - Version information
+   * - Modem library
+     - `Changelog <Modem library changelog for v3.1.0_>`_
+   * - LwM2M carrier library
+     - `Changelog <LwM2M carrier library changelog for v3.1.0_>`_
 
 Known issues
 ************
 
 Known issues are only tracked for the latest official release.
-See `known issues for nRF Connect SDK v3.0.0`_ for the list of issues valid for the latest release.
+See `known issues for nRF Connect SDK v3.1.0`_ for the list of issues valid for the latest release.
+
+Migration notes
+***************
+
+See the `Migration guide for nRF Connect SDK v3.1.0`_ for the changes required or recommended when migrating your application from |NCS| v3.0.0 to |NCS| v3.1.0.
+
+.. _ncs_release_notes_310_changelog:
 
 Changelog
 *********
@@ -38,7 +95,6 @@ IDE, OS, and tool support
 * Updated the required `SEGGER J-Link`_ version to v8.42.
 * Removed the separate requirement for installation of the `nRF Util's device command <Device command overview_>`_ from the :ref:`install_ncs` page under :ref:`installing_vsc`.
   The tool and the command are now included in the |NCS| toolchain bundle.
-  When you :ref:`gs_installing_toolchain`, you get both these versions `locked <Locking nRF Util home directory_>`_ to prevent unwanted changes to the toolchain bundle.
 
   .. note::
 
@@ -79,12 +135,13 @@ Developing with nRF70 Series
 Developing with nRF54L Series
 =============================
 
-* Increased the default value of the :kconfig:option:`CONFIG_MPSL_HFCLK_LATENCY` Kconfig option to support slower crystals.
-  See the Kconfig description for a detailed description on how to select the correct value for a given application.
 * Added:
 
   * The :ref:`ug_nrf54l_dfu_config` documentation page, describing how to configure Device Firmware Update (DFU) and secure boot settings using MCUboot and NSIB.
   * The :ref:`ug_nrf54l_ecies_x25519` page on enabling the AES encryption with ECIES-X25519, which is used for secure encryption key exchange.
+
+* Increased the default value of the :kconfig:option:`CONFIG_MPSL_HFCLK_LATENCY` Kconfig option to support slower crystals.
+  See the Kconfig description for a detailed description on how to select the correct value for a given application.
 
 Developing with nRF54H Series
 =============================
@@ -221,21 +278,16 @@ The following list summarizes the most important changes inherited from the upst
 
 * Updated:
 
-  * Fixed incorrect memory releases and unhandled exceptions.
   * Improved robustness in group session management.
   * Optimized the device commissioning process.
 
+* Fixed incorrect memory releases and unhandled exceptions.
 
 nRF IEEE 802.15.4 radio driver
 ------------------------------
 
-* Added:
-
-  * The Kconfig options to configure default CSMA-CA algorithm parameters (:kconfig:option:`CONFIG_NRF_802154_CSMA_CA_MIN_BE_DEFAULT`, :kconfig:option:`CONFIG_NRF_802154_CSMA_CA_MAX_BE_DEFAULT`, :kconfig:option:`CONFIG_NRF_802154_CSMA_CA_MAX_CSMA_BACKOFFS_DEFAULT`).
-
-* Updated:
-
-  * The Kconfig option :kconfig:option:`CONFIG_NRF_802154_CCA_ED_THRESHOLD` has been replaced by :kconfig:option:`CONFIG_NRF_802154_CCA_ED_THRESHOLD_DBM` to ensure consistent behavior on different SoC families and to reduce the likelihood of misconfiguration.
+* Added the Kconfig options to configure default CSMA-CA algorithm parameters (:kconfig:option:`CONFIG_NRF_802154_CSMA_CA_MIN_BE_DEFAULT`, :kconfig:option:`CONFIG_NRF_802154_CSMA_CA_MAX_BE_DEFAULT`, :kconfig:option:`CONFIG_NRF_802154_CSMA_CA_MAX_CSMA_BACKOFFS_DEFAULT`).
+* Updated the Kconfig option :kconfig:option:`CONFIG_NRF_802154_CCA_ED_THRESHOLD` has been replaced by :kconfig:option:`CONFIG_NRF_802154_CCA_ED_THRESHOLD_DBM` to ensure consistent behavior on different SoC families and to reduce the likelihood of misconfiguration.
 
 Thread
 ------
@@ -432,6 +484,8 @@ Bluetooth samples
   * :ref:`central_uart`
   * :ref:`power_profiling`
 
+* Removed SUIT support from ``mcumgr_bt_ota_dfu``.
+
 * :ref:`bluetooth_isochronous_time_synchronization` sample:
 
   * Fixed an issue where the sample would assert with the :kconfig:option:`CONFIG_ASSERT` Kconfig option enabled.
@@ -459,9 +513,7 @@ Bluetooth samples
 
 * :ref:`direction_finding_connectionless_tx` sample:
 
-  Added support for the ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l10/cpuapp``, and ``nrf54l15dk/nrf54l05/cpuapp`` board targets.
-
-* Removed SUIT support from ``mcumgr_bt_ota_dfu``.
+  * Added support for the ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l10/cpuapp``, and ``nrf54l15dk/nrf54l05/cpuapp`` board targets.
 
 Bluetooth Mesh samples
 ----------------------
@@ -538,8 +590,8 @@ Cellular samples
 
 * :ref:`nrf_cloud_rest_cell_location` sample:
 
-  * Removed JITP.
   * Updated the sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
+  * Removed JITP.
 
 * :ref:`nrf_cloud_rest_fota` sample:
 
@@ -595,8 +647,8 @@ Matter samples
 * Updated:
 
   * The Bluetooth Low Energy variant of the Soft Device Controller (SDC) to use the Peripheral-only role in all Matter samples.
-  * API of the ``ncs_configure_data_model`` cmake method that does not use ``ZAP_FILE`` argument anymore, but creates path to ZAP file based on :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option.
-  * By renaming the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH` Kconfig option to :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` and changed its purpose to configure the absolute path under which the ZAP file is located.
+  * API of the ``ncs_configure_data_model`` cmake method that does not use ``ZAP_FILE`` argument anymore, but creates path to ZAP file based on :ref:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH <CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH>` Kconfig option.
+  * By renaming the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILES_PATH` Kconfig option to :ref:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH <CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH>` and changed its purpose to configure the absolute path under which the ZAP file is located.
   * By enabling Matter persistent subscriptions by default for all Matter samples.
   * By changing the default values of the following ICD parameters:
 
@@ -847,12 +899,12 @@ Modem libraries
       Even within the same network, the PDN connection establishment method (PCO vs ePCO) might change when the device operates in NB-IoT or LTE Cat-M1, resulting in missing DNS addresses when one method is used, but not the other.
       Having a fallback DNS address ensures that the device always has a DNS to fallback to.
 
+  * Updated modem events subscription to persist between functional mode changes.
+
   * Removed:
 
     * The deprecated functions ``lte_lc_reduced_mobility_get()``, ``lte_lc_reduced_mobility_set()``, and ``lte_lc_factory_reset()``.
     * The deprecated macro ``LTE_LC_ON_CFUN()``.
-
-  * Updated modem events subscription to persist between functional mode changes.
 
 * :ref:`lib_modem_slm` library:
 
@@ -886,11 +938,6 @@ Multiprotocol Service Layer libraries
 
 * Added an implementation of the API required by the MPSL (defined by :file:`mpsl_hwres.h`) for the nRF53 and nRF54L Series devices.
 
-* Fixed an issue where calling the :c:func:`mpsl_lib_uninit` function would prevent calibration of the RC oscillator when MPSL was subsequently re-initialized using the :c:func:`mpsl_lib_init()` function.
-
-  This could happen, for instance, when using bluetooth with the :kconfig:option:`CONFIG_BT_UNINIT_MPSL_ON_DISABLE` Kconfig option enabled.
-  The low-frequency clock had poor accuracy in this case.
-
 * Updated the implementation of the following interrupt service routine wrappers:
 
   * :c:func:`mpsl_timer0_isr_wrapper`
@@ -903,6 +950,11 @@ Multiprotocol Service Layer libraries
 
      Invoking kernel APIs or triggering the kernel scheduler from Zero Latency Interrupts is considered undefined behavior.
      Users of MPSL timeslots should not assume that thread rescheduling will occur automatically at the end of a timeslot.
+
+* Fixed an issue where calling the :c:func:`mpsl_lib_uninit` function would prevent calibration of the RC oscillator when MPSL was subsequently re-initialized using the :c:func:`mpsl_lib_init()` function.
+
+  This could happen, for instance, when using bluetooth with the :kconfig:option:`CONFIG_BT_UNINIT_MPSL_ON_DISABLE` Kconfig option enabled.
+  The low-frequency clock had poor accuracy in this case.
 
 Libraries for networking
 ------------------------
@@ -995,7 +1047,6 @@ Google Fast Pair integration
 ----------------------------
 
 * Added the :ref:`ug_bt_fast_pair_adv_manager` page that describes how to integrate the :ref:`bt_fast_pair_adv_manager_readme` module in your application.
-
 * Updated the :ref:`ug_bt_fast_pair` page to mention the availability of the guide for :ref:`ug_bt_fast_pair_adv_manager` that covers the associated helper module.
   Mentioned applicability of the :ref:`bt_fast_pair_adv_manager_readme` module in the :ref:`ug_bt_fast_pair_advertising` and the :ref:`ug_bt_fast_pair_use_case_locator_tag` sections.
 
@@ -1098,9 +1149,10 @@ Documentation
   * The :ref:`bt_fast_pair_adv_manager_readme` page that describes the new helper module for the :ref:`bt_fast_pair_readme` library.
   * The :ref:`migration_bicr_nrf54h` page that describes how to migrate the nRF54H20 SoC BICR configuration from DTS to JSON.
 
-* Updated the :ref:`bt_fast_pair_readme` page to mention the availability of the :ref:`bt_fast_pair_adv_manager_readme` helper module.
+* Updated:
 
-* Moved the Wi-Fi credentials library page to the upstream :ref:`Zephyr repository <zephyr:lib_wifi_credentials>`.
+  * The :ref:`bt_fast_pair_readme` page to mention the availability of the :ref:`bt_fast_pair_adv_manager_readme` helper module.
+  * Moved the Wi-Fi credentials library page to the upstream :ref:`Zephyr repository <zephyr:lib_wifi_credentials>`.
 
 * Removed:
 
