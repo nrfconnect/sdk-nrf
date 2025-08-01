@@ -1020,7 +1020,7 @@ nRF54L MCUboot provisioning
 ===========================
 
 nRF54L-based nRF Desktop devices enable hardware cryptography for the MCUboot bootloader.
-For this purpose, a set of private and public keys is needed.
+To implement the secure boot feature, the bootloader requires a set of private and public keys.
 The private key is used to sign the application image.
 The public key is generated from the private key and is used by MCUboot to validate the application image.
 The public key is securely stored in the Key Management Unit (KMU) hardware peripheral of the nRF54L device.
