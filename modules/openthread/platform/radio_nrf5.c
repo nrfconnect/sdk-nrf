@@ -11,6 +11,8 @@
  *
  */
 
+#include "radio_nrf5.h"
+
 #include <openthread/error.h>
 #define LOG_MODULE_NAME otPlat_nrf5_radio
 
@@ -53,7 +55,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME, CONFIG_OPENTHREAD_PLATFORM_LOG_LEVEL);
 #endif
 
 #if defined(CONFIG_NRF5_UICR_EUI64_ENABLE)
-#if defined(CONFIG_SOC_NRF5340_CPUAPP)
+#if defined(CONFIG_SOC_NRF5340_CPUAPP) || defined(CONFIG_SOC_SERIES_NRF54LX)
 #if defined(CONFIG_TRUSTED_EXECUTION_NONSECURE)
 #error "NRF_UICR->OTP is not supported to read from non-secure"
 #else
@@ -61,7 +63,7 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME, CONFIG_OPENTHREAD_PLATFORM_LOG_LEVEL);
 #endif /* CONFIG_TRUSTED_EXECUTION_NONSECURE */
 #else
 #define EUI64_ADDR (NRF_UICR->CUSTOMER)
-#endif /* CONFIG_SOC_NRF5340_CPUAPP */
+#endif /* CONFIG_SOC_NRF5340_CPUAPP || CONFIG_SOC_SERIES_NRF54LX */
 #endif /* CONFIG_NRF5_UICR_EUI64_ENABLE */
 
 #if defined(CONFIG_NRF5_UICR_EUI64_ENABLE)
@@ -1946,3 +1948,8 @@ void nrf_802154_serialization_error(const nrf_802154_ser_err_data_t *err)
 	k_oops();
 }
 #endif
+
+void openthread_platform_radio_set_eui64(uint8_t eui64[EXTENDED_ADDRESS_SIZE])
+{
+	memcpy(nrf5_data.mac, eui64, EXTENDED_ADDRESS_SIZE);
+}
