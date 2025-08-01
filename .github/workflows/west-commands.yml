@@ -4,6 +4,7 @@ on:
   pull_request:
     branches: [main]
     paths:
+      - .github/workflows/west-commands.yml
       - scripts/west_commands/**
       - scripts/requirements-west-ncs-sbom.txt
       - scripts/requirements-extra.txt
@@ -21,9 +22,6 @@ jobs:
       - name: Install python dependencies
         working-directory: ncs/nrf
         run: |
-          pip3 install -U pip
-          pip3 install -U setuptools
-          pip3 install -U wheel
           pip3 install -U mypy types-colorama types-editdistance types-PyYAML
           grep -E "west==" scripts/requirements-fixed.txt | cut -f1 -d"#" | cut -d ' ' -f '1'| xargs pip3 install -U
           pip3 show -f west
@@ -37,9 +35,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, macos-13, windows-latest]
+        os: [ubuntu-24.04, macos-14, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
+      - name: Setup Python
+        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5
+        with:
+          python-version: '3.12'
       - name: Checkout sources
         uses: nrfconnect/action-checkout-west-update@main
         with:
@@ -48,7 +50,6 @@ jobs:
       - name: Install requirements
         shell: bash
         run: |
-          python3 -m pip install -U pip
           pip3 install -r nrf/scripts/requirements-west-ncs-sbom.txt
           pip3 install -r nrf/scripts/requirements-extra.txt
       - name: Smoke test ncs-loot & ncs-compare
