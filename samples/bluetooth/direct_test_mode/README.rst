@@ -286,8 +286,8 @@ Vendor-specific commands can be divided into different categories as follows:
 * If the **Length** field is set ``2`` (symbol ``SET_TX_POWER``), the **Frequency** field sets the TX power in dBm.
   The valid TX power values are specified in the product specification of the SoC used, where ``0`` dBm is the reset value.
   Only the six least significant bits will fit in the **Length** field.
-  The two most significant bits are calculated by the DTM module.
-  This is possible because the six least significant bits of all valid TX power values are unique.
+  The two most significant bits are calculated by the DTM module, assuming the maximum possible positive power value requested is 15 dBm.
+  This way, the available theoretical range of the TX power values set by this command is from ``-48`` dBm to ``15`` dBm.
   The TX power can be modified only when no Transmitter Test or Receiver Test is running.
 * If the **Length** field is set to ``3`` (symbol ``FEM_ANTENNA_SELECT``), the **Frequency** field sets the front-end module (FEM) antenna output.
   The valid values are:
