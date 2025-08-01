@@ -39,6 +39,7 @@ config DESKTOP_BT_PERIPHERAL
 	imply DESKTOP_HIDS_ENABLE
 	imply BT_DIS
 	imply DESKTOP_DEV_DESCR_ENABLE
+	imply BT_ID_AUTO_SWAP_MATCHING_BONDS
 	select BT_PERIPHERAL
 	help
 	  HID peripherals are configured to use the GAP Peripheral role as
@@ -55,19 +56,11 @@ config DESKTOP_BT_PERIPHERAL
 	  module. The module implements a custom GATT Service which is required
 	  to connect with nRF Desktop dongles.
 
+	  The nRF Desktop peripheral enables the feature that is used
+	  to automatically swap matching bonds when the local Bluetooth
+	  identity changes.
+
 if DESKTOP_BT_PERIPHERAL
-
-config BT_ID_UNPAIR_MATCHING_BONDS
-	default y
-	help
-	  Delete bond with the same peer on another Bluetooth local identity
-	  when bonding to prevent bonding failures. That improves user
-	  experience during the erase advertising procedure.
-
-	  By default, overwriting bond requires authenticated pairing.
-
-	  Enabling this option is needed to pass the Fast Pair Validator's
-	  end-to-end integration tests.
 
 config BT_ID_ALLOW_UNAUTH_OVERWRITE
 	default y

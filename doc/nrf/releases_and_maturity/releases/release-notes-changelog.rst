@@ -325,6 +325,11 @@ nRF Desktop
     To enable the module, set the :ref:`CONFIG_DESKTOP_BLE_ADV_CTRL_ENABLE <config_desktop_app_options>` Kconfig option to ``y``.
     To enable the module to suspend and resume the |ble_adv| when the USB state changes, set the :ref:`CONFIG_DESKTOP_BLE_ADV_CTRL_SUSPEND_ON_USB <config_desktop_app_options>` Kconfig option to ``y``.
     These options are enabled for targets that support the USB High-Speed.
+  * The :kconfig:option:`CONFIG_BT_ID_AUTO_SWAP_MATCHING_BONDS` Kconfig option as an imply to the :kconfig:option:`CONFIG_DESKTOP_BT_PERIPHERAL` Kconfig option.
+    As a result, all nRF Desktop configurations that are set up for the Bluetooth Peripheral role have the :kconfig:option:`CONFIG_BT_ID_AUTO_SWAP_MATCHING_BONDS` Kconfig option enabled by default.
+    The option allows the application to automatically swap matching bonds when the local Bluetooth identity changes.
+    Due to that change the nRF Desktop application no longer requires the :kconfig:option:`CONFIG_BT_ID_UNPAIR_MATCHING_BONDS` Kconfig option to be enabled.
+    Removing it enables the possibility for bonding with the same HID host on multiple Bluetooth local identities for all nRF Desktop peripherals.
 
 * Updated:
 
