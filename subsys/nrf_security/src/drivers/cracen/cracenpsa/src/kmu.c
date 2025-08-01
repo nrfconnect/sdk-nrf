@@ -514,6 +514,16 @@ psa_status_t cracen_kmu_destroy_key(const psa_key_attributes_t *attributes)
 			return psa_status;
 		}
 
+		/* If the slot we attempt to destroy is blocked we will get a hardware failure, and
+		 * there is no way in hardware to distingush between an actual failure and the slot
+		 * being blocked. Therefore we attempt to push the key here to verify if the key is
+		 * blocked or not.*/
+		for (size_t i = 0; i < slot_count; i++) {
+			if (lib_kmu_push_slot(slot_id + i) != 0) {
+				return PSA_ERROR_INVALID_ARGUMENT;
+			}
+		}
+
 		psa_status = set_provisioning_in_progress(slot_id, slot_count);
 		if (psa_status != PSA_SUCCESS) {
 			return psa_status;
