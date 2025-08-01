@@ -473,7 +473,7 @@ Bluetooth Fast Pair samples
   * Added:
 
     * The integration of the :ref:`bt_fast_pair_adv_manager_readme` helper module (:kconfig:option:`CONFIG_BT_FAST_PAIR_ADV_MANAGER`) that replaces the application module for managing Fast Pair advertising.
-      The sample uses the new module with the locator tag extension (:kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_LOCATOR_TAG`) that automates common advertising scenarios for this use case.
+      The sample uses the new module with the locator tag extension (:kconfig:option:`CONFIG_BT_FAST_PAIR_ADV_MANAGER_USE_CASE_LOCATOR_TAG`) that automates common advertising scenarios for this use case.
       As a result, the triggers for the FMDN provisioning and clock synchronization are now handled by the :ref:`bt_fast_pair_adv_manager_readme` module and are no longer part of the application code.
     * Possibility to build and run the sample without the motion detector support (with the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN_DULT_MOTION_DETECTOR` Kconfig option disabled).
 
