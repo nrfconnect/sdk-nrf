@@ -18,10 +18,14 @@
 
 #include <openthread/link.h>
 
-#ifdef CONFIG_IEEE802154_NRF5_UICR_EUI64_ENABLE
+#ifdef CONFIG_NRF5_UICR_EUI64_ENABLE
 #ifdef CONFIG_NRFX_RRAMC
 #include <nrfx_rramc.h>
 #endif
+#endif
+
+#ifdef CONFIG_OPENTHREAD
+#include <radio_nrf5.h>
 #endif
 
 static void ot_rpc_cmd_set_poll_period(const struct nrf_rpc_group *group,
@@ -196,14 +200,10 @@ static void ot_rpc_cmd_set_factory_assigned_eui64(const struct nrf_rpc_group *gr
 		return;
 	}
 
-#ifdef CONFIG_IEEE802154_NRF5_UICR_EUI64_ENABLE
+#ifdef CONFIG_NRF5_UICR_EUI64_ENABLE
 #ifdef CONFIG_NRFX_RRAMC
-	if (nrfx_rramc_otp_word_write(CONFIG_IEEE802154_NRF5_UICR_EUI64_REG + 1,
-				      sys_get_le32(ext_addr.m8)) &&
-	    nrfx_rramc_otp_word_write(CONFIG_IEEE802154_NRF5_UICR_EUI64_REG,
-				      sys_get_le32(ext_addr.m8 + 4))) {
-		error = OT_ERROR_NONE;
-	} else {
+	if (!nrfx_rramc_otp_word_write(CONFIG_NRF5_UICR_EUI64_REG + 1, sys_get_le32(ext_addr.m8)) ||
+	    !nrfx_rramc_otp_word_write(CONFIG_NRF5_UICR_EUI64_REG, sys_get_le32(ext_addr.m8 + 4))) {
 		error = OT_ERROR_FAILED;
 	}
 #else
@@ -212,24 +212,17 @@ static void ot_rpc_cmd_set_factory_assigned_eui64(const struct nrf_rpc_group *gr
 #endif
 
 	/*
-	 * Update the network interface regardless of whether EUI64 comes from UICR of not.
-	 * Even if it does, it is only read from UICR once, during the network interface
+	 * Update runtime configuration regardless of whether EUI64 comes from UICR of not.
+	 * Even if it does, it is only read from UICR once, during the OpenThread platform
 	 * initialization, and we want the EUI64 change to have an immediate effect.
 	 */
-	if (IS_ENABLED(CONFIG_NET_L2_OPENTHREAD) && error == OT_ERROR_NONE) {
-		struct net_if *iface = net_if_get_first_by_type(&NET_L2_GET_NAME(OPENTHREAD));
-		struct net_linkaddr *addr;
-
-		__ASSERT_NO_MSG(iface != NULL);
-
-		net_if_lock(iface);
-		addr = net_if_get_link_addr(iface);
-
-		__ASSERT_NO_MSG(addr != NULL && addr->len == OT_EXT_ADDRESS_SIZE);
-
-		memcpy(addr->addr, ext_addr.m8, OT_EXT_ADDRESS_SIZE);
-		net_if_unlock(iface);
+#ifdef CONFIG_OPENTHREAD
+	if (error == OT_ERROR_NONE) {
+		ot_rpc_mutex_lock();
+		openthread_platform_radio_set_eui64(ext_addr.m8);
+		ot_rpc_mutex_unlock();
 	}
+#endif
 
 	nrf_rpc_rsp_send_uint(group, error);
 }
