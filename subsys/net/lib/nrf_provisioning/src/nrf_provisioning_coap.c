@@ -61,12 +61,12 @@ static bool socket_keep_open;
 
 static K_SEM_DEFINE(coap_response, 0, 1);
 
-int nrf_provisioning_coap_init(struct nrf_provisioning_mm_change *mmode)
+int nrf_provisioning_coap_init(nrf_provisioning_event_cb_t callback)
 {
 	static bool initialized;
 	int ret;
 
-	nrf_provisioning_codec_init(mmode);
+	nrf_provisioning_codec_init(callback);
 
 	if (initialized) {
 		return 0;
@@ -310,6 +310,7 @@ static int send_coap_request(struct coap_client *client, uint8_t method, const c
 			     struct nrf_provisioning_coap_context *const coap_ctx, bool confirmable)
 {
 	int retries = 0;
+	int ret;
 	struct coap_transmission_parameters params = coap_get_transmission_parameters();
 	static struct coap_client_option block2_option;
 
@@ -345,7 +346,15 @@ static int send_coap_request(struct coap_client *client, uint8_t method, const c
 		k_sleep(K_MSEC(params.ack_timeout));
 		retries++;
 	}
-	k_sem_take(&coap_response, K_FOREVER);
+
+	ret = k_sem_take(&coap_response, K_SECONDS(CONFIG_NRF_PROVISIONING_COAP_TIMEOUT_SECONDS));
+	if (ret == -EAGAIN) {
+		LOG_ERR("CoAP request timed out");
+		return -ETIMEDOUT;
+	} else if (ret) {
+		LOG_ERR("Failed to take CoAP response semaphore, error: %d", ret);
+		return ret;
+	}
 
 	return 0;
 }
@@ -617,8 +626,8 @@ int nrf_provisioning_coap_req(struct nrf_provisioning_coap_context *const coap_c
 
 		if (coap_ctx->code == COAP_RESPONSE_CODE_CONTENT) {
 			if (!coap_ctx->response_len) {
-				LOG_INF("No more commands to process on server side");
-				ret = 0;
+				LOG_INF("No commands to process on server side");
+				ret = -ENODATA;
 				break;
 			}
 			nrf_provisioning_codec_setup(&cdc_ctx, tx_buf.at, sizeof(tx_buf));

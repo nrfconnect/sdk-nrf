@@ -28,6 +28,7 @@ cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/modem_info.h
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/modem/nrf_modem_lib.h)
 cmock_handle(${ZEPHYR_BASE}/include/zephyr/settings/settings.h)
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_at.h)
+cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf_provisioning/include/nrf_provisioning_internal.h FUNC_EXCLUDE ".*(nrf_provisioning_schedule)")
 cmock_handle(${ZEPHYR_NRF_MODULE_DIR}/include/net/rest_client.h)
 cmock_handle(include/nrf_modem_at.h)
 
