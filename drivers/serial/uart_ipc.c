@@ -51,16 +51,28 @@ static void ipc_send_work_handler(struct k_work *work)
 
 	dev_data = CONTAINER_OF(work, struct uart_ipc_data, ipc_send_work.work);
 
-	data_size = ring_buf_get_claim(dev_data->tx_ringbuf, &data,
-				       ring_buf_size_get(dev_data->tx_ringbuf));
+	uint32_t ringbuf_size = ring_buf_size_get(dev_data->tx_ringbuf);
+	data_size = ring_buf_get_claim(dev_data->tx_ringbuf, &data, ringbuf_size);
 	if (data_size == 0) {
 		/* Nothing to send. */
 		return;
 	}
 
+	if (ringbuf_size > data_size) {
+		// hit end of contiguous buffer, reschedule to get the rest
+		ret = k_work_schedule(&dev_data->ipc_send_work, K_NO_WAIT);
+		if (ret < 0) {
+			LOG_ERR("k_work_schedule Failed with: %d", ret);
+		}
+	}
+
 	ret = ipc_service_send(&dev_data->ept, data, data_size);
 	if (ret == -ENOMEM) {
-		k_work_reschedule(&dev_data->ipc_send_work, K_MSEC(IPC_RESEND_DELAY));
+		ret = k_work_reschedule(&dev_data->ipc_send_work, K_MSEC(IPC_RESEND_DELAY));
+		if (ret < 0) {
+			LOG_ERR("k_work_reschedule Failed with: %d", ret);
+		}
+
 	} else if (ret < 0) {
 		__ASSERT(false, "Failed to send data over ipc, ret: %d", ret);
 		ret = 0;
@@ -137,7 +149,10 @@ void ipc_uart_poll_out(const struct device *dev, unsigned char out_char)
 		__ASSERT(false, "Invalid bytes count returned from buffer");
 	}
 
-	k_work_schedule(&data->ipc_send_work, K_NO_WAIT);
+	ret = k_work_schedule(&data->ipc_send_work, K_NO_WAIT);
+	if (ret < 0) {
+		LOG_ERR("k_work_schedule Failed with: %d", ret);
+	}
 }
 
 int ipc_uart_init(const struct device *dev)
