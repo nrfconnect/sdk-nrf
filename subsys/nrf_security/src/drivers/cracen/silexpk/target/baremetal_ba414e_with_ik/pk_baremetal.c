@@ -244,6 +244,10 @@ struct sx_pk_acq_req sx_pk_acquire_req(const struct sx_pk_cmd_def *cmd)
 
 			cracen_wait_for_pke_interrupt();
 		}
+		if (sx_pk_rdreg(&req.req->regs, IK_REG_STATUS) == IK_ENTROPY_ERROR) {
+			req.status = SX_ERR_RETRY;
+			return req;
+		}
 	}
 
 	return req;
