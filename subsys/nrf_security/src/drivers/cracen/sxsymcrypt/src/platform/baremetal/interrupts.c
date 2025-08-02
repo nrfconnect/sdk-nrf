@@ -22,24 +22,30 @@
 NRF_SECURITY_EVENT_DEFINE(cracen_irq_event_for_cryptomaster)
 NRF_SECURITY_EVENT_DEFINE(cracen_irq_event_for_pke)
 
-void cracen_interrupts_init(void)
-{
-	nrf_security_event_init(cracen_irq_event_for_cryptomaster);
-	nrf_security_event_init(cracen_irq_event_for_pke);
-
-	IRQ_CONNECT(CRACEN_IRQn, 0, cracen_isr_handler, NULL, 0);
-}
-
 #ifdef __NRF_TFM__
 void CRACEN_IRQHandler(void)
 {
 	cracen_isr_handler(NULL);
 }
-#else
-/* On Zephyr the IRQ_CONNECT infrastructure is given the
- * cracen_isr_handler function in the cracen_init function.
- */
+#elif !defined(CONFIG_GEN_SW_ISR_TABLE)
+ISR_DIRECT_DECLARE(cracen_direct_isr)
+{
+	cracen_isr_handler(NULL);
+	return 1;
+}
 #endif
+
+void cracen_interrupts_init(void)
+{
+	nrf_security_event_init(cracen_irq_event_for_cryptomaster);
+	nrf_security_event_init(cracen_irq_event_for_pke);
+
+#if defined(CONFIG_GEN_SW_ISR_TABLE)
+	IRQ_CONNECT(CRACEN_IRQn, 0, cracen_isr_handler, NULL, 0);
+#else
+	IRQ_DIRECT_CONNECT(CRACEN_IRQn, 0, cracen_direct_isr, 0);
+#endif
+}
 
 void cracen_isr_handler(void *i)
 {
