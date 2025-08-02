@@ -875,7 +875,7 @@ static int start_job(struct nrf_cloud_fota_job *const job, const bool send_evt)
 		.path = job->info.path,
 		.dl_host_conf = {
 			.sec_tag_list = &sec_tag,
-			.sec_tag_count = (sec_tag < 0 ? 0 : 1),
+			.sec_tag_count = (sec_tag == 0xFFFFFFFF ? 0 : 1),
 			.pdn_id = 0,
 			.range_override = CONFIG_NRF_CLOUD_FOTA_DOWNLOAD_FRAGMENT_SIZE,
 		},

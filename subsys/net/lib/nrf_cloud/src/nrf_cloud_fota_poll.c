@@ -541,7 +541,7 @@ static int start_download(void)
 		.path = job.path,
 		.dl_host_conf = {
 			.sec_tag_list = &sec_tag,
-			.sec_tag_count = (sec_tag < 0 ? 0 : 1),
+			.sec_tag_count = (sec_tag == 0xFFFFFFFF ? 0 : 1),
 			.pdn_id = 0,
 			.range_override =
 				ctx_ptr->fragment_size

@@ -27,7 +27,7 @@ struct tls_cred_buf {
 };
 static struct tls_cred_buf cred_buf[CONFIG_SLM_NATIVE_TLS_CREDENTIAL_BUFFER_COUNT] = {
 	[0 ... CONFIG_SLM_NATIVE_TLS_CREDENTIAL_BUFFER_COUNT - 1] = {
-		.sec_tag = -1
+		.sec_tag = 0xFFFFFFFF
 	}
 };
 static uint8_t cred_buf_next; /* Index of next cred_buf to use. */
@@ -201,7 +201,7 @@ static int unload_tls_cred_buf(sec_tag_t sec_tag)
 			}
 		}
 	}
-	cred->sec_tag = -1;
+	cred->sec_tag = 0xFFFFFFFF;
 	cred->type_flags = 0;
 
 	return 0;

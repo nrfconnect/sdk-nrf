@@ -126,7 +126,7 @@ static int establish_data_channel(const char *pasv_msg)
 	LOG_DBG("data port: %d", data_port);
 
 	/* open data socket */
-	if (client.sec_tag <= 0) {
+	if (client.sec_tag == 0xFFFFFFFF) {
 		client.data_sock = zsock_socket(client.family, SOCK_STREAM, IPPROTO_TCP);
 	} else {
 		client.data_sock = zsock_socket(client.family, SOCK_STREAM, IPPROTO_TLS_1_2);

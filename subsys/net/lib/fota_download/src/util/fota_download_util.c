@@ -53,7 +53,7 @@ static K_WORK_DEFINE(download_work, start_fota_download);
 static fota_download_callback_t fota_client_callback;
 static char fota_path[CONFIG_FOTA_DOWNLOAD_FILE_NAME_LENGTH];
 static char fota_host[CONFIG_FOTA_DOWNLOAD_HOST_NAME_LENGTH];
-static int fota_sec_tag = -1;
+static int fota_sec_tag = 0xFFFFFFFF;
 static bool download_active;
 static enum dfu_target_image_type active_dfu_type;
 

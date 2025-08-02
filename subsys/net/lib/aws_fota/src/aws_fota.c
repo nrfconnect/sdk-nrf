@@ -344,7 +344,7 @@ cleanup:
 static int job_update_accepted(struct mqtt_client *const client, uint32_t payload_len)
 {
 	int err;
-	int sec_tag = -1;
+	int sec_tag = 0xFFFFFFFF;
 
 	err = get_published_payload(client, payload_buf, payload_len);
 	if (err) {
