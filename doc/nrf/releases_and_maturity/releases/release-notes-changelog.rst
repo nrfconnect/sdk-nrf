@@ -424,6 +424,8 @@ Amazon Sidewalk samples
 Bluetooth samples
 -----------------
 
+* Added the :ref:`bluetooth_path_loss_monitoring` sample.
+
 * Added experimental ``llvm`` toolchain support for the nRF54L Series board targets to the following samples:
 
   * :ref:`peripheral_lbs`
