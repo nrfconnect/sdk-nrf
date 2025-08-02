@@ -659,7 +659,11 @@ Peripheral samples
 PMIC samples
 ------------
 
-|no_changes_yet_note|
+* Renamed the npm1300_one_button sample to :ref:`npm13xx_one_button` sample:
+
+  * Added support for the nPM1304 EK.
+  * Changed wiring for all targets.
+    Refer to the :ref:`Wiring table <npm13xx_one_button_wiring>` for details.
 
 Protocol serialization samples
 ------------------------------
