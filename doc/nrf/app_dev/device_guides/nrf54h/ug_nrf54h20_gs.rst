@@ -68,24 +68,16 @@ Installing nRF Util and its commands
 
 Using the nRF54H20 DK with the |NCS| version |release| requires the following:
 
-* nRF Util v7.13.0 or higher
-* nRF Util ``device`` command v2.8.8
-* nRF Util ``trace`` command v3.3.0
-* nRF Util ``suit`` command v0.9.0
+* The latest available version of nRF Util core module (nrfutil)
+* nRF Util ``device`` command v|54H_nrfutil_device_ver|
+* nRF Util ``trace`` command v4.0.1
 
-If you have not already installed nRF Util as part of :ref:`nRF Connect SDK prerequisites <installing_vsc>`, complete the following steps to install it:
+If you have not already installed nRF Util as part of :ref:`nRF Connect SDK prerequisites <installing_vsc>`, complete the steps listed on the `Installing nRF Util`_ page to install the latest version.
+Follow the default installation procedure from the web repository.
 
-1. Complete the steps listed on the `Installing nRF Util`_ page to install nRF Util.
-   Follow the default installation procedure from the web repository.
-#. Verify the version of the nRF Util installation on your machine:
+If you already have nRF Util installed, follow these steps:
 
-   a. Run the following command:
-
-      .. code-block::
-
-         nrfutil --version
-
-   b. If your version is below v7.13.0, run the following command to update the core module:
+1. Run the following command to update the core module to the latest version:
 
       .. code-block::
 
@@ -94,11 +86,23 @@ If you have not already installed nRF Util as part of :ref:`nRF Connect SDK prer
       For more information, consult the `Upgrading nRF Util core module`_ documentation.
 
 #. Install the required versions of nRF Util commands, as listed above, using the command from `Installing specific versions of nRF Util commands`_.
-   For example, the following command installs the nRF Util ``device`` command version 2.7.16:
+   For example, the following command installs the nRF Util ``device`` command:
+
+      nrfutil install device=<version_number> --force
+
+   .. note::
+      Substitute ``<version_number>`` with |54H_nrfutil_device_ver|.
+
+#. Verify the installation of the nRF Util commands by running the following command:
 
    .. code-block::
 
-      nrfutil install device=2.7.16 --force
+      nrfutil <command> --version
+
+   .. note::
+      Substitute ``<command>`` with  either ``device``, ``trace``, or ``suit``.
+
+   The output will show the installed version of that command.
 
 .. _ug_nrf54h20_install_toolchain:
 
@@ -162,7 +166,7 @@ After programming the BICR, program the nRF54H20 SoC with the :ref:`nRF54H20 SoC
 This bundle contains the precompiled firmware for the :ref:`Secure Domain <ug_nrf54h20_secure_domain>` and :ref:`System Controller <ug_nrf54h20_sys_ctrl>`.
 To program the nRF54H20 SoC binaries to the nRF54H20 DK, do the following:
 
-1. Download the `nRF54H20 SoC binaries v0.9.6`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
+1. Download the `nRF54H20 SoC binaries v22.2.1`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
 
    .. note::
       On MacOS, ensure that the ZIP file is not unpacked automatically upon download.
