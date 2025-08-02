@@ -38,3 +38,4 @@ See the subpages for information on the various aspects of Thingy:91 X.
    thingy91x_features
    thingy91x_updating_fw_programmer
    thingy91x_building_programming
+   thingy91x_recover_to_factory_firmware
