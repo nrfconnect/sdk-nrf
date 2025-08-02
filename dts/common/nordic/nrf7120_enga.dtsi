@@ -79,20 +79,20 @@
 		#size-cells = <1>;
 		ranges;
 
-		nordic_reserved: memory@200ff000{
+		nordic_reserved: memory@200fe000{
 			#address-cells = <1>;
 			#size-cells = <1>;
 			compatible = "mmio-sram";
-			reg = <0x200ff000 0xf00>;
-			ranges = <0x0 0x200ff000 0xf00>;
+			reg = <0x200fe000 0x1000>;
+			ranges = <0x0 0x200fe000 0x1000>;
 		};
 
-		nrf_kmu_reserved_push_area: memory@200fff00{
+		nrf_kmu_cracen_exchange_area: memory@200ff000{
 			#address-cells = <1>;
 			#size-cells = <1>;
-			reg = <0x200fff00 0x0100>;
+			reg = <0x200ff000 0x1000>;
 			compatible = "zephyr,memory-region", "mmio-sram";
-			zephyr,memory-region = "NRF_KMU_RESERVED_PUSH";
+			zephyr,memory-region = "NRF_KMU_CRACEN_EXCHANGE";
 		};
 
 		nrf_mpc_region: memory@50041000 {
