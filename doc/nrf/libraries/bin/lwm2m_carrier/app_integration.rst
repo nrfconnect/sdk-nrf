@@ -155,7 +155,7 @@ Following are some of the server Kconfig options that you can configure.
 See the :ref:`enabled carriers <general_options_enabled_carriers>` under :ref:`general_options_lwm2m` for when the option is relevant.
 
 For :kconfig:option:`CONFIG_LWM2M_CARRIER_GENERIC`, no valid factory configuration has been set.
-At a minimum, a URI must be set, unless the :kconfig:option:`CONFIG_LWM2M_SERVER_BINDING_CHOICE` Kconfig option value is non-IP.
+At a minimum, a URI must be set, unless the :kconfig:option:`CONFIG_LWM2M_CARRIER_SERVER_BINDING_NONIP` Kconfig option value is set.
 
 .. note::
    Changing one or more server options will trigger a factory reset (resulting in a new bootstrap sequence).
