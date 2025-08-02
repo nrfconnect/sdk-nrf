@@ -16,10 +16,10 @@ config B0N_SIZE
 	default 0x8580 if PM_PARTITION_SIZE_PROVISION=0x280
 	default 0x8800
 	help
-		Since the locking granularity is 2kB, ensure that B0N_SIZE is
-		set such that the size of the `b0n_container` is aligned to this
-		size. If the minimal config is enabled the binary will be around
-		5kB. Note: The provision partition is 0x280 bytes.
+	  Since the locking granularity is 2kB, ensure that B0N_SIZE is
+	  set such that the size of the `b0n_container` is aligned to this
+	  size. If the minimal config is enabled the binary will be around
+	  5kB. Note: The provision partition is 0x280 bytes.
 
 endmenu
 
