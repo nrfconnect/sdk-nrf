@@ -696,6 +696,7 @@
 /scripts/pip-audit-whitelist.yml          @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
 /scripts/tools-versions-*.txt             @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
 /scripts/requirements-*.txt               @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
+/scripts/requirements-*.in                @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
 /scripts/west_commands/utils/             @gmarull
 /scripts/west_commands/create_board/      @gmarull
 /scripts/west_commands/sbom/              @nrfconnect/ncs-co-scripts
