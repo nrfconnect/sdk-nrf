@@ -185,6 +185,7 @@ Enhanced ShockBurst (ESB)
 -------------------------
 
 * Improved protocol disable handling in the ``esb_disable`` and ``esb_stop_rx`` functions.
+* Added the :ref:`esb_monitor_mode` feature.
 
 Gazell
 ------
@@ -570,7 +571,7 @@ Edge Impulse samples
 Enhanced ShockBurst samples
 ---------------------------
 
-|no_changes_yet_note|
+* Added the :ref:`esb_monitor` sample to demonstrate how to use the :ref:`ug_esb` protocol in Monitor mode.
 
 Gazell samples
 --------------
