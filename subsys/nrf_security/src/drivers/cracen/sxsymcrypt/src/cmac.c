@@ -43,9 +43,9 @@ static const struct sx_mac_cmdma_cfg ba411cfg = {
 	.dmatags = &ba411tags,
 };
 
-static int sx_cmac_create_aes_ba411(struct sxmac *c, const struct sxkeyref *key);
+static int sx_cmac_create_aes_ba411(struct sxmac *mac_ctx, const struct sxkeyref *key);
 
-static int sx_cmac_create_aes_ba411(struct sxmac *c, const struct sxkeyref *key)
+static int sx_cmac_create_aes_ba411(struct sxmac *mac_ctx, const struct sxkeyref *key)
 {
 	int err;
 
@@ -58,28 +58,28 @@ static int sx_cmac_create_aes_ba411(struct sxmac *c, const struct sxkeyref *key)
 		}
 	}
 
-	c->key = key;
-	err = sx_mac_hw_reserve(c);
+	mac_ctx->key = key;
+	err = sx_mac_hw_reserve(mac_ctx);
 	if (err != SX_OK) {
 		return err;
 	}
 
-	c->cfg = &ba411cfg;
-	c->cntindescs = 1;
-	sx_cmdma_newcmd(&c->dma, c->descs,
+	mac_ctx->cfg = &ba411cfg;
+	mac_ctx->cntindescs = 1;
+	sx_cmdma_newcmd(&mac_ctx->dma, mac_ctx->descs,
 			CMDMA_CMAC_MODE_SET(CMAC_MODEID_AES) | KEYREF_AES_HWKEY_CONF(key->cfg),
-			c->cfg->dmatags->cfg);
+			mac_ctx->cfg->dmatags->cfg);
 	if (KEYREF_IS_USR(key)) {
-		ADD_CFGDESC(c->dma, key->key, key->sz, c->cfg->dmatags->key);
-		c->cntindescs++;
+		ADD_CFGDESC(mac_ctx->dma, key->key, key->sz, mac_ctx->cfg->dmatags->key);
+		mac_ctx->cntindescs++;
 	}
-	c->feedsz = 0;
-	c->macsz = CMAC_MAC_SZ;
+	mac_ctx->feedsz = 0;
+	mac_ctx->macsz = CMAC_MAC_SZ;
 
 	return SX_OK;
 }
 
-int sx_mac_create_aescmac(struct sxmac *c, const struct sxkeyref *key)
+int sx_mac_create_aescmac(struct sxmac *mac_ctx, const struct sxkeyref *key)
 {
-	return sx_cmac_create_aes_ba411(c, key);
+	return sx_cmac_create_aes_ba411(mac_ctx, key);
 }
