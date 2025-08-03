@@ -630,6 +630,13 @@ config BT_CTLR_SDC_CS_STEP_MODE3
 	  Enable optional step mode-3 support. Channel sounding will not automatically start using step mode-3 if this
 	  config is set. To use step mode-3, modify the configuration which is created using the LE CS Create config command.
 
+config BT_CTLR_SDC_CS_EVENT_LEN_DEFAULT
+	int "Default channel sounding event length [us]"
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	default 5000
+	help
+	  The time set aside for channel sounding events in microseconds.
+
 config BT_CTLR_SDC_LE_POWER_CLASS_1
 	bool "Device supports transmitting at LE Power Class 1 level"
 	default y if BT_CTLR_TX_PWR_ANTENNA >= 10
