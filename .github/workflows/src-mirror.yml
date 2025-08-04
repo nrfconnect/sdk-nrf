@@ -1,21 +1,10 @@
-name: src-mirror
+name: Generate src mirror package
 
 on:
   workflow_dispatch:
-    inputs:
-      git-ref:
-        description: 'Branch, tag or SHA to checkout'
-        required: true
-        default: 'main'
   push:
     tags:
       - '*'
-  pull_request:
-    types:
-      - opened
-      - synchronize
-    paths:
-      - .github/workflows/src-mirror.yml
 
 concurrency:
   group: src-mirror-${{ github.ref }}
@@ -24,17 +13,27 @@ concurrency:
 jobs:
 
   # Tar entire project west workspace, prune, and upload to artifact service.
-  standard:
+  generate-src-mirror-package:
     runs-on: ubuntu-24.04-16cores
     steps:
+
+      - name: Set STABLE variable
+        run: |
+          if [[ "${{ github.ref_type }}" == "tag" ]] && [[ "${{ github.ref_name }}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "STABLE=true" >> $GITHUB_ENV
+          else
+            echo "STABLE=false" >> $GITHUB_ENV
+          fi
+          echo "STABLE=${{ env.STABLE }}"
+
       - name: Upload src.tar.gz
         uses: nrfconnect/action-src-mirror@main
         with:
+          git-ref: ${{ github.ref_name }}
           path: 'nrf'
           west-update-args: ''
-          artifactory-path: >-
-            ${{ (github.ref_type != 'tag') &&
-              format('ncs-src-mirror/internal/{0}/{1}/src.tar.gz', github.event.repository.name, github.ref_name) ||
-              format('ncs-src-mirror/external/{1}/src.tar.gz', github.event.repository.name, github.ref_name) }}
+          sdk-manager-api-version: '1'
+          artifactory-base-folder-path: ${{ (github.ref_type == 'tag') && 'ncs-src-mirror/external/' || 'ncs-src-mirror/internal/' }}
           artifactory-user: ${{ secrets.COM_NORDICSEMI_FILES_USERNAME }}
           artifactory-pass: ${{ secrets.COM_NORDICSEMI_FILES_PASSWORD }}
+          stable: ${{ env.STABLE }}
