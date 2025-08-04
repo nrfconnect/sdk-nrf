@@ -15,7 +15,8 @@ static void test_uart_latency(size_t buffer_size, uint32_t baudrate)
 {
 	int err;
 	uint32_t tst_timer_value;
-	uint64_t timer_value_us;
+	uint64_t timer_value_us[MEASUREMENT_REPEATS];
+	uint64_t average_timer_value_us = 0;
 	uint32_t theoretical_transmission_time_us;
 	uint32_t maximal_allowed_transmission_time_us;
 	struct uart_config test_uart_config;
@@ -45,33 +46,40 @@ static void test_uart_latency(size_t buffer_size, uint32_t baudrate)
 	maximal_allowed_transmission_time_us = MAX_TOLERANCE * theoretical_transmission_time_us;
 
 	configure_test_timer(tst_timer_dev, TEST_TIMER_COUNT_TIME_LIMIT_MS);
-	counter_reset(tst_timer_dev);
 
-	dk_set_led_on(DK_LED1);
-	counter_start(tst_timer_dev);
-	for (uint32_t counter = 0; counter < buffer_size; counter++) {
-		uart_poll_out(uart_dev, test_data.tx_buffer[counter]);
-		/* Wait for the character to be avilable in the RX buffer */
-		while (uart_poll_in(uart_dev, &test_data.rx_buffer[counter]) == -1) {
-		};
-		uart_poll_in(uart_dev, &test_data.rx_buffer[counter]);
+	for (uint32_t repeat_counter = 0; repeat_counter < MEASUREMENT_REPEATS; repeat_counter++) {
+		memset(rx_test_buffer, 0xFF, MAX_BUFFER_SIZE);
+		counter_reset(tst_timer_dev);
+		dk_set_led_on(DK_LED1);
+		counter_start(tst_timer_dev);
+		for (uint32_t counter = 0; counter < buffer_size; counter++) {
+			uart_poll_out(uart_dev, test_data.tx_buffer[counter]);
+			/* Wait for the character to be avilable in the RX buffer */
+			while (uart_poll_in(uart_dev, &test_data.rx_buffer[counter]) == -1) {
+			};
+			uart_poll_in(uart_dev, &test_data.rx_buffer[counter]);
+		}
+		counter_get_value(tst_timer_dev, &tst_timer_value);
+		counter_stop(tst_timer_dev);
+		dk_set_led_off(DK_LED1);
+
+		timer_value_us[repeat_counter] =
+			counter_ticks_to_us(tst_timer_dev, tst_timer_value);
+		average_timer_value_us += timer_value_us[repeat_counter] / MEASUREMENT_REPEATS;
+
+		check_transmitted_data(&test_data);
 	}
-	counter_get_value(tst_timer_dev, &tst_timer_value);
-	counter_stop(tst_timer_dev);
-	dk_set_led_off(DK_LED1);
-	timer_value_us = counter_ticks_to_us(tst_timer_dev, tst_timer_value);
-	check_transmitted_data(&test_data);
 
 	TC_PRINT("Calculated transmission time (for %u bytes) [us]: %u\n", buffer_size,
 		 theoretical_transmission_time_us);
 	TC_PRINT("Measured transmission time (for %u bytes) [us]: %llu\n", buffer_size,
-		 timer_value_us);
+		 average_timer_value_us);
 	TC_PRINT("Measured - claculated time delta (for %u bytes) [us]: %lld\n", buffer_size,
-		 timer_value_us - theoretical_transmission_time_us);
+		 average_timer_value_us - theoretical_transmission_time_us);
 	TC_PRINT("Maximal allowed transmission time [us]: %u\n",
 		 maximal_allowed_transmission_time_us);
 
-	zassert_true(timer_value_us < maximal_allowed_transmission_time_us,
+	zassert_true(average_timer_value_us < maximal_allowed_transmission_time_us,
 		     "Measured call latency is over the specified limit");
 }
 

@@ -33,11 +33,11 @@ uint32_t calculate_theoretical_transsmison_time_us(struct uart_config *tst_uart_
 						   size_t buffer_size)
 {
 	uint32_t number_of_bits;
-	float ratio;
+	double ratio;
 
 	number_of_bits = 1 + (tst_uart_config->data_bits + 5) + tst_uart_config->stop_bits;
 	ratio = 1000000.0 / tst_uart_config->baudrate;
-	return (uint32_t)(ratio * (float)number_of_bits * (float)buffer_size);
+	return (uint32_t)(ratio * (double)number_of_bits * (double)buffer_size);
 }
 
 void check_transmitted_data(uart_test_data *test_data)
