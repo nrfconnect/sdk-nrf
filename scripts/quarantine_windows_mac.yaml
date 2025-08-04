@@ -27,10 +27,3 @@
     - thingy53/nrf5340/cpuapp/ns
     - thingy53/nrf5340/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/SHEL-3161"
-
-- scenarios:
-    - sample.matter.*
-    - applications.matter.*
-  platforms:
-    - all
-  comment: "https://nordicsemi.atlassian.net/browse/KRKNWK-20461"
