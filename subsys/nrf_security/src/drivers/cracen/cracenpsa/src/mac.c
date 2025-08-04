@@ -40,14 +40,14 @@ static psa_status_t setup(cracen_mac_operation_t *operation, const psa_key_attri
 		}
 	}
 	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC) &&
-	    IS_ENABLED(CONFIG_CRACEN_USE_MULTIPART_WORKAROUNDS)) {
+	    IS_ENABLED(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)) {
 		if (PSA_ALG_FULL_LENGTH_MAC(alg) == PSA_ALG_CMAC) {
 			return cracen_sw_cmac_setup(operation, attributes, key_buffer,
 						    key_buffer_size);
 		}
 	}
 	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC) &&
-	    !IS_ENABLED(CONFIG_CRACEN_USE_MULTIPART_WORKAROUNDS)) {
+	    !IS_ENABLED(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)) {
 		if (PSA_ALG_FULL_LENGTH_MAC(alg) == PSA_ALG_CMAC) {
 			return cracen_cmac_setup(operation, attributes, key_buffer,
 						 key_buffer_size);
@@ -91,14 +91,14 @@ psa_status_t cracen_mac_update(cracen_mac_operation_t *operation, const uint8_t 
 		}
 	}
 	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC) &&
-	    IS_ENABLED(CONFIG_CRACEN_USE_MULTIPART_WORKAROUNDS)) {
+	    IS_ENABLED(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)) {
 		if (PSA_ALG_FULL_LENGTH_MAC(operation->alg) == PSA_ALG_CMAC) {
 			return cracen_sw_cmac_update(operation, input, input_length);
 		}
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC) &&
-	    !IS_ENABLED(CONFIG_CRACEN_USE_MULTIPART_WORKAROUNDS)) {
+	    !IS_ENABLED(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)) {
 		if (PSA_ALG_FULL_LENGTH_MAC(operation->alg) == PSA_ALG_CMAC) {
 			return cracen_cmac_update(operation, input, input_length);
 		}
@@ -130,12 +130,12 @@ psa_status_t cracen_mac_sign_finish(cracen_mac_operation_t *operation, uint8_t *
 		}
 	}
 	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC) &&
-	    IS_ENABLED(CONFIG_CRACEN_USE_MULTIPART_WORKAROUNDS)) {
+	    IS_ENABLED(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)) {
 		if (PSA_ALG_FULL_LENGTH_MAC(operation->alg) == PSA_ALG_CMAC) {
 			status = cracen_sw_cmac_finish(operation);
 		}
 	} else if (IS_ENABLED(PSA_NEED_CRACEN_CMAC) &&
-		   !IS_ENABLED(CONFIG_CRACEN_USE_MULTIPART_WORKAROUNDS)) {
+		   !IS_ENABLED(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)) {
 		if (PSA_ALG_FULL_LENGTH_MAC(operation->alg) == PSA_ALG_CMAC) {
 			status = cracen_cmac_finish(operation);
 		}
@@ -180,12 +180,12 @@ psa_status_t cracen_mac_verify_finish(cracen_mac_operation_t *operation, const u
 		}
 	}
 	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC) &&
-	    IS_ENABLED(CONFIG_CRACEN_USE_MULTIPART_WORKAROUNDS)) {
+	    IS_ENABLED(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)) {
 		if (PSA_ALG_FULL_LENGTH_MAC(operation->alg) == PSA_ALG_CMAC) {
 			status = cracen_sw_cmac_finish(operation);
 		}
 	} else if (IS_ENABLED(PSA_NEED_CRACEN_CMAC) &&
-		   !IS_ENABLED(CONFIG_CRACEN_USE_MULTIPART_WORKAROUNDS)) {
+		   !IS_ENABLED(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)) {
 		if (PSA_ALG_FULL_LENGTH_MAC(operation->alg) == PSA_ALG_CMAC) {
 			status = cracen_cmac_finish(operation);
 		}
@@ -220,7 +220,7 @@ psa_status_t cracen_mac_compute(const psa_key_attributes_t *attributes, const ui
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC) &&
-	    IS_ENABLED(CONFIG_CRACEN_USE_MULTIPART_WORKAROUNDS) &&
+	    IS_ENABLED(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS) &&
 	    PSA_ALG_FULL_LENGTH_MAC(alg) == PSA_ALG_CMAC) {
 
 		if (mac_size < operation.mac_size) {
