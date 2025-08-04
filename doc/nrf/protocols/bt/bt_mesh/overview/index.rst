@@ -40,13 +40,13 @@ The following features are supported:
 * Proxy feature (for connectivity to smart phones and tablets)
 * Friend and Low Power features
 * Configuration and health foundation models
-* Remote Provisioning models
-* Bridge Configuration models
+* Remote Provisioning feature
+* Subnet Bridge feature
 * Private Beacons
 * On-Demand Private GATT Proxy
-* SAR Enhancements
-* Opcode Aggregator models
-* Large Composition Data models
+* Segmentation and Reassembly Enhancements
+* Opcode Aggregation feature
+* Large Composition Data feature
 * Enhanced Provisioning Authentication algorithm
 
 All models from the `Bluetooth Mesh model specification`_ are supported.
