@@ -53,12 +53,14 @@ PROJECT_TAGS[zephyr]=""
 PROJECT_TAGS[mcuboot]=""
 PROJECT_TAGS[trusted-firmware-m]=""
 PROJECT_TAGS[mbedtls]=""
+PROJECT_TAGS[oberon-psa-crypto]=""
 
 # Upstream OSS remotes
 UPSTREAM_REMOTES[zephyr]="https://github.com/zephyrproject-rtos/zephyr"
 UPSTREAM_REMOTES[mcuboot]="https://github.com/mcu-tools/mcuboot"
 UPSTREAM_REMOTES[trusted-firmware-m]="https://github.com/TrustedFirmware-M/trusted-firmware-m"
 UPSTREAM_REMOTES[mbedtls]="https://github.com/Mbed-TLS/mbedtls"
+UPSTREAM_REMOTES[oberon-psa-crypto]="" # Upstream skipped because it's private
 
 
 # ----------------------------------------------------------------------
