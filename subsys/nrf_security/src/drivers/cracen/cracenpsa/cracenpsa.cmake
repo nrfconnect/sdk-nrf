@@ -90,7 +90,7 @@ if(CONFIG_PSA_NEED_CRACEN_MAC_DRIVER)
   endif()
 
   if(CONFIG_PSA_NEED_CRACEN_CMAC)
-    if(CONFIG_CRACEN_USE_MULTIPART_WORKAROUNDS)
+    if(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)
       list(APPEND cracen_driver_sources
         ${CMAKE_CURRENT_LIST_DIR}/src/cracen_sw_mac_cmac.c
       )
