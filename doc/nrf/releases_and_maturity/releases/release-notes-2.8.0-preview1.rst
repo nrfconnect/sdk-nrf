@@ -530,7 +530,7 @@ Cellular samples
   * Added ``link modem`` command for initializing and shutting down the modem.
   * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
 
-* :ref:`nrf_cloud_rest_fota` sample:
+* :ref:`nrf_cloud_fota_sample` sample:
 
   * Added support for setting the FOTA update check interval using the config section in the shadow.
   * Removed redundant logging now done by the :ref:`lib_nrf_cloud` library.

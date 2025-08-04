@@ -532,7 +532,7 @@ nRF9160 samples
 
   * Fixed an issue with connection initialization that would cause delta modem FOTA updates to hang and would require manual reset.
 
-* :ref:`nrf_cloud_rest_fota` sample:
+* :ref:`nrf_cloud_fota_sample` sample:
 
   * Added support for full modem FOTA updates.
 

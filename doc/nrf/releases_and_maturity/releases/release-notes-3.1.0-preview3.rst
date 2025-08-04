@@ -387,7 +387,7 @@ Cellular samples
 
   * Removed JITP.
 
-* :ref:`nrf_cloud_rest_fota` sample:
+* :ref:`nrf_cloud_fota_sample` sample:
 
   * Updated the sample to use Zephyr's :ref:`zephyr:conn_mgr_docs` feature.
   * Fixed SMP FOTA for the nRF9160 DK.

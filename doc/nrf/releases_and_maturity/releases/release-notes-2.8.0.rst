@@ -87,7 +87,7 @@ Added the following features as experimental:
 * nRF Cloud:
 
   * SMP FOTA, which allows updating a companion device such as an nRF52 Series device running MCUboot from a FOTA image received by an nRF91 Series device from the cloud.
-    This is showcased in the sample :ref:`nrf_cloud_rest_fota`.
+    This is showcased in the sample :ref:`nrf_cloud_fota_sample`.
 
 * Bootloaders and DFU:
 
@@ -764,7 +764,7 @@ Cellular samples
   * Added ``link modem`` command for initializing and shutting down the modem.
   * Updated to use the :ref:`at_parser_readme` library instead of the :ref:`at_cmd_parser_readme` library.
 
-* :ref:`nrf_cloud_rest_fota` sample:
+* :ref:`nrf_cloud_fota_sample` sample:
 
   * Added:
 

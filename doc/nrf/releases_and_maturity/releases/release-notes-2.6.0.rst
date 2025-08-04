@@ -757,7 +757,7 @@ Cellular samples
 
   * Removed the nRF7002 EK devicetree overlay file :file:`nrf91xxdk_with_nrf7002ek.overlay`, because UART1 is disabled through the shield configuration.
 
-* :ref:`nrf_cloud_rest_fota` sample:
+* :ref:`nrf_cloud_fota_sample` sample:
 
   * Added credential check before connecting to the network.
   * Updated:
@@ -1270,7 +1270,7 @@ Libraries for networking
 
     * Support for the :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` by selecting the :kconfig:option:`CONFIG_NRF_CLOUD_CREDENTIALS_MGMT_TLS_CRED` Kconfig option.
       This is applicable to the :kconfig:option:`CONFIG_NRF_CLOUD_CHECK_CREDENTIALS` and :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig options.
-    * The :file:`nrf_cloud_fota_poll.c` file to consolidate the FOTA polling code from the :ref:`nrf_cloud_multi_service` and :ref:`nrf_cloud_rest_fota` samples.
+    * The :file:`nrf_cloud_fota_poll.c` file to consolidate the FOTA polling code from the :ref:`nrf_cloud_multi_service` and :ref:`nrf_cloud_fota_sample` samples.
     * The :file:`nrf_cloud_fota_poll.h` file.
 
   * Updated:

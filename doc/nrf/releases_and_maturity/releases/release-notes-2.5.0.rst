@@ -665,7 +665,7 @@ Cellular samples (renamed from nRF9160 samples)
   * Added support for nRF91x1 factory almanac.
     The new almanac file format also supports QZSS satellites.
 
-* :ref:`nrf_cloud_rest_fota` sample:
+* :ref:`nrf_cloud_fota_sample` sample:
 
   * Added reporting of device and connection info to the device shadow.
 

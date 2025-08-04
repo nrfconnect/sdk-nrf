@@ -601,7 +601,7 @@ nRF9160 samples
     * Sending of log messages directly to nRF Cloud.
     * Overlay to enable `Zephyr Logging`_ backend for full logging to nRF Cloud.
 
-* :ref:`nrf_cloud_rest_fota` sample:
+* :ref:`nrf_cloud_fota_sample` sample:
 
     * Updated the sample by enabling external flash in the nRF9160 DK devicetree overlays for v0.14.0 or later versions, as it is now disabled in the Zephyr board definition.
 

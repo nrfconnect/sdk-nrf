@@ -7,7 +7,7 @@
 cmake_minimum_required(VERSION 3.20.0)
 
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
-project(nRF_Cloud_REST_FOTA_Sample)
+project(nrf_cloud_fota_sample)
 zephyr_compile_definitions(PROJECT_NAME=${PROJECT_NAME})
 
 # NORDIC SDK APP START

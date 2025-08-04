@@ -546,7 +546,7 @@ nRF9160 samples
   * nRF9160: Simple MQTT sample.
     This is now replaced by a new :ref:`mqtt_sample` sample that supports Wi-Fi and LTE connectivity.
 
-* :ref:`nrf_cloud_rest_fota` sample:
+* :ref:`nrf_cloud_fota_sample` sample:
 
   * Updated:
 

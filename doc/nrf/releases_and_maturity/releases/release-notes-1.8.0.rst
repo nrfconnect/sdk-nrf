@@ -342,7 +342,7 @@ nRF9160 samples
 
 * Added:
 
-  * :ref:`nrf_cloud_rest_fota` sample, demonstrating how to perform FOTA updates with the nRF Cloud REST API.
+  * :ref:`nrf_cloud_fota_sample` sample, demonstrating how to perform FOTA updates with the nRF Cloud REST API.
 
 * :ref:`https_client` sample:
 

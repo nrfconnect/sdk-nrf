@@ -10,7 +10,7 @@
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
 
-LOG_MODULE_REGISTER(nrf_cloud_rest_fota_smp, CONFIG_NRF_CLOUD_REST_FOTA_SAMPLE_LOG_LEVEL);
+LOG_MODULE_REGISTER(nrf_cloud_fota_sample_smp, CONFIG_NRF_CLOUD_FOTA_SAMPLE_LOG_LEVEL);
 
 #define RESET_NODE DT_NODELABEL(nrf52840_reset)
 #define HAS_RECOVERY_MODE (DT_NODE_HAS_STATUS(RESET_NODE, okay))

@@ -3087,7 +3087,7 @@ Cellular samples
 
 .. rst-class:: v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-2 v2-9-1 v2-9-0 v2-8-0
 
-NCSDK-30050: The :ref:`nrf_cloud_rest_fota` sample with experimental SMP FOTA support enabled crashes with a secure fault
+NCSDK-30050: The :ref:`nrf_cloud_fota_sample` sample with experimental SMP FOTA support enabled crashes with a secure fault
   This happens approximately one out of five times during an SMP FOTA update.
 
 .. rst-class:: v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0

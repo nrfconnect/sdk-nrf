@@ -395,7 +395,7 @@ nRF9160 samples
       * When disabling of UART is requested either by a shell command or by a button press, modem traces are disabled before disabling UART1.
       * When the UART1 is re-enabled (either after timer expiry or button press), the modem traces are also re-enabled.
 
-* :ref:`nrf_cloud_rest_fota` sample:
+* :ref:`nrf_cloud_fota_sample` sample:
 
   * Enabled building of bootloader FOTA update files.
   * Corrected handling of the bootloader FOTA updates.
