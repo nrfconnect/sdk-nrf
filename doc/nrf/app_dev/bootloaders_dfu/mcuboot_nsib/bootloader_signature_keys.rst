@@ -144,7 +144,7 @@ You can add this feature to your own project and check its functionality as foll
 
    .. note::
 
-      Use only absolute paths for ``SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE`` and ``SB_CONFIG_SECURE_BOOT_PUBLIC_KEY_FILES``.
+      Use only absolute paths for :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE` and :kconfig:option:`SB_CONFIG_SECURE_BOOT_PUBLIC_KEY_FILES`.
 
    .. tabs::
 

@@ -32,7 +32,7 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-For nRF54L15 DK, make sure you are building your project with the ``SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE`` Kconfig option enabled.
+For nRF54L15 DK, make sure you are building your project with the :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE` Kconfig option enabled.
 
 You will notice that the size of MCUboot is significantly reduced in comparison to the default configuration.
 
