@@ -34,7 +34,7 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-For nRF54L15 DK, make sure you are building your project with the ``SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE`` Kconfig option enabled.
+For nRF54L15 DK, make sure you are building your project with the :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE` Kconfig option enabled.
 
 For direct-xip mode, you must build the sample with the :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP` Kconfig option enabled.
 For swap using move mode, use the :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_SWAP_USING_MOVE` Kconfig option instead.

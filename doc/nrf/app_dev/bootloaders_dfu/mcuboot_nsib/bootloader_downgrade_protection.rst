@@ -29,10 +29,10 @@ Software-based downgrade protection
 The |NCS| supports MCUboot's software-based downgrade prevention for application images, using semantic versioning.
 This feature offers protection against any outdated firmware that is uploaded to a device.
 
-To enable this feature, set the configuration option :kconfig:option:`CONFIG_MCUBOOT_DOWNGRADE_PREVENTION` for the MCUboot image and ``SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY`` for sysbuild.
+To enable this feature, set the configuration option :kconfig:option:`CONFIG_MCUBOOT_DOWNGRADE_PREVENTION` for the MCUboot image and :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY` for sysbuild.
 
 .. caution::
-   Enabling ``SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY`` prevents the fallback recovery of application images.
+   Enabling :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY` prevents the fallback recovery of application images.
    Consult its Kconfig description and the :doc:`MCUboot Design documentation <mcuboot:design>` for more information on how to use it.
 
    For nRF53 Series devices, this mode is generally the most appropriate for MCUboot.
@@ -106,9 +106,9 @@ Downgrade protection using MCUboot
 
 To enable anti-rollback protection with monotonic counter for MCUboot, set the following configurations using sysbuild:
 
-* ``SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION``
-* ``SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS``
-* ``SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE``
+* :kconfig:option:`SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION`
+* :kconfig:option:`SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS`
+* :kconfig:option:`SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE`
 
 Downgrade protection using |NSIB| with MCUboot
 ==============================================

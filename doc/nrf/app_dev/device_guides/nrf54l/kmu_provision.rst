@@ -102,7 +102,7 @@ Once you have an unprovisioned SoC, upload keys to the board by running one of t
       * It might utilize multiple keys, which is intended for use with key revocation.
         The number of keys is defined by the ``CONFIG_BOOT_SIGNATURE_KMU_SLOTS`` MCUboot's Kconfig option.
         You can enable the key revocation mechanism with the  ``CONFIG_BOOT_KEYS_REVOCATION`` MCUboot's Kconfig option.
-      * KMU support in its configuration needs to be enabled by setting the ``SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU`` sysbuild Kconfig option.
+      * KMU support in its configuration needs to be enabled by setting the :kconfig:option:`SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU` sysbuild Kconfig option.
         Otherwise, MCUboot will fallback to the compiled-in key.
 
       For NSIB, take note of the following:
@@ -150,7 +150,7 @@ You can generate the :file:`keyfile.json` file during the build process (for exa
 These options enable, respectively, the NSIB and the MCUboot keys, included in the generated :file:`keyfile.json` file.
 This file contains the necessary key provisioning information.
 
-If you set the ``SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE`` Kconfig option to a PEM key file, that specific file will be used.
+If you set the :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE` Kconfig option to a PEM key file, that specific file will be used.
 If not, the build will use the default key named :file:`GENERATED_NON_SECURE_SIGN_KEY_PRIVATE.pem`, which is located in the build directory.
 Similarly, MCUboot uses the key file designated by the :Kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` option.
 

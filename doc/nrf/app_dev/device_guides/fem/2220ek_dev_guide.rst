@@ -81,11 +81,11 @@ See :ref:`Migrating to sysbuild <child_parent_to_sysbuild_migration>` page.
 Setting the correct sysbuild option enables support for 802.15.4 and Bluetooth :ref:`ipc_radio`.
 
 ``ipc_radio`` represents all applications with support for the combination of both 802.15.4 and Bluetooth.
-You can configure your application using the following sysbuild configurations:
+You can configure your application using the following sysbuild Kconfig options:
 
-* ``SB_CONFIG_NETCORE_IPC_RADIO=y`` for applications having support for 802.15.4, but not for Bluetooth.
-* ``SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y`` for application having support for Bluetooth, but not for 802.15.4.
-* ``SB_CONFIG_NETCORE_IPC_RADIO=y`` and ``SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y`` for multiprotocol applications having support for both 802.15.4 and Bluetooth.
+* :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO` for applications having support for 802.15.4, but not for Bluetooth.
+* :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC` for application having support for Bluetooth, but not for 802.15.4.
+* :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO` and :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC` for multiprotocol applications having support for both 802.15.4 and Bluetooth.
 
 
 .. note::

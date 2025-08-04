@@ -61,7 +61,7 @@ Example build
 
 The recommended way of building this sample is to use :ref:`configuration_system_overview_sysbuild`, building the sample with the same Bluetooth configuration as the application core sample.
 
-To enable the firmware, use the sysbuild configuration ``SB_CONFIG_NETCORE_RPC_HOST``.
+To enable the firmware, use the :kconfig:option:`SB_CONFIG_NETCORE_RPC_HOST` sysbuild Kconfig.
 You also need to use the ``nordic-bt-rpc`` snippet, see :file:`snippets/nordic-bt-rpc/README.rst`.
 
 See :ref:`configure_application` for information about how to configure a sample.
