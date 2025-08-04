@@ -30,8 +30,9 @@
 #error "TWIS instance not enabled or not supported"
 #endif
 
-#define NODE_TWIM DT_NODELABEL(sensor)
-#define NODE_TWIS DT_ALIAS(i2c_slave)
+#define NODE_TWIM	    DT_NODELABEL(sensor)
+#define NODE_TWIS	    DT_ALIAS(i2c_slave)
+#define MEASUREMENT_REPEATS 10
 
 #define TWIS_MEMORY_SECTION                                                                        \
 	COND_CODE_1(DT_NODE_HAS_PROP(NODE_TWIS, memory_regions),                                   \
@@ -219,7 +220,8 @@ static void test_i2c_read_latency(size_t buffer_size, uint8_t i2c_speed_setting)
 {
 	int ret;
 	uint32_t tst_timer_value;
-	uint64_t timer_value_us;
+	uint64_t timer_value_us[MEASUREMENT_REPEATS];
+	uint64_t average_timer_value_us = 0;
 	uint32_t theoretical_transmission_time_us;
 
 	TC_PRINT("I2C read latency in test with buffer size: %u bytes and spedd setting: %u\n",
@@ -228,37 +230,44 @@ static void test_i2c_read_latency(size_t buffer_size, uint8_t i2c_speed_setting)
 
 	prepare_test_data(fixture.slave_buffer, buffer_size);
 	configure_test_timer(tst_timer_dev, TEST_TIMER_COUNT_TIME_LIMIT_MS);
-	counter_reset(tst_timer_dev);
 
 	theoretical_transmission_time_us =
 		calculate_theoretical_transsmison_time_us(buffer_size, i2c_speed_setting);
 
-	dk_set_led_on(DK_LED1);
-	counter_start(tst_timer_dev);
-	ret = i2c_read(fixture.dev, fixture.master_buffer, buffer_size, fixture.addr);
-	counter_get_value(tst_timer_dev, &tst_timer_value);
-	dk_set_led_off(DK_LED1);
-	counter_stop(tst_timer_dev);
-	timer_value_us = counter_ticks_to_us(tst_timer_dev, tst_timer_value);
+	for (uint32_t repeat_counter = 0; repeat_counter < MEASUREMENT_REPEATS; repeat_counter++) {
+		memset(fixture.slave_buffer, 0, buffer_size);
+		counter_reset(tst_timer_dev);
+		dk_set_led_on(DK_LED1);
+		counter_start(tst_timer_dev);
+		ret = i2c_read(fixture.dev, fixture.master_buffer, buffer_size, fixture.addr);
+		counter_get_value(tst_timer_dev, &tst_timer_value);
+		dk_set_led_off(DK_LED1);
+		counter_stop(tst_timer_dev);
+		timer_value_us[repeat_counter] =
+			counter_ticks_to_us(tst_timer_dev, tst_timer_value);
+		average_timer_value_us += timer_value_us[repeat_counter] / MEASUREMENT_REPEATS;
 
-	zassert_ok(ret);
-	zassert_mem_equal(fixture.master_buffer, fixture.slave_buffer, buffer_size);
+		zassert_ok(ret);
+		zassert_mem_equal(fixture.master_buffer, fixture.slave_buffer, buffer_size);
+	}
 
 	TC_PRINT("Calculated transmission time (for %u bytes) [us]: %u\n", buffer_size,
 		 theoretical_transmission_time_us);
 	TC_PRINT("i2c_read: measured transmission time (for %u bytes) [us]: %llu\n", buffer_size,
-		 timer_value_us);
+		 average_timer_value_us);
 	TC_PRINT("i2c_read: measured - claculated time delta (for %d bytes) [us]: %lld\n",
-		 buffer_size, timer_value_us - theoretical_transmission_time_us);
+		 buffer_size, average_timer_value_us - theoretical_transmission_time_us);
 
-	assess_measurement_result(timer_value_us, theoretical_transmission_time_us, buffer_size);
+	assess_measurement_result(average_timer_value_us, theoretical_transmission_time_us,
+				  buffer_size);
 }
 
 static void test_i2c_write_latency(size_t buffer_size, uint8_t i2c_speed_setting)
 {
 	int ret;
 	uint32_t tst_timer_value;
-	uint64_t timer_value_us;
+	uint64_t timer_value_us[MEASUREMENT_REPEATS];
+	uint64_t average_timer_value_us = 0;
 	uint32_t theoretical_transmission_time_us;
 
 	TC_PRINT("I2C write latency in test with buffer size: %u bytes and speed setting: %u\n",
@@ -267,30 +276,36 @@ static void test_i2c_write_latency(size_t buffer_size, uint8_t i2c_speed_setting
 
 	prepare_test_data(fixture.master_buffer, buffer_size);
 	configure_test_timer(tst_timer_dev, TEST_TIMER_COUNT_TIME_LIMIT_MS);
-	counter_reset(tst_timer_dev);
 
 	theoretical_transmission_time_us =
 		calculate_theoretical_transsmison_time_us(buffer_size, i2c_speed_setting);
 
-	dk_set_led_on(DK_LED1);
-	counter_start(tst_timer_dev);
-	ret = i2c_write(fixture.dev, fixture.master_buffer, buffer_size, fixture.addr);
-	counter_get_value(tst_timer_dev, &tst_timer_value);
-	dk_set_led_off(DK_LED1);
-	counter_stop(tst_timer_dev);
-	timer_value_us = counter_ticks_to_us(tst_timer_dev, tst_timer_value);
+	for (uint32_t repeat_counter = 0; repeat_counter < MEASUREMENT_REPEATS; repeat_counter++) {
+		memset(fixture.slave_buffer, 0, buffer_size);
+		counter_reset(tst_timer_dev);
+		dk_set_led_on(DK_LED1);
+		counter_start(tst_timer_dev);
+		ret = i2c_write(fixture.dev, fixture.master_buffer, buffer_size, fixture.addr);
+		counter_get_value(tst_timer_dev, &tst_timer_value);
+		dk_set_led_off(DK_LED1);
+		counter_stop(tst_timer_dev);
+		timer_value_us[repeat_counter] =
+			counter_ticks_to_us(tst_timer_dev, tst_timer_value);
+		average_timer_value_us += timer_value_us[repeat_counter] / MEASUREMENT_REPEATS;
 
-	zassert_ok(ret);
-	zassert_mem_equal(fixture.slave_buffer, fixture.slave_buffer, buffer_size);
+		zassert_ok(ret);
+		zassert_mem_equal(fixture.slave_buffer, fixture.slave_buffer, buffer_size);
+	}
 
 	TC_PRINT("Calculated transmission time (for %u bytes) [us]: %u\n", buffer_size,
 		 theoretical_transmission_time_us);
 	TC_PRINT("i2c_write: measured transmission time (for %u bytes) [us]: %llu\n", buffer_size,
-		 timer_value_us);
+		 average_timer_value_us);
 	TC_PRINT("i2c_write: measured - claculated time delta (for %d bytes) [us]: %lld\n",
-		 buffer_size, timer_value_us - theoretical_transmission_time_us);
+		 buffer_size, average_timer_value_us - theoretical_transmission_time_us);
 
-	assess_measurement_result(timer_value_us, theoretical_transmission_time_us, buffer_size);
+	assess_measurement_result(average_timer_value_us, theoretical_transmission_time_us,
+				  buffer_size);
 }
 
 ZTEST(i2c_transmission_latency, test_i2c_read_call_latency_standard_speed)

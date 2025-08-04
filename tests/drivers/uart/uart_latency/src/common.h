@@ -15,6 +15,7 @@
 #define MAX_BUFFER_SIZE		       4096
 #define TEST_TIMER_COUNT_TIME_LIMIT_MS 500
 #define MAX_TOLERANCE		       2.0
+#define MEASUREMENT_REPEATS	       10
 
 #define UART_BAUD_9k6	9600
 #define UART_BAUD_115k2 115200
