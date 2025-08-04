@@ -47,8 +47,6 @@ PROJECT_TAGS[nrfxlib]=""
 PROJECT_TAGS[find-my]=""
 PROJECT_TAGS[matter]=""
 PROJECT_TAGS[nrf-802154]=""
-PROJECT_TAGS[suit-processor]=""
-PROJECT_TAGS[suit-generator]=""
 
 # OSS repositories: vX.Y.Z-ncsN(-I)(-rcM)
 PROJECT_TAGS[zephyr]=""
