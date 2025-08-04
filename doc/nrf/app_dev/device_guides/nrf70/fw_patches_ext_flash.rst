@@ -54,7 +54,7 @@ Using XIP access
 
 If the application supports XIP from external memory, then the firmware patches can be loaded as part of the nRF Wi-Fi driver code (RODATA) and then relocated to the external memory.
 The nRF Wi-Fi driver accesses the firmware patches using XIP feature and downloads the firmware patches to the nRF70 device.
-To enable this feature, set the ``SB_CONFIG_WIFI_PATCHES_EXT_FLASH_XIP`` sysbuild Kconfig option to ``y``.
+To enable this feature, set the :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_XIP` sysbuild Kconfig option to ``y``.
 Once the build is complete, the feature can be verified by checking the memory regions summary in the build output.
 A new memory region called ``EXTFLASH`` is added to the memory regions summary, and the firmware patches are placed in this region.
 The size of the ``FLASH`` used is reduced by the size of the firmware patches.
@@ -89,7 +89,7 @@ Configuration
 
 The following configuration options are available:
 
-* ``SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE`` - Enables the option to store the firmware patch in external non-XIP memory.
+* :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE` - Enables the option to store the firmware patch in external non-XIP memory.
 * :kconfig:option:`CONFIG_NRF_WIFI_FW_FLASH_CHUNK_SIZE` - Defines the size of the chunks used to read the firmware patches from the external non-XIP memory.
   The default value is 8192 bytes.
 
@@ -111,7 +111,7 @@ Building
 
 See :ref:`nrf7002dk_nrf5340` for general instructions on building.
 
-Additionally, you can build the sample using the ``nrf70-fw-patch-ext-flash`` snippet and set the ``SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y`` Kconfig option.
+Additionally, you can build the sample using the ``nrf70-fw-patch-ext-flash`` snippet and set the :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE` Kconfig option to ``y``.
 
 For example, to build the :ref:`wifi_shell_sample` sample for the nRF5340 DK with the ``nrf70-fw-patch-ext-flash`` snippet enabled, run the following commands.
 
