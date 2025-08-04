@@ -250,15 +250,30 @@ int sw_codec_decode(struct net_buf const *const audio_frame, void **decoded_data
 				}
 			}
 
-			/* For now, i2s is only stereo, so in order to send
-			 * just one channel, we need to insert 0 for the
-			 * other channel
-			 */
-			ret = pscm_zero_pad(pcm_in_data_ptrs[0], pcm_size_mono,
-					    m_config.decoder.audio_ch, CONFIG_AUDIO_BIT_DEPTH_BITS,
-					    pcm_data_stereo, &pcm_size_stereo);
-			if (ret) {
-				return ret;
+			if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) &&
+			    (CONFIG_AUDIO_DEV == GATEWAY)) {
+				/* If we are receieving mono audio on the gateway, we send it out
+				 * as stereo, so we need to pad the mono data to stereo.
+				 */
+				ret = pscm_copy_pad(pcm_in_data_ptrs[0], pcm_size_mono,
+						    CONFIG_AUDIO_BIT_DEPTH_BITS, pcm_data_stereo,
+						    &pcm_size_stereo);
+				if (ret) {
+					LOG_ERR("Failed to copy pad mono to stereo: %d", ret);
+					return ret;
+				}
+			} else {
+				/* For now, i2s is only stereo, so in order to send
+				 * just one channel, we need to insert 0 for the
+				 * other channel
+				 */
+				ret = pscm_zero_pad(pcm_in_data_ptrs[0], pcm_size_mono,
+						    m_config.decoder.audio_ch,
+						    CONFIG_AUDIO_BIT_DEPTH_BITS, pcm_data_stereo,
+						    &pcm_size_stereo);
+				if (ret) {
+					return ret;
+				}
 			}
 			break;
 		}
