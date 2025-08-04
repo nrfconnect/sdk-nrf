@@ -16,7 +16,7 @@ This reference page lists the supported features and limitations of cryptographi
 Support definitions
 *******************
 
-This page uses the same definitions as the :ref:`software_maturity` page:
+This page uses the same definitions as the :ref:`software_maturity` page, with the exception of not listing features that are not supported.
 
 .. include:: ../../releases_and_maturity/software_maturity.rst
     :start-after: software_maturity_definitions_start
