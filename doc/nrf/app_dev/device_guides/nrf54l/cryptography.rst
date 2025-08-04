@@ -150,7 +150,7 @@ The keys are not exportable, except for the public key associated with the asymm
 Programming model for referencing keys
 **************************************
 
-The keys which are stored in the KMU can be used by most cryptographic functions and key management functions in the PSA Crypto API (see `PSA Certified Crypto API 1.2.1`_), with a built-in key ID representing a particular KMU slot.
+The keys that are stored in the KMU can be used by most cryptographic functions and key management functions in the PSA Crypto API (see `PSA Certified Crypto API 1.3.1`_), with a built-in key ID representing a particular KMU slot.
 
 To identify that the KMU is used as a persistent storage backend for a specific ``psa_key_id_t``, you need to create a ``psa_key_attributes_t`` structure and set the required attributes from the list below.
 
