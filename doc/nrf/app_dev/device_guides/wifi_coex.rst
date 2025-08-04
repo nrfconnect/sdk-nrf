@@ -133,9 +133,9 @@ To enable Wi-Fi coexistence on the nRF70 Series device, complete the following s
    The *image_name* value is ``ipc_radio`` (:ref:`ipc_radio`), which represents all applications with support for the combination of both 802.15.4 and Bluetooth.
    To configure your application, use the following sysbuild configurations:
 
-   * ``SB_CONFIG_NETCORE_IPC_RADIO=y`` for applications having support for 802.15.4, but not for Bluetooth.
-   * ``SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y`` for an application having support for Bluetooth, but not for 802.15.4.
-   * ``SB_CONFIG_NETCORE_IPC_RADIO=y`` and ``SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y`` for multiprotocol applications having support for both 802.15.4 and Bluetooth.
+   * Set the :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO` Kconfig option to ``y`` for applications having support for 802.15.4, but not for Bluetooth.
+   * Set the :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC` Kconfig option to ``y`` for an application having support for Bluetooth, but not for 802.15.4.
+   * Set the :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO` and :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC` Kconfig options to ``y`` for multiprotocol applications having support for both 802.15.4 and Bluetooth.
 
 #. Enable the following Kconfig options:
 
@@ -213,9 +213,9 @@ To enable the generic three-wire coexistence, complete the following steps:
    The *image_name* value is ``ipc_radio``, which represents all applications with support for the combination of both 802.15.4 and Bluetooth.
    To configure your application, use the following sysbuild configurations:
 
-   * ``SB_CONFIG_NETCORE_IPC_RADIO=y`` for applications having support for 802.15.4, but not for Bluetooth.
-   * ``SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y`` for an application having support for Bluetooth, but not for 802.15.4.
-   * ``SB_CONFIG_NETCORE_IPC_RADIO=y`` and ``SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y`` for multiprotocol applications having support for both 802.15.4 and Bluetooth.
+   * Set the :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO` Kconfig option to ``y`` for applications having support for 802.15.4, but not for Bluetooth.
+   * Set the :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC` Kconfig option to ``y`` for an application having support for Bluetooth, but not for 802.15.4.
+   * Set the :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO` and :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC` Kconfig options to ``y`` for multiprotocol applications having support for both 802.15.4 and Bluetooth.
 
 #. Enable the following Kconfig options:
 
