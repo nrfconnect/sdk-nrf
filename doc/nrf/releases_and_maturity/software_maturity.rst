@@ -2527,6 +2527,7 @@ Trusted Firmware-M support
               - --
               - --
               - --
+
       .. tab:: nRF53 Series
 
          .. list-table:: TF-M profile support
@@ -2539,6 +2540,7 @@ Trusted Firmware-M support
               - Experimental
             * - :ref:`Minimal <ug_tfm_supported_services_profiles_minimal>`
               - Supported
+
       .. tab:: nRF54 Series
 
          .. list-table:: TF-M profile support
@@ -2560,6 +2562,7 @@ Trusted Firmware-M support
               - --
               - --
               - Experimental
+
       .. tab:: nRF91 Series
 
          .. list-table:: TF-M profile support
@@ -2591,8 +2594,8 @@ Trusted Firmware-M support
 PSA Crypto support
 ==================
 
-For more information about the PSA Crypto implementations in the |NCS|, see :ref:`ug_crypto_index`.
-
+The following tables list hardware support for the :ref:`PSA Crypto implementations in the |NCS| <ug_crypto_architecture_implementation_standards>`.
+The lists are organized by device Series and implementation.
 
 .. toggle::
 
@@ -2602,169 +2605,157 @@ For more information about the PSA Crypto implementations in the |NCS|, see :ref
 
       .. tab:: nRF52 Series
 
-        .. list-table:: Cryptographic support (nRF52 Series)
-           :header-rows: 1
-           :widths: auto
+         The following tables list the cryptographic support for nRF52 Series devices.
+         The nRF52 Series devices do not support the :ref:`CRACEN <crypto_drivers_cracen>` driver.
 
-           * - Implementation
-             - Driver
-             - nRF52810
-             - nRF52811
-             - nRF52820
-             - nRF52832
-             - nRF52833
-             - nRF52840
-           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
-             - :ref:`nrf_cc3xx <crypto_drivers>`
-             - --
-             - --
-             - --
-             - --
-             - --
-             - Supported
-           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
-             - :ref:`CRACEN <crypto_drivers>`
-             - --
-             - --
-             - --
-             - --
-             - --
-             - --
-           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
-             - :ref:`nrf_oberon <crypto_drivers>`
-             - --
-             - --
-             - --
-             - Supported
-             - Supported
-             - Supported
-           * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
-             - :ref:`Oberon PSA Crypto drivers <crypto_drivers>`
-             - --
-             - --
-             - --
-             - --
-             - --
-             - --
-           * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
-             - :ref:`CRACEN <crypto_drivers>`
-             - --
-             - --
-             - --
-             - --
-             - --
-             - --
+         .. list-table:: Cryptographic support by implementation - nRF52 Series
+            :header-rows: 1
+            :widths: auto
+
+            * - Implementation
+              - nRF52810
+              - nRF52811
+              - nRF52820
+              - nRF52832
+              - nRF52833
+              - nRF52840
+            * - :ref:`Oberon PSA Crypto - nrf_cc3xx <ug_crypto_architecture_implementation_standards_oberon>`
+              - --
+              - --
+              - --
+              - --
+              - --
+              - Supported
+            * - :ref:`Oberon PSA Crypto - CRACEN <ug_crypto_architecture_implementation_standards_oberon>`
+              - --
+              - --
+              - --
+              - --
+              - --
+              - --
+            * - :ref:`Oberon PSA Crypto - nrf_oberon <ug_crypto_architecture_implementation_standards_oberon>`
+              - --
+              - --
+              - --
+              - Supported
+              - Supported
+              - Supported
+            * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
+              - --
+              - --
+              - --
+              - --
+              - --
+              - --
+            * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
+              - --
+              - --
+              - --
+              - --
+              - --
+              - --
 
       .. tab:: nRF53 Series
 
-        .. list-table:: Cryptographic support (nRF53 Series)
-           :header-rows: 1
-           :widths: auto
+         The following tables list the cryptographic support for nRF53 Series devices.
+         The nRF53 Series devices do not support the :ref:`CRACEN <crypto_drivers_cracen>` driver.
 
-           * - Implementation
-             - Driver
-             - nRF5340
-           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
-             - :ref:`nrf_cc3xx <crypto_drivers>`
-             - Supported
-           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
-             - :ref:`CRACEN <crypto_drivers>`
-             - --
-           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
-             - :ref:`nrf_oberon <crypto_drivers>`
-             - Supported
-           * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
-             - :ref:`Oberon PSA Crypto drivers <crypto_drivers>`
-             - Supported
-           * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
-             - :ref:`CRACEN <crypto_drivers>`
-             - --
+         .. list-table:: Cryptographic support by implementation - nRF53 Series
+            :header-rows: 1
+            :widths: auto
+
+            * - Implementation
+              - nRF5340
+            * - :ref:`Oberon PSA Crypto - nrf_cc3xx <ug_crypto_architecture_implementation_standards_oberon>`
+              - Supported
+            * - :ref:`Oberon PSA Crypto - CRACEN <ug_crypto_architecture_implementation_standards_oberon>`
+              - --
+            * - :ref:`Oberon PSA Crypto - nrf_oberon <ug_crypto_architecture_implementation_standards_oberon>`
+              - Supported
+            * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
+              - Experimental
+            * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
+              - --
 
       .. tab:: nRF54 Series
 
-        .. list-table:: Cryptographic support (nRF54 Series)
-           :header-rows: 1
-           :widths: auto
+         The following tables list the cryptographic support for nRF54 Series devices.
+         The nRF54 Series devices do not support the :ref:`nrf_cc3xx <crypto_drivers_cc3xx>` driver.
 
-           * - Implementation
-             - Driver
-             - nRF54H20
-             - nRF54L05
-             - nRF54L10
-             - nRF54L15
-           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
-             - :ref:`nrf_cc3xx <crypto_drivers>`
-             - --
-             - --
-             - --
-             - --
-           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
-             - :ref:`CRACEN <crypto_drivers>`
-             - --
-             - Supported
-             - Supported
-             - Supported
-           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
-             - :ref:`nrf_oberon <crypto_drivers>`
-             - --
-             - Supported
-             - Supported
-             - Supported
-           * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
-             - :ref:`Oberon PSA Crypto drivers <crypto_drivers>`
-             - --
-             - --
-             - Experimental
-             - Experimental
-           * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
-             - :ref:`CRACEN <crypto_drivers>`
-             - Supported
-             - --
-             - --
-             - --
+         .. list-table:: Cryptographic support by implementation - nRF54 Series
+            :header-rows: 1
+            :widths: auto
+
+            * - Implementation
+              - nRF54H20
+              - nRF54L05
+              - nRF54L10
+              - nRF54L15
+            * - :ref:`Oberon PSA Crypto - nrf_cc3xx <ug_crypto_architecture_implementation_standards_oberon>`
+              - --
+              - --
+              - --
+              - --
+            * - :ref:`Oberon PSA Crypto - CRACEN <ug_crypto_architecture_implementation_standards_oberon>`
+              - --
+              - Supported
+              - Supported
+              - Supported
+            * - :ref:`Oberon PSA Crypto - nrf_oberon <ug_crypto_architecture_implementation_standards_oberon>`
+              - --
+              - Supported
+              - Supported
+              - Supported
+            * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
+              - --
+              - --
+              - Experimental
+              - Experimental
+            * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
+              - Supported
+              - --
+              - --
+              - --
 
       .. tab:: nRF91 Series
 
-        .. list-table:: Cryptographic support (nRF91 Series)
-           :header-rows: 1
-           :widths: auto
+         The following tables list the cryptographic support for nRF91 Series devices.
+         The nRF91 Series devices do not support the :ref:`CRACEN <crypto_drivers_cracen>` driver.
 
-           * - Implementation
-             - Driver
-             - nRF9131
-             - nRF9151
-             - nRF9160
-             - nRF9161
-           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
-             - :ref:`nrf_cc3xx <crypto_drivers>`
-             - Experimental
-             - Supported
-             - Supported
-             - Supported
-           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
-             - :ref:`CRACEN <crypto_drivers>`
-             - --
-             - --
-             - --
-             - --
-           * - :ref:`Oberon PSA Crypto <ug_crypto_architecture_implementation_standards_oberon>`
-             - :ref:`nrf_oberon <crypto_drivers>`
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-           * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
-             - :ref:`Oberon PSA Crypto drivers <crypto_drivers>`
-             - Experimental
-             - Supported
-             - Supported
-             - Supported
-           * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
-             - :ref:`CRACEN <crypto_drivers>`
-             - --
-             - --
-             - --
-             - --
+         .. list-table:: Cryptographic support by implementation - nRF91 Series
+            :header-rows: 1
+            :widths: auto
+
+            * - Implementation
+              - nRF9131
+              - nRF9151
+              - nRF9160
+              - nRF9161
+            * - :ref:`Oberon PSA Crypto - nrf_cc3xx <ug_crypto_architecture_implementation_standards_oberon>`
+              - Experimental
+              - Supported
+              - Supported
+              - Supported
+            * - :ref:`Oberon PSA Crypto - CRACEN <ug_crypto_architecture_implementation_standards_oberon>`
+              - --
+              - --
+              - --
+              - --
+            * - :ref:`Oberon PSA Crypto - nrf_oberon <ug_crypto_architecture_implementation_standards_oberon>`
+              - Supported
+              - Supported
+              - Supported
+              - Supported
+            * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
+              - Experimental
+              - Experimental
+              - Experimental
+              - Experimental
+            * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
+              - --
+              - --
+              - --
+              - --
 
 .. crypto_support_table_end
 
