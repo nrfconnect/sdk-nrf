@@ -1,0 +1,43 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Required loopbacks:
+ * P1.06 (AIN2) <-> VDDIO (Zephyr test loopback set)
+ */
+
+/ {
+	aliases {
+		tst-timer = &timer20;
+	};
+
+	zephyr,user {
+		test-gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
+		io-channels = <&adc 0>;
+		io-channel-names = "A2";
+	};
+};
+
+dut_adc: &adc {
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	channel@0 {
+		reg = <0>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+		zephyr,input-positive = <NRF_SAADC_AIN1>;
+	};
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&timer20 {
+	status = "okay";
+};
