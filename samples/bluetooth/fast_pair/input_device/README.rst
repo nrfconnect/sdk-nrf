@@ -458,12 +458,13 @@ Personalized Name extension
 Testing Personalized Name extension is described in `Fast Pair Certification Guidelines for Personalized Name`_.
 
 .. note::
-   To mitigate Android Personalized Name write issues, whenever you change the Personalized Name on an Android phone, perform the following:
+   For Android devices running Android 15 or lower, to mitigate Android Personalized Name write issues when you change the Personalized Name, perform the following:
 
-   * Write the new Personalized Name.
-   * Disconnect the phone from the Fast Pair Provider.
-   * Put the Fast Pair Provider in not discoverable advertising mode.
-   * The phone reconnects and sends new Personalized Name to the Fast Pair Provider.
+   1. Write the new Personalized Name.
+   #. Disconnect the phone from the Fast Pair Provider.
+   #. Put the Fast Pair Provider in not discoverable advertising mode.
+   #. The phone reconnects automatically or you need to reconnect it manually.
+   #. The phone sends new Personalized Name to the Fast Pair Provider.
 
 Battery Notification extension
 ------------------------------
