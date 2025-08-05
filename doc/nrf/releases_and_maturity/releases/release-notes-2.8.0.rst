@@ -140,9 +140,9 @@ Supported modem firmware
 
 See the following documentation for an overview of which modem firmware versions have been tested with this version of the |NCS|:
 
-* `Modem firmware compatibility matrix for the nRF9151 DK`_
-* `Modem firmware compatibility matrix for the nRF9161 DK`_
-* `Modem firmware compatibility matrix for the nRF9160 DK`_
+* `Modem firmware compatibility matrix for the nRF9151 SoC`_
+* `Modem firmware compatibility matrix for the nRF9161 SoC`_
+* `Modem firmware compatibility matrix for the nRF9160 SoC`_
 
 Use the latest version of the nRF Programmer app of `nRF Connect for Desktop`_ to update the modem firmware.
 See :ref:`nrf9160_gs_updating_fw_modem` for instructions.
