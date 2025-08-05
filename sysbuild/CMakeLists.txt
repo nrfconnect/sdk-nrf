@@ -298,9 +298,9 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
     if(SB_CONFIG_SOC_SERIES_NRF54HX)
       if(SB_CONFIG_MCUBOOT_SIGNATURE_USING_ITS)
-        set_config_bool(mcuboot CONFIG_NRF_BOOT_SIGNATURE_USING_ITS y)
+        set_config_bool(mcuboot CONFIG_NCS_BOOT_SIGNATURE_USING_ITS y)
       else()
-        set_config_bool(mcuboot CONFIG_NRF_BOOT_SIGNATURE_USING_ITS n)
+        set_config_bool(mcuboot CONFIG_NCS_BOOT_SIGNATURE_USING_ITS n)
       endif()
     endif()
 
