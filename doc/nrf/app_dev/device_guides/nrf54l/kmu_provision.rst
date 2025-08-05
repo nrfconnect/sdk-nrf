@@ -146,13 +146,17 @@ Once you have an unprovisioned SoC, upload keys to the board by running one of t
 Alternative provisioning method
 *********************************
 
-To simplify the development process, keys can be generated and provisioned at the same time as the flashing process
-In the case of NSIB, enabling the ``SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE`` Kconfig option at the sysbuild level introduces an additional programming step that is triggered when you execute the ``west flash --recover`` command.
+To simplify the development process, keys can be generated and then provisioned at the same time as the flashing process.
+You can provision keys during flashing when the build directory contains the :file:`keyfile.json` file with commands, such as ``west flash --recover`` or ``west flash --erase``.
+When flashing a project that contains NSIB, you can only use the ``west flash --recover``, as the programming file contains UICR provisioning data as well.
+
+You can generate the :file:`keyfile.json` file during the build process (for example, when running ``west build``) if the :Kconfig:option:`SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE` or :Kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE` Kconfig options are enabled.
+These options enable, respectively, the NSIB and the MCUboot keys, included in the generated :file:`keyfile.json` file.
+This file contains the necessary key provisioning information.
+
 If you set the ``SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE`` Kconfig option to a PEM key file, that specific file will be used.
 If not, the build will use the default key named :file:`GENERATED_NON_SECURE_SIGN_KEY_PRIVATE.pem`, which is located in the build directory.
-
-For MCUboot configurations, activating the ``SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE`` Kconfig option at the sysbuild level allows to provision keys simultaneously with the flashing process. Provisioning step is triggered when you execute either ``west flash --recover`` or ``west flash --erase`` command.
-MCUboot uses the key file designated by the ``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`` option.
+Similarly, MCUboot uses the key file designated by the :Kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` option.
 
 At the end of the described process the :file:`keyfile.json` file is generated in the build directory.
 This file allows key provisioning to occur simultaneously with the flashing process.
