@@ -861,6 +861,7 @@
 /tests/drivers/timer/grtc_timer_lfrc/     @nrfconnect/ncs-low-level-test
 /tests/drivers/uart/                      @nrfconnect/ncs-low-level-test
 /tests/drivers/watchdog/                  @nrfconnect/ncs-low-level-test
+/tests/drivers/adc/                       @nrfconnect/ncs-low-level-test
 /tests/lib/at_cmd_parser/                 @nrfconnect/ncs-modem
 /tests/lib/at_cmd_custom/                 @nrfconnect/ncs-modem
 /tests/lib/at_parser/                     @nrfconnect/ncs-modem

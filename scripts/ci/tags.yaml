@@ -1748,6 +1748,7 @@ ci_tests_zephyr_drivers_adc:
   files:
     - nrf/tests/zephyr/drivers/adc/
     - zephyr/tests/drivers/adc/
+    - nrf/tests/drivers/adc/
 
 ci_samples_zephyr_drivers_adc:
   files:
