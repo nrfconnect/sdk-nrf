@@ -12,14 +12,14 @@ This page provides guidelines on how to integrate this module in your applicatio
 
 .. note::
    This page complements the main Fast Pair integration guide and covers only integration steps for the :ref:`bt_fast_pair_adv_manager_readme` module.
-   For the complete Fast Pair integration guide, see :ref:`ug_bt_fast_pair`.
+   For the complete Fast Pair integration guide, see :ref:`Google Fast Pair integration <ug_bt_fast_pair_integration>`.
 
 Prerequisites
 *************
 
 Before using the :ref:`bt_fast_pair_adv_manager_readme`, ensure to fulfill the following prerequisites:
 
-* Read through the main :ref:`ug_bt_fast_pair` guide to understand the overall Fast Pair integration requirements and ensure you meet all the prerequisites listed in this document.
+* Read through the main :ref:`Google Fast Pair integration <ug_bt_fast_pair_integration>` guide to understand the overall Fast Pair integration requirements and ensure you meet all the prerequisites listed in this document.
 * Accept the usage of the Bluetooth® LE Extended Advertising feature (:kconfig:option:`CONFIG_BT_EXT_ADV`), which is a dependency for the :ref:`bt_fast_pair_adv_manager_readme` module.
 
   .. note::

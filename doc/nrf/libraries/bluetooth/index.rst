@@ -16,4 +16,5 @@ Bluetooth libraries and services
    :caption: Bluetooth® services:
    :glob:
 
+   services/fast_pair/index
    services/*
