@@ -32,4 +32,4 @@ pip:
 nrfutil:
   version: 8.1.0
   subcommands:
-    device: 2.11.2
+    device: 2.12.6
