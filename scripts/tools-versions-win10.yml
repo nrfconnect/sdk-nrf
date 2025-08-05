@@ -26,6 +26,6 @@ doxygen:
 pip:
   version: 24.2
 nrfutil:
-  version: 8.1.0
+  version: 8.1.1
   subcommands:
-    device: 2.12.6
+    device: 2.13.0
