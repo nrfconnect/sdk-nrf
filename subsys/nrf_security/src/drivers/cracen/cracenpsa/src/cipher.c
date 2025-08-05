@@ -258,20 +258,20 @@ static psa_status_t decrypt_cbc(const struct sxkeyref *key, const uint8_t *input
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	uint8_t padding = output[input_length - 1];
+	size_t padding_length = output[input_length - 1];
+	size_t padding_index = input_length - padding_length;
+	uint32_t failure = 0;
 
-	if (padding > SX_BLKCIPHER_AES_BLK_SZ || padding == 0) {
-		return PSA_ERROR_INVALID_PADDING;
+	failure |= (padding_length > SX_BLKCIPHER_AES_BLK_SZ);
+	failure |= (padding_length == 0);
+
+	for (size_t i = 0; i < input_length; i++) {
+		failure |= (output[i] ^ padding_length) * (i >= padding_index);
 	}
 
-	for (size_t i = input_length - padding; i < input_length; i++) {
-		if (output[i] != padding) {
-			return PSA_ERROR_INVALID_PADDING;
-		}
-	}
+	*output_length = padding_index;
 
-	*output_length = input_length - padding;
-	return PSA_SUCCESS;
+	return (failure == 0) ? PSA_SUCCESS : PSA_ERROR_INVALID_PADDING;
 }
 
 psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
