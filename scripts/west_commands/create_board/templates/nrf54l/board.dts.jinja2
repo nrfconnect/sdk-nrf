@@ -11,11 +11,8 @@
 		zephyr,code-partition = &slot0_partition;
 		zephyr,sram = &cpuapp_sram;
 		zephyr,flash = &cpuapp_rram;
+		zephyr,flash-controller = &rram_controller;
 	};
-};
-
-&cpuapp_sram {
-	status = "okay";
 };
 
 &grtc {
@@ -25,33 +22,18 @@
 	status = "okay";
 };
 
-&cpuapp_rram {
-	partitions {
-		compatible = "fixed-partitions";
-		#address-cells = <1>;
-		#size-cells = <1>;
-
-		boot_partition: partition@0 {
-			label = "mcuboot";
-			reg = <0x0 DT_SIZE_K(64)>;
-		};
-
-		slot0_partition: partition@10000 {
-			label = "image-0";
-			reg = <0x10000 DT_SIZE_K(664)>;
-		};
-
-		slot1_partition: partition@b6000 {
-			label = "image-1";
-			reg = <0xb6000 DT_SIZE_K(664)>;
-		};
-
-		storage_partition: partition@15c000 {
-			label = "storage";
-			reg = <0x15c000 DT_SIZE_K(36)>;
-		};
-	};
+&cpuapp_sram {
+	status = "okay";
+{% if soc == "nrf54l05" %}
+	reg = <0x20000000 DT_SIZE_K(96)>;
+	ranges = <0x0 0x20000000 DT_SIZE_K(96)>;
+{% elif soc == "nrf54l10" %}
+	reg = <0x20000000 DT_SIZE_K(192)>;
+	ranges = <0x0 0x20000000 DT_SIZE_K(192)>;
+{% endif %}
 };
+
+#include <nordic/{{ soc }}_partition.dtsi>
 {% else %}
 {% if not target['xip'] %}
 /dts-v1/;

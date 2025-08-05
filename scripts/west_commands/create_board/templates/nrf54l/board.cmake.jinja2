@@ -1,7 +1,7 @@
 if (CONFIG_SOC_{{ soc | upper }}_CPUAPP)
-  board_runner_args(jlink "--device={{ soc | replace("nrf", "nRF") }}_M33" "--speed=4000")
+  board_runner_args(jlink "--device={{ soc | replace("nrf", "nRF") | replace("l", "L") }}_M33" "--speed=4000")
 elseif (CONFIG_SOC_{{ soc | upper }}_CPUFLPR)
-  board_runner_args(jlink "--device={{ soc | replace("nrf", "nRF") }}_RV32" "--speed=4000")
+  board_runner_args(jlink "--device={{ soc | replace("nrf", "nRF") | replace("l", "L") }}_RV32" "--speed=4000")
 endif()
 
 include(${ZEPHYR_BASE}/boards/common/nrfutil.board.cmake)
