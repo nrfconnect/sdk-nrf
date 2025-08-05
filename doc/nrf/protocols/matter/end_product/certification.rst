@@ -286,9 +286,9 @@ Nordic Semiconductor provides the following certification identifiers:
 
 You can visit the following pages to check the Bluetooth QDIDs and Thread CIDs valid for SoCs that support Matter applications:
 
-* `nRF52840 Compatibility Matrix <nRF52840 DK Compatibility Matrix_>`_
-* `nRF5340 Compatibility Matrix <nRF5340 DK Compatibility Matrix_>`_
-* `nRF54L15 Compatibility Matrix <nRF54L15 DK Compatibility Matrix_>`_
+* `nRF52840 Compatibility Matrix <nRF52840 Compatibility Matrix_>`_
+* `nRF5340 Compatibility Matrix <nRF5340 Compatibility Matrix_>`_
+* `nRF54L15 Compatibility Matrix <nRF54L15 SoC Compatibility Matrix_>`_
 
 Matter certification process variants
 *************************************

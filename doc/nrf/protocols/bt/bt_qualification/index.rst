@@ -28,7 +28,7 @@ This allows you to speed up your product's qualification process by omitting a t
 
 The |NCS| contains qualified portions of various Bluetooth features (for example, :ref:`ug_ble_controller_softdevice` versions).
 If your product uses a qualified Bluetooth stack provided as part of the |NCS|, you can inherit this qualification from Nordic Semiconductor, provided that you do not introduce any changes to the stack.
-To find the QDID, go to the Compatibility Matrix relevant for the SoC or SiP model you use (for example, the `nRF52840 DK Compatibility Matrix`_), and open the Bluetooth QDID section.
+To find the QDID, go to the Compatibility Matrix relevant for the SoC or SiP model you use (for example, the `nRF52840 Compatibility Matrix`_), and open the Bluetooth QDID section.
 
 Generally, the qualified designs from Nordic Semiconductor combine many features together, but when you create a product or product line, you might not need some optional features.
 In this case, you can create a subset design that contains only the features you want to inherit from the qualified design.
