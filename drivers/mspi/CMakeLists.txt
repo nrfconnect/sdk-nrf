@@ -13,7 +13,7 @@ if(CONFIG_MSPI_NRF_SQSPI)
 
   dt_comp_path(sqspi_path COMPATIBLE "nordic,nrf-sqspi" IDX 0)
   dt_reg_addr(sqspi_addr PATH ${sqspi_path})
-  math(EXPR sqspi_sp_firmware_addr "${sqspi_addr} - 0x3c00")
+  math(EXPR sqspi_sp_firmware_addr "${sqspi_addr} - 0x3b40")
 
   zephyr_library_compile_definitions(
     NRF_SQSPI_ENABLED=1

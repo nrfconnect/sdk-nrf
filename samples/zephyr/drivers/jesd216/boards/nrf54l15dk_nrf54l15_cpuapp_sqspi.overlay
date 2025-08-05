@@ -48,11 +48,11 @@
 			#address-cells = <1>;
 			#size-cells = <1>;
 
-			sqspi: sqspi@3c00 {
+			sqspi: sqspi@3b40 {
 				compatible = "nordic,nrf-sqspi";
 				#address-cells = <1>;
 				#size-cells = <0>;
-				reg = <0x3c00 0x200>;
+				reg = <0x3b40 0x200>;
 				status = "okay";
 				zephyr,pm-device-runtime-auto;
 			};
