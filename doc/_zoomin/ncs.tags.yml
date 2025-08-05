@@ -397,7 +397,7 @@ mapping_topics:
   - nrf/libraries/others/esb.html: ["esb"]
   - nrf/libraries/others/fem_al.html: ["fem", "nrf21540"]
   - nrf/libraries/others/st25r3911b_nfc.html: ["nfc"]
-  - nrf/external_comp/bt_fast_pair.html: ["ble"]
+  - nrf/external_comp/bt_fast_pair/*.html: ["ble"]
   - nrf/external_comp/nrf_cloud.html: ["nrf-cloud"]
   - nrf/external_comp/avsystem.html: ["lte"]
   - nrf/releases_and_maturity/release_notes.html: ["release-notes"]
