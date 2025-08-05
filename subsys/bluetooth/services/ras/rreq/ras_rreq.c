@@ -1207,9 +1207,25 @@ void bt_ras_rreq_rd_subevent_data_parse(struct net_buf_simple *peer_ranging_data
 					bt_ras_rreq_subevent_header_cb_t subevent_header_cb,
 					bt_ras_rreq_step_data_cb_t step_data_cb, void *user_data)
 {
-	if (!peer_ranging_data_buf || !local_step_data_buf || peer_ranging_data_buf->len == 0 ||
-	    local_step_data_buf->len == 0) {
-		LOG_ERR("Tried to parse empty step data.");
+	bool error = false;
+
+	if (!peer_ranging_data_buf) {
+		LOG_ERR("No peer step data provided.");
+		error = true;
+	} else if (peer_ranging_data_buf->len == 0) {
+		LOG_ERR("Tried to parse empty peer step data.");
+		error = true;
+	}
+
+	if (!local_step_data_buf) {
+		LOG_ERR("No local step data provided.");
+		error = true;
+	} else if (local_step_data_buf->len == 0) {
+		LOG_ERR("Tried to parse empty local step data.");
+		error = true;
+	}
+
+	if (error) {
 		return;
 	}
 
