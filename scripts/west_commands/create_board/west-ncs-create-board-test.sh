@@ -20,6 +20,8 @@ declare -a SOCS=(
 	"nRF52840-QFAA"
 	"nRF52840-QIAA"
 	"nRF5340-QKAA"
+	"nRF54L05-QFAA"
+	"nRF54L10-QFAA"
 	"nRF54L15-QFAA"
 	"nRF9131-LACA"
 	"nRF9151-LACA"
@@ -58,8 +60,10 @@ for soc in "${SOCS[@]}"; do
 		west build -p -b $board/$soc_name/cpunet $HELLO_WORLD
 	elif [[ $soc == nRF54L* ]]; then
 		west build -p -b $board/$soc_name/cpuapp $HELLO_WORLD
-		# west build -p -b $board/$soc_name/cpuflpr $HELLO_WORLD
-		# west build -p -b $board/$soc_name/cpuflpr/xip $HELLO_WORLD
+		if [[ $soc == nRF54L15* ]]; then
+			west build -p -b $board/$soc_name/cpuflpr $HELLO_WORLD
+			west build -p -b $board/$soc_name/cpuflpr/xip $HELLO_WORLD
+		fi
 	elif [[ $soc == nRF91* ]]; then
 		west build -p -b $board/$soc_name $HELLO_WORLD
 		west build -p -b $board/$soc_name/ns $HELLO_WORLD
