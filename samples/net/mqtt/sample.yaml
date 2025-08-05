@@ -63,7 +63,7 @@ tests:
       - ci_samples_net
     extra_args:
       - mqtt_SHIELD="nrf7002ek"
-      - mqtt_EXTRA_CONF_FILE=overlay-tls-nrf54l15-nrf70.conf
+      - mqtt_EXTRA_CONF_FILE=overlay-tls-nrf70.conf
   sample.net.mqtt.nrf54l15.wifi:
     sysbuild: true
     build_only: true
