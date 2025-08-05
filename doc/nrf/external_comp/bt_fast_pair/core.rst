@@ -1,18 +1,14 @@
-.. _ug_bt_fast_pair:
+.. _ug_bt_fast_pair_integration:
 
-Google Fast Pair integration
-############################
+Integration overview
+####################
 
 .. contents::
    :local:
    :depth: 2
 
-Google Fast Pair is a standard for pairing *Bluetooth®* and Bluetooth Low Energy (LE) devices with as little user interaction required as possible.
-Google also provides additional features built upon the Fast Pair standard.
-For detailed information about supported functionalities, see the official `Fast Pair`_ documentation.
 
-.. note::
-   The software maturity level for the Fast Pair support in the |NCS| is indicated at the use case level in the :ref:`Google Fast Pair use case support <software_maturity_fast_pair_use_case>` table and at the feature level in the :ref:`Google Fast Pair feature support <software_maturity_fast_pair_feature>` table.
+The |NCS| integrates the Fast Pair Provider role, facilitating communication between the Fast Pair Seeker (typically a smartphone) and the Provider (your device).
 
 Integration prerequisites
 *************************
@@ -31,7 +27,6 @@ Before you start the |NCS| integration with Fast Pair, make sure that the follow
 Solution architecture
 *********************
 
-The |NCS| integrates the Fast Pair Provider role, facilitating communication between the Fast Pair Seeker (typically a smartphone) and the Provider (your device).
 The integration involves following the instructions outlined in the :ref:`ug_integrating_fast_pair` section.
 The SDK supports extensions such as Battery Notification and Personalized Name, which can be included based on the specific use case requirements.
 
@@ -70,7 +65,7 @@ For more details on this extension, see the `Fast Pair Personalized Name extensi
 FMDN extension
 ==============
 
-The FMDN extension leverages the Find My Device network, which is a crowdsourced network consisting of millions of Android devices that use Bluetooth LE to detect missing devices and report their approximate locations back to their owners.
+The FMDN extension leverages the Find My Device network, which is a crowdsourced network consisting of millions of Android devices that use Bluetooth® LE to detect missing devices and report their approximate locations back to their owners.
 The entire process is end-to-end encrypted and anonymous, so no one else (including Google) can view device's location or information.
 The Find My Device network also includes features protecting the user against unwanted tracking.
 
@@ -103,20 +98,6 @@ This documentation also contains the FMDN Accessory specification, which is freq
 The FMDN Accessory specification integrates the Detecting Unwanted Location Trackers (DULT) specification, which is a joint standardization effort from Apple, Google and other companies to prevent unwanted tracking.
 Relevant FMDN sections of this guide describe the DULT integration with the FMDN extension.
 For more details on the DULT integration guidelines, see the `Fast Pair Unwanted Tracking Prevention Guidelines`_ documentation.
-
-Integration guides for helper modules
-*************************************
-
-This integration guide includes additional pages that discuss the Fast Pair helper modules.
-While these helper modules can provide additional functionality in your application, they are not strictly required for the Fast Pair integration.
-Each helper module is described on a dedicated page.
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Integration guides for helper modules:
-   :glob:
-
-   bt_fast_pair/*
 
 .. _ug_integrating_fast_pair:
 

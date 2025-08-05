@@ -527,7 +527,8 @@ NRF = [
     ("libraries/bluetooth_services/services/cts_client", "libraries/bluetooth/services/cts_client"),
     ("libraries/bluetooth_services/services/ddfs", "libraries/bluetooth/services/ddfs"),
     ("libraries/bluetooth_services/services/dfu_smp", "libraries/bluetooth/services/dfu_smp"),
-    ("libraries/bluetooth_services/services/fast_pair", "libraries/bluetooth/services/fast_pair"),
+    ("libraries/bluetooth_services/services/fast_pair", "libraries/bluetooth/services/fast_pair/core"),
+    ("libraries/bluetooth/services/fast_pair", "libraries/bluetooth/services/fast_pair/core"),
     ("libraries/bluetooth_services/services/gattp", "libraries/bluetooth/services/gattp"),
     ("libraries/bluetooth_services/services/hids", "libraries/bluetooth/services/hids"),
     ("libraries/bluetooth_services/services/hogp", "libraries/bluetooth/services/hogp"),
@@ -564,7 +565,8 @@ NRF = [
     ("libraries/others/hw_unique_key", "libraries/security/hw_unique_key"), # Hardware unique key
     ("libraries/others/identity_key", "libraries/security/identity_key"), # Identity key
     ("ecosystems_integrations", "integrations"), # Integrations (landing)
-    ("ug_bt_fast_pair", "external_comp/bt_fast_pair"), # Google Fast Pair integration
+    ("ug_bt_fast_pair", "external_comp/bt_fast_pair/index"), # Google Fast Pair integration
+    ("external_comp/bt_fast_pair", "external_comp/bt_fast_pair/index"),
     ("ug_edge_impulse", "external_comp/edge_impulse"), # Edge Impulse integration
     ("ug_memfault", "external_comp/memfault"), # Memfault integration
     ("ug_nrf_cloud", "external_comp/nrf_cloud"), # Using nRF Cloud with the nRF Connect SDK
