@@ -79,11 +79,11 @@ See the following configuration example for the nRF54L15 SoC:
 				#address-cells = <1>;
 				#size-cells = <1>;
 
-				sqspi: sqspi@3c00 {
+				sqspi: sqspi@3b40 {
 					compatible = "nordic,nrf-sqspi";
 					#address-cells = <1>;
 					#size-cells = <0>;
-					reg = <0x3c00 0x200>;
+					reg = <0x3b40 0x200>;
 					status = "okay";
 					zephyr,pm-device-runtime-auto;
 				};
@@ -157,11 +157,11 @@ The following example configuration for the nRF54H20 SoC sets up the necessary p
 				#address-cells = <1>;
 				#size-cells = <1>;
 
-				sqspi: sqspi@3e00 {
+				sqspi: sqspi@3d40 {
 					compatible = "nordic,nrf-sqspi";
 					#address-cells = <1>;
 					#size-cells = <0>;
-					reg = <0x3e00 0x200>;
+					reg = <0x3d40 0x200>;
 					zephyr,pm-device-runtime-auto;
 					memory-regions = <&sqspi_buffers>;
 				};
