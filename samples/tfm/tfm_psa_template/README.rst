@@ -151,7 +151,7 @@ The following steps are an example of how to generate the keys and update the co
 #. Update the :file:`sysbuild.conf` file to set the private signing keys for MCUboot and NSIB:
 
    .. note::
-        Use only absolute paths for ``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`` and ``SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE``.
+        Use only absolute paths for :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` and :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE`.
 
    .. code-block:: console
 

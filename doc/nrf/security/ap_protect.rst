@@ -213,7 +213,7 @@ For hardware protection, the ``UICR.APPROTECT`` register should be written as in
     For multi-image builds, :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK` needs to be set for the first image (usually a bootloader).
     Otherwise, the software AP-Protect will not be sufficient as the debugger can be attached to the device after the first image opens the software AP-Protect, which is the default operation.
 
-    You can set this option manually or use sysbuild's ``SB_CONFIG_APPROTECT_LOCK`` Kconfig option to set it for all images at once.
+    You can set this option manually or use sysbuild's :kconfig:option:`SB_CONFIG_APPROTECT_LOCK` Kconfig option to set it for all images at once.
 
 .. _app_approtect_ncs_user_handling:
 
@@ -233,7 +233,7 @@ See the SoC or SiP hardware documentation for more information.
     The default value is to open the device.
     This allows the debugger to be attached to the device.
 
-    You can set this option manually for each image or use sysbuild's ``SB_CONFIG_APPROTECT_USER_HANDLING`` Kconfig option to set it for all images at once.
+    You can set this option manually for each image or use sysbuild's :kconfig:option:`SB_CONFIG_APPROTECT_USER_HANDLING` Kconfig option to set it for all images at once.
 
 .. _app_approtect_ncs_use_uicr:
 
@@ -342,7 +342,7 @@ For hardware protection, the ``UICR.SECUREAPPROTECT`` register should be written
     For multi-image builds, :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK` needs to be set for the first image (usually a bootloader).
     Otherwise, the software Secure AP-Protect will not be sufficient as the debugger can be attached to the SPE after the first image opens the software Secure AP-Protect, which is the default operation.
 
-    You can set this option manually or use sysbuild's ``SB_CONFIG_SECURE_APPROTECT_LOCK`` Kconfig option to enable it for all images.
+    You can set this option manually or use sysbuild's :kconfig:option:`SB_CONFIG_SECURE_APPROTECT_LOCK` Kconfig option to enable it for all images.
 
 Enabling software Secure AP-Protect with :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING`
 ----------------------------------------------------------------------------------------------------
@@ -360,7 +360,7 @@ See the SoC or SiP hardware documentation for more information.
     The default value is to open the device.
     This allows the debugger to be attached to the device.
 
-    You can set this option manually for each image or use sysbuild's ``SB_CONFIG_SECURE_APPROTECT_USER_HANDLING`` Kconfig option to set it for all images at once.
+    You can set this option manually for each image or use sysbuild's :kconfig:option:`SB_CONFIG_SECURE_APPROTECT_USER_HANDLING` Kconfig option to set it for all images at once.
 
 Disabling software Secure AP-Protect with :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USE_UICR`
 ------------------------------------------------------------------------------------------------
