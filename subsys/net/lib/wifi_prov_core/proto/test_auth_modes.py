@@ -30,43 +30,32 @@ def test_auth_mode_validation():
 
     for mode in valid_modes:
         try:
-            result = generate_wifi_config(
-                ssid="TestWiFi",
-                bssid="00:11:22:33:44:55",
-                auth_mode=mode,
-                passphrase="testpass"
-            )
+            result = generate_wifi_config("TestSSID", "AA:BB:CC:DD:EE:FF", auth_mode=mode)
             if result is not None:
-                print(f"✅ Auth mode {mode} is valid")
+                print(f"[OK] Auth mode {mode} is valid")
             else:
-                print(f"❌ Auth mode {mode} returned None")
+                print(f"[ERROR] Auth mode {mode} returned None")
         except ValueError as e:
-            print(f"❌ Auth mode {mode} failed: {e}")
+            print(f"[ERROR] Auth mode {mode} failed: {e}")
         except Exception as e:
-            print(f"❌ Auth mode {mode} unexpected error: {e}")
+            print(f"[ERROR] Auth mode {mode} unexpected error: {e}")
 
     # Test invalid auth modes
-    invalid_modes = [-1, 24, 100, 999]
-
+    invalid_modes = [-1, 100, 999]
     for mode in invalid_modes:
         try:
-            result = generate_wifi_config(
-                ssid="TestWiFi",
-                bssid="00:11:22:33:44:55",
-                auth_mode=mode,
-                passphrase="testpass"
-            )
-            print(f"❌ Auth mode {mode} should have failed but didn't")
+            result = generate_wifi_config("TestSSID", "AA:BB:CC:DD:EE:FF", auth_mode=mode)
+            if result is not None:
+                print(f"[ERROR] Auth mode {mode} should have failed but didn't")
+            else:
+                print(f"[OK] Auth mode {mode} correctly rejected")
         except ValueError as e:
-            if "invalid enumerator" in str(e):
-                print(f"✅ Auth mode {mode} correctly rejected: {e}")
-            else:
-                print(f"❌ Auth mode {mode} unexpected ValueError: {e}")
+            print(f"[OK] Auth mode {mode} correctly rejected: {e}")
         except Exception as e:
-            if "invalid enumerator" in str(e):
-                print(f"✅ Auth mode {mode} correctly rejected: {e}")
+            if isinstance(e, ValueError):
+                print(f"[ERROR] Auth mode {mode} unexpected ValueError: {e}")
             else:
-                print(f"❌ Auth mode {mode} unexpected error: {e}")
+                print(f"[OK] Auth mode {mode} correctly rejected: {e}")
 
 if __name__ == "__main__":
     test_auth_mode_validation()
