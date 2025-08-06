@@ -15,7 +15,7 @@ int main(void)
 	unsigned int cnt = 0;
 
 #ifdef CONFIG_FIRST_SLEEP_OFFSET
-	k_msleep(1000);
+	k_msleep(1001);
 #endif
 
 	LOG_INF("Multicore idle test on %s", CONFIG_BOARD_TARGET);
