@@ -9,5 +9,5 @@ option java_multiple_files = true;
 option java_package = "no.nordicsemi.android.wifi.provisioning";
 
 message Info {
-  required uint32 version = 2;
+  required uint32 version = 1;
 }
