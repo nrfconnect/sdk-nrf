@@ -32,7 +32,7 @@ extern "C" {
 #define RESULT_MSG_MAX_LENGTH      Result_size
 
 /* WiFi Provisioning Service Version */
-#define PROV_SVC_VER              0x01
+#define PROV_SVC_VER              0x02
 
 /**
  * @brief Handle received WiFi provisioning request
