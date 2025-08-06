@@ -70,7 +70,7 @@ static void decode_response(const uint8_t *data, size_t len)
 
 			if (response.device_status.has_connection_info) {
 				LOG_INF("  Connection Info:");
-				LOG_INF("    IP4 Addr: %02x:%02x:%02x:%02x",
+				LOG_INF("    IP4 Addr: %d.%d.%d.%d",
 					response.device_status.connection_info.ip4_addr.bytes[0],
 					response.device_status.connection_info.ip4_addr.bytes[1],
 					response.device_status.connection_info.ip4_addr.bytes[2],
