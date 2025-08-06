@@ -37,7 +37,8 @@ if(CONFIG_WIFI_PROV_CONFIG)
         OUTPUT ${WIFI_CONFIG_BIN}
         COMMAND ${WIFI_CONFIG_CMD}
         DEPENDS ${WIFI_CONFIG_SCRIPT}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        DEPENDS wifi_prov_core
+        WORKING_DIRECTORY ${PROTO_DIR}
         COMMENT "Generating sample WiFi configuration"
     )
 

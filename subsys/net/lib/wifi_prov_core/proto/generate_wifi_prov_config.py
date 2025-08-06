@@ -23,34 +23,10 @@ try:
     from request_pb2 import Request, WifiConfig, EnterpriseCertConfig
     from common_pb2 import WifiInfo, AuthMode, Band, OpCode
 except ImportError:
-    # Auto-generate Python protobuf files if they don't exist
-    print("Python protobuf definitions not found. Auto-generating...")
-    import subprocess
-
-    # Check if protoc is available
-    try:
-        subprocess.run(['protoc', '--version'], capture_output=True, check=True)
-    except (subprocess.CalledProcessError, FileNotFoundError):
-        print("Error: 'protoc' not found. Please install protobuf compiler.")
-        sys.exit(1)
-
-    # Generate Python protobuf files
-    proto_files = ['request.proto', 'common.proto', 'response.proto', 'result.proto', 'version.proto']
-    try:
-        # Get the directory where this script is located
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-
-        # Run protoc from the script directory where .proto files are located
-        subprocess.run(['protoc', '--python_out=' + script_dir] + proto_files,
-                      cwd=script_dir, check=True)
-        print("✅ Generated Python protobuf definitions")
-
-        # Import the generated modules
-        from request_pb2 import Request, WifiConfig, EnterpriseCertConfig
-        from common_pb2 import WifiInfo, AuthMode, Band, OpCode
-    except subprocess.CalledProcessError as e:
-        print(f"Error generating protobuf definitions: {e}")
-        sys.exit(1)
+    print("Error: Python protobuf defigdnitions not found.")
+    print("Please ensure the CMake build has generated the protobuf files.")
+    print("The files should be generated automatically during the build process.")
+    sys.exit(1)
 
 def read_cert_file(file_path):
     """Read certificate file and return as bytes.
