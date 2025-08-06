@@ -78,7 +78,7 @@ def check_required_files(cert_dir):
         print(f"Error: Missing required certificate files: {missing_files}")
         return False
 
-    print(f"✅ All required certificate files found in {cert_dir}")
+    print(f"[OK] All required certificate files found in {cert_dir}")
     return True
 
 def generate_wifi_config(ssid, bssid, channel=6, band=1, auth_mode=5,
@@ -142,6 +142,7 @@ def generate_wifi_config(ssid, bssid, channel=6, band=1, auth_mode=5,
 
         # Handle EAP-TLS mode
         if cert_dir is not None:
+            # Check if all required files exist
             if not check_required_files(cert_dir):
                 return None
 
@@ -155,10 +156,10 @@ def generate_wifi_config(ssid, bssid, channel=6, band=1, auth_mode=5,
             client_cert2_data = read_cert_file(os.path.join(cert_dir, 'client2.pem'))
             private_key2_data = read_cert_file(os.path.join(cert_dir, 'client-key2.pem'))
 
-            print("✅ Successfully read all certificate files")
+            print("[OK] Successfully read all certificate files")
 
             # Create EnterpriseCertConfig
-            # MbedTLS uses null-terminator to distinguis b/w PEM and DER formats
+            # MbedTLS uses null-terminator to distinguish b/w PEM and DER formats
             def add_null_terminator(data):
                 if data and not data.endswith(b'\0'):
                     return data + b'\0'
@@ -177,15 +178,15 @@ def generate_wifi_config(ssid, bssid, channel=6, band=1, auth_mode=5,
             cert_config.password = password
 
             wifi_config.certs.CopyFrom(cert_config)
-            print("✅ EAP-TLS mode configured")
+            print("[OK] EAP-TLS mode configured")
 
         # Handle Personal mode
         elif passphrase is not None:
             wifi_config.passphrase = passphrase.encode('utf-8')
-            print("✅ Personal mode configured")
+            print("[OK] Personal mode configured")
 
         else:
-            print("❌ Error: Must specify either --cert-dir (EAP-TLS) or --passphrase (Personal)")
+            print("[ERROR] Error: Must specify either --cert-dir (EAP-TLS) or --passphrase (Personal)")
             return None
 
         # Create Request
@@ -193,14 +194,14 @@ def generate_wifi_config(ssid, bssid, channel=6, band=1, auth_mode=5,
         request.op_code = OpCode.SET_CONFIG
         request.config.CopyFrom(wifi_config)
 
-        print("✅ Successfully created protobuf message")
+        print("[OK] Successfully created protobuf message")
         return request
 
     except ValueError as e:
-        print(f"❌ Error creating configuration: {e}")
+        print(f"[ERROR] Error creating configuration: {e}")
         raise  # Re-raise ValueError to be caught by caller
     except Exception as e:
-        print(f"❌ Error creating configuration: {e}")
+        print(f"[ERROR] Error creating configuration: {e}")
         return None
 
 def main():
@@ -291,12 +292,12 @@ Examples:
         from google.protobuf.json_format import MessageToDict
 
         json_data = MessageToDict(request, preserving_proto_field_name=True)
-        print("📄 JSON Configuration:")
+        print("[JSON] JSON Configuration:")
         print(json.dumps(json_data, indent=2))
         print()
 
     # Always show encoded protobuf string
-    print("🔧 Encoded Protobuf (Base64):")
+    print("[PROTO] Encoded Protobuf (Base64):")
     print(base64.b64encode(serialized).decode('utf-8'))
     print()
 
@@ -309,14 +310,14 @@ Examples:
             json_data = MessageToDict(request, preserving_proto_field_name=True)
             with open(args.output, 'w') as f:
                 json.dump(json_data, f, indent=2)
-            print(f"✅ JSON configuration written to: {args.output}")
+            print(f"[OK] JSON configuration written to: {args.output}")
         else:
             # Save as binary protobuf
             with open(args.output, 'wb') as f:
                 f.write(serialized)
-            print(f"✅ Binary protobuf written to: {args.output}")
+            print(f"[OK] Binary protobuf written to: {args.output}")
 
-    print(f"📊 Protobuf size: {len(serialized)} bytes")
+    print(f"[INFO] Protobuf size: {len(serialized)} bytes")
 
         # Get auth mode name based on proto AuthMode enum (backward compatible)
     auth_names = {
