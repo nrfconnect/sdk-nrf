@@ -22,8 +22,7 @@ __weak bool self_suspend_req(void)
 	return false;
 }
 
-K_THREAD_DEFINE(thread_id, 500, thread_definition, NULL, NULL, NULL,
-				5, 0, 0);
+K_THREAD_DEFINE(thread_id, 1024, thread_definition, NULL, NULL, NULL, 5, 0, 0);
 
 void timer_handler(struct k_timer *dummy)
 {
