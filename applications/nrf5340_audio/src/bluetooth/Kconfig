@@ -43,41 +43,74 @@ config BT_AUDIO_CONCURRENT_TX_STREAMS_MAX
 	  The maximum number of concurrent streams supported in the TX direction.
 	  This is the maximum number of streams that can be active at the same time.
 
-config BT_AUDIO_PREF_SAMPLE_RATE_VALUE
+config BT_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE
 	hex
-	default 0x03 if BT_AUDIO_PREF_SAMPLE_RATE_16KHZ
-	default 0x05 if BT_AUDIO_PREF_SAMPLE_RATE_24KHZ
-	default 0x08 if BT_AUDIO_PREF_SAMPLE_RATE_48KHZ
+	default 0x03 if BT_AUDIO_PREF_SINK_SAMPLE_RATE_16KHZ
+	default 0x05 if BT_AUDIO_PREF_SINK_SAMPLE_RATE_24KHZ
+	default 0x08 if BT_AUDIO_PREF_SINK_SAMPLE_RATE_48KHZ
 
-choice BT_AUDIO_PREF_SAMPLE_RATE
-	prompt "Preferred BT audio sample rate"
-	default BT_AUDIO_PREF_SAMPLE_RATE_16KHZ if BT_BAP_BROADCAST_16_2_1
-	default BT_AUDIO_PREF_SAMPLE_RATE_16KHZ if BT_BAP_BROADCAST_16_2_2
-	default BT_AUDIO_PREF_SAMPLE_RATE_16KHZ if BT_BAP_UNICAST_16_2_1
-	default BT_AUDIO_PREF_SAMPLE_RATE_24KHZ if STREAM_BIDIRECTIONAL
-	default BT_AUDIO_PREF_SAMPLE_RATE_24KHZ if BT_BAP_BROADCAST_24_2_1
-	default BT_AUDIO_PREF_SAMPLE_RATE_24KHZ if BT_BAP_BROADCAST_24_2_2
-	default BT_AUDIO_PREF_SAMPLE_RATE_24KHZ if BT_BAP_UNICAST_24_2_1
-	default BT_AUDIO_PREF_SAMPLE_RATE_48KHZ
+choice BT_AUDIO_PREF_SINK_SAMPLE_RATE
+	prompt "Preferred BT audio sink sample rate"
+	default BT_AUDIO_PREF_SINK_SAMPLE_RATE_16KHZ if BT_BAP_BROADCAST_16_2_1
+	default BT_AUDIO_PREF_SINK_SAMPLE_RATE_16KHZ if BT_BAP_BROADCAST_16_2_2
+	default BT_AUDIO_PREF_SINK_SAMPLE_RATE_16KHZ if BT_BAP_UNICAST_16_2_1
+	default BT_AUDIO_PREF_SINK_SAMPLE_RATE_24KHZ if STREAM_BIDIRECTIONAL
+	default BT_AUDIO_PREF_SINK_SAMPLE_RATE_24KHZ if BT_BAP_BROADCAST_24_2_1
+	default BT_AUDIO_PREF_SINK_SAMPLE_RATE_24KHZ if BT_BAP_BROADCAST_24_2_2
+	default BT_AUDIO_PREF_SINK_SAMPLE_RATE_24KHZ if BT_BAP_UNICAST_24_2_1
+	default BT_AUDIO_PREF_SINK_SAMPLE_RATE_48KHZ
 	help
 	  Select the preferred sample rate to stream if there are more than one to choose from.
 	  Only valid when used by unicast_client if CONFIG_SAMPLE_RATE_CONVERTER=y and
 	  CONFIG_AUDIO_SAMPLE_RATE_48000_HZ=y, meaning 16, 24, and 48kHz are supported.
 
-config  BT_AUDIO_PREF_SAMPLE_RATE_48KHZ
+config  BT_AUDIO_PREF_SINK_SAMPLE_RATE_48KHZ
 	bool "48 kHz"
 	help
-	  Select 48000 Hz as the preferred sample rate.
+	  Select 48000 Hz as the preferred sink sample rate.
 
-config  BT_AUDIO_PREF_SAMPLE_RATE_24KHZ
+config  BT_AUDIO_PREF_SINK_SAMPLE_RATE_24KHZ
 	bool "24 kHz"
 	help
-	  Select 24000 Hz as the preferred sample rate.
+	  Select 24000 Hz as the preferred sink sample rate.
 
-config  BT_AUDIO_PREF_SAMPLE_RATE_16KHZ
+config  BT_AUDIO_PREF_SINK_SAMPLE_RATE_16KHZ
 	bool "16 kHz"
 	help
-	  Select 16000 Hz as the preferred sample rate.
+	  Select 16000 Hz as the preferred sink sample rate.
+endchoice
+
+config BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_VALUE
+	hex
+	default 0x03 if BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_16KHZ
+	default 0x05 if BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_24KHZ
+	default 0x08 if BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_48KHZ
+
+choice BT_AUDIO_PREF_SOURCE_SAMPLE_RATE
+	prompt "Preferred BT audio source sample rate"
+	default BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_16KHZ if BT_BAP_UNICAST_16_2_1
+	default BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_24KHZ if STREAM_BIDIRECTIONAL
+	default BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_24KHZ if BT_BAP_UNICAST_24_2_1
+	default BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_48KHZ
+	help
+	  Select the preferred sample rate to stream if there are more than one to choose from.
+	  Only valid when used by unicast_client if CONFIG_SAMPLE_RATE_CONVERTER=y and
+	  CONFIG_AUDIO_SAMPLE_RATE_48000_HZ=y, meaning 16, 24, and 48kHz are supported.
+
+config  BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_48KHZ
+	bool "48 kHz"
+	help
+	  Select 48000 Hz as the preferred source sample rate.
+
+config  BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_24KHZ
+	bool "24 kHz"
+	help
+	  Select 24000 Hz as the preferred source sample rate.
+
+config  BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_16KHZ
+	bool "16 kHz"
+	help
+	  Select 16000 Hz as the preferred source sample rate.
 endchoice
 
 #----------------------------------------------------------------------------#
