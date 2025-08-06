@@ -856,6 +856,8 @@ static void button_changed(uint32_t button_state, uint32_t has_changed)
 
 	uint32_t buttons = button_state & has_changed;
 
+	printk("Button state changed: 0x%08x \n", buttons);
+
 	if (k_msgq_num_used_get(&mitm_queue)) {
 		if (buttons & KEY_PAIRING_ACCEPT) {
 			pairing_button_pressed = true;
