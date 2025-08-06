@@ -26,7 +26,8 @@ message WifiConfig {
   optional WifiInfo wifi          = 1;
   optional bytes passphrase       = 2;
   optional bool volatileMemory    = 3;
-  optional EnterpriseCertConfig certs = 4;
+  optional bool anyChannel        = 4; // Added for Android app compatibility (unused)
+  optional EnterpriseCertConfig certs = 5;
 }
 
 message Request {
