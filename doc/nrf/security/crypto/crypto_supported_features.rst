@@ -2033,7 +2033,7 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_NO_PADDING`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_PKCS7`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM_NO_TAG`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM_STAR_NO_TAG`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_STREAM_CIPHER`
 
    .. tab:: nRF53 Series
@@ -2070,7 +2070,7 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_NO_PADDING`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_PKCS7`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM_NO_TAG`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM_STAR_NO_TAG`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_STREAM_CIPHER`
 
    .. tab:: nRF54 Series
@@ -2107,7 +2107,7 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_NO_PADDING`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_PKCS7`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM_NO_TAG`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM_STAR_NO_TAG`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_STREAM_CIPHER`
 
    .. tab:: nRF91 Series
@@ -2144,7 +2144,7 @@ The following tables show the ``CONFIG_PSA_USE_*`` Kconfig options for configuri
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_NO_PADDING`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_PKCS7`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM_NO_TAG`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM_STAR_NO_TAG`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_STREAM_CIPHER`
 
 
