@@ -205,6 +205,7 @@ NCSDK-31457: Implementation of L2CAP PDU recombination through ACL in pool
   When the Host and Controller run on separate cores, the ``<err> bt_hci_driver: No available ACL buffers!`` error might be printed.
 
   **Workaround:** Increase the value of the :kconfig:option:`CONFIG_BT_BUF_ACL_RX_COUNT_EXTRA` Kconfig option.
+  This workaround is only applicable for the |NCS| v3-0-2, v3-0-1 and v3-0-0 releases.
 
 .. rst-class:: v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-2 v2-9-1 v2-9-0 v2-8-0
 
