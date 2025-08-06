@@ -2,7 +2,13 @@
 	status = "okay";
 };
 
+&gpio6 {
+	status = "okay";
+	zephyr,pm-device-runtime-auto;
+};
+
 &exmif {
+	status = "okay";
 	zephyr,pm-device-runtime-auto;
 };
 

@@ -52,6 +52,7 @@
 
 &gpio0 {
 	status = "okay";
+	zephyr,pm-device-runtime-auto;
 };
 
 &gpiote130 {
