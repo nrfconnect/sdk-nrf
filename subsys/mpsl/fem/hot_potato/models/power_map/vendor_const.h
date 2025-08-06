@@ -50,7 +50,7 @@ extern "C" {
 #define NUM_ATT_STATES       16U
 
 #define MIN_SUPPORTED_POWER  0
-#define NUM_SUPPORTED_POWERS 21
+#define NUM_SUPPORTED_POWERS 22
 #define MAX_SUPPORTED_POWER  (MIN_SUPPORTED_POWER + NUM_SUPPORTED_POWERS - 1)
 
 #ifdef __cplusplus
