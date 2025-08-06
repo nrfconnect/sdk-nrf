@@ -594,7 +594,7 @@ int main(void)
 	ERR_CHK_MSG(ret, "Failed to enable broadcaster(s)");
 
 	ret = audio_system_config_set(
-		bt_audio_codec_cfg_freq_to_freq_hz(CONFIG_BT_AUDIO_PREF_SAMPLE_RATE_VALUE),
+		bt_audio_codec_cfg_freq_to_freq_hz(CONFIG_BT_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE),
 		CONFIG_BT_AUDIO_BITRATE_BROADCAST_SRC, VALUE_NOT_SET);
 	ERR_CHK_MSG(ret, "Failed to set sample- and bitrate");
 
