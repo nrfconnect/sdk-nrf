@@ -390,6 +390,27 @@ int set_monotonic_counter(uint16_t counter_desc, counter_t new_counter)
 	return 0;
 }
 
+int is_monotonic_counter_update_possible(uint16_t counter_desc)
+{
+	int err;
+
+	const counter_t *next_counter_addr;
+	counter_t current_cnt_value;
+
+	err = get_counter(counter_desc, &current_cnt_value, &next_counter_addr);
+	(void) current_cnt_value;
+
+	if (err != 0) {
+		return err;
+	}
+
+	if (next_counter_addr == NULL) {
+		err = -ENOMEM;
+	}
+
+	return err;
+}
+
 static lcs_data_t bl_storage_lcs_get(uint32_t address)
 {
 #if defined(CONFIG_NRFX_NVMC)
