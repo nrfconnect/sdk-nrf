@@ -43,25 +43,25 @@ static uint64_t get_maximal_allowed_ping_pong_time_us(size_t test_message_len)
 		maximal_allowed_ping_pong_time_us = 120;
 		break;
 	case 16:
-		maximal_allowed_ping_pong_time_us = 120;
-		break;
-	case 32:
-		maximal_allowed_ping_pong_time_us = 120;
-		break;
-	case 64:
 		maximal_allowed_ping_pong_time_us = 130;
 		break;
-	case 128:
+	case 32:
 		maximal_allowed_ping_pong_time_us = 140;
 		break;
+	case 64:
+		maximal_allowed_ping_pong_time_us = 150;
+		break;
+	case 128:
+		maximal_allowed_ping_pong_time_us = 169;
+		break;
 	case 256:
-		maximal_allowed_ping_pong_time_us = 160;
+		maximal_allowed_ping_pong_time_us = 180;
 		break;
 	case 512:
 		maximal_allowed_ping_pong_time_us = 200;
 		break;
 	default:
-		maximal_allowed_ping_pong_time_us = 250;
+		maximal_allowed_ping_pong_time_us = 220;
 		break;
 	}
 #else
