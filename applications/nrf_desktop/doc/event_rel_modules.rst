@@ -39,6 +39,31 @@ Sink modules for ble_peer_event
 * :ref:`nrf_desktop_ble_state`
 
 
+.. _nrf_desktop_button_event_sources:
+
+Source modules for button_event
+===============================
+
+* :ref:`nrf_desktop_buttons`
+* :ref:`nrf_desktop_buttons_sim`
+* :ref:`nrf_desktop_fn_keys`
+
+.. _nrf_desktop_button_event_sinks:
+
+Sink modules for button_event
+=============================
+
+* :ref:`nrf_desktop_buttons_sim`
+* :ref:`nrf_desktop_fn_keys`
+* :ref:`nrf_desktop_motion`
+* :ref:`nrf_desktop_passkey`
+* :ref:`nrf_desktop_click_detector`
+* :ref:`nrf_desktop_hid_provider_consumer_ctrl`
+* :ref:`nrf_desktop_hid_provider_keyboard`
+* :ref:`nrf_desktop_hid_provider_mouse`
+* :ref:`nrf_desktop_hid_provider_system_ctrl`
+
+
 .. _nrf_desktop_config_event_sources:
 
 Source modules for config_event
@@ -80,7 +105,10 @@ Source modules for hid_report_event
 ===================================
 
 * :ref:`nrf_desktop_hid_forward`
-* :ref:`nrf_desktop_hid_state`
+* :ref:`nrf_desktop_hid_provider_consumer_ctrl`
+* :ref:`nrf_desktop_hid_provider_keyboard`
+* :ref:`nrf_desktop_hid_provider_mouse`
+* :ref:`nrf_desktop_hid_provider_system_ctrl`
 * :ref:`nrf_desktop_hids`
 * :ref:`nrf_desktop_usb_state`
 
@@ -179,6 +207,10 @@ Sink modules for module_state_event
 * :ref:`nrf_desktop_fn_keys`
 * :ref:`nrf_desktop_hfclk_lock`
 * :ref:`nrf_desktop_hid_forward`
+* :ref:`nrf_desktop_hid_provider_consumer_ctrl`
+* :ref:`nrf_desktop_hid_provider_keyboard`
+* :ref:`nrf_desktop_hid_provider_mouse`
+* :ref:`nrf_desktop_hid_provider_system_ctrl`
 * :ref:`nrf_desktop_hid_state`
 * :ref:`nrf_desktop_info`
 * :ref:`nrf_desktop_led_state`
