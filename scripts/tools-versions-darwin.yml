@@ -1,4 +1,6 @@
 # Requirement file for native tools on Darwin 86 and aarch64
+# On Windows hardcoded version of gn is used: 2223 (6e8e0d6d4a15)
+
 python:
   version: 3.12.4
 git:
