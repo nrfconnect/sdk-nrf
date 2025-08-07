@@ -1,13 +1,13 @@
 .. _wifi_provisioning_internal_sample:
 
-Wi-Fi Provisioning Internal Sample
-##################################
+Wi-Fi: Provisioning Internal
+############################
 
 .. contents::
    :local:
    :depth: 2
 
-This sample demonstrates the internal Wi-Fi® provisioning functionality using the decoupled Wi-Fi provisioning library.
+The Provisioning Internal sample demonstrates the internal Wi-Fi® provisioning functionality using the decoupled Wi-Fi provisioning library.
 The sample demonstrates proper integration of the Wi-Fi provisioning library with comprehensive testing capabilities and human-readable protocol decoding.
 It provides shell commands to test all supported Wi-Fi provisioning operations.
 
@@ -21,7 +21,7 @@ The sample supports the following development kits:
 Overview
 ********
 
-The sample uses the core Wi-Fi provisioning library (``wifi_prov_core``) with a transport stub implementation that decodes and logs protobuf messages.
+The sample uses the :ref:`lib_wifi_prov_core` library with a transport stub implementation that decodes and logs protobuf messages.
 This allows testing of the provisioning protocol without requiring a Bluetooth® transport layer.
 
 Features
@@ -29,11 +29,11 @@ Features
 
 This sample demonstrates the following features:
 
-* Transport Decoupling - Uses the core Wi-Fi provisioning library without Bluetooth® dependencies.
-* Protobuf Decoding - Automatically decodes and logs all requests and responses.
-* Comprehensive Testing - Shell commands for all supported operations.
-* Raw Data Support - Ability to send custom binary data for testing.
-* Configurable Generation - Wi-Fi configuration generated from Kconfig options.
+* Transport decoupling - Uses the Wi-Fi Provisioning Core library without Bluetooth dependencies.
+* Protobuf decoding - Automatically decodes and logs all requests and responses.
+* Comprehensive testing - Shell commands for all supported operations.
+* Raw data support - Ability to send custom binary data for testing.
+* Configurable generation - Wi-Fi configuration generated from Kconfig options.
 
 Architecture
 ************
@@ -208,9 +208,9 @@ The sample provides the following shell commands for testing Wi-Fi provisioning 
    * - ``wifi_prov``
      - Send pregenerated Wi-Fi configuration data to the provisioning service.
    * - ``wifi_prov raw <base64_data>``
-     - Send raw protobuf-encoded data (Base64 format) to the provisioning service.
+     - Send raw protobuf-encoded data (in Base64 format) to the provisioning service.
    * - ``wifi_prov dump_scan <base64_data>``
-     - Decode and display scan results in human-readable format from Base64 encoded protobuf data.
+     - Decode and display scan results in a human-readable format from Base64 encoded protobuf data.
    * - ``wifi_prov get_status``
      - Send a ``GET_STATUS`` request to the provisioning service.
    * - ``wifi_prov start_scan``
@@ -230,6 +230,8 @@ Building and running
 .. |sample path| replace:: :file:`samples/wifi/provisioning/internal`
 
 .. include:: /includes/build_and_run.txt
+
+To build and run the sample, complete the following steps:
 
 1. Configure the sample (optional) by running the following command:
 
@@ -342,6 +344,8 @@ The sample automatically decodes and logs all protobuf messages:
 Directory structure
 *******************
 
+The directory structure of the sample is as follows:
+
 .. code-block:: text
 
     samples/wifi/provisioning/internal/
@@ -359,6 +363,6 @@ Generated files
 
 During the build process, the following files are generated:
 
-* :file:`wifi_config.h` - Header with Wi-Fi configuration data declarations
-* :file:`wifi_config.c` - C file with Wi-Fi configuration data definitions
+* :file:`wifi_config.h` - Header file with Wi-Fi configuration data declarations.
+* :file:`wifi_config.c` - Source file with Wi-Fi configuration data definitions.
 * Protobuf Python files - Generated from the :file:`*.proto` files for configuration.
