@@ -72,7 +72,7 @@ static int disable_next_w()
 #define RRAMC_REGION_TO_LOCK_ADDR NRF_RRAMC->REGION[3].CONFIG
 #define RRAMC_REGION_TO_LOCK_ADDR_H (((uint32_t)(&(RRAMC_REGION_TO_LOCK_ADDR))) >> 16)
 #define RRAMC_REGION_TO_LOCK_ADDR_L (((uint32_t)(&(RRAMC_REGION_TO_LOCK_ADDR))) & 0x0000fffful)
-static uint8_t ram_exec_buf[FUNCTION_BUFFER_LEN];
+static volatile uint8_t ram_exec_buf[FUNCTION_BUFFER_LEN];
 #endif /* CONFIG_SB_DISABLE_SELF_RWX */
 
 #ifdef CONFIG_UART_NRFX_UARTE
@@ -264,7 +264,7 @@ void bl_boot(const struct fw_info *fw_info)
 		"   bne  ram_cpy\n"
 		"   dsb\n"
 		/* Jump to ram */
-		"   bx   r5\n"
+	//	"   bx   r5\n"
 		/* CODE_UNREACHABLE */
 
 		".thumb_func\n"
