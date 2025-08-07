@@ -47,10 +47,20 @@ This eases the process of building and programming images for multiple developme
 The script is located in the :file:`applications/nrf5340_audio/tools/buildprog` directory.
 
   .. note::
-     The :file:`buildprog.py` script is an app-specific script for building and programming multiple kits and cores with various audio application configurations. The script will be deprecated in a future release. The audio applications will gradually shift only to using standard tools for building and programming development kits.
+     The :file:`buildprog.py` script is an app-specific script for building and programming multiple kits and cores with various audio application configurations.
+     The script will be deprecated in a future release.
+     The audio applications will gradually shift only to using standard tools for building and programming development kits.
 
-Preparing the JSON file
-=======================
+Step 1: Switching the west runner
+=================================
+
+Starting with the |NCS| v3.0.0, all Nordic Semiconductor :ref:`boards <app_boards>` are using the `nRF Util`_ as the default runner for the ``west flash`` command.
+
+The script uses ``nrfjprog`` as the default runner, which is part of the archived `nRF Command Line Tools`_.
+For this reason, update your application's :file:`CMakeLists.txt` file to use the ``nrfjprog`` runner as described in :ref:`programming_selecting_runner`.
+
+Step 2: Preparing the JSON file
+===============================
 
 The script depends on the settings defined in the :file:`nrf5340_audio_dk_devices.json` file.
 Before using the script, make sure to update this file with the following information for each development kit you want to use.
@@ -71,10 +81,10 @@ When preparing the JSON file, update the following fields:
 
 .. _nrf53_audio_app_building_script_running:
 
-Running the script
-==================
+Step 3: Running the script
+==========================
 
-The script handles building and parallel programming of multiple kits.
+The script handles building and programming multiple kits in parallel.
 The following sections explain these two steps separately.
 
 Script parameters for building
