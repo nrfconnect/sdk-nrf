@@ -71,14 +71,14 @@ static inline int mpsl_fem_utils_egu_channel_alloc(
 	(void)egu_instance_no;
 
 	/* The 802.15.4 radio driver is the only user of EGU peripheral on nRF5340 network core
-	 * and it uses channels: 0, 1, 2, 3, 4, 15. Therefore starting from channel 5, a consecutive
-	 * block of at most 10 channels can be allocated.
+	 * and it uses channels: 0, 1, 2, 3, 4, 5, 15. Therefore starting from channel 6,
+	 * a consecutive block of at most 9 channels can be allocated.
 	 */
-	if (size > 10U) {
+	if (size > 9U) {
 		return -ENOMEM;
 	}
 
-	uint8_t starting_channel = 5U;
+	uint8_t starting_channel = 6U;
 
 	for (int i = 0; i < size; i++) {
 		egu_channels[i] = starting_channel + i;
