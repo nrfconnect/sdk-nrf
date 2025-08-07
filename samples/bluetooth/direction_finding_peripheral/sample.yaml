@@ -5,7 +5,6 @@ sample:
 tests:
   sample.bluetooth.direction_finding_peripheral.aoa.sdc.nrf52_nrf53_54lx:
     sysbuild: true
-    build_only: true
     platform_allow:
       - nrf52833dk/nrf52833
       - nrf52833dk/nrf52820
@@ -27,6 +26,14 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "Bluetooth initialized"
+        - "Advertising successfully started"
+    timeout: 15
   sample.bluetooth.direction_finding_peripheral.aoa.bt_ll_sw_split.nrf52:
     sysbuild: false
     build_only: true

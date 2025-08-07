@@ -1,10 +1,23 @@
 sample:
   description: Bluetooth Nordic Status Message service sample
   name: Bluetooth LE Nordic Status Message service
+common:
+  harness: console
+  harness_config:
+    type: multi_line
+    ordered: true
+    regex:
+      - "Starting Bluetooth Peripheral Status sample"
+      - "Bluetooth initialized"
+      - "Advertising successfully started"
+  timeout: 15
+  tags:
+    - bluetooth
+    - ci_build
+    - sysbuild
 tests:
   sample.bluetooth.peripheral_nsms:
     sysbuild: true
-    build_only: true
     integration_platforms:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
@@ -31,13 +44,8 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
   sample.bluetooth.peripheral_nsms_no_security:
     sysbuild: true
-    build_only: true
     extra_args: CONFIG_BT_STATUS_SECURITY_ENABLED=n
     integration_platforms:
       - nrf52dk/nrf52832
@@ -66,7 +74,3 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild

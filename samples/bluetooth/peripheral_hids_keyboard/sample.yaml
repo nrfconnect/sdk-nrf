@@ -39,3 +39,4 @@ tests:
       regex:
         - "Starting Bluetooth Peripheral HIDS keyboard sample"
         - "Bluetooth initialized"
+    timeout: 15

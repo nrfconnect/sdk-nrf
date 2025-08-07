@@ -4,7 +4,6 @@ sample:
 tests:
   sample.bluetooth.peripheral_mds:
     sysbuild: true
-    build_only: true
     extra_configs:
       - CONFIG_MEMFAULT_NCS_PROJECT_KEY="dummy-key"
       - CONFIG_MEMFAULT_NCS_DEVICE_ID="dummy-device-id"
@@ -34,3 +33,12 @@ tests:
       - bluetooth
       - ci_build
       - sysbuild
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "Starting Bluetooth Memfault sample"
+        - "Bluetooth initialized"
+        - "Advertising successfully started"
+    timeout: 15

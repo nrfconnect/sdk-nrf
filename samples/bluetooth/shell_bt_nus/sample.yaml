@@ -4,7 +4,6 @@ sample:
 tests:
   sample.bluetooth.shell_bt_nus:
     sysbuild: true
-    build_only: true
     integration_platforms:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
@@ -31,3 +30,11 @@ tests:
       - bluetooth
       - ci_build
       - sysbuild
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "Starting Bluetooth NUS shell transport sample"
+        - "Advertising successfully started"
+    timeout: 15
