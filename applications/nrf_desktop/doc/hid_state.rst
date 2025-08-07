@@ -7,13 +7,12 @@ HID state module
    :local:
    :depth: 2
 
-The |hid_state| is required for generating reports from input data.
+The |hid_state| is required for communicating with the HID report providers to generate reports from input data.
 It is responsible for the following operations:
 
-* Aggregating data from user input sources.
 * Tracking state of the HID report subscriptions.
-* Forming the HID reports in either report or boot protocol.
-* Transmitting the HID reports to the right subscriber.
+* Notifying the HID report providers to form the HID reports in either report or boot protocol.
+* Notifying the HID report providers about state changes of the HID report subscriber connection.
 * Sending :c:struct:`led_event` based on the HID keyboard LED output reports.
 
 Module events
@@ -30,7 +29,7 @@ Configuration
 *************
 
 To enable the |hid_state|, use the :ref:`CONFIG_DESKTOP_HID_STATE_ENABLE <config_desktop_app_options>` Kconfig option that is implied by the :ref:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL <config_desktop_app_options>` option.
-An nRF Desktop peripheral uses the |hid_state| to generate HID reports based on the user input.
+An nRF Desktop peripheral uses the |hid_state| and HID report providers to generate HID reports based on the user input.
 For details related to HID configuration in the nRF Desktop, see the :ref:`nrf_desktop_hid_configuration` documentation.
 
 To send boot reports, enable the respective Kconfig option:
@@ -44,14 +43,6 @@ Number of supported HID data subscribers
 If your application configuration supports more than one HID data subscriber, you must align the maximum number of HID data subscribers that can be supported simultaneously (:ref:`CONFIG_DESKTOP_HID_STATE_SUBSCRIBER_COUNT <config_desktop_app_options>`).
 For example, to use a configuration that allows to simultaneously subscribe for HID reports from HID over GATT (BLE) and a single USB HID instance, set the value of this Kconfig option to ``2``.
 See the `Tracking state of transports`_ section for more details about HID subscribers.
-
-HID keymap
-==========
-
-The HID state module uses the :ref:`nrf_desktop_hid_keymap` to map an application-specific key ID to a HID report ID and HID usage ID pair.
-The module selects the :ref:`CONFIG_DESKTOP_HID_KEYMAP <config_desktop_app_options>` Kconfig option to enable the utility.
-Make sure to configure the HID keymap utility.
-See the utility's documentation for details.
 
 HID keyboard LEDs
 =================
@@ -88,130 +79,25 @@ You must define all of the mentioned data in this configuration file, and specif
    The configuration file should be included only by the configured module.
    Do not include the configuration file in other source files.
 
-Queuing keypresses
-==================
+HID report providers
+====================
 
-The module selects the :ref:`CONFIG_DESKTOP_HID_EVENTQ <config_desktop_app_options>` Kconfig option to enable the :ref:`nrf_desktop_hid_eventq`.
-The utility is used to temporarily queue key state changes (presses and releases) before the connection with the HID host is established.
-When a key state changes (it is pressed or released) before the connection is established, an element containing this key's usage ID is pushed onto the queue.
-
-Queue size
-----------
-
-With the :ref:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE <config_desktop_app_options>` Kconfig option, you can set the number of elements on the queue where the keys are stored before the connection is established.
-If there is no space in the queue to enqueue a new key state change, the oldest element is released.
-
-Report expiration
------------------
-
-With the :ref:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION <config_desktop_app_options>` Kconfig option, you can set the amount of time after which a queued key will be considered expired.
-The higher the value, the longer the period from which the nRF Desktop application will recall pressed keys when the connection with HID host is established.
-
-Handling keys state
-===================
-
-The module selects the :ref:`CONFIG_DESKTOP_KEYS_STATE <config_desktop_app_options>` Kconfig option to enable the :ref:`nrf_desktop_keys_state`.
-The utility is used to track the state of active keys after the connection with the HID host is established.
+The module selects the :ref:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_EVENT <config_desktop_app_options>` Kconfig option to enable :c:struct:`hid_report_provider_event` event support.
+The events are used to establish two-way callbacks between the |hid_state| and the HID report providers.
+The |hid_state| can request the HID report providers to generate HID reports and notify the providers about the connection state changes and report sent occurrences.
+The HID report providers are responsible for generating HID reports when requested by the |hid_state|.
+The HID report providers can also notify the |hid_state| when new data is available.
 
 Implementation details
 **********************
 
-The |hid_state| provides a routing mechanism between sources of input data and transport modules.
+The |hid_state| in association with the HID report providers provides a routing mechanism between sources of input data and transport modules.
 This can be associated with:
 
 * Receiving input events from :ref:`caf_buttons`, :ref:`nrf_desktop_wheel`, and :ref:`nrf_desktop_motion`.
 * Sending out HID reports to HID transports, for example, :ref:`nrf_desktop_hids` and :ref:`nrf_desktop_usb_state`.
 
-For the routing mechanism to work, the module performs the following operations:
-
-* `Linking input data with the right HID report`_
-* `Storing input data before the connection`_
-* `Tracking state of transports`_
-* `Tracking state of HID report notifications`_
-* `Forming HID reports`_
-
 Apart from the routing mechanism, the module is also responsible for `Handling HID keyboard LED state`_.
-
-Linking input data with the right HID report
-============================================
-
-Out of all available input data types, the following types are collected by the |hid_state|:
-
-* `Relative value data`_ (axes)
-* `Absolute value data`_ (buttons)
-
-Both types are stored in the :c:struct:`report_data` structure.
-
-Relative value data
--------------------
-
-This type of input data is related to the pointer coordinates and the wheel rotation.
-Both ``motion_event`` and ``wheel_event`` are sources of this type of data.
-
-To indicate a change to this input data, overwrite the value that is already stored.
-
-When either ``motion_event`` or ``wheel_event`` is received, the |hid_state| selects the :c:struct:`report_data` structure associated with the mouse HID report and stores the values at the right position within this structure's ``axes`` member.
-
-.. note::
-    The values of axes are stored every time the input data is received, but these values are cleared when a report is connected to the subscriber.
-    Consequently, values outside of the connection period are never retained.
-
-Absolute value data
--------------------
-
-This type of input data is related to buttons.
-The ``button_event`` is the source of this type of data.
-
-To indicate a change to this input data, overwrite the value that is already stored.
-
-Since keys on the board can be associated to a HID usage ID, and thus be part of different HID reports, the first step is to identify which report the key belongs to and what usage it represents.
-This is done by obtaining the key mapping from the :ref:`nrf_desktop_hid_keymap`.
-
-Once the mapping is obtained, the application checks if the report to which the usage belongs is connected:
-
-* If the report is connected, the :ref:`nrf_desktop_keys_state` instance is used to track the state of active keys associated with a given HID report.
-* If the report is not connected, the value is stored in the :ref:`nrf_desktop_hid_eventq` instance in the same structure.
-
-The difference between these operations is that storing value onto the queue (second case) preserves the order of input events.
-See the following section for more information about storing data before the connection.
-
-Storing input data before the connection
-========================================
-
-The storing approach before the connection depends on the data type:
-
-* The relative value data is not stored outside of the connection period.
-* The absolute value data is stored before the connection.
-
-The reason for this operation is to allow to track key presses that happen right after the device is woken up, but before it is able to connect to the HID host.
-
-When the device is disconnected and the input event with the absolute value data is received, the data is stored onto the :ref:`nrf_desktop_hid_eventq` instance, a member of :c:struct:`report_data` structure.
-This queue preserves an order at which input data events are received.
-
-Storing limitations
--------------------
-
-The number of events that can be inserted into the queue is limited using the :ref:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE <config_desktop_app_options>` Kconfig option.
-
-Discarding events
-    When there is no space for a new input event, the |hid_state| tries to free space by discarding the oldest event in the queue.
-    Events stored in the queue are automatically discarded after the period defined by :ref:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION <config_desktop_app_options>` option.
-
-    When discarding an event from the queue, the module checks if the key associated with the event is pressed.
-    This is to avoid missing key releases for earlier key presses when the keys from the queue are replayed to the host.
-    If a key release is missed, the host could stay with a key that is permanently pressed.
-    The discarding mechanism ensures that the host will always receive the correct key sequence.
-
-    .. note::
-        The |hid_state| can only discard an event if the event does not overlap any button that was pressed but not released, or if the button itself is pressed.
-        The event is released only when the following conditions are met:
-
-        * The associated key is not pressed anymore.
-        * Every key that was pressed after the associated key had been pressed is also released.
-
-If there is no space to store the input event in the queue and no old event can be discarded, the entire content of the queue is dropped to ensure the sanity.
-
-Once connection is established, the elements of the queue are replayed one after the other to the host, in a sequence of consecutive HID reports.
 
 Tracking state of transports
 ============================
@@ -242,18 +128,13 @@ Depending on the connection method, this event can be submitted:
 The :c:struct:`report_state` structure serves the following purposes:
 
 * Tracks the state of the connection.
-* Contains the link connecting the object to the right :c:struct:`report_data` structure from which the data is taken when the HID report is formed.
+* Contains the link connecting the object to the right :c:struct:`provider` structure which contains the HID report provider info such as report ID and API (:c:struct:`hid_report_provider_api`).
 * Tracks the number of reports of the associated type that were sent to the subscriber.
 
-Forming HID reports
-===================
+Requesting HID reports
+======================
 
-When a HID report is to be sent to the subscriber, the |hid_state| calls the function responsible for the report generation.
-The :c:struct:`report_data` structure is passed as an argument to this function.
-
-.. note::
-    The HID report formatting function must work according to the HID report descriptor (``hid_report_desc``).
-    The source file containing the descriptor is provided by the :ref:`CONFIG_DESKTOP_HID_REPORT_DESC <config_desktop_app_options>` Kconfig option.
+When a HID report is to be sent to the subscriber, the |hid_state| calls the appropriate function from the :c:struct:`hid_report_provider_api` to trigger the HID report provider to generate HID report.
 
 Handling HID keyboard LED state
 ===============================
