@@ -25,7 +25,7 @@ nRF5340 Audio DNs and QDIDs
 
 The following DNs (Design Numbers) and QDIDs (Qualified Design IDs) are related to the nRF5340 LE Audio applications:
 
-nRF5340 DK Bluetooth DNs/QDIDs
+nRF5340 Bluetooth DNs/QDIDs
    See `nRF5340 Bluetooth DNs and QDIDs Compatibility Matrix`_ for the DNs/QDIDs for nRF5340 LE Audio applications.
 
    A full Audio product DN will typically require DNs/QDIDs for Controller component, Host component, Profiles and Services component and LC3 codec component.
