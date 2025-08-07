@@ -1121,13 +1121,6 @@ The following table indicates the software maturity levels of the support for ea
               - nRF52832
               - nRF52833
               - nRF52840
-            * - **Thread + nRF21540 (GPIO)**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Supported
             * - **Thread - Full Thread Device (FTD)**
               - --
               - --
@@ -1221,8 +1214,6 @@ The following table indicates the software maturity levels of the support for ea
 
             * - Feature
               - nRF5340
-            * - **Thread + nRF21540 (GPIO)**
-              - --
             * - **Thread - Full Thread Device (FTD)**
               - Supported
             * - **Thread - Minimal Thread Device (MTD)**
@@ -1259,11 +1250,6 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L05
               - nRF54L10
               - nRF54L15
-            * - **Thread + nRF21540 (GPIO)**
-              - --
-              - --
-              - --
-              - --
             * - **Thread - Full Thread Device (FTD)**
               - --
               - --
@@ -1336,11 +1322,6 @@ The following table indicates the software maturity levels of the support for ea
               - nRF9151
               - nRF9160
               - nRF9161
-            * - **Thread + nRF21540 (GPIO)**
-              - --
-              - --
-              - --
-              - --
             * - **Thread - Full Thread Device (FTD)**
               - --
               - --
