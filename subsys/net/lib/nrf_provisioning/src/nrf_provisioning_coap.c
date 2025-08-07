@@ -309,6 +309,7 @@ static int send_coap_request(struct coap_client *client, uint8_t method, const c
 			     const uint8_t *payload, size_t len,
 			     struct nrf_provisioning_coap_context *const coap_ctx, bool confirmable)
 {
+	int ret;
 	int retries = 0;
 	struct coap_transmission_parameters params = coap_get_transmission_parameters();
 	static struct coap_client_option block2_option;
@@ -336,8 +337,8 @@ static int send_coap_request(struct coap_client *client, uint8_t method, const c
 		client_request.num_options = 1;
 	}
 
-	while (coap_client_req(client, coap_ctx->connect_socket, NULL, &client_request, NULL) ==
-	       -EAGAIN) {
+	while ((ret = coap_client_req(client, coap_ctx->connect_socket, NULL, &client_request,
+				      NULL)) == -EAGAIN) {
 		if (retries > RETRY_AMOUNT) {
 			break;
 		}
@@ -345,9 +346,12 @@ static int send_coap_request(struct coap_client *client, uint8_t method, const c
 		k_sleep(K_MSEC(params.ack_timeout));
 		retries++;
 	}
-	k_sem_take(&coap_response, K_FOREVER);
 
-	return 0;
+	if (ret == 0) {
+		return k_sem_take(&coap_response, K_SECONDS(240));
+	}
+
+	return ret;
 }
 
 static int max_token_len(void)
@@ -583,6 +587,7 @@ int nrf_provisioning_coap_req(struct nrf_provisioning_coap_context *const coap_c
 	char *auth_token = NULL;
 	struct cdc_context cdc_ctx;
 	bool finished = false;
+	int retries = 0;
 
 	coap_ctx->rx_buf = rx_buf;
 	coap_ctx->rx_buf_len = sizeof(rx_buf);
@@ -644,7 +649,7 @@ int nrf_provisioning_coap_req(struct nrf_provisioning_coap_context *const coap_c
 				LOG_INF("Finished");
 				finished = true;
 			}
-
+retry_response:
 			if (!socket_keep_open) {
 				ret = socket_connect(&coap_ctx->connect_socket);
 				if (ret < 0) {
@@ -660,6 +665,14 @@ int nrf_provisioning_coap_req(struct nrf_provisioning_coap_context *const coap_c
 			LOG_INF("Sending response to server");
 			ret = send_response(&client, coap_ctx, &cdc_ctx);
 			if (ret < 0) {
+				if (socket_keep_open && retries++ == 0) {
+					/* Try reconnecting */
+					socket_close(&coap_ctx->connect_socket);
+					socket_keep_open = false;
+					goto retry_response;
+				}
+				LOG_ERR("Failed to send response, ret %d", ret);
+
 				break;
 			}
 			/* Provisioning finished */
