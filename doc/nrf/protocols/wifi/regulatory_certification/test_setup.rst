@@ -139,8 +139,7 @@ This describes the flashing, running, and use of the appropriate console ports w
 Programming firmware in the nRF7002 setup
 =========================================
 
-Before you begin, make sure you have the nRF Util tool installed on your computer.
-See `Installing nRF Util`_ and `Installing and upgrading nRF Util commands`_ for instructions on how to install the nRF Util device utility.
+This procedure uses the `nRF Util`_ tool, which is part of the :ref:`nRF Connect SDK toolchain bundle <requirements_toolchain>` and you get it when you :ref:`gs_installing_toolchain`.
 
 To program firmware in the nRF7002 DK or EK setup, complete the following steps.
 
@@ -177,7 +176,7 @@ To program firmware in the nRF7002 DK or EK setup, complete the following steps.
       $  nrfutil device program --firmware merged_CPUNET.hex --core Network --options chip_erase_mode=ERASE_ALL,reset=RESET_SYSTEM
 
 #. To run the firmware on the nRF7002 DK or EK, reset the device.
-   You can press the **RESET** button, use the ``reset`` command in nRF Util, or power cycle the development kit.
+   You can press the **RESET** button, use the ``nrfutil device reset`` command in nRF Util, or power cycle the development kit.
 
    .. note::
       Set the baud rate to 115,200 bps.

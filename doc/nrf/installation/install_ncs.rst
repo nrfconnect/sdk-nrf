@@ -115,6 +115,8 @@ Depending on your preferred development environment, complete the following step
    .. group-tab:: Command line
 
       1. Open a terminal window.
+      #. Remove the lock on the nRF Util installation to be able to install other nRF Util commands.
+         See `Locking nRF Util home directory`_ in the tool documentation for more information.
       #. Run the following command to install the nRF Util's ``sdk-manager`` command:
 
          .. code-block:: console

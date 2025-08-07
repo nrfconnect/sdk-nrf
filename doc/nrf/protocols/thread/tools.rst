@@ -102,12 +102,22 @@ To program the nRF device with the RCP application, complete the following steps
 
       .. tab:: nRF52840 Dongle (USB transport)
 
-         a. Install nRF Util as described in `Installing nRF Util for nRF5 SDK`_.
+         This procedure uses the `nRF Util`_ tool, which is part of the :ref:`nRF Connect SDK toolchain bundle <requirements_toolchain>` and you get it when you :ref:`gs_installing_toolchain`.
+
+         1. Remove the lock on the nRF Util installation to be able to install other nRF Util commands.
+            See `Locking nRF Util home directory`_ in the tool documentation for more information.
+         #. Install nRF Util's ``nrf5sdk-tools`` command:
+
+            .. code-block:: console
+
+               nrfutil install nrf5sdk-tools
+
+            See `nrf5sdk-tools command overview`_ for more information.
          #. Generate the RCP firmware package:
 
             .. code-block:: console
 
-               nrfutil pkg generate --hw-version 52 --sd-req=0x00 \
+               nrfutil nrf5sdk-tools pkg generate --hw-version 52 --sd-req=0x00 \
                 --application build/zephyr/zephyr.hex --application-version 1 build/zephyr/zephyr.zip
 
          #. Connect the nRF52840 Dongle to the USB port.
@@ -117,7 +127,7 @@ To program the nRF device with the RCP application, complete the following steps
 
             .. code-block:: console
 
-               nrfutil dfu usb-serial -pkg build/zephyr/zephyr.zip -p /dev/ttyACM0
+               nrfutil nrf5sdk-tools dfu usb-serial -pkg build/zephyr/zephyr.zip -p /dev/ttyACM0
 
       .. tab:: nRF52840 Development Kit (UART transport)
 

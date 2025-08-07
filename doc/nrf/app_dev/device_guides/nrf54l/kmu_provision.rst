@@ -13,14 +13,8 @@ The |NCS| provides a west command, ``ncs-provision``, allowing to upload keys to
 Prerequisites
 *************
 
-First, ensure that the `nRF Util`_ tool is installed.
-It should install automatically during the setup of the |NCS| working environment.
-Once completed, install the required additional commands for nRF Util:
-
-.. parsed-literal::
-   :class: highlight
-
-    nrfutil install device
+You need the `nRF Util`_ tool, which you get as part of the :ref:`nRF Connect SDK toolchain bundle <requirements_toolchain>` when you :ref:`gs_installing_toolchain`.
+The bundle also provides the ``nrfutil device`` command, which you can use to program the keys to the device.
 
 Additionally, before provisioning, make sure you familiarized yourself with the :ref:`ug_nrf54l_developing_basics_kmu_provisioning_keys` section.
 
