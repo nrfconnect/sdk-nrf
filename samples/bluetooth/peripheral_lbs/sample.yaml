@@ -44,6 +44,7 @@ tests:
         - "Starting Bluetooth Peripheral LBS sample"
         - "Bluetooth initialized"
         - "Advertising successfully started"
+    timeout: 15
   sample.bluetooth.peripheral_lbs_minimal:
     sysbuild: true
     build_only: true

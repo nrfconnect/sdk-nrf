@@ -40,3 +40,4 @@ tests:
         - "Starting Bluetooth Central HIDS sample"
         - "Bluetooth initialized"
         - "Scanning successfully started"
+    timeout: 15

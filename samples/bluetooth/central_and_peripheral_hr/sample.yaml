@@ -2,9 +2,8 @@ sample:
   description: Bluetooth Low Energy central and peripheral heart rate relay sample
   name: Bluetooth LE Central and Peripheral HRS
 tests:
-  sample.bluetooth.central_and_peripheral_hr.build:
+  sample.bluetooth.central_and_peripheral_hr:
     sysbuild: true
-    build_only: true
     integration_platforms:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
@@ -31,3 +30,12 @@ tests:
       - bluetooth
       - ci_build
       - sysbuild
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "Starting Bluetooth Central and Peripheral Heart Rate relay sample"
+        - "Scanning started"
+        - "Advertising successfully started"
+    timeout: 15
