@@ -1,9 +1,9 @@
 #include <zephyr/autoconf.h>
 
-# In nRF54L15 we place the TF-M non-secure storage partitions after the
+# In nRF54L series devices we place the TF-M non-secure storage partitions after the
 # TF-M non-secure application to avoid splitting the secure/non-secure
 # partitions more than necessary.
-#if defined(CONFIG_SOC_NRF54L15_CPUAPP)
+#if defined(CONFIG_SOC_NRF54L_CPUAPP_COMMON)
 nvs_storage:
   placement:
     after: [app]
