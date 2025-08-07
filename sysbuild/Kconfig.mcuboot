@@ -156,7 +156,7 @@ endchoice
 
 config BOOT_SIGNATURE_TYPE_PURE
 	bool "Verify signature directly over image"
-	depends on SOC_SERIES_NRF54LX
+	depends on SOC_SERIES_NRF54LX || SOC_SERIES_NRF54HX
 	depends on BOOT_SIGNATURE_TYPE_ED25519
 	help
 	  The image signature will be verified over image rather than
