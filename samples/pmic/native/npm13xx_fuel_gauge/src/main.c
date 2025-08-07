@@ -3,8 +3,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <stdlib.h>
-
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/gpio.h>
@@ -16,8 +14,16 @@
 
 #define SLEEP_TIME_MS 1000
 
-static const struct device *pmic = DEVICE_DT_GET(DT_NODELABEL(npm1300_ek_pmic));
-static const struct device *charger = DEVICE_DT_GET(DT_NODELABEL(npm1300_ek_charger));
+#if DT_NODE_EXISTS(DT_NODELABEL(npm1300_ek_pmic))
+#define NPM13XX_DEVICE(dev) DEVICE_DT_GET(DT_NODELABEL(npm1300_ek_ ## dev))
+#elif DT_NODE_EXISTS(DT_NODELABEL(npm1304_ek_pmic))
+#define NPM13XX_DEVICE(dev) DEVICE_DT_GET(DT_NODELABEL(npm1304_ek_ ## dev))
+#else
+#error "neither npm1300 nor npm1304 found in devicetree"
+#endif
+
+static const struct device *pmic = NPM13XX_DEVICE(pmic);
+static const struct device *charger = NPM13XX_DEVICE(charger);
 static volatile bool vbus_connected;
 
 static void event_callback(const struct device *dev, struct gpio_callback *cb, uint32_t pins)

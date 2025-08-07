@@ -56,7 +56,7 @@ The following list includes the summary of the most relevant changes introduced 
   * PMIC: nPM1300 PMIC and nPM1300 EK:
 
     * Charger, BUCKs, LDOs, Load Switches, and GPIOs.
-    * :ref:`Sample showing fuel gauge functionality <npm1300_fuel_gauge>`.
+    * :ref:`Sample showing fuel gauge functionality <npm13xx_fuel_gauge>`.
       The sample calculates battery state of charge, time to empty, time to full and provides updates of these over the terminal once every second.
     * The nPM1300 EK sample that supports PMIC features: regulators (BUCKs, LDO) and GPIOs.
 
@@ -622,7 +622,7 @@ nRF9160 samples
 PMIC samples
 ------------
 
-* Added :ref:`npm1300_fuel_gauge` sample that demonstrates how to calculate the battery state of charge using the :ref:`nrfxlib:nrf_fuel_gauge`.
+* Added the :ref:`nPM1300: Fuel gauge <npm13xx_fuel_gauge>` sample that demonstrates how to calculate the battery state of charge using the :ref:`nrfxlib:nrf_fuel_gauge`.
 
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
