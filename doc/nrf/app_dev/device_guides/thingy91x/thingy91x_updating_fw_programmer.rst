@@ -20,7 +20,7 @@ When developing with your Thingy:91 X, it is recommended to use an external debu
    The external debug probe must support Arm Cortex-M33, such as the nRF9151 DK.
    You need a 10-pin 2x5 socket-socket 1.27 mm IDC (:term:`Serial Wire Debug (SWD)`) JTAG cable to connect to the external debug probe.
 
-See `Installing nRF Util`_ and `Installing and upgrading nRF Util commands`_ for instructions on how to install the nrfutil device utility.
+Both nRF Util and the ``device`` command are part of the :ref:`nRF Connect SDK toolchain bundle <requirements_toolchain>` and you get them when you :ref:`gs_installing_toolchain`.
 
 .. _updating_firmware_nRF5340:
 
@@ -35,8 +35,7 @@ This section describes how you can update the firmware of the nRF5340 SoC on the
 
       To update the nRF5340 SoC firmware over USB, complete the following steps:
 
-      1. Install the ``nrfutil device`` command package by completing the steps in the `Installing and upgrading nRF Util commands`_ documentation.
-      #. Connect the Thingy:91 X to your computer with a USB-C cable.
+      1. Connect the Thingy:91 X to your computer with a USB-C cable.
       #. Power on the device by switching **SW1** to the **ON** position.
       #. Open a terminal window.
       #. Enter the following command to list the connected devices and their traits::
@@ -61,8 +60,7 @@ This section describes how you can update the firmware of the nRF5340 SoC on the
 
       To update the nRF5340 firmware using an external debug probe, complete the following steps:
 
-      2. Install the ``nrfutil device`` command package by completing the steps in the `Installing and upgrading nRF Util commands`_ documentation.
-      #. Connect the Thingy:91 X to your computer with a USB-C cable.
+      2. Connect the Thingy:91 X to your computer with a USB-C cable.
       #. Connect the 10-pin :term:`Serial Wire Debug (SWD)` programming cable from the external debug probe to the programming connector (**P8**) on the Thingy:91 X.
       #. Connect the external debug probe to your computer.
       #. Power on the device by switching **SW1** to the **ON** position.
@@ -101,8 +99,7 @@ When updating the firmware through USB and MCUboot method, you must not connect 
 
       To update the nRF9151 SiP application firmware over USB, complete the following steps:
 
-      1. Install the ``nrfutil device`` command package by completing the steps in the `Installing and upgrading nRF Util commands`_ documentation.
-      #. Connect the Thingy:91 X to your computer with a USB-C cable.
+      1. Connect the Thingy:91 X to your computer with a USB-C cable.
       #. Power on the device by switching **SW1** to the **ON** position.
       #. Open a terminal window.
       #. Enter the following command to list the connected devices and their traits::
@@ -126,8 +123,7 @@ When updating the firmware through USB and MCUboot method, you must not connect 
 
       To update the nRF9151 SiP application firmware using an external debug probe, complete the following steps:
 
-      1. Install the ``nrfutil device`` command package by completing the steps in the `Installing and upgrading nRF Util commands`_ documentation.
-      #. Connect the Thingy:91 X to your computer with a USB-C cable.
+      1. Connect the Thingy:91 X to your computer with a USB-C cable.
       #. Connect the 10-pin :term:`Serial Wire Debug (SWD)` programming cable from the external debug probe to the programming connector (**P8**) on the Thingy:91 X.
       #. Connect the external debug probe to your computer.
       #. Power on the device by switching **SW1** to the **ON** position.
@@ -155,8 +151,7 @@ Updating the modem firmware on the nRF9151 SiP
 
 To update the nRF9151 modem firmware using an external debug probe, complete the following steps:
 
-1. Install the ``nrfutil device`` command package by completing the steps in the `Installing and upgrading nRF Util commands`_ documentation.
-#. Connect the Thingy:91 X to your computer with a USB-C cable.
+1. Connect the Thingy:91 X to your computer with a USB-C cable.
 #. Connect the 10-pin :term:`Serial Wire Debug (SWD)` programming cable from the external debug probe to the programming connector (**P8**) on the Thingy:91 X.
 #. Connect the external debug probe to your computer.
 #. Power on the device by switching **SW1** to the **ON** position.

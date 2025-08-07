@@ -59,7 +59,7 @@ If you want to change the runner used by ``west flash``, you can use one of the 
      west flash -r nrfjprog
 
 In either case, make sure you have the required tools installed on your system.
-`nRF Util`_ is a :ref:`prerequisite <installing_vsc>` for the |NCS|.
+`nRF Util`_ is part of the :ref:`nRF Connect SDK toolchain bundle <requirements_toolchain>`.
 For ``-r nrfjprog``, you need the archived `nRF Command Line Tools`_.
 
 To see which runners are available for your board, run the following command:
@@ -94,6 +94,7 @@ Programming the nRF52840 Dongle
 Programming the nRF54H20 DK
    To program the nRF54H20 DK, follow the programming instructions in the :ref:`nRF54H20 device guide <ug_nrf54h20_gs_sample>`.
    Programming the nRF54H20 DK with the |NCS| version earlier than v3.0.0 requires installing the `nrfutil device command <Installing and upgrading nRF Util commands_>`_ for the ``west flash`` command to work with this device.
+   Starting with the |NCS| v3.1.0, the ``nrfutil device`` command is part of the :ref:`nRF Connect SDK toolchain bundle <requirements_toolchain>` and you get it when you :ref:`gs_installing_toolchain`.
 
 .. _programming_params:
 
