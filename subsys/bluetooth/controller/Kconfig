@@ -223,6 +223,7 @@ config BT_CTLR_SDC_PERIODIC_ADV_EVENT_LEN_DEFAULT
 
 config BT_CTLR_SDC_TX_PACKET_COUNT
 	int "Number of Link Layer ACL TX buffers"
+	default BT_BUF_ACL_TX_COUNT
 	default 3
 	range 1 20
 	help
@@ -394,6 +395,7 @@ config BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT
 	int "BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT"
 	depends on BT_CTLR_ADV_ISO || BT_CTLR_CONN_ISO
 	range 0 10
+	default BT_ISO_TX_BUF_COUNT if BT_ISO
 	default 3
 	help
 	  Configures the number of HCI TX buffers allocated for ISO.
