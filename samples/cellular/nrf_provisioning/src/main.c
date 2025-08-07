@@ -18,12 +18,16 @@
 
 LOG_MODULE_REGISTER(nrf_provisioning_sample, CONFIG_NRF_PROVISIONING_SAMPLE_LOG_LEVEL);
 
-#define NETWORK_UP			    BIT(0)
+#define NETWORK_UP			BIT(0)
 #define NETWORK_DOWN			BIT(1)
 #define PROVISIONING_IDLE		BIT(2)
+#define NETWORK_IPV4_CONNECTED		BIT(3)
+#define NETWORK_IPV6_CONNECTED		BIT(4)
 #define NORMAL_REBOOT_S		    10
 #define PROVISIONING_IDLE_DELAY_S	3
-#define EVENT_MASK (NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
+#define EVENT_MASK                                                                                 \
+	(NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED | NET_EVENT_L4_IPV6_CONNECTED |        \
+	 NET_EVENT_L4_IPV4_CONNECTED)
 
 static K_EVENT_DEFINE(prov_events);
 
@@ -41,6 +45,11 @@ static int modem_mode_cb(enum lte_lc_func_mode new_mode, void *user_data)
 		return -EFAULT;
 	}
 
+	if (new_mode == fmode) {
+		LOG_DBG("Functional mode unchanged: %d", fmode);
+		return fmode;
+	}
+
 	if (new_mode == LTE_LC_FUNC_MODE_NORMAL || new_mode == LTE_LC_FUNC_MODE_ACTIVATE_LTE) {
 		LOG_INF("Provisioning library requests normal mode");
 
@@ -49,7 +58,9 @@ static int modem_mode_cb(enum lte_lc_func_mode new_mode, void *user_data)
 
 		/* Wait for network readiness to be re-established before returning. */
 		LOG_DBG("Waiting for network up");
-		k_event_wait(&prov_events, NETWORK_UP, false, K_FOREVER);
+		k_event_wait(&prov_events, NETWORK_IPV4_CONNECTED, false, K_FOREVER);
+		/* Wait extra 2 seconds for IPv6 negotiation */
+		k_event_wait(&prov_events, NETWORK_IPV6_CONNECTED, false, K_SECONDS(2));
 
 		LOG_DBG("Network is up.");
 	}
@@ -142,13 +153,23 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 		return;
 	}
 
-	if (event == NET_EVENT_L4_CONNECTED) {
+	if (event == NET_EVENT_L4_IPV4_CONNECTED) {
+		/* Mark network as up. */
+		LOG_INF("IPv4 connectivity gained!");
+		k_event_clear(&prov_events, NETWORK_DOWN);
+		k_event_post(&prov_events, NETWORK_IPV4_CONNECTED);
+	} else if (event == NET_EVENT_L4_IPV6_CONNECTED) {
+		/* Mark network as up. */
+		LOG_INF("IPv6 connectivity gained!");
+		k_event_clear(&prov_events, NETWORK_DOWN);
+		k_event_post(&prov_events, NETWORK_IPV6_CONNECTED);
+	} else if (event == NET_EVENT_L4_CONNECTED) {
 		/* Mark network as up. */
 		LOG_INF("Network connectivity gained!");
 		k_event_clear(&prov_events, NETWORK_DOWN);
 		k_event_post(&prov_events, NETWORK_UP);
 
-		/* Start the provisioning library after network readiness is first established.	 */
+		/* Start the provisioning library after network readiness is first established. */
 		if (!provisioning_started) {
 			LOG_INF("Initializing the nRF Provisioning library...");
 
@@ -164,7 +185,8 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 	if (event == NET_EVENT_L4_DISCONNECTED) {
 		/* Mark network as down. */
 		LOG_INF("Network connectivity lost!");
-		k_event_clear(&prov_events, NETWORK_UP);
+		k_event_clear(&prov_events,
+			      NETWORK_UP | NETWORK_IPV4_CONNECTED | NETWORK_IPV6_CONNECTED);
 		k_event_post(&prov_events, NETWORK_DOWN);
 	}
 }
