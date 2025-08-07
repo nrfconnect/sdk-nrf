@@ -4,16 +4,19 @@
 
 # A script to generate twister options based on modified files.
 
-import re, os
 import argparse
-import yaml
 import fnmatch
-import subprocess
+import glob
 import json
 import logging
+import math
+import os
+import re
+import subprocess
 import sys
-import glob
 from pathlib import Path
+
+import yaml
 from git import Repo
 from west.manifest import Manifest
 
@@ -432,7 +435,7 @@ def parse_args():
     parser.add_argument('-t', '--tests_per_builder', default=700, type=int,
             help="Number of tests per builder")
     parser.add_argument('-n', '--default-matrix', default=10, type=int,
-            help="Number of tests per builder")
+            help="Default matrix")
     parser.add_argument('--testcase-roots-threshold', default=20, type=int,
             help="Threshold value for number of modified testcase roots, up to which an optimized scope is still applied."
                  "When exceeded, full scope will be triggered")
@@ -515,7 +518,7 @@ if __name__ == "__main__":
         if total_tests and total_tests < args.tests_per_builder:
             nodes = 1
         else:
-            nodes = round(total_tests / args.tests_per_builder)
+            nodes = math.ceil(total_tests / args.tests_per_builder)
 
         tp.write(f"TWISTER_TESTS={total_tests}\n")
         tp.write(f"TWISTER_NODES={nodes}\n")
