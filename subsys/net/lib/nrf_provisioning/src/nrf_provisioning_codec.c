@@ -542,6 +542,7 @@ stop_provisioning:
 
 	/* Can't send anything if modem connection is not restored */
 	if (mret < 0) {
+		LOG_ERR("Failed to restore functional mode, error: %d", mret);
 		return mret;
 	}
 
