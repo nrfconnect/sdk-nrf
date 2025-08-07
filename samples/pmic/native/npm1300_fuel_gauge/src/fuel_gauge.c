@@ -96,6 +96,10 @@ int fuel_gauge_init(const struct device *charger)
 	if (ret < 0) {
 		return ret;
 	}
+	/* Zephyr sensor API convention for Gauge current is negative=discharging,
+	 * while nrf_fuel_gauge lib expects the opposite negative=charging
+	 */
+	parameters.i0 = -parameters.i0;
 
 	/* Store charge nominal and termination current, needed for ttf calculation */
 	sensor_channel_get(charger, SENSOR_CHAN_GAUGE_DESIRED_CHARGING_CURRENT, &value);
@@ -176,7 +180,10 @@ int fuel_gauge_update(const struct device *charger, bool vbus_connected)
 
 	delta = (float)k_uptime_delta(&ref_time) / 1000.f;
 
-	soc = nrf_fuel_gauge_process(voltage, current, temp, delta, NULL);
+	/* Zephyr sensor API convention for Gauge current is negative=discharging,
+	 * while nrf_fuel_gauge lib expects the opposite negative=charging
+	 */
+	soc = nrf_fuel_gauge_process(voltage, -current, temp, delta, NULL);
 	tte = nrf_fuel_gauge_tte_get();
 	ttf = nrf_fuel_gauge_ttf_get();
 
