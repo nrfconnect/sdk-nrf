@@ -924,7 +924,7 @@
 .. _`Upgrading nRF Util core module`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides/installing.html#upgrading-nrf-util
 .. _`Installing and upgrading nRF Util commands`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides/installing_commands.html
 .. _`Installing specific versions of nRF Util commands`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides/installing_commands.html#installing-specific-versions-of-commands
-.. _`Installing nRF Util for nRF5 SDK`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides-nrf5sdk/installing.html
+.. _`nrf5sdk-tools command overview`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-nrf5sdk-tools/guides/intro.html
 .. _`Generating DFU packages`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides-nrf5sdk/dfu_generating_packages.html
 .. _`DFU over a serial USB connection`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides-nrf5sdk/dfu_performing.html#dfu-over-a-serial-usb-connection
 .. _`Toolchain Manager command`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-toolchain-manager/nrfutil-toolchain-manager_0.14.1.html

@@ -10,12 +10,8 @@
 The image is based on Linux - Ubuntu 22.04 Docker image with the following additional tools:
 
 * Git
-* `nRF Util`_ with following commands:
-
-  * ``toolchain-manager``
-  * ``device``
-
-* |NCS| toolchain bundle
+* |NCS| toolchain bundle, which includes `nRF Util`_ and the ``device`` command
+* ``toolchain-manager`` command in nRF Util
 * SEGGER J-Link |jlink_ver| (installation requires accepting SEGGER License)
 
 Building image
