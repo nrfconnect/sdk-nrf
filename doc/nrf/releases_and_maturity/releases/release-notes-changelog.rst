@@ -113,7 +113,7 @@ Developing with custom boards
 Developing with coprocessors
 ============================
 
-* Added the :ref:`ug_hpf_softperipherals_comparison` documentation page, describing potential use cases and differences between the two solutions.
+|no_changes_yet_note|
 
 Security
 ========
@@ -159,12 +159,6 @@ Matter
 ------
 
 |no_changes_yet_note|
-
-* Removed:
-
-  * The nRF Connect Matter Manufacturer Cluster Editor tool page.
-    The tool is now available in the `nRF Connect for Desktop`_ app as the Matter Cluster Editor app.
-    For installation instructions and more information about the tool, see the `Matter Cluster Editor app`_ documentation.
 
 Matter fork
 +++++++++++
