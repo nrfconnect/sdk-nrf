@@ -43,7 +43,7 @@ The sample performs the following operations:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/crypto/chacha_poly`
+.. |sample path| replace:: :file:`samples/crypto/chachapoly`
 
 .. include:: /includes/build_and_run_ns.txt
 
