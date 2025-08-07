@@ -834,7 +834,7 @@ static void bt_le_ext_adv_start_param_enc(struct nrf_rpc_cbor_ctx *encoder,
 	nrf_rpc_encode_uint(encoder, data->num_events);
 }
 
-int bt_le_ext_adv_start(struct bt_le_ext_adv *adv, struct bt_le_ext_adv_start_param *param)
+int bt_le_ext_adv_start(struct bt_le_ext_adv *adv, const struct bt_le_ext_adv_start_param *param)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	int result;
