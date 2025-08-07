@@ -53,6 +53,8 @@ LOG_MODULE_REGISTER(nrf_provisioning_coap, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 	CMDS_AFTER "&" CMDS_MAX_RX_SZ "&" CMDS_MAX_TX_SZ "&" CMDS_LIMIT)
 
 #define RETRY_AMOUNT 10
+#define COAP_TIMEOUT_SECONDS 60
+
 static const char *resp_path = "p/rsp";
 static const char *dtls_suspend = "/.dtls/suspend";
 
@@ -310,6 +312,7 @@ static int send_coap_request(struct coap_client *client, uint8_t method, const c
 			     struct nrf_provisioning_coap_context *const coap_ctx, bool confirmable)
 {
 	int retries = 0;
+	int ret;
 	struct coap_transmission_parameters params = coap_get_transmission_parameters();
 	static struct coap_client_option block2_option;
 
@@ -336,16 +339,28 @@ static int send_coap_request(struct coap_client *client, uint8_t method, const c
 		client_request.num_options = 1;
 	}
 
-	while (coap_client_req(client, coap_ctx->connect_socket, NULL, &client_request, NULL) ==
-	       -EAGAIN) {
-		if (retries > RETRY_AMOUNT) {
-			break;
+	do {
+		ret = coap_client_req(client, coap_ctx->connect_socket, NULL, &client_request,
+				      NULL);
+		if (ret == -EAGAIN) {
+			LOG_DBG("CoAP client busy");
+			k_sleep(K_MSEC(params.ack_timeout));
 		}
-		LOG_DBG("CoAP client busy");
-		k_sleep(K_MSEC(params.ack_timeout));
 		retries++;
+	} while (ret == -EAGAIN && retries < RETRY_AMOUNT);
+
+	if (ret < 0) {
+		return ret;
 	}
-	k_sem_take(&coap_response, K_FOREVER);
+
+	ret = k_sem_take(&coap_response, K_SECONDS(COAP_TIMEOUT_SECONDS));
+	if (ret == -EAGAIN) {
+		LOG_ERR("CoAP request timed out");
+		return -ETIMEDOUT;
+	} else if (ret) {
+		LOG_ERR("Failed to take CoAP response semaphore, error: %d", ret);
+		return ret;
+	}
 
 	return 0;
 }
