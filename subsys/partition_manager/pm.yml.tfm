@@ -26,7 +26,8 @@ tfm_storage:
 # In nRF54L15 and nRF7120 we place the tfm_storage partitions before the
 # TF-M non-secure application to avoid splitting the secure/non-secure
 # partitions more than necessary.
-#if defined(CONFIG_SOC_NRF54L15_CPUAPP) || defined(CONFIG_SOC_NRF54LV10A_ENGA_CPUAPP) || defined(CONFIG_SOC_NRF7120_ENGA_CPUAPP)
+#if defined(CONFIG_SOC_NRF54L15_CPUAPP) || defined(CONFIG_SOC_NRF54LV10A_ENGA_CPUAPP) || \
+    defined(CONFIG_SOC_NRF54LM20A_ENGA_CPUAPP) || defined(CONFIG_SOC_NRF7120_ENGA_CPUAPP)
 
 tfm_ps:
   placement:
