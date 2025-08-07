@@ -41,6 +41,30 @@ The table also lists the release date for that Matter specification version, and
 |                 |                                                                                                          | Specification         | |NCS| version    |
 | Matter version  | Overview of changes                                                                                      | release date          |                  |
 +=================+==========================================================================================================+=======================+==================+
+| 1.4.2           |                                                                                                          | July 9, 2025          | v3.1.0           |
++-----------------+----------------------------------------------------------------------------------------------------------+-----------------------+------------------+
+| 1.4.1           | - Matter onboarding using NFC tag can be officially certified now.                                       | March 12, 2025        | v3.0.0           |
+|                 | - Added Enhanced Setup Flow that allows the standard Matter commissioning process to enable display      |                       |                  |
+|                 |   and acknowledgment of device makers’ legal terms and conditions before the device setup.               |                       |                  |
+|                 | - Added support for large messages over TCP.                                                             |                       |                  |
++-----------------+----------------------------------------------------------------------------------------------------------+-----------------------+------------------+
+| 1.4.0           | - Updated Intermittently Connected Devices feature with enhancements for the Long Idle Time (LIT)        | October 19, 2024      | v2.9.0           |
+|                 |   and Check-In protocol. With these enhancements, the state of this feature is changed from provisional  |                       |                  |
+|                 |   to certifiable.                                                                                        |                       |                  |
+|                 | - Updated occupancy sensing cluster with features like radar, vision, and ambient sensing.               |                       |                  |
+|                 | - Updated Electric Vehicle Supply Equipment (EVSE) with support for user-defined charging preferences,   |                       |                  |
+|                 |   like specifying the time when the car will be charged.                                                 |                       |                  |
+|                 | - Updated Thermostat cluster with support for scheduling and preset modes, like vacation, and home       |                       |                  |
+|                 |   or away settings.                                                                                      |                       |                  |
+|                 | - Added new device types like Water heater, Solar power, Battery storage, Heat pump, Mounted             |                       |                  |
+|                 |   on/off control and Mounted dimmable load control.                                                      |                       |                  |
+|                 | - Added Dynamic SIT LIT switching support that allows the application to switch between these modes,     |                       |                  |
+|                 |   as long as the requirements for these modes are met.                                                   |                       |                  |
+|                 | - Added Enhanced multi-admin that aims to simplify the smart home management from the user perspective.  |                       |                  |
+|                 | - Added Enhanced Network Infrastructure with Home Routers and Access Points (HRAP). This provides        |                       |                  |
+|                 |   requirements for devices such as home routers, modems, or access points to create a necessary          |                       |                  |
+|                 |   infrastructure for Matter products.                                                                    |                       |                  |
++-----------------+----------------------------------------------------------------------------------------------------------+-----------------------+------------------+
 | 1.3.0           | - Support for the Scenes cluster.                                                                        | April 12, 2024        | v2.7.0           |
 |                 | - Support for command batching.                                                                          |                       |                  |
 |                 | - Extended beaconing feature that allows an accessory device to advertise Matter service over            |                       |                  |
