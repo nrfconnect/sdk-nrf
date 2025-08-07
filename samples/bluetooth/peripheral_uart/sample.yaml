@@ -48,6 +48,7 @@ tests:
       ordered: true
       regex:
         - "Starting Nordic UART service sample"
+    timeout: 15
   sample.bluetooth.peripheral_uart_cdc:
     sysbuild: true
     build_only: true

@@ -40,6 +40,7 @@ tests:
       ordered: true
       regex:
         - "Starting Bluetooth Central UART sample"
+    timeout: 15
   sample.bluetooth.central_uart.bt_rpc:
     sysbuild: true
     build_only: true
