@@ -4,7 +4,6 @@ sample:
 tests:
   sample.mpsl.timeslot:
     sysbuild: true
-    build_only: true
     integration_platforms:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
@@ -27,3 +26,10 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_mpsl
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "Nordic MPSL Timeslot sample"
+    timeout: 15
