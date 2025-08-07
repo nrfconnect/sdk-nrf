@@ -136,4 +136,4 @@ Dependencies
 This sample uses the following |NCS| libraries:
 
 * :ref:`lib_dfu_target`
-* MCUBOOT
+* :ref:`MCUboot <mcuboot_index_ncs>`

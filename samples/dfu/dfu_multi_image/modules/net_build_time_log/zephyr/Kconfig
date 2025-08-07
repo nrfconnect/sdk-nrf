@@ -1,0 +1,8 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config NET_BUILD_TIME_LOG
+	bool "Makes the net core log print its build time at startup"

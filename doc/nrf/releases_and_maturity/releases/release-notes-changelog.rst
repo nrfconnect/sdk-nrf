@@ -282,6 +282,11 @@ DECT NR+ samples
 
 |no_changes_yet_note|
 
+DFU samples
+-----------
+
+* Added the :ref:`dfu_multi_image_sample` sample to demonstrate how to use the :ref:`lib_dfu_target` library.
+
 Edge Impulse samples
 --------------------
 
