@@ -75,6 +75,12 @@ static bool command_generates_command_complete_event(uint16_t hci_opcode)
 	case SDC_HCI_OPCODE_CMD_LE_CS_TEST_END:
 #endif /* CONFIG_BT_CTLR_CHANNEL_SOUNDING_TEST */
 #endif /* CONFIG_BT_CTLR_CHANNEL_SOUNDING */
+#if defined(CONFIG_BT_CTLR_EXTENDED_FEAT_SET)
+	case SDC_HCI_OPCODE_CMD_LE_READ_ALL_REMOTE_FEATURES:
+#endif /* CONFIG_BT_CTLR_EXTENDED_FEAT_SET */
+#if defined(CONFIG_BT_CTLR_FRAME_SPACE_UPDATE)
+	case SDC_HCI_OPCODE_CMD_LE_FRAME_SPACE_UPDATE:
+#endif /* CONFIG_BT_CTLR_FRAME_SPACE_UPDATE */
 		return false;
 	default:
 		return true;
@@ -643,6 +649,13 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_cs_set_procedure_parameters = 1;
 	cmds->hci_le_cs_procedure_enable = 1;
 #endif /* CONFIG_BT_CTLR_CHANNEL_SOUNDING */
+#if defined(CONFIG_BT_CTLR_EXTENDED_FEAT_SET)
+	cmds->hci_le_read_all_local_supported_features = 1;
+	cmds->hci_le_read_all_remote_features = 1;
+#endif /* CONFIG_BT_CTLR_EXTENDED_FEAT_SET */
+#if defined(CONFIG_BT_CTLR_FRAME_SPACE_UPDATE)
+	cmds->hci_le_frame_space_update = 1;
+#endif /* CONFIG_BT_CTLR_FRAME_SPACE_UPDATE */
 }
 
 #if defined(CONFIG_BT_HCI_VS)
@@ -777,6 +790,10 @@ void hci_internal_le_supported_features(
 	features->params.channel_sounding = 1;
 	features->params.channel_sounding_tone_quality_indication = 1;
 #endif /* CONFIG_BT_CTLR_CHANNEL_SOUNDING */
+
+#if defined(CONFIG_BT_CTLR_EXTENDED_FEAT_SET)
+	features->params.ll_extended_feature_set = 1;
+#endif /* CONFIG_BT_CTLR_EXTENDED_FEAT_SET */
 
 #if defined(CONFIG_BT_CTLR_SDC_LE_POWER_CLASS_1)
 	features->params.le_Power_class_1 = 1;
@@ -1579,6 +1596,21 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 		return sdc_hci_cmd_le_cs_test_end();
 #endif /* CONFIG_BT_CTLR_CHANNEL_SOUNDING_TEST */
 #endif /* CONFIG_BT_CTLR_CHANNEL_SOUNDING */
+
+#if defined(CONFIG_BT_CTLR_EXTENDED_FEAT_SET)
+	case SDC_HCI_OPCODE_CMD_LE_READ_ALL_REMOTE_FEATURES:
+		return sdc_hci_cmd_le_read_all_remote_features((void *)cmd_params);
+	case SDC_HCI_OPCODE_CMD_LE_READ_ALL_LOCAL_SUPPORTED_FEATURES:
+		*param_length_out +=
+			sizeof(sdc_hci_cmd_le_read_all_local_supported_features_return_t);
+		return sdc_hci_cmd_le_read_all_local_supported_features(
+			(void *)event_out_params);
+#endif /* CONFIG_BT_CTLR_EXTENDED_FEAT_SET */
+
+#if defined(CONFIG_BT_CTLR_FRAME_SPACE_UPDATE)
+	case SDC_HCI_OPCODE_CMD_LE_FRAME_SPACE_UPDATE:
+		return sdc_hci_cmd_le_frame_space_update((void *)cmd_params);
+#endif /* CONFIG_BT_CTLR_FRAME_SPACE_UPDATE */
 
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;

@@ -198,6 +198,20 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 #define SDC_SYNC_TRANSFER_MEM_SIZE 0
 #endif
 
+#if defined(CONFIG_BT_CTLR_FRAME_SPACE_UPDATE)
+#define SDC_FRAME_SPACE_UPDATE_MEM_SIZE \
+	SDC_MEM_FRAME_SPACE_UPDATE(SDC_CENTRAL_COUNT + PERIPHERAL_COUNT)
+#else
+#define SDC_FRAME_SPACE_UPDATE_MEM_SIZE 0
+#endif
+
+#if defined(CONFIG_BT_CTLR_EXTENDED_FEAT_SET)
+#define SDC_EXTENDED_FEAT_SET_MEM_SIZE \
+	SDC_MEM_EXTENDED_FEATURE_SET(SDC_CENTRAL_COUNT + PERIPHERAL_COUNT)
+#else
+#define SDC_EXTENDED_FEAT_SET_MEM_SIZE 0
+#endif
+
 #if defined(CONFIG_BT_CTLR_CONN_ISO)
 #define SDC_MEM_CIG SDC_MEM_PER_CIG(CONFIG_BT_CTLR_CONN_ISO_GROUPS)
 #define SDC_MEM_CIS \
@@ -278,6 +292,8 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 		      (SDC_LE_POWER_CONTROL_MEM_SIZE) + \
 		      (SDC_SUBRATING_MEM_SIZE) + \
 		      (SDC_SYNC_TRANSFER_MEM_SIZE) + \
+		      (SDC_FRAME_SPACE_UPDATE_MEM_SIZE) + \
+		      (SDC_EXTENDED_FEAT_SET_MEM_SIZE) + \
 		      (SDC_PERIODIC_ADV_MEM_SIZE) + \
 		      (SDC_PERIODIC_ADV_RSP_MEM_SIZE) + \
 		      (SDC_PERIODIC_SYNC_MEM_SIZE) + \
@@ -976,6 +992,28 @@ static int configure_supported_features(void)
 			if (err) {
 				return -ENOTSUP;
 			}
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_BT_CTLR_FRAME_SPACE_UPDATE)) {
+		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+			err = sdc_support_frame_space_update_central();
+			if (err) {
+				return -ENOTSUP;
+			}
+		}
+		if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
+			err = sdc_support_frame_space_update_peripheral();
+			if (err) {
+				return -ENOTSUP;
+			}
+		}
+	}
+
+	if (IS_ENABLED(CONFIG_BT_CTLR_EXTENDED_FEAT_SET)) {
+		err = sdc_support_extended_feature_set();
+		if (err) {
+			return -ENOTSUP;
 		}
 	}
 
