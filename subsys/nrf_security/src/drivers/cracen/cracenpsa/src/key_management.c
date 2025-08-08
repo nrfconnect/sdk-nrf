@@ -14,7 +14,6 @@
 #include <cracen_psa_montgomery.h>
 #include <cracen_psa_ikg.h>
 #include <cracen_psa_rsa_keygen.h>
-#include "platform_keys/platform_keys.h"
 #include <nrf_security_mutexes.h>
 #include "ecc.h"
 #include <silexpk/sxops/rsa.h>
@@ -981,35 +980,6 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 		return status;
 	}
 #endif
-#ifdef CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
-	if (location == PSA_KEY_LOCATION_CRACEN) {
-		psa_key_lifetime_t lifetime;
-		psa_drv_slot_number_t slot_id;
-		psa_key_attributes_t stored_attributes;
-		psa_status_t status = cracen_platform_keys_provision(attributes, data, data_length);
-
-		if (status != PSA_SUCCESS) {
-			return status;
-		}
-		status = cracen_platform_get_key_slot(psa_get_key_id(attributes), &lifetime,
-						      &slot_id);
-
-		if (status != PSA_SUCCESS) {
-			return status;
-		}
-
-		status = cracen_platform_get_builtin_key(slot_id, &stored_attributes, key_buffer,
-							 key_buffer_size, key_buffer_length);
-
-		if (status != PSA_SUCCESS) {
-			return status;
-		}
-
-		*key_bits = psa_get_key_bits(&stored_attributes);
-
-		return status;
-	}
-#endif
 
 	if (location != PSA_KEY_LOCATION_LOCAL_STORAGE) {
 		return PSA_ERROR_NOT_SUPPORTED;
@@ -1197,7 +1167,8 @@ psa_status_t generate_key_for_kmu(const psa_key_attributes_t *attributes, uint8_
 		}
 	} else if (key_type == PSA_KEY_TYPE_AES || key_type == PSA_KEY_TYPE_HMAC ||
 		   key_type == PSA_KEY_TYPE_CHACHA20) {
-		status = psa_generate_random(key, PSA_BITS_TO_BYTES(psa_get_key_bits(attributes)));
+		status = cracen_get_random(NULL, key,
+					   PSA_BITS_TO_BYTES(psa_get_key_bits(attributes)));
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
@@ -1365,9 +1336,6 @@ psa_status_t cracen_get_builtin_key(psa_drv_slot_number_t slot_number,
 #if CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
 		return cracen_kmu_get_builtin_key(slot_number, attributes, key_buffer,
 						  key_buffer_size, key_buffer_length);
-#elif CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
-		return cracen_platform_get_builtin_key(slot_number, attributes, key_buffer,
-						       key_buffer_size, key_buffer_length);
 #else
 		return PSA_ERROR_DOES_NOT_EXIST;
 #endif
@@ -1378,16 +1346,6 @@ psa_status_t mbedtls_psa_platform_get_builtin_key(mbedtls_svc_key_id_t key_id,
 						  psa_key_lifetime_t *lifetime,
 						  psa_drv_slot_number_t *slot_number)
 {
-/* For nRF54H20 devices all the builtin keys are considered platform keys,
- * these include the IKG keys. The IKG keys in these devices don't directly
- * use the CRACEN_BUILTIN_ ids, they use the IDs defined in  the file
- * nrf_platform_key_ids.h.
- * The function cracen_platform_get_key_slot will do the matching between the
- * platform key ids and the Cracen bulitin ids.
- */
-#if CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
-	return cracen_platform_get_key_slot(key_id, lifetime, slot_number);
-#else
 
 	switch (MBEDTLS_SVC_KEY_ID_GET_KEY_ID(key_id)) {
 	case CRACEN_BUILTIN_IDENTITY_KEY_ID:
@@ -1411,7 +1369,6 @@ psa_status_t mbedtls_psa_platform_get_builtin_key(mbedtls_svc_key_id_t key_id,
 								   PSA_KEY_LOCATION_CRACEN);
 
 	return PSA_SUCCESS;
-#endif /* CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS */
 }
 
 psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
@@ -1527,9 +1484,6 @@ psa_status_t cracen_destroy_key(const psa_key_attributes_t *attributes)
 {
 #ifdef CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
 	return cracen_kmu_destroy_key(attributes);
-#endif
-#ifdef CONFIG_PSA_NEED_CRACEN_PLATFORM_KEYS
-	return cracen_platform_destroy_key(attributes);
 #endif
 
 	return PSA_ERROR_DOES_NOT_EXIST;
