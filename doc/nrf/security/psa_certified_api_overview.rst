@@ -189,7 +189,7 @@ The Secure Storage API consists of the following components:
 * Internal Trusted Storage - The Internal Trusted Storage API is used internally by the SPE to store data persistently in secure flash.
   It is possible to expose the Internal Trusted Storage API to the NSPE, but it is not recommended.
 
-* Protected Storage - The Protected Storage API is for storing data persistently in secure flash and provides integrity checks to the stored data.
+* Protected Storage - The Protected Storage API is used for storing data persistently in secure flash and it provides integrity checks to the stored data.
   The Protected Storage API is one of :ref:`ug_tfm_architecture_rot_services_application` and is available in the Non-Secure Callable interface, making the Protected Storage API callable from either the SPE or the NSPE.
   Data in Protected Storage has ownership, so data stored from the SPE is only available to the SPE.
 
@@ -223,18 +223,25 @@ PSA Secure Storage API in Nordic hardware and the |NCS|
 =======================================================
 
 SoCs from Nordic Semiconductor that come with dedicated hardware components for security (such as `nRF9160's System Protection Unit <nRF9160 System Protection Unit_>`_ or `nRF54L Series' security components <nRF54L15 Security_>`_) have the functionality for `flash <nRF9160 flash access control_>`_ (nRF9160) or `feature <nRF54L15 feature access control_>`_ (nRF54L15) access control, making it possible to configure different features as secure.
+
 Internal Trusted Storage and Protected Storage saves data to the sections of secure flash.
 This way, the NSPE cannot directly access data saved by the Internal Trusted Storage API or the Protected Storage API.
-
 Internal Trusted Storage is by default only available from the SPE.
 
-.. note::
+The following implementations of the PSA Secure Storage API are available:
 
-   For Nordic SoCs without TF-M's Platform Root of Trust (such as the nRF52832), the :ref:`trusted_storage_readme` library is used for the PSA Certified Secure Storage APIs.
+.. ncs-include:: security/secure_storage.rst
+   :start-after: secure_storage_options_table_start
+   :end-before: secure_storage_options_table_end
 
-The PSA Protected Storage API implementation is optional for use in the |NCS|.
+In the |NCS|, the PSA Protected Storage implementation is optional for use alongside other :ref:`data storage options <data_storage_psa_protected>`.
 It does not support storing data to external flash.
 Instead, you can configure your application to encrypt data stored to the external flash, for example using the :ref:`ug_psa_certified_api_overview_crypto`.
+
+.. note::
+   For Nordic SoCs without TF-M's Platform Root of Trust (such as the nRF52832), the :ref:`trusted_storage_readme` library is used for the PSA Certified Secure Storage APIs.
+
+For more information about the secure storage implementation in the |NCS|, see :ref:`secure_storage_in_ncs`.
 
 .. _ug_psa_certified_api_overview_fw_update:
 
