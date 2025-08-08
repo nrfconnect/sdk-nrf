@@ -291,13 +291,13 @@ The following two types of security risks are possible:
   * Execute a key refresh procedure for all existing keys used on the entire network as soon as possible by excluding the compromised device, if any.
     The mechanism to determine if the device is compromised is up to the OEM developers.
 
-Additionally, after upgrading the device firmware with the key importer functionality enabled, and once the key import is complete, it is recommend to update device firmware with the key importer functionality disabled as soon as possible.
+Additionally, after upgrading the device firmware with the key importer functionality enabled, and once the key import is complete, it is recommended to update device firmware with the key importer functionality disabled as soon as possible.
 
-Trusted storage
----------------
+Secure storage
+--------------
 
-The :ref:`trusted_storage_in_ncs` is a security mechanism designed to securely store and manage sensitive data.
-Currently, all :ref:`bt_mesh_samples` in the |NCS| use the :ref:`trusted_storage_readme` library as the Trusted Storage backend for all supported platforms.
+:ref:`secure_storage_in_ncs` lets you securely store and manage sensitive data.
+Currently, all :ref:`bt_mesh_samples` in the |NCS| use the :ref:`trusted_storage_readme` library as the PSA Secure Storage API implementation for all supported platforms.
 
 .. note::
    For the nRF52840 devices, in regards to :ref:`bt_mesh_samples` in |NCS|, AEAD keys are derived using hashes of entry UIDs (:kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID`).
