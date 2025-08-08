@@ -26,6 +26,7 @@
 #include "zbus_common.h"
 #include "bt_le_audio_tx.h"
 #include "le_audio.h"
+#include "server_store.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(unicast_client, CONFIG_UNICAST_CLIENT_LOG_LEVEL);
@@ -2018,6 +2019,11 @@ int unicast_client_enable(uint8_t cig_index, le_audio_receive_cb recv_cb)
 {
 	int ret;
 	static bool initialized;
+
+	ret = srv_store_init();
+	if (ret) {
+		return ret;
+	}
 
 	if (cig_index >= CONFIG_BT_ISO_MAX_CIG) {
 		LOG_ERR("Trying to enable CIG %d out of %d", cig_index, CONFIG_BT_ISO_MAX_CIG);
