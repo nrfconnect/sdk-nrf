@@ -3057,8 +3057,8 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L15
             * - **Immutable MCUboot as part of build**
               - --
-              - Experimental
-              - Experimental
+              - Supported
+              - Supported
               - Supported
             * - **Updatable MCUboot as part of build**
               - --
@@ -3072,13 +3072,13 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
             * - **Hardware cryptography acceleration**
               - --
-              - Experimental
-              - Experimental
+              - Supported
+              - Supported
               - Supported
             * - **Multiple signature keys**
               - --
-              - Experimental
-              - Experimental
+              - Supported
+              - Supported
               - Supported
             * - **Image encryption**
               - --
