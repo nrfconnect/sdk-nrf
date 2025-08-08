@@ -33,16 +33,7 @@ extern nrf_security_mutex_t cracen_mutex_symmetric;
 
 #define KMU_PUSH_AREA_SIZE 64
 
-/* When execution in place (CONFIG_XIP) is not enabled, which in practice means that when Zephyr is
- * built for a RAM loaded image, the Zephyr linker script always places the RAM loaded image in the
- * top address of the RAM and then loads the linker scripts defined with the Zephyr SECTION_PROLOGUE
- * macros. Using SECTION_PROLOGUE macros to set the address of the kmu_push_area is
- * incompatible with RAM loaded images. The Zephyr reserved-memory devicetree methodology works for
- * both use cases but it requires heavy updates of multiple devicetree files and overlays. In order
- * to support the RAM loaded images use cases faster initial support for reserving the memory of
- * nrf_kmu_reserved_push_area though devicetree is limited to RAM loaded images.
- */
-#if DT_NODE_EXISTS(DT_NODELABEL(nrf_kmu_reserved_push_area)) && !CONFIG_XIP
+#if DT_NODE_EXISTS(DT_NODELABEL(nrf_kmu_reserved_push_area))
 
 #include <zephyr/dt-bindings/memory-attr/memory-attr.h>
 #include <zephyr/linker/devicetree_regions.h>
