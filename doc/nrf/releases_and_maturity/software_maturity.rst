@@ -237,7 +237,7 @@ The following table indicates the software maturity levels of the support for ea
            - --
            - --
            - --
-           - Supported
+           - Supported\ :sup:`4`
          * - **Thread**
            - --
            - --
@@ -257,8 +257,8 @@ The following table indicates the software maturity levels of the support for ea
            - --
            - --
            - --
-           - Supported
-           - Supported
+           - Supported\ :sup:`5`
+           - Supported\ :sup:`5`
 
    .. group-tab:: nRF53 Series
 
@@ -281,13 +281,13 @@ The following table indicates the software maturity levels of the support for ea
          * - **NFC**
            - Supported
          * - **Sidewalk**
-           - Supported
+           - Supported\ :sup:`4`
          * - **Thread**
            - Supported
          * - **Wi-Fi®**
            - Supported\ :sup:`2`
          * - **Zigbee**
-           - Supported
+           - Supported\ :sup:`5`
 
    .. group-tab:: nRF54 Series
 
@@ -333,8 +333,8 @@ The following table indicates the software maturity levels of the support for ea
          * - **Sidewalk**
            - --
            - --
-           - Supported
-           - Supported
+           - Supported\ :sup:`4`
+           - Supported\ :sup:`4`
          * - **Thread**
            - --
            - Supported
@@ -347,9 +347,9 @@ The following table indicates the software maturity levels of the support for ea
            - Experimental\ :sup:`3`
          * - **Zigbee**
            - --
-           - --
-           - --
-           - --
+           - Supported\ :sup:`5`
+           - Supported\ :sup:`5`
+           - Supported\ :sup:`5`
 
    .. group-tab:: nRF91 Series
 
@@ -416,6 +416,8 @@ The following table indicates the software maturity levels of the support for ea
 | [1]: Only with nRF7002 EK, nRF7002 EK in nRF7000 emulation mode or nRF7002 EK in nRF7001 emulation mode
 | [2]: Only with nRF7002 DK, nRF7002 DK in nRF7001 emulation mode, nRF7002 EB, nRF7002 EK, nRF7002 EK in nRF7000 emulation mode or nRF7002 EK in nRF7001 emulation mode
 | [3]: Only with nRF7002-EB II
+| [4]: Available through Amazon Sidewalk add-on for the |NCS|
+| [5]: Available through Zigbee add-ons for the |NCS|
 
 Amazon Sidewalk features support
 ********************************
@@ -1907,18 +1909,18 @@ The following table indicates the software maturity levels of the support for ea
             * - **OTA DFU over Zigbee**
               - --
               - --
-              - --
-              - --
+              - Supported
+              - Supported
             * - **Zigbee (Sleepy) End Device**
               - --
               - --
-              - --
-              - --
+              - Supported
+              - Supported
             * - **Zigbee + Bluetooth LE multiprotocol**
               - --
               - --
-              - --
-              - --
+              - Supported
+              - Supported
             * - **Zigbee + nRF21540 (GPIO)**
               - --
               - --
@@ -1927,18 +1929,18 @@ The following table indicates the software maturity levels of the support for ea
             * - **Zigbee Coordinator**
               - --
               - --
-              - --
-              - --
+              - Supported
+              - Supported
             * - **Zigbee Network Co-Processor (NCP)**
               - --
-              - --
-              - --
-              - --
+              - Supported
+              - Supported
+              - Supported
             * - **Zigbee Router**
               - --
               - --
-              - --
-              - --
+              - Supported
+              - Supported
 
       .. tab:: nRF91 Series
          .. list-table:: Zigbee feature support
