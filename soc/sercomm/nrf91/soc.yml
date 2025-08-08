@@ -1,0 +1,42 @@
+family:
+  - name: nordic_nrf
+    series:
+      - name: nrf91
+        socs:
+          - name: tpm530m
+
+# Recovery/erase is only needed once per core. Prevent resetting the cores whilst flashing
+# multiple images until all images for each core have been flashed, this allows security
+# bits to be set during programming without them interfering with additional flashing
+# operations.
+runners:
+  run_once:
+    '--recover':
+      - runners:
+          - nrfjprog
+          - nrfutil
+        run: first
+        groups:
+          - qualifiers:
+              - tpm530m
+              - tpm530m/ns
+    '--erase':
+      - runners:
+          - nrfjprog
+          - jlink
+          - nrfutil
+        run: first
+        groups:
+          - qualifiers:
+              - tpm530m
+              - tpm530m/ns
+    '--reset':
+      - runners:
+          - nrfjprog
+          - jlink
+          - nrfutil
+        run: last
+        groups:
+          - qualifiers:
+              - tpm530m
+              - tpm530m/ns
