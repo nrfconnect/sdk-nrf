@@ -6,7 +6,7 @@
 
 config APP_IPC_SERVICE_SEND_INTERVAL
 	int "Ipc service sending interval [us]"
-	default 30 if BOARD_NRF5340DK_NRF5340_CPUNET
+	default 30 if BOARD_NRF5340DK_NRF5340_CPUNET || BOARD_NRF7002DK_NRF5340_CPUNET
 	default 70
 	help
 	  Time in micro seconds between sending subsequent data packages over
