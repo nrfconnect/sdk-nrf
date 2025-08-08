@@ -141,7 +141,9 @@ The sample can also be the Target node updated by any firmware image that is com
 In both cases, the firmware needs to be signed and the firmware version increased to pass the validation when the MCUboot swaps the images.
 
 To set a new version, alter the Kconfig option :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` to a version that is higher than the default version of: ``"1.0.0+0"``.
-Then, after rebuilding the sample, the binary of the updated sample can be found in :file:`samples/bluetooth/mesh_dfu/target/build/zephyr/app_update.bin`.
+Then, after rebuilding the sample, the binary of the updated sample can be found in :file:`samples/bluetooth/mesh/dfu/target/build/target/zephyr/zephyr.signed.bin` or
+:file:`samples/bluetooth/mesh/dfu/target/build/dfu_application.zip`.
+The file format to use depends on the tool you are using for the DFU procedure.
 
 To perform a DFU with this sample, the following additional information is required:
 
