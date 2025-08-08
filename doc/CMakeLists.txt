@@ -323,7 +323,7 @@ add_doxygen_docset(nrf ${NRF_BASE} ${NRF_VERSION})
 #-------------------------------------------------------------------------------
 # docset: mcuboot
 
-add_docset(mcuboot "2.1.99")
+add_docset(mcuboot "2.2.0-rc2")
 
 #-------------------------------------------------------------------------------
 # docset: nrfx
@@ -333,7 +333,7 @@ add_doxygen_docset(nrfx ${ZEPHYR_HAL_NORDIC_MODULE_DIR} "" STANDALONE)
 #-------------------------------------------------------------------------------
 # docset: tfm
 
-add_docset(tfm "2.1.1")
+add_docset(tfm "2.1.2")
 
 #-------------------------------------------------------------------------------
 # docset: matter
