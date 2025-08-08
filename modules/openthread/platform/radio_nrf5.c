@@ -1328,7 +1328,7 @@ otError otPlatRadioReceiveAt(otInstance *aInstance, uint8_t aChannel, uint32_t a
 	LOG_DBG("nRF5 OT radio RX AT started (channel: %d, aStart: %u, aDuration: %u)", aChannel,
 		aStart, aDuration);
 
-	return result ? OT_ERROR_FAILED : OT_ERROR_NONE;
+	return result ? OT_ERROR_NONE : OT_ERROR_FAILED;
 }
 #endif
 
@@ -1554,7 +1554,7 @@ uint8_t otPlatRadioGetCslAccuracy(otInstance *aInstance)
 {
 	ARG_UNUSED(aInstance);
 
-	return CONFIG_CLOCK_CONTROL_NRF_ACCURACY;
+	return CONFIG_NRF5_DELAY_TRX_ACC;
 }
 
 #if defined(CONFIG_OPENTHREAD_PLATFORM_CSL_UNCERT)
