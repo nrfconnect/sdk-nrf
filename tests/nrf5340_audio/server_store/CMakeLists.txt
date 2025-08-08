@@ -12,9 +12,11 @@ project(test_server_store)
 target_sources(app
   PRIVATE
   ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/bluetooth/bt_stream/unicast/server_store.c
+  ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/bluetooth/bt_stream/unicast/min_heap_temp/min_heap.c
   main.c
 )
 
 target_include_directories(app PRIVATE
   ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/bluetooth/bt_stream/unicast/
+  ${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/bluetooth/bt_stream/unicast/min_heap_temp
 )

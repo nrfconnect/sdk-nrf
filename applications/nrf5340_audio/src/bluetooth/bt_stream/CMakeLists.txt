@@ -28,7 +28,8 @@ endif()
 if (CONFIG_BT_BAP_UNICAST_CLIENT)
 	target_sources(app PRIVATE
 			${CMAKE_CURRENT_SOURCE_DIR}/unicast/unicast_client.c
-			${CMAKE_CURRENT_SOURCE_DIR}/unicast/server_store.c)
+			${CMAKE_CURRENT_SOURCE_DIR}/unicast/server_store.c
+			${CMAKE_CURRENT_SOURCE_DIR}/unicast/min_heap_temp/min_heap.c)
 endif()
 
 if (CONFIG_BT_BAP_UNICAST_SERVER)

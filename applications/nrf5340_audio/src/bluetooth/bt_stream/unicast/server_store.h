@@ -55,8 +55,6 @@ struct server_store {
 	struct unicast_server_src_vars src;
 };
 
-int srv_store_clear_conn(struct bt_conn *conn);
-
 int srv_store_src_num_get(uint8_t cig_idx);
 
 int srv_store_snk_num_get(uint8_t cig_idx);
@@ -80,8 +78,15 @@ int srv_store_stream_idx_get(struct bt_bap_stream const *const stream); /* May b
 
 int srv_store_num_running_streams_get(void);
 
+int srv_store_from_conn_get(struct bt_conn const *const conn, struct server_store **server);
+
+int srv_store_num_get(void);
+
+int srv_store_add(struct bt_conn *conn);
+
+int srv_store_remove(struct bt_conn *conn);
+
 int srv_store_clear_all(void);
-int srv_store_from_conn_get(struct bt_conn const *const conn, struct server_store *server);
 
 int srv_store_init(void);
 

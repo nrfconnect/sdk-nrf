@@ -1,5 +1,5 @@
 tests:
-  nrf5340_audio.sw_codec_lc3_test:
+  nrf5340_audio.server_store:
     sysbuild: true
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
