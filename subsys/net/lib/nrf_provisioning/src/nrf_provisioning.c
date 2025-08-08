@@ -495,6 +495,8 @@ int nrf_provisioning_schedule(void)
 						: CONFIG_NRF_PROVISIONING_INTERVAL_S;
 		LOG_DBG("First provisioning, setting interval to %lld seconds",
 			(int64_t)provisioning_interval);
+		/* Delay spread does not need high-entropy randomness */
+		srand(k_uptime_get_32());
 		goto out;
 	}
 
@@ -505,47 +507,34 @@ int nrf_provisioning_schedule(void)
 			LOG_ERR("Getting time failed, error: %d", ret);
 		}
 
-		if (provisioning_interval) {
-			retry_s = provisioning_interval;
-		} else {
-			/* Backoff... */
-			retry_s = retry_s * 2;
+		/* Backoff... */
+		retry_s = retry_s * 2;
 
-			/* ...up to a degree */
-			if (retry_s > CONFIG_NRF_PROVISIONING_INTERVAL_S) {
-				retry_s = CONFIG_NRF_PROVISIONING_INTERVAL_S;
-			}
+		/* ...up to a degree */
+		if (retry_s > CONFIG_NRF_PROVISIONING_INTERVAL_S) {
+			retry_s = CONFIG_NRF_PROVISIONING_INTERVAL_S;
 		}
 
 		goto out;
 	}
 
 	now_s /= 1000; /* date_time_now() is ms */
+
 	if (now_s > deadline_s || reschedule) {
-
-		/* Provision now */
-		if (!provisioning_interval && !deadline_s) {
-			deadline_s = now_s + CONFIG_NRF_PROVISIONING_INTERVAL_S;
-			retry_s = 0;
-			goto out;
-		}
-
 		/* Interval set by the server takes precedence */
-		deadline_s = provisioning_interval ? now_s + provisioning_interval :
-			now_s + CONFIG_NRF_PROVISIONING_INTERVAL_S;
+		deadline_s = now_s + (provisioning_interval ? provisioning_interval
+							    : CONFIG_NRF_PROVISIONING_INTERVAL_S);
 	}
 
 	retry_s = deadline_s - now_s;
 out:
-	/* Delay spread does not need high-entropy randomness */
-	srand(now_s);
 	spread_s = rand() %
 		(CONFIG_NRF_PROVISIONING_SPREAD_S ? CONFIG_NRF_PROVISIONING_SPREAD_S : 1);
 
 	/* To even the load on server side */
 	retry_s += spread_s;
 
-	LOG_INF("Checking for provisioning commands in %lld seconds", retry_s);
+	LOG_INF("Checking for provisioning commands in %lld seconds", (int64_t) retry_s);
 	reschedule = false;
 
 	return retry_s;
