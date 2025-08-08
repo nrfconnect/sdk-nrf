@@ -183,11 +183,11 @@ Then, in the mobile app, do the following:
 
 * Find and select the :guilabel:`Mesh DFU Distributor` device.
 * Go to the :guilabel:`Image` tab.
-* Press the :guilabel:`ADVANCED` button in the right top corner.
+* Tap the :guilabel:`Advanced` button in the right top corner.
   This will allow uploading the image to slot-1 without swapping the image on the Distributor.
-* Under the :guilabel:`Firmware Upload` area, press the :guilabel:`SELECT FILE` button and select the copied image.
-* Press the :guilabel:`UPLOAD` button.
-* Select :guilabel:`Application Core (0)` and tap :guilabel:`OK`.
+* Under the :guilabel:`Image Upload` area, tap the :guilabel:`Select File` button and select the copied image.
+* Tap the :guilabel:`Start` button.
+* Select :guilabel:`target.signed.bin`.
 
 Once the image upload is done, the :guilabel:`State` field is set to UPLOAD COMPLETE.
 
