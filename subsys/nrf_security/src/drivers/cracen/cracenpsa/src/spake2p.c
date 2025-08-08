@@ -443,7 +443,7 @@ static psa_status_t cracen_write_key_share(cracen_spake2p_operation_t *operation
 		}
 	}
 
-	status = psa_generate_random(xs, sizeof(xs));
+	status = cracen_get_random(NULL, xs, sizeof(xs));
 	if (status != PSA_SUCCESS) {
 		return status;
 	}

@@ -408,7 +408,7 @@ psa_status_t rnd_in_range(uint8_t *n, size_t sz, const uint8_t *upperlimit, size
 	msb_mask = ~msb_mask;
 
 	while (retries++ < retry_limit) {
-		psa_status_t status = psa_generate_random(n, sz);
+		psa_status_t status = cracen_get_random(NULL, n, sz);
 
 		if (status) {
 			return status;

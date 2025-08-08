@@ -150,7 +150,7 @@ int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey
 int cracen_signature_asn1_get_operand(uint8_t **p, const uint8_t *end, struct sx_buf *op);
 
 /**
- * @brief Use psa_generate_random up to generate a random number in the range [1, upperlimit).
+ * @brief Use cracen_get_random up to generate a random number in the range [1, upperlimit).
  *
  * @param[out] n           Output number.
  * @param[in]  sz          Size of number in bytes.

@@ -610,7 +610,7 @@ psa_status_t cracen_platform_keys_provision(const psa_key_attributes_t *attribut
 	key.sicr.bits = psa_get_key_bits(attributes);
 
 	/* Generate the 4 first bytes of the nonce, the rest are padded with zeros */
-	status = psa_generate_random((uint8_t *)key.sicr.nonce, sizeof(key.sicr.nonce[0]));
+	status = cracen_get_random(NULL, (uint8_t *)key.sicr.nonce, sizeof(key.sicr.nonce[0]));
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
