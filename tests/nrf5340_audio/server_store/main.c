@@ -105,4 +105,55 @@ ZTEST(suite_server_store, test_srv_remove)
 	zassert_equal(ret, 2, "Number of servers should be two after removing one");
 }
 
+ZTEST(suite_server_store, find_srv_from_stream)
+{
+	int ret;
+
+	ret = srv_store_init();
+	zassert_equal(ret, 0, "Init did not return zero");
+
+	uint32_t conn0 = 0x1000;
+	uint32_t conn1 = 0x2000;
+
+	ret = srv_store_add((struct bt_conn *)conn0);
+	zassert_equal(ret, 0, "Adding server did not return zero");
+
+	ret = srv_store_add((struct bt_conn *)conn1);
+	zassert_equal(ret, 0, "Adding server did not return zero");
+
+	struct server_store *retrieved_server = NULL;
+
+	ret = srv_store_from_conn_get((struct bt_conn *)conn0, &retrieved_server);
+	zassert_equal(ret, 0, "Retrieving OK server by connection did not return zero");
+
+	retrieved_server->name = "Test Server 0";
+	retrieved_server->snk.cap_streams[0] = (struct bt_cap_stream *)0x0000;
+	retrieved_server->snk.cap_streams[1] = (struct bt_cap_stream *)0x0111;
+	retrieved_server->snk.cap_streams[2] = (struct bt_cap_stream *)0x0222;
+
+	ret = srv_store_from_conn_get((struct bt_conn *)conn1, &retrieved_server);
+	zassert_equal(ret, 0, "Retrieving OK server by connection did not return zero");
+
+	retrieved_server->name = "Test Server 1";
+	retrieved_server->snk.cap_streams[0] = (struct bt_cap_stream *)0x1000;
+	retrieved_server->snk.cap_streams[1] = (struct bt_cap_stream *)0x1111;
+	retrieved_server->snk.cap_streams[2] = (struct bt_cap_stream *)0x1222;
+
+	ret = srv_store_from_stream_get((struct bt_cap_stream *)0x9999, &retrieved_server);
+	zassert_equal(ret, -ENOENT, "Retrieving from NULL stream should return -ENOENT");
+	zassert_is_null(retrieved_server, "Retrieved server should be NULL");
+
+	ret = srv_store_from_stream_get((struct bt_cap_stream *)0x1111, &retrieved_server);
+	zassert_equal(ret, 0, "Retrieving from stream should return zero");
+	zassert_not_null(retrieved_server, "Retrieved server should not be NULL");
+	zassert_equal(retrieved_server->name, "Test Server 1");
+	zassert_equal_ptr(retrieved_server->conn, conn1,
+			  "Retrieved server connection does not match expected");
+	/* Testing illegal operation with idential cap_stream pointers */
+	retrieved_server->snk.cap_streams[3] = (struct bt_cap_stream *)0x0111;
+
+	ret = srv_store_from_stream_get((struct bt_cap_stream *)0x0111, &retrieved_server);
+	zassert_equal(ret, -ESPIPE, "Retrieving from stream should return -ESPIPE");
+}
+
 ZTEST_SUITE(suite_server_store, NULL, NULL, NULL, NULL, NULL);

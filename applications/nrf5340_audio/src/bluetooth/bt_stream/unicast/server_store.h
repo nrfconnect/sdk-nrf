@@ -23,7 +23,7 @@ struct unicast_server_snk_vars {
 	uint32_t location;
 
 	/* We should have all info here. (Locations, stream status etc.) */
-	struct bt_cap_stream *streams[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT];
+	struct bt_cap_stream *cap_streams[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT];
 	/* One array for discovering the eps. Do not use this for operations */
 	struct bt_bap_ep *eps[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT];
 	uint8_t num_eps;
@@ -36,7 +36,7 @@ struct unicast_server_src_vars {
 	bool waiting_for_disc;
 	struct bt_audio_codec_cap codec_caps[CONFIG_CODEC_CAP_COUNT_MAX];
 	uint32_t location;
-	struct bt_cap_stream *streams[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT];
+	struct bt_cap_stream *cap_streams[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT];
 	struct bt_bap_ep *eps[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT];
 	uint8_t num_eps;
 	enum bt_audio_context ctx;
@@ -63,20 +63,13 @@ int srv_store_pres_dly_find(uint8_t cig_idx, uint32_t *new_pres_dly_us);
 
 int srv_store_location_set(struct bt_conn *conn, enum bt_audio_dir dir, enum bt_audio_location loc);
 
-int srv_store_avail_context_set(struct bt_conn *conn, enum bt_audio_context snk_ctx,
-				enum bt_audio_context src_ctx); /* Do we have to store all caps? */
-
-int srv_store_codec_cap_set(struct bt_conn *conn, enum bt_audio_dir dir,
-			    const struct bt_audio_codec_cap *codec);
-
-int srv_store_ep_set(struct bt_conn *conn, enum bt_audio_dir dir, struct bt_bap_ep *ep);
-
 int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_audio_dir dir,
 				    bool **array_of_valid_caps);
 
 int srv_store_stream_idx_get(struct bt_bap_stream const *const stream); /* May be not needed?*/
 
-int srv_store_num_running_streams_get(void);
+int srv_store_from_stream_get(struct bt_cap_stream const *const stream,
+			      struct server_store **server);
 
 int srv_store_from_conn_get(struct bt_conn const *const conn, struct server_store **server);
 

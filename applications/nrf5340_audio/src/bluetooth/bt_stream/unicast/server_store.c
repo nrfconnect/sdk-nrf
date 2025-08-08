@@ -10,6 +10,9 @@
 #include "server_store.h"
 #include "min_heap.h"
 
+#include <zephyr/logging/log.h>
+LOG_MODULE_REGISTER(unicast_client, CONFIG_UNICAST_CLIENT_LOG_LEVEL);
+
 /* This array keeps track of all the remote unicast servers this unicast client is operating on.
  **/
 /* static struct server_store servers[CONFIG_BT_MAX_CONN]; */
@@ -81,14 +84,136 @@ int srv_store_stream_idx_get(struct bt_bap_stream const *const stream) /* May no
 	return -EPERM;
 }
 
-int srv_store_num_running_streams_get(void)
+int srv_store_from_stream_get(struct bt_cap_stream const *const stream,
+			      struct server_store **server)
 {
-	return -EPERM;
+	struct server_store *tmp_server = NULL;
+	uint32_t matches = 0;
+
+	*server = NULL;
+
+	if (stream == NULL || server == NULL) {
+		LOG_ERR("Invalid parameters: stream or server is NULL");
+		return -EINVAL;
+	}
+
+	for (int srv_idx = 0; srv_idx < server_heap.size; srv_idx++) {
+		tmp_server = (struct server_store *)min_heap_get_element(&server_heap, srv_idx);
+		if (server == NULL) {
+			LOG_ERR("Server is NULL at index %d", srv_idx);
+			return -EINVAL;
+		}
+		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT; i++) {
+			if (tmp_server->snk.cap_streams[i] == stream) {
+				*server = tmp_server;
+				LOG_DBG("Found server for sink stream at index %d", srv_idx);
+				matches++;
+			}
+		}
+		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT; i++) {
+			if (tmp_server->src.cap_streams[i] == stream) {
+				*server = tmp_server;
+				LOG_DBG("Found server for source stream at index %d", srv_idx);
+				matches++;
+			}
+		}
+	}
+
+	if (matches == 0) {
+		LOG_ERR("No server found for the given stream");
+		return -ENOENT;
+	} else if (matches > 1) {
+		LOG_ERR("Multiple servers found for the same stream, this should not happen");
+		return -ESPIPE;
+	}
+
+	return 0;
 }
 
-int srv_store_from_stream_get(struct bt_bap_stream const *const stream, struct server_store *server)
+int srv_store_ep_state_count(struct bt_conn const *const conn, enum bt_bap_ep_state state,
+			     enum bt_audio_dir dir)
 {
-	return -EPERM;
+	int ret;
+	int count = 0;
+	struct server_store *server = NULL;
+
+	ret = srv_store_from_conn_get(conn, &server);
+	if (ret < 0) {
+		return ret;
+	}
+
+	switch (dir) {
+	case BT_AUDIO_DIR_SINK:
+		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT; i++) {
+			if (server->snk.cap_streams[i] != NULL &&
+			    server->snk.cap_streams[i]->bap_stream.ep != NULL) {
+				struct bt_bap_ep_info ep_info;
+
+				ret = bt_bap_ep_get_info(server->snk.cap_streams[i]->bap_stream.ep,
+							 &ep_info);
+				if (ret) {
+					return ret;
+				}
+
+				if (ep_info.state == state) {
+					count++;
+				}
+			} else {
+				break;
+			}
+		}
+		break;
+
+	case BT_AUDIO_DIR_SOURCE:
+		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT; i++) {
+			if (server->src.cap_streams[i] != NULL &&
+			    server->src.cap_streams[i]->bap_stream.ep != NULL) {
+				struct bt_bap_ep_info ep_info;
+
+				ret = bt_bap_ep_get_info(server->src.cap_streams[i]->bap_stream.ep,
+							 &ep_info);
+				if (ret) {
+					return ret;
+				}
+
+				if (ep_info.state == state) {
+					count++;
+				}
+			} else {
+				break;
+			}
+		}
+		break;
+
+	default:
+		LOG_ERR("Unknown direction: %d", dir);
+		return -EINVAL;
+	}
+
+	return count;
+}
+
+int srv_store_all_ep_state_count(enum bt_bap_ep_state state, enum bt_audio_dir dir)
+{
+	int count = 0;
+	int count_total = 0;
+	struct server_store *server = NULL;
+
+	for (int srv_idx = 0; srv_idx < server_heap.size; srv_idx++) {
+		server = (struct server_store *)min_heap_get_element(&server_heap, srv_idx);
+		if (server == NULL) {
+			LOG_ERR("Server is NULL at index %d", srv_idx);
+			return -EINVAL;
+		}
+		count = srv_store_ep_state_count(server->conn, state, dir);
+		if (count < 0) {
+			LOG_ERR("Failed to get ep state count for server %d: %d", srv_idx, count);
+			return count;
+		}
+		count_total += count;
+	}
+
+	return count_total;
 }
 
 int srv_store_from_conn_get(struct bt_conn const *const conn, struct server_store **server)
