@@ -486,7 +486,7 @@ static int data_packet_process(const struct device *dev, uint8_t *hci_buf)
 	bc = bt_acl_flags_bc(flags);
 
 	if (len + sizeof(*hdr) > HCI_RX_BUF_SIZE) {
-		LOG_ERR("Event buffer too small. %u > %u",
+		LOG_ERR("Event buffer too small. %zu > %u",
 			len + sizeof(*hdr),
 			HCI_RX_BUF_SIZE);
 		return -ENOMEM;
@@ -517,7 +517,7 @@ static int iso_data_packet_process(const struct device *dev, uint8_t *hci_buf)
 	}
 
 	if (len + sizeof(*hdr) > HCI_RX_BUF_SIZE) {
-		LOG_ERR("Event buffer too small. %u > %u",
+		LOG_ERR("Event buffer too small. %zu > %u",
 			len + sizeof(*hdr),
 			HCI_RX_BUF_SIZE);
 		return -ENOMEM;
@@ -583,7 +583,7 @@ static int event_packet_process(const struct device *dev, uint8_t *hci_buf)
 	struct net_buf *evt_buf;
 
 	if (hdr->len + sizeof(*hdr) > HCI_RX_BUF_SIZE) {
-		LOG_ERR("Event buffer too small. %u > %u",
+		LOG_ERR("Event buffer too small. %zu > %u",
 			hdr->len + sizeof(*hdr),
 			HCI_RX_BUF_SIZE);
 		return -ENOMEM;
@@ -1351,11 +1351,11 @@ static int configure_memory_usage(void)
 	}
 #endif
 
-	LOG_DBG("BT mempool size: %u, required: %u",
+	LOG_DBG("BT mempool size: %zu, required: %u",
 	       sizeof(sdc_mempool), required_memory);
 
 	if (required_memory > sizeof(sdc_mempool)) {
-		LOG_ERR("Allocated memory too low: %u < %u",
+		LOG_ERR("Allocated memory too low: %zu < %u",
 		       sizeof(sdc_mempool), required_memory);
 		k_panic();
 		/* No return from k_panic(). */
