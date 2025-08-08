@@ -52,12 +52,12 @@ The recommended values are provided in the :ref:`ug_matter_hw_requirements_layou
 By default, the DAC private key is stored in the KMU storage while using TF-M.
 See the :ref:`matter_platforms_security_dac_priv_key_kmu` section for more information.
 
-Trusted storage
-***************
+Secure storage
+**************
 
-The :ref:`trusted_storage_in_ncs` is a security mechanism designed to securely store and manage sensitive data.
-Currently, all :ref:`matter_samples` in the |NCS| use the :ref:`trusted_storage_readme` library as the Trusted Storage backend for all supported platforms.
-You can find an overview of the Trusted Storage layer configuration supported for each |NCS| Matter-enabled platform in the :ref:`matter_platforms_security_support` section.
+:ref:`secure_storage_in_ncs` lets you securely store and manage sensitive data.
+Currently, all :ref:`matter_samples` in the |NCS| use the :ref:`trusted_storage_readme` library as the PSA Secure Storage API implementation for all supported platforms.
+You can find an overview of the PSA Secure Storage configuration supported for each |NCS| Matter-enabled platform in the :ref:`matter_platforms_security_support` section.
 
 .. note::
    For the nRF52840 devices, in regards to :ref:`matter_samples` in |NCS|, AEAD keys are derived using hashes of entry UIDs (:kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID`).

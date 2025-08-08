@@ -137,7 +137,11 @@ Security
 
   * Support for AES in counter mode using CRACEN for the :zephyr:board:`nrf54lm20dk`.
 
-* Updated the :ref:`security_index` page with a table that lists the versions of security components implemented in the |NCS|.
+* Updated:
+
+  * The :ref:`security_index` page with a table that lists the versions of security components implemented in the |NCS|.
+  * The :ref:`secure_storage_in_ncs` page with updated information about the secure storage configuration in the |NCS|.
+    Also renamed the page from "Trusted storage in the |NCS|."
 
 Protocols
 =========

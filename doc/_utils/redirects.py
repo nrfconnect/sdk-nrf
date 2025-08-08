@@ -303,6 +303,7 @@ NRF = (
     ("security/tfm", "security/tfm/index"),
     ("security/tfm/tfm", "security/tfm/index"),
     ("app_dev/ap_protect/index", "security/ap_protect"), # Enabling access port protection mechanism
+    ("security/trusted_storage", "security/secure_storage"), # Secure storage in the |NCS| (renamed from Trusted storage)
     ("ug_ble_controller", "protocols/bt/index"), # Bluetooth LE Controller
     ("protocols/ble/index", "protocols/bt/index"),
     ("protocols/bt/ble/index", "protocols/bt/bt_stack_arch"),

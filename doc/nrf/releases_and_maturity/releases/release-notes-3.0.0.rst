@@ -382,7 +382,7 @@ Matter
 
   * By disabling the :ref:`mpsl` before performing a factory reset to speed up the process.
   * The :ref:`ug_matter_device_low_power_configuration` page to mention the `nWP049 - Matter over Thread: Power consumption and battery life`_ and `Online Power Profiler for Matter over Thread`_ as useful resources in optimizing the power consumption of a Matter device.
-  * The general documentation on trusted storage by moving it to the :ref:`trusted_storage_in_ncs` page and :ref:`trusted_storage_readme` library documentation.
+  * The general documentation on secure storage by moving it to the :ref:`secure_storage_in_ncs` page and :ref:`trusted_storage_readme` library documentation.
 
 Matter fork
 +++++++++++
