@@ -183,10 +183,17 @@ struct coap_transmission_parameters coap_get_transmission_parameters(void)
 	return coap_transmission_params;
 }
 
+static int time_now(int64_t *unix_time_ms, int cmock_num_calls)
+{
+	*unix_time_ms = (int64_t)time(NULL) * MSEC_PER_SEC;
+	return 0;
+}
+
 void setUp(void)
 {
 	k_sem_reset(&stopped_sem);
 	k_sem_reset(&done_sem);
+	__cmock_date_time_now_Stub(time_now);
 }
 
 void tearDown(void)
@@ -753,7 +760,6 @@ void test_provisioning_init_change_cbs_valid(void)
 	__cmock_lte_lc_connect_Stub(lte_lc_connect_cb);
 	/* No way to check that the correct handler is passed as an argument */
 	__cmock_lte_lc_register_handler_Ignore();
-	__cmock_date_time_now_IgnoreAndReturn(0);
 
 	/* To make certain init has been called at least once beforehand */
 	int ret = nrf_provisioning_init(NULL, NULL);
@@ -794,7 +800,6 @@ void test_provisioning_task_valid(void)
 	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_control_IgnoreAndReturn(0);
-	__cmock_date_time_now_IgnoreAndReturn(0);
 
 	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
 	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
@@ -844,7 +849,6 @@ void test_provisioning_commands(void)
 	__cmock_lte_lc_func_mode_get_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_enable_IgnoreAndReturn(0);
 	__cmock_nrf_provisioning_at_cmee_control_IgnoreAndReturn(0);
-	__cmock_date_time_now_IgnoreAndReturn(0);
 	__cmock_settings_load_subtree_IgnoreAndReturn(0);
 
 	/* To make certain init has been called at least once beforehand */
@@ -1013,13 +1017,6 @@ void test_coap_rsp_unsupported_code(void)
 	TEST_ASSERT_EQUAL_INT(-ENOTSUP, ret);
 }
 
-static int time_now(int64_t *unix_time_ms, int cmock_num_calls)
-{
-	*unix_time_ms = (int64_t)time(NULL);
-
-	return 0;
-}
-
 /*
  * - Get when next provisioning should be executed
  * - The client should follow the interval configured
@@ -1031,13 +1028,7 @@ void test_provisioning_schedule_valid(void)
 	/* To avoid being entangled to other tests let's assume that the function has
 	 * never been called earlier. If that's not the case let's just ignore the first invocation.
 	 */
-	__cmock_date_time_now_IgnoreAndReturn(0);
 	(void)nrf_provisioning_schedule();
-
-	__cmock_date_time_now_StopIgnore();
-
-	__cmock_date_time_now_AddCallback(time_now);
-	__cmock_date_time_now_ExpectAnyArgsAndReturn(0);
 
 	int ret = nrf_provisioning_schedule();
 
@@ -1059,11 +1050,7 @@ void test_provisioning_schedule_no_nw_time_valid(void)
 	/* To avoid being entangled to other tests let's assume that the function has
 	 * never been called earlier. If that's not the case let's just ignore the first invocation.
 	 */
-	__cmock_date_time_now_AddCallback(time_now);
-	__cmock_date_time_now_IgnoreAndReturn(0);
 	(void)nrf_provisioning_schedule();
-
-	__cmock_date_time_now_StopIgnore();
 
 	__cmock_date_time_now_ExpectAnyArgsAndReturn(-1);
 
