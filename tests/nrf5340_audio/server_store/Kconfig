@@ -1,0 +1,7 @@
+source "Kconfig.zephyr"
+
+config CODEC_CAP_COUNT_MAX
+	int "Max storage of codec capabilities"
+	default 5
+	help
+	  Max number of codec capabilities to store per stream.
