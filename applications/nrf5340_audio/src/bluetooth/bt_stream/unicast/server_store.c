@@ -43,10 +43,15 @@ int srv_store_add(struct bt_conn *conn);
 
 int srv_store_remove(struct bt_conn *conn);
 
-int srv_store_from_conn_get(struct bt_conn const *const conn, struct server_store *server);
+int srv_store_from_conn_get(struct bt_conn const *const conn, struct server_store *server)
+{
+	return 0;
+}
 
-int srv_store_from_stream_get(struct bt_bap_stream const *const stream,
-			      struct server_store *server);
+int srv_store_from_stream_get(struct bt_bap_stream const *const stream, struct server_store *server)
+{
+	return 0;
+}
 
 int srv_store_clear_all(void)
 {

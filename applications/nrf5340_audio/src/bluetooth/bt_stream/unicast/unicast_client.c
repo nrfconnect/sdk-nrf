@@ -984,46 +984,37 @@ static void pac_record_cb(struct bt_conn *conn, enum bt_audio_dir dir,
 static void endpoint_cb(struct bt_conn *conn, enum bt_audio_dir dir, struct bt_bap_ep *ep)
 {
 	int ret;
-	struct stream_index idx;
 
-	ret = device_index_from_conn_get(conn, &idx);
+	struct server_store *server = NULL;
+	ret = srv_store_from_conn_get(conn, server);
 	if (ret) {
 		LOG_ERR("Unknown connection, should not reach here");
 		return;
 	}
 
-	struct le_audio_unicast_server *unicast_server =
-		&unicast_servers[idx.lvl1][idx.lvl2][idx.lvl3];
-
 	if (dir == BT_AUDIO_DIR_SINK) {
 		if (ep != NULL) {
-			/* Since we need to discover all sink endpoints first, we store them in a
-			 * temporary array in the first unicast server, to be distributed later
+			/* Since we need to discover all sink endpoints before assigning streams to
+			 * them, we store them in a temporary array.
 			 */
-			unicast_server->spare_sink_eps[unicast_server->num_sink_eps] = ep;
-			unicast_server->num_sink_eps++;
+			server->snk.eps[server->snk.num_eps] = ep;
+			server->snk.num_eps++;
 			return;
 		}
 
-		if (unicast_server->spare_sink_eps[0] == NULL) {
+		if (server->snk.eps[0] == NULL) {
 			LOG_WRN("No sink endpoints found");
 		}
 
 		return;
 	} else if (dir == BT_AUDIO_DIR_SOURCE) {
 		if (ep != NULL) {
-			if (unicast_server->num_source_eps > 0) {
-				LOG_WRN("More than one source endpoint found, idx 0 is "
-					"used by default");
-				return;
-			}
-
-			unicast_server->source_ep = ep;
-			unicast_server->num_source_eps++;
+			server->src.eps[server->src.num_eps] = ep;
+			server->src.num_eps++;
 			return;
 		}
 
-		if (unicast_server->source_ep == NULL) {
+		if (server->src.eps[0] == NULL) {
 			LOG_WRN("No source endpoints found");
 		}
 

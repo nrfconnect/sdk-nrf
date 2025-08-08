@@ -26,6 +26,7 @@ struct unicast_server_snk_vars {
 	struct bt_cap_stream *streams[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT];
 	/* One array for discovering the eps. Do not use this for operations */
 	struct bt_bap_ep *eps[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT];
+	uint8_t num_eps;
 	enum bt_audio_context ctx;
 };
 
@@ -37,6 +38,7 @@ struct unicast_server_src_vars {
 	uint32_t location;
 	struct bt_cap_stream *streams[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT];
 	struct bt_bap_ep *eps[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT];
+	uint8_t num_eps;
 	enum bt_audio_context ctx;
 };
 
@@ -79,6 +81,7 @@ int srv_store_stream_idx_get(struct bt_bap_stream const *const stream); /* May b
 int srv_store_num_running_streams_get(void);
 
 int srv_store_clear_all(void);
+int srv_store_from_conn_get(struct bt_conn const *const conn, struct server_store *server);
 
 int srv_store_init(void);
 
