@@ -2,6 +2,30 @@ sample:
   description: Wi-Fi shutdown sample application
   name: Wi-Fi shutdown
 tests:
+  sample.nrf7002.shutdown:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf7002dk/nrf5340/cpuapp
+    platform_allow: nrf7002dk/nrf5340/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf7002_eks.shutdown:
+    sysbuild: true
+    build_only: true
+    extra_args: SHIELD=nrf7002ek
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf52840dk/nrf52840
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf52840dk/nrf52840
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
   sample.nrf7000_location.shutdown:
     sysbuild: true
     build_only: true
@@ -10,11 +34,13 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
+      - nrf52840dk/nrf52840
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
+      - nrf52840dk/nrf52840
     tags:
       - ci_build
       - sysbuild
@@ -29,6 +55,20 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf7002eb2.shutdown:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - shutdown_SHIELD="nrf7002eb2"
+      - SNIPPET=nrf70-wifi
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
     tags:
       - ci_build
       - sysbuild
