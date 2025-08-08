@@ -113,7 +113,8 @@
             {.actual_power = 17, .radio_tx_power_db = 0, .att_state = 3},  \
             {.actual_power = 18, .radio_tx_power_db = 0, .att_state = 2},  \
             {.actual_power = 19, .radio_tx_power_db = 0, .att_state = 1},  \
-            {.actual_power = 20, .radio_tx_power_db = 0, .att_state = 0}   \
+            {.actual_power = 20, .radio_tx_power_db = 0, .att_state = 0},  \
+            {.actual_power = 21, .radio_tx_power_db = 4, .att_state = 3}   \
         }                                                                  \
     }
 
@@ -134,6 +135,7 @@
             {.actual_power = 5, .radio_tx_power_db = 5, .att_state = 0}, \
             {.actual_power = 6, .radio_tx_power_db = 6, .att_state = 0}, \
             {.actual_power = 7, .radio_tx_power_db = 7, .att_state = 0}, \
+            {.actual_power = 8, .radio_tx_power_db = 8, .att_state = 0}, \
             {.actual_power = 8, .radio_tx_power_db = 8, .att_state = 0}, \
             {.actual_power = 8, .radio_tx_power_db = 8, .att_state = 0}, \
             {.actual_power = 8, .radio_tx_power_db = 8, .att_state = 0}, \
