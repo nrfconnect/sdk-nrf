@@ -67,4 +67,12 @@ config NRF5_LOG_RX_FAILURES
 	  It can be helpful for the network traffic analyze but it generates also
 	  a lot of log records in a stress environment.
 
+config NRF5_DELAY_TRX_ACC
+	int "Clock accuracy for delayed operations"
+	default CLOCK_CONTROL_NRF_ACCURACY if BOARD_NRF52840DONGLE_NRF52840
+	default 20 # Value agreed after research as the best for power consumption and system reliability.
+	help
+	  Accuracy of the clock used for scheduling radio delayed operations (delayed transmission
+	  or delayed reception), in ppm.
+
 endif # !NET_L2_OPENTHREAD
