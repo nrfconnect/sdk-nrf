@@ -1,2 +1,3 @@
-pixart	PixArt Imaging Inc.
 caf	Common Application Framework
+pixart	PixArt Imaging Inc.
+sercomm	Sercomm Corporation
