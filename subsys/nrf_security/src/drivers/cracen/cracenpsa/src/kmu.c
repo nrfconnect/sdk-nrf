@@ -159,7 +159,7 @@ static psa_status_t cracen_kmu_encrypt(const uint8_t *key, size_t key_length,
 	psa_set_key_usage_flags(&attr, PSA_KEY_USAGE_ENCRYPT);
 
 	if (encrypted_buffer_size > CRACEN_KMU_SLOT_KEY_SIZE) {
-		psa_status = psa_generate_random(encrypted_buffer, CRACEN_KMU_SLOT_KEY_SIZE);
+		psa_status = cracen_get_random(NULL, encrypted_buffer, CRACEN_KMU_SLOT_KEY_SIZE);
 	} else {
 		return PSA_ERROR_GENERIC_ERROR;
 	}
