@@ -27,6 +27,12 @@ The sample supports the following development kits:
 .. table-from-sample-yaml::
 
 .. note::
+   This sample does not build or run for the ``nrf54h20dk/nrf54h20/cpuapp`` board target due to the IronSide SE migration.
+   See the ``NCSDK-34821`` in the :ref:`known_issues` page for more information.
+   This documentation page may still refer to concepts that were valid before the IronSide SE migration (for example, to the SUIT solution).
+   The codebase and documentation will be updated in the future releases to address this issue.
+
+.. note::
    In case of the :zephyr:board:`nrf54h20dk` board target, the application still has high power consumption as the Bluetooth LE controller running on the radio core requires disabling MRAM latency (:kconfig:option:`CONFIG_MRAM_LATENCY_AUTO_REQ`).
    Enabling MRAM latency makes the Bluetooth LE controller unstable.
 
