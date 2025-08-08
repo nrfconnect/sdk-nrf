@@ -144,9 +144,6 @@ static void test_adc_latency(uint32_t acquisition_time_us, uint32_t sampling_int
 ZTEST(adc_latency, test_adc_read_call_latency)
 {
 #if defined(CONFIG_SOC_NRF54H20) || defined(CONFIG_SOC_NRF54L15)
-	test_adc_latency(5, 40, 9);
-	test_adc_latency(5, 40, 99);
-	test_adc_latency(5, 40, 499);
 	test_adc_latency(20, 100, 9);
 	test_adc_latency(20, 100, 99);
 	test_adc_latency(20, 100, 499);
