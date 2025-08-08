@@ -1,0 +1,11 @@
+# Sercomm TPM530M module
+
+# Copyright (c) 2025 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+if SOC_TPM530M
+
+config NUM_IRQS
+	default 65
+
+endif # SOC_TPM530M
