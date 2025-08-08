@@ -14,7 +14,44 @@
 #include <zephyr/bluetooth/audio/bap.h>
 #include <zephyr/bluetooth/audio/bap_lc3_preset.h>
 
-int srv_store_clear_all(void);
+struct unicast_server_snk_vars {
+	/* This value will propagate to the streams */
+	struct bt_bap_lc3_preset lc3_preset[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT];
+	bool waiting_for_disc;
+	struct bt_audio_codec_cap codec_caps[CONFIG_CODEC_CAP_COUNT_MAX];
+	/* Do we need this as we have the locations in the codec? */
+	uint32_t location;
+
+	/* We should have all info here. (Locations, stream status etc.) */
+	struct bt_cap_stream *streams[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT];
+	/* One array for discovering the eps. Do not use this for operations */
+	struct bt_bap_ep *eps[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT];
+	enum bt_audio_context ctx;
+};
+
+struct unicast_server_src_vars {
+	/* This value will propagate to the streams */
+	struct bt_bap_lc3_preset lc3_preset[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT];
+	bool waiting_for_disc;
+	struct bt_audio_codec_cap codec_caps[CONFIG_CODEC_CAP_COUNT_MAX];
+	uint32_t location;
+	struct bt_cap_stream *streams[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT];
+	struct bt_bap_ep *eps[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT];
+	enum bt_audio_context ctx;
+};
+
+/* This struct holds the actual values of codec configs and QoS across all CIGs */
+struct server_store {
+	char *name;
+	struct bt_conn *conn;
+	const struct bt_csip_set_coordinator_set_member *member;
+
+	/* Flag set if we need to reconfig codec and/or QoS. */
+	bool flag_reconfig; /* Check, this may be omitted. */
+
+	struct unicast_server_snk_vars snk;
+	struct unicast_server_src_vars src;
+};
 
 int srv_store_clear_conn(struct bt_conn *conn);
 
@@ -41,7 +78,7 @@ int srv_store_stream_idx_get(struct bt_bap_stream const *const stream); /* May b
 
 int srv_store_num_running_streams_get(void);
 
-int srv_store_init(void);
+int srv_store_clear_all(void);
 
 int srv_store_init(void);
 
