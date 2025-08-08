@@ -58,7 +58,7 @@ static int disable_next_w()
 
 #include <zephyr/linker/linker-defs.h>
 #define CLEANUP_RAM_GAP_START ((int)__ramfunc_region_start)
-#define CLEANUP_RAM_GAP_END ((int)__ramfunc_end-48)
+#define CLEANUP_RAM_GAP_END ((int)__ramfunc_end)
 
 #define CLEANUP_RAM_FIRST_START (CONFIG_SRAM_BASE_ADDRESS)
 #define CLEANUP_RAM_FIRST_SIZE (CLEANUP_RAM_GAP_START)
@@ -75,15 +75,14 @@ static int disable_next_w()
  */
 #include <hal/nrf_rramc.h>
 
-#define FUNCTION_BUFFER_LEN 164
 #define RRAMC_REGION_RWX_LSB 0
 #define RRAMC_REGION_RWX_WIDTH 3
 #define RRAMC_REGION_TO_LOCK_ADDR NRF_RRAMC->REGION[3].CONFIG
 #define RRAMC_REGION_TO_LOCK_ADDR_H (((uint32_t)(&(RRAMC_REGION_TO_LOCK_ADDR))) >> 16)
 #define RRAMC_REGION_TO_LOCK_ADDR_L (((uint32_t)(&(RRAMC_REGION_TO_LOCK_ADDR))) & 0x0000fffful)
-static volatile uint8_t ram_exec_buf[FUNCTION_BUFFER_LEN];
-//
-static void __ramfunc rrr(uint32_t vector_table){
+#endif /* CONFIG_SB_DISABLE_SELF_RWX */
+
+static void __ramfunc jump_in(uint32_t* vector_table) {
 	__asm__ volatile (
 
                 /* vector_table[1] -> r0 */
@@ -116,8 +115,9 @@ static void __ramfunc rrr(uint32_t vector_table){
                 "   dsb\n"
 #endif /* CONFIG_SB_CLEANUP_RAM */
 
+#ifdef CONFIG_SB_DISABLE_SELF_RWX
 		".thumb_func\n"
-		"rrbootconf_disable_rwx:\n"
+		"bootconf_disable_rwx:\n"
 		"   mov  r0, %0\n"
 		"   movw r1, %6\n"
 		"   movt r1, %7\n"
@@ -136,10 +136,9 @@ static void __ramfunc rrr(uint32_t vector_table){
 		"   str  r2, [r1]\n"
 		"   dsb\n"
 		/* Next assembly line is important for current function */
- 
 
+ #endif /* CONFIG_SB_DISABLE_SELF_RWX */
 
- 
 		/* Jump to reset vector of an app */
 		"   bx   r0\n"
 		:
@@ -149,6 +148,7 @@ static void __ramfunc rrr(uint32_t vector_table){
 		  "r" (CLEANUP_RAM_SECOND_START),
 		  "r" (CLEANUP_RAM_SECOND_SIZE),
 		  "i" (0),
+#ifdef CONFIG_SB_DISABLE_SELF_RWX
 		  "i" (RRAMC_REGION_TO_LOCK_ADDR_L),
 		  "i" (RRAMC_REGION_TO_LOCK_ADDR_H),
 		  "i" (CONFIG_PM_PARTITION_SIZE_B0_IMAGE / 1024),
@@ -156,10 +156,10 @@ static void __ramfunc rrr(uint32_t vector_table){
 		  "i" (RRAMC_REGION_RWX_WIDTH),
 		  "i" (RRAMC_REGION_CONFIG_LOCK_Msk),
 		  "i" (RRAMC_REGION_CONFIG_SIZE_Msk)
+#endif /* CONFIG_SB_DISABLE_SELF_RWX */
 		: "r0", "r1", "r2", "r3", "r4", "r5", "memory"
 	);
 }
-#endif /* CONFIG_SB_DISABLE_SELF_RWX */
 
 #ifdef CONFIG_UART_NRFX_UARTE
 static void uninit_used_uarte(NRF_UARTE_Type *p_reg)
@@ -305,7 +305,7 @@ void bl_boot(const struct fw_info *fw_info)
 	__set_MSP(vector_table[0]);
 	__set_PSP(0);
 
-rrr((int)(vector_table[1]));
+	jump_in((vector_table[1]));
 
 	CODE_UNREACHABLE;
 }
