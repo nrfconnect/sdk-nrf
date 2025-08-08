@@ -9,6 +9,7 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/drivers/counter.h>
 #include <zephyr/ztest.h>
+#include <dmm.h>
 
 #define ADC_NODE			      DT_NODELABEL(dut_adc)
 #define DT_SPEC_AND_COMMA(node_id, prop, idx) ADC_DT_SPEC_GET_BY_IDX(node_id, idx),
@@ -18,7 +19,7 @@
 #define ADC_BUFFER_MAX_SIZE		      500
 #define MAX_TOLERANCE			      3.0
 
-static int16_t adc_sample_buffer[ADC_BUFFER_MAX_SIZE];
+static int16_t adc_sample_buffer[ADC_BUFFER_MAX_SIZE] DMM_MEMORY_SECTION(DT_NODELABEL(adc));
 
 static const struct device *adc = DEVICE_DT_GET(ADC_NODE);
 static const struct gpio_dt_spec test_gpio = GPIO_DT_SPEC_GET(DT_PATH(zephyr_user), test_gpios);
@@ -82,6 +83,7 @@ static void test_adc_latency(uint32_t acquisition_time_us, uint32_t sampling_int
 		.channels = 1,
 		.resolution = 12,
 	};
+
 	channel_cfgs[0].acquisition_time =
 		ADC_ACQ_TIME(ADC_ACQ_TIME_MICROSECONDS, acquisition_time_us);
 
@@ -144,6 +146,12 @@ static void test_adc_latency(uint32_t acquisition_time_us, uint32_t sampling_int
 ZTEST(adc_latency, test_adc_read_call_latency)
 {
 #if defined(CONFIG_SOC_NRF54H20) || defined(CONFIG_SOC_NRF54L15)
+	test_adc_latency(5, 70, 9);
+	test_adc_latency(5, 70, 99);
+	test_adc_latency(5, 70, 499);
+	test_adc_latency(10, 80, 9);
+	test_adc_latency(10, 80, 99);
+	test_adc_latency(10, 80, 499);
 	test_adc_latency(20, 100, 9);
 	test_adc_latency(20, 100, 99);
 	test_adc_latency(20, 100, 499);
