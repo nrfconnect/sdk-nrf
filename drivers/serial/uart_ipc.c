@@ -73,6 +73,14 @@ static void ipc_send_work_handler(struct k_work *work)
 		/* Should not happen. */
 		__ASSERT_NO_MSG(false);
 	}
+	ringbuf_size = ring_buf_size_get(dev_data->tx_ringbuf);
+	if (ringbuf_size > 0 ) {
+		// hit end of contiguous buffer, reschedule to get the rest
+		ret = k_work_schedule(&dev_data->ipc_send_work, K_NO_WAIT);
+		if (ret < 0) {
+			LOG_ERR("k_work_schedule Failed with: %d", ret);
+		}
+	}
 }
 
 static void ipc_ept_bound(void *priv)
