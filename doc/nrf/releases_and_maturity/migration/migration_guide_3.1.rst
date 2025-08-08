@@ -1,7 +1,9 @@
+:orphan:
+
 .. _migration_3.1:
 
-Migration guide for |NCS| v3.1.0 (Working draft)
-################################################
+Migration guide for |NCS| v3.1.0
+################################
 
 .. contents::
    :local:
@@ -36,10 +38,10 @@ Matter
 
    * For the Matter samples and applications:
 
-      * The :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option has been introduced.
+      * The :ref:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH <CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH>` Kconfig option has been introduced.
         Previously, the path to the ZAP file was deduced based on hardcoded locations.
-        Now, the location is configured using the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` Kconfig option.
-        This change requires you to update your application :file:`prj.conf` file by setting the :kconfig:option:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH` option to point to the location of you ZAP file.
+        Now, the location is configured using the :ref:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH <CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH>` Kconfig option.
+        This change requires you to update your application :file:`prj.conf` file by setting the :ref:`CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH <CONFIG_NCS_SAMPLE_MATTER_ZAP_FILE_PATH>` option to point to the location of you ZAP file.
 
    * For the :ref:`Matter light bulb <matter_light_bulb_sample>` sample:
 
@@ -124,6 +126,13 @@ nRF5340 Audio applications
      This requires the location bitfield to be set according to your preference.
      If you are using the :file:`buildprog.py` script, it will handle the correct write to UICR.
      You only need to update the locations in the :file:`devices.json` file.
+     The new format is: "location": ["FRONT_LEFT", "FRONT_RIGHT"].
+     The optional buildprog tool now uses `nRF Util`_ instead of nrfjprog, which has been archived.
+
+     .. note::
+        Support for multiple locations is still under development.
+
+
    * As a device can have multiple audio locations, the location name is no longer included in the advertised device name during DFU.
 
 nRF Desktop
