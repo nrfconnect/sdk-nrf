@@ -19,8 +19,10 @@
  * @{
  */
 
+#ifdef CONFIG_SAMPLE_RATE_CONVERTER
 #include <zephyr/sys/ring_buffer.h>
 #include <dsp/filtering_functions.h>
+#endif /* CONFIG_SAMPLE_RATE_CONVERTER */
 
 /**
  * Maximum size for the internal state buffers.
