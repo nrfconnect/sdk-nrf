@@ -59,9 +59,11 @@ config SLM_UART_RX_BUF_COUNT
 config SLM_UART_RX_BUF_SIZE
 	int "Receive buffer size for UART"
 	range 128 4096
+	default 2048 if BOARD_THINGY91_NRF9160_NS || BOARD_THINGY91X_NRF9151_NS
 	default 256
 	help
 	  Amount of received (RX), unprocessed, UART traffic that can be held by single buffer.
+	  Increase buffer space for Thingy:91 and Thingy:91 X as hardware flow control is not used.
 	  These buffers are not used when CMUX is in use.
 
 config SLM_UART_TX_BUF_SIZE
@@ -189,7 +191,7 @@ config SLM_CMUX
 config SLM_CMUX_UART_BUFFER_SIZE
 	int "UART buffer size for CMUX"
 	depends on SLM_CMUX
-	default 6000
+	default 600
 	help
 	  Size of the buffer for data received in CMUX mode.
 	  Same buffer size is used for both RX and TX.
