@@ -20,6 +20,11 @@ Currently, the sample supports the following backends:
   * `OpenAMP`_ library
   * :ref:`zephyr:ipc_service_backend_icmsg`
 
+* :zephyr:board:`nrf7002dk` board:
+
+  * `OpenAMP`_ library
+  * :ref:`zephyr:ipc_service_backend_icmsg`
+
 * :zephyr:board:`nrf54h20dk` board:
 
   * :ref:`zephyr:ipc_service_backend_icbmsg`
@@ -94,6 +99,38 @@ Use these overlays when building the IPC sample to test the following scenarios:
 
      west build -p -b nrf5340dk/nrf5340/cpuapp -T sample.ipc.ipc_service.nrf5340dk_icmsg_cpuapp_sending .
      west build -p -b nrf5340dk/nrf5340/cpuapp -T sample.ipc.ipc_service.nrf5340dk_icmsg_cpunet_sending .
+
+ **nRF7002 DK**
+
+ You can build the sample using either the RPMsg or ICMSG backend.
+ For the default RPMsg backend, use the following command:
+
+ .. code-block:: console
+
+    west build -p -b nrf7002dk/nrf5340/cpuapp
+
+ For the ICMSG backend, use the following command:
+
+ .. code-block:: console
+
+    west build -p -b nrf7002dk/nrf5340/cpuapp -T sample.ipc.ipc_service.nrf5340dk_icmsg_default .
+
+ A set of overlays is available for the sample to verify the throughput when only one core is sending the data.
+ Use these overlays when building the IPC sample to test the following scenarios:
+
+ * Either the network or application core is sending data through the IPC service using RPMsg:
+
+   .. code-block:: console
+
+      west build -p -b nrf7002dk/nrf5340/cpuapp -T sample.ipc.ipc_service.nrf5340dk_rpmsg_cpuapp_sending .
+      west build -p -b nrf7002dk/nrf5340/cpuapp -T sample.ipc.ipc_service.nrf5340dk_rpmsg_cpunet_sending .
+
+ * Either the network or application core is sending data through the IPC service using the :ref:`zephyr:ipc_service_backend_icmsg` backend:
+
+   .. code-block:: console
+
+      west build -p -b nrf7002dk/nrf5340/cpuapp -T sample.ipc.ipc_service.nrf5340dk_icmsg_cpuapp_sending .
+      west build -p -b nrf7002dk/nrf5340/cpuapp -T sample.ipc.ipc_service.nrf5340dk_icmsg_cpunet_sending .
 
 **nRF54H20 DK**
 
