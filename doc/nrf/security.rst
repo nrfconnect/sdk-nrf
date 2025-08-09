@@ -51,7 +51,7 @@ Some of them are documented in detail in other parts of this documentation, whil
     - All samples and applications that support the ``*/ns`` :ref:`variant <app_boards_names>` of the boards.
   * - Trusted storage
     - The trusted storage library enables you to provide features like integrity, confidentiality and authenticity of the stored data, without using the TF-M Platform Root of Trust (PRoT).
-    - See :ref:`trusted_storage_in_ncs` and :ref:`trusted storage library configuration <trusted_storage_configuration>`.
+    - See :ref:`secure_storage_in_ncs` and :ref:`trusted storage library configuration <trusted_storage_configuration>`.
     - :ref:`trusted_storage_readme` library
   * - Hardware unique key (HUK)
     - Nordic Semiconductor devices featuring the CryptoCell cryptographic accelerator allow the usage of a hardware unique key (HUK) for key derivation.
@@ -68,5 +68,5 @@ Some of them are documented in detail in other parts of this documentation, whil
    security/crypto/index
    security/tfm/index
    security/ap_protect
-   security/trusted_storage
+   security/secure_storage
    security/key_storage
