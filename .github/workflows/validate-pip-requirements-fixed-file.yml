@@ -10,6 +10,8 @@ on:
       - 'scripts/requirements*.txt'
       - '.github/workflows/validate-pip-requirements-fixed-file.yml'
 
+permissions:
+  contents: read
 
 jobs:
   check-requirements:
@@ -31,6 +33,12 @@ jobs:
         uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5
         with:
           python-version: '${{ steps.pyv.outputs.python_version }}'
+
+      - name: Cache pip
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip
 
       - name: Setup environment
         working-directory: ncs
