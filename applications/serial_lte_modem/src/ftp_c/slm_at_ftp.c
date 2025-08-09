@@ -118,8 +118,8 @@ static int do_ftp_open(enum at_parser_cmd_type cmd_type, struct at_parser *parse
 	int sz_password = sizeof(password);
 	char hostname[SLM_MAX_URL];
 	int sz_hostname = sizeof(hostname);
-	uint16_t port = FTP_DEFAULT_PORT;
-	sec_tag_t sec_tag = INVALID_SEC_TAG;
+	uint16_t port;
+	sec_tag_t sec_tag;
 
 	/* Parse AT command */
 	ret = util_string_get(parser, 2, username, &sz_username);
@@ -136,17 +136,13 @@ static int do_ftp_open(enum at_parser_cmd_type cmd_type, struct at_parser *parse
 	if (ret) {
 		return ret;
 	}
-	if (param_count > 5) {
-		ret = at_parser_num_get(parser, 5, &port);
-		if (ret) {
-			return ret;
-		}
+	ret = util_get_num_with_default(parser, 5, param_count, FTP_DEFAULT_PORT, &port);
+	if (ret) {
+		return ret;
 	}
-	if (param_count > 6) {
-		ret = at_parser_num_get(parser, 6, &sec_tag);
-		if (ret) {
-			return ret;
-		}
+	ret = util_get_num_with_default(parser, 6, param_count, INVALID_SEC_TAG, &sec_tag);
+	if (ret) {
+		return ret;
 	}
 
 	/* FTP open */

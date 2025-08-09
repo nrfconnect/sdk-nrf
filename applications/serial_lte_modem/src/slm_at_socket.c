@@ -1020,17 +1020,12 @@ static int handle_at_socket(enum at_parser_cmd_type cmd_type, struct at_parser *
 			if (err) {
 				goto error;
 			}
-			sock->family = (op == AT_SOCKET_OPEN) ? AF_INET : AF_INET6;
-			if (param_count > 4) {
-				err = at_parser_num_get(parser, 4, &sock->cid);
-				if (err) {
-					goto error;
-				}
-				if (sock->cid > 10) {
-					err = -EINVAL;
-					goto error;
-				}
+			err = util_get_num_with_default(parser, 4, param_count, 0, &sock->cid);
+			if (err || sock->cid > 10) {
+				err = -EINVAL;
+				goto error;
 			}
+			sock->family = (op == AT_SOCKET_OPEN) ? AF_INET : AF_INET6;
 			err = do_socket_open();
 			if (err) {
 				LOG_ERR("do_socket_open() failed: %d", err);
@@ -1122,23 +1117,17 @@ static int handle_at_secure_socket(enum at_parser_cmd_type cmd_type,
 			if (err) {
 				goto error;
 			}
-			if (param_count > 5) {
-				err = at_parser_num_get(parser, 5, &peer_verify);
-				if (err) {
-					goto error;
-				}
+			err = util_get_num_with_default(parser, 5, param_count, peer_verify,
+							&peer_verify);
+			if (err) {
+				goto error;
+			}
+			err = util_get_num_with_default(parser, 6, param_count, 0, &sock->cid);
+			if (err || sock->cid > 10) {
+				err = -EINVAL;
+				goto error;
 			}
 			sock->family = (op == AT_SOCKET_OPEN) ? AF_INET : AF_INET6;
-			if (param_count > 6) {
-				err = at_parser_num_get(parser, 6, &sock->cid);
-				if (err) {
-					goto error;
-				}
-				if (sock->cid > 10) {
-					err = -EINVAL;
-					goto error;
-				}
-			}
 			err = do_secure_socket_open(peer_verify);
 			if (err) {
 				LOG_ERR("do_secure_socket_open() failed: %d", err);
@@ -1235,7 +1224,7 @@ static int handle_at_socketopt(enum at_parser_cmd_type cmd_type, struct at_parse
 	int err = -EINVAL;
 	uint16_t op;
 	uint16_t name;
-	int value = 0;
+	int value;
 
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
@@ -1248,14 +1237,11 @@ static int handle_at_socketopt(enum at_parser_cmd_type cmd_type, struct at_parse
 			return err;
 		}
 		if (op == AT_SOCKETOPT_SET) {
-			/* some options don't require a value */
-			if (param_count > 3) {
-				err = at_parser_num_get(parser, 3, &value);
-				if (err) {
-					return err;
-				}
+			/* Some options don't require a value */
+			err = util_get_num_with_default(parser, 3, param_count, 0, &value);
+			if (err) {
+				return err;
 			}
-
 			err = sockopt_set(name, value);
 		} else if (op == AT_SOCKETOPT_GET) {
 			err = sockopt_get(name);
@@ -1459,8 +1445,6 @@ static int handle_at_send(enum at_parser_cmd_type cmd_type, struct at_parser *pa
 	int size;
 	bool datamode = false;
 
-	sock->send_flags = 0;
-
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
 		if (param_count > 1) {
@@ -1472,14 +1456,12 @@ static int handle_at_send(enum at_parser_cmd_type cmd_type, struct at_parser *pa
 			} else if (err != 0) {
 				return err;
 			}
-			if (param_count > 2) {
-				err = at_parser_num_get(parser, 2, &sock->send_flags);
-				if (err) {
-					return err;
-				}
-			}
 		} else {
 			datamode = true;
+		}
+		err = util_get_num_with_default(parser, 2, param_count, 0, &sock->send_flags);
+		if (err) {
+			return err;
 		}
 		if (datamode) {
 			err = enter_datamode(socket_datamode_callback);
@@ -1506,7 +1488,7 @@ static int handle_at_recv(enum at_parser_cmd_type cmd_type, struct at_parser *pa
 {
 	int err = -EINVAL;
 	int timeout;
-	int flags = 0;
+	int flags;
 
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
@@ -1514,11 +1496,9 @@ static int handle_at_recv(enum at_parser_cmd_type cmd_type, struct at_parser *pa
 		if (err) {
 			return err;
 		}
-		if (param_count > 2) {
-			err = at_parser_num_get(parser, 2, &flags);
-			if (err) {
-				return err;
-			}
+		err = util_get_num_with_default(parser, 2, param_count, 0, &flags);
+		if (err) {
+			return err;
 		}
 		err = do_recv(timeout, flags);
 		break;
@@ -1540,8 +1520,6 @@ static int handle_at_sendto(enum at_parser_cmd_type cmd_type, struct at_parser *
 	int size;
 	bool datamode = false;
 
-	sock->send_flags = 0;
-
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
 		size = sizeof(udp_url);
@@ -1562,14 +1540,12 @@ static int handle_at_sendto(enum at_parser_cmd_type cmd_type, struct at_parser *
 			} else if (err != 0) {
 				return err;
 			}
-			if (param_count > 4) {
-				err = at_parser_num_get(parser, 4, &sock->send_flags);
-				if (err) {
-					return err;
-				}
-			}
 		} else {
 			datamode = true;
+		}
+		err = util_get_num_with_default(parser, 4, param_count, 0, &sock->send_flags);
+		if (err) {
+			return err;
 		}
 		if (datamode) {
 			err = enter_datamode(socket_datamode_callback);
@@ -1597,7 +1573,7 @@ static int handle_at_recvfrom(enum at_parser_cmd_type cmd_type, struct at_parser
 {
 	int err = -EINVAL;
 	int timeout;
-	int flags = 0;
+	int flags;
 
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
@@ -1605,11 +1581,9 @@ static int handle_at_recvfrom(enum at_parser_cmd_type cmd_type, struct at_parser
 		if (err) {
 			return err;
 		}
-		if (param_count > 2) {
-			err = at_parser_num_get(parser, 2, &flags);
-			if (err) {
-				return err;
-			}
+		err = util_get_num_with_default(parser, 2, param_count, 0, &flags);
+		if (err) {
+			return err;
 		}
 		err = do_recvfrom(timeout, flags);
 		break;

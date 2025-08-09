@@ -410,3 +410,59 @@ int util_get_peer_addr(struct sockaddr *peer, char addr[static INET6_ADDRSTRLEN]
 
 	return 0;
 }
+
+int util_get_int32_with_default(struct at_parser *parser, uint32_t param_index,
+				uint32_t param_count, int32_t default_value, int32_t *value)
+{
+	int err;
+
+	if (param_index >= param_count) {
+		*value = default_value;
+		return 0;
+	}
+
+	err = at_parser_num_get(parser, param_index, value);
+	if (err == -ENODATA) {
+		*value = default_value;
+		err = 0;
+	} else if (err) {
+		LOG_ERR("Failed to get parameter %d (%d)", param_index, err);
+		return err;
+	}
+	return 0;
+}
+
+int util_get_uint16_with_default(struct at_parser *parser, uint32_t param_index,
+				 uint32_t param_count, uint16_t default_value, uint16_t *value)
+{
+	int err;
+	int32_t val;
+
+	err = util_get_int32_with_default(parser, param_index, param_count, (int)default_value,
+					  &val);
+	if (!err && (val < 0 || val > UINT16_MAX)) {
+		LOG_ERR("Invalid uint16_t value %d", val);
+		return -EINVAL;
+	}
+	*value = (uint16_t)val;
+
+	return 0;
+}
+
+int util_get_bool_with_default(struct at_parser *parser, uint32_t param_index, uint32_t param_count,
+			       bool default_value, bool *value)
+{
+	int err;
+	int32_t val;
+
+	err = util_get_int32_with_default(parser, param_index, param_count, (int32_t)default_value,
+					  &val);
+
+	if (!err && (val < 0 || val > 1)) {
+		LOG_ERR("Invalid boolean value %d", val);
+		return -EINVAL;
+	}
+
+	*value = (val != 0);
+	return 0;
+}
