@@ -62,7 +62,7 @@ Configuring CoAP and CoAPS (DTLS 1.2)
 =====================================
 
 Make sure the buffer provided to the downloader is large enough to accommodate the entire CoAP header and the CoAP block.
-The CoAP block size is provided by the :kconfig:option:`CONFIG_DOWNLOADER_COAP_BLOCK_SIZE_CHOICE` Kconfig option.
+You can configure the CoAP block size using the :c:func:`downloader_transport_coap_set_config` function.
 Ensure that the values of the :kconfig:option:`CONFIG_DOWNLOADER_MAX_HOSTNAME_SIZE` and :kconfig:option:`CONFIG_DOWNLOADER_MAX_FILENAME_SIZE` Kconfig options are large enough for your host and filenames, respectively.
 
 When using CoAPS the application must provision the TLS credentials and pass the security tag to the library through the :c:struct:`downloader_host_cfg` structure.
