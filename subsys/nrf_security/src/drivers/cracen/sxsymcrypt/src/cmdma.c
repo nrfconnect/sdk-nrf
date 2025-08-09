@@ -12,9 +12,9 @@
 #include "cmdma.h"
 #include "security/cracen.h"
 
-void sx_cmdma_newcmd(struct sx_dmactl *dma, struct sxdesc *d, uint32_t cmd, uint32_t tag)
+void sx_cmdma_newcmd(struct sx_dmactl *dma, struct sxdesc *desc_ptr, uint32_t cmd, uint32_t tag)
 {
-	dma->d = d;
+	dma->d = desc_ptr;
 	dma->dmamem.cfg = cmd;
 	dma->out = dma->dmamem.outdescs;
 
@@ -24,48 +24,50 @@ void sx_cmdma_newcmd(struct sx_dmactl *dma, struct sxdesc *d, uint32_t cmd, uint
 
 static void sx_cmdma_finalize_descs(struct sxdesc *start, struct sxdesc *end)
 {
-	struct sxdesc *d;
+	struct sxdesc *desc_ptr;
 
-	for (d = start; d < end; d++) {
+	for (desc_ptr = start; desc_ptr < end; desc_ptr++) {
 #ifdef DMA_FIFO_ADDR
-		if (d->addr == (char *)DMA_FIFO_ADDR)
-			d->sz |= DMA_CONST_ADDR;
+		if (desc_ptr->addr == (char *)DMA_FIFO_ADDR) {
+			desc_ptr->sz |= DMA_CONST_ADDR;
+		}
 #endif
-		d->next = d + 1;
+		desc_ptr->next = desc_ptr + 1;
 	}
 	end->next = DMA_LAST_DESCRIPTOR;
 	end->dmatag |= DMATAG_LAST;
 	end->sz |= DMA_REALIGN;
 #ifdef DMA_FIFO_ADDR
-	if (end->addr == (char *)DMA_FIFO_ADDR)
+	if (end->addr == (char *)DMA_FIFO_ADDR) {
 		end->sz |= DMA_CONST_ADDR;
+	}
 #endif
 }
 
 void sx_cmdma_start(struct sx_dmactl *dma, size_t privsz, struct sxdesc *indescs)
 {
-	struct sxdesc *m;
+	struct sxdesc *desc;
 
 	sx_cmdma_finalize_descs(indescs, dma->d - 1);
 	sx_cmdma_finalize_descs(dma->dmamem.outdescs, dma->out - 1);
 
 #ifdef CONFIG_DCACHE
-	m = (struct sxdesc *)(dma->mapped + sizeof(struct sx_dmaslot));
-	for (; m != DMA_LAST_DESCRIPTOR; m = m->next) {
-		sys_cache_data_flush_and_invd_range(m->addr, m->sz & DMA_SZ_MASK);
+	desc = (struct sxdesc *)(dma->mapped + sizeof(struct sx_dmaslot));
+	for (; desc != DMA_LAST_DESCRIPTOR; desc = desc->next) {
+		sys_cache_data_flush_and_invd_range(desc->addr, desc->sz & DMA_SZ_MASK);
 	}
-	m = (struct sxdesc *)(dma->mapped + offsetof(struct sx_dmaslot, outdescs));
-	for (; m != DMA_LAST_DESCRIPTOR; m = m->next) {
-		sys_cache_data_flush_and_invd_range(m->addr, m->sz & DMA_SZ_MASK);
+	desc = (struct sxdesc *)(dma->mapped + offsetof(struct sx_dmaslot, outdescs));
+	for (; desc != DMA_LAST_DESCRIPTOR; desc = desc->next) {
+		sys_cache_data_flush_and_invd_range(desc->addr, desc->sz & DMA_SZ_MASK);
 	}
 
 	sys_cache_data_flush_range((void *)&dma->dmamem, sizeof(dma->dmamem) + privsz);
 #endif
 
-	m = (struct sxdesc *)(dma->mapped + sizeof(struct sx_dmaslot));
-	sx_wrreg_addr(REG_FETCH_ADDR, m);
-	m = (struct sxdesc *)(dma->mapped + offsetof(struct sx_dmaslot, outdescs));
-	sx_wrreg_addr(REG_PUSH_ADDR, m);
+	desc = (struct sxdesc *)(dma->mapped + sizeof(struct sx_dmaslot));
+	sx_wrreg_addr(REG_FETCH_ADDR, desc);
+	desc = (struct sxdesc *)(dma->mapped + offsetof(struct sx_dmaslot, outdescs));
+	sx_wrreg_addr(REG_PUSH_ADDR, desc);
 	sx_wrreg(REG_CONFIG, REG_CONFIG_SG);
 	sx_wrreg(REG_START, REG_START_ALL);
 }
@@ -84,16 +86,16 @@ static int sx_cmdma_check_with_polling(void)
 
 static int sx_cmdma_check_with_interrupts(void)
 {
-	uint32_t r = 0xFF;
+	uint32_t status = 0xFF;
 	uint32_t busy;
 
-	r = cracen_wait_for_cm_interrupt();
-	if (!r) {
-		r = sx_rdreg(REG_INT_STATRAW);
+	status = cracen_wait_for_cm_interrupt();
+	if (!status) {
+		status = sx_rdreg(REG_INT_STATRAW);
 	}
 	busy = sx_rdreg(REG_STATUS) & REG_STATUS_BUSY_MASK;
 
-	if (r & (DMA_BUS_FETCHER_ERROR_MASK | DMA_BUS_PUSHER_ERROR_MASK)) {
+	if (status & (DMA_BUS_FETCHER_ERROR_MASK | DMA_BUS_PUSHER_ERROR_MASK)) {
 		sx_cmdma_reset();
 		return SX_ERR_DMA_FAILED;
 	}
