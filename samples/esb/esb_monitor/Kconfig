@@ -1,0 +1,65 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Enhanced ShockBurst: Monitor"
+
+config LED_ENABLE
+	bool "Enable led changes when receiving packets"
+	default y
+	help
+	  Turns on led updates when receiving packets from PTX sample.
+
+config ESB_SNIFFER
+	bool "Turn sample into functional ESB sniffer"
+	select USE_SEGGER_RTT
+	select SHELL
+	default n
+	help
+	  Enable sniffer functionality with RTT backend and runtime configuration updates via uart shell.
+
+	menu "ESB sniffer config"
+
+	config ESB_SNIFFER_RTT_DATA_CHANNEL
+		int "RTT channel number for data transfer"
+		default 1
+
+	config ESB_SNIFFER_RTT_COMM_RET_CHANNEL
+		int "RTT channel number for sniffer command returns"
+		default 2
+
+	config ESB_SNIFFER_RTT_COMM_CHANNEL
+		int "RTT channel number for sniffer commands"
+		default 1
+
+	config ESB_SNIFFER_RTT_DATA_BUFF_SZ
+		int "RTT data buffer size"
+		default 32768
+
+	config ESB_SNIFFER_RTT_COMM_RET_BUFF_SZ
+		int "RTT commands return buffer size"
+		default 128
+
+	config ESB_SNIFFER_RTT_COMM_BUFF_SZ
+		int "RTT commands buffer size"
+		default 128
+
+	config ESB_SNIFFER_THREAD_PRIORITY
+		int "ESB sniffer thread priority"
+		default 10
+
+	config ESB_SNIFFER_THREAD_STACK_SZ
+		int "ESB sniffer thread stack size"
+		default 1024
+
+	endmenu
+
+module = ESB_MONITOR_APP
+module-str = "ESB Monitor app"
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endmenu

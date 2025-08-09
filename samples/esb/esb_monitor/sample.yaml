@@ -1,0 +1,72 @@
+sample:
+  name: ESB Monitor Sample
+tests:
+  sample.esb.monitor:
+    sysbuild: true
+    filter: CONFIG_UART_CONSOLE and CONFIG_SERIAL_SUPPORT_INTERRUPT
+    harness: keyboard
+    integration_platforms:
+      - nrf52dk/nrf52832
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpunet
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf52dk/nrf52832
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpunet
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    tags:
+      - esb
+      - samples
+      - console
+      - sysbuild
+      - ci_samples_esb
+  sample.esb.monitor.build:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf52dk/nrf52832
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpunet
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf52dk/nrf52832
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpunet
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    tags:
+      - esb
+      - ci_build
+      - sysbuild
+      - ci_samples_esb
+  sample.esb.monitor.dynamic_irq:
+    sysbuild: true
+    build_only: true
+    extra_configs:
+      - CONFIG_ESB_DYNAMIC_INTERRUPTS=y
+      - CONFIG_DYNAMIC_INTERRUPTS=y
+      - CONFIG_DYNAMIC_DIRECT_INTERRUPTS=y
+      - CONFIG_MPSL_DYNAMIC_INTERRUPTS=y
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpunet
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    platform_allow:
+      - nrf5340dk/nrf5340/cpunet
+      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    tags:
+      - esb
+      - ci_build
+      - sysbuild
+      - ci_samples_esb
