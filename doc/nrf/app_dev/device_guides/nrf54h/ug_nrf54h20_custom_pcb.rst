@@ -178,20 +178,19 @@ When doing so, consider the following:
 Update the nRF54H20 SoC binaries
 ********************************
 
-When a new version of the nRF54H20 SoC binaries compatible with your development kit is released, you can update it as follows:
+To update the nRF54H20 SoC binaries (version 20.0.0 or higher, based on IronSide SE) using the debugger on a nRF54H20 SoC, use the west ``ncs-ironside-se-update`` command.
+This command takes a nRF54H20 SoC binary ZIP file and uses the IronSide SE update service to update both the IronSide SE and IronSide SE Recovery (or optionally just one of them).
+
+To update the nRF54H20 SoC binaries, do the following:
 
 1. Download the new version of the nRF54H20 SoC binaries for your development kit from the :ref:`abi_compatibility` page.
 #. Move the :file:`ZIP` bundle to a folder of your choice and unzip it.
 #. |open_terminal_window_with_environment|
-#. Verify the current version of the nRF54H20 SoC binaries by running the following command::
+#. Run the following command::
 
-      nrfutil device x-sdfw-version-get --firmware-slot uslot --serial-number <serial_number>
+      west ncs-ironside-se-update --zip ~/path/to//nrf54h20_soc_binaries_v<version_number>.zip --serial $dbg --allow-erase
 
-   If the nRF54H20 SoC binaries version is 0.5.0 or higher, continue to the next step.
-#. Run nRF Util to update the binaries using the following SUIT command::
+For more information on the nRF54H20 SoC binaries, see :ref:`abi_compatibility`.
 
-      nrfutil device x-suit-dfu --serial-number <snr> --firmware nordic_top.suit
-
-#. Run again the following command to verify the new SDFW version::
-
-      nrfutil device x-sdfw-version-get --firmware-slot uslot --serial-number <serial_number>
+.. note::
+   It is not possible to update the nRF54H20 SoC binaries from a SUIT-based (up to 0.9.6) to an IronSide-SE-based (from a SUIT-based) version.
