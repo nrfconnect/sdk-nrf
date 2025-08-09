@@ -23,20 +23,20 @@ To enable the DFU multi-image library, set the :kconfig:option:`CONFIG_DFU_MULTI
 
 To configure the maximum number of images that the DFU multi-image library is able to process, use the :kconfig:option:`CONFIG_DFU_MULTI_IMAGE_MAX_IMAGE_COUNT` Kconfig option.
 
-To enable building the DFU multi-image package that contains commonly used update images, such as the application core firmware, the network core firmware, or MCUboot images, set the ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD`` Kconfig option.
+To enable building the DFU multi-image package that contains commonly used update images, such as the application core firmware, the network core firmware, or MCUboot images, set the :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD` Kconfig option.
 The following options control which images are included:
 
-+----------------------------------------------------+-----------------------------------------+
-| Kconfig                                            | Description                             |
-+====================================================+=========================================+
-|``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_APP``           | Include application update.             |
-+----------------------------------------------------+-----------------------------------------+
-|``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_NET``           | Include network core image update.      |
-+----------------------------------------------------+-----------------------------------------+
-| ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_MCUBOOT``      | Include MCUboot update.                 |
-+----------------------------------------------------+-----------------------------------------+
-|``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH`` | Include nRF700x Wi-Fi® firmware patches.|
-+----------------------------------------------------+-----------------------------------------+
++-------------------------------------------------------------------+-----------------------------------------+
+| Kconfig                                                           | Description                             |
++===================================================================+=========================================+
+| :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_APP`           | Include application update.             |
++-------------------------------------------------------------------+-----------------------------------------+
+| :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_NET`           | Include network core image update.      |
++-------------------------------------------------------------------+-----------------------------------------+
+| :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_MCUBOOT`       | Include MCUboot update.                 |
++-------------------------------------------------------------------+-----------------------------------------+
+| :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH` | Include nRF700x Wi-Fi® firmware patches.|
++-------------------------------------------------------------------+-----------------------------------------+
 
 .. _lib_dfu_multi_image_suit_multi_image_package:
 

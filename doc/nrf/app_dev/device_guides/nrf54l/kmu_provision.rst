@@ -100,7 +100,7 @@ Once you have an unprovisioned SoC, upload keys to the board by running one of t
       * It might utilize multiple keys, which is intended for use with key revocation.
         The number of keys is defined by the ``CONFIG_BOOT_SIGNATURE_KMU_SLOTS`` MCUboot's Kconfig option.
         You can enable the key revocation mechanism with the  ``CONFIG_BOOT_KEYS_REVOCATION`` MCUboot's Kconfig option.
-      * KMU support in its configuration needs to be enabled by setting the ``SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU`` sysbuild Kconfig option.
+      * KMU support in its configuration needs to be enabled by setting the :kconfig:option:`SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU` sysbuild Kconfig option.
         Otherwise, MCUboot will fallback to the compiled-in key.
 
       For NSIB, take note of the following:
@@ -141,12 +141,12 @@ Alternative provisioning method
 *********************************
 
 To simplify the development process, keys can be generated and provisioned at the same time as the flashing process
-In the case of NSIB, enabling the ``SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE`` Kconfig option at the sysbuild level introduces an additional programming step that is triggered when you execute the ``west flash --recover`` command.
-If you set the ``SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE`` Kconfig option to a PEM key file, that specific file will be used.
+In the case of NSIB, enabling the :kconfig:option:`SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE` Kconfig option at the sysbuild level introduces an additional programming step that is triggered when you execute the ``west flash --recover`` command.
+If you set the :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE` Kconfig option to a PEM key file, that specific file will be used.
 If not, the build will use the default key named :file:`GENERATED_NON_SECURE_SIGN_KEY_PRIVATE.pem`, which is located in the build directory.
 
-For MCUboot configurations, activating the ``SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE`` Kconfig option at the sysbuild level allows to provision keys simultaneously with the flashing process. Provisioning step is triggered when you execute either ``west flash --recover`` or ``west flash --erase`` command.
-MCUboot uses the key file designated by the ``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`` option.
+For MCUboot configurations, activating the :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE` Kconfig option at the sysbuild level allows to provision keys simultaneously with the flashing process. Provisioning step is triggered when you execute either ``west flash --recover`` or ``west flash --erase`` command.
+MCUboot uses the key file designated by the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` option.
 
 At the end of the described process the :file:`keyfile.json` file is generated in the build directory.
 This file allows key provisioning to occur simultaneously with the flashing process.

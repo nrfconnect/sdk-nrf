@@ -91,7 +91,7 @@ The MCUboot backend configuration selects the following options:
 * :kconfig:option:`CONFIG_STREAM_FLASH`
 * :kconfig:option:`CONFIG_MCUBOOT_BOOTUTIL_LIB`
 
-To use the module with this backend, you must also enable the ``SB_CONFIG_BOOTLOADER_MCUBOOT`` Kconfig option.
+To use the module with this backend, you must also enable the :kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT` Kconfig option.
 
 By default, the MCUmgr DFU module confirms the image using the :c:func:`boot_write_img_confirmed` function during the system boot.
 If the :kconfig:option:`CONFIG_DESKTOP_DFU_MCUMGR_MCUBOOT_DIRECT_XIP` option is enabled, the MCUmgr DFU module assumes that the bootloader simply boots the image with a higher version and does not confirm the newly updated image after a successful boot.
