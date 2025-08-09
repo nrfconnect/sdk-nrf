@@ -7,22 +7,23 @@
 #include "ot_shell.h"
 #include <net/ot_rpc.h>
 
-#include <zephyr/shell/shell.h>
 #include <zephyr/net/net_ip.h>
+#include <zephyr/shell/shell.h>
 
 #include <openthread/cli.h>
 #include <openthread/coap.h>
+#include <openthread/dns_client.h>
+#include <openthread/instance.h>
 #include <openthread/ip6.h>
-#include <openthread/link.h>
 #include <openthread/link_raw.h>
-#include <openthread/thread.h>
-#include <openthread/udp.h>
+#include <openthread/link.h>
+#include <openthread/mesh_diag.h>
+#include <openthread/message.h>
 #include <openthread/netdata.h>
 #include <openthread/netdiag.h>
-#include <openthread/message.h>
-#include <openthread/mesh_diag.h>
 #include <openthread/srp_client.h>
-#include <openthread/dns_client.h>
+#include <openthread/thread.h>
+#include <openthread/udp.h>
 
 #include <string.h>
 
@@ -142,7 +143,7 @@ static int ot_cli_command_send(const struct shell *sh, size_t argc, char *argv[]
 
 	ot_cli_lazy_init(sh);
 
-	for (size_t i = 1; i < argc; i++) {
+	for (size_t i = 0; i < argc; i++) {
 		int arg_len = snprintk(ptr, end - ptr, "%s", argv[i]);
 
 		if (arg_len < 0) {
@@ -152,7 +153,7 @@ static int ot_cli_command_send(const struct shell *sh, size_t argc, char *argv[]
 		ptr += arg_len;
 
 		if (ptr >= end) {
-			shell_fprintf(sh, SHELL_WARNING, "OT shell buffer full\n");
+			shell_warn(sh, "OT shell buffer full");
 			return -ENOEXEC;
 		}
 
@@ -238,7 +239,7 @@ static int cmd_discover(const struct shell *sh, size_t argc, char *argv[])
 	return ot_cli_command_exec(ot_cli_command_discover, sh, argc, argv);
 }
 
-static otError ot_cli_command_radio(const struct shell *sh, size_t argc, char *argv[])
+static otError cmd_radio_impl(const struct shell *sh, size_t argc, char *argv[])
 {
 	if (argc != 2 || strcmp(argv[1], "time") != 0) {
 		return OT_ERROR_INVALID_COMMAND;
@@ -252,10 +253,10 @@ static otError ot_cli_command_radio(const struct shell *sh, size_t argc, char *a
 static int cmd_radio(const struct shell *sh, size_t argc, char *argv[])
 {
 	if (argc == 2 && strcmp(argv[1], "time") == 0) {
-		return ot_cli_command_exec(ot_cli_command_radio, sh, argc, argv);
+		return ot_cli_command_exec(cmd_radio_impl, sh, argc, argv);
 	}
 
-	return ot_cli_command_send(sh, argc + 1, argv - 1);
+	return ot_cli_command_send(sh, argc, argv);
 }
 
 static otError ot_cli_command_ifconfig(const struct shell *sh, size_t argc, char *argv[])
@@ -441,7 +442,7 @@ static int cmd_state(const struct shell *sh, size_t argc, char *argv[])
 		 * Serialization of OT APIs for enforcing the role is to be done,
 		 * so send the command to be processed by the RPC server.
 		 */
-		return ot_cli_command_send(sh, argc + 1, argv - 1);
+		return ot_cli_command_send(sh, argc, argv);
 	}
 
 	return ot_cli_command_exec(ot_cli_command_state, sh, argc, argv);
@@ -731,7 +732,7 @@ exit:
 
 static int cmd_ot(const struct shell *sh, size_t argc, char *argv[])
 {
-	return ot_cli_command_send(sh, argc, argv);
+	return ot_cli_command_send(sh, argc - 1, argv + 1);
 }
 
 static int cmd_test_srp_client_autostart(const struct shell *sh, size_t argc, char *argv[])
@@ -2089,19 +2090,212 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(send, NULL, "Send message [addr port] <message>", cmd_udp_send, 2, 2),
 	SHELL_CMD_ARG(close, NULL, "Close socket", cmd_udp_close, 1, 0), SHELL_SUBCMD_SET_END);
 
+static otError cmd_channel_impl(const struct shell *sh, size_t argc, char *argv[])
+{
+	shell_print(sh, "%u", otLinkGetChannel(NULL));
+	return OT_ERROR_NONE;
+}
+
+static int cmd_channel(const struct shell *sh, size_t argc, char *argv[])
+{
+	if (argc == 1) {
+		return ot_cli_command_exec(cmd_channel_impl, sh, argc, argv);
+	}
+
+	return ot_cli_command_send(sh, argc, argv);
+}
+
+static otError cmd_counters_mac_impl(const struct shell *sh, size_t argc, char *argv[])
+{
+	const otMacCounters *counters = otLinkGetCounters(NULL);
+
+	shell_print(sh, "TxTotal: %u", counters->mTxTotal);
+
+	shell_print(sh, "    TxUnicast: %u", counters->mTxUnicast);
+	shell_print(sh, "    TxBroadcast: %u", counters->mTxBroadcast);
+	shell_print(sh, "    TxAckRequested: %u", counters->mTxAckRequested);
+	shell_print(sh, "    TxAcked: %u", counters->mTxAcked);
+	shell_print(sh, "    TxNoAckRequested: %u", counters->mTxNoAckRequested);
+	shell_print(sh, "    TxData: %u", counters->mTxData);
+	shell_print(sh, "    TxDataPoll: %u", counters->mTxDataPoll);
+	shell_print(sh, "    TxBeacon: %u", counters->mTxBeacon);
+	shell_print(sh, "    TxBeaconRequest: %u", counters->mTxBeaconRequest);
+	shell_print(sh, "    TxOther: %u", counters->mTxOther);
+	shell_print(sh, "    TxRetry: %u", counters->mTxRetry);
+	shell_print(sh, "    TxErrCca: %u", counters->mTxErrCca);
+	shell_print(sh, "    TxErrBusyChannel: %u", counters->mTxErrBusyChannel);
+	shell_print(sh, "    TxErrAbort: %u", counters->mTxErrAbort);
+	shell_print(sh, "    TxDirectMaxRetryExpiry: %u", counters->mTxDirectMaxRetryExpiry);
+	shell_print(sh, "    TxIndirectMaxRetryExpiry: %u", counters->mTxIndirectMaxRetryExpiry);
+
+	shell_print(sh, "RxTotal: %u", counters->mRxTotal);
+
+	shell_print(sh, "    RxUnicast: %u", counters->mRxUnicast);
+	shell_print(sh, "    RxBroadcast: %u", counters->mRxBroadcast);
+	shell_print(sh, "    RxData: %u", counters->mRxData);
+	shell_print(sh, "    RxDataPoll: %u", counters->mRxDataPoll);
+	shell_print(sh, "    RxBeacon: %u", counters->mRxBeacon);
+	shell_print(sh, "    RxBeaconRequest: %u", counters->mRxBeaconRequest);
+	shell_print(sh, "    RxOther: %u", counters->mRxOther);
+	shell_print(sh, "    RxAddressFiltered: %u", counters->mRxAddressFiltered);
+	shell_print(sh, "    RxDestAddrFiltered: %u", counters->mRxDestAddrFiltered);
+	shell_print(sh, "    RxDuplicated: %u", counters->mRxDuplicated);
+	shell_print(sh, "    RxErrNoFrame: %u", counters->mRxErrNoFrame);
+	shell_print(sh, "    RxErrNoUnknownNeighbor: %u", counters->mRxErrUnknownNeighbor);
+	shell_print(sh, "    RxErrInvalidSrcAddr: %u", counters->mRxErrInvalidSrcAddr);
+	shell_print(sh, "    RxErrSec: %u", counters->mRxErrSec);
+	shell_print(sh, "    RxErrFcs: %u", counters->mRxErrFcs);
+	shell_print(sh, "    RxErrOther: %u", counters->mRxErrOther);
+
+	return OT_ERROR_NONE;
+}
+
+static int cmd_counters_mac(const struct shell *sh, size_t argc, char *argv[])
+{
+	if (argc == 1) {
+		return ot_cli_command_exec(cmd_counters_mac_impl, sh, argc, argv);
+	}
+
+	return ot_cli_command_send(sh, argc + 1, argv - 1);
+}
+
+static otError cmd_counters_mle_impl(const struct shell *sh, size_t argc, char *argv[])
+{
+	const otMleCounters *counters = otThreadGetMleCounters(NULL);
+
+	shell_print(sh, "Role Disabled: %u", counters->mDisabledRole);
+	shell_print(sh, "Role Detached: %u", counters->mDetachedRole);
+	shell_print(sh, "Role Child: %u", counters->mChildRole);
+	shell_print(sh, "Role Router: %u", counters->mRouterRole);
+	shell_print(sh, "Role Leader: %u", counters->mLeaderRole);
+	shell_print(sh, "Attach Attempts: %u", counters->mAttachAttempts);
+	shell_print(sh, "Partition Id Changes: %u", counters->mPartitionIdChanges);
+	shell_print(sh, "Better Partition Attach Attempts: %u",
+		    counters->mBetterPartitionAttachAttempts);
+	shell_print(sh, "Parent Changes: %u", counters->mParentChanges);
+	shell_print(sh, "Time Disabled Milli: %llu", counters->mDisabledTime);
+	shell_print(sh, "Time Detached Milli: %llu", counters->mDetachedTime);
+	shell_print(sh, "Time Child Milli: %llu", counters->mChildTime);
+	shell_print(sh, "Time Router Milli: %llu", counters->mRouterTime);
+	shell_print(sh, "Time Leader Milli: %llu", counters->mLeaderTime);
+	shell_print(sh, "Time Tracked Milli: %llu", counters->mTrackedTime);
+
+	return OT_ERROR_NONE;
+}
+
+static int cmd_counters_mle(const struct shell *sh, size_t argc, char *argv[])
+{
+	if (argc == 1) {
+		return ot_cli_command_exec(cmd_counters_mle_impl, sh, argc, argv);
+	}
+
+	return ot_cli_command_send(sh, argc + 1, argv - 1);
+}
+
+SHELL_STATIC_SUBCMD_SET_CREATE(counters_cmds,
+			       SHELL_CMD_ARG(mac, NULL, "MAC counters", cmd_counters_mac, 1, 1),
+			       SHELL_CMD_ARG(mle, NULL, "MLE counters", cmd_counters_mle, 1, 1),
+			       SHELL_SUBCMD_SET_END);
+
+static otError cmd_extaddr_impl(const struct shell *sh, size_t argc, char *argv[])
+{
+	const otExtAddress *ext_addr = otLinkGetExtendedAddress(NULL);
+
+	shell_print(sh, "%016llx", sys_get_be64(ext_addr->m8));
+
+	return OT_ERROR_NONE;
+}
+
+static int cmd_extaddr(const struct shell *sh, size_t argc, char *argv[])
+{
+	if (argc == 1) {
+		return ot_cli_command_exec(cmd_extaddr_impl, sh, argc, argv);
+	}
+
+	return ot_cli_command_send(sh, argc, argv);
+}
+
+static otError cmd_networkname_impl(const struct shell *sh, size_t argc, char *argv[])
+{
+	shell_print(sh, "%s", otThreadGetNetworkName(NULL));
+	return OT_ERROR_NONE;
+}
+
+static int cmd_networkname(const struct shell *sh, size_t argc, char *argv[])
+{
+	if (argc == 1) {
+		return ot_cli_command_exec(cmd_networkname_impl, sh, argc, argv);
+	}
+
+	return ot_cli_command_send(sh, argc, argv);
+}
+
+static otError cmd_panid_impl(const struct shell *sh, size_t argc, char *argv[])
+{
+	shell_print(sh, "0x%04x", otLinkGetPanId(NULL));
+	return OT_ERROR_NONE;
+}
+
+static int cmd_panid(const struct shell *sh, size_t argc, char *argv[])
+{
+	if (argc == 1) {
+		return ot_cli_command_exec(cmd_panid_impl, sh, argc, argv);
+	}
+
+	return ot_cli_command_send(sh, argc, argv);
+}
+
+static otError cmd_partitionid_impl(const struct shell *sh, size_t argc, char *argv[])
+{
+	shell_print(sh, "%u", otThreadGetPartitionId(NULL));
+	return OT_ERROR_NONE;
+}
+
+static int cmd_partitionid(const struct shell *sh, size_t argc, char *argv[])
+{
+	if (argc == 1) {
+		return ot_cli_command_exec(cmd_partitionid_impl, sh, argc, argv);
+	}
+
+	return ot_cli_command_send(sh, argc, argv);
+}
+
+static otError cmd_version_impl(const struct shell *sh, size_t argc, char *argv[])
+{
+	shell_print(sh, "%s", otGetVersionString());
+	return OT_ERROR_NONE;
+}
+
+static int cmd_version(const struct shell *sh, size_t argc, char *argv[])
+{
+	if (argc == 1) {
+		return ot_cli_command_exec(cmd_version_impl, sh, argc, argv);
+	}
+
+	return ot_cli_command_send(sh, argc, argv);
+}
+
 SHELL_STATIC_SUBCMD_SET_CREATE(
-	ot_cmds, SHELL_CMD_ARG(ifconfig, NULL, "Interface management", cmd_ifconfig, 1, 1),
+	ot_cmds, SHELL_CMD_ARG(channel, NULL, "Channel configuration", cmd_channel, 1, 255),
+	SHELL_CMD_ARG(cli, NULL, "Send command as text", cmd_ot, 1, 255),
+	SHELL_CMD_ARG(counters, &counters_cmds, "Counters subcommands", NULL, 1, 0),
+	SHELL_CMD_ARG(discover, NULL, "Thread discovery scan", cmd_discover, 1, 4),
+	SHELL_CMD_ARG(eui64, NULL, "EUI64 configuration", cmd_eui64, 1, 1),
+	SHELL_CMD_ARG(extaddr, NULL, "Ext address configuration", cmd_extaddr, 1, 1),
+	SHELL_CMD_ARG(factoryreset, NULL, "Factory reset", cmd_factoryreset, 1, 0),
+	SHELL_CMD_ARG(ifconfig, NULL, "Interface management", cmd_ifconfig, 1, 1),
 	SHELL_CMD_ARG(ipmaddr, NULL, "IPv6 multicast configuration", cmd_ipmaddr, 1, 2),
 	SHELL_CMD_ARG(mode, NULL, "Mode configuration", cmd_mode, 1, 1),
+	SHELL_CMD_ARG(networkname, NULL, "Network name configuration", cmd_networkname, 1, 1),
+	SHELL_CMD_ARG(panid, NULL, "PAN ID configuration", cmd_panid, 1, 1),
+	SHELL_CMD_ARG(partitionid, NULL, "Partition configuration", cmd_partitionid, 1, 2),
 	SHELL_CMD_ARG(pollperiod, NULL, "Polling configuration", cmd_pollperiod, 1, 1),
+	SHELL_CMD_ARG(radio, NULL, "Radio configuration", cmd_radio, 1, 1),
+	SHELL_CMD_ARG(rloc16, NULL, "Get RLOC16", cmd_rloc16, 1, 0),
 	SHELL_CMD_ARG(state, NULL, "Current role", cmd_state, 1, 1),
 	SHELL_CMD_ARG(thread, NULL, "Role management", cmd_thread, 2, 0),
-	SHELL_CMD_ARG(discover, NULL, "Thread discovery scan", cmd_discover, 1, 4),
-	SHELL_CMD_ARG(radio, NULL, "Radio configuration", cmd_radio, 1, 1),
-	SHELL_CMD_ARG(eui64, NULL, "EUI64 configuration", cmd_eui64, 1, 1),
-	SHELL_CMD_ARG(rloc16, NULL, "Get RLOC16", cmd_rloc16, 1, 0),
 	SHELL_CMD_ARG(udp, &udp_cmds, "UDP subcommands", NULL, 1, 0),
-	SHELL_CMD_ARG(factoryreset, NULL, "Factory reset", cmd_factoryreset, 1, 0),
+	SHELL_CMD_ARG(version, NULL, "Get version", cmd_version, 1, 1),
 	SHELL_CMD_ARG(test_message, NULL, "Test message API", cmd_test_message, 1, 0),
 	SHELL_CMD_ARG(test_net_data, NULL, "Test netdata API", cmd_test_net_data, 1, 0),
 	SHELL_CMD_ARG(test_net_data_mesh_prefix, NULL, "Test netdata msh prefix API",
