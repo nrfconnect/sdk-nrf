@@ -102,15 +102,31 @@ static uint16_t bl_storage_otp_halfword_read(uint32_t address)
  * we read it as if it were a UICR address as it is safe (although
  * inefficient) to do so.
  */
+#if defined(CONFIG_IS_SECURE_BOOTLOADER) || defined(CONFIG_SECURE_BOOT)
 uint32_t s0_address_read(void)
 {
-	return bl_storage_word_read((uint32_t)&BL_STORAGE->s0_address);
+#ifdef CONFIG_PARTITION_MANAGER_ENABLED
+#if defined(CONFIG_SOC_NRF5340_CPUNET)
+	return PM_APP_ADDRESS;
+#else
+	return PM_S0_ADDRESS;
+#endif
+#else
+#error "Not currently supported"
+#endif
 }
 
+#if !defined(CONFIG_SOC_NRF5340_CPUNET)
 uint32_t s1_address_read(void)
 {
-	return bl_storage_word_read((uint32_t)&BL_STORAGE->s1_address);
+#ifdef CONFIG_PARTITION_MANAGER_ENABLED
+	return PM_S1_ADDRESS;
+#else
+#error "Not currently supported"
+#endif
 }
+#endif
+#endif
 
 uint32_t num_public_keys_read(void)
 {
