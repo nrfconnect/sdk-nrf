@@ -1,0 +1,21 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+menu "Enhanced ShockBurst: Monitor"
+
+config LED_ENABLE
+	bool "Enable led changes when receiving packets"
+	default y
+	help
+	  Turns on led updates when receiving packets from PTX sample.
+
+module = ESB_MONITOR_APP
+module-str = "ESB Monitor app"
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endmenu
