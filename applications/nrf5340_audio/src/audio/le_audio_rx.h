@@ -4,6 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @defgroup nrf5340_audio_le_audio_rx LE Audio RX
+ * @{
+ * @brief LE Audio receive (RX) API for nRF5340 Audio applications.
+ *
+ * This module handles the reception and processing of incoming LE Audio streams from
+ * Bluetooth connections.
+ */
+
 #ifndef _LE_AUDIO_RX_H_
 #define _LE_AUDIO_RX_H_
 
@@ -27,5 +36,9 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
  * @return	0 if successful, error otherwise.
  */
 int le_audio_rx_init(void);
+
+/**
+ * @}
+ */
 
 #endif /* _LE_AUDIO_RX_H_ */
