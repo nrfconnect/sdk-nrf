@@ -54,6 +54,7 @@
 /boards/nordic/nrf54l*/                   @nrfconnect/ncs-co-boards @kl-cruz
 /boards/nordic/nrf52*                     @nrfconnect/ncs-co-boards @nrfconnect/ncs-si-bluebagel
 /boards/nordic/thingy91*/                 @nrfconnect/ncs-co-boards @nrfconnect/ncs-cia
+/boards/sercomm/                          @nrfconnect/ncs-co-boards @tokangas
 
 **/shields/                               @nrfconnect/ncs-co-build-system
 
