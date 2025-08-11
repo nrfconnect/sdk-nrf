@@ -2457,6 +2457,8 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - --
 
+.. include:: /includes/fast_pair_fmdn_rename.txt
+
 .. _software_maturity_security_features:
 
 Security Feature Support
