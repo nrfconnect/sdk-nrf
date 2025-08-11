@@ -1,0 +1,96 @@
+name: Twister nightly mac
+
+on:
+  schedule:
+    - cron: "0 22 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  twister-build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos]
+        subset: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30]
+        include:
+          - os: macos
+            runner: '["macos-15"]'
+
+    runs-on: ${{ fromJson(matrix.runner) }}
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Checkout sources
+        uses: nrfconnect/action-checkout-west-update@main
+        with:
+          west-update-args: '--narrow -o=--depth=1 --group-filter=+bsec'
+
+      - name: Setup ncs toolchain
+        uses: nrfconnect/action-ncs-toolchain-setup@main
+
+      - name: Run twister
+        working-directory: ncs
+        shell: bash
+        run: |
+          nrf/scripts/ci/twister_runner.sh --ninja --inline-logs --verbose --overflow-as-errors \
+          --integration --jobs 2 \
+          --quarantine-list nrf/scripts/quarantine.yaml \
+          --quarantine-list nrf/scripts/quarantine_windows_mac.yaml  \
+          --subset ${{ matrix.subset }}/30 --outdir twister-build --report-dir results_samples \
+          -T nrf/samples
+
+      - name: Upload twister
+        if: always()
+        id: artifact-upload-step
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4
+        with:
+          name: Twister results dir ${{ runner.os }} ${{matrix.subset}}
+          if-no-files-found: ignore
+          include-hidden-files: false
+          retention-days: 1
+          path: |
+            ncs/results_samples/**/*
+            ncs/twister-build/**/*.hex
+            ncs/twister-build/**/*.log
+
+  artifact-combination:
+    needs: twister-build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all twister artifacts
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          pattern: Twister results dir *
+          path: artifacts
+
+      - name: Combine all artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          mkdir -p combined
+
+          # Loop through each downloaded artifact folder (e.g., "artifacts/Twister results")
+          # and merge its contents into "combined"
+          for artifact_dir in artifacts/*; do
+             if [ -d "$artifact_dir" ]; then
+               # The trailing slash on artifact_dir/ is important for rsync to copy contents, not the folder itself
+               rsync -a "$artifact_dir/" combined/
+             fi
+          done
+
+      - name: Upload combined twister artifact
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4
+        with:
+          name: Twister combined results
+          retention-days: 7
+          path: combined/**
