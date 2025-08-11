@@ -1,0 +1,7 @@
+# TPM530M EVK TPM530M board configuration
+
+# Copyright (c) 2025 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config BOARD_TPM530MEVK
+	select SOC_TPM530M
