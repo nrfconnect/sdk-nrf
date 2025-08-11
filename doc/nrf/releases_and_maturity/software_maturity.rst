@@ -2282,8 +2282,8 @@ The following table indicates the software maturity levels of the support for Go
             * - **Locator tag**
               - :ref:`fast_pair_locator_tag`
               - Experimental
-              - Experimental
-              - Experimental
+              - Supported
+              - Supported
               - Supported
       .. tab:: nRF91 Series
 
@@ -2397,8 +2397,8 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L15
             * - **Initial pairing**
               - Experimental
-              - Experimental
-              - Experimental
+              - Supported
+              - Supported
               - Supported
             * - **Subsequent pairing**
               - Experimental
@@ -2417,8 +2417,8 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
             * - **Find My Device Network extension**
               - Experimental
-              - Experimental
-              - Experimental
+              - Supported
+              - Supported
               - Supported
       .. tab:: nRF91 Series
 
