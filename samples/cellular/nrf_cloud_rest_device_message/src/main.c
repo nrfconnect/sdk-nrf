@@ -304,6 +304,76 @@ static void modem_time_wait(void)
 	LOG_INF("Network time obtained");
 }
 
+/* For simplicity, just build the JSON string here and add the interval with snprintk */
+#define REP_CTRL_TMPLT "{\"" NRF_CLOUD_JSON_KEY_REP "\":{" \
+				"\"" NRF_CLOUD_JSON_KEY_CTRL "\":{" \
+					"\"" NRF_CLOUD_JSON_KEY_LOG "\":%lu}}}"
+
+/* The transform is just a dotted string of the JSON keys */
+#define TRANSFORM_DESIRED_LOG_LVL	NRF_CLOUD_JSON_KEY_STATE "." \
+					NRF_CLOUD_JSON_KEY_DES "." \
+					NRF_CLOUD_JSON_KEY_CTRL "." \
+					NRF_CLOUD_JSON_KEY_LOG
+
+/* Size of the template plus three additional chars for the number value */
+#define REP_CTRL_BUFF_SZ (sizeof(REP_CTRL_TMPLT) + 3)
+
+static void check_desired_log_level(void)
+{
+	/* Ensure the reported section gets sent once */
+	static bool reported_sent;
+	static char ctrl_buf[REP_CTRL_BUFF_SZ];
+	long desired_log_level = -1;
+	bool update_reported = false;
+	int err;
+
+	/* Check if there is a value in the desired config */
+	err = nrf_cloud_rest_shadow_transform_request(&rest_ctx, device_id,
+						      TRANSFORM_DESIRED_LOG_LVL);
+	if (err) {
+		LOG_ERR("Failed to request desired log level, error: %u", err);
+	} else if ((rest_ctx.response_len == 0) || !rest_ctx.response) {
+		LOG_DBG("No desired log level exists");
+		desired_log_level = nrf_cloud_log_control_get();
+	} else {
+		char *endptr;
+
+		/* Parse the desired log level */
+		desired_log_level = strtol(rest_ctx.response, &endptr, 10);
+		if ((endptr == rest_ctx.response) || (errno)) {
+			LOG_ERR("Failed to parse desired log level value");
+		}
+	}
+
+	/* Validate desired log level */
+	LOG_INF("Desired log level: %ld", desired_log_level);
+
+	if (desired_log_level < LOG_LEVEL_NONE || desired_log_level > LOG_LEVEL_DBG) {
+		LOG_ERR("Invalid desired log level: %ld", desired_log_level);
+		desired_log_level = nrf_cloud_log_control_get();
+	} else {
+		update_reported = (desired_log_level != nrf_cloud_log_control_get());
+	}
+	nrf_cloud_log_control_set(desired_log_level);
+
+	if (update_reported || !reported_sent) {
+		/* Format the JSON for the reported config */
+		err = snprintk(ctrl_buf, REP_CTRL_BUFF_SZ, REP_CTRL_TMPLT, desired_log_level);
+
+		if ((err < 0) || (err >= REP_CTRL_BUFF_SZ)) {
+			LOG_ERR("Could not format reported config JSON");
+		} else {
+			/* Update the shadow's reported config with the log level value */
+			err = nrf_cloud_rest_shadow_state_update(&rest_ctx, device_id, ctrl_buf);
+			if (!err) {
+				reported_sent = true;
+			} else {
+				LOG_ERR("Failed to update reported config, error: %d", err);
+			}
+		}
+	}
+}
+
 static int setup(void)
 {
 	int err = 0;
@@ -361,6 +431,8 @@ static int setup(void)
 	nrf_cloud_log_rest_context_set(&rest_ctx, device_id);
 #endif
 	nrf_cloud_log_enable(nrf_cloud_log_control_get() != LOG_LEVEL_NONE);
+
+	check_desired_log_level();
 
 	return 0;
 }
@@ -429,5 +501,6 @@ int main(void)
 
 	while (1) {
 		send_message_on_button();
+		check_desired_log_level();
 	}
 }

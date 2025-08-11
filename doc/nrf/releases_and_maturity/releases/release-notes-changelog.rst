@@ -253,7 +253,11 @@ Bluetooth Fast Pair samples
 Cellular samples
 ----------------
 
-|no_changes_yet_note|
+* :ref:`nrf_cloud_rest_cell_location` sample:
+
+  * Added:
+
+    * Runtime setting of the log level for the nRF Cloud logging feature.
 
 Cryptography samples
 --------------------
