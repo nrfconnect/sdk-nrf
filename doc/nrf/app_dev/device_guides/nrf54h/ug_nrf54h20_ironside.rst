@@ -7,7 +7,7 @@ IronSide Secure Element
    :local:
    :depth: 2
 
-The IronSide Secure Element (|ISE|) is a firmware for the Secure Domain of the nRF54H20 SoC that provides security features.
+The IronSide Secure Element (|ISE|) is a firmware for the :ref:`Secure Domain <ug_nrf54h20_secure_domain>` of the nRF54H20 SoC that provides security features based on the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>`, part of the :ref:`PSA Certified Security Framework <ug_psa_certified_api_overview>`.
 
 |ISE| provides the following features:
 
@@ -16,17 +16,12 @@ The IronSide Secure Element (|ISE|) is a firmware for the Secure Domain of the n
 * Boot commands (ERASEALL, DEBUGWAIT)
 * CPUCONF service
 * Update service
-* PSA crypto service
+* PSA Crypto service - see also :ref:`ug_crypto_architecture_implementation_standards_ironside`
 
 Distribution
 ************
 
-<<<<<<< HEAD
-The |ISE| is provided as a precompiled binary, part of the nRF54H20 SoC bundle.
-For programming instructions, see :ref:`ug_nrf54h20_SoC_binaries`.
-=======
 The |ISE| is provided as a precompiled binary, which is part of the nRF54H20 SoC bundle and is provided independently from the |NCS| release cycle.
->>>>>>> 5535821df1 (add fixes)
 
 .. _ug_nrf54h20_ironside_se_uicr:
 
@@ -515,7 +510,6 @@ The |ISE| CPUCONF service enables the application core to trigger the boot of an
 Specifically, |ISE| sets INITSVTOR of the CPUCONF instance of the processor being booted with the address provided to the IronSide call, and then writes 0x1 to CPUSTART of the CPUCONF instance of the processor being booted to start the target CPU.
 When CPUWAIT is enabled in the IronSide service call, the target CPU is stalled by writing 0x1 to CPUWAIT of the CPUCONF instance of the processor being booted.
 
-.
 This feature is intended for debugging purposes.
 
 .. note::
