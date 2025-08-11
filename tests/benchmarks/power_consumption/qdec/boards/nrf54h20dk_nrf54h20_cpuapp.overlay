@@ -44,6 +44,7 @@
 
 &gpio2 {
 	status = "okay";
+	zephyr,pm-device-runtime-auto;
 };
 
 &qdec130 {
