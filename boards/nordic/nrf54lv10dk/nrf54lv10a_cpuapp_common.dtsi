@@ -54,10 +54,6 @@
 	status = "okay";
 };
 
-&uart20 {
-	status = "okay";
-};
-
 &uart30 {
 	status = "okay";
 };
