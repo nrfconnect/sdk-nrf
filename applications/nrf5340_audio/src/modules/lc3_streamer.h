@@ -5,15 +5,15 @@
  */
 
 /** @file
- * @defgroup nrf5340_audio_lc3_streamer LC3 Streamer
+ * @defgroup audio_app_lc3_streamer LC3 Streamer
  * @{
- * @brief LC3 streamer API for nRF5340 Audio applications.
+ * @brief LC3 streamer API for Audio applications.
  *
  * This module provides LC3 audio file streaming functionality for playback from SD card
  * storage.
  *
- * The streamer integrates with @ref nrf5340_audio_lc3_file for file operations,
- * @ref nrf5340_audio_sd_card for storage access, and @ref nrf5340_audio_system
+ * The streamer integrates with @ref audio_app_lc3_file for file operations,
+ * @ref audio_app_sd_card for storage access, and @ref audio_app_system
  * for audio playback integration.
  */
 

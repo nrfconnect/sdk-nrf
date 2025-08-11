@@ -5,9 +5,9 @@
  */
 
 /** @file
- * @defgroup nrf5340_audio_bt_rendering_and_capture Bluetooth Audio Rendering and Capture
+ * @defgroup audio_app_bt_rendering_and_capture Bluetooth Audio Rendering and Capture
  * @{
- * @brief Bluetooth audio rendering and capture API for nRF5340 Audio applications.
+ * @brief Bluetooth audio rendering and capture API for Audio applications.
  *
  * This module provides volume control and audio rendering functionality for LE Audio
  * streams.

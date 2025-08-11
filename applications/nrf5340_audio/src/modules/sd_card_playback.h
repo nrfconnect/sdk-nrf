@@ -5,9 +5,9 @@
  */
 
 /** @file
- * @defgroup nrf5340_audio_sd_card_playback SD Card Playback
+ * @defgroup audio_app_sd_card_playback SD Card Playback
  * @{
- * @brief SD card playback API for nRF5340 Audio applications.
+ * @brief SD card playback API for Audio applications.
  *
  * This module provides audio file playback functionality from SD card storage,
  * supporting both WAV and LC3 audio formats. It handles file reading and audio

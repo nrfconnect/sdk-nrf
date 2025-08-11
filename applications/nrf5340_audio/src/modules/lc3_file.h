@@ -5,9 +5,9 @@
  */
 
 /** @file
- * @defgroup nrf5340_audio_lc3_file LC3 File
+ * @defgroup audio_app_lc3_file LC3 File
  * @{
- * @brief LC3 file handling API for nRF5340 Audio applications.
+ * @brief LC3 file handling API for Audio applications.
  *
  * This module provides LC3 audio file I/O operations for reading and parsing LC3
  * encoded audio files from SD card storage.

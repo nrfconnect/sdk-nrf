@@ -5,9 +5,9 @@
  */
 
 /** @file
- * @defgroup nrf5340_audio_streamctrl Audio Stream Control
+ * @defgroup audio_app_streamctrl Audio Stream Control
  * @{
- * @brief Stream control API for nRF5340 Audio applications.
+ * @brief Stream control API for Audio applications.
  *
  * This module provides stream state management and control functions for audio streaming
  * operations.
@@ -24,8 +24,8 @@
  * @brief Stream state enumeration for audio streaming operations.
  */
 enum stream_state {
-	STATE_STREAMING,	/**< Audio is currently being streamed */
-	STATE_PAUSED,		/**< Audio streaming is paused */
+	STATE_STREAMING,
+	STATE_PAUSED,
 };
 
 /**

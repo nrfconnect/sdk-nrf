@@ -5,15 +5,15 @@
  */
 
 /** @file
- * @defgroup nrf5340_audio_sw_codec_select Audio Software Codec Selection
+ * @defgroup audio_app_sw_codec_select Audio Software Codec Selection
  * @{
- * @brief Software codec selection and configuration API for nRF5340 Audio applications.
+ * @brief Software codec selection and configuration API for Audio applications.
  *
  * This module provides the software codec interface for audio encoding and decoding operations.
  * It supports the LC3 (Low Complexity Communication Codec) as specified in the
  * Bluetooth LE Audio standard. The module handles codec initialization and codec configuration.
  * It provides encoding/decoding functions with support for different sample rates,
- * bitrates, and channel modes (mono/multichannel). It integrates with @ref nrf5340_audio_system to
+ * bitrates, and channel modes (mono/stereo). It integrates with @ref audio_app_system to
  * process audio data for both unicast (CIS) and broadcast (BIS) streaming modes.
  */
 
@@ -58,7 +58,7 @@
 /** Number of PCM bytes per mono frame across all supported codecs. */
 #define PCM_NUM_BYTES_MONO   MAX(LC3_PCM_NUM_BYTES_MONO, 0)
 
-/** Number of PCM bytes per multichannel frame across all supported codecs. */
+/** Number of PCM bytes per stereo frame across all supported codecs. */
 #define PCM_NUM_BYTES_STEREO (PCM_NUM_BYTES_MONO * 2)
 
 /**
@@ -83,7 +83,7 @@ enum sw_codec_channel_mode {
 struct sw_codec_encoder {
 	bool enabled;				/**< Whether the encoder is enabled */
 	int bitrate;				/**< Encoder bitrate in bits per second */
-	enum sw_codec_channel_mode channel_mode;	/**< Mono or multichannel encoding mode */
+	enum sw_codec_channel_mode channel_mode;	/**< Mono or stereo encoding mode */
 	uint8_t num_ch;				/**< Number of encoder channels */
 	enum audio_channel audio_ch;		/**< Audio channel assignment */
 	uint32_t sample_rate_hz;		/**< Sample rate in Hz */
@@ -94,7 +94,7 @@ struct sw_codec_encoder {
  */
 struct sw_codec_decoder {
 	bool enabled;				/**< Whether the decoder is enabled */
-	enum sw_codec_channel_mode channel_mode;	/**< Mono or multichannel decoding mode */
+	enum sw_codec_channel_mode channel_mode;	/**< Mono or stereo decoding mode */
 	uint8_t num_ch;				/**< Number of decoder channels */
 	enum audio_channel audio_ch;		/**< Audio channel assignment */
 	uint32_t sample_rate_hz;		/**< Sample rate in Hz */
@@ -121,7 +121,7 @@ bool sw_codec_is_initialized(void);
 /**
  * @brief	Encode PCM data and output encoded data.
  *
- * @note	Takes in multichannel PCM stream, will encode either one or two
+ * @note	Takes in stereo PCM stream, will encode either one or two
  *		channels, based on channel_mode set during init.
  *
  * @param[in]	audio_frame	Pointer to the audio buffer.

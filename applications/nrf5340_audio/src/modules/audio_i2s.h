@@ -5,9 +5,9 @@
  */
 
 /** @file
- * @defgroup nrf5340_audio_i2s Audio I2S
+ * @defgroup audio_app_i2s Audio I2S
  * @{
- * @brief Audio I2S interface API for nRF5340 Audio applications.
+ * @brief Audio I2S interface API for Audio applications.
  *
  * This module provides the I2S (Inter-IC Sound) interface for audio data transfer
  * between the application and external audio hardware.

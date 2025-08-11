@@ -5,9 +5,9 @@
  */
 
 /** @file
- * @defgroup nrf5340_audio_bt_mgmt Audio Bluetooth Management
+ * @defgroup audio_app_bt_mgmt Audio Bluetooth Management
  * @{
- * @brief Bluetooth management API for nRF5340 Audio applications.
+ * @brief Bluetooth management API for Audio applications.
  *
  * This module provides comprehensive Bluetooth management functionality including device
  * initialization, connection handling, scanning, advertising, and security management.

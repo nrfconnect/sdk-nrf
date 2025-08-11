@@ -5,9 +5,9 @@
  */
 
 /** @file
- * @defgroup nrf5340_audio_sd_card SD Card
+ * @defgroup audio_app_sd_card SD Card
  * @{
- * @brief SD card interface API for nRF5340 Audio applications.
+ * @brief SD card interface API for Audio applications.
  *
  * This module provides SD card file system operations and management functionality.
  * It handles SD card initialization and file system mounting, and provides file I/O

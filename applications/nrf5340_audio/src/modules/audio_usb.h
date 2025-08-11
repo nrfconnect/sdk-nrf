@@ -5,9 +5,9 @@
  */
 
 /** @file
- * @defgroup nrf5340_audio_usb Audio USB
+ * @defgroup audio_app_usb Audio USB
  * @{
- * @brief Audio USB interface API for nRF5340 Audio applications.
+ * @brief Audio USB interface API for Audio applications.
  *
  * This module provides USB audio functionality for gateway devices, enabling audio
  * input/output through USB connections.
@@ -23,7 +23,7 @@
 #error USB only supports 48kHz
 #endif /* (CONFIG_AUDIO_SOURCE_USB && !CONFIG_AUDIO_SAMPLE_RATE_48000_HZ) */
 
-/** Calculate USB block size for multichannel audio in bytes. */
+/** Calculate USB block size for stereo audio in bytes. */
 #define USB_BLOCK_SIZE_STEREO                                                                      \
 	(((CONFIG_AUDIO_SAMPLE_RATE_HZ * CONFIG_AUDIO_BIT_DEPTH_OCTETS) / 1000) * 2)
 

@@ -5,9 +5,9 @@
  */
 
 /** @file
- * @defgroup nrf5340_audio_button Audio Button Handler
+ * @defgroup audio_app_button Audio Button Handler
  * @{
- * @brief Button handler API for nRF5340 Audio applications.
+ * @brief Button handler API for Audio applications.
  *
  * This module provides button input handling and debouncing functionality for user
  * interface control.

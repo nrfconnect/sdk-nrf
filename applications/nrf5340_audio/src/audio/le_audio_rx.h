@@ -5,12 +5,14 @@
  */
 
 /** @file
- * @defgroup nrf5340_audio_le_audio_rx LE Audio RX
+ * @defgroup audio_app_le_audio_rx LE Audio RX
  * @{
- * @brief LE Audio receive (RX) API for nRF5340 Audio applications.
+ * @brief LE Audio receive (RX) API for Audio applications.
  *
  * This module handles the reception and processing of incoming LE Audio streams from
- * Bluetooth connections.
+ * Bluetooth. It manages the audio data reception pipeline, including
+ * metadata extraction and audio frame processing for both unicast (CIS) and broadcast
+ * (BIS) modes.
  */
 
 #ifndef _LE_AUDIO_RX_H_

@@ -1,13 +1,13 @@
-.. _nrf5340_audio_api:
+.. _audio_api:
 
-nRF5340 Audio: API documentation
-################################
+Audio applications: API documentation
+#####################################
 
 .. contents::
    :local:
    :depth: 2
 
-Following are the API elements used by the nRF5340 Audio applications.
+Following are the API elements used by the Audio applications.
 
 Audio System
 ************
@@ -15,7 +15,7 @@ Audio System
 | Header file: :file:`applications/nrf5340_audio/src/audio/audio_system.h`
 | Source file: :file:`applications/nrf5340_audio/src/audio/audio_system.c`
 
-.. doxygengroup:: nrf5340_audio_system
+.. doxygengroup:: audio_app_system
 
 Audio Datapath
 **************
@@ -23,14 +23,14 @@ Audio Datapath
 | Header file: :file:`applications/nrf5340_audio/src/audio/audio_datapath.h`
 | Source file: :file:`applications/nrf5340_audio/src/audio/audio_datapath.c`
 
-.. doxygengroup:: nrf5340_audio_datapath
+.. doxygengroup:: audio_app_datapath
 
 Audio Stream Control
 ********************
 
 | Header file: :file:`applications/nrf5340_audio/src/audio/streamctrl.h`
 
-.. doxygengroup:: nrf5340_audio_streamctrl
+.. doxygengroup:: audio_app_streamctrl
 
 Audio Software Codec Selection
 ******************************
@@ -38,7 +38,7 @@ Audio Software Codec Selection
 | Header file: :file:`applications/nrf5340_audio/src/audio/sw_codec_select.h`
 | Source file: :file:`applications/nrf5340_audio/src/audio/sw_codec_select.c`
 
-.. doxygengroup:: nrf5340_audio_sw_codec_select
+.. doxygengroup:: audio_app_sw_codec_select
 
 LE Audio RX
 ***********
@@ -46,7 +46,7 @@ LE Audio RX
 | Header file: :file:`applications/nrf5340_audio/src/audio/le_audio_rx.h`
 | Source file: :file:`applications/nrf5340_audio/src/audio/le_audio_rx.c`
 
-.. doxygengroup:: nrf5340_audio_le_audio_rx
+.. doxygengroup:: audio_app_le_audio_rx
 
 Audio Bluetooth Management
 **************************
@@ -54,7 +54,7 @@ Audio Bluetooth Management
 | Header file: :file:`applications/nrf5340_audio/src/bluetooth/bt_management/bt_mgmt.h`
 | Source file: :file:`applications/nrf5340_audio/src/bluetooth/bt_management/bt_mgmt.c`
 
-.. doxygengroup:: nrf5340_audio_bt_mgmt
+.. doxygengroup:: audio_app_bt_mgmt
 
 Bluetooth LE Audio Stream
 *************************
@@ -62,7 +62,7 @@ Bluetooth LE Audio Stream
 | Header file: :file:`applications/nrf5340_audio/src/bluetooth/bt_stream/le_audio.h`
 | Source file: :file:`applications/nrf5340_audio/src/bluetooth/bt_stream/le_audio.c`
 
-.. doxygengroup:: nrf5340_audio_bt_stream
+.. doxygengroup:: audio_app_bt_stream
 
 Bluetooth Audio Rendering and Capture
 *************************************
@@ -70,7 +70,7 @@ Bluetooth Audio Rendering and Capture
 | Header file: :file:`applications/nrf5340_audio/src/bluetooth/bt_rendering_and_capture/bt_rendering_and_capture.h`
 | Source file: :file:`applications/nrf5340_audio/src/bluetooth/bt_rendering_and_capture/bt_rendering_and_capture.c`
 
-.. doxygengroup:: nrf5340_audio_bt_rendering_and_capture
+.. doxygengroup:: audio_app_bt_rendering_and_capture
 
 Audio I2S
 *********
@@ -78,7 +78,7 @@ Audio I2S
 | Header file: :file:`applications/nrf5340_audio/src/modules/audio_i2s.h`
 | Source file: :file:`applications/nrf5340_audio/src/modules/audio_i2s.c`
 
-.. doxygengroup:: nrf5340_audio_i2s
+.. doxygengroup:: audio_app_i2s
 
 Audio Sync Timer
 ****************
@@ -86,7 +86,7 @@ Audio Sync Timer
 | Header file: :file:`applications/nrf5340_audio/src/modules/audio_sync_timer.h`
 | Source file: :file:`applications/nrf5340_audio/src/modules/audio_sync_timer.c`
 
-.. doxygengroup:: nrf5340_audio_sync_timer
+.. doxygengroup:: audio_app_sync_timer
 
 Audio USB
 *********
@@ -94,7 +94,7 @@ Audio USB
 | Header file: :file:`applications/nrf5340_audio/src/modules/audio_usb.h`
 | Source file: :file:`applications/nrf5340_audio/src/modules/audio_usb.c`
 
-.. doxygengroup:: nrf5340_audio_usb
+.. doxygengroup:: audio_app_usb
 
 Audio LED Control
 *****************
@@ -102,7 +102,7 @@ Audio LED Control
 | Header file: :file:`applications/nrf5340_audio/src/modules/led.h`
 | Source file: :file:`applications/nrf5340_audio/src/modules/led.c`
 
-.. doxygengroup:: nrf5340_audio_led
+.. doxygengroup:: audio_app_led
 
 Audio Button Handler
 ********************
@@ -110,7 +110,7 @@ Audio Button Handler
 | Header file: :file:`applications/nrf5340_audio/src/modules/button_handler.h`
 | Source file: :file:`applications/nrf5340_audio/src/modules/button_handler.c`
 
-.. doxygengroup:: nrf5340_audio_button
+.. doxygengroup:: audio_app_button
 
 LC3 Streamer
 ************
@@ -118,7 +118,7 @@ LC3 Streamer
 | Header file: :file:`applications/nrf5340_audio/src/modules/lc3_streamer.h`
 | Source file: :file:`applications/nrf5340_audio/src/modules/lc3_streamer.c`
 
-.. doxygengroup:: nrf5340_audio_lc3_streamer
+.. doxygengroup:: audio_app_lc3_streamer
 
 LC3 File
 ********
@@ -126,7 +126,7 @@ LC3 File
 | Header file: :file:`applications/nrf5340_audio/src/modules/lc3_file.h`
 | Source file: :file:`applications/nrf5340_audio/src/modules/lc3_file.c`
 
-.. doxygengroup:: nrf5340_audio_lc3_file
+.. doxygengroup:: audio_app_lc3_file
 
 SD Card Playback
 ****************
@@ -134,7 +134,7 @@ SD Card Playback
 | Header file: :file:`applications/nrf5340_audio/src/modules/sd_card_playback.h`
 | Source file: :file:`applications/nrf5340_audio/src/modules/sd_card_playback.c`
 
-.. doxygengroup:: nrf5340_audio_sd_card_playback
+.. doxygengroup:: audio_app_sd_card_playback
 
 SD Card
 *******
@@ -142,4 +142,4 @@ SD Card
 | Header file: :file:`applications/nrf5340_audio/src/modules/sd_card.h`
 | Source file: :file:`applications/nrf5340_audio/src/modules/sd_card.c`
 
-.. doxygengroup:: nrf5340_audio_sd_card
+.. doxygengroup:: audio_app_sd_card

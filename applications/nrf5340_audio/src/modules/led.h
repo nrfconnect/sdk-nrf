@@ -5,9 +5,9 @@
  */
 
 /** @file
- * @defgroup nrf5340_audio_led Audio LED Control
+ * @defgroup audio_app_led Audio LED Control
  * @{
- * @brief LED control API for nRF5340 Audio applications.
+ * @brief LED control API for Audio applications.
  *
  * This module provides LED control functionality for user interface and status indication.
  */

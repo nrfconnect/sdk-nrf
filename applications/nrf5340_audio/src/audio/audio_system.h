@@ -5,12 +5,12 @@
  */
 
 /** @file
- * @defgroup nrf5340_audio_system Audio System
+ * @defgroup audio_app_system Audio System
  * @{
- * @brief Core audio system API for nRF5340 Audio applications.
+ * @brief Core audio system API for Audio applications.
  *
- * This module provides the central audio processing functionality for the nRF5340 Audio
- * applications, managing both hardware and software codecs.
+ * This module provides the central audio processing functionality for the Audio
+ * applications, managing both hardware (DAC/ADC) and software codecs (such as LC3).
  */
 
 #ifndef _AUDIO_SYSTEM_H_

@@ -5,9 +5,9 @@
  */
 
 /** @file
- * @defgroup nrf5340_audio_bt_stream Bluetooth LE Audio Stream
+ * @defgroup audio_app_bt_stream Bluetooth LE Audio Stream
  * @{
- * @brief LE Audio stream API for nRF5340 Audio applications.
+ * @brief LE Audio stream API for Audio applications.
  *
  * This module provides the core LE Audio streaming functionality for both unicast (CIS)
  * and broadcast (BIS) modes.
