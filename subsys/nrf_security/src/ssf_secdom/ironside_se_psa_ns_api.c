@@ -30,19 +30,16 @@ static psa_status_t psa_call_buffered_and_flushed(psa_handle_t handle, int32_t t
 						  const psa_invec *in_vec, size_t in_len,
 						  psa_outvec *out_vec, size_t out_len)
 {
-	/* We have no need for this at this time */
-	ARG_UNUSED(type);
-
 	struct ironside_call_buf *const buf = ironside_call_alloc();
 
-	buf->id = IRONSIDE_CALL_ID_PSA_CRYPTO_V0;
+	buf->id = IRONSIDE_CALL_ID_PSA_V1;
 
-	buf->args[IRONSIDE_SE_IPC_INDEX_HANDLE] =
-		handle; /* i.e. TFM_CRYPTO_HANDLE defined to 0x40000100U */
+	buf->args[IRONSIDE_SE_IPC_INDEX_HANDLE] = handle;
 	buf->args[IRONSIDE_SE_IPC_INDEX_IN_VEC] = (uint32_t)in_vec;
 	buf->args[IRONSIDE_SE_IPC_INDEX_IN_LEN] = in_len;
 	buf->args[IRONSIDE_SE_IPC_INDEX_OUT_VEC] = (uint32_t)out_vec;
 	buf->args[IRONSIDE_SE_IPC_INDEX_OUT_LEN] = out_len;
+	buf->args[IRONSIDE_SE_IPC_INDEX_TYPE] = type;
 
 	ironside_call_dispatch(buf);
 
