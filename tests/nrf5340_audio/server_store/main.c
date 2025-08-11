@@ -27,7 +27,7 @@ ZTEST(suite_server_store, test_srv_store_init)
 	ret = srv_store_num_get();
 	zassert_equal(ret, 1, "Number of servers should be one after adding a server");
 
-	ret = srv_store_clear_all();
+	ret = srv_store_remove_all();
 	zassert_equal(ret, 0, "Clearing all servers did not return zero");
 
 	ret = srv_store_num_get();

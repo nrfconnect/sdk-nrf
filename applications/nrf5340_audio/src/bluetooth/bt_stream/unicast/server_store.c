@@ -10,6 +10,9 @@
 #include "server_store.h"
 #include "min_heap.h"
 
+/* TODO: Dicuss this include */
+#include <../subsys/bluetooth/audio/bap_endpoint.h>
+
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(unicast_client, CONFIG_UNICAST_CLIENT_LOG_LEVEL);
 
@@ -46,7 +49,215 @@ int srv_store_snk_num_get(uint8_t cig_idx)
 	return -EPERM;
 }
 
-int srv_store_pres_dly_find(uint8_t cig_idx, uint32_t *new_pres_dly_us)
+struct pd {
+	uint32_t min;
+	uint32_t max;
+	uint32_t pref_min;
+	uint32_t pref_max;
+};
+
+static bool pres_dly_in_range(uint32_t existing_pres_dly_us,
+			      struct bt_bap_qos_cfg_pref const *const qos_cfg_pref_in)
+{
+	if (qos_cfg_pref_in->pd_max == 0 || qos_cfg_pref_in->pd_min == 0) {
+		LOG_ERR("No max or min presentation delay set");
+		return false;
+	}
+
+	if (existing_pres_dly_us > qos_cfg_pref_in->pd_max) {
+		LOG_DBG("Existing presentation delay %u is greater than max %u",
+			existing_pres_dly_us, qos_cfg_pref_in->pd_max);
+		return false;
+	}
+
+	if (existing_pres_dly_us < qos_cfg_pref_in->pd_min) {
+		LOG_DBG("Existing presentation delay %u is less than min %u", existing_pres_dly_us,
+			qos_cfg_pref_in->pd_min);
+		return false;
+	}
+	/* We will not check the preferred presentation delay if we already have a running stream in
+	 * the same group*/
+
+	return true;
+}
+
+/* Looking for the smallest commonly acceptable set of presentation delays */
+static int pres_delay_find(struct bt_bap_qos_cfg_pref *common,
+			   struct bt_bap_qos_cfg_pref const *const in)
+{
+	/* Checking min values */
+	if (!IN_RANGE(in->pd_min, common->pd_min, common->pd_max)) {
+		LOG_ERR("Incoming pd_max %d is not in range [%d, %d]", in->pd_max, common->pd_min,
+			common->pd_max);
+		return -EINVAL;
+	}
+
+	common->pd_min = MAX(in->pd_min, common->pd_min);
+
+	if (common->pref_pd_min == 0) {
+		common->pref_pd_min = in->pd_min;
+	} else if (in->pref_pd_min == 0) {
+		/* Incoming has no preferred min */
+	} else {
+		if (!IN_RANGE(in->pref_pd_min, common->pd_min, common->pd_max)) {
+			LOG_WRN("Incoming pref_pd_min %d is not in range [%d, %d]. Will revert to "
+				"common "
+				"pd_min %d",
+				in->pref_pd_min, common->pd_min, common->pd_max);
+			common->pref_pd_min = UINT32_MAX;
+		}
+	}
+
+	/* Checking max values */
+	if (!IN_RANGE(in->pd_max, common->pd_min, common->pd_max)) {
+		LOG_WRN("Incoming pd_max %d is not in range [%d, %d]. Ignored.", in->pd_max,
+			common->pd_min, common->pd_max);
+		common->pd_max = 0;
+	} else {
+		common->pd_max = MIN(in->pd_max, common->pd_max);
+	}
+
+	if (common->pref_pd_max == 0) {
+		common->pref_pd_max = in->pd_max;
+	} else if (in->pref_pd_max == 0) {
+		/* Incoming has no preferred max */
+	} else {
+		if (!IN_RANGE(in->pref_pd_max, common->pd_min, common->pd_max)) {
+			LOG_WRN("Incoming pref_pd_max %d is not in range [%d, %d]. Will revert to "
+				"common "
+				"pd_max %d. Ignored.",
+				in->pref_pd_max, common->pd_min, common->pd_max);
+			common->pref_pd_max = 0;
+		} else {
+			common->pref_pd_max = MIN(in->pref_pd_max, common->pref_pd_max);
+		}
+	}
+
+	return 0;
+}
+
+/* One needs to look at the group pointer, if this group pointer already exists, we may need
+to update the entire group. If it is a new group, no reconfig is needed.
+*  New A, no ext group
+*  New A, existing A. If new pres dlay needed, reconfig all
+*  New B, existing A, no reconfig needed.
+*/
+
+/* The presentation delay within a CIG for a given dir needs to be the same.
+ * bt_bap_ep -> cig_id;
+ */
+int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *new_pres_dly_us,
+			    struct bt_bap_qos_cfg_pref const *qos_cfg_pref_in,
+			    bool *group_reconfig_needed)
+{
+	if (stream->group == NULL) {
+		LOG_ERR("The incoming stream %p has no group", (void *)stream);
+		return -EINVAL;
+	}
+
+	int ret;
+	*group_reconfig_needed = false;
+	*new_pres_dly_us = UINT32_MAX;
+	struct bt_bap_qos_cfg_pref common_pd = *qos_cfg_pref_in;
+
+	struct bt_bap_ep_info ep_info;
+	bt_bap_ep_get_info(stream->ep, &ep_info);
+	enum bt_audio_dir dir = ep_info.dir;
+
+	struct server_store *server = NULL;
+	for (int srv_idx = 0; srv_idx < server_heap.size; srv_idx++) {
+
+		// Across all servers, we need to first check if another stream is in the
+		// same subgroup as the new incoming stream.
+		server = (struct server_store *)min_heap_get_element(&server_heap, srv_idx);
+		if (server == NULL) {
+			LOG_ERR("Server is NULL at index %d", srv_idx);
+			return -EINVAL;
+		}
+
+		if (server->conn == stream->conn) {
+			/* Do not compare against the same unicast server */
+			continue;
+		}
+
+		switch (dir) {
+		case BT_AUDIO_DIR_SINK:
+			for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT; i++) {
+				if (server->snk.cap_streams[i] == NULL) {
+					break;
+				}
+
+				if (server->snk.cap_streams[i]->bap_stream.group == NULL) {
+					/* The stream we are comparing against has no group
+					 */
+					continue;
+				}
+
+				/* Only need to check pres delay if the stream is part of the same
+				 * group */
+				if (stream->group != server->snk.cap_streams[i]->bap_stream.group) {
+					continue;
+				}
+
+				if (stream == &server->snk.cap_streams[i]->bap_stream) {
+					/* This is our own stream, so we can skip it */
+					continue;
+				}
+
+				if (server->snk.cap_streams[i]->bap_stream.ep == NULL) {
+					continue;
+				}
+
+				uint32_t existing_pres_dly_us =
+					server->snk.cap_streams[i]->bap_stream.qos->pd;
+
+				if (pres_dly_in_range(existing_pres_dly_us, qos_cfg_pref_in)) {
+
+					*new_pres_dly_us = existing_pres_dly_us;
+					return 0;
+				}
+
+				*group_reconfig_needed = true;
+
+				ret = pres_delay_find(
+					&common_pd,
+					&server->snk.cap_streams[i]->bap_stream.ep->qos_pref);
+				// Check ranges here.
+			}
+			break;
+
+		case BT_AUDIO_DIR_SOURCE:
+
+			break;
+		default:
+			LOG_ERR("Unknown direction: %d", dir);
+			return -EINVAL;
+		};
+
+		return -EPERM;
+	}
+
+	if (group_reconfig_needed) {
+		/* Found other streams, need to use common denominator */
+		if (common_pd.pref_pd_min == UINT32_MAX || common_pd.pref_pd_min == 0) {
+			/* No preferred min, use common min */
+			*new_pres_dly_us = common_pd.pd_min;
+		} else {
+			/* Use preferred min */
+			*new_pres_dly_us = common_pd.pref_pd_min;
+		}
+		return 0;
+	}
+
+	/* No other streams in the same group found */
+
+	if (qos_cfg_pref_in->pref_pd_min == 0) {
+		*new_pres_dly_us = qos_cfg_pref_in->pd_min;
+	}
+	return 0;
+}
+
+int srv_store_cig_pres_dly_find(uint8_t cig_id, uint32_t *common_pres_dly_us, enum bt_audio_dir dir)
 {
 	return -EPERM;
 }
@@ -84,6 +295,31 @@ int srv_store_stream_idx_get(struct bt_bap_stream const *const stream) /* May no
 	return -EPERM;
 }
 
+int srv_store_stream_dir_get(struct bt_bap_stream const *const stream)
+{
+	int ret;
+
+	if (stream == NULL) {
+		LOG_ERR("Stream is NULL");
+		return -EINVAL;
+	}
+
+	if (stream->ep == NULL) {
+		LOG_ERR("Stream endpoint is NULL");
+		return -EINVAL;
+	}
+
+	struct bt_bap_ep_info ep_info;
+
+	ret = bt_bap_ep_get_info(stream->ep, &ep_info);
+	if (ret) {
+		LOG_ERR("Failed to get endpoint info: %d", ret);
+		return ret;
+	}
+
+	return ep_info.dir;
+}
+
 int srv_store_from_stream_get(struct bt_cap_stream const *const stream,
 			      struct server_store **server)
 {
@@ -113,7 +349,9 @@ int srv_store_from_stream_get(struct bt_cap_stream const *const stream,
 		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT; i++) {
 			if (tmp_server->src.cap_streams[i] == stream) {
 				*server = tmp_server;
-				LOG_DBG("Found server for source stream at index %d", srv_idx);
+				LOG_DBG("Found server for source stream at index "
+					"%d",
+					srv_idx);
 				matches++;
 			}
 		}
@@ -123,7 +361,8 @@ int srv_store_from_stream_get(struct bt_cap_stream const *const stream,
 		LOG_ERR("No server found for the given stream");
 		return -ENOENT;
 	} else if (matches > 1) {
-		LOG_ERR("Multiple servers found for the same stream, this should not happen");
+		LOG_ERR("Multiple servers found for the same stream, this should "
+			"not happen");
 		return -ESPIPE;
 	}
 
@@ -145,21 +384,21 @@ int srv_store_ep_state_count(struct bt_conn const *const conn, enum bt_bap_ep_st
 	switch (dir) {
 	case BT_AUDIO_DIR_SINK:
 		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT; i++) {
-			if (server->snk.cap_streams[i] != NULL &&
-			    server->snk.cap_streams[i]->bap_stream.ep != NULL) {
-				struct bt_bap_ep_info ep_info;
-
-				ret = bt_bap_ep_get_info(server->snk.cap_streams[i]->bap_stream.ep,
-							 &ep_info);
-				if (ret) {
-					return ret;
-				}
-
-				if (ep_info.state == state) {
-					count++;
-				}
-			} else {
+			if (server->snk.cap_streams[i] == NULL ||
+			    server->snk.cap_streams[i]->bap_stream.ep == NULL) {
 				break;
+			}
+
+			struct bt_bap_ep_info ep_info;
+
+			ret = bt_bap_ep_get_info(server->snk.cap_streams[i]->bap_stream.ep,
+						 &ep_info);
+			if (ret) {
+				return ret;
+			}
+
+			if (ep_info.state == state) {
+				count++;
 			}
 		}
 		break;
@@ -257,7 +496,7 @@ int srv_store_remove(struct bt_conn *conn)
 	return 0;
 }
 
-int srv_store_clear_all(void)
+int srv_store_remove_all(void)
 {
 	struct server_store dummy_server;
 
@@ -272,5 +511,5 @@ int srv_store_clear_all(void)
 
 int srv_store_init(void)
 {
-	return srv_store_clear_all();
+	return srv_store_remove_all();
 }
