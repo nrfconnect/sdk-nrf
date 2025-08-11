@@ -58,7 +58,7 @@ Hardware drivers take precedence over software drivers, which provide fallback o
    * - :ref:`CRACEN <crypto_drivers_cracen>`
      - Hardware
      - nRF54L Series devices, nRF54H20
-     - Security subsystem providing hardware acceleration for cryptographic operations through the CRACEN hardware peripheral. For more information, see the :ref:`ug_nrf54l_cryptography` page.
+     - Security subsystem providing hardware acceleration for cryptographic operations through the CRACEN hardware peripheral. For more information, see the :ref:`ug_nrf54l_cryptography` and the :ref:`ug_nrf54h20_ironside` pages.
    * - :ref:`nrf_oberon <crypto_drivers_oberon>`
      - Software
      - nRF devices with Arm Cortex®-M0, -M4, or -M33 processors
@@ -353,7 +353,7 @@ The hardware peripheral is available on the following devices:
 
 * nRF54L15 Series devices - For more information about both the hardware peripheral and the driver, see the `CRACEN hardware peripheral <nRF54L15 DK CRACEN_>`_ page in the datasheet and the :ref:`ug_nrf54l_cryptography` page in the |NCS| documentation.
 * nRF54H20 - On this platform, the IronSide Secure Element relies on the CRACEN driver.
-  For more information, see the :ref:`ug_nrf54h20_secure_domain_cracen`.
+  For more information, see the :ref:`ug_nrf54h20_secure_domain_cracen` and the :ref:`ug_nrf54h20_ironside` pages.
 
 CRACEN driver configuration
 ---------------------------
