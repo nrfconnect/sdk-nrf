@@ -169,7 +169,7 @@ For more information about the storage integration for the TF-M Crypto Service i
 IronSide Secure Element implementation
 ======================================
 
-The IronSide Secure Element (IronSide SE) implementation provides a PSA Crypto API interface for applications running on nRF54H20.
+The IronSide Secure Element (|ISE|) implementation provides a PSA Crypto API interface for applications running on nRF54H20.
 
 .. figure:: ../images/psa_crypto_api_ironside.svg
    :alt: IronSide SE implementation
@@ -177,14 +177,15 @@ The IronSide Secure Element (IronSide SE) implementation provides a PSA Crypto A
 
    IronSide SE implementation
 
-This implementation provides IronSide SE firmware for the :ref:`CRACEN hardware peripheral in the Secure Domain <ug_nrf54h20_secure_domain_cracen>`.
+This implementation provides |ISE| firmware for the :ref:`CRACEN hardware peripheral in the Secure Domain <ug_nrf54h20_secure_domain_cracen>`.
 It is designed to provide a robust Root of Trust (RoT) and offload cryptographic operations, key handling, and secure storage.
 The firmware implements the cryptographic operations using the existing Oberon PSA Core and the CRACEN driver.
 
 The firmware is provided by Nordic Semiconductor independently from the |NCS| release cycle.
+For more information, see the :ref:`IronSide Secure Element <ug_nrf54h20_ironside>` page.
 
-Driver selection in the IronSide SE implementation
---------------------------------------------------
+Driver selection in the |ISE| implementation
+--------------------------------------------
 
-The IronSide SE implementation works only with the :ref:`CRACEN driver <crypto_drivers_cracen>`.
+The |ISE| implementation works only with the :ref:`CRACEN driver <crypto_drivers_cracen>`.
 It does not support the :ref:`software fallback <crypto_drivers_software_fallback>` mechanism to :ref:`nrf_oberon <crypto_drivers_oberon>`.
