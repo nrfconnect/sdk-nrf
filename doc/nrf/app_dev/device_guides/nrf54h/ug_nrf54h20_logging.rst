@@ -148,27 +148,21 @@ Reading the logs
 
 To read the dictionary-based STM log output, do the following:
 
-1. Set up the log capture.
+1. Start capturing the log with the ``nrfutil trace stm`` command.
+   Use the following command pattern, with ``<domain_id>`` being the ID of the domain which the application is running on, ``<port>`` being the serial port used for output, and ``<app_name>`` being the application name:
 
-   Use the ``nrfutil trace stm`` command to start capturing logs from the device, specifying the database configuration for each domain ID, along with the serial port, baud rate, and output type::
+   .. parsed-literal::
+      :class: highlight
 
-      nrfutil trace stm --database-config <domain_id>:build/<app_name>/zephyr/log_dictionary.json --input-serialport <port> --baudrate 115200 --stdout ascii
+      nrfutil trace stm \
+       --database-config <domain_id>:build/<app_name>/zephyr/log_dictionary.json \
+       --input-serialport <port> \
+       --baudrate 115200 \
+       --stdout ascii
 
-   This command contains the following parameters:
+   The output can be either the console (``--stdout ascii``) or a file (the :file:`out.txt` file if ``--output-ascii out.txt``).
 
-   * ``<domain_id>`` is the ID of the domain which the application is running on.
-     It should be in decimals, not in hexadecimals.
-     When using several domains, use a comma (`,`) to separate each domain in the list.
-   * ``<app_name>`` is the application name.
-   * ``<port>`` is the serial port used for output.
-     |serial_port_number_list|
-   * The output can be either the console (``--stdout ascii``) or a file (the :file:`out.txt` file if ``--output-ascii out.txt``).
-
-#. Capture and decode the logs.
-
-   nrfutil will capture the log data from the specified UART port and use the provided dictionary databases to decode the logs into a human-readable format.
-   The tool sends the decoded logs to the specified output (either the console or the :file:`out.txt` file in the example).
-
+#. When done, stop tracing by pressing CTRL-C.
 #. Read the terminal or open the output file to review the decoded log messages.
 
    The output contains timestamps and the log messages in a human-readable format.
@@ -191,7 +185,7 @@ The following are the prefixes used to indicate the cores:
    Fast Lightweight Processor (FLPR), ``flpr``, 0x2d
    Peripheral Processor (PPR), ``ppr``, 0x2e
 
-For more information on ``nrfutil trace``, see `nrfutil-trace`_.
+For more information, see `Capturing STM trace data`_ in the nRF Util documentation.
 
 Additional considerations
 -------------------------
