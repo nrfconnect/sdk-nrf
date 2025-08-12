@@ -256,7 +256,7 @@ void cpu_activity_thread(void)
 }
 
 K_THREAD_DEFINE(cpu_activity_thread_id, 1024, cpu_activity_thread, NULL, NULL, NULL,
-		K_HIGHEST_THREAD_PRIO, 0, 0);
+		K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
 
 static otError cmd_cpu_activity_idle(void *ctx, uint8_t argc, char *argv[])
 {
