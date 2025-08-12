@@ -949,7 +949,7 @@ The following table indicates the software maturity levels of the support for ea
              - --
              - --
 
-  | [1]: Concurrent central, observer, peripheral, and broadcaster roles with up to 20 concurrent connections along with one Observer and one Broadcaster (subject to RAM availability)
+  | [1]: Subject to RAM availability
   | [2]: Do not support encrypting and decrypting the Isochronous Channels packets
   | [3]: Only AoA transmitter is supported
 
