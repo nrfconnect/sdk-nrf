@@ -525,7 +525,7 @@ See the changelog for each library in the :doc:`nrfxlib documentation <nrfxlib:R
 Scripts
 =======
 
-|no_changes_yet_note|
+* Added the :ref:`esb_sniffer_scripts` scripts for the :ref:`esb_monitor` sample.
 
 Integrations
 ============
