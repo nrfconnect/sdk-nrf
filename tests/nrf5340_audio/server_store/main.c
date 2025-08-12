@@ -105,7 +105,7 @@ ZTEST(suite_server_store, test_srv_remove)
 	zassert_equal(ret, 2, "Number of servers should be two after removing one");
 }
 
-ZTEST(suite_server_store, find_srv_from_stream)
+ZTEST(suite_server_store, test_find_srv_from_stream)
 {
 	int ret;
 
@@ -154,6 +154,52 @@ ZTEST(suite_server_store, find_srv_from_stream)
 
 	ret = srv_store_from_stream_get((struct bt_cap_stream *)0x0111, &retrieved_server);
 	zassert_equal(ret, -ESPIPE, "Retrieving from stream should return -ESPIPE");
+}
+
+ZTEST(suite_server_store, test_presentation_delay_simple)
+{
+
+	int ret;
+
+	ret = srv_store_init();
+	zassert_equal(ret, 0, "Init did not return zero");
+
+	struct bt_bap_stream stream;
+	struct bt_bap_qos_cfg_pref qos_cfg_pref_in;
+
+	stream.group = (void *)0xaaaa;
+	qos_cfg_pref_in.pd_min = 1000;
+	qos_cfg_pref_in.pd_max = 4000;
+	qos_cfg_pref_in.pref_pd_min = 2000;
+	qos_cfg_pref_in.pref_pd_max = 3000;
+
+	/* For this test, we have no other endpoints or streams stored
+	 * This simulates getting the first call to find the presentation delay
+	 */
+
+	uint32_t computed_pres_dly_us = 0;
+	bool group_reconfig_needed = false;
+
+	ret = srv_store_pres_dly_find(&stream, &computed_pres_dly_us, &qos_cfg_pref_in,
+				      &group_reconfig_needed);
+	zassert_equal(ret, 0, "Finding presentation delay did not return zero");
+	zassert_equal(computed_pres_dly_us, 2000,
+		      "Computed presentation delay should be equal to preferred min");
+
+	/* Removing preferred min. Result should return min */
+	qos_cfg_pref_in.pref_pd_min = 0;
+
+	ret = srv_store_pres_dly_find(&stream, &computed_pres_dly_us, &qos_cfg_pref_in,
+				      &group_reconfig_needed);
+	zassert_equal(ret, 0, "Finding presentation delay did not return zero");
+	zassert_equal(computed_pres_dly_us, 1000,
+		      "Computed presentation delay should be equal to preferred min");
+
+	/* removing min, should return error*/
+	qos_cfg_pref_in.pd_min = 0;
+	ret = srv_store_pres_dly_find(&stream, &computed_pres_dly_us, &qos_cfg_pref_in,
+				      &group_reconfig_needed);
+	zassert_equal(ret, -EINVAL, "Finding presentation delay should return -EINVAL %d ", ret);
 }
 
 ZTEST_SUITE(suite_server_store, NULL, NULL, NULL, NULL, NULL);

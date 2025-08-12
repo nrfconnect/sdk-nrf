@@ -146,18 +146,30 @@ to update the entire group. If it is a new group, no reconfig is needed.
 /* The presentation delay within a CIG for a given dir needs to be the same.
  * bt_bap_ep -> cig_id;
  */
-int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *new_pres_dly_us,
+int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pres_dly_us,
 			    struct bt_bap_qos_cfg_pref const *qos_cfg_pref_in,
 			    bool *group_reconfig_needed)
 {
+	if (stream == NULL || computed_pres_dly_us == NULL || qos_cfg_pref_in == NULL ||
+	    group_reconfig_needed == NULL) {
+		LOG_ERR("NULL parameter");
+		return -EINVAL;
+	}
+
 	if (stream->group == NULL) {
 		LOG_ERR("The incoming stream %p has no group", (void *)stream);
 		return -EINVAL;
 	}
 
+	if (qos_cfg_pref_in->pd_min == 0 || qos_cfg_pref_in->pd_max == 0) {
+		LOG_ERR("Incoming pd_min or pd_max is zero");
+		return -EINVAL;
+	}
+
 	int ret;
+
 	*group_reconfig_needed = false;
-	*new_pres_dly_us = UINT32_MAX;
+	*computed_pres_dly_us = UINT32_MAX;
 	struct bt_bap_qos_cfg_pref common_pd = *qos_cfg_pref_in;
 
 	struct bt_bap_ep_info ep_info;
@@ -166,9 +178,11 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *new_pres_dly
 
 	struct server_store *server = NULL;
 	for (int srv_idx = 0; srv_idx < server_heap.size; srv_idx++) {
+		LOG_ERR("HEAP SIZE %d", server_heap.size);
 
-		// Across all servers, we need to first check if another stream is in the
-		// same subgroup as the new incoming stream.
+		/* Across all servers, we need to first check if another stream is in the
+		 * same subgroup as the new incoming stream.
+		 */
 		server = (struct server_store *)min_heap_get_element(&server_heap, srv_idx);
 		if (server == NULL) {
 			LOG_ERR("Server is NULL at index %d", srv_idx);
@@ -213,7 +227,7 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *new_pres_dly
 
 				if (pres_dly_in_range(existing_pres_dly_us, qos_cfg_pref_in)) {
 
-					*new_pres_dly_us = existing_pres_dly_us;
+					*computed_pres_dly_us = existing_pres_dly_us;
 					return 0;
 				}
 
@@ -222,7 +236,9 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *new_pres_dly
 				ret = pres_delay_find(
 					&common_pd,
 					&server->snk.cap_streams[i]->bap_stream.ep->qos_pref);
-				// Check ranges here.
+				if (ret) {
+					return ret;
+				}
 			}
 			break;
 
@@ -241,10 +257,10 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *new_pres_dly
 		/* Found other streams, need to use common denominator */
 		if (common_pd.pref_pd_min == UINT32_MAX || common_pd.pref_pd_min == 0) {
 			/* No preferred min, use common min */
-			*new_pres_dly_us = common_pd.pd_min;
+			*computed_pres_dly_us = common_pd.pd_min;
 		} else {
 			/* Use preferred min */
-			*new_pres_dly_us = common_pd.pref_pd_min;
+			*computed_pres_dly_us = common_pd.pref_pd_min;
 		}
 		return 0;
 	}
@@ -252,7 +268,9 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *new_pres_dly
 	/* No other streams in the same group found */
 
 	if (qos_cfg_pref_in->pref_pd_min == 0) {
-		*new_pres_dly_us = qos_cfg_pref_in->pd_min;
+		*computed_pres_dly_us = qos_cfg_pref_in->pd_min;
+	} else {
+		*computed_pres_dly_us = qos_cfg_pref_in->pref_pd_min;
 	}
 	return 0;
 }
