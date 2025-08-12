@@ -200,7 +200,7 @@ manifest:
           compare-by-default: false
     - name: find-my
       repo-path: sdk-find-my
-      revision: v3.1.0-rc2
+      revision: 261b65822f55bc4c31174ff55a0447f13b5666dc
       groups:
         - find-my
     - name: azure-sdk-for-c
