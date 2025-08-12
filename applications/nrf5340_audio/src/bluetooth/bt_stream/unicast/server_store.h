@@ -21,8 +21,10 @@ struct unicast_server_snk_vars {
 	/* This value will propagate to the streams. */
 	struct bt_bap_lc3_preset lc3_preset[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT];
 	struct bt_audio_codec_cap codec_caps[CONFIG_CODEC_CAP_COUNT_MAX];
+	size_t num_codec_caps;
 	/* One array for discovering the eps. Do not use this for operations */
 	struct bt_bap_ep *eps[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT];
+	size_t num_eps;
 	enum bt_audio_context supported_ctx;
 	/* Check this before calling unicast audio start */
 	enum bt_audio_context available_ctx;
@@ -35,7 +37,9 @@ struct unicast_server_src_vars {
 	uint32_t locations;
 	struct bt_bap_lc3_preset lc3_preset[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT];
 	struct bt_audio_codec_cap codec_caps[CONFIG_CODEC_CAP_COUNT_MAX];
+	size_t num_codec_caps;
 	struct bt_bap_ep *eps[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT];
+	size_t num_eps;
 	enum bt_audio_context supported_ctx;
 	enum bt_audio_context available_ctx;
 	struct bt_cap_stream *cap_streams[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT];
@@ -89,7 +93,7 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 
 int srv_store_stream_dir_get(struct bt_bap_stream const *const stream);
 
-int srv_store_from_stream_get(struct bt_cap_stream const *const stream,
+int srv_store_from_stream_get(struct bt_bap_stream const *const stream,
 			      struct server_store **server);
 
 int srv_store_from_conn_get(struct bt_conn const *const conn, struct server_store **server);

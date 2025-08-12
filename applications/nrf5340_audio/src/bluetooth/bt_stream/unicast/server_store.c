@@ -285,12 +285,12 @@ int srv_store_ep_set(struct bt_conn *conn, enum bt_audio_dir dir, struct bt_bap_
 }
 
 int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_audio_dir dir,
-				    bool **array_of_valid_caps)
+				    uint32_t *valid_codec_caps)
 {
 	return -EPERM;
 }
 
-int srv_store_stream_idx_get(struct bt_bap_stream const *const stream) /* May not be required */
+int srv_store_stream_idx_get(struct bt_bap_stream const *const stream, struct stream_index *idx)
 {
 	return -EPERM;
 }
@@ -320,7 +320,7 @@ int srv_store_stream_dir_get(struct bt_bap_stream const *const stream)
 	return ep_info.dir;
 }
 
-int srv_store_from_stream_get(struct bt_cap_stream const *const stream,
+int srv_store_from_stream_get(struct bt_bap_stream const *const stream,
 			      struct server_store **server)
 {
 	struct server_store *tmp_server = NULL;
@@ -340,14 +340,14 @@ int srv_store_from_stream_get(struct bt_cap_stream const *const stream,
 			return -EINVAL;
 		}
 		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT; i++) {
-			if (tmp_server->snk.cap_streams[i] == stream) {
+			if (tmp_server->snk.cap_streams[i].bap_stream == stream) {
 				*server = tmp_server;
 				LOG_DBG("Found server for sink stream at index %d", srv_idx);
 				matches++;
 			}
 		}
 		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT; i++) {
-			if (tmp_server->src.cap_streams[i] == stream) {
+			if (tmp_server->src.cap_streams[i].bap_stream == stream) {
 				*server = tmp_server;
 				LOG_DBG("Found server for source stream at index "
 					"%d",
