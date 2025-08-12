@@ -318,6 +318,8 @@ Keys samples
 Matter samples
 --------------
 
+* Added the :ref:`matter_temperature_sensor_sample` sample that demonstrates how to implement and test a Matter temperature sensor device.
+
 * :ref:`matter_lock_sample` sample:
 
    * Added a callback for the auto-relock feature.
