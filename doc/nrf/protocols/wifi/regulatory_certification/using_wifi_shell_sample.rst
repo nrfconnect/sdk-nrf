@@ -19,6 +19,8 @@ Build instructions
 
 For information on the build instructions, see :ref:`Wi-Fi Shell sample building and running <wifi_shell_sample_building_and_running>`.
 
+Set the :kconfig:option:`CONFIG_NRF70_UTIL` Kconfig option to ``y`` in the :file:`<ncs_repo>/nrf/samples/wifi/shell/prj.conf` file to enable the ``nrf70 util`` commands.
+
 Scan, connect, and ping to a network using the Wi-Fi Shell sample
 *****************************************************************
 
