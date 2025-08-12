@@ -126,7 +126,6 @@ config CHIP_ENABLE_ICD_SUPPORT
 
 # Reduce Thread TX output power to 0 dBm for SED device
 config OPENTHREAD_DEFAULT_TX_POWER
-	int
 	default 0
 
 endif # OPENTHREAD

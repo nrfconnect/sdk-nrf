@@ -17,6 +17,8 @@
     - sample.matter.thermostat.ext_temp
     - sample.matter.light_bulb.memory_profiling
     - sample.matter.smoke_co_alarm.release.power_consumption
+    - sample.matter.temperature_sensor.release
+    - sample.matter.temperature_sensor.release.power_consumption
   platforms:
     - nrf52840dk/nrf52840
   comment: "Configurations excluded to limit resources usage in integration builds"
@@ -35,6 +37,8 @@
     - sample.matter.window_cover.release
     - sample.matter.window_cover.release.power_consumption
     - sample.matter.smoke_co_alarm.release.power_consumption
+    - sample.matter.temperature_sensor.release
+    - sample.matter.temperature_sensor.release.power_consumption
     - sample.matter.thermostat.ext_temp
     - sample.matter.light_bulb.memory_profiling
     - applications.matter_bridge.br_ble.memory_profiling
@@ -91,6 +95,8 @@
     - sample.matter.window_cover.debug
     - sample.matter.window_cover.release.power_consumption
     - sample.matter.smoke_co_alarm.release.power_consumption
+    - sample.matter.temperature_sensor.release
+    - sample.matter.temperature_sensor.release.power_consumption
   platforms:
     - nrf54l15dk/nrf54l15/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
