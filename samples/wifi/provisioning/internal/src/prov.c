@@ -58,7 +58,7 @@ static int base64_decode_string(const char *base64_str, uint8_t **binary, size_t
 	}
 
 	/* Allocate memory for decoded data */
-	decoded_data = malloc(decoded_len);
+	decoded_data = k_malloc(decoded_len);
 	if (!decoded_data) {
 		return -ENOMEM;
 	}
@@ -67,7 +67,7 @@ static int base64_decode_string(const char *base64_str, uint8_t **binary, size_t
 	ret = base64_decode(decoded_data, decoded_len, binary_len,
 			   (const uint8_t *)base64_str, len);
 	if (ret < 0) {
-		free(decoded_data);
+		k_free(decoded_data);
 		return ret;
 	}
 
@@ -494,14 +494,14 @@ static int cmd_wifi_prov_raw(const struct shell *shell, size_t argc, char *argv[
 	ret = wifi_prov_recv_req(&raw_buf);
 	if (ret < 0) {
 		shell_error(shell, "Failed to send protobuf data: %d", ret);
-		free(raw_data);
+		k_free(raw_data);
 		return ret;
 	}
 
 	shell_info(shell, "Protobuf data sent successfully");
 
 	/* Clean up */
-	free(raw_data);
+	k_free(raw_data);
 
 	return 0;
 }
@@ -704,7 +704,7 @@ static int cmd_wifi_prov_dump_scan(const struct shell *shell, size_t argc, char 
 	decode_scan_results(scan_data, scan_data_len);
 
 	/* Clean up */
-	free(scan_data);
+	k_free(scan_data);
 
 	return 0;
 }
