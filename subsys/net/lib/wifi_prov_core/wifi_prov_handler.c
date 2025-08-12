@@ -267,45 +267,66 @@ static void prov_set_config_handler(Request *req, Response *rsp)
 	} else {
 #if defined(CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE)
 		if (req->config.wifi.auth == AuthMode_WPA2_ENTERPRISE) {
+			int ret;
+
+#define WIFI_PROV_CHECK_TLS_ADD(_ret) \
+	do { \
+		if ((_ret) < 0) { \
+			LOG_ERR("Failed to add credential: %d", (_ret)); \
+			rsp->has_status = true; \
+			rsp->status = Status_INTERNAL_ERROR; \
+			return; \
+		} \
+	} while (0)
+
 			config.header.type = WIFI_SECURITY_TYPE_EAP_TLS;
 			if (req->config.has_certs == true) {
+				/* Phase 1 credentials */
 				if (req->config.certs.has_ca_cert) {
-					tls_credential_add(WIFI_CERT_CA_SEC_TAG,
+					ret = tls_credential_add(WIFI_CERT_CA_SEC_TAG,
 						TLS_CREDENTIAL_CA_CERTIFICATE,
 						req->config.certs.ca_cert.bytes,
 						req->config.certs.ca_cert.size);
+					WIFI_PROV_CHECK_TLS_ADD(ret);
 				}
 				if (req->config.certs.has_client_cert) {
-					tls_credential_add(WIFI_CERT_CLIENT_SEC_TAG,
+					ret = tls_credential_add(WIFI_CERT_CLIENT_SEC_TAG,
 						TLS_CREDENTIAL_PUBLIC_CERTIFICATE,
 						req->config.certs.client_cert.bytes,
 						req->config.certs.client_cert.size);
+					WIFI_PROV_CHECK_TLS_ADD(ret);
 				}
 				if (req->config.certs.has_private_key) {
-					tls_credential_add(WIFI_CERT_CLIENT_KEY_SEC_TAG,
+					ret = tls_credential_add(WIFI_CERT_CLIENT_KEY_SEC_TAG,
 						TLS_CREDENTIAL_PRIVATE_KEY,
 						req->config.certs.private_key.bytes,
 						req->config.certs.private_key.size);
+					WIFI_PROV_CHECK_TLS_ADD(ret);
 				}
-				if (req->config.certs.has_ca_cert) {
-					tls_credential_add(WIFI_CERT_CA_P2_SEC_TAG,
+				/* Phase 2 credentials (use *_P2_* sec tags, if present) */
+				if (req->config.certs.has_ca_cert2) {
+					ret = tls_credential_add(WIFI_CERT_CA_P2_SEC_TAG,
 						TLS_CREDENTIAL_CA_CERTIFICATE,
-						req->config.certs.ca_cert.bytes,
-						req->config.certs.ca_cert.size);
+						req->config.certs.ca_cert2.bytes,
+						req->config.certs.ca_cert2.size);
+					WIFI_PROV_CHECK_TLS_ADD(ret);
 				}
-				if (req->config.certs.has_client_cert) {
-					tls_credential_add(WIFI_CERT_CLIENT_P2_SEC_TAG,
+				if (req->config.certs.has_client_cert2) {
+					ret = tls_credential_add(WIFI_CERT_CLIENT_P2_SEC_TAG,
 						TLS_CREDENTIAL_PUBLIC_CERTIFICATE,
-						req->config.certs.client_cert.bytes,
-						req->config.certs.client_cert.size);
+						req->config.certs.client_cert2.bytes,
+						req->config.certs.client_cert2.size);
+					WIFI_PROV_CHECK_TLS_ADD(ret);
 				}
-				if (req->config.certs.has_private_key) {
-					tls_credential_add(WIFI_CERT_CLIENT_KEY_P2_SEC_TAG,
+				if (req->config.certs.has_private_key2) {
+					ret = tls_credential_add(WIFI_CERT_CLIENT_KEY_P2_SEC_TAG,
 						TLS_CREDENTIAL_PRIVATE_KEY,
-						req->config.certs.private_key.bytes,
-						req->config.certs.private_key.size);
+						req->config.certs.private_key2.bytes,
+						req->config.certs.private_key2.size);
+					WIFI_PROV_CHECK_TLS_ADD(ret);
 				}
 			}
+#undef WIFI_PROV_CHECK_TLS_ADD
 		} else
 #endif /* CONFIG_WIFI_NM_WPA_SUPPLICANT_CRYPTO_ENTERPRISE */
 		{
