@@ -274,3 +274,5 @@
 .. |matter_cluster_editor_preview| replace:: The Matter Cluster Editor app is currently in the preview stage.
 
 .. |ISE| replace:: IronSide SE
+
+.. |ESB| replace:: Enhanced ShockBurst
