@@ -177,6 +177,13 @@ This gives the following formula to compute estimated storage time:
 
 Calling the :c:func:`emds_store_time_get` function in the sample automatically computes the result of the formula and returns 25360.
 
+Data storing context
+====================
+
+Despite that the :c:func:`emds_store` function blocks interrupts to prevent context pre-emption, it is recommended to call it from a context with the highest priority to minimize the chance of context pre-emption before the function starts executing.
+The EMDS “data storing finished” callback is invoked from the same context as :c:func:`emds_store`.
+If a radio is present, the :ref:`SoftDevice Controller <nrfxlib:softdevice_controller>` and the :ref:`Multiprotocol Service Layer <mpsl_lib>` must be uninitialized before calling :c:func:`emds_store` to ensure that no radio activity is in progress.
+
 Limitations
 ***********
     The power-fail comparator cannot be active when EMDS is used, as it will prevent the NVMC or RRAMC from performing write operations to persistent memory.
