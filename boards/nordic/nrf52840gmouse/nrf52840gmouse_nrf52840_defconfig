@@ -1,4 +1,2 @@
 # Enable MPU
 CONFIG_ARM_MPU=y
-
-CONFIG_PINCTRL=y
