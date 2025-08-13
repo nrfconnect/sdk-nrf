@@ -111,7 +111,22 @@ static void procedure_enable_cb(struct bt_conn *conn,
 
 	if (status == BT_HCI_ERR_SUCCESS) {
 		if (params->state == 1) {
-			LOG_INF("CS procedures enabled.");
+			LOG_INF("CS procedures enabled:\n"
+				" - config ID: %u\n"
+				" - antenna configuration index: %u\n"
+				" - TX power: %d dbm\n"
+				" - subevent length: %u us\n"
+				" - subevents per event: %u\n"
+				" - subevent interval: %u\n"
+				" - event interval: %u\n"
+				" - procedure interval: %u\n"
+				" - procedure count: %u\n"
+				" - maximum procedure length: %u",
+				params->config_id, params->tone_antenna_config_selection,
+				params->selected_tx_power, params->subevent_len,
+				params->subevents_per_event, params->subevent_interval,
+				params->event_interval, params->procedure_interval,
+				params->procedure_count, params->max_procedure_len);
 		} else {
 			LOG_INF("CS procedures disabled.");
 		}
