@@ -17,6 +17,7 @@ common:
     - thingy53/nrf5340/cpuapp
   tags:
     - ci_samples_nrf5340
+  timeout: 240
 tests:
   sample.mcumgr.smp_svr.ext_xip:
     platform_allow:
