@@ -9,11 +9,14 @@
 #include <zephyr/drivers/uart.h>
 #include <hal/nrf_uarte.h>
 #include <hal/nrf_gpio.h>
+#include <assert.h>
 #include <zephyr/sys/ring_buffer.h>
 #include <zephyr/pm/device.h>
 #include <zephyr/modem/pipe.h>
 #include "slm_uart_handler.h"
 #include "slm_at_host.h"
+#include <hal/nrf_regulators.h>
+#include <zephyr/sys/reboot.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(slm_uart_handler, CONFIG_SLM_LOG_LEVEL);
@@ -27,6 +30,7 @@ const struct device *const slm_uart_dev = DEVICE_DT_GET(DT_CHOSEN(ncs_slm_uart))
 uint32_t slm_uart_baudrate;
 
 static struct k_work_delayable rx_process_work;
+static struct k_work sleep_work;
 
 struct rx_buf_t {
 	atomic_t ref_counter;
@@ -279,16 +283,12 @@ static int tx_start(void)
 	uint8_t *buf;
 	size_t len;
 	int err;
-	enum pm_device_state state = PM_DEVICE_STATE_OFF;
+	// enum pm_device_state state = PM_DEVICE_STATE_OFF;
 
-	if (!atomic_test_bit(&uart_state, SLM_TX_ENABLED_BIT)) {
-		return -EAGAIN;
-	}
-
-	pm_device_state_get(slm_uart_dev, &state);
-	if (state != PM_DEVICE_STATE_ACTIVE) {
-		return 1;
-	}
+	// pm_device_state_get(slm_uart_dev, &state);
+	// if (state != PM_DEVICE_STATE_ACTIVE) {
+	// 	return 1;
+	// }
 
 	len = ring_buf_get_claim(&tx_buf, &buf, ring_buf_capacity_get(&tx_buf));
 	err = uart_tx(slm_uart_dev, buf, len, SYS_FOREVER_US);
@@ -328,6 +328,7 @@ static void uart_callback(const struct device *dev, struct uart_event *evt, void
 	struct rx_buf_t *buf;
 	struct rx_event_t rx_event;
 	int err;
+	static bool hwfc_active;
 
 	ARG_UNUSED(dev);
 	ARG_UNUSED(user_data);
@@ -360,17 +361,20 @@ static void uart_callback(const struct device *dev, struct uart_event *evt, void
 		(void)k_work_submit((struct k_work *)&rx_process_work);
 		break;
 	case UART_RX_BUF_REQUEST:
+		hwfc_active = false;
 		if (k_msgq_num_free_get(&rx_event_queue) < UART_RX_EVENT_COUNT_FOR_BUF) {
 			LOG_WRN("Disabling UART RX: No event space.");
 			break;
 		}
 		buf = rx_buf_alloc();
 		if (!buf) {
+			hwfc_active = true;
 			LOG_WRN("Disabling UART RX: No free buffers.");
 			break;
 		}
 		err = uart_rx_buf_rsp(slm_uart_dev, buf->buf, sizeof(buf->buf));
 		if (err) {
+			hwfc_active = true;
 			LOG_WRN("Disabling UART RX: %d", err);
 			rx_buf_unref(buf);
 		}
@@ -381,8 +385,15 @@ static void uart_callback(const struct device *dev, struct uart_event *evt, void
 		}
 		break;
 	case UART_RX_DISABLED:
+		LOG_INF("UART RX disabled");
 		atomic_clear_bit(&uart_state, SLM_RX_ENABLED_BIT);
-		k_work_submit((struct k_work *)&rx_process_work);
+		if (hwfc_active) {
+			LOG_INF("UART RX disabled due to flow control");
+			k_work_submit((struct k_work *)&rx_process_work);
+		}
+		// MARKUS TODO: Whether we shutdown or go to sleep should
+		// be configurable with AT-commands.
+		// (void)k_work_submit((struct k_work *)&sleep_work);
 		break;
 	default:
 		break;
@@ -445,6 +456,35 @@ static int slm_uart_tx_write(const uint8_t *data, size_t len)
 	return 0;
 }
 
+static void sleep_work_fn(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	// MARKUS TODO: Some of the cleanup code sends UART responses. Those should be handled properly.
+	// This is a problem with having the virtual uart driver. The API between that and the SLM is
+	// the default UART API, which does not allow for us to react to DTR before closing the UART.
+	//
+	// It is possible to remove the UART responses in cleanup code. But it would be better to have them.
+
+	slm_at_host_uninit();
+
+	/* Only power off the modem if it has not been put
+	 * in flight mode to allow reducing NVM wear.
+	 */
+	// if (!slm_is_modem_functional_mode(LTE_LC_FUNC_MODE_OFFLINE)) {
+	// 	slm_power_off_modem();
+	// }
+
+	LOG_INF("Entering sleep.");
+	// LOG_PANIC();
+	// nrf_gpio_cfg_sense_set(CONFIG_SLM_POWER_PIN, NRF_GPIO_PIN_SENSE_LOW);
+
+	k_sleep(K_MSEC(100));
+
+	nrf_regulators_system_off(NRF_REGULATORS_NS);
+	assert(false);
+}
+
 int slm_tx_write(const uint8_t *data, size_t len)
 {
 #if SLM_PIPE
@@ -505,6 +545,7 @@ int slm_uart_handler_enable(void)
 	}
 
 	k_work_init_delayable(&rx_process_work, rx_process);
+	k_work_init(&sleep_work, sleep_work_fn);
 
 
 	/* Flush possibly pending data in case SLM was idle. */

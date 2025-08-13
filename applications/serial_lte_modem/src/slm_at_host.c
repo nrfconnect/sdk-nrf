@@ -446,22 +446,13 @@ static void format_final_result(char *buf, size_t buf_len, size_t buf_max_len)
 }
 
 static int slm_at_send_indicate(const uint8_t *data, size_t len,
-				bool print_full_debug, bool indicate)
+				bool print_full_debug, bool)
 {
 	int ret;
 
 	if (k_is_in_isr()) {
 		LOG_ERR("FIXME: Attempt to send AT response (of size %u) in ISR.", len);
 		return -EINTR;
-	}
-
-	if (indicate) {
-		enum pm_device_state state = PM_DEVICE_STATE_OFF;
-
-		pm_device_state_get(slm_uart_dev, &state);
-		if (state != PM_DEVICE_STATE_ACTIVE) {
-			slm_ctrl_pin_indicate();
-		}
 	}
 
 	ret = slm_tx_write(data, len);
@@ -1019,7 +1010,7 @@ void slm_at_host_uninit(void)
 
 	slm_at_uninit();
 
-	at_host_power_off(true);
+	// at_host_power_off(true); MARKUS TODO
 
 	LOG_DBG("at_host uninit done");
 }

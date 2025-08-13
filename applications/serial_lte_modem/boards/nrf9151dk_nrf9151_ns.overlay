@@ -6,13 +6,51 @@
 
  / {
 	chosen {
-		ncs,slm-uart = &uart0;
+		ncs,slm-uart = &dtr_uart;
 	};
 };
 
+/*
+/ {
+	aliases {
+		/delete-property/ sw0;
+		/delete-property/ mcuboot-button0;
+	};
+};
+/delete-node/ &button0;
+*/
+
+/* DTR with DK */
+/*
 &uart0 {
 	status = "okay";
 	hw-flow-control;
+
+	lpuart: nrf-sw-lpuart {
+		compatible = "nordic,nrf-sw-lpuart";
+		dtr-pin = <8>;
+		dtr-pin-toggle;
+		dtr-pin-debounce = <50>;
+		ri-pin = <0>;
+		status = "okay";
+	};
+};
+*/
+
+/* DTR with external MCU */
+&uart1 {
+	status = "okay";
+	hw-flow-control;
+
+	dtr_uart: nrf-sw-dtr-uart {
+		compatible = "nordic,nrf-sw-dtr-uart";
+		dtr-pin = <31>;
+		ri-pin = <30>;
+		status = "okay";
+	};
+	pinctrl-0 = <&uart2_default_alt>;
+	pinctrl-1 = <&uart2_sleep_alt>;
+	pinctrl-names = "default", "sleep";
 };
 
 &uart2 {
