@@ -558,4 +558,7 @@ cJSON
 Documentation
 =============
 
-|no_changes_yet_note|
+* Updated:
+
+  * The :ref:`emds_readme_application_integration` section in the :ref:`emds_readme` library documentation to clarify the EMDS storage context usage.
+  * The Emergency data storage section in the :ref:`bluetooth_mesh_light_lc` sample documentation to clarify the EMDS storage context implementation and usage.
