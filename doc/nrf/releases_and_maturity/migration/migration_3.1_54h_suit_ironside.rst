@@ -1,5 +1,3 @@
-:orphan:
-
 .. _migration_3.1_54h_suit_ironside:
 
 Migration from SUIT to IronSide SE for the nRF54H20 SoC
