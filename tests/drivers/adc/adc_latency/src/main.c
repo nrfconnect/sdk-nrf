@@ -119,8 +119,8 @@ static void test_adc_latency(uint32_t acquisition_time_us, uint32_t sampling_int
 		 */
 		for (int i = 0; i < adc_buffer_length; i++) {
 			zassert_true(adc_sample_buffer[i] > ADC_MINIMAL_READING_FOR_HIGH_LEVEL,
-				     "Sample %u is below the  minimal ADC reading for high level\n",
-				     i);
+				     "Sample [%u] = %d, is below the  minimal ADC reading for high level\n",
+				     i, adc_sample_buffer[i]);
 		}
 #endif
 	}
