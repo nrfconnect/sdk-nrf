@@ -1,8 +1,6 @@
-:orphan:
-
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v3.0.99
+Changelog for |NCS| v3.1.99
 ###########################
 
 .. contents::
@@ -25,7 +23,7 @@ Known issues
 ************
 
 Known issues are only tracked for the latest official release.
-See `known issues for nRF Connect SDK v3.0.0`_ for the list of issues valid for the latest release.
+See `known issues for nRF Connect SDK v3.1.0`_ for the list of issues valid for the latest release.
 
 Changelog
 *********
@@ -530,21 +528,21 @@ Zephyr
 
 .. NOTE TO MAINTAINERS: All the Zephyr commits in the below git commands must be handled specially after each upmerge and each nRF Connect SDK release.
 
-The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``9a6f116a6aa9b70b517a420247cd8d33bbbbaaa3``, with some |NCS| specific additions.
+The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``0fe59bf1e4b96122c3467295b09a034e399c5ee6``, with some |NCS| specific additions.
 
-For the list of upstream Zephyr commits (not including cherry-picked commits) incorporated into nRF Connect SDK since the most recent release, run the following command from the :file:`ncs/zephyr` repository (after running ``west update``):
+For the list of upstream Zephyr commits (not including cherry-picked commits) incorporated into |NCS| since the most recent release, run the following command from the :file:`ncs/zephyr` repository (after running ``west update``):
 
 .. code-block:: none
 
-   git log --oneline 9a6f116a6a ^fdeb735017
+   git log --oneline 0fe59bf1e4 ^fdeb735017
 
 For the list of |NCS| specific commits, including commits cherry-picked from upstream, run:
 
 .. code-block:: none
 
-   git log --oneline manifest-rev ^9a6f116a6a
+   git log --oneline manifest-rev ^0fe59bf1e4
 
-The current |NCS| main branch is based on revision ``9a6f116a6a`` of Zephyr.
+The current |NCS| main branch is based on revision ``0fe59bf1e4`` of Zephyr.
 
 .. note::
    For possible breaking changes and changes between the latest Zephyr release and the current Zephyr version, refer to the :ref:`Zephyr release notes <zephyr_release_notes>`.
@@ -561,11 +559,6 @@ zcbor
 
 Trusted Firmware-M
 ==================
-
-|no_changes_yet_note|
-
-cJSON
-=====
 
 |no_changes_yet_note|
 
