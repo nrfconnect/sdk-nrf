@@ -47,6 +47,9 @@ static void button_handler_cb(uint32_t pressed, uint32_t changed)
 
 static void app_emds_cb(void)
 {
+	/* The sample did not call bt_disable and stop the Bluetooth stack properly.
+	 * Therefore, the device does not work any longer and needs reboot.
+	 */
 	/* Flush logs before halting. */
 	log_panic();
 	dk_set_leds(DK_LED2_MSK | DK_LED3_MSK | DK_LED4_MSK);
@@ -58,6 +61,9 @@ static void isr_emds_cb(void *arg)
 	ARG_UNUSED(arg);
 
 #if defined(CONFIG_HAS_BT_CTLR)
+	/* The sample does not stop the SoftDevice Controller here because the device expects
+	 * a system reset after EMDS completes storing.
+	 */
 	int32_t err = mpsl_lib_uninit();
 
 	if (err != 0) {

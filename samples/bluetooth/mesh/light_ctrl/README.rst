@@ -200,6 +200,10 @@ Emergency data storage
 
 To build this sample with support for emergency data storage (EMDS), set :makevar:`EXTRA_CONF_FILE` to :file:`overlay-emds.conf` using the respective :ref:`CMake option <cmake_options>`.
 This will save replay protection list (RPL) data and some of the :ref:`bt_mesh_lightness_srv_readme` data to the emergency data storage instead of to the :ref:`settings_api`.
+The EMDS storing data API is called from the interrupt service routine (:ref:`ISR <zephyr:interrupts_v2>`) with priority 0 to prevent pre-emption of the storing procedure.
+As a part of the interrupt routine, the Multiprotocol Service Layer (:ref:`MPSL <mpsl_lib>`) is uninitialized to ensure that no radio activity is ongoing during the EMDS storing procedure (only if radio is present as a peripheral module in the core running the EMDS).
+After the storing procedure has completed, the sample leaves the MPSL uninitialized until the next system reset.
+Because the EMDS "data storing completed" callback is invoked from the same interrupt service routine, it is not possible to use the MPSL API or any API that depends on MPSL within this callback.
 When using EMDS, certain considerations need to be taken regarding hardware choices in your application design.
 See :ref:`emds_readme_application_integration` in the EMDS documentation for more information.
 
