@@ -6,7 +6,7 @@
 
 / {
 	chosen {
-		ncs,slm-uart = &uart2;
+		ncs,slm-uart = &dtr_uart;
 		ncs,slm-gpio = &gpio0;
 	};
 };
@@ -26,6 +26,14 @@
 	pinctrl-0 = <&uart2_default>;
 	pinctrl-1 = <&uart2_sleep>;
 	pinctrl-names = "default", "sleep";
+	dtr_uart: nrf-sw-dtr-uart {
+		compatible = "nordic,nrf-sw-dtr-uart";
+		dte-role;
+		status = "okay";
+		dtr-pin = <26>;
+		ri-pin = <25>;
+	};
+
 };
 
 &pinctrl {
