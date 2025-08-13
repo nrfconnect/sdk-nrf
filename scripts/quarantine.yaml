@@ -81,14 +81,3 @@
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34187"
-
-- scenarios:
-    - nrf.extended.secure_storage.backward_compatibility.psa.its.secure_storage.custom.store
-    - nrf.extended.secure_storage.backward_compatibility.psa.its.secure_storage.custom.transform
-    - nrf.extended.secure_storage.backward_compatibility.psa.its.secure_storage.store.settings
-  platforms:
-    - native_sim/native
-    - nrf52840dk/nrf52840
-    - nrf54l15dk/nrf54l15/cpuapp
-    - nrf9151dk/nrf9151
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34909"
