@@ -8,6 +8,7 @@ zephyr_library_include_directories(
     broadcast
     unicast
     bt_le_audio_tx
+	unicast/min_heap_temp
 )
 
 add_subdirectory(bt_le_audio_tx)

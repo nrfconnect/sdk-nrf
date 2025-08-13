@@ -14,7 +14,7 @@
 #include <../subsys/bluetooth/audio/bap_endpoint.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(unicast_client, CONFIG_UNICAST_CLIENT_LOG_LEVEL);
+LOG_MODULE_DECLARE(unicast_client, CONFIG_UNICAST_CLIENT_LOG_LEVEL);
 
 /* This array keeps track of all the remote unicast servers this unicast client is operating on.
  **/
@@ -103,7 +103,7 @@ static int pres_delay_find(struct bt_bap_qos_cfg_pref *common,
 			LOG_WRN("Incoming pref_pd_min %d is not in range [%d, %d]. Will revert to "
 				"common "
 				"pd_min %d",
-				in->pref_pd_min, common->pd_min, common->pd_max);
+				in->pref_pd_min, common->pd_min, common->pd_max, common->pd_min);
 			common->pref_pd_min = UINT32_MAX;
 		}
 	}
@@ -126,7 +126,7 @@ static int pres_delay_find(struct bt_bap_qos_cfg_pref *common,
 			LOG_WRN("Incoming pref_pd_max %d is not in range [%d, %d]. Will revert to "
 				"common "
 				"pd_max %d. Ignored.",
-				in->pref_pd_max, common->pd_min, common->pd_max);
+				in->pref_pd_max, common->pd_min, common->pd_max, common->pd_max);
 			common->pref_pd_max = 0;
 		} else {
 			common->pref_pd_max = MIN(in->pref_pd_max, common->pref_pd_max);
@@ -358,14 +358,14 @@ int srv_store_from_stream_get(struct bt_bap_stream const *const stream,
 			return -EINVAL;
 		}
 		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT; i++) {
-			if (tmp_server->snk.cap_streams[i].bap_stream == stream) {
+			if (&tmp_server->snk.cap_streams[i]->bap_stream == stream) {
 				*server = tmp_server;
 				LOG_DBG("Found server for sink stream at index %d", srv_idx);
 				matches++;
 			}
 		}
 		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT; i++) {
-			if (tmp_server->src.cap_streams[i].bap_stream == stream) {
+			if (&tmp_server->src.cap_streams[i]->bap_stream == stream) {
 				*server = tmp_server;
 				LOG_DBG("Found server for source stream at index "
 					"%d",
