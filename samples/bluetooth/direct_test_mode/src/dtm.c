@@ -2045,8 +2045,11 @@ static uint32_t dtm_packet_interval_calculate(uint32_t test_payload_length,
 
 	if (dtm_inst.cte_info.mode != DTM_CTE_MODE_OFF) {
 		/* Add 8 - bit S1 field with CTEInfo. */
-		((test_packet_length += mode) == RADIO_MODE_MODE_Ble_1Mbit) ?
-						 8 : 4;
+		if (mode == NRF_RADIO_MODE_BLE_1MBIT) {
+			test_packet_length += 8; /* 1 byte */
+		} else {
+			test_packet_length += 4; /* 0.5 byte */
+		}
 
 		/* Add CTE length in us to test packet length. */
 		test_packet_length +=
