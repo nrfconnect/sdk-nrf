@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "nRF Cloud CoAP Device Message Sample"
+
+module = NRF_CLOUD_COAP_DEVICE_MESSAGE_SAMPLE
+module-str = nRF Cloud CoAP Sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endmenu
+
+menu "Zephyr Kernel"
+source "Kconfig.zephyr"
+endmenu
