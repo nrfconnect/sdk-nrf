@@ -54,6 +54,7 @@ static struct {
 	} dlcis[CHANNEL_COUNT];
 	/* Index of the DLCI used for AT communication; defaults to 0. */
 	unsigned int at_channel;
+	unsigned int requested_at_channel;
 
 	/* Incoming data for DLCI's. */
 	atomic_t dlci_channel_rx;
@@ -199,6 +200,12 @@ static void tx_work_fn(struct k_work *work)
 	if (!ring_buf_is_empty(&cmux.tx_rb)) {
 		LOG_DBG("Remaining bytes in TX buffer: %u.", ring_buf_size_get(&cmux.tx_rb));
 	}
+
+	if (cmux.requested_at_channel != UINT_MAX) {
+		cmux.at_channel = cmux.requested_at_channel;
+		cmux.requested_at_channel = UINT_MAX;
+		LOG_INF("DLCI %u (AT) updated.", INDEX_TO_DLCI(cmux.at_channel));
+	}
 }
 
 static int cmux_write_at_channel_nonblock(const uint8_t *data, size_t len)
@@ -333,6 +340,8 @@ void slm_cmux_init(void)
 	ring_buf_init(&cmux.tx_rb, sizeof(cmux.tx_buffer), cmux.tx_buffer);
 	k_mutex_init(&cmux.tx_rb_mutex);
 	k_work_init(&cmux.tx_work, tx_work_fn);
+
+	cmux.requested_at_channel = UINT_MAX;
 }
 
 static struct cmux_dlci *cmux_get_dlci(enum cmux_channel channel)
@@ -463,9 +472,9 @@ static int handle_at_cmux(enum at_parser_cmd_type cmd_type, struct at_parser *pa
 		}
 #endif
 		if (cmux_is_started()) {
-			/* Just update the AT channel, first answering "OK" on the current DLCI. */
+			/* Update the AT channel after answering "OK" on the current DLCI. */
 			rsp_send_ok();
-			cmux.at_channel = at_channel;
+			cmux.requested_at_channel = at_channel;
 			return -SILENT_AT_COMMAND_RET;
 		}
 		cmux.at_channel = at_channel;
