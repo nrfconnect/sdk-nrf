@@ -878,6 +878,13 @@ static int configure_supported_features(void)
 		}
 	}
 
+	if (IS_ENABLED(CONFIG_BT_CTLR_DF_ADV_CTE_TX)) {
+		err = sdc_support_le_connectionless_cte_transmitter();
+		if (err) {
+			return -ENOTSUP;
+		}
+	}
+
 	if (IS_ENABLED(CONFIG_BT_CTLR_LE_POWER_CONTROL)) {
 		if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
 			err = sdc_support_le_power_control_central();
