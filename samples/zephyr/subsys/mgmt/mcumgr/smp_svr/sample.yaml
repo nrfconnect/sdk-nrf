@@ -266,6 +266,7 @@ tests:
       - SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y
       - mcuboot_CONFIG_NRF_SECURITY=y
       - mcuboot_CONFIG_MULTITHREADING=y
+      - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
@@ -310,6 +311,25 @@ tests:
       - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT=y
       - mcuboot_CONFIG_NRF_SECURITY=y
       - mcuboot_CONFIG_MULTITHREADING=y
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    harness_config: *bt_harness_config
+
+  sample.mcumgr.smp_svr.bt.nrf54h20dk.ext_flash:
+    extra_args:
+      - FILE_SUFFIX="ext_flash"
+      - EXTRA_CONF_FILE="overlay-bt.conf"
+      - mcuboot_CONFIG_MULTITHREADING=y
+      - mcuboot_CONFIG_NRF_SECURITY=y
+      - mcuboot_CONFIG_BOOT_IMG_HASH_DIRECTLY_ON_STORAGE=n
+      - mcuboot_CONFIG_BOOT_MAX_IMG_SECTORS_AUTO=n
+      - mcuboot_CONFIG_BOOT_MAX_IMG_SECTORS=512
+      - mcuboot_CONFIG_FLASH_MSPI_NOR_LAYOUT_PAGE_SIZE=4096
+      - SB_CONFIG_NETCORE_IPC_RADIO=y
+      - SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y
+      - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
