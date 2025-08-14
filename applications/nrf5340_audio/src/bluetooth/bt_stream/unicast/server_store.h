@@ -31,7 +31,7 @@ struct unicast_server_snk_vars {
 	/* Check this before calling unicast audio start */
 	enum bt_audio_context available_ctx;
 	/* We should have all info here. (Locations, stream status etc.) */
-	struct bt_cap_stream *cap_streams[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT];
+	struct bt_cap_stream cap_streams[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT];
 };
 
 struct unicast_server_src_vars {
@@ -44,7 +44,7 @@ struct unicast_server_src_vars {
 	size_t num_eps;
 	enum bt_audio_context supported_ctx;
 	enum bt_audio_context available_ctx;
-	struct bt_cap_stream *cap_streams[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT];
+	struct bt_cap_stream cap_streams[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT];
 };
 
 /* This struct holds the actual values of codec configs and QoS across all CIGs */
@@ -102,6 +102,9 @@ int srv_store_all_ep_state_count(enum bt_bap_ep_state state, enum bt_audio_dir d
 
 int srv_store_avail_context_set(struct bt_conn *conn, enum bt_audio_context snk_ctx,
 				enum bt_audio_context src_ctx);
+
+int srv_store_codec_cap_set(struct bt_conn *conn, enum bt_audio_dir dir,
+			    const struct bt_audio_codec_cap *codec);
 
 int srv_store_from_conn_get(struct bt_conn const *const conn, struct server_store **server);
 

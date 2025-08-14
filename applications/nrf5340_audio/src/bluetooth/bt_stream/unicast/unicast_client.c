@@ -6,7 +6,6 @@
 
 #include "unicast_client.h"
 
-#include <zephyr/sys/byteorder.h>
 #include <zephyr/zbus/zbus.h>
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/sys/byteorder.h>
@@ -45,7 +44,7 @@ struct discover_dir {
 	bool source;
 };
 
-K_MSGQ_DEFINE(cap_start_q, sizeof(struct stream_index), CONFIG_BT_ISO_MAX_CHAN, sizeof(void *));
+K_MSGQ_DEFINE(cap_start_q, sizeof(struct bt_conn **), CONFIG_BT_ISO_MAX_CHAN, sizeof(void *));
 
 BUILD_ASSERT(CONFIG_BT_ISO_MAX_CIG == 1, "Only one CIG is supported");
 
@@ -53,20 +52,6 @@ static le_audio_receive_cb receive_cb;
 
 static struct bt_bap_unicast_group *unicast_group;
 static bool unicast_group_created;
-
-static struct bt_bap_lc3_preset lc3_preset_sink_48_4_1 = BT_BAP_LC3_UNICAST_PRESET_48_4_1(
-	BT_AUDIO_LOCATION_ANY, (BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED));
-static struct bt_bap_lc3_preset lc3_preset_sink_24_2_1 = BT_BAP_LC3_UNICAST_PRESET_24_2_1(
-	BT_AUDIO_LOCATION_ANY, (BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED));
-static struct bt_bap_lc3_preset lc3_preset_sink_16_2_1 = BT_BAP_LC3_UNICAST_PRESET_16_2_1(
-	BT_AUDIO_LOCATION_ANY, (BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED));
-
-static struct bt_bap_lc3_preset lc3_preset_source_48_4_1 =
-	BT_BAP_LC3_UNICAST_PRESET_48_4_1(BT_AUDIO_LOCATION_ANY, BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
-static struct bt_bap_lc3_preset lc3_preset_source_24_2_1 =
-	BT_BAP_LC3_UNICAST_PRESET_24_2_1(BT_AUDIO_LOCATION_ANY, BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
-static struct bt_bap_lc3_preset lc3_preset_source_16_2_1 =
-	BT_BAP_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_ANY, BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED);
 
 static bool playing_state = true;
 
@@ -89,82 +74,86 @@ K_MUTEX_DEFINE(mtx_cap_procedure_proceed);
 static void cap_start_worker(struct k_work *work)
 {
 	int ret;
-	struct stream_index idx;
-	// int device_iterator = 0;
-	// int stream_iterator = 0;
+	struct bt_conn *conn;
+	int device_iterator = 0;
+	int stream_iterator = 0;
 
 	/* Check msgq for a pending start procedure */
-	ret = k_msgq_get(&cap_start_q, &idx, K_NO_WAIT);
+	ret = k_msgq_get(&cap_start_q, &conn, K_NO_WAIT);
 	if (ret) {
 		LOG_ERR("Failed to get device index for pending cap start procedure: %d", ret);
 		return;
 	}
 
 	struct server_store *server = NULL;
+	ret = srv_store_from_conn_get(conn, &server);
+	if (ret < 0) {
+		LOG_ERR("Failed to get server store from connection: %d", ret);
+		return;
+	}
 
 	if (server->snk.num_eps == 0 && server->src.num_eps == 0) {
 		LOG_ERR("No sink or source endpoint found for device");
 		return;
+	} else {
+		LOG_INF("Starting CAP procedure for device %p", (void *)conn);
+		LOG_INF("Sink EPs: %d, Source EPs: %d", server->snk.num_eps, server->src.num_eps);
 	}
 
-	// if (unicast_group_created == false) {
-	// 	uint8_t cig_index = idx.lvl1;
-	// 	struct bt_bap_unicast_group_stream_pair_param
-	// 		pair_params[ARRAY_SIZE(unicast_servers[cig_index][LVL2])];
-	// 	/* 2 streams (one sink and one source stream) for each unicast_server */
-	// 	struct bt_bap_unicast_group_stream_param
-	// 		group_stream_params[(ARRAY_SIZE(unicast_servers[cig_index][LVL2]) * 2)];
-	// 	struct bt_bap_unicast_group_param group_param;
+	/* Create unicast group if it doesn't exist */
+	if (unicast_group_created == false) {
+		struct bt_bap_unicast_group_stream_pair_param pair_params[2];
+		/* 2 streams (one sink and one source stream) for each unicast_server */
+		struct bt_bap_unicast_group_stream_param group_stream_params[4];
+		struct bt_bap_unicast_group_param group_param;
 
-	// 	for (int i = 0; i < ARRAY_SIZE(group_stream_params); i++) {
-	// 		/* Every other stream should be sink or source */
-	// 		if ((i % 2) == 0) {
-	// 			group_stream_params[i].qos = &lc3_preset_sink.qos;
-	// 			group_stream_params[i].stream =
-	// 				&unicast_servers[cig_index][LVL2][device_iterator]
-	// 					 .cap_sink_stream.bap_stream;
-	// 		} else {
-	// 			group_stream_params[i].qos = &lc3_preset_source.qos;
-	// 			group_stream_params[i].stream =
-	// 				&unicast_servers[cig_index][LVL2][device_iterator]
-	// 					 .cap_source_stream.bap_stream;
-	// 			device_iterator++;
-	// 		}
-	// 	}
+		for (int i = 0; i < ARRAY_SIZE(group_stream_params); i++) {
+			/* Every other stream should be sink or source */
+			if ((i % 2) == 0) {
+				group_stream_params[i].qos = &server->snk.lc3_preset[0].qos;
+				group_stream_params[i].stream =
+					&server->snk.cap_streams[device_iterator].bap_stream;
+			} else {
+				group_stream_params[i].qos = &server->src.lc3_preset[0].qos;
+				group_stream_params[i].stream =
+					&server->src.cap_streams[device_iterator].bap_stream;
+				device_iterator++;
+			}
+		}
 
-	// 	for (int i = 0; i < ARRAY_SIZE(pair_params); i++) {
-	// 		if (unicast_server->sink_ep) {
-	// 			pair_params[i].tx_param = &group_stream_params[stream_iterator];
-	// 		} else {
-	// 			pair_params[i].tx_param = NULL;
-	// 		}
-	// 		stream_iterator++;
+		for (int i = 0; i < ARRAY_SIZE(pair_params); i++) {
+			if (server->snk.num_eps > 0) {
+				pair_params[i].tx_param = &group_stream_params[stream_iterator];
+			} else {
+				pair_params[i].tx_param = NULL;
+			}
+			stream_iterator++;
 
-	// 		if (unicast_server->source_ep) {
-	// 			pair_params[i].rx_param = &group_stream_params[stream_iterator];
-	// 		} else {
-	// 			pair_params[i].rx_param = NULL;
-	// 		}
+			if (server->src.num_eps > 0) {
+				pair_params[i].rx_param = &group_stream_params[stream_iterator];
+			} else {
+				pair_params[i].rx_param = NULL;
+			}
 
-	// 		stream_iterator++;
-	// 	}
+			stream_iterator++;
+		}
 
-	// 	group_param.params = pair_params;
-	// 	group_param.params_count = ARRAY_SIZE(pair_params);
+		group_param.params = pair_params;
+		group_param.params_count = ARRAY_SIZE(pair_params);
 
-	// 	if (IS_ENABLED(CONFIG_BT_AUDIO_PACKING_INTERLEAVED)) {
-	// 		group_param.packing = BT_ISO_PACKING_INTERLEAVED;
-	// 	} else {
-	// 		group_param.packing = BT_ISO_PACKING_SEQUENTIAL;
-	// 	}
+		if (IS_ENABLED(CONFIG_BT_AUDIO_PACKING_INTERLEAVED)) {
+			group_param.packing = BT_ISO_PACKING_INTERLEAVED;
+		} else {
+			group_param.packing = BT_ISO_PACKING_SEQUENTIAL;
+		}
 
-	// 	ret = bt_bap_unicast_group_create(&group_param, &unicast_group);
-	// 	if (ret) {
-	// 		LOG_ERR("Failed to create unicast group: %d", ret);
-	// 	} else {
-	// 		unicast_group_created = true;
-	// 	}
-	// }
+		ret = bt_bap_unicast_group_create(&group_param, &unicast_group);
+		if (ret) {
+			LOG_ERR("Failed to create unicast group: %d", ret);
+		} else {
+			unicast_group_created = true;
+		}
+	}
 
 	ret = k_mutex_lock(&mtx_cap_procedure_proceed, CAP_PROCED_MUTEX_WAIT_TIME_MS);
 	if (ret == -EAGAIN) {
@@ -216,7 +205,7 @@ static void cap_start_worker(struct k_work *work)
 	// }
 
 	if (param.count == 0) {
-		LOG_DBG("No streams to start for device %d.%d.%d", idx.lvl1, idx.lvl2, idx.lvl3);
+		LOG_DBG("No streams to start for device %p", (void *)conn);
 		k_mutex_unlock(&mtx_cap_procedure_proceed);
 		return;
 	}
@@ -224,7 +213,7 @@ static void cap_start_worker(struct k_work *work)
 	ret = bt_cap_initiator_unicast_audio_start(&param);
 	if (ret == -EBUSY) {
 		/* Try again once the ongoing start procedure is completed */
-		ret = k_msgq_put(&cap_start_q, &idx, K_NO_WAIT);
+		ret = k_msgq_put(&cap_start_q, NULL, K_NO_WAIT);
 		if (ret) {
 			LOG_ERR("Failed to put device_index on the queue: %d", ret);
 		}
@@ -233,252 +222,6 @@ static void cap_start_worker(struct k_work *work)
 	}
 }
 K_WORK_DEFINE(cap_start_work, cap_start_worker);
-
-static void supported_sample_rates_print(uint16_t supported_sample_rates, enum bt_audio_dir dir)
-{
-	char supported_str[20] = "";
-
-	if (supported_sample_rates & BT_AUDIO_CODEC_CAP_FREQ_48KHZ) {
-		strcat(supported_str, "48, ");
-	}
-
-	if (supported_sample_rates & BT_AUDIO_CODEC_CAP_FREQ_24KHZ) {
-		strcat(supported_str, "24, ");
-	}
-
-	if (supported_sample_rates & BT_AUDIO_CODEC_CAP_FREQ_32KHZ) {
-		strcat(supported_str, "32, ");
-	}
-
-	if (supported_sample_rates & BT_AUDIO_CODEC_CAP_FREQ_16KHZ) {
-		strcat(supported_str, "16, ");
-	}
-
-	if (dir == BT_AUDIO_DIR_SINK) {
-		LOG_DBG("Unicast_server supports: %s kHz in sink direction", supported_str);
-	} else if (dir == BT_AUDIO_DIR_SOURCE) {
-		LOG_DBG("Unicast_server supports: %s kHz in source direction", supported_str);
-	}
-}
-
-static bool sink_parse_cb(struct bt_data *data, void *user_data)
-{
-	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_FREQ) {
-		uint16_t lc3_freq_bit = sys_get_le16(data->data);
-
-		supported_sample_rates_print(lc3_freq_bit, BT_AUDIO_DIR_SINK);
-
-		/* Try with the preferred sample rate first */
-		switch (CONFIG_BT_AUDIO_PREF_SAMPLE_RATE_VALUE) {
-		case BT_AUDIO_CODEC_CFG_FREQ_48KHZ:
-			if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_48KHZ) {
-				// lc3_preset_sink = lc3_preset_sink_48_4_1;
-				*(bool *)user_data = true;
-				/* Found what we were looking for, stop parsing LTV */
-				return false;
-			}
-
-			break;
-
-		case BT_AUDIO_CODEC_CFG_FREQ_24KHZ:
-			if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_24KHZ) {
-				// lc3_preset_sink = lc3_preset_sink_24_2_1;
-				*(bool *)user_data = true;
-				/* Found what we were looking for, stop parsing LTV */
-				return false;
-			}
-
-			break;
-
-		case BT_AUDIO_CODEC_CFG_FREQ_16KHZ:
-			if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_16KHZ) {
-				// lc3_preset_sink = lc3_preset_sink_16_2_1;
-				*(bool *)user_data = true;
-				/* Found what we were looking for, stop parsing LTV */
-				return false;
-			}
-
-			break;
-		}
-
-		/* If no match with the preferred, revert to trying highest first */
-		if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_48KHZ) {
-			// lc3_preset_sink = lc3_preset_sink_48_4_1;
-			*(bool *)user_data = true;
-		} else if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_24KHZ) {
-			// lc3_preset_sink = lc3_preset_sink_24_2_1;
-			*(bool *)user_data = true;
-		} else if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_16KHZ) {
-			// lc3_preset_sink = lc3_preset_sink_16_2_1;
-			*(bool *)user_data = true;
-		}
-
-		/* Found what we were looking for, stop parsing LTV */
-		return false;
-	}
-
-	/* Did not find what we were looking for, continue parsing LTV */
-	return true;
-}
-
-static void set_color_if_supported(char *str, uint16_t bitfield, uint16_t mask)
-{
-	if (bitfield & mask) {
-		strcat(str, COLOR_GREEN);
-	} else {
-		strcat(str, COLOR_RED);
-		strcat(str, "!");
-	}
-}
-
-static bool caps_print_cb(struct bt_data *data, void *user_data)
-{
-	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_FREQ) {
-		uint16_t freq_bit = sys_get_le16(data->data);
-		char supported_freq[320] = "";
-
-		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_8KHZ);
-		strcat(supported_freq, "8, ");
-		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_11KHZ);
-		strcat(supported_freq, "11.025, ");
-		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_16KHZ);
-		strcat(supported_freq, "16, ");
-		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_22KHZ);
-		strcat(supported_freq, "22.05, ");
-		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_24KHZ);
-		strcat(supported_freq, "24, ");
-		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_32KHZ);
-		strcat(supported_freq, "32, ");
-		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_44KHZ);
-		strcat(supported_freq, "44.1, ");
-		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_48KHZ);
-		strcat(supported_freq, "48, ");
-		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_88KHZ);
-		strcat(supported_freq, "88.2, ");
-		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_96KHZ);
-		strcat(supported_freq, "96, ");
-		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_176KHZ);
-		strcat(supported_freq, "176, ");
-		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_192KHZ);
-		strcat(supported_freq, "192, ");
-		set_color_if_supported(supported_freq, freq_bit, BT_AUDIO_CODEC_CAP_FREQ_384KHZ);
-		strcat(supported_freq, "384");
-
-		LOG_INF("\tFrequencies kHz: %s", supported_freq);
-	}
-
-	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_DURATION) {
-		uint16_t dur_bit = sys_get_le16(data->data);
-		char supported_dur[80] = "";
-
-		set_color_if_supported(supported_dur, dur_bit, BT_AUDIO_CODEC_CAP_DURATION_7_5);
-		strcat(supported_dur, "7.5, ");
-		set_color_if_supported(supported_dur, dur_bit, BT_AUDIO_CODEC_CAP_DURATION_10);
-		strcat(supported_dur, "10");
-
-		LOG_INF("\tFrame duration ms: %s", supported_dur);
-	}
-
-	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_CHAN_COUNT) {
-		uint16_t chan_bit = sys_get_le16(data->data);
-		char supported_chan[140] = "";
-
-		set_color_if_supported(supported_chan, chan_bit, BT_AUDIO_CODEC_CAP_CHAN_COUNT_1);
-		strcat(supported_chan, "1, ");
-		set_color_if_supported(supported_chan, chan_bit, BT_AUDIO_CODEC_CAP_CHAN_COUNT_2);
-		strcat(supported_chan, "2, ");
-		set_color_if_supported(supported_chan, chan_bit, BT_AUDIO_CODEC_CAP_CHAN_COUNT_3);
-		strcat(supported_chan, "3, ");
-		set_color_if_supported(supported_chan, chan_bit, BT_AUDIO_CODEC_CAP_CHAN_COUNT_4);
-		strcat(supported_chan, "4, ");
-		set_color_if_supported(supported_chan, chan_bit, BT_AUDIO_CODEC_CAP_CHAN_COUNT_5);
-		strcat(supported_chan, "5, ");
-		set_color_if_supported(supported_chan, chan_bit, BT_AUDIO_CODEC_CAP_CHAN_COUNT_6);
-		strcat(supported_chan, "6, ");
-		set_color_if_supported(supported_chan, chan_bit, BT_AUDIO_CODEC_CAP_CHAN_COUNT_7);
-		strcat(supported_chan, "7, ");
-		set_color_if_supported(supported_chan, chan_bit, BT_AUDIO_CODEC_CAP_CHAN_COUNT_8);
-		strcat(supported_chan, "8");
-
-		LOG_INF("\tChannels supported: %s", supported_chan);
-	}
-
-	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_FRAME_LEN) {
-		uint16_t lc3_min_frame_length = sys_get_le16(data->data);
-		uint16_t lc3_max_frame_length = sys_get_le16(data->data + sizeof(uint16_t));
-
-		LOG_INF("\tFrame length bytes: %d - %d", lc3_min_frame_length,
-			lc3_max_frame_length);
-	}
-
-	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_FRAME_COUNT) {
-		uint16_t lc3_frame_per_sdu = sys_get_le16(data->data);
-
-		LOG_INF("\tMax frames per SDU: %d", lc3_frame_per_sdu);
-	}
-
-	return true;
-}
-
-static bool source_parse_cb(struct bt_data *data, void *user_data)
-{
-	if (data->type == BT_AUDIO_CODEC_CAP_TYPE_FREQ) {
-		uint16_t lc3_freq_bit = sys_get_le16(data->data);
-
-		supported_sample_rates_print(lc3_freq_bit, BT_AUDIO_DIR_SOURCE);
-
-		/* Try with the preferred sample rate first */
-		switch (CONFIG_BT_AUDIO_PREF_SAMPLE_RATE_VALUE) {
-		case BT_AUDIO_CODEC_CFG_FREQ_48KHZ:
-			if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_48KHZ) {
-				// lc3_preset_source = lc3_preset_source_48_4_1;
-				*(bool *)user_data = true;
-				/* Found what we were looking for, stop parsing LTV */
-				return false;
-			}
-
-			break;
-
-		case BT_AUDIO_CODEC_CFG_FREQ_24KHZ:
-			if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_24KHZ) {
-				// lc3_preset_source = lc3_preset_source_24_2_1;
-				*(bool *)user_data = true;
-				/* Found what we were looking for, stop parsing LTV */
-				return false;
-			}
-
-			break;
-
-		case BT_AUDIO_CODEC_CFG_FREQ_16KHZ:
-			if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_16KHZ) {
-				// lc3_preset_source = lc3_preset_source_16_2_1;
-				*(bool *)user_data = true;
-				/* Found what we were looking for, stop parsing LTV */
-				return false;
-			}
-
-			break;
-		}
-
-		/* If no match with the preferred, revert to trying highest first */
-		if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_48KHZ) {
-			// lc3_preset_source = lc3_preset_source_48_4_1;
-			*(bool *)user_data = true;
-		} else if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_24KHZ) {
-			// lc3_preset_source = lc3_preset_source_24_2_1;
-			*(bool *)user_data = true;
-		} else if (lc3_freq_bit & BT_AUDIO_CODEC_CAP_FREQ_16KHZ) {
-			// lc3_preset_source = lc3_preset_source_16_2_1;
-			*(bool *)user_data = true;
-		}
-
-		/* Found what we were looking for, stop parsing LTV */
-		return false;
-	}
-
-	/* Did not find what we were looking for, continue parsing LTV */
-	return true;
-}
 
 // static int update_cap_sink_stream_qos(struct le_audio_unicast_server *unicast_server,
 // 				      uint32_t pres_delay_us)
@@ -625,53 +368,15 @@ static void pac_record_cb(struct bt_conn *conn, enum bt_audio_dir dir,
 {
 	int ret;
 
-	struct server_store *server = NULL;
-
-	ret = srv_store_from_conn_get(conn, &server);
-	if (ret) {
-		LOG_ERR("Unknown connection, should not reach here");
-		return;
-	}
-
 	if (codec->id != BT_HCI_CODING_FORMAT_LC3) {
 		LOG_DBG("Only the LC3 codec is supported");
 		return;
 	}
 
-	if (codec->data_len == 0) {
-		LOG_ERR("Codec data is empty");
+	ret = srv_store_codec_cap_set(conn, dir, codec);
+	if (ret) {
+		LOG_ERR("Failed to set codec capability: %d", ret);
 		return;
-	}
-
-	if (codec->data_len > CONFIG_BT_AUDIO_CODEC_CAP_MAX_DATA_SIZE) {
-		LOG_ERR("Codec data length exceeds maximum size: %d", codec->data_len);
-		return;
-	}
-
-	if (dir == BT_AUDIO_DIR_SINK) {
-		/* num_codec_caps is an increasing index that starts at 0 */
-		if (server->snk.num_codec_caps >= ARRAY_SIZE(server->snk.codec_caps)) {
-			LOG_WRN("No more space for sink codec capabilities, increase "
-				"CONFIG_CODEC_CAP_COUNT_MAX");
-			return;
-		}
-
-		memcpy(&server->snk.codec_caps[server->snk.num_codec_caps], codec,
-		       sizeof(struct bt_audio_codec_cap));
-		server->snk.num_codec_caps++;
-	} else if (dir == BT_AUDIO_DIR_SOURCE) {
-		/* num_codec_caps is an increasing index that starts at 0 */
-		if (server->src.num_codec_caps >= ARRAY_SIZE(server->src.codec_caps)) {
-			LOG_WRN("No more space for source codec capabilities, increase "
-				"CONFIG_CODEC_CAP_COUNT_MAX");
-			return;
-		}
-
-		memcpy(&server->src.codec_caps[server->src.num_codec_caps], codec,
-		       sizeof(struct bt_audio_codec_cap));
-		server->src.num_codec_caps++;
-	} else {
-		LOG_WRN("PAC record direction not recognized: %d", dir);
 	}
 }
 
@@ -689,8 +394,9 @@ static void endpoint_cb(struct bt_conn *conn, enum bt_audio_dir dir, struct bt_b
 	if (dir == BT_AUDIO_DIR_SINK) {
 		if (ep != NULL) {
 			if (server->snk.num_eps >= ARRAY_SIZE(server->snk.eps)) {
-				LOG_WRN("No more space for sink endpoints, increase "
-					"CONFIG_SNK_EP_COUNT_MAX");
+				LOG_WRN("No more space (%d) for sink endpoints, increase "
+					"CONFIG_SNK_EP_COUNT_MAX (%d)",
+					server->snk.num_eps, ARRAY_SIZE(server->snk.eps));
 				return;
 			}
 
@@ -754,7 +460,8 @@ static void discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
 			/* Get the valid configuration to set for this stream and put that in the
 			 * corresponding preset */
 
-			LOG_INF("Found %d valid cap(s), %d location(s), %d snk ep(s) %d src ep(s)",
+			LOG_INF("Found %d valid PAC record(s), %d location(s), %d snk ep(s) %d src "
+				"ep(s)",
 				POPCOUNT(valid_sink_caps), POPCOUNT(server->snk.locations),
 				server->snk.num_eps, server->src.num_eps);
 
@@ -846,11 +553,11 @@ static void discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
 		return;
 	}
 
-	// ret = k_msgq_put(&cap_start_q, &idx, K_NO_WAIT);
-	// if (ret) {
-	// 	LOG_ERR("Failed to put device_index on the queue: %d", ret);
-	// 	return;
-	// }
+	ret = k_msgq_put(&cap_start_q, &conn, K_NO_WAIT);
+	if (ret) {
+		LOG_ERR("Failed to put device_index on the queue: %d", ret);
+		return;
+	}
 
 	// /* If we have a valid stereo idx, put it on the queue */
 	// if (memcmp(&stereo_idx, &idx, sizeof(struct stream_index)) && stereo_idx.lvl3 != 0) {
@@ -1140,7 +847,6 @@ static void unicast_discovery_complete_cb(struct bt_conn *conn, int err,
 static void unicast_start_complete_cb(int err, struct bt_conn *conn)
 {
 	int ret;
-	struct stream_index idx;
 
 	k_mutex_unlock(&mtx_cap_procedure_proceed);
 
@@ -1149,7 +855,7 @@ static void unicast_start_complete_cb(int err, struct bt_conn *conn)
 	}
 
 	LOG_DBG("Unicast start complete cb");
-	ret = k_msgq_peek(&cap_start_q, &idx);
+	ret = k_msgq_peek(&cap_start_q, &conn);
 	if (ret == 0) {
 		/* Pending start procedure found, call k_work */
 		k_work_submit(&cap_start_work);
@@ -1234,14 +940,14 @@ int unicast_client_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint3
 	}
 
 	if (dir == BT_AUDIO_DIR_SINK) {
-		if (server->snk.cap_streams[0]->bap_stream.codec_cfg == NULL) {
+		if (server->snk.cap_streams[0].bap_stream.codec_cfg == NULL) {
 			LOG_ERR("No codec found for the stream");
 
 			return -ENXIO;
 		}
 
 		if (sampling_rate_hz != NULL) {
-			ret = le_audio_freq_hz_get(server->snk.cap_streams[0]->bap_stream.codec_cfg,
+			ret = le_audio_freq_hz_get(server->snk.cap_streams[0].bap_stream.codec_cfg,
 						   sampling_rate_hz);
 			if (ret) {
 				LOG_ERR("Invalid sampling frequency: %d", ret);
@@ -1250,7 +956,7 @@ int unicast_client_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint3
 		}
 
 		if (bitrate != NULL) {
-			ret = le_audio_bitrate_get(server->snk.cap_streams[0]->bap_stream.codec_cfg,
+			ret = le_audio_bitrate_get(server->snk.cap_streams[0].bap_stream.codec_cfg,
 						   bitrate);
 			if (ret) {
 				LOG_ERR("Unable to calculate bitrate: %d", ret);
@@ -1258,13 +964,13 @@ int unicast_client_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint3
 			}
 		}
 	} else if (dir == BT_AUDIO_DIR_SOURCE) {
-		if (server->src.cap_streams[0]->bap_stream.codec_cfg == NULL) {
+		if (server->src.cap_streams[0].bap_stream.codec_cfg == NULL) {
 			LOG_ERR("No codec found for the stream");
 			return -ENXIO;
 		}
 
 		if (sampling_rate_hz != NULL) {
-			ret = le_audio_freq_hz_get(server->src.cap_streams[0]->bap_stream.codec_cfg,
+			ret = le_audio_freq_hz_get(server->src.cap_streams[0].bap_stream.codec_cfg,
 						   sampling_rate_hz);
 			if (ret) {
 				LOG_ERR("Invalid sampling frequency: %d", ret);
@@ -1273,7 +979,7 @@ int unicast_client_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint3
 		}
 
 		if (bitrate != NULL) {
-			ret = le_audio_bitrate_get(server->src.cap_streams[0]->bap_stream.codec_cfg,
+			ret = le_audio_bitrate_get(server->src.cap_streams[0].bap_stream.codec_cfg,
 						   bitrate);
 			if (ret) {
 				LOG_ERR("Unable to calculate bitrate: %d", ret);
@@ -1315,11 +1021,11 @@ int unicast_client_discover(struct bt_conn *conn, enum unicast_discover_dir dir)
 
 	/* Register ops */
 	for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT; i++) {
-		bt_cap_stream_ops_register(server->snk.cap_streams[i], &stream_ops);
+		bt_cap_stream_ops_register(&server->snk.cap_streams[i], &stream_ops);
 	}
 
 	for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT; i++) {
-		bt_cap_stream_ops_register(server->src.cap_streams[i], &stream_ops);
+		bt_cap_stream_ops_register(&server->src.cap_streams[i], &stream_ops);
 	}
 
 	ret = bt_cap_initiator_unicast_discover(conn);
