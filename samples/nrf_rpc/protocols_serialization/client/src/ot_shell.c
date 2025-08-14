@@ -56,6 +56,7 @@ static const char udp_payload[] = "Hello OpenThread World!";
 static bool udp_tx_callback_enabled;
 static char srp_client_host_name[OT_DNS_MAX_NAME_SIZE];
 static struct srp_service services[SERVICE_NUM];
+static bool udp_tx_timestamp_enable = false;
 
 struct srp_service *service_alloc(void)
 {
@@ -2072,6 +2073,10 @@ static otError cmd_udp_send_impl(const struct shell *sh, size_t argc, char *argv
 		otMessageRegisterTxCallback(msg, udp_tx_callback, (void *)sh);
 	}
 
+	if (udp_tx_timestamp_enable) {
+		otMessageEnableTxTimestamp(msg);
+	}
+
 	error = otUdpSend(NULL, &udp_socket, msg, &msg_info);
 	if (error != OT_ERROR_NONE) {
 		otMessageFree(msg);
@@ -2083,6 +2088,31 @@ static otError cmd_udp_send_impl(const struct shell *sh, size_t argc, char *argv
 static int cmd_udp_send(const struct shell *sh, size_t argc, char *argv[])
 {
 	return ot_cli_command_exec(cmd_udp_send_impl, sh, argc, argv);
+}
+
+static otError cmd_udp_txtimestamp_impl(const struct shell *sh, size_t argc, char *argv[])
+{
+	if (argc >= 2) {
+		if (strcmp(argv[1], "enable") == 0) {
+			udp_tx_timestamp_enable = true;
+			return OT_ERROR_NONE;
+		}
+
+		if (strcmp(argv[1], "disable") == 0) {
+			udp_tx_timestamp_enable = false;
+			return OT_ERROR_NONE;
+		}
+
+		return OT_ERROR_INVALID_COMMAND;
+	} else {
+		shell_print(sh, "%s", udp_tx_timestamp_enable ? "enabled" : "disabled");
+		return OT_ERROR_NONE;
+	}
+}
+
+static int cmd_udp_txtimestamp(const struct shell *sh, size_t argc, char *argv[])
+{
+	return ot_cli_command_exec(cmd_udp_txtimestamp_impl, sh, argc, argv);
 }
 
 static otError cmd_udp_close_impl(const struct shell *sh, size_t argc, char *argv[])
@@ -2120,9 +2150,10 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(bind, NULL, "Bind socket [-u|-b] <addr> <port>", cmd_udp_bind, 3, 1),
 	SHELL_CMD_ARG(connect, NULL, "Connect socket <addr> <port>", cmd_udp_connect, 3, 0),
 	SHELL_CMD_ARG(send, NULL, "Send message [addr port] <message>", cmd_udp_send, 2, 2),
-	SHELL_CMD_ARG(close, NULL, "Close socket", cmd_udp_close, 1, 0),
 	SHELL_CMD_ARG(txcallback, NULL, "Enable/disable tx callback", cmd_udp_txcallback, 1, 1),
-	SHELL_SUBCMD_SET_END);
+	SHELL_CMD_ARG(txtimestamp, NULL, "Enable/disable TX timestamping of UDP packets [enable|disable]",
+		      cmd_udp_txtimestamp, 1, 1),
+	SHELL_CMD_ARG(close, NULL, "Close socket", cmd_udp_close, 1, 0), SHELL_SUBCMD_SET_END);
 
 static otError cmd_channel_impl(const struct shell *sh, size_t argc, char *argv[])
 {

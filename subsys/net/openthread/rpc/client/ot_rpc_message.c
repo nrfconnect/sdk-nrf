@@ -238,3 +238,14 @@ static void ot_rpc_cmd_message_tx_cb(const struct nrf_rpc_group *group,
 
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_message_tx_cb, OT_RPC_CMD_MESSAGE_TX_CB,
 			 ot_rpc_cmd_message_tx_cb, NULL);
+
+void otMessageEnableTxTimestamp(otMessage *aMessage)
+{
+	ot_rpc_res_tab_key key = (ot_rpc_res_tab_key)aMessage;
+	struct nrf_rpc_cbor_ctx ctx;
+
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + sizeof(key));
+	nrf_rpc_encode_uint(&ctx, key);
+	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_MESSAGE_ENABLE_TX_TIMESTAMP, &ctx,
+				nrf_rpc_rsp_decode_void, NULL);
+}

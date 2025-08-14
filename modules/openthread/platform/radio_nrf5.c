@@ -678,6 +678,7 @@ static bool nrf5_tx(const otRadioFrame *frame, uint8_t *payload, bool cca)
 			.use_metadata_value = true,
 			.power = get_transmit_power_for_channel(frame->mChannel),
 		},
+		.tx_timestamp_encode = frame->mInfo.mTxInfo.mTxTimestampEnabled,
 	};
 
 	nrf_802154_tx_error_t result = nrf_802154_transmit_raw(payload, &metadata);
@@ -702,6 +703,7 @@ static bool nrf5_tx_csma_ca(otRadioFrame *frame, uint8_t *payload)
 			.use_metadata_value = true,
 			.power = get_transmit_power_for_channel(frame->mChannel),
 		},
+		.tx_timestamp_encode = frame->mInfo.mTxInfo.mTxTimestampEnabled,
 	};
 
 	nrf_802154_csma_ca_max_backoffs_set(frame->mInfo.mTxInfo.mMaxCsmaBackoffs);
@@ -734,6 +736,7 @@ static bool nrf5_tx_at(otRadioFrame *frame, uint8_t *payload)
 			.use_metadata_value = true,
 			.power = get_transmit_power_for_channel(frame->mChannel),
 		},
+		.tx_timestamp_encode = frame->mInfo.mTxInfo.mTxTimestampEnabled,
 	};
 
 	/* The timestamp points to the start of PHR but `nrf_802154_transmit_raw_at`
@@ -1922,6 +1925,9 @@ void nrf_802154_transmit_failed(uint8_t *frame, nrf_802154_tx_error_t error,
 				const nrf_802154_transmit_done_metadata_t *metadata)
 {
 	ARG_UNUSED(frame);
+
+	__ASSERT(error != NRF_802154_TX_ERROR_TIMESTAMP_ENCODING_ERROR,
+		"Timestamping encoding error: invalid frame configuration");
 
 	nrf5_data.tx.result = nrf5_tx_error_to_ot_error(error);
 

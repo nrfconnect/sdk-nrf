@@ -320,6 +320,34 @@ static void ot_rpc_msg_register_tx_callback(const struct nrf_rpc_group *group,
 	nrf_rpc_rsp_send_void(group);
 }
 
+static void ot_rpc_msg_enable_tx_timestamp(const struct nrf_rpc_group *group,
+					   struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
+{
+	ot_rpc_res_tab_key key;
+	otMessage *message;
+
+	key = nrf_rpc_decode_uint(ctx);
+
+	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_ENABLE_TX_TIMESTAMP);
+		return;
+	}
+
+	ot_rpc_mutex_lock();
+	message = ot_res_tab_msg_get(key);
+
+	if (!message) {
+		ot_rpc_mutex_unlock();
+		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_MESSAGE_ENABLE_TX_TIMESTAMP);
+		return;
+	}
+
+	otMessageEnableTxTimestamp(message);
+	ot_rpc_mutex_unlock();
+
+	nrf_rpc_rsp_send_void(group);
+}
+
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_msg_length, OT_RPC_CMD_MESSAGE_GET_LENGTH,
 			 ot_rpc_msg_length, NULL);
 
@@ -342,4 +370,8 @@ NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_msg_get_thread_link_info,
 
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_msg_register_tx_callback,
 			 OT_RPC_CMD_MESSAGE_REGISTER_TX_CALLBACK, ot_rpc_msg_register_tx_callback,
+			 NULL);
+
+NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_msg_enable_tx_timestamp,
+			 OT_RPC_CMD_MESSAGE_ENABLE_TX_TIMESTAMP, ot_rpc_msg_enable_tx_timestamp,
 			 NULL);
