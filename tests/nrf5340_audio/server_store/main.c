@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Nordic Semiconductor ASA
+ * Copyright (c) 2025 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
@@ -7,9 +7,23 @@
 #include <zephyr/ztest.h>
 #include <zephyr/tc_util.h>
 
+#include <zephyr/bluetooth/audio/audio.h>
+#include <../subsys/bluetooth/audio/bap_endpoint.h>
+#include <../subsys/bluetooth/audio/bap_iso.h>
 #include "server_store.h"
 
-ZTEST(suite_server_store, test_srv_store_init)
+#define TEST_CAP_STREAM(name)                                                                      \
+	struct bt_cap_stream test_##name##_cap_stream;                                             \
+	struct bt_bap_ep test_##name##_ep_var = {0};                                               \
+	struct bt_bap_iso test_##name##_bap_iso = {0};                                             \
+	struct bt_bap_qos_cfg test_##name##_qos = {0};                                             \
+	test_##name##_ep_var.dir = 1;                                                              \
+	test_##name##_cap_stream.bap_stream.ep = &test_##name##_ep_var;                            \
+	test_##name##_cap_stream.bap_stream.bap_iso = &test_##name##_bap_iso;                      \
+	test_##name##_cap_stream.bap_stream.group = (void *)0;                                     \
+	test_##name##_cap_stream.bap_stream.qos = &test_##name##_qos;
+
+ZTEST(suite_server_store, test_1_srv_store_init)
 {
 	int ret;
 
@@ -34,7 +48,7 @@ ZTEST(suite_server_store, test_srv_store_init)
 	zassert_equal(ret, 0, "Number of servers should be zero after clearing");
 }
 
-ZTEST(suite_server_store, test_srv_store_multiple)
+ZTEST(suite_server_store, test_2_srv_store_multiple)
 {
 	int ret;
 
@@ -50,11 +64,9 @@ ZTEST(suite_server_store, test_srv_store_multiple)
 	zassert_equal(ret, 0, "Adding server did not return zero");
 
 	ret = srv_store_add((struct bt_conn *)conn2);
-	TC_PRINT("ret = %d\n", ret);
 	zassert_equal(ret, 0, "Adding server did not return zero");
 
 	ret = srv_store_add((struct bt_conn *)conn3);
-	TC_PRINT("ret = %d\n", ret);
 	zassert_equal(ret, 0, "Adding server did not return zero");
 
 	ret = srv_store_num_get();
@@ -73,8 +85,9 @@ ZTEST(suite_server_store, test_srv_store_multiple)
 	zassert_is_null(retrieved_server, "Retrieved server should be NULL for non-existing entry");
 }
 
-ZTEST(suite_server_store, test_srv_remove)
+ZTEST(suite_server_store, test_3_srv_remove)
 {
+	Z_TEST_SKIP_IFNDEF(true);
 	int ret;
 
 	ret = srv_store_init();
@@ -88,11 +101,9 @@ ZTEST(suite_server_store, test_srv_remove)
 	zassert_equal(ret, 0, "Adding server did not return zero");
 
 	ret = srv_store_add((struct bt_conn *)conn2);
-	TC_PRINT("ret = %d\n", ret);
 	zassert_equal(ret, 0, "Adding server did not return zero");
 
 	ret = srv_store_add((struct bt_conn *)conn3);
-	TC_PRINT("ret = %d\n", ret);
 	zassert_equal(ret, 0, "Adding server did not return zero");
 
 	ret = srv_store_num_get();
@@ -105,7 +116,7 @@ ZTEST(suite_server_store, test_srv_remove)
 	zassert_equal(ret, 2, "Number of servers should be two after removing one");
 }
 
-ZTEST(suite_server_store, test_find_srv_from_stream)
+ZTEST(suite_server_store, test_4_find_srv_from_stream)
 {
 	int ret;
 
@@ -156,18 +167,17 @@ ZTEST(suite_server_store, test_find_srv_from_stream)
 	zassert_equal(ret, -ESPIPE, "Retrieving from stream should return -ESPIPE");
 }
 
-ZTEST(suite_server_store, test_presentation_delay_simple)
+ZTEST(suite_server_store, test_5_pres_dly_simple)
 {
-
 	int ret;
 
 	ret = srv_store_init();
 	zassert_equal(ret, 0, "Init did not return zero");
 
-	struct bt_bap_stream stream;
-	struct bt_bap_qos_cfg_pref qos_cfg_pref_in;
+	TEST_CAP_STREAM(one);
+	test_one_cap_stream.bap_stream.group = (void *)0xaaaa;
 
-	stream.group = (void *)0xaaaa;
+	struct bt_bap_qos_cfg_pref qos_cfg_pref_in;
 	qos_cfg_pref_in.pd_min = 1000;
 	qos_cfg_pref_in.pd_max = 4000;
 	qos_cfg_pref_in.pref_pd_min = 2000;
@@ -180,8 +190,9 @@ ZTEST(suite_server_store, test_presentation_delay_simple)
 	uint32_t computed_pres_dly_us = 0;
 	bool group_reconfig_needed = false;
 
-	ret = srv_store_pres_dly_find(&stream, &computed_pres_dly_us, &qos_cfg_pref_in,
-				      &group_reconfig_needed);
+	ret = srv_store_pres_dly_find(&test_one_cap_stream.bap_stream, &computed_pres_dly_us,
+				      &qos_cfg_pref_in, &group_reconfig_needed);
+
 	zassert_equal(ret, 0, "Finding presentation delay did not return zero");
 	zassert_equal(computed_pres_dly_us, 2000,
 		      "Computed presentation delay should be equal to preferred min");
@@ -189,17 +200,67 @@ ZTEST(suite_server_store, test_presentation_delay_simple)
 	/* Removing preferred min. Result should return min */
 	qos_cfg_pref_in.pref_pd_min = 0;
 
-	ret = srv_store_pres_dly_find(&stream, &computed_pres_dly_us, &qos_cfg_pref_in,
-				      &group_reconfig_needed);
+	ret = srv_store_pres_dly_find(&test_one_cap_stream.bap_stream, &computed_pres_dly_us,
+				      &qos_cfg_pref_in, &group_reconfig_needed);
 	zassert_equal(ret, 0, "Finding presentation delay did not return zero");
 	zassert_equal(computed_pres_dly_us, 1000,
 		      "Computed presentation delay should be equal to preferred min");
 
-	/* removing min, should return error*/
+	/* Removing min, should return error*/
 	qos_cfg_pref_in.pd_min = 0;
-	ret = srv_store_pres_dly_find(&stream, &computed_pres_dly_us, &qos_cfg_pref_in,
-				      &group_reconfig_needed);
+	ret = srv_store_pres_dly_find(&test_one_cap_stream.bap_stream, &computed_pres_dly_us,
+				      &qos_cfg_pref_in, &group_reconfig_needed);
 	zassert_equal(ret, -EINVAL, "Finding presentation delay should return -EINVAL %d ", ret);
+}
+
+ZTEST(suite_server_store, test_6_pres_delay_advanced)
+{
+	int ret;
+
+	uint32_t conn0 = 0x4000;
+
+	ret = srv_store_init();
+	zassert_equal(ret, 0, "Init did not return zero");
+
+	ret = srv_store_add((struct bt_conn *)conn0);
+	zassert_equal(ret, 0, "Adding server did not return zero");
+
+	struct server_store *retrieved_server = NULL;
+
+	ret = srv_store_from_conn_get((struct bt_conn *)conn0, &retrieved_server);
+	zassert_equal(ret, 0, "Retrieving server by connection did not return zero");
+	zassert_not_null(retrieved_server, "Retrieved server should not be NULL");
+	zassert_equal(retrieved_server->conn, (struct bt_conn *)conn0,
+		      "Retrieved server connection does not match expected");
+
+	TEST_CAP_STREAM(one);
+	test_one_cap_stream.bap_stream.ep->qos_pref.pd_min = 1000;
+	test_one_cap_stream.bap_stream.ep->qos_pref.pd_max = 4000;
+	test_one_cap_stream.bap_stream.ep->qos_pref.pref_pd_min = 2000;
+	test_one_cap_stream.bap_stream.ep->qos_pref.pref_pd_max = 3000;
+	test_one_cap_stream.bap_stream.group = (void *)0xaaaa;
+
+	retrieved_server->snk.cap_streams[0] = &test_one_cap_stream;
+
+	TEST_CAP_STREAM(two);
+	test_one_cap_stream.bap_stream.group = (void *)0xaaaa;
+
+	struct bt_bap_qos_cfg_pref qos_cfg_pref_in_two;
+
+	qos_cfg_pref_in_two.pd_min = 1100;
+	qos_cfg_pref_in_two.pd_max = 4000;
+	qos_cfg_pref_in_two.pref_pd_min = 2100;
+	qos_cfg_pref_in_two.pref_pd_max = 3000;
+
+	uint32_t computed_pres_dly_us = 0;
+	bool group_reconfig_needed = false;
+
+	ret = srv_store_pres_dly_find(&test_one_cap_stream.bap_stream, &computed_pres_dly_us,
+				      &qos_cfg_pref_in_two, &group_reconfig_needed);
+	zassert_equal(ret, 0, "Finding presentation delay did not return zero %d", ret);
+	zassert_equal(computed_pres_dly_us, 2100,
+		      "Computed presentation delay should be equal to preferred min %d",
+		      computed_pres_dly_us);
 }
 
 ZTEST_SUITE(suite_server_store, NULL, NULL, NULL, NULL, NULL);

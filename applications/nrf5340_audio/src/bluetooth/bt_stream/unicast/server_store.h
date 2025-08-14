@@ -82,7 +82,7 @@ int srv_store_cig_pres_dly_find(uint8_t cig_id, uint32_t *common_pres_dly_us,
  * @return -ESPIPE if there is no common presentation delay found.
  * @return -EMLINK if the search was conducted across multiple CIGs
  */
-int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *new_pres_dly_us,
+int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pres_dly_us,
 			    struct bt_bap_qos_cfg_pref const *qos_cfg_pref_in,
 			    bool *group_reconfig_needed);
 
@@ -115,6 +115,8 @@ int srv_store_add(struct bt_conn *conn);
 int srv_store_remove(struct bt_conn *conn);
 
 int srv_store_remove_all(void);
+
+void srv_store_reset(struct server_store *server);
 
 int srv_store_init(void);
 
