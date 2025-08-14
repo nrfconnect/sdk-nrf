@@ -151,8 +151,10 @@ class Device:
         com_ports = []
         for item in comports():
             manufacturer_match = item.manufacturer in ('SEGGER', 'Nordic Semiconductor')
+            if not manufacturer_match:
+                continue
             serial_match = item.serial_number.lstrip("0") == sid
-            if manufacturer_match and serial_match:
+            if serial_match:
                 com_ports.append(item.device)
         # Sort com ports on their integer identifiers, which takes care of corner case
         # where we have a cross-over from N digit to N + 1 digit identifiers
