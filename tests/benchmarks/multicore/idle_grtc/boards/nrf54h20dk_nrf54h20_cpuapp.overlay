@@ -11,3 +11,8 @@
 };
 
 /delete-node/ &led1;
+
+&grtc {
+	/delete-property/ child-owned-channels;
+	/delete-property/ nonsecure-channels;
+};
