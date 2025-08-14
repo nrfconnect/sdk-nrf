@@ -35,13 +35,15 @@ To connect your DK to the nPM1300 or nPM1304 EK, complete the following steps:
 
 #. Make the following connections on the EK:
 
-   * Remove all existing connections.
-   * On the **P1** pin header, connect **VBATIN** and **VBAT** pins with a jumper.
-   * On the **P13** pin header, connect **RSET1** and **VSET1** pins with a jumper.
-   * On the **P14** pin header, connect **RSET2** and **VSET2** pins with a jumper.
-   * On the **P15** pin header, connect **VOUT1** and **LSIN1** pins with a jumper.
-   * On the **P17** pin header, connect **HOST** and **LED2** pins with a jumper.
-   * Connect a suitable battery to the **J2** connector.
+   a. Remove all existing connections, including jumpers and USB-C cables.
+   #. On the **P1** pin header, connect **VBATIN** and **VBAT** pins with a jumper.
+   #. On the **P13** pin header, connect **RSET1** and **VSET1** pins with a jumper.
+   #. On the **P14** pin header, connect **RSET2** and **VSET2** pins with a jumper.
+   #. On the **P15** pin header, connect **VOUT1** and **LSIN1** pins with a jumper.
+   #. On the **P17** pin header, connect **HOST** and **LED2** pins with a jumper.
+   #. Connect a suitable battery to either the **J2** or **J1** connector. When using the nPM1304-EK, the **J3** connector can also be used.
+
+   With these connections the battery is powering the EK, the BUCK regulators are enabled, and the I/O reference voltage is supplied by a DK as described in the next step.
 
 #. Connect the chosen DK to the EK as in the following table:
 
