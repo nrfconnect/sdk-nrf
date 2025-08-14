@@ -8,6 +8,7 @@
 
 #include <mock_nrf_rpc_transport.h>
 #include <ot_rpc_ids.h>
+#include <ot_rpc_lock.h>
 #include <ot_rpc_resource.h>
 #include <test_rpc_env.h>
 
@@ -19,6 +20,14 @@
 
 /* Message address used when testing serialization of a function that takes otMessage* */
 #define MSG_ADDR UINT32_MAX
+
+/* Message address used when testing serialization of a function that takes otMessage* */
+#define MSG_ADDR UINT32_MAX
+
+/* Message TX callback ID */
+#define MSG_TX_CB_ID (UINT32_MAX - 1)
+
+FAKE_VOID_FUNC(otMessageRegisterTxCallback, otMessage *, otMessageTxCallback, void *);
 
 static void nrf_rpc_err_handler(const struct nrf_rpc_err_report *report)
 {
@@ -32,7 +41,8 @@ static void nrf_rpc_err_handler(const struct nrf_rpc_err_report *report)
 	f(otMessageRead);                                                                          \
 	f(otMessageFree);                                                                          \
 	f(otMessageAppend);                                                                        \
-	f(otUdpNewMessage);
+	f(otUdpNewMessage);                                                                        \
+	f(otMessageRegisterTxCallback);
 
 static void tc_setup(void *f)
 {
@@ -177,6 +187,47 @@ ZTEST(ot_rpc_message, test_otMessageGetOffset)
 
 	zassert_equal(otMessageGetOffset_fake.call_count, 2);
 	zassert_equal(otMessageGetOffset_fake.arg0_val, msg);
+}
+
+ZTEST(ot_rpc_message, test_otMessageRegisterTxCallback)
+{
+	otMessage *msg = (otMessage *)MSG_ADDR;
+	void *ctx = (void *)MSG_TX_CB_ID;
+	ot_rpc_res_tab_key msg_key = ot_res_tab_msg_alloc(msg);
+
+	/* Test reception of otMessageRegisterTxCallback with non-null callback. */
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_MESSAGE_REGISTER_TX_CALLBACK, msg_key,
+					CBOR_UINT32(MSG_TX_CB_ID)));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otMessageRegisterTxCallback_fake.call_count, 1);
+	zassert_equal(otMessageRegisterTxCallback_fake.arg0_val, msg);
+	zassert_not_null(otMessageRegisterTxCallback_fake.arg1_val);
+	zassert_equal(otMessageRegisterTxCallback_fake.arg2_val, ctx);
+
+	/* Test serialization of otMessageTxCallback.
+	 * Note that the callback allocates a new message key.
+	 */
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_MESSAGE_TX_CB, CBOR_UINT32(MSG_TX_CB_ID),
+					   msg_key + 1, OT_ERROR_NO_ACK),
+				   RPC_RSP());
+	ot_rpc_mutex_lock();
+	otMessageRegisterTxCallback_fake.arg1_val(msg, OT_ERROR_NO_ACK, ctx);
+	ot_rpc_mutex_unlock();
+	mock_nrf_rpc_tr_expect_done();
+
+	/* Test reception of otMessageRegisterTxCallback with null callback. */
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_MESSAGE_REGISTER_TX_CALLBACK, msg_key, 0));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otMessageRegisterTxCallback_fake.call_count, 2);
+	zassert_equal(otMessageRegisterTxCallback_fake.arg0_val, msg);
+	zassert_is_null(otMessageRegisterTxCallback_fake.arg1_val);
+
+	/* Cleanup */
+	ot_res_tab_msg_free(msg_key);
 }
 
 ZTEST_SUITE(ot_rpc_message, NULL, NULL, tc_setup, tc_cleanup, NULL);
