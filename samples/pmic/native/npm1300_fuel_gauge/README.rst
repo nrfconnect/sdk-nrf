@@ -32,6 +32,18 @@ Wiring
 
 To connect your DK to the nPM1300 EK, complete the following steps:
 
+#. Make the following connections on the nPM1300 EK:
+
+   #. Remove all existing connections, including jumpers and USB-C cables.
+   #. Connect a USB power supply to the **J3** connector.
+   #. Connect a suitable battery to the **J2** connector.
+   #. On the **P2** pin header, connect **VBAT** and **VBATIN** pins with a jumper.
+   #. On the **P17** pin header, connect all LEDs with jumpers.
+   #. On the **P13** pin header, connect **RSET1** and **VSET1** pins with a jumper.
+   #. On the **P14** pin header, connect **RSET2** and **VSET2** pins with a jumper.
+
+With these connections, the USB power supply is powering the EK, the BUCK regulators are enabled, and the I/O reference voltage is supplied by a DK as described in the next step.
+
 #. Connect the TWI interface between the chosen DK and the nPM1300 EK as in the following table:
 
    .. list-table:: nPM1300 EK connections.
@@ -80,16 +92,6 @@ To connect your DK to the nPM1300 EK, complete the following steps:
         - GND
         - GND
         - GND
-
-#. Make the following connections on the nPM1300 EK:
-
-   * Remove all existing connections.
-   * Connect a USB power supply to the **J3** connector.
-   * Connect a suitable battery to the **J2** connector.
-   * On the **P2** pin header, connect **VBAT** and **VBATIN** pins with a jumper.
-   * On the **P17** pin header, connect all LEDs with jumpers.
-   * On the **P13** pin header, connect **RSET1** and **VSET1** pins with a jumper.
-   * On the **P14** pin header, connect **RSET2** and **VSET2** pins with a jumper.
 
 .. note::
    When using the :zephyr:board:`nrf54l15dk`, the nPM1300 **GPIO3** interrupt pin assignment uses the DK's **LED 1** pin.
