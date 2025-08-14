@@ -213,7 +213,7 @@ nRF Desktop
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
 
-|no_changes_yet_note|
+* Updated the application to change the default libc from the :ref:`zephyr:c_library_newlib` to the :ref:`zephyr:c_library_picolibc` to align with the |NCS| and Zephyr.
 
 Serial LTE modem
 ----------------
