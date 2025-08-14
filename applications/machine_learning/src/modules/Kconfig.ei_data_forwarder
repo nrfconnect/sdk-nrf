@@ -6,8 +6,8 @@
 
 menuconfig ML_APP_EI_DATA_FORWARDER
 	bool "Edge Impulse data forwarder"
-	depends on NEWLIB_LIBC
-	depends on NEWLIB_LIBC_FLOAT_PRINTF
+	depends on PICOLIBC
+	depends on PICOLIBC_IO_FLOAT
 	depends on CAF_SENSOR_EVENTS
 
 if ML_APP_EI_DATA_FORWARDER
