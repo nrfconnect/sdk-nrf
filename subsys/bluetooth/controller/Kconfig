@@ -549,9 +549,11 @@ config BT_CTLR_SDC_CIS_SUBEVENT_LENGTH_US
 	  is chosen by the controller.
 
 config BT_CTLR_EXTENDED_FEAT_SET
+	bool
 	select EXPERIMENTAL
 
 config BT_CTLR_FRAME_SPACE_UPDATE
+	bool
 	select EXPERIMENTAL
 
 config BT_CTLR_CHANNEL_SOUNDING
