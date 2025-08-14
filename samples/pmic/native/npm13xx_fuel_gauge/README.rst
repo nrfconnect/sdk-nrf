@@ -32,7 +32,24 @@ Wiring
 
 To connect your DK to the nPM1300 or nPM1304 EK, complete the following steps:
 
-#. Connect the TWI interface between the chosen DK and the nPM1300 or nPM1304 EK as in the following table:
+#. Make the following connections on the EK:
+
+   a. Remove all existing connections, including jumpers and USB-C cables.
+   #. On the **P1** pin header, connect **VBATIN** and **VBAT** pins with a jumper.
+   #. On the **P17** pin header, connect all LEDs with jumpers.
+   #. On the **P13** pin header, connect **RSET1** and **VSET1** pins with a jumper.
+   #. On the **P14** pin header, connect **RSET2** and **VSET2** pins with a jumper.
+   #. If your battery does not include an NTC thermistor, connect the **NTC** and **10kOhm** pins on the **P3** pin header with a jumper.
+   #. Connect a suitable battery to either the **J2** or **J1** connector.
+      When using the nPM1304 EK, the **J3** connector can also be used.
+   #. Connect a USB power supply to the **J3** connector on nPM1300 EK or **J4** connector on nPM1304 EK.
+
+   With these connections, the USB power supply is powering the EK, the BUCK regulators are enabled, and the I/O reference voltage is supplied by the DK as described in the next step.
+
+   .. note::
+      Battery charging will not begin if the NTC signal is disconnected.
+
+#. Connect the chosen DK to the EK as in the following table:
 
    .. list-table:: nPM1300/nPM1304 EK connections.
       :widths: auto
@@ -80,16 +97,6 @@ To connect your DK to the nPM1300 or nPM1304 EK, complete the following steps:
         - GND
         - GND
         - GND
-
-#. Make the following connections on the nPM1300 or nPM1304 EK:
-
-   * Remove all existing connections.
-   * Connect a USB power supply to the connector **J3** (on nPM1300) or **J4** (on nPM1304).
-   * Connect a suitable battery to the **J2** connector.
-   * On the **P1** pin header, connect **VBAT** and **VBATIN** pins with a jumper.
-   * On the **P17** pin header, connect all LEDs with jumpers.
-   * On the **P13** pin header, connect **RSET1** and **VSET1** pins with a jumper.
-   * On the **P14** pin header, connect **RSET2** and **VSET2** pins with a jumper.
 
 .. note::
    When using the :zephyr:board:`nrf54l15dk`, the PMIC **GPIO3** interrupt pin assignment uses the DK's **BUTTON 3** pin.
