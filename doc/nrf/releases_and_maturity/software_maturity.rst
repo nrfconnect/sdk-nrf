@@ -327,8 +327,8 @@ The following table indicates the software maturity levels of the support for ea
            - Supported
          * - **NFC**
            - Experimental
-           - --
-           - --
+           - Supported
+           - Supported
            - Supported
          * - **Sidewalk**
            - --
@@ -1708,13 +1708,13 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L15
             * - **NFC Type 2 Tag (read-only)**
               - Experimental
-              - --
-              - --
+              - Supported
+              - Supported
               - Supported
             * - **NFC Type 4 Tag (read/write)**
               - Experimental
-              - --
-              - --
+              - Supported
+              - Supported
               - Supported
             * - **NFC Reader/Writer (polling device)**
               - --
@@ -1723,28 +1723,28 @@ The following table indicates the software maturity levels of the support for ea
               - --
             * - **NFC ISO-DEP protocol (ISO/IEC 14443-4)**
               - Experimental
-              - --
-              - --
+              - Supported
+              - Supported
               - Supported
             * - **NDEF encoding/decoding**
               - Experimental
-              - --
-              - --
+              - Supported
+              - Supported
               - Supported
             * - **NFC Record Type Definitions: URI, Text, Connection Handover**
               - Experimental
-              - --
-              - --
+              - Supported
+              - Supported
               - Supported
             * - **NFC Connection Handover to Bluetooth carrier, Static and Negotiated Handover**
               - Experimental
-              - --
-              - --
+              - Supported
+              - Supported
               - Supported
             * - **NFC Tag NDEF Exchange Protocol (TNEP)**
               - Experimental\ :sup:`1`
-              - --
-              - --
+              - Supported\ :sup:`1`
+              - Supported\ :sup:`1`
               - Supported\ :sup:`1`
 
       .. group-tab:: nRF91 Series
