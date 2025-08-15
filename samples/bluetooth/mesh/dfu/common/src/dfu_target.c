@@ -289,5 +289,7 @@ void dfu_target_image_confirm(void)
 	}
 
 	/* Switch DFU Server state to the Idle state if it was in the Applying state. */
-	bt_mesh_dfu_srv_applied(&dfu_srv);
+	if (dfu_srv.update.phase == BT_MESH_DFU_PHASE_APPLYING) {
+		bt_mesh_dfu_srv_applied(&dfu_srv);
+	}
 }
