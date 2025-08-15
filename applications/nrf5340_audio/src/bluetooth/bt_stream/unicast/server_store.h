@@ -14,8 +14,6 @@
 #include <zephyr/bluetooth/audio/bap.h>
 #include <zephyr/bluetooth/audio/bap_lc3_preset.h>
 
-#include "le_audio.h"
-
 struct unicast_server_snk_vars {
 	bool waiting_for_disc;
 	/* PACS response. Location should be a superset of all codec locations. Bitfield */
@@ -96,7 +94,8 @@ int srv_store_stream_dir_get(struct bt_bap_stream const *const stream);
 int srv_store_from_stream_get(struct bt_bap_stream const *const stream,
 			      struct server_store **server);
 
-int srv_store_stream_idx_get(struct bt_bap_stream const *const stream, struct stream_index *idx);
+int srv_store_stream_idx_get(struct bt_bap_stream const *const stream, uint8_t *cig_idx,
+			     uint8_t cis_index);
 
 int srv_store_all_ep_state_count(enum bt_bap_ep_state state, enum bt_audio_dir dir);
 

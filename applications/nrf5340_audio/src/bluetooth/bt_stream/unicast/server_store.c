@@ -719,7 +719,8 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 	return 0;
 }
 
-int srv_store_stream_idx_get(struct bt_bap_stream const *const stream, struct stream_index *idx)
+int srv_store_stream_idx_get(struct bt_bap_stream const *const stream, uint8_t *cig_idx,
+			     uint8_t cis_index)
 {
 	return -EPERM;
 }
