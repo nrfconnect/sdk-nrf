@@ -1573,6 +1573,7 @@
 
 .. ### Source: apple.com
 
+.. _`macOS 26`: https://www.apple.com/os/macos/
 .. _`macOS 15`: https://www.apple.com/macos/macos-sequoia/
 .. _`macOS 14`: https://www.apple.com/macos/sonoma/
 .. _`macOS 13`: https://www.apple.com/macos/ventura/
