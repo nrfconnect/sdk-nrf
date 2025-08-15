@@ -296,4 +296,59 @@ ZTEST(suite_server_store, test_6_pres_delay_advanced)
 	zassert_equal(group_reconfig_needed, true, "Group reconfiguration should not be needed");
 }
 
+ZTEST(suite_server_store, test_7_pres_delay_multi_group)
+{
+	int ret;
+
+	uint32_t conn0 = 0x4000;
+	uint32_t conn1 = 0x4001;
+
+	ret = srv_store_init();
+	zassert_equal(ret, 0, "Init did not return zero");
+
+	ret = srv_store_add((struct bt_conn *)conn0);
+	zassert_equal(ret, 0, "Adding server did not return zero");
+
+	ret = srv_store_add((struct bt_conn *)conn1);
+	zassert_equal(ret, 0, "Adding server did not return zero");
+
+	struct server_store *retr_server = NULL;
+
+	ret = srv_store_from_conn_get((struct bt_conn *)conn0, &retr_server);
+	zassert_equal(ret, 0, "Retrieving server by connection did not return zero");
+	zassert_not_null(retr_server, "Retrieved server should not be NULL");
+	zassert_equal(retr_server->conn, (struct bt_conn *)conn0,
+		      "Retrieved server connection does not match expected");
+
+	TEST_CAP_STREAM(one);
+	test_one_cap_stream.bap_stream.group = (void *)0xaaaa;
+	test_one_cap_stream.bap_stream.qos->pd = 2000;
+
+	memcpy(&retr_server->snk.cap_streams[0], &test_one_cap_stream, sizeof(test_one_cap_stream));
+
+	/* Add stream in another group. Should be ignored */
+	TEST_CAP_STREAM(two);
+	test_two_cap_stream.bap_stream.group = (void *)0xbbbb;
+	test_two_cap_stream.bap_stream.qos->pd = 500;
+
+	memcpy(&retr_server->snk.cap_streams[1], &test_two_cap_stream, sizeof(test_two_cap_stream));
+
+	struct bt_bap_qos_cfg_pref qos_cfg_pref_in;
+
+	qos_cfg_pref_in.pd_min = 1100;
+	qos_cfg_pref_in.pd_max = 4000;
+	qos_cfg_pref_in.pref_pd_min = 2100;
+	qos_cfg_pref_in.pref_pd_max = 3000;
+
+	uint32_t computed_pres_dly_us = 0;
+	bool group_reconfig_needed = false;
+
+	ret = srv_store_pres_dly_find(&test_one_cap_stream.bap_stream, &computed_pres_dly_us,
+				      &qos_cfg_pref_in, &group_reconfig_needed);
+	zassert_equal(ret, 0, "Finding presentation delay did not return zero %d", ret);
+	zassert_equal(computed_pres_dly_us, 2000, "Presentation delay should be unchanged %d",
+		      computed_pres_dly_us);
+	zassert_equal(group_reconfig_needed, false, "Group reconfiguration should not be needed");
+}
+
 ZTEST_SUITE(suite_server_store, NULL, NULL, NULL, NULL, NULL);

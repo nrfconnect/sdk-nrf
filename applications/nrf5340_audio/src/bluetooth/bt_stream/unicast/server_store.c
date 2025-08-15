@@ -381,6 +381,38 @@ static void srv_store_clear_vars(struct server_store *server)
 	server->src.locations = 0;
 }
 
+/* Check to see if the existing stream can be ignored when we try to find a valid presentation delay
+ * when a new stream is added.
+ */
+static bool pres_dly_ignore_stream(struct bt_bap_stream const *const existing_stream,
+				   struct bt_bap_stream const *const stream_in)
+{
+	if (existing_stream == NULL || stream_in == NULL) {
+		LOG_ERR("NULL parameter");
+		return true;
+	}
+
+	if (existing_stream->group == NULL) {
+		return true;
+	}
+
+	if (existing_stream->group != stream_in->group) {
+		/* The existing stream is not in the same group as the incoming stream */
+		return true;
+	}
+
+	if (existing_stream == stream_in) {
+		/* The existing stream is not in the same group as the incoming stream */
+		return true;
+	}
+
+	if (existing_stream->ep == NULL) {
+		return true;
+	}
+
+	return false;
+}
+
 /* One needs to look at the group pointer, if this group pointer already exists, we may need
 to update the entire group. If it is a new group, no reconfig is needed.
 *  New A, no ext group
@@ -441,24 +473,9 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 		switch (dir) {
 		case BT_AUDIO_DIR_SINK:
 			for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT; i++) {
-				if (server->snk.cap_streams[i].bap_stream.group == NULL) {
-					/* The stream we are comparing against has no group
-					 */
-					continue;
-				}
 
-				/* Only need to check pres delay if the stream is part of the same
-				 * group */
-				if (stream->group != server->snk.cap_streams[i].bap_stream.group) {
-					continue;
-				}
-
-				if (stream == &server->snk.cap_streams[i].bap_stream) {
-					/* This is our own stream, so we can skip it */
-					continue;
-				}
-
-				if (server->snk.cap_streams[i].bap_stream.ep == NULL) {
+				if (pres_dly_ignore_stream(&server->snk.cap_streams[i].bap_stream,
+							   stream)) {
 					continue;
 				}
 
@@ -471,7 +488,6 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 				}
 
 				if (pres_dly_in_range(existing_pres_dly_us, qos_cfg_pref_in)) {
-
 					*computed_pres_dly_us = existing_pres_dly_us;
 					return 0;
 				}
@@ -488,7 +504,34 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 			break;
 
 		case BT_AUDIO_DIR_SOURCE:
+			for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT; i++) {
+				if (pres_dly_ignore_stream(&server->snk.cap_streams[i].bap_stream,
+							   stream)) {
+					continue;
+				}
 
+				uint32_t existing_pres_dly_us =
+					server->src.cap_streams[i].bap_stream.qos->pd;
+
+				if (existing_pres_dly_us == 0) {
+					LOG_ERR("Existing presentation delay is zero");
+					return -EINVAL;
+				}
+
+				if (pres_dly_in_range(existing_pres_dly_us, qos_cfg_pref_in)) {
+					*computed_pres_dly_us = existing_pres_dly_us;
+					return 0;
+				}
+
+				*group_reconfig_needed = true;
+
+				ret = pres_delay_find(
+					&server->src.cap_streams[i].bap_stream.ep->qos_pref,
+					&common_pd);
+				if (ret) {
+					return ret;
+				}
+			}
 			break;
 		default:
 			LOG_ERR("Unknown direction: %d", dir);
