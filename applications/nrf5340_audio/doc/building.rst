@@ -16,7 +16,7 @@ You can build and program the applications in one of the following ways:
 * :ref:`nrf53_audio_app_building_standard` - Using this method requires building and programming each development kit separately.
 
 .. important::
-   Building and programming using the |nRFVSC| is currently not supported.
+   Building and programming using |nRFVSC| is currently not supported.
 
 .. note::
    You might want to check the :ref:`nRF5340 Audio application known issues <known_issues_nrf5340audio>` before building and programming the applications.

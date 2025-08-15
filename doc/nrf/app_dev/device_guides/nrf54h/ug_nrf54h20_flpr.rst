@@ -127,7 +127,7 @@ To complete the build, do the following:
 Separate images
 ---------------
 
-You can build and program the application sample and the FLPR sample as separate images using either the |nRFVSC| or the command line.
+You can build and program the application sample and the FLPR sample as separate images using either |nRFVSC| or the command line.
 To use nRF Util, see `nRF Util`_.
 Depending on the method you select, complete the following steps:
 

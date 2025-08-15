@@ -115,7 +115,7 @@ You can program the precompiled firmware image in one of the following ways:
 Building and programming using |VSC|
 ************************************
 
-Complete the following steps to build and program using the |nRFVSC|:
+Complete the following steps to build and program using |nRFVSC|:
 
 .. |sample_path_vsc| replace:: :file:`nrf/samples/bluetooth/peripheral_lbs`
 

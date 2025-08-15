@@ -311,8 +311,8 @@ Kconfig.sysbuild:
 
 .. _sysbuild_images_editing_in_nrfvsc:
 
-Editing sysbuild images and domains in the |nRFVSC|
-***************************************************
+Editing sysbuild images and domains in |nRFVSC|
+***********************************************
 
-The |nRFVSC| provides a GUI for editing sysbuild images and domains.
+|nRFVSC| provides a GUI for editing sysbuild images and domains.
 See the `How to work with sysbuild domains`_ page in the extension documentation for more information.

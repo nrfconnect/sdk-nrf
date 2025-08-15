@@ -88,10 +88,10 @@ Use the method corresponding to the way you installed the |NCS|, as described in
 
    .. group-tab:: nRF Connect for VS Code
 
-      The |nRFVSC| lets you update the associated |NCS| repositories within the :guilabel:`Source Control View`.
+      |nRFVSC| lets you update the associated |NCS| repositories within the :guilabel:`Source Control View`.
       For detailed instructions, see the `west module management`_ page in the extension's documentation.
 
-      You can also change the SDK or toolchain in the |nRFVSC| to a new one.
+      You can also change the SDK or toolchain in |nRFVSC| to a new one.
       Complete the steps listed on the `How to change SDK and toolchain versions`_ page in the extension's documentation.
 
    .. group-tab:: Command line
@@ -161,8 +161,8 @@ After you updated the |NCS| repositories to the new version and you need to migr
 
 .. _vsc_update:
 
-Updating the |nRFVSC|
-*********************
+Updating |nRFVSC|
+*****************
 
 |VSC| checks for extension updates and automatically installs them when they are available.
 After an extension is updated, |VSC| prompts you to reload the application.

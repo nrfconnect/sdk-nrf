@@ -33,7 +33,7 @@ For example, if you build for nRF52840 DK on the command line, you can use the f
 
    west build -b nrf52840dk/nrf52840 -- -DSHIELD=nrf21540ek
 
-If you use the |nRFVSC|, specify ``-DSHIELD=nrf21540ek`` in the **Extra Cmake arguments** field when `setting up a build configuration <How to work with build configurations_>`_.
+If you use |nRFVSC|, specify ``-DSHIELD=nrf21540ek`` in the **Extra Cmake arguments** field when `setting up a build configuration <How to work with build configurations_>`_.
 
 Alternatively, add the shield in the project's :file:`CMakeLists.txt` file:
 

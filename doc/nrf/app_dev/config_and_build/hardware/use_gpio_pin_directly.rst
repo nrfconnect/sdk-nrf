@@ -12,7 +12,7 @@ In the development phase of an embedded project, you can use this configuration 
 You can use this solution to collect execution timings, or as a debugging tool.
 
 You can copy the following configuration snippets manually into the devicetree overlay files.
-You can also use the `Devicetree Visual Editor <How to work with Devicetree Visual Editor_>`_ (either in GUI or text mode) in the |nRFVSC| to apply them.
+You can also use the `Devicetree Visual Editor <How to work with Devicetree Visual Editor_>`_ (either in GUI or text mode) in |nRFVSC| to apply them.
 
 .. rst-class:: numbered-step
 
