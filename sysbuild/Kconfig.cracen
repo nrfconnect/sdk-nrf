@@ -10,6 +10,14 @@ config SUPPORT_CRACEN
 
 if SUPPORT_CRACEN
 
+config SUPPORT_CRACEN_MICROCODE
+	bool
+	default y if SOC_NRF54L15 || SOC_NRF54L10 || SOC_NRF54L05
+	help
+	  Hidden symbol indicating if CRACEN microcode loading is supported on the device.
+
+if SUPPORT_CRACEN_MICROCODE
+
 menu "CRACEN"
 
 config CRACEN_MICROCODE_LOAD_B0
@@ -35,5 +43,7 @@ config CRACEN_MICROCODE_LOAD_ONCE
 	  which will be either b0 or MCUboot, depending on project configuration.
 
 endmenu
+
+endif # SUPPORT_CRACEN_MICROCODE
 
 endif # SUPPORT_CRACEN
