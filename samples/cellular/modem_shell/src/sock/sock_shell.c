@@ -15,6 +15,7 @@
 #else
 #include <zephyr/net/socket.h>
 #endif
+#include <zephyr/net/tls_credentials.h>
 #include <fcntl.h>
 #include <getopt.h>
 
@@ -433,7 +434,7 @@ static int cmd_sock_connect(const struct shell *shell, size_t argc, char **argv)
 	int arg_bind_port = 0;
 	int arg_pdn_cid = 0;
 	bool arg_secure = false;
-	uint32_t arg_sec_tag = 0;
+	uint32_t arg_sec_tag = SEC_TAG_TLS_INVALID;
 	bool arg_session_cache = false;
 	bool arg_keep_open = false;
 	int arg_peer_verify = 2;

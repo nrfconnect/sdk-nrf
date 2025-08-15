@@ -218,7 +218,8 @@ nRF Machine Learning (Edge Impulse)
 Serial LTE modem
 ----------------
 
-|no_changes_yet_note|
+* Updated to use the new ``SEC_TAG_TLS_INVALID`` definition as a placeholder for security tags.
+
 
 Thingy:53: Matter weather station
 ---------------------------------
@@ -266,6 +267,13 @@ Cellular samples
 * :ref:`nrf_cloud_rest_cell_location` sample:
 
   * Added runtime setting of the log level for the nRF Cloud logging feature.
+
+* Updated the following samples to use the new ``SEC_TAG_TLS_INVALID`` definition:
+
+  * :ref:`modem_shell_application`
+  * :ref:`http_application_update_sample`
+  * :ref:`http_modem_delta_update_sample`
+  * :ref:`http_modem_full_update_sample`
 
 Cryptography samples
 --------------------
@@ -440,7 +448,11 @@ Multiprotocol Service Layer libraries
 Libraries for networking
 ------------------------
 
-|no_changes_yet_note|
+* Updated the following libraries to use the new ``SEC_TAG_TLS_INVALID`` definition for checking whether a security tag is valid:
+
+  * :ref:`lib_aws_fota`
+  * :ref:`lib_fota_download`
+  * :ref:`lib_ftp_client`
 
 Libraries for NFC
 -----------------
