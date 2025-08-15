@@ -347,13 +347,13 @@ static void connected_cb(struct bt_conn *conn, uint8_t err)
 	if (err) {
 		bt_conn_unref(conn);
 		connection = NULL;
+	} else {
+		connection = bt_conn_ref(conn);
+
+		k_sem_give(&sem_connected);
+
+		dk_set_led_on(CON_STATUS_LED);
 	}
-
-	connection = bt_conn_ref(conn);
-
-	k_sem_give(&sem_connected);
-
-	dk_set_led_on(CON_STATUS_LED);
 }
 
 static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
