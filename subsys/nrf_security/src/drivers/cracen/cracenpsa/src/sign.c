@@ -246,16 +246,16 @@ static psa_status_t handle_ecdsa_sign(bool is_message, const uint8_t *key_buffer
 	const struct sxhashalg *hashalgpointer = &hashalg;
 
 	privkey.d = key_buffer;
-	status = hash_get_algo(alg, &hashalgpointer);
-	if (status != PSA_SUCCESS) {
-		return status;
-	}
 
 	*signature_length = 2 * ecurve->sz;
 	status = SX_ERR_INCOMPATIBLE_HW;
 
 	if (PSA_ALG_IS_DETERMINISTIC_ECDSA(alg) &&
 	    IS_ENABLED(PSA_NEED_CRACEN_DETERMINISTIC_ECDSA)) {
+		status = hash_get_algo(alg, &hashalgpointer);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
 		if (is_message) {
 			status = cracen_ecdsa_sign_message_deterministic(
 				&privkey, hashalgpointer, ecurve, input, input_length, signature);
@@ -266,6 +266,10 @@ static psa_status_t handle_ecdsa_sign(bool is_message, const uint8_t *key_buffer
 	} else if ((PSA_ALG_IS_ECDSA(alg) && IS_ENABLED(PSA_NEED_CRACEN_ECDSA)) &&
 		   !PSA_ALG_IS_DETERMINISTIC_ECDSA(alg)) {
 		if (is_message) {
+			status = hash_get_algo(alg, &hashalgpointer);
+			if (status != PSA_SUCCESS) {
+				return status;
+			}
 			status = cracen_ecdsa_sign_message(&privkey, hashalgpointer, ecurve, input,
 							   input_length, signature);
 		} else {
@@ -402,19 +406,22 @@ static psa_status_t cracen_signature_ecc_verify(bool is_message,
 		const struct sxhashalg *hash_algorithm_ptr = &hashalg;
 
 		psa_status = cracen_ecc_get_ecurve_from_psa(PSA_KEY_TYPE_ECC_GET_FAMILY(key_type),
-							psa_get_key_bits(attributes), &curve);
+							    psa_get_key_bits(attributes), &curve);
 		if (psa_status != PSA_SUCCESS) {
 			return psa_status;
 		}
-		psa_status = hash_get_algo(alg, &hash_algorithm_ptr);
-		if (psa_status != PSA_SUCCESS) {
-			return psa_status;
+		if (is_message) {
+			psa_status = hash_get_algo(alg, &hash_algorithm_ptr);
+			if (psa_status != PSA_SUCCESS) {
+				return psa_status;
+			}
+			sx_status = cracen_ecdsa_verify_message(pubkey_buffer, hash_algorithm_ptr,
+								input, input_length, curve,
+								signature);
+		} else {
+			sx_status = cracen_ecdsa_verify_digest(pubkey_buffer, input, input_length,
+							       curve, signature);
 		}
-		sx_status = is_message ? cracen_ecdsa_verify_message(pubkey_buffer,
-								     hash_algorithm_ptr, input,
-								     input_length, curve, signature)
-				       : cracen_ecdsa_verify_digest(pubkey_buffer, input,
-								    input_length, curve, signature);
 	} else {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
