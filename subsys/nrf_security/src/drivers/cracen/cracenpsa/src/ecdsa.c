@@ -215,14 +215,18 @@ int cracen_ecdsa_sign_digest(const struct cracen_ecc_priv_key *privkey,
 			     const uint8_t *digest, size_t digest_length, uint8_t *signature)
 {
 	int status;
-	const size_t digestsz = sx_hash_get_alg_digestsz(hashalg);
 	size_t opsz = sx_pk_curve_opsize(curve);
 	struct sx_pk_acq_req pkreq;
 	struct sx_pk_inops_ecdsa_generate inputs;
 	const uint8_t *curve_n;
-	const size_t workmem_requirement = digestsz + opsz;
+	const size_t workmem_requirement = digest_length + opsz;
 	struct cracen_signature internal_signature = {0};
 	uint8_t workmem[workmem_requirement];
+
+	/* Checking against the hash algorithm with the largest digest we support */
+	if (digest_length > SX_HASH_DIGESTSZ_SHA2_512) {
+		return SX_ERR_TOO_BIG;
+	}
 
 	memcpy(workmem, digest, digest_length);
 	curve_n = sx_pk_curve_order(curve);
@@ -231,12 +235,12 @@ int cracen_ecdsa_sign_digest(const struct cracen_ecc_priv_key *privkey,
 	internal_signature.s = signature + opsz;
 
 	for (int i = 0; i <= MAX_ECDSA_ATTEMPTS; i++) {
-		status = cracen_get_rnd_in_range(curve_n, opsz, workmem + digestsz);
+		status = cracen_get_rnd_in_range(curve_n, opsz, workmem + digest_length);
 		if (status != SX_OK) {
 			return status;
 		}
-		status = ecdsa_run_generate_sign(&pkreq, privkey, curve, workmem, digestsz, opsz,
-						 &inputs);
+		status = ecdsa_run_generate_sign(&pkreq, privkey, curve, workmem, digest_length,
+						 opsz, &inputs);
 
 		if (status != SX_OK) {
 			return status;
