@@ -69,7 +69,7 @@ static int do_udp_server_start(uint16_t port)
 	int ret;
 
 	/* Open socket */
-	if (proxy.sec_tag == INVALID_SEC_TAG) {
+	if (proxy.sec_tag == SEC_TAG_TLS_INVALID) {
 		ret = zsock_socket(proxy.family, SOCK_DGRAM, IPPROTO_UDP);
 	} else {
 		ret = zsock_socket(proxy.family, SOCK_DGRAM, IPPROTO_DTLS_1_2);
@@ -81,7 +81,7 @@ static int do_udp_server_start(uint16_t port)
 	}
 	proxy.sock = ret;
 
-	if (proxy.sec_tag != INVALID_SEC_TAG) {
+	if (proxy.sec_tag != SEC_TAG_TLS_INVALID) {
 #ifndef CONFIG_SLM_NATIVE_TLS
 		LOG_ERR("Not supported");
 		ret = -ENOTSUP;
@@ -190,7 +190,7 @@ static int do_udp_client_connect(const char *url, uint16_t port, uint16_t cid)
 	int ret;
 	struct sockaddr sa;
 	const bool using_cid = (proxy.dtls_cid != INVALID_DTLS_CID);
-	const bool using_dtls = (proxy.sec_tag != INVALID_SEC_TAG);
+	const bool using_dtls = (proxy.sec_tag != SEC_TAG_TLS_INVALID);
 
 	/* Open socket */
 	ret = zsock_socket(proxy.family, SOCK_DGRAM, using_dtls ? IPPROTO_DTLS_1_2 : IPPROTO_UDP);
@@ -452,7 +452,7 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 				ret = -EIO;
 				break;
 			}
-			if (proxy.role == UDP_ROLE_SERVER && proxy.sec_tag != INVALID_SEC_TAG &&
+			if (proxy.role == UDP_ROLE_SERVER && proxy.sec_tag != SEC_TAG_TLS_INVALID &&
 			    value == ECONNABORTED) {
 				util_get_peer_addr((struct sockaddr *)&proxy.remote, peer_addr,
 						   &peer_port);
@@ -470,7 +470,7 @@ static void udp_thread_func(void *p1, void *p2, void *p3)
 			break;
 		}
 		if ((fds[SOCK].revents & ZSOCK_POLLHUP) != 0) {
-			if (proxy.role == UDP_ROLE_SERVER && proxy.sec_tag != INVALID_SEC_TAG) {
+			if (proxy.role == UDP_ROLE_SERVER && proxy.sec_tag != SEC_TAG_TLS_INVALID) {
 				util_get_peer_addr((struct sockaddr *)&proxy.remote, peer_addr,
 						   &peer_port);
 				LOG_INF("DTLS client disconnected: \"%s\",%d\r\n", peer_addr,
@@ -564,7 +564,7 @@ static int handle_at_udp_server(enum at_parser_cmd_type cmd_type, struct at_pars
 			if (err) {
 				return err;
 			}
-			proxy.sec_tag = INVALID_SEC_TAG;
+			proxy.sec_tag = SEC_TAG_TLS_INVALID;
 			if (param_count > 3 &&
 			    at_parser_num_get(parser, 3, &proxy.sec_tag)) {
 				return -EINVAL;
@@ -623,7 +623,7 @@ static int handle_at_udp_client(enum at_parser_cmd_type cmd_type, struct at_pars
 			if (err) {
 				return err;
 			}
-			proxy.sec_tag = INVALID_SEC_TAG;
+			proxy.sec_tag = SEC_TAG_TLS_INVALID;
 			if (param_count > 4) { /* optional param */
 				err = at_parser_num_get(parser, 4, &proxy.sec_tag);
 				if ((err != 0 && err != -EOPNOTSUPP)) {
@@ -744,7 +744,7 @@ static int handle_at_udp_send(enum at_parser_cmd_type cmd_type, struct at_parser
 int slm_at_udp_proxy_init(void)
 {
 	proxy.sock	= INVALID_SOCKET;
-	proxy.sec_tag	= INVALID_SEC_TAG;
+	proxy.sec_tag	= SEC_TAG_TLS_INVALID;
 	proxy.efd	= INVALID_SOCKET;
 
 	return 0;

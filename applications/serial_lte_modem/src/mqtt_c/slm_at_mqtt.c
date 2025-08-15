@@ -382,7 +382,7 @@ static int do_mqtt_connect(void)
 		/* ignore password if no user_name */
 	}
 #if defined(CONFIG_MQTT_LIB_TLS)
-	if (ctx.sec_tag != INVALID_SEC_TAG) {
+	if (ctx.sec_tag != SEC_TAG_TLS_INVALID) {
 		struct mqtt_sec_config *tls_config;
 
 		tls_config = &(client.transport).tls.config;
@@ -574,7 +574,7 @@ static int handle_at_mqtt_connect(enum at_parser_cmd_type cmd_type, struct at_pa
 			if (err) {
 				return err;
 			}
-			ctx.sec_tag = INVALID_SEC_TAG;
+			ctx.sec_tag = SEC_TAG_TLS_INVALID;
 			if (param_count > 6) {
 				err = at_parser_num_get(parser, 6, &ctx.sec_tag);
 				if (err) {
@@ -592,7 +592,7 @@ static int handle_at_mqtt_connect(enum at_parser_cmd_type cmd_type, struct at_pa
 
 	case AT_PARSER_CMD_TYPE_READ:
 		if (ctx.connected) {
-			if (ctx.sec_tag != INVALID_SEC_TAG) {
+			if (ctx.sec_tag != SEC_TAG_TLS_INVALID) {
 				rsp_send("\r\n#XMQTTCON: %d,\"%s\",\"%s\",%d,%d\r\n",
 					 ctx.connected, mqtt_clientid, mqtt_broker_url,
 					 mqtt_broker_port, ctx.sec_tag);
@@ -804,7 +804,7 @@ int slm_at_mqtt_init(void)
 {
 	pub_param.message_id = 0;
 	memset(&ctx, 0, sizeof(ctx));
-	ctx.sec_tag = INVALID_SEC_TAG;
+	ctx.sec_tag = SEC_TAG_TLS_INVALID;
 
 	strcpy(mqtt_clientid, SLM_DEFAULT_CID);
 	do_mqtt_config(CONFIG_MQTT_KEEPALIVE, CONFIG_MQTT_CLEAN_SESSION);

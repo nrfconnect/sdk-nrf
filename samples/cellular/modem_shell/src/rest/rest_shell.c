@@ -151,7 +151,7 @@ static int rest_shell(const struct shell *shell, size_t argc, char **argv)
 		case 's':
 			req_ctx.sec_tag = atoi(optarg);
 			if (req_ctx.sec_tag == 0) {
-				mosh_warn("sec_tag not an integer (> 0)");
+				mosh_warn("sec_tag not an integer (!= 0)");
 				ret = -EINVAL;
 				goto end;
 			}
