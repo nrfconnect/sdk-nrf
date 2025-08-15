@@ -710,7 +710,7 @@ int main(void)
 			for (uint8_t ap = 0; ap < MAX_AP; ap++) {
 				cs_de_dist_estimates_t distance_on_ap = get_distance(ap);
 
-				LOG_INF("Distance estimates on antenna path %u: ifft: %f, "
+				LOG_INF("Latest distance estimates on antenna path %u: ifft: %f, "
 					"phase_slope: %f, rtt: %f",
 					ap, (double)distance_on_ap.ifft,
 					(double)distance_on_ap.phase_slope,
