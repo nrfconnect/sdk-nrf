@@ -261,11 +261,11 @@ Bluetooth Fast Pair samples
 Cellular samples
 ----------------
 
+* Added the :ref:`nrf_cloud_coap_cell_location` sample to demonstrate how to use the `nRF Cloud CoAP API`_ for nRF Cloud's cellular location service.
+
 * :ref:`nrf_cloud_rest_cell_location` sample:
 
-  * Added:
-
-    * Runtime setting of the log level for the nRF Cloud logging feature.
+  * Added runtime setting of the log level for the nRF Cloud logging feature.
 
 Cryptography samples
 --------------------
