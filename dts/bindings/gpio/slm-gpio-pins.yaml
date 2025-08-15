@@ -1,0 +1,33 @@
+description: GPIO pins to control Serial LTE Modem
+
+compatible: "slm-gpio-pins"
+
+properties:
+  power-gpios:
+    type: phandle-array
+    required: true
+    description: |
+      Power pin.
+
+  power-gpios-active-time-ms:
+    type: int
+    default: 100
+    description: |
+      Power pin active time in milliseconds.
+
+  power-gpios-debounce-time-ms:
+    type: int
+    default: 50
+    description: |
+      Power pin debounce time in milliseconds.
+
+  indicate-gpios:
+    type: phandle-array
+    description: |
+      Indicate pin.
+
+  indicate-gpios-active-time-ms:
+    type: int
+    default: 100
+    description: |
+      Indicate pin active time in milliseconds.
