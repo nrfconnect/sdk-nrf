@@ -1,0 +1,76 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		ncs,slm-uart = &uart20;
+		ncs,slm-gpio = &gpio0;
+		zephyr,console = &uart30;
+		zephyr,shell-uart = &uart30;
+	};
+};
+
+/* Shell UART */
+&uart30 {
+	current-speed = <115200>;
+	status = "okay";
+};
+
+/* SLM Shell <-> SLM UART */
+&uart20 {
+	compatible = "nordic,nrf-uarte";
+	current-speed = <115200>;
+	status = "okay";
+	hw-flow-control;
+	pinctrl-0 = <&uart20_default_alt>;
+	pinctrl-1 = <&uart20_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+};
+
+/ {
+	slm_gpio_pins: slm_gpio_pins {
+		compatible = "slm-gpio-pins";
+		power-gpios = <&gpio1 13 GPIO_ACTIVE_LOW>;
+		power-gpios-active-time-ms = <100>;
+		power-gpios-debounce-time-ms = <50>;
+		indicate-gpios = <&gpio2 9 GPIO_ACTIVE_LOW>;
+		indicate-gpios-active-time-ms = <100>;
+	};
+};
+
+/ {
+	aliases {
+		/delete-property/ led1;
+		/delete-property/ led3;
+	};
+};
+
+/delete-node/ &led1;
+/delete-node/ &led3;
+
+&pinctrl {
+	uart20_default_alt: uart20_default_alt {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 1, 11)>,
+				<NRF_PSEL(UART_RTS, 1, 14)>;
+		};
+		group2 {
+			psels = <NRF_PSEL(UART_RX, 1, 12)>,
+				<NRF_PSEL(UART_CTS, 1, 10)>;
+			bias-pull-up;
+		};
+	};
+
+	uart20_sleep_alt: uart20_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 1, 11)>,
+				<NRF_PSEL(UART_RX, 1, 12)>,
+				<NRF_PSEL(UART_RTS, 1, 14)>,
+				<NRF_PSEL(UART_CTS, 1, 10)>;
+			low-power-enable;
+		};
+	};
+};
