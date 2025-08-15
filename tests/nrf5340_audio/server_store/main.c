@@ -17,6 +17,7 @@
 	struct bt_bap_ep test_##name##_ep_var = {0};                                               \
 	struct bt_bap_iso test_##name##_bap_iso = {0};                                             \
 	struct bt_bap_qos_cfg test_##name##_qos = {0};                                             \
+	test_##name##_qos.pd = UINT32_MAX;                                                         \
 	test_##name##_ep_var.dir = 1;                                                              \
 	test_##name##_cap_stream.bap_stream.ep = &test_##name##_ep_var;                            \
 	test_##name##_cap_stream.bap_stream.bap_iso = &test_##name##_bap_iso;                      \
@@ -252,28 +253,47 @@ ZTEST(suite_server_store, test_6_pres_delay_advanced)
 	test_one_cap_stream.bap_stream.ep->qos_pref.pref_pd_min = 2000;
 	test_one_cap_stream.bap_stream.ep->qos_pref.pref_pd_max = 3000;
 	test_one_cap_stream.bap_stream.group = (void *)0xaaaa;
+	test_one_cap_stream.bap_stream.qos->pd = 2500;
 
 	memcpy(&retr_server->snk.cap_streams[0], &test_one_cap_stream, sizeof(test_one_cap_stream));
 
 	TEST_CAP_STREAM(two);
-	test_one_cap_stream.bap_stream.group = (void *)0xaaaa;
 
-	struct bt_bap_qos_cfg_pref qos_cfg_pref_in_two;
+	struct bt_bap_qos_cfg_pref qos_cfg_pref_in;
 
-	qos_cfg_pref_in_two.pd_min = 1100;
-	qos_cfg_pref_in_two.pd_max = 4000;
-	qos_cfg_pref_in_two.pref_pd_min = 2100;
-	qos_cfg_pref_in_two.pref_pd_max = 3000;
+	qos_cfg_pref_in.pd_min = 1100;
+	qos_cfg_pref_in.pd_max = 4000;
+	qos_cfg_pref_in.pref_pd_min = 2100;
+	qos_cfg_pref_in.pref_pd_max = 3000;
 
 	uint32_t computed_pres_dly_us = 0;
 	bool group_reconfig_needed = false;
 
 	ret = srv_store_pres_dly_find(&test_one_cap_stream.bap_stream, &computed_pres_dly_us,
-				      &qos_cfg_pref_in_two, &group_reconfig_needed);
+				      &qos_cfg_pref_in, &group_reconfig_needed);
 	zassert_equal(ret, 0, "Finding presentation delay did not return zero %d", ret);
-	zassert_equal(computed_pres_dly_us, 2100,
-		      "Computed presentation delay should be equal to preferred min %d",
+	zassert_equal(computed_pres_dly_us, 2500, "Presentation delay should be unchanged %d",
 		      computed_pres_dly_us);
+	zassert_equal(group_reconfig_needed, false, "Group reconfiguration should not be needed");
+
+	/* Testing with pref outside existing PD. Should not change existing streams*/
+
+	qos_cfg_pref_in.pref_pd_min = 2600;
+	ret = srv_store_pres_dly_find(&test_one_cap_stream.bap_stream, &computed_pres_dly_us,
+				      &qos_cfg_pref_in, &group_reconfig_needed);
+	zassert_equal(ret, 0, "Finding presentation delay did not return zero %d", ret);
+	zassert_equal(computed_pres_dly_us, 2500, "Presentation delay should be unchanged %d",
+		      computed_pres_dly_us);
+	zassert_equal(group_reconfig_needed, false, "Group reconfiguration should not be needed");
+
+	/* Now check with min outside range. Shall trigger a reconfig*/
+	qos_cfg_pref_in.pd_min = 2600;
+	ret = srv_store_pres_dly_find(&test_one_cap_stream.bap_stream, &computed_pres_dly_us,
+				      &qos_cfg_pref_in, &group_reconfig_needed);
+	zassert_equal(ret, 0, "Finding presentation delay did not return zero %d", ret);
+	zassert_equal(computed_pres_dly_us, 2600, "Presentation delay should be unchanged %d",
+		      computed_pres_dly_us);
+	zassert_equal(group_reconfig_needed, true, "Group reconfiguration should not be needed");
 }
 
 ZTEST_SUITE(suite_server_store, NULL, NULL, NULL, NULL, NULL);

@@ -465,6 +465,11 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 				uint32_t existing_pres_dly_us =
 					server->snk.cap_streams[i].bap_stream.qos->pd;
 
+				if (existing_pres_dly_us == 0) {
+					LOG_ERR("Existing presentation delay is zero");
+					return -EINVAL;
+				}
+
 				if (pres_dly_in_range(existing_pres_dly_us, qos_cfg_pref_in)) {
 
 					*computed_pres_dly_us = existing_pres_dly_us;
@@ -474,7 +479,6 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 				*group_reconfig_needed = true;
 
 				ret = pres_delay_find(
-
 					&server->snk.cap_streams[i].bap_stream.ep->qos_pref,
 					&common_pd);
 				if (ret) {
