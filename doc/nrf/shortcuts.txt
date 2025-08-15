@@ -85,10 +85,10 @@
 
 .. ### VSC shortcuts
 
-.. |vsc_extension_description| replace:: The |nRFVSC| is a complete IDE for developing applications compatible with the |NCS|.
-   The extension includes an interface for managing SDK and toolchain installations, an interface to the compiler and linker, an RTOS-aware debugger, a seamless interface to the |NCS|, and a serial terminal.
+.. |vsc_extension_description| replace:: |nRFVSC| is a set of VSIX extensions that turns |VSC| into a complete IDE for developing applications compatible with the |NCS|.
+   The extensions that are part of |nRFVSC| provide an interface for managing SDK and toolchain installations, an interface to the compiler and linker, an RTOS-aware debugger, a seamless interface to the |NCS|, and a serial terminal.
 .. |VSC| replace:: Visual Studio Code
-.. |nRFVSC| replace:: nRF Connect for VS Code extension
+.. |nRFVSC| replace:: nRF Connect for VS Code
 
 .. ### Deprecation shortcuts
 
@@ -180,7 +180,8 @@
 .. ### Other shortcuts
 
 .. |ncs_oot_sample_note| replace:: Some samples in the |NCS| are currently not designed to work out-of-tree.
-   You may need to manually configure your sample to work correctly in the |nRFVSC|.
+   You may need to manually configure your sample to work correctly in |nRFVSC|.
+
 .. |ncs_repo| replace:: https://github.com/nrfconnect/sdk-nrf
 
 .. |ncs_nrfxlib_repo| replace:: https://github.com/nrfconnect/sdk-nrfxlib

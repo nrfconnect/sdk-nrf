@@ -1699,6 +1699,8 @@
 
 .. ### Source: other (2 links or less from the same URL)
 
+.. _`Open VSX Registry`: https://open-vsx.org/
+
 .. _`Amazon Root CA 1`: https://www.amazontrust.com/repository/AmazonRootCA1.pem
 
 .. _`Memfault Diagnostic GATT Service`: https://memfault.notion.site/Memfault-Diagnostic-GATT-Service-MDS-ffd5a430062649cd9bf6edbf64e2563b
