@@ -18,7 +18,7 @@ Regardless of which way you choose, the following steps install the |NCS| source
 This includes everything that is required by Zephyr's :ref:`zephyr:getting_started` together with additional tools and Python dependencies that the |NCS| uses.
 
 .. note::
-    Using |VSC| and the |nRFVSC| is also covered in the `Installing nRF Connect SDK and VS Code`_ exercise of the `nRF Connect SDK Fundamentals course`_ on Nordic Developer Academy.
+    Using |VSC| and |nRFVSC| is also covered in the `Installing nRF Connect SDK and VS Code`_ exercise of the `nRF Connect SDK Fundamentals course`_ on Nordic Developer Academy.
 
 .. rst-class:: numbered-step
 
@@ -44,7 +44,7 @@ Depending on your preferred development environment, install the following softw
 
 .. tabs::
 
-   .. group-tab:: nRF Connect for Visual Studio Code
+   .. group-tab:: nRF Connect for VS Code
 
       .. include:: /includes/install_sdk_common_prerequisites.txt
 
@@ -52,7 +52,12 @@ Depending on your preferred development environment, install the following softw
 
       * The latest version of |VSC| for your operating system from the `Visual Studio Code download page`_ or `using this direct link <start VS Code walkthrough_>`_.
       * In |VSC|, the latest version of the `nRF Connect for VS Code Extension Pack`_.
-        The |nRFVSC| comes with its own bundled version of some of the nRF Util commands.
+        |nRFVSC| comes with its own bundled version of some of the nRF Util commands.
+
+      .. note::
+         You can also use a different IDE compatible with the VSIX format and install the extensions that are part of the nRF Connect for VS Code Extension Pack from the `Open VSX Registry`_.
+         However, Nordic Semiconductor does not test editors other than |VSC| for compatibility with |nRFVSC|.
+         While you are encouraged to report any issues you encounter on `DevZone`_, issues discovered in editors other than |VSC| and not reproducible in |VSC| will not be prioritized.
 
    .. group-tab:: Command line
 
@@ -88,7 +93,7 @@ Depending on your preferred development environment, complete the following step
 
 .. tabs::
 
-   .. group-tab:: nRF Connect for Visual Studio Code
+   .. group-tab:: nRF Connect for VS Code
 
       .. note::
          If you prefer, you can now `start VS Code walkthrough`_ and install the toolchain and the SDK from there.
@@ -219,7 +224,7 @@ For more information about the repository and development model, see the :ref:`d
 
 .. tabs::
 
-   .. group-tab:: nRF Connect for Visual Studio Code
+   .. group-tab:: nRF Connect for VS Code
 
       To clone the |NCS| code, complete the following steps:
 
@@ -466,7 +471,7 @@ Define the required environment variables as follows, depending on your operatin
 Alternative method: System-wide installation
 ********************************************
 
-System-wide installation is an alternative to the recommended installation methods using the |nRFVSC| or nRF Util.
+System-wide installation is an alternative to the recommended installation methods using |nRFVSC| or nRF Util.
 It gives you more control over each of the required tools, but requires more familiarity with Zephyr and with each of the tools.
 
 To install the |NCS| system-wide, complete the following steps:
@@ -674,7 +679,7 @@ To install the |NCS| system-wide, complete the following steps:
 #. Follow the steps in the "Install the Zephyr SDK" section in Zephyr's :ref:`zephyr:getting_started` to install the Zephyr SDK.
 #. Depending on your preferred development environment:
 
-   * If you want to work with |VSC|, install the |nRFVSC| (the default IDE for the |NCS|).
+   * If you want to work with |VSC|, install |nRFVSC| (the default IDE for the |NCS|).
    * If you want to work from command line, :ref:`build_environment_cli`.
 
 #. If you want to build `Matter`_ applications, additionally install the `GN`_ meta-build system.

@@ -62,7 +62,7 @@ You can do this in one of the following ways:
 
          -D<image_name>_SNIPPET="nrf91-modem-trace-ext-flash" [...]
 
-      To build with the |nRFVSC|, specify ``-D<image_name>_SNIPPET="nrf91-modem-trace-ext-flash" [...]`` in the **Extra CMake arguments** field.
+      To build with |nRFVSC|, specify ``-D<image_name>_SNIPPET="nrf91-modem-trace-ext-flash" [...]`` in the **Extra CMake arguments** field.
 
       See :ref:`cmake_options` for more details.
 
@@ -96,7 +96,7 @@ You can do this in one of the following ways:
 
          -D<image_name>_SNIPPET="nrf91-modem-trace-ram" [...]
 
-      To build with the |nRFVSC|, specify ``-D<image_name>_SNIPPET="nrf91-modem-trace-ram" [...]`` in the **Extra CMake arguments** field.
+      To build with |nRFVSC|, specify ``-D<image_name>_SNIPPET="nrf91-modem-trace-ram" [...]`` in the **Extra CMake arguments** field.
 
       See :ref:`cmake_options` for more details.
 
@@ -138,7 +138,7 @@ You can do this in one of the following ways:
 
          -D<image_name>_SNIPPET="nrf91-modem-trace-uart" [...]
 
-      To build with the |nRFVSC|, specify ``-D<image_name>_SNIPPET="nrf91-modem-trace-uart" [...]`` in the **Extra CMake arguments** field.
+      To build with |nRFVSC|, specify ``-D<image_name>_SNIPPET="nrf91-modem-trace-uart" [...]`` in the **Extra CMake arguments** field.
 
       See :ref:`cmake_options` for more details.
 
@@ -171,7 +171,7 @@ You can do this in one of the following ways:
 
           -D<image_name>_SNIPPET="nrf91-modem-trace-rtt" [...]
 
-       To build with the |nRFVSC|, specify ``-D<image_name>_SNIPPET="nrf91-modem-trace-rtt" [...]`` in the **Extra CMake arguments** field.
+       To build with |nRFVSC|, specify ``-D<image_name>_SNIPPET="nrf91-modem-trace-rtt" [...]`` in the **Extra CMake arguments** field.
 
        See :ref:`cmake_options` for more details.
 
@@ -204,6 +204,6 @@ You can do this in one of the following ways:
 
          -D<image_name>_SNIPPET="tfm-enable-share-uart" [...]
 
-      To build with the |nRFVSC|, specify ``-D<image_name>_SNIPPET="tfm-enable-share-uart" [...]`` in the **Extra CMake arguments** field.
+      To build with |nRFVSC|, specify ``-D<image_name>_SNIPPET="tfm-enable-share-uart" [...]`` in the **Extra CMake arguments** field.
 
       See :ref:`cmake_options` for more details.
