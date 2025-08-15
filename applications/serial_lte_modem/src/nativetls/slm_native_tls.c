@@ -5,6 +5,7 @@
  */
 #include <zephyr/net/socket.h>
 #include <zephyr/settings/settings.h>
+#include <zephyr/net/tls_credentials.h>
 #include "slm_native_tls.h"
 #include "slm_at_host.h"
 #include "slm_at_cmng.h"
@@ -27,7 +28,7 @@ struct tls_cred_buf {
 };
 static struct tls_cred_buf cred_buf[CONFIG_SLM_NATIVE_TLS_CREDENTIAL_BUFFER_COUNT] = {
 	[0 ... CONFIG_SLM_NATIVE_TLS_CREDENTIAL_BUFFER_COUNT - 1] = {
-		.sec_tag = -1
+		.sec_tag = SEC_TAG_TLS_INVALID
 	}
 };
 static uint8_t cred_buf_next; /* Index of next cred_buf to use. */
@@ -183,7 +184,7 @@ static int unload_tls_cred_buf(sec_tag_t sec_tag)
 {
 	struct tls_cred_buf *cred = get_tls_cred_buf(sec_tag);
 
-	if (cred == NULL || sec_tag == -1) {
+	if (cred == NULL || sec_tag == SEC_TAG_TLS_INVALID) {
 		return 0;
 	}
 
@@ -201,7 +202,7 @@ static int unload_tls_cred_buf(sec_tag_t sec_tag)
 			}
 		}
 	}
-	cred->sec_tag = -1;
+	cred->sec_tag = SEC_TAG_TLS_INVALID;
 	cred->type_flags = 0;
 
 	return 0;

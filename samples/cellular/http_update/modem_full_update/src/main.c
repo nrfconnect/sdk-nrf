@@ -9,6 +9,7 @@
 #include <zephyr/drivers/flash.h>
 #include <zephyr/toolchain.h>
 #include <zephyr/net/socket.h>
+#include <zephyr/net/tls_credentials.h>
 #include <zephyr/sys/reboot.h>
 #include <zephyr/shell/shell.h>
 #include <zephyr/drivers/gpio.h>
@@ -31,7 +32,7 @@
 #ifdef CONFIG_USE_HTTPS
 #define SEC_TAG (TLS_SEC_TAG)
 #else
-#define SEC_TAG (-1)
+#define SEC_TAG (SEC_TAG_TLS_INVALID)
 #endif
 
 /* We assume that modem version strings (not UUID) will not be more than this. */
@@ -429,7 +430,7 @@ static int update_download(void)
 	int err;
 	const char *file;
 	int sec_tag = SEC_TAG;
-	uint8_t sec_tag_count = sec_tag < 0 ? 0 : 1;
+	uint8_t sec_tag_count = sec_tag == SEC_TAG_TLS_INVALID ? 0 : 1;
 	const struct dfu_target_full_modem_params params = {
 		.buf = fmfu_buf,
 		.len = sizeof(fmfu_buf),

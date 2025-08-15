@@ -216,7 +216,7 @@ static int do_fota_start(int op, const char *file_uri, int sec_tag,
 
 	/* start HTTP(S) FOTA */
 	if (slm_util_casecmp(schema, SCHEMA_HTTPS)) {
-		if (sec_tag == INVALID_SEC_TAG) {
+		if (sec_tag == SEC_TAG_TLS_INVALID) {
 			LOG_ERR("Missing sec_tag");
 			return -EINVAL;
 		}
@@ -319,7 +319,7 @@ static int handle_at_fota(enum at_parser_cmd_type cmd_type, struct at_parser *pa
 			char uri[FILE_URI_MAX];
 			uint16_t pdn_id;
 			int size = FILE_URI_MAX;
-			sec_tag_t sec_tag = INVALID_SEC_TAG;
+			sec_tag_t sec_tag = SEC_TAG_TLS_INVALID;
 			enum dfu_target_image_type type;
 
 			err = util_string_get(parser, 2, uri, &size);

@@ -72,7 +72,7 @@ static int do_tcp_server_start(uint16_t port)
 	int reuseaddr = 1;
 
 	/* Open socket */
-	if (proxy.sec_tag == INVALID_SEC_TAG) {
+	if (proxy.sec_tag == SEC_TAG_TLS_INVALID) {
 		ret = zsock_socket(proxy.family, SOCK_STREAM, IPPROTO_TCP);
 	} else {
 		ret = zsock_socket(proxy.family, SOCK_STREAM, IPPROTO_TLS_1_2);
@@ -84,7 +84,7 @@ static int do_tcp_server_start(uint16_t port)
 	}
 	proxy.sock = ret;
 
-	if (proxy.sec_tag != INVALID_SEC_TAG) {
+	if (proxy.sec_tag != SEC_TAG_TLS_INVALID) {
 #ifndef CONFIG_SLM_NATIVE_TLS
 		LOG_ERR("Not supported");
 		return -ENOTSUP;
@@ -199,7 +199,7 @@ static int do_tcp_client_connect(const char *url, uint16_t port, uint16_t cid)
 	struct sockaddr sa;
 
 	/* Open socket */
-	if (proxy.sec_tag == INVALID_SEC_TAG) {
+	if (proxy.sec_tag == SEC_TAG_TLS_INVALID) {
 		ret = zsock_socket(proxy.family, SOCK_STREAM, IPPROTO_TCP);
 	} else {
 		ret = zsock_socket(proxy.family, SOCK_STREAM, IPPROTO_TLS_1_2);
@@ -210,7 +210,7 @@ static int do_tcp_client_connect(const char *url, uint16_t port, uint16_t cid)
 	}
 	proxy.sock = ret;
 
-	if (proxy.sec_tag != INVALID_SEC_TAG) {
+	if (proxy.sec_tag != SEC_TAG_TLS_INVALID) {
 #if defined(CONFIG_SLM_NATIVE_TLS)
 		ret = slm_native_tls_load_credentials(proxy.sec_tag);
 		if (ret < 0) {
@@ -690,7 +690,7 @@ static int handle_at_tcp_server(enum at_parser_cmd_type cmd_type, struct at_pars
 			if (err) {
 				return err;
 			}
-			proxy.sec_tag = INVALID_SEC_TAG;
+			proxy.sec_tag = SEC_TAG_TLS_INVALID;
 			if (param_count > 3) {
 				err = at_parser_num_get(parser, 3, &proxy.sec_tag);
 				if (err) {
@@ -752,7 +752,7 @@ static int handle_at_tcp_client(enum at_parser_cmd_type cmd_type, struct at_pars
 			if (at_parser_num_get(parser, 3, &port)) {
 				return -EINVAL;
 			}
-			proxy.sec_tag = INVALID_SEC_TAG;
+			proxy.sec_tag = SEC_TAG_TLS_INVALID;
 			if (param_count > 4) { /* optional param */
 				err = at_parser_num_get(parser, 4, &proxy.sec_tag);
 				if (err != 0 && err != -EOPNOTSUPP) {
@@ -905,7 +905,7 @@ int slm_at_tcp_proxy_init(void)
 	proxy.family	= AF_UNSPEC;
 	proxy.sock_peer	= INVALID_SOCKET;
 	proxy.role	= INVALID_ROLE;
-	proxy.sec_tag	= INVALID_SEC_TAG;
+	proxy.sec_tag	= SEC_TAG_TLS_INVALID;
 	proxy.efd	= INVALID_SOCKET;
 
 	return 0;
