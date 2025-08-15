@@ -19,7 +19,7 @@ The steps differ depending on whether you work with |VSC| or on the command line
 Using |VSC|
 ===========
 
-You can build and program separate images or combined images using the |nRFVSC|.
+You can build and program separate images or combined images using |nRFVSC|.
 
 .. tabs::
 

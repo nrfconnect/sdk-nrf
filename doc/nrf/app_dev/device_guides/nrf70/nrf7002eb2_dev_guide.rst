@@ -98,7 +98,7 @@ For example, if you build the :ref:`wifi_shell_sample` sample for nRF54L15 DK on
 
    west build -p -b nrf54l15dk/nrf54l15/cpuapp -- -Dshell_SHIELD="nrf7002eb2" -Dshell_SNIPPET=nrf70-wifi
 
-If you use the |nRFVSC|, specify ``-DSHIELD=nrf7002eb2`` in the **Extra Cmake arguments** field when `setting up a build configuration <How to work with build configurations_>`_.
+If you use |nRFVSC|, specify ``-DSHIELD=nrf7002eb2`` in the **Extra Cmake arguments** field when `setting up a build configuration <How to work with build configurations_>`_.
 
 Alternatively, add the shield in the project's :file:`CMakeLists.txt` file by using the following command:
 

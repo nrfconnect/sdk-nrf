@@ -106,7 +106,7 @@ To complete the build, do the following:
 Separate images
 ---------------
 
-You can build and program the application sample and the PPR sample as separate images using either the |nRFVSC| or the command line.
+You can build and program the application sample and the PPR sample as separate images using either |nRFVSC| or the command line.
 Refer to `nRF Util`_ documentation for instructions on using nRF Util.
 Depending on the method you select, complete the following steps:
 

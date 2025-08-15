@@ -388,7 +388,7 @@ nRF Connect for Visual Studio Code
 
 |vsc_extension_description|
 
-In addition, the |nRFVSC| provides the following configuration tools for the :ref:`build system components <configuration_system_overview>`:
+In addition, |nRFVSC| provides the following configuration tools for the :ref:`build system components <configuration_system_overview>`:
 
 * For CMake, the `build configuration management <How to work with build configurations_>`_.
 * For Devicetree, the `Devicetree Visual Editor <How to work with Devicetree Visual Editor_>`_.
@@ -396,6 +396,11 @@ In addition, the |nRFVSC| provides the following configuration tools for the :re
 
 The extension follows its own `release cycle <latest release notes for nRF Connect for Visual Studio Code_>`_.
 Use the latest available release for development.
+
+.. note::
+   |nRFVSC| is also available on the `Open VSIX Registry`_ and works with other editors based on |VSC| and compatible with the VSIX format.
+   However, the |nRFVSC| extensions are only recommended and tested for use with |VSC|.
+   Extension issues discovered in editors other than |VSC| will not be prioritized.
 
 See the :ref:`install_ncs` page for information about how to use the extension to manage |NCS| toolchain installations.
 For more information about the extension and what it offers, visit the `nRF Connect for Visual Studio Code`_ documentation.

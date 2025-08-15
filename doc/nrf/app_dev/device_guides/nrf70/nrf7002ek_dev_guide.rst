@@ -49,7 +49,7 @@ For example, if you build for nRF5340 DK on the command line, you can use the fo
 
    west build -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf7002ek
 
-If you use the |nRFVSC|, specify ``-DSHIELD=nrf7002ek`` in the **Extra Cmake arguments** field when `setting up a build configuration <How to work with build configurations_>`_.
+If you use |nRFVSC|, specify ``-DSHIELD=nrf7002ek`` in the **Extra Cmake arguments** field when `setting up a build configuration <How to work with build configurations_>`_.
 
 Alternatively, add the shield in the project's :file:`CMakeLists.txt` file, specifying the below settings, depending on which IC is to be used:
 
