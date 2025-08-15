@@ -224,7 +224,7 @@ static int do_http_connect(void)
 	}
 
 	/* Open socket */
-	if (httpc.sec_tag == INVALID_SEC_TAG) {
+	if (httpc.sec_tag == SEC_TAG_TLS_INVALID) {
 		ret = zsock_socket(httpc.family, SOCK_STREAM, IPPROTO_TCP);
 	} else {
 		ret = zsock_socket(httpc.family, SOCK_STREAM, IPPROTO_TLS_1_2);
@@ -236,7 +236,7 @@ static int do_http_connect(void)
 	httpc.fd = ret;
 
 	/* Set socket options */
-	if (httpc.sec_tag != INVALID_SEC_TAG) {
+	if (httpc.sec_tag != SEC_TAG_TLS_INVALID) {
 #if defined(CONFIG_SLM_NATIVE_TLS)
 		ret = slm_native_tls_load_credentials(httpc.sec_tag);
 		if (ret < 0) {
@@ -444,7 +444,7 @@ static int handle_at_httpc_connect(enum at_parser_cmd_type cmd_type,
 				return -EINVAL;
 			}
 
-			httpc.sec_tag = INVALID_SEC_TAG;
+			httpc.sec_tag = SEC_TAG_TLS_INVALID;
 			if (param_count > 4) {
 				if (at_parser_num_get(parser, 4, &httpc.sec_tag)) {
 					return -EINVAL;
@@ -480,7 +480,7 @@ static int handle_at_httpc_connect(enum at_parser_cmd_type cmd_type,
 		break;
 
 	case AT_PARSER_CMD_TYPE_READ:
-		if (httpc.sec_tag != INVALID_SEC_TAG) {
+		if (httpc.sec_tag != SEC_TAG_TLS_INVALID) {
 			rsp_send("\r\n#XHTTPCCON: %d,\"%s\",%d,%d\r\n",
 				(httpc.fd == INVALID_SOCKET) ? 0 : 1,
 				httpc.host, httpc.port, httpc.sec_tag);

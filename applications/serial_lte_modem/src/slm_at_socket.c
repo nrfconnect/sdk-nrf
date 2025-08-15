@@ -109,7 +109,7 @@ static void init_socket(struct slm_socket *socket)
 	}
 
 	socket->family = AF_UNSPEC;
-	socket->sec_tag = INVALID_SEC_TAG;
+	socket->sec_tag = SEC_TAG_TLS_INVALID;
 	socket->role = AT_SOCKET_ROLE_CLIENT;
 	socket->fd = INVALID_SOCKET;
 	socket->fd_peer = INVALID_SOCKET;
@@ -1117,7 +1117,7 @@ static int handle_at_secure_socket(enum at_parser_cmd_type cmd_type,
 				err = -EINVAL;
 				goto error;
 			}
-			sock->sec_tag = INVALID_SEC_TAG;
+			sock->sec_tag = SEC_TAG_TLS_INVALID;
 			err = at_parser_num_get(parser, 4, &sock->sec_tag);
 			if (err) {
 				goto error;
@@ -1284,7 +1284,7 @@ static int handle_at_secure_socketopt(enum at_parser_cmd_type cmd_type,
 
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
-		if (sock->sec_tag == INVALID_SEC_TAG) {
+		if (sock->sec_tag == SEC_TAG_TLS_INVALID) {
 			LOG_ERR("Not secure socket");
 			return err;
 		}

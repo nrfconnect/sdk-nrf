@@ -119,7 +119,7 @@ static int do_ftp_open(enum at_parser_cmd_type cmd_type, struct at_parser *parse
 	char hostname[SLM_MAX_URL];
 	int sz_hostname = sizeof(hostname);
 	uint16_t port = FTP_DEFAULT_PORT;
-	sec_tag_t sec_tag = INVALID_SEC_TAG;
+	sec_tag_t sec_tag = SEC_TAG_TLS_INVALID;
 
 	/* Parse AT command */
 	ret = util_string_get(parser, 2, username, &sz_username);

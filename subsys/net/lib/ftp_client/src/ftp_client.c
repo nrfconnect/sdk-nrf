@@ -16,7 +16,6 @@
 LOG_MODULE_REGISTER(ftp_client, CONFIG_FTP_CLIENT_LOG_LEVEL);
 
 #define INVALID_SOCKET		-1
-#define INVALID_SEC_TAG		-1
 
 #define FTP_MAX_BUFFER_SIZE	708 /* align with MSS on modem side */
 #define FTP_DATA_TIMEOUT_SEC	60  /* time in seconds to wait for "Transfer complete" */
@@ -135,7 +134,7 @@ static int establish_data_channel(const char *pasv_msg)
 		LOG_ERR("socket(data) failed: %d", -errno);
 		return -errno;
 	}
-	if (client.sec_tag != INVALID_SEC_TAG) {
+	if (client.sec_tag != SEC_TAG_TLS_INVALID) {
 		sec_tag_t sec_tag_list[] = { client.sec_tag };
 
 		ret = zsock_setsockopt(client.data_sock, SOL_TLS, TLS_SEC_TAG_LIST,
@@ -201,7 +200,7 @@ static void close_connection(int code, int error)
 		client.cmd_sock = INVALID_SOCKET;
 		client.data_sock = INVALID_SOCKET;
 		client.connected = false;
-		client.sec_tag = INVALID_SEC_TAG;
+		client.sec_tag = SEC_TAG_TLS_INVALID;
 	}
 }
 
@@ -460,7 +459,7 @@ int ftp_open(const char *hostname, uint16_t port, int sec_tag)
 	zsock_freeaddrinfo(ai);
 
 	/* open control socket */
-	if (sec_tag == INVALID_SEC_TAG) {
+	if (sec_tag == SEC_TAG_TLS_INVALID) {
 		client.cmd_sock = zsock_socket(client.family, SOCK_STREAM, IPPROTO_TCP);
 	} else {
 		client.cmd_sock = zsock_socket(client.family, SOCK_STREAM, IPPROTO_TLS_1_2);
@@ -469,7 +468,7 @@ int ftp_open(const char *hostname, uint16_t port, int sec_tag)
 		LOG_ERR("socket(ctrl) failed: %d", -errno);
 		ret = -errno;
 	}
-	if (sec_tag != INVALID_SEC_TAG) {
+	if (sec_tag != SEC_TAG_TLS_INVALID) {
 		sec_tag_t sec_tag_list[] = { sec_tag };
 
 		ret = zsock_setsockopt(client.cmd_sock, SOL_TLS, TLS_SEC_TAG_LIST,
@@ -842,7 +841,7 @@ int ftp_init(ftp_client_callback_t ctrl_callback, ftp_client_callback_t data_cal
 	client.cmd_sock = INVALID_SOCKET;
 	client.data_sock = INVALID_SOCKET;
 	client.connected = false;
-	client.sec_tag = INVALID_SEC_TAG;
+	client.sec_tag = SEC_TAG_TLS_INVALID;
 	client.ctrl_callback = ctrl_callback;
 	client.data_callback = data_callback;
 
