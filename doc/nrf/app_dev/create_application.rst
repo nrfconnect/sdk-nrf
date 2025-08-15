@@ -138,7 +138,7 @@ Creating an |NCS| application
 *****************************
 
 The process for creating an |NCS| application depends on the development environment.
-Using the |nRFVSC| is the recommended method.
+Using |nRFVSC| is the recommended method.
 
 .. note::
      No steps are provided for the creation of :ref:`repository applications <create_application_types_repository>`.
@@ -146,8 +146,8 @@ Using the |nRFVSC| is the recommended method.
 
 .. _creating_vsc:
 
-Creating application in the |nRFVSC|
-====================================
+Creating application in |nRFVSC|
+================================
 
 .. note::
    If you prefer, you can `start VS Code walkthrough`_ and create applications and build configurations from there.
@@ -158,10 +158,10 @@ Use the following steps depending on the application placement:
 
    .. group-tab:: Workspace application (recommended)
 
-      To create a workspace application in the |nRFVSC|:
+      To create a workspace application in |nRFVSC|:
 
       1. Open |VSC|.
-      #. Open the |nRFVSC|.
+      #. Open |nRFVSC|.
       #. In the :guilabel:`Welcome View`, click the :guilabel:`Create a new application` action.
          A quick pick menu appears.
       #. Choose one of the following options:
@@ -194,10 +194,10 @@ Use the following steps depending on the application placement:
 
    .. group-tab:: Freestanding application
 
-      To create a freestanding application in the |nRFVSC|:
+      To create a freestanding application in |nRFVSC|:
 
       1. Open |VSC|.
-      #. Open the |nRFVSC|.
+      #. Open |nRFVSC|.
       #. In the :guilabel:`Welcome View`, click the :guilabel:`Create a new application` action.
          A quick pick menu appears.
       #. Choose one of the following options:
@@ -311,7 +311,7 @@ To create an application from the add-on index, complete the following steps:
 
    .. tab:: nRF Connect for VS Code (recommended)
 
-      Complete the following steps in the |nRFVSC|:
+      Complete the following steps in |nRFVSC|:
 
       1. In the :guilabel:`Welcome View`, click :guilabel:`Create a new application`.
       #. Select :guilabel:`Browse nRF Connect SDK Add-on Index`.

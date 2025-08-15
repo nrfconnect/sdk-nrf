@@ -108,7 +108,7 @@ Complete the following steps to configure the building process:
      The API key is provided using a format in which *key_name* is followed by *key_value*.
      For example, if the URI uses ``x-api_key`` for authentication, the :c:macro:`EI_API_KEY_HEADER` can be defined as follows: ``x-api-key:aaaabbbbccccdddd``.
      The ``aaaabbbbccccdddd`` is a sample *key_value*.
-     See :ref:`cmake_options` for more information about defining CMake options for command line builds and the |nRFVSC|.
+     See :ref:`cmake_options` for more information about defining CMake options for command line builds and |nRFVSC|.
      See `Downloading model directly from Edge Impulse studio`_ for details about downloading model directly from the Edge Impulse studio.
 
 Downloading model directly from Edge Impulse studio
