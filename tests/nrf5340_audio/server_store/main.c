@@ -72,17 +72,17 @@ ZTEST(suite_server_store, test_2_srv_store_multiple)
 	ret = srv_store_num_get();
 	zassert_equal(ret, 3, "Number of servers should be three after adding three servers");
 
-	struct server_store *retrieved_server = NULL;
+	struct server_store *retr_server = NULL;
 
-	ret = srv_store_from_conn_get((struct bt_conn *)conn2, &retrieved_server);
+	ret = srv_store_from_conn_get((struct bt_conn *)conn2, &retr_server);
 	zassert_equal(ret, 0, "Retrieving server by connection did not return zero");
-	zassert_not_null(retrieved_server, "Retrieved server should not be NULL");
-	zassert_equal(retrieved_server->conn, (struct bt_conn *)conn2,
+	zassert_not_null(retr_server, "Retrieved server should not be NULL");
+	zassert_equal(retr_server->conn, (struct bt_conn *)conn2,
 		      "Retrieved server connection does not match expected");
 
-	ret = srv_store_from_conn_get((struct bt_conn *)conn4, &retrieved_server);
+	ret = srv_store_from_conn_get((struct bt_conn *)conn4, &retr_server);
 	zassert_equal(ret, -ENOENT, "Retrieving non-existing server should return -ENOENT");
-	zassert_is_null(retrieved_server, "Retrieved server should be NULL for non-existing entry");
+	zassert_is_null(retr_server, "Retrieved server should be NULL for non-existing entry");
 }
 
 ZTEST(suite_server_store, test_3_srv_remove)
@@ -132,38 +132,51 @@ ZTEST(suite_server_store, test_4_find_srv_from_stream)
 	ret = srv_store_add((struct bt_conn *)conn1);
 	zassert_equal(ret, 0, "Adding server did not return zero");
 
-	struct server_store *retrieved_server = NULL;
+	struct server_store *retr_server = NULL;
 
-	ret = srv_store_from_conn_get((struct bt_conn *)conn0, &retrieved_server);
+	ret = srv_store_from_conn_get((struct bt_conn *)conn0, &retr_server);
 	zassert_equal(ret, 0, "Retrieving OK server by connection did not return zero");
 
-	retrieved_server->name = "Test Server 0";
-	retrieved_server->snk.cap_streams[0] = (struct bt_cap_stream *)0x0000;
-	retrieved_server->snk.cap_streams[1] = (struct bt_cap_stream *)0x0111;
-	retrieved_server->snk.cap_streams[2] = (struct bt_cap_stream *)0x0222;
+	retr_server->name = "Test Server 0";
+	TEST_CAP_STREAM(one);
+	memcpy(&retr_server->snk.cap_streams[0], &test_one_cap_stream, sizeof(test_one_cap_stream));
+	TEST_CAP_STREAM(two);
+	memcpy(&retr_server->snk.cap_streams[1], &test_two_cap_stream, sizeof(test_two_cap_stream));
+	TEST_CAP_STREAM(three);
+	memcpy(&retr_server->snk.cap_streams[2], &test_three_cap_stream,
+	       sizeof(test_three_cap_stream));
 
-	ret = srv_store_from_conn_get((struct bt_conn *)conn1, &retrieved_server);
+	ret = srv_store_from_conn_get((struct bt_conn *)conn1, &retr_server);
 	zassert_equal(ret, 0, "Retrieving OK server by connection did not return zero");
 
-	retrieved_server->name = "Test Server 1";
-	retrieved_server->snk.cap_streams[0] = (struct bt_cap_stream *)0x1000;
-	retrieved_server->snk.cap_streams[1] = (struct bt_cap_stream *)0x1111;
-	retrieved_server->snk.cap_streams[2] = (struct bt_cap_stream *)0x1222;
+	retr_server->name = "Test Server 1";
+	TEST_CAP_STREAM(four);
+	memcpy(&retr_server->snk.cap_streams[0], &test_four_cap_stream,
+	       sizeof(test_four_cap_stream));
+	TEST_CAP_STREAM(five);
+	memcpy(&retr_server->snk.cap_streams[1], &test_five_cap_stream,
+	       sizeof(test_five_cap_stream));
+	TEST_CAP_STREAM(six);
+	memcpy(&retr_server->snk.cap_streams[2], &test_six_cap_stream, sizeof(test_six_cap_stream));
 
-	ret = srv_store_from_stream_get((struct bt_cap_stream *)0x9999, &retrieved_server);
-	zassert_equal(ret, -ENOENT, "Retrieving from NULL stream should return -ENOENT");
-	zassert_is_null(retrieved_server, "Retrieved server should be NULL");
+	TEST_CAP_STREAM(seven);
 
-	ret = srv_store_from_stream_get((struct bt_cap_stream *)0x1111, &retrieved_server);
-	zassert_equal(ret, 0, "Retrieving from stream should return zero");
-	zassert_not_null(retrieved_server, "Retrieved server should not be NULL");
-	zassert_equal(retrieved_server->name, "Test Server 1");
-	zassert_equal_ptr(retrieved_server->conn, conn1,
+	ret = srv_store_from_stream_get(&test_seven_cap_stream.bap_stream, &retr_server);
+	zassert_equal(ret, -ENOENT, "Retrieving from non existing stream should return -ENOENT");
+	zassert_is_null(retr_server, "Retrieved server should be NULL");
+
+	TC_PRINT("test bap ptr %p\n", &test_two_cap_stream.bap_stream);
+
+	ret = srv_store_from_stream_get(&test_five_cap_stream.bap_stream, &retr_server);
+	zassert_equal(ret, 0, "Retrieving from stream should return zero %d", ret);
+	zassert_not_null(retr_server, "Retrieved server should not be NULL");
+	zassert_equal(retr_server->name, "Test Server 1");
+	zassert_equal_ptr(retr_server->conn, conn1,
 			  "Retrieved server connection does not match expected");
 	/* Testing illegal operation with idential cap_stream pointers */
-	retrieved_server->snk.cap_streams[3] = (struct bt_cap_stream *)0x0111;
+	memcpy(&retr_server->snk.cap_streams[3], &test_two_cap_stream, sizeof(test_two_cap_stream));
 
-	ret = srv_store_from_stream_get((struct bt_cap_stream *)0x0111, &retrieved_server);
+	ret = srv_store_from_stream_get(&test_two_cap_stream.bap_stream, &retr_server);
 	zassert_equal(ret, -ESPIPE, "Retrieving from stream should return -ESPIPE");
 }
 
@@ -225,12 +238,12 @@ ZTEST(suite_server_store, test_6_pres_delay_advanced)
 	ret = srv_store_add((struct bt_conn *)conn0);
 	zassert_equal(ret, 0, "Adding server did not return zero");
 
-	struct server_store *retrieved_server = NULL;
+	struct server_store *retr_server = NULL;
 
-	ret = srv_store_from_conn_get((struct bt_conn *)conn0, &retrieved_server);
+	ret = srv_store_from_conn_get((struct bt_conn *)conn0, &retr_server);
 	zassert_equal(ret, 0, "Retrieving server by connection did not return zero");
-	zassert_not_null(retrieved_server, "Retrieved server should not be NULL");
-	zassert_equal(retrieved_server->conn, (struct bt_conn *)conn0,
+	zassert_not_null(retr_server, "Retrieved server should not be NULL");
+	zassert_equal(retr_server->conn, (struct bt_conn *)conn0,
 		      "Retrieved server connection does not match expected");
 
 	TEST_CAP_STREAM(one);
@@ -240,7 +253,7 @@ ZTEST(suite_server_store, test_6_pres_delay_advanced)
 	test_one_cap_stream.bap_stream.ep->qos_pref.pref_pd_max = 3000;
 	test_one_cap_stream.bap_stream.group = (void *)0xaaaa;
 
-	retrieved_server->snk.cap_streams[0] = &test_one_cap_stream;
+	memcpy(&retr_server->snk.cap_streams[0], &test_one_cap_stream, sizeof(test_one_cap_stream));
 
 	TEST_CAP_STREAM(two);
 	test_one_cap_stream.bap_stream.group = (void *)0xaaaa;

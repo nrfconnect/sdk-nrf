@@ -17,7 +17,11 @@
 #include <../subsys/bluetooth/audio/bap_endpoint.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_DECLARE(unicast_client, CONFIG_UNICAST_CLIENT_LOG_LEVEL);
+LOG_MODULE_REGISTER(unicast_client, CONFIG_UNICAST_CLIENT_LOG_LEVEL);
+
+#ifndef CONFIG_BT_AUDIO_PREF_SAMPLE_RATE_VALUE
+#define CONFIG_BT_AUDIO_PREF_SAMPLE_RATE_VALUE 0x08
+#endif
 
 static struct bt_bap_lc3_preset lc3_preset_48_4_1 = BT_BAP_LC3_UNICAST_PRESET_48_4_1(
 	BT_AUDIO_LOCATION_ANY, (BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED));
@@ -97,7 +101,7 @@ static int pres_delay_find(struct bt_bap_qos_cfg_pref *common,
 {
 	/* Checking min values */
 	if (!IN_RANGE(in->pd_min, common->pd_min, common->pd_max)) {
-		LOG_ERR("Incoming pd_max %d is not in range [%d, %d]", in->pd_max, common->pd_min,
+		LOG_ERR("Incoming pd_min %d is not in range [%d, %d]", in->pd_min, common->pd_min,
 			common->pd_max);
 		return -EINVAL;
 	}
@@ -470,8 +474,9 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 				*group_reconfig_needed = true;
 
 				ret = pres_delay_find(
-					&common_pd,
-					&server->snk.cap_streams[i].bap_stream.ep->qos_pref);
+
+					&server->snk.cap_streams[i].bap_stream.ep->qos_pref,
+					&common_pd);
 				if (ret) {
 					return ret;
 				}
@@ -770,7 +775,8 @@ int srv_store_from_stream_get(struct bt_bap_stream const *const stream,
 			return -EINVAL;
 		}
 		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT; i++) {
-			if (&tmp_server->snk.cap_streams[i].bap_stream == stream) {
+			if (memcmp(&tmp_server->snk.cap_streams[i].bap_stream, stream,
+				   sizeof(struct bt_bap_stream)) == 0) {
 				*server = tmp_server;
 				LOG_DBG("Found server for sink stream %p at index %d", stream,
 					srv_idx);
@@ -778,7 +784,8 @@ int srv_store_from_stream_get(struct bt_bap_stream const *const stream,
 			}
 		}
 		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT; i++) {
-			if (&tmp_server->src.cap_streams[i].bap_stream == stream) {
+			if (memcmp(&tmp_server->src.cap_streams[i].bap_stream, stream,
+				   sizeof(struct bt_bap_stream)) == 0) {
 				*server = tmp_server;
 				LOG_DBG("Found server for source stream %p at index %d", stream,
 					srv_idx);
