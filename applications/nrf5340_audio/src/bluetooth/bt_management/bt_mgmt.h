@@ -4,6 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @defgroup audio_app_bt_mgmt Audio Bluetooth Management
+ * @{
+ * @brief Bluetooth management API for Audio applications.
+ *
+ * This module provides comprehensive Bluetooth management functionality including device
+ * initialization, connection handling, scanning, advertising, and security management.
+ */
+
 #ifndef _BT_MGMT_H_
 #define _BT_MGMT_H_
 
@@ -11,29 +20,32 @@
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/audio/audio.h>
 
+/** Extended advertising parameters for LE Audio without connection capability. */
 #define LE_AUDIO_EXTENDED_ADV                                                                      \
 	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV, CONFIG_BLE_ACL_EXT_ADV_INT_MIN,                     \
 			CONFIG_BLE_ACL_EXT_ADV_INT_MAX, NULL)
 
+/** Extended advertising parameters for LE Audio with connection capability. */
 #define LE_AUDIO_EXTENDED_ADV_CONN                                                                 \
 	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_CONN,                                \
 			CONFIG_BLE_ACL_EXT_ADV_INT_MIN, CONFIG_BLE_ACL_EXT_ADV_INT_MAX, NULL)
 
+/** Extended advertising parameters for LE Audio with connection filtering. */
 #define LE_AUDIO_EXTENDED_ADV_CONN_FILTER                                                          \
 	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_EXT_ADV | BT_LE_ADV_OPT_CONN | BT_LE_ADV_OPT_FILTER_CONN,    \
 			CONFIG_BLE_ACL_EXT_ADV_INT_MIN, CONFIG_BLE_ACL_EXT_ADV_INT_MAX, NULL)
 
+/** Periodic advertising parameters for LE Audio broadcast mode. */
 #define LE_AUDIO_PERIODIC_ADV                                                                      \
 	BT_LE_PER_ADV_PARAM(CONFIG_BLE_ACL_PER_ADV_INT_MIN, CONFIG_BLE_ACL_PER_ADV_INT_MAX,        \
 			    BT_LE_PER_ADV_OPT_NONE)
 
+/** Fast connection advertising parameters for quick device discovery. */
 #define BT_LE_ADV_FAST_CONN                                                                        \
 	BT_LE_ADV_PARAM(BT_LE_ADV_OPT_CONN, BT_GAP_ADV_FAST_INT_MIN_1, BT_GAP_ADV_FAST_INT_MAX_1,  \
 			NULL)
 
-/* Broadcast name can be max 32 bytes long, so this will be the limit for both.
- * Add one for '\0' at the end.
- */
+/** Maximum length for Bluetooth device search names. */
 #define BLE_SEARCH_NAME_MAX_LEN 33
 
 #if (CONFIG_SCAN_MODE_ACTIVE)
@@ -46,9 +58,12 @@
 #error "Select either CONFIG_SCAN_MODE_ACTIVE or CONFIG_SCAN_MODE_PASSIVE"
 #endif
 
+/**
+ * @brief Bluetooth management scan type enumeration.
+ */
 enum bt_mgmt_scan_type {
-	BT_MGMT_SCAN_TYPE_CONN = 1,
-	BT_MGMT_SCAN_TYPE_BROADCAST = 2,
+	BT_MGMT_SCAN_TYPE_CONN = 1,		/**< Scan for connection (unicast) devices */
+	BT_MGMT_SCAN_TYPE_BROADCAST = 2,	/**< Scan for broadcast devices */
 };
 
 #define BRDCAST_ID_NOT_USED (BT_AUDIO_BROADCAST_ID_MAX + 1)
@@ -106,6 +121,9 @@ int bt_mgmt_adv_buffer_put(struct bt_data *const adv_buf, uint32_t *index, size_
  *		be used.
  *
  * @return	0 if success, error otherwise.
+ *
+ * @see @ref bt_mgmt_adv_start for advertising operations
+ * @see @ref bt_mgmt_scan_sirk_set for SIRK configuration
  */
 int bt_mgmt_scan_start(uint16_t scan_intvl, uint16_t scan_win, enum bt_mgmt_scan_type type,
 		       char const *const name, uint32_t brdcast_id);
@@ -209,5 +227,9 @@ int bt_mgmt_conn_disconnect(struct bt_conn *conn, uint8_t reason);
  * @return	0 if success, error otherwise.
  */
 int bt_mgmt_init(void);
+
+/**
+ * @}
+ */
 
 #endif /* _BT_MGMT_H_ */

@@ -4,6 +4,15 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @defgroup audio_app_button Audio Button Handler
+ * @{
+ * @brief Button handler API for Audio applications.
+ *
+ * This module provides button input handling and debouncing functionality for user
+ * interface control.
+ */
+
 #ifndef _BUTTON_HANDLER_H_
 #define _BUTTON_HANDLER_H_
 
@@ -27,5 +36,9 @@ int button_handler_init(void);
  * @return 0 if success, an error code otherwise.
  */
 int button_pressed(gpio_pin_t button_pin, bool *button_pressed);
+
+/**
+ * @}
+ */
 
 #endif /* _BUTTON_HANDLER_H_ */

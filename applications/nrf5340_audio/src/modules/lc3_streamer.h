@@ -4,6 +4,19 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/** @file
+ * @defgroup audio_app_lc3_streamer LC3 Streamer
+ * @{
+ * @brief LC3 streamer API for Audio applications.
+ *
+ * This module provides LC3 audio file streaming functionality for playback from SD card
+ * storage.
+ *
+ * The streamer integrates with @ref audio_app_lc3_file for file operations,
+ * @ref audio_app_sd_card for storage access, and @ref audio_app_system
+ * for audio playback integration.
+ */
+
 #ifndef LC3_STREAMER_H
 #define LC3_STREAMER_H
 
@@ -12,10 +25,16 @@
 #include <stdbool.h>
 #include <sys/types.h>
 
+/**
+ * @brief LC3 stream configuration structure.
+ *
+ * This structure defines the configuration parameters for LC3 audio streams,
+ * including sample rate, bit rate, and frame duration.
+ */
 struct lc3_stream_cfg {
-	uint32_t sample_rate_hz;
-	uint32_t bit_rate_bps;
-	uint32_t frame_duration_us;
+	uint32_t sample_rate_hz;	/**< Sample rate in Hz */
+	uint32_t bit_rate_bps;		/**< Bit rate in bits per second */
+	uint32_t frame_duration_us;	/**< Frame duration in microseconds */
 };
 
 /**
@@ -67,6 +86,9 @@ bool lc3_streamer_file_compatible_check(const char *const filename,
  * @retval -EINVAL	Invalid filename or streamer_idx.
  * @retval -EAGAIN	No stream slot is available.
  * @retval -EFAULT	Module has not been initialized.
+ *
+ * @see @ref lc3_file_open for file opening operations
+ * @see @ref lc3_streamer_next_frame_get for frame retrieval
  */
 int lc3_streamer_stream_register(const char *const filename, uint8_t *const streamer_idx,
 				 const bool loop);
@@ -134,5 +156,9 @@ int lc3_streamer_close_all_streams(void);
  * @retval 0		Success, other negative values are errors from lc3_file module.
  */
 int lc3_streamer_init(void);
+
+/**
+ * @}
+ */
 
 #endif /* LC3_STREAMER_H */
