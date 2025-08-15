@@ -346,6 +346,10 @@ For firmware OS support, see :ref:`the table at the top of the page <supported_O
     - Not supported
     - Not supported
     - Not supported
+  * - `macOS 26`_
+    - n/a
+    - Tier 3
+    - Tier 3
   * - `macOS 15`_
     - n/a
     - Tier 3
