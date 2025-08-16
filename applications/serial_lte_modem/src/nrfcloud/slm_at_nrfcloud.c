@@ -551,7 +551,7 @@ static int handle_at_nrf_cloud(enum at_parser_cmd_type cmd_type, struct at_parse
 	};
 	int err = -EINVAL;
 	uint16_t op;
-	uint16_t send_location = 0;
+	bool send_location;
 
 	switch (cmd_type) {
 	case AT_PARSER_CMD_TYPE_SET:
@@ -560,14 +560,10 @@ static int handle_at_nrf_cloud(enum at_parser_cmd_type cmd_type, struct at_parse
 			return err;
 		}
 		if (op == SLM_NRF_CLOUD_CONNECT && !slm_nrf_cloud_ready) {
-			if (param_count > 2) {
-				err = at_parser_num_get(parser, 2, &send_location);
-				if (send_location != 0 && send_location != 1) {
-					err = -EINVAL;
-				}
-				if (err < 0) {
-					return err;
-				}
+			err = util_get_bool_with_default(parser, 2, param_count, false,
+							 &send_location);
+			if (err) {
+				return err;
 			}
 			/* Disconnect for the case where a connection previously
 			 * got initiated and failed to receive NRF_CLOUD_EVT_READY.
