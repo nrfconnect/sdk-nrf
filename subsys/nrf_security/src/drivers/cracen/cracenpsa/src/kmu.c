@@ -76,7 +76,7 @@ enum kmu_metadata_algorithm {
 	METADATA_ALG_ECDSA = 11,
 	METADATA_ALG_ED25519PH = 12,
 	METADATA_ALG_HMAC = 13,
-	METADATA_ALG_RESERVED4 = 14,
+	METADATA_ALG_ECDH = 14,
 	METADATA_ALG_RESERVED5 = 15,
 };
 
@@ -371,6 +371,13 @@ static bool can_sign(const psa_key_attributes_t *key_attr)
 	       (psa_get_key_usage_flags(key_attr) & PSA_KEY_USAGE_SIGN_HASH);
 }
 #endif /* defined(CONFIG_PSA_WANT_ALG_PURE_EDDSA) || define(CONFIG_PSA_WANT_ALG_ED25519PH) */
+
+#if defined(CONFIG_PSA_WANT_ALG_ECDH)
+static bool can_derive(const psa_key_attributes_t *key_attr)
+{
+	return psa_get_key_usage_flags(key_attr) & PSA_KEY_USAGE_DERIVE;
+}
+#endif
 
 /**
  * @brief Check provisioning state, and delete slots that were not completely provisioned.
@@ -681,6 +688,12 @@ static psa_status_t convert_to_psa_attributes(kmu_metadata *metadata,
 		psa_set_key_algorithm(key_attr, PSA_ALG_HMAC(PSA_ALG_SHA_256));
 		break;
 #endif
+#ifdef CONFIG_PSA_WANT_ALG_ECDH
+	case METADATA_ALG_ECDH:
+		psa_set_key_type(key_attr, PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1));
+		psa_set_key_algorithm(key_attr, PSA_ALG_ECDH);
+		break;
+#endif
 	default:
 		return PSA_ERROR_HARDWARE_FAILURE;
 	}
@@ -879,6 +892,15 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		metadata->algorithm = METADATA_ALG_HMAC;
+		break;
+#endif
+#ifdef CONFIG_PSA_WANT_ALG_ECDH
+	case PSA_ALG_ECDH:
+		if (!can_derive(key_attr) || PSA_KEY_TYPE_ECC_GET_FAMILY(psa_get_key_type(
+						     key_attr)) != PSA_ECC_FAMILY_SECP_R1) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
+		metadata->algorithm = METADATA_ALG_ECDH;
 		break;
 #endif
 	default:

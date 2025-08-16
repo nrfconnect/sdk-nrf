@@ -2414,6 +2414,9 @@ psa_status_t psa_driver_wrapper_key_agreement(const psa_key_attributes_t *attrib
 		 * cycle through all known transparent accelerators
 		 */
 #if defined(PSA_NEED_CRACEN_KEY_AGREEMENT_DRIVER)
+#if defined(PSA_NEED_CRACEN_KMU_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN_KMU:
+#endif /* defined(PSA_NEED_CRACEN_KMU_DRIVER) */
 		status = cracen_key_agreement(attributes, priv_key, priv_key_size, publ_key,
 					      publ_key_size, output, output_size, output_length,
 					      alg);
