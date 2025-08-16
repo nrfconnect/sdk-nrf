@@ -33,7 +33,7 @@
 #endif /* CONFIG_SAMPLE_RATE_CONVERTER */
 
 #define BT_BAP_LC3_PRESET_CONFIGURABLE(_loc, _stream_context, _bitrate)                            \
-	BT_BAP_LC3_PRESET(BT_AUDIO_CODEC_LC3_CONFIG(CONFIG_BT_AUDIO_PREF_SAMPLE_RATE_VALUE,        \
+	BT_BAP_LC3_PRESET(BT_AUDIO_CODEC_LC3_CONFIG(CONFIG_BT_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE,   \
 						    BT_AUDIO_CODEC_CFG_DURATION_10, _loc,          \
 						    LE_AUDIO_SDU_SIZE_OCTETS(_bitrate), 1,         \
 						    _stream_context),                              \
