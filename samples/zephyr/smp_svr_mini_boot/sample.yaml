@@ -12,6 +12,17 @@ common:
       - "smp_sample: build time:"
 tests:
   sample.smp_svr_mini_boot:
+    extra_args:
+      - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP=y
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+  sample.smp_svr_mini_boot.swap_move:
+    extra_args:
+      - SB_CONFIG_MCUBOOT_MODE_SWAP_USING_MOVE=y
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
