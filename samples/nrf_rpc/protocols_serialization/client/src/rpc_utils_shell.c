@@ -26,6 +26,32 @@ static int remote_version_cmd(const struct shell *sh, size_t argc, char *argv[])
 
 	return 0;
 }
+
+static int cmd_get_crash_info(const struct shell *sh, size_t argc, char *argv[])
+{
+	int rc;
+	struct nrf_rpc_crash_info info;
+
+	rc = nrf_rpc_get_crash_info(&info);
+	if (rc) {
+		shell_print(sh, "No coredump stored");
+
+		return 0;
+	}
+
+	shell_print(sh, "uuid: %u", info.uuid);
+	shell_print(sh, "reason: %u", info.reason);
+	shell_print(sh, "PC: 0x%08x", info.pc);
+	shell_print(sh, "LR: 0x%08x", info.lr);
+	shell_print(sh, "SP: 0x%08x", info.sp);
+	shell_print(sh, "XPSR: 0x%08x", info.xpsr);
+
+	if (info.assert_line) {
+		shell_print(sh, "ASSERT at %s:%u", info.assert_filename, info.assert_line);
+	}
+
+	return 0;
+}
 #endif
 
 #if defined(CONFIG_NRF_RPC_UTILS_REMOTE_SHELL)
@@ -122,6 +148,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	util_cmds,
 #if defined(CONFIG_NRF_RPC_UTILS_DEV_INFO)
 	SHELL_CMD_ARG(remote_version, NULL, "Get server version", remote_version_cmd, 1, 0),
+	SHELL_CMD_ARG(crash_info, NULL, "Fetch information about the latest crash of RPC server", cmd_get_crash_info, 1, 0),
 #endif
 #if defined(CONFIG_NRF_RPC_UTILS_REMOTE_SHELL)
 	SHELL_CMD_ARG(remote_shell, NULL, "Call remote shell command", remote_shell_cmd, 2, 255),
