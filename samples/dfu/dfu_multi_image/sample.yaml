@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+sample:
+  description: DFU multi image sample application
+  name: dfu_multi_image sample
+common:
+  platform_allow: nrf5340dk/nrf5340/cpuapp
+  build_only: true
+  sysbuild: true
+tests:
+  sample.dfu.dfu_multi_image:
+    tags:
+      - dfu_multi_image
+      - ci_samples_dfu
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
