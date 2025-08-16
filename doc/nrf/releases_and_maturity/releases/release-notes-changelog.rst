@@ -305,7 +305,9 @@ Keys samples
 Matter samples
 --------------
 
-|no_changes_yet_note|
+* Added:
+
+  * :ref:`matter_temperature_sensor_sample` sample that demonstrates how to implement and test a Matter temperature sensor device.
 
 Networking samples
 ------------------
