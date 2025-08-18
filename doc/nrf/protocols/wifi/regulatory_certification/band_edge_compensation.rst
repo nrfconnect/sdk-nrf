@@ -34,7 +34,7 @@ The following table shows examples of frequency ranges for the U.S. regulatory d
 
 When applying backoff, consider the following:
 
-* A channel is considered an edge channel if the difference between the edge frequency of a band and the center frequency of the channel is 10 MHz or less.
+* A channel is considered an edge channel if the difference between the edge frequency of a band and the center frequency of the channel is 15 MHz or less.
 * In the U.S. regulatory domain, devices operating on channel 11 of the 2.4 GHz band (2462 MHz) must apply backoff as channel 11 is at the edge for this frequency band.
 * For world regulatory domain, channel 14 is the edge channel as the frequency range for world regulatory domain is 2400 MHz to 2494 MHz.
 * Backoff values also vary based on the frame type, affecting the maximum transmit power. Different backoff values are configured for each frame type.
