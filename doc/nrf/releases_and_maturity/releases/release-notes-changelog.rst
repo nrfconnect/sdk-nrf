@@ -245,6 +245,8 @@ Bluetooth samples
   * :ref:`bluetooth_iso_combined_bis_cis`
   * :ref:`bluetooth_isochronous_time_synchronization`
   * :ref:`bt_scanning_while_connecting`
+  * :ref:`channel_sounding_ras_initiator`
+  * :ref:`channel_sounding_ras_reflector`
 
   The :ref:`ipc_radio` application is commonly used for multicore builds in other |NCS| samples and projects.
   Hence, this is to align with the common practice.
