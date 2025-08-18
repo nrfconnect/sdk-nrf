@@ -78,6 +78,14 @@ enum lte_lc_system_mode {
 
 	/** LTE-M + NB-IoT + GNSS. */
 	LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS,
+
+	/**
+	 * NTN NB-IoT only.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9151-ntn
+	 */
+	LTE_LC_SYSTEM_MODE_NTN_NBIOT
 };
 
 /**
@@ -88,13 +96,21 @@ enum lte_lc_system_mode {
  */
 enum lte_lc_lte_mode {
 	/** None. */
-	LTE_LC_LTE_MODE_NONE	= 0,
+	LTE_LC_LTE_MODE_NONE		= 0,
 
 	/** LTE-M. */
-	LTE_LC_LTE_MODE_LTEM	= 7,
+	LTE_LC_LTE_MODE_LTEM		= 7,
 
 	/** NB-IoT. */
-	LTE_LC_LTE_MODE_NBIOT	= 9,
+	LTE_LC_LTE_MODE_NBIOT		= 9,
+
+	/**
+	 * NTN NB-IoT.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9151-ntn
+	 */
+	LTE_LC_LTE_MODE_NTN_NBIOT	= 14
 };
 
 /**
@@ -171,7 +187,10 @@ enum lte_lc_func_mode {
 	 * Can be used, for example, to evaluate connections with
 	 * lte_lc_conn_eval_params_get().
 	 *
-	 * @note This mode is only supported by modem firmware versions >= 1.3.0.
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9160 >= v1.3.0
+	 *       - mfw_nrf91x1
+	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_FUNC_MODE_RX_ONLY		= 2,
 
@@ -337,7 +356,9 @@ enum lte_lc_evt_type {
 	 * The associated payload is the @c lte_lc_evt.rai_cfg member of type
 	 * @ref lte_lc_rai_cfg in the event.
 	 *
-	 * @note This event is only supported by modem firmware versions >= 2.0.2.
+	 * @note This is only supported by the following modem firmware:
+	 * - mfw_nrf91x1 >= v2.0.2
+	 * - mfw_nrf9151-ntn
 	 */
 	LTE_LC_EVT_RAI_UPDATE			= 12,
 #endif /* CONFIG_LTE_LC_RAI_MODULE */
@@ -462,11 +483,10 @@ struct lte_lc_cell {
 	 *
 	 * Range 0 - 18 446 744 073 709 551 614 ms.
 	 *
-	 * @note For modem firmware versions >= 1.3.1, timing advance measurement time may be
-	 *       reported from the modem. This means that timing advance data may now also be
-	 *       available in neighbor cell measurements done in RRC idle, even though the timing
-	 *       advance data was captured in RRC connected. If the value is not reported by the
-	 *       modem, it is set to 0.
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9160 >= v1.3.1
+	 *       - mfw_nrf91x1
+	 *       - mfw_nrf9151-ntn
 	 */
 	uint64_t timing_advance_meas_time;
 
@@ -575,7 +595,9 @@ enum lte_lc_modem_sleep_type {
 	/**
 	 * Proprietary PSM.
 	 *
-	 * @note This type is only supported by modem firmware versions >= 2.0.0.
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf91x1 >= v2.0.0
+	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_MODEM_SLEEP_PROPRIETARY_PSM	= 7,
 };
@@ -717,28 +739,36 @@ enum lte_lc_modem_evt {
 	/**
 	 * Selected CE level in RACH procedure is 0, see 3GPP TS 36.331 for details.
 	 *
-	 * @note This event is only supported by modem firmware versions >= 2.0.0.
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf91x1 >= v2.0.0
+	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_MODEM_EVT_CE_LEVEL_0,
 
 	/**
 	 * Selected CE level in RACH procedure is 1, see 3GPP TS 36.331 for details.
 	 *
-	 * @note This event is only supported by modem firmware versions >= 2.0.0.
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf91x1 >= v2.0.0
+	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_MODEM_EVT_CE_LEVEL_1,
 
 	/**
 	 * Selected CE level in RACH procedure is 2, see 3GPP TS 36.331 for details.
 	 *
-	 * @note This event is only supported by modem firmware versions >= 2.0.0.
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf91x1 >= v2.0.0
+	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_MODEM_EVT_CE_LEVEL_2,
 
 	/**
 	 * Selected CE level in RACH procedure is 3, see 3GPP TS 36.331 for details.
 	 *
-	 * @note This event is only supported by modem firmware versions >= 2.0.0.
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf91x1 >= v2.0.0
+	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_MODEM_EVT_CE_LEVEL_3,
 };
@@ -948,7 +978,10 @@ enum lte_lc_neighbor_search_type {
 	 * bands that are valid for the area of the current ITU-T region. If RPLMN is not found
 	 * based on previous cell history, the modem accepts any found PLMN.
 	 *
-	 * @note This search type is only supported by modem firmware versions >= 1.3.1.
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9160 >= v1.3.1
+	 *       - mfw_nrf91x1
+	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT = 2,
 
@@ -957,14 +990,20 @@ enum lte_lc_neighbor_search_type {
 	 * @ref LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_LIGHT, but will continue to perform a complete
 	 * search instead of a light search, and the search is performed for all supported bands.
 	 *
-	 * @note This search type is only supported by modem firmware versions >= 1.3.1.
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9160 >= v1.3.1
+	 *       - mfw_nrf91x1
+	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_NEIGHBOR_SEARCH_TYPE_EXTENDED_COMPLETE = 3,
 
 	/**
 	 * GCI search, option 1. Modem searches EARFCNs based on previous cell history.
 	 *
-	 * @note This search type is only supported by modem firmware versions >= 1.3.4.
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9160 >= v1.3.4
+	 *       - mfw_nrf91x1
+	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_DEFAULT = 4,
 
@@ -974,7 +1013,10 @@ enum lte_lc_neighbor_search_type {
 	 * the modem performs a light search on bands that are valid for the area of the current
 	 * ITU-T region.
 	 *
-	 * @note This search type is only supported by modem firmware versions >= 1.3.4.
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9160 >= v1.3.4
+	 *       - mfw_nrf91x1
+	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_LIGHT = 5,
 
@@ -983,7 +1025,10 @@ enum lte_lc_neighbor_search_type {
 	 * @ref LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_DEFAULT. If less than gci_count cells were found,
 	 * the modem performs a complete search on all supported bands.
 	 *
-	 * @note This search type is only supported by modem firmware versions >= 1.3.4.
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9160 >= v1.3.4
+	 *       - mfw_nrf91x1
+	 *       - mfw_nrf9151-ntn
 	 */
 	LTE_LC_NEIGHBOR_SEARCH_TYPE_GCI_EXTENDED_COMPLETE = 6,
 };
@@ -999,7 +1044,10 @@ struct lte_lc_ncellmeas_params {
 	 * Current cell is counted as one cell. Mandatory with the GCI search types, ignored with
 	 * other search types.
 	 *
-	 * @note GCI search types are only supported by modem firmware versions >= 1.3.4.
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9160 >= v1.3.4
+	 *       - mfw_nrf91x1
+	 *       - mfw_nrf9151-ntn
 	 */
 	uint8_t gci_count;
 };
@@ -1477,7 +1525,9 @@ int lte_lc_psm_get(int *tau, int *active_time);
  *       noted that conflicts may arise with the value set by
  *       `CONFIG_LTE_PROPRIETARY_PSM_REQ` if it is called during modem initialization.
  *
- * @note This feature is only supported by modem firmware versions >= v2.0.0.
+ * @note This is only supported by the following modem firmware:
+ *       - mfw_nrf91x1 >= v2.0.0
+ *       - mfw_nrf9151-ntn
  *
  * @note Requires `CONFIG_LTE_LC_PSM_MODULE` to be enabled.
  *
@@ -1647,7 +1697,10 @@ int lte_lc_lte_mode_get(enum lte_lc_lte_mode *mode);
  * event is received, the neighbor cell measurements are automatically stopped. If the
  * function returns successfully, the @ref LTE_LC_EVT_NEIGHBOR_CELL_MEAS event is always reported.
  *
- * @note This feature is only supported by modem firmware versions >= 1.3.0.
+ * @note This is only supported by the following modem firmware:
+ *       - mfw_nrf9160 >= v1.3.0
+ *       - mfw_nrf91x1
+ *       - mfw_nrf9151-ntn
  *
  * @note Requires `CONFIG_LTE_LC_NEIGHBOR_CELL_MEAS_MODULE` to be enabled.
  *
@@ -1706,7 +1759,10 @@ int lte_lc_conn_eval_params_get(struct lte_lc_conn_eval_params *params);
  * See @ref lte_lc_modem_evt for more information on which events may be received.
  * An event handler must be registered to receive events.
  *
- * @note This feature is only supported by modem firmware versions >= 1.3.0.
+ * @note This is only supported by the following modem firmware:
+ *       - mfw_nrf9160 >= v1.3.0
+ *       - mfw_nrf91x1
+ *       - mfw_nrf9151-ntn
  *
  * @retval 0 if successful.
  * @retval -EFAULT if AT command failed.
