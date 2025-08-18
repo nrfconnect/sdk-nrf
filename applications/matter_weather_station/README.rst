@@ -228,7 +228,7 @@ To build this application to work with the nRF7002 Wi-Fi expansion board:
 Generating factory data
 =======================
 
-To enable factory data support, you need to select the ``overlay-factory_data`` configuration overlay from the available application :ref:`build configuration overlays <matter_weather_station_app_build_configuration_overlays>`, set the ``SB_CONFIG_MATTER_FACTORY_DATA_GENERATE`` Kconfig option to ``y``, and use the ``factory_data`` file suffix.
+To enable factory data support, you need to select the ``overlay-factory_data`` configuration overlay from the available application :ref:`build configuration overlays <matter_weather_station_app_build_configuration_overlays>`, set the :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE` Kconfig option to ``y``, and use the ``factory_data`` file suffix.
 You can generate new factory data set when building for the given board target by invoking the following command:
 
 .. code-block:: console

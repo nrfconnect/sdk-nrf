@@ -128,7 +128,7 @@ You can program a portion of the application code related to the nRF70 Series' W
 This option is available only when building for the nRF5340 DK with the nRF7002 EK shield attached.
 To prepare an application to use this feature, you need to create additional MCUboot partitions.
 To learn how to configure MCUboot partitions, see the :ref:`nrf70_fw_patch_update_adding_partitions` guide.
-To enable this feature for Matter, set the ``SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE``, ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH`` Kconfig options to ``y``, and set the ``SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES`` Kconfig option to ``3``.
+To enable this feature for Matter, set the :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE`, :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH` Kconfig options to ``y``, and set the :kconfig:option:`SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES` Kconfig option to ``3``.
 
 .. matter_door_lock_sample_nrf70_firmware_patch_end
 
@@ -348,7 +348,7 @@ Factory data support
    To disable factory data support, set the following Kconfig options to ``n``:
 
    * :kconfig:option:`CONFIG_CHIP_FACTORY_DATA`
-   * ``SB_CONFIG_MATTER_FACTORY_DATA_GENERATE``
+   * :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE`
 
    To learn more about factory data, read the :doc:`matter:nrfconnect_factory_data_configuration` page in the Matter documentation.
 
