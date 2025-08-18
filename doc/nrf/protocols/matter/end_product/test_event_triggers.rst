@@ -100,7 +100,7 @@ The following table lists the available triggers and their activation codes:
     - ``0xFFFFFFFF60000000``
     - No additional value supported.
   * - OTA query
-    - :kconfig:option:`CONFIG_CHIP_OTA_REQUESTOR` = ``y``, and ``SB_CONFIG_MATTER_OTA`` = ``y``.
+    - :kconfig:option:`CONFIG_CHIP_OTA_REQUESTOR` = ``y``, and :kconfig:option:`SB_CONFIG_MATTER_OTA` = ``y``.
     - Trigger an OTA firmware update.
     - ``0x002a000000000100`` - ``0x01000000000001FF``
     - The range of ``0x00`` - ``0xFF`` is the fabric index value.
@@ -187,10 +187,10 @@ You cannot set the enable key to a specific value using factory data unless the 
 If it is not set, the default value ``00112233445566778899AABBCCDDEEFF`` will be used.
 For secure operation, you need to ensure that the enable key is unique for all of your devices.
 
-To specify the enable key through the build system, enable the ``SB_CONFIG_MATTER_FACTORY_DATA_GENERATE`` Kconfig option by setting it to ``y``.
+To specify the enable key through the build system, enable the :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE` Kconfig option by setting it to ``y``.
 Then, set the :kconfig:option:`CONFIG_CHIP_DEVICE_ENABLE_KEY` Kconfig option to a 32-byte hexadecimal string value.
 
-If ``SB_CONFIG_MATTER_FACTORY_DATA_GENERATE`` is set to ``n``, you can follow the :doc:`matter:nrfconnect_factory_data_configuration` guide in the Matter documentation to generate the factory data set with the specific enable key value.
+If :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE` is set to ``n``, you can follow the :doc:`matter:nrfconnect_factory_data_configuration` guide in the Matter documentation to generate the factory data set with the specific enable key value.
 
 If you do not use the |NCS| Matter common module, you need to read the enable key value manually from the factory data set and provide it to the ``TestEventTrigger`` class.
 
