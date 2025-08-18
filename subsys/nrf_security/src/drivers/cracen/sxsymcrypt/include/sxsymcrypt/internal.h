@@ -178,7 +178,7 @@ struct sxcmmask {
  * @return Return the nested error if it is not SX_OK, otherwise return
  *         the original error code.
  */
-inline int sx_handle_nested_error(int nested_err, int err)
+static inline int sx_handle_nested_error(int nested_err, int err)
 {
 	return nested_err ? nested_err != SX_OK : err;
 }
