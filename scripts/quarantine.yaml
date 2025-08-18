@@ -23,6 +23,13 @@
   comment: "Variant does not fit in FLASH area - it should be probably removed in the future"
 
 - scenarios:
+    - sample.matter.light_bulb.memory_profiling
+  platforms:
+    - nrf7002dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/KRKNWK-20715"
+
+
+- scenarios:
     - nrf.extended.drivers.uart.uart_elementary_dual_l09
     - nrf.extended.drivers.uart.uart_elementary_dual_setup_mismatch_l09
   platforms:
