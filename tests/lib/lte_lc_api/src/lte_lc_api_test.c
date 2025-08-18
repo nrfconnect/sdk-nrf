@@ -1661,7 +1661,7 @@ void test_lte_lc_system_mode_get_all_modes(void)
 
 	for (size_t i = 0; i < ARRAY_SIZE(system_modes); ++i) {
 		__mock_nrf_modem_at_scanf_ExpectAndReturn(
-			"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
+			"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d", 4);
 		__mock_nrf_modem_at_scanf_ReturnVarg_int(system_modes[i][1]); /* ltem_mode */
 		__mock_nrf_modem_at_scanf_ReturnVarg_int(system_modes[i][2]); /* nbiot_mode */
 		__mock_nrf_modem_at_scanf_ReturnVarg_int(system_modes[i][3]); /* gps_mode */
@@ -1682,7 +1682,7 @@ void test_lte_lc_system_mode_get_all_preferences(void)
 
 	for (int i = 0; i < 5; ++i) {
 		__mock_nrf_modem_at_scanf_ExpectAndReturn(
-			"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
+			"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d", 4);
 		__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* ltem_mode */
 		__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* nbiot_mode */
 		__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* gps_mode */
@@ -1701,7 +1701,7 @@ void test_lte_lc_system_mode_get_no_pref(void)
 	enum lte_lc_system_mode mode;
 
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
-		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
+		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d", 4);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* ltem_mode */
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* nbiot_mode */
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* gps_mode */
@@ -1719,7 +1719,7 @@ void test_lte_lc_system_mode_get_at_scanf_fail(void)
 	enum lte_lc_system_mode_preference preference;
 
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
-		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 3);
+		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d", 3);
 
 	ret = lte_lc_system_mode_get(&mode, &preference);
 	TEST_ASSERT_EQUAL(-EFAULT, ret);
@@ -1741,7 +1741,7 @@ void test_lte_lc_system_mode_get_invalid_mode_fail(void)
 	enum lte_lc_system_mode_preference preference;
 
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
-		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
+		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d", 4);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* ltem_mode */
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* nbiot_mode */
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(0); /* gps_mode */
@@ -1758,7 +1758,7 @@ void test_lte_lc_system_mode_get_invalid_pref_fail(void)
 	enum lte_lc_system_mode_preference preference;
 
 	__mock_nrf_modem_at_scanf_ExpectAndReturn(
-		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d", 4);
+		"AT%XSYSTEMMODE?", "%%XSYSTEMMODE: %d,%d,%d,%d,%d", 4);
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* ltem_mode */
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* nbiot_mode */
 	__mock_nrf_modem_at_scanf_ReturnVarg_int(1); /* gps_mode */

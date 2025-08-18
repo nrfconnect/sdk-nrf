@@ -270,6 +270,9 @@ config LTE_NETWORK_MODE_LTE_M_NBIOT
 config LTE_NETWORK_MODE_LTE_M_NBIOT_GPS
 	bool "LTE-M, NB-IoT and GPS"
 
+config LTE_NETWORK_MODE_NTN_NBIOT
+	bool "NTN NB-IoT"
+
 endchoice
 
 choice LTE_MODE_PREFERENCE
