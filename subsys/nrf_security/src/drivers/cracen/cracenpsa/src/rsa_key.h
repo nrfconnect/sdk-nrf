@@ -12,7 +12,7 @@
 #include <silexpk/sxbuf/sxbufop.h>
 
 /** Write the sizes of the elements of a RSA key. */
-static void cracen_ffkey_write_sz(const struct cracen_rsa_key *key, int *sizes)
+static inline void cracen_ffkey_write_sz(const struct cracen_rsa_key *key, int *sizes)
 {
 	int slotidx = 0;
 	int i = 0;
@@ -29,7 +29,7 @@ static void cracen_ffkey_write_sz(const struct cracen_rsa_key *key, int *sizes)
 }
 
 /** Write the elements of a RSA key into the input slots. */
-static void cracen_ffkey_write(const struct cracen_rsa_key *key, struct sx_pk_slot *inputs)
+static inline void cracen_ffkey_write(const struct cracen_rsa_key *key, struct sx_pk_slot *inputs)
 {
 	int slotidx = 0;
 	int i = 0;
