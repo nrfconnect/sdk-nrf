@@ -568,9 +568,6 @@ cluster BasicInformation = 40 {
     boolean reachableNewValue = 0;
   }
 
-  info event RandomNumberChanged = 4 {
-  }
-
   readonly attribute int16u dataModelRevision = 0;
   readonly attribute char_string<32> vendorName = 1;
   readonly attribute vendor_id vendorID = 2;
@@ -594,7 +591,6 @@ cluster BasicInformation = 40 {
   readonly attribute optional ProductAppearanceStruct productAppearance = 20;
   readonly attribute int32u specificationVersion = 21;
   readonly attribute int16u maxPathsPerInvoke = 22;
-  attribute int16u randomNumber = 23;
   readonly attribute int32u configurationVersion = 24;
   readonly attribute command_id generatedCommandList[] = 65528;
   readonly attribute command_id acceptedCommandList[] = 65529;
@@ -602,8 +598,6 @@ cluster BasicInformation = 40 {
   readonly attribute bitmap32 featureMap = 65532;
   readonly attribute int16u clusterRevision = 65533;
 
-  /** Generate random number */
-  command GenerateRandom(): DefaultSuccess = 0;
   command MfgSpecificPing(): DefaultSuccess = 0;
 }
 
@@ -1442,66 +1436,6 @@ cluster GroupKeyManagement = 63 {
   fabric command access(invoke: administer) KeySetReadAllIndices(): KeySetReadAllIndicesResponse = 4;
 }
 
-/** The NordicDevKit cluster showcases a cluster manufacturer extensions */
-cluster NordicDevKit = 4294048769 {
-  revision 1; // NOTE: Default/not specifically set
-
-  enum LEDActionEnum : enum8 {
-    kOff = 0;
-    kOn = 1;
-    kToggle = 2;
-  }
-
-  info event UserButtonChanged = 4293984256 {
-  }
-
-  readonly attribute command_id generatedCommandList[] = 65528;
-  readonly attribute command_id acceptedCommandList[] = 65529;
-  readonly attribute attrib_id attributeList[] = 65531;
-  readonly attribute bitmap32 featureMap = 65532;
-  readonly attribute int16u clusterRevision = 65533;
-  attribute char_string<254> devKitName = 4293984256;
-  provisional readonly nosubscribe attribute boolean userLED = 4293984257;
-  provisional readonly nosubscribe attribute boolean userButton = 4293984258;
-
-  request struct SetLEDRequest {
-    LEDActionEnum action = 0;
-  }
-
-  /** Change LED state */
-  command SetLED(SetLEDRequest): DefaultSuccess = 4293984256;
-}
-
-/** The NordicDevKit cluster showcases a cluster manufacturer extensions */
-cluster NordicDevKit = 4294048769 {
-  revision 1; // NOTE: Default/not specifically set
-
-  enum LEDActionEnum : enum8 {
-    kOff = 0;
-    kOn = 1;
-    kToggle = 2;
-  }
-
-  info event UserButtonChanged = 4293984256 {
-  }
-
-  readonly attribute command_id generatedCommandList[] = 65528;
-  readonly attribute command_id acceptedCommandList[] = 65529;
-  readonly attribute attrib_id attributeList[] = 65531;
-  readonly attribute bitmap32 featureMap = 65532;
-  readonly attribute int16u clusterRevision = 65533;
-  attribute char_string<254> devKitName = 4293984256;
-  provisional readonly nosubscribe attribute boolean userLED = 4293984257;
-  provisional readonly nosubscribe attribute boolean userButton = 4293984258;
-
-  request struct SetLEDRequest {
-    LEDActionEnum action = 0;
-  }
-
-  /** Change LED state */
-  command SetLED(SetLEDRequest): DefaultSuccess = 4293984256;
-}
-
 endpoint 0 {
   device type ma_rootdevice = 22, version 3;
   device type ma_otarequestor = 18, version 1;
@@ -1537,7 +1471,6 @@ endpoint 0 {
     emits event StartUp;
     emits event ShutDown;
     emits event Leave;
-    emits event RandomNumberChanged;
     callback attribute dataModelRevision;
     callback attribute vendorName;
     callback attribute vendorID;
@@ -1555,14 +1488,11 @@ endpoint 0 {
     callback attribute capabilityMinima;
     callback attribute specificationVersion;
     callback attribute maxPathsPerInvoke;
-    ram      attribute randomNumber default = 0;
     callback attribute generatedCommandList;
     callback attribute acceptedCommandList;
     callback attribute attributeList;
     ram      attribute featureMap default = 0;
     ram      attribute clusterRevision default = 4;
-
-    handle command GenerateRandom;
   }
 
   server cluster OtaSoftwareUpdateRequestor {
@@ -1689,6 +1619,9 @@ endpoint 0 {
     handle command UpdateFabricLabel;
     handle command RemoveFabric;
     handle command AddTrustedRootCertificate;
+    handle command SetVIDVerificationStatement;
+    handle command SignVIDVerificationRequest;
+    handle command SignVIDVerificationResponse;
   }
 
   server cluster GroupKeyManagement {
@@ -1711,20 +1644,5 @@ endpoint 0 {
   }
 }
 endpoint 1 {
-  device type nordic_dev_kit = 1, version 1;
 
-  binding cluster NordicDevKit;
-
-  server cluster NordicDevKit {
-    callback attribute generatedCommandList;
-    callback attribute acceptedCommandList;
-    callback attribute attributeList;
-    ram      attribute featureMap default = 0;
-    ram      attribute clusterRevision default = 1;
-    persist  attribute devKitName default = "Nordic Development Kit";
-    ram      attribute userLED default = false;
-    ram      attribute userButton default = false;
-
-    handle command SetLED;
-  }
 }
