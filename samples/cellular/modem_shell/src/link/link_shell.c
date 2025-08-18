@@ -126,6 +126,7 @@ static const char link_sysmode_usage_str[] =
 	"  -M, --ltem_gnss,        Set LTE-M + GNSS system mode\n"
 	"  -N, --nbiot_gnss,       Set NB-IoT + GNSS system mode\n"
 	"      --ltem_nbiot_gnss,  Set LTE-M + NB-IoT + GNSS system mode\n"
+	"      --ntn,              Set NTN NB-IoT system mode\n"
 	"  -h, --help,             Shows this help information\n"
 	"\n"
 	"Additional LTE mode preference that can be optionally given\n"
@@ -380,6 +381,7 @@ enum {
 	LINK_SHELL_OPT_MRESET_USER,
 	LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT,
 	LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT_GNSS,
+	LINK_SHELL_OPT_SYSMODE_NTN,
 	LINK_SHELL_OPT_SYSMODE_PREF_AUTO,
 	LINK_SHELL_OPT_SYSMODE_PREF_LTEM,
 	LINK_SHELL_OPT_SYSMODE_PREF_NBIOT,
@@ -466,6 +468,7 @@ static struct option long_options[] = {
 	{ "mreset_user", no_argument, 0, LINK_SHELL_OPT_MRESET_USER },
 	{ "ltem_nbiot", no_argument, 0, LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT },
 	{ "ltem_nbiot_gnss", no_argument, 0, LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT_GNSS },
+	{ "ntn", no_argument, 0, LINK_SHELL_OPT_SYSMODE_NTN },
 	{ "pref_auto", no_argument, 0, LINK_SHELL_OPT_SYSMODE_PREF_AUTO },
 	{ "pref_ltem", no_argument, 0, LINK_SHELL_OPT_SYSMODE_PREF_LTEM },
 	{ "pref_nbiot", no_argument, 0, LINK_SHELL_OPT_SYSMODE_PREF_NBIOT },
@@ -581,9 +584,11 @@ static void link_shell_print_usage(enum link_shell_command command)
 	 LTE_LC_SYSTEM_MODE_LTEM_NBIOT                   :	   \
 	 IS_ENABLED(CONFIG_LTE_NETWORK_MODE_LTE_M_NBIOT_GPS)     ? \
 	 LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS               :	   \
+	 IS_ENABLED(CONFIG_LTE_NETWORK_MODE_NTN_NBIOT)           ? \
+	 LTE_LC_SYSTEM_MODE_NTN_NBIOT                    :	   \
 	 LINK_SYSMODE_NONE)
 
-static void link_shell_sysmode_set(int sysmode, int lte_pref)
+static int link_shell_sysmode_set(int sysmode, int lte_pref)
 {
 	enum lte_lc_func_mode functional_mode;
 	char snum[64];
@@ -599,11 +604,15 @@ static void link_shell_sysmode_set(int sysmode, int lte_pref)
 				"Requested mode couldn't set to modem. "
 				"Not in flighmode nor in pwroff?");
 		}
+
+		return -EFAULT;
 	} else {
 		mosh_print(
 			"System mode set successfully to modem: %s",
 			link_shell_sysmode_to_string(sysmode, snum));
 	}
+
+	return 0;
 }
 
 #define MOSH_NCELLMEAS_SEARCH_TYPE_NONE 0xFF
@@ -2406,8 +2415,8 @@ static int link_shell_settings(const struct shell *shell, size_t argc, char **ar
 		if (operation == LINK_OPERATION_RESET) {
 			link_sett_defaults_set();
 			if (SYS_MODE_PREFERRED != LINK_SYSMODE_NONE) {
-				link_shell_sysmode_set(SYS_MODE_PREFERRED,
-						       CONFIG_LTE_MODE_PREFERENCE_VALUE);
+				(void)link_shell_sysmode_set(SYS_MODE_PREFERRED,
+							     CONFIG_LTE_MODE_PREFERENCE_VALUE);
 			}
 		}
 		if (mreset_type == LINK_FACTORY_RESET_ALL) {
@@ -2500,6 +2509,9 @@ static int link_shell_sysmode(const struct shell *shell, size_t argc, char **arg
 		case LINK_SHELL_OPT_SYSMODE_LTEM_NBIOT_GNSS:
 			sysmode_option = LTE_LC_SYSTEM_MODE_LTEM_NBIOT_GPS;
 			break;
+		case LINK_SHELL_OPT_SYSMODE_NTN:
+			sysmode_option = LTE_LC_SYSTEM_MODE_NTN_NBIOT;
+			break;
 		case LINK_SHELL_OPT_SYSMODE_PREF_AUTO:
 			sysmode_lte_pref_option = LTE_LC_SYSTEM_MODE_PREFER_AUTO;
 			break;
@@ -2559,15 +2571,15 @@ static int link_shell_sysmode(const struct shell *shell, size_t argc, char **arg
 			}
 		}
 	} else if (sysmode_option != LINK_SYSMODE_NONE) {
-		link_shell_sysmode_set(sysmode_option, sysmode_lte_pref_option);
-
-		/* Save system modem to link settings */
-		(void)link_sett_sysmode_save(sysmode_option, sysmode_lte_pref_option);
-
+		ret = link_shell_sysmode_set(sysmode_option, sysmode_lte_pref_option);
+		if (ret == 0) {
+			/* Save system modem to link settings */
+			(void)link_sett_sysmode_save(sysmode_option, sysmode_lte_pref_option);
+		}
 	} else if (operation == LINK_OPERATION_RESET) {
 		if (SYS_MODE_PREFERRED != LINK_SYSMODE_NONE) {
-			link_shell_sysmode_set(SYS_MODE_PREFERRED,
-					       CONFIG_LTE_MODE_PREFERENCE_VALUE);
+			(void)link_shell_sysmode_set(SYS_MODE_PREFERRED,
+						     CONFIG_LTE_MODE_PREFERENCE_VALUE);
 		}
 
 		(void)link_sett_sysmode_default_set();
