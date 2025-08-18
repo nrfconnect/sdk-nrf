@@ -35,6 +35,8 @@ manifest:
       url-base: https://github.com/boschsensortec
     - name: eembc
       url-base: https://github.com/eembc
+    - name: raku
+      url-base: https://github.com/e-rk
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -145,7 +147,8 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: bdace5c474dac5dde93b97d34fe9119c5d691870
+      remote: raku
+      revision: clock-test-2
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
