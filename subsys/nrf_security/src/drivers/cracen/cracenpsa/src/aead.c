@@ -414,7 +414,7 @@ psa_status_t cracen_aead_set_lengths(cracen_aead_operation_t *operation, size_t 
 #endif
 }
 
-static psa_status_t cracen_aead_update_internal(cracen_aead_operation_t *operation,
+static __maybe_unused psa_status_t cracen_aead_update_internal(cracen_aead_operation_t *operation,
 						const uint8_t *input, size_t input_length,
 						uint8_t *output, size_t output_size,
 						size_t *output_length, bool is_ad_update)
