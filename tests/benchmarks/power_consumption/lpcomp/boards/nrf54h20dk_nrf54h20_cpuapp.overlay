@@ -27,4 +27,5 @@
 	psel = "AIN2"; /* P1.02 */
 	refsel = "VDD_4_8";
 	status = "okay";
+	zephyr,pm-device-runtime-auto;
 };
