@@ -50,19 +50,17 @@ static void ot_receive_handler(otMessage *message, void *context)
 	LOG_DBG("Passing IPv6 packet to RPC client");
 
 out:
+	otMessageFree(message);
 	ot_rpc_mutex_unlock();
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_IF_RECEIVE, &ctx, ot_rpc_decode_void, NULL);
 	ot_rpc_mutex_lock();
-}
-
-static void ot_receive_handler_null(otMessage *message, void *context)
-{
 }
 
 static void ot_rpc_cmd_if_enable(const struct nrf_rpc_group *group, struct nrf_rpc_cbor_ctx *ctx,
 				 void *handler_data)
 {
 	bool enable;
+	otInstance *instance;
 
 	enable = nrf_rpc_decode_bool(ctx);
 
@@ -71,11 +69,11 @@ static void ot_rpc_cmd_if_enable(const struct nrf_rpc_group *group, struct nrf_r
 		return;
 	}
 
-	/*
-	 * When the interface is getting disabled, set an empty receive handler
-	 * because openthread_set_receive_cb() asserts that the callback is not null.
-	 */
-	openthread_set_receive_cb(enable ? ot_receive_handler : ot_receive_handler_null, NULL);
+	openthread_mutex_lock();
+	instance = openthread_get_default_instance();
+	otIp6SetReceiveCallback(instance, enable ? ot_receive_handler : NULL, NULL);
+	openthread_mutex_unlock();
+
 	nrf_rpc_rsp_send_void(group);
 }
 
