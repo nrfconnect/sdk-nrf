@@ -135,6 +135,10 @@ nRF54H20 DK bring-up
 
 The following sections describe the steps required for the nRF54H20 bring-up.
 
+.. note::
+   To program the nRF54H20 SoC binaries based on IronSide SE on your nRF54H20 SoC-based device, your device must be in lifecycle state (LCS) ``EMPTY``.
+   Devices already provisioned using SUIT-based binaries and in LCS RoT cannot be transitioned back to LCS EMPTY.
+
 .. rst-class:: numbered-step
 
 Programming the BICR
