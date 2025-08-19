@@ -42,7 +42,7 @@ config TFM_LOG_LEVEL_SILENCE
 		   $(dt_nodelabel_has_prop,uart30,pinctrl-names)
 
 choice TFM_PROFILE_TYPE
-	default TFM_PROFILE_TYPE_NOT_SET if SOC_SERIES_NRF54LX
+	default TFM_PROFILE_TYPE_NOT_SET if SOC_SERIES_NRF54LX || BT_CRYPTO || BT_MESH_USES_TFM_PSA || OPENTHREAD
 	default TFM_PROFILE_TYPE_MINIMAL
 endchoice
 
