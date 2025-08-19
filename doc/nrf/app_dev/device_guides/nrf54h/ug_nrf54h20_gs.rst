@@ -8,21 +8,27 @@ Getting started with the nRF54H20 DK
    :depth: 2
 
 This document gets you started with your nRF54H20 Development Kit (DK) using the |NCS| for the first time.
-It tells you how to install the :zephyr:code-sample:`sysbuild_hello_world` sample and perform a quick test of your DK.
+It tells you how to do the following:
 
-If you are migrating from an earlier version of the |NCS|, see :ref:`migration_guides`.
+* Install the required software and tools.
+* Prepare the nRF54H20 DK for first use.
+* Program on the DK the :zephyr:code-sample:`sysbuild_hello_world` sample
+* Perform a quick test of your DK.
+
+.. note::
+   If you are migrating from an earlier version of the |NCS|, see :ref:`migration_guides`.
 
 .. _ug_nrf54h20_gs_requirements:
 
-Minimum requirements
-********************
+Requirements
+************
 
 Make sure you have all the required hardware and that your computer has one of the supported operating systems.
 
 Hardware
 ========
 
-* nRF54H20 DK version PCA10175 Engineering C - v0.9.0 and later revisions.
+* nRF54H20 DK version PCA10175 Engineering C - v0.9.0 and later DK revisions on lifecycle state (LCS) ``EMPTY``.
   Check the version number on your DK's sticker to verify its compatibility with the |NCS|.
 * USB-C cable.
 
@@ -63,7 +69,7 @@ Install prerequisites
    :start-after: .. prerequisites-include-start
    :end-before: .. prerequisites-include-end
 
-.. _ug_nrf54h20_install_toolchain:
+.. _ug_nrf54h20_gs_install_toolchain:
 
 Installing the |NCS| toolchain
 ==============================
@@ -77,6 +83,8 @@ Installing nRF Util and its commands
 
 When you install the |NCS| toolchain as listed above, you get the :ncs-tool-version:`NRFUTIL_VERSION_WIN10` version of nRF Util core module (``nrfutil``).
 Using the nRF54H20 DK with the |NCS| version |release| requires the following:
+
+.. _ug_nrf54h20_nrfutil_comm_ver:
 
 * The latest version of nRF Util core module (``nrfutil``), which might or might not be the same as the version installed with the |NCS| toolchain
 * nRF Util ``device`` command version |54H_nrfutil_device_ver|
@@ -94,26 +102,25 @@ To update your nRF Util installation, complete the following steps:
 
    For more information, consult the `Upgrading nRF Util core module`_ documentation.
 
-#. Install the required versions of nRF Util commands, as listed above, using the command from `Installing specific versions of nRF Util commands`_.
-   For example, the following command installs the nRF Util ``device`` command:
+#. Install the required versions of nRF Util commands, as listed above, using the command from `Installing specific versions of nRF Util commands`_:
 
    .. code-block::
 
       nrfutil install device=<version_number> --force
+      nrfutil install trace=<version_number> --force
 
    .. note::
-      Substitute ``<version_number>`` with |54H_nrfutil_device_ver|.
+      Substitute ``<version_number>`` with the version numbers listed :ref:`here <ug_nrf54h20_nrfutil_comm_ver>`.
 
 #. To verify the installation of the nRF Util commands, run the following command:
 
    .. code-block::
 
-      nrfutil <command> --version
-
-   .. note::
-      Substitute ``<command>`` with  either ``device``, or ``trace``.
+      nrfutil device --version
+      nrfutil trace --version
 
    The output will show the installed version of that command.
+   Ensure they match the required versions.
 
 Getting the |NCS| code
 ======================
@@ -205,8 +212,8 @@ To transition the LCS to ``RoT``, do the following:
 
 .. _ug_nrf54h20_gs_sample:
 
-Building and programming the sample
-***********************************
+Building and programming your first sample to the nRF54H20 DK
+*************************************************************
 
 The :zephyr:code-sample:`sysbuild_hello_world` sample is a multicore sample running on both the application core (``cpuapp``) and the Peripheral Processor (PPR, ``cpuppr``).
 It uses the ``nrf54h20dk/nrf54h20/cpuapp`` board target.
@@ -234,8 +241,8 @@ This command builds and programs the sample automatically on both the applicatio
 
 .. _ug_nrf54h20_sample_reading_logs:
 
-Reading the logs
-****************
+Testing your first sample on the nRF54H20 DK
+********************************************
 
 With the :zephyr:code-sample:`sysbuild_hello_world` sample programmed, the nRF54H20 DK outputs logs for the application core and the configured remote processor.
 The logs are output over UART.
