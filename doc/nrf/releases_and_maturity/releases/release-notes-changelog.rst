@@ -310,7 +310,10 @@ Keys samples
 Matter samples
 --------------
 
-|no_changes_yet_note|
+* :ref:`matter_lock_sample` sample:
+
+   * Added a callback for the auto-relock feature.
+     This resolves the :ref:`known issue <known_issues>` KRKNWK-20691.
 
 Networking samples
 ------------------
