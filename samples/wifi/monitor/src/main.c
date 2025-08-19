@@ -121,8 +121,8 @@ static const struct device *capture_dev;
 /* Fixed address as the static IP given from Kconfig will be
  * applied to Wi-Fi interface.
  */
-#define CONFIG_NET_CONFIG_USB_IPV4_ADDR "192.0.2.1"
-#define CONFIG_NET_CONFIG_USB_IPV4_MASK "255.255.255.0"
+#define NET_CONFIG_USB_IPV4_ADDR "192.0.2.1"
+#define NET_CONFIG_USB_IPV4_MASK "255.255.255.0"
 
 int init_usb(void)
 {
@@ -551,18 +551,18 @@ int main(void)
 		printk("Cannot find network interface: %s", "eth_netusb");
 		return -1;
 	}
-	if (sizeof(CONFIG_NET_CONFIG_USB_IPV4_ADDR) > 1) {
-		if (net_addr_pton(AF_INET, CONFIG_NET_CONFIG_USB_IPV4_ADDR, &addr)) {
-			printk("Invalid address: %s", CONFIG_NET_CONFIG_USB_IPV4_ADDR);
+	if (sizeof(NET_CONFIG_USB_IPV4_ADDR) > 1) {
+		if (net_addr_pton(AF_INET, NET_CONFIG_USB_IPV4_ADDR, &addr)) {
+			printk("Invalid address: %s", NET_CONFIG_USB_IPV4_ADDR);
 			return -1;
 		}
 		net_if_ipv4_addr_add(iface, &addr, NET_ADDR_MANUAL, 0);
 	}
 
-	if (sizeof(CONFIG_NET_CONFIG_USB_IPV4_MASK) > 1) {
+	if (sizeof(NET_CONFIG_USB_IPV4_MASK) > 1) {
 		/* If not empty */
-		if (net_addr_pton(AF_INET, CONFIG_NET_CONFIG_USB_IPV4_MASK, &mask)) {
-			printk("Invalid netmask: %s", CONFIG_NET_CONFIG_USB_IPV4_MASK);
+		if (net_addr_pton(AF_INET, NET_CONFIG_USB_IPV4_MASK, &mask)) {
+			printk("Invalid netmask: %s", NET_CONFIG_USB_IPV4_MASK);
 		} else {
 			net_if_ipv4_set_netmask_by_addr(iface, &addr, &mask);
 		}
