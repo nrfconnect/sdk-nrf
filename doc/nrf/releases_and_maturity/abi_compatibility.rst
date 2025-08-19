@@ -57,6 +57,11 @@ Additionally, maintaining ABI compatibility allows the nRF54H20 SoC binary compo
     The nRF54H20 SoC binaries only support specific versions of the |NCS| and do not support rollbacks to previous versions.
     Upgrading the nRF54H20 SoC binaries on your development kit might break the DK's compatibility with applications developed for earlier versions of the |NCS|.
 
+Provisioning the nRF54H20 SoC
+*****************************
+
+To provision the nRF54H20 SoC using the nRF54H20 SoC binaries, see :ref:`ug_nrf54h20_gs_bringup`.
+
 nRF54H20 SoC binaries v22.2.0+14 changelog
 ******************************************
 
