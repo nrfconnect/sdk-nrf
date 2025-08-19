@@ -89,6 +89,11 @@ bool emberAfPluginDoorLockOnDoorUnlockCommand(EndpointId endpointId, const Nulla
 	return success;
 }
 
+void emberAfPluginDoorLockOnAutoRelock(chip::EndpointId endpointId)
+{
+	BoltLockMgr().Lock(BoltLockManager::OperationSource::kAuto);
+}
+
 void emberAfDoorLockClusterInitCallback(EndpointId endpoint)
 {
 	DoorLockServer::Instance().InitServer(endpoint);
