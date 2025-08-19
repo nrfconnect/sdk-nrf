@@ -210,11 +210,6 @@ config BT_MESH_KEY_IMPORTER_PRIO
 	  The key importer is initialized before the main application. It is initialized
 	  using system initialization macro with application level.
 
-choice TFM_PROFILE_TYPE
-	depends on BT_MESH_USES_TFM_PSA
-	default TFM_PROFILE_TYPE_NOT_SET
-endchoice
-
 rsource "Kconfig.models"
 rsource "Kconfig.dk_prov"
 rsource "shell/Kconfig"
