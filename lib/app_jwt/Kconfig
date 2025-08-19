@@ -14,10 +14,17 @@ menuconfig APP_JWT
 	# Needed to print integer values in JSON
 	select CJSON_LIB
 	select CBPRINTF_FP_SUPPORT
+	# Needed to use PSA and crypto
+	select NRF_SECURITY
+	select PSA_SSF_CRYPTO_CLIENT
 	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT
 	select PSA_WANT_ALG_ECDSA
 	select PSA_WANT_ECC_SECP_R1_256
 	select PSA_WANT_ALG_SHA_256
+	# Needed to use PSA services from secure core
+	select NRF_IRONSIDE_CALL
+	# Needed for device UUID
+	select NRF_IRONSIDE_BOOT_REPORT
 
 if APP_JWT
 

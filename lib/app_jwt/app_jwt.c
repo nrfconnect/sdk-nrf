@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include <errno.h>
 
-#include <sdfw/sdfw_services/device_info_service.h>
+#include <ironside/include/nrf_ironside/boot_report.h>
 
 #include <date_time.h>
 #include <psa/crypto.h>
@@ -636,6 +636,20 @@ static int jwt_signature_append(const char *const unsigned_jwt, const char *cons
 	return err;
 }
 
+static int device_info_get_uuid(uint8_t *uuid_bytes)
+{
+	int err = 0;
+	const struct ironside_boot_report *report;
+
+	err = ironside_boot_report_get(&report);
+
+	if (err == 0) {
+		memcpy(uuid_bytes, (void*)&report->device_info_uuid ,SECDOM_BOOT_REPORT_UUID_SIZE);
+	}
+
+	return err;
+}
+
 int app_jwt_generate(struct app_jwt_data *const jwt)
 {
 	if (jwt == NULL) {
@@ -712,7 +726,7 @@ int app_jwt_get_uuid(char *uuid_buffer, const size_t uuid_buffer_size)
 
 	uint8_t uuid_bytes[UUID_BINARY_BYTES_SZ];
 
-	if (0 != ssf_device_info_get_uuid(uuid_bytes)) {
+	if (0 != device_info_get_uuid(uuid_bytes)) {
 		/* Couldn't read data */
 		return -ENXIO;
 	}
