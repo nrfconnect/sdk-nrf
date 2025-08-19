@@ -22,40 +22,55 @@ However, changes that affect data structure layouts, such as altering field orde
 ABI compatibility matrix for the nRF54H20 SoC binaries
 ******************************************************
 
+.. caution::
+
+   * To use the most recent version of the |NCS|, you must provision your nRF54H20-based device with the compatible IronSide-based SoC binaries.
+     Devices already provisioned using SUIT-based SoC binaries and in LCS ``RoT`` cannot be transitioned back to LCS ``EMPTY``.
+
+     For more information on provisioning devices, see :ref:`ug_nrf54h20_gs_bringup`.
+
+   * The nRF54H20 SoC binaries only support specific versions of the |NCS| and do not support rollbacks to previous versions.
+     Upgrading the nRF54H20 SoC binaries on your development kit might break the DK's compatibility with applications developed for earlier versions of the |NCS|.
+
+     To migrate your existing applications to the newest version of the |NCS|, see :ref:`migration_guides`.
+
 The following table illustrates ABI compatibility between different versions of the nRF54H20 SoC binaries and the |NCS|:
 
 .. list-table::
    :header-rows: 1
 
    * - |NCS| versions
-     - Compatible nRF54H20 SoC binaries version
+     - Compatible nRF54H20 SoC binaries version based on IronSide Secure Element (IronSide SE)
    * - |NCS| v3.1.0
-     - `nRF54H20 SoC binaries v22.2.0+14`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
-       It includes IronSide Secure Element (IronSide SE).
+     - `nRF54H20 SoC binaries v22.2.0+14`_, compatible with the nRF54H20 DK v0.9.0 and later DK revisions in LCS ``EMPTY``.
+
+
+.. list-table::
+   :header-rows: 1
+
+   * - |NCS| versions
+     - Compatible nRF54H20 SoC binaries version based on SUIT
+       (no longer usable with the newest |NCS| versions)
    * - |NCS| v3.0.0
-     - `nRF54H20 SoC binaries v0.9.6`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
+     - nRF54H20 SoC binaries v0.9.6, compatible with the nRF54H20 DK v0.9.0 and later DK revisions.
    * - |NCS| v2.9.0-nRF54H20-1
-     - `nRF54H20 SoC binaries v0.9.2`_, compatible with the nRF54H20 DK v0.9.0 and later revisions.
+     - nRF54H20 SoC binaries v0.9.2, compatible with the nRF54H20 DK v0.9.0 and later DK revisions.
    * - |NCS| v2.9.0
-     - `nRF54H20 SoC binaries v0.7.0 for EngC DKs`_, compatible with the nRF54H20 DK v0.8.3 and later revisions.
+     - nRF54H20 SoC binaries v0.7.0 for EngC DKs, compatible with the nRF54H20 DK v0.8.3 and later DK revisions.
    * - |NCS| v2.8.0
-     - `nRF54H20 SoC binaries v0.7.0 for EngC DKs`_, compatible with the nRF54H20 DK v0.8.3 and later revisions.
-       `nRF54H20 SoC binaries v0.7.0 for EngB DKs`_, compatible with the nRF54H20 DKs ranging from v0.8.0 to v0.8.2.
+     - nRF54H20 SoC binaries v0.7.0 for EngC DKs, compatible with the nRF54H20 DK v0.8.3 and later DK revisions.
+       nRF54H20 SoC binaries v0.7.0 for EngB DKs, compatible with the nRF54H20 DKs ranging from v0.8.0 to v0.8.2.
    * - |NCS| v2.7.99-cs2
-     - `nRF54H20 SoC binaries v0.6.5`_
+     - nRF54H20 SoC binaries v0.6.5
    * - |NCS| v2.7.99-cs1
-     - `nRF54H20 SoC binaries v0.6.2`_
+     - nRF54H20 SoC binaries v0.6.2
    * - |NCS| v2.7.0
-     - `nRF54H20 SoC binaries v0.5.0`_
+     - nRF54H20 SoC binaries v0.5.0
    * - |NCS| v2.6.99-cs2
-     - `nRF54H20 SoC binaries v0.3.3`_
+     - nRF54H20 SoC binaries v0.3.3
 
 Maintaining ABI compatibility ensures that the Secure Domain and System Controller firmware binaries do not need to be recompiled each time the application, radio binaries, or both are recompiled, as long as they are based on a compatible |NCS| version.
 Additionally, maintaining ABI compatibility allows the nRF54H20 SoC binary components to work together without recompilation when updating to newer |NCS| versions.
-
-.. note::
-    The nRF54H20 SoC binaries only support specific versions of the |NCS| and do not support rollbacks to previous versions.
-    Upgrading the nRF54H20 SoC binaries on your development kit might break the DK's compatibility with applications developed for earlier versions of the |NCS|.
 
 Provisioning the nRF54H20 SoC
 *****************************
