@@ -596,6 +596,18 @@ Matter
 
 The issues in this section are related to the :ref:`ug_matter` protocol.
 
+.. rst-class:: v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0
+
+KRKNWK-20445: PSA crypto implementation does not properly revert NOC keys when failsafe occurs
+  If a Matter controller attempts to commission a device to the same Matter fabric to which it is already commissioned, and the failsafe procedure occurs (for example, some error occurs during the commissioning process), the new NOC key is discarded, but the old NOC key is not restored.
+  This issue is caused by a bug where the same PSA key ID is used for both the active and pending NOC keys.
+  When the pending key is being destroyed, the active key is also destroyed.
+  The TC-OPCREDS-3.8 certification test fails on the |NCS| release v3.1.0.
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix to ``sdk-connectedhomeip`` (commit hash: ``fe650a3ee4948ef1a2edd55a7fe4f6eb561c9e64``).
+                  This fix can be applied only to the |NCS| release v3.1.0.
+                  The workaround cannot be applied if the experimental :kconfig:option:`CONFIG_CHIP_STORE_KEYS_IN_KMU` Kconfig option is set to ``y``.
+
 .. rst-class:: v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0
 
 KRKNWK-19277: Invalid testing steps in the Light Switch README file
