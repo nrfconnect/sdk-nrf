@@ -262,7 +262,10 @@ Bluetooth Fast Pair samples
 Cellular samples
 ----------------
 
-* Added the :ref:`nrf_cloud_coap_cell_location` sample to demonstrate how to use the `nRF Cloud CoAP API`_ for nRF Cloud's cellular location service.
+* Added:
+
+  * The :ref:`nrf_cloud_coap_cell_location` sample to demonstrate how to use the `nRF Cloud CoAP API`_ for nRF Cloud's cellular location service.
+  * The :ref:`nrf_cloud_coap_fota_sample` sample to demonstrate how to use the `nRF Cloud CoAP API`_ for FOTA updates.
 
 * :ref:`nrf_cloud_rest_cell_location` sample:
 
