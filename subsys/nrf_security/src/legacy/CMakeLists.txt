@@ -24,6 +24,7 @@ if(CONFIG_MBEDTLS_LEGACY_CRYPTO_C OR
   CONFIG_PSA_CRYPTO_DRIVER_OBERON OR
   CONFIG_PSA_CRYPTO_DRIVER_CRACEN)
   append_with_prefix(src_crypto_legacy ${ARM_MBEDTLS_PATH}/library
+    block_cipher.c
     aes.c
     cmac.c
     ccm.c
