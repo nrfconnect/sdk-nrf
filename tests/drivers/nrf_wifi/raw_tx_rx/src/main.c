@@ -300,12 +300,33 @@ static void rx_thread_oneshot(void)
 
 ZTEST(nrf_wifi, test_single_raw_tx_rx)
 {
+	struct net_if *iface;
+	struct wifi_filter_info filter_info = {0};
+	int ret;
 	/* MONITOR mode */
 	int mode = BIT(1);
 
 	wifi_set_mode(mode);
 	zassert_false(wifi_set_tx_injection_mode(), "Failed to set TX injection mode");
 	zassert_equal(wifi_set_channel(), 0, "Failed to set channel");
+	/* Configure packet filter with buffer size 1550 */
+	iface = net_if_get_first_wifi();
+	if (iface == NULL) {
+		LOG_ERR("Failed to get Wi-Fi iface for packet filter");
+		return;
+	}
+
+	filter_info.oper = WIFI_MGMT_SET;
+	filter_info.if_index = net_if_get_by_iface(iface);
+	filter_info.filter = WIFI_PACKET_FILTER_ALL;
+	filter_info.buffer_size = 1550;
+
+	ret = net_mgmt(NET_REQUEST_WIFI_PACKET_FILTER, iface, &filter_info, sizeof(filter_info));
+	if (ret) {
+		LOG_ERR("Packet filter setting failed %d", ret);
+	} else {
+		LOG_INF("Packet filter set with buffer size %d", filter_info.buffer_size);
+	}
 	zassert_false(setup_raw_pkt_socket(&sa), "Setting socket for raw pkt transmission failed");
 	k_thread_start(receiver_thread_id);
 	/* TODO: Wait for interface to be operationally UP */
