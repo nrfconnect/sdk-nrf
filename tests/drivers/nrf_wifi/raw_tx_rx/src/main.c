@@ -45,6 +45,13 @@ static void rx_thread_oneshot(void);
 K_THREAD_DEFINE(receiver_thread_id, STACK_SIZE, rx_thread_oneshot, NULL, NULL, NULL,
 		THREAD_PRIORITY, 0, -1);
 
+#define NRF_WIFICORE_RPURFBUS_BASE        0x48020000UL
+#define NRF_WIFICORE_RPURFBUS_RFCTRL ((NRF_WIFICORE_RPURFBUS_BASE) + 0x00010000UL)
+#define NRF_WIFICORE_RPURFBUS_RFCTRL_AXIMASTERACCESS ((NRF_WIFICORE_RPURFBUS_RFCTRL) + 0x00000000UL)
+
+#define RDW(addr)           (*(volatile unsigned int *)(addr))
+#define WRW(addr, data)     (*(volatile unsigned int *)(addr) = (data))
+
 struct beacon {
 	uint16_t frame_control;
 	uint16_t duration;
@@ -90,6 +97,79 @@ struct raw_tx_pkt_header {
 	unsigned char queue;
 	unsigned char raw_tx_flag;
 };
+
+
+/* RF Playout Capture Register Configuration Structure */
+struct rf_pocap_reg_config {
+	uint32_t offset;		/* Register offset from base */
+	uint32_t value;		/* Register value to write */
+	const char *reg_name;	/* Register name for logging */
+	const char *desc;		/* Description of what this register does */
+};
+
+static void configure_playout_capture(uint32_t rx_mode, uint32_t tx_mode, uint32_t rx_holdoff_length,
+	uint32_t rx_wrap_length, uint32_t back_to_back_mode)
+{
+#if (CONFIG_BOARD_NRF7120PDK_NRF7120_CPUAPP || CONFIG_BOARD_NRF7120PDK_NRF7120_CPUAPP_EMU)
+	unsigned int value;
+	int i;
+
+	LOG_INF("%s: Setting RF Playout Capture Config", __func__);
+
+	/* Set AXI Master to APP so we can access the RF */
+	WRW(NRF_WIFICORE_RPURFBUS_RFCTRL_AXIMASTERACCESS, 0x31);
+	while (RDW(NRF_WIFICORE_RPURFBUS_RFCTRL_AXIMASTERACCESS) != 0x31) {
+		/* busy-wait */
+	}
+
+	/* Data-driven register configuration */
+	struct rf_pocap_reg_config reg_configs[] = {
+		{
+			.offset = 0x0000,
+			.value = (tx_mode << 1) | rx_mode,
+			.reg_name = "WLAN_RF_POCAP_CONFIG",
+			.desc = "RX/TX mode configuration"
+		},
+		{
+			.offset = 0x0004,
+			.value = rx_holdoff_length & 0xFF,
+			.reg_name = "WLAN_RF_POCAP_RX_HOLDOFF_CONFIG",
+			.desc = "RX holdoff length configuration"
+		},
+		{
+			.offset = 0x0008,
+			.value = rx_wrap_length,
+			.reg_name = "WLAN_RF_POCAP_RX_WRAP_CONFIG",
+			.desc = "RX wrap length configuration"
+		},
+		{
+			.offset = 0x000C,
+			 /* WLAN_POCAP_BACK_TO_BACK_MODE [1..1] */
+			.value = (back_to_back_mode << 1),
+			.reg_name = "WLAN_POCAP_VERSION_CONFIG",
+			.desc = "Version and back-to-back mode configuration"
+		}
+	};
+
+	/* Process register configurations - skip other configs if back-to-back mode is active */
+	for (i = 0; i < ARRAY_SIZE(reg_configs); i++) {
+		struct rf_pocap_reg_config *cfg = &reg_configs[i];
+
+		/* If back-to-back mode is active, only configure the version register */
+		if (back_to_back_mode && cfg->offset != 0x000C) {
+			continue;
+		}
+
+		WRW(NRF_WIFICORE_RPURFBUS_BASE + cfg->offset, cfg->value);
+		value = RDW(NRF_WIFICORE_RPURFBUS_BASE + cfg->offset);
+		LOG_INF("%s: %s (0x%04x) = 0x%x - %s",
+			__func__, cfg->reg_name, cfg->offset, value, cfg->desc);
+	}
+
+	LOG_INF("%s: RF Playout Capture Config completed", __func__);
+#endif
+}
+
 
 static void wifi_set_mode(int mode_val)
 {
@@ -328,6 +408,7 @@ ZTEST(nrf_wifi, test_single_raw_tx_rx)
 		LOG_INF("Packet filter set with buffer size %d", filter_info.buffer_size);
 	}
 	zassert_false(setup_raw_pkt_socket(&sa), "Setting socket for raw pkt transmission failed");
+	configure_playout_capture(0, 1, 0x7F, 0xCA60, 0);
 	k_thread_start(receiver_thread_id);
 	/* TODO: Wait for interface to be operationally UP */
 	k_sleep(K_MSEC(50));
