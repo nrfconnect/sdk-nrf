@@ -94,9 +94,14 @@ static void ppi_cleanup(uint8_t ch_tick, uint8_t ch_sleep, uint8_t ch_wakeup)
 
 static void cpu_load_log_fn(struct k_work *item)
 {
-	uint32_t load = cpu_load_get();
+	int load = cpu_load_get();
 	uint32_t percent = load / 1000;
 	uint32_t fraction = load % 1000;
+
+	if (load < 0) {
+		LOG_ERR("Module failed to initialize.");
+		return;
+	}
 
 	cpu_load_reset();
 	LOG_INF("Load:%d,%03d%%", percent, fraction);
@@ -115,7 +120,7 @@ static void timer_handler(nrf_timer_event_t event_type, void *context)
 }
 
 
-int cpu_load_init(void)
+int cpu_load_init_internal(void)
 {
 	uint8_t ch_sleep;
 	uint8_t ch_wakeup;
@@ -200,6 +205,11 @@ int cpu_load_init(void)
 	return ret;
 }
 
+int cpu_load_init(void)
+{
+	return cpu_load_init_internal();
+}
+
 void cpu_load_reset(void)
 {
 	nrfx_timer_clear(&timer);
@@ -213,12 +223,16 @@ static uint32_t sleep_ticks_to_us(uint32_t ticks)
 	   ticks;
 }
 
-uint32_t cpu_load_get(void)
+int cpu_load_get(void)
 {
 	uint32_t sleep_us;
 	uint32_t total_cyc;
 	uint64_t total_us;
 	uint64_t load;
+
+	if (!ready) {
+		return -ENODEV;
+	}
 
 	sleep_us = sleep_ticks_to_us(nrfx_timer_capture(&timer, 0));
 	total_cyc = k_cycle_get_32() - cycle_ref;
@@ -236,21 +250,20 @@ uint32_t cpu_load_get(void)
 	load = (total_us > (uint64_t)sleep_us) ?
 			(100000 * (total_us - (uint64_t)sleep_us)) / total_us : 0;
 
-	return (uint32_t)load;
+	return (int)load;
 }
 
 static int cmd_cpu_load_get(const struct shell *shell, size_t argc, char **argv)
 {
-	uint32_t load;
+	int load;
 	uint32_t percent;
 	uint32_t fraction;
 
-	if (!ready) {
+	load = cpu_load_get();
+	if (load < 0) {
 		shell_error(shell, "Not initialized.");
 		return 0;
 	}
-
-	load = cpu_load_get();
 	percent = load / 1000;
 	fraction = load % 1000;
 
@@ -262,18 +275,12 @@ static int cmd_cpu_load_get(const struct shell *shell, size_t argc, char **argv)
 static int cmd_cpu_load_reset(const struct shell *shell,
 				size_t argc, char **argv)
 {
-	int err;
-
-	err = cpu_load_init();
-	if (err != 0) {
-		shell_error(shell, "Init failed (err:%d)", err);
-		return 0;
-	}
-
 	cpu_load_reset();
 
 	return 0;
 }
+
+SYS_INIT(cpu_load_init_internal, POST_KERNEL, CONFIG_KERNEL_INIT_PRIORITY_DEFAULT);
 
 SHELL_STATIC_SUBCMD_SET_CREATE(sub_cmd_cpu_load,
 	SHELL_CMD_ARG(get, NULL, "Get load", cmd_cpu_load_get, 1, 0),
