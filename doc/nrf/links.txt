@@ -1907,8 +1907,10 @@
 
 .. _`nRF54H20 SoC binaries v22.2.0+14`: https://files.nordicsemi.com/artifactory/SDSC/external/nrf54h20_soc_binaries_v22.2.0%2B14.zip
 
+## Old BICR file
 .. _`BICR binary file`: https://files.nordicsemi.com/artifactory/SDSC/external/bicr_ext_loadcap.hex
-.. _`BICR new binary file`: https://files.nordicsemi.com/artifactory/SDSC/external/bicr/bicr.hex
+## New BICR file
+.. _`nRF54H20 DK BICR binary file`: https://files.nordicsemi.com/artifactory/SDSC/external/bicr/bicr.hex
 
 .. _`DTS format definition`: https://github.com/nrfconnect/sdk-zephyr/blob/v3.7.99-ncs2/dts/bindings/misc/nordic%2Cnrf-bicr.yaml
 .. _`JSON format definition`: https://github.com/nrfconnect/sdk-zephyr/blob/v4.0.99-ncs1/soc/nordic/nrf54h/bicr/bicr-schema.json
