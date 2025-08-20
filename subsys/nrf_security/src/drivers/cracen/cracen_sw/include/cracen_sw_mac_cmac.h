@@ -3,13 +3,16 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#ifndef CRACEN_SW_CMAC_H
+#define CRACEN_PSA_SW_CMAC_H
 
 #include <psa/crypto.h>
-#include "common.h"
 #include "cracen_psa_primitives.h"
+#include "../../../cracenpsa/src/common.h"
+#include "cracen_sw_common.h"
 
 /**
- * @brief Setup for software based CMAC operation
+ * @brief Set up for software based CMAC operation
  *
  * This function initializes a CMAC operation with the provided key attributes
  * and key buffer. It prepares the operation structure for subsequent CMAC
@@ -64,3 +67,5 @@ psa_status_t cracen_sw_cmac_finish(cracen_mac_operation_t *op);
  */
 psa_status_t cracen_cmac_compute(cracen_mac_operation_t *op, const uint8_t *input,
 				 size_t input_length, uint8_t *mac);
+
+#endif /* CRACEN_SW_CMAC_H */

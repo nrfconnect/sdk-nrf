@@ -82,29 +82,23 @@ if(CONFIG_PSA_NEED_CRACEN_HASH_DRIVER)
   )
 endif()
 
-if(CONFIG_PSA_NEED_CRACEN_MAC_DRIVER)
+if(CONFIG_PSA_NEED_CRACEN_MAC_DRIVER AND NOT CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/mac.c
   )
 
-  if(CONFIG_PSA_NEED_CRACEN_HMAC)
+  if(CONFIG_PSA_NEED_CRACEN_CMAC)
     list(APPEND cracen_driver_sources
-      ${CMAKE_CURRENT_LIST_DIR}/src/cracen_mac_hmac.c
-      ${CMAKE_CURRENT_LIST_DIR}/src/hmac.c
+      ${CMAKE_CURRENT_LIST_DIR}/src/cracen_mac_cmac.c
     )
   endif()
+endif()
 
-  if(CONFIG_PSA_NEED_CRACEN_CMAC)
-    if(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)
-      list(APPEND cracen_driver_sources
-        ${CMAKE_CURRENT_LIST_DIR}/src/cracen_sw_mac_cmac.c
-      )
-    else()
-      list(APPEND cracen_driver_sources
-        ${CMAKE_CURRENT_LIST_DIR}/src/cracen_mac_cmac.c
-      )
-    endif()
-  endif()
+if(CONFIG_PSA_NEED_CRACEN_HMAC)
+  list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_mac_hmac.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/hmac.c
+  )
 endif()
 
 if(CONFIG_PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER OR CONFIG_PSA_NEED_CRACEN_KMU_DRIVER OR CONFIG_MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS)
