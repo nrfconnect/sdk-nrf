@@ -20,7 +20,9 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
      - Product pages
    * - :zephyr:board:`nrf54l15dk`
      - PCA10156
-     - ``nrf54l15dk/nrf54l15/cpuapp``
+     - | ``nrf54l15dk/nrf54l15/cpuapp``
+       | ``nrf54l15dk/nrf54l15/cpuflpr``
+       | ``nrf54l15dk/nrf54l15/cpuflpr/xip``
      - | `Datasheet <nRF54L15 Datasheet_>`_
        | `Quick Start app`_
        | `User Guide <nRF54L15 DK User Guide_>`_
@@ -36,6 +38,13 @@ Zephyr and the |NCS| provide support and contain board definitions for developin
      - ``nrf54l15dk/nrf54l05/cpuapp``
      - | `Datasheet <nRF54L15 Datasheet_>`_
      - | `nRF54L05 System-on-Chip (SoC) <nRF54L05_>`_
+   * - :zephyr:board:`nrf54lm20dk`
+     - PCA10184
+     - | ``nrf54lm20dk/nrf54lm20/cpuapp``
+       | ``nrf54lm20dk/nrf54lm20/cpuflpr``
+       | ``nrf54lm20dk/nrf54lm20/cpuflpr/xip``
+     - --
+     - --
 
 .. note::
 
@@ -70,7 +79,7 @@ Make sure to check the revision of your nRF54L15 development kit to see if it is
 
 .. note::
 
-  The supported nRF54L15 DK revisions are functionally equal and use the same board target (``nrf54l15dk/nrf54l15/cpuapp``).
+  The supported nRF54L15 DK revisions are functionally equal and use the same board target (``nrf54l15dk/nrf54l15/cpuapp`` or ``nrf54l15dk/nrf54l15/cpuflpr``).
 
 Refer to the compatibility matrices for the nRF54L Series devices to check the compatibility of various SoC revisions with different versions of the |NCS|:
 
