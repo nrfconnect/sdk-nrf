@@ -252,13 +252,15 @@ config MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP
 	  Use internal flash to store coredump data
 
 if MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP
+
 config MEMFAULT_NCS_FLASH_REGION_SIZE
 	hex
 	default $(dt_node_int_prop_hex,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
 
 partition=MEMFAULT_STORAGE
 partition-size=0x10000
-source "${ZEPHYR_BASE}/../nrf/subsys/partition_manager/Kconfig.template.partition_config"
+source "$(ZEPHYR_NRF_MODULE_DIR)/subsys/partition_manager/Kconfig.template.partition_config"
+
 endif # MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP
 
 # We want to encourage the use of a dedicated workqueue to upload data periodically,
@@ -292,6 +294,6 @@ endif # HW_ID_LIBRARY
 module = MEMFAULT_NCS
 module-dep = LOG
 module-str = Memfault NCS module
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # MEMFAULT

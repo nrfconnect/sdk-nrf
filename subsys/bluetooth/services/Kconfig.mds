@@ -56,6 +56,6 @@ config BT_MDS_DATA_POLL_INTERVAL
 
 module = BT_MDS
 module-str = MDS
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_MDS

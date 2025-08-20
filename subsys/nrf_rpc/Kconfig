@@ -176,21 +176,21 @@ endif # NRF_RPC_CALLBACK_PROXY
 
 module = NRF_RPC
 module-str = NRF_RPC
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 module = NRF_RPC_TR
 module-str = NRF_RPC_TR
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 module = NRF_RPC_OS
 module-str = NRF_RPC_OS
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 if NRF_RPC_CBOR
 
 module = NRF_RPC_CBOR
 module-str = NRF_RPC_CBOR
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # NRF_RPC_CBOR
 

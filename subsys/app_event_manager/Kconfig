@@ -51,7 +51,7 @@ config APP_EVENT_MANAGER_SHELL
 
 module = APP_EVENT_MANAGER
 module-str = Application Event Manager
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 config APP_EVENT_MANAGER_EVENT_LOG_BUF_LEN
 	int "Length of buffer for processing event message"

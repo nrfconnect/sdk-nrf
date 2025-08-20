@@ -156,6 +156,6 @@ endif # BT_SCAN_BLOCKLIST
 
 module = BT_SCAN
 module-str = scan library
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_SCAN

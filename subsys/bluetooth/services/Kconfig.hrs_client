@@ -22,6 +22,6 @@ config BT_HRS_CLIENT_RR_INTERVALS_COUNT
 
 module = BT_HRS_CLIENT
 module-str = HRS Client
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_HRS_CLIENT

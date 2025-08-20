@@ -48,6 +48,6 @@ config BT_GATT_POOL_STATS
 
 module = BT_GATT_POOL
 module-str = GATT_POOL
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_GATT_POOL

@@ -44,6 +44,6 @@ config SSF_$(service_name)_SERVICE_BUFFER_SIZE
 
 module = SSF_$(service_name)_SERVICE
 module-str = $(service_name_str) service
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif

@@ -213,6 +213,6 @@ endif # DULT_MOTION_DETECTOR
 
 module = DULT
 module-str = DULT
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # DULT

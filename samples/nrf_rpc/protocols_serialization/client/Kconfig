@@ -16,7 +16,7 @@ config NRF_PS_CLIENT_CRASH_DUMP_READ_BUFFER_SIZE
 
 module = NRF_PS_CLIENT
 module-str = nrf_ps_client
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 config NRF_PS_CLIENT_BT_TEST
 	bool "BLE test service for RPC Client"

@@ -4,10 +4,10 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-rsource "${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/audio/Kconfig"
-rsource "${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/bluetooth/Kconfig"
-rsource "${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/modules/Kconfig"
-rsource "${ZEPHYR_NRF_MODULE_DIR}/applications/nrf5340_audio/src/utils/Kconfig"
+rsource "$(ZEPHYR_NRF_MODULE_DIR)/applications/nrf5340_audio/src/audio/Kconfig"
+rsource "$(ZEPHYR_NRF_MODULE_DIR)/applications/nrf5340_audio/src/bluetooth/Kconfig"
+rsource "$(ZEPHYR_NRF_MODULE_DIR)/applications/nrf5340_audio/src/modules/Kconfig"
+rsource "$(ZEPHYR_NRF_MODULE_DIR)/applications/nrf5340_audio/src/utils/Kconfig"
 
 #----------------------------------------------------------------------------#
 

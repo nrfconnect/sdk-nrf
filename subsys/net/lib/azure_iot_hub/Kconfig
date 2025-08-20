@@ -145,6 +145,6 @@ endif # AZURE_IOT_HUB_DPS
 module=AZURE_IOT_HUB
 module-dep=LOG
 module-str=Azure IoT Hub
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # AZURE_IOT_HUB

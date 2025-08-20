@@ -63,6 +63,6 @@ endchoice
 
 module = PMW3360
 module-str = PMW3360
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif #PMW3360

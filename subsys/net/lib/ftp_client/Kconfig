@@ -26,7 +26,7 @@ config FTP_CLIENT_TLS
 module=FTP_CLIENT
 module-dep=LOG
 module-str=FTP client
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 if FTP_CLIENT_LOG_LEVEL_DBG
 

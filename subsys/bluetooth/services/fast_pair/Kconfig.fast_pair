@@ -199,6 +199,6 @@ config BT_FAST_PAIR_BOND_MANAGER
 
 module = BT_FAST_PAIR
 module-str = Fast Pair Service
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_FAST_PAIR

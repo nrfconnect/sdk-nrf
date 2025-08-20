@@ -127,7 +127,7 @@ EXT_API = EXT_API_PROVIDE
 id = 0x1200
 flags = 0
 ver = 1
-source "${ZEPHYR_BASE}/../nrf/subsys/fw_info/Kconfig.template.fw_info_ext_api"
+source "$(ZEPHYR_NRF_MODULE_DIR)/subsys/fw_info/Kconfig.template.fw_info_ext_api"
 
 config EXT_API_PROVIDE_EXT_API_ATLEAST_OPTIONAL
 	bool "Set the PROVIDE EXT_API as at least optional"

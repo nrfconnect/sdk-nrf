@@ -21,7 +21,7 @@ if BT_CS_DE
 
 module = BT_CS_DE
 module-str = CS_DE
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 config BT_CS_DE_NFFT_SIZE
 	int

@@ -130,6 +130,6 @@ config DFU_TARGET_CUSTOM
 module=DFU_TARGET
 module-dep=LOG
 module-str=Device Firmware Upgrade
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # DFU_TARGET

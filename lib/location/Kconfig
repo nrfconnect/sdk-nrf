@@ -302,6 +302,6 @@ endif # LOCATION_METHOD_WIFI
 
 module = LOCATION
 module-str = Location
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # LOCATION

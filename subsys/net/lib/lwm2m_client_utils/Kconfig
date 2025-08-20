@@ -288,6 +288,6 @@ endif #LWM2M_DTLS_CID
 module = LWM2M_CLIENT_UTILS
 module-dep = LOG
 module-str = LwM2M client utilities library
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # LWM2M_CLIENT_UTILS

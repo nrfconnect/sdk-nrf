@@ -20,7 +20,7 @@ config DK_LIBRARY_DYNAMIC_BUTTON_HANDLERS
 
 module = DK_LIBRARY
 module-str = DK library
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 config DK_LIBRARY_SHELL
 	bool "DK_LIBRARY SHELL"
