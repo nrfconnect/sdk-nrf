@@ -68,7 +68,7 @@ config DM_TIMESLOT_QUEUE_COUNT_SAME_PEER
 
 module = DM_MODULE
 module-str = DM_MODULE
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif #DM_MODULE
 

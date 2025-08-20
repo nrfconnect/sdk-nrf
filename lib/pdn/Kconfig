@@ -97,6 +97,6 @@ config PDN_ESM_STRERROR
 module=PDN
 module-dep=LOG
 module-str=PDN library
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # PDN

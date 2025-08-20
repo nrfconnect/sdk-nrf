@@ -16,6 +16,6 @@ if BT_LATENCY_CLIENT
 
 module = BT_LATENCY_CLIENT
 module-str = LATENCY Client
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_LATENCY_CLIENT

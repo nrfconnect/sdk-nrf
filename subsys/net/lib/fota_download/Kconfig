@@ -69,6 +69,6 @@ config FOTA_DOWNLOAD_SEC_TAG_LIST_SIZE_MAX
 module=FOTA_DOWNLOAD
 module-dep=LOG
 module-str=Firmware Over the Air Download
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif #FOTA_DOWNLOAD

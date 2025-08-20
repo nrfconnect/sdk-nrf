@@ -51,6 +51,6 @@ config SSF_EXTMEM_WRITE_ERASE_OPS
 
 module = SSF_EXTMEM_SERVICE
 module-str = EXTMEM Update service
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif

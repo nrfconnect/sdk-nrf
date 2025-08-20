@@ -19,7 +19,7 @@ if SAMPLE_RATE_CONVERTER
 
 module = SAMPLE_RATE_CONVERTER
 module-str = Sample Rate Converter
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 config SAMPLE_RATE_CONVERTER_FILTER_TEST
 	bool "Include the test filters for the sample rate converter"

@@ -70,6 +70,6 @@ endchoice
 
 module = BT_HIDS
 module-str = HIDS
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_HIDS

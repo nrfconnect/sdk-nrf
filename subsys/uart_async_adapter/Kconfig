@@ -17,6 +17,6 @@ if UART_ASYNC_ADAPTER
 
 module = UART_ASYNC_ADAPTER
 module-str = UART Async Adapter
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif

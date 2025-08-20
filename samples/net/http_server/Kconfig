@@ -49,7 +49,7 @@ config HTTP_SERVER_SAMPLE_RECEIVE_BUFFER_SIZE
 
 module = HTTP_SERVER_SAMPLE
 module-str = HTTP server sample
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"

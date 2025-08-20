@@ -25,8 +25,8 @@ config HPF_DEVELOPER_MODE
 
 config HPF_IMAGE_PATH
 	string
-	default "${ZEPHYR_NRF_MODULE_DIR}/applications/hpf/gpio" if HPF_GPIO
-	default "${ZEPHYR_NRF_MODULE_DIR}/applications/hpf/mspi" if HPF_MSPI
+	default "$(ZEPHYR_NRF_MODULE_DIR)/applications/hpf/gpio" if HPF_GPIO
+	default "$(ZEPHYR_NRF_MODULE_DIR)/applications/hpf/mspi" if HPF_MSPI
 	help
 	  Source directory of HPF image.
 

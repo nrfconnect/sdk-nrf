@@ -69,6 +69,6 @@ endif # IPC_RADIO_BT
 
 module = IPC_RADIO
 module-str = "ipc_radio"
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 source "Kconfig.zephyr"

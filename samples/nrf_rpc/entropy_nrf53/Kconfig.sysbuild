@@ -30,7 +30,7 @@ config NETCORE_IMAGE_NAME
 	default "remote" if NETCORE_REMOTE
 
 config NETCORE_IMAGE_PATH
-	default "${APP_DIR}/remote" if NETCORE_REMOTE
+	default "$(APP_DIR)/remote" if NETCORE_REMOTE
 
 endif # !NETCORE_NONE
 

@@ -248,7 +248,7 @@ config SLM_SKIP_READY_MSG
 
 module = SLM
 module-str = serial modem
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 rsource "src/ftp_c/Kconfig"
 rsource "src/mqtt_c/Kconfig"

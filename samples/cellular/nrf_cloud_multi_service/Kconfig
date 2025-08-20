@@ -323,7 +323,7 @@ if NRF_CLOUD_COAP
 module-str = CoAP Multi Service
 endif
 module = MULTI_SERVICE
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"

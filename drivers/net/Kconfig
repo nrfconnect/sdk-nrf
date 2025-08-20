@@ -93,7 +93,7 @@ module=ETH_RTT
 module-dep=LOG
 module-str=Log level
 module-help=Sets log level for Ethernet over RTT driver.
-source "${ZEPHYR_BASE}/subsys/net/Kconfig.template.log_config.net"
+source "$(ZEPHYR_BASE)/subsys/net/Kconfig.template.log_config.net"
 
 config ETH_RTT_DEBUG_HEX_DUMP
 	bool "Print hex dumps"

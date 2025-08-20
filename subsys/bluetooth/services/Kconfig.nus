@@ -19,6 +19,6 @@ config BT_NUS_AUTHEN
 
 module = BT_NUS
 module-str = NUS
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_NUS

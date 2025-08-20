@@ -61,6 +61,6 @@ endif
 
 module = ESB_MONITOR_APP
 module-str = "ESB Monitor app"
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endmenu

@@ -44,6 +44,6 @@ endchoice
 
 module = PAW3212
 module-str = PAW3212
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif #PAW3212

@@ -60,7 +60,7 @@ config NFC_T4T_ISODEP_DESELECT_RETRY
 
 module = NFC_T4T_ISODEP
 module-str = ISODEP
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # NFC_T4T_ISODEP
 
@@ -73,7 +73,7 @@ if NFC_T4T_APDU
 
 module = NFC_T4T_APDU
 module-str = APDU
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # NFC_T4T_APDU
 
@@ -86,7 +86,7 @@ if NFC_T4T_CC_FILE
 
 module = NFC_T4T_CC_FILE
 module-str = CC_FILE
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # NFC_T4T_CC_FILE
 
@@ -115,6 +115,6 @@ config NFC_T4T_HL_PROCEDURE_APDU_BUF_SIZE
 
 module = NFC_T4T_HL_PROCEDURE
 module-str = HL_PROCEDURE
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # NFC_T4T_HL_PROCEDURE

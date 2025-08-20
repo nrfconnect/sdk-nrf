@@ -23,4 +23,4 @@ config FIRMWARE_LOADER_IMAGE_NAME
 	default "smp_svr_mini_boot" if FIRMWARE_LOADER_IMAGE_SMP_SVR_MINI_BOOT
 
 config FIRMWARE_LOADER_IMAGE_PATH
-	default "${ZEPHYR_NRF_MODULE_DIR}/samples/zephyr/smp_svr_mini_boot" if FIRMWARE_LOADER_IMAGE_SMP_SVR_MINI_BOOT
+	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/zephyr/smp_svr_mini_boot" if FIRMWARE_LOADER_IMAGE_SMP_SVR_MINI_BOOT

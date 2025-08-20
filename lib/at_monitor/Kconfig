@@ -20,6 +20,6 @@ config SYSTEM_WORKQUEUE_STACK_SIZE
 module=AT_MONITOR
 module-dep=LOG
 module-str= AT notification monitor library
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # AT_MONITOR

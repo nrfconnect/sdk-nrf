@@ -19,7 +19,7 @@ if NRF_CPU_LOAD
 
 module = NRF_CPU_LOAD
 module-str = CPU load measurement
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 config NRF_CPU_LOAD_CMDS
 	bool "Enable shell commands"

@@ -92,6 +92,6 @@ config MODEM_SLM_INDICATE_PIN
 
 module = MODEM_SLM
 module-str = Modem SLM
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # MODEM_SLM
