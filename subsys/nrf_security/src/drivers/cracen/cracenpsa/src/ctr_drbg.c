@@ -43,7 +43,8 @@
  */
 static cracen_prng_context_t prng;
 
-NRF_SECURITY_MUTEX_DEFINE(cracen_prng_context_mutex);
+/* This mutex protects access to the TRNG and to the PRNG context as well. */
+NRF_SECURITY_MUTEX_DEFINE(cracen_prng_trng_mutex);
 
 /*
  * @brief Internal function to enable TRNG and get entropy for initial seed and
@@ -51,31 +52,53 @@ NRF_SECURITY_MUTEX_DEFINE(cracen_prng_context_mutex);
  *
  * @return 0 on success, nonzero on failure.
  */
-static int trng_get_seed(char *dst, int num_trng_bytes)
+static int trng_get_entropy(char *dst, int num_trng_bytes)
 {
-	int sx_err = SX_ERR_RESET_NEEDED;
+	int sx_err;
 	struct sx_trng trng;
+	int trng_chunk_size;
+	bool loop_continue;
 
-	while (true) {
-		switch (sx_err) {
-		case SX_ERR_RESET_NEEDED:
-			sx_err = sx_trng_open(&trng, NULL);
-			if (sx_err != SX_OK) {
-				return sx_err;
+	while (num_trng_bytes) {
+		/* The sx_trng_get function suggests to return <= 32 bytes at a time */
+		trng_chunk_size = MIN(num_trng_bytes, 32);
+
+		sx_err = SX_ERR_RESET_NEEDED;
+		loop_continue = true;
+		while (loop_continue) {
+			switch (sx_err) {
+			case SX_ERR_RESET_NEEDED:
+				sx_err = sx_trng_open(&trng, NULL);
+				if (sx_err != SX_OK) {
+					return sx_err;
+				}
+			/* fallthrough */
+			case SX_ERR_HW_PROCESSING:
+				/* Generate random numbers */
+				sx_err = sx_trng_get(&trng, dst, trng_chunk_size);
+				if (sx_err == SX_ERR_RESET_NEEDED) {
+					(void)sx_trng_close(&trng);
+				}
+				break;
+			default:
+				/* Exit the loop, either there is SX_OK or an error that cannot get
+				 * hanlded here.
+				 */
+				loop_continue = false;
+				break;
 			}
-		/* fallthrough */
-		case SX_ERR_HW_PROCESSING:
-			/* Generate random numbers */
-			sx_err = sx_trng_get(&trng, dst, num_trng_bytes);
-			if (sx_err == SX_ERR_RESET_NEEDED) {
-				(void)sx_trng_close(&trng);
-			}
-			break;
-		default:
-			(void)sx_trng_close(&trng);
+		}
+
+		(void)sx_trng_close(&trng);
+		if (sx_err != SX_OK) {
 			return sx_err;
 		}
+
+		num_trng_bytes -= trng_chunk_size;
+		dst += trng_chunk_size;
 	}
+
+	return SX_OK;
 }
 
 /**
@@ -134,11 +157,11 @@ psa_status_t cracen_init_random(cracen_prng_context_t *context)
 		return PSA_SUCCESS;
 	}
 
-	nrf_security_mutex_lock(cracen_prng_context_mutex);
+	nrf_security_mutex_lock(cracen_prng_trng_mutex);
 	safe_memset(&prng, sizeof(prng), 0, sizeof(prng));
 
 	/* Get the entropy used to seed the DRBG */
-	sx_err = trng_get_seed(entropy, sizeof(entropy));
+	sx_err = trng_get_entropy(entropy, sizeof(entropy));
 
 	if (sx_err != SX_OK) {
 		goto exit;
@@ -158,7 +181,7 @@ psa_status_t cracen_init_random(cracen_prng_context_t *context)
 	prng.initialized = CRACEN_PRNG_INITIALIZED;
 
 exit:
-	nrf_security_mutex_unlock(cracen_prng_context_mutex);
+	nrf_security_mutex_unlock(cracen_prng_trng_mutex);
 
 	return silex_statuscodes_to_psa(sx_err);
 }
@@ -169,7 +192,7 @@ static psa_status_t cracen_reseed(void)
 
 	/* DRBG entropy + nonce buffer. */
 	char entropy[CRACEN_PRNG_ENTROPY_SIZE + CRACEN_PRNG_NONCE_SIZE];
-	int sx_err = trng_get_seed(entropy, sizeof(entropy));
+	int sx_err = trng_get_entropy(entropy, sizeof(entropy));
 
 	if (sx_err) {
 		return PSA_ERROR_HARDWARE_FAILURE;
@@ -199,7 +222,7 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	nrf_security_mutex_lock(cracen_prng_context_mutex);
+	nrf_security_mutex_lock(cracen_prng_trng_mutex);
 
 	if (prng.reseed_counter == 0) {
 		/* Zephyr mutexes allow the same thread to lock a
@@ -208,7 +231,7 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 		 */
 		status = cracen_init_random(context);
 		if (status != PSA_SUCCESS) {
-			nrf_security_mutex_unlock(cracen_prng_context_mutex);
+			nrf_security_mutex_unlock(cracen_prng_trng_mutex);
 			return status;
 		}
 	}
@@ -216,7 +239,7 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 	if (prng.reseed_counter + number_of_blocks >= RESEED_INTERVAL) {
 		status = cracen_reseed();
 		if (status != PSA_SUCCESS) {
-			nrf_security_mutex_unlock(cracen_prng_context_mutex);
+			nrf_security_mutex_unlock(cracen_prng_trng_mutex);
 			return status;
 		}
 	}
@@ -236,7 +259,7 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 						 temp, sizeof(temp));
 
 		if (status != PSA_SUCCESS) {
-			nrf_security_mutex_unlock(cracen_prng_context_mutex);
+			nrf_security_mutex_unlock(cracen_prng_trng_mutex);
 			return status;
 		}
 
@@ -250,7 +273,7 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 	}
 
 	status = ctr_drbg_update(NULL);
-	nrf_security_mutex_unlock(cracen_prng_context_mutex);
+	nrf_security_mutex_unlock(cracen_prng_trng_mutex);
 	return status;
 }
 
@@ -258,4 +281,20 @@ psa_status_t cracen_free_random(cracen_prng_context_t *context)
 {
 	(void)context;
 	return PSA_SUCCESS;
+}
+
+
+psa_status_t cracen_get_trng(uint8_t *output, size_t output_size)
+{
+	int sx_err;
+
+	if (output == NULL || output_size == 0) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	nrf_security_mutex_lock(cracen_prng_trng_mutex);
+	sx_err = trng_get_entropy((char *)output, output_size);
+	nrf_security_mutex_unlock(cracen_prng_trng_mutex);
+
+	return silex_statuscodes_to_psa(sx_err);
 }
