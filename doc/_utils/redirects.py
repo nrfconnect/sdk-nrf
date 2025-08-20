@@ -606,7 +606,8 @@ NRF = [
     # 54H new links
     ("device_guides/nrf54h", "app_dev/device_guides/nrf54h/index"), # Developing with nRF54H Series
     ("app_dev/device_guides/nrf54h", "app_dev/device_guides/nrf54h/index"),  # Developing with nRF54H Series
-    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_app_samples", "app_dev/device_guides/nrf54h/ug_nrf54h20_app_samples"), # nRF54H20 applications and samples (orphaned as of 2.7.0)
+    ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_app_samples", "samples"), # nRF54H20 applications and samples (orphaned as of 2.7.0)
+    ("app_dev/device_guides/nrf54h/ug_nrf54h20_app_samples", "samples"), # nRF54H20 applications and samples (orphaned as of 2.7.0)
     ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture", "app_dev/device_guides/nrf54h/ug_nrf54h20_architecture"), # Architecture of nRF54H20 (landing)
     ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_boot", "app_dev/device_guides/nrf54h/ug_nrf54h20_architecture_boot"), # nRF54H20 Boot Sequence
     ("app_dev/device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_clockman", "app_dev/device_guides/nrf54h/ug_nrf54h20_architecture_clockman"), # nRF54H20 clock management
@@ -644,7 +645,7 @@ NRF = [
     # 54H legacy links
     ("device_guides/nrf54h", "app_dev/device_guides/nrf54h"), # Developing with nRF54H Series
     ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_gs",  "app_dev/device_guides/nrf54h/ug_nrf54h20_gs"), # Getting started with the nRF54H20 DK
-    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_app_samples", "app_dev/device_guides/nrf54h/ug_nrf54h20_app_samples"), # nRF54H20 applications and samples (orphaned as of 2.7.0)
+    ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_app_samples", "samples"), # nRF54H20 applications and samples (orphaned as of 2.7.0)
     ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture", "app_dev/device_guides/nrf54h/ug_nrf54h20_architecture"), # Architecture of nRF54H20 (landing)
     ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_cpu", "app_dev/device_guides/nrf54h/ug_nrf54h20_architecture_cpu"), # nRF54H20 Domains
     ("device_guides/working_with_nrf/nrf54h/ug_nrf54h20_architecture_memory", "app_dev/device_guides/nrf54h/ug_nrf54h20_architecture_memory"), # nRF54H20 Memory Layout
