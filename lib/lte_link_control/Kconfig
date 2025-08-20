@@ -213,6 +213,17 @@ config LTE_EDRX_REQ_VALUE_NBIOT
 	  See 3GPP TS 24.008, subclause 10.5.5.32.
 	  The value 1001 corresponds to 163.84 seconds.
 
+config LTE_EDRX_REQ_VALUE_NTN_NBIOT
+	string "Requested eDRX value for NTN NB-IoT"
+	default "1001"
+	help
+	  Sets the eDRX value to be requested when NTN NB-IoT is used.
+	  The format is half a byte in a four-bit format.
+	  The eDRX value refers to bit 4 to 1 of octet 3 of the
+	  Extended DRX parameters information element.
+	  See 3GPP TS 24.008, subclause 10.5.5.32.
+	  The value 1001 corresponds to 163.84 seconds.
+
 config LTE_PTW_VALUE_LTE_M
 	string "Requested PTW value for LTE-M"
 	help
@@ -223,7 +234,7 @@ config LTE_PTW_VALUE_LTE_M
 	  element according to 10.5.5.32 of 3GPP TS 24.008.
 	  Requesting a specific PTW configuration should be done with
 	  caution. The requested value must be compliant with the eDRX
-	  value that is configured, and it's usually best to let the modem
+	  value that is configured, and it is usually best to let the modem
 	  use default PTW values.
 
 config LTE_PTW_VALUE_NBIOT
@@ -236,7 +247,20 @@ config LTE_PTW_VALUE_NBIOT
 	  element according to 10.5.5.32 of 3GPP TS 24.008.
 	  Requesting a specific PTW configuration should be done with
 	  caution. The requested value must be compliant with the eDRX
-	  value that is configured, and it's usually best to let the modem
+	  value that is configured, and it is usually best to let the modem
+	  use default PTW values.
+
+config LTE_PTW_VALUE_NTN_NBIOT
+	string "Requested PTW value for NTN NB-IoT"
+	help
+	  Sets the Paging Time Window value to be requested when enabling
+	  eDRX. The value applies to NTN NB-IoT.
+	  The format is a string with half a byte in 4-bit format,
+	  corresponding to bits 8 to 5 in octet 3 of eDRX information
+	  element according to 10.5.5.32 of 3GPP TS 24.008.
+	  Requesting a specific PTW configuration should be done with
+	  caution. The requested value must be compliant with the eDRX
+	  value that is configured, and it is usually best to let the modem
 	  use default PTW values.
 
 endif # LTE_LC_EDRX_MODULE
