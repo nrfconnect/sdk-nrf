@@ -119,8 +119,11 @@ Developing with coprocessors
 Security
 ========
 
-* Added CRACEN and nrf_oberon driver support for nRF54LM20.
-  For the list of supported features and limitations, see the :ref:`ug_crypto_supported_features` page.
+* Added:
+
+  * CRACEN and nrf_oberon driver support for nRF54LM20.
+    For the list of supported features and limitations, see the :ref:`ug_crypto_supported_features` page.
+  * Support for AES in counter mode using CRACEN for the :zephyr:board:`nrf54lm20dk`.
 
 Protocols
 =========
@@ -355,7 +358,10 @@ Cellular samples
 Cryptography samples
 --------------------
 
-|no_changes_yet_note|
+
+* :ref:`crypto_aes_ctr` sample:
+
+  * Added support for ``nrf54lm20dk/nrf54lm20a/cpuapp``.
 
 Debug samples
 -------------
