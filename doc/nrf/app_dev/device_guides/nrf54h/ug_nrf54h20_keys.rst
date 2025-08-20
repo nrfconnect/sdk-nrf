@@ -82,8 +82,6 @@ Provisioning a key calls the function to import the key:
 * The ``value`` field is passed to the function's data argument.
 * The function's ``data_length`` is set to the length of the value field.
 
-To provision the keys from ``all_keys.json`` onto the KMU of the nRF54H20 SoC, use nRF Util as follows::
+To provision the keys from ``all_keys.json`` onto the nRF54H20 SoC, use nRF Util as follows::
 
       nrfutil device x-provision-keys --serial-number <snr> --key-file all_keys.json
-
-For more information on how to provision keys, see the `Provisioning keys for hardware KMU`_ page in the nRF Util documentation.
