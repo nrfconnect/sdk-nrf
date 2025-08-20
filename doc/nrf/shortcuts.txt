@@ -9,6 +9,7 @@
 .. |jlink_ver| replace:: v8.42
 
 .. |54H_nrfutil_device_ver| replace:: 2.12.6
+.. |54H_nrfutil_trace_ver| replace:: 4.0.1
 
 .. ### Config shortcuts
 
