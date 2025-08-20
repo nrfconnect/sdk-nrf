@@ -90,4 +90,8 @@ config CRACEN_USE_INTERRUPTS
 
 rsource 'psa_driver.Kconfig'
 
+if CRACEN_NEED_MULTIPART_WORKAROUNDS || SOC_NRF54LV10A
+rsource 'cracen_sw/Kconfig'
+endif
+
 endif # PSA_CRYPTO_DRIVER_CRACEN
