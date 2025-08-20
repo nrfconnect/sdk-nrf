@@ -29,8 +29,12 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_SLM_START_SLEEP),
 	"CONFIG_SLM_START_SLEEP requires CONFIG_SLM_POWER_PIN to be defined.");
 #endif
 
+#if INDICATE_PIN_IS_ENABLED
 static struct k_work_delayable indicate_work;
+#endif
+#if POWER_PIN_IS_ENABLED
 static atomic_t callback_wakeup_running;
+#endif
 
 static int ext_xtal_control(bool xtal_on)
 {
@@ -136,14 +140,14 @@ static void power_pin_callback_poweroff(const struct device *dev,
 
 #endif /* POWER_PIN_IS_ENABLED */
 
+#if INDICATE_PIN_IS_ENABLED
+
 static void indicate_stop(void)
 {
-#if (INDICATE_PIN_IS_ENABLED)
 	if (gpio_pin_set(gpio_dev, CONFIG_SLM_INDICATE_PIN, 0) != 0) {
 		LOG_WRN("GPIO_0 set error");
 	}
 	LOG_DBG("Stop indicating");
-#endif
 }
 
 static void indicate_wk(struct k_work *work)
@@ -152,6 +156,8 @@ static void indicate_wk(struct k_work *work)
 
 	indicate_stop();
 }
+
+#endif /* INDICATE_PIN_IS_ENABLED */
 
 #if POWER_PIN_IS_ENABLED
 
@@ -177,10 +183,13 @@ static void power_pin_callback_wakeup_work_fn(struct k_work *)
 	int err;
 
 	LOG_INF("Resuming from idle.");
+
+#if INDICATE_PIN_IS_ENABLED
 	if (k_work_delayable_is_pending(&indicate_work)) {
 		k_work_cancel_delayable(&indicate_work);
 		indicate_stop();
 	}
+#endif /* INDICATE_PIN_IS_ENABLED */
 
 	err = ext_xtal_control(true);
 	if (err < 0) {
@@ -214,25 +223,6 @@ static void power_pin_callback_wakeup(const struct device *dev,
 	configure_power_pin_interrupt(power_pin_callback_enable_poweroff, GPIO_INT_EDGE_FALLING);
 
 	k_work_submit(&work);
-}
-
-int slm_ctrl_pin_indicate(void)
-{
-	int err = 0;
-
-#if (INDICATE_PIN_IS_ENABLED)
-	if (k_work_delayable_is_pending(&indicate_work)) {
-		return 0;
-	}
-	LOG_DBG("Start indicating");
-	err = gpio_pin_set(gpio_dev, CONFIG_SLM_INDICATE_PIN, 1);
-	if (err) {
-		LOG_ERR("GPIO_0 set error: %d", err);
-	} else {
-		k_work_reschedule(&indicate_work, K_MSEC(CONFIG_SLM_INDICATE_TIME));
-	}
-#endif
-	return err;
 }
 
 void slm_ctrl_pin_enter_idle(void)
@@ -280,6 +270,25 @@ void slm_ctrl_pin_enter_sleep_no_uninit(void)
 
 #endif /* POWER_PIN_IS_ENABLED */
 
+int slm_ctrl_pin_indicate(void)
+{
+	int err = 0;
+
+#if INDICATE_PIN_IS_ENABLED
+	if (k_work_delayable_is_pending(&indicate_work)) {
+		return 0;
+	}
+	LOG_DBG("Start indicating");
+	err = gpio_pin_set(gpio_dev, CONFIG_SLM_INDICATE_PIN, 1);
+	if (err) {
+		LOG_ERR("GPIO_0 set error: %d", err);
+	} else {
+		k_work_reschedule(&indicate_work, K_MSEC(CONFIG_SLM_INDICATE_TIME));
+	}
+#endif
+	return err;
+}
+
 void slm_ctrl_pin_enter_shutdown(void)
 {
 	LOG_INF("Entering shutdown.");
@@ -319,7 +328,9 @@ int slm_ctrl_pin_init(void)
 {
 	int err;
 
+#if INDICATE_PIN_IS_ENABLED
 	k_work_init_delayable(&indicate_work, indicate_wk);
+#endif
 
 	err = ext_xtal_control(true);
 	if (err < 0) {
