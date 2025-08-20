@@ -49,7 +49,7 @@ Build and configuration system
 Bootloaders and DFU
 ===================
 
-|no_changes_yet_note|
+* Added an option to restore progress after a power failure when using DFU multi-image with MCUboot.
 
 Developing with nRF91 Series
 ============================

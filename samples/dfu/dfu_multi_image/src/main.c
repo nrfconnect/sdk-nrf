@@ -42,16 +42,24 @@ static int writer_write(const uint8_t *chunk, size_t chunk_size)
 
 static int writer_close(bool success)
 {
-	if (success) {
-		LOG_INF("Closing DFU target image successfully");
-		return dfu_target_done(success);
-	}
+	LOG_INF("Closing DFU target image %s", success ? "successfully" : "with failure");
+	return dfu_target_done(success);
+}
 
-	LOG_ERR("Closing DFU target image with failure");
+#ifdef CONFIG_DFU_MULTI_IMAGE_SAVE_PROGRESS
+static int writer_offset(size_t *offset)
+{
+	return dfu_target_offset_get(offset);
+}
+#endif
+
+static int writer_reset(void)
+{
+	LOG_INF("Resetting DFU target image");
 	return dfu_target_reset();
 }
 
-static int prepare(void)
+int dfu_multi_image_sample_lib_prepare(void)
 {
 	int ret = 0;
 
@@ -74,9 +82,13 @@ static int prepare(void)
 		struct dfu_image_writer writer;
 
 		writer.image_id = image_id;
-		writer.open     = writer_open;
-		writer.write    = writer_write;
-		writer.close    = writer_close;
+		writer.open = writer_open;
+		writer.write = writer_write;
+		writer.close = writer_close;
+#ifdef CONFIG_DFU_MULTI_IMAGE_SAVE_PROGRESS
+		writer.offset = writer_offset;
+#endif /* CONFIG_DFU_MULTI_IMAGE_SAVE_PROGRESS */
+		writer.reset = writer_reset;
 
 		ret = dfu_multi_image_register_writer(&writer);
 		if (ret < 0) {
@@ -96,7 +108,7 @@ int main(void)
 	nrf53_cpunet_enable(true);
 #endif
 
-	ret = prepare();
+	ret = dfu_multi_image_sample_lib_prepare();
 
 	if (ret < 0) {
 		printf("Failed to prepare dfu_multi_image sample: %d\n", ret);

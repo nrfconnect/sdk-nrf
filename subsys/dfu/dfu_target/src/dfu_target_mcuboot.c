@@ -157,16 +157,25 @@ int dfu_target_mcuboot_offset_get(size_t *out)
 	int err = 0;
 
 	err = dfu_target_stream_offset_get(out);
+#ifndef CONFIG_DFU_TARGET_STREAM_SYNCHRONOUS
 	if (err == 0) {
 		*out += stream_buf_bytes;
 	}
+#endif
 
 	return err;
 }
 
 int dfu_target_mcuboot_write(const void *const buf, size_t len)
 {
+	/**
+	 * If saving progress the bytes written to flash are flushed
+	 * immediately, no need to add additional bytes to compensate
+	 * for buffering.
+	 */
+#ifndef CONFIG_DFU_TARGET_STREAM_SYNCHRONOUS
 	stream_buf_bytes = (stream_buf_bytes + len) % stream_buf_len;
+#endif
 
 	return dfu_target_stream_write(buf, len);
 }
