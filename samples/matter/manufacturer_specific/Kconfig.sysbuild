@@ -41,9 +41,6 @@ config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
 #### DFU network core configuration
 if SOC_SERIES_NRF53X
 
-config MCUBOOT_UPDATEABLE_IMAGES
-	default 2
-
 choice MCUBOOT_MODE
 	default MCUBOOT_MODE_OVERWRITE_ONLY
 endchoice
