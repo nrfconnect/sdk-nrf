@@ -149,7 +149,7 @@ config DOWNLOAD_CLIENT_SHELL
 module=DOWNLOAD_CLIENT
 module-dep=LOG
 module-str=Download client
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 if DOWNLOAD_CLIENT_LOG_LEVEL_DBG
 

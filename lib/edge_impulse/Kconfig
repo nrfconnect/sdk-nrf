@@ -98,6 +98,6 @@ config EI_WRAPPER_DEBUG_MODE
 module=EI_WRAPPER
 module-dep=LOG
 module-str=Edge Impulse NCS wrapper
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # EI_WRAPPER

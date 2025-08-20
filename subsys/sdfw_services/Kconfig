@@ -69,6 +69,6 @@ rsource "transport/Kconfig"
 
 module = SSF_CLIENT
 module-str = SSF Client
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endmenu # "SDFW Service Framework"

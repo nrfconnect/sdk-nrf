@@ -172,4 +172,4 @@ endmenu
 
 module = GNSS_SAMPLE
 module-str = GNSS sample
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"

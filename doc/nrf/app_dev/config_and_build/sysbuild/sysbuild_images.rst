@@ -88,7 +88,7 @@ If the image selection is mandatory, the :file:`Kconfig.sysbuild` file can be om
             help
               Will include the ABC image in the build, which will...
 
-        source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+        source "$(ZEPHYR_BASE)/share/sysbuild/Kconfig"
 
 * :file:`sysbuild.cmake` file
 
@@ -140,13 +140,13 @@ This can be handled using the following approach:
             default "abc" if NETCORE_ABC
 
         config NETCORE_IMAGE_PATH
-            default "${ZEPHYR_MY_MODULE_MODULE_DIR}/<image_path>" if NETCORE_ABC
+            default "$(ZEPHYR_MY_MODULE_MODULE_DIR)/<image_path>" if NETCORE_ABC
 
         endif # !NETCORE_NONE
 
         endmenu
 
-        source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+        source "$(ZEPHYR_BASE)/share/sysbuild/Kconfig"
 
 * :file:`sysbuild.cmake` file - This file is optional and should be used only if specific custom configurations are required for the application.
 
@@ -201,13 +201,13 @@ This can be handled using the following approach:
             default "abc" if FIRMWARE_LOADER_IMAGE_ABC
 
         config FIRMWARE_LOADER_IMAGE_PATH
-            default "${ZEPHYR_MY_MODULE_MODULE_DIR}/<image_path>" if FIRMWARE_LOADER_IMAGE_ABC
+            default "$(ZEPHYR_MY_MODULE_MODULE_DIR)/<image_path>" if FIRMWARE_LOADER_IMAGE_ABC
 
         endif # !FIRMWARE_LOADER_IMAGE_NONE
 
         endmenu
 
-        source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+        source "$(ZEPHYR_BASE)/share/sysbuild/Kconfig"
 
 * :file:`sysbuild.cmake` file - This file is optional and should be used only if specific custom configurations are required for the application.
 
@@ -303,7 +303,7 @@ Kconfig.sysbuild:
         default "abc" if NETCORE_ABC
 
     config NETCORE_IMAGE_PATH
-        default "${ZEPHYR_MY_MODULE_MODULE_DIR}/<image_path>" if NETCORE_ABC
+        default "$(ZEPHYR_MY_MODULE_MODULE_DIR)/<image_path>" if NETCORE_ABC
 
     endif # !NETCORE_NONE
 

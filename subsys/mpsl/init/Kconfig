@@ -120,4 +120,4 @@ config MPSL_INIT_PRIORITY
 
 module=MPSL
 module-str=MPSL
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"

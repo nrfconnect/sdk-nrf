@@ -14,6 +14,6 @@ if BT_NUS_CLIENT
 
 module = BT_NUS_CLIENT
 module-str = NUS Client
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_NUS_CLIENT
