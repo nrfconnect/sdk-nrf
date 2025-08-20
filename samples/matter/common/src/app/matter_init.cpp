@@ -83,12 +83,11 @@ app::Clusters::NetworkCommissioning::InstanceAndDriver<NetworkCommissioning::Gen
 	sThreadNetworkDriver(0 /*endpointId*/);
 #endif
 
-#ifdef CONFIG_CHIP_CRYPTO_PSA
-chip::Crypto::PSAOperationalKeystore Nrf::Matter::InitData::sOperationalKeystoreDefault{};
-#endif
-
-#ifdef CONFIG_CHIP_STORE_KEYS_IN_KMU
+#if defined(CONFIG_CHIP_STORE_KEYS_IN_KMU)
+chip::DeviceLayer::KMUOperationalKeystore Nrf::Matter::InitData::sKMUOperationalKeystoreDefault{};
 chip::DeviceLayer::KMUSessionKeystore Nrf::Matter::InitData::sKMUSessionKeystoreDefault{};
+#elif defined(CONFIG_CHIP_CRYPTO_PSA)
+chip::Crypto::PSAOperationalKeystore Nrf::Matter::InitData::sOperationalKeystoreDefault{};
 #endif
 
 #ifdef CONFIG_CHIP_FACTORY_DATA
@@ -329,6 +328,7 @@ void DoInitChipServer(intptr_t /* unused */)
 	static KMUKeyAllocator kmuAllocator;
 	Crypto::SetPSAKeyAllocator(&kmuAllocator);
 	sLocalInitData.mServerInitParams->sessionKeystore = sLocalInitData.mSessionKeystore;
+	sLocalInitData.mServerInitParams->operationalKeystore = sLocalInitData.mOperationalKeyStore;
 #endif
 
 	VerifyOrReturn(sLocalInitData.mServerInitParams, LOG_ERR("No valid server initialization parameters"));
