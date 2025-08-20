@@ -40,15 +40,15 @@ See the following documentation pages for more information:
 * The :ref:`zephyr:zephyr-repo-app` page for more information on Zephyr application types.
 * The :ref:`dm_adding_code` documentation for details on the best user workflows to add your own code to the |NCS|.
 
-.. note::
+.. caution::
    The configuration of board files is based on the nRF54H20 common SoC files located in :file:`sdk-zephyr/dts/vendor/nordic/`.
    Each new |NCS| revision might change these files, breaking the compatibility with your custom board files created for previous revisions.
    Ensure the compatibility of your custom board files when migrating to a new |NCS| release.
 
    See :ref:`zephyr:board_porting_guide` for more information.
 
-Configure, generate, and program BICR
-*************************************
+Configure, generate, and program the BICR
+*****************************************
 
 The Board Information Configuration Registers (BICR) are non-volatile memory (NVM) registers that contain information on how the nRF54H20 SoC must interact with other board elements, including the information about the power and clock delivery to the SoC.
 The power and clock control firmware uses this information to apply the proper regulator and oscillator configurations.
@@ -66,8 +66,6 @@ BICR allows for the configuration of various components on your custom board, li
 * Tamper switches
 * Active shield channels
 
-You can find the details in the BICR configuration file scheme in :file:`sdk-zephyr/soc/nordic/nrf54h/bicr/bicr-schema.json`.
-
 When the BICR has not been programmed, all the registers contain ``0xFFFFFFFF``.
 
 The ``LFOSC.LFXOCAL`` register is used by the device to store the calibration of the LFXO.
@@ -77,12 +75,13 @@ This is useful when making a change on the PCB (for example, when changing the c
 This initial calibration is only performed once.
 Each subsequent start will use this initial calibration as the starting point.
 
-BICR configuration
+Configure the BICR
 ==================
 
-The nRF54H20 DK BICR configuration can be found in the board configuration directory as :file:`sdk-zephyr/boards/nordic/nrf54h20dk/bicr.json`.
-This file is used by the |NCS| build system to generate a corresponding HEX file.
-The scheme for this file can be found in :file:`sdk-zephyr/soc/nordic/nrf54h/bicr/bicr-schema.json`.
+You can find the nRF54H20 DK BICR configuration in the board configuration directory as :file:`sdk-zephyr/boards/nordic/nrf54h20dk/bicr.json`, and the details of the file scheme in the :file:`sdk-zephyr/soc/nordic/nrf54h/bicr/bicr-schema.json` file.
+You can use these files as a reference for your own BICR configuration.
+
+The |NCS| build system uses the BICR configuration JSON files to generate the corresponding HEX file.
 
 .. caution::
    A mismatch between the board and the configuration values in BICR can damage the device or set it in an unrecoverable state.
@@ -136,13 +135,15 @@ After programming the BICR binary onto the device, validate whether the BICR wor
    * ``Error``: This indicates that the device is likely suffering from severe power issues after applying the BICR.
      This state is likely unrecoverable.
 
-Program the nRF54H20 SoC binaries
-*********************************
+.. _54h_soc_binaries_provision:
+
+Provision the nRF54H20 SoC binaries
+***********************************
 
 After programming the BICR, the nRF54H20 SoC requires the provisioning of the nRF54H20 SoC binaries, a bundle containing the precompiled firmware for the Secure Domain and System Controller.
-To program the nRF54H20 SoC binaries to the nRF54H20 DK, do the following:
+To provision the nRF54H20 SoC binaries to the nRF54H20 SoC, do the following:
 
-1. Download the right nRF54H20 SoC binaries version for your development kit and |NCS| version.
+1. Download the right nRF54H20 SoC binaries version for your |NCS| version.
    You can find the SoC binaries versions listed in the :ref:`abi_compatibility` page.
 #. Move the :file:`ZIP` bundle to a folder of your choice.
 #. |open_terminal_window_with_environment|
@@ -156,6 +157,22 @@ You can run the following command to confirm that the Secure Domain Firmware has
 
 If issues occur during bundle programming, the system will return an ``ADAC_FAILURE`` error.
 
+.. _54h_soc_binaries_transition_rot:
+
+Transition the nRF54H20 SoC to RoT
+==================================
+
+The nRF54H20 SoC comes with its lifecycle state (LCS) set to ``EMPTY``.
+To operate correctly, you must transition its lifecycle state to Root of Trust (``RoT``).
+
+.. note::
+   The forward transition to LCS ``RoT`` is permanent.
+   After the transition, it is impossible to transition backward to LCS ``EMPTY``.
+
+To transition the LCS to ``RoT``, set the LCS of the nRF54H20 SoC to Root of Trust using the following command::
+
+   nrfutil device x-adac-lcs-change --life-cycle rot --serial-number <serial_number>
+
 Create or modify your application for your custom board
 *******************************************************
 
@@ -163,23 +180,29 @@ You can now create or modify your application for your custom board.
 When doing so, consider the following:
 
 * When reusing the |NCS| applications and samples, you must provide board-specific overlay files when such files are needed.
-  For general information on configuration overlays, see :ref:`configure_application`.
+  For more information on configuration overlays, see :ref:`configure_application`.
 
-  However, you must consider the following nRF54H20-specific difference:
-
-  * The application might require board overlays for multiple cores.
-    In this case, ensure that these overlays are consistent with each other.
+  However, on the nRF54H20 SoC, the application might require board overlays for multiple cores.
+  In this case, ensure that these overlays are consistent with each other.
 
 * When creating a new application specific to your new board, DTS board files can contain all necessary configurations, and no overlay file is needed.
   However, the same limitations regarding the consistency and UICR configuration apply, but should be kept on the board files level.
 
 * You must manually program the BICR if it has been modified.
 
+For more information on |NCS| application development, see :ref:`ug_app_dev`.
+For more information on nRF54H20 SoC development, see :ref:`ug_nrf54h`.
+
+.. _54h_soc_binaries_update:
+
 Update the nRF54H20 SoC binaries
 ********************************
 
-To update the nRF54H20 SoC binaries (version 20.0.0 or higher, based on IronSide SE) using the debugger on a nRF54H20 SoC, use the west ``ncs-ironside-se-update`` command.
-This command takes a nRF54H20 SoC binary ZIP file and uses the IronSide SE update service to update both the IronSide SE and IronSide SE Recovery (or optionally just one of them).
+.. caution::
+   It is not possible to update the nRF54H20 SoC binaries from a SUIT-based (up to 0.9.6) to an IronSide-SE-based (2x.x.x) version.
+
+To update the nRF54H20 SoC binaries (versions 2x.x.x, based on IronSide SE) using the debugger on a nRF54H20 SoC, use the west ``ncs-ironside-se-update`` command.
+This command takes the nRF54H20 SoC binary ZIP file and uses the IronSide SE update service to update both the IronSide SE and IronSide SE Recovery (or optionally just one of them).
 
 To update the nRF54H20 SoC binaries, do the following:
 
@@ -191,6 +214,3 @@ To update the nRF54H20 SoC binaries, do the following:
       west ncs-ironside-se-update --zip ~/path/to//nrf54h20_soc_binaries_v<version_number>.zip --serial $dbg --allow-erase
 
 For more information on the nRF54H20 SoC binaries, see :ref:`abi_compatibility`.
-
-.. note::
-   It is not possible to update the nRF54H20 SoC binaries from a SUIT-based (up to 0.9.6) to an IronSide-SE-based (from a SUIT-based) version.
