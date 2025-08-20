@@ -1,17 +1,16 @@
 .. _building_nrf54l:
 
-Building and programming with nRF54L15 DK
-#########################################
+Building and programming with nRF54L SoC series
+###############################################
 
 .. contents::
    :local:
    :depth: 2
 
 .. note::
-   The FLPR core support in the |NCS| is currently :ref:`experimental<software_maturity>`.
-   Additionally, it is not yet available for the nRF54L05 and nRF54L10 SoCs.
+   Refer to the :ref:`VPR support table<vpr_flpr_nrf54l_support_status>` for availability and maturity of FLPR targets.
 
-This guide provides instructions on how to build and program the nRF54L15 development kit.
+This guide provides instructions on how to build and program the nRF54L Series development kits.
 Whether you are working with single or multi-image builds, the following sections will guide you through the necessary steps.
 
 Depending on the sample, you must program only the application core or both the Fast Lightweight Peripheral Processor (FLPR) and the application core.
@@ -36,10 +35,12 @@ Using the FLPR core also requires additional configuration to enable it.
 This section outlines how to build and program for both the application and FLPR core, covering separate builds and sysbuild configurations.
 The FLPR core supports two variants:
 
-* ``nrf54l15dk/nrf54l15/cpuflpr``, where FLPR runs from SRAM, which is the recommended method.
+* ``<board target>/cpuflpr``, where *board target* depends on the device you are using.
+  In this variant, FLPR runs from SRAM, which is the recommended method.
   To build FLPR image with this variant, the application core image must include the ``nordic-flpr`` :ref:`snippet <app_build_snippets>`.
 
-* ``nrf54l15dk/nrf54l15/cpuflpr/xip``, where FLPR runs from RRAM.
+* ``<board target>/cpuflpr/xip``, where *board target* depends on the device you are using.
+  In this variant, FLPR runs from RRAM.
   To build FLPR image with this variant, the application core image must include the ``nordic-flpr-xip`` snippet.
 
 Standard build
@@ -57,13 +58,13 @@ Complete the following steps:
 
    .. group-tab:: Using minimal sample for VPR bootstrapping
 
-      This option automatically programs the FLPR core with :ref:`dedicated bootstrapping firmware <vpr_flpr_nrf54l15_initiating>`.
+      This option automatically programs the FLPR core with :ref:`dedicated bootstrapping firmware <vpr_flpr_nrf54l_initiating>`.
 
       To build and flash both images, run the following command that performs a :ref:`pristine build <zephyr:west-building>`:
 
-      .. code-block:: console
+      .. parsed-literal::
 
-         west build -p -b nrf54l15dk/nrf54l15/cpuflpr
+         west build -p -b *board target*
          west flash
 
    .. group-tab:: Using application that supports multi-image builds
@@ -74,16 +75,16 @@ Complete the following steps:
 
       To build and flash both images, run the following command that performs a :ref:`pristine build <zephyr:west-building>`:
 
-      .. code-block:: console
+      .. parsed-literal::
 
-         west build -p -b nrf54l15dk/nrf54l15/cpuflpr -- -DSB_CONFIG_VPR_LAUNCHER=n
+         west build -p -b *board target* -- -DSB_CONFIG_VPR_LAUNCHER=n
          west flash
 
 Separate images
 ---------------
 
 You can build and program application sample and the FLPR sample as separate images using |nRFVSC| or command line.
-To use nRF Util, see `Programming application firmware on the nRF54L15 SoC`_.
+To use nRF Util, see `Programming application firmware on the nRF54L SoCs`_.
 Depending on the selected method, complete the following steps:
 
 .. tabs::
@@ -99,7 +100,7 @@ Depending on the selected method, complete the following steps:
 
       3. Build the application image by setting the following options:
 
-         * Board target to ``nrf54l15dk/nrf54l15/cpuapp``.
+         * Appropriate board target, depending on the device you are using.
          * Choose either ``nordic-flpr`` or ``nordic-flpr-xip`` snippet depending on the FLPR image target.
          * System build to :guilabel:`No sysbuild`.
 
@@ -107,7 +108,7 @@ Depending on the selected method, complete the following steps:
 
       #. Build the FLPR image by setting the following options:
 
-         * Board target to ``nrf54l15dk/nrf54l15/cpuflpr`` (recommended) or ``nrf54l15dk/nrf54l15/cpuflpr/xip``.
+         * Board target to ``board target/cpuflpr`` (recommended) or ``board target/cpuflpr/xip``.
          * System build to :guilabel:`No sysbuild`.
 
          For more information, see :ref:`cmake_options`.
@@ -117,9 +118,9 @@ Depending on the selected method, complete the following steps:
       1. |open_terminal_window_with_environment|
       #. Build the application core image, and based on your build target include the appropriate snippet:
 
-         .. code-block:: console
+         .. parsed-literal::
 
-            west build -p -b nrf54l15dk/nrf54l15/cpuapp -S nordic-flpr --no-sysbuild
+            west build -p -b *board target* -S nordic-flpr --no-sysbuild
 
       #. Program the application core image by running the `west flash` command :ref:`without --erase <programming_params_no_erase>`.
 
@@ -129,9 +130,9 @@ Depending on the selected method, complete the following steps:
 
       #. Build the FLPR core image:
 
-         .. code-block:: console
+         .. parsed-literal::
 
-            west build -p -b nrf54l15dk/nrf54l15/cpuflpr --no-sysbuild
+            west build -p -b *board target* --no-sysbuild
 
          You can also customize the command for additional options, by adding :ref:`build parameters <optional_build_parameters>`.
 
