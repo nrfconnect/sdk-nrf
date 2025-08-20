@@ -237,6 +237,8 @@
 .. _`ncs-app-index`: https://github.com/nrfconnect/ncs-app-index
 
 .. _`crypto.h`: https://github.com/nrfconnect/sdk-oberon-psa-crypto/blob/main/include/psa/crypto.h
+.. _`crypto_struct.h`: https://github.com/nrfconnect/sdk-oberon-psa-crypto/blob/main/include/psa/crypto_struct.h
+.. _`psa_key_attributes_s`: https://github.com/nrfconnect/sdk-oberon-psa-crypto/blob/main/include/psa/crypto_struct.h#L286
 .. _`protected_storage.h`: https://github.com/nrfconnect/sdk-trusted-firmware-m/blob/master/interface/include/psa/protected_storage.h
 .. _`initial_attestation.h`: https://github.com/nrfconnect/sdk-trusted-firmware-m/blob/main/interface/include/psa/initial_attestation.h.in
 .. _`tfm_platform_api.h`: https://github.com/nrfconnect/sdk-trusted-firmware-m/blob/main/interface/include/tfm_platform_api.h
@@ -257,6 +259,7 @@
 .. _`PSA Certified Crypto API 1.0.0`: https://arm-software.github.io/psa-api/crypto/1.0/IHI0086-PSA_Cryptography_API-1.0.0.pdf
 .. _`PSA Certified Crypto API 1.3.1`: https://arm-software.github.io/psa-api/crypto/1.3/
 .. _`PSA functions for key management`: https://arm-software.github.io/psa-api/crypto/1.1/api/keys/management.html
+.. _`PSA_KEY_USAGE_EXPORT policy`: https://arm-software.github.io/psa-api/crypto/1.3/api/keys/policy.html#c.PSA_KEY_USAGE_EXPORT
 
 .. _`PSA Certified Secure Storage API`: https://arm-software.github.io/psa-api/storage/
 .. _`PSA Certified Secure Storage API 1.0`: https://arm-software.github.io/psa-api/storage/1.0/
@@ -958,7 +961,7 @@
 .. _`Programming modem firmware using MCUboot serial recovery`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_firmware_thingy91.html
 .. _`Programming application firmware on the nRF54L SoCs`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_nrf54L15.html
 .. _`Upgrading modem firmware using J-Link`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/programming_modem_9160.html
-.. _`Provisioning keys for hardware KMU`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/provisioning_keys.html
+.. _`Provisioning cryptographic keys`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/guides/provisioning_keys.html
 
 .. _`anomaly 19`: https://docs.nordicsemi.com/bundle/errata_nRF5340_EngA/page/ERR/nRF5340/EngineeringA/latest/anomaly_340_19.html
 
@@ -1709,6 +1712,9 @@
 .. ### Source: other (2 links or less from the same URL)
 
 .. _`Open VSX Registry`: https://open-vsx.org/
+
+.. _`pyca/cryptography`: https://cryptography.io/en/latest/
+.. _`PyCryptodome`: https://pycryptodome.readthedocs.io/en/latest/
 
 .. _`Amazon Root CA 1`: https://www.amazontrust.com/repository/AmazonRootCA1.pem
 

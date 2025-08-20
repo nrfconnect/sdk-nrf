@@ -51,19 +51,19 @@ To generate the keys, follow these steps:
       MANIFEST_PUBKEY_RADIOCORE_GEN2 = 0x40032101
       MANIFEST_PUBKEY_RADIOCORE_GEN3 = 0x40032102
 
-#. Create a JSON input file with the ``generate_psa_key_attributes.py`` script:
+#. Create a JSON input file with the :ref:`generate_psa_key_attributes_script`:
 
    * For the application core::
 
-        python generate_psa_key_attributes.py --usage VERIFY_MESSAGE_EXPORT --id 0x40022100 --type ECC_TWISTED_EDWARDS --size 255 --algorithm EDDSA_PURE --location LOCATION_CRACEN --key-from-file MANIFEST_APPLICATION_GEN1_pub.pem  --file all_keys.json --cracen_usage RAW --lifetime PERSISTENCE_DEFAULT
+        python generate_psa_key_attributes.py --usage VERIFY --allow-usage-export --id 0x40022100 --type ECC_PUBLIC_KEY_TWISTED_EDWARDS --key-bits 255 --algorithm EDDSA_PURE --location LOCATION_CRACEN --key-from-file MANIFEST_APPLICATION_GEN1_pub.pem  --file all_keys.json --cracen-usage RAW --persistence PERSISTENCE_DEFAULT
 
    * For the radio core::
 
-        python generate_psa_key_attributes.py --usage VERIFY_MESSAGE_EXPORT --id 0x40032100 --type ECC_TWISTED_EDWARDS --size 255 --algorithm EDDSA_PURE --location LOCATION_CRACEN --key-from-file MANIFEST_RADIOCORE_GEN1_pub.pem --file all_keys.json --cracen_usage RAW --lifetime PERSISTENCE_DEFAULT
+        python generate_psa_key_attributes.py --usage VERIFY --allow-usage-export --id 0x40032100 --type ECC_PUBLIC_KEY_TWISTED_EDWARDS --key-bits 255 --algorithm EDDSA_PURE --location LOCATION_CRACEN --key-from-file MANIFEST_RADIOCORE_GEN1_pub.pem --file all_keys.json --cracen-usage RAW --persistence PERSISTENCE_DEFAULT
 
    * For the main root manifest::
 
-        python generate_psa_key_attributes.py --usage VERIFY_MESSAGE_EXPORT --id 0x4000AA00 --type ECC_TWISTED_EDWARDS --size 255 --algorithm EDDSA_PURE --location LOCATION_CRACEN --key-from-file MANIFEST_OEM_ROOT_GEN1_pub.pem --file all_keys.json --cracen_usage RAW --lifetime PERSISTENCE_DEFAULT
+        python generate_psa_key_attributes.py --usage VERIFY --allow-usage-export --id 0x4000AA00 --type ECC_PUBLIC_KEY_TWISTED_EDWARDS --key-bits 255 --algorithm EDDSA_PURE --location LOCATION_CRACEN --key-from-file MANIFEST_OEM_ROOT_GEN1_pub.pem --file all_keys.json --cracen-usage RAW --persistence PERSISTENCE_DEFAULT
 
 
 The generated key data is stored in a JSON file, which serves as an input for the next step.
@@ -71,9 +71,9 @@ The generated key data is stored in a JSON file, which serves as an input for th
 Provisioning the keys
 =====================
 
-nRF Util is used to provision the generated keys into the target device.
-It takes the JSON file as input and injects it without validating its contents.
-In this scenario, nRF Util functions as a transport layer, transferring the key data to the correct location in the device.
+.. include:: ../../../../../scripts/generate_psa_key_attributes/generate_psa_key_attributes.rst
+   :start-after: nrfutil_provision_keys_info_start
+   :end-before: nrfutil_provision_keys_info_end
 
 The Secure Domain Firmware on the device handles the actual key provisioning using PSA Crypto's ``psa_import_key`` function.
 Provisioning a key calls the function to import the key:
@@ -82,6 +82,6 @@ Provisioning a key calls the function to import the key:
 * The ``value`` field is passed to the function's data argument.
 * The function's ``data_length`` is set to the length of the value field.
 
-To provision the keys from ``all_keys.json`` onto the nRF54H20 SoC, use nRF Util as follows::
-
-      nrfutil device x-provision-keys --serial-number <snr> --key-file all_keys.json
+.. include:: ../../../../../scripts/generate_psa_key_attributes/generate_psa_key_attributes.rst
+   :start-after: nrfutil_provision_keys_command_start
+   :end-before: nrfutil_provision_keys_command_end

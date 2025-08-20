@@ -17,8 +17,14 @@ The |NCS| provides a west command, ``ncs-provision``, allowing to upload keys to
 Prerequisites
 *************
 
-You need the `nRF Util`_ tool, which you get as part of the :ref:`nRF Connect SDK toolchain bundle <requirements_toolchain>` when you :ref:`gs_installing_toolchain`.
-The bundle also provides the ``nrfutil device`` command, which you can use to program the keys to the device.
+First, ensure that the `nRF Util`_ tool is installed.
+It should install automatically during the setup of the |NCS| working environment.
+Once completed, install the required additional commands for nRF Util:
+
+.. parsed-literal::
+   :class: highlight
+
+    nrfutil install device
 
 Additionally, before provisioning, make sure you familiarized yourself with the :ref:`ug_nrf54l_developing_basics_kmu_provisioning_keys` section.
 
@@ -125,23 +131,15 @@ Once you have an unprovisioned SoC, upload keys to the board by running one of t
 
    .. tab:: nRF Util
 
-      The nRF Util provisioning command requires a JSON file with the keys and the key metadata.
+      You can use the :ref:`generate_psa_key_attributes_script`, :ref:`similarly to nRF54H20<ug_nrf54h20_keys_generating>`, to generate the JSON file and the metadata from the PEM file you :ref:`generated earlier <ug_nrf54l_developing_provision_kmu_generate>`.
 
-      You can use the `generate_psa_key_attributes.py`_ script, :ref:`similarly to nRF54H20<ug_nrf54h20_keys_generating>`, to generate the JSON file and the metadata from the PEM file you :ref:`generated earlier <ug_nrf54l_developing_provision_kmu_generate>`.
-      For this purpose, invoke the script with the ``--key-from-file`` option to provide the PEM file and with the ``--file`` option to create a JSON file.
-      The file can contain multiple keys.
-      Calling the script multiple times and passing the same file to the `--file` argument will add all keys to the same JSON file.
+      .. include:: ../../../../../scripts/generate_psa_key_attributes/generate_psa_key_attributes.rst
+         :start-after: nrfutil_provision_keys_info_start
+         :end-before: nrfutil_provision_keys_info_end
 
-      To provision keys onto the KMU of the nRF54L15 SoC, use the following nRF Util command, with the ``<snr>`` being the serial number of the device and ``<key-file>`` being the name of the key file in the JSON format:
-
-      .. parsed-literal::
-        :class: highlight
-
-         nrfutil device x-provision-keys --serial-number <snr> --key-file <JSON-key-file>
-
-      You can call this command multiple times also to provision multiple keys, as long as each key has a different ID that is part of the metadata string.
-
-      For more information about this command, see the `Provisioning keys for hardware KMU`_ page in the nRF Util documentation.
+      .. include:: ../../../../../scripts/generate_psa_key_attributes/generate_psa_key_attributes.rst
+         :start-after: nrfutil_provision_keys_command_start
+         :end-before: nrfutil_provision_keys_command_end
 
 Alternative provisioning method
 *******************************
