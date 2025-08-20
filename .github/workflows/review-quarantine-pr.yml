@@ -7,6 +7,11 @@ on:
       - v*-branch
     paths:
       - '**/scripts/quarantine*.yaml'
+
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   quarantine-info:
     runs-on: ubuntu-24.04

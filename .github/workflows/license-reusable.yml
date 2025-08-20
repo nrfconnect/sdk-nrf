@@ -31,6 +31,10 @@ on:
         type: string
         default: nrf/scripts/ci/license_allow_list.yaml
 
+permissions:
+  contents: read
+  pull-requests: read
+
 jobs:
   license_job:
     runs-on: ubuntu-24.04
