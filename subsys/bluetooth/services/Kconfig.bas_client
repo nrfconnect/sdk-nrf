@@ -14,6 +14,6 @@ if BT_BAS_CLIENT
 
 module = BT_BAS_CLIENT
 module-str = BAS Client
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_BAS_CLIENT

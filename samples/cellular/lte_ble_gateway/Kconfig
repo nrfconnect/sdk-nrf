@@ -22,7 +22,7 @@ endmenu
 module=LTE_BLE_GW
 module-dep=LOG
 module-str= LTE BLE gateway sample
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 menu "Zephyr Kernel"
 source "Kconfig.zephyr"

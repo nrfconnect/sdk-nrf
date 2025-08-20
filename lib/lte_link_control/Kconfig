@@ -458,6 +458,6 @@ config LTE_LC_WORKQUEUE_STACK_SIZE
 module = LTE_LINK_CONTROL
 module-dep = LOG
 module-str = LTE link control library
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # LTE_LINK_CONTROL

@@ -34,6 +34,6 @@ endmenu
 
 module = NET_CORE_MONITOR
 module-str = NET_CORE_MONITOR
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif #NET_CORE_MONITOR

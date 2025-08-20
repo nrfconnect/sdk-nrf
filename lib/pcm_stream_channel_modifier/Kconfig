@@ -13,6 +13,6 @@ if PSCM
 
 module = PSCM
 module-str = PCM Stream Channel Modifier
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif #PSCM

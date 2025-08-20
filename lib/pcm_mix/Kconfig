@@ -12,6 +12,6 @@ if PCM_MIX
 
 module = PCM_MIX
 module-str = pcm-mix
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
-endif #PCM_MIX
+endif # PCM_MIX

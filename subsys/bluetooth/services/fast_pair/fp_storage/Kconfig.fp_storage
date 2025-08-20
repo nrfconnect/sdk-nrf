@@ -120,6 +120,6 @@ config BT_FAST_PAIR_STORAGE_FMDN_EIK
 
 module = FP_STORAGE
 module-str = Fast Pair storage library
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_FAST_PAIR_STORAGE

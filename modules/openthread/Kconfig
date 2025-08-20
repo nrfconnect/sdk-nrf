@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # Load the main OpenThread stack Kconfig file
-source "${ZEPHYR_BASE}/modules/openthread/Kconfig"
+source "$(ZEPHYR_BASE)/modules/openthread/Kconfig"
 
 if OPENTHREAD
 

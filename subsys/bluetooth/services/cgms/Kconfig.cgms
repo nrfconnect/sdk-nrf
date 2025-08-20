@@ -21,6 +21,6 @@ config BT_CGMS_MAX_MEASUREMENT_RECORD
 
 module = BT_CGMS
 module-str = CGMS
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_CGMS

@@ -20,4 +20,4 @@ config WIFI_PROV_CORE
 module = WIFI_PROV_CORE
 module-dep = LOG
 module-str = Log level for sample
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
