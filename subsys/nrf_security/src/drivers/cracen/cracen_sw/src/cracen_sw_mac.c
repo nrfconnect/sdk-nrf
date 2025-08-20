@@ -11,8 +11,9 @@
 #include "common.h"
 #include <cracen/mem_helpers.h>
 #include "cracen_psa_primitives.h"
-#include "cracen_mac_cmac.h"
-#include "cracen_mac_hmac.h"
+#include "cracen_sw_mac_cmac.h"
+#include "../../cracenpsa/src/cracen_mac_hmac.h"
+#include <cracen_psa.h>
 
 static psa_status_t setup(cracen_mac_operation_t *operation, const psa_key_attributes_t *attributes,
 			  const uint8_t *key_buffer, size_t key_buffer_size, psa_algorithm_t alg)
@@ -40,8 +41,8 @@ static psa_status_t setup(cracen_mac_operation_t *operation, const psa_key_attri
 	}
 	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC)) {
 		if (PSA_ALG_FULL_LENGTH_MAC(alg) == PSA_ALG_CMAC) {
-			return cracen_cmac_setup(operation, attributes, key_buffer,
-						 key_buffer_size);
+			return cracen_sw_cmac_setup(operation, attributes, key_buffer,
+						    key_buffer_size);
 		}
 	}
 
@@ -81,10 +82,9 @@ psa_status_t cracen_mac_update(cracen_mac_operation_t *operation, const uint8_t 
 			return cracen_hmac_update(operation, input, input_length);
 		}
 	}
-
 	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC)) {
 		if (PSA_ALG_FULL_LENGTH_MAC(operation->alg) == PSA_ALG_CMAC) {
-			return cracen_cmac_update(operation, input, input_length);
+			return cracen_sw_cmac_update(operation, input, input_length);
 		}
 	}
 
@@ -115,7 +115,7 @@ psa_status_t cracen_mac_sign_finish(cracen_mac_operation_t *operation, uint8_t *
 	}
 	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC)) {
 		if (PSA_ALG_FULL_LENGTH_MAC(operation->alg) == PSA_ALG_CMAC) {
-			status = cracen_cmac_finish(operation);
+			status = cracen_sw_cmac_finish(operation);
 		}
 	}
 	if (status != PSA_SUCCESS) {
@@ -159,7 +159,7 @@ psa_status_t cracen_mac_verify_finish(cracen_mac_operation_t *operation, const u
 	}
 	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC)) {
 		if (PSA_ALG_FULL_LENGTH_MAC(operation->alg) == PSA_ALG_CMAC) {
-			status = cracen_cmac_finish(operation);
+			status = cracen_sw_cmac_finish(operation);
 		}
 	}
 
@@ -189,6 +189,24 @@ psa_status_t cracen_mac_compute(const psa_key_attributes_t *attributes, const ui
 	status = setup(&operation, attributes, key_buffer, key_buffer_size, alg);
 	if (status != PSA_SUCCESS) {
 		goto error_exit;
+	}
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC)) {
+		if (PSA_ALG_FULL_LENGTH_MAC(alg) == PSA_ALG_CMAC) {
+
+			if (mac_size < operation.mac_size) {
+				status = PSA_ERROR_BUFFER_TOO_SMALL;
+				goto error_exit;
+			}
+
+			status = cracen_cmac_compute(&operation, input, input_length, mac);
+			if (status != PSA_SUCCESS) {
+				goto error_exit;
+			}
+
+			*mac_length = operation.mac_size;
+			return PSA_SUCCESS;
+		}
 	}
 
 	status = cracen_mac_update(&operation, input, input_length);
