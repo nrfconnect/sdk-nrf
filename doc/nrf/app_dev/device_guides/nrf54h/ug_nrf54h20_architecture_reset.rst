@@ -73,7 +73,7 @@ Reset your device using nRF Util
 
 To trigger a specific reset type on your nRF54H20 SoC-based device, use the ``nrfutil device reset`` command::
 
-   nrfutil device reset --serial-number <blah> --reset-kind <reset-kind>
+   nrfutil device reset --serial-number <serial_number> --reset-kind <reset_kind>
 
 For a detailed list of commands for each reset type, run the following::
 
