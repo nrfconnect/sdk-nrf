@@ -310,6 +310,16 @@ Building and running
 
 See `Configuration`_ for information about building the sample with the DFU support.
 
+Building the Matter over Wi-Fi sample variant on nRF5340 DK with nRF7002 EK shield
+==================================================================================
+
+.. include:: /includes/matter_building_nrf5340dk_70ek
+
+Flashing the Matter over Wi-Fi sample variant
+=============================================
+
+.. include:: /includes/matter_sample_wifi_flash.txt
+
 Selecting a configuration
 =========================
 

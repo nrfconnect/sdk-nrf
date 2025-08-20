@@ -29,7 +29,37 @@ Samples and applications
 
 This section describes the changes related to samples and applications.
 
-|no_changes_yet_note|
+Matter
+------
+
+.. toggle::
+
+   * For the Matter samples and applications:
+
+     * All Matter over Wi-Fi samples and applications now store a portion of the application code related to the nRF70 Series Wi-Fi firmware in external flash memory by default.
+
+       There are two consequences of this change:
+
+       * The partition map has been changed.
+         You cannot perform DFU between the previous |NCS| versions and v3.2.0 unless you disable storing of the Wi-Fi firmware patch in external memory.
+       * The application code size is reduced, but the programming process may take longer when performing the full erase, because the entire external flash memory is erased before programming the Wi-Fi firmware patch.
+
+       When using the ``west flash`` command, the default behavior is to erase the entire external memory before programming the Wi-Fi firmware patch.
+       To reduce programming time, you can add the ``--ext-erase-mode=ranges`` option to erase only the necessary memory ranges:
+
+       .. code-block:: console
+
+          west flash --ext-erase-mode=ranges
+
+       The longer programming time also occurs when using the :guilabel:`Erase and Flash to Board` option in the |nRFVSC|.
+       To speed up the process in the |nRFVSC|, use the :guilabel:`Flash` button instead of :guilabel:`Erase and Flash to Board` in the :guilabel:`Actions View`.
+
+       To disable storing the Wi-Fi firmware patch in external memory and revert to the previous approach, complete the following steps:
+
+       1. Remove the Wi-Fi firmware patch partition from the partition list.
+       #. Set the :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE` Kconfig option to ``n``.
+       #. Set the :kconfig:option:`SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH` Kconfig option to ``n``.
+       #. Set the :kconfig:option:`SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES` Kconfig option to ``2``.
 
 Libraries
 =========
