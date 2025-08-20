@@ -1,22 +1,14 @@
 .. _ug_nrf54h20_architecture_lifecycle:
 
-nRF54H20 lifecycle states
-#########################
+nRF54H20 SoC lifecycle states
+#############################
 
 .. contents::
    :local:
    :depth: 2
 
-The Secure Domain ROM firmware defines the lifecycle states (LCS) for the nRF54H20 SoC.
+The Secure Domain ROM defines the lifecycle states (LCS) for the nRF54H20 SoC.
 The states are based on the Arm PSA Security Model and allow for programming and safely erasing the device assets.
-
-.. note::
-    During the customer sampling, the LCS of the nRF54H20 SoC must be set to Root of Trust (RoT).
-    If the LCS is set to ``EMPTY``, it must be transitioned to ``RoT``.
-    For more information, see :ref:`ug_nrf54h20_gs_bringup`.
-
-    However, the forward transition to LCS ``RoT`` is permanent.
-    After the transition, it is not possible to transition backward to LCS ``EMPTY``.
 
 The LCS available are the following:
 
@@ -49,12 +41,18 @@ See the following diagram:
 .. figure:: images/nRF54H20_lifecycle_states.svg
    :alt: nRF54H20 lifecycle states and transitions
 
-   nRF54H20 lifecycle states and transitions available on the final silicon.
+   nRF54H20 lifecycle states and transitions available on the nRF54H20 SoC.
 
-This figure shows the states and transitions (both forward and backward ones) that will be available on the final silicon.
+You can change the SoC lifecycle state to streamline development and testing:
 
-Changing the lifecycle state will be useful during development.
-Test devices in their final configuration would require the device to be in the deployed state, however, updating the Secure Domain firmware and the System Controller firmware will be easier with the device in RoT state.
+* During application development, set the SoC to the ``Root of Trust`` (RoT) state.
+* To validate behavior in a production environment, use the ``DEPLOYED`` state.
+
+
+If the device is in LCS ``EMPTY``, transition it to LCS ``RoT`` by following the :ref:`nRF54H20 DK bring-up <ug_nrf54h20_gs_bringup>` procedure.
+
+.. caution::
+   The transition from ``EMPTY`` to ``RoT`` is permanent and cannot be reversed.
 
 For more information, see the following pages:
 
