@@ -12,15 +12,16 @@
 #include <sxsymcrypt/keyref.h>
 
 /**
- * @brief Encrypt a single AES block using ECB mode
+ * @brief Encrypt a single AES block using ECB mode.
  *
- * This function is specifically for CRACEN software workarounds that need
+ * This function is designed for CRACEN software workarounds that need
  * AES-ECB encryption functionality.
  *
- * @param key The AES key reference
- * @param input Pointer to 16-byte input block
- * @param output Pointer to 16-byte output buffer
- * @return psa_status_t PSA_SUCCESS on success, error code otherwise
+ * @param key The AES key reference.
+ * @param input Pointer to a 16-byte input block.
+ * @param output Pointer to a 16-byte output buffer.
+ *
+ * @retval psa_status_t PSA_SUCCESS on success, error code otherwise.
  */
 psa_status_t cracen_aes_ecb_encrypt(const struct sxkeyref *key, const uint8_t *input,
 				    uint8_t *output);
