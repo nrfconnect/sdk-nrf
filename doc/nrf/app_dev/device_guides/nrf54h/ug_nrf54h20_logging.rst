@@ -63,7 +63,7 @@ The standalone logging mode with STM on the nRF54H20 SoC works as follows:
 #. The STMESP generates a data stream based on the register writes.
 #. The STM multiplexes the data stream with streams from other domains, and it places them in the single memory buffer provided by the ETR.
 #. The application core, acting as the ETR-designated proxy, reads the buffer and decodes the raw encoded log data.
-#. The SDFW outputs the logging data in a human-readable format over UART.
+#. The IronSide Secure Element (IronSide SE) outputs the logging data in a human-readable format over UART.
 
 Standalone logging leverages the frontend API of the Zephyr logging subsystem to select the stimulus ports and writes log messages directly to memory-mapped registers.
 This method bypasses the need for string formatting functions and peripheral drivers, as the core writes directly to the STM port.
