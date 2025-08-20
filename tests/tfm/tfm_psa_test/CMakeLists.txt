@@ -69,6 +69,7 @@ set(TEST_PSA_API "${TFM_PSA_TEST_SUITE}")
 set_property(TARGET zephyr_property_target
              APPEND PROPERTY TFM_CMAKE_OPTIONS
              -DCONFIG_TFM_TEST_DIR=${TFM_TEST_DIR}
+             -DTFM_PROFILE=profile_large
 )
 
 set_property(TARGET zephyr_property_target
