@@ -24,12 +24,17 @@ The accuracy of measurements depends on the accuracy of the given clock sources.
 Configuration
 *************
 
+To use the module, enable the :kconfig:option:`CONFIG_NRF_CPU_LOAD` Kconfig option.
+
 The module allows you to configure the following options in Kconfig:
 
-* Enabling or disabling the shell commands for controlling the library.
-* Toggling the periodic load measurement logging.
-* Enabling the alignment of the clock sources for more accurate measurement.
-* Choosing the TIMER instance for the load measurement.
+* :kconfig:option:`CONFIG_NRF_CPU_LOAD_CMDS` - to enable shell commands
+* :kconfig:option:`CONFIG_NRF_CPU_LOAD_LOG_PERIODIC` - to enable periodic logging of the
+  CPU load. You can use the :kconfig:option:`CONFIG_NRF_CPU_LOAD_LOG_INTERVAL` Kconfig option
+  to configure the interval of the logging.
+* :kconfig:option:`CONFIG_NRF_CPU_LOAD_ALIGNED_CLOCKS` - to enable the alignment of the clock sources
+  for more accurate measurement.
+* ``CONFIG_NRF_CPU_LOAD_TIMER_*`` - to choose the TIMER instance for the load measurement (for example,  :kconfig:option:`CONFIG_NRF_CPU_LOAD_TIMER_0`)
 
 
 Usage
