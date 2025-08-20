@@ -38,7 +38,21 @@ The following options control which images are included:
 |``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH`` | Include nRF700x Wi-Fi® firmware patches.|
 +----------------------------------------------------+-----------------------------------------+
 
-.. _lib_dfu_multi_image_suit_multi_image_package:
+Allowing to restore progress after power failure
+================================================
+
+To enable restoring the write progress after a power failure or device reset, set the :kconfig:option:`CONFIG_DFU_MULTI_IMAGE_SAVE_PROGRESS` Kconfig option.
+Currently, restoring the progress is only supported when using MCUboot as the DFU target.
+To use this option, you must also set the following Kconfig options:
+
+* :kconfig:option:`CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS` - Allows DFU multi-image to calculate its current progress based on offsets stored by the underlying DFU targets.
+* :kconfig:option:`CONFIG_SETTINGS` - Allows the use of a settings area to store progress information.
+* :kconfig:option:`CONFIG_NVS` - Enables the settings backend to store data in flash memory.
+
+..note::
+  Enabling this option uses space in the settings area (usually in flash memory) to store the progress information.
+   Data is stored on every call to :c:func:`dfu_multi_image_write`.
+   Make sure that the settings area is large enough to accommodate this additional data.
 
 Dependencies
 ************
