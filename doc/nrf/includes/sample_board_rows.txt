@@ -254,6 +254,11 @@
 
 | :ref:`nRF54L15 DK <ug_nrf54l>` | PCA10156 | :zephyr:board:`nrf54l15dk <nrf54l15dk>` | ``nrf54l15dk/nrf54l15/cpuflpr`` |
 
+.. nrf54l15dk_nrf54l15_cpuflpr_xip
+
+| :ref:`nRF54L15 DK <ug_nrf54l>` | PCA10156 | :zephyr:board:`nrf54l15dk <nrf54l15dk>` |
+``nrf54l15dk/nrf54l15/cpuflpr/xip`` |
+
 .. nrf54lv10dk_nrf54lv10a_cpuapp
 
 | nRF54LV10 DK |   | nrf54lv10dk | ``nrf54lv10dk/nrf54lv10a/cpuapp`` |
@@ -265,3 +270,11 @@
 .. nrf54lm20dk_nrf54lm20a_cpuapp
 
 | nRF54LM20 DK |   | nrf54lm20dk | ``nrf54lm20dk/nrf54lm20a/cpuapp`` |
+
+.. nrf54lm20dk_nrf54lm20a_cpuflpr
+
+| nRF54LM20 DK |   | nrf54lm20dk | ``nrf54lm20dk/nrf54lm20a/cpuflpr`` |
+
+.. nrf54lm20dk_nrf54lm20a_cpuflpr_xip
+
+| nRF54LM20 DK |   | nrf54lm20dk | ``nrf54lm20dk/nrf54lm20a/cpuflpr/xip`` |
