@@ -1539,7 +1539,8 @@ int lte_lc_proprietary_psm_req(bool enable);
 /**
  * Set the Paging Time Window (PTW) value to be used with eDRX.
  *
- * eDRX can be requested using lte_lc_edrx_req(). PTW is set individually for LTE-M and NB-IoT.
+ * eDRX can be requested using lte_lc_edrx_req(). PTW is set individually for LTE-M, NB-IoT and
+ * NTN NB-IoT.
  *
  * Requesting a specific PTW configuration should be done with caution. The requested value must be
  * compliant with the eDRX value that is configured, and it is usually best to let the modem
@@ -1561,8 +1562,8 @@ int lte_lc_ptw_set(enum lte_lc_lte_mode mode, const char *ptw);
 /**
  * Set the requested eDRX value.
  *
- * eDRX can be requested using lte_lc_edrx_req(). eDRX value is set individually for LTE-M and
- * NB-IoT.
+ * eDRX can be requested using lte_lc_edrx_req(). eDRX value is set individually for LTE-M,
+ * NB-IoT and NTN NB-IoT.
  *
  * For reference see 3GPP 27.007 Ch. 7.40.
  *

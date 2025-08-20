@@ -1245,12 +1245,17 @@ void test_lte_lc_edrx_req_enable_success(void)
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	ret = lte_lc_edrx_param_set(LTE_LC_LTE_MODE_NBIOT, "0100");
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	ret = lte_lc_edrx_param_set(LTE_LC_LTE_MODE_NTN_NBIOT, "0100");
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 
 	ret = lte_lc_ptw_set(LTE_LC_LTE_MODE_LTEM, "0011");
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	ret = lte_lc_ptw_set(LTE_LC_LTE_MODE_NBIOT, NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	/* Not setting PTW for NB-IoT to test that requested PTW is not 4 characters long */
+	ret = lte_lc_ptw_set(LTE_LC_LTE_MODE_NTN_NBIOT, NULL);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	/* Not setting PTW for NTN NB-IoT to test that requested PTW is not 4 characters long */
 
 	strcpy(at_notif, "+CEDRXP: 4,\"0010\",\"0010\",\"0011\"\r\n");
 	at_monitor_dispatch(at_notif);
@@ -1258,6 +1263,7 @@ void test_lte_lc_edrx_req_enable_success(void)
 
 	/* AT+CEDRXS=2,4,"0010" is not sent by lte_lc because eDRX value for LTE-M is the same */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,5,\"0100\"", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,6,\"0100\"", EXIT_SUCCESS);
 	ret = lte_lc_edrx_req(true);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 
@@ -1282,9 +1288,12 @@ void test_lte_lc_edrx_req_enable_no_edrx_value_set_success(void)
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	ret = lte_lc_edrx_param_set(LTE_LC_LTE_MODE_NBIOT, NULL);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	ret = lte_lc_edrx_param_set(LTE_LC_LTE_MODE_NTN_NBIOT, NULL);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,4", EXIT_SUCCESS);
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,5", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,6", EXIT_SUCCESS);
 	ret = lte_lc_edrx_req(true);
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
@@ -1306,15 +1315,20 @@ void test_lte_lc_cedrxp(void)
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	ret = lte_lc_edrx_param_set(LTE_LC_LTE_MODE_NBIOT, "0100");
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	ret = lte_lc_edrx_param_set(LTE_LC_LTE_MODE_NTN_NBIOT, "0100");
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 
 	ret = lte_lc_ptw_set(LTE_LC_LTE_MODE_LTEM, "1110");
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 	ret = lte_lc_ptw_set(LTE_LC_LTE_MODE_NBIOT, "0001");
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	ret = lte_lc_ptw_set(LTE_LC_LTE_MODE_NTN_NBIOT, "0001");
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 
 	/* Test AT%XPTW failure which is not really tested except in the code coverage data */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XPTW=4,\"1110\"", -NRF_ENOMEM);
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XPTW=5,\"0001\"", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XPTW=6,\"0001\"", EXIT_SUCCESS);
 	at_monitor_dispatch(at_notif);
 	k_sleep(K_MSEC(1));
 }
@@ -1324,6 +1338,7 @@ void test_lte_lc_edrx_on_modem_cfun(void)
 	/* Power off callback from nrf_modem_lib causes AT commands */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,4,\"0010\"", EXIT_SUCCESS);
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,5,\"0100\"", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEDRXS=2,6,\"0100\"", EXIT_SUCCESS);
 	lte_lc_edrx_on_modem_cfun(LTE_LC_FUNC_MODE_POWER_OFF, NULL);
 	k_sleep(K_MSEC(1));
 
