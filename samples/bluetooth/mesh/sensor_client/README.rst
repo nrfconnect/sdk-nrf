@@ -11,6 +11,8 @@ The Bluetooth® Mesh sensor observer sample demonstrates how to set up a basic B
 Eight different sensor types are used to showcase different ways for the server to publish data.
 In addition, the samples demonstrate usage of both :ref:`single-channel sensor types and sensor series types <bt_mesh_sensor_types_channels>`, as well as how to add and write to a sensor setting.
 
+This sample also demonstrates how to implement the HVAC Integration NLC Profile (see :ref:`ug_bt_mesh_nlc`).
+
 .. note::
    This sample must be paired with :ref:`bluetooth_mesh_sensor_server` to show any functionality.
    The observer has no sensor data, and is dependent on a mesh sensor to provide it.

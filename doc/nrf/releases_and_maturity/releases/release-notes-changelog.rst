@@ -138,7 +138,11 @@ Bluetooth® LE
 Bluetooth Mesh
 --------------
 
-|no_changes_yet_note|
+* Updated the NLC profile configuration system:
+
+  * Introduced individual profile configuration options for better user control.
+  * Deprecated the ``CONFIG_BT_MESH_NLC_PERF_CONF`` and ``CONFIG_BT_MESH_NLC_PERF_DEFAULT`` Kconfig options.
+    Existing configurations continue to work but you should migrate to individual profile options.
 
 DECT NR+
 --------
@@ -277,6 +281,18 @@ Bluetooth Mesh samples
 * :ref:`ble_mesh_dfu_target` sample:
 
   * Added support for external flash memory for the ``nrf52840dk/nrf52840`` as the secondary partition for the DFU process.
+
+* :ref:`bluetooth_mesh_sensor_client` sample:
+
+  * Updated:
+
+    * To demonstrate the Bluetooth :ref:`ug_bt_mesh_nlc` HVAC Integration profile.
+    * The following Mesh samples to use individual NLC profile configurations instead of the deprecated options:
+
+      * :ref:`bluetooth_mesh_light_dim`
+      * :ref:`bluetooth_mesh_light_lc`
+      * :ref:`bluetooth_mesh_sensor_server`
+      * :ref:`bluetooth_mesh_sensor_client`
 
 Bluetooth Fast Pair samples
 ---------------------------
