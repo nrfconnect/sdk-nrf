@@ -365,4 +365,6 @@ psa_status_t cracen_derive_key(const psa_key_attributes_t *attributes, const uin
 			       size_t input_length, uint8_t *key, size_t key_size,
 			       size_t *key_length);
 
+psa_status_t cracen_get_trng(uint8_t *output, size_t output_size);
+
 #endif /* CRACEN_PSA_H */
