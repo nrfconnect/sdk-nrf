@@ -10,4 +10,4 @@ endmenu
 
 module = MEMFAULT_SAMPLE
 module-str = Memfault sample
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"

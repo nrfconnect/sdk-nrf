@@ -90,5 +90,5 @@ endif
 
 config CUSTOM_LINKER_SCRIPT
 	string "Custom linker script for nRF70 FW patches in external flash"
-	default "${ZEPHYR_BASE}/../nrf/subsys/net/lib/nrf70_fw_ext/rpu_fw_patches.ld"
+	default "$(ZEPHYR_BASE)/../nrf/subsys/net/lib/nrf70_fw_ext/rpu_fw_patches.ld"
 endif

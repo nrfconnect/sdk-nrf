@@ -13,6 +13,6 @@ if MODEM_KEY_MGMT
 module = MODEM_KEY_MGMT
 module-dep = LOG
 module-str = Modem key management
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # MODEM_KEY_MGMT

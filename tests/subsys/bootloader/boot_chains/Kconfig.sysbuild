@@ -14,4 +14,4 @@ config SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE
 
 endif
 
-source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+source "$(ZEPHYR_BASE)/share/sysbuild/Kconfig"

@@ -63,7 +63,7 @@ endif # DOWNLOADER_SHELL
 module=DOWNLOADER
 module-dep=LOG
 module-str=Download client
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 if DOWNLOADER_LOG_LEVEL_DBG
 

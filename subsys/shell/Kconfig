@@ -18,13 +18,13 @@ if SHELL_BT_NUS
 
 module = SHELL_BT_NUS
 module-str = Shell over Bluetooth NUS
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 default-timeout = 100
-source "${ZEPHYR_BASE}/subsys/shell/Kconfig.template.shell_log_queue_timeout"
+source "$(ZEPHYR_BASE)/subsys/shell/Kconfig.template.shell_log_queue_timeout"
 
 default-size = 512
-source "${ZEPHYR_BASE}/subsys/shell/Kconfig.template.shell_log_queue_size"
+source "$(ZEPHYR_BASE)/subsys/shell/Kconfig.template.shell_log_queue_size"
 
 choice
 	prompt "Initial log level limit"
@@ -144,13 +144,13 @@ config SHELL_IPC_INIT_LOG_LEVEL
 
 module = SHELL_IPC
 module-str = Shell over the IPC Service
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 default-timeout = 100
-source "${ZEPHYR_BASE}/subsys/shell/Kconfig.template.shell_log_queue_timeout"
+source "$(ZEPHYR_BASE)/subsys/shell/Kconfig.template.shell_log_queue_timeout"
 
 default-size = 512
-source "${ZEPHYR_BASE}/subsys/shell/Kconfig.template.shell_log_queue_size"
+source "$(ZEPHYR_BASE)/subsys/shell/Kconfig.template.shell_log_queue_size"
 
 endif #SHELL_IPC
 
@@ -231,13 +231,13 @@ config SHELL_NFC_INIT_LOG_LEVEL
 
 module = SHELL_NFC
 module-str = Shell over the NFC T4T ISO-DEP
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 default-timeout = 100
-source "${ZEPHYR_BASE}/subsys/shell/Kconfig.template.shell_log_queue_timeout"
+source "$(ZEPHYR_BASE)/subsys/shell/Kconfig.template.shell_log_queue_timeout"
 
 default-size = 512
-source "${ZEPHYR_BASE}/subsys/shell/Kconfig.template.shell_log_queue_size"
+source "$(ZEPHYR_BASE)/subsys/shell/Kconfig.template.shell_log_queue_size"
 
 
 endif # SHELL_NFC
