@@ -192,6 +192,12 @@ static const char link_edrx_usage_str[] =
 	"                          enabling eDRX with -e option.\n"
 	"      --nbiot_ptw, [str]  Sets custom Paging Time Window value for NB-IoT to be\n"
 	"                          requested when enabling eDRX with -e option.\n"
+	"      --ntn_nbiot_edrx, [str]\n"
+	"                          Sets custom eDRX value for NTN NB-IoT to be requested when\n"
+	"                          enabling eDRX with -e option.\n"
+	"      --ntn_nbiot_ptw, [str]\n"
+	"                          Sets custom Paging Time Window value for NTN NB-IoT to be\n"
+	"                          requested when enabling eDRX with -e option.\n"
 	"  -h, --help,             Shows this help information";
 
 static const char link_psm_usage_str[] =
@@ -413,6 +419,8 @@ enum {
 	LINK_SHELL_OPT_LTEM_PTW,
 	LINK_SHELL_OPT_NBIOT_EDRX,
 	LINK_SHELL_OPT_NBIOT_PTW,
+	LINK_SHELL_OPT_NTN_NBIOT_EDRX,
+	LINK_SHELL_OPT_NTN_NBIOT_PTW,
 	LINK_SHELL_OPT_MODEM_INIT,
 	LINK_SHELL_OPT_MODEM_SHUTDOWN,
 	LINK_SHELL_OPT_MODEM_SHUTDOWN_CFUN0,
@@ -452,6 +460,8 @@ static struct option long_options[] = {
 	{ "ltem_ptw", required_argument, 0, LINK_SHELL_OPT_LTEM_PTW },
 	{ "nbiot_edrx", required_argument, 0, LINK_SHELL_OPT_NBIOT_EDRX },
 	{ "nbiot_ptw", required_argument, 0, LINK_SHELL_OPT_NBIOT_PTW },
+	{ "ntn_nbiot_edrx", required_argument, 0, LINK_SHELL_OPT_NTN_NBIOT_EDRX },
+	{ "ntn_nbiot_ptw", required_argument, 0, LINK_SHELL_OPT_NTN_NBIOT_PTW },
 	{ "prot", required_argument, 0, 'A' },
 	{ "pword", required_argument, 0, 'P' },
 	{ "uname", required_argument, 0, 'U' },
@@ -1128,6 +1138,10 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 	bool nbiot_edrx_set = false;
 	char nbiot_ptw_str[LINK_SHELL_EDRX_PTW_STR_LENGTH + 1];
 	bool nbiot_ptw_set = false;
+	char ntn_nbiot_edrx_str[LINK_SHELL_EDRX_VALUE_STR_LENGTH + 1];
+	bool ntn_nbiot_edrx_set = false;
+	char ntn_nbiot_ptw_str[LINK_SHELL_EDRX_PTW_STR_LENGTH + 1];
+	bool ntn_nbiot_ptw_set = false;
 
 	optreset = 1;
 	optind = 1;
@@ -1182,6 +1196,28 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 			if (strlen(optarg) == LINK_SHELL_EDRX_PTW_STR_LENGTH) {
 				strcpy(nbiot_ptw_str, optarg);
 				nbiot_ptw_set = true;
+			} else {
+				mosh_error(
+					"PTW string length must be %d.",
+					LINK_SHELL_EDRX_PTW_STR_LENGTH);
+				return -EINVAL;
+			}
+			break;
+		case LINK_SHELL_OPT_NTN_NBIOT_EDRX:
+			if (strlen(optarg) == LINK_SHELL_EDRX_VALUE_STR_LENGTH) {
+				strcpy(ntn_nbiot_edrx_str, optarg);
+				ntn_nbiot_edrx_set = true;
+			} else {
+				mosh_error(
+					"eDRX value string length must be %d.",
+					LINK_SHELL_EDRX_VALUE_STR_LENGTH);
+				return -EINVAL;
+			}
+			break;
+		case LINK_SHELL_OPT_NTN_NBIOT_PTW:
+			if (strlen(optarg) == LINK_SHELL_EDRX_PTW_STR_LENGTH) {
+				strcpy(ntn_nbiot_ptw_str, optarg);
+				ntn_nbiot_ptw_set = true;
 			} else {
 				mosh_error(
 					"PTW string length must be %d.",
@@ -1262,6 +1298,34 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 			return -EINVAL;
 		}
 
+		value = NULL; /* Set with the defaults if not given */
+		if (ntn_nbiot_edrx_set) {
+			value = ntn_nbiot_edrx_str;
+		}
+
+		ret = lte_lc_edrx_param_set(LTE_LC_LTE_MODE_NTN_NBIOT, value);
+		if (ret < 0) {
+			mosh_error(
+				"Cannot set NTN NB-IoT eDRX value %s, error: %d",
+				((value == NULL) ? "NULL" : value),
+				ret);
+			return -EINVAL;
+		}
+
+		value = NULL; /* Set with the defaults if not given */
+		if (ntn_nbiot_ptw_set) {
+			value = ntn_nbiot_ptw_str;
+		}
+
+		ret = lte_lc_ptw_set(LTE_LC_LTE_MODE_NTN_NBIOT, value);
+		if (ret < 0) {
+			mosh_error(
+				"Cannot set NTN NB-IoT PTW value %s, error: %d",
+				((value == NULL) ? "NULL" : value),
+				ret);
+			return -EINVAL;
+		}
+
 		ret = lte_lc_edrx_req(true);
 		if (ret < 0) {
 			mosh_error("Cannot enable eDRX: %d", ret);
@@ -1286,8 +1350,9 @@ static int link_shell_edrx(const struct shell *shell, size_t argc, char **argv)
 				mosh_print("eDRX not in use");
 			} else {
 				mosh_print("eDRX LTE mode: %s, eDRX interval: %.2f s, PTW: %.2f s",
-					   edrx_cfg.mode == LTE_LC_LTE_MODE_LTEM ?
-						"LTE-M" : "NB-IoT",
+					   (edrx_cfg.mode == LTE_LC_LTE_MODE_LTEM)  ? "LTE-M" :
+					   (edrx_cfg.mode == LTE_LC_LTE_MODE_NBIOT) ? "NB-IoT" :
+										      "NTN NB-IoT",
 					   (double)edrx_cfg.edrx, (double)edrx_cfg.ptw);
 			}
 		}

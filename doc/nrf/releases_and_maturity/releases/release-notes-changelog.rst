@@ -345,6 +345,10 @@ Cellular samples
   * :ref:`http_modem_delta_update_sample`
   * :ref:`http_modem_full_update_sample`
 
+* :ref:`modem_shell_application` sample:
+
+  * Added support for NTN NB-IoT to the ``link sysmode`` and ``link edrx`` commands.
+
 Cryptography samples
 --------------------
 
@@ -522,7 +526,12 @@ Security libraries
 Modem libraries
 ---------------
 
-|no_changes_yet_note|
+* :ref:`lte_lc_readme` library:
+
+  * Added:
+
+    * Support for NTN NB-IoT system mode.
+    * eDRX support for NTN NB-IoT.
 
 Multiprotocol Service Layer libraries
 -------------------------------------
