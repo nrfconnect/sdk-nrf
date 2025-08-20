@@ -27,7 +27,7 @@ jobs:
           echo "STABLE=${{ env.STABLE }}"
 
       - name: Upload src.tar.gz
-        uses: nrfconnect/action-src-mirror@main
+        uses: nrfconnect/action-src-mirror@v1_v2_upload
         with:
           git-ref: ${{ github.ref_name }}
           path: 'nrf'
