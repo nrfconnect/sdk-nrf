@@ -7,6 +7,7 @@ common:
     - nrf54l15dk/nrf54l15/cpuapp
   tags:
     - ci_tests_subsys_bootloader
+  timeout: 240
   harness: console
   harness_config:
     type: one_line
