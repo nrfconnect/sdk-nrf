@@ -51,6 +51,8 @@ extern "C" {
 typedef int (*dfu_image_open_t)(int image_id, size_t image_size);
 typedef int (*dfu_image_write_t)(const uint8_t *chunk, size_t chunk_size);
 typedef int (*dfu_image_close_t)(bool success);
+typedef int (*dfu_image_offset_t)(size_t *offset);
+typedef int (*dfu_image_reset_t)(void);
 
 /**
  * @brief User-provided functions for writing a single image from DFU Multi Image package.
@@ -93,6 +95,27 @@ struct dfu_image_writer {
 	 * @return 0        On success.
 	 */
 	dfu_image_close_t close;
+
+#ifdef CONFIG_DFU_MULTI_IMAGE_SAVE_PROGRESS
+	/**
+	 * @brief Function called to get the current write position of the applicable image.
+	 *
+	 * This function is called by @c dfu_multi_image_init if restoring the write position
+	 * after a reboot is needed.
+	 *
+	 * @return negative On failure.
+	 * @return 0        On success.
+	 */
+	dfu_image_offset_t offset;
+#endif
+
+	/**
+	 * @brief Function called to reset any internal state of the writer.
+	 *
+	 * The function is indirectly called by @c dfu_multi_image_reset and in the case
+	 * of failure the error code is propagated and returned from the latter function.
+	 */
+	dfu_image_reset_t reset;
 };
 
 /**
@@ -177,6 +200,12 @@ size_t dfu_multi_image_offset(void);
  * @return 0        On success.
  */
 int dfu_multi_image_done(bool success);
+
+/**
+ * @brief Release the resources that were needed for DFU multi image
+ *        and resets all the underlying image writers.
+ */
+int dfu_multi_image_reset(void);
 
 #ifdef __cplusplus
 }

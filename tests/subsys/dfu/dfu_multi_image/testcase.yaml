@@ -8,3 +8,20 @@ tests:
       - dfu
       - sysbuild
       - ci_tests_subsys_dfu
+  dfu.dfu_multi_image.save_progress:
+    sysbuild: true
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
+    extra_configs:
+      - CONFIG_DFU_MULTI_IMAGE_SAVE_PROGRESS=y
+      - CONFIG_FLASH=y
+      - CONFIG_FLASH_MAP=y
+      - CONFIG_NVS=y
+      - CONFIG_SETTINGS=y
+      - CONFIG_SETTINGS_RUNTIME=y
+      - CONFIG_SETTINGS_NVS=y
+    tags:
+      - dfu
+      - sysbuild
+      - ci_tests_subsys_dfu

@@ -12,6 +12,11 @@ if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
   set(dfu_multi_image_paths)
   set(dfu_multi_image_targets)
 
+  sysbuild_get(dfu_multi_image_align IMAGE ${DEFAULT_IMAGE} VAR CONFIG_DFU_MULTI_IMAGE_ALIGN KCONFIG)
+  if(NOT dfu_multi_image_align)
+    set(dfu_multi_image_align 1)
+  endif()
+
   if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_APP)
     sysbuild_get(${DEFAULT_IMAGE}_image_dir IMAGE ${DEFAULT_IMAGE} VAR APPLICATION_BINARY_DIR CACHE)
     sysbuild_get(${DEFAULT_IMAGE}_kernel_name IMAGE ${DEFAULT_IMAGE} VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
@@ -60,6 +65,7 @@ if(SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
     dfu_multi_image_package(dfu_multi_image_pkg
       IMAGE_IDS ${dfu_multi_image_ids}
       IMAGE_PATHS ${dfu_multi_image_paths}
+      ALIGN ${dfu_multi_image_align}
       OUTPUT ${CMAKE_BINARY_DIR}/dfu_multi_image.bin
       DEPENDS ${dfu_multi_image_targets}
       )
