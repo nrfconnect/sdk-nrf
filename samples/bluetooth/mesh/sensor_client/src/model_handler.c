@@ -142,6 +142,28 @@ static const struct bt_mesh_sensor_cli_handlers bt_mesh_sensor_cli_handlers = {
 static struct bt_mesh_sensor_cli sensor_cli =
 	BT_MESH_SENSOR_CLI_INIT(&bt_mesh_sensor_cli_handlers);
 
+#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_CONF)
+/* HVAC Integration NLC Profile composition data page 2 */
+static const uint8_t cmp2_elem_offset_hvac[1]; /* Profile uses element 0 */
+
+static const struct bt_mesh_comp2_record comp_rec[1] = {
+	{/* HVAC Integration NLC Profile 1.0 */
+	 .id = BT_MESH_NLC_PROFILE_ID_HVAC_INTEGRATION,
+	 .version.x = 1,
+	 .version.y = 0,
+	 .version.z = 0,
+	 .elem_offset_cnt = 1,
+	 .elem_offset = cmp2_elem_offset_hvac,
+	 .data_len = 0
+	}
+};
+
+static const struct bt_mesh_comp2 comp_p2 = {
+	.record_cnt = 1,
+	.record = comp_rec
+};
+#endif
+
 static struct k_work_delayable get_data_work;
 
 static void get_data(struct k_work *work)
@@ -358,6 +380,12 @@ static const struct bt_mesh_comp comp = {
 
 const struct bt_mesh_comp *model_handler_init(void)
 {
+#if IS_ENABLED(CONFIG_BT_MESH_NLC_PERF_CONF)
+	if (bt_mesh_comp2_register(&comp_p2)) {
+		printk("Failed to register comp2\n");
+	}
+#endif
+
 	k_work_init_delayable(&attention_blink_work, attention_blink);
 	k_work_init_delayable(&get_data_work, get_data);
 	k_work_init_delayable(&motion_timeout_work, motion_timeout);
