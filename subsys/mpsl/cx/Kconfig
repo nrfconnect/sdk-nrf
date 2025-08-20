@@ -131,6 +131,6 @@ endif # MPSL_CX_SOFTWARE
 
 module=MPSL_CX
 module-str=MPSL_CX
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif	# MPSL_CX

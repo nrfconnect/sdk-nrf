@@ -48,6 +48,6 @@ config REMOTE_HCI_TX_THREAD_PRIORITY
 
 module = DTM_REMOTE_HCI
 module-str = "DTM_remote_hci"
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 source "Kconfig.zephyr"

@@ -61,6 +61,6 @@ module=AZURE_FOTA
 module-dep=LOG
 module-str=Log level for Azure FOTA
 module-help=Enables Azure FOTA log messages.
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # AZURE_FOTA

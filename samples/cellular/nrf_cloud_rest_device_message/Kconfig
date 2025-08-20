@@ -34,4 +34,4 @@ endmenu
 
 module = NRF_CLOUD_REST_DEVICE_MESSAGE_SAMPLE
 module-str = nRF Cloud Rest Sample
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"

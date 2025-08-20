@@ -13,7 +13,7 @@ if BT_RAS_RREQ
 
 module = BT_RAS_RREQ
 module-str = RAS_RREQ
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 config BT_RAS_RREQ_MAX_ACTIVE_CONN
 	int "Number of simultaneously supported RREQ instances"

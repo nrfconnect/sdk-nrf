@@ -13,6 +13,6 @@ if DATA_FIFO
 
 module = DATA_FIFO
 module-str = Data first-in first-out
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif #DATA_FIFO
