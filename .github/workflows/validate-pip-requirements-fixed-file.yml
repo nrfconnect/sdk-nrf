@@ -34,6 +34,12 @@ jobs:
         with:
           python-version: '${{ steps.pyv.outputs.python_version }}'
 
+      - name: Cache pip
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip
+
       - name: Setup environment
         working-directory: ncs
         run: |
