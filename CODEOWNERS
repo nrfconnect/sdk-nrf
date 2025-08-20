@@ -712,7 +712,7 @@
 /scripts/print_docker_image.sh            @nrfconnect/ncs-ci
 /scripts/print_toolchain_checksum.sh      @nrfconnect/ncs-ci
 /scripts/hpf/                             @nrfconnect/ncs-ll-ursus
-/scripts/generate_psa_key_attributes.py   @nrfconnect/ncs-aurora
+/scripts/generate_psa_key_attributes.py   @nrfconnect/ncs-aegir
 /scripts/tests/                           @nrfconnect/ncs-pluto @fundakol
 /scripts/vale/                            @francescoser
 /scripts/esb_sniffer/                     @nrfconnect/ncs-si-muffin
