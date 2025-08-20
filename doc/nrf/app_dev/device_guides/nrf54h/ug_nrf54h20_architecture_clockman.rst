@@ -130,7 +130,7 @@ In such cases, developers must:
 
 1. Initialize the IPC backend.
 
-   GDFS relies on Interprocessor Communication (IPC) to exchange configuration requests and responses between the application core and the System Controller firmware (SCFW).
+   GDFS relies on :ref:`interprocessor communication (IPC) <ug_nrf54h20_architecture_ipc>` to exchange configuration requests and responses between the application core and the System Controller Firmware (SCFW) component of the IronSide Secure Element (IronSide SE).
    Before invoking GDFS functions, the application must properly initialize the underlying IPC backend.
 
 #. Initialize GDFS and configure handlers.
