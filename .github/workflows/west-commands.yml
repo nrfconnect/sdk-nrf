@@ -9,6 +9,9 @@ on:
       - scripts/requirements-west-ncs-sbom.txt
       - scripts/requirements-extra.txt
 
+permissions:
+  contents: read
+
 jobs:
   west_commands_job:
     runs-on: ubuntu-24.04

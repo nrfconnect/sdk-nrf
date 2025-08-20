@@ -18,6 +18,10 @@ on:
     branches: # Trigger on push to main and release branches
       - main
       - 'v*-branch'
+
+permissions:
+  contents: read
+
 jobs:
   check-prs:
     if: ${{ github.repository_owner == 'nrfconnect' && !github.event.created }}  # Skip for new branches or forks
