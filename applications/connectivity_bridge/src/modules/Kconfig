@@ -13,8 +13,8 @@ config BRIDGE_CDC_ENABLE
 	depends on USB_DEVICE_STACK
 	select USB_CDC_ACM
 	help
-		This option enables USB CDC ACM
-		and exposes two COM ports, bridging the two UART interfaces.
+	  This option enables USB CDC ACM
+	  and exposes two COM ports, bridging the two UART interfaces.
 
 if BRIDGE_CDC_ENABLE
 
@@ -56,8 +56,8 @@ config BRIDGE_MSC_ENABLE
 	select USB_MASS_STORAGE
 	select FILE_SYSTEM
 	help
-		This option enables USB Mass Storage Device Class,
-		and exposes utility files via USB.
+	  This option enables USB Mass Storage Device Class,
+	  and exposes utility files via USB.
 
 if BRIDGE_MSC_ENABLE
 
