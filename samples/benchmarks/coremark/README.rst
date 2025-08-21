@@ -56,6 +56,7 @@ The sample configuration sets up the following board targets for standard loggin
 * ``nrf54l15dk/nrf54l05/cpuapp``
 * ``nrf54l15dk/nrf54l10/cpuapp``
 * ``nrf54l15dk/nrf54l15/cpuapp``
+* ``nrf54lm20dk/nrf54lm20a/cpuapp``
 
 Multi-domain logging
 --------------------
@@ -98,7 +99,10 @@ Each target CPU has an assigned button responsible for starting the benchmark an
 
       FLPR core: **Button 3** and **LED 3**
 
-        This UI is currently only supported for the ``nrf54l15dk/nrf54l15/cpuapp`` board target.
+        This UI is currently only supported for the following board targets:
+
+        * ``nrf54l15dk/nrf54l15/cpuapp``
+        * ``nrf54lm20dk/nrf54lm20a/cpuapp``
 
    .. group-tab:: nRF54H DKs
 
