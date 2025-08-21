@@ -34,6 +34,7 @@ IDE, OS, and tool support
 =========================
 
 * Added macOS 26 support (Tier 3) to the table listing :ref:`supported operating systems for proprietary tools <additional_nordic_sw_tools_os_support>`.
+* Updated the required `SEGGER J-Link`_ version to v8.60.
 
 Board support
 =============
