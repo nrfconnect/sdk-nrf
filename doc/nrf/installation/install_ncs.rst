@@ -227,7 +227,9 @@ For more information about the repository and development model, see the :ref:`d
       #. In the extension's :guilabel:`Welcome View`, click on :guilabel:`Manage SDKs`.
          The list of actions appears in the |VSC|'s quick pick.
       #. Click :guilabel:`Install SDK`.
-         The list of available stable SDK versions appears in the |VSC|'s quick pick, grouped into two categories:
+         The list of available SDK types appears.
+      #. Select the SDK type to install.
+         The list of available stable SDK versions for the selected SDK type appears in the |VSC|'s quick pick, grouped into two categories:
 
          * Pre-packaged SDKs - Bundled by Nordic Semiconductor.
            Available mostly for stable releases and some preview tags.
