@@ -55,18 +55,21 @@ choice
 	prompt "AT command terminator"
 	default MODEM_SLM_CR_LF_TERMINATION
 	help
-		Sets the termination ending from the serial terminal
-		Levels are:
-		-  CR Termination
-		-  LF Termination
-		-  CR+LF Termination
+	  Sets the termination ending from the serial terminal
+	  Levels are:
+	  -  CR Termination
+	  -  LF Termination
+	  -  CR+LF Termination
 
-	config MODEM_SLM_CR_TERMINATION
-		bool "CR Termination"
-	config MODEM_SLM_LF_TERMINATION
-		bool "LF Termination"
-	config MODEM_SLM_CR_LF_TERMINATION
-		bool "CR+LF Termination"
+config MODEM_SLM_CR_TERMINATION
+	bool "CR Termination"
+
+config MODEM_SLM_LF_TERMINATION
+	bool "LF Termination"
+
+config MODEM_SLM_CR_LF_TERMINATION
+	bool "CR+LF Termination"
+
 endchoice
 
 config MODEM_SLM_POWER_PIN
