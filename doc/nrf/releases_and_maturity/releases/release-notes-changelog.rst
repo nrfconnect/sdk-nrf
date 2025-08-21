@@ -120,7 +120,8 @@ Developing with coprocessors
 Security
 ========
 
-|no_changes_yet_note|
+* Added CRACEN and nrf_oberon driver support for nRF54LM20.
+  For the list of supported features and limitations, see the :ref:`ug_crypto_supported_features` page.
 
 Protocols
 =========
