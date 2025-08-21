@@ -1013,6 +1013,7 @@
 .. _`Create a new application`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_welcome.html#create-a-new-application
 .. _`Browse samples`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_sidebar_welcome.html#browse-samples
 .. _`nRF Terminal documentation`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/reference/ui_panel.html#nrf-connect-and-nrf-terminal-profiles
+.. _`How to use nRF Connect terminal profile`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/extension_nrfconnect_profile.html
 .. _`switch to the pre-release version of the extension`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/rel_notes_overview.html#switching-to-a-pre-release-version
 .. _`How to work with sysbuild domains`: https://docs.nordicsemi.com/bundle/nrf-connect-vscode/page/guides/build_multi_domain.html
 

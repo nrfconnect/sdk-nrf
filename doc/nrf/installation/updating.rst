@@ -34,8 +34,8 @@ Depending on your preferred development method, you can start the correct CLI to
 
    .. group-tab:: nRF Connect for Visual Studio Code
 
-      Start the nRF Connect terminal profile from the :guilabel:`Panel View`.
-      See `the extension documentation <nRF Terminal documentation_>`_ for more information.
+      Start the nRF Connect terminal profile from the :guilabel:`Welcome View` (:guilabel:`Open terminal` action) or the :guilabel:`Panel View`.
+      See `How to use nRF Connect terminal profile`_ in the extension documentation for more information.
 
       .. note::
           Repositories and tools can be updated in the |nRFVSC| using GUI.
