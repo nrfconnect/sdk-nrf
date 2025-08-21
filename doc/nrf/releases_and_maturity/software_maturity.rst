@@ -2537,16 +2537,19 @@ Trusted Firmware-M support
               - nRF54L05
               - nRF54L10
               - nRF54L15
+              - nRF54LM20
             * - :ref:`Configurable <ug_tfm_supported_services_profiles_configurable>`
               - --
               - --
               - --
               - Experimental
+              - --
             * - :ref:`Minimal <ug_tfm_supported_services_profiles_minimal>`
               - --
               - --
               - --
               - Experimental
+              - --
 
       .. tab:: nRF91 Series
 
@@ -2676,7 +2679,9 @@ The lists are organized by device Series and implementation.
               - nRF54L05
               - nRF54L10
               - nRF54L15
+              - nRF54LM20
             * - :ref:`Oberon PSA Crypto - nrf_cc3xx <ug_crypto_architecture_implementation_standards_oberon>`
+              - --
               - --
               - --
               - --
@@ -2686,8 +2691,10 @@ The lists are organized by device Series and implementation.
               - Supported
               - Supported
               - Supported
+              - Experimental
             * - :ref:`Oberon PSA Crypto - nrf_oberon <ug_crypto_architecture_implementation_standards_oberon>`
               - --
+              - Supported
               - Supported
               - Supported
               - Supported
@@ -2696,8 +2703,10 @@ The lists are organized by device Series and implementation.
               - --
               - Experimental
               - Experimental
+              - --
             * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
               - Supported
+              - --
               - --
               - --
               - --
@@ -2773,6 +2782,7 @@ The lists are organized by device Series and implementation.
              - Supported
              - Supported
              - Supported
+
       .. tab:: nRF53 Series
 
         .. list-table:: Immutable Bootloader support
@@ -2783,6 +2793,7 @@ The lists are organized by device Series and implementation.
              - nRF5340
            * - **Immutable Bootloader as part of build**
              - Supported
+
       .. tab:: nRF54 Series
 
         .. list-table:: Immutable Bootloader support
@@ -2794,11 +2805,14 @@ The lists are organized by device Series and implementation.
              - nRF54L05
              - nRF54L10
              - nRF54L15
+             - nRF54LM20
            * - **Immutable Bootloader as part of build**
              - --
              - Experimental
              - Experimental
              - Experimental
+             - --
+
       .. tab:: nRF91 Series
 
         .. list-table:: Immutable Bootloader support
@@ -2845,6 +2859,7 @@ Hardware Unique Key
              - --
              - --
              - Supported
+
       .. tab:: nRF53 Series
 
         .. list-table:: Key Derivation support
@@ -2855,6 +2870,7 @@ Hardware Unique Key
              - nRF5340
            * - **Key Derivation from Hardware Unique Key**
              - Supported
+
       .. tab:: nRF54 Series
 
         .. list-table:: Key Derivation support
@@ -2866,11 +2882,14 @@ Hardware Unique Key
              - nRF54L05
              - nRF54L10
              - nRF54L15
+             - nRF54LM20
            * - **Key Derivation from Hardware Unique Key**
              - --
              - Experimental
              - Experimental
              - Experimental
+             - Experimental
+
       .. tab:: nRF91 Series
 
         .. list-table:: Key Derivation support
@@ -2919,6 +2938,7 @@ Trusted storage implements the PSA Certified Secure Storage APIs without TF-M.
               - --
               - --
               - Supported
+
       .. tab:: nRF53 Series
 
          .. list-table:: Trusted storage support
@@ -2929,6 +2949,7 @@ Trusted storage implements the PSA Certified Secure Storage APIs without TF-M.
               - nRF5340
             * - **Trusted storage**
               - Supported
+
       .. tab:: nRF54 Series
 
          .. list-table:: Trusted storage support
@@ -2940,11 +2961,14 @@ Trusted storage implements the PSA Certified Secure Storage APIs without TF-M.
               - nRF54L05
               - nRF54L10
               - nRF54L15
+              - nRF54LM20
             * - **Trusted storage**
               - Experimental
               - Supported
               - Supported
               - Supported
+              - Experimental
+
       .. tab:: nRF91 Series
 
          .. list-table:: Trusted storage support
@@ -3026,6 +3050,7 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - Experimental
               - Experimental
+
       .. tab:: nRF53 Series
 
          .. list-table:: Bootloader and security features
@@ -3046,6 +3071,7 @@ The following table indicates the software maturity levels of the support for ea
               - --
             * - **Image encryption**
               - Experimental
+
       .. tab:: nRF54 Series
 
          .. list-table:: Bootloader and security features
@@ -3057,36 +3083,44 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L05
               - nRF54L10
               - nRF54L15
+              - nRF54LM20
             * - **Immutable MCUboot as part of build**
               - --
               - Supported
               - Supported
               - Supported
+              - Experimental
             * - **Updatable MCUboot as part of build**
               - --
               - Experimental
               - Experimental
               - Experimental
+              - --
             * - **Application image compression**
               - --
               - --
               - Supported
               - Supported
+              - Experimental
             * - **Hardware cryptography acceleration**
               - --
               - Supported
               - Supported
               - Supported
+              - --
             * - **Multiple signature keys**
               - --
               - Supported
               - Supported
               - Supported
+              - --
             * - **Image encryption**
               - --
               - Experimental
               - Experimental
               - Experimental
+              - Experimental
+
       .. tab:: nRF91 Series
 
          .. list-table:: Bootloader and security features
