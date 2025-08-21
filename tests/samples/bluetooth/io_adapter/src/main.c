@@ -29,6 +29,10 @@ LOG_MODULE_REGISTER(main, CONFIG_LOG_DEFAULT_LEVEL);
 #define PRINT_STATUS(status, fmt, ...)  \
 	shell_print(shell, "{\"status\": \"%s\", \"msg\": \"" fmt "\"}", status, ##__VA_ARGS__)
 
+#define DISABLE_PIN(gpio, pin) gpio_pin_configure(gpio, pin, GPIO_DISCONNECTED)
+#define ENABLE_BUTTON_PIN(gpio, pin) gpio_pin_configure(gpio, pin, GPIO_OUTPUT_INACTIVE)
+#define ENABLE_LED_PIN(gpio, pin) gpio_pin_configure(gpio, pin, GPIO_INPUT)
+
 /* IO Adapter channel to port/pin mapping */
 typedef struct {
 	uint8_t gpio_port;
@@ -133,7 +137,7 @@ static int cmd_button_push(const struct shell *shell, size_t argc, char **argv)
 
 	for (int i = 0; i < repeats; i++) {
 		/* Press button (set to LOW) */
-		int ret = gpio_pin_set(gpio, btn->gpio_pin, 0);
+		int ret = ENABLE_BUTTON_PIN(gpio, btn->gpio_pin);
 
 		if (ret < 0) {
 			PRINT_STATUS("error", "Failed to press button on port %d pin %d",
@@ -144,8 +148,8 @@ static int cmd_button_push(const struct shell *shell, size_t argc, char **argv)
 		/* Wait for specified time */
 		k_sleep(K_MSEC(time_ms));
 
-		/* Release button (set to HIGH) */
-		ret = gpio_pin_set(gpio, btn->gpio_pin, 1);
+		/* Release button (disconnect pin) */
+		ret = DISABLE_PIN(gpio, btn->gpio_pin);
 		if (ret < 0) {
 			PRINT_STATUS("error", "Failed to release button on port %d pin %d",
 					btn->gpio_port, btn->gpio_pin);
@@ -201,7 +205,7 @@ static int cmd_button_hold(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	/* Press button (set to LOW) */
-	int ret = gpio_pin_set(gpio, btn->gpio_pin, 0);
+	int ret = ENABLE_BUTTON_PIN(gpio, btn->gpio_pin);
 
 	if (ret < 0) {
 		PRINT_STATUS("error", "Failed to press button on port %d pin %d",
@@ -250,8 +254,8 @@ static int cmd_button_release(const struct shell *shell, size_t argc, char **arg
 		return -ENODEV;
 	}
 
-	/* Release button (set to HIGH) */
-	int ret = gpio_pin_set(gpio, btn->gpio_pin, 1);
+	/* Release button (disconnect pin) */
+	int ret = DISABLE_PIN(gpio, btn->gpio_pin);
 
 	if (ret < 0) {
 		PRINT_STATUS("error", "Failed to release button on port %d pin %d",
@@ -303,13 +307,25 @@ static int cmd_led_state(const struct shell *shell, size_t argc, char **argv)
 	}
 
 	int state;
-	int ret = gpio_pin_get(gpio, led_map_entry->gpio_pin);
+	int ret = ENABLE_LED_PIN(gpio, led_map_entry->gpio_pin);
 
+	if (ret < 0) {
+		PRINT_STATUS("error", "Failed to enable LED pin");
+		return ret;
+	}
+
+	ret = gpio_pin_get(gpio, led_map_entry->gpio_pin);
 	if (ret < 0) {
 		PRINT_STATUS("error", "Failed to read LED state");
 		return ret;
 	}
 	state = ret;
+
+	ret = DISABLE_PIN(gpio, led_map_entry->gpio_pin);
+	if (ret < 0) {
+		PRINT_STATUS("error", "Failed to disable LED pin");
+		return ret;
+	}
 
 	shell_print(shell, "{\"status\": \"success\", "
 				"\"result\": \"%s\", "
@@ -404,6 +420,13 @@ static int cmd_blink(const struct shell *shell, size_t argc, char **argv)
 	int64_t start_time = k_uptime_get();
 	int64_t end_time = start_time + time_ms;
 
+	int ret = ENABLE_LED_PIN(gpio, led_map_entry->gpio_pin);
+
+	if (ret < 0) {
+		PRINT_STATUS("error", "Failed to enable LED pin");
+		return ret;
+	}
+
 	while (k_uptime_get() < end_time) {
 		int current_state = gpio_pin_get(gpio, led_map_entry->gpio_pin);
 
@@ -419,6 +442,12 @@ static int cmd_blink(const struct shell *shell, size_t argc, char **argv)
 
 		/* Small delay to prevent CPU hogging */
 		k_sleep(K_MSEC(5));
+	}
+
+	ret = DISABLE_PIN(gpio, led_map_entry->gpio_pin);
+	if (ret < 0) {
+		PRINT_STATUS("error", "Failed to disable LED pin");
+		return ret;
 	}
 
 	shell_print(shell,
@@ -484,8 +513,6 @@ SHELL_CMD_REGISTER(blink, NULL,
 
 int main(void)
 {
-	int ret;
-
 	/* Initialize GPIO devices */
 	gpio_devs[0] = DEVICE_DT_GET(DT_NODELABEL(gpio0));
 	gpio_devs[1] = DEVICE_DT_GET(DT_NODELABEL(gpio1));
@@ -493,41 +520,6 @@ int main(void)
 	if (!device_is_ready(gpio_devs[0]) || !device_is_ready(gpio_devs[1])) {
 		LOG_ERR("Error: GPIO devices not ready");
 		return -ENODEV;
-	}
-
-	/* Configure all button pins as outputs with initial state HIGH (released) */
-	for (int channel = 0; channel < IOADAPTER_CHANNELS_NUMBER; channel++) {
-		for (int btn = 0; btn < BUTTONS_NUMBER_PER_CHANNEL; btn++) {
-			const io_map *btn_map = &button_map[channel][btn];
-			const struct device *gpio = gpio_devs[btn_map->gpio_port];
-
-			ret = gpio_pin_configure(gpio, btn_map->gpio_pin,
-				GPIO_OUTPUT_ACTIVE | GPIO_PULL_UP);
-			if (ret < 0) {
-				LOG_ERR("Error: Failed to configure button pin "
-					"(channel %d, button %d)",
-					channel, btn + 1);
-				return ret;
-			}
-			/* Set initial state to HIGH (released) */
-			gpio_pin_set(gpio, btn_map->gpio_pin, 1);
-		}
-	}
-
-	/* Configure all LED pins as inputs */
-	for (int channel = 0; channel < IOADAPTER_CHANNELS_NUMBER; channel++) {
-		for (int led = 0; led < LEDS_NUMBER_PER_CHANNEL; led++) {
-			const io_map *led_map_entry = &led_map[channel][led];
-			const struct device *gpio = gpio_devs[led_map_entry->gpio_port];
-
-			ret = gpio_pin_configure(gpio, led_map_entry->gpio_pin,
-				GPIO_INPUT | GPIO_PULL_UP);
-			if (ret < 0) {
-				LOG_ERR("Error: Failed to configure LED pin (channel %d, LED %d)",
-					channel, led + 1);
-				return ret;
-			}
-		}
 	}
 
 	return 0;
