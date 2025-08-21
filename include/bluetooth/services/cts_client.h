@@ -49,6 +49,32 @@ struct bt_cts_current_time {
 	struct bt_cts_adjust_reason adjust_reason;
 };
 
+/**@brief Timezone value for the Local Time Information characteristic.
+ *
+ * -128 indicates unknown timezone.
+ */
+#define BT_CTS_TZ_UNKNOWN ((int8_t)-128)
+
+/**@brief DST Offset enumerations
+ *  as defined by the Bluetooth specification (Characteristic 0x2A0D).
+ */
+enum bt_cts_dst_offset {
+	BT_CTS_DST_OFFSET_STANDARD = 0,
+	BT_CTS_DST_OFFSET_HALF_HOUR = 2,
+	BT_CTS_DST_OFFSET_DAYLIGHT = 4,
+	BT_CTS_DST_OFFSET_DOUBLE_DAYLIGHT = 8,
+	BT_CTS_DST_OFFSET_UNKNOWN = 255,
+};
+
+/* Use an explicit uint8_t typedef for storage to match the spec's uint8 format. */
+typedef uint8_t bt_cts_dst_offset_t;
+
+/**@brief Data structure for the Local Time Information characteristic. */
+struct bt_cts_local_time_info {
+	int8_t timezone;	 /* Time zone in 15 minute increments. */
+	bt_cts_dst_offset_t dst; /* DST offset (enum stored as uint8). */
+};
+
 struct bt_cts_client;
 
 /**@brief Read complete callback.
@@ -74,7 +100,13 @@ typedef void (*bt_cts_read_cb)(struct bt_cts_client *cts_c,
 typedef void (*bt_cts_notify_cb)(struct bt_cts_client *cts_c,
 				 struct bt_cts_current_time *current_time);
 
-/**@brief Current Time Service client structure. This structure contains status information for the client. */
+/**@brief Read complete callback for Local Time Information. */
+typedef void (*bt_cts_lti_read_cb)(struct bt_cts_client *cts_c, struct bt_cts_local_time_info *lti,
+				   int err);
+
+/**@brief Current Time Service client structure. This structure contains status information for the
+ * client.
+ */
 struct bt_cts_client {
 	/** Connection object. */
 	struct bt_conn *conn;
@@ -85,17 +117,26 @@ struct bt_cts_client {
 	/** Handle of the CCCD of the Current Time Characteristic. */
 	uint16_t handle_ct_ccc;
 
+	/** Handle of the Local Time Information Characteristic (optional). */
+	uint16_t handle_lti;
+
 	/** Internal state. */
 	atomic_t state;
 
 	/** Read parameters. */
 	struct bt_gatt_read_params read_params;
 
+	/** Read parameters for Local Time Information. */
+	struct bt_gatt_read_params read_params_lti;
+
 	/** Notification parameters. */
 	struct bt_gatt_subscribe_params notify_params;
 
 	/** Read value callback. */
 	bt_cts_read_cb read_cb;
+
+	/** Read callback for Local Time Information. */
+	bt_cts_lti_read_cb read_lti_cb;
 
 	/** Notification callback. */
 	bt_cts_notify_cb notify_cb;
@@ -122,6 +163,16 @@ int bt_cts_client_init(struct bt_cts_client *cts_c);
  *           Otherwise, a (negative) error code is returned.
  */
 int bt_cts_read_current_time(struct bt_cts_client *cts_c, bt_cts_read_cb func);
+
+/**@brief Function for reading the peer's Local Time Information characteristic.
+ *
+ * @param[in] cts_c  Current Time Service client structure.
+ * @param[in] func   The callback function.
+ *
+ * @retval 0 If all operations are successful.
+ *           Otherwise, a (negative) error code is returned.
+ */
+int bt_cts_read_local_time_info(struct bt_cts_client *cts_c, bt_cts_lti_read_cb func);
 
 /**
  * @brief Subscribe to the current time value change notification.
