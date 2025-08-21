@@ -63,8 +63,8 @@ To perform a FOTA update, complete the following steps:
       This step does not apply for updates of the modem firmware.
       You can download delta patches and full binaries of the modem firmware from the `nRF9151 product website (compatible downloads)`_, `nRF9161 product website (compatible downloads)`_, or `nRF9160 product website (compatible downloads)`_, depending on the SiP you are using.
 
-   |fota_upgrades_building|
-   The :file:`app_update.bin` file must be uploaded to the server.
+   To create a binary file for an application update, build the application with the :kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT` option enabled.
+   The :file:`build/<app_name>/zephyr/zephyr.signed.bin` file must be uploaded to the server.
 
    To create binary files for a bootloader upgrade, make sure that the Kconfig options :kconfig:option:`CONFIG_SECURE_BOOT` and :kconfig:option:`CONFIG_BUILD_S1_VARIANT` are enabled and build MCUboot as usual.
    The build will create a binary file for each variant of the upgradable bootloader, one for each bootloader slot.
