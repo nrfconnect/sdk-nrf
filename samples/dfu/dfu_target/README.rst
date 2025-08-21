@@ -13,7 +13,7 @@ Currently, it only supports DFU targets for MCUboot.
 Requirements
 ************
 
-The sample supports the following development kits:
+The sample supports the following development kit:
 
 .. table-from-sample-yaml::
 

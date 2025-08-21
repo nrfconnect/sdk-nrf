@@ -13,7 +13,7 @@ Currently, it only supports DFU targets for MCUboot as its backend.
 Requirements
 ************
 
-The sample supports the following development kits:
+The sample supports the following development kit:
 
 .. table-from-sample-yaml::
 
@@ -137,10 +137,6 @@ Testing
       Network core build time: <BUILD_TIME>
 
    The build time should reflect the new version in both cases.
-
-#. (Optional) To make the update permanent, use the ``dfu_multi_image mcuboot_confirm`` command.
-   Without this step, the device will revert to the previous image on the next reboot.
-   For nRF5340, the radio core is confirmed automatically, which is not the case for the application core.
 
 Dependencies
 ************

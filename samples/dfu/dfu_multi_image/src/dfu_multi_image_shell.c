@@ -166,18 +166,6 @@ static int cmd_dfu_multi_image_full_update(const struct shell *shell, size_t arg
 	return 0;
 }
 
-static int cmd_dfu_target_mcuboot_confirm(const struct shell *shell, size_t argc, char **argv)
-{
-	int ret = boot_write_img_confirmed();
-
-	if (ret < 0) {
-		shell_error(shell, "Failed to confirm current MCUBOOT image: %d", ret);
-		return ret;
-	}
-
-	return 0;
-}
-
 /* Define the dfu_target subcommand group */
 SHELL_STATIC_SUBCMD_SET_CREATE(dfu_multi_image_cmds,
 	SHELL_CMD(write, NULL,
@@ -192,8 +180,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(dfu_multi_image_cmds,
 	SHELL_CMD(full_update, NULL,
 			  "Perform all the steps to fully update the firmware from the NVM buffer",
 			  cmd_dfu_multi_image_full_update),
-	SHELL_CMD(mcuboot_confirm, NULL, "Confirm the current MCUBOOT image",
-		  cmd_dfu_target_mcuboot_confirm),
 	SHELL_SUBCMD_SET_END
 );
 
