@@ -259,7 +259,25 @@ Bluetooth Mesh samples
 Bluetooth Fast Pair samples
 ---------------------------
 
-|no_changes_yet_note|
+* :ref:`fast_pair_locator_tag` sample:
+
+  * Updated:
+
+    * The memory layout for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target to make more space for the application code.
+      This change in the nRF54LM20 partition map is a breaking change and cannot be performed using DFU.
+      As a result, the DFU procedure will fail if you attempt to upgrade the sample firmware based on one of the |NCS| v3.1 releases.
+    * The application and MCUBoot configurations for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target to use the CRACEN hardware crypto driver instead of the Oberon software crypto driver.
+      Note, that the Fast Pair subsystem still uses the Oberon software library.
+      The application image signature is verified with the CRACEN hardware peripheral.
+    * The MCUBoot configuration for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target to use the KMU-based key storage.
+      The public key used by MCUboot for validating the application image is securely stored in the KMU hardware peripheral.
+      To simplify the programming procedure, the samples are configured to use the automatic KMU provisioning.
+      The KMU provisioning is performed by the west runner as a part of the ``west flash`` command when the ``--erase`` or ``--recover`` flag is used.
+
+* :ref:`fast_pair_input_device` sample:
+
+  * Updated the application configuration for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target to use the CRACEN hardware crypto driver instead of the Oberon software crypto driver.
+    Note, that the Fast Pair subsystem still uses the Oberon software library.
 
 Cellular samples
 ----------------
