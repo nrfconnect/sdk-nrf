@@ -250,7 +250,7 @@ Bluetooth Mesh samples
 Bluetooth Fast Pair samples
 ---------------------------
 
-|no_changes_yet_note|
+* Added experimental support for the :zephyr:board:`nrf54lm20dk` board in all Fast Pair samples.
 
 Cellular samples
 ----------------
@@ -360,7 +360,9 @@ Wi-Fi samples
 Other samples
 -------------
 
-|no_changes_yet_note|
+* :ref:`coremark_sample` sample:
+
+  * Added support for the :zephyr:board:`nrf54lm20dk` board target.
 
 Drivers
 =======
