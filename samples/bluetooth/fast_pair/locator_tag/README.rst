@@ -194,6 +194,7 @@ The configuration of the DFU solution varies depending on the board target:
 |              |                                | * ``nrf54l15dk/nrf54l05/cpuapp`` (only ``release`` configuration) |
 |              |                                | * ``nrf54l15dk/nrf54l10/cpuapp``                                  |
 |              |                                | * ``nrf54l15dk/nrf54l15/cpuapp``                                  |
+|              |                                | * ``nrf54lm20dk/nrf54lm20a/cpuapp``                               |
 +--------------+--------------------------------+-------------------------------------------------------------------+
 | MCUboot      | overwrite only mode            | * ``nrf5340dk/nrf5340/cpuapp``                                    |
 |              |                                | * ``nrf5340dk/nrf5340/cpuapp/ns``                                 |
@@ -231,6 +232,7 @@ The configuration of the signature algorithm and the public key storage solution
 | ED25519                        | * ``nrf54l15dk/nrf54l05/cpuapp`` (only ``release`` configuration) | Key Management Unit (KMU) | HW-accelerated (CRACEN),  |
 |                                | * ``nrf54l15dk/nrf54l10/cpuapp``                                  |                           | Signature derived from    |
 |                                | * ``nrf54l15dk/nrf54l15/cpuapp``                                  |                           | image (pure)              |
+|                                | * ``nrf54lm20dk/nrf54lm20a/cpuapp``                               |                           |                           |
 +--------------------------------+-------------------------------------------------------------------+---------------------------+---------------------------+
 
 .. note::

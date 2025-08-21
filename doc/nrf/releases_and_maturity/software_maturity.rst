@@ -2275,8 +2275,10 @@ The following table indicates the software maturity levels of the support for Go
               - nRF54L05
               - nRF54L10
               - nRF54L15
+              - nRF54LM20
             * - **Input device**
               - :ref:`fast_pair_input_device`
+              - Experimental
               - Experimental
               - Experimental
               - Experimental
@@ -2287,6 +2289,7 @@ The following table indicates the software maturity levels of the support for Go
               - Supported
               - Supported
               - Supported
+              - Experimental
       .. tab:: nRF91 Series
 
          .. list-table:: Google Fast Pair use case support
@@ -2397,12 +2400,15 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L05
               - nRF54L10
               - nRF54L15
+              - nRF54LM20
             * - **Initial pairing**
               - Experimental
               - Supported
               - Supported
               - Supported
+              - Experimental
             * - **Subsequent pairing**
+              - Experimental
               - Experimental
               - Experimental
               - Experimental
@@ -2412,7 +2418,9 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - Experimental
               - Experimental
+              - Experimental
             * - **Personalized Name extension**
+              - Experimental
               - Experimental
               - Experimental
               - Experimental
@@ -2422,6 +2430,7 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Supported
+              - Experimental
       .. tab:: nRF91 Series
 
          .. list-table:: Google Fast Pair feature support
