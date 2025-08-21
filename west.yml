@@ -35,6 +35,8 @@ manifest:
       url-base: https://github.com/boschsensortec
     - name: eembc
       url-base: https://github.com/eembc
+    - name: raku
+      url-base: https://github.com/e-rk
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -65,7 +67,8 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 6872776607a93ee279176a32a73f4e362ba066d9
+      remote: raku
+      revision: clock-test-2
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -145,7 +148,8 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: bdace5c474dac5dde93b97d34fe9119c5d691870
+      remote: raku
+      revision: clock-test-2
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
