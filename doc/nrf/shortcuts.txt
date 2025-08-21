@@ -83,8 +83,6 @@
 .. |fota_upgrades_def| replace:: You can update the firmware of the device over the air, thus without a wired connection.
    Such an update is called a FOTA (firmware over-the-air) update.
 
-.. |fota_upgrades_building| replace:: To create a binary file for an application update, build the application with the :kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT` option enabled.
-
 .. ### VSC shortcuts
 
 .. |vsc_extension_description| replace:: The |nRFVSC| is a complete IDE for developing applications compatible with the |NCS|.
