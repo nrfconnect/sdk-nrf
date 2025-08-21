@@ -19,7 +19,10 @@ You can build and program the applications in one of the following ways:
    Building and programming using |nRFVSC| is currently not supported.
 
 .. note::
-   You might want to check the :ref:`nRF5340 Audio application known issues <known_issues_nrf5340audio>` before building and programming the applications.
+   Check the :ref:`nRF5340 Audio application known issues <known_issues_nrf5340audio>` before building and programming the applications.
+   Some of them might impact running the application on certain platforms.
+
+   For example, one of the known issues (OCT-2154) mentions intermittent audio stream on the headset when using USB audio interface on macOS.
 
 .. _nrf53_audio_app_dk_testing_out_of_the_box:
 

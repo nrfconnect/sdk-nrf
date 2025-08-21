@@ -214,7 +214,7 @@
    The suggested approach is to test with Nordic Semiconductor devices on both sides first to verify basic functionalities and get familiar with the solution before using custom devices.
    Contact `Technical Support team <DevZone_>`_ if you need assistance.
 
-.. |usb_known_issues| replace:: Make sure to check the :ref:`nRF5340 Audio application known issues <known_issues_nrf5340audio>` related to serial connection with the USB.
+.. |usb_known_issues| replace:: Make sure to check the :ref:`nRF5340 Audio application known issue OCT-2154 <known_issues_nrf5340audio>` related to intermittent audio stream on the headset when using USB audio interface on macOS.
 
 .. |trusted_execution| replace:: nRF5340 and nRF9160
 
