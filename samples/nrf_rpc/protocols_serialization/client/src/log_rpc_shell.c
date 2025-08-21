@@ -141,6 +141,7 @@ static int cmd_log_rpc_history_threshold(const struct shell *sh, size_t argc, ch
 
 	shell = sh;
 	log_rpc_set_history_usage_threshold(history_threshold_reached_handler, (uint8_t)threshold);
+	shell_print(sh, "%u", log_rpc_get_history_usage_threshold());
 
 	return 0;
 }
