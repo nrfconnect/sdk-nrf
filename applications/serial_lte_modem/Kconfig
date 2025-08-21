@@ -31,17 +31,21 @@ choice
 	prompt "Termination mode"
 	default SLM_CR_LF_TERMINATION
 	help
-		Sets the command terminator used by the serial terminal.
-		Available options are:
-		-  CR termination
-		-  LF termination
-		-  CR+LF termination
-	config SLM_CR_TERMINATION
-		bool "CR termination"
-	config SLM_LF_TERMINATION
-		bool "LF termination"
-	config SLM_CR_LF_TERMINATION
-		bool "CR+LF termination"
+	  Sets the command terminator used by the serial terminal.
+	  Available options are:
+	  -  CR termination
+	  -  LF termination
+	  -  CR+LF termination
+
+config SLM_CR_TERMINATION
+	bool "CR termination"
+
+config SLM_LF_TERMINATION
+	bool "LF termination"
+
+config SLM_CR_LF_TERMINATION
+	bool "CR+LF termination"
+
 endchoice
 
 #
@@ -163,7 +167,6 @@ config SLM_NRF_CLOUD
 
 config SLM_FULL_FOTA
 	bool "Full modem FOTA support in SLM"
-	default n
 	depends on !BOARD_THINGY91_NRF9160_NS
 
 config SLM_PPP

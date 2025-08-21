@@ -5,7 +5,6 @@
 
 config SLM_CARRIER
 	bool "LwM2M Carrier support in SLM"
-	default n
 	depends on LWM2M_CARRIER
 
 if SLM_CARRIER
