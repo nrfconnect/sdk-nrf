@@ -2676,7 +2676,9 @@ The lists are organized by device Series and implementation.
               - nRF54L05
               - nRF54L10
               - nRF54L15
+              - nRF54LM20
             * - :ref:`Oberon PSA Crypto - nrf_cc3xx <ug_crypto_architecture_implementation_standards_oberon>`
+              - --
               - --
               - --
               - --
@@ -2686,8 +2688,10 @@ The lists are organized by device Series and implementation.
               - Supported
               - Supported
               - Supported
+              - Experimental
             * - :ref:`Oberon PSA Crypto - nrf_oberon <ug_crypto_architecture_implementation_standards_oberon>`
               - --
+              - Supported
               - Supported
               - Supported
               - Supported
@@ -2696,8 +2700,10 @@ The lists are organized by device Series and implementation.
               - --
               - Experimental
               - Experimental
+              - --
             * - :ref:`IronSide Secure Element <ug_crypto_architecture_implementation_standards_ironside>`
               - Supported
+              - --
               - --
               - --
               - --
