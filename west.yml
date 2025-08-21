@@ -144,7 +144,7 @@ manifest:
     - name: oberon-psa-crypto
       path: modules/crypto/oberon-psa-crypto
       repo-path: sdk-oberon-psa-crypto
-      revision: ncs-v3.1.0
+      revision: d682b30a4498ecbaa8992e909b8d8c31f4988956
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
