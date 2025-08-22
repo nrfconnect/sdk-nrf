@@ -589,6 +589,7 @@ static int hci_tx_test(uint16_t opcode, const uint8_t *data)
 		break;
 
 	case BT_HCI_OP_LE_TX_TEST_V4:
+	{
 		struct bt_hci_cp_le_tx_test_v4_tx_power *tmp;
 
 		chan = params->v4.tx_ch;
@@ -605,7 +606,7 @@ static int hci_tx_test(uint16_t opcode, const uint8_t *data)
 			" cte_len: %d, cte_type: %d, pattern_len: %d, power: %d.",
 			chan, data_len, payload, phy, cte_len, cte_type, pattern_len, power);
 		break;
-
+	}
 	default:
 		return -EINVAL;
 	}
