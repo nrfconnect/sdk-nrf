@@ -206,6 +206,7 @@ ci_applications_matter: &ci_matter
     - zephyr/soc/nordic/
     - zephyr/subsys/bluetooth/
     - zephyr/subsys/dfu/
+    - zephyr/subsys/fs/
     - zephyr/subsys/mgmt/mcumgr/
     - zephyr/subsys/net/
     - zephyr/subsys/settings/
