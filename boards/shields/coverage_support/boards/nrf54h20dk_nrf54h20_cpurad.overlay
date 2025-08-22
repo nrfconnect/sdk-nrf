@@ -5,11 +5,11 @@
  */
 
 /* Shrink by 160 KB */
-&cpurad_slot0_partition {
-	reg = <0x54000 DT_SIZE_K(96)>;
-};
-
-/* To disable SDFW_SERVICES to save RAM */
-&cpusec_cpurad_ipc {
-	status = "disabled";
+/delete-node/ &cpurad_slot0_partition;
+&mram1x {
+	partitions {
+		cpurad_slot0_partition: partition@BA000 {
+			reg = <0xBA000 DT_SIZE_K(168)>;
+		};
+	};
 };
