@@ -2,9 +2,8 @@ sample:
   description: Bluetooth Low Energy Connection Subrating sample
   name: Bluetooth LE Connection Subrating
 tests:
-  sample.bluetooth.subrating.build:
+  sample.bluetooth.subrating:
     sysbuild: true
-    build_only: true
     integration_platforms:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
@@ -29,3 +28,11 @@ tests:
       - bluetooth
       - ci_build
       - sysbuild
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "Starting Bluetooth Subrating sample"
+        - "Bluetooth initialized"
+    timeout: 15
