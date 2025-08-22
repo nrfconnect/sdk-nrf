@@ -787,6 +787,7 @@
 /subsys/esb/                              @nrfconnect/ncs-si-muffin
 /subsys/event_manager_proxy/              @nrfconnect/ncs-si-muffin
 /subsys/fw_info/                          @nrfconnect/ncs-pluto
+/subsys/fs/                          	  @rghaddab @de-nordic
 /subsys/gazell/                           @leewkb4567
 /subsys/logging/                          @nrfconnect/ncs-protocols-serialization
 /subsys/mcuboot/                          @nrfconnect/ncs-charon
