@@ -85,6 +85,23 @@ static int modem_mode_cb(enum lte_lc_func_mode new_mode, void *user_data)
 		k_event_wait(&prov_events, NETWORK_DOWN, false, K_FOREVER);
 
 		LOG_DBG("Network is down.");
+
+		/* conn_mgr disables only LTE connectivity. GNSS may remain active.
+		 * Ensure GNSS is also disabled before storing credentials to the modem.
+		 */
+		enum lte_lc_func_mode current_mode;
+
+		if (lte_lc_func_mode_get(&current_mode)) {
+			LOG_ERR("Failed to read modem functional mode");
+			return -EFAULT;
+		}
+		if (current_mode == LTE_LC_FUNC_MODE_ACTIVATE_GNSS) {
+			LOG_WRN("GNSS is still active. Deactivating GNSS.");
+			if (lte_lc_func_mode_set(LTE_LC_FUNC_MODE_DEACTIVATE_GNSS)) {
+				LOG_ERR("Failed to deactivate GNSS");
+				return -EFAULT;
+			}
+		}
 	}
 
 	return fmode;
