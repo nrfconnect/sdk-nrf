@@ -118,7 +118,7 @@ The table mirrors the test setup used for TLS verification.
            - Also supports :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
          * - ``nrf54h20dk/nrf54h20/cpuapp``
              ``nrf54h20dk/nrf54h20/cpurad``
-           - `SSF Crypto <PSA CRYPTO SSF SERVICE ENABLED_>`_
+           - `SSF Crypto <CONFIG_PSA_SSF_CRYPTO_CLIENT_>`_
            - No
            - Yes
            - RSA not supported
@@ -157,7 +157,7 @@ The table mirrors the test setup used for TLS verification.
            - Also supports :ref:`PSA Crypto nrf_oberon driver<nrf_security_drivers_oberon>`
          * - ``nrf54h20dk/nrf54h20/cpuapp``
              ``nrf54h20dk/nrf54h20/cpurad``
-           - `SSF Crypto <PSA CRYPTO SSF SERVICE ENABLED_>`_
+           - `SSF Crypto <CONFIG_PSA_SSF_CRYPTO_CLIENT_>`_
            - No
            - No
            - RSA not supported

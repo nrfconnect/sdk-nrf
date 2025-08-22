@@ -8,4 +8,3 @@
 rsource "device_info/Kconfig"
 rsource "enc_fw/Kconfig"
 rsource "extmem/Kconfig"
-rsource "psa_crypto/Kconfig"
