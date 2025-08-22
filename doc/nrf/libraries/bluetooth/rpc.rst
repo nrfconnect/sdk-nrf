@@ -96,7 +96,7 @@ For more details, see the :ref:`zephyr:snippets` documentation.
 Configuration
 *************
 
-To enable the Bluetooth Low Energy RPC library, use the sysbuild configuration ``SB_CONFIG_NETCORE_IPC_RADIO`` along with the ``SB_CONFIG_NETCORE_IPC_RADIO_BT_RPC`` option.
+To enable the Bluetooth Low Energy RPC library, use the sysbuild configuration :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO` along with the :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO_BT_RPC` option.
 Set the :makevar:`SNIPPET` to ``nordic-bt-rpc`` to apply the necessary configuration for the Bluetooth Low Energy RPC library on both cores.
 If you use a custom board, you need to create a custom snippet with a similar configuration to the ``nordic-bt-rpc`` snippet.
 
@@ -124,7 +124,7 @@ The following |NCS| samples can optionally use this library:
 * :ref:`peripheral_uart`
 
 The :ref:`ipc_radio` sample, is a configurable application, that exposes the Bluetooth LE stack functionality running on an MCU with radio (for example, the nRF5340 network core) to another CPU through the :ref:`nrfxlib:nrf_rpc`.
-When using the :ref:`ipc_radio` as Bluetooth Low Energy over RPC, reconfigure it by setting the ``SB_CONFIG_NETCORE_IPC_RADIO_BT_RPC`` sysbuild Kconfig option to ``y`` to run the whole Bluetooth LE stack on the network core.
+When using the :ref:`ipc_radio` as Bluetooth Low Energy over RPC, reconfigure it by setting the :kconfig:option:`SB_CONFIG_NETCORE_IPC_RADIO_BT_RPC` sysbuild Kconfig option to ``y`` to run the whole Bluetooth LE stack on the network core.
 For more details, see the :ref:`Configuration <ipc_radio_config>` section of the IPC radio firmware application guide.
 
 The :ref:`ble_rpc_host` application is an alternative to the :ref:`ipc_radio` sample.

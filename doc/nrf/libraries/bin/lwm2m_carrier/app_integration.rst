@@ -419,4 +419,4 @@ A ``__weak`` implementation of the function is included, which checks if the cur
 
 The proprietary application upgrades over multiple files are currently only supported if the :kconfig:option:`CONFIG_LWM2M_CARRIER_SOFTBANK_DIVIDED_FOTA` Kconfig option is enabled.
 This allows the library to perform the non-standard divided FOTA procedure in the SoftBank network.
-The application update files required for this type of firmware upgrade can be generated during the building process by enabling the ``SB_CONFIG_LWM2M_CARRIER_DIVIDED_DFU`` sysbuild Kconfig option.
+The application update files required for this type of firmware upgrade can be generated during the building process by enabling the :kconfig:option:`SB_CONFIG_LWM2M_CARRIER_DIVIDED_DFU` sysbuild Kconfig option.

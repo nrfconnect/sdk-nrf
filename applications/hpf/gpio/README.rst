@@ -40,9 +40,9 @@ Configuration
 
 You can enable the following IPC backends:
 
-* mbox (``SB_CONFIG_HPF_GPIO_BACKEND_MBOX``)
-* icmsg (``SB_CONFIG_HPF_GPIO_BACKEND_ICMSG``)
-* icbmsg (``SB_CONFIG_HPF_GPIO_BACKEND_ICBMSG``)
+* mbox (:kconfig:option:`SB_CONFIG_HPF_GPIO_BACKEND_MBOX`)
+* icmsg (:kconfig:option:`SB_CONFIG_HPF_GPIO_BACKEND_ICMSG`)
+* icbmsg (:kconfig:option:`SB_CONFIG_HPF_GPIO_BACKEND_ICBMSG`)
 
 Building and running
 ********************
