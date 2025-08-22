@@ -93,7 +93,7 @@ To complete the build, do the following:
 
    .. group-tab:: Using an application that supports multi-image builds
 
-      If your application involves creating custom images for both the application core and the PPR core, disable the VPR bootstrapping sample by setting the ``SB_CONFIG_VPR_LAUNCHER`` option to ``n`` when building for the PPR target.
+      If your application involves creating custom images for both the application core and the PPR core, disable the VPR bootstrapping sample by setting the :kconfig:option:`SB_CONFIG_VPR_LAUNCHER` option to ``n`` when building for the PPR target.
       For more details, see :ref:`how to configure Kconfig <configuring_kconfig>`.
 
       To build and flash both images, run the following command to perform a :ref:`pristine build <zephyr:west-building>`:

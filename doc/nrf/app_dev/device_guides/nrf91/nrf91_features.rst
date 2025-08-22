@@ -77,7 +77,7 @@ Therefore, you must build it for any of the following board targets, depending o
 * ``thingy91x/nrf9151/ns``
 
 The application image might require other images to be present.
-Some samples include the :ref:`bootloader` sample (``SB_CONFIG_SECURE_BOOT_APPCORE``) and :doc:`mcuboot:index-ncs` (``SB_CONFIG_BOOTLOADER_MCUBOOT``).
+Some samples include the :ref:`bootloader` sample (:kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE`) and :doc:`mcuboot:index-ncs` (:kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT`).
 
 .. _lte_modem:
 

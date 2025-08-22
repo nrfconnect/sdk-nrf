@@ -505,12 +505,12 @@ Matter
 
    With the inheritance of Zephyr's :ref:`sysbuild in the |NCS| <configuration_system_overview_sysbuild>`, some changes are provided to the Matter samples and applications:
 
-     * :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_BUILD` Kconfig option is deprecated and you need to use the ``SB_CONFIG_MATTER_FACTORY_DATA_GENERATE`` Kconfig option instead to enable or disable creating the factory data set during building a Matter sample.
+     * :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_BUILD` Kconfig option is deprecated and you need to use the :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_GENERATE` Kconfig option instead to enable or disable creating the factory data set during building a Matter sample.
        To enable factory data support on your device, you still need to set the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA` to ``y``.
      * Factory data output files are now located in the ``<application_name>/zephyr/`` directory within the build directory.
-     * :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_MERGE_WITH_FIRMWARE` Kconfig option is deprecated in sysbuild and you need to use the ``SB_CONFIG_MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE`` Kconfig option instead to enable or disable merging the factory data HEX file with the final firmware HEX file.
-     * ``SB_CONFIG_MATTER_OTA`` Kconfig option has been added to enable or disable generating Matter OTA package during the building process.
-     * :kconfig:option:`CONFIG_CHIP_OTA_IMAGE_FILE_NAME` Kconfig option is deprecated and you need to use the ``SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME`` Kconfig option instead to define Matter OTA output filename.
+     * :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_MERGE_WITH_FIRMWARE` Kconfig option is deprecated in sysbuild and you need to use the :kconfig:option:`SB_CONFIG_MATTER_FACTORY_DATA_MERGE_WITH_FIRMWARE` Kconfig option instead to enable or disable merging the factory data HEX file with the final firmware HEX file.
+     * :kconfig:option:`SB_CONFIG_MATTER_OTA` Kconfig option has been added to enable or disable generating Matter OTA package during the building process.
+     * :kconfig:option:`CONFIG_CHIP_OTA_IMAGE_FILE_NAME` Kconfig option is deprecated and you need to use the :kconfig:option:`SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME` Kconfig option instead to define Matter OTA output filename.
 
    .. note::
 

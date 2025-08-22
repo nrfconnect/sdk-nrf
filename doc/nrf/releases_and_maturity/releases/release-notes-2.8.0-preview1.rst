@@ -55,24 +55,24 @@ Build and configuration system
 
 * Added:
 
-  * The ``SB_CONFIG_MCUBOOT_USE_ALL_AVAILABLE_RAM`` sysbuild Kconfig option to system that allows utilizing all available RAM when using TF-M on an nRF5340 device.
+  * The :kconfig:option:`SB_CONFIG_MCUBOOT_USE_ALL_AVAILABLE_RAM` sysbuild Kconfig option to system that allows utilizing all available RAM when using TF-M on an nRF5340 device.
 
     .. note::
        This has security implications and may allow secrets to be leaked to the non-secure application in RAM.
 
-  * The ``SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE`` sysbuild Kconfig option that enables updating the network core on the nRF5340 SoC from external flash.
+  * The :kconfig:option:`SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE` sysbuild Kconfig option that enables updating the network core on the nRF5340 SoC from external flash.
   * The AP-Protect sysbuild Kconfig options to enable the corresponding AP-Protect Kconfig options for all images in the build:
 
-    * ``SB_CONFIG_APPROTECT_LOCK`` for the :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK` Kconfig option.
-    * ``SB_CONFIG_APPROTECT_USER_HANDLING`` for the :kconfig:option:`CONFIG_NRF_APPROTECT_USER_HANDLING` Kconfig option.
-    * ``SB_CONFIG_APPROTECT_USE_UICR`` for the :kconfig:option:`CONFIG_NRF_APPROTECT_USE_UICR` Kconfig option.
-    * ``SB_CONFIG_SECURE_APPROTECT_LOCK`` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK` Kconfig option.
-    * ``SB_CONFIG_SECURE_APPROTECT_USER_HANDLING`` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING` Kconfig option.
-    * ``SB_CONFIG_SECURE_APPROTECT_USE_UICR`` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USE_UICR` Kconfig option.
+    * :kconfig:option:`SB_CONFIG_APPROTECT_LOCK` for the :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK` Kconfig option.
+    * :kconfig:option:`SB_CONFIG_APPROTECT_USER_HANDLING` for the :kconfig:option:`CONFIG_NRF_APPROTECT_USER_HANDLING` Kconfig option.
+    * :kconfig:option:`SB_CONFIG_APPROTECT_USE_UICR` for the :kconfig:option:`CONFIG_NRF_APPROTECT_USE_UICR` Kconfig option.
+    * :kconfig:option:`SB_CONFIG_SECURE_APPROTECT_LOCK` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK` Kconfig option.
+    * :kconfig:option:`SB_CONFIG_SECURE_APPROTECT_USER_HANDLING` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING` Kconfig option.
+    * :kconfig:option:`SB_CONFIG_SECURE_APPROTECT_USE_UICR` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USE_UICR` Kconfig option.
 
-* Added the ``SB_CONFIG_LWM2M_CARRIER_DIVIDED_DFU`` sysbuild Kconfig option that enables the generation of proprietary application update files required for the LwM2M carrier divided FOTA procedure.
+* Added the :kconfig:option:`SB_CONFIG_LWM2M_CARRIER_DIVIDED_DFU` sysbuild Kconfig option that enables the generation of proprietary application update files required for the LwM2M carrier divided FOTA procedure.
 
-* Removed the non-working support for configuring the NSIB signing key through the environmental or command line variable (``SB_SIGNING_KEY_FILE``) along with child image.
+* Removed the non-working support for configuring the NSIB signing key through the environmental or command line variable (:kconfig:option:`SB_SIGNING_KEY_FILE`) along with child image.
 
   .. note::
      This feature has never been functional.
@@ -90,7 +90,7 @@ Build and configuration system
   It is recommended to replace them with the new devicetree property: ``nordic,access``.
   See the :ref:`migration guide <migration_2.8_recommended>` for more information.
 
-* Removed the non-working support for configuring the NSIB signing key through the environmental or command line variable (``SB_SIGNING_KEY_FILE``) along with child image.
+* Removed the non-working support for configuring the NSIB signing key through the environmental or command line variable (:kconfig:option:`SB_SIGNING_KEY_FILE`) along with child image.
 
   .. note::
      This feature has never been functional.
@@ -492,7 +492,7 @@ Bluetooth Fast Pair samples
 
     * LED indication on development kits for the Fast Pair advertising state.
     * An application versioning using the :file:`VERSION` file.
-    * The DFU support which can be enabled using the ``SB_CONFIG_APP_DFU`` sysbuild Kconfig option.
+    * The DFU support which can be enabled using the :kconfig:option:`SB_CONFIG_APP_DFU` sysbuild Kconfig option.
       DFU is available for all supported targets except the ``debug`` configurations of :zephyr:board:`nrf52dk` and :zephyr:board:`nrf52833dk` due to size constraints.
 
   * Updated:
