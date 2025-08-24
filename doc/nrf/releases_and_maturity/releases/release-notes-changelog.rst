@@ -38,7 +38,9 @@ IDE, OS, and tool support
 Board support
 =============
 
-|no_changes_yet_note|
+* Added:
+
+  * Support for nRF7002-EB II Wi-Fi shield
 
 Build and configuration system
 ==============================
