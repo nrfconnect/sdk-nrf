@@ -43,7 +43,7 @@ IDE, OS, and tool support
 Board support
 =============
 
-|no_changes_yet_note|
+* Added support for the nRF7002-EB II Wi-Fi shield for use with the nRF54LM20 DK board target.
 
 Build and configuration system
 ==============================
