@@ -4,9 +4,12 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+config MBEDTLS_STDC_HEAP
+	bool "Use heap from libc"
+
 config MBEDTLS_PLATFORM_MEMORY
 	bool
-	default y
+	default y if !MBEDTLS_STDC_HEAP
 
 config MBEDTLS_PLATFORM_C
 	bool
@@ -18,7 +21,7 @@ config MBEDTLS_MEMORY_C
 
 config MBEDTLS_MEMORY_BUFFER_ALLOC_C
 	bool
-	default y
+	default y if !MBEDTLS_STDC_HEAP
 
 config MBEDTLS_THREADING_C
 	bool "Threading support for Mbed TLS and PSA crypto"
