@@ -240,7 +240,11 @@ Amazon Sidewalk samples
 Bluetooth samples
 -----------------
 
-|no_changes_yet_note|
+* Added experimental support for the :zephyr:board:`nrf54lm20dk` board in the following samples:
+
+  * :ref:`bluetooth_central_hids`
+  * :ref:`peripheral_hids_keyboard`
+  * :ref:`peripheral_hids_mouse`
 
 Bluetooth Mesh samples
 ----------------------
