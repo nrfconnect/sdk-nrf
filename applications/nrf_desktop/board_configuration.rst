@@ -166,6 +166,28 @@ Sample mouse or keyboard (``nrf54l15dk/nrf54l15/cpuapp``)
       * The board supports the ``debug`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration that acts as a mouse (``fast_pair`` file suffix).
         The configuration uses the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and supports firmware updates using the :ref:`nrf_desktop_dfu` and :ref:`nrf_desktop_dfu_mcumgr`.
 
+Sample mouse (``nrf54lm20dk/nrf54lm20a/cpuapp``)
+      * The configuration uses the nRF54LM20 Development Kit.
+      * The build types allow to build the application as a mouse.
+      * Inputs are simulated based on the hardware button presses.
+      * Bluetooth LE and USB High-Speed transports are enabled.
+        Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
+        USB High-Speed is configured to use the USB next stack (:kconfig:option:`CONFIG_USB_DEVICE_STACK_NEXT`).
+        The :kconfig:option:`CONFIG_DESKTOP_BLE_ADV_CTRL_ENABLE` and :kconfig:option:`CONFIG_DESKTOP_BLE_ADV_CTRL_SUSPEND_ON_USB` Kconfig options are enabled in mouse configurations to improve the USB High-Speed report rate.
+      * In ``debug`` configurations, logs are provided through the UART.
+        For detailed information on working with the nRF54LM20 DK, see the :ref:`ug_nrf54l15_gs` documentation.
+      * In ``llvm`` configurations, the partition layout is different to accommodate for the higher memory footprint of the ``llvm``  toolchain.
+      * The configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
+        The application image is verified using a pure ED25519 signature.
+
+      .. note::
+         Currently, the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target has the following limitations:
+
+         * The software-based cryptography is used in the MCUboot bootloader and application image.
+           The hardware-based cryptography is not yet supported.
+         * The public key that MCUboot uses for validating the application image is stored in the bootloader partition.
+           The hardware Key Management Unit (KMU) is not supported yet.
+
 Sample mouse or dongle (``nrf54h20dk/nrf54h20/cpuapp``)
       * The configuration uses the nRF54H20 Development Kit.
       * The build types allow to build the application as a mouse or dongle.
