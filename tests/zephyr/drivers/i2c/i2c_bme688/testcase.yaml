@@ -13,10 +13,12 @@ tests:
     extra_args:
       - SHIELD=pca63565
       - SB_CONFIG_VPR_LAUNCHER=y
-      - vpr_launcher_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/boards/shields/pca63565/boards/nrf54l15dk_nrf54l15_vpr_launcher.overlay"
+      - vpr_launcher_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/boards/shields/pca63565/boards/nrf54l_vpr_launcher.overlay"
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuflpr
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuflpr
 
   nrf.extended.drivers.i2c.bme688_nrf54l_fast_speed:
     filter: not CONFIG_COVERAGE
@@ -25,11 +27,13 @@ tests:
     extra_args:
       - SHIELD=pca63565
       - SB_CONFIG_VPR_LAUNCHER=y
-      - vpr_launcher_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/boards/shields/pca63565/boards/nrf54l15dk_nrf54l15_vpr_launcher.overlay"
+      - vpr_launcher_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/boards/shields/pca63565/boards/nrf54l_vpr_launcher.overlay"
       - CONFIG_TEST_I2C_SPEED=2
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuflpr
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuflpr
 
   nrf.extended.drivers.i2c.bme688_nrf54l_coverage:
     filter: CONFIG_COVERAGE
@@ -39,6 +43,7 @@ tests:
       - SHIELD=pca63565;coverage_support
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
 
   nrf.extended.drivers.i2c.bme688_nrf54l_coverage_fast_speed:
     filter: CONFIG_COVERAGE
@@ -49,6 +54,7 @@ tests:
       - CONFIG_TEST_I2C_SPEED=2
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
 
   nrf.extended.drivers.i2c.bme688_nrf54h:
     filter: not CONFIG_COVERAGE
