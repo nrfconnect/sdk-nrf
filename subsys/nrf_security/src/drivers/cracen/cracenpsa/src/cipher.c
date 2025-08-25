@@ -20,6 +20,9 @@
 #include <sxsymcrypt/keyref.h>
 #include <cracen/statuscodes.h>
 #include <zephyr/sys/__assert.h>
+#if defined(CONFIG_CRACEN_SW_CTR_AES_WORKAROUND)
+#include <cracen_sw_aes_ctr.h>
+#endif
 
 #include "cracen_psa_primitives.h"
 
@@ -64,9 +67,8 @@ static bool is_alg_supported(psa_algorithm_t alg, const psa_key_attributes_t *at
 }
 
 static psa_status_t setup(enum cipher_operation dir, cracen_cipher_operation_t *operation,
-				    const psa_key_attributes_t *attributes,
-				    const uint8_t *key_buffer, size_t key_buffer_size,
-				    psa_algorithm_t alg)
+			  const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
+			  size_t key_buffer_size, psa_algorithm_t alg)
 {
 	if (!is_alg_supported(alg, attributes)) {
 		return PSA_ERROR_NOT_SUPPORTED;
@@ -313,6 +315,28 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 				   iv);
 	}
 
+	/* Use software CTR workaround if needed for single-shot operations */
+#if defined(CONFIG_CRACEN_SW_CTR_AES_WORKAROUND)
+	if (alg == PSA_ALG_CTR) {
+		if (output_size < iv_length + input_length) {
+			return PSA_ERROR_BUFFER_TOO_SMALL;
+		}
+
+		/* Handle inplace encryption by moving plaintext to right to free space for iv */
+		if (input_length && output > input && output < input + input_length) {
+			memmove(output, input, input_length);
+			input = output;
+		}
+
+		status = cracen_sw_aes_ctr_crypt(attributes, key_buffer, key_buffer_size, iv,
+						 iv_length, input, input_length, output,
+						 output_size, output_length);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+		return PSA_SUCCESS;
+	}
+#endif
 	status = setup(CRACEN_ENCRYPT, &operation, attributes, key_buffer, key_buffer_size, alg);
 	if (status != PSA_SUCCESS) {
 		return status;
@@ -370,6 +394,15 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 	if (input_length < iv_size) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
+
+	/* Use software CTR workaround if needed for single-shot operations */
+#if defined(CONFIG_CRACEN_SW_CTR_AES_WORKAROUND)
+	if (alg == PSA_ALG_CTR) {
+		return cracen_sw_aes_ctr_crypt(attributes, key_buffer, key_buffer_size, input,
+					       iv_size, input + iv_size, input_length - iv_size,
+					       output, output_size, output_length);
+	}
+#endif
 
 	status = setup(CRACEN_DECRYPT, &operation, attributes, key_buffer, key_buffer_size, alg);
 	if (status != PSA_SUCCESS) {
@@ -445,7 +478,7 @@ static psa_status_t initialize_cipher(cracen_cipher_operation_t *operation)
 
 static bool is_multi_part_supported(psa_algorithm_t alg)
 {
-	if (IS_ENABLED(CONFIG_SOC_NRF54LM20A)) {
+	if (IS_ENABLED(CONFIG_CRACEN_NEED_MULTIPART_WORKAROUNDS)) {
 		switch (alg) {
 		case PSA_ALG_ECB_NO_PADDING:
 			return IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES);
@@ -462,9 +495,16 @@ psa_status_t cracen_cipher_encrypt_setup(cracen_cipher_operation_t *operation,
 					 const uint8_t *key_buffer, size_t key_buffer_size,
 					 psa_algorithm_t alg)
 {
+	/* Use software CTR workaround if needed */
+#if defined(CONFIG_CRACEN_SW_CTR_AES_WORKAROUND)
+	if (alg == PSA_ALG_CTR) {
+		return cracen_sw_aes_ctr_setup(operation, attributes, key_buffer, key_buffer_size);
+	}
+#endif
 	if (!is_multi_part_supported(alg)) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
+
 	return setup(CRACEN_ENCRYPT, operation, attributes, key_buffer, key_buffer_size, alg);
 }
 
@@ -473,6 +513,12 @@ psa_status_t cracen_cipher_decrypt_setup(cracen_cipher_operation_t *operation,
 					 const uint8_t *key_buffer, size_t key_buffer_size,
 					 psa_algorithm_t alg)
 {
+	/* Use software CTR workaround if needed */
+#if defined(CONFIG_CRACEN_SW_CTR_AES_WORKAROUND)
+	if (alg == PSA_ALG_CTR) {
+		return cracen_sw_aes_ctr_setup(operation, attributes, key_buffer, key_buffer_size);
+	}
+#endif
 	if (!is_multi_part_supported(alg)) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
@@ -483,6 +529,13 @@ psa_status_t cracen_cipher_set_iv(cracen_cipher_operation_t *operation, const ui
 				  size_t iv_length)
 {
 	__ASSERT_NO_MSG(iv != NULL);
+
+	/* Use software CTR workaround if needed */
+#if defined(CONFIG_CRACEN_SW_CTR_AES_WORKAROUND)
+	if (operation->alg == PSA_ALG_CTR) {
+		return cracen_sw_aes_ctr_set_iv(operation, iv, iv_length);
+	}
+#endif
 
 	/* Set IV is called after the encrypt/decrypt setup functions thus we
 	 * know that we have CHACHA20 as the stream cipher here. Chacha20
@@ -519,6 +572,14 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 {
 	__ASSERT_NO_MSG(input != NULL || input_length == 0);
 	__ASSERT_NO_MSG(output_length != NULL);
+
+	/* Use software CTR workaround if needed */
+#if defined(CONFIG_CRACEN_SW_CTR_AES_WORKAROUND)
+	if (operation->alg == PSA_ALG_CTR) {
+		return cracen_sw_aes_ctr_update(operation, input, input_length,
+						output, output_size, output_length);
+	}
+#endif
 
 	int sx_status = SX_ERR_UNINITIALIZED_OBJ;
 	psa_status_t psa_status = PSA_ERROR_CORRUPTION_DETECTED;
@@ -667,6 +728,13 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 				  size_t output_size, size_t *output_length)
 {
 	__ASSERT_NO_MSG(output_length != NULL);
+
+	/* Use software CTR workaround if needed */
+#if defined(CONFIG_CRACEN_SW_CTR_AES_WORKAROUND)
+	if (operation->alg == PSA_ALG_CTR) {
+		return cracen_sw_aes_ctr_finish(operation, output_length);
+	}
+#endif
 
 	int sx_status;
 

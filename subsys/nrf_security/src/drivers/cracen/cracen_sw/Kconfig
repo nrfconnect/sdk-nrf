@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2025 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config CRACEN_SW_CMAC_WORKAROUND
+	bool
+	default y if PSA_NEED_CRACEN_CMAC && CRACEN_NEED_MULTIPART_WORKAROUNDS
+
+config CRACEN_SW_CTR_AES_WORKAROUND
+	bool
+	default y if PSA_NEED_CRACEN_CTR_AES && \
+		(CRACEN_NEED_MULTIPART_WORKAROUNDS || SOC_NRF54LV10A)
