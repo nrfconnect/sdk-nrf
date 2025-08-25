@@ -212,26 +212,26 @@ Build and configuration system
 
 * Added:
 
-  * The ``SB_CONFIG_MCUBOOT_USE_ALL_AVAILABLE_RAM`` sysbuild Kconfig option to system that allows utilizing all available RAM when using TF-M on an nRF5340 device.
+  * The :kconfig:option:`SB_CONFIG_MCUBOOT_USE_ALL_AVAILABLE_RAM` sysbuild Kconfig option to system that allows utilizing all available RAM when using TF-M on an nRF5340 device.
 
     .. note::
        This has security implications and might allow secrets to be leaked to the non-secure application in RAM.
 
-  * The ``SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE`` sysbuild Kconfig option that enables updating the network core on the nRF5340 SoC from external flash.
+  * The :kconfig:option:`SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE` sysbuild Kconfig option that enables updating the network core on the nRF5340 SoC from external flash.
   * The AP-Protect sysbuild Kconfig options to enable the corresponding AP-Protect Kconfig options for all images in the build:
 
-    * ``SB_CONFIG_APPROTECT_LOCK`` for the :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK` Kconfig option.
-    * ``SB_CONFIG_APPROTECT_USER_HANDLING`` for the :kconfig:option:`CONFIG_NRF_APPROTECT_USER_HANDLING` Kconfig option.
-    * ``SB_CONFIG_APPROTECT_USE_UICR`` for the :kconfig:option:`CONFIG_NRF_APPROTECT_USE_UICR` Kconfig option.
-    * ``SB_CONFIG_SECURE_APPROTECT_LOCK`` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK` Kconfig option.
-    * ``SB_CONFIG_SECURE_APPROTECT_USER_HANDLING`` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING` Kconfig option.
-    * ``SB_CONFIG_SECURE_APPROTECT_USE_UICR`` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USE_UICR` Kconfig option.
+    * :kconfig:option:`SB_CONFIG_APPROTECT_LOCK` for the :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK` Kconfig option.
+    * :kconfig:option:`SB_CONFIG_APPROTECT_USER_HANDLING` for the :kconfig:option:`CONFIG_NRF_APPROTECT_USER_HANDLING` Kconfig option.
+    * :kconfig:option:`SB_CONFIG_APPROTECT_USE_UICR` for the :kconfig:option:`CONFIG_NRF_APPROTECT_USE_UICR` Kconfig option.
+    * :kconfig:option:`SB_CONFIG_SECURE_APPROTECT_LOCK` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK` Kconfig option.
+    * :kconfig:option:`SB_CONFIG_SECURE_APPROTECT_USER_HANDLING` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING` Kconfig option.
+    * :kconfig:option:`SB_CONFIG_SECURE_APPROTECT_USE_UICR` for the :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USE_UICR` Kconfig option.
 
   * CMake warning when the static :ref:`partition_manager` file has been changed but changes will not be read until a pristine build is performed.
   * Encrypted firmware update to :file:`dfu_application.zip` instead of the unencrypted firmware update when encrypted image support is enabled in sysbuild.
     See :ref:`app_build_mcuboot_output` for details.
   * Sysbuild-assigned MCUboot image IDs feature, which deals with MCUboot image IDs for different components in a project.
-  * The ``SB_CONFIG_LWM2M_CARRIER_DIVIDED_DFU`` sysbuild Kconfig option that enables the generation of proprietary application update files required for the LwM2M carrier divided FOTA procedure.
+  * The :kconfig:option:`SB_CONFIG_LWM2M_CARRIER_DIVIDED_DFU` sysbuild Kconfig option that enables the generation of proprietary application update files required for the LwM2M carrier divided FOTA procedure.
 
 * Fixed:
 
@@ -252,7 +252,7 @@ Build and configuration system
   It is recommended to replace them with the new devicetree property: ``nordic,access``.
   See the :ref:`migration guide <migration_2.8_recommended>` for more information.
 
-* Removed documentation related to non-working support for configuring the NSIB signing key through the environmental or command line variable (``SB_SIGNING_KEY_FILE``) along with child image.
+* Removed documentation related to non-working support for configuring the NSIB signing key through the environmental or command line variable (:kconfig:option:`SB_SIGNING_KEY_FILE`) along with child image.
 
 Bootloaders and DFU
 ===================
@@ -260,7 +260,7 @@ Bootloaders and DFU
 * Added:
 
   * Support for handling SHA512 by MCUmgr server protocol implementation.
-  * ``SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE`` sysbuild Kconfig to allow supporting network core application in MCUboot.
+  * :kconfig:option:`SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE` sysbuild Kconfig to allow supporting network core application in MCUboot.
   * :ref:`QSPI XIP split image <qspi_xip_split_image>` support for the nRF52840 SoC and MCUboot's direct-xip mode.
   * Documentation for :ref:`mcuboot_image_compression`.
   * Documentation for :ref:`sysbuild_assigned_images_ids`.
@@ -724,7 +724,7 @@ Bluetooth Fast Pair samples
 
     * LED indication on development kits for the Fast Pair advertising state.
     * An application versioning using the :file:`VERSION` file.
-    * The DFU support, which can be enabled using the ``SB_CONFIG_APP_DFU`` sysbuild Kconfig option.
+    * The DFU support, which can be enabled using the :kconfig:option:`SB_CONFIG_APP_DFU` sysbuild Kconfig option.
       DFU is available for all supported targets except the ``debug`` configurations of :zephyr:board:`nrf52dk` and :zephyr:board:`nrf52833dk` due to size constraints.
     * An application module for the DULT motion detector feature and the new UI for supported board targets to interact with this feature.
       The development kit board targets simulate the motion with the button presses.
@@ -1462,9 +1462,9 @@ The following list summarizes both the main changes inherited from upstream MCUb
     This is supported either for the ED25519 'PURE' signature or the ED25519 signature.
   * Support for storing signature verification keys in hardware KMU on the nRF54L15 SoC.
     See Kconfig option :kconfig:option:`CONFIG_BOOT_SIGNATURE_USING_KMU` in MCUboot for details.
-  * Integration of nRF54L15 SoC's HW cryptography (``SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519``), KMU sysbuild configuration (``SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU``), and signing script (``SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE``) for building and signing the application in a project.
+  * Integration of nRF54L15 SoC's HW cryptography (:kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519`), KMU sysbuild configuration (:kconfig:option:`SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU`), and signing script (:kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE`) for building and signing the application in a project.
 
-* Updated the immutable bootloader to now be protected using the :ref:`fprotect_readme` library on the nRF54L15 SoC (``SB_CONFIG_MCUBOOT_FPROTECT_ALLOW_COMBINED_REGIONS`` and the :kconfig:option:`CONFIG_FPROTECT_ALLOW_COMBINED_REGIONS` Kconfig option).
+* Updated the immutable bootloader to now be protected using the :ref:`fprotect_readme` library on the nRF54L15 SoC (:kconfig:option:`SB_CONFIG_MCUBOOT_FPROTECT_ALLOW_COMBINED_REGIONS` and the :kconfig:option:`CONFIG_FPROTECT_ALLOW_COMBINED_REGIONS` Kconfig option).
 
 * Fixed:
 

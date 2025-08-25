@@ -36,7 +36,7 @@ Build and configuration system
    * Sysbuild now handles the following MCUboot image ID assignments:
 
      * MCUboot updates (using b0) are automatically assigned to MCUboot.
-       The ``SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES`` Kconfig option must not be incremented to include this image.
+       The :kconfig:option:`SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES` Kconfig option must not be incremented to include this image.
      * Applications and MCUboot must now use the MCUboot assigned image ID Kconfig values to refer to image IDs instead of hardcoding them.
      * Applications interacting with the device using MCUboot serial recovery MCUmgr must use the image IDs assigned to them, as well as MCUboot or MCUmgr hooks.
      * Depending upon enabled images, some image IDs might differ in |NCS| 2.8 and higher than from previous releases.
