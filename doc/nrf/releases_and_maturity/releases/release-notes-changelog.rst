@@ -210,7 +210,10 @@ nRF5340 Audio
 nRF Desktop
 -----------
 
-|no_changes_yet_note|
+* Added application configurations for the :zephyr:board:`nrf54lm20dk` board.
+  The configurations are supported through the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target.
+  For details, see the :ref:`nrf_desktop_board_configuration` page.
+  The :zephyr:board:`nrf54lm20dk` board support is experimental.
 
 nRF Machine Learning (Edge Impulse)
 -----------------------------------
