@@ -84,7 +84,7 @@ Reading the logs
 
 To read the STM log output on the UART, consult the following documentation pages:
 
-* If you want to use the *nRF Serial Terminal* from the |nRFVSC|, see the `nRF Terminal documentation`_ on the `nRF Connect for Visual Studio Code`_ documentation site.
+* If you want to use the *nRF Serial Terminal* from |nRFVSC|, see the `nRF Terminal documentation`_ on the `nRF Connect for Visual Studio Code`_ documentation site.
 * If you want to use PuTTY, see :ref:`putty`.
 
 .. note::

@@ -10,13 +10,13 @@ Building an application
 |application_sample_definition|
 
 After you have :ref:`created an application <create_application>`, you need to build it in order to be able to program it.
-Just as for creating the application, you can build the application using either the |nRFVSC| or the command line.
+Just as for creating the application, you can build the application using either |nRFVSC| or the command line.
 
 .. tabs::
 
    .. group-tab:: nRF Connect for VS Code
 
-      To build with the |nRFVSC|, you first need to create a build configuration.
+      To build with |nRFVSC|, you first need to create a build configuration.
       For instructions, see `How to build an application`_ in the extension documentation.
 
       By default, the extension runs both stages of the CMake build (:ref:`configuration phase and building phase <app_build_system>`).

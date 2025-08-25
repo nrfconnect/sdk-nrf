@@ -14,7 +14,7 @@ This file is the entry point of the build system as it specifies the application
 Maintaining CMakeLists.txt
 **************************
 
-The recommended method to maintain and update the :file:`CMakeLists.txt` file is to use the |nRFVSC|.
+The recommended method to maintain and update the :file:`CMakeLists.txt` file is to use |nRFVSC|.
 The extension provides support for the `source control with west`_ and `CMake build system`_, including `build configuration management <How to work with build configurations_>`_ and `source and config files overview <Details View_>`_.
 
 .. _modifying_files_compiler:
@@ -103,7 +103,7 @@ The following table lists the most common ones used in the |NCS|:
        | For applications that *do not* use multiple images, the static configuration can be selected with :makevar:`FILE_SUFFIX` (see above).
      - ``-DPM_STATIC_YML_FILE=pm_static_<suffix>.yml``
 
-You can use these parameters in both the |nRFVSC| and the command line.
+You can use these parameters in both |nRFVSC| and the command line.
 
 The build variables are applied one after another, based on the order you provide them.
 This is how you can specify them:
@@ -148,7 +148,7 @@ Examples of commands
 
         .. group-tab:: nRF Connect for VS Code
 
-            To select the build type in the |nRFVSC|:
+            To select the build type in |nRFVSC|:
 
             1. When `building an application <How to build an application_>`_ as described in the |nRFVSC| documentation, follow the steps for setting up the build configuration.
             #. In the **Add Build Configuration** screen, select the desired :file:`.conf` file from the :guilabel:`Configuration` drop-down menu.

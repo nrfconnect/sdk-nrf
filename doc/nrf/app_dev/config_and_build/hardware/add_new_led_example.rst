@@ -9,7 +9,7 @@ Adding a dimmable LED node
 
 This example demonstrates how to add support for a dimmable LED node to your board in an overlay file.
 
-To implement this example, you can either edit the devicetree files manually or use the |nRFVSC| with its `Devicetree language support`_ and the `Devicetree Visual Editor <How to work with Devicetree Visual Editor_>`_ (recommended).
+To implement this example, you can either edit the devicetree files manually or use |nRFVSC| with its `Devicetree language support`_ and the `Devicetree Visual Editor <How to work with Devicetree Visual Editor_>`_ (recommended).
 
 For more advanced LED control, you can also use the :ref:`LEDs module <caf_leds>` of the :ref:`Common Application Framework (CAF) <lib_caf>`, which provides additional features, such as LED effects and power management integration.
 
@@ -33,7 +33,7 @@ Open or create the overlay file to edit
 Overlay files are a category of devicetree's :ref:`zephyr:devicetree-in-out-files`.
 These files can override node property values in multiple ways.
 
-You can add them to your configuration :ref:`manually <zephyr:set-devicetree-overlays>` or by using the |nRFVSC| (see `How to create devicetree files`_).
+You can add them to your configuration :ref:`manually <zephyr:set-devicetree-overlays>` or by using |nRFVSC| (see `How to create devicetree files`_).
 
 .. rst-class:: numbered-step
 

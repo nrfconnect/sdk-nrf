@@ -13,7 +13,7 @@ The tool uses `Microsoft's debug adaptor`_ and integrates custom debugging featu
 
 .. tabs::
 
-   .. group-tab:: nRF Connect for Visual Studio Code
+   .. group-tab:: nRF Connect for VS Code
 
       Use nRF Debug after adding the required Kconfig options to the :file:`prj.conf` file.
       For details, see the `How to debug an application`_ section in the |nRFVSC| documentation.

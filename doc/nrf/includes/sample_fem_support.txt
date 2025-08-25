@@ -11,7 +11,7 @@ You can add support for the nRF21540 front-end module to this sample by using on
 
      .. group-tab:: nRF Connect for VS Code
 
-        To build the sample in the |nRFVSC| for an nRF52840 DK with the nRF21540 EK attached, add the shield variable in the build configuration's :guilabel:`Extra CMake arguments` and rebuild the build configuration.
+        To build the sample in |nRFVSC| for an nRF52840 DK with the nRF21540 EK attached, add the shield variable in the build configuration's :guilabel:`Extra CMake arguments` and rebuild the build configuration.
         For example: ``-DSHIELD=nrf21540ek``.
 
         See `How to work with build configurations`_ in the |nRFVSC| documentation for more information.

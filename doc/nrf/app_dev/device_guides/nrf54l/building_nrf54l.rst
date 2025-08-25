@@ -82,7 +82,7 @@ Complete the following steps:
 Separate images
 ---------------
 
-You can build and program application sample and the FLPR sample as separate images using the |nRFVSC| or command line.
+You can build and program application sample and the FLPR sample as separate images using |nRFVSC| or command line.
 To use nRF Util, see `Programming application firmware on the nRF54L15 SoC`_.
 Depending on the selected method, complete the following steps:
 
@@ -92,7 +92,7 @@ Depending on the selected method, complete the following steps:
 
       .. note::
 
-         The |nRFVSC| currently offers experimental support for the nRF54L15's FLPR core.
+         |nRFVSC| currently offers experimental support for the nRF54L15's FLPR core.
          Certain features, particularly debugging, may not function as expected.
 
       .. include:: /includes/vsc_build_and_run.txt
