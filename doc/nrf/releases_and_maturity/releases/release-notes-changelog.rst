@@ -239,17 +239,7 @@ Amazon Sidewalk samples
 Bluetooth samples
 -----------------
 
-* Updated the network core image applications for the following samples from the :zephyr:code-sample:`bluetooth_hci_ipc` sample to the :ref:`ipc_radio` application for multicore builds:
-
-  * :ref:`bluetooth_conn_time_synchronization`
-  * :ref:`bluetooth_iso_combined_bis_cis`
-  * :ref:`bluetooth_isochronous_time_synchronization`
-  * :ref:`bt_scanning_while_connecting`
-  * :ref:`channel_sounding_ras_initiator`
-  * :ref:`channel_sounding_ras_reflector`
-
-  The :ref:`ipc_radio` application is commonly used for multicore builds in other |NCS| samples and projects.
-  Hence, this is to align with the common practice.
+|no_changes_yet_note|
 
 Bluetooth Mesh samples
 ----------------------
