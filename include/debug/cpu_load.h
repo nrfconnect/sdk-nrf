@@ -8,6 +8,7 @@
 #define __CPU_LOAD_H
 
 #include <zephyr/types.h>
+#include <zephyr/toolchain.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,6 +22,7 @@ extern "C" {
  */
 
 /** @brief Initialize the CPU load measurement module.
+    The module is now automatically initialized. This function is deprecated.
  *
  * The TIMER driver and PPI channels are allocated during the initialization of
  * this module.
@@ -29,7 +31,7 @@ extern "C" {
  * @retval -ENODEV PPI channels could not be allocated.
  * @retval -EBUSY TIMER instance is busy.
  */
-int cpu_load_init(void);
+__deprecated int cpu_load_init(void);
 
 /** @brief Reset measurement.
  *
@@ -43,9 +45,10 @@ void cpu_load_reset(void);
  * The CPU load is represented in 0,001% units where a 100000 value represents
  * 100% load (e.g. 12345 represents 12,345% load).
  *
- * @return The current CPU load value.
+ * @retval non-negative the current CPU load value.
+ * @retval -ENODEV if module failed to initialize.
  */
-uint32_t cpu_load_get(void);
+int cpu_load_get(void);
 
 /** @} */
 
