@@ -65,9 +65,19 @@ You can enable both methods after :ref:`building and running the sample <matter_
 ICD LIT device type
 ===================
 
-The smoke CO alarm works as a Matter Intermittently Connected Device (ICD) with a :ref:`Long Idle Time (LIT)<ug_matter_device_low_power_icd_sit_lit>`.
+.. matter_smoke_co_alarm_sample_lit_start
+
+The device works as a Matter Intermittently Connected Device (ICD) with a :ref:`Long Idle Time (LIT)<ug_matter_device_low_power_icd_sit_lit>`.
 The device starts operation in the Short Idle Time (SIT) mode and remains in it until it is commissioned to the Matter fabric and registers the first ICD client.
 It then switches the operation mode to LIT to reduce the power consumption.
+
+In the LIT mode, the device responsiveness is much lower than in the SIT mode.
+However, you can request the device to become responsive to, for example, change its configuration.
+To do that, you need to use the User Active Mode Trigger (UAT) feature by pressing the appropriate button.
+
+See `User interface`_ for information about how to switch the operation modes.
+
+.. matter_smoke_co_alarm_sample_lit_end
 
 The sample supports ICD Dynamic SIT LIT switching (DSLS) feature to switch between SIT and LIT modes, depending on the used power source.
 The device uses the SIT mode, when the wired power source is active.
@@ -76,12 +86,6 @@ Dynamic switching is possible only if the ICD device meets all criteria for oper
 DSLS support is disabled by default.
 To enable it, set the :kconfig:option:`CONFIG_CHIP_ICD_DSLS_SUPPORT` Kconfig option to ``y`` and enable the feature support in the ICD Management cluster's feature map, by setting it to ``0xf`` in the sample's :file:`.zap` file.
 Regenerate the source files after modifying the :file:`.zap` file.
-
-In the LIT mode, the device responsiveness is much lower than in the SIT mode.
-However, you can request the device to become responsive to, for example, change its configuration.
-To do that, you need to use the User Active Mode Trigger (UAT) feature by pressing the appropriate button.
-
-See `User interface`_ for information about how to switch the operation modes.
 
 .. _matter_smoke_co_alarm_network_mode:
 
