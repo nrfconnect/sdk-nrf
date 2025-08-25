@@ -198,7 +198,10 @@ IPC radio firmware
 Matter bridge
 -------------
 
-|no_changes_yet_note|
+* Updated the application to store a portion of the application code related to the nRF70 Series' Wi-Fi firmware in the external flash memory by default.
+  This change breaks the DFU between the previous |NCS| versions and the |NCS| v3.2.0.
+  To fix this, you need to disable storing the Wi-Fi firmware patch in external memory.
+  See the :ref:`migration guide <migration_3.2_required>` for more information.
 
 nRF5340 Audio
 -------------
@@ -340,6 +343,11 @@ Keys samples
 
 Matter samples
 --------------
+
+* Updated all Matter over Wi-Fi samples and applications to store a portion of the application code related to the nRF70 Series' Wi-Fi firmware in the external flash memory by default.
+  This change breaks the DFU between the previous |NCS| versions and the |NCS| v3.2.0.
+  To fix this, you need to disable storing the Wi-Fi firmware patch in external memory.
+  See the :ref:`migration guide <migration_3.2_required>` for more information.
 
 * :ref:`matter_lock_sample` sample:
 

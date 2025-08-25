@@ -559,7 +559,7 @@ The current maximum number of Bluetooth LE connections that can be selected usin
             .. parsed-literal::
                :class: highlight
 
-               west build -b nrf5340dk/nrf5340/cpuapp -p -- -Dmatter_bridge_SHIELD=nrf7002ek -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DSB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH=y -DSB_CONFIG_WIFI_NRF70=y -Dmcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3 -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="overlay-bt_max_connections_net.conf" -DFILE_SUFFIX=nrf70ek
+               west build -b nrf5340dk/nrf5340/cpuapp -p -- -Dmatter_bridge_SHIELD=nrf7002ek -DSB_CONFIG_WIFI_NRF70=y -DCONFIG_BRIDGED_DEVICE_BT=y -DEXTRA_CONF_FILE="overlay-bt_max_connections_app.conf" -Dipc_radio_EXTRA_CONF_FILE="overlay-bt_max_connections_net.conf" -DFILE_SUFFIX=nrf70ek
 
          .. group-tab:: Matter bridge over Thread
 
@@ -695,15 +695,15 @@ Building and running
 
 .. include:: /includes/ipc_radio_conf.txt
 
-.. include:: ../../../samples/matter/lock/README.rst
-    :start-after: matter_door_lock_sample_nrf70_firmware_patch_start
-    :end-before: matter_door_lock_sample_nrf70_firmware_patch_end
+Building the application on nRF5340 DK with nRF7002 EK shield
+=============================================================
 
-For example:
+.. include:: /includes/matter_building_nrf5340dk_70ek
 
-   .. code-block:: console
+Flashing the Matter over Wi-Fi application variant
+==================================================
 
-      west build -b nrf5340dk/nrf5340/cpuapp -p -- -Dmatter_bridge_SHIELD=nrf7002ek -DSB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE=y -DSB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH=y -DSB_CONFIG_WIFI_NRF70=y -Dmcuboot_CONFIG_UPDATEABLE_IMAGE_NUMBER=3 -DFILE_SUFFIX=nrf70ek
+.. include:: /includes/matter_sample_wifi_flash.txt
 
 Selecting a configuration
 =========================
