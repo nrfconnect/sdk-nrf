@@ -202,6 +202,25 @@ In this sample, UART and SEGGER RTT are available as logging backends.
 .. note::
    With the :zephyr:board:`nrf52840dongle`, only logging over UART is available.
 
+External flash support
+======================
+
+This sample supports external flash memory as secondary storage partition for saving of the incoming firmware images.
+See :ref:`ug_bootloader_external_flash` for more information on external flash support as a partition in the :ref:`ug_bootloader_mcuboot_nsib`.
+The default configuration does not support external flash memory.
+To enable external flash support, set :makevar:`FILE_SUFFIX` to ``ext_flash`` when building the sample.
+
+Build the sample using the following command:
+
+.. code-block:: console
+
+   west build -p -b *board_name* -- -DFILE_SUFFIX=ext_flash
+
+.. note::
+   The external flash is not erased during the internal flash erasing procedure.
+   See `nRF Util`_ for more information on how to erase the external flash.
+   Currently, only the external flash on the ``nrf52840dk/nrf52840`` board is supported at the moment.
+
 Dependencies
 ************
 
