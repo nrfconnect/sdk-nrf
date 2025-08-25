@@ -58,7 +58,7 @@ target_include_directories(psa_crypto_library_config
     ${OBERON_PSA_CORE_PATH}/oberon/drivers
 )
 
-if(CONFIG_MBEDTLS_ENABLE_HEAP)
+if(CONFIG_MBEDTLS_ENABLE_HEAP AND CONFIG_MBEDTLS_PLATFORM_MEMORY)
   if (CONFIG_BUILD_WITH_TFM)
     # Add replacement for memory_buffer_alloc.c for NS build
     list(APPEND src_crypto ${NRF_SECURITY_ROOT}/src/legacy/memory_buffer_alloc.c)
