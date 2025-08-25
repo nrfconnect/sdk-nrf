@@ -1,0 +1,17 @@
+identifier: tpm530mevk/tpm530m
+name: TPM530M-EVK-TPM530M
+type: mcu
+arch: arm
+toolchain:
+  - gnuarmemb
+  - zephyr
+ram: 88
+flash: 1024
+supported:
+  - gpio
+  - i2c
+  - pwm
+  - spi
+  - watchdog
+  - counter
+vendor: sercomm
