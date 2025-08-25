@@ -138,8 +138,6 @@ Bluetooth® LE
 Bluetooth Mesh
 --------------
 
-|no_changes_yet_note|
-
 DECT NR+
 --------
 
@@ -254,7 +252,7 @@ Bluetooth samples
 Bluetooth Mesh samples
 ----------------------
 
-|no_changes_yet_note|
+* Updated the :ref:`bluetooth_mesh_sensor_client` sample to demonstrate the Bluetooth :ref:`ug_bt_mesh_nlc` HVAC Integration profile.
 
 Bluetooth Fast Pair samples
 ---------------------------

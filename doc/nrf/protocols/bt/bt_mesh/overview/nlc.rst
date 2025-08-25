@@ -8,7 +8,13 @@ The NLC profiles can be used to implement interoperable network controlled light
 Each of the profiles specifies a set of models and a set of performance parameters.
 
 Enable the :kconfig:option:`CONFIG_BT_MESH_NLC_PERF_CONF` Kconfig option to set the required performance configurations for the NLC profiles.
-When implementing the NLC Basic Lightness Controller profile individually or in conjunction with other NLC profiles, also enable the :kconfig:option:`CONFIG_BT_MESH_NLC_PERF_LIGHTNESS_CTRL` Kconfig option.
+Multiple NLC profiles can be combined on a single device.
+When combining profiles, the device will use the highest minimum requirements, as defined in the NLC Profile specifications.
+
+For specific profile implementations, enable the following Kconfig options:
+
+* :kconfig:option:`CONFIG_BT_MESH_NLC_PERF_LIGHTNESS_CTRL` - for the NLC Basic Lightness Controller profile
+* :kconfig:option:`CONFIG_BT_MESH_NLC_PERF_HVAC` - for the NLC HVAC Integration profile
 
 The |NCS| provides a demonstration of how to implement each of these profiles as part of the Bluetooth samples.
 An overview of the NLC profiles and the samples supporting them is provided in a table below.
@@ -28,6 +34,8 @@ An overview of the NLC profiles and the samples supporting them is provided in a
    | Dimming Control NLC Profile             | :ref:`bluetooth_mesh_light_dim`      |
    +-----------------------------------------+--------------------------------------+
    | Energy Monitor NLC Profile              | :ref:`bluetooth_mesh_light_lc`       |
+   +-----------------------------------------+--------------------------------------+
+   | HVAC Integration NLC Profile            | :ref:`bluetooth_mesh_sensor_client`  |
    +-----------------------------------------+--------------------------------------+
    | Occupancy Sensor NLC Profile            | :ref:`bluetooth_mesh_sensor_server`  |
    +-----------------------------------------+--------------------------------------+
