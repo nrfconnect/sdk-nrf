@@ -715,6 +715,7 @@
 /scripts/generate_psa_key_attributes.py   @nrfconnect/ncs-aurora
 /scripts/tests/                           @nrfconnect/ncs-pluto @fundakol
 /scripts/vale/                            @francescoser
+/scripts/esb_sniffer/                     @nrfconnect/ncs-si-muffin
 
 /scripts/docker/*.rst                     @nrfconnect/ncs-doc-leads
 /scripts/hid_configurator/*.rst           @nrfconnect/ncs-si-bluebagel-doc
@@ -723,6 +724,7 @@
 /scripts/partition_manager/*.rst          @nrfconnect/ncs-aurora-doc
 /scripts/shell/ble_console/**/*.rst       @nrfconnect/ncs-doc-leads
 /scripts/west_commands/sbom/*.rst         @nrfconnect/ncs-co-doc @nrfconnect/ncs-doc-leads
+/scripts/esb_sniffer/*.rst                @nrfconnect/ncs-si-muffin-doc
 /scripts/runners/nrf_common_next.py       @nrfconnect/ncs-ci
 /scripts/runners/nrfutil_next.py          @nrfconnect/ncs-ci
 
