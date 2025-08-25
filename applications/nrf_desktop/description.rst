@@ -366,7 +366,7 @@ Depending on the development kit you use, you need to select the respective conf
 
       .. table-from-rows:: /includes/sample_board_rows.txt
          :header: heading
-         :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf5340dk_nrf5340_cpuapp, nrf54l15dk_nrf54l15_cpuapp, nrf54l15dk_nrf54l10_cpuapp, nrf54l15dk_nrf54l05_cpuapp, nrf54h20dk_nrf54h20_cpuapp
+         :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf5340dk_nrf5340_cpuapp, nrf54l15dk_nrf54l15_cpuapp, nrf54l15dk_nrf54l10_cpuapp, nrf54l15dk_nrf54l05_cpuapp, nrf54lm20dk_nrf54lm20a_cpuapp, nrf54h20dk_nrf54h20_cpuapp
 
       Depending on the configuration, a DK may act either as mouse, keyboard or dongle.
       For information about supported configurations for each board, see the :ref:`nrf_desktop_board_configuration_files` section.
@@ -447,6 +447,10 @@ The application supports the following build types:
      - ``release_4llpmconn``
      - ``nrf52840dongle/nrf52840``
      - Release version of the application with the support for up to four simultaneous Bluetooth LE connections, in Low Latency Packet Mode.
+   * - LLVM
+     - ``llvm``
+     - ``nrf54lm20dk/nrf54lm20a/cpuapp``
+     - Debug version of the application with the support for the ``llvm`` toolchain.
 
 .. note::
     Bootloader-enabled configurations with support for :ref:`serial recovery DFU <nrf_desktop_bootloader_serial_dfu>` or :ref:`background DFU <nrf_desktop_bootloader_background_dfu>` are set as default if they fit in the non-volatile memory.
@@ -1024,6 +1028,9 @@ To implement the secure boot feature, the bootloader requires a set of private a
 The private key is used to sign the application image.
 The public key is generated from the private key and is used by MCUboot to validate the application image.
 The public key is securely stored in the Key Management Unit (KMU) hardware peripheral of the nRF54L device.
+
+.. note::
+   KMU is not yet supported for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target.
 
 In this application, the application image is automatically signed with a private key by the |NCS| build system.
 The private keys are stored in the application configuration directory of the board.
