@@ -426,7 +426,7 @@ Configuring LED status indication for third-party boards
 
 This sample assumes that the target board either has a single RGB LED with PWM support, or four discrete LEDs available.
 
-For third-party boards, you can select the RGB LED option by enabling both the :ref:`CONFIG_LED_INDICATION_PWM <CONFIG_LED_INDICATION_PWM>` and :ref:`CONFIG_LED_INDICATION_RGB <CONFIG_LED_INDICATOR_RGB>` options.
+For third-party boards, you can select the RGB LED option by enabling both the :ref:`CONFIG_LED_INDICATION_PWM <CONFIG_LED_INDICATION_PWM>` and :ref:`CONFIG_LED_INDICATOR_RGB <CONFIG_LED_INDICATOR_RGB>` options.
 In this case, the board must have a devicetree entry marked as compatible with the `Zephyr pwm-leds`_ driver.
 
 Otherwise, the four-LED option (:ref:`CONFIG_LED_INDICATION_GPIO <CONFIG_LED_INDICATION_GPIO>` and :ref:`CONFIG_LED_INDICATOR_4LED <CONFIG_LED_INDICATOR_4LED>`) is selected by default as long as there is a devicetree entry compatible with the `Zephyr gpio-leds`_ driver.
@@ -682,25 +682,25 @@ CONFIG_COAP_FOTA - Enable FOTA with CoAP
 
 If :ref:`CONFIG_COAP_FOTA <CONFIG_COAP_FOTA>` is enabled, these options additional are available:
 
-.. _CONFIG_COAP_FOTA_DL_TIMEOUT_MIN:
+.. _CONFIG_FOTA_DL_TIMEOUT_MIN:
 
-CONFIG_COAP_FOTA_DL_TIMEOUT_MIN - CoAP FOTA download timeout
+CONFIG_FOTA_DL_TIMEOUT_MIN - FOTA download timeout
     The time in minutes allotted for a FOTA download to complete.
 
-.. _CONFIG_COAP_FOTA_USE_NRF_CLOUD_SETTINGS_AREA:
+.. _CONFIG_FOTA_USE_NRF_CLOUD_SETTINGS_AREA:
 
-CONFIG_COAP_FOTA_USE_NRF_CLOUD_SETTINGS_AREA - Make FOTA compatible with other samples
+CONFIG_FOTA_USE_NRF_CLOUD_SETTINGS_AREA - Make FOTA compatible with other samples
    Use the same settings area as the nRF Cloud FOTA library.
 
-.. _CONFIG_COAP_FOTA_SETTINGS_NAME:
+.. _CONFIG_FOTA_SETTINGS_NAME:
 
-CONFIG_COAP_FOTA_SETTINGS_NAME - Settings identifier
-   Set the identifier for the CoAP FOTA storage if :kconfig:option:`CONFIG_COAP_FOTA_USE_NRF_CLOUD_SETTINGS_AREA` is not enabled.
+CONFIG_FOTA_SETTINGS_NAME - Settings identifier
+   Set the identifier for the CoAP FOTA storage if :kconfig:option:`CONFIG_FOTA_USE_NRF_CLOUD_SETTINGS_AREA` is not enabled.
 
-.. _CONFIG_COAP_FOTA_SETTINGS_KEY_PENDING_JOB:
+.. _CONFIG_FOTA_SETTINGS_KEY_PENDING_JOB:
 
-CONFIG_COAP_FOTA_SETTINGS_KEY_PENDING_JOB - Settings item key
-   Set the settings item key for pending FOTA job info if :kconfig:option:`CONFIG_COAP_FOTA_USE_NRF_CLOUD_SETTINGS_AREA` is not enabled.
+CONFIG_FOTA_SETTINGS_KEY_PENDING_JOB - Settings item key
+   Set the settings item key for pending FOTA job info if :kconfig:option:`CONFIG_FOTA_USE_NRF_CLOUD_SETTINGS_AREA` is not enabled.
 
 .. _CONFIG_COAP_FOTA_JOB_CHECK_RATE_MINUTES:
 
