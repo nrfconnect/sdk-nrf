@@ -408,7 +408,14 @@ int sx_blkcipher_ecb_simple(uint8_t *key, size_t key_size, uint8_t *input, size_
 	int status = SX_ERR_HW_PROCESSING;
 
 	uint32_t cmd = CMDMA_BLKCIPHER_MODE_SET(BLKCIPHER_MODEID_ECB);
-	struct sxdesc in_descs[3] = {};
+	/* Both out_desc and in_descs are used after sx_hw_reserve which locks
+	 * the symmetric mutex, so it is safe to have them as static.
+	 */
+	static struct sxdesc out_desc;
+	static struct sxdesc in_descs[3];
+
+	/* This guards the static variables out_desc and in_descs */
+	sx_hw_reserve(NULL);
 
 	in_descs[0].addr = (char *)&cmd;
 	in_descs[0].sz = DMA_REALIGN | sizeof(cmd);
@@ -425,14 +432,10 @@ int sx_blkcipher_ecb_simple(uint8_t *key, size_t key_size, uint8_t *input, size_
 	in_descs[2].dmatag = DMATAG_LAST | ba411tags.data;
 	in_descs[2].next = (void *)1;
 
-	struct sxdesc out_desc = {};
-
 	out_desc.addr = output;
 	out_desc.sz = DMA_REALIGN | output_size;
 	out_desc.next = (void *)1;
 	out_desc.dmatag = DMATAG_LAST;
-
-	sx_hw_reserve(NULL);
 
 #if CONFIG_DCACHE
 	sys_cache_data_flush_range(in_descs, sizeof(in_descs));
