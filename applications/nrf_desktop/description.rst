@@ -1029,9 +1029,6 @@ The private key is used to sign the application image.
 The public key is generated from the private key and is used by MCUboot to validate the application image.
 The public key is securely stored in the Key Management Unit (KMU) hardware peripheral of the nRF54L device.
 
-.. note::
-   KMU is not yet supported for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target.
-
 In this application, the application image is automatically signed with a private key by the |NCS| build system.
 The private keys are stored in the application configuration directory of the board.
 Path to the private key is defined by the ``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`` sysbuild Kconfig option.

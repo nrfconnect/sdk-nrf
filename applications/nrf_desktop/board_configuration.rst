@@ -178,15 +178,10 @@ Sample mouse (``nrf54lm20dk/nrf54lm20a/cpuapp``)
         For detailed information on working with the nRF54LM20 DK, see the :ref:`ug_nrf54l15_gs` documentation.
       * In ``llvm`` configurations, the partition layout is different to accommodate for the higher memory footprint of the ``llvm``  toolchain.
       * The configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
+        All of the configurations enable hardware cryptography for the MCUboot bootloader.
         The application image is verified using a pure ED25519 signature.
-
-      .. note::
-         Currently, the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target has the following limitations:
-
-         * The software-based cryptography is used in the MCUboot bootloader and application image.
-           The hardware-based cryptography is not yet supported.
-         * The public key that MCUboot uses for validating the application image is stored in the bootloader partition.
-           The hardware Key Management Unit (KMU) is not supported yet.
+        The public key that MCUboot uses for validating the application image is securely stored in the hardware Key Management Unit (KMU).
+        For more details on nRF54L Series cryptography, see :ref:`ug_nrf54l_cryptography`.
 
 Sample mouse or dongle (``nrf54h20dk/nrf54h20/cpuapp``)
       * The configuration uses the nRF54H20 DK.
