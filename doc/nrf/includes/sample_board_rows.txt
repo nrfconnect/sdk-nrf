@@ -282,3 +282,7 @@
 .. nrf54lm20dk_nrf54lm20a_cpuflpr_xip
 
 | :ref:`nRF54LM20 DK <ug_nrf54l>` | PCA10184 | :zephyr:board:`nrf54lm20dk <nrf54lm20dk>` | ``nrf54lm20dk/nrf54lm20a/cpuflpr/xip`` |
+
+.. nrf54ls05dk_nrf54ls05b_cpuapp
+
+| nRF54LS05 DK |   | nrf54ls05dk | ``nrf54ls05dk/nrf54ls05b/cpuapp`` |
