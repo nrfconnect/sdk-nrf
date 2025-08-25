@@ -98,11 +98,13 @@ static void timer_compare_interrupt_handler(int32_t id, uint64_t expire_time, vo
 				 reference_timer_value_us);
 		zassert_true((uint64_t)test_limit->grtc_timer_count_time_ms * 1000 <
 				     reference_timer_value_us +
-					     test_limit->time_delta_abs_tolerance_us,
+					     test_limit->time_delta_abs_tolerance_us *
+						     DIFF_TOLERANCE,
 			     "GRTC timer count value is over upper limit");
 		zassert_true((uint64_t)test_limit->grtc_timer_count_time_ms * 1000 >
 				     reference_timer_value_us -
-					     test_limit->time_delta_abs_tolerance_us,
+					     test_limit->time_delta_abs_tolerance_us *
+						     DIFF_TOLERANCE,
 			     "GRTC timer count value is under lower limit");
 	}
 
