@@ -7,14 +7,10 @@
 #include <zephyr/shell/shell.h>
 #include <assert.h>
 #include <stdio.h>
-#if defined(CONFIG_POSIX_API)
 #include <unistd.h>
 #include <netdb.h>
 #include <poll.h>
 #include <sys/socket.h>
-#else
-#include <zephyr/net/socket.h>
-#endif
 #include <zephyr/net/tls_credentials.h>
 #include <fcntl.h>
 #include <getopt.h>
