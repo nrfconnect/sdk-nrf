@@ -47,3 +47,8 @@
 &uart135 {
 	status = "disabled";
 };
+
+/* Disable unbound feature for cpuapp to fix boot issues */
+&cpuapp_cpusys_ipc {
+	unbound = "disable";
+};
