@@ -177,11 +177,7 @@ static int psm_encode_timer(char *encoded_timer_str, uint32_t requested_value,
 	return 0;
 }
 
-#if defined(CONFIG_UNITY)
-int psm_encode(char *tau_ext_str, char *active_time_str, int rptau, int rat)
-#else
 static int psm_encode(char *tau_ext_str, char *active_time_str, int rptau, int rat)
-#endif /* CONFIG_UNITY */
 {
 	int ret = 0;
 
