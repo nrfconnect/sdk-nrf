@@ -26,11 +26,7 @@ AT_MONITOR(ltelc_atmon_xt3412, "%XT3412", at_handler_xt3412);
 #define AT_XT3412_TIME_INDEX 1
 #define T3412_MAX	     35712000000
 
-#if defined(CONFIG_UNITY)
-int parse_xt3412(const char *at_response, uint64_t *time)
-#else
 static int parse_xt3412(const char *at_response, uint64_t *time)
-#endif /* CONFIG_UNITY */
 {
 	int err;
 	struct at_parser parser;

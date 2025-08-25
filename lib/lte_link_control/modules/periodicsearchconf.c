@@ -19,13 +19,8 @@
 
 LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
-#if defined(CONFIG_UNITY)
-int periodicsearchconf_parse(const char *const pattern_str,
-				    struct lte_lc_periodic_search_pattern *pattern)
-#else
 static int periodicsearchconf_parse(const char *const pattern_str,
 				    struct lte_lc_periodic_search_pattern *pattern)
-#endif /* CONFIG_UNITY */
 {
 	int err;
 	int values[5];
@@ -79,15 +74,9 @@ static int periodicsearchconf_parse(const char *const pattern_str,
 	return 0;
 }
 
-#if defined(CONFIG_UNITY)
-char *
-periodicsearchconf_pattern_get(char *const buf, size_t buf_size,
-			       const struct lte_lc_periodic_search_pattern *const pattern)
-#else
 static char *
 periodicsearchconf_pattern_get(char *const buf, size_t buf_size,
 			       const struct lte_lc_periodic_search_pattern *const pattern)
-#endif /* CONFIG_UNITY */
 {
 	int len = 0;
 
