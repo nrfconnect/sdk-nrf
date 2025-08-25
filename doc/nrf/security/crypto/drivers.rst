@@ -351,7 +351,17 @@ The driver implements the PSA Crypto driver API (``cracen_aead_set_nonce``) and 
 
 The hardware peripheral is available on the following devices:
 
-* nRF54L15 Series devices - For more information about both the hardware peripheral and the driver, see the `CRACEN hardware peripheral <nRF54L15 DK CRACEN_>`_ page in the datasheet and the :ref:`ug_nrf54l_cryptography` page in the |NCS| documentation.
+* nRF54L Series devices
+
+  * nRF54L05, nRF54L10, nRF54L15 devices - For more information about both the hardware peripheral and the driver, see the `CRACEN hardware peripheral <nRF54L15 DK CRACEN_>`_ page in the datasheet and the :ref:`ug_nrf54l_cryptography` page in the |NCS| documentation.
+  * nRF54LM20 device - CRACEN support for this device has limitations for several cryptographic operations.
+    See notes in the nRF54 Series tab in the following sections:
+
+    * :ref:`Cipher mode support <ug_crypto_supported_features_cipher_modes>`
+    * :ref:`AEAD algorithms <ug_crypto_supported_features_aead_algorithms>`
+    * :ref:`MAC algorithms <ug_crypto_supported_features_mac_algorithms>`
+    * :ref:`PAKE algorithms <ug_crypto_supported_features_pake_algorithms>`
+
 * nRF54H20 - On this platform, the IronSide Secure Element relies on the CRACEN driver.
   For more information, see the :ref:`ug_nrf54h20_secure_domain_cracen` and the :ref:`ug_nrf54h20_ironside` pages.
 
