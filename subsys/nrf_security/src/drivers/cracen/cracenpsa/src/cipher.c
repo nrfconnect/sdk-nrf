@@ -125,12 +125,11 @@ static psa_status_t crypt(cracen_cipher_operation_t *operation,
  * the state between calls is not supported. This function is using the single part
  * APIs of Cracen to perform the AES ECB operations.
  */
-static psa_status_t crypt_ecb(const struct sxkeyref *key, const uint8_t *input,
+static psa_status_t crypt_ecb(struct sxblkcipher *blkciph, const struct sxkeyref *key, const uint8_t *input,
 			      size_t input_length, uint8_t *output, size_t output_size,
 			      size_t *output_length, enum cipher_operation dir)
 {
 	int sx_status;
-	struct sxblkcipher blkciph;
 
 	if (output_size < input_length) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
@@ -141,28 +140,29 @@ static psa_status_t crypt_ecb(const struct sxkeyref *key, const uint8_t *input,
 	}
 
 	*output_length = 0;
+	safe_memzero(blkciph, sizeof(struct sxblkcipher));
 
 	if (dir == CRACEN_ENCRYPT) {
-		sx_status = sx_blkcipher_create_aesecb_enc(&blkciph, key);
+		sx_status = sx_blkcipher_create_aesecb_enc(blkciph, key);
 	} else {
-		sx_status = sx_blkcipher_create_aesecb_dec(&blkciph, key);
+		sx_status = sx_blkcipher_create_aesecb_dec(blkciph, key);
 	}
 
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	sx_status = sx_blkcipher_crypt(&blkciph, input, input_length, output);
+	sx_status = sx_blkcipher_crypt(blkciph, input, input_length, output);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	sx_status = sx_blkcipher_run(&blkciph);
+	sx_status = sx_blkcipher_run(blkciph);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	sx_status = sx_blkcipher_wait(&blkciph);
+	sx_status = sx_blkcipher_wait(blkciph);
 	if (sx_status == SX_OK) {
 		*output_length = input_length;
 	}
@@ -299,7 +299,7 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
-		return crypt_ecb(&key, input, input_length, output, output_size, output_length,
+		return crypt_ecb(&operation.cipher, &key, input, input_length, output, output_size, output_length,
 				 CRACEN_ENCRYPT);
 	}
 	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES) && alg == PSA_ALG_CBC_PKCS7) {
@@ -355,7 +355,7 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
-		return crypt_ecb(&key, input, input_length, output, output_size, output_length,
+		return crypt_ecb(&operation.cipher, &key, input, input_length, output, output_size, output_length,
 				 CRACEN_DECRYPT);
 	}
 	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_PKCS7_AES) && alg == PSA_ALG_CBC_PKCS7) {
@@ -578,7 +578,7 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 					__ASSERT_NO_MSG(operation->unprocessed_input_bytes ==
 							operation->blk_size);
 					psa_status = crypt_ecb(
-						&operation->keyref, operation->unprocessed_input,
+						&operation->cipher, &operation->keyref, operation->unprocessed_input,
 						operation->unprocessed_input_bytes, output,
 						output_size, output_length, operation->dir);
 					if (psa_status != PSA_SUCCESS) {
@@ -590,7 +590,7 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 
 				if (block_bytes) {
 					psa_status = crypt_ecb(
-						&operation->keyref, input, block_bytes, output,
+						&operation->cipher, &operation->keyref, input, block_bytes, output,
 						output_size, output_length, operation->dir);
 					if (psa_status != PSA_SUCCESS) {
 						return psa_status;
@@ -686,7 +686,7 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 	 */
 	if (IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES)) {
 		if (operation->alg == PSA_ALG_ECB_NO_PADDING) {
-			return crypt_ecb(&operation->keyref, operation->unprocessed_input,
+			return crypt_ecb(&operation->cipher, &operation->keyref, operation->unprocessed_input,
 					 operation->unprocessed_input_bytes, output,
 					 output_size, output_length, operation->dir);
 		}
