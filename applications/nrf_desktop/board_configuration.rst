@@ -55,7 +55,7 @@ nRF52832 Desktop Mouse (``nrf52dmouse``)
       * The preconfigured build types do not use a bootloader.
 
 Sample mouse, keyboard or dongle (``nrf52840dk/nrf52840``)
-      * The configuration uses the nRF52840 Development Kit.
+      * The configuration uses the nRF52840 DK.
       * The build types allow to build the application as mouse, keyboard or dongle.
       * Inputs are simulated based on the hardware button presses.
       * The configuration with the B0 bootloader is set as default.
@@ -63,7 +63,7 @@ Sample mouse, keyboard or dongle (``nrf52840dk/nrf52840``)
         The configuration uses the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and supports firmware updates using the :ref:`nrf_desktop_dfu` and the :ref:`nrf_desktop_dfu_mcumgr`.
 
 Sample dongle (``nrf52833dk/nrf52833``)
-      * The configuration uses the nRF52833 Development Kit.
+      * The configuration uses the nRF52833 DK.
       * The application is configured to act as a dongle that forwards data from both mouse and keyboard.
         The dongle acts as a Bluetooth central.
         Input data comes from Bluetooth and is retransmitted to USB.
@@ -73,7 +73,7 @@ Sample dongle (``nrf52833dk/nrf52833``)
       * The configuration with the MCUboot bootloader is set as default.
 
 Sample dongle (``nrf52833dk/nrf52820``)
-      * The configuration uses the nRF52820 emulation on the nRF52833 Development Kit.
+      * The configuration uses the nRF52820 emulation on the nRF52833 DK.
       * The application is configured to act as a dongle that forwards data from both mouse and keyboard.
       * Bluetooth uses Zephyr's software link layer and is configured to act as a central.
         Input data comes from Bluetooth and is retransmitted to USB.
@@ -107,7 +107,7 @@ Sample dongle (``nrf5340dk/nrf5340``)
       * The configuration with the B0 bootloader is set as default.
 
 Sample mouse or keyboard (``nrf54l15dk/nrf54l05/cpuapp``)
-      * The configuration :ref:`emulates the nRF54L05 SoC <zephyr:nrf54l15dk_nrf54l05>` on the nRF54L15 Development Kit.
+      * The configuration :ref:`emulates the nRF54L05 SoC <zephyr:nrf54l15dk_nrf54l05>` on the nRF54L15 DK.
       * The build types allow to build the application as a mouse or a keyboard.
       * Inputs are simulated based on the hardware button presses.
       * On the nRF54L05 SoC, you can only use the **GPIO1** port for PWM hardware peripheral output.
@@ -127,7 +127,7 @@ Sample mouse or keyboard (``nrf54l15dk/nrf54l05/cpuapp``)
       * The board supports the ``release`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration that acts as a mouse  (``release_fast_pair`` file suffix).
 
 Sample mouse or keyboard (``nrf54l15dk/nrf54l10/cpuapp``)
-      * The configuration :ref:`emulates the nRF54L10 SoC <zephyr:nrf54l15dk_nrf54l10>` on the nRF54L15 Development Kit.
+      * The configuration :ref:`emulates the nRF54L10 SoC <zephyr:nrf54l15dk_nrf54l10>` on the nRF54L15 DK.
       * The build types allow to build the application as a mouse or a keyboard.
       * Inputs are simulated based on the hardware button presses.
       * On the nRF54L10 SoC, you can only use the **GPIO1** port for PWM hardware peripheral output.
@@ -147,7 +147,7 @@ Sample mouse or keyboard (``nrf54l15dk/nrf54l10/cpuapp``)
         The configuration uses the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and supports firmware updates using the :ref:`nrf_desktop_dfu` and :ref:`nrf_desktop_dfu_mcumgr`.
 
 Sample mouse or keyboard (``nrf54l15dk/nrf54l15/cpuapp``)
-      * The configuration uses the nRF54L15 Development Kit.
+      * The configuration uses the nRF54L15 DK.
       * The build types allow to build the application as a mouse or a keyboard.
       * Inputs are simulated based on the hardware button presses.
       * On the nRF54L15 SoC, you can only use the **GPIO1** port for PWM hardware peripheral output.
@@ -167,7 +167,7 @@ Sample mouse or keyboard (``nrf54l15dk/nrf54l15/cpuapp``)
         The configuration uses the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and supports firmware updates using the :ref:`nrf_desktop_dfu` and :ref:`nrf_desktop_dfu_mcumgr`.
 
 Sample mouse (``nrf54lm20dk/nrf54lm20a/cpuapp``)
-      * The configuration uses the nRF54LM20 Development Kit.
+      * The configuration uses the nRF54LM20 DK.
       * The build types allow to build the application as a mouse.
       * Inputs are simulated based on the hardware button presses.
       * Bluetooth LE and USB High-Speed transports are enabled.
@@ -189,7 +189,7 @@ Sample mouse (``nrf54lm20dk/nrf54lm20a/cpuapp``)
            The hardware Key Management Unit (KMU) is not supported yet.
 
 Sample mouse or dongle (``nrf54h20dk/nrf54h20/cpuapp``)
-      * The configuration uses the nRF54H20 Development Kit.
+      * The configuration uses the nRF54H20 DK.
       * The build types allow to build the application as a mouse or dongle.
       * Inputs are simulated based on the hardware button presses.
       * Bluetooth LE and USB High-Speed transports are enabled.
