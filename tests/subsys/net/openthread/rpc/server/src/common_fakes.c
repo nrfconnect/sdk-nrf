@@ -14,3 +14,5 @@ DEFINE_FAKE_VOID_FUNC(otMessageFree, otMessage *);
 DEFINE_FAKE_VALUE_FUNC(otError, otMessageAppend, otMessage *, const void *, uint16_t);
 DEFINE_FAKE_VALUE_FUNC(otMessage *, otUdpNewMessage, otInstance *, const otMessageSettings *);
 DEFINE_FAKE_VALUE_FUNC(void *, nrf_rpc_cbkproxy_out_get, int, void *);
+DEFINE_FAKE_VOID_FUNC(otCliInit, otInstance *, otCliOutputCallback, void *);
+DEFINE_FAKE_VOID_FUNC(otCliInputLine, char *);
