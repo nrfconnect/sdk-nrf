@@ -983,3 +983,12 @@
 Kconfig*                                  @nrfconnect/ncs-co-build-system
 CMakeLists*                               @nrfconnect/ncs-co-build-system
 *.cmake	                                  @nrfconnect/ncs-co-build-system
+
+# ncs-matter-related files
+/samples/matter/**/*.cmake               @nrfconnect/ncs-co-build-system @nrfconnect/ncs-matter
+/samples/matter/**/Kconfig*              @nrfconnect/ncs-co-build-system @nrfconnect/ncs-matter
+/applications/matter_weather_station/**/Kconfig* @nrfconnect/ncs-co-build-system @nrfconnect/ncs-matter
+/applications/matter_bridge/**/Kconfig*  @nrfconnect/ncs-co-build-system @nrfconnect/ncs-matter
+/samples/matter/**/CMakeLists*           @nrfconnect/ncs-co-build-system @nrfconnect/ncs-matter
+/applications/matter_weather_station/**/CMakeLists* @nrfconnect/ncs-co-build-system @nrfconnect/ncs-matter
+/applications/matter_bridge/**/CMakeLists* @nrfconnect/ncs-co-build-system @nrfconnect/ncs-matter
