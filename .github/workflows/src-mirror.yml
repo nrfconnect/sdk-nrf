@@ -6,6 +6,9 @@ on:
     tags:
       - '*'
 
+permissions:
+  contents: read
+
 concurrency:
   group: src-mirror-${{ github.ref }}
   cancel-in-progress: true
