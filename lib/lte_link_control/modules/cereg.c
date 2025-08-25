@@ -52,15 +52,9 @@ static bool is_cellid_valid(uint32_t cellid)
 	return true;
 }
 
-#if defined(CONFIG_UNITY)
-int parse_cereg(const char *at_response, enum lte_lc_nw_reg_status *reg_status,
-		       struct lte_lc_cell *cell, enum lte_lc_lte_mode *lte_mode,
-		       struct lte_lc_psm_cfg *psm_cfg)
-#else
 static int parse_cereg(const char *at_response, enum lte_lc_nw_reg_status *reg_status,
 		       struct lte_lc_cell *cell, enum lte_lc_lte_mode *lte_mode,
 		       struct lte_lc_psm_cfg *psm_cfg)
-#endif /* CONFIG_UNITY */
 {
 	int err, temp;
 	struct at_parser parser;

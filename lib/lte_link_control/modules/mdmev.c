@@ -39,11 +39,7 @@ AT_MONITOR(ltelc_atmon_mdmev, "%MDMEV", at_handler_mdmev);
 
 bool mdmev_enabled;
 
-#if defined(CONFIG_UNITY)
-int mdmev_parse(const char *at_response, enum lte_lc_modem_evt *modem_evt)
-#else
 static int mdmev_parse(const char *at_response, enum lte_lc_modem_evt *modem_evt)
-#endif /* CONFIG_UNITY */
 {
 	static const char *const event_types[] = {
 		[LTE_LC_MODEM_EVT_LIGHT_SEARCH_DONE] = AT_MDMEV_SEARCH_STATUS_1,

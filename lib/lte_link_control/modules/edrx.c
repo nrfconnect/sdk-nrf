@@ -173,14 +173,9 @@ static void get_edrx_value(enum lte_lc_lte_mode lte_mode, uint8_t idx, float *ed
 	*edrx_value = multiplier == 0 ? 5.12 : multiplier * 10.24;
 }
 
-#if defined(CONFIG_UNITY)
-int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg, char *edrx_str,
-		      char *ptw_str)
-#else
 /* Parses eDRX parameters from a +CEDRXS notification or a +CEDRXRDP response. */
 static int parse_edrx(const char *at_response, struct lte_lc_edrx_cfg *cfg, char *edrx_str,
 		      char *ptw_str)
-#endif /* CONFIG_UNITY */
 {
 	int err, tmp_int;
 	uint8_t idx;
