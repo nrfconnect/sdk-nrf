@@ -208,6 +208,9 @@ You can enhance security further by enabling the following sysbuild Kconfig opti
      This option enables generating a default :file:`keyfile.json` file during the build process based on the input file provided by the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` sysbuild Kconfig option.
      The automatic provisioning is only performed if the west flash command is executed with the ``--erase`` or ``--recover`` flag.
 
+  .. note::
+     KMU is not yet supported for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target.
+
 .. _nrf_desktop_bootloader_background_dfu:
 
 Background Device Firmware Upgrade
