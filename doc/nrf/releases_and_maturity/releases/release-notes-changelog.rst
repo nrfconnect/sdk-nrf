@@ -264,7 +264,13 @@ Bluetooth samples
 Bluetooth Mesh samples
 ----------------------
 
-|no_changes_yet_note|
+* :ref:`ble_mesh_dfu_distributor` sample:
+
+  * Added support for external flash memory for the ``nrf52840dk/nrf52840`` as the secondary partition for the DFU process.
+
+* :ref:`ble_mesh_dfu_target` sample:
+
+  * Added support for external flash memory for the ``nrf52840dk/nrf52840`` as the secondary partition for the DFU process.
 
 Bluetooth Fast Pair samples
 ---------------------------
@@ -624,3 +630,5 @@ Documentation
 
   * The :ref:`emds_readme_application_integration` section in the :ref:`emds_readme` library documentation to clarify the EMDS storage context usage.
   * The Emergency data storage section in the :ref:`bluetooth_mesh_light_lc` sample documentation to clarify the EMDS storage context implementation and usage.
+  * The :ref:`ble_mesh_dfu_distributor` sample documentation to clarify the external flash support.
+  * The :ref:`ble_mesh_dfu_target` sample documentation to clarify the external flash support.
