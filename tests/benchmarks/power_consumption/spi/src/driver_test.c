@@ -9,6 +9,14 @@
 
 #define SPIOP	SPI_WORD_SET(8) | SPI_TRANSFER_MSB
 
+static bool suspend_req;
+
+bool self_suspend_req(void)
+{
+	suspend_req = true;
+	return true;
+}
+
 void thread_definition(void)
 {
 	int ret;
@@ -22,6 +30,11 @@ void thread_definition(void)
 	struct spi_buf_set rx_spi_buf_set	= {.buffers = &rx_spi_bufs, .count = 1};
 
 	while (1) {
+		if (suspend_req) {
+			suspend_req = false;
+			k_thread_suspend(k_current_get());
+		}
+
 		ret = spi_transceive_dt(&spispec, &tx_spi_buf_set, &rx_spi_buf_set);
 		if (ret < 0) {
 			printk("Error during SPI transfer");
