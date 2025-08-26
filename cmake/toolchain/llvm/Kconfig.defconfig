@@ -12,3 +12,9 @@ endchoice
 choice RTLIB_IMPLEMENTATION
 	default COMPILER_RT_RTLIB
 endchoice
+
+config OVERRIDE_FRAME_POINTER_DEFAULT
+	default y
+
+config OMIT_FRAME_POINTER
+	default y if OVERRIDE_FRAME_POINTER_DEFAULT
