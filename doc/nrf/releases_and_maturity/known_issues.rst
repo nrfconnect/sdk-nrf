@@ -2444,6 +2444,12 @@ The issues in this section are related to the :ref:`nrf53_audio_app` application
 
 .. rst-class:: v3-1-0
 
+OCT-3265: Test with nRF5340 DK as sink will cause the I2S to interfere with other signals on the same pins
+  Using the nRF5340 DK to drive an external digital-to-analog converter through I2S will not produce audio.
+  This is due to the fact that the I2S signals are multiplexed with the QSPI flash signals on the nRF5340 DK.
+
+.. rst-class::  v3-1-0
+
 OCT-3432: Selecting 32 bit (CONFIG_AUDIO_BIT_DEPTH_32=y) as the I2S input on gateway may cause choppy audio
   Using 32-bit I2S input requires significantly more buffer handling and CPU time.
   Depending on the configuration, this may overload the system and cause I2S RX overruns.
