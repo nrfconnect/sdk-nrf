@@ -104,7 +104,7 @@ For more information, see the :file:`samples/zephyr/subsys/mgmt/mcumgr/smp_svr` 
 This sample demonstrates how to configure DFU feature in both MCUboot and user application in your project.
 It uses Simple Management Protocol for DFU and querying device information from the application.
 
-The following build flavours are available:
+The following build flavors are available:
 
 * ``sample.mcumgr.smp_svr.bt.nrf54h20dk`` - DFU over BLE using the default :ref:`ipc_radio` image and *Swap using move* MCUboot mode.
 * ``sample.mcumgr.smp_svr.bt.nrf54h20dk.direct_xip_withrevert`` - DFU over BLE using *Direct-XIP with revert* MCUboot mode.

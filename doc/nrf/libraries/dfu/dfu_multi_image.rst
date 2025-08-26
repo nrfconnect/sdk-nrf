@@ -53,9 +53,9 @@ To use this option, you must also set the following Kconfig options:
 * :kconfig:option:`CONFIG_NVS` (the nRF52 and nRF53 Series) or :kconfig:option:`CONFIG_ZMS` (the nRF54L and nRF54H Series) - Enables the settings backend to store data in NVM.
 
 .. note::
-  Enabling this option uses space in the settings area in NVM to store the progress information.
-  Data is stored on every call to :c:func:`dfu_multi_image_write`.
-  Make sure that the settings area is large enough to accommodate this additional data.
+   Enabling this option uses space in the settings area in NVM to store the progress information.
+   Data is stored on every call to :c:func:`dfu_multi_image_write`.
+   Make sure that the settings area is large enough to accommodate this additional data.
 
 Dependencies
 ************

@@ -235,7 +235,7 @@
 /doc/nrf/releases_and_maturity/           @nrfconnect/ncs-doc-release
 /doc/nrf/releases_and_maturity/abi_compatibility.rst @FrancescoSer
 /doc/nrf/samples/amazon_sidewalk.rst      @nrfconnect/ncs-sidewalk-doc
-/doc/nrf/samples/bl.rst                   @nrfconnect/ncs-dragoon-doc
+/doc/nrf/samples/bl.rst                   @nrfconnect/ncs-doc-leads
 /doc/nrf/samples/cellular.rst             @nrfconnect/ncs-cia-doc
 /doc/nrf/samples/crypto.rst               @nrfconnect/ncs-aegir-doc
 /doc/nrf/samples/debug.rst                @nrfconnect/ncs-cia-doc
