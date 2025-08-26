@@ -19,7 +19,7 @@ Prerequisites
 
 At the very least, you need the following pieces of hardware to set up and test the interoperability scenario from the tutorial:
 
-* Matter over Thread development kit: 1x nRF52840 DK, 1x nRF5340 DK, or 1x nRF54L15 DK
+* Matter over Thread development kit: 1x nRF52840 DK, 1x nRF5340 DK, 1x nRF54L15 DK, or 1x nRF54LM20 DK
 * Matter over Wi-Fi development kit: 1x nRF7002 DK
 * Devices from at least one of commercial ecosystems compatible with the official Matter implementation, for example:
 
