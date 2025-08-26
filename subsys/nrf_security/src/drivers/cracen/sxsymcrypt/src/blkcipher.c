@@ -81,8 +81,8 @@ static const struct sx_blkcipher_cmdma_cfg ba411xtscfg = {
 int sx_blkcipher_free(struct sxblkcipher *cipher_ctx)
 {
 	int sx_err = SX_OK;
-	if (cipher_ctx->key.clean_key) {
-		sx_err = cipher_ctx->key.clean_key(cipher_ctx->key.user_data);
+	if (cipher_ctx->key && cipher_ctx->key->clean_key) {
+		sx_err = cipher_ctx->key->clean_key(cipher_ctx->key->user_data);
 	}
 	sx_cmdma_release_hw(&cipher_ctx->dma);
 	return sx_err;
@@ -106,8 +106,8 @@ static int sx_blkcipher_hw_reserve(struct sxblkcipher *cipher_ctx)
 		goto exit;
 	}
 
-	if (cipher_ctx->key.prepare_key) {
-		err = cipher_ctx->key.prepare_key(cipher_ctx->key.user_data);
+	if (cipher_ctx->key && cipher_ctx->key->prepare_key) {
+		err = cipher_ctx->key->prepare_key(cipher_ctx->key->user_data);
 	}
 
 exit:
@@ -140,7 +140,7 @@ static int sx_blkcipher_create_aesxts(struct sxblkcipher *cipher_ctx, const stru
 		}
 	}
 
-	memcpy(&cipher_ctx->key, key1, sizeof(cipher_ctx->key));
+	cipher_ctx->key = key1;
 	err = sx_blkcipher_hw_reserve(cipher_ctx);
 	if (err != SX_OK) {
 		return err;
@@ -207,7 +207,7 @@ static int sx_blkcipher_create_aes_ba411(struct sxblkcipher *cipher_ctx, const s
 		}
 	}
 
-	memcpy(&cipher_ctx->key, key, sizeof(cipher_ctx->key));
+	cipher_ctx->key = key;
 	cipher_ctx->cfg = cfg;
 	cipher_ctx->textsz = 0;
 
@@ -324,8 +324,9 @@ int sx_blkcipher_resume_state(struct sxblkcipher *cipher_ctx)
 	cipher_ctx->dma.dmamem.cfg &= ~(cipher_ctx->cfg->ctxsave);
 	sx_cmdma_newcmd(&cipher_ctx->dma, cipher_ctx->descs, cipher_ctx->dma.dmamem.cfg,
 			cipher_ctx->cfg->dmatags->cfg);
-	if (KEYREF_IS_USR(&cipher_ctx->key)) {
-		ADD_CFGDESC(cipher_ctx->dma, cipher_ctx->key.key, cipher_ctx->key.sz,
+
+	if (cipher_ctx->key && KEYREF_IS_USR(cipher_ctx->key)) {
+		ADD_CFGDESC(cipher_ctx->dma, cipher_ctx->key->key, cipher_ctx->key->sz,
 			    cipher_ctx->cfg->dmatags->key);
 	}
 	/* Context will be transferred in the same place as the IV. However,
