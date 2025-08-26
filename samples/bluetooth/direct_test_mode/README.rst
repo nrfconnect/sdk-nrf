@@ -188,7 +188,7 @@ Antenna matrix configuration
 To use this sample to test the Bluetooth Direction Finding feature, additional configuration of GPIOs is required to control the antenna array.
 An example of such configuration is provided in a devicetree overlay file :file:`nrf5340dk_nrf5340_cpunet.overlay`.
 
-The overlay file provides the information about of the GPIOs to be used by the Radio peripheral to switch between antenna patches during the Constant Tone Extension (CTE) reception or transmission.
+The overlay file provides the information of the GPIOs to be used by the Radio peripheral to switch between antenna patches during the Constant Tone Extension (CTE) reception or transmission.
 At least one GPIO must be provided to enable antenna switching.
 
 The GPIOs are used by the radio peripheral in the order provided by the ``dfegpio#-gpios`` properties.

@@ -137,7 +137,7 @@ The following steps show how to add support for a new Matter device type, using 
    #. Implement the body of the :c:func:`HandleRead` method to handle reading data operations for all supported attributes.
 
       The read operations for the ``Descriptor``, ``Bridged Device Basic Information`` and ``Identify`` clusters, which are common to all devices, are handled in a common bridge module.
-      The read operations for the ``Pressure Measurement`` cluster are the only ones to that need to be handled in the application.
+      The read operations for the ``Pressure Measurement`` cluster are the only ones that need to be handled in the application.
 
       To provide support for reading attributes for the Pressure Sensor device, edit the :file:`pressure_sensor.h` and :file:`pressure_sensor.cpp` files as follows:
 
