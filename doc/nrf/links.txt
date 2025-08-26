@@ -137,7 +137,7 @@
 .. _`Commissioner CLI commands`: https://github.com/openthread/openthread/blob/main/src/cli/README_COMMISSIONER.md
 .. _`Joiner CLI commands`: https://github.com/openthread/openthread/blob/main/src/cli/README_JOINER.md
 .. _`BBTC Client`: https://github.com/nrfconnect/sdk-openthread/tree/main/tools/tcat_ble_client
-
+.. _`OpenThread CSL issue`: https://github.com/openthread/openthread/issues/9358
 .. _`Sphinx parser issue`: https://github.com/sphinx-doc/sphinx/issues/2683
 
 .. _`Leshan Demo Server`: https://github.com/eclipse/leshan/blob/master/README.md
@@ -1845,6 +1845,10 @@
 .. _`Wireless Logic LTE-M/NB-IoT network coverage`: https://www.wirelesslogic.com/simclaim/nsctrial/
 
 .. _`ISO 639-2 code`: https://www.loc.gov/standards/iso639-2/php/code_list.php
+
+.. _`IEEE 802.15.4-2015 standard`: https://standards.ieee.org/ieee/802.15.4/5788/
+
+.. _`NX3215SA-32.768K-STD-MUA-9 datasheet`: https://www.ndk.com/en/products/upload/lineup/pdf/NDKX01-00001_en.pdf
 
 .. ### Temp: nRF54H and nRF54L related links, repositories, and documents
 
