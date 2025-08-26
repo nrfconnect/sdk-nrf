@@ -37,12 +37,6 @@ Usage
 
 The module allows the following usage scenarios:
 
-Enabling the module
-    Use :c:func:`cpu_load_init` to initialize the module.
-    Calling this function resets the TIMER peripheral and the system clock.
-
-    The module can be enabled also by using the ``cpu_load init`` command, if you enabled the shell commands.
-
 Getting the results
     After the initialization, you can get the CPU load value by calling the :c:func:`cpu_load_get` function.
 
