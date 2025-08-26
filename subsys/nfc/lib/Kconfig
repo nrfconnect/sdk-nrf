@@ -59,7 +59,6 @@ config NFC_LIB_CTX_MAX_SIZE
 
 config NFC_OWN_THREAD
 	bool "Call NFC callback from its own thread"
-	default n
 	help
 	  Use dedicated a thread to call NFC callback.
 	  Otherwise use the system workqueue thread.
@@ -80,7 +79,7 @@ config NFC_THREAD_PRIORITY
 	  Cooperative thread priority is preferred,
 	  because it might decrease latency and fifo usage
 
-endif# NFC_OWN_THREAD
+endif # NFC_OWN_THREAD
 
 config NFC_LOW_LATENCY_IRQ
 	bool "Use low latency IRQ for NFC"
