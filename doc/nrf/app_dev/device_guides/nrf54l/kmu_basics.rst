@@ -24,7 +24,7 @@ Key types
 *********
 
 Different types of keys, such as revocable and locked keys, serve distinct purposes and have unique policies associated with their use and management.
-In the PSA abstraction, key types are mapped by the ``psa_set_key_lifetime`` function.
+In the PSA abstraction, key types are mapped by the ``psa_set_key_lifetime()`` function.
 Refer to :ref:`PSA Key programming model<ug_nrf54l_crypto_kmu_key_programming_model>` for details.
 
 Revocable keys

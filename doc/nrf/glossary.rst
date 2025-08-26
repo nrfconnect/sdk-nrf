@@ -1076,7 +1076,7 @@ Glossary
 
    Wi-Fi Protected Access® (WPA)
       A security protocol developed by Wi-Fi Alliance.
-      It comes in three flavours WPA, WPA2 and WPA3 respectively, with each offering higher security compared to its predecessor.
+      It comes in three flavors WPA, WPA2 and WPA3 respectively, with each offering higher security compared to its predecessor.
 
    Wireshark
       A free software tool that captures wireless traffic and reproduces it in a readable format.

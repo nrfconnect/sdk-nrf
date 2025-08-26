@@ -3,6 +3,10 @@
 nRF Profiler host tools
 #######################
 
+.. contents::
+   :local:
+   :depth: 2
+
 The nRF Profiler host tools is a set of Python scripts that you can use to visualize and analyze the nRF Profiler events received over RTT from an embedded device running the :ref:`nrf_profiler` library.
 You can use the scripts for both :ref:`app_event_manager` events and custom events.
 
