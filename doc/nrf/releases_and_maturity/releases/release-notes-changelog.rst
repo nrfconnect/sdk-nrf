@@ -327,7 +327,14 @@ Peripheral samples
 PMIC samples
 ------------
 
-|no_changes_yet_note|
+* Updated:
+
+  * By renaming the nPM1300: Fuel Gauge sample to :ref:`npm13xx_fuel_gauge`.
+    The wiring is changed for all targets.
+    Refer to the :ref:`Wiring table <npm13xx_fuel_gauge_wiring>` in the sample documentation for details.
+  * By renaming the nPM1300: One button sample to :ref:`npm13xx_one_button`.
+    The wiring is changed for all targets.
+    Refer to the :ref:`Wiring table <npm13xx_one_button_wiring>` in the sample documentation for details.
 
 Protocol serialization samples
 ------------------------------
