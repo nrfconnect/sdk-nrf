@@ -14,7 +14,6 @@
 static uint32_t uptime_prev;
 static uint32_t num_bytes_prev;
 static uint32_t tot_bytes_rcvd;
-static bool show_cpu_load;
 static trace_backend_processed_cb trace_processed_callback;
 
 static void print_stats(struct k_work *item);
@@ -27,6 +26,7 @@ static void print_stats(struct k_work *item)
 	uint32_t num_bytes;
 	double throughput;
 	double cpu_load_percent;
+	int load;
 
 	ARG_UNUSED(item);
 
@@ -36,8 +36,9 @@ static void print_stats(struct k_work *item)
 
 	printk("Traces received: %5.1fkB, %4.1fkB/s", num_bytes / 1000.0, throughput / 1000.0);
 
-	if (show_cpu_load) {
-		cpu_load_percent = cpu_load_get() / 1000.0;
+	load = cpu_load_get();
+	if (load >= 0) {
+		cpu_load_percent = load / 1000.0;
 		printk(", CPU-load: %5.2f%%\n", cpu_load_percent);
 		cpu_load_reset();
 	} else {
@@ -52,29 +53,13 @@ static void print_stats(struct k_work *item)
 
 int trace_backend_init(trace_backend_processed_cb trace_processed_cb)
 {
-	int err;
-
 	if (trace_processed_cb == NULL) {
 		return -EFAULT;
 	}
 
 	trace_processed_callback = trace_processed_cb;
 
-	err = cpu_load_init();
-	if (err) {
-		if (err == -ENODEV) {
-			printk("Failed to allocate PPI channels for cpu load estimation\n");
-		} else if (err == -EBUSY) {
-			printk("Failed to allocate TIMER instance for cpu load estimation\n");
-		} else {
-			printk("Failed to initialize cpu load module\n");
-		}
-
-		show_cpu_load = false;
-	} else {
-		show_cpu_load = true;
-		cpu_load_reset();
-	}
+	cpu_load_reset();
 
 	num_bytes_prev = tot_bytes_rcvd;
 	uptime_prev = k_uptime_get_32();
