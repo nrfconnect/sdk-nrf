@@ -992,3 +992,9 @@ CMakeLists*                               @nrfconnect/ncs-co-build-system
 /samples/matter/**/CMakeLists*           @nrfconnect/ncs-co-build-system @nrfconnect/ncs-matter
 /applications/matter_weather_station/**/CMakeLists* @nrfconnect/ncs-co-build-system @nrfconnect/ncs-matter
 /applications/matter_bridge/**/CMakeLists* @nrfconnect/ncs-co-build-system @nrfconnect/ncs-matter
+
+# ncs-thread-related files
+/modules/openthread/**/Kconfig*          @nrfconnect/ncs-co-build-system @nrfconnect/ncs-thread
+/samples/openthread/**/Kconfig*          @nrfconnect/ncs-co-build-system @nrfconnect/ncs-thread
+/samples/openthread/**/CMakeLists*       @nrfconnect/ncs-co-build-system @nrfconnect/ncs-thread
+/subsys/net/openthread/Kconfig*          @nrfconnect/ncs-co-build-system @nrfconnect/ncs-thread
