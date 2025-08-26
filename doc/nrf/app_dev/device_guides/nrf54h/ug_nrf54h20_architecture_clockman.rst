@@ -99,7 +99,7 @@ These clocks are fixed frequency, and are by default optimized for low power at 
 The firmware can request a minimum level of accuracy and precision using the ``nrf_clock_control`` API provided by Zephyr RTOS, if the default configuration does not meet the required timing specifications.
 
 The startup time of these clocks can be relatively long, typically on the order of hundreds of milliseconds.
-To ensure that the clocks meet the required timing constraints, retrieve the startup time for a given accuracy and precision using ``nrf_clock_control_get_startup_time``.
+To ensure that the clocks meet the required timing constraints, retrieve the startup time for a given accuracy and precision using ``nrf_clock_control_get_startup_time()``.
 For more information, see the `Zephyr clock control API`_ section.
 
 Global HSFLL
@@ -129,6 +129,8 @@ Furthermore, the ISR handling latency will be increased.
 
 If the local HSFLL is managed at runtime, the clock control driver will force it to its lowest frequency.
 The firmware must request a higher frequency using the ``nrf_clock_control`` API.
+
+.. _ug_nrf54h20_zephyr_clock_control:
 
 Zephyr clock control API
 ************************

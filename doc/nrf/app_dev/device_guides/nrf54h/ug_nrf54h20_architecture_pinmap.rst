@@ -14,13 +14,13 @@ This comes at the cost of additional management by the firmware, thus additional
 The following sections describe how pins are powered, which domains they are in, and how to map and handle them.
 
 Pin groups
-----------
+**********
 
 A pin group is a group of pins designated by an index, like P0.x, where P0 is the group containing [P0.0, P0.1, ...].
 The pin group P0 is distinct from the GPIO controller with the same instance of P0.
 The P0 peripheral is routed to pins in the pin group P0, but is not necessarily in the same domain as the pin group P0.
 
-The following table shows which domains the pin groups belong to.
+The following table shows which domains the pin groups belong to:
 
 .. list-table:: Pin group domains
    :header-rows: 1
@@ -48,14 +48,13 @@ This power is provided by the domain where the pin and the multiplexers are.
 If a pin is configured as an output, the output value will be retained even when the power domain is suspended.
 
 Peripheral domains
-------------------
+******************
 
 Peripherals with an instance ending in 120, like UARTE120, PWM120, SPIS120, are in the FAST_ACTIVE_1 domain.
 The rest are in the SLOW_MAIN and SLOW_ACTIVE domains.
 
 Pin group power management
---------------------------
-
+**************************
 If a pin and the peripheral it is routed to are in the same domain, the peripheral forces the domain on when in use, thus powering the pin and the required multiplexers, as well.
 If a pin and the peripheral it is routed to are in different domains, the peripheral can only force on its own domain, not the domain the pin is in.
 

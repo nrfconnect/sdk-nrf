@@ -562,13 +562,10 @@
 .. _`Repositories and revisions for v2.9.0-nRF54H20-1`: https://docs.nordicsemi.com/bundle/ncs-2.9.0-nRF54H20-1/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.9.0`: https://docs.nordicsemi.com/bundle/ncs-2.9.0/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.8.0`: https://docs.nordicsemi.com/bundle/ncs-2.8.0/page/nrf/releases_and_maturity/repository_revisions.html
-.. _`Repositories and revisions for v2.7.99-cs2`: https://docs.nordicsemi.com/bundle/ncs-2.7.99-cs2/page/nrf/releases_and_maturity/repository_revisions.html
-.. _`Repositories and revisions for v2.7.99-cs1`: https://docs.nordicsemi.com/bundle/ncs-2.7.99-cs1/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.7.0`: https://docs.nordicsemi.com/bundle/ncs-2.7.0/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.6.4`: https://docs.nordicsemi.com/bundle/ncs-2.6.4/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.6.3`: https://docs.nordicsemi.com/bundle/ncs-2.6.3/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.6.2`: https://docs.nordicsemi.com/bundle/ncs-2.6.2/page/nrf/releases_and_maturity/repository_revisions.html
-.. _`Repositories and revisions for v2.6.99-cs1`: https://docs.nordicsemi.com/bundle/ncs-2.6.99-cs1/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.6.1`: https://docs.nordicsemi.com/bundle/ncs-2.6.1/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.6.0`: https://docs.nordicsemi.com/bundle/ncs-2.6.0/page/nrf/releases_and_maturity/repository_revisions.html
 .. _`Repositories and revisions for v2.5.3`: https://docs.nordicsemi.com/bundle/ncs-2.5.3/page/nrf/releases_and_maturity/repository_revisions.html

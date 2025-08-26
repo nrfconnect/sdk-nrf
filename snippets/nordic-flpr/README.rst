@@ -3,6 +3,11 @@
 Nordic FLPR snippet with execution from SRAM (nordic-flpr)
 ##########################################################
 
+.. contents::
+   :local:
+   :depth: 2
+
+
 Overview
 ********
 

@@ -127,8 +127,7 @@ Consider also the following recommendations:
 
   * Disable all unused peripherals before entering sleep (Zephyr's API does this automatically when supported).
   * Build and program an empty image on any unused core to release shared resources.
-  * If one or more specific sleep states are not desired, disable them in the devicetree by setting their status
-    to ``disabled``:
+  * If one or more specific sleep states are not desired, disable them in the devicetree by setting their status to ``disabled``:
 
     .. code-block:: dts
 

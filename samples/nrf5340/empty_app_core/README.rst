@@ -55,10 +55,10 @@ Dependencies
 
 This sample has the following `nrfx`_ dependencies:
 
-* ``nrfx/nrfx.h``
+* :file:`nrfx/nrfx.h`
 
 In addition, it uses the following Zephyr libraries:
 
 * :ref:`zephyr:kernel_api`:
 
-  * ``include/init.h``
+  * :file:`include/init.h`

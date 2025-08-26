@@ -7,7 +7,7 @@ Protected Memory with PERIPHCONF Partition
    :local:
    :depth: 2
 
-This sample demonstrates how to protect the PERIPHCONF Partition using UICR.PROTECTEDMEM.
+This sample demonstrates how to protect the PERIPHCONF partition using UICR.PROTECTEDMEM.
 
 Requirements
 ************

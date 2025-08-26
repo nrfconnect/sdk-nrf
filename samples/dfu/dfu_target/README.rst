@@ -55,7 +55,7 @@ After programming the sample to your development kit, perform the following step
    ``Starting dfu_target sample, build time: <BUILD TIME>``
 
    ``<BUILD TIME>`` indicates the build time.
-   Iit will be used later to verify the update.
+   It will be used later to verify the update.
 
 #. Build a second version of the sample.
    For simplicity, it is assumed to be built in the :file:`build_v2` directory.

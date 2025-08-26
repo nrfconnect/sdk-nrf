@@ -7,7 +7,7 @@ Reducing power consumption in Matter
    :local:
    :depth: 2
 
-The Matter protocol can be used in various device types that are designed to be battery supplied, where a low power consumption is of critical importance.
+The Matter protocol can be used in various device types that are designed to be battery supplied, where low power consumption is of critical importance.
 
 There are many ways to reduce the power consumption in your application, including methods related to the adopted network technology, disabling specific modules, or configuring features meant for optimizing power consumption.
 See the following sections for more information.
@@ -204,7 +204,7 @@ Configure Bluetooth LE advertising duration
 
 A Matter device uses Bluetooth® Low Energy (LE) to advertise its service for device commissioning purposes.
 The duration of this advertising is configurable and can last up to 15 minutes in the standard mode and up to 48 hours in the Extended Announcement mode.
-An extended advertising duration may improve the user experience, as it gives more time for the user to setup the device, but it also increases the energy consumption.
+An extended advertising duration may improve the user experience, as it gives more time for the user to set up the device, but it also increases the energy consumption.
 
 Selecting the optimal advertising duration is a compromise and depends on the specific application use case.
 Use the following Kconfig options to configure the advertising and reduce the consumed energy:
