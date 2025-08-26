@@ -43,7 +43,7 @@ IPv6 network support
 
 The development kits for this sample offer the following IPv6 network support for Matter:
 
-* Matter over Thread is supported for the ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf21540dk/nrf52840``, and ``nrf54l15dk/nrf54l15/cpuapp`` board targets.
+* Matter over Thread is supported for the ``nrf52840dk/nrf52840``, ``nrf5340dk/nrf5340/cpuapp``, ``nrf21540dk/nrf52840``, ``nrf54l15dk/nrf54l15/cpuapp`` and ``nrf54lm20dk/nrf54lm20a/cpuapp`` board targets.
 * Matter over Wi-Fi is supported for the ``nrf5340dk/nrf5340/cpuapp`` board target with the ``nrf7002ek`` shield attached, for the ``nrf7002dk/nrf5340/cpuapp`` (2.4 GHz and 5 GHz), or ``nrf7002dk/nrf5340/cpuapp/nrf7001`` board targets (2.4 GHz only).
 * :ref:`Switching between Matter over Thread and Matter over Wi-Fi <matter_lock_sample_wifi_thread_switching>` is supported for ``nrf5340dk/nrf5340/cpuapp`` with the ``nrf7002ek`` shield attached, using the :ref:`switched Thread and Wi-Fi configuration <matter_lock_sample_custom_configs>`.
 
@@ -293,7 +293,7 @@ Device Firmware Upgrade support
 
    .. note::
       You can enable over-the-air Device Firmware Upgrade only on hardware platforms that have external flash memory.
-      Currently only nRF52840 DK, nRF5340 DK, nRF7002 DK and nRF54L15 DK support Device Firmware Upgrade feature.
+      Currently only nRF52840 DK, nRF5340 DK, nRF7002 DK, nRF54L15 DK and nRF54LM20 DK support Device Firmware Upgrade feature.
 
    The sample supports over-the-air (OTA) device firmware upgrade (DFU) using one of the two following protocols:
 
