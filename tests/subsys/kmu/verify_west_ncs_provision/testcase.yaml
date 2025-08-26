@@ -6,7 +6,7 @@ common:
     - ci_tests_subsys_kmu
   platform_allow:
     - nrf54l15dk/nrf54l15/cpuapp
-    - nrf54lm20pdk/nrf54lm20a/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
     - nrf54lv10dk/nrf54lv10a/cpuapp
 tests:
   kmu.west.provision.verify_keys_in_app:
