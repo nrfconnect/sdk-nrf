@@ -203,7 +203,10 @@ Matter bridge
 nRF5340 Audio
 -------------
 
-|no_changes_yet_note|
+  * Updated:
+
+    * The audio application targeting the :zephyr:board:`nrf5340dk` to use pins **P1.5** to **P1.9** for the I2S interface instead of **P0.13** to **P0.17**.
+      This change was made to avoid conflicts with the onboard peripherals on the nRF5340 DK.
 
 nRF Desktop
 -----------
