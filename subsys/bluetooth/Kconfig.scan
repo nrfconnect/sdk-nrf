@@ -27,7 +27,6 @@ config BT_SCAN_SHORT_NAME_MAX_LEN
 
 config BT_SCAN_FILTER_ENABLE
 	bool "Enabling filters for the Scan library"
-	default n
 	help
 	  Enabling filters for the Scan library.
 

@@ -16,7 +16,6 @@ if DM_MODULE
 config DM_HIGH_PRECISION_CALC
 	# Due to memory limitations, functionality is not provided for nrf52832.
 	depends on !SOC_NRF52832
-	default n
 	bool "Use high-precision distance estimation"
 	help
 	  Use a more compute-intensive algorithm for the distance estimation.
@@ -24,7 +23,6 @@ config DM_HIGH_PRECISION_CALC
 
 config DM_TIMESLOT_RESCHEDULE
 	bool "Timeslot reschedule"
-	default n
 	help
 	  Enable allocation of the next timeslot after the previous timeslot has succeeded.
 
@@ -52,7 +50,6 @@ config DM_RANGING_OFFSET_US
 
 config DM_GPIO_DEBUG
 	bool "Debugging with output pins"
-	default n
 	select PPI_TRACE
 	help
 	  Indication of distance measurement events by output pins.
