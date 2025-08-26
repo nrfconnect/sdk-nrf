@@ -300,17 +300,21 @@ The following table indicates the software maturity levels of the support for ea
            - nRF54L05
            - nRF54L10
            - nRF54L15
+           - nRF54LM20
          * - **Bluetooth®**
            - Supported
            - Supported
            - Supported
            - Supported
+           - --
          * - **Bluetooth Mesh**
            - --
            - Supported
            - Supported
            - Supported
+           - --
          * - **DECT NR+ PHY**
+           - --
            - --
            - --
            - --
@@ -320,36 +324,43 @@ The following table indicates the software maturity levels of the support for ea
            - --
            - --
            - --
+           - --
          * - **Matter**
            - --
            - --
            - Supported
            - Supported
+           - Experimental
          * - **NFC**
            - Experimental
            - Supported
            - Supported
            - Supported
+           - --
          * - **Sidewalk**
            - --
            - --
            - Supported\ :sup:`4`
            - Supported\ :sup:`4`
+           - --
          * - **Thread**
            - --
            - Supported
            - Supported
            - Supported
+           - Experimental
          * - **Wi-Fi®**
            - Experimental\ :sup:`3`
            - --
            - --
            - Experimental\ :sup:`3`
+           - --
          * - **Zigbee**
            - --
            - Supported\ :sup:`5`
            - Supported\ :sup:`5`
            - Supported\ :sup:`5`
+           - --
 
    .. group-tab:: nRF91 Series
 
@@ -1499,37 +1510,45 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L05
               - nRF54L10
               - nRF54L15
+              - nRF54LM20
             * - **Matter - OTA DFU over Bluetooth LE**
               - --
               - --
               - Supported
               - Supported
+              - Experimental
             * - **Matter Intermittently Connected Device**
               - --
               - --
               - Supported
               - Supported
+              - Experimental
             * - **Matter commissioning over Bluetooth LE with NFC onboarding**
               - --
               - --
               - Supported
               - Supported
+              - Experimental
             * - **Matter commissioning over Bluetooth LE with QR code onboarding**
               - --
               - --
               - Supported
               - Supported
+              - Experimental
             * - **Matter commissioning over IP**
               - --
               - --
               - Supported
               - Supported
+              - Experimental
             * - **Matter over Thread**
               - --
               - --
               - Supported
               - Supported
+              - Experimental
             * - **Matter over Wi-Fi**
+              - --
               - --
               - --
               - --
@@ -1539,6 +1558,7 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - Supported
               - Supported
+              - Experimental
 
       .. tab:: nRF91 Series
          .. list-table:: Matter features support
