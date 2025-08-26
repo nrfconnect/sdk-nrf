@@ -12,7 +12,6 @@ config NIDD_APN
 
 config NIDD_ALLOC_NEW_CID
 	bool "Allocate new context identifier for NIDD connection"
-	default n
 
 config NIDD_PAYLOAD
 	string "Payload for NIDD transmission"
