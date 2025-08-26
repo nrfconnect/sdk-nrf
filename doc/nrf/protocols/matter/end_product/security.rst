@@ -121,7 +121,12 @@ This is a reference configuration that can be modified in the production firmwar
      - CRACEN [2]_
      - Yes
      - Trusted Storage library + Hardware Unique Key (HUK) + Key Management Unit (KMU)
-
+   * - nRF54LM20 SoC
+     - Thread
+     - PSA Crypto API
+     - CRACEN [2]_
+     - Yes
+     - Trusted Storage library + Hardware Unique Key (HUK) + Key Management Unit (KMU)
 
 .. [1] The CryptoCell backend is used in parallel with the Oberon backend.
        By default, the CryptoCell backend is used only for Random Number Generation (RNG) and the AEAD key derivation driver.
