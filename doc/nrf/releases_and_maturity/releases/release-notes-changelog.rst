@@ -160,7 +160,11 @@ Gazell
 Matter
 ------
 
-|no_changes_yet_note|
+* Added support for the :zephyr:board:`nrf54lm20dk` board.
+* Included fixes for the following certification test cases:
+
+  * TC-IDM-10.3
+  * TC-OPCREDS-3.8
 
 Matter fork
 +++++++++++
@@ -302,7 +306,7 @@ Keys samples
 Matter samples
 --------------
 
-|no_changes_yet_note|
+* Added support for the :zephyr:board:`nrf54lm20dk` board in all Matter samples.
 
 Networking samples
 ------------------
@@ -364,7 +368,7 @@ Trusted Firmware-M (TF-M) samples
 Thread samples
 --------------
 
-|no_changes_yet_note|
+* Added support for the :zephyr:board:`nrf54lm20dk` board in the :ref:`ot_cli_sample` and :ref:`ot_coprocessor_sample` samples.
 
 Wi-Fi samples
 -------------
