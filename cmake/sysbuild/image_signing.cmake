@@ -249,7 +249,7 @@ function(zephyr_mcuboot_tasks)
       # ECIES-X25519 is used. Default to HMAC-SHA512 for ECIES-X25519.
       # Only NRF54L gets the HMAC-SHA512, other remain with previously used
       # SHA256.
-      if(CONFIG_SOC_SERIES_NRF54LX AND CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519)
+      if((CONFIG_SOC_NRF54L15_CPUAPP OR CONFIG_SOC_NRF54L10_CPUAPP OR CONFIG_SOC_NRF54L05_CPUAPP OR CONFIG_SOC_NRF54LM20A_ENGA_CPUAPP) AND CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_ED25519)
         set(imgtool_args ${imgtool_args} --hmac-sha 512)
       endif()
 
