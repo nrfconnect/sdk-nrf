@@ -100,7 +100,7 @@ Developing with Thingy:53
 Developing with PMICs
 =====================
 
-|no_changes_yet_note|
+* Added the :ref:`ug_npm1304_developing` documentation.
 
 Developing with Front-End Modules
 =================================
