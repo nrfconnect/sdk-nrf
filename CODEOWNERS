@@ -418,7 +418,7 @@
 /modules/cjson/                           @nrfconnect/ncs-cia @nrfconnect/ncs-nrf-cloud
 /modules/coremark/                        @nrfconnect/ncs-si-bluebagel
 /modules/mcuboot/                         @nrfconnect/ncs-pluto
-/modules/memfault-firmware-sdk/           @nrfconnect/ncs-cia
+/modules/memfault-firmware-sdk/           @nrfconnect/ncs-cia @nrfconnect/ncs-memfault
 /modules/nrfxlib/                         @nrfconnect/ncs-code-owners
 /modules/openthread/                      @nrfconnect/ncs-thread
 /modules/trusted-firmware-m/              @nrfconnect/ncs-aegir
@@ -501,7 +501,7 @@
 /samples/cellular/lte_ble_gateway/        @nrfconnect/ncs-cia
 /samples/common/                          @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/crypto/                          @nrfconnect/ncs-aegir
-/samples/debug/memfault/                  @nrfconnect/ncs-cia
+/samples/debug/memfault/                  @nrfconnect/ncs-cia @nrfconnect/ncs-memfault
 /samples/debug/ppi_trace/                 @nordic-krch
 /samples/dect/dect_phy/dect_shell/        @nrfconnect/ncs-modem-tre
 /samples/dect/dect_phy/hello_dect/        @nrfconnect/ncs-modem
