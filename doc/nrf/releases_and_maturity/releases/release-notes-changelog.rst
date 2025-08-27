@@ -88,7 +88,10 @@ Developing with Thingy:91 X
 Developing with Thingy:91
 =========================
 
-|no_changes_yet_note|
+* Removed the page about updating the Thingy:91 firmware using the Programmer app.
+  Its contents are now available in the app documentation on the `Programming Nordic Thingy prototyping platforms`_ page.
+* Updated the title of the page about updating the Thingy:91 firmware using the Cellular Monitor app to :ref:`thingy91_updating_fw_celmon`.
+  This page now includes the :ref:`thingy91_partition_layout` section, moved from the removed page.
 
 Developing with Thingy:53
 =========================

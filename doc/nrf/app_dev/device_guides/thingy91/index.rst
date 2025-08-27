@@ -40,5 +40,4 @@ See the subpages for information on the various aspects of Thingy:91.
    thingy91_connecting
    thingy91_cloud_connecting
    thingy91_updating_fw_celmon
-   thingy91_updating_fw_programmer
    thingy91_building_programming

@@ -102,11 +102,11 @@ You can update the precompiled firmware using any of the following methods:
 
    .. tab:: Programmer app (USB)
 
-      See the `Programming Nordic Thingy:53 <Programming Nordic Thingy53_>`_ in the tool documentation for detailed steps.
+      See the `Programming Nordic Thingy prototyping platforms`_ in the tool documentation for detailed steps.
 
    .. tab:: Programmer app (external debug probe)
 
-      See the `Programming Nordic Thingy:53 <Programming Nordic Thingy53_>`_ in the tool documentation for detailed steps.
+      See the `Programming Nordic Thingy prototyping platforms`_ in the tool documentation for detailed steps.
 
    .. tab:: nRF Util
 
