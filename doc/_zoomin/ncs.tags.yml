@@ -195,7 +195,7 @@ mapping_topics:
   - nrf/app_dev/device_guides/nrf91/nrf9160_external_flash.html: ["nrf9160", "development-kits"]
   - nrf/app_dev/device_guides/thingy91/*.html: ["thingy91", "prototyping-platforms", "nrf91-series",
                                                 "lte"]
-  - nrf/app_dev/device_guides/thingy91/thingy91_updating_fw_programmer.html: ["nrf9160"]
+  - nrf/app_dev/device_guides/thingy91/thingy91_updating_fw_celmon.html: ["nrf9160"]
   - nrf/app_dev/device_guides/thingy91x/*.html: ["thingy91x", "prototyping-platforms",
                                                  "nrf91-series", "lte"]
   - nrf/app_dev/device_guides/thingy91x/thingy91x_updating_fw_programmer.html: ["nrf9151"]
