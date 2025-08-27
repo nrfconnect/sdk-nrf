@@ -33,6 +33,8 @@ See the following example for generating a private key:
 
    imgtool keygen -k my_ed25519_priv_key.pem -t ed25519
 
+.. _ug_nrf54l_developing_provision_kmu_provisioning:
+
 Provisioning keys to the board
 ******************************
 
@@ -138,7 +140,7 @@ Once you have an unprovisioned SoC, upload keys to the board by running one of t
       For more information about this command, see the `Provisioning keys for hardware KMU`_ page in the nRF Util documentation.
 
 Alternative provisioning method
-*********************************
+*******************************
 
 To simplify the development process, keys can be generated and then provisioned at the same time as the flashing process.
 You can provision keys during flashing when the build directory contains the :file:`keyfile.json` file with commands, such as ``west flash --recover`` or ``west flash --erase``.

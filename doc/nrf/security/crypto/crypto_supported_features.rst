@@ -572,6 +572,9 @@ The options are grouped by Series and drivers available for the device Series, a
 
       The following tables list the supported key types for nRF54 Series devices.
 
+      .. note::
+         Only some of these key types can be :ref:`stored in the Key Management Unit (KMU) <ug_nrf54l_crypto_kmu_supported_key_types>`.
+
       .. tabs::
 
          .. tab:: CRACEN
