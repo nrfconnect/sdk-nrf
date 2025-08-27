@@ -40,6 +40,8 @@
 #include <nrfx_temp.h>
 #include <openthread/cli.h>
 #include <openthread/error.h>
+#include <openthread/instance.h>
+#include <openthread/link.h>
 #include <zephyr/device.h>
 
 #include "common/code_utils.hpp"
@@ -703,6 +705,43 @@ exit:
 	return error;
 }
 
+static otError VendorCurrentPowerInfo(void *aContext, uint8_t aArgsLength, char *aArgs[])
+{
+	otError error = OT_ERROR_NONE;
+	otInstance *instance;
+	uint8_t channel;
+	int8_t requested_power;
+	int8_t limited_power;
+	int8_t soc_power;
+	uint8_t att;
+	int8_t fem_gain;
+	int8_t real_power;
+
+	instance = otInstanceInitSingle();
+	channel = otLinkGetChannel(instance);
+	SuccessOrExit(error = otPlatRadioGetTransmitPower(instance, &requested_power));
+
+	SuccessOrExit(error = vendor_radio_power_limit_get(
+			      channel, vendor_radio_power_map_tx_path_id_get(), &limited_power));
+	limited_power = MIN(limited_power, requested_power);
+
+	SuccessOrExit(error = vendor_radio_power_map_internal_tx_power_get(
+			      channel, limited_power, &soc_power, &att, &real_power));
+	fem_gain = vendor_radio_power_map_att_to_gain(att);
+
+	otCliOutputFormat("Channel=%u\r\n", channel);
+	otCliOutputFormat("ReqOutputPwr=%d\r\n", requested_power);
+	otCliOutputFormat("LimitOutputPwr=%d\r\n", limited_power);
+	otCliOutputFormat("PwrAmpValue=%d\r\n", soc_power);
+	if (fem_gain > INT8_MIN) {
+		otCliOutputFormat("FemGain=%d\r\n", fem_gain);
+	}
+	otCliOutputFormat("RealOutputPower=%d\r\n", real_power);
+
+exit:
+	return error;
+}
+
 static otError memory_read(const struct shell *sh, mem_addr_t addr, uint8_t width)
 {
 	otError error = OT_ERROR_NONE;
@@ -759,6 +798,7 @@ extern "C" otError VendorRadioTest(void *aContext, uint8_t aArgsLength, char *aA
 static const otCliCommand sExtensionCommands[] = {
 	{"vendor:clkout:lfclk", VendorClkoutLfclk},
 	{"vendor:clkout:hfclk", VendorClkoutHfclk},
+	{"vendor:current:power:info", VendorCurrentPowerInfo},
 	{"vendor:devmem", VendorDevMem},
 	{"vendor:diag:attenuation", VendorDiagAttenuation},
 	{"vendor:diag:fem:enable", VendorDiagFemEnable},
