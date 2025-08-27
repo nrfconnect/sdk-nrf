@@ -1,0 +1,33 @@
+/*
+ * Copyright (c) 2025 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		test-counter = &timer137;
+		watchdog0 = &wdt010;
+	};
+};
+
+&wdt010 {
+	status = "okay";
+};
+
+&wdt011 {
+	status = "disabled";
+};
+
+&wdt131 {
+	status = "disabled";
+};
+
+&wdt132 {
+	status = "disabled";
+};
+
+&timer137 {
+	status = "okay";
+	prescaler = <4>;
+};
