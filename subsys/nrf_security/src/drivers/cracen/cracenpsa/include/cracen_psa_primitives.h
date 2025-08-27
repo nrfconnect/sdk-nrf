@@ -20,8 +20,13 @@
 
 #define SX_BLKCIPHER_IV_SZ	(16U)
 #define SX_BLKCIPHER_AES_BLK_SZ (16U)
+
+#if defined(PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20)
 /* ChaCha20 has a 512 bit block size */
 #define SX_BLKCIPHER_MAX_BLK_SZ (64U)
+#else
+#define SX_BLKCIPHER_MAX_BLK_SZ SX_BLKCIPHER_AES_BLK_SZ
+#endif
 
 #define CRACEN_MAX_AES_KEY_SIZE (32u)
 
