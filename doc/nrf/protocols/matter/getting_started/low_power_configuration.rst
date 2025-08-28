@@ -20,6 +20,7 @@ The following Matter samples and applications use the low power configuration by
 * :ref:`Matter window covering sample <matter_window_covering_sample>`
 * :ref:`Matter weather station application <matter_weather_station_app>`
 * :ref:`Matter temperature sensor sample <matter_temperature_sensor_sample>`
+* :ref:`Matter contact sensor sample <matter_contact_sensor_sample>`
 
 The following additional materials and tools might help you to optimize, estimate, and measure the power consumption of your device are:
 
