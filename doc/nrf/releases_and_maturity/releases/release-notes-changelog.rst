@@ -396,7 +396,11 @@ Keys samples
 Matter samples
 --------------
 
-* Added the :ref:`matter_temperature_sensor_sample` sample that demonstrates how to implement and test a Matter temperature sensor device.
+* Added:
+
+  * The :ref:`matter_temperature_sensor_sample` sample that demonstrates how to implement and test a Matter temperature sensor device.
+  * The :ref:`matter_contact_sensor_sample` sample that demonstrates how to implement and test a Matter contact sensor device.
+
 * Updated all Matter over Wi-Fi samples and applications to store a portion of the application code related to the nRF70 Series Wi-Fi firmware in the external flash memory by default.
   This change breaks the DFU between the previous |NCS| versions and the |NCS| v3.2.0.
   To fix this, you need to disable storing the Wi-Fi firmware patch in external memory.
