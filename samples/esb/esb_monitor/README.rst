@@ -38,7 +38,49 @@ All LEDs:
 
        The next four packets turn them off again in the same order.
 
-   To disable LEDs, unset the :kconfig:option:`CONFIG_LED_ENABLE` Kconfig option.
+   To disable LEDs, unset the :ref:`CONFIG_LED_ENABLE <CONFIG_LED_ENABLE>` Kconfig option.
+
+The following ``sniffer`` shell subcommands are available when the :ref:`CONFIG_ESB_SNIFFER <CONFIG_ESB_SNIFFER>` Kconfig option is set:
+
+   .. list-table:: Sniffer shell commands
+      :header-rows: 1
+
+      * - Subcommand
+        - Arguments
+        - Description
+      * - ``show``
+        -
+        - Print actual sniffer configuration
+      * - ``start``
+        -
+        - Start listening
+      * - ``stop``
+        -
+        - Stop listening
+      * - ``set addr0``
+        - <xx.xx.xx.xx>
+        - Set base address 0
+      * - ``set addr1``
+        - <xx.xx.xx.xx>
+        - Set base address 1
+      * - ``set bitrate``
+        - <bitrate>
+        - Set bitrate
+      * - ``set channel``
+        - <channel number>
+        - Set ESB channel
+      * - ``set prefix``
+        - <xx.xx.xx.xx> <xx.xx.xx.xx>
+        - Set prefix0 and prefix1
+      * - ``pipe enable``
+        - <pipe number> <pipe number> ... or ``all``
+        - Enable selected pipes, or all pipes when argument is ``all``
+      * - ``pipe disable``
+        - <pipe number> <pipe number> ... or ``all``
+        - Disable selected pipes, or all pipes when argument is ``all``
+      * - ``pipe prefix``
+        - <pipe number> <prefix>
+        - Set <prefix> on <pipe number>
 
 Configuration
 *************
@@ -50,10 +92,17 @@ Configuration options
 
 Check and configure the following options:
 
+.. _CONFIG_LED_ENABLE:
+
+CONFIG_LED_ENABLE
+   Enable led changes while receiving packets.
+   It is intended to use together with the :ref:`Transmitter <esb_ptx>` sample.
+   This option is enabled by default.
+
 .. _CONFIG_ESB_SNIFFER:
 
 CONFIG_ESB_SNIFFER
-   Disable logging received packets through UART, and set RTT as transport layer for the packets.
+   Disable logging received packets through UART, set RTT as transport layer for the packets, and enable the shell.
    It is intended for use together with :file:`scripts/esb_sniffer/main.py` or :file:`scripts/esb_sniffer/capture_to_pcap.py` scripts.
    This option is disabled by default.
 
