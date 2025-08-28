@@ -236,6 +236,8 @@ nRF Machine Learning (Edge Impulse)
 
 * Updated the application to change the default libc from the :ref:`zephyr:c_library_newlib` to the :ref:`zephyr:c_library_picolibc` to align with the |NCS| and Zephyr.
 
+* Removed support for the ``thingy53/nrf5340/cpuapp/ns`` build target.
+
 Serial LTE modem
 ----------------
 
@@ -271,6 +273,12 @@ Bluetooth samples
 
   The :ref:`ipc_radio` application is commonly used for multicore builds in other |NCS| samples and projects.
   Hence, this is to align with the common practice.
+
+* Removed support for the ``thingy53/nrf5340/cpuapp/ns`` build target from the following samples:
+
+   * :ref:`peripheral_lbs`
+   * :ref:`peripheral_status`
+   * :ref:`peripheral_status`
 
 Bluetooth Mesh samples
 ----------------------
