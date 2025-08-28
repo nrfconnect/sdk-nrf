@@ -306,7 +306,7 @@ The following table indicates the software maturity levels of the support for ea
            - Supported
            - Supported
            - Supported
-           - --
+           - Experimental
          * - **Bluetooth Mesh**
            - --
            - Supported
@@ -797,48 +797,58 @@ The following table indicates the software maturity levels of the support for ea
              - nRF54L05
              - nRF54L10
              - nRF54L15
+             - nRF54LM20
            * - **2 Mbps PHY**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Experimental
            * - **Coded PHY (Long Range)**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Experimental
            * - **Concurrent Roles**\ :sup:`1`
              - Supported
              - Supported
              - Supported
              - Supported
+             - Experimental
            * - **Data Length Extensions**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Experimental
            * - **Advertising Extensions**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Experimental
            * - **Periodic Advertising with Responses**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Experimental
            * - **Periodic Advertising Sync Transfer**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Experimental
            * - **Isochronous Channels**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Experimental
            * - **Direction Finding**\ :sup:`3`
              - Supported
+             - Experimental
              - Experimental
              - Experimental
              - Experimental
@@ -847,31 +857,37 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
              - Supported
              - Supported
+             - Experimental
            * - **Connection Subrating**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Experimental
            * - **Channel Sounding**
              - --
              - --
              - --
              - Supported
+             - Experimental
            * - **GATT Database Hash**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Experimental
            * - **Enhanced ATT**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Experimental
            * - **L2CAP Connection Oriented Channels**
              - Supported
              - Supported
              - Supported
              - Supported
+             - Experimental
 
      .. group-tab:: nRF91 Series
 
@@ -1049,22 +1065,27 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L05
               - nRF54L10
               - nRF54L15
+              - nRF54LM20
             * - **Low Latency Packet Mode**
               - Supported
               - Supported
               - Supported
               - Supported
+              - Experimental
             * - **Multi-protocol Support**
               - Supported
               - Supported
               - Supported
               - Supported
+              - Experimental
             * - **QoS Conn Event Reports**
               - Supported
               - Supported
               - Supported
               - Supported
+              - Experimental
             * - **QoS Channel Survey**
+              - Experimental
               - Experimental
               - Experimental
               - Experimental
@@ -1074,6 +1095,7 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Supported
+              - Experimental
 
       .. tab:: nRF91 Series
 
