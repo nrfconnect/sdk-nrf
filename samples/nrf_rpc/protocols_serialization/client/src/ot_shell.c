@@ -2058,6 +2058,13 @@ static otError cmd_udp_send_impl(const struct shell *sh, size_t argc, char *argv
 		}
 	}
 
+	if (argc >= 5 || argc == 3) {
+		// Text payload (same as without specifying the type)
+		if (strcmp(argv[argc - 2], "-t") != 0) {
+			return OT_ERROR_INVALID_ARGS;
+		}
+	}
+
 	msg = otUdpNewMessage(NULL, &msg_settings);
 	if (msg == NULL) {
 		return OT_ERROR_NO_BUFS;
@@ -2151,6 +2158,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(connect, NULL, "Connect socket <addr> <port>", cmd_udp_connect, 3, 0),
 	SHELL_CMD_ARG(send, NULL, "Send message [addr port] <message>", cmd_udp_send, 2, 2),
 	SHELL_CMD_ARG(txcallback, NULL, "Enable/disable tx callback", cmd_udp_txcallback, 1, 1),
+	SHELL_CMD_ARG(send, NULL, "Send message [addr port] [-t] <message>", cmd_udp_send, 2, 3),
 	SHELL_CMD_ARG(txtimestamp, NULL, "Enable/disable TX timestamping of UDP packets [enable|disable]",
 		      cmd_udp_txtimestamp, 1, 1),
 	SHELL_CMD_ARG(close, NULL, "Close socket", cmd_udp_close, 1, 0), SHELL_SUBCMD_SET_END);
