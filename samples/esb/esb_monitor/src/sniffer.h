@@ -28,6 +28,7 @@ struct rtt_frame {
 } __packed;
 
 int sniffer_init(void);
+void sniffer_shell_init(struct esb_sniffer_cfg *sniffer_cfg);
 
 #ifdef __cplusplus
 }

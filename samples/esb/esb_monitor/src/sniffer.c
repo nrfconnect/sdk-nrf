@@ -183,5 +183,7 @@ int sniffer_init(void)
 				NULL, NULL, NULL,
 				CONFIG_ESB_SNIFFER_THREAD_PRIORITY, 0, K_NO_WAIT);
 
+	sniffer_shell_init(&sniffer_cfg);
+
 	return 0;
 }
