@@ -1,0 +1,40 @@
+#
+#Copyright(c) 2025 Nordic Semiconductor ASA
+#
+#SPDX - License - Identifier : LicenseRef - Nordic - 5 - Clause
+#
+
+menuconfig PPR_PRL
+	bool "PPR power request logger library"
+	help
+	  This library provides communication with the PPR power request logger.
+
+
+if PPR_PRL
+
+config PPR_PRL_AUTO_START
+	bool "Auto start PPR PRL"
+	default y
+	help
+	  If selected, the PPR power logger will be started automatically
+	  when the application starts. Otherwise, the application must
+	  call ppr_prl_start() to start the logger.
+
+if PPR_PRL_AUTO_START
+
+config PPR_PRL_AUTO_START_CONFIG_VTIM_CNTTOP
+	int "VTIM_CNTTOP value"
+	default 16000
+	help
+	  The value of the VTIM_CNTTOP register for the PPR power request logger sampling timer.
+	  The TIMER runs at 16 MHz and the value is the number of clock cycles to count before taking a sample.
+
+config PPR_PRL_AUTO_START_CONFIG_MAX_SAMPLES
+	int "Number of samples the power logger should collect"
+	default 1024
+	help
+	  The number of samples the power logger should collect before stopping.
+
+endif # PPR_PRL_AUTO_START
+
+endif # PPR_PRL
