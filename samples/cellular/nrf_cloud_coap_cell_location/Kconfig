@@ -36,7 +36,7 @@ config COAP_CELL_SEND_DEVICE_STATUS
 
 module = NRF_CLOUD_COAP_CELL_LOCATION_SAMPLE
 module-str = nRF Cloud CoAP Cellular Location Sample
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endmenu
 

@@ -8,10 +8,10 @@ menu "Application JWT"
 
 module = APPLICATION_JWT
 module-str = Application JWT
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endmenu
 
 menu "Zephyr Kernel"
-	source "Kconfig.zephyr"
+source "Kconfig.zephyr"
 endmenu

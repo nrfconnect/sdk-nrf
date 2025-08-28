@@ -105,7 +105,7 @@ if NFC_NDEF_PARSER
 
 module = NFC_NDEF_PARSER
 module-str = nfc_ndef_parser
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 config NFC_NDEF_LE_OOB_REC_PARSER
 	bool
@@ -123,7 +123,7 @@ if NFC_NDEF_LE_OOB_REC_PARSER
 
 module = NFC_NDEF_LE_OOB_REC_PARSER
 module-str = nfc_ndef_le_oob_rec_parser
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # NFC_NDEF_LE_OOB_REC_PARSER
 
@@ -131,7 +131,7 @@ if NFC_NDEF_CH_PARSER
 
 module = NFC_NDEF_CH_REC_PARSER
 module-str = nfc_ndef_ch_rec_parser
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # NFC_NDEF_CH_PARSER
 

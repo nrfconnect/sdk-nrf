@@ -46,4 +46,4 @@ endmenu
 
 module = NRF_CLOUD_REST_CELL_LOCATION_SAMPLE
 module-str = nRF Cloud REST Cellular Location Sample
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"

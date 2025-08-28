@@ -13,6 +13,6 @@ if BT_BMS
 
 module = BT_BMS
 module-str = BMS
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # BT_BMS

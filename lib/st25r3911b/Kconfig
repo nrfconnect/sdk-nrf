@@ -22,6 +22,6 @@ if ST25R3911B_LIB
 
 module = ST25R3911B_LIB
 module-str = ST25R3911B
-source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
 endif # ST25R3911B_LIB

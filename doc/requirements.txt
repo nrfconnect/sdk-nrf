@@ -14,6 +14,7 @@ natsort                         # |     |         |        |         |         |
 PyYAML                          # |  X  |         |        |         |         |      |   X    |
 pykwalify                       # |     |         |        |         |         |      |   X    |
 pytest                          # |     |         |        |         |         |      |   X    |
+python-dotenv>=1.1.1            # |     |    X    |        |         |         |      |        |
 recommonmark                    # |     |         |   X    |    X    |         |      |        |
 snowballstemmer<3.0.0           # https://github.com/snowballstem/snowball/issues/229
 sphinx>=8.1,<8.2                # |  X  |    X    |   X    |    X    |    X    |  X   |   X    |
