@@ -93,6 +93,7 @@ After programming the sample to your development kit, perform the following step
      ``<image_size>`` is the size, in bytes, of the file :file:`build_v2/dfu_target/zephyr/zephyr.signed.bin`.
 
    * Step-by-step update:
+
      #. Get the image type::
 
            dfu_target image_type
