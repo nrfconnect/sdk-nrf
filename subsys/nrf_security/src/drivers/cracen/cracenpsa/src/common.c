@@ -734,6 +734,10 @@ int cracen_prepare_ik_key(const uint8_t *user_data)
 	}
 #endif
 
+#ifdef CONFIG_CRACEN_IKG_PERSONALIZED_KEYS
+	cfg.key_bundle = (const uint32_t *)user_data;
+	cfg.key_bundle_sz = 1; /* size of the owner_id is one 32-bit word */
+#endif
 
 #if defined(CONFIG_CRACEN_IKG)
 	return sx_pk_ik_derive_keys(&cfg);
