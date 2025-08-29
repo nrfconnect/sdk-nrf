@@ -1,0 +1,25 @@
+sample:
+  description: Appl with central role for testing basic Bluetooth functionality in BLE samples
+  name: BLE Samples Test App
+tests:
+  sample.bluetooth.ble_samples_test_app:
+    sysbuild: true
+    harness: bluetooth
+    integration_platforms:
+      - nrf52dk/nrf52832
+      - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf52dk/nrf52832
+      - nrf52833dk/nrf52833
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - bluetooth
+      - ci_build
+      - sysbuild
