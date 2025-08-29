@@ -70,7 +70,7 @@ Complete the following steps:
    .. group-tab:: Using application that supports multi-image builds
 
       If your application involves creating custom images for both the application core and the FLPR core, make sure to disable the VPR bootstrapping sample.
-      You can do this by disabling the ``SB_CONFIG_VPR_LAUNCHER`` option when building for the FLPR target.
+      You can do this by disabling the :kconfig:option:`SB_CONFIG_VPR_LAUNCHER` option when building for the FLPR target.
       For more details, see :ref:`how to configure Kconfig <configuring_kconfig>`.
 
       To build and flash both images, run the following command that performs a :ref:`pristine build <zephyr:west-building>`:

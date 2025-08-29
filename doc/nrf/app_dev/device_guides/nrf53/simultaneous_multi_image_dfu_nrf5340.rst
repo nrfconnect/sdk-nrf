@@ -8,9 +8,9 @@ It allows the updating of both the application core and the network core in one 
 
 To enable the simultaneous update of multiple images by MCUboot, set the following options:
 
-* ``SB_CONFIG_SECURE_BOOT_NETCORE`` - Enables |NSIB| for the network core.
-* ``SB_CONFIG_NETCORE_APP_UPDATE`` - Enables firmware updates for the network core.
-* ``SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE`` - Performs network core updates in a single operation.
+* :kconfig:option:`SB_CONFIG_SECURE_BOOT_NETCORE` - Enables |NSIB| for the network core.
+* :kconfig:option:`SB_CONFIG_NETCORE_APP_UPDATE` - Enables firmware updates for the network core.
+* :kconfig:option:`SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE` - Performs network core updates in a single operation.
 
 .. note::
 
