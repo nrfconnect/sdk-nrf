@@ -83,6 +83,13 @@ config CRACEN_IKG_SEED_KMU_SLOT
 	  This defines the KMU slot (along with the two following it) to which
 	  the IKG seed is provisioned and that is pushed when loading the IKG seed.
 
+config CRACEN_IKG_PERSONALIZED_KEYS
+	bool "CRACEN IKG personalized keys"
+	help
+	  Personalize each IKG-generated key for the associated key owner.
+	  If an owner ID is encoded into the mbedtls_svc_key_id_t type,
+	  it will be passed to the IKG as a personalization string.
+
 config CRACEN_USE_INTERRUPTS
 	bool "Use cracen with interrupts"
 	default y
