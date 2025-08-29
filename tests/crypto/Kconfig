@@ -1,9 +1,8 @@
 config REDUCED_TEST_SUITE
 	bool "Reduced test suite"
-	default n
 	help
-		If False, all test vectors in all test_vector_* files are used as a test basis.
-		If True, only the test vectors in test_vectors.c are used.
+	  If False, all test vectors in all test_vector_* files are used as a test basis.
+	  If True, only the test vectors in test_vectors.c are used.
 
 config CRYPTO_TEST_LONG_RUNNING_VECTORS
 	bool "Test slow vectors"
