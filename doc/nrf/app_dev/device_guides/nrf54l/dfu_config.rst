@@ -22,6 +22,10 @@ In the following subsections, the Zephyr's :zephyr:code-sample:`smp-svr` sample 
 Configuring NSIB with MCUboot
 =============================
 
+.. note::
+
+   The nRF54LM20A SoC currently does not support this configuration.
+
 To configure and build firmware using NSIB and MCUboot, complete the following steps:
 
 1. Navigate to the :file:`zephyr/samples/subsys/mgmt/mcumgr/smp_svr` directory.
@@ -107,6 +111,7 @@ Signature keys
 
 The :ref:`Key Management Unit (KMU)<ug_nrf54l_developing_basics_kmu>` retains the keys necessary for image signature verification, which must be uploaded simultaneously with the application during the flashing process.
 Currently, encryption keys are not stored in the KMU.
+In the case of nRF54LM20A SoC, keys are compiled into the bootloader.
 
 .. note::
    NSIB regenerates its key with each build unless it is specified in the command line.
