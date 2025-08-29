@@ -267,6 +267,8 @@ Bluetooth samples
   The :ref:`ipc_radio` application is commonly used for multicore builds in other |NCS| samples and projects.
   Hence, this is to align with the common practice.
 
+* Added the :ref:`samples_test_app` sample to demonstrate how to use the Bluetooth LE Test GATT Server sample and test Bluetooth LE functionality in peripheral samples.
+
 Bluetooth Mesh samples
 ----------------------
 
