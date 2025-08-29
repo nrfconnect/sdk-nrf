@@ -333,13 +333,13 @@ The process involves building a test or user application that is using MSPI driv
 
       1. Enable the following Kconfig options:
 
-         * ``SB_CONFIG_HPF`` - Enables the High-Performance Framework (HPF).
-         * ``SB_CONFIG_HPF_MSPI`` - Integrates the HPF application image with the user application image.
+         * :kconfig:option:`SB_CONFIG_HPF` - Enables the High-Performance Framework (HPF).
+         * :kconfig:option:`SB_CONFIG_HPF_MSPI` - Integrates the HPF application image with the user application image.
 
       #. Disable the following Kconfig options:
 
-         * ``SB_CONFIG_VPR_LAUNCHER`` - Disables the default VPR launcher image for the application core.
-         * ``SB_CONFIG_PARTITION_MANAGER`` - Disables the :ref:`Partition Manager <partition_manager>`.
+         * :kconfig:option:`SB_CONFIG_VPR_LAUNCHER` - Disables the default VPR launcher image for the application core.
+         * :kconfig:option:`SB_CONFIG_PARTITION_MANAGER` - Disables the :ref:`Partition Manager <partition_manager>`.
 
       #. Implement the business logic using the MSPI API with the HPF application.
 

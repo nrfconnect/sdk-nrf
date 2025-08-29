@@ -390,7 +390,7 @@ Google Fast Pair
    For applications and samples using the :ref:`bt_fast_pair_readme` library:
 
    * If you use sysbuild for generating a hex file with the Fast Pair provisioning data, you must align your application with the new approach for passing the provisioning parameters (the Model ID and the Anti-Spoofing Private Key).
-     The ``FP_MODEL_ID`` and ``FP_ANTI_SPOOFING_KEY`` CMake variables are replaced by the corresponding ``SB_CONFIG_BT_FAST_PAIR_MODEL_ID`` and ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` Kconfig options that are defined at the sysbuild level.
+     The ``FP_MODEL_ID`` and ``FP_ANTI_SPOOFING_KEY`` CMake variables are replaced by the corresponding :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_MODEL_ID` and :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY` Kconfig options that are defined at the sysbuild level.
      The following additional build parameters for Fast Pair are no longer valid:
 
      ``-DFP_MODEL_ID=0xFFFFFF -DFP_ANTI_SPOOFING_KEY=AbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbAbA=``
@@ -425,11 +425,11 @@ Google Fast Pair
 
               Replace the standard ``"`` character with the ``\"`` characters.
 
-        The special character sequence is only required when you pass the ``SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY`` Kconfig option as an additional build parameter.
+        The special character sequence is only required when you pass the :kconfig:option:`SB_CONFIG_BT_FAST_PAIR_ANTI_SPOOFING_PRIVATE_KEY` Kconfig option as an additional build parameter.
 
-   * You must remove the ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option from the sysbuild configuration in your project.
-     The ``SB_CONFIG_BT_FAST_PAIR`` option no longer exists in this |NCS| release.
-     Additionally, if you rely on the ``SB_CONFIG_BT_FAST_PAIR`` Kconfig option to set the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option in the main image configuration of your application, you must align your main image configuration and set the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option explicitly.
+   * You must remove the :kconfig:option:`SB_CONFIG_BT_FAST_PAIR` Kconfig option from the sysbuild configuration in your project.
+     The :kconfig:option:`SB_CONFIG_BT_FAST_PAIR` option no longer exists in this |NCS| release.
+     Additionally, if you rely on the :kconfig:option:`SB_CONFIG_BT_FAST_PAIR` Kconfig option to set the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option in the main image configuration of your application, you must align your main image configuration and set the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option explicitly.
 
    * If your Fast Pair application uses the Find My Device (FMD) extension, you must update your application code to correctly track the FMDN provisioning state.
      From this |NCS| release, you must not rely on the :c:member:`bt_fast_pair_fmdn_info_cb.provisioning_state_changed` callback to report the initial provisioning state right after the Fast Pair module is enabled with the :c:func:`bt_fast_pair_enable` function call.
@@ -505,11 +505,11 @@ Bluetooth® Fast Pair Locator tag
 
 .. toggle::
 
-   * If you want to align your application project with the newest version of the :ref:`fast_pair_locator_tag` sample and still maintain the DFU backwards compatibility for your already deployed products that are based on the ``nrf52840dk/nrf52840``  and the ``nrf54l15dk/nrf54l15/cpuapp`` board targets, use the RSA signature algorithm (the ``SB_CONFIG_BOOT_SIGNATURE_TYPE_RSA`` Kconfig option) that is supported as part of the previous |NCS| releases.
+   * If you want to align your application project with the newest version of the :ref:`fast_pair_locator_tag` sample and still maintain the DFU backwards compatibility for your already deployed products that are based on the ``nrf52840dk/nrf52840``  and the ``nrf54l15dk/nrf54l15/cpuapp`` board targets, use the RSA signature algorithm (the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_RSA` Kconfig option) that is supported as part of the previous |NCS| releases.
      In the current |NCS| release, the MCUboot DFU signature type has been changed:
 
-     * To the Elliptic curve digital signatures with curve P-256 (ECDSA P256 - the ``SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256`` Kconfig option) in case of the ``nrf52840dk/nrf52840`` board target.
-     * To the Edwards-curve digital signature with curve Curve25519 (ED25519 - the ``SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519`` Kconfig option) in case of the ``nrf54l15dk/nrf54l15/cpuapp`` board target.
+     * To the Elliptic curve digital signatures with curve P-256 (ECDSA P256 - the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256` Kconfig option) in case of the ``nrf52840dk/nrf52840`` board target.
+     * To the Edwards-curve digital signature with curve Curve25519 (ED25519 - the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519` Kconfig option) in case of the ``nrf54l15dk/nrf54l15/cpuapp`` board target.
 
      As a result, you will not be able to perform DFU from an old version to a new one.
 

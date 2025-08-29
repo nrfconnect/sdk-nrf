@@ -631,7 +631,7 @@ Bluetooth Fast Pair samples
 
       This change in the nRF54L10 partition map is a breaking change and cannot be performed using DFU.
       As a result, the DFU procedure will fail if you attempt to upgrade the sample firmware based on one of the |NCS| v3.0 releases.
-    * The configurations for nRF54L-based board targets that store the MCUboot verification key in the KMU peripheral to automatically generate the :file:`keyfile.json` file in the build directory (the ``SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE`` Kconfig option) based on the input file provided by the ``SB_CONFIG_BOOT_SIGNATURE_KEY_FILE`` Kconfig option.
+    * The configurations for nRF54L-based board targets that store the MCUboot verification key in the KMU peripheral to automatically generate the :file:`keyfile.json` file in the build directory (the :kconfig:option:`SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KMU_KEYFILE` Kconfig option) based on the input file provided by the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` Kconfig option.
       This KMU provisioning step can now be performed automatically by the west runner, provided that a :file:`keyfile.json` file is present in the build directory.
       The provisioning is only performed if the ``west flash`` command is executed with the ``--erase``  or ``--recover`` flag.
     * Link Time Optimization (:kconfig:option:`CONFIG_LTO`) to be enabled in MCUboot configurations of the nRF5340 DK and Thingy:53.
